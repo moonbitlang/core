@@ -1563,7 +1563,7 @@ test "append_growth_strategy" {
   /// Test the behavior of capacity growth after flattening
   let d1 = @deque.from_array([])
   let d2 = @deque.from_array([])
-  for i = 0; i < 100; i = i + 1 {
+  for i in 0..<100 {
     d2.push_back(i)
   }
   let old_cap = d1.capacity()
@@ -1577,7 +1577,7 @@ test "append_growth_strategy" {
 test "append_large_realloc" {
   let d1 = @deque.from_array([1])
   let d2 : @deque.Deque[Int] = @deque.from_array([])
-  for i = 0; i < 1000; i = i + 1 {
+  for i in 0..<1000 {
     d2.push_back(i)
   }
   d1.append(d2)
@@ -1590,7 +1590,7 @@ test "append_large_realloc" {
 /// Test append empty after multiple pushes
 test "append_empty_after_pushes" {
   let d1 = @deque.from_array([])
-  for i = 0; i < 10; i = i + 1 {
+  for i in 0..<10 {
     d1.push_back(i)
   }
   let d2 = @deque.from_array([])
@@ -1911,7 +1911,7 @@ test "insert_back" {
 /// Test insert triggers reallocation
 test "insert_realloc" {
   let d = @deque.from_array([])
-  for i = 0; i < 8; i = i + 1 {
+  for i in 0..<8 {
     d.push_back(i)
   }
   inspect(d.as_views(), content="([0, 1, 2, 3, 4, 5, 6, 7], [])")
@@ -1929,7 +1929,7 @@ test "insert_folded" {
   d.unsafe_pop_front()
   d.unsafe_pop_front()
   d.unsafe_pop_front()
-  for i = 9; i < 13; i = i + 1 {
+  for i in 9..<13 {
     d.push_back(i)
   }
   inspect(d.as_views(), content="([5, 6, 7, 8], [9, 10, 11, 12])")
@@ -1988,7 +1988,7 @@ test "remove_folded" {
   d.unsafe_pop_front()
   d.unsafe_pop_front()
   d.unsafe_pop_front()
-  for i = 9; i < 13; i = i + 1 {
+  for i in 9..<13 {
     d.push_back(i)
   }
   inspect(d.as_views(), content="([5, 6, 7, 8], [9, 10, 11, 12])")
@@ -2039,7 +2039,7 @@ test "extract_if_folded" {
   d.unsafe_pop_front()
   d.unsafe_pop_front()
   d.unsafe_pop_front()
-  for i = 9; i < 13; i = i + 1 {
+  for i in 9..<13 {
     d.push_back(i)
   }
   inspect(d.as_views(), content="([5, 6, 7, 8], [9, 10, 11, 12])")

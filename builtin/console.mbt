@@ -66,7 +66,9 @@ fn base64_encode(data : FixedArray[Byte]) -> String {
   let buf = StringBuilder::new()
   let len = data.length()
   let rem = len % 3
-  for i = 0; i < len - rem; i = i + 3 {
+  let block_count = (len - rem) / 3
+  for block in 0..<block_count {
+    let i = block * 3
     let b0 = data[i].to_int()
     let b1 = data[i + 1].to_int()
     let b2 = data[i + 2].to_int()
@@ -106,21 +108,21 @@ fn base64_encode_string_codepoint(s : String) -> String {
   // the input string is expected to be valid utf-16 string
   let codepoint_length = s.char_length()
   let data : FixedArray[Byte] = FixedArray::make(codepoint_length * 4, 0)
-  for i = 0, utf16_index = 0
-      i < codepoint_length
-      i = i + 1, utf16_index = utf16_index + 1 {
+  let mut utf16_index = 0
+  for i in 0..<codepoint_length {
     let c = s.unsafe_char_at(utf16_index).to_int()
     if c > 0xFFFF {
       data[i * 4] = (c & 0xFF).to_byte()
       data[i * 4 + 1] = ((c >> 8) & 0xFF).to_byte()
       data[i * 4 + 2] = ((c >> 16) & 0xFF).to_byte()
       data[i * 4 + 3] = ((c >> 24) & 0xFF).to_byte()
-      continue i + 1, utf16_index + 2
+      utf16_index += 2
     } else {
       data[i * 4] = (c & 0xFF).to_byte()
       data[i * 4 + 1] = ((c >> 8) & 0xFF).to_byte()
       data[i * 4 + 2] = 0
       data[i * 4 + 3] = 0
+      utf16_index += 1
     }
   }
   base64_encode(data)

@@ -142,13 +142,14 @@ fn is_unquoted_key(key : String) -> Bool {
     if !is_unquoted_key_head(head) {
       false
     } else {
-      for i = 1, ok = true
-          i < chars.length()
-          i = i + 1, ok = ok && is_unquoted_key_tail(chars[i]) {
-
-      } else {
-        ok
+      let mut ok = true
+      for i in 1..<chars.length() {
+        if !is_unquoted_key_tail(chars[i]) {
+          ok = false
+          break
+        }
       }
+      ok
     }
   }
 }

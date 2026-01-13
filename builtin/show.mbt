@@ -138,6 +138,13 @@ pub impl Show for String with output(self, logger) {
           continue i + 1, seg
         }
     }
+  } where {
+    invariant: 0 <= seg && seg <= i,
+    invariant: i <= len,
+    reasoning: (
+      #|i advances one UTF-16 code unit per iteration until len, while seg
+      #|tracks the start of the current unescaped slice and never exceeds i.
+    ),
   }
   logger.write_char('"')
 }

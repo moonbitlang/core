@@ -598,6 +598,13 @@ fn to_chars(v : FloatingDecimal64, sign : Bool) -> String {
       for i = -1; i > exp; i = i - 1 {
         result[index] = b'0'
         index += 1
+      } where {
+        invariant: i <= -1,
+        invariant: i > exp,
+        reasoning: (
+          #|i starts at -1 and decreases by 1 until it is no longer greater
+          #|than exp, so the loop terminates.
+        ),
       }
       let current = index
       for i in 0..<olength {

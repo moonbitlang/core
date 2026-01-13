@@ -818,7 +818,7 @@ pub fn[X : Eq] Iter::contains(self : Iter[X], value : X) -> Bool {
 /// The iterator `self` will advance past the returned element.
 pub fn[X] Iter::nth(self : Iter[X], n : Int) -> X? {
   guard n >= 0 else { None }
-  for i = 0; i < n; i = i + 1 {
+  for _ in 0..<n {
     guard self.next() is Some(_) else { break None }
   } else {
     self.next()

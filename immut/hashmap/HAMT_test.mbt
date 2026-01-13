@@ -18,6 +18,12 @@ test "HAMT::size" {
     assert_eq(map.length(), i)
   } else {
     assert_eq(map.add(0, 0).length(), 20)
+  } where {
+    invariant: i >= 0,
+    invariant: i <= 20,
+    reasoning: (
+      #|i increases by 1 each iteration until it reaches 20.
+    ),
   }
 }
 
@@ -41,6 +47,14 @@ test "HAMT" {
   for i = 0; i < 100; i = i + 2 {
     assert_eq((i, map.get(i)), (i, Some(i + 1)))
     assert_eq((i + 1, map.get(i + 1)), (i + 1, Some(i + 1)))
+  } where {
+    invariant: i >= 0,
+    invariant: i <= 100,
+    invariant: i % 2 == 0,
+    reasoning: (
+      #|i starts at 0 and increases by 2 each iteration,
+      #|so the loop terminates when i reaches 100.
+    ),
   }
 }
 
@@ -77,6 +91,14 @@ test "HAMT::remove" {
   for i = 0; i < 100; i = i + 2 {
     assert_eq(map.get(i), None)
     assert_eq(map.get(i + 1), Some(i + 1))
+  } where {
+    invariant: i >= 0,
+    invariant: i <= 100,
+    invariant: i % 2 == 0,
+    reasoning: (
+      #|i starts at 0 and increases by 2 each iteration,
+      #|so the loop terminates when i reaches 100.
+    ),
   }
 }
 

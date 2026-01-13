@@ -85,6 +85,13 @@ test "priority" (t : @test.Test) {
     t.writeln(
       "aabbcc".view(start_offset=captures[i], end_offset=captures[i + 1]),
     )
+  } where {
+    invariant: i >= 0,
+    invariant: i <= captures.length(),
+    invariant: i % 2 == 0,
+    reasoning: (
+      #|i starts at 0 and increases by 2, so it reaches captures.length().
+    ),
   }
   t.snapshot(filename="priority.txt")
 }

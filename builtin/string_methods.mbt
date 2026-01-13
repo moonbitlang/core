@@ -84,6 +84,13 @@ fn boyer_moore_horspool_find(
     } else {
       return Some(i)
     }
+  } where {
+    invariant: i >= 0,
+    invariant: i <= haystack_len - needle_len,
+    reasoning: (
+      #|The skip table always advances by at least 1, so i moves forward through
+      #|valid start positions until a match is found or the range is exhausted.
+    ),
   }
   None
 }
@@ -218,7 +225,8 @@ fn boyer_moore_horspool_rev_find(
   guard needle_len > 0 else { return Some(haystack_len) }
   guard haystack_len >= needle_len else { return None }
   let skip_table = FixedArray::make(1 << 8, needle_len)
-  for i = needle_len - 1; i > 0; i = i - 1 {
+  for offset in 1..<needle_len {
+    let i = needle_len - offset
     skip_table[needle.unsafe_get(i).to_int() & 0xFF] = i
   }
   for i = haystack_len - needle_len
@@ -232,6 +240,13 @@ fn boyer_moore_horspool_rev_find(
     } else {
       return Some(i)
     }
+  } where {
+    invariant: i >= 0,
+    invariant: i <= haystack_len - needle_len,
+    reasoning: (
+      #|The skip table always steps by at least 1, so i moves backward through
+      #|candidate positions until it drops below 0 or a match is found.
+    ),
   }
   None
 }
@@ -1223,6 +1238,15 @@ pub fn StringView::replace_all(
           break
         }
         continue next_view, next_end
+      } where {
+        invariant: end >= 0,
+        invariant: end <= view.length(),
+        invariant: view.length() <= len,
+        reasoning: (
+          #|view tracks the remaining suffix of the original string; each
+          #|iteration advances past a match, shrinking view and keeping end
+          #|within the current slice.
+        ),
       }
       buf.to_string()
     } else {
@@ -1273,6 +1297,15 @@ pub fn String::replace_all(
           break
         }
         continue next_view, next_end
+      } where {
+        invariant: end >= 0,
+        invariant: end <= view.length(),
+        invariant: view.length() <= len,
+        reasoning: (
+          #|view tracks the remaining suffix of the original string; each
+          #|iteration advances past a match, shrinking view and keeping end
+          #|within the current slice.
+        ),
       }
       buf.to_string()
     } else {

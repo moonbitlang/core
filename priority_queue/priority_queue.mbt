@@ -51,6 +51,13 @@ pub fn[A : Compare] PriorityQueue::from_array(
     } else {
       break { len, top: Some(acc) }
     }
+  } where {
+    invariant: i >= 1,
+    invariant: i <= len,
+    reasoning: (
+      #|i starts at 1 and increases by 1 on each continue,
+      #|so it reaches len and breaks.
+    ),
   }
 }
 
@@ -310,6 +317,13 @@ pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for Priority
     } else {
       break { len, top: Some(acc) }
     }
+  } where {
+    invariant: i >= 1,
+    invariant: i <= len,
+    reasoning: (
+      #|i starts at 1 and increases by 1 on each continue,
+      #|so it reaches len and breaks.
+    ),
   }
 }
 

@@ -392,7 +392,7 @@ test "hashset arbitrary" {
     @hashset.from_array([0]),
     @hashset.from_array([-5, -1, 6, 0, 2, -2]),
   ]
-  for i = 0; i < 20; i = i + 1 {
+  for i in 0..<20 {
     assert_true(samples[i].symmetric_difference(cases[i]).is_empty())
   }
 }

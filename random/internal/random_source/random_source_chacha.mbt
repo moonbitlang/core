@@ -285,6 +285,12 @@ test "output" {
         return x
       }
       s.refill()
+    } where {
+      invariant: true,
+      reasoning: (
+        #|Each iteration attempts to read from the buffer; refill is retried
+        #|until a value is produced.
+      ),
     }
   }
 

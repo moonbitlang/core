@@ -131,6 +131,13 @@ pub fn[X] SparseArray::union(
         }
     }
     continue rest.remove(idx), index + 1
+  } where {
+    invariant: index >= 0,
+    invariant: index <= data.length(),
+    reasoning: (
+      #|rest removes one index each iteration,
+      #|so the loop terminates when rest becomes empty.
+    ),
   }
   { elem_info: union_elem_info, data }
 }
@@ -172,6 +179,14 @@ pub fn[X] SparseArray::intersection(
     } else {
       Some({ elem_info, data: data.copy_prefix(len=index) })
     }
+  } where {
+    invariant: index >= 0,
+    invariant: index <= data.length(),
+    invariant: elem_info.length() <= data.length(),
+    reasoning: (
+      #|rest removes one index each iteration,
+      #|so the loop terminates when rest becomes empty.
+    ),
   }
 }
 
@@ -209,6 +224,14 @@ pub fn[X] SparseArray::difference(
     } else {
       Some({ elem_info, data: data.copy_prefix(len=index) })
     }
+  } where {
+    invariant: index >= 0,
+    invariant: index <= data.length(),
+    invariant: elem_info.length() <= data.length(),
+    reasoning: (
+      #|rest removes one index each iteration,
+      #|so the loop terminates when rest becomes empty.
+    ),
   }
 }
 
@@ -245,6 +268,14 @@ pub fn[X] SparseArray::filter(
     } else {
       Some({ elem_info, data: data.copy_prefix(len=index) })
     }
+  } where {
+    invariant: index >= 0,
+    invariant: index <= data.length(),
+    invariant: elem_info.length() <= data.length(),
+    reasoning: (
+      #|rest removes one index each iteration,
+      #|so the loop terminates when rest becomes empty.
+    ),
   }
 }
 

@@ -368,7 +368,9 @@ pub fn[T] FixedArray::rev_each(
   self : FixedArray[T],
   f : (T) -> Unit raise?,
 ) -> Unit raise? {
-  for i = self.length() - 1; i >= 0; i = i - 1 {
+  let len = self.length()
+  for offset in 0..<len {
+    let i = len - 1 - offset
     f(self[i])
   }
 }
@@ -635,11 +637,11 @@ pub fn[A, B] FixedArray::fold(
   init~ : B,
   f : (B, A) -> B raise?,
 ) -> B raise? {
-  for i = 0, acc = init; i < self.length(); {
-    continue i + 1, f(acc, self[i])
-  } else {
-    acc
+  let mut acc = init
+  for i in 0..<self.length() {
+    acc = f(acc, self[i])
   }
+  acc
 }
 
 ///|
@@ -668,11 +670,13 @@ pub fn[A, B] FixedArray::rev_fold(
   init~ : B,
   f : (B, A) -> B raise?,
 ) -> B raise? {
-  for i = self.length() - 1, acc = init; i >= 0; {
-    continue i - 1, f(acc, self[i])
-  } else {
-    acc
+  let len = self.length()
+  let mut acc = init
+  for offset in 0..<len {
+    let i = len - 1 - offset
+    acc = f(acc, self[i])
   }
+  acc
 }
 
 ///|
@@ -701,11 +705,11 @@ pub fn[A, B] FixedArray::foldi(
   init~ : B,
   f : (Int, B, A) -> B raise?,
 ) -> B raise? {
-  for i = 0, acc = init; i < self.length(); {
-    continue i + 1, f(i, acc, self[i])
-  } else {
-    acc
+  let mut acc = init
+  for i in 0..<self.length() {
+    acc = f(i, acc, self[i])
   }
+  acc
 }
 
 ///|
@@ -739,11 +743,12 @@ pub fn[A, B] FixedArray::rev_foldi(
   f : (Int, B, A) -> B raise?,
 ) -> B raise? {
   let len = self.length()
-  for i = len - 1, acc = init; i >= 0; {
-    continue i - 1, f(len - i - 1, acc, self[i])
-  } else {
-    acc
+  let mut acc = init
+  for offset in 0..<len {
+    let i = len - 1 - offset
+    acc = f(offset, acc, self[i])
   }
+  acc
 }
 
 ///|

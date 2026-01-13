@@ -19,7 +19,7 @@ trait Leb128 {
 
 ///|
 pub impl Leb128 for Int with output(self, buffer) {
-  for value = self {
+  for value = self, shift = 0 {
     let byte = value & 0x7f // Get the low 7 bits
     let next_value = value >> 7 // Arithmetic right shift
     let sign_bit_set = (byte & 0x40) != 0
@@ -30,17 +30,25 @@ pub impl Leb128 for Int with output(self, buffer) {
     }
     if need_more {
       buffer.write_byte((byte | 0x80).to_byte())
-      continue next_value
+      continue next_value, shift + 7
     } else {
       buffer.write_byte(byte.to_byte())
       break
     }
+  } where {
+    invariant: shift >= 0,
+    invariant: shift % 7 == 0,
+    invariant: value == self >> shift,
+    reasoning: (
+      #|Each iteration shifts the remaining value right by 7 bits,
+      #|so `value` tracks the unencoded suffix and converges to 0 or -1.
+    ),
   }
 }
 
 ///|
 pub impl Leb128 for Int64 with output(self, buffer) {
-  for value = self {
+  for value = self, shift = 0 {
     let byte = value & 0x7f // Get the low 7 bits
     let next_value = value >> 7 // Arithmetic right shift
     let sign_bit_set = (byte & 0x40) != 0
@@ -51,11 +59,19 @@ pub impl Leb128 for Int64 with output(self, buffer) {
     }
     if need_more {
       buffer.write_byte((byte | 0x80).to_byte())
-      continue next_value
+      continue next_value, shift + 7
     } else {
       buffer.write_byte(byte.to_byte())
       break
     }
+  } where {
+    invariant: shift >= 0,
+    invariant: shift % 7 == 0,
+    invariant: value == self >> shift,
+    reasoning: (
+      #|Each iteration shifts the remaining value right by 7 bits,
+      #|so `value` tracks the unencoded suffix and converges to 0 or -1.
+    ),
   }
 }
 

@@ -206,6 +206,13 @@ pub fn vm(
     nlist = tmp
     nlist.clear()
     continue next_sp
+  } where {
+    invariant: sp >= 0,
+    invariant: sp <= input.length(),
+    reasoning: (
+      #|sp increases by 1 or 2 each iteration and is bounded by input.length(),
+      #|so the loop terminates.
+    ),
   }
   return matched
 }

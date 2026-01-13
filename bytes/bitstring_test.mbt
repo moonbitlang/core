@@ -57,23 +57,23 @@ test "extract_bit - edge patterns" {
   let view = bytes[:]
 
   // All ones byte (0xFF)
-  for i = 0; i < 8; i = i + 1 {
+  for i in 0..<8 {
     inspect(view.unsafe_extract_bit(i, 1), content="1")
   }
 
   // All zeros byte (0x00)
-  for i = 8; i < 16; i = i + 1 {
+  for i in 8..<16 {
     inspect(view.unsafe_extract_bit(i, 1), content="0")
   }
 
   // Single high bit (0x80 = 10000000)
   inspect(view.unsafe_extract_bit(16, 1), content="1")
-  for i = 17; i < 24; i = i + 1 {
+  for i in 17..<24 {
     inspect(view.unsafe_extract_bit(i, 1), content="0")
   }
 
   // Single low bit (0x01 = 00000001)
-  for i = 24; i < 31; i = i + 1 {
+  for i in 24..<31 {
     inspect(view.unsafe_extract_bit(i, 1), content="0")
   }
   inspect(view.unsafe_extract_bit(31, 1), content="1")
@@ -113,7 +113,7 @@ test "extract_byte - partial bits from byte aligned positions" {
   inspect(view.unsafe_extract_byte(0, 7), content="127") // 1111111 -> 127
 
   // Extract 2-7 bits from 0x00 (00000000)
-  for len = 2; len <= 7; len = len + 1 {
+  for len in 2..=7 {
     inspect(view.unsafe_extract_byte(8, len), content="0")
   }
 }
@@ -1793,7 +1793,7 @@ test "integration - boundary stress test" {
   let view = bytes[:]
 
   // Test extractions that cross multiple boundaries
-  for offset = 1; offset <= 7; offset = offset + 1 {
+  for offset in 1..=7 {
     // Extract a bit
     let _bit = view.unsafe_extract_bit(offset, 1)
 
@@ -1821,7 +1821,7 @@ test "integration - pattern verification" {
   // Verify the pattern is preserved through different extraction methods
 
   // Check that alternating pattern is maintained in bits
-  for i = 0; i < 16; i = i + 1 {
+  for i in 0..<16 {
     let bit = view.unsafe_extract_bit(i, 1)
     let expected = if i % 2 == 0 { false } else { true } // 0x55 = 01010101
     if i < 8 {

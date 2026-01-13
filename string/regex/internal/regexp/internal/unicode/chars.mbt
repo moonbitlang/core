@@ -134,6 +134,13 @@ pub fn simplify_char_ranges(chars : Array[Char]) -> Array[Char] {
     let start = chars[i]
     let end = chars[i + 1]
     ranges.push((start, end))
+  } where {
+    invariant: i >= 0,
+    invariant: i <= chars.length(),
+    invariant: i % 2 == 0,
+    reasoning: (
+      #|i starts at 0 and increases by 2, so it reaches chars.length().
+    ),
   }
 
   // Sort ranges by start character
@@ -211,6 +218,12 @@ pub fn compute_char_class_complement(chars : Array[Char]) -> Array[Char] {
       complement.push(gap_start)
       complement.push(gap_end)
     }
+  } where {
+    invariant: i >= 0,
+    invariant: i < simplified.length() / 2,
+    reasoning: (
+      #|i starts at 0 and increases by 1 until the last adjacent pair is processed.
+    ),
   }
 
   // Add range after last range if it doesn't end at maximum
