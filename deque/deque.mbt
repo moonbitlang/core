@@ -296,7 +296,7 @@ pub fn[A] Deque::blit_to(
       dst.buf[dst_idx] = self.buf[src_idx]
     }
   } else {
-    for i = 0; i < len; i = i + 1 {
+    for i in 0..<len {
       let dst_idx = (dst.head + dst_offset + i) % dst.buf.length()
       let src_idx = (self.head + src_offset + i) % self.buf.length()
       dst.buf[dst_idx] = self.buf[src_idx]
@@ -353,7 +353,7 @@ pub fn[A] Deque::append(self : Deque[A], other : Deque[A]) -> Unit {
   }
   let cap = self.buf.length()
   // Use captured state to read from other, avoiding aliasing issues
-  for i = 0; i < other_len; i = i + 1 {
+  for i in 0..<other_len {
     let read_idx = (other_head + i) % other_buf_len
     let write_idx = (self.head + self.len) % cap
     self.buf[write_idx] = other_buf[read_idx]
@@ -403,7 +403,7 @@ pub fn[A] Deque::insert(self : Deque[A], index : Int, value : A) -> Unit {
   if index < self.len / 2 {
     // Shift front elements left
     let new_head = (self.head - 1 + cap) % cap
-    for i = 0; i < index; i = i + 1 {
+    for i in 0..<index {
       let to = (new_head + i) % cap
       let from = (self.head + i) % cap
       self.buf[to] = self.buf[from]
@@ -474,7 +474,7 @@ pub fn[A] Deque::remove(self : Deque[A], index : Int) -> A {
   } else {
     // Shift back elements left
     let tail_idx = (self.head + self.len - 1) % cap
-    for i = index + 1; i < self.len; i = i + 1 {
+    for i in (index + 1)..<self.len {
       let to = (self.head + i - 1) % cap
       let from = (self.head + i) % cap
       self.buf[to] = self.buf[from]
@@ -1760,7 +1760,10 @@ pub fn[A] Deque::chunks(self : Deque[A], size : Int) -> Deque[Deque[A]] {
   let mut i = 0
   while i < self.length() {
     let chunk = Deque::new(capacity=size)
-    for j = 0; j < size && i < self.length(); j = j + 1 {
+    for _ in 0..<size {
+      if i >= self.length() {
+        break
+      }
       chunk.push_back(self[i])
       i = i + 1
     }
