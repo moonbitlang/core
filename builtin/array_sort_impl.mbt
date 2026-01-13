@@ -111,21 +111,25 @@ fn[T : Compare] find_streak(arr : MutArrayView[T]) -> (Int, Bool) {
   }
   let assume_reverse = arr[1] < arr[0]
   if assume_reverse {
-    for end = 2 {
-      if end < len && arr[end] < arr[end - 1] {
-        continue end + 1
-      } else {
-        break (end, true)
+    let end = for idx in 2..<len {
+      if arr[idx] < arr[idx - 1] {
+        continue
       }
+      break idx
+    } else {
+      len
     }
+    (end, true)
   } else {
-    for end = 2 {
-      if end < len && arr[end] >= arr[end - 1] {
-        continue end + 1
-      } else {
-        break (end, false)
+    let end = for idx in 2..<len {
+      if arr[idx] >= arr[idx - 1] {
+        continue
       }
+      break idx
+    } else {
+      len
     }
+    (end, false)
   }
 }
 
@@ -457,7 +461,8 @@ fn fixed_test_sort(f : (MutArrayView[Int]) -> Unit) -> Unit raise {
   for i in 0..<1000 {
     arr[i] = 1000 - i - 1
   }
-  for i = 10; i < 1000; i = i + 10 {
+  for step in 1..<100 {
+    let i = step * 10
     arr.swap(i, i - 1)
   }
   f(arr.mut_view())
@@ -492,7 +497,8 @@ test "stable_sort" {
   for i in 0..<1000 {
     arr[i] = 1000 - i - 1
   }
-  for i = 10; i < 1000; i = i + 10 {
+  for step in 1..<100 {
+    let i = step * 10
     arr.swap(i, i - 1)
   }
   arr.mut_view().stable_sort()

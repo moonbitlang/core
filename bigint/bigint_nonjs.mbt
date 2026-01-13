@@ -1390,7 +1390,10 @@ pub fn BigInt::to_octets(self : BigInt, length? : Int) -> Bytes {
   let len = (head_bits + 7) / 8 + tail_len * (radix_bit_len / 8)
   let len = max(length, len)
   let result = FixedArray::make(len, Byte::default())
-  for i = 0; i < len && i / 4 < self.len; i = i + 1 {
+  for i in 0..<len {
+    if i / 4 >= self.len {
+      break
+    }
     result[len - 1 - i] = ((self.limbs[i / 4] >> (i % 4 * 8)) & 0xffU)
       .reinterpret_as_int()
       .to_byte()
@@ -1803,7 +1806,10 @@ pub fn BigInt::bit_length(self : BigInt) -> Int {
   if self.sign == Negative {
     // check if this number is a power of two
     let mut pow2 = self.limbs[0].popcnt() == 1
-    for i = 1; i < self.len && pow2; i = i + 1 {
+    for i in 1..<self.len {
+      if !pow2 {
+        break
+      }
       pow2 = self.limbs[i] == 0
     }
     if pow2 {

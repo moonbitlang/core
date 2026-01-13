@@ -334,8 +334,7 @@ fn bracket_seq_lines(
     _ => {
       // Multi-line always uses trailing comma style to match expectation.
       let out : Array[String] = [open]
-      for i = 0; i < contents.length(); i = i + 1 {
-        let item = contents[i]
+      for item in contents {
         let item_lines = item.filter(fn(line) { line != "" })
         match item_lines {
           [] => ()
@@ -415,9 +414,9 @@ fn comma_seq_lines(
           [x] => [begin + x + end]
           _ => {
             let out : Array[String] = [begin]
-            for i = 0; i < item_lines.length(); i = i + 1 {
-              let line = item_lines[i]
-              if i == item_lines.length() - 1 {
+            let last_i = item_lines.length() - 1
+            for i, line in item_lines {
+              if i == last_i {
                 out.push(" ".repeat(indent_by) + line + ",")
               } else {
                 out.push(" ".repeat(indent_by) + line)
@@ -430,8 +429,7 @@ fn comma_seq_lines(
       }
       _ => {
         let out : Array[String] = [begin]
-        for i = 0; i < contents.length(); i = i + 1 {
-          let item = contents[i]
+        for item in contents {
           let item_lines = item.filter(fn(line) { line != "" })
           match item_lines {
             [] => ()

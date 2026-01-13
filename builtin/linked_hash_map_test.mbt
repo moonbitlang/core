@@ -346,7 +346,7 @@ test "Map::retain - filter by both key and value" {
 ///|
 test "Map::retain - large map performance" {
   let map : Map[String, Int] = Map::new()
-  for i = 0; i < 1000; i = i + 1 {
+  for i in 0..<1000 {
     map.set("key" + i.to_string(), i)
   }
 
@@ -437,7 +437,7 @@ test "Map::retain - with hash collisions simulation" {
   let map : Map[String, Int] = Map::new()
   // Create keys that might have similar hash values
   let keys = ["a", "aa", "aaa", "aaaa", "aaaaa", "aaaaaa"]
-  for i = 0; i < keys.length(); i = i + 1 {
+  for i in 0..<keys.length() {
     map.set(keys[i], i + 1)
   }
 
