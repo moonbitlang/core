@@ -57,6 +57,7 @@ pub impl[A, B] Debug for Iter2[A, B]
 pub impl[K : Debug, V : Debug] Debug for Map[K, V]
 pub impl[T : Debug] Debug for MutArrayView[T]
 pub impl Debug for SourceLoc
+pub impl Debug for StringBuilder
 pub impl[A : Debug] Debug for @deque.Deque[A]
 pub impl[K : Debug, V : Debug] Debug for @moonbitlang/core/hashmap.HashMap[K, V]
 pub impl[K : Debug] Debug for @moonbitlang/core/hashset.HashSet[K]
