@@ -209,6 +209,11 @@ pub impl Debug for @buffer.Buffer with to_repr(self) {
 }
 
 ///|
+pub impl Debug for StringBuilder with to_repr(self) {
+  Repr::string(self.to_string())
+}
+
+///|
 pub impl[K : Debug, V : Debug] Debug for @immut_sorted_map.SortedMap[K, V] with to_repr(
   self,
 ) {
