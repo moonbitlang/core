@@ -119,6 +119,13 @@ pub fn[X] SparseArray::union(
   f : (X, X) -> X raise?,
 ) -> SparseArray[X] raise? {
   let union_elem_info = self.elem_info.union(other.elem_info)
+  guard union_elem_info != empty_bitset else { return empty() }
+  if self.elem_info == empty_bitset {
+    return other
+  }
+  if other.elem_info == empty_bitset {
+    return self
+  }
   let data = FixedArray::make(union_elem_info.length(), self.data[0])
   for rest = union_elem_info, index = 0; rest != empty_bitset; {
     let idx = rest.first_idx()
@@ -183,6 +190,7 @@ pub fn[X] SparseArray::difference(
   f : (X, X) -> X?,
 ) -> SparseArray[X]? {
   let self_elem_info = self.elem_info
+  guard self_elem_info != empty_bitset else { return None }
   let data = FixedArray::make(self_elem_info.length(), self.data[0])
   for rest = self_elem_info, index = 0, elem_info = self_elem_info; rest !=
      empty_bitset; {
@@ -226,6 +234,7 @@ pub fn[X] SparseArray::filter(
   pred : (X) -> X? raise?,
 ) -> SparseArray[X]? raise? {
   let self_elem_info = self.elem_info
+  guard self_elem_info != empty_bitset else { return None }
   let data = FixedArray::make(self_elem_info.length(), self.data[0])
   for rest = self_elem_info, index = 0, elem_info = self_elem_info; rest !=
      empty_bitset; {

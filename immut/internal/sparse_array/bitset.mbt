@@ -55,7 +55,7 @@ pub fn Bitset::add(self : Bitset, idx : Int) -> Bitset {
 ///|
 /// Remove an index from the bitset.
 pub fn Bitset::remove(self : Bitset, idx : Int) -> Bitset {
-  Bitset(self.0 ^ (1U << idx))
+  Bitset(self.0 & (1U << idx).lnot())
 }
 
 ///|
@@ -126,6 +126,14 @@ test "Bitset::remove" {
   inspect(b.has(2), content="false")
   inspect(b.has(3), content="true")
   inspect(b.index_of(3), content="0")
+}
+
+///|
+test "Bitset::remove absent" {
+  let b = empty_bitset.add(1)
+  let b = b.remove(2)
+  inspect(b.has(1), content="true")
+  inspect(b.has(2), content="false")
 }
 
 ///|

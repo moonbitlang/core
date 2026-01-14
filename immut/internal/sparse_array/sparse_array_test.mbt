@@ -90,3 +90,29 @@ test "SparseArray::iter" {
   })
   inspect(buf, content="0, 1, 3, 31")
 }
+
+///|
+test "SparseArray::union empty" {
+  let empty = @sparse_array.empty()
+  let arr = @sparse_array.singleton(1, 1)
+  let union_left = empty.union(arr, (_x, y) => y)
+  let union_right = arr.union(empty, (x, _y) => x)
+  inspect(union_left.get(1), content="Some(1)")
+  inspect(union_right.get(1), content="Some(1)")
+  let union_empty = empty.union(empty, (_x, _y) => 0)
+  inspect(union_empty.get(0), content="None")
+}
+
+///|
+test "SparseArray::difference empty" {
+  let empty : @sparse_array.SparseArray[Int] = @sparse_array.empty()
+  let diff = empty.difference(@sparse_array.singleton(0, 1), (x, _y) => Some(x))
+  guard diff is None else { fail("expected empty difference") }
+}
+
+///|
+test "SparseArray::filter empty" {
+  let empty : @sparse_array.SparseArray[Int] = @sparse_array.empty()
+  let filtered = empty.filter(x => Some(x))
+  guard filtered is None else { fail("expected empty filter") }
+}
