@@ -34,3 +34,30 @@ test "bench buffer writes with multiple samples" {
   bench.bench(() => ignore(2 + 2), name="second", count=1)
   inspect(bench.dump_summaries().contains(","), content="true")
 }
+
+///|
+fn busy_wait_us(target_us : Double) -> Unit {
+  let start = @bench.monotonic_clock_start()
+  let mut elapsed = 0.0
+  while elapsed < target_us {
+    elapsed = @bench.monotonic_clock_end(start)
+  }
+}
+
+///|
+test "bench slow samples clamp batch size and winsorize" {
+  let mut calls = 0
+  let summary = @bench.single_bench(
+    () => {
+      let is_slow = calls % 2 == 0
+      calls = calls + 1
+      if is_slow {
+        busy_wait_us(120000.0)
+      }
+    },
+    count=4,
+  )
+  let json = ToJson::to_json(summary).stringify()
+  inspect(json.contains("\"batch_size\""), content="true")
+  inspect(json.contains("\"runs\""), content="true")
+}

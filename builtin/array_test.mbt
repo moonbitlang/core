@@ -218,6 +218,33 @@ test "array_sort_by_pred_skip_duplicates" {
 }
 
 ///|
+struct HeapSortProbe {
+  value : Int
+}
+
+///|
+impl Eq for HeapSortProbe with equal(_self, _other) -> Bool {
+  false
+}
+
+///|
+impl Compare for HeapSortProbe with compare(_self, _other) -> Int {
+  1
+}
+
+///|
+test "array_sort heap fallback" {
+  // Force unbalanced partitions to exercise the heap sort fallback.
+  let arr : FixedArray[HeapSortProbe] = FixedArray::make(64, { value: 0 })
+  for i in 0..<arr.length() {
+    arr[i] = { value: i }
+  }
+  arr.sort()
+  assert_eq(arr.length(), 64)
+  ignore(arr[0].value)
+}
+
+///|
 test "array_each" {
   let arr = [1, 2, 3]
   let mut sum = 0
