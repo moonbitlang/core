@@ -25,7 +25,7 @@ fn literal(str : String) -> Ast {
 test "literal" {
   let regex = literal("abc")
   let instructions = regex.compile()
-  let result = vm(instructions, "abc", 1)
+  let result = @vm.vm(instructions, "abc", 1)
   inspect(result, content="[0, 3]")
 }
 
@@ -37,7 +37,7 @@ test "char_class" {
     greedy=true,
   )
   let instructions = regex.compile()
-  let result = vm(instructions, "abc", 1)
+  let result = @vm.vm(instructions, "abc", 1)
   inspect(result, content="[0, 3]")
   // ([a])
   let regex = Ast::ZeroOrMore(
@@ -45,12 +45,12 @@ test "char_class" {
     greedy=true,
   )
   let instructions = regex.compile()
-  let result = vm(instructions, "abc", 1)
+  let result = @vm.vm(instructions, "abc", 1)
   inspect(result, content="[0, 1]")
   // ([^ac])
   let regex = Ast::ZeroOrMore(Ast::CharClass(['a', 'c'], neg=true), greedy=true)
   let instructions = regex.compile()
-  let result = vm(instructions, "abc", 1)
+  let result = @vm.vm(instructions, "abc", 1)
   inspect(result, content="[0, 0]")
 }
 
@@ -58,7 +58,7 @@ test "char_class" {
 test "capture" {
   let regex = Ast::Capture(literal("abc"), index=1)
   let instructions = regex.compile()
-  let result = vm(instructions, "abc", 2)
+  let result = @vm.vm(instructions, "abc", 2)
   inspect(result, content="[0, 3, 0, 3]")
   inspect(
     "abc".view(start_offset=result[1 * 2], end_offset=result[1 * 2 + 1]),
@@ -70,15 +70,15 @@ test "capture" {
 test "zero_or_more" {
   let regex = Ast::ZeroOrMore(literal("abc"), greedy=true)
   let instructions = regex.compile()
-  let result = vm(instructions, "abcabcab", 1)
+  let result = @vm.vm(instructions, "abcabcab", 1)
   inspect(result, content="[0, 6]")
-  let result = vm(instructions, "ab", 1)
+  let result = @vm.vm(instructions, "ab", 1)
   inspect(result, content="[0, 0]")
   let regex = Ast::ZeroOrMore(literal("abc"), greedy=false)
   let instructions = regex.compile()
-  let result = vm(instructions, "abcabcab", 1)
+  let result = @vm.vm(instructions, "abcabcab", 1)
   inspect(result, content="[0, 0]")
-  let result = vm(instructions, "ab", 1)
+  let result = @vm.vm(instructions, "ab", 1)
   inspect(result, content="[0, 0]")
 }
 
@@ -86,15 +86,15 @@ test "zero_or_more" {
 test "one_or_more" {
   let regex = Ast::OneOrMore(literal("abc"), greedy=true)
   let instructions = regex.compile()
-  let result = vm(instructions, "abcabcab", 1)
+  let result = @vm.vm(instructions, "abcabcab", 1)
   inspect(result, content="[0, 6]")
-  let result = vm(instructions, "ab", 1)
+  let result = @vm.vm(instructions, "ab", 1)
   inspect(result, content="[]")
   let regex = Ast::OneOrMore(literal("abc"), greedy=false)
   let instructions = regex.compile()
-  let result = vm(instructions, "abcabcab", 1)
+  let result = @vm.vm(instructions, "abcabcab", 1)
   inspect(result, content="[0, 3]")
-  let result = vm(instructions, "ab", 1)
+  let result = @vm.vm(instructions, "ab", 1)
   inspect(result, content="[]")
 }
 
@@ -102,15 +102,15 @@ test "one_or_more" {
 test "zero_or_one" {
   let regex = Ast::ZeroOrOne(literal("abc"), greedy=true)
   let instructions = regex.compile()
-  let result = vm(instructions, "abc", 1)
+  let result = @vm.vm(instructions, "abc", 1)
   inspect(result, content="[0, 3]")
-  let result = vm(instructions, "ab", 1)
+  let result = @vm.vm(instructions, "ab", 1)
   inspect(result, content="[0, 0]")
   let regex = Ast::ZeroOrOne(literal("abc"), greedy=false)
   let instructions = regex.compile()
-  let result = vm(instructions, "abc", 1)
+  let result = @vm.vm(instructions, "abc", 1)
   inspect(result, content="[0, 0]")
-  let result = vm(instructions, "ab", 1)
+  let result = @vm.vm(instructions, "ab", 1)
   inspect(result, content="[0, 0]")
 }
 
@@ -119,20 +119,20 @@ test "repeat" {
   // greedy
   let regex = Ast::Repeat(min=2, max=Some(4), literal("abc"), greedy=true)
   let instructions = regex.compile()
-  let result = vm(instructions, "abcabcabcabc", 1)
+  let result = @vm.vm(instructions, "abcabcabcabc", 1)
   inspect(result, content="[0, 12]")
-  let result = vm(instructions, "abcabc", 1)
+  let result = @vm.vm(instructions, "abcabc", 1)
   inspect(result, content="[0, 6]")
-  let result = vm(instructions, "ab", 1)
+  let result = @vm.vm(instructions, "ab", 1)
   inspect(result, content="[]")
   // non-greedy
   let regex = Ast::Repeat(min=2, max=Some(4), literal("abc"), greedy=false)
   let instructions = regex.compile()
-  let result = vm(instructions, "abcabcabcabc", 1)
+  let result = @vm.vm(instructions, "abcabcabcabc", 1)
   inspect(result, content="[0, 6]")
-  let result = vm(instructions, "abcabc", 1)
+  let result = @vm.vm(instructions, "abcabc", 1)
   inspect(result, content="[0, 6]")
-  let result = vm(instructions, "ab", 1)
+  let result = @vm.vm(instructions, "ab", 1)
   inspect(result, content="[]")
 }
 
@@ -140,9 +140,9 @@ test "repeat" {
 test "concat" {
   let regex = Ast::Concat([literal("abc"), literal("def")])
   let instructions = regex.compile()
-  let result = vm(instructions, "abcdef", 1)
+  let result = @vm.vm(instructions, "abcdef", 1)
   inspect(result, content="[0, 6]")
-  let result = vm(instructions, "abc", 1)
+  let result = @vm.vm(instructions, "abc", 1)
   inspect(result, content="[]")
 }
 
@@ -150,11 +150,11 @@ test "concat" {
 test "alternate" {
   let regex = Ast::Alternate(literal("abc"), literal("def"))
   let instructions = regex.compile()
-  let result = vm(instructions, "abc", 1)
+  let result = @vm.vm(instructions, "abc", 1)
   inspect(result, content="[0, 3]")
-  let result = vm(instructions, "def", 1)
+  let result = @vm.vm(instructions, "def", 1)
   inspect(result, content="[0, 3]")
-  let result = vm(instructions, "xyz", 1)
+  let result = @vm.vm(instructions, "xyz", 1)
   inspect(result, content="[]")
 }
 
@@ -162,15 +162,15 @@ test "alternate" {
 test "empty" {
   let regex = Ast::Alternate(literal("abc"), Ast::Empty)
   let instructions = regex.compile()
-  let result = vm(instructions, "abc", 1)
+  let result = @vm.vm(instructions, "abc", 1)
   inspect(result, content="[0, 3]")
-  let result = vm(instructions, "xyz", 1)
+  let result = @vm.vm(instructions, "xyz", 1)
   inspect(result, content="[0, 0]")
 
   /// Reversed
   let regex = Ast::Alternate(Ast::Empty, literal("abc"))
   let instructions = regex.compile()
-  let result = vm(instructions, "abc", 1)
+  let result = @vm.vm(instructions, "abc", 1)
   inspect(result, content="[0, 0]")
 }
 

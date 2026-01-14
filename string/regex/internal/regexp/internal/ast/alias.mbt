@@ -11,9 +11,3 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-///|
-using @vm {type Instruction, type Predicate}
-
-///|
-using @unicode {simplify_char_ranges, compute_char_class_complement}

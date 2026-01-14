@@ -70,7 +70,7 @@ pub fn[K : Eq + Hash, V] HashMap::at(self : HashMap[K, V], key : K) -> V {
 fn[K : Eq, V] Node::get_with_path(
   self : Node[K, V],
   key : K,
-  path : Path,
+  path : @path.Path,
 ) -> V? {
   loop (self, path) {
     (Leaf(key1, value1, bucket), _) =>
@@ -100,10 +100,10 @@ fn[K : Eq, V] Node::get_with_path(
 fn[K, V] join_2(
   key1 : K,
   value1 : V,
-  path1 : Path,
+  path1 : @path.Path,
   key2 : K,
   value2 : V,
-  path2 : Path,
+  path2 : @path.Path,
 ) -> Node[K, V] {
   let idx1 = path1.idx()
   let idx2 = path2.idx()
@@ -129,7 +129,7 @@ fn[K : Eq, V] Node::add_with_path(
   self : Node[K, V],
   key : K,
   value : V,
-  path : Path,
+  path : @path.Path,
 ) -> Node[K, V] {
   match self {
     Leaf(key1, value1, bucket) =>
@@ -283,7 +283,7 @@ pub fn[K : Eq + Hash, V] HashMap::remove(
 fn[K : Eq, V] Node::remove_with_path(
   self : Node[K, V],
   key : K,
-  path : Path,
+  path : @path.Path,
 ) -> Node[K, V]? {
   match self {
     Leaf(key1, value1, bucket) =>

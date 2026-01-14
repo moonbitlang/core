@@ -13,12 +13,6 @@
 // limitations under the License.
 
 ///|
-using @ast {type Ast}
-
-///|
-using @unicode {case_insensitive_char_class, compute_char_class_complement}
-
-///|
 let ranges_is_digit = @unicode.ranges_is_digit
 
 ///|

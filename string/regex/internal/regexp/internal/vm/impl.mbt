@@ -120,9 +120,11 @@ fn add_thread(
         BeginLine => sp == 0 || content.code_unit_at(sp - 1) == '\n'
         EndLine => sp == content.length() || content.code_unit_at(sp) == '\n'
         WordBoundary =>
-          is_word_char_at(content, sp - 1) != is_word_char_at(content, sp)
+          @unicode.is_word_char_at(content, sp - 1) !=
+          @unicode.is_word_char_at(content, sp)
         NoWordBoundary =>
-          is_word_char_at(content, sp - 1) == is_word_char_at(content, sp)
+          @unicode.is_word_char_at(content, sp - 1) ==
+          @unicode.is_word_char_at(content, sp)
       }
       if assertion {
         add_thread(
@@ -189,7 +191,7 @@ pub fn vm(
       // should have been handled in the add_thread
       match instructions[pc] {
         Char(chars) =>
-          if char_in_ranges(actual_char, chars) {
+          if @unicode.char_in_ranges(actual_char, chars) {
             add_thread(
               input,
               instructions,
