@@ -321,3 +321,17 @@ pub fn render(r : Repr, max_depth? : Int) -> String {
 pub fn[T : Debug] debug(x : T) -> Unit {
   println(render(x.to_repr()))
 }
+
+///|
+/// Convert a value to its debug string representation.
+///
+/// # Examples
+/// ```mbt check
+/// test {
+///   let str = @debug.to_string([1, 2, 3])
+///   assert_eq(str, "[1, 2, 3]")
+/// }
+/// ```
+pub fn[T : Debug] to_string(x : T) -> String {
+  render(x.to_repr())
+}
