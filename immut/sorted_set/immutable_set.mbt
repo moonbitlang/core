@@ -491,10 +491,10 @@ pub fn[A : Compare] SortedSet::subset(
         l1.subset(l2) && r1.subset(r2)
       } else if compare_result < 0 {
         Node(left=l1, value=v1, right=Empty, size=1).subset(l2) &&
-        r1.subset(self)
+        r1.subset(other)
       } else {
         Node(left=Empty, value=v1, right=r1, size=1).subset(r2) &&
-        l1.subset(self)
+        l1.subset(other)
       }
     }
   }

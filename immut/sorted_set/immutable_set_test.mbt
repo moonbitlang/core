@@ -75,6 +75,13 @@ test "subset" {
 }
 
 ///|
+test "subset missing right subtree values" {
+  let subset = @sorted_set.from_array([1, 4])
+  let superset = @sorted_set.from_array([1, 2, 3])
+  inspect(subset.subset(superset), content="false")
+}
+
+///|
 test "diff" {
   let empty = @sorted_set.new()
   inspect(
