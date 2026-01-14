@@ -14,9 +14,3 @@
 
 ///|
 pub using @parse {type RegexpError}
-
-///|
-using @parse {parse, type ParseResult}
-
-///|
-using @vm {type Instruction, vm}

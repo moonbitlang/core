@@ -17,7 +17,7 @@ pub(all) enum Ast {
   Empty
   /// Anything that can be interpreted as range (inclusive) pair list, e.g. `.` (0..=0x10FFFF)
   CharClass(Array[Char], neg~ : Bool)
-  Assertion(Predicate)
+  Assertion(@vm.Predicate)
   Capture(Ast, index~ : Int)
   ZeroOrMore(Ast, greedy~ : Bool)
   OneOrMore(Ast, greedy~ : Bool)
@@ -30,24 +30,24 @@ pub(all) enum Ast {
 
 ///|
 /// @returns next capture
-fn Ast::compile_aux(regex : Ast, instructions : Array[Instruction]) -> Unit {
+fn Ast::compile_aux(regex : Ast, instructions : Array[@vm.Instruction]) -> Unit {
   match regex {
     Empty => ()
     CharClass(chars, neg~) =>
       if neg {
         // compute the complement of the character class
-        let complement = compute_char_class_complement(chars)
-        instructions.push(Char(complement))
+        let complement = @unicode.compute_char_class_complement(chars)
+        instructions.push(@vm.Instruction::Char(complement))
       } else {
         // simplify and sort the character ranges for binary search
-        let simplified = simplify_char_ranges(chars)
-        instructions.push(Char(simplified))
+        let simplified = @unicode.simplify_char_ranges(chars)
+        instructions.push(@vm.Instruction::Char(simplified))
       }
-    Assertion(pred) => instructions.push(Assertion(pred))
+    Assertion(pred) => instructions.push(@vm.Instruction::Assertion(pred))
     Capture(inner, index=capture) => {
-      instructions.push(Save(capture * 2))
+      instructions.push(@vm.Instruction::Save(capture * 2))
       inner.compile_aux(instructions)
-      instructions.push(Save(capture * 2 + 1))
+      instructions.push(@vm.Instruction::Save(capture * 2 + 1))
     }
     ZeroOrMore(inner, greedy~) => {
       // Compiles to (a+)?
@@ -57,15 +57,21 @@ fn Ast::compile_aux(regex : Ast, instructions : Array[Instruction]) -> Unit {
       //                            ^ -- instructions.length() at the end
       let split_pos = instructions.length()
       // placeholder for split
-      instructions.push(Split(-1, -1))
+      instructions.push(@vm.Instruction::Split(-1, -1))
       inner.compile_aux(instructions)
       let next_pos = instructions.length()
       if not(greedy) {
-        instructions.push(Split(next_pos + 1, split_pos + 1))
-        instructions[split_pos] = Split(next_pos + 1, split_pos + 1)
+        instructions.push(@vm.Instruction::Split(next_pos + 1, split_pos + 1))
+        instructions[split_pos] = @vm.Instruction::Split(
+          next_pos + 1,
+          split_pos + 1,
+        )
       } else {
-        instructions.push(Split(split_pos + 1, next_pos + 1))
-        instructions[split_pos] = Split(split_pos + 1, next_pos + 1)
+        instructions.push(@vm.Instruction::Split(split_pos + 1, next_pos + 1))
+        instructions[split_pos] = @vm.Instruction::Split(
+          split_pos + 1,
+          next_pos + 1,
+        )
       }
     }
     OneOrMore(inner, greedy~) => {
@@ -75,9 +81,9 @@ fn Ast::compile_aux(regex : Ast, instructions : Array[Instruction]) -> Unit {
       inner.compile_aux(instructions)
       let next_pos = instructions.length()
       if not(greedy) {
-        instructions.push(Split(next_pos + 1, jmp_pos))
+        instructions.push(@vm.Instruction::Split(next_pos + 1, jmp_pos))
       } else {
-        instructions.push(Split(jmp_pos, next_pos + 1))
+        instructions.push(@vm.Instruction::Split(jmp_pos, next_pos + 1))
       }
     }
     ZeroOrOne(inner, greedy~) => {
@@ -86,12 +92,18 @@ fn Ast::compile_aux(regex : Ast, instructions : Array[Instruction]) -> Unit {
       //                        ^ -- instructions.length() at the end
       let split_pos = instructions.length()
       // for taking up position
-      instructions.push(Split(-1, -1))
+      instructions.push(@vm.Instruction::Split(-1, -1))
       inner.compile_aux(instructions)
       if not(greedy) {
-        instructions[split_pos] = Split(instructions.length(), split_pos + 1)
+        instructions[split_pos] = @vm.Instruction::Split(
+          instructions.length(),
+          split_pos + 1,
+        )
       } else {
-        instructions[split_pos] = Split(split_pos + 1, instructions.length())
+        instructions[split_pos] = @vm.Instruction::Split(
+          split_pos + 1,
+          instructions.length(),
+        )
       }
     }
     Repeat(greedy~, min~, max~, inner) =>
@@ -104,17 +116,17 @@ fn Ast::compile_aux(regex : Ast, instructions : Array[Instruction]) -> Unit {
         for i in 0U..<(max - min) {
           // placeholder for split
           split_pos.push(instructions.length())
-          instructions.push(Split(-1, -1))
+          instructions.push(@vm.Instruction::Split(-1, -1))
           inner.compile_aux(instructions) |> ignore
         }
         let jmp_pos = instructions.length()
         if not(greedy) {
           for pos in split_pos {
-            instructions[pos] = Split(jmp_pos, pos + 1)
+            instructions[pos] = @vm.Instruction::Split(jmp_pos, pos + 1)
           }
         } else {
           for pos in split_pos {
-            instructions[pos] = Split(pos + 1, jmp_pos)
+            instructions[pos] = @vm.Instruction::Split(pos + 1, jmp_pos)
           }
         }
       } else {
@@ -126,13 +138,19 @@ fn Ast::compile_aux(regex : Ast, instructions : Array[Instruction]) -> Unit {
         }
         let split_pos = instructions.length()
         // placeholder for split
-        instructions.push(Split(-1, -1))
+        instructions.push(@vm.Instruction::Split(-1, -1))
         inner.compile_aux(instructions)
-        instructions.push(Jump(split_pos))
+        instructions.push(@vm.Instruction::Jump(split_pos))
         if not(greedy) {
-          instructions[split_pos] = Split(instructions.length(), split_pos + 1)
+          instructions[split_pos] = @vm.Instruction::Split(
+            instructions.length(),
+            split_pos + 1,
+          )
         } else {
-          instructions[split_pos] = Split(split_pos + 1, instructions.length())
+          instructions[split_pos] = @vm.Instruction::Split(
+            split_pos + 1,
+            instructions.length(),
+          )
         }
       }
     Concat(regexs) =>
@@ -146,31 +164,34 @@ fn Ast::compile_aux(regex : Ast, instructions : Array[Instruction]) -> Unit {
       //                                   ^ -- instructions.length() at the end
       let split_pos = instructions.length()
       // for taking up position
-      instructions.push(Split(-1, -1))
+      instructions.push(@vm.Instruction::Split(-1, -1))
       left.compile_aux(instructions)
       let jmp_pos = instructions.length()
       // placeholder for jump
-      instructions.push(Jump(-1))
+      instructions.push(@vm.Instruction::Jump(-1))
       right.compile_aux(instructions)
-      instructions[split_pos] = Split(split_pos + 1, jmp_pos + 1)
-      instructions[jmp_pos] = Jump(instructions.length())
+      instructions[split_pos] = @vm.Instruction::Split(
+        split_pos + 1,
+        jmp_pos + 1,
+      )
+      instructions[jmp_pos] = @vm.Instruction::Jump(instructions.length())
     }
   }
 }
 
 ///|
-pub fn Ast::compile(self : Ast) -> Array[Instruction] {
+pub fn Ast::compile(self : Ast) -> Array[@vm.Instruction] {
   // for leftmost matching
-  let instructions : Array[Instruction] = [
-    Split(3, 1),
-    Char(['\u{0}', '\u{10FFFF}']),
-    Jump(0),
+  let instructions : Array[@vm.Instruction] = [
+    @vm.Instruction::Split(3, 1),
+    @vm.Instruction::Char(['\u{0}', '\u{10FFFF}']),
+    @vm.Instruction::Jump(0),
   ]
   // start matching
-  instructions.push(Save(0))
+  instructions.push(@vm.Instruction::Save(0))
   self.compile_aux(instructions)
-  instructions.push(Save(1))
-  instructions.push(Matched)
+  instructions.push(@vm.Instruction::Save(1))
+  instructions.push(@vm.Instruction::Matched)
   instructions
 }
 

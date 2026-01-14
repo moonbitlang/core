@@ -16,7 +16,7 @@
 test "to be discussed" {
   // In JS, this is parsed as two character classes with no characters
   // In Golang, this is parsed as one character class with `]` and `[`
-  parse("[][]").ast
+  @parse.parse("[][]").ast
   |> inspect(
     content="Concat([CharClass([], neg=false), CharClass([], neg=false)])",
   )
@@ -25,14 +25,14 @@ test "to be discussed" {
 ///|
 /// Reference: https://github.com/golang/go/issues/46123
 test "to be fixed" {
-  let result = parse("(|a)*").compile().execute("aaa")
+  let result = @parse.parse("(|a)*").compile().execute("aaa")
   inspect(
     result.get(0),
     content=(
       #|Some("")
     ),
   )
-  let result = parse("(|a)+").compile().execute("aaa")
+  let result = @parse.parse("(|a)+").compile().execute("aaa")
   inspect(
     result.get(0),
     content=(

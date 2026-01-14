@@ -13,12 +13,9 @@
 // limitations under the License.
 
 ///|
-using @path {type Path}
-
-///|
 /// An non-empty immutable hash set data structure
 priv enum Node[A] {
-  Flat(A, Path)
+  Flat(A, @path.Path)
   Leaf(A, @list.List[A]) // use a list of buckets to resolve collision
   /// number of all its leaf > 1. If equals 1, it should be represented as `Flat`
   Branch(@sparse_array.SparseArray[Node[A]])

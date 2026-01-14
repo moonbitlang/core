@@ -40,7 +40,7 @@ pub fn[A : Eq + Hash] HashSet::contains(self : HashSet[A], key : A) -> Bool {
 }
 
 ///|
-fn[A : Eq] Node::contains(self : Node[A], key : A, path : Path) -> Bool {
+fn[A : Eq] Node::contains(self : Node[A], key : A, path : @path.Path) -> Bool {
   loop (self, path) {
     (Leaf(key1, bucket), _) => key == key1 || bucket.contains(key)
     (Flat(key1, path1), path) => path == path1 && key == key1
@@ -56,7 +56,12 @@ fn[A : Eq] Node::contains(self : Node[A], key : A, path : Path) -> Bool {
 
 ///|
 /// require: key1 != key2, path1 and path2 has the same length
-fn[A] join_2(key1 : A, path1 : Path, key2 : A, path2 : Path) -> Node[A] {
+fn[A] join_2(
+  key1 : A,
+  path1 : @path.Path,
+  key2 : A,
+  path2 : @path.Path,
+) -> Node[A] {
   let idx1 = path1.idx()
   let idx2 = path2.idx()
   if idx1 == idx2 {
@@ -77,7 +82,11 @@ fn[A] join_2(key1 : A, path1 : Path, key2 : A, path2 : Path) -> Node[A] {
 }
 
 ///|
-fn[A : Eq] Node::add_with_path(self : Node[A], key : A, path : Path) -> Node[A] {
+fn[A : Eq] Node::add_with_path(
+  self : Node[A],
+  key : A,
+  path : @path.Path,
+) -> Node[A] {
   match self {
     Leaf(key1, bucket) =>
       if key == key1 || bucket.contains(key) {
@@ -129,7 +138,7 @@ pub fn[A : Eq + Hash] HashSet::remove(self : HashSet[A], key : A) -> HashSet[A] 
 fn[A : Eq] Node::remove_with_path(
   self : Node[A],
   key : A,
-  path : Path,
+  path : @path.Path,
 ) -> Node[A]? {
   match self {
     Leaf(key1, bucket) =>

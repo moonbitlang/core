@@ -78,7 +78,7 @@ priv struct Parser {
 
 ///|
 pub(all) struct ParseResult {
-  ast : Ast
+  ast : @ast.Ast
   captures : Int
   capture_map : Map[String, Int]
 } derive(ToJson)
@@ -173,12 +173,12 @@ pub fn parse(
 /// - `a|b|c`   -> Alternation of multiple sequences: match a, b, or c
 ///
 /// Returns: Parsed Regex AST
-fn Parser::parse_expression(self : Parser) -> Ast raise RegexpError {
+fn Parser::parse_expression(self : Parser) -> @ast.Ast raise RegexpError {
   let mut left = self.parse_sequence()
   while self.input is ['|', .. rest] {
     self.input = rest // consume '|'
     let right = self.parse_sequence()
-    left = Ast::Alternate(left, right)
+    left = @ast.Ast::Alternate(left, right)
   }
   left
 }
@@ -203,7 +203,7 @@ fn Parser::parse_expression(self : Parser) -> Ast raise RegexpError {
 /// - End of input
 ///
 /// Returns: Parsed Regex AST
-fn Parser::parse_sequence(self : Parser) -> Ast raise RegexpError {
+fn Parser::parse_sequence(self : Parser) -> @ast.Ast raise RegexpError {
   let sequence = []
   while self.input is [ch, ..] && ch != '|' && ch != ')' {
     let term = self.parse_term()
@@ -211,9 +211,9 @@ fn Parser::parse_sequence(self : Parser) -> Ast raise RegexpError {
   }
   match sequence {
     // Empty sequence is considered a valid regular expression (consistent with Go's behavior)
-    [] => Ast::Empty
+    [] => @ast.Ast::Empty
     [regex] => regex
-    _ => Ast::Concat(sequence)
+    _ => @ast.Ast::Concat(sequence)
   }
 }
 
@@ -244,7 +244,7 @@ fn Parser::parse_sequence(self : Parser) -> Ast raise RegexpError {
 /// - `(ab)*`  -> Quantified term: group (ab) repeated 0 or more times
 ///
 /// Returns: Parsed Regex AST
-fn Parser::parse_term(self : Parser) -> Ast raise RegexpError {
+fn Parser::parse_term(self : Parser) -> @ast.Ast raise RegexpError {
   let mut base = self.parse_factor()
 
   // Handle quantifiers
@@ -252,32 +252,32 @@ fn Parser::parse_term(self : Parser) -> Ast raise RegexpError {
     [.. "*?", .. rest] => {
       // Handle lazy quantifier '*?'
       self.input = rest // consume '*?'
-      base = ZeroOrMore(base, greedy=false)
+      base = @ast.Ast::ZeroOrMore(base, greedy=false)
     }
     [.. "*", .. rest] => {
       // Handle greedy quantifier '*'
       self.input = rest // consume '*'
-      base = ZeroOrMore(base, greedy=true)
+      base = @ast.Ast::ZeroOrMore(base, greedy=true)
     }
     [.. "+?", .. rest] => {
       // Handle lazy quantifier '+?'
       self.input = rest // consume '+?'
-      base = OneOrMore(base, greedy=false)
+      base = @ast.Ast::OneOrMore(base, greedy=false)
     }
     [.. "+", .. rest] => {
       // Handle greedy quantifier '+'
       self.input = rest // consume '+'
-      base = OneOrMore(base, greedy=true)
+      base = @ast.Ast::OneOrMore(base, greedy=true)
     }
     [.. "??", .. rest] => {
       // Handle lazy quantifier '??'
       self.input = rest // consume '??'
-      base = ZeroOrOne(base, greedy=false)
+      base = @ast.Ast::ZeroOrOne(base, greedy=false)
     }
     [.. "?", .. rest] => {
       // Handle greedy quantifier '?'
       self.input = rest // consume '?'
-      base = ZeroOrOne(base, greedy=true)
+      base = @ast.Ast::ZeroOrOne(base, greedy=true)
     }
     ['{', .. rest] => {
       self.input = rest
@@ -290,7 +290,12 @@ fn Parser::parse_term(self : Parser) -> Ast raise RegexpError {
         }
         _ => true
       }
-      base = Repeat(base, greedy~, min=repeat_result.0, max=repeat_result.1)
+      base = @ast.Ast::Repeat(
+        base,
+        greedy~,
+        min=repeat_result.0,
+        max=repeat_result.1,
+      )
     }
     _ => ()
   }
@@ -325,7 +330,7 @@ fn Parser::parse_term(self : Parser) -> Ast raise RegexpError {
 /// Returns: Parsed Regex AST
 ///
 /// Throws: Error_ when invalid syntax is encountered
-fn Parser::parse_factor(self : Parser) -> Ast raise RegexpError {
+fn Parser::parse_factor(self : Parser) -> @ast.Ast raise RegexpError {
   match self.input {
     [.. "(?", .. rest] as capture =>
       // Handle various special group syntax
@@ -361,7 +366,7 @@ fn Parser::parse_factor(self : Parser) -> Ast raise RegexpError {
             raise RegexpError(err=InvalidNamedCapture, source_fragment=capture)
           }
           self.capture_map.set(name, captures)
-          Capture(expr, index=captures)
+          @ast.Ast::Capture(expr, index=captures)
         }
         _ => {
           // (?flags:...) - Scoped flags group
@@ -397,7 +402,7 @@ fn Parser::parse_factor(self : Parser) -> Ast raise RegexpError {
         raise RegexpError(err=MissingParenthesis, source_fragment=self.input)
       }
       self.input = rest // consume ')'
-      Capture(expr, index=captures)
+      @ast.Ast::Capture(expr, index=captures)
     }
     ['[', .. rest] => {
       self.input = rest
@@ -407,30 +412,30 @@ fn Parser::parse_factor(self : Parser) -> Ast raise RegexpError {
       self.input = rest // consume '.'
       if self.flags.singleline {
         // In singleline mode, '.' matches any character including newline
-        CharClass(ranges_any, neg=false)
+        @ast.Ast::CharClass(ranges_any, neg=false)
       } else {
         // In default mode, '.' matches any character except newline
-        CharClass(ranges_any_not_new_line, neg=false)
+        @ast.Ast::CharClass(ranges_any_not_new_line, neg=false)
       }
     }
     ['^', .. rest] => {
       self.input = rest // consume '^'
       if self.flags.multiline {
         // In multiline mode, '^' matches the beginning of a line
-        Assertion(BeginLine)
+        @ast.Ast::Assertion(@vm.Predicate::BeginLine)
       } else {
         // In default mode, '^' matches the beginning of the text
-        Assertion(BeginText)
+        @ast.Ast::Assertion(@vm.Predicate::BeginText)
       }
     }
     ['$', .. rest] => {
       self.input = rest // consume '$'
       if self.flags.multiline {
         // In multiline mode, '$' matches the end of a line
-        Assertion(EndLine)
+        @ast.Ast::Assertion(@vm.Predicate::EndLine)
       } else {
         // In default mode, '$' matches the end of the text
-        Assertion(EndText)
+        @ast.Ast::Assertion(@vm.Predicate::EndText)
       }
     }
     ['\\', .. rest] as escape => {
@@ -439,21 +444,28 @@ fn Parser::parse_factor(self : Parser) -> Ast raise RegexpError {
       }
       self.input = rest // consume '\' and the character
       match c {
-        'b' => Assertion(WordBoundary) // Word boundary assertion
-        'B' => Assertion(NoWordBoundary) // Non-word boundary assertion
-        'd' => CharClass(ranges_is_digit, neg=false) // Digit character class
-        'D' => CharClass(ranges_is_not_digit, neg=false) // Non-digit character class
-        'w' => CharClass(ranges_is_word, neg=false) // Word character class
-        'W' => CharClass(ranges_is_not_word, neg=false) // Non-word character class
-        's' => CharClass(ranges_is_white_space_or_line_terminator, neg=false) // Whitespace character class
+        'b' => @ast.Ast::Assertion(@vm.Predicate::WordBoundary) // Word boundary assertion
+        'B' => @ast.Ast::Assertion(@vm.Predicate::NoWordBoundary) // Non-word boundary assertion
+        'd' => @ast.Ast::CharClass(ranges_is_digit, neg=false) // Digit character class
+        'D' => @ast.Ast::CharClass(ranges_is_not_digit, neg=false) // Non-digit character class
+        'w' => @ast.Ast::CharClass(ranges_is_word, neg=false) // Word character class
+        'W' => @ast.Ast::CharClass(ranges_is_not_word, neg=false) // Non-word character class
+        's' =>
+          @ast.Ast::CharClass(
+            ranges_is_white_space_or_line_terminator,
+            neg=false,
+          ) // Whitespace character class
         'S' =>
-          CharClass(ranges_is_not_white_space_or_line_terminator, neg=false) // Non-whitespace character class
+          @ast.Ast::CharClass(
+            ranges_is_not_white_space_or_line_terminator,
+            neg=false,
+          ) // Non-whitespace character class
         // ControlEscape
-        't' => CharClass(['\t', '\t'], neg=false) // Tab
-        'n' => CharClass(['\n', '\n'], neg=false) // Newline
-        'v' => CharClass(['\u{b}', '\u{b}'], neg=false) // Vertical tab
-        'f' => CharClass(['\u{c}', '\u{c}'], neg=false) // Form feed
-        'r' => CharClass(['\r', '\r'], neg=false) // Carriage return
+        't' => @ast.Ast::CharClass(['\t', '\t'], neg=false) // Tab
+        'n' => @ast.Ast::CharClass(['\n', '\n'], neg=false) // Newline
+        'v' => @ast.Ast::CharClass(['\u{b}', '\u{b}'], neg=false) // Vertical tab
+        'f' => @ast.Ast::CharClass(['\u{c}', '\u{c}'], neg=false) // Form feed
+        'r' => @ast.Ast::CharClass(['\r', '\r'], neg=false) // Carriage return
         'p' | 'P' as flag => {
           // Unicode property \p{property_name}
           let property_name = self.parse_unicode_property()
@@ -462,23 +474,26 @@ fn Parser::parse_factor(self : Parser) -> Ast raise RegexpError {
         'u' => {
           // Unicode escape \u{aaaa} or \uaaaa
           let unicode_char = self.parse_unicode_escape()
-          CharClass([unicode_char, unicode_char], neg=false)
+          @ast.Ast::CharClass([unicode_char, unicode_char], neg=false)
         }
         '0' =>
           if rest is ['0'..='9', ..] {
             raise RegexpError(err=InvalidEscape, source_fragment=escape)
           } else {
             self.input = rest
-            CharClass(['\u{0}', '\u{0}'], neg=false) // Null character
+            @ast.Ast::CharClass(['\u{0}', '\u{0}'], neg=false) // Null character
           }
         // reserve c, k, number
         'c' | 'k' | '1'..='9' =>
           raise RegexpError(err=InvalidEscape, source_fragment=escape)
         _ =>
           if self.flags.ignore_case {
-            CharClass(case_insensitive_char_class([c, c]), neg=false)
+            @ast.Ast::CharClass(
+              @unicode.case_insensitive_char_class([c, c]),
+              neg=false,
+            )
           } else {
-            CharClass([c, c], neg=false)
+            @ast.Ast::CharClass([c, c], neg=false)
           }
       }
     }
@@ -487,9 +502,12 @@ fn Parser::parse_factor(self : Parser) -> Ast raise RegexpError {
     [c, .. rest] => {
       self.input = rest
       if self.flags.ignore_case {
-        CharClass(case_insensitive_char_class([c, c]), neg=false)
+        @ast.Ast::CharClass(
+          @unicode.case_insensitive_char_class([c, c]),
+          neg=false,
+        )
       } else {
-        CharClass([c, c], neg=false)
+        @ast.Ast::CharClass([c, c], neg=false)
       }
     }
     "" => raise RegexpError(err=InternalError, source_fragment=self.input)
@@ -522,7 +540,7 @@ fn Parser::parse_factor(self : Parser) -> Ast raise RegexpError {
 /// Returns: CharClass(chars) - a character class AST containing a list of character ranges
 ///
 /// Throws: Error_ when the character class format is incorrect
-fn Parser::parse_char_class(self : Parser) -> Ast raise RegexpError {
+fn Parser::parse_char_class(self : Parser) -> @ast.Ast raise RegexpError {
   let neg = if self.input is ['^', .. rest] {
     self.input = rest // consume '^'
     true
@@ -568,9 +586,9 @@ fn Parser::parse_char_class(self : Parser) -> Ast raise RegexpError {
             // Unicode property \p{property_name}
             let property_name = self.parse_unicode_property()
             guard self.parse_general_category(property_name, flag == 'P')
-              is CharClass(class, neg~)
+              is @ast.Ast::CharClass(class, neg~)
             if neg {
-              compute_char_class_complement(class).each(chars.push(_))
+              @unicode.compute_char_class_complement(class).each(chars.push(_))
             } else {
               class.each(chars.push(_))
             }
@@ -671,9 +689,9 @@ fn Parser::parse_char_class(self : Parser) -> Ast raise RegexpError {
   }
   self.input = rest // consume ']'
   if self.flags.ignore_case {
-    CharClass(case_insensitive_char_class(chars), neg~)
+    @ast.Ast::CharClass(@unicode.case_insensitive_char_class(chars), neg~)
   } else {
-    CharClass(chars, neg~)
+    @ast.Ast::CharClass(chars, neg~)
   }
 }
 
@@ -970,7 +988,7 @@ fn Parser::parse_general_category(
   self : Parser,
   property_name : String,
   neg : Bool,
-) -> Ast raise RegexpError {
+) -> @ast.Ast raise RegexpError {
   // First, normalize the property name using aliases
   let normalized_name = match
     @unicode.general_category_property_value_alises.get(property_name) {
@@ -980,5 +998,5 @@ fn Parser::parse_general_category(
 
   // Get the character ranges for the normalized property name
   guard @unicode.general_category_ranges.get(normalized_name) is Some(ranges)
-  CharClass(ranges, neg~)
+  @ast.Ast::CharClass(ranges, neg~)
 }

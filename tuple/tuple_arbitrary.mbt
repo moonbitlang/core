@@ -13,77 +13,78 @@
 // limitations under the License.
 
 ///|
-using @quickcheck {trait Arbitrary}
-
-///|
-pub impl[A : Arbitrary, B : Arbitrary] Arbitrary for (A, B) with arbitrary(
-  size,
-  r0,
-) {
-  let r1 = r0.split()
-  (Arbitrary::arbitrary(size, r0), Arbitrary::arbitrary(size, r1))
-}
-
-///|
-pub impl[A : Arbitrary, B : Arbitrary, C : Arbitrary] Arbitrary for (A, B, C) with arbitrary(
-  size,
-  r0,
-) {
-  let r1 = r0.split()
-  let (v1, v2) = Arbitrary::arbitrary(size, r1)
-  (Arbitrary::arbitrary(size, r0), v1, v2)
-}
-
-///|
-pub impl[A : Arbitrary, B : Arbitrary, C : Arbitrary, D : Arbitrary] Arbitrary for (
+pub impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (
   A,
   B,
-  C,
-  D,
 ) with arbitrary(size, r0) {
   let r1 = r0.split()
-  let (v1, v2, v3) = Arbitrary::arbitrary(size, r1)
-  (Arbitrary::arbitrary(size, r0), v1, v2, v3)
+  (
+    @quickcheck.Arbitrary::arbitrary(size, r0),
+    @quickcheck.Arbitrary::arbitrary(size, r1),
+  )
 }
 
 ///|
 pub impl[
-  A : Arbitrary,
-  B : Arbitrary,
-  C : Arbitrary,
-  D : Arbitrary,
-  E : Arbitrary,
-] Arbitrary for (A, B, C, D, E) with arbitrary(size, r0) {
+  A : @quickcheck.Arbitrary,
+  B : @quickcheck.Arbitrary,
+  C : @quickcheck.Arbitrary,
+] @quickcheck.Arbitrary for (A, B, C) with arbitrary(size, r0) {
   let r1 = r0.split()
-  let (v1, v2, v3, v4) = Arbitrary::arbitrary(size, r1)
-  (Arbitrary::arbitrary(size, r0), v1, v2, v3, v4)
+  let (v1, v2) = @quickcheck.Arbitrary::arbitrary(size, r1)
+  (@quickcheck.Arbitrary::arbitrary(size, r0), v1, v2)
 }
 
 ///|
 pub impl[
-  A : Arbitrary,
-  B : Arbitrary,
-  C : Arbitrary,
-  D : Arbitrary,
-  E : Arbitrary,
-  F : Arbitrary,
-] Arbitrary for (A, B, C, D, E, F) with arbitrary(size, r0) {
+  A : @quickcheck.Arbitrary,
+  B : @quickcheck.Arbitrary,
+  C : @quickcheck.Arbitrary,
+  D : @quickcheck.Arbitrary,
+] @quickcheck.Arbitrary for (A, B, C, D) with arbitrary(size, r0) {
   let r1 = r0.split()
-  let (v1, v2, v3, v4, v5) = Arbitrary::arbitrary(size, r1)
-  (Arbitrary::arbitrary(size, r0), v1, v2, v3, v4, v5)
+  let (v1, v2, v3) = @quickcheck.Arbitrary::arbitrary(size, r1)
+  (@quickcheck.Arbitrary::arbitrary(size, r0), v1, v2, v3)
 }
 
 ///|
 pub impl[
-  A : Arbitrary,
-  B : Arbitrary,
-  C : Arbitrary,
-  D : Arbitrary,
-  E : Arbitrary,
-  F : Arbitrary,
-  G : Arbitrary,
-] Arbitrary for (A, B, C, D, E, F, G) with arbitrary(size, r0) {
+  A : @quickcheck.Arbitrary,
+  B : @quickcheck.Arbitrary,
+  C : @quickcheck.Arbitrary,
+  D : @quickcheck.Arbitrary,
+  E : @quickcheck.Arbitrary,
+] @quickcheck.Arbitrary for (A, B, C, D, E) with arbitrary(size, r0) {
   let r1 = r0.split()
-  let (v1, v2, v3, v4, v5, v6) = Arbitrary::arbitrary(size, r1)
-  (Arbitrary::arbitrary(size, r0), v1, v2, v3, v4, v5, v6)
+  let (v1, v2, v3, v4) = @quickcheck.Arbitrary::arbitrary(size, r1)
+  (@quickcheck.Arbitrary::arbitrary(size, r0), v1, v2, v3, v4)
+}
+
+///|
+pub impl[
+  A : @quickcheck.Arbitrary,
+  B : @quickcheck.Arbitrary,
+  C : @quickcheck.Arbitrary,
+  D : @quickcheck.Arbitrary,
+  E : @quickcheck.Arbitrary,
+  F : @quickcheck.Arbitrary,
+] @quickcheck.Arbitrary for (A, B, C, D, E, F) with arbitrary(size, r0) {
+  let r1 = r0.split()
+  let (v1, v2, v3, v4, v5) = @quickcheck.Arbitrary::arbitrary(size, r1)
+  (@quickcheck.Arbitrary::arbitrary(size, r0), v1, v2, v3, v4, v5)
+}
+
+///|
+pub impl[
+  A : @quickcheck.Arbitrary,
+  B : @quickcheck.Arbitrary,
+  C : @quickcheck.Arbitrary,
+  D : @quickcheck.Arbitrary,
+  E : @quickcheck.Arbitrary,
+  F : @quickcheck.Arbitrary,
+  G : @quickcheck.Arbitrary,
+] @quickcheck.Arbitrary for (A, B, C, D, E, F, G) with arbitrary(size, r0) {
+  let r1 = r0.split()
+  let (v1, v2, v3, v4, v5, v6) = @quickcheck.Arbitrary::arbitrary(size, r1)
+  (@quickcheck.Arbitrary::arbitrary(size, r0), v1, v2, v3, v4, v5, v6)
 }
