@@ -239,7 +239,7 @@ fn complement(t : Tree) -> Tree {
     }
   }
 
-  aux(-80000000, 0x7FFFFFFF, t)
+  aux(-0x80000000, 0x7FFFFFFF, t)
 }
 
 ///|
