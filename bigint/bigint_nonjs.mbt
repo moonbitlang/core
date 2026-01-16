@@ -1044,6 +1044,7 @@ pub fn BigInt::from_string(input : String) -> BigInt {
   while b[b_len - 1] == 0 && b_len > 1 {
     b_len -= 1
   }
+  let sign = if b_len == 1 && b[0] == 0 { Positive } else { sign }
   { limbs: b, sign, len: b_len }
 }
 
@@ -1116,6 +1117,7 @@ pub fn BigInt::from_hex(input : String) -> BigInt {
   while b[b_len - 1] == 0 && b_len > 1 {
     b_len -= 1
   }
+  let sign = if b_len == 1 && b[0] == 0 { Positive } else { sign }
   { limbs: b, sign, len: b_len }
 }
 

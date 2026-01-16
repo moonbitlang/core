@@ -495,6 +495,22 @@ test "from_hex" {
 }
 
 ///|
+test "from_string negative zero" {
+  let z = @bigint.BigInt::from_string("-0")
+  inspect(z.to_string(), content="0")
+  assert_true(z == 0N)
+  assert_eq(z.compare(0N), 0)
+}
+
+///|
+test "from_hex negative zero" {
+  let z = @bigint.BigInt::from_hex("-0")
+  inspect(z.to_string(), content="0")
+  assert_true(z == 0N)
+  assert_eq(z.compare(0N), 0)
+}
+
+///|
 test "to_hex" {
   // Check zero
   let a = @bigint.BigInt::from_hex("00")
