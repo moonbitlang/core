@@ -42,7 +42,7 @@
 /// hash map keys during automaton construction and execution.
 pub struct State {
   priv slot : Slot
-  priv cat : Category
+  priv cat : @shared_types.Category
   priv desc : ThreadSet
   priv hash : Int
 }
@@ -50,7 +50,7 @@ pub struct State {
 ///|
 pub let st_dummy : State = {
   slot: Slot::unassigned(),
-  cat: Category::dummy(),
+  cat: @shared_types.Category::dummy(),
   desc: ts_empty,
   hash: -1,
 }
@@ -81,12 +81,16 @@ pub impl Hash for State with hash_combine(self, hasher) {
 }
 
 ///|
-fn State::new(slot : Slot, cat : Category, desc : ThreadSet) -> State {
+fn State::new(
+  slot : Slot,
+  cat : @shared_types.Category,
+  desc : ThreadSet,
+) -> State {
   State::{ slot, cat, desc, hash: (slot, cat, desc).hash() }
 }
 
 ///|
-pub fn State::start(cat : Category, expr : Expr) -> State {
+pub fn State::start(cat : @shared_types.Category, expr : Expr) -> State {
   State::new(Slot::unassigned(), cat, ts_exp(MarkSlotMap::empty(), expr))
 }
 

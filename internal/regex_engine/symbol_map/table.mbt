@@ -14,8 +14,8 @@
 
 ///|
 pub trait Table {
-  map(self : Self, c : Rechar) -> Rechar
-  map_set(self : Self, set : RecharSet) -> RecharSet = _
+  map(self : Self, c : @shared_types.Rechar) -> @shared_types.Rechar
+  map_set(self : Self, set : @shared_types.RecharSet) -> @shared_types.RecharSet = _
 }
 
 ///|

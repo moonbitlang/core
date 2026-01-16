@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-priv struct DenseTable(FixedArray[Rechar])
+priv struct DenseTable(FixedArray[@shared_types.Rechar])
 
 ///|
 impl Table for DenseTable with map(self, c) {

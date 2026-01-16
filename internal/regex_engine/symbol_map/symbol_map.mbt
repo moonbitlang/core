@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-struct SymbolMap(@sorted_set.SortedSet[Rechar])
+struct SymbolMap(@sorted_set.SortedSet[@shared_types.Rechar])
 
 ///|
 pub fn new() -> SymbolMap {
@@ -21,7 +21,10 @@ pub fn new() -> SymbolMap {
 }
 
 ///|
-pub fn SymbolMap::split(self : SymbolMap, set : RecharSet) -> Unit {
+pub fn SymbolMap::split(
+  self : SymbolMap,
+  set : @shared_types.RecharSet,
+) -> Unit {
   for interval in set.intervals() {
     let (start, stop) = interval
     self.0.add(start)
@@ -34,9 +37,9 @@ pub fn SymbolMap::split(self : SymbolMap, set : RecharSet) -> Unit {
 ///|
 pub fn SymbolMap::finalize(
   self : SymbolMap,
-  lb : Rechar,
-  ub : Rechar,
-) -> (&Table, ReadOnlyArray[Rechar]) {
+  lb : @shared_types.Rechar,
+  ub : @shared_types.Rechar,
+) -> (&Table, ReadOnlyArray[@shared_types.Rechar]) {
   if ub - lb < 1024 {
     let (table, repr) = self.finalize_dense(lb, ub)
     (table as &Table, repr)
@@ -49,9 +52,9 @@ pub fn SymbolMap::finalize(
 ///|
 fn SymbolMap::finalize_dense(
   self : SymbolMap,
-  lb : Rechar,
-  ub : Rechar,
-) -> (DenseTable, ReadOnlyArray[Rechar]) {
+  lb : @shared_types.Rechar,
+  ub : @shared_types.Rechar,
+) -> (DenseTable, ReadOnlyArray[@shared_types.Rechar]) {
   let repr = []
   let table = FixedArray::make(ub - lb + 1, 0)
   self.each_intervals(lb, ub, (lo, hi) => {
@@ -67,9 +70,9 @@ fn SymbolMap::finalize_dense(
 ///|
 fn SymbolMap::finalize_sparse(
   self : SymbolMap,
-  lb : Rechar,
-  ub : Rechar,
-) -> (SparseTable, ReadOnlyArray[Rechar]) {
+  lb : @shared_types.Rechar,
+  ub : @shared_types.Rechar,
+) -> (SparseTable, ReadOnlyArray[@shared_types.Rechar]) {
   let repr = []
   let entries = []
   self.each_intervals(lb, ub, (lo, hi) => {
@@ -87,9 +90,9 @@ fn SymbolMap::finalize_sparse(
 #locals(f)
 fn SymbolMap::each_intervals(
   self : SymbolMap,
-  lb : Rechar,
-  ub : Rechar,
-  f : (Rechar, Rechar) -> Unit,
+  lb : @shared_types.Rechar,
+  ub : @shared_types.Rechar,
+  f : (@shared_types.Rechar, @shared_types.Rechar) -> Unit,
 ) -> Unit {
   if self.0.is_empty() {
     f(lb, ub)

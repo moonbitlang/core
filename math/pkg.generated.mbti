@@ -1,10 +1,10 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/math"
 
-import(
-  "moonbitlang/core/bigint"
-  "moonbitlang/core/random"
-)
+import {
+  "moonbitlang/core/bigint",
+  "moonbitlang/core/random",
+}
 
 // Values
 pub const PI : Double = 0x3.243F6A8885A308CA8A54

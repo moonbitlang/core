@@ -16,7 +16,7 @@
 pub(all) struct Quantifier {
   min : Int
   max : Int?
-  mode : QuantifierMode
+  mode : @shared_types.QuantifierMode
 }
 
 ///|
@@ -38,11 +38,11 @@ pub struct Pattern {
 
 ///|
 pub enum PatternDesc {
-  Char(RecharSet)
+  Char(@shared_types.RecharSet)
   Sequence(ReadOnlyArray[Pattern])
   Alternation(ReadOnlyArray[Pattern])
   Quantifier(Quantifier, Pattern)
-  Preference(Preference, Pattern)
+  Preference(@shared_types.Preference, Pattern)
   Capture(name~ : String?, Pattern)
   Assertion(Assertion)
 }
@@ -62,7 +62,7 @@ pub fn Pattern::is_anchored(self : Pattern) -> Bool {
 }
 
 ///|
-pub fn char(cs : RecharSet) -> Pattern {
+pub fn char(cs : @shared_types.RecharSet) -> Pattern {
   if cs.is_empty() {
     empty
   } else {
@@ -107,7 +107,7 @@ pub fn quantifier(expr : Pattern, q : Quantifier) -> Pattern {
 }
 
 ///|
-pub fn preference(pref : Preference, expr : Pattern) -> Pattern {
+pub fn preference(pref : @shared_types.Preference, expr : Pattern) -> Pattern {
   if expr.desc is Char(_) {
     expr
   } else {

@@ -17,7 +17,7 @@ priv struct State {
   kind : StateKind
   desc : @automata.State
   transitions : FixedArray[State] // indexed by symbol
-  mut final_ : @list.List[(Category, Slot, @automata.Status)]
+  mut final_ : @list.List[(Category, @automata.Slot, @automata.Status)]
 }
 
 ///|
@@ -59,7 +59,7 @@ let pending_state : State = {
 
 ///|
 fn find_state(
-  table : HashMap[@automata.State, State],
+  table : @hashmap.HashMap[@automata.State, State],
   num_symbols : Int,
   desc : @automata.State,
 ) -> State {

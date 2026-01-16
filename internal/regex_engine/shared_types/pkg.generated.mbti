@@ -1,9 +1,9 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/internal/regex_engine/shared_types"
 
-import(
-  "moonbitlang/core/internal/regex_engine/shared_types/rechar_set"
-)
+import {
+  "moonbitlang/core/internal/regex_engine/shared_types/rechar_set",
+}
 
 // Values
 
