@@ -1346,17 +1346,18 @@ pub fn[A] Deque::retain_map(self : Deque[A], f : (A) -> A?) -> Unit {
   guard !self.is_empty() else { return }
   let { head, buf, .. } = self
   let cap = buf.length()
-  let head_len = cap - head
   let mut idx = head
+  let mut kept_len = 0
   let (front, back) = self.as_views()
   for cur in front {
     if f(cur) is Some(v) {
       buf[idx] = v
       idx += 1
+      kept_len += 1
     }
   }
   if back.length() == 0 {
-    self.truncate(idx - head)
+    self.truncate(kept_len)
     return
   }
   for cur in back {
@@ -1366,13 +1367,10 @@ pub fn[A] Deque::retain_map(self : Deque[A], f : (A) -> A?) -> Unit {
     if f(cur) is Some(v) {
       buf[idx] = v
       idx += 1
+      kept_len += 1
     }
   }
-  if idx <= self.len - head_len {
-    self.truncate(idx + head_len)
-  } else {
-    self.truncate(idx - head)
-  }
+  self.truncate(kept_len)
 }
 
 ///|
@@ -1405,17 +1403,18 @@ pub fn[A] Deque::retain(self : Deque[A], f : (A) -> Bool) -> Unit {
   guard !self.is_empty() else { return }
   let { head, buf, .. } = self
   let cap = buf.length()
-  let head_len = cap - head
   let mut idx = head
+  let mut kept_len = 0
   let (front, back) = self.as_views()
   for cur in front {
     if f(cur) {
       buf[idx] = cur
       idx += 1
+      kept_len += 1
     }
   }
   if back.length() == 0 {
-    self.truncate(idx - head)
+    self.truncate(kept_len)
     return
   }
   for cur in back {
@@ -1425,13 +1424,10 @@ pub fn[A] Deque::retain(self : Deque[A], f : (A) -> Bool) -> Unit {
     if f(cur) {
       buf[idx] = cur
       idx += 1
+      kept_len += 1
     }
   }
-  if idx <= self.len - head_len {
-    self.truncate(idx + head_len)
-  } else {
-    self.truncate(idx - head)
-  }
+  self.truncate(kept_len)
 }
 
 ///|

@@ -935,6 +935,18 @@ test "deque retain" {
 }
 
 ///|
+test "deque retain clears full wrapped deque" {
+  let dq = @deque.new(capacity=4)
+  dq..push_back(1)..push_back(2)..push_back(3)..push_back(4)
+  ignore(dq.pop_front())
+  dq.push_back(5)
+  inspect(dq.as_views(), content="([2, 3, 4], [5])")
+  dq.retain(_ => false)
+  inspect(dq.as_views(), content="([], [])")
+  assert_true(dq.is_empty())
+}
+
+///|
 test "deque retain_map" {
   let inc_if = pred => x => if pred(x) { Some(x + 1) } else { None }
   let is_even = x => x % 2 == 0
@@ -981,6 +993,18 @@ test "deque retain_map" {
     [4, 5, 6],
     [7, 8],
   ])
+}
+
+///|
+test "deque retain_map clears full wrapped deque" {
+  let dq = @deque.new(capacity=4)
+  dq..push_back(1)..push_back(2)..push_back(3)..push_back(4)
+  ignore(dq.pop_front())
+  dq.push_back(5)
+  inspect(dq.as_views(), content="([2, 3, 4], [5])")
+  dq.retain_map(_ => None)
+  inspect(dq.as_views(), content="([], [])")
+  assert_true(dq.is_empty())
 }
 
 ///|
