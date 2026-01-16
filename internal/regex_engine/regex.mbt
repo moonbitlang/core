@@ -17,7 +17,7 @@ struct Regex {
   profile : Profile
   ctx : @automata.Context
   expr : Expr
-  groups : Array[String?]
+  groups : ReadOnlyArray[String?]
   symbol_table : &@symbol_map.Table
   symbol_repr : ReadOnlyArray[Rechar]
   start_states : Array[(Category, State)]
@@ -26,7 +26,7 @@ struct Regex {
 
 ///|
 pub fn Regex::group_names(self : Regex) -> ReadOnlyArray[String?] {
-  ReadOnlyArray::from_array(self.groups)
+  self.groups
 }
 
 ///|
@@ -34,7 +34,7 @@ fn Regex::new(
   profile : Profile,
   ctx : @automata.Context,
   expr : Expr,
-  groups : Array[String?],
+  groups : ReadOnlyArray[String?],
   symbol_table : &@symbol_map.Table,
   symbol_repr : ReadOnlyArray[Rechar],
 ) -> Regex {

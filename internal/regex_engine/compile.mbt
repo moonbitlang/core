@@ -31,5 +31,12 @@ pub fn compile(profile~ : Profile, ast : Pattern) -> Regex {
   let tc = TranslateContext::new(ctx, symbol_table)
   let (expr, pref) = translate(tc, ast)
   let expr = enforce_pref(tc.ctx, First, pref, expr)
-  Regex::new(profile, ctx, expr, tc.groups, symbol_table, symbol_repr)
+  Regex::new(
+    profile,
+    ctx,
+    expr,
+    ReadOnlyArray::from_array(tc.groups),
+    symbol_table,
+    symbol_repr,
+  )
 }
