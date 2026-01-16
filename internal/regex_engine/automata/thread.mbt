@@ -40,5 +40,5 @@
 priv enum Thread {
   End(MarkSlotMap)
   Exp(MarkSlotMap, Expr)
-  Seq(Preference, ThreadSet, Expr)
+  Seq(@shared_types.Preference, ThreadSet, Expr)
 } derive(Eq, Hash)

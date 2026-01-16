@@ -50,16 +50,16 @@ priv struct Delta {}
 ///|
 #valtype
 priv struct DeltaContext {
-  c : Rechar
-  prev_cat : Category
-  next_cat : Category
+  c : @shared_types.Rechar
+  prev_cat : @shared_types.Category
+  next_cat : @shared_types.Category
 }
 
 ///|
 fn delta_rep(
   outer : Expr,
-  mode : QuantifierMode,
-  pref : Preference,
+  mode : @shared_types.QuantifierMode,
+  pref : @shared_types.Preference,
   inner : Expr,
   c : DeltaContext,
   marks : MarkSlotMap,
@@ -93,13 +93,13 @@ fn delta_expr(expr : Expr, c : DeltaContext, marks : MarkSlotMap) -> ThreadSet {
     Eps => ts_end(marks)
     Mark(mark) => ts_end(marks.add_mark(mark))
     Before(cat) =>
-      if Category::intersects(c.next_cat, cat) {
+      if @shared_types.Category::intersects(c.next_cat, cat) {
         ts_end(marks)
       } else {
         ts_empty
       }
     After(cat) =>
-      if Category::intersects(c.prev_cat, cat) {
+      if @shared_types.Category::intersects(c.prev_cat, cat) {
         ts_end(marks)
       } else {
         ts_empty
@@ -109,7 +109,7 @@ fn delta_expr(expr : Expr, c : DeltaContext, marks : MarkSlotMap) -> ThreadSet {
 
 ///|
 fn delta_seq(
-  pref : Preference,
+  pref : @shared_types.Preference,
   first : ThreadSet,
   next : Expr,
   c : DeltaContext,
@@ -206,8 +206,8 @@ fn find_slot(ctx~ : Context, desc : ThreadSet) -> Slot {
 pub fn delta(
   ctx~ : Context,
   state : State,
-  c : Rechar,
-  next_cat~ : Category,
+  c : @shared_types.Rechar,
+  next_cat~ : @shared_types.Category,
 ) -> State {
   let prev_cat = state.cat
   let desc = delta_threads(

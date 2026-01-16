@@ -1,9 +1,9 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/bytes"
 
-import(
-  "moonbitlang/core/builtin"
-)
+import {
+  "moonbitlang/core/builtin",
+}
 
 // Values
 pub fn default() -> Bytes

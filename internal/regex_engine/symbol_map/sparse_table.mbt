@@ -15,9 +15,9 @@
 ///|
 #valtype
 priv struct SparseTableEntry {
-  lo : Rechar
-  hi : Rechar
-  symbol : Rechar
+  lo : @shared_types.Rechar
+  hi : @shared_types.Rechar
+  symbol : @shared_types.Rechar
 }
 
 ///|

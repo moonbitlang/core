@@ -47,21 +47,3 @@ pub using @ast {
   end_of_word,
   not_word_boundary,
 }
-
-///|
-using @automata {
-  type Expr,
-  type Slot,
-  e_after,
-  e_alt,
-  e_before,
-  e_cset,
-  e_eps,
-  e_mark,
-  e_rep,
-  e_seq,
-  e_copy,
-}
-
-///|
-using @hashmap {type HashMap}

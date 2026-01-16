@@ -71,14 +71,14 @@ const EXPR_ID_RESERVED : ExprId = 1
 
 ///|
 priv enum ExprDef {
-  Chr(RecharSet)
+  Chr(@shared_types.RecharSet)
   Alt(Array[Expr])
-  Seq(Preference, Expr, Expr)
-  Rep(QuantifierMode, Preference, Expr)
+  Seq(@shared_types.Preference, Expr, Expr)
+  Rep(@shared_types.QuantifierMode, @shared_types.Preference, Expr)
   Eps
   Mark(Mark)
-  Before(Category)
-  After(Category)
+  Before(@shared_types.Category)
+  After(@shared_types.Category)
 }
 
 ///|
@@ -117,7 +117,7 @@ pub fn is_eps(e : Expr) -> Bool {
 }
 
 ///|
-pub fn e_cset(ctx~ : Context, c : RecharSet) -> Expr {
+pub fn e_cset(ctx~ : Context, c : @shared_types.RecharSet) -> Expr {
   if c.is_empty() {
     e_empty
   } else {
@@ -128,8 +128,8 @@ pub fn e_cset(ctx~ : Context, c : RecharSet) -> Expr {
 ///|
 pub fn e_rep(
   ctx~ : Context,
-  mode : QuantifierMode,
-  pref : Preference,
+  mode : @shared_types.QuantifierMode,
+  pref : @shared_types.Preference,
   x : Expr,
 ) -> Expr {
   Expr::{ id: ctx.new_expr_id(), def: Rep(mode, pref, x) }
@@ -141,12 +141,12 @@ pub fn e_mark(ctx~ : Context, m : Mark) -> Expr {
 }
 
 ///|
-pub fn e_before(ctx~ : Context, cat : Category) -> Expr {
+pub fn e_before(ctx~ : Context, cat : @shared_types.Category) -> Expr {
   Expr::{ id: ctx.new_expr_id(), def: Before(cat) }
 }
 
 ///|
-pub fn e_after(ctx~ : Context, cat : Category) -> Expr {
+pub fn e_after(ctx~ : Context, cat : @shared_types.Category) -> Expr {
   Expr::{ id: ctx.new_expr_id(), def: After(cat) }
 }
 
@@ -173,7 +173,12 @@ pub fn e_alt(ctx~ : Context, xs : Array[Expr]) -> Expr {
 /// - `Seq(Eps, x)` → `x` (epsilon has no effect)
 /// - `Seq(x, Eps)` with First preference → `x`
 /// - Otherwise → create Seq node
-pub fn e_seq(ctx~ : Context, pref : Preference, x : Expr, y : Expr) -> Expr {
+pub fn e_seq(
+  ctx~ : Context,
+  pref : @shared_types.Preference,
+  x : Expr,
+  y : Expr,
+) -> Expr {
   match (x.def, y.def) {
     (Alt([]), _) => x
     (_, Alt([])) => y

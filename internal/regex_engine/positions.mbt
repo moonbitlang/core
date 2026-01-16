@@ -22,7 +22,7 @@ fn Positions::new() -> Positions {
 
 ///|
 #alias("_[_]=_")
-fn Positions::set(self : Positions, slot : Slot, pos : Int) -> Unit {
+fn Positions::set(self : Positions, slot : @automata.Slot, pos : Int) -> Unit {
   if slot.0 >= self.0.length() {
     self.0.resize(slot.0 + 1, -1)
   }
@@ -31,7 +31,7 @@ fn Positions::set(self : Positions, slot : Slot, pos : Int) -> Unit {
 
 ///|
 #alias("_[_]")
-fn Positions::get(self : Positions, slot : Slot) -> Int {
+fn Positions::get(self : Positions, slot : @automata.Slot) -> Int {
   if slot.0 >= self.0.length() {
     -1
   } else {

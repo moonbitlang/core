@@ -11,18 +11,3 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-///|
-using @shared_types {
-  type Category,
-  type Rechar,
-  type RecharSet,
-  type Preference,
-  type QuantifierMode,
-}
-
-///|
-using @immut/sorted_map {type SortedMap}
-
-///|
-using @hashset {type HashSet}

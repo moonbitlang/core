@@ -16,12 +16,12 @@
 struct Regex {
   profile : Profile
   ctx : @automata.Context
-  expr : Expr
+  expr : @automata.Expr
   groups : ReadOnlyArray[String?]
   symbol_table : &@symbol_map.Table
   symbol_repr : ReadOnlyArray[Rechar]
   start_states : Array[(Category, State)]
-  state_table : HashMap[@automata.State, State]
+  state_table : @hashmap.HashMap[@automata.State, State]
 }
 
 ///|
@@ -33,7 +33,7 @@ pub fn Regex::group_names(self : Regex) -> ReadOnlyArray[String?] {
 fn Regex::new(
   profile : Profile,
   ctx : @automata.Context,
-  expr : Expr,
+  expr : @automata.Expr,
   groups : ReadOnlyArray[String?],
   symbol_table : &@symbol_map.Table,
   symbol_repr : ReadOnlyArray[Rechar],
@@ -46,6 +46,6 @@ fn Regex::new(
     symbol_table,
     symbol_repr,
     start_states: [],
-    state_table: HashMap::new(),
+    state_table: @hashmap.HashMap::new(),
   }
 }
