@@ -1,14 +1,14 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/debug"
 
-import {
-  "moonbitlang/core/buffer",
-  "moonbitlang/core/deque",
-  "moonbitlang/core/immut/array",
-  "moonbitlang/core/immut/sorted_map",
-  "moonbitlang/core/immut/sorted_set",
-  "moonbitlang/core/queue",
-}
+import(
+  "moonbitlang/core/buffer"
+  "moonbitlang/core/deque"
+  "moonbitlang/core/immut/array"
+  "moonbitlang/core/immut/sorted_map"
+  "moonbitlang/core/immut/sorted_set"
+  "moonbitlang/core/queue"
+)
 
 // Values
 pub fn[T : Debug] debug(T) -> Unit

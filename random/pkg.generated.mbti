@@ -1,9 +1,9 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/random"
 
-import {
-  "moonbitlang/core/bigint",
-}
+import(
+  "moonbitlang/core/bigint"
+)
 
 // Values
 #deprecated
