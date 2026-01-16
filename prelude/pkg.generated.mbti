@@ -1,13 +1,13 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/prelude"
 
-import {
-  "moonbitlang/core/bigint",
-  "moonbitlang/core/builtin",
-  "moonbitlang/core/debug",
-  "moonbitlang/core/json",
-  "moonbitlang/core/set",
-}
+import(
+  "moonbitlang/core/bigint"
+  "moonbitlang/core/builtin"
+  "moonbitlang/core/debug"
+  "moonbitlang/core/json"
+  "moonbitlang/core/set"
+)
 
 // Values
 #callsite(autofill(loc))

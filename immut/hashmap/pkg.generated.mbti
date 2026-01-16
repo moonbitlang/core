@@ -1,10 +1,10 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/immut/hashmap"
 
-import {
-  "moonbitlang/core/quickcheck",
-  "moonbitlang/core/quickcheck/splitmix",
-}
+import(
+  "moonbitlang/core/quickcheck"
+  "moonbitlang/core/quickcheck/splitmix"
+)
 
 // Values
 
