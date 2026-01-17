@@ -48,6 +48,7 @@ pub fn[A] SortedSet::min(Self[A]) -> A
 pub fn[A] SortedSet::min_option(Self[A]) -> A?
 #as_free_fn
 pub fn[A] SortedSet::new() -> Self[A]
+pub fn[A : Compare] SortedSet::range(Self[A], A, A) -> Iterator[A]
 pub fn[A : Compare] SortedSet::remove(Self[A], A) -> Self[A]
 pub fn[A] SortedSet::remove_min(Self[A]) -> Self[A]
 #alias(rev_iterator, deprecated)

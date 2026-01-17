@@ -334,6 +334,172 @@ test "rev_values with complex tree" {
 }
 
 ///|
+test "range on empty map" {
+  let empty : @sorted_map.SortedMap[Int, String] = @sorted_map.new()
+  let mut count = 0
+  for _, _ in empty.range(1, 5) {
+    count = count + 1
+  }
+  inspect(count, content="0")
+}
+
+///|
+test "range with no matches" {
+  let map = @sorted_map.from_array([(1, "a"), (2, "b"), (3, "c")])
+  let mut count = 0
+  for _, _ in map.range(10, 20) {
+    count = count + 1
+  }
+  inspect(count, content="0")
+}
+
+///|
+test "range matching all elements" {
+  let map = @sorted_map.from_array([(1, "a"), (2, "b"), (3, "c")])
+  let buf = StringBuilder::new()
+  for k, v in map.range(0, 10) {
+    buf.write_string("[\{k},\{v}]")
+  }
+  inspect(buf, content="[1,a][2,b][3,c]")
+}
+
+///|
+test "range partial match" {
+  let map = @sorted_map.from_array([
+    (1, "a"),
+    (2, "b"),
+    (3, "c"),
+    (4, "d"),
+    (5, "e"),
+  ])
+  let buf = StringBuilder::new()
+  for k, v in map.range(2, 4) {
+    buf.write_string("[\{k},\{v}]")
+  }
+  inspect(buf, content="[2,b][3,c][4,d]")
+}
+
+///|
+test "range with single element" {
+  let map = @sorted_map.from_array([
+    (1, "a"),
+    (2, "b"),
+    (3, "c"),
+    (4, "d"),
+    (5, "e"),
+  ])
+  let buf = StringBuilder::new()
+  for k, v in map.range(3, 3) {
+    buf.write_string("[\{k},\{v}]")
+  }
+  inspect(buf, content="[3,c]")
+}
+
+///|
+test "range at left boundary" {
+  let map = @sorted_map.from_array([
+    (1, "a"),
+    (2, "b"),
+    (3, "c"),
+    (4, "d"),
+    (5, "e"),
+  ])
+  let buf = StringBuilder::new()
+  for k, v in map.range(1, 2) {
+    buf.write_string("[\{k},\{v}]")
+  }
+  inspect(buf, content="[1,a][2,b]")
+}
+
+///|
+test "range at right boundary" {
+  let map = @sorted_map.from_array([
+    (1, "a"),
+    (2, "b"),
+    (3, "c"),
+    (4, "d"),
+    (5, "e"),
+  ])
+  let buf = StringBuilder::new()
+  for k, v in map.range(4, 5) {
+    buf.write_string("[\{k},\{v}]")
+  }
+  inspect(buf, content="[4,d][5,e]")
+}
+
+///|
+test "range with gaps in data" {
+  let map = @sorted_map.from_array([
+    (1, "a"),
+    (3, "c"),
+    (5, "e"),
+    (7, "g"),
+    (9, "i"),
+  ])
+  let buf = StringBuilder::new()
+  for k, v in map.range(2, 8) {
+    buf.write_string("[\{k},\{v}]")
+  }
+  inspect(buf, content="[3,c][5,e][7,g]")
+}
+
+///|
+test "range with inverted bounds" {
+  let map = @sorted_map.from_array([
+    (1, "a"),
+    (2, "b"),
+    (3, "c"),
+    (4, "d"),
+    (5, "e"),
+  ])
+  let mut count = 0
+  for _, _ in map.range(5, 2) {
+    count = count + 1
+  }
+  inspect(count, content="0")
+}
+
+///|
+test "range with early termination" {
+  let map = @sorted_map.from_array([
+    (1, "a"),
+    (2, "b"),
+    (3, "c"),
+    (4, "d"),
+    (5, "e"),
+  ])
+  let mut count = 0
+  for _, _ in map.range(1, 5) {
+    count = count + 1
+    if count == 2 {
+      break
+    }
+  }
+  inspect(count, content="2")
+}
+
+///|
+test "range on large dataset" {
+  let arr = Array::makei(100, fn(i) { (i, "val\{i}") })
+  let map = @sorted_map.from_array(arr[:])
+  let mut count = 0
+  for _, _ in map.range(25, 75) {
+    count = count + 1
+  }
+  inspect(count, content="51")
+}
+
+///|
+test "range with non-existent boundaries" {
+  let map = @sorted_map.from_array([(2, "b"), (4, "d"), (6, "f"), (8, "h")])
+  let buf = StringBuilder::new()
+  for k, v in map.range(3, 7) {
+    buf.write_string("[\{k},\{v}]")
+  }
+  inspect(buf, content="[4,d][6,f]")
+}
+
+///|
 test "from_json free function" {
   let json : Json = { "a": 1, "b": 2 }
   let map : @sorted_map.SortedMap[String, Int] = @sorted_map.from_json(json)
