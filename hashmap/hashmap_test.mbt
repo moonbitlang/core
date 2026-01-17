@@ -20,6 +20,12 @@ test "new" {
 }
 
 ///|
+test "new minimum capacity" {
+  let m : @hashmap.HashMap[Int, Int] = @hashmap.new(capacity=2)
+  inspect(m.capacity(), content="8")
+}
+
+///|
 test "get" {
   let m = @hashmap.new()
   m.set("a", 1)
