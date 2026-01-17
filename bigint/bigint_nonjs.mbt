@@ -30,6 +30,7 @@
 // - (exists 0 <= i < len. limbs[i] > 0) => limbs[len-1] > 0
 // - (forall 0 <= i < len. limbs[i] == 0) => limbs[0] == 0 and len == 1
 // - forall len <= i < limbs.length(). limbs[i] == 0
+#valtype
 struct BigInt {
   limbs : FixedArray[UInt] // Note: do not use limbs.length(), use len instead because of leading zeros
   sign : Sign
