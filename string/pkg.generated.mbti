@@ -6,16 +6,6 @@ import(
 )
 
 // Values
-pub fn default() -> String
-
-#deprecated
-pub fn from_array(ArrayView[Char]) -> String
-
-#deprecated
-pub fn from_iter(Iter[Char]) -> String
-
-#deprecated
-pub fn from_iterator(Iter[Char]) -> String
 
 // Errors
 
@@ -31,9 +21,6 @@ type Regex
 pub fn Regex::execute(Self, StringView, lastIndex? : Int) -> MatchResult?
 
 // Type aliases
-#deprecated
-pub using @builtin {type StringView as View}
-
 pub using @builtin {trait ToStringView}
 
 // Traits

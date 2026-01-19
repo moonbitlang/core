@@ -13,32 +13,16 @@
 // limitations under the License.
 
 ///|
-/// A `BytesView` represents a view into a section of a `Bytes` without copying the data.
-///
-/// # Example
-/// 
-/// ```mbt check
-/// test {
-///   let bs = b"\x00\x01\x02\x03\x04\x05"
-///   let bv = bs[1:4]
-///   inspect(bv.length(), content="3")
-///   assert_eq(bv[0], b'\x01')
-///   assert_eq(bv[1], b'\x02')
-///   assert_eq(bv[2], b'\x03')
-/// }
-/// ```
-#builtin.valtype
-#deprecated("Use `BytesView` instead")
-pub type View = BytesView
-
-///|
 /// same as `Bytes::default`
+#deprecated("Use `Bytes::default` instead")
+#doc(hidden)
 pub fn default() -> Bytes {
   b""
 }
 
 ///|
 #deprecated("Use `Bytes::from_array` instead")
+#doc(hidden)
 pub fn from_fixedarray(arr : FixedArray[Byte], len? : Int) -> Bytes {
   Bytes::from_array(arr[:len.unwrap_or(arr.length())])
 }
@@ -46,18 +30,21 @@ pub fn from_fixedarray(arr : FixedArray[Byte], len? : Int) -> Bytes {
 ///|
 #deprecated("Use `Bytes::from_iter` instead")
 #alias(from_iterator, deprecated="Use `Bytes::from_iter` instead")
+#doc(hidden)
 pub fn from_iter(iter : Iter[Byte]) -> Bytes {
   Bytes::from_iter(iter)
 }
 
 ///|
 #deprecated("Use `Bytes::from_array` instead")
+#doc(hidden)
 pub fn of(arr : ArrayView[Byte]) -> Bytes {
   Bytes::from_array(arr)
 }
 
 ///|
 #deprecated("Use `Bytes::from_array` instead")
+#doc(hidden)
 pub fn from_array(arr : ArrayView[Byte]) -> Bytes {
   Bytes::from_array(arr)
 }
