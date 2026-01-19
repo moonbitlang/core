@@ -622,3 +622,21 @@ test "Map early exit on psl" {
   inspect(map.get_or_default(missing, 77), content="77")
   inspect(map.contains(missing), content="false")
 }
+
+///|
+test "Map::merge_in_place self should not grow" {
+  let map : Map[String, Int] = {}
+  // Add 6 entries to reach the growth threshold (default capacity 8, grow_at 6)
+  for i in 0..<6 {
+    map.set(i.to_string(), i)
+  }
+  let cap_before = map.capacity()
+  map.merge_in_place(map)
+  // Capacity should remain unchanged since no new entries are added
+  assert_eq(map.capacity(), cap_before)
+  assert_eq(map.length(), 6)
+  // Verify all entries are still intact
+  for i in 0..<6 {
+    assert_eq(map.get(i.to_string()), Some(i))
+  }
+}
