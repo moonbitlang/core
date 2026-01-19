@@ -214,6 +214,13 @@ test "powf branch coverage" {
 }
 
 ///|
+test "powf subnormal normalization path" {
+  let sub = Float::reinterpret_from_int(1)
+  let res = @math.powf(sub, 1.0)
+  assert_true(!res.is_nan())
+}
+
+///|
 test "pow" {
   let test_cases = [
     (1.1, 1.1, 1.1105342410545758),

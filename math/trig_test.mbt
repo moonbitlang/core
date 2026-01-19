@@ -215,6 +215,13 @@ test "atan2f function comprehensive" {
 }
 
 ///|
+test "sin double near half_pi" {
+  let half_pi = @math.PI / 2.0
+  let value = @math.sin(-half_pi)
+  assert_true(value.is_close(-1.0, absolute_tolerance=1.0e-12))
+}
+
+///|
 test "trig reduce methods simple" {
   // Test with moderate numbers to avoid type issues
   let result1 = @math.sinf(10.0)
@@ -561,4 +568,15 @@ test "atan2f branch coverage" {
     @math.atan2f(1.0, -1.0e20).is_close(pi, absolute_tolerance=1.0e-5),
   )
   assert_true(@math.atan2f(1.0, 2.0).is_close(@math.atanf(0.5)))
+}
+
+///|
+test "tan large argument reduction" {
+  let values = [1.0e6, 1.0e12, 1.0e20, -1.0e6, -1.0e12]
+  for v in values {
+    let t = @math.tan(v)
+    assert_true(!t.is_nan())
+  }
+  assert_true(@math.tan(@double.infinity).is_nan())
+  assert_true(@math.tan(@double.not_a_number).is_nan())
 }
