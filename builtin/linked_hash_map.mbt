@@ -798,6 +798,9 @@ pub fn[K : Eq, V] Map::merge_in_place(
   self : Map[K, V],
   other : Map[K, V],
 ) -> Unit {
+  if physical_equal(self, other) {
+    return
+  }
   loop other.head {
     Some({ key, value, next, hash, .. }) => {
       self.set_with_hash(key, value, hash)
