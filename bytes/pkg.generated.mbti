@@ -1,25 +1,7 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/bytes"
 
-import(
-  "moonbitlang/core/builtin"
-)
-
 // Values
-pub fn default() -> Bytes
-
-#deprecated
-pub fn from_array(ArrayView[Byte]) -> Bytes
-
-#deprecated
-pub fn from_fixedarray(FixedArray[Byte], len? : Int) -> Bytes
-
-#alias(from_iterator, deprecated)
-#deprecated
-pub fn from_iter(Iter[Byte]) -> Bytes
-
-#deprecated
-pub fn of(ArrayView[Byte]) -> Bytes
 
 // Errors
 
@@ -35,8 +17,6 @@ pub fn MatchResult::group(Self, Int) -> BytesView?
 pub fn MatchResult::named_group(Self, String) -> BytesView?
 
 // Type aliases
-#deprecated
-pub using @builtin {type BytesView as View}
 
 // Traits
 

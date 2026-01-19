@@ -780,5 +780,5 @@ test "guard const" {
 
 ///|
 test "string default" {
-  inspect(@string.default(), content="")
+  inspect(String::default(), content="")
 }

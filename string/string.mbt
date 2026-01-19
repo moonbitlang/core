@@ -26,6 +26,7 @@
 ///
 /// For efficiency considerations, it's recommended to use `Buffer` instead.
 #deprecated
+#doc(hidden)
 pub fn from_array(chars : ArrayView[Char]) -> String {
   String::from_array(chars)
 }
@@ -33,6 +34,7 @@ pub fn from_array(chars : ArrayView[Char]) -> String {
 ///|
 /// Convert char iterator to string,
 #deprecated
+#doc(hidden)
 pub fn from_iter(iter : Iter[Char]) -> String {
   String::from_iter(iter)
 }
@@ -40,12 +42,15 @@ pub fn from_iter(iter : Iter[Char]) -> String {
 ///|
 /// Convert char iterator to string,
 #deprecated
+#doc(hidden)
 pub fn from_iterator(iter : Iter[Char]) -> String {
   String::from_iter(iter)
 }
 
 ///|
 /// same as `String::default`
+#deprecated("Use `String::default` instead")
+#doc(hidden)
 pub fn default() -> String {
   ""
 }
