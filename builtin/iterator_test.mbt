@@ -11,3 +11,10 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+///|
+test "Iter2::run empty iterator" {
+  let iter : Iter2[Unit, Unit] = Iter2::new(() => None)
+  let result = iter.run((_, _) => IterContinue)
+  assert_true(result is IterContinue)
+}

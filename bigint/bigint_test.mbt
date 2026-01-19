@@ -42,6 +42,19 @@ test "bit_length zero" {
 }
 
 ///|
+test "bit_length negative non_power_of_two" {
+  let value = 1N + (1N << 33) + (1N << 70)
+  let neg = -value
+  inspect(neg.bit_length(), content="71")
+}
+
+///|
+test "to_octets pads larger length" {
+  let n = @bigint.BigInt::from_hex("010203")
+  inspect(n.to_octets(length=5), content="b\"\\x00\\x00\\x01\\x02\\x03\"")
+}
+
+///|
 test "add" {
   let a = @bigint.BigInt::from_int64(123456789012345678L)
   let b = @bigint.BigInt::from_int64(987654321098765432L)

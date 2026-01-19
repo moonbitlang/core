@@ -64,3 +64,15 @@ test "parse_double many digits with leading zero" {
   assert_true(value > 0.0)
   assert_true(value < 1.0e-15)
 }
+
+///|
+#warnings("-deprecated")
+test "decimal shift truncation path" {
+  let prefix = "1" + String::make(299, '0')
+  let suffix = String::make(521, '9')
+  let s = prefix + "." + suffix
+  let decimal = @strconv.parse_decimal(s)
+  decimal.shift(59)
+  let result : Result[Double, Error] = try? decimal.to_double()
+  assert_true(result is Err(_))
+}

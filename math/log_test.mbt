@@ -98,6 +98,16 @@ test "ln" {
 }
 
 ///|
+test "ln near one paths" {
+  assert_eq(@math.ln(1.0), 0.0)
+  let tiny = 1.0e-12
+  let near = @math.ln(1.0 + tiny)
+  assert_true(near > tiny * 0.9 && near < tiny * 1.1)
+  let near2 = @math.ln(2.0 + tiny)
+  assert_true(near2 > 0.6 && near2 < 0.8)
+}
+
+///|
 test "lnf subnormal input" {
   let sub = Float::reinterpret_from_uint(1U)
   let res = @math.lnf(sub)

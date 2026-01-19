@@ -198,6 +198,11 @@ test "StringView pad_start and pad_end no padding" {
 }
 
 ///|
+test "String::rev_find partial mismatch" {
+  inspect("ababa".rev_find("abac"), content="None")
+}
+
+///|
 test "StringView repeat non-positive" {
   let view = "hi"[:]
   let mut n = 1
