@@ -640,3 +640,24 @@ test "Map::merge_in_place self should not grow" {
     assert_eq(map.get(i.to_string()), Some(i))
   }
 }
+
+///|
+test "Map::set updating existing key should not grow" {
+  let map : Map[String, Int] = {}
+  // Add 6 entries to reach the growth threshold (default capacity 8, grow_at 6)
+  for i in 0..<6 {
+    map.set(i.to_string(), i)
+  }
+  assert_eq(map.capacity(), 8)
+  assert_eq(map.length(), 6)
+  // Update existing keys - should NOT trigger grow
+  for i in 0..<6 {
+    map.set(i.to_string(), i * 10)
+  }
+  assert_eq(map.capacity(), 8) // Should still be 8, not 16
+  assert_eq(map.length(), 6)
+  // Verify values were updated
+  for i in 0..<6 {
+    assert_eq(map.get(i.to_string()), Some(i * 10))
+  }
+}

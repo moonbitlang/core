@@ -116,28 +116,44 @@ fn[K : Eq, V] HashMap::set_with_hash(
   value : V,
   hash : Int,
 ) -> Unit {
-  if self.size >= self.capacity / 2 {
-    self.grow()
-  }
-  let (idx, psl) = for psl = 0, idx = hash & self.capacity_mask {
+  // Only grow when actually inserting a new entry, not when updating existing
+  for psl = 0, idx = hash & self.capacity_mask {
     match self.entries[idx] {
-      None => break (idx, psl)
+      None => {
+        // Need to insert new entry - check if grow is needed first
+        if self.size >= self.capacity / 2 {
+          self.grow()
+          // Restart search with new capacity_mask
+          continue 0, hash & self.capacity_mask
+        }
+        let entry = { psl, key, value, hash }
+        self.entries[idx] = Some(entry)
+        self.size += 1
+        return
+      }
       Some(curr_entry) => {
         if curr_entry.hash == hash && curr_entry.key == key {
+          // Key exists - just update value, no grow needed
           curr_entry.value = value
           return
         }
         if psl > curr_entry.psl {
+          // Need to insert and push away - check if grow is needed first
+          if self.size >= self.capacity / 2 {
+            self.grow()
+            // Restart search with new capacity_mask
+            continue 0, hash & self.capacity_mask
+          }
           self.push_away(idx, curr_entry)
-          break (idx, psl)
+          let entry = { psl, key, value, hash }
+          self.entries[idx] = Some(entry)
+          self.size += 1
+          return
         }
         continue psl + 1, (idx + 1) & self.capacity_mask
       }
     }
   }
-  let entry = { psl, key, value, hash }
-  self.entries[idx] = Some(entry)
-  self.size += 1
 }
 
 ///|
