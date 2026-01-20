@@ -303,26 +303,53 @@ pub fn[A : Compare] SortedSet::contains(self : SortedSet[A], value : A) -> Bool 
 }
 
 ///|
-/// Returns an iterator over all values in the set where values fall within [low, high].
-/// The range is inclusive on both ends.
-/// O(log n + k) where k is the number of elements in the range.
+/// Returns an iterator over all values in the set that fall within the
+/// inclusive range `[low, high]`.
+///
+/// The iterator yields values in ascending order. Values equal to `low` or
+/// `high` are included if present.
+///
+/// # Arguments
+///
+/// * `low` - The lower bound of the range (inclusive).
+/// * `high` - The upper bound of the range (inclusive).
+///
+/// # Returns
+///
+/// An `Iter[A]` that yields values where `low <= value <= high`.
+///
+/// # Performance
+///
+/// Time complexity is O(log n + k) where n is the size of the set and k is the
+/// number of elements in the range. The algorithm efficiently prunes subtrees
+/// that fall entirely outside the range.
+///
+/// # Behavior
+///
+/// * If `low > high`, the iterator yields no elements.
+/// * If the range contains no values from the set, the iterator yields no elements.
+/// * The iterator is single-use; create a new one for multiple traversals.
 ///
 /// # Example
 ///
-/// ```mbt
-/// let set = @immut/sorted_set.from_array([1, 2, 3, 4, 5])
-///
-/// let result = set.range(2, 4)
-/// // Yields: 2, 3, 4
+/// ```mbt check
+/// test {
+///   let set = @sorted_set.from_array([1, 2, 3, 4, 5])
+///   let result = []
+///   for v in set.range(low=2, high=4) {
+///     result.push(v)
+///   }
+///   assert_eq(result, [2, 3, 4])
+/// }
 /// ```
 pub fn[A : Compare] SortedSet::range(
   self : SortedSet[A],
-  low : A,
-  high : A,
-) -> Iterator[A] {
+  low~ : A,
+  high~ : A,
+) -> Iter[A] {
   let todo_list = []
   let mut next_node = self
-  Iterator::new(fn() {
+  Iter::new(fn() {
     loop next_node {
       Node(left~, right~, value~, ..) => {
         let cmp_value_low = value.compare(low)
