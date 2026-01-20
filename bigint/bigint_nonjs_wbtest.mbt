@@ -164,16 +164,18 @@ test "BigInt::to_uint negative values modulo 2^32" {
   // Test that to_uint correctly handles negative values modulo 2^32
   // -1N should map to 2^32 - 1 = 4294967295
   inspect((-1N).to_uint(), content="4294967295")
-
+  
   // -(2^32 + 1) should map to 2^32 - 1 = 4294967295 (mod 2^32)
   let large_neg = -(1N << 32) - 1N
   inspect(large_neg.to_uint(), content="4294967295") // Should be 4294967295, not 1
-
+  
   // -(2^32) should map to 0
   let neg_2_32 = -(1N << 32)
   inspect(neg_2_32.to_uint(), content="0")
-
+  
   // -(2^32 + 42) should map to 2^32 - 42 = 4294967254
   let neg_2_32_plus_42 = -(1N << 32) - 42N
   inspect(neg_2_32_plus_42.to_uint(), content="4294967254")
 }
+
+
