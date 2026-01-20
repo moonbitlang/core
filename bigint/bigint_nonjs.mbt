@@ -888,14 +888,16 @@ pub impl Eq for BigInt with equal(self, other) {
 }
 
 ///|
-/// Converts a `BigInt` value to its decimal string representation.
+/// Converts a `BigInt` value to a string representation in the specified radix.
 ///
 /// Parameters:
 ///
 /// * `self` : The `BigInt` value to convert to a string.
+/// * `radix` : The base to use for formatting (2 to 36). Defaults to 10.
 ///
-/// Returns a string containing the decimal representation of the number, with a
-/// leading minus sign for negative numbers.
+/// Returns a string containing the representation of the number in the given
+/// radix, with a leading minus sign for negative numbers. Digits above 9 use
+/// lowercase letters (`a` to `z`).
 ///
 /// Example:
 ///
@@ -903,13 +905,20 @@ pub impl Eq for BigInt with equal(self, other) {
 /// test {
 ///   let n = 12345678901234567890N
 ///   inspect(n.to_string(), content="12345678901234567890")
+///   inspect(n.to_string(radix=16), content="ab54a98ceb1f0ad2")
 ///   let neg = -42N
 ///   inspect(neg.to_string(), content="-42")
 ///   let zero = 0N
 ///   inspect(zero.to_string(), content="0")
 /// }
 /// ```
-pub fn BigInt::to_string(self : BigInt) -> String {
+pub fn BigInt::to_string(self : BigInt, radix? : Int = 10) -> String {
+  if radix < 2 || radix > 36 {
+    abort("radix must be between 2 and 36")
+  }
+  if radix != 10 {
+    return self.to_string_radix(radix)
+  }
   // This function first converts the BigInt to a decimal representation, with a radix of 2^(`decimal_radix_bit_len`).
   // Then it converts the decimal representation to a string slot by slot.
   if self.is_zero() {
@@ -986,21 +995,202 @@ pub impl Show for BigInt with output(self, logger) {
 }
 
 ///|
-/// Converts a decimal string representation to a BigInt value. The string can
-/// optionally start with a minus sign (-) to indicate a negative number,
-/// followed by one or more decimal digits.
+fn digit_from_char(x : Int) -> Int {
+  match x {
+    '0'..='9' => x - '0'
+    'A'..='Z' => x + (10 - 'A')
+    'a'..='z' => x + (10 - 'a')
+    _ => -1
+  }
+}
+
+///|
+fn char_from_digit(d : Int) -> Char {
+  if d < 10 {
+    (d + '0'.to_int()).unsafe_to_char()
+  } else {
+    (d - 10 + 'a'.to_int()).unsafe_to_char()
+  }
+}
+
+///|
+fn pow2_shift(radix : Int) -> Int? {
+  if radix >= 2 && (radix & (radix - 1)) == 0 {
+    Some(radix.ctz())
+  } else {
+    None
+  }
+}
+
+///|
+fn BigInt::to_string_radix(self : BigInt, radix : Int) -> String {
+  if self.is_zero() {
+    return "0"
+  }
+  match pow2_shift(radix) {
+    Some(shift) => self.to_string_radix_pow2(shift)
+    None => {
+      let is_negative = self.sign == Negative
+      let base = BigInt::from_int(radix)
+      let value = if is_negative { -self } else { self }
+      let digits = []
+      loop value {
+        v =>
+          if v > zero {
+            let (q, r) = BigInt::grade_school_div(v, base)
+            digits.push(char_from_digit(r.to_int()))
+            continue q
+          }
+      }
+      let builder = StringBuilder::new(
+        size_hint=digits.length() + (if is_negative { 1 } else { 0 }),
+      )
+      if is_negative {
+        builder.write_char('-')
+      }
+      for i = digits.length() - 1; i >= 0; i = i - 1 {
+        builder.write_char(digits[i])
+      }
+      builder.to_string()
+    }
+  }
+}
+
+///|
+fn BigInt::to_string_radix_pow2(self : BigInt, shift : Int) -> String {
+  let is_negative = self.sign == Negative
+  let value = if is_negative { -self } else { self }
+  let bit_len = value.bit_length()
+  let digit_len = (bit_len + shift - 1) / shift
+  let builder = StringBuilder::new(
+    size_hint=digit_len + (if is_negative { 1 } else { 0 }),
+  )
+  if is_negative {
+    builder.write_char('-')
+  }
+  let mask = (1UL << shift) - 1UL
+  for pos = digit_len - 1; pos >= 0; pos = pos - 1 {
+    let bit_index = pos * shift
+    let limb_index = bit_index / radix_bit_len
+    let offset = bit_index % radix_bit_len
+    let mut chunk = value.limbs[limb_index].to_uint64() >> offset
+    if offset + shift > radix_bit_len && limb_index + 1 < value.len {
+      chunk = chunk |
+        (value.limbs[limb_index + 1].to_uint64() << (radix_bit_len - offset))
+    }
+    let digit = (chunk & mask).to_int()
+    builder.write_char(char_from_digit(digit))
+  }
+  builder.to_string()
+}
+
+///|
+fn BigInt::from_string_radix(input : String, radix : Int) -> BigInt {
+  match pow2_shift(radix) {
+    Some(shift) => BigInt::from_string_radix_pow2(input, radix, shift)
+    None => {
+      let len = input.length()
+      if len == 0 {
+        abort("empty string")
+      }
+      let sign : Sign = if input.unsafe_get(0) == '-' {
+        Negative
+      } else {
+        Positive
+      }
+      let start = if sign == Negative { 1 } else { 0 }
+      if start == len {
+        abort("invalid character")
+      }
+      let base = BigInt::from_int(radix)
+      let mut acc = zero
+      for i in start..<len {
+        let digit = digit_from_char(input.unsafe_get(i).to_int())
+        if digit < 0 || digit >= radix {
+          abort("invalid character")
+        }
+        acc = acc * base + BigInt::from_int(digit)
+      }
+      if sign == Negative {
+        -acc
+      } else {
+        acc
+      }
+    }
+  }
+}
+
+///|
+fn BigInt::from_string_radix_pow2(
+  input : String,
+  radix : Int,
+  shift : Int,
+) -> BigInt {
+  let len = input.length()
+  if len == 0 {
+    abort("empty string")
+  }
+  let sign : Sign = if input.unsafe_get(0) == '-' { Negative } else { Positive }
+  let start = if sign == Negative { 1 } else { 0 }
+  if start == len {
+    abort("invalid character")
+  }
+  let mut first = start
+  while first < len {
+    let digit = digit_from_char(input.unsafe_get(first).to_int())
+    if digit < 0 || digit >= radix {
+      abort("invalid character")
+    }
+    if digit != 0 {
+      break
+    }
+    first += 1
+  }
+  if first == len {
+    return zero
+  }
+  let digits_count = len - first
+  let total_bits = digits_count * shift
+  let b_len = (total_bits + radix_bit_len - 1) / radix_bit_len
+  let limbs = FixedArray::make(b_len, 0U)
+  let mut bit_pos = 0
+  for i = len - 1; i >= first; i = i - 1 {
+    let digit = digit_from_char(input.unsafe_get(i).to_int())
+    if digit < 0 || digit >= radix {
+      abort("invalid character")
+    }
+    let limb_index = bit_pos / radix_bit_len
+    let offset = bit_pos % radix_bit_len
+    let val = digit.reinterpret_as_uint().to_uint64()
+    limbs[limb_index] = (limbs[limb_index].to_uint64() | (val << offset)).to_uint()
+    if offset + shift > radix_bit_len {
+      let hi = val >> (radix_bit_len - offset)
+      limbs[limb_index + 1] = (limbs[limb_index + 1].to_uint64() | hi).to_uint()
+    }
+    bit_pos += shift
+  }
+  let b_len = normalize_len(limbs, b_len)
+  let sign = if b_len == 1 && limbs[0] == 0 { Positive } else { sign }
+  { limbs, sign, len: b_len }
+}
+
+///|
+/// Converts a string representation in the specified radix to a BigInt value.
+/// The string can optionally start with a minus sign (-) to indicate a negative
+/// number, followed by one or more digits valid for the radix.
 ///
 /// Parameters:
 ///
-/// * `input` : The string to be converted. Must be a valid decimal number string
-/// consisting of optional leading minus sign followed by decimal digits (0-9).
+/// * `input` : The string to be converted. Must be a valid number string in the
+/// given radix.
+/// * `radix` : The base to use for parsing (2 to 36). Defaults to 10.
 ///
-/// Returns a `BigInt` value representing the decimal number in the input string.
+/// Returns a `BigInt` value representing the number in the input string.
 ///
 /// Throws a panic if:
 ///
 /// * The input string is empty
-/// * The input string contains non-decimal digits
+/// * The input string contains digits not valid for the given radix
 ///
 /// Example:
 ///
@@ -1008,11 +1198,24 @@ pub impl Show for BigInt with output(self, logger) {
 /// test {
 ///   let pos = @bigint.BigInt::from_string("12345")
 ///   let neg = @bigint.BigInt::from_string("-12345")
+///   let hex = @bigint.BigInt::from_string("ff", radix=16)
 ///   inspect(pos, content="12345")
 ///   inspect(neg, content="-12345")
+///   inspect(hex, content="255")
 /// }
 /// ```
-pub fn BigInt::from_string(input : String) -> BigInt {
+pub fn BigInt::from_string(input : String, radix? : Int = 10) -> BigInt {
+  if radix < 2 || radix > 36 {
+    abort("radix must be between 2 and 36")
+  }
+  if radix != 10 {
+    return BigInt::from_string_radix(input, radix)
+  }
+  BigInt::from_string_dec(input)
+}
+
+///|
+fn BigInt::from_string_dec(input : String) -> BigInt {
   let len = input.length()
   if len == 0 {
     abort("empty string")
@@ -1047,145 +1250,6 @@ pub fn BigInt::from_string(input : String) -> BigInt {
   }
   let sign = if b_len == 1 && b[0] == 0 { Positive } else { sign }
   { limbs: b, sign, len: b_len }
-}
-
-///|
-/// Converts a hexadecimal string to a `BigInt`. The string can be prefixed with
-/// a minus sign (`-`) to indicate a negative number. The string must contain
-/// only hexadecimal digits (`0-9`, `a-f`, or `A-F`).
-///
-/// Parameters:
-///
-/// * `input` : A string containing the hexadecimal representation of an integer.
-/// Must be non-empty and contain only valid hexadecimal digits. May be prefixed
-/// with a minus sign to indicate a negative number.
-///
-/// Returns a `BigInt` value representing the hexadecimal number.
-///
-/// Throws a runtime error if:
-///
-/// * The input string is empty.
-/// * The input string contains characters other than hexadecimal digits (0-9,
-/// a-f, A-F) or a leading minus sign.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   inspect(@bigint.BigInt::from_hex("ff"), content="255")
-///   inspect(@bigint.BigInt::from_hex("-ff"), content="-255")
-///   inspect(@bigint.BigInt::from_hex("DEADBEEF"), content="3735928559")
-/// }
-/// ```
-pub fn BigInt::from_hex(input : String) -> BigInt {
-  // WARN: this implementation assumes that `radix_bit_len` is a multiple of 4.
-  fn char_from_hex(x : Int) -> UInt {
-    (match x {
-      '0'..='9' => x - '0'
-      'A'..='F' => x + (10 - 'A')
-      'a'..='f' => x + (10 - 'a')
-      _ => abort("invalid character")
-    }).reinterpret_as_uint()
-  }
-
-  let len = input.length()
-  if len == 0 {
-    abort("empty string")
-  }
-  let (sign, number_len) = if input.unsafe_get(0) == '-' {
-    (Negative, len - 1)
-  } else {
-    (Positive, len)
-  }
-  let nb_char = radix_bit_len / 4 // number of char per limb
-  let quotient = number_len / nb_char
-  let mod = number_len % nb_char
-  let mut b_len = if mod == 0 { quotient } else { quotient + 1 }
-  let b = FixedArray::make(b_len, 0U)
-  if mod != 0 {
-    let start = len - quotient * nb_char - mod
-    for i in 0..<mod {
-      b[b_len - 1] = (b[b_len - 1] << 4) |
-        char_from_hex(input.unsafe_get(start + i).to_int())
-    }
-  }
-  for i in 0..<quotient {
-    let start = len - (i + 1) * nb_char
-    for j in 0..<nb_char {
-      b[i] = (b[i] << 4) | char_from_hex(input.unsafe_get(start + j).to_int())
-    }
-  }
-  while b[b_len - 1] == 0 && b_len > 1 {
-    b_len -= 1
-  }
-  let sign = if b_len == 1 && b[0] == 0 { Positive } else { sign }
-  { limbs: b, sign, len: b_len }
-}
-
-///|
-/// Converts a big integer to its hexadecimal string representation. The output
-/// string has no prefix (like "0x") and uses uppercase letters A-F by default
-/// for digits above 9.
-///
-/// Parameters:
-///
-/// * `self` : The `BigInt` value to be converted.
-/// * `uppercase` : Whether to use uppercase (A-F) or lowercase (a-f) letters for
-/// hexadecimal digits above 9. Defaults to `true`.
-///
-/// Returns a string representing the number in hexadecimal format. For negative
-/// numbers, the string is prefixed with a minus sign.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let pos = @bigint.BigInt::from_string("255")
-///   let neg = @bigint.BigInt::from_string("-255")
-///   inspect(pos.to_hex(), content="FF")
-///   inspect(neg.to_hex(), content="-FF")
-///   inspect(pos.to_hex(uppercase=false), content="ff")
-///   inspect(0N.to_hex(), content="0")
-/// }
-/// ```
-pub fn BigInt::to_hex(self : BigInt, uppercase? : Bool = true) -> String {
-  if self.is_zero() {
-    return "0"
-  }
-  // WARN: this implementation assumes that `radix_bit_len` is a multiple of 4.
-  let digits_per_limb = radix_bit_len / 4
-  let buf = if self.sign is Negative {
-    let builder = StringBuilder::new(size_hint=self.len * digits_per_limb + 2)
-    builder.write_char('-')
-    builder
-  } else {
-    StringBuilder::new(size_hint=self.len * digits_per_limb)
-  }
-  for i = self.len - 1; i >= 0; i = i - 1 { // TODO: reverse iteration would be a bit faster.
-    // split the limb into 4-bit chunks
-    let mut x = self.limbs[i]
-    let digits = FixedArray::make(digits_per_limb, '0')
-    let mut idx = 0
-    while x > 0 {
-      let y = x % 16
-      x /= 16
-      digits[idx] = if y < 10 {
-        (y.reinterpret_as_int() + '0'.to_int()).unsafe_to_char()
-      } else if uppercase {
-        (y.reinterpret_as_int() - 10 + 'A'.to_int()).unsafe_to_char()
-      } else {
-        (y.reinterpret_as_int() - 10 + 'a'.to_int()).unsafe_to_char()
-      }
-      idx += 1
-    }
-    if i != self.len - 1 {
-      idx = digits_per_limb
-    }
-    for j in 0..<idx {
-      buf.write_char(digits[idx - 1 - j])
-    }
-  }
-  buf.to_string()
 }
 
 ///|
@@ -1371,7 +1435,7 @@ pub fn BigInt::from_octets(input : Bytes, signum? : Int = 1) -> BigInt {
 ///
 /// ```mbt check
 /// test {
-///   let n = @bigint.BigInt::from_hex("abcdef")
+///   let n = @bigint.BigInt::from_string("abcdef", radix=16)
 ///   inspect(n.to_octets(length=4), content="b\"\\x00\\xab\\xcd\\xef\"")
 ///   let m = @bigint.BigInt::from_string("0")
 ///   inspect(m.to_octets(), content="b\"\\x00\"")

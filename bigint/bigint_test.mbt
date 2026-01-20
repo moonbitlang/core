@@ -50,7 +50,7 @@ test "bit_length negative non_power_of_two" {
 
 ///|
 test "to_octets pads larger length" {
-  let n = @bigint.BigInt::from_hex("010203")
+  let n = @bigint.BigInt::from_string("010203", radix=16)
   inspect(n.to_octets(length=5), content="b\"\\x00\\x00\\x01\\x02\\x03\"")
 }
 
@@ -455,42 +455,45 @@ test "compare" {
 }
 
 ///|
-test "from_hex" {
+test "from_string radix 16" {
   // Check zero
-  let a = @bigint.BigInt::from_hex("0")
+  let a = @bigint.BigInt::from_string("0", radix=16)
   inspect(a.to_string(), content="0")
 
   // Test positive number
-  let a = @bigint.BigInt::from_hex("1")
+  let a = @bigint.BigInt::from_string("1", radix=16)
   inspect(a.to_string(), content="1")
 
   // Test negative number
-  let a = @bigint.BigInt::from_hex("-F")
+  let a = @bigint.BigInt::from_string("-F", radix=16)
   inspect(a.to_string(), content="-15")
-  let a = @bigint.BigInt::from_hex("-a")
+  let a = @bigint.BigInt::from_string("-a", radix=16)
   inspect(a.to_string(), content="-10")
 
   // Test large positive number
-  let a = @bigint.BigInt::from_hex("112210F47DE98115")
+  let a = @bigint.BigInt::from_string("112210F47DE98115", radix=16)
   inspect(a.to_string(), content="1234567890123456789")
 
   // Test very large positive number
-  let a = @bigint.BigInt::from_hex(
+  let a = @bigint.BigInt::from_string(
     "123456789012345678123456789012345678123456789012345678123456789012345678",
+    radix=16,
   )
   inspect(
     a.to_string(),
     content="35365207917649046390549507392234216535182073572857507984542859337680634154115797374584",
   )
-  let a = @bigint.BigInt::from_hex(
+  let a = @bigint.BigInt::from_string(
     "11E3444DC1F35F057AD2CBC2791737468140A426FAC3CBA7AF8C92A8F34E",
+    radix=16,
   )
   inspect(
     a.to_string(),
     content="123456789012345678123456789012345678123456789012345678123456789012345678",
   )
-  let a = @bigint.BigInt::from_hex(
+  let a = @bigint.BigInt::from_string(
     "805146F2F58580962A0A2E6134BC75E25AD97AE3D09CD34BA4F629AB8911F3F5CB8573A62EDD16B0D46775A415F545A75518DA3439914D9CAA26449067D85E704E8FCF9B29182485B41F952616BACDFDDF52B413B524D0EB743E8264A9C6AE32D12C3D20C5B81189060F4AC5D216713D503A69644EA8E4EA220A720C41F6B3D18BED65B4238318E6B0A41D8540D756865EC92DF40E8D365A230F17DF1D0A440BC6A557CD46D00B10D74C0E75500B2ADB3A0336223F9285B78CD04F485E417E1DB562B9EFCF79433209E6D6E2F43A484E471DE4F1F5AE38E08E7DAEB644C2C0A22697DD6D29BE0B40FF50DB575FEF02FA5525953C7C198B4A3600BA8CE1F917852A4B957151189F09DCDFCB79963E7D850127858A97855B94870ACCBE8203E73FE79791EE6EA1B1282A0CEAC54D6F6B7CD6C7B8D8092E949FF0A84",
+    radix=16,
   )
   inspect(
     a.to_string(),
@@ -498,8 +501,9 @@ test "from_hex" {
   )
 
   // Test very large negative number
-  let a = @bigint.BigInt::from_hex(
+  let a = @bigint.BigInt::from_string(
     "-123456789012345678123456789012345678123456789012345678123456789012345678",
+    radix=16,
   )
   inspect(
     a.to_string(),
@@ -516,63 +520,73 @@ test "from_string negative zero" {
 }
 
 ///|
-test "from_hex negative zero" {
-  let z = @bigint.BigInt::from_hex("-0")
+test "from_string radix 16 negative zero" {
+  let z = @bigint.BigInt::from_string("-0", radix=16)
   inspect(z.to_string(), content="0")
   assert_true(z == 0N)
   assert_eq(z.compare(0N), 0)
 }
 
 ///|
-test "to_hex" {
+test "radix string conversions" {
+  let n = 255N
+  inspect(n.to_string(radix=2), content="11111111")
+  inspect(n.to_string(radix=16), content="ff")
+  inspect(n.to_string(radix=36), content="73")
+  let neg = -10N
+  inspect(neg.to_string(radix=2), content="-1010")
+  inspect(@bigint.BigInt::from_string("11111111", radix=2), content="255")
+  inspect(@bigint.BigInt::from_string("ff", radix=16), content="255")
+  inspect(@bigint.BigInt::from_string("-1010", radix=2), content="-10")
+  inspect(@bigint.BigInt::from_string("z", radix=36), content="35")
+}
+
+///|
+test "to_string radix 16" {
   // Check zero
-  let a = @bigint.BigInt::from_hex("00")
-  inspect(a.to_hex(), content="0")
+  let a = @bigint.BigInt::from_string("00", radix=16)
+  inspect(a.to_string(radix=16), content="0")
 
   // Test negative number
-  let a = @bigint.BigInt::from_hex("-F")
-  inspect(a.to_hex(), content="-F")
+  let a = @bigint.BigInt::from_string("-F", radix=16)
+  inspect(a.to_string(radix=16), content="-f")
 
   // Test positive number
-  let a = @bigint.BigInt::from_hex("F")
-  inspect(a.to_hex(), content="F")
+  let a = @bigint.BigInt::from_string("F", radix=16)
+  inspect(a.to_string(radix=16), content="f")
 
   // Test positive number with leading zero
-  let a = @bigint.BigInt::from_hex("10")
-  inspect(a.to_hex(), content="10")
+  let a = @bigint.BigInt::from_string("10", radix=16)
+  inspect(a.to_string(radix=16), content="10")
 
   // Test large positive number
-  let a = @bigint.BigInt::from_hex("01234567890123456789")
-  inspect(a.to_hex(), content="1234567890123456789")
+  let a = @bigint.BigInt::from_string("01234567890123456789", radix=16)
+  inspect(a.to_string(radix=16), content="1234567890123456789")
 
   // Check padding
-  let a = @bigint.BigInt::from_hex("100000")
+  let a = @bigint.BigInt::from_string("100000", radix=16)
   inspect(a.to_string(), content="1048576")
-  inspect(a.to_hex(), content="100000")
+  inspect(a.to_string(radix=16), content="100000")
 
   // Test very large positive number
   let a = @bigint.BigInt::from_string(
     "123456789012345678123456789012345678123456789012345678123456789012345678",
   )
   inspect(
-    a.to_hex(),
-    content="11E3444DC1F35F057AD2CBC2791737468140A426FAC3CBA7AF8C92A8F34E",
+    a.to_string(radix=16),
+    content="11e3444dc1f35f057ad2cbc2791737468140a426fac3cba7af8c92a8f34e",
   )
   let a = @bigint.BigInt::from_string(
     "35365207917649046390549507392234216535182073572857507984542859337680634154115797374584",
   )
   inspect(
-    a.to_hex(),
+    a.to_string(radix=16),
     content="123456789012345678123456789012345678123456789012345678123456789012345678",
   )
   let str = "12345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812"
   let a = @bigint.BigInt::from_string(str)
   inspect(
-    a.to_hex(),
-    content="805146F2F58580962A0A2E6134BC75E25AD97AE3D09CD34BA4F629AB8911F3F5CB8573A62EDD16B0D46775A415F545A75518DA3439914D9CAA26449067D85E704E8FCF9B29182485B41F952616BACDFDDF52B413B524D0EB743E8264A9C6AE32D12C3D20C5B81189060F4AC5D216713D503A69644EA8E4EA220A720C41F6B3D18BED65B4238318E6B0A41D8540D756865EC92DF40E8D365A230F17DF1D0A440BC6A557CD46D00B10D74C0E75500B2ADB3A0336223F9285B78CD04F485E417E1DB562B9EFCF79433209E6D6E2F43A484E471DE4F1F5AE38E08E7DAEB644C2C0A22697DD6D29BE0B40FF50DB575FEF02FA5525953C7C198B4A3600BA8CE1F917852A4B957151189F09DCDFCB79963E7D850127858A97855B94870ACCBE8203E73FE79791EE6EA1B1282A0CEAC54D6F6B7CD6C7B8D8092E949FF0A84",
-  )
-  inspect(
-    a.to_hex(uppercase=false),
+    a.to_string(radix=16),
     content="805146f2f58580962a0a2e6134bc75e25ad97ae3d09cd34ba4f629ab8911f3f5cb8573a62edd16b0d46775a415f545a75518da3439914d9caa26449067d85e704e8fcf9b29182485b41f952616bacdfddf52b413b524d0eb743e8264a9c6ae32d12c3d20c5b81189060f4ac5d216713d503a69644ea8e4ea220a720c41f6b3d18bed65b4238318e6b0a41d8540d756865ec92df40e8d365a230f17df1d0a440bc6a557cd46d00b10d74c0e75500b2adb3a0336223f9285b78cd04f485e417e1db562b9efcf79433209e6d6e2f43a484e471de4f1f5ae38e08e7daeb644c2c0a22697dd6d29be0b40ff50db575fef02fa5525953c7c198b4a3600ba8ce1f917852a4b957151189f09dcdfcb79963e7d850127858a97855b94870accbe8203e73fe79791ee6ea1b1282a0ceac54d6f6b7cd6c7b8d8092e949ff0a84",
   )
 
@@ -581,18 +595,14 @@ test "to_hex" {
     "-123456789012345678123456789012345678123456789012345678123456789012345678",
   )
   inspect(
-    a.to_hex(),
-    content="-11E3444DC1F35F057AD2CBC2791737468140A426FAC3CBA7AF8C92A8F34E",
-  )
-  inspect(
-    a.to_hex(uppercase=false),
+    a.to_string(radix=16),
     content="-11e3444dc1f35f057ad2cbc2791737468140a426fac3cba7af8c92a8f34e",
   )
 }
 
 ///|
 test "pow" {
-  let x = 2N.pow(5664N).to_hex()
+  let x = 2N.pow(5664N).to_string(radix=16)
   assert_eq(x.get_char(0).unwrap(), '1')
   assert_eq(x[1:], String::make(5664 / 4, '0')[:])
 }
@@ -607,13 +617,13 @@ test "land_1" {
 ///|
 test "land_2" {
   let a = @bigint.BigInt::from_string("-10")
-  let b = @bigint.BigInt::from_hex("fffffffffffffff") // 15 'f' chars
+  let b = @bigint.BigInt::from_string("fffffffffffffff", radix=16) // 15 'f' chars
   inspect(a & b, content="1152921504606846966")
 }
 
 ///|
 test "land_3" {
-  let a = @bigint.BigInt::from_hex("ffffffffffffffff") // 16 'f' chars
+  let a = @bigint.BigInt::from_string("ffffffffffffffff", radix=16) // 16 'f' chars
   let b = @bigint.BigInt::from_string("-10")
   inspect(a & b, content="18446744073709551606")
 }
@@ -627,8 +637,8 @@ test "land_4" {
 
 ///|
 test "land_5" {
-  let a = @bigint.BigInt::from_hex("ffffffffffffffff")
-  let b = @bigint.BigInt::from_hex("ffffffffffffffff")
+  let a = @bigint.BigInt::from_string("ffffffffffffffff", radix=16)
+  let b = @bigint.BigInt::from_string("ffffffffffffffff", radix=16)
   inspect(a & b, content="18446744073709551615")
 }
 
@@ -655,8 +665,8 @@ test "land_result_zero_normalization" {
   inspect(c & d, content="0")
 
   // Complementary bitmasks
-  let e = @bigint.BigInt::from_hex("aaaaaaaaaaaaaaaa")
-  let f = @bigint.BigInt::from_hex("5555555555555555")
+  let e = @bigint.BigInt::from_string("aaaaaaaaaaaaaaaa", radix=16)
+  let f = @bigint.BigInt::from_string("5555555555555555", radix=16)
   inspect(e & f, content="0")
 }
 
@@ -680,13 +690,13 @@ test "lor_1" {
 ///|
 test "lor_2" {
   let a = @bigint.BigInt::from_string("-10")
-  let b = @bigint.BigInt::from_hex("fffffffffffffff") // 15 'f' chars
+  let b = @bigint.BigInt::from_string("fffffffffffffff", radix=16) // 15 'f' chars
   inspect(a | b, content="-1")
 }
 
 ///|
 test "lor_3" {
-  let a = @bigint.BigInt::from_hex("ffffffffffffffff") // 16 'f' chars
+  let a = @bigint.BigInt::from_string("ffffffffffffffff", radix=16) // 16 'f' chars
   let b = @bigint.BigInt::from_string("-10")
   inspect(a | b, content="-1")
 }
@@ -700,7 +710,7 @@ test "lor_4" {
 
 ///|
 test "lor_5" {
-  let a = @bigint.BigInt::from_hex("ffffffffffffffff")
+  let a = @bigint.BigInt::from_string("ffffffffffffffff", radix=16)
   let b = @bigint.BigInt::from_string("0")
   inspect(a | b, content="18446744073709551615")
 }
@@ -728,13 +738,13 @@ test "lxor_1" {
 ///|
 test "lxor_2" {
   let a = @bigint.BigInt::from_string("-10")
-  let b = @bigint.BigInt::from_hex("fffffffffffffff") // 15 'f' chars
+  let b = @bigint.BigInt::from_string("fffffffffffffff", radix=16) // 15 'f' chars
   inspect(a ^ b, content="-1152921504606846967")
 }
 
 ///|
 test "lxor_3" {
-  let a = @bigint.BigInt::from_hex("ffffffffffffffff") // 16 'f' chars
+  let a = @bigint.BigInt::from_string("ffffffffffffffff", radix=16) // 16 'f' chars
   let b = @bigint.BigInt::from_string("-10")
   inspect(a ^ b, content="-18446744073709551607")
 }
@@ -749,7 +759,7 @@ test "lxor_4" {
 ///|
 test "lxor_5" {
   let a = @bigint.BigInt::from_string("0")
-  let b = @bigint.BigInt::from_hex("ffffffffffffffff")
+  let b = @bigint.BigInt::from_string("ffffffffffffffff", radix=16)
   inspect(a ^ b, content="18446744073709551615")
 }
 
@@ -760,7 +770,7 @@ test "lxor_result_zero_normalization" {
   inspect(a ^ a, content="0")
 
   // XOR of same values
-  let b = @bigint.BigInt::from_hex("ffffffffffffffff")
+  let b = @bigint.BigInt::from_string("ffffffffffffffff", radix=16)
   inspect(b ^ b, content="0")
 
   // XOR resulting in zero

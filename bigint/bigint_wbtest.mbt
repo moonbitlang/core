@@ -391,8 +391,8 @@ test "decimal_string" {
 }
 
 ///|
-test "from_hex with leading zeros" {
-  let a = BigInt::from_hex("0ffffffff")
+test "from_string radix 16 with leading zeros" {
+  let a = BigInt::from_string("0ffffffff", radix=16)
   check_invariant(a)
 }
 
@@ -423,49 +423,52 @@ test "compare" {
 }
 
 ///|
-test "from_hex" {
+test "from_string radix 16" {
   // Check zero
-  let a = BigInt::from_hex("0")
+  let a = BigInt::from_string("0", radix=16)
   check_invariant(a)
   inspect(a, content="0")
 
   // Test positive number
-  let a = BigInt::from_hex("1")
+  let a = BigInt::from_string("1", radix=16)
   check_invariant(a)
   inspect(a, content="1")
 
   // Test negative number
-  let a = BigInt::from_hex("-F")
+  let a = BigInt::from_string("-F", radix=16)
   check_invariant(a)
   inspect(a, content="-15")
-  let a = BigInt::from_hex("-a")
+  let a = BigInt::from_string("-a", radix=16)
   check_invariant(a)
   inspect(a, content="-10")
 
   // Test large positive number
-  let a = BigInt::from_hex("112210F47DE98115")
+  let a = BigInt::from_string("112210F47DE98115", radix=16)
   check_invariant(a)
   inspect(a, content="1234567890123456789")
 
   // Test very large positive number
-  let a = BigInt::from_hex(
+  let a = BigInt::from_string(
     "123456789012345678123456789012345678123456789012345678123456789012345678",
+    radix=16,
   )
   check_invariant(a)
   inspect(
     a,
     content="35365207917649046390549507392234216535182073572857507984542859337680634154115797374584",
   )
-  let a = BigInt::from_hex(
+  let a = BigInt::from_string(
     "11E3444DC1F35F057AD2CBC2791737468140A426FAC3CBA7AF8C92A8F34E",
+    radix=16,
   )
   check_invariant(a)
   inspect(
     a,
     content="123456789012345678123456789012345678123456789012345678123456789012345678",
   )
-  let a = BigInt::from_hex(
+  let a = BigInt::from_string(
     "805146F2F58580962A0A2E6134BC75E25AD97AE3D09CD34BA4F629AB8911F3F5CB8573A62EDD16B0D46775A415F545A75518DA3439914D9CAA26449067D85E704E8FCF9B29182485B41F952616BACDFDDF52B413B524D0EB743E8264A9C6AE32D12C3D20C5B81189060F4AC5D216713D503A69644EA8E4EA220A720C41F6B3D18BED65B4238318E6B0A41D8540D756865EC92DF40E8D365A230F17DF1D0A440BC6A557CD46D00B10D74C0E75500B2ADB3A0336223F9285B78CD04F485E417E1DB562B9EFCF79433209E6D6E2F43A484E471DE4F1F5AE38E08E7DAEB644C2C0A22697DD6D29BE0B40FF50DB575FEF02FA5525953C7C198B4A3600BA8CE1F917852A4B957151189F09DCDFCB79963E7D850127858A97855B94870ACCBE8203E73FE79791EE6EA1B1282A0CEAC54D6F6B7CD6C7B8D8092E949FF0A84",
+    radix=16,
   )
   check_invariant(a)
   inspect(
@@ -474,8 +477,9 @@ test "from_hex" {
   )
 
   // Test very large negative number
-  let a = BigInt::from_hex(
+  let a = BigInt::from_string(
     "-123456789012345678123456789012345678123456789012345678123456789012345678",
+    radix=16,
   )
   check_invariant(a)
   inspect(
@@ -485,37 +489,37 @@ test "from_hex" {
 }
 
 ///|
-test "to_hex" {
+test "to_string radix 16" {
   // Check zero
-  let a = BigInt::from_hex("00")
+  let a = BigInt::from_string("00", radix=16)
   check_invariant(a)
-  inspect(a.to_hex(), content="0")
+  inspect(a.to_string(radix=16), content="0")
 
   // Test negative number
-  let a = BigInt::from_hex("-F")
+  let a = BigInt::from_string("-F", radix=16)
   check_invariant(a)
-  inspect(a.to_hex(), content="-F")
+  inspect(a.to_string(radix=16), content="-f")
 
   // Test positive number
-  let a = BigInt::from_hex("F")
+  let a = BigInt::from_string("F", radix=16)
   check_invariant(a)
-  inspect(a.to_hex(), content="F")
+  inspect(a.to_string(radix=16), content="f")
 
   // Test positive number with leading zero
-  let a = BigInt::from_hex("10")
+  let a = BigInt::from_string("10", radix=16)
   check_invariant(a)
-  inspect(a.to_hex(), content="10")
+  inspect(a.to_string(radix=16), content="10")
 
   // Test large positive number
-  let a = BigInt::from_hex("01234567890123456789")
+  let a = BigInt::from_string("01234567890123456789", radix=16)
   check_invariant(a)
-  inspect(a.to_hex(), content="1234567890123456789")
+  inspect(a.to_string(radix=16), content="1234567890123456789")
 
   // Check padding
-  let a = BigInt::from_hex("100000")
+  let a = BigInt::from_string("100000", radix=16)
   check_invariant(a)
   inspect(a, content="1048576")
-  inspect(a.to_hex(), content="100000")
+  inspect(a.to_string(radix=16), content="100000")
 
   // Test very large positive number
   let a = BigInt::from_string(
@@ -523,23 +527,23 @@ test "to_hex" {
   )
   check_invariant(a)
   inspect(
-    a.to_hex(),
-    content="11E3444DC1F35F057AD2CBC2791737468140A426FAC3CBA7AF8C92A8F34E",
+    a.to_string(radix=16),
+    content="11e3444dc1f35f057ad2cbc2791737468140a426fac3cba7af8c92a8f34e",
   )
   let a = BigInt::from_string(
     "35365207917649046390549507392234216535182073572857507984542859337680634154115797374584",
   )
   check_invariant(a)
   inspect(
-    a.to_hex(),
+    a.to_string(radix=16),
     content="123456789012345678123456789012345678123456789012345678123456789012345678",
   )
   let str = "12345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812"
   let a = BigInt::from_string(str)
   check_invariant(a)
   inspect(
-    a.to_hex(),
-    content="805146F2F58580962A0A2E6134BC75E25AD97AE3D09CD34BA4F629AB8911F3F5CB8573A62EDD16B0D46775A415F545A75518DA3439914D9CAA26449067D85E704E8FCF9B29182485B41F952616BACDFDDF52B413B524D0EB743E8264A9C6AE32D12C3D20C5B81189060F4AC5D216713D503A69644EA8E4EA220A720C41F6B3D18BED65B4238318E6B0A41D8540D756865EC92DF40E8D365A230F17DF1D0A440BC6A557CD46D00B10D74C0E75500B2ADB3A0336223F9285B78CD04F485E417E1DB562B9EFCF79433209E6D6E2F43A484E471DE4F1F5AE38E08E7DAEB644C2C0A22697DD6D29BE0B40FF50DB575FEF02FA5525953C7C198B4A3600BA8CE1F917852A4B957151189F09DCDFCB79963E7D850127858A97855B94870ACCBE8203E73FE79791EE6EA1B1282A0CEAC54D6F6B7CD6C7B8D8092E949FF0A84",
+    a.to_string(radix=16),
+    content="805146f2f58580962a0a2e6134bc75e25ad97ae3d09cd34ba4f629ab8911f3f5cb8573a62edd16b0d46775a415f545a75518da3439914d9caa26449067d85e704e8fcf9b29182485b41f952616bacdfddf52b413b524d0eb743e8264a9c6ae32d12c3d20c5b81189060f4ac5d216713d503a69644ea8e4ea220a720c41f6b3d18bed65b4238318e6b0a41d8540d756865ec92df40e8d365a230f17df1d0a440bc6a557cd46d00b10d74c0e75500b2adb3a0336223f9285b78cd04f485e417e1db562b9efcf79433209e6d6e2f43a484e471de4f1f5ae38e08e7daeb644c2c0a22697dd6d29be0b40ff50db575fef02fa5525953c7c198b4a3600ba8ce1f917852a4b957151189f09dcdfcb79963e7d850127858a97855b94870accbe8203e73fe79791ee6ea1b1282a0ceac54d6f6b7cd6c7b8d8092e949ff0a84",
   )
 
   // Test very large negative number
@@ -548,14 +552,14 @@ test "to_hex" {
   )
   check_invariant(a)
   inspect(
-    a.to_hex(),
-    content="-11E3444DC1F35F057AD2CBC2791737468140A426FAC3CBA7AF8C92A8F34E",
+    a.to_string(radix=16),
+    content="-11e3444dc1f35f057ad2cbc2791737468140a426fac3cba7af8c92a8f34e",
   )
 
-  // Test to_hex where limbs is zero in the middle
-  let a = BigInt::from_hex("1000000000000000000000000")
+  // Test where limbs is zero in the middle
+  let a = BigInt::from_string("1000000000000000000000000", radix=16)
   check_invariant(a)
-  inspect(a.to_hex(), content="1000000000000000000000000")
+  inspect(a.to_string(radix=16), content="1000000000000000000000000")
 }
 
 ///|

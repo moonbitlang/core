@@ -19,9 +19,15 @@ type BigInt
 let zero = 0N
 
 ///|
-pub fn BigInt::from_string(str : String) -> BigInt {
+pub fn BigInt::from_string(str : String, radix? : Int = 10) -> BigInt {
   if str.length() == 0 {
     abort("empty string")
+  }
+  if radix < 2 || radix > 36 {
+    abort("radix must be between 2 and 36")
+  }
+  if radix != 10 {
+    return BigInt::from_string_radix(str, radix)
   }
   BigInt::js_from_string(str)
 }
@@ -31,27 +37,76 @@ extern "js" fn BigInt::js_from_string(str : String) -> BigInt =
   #|(x) => BigInt(x)
 
 ///|
+fn digit_from_char(x : Int) -> Int {
+  match x {
+    '0'..='9' => x - '0'
+    'A'..='Z' => x + (10 - 'A')
+    'a'..='z' => x + (10 - 'a')
+    _ => -1
+  }
+}
+
+///|
+fn pow2_shift(radix : Int) -> Int? {
+  if radix >= 2 && (radix & (radix - 1)) == 0 {
+    Some(radix.ctz())
+  } else {
+    None
+  }
+}
+
+///|
+fn BigInt::from_string_radix(str : String, radix : Int) -> BigInt {
+  let len = str.length()
+  let sign = if str.unsafe_get(0) == '-' { -1 } else { 1 }
+  let start = if sign == -1 { 1 } else { 0 }
+  if start == len {
+    abort("invalid character")
+  }
+  let mut acc = 0N
+  match pow2_shift(radix) {
+    Some(shift) =>
+      for i in start..<len {
+        let digit = digit_from_char(str.unsafe_get(i).to_int())
+        if digit < 0 || digit >= radix {
+          abort("invalid character")
+        }
+        acc = (acc << shift) | BigInt::from_int(digit)
+      }
+    None => {
+      let base = BigInt::from_int(radix)
+      for i in start..<len {
+        let digit = digit_from_char(str.unsafe_get(i).to_int())
+        if digit < 0 || digit >= radix {
+          abort("invalid character")
+        }
+        acc = acc * base + BigInt::from_int(digit)
+      }
+    }
+  }
+  if sign == -1 {
+    -acc
+  } else {
+    acc
+  }
+}
+
+///|
 pub impl Show for BigInt with output(self, logger) {
   logger.write_string(self.to_string())
 }
 
 ///|
-pub extern "js" fn BigInt::to_string(self : BigInt) -> String =
-  #|(x) => String(x)
+pub fn BigInt::to_string(self : BigInt, radix? : Int = 10) -> String {
+  if radix < 2 || radix > 36 {
+    abort("radix must be between 2 and 36")
+  }
+  BigInt::js_to_string_radix(self, radix)
+}
 
 ///|
-pub extern "js" fn BigInt::from_hex(str : String) -> BigInt =
-  #|(x) => x.startsWith('-') ? -BigInt(`0x${x.slice(1)}`) : BigInt(`0x${x}`)
-
-///|
-pub extern "js" fn BigInt::to_hex(
-  self : BigInt,
-  uppercase? : Bool = true,
-) -> String =
-  #|(x, uppercase) => {
-  #|  const r = x.toString(16);
-  #|  return uppercase ? r.toUpperCase() : r;
-  #|}
+extern "js" fn BigInt::js_to_string_radix(self : BigInt, radix : Int) -> String =
+  #|(x, radix) => x.toString(radix)
 
 ///|
 extern "js" fn hex2(b : Byte) -> String =
