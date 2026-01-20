@@ -41,3 +41,23 @@ test "panic insert out of bounds" {
 test "panic remove out of bounds" {
   @deque.from_array([1, 2, 3]).remove(3) |> ignore
 }
+
+///|
+test "panic drain with negative start" {
+  @deque.from_array([5, 6]).drain(start=-1) |> ignore
+}
+
+///|
+test "panic drain with start out of bounds" {
+  @deque.from_array([5, 6]).drain(start=100) |> ignore
+}
+
+///|
+test "panic drain with negative len" {
+  @deque.from_array([5, 6]).drain(start=0, len=-1) |> ignore
+}
+
+///|
+test "panic drain with len exceeding bounds" {
+  @deque.from_array([5, 6]).drain(start=1, len=100) |> ignore
+}

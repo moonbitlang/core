@@ -1141,19 +1141,30 @@ test "drain when wrapped around" {
 }
 
 ///|
-test "drain invalid inputs" {
-  let dq = @deque.from_array([5, 6])
-  let dq2 = dq.drain(start=100)
-  inspect(dq.as_views(), content="([5, 6], [])")
-  inspect(dq2, content="@deque.from_array([])")
-  let dq = @deque.from_array([5, 6])
-  let dq2 = dq.drain(start=1, len=100)
-  inspect(dq.as_views(), content="([5], [])")
-  inspect(dq2, content="@deque.from_array([6])")
+test "drain edge cases" {
+  // drain with len=0 should return empty and not modify original
   let dq = @deque.from_array([5, 6])
   let dq2 = dq.drain(start=1, len=0)
   inspect(dq.as_views(), content="([5, 6], [])")
   inspect(dq2, content="@deque.from_array([])")
+
+  // drain from start=length() should return empty (no elements to drain)
+  let dq = @deque.from_array([5, 6])
+  let dq2 = dq.drain(start=2)
+  inspect(dq.as_views(), content="([5, 6], [])")
+  inspect(dq2, content="@deque.from_array([])")
+
+  // drain entire deque
+  let dq = @deque.from_array([5, 6])
+  let dq2 = dq.drain(start=0)
+  inspect(dq.as_views(), content="([], [])")
+  inspect(dq2, content="@deque.from_array([5, 6])")
+
+  // drain with exact len
+  let dq = @deque.from_array([5, 6, 7])
+  let dq2 = dq.drain(start=1, len=2)
+  inspect(dq.as_views(), content="([5], [])")
+  inspect(dq2, content="@deque.from_array([6, 7])")
 }
 
 ///|

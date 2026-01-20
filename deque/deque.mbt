@@ -1867,17 +1867,23 @@ pub fn[A] Deque::flatten(self : Deque[Deque[A]]) -> Deque[A] {
 }
 
 ///|
-/// Removes and returns elements in the specified range [begin, end) from the deque.
+/// Removes and returns elements in the specified range `[start, start + len)` from the deque.
 ///
 /// Parameters:
 ///
 /// * `self` : The target deque (modified in-place).
-/// * `start` : Start index of the range (inclusive).
-/// * `len` : Length of the range to drain.
+/// * `start` : Start index of the range (inclusive). Must be >= 0 and <= self.length().
+/// * `len` : Length of the range to drain. If not provided, drains from `start` to end.
+///   If provided, must be >= 0 and `start + len` must be <= self.length().
 ///
-/// Important:
-///   - Returns a new deque containing the drained elements.
-///   - Original deque retains elements outside [start, start + len) in original order.
+/// Returns a new deque containing the drained elements. The original deque retains
+/// elements outside `[start, start + len)` in their original order.
+///
+/// Panics if:
+/// * `start < 0`
+/// * `start > self.length()`
+/// * `len < 0` (when provided)
+/// * `start + len > self.length()` (when len is provided)
 ///
 /// Example:
 ///
@@ -1890,12 +1896,24 @@ pub fn[A] Deque::flatten(self : Deque[Deque[A]]) -> Deque[A] {
 /// }
 /// ```
 pub fn[A] Deque::drain(self : Deque[A], start~ : Int, len? : Int) -> Deque[A] {
-  // Verify parameters
-  if start >= self.len {
-    return new()
+  // Validate start
+  guard start >= 0 && start <= self.len else {
+    abort(
+      "Deque::drain: start index out of bounds (start=\{start}, deque.length()=\{self.len})",
+    )
   }
-  let max_len = self.len - start
-  let len = if len is Some(l) && l <= max_len { l } else { max_len }
+  // Calculate and validate len
+  let len = match len {
+    Some(l) => {
+      guard l >= 0 && start + l <= self.len else {
+        abort(
+          "Deque::drain: len out of bounds (start=\{start}, len=\{l}, deque.length()=\{self.len})",
+        )
+      }
+      l
+    }
+    None => self.len - start
+  }
   if len == 0 {
     return new()
   }
