@@ -261,32 +261,60 @@ pub fn[K, V] SortedMap::iter2(self : SortedMap[K, V]) -> Iter2[K, V] {
 }
 
 ///|
-/// Returns an iterator over all key-value pairs in the map where keys fall within [low, high].
-/// The range is inclusive on both ends.
-/// O(log n + k) where k is the number of elements in the range.
+/// Returns an iterator over all key-value pairs in the map where keys fall
+/// within the inclusive range `[low, high]`.
+///
+/// The iterator yields key-value pairs in ascending key order. Keys equal to
+/// `low` or `high` are included if present.
+///
+/// # Arguments
+///
+/// * `low` - The lower bound of the range (inclusive).
+/// * `high` - The upper bound of the range (inclusive).
+///
+/// # Returns
+///
+/// An `Iter2[K, V]` that yields key-value pairs `(key, value)` where
+/// `low <= key <= high`.
+///
+/// # Performance
+///
+/// Time complexity is O(log n + k) where n is the size of the map and k is the
+/// number of elements in the range. The algorithm efficiently prunes subtrees
+/// that fall entirely outside the range.
+///
+/// # Behavior
+///
+/// * If `low > high`, the iterator yields no elements.
+/// * If the range contains no keys from the map, the iterator yields no elements.
+/// * The iterator is single-use; create a new one for multiple traversals.
 ///
 /// # Example
 ///
-/// ```mbt
-/// let map = @immut/sorted_map.from_array([
-///   (1, "a"),
-///   (2, "b"),
-///   (3, "c"),
-///   (4, "d"),
-///   (5, "e"),
-/// ])
-///
-/// let result = map.range(2, 4)
-/// // Yields: (2, "b"), (3, "c"), (4, "d")
+/// ```mbt check
+/// test {
+///   let map = @sorted_map.from_array([
+///     (1, "a"),
+///     (2, "b"),
+///     (3, "c"),
+///     (4, "d"),
+///     (5, "e"),
+///   ])
+///   let result = []
+///   for k, v in map.range(low=2, high=4) {
+///     result.push((k, v))
+///   }
+///   assert_eq(result, [(2, "b"), (3, "c"), (4, "d")])
+/// }
 /// ```
 pub fn[K : Compare, V] SortedMap::range(
   self : SortedMap[K, V],
-  low : K,
-  high : K,
-) -> Iterator2[K, V] {
+  low~ : K,
+  high~ : K,
+) -> Iter2[K, V] {
   let todo_list = []
   let mut next_node = self
-  Iterator2::new(fn() {
+  Iter2::new(fn() {
     loop next_node {
       Tree(k, value~, l, r, ..) => {
         let cmp_key_low = k.compare(low)
