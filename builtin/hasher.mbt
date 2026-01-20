@@ -649,7 +649,7 @@ pub impl Hash for BytesView with hash_combine(self : BytesView, hasher : Hasher)
   let mut rest = self.len()
   while rest >= 4 {
     let mut result : UInt = 0
-    for i in 0..<=3 {
+    for i in 0..=3 {
       result = result | (data.unsafe_get(i + start).to_uint() << (8 * i))
     }
     hasher.combine_uint(result)

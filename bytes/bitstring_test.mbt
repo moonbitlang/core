@@ -113,7 +113,7 @@ test "extract_byte - partial bits from byte aligned positions" {
   inspect(view.unsafe_extract_byte(0, 7), content="127") // 1111111 -> 127
 
   // Extract 2-7 bits from 0x00 (00000000)
-  for len in 2..<=7 {
+  for len in 2..=7 {
     inspect(view.unsafe_extract_byte(8, len), content="0")
   }
 }
@@ -1793,7 +1793,7 @@ test "integration - boundary stress test" {
   let view = bytes[:]
 
   // Test extractions that cross multiple boundaries
-  for offset in 1..<=7 {
+  for offset in 1..=7 {
     // Extract a bit
     let _bit = view.unsafe_extract_bit(offset, 1)
 

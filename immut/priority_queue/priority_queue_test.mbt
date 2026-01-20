@@ -187,11 +187,11 @@ test "complex" {
   let arr = (0).until(1000, inclusive=true).collect()
   arr.shuffle_in_place(rand~)
   let mut pq = @priority_queue.new()
-  for i in 0..<=1000 {
+  for i in 0..=1000 {
     pq = pq.push(arr[i])
   }
   inspect(pq.length(), content="1001")
-  for i in 0..<=1000 {
+  for i in 0..=1000 {
     assert_eq(pq.peek(), Some(1000 - i))
     pq = pq.pop().unwrap()
   }

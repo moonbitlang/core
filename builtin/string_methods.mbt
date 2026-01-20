@@ -77,7 +77,7 @@ fn boyer_moore_horspool_find(
       i = i +
         skip_table[haystack.unsafe_get(i + needle_len - 1).to_int() & 0xFF] {
     // Check all charcodes for match at current position
-    for j in 0..<=(needle_len - 1) {
+    for j in 0..=(needle_len - 1) {
       if haystack.unsafe_get(i + j) != needle.unsafe_get(j) {
         break
       }
