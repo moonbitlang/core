@@ -655,6 +655,9 @@ pub fn[K : Eq, V] HashMap::merge_in_place(
   self : HashMap[K, V],
   other : HashMap[K, V],
 ) -> Unit {
+  if physical_equal(self, other) {
+    return
+  }
   for entry in other.entries {
     if entry is Some({ key, value, hash, .. }) {
       self.set_with_hash(key, value, hash)
