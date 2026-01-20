@@ -471,6 +471,28 @@ test "@hashmap.merge_in_place empty maps" {
 }
 
 ///|
+test "@hashmap.merge_in_place self-aliasing should be no-op" {
+  let map : @hashmap.HashMap[String, Int] = @hashmap.new()
+  // With 4 elements: capacity=8, size=4
+  // The grow condition is size >= capacity/2, i.e., 4 >= 4
+  // Without fix, merge_in_place(map) calls set_with_hash which triggers grow()
+  for i in 0..<4 {
+    map.set(i.to_string(), i)
+  }
+  let cap_before = map.capacity()
+  assert_eq(cap_before, 8) // Verify initial state
+  assert_eq(map.length(), 4)
+  // Merging with self should be a no-op - capacity should NOT grow from 8 to 16
+  map.merge_in_place(map)
+  assert_eq(map.capacity(), cap_before)
+  assert_eq(map.length(), 4)
+  // Verify all entries are still correct
+  for i in 0..<4 {
+    assert_eq(map.get(i.to_string()), Some(i))
+  }
+}
+
+///|
 priv struct Key(Int, Int) derive(Eq)
 
 ///|
