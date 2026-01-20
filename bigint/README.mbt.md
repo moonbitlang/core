@@ -26,7 +26,7 @@ test "creating bigint values" {
   inspect(big4, content="123456789012345678901234567890")
 
   // From hexadecimal strings
-  let big5 = @bigint.BigInt::from_hex("1a2b3c4d5e6f")
+  let big5 = @bigint.BigInt::from_string("1a2b3c4d5e6f", radix=16)
   inspect(big5, content="28772997619311")
 }
 ```
@@ -170,16 +170,12 @@ test "string conversions" {
   inspect(decimal, content="255")
 
   // Hexadecimal (lowercase)
-  let hex_lower = big.to_hex()
-  inspect(hex_lower, content="FF")
+  let hex = big.to_string(radix=16)
+  inspect(hex, content="ff")
 
-  // Hexadecimal (uppercase)
-  let hex_upper = big.to_hex(uppercase=true)
-  inspect(hex_upper, content="FF")
-
-  // Parse from hex
-  let from_hex = @bigint.BigInt::from_hex("deadbeef")
-  inspect(from_hex, content="3735928559")
+  // Parse from hex (radix=16)
+  let from_radix16 = @bigint.BigInt::from_string("deadbeef", radix=16)
+  inspect(from_radix16, content="3735928559")
 
   // Round-trip conversion
   let original = 98765432109876543210N

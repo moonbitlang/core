@@ -124,13 +124,13 @@ test "panic from_string coverage for invalid character" {
 }
 
 ///|
-test "panic from_hex coverage for empty string" {
-  BigInt::from_hex("") |> ignore
+test "panic from_string radix 16 coverage for empty string" {
+  BigInt::from_string("", radix=16) |> ignore
 }
 
 ///|
-test "panic from_hex coverage for invalid character" {
-  BigInt::from_hex("123g56789") |> ignore
+test "panic from_string radix 16 coverage for invalid character" {
+  BigInt::from_string("123g56789", radix=16) |> ignore
 }
 
 ///|
