@@ -31,14 +31,14 @@ test "unsafe_write_uint64_le basic functionality" {
   // Test with zero
   let zero_buffer : FixedArray[Byte] = FixedArray::make(8, 255) // Fill with 0xFF initially
   FixedArray::unsafe_write_uint64_le(zero_buffer, 0, 0UL)
-  for i in 0..=7 {
+  for i in 0..<=7 {
     inspect(zero_buffer[i], content="b'\\x00'")
   }
 
   // Test with maximum value
   let max_buffer : FixedArray[Byte] = FixedArray::make(8, 0)
   FixedArray::unsafe_write_uint64_le(max_buffer, 0, 0xFFFFFFFFFFFFFFFFUL)
-  for i in 0..=7 {
+  for i in 0..<=7 {
     inspect(max_buffer[i], content="b'\\xFF'") // All bytes should be 0xFF
   }
 }
@@ -87,14 +87,14 @@ test "unsafe_write_uint32_le basic functionality" {
   // Test with zero
   let zero_buffer : FixedArray[Byte] = FixedArray::make(4, 255)
   FixedArray::unsafe_write_uint32_le(zero_buffer, 0, 0U)
-  for i in 0..=3 {
+  for i in 0..<=3 {
     inspect(zero_buffer[i], content="b'\\x00'")
   }
 
   // Test with maximum value
   let max_buffer : FixedArray[Byte] = FixedArray::make(4, 0)
   FixedArray::unsafe_write_uint32_le(max_buffer, 0, 0xFFFFFFFFU)
-  for i in 0..=3 {
+  for i in 0..<=3 {
     inspect(max_buffer[i], content="b'\\xFF'")
   }
 }
@@ -176,12 +176,12 @@ test "unsafe write functions with different offsets" {
 
   // Check the results
   // UInt64 at 0-7 (little-endian)
-  for i in 0..=7 {
+  for i in 0..<=7 {
     inspect(buffer[i], content="b'\\x11'") // 0x11
   }
 
   // UInt32 at 8-11 (little-endian)  
-  for i in 8..=11 {
+  for i in 8..<=11 {
     inspect(buffer[i], content="b'\\x22'") // 0x22
   }
 
@@ -269,12 +269,12 @@ test "edge cases with boundary values" {
   // Test with 1 (should only set the least significant bit)
   FixedArray::unsafe_write_uint64_le(buffer, 0, 1UL)
   inspect(buffer[0], content="b'\\x01'")
-  for i in 1..=7 {
+  for i in 1..<=7 {
     inspect(buffer[i], content="b'\\x00'")
   }
 
   // Reset buffer  
-  for i in 0..=7 {
+  for i in 0..<=7 {
     buffer[i] = 0
   }
 
@@ -282,7 +282,7 @@ test "edge cases with boundary values" {
   FixedArray::unsafe_write_uint64_le(buffer, 0, 256UL)
   inspect(buffer[0], content="b'\\x00'")
   inspect(buffer[1], content="b'\\x01'")
-  for i in 2..=7 {
+  for i in 2..<=7 {
     inspect(buffer[i], content="b'\\x00'")
   }
 }
@@ -299,13 +299,13 @@ test "overlapping writes" {
   FixedArray::unsafe_write_uint32_le(buffer, 4, 0x00000000U)
 
   // Check results: first 4 bytes should still be 0xFF, next 4 should be 0x00
-  for i in 0..=3 {
+  for i in 0..<=3 {
     inspect(buffer[i], content="b'\\xFF'") // 0xFF
   }
-  for i in 4..=7 {
+  for i in 4..<=7 {
     inspect(buffer[i], content="b'\\x00'") // 0x00
   }
-  for i in 8..=11 {
+  for i in 8..<=11 {
     inspect(buffer[i], content="b'\\x00'") // Should remain 0 (untouched)
   }
 }
