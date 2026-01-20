@@ -476,19 +476,19 @@ test "nested json" {
 test "call stack overflow" {
   let depth = 50000
   let json_string = StringBuilder::new()
-  for _ in 0..=depth {
+  for _ in 0..<=depth {
     json_string.write_char('[')
   }
-  for _ in 0..=depth {
+  for _ in 0..<=depth {
     json_string.write_char(']')
   }
   let _ = @json.parse(json_string.to_string()) catch { _ => null }
   let depth = 1500
   let json_string = StringBuilder::new()
-  for _ in 0..=depth {
+  for _ in 0..<=depth {
     json_string.write_char('[')
   }
-  for _ in 0..=depth {
+  for _ in 0..<=depth {
     json_string.write_char(']')
   }
   try @json.parse(json_string.to_string()) catch {
@@ -512,7 +512,7 @@ test "stringify deep nested array" {
   // Build a deeply nested JSON array like [[[[[]]]]] with depth = 6000
   let depth = 6000
   let mut j : Json = []
-  for _ in 1..=depth {
+  for _ in 1..<=depth {
     j = [j]
   }
   let s = j.stringify()
@@ -525,7 +525,7 @@ test "stringify deep nested object" {
   // Build a deeply nested object like {"a":{"a":{ ... {"a":null}}}} with depth = 6000
   let depth = 6000
   let mut j : Json = null
-  for _ in 1..=depth {
+  for _ in 1..<=depth {
     j = { "a": j }
   }
   let s = j.stringify()

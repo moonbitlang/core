@@ -237,7 +237,7 @@ test "HAMT::union with branch" {
   let m1 = @hashset.from_array([1, 2, 3])
   let m2 = @hashset.from_array([4, 5, 6])
   let u = m1.union(m2)
-  for i in 1..=6 {
+  for i in 1..<=6 {
     assert_eq(u.contains(i), true)
   }
 }
