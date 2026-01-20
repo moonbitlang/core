@@ -1720,8 +1720,15 @@ pub fn BigInt::to_int(self : BigInt) -> Int {
 /// }
 /// ```
 pub fn BigInt::to_uint(self : BigInt) -> UInt {
-  let value = if self.sign == Negative { (1N << 32) + self } else { self }
-  value.limbs[0]
+  let low_limb = self.limbs[0]
+  if self.sign == Negative {
+    // For negative numbers, return (2^32 - low_limb) mod 2^32
+    // This computes the two's complement representation
+    // Equivalent to: 2^32 - low_limb = (2^32 - 1 - low_limb) + 1
+    4294967295U - low_limb + 1U
+  } else {
+    low_limb
+  }
 }
 
 ///|
