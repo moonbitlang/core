@@ -60,7 +60,7 @@ fn SymbolMap::finalize_dense(
   self.each_intervals(lb, ub, (lo, hi) => {
     let symbol = repr.length()
     repr.push(lo)
-    for c in lo..<=hi {
+    for c in lo..=hi {
       table[c] = symbol
     }
   })

@@ -19,7 +19,7 @@ pub fn BytesView::find(target : BytesView, pattern : BytesView) -> Int? {
   // TODO: more efficient algorithm
   let target_len = target.length()
   let pattern_len = pattern.length()
-  for i in 0..<=(target_len - pattern_len) {
+  for i in 0..=(target_len - pattern_len) {
     for j in 0..<pattern_len {
       guard target.unsafe_get(i + j) == pattern.unsafe_get(j) else { break }
     } else {

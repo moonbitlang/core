@@ -184,11 +184,11 @@ test "complex" {
   let arr = (0).until(1000, inclusive=true).collect()
   arr.shuffle_in_place(rand~)
   let pq = @priority_queue.new()
-  for i in 0..<=1000 {
+  for i in 0..=1000 {
     pq.push(arr[i])
   }
   assert_eq(pq.length(), 1001)
-  for i in 0..<=1000 {
+  for i in 0..=1000 {
     assert_eq(pq.pop(), Some(1000 - i))
   }
   inspect(pq.iter(), content="[]")
@@ -198,11 +198,11 @@ test "complex" {
 ///|
 test "priority queue large data" {
   let pq = @priority_queue.new()
-  for i in 0..<=10000000 {
+  for i in 0..=10000000 {
     pq.push(-i)
   }
   assert_eq(pq.length(), 10000001)
-  for i in 0..<=10000000 {
+  for i in 0..=10000000 {
     assert_eq(pq.pop(), Some(-i))
   }
   inspect(pq.iter(), content="[]")

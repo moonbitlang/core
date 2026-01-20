@@ -735,7 +735,7 @@ test "offset_of_nth_char property" {
 test "offset_of_nth_char property negative" {
   let s = "a😭b😂c"
   let n = s.char_length()
-  for i in 1..<=n {
+  for i in 1..=n {
     let index = s.offset_of_nth_char(-i).unwrap()
     assert_eq(s.get_char(index).unwrap(), s.rev_iter().nth(i - 1).unwrap())
   }
