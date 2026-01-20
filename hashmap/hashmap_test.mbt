@@ -493,6 +493,27 @@ test "@hashmap.merge_in_place self-aliasing should be no-op" {
 }
 
 ///|
+test "@hashmap.set updating existing key should not grow" {
+  let map : @hashmap.HashMap[String, Int] = @hashmap.new()
+  // Fill to exactly at grow threshold: capacity=8, size=4
+  for i in 0..<4 {
+    map.set(i.to_string(), i)
+  }
+  assert_eq(map.capacity(), 8)
+  assert_eq(map.length(), 4)
+  // Update existing keys - should NOT trigger grow
+  for i in 0..<4 {
+    map.set(i.to_string(), i * 10)
+  }
+  assert_eq(map.capacity(), 8) // Should still be 8, not 16
+  assert_eq(map.length(), 4)
+  // Verify values were updated
+  for i in 0..<4 {
+    assert_eq(map.get(i.to_string()), Some(i * 10))
+  }
+}
+
+///|
 priv struct Key(Int, Int) derive(Eq)
 
 ///|

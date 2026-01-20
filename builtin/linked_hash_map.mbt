@@ -116,27 +116,42 @@ fn[K : Eq, V] Map::set_with_hash(
   value : V,
   hash : Int,
 ) -> Unit {
-  if self.size >= self.grow_at {
-    self.grow()
-  }
-  let (idx, psl) = for psl = 0, idx = hash & self.capacity_mask {
+  // Only grow when actually inserting a new entry, not when updating existing
+  for psl = 0, idx = hash & self.capacity_mask {
     match self.entries[idx] {
-      None => break (idx, psl)
+      None => {
+        // Need to insert new entry - check if grow is needed first
+        if self.size >= self.grow_at {
+          self.grow()
+          // Restart search with new capacity_mask
+          continue 0, hash & self.capacity_mask
+        }
+        let entry = { prev: self.tail, next: None, psl, key, value, hash }
+        self.add_entry_to_tail(idx, entry)
+        return
+      }
       Some(curr_entry) => {
         if curr_entry.hash == hash && curr_entry.key == key {
+          // Key exists - just update value, no grow needed
           curr_entry.value = value
           return
         }
         if psl > curr_entry.psl {
+          // Need to insert and push away - check if grow is needed first
+          if self.size >= self.grow_at {
+            self.grow()
+            // Restart search with new capacity_mask
+            continue 0, hash & self.capacity_mask
+          }
           self.push_away(idx, curr_entry)
-          break (idx, psl)
+          let entry = { prev: self.tail, next: None, psl, key, value, hash }
+          self.add_entry_to_tail(idx, entry)
+          return
         }
         continue psl + 1, (idx + 1) & self.capacity_mask
       }
     }
   }
-  let entry = { prev: self.tail, next: None, psl, key, value, hash }
-  self.add_entry_to_tail(idx, entry)
 }
 
 ///|
