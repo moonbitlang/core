@@ -87,6 +87,12 @@ pub using @builtin {type Iter2}
 
 pub using @builtin {type IterResult}
 
+#deprecated
+pub using @builtin {type Iter as Iterator}
+
+#deprecated
+pub using @builtin {type Iter2 as Iterator2}
+
 pub using @builtin {type Json}
 
 pub using @builtin {type Map}
