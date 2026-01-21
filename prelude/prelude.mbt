@@ -33,7 +33,6 @@ pub using @builtin {
   println,
   not,
   repr,
-  dump,
   trait Eq,
   trait Compare,
   trait Hash,
@@ -60,9 +59,7 @@ pub using @builtin {
   type Failure,
   type Hasher,
   type Iter,
-  type Iterator,
   type Iter2,
-  type Iterator2,
   type IterResult,
   type Json,
   type Map,
@@ -137,3 +134,23 @@ pub let null : Json = @builtin.null
 
 ///|
 pub using @json {trait FromJson, json_inspect}
+
+///|
+/// Prints and returns the value of a given expression for quick and dirty debugging.
+/// This could also be useful to print some logs to trace the progress.
+/// For example, you can put `dump(())` in each line, the execution will print the line number
+/// when it reaches that line.
+#callsite(autofill(loc))
+#deprecated("This function is for debugging only and should not be used in production")
+#warnings("-deprecated")
+pub fn[T] dump(t : T, name? : String, loc~ : SourceLoc) -> T {
+  @builtin.dump(t, name?, loc~)
+}
+
+///|
+#deprecated("The name `Iterator` is deprecated, use `Iter` instead. Note that if you have defined `iterator()` method to support `for .. in` loop, you should also rename `iterator()` to `iter()`. See https://github.com/moonbitlang/core/pull/3127 for more details.")
+pub type Iterator[X] = Iter[X]
+
+///|
+#deprecated("The name `Iterator2` is deprecated, use `Iter2` instead. Note that if you have defined `iterator2()` method to support `for .. in` loop, you should also rename `iterator2()` to `iter2()`. See https://github.com/moonbitlang/core/pull/3127 for more details.")
+pub type Iterator2[X, Y] = Iter2[X, Y]
