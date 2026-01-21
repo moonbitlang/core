@@ -538,7 +538,7 @@ test "rev_iter when head needs to wrap around" {
   dq.unsafe_pop_front()
   dq.push_back(2)
   dq.unsafe_pop_front()
-  for i in 3..=6 {
+  for i in 3..<=6 {
     dq.push_back(i)
   }
   inspect(dq.rev_iter().to_array(), content="[6, 5, 4, 3]")
@@ -551,7 +551,7 @@ test "rev_iter2 when head needs to wrap around" {
   dq.unsafe_pop_front()
   dq.push_back(2)
   dq.unsafe_pop_front()
-  for i in 3..=6 {
+  for i in 3..<=6 {
     dq.push_back(i)
   }
   inspect(dq.rev_iter2(), content="[(0, 6), (1, 5), (2, 4), (3, 3)]")
@@ -680,10 +680,10 @@ test "test_shrink_to_fit" {
   tester.reserve_capacity(63)
   let max_cap = tester.capacity()
   let start = 0
-  for len in 0..=cap {
+  for len in 0..<=cap {
     // 0, 1, 2, .., len - 1
     let expected = @deque.from_array(start.until(len).collect())
-    for head_pos in 0..=max_cap {
+    for head_pos in 0..<=max_cap {
       tester.reserve_capacity(head_pos)
       tester.clear()
       tester.reserve_capacity(63)
@@ -699,10 +699,10 @@ test "test_shrink_to_fit" {
 
 ///|
 test "test_from_vec" {
-  for cap in 0..=35 {
-    for len in 0..=cap {
+  for cap in 0..<=35 {
+    for len in 0..<=cap {
       let vec = Array::make(cap, 0)
-      for i in 0..=len {
+      for i in 0..<=len {
         vec.push(i)
       }
       let vd = @deque.from_array(vec)
@@ -763,11 +763,11 @@ test "deque guard iter coverage improvement" {
   let dq = @deque.new(capacity=15)
   // Use push_front only
   fn test_n_via_push_front(n : Int) -> Unit raise {
-    for i in 0..=n {
+    for i in 0..<=n {
       dq.push_front(i)
     }
     let mut sym = -1
-    for t in 0..=n {
+    for t in 0..<=n {
       for elem in dq.iter() {
         sym = elem
         if elem == t {
@@ -800,7 +800,7 @@ test "deque guard iter after push_front and push_back" {
   dq.push_front(-1)
   let arr = FixedArray::from_iter(dq.iter())
   assert_eq(arr, [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14])
-  for t in 0..=15 {
+  for t in 0..<=15 {
     let mut count = 0
     let mut expect = -2
     for i in dq.iter() {
@@ -820,11 +820,11 @@ test "deque guard iter2 coverage improvement" {
   let dq = @deque.new(capacity=15)
   // Use push_front only
   fn test_n_via_push_front(n : Int) -> Unit raise {
-    for i in 0..=n {
+    for i in 0..<=n {
       dq.push_front(i)
     }
     let mut sym = (-1, -1)
-    for t in 0..=n {
+    for t in 0..<=n {
       for index, elem in dq.iter2() {
         sym = (index, elem)
         if elem == n - t {
@@ -1238,13 +1238,13 @@ test "binary_search when wrapped around" {
 ///|
 test "binary_search on wrapped deque with first/mid/last checks" {
   let dq = @deque.new(capacity=10)
-  for i in 1..=9 {
+  for i in 1..<=9 {
     dq.push_back(i)
   }
-  for _ in 1..=5 {
+  for _ in 1..<=5 {
     dq.unsafe_pop_front()
   }
-  for i in 10..=12 {
+  for i in 10..<=12 {
     dq.push_back(i)
   }
   inspect(dq.as_views(), content="([6, 7, 8, 9, 10], [11, 12])")

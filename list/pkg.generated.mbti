@@ -1,11 +1,11 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/list"
 
-import(
-  "moonbitlang/core/json"
-  "moonbitlang/core/quickcheck"
-  "moonbitlang/core/quickcheck/splitmix"
-)
+import {
+  "moonbitlang/core/json",
+  "moonbitlang/core/quickcheck",
+  "moonbitlang/core/quickcheck/splitmix",
+}
 
 // Values
 pub fn[X] default() -> List[X]

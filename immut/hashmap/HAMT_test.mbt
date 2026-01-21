@@ -686,7 +686,7 @@ test "HAMT::union with branch" {
   let m1 = @hashmap.from_array([(1, 1), (2, 2), (3, 3)])
   let m2 = @hashmap.from_array([(4, 4), (5, 5), (6, 6)])
   let u = m1.union(m2)
-  for i in 1..=6 {
+  for i in 1..<=6 {
     inspect(u.contains(i), content="true")
   }
 }
