@@ -16,7 +16,7 @@
 test "extract bit" {
   let bs1 = b"\x89\xab\xcd\xef"
   let bs2 : Array[Byte] = bs1.to_array()
-  for i in 0..=(bs1.length() * 8 - 1) {
+  for i in 0..<=(bs1.length() * 8 - 1) {
     assert_eq(bs1.unsafe_extract_bit(i, 1), bs2.unsafe_extract_bit(i, 1))
   }
 }
@@ -83,7 +83,7 @@ test "panic BytesView::unsafe_extract_uint64_be invalid len" {
 test "extract byte" {
   let bs1 = b"\x89\xab\xcd\xef"
   let bs2 : Array[Byte] = bs1.to_array()
-  for i in 0..=(bs1.length() * 8 - 8) {
+  for i in 0..<=(bs1.length() * 8 - 8) {
     assert_eq(bs1.unsafe_extract_byte(i, 2), bs2.unsafe_extract_byte(i, 2))
     assert_eq(bs1.unsafe_extract_byte(i, 3), bs2.unsafe_extract_byte(i, 3))
     assert_eq(bs1.unsafe_extract_byte(i, 4), bs2.unsafe_extract_byte(i, 4))
@@ -96,7 +96,7 @@ test "extract byte" {
 test "extract int32" {
   let bs1 = b"\x89\xab\xcd\xef\x01\x23\x45\x67"
   let bs2 : Array[Byte] = bs1.to_array()
-  for i in 0..=(bs1.length() * 8 - 32) {
+  for i in 0..<=(bs1.length() * 8 - 32) {
     assert_eq(
       bs1.unsafe_extract_uint_be(i, 9),
       bs2.unsafe_extract_uint_be(i, 9),
@@ -152,7 +152,7 @@ test "extract int32" {
 test "extract int64" {
   let bs1 = b"\x89\xab\xcd\xef\x01\x23\x45\x67\x01\x23\x45\x67\x89\xab\xcd\xef"
   let bs2 : Array[Byte] = bs1.to_array()
-  for i in 0..=(bs1.length() * 8 - 64) {
+  for i in 0..<=(bs1.length() * 8 - 64) {
     assert_eq(
       bs1.unsafe_extract_uint64_be(i, 33),
       bs2.unsafe_extract_uint64_be(i, 33),
@@ -215,8 +215,8 @@ test "extract view" {
     }
   }
 
-  for i in 0..=bs1.length() {
-    for j in 0..=(bs1.length() - i) {
+  for i in 0..<=bs1.length() {
+    for j in 0..<=(bs1.length() - i) {
       equal(
         bs1.unsafe_extract_bytesview(i * 8, j * 8),
         bs2.unsafe_extract_bytesview(i * 8, j * 8),
@@ -230,7 +230,7 @@ test "FixedArray extract bit" {
   let bs1 = b"\x89\xab\xcd\xef"
   let bs2 : Array[Byte] = bs1.to_array()
   let bs3 : FixedArray[Byte] = FixedArray::from_array(bs2)
-  for i in 0..=(bs1.length() * 8 - 1) {
+  for i in 0..<=(bs1.length() * 8 - 1) {
     assert_eq(bs3.unsafe_extract_bit(i, 1), bs2.unsafe_extract_bit(i, 1))
     assert_eq(bs3.unsafe_extract_bit(i, 1), bs1.unsafe_extract_bit(i, 1))
   }
@@ -241,7 +241,7 @@ test "FixedArray extract byte" {
   let bs1 = b"\x89\xab\xcd\xef"
   let bs2 : Array[Byte] = bs1.to_array()
   let bs3 : FixedArray[Byte] = FixedArray::from_array(bs2)
-  for i in 0..=(bs1.length() * 8 - 8) {
+  for i in 0..<=(bs1.length() * 8 - 8) {
     assert_eq(bs3.unsafe_extract_byte(i, 2), bs2.unsafe_extract_byte(i, 2))
     assert_eq(bs3.unsafe_extract_byte(i, 3), bs2.unsafe_extract_byte(i, 3))
     assert_eq(bs3.unsafe_extract_byte(i, 4), bs2.unsafe_extract_byte(i, 4))
@@ -260,7 +260,7 @@ test "FixedArray extract int32" {
   let bs1 = b"\x89\xab\xcd\xef\x01\x23\x45\x67"
   let bs2 : Array[Byte] = bs1.to_array()
   let bs3 : FixedArray[Byte] = FixedArray::from_array(bs2)
-  for i in 0..=(bs1.length() * 8 - 32) {
+  for i in 0..<=(bs1.length() * 8 - 32) {
     // Test big-endian extraction
     assert_eq(
       bs3.unsafe_extract_uint_be(i, 9),
@@ -370,7 +370,7 @@ test "FixedArray extract int64" {
   let bs1 = b"\x89\xab\xcd\xef\x01\x23\x45\x67\x01\x23\x45\x67\x89\xab\xcd\xef"
   let bs2 : Array[Byte] = bs1.to_array()
   let bs3 : FixedArray[Byte] = FixedArray::from_array(bs2)
-  for i in 0..=(bs1.length() * 8 - 64) {
+  for i in 0..<=(bs1.length() * 8 - 64) {
     // Test big-endian extraction
     assert_eq(
       bs3.unsafe_extract_uint64_be(i, 33),
@@ -494,8 +494,8 @@ test "FixedArray extract view" {
     }
   }
 
-  for i in 0..=bs1.length() {
-    for j in 0..=(bs1.length() - i) {
+  for i in 0..<=bs1.length() {
+    for j in 0..<=(bs1.length() - i) {
       // Test FixedArray vs Array
       equal(
         bs3.unsafe_extract_bytesview(i * 8, j * 8),
@@ -540,7 +540,7 @@ test "extract bit signed extremes" {
 test "extract byte signed" {
   let bs1 : BytesView = b"\x7F\xFF\x80\x00\xAA\x55"
   let bs2 : ArrayView[Byte] = [0x7F, 0xFF, 0x80, 0x00, 0xAA, 0x55]
-  for i in 0..=(bs1.length() * 8 - 8) {
+  for i in 0..<=(bs1.length() * 8 - 8) {
     assert_eq(
       bs1.unsafe_extract_byte_signed(i, 2),
       bs2.unsafe_extract_byte_signed(i, 2),
@@ -570,7 +570,7 @@ test "extract int signed" {
   let bs2 : ArrayView[Byte] = [
     0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x80, 0x01, 0x00, 0x00, 0x00,
   ]
-  for i in 0..=(bs1.length() * 8 - 32) {
+  for i in 0..<=(bs1.length() * 8 - 32) {
     // Test big-endian signed extraction
     assert_eq(bs1.unsafe_extract_int_be(i, 9), bs2.unsafe_extract_int_be(i, 9))
     assert_eq(
@@ -626,7 +626,7 @@ test "extract int64 signed" {
     0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x80, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
   ]
-  for i in 0..=(bs1.length() * 8 - 64) {
+  for i in 0..<=(bs1.length() * 8 - 64) {
     // Test big-endian signed extraction
     assert_eq(
       bs1.unsafe_extract_int64_be(i, 33),

@@ -1,10 +1,10 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/internal/regex_engine/automata"
 
-import(
-  "moonbitlang/core/internal/regex_engine/shared_types"
-  "moonbitlang/core/internal/regex_engine/shared_types/rechar_set"
-)
+import {
+  "moonbitlang/core/internal/regex_engine/shared_types",
+  "moonbitlang/core/internal/regex_engine/shared_types/rechar_set",
+}
 
 // Values
 pub fn delta(ctx~ : Context, State, Int, next_cat~ : @shared_types.Category) -> State
