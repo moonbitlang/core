@@ -1,0 +1,37 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/uint64",
+  "moonbitlang/core/double/internal/ryu",
+}
+
+import "test" {
+  "moonbitlang/core/buffer",
+  "moonbitlang/core/math",
+}
+
+options(
+  targets: {
+    "cbrt_js.mbt": [ "js" ],
+    "cbrt_nonjs.mbt": [ "not", "js" ],
+    "exp_js.mbt": [ "js" ],
+    "exp_nonjs.mbt": [ "not", "js" ],
+    "hyperbolic_js.mbt": [ "js" ],
+    "hyperbolic_nonjs.mbt": [ "not", "js" ],
+    "hypot_js.mbt": [ "js" ],
+    "hypot_nonjs.mbt": [ "not", "js" ],
+    "log_js.mbt": [ "js" ],
+    "log_nonjs.mbt": [ "not", "js" ],
+    "mod_js.mbt": [ "js" ],
+    "mod_nonjs.mbt": [ "not", "js" ],
+    "pow_js.mbt": [ "js" ],
+    "pow_nonjs.mbt": [ "not", "js" ],
+    "round.mbt": [ "not", "js", "wasm", "wasm-gc" ],
+    "round_js.mbt": [ "js" ],
+    "round_wasm.mbt": [ "wasm", "wasm-gc" ],
+    "scalbn.mbt": [ "not", "js" ],
+    "to_uint.mbt": [ "not", "wasm", "wasm-gc" ],
+    "to_uint_wasm.mbt": [ "wasm", "wasm-gc" ],
+    "trig_js.mbt": [ "js" ],
+    "trig_nonjs.mbt": [ "not", "js" ],
+  },
+)

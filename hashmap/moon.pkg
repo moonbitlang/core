@@ -1,0 +1,12 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/test",
+  "moonbitlang/core/array",
+  "moonbitlang/core/tuple",
+  "moonbitlang/core/quickcheck",
+  "moonbitlang/core/int",
+}
+
+import "test" {
+  "moonbitlang/core/json",
+}

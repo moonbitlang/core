@@ -1,0 +1,7 @@
+import {
+  "moonbitlang/core/builtin",
+}
+
+import "test" {
+  "moonbitlang/core/json",
+}

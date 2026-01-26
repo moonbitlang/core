@@ -1,0 +1,6 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/hashset",
+  "moonbitlang/core/immut/sorted_map" as @immut/sorted_map,
+  "moonbitlang/core/internal/regex_engine/shared_types",
+}
