@@ -368,7 +368,8 @@ pub fn[T] FixedArray::mut_view(
 /// * `end` : The ending index in the array (exclusive). Defaults to the
 /// length of the array.
 #alias("_[_:_]")
-pub fn[T] MutArrayView::sub(
+#alias(sub, deprecated="Use _[_:_] instead")
+pub fn[T] MutArrayView::view(
   self : MutArrayView[T],
   start? : Int = 0,
   end? : Int,

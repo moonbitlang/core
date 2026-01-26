@@ -409,11 +409,12 @@ pub fn[T] MutArrayView::sort_by(Self[T], (T, T) -> Int) -> Unit
 pub fn[T, K : Compare] MutArrayView::sort_by_key(Self[T], (T) -> K) -> Unit
 pub fn[T : Compare] MutArrayView::stable_sort(Self[T]) -> Unit
 pub fn[T] MutArrayView::start_offset(Self[T]) -> Int
-#alias("_[_:_]")
-pub fn[T] MutArrayView::sub(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 pub fn[T] MutArrayView::to_array(Self[T]) -> Array[T]
 pub fn[T] MutArrayView::unsafe_get(Self[T], Int) -> T
 pub fn[T] MutArrayView::unsafe_set(Self[T], Int, T) -> Unit
+#alias("_[_:_]")
+#alias(sub, deprecated)
+pub fn[T] MutArrayView::view(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 pub impl[T : Compare] Compare for MutArrayView[T]
 pub impl[T : Eq] Eq for MutArrayView[T]
 pub impl[A : Hash] Hash for MutArrayView[A]
