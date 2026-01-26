@@ -297,6 +297,36 @@ test "compare" {
 }
 
 ///|
+test "lexical_compare" {
+  // Test equal arrays
+  inspect([1, 2, 3][:].lexical_compare([1, 2, 3][:]), content="0")
+  inspect(
+    ([] : Array[Int])[0:0].lexical_compare(([] : Array[Int])[0:0]),
+    content="0",
+  )
+
+  // Test shorter is less when prefix matches
+  inspect([1, 2][:].lexical_compare([1, 2, 3][:]), content="-1")
+  inspect([1, 2, 3][:].lexical_compare([1, 2][:]), content="1")
+  inspect(([] : Array[Int])[0:0].lexical_compare([1][:]), content="-1")
+  inspect([1][:].lexical_compare(([] : Array[Int])[0:0]), content="1")
+
+  // Test element-wise comparison (differs from shortlex)
+  inspect([1, 2, 3][:].lexical_compare([1, 2, 4][:]), content="-1")
+  inspect([1, 2, 4][:].lexical_compare([1, 2, 3][:]), content="1")
+
+  // Key difference from Compare trait: lexical compares elements first, not length
+  // Compare trait: [1, 2, 0].compare([1, 2]) == 1 (longer is greater by shortlex)
+  // lexical_compare: [1, 2, 0].lexical_compare([1, 2]) == 1 (longer is greater since prefix matches)
+  inspect([1, 2, 0][:].lexical_compare([1, 2][:]), content="1")
+
+  // Elements are compared before considering length
+  // [1, 3] > [1, 2, 9] because 3 > 2 at position 1
+  inspect([1, 3][:].lexical_compare([1, 2, 9][:]), content="1")
+  inspect([1, 2, 9][:].lexical_compare([1, 3][:]), content="-1")
+}
+
+///|
 test "iter" {
   let array = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
   @json.json_inspect(array[:].iter().to_array(), content=[

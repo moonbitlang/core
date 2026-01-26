@@ -800,3 +800,31 @@ pub fn Bytes::repeat(self : Self, count : Int) -> Bytes {
   }
   unsafe_to_bytes(arr)
 }
+
+///|
+/// Performs a lexicographical comparison of two byte sequences.
+///
+/// This method compares the sequences byte by byte until a difference is found
+/// or one sequence is exhausted. Unlike the `Compare` trait implementation which
+/// uses shortlex order (shorter sequences come first), this method compares based
+/// purely on byte values until a difference is found.
+///
+/// # Returns
+///
+/// - A negative integer if `self` is lexicographically less than `other`
+/// - Zero if `self` is lexicographically equal to `other`
+/// - A positive integer if `self` is lexicographically greater than `other`
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   inspect(b"\x01\x02".lexical_compare(b"\x01\x02\x03"), content="-1")
+///   inspect(b"\x01\x02\x03".lexical_compare(b"\x01\x02"), content="1")
+///   inspect(b"\x01\x02\x03".lexical_compare(b"\x01\x02\x03"), content="0")
+///   inspect(b"\x01\x02\x03".lexical_compare(b"\x01\x02\x04"), content="-1")
+/// }
+/// ```
+pub fn Bytes::lexical_compare(self : Bytes, other : Bytes) -> Int {
+  self[:].lexical_compare(other[:])
+}

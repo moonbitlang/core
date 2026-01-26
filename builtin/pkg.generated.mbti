@@ -122,6 +122,7 @@ pub fn[A] Array::iter2(Self[A]) -> Iter2[Int, A]
 pub fn[A : ToStringView] Array::join(Self[A], StringView) -> String
 pub fn[A] Array::last(Self[A]) -> A?
 pub fn[T] Array::length(Self[T]) -> Int
+pub fn[T : Compare] Array::lexical_compare(Self[T], Self[T]) -> Int
 pub fn[T] Array::make(Int, T) -> Self[T]
 pub fn[T] Array::makei(Int, (Int) -> T raise?) -> Self[T] raise?
 pub fn[T, U] Array::map(Self[T], (T) -> U raise?) -> Self[U] raise?
@@ -214,6 +215,7 @@ pub fn[X] ArrayView::iter2(Self[X]) -> Iter2[Int, X]
 pub fn[A : ToStringView] ArrayView::join(Self[A], StringView) -> String
 pub fn[T] ArrayView::last(Self[T]) -> T?
 pub fn[T] ArrayView::length(Self[T]) -> Int
+pub fn[T : Compare] ArrayView::lexical_compare(Self[T], Self[T]) -> Int
 pub fn[T, U] ArrayView::map(Self[T], (T) -> U raise?) -> Array[U] raise?
 pub fn[T, U] ArrayView::mapi(Self[T], (Int, T) -> U raise?) -> Array[U] raise?
 pub fn[A, B] ArrayView::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
@@ -793,6 +795,7 @@ pub fn[X] FixedArray::iter2(Self[X]) -> Iter2[Int, X]
 pub fn FixedArray::join(Self[String], StringView) -> String
 pub fn[A] FixedArray::last(Self[A]) -> A?
 pub fn[T] FixedArray::length(Self[T]) -> Int
+pub fn[T : Compare] FixedArray::lexical_compare(Self[T], Self[T]) -> Int
 pub fn[T] FixedArray::make(Int, T) -> Self[T]
 pub fn[T] FixedArray::makei(Int, (Int) -> T raise?) -> Self[T] raise?
 pub fn[T, U] FixedArray::map(Self[T], (T) -> U raise?) -> Self[U] raise?
@@ -883,6 +886,7 @@ pub fn Bytes::iter(Bytes) -> Iter[Byte]
 #alias(iterator2, deprecated)
 pub fn Bytes::iter2(Bytes) -> Iter2[Int, Byte]
 pub fn Bytes::length(Bytes) -> Int
+pub fn Bytes::lexical_compare(Bytes, Bytes) -> Int
 pub fn Bytes::make(Int, Byte) -> Bytes
 pub fn Bytes::makei(Int, (Int) -> Byte raise?) -> Bytes raise?
 pub fn Bytes::new(Int) -> Bytes
@@ -907,6 +911,7 @@ pub fn BytesView::iter(Self) -> Iter[Byte]
 #alias(iterator2, deprecated)
 pub fn BytesView::iter2(Self) -> Iter2[Int, Byte]
 pub fn BytesView::length(Self) -> Int
+pub fn BytesView::lexical_compare(Self, Self) -> Int
 pub fn BytesView::rev_find(Self, Self) -> Int?
 pub fn BytesView::start_offset(Self) -> Int
 #alias("_[_:_]")

@@ -1559,3 +1559,38 @@ pub fn[T] FixedArray::copy(self : FixedArray[T]) -> FixedArray[T] {
 pub fn[T] FixedArray::copy(self : FixedArray[T]) -> FixedArray[T] {
   JSArray::ofAnyFixedArray(self).copy().toAnyFixedArray()
 }
+
+///|
+/// Performs a lexicographical comparison of two fixed arrays.
+///
+/// This method compares the arrays element by element until a difference is
+/// found or one array is exhausted. Unlike the `Compare` trait implementation
+/// which uses shortlex order (shorter arrays come first), this method compares
+/// based purely on element values until a difference is found.
+///
+/// # Returns
+///
+/// - A negative integer if `self` is lexicographically less than `other`
+/// - Zero if `self` is lexicographically equal to `other`
+/// - A positive integer if `self` is lexicographically greater than `other`
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   let a : FixedArray[Int] = [1, 2]
+///   let b : FixedArray[Int] = [1, 2, 3]
+///   inspect(a.lexical_compare(b), content="-1")
+///   inspect(b.lexical_compare(a), content="1")
+///   let c : FixedArray[Int] = [1, 2, 3]
+///   inspect(b.lexical_compare(c), content="0")
+///   let d : FixedArray[Int] = [1, 2, 4]
+///   inspect(b.lexical_compare(d), content="-1")
+/// }
+/// ```
+pub fn[T : Compare] FixedArray::lexical_compare(
+  self : FixedArray[T],
+  other : FixedArray[T],
+) -> Int {
+  self[:].lexical_compare(other[:])
+}

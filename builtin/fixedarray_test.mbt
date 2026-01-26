@@ -36,6 +36,37 @@ test "compare" {
 }
 
 ///|
+test "lexical_compare" {
+  // Test equal arrays
+  let arr1 : FixedArray[Int] = [1, 2, 3]
+  let arr2 : FixedArray[Int] = [1, 2, 3]
+  inspect(arr1.lexical_compare(arr2), content="0")
+  let empty1 : FixedArray[Int] = []
+  let empty2 : FixedArray[Int] = []
+  inspect(empty1.lexical_compare(empty2), content="0")
+
+  // Test shorter is less when prefix matches
+  let short : FixedArray[Int] = [1, 2]
+  let long : FixedArray[Int] = [1, 2, 3]
+  inspect(short.lexical_compare(long), content="-1")
+  inspect(long.lexical_compare(short), content="1")
+  let one : FixedArray[Int] = [1]
+  inspect(empty1.lexical_compare(one), content="-1")
+  inspect(one.lexical_compare(empty1), content="1")
+
+  // Test element-wise comparison
+  let arr3 : FixedArray[Int] = [1, 2, 4]
+  inspect(arr1.lexical_compare(arr3), content="-1")
+  inspect(arr3.lexical_compare(arr1), content="1")
+
+  // Elements are compared before considering length
+  let a : FixedArray[Int] = [1, 3]
+  let b : FixedArray[Int] = [1, 2, 9]
+  inspect(a.lexical_compare(b), content="1")
+  inspect(b.lexical_compare(a), content="-1")
+}
+
+///|
 test "is_empty" {
   let arr : FixedArray[Int] = []
   assert_true(arr.is_empty())

@@ -366,6 +366,28 @@ test "array_ends_with" {
 }
 
 ///|
+test "lexical_compare" {
+  // Test equal arrays
+  inspect([1, 2, 3].lexical_compare([1, 2, 3]), content="0")
+  inspect(([] : Array[Int]).lexical_compare([]), content="0")
+
+  // Test shorter is less when prefix matches
+  inspect([1, 2].lexical_compare([1, 2, 3]), content="-1")
+  inspect([1, 2, 3].lexical_compare([1, 2]), content="1")
+  inspect(([] : Array[Int]).lexical_compare([1]), content="-1")
+  inspect([1].lexical_compare([]), content="1")
+
+  // Test element-wise comparison
+  inspect([1, 2, 3].lexical_compare([1, 2, 4]), content="-1")
+  inspect([1, 2, 4].lexical_compare([1, 2, 3]), content="1")
+
+  // Elements are compared before considering length
+  // [1, 3] > [1, 2, 9] because 3 > 2 at position 1
+  inspect([1, 3].lexical_compare([1, 2, 9]), content="1")
+  inspect([1, 2, 9].lexical_compare([1, 3]), content="-1")
+}
+
+///|
 test "array_strip_prefix" {
   let arr = [1, 2, 3]
   assert_eq(arr.strip_prefix([1, 2]), Some([3]))

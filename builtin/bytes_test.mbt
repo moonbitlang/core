@@ -334,6 +334,53 @@ test "@builtin.Bytes::compare/empty" {
 }
 
 ///|
+test "Bytes::lexical_compare/basic" {
+  // Test equal sequences
+  inspect(b"\x01\x02\x03".lexical_compare(b"\x01\x02\x03"), content="0")
+  inspect(b"".lexical_compare(b""), content="0")
+
+  // Test shorter is less when prefix matches
+  inspect(b"\x01\x02".lexical_compare(b"\x01\x02\x03"), content="-1")
+  inspect(b"\x01\x02\x03".lexical_compare(b"\x01\x02"), content="1")
+  inspect(b"".lexical_compare(b"\x00"), content="-1")
+  inspect(b"\x00".lexical_compare(b""), content="1")
+
+  // Test element-wise comparison
+  inspect(b"\x01\x02\x03".lexical_compare(b"\x01\x02\x04"), content="-1")
+  inspect(b"\x01\x02\x04".lexical_compare(b"\x01\x02\x03"), content="1")
+
+  // Elements are compared before considering length
+  // b"\x01\x03" > b"\x01\x02\x09" because 0x03 > 0x02 at position 1
+  inspect(b"\x01\x03".lexical_compare(b"\x01\x02\x09"), content="1")
+  inspect(b"\x01\x02\x09".lexical_compare(b"\x01\x03"), content="-1")
+}
+
+///|
+test "BytesView::lexical_compare/basic" {
+  let bytes = b"\x01\x02\x03\x04\x05"
+
+  // Test equal views
+  inspect(bytes[0:3].lexical_compare(bytes[0:3]), content="0")
+  inspect(bytes[0:0].lexical_compare(bytes[5:5]), content="0") // both empty
+
+  // Test shorter is less when prefix matches
+  inspect(bytes[0:2].lexical_compare(bytes[0:3]), content="-1")
+  inspect(bytes[0:3].lexical_compare(bytes[0:2]), content="1")
+
+  // Test element-wise comparison
+  let a = b"\x01\x02\x03"
+  let b = b"\x01\x02\x04"
+  inspect(a[:].lexical_compare(b[:]), content="-1")
+  inspect(b[:].lexical_compare(a[:]), content="1")
+
+  // Elements are compared before considering length
+  let short_higher = b"\x01\x03"
+  let long_lower = b"\x01\x02\x09"
+  inspect(short_higher[:].lexical_compare(long_lower[:]), content="1")
+  inspect(long_lower[:].lexical_compare(short_higher[:]), content="-1")
+}
+
+///|
 test "Bytes find and rev_find" {
   let target = b"abcabc"
   let pattern = b"abc"
