@@ -957,6 +957,46 @@ pub fn[A : ToStringView] ArrayView::join(
   }
 }
 
+///|
+/// Performs a lexicographical comparison of two array views.
+///
+/// This method compares the array views element by element until a difference
+/// is found or one view is exhausted. Unlike the `Compare` trait implementation
+/// which uses shortlex order (shorter views come first), this method compares
+/// based purely on element values until a difference is found.
+///
+/// # Returns
+///
+/// - A negative integer if `self` is lexicographically less than `other`
+/// - Zero if `self` is lexicographically equal to `other`
+/// - A positive integer if `self` is lexicographically greater than `other`
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   inspect([1, 2][:].lexical_compare([1, 2, 3][:]), content="-1")
+///   inspect([1, 2, 3][:].lexical_compare([1, 2][:]), content="1")
+///   inspect([1, 2, 3][:].lexical_compare([1, 2, 3][:]), content="0")
+///   inspect([1, 2, 3][:].lexical_compare([1, 2, 4][:]), content="-1")
+/// }
+/// ```
+pub fn[T : Compare] ArrayView::lexical_compare(
+  self : ArrayView[T],
+  other : ArrayView[T],
+) -> Int {
+  let self_len = self.length()
+  let other_len = other.length()
+  let min_len = if self_len < other_len { self_len } else { other_len }
+  for i in 0..<min_len {
+    let cmp = self.unsafe_get(i).compare(other.unsafe_get(i))
+    if cmp != 0 {
+      return cmp
+    }
+  }
+  self_len.compare(other_len)
+}
+
 // #endregion
 
 // #region trait impls

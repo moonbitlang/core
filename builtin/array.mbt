@@ -2038,3 +2038,34 @@ pub fn[A : ToStringView] Array::join(
 ) -> String {
   self[:].join(separator)
 }
+
+///|
+/// Performs a lexicographical comparison of two arrays.
+///
+/// This method compares the arrays element by element until a difference is
+/// found or one array is exhausted. Unlike the `Compare` trait implementation
+/// which uses shortlex order (shorter arrays come first), this method compares
+/// based purely on element values until a difference is found.
+///
+/// # Returns
+///
+/// - A negative integer if `self` is lexicographically less than `other`
+/// - Zero if `self` is lexicographically equal to `other`
+/// - A positive integer if `self` is lexicographically greater than `other`
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   inspect([1, 2].lexical_compare([1, 2, 3]), content="-1")
+///   inspect([1, 2, 3].lexical_compare([1, 2]), content="1")
+///   inspect([1, 2, 3].lexical_compare([1, 2, 3]), content="0")
+///   inspect([1, 2, 3].lexical_compare([1, 2, 4]), content="-1")
+/// }
+/// ```
+pub fn[T : Compare] Array::lexical_compare(
+  self : Array[T],
+  other : Array[T],
+) -> Int {
+  self[:].lexical_compare(other[:])
+}

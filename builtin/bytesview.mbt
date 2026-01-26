@@ -570,6 +570,43 @@ pub impl Compare for BytesView with compare(self, other) -> Int {
 }
 
 ///|
+/// Performs a lexicographical comparison of two byte views.
+///
+/// This method compares the views byte by byte until a difference is found
+/// or one view is exhausted. Unlike the `Compare` trait implementation which
+/// uses shortlex order (shorter views come first), this method compares based
+/// purely on byte values until a difference is found.
+///
+/// # Returns
+///
+/// - A negative integer if `self` is lexicographically less than `other`
+/// - Zero if `self` is lexicographically equal to `other`
+/// - A positive integer if `self` is lexicographically greater than `other`
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   inspect(b"\x01\x02"[:].lexical_compare(b"\x01\x02\x03"[:]), content="-1")
+///   inspect(b"\x01\x02\x03"[:].lexical_compare(b"\x01\x02"[:]), content="1")
+///   inspect(b"\x01\x02\x03"[:].lexical_compare(b"\x01\x02\x03"[:]), content="0")
+///   inspect(b"\x01\x02\x03"[:].lexical_compare(b"\x01\x02\x04"[:]), content="-1")
+/// }
+/// ```
+pub fn BytesView::lexical_compare(self : BytesView, other : BytesView) -> Int {
+  let self_len = self.length()
+  let other_len = other.length()
+  let min_len = if self_len < other_len { self_len } else { other_len }
+  for i in 0..<min_len {
+    let cmp = self.unsafe_get(i).compare(other.unsafe_get(i))
+    if cmp != 0 {
+      return cmp
+    }
+  }
+  self_len.compare(other_len)
+}
+
+///|
 /// Retrieves the underlying `Bytes` from a `View`.
 pub fn BytesView::data(self : BytesView) -> Bytes {
   self.bytes()
