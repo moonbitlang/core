@@ -236,7 +236,8 @@ pub fn[T] ArrayView::unsafe_get(self : ArrayView[T], index : Int) -> T {
 /// }
 /// ```
 #alias("_[_:_]")
-pub fn[T] Array::sub(
+#alias(sub, deprecated="Use _[_:_] instead")
+pub fn[T] Array::view(
   self : Array[T],
   start? : Int = 0,
   end? : Int,
@@ -285,7 +286,8 @@ pub fn[T] Array::sub(
 /// }
 /// ```
 #alias("_[_:_]")
-pub fn[T] ArrayView::sub(
+#alias(sub, deprecated="Use _[_:_] instead")
+pub fn[T] ArrayView::view(
   self : ArrayView[T],
   start? : Int = 0,
   end? : Int,
@@ -336,7 +338,8 @@ fn[T] unsafe_cast_fixedarray_to_uninitializedarray(
 /// }
 /// ```
 #alias("_[_:_]")
-pub fn[T] FixedArray::sub(
+#alias(sub, deprecated="Use _[_:_] instead")
+pub fn[T] FixedArray::view(
   self : FixedArray[T],
   start? : Int = 0,
   end? : Int,
