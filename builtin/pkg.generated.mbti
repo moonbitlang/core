@@ -168,8 +168,6 @@ pub fn[T] Array::split(Self[T], (T) -> Bool raise?) -> Self[Self[T]] raise?
 pub fn[T : Eq] Array::starts_with(Self[T], Self[T]) -> Bool
 pub fn[T : Eq] Array::strip_prefix(Self[T], Self[T]) -> Self[T]?
 pub fn[T : Eq] Array::strip_suffix(Self[T], Self[T]) -> Self[T]?
-#alias("_[_:_]")
-pub fn[T] Array::sub(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 pub fn[T] Array::suffixes(Self[T], include_empty? : Bool) -> Iter[ArrayView[T]]
 pub fn[T] Array::swap(Self[T], Int, Int) -> Unit
 pub fn[A] Array::truncate(Self[A], Int) -> Unit
@@ -177,6 +175,9 @@ pub fn[A] Array::unsafe_blit_fixed(Self[A], Int, FixedArray[A], Int, Int) -> Uni
 pub fn[T] Array::unsafe_get(Self[T], Int) -> T
 pub fn[T] Array::unsafe_set(Self[T], Int, T) -> Unit
 pub fn[T1, T2] Array::unzip(Self[(T1, T2)]) -> (Self[T1], Self[T2])
+#alias("_[_:_]")
+#alias(sub, deprecated)
+pub fn[T] Array::view(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 pub fn[T] Array::windows(Self[T], Int) -> Self[ArrayView[T]]
 pub fn[A, B] Array::zip(Self[A], Self[B]) -> Self[(A, B)]
 pub fn[A, B] Array::zip_to_iter2(Self[A], Self[B]) -> Iter2[A, B]
@@ -225,10 +226,11 @@ pub fn[X] ArrayView::rev_iter(Self[X]) -> Iter[X]
 pub fn[T : Eq] ArrayView::search(Self[T], T) -> Int?
 pub fn[T] ArrayView::start_offset(Self[T]) -> Int
 pub fn[T : Eq] ArrayView::starts_with(Self[T], Self[T]) -> Bool
-#alias("_[_:_]")
-pub fn[T] ArrayView::sub(Self[T], start? : Int, end? : Int) -> Self[T]
 pub fn[T] ArrayView::suffixes(Self[T], include_empty? : Bool) -> Iter[Self[T]]
 pub fn[T] ArrayView::to_array(Self[T]) -> Array[T]
+#alias("_[_:_]")
+#alias(sub, deprecated)
+pub fn[T] ArrayView::view(Self[T], start? : Int, end? : Int) -> Self[T]
 pub impl[T : Compare] Compare for ArrayView[T]
 pub impl[T : Eq] Eq for ArrayView[T]
 pub impl[A : Hash] Hash for ArrayView[A]
@@ -819,8 +821,6 @@ pub fn[T] FixedArray::sort_by(Self[T], (T, T) -> Int) -> Unit
 pub fn[T, K : Compare] FixedArray::sort_by_key(Self[T], (T) -> K) -> Unit
 pub fn[T : Compare] FixedArray::stable_sort(Self[T]) -> Unit
 pub fn[T : Eq] FixedArray::starts_with(Self[T], Self[T]) -> Bool
-#alias("_[_:_]")
-pub fn[T] FixedArray::sub(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 pub fn[T] FixedArray::swap(Self[T], Int, Int) -> Unit
 pub fn[A] FixedArray::unsafe_blit(Self[A], Int, Self[A], Int, Int) -> Unit
 pub fn FixedArray::unsafe_write_uint16_be(Self[Byte], Int, UInt16) -> Unit
@@ -829,6 +829,9 @@ pub fn FixedArray::unsafe_write_uint32_be(Self[Byte], Int, UInt) -> Unit
 pub fn FixedArray::unsafe_write_uint32_le(Self[Byte], Int, UInt) -> Unit
 pub fn FixedArray::unsafe_write_uint64_be(Self[Byte], Int, UInt64) -> Unit
 pub fn FixedArray::unsafe_write_uint64_le(Self[Byte], Int, UInt64) -> Unit
+#alias("_[_:_]")
+#alias(sub, deprecated)
+pub fn[T] FixedArray::view(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 
 #alias(every)
 pub fn[T] ReadOnlyArray::all(Self[T], (T) -> Bool raise?) -> Bool raise?
@@ -867,7 +870,8 @@ pub fn[A, B] ReadOnlyArray::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B raise
 pub fn[T : Eq] ReadOnlyArray::search(Self[T], T) -> Int?
 pub fn[T : Eq] ReadOnlyArray::starts_with(Self[T], Self[T]) -> Bool
 #alias("_[_:_]")
-pub fn[T] ReadOnlyArray::sub(Self[T], start? : Int, end? : Int) -> ArrayView[T]
+#alias(sub, deprecated)
+pub fn[T] ReadOnlyArray::view(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 
 #alias("_[_]")
 pub fn Bytes::at(Bytes, Int) -> Byte

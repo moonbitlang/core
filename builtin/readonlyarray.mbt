@@ -557,20 +557,21 @@ pub fn[T] ReadOnlyArray::binary_search_by(
 /// ```mbt check
 /// test {
 ///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
-///   let view = arr.sub(start=1, end=4)
+///   let view = arr[1:4]
 ///   inspect(view[0], content="2")
 ///   inspect(view[2], content="4")
 /// }
 /// ```
 #alias("_[_:_]")
-pub fn[T] ReadOnlyArray::sub(
+#alias(sub, deprecated="Use _[_:_] instead")
+pub fn[T] ReadOnlyArray::view(
   self : ReadOnlyArray[T],
   start? : Int = 0,
   end? : Int,
 ) -> ArrayView[T] {
   match end {
-    None => self.unsafe_reinterpret_to_fixed_array().sub(start~)
-    Some(e) => self.unsafe_reinterpret_to_fixed_array().sub(start~, end=e)
+    None => self.unsafe_reinterpret_to_fixed_array()[start:]
+    Some(e) => self.unsafe_reinterpret_to_fixed_array()[start:e]
   }
 }
 
