@@ -163,15 +163,10 @@ pub fn[T : Show] &Logger::write_iter(
       self.write_object(x)
       self.write_string(sep)
     }
-  } else {
-    // trailing is false
-    let mut first = true
+  } else if iter.next() is Some(x) {
+    self.write_object(x)
     for x in iter {
-      if first {
-        first = false
-      } else {
-        self.write_string(sep)
-      }
+      self.write_string(sep)
       self.write_object(x)
     }
   }
