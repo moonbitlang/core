@@ -9,8 +9,6 @@ pub let min_value : UInt64
 // Errors
 
 // Types and methods
-pub fn UInt64::to_be_bytes(UInt64) -> Bytes
-pub fn UInt64::to_le_bytes(UInt64) -> Bytes
 
 // Type aliases
 

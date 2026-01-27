@@ -30,7 +30,6 @@
 ///   inspect(Double::from_int(-1), content="-1")
 /// }
 /// ```
-#as_free_fn(deprecated)
 pub fn Double::from_int(i : Int) -> Double {
   i.to_double()
 }
@@ -55,7 +54,6 @@ pub fn Double::from_int(i : Int) -> Double {
 ///   inspect(0.0.abs(), content="0")
 /// }
 /// ```
-#as_free_fn(deprecated)
 pub fn Double::abs(self : Double) -> Double = "%f64.abs"
 
 ///|
@@ -118,7 +116,7 @@ pub fn Double::is_nan(self : Double) -> Bool {
 /// }
 /// ```
 pub fn Double::is_inf(self : Double) -> Bool {
-  self > max_value || self < min_value
+  self > double_max_value || self < double_min_value
 }
 
 ///|
@@ -140,7 +138,7 @@ pub fn Double::is_inf(self : Double) -> Bool {
 /// }
 /// ```
 pub fn Double::is_pos_inf(self : Double) -> Bool {
-  self > max_value
+  self > double_max_value
 }
 
 ///|
@@ -162,7 +160,7 @@ pub fn Double::is_pos_inf(self : Double) -> Bool {
 /// }
 /// ```
 pub fn Double::is_neg_inf(self : Double) -> Bool {
-  self < min_value
+  self < double_min_value
 }
 
 ///|
@@ -237,7 +235,6 @@ pub impl Show for Double with output(self, logger) {
 ///   inspect(@double.infinity.is_close(@double.infinity), content="true")
 /// }
 /// ```
-#as_free_fn(deprecated)
 pub fn Double::is_close(
   self : Self,
   other : Self,

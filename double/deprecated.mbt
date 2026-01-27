@@ -67,3 +67,31 @@ pub fn Double::min_normal() -> Double {
 }
 
 ///|
+#deprecated("Use `@math.pow` instead")
+#warnings("-deprecated")
+pub fn pow(m : Double, n : Double) -> Double {
+  m.pow(n)
+}
+
+///|
+#deprecated("Use `Double::is_close` instead")
+pub fn is_close(
+  d : Double,
+  other : Double,
+  relative_tolerance? : Double = 1.0e-09,
+  absolute_tolerance? : Double = 0.0,
+) -> Bool {
+  d.is_close(other, relative_tolerance~, absolute_tolerance~)
+}
+
+///|
+#deprecated("Use `Double::from_int` instead")
+pub fn from_int(i : Int) -> Double {
+  Double::from_int(i)
+}
+
+///|
+#deprecated("Use `x.abs()` instead")
+pub fn abs(x : Double) -> Double {
+  x.abs()
+}

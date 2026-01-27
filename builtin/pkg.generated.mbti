@@ -626,6 +626,7 @@ pub fn UInt64::reinterpret_as_int64(UInt64) -> Int64
 pub fn UInt64::shl(UInt64, Int) -> UInt64
 #deprecated
 pub fn UInt64::shr(UInt64, Int) -> UInt64
+pub fn UInt64::to_be_bytes(UInt64) -> Bytes
 pub fn UInt64::to_byte(UInt64) -> Byte
 pub fn UInt64::to_double(UInt64) -> Double
 #deprecated
@@ -633,25 +634,42 @@ pub fn UInt64::to_float(UInt64) -> Float
 pub fn UInt64::to_int(UInt64) -> Int
 #deprecated
 pub fn UInt64::to_int64(UInt64) -> Int64
+pub fn UInt64::to_le_bytes(UInt64) -> Bytes
 pub fn UInt64::to_string(UInt64, radix? : Int) -> String
 pub fn UInt64::to_uint(UInt64) -> UInt
 pub fn UInt64::to_uint16(UInt64) -> UInt16
 pub fn UInt64::trunc_double(Double) -> UInt64
 
+pub fn Double::abs(Double) -> Double
+pub fn Double::ceil(Double) -> Double
 pub fn Double::convert_uint(UInt) -> Double
 pub fn Double::convert_uint64(UInt64) -> Double
+pub fn Double::floor(Double) -> Double
+pub fn Double::from_int(Int) -> Double
+pub fn Double::is_close(Double, Double, relative_tolerance? : Double, absolute_tolerance? : Double) -> Bool
+pub fn Double::is_inf(Double) -> Bool
+pub fn Double::is_nan(Double) -> Bool
+pub fn Double::is_neg_inf(Double) -> Bool
+pub fn Double::is_pos_inf(Double) -> Bool
+#deprecated
+pub fn Double::pow(Double, Double) -> Double
 #deprecated
 pub fn Double::reinterpret_as_i64(Double) -> Int64
 pub fn Double::reinterpret_as_int64(Double) -> Int64
 #deprecated
 pub fn Double::reinterpret_as_u64(Double) -> UInt64
 pub fn Double::reinterpret_as_uint64(Double) -> UInt64
+pub fn Double::round(Double) -> Double
+pub fn Double::signum(Double) -> Double
 pub fn Double::sqrt(Double) -> Double
 #deprecated
 pub fn Double::to_float(Double) -> Float
 pub fn Double::to_int(Double) -> Int
 pub fn Double::to_int64(Double) -> Int64
+pub fn Double::to_string(Double) -> String
+pub fn Double::to_uint(Double) -> UInt
 pub fn Double::to_uint64(Double) -> UInt64
+pub fn Double::trunc(Double) -> Double
 pub fn Double::until(Double, Double, step? : Double, inclusive? : Bool) -> Iter[Double]
 
 #alias("_[_]")
@@ -1176,6 +1194,7 @@ pub impl Hash for Int64
 pub impl Hash for UInt
 pub impl Hash for UInt16
 pub impl Hash for UInt64
+pub impl Hash for Double
 pub impl Hash for String
 pub impl[X : Hash] Hash for X?
 pub impl[T : Hash, E : Hash] Hash for Result[T, E]
@@ -1212,6 +1231,7 @@ pub impl Mod for Int64
 pub impl Mod for UInt
 pub impl Mod for UInt16
 pub impl Mod for UInt64
+pub impl Mod for Double
 
 pub(open) trait Mul {
   mul(Self, Self) -> Self = _
@@ -1260,6 +1280,7 @@ pub impl Show for Int64
 pub impl Show for UInt
 pub impl Show for UInt16
 pub impl Show for UInt64
+pub impl Show for Double
 pub impl Show for String
 pub impl[X : Show] Show for X?
 pub impl[T : Show, E : Show] Show for Result[T, E]
