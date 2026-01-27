@@ -97,9 +97,9 @@ pub fn powf(base : Float, exponent : Float) -> Float {
   let mut iy : Int = 0
   let mut i_s : Int = 0
   let (x, y) = (base, exponent)
-  let bp : Array[Float] = [1.0, 1.5]
-  let dp_h : Array[Float] = [0.0, 5.84960938e-01] // 0x3f15c000 */
-  let dp_l : Array[Float] = [0.0, 1.56322085e-06] // 0x35d1cfdc */
+  let bp : ReadOnlyArray[Float] = [1.0, 1.5]
+  let dp_h : ReadOnlyArray[Float] = [0.0, 5.84960938e-01] // 0x3f15c000 */
+  let dp_l : ReadOnlyArray[Float] = [0.0, 1.56322085e-06] // 0x35d1cfdc */
   let two24 : Float = 16777216.0
   hx = x.reinterpret_as_int()
   hy = y.reinterpret_as_int()
