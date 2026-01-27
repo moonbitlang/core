@@ -1,0 +1,14 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/array",
+  "moonbitlang/core/tuple",
+  "moonbitlang/core/quickcheck",
+  "moonbitlang/core/immut/internal/sparse_array",
+  "moonbitlang/core/immut/internal/path",
+  "moonbitlang/core/list",
+}
+
+import "test" {
+  "moonbitlang/core/int",
+  "moonbitlang/core/option",
+}

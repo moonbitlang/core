@@ -1,0 +1,29 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/array",
+  "moonbitlang/core/double",
+  "moonbitlang/core/float",
+  "moonbitlang/core/list",
+  "moonbitlang/core/hashmap",
+  "moonbitlang/core/hashset",
+  "moonbitlang/core/deque",
+  "moonbitlang/core/queue",
+  "moonbitlang/core/priority_queue",
+  "moonbitlang/core/buffer",
+  "moonbitlang/core/ref",
+  "moonbitlang/core/immut/array" as @immut_array,
+  "moonbitlang/core/immut/priority_queue" as @immut_priority_queue,
+  "moonbitlang/core/immut/sorted_map" as @immut_sorted_map,
+  "moonbitlang/core/immut/sorted_set" as @immut_sorted_set,
+  "moonbitlang/core/immut/hashmap" as @immut_hashmap,
+  "moonbitlang/core/immut/hashset" as @immut_hashset,
+}
+
+import "test" {
+  "moonbitlang/core/int",
+  "moonbitlang/core/ref",
+}
+
+options(
+  "warn-list": "-alert_visibility-test_unqualified_package",
+)

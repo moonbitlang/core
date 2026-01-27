@@ -1,0 +1,20 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/char",
+  "moonbitlang/core/uint",
+  "moonbitlang/core/json",
+  "moonbitlang/core/quickcheck",
+  "moonbitlang/core/quickcheck/splitmix",
+  "moonbitlang/core/int16",
+  "moonbitlang/core/uint16",
+}
+
+options(
+  targets: {
+    "bigint_js.mbt": [ "js" ],
+    "bigint_js_wbtest.mbt": [ "js" ],
+    "bigint_nonjs.mbt": [ "not", "js" ],
+    "bigint_nonjs_wbtest.mbt": [ "not", "js" ],
+  },
+  "warn-list": "-29",
+)

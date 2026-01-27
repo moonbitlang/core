@@ -1,0 +1,10 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/bool",
+  "moonbitlang/core/array",
+}
+
+options(
+  targets: { "ryu.mbt": [ "not", "js" ], "ryu_js.mbt": [ "js" ] },
+  "warn-list": "-unused_package",
+)

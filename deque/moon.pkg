@@ -1,0 +1,9 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/json",
+  "moonbitlang/core/array",
+}
+
+options(
+  targets: { "panic_test.mbt": [ "not", "native", "llvm" ] },
+)

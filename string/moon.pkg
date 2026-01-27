@@ -1,0 +1,18 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/char",
+  "moonbitlang/core/internal/regex_engine" as @re,
+}
+
+import "test" {
+  "moonbitlang/core/list",
+  "moonbitlang/core/json",
+  "moonbitlang/core/array",
+  "moonbitlang/core/quickcheck",
+  "moonbitlang/core/encoding/utf8" as @encoding/utf8,
+  "moonbitlang/core/encoding/utf16" as @encoding/utf16,
+}
+
+options(
+  targets: { "panic_test.mbt": [ "not", "native", "llvm" ] },
+)

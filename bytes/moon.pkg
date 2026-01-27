@@ -1,0 +1,16 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/internal/regex_engine" as @re,
+}
+
+import "test" {
+  "moonbitlang/core/array",
+  "moonbitlang/core/double",
+  "moonbitlang/core/uint",
+  "moonbitlang/core/uint64",
+  "moonbitlang/core/test",
+  "moonbitlang/core/quickcheck",
+  "moonbitlang/core/error",
+  "moonbitlang/core/json",
+  "moonbitlang/core/float",
+}
