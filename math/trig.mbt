@@ -55,7 +55,7 @@ fn trig_reduce(x : Float, switch_over : Float) -> (Float, Int) {
   let ix = ((x.reinterpret_as_uint() & 0x007fffff) << 8) | 0x80000000
   let ind = exp >> 5
   exp = exp & 0x1f
-  let two_over_pi : Array[UInt] = [
+  let two_over_pi : ReadOnlyArray[UInt] = [
     0x00000000, 0x28be60db, 0x9391054a, 0x7f09d5f4, 0x7d4d3770, 0x36d8a566, 0x4f10e410,
     0000000000,
   ]
@@ -419,13 +419,13 @@ pub fn acosf(x : Float) -> Float {
 /// }
 /// ```
 pub fn atanf(x : Float) -> Float {
-  let atanhi : Array[Float] = [
+  let atanhi : ReadOnlyArray[Float] = [
     4.6364760399e-01, 7.8539812565e-01, 9.8279368877e-01, 1.5707962513e+00,
   ]
-  let atanlo : Array[Float] = [
+  let atanlo : ReadOnlyArray[Float] = [
     5.0121582440e-09, 3.7748947079e-08, 3.4473217170e-08, 7.5497894159e-08,
   ]
-  let a_t : Array[Float] = [
+  let a_t : ReadOnlyArray[Float] = [
     3.3333328366e-01, -1.9999158382e-01, 1.4253635705e-01, -1.0648017377e-01, 6.1687607318e-02,
   ]
   let ix = x.reinterpret_as_int()
