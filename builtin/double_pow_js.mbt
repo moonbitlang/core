@@ -38,7 +38,6 @@
 /// }
 /// ```
 #deprecated("Use `@math.pow` instead")
-#as_free_fn(deprecated="Use `@math.pow` instead")
 pub fn Double::pow(self : Double, other : Double) -> Double = "Math" "pow"
 
 ///|

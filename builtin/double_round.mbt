@@ -43,7 +43,6 @@ let frac_bits = 52
 ///   inspect(0.0.trunc(), content="0")
 /// }
 /// ```
-#as_free_fn
 pub fn Double::trunc(self : Double) -> Double {
   let u64 = self.reinterpret_as_uint64()
   let biased_exp = ((u64 >> frac_bits) & ((0x1UL << exp_bits) - 1)).to_int()
@@ -75,7 +74,6 @@ pub fn Double::trunc(self : Double) -> Double {
 ///   inspect(42.0.ceil(), content="42")
 /// }
 /// ```
-#as_free_fn
 pub fn Double::ceil(self : Double) -> Double {
   let trunced = self.trunc()
   if self > trunced {
@@ -104,7 +102,6 @@ pub fn Double::ceil(self : Double) -> Double {
 ///   inspect(0.0.floor(), content="0")
 /// }
 /// ```
-#as_free_fn
 pub fn Double::floor(self : Double) -> Double {
   let trunced = self.trunc()
   if self < trunced {
@@ -135,7 +132,6 @@ pub fn Double::floor(self : Double) -> Double {
 ///   inspect((-3.5).round(), content="-3")
 /// }
 /// ```
-#as_free_fn
 pub fn Double::round(self : Double) -> Double {
-  floor(self + 0.5)
+  (self + 0.5).floor()
 }

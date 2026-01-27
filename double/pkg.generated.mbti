@@ -2,7 +2,20 @@
 package "moonbitlang/core/double"
 
 // Values
+#deprecated
+pub fn abs(Double) -> Double
+
+pub fn ceil(Double) -> Double
+
+pub fn floor(Double) -> Double
+
+#deprecated
+pub fn from_int(Int) -> Double
+
 pub let infinity : Double
+
+#deprecated
+pub fn is_close(Double, Double, relative_tolerance? : Double, absolute_tolerance? : Double) -> Bool
 
 pub let max_value : Double
 
@@ -14,42 +27,22 @@ pub let neg_infinity : Double
 
 pub let not_a_number : Double
 
+#deprecated
+pub fn pow(Double, Double) -> Double
+
+pub fn round(Double) -> Double
+
+pub fn trunc(Double) -> Double
+
 // Errors
 
 // Types and methods
-#as_free_fn(deprecated)
-pub fn Double::abs(Double) -> Double
-#as_free_fn
-pub fn Double::ceil(Double) -> Double
-#as_free_fn
-pub fn Double::floor(Double) -> Double
-#as_free_fn(deprecated)
-pub fn Double::from_int(Int) -> Double
 #deprecated
 pub fn Double::inf(Int) -> Double
-#as_free_fn(deprecated)
-pub fn Double::is_close(Double, Double, relative_tolerance? : Double, absolute_tolerance? : Double) -> Bool
-pub fn Double::is_inf(Double) -> Bool
-pub fn Double::is_nan(Double) -> Bool
-pub fn Double::is_neg_inf(Double) -> Bool
-pub fn Double::is_pos_inf(Double) -> Bool
 #deprecated
 pub fn Double::min_normal() -> Double
 #deprecated
 pub fn Double::nan() -> Double
-#as_free_fn(deprecated)
-#deprecated
-pub fn Double::pow(Double, Double) -> Double
-#as_free_fn
-pub fn Double::round(Double) -> Double
-pub fn Double::signum(Double) -> Double
-pub fn Double::to_string(Double) -> String
-pub fn Double::to_uint(Double) -> UInt
-#as_free_fn
-pub fn Double::trunc(Double) -> Double
-pub impl Hash for Double
-pub impl Mod for Double
-pub impl Show for Double
 
 // Type aliases
 

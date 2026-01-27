@@ -31,7 +31,6 @@
 ///   inspect(0.0.trunc(), content="0")
 /// }
 /// ```
-#as_free_fn
 pub fn Double::trunc(self : Double) -> Double = "Math" "trunc"
 
 ///|
@@ -52,7 +51,6 @@ pub fn Double::trunc(self : Double) -> Double = "Math" "trunc"
 ///   inspect(42.0.ceil(), content="42")
 /// }
 /// ```
-#as_free_fn
 pub fn Double::ceil(self : Double) -> Double = "Math" "ceil"
 
 ///|
@@ -74,7 +72,6 @@ pub fn Double::ceil(self : Double) -> Double = "Math" "ceil"
 ///   inspect(0.0.floor(), content="0")
 /// }
 /// ```
-#as_free_fn
 pub fn Double::floor(self : Double) -> Double = "Math" "floor"
 
 ///|
@@ -98,5 +95,4 @@ pub fn Double::floor(self : Double) -> Double = "Math" "floor"
 ///   inspect((-3.5).round(), content="-3")
 /// }
 /// ```
-#as_free_fn
 pub fn Double::round(self : Double) -> Double = "Math" "round"
