@@ -13,5 +13,5 @@
 // limitations under the License.
 
 ///|
-pub extern "js" fn ryu_to_string(val : Double) -> String =
+extern "js" fn ryu_to_string(val : Double) -> String =
   #|(number) => number.toString()

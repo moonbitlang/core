@@ -13,7 +13,19 @@
 // limitations under the License.
 
 ///|
-pub let min_value : UInt64 = 0UL
+pub let not_a_number : Double = 0x7FF8000000000001L.reinterpret_as_double()
 
 ///|
-pub let max_value : UInt64 = 18446744073709551615UL
+pub let infinity : Double = 0x7FF0000000000000L.reinterpret_as_double()
+
+///|
+pub let neg_infinity : Double = 0xFFF0000000000000L.reinterpret_as_double()
+
+///|
+pub let max_value : Double = 0x7FEFFFFFFFFFFFFFL.reinterpret_as_double()
+
+///|
+pub let min_value : Double = 0xFFEFFFFFFFFFFFFFL.reinterpret_as_double()
+
+///|
+let min_positive : Double = 0x0010000000000000L.reinterpret_as_double()
