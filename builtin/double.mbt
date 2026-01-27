@@ -193,7 +193,7 @@ pub impl Hash for Double with hash_combine(self, hasher) {
 /// ```
 ///
 pub fn Double::to_string(self : Double) -> String {
-  @ryu.ryu_to_string(self)
+  ryu_to_string(self)
 }
 
 // TODO:

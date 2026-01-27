@@ -656,7 +656,7 @@ fn d2d_small_int(
 
 ///|
 /// TODO: ryu_to_logger[T:Logger](Double/Float, T) -> Unit
-pub fn ryu_to_string(val : Double) -> String {
+fn ryu_to_string(val : Double) -> String {
   if val == 0.0 {
     return "0"
   }

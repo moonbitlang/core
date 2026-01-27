@@ -21,3 +21,33 @@ pub impl Default for UInt64 with default() {
 test {
   inspect(0x7000_0001_1F00_100FUL.popcnt(), content="14")
 }
+
+///|
+/// Converts the UInt64 to a Bytes in big-endian byte order.
+pub fn UInt64::to_be_bytes(self : UInt64) -> Bytes {
+  [
+    (self >> 56).to_byte(),
+    (self >> 48).to_byte(),
+    (self >> 40).to_byte(),
+    (self >> 32).to_byte(),
+    (self >> 24).to_byte(),
+    (self >> 16).to_byte(),
+    (self >> 8).to_byte(),
+    self.to_byte(),
+  ]
+}
+
+///|
+/// Converts the UInt64 to a Bytes in little-endian byte order.
+pub fn UInt64::to_le_bytes(self : UInt64) -> Bytes {
+  [
+    self.to_byte(),
+    (self >> 8).to_byte(),
+    (self >> 16).to_byte(),
+    (self >> 24).to_byte(),
+    (self >> 32).to_byte(),
+    (self >> 40).to_byte(),
+    (self >> 48).to_byte(),
+    (self >> 56).to_byte(),
+  ]
+}
