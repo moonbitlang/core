@@ -38,17 +38,9 @@ pub struct Profile {
   ub : Int
   valid : @rechar_set.RecharSet
   word : @rechar_set.RecharSet
-  non_word : @rechar_set.RecharSet
-  digit : @rechar_set.RecharSet
-  non_digit : @rechar_set.RecharSet
-  space : @rechar_set.RecharSet
-  non_space : @rechar_set.RecharSet
-  line_terminator : @rechar_set.RecharSet
-  non_line_terminator : @rechar_set.RecharSet
-  case_insensitive : (@rechar_set.RecharSet) -> @rechar_set.RecharSet
   category : (Int) -> Category
 }
-pub fn Profile::new(valid~ : @rechar_set.RecharSet, word~ : @rechar_set.RecharSet, digit~ : @rechar_set.RecharSet, space~ : @rechar_set.RecharSet, line_terminator~ : @rechar_set.RecharSet, case_insensitive~ : (@rechar_set.RecharSet) -> @rechar_set.RecharSet, category~ : (Int) -> Category) -> Self
+pub fn Profile::new(valid~ : @rechar_set.RecharSet, word~ : @rechar_set.RecharSet, category~ : (Int) -> Category) -> Self
 
 pub(all) enum QuantifierMode {
   Greedy
