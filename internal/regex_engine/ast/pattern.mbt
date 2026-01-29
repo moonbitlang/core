@@ -17,7 +17,7 @@ pub(all) struct Quantifier {
   min : Int
   max : Int?
   mode : @shared_types.QuantifierMode
-}
+} derive(Debug)
 
 ///|
 pub enum Assertion {
@@ -28,13 +28,13 @@ pub enum Assertion {
   StartOfWord
   EndOfWord
   NotWordBoundary
-}
+} derive(Debug)
 
 ///|
 pub struct Pattern {
   desc : PatternDesc
   nullable : Bool
-}
+} derive(Debug)
 
 ///|
 pub enum PatternDesc {
@@ -45,7 +45,7 @@ pub enum PatternDesc {
   Preference(@shared_types.Preference, Pattern)
   Capture(name~ : String?, Pattern)
   Assertion(Assertion)
-}
+} derive(Debug)
 
 ///|
 pub fn Pattern::is_anchored(self : Pattern) -> Bool {

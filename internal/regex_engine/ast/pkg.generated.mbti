@@ -2,6 +2,7 @@
 package "moonbitlang/core/internal/regex_engine/ast"
 
 import {
+  "moonbitlang/core/debug",
   "moonbitlang/core/internal/regex_engine/shared_types",
   "moonbitlang/core/internal/regex_engine/shared_types/rechar_set",
 }
@@ -57,12 +58,14 @@ pub enum Assertion {
   EndOfWord
   NotWordBoundary
 }
+pub impl @debug.Debug for Assertion
 
 pub struct Pattern {
   desc : PatternDesc
   nullable : Bool
 }
 pub fn Pattern::is_anchored(Self) -> Bool
+pub impl @debug.Debug for Pattern
 
 pub enum PatternDesc {
   Char(@rechar_set.RecharSet)
@@ -73,12 +76,14 @@ pub enum PatternDesc {
   Capture(name~ : String?, Pattern)
   Assertion(Assertion)
 }
+pub impl @debug.Debug for PatternDesc
 
 pub(all) struct Quantifier {
   min : Int
   max : Int?
   mode : @shared_types.QuantifierMode
 }
+pub impl @debug.Debug for Quantifier
 
 // Type aliases
 

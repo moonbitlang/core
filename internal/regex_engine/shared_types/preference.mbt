@@ -17,4 +17,4 @@ pub(all) enum Preference {
   Shortest
   Longest
   First
-} derive(Eq, Hash)
+} derive(Eq, Hash, Debug)

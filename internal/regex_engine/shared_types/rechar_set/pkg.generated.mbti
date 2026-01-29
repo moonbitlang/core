@@ -1,6 +1,10 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/internal/regex_engine/shared_types/rechar_set"
 
+import {
+  "moonbitlang/core/debug",
+}
+
 // Values
 
 // Errors
@@ -23,6 +27,7 @@ pub fn RecharSet::union(Self, Self) -> Self
 pub impl Add for RecharSet
 pub impl BitAnd for RecharSet
 pub impl Sub for RecharSet
+pub impl @debug.Debug for RecharSet
 
 // Type aliases
 pub type Rechar = Int
