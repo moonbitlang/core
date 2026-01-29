@@ -18,14 +18,6 @@ pub struct Profile {
   ub : Rechar
   valid : RecharSet
   word : RecharSet
-  non_word : RecharSet
-  digit : RecharSet
-  non_digit : RecharSet
-  space : RecharSet
-  non_space : RecharSet
-  line_terminator : RecharSet
-  non_line_terminator : RecharSet
-  case_insensitive : (RecharSet) -> RecharSet
   category : (Rechar) -> Category
 }
 
@@ -33,31 +25,9 @@ pub struct Profile {
 pub fn Profile::new(
   valid~ : RecharSet,
   word~ : RecharSet,
-  digit~ : RecharSet,
-  space~ : RecharSet,
-  line_terminator~ : RecharSet,
-  case_insensitive~ : (RecharSet) -> RecharSet,
   category~ : (Rechar) -> Category,
 ) -> Profile {
   guard valid.first_interval() is Some((lb, _)) else { panic() }
   guard valid.last_interval() is Some((_, ub)) else { panic() }
-  let non_word = valid - word
-  let non_digit = valid - digit
-  let non_space = valid - space
-  let non_line_terminator = valid - line_terminator
-  Profile::{
-    lb,
-    ub,
-    valid,
-    word,
-    non_word,
-    digit,
-    non_digit,
-    space,
-    non_space,
-    line_terminator,
-    non_line_terminator,
-    case_insensitive,
-    category,
-  }
+  Profile::{ lb, ub, valid, word, category }
 }

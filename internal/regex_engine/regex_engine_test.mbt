@@ -19,17 +19,6 @@ let profile : @regex_engine.Profile = @regex_engine.Profile::new(
     @regex_engine.RecharSet::char_range('A', 'Z') +
     @regex_engine.RecharSet::char_range('0', '9') +
     @regex_engine.RecharSet::char('_'),
-  space=@regex_engine.RecharSet::char(' ') +
-    @regex_engine.RecharSet::char('\t') +
-    @regex_engine.RecharSet::char('\n') +
-    @regex_engine.RecharSet::char('\r') +
-    @regex_engine.RecharSet::char('\u{000B}') +
-    @regex_engine.RecharSet::char('\f'),
-  digit=@regex_engine.RecharSet::char_range('0', '9'),
-  line_terminator=@regex_engine.RecharSet::char('\n'),
-  case_insensitive=cs => cs +
-    (cs & @regex_engine.RecharSet::char_range('A', 'Z')).offset_by(it => it + 32) +
-    (cs & @regex_engine.RecharSet::char_range('a', 'z')).offset_by(it => it - 32),
   category=c => match c {
     'a'..='z' | 'A'..='Z' | '0'..='9' | '_' => @regex_engine.Category::word()
     '\n' => @regex_engine.Category::newline()
@@ -44,17 +33,6 @@ let profile_ascii : @regex_engine.Profile = @regex_engine.Profile::new(
     @regex_engine.RecharSet::char_range('A', 'Z') +
     @regex_engine.RecharSet::char_range('0', '9') +
     @regex_engine.RecharSet::char('_'),
-  space=@regex_engine.RecharSet::char(' ') +
-    @regex_engine.RecharSet::char('\t') +
-    @regex_engine.RecharSet::char('\n') +
-    @regex_engine.RecharSet::char('\r') +
-    @regex_engine.RecharSet::char('\u{000B}') +
-    @regex_engine.RecharSet::char('\f'),
-  digit=@regex_engine.RecharSet::char_range('0', '9'),
-  line_terminator=@regex_engine.RecharSet::char('\n'),
-  case_insensitive=cs => cs +
-    (cs & @regex_engine.RecharSet::char_range('A', 'Z')).offset_by(it => it + 32) +
-    (cs & @regex_engine.RecharSet::char_range('a', 'z')).offset_by(it => it - 32),
   category=c => match c {
     'a'..='z' | 'A'..='Z' | '0'..='9' | '_' => @regex_engine.Category::word()
     '\n' => @regex_engine.Category::newline()
