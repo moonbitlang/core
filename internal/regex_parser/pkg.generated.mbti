@@ -1,0 +1,25 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/internal/regex_parser"
+
+import {
+  "moonbitlang/core/internal/regex_engine/ast",
+  "moonbitlang/core/internal/regex_engine/shared_types",
+}
+
+// Values
+pub fn parse(profile~ : @shared_types.Profile, mode~ : Mode, StringView) -> @ast.Pattern raise ParserError
+
+// Errors
+type ParserError
+pub impl Show for ParserError
+
+// Types and methods
+pub(all) enum Mode {
+  Bytes
+  String
+}
+
+// Type aliases
+
+// Traits
+
