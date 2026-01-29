@@ -2,6 +2,7 @@
 package "moonbitlang/core/internal/regex_engine/shared_types"
 
 import {
+  "moonbitlang/core/debug",
   "moonbitlang/core/internal/regex_engine/shared_types/rechar_set",
 }
 
@@ -32,6 +33,7 @@ pub(all) enum Preference {
 }
 pub impl Eq for Preference
 pub impl Hash for Preference
+pub impl @debug.Debug for Preference
 
 pub struct Profile {
   lb : Int
@@ -46,6 +48,7 @@ pub(all) enum QuantifierMode {
   Greedy
   NonGreedy
 }
+pub impl @debug.Debug for QuantifierMode
 
 // Type aliases
 pub type Rechar = Int

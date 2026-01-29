@@ -321,3 +321,8 @@ pub impl Sub for RecharSet with sub(self, other) {
 pub impl BitAnd for RecharSet with land(self, other) {
   RecharSet::intersection(self, other)
 }
+
+///|
+pub impl @debug.Debug for RecharSet with to_repr(self) {
+  @debug.Debug::to_repr(self.intervals().to_array())
+}
