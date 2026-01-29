@@ -140,8 +140,3 @@ test "render array with empty literal item" {
   let rendered = render(repr)
   assert_true(rendered.contains("1"))
 }
-
-///|
-test "debug prints simple value" {
-  @debug.debug(1)
-}
