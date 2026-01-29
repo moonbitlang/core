@@ -34,7 +34,12 @@ pub enum Assertion {
 pub struct Pattern {
   desc : PatternDesc
   nullable : Bool
-} derive(Debug)
+}
+
+///|
+pub impl Debug for Pattern with to_repr(self) {
+  self.desc.to_repr()
+}
 
 ///|
 pub enum PatternDesc {
