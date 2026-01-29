@@ -15,7 +15,7 @@
 ///|
 suberror ParserError {
   ParserError(at~ : Int, hint~ : String)
-}
+} derive(Debug)
 
 ///|
 pub impl Show for ParserError with output(self, logger) {
@@ -91,6 +91,9 @@ const HINT_UNSUPPORTED_CLASS_SET_EXPRESSION = "Unsupported character class set e
 
 ///|
 const HINT_UNSUPPORTED_POSSESSIVE_QUANTIFIER = "Unsupported possessive quantifier"
+
+///|
+const HINT_UNSUPPORTED_NESTED_CHAR_CLASS = "Unsupported nested character class"
 
 ///|
 const HINT_USE_POSIX_CHARACTER_CLASS = "Use POSIX character class instead of \\w, \\W, \\d, \\D, \\s, \\S"

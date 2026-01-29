@@ -21,3 +21,6 @@ using @re {
   type QuantifierMode,
   type Pattern,
 }
+
+///|
+using @debug {trait Debug, type Repr}
