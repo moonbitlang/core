@@ -14,13 +14,13 @@
 
 ///|
 /// Default max depth for pruning.
-let default_max_depth : Int = 4
+let default_max_depth : Int = 16
 
 ///|
 /// Default layout threshold for compact-vs-multiline decisions.
 ///
 /// Larger values prefer single-line output.
-let default_threshold : Int = 30
+let default_threshold : Int = 70
 
 ///|
 /// Prune a `Repr` using max_depth (replacing with `Omitted`).
