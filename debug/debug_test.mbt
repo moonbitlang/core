@@ -81,16 +81,7 @@ test "tuple Debug implementations" {
   @debug.debug_inspect(
     (1, "a", true, 2.0, 'c', 6, "g", false),
     content=(
-      #|(
-      #|  1,
-      #|  "a",
-      #|  true,
-      #|  2,
-      #|  'c',
-      #|  6,
-      #|  "g",
-      #|  false,
-      #|)
+      #|(1, "a", true, 2, 'c', 6, "g", false)
     ),
   )
 
@@ -98,17 +89,7 @@ test "tuple Debug implementations" {
   @debug.debug_inspect(
     (1, "a", true, 2.0, 'c', 6, "g", false, 9),
     content=(
-      #|(
-      #|  1,
-      #|  "a",
-      #|  true,
-      #|  2,
-      #|  'c',
-      #|  6,
-      #|  "g",
-      #|  false,
-      #|  9,
-      #|)
+      #|(1, "a", true, 2, 'c', 6, "g", false, 9)
     ),
   )
 
@@ -116,18 +97,7 @@ test "tuple Debug implementations" {
   @debug.debug_inspect(
     (1, "a", true, 2.0, 'c', 6, "g", false, 9, "j"),
     content=(
-      #|(
-      #|  1,
-      #|  "a",
-      #|  true,
-      #|  2,
-      #|  'c',
-      #|  6,
-      #|  "g",
-      #|  false,
-      #|  9,
-      #|  "j",
-      #|)
+      #|(1, "a", true, 2, 'c', 6, "g", false, 9, "j")
     ),
   )
 
@@ -135,19 +105,7 @@ test "tuple Debug implementations" {
   @debug.debug_inspect(
     (1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11),
     content=(
-      #|(
-      #|  1,
-      #|  "a",
-      #|  true,
-      #|  2,
-      #|  'c',
-      #|  6,
-      #|  "g",
-      #|  false,
-      #|  9,
-      #|  "j",
-      #|  11,
-      #|)
+      #|(1, "a", true, 2, 'c', 6, "g", false, 9, "j", 11)
     ),
   )
 
@@ -155,20 +113,7 @@ test "tuple Debug implementations" {
   @debug.debug_inspect(
     (1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l"),
     content=(
-      #|(
-      #|  1,
-      #|  "a",
-      #|  true,
-      #|  2,
-      #|  'c',
-      #|  6,
-      #|  "g",
-      #|  false,
-      #|  9,
-      #|  "j",
-      #|  11,
-      #|  "l",
-      #|)
+      #|(1, "a", true, 2, 'c', 6, "g", false, 9, "j", 11, "l")
     ),
   )
 
@@ -176,21 +121,7 @@ test "tuple Debug implementations" {
   @debug.debug_inspect(
     (1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l", 13),
     content=(
-      #|(
-      #|  1,
-      #|  "a",
-      #|  true,
-      #|  2,
-      #|  'c',
-      #|  6,
-      #|  "g",
-      #|  false,
-      #|  9,
-      #|  "j",
-      #|  11,
-      #|  "l",
-      #|  13,
-      #|)
+      #|(1, "a", true, 2, 'c', 6, "g", false, 9, "j", 11, "l", 13)
     ),
   )
 
@@ -198,22 +129,7 @@ test "tuple Debug implementations" {
   @debug.debug_inspect(
     (1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l", 13, "n"),
     content=(
-      #|(
-      #|  1,
-      #|  "a",
-      #|  true,
-      #|  2,
-      #|  'c',
-      #|  6,
-      #|  "g",
-      #|  false,
-      #|  9,
-      #|  "j",
-      #|  11,
-      #|  "l",
-      #|  13,
-      #|  "n",
-      #|)
+      #|(1, "a", true, 2, 'c', 6, "g", false, 9, "j", 11, "l", 13, "n")
     ),
   )
 
@@ -221,23 +137,7 @@ test "tuple Debug implementations" {
   @debug.debug_inspect(
     (1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l", 13, "n", 15),
     content=(
-      #|(
-      #|  1,
-      #|  "a",
-      #|  true,
-      #|  2,
-      #|  'c',
-      #|  6,
-      #|  "g",
-      #|  false,
-      #|  9,
-      #|  "j",
-      #|  11,
-      #|  "l",
-      #|  13,
-      #|  "n",
-      #|  15,
-      #|)
+      #|(1, "a", true, 2, 'c', 6, "g", false, 9, "j", 11, "l", 13, "n", 15)
     ),
   )
 
@@ -513,8 +413,7 @@ test "core data structures Debug implementations" {
   @debug.debug_inspect(
     immut_sm,
     content=(
-      #|<SortedMap:
-      #|  { 1: "a", 2: "b" }>
+      #|<SortedMap: { 1: "a", 2: "b" }>
     ),
   )
   let immut_ss = @immut_sorted_set.from_array([3, 1, 2])

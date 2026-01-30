@@ -54,67 +54,24 @@ test "Nested List" {
     render(repeat(10).debug(), max_depth=100),
     content=(
       #|Cons(
-      #|  {
-      #|    answer: 1,
-      #|    xs: [1, 2, 3],
-      #|    tag: Ok("test string result"),
-      #|  },
+      #|  { answer: 1, xs: [1, 2, 3], tag: Ok("test string result") },
       #|  Cons(
-      #|    {
-      #|      answer: 1,
-      #|      xs: [1, 2, 3],
-      #|      tag: Ok("test string result"),
-      #|    },
+      #|    { answer: 1, xs: [1, 2, 3], tag: Ok("test string result") },
       #|    Cons(
-      #|      {
-      #|        answer: 1,
-      #|        xs: [1, 2, 3],
-      #|        tag: Ok("test string result"),
-      #|      },
+      #|      { answer: 1, xs: [1, 2, 3], tag: Ok("test string result") },
       #|      Cons(
-      #|        {
-      #|          answer: 1,
-      #|          xs: [1, 2, 3],
-      #|          tag: Ok("test string result"),
-      #|        },
+      #|        { answer: 1, xs: [1, 2, 3], tag: Ok("test string result") },
       #|        Cons(
-      #|          {
-      #|            answer: 1,
-      #|            xs: [1, 2, 3],
-      #|            tag: Ok("test string result"),
-      #|          },
+      #|          { answer: 1, xs: [1, 2, 3], tag: Ok("test string result") },
       #|          Cons(
-      #|            {
-      #|              answer: 1,
-      #|              xs: [1, 2, 3],
-      #|              tag: Ok("test string result"),
-      #|            },
+      #|            { answer: 1, xs: [1, 2, 3], tag: Ok("test string result") },
       #|            Cons(
-      #|              {
-      #|                answer: 1,
-      #|                xs: [1, 2, 3],
-      #|                tag: Ok("test string result"),
-      #|              },
+      #|              { answer: 1, xs: [1, 2, 3], tag: Ok("test string result") },
       #|              Cons(
-      #|                {
-      #|                  answer: 1,
-      #|                  xs: [1, 2, 3],
-      #|                  tag: Ok("test string result"),
-      #|                },
+      #|                { answer: 1, xs: [1, 2, 3], tag: Ok("test string result") },
       #|                Cons(
-      #|                  {
-      #|                    answer: 1,
-      #|                    xs: [1, 2, 3],
-      #|                    tag: Ok("test string result"),
-      #|                  },
-      #|                  Cons(
-      #|                    {
-      #|                      answer: 1,
-      #|                      xs: [1, 2, 3],
-      #|                      tag: Ok("test string result"),
-      #|                    },
-      #|                    Nil,
-      #|                  ),
+      #|                  { answer: 1, xs: [1, 2, 3], tag: Ok("test string result") },
+      #|                  Cons({ answer: 1, xs: [1, 2, 3], tag: Ok("test string result") }, Nil),
       #|                ),
       #|              ),
       #|            ),
@@ -151,11 +108,7 @@ test "docs: custom type pretty_print" {
   @builtin.inspect(
     render(r),
     content=(
-      #|{
-      #|  answer: 42,
-      #|  xs: [1, 2, 3],
-      #|  tag: Ok("done"),
-      #|}
+      #|{ answer: 42, xs: [1, 2, 3], tag: Ok("done") }
     ),
   )
 }
@@ -190,12 +143,7 @@ test "docs: record keys are quoted when needed" {
   @builtin.inspect(
     render(r),
     content=(
-      #|{
-      #|  snake_case_ok: 1,
-      #|  "with space": 2,
-      #|  "k-v": 3,
-      #|  "CamelCase": 4,
-      #|}
+      #|{ snake_case_ok: 1, "with space": 2, "k-v": 3, "CamelCase": 4 }
     ),
   )
 }
@@ -276,15 +224,7 @@ fn shape_repr(shape : Shape) -> Repr {
 test "docs: labeled enum arguments are printed" {
   let sample : Shape = Line(Point(x=1, y=2), Point(x=3, y=4))
   let r = shape_repr(sample)
-  @builtin.inspect(
-    render(r),
-    content=(
-      #|Line(
-      #|  Point(x=1, y=2),
-      #|  Point(x=3, y=4),
-      #|)
-    ),
-  )
+  @builtin.inspect(render(r), content="Line(Point(x=1, y=2), Point(x=3, y=4))")
 }
 
 ///|
