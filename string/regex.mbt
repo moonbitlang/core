@@ -79,9 +79,9 @@ pub fn Regex::internal_compile_pattern(pat : Pattern) -> Regex {
 pub fn Regex::execute(
   self : Regex,
   input : StringView,
-  lastIndex? : Int = 0,
+  last_index? : Int = 0,
 ) -> MatchResult? {
-  match self.0.execute(input, lastIndex) {
+  match self.0.execute(input, last_index) {
     None => None
     Some(result) =>
       Some(MatchResult::{ input, group_names: self.0.group_names(), result })

@@ -18,7 +18,7 @@ pub fn MatchResult::group(Self, Int) -> StringView?
 pub fn MatchResult::named_group(Self, String) -> StringView?
 
 type Regex
-pub fn Regex::execute(Self, StringView, lastIndex? : Int) -> MatchResult?
+pub fn Regex::execute(Self, StringView, last_index? : Int) -> MatchResult?
 
 // Type aliases
 pub using @builtin {trait ToStringView}
