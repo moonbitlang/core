@@ -173,9 +173,7 @@ test "concat" {
   )
   debug_inspect(
     ls.concat(rs),
-    content=(
-      "<List: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]>"
-    ),
+    content="<List: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]>",
   )
 }
 
@@ -190,9 +188,7 @@ test "rev_concat" {
   )
   debug_inspect(
     ls.rev_concat(rs),
-    content=(
-      "<List: [5, 4, 3, 2, 1, 6, 7, 8, 9, 10]>"
-    ),
+    content="<List: [5, 4, 3, 2, 1, 6, 7, 8, 9, 10]>",
   )
 }
 
@@ -255,9 +251,7 @@ test "zip" {
   let rs = @list.from_array([6, 7, 8, 9, 10])
   debug_inspect(
     ls.zip(rs),
-    content=(
-      "<List: [(1, 6), (2, 7), (3, 8), (4, 9), (5, 10)]>"
-    ),
+    content="<List: [(1, 6), (2, 7), (3, 8), (4, 9), (5, 10)]>",
   )
 }
 
@@ -317,7 +311,6 @@ test "intersperse" {
     ls.intersperse("|"),
     content=(
       #|<List: ["1", "|", "2", "|", "3", "|", "4", "|", "5"]>
-
     ),
   )
   debug_inspect(el.intersperse("|"), content="<List: []>")
@@ -346,12 +339,7 @@ test "flatten" {
     @list.from_array([7, 8, 9]),
   ])
   let el : @list.List[@list.List[Int]] = @list.empty()
-  debug_inspect(
-    ls.flatten(),
-    content=(
-      "<List: [1, 2, 3, 4, 5, 6, 7, 8, 9]>"
-    ),
-  )
+  debug_inspect(ls.flatten(), content="<List: [1, 2, 3, 4, 5, 6, 7, 8, 9]>")
   debug_inspect(el.flatten(), content="<List: []>")
 }
 
@@ -387,12 +375,7 @@ test "sort" {
   let ls = @list.from_array([1, 123, 52, 3, 6, 0, -6, -76])
   let el : @list.List[Int] = @list.empty()
   debug_inspect(el.sort(), content="<List: []>")
-  debug_inspect(
-    ls.sort(),
-    content=(
-      "<List: [-76, -6, 0, 1, 3, 6, 52, 123]>"
-    ),
-  )
+  debug_inspect(ls.sort(), content="<List: [-76, -6, 0, 1, 3, 6, 52, 123]>")
 }
 
 ///|
@@ -500,12 +483,7 @@ test "scan_right" {
   )
   debug_inspect(el, content="<List: [0]>")
   debug_inspect(ls, content="<List: [10, 9, 7, 4, 0]>")
-  debug_inspect(
-    ls2,
-    content=(
-      "<List: [98, -97, 99, -96, 100]>"
-    ),
-  )
+  debug_inspect(ls2, content="<List: [98, -97, 99, -96, 100]>")
 }
 
 ///|
@@ -572,7 +550,6 @@ test "remove_at" {
     @list.from_array(["a", "b", "c", "d", "e"]).remove_at(5),
     content=(
       #|<List: ["a", "b", "c", "d", "e"]>
-
     ),
   )
 }
@@ -593,7 +570,6 @@ test "remove" {
     @list.from_array(["a", "b", "c", "d", "e"]).remove("f"),
     content=(
       #|<List: ["a", "b", "c", "d", "e"]>
-
     ),
   )
 }
@@ -649,9 +625,7 @@ test "intercalate" {
   let el : @list.List[@list.List[Int]] = @list.empty()
   debug_inspect(
     ls.intercalate(@list.from_array([0])),
-    content=(
-      "<List: [1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9]>"
-    ),
+    content="<List: [1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9]>",
   )
   debug_inspect(el.intersperse(@list.from_array([1])), content="<List: []>")
 }
@@ -864,12 +838,7 @@ test "hash" {
 test "immutability" {
   let l1 = @list.from_array([1, 2])
   let l2 = @list.from_array([l1, l1, l1, l1]).flatten()
-  debug_inspect(
-    l2,
-    content=(
-      "<List: [1, 2, 1, 2, 1, 2, 1, 2]>"
-    ),
-  )
+  debug_inspect(l2, content="<List: [1, 2, 1, 2, 1, 2, 1, 2]>")
   debug_inspect(l1, content="<List: [1, 2]>")
   let l3 = l1.flat_map(_ => l1)
   debug_inspect(l3, content="<List: [1, 2, 1, 2]>")
@@ -890,25 +859,10 @@ test "advanced list manipulations" {
   let sorted = orig.sort()
   let filtered = orig.filter(x => x > 3)
   let mapped = orig.map(x => x * x)
-  debug_inspect(
-    orig,
-    content=(
-      "<List: [3, 1, 4, 1, 5, 9, 2, 6]>"
-    ),
-  )
-  debug_inspect(
-    sorted,
-    content=(
-      "<List: [1, 1, 2, 3, 4, 5, 6, 9]>"
-    ),
-  )
+  debug_inspect(orig, content="<List: [3, 1, 4, 1, 5, 9, 2, 6]>")
+  debug_inspect(sorted, content="<List: [1, 1, 2, 3, 4, 5, 6, 9]>")
   debug_inspect(filtered, content="<List: [4, 5, 9, 6]>")
-  debug_inspect(
-    mapped,
-    content=(
-      "<List: [9, 1, 16, 1, 25, 81, 4, 36]>"
-    ),
-  )
+  debug_inspect(mapped, content="<List: [9, 1, 16, 1, 25, 81, 4, 36]>")
 }
 
 ///|
@@ -1051,9 +1005,7 @@ test "nested lists operations" {
   let mapped = nested.map(inner => inner.map(x => x * 2))
   debug_inspect(
     mapped,
-    content=(
-      "<List: [<List: [2, 4]>, <List: [6, 8]>, <List: [10, 12]>]>"
-    ),
+    content="<List: [<List: [2, 4]>, <List: [6, 8]>, <List: [10, 12]>]>",
   )
 
   // Flatten and then map
@@ -1104,7 +1056,6 @@ test "intersperse with complex values" {
     words.intersperse(", "),
     content=(
       #|<List: ["hello", ", ", "moonbit", ", ", "world"]>
-
     ),
   )
 
