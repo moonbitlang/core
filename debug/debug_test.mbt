@@ -442,3 +442,64 @@ test "Debug for hash-based collections" {
   let immut_hs = @immut_hashset.from_array([3])
   @debug.debug_inspect(immut_hs, content="<HashSet: [3]>")
 }
+
+///|
+test "assert_eq" {
+  fn output(x : Result[Unit, Error]) -> String {
+    match x {
+      Err(Failure::Failure(s)) => s
+      Ok(_) => "ok"
+      Err(e) => "\{e}"
+    }
+  }
+
+  inspect(output(try? @debug.assert_eq(1, 1)), content="ok")
+  inspect(
+    output(try? @debug.assert_eq(1, 2)),
+    content=(
+      #|debug_blackbox_test/debug_test.mbt:559:17-559:39@moonbitlang/core FAILED: `1 != 2`
+      #|diff:
+      #|-1 +2
+    ),
+  )
+  inspect(
+    output(try? @debug.assert_eq("a", "b")),
+    content=(
+      #|debug_blackbox_test/debug_test.mbt:567:17-567:43@moonbitlang/core FAILED: `"a" != "b"`
+      #|diff:
+      #|-"a" +"b"
+    ),
+  )
+  inspect(output(try? @debug.assert_eq([1, 2, 3], [1, 2, 3])), content="ok")
+  inspect(
+    output(try? @debug.assert_eq([1, 2, 3], [1, 222, 3])),
+    content=(
+      #|debug_blackbox_test/debug_test.mbt:576:17-576:57@moonbitlang/core FAILED: `[1, 2, 3] != [1, 222, 3]`
+      #|diff:
+      #|[1, -2 +222, 3]
+    ),
+  )
+  inspect(
+    output(try? @debug.assert_eq((true, "string", 123), (true, "s", 1))),
+    content=(
+      #|debug_blackbox_test/debug_test.mbt:584:17-584:72@moonbitlang/core FAILED: `(true, "string", 123) != (true, "s", 1)`
+      #|diff:
+      #|(
+      #|  true,
+      #|  -"string" +"s",
+      #|  -123 +1,
+      #|)
+    ),
+  )
+  inspect(
+    output(try? @debug.assert_eq({ "k1": 1.0, "k2": 2 }, { "k1": 2, "k3": 5 })),
+    content=(
+      #|debug_blackbox_test/debug_test.mbt:596:17-596:79@moonbitlang/core FAILED: `{ "k1": 1, "k2": 2 } != { "k1": 2, "k3": 5 }`
+      #|diff:
+      #|{
+      #|  "k1": -1 +2,
+      #|  -"k2": 2 +"k3": 5,
+      #|}
+    ),
+  )
+}
