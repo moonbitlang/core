@@ -37,6 +37,11 @@ pub fn RecharSet::is_empty(self : RecharSet) -> Bool {
 }
 
 ///|
+pub fn RecharSet::is_subset(self : RecharSet, other : RecharSet) -> Bool {
+  difference(self.0, other.0) is Empty
+}
+
+///|
 pub fn RecharSet::first_interval(self : RecharSet) -> (Rechar, Rechar)? {
   leftmost(self.0)
 }

@@ -21,6 +21,7 @@ pub fn RecharSet::from_sorted_array(ArrayView[(Int, Int)]) -> Self
 pub fn RecharSet::intersection(Self, Self) -> Self
 pub fn RecharSet::intervals(Self) -> Iter[(Int, Int)]
 pub fn RecharSet::is_empty(Self) -> Bool
+pub fn RecharSet::is_subset(Self, Self) -> Bool
 pub fn RecharSet::last_interval(Self) -> (Int, Int)?
 pub fn RecharSet::offset_by(Self, (Int) -> Int) -> Self
 pub fn RecharSet::union(Self, Self) -> Self
