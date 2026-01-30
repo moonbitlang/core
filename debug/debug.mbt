@@ -986,6 +986,28 @@ pub fn debug_inspect(
 }
 
 ///|
+#callsite(autofill(loc))
+pub fn[T : Eq + Debug] assert_eq(
+  a : T,
+  b : T,
+  msg? : String,
+  loc~ : SourceLoc,
+) -> Unit raise {
+  if a != b {
+    let fail_msg = match msg {
+      Some(msg) => msg
+      None => {
+        let repr_a = Debug::to_repr(a)
+        let repr_b = Debug::to_repr(b)
+        let diff = pretty_print_delta(diff_repr(repr_a, repr_b), use_ansi=false)
+        "`\{render(repr_a)} != \{render(repr_b)}`\ndiff:\n\{diff}"
+      }
+    }
+    fail(fail_msg, loc~)
+  }
+}
+
+///|
 test "tuple Debug implementations" {
   debug_inspect((1, "a"), content="(1, \"a\")")
 
