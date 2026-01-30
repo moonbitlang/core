@@ -64,24 +64,25 @@ fn relative_error(x : Double, y : Double) -> Double {
 /// Compare two node "labels", with float tolerance for `DoubleLit`.
 fn info_approx_eq(max_relative_error : Double, x : Repr, y : Repr) -> Bool {
   match (x, y) {
+    (UnitLit, UnitLit) => true
+    (Integer(x1), Integer(y1)) => x1 == y1
     (DoubleLit(x1), DoubleLit(y1)) =>
       relative_error(x1, y1) <= max_relative_error
     (FloatLit(x1), FloatLit(y1)) => x1 == y1
-    (Integer(x1), Integer(y1)) => x1 == y1
     (BoolLit(x1), BoolLit(y1)) => x1 == y1
     (CharLit(x1), CharLit(y1)) => x1 == y1
     (StringLit(x1), StringLit(y1)) => x1 == y1
-    (Literal(x1), Literal(y1)) => x1 == y1
-    (Omitted, Omitted) => true
     (Tuple(_), Tuple(_)) => true
     (Array(_), Array(_)) => true
     (Record(_), Record(_)) => true
+    (Enum(n1, _), Enum(n2, _)) => n1 == n2
+    (Map(_), Map(_)) => true
     (RecordField(n1, _), RecordField(n2, _)) => n1 == n2
     (EnumLabeledArg(n1, _), EnumLabeledArg(n2, _)) => n1 == n2
-    (Enum(n1, _), Enum(n2, _)) => n1 == n2
     (Opaque(n1, _), Opaque(n2, _)) => n1 == n2
-    (Map(_), Map(_)) => true
+    (Literal(x1), Literal(y1)) => x1 == y1
     (MapEntry(_, _), MapEntry(_, _)) => true
+    (Omitted, Omitted) => true
     _ => false
   }
 }
