@@ -7,7 +7,7 @@ package "moonbitlang/core/bytes"
 
 // Types and methods
 type BytesRegex
-pub fn BytesRegex::execute(Self, BytesView, lastIndex? : Int) -> MatchResult?
+pub fn BytesRegex::execute(Self, BytesView, last_index? : Int) -> MatchResult?
 
 type MatchResult
 pub fn MatchResult::after(Self) -> BytesView
