@@ -12,6 +12,9 @@ import {
 }
 
 // Values
+#callsite(autofill(loc))
+pub fn[T : Eq + Debug] assert_eq(T, T, msg? : String, loc~ : SourceLoc) -> Unit raise
+
 pub fn[T : Debug] debug(T) -> Unit
 
 #alias(inspect, deprecated)

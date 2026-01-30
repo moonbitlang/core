@@ -11,6 +11,7 @@ import {
   "moonbitlang/core/priority_queue",
   "moonbitlang/core/buffer",
   "moonbitlang/core/ref",
+  "moonbitlang/core/error",
   "moonbitlang/core/immut/array" as @immut_array,
   "moonbitlang/core/immut/priority_queue" as @immut_priority_queue,
   "moonbitlang/core/immut/sorted_map" as @immut_sorted_map,
