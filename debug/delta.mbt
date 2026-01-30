@@ -155,7 +155,9 @@ fn diff_info_with(
       } else {
         children
       }
-      if info_is_unimportant(left_node) && tree_all(children, differing) {
+      if info_is_unimportant(left_node) &&
+        !children.is_empty() &&
+        tree_all(children, differing) {
         Different(left_node, right_node)
       } else {
         Same(info_shallow(left_node), children)
