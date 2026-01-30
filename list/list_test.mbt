@@ -174,19 +174,7 @@ test "concat" {
   debug_inspect(
     ls.concat(rs),
     content=(
-      #|<List:
-      #|  [
-      #|    1,
-      #|    2,
-      #|    3,
-      #|    4,
-      #|    5,
-      #|    6,
-      #|    7,
-      #|    8,
-      #|    9,
-      #|    10,
-      #|  ]>
+      "<List: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]>"
     ),
   )
 }
@@ -203,19 +191,7 @@ test "rev_concat" {
   debug_inspect(
     ls.rev_concat(rs),
     content=(
-      #|<List:
-      #|  [
-      #|    5,
-      #|    4,
-      #|    3,
-      #|    2,
-      #|    1,
-      #|    6,
-      #|    7,
-      #|    8,
-      #|    9,
-      #|    10,
-      #|  ]>
+      "<List: [5, 4, 3, 2, 1, 6, 7, 8, 9, 10]>"
     ),
   )
 }
@@ -280,14 +256,7 @@ test "zip" {
   debug_inspect(
     ls.zip(rs),
     content=(
-      #|<List:
-      #|  [
-      #|    (1, 6),
-      #|    (2, 7),
-      #|    (3, 8),
-      #|    (4, 9),
-      #|    (5, 10),
-      #|  ]>
+      "<List: [(1, 6), (2, 7), (3, 8), (4, 9), (5, 10)]>"
     ),
   )
 }
@@ -347,18 +316,8 @@ test "intersperse" {
   debug_inspect(
     ls.intersperse("|"),
     content=(
-      #|<List:
-      #|  [
-      #|    "1",
-      #|    "|",
-      #|    "2",
-      #|    "|",
-      #|    "3",
-      #|    "|",
-      #|    "4",
-      #|    "|",
-      #|    "5",
-      #|  ]>
+      #|<List: ["1", "|", "2", "|", "3", "|", "4", "|", "5"]>
+
     ),
   )
   debug_inspect(el.intersperse("|"), content="<List: []>")
@@ -390,8 +349,7 @@ test "flatten" {
   debug_inspect(
     ls.flatten(),
     content=(
-      #|<List:
-      #|  [1, 2, 3, 4, 5, 6, 7, 8, 9]>
+      "<List: [1, 2, 3, 4, 5, 6, 7, 8, 9]>"
     ),
   )
   debug_inspect(el.flatten(), content="<List: []>")
@@ -432,8 +390,7 @@ test "sort" {
   debug_inspect(
     ls.sort(),
     content=(
-      #|<List:
-      #|  [-76, -6, 0, 1, 3, 6, 52, 123]>
+      "<List: [-76, -6, 0, 1, 3, 6, 52, 123]>"
     ),
   )
 }
@@ -546,8 +503,7 @@ test "scan_right" {
   debug_inspect(
     ls2,
     content=(
-      #|<List:
-      #|  [98, -97, 99, -96, 100]>
+      "<List: [98, -97, 99, -96, 100]>"
     ),
   )
 }
@@ -615,8 +571,8 @@ test "remove_at" {
   debug_inspect(
     @list.from_array(["a", "b", "c", "d", "e"]).remove_at(5),
     content=(
-      #|<List:
-      #|  ["a", "b", "c", "d", "e"]>
+      #|<List: ["a", "b", "c", "d", "e"]>
+
     ),
   )
 }
@@ -636,8 +592,8 @@ test "remove" {
   debug_inspect(
     @list.from_array(["a", "b", "c", "d", "e"]).remove("f"),
     content=(
-      #|<List:
-      #|  ["a", "b", "c", "d", "e"]>
+      #|<List: ["a", "b", "c", "d", "e"]>
+
     ),
   )
 }
@@ -694,20 +650,7 @@ test "intercalate" {
   debug_inspect(
     ls.intercalate(@list.from_array([0])),
     content=(
-      #|<List:
-      #|  [
-      #|    1,
-      #|    2,
-      #|    3,
-      #|    0,
-      #|    4,
-      #|    5,
-      #|    6,
-      #|    0,
-      #|    7,
-      #|    8,
-      #|    9,
-      #|  ]>
+      "<List: [1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9]>"
     ),
   )
   debug_inspect(el.intersperse(@list.from_array([1])), content="<List: []>")
@@ -924,8 +867,7 @@ test "immutability" {
   debug_inspect(
     l2,
     content=(
-      #|<List:
-      #|  [1, 2, 1, 2, 1, 2, 1, 2]>
+      "<List: [1, 2, 1, 2, 1, 2, 1, 2]>"
     ),
   )
   debug_inspect(l1, content="<List: [1, 2]>")
@@ -951,23 +893,20 @@ test "advanced list manipulations" {
   debug_inspect(
     orig,
     content=(
-      #|<List:
-      #|  [3, 1, 4, 1, 5, 9, 2, 6]>
+      "<List: [3, 1, 4, 1, 5, 9, 2, 6]>"
     ),
   )
   debug_inspect(
     sorted,
     content=(
-      #|<List:
-      #|  [1, 1, 2, 3, 4, 5, 6, 9]>
+      "<List: [1, 1, 2, 3, 4, 5, 6, 9]>"
     ),
   )
   debug_inspect(filtered, content="<List: [4, 5, 9, 6]>")
   debug_inspect(
     mapped,
     content=(
-      #|<List:
-      #|  [9, 1, 16, 1, 25, 81, 4, 36]>
+      "<List: [9, 1, 16, 1, 25, 81, 4, 36]>"
     ),
   )
 }
@@ -1113,12 +1052,7 @@ test "nested lists operations" {
   debug_inspect(
     mapped,
     content=(
-      #|<List:
-      #|  [
-      #|    <List: [2, 4]>,
-      #|    <List: [6, 8]>,
-      #|    <List: [10, 12]>,
-      #|  ]>
+      "<List: [<List: [2, 4]>, <List: [6, 8]>, <List: [10, 12]>]>"
     ),
   )
 
@@ -1169,14 +1103,8 @@ test "intersperse with complex values" {
   debug_inspect(
     words.intersperse(", "),
     content=(
-      #|<List:
-      #|  [
-      #|    "hello",
-      #|    ", ",
-      #|    "moonbit",
-      #|    ", ",
-      #|    "world",
-      #|  ]>
+      #|<List: ["hello", ", ", "moonbit", ", ", "world"]>
+
     ),
   )
 
