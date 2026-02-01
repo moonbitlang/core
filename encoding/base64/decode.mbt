@@ -70,11 +70,15 @@ pub fn decode(
           if count == 4 {
             count = 0
             // quartet[3] = PADDING
-            let b0 = ((quartet[0] << 2) | (quartet[1] >> 4)).to_byte()
-            buffer.write_byte(b0)
-            if quartet[2] != PADDING {
+            if quartet[2] == PADDING {
+              let b0 = ((quartet[0] << 2) | (quartet[1] >> 4)).to_byte()
+              buffer.write_byte(b0)
+              guard (quartet[1] & 0x0F) == 0 else { raise Malformed(text) }
+            } else {
+              let b0 = ((quartet[0] << 2) | (quartet[1] >> 4)).to_byte()
               let b1 = (((quartet[1] & 0x0F) << 4) | (quartet[2] >> 2)).to_byte()
-              buffer.write_byte(b1)
+              guard (quartet[2] & 0x03) == 0 else { raise Malformed(text) }
+              buffer..write_byte(b0)..write_byte(b1)
             }
             // check no rest
             if ignore_whitespace {
@@ -109,12 +113,14 @@ pub fn decode(
     1 => raise Malformed(text)
     2 => {
       let b0 = ((quartet[0] << 2) | (quartet[1] >> 4)).to_byte()
+      guard (quartet[1] & 0x0F) == 0 else { raise Malformed(text) }
       buffer.write_byte(b0)
     }
     3 => {
       guard quartet[2] != PADDING else { raise Malformed(text) }
       let b0 = ((quartet[0] << 2) | (quartet[1] >> 4)).to_byte()
       let b1 = (((quartet[1] & 0x0F) << 4) | (quartet[2] >> 2)).to_byte()
+      guard (quartet[2] & 0x03) == 0 else { raise Malformed(text) }
       buffer..write_byte(b0)..write_byte(b1)
     }
     _ => ()
