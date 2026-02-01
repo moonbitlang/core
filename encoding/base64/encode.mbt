@@ -30,37 +30,31 @@ pub fn encode(bytes : BytesView, padding? : Bool = true) -> String {
   loop bytes {
     [b0, b1, b2, .. rest] => {
       let n = (b0.to_int() << 16) | (b1.to_int() << 8) | b2.to_int()
-      builder.write_char(BASE64_STD[(n >> 18) & 0x3F].to_int().unsafe_to_char())
-      builder.write_char(BASE64_STD[(n >> 12) & 0x3F].to_int().unsafe_to_char())
-      builder.write_char(BASE64_STD[(n >> 6) & 0x3F].to_int().unsafe_to_char())
-      builder.write_char(BASE64_STD[n & 0x3F].to_int().unsafe_to_char())
+      builder
+      ..write_char(BASE64_STD[(n >> 18) & 0x3F].to_char())
+      ..write_char(BASE64_STD[(n >> 12) & 0x3F].to_char())
+      ..write_char(BASE64_STD[(n >> 6) & 0x3F].to_char())
+      ..write_char(BASE64_STD[n & 0x3F].to_char())
       continue rest
     }
     [b0, b1] => {
       let n = (b0.to_int() << 16) | (b1.to_int() << 8)
-      builder.write_char(BASE64_STD[(n >> 18) & 0x3F].to_int().unsafe_to_char())
-      builder.write_char(BASE64_STD[(n >> 12) & 0x3F].to_int().unsafe_to_char())
+      builder
+      ..write_char(BASE64_STD[(n >> 18) & 0x3F].to_char())
+      ..write_char(BASE64_STD[(n >> 12) & 0x3F].to_char())
+      ..write_char(BASE64_STD[(n >> 6) & 0x3F].to_char())
       if padding is true {
-        builder.write_char(
-          BASE64_STD[(n >> 6) & 0x3F].to_int().unsafe_to_char(),
-        )
         builder.write_char('=')
-      } else {
-        builder.write_char(
-          BASE64_STD[(n >> 6) & 0x3F].to_int().unsafe_to_char(),
-        )
       }
-      continue []
     }
     [b0] => {
       let n = b0.to_int() << 16
-      builder.write_char(BASE64_STD[(n >> 18) & 0x3F].to_int().unsafe_to_char())
-      builder.write_char(BASE64_STD[(n >> 12) & 0x3F].to_int().unsafe_to_char())
+      builder
+      ..write_char(BASE64_STD[(n >> 18) & 0x3F].to_char())
+      ..write_char(BASE64_STD[(n >> 12) & 0x3F].to_char())
       if padding is true {
-        builder.write_char('=')
-        builder.write_char('=')
+        builder.write_string("==")
       }
-      continue []
     }
     [] => ()
   }
