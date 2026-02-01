@@ -1,0 +1,21 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/encoding/base64"
+
+// Values
+pub fn decode(StringView, ignore_whitespace? : Bool) -> Bytes raise Malformed
+
+pub fn decode_lossy(StringView, ignore_whitespace? : Bool) -> Bytes
+
+pub fn encode(BytesView, padding? : Bool) -> String
+
+// Errors
+pub suberror Malformed {
+  Malformed(StringView)
+}
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+
