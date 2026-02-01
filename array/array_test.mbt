@@ -18,3 +18,15 @@ test "zip_with" {
   let right = [10, 20]
   inspect(@array.zip_with(left, right, (a, b) => a + b), content="[11, 22]")
 }
+
+///|
+test "get_view" {
+  let arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
+  let start = 16
+  let end = 18
+  inspect(arr.get_view(start~), content="Some([16, 17, 18])")
+  let start = 20
+  inspect(arr.get_view(start~), content="None")
+  let start = 16
+  inspect(arr.get_view(start~, end~), content="Some([16, 17])")
+}

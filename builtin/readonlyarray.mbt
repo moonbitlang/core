@@ -576,6 +576,33 @@ pub fn[T] ReadOnlyArray::view(
 }
 
 ///|
+/// Creates a view of a subarray, returning `None` when indices are invalid.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
+///   let start = 1
+///   let end = 4
+///   inspect(arr.get_view(start~, end~), content="Some([2, 3, 4])")
+///   let start = 4
+///   let end = 10
+///   inspect(arr.get_view(start~, end~), content="None")
+/// }
+/// ```
+pub fn[T] ReadOnlyArray::get_view(
+  self : ReadOnlyArray[T],
+  start? : Int = 0,
+  end? : Int,
+) -> ArrayView[T]? {
+  let fixed = self.unsafe_reinterpret_to_fixed_array()
+  match end {
+    None => fixed.get_view(start~)
+    Some(end) => fixed.get_view(start~, end~)
+  }
+}
+
+///|
 /// Joins string elements with a separator.
 ///
 /// # Example

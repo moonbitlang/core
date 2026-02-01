@@ -112,6 +112,7 @@ pub fn[T] Array::from_fixed_array(FixedArray[T]) -> Self[T]
 #alias(from_iterator, deprecated)
 pub fn[T] Array::from_iter(Iter[T]) -> Self[T]
 pub fn[T] Array::get(Self[T], Int) -> T?
+pub fn[T] Array::get_view(Self[T], start? : Int, end? : Int) -> ArrayView[T]?
 pub fn[T] Array::insert(Self[T], Int, T) -> Unit
 pub fn[T] Array::is_empty(Self[T]) -> Bool
 pub fn[T : Compare] Array::is_sorted(Self[T]) -> Bool
@@ -207,6 +208,7 @@ pub fn[T] ArrayView::filter(Self[T], (T) -> Bool raise?) -> Array[T] raise?
 pub fn[A, B] ArrayView::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 pub fn[A, B] ArrayView::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
 pub fn[T] ArrayView::get(Self[T], Int) -> T?
+pub fn[T] ArrayView::get_view(Self[T], start? : Int, end? : Int) -> Self[T]?
 pub fn[T] ArrayView::is_empty(Self[T]) -> Bool
 pub fn[T : Compare] ArrayView::is_sorted(Self[T]) -> Bool
 #alias(iterator, deprecated)
@@ -810,6 +812,7 @@ pub fn[T] FixedArray::from_array(ArrayView[T]) -> Self[T]
 #alias(from_iterator, deprecated)
 pub fn[T] FixedArray::from_iter(Iter[T]) -> Self[T]
 pub fn[T] FixedArray::get(Self[T], Int) -> T?
+pub fn[T] FixedArray::get_view(Self[T], start? : Int, end? : Int) -> ArrayView[T]?
 pub fn[T] FixedArray::is_empty(Self[T]) -> Bool
 pub fn[T : Compare] FixedArray::is_sorted(Self[T]) -> Bool
 #alias(iterator, deprecated)
@@ -873,6 +876,7 @@ pub fn[T] ReadOnlyArray::from_array(ArrayView[T]) -> Self[T]
 #alias(from_iterator, deprecated)
 pub fn[T] ReadOnlyArray::from_iter(Iter[T]) -> Self[T]
 pub fn[T] ReadOnlyArray::get(Self[T], Int) -> T?
+pub fn[T] ReadOnlyArray::get_view(Self[T], start? : Int, end? : Int) -> ArrayView[T]?
 pub fn[T] ReadOnlyArray::is_empty(Self[T]) -> Bool
 pub fn[T : Compare] ReadOnlyArray::is_sorted(Self[T]) -> Bool
 #alias(iterator, deprecated)
