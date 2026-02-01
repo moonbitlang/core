@@ -145,6 +145,17 @@ pub fn decode_lossy(
       if ignore_whitespace is true {
         continue
       } else {
+        if count == 2 {
+          let b0 = ((quartet[0] << 2) | (quartet[1] >> 4)).to_byte()
+          buffer.write_byte(b0)
+        } else if count == 3 {
+          let b0 = ((quartet[0] << 2) | (quartet[1] >> 4)).to_byte()
+          let b1 = (((quartet[1] & 0x0F) << 4) | (quartet[2] >> 2)).to_byte()
+          buffer.write_byte(b0)
+          buffer.write_byte(b1)
+        }
+        done = true
+        count = 0
         continue
       }
     }
