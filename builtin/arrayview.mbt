@@ -255,6 +255,48 @@ pub fn[T] Array::view(
 }
 
 ///|
+/// Creates a view of a portion of the array, returning `None` when indices are
+/// invalid.
+///
+/// Parameters:
+///
+/// * `array` : The array to create a view from.
+/// * `start` : The starting index of the view (inclusive). Defaults to 0.
+/// * `end` : The ending index of the view (exclusive). If not provided, defaults
+/// to the length of the array.
+///
+/// Returns `Some(ArrayView)` that provides a window into the specified portion
+/// of the array, or `None` when the indices are invalid.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let arr = [1, 2, 3, 4, 5]
+///   let start = 1
+///   let end = 4
+///   inspect(arr.get_view(start~, end~), content="Some([2, 3, 4])")
+///   let start = 3
+///   let end = 10
+///   inspect(arr.get_view(start~, end~), content="None")
+/// }
+/// ```
+pub fn[T] Array::get_view(
+  self : Array[T],
+  start? : Int = 0,
+  end? : Int,
+) -> ArrayView[T]? {
+  let len = self.length()
+  let end = match end {
+    None => len
+    Some(end) => if end < 0 { len + end } else { end }
+  }
+  let start = if start < 0 { len + start } else { start }
+  guard start >= 0 && start <= end && end <= len else { None }
+  Some(ArrayView::make(self.buffer(), start, end - start))
+}
+
+///|
 /// Creates a new view into a portion of the array view.
 ///
 /// Parameters:
@@ -302,6 +344,50 @@ pub fn[T] ArrayView::view(
     abort("View index out of bounds")
   }
   ArrayView::make(self.buf(), self.start() + start, end - start)
+}
+
+///|
+/// Creates a new view into a portion of the array view, returning `None` when
+/// indices are invalid.
+///
+/// Parameters:
+///
+/// * `self` : The array view to create a new view from.
+/// * `start` : The starting index in the current view (inclusive). Defaults to
+/// 0.
+/// * `end` : The ending index in the current view (exclusive). Defaults to the
+/// length of the current view.
+///
+/// Returns `Some(ArrayView)` that provides a window into the specified portion
+/// of the original array view, or `None` when the indices are invalid.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let arr = [1, 2, 3, 4, 5]
+///   let view = arr[1:4] // view = [2, 3, 4]
+///   let start = 1
+///   let end = 2
+///   inspect(view.get_view(start~, end~), content="Some([3])")
+///   let start = 4
+///   let end = 5
+///   inspect(view.get_view(start~, end~), content="None")
+/// }
+/// ```
+pub fn[T] ArrayView::get_view(
+  self : ArrayView[T],
+  start? : Int = 0,
+  end? : Int,
+) -> ArrayView[T]? {
+  let len = self.length()
+  let end = match end {
+    None => len
+    Some(end) => if end < 0 { len + end } else { end }
+  }
+  let start = if start < 0 { len + start } else { start }
+  guard start >= 0 && start <= end && end <= len else { None }
+  Some(ArrayView::make(self.buf(), self.start() + start, end - start))
 }
 
 ///|
@@ -357,6 +443,54 @@ pub fn[T] FixedArray::view(
     unsafe_cast_fixedarray_to_uninitializedarray(self),
     start,
     end - start,
+  )
+}
+
+///|
+/// Creates a new `ArrayView` from a `FixedArray`, returning `None` when indices
+/// are invalid.
+///
+/// Parameters:
+///
+/// * `self` : The fixed array to create a new view from.
+/// * `start` : The starting index in the array (inclusive). Defaults to 0.
+/// * `end` : The ending index in the array (exclusive). Defaults to the
+/// length of the array.
+///
+/// Returns `Some(ArrayView)` that provides a window into the specified portion
+/// of the original fixed array, or `None` when the indices are invalid.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let arr : FixedArray[Int] = [1, 2, 3, 4, 5]
+///   let start = 1
+///   let end = 4
+///   inspect(arr.get_view(start~, end~), content="Some([2, 3, 4])")
+///   let start = 2
+///   let end = 10
+///   inspect(arr.get_view(start~, end~), content="None")
+/// }
+/// ```
+pub fn[T] FixedArray::get_view(
+  self : FixedArray[T],
+  start? : Int = 0,
+  end? : Int,
+) -> ArrayView[T]? {
+  let len = self.length()
+  let end = match end {
+    None => len
+    Some(end) => if end < 0 { len + end } else { end }
+  }
+  let start = if start < 0 { len + start } else { start }
+  guard start >= 0 && start <= end && end <= len else { None }
+  Some(
+    ArrayView::make(
+      unsafe_cast_fixedarray_to_uninitializedarray(self),
+      start,
+      end - start,
+    ),
   )
 }
 
