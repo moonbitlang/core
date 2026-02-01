@@ -58,18 +58,16 @@ test "decode with whitespace" {
 
 ///|
 test "decode malformed" {
-  try {
-    let _ = @base64.decode("Zg=")
-    panic()
+  let f = str => try {
+    let _ = @base64.decode(str)
+    false
   } catch {
-    Malformed(_) => ()
+    Malformed(_) => true
   }
-  try {
-    let _ = @base64.decode("Zg$=")
-    panic()
-  } catch {
-    Malformed(_) => ()
-  }
+  assert_true(f("Zh=="))
+  assert_true(f("Zm9="))
+  assert_true(f("Zg="))
+  assert_true(f("Zg$="))
 }
 
 ///|
