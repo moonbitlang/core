@@ -18,26 +18,25 @@ pub suberror Malformed {
 }
 
 ///|
+const WRITESPACE = -3
+
+///|
+const PADDING = -2
+
+///|
+const INVALID_CHAR = -1
+
+///|
 fn base64_value(code_unit : Int) -> Int {
-  if code_unit >= 0x41 && code_unit <= 0x5A { // A-Z
-    code_unit - 0x41
-  } else if code_unit >= 0x61 && code_unit <= 0x7A { // a-z
-    code_unit - 0x61 + 26
-  } else if code_unit >= 0x30 && code_unit <= 0x39 { // 0-9
-    code_unit - 0x30 + 52
-  } else if code_unit == 0x2B { // +
-    62
-  } else if code_unit == 0x2F { // /
-    63
-  } else if code_unit == 0x3D { // =
-    -2
-  } else if code_unit == 0x20 ||
-    code_unit == 0x0A ||
-    code_unit == 0x0D ||
-    code_unit == 0x09 { // whitespace
-    -3
-  } else {
-    -1
+  match code_unit {
+    'A'..='Z' => code_unit - 'A'
+    'a'..='z' => code_unit - 'a' + 26
+    '0'..='9' => code_unit - '0' + 52
+    '+' => 62
+    '/' => 63
+    ' ' | '\n' | '\r' | '\t' => WRITESPACE
+    '=' => PADDING
+    _ => INVALID_CHAR
   }
 }
 
@@ -54,71 +53,71 @@ pub fn decode(
   let buffer = @buffer.new(size_hint=text.length() / 4 * 3)
   let quartet = FixedArray::make(4, 0)
   let mut count = 0
-  let mut trailing_padding = false
   for i in 0..<text.length() {
-    let value = base64_value(text.code_unit_at(i).to_int())
-    if value == -3 {
-      if ignore_whitespace is true {
-        continue
-      } else {
-        raise Malformed(text)
+    match base64_value(text.code_unit_at(i).to_int()) {
+      WRITESPACE =>
+        if ignore_whitespace {
+          continue
+        } else {
+          raise Malformed(text)
+        }
+      PADDING =>
+        if count < 2 {
+          raise Malformed(text)
+        } else {
+          quartet[count] = PADDING
+          count += 1
+          if count == 4 {
+            count = 0
+            // quartet[3] = PADDING
+            let b0 = ((quartet[0] << 2) | (quartet[1] >> 4)).to_byte()
+            buffer.write_byte(b0)
+            if quartet[2] != PADDING {
+              let b1 = (((quartet[1] & 0x0F) << 4) | (quartet[2] >> 2)).to_byte()
+              buffer.write_byte(b1)
+            }
+            // check no rest
+            if ignore_whitespace {
+              for j in (i + 1)..<text.length() {
+                guard text.code_unit_at(j).to_int()
+                  is (' ' | '\n' | '\r' | '\t') else {
+                  raise Malformed(text)
+                }
+              }
+            } else {
+              guard i + 1 == text.length() else { raise Malformed(text) }
+            }
+            break
+          }
+        }
+      INVALID_CHAR => raise Malformed(text)
+      value => {
+        quartet[count] = value
+        count += 1
+        if count == 4 {
+          count = 0
+          guard quartet[2] != PADDING else { raise Malformed(text) }
+          let b0 = ((quartet[0] << 2) | (quartet[1] >> 4)).to_byte()
+          let b1 = (((quartet[1] & 0x0F) << 4) | (quartet[2] >> 2)).to_byte()
+          let b2 = (((quartet[2] & 0x03) << 6) | quartet[3]).to_byte()
+          buffer..write_byte(b0)..write_byte(b1)..write_byte(b2)
+        }
       }
     }
-    if trailing_padding {
-      raise Malformed(text)
-    }
-    if value == -1 {
-      raise Malformed(text)
-    }
-    if value == -2 && count < 2 {
-      raise Malformed(text)
-    }
-    quartet[count] = value
-    count += 1
-    if count == 4 {
-      if quartet[0] == -2 || quartet[1] == -2 {
-        raise Malformed(text)
-      }
-      if quartet[2] == -2 && quartet[3] != -2 {
-        raise Malformed(text)
-      }
+  }
+  match count {
+    1 => raise Malformed(text)
+    2 => {
       let b0 = ((quartet[0] << 2) | (quartet[1] >> 4)).to_byte()
       buffer.write_byte(b0)
-      if quartet[2] != -2 {
-        let b1 = (((quartet[1] & 0x0F) << 4) | (quartet[2] >> 2)).to_byte()
-        buffer.write_byte(b1)
-        if quartet[3] != -2 {
-          let b2 = (((quartet[2] & 0x03) << 6) | quartet[3]).to_byte()
-          buffer.write_byte(b2)
-        } else {
-          trailing_padding = true
-        }
-      } else {
-        trailing_padding = true
-      }
-      count = 0
     }
-  }
-  if trailing_padding {
-    if count != 0 {
-      raise Malformed(text)
+    3 => {
+      guard quartet[2] != PADDING else { raise Malformed(text) }
+      let b0 = ((quartet[0] << 2) | (quartet[1] >> 4)).to_byte()
+      let b1 = (((quartet[1] & 0x0F) << 4) | (quartet[2] >> 2)).to_byte()
+      buffer..write_byte(b0)..write_byte(b1)
     }
-    return buffer.to_bytes()
-  }
-  if count == 1 {
-    raise Malformed(text)
-  }
-  if count == 3 && quartet[2] == -2 {
-    raise Malformed(text)
-  }
-  if count == 2 {
-    let b0 = ((quartet[0] << 2) | (quartet[1] >> 4)).to_byte()
-    buffer.write_byte(b0)
-  } else if count == 3 {
-    let b0 = ((quartet[0] << 2) | (quartet[1] >> 4)).to_byte()
-    let b1 = (((quartet[1] & 0x0F) << 4) | (quartet[2] >> 2)).to_byte()
-    buffer.write_byte(b0)
-    buffer.write_byte(b1)
+    _ => ()
   }
   buffer.to_bytes()
 }
@@ -135,69 +134,31 @@ pub fn decode_lossy(
   let buffer = @buffer.new(size_hint=text.length() / 4 * 3)
   let quartet = FixedArray::make(4, 0)
   let mut count = 0
-  let mut done = false
   for i in 0..<text.length() {
-    if done {
-      continue
-    }
-    let value = base64_value(text.code_unit_at(i).to_int())
-    if value == -3 {
-      if ignore_whitespace is true {
-        continue
-      } else {
-        if count == 2 {
-          let b0 = ((quartet[0] << 2) | (quartet[1] >> 4)).to_byte()
-          buffer.write_byte(b0)
-        } else if count == 3 {
+    match base64_value(text.code_unit_at(i).to_int()) {
+      WRITESPACE => if !ignore_whitespace { break }
+      PADDING => break
+      INVALID_CHAR => ()
+      value => {
+        quartet[count] = value
+        count += 1
+        if count == 4 {
+          count = 0
           let b0 = ((quartet[0] << 2) | (quartet[1] >> 4)).to_byte()
           let b1 = (((quartet[1] & 0x0F) << 4) | (quartet[2] >> 2)).to_byte()
-          buffer.write_byte(b0)
-          buffer.write_byte(b1)
+          let b2 = (((quartet[2] & 0x03) << 6) | quartet[3]).to_byte()
+          buffer..write_byte(b0)..write_byte(b1)..write_byte(b2)
         }
-        done = true
-        count = 0
-        continue
       }
-    }
-    if value == -2 {
-      if count == 2 {
-        let b0 = ((quartet[0] << 2) | (quartet[1] >> 4)).to_byte()
-        buffer.write_byte(b0)
-      } else if count == 3 {
-        let b0 = ((quartet[0] << 2) | (quartet[1] >> 4)).to_byte()
-        let b1 = (((quartet[1] & 0x0F) << 4) | (quartet[2] >> 2)).to_byte()
-        buffer.write_byte(b0)
-        buffer.write_byte(b1)
-      }
-      done = true
-      count = 0
-      continue
-    }
-    if value == -1 {
-      continue
-    }
-    quartet[count] = value
-    count += 1
-    if count == 4 {
-      let b0 = ((quartet[0] << 2) | (quartet[1] >> 4)).to_byte()
-      let b1 = (((quartet[1] & 0x0F) << 4) | (quartet[2] >> 2)).to_byte()
-      let b2 = (((quartet[2] & 0x03) << 6) | quartet[3]).to_byte()
-      buffer.write_byte(b0)
-      buffer.write_byte(b1)
-      buffer.write_byte(b2)
-      count = 0
     }
   }
-  if done is false {
-    if count == 2 {
-      let b0 = ((quartet[0] << 2) | (quartet[1] >> 4)).to_byte()
-      buffer.write_byte(b0)
-    } else if count == 3 {
-      let b0 = ((quartet[0] << 2) | (quartet[1] >> 4)).to_byte()
-      let b1 = (((quartet[1] & 0x0F) << 4) | (quartet[2] >> 2)).to_byte()
-      buffer.write_byte(b0)
-      buffer.write_byte(b1)
-    }
+  if count == 2 {
+    let b0 = ((quartet[0] << 2) | (quartet[1] >> 4)).to_byte()
+    buffer.write_byte(b0)
+  } else if count == 3 {
+    let b0 = ((quartet[0] << 2) | (quartet[1] >> 4)).to_byte()
+    let b1 = (((quartet[1] & 0x0F) << 4) | (quartet[2] >> 2)).to_byte()
+    buffer..write_byte(b0)..write_byte(b1)
   }
   buffer.to_bytes()
 }
