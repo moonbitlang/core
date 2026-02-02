@@ -749,7 +749,8 @@ pub fn[X] Iter::intersperse(self : Iter[X], sep : X) -> Iter[X] {
 
 ///|
 #alias("_[_:_]")
-pub fn[X] Iter::sub(self : Iter[X], start? : Int = 0, end? : Int) -> Iter[X] {
+#alias(sub, deprecated="Use _[_:_] instead")
+pub fn[X] Iter::view(self : Iter[X], start? : Int = 0, end? : Int) -> Iter[X] {
   match (start, end) {
     (_..=0, None) => self
     (_..=0, Some(end)) => self.take(end)

@@ -194,7 +194,7 @@ test "drop" {
 ///|
 test "sub" {
   let iter = test_from_array([1, 2, 3, 4, 5])
-  let res = iter.sub(start=1, end=4).collect()
+  let res = iter[1:4].collect()
   inspect(res, content="[2, 3, 4]")
 }
 
@@ -906,13 +906,13 @@ test "Iter::maximum" {
 }
 
 ///|
-test "Iter::sub variants" {
-  inspect([1, 2, 3].iter().sub(start=-1).collect(), content="[1, 2, 3]")
-  inspect([1, 2, 3].iter().sub(start=0, end=2).collect(), content="[1, 2]")
-  inspect([1, 2, 3].iter().sub(start=1).collect(), content="[2, 3]")
-  inspect([1, 2, 3, 4].iter().sub(start=1, end=3).collect(), content="[2, 3]")
-  inspect([1, 2, 3].iter().sub(start=2, end=2).collect(), content="[]")
-  inspect([1, 2, 3].iter().sub(start=1, end=0).collect(), content="[]")
+test "Iter::view variants" {
+  inspect([1, 2, 3].iter().view(start=-1).collect(), content="[1, 2, 3]")
+  inspect([1, 2, 3].iter()[:2].collect(), content="[1, 2]")
+  inspect([1, 2, 3].iter()[1:].collect(), content="[2, 3]")
+  inspect([1, 2, 3, 4].iter()[1:3].collect(), content="[2, 3]")
+  inspect([1, 2, 3].iter()[2:2].collect(), content="[]")
+  inspect([1, 2, 3].iter()[1:0].collect(), content="[]")
 }
 
 ///|
