@@ -929,12 +929,13 @@ pub fn Bytes::new(Int) -> Bytes
 pub fn Bytes::of_string(String) -> Bytes
 pub fn Bytes::repeat(Bytes, Int) -> Bytes
 pub fn Bytes::rev_find(Bytes, BytesView) -> Int?
-#alias("_[_:_]")
-pub fn Bytes::sub(Bytes, start? : Int, end? : Int) -> BytesView
 pub fn Bytes::to_array(Bytes) -> Array[Byte]
 #label_migration(len, fill=false)
 pub fn Bytes::to_fixedarray(Bytes, len? : Int) -> FixedArray[Byte]
 pub fn Bytes::to_unchecked_string(Bytes, offset? : Int, length? : Int) -> String
+#alias("_[_:_]")
+#alias(sub, deprecated)
+pub fn Bytes::view(Bytes, start? : Int, end? : Int) -> BytesView
 
 #alias("_[_]")
 pub fn BytesView::at(Self, Int) -> Byte
@@ -954,11 +955,12 @@ pub fn BytesView::length(Self) -> Int
 pub fn BytesView::lexical_compare(Self, Self) -> Int
 pub fn BytesView::rev_find(Self, Self) -> Int?
 pub fn BytesView::start_offset(Self) -> Int
-#alias("_[_:_]")
-pub fn BytesView::sub(Self, start? : Int, end? : Int) -> Self
 pub fn BytesView::to_array(Self) -> Array[Byte]
 pub fn BytesView::to_bytes(Self) -> Bytes
 pub fn BytesView::to_fixedarray(Self) -> FixedArray[Byte]
+#alias("_[_:_]")
+#alias(sub, deprecated)
+pub fn BytesView::view(Self, start? : Int, end? : Int) -> Self
 
 #alias("_[_]")
 #alias(code_unit_at)
