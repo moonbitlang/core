@@ -65,7 +65,8 @@ pub fn Bytes::rev_find(target : Bytes, pattern : BytesView) -> Int? {
 ///|
 /// Returns true if this bytes view starts with the given prefix.
 pub fn BytesView::has_prefix(self : BytesView, prefix : BytesView) -> Bool {
-  self.find(prefix) is Some(i) && i == 0
+  let prefix_len = prefix.length()
+  self.length() >= prefix_len && self.sub(end=prefix_len) == prefix
 }
 
 ///|
