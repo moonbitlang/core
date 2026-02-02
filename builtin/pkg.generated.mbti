@@ -901,6 +901,8 @@ pub fn[T] ReadOnlyArray::view(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 
 #alias("_[_]")
 pub fn Bytes::at(Bytes, Int) -> Byte
+pub fn Bytes::chop_prefix(Bytes, BytesView) -> BytesView?
+pub fn Bytes::chop_suffix(Bytes, BytesView) -> BytesView?
 #deprecated
 pub fn Bytes::copy(Bytes) -> Bytes
 pub fn Bytes::find(Bytes, BytesView) -> Int?
@@ -911,6 +913,8 @@ pub fn Bytes::from_fixedarray(FixedArray[Byte], len? : Int) -> Bytes
 #alias(from_iterator, deprecated)
 pub fn Bytes::from_iter(Iter[Byte]) -> Bytes
 pub fn Bytes::get(Bytes, Int) -> Byte?
+pub fn Bytes::has_prefix(Bytes, BytesView) -> Bool
+pub fn Bytes::has_suffix(Bytes, BytesView) -> Bool
 pub fn Bytes::is_empty(Bytes) -> Bool
 #alias(iterator, deprecated)
 pub fn Bytes::iter(Bytes) -> Iter[Byte]
@@ -934,9 +938,13 @@ pub fn Bytes::to_unchecked_string(Bytes, offset? : Int, length? : Int) -> String
 
 #alias("_[_]")
 pub fn BytesView::at(Self, Int) -> Byte
+pub fn BytesView::chop_prefix(Self, Self) -> Self?
+pub fn BytesView::chop_suffix(Self, Self) -> Self?
 pub fn BytesView::data(Self) -> Bytes
 pub fn BytesView::find(Self, Self) -> Int?
 pub fn BytesView::get(Self, Int) -> Byte?
+pub fn BytesView::has_prefix(Self, Self) -> Bool
+pub fn BytesView::has_suffix(Self, Self) -> Bool
 pub fn BytesView::is_empty(Self) -> Bool
 #alias(iterator, deprecated)
 pub fn BytesView::iter(Self) -> Iter[Byte]

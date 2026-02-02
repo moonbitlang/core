@@ -392,6 +392,35 @@ test "Bytes find and rev_find" {
 }
 
 ///|
+test "Bytes has_prefix/has_suffix/chop" {
+  let bytes = b"hello"
+  inspect(bytes.has_prefix(b"h"[:]), content="true")
+  inspect(bytes.has_prefix(b"he"[:]), content="true")
+  inspect(bytes.has_prefix(b""[:]), content="true")
+  inspect(bytes.has_prefix(b"hello"[:]), content="true")
+  inspect(bytes.has_prefix(b"world"[:]), content="false")
+  inspect(bytes.has_suffix(b"o"[:]), content="true")
+  inspect(bytes.has_suffix(b"lo"[:]), content="true")
+  inspect(bytes.has_suffix(b""[:]), content="true")
+  inspect(bytes.has_suffix(b"hello"[:]), content="true")
+  inspect(bytes.has_suffix(b"hel"[:]), content="false")
+  let view = bytes[1:4]
+  inspect(view.has_prefix(b"ell"[:]), content="true")
+  inspect(view.has_suffix(b"ell"[:]), content="true")
+  inspect(view.has_prefix(b"el"[:]), content="true")
+  inspect(view.has_suffix(b"ll"[:]), content="true")
+  inspect(view.has_prefix(b"ll"[:]), content="false")
+  inspect(view.chop_prefix(b"el"[:]), content="Some(b\"l\")")
+  inspect(view.chop_suffix(b"ll"[:]), content="Some(b\"e\")")
+  inspect(view.chop_prefix(b""[:]), content="Some(b\"ell\")")
+  inspect(view.chop_suffix(b""[:]), content="Some(b\"ell\")")
+  inspect(bytes.chop_prefix(b"he"[:]), content="Some(b\"llo\")")
+  inspect(bytes.chop_suffix(b"lo"[:]), content="Some(b\"hel\")")
+  inspect(bytes.chop_prefix(b"zz"[:]), content="None")
+  inspect(bytes.chop_suffix(b"zz"[:]), content="None")
+}
+
+///|
 test "BytesView::to_array" {
   let view = b"hi"[:]
   inspect(view.to_array(), content="[b'\\x68', b'\\x69']")
