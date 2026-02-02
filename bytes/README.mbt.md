@@ -156,3 +156,19 @@ test "bytes operations" {
   inspect(b1 < b2, content="true")
 }
 ```
+
+## Prefixes, Suffixes, and Chopping
+
+You can check for prefixes and suffixes or remove them when present:
+
+```mbt check
+///|
+test "bytes prefix/suffix" {
+  let bytes = b"hello"
+  inspect(bytes.has_prefix(b"he"[:]), content="true")
+  inspect(bytes.has_suffix(b"lo"[:]), content="true")
+  inspect(bytes.chop_prefix(b"he"[:]), content="Some(b\"llo\")")
+  inspect(bytes.chop_suffix(b"lo"[:]), content="Some(b\"hel\")")
+  inspect(bytes.chop_prefix(b"zz"[:]), content="None")
+}
+```

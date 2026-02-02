@@ -61,3 +61,74 @@ pub fn BytesView::rev_find(target : BytesView, pattern : BytesView) -> Int? {
 pub fn Bytes::rev_find(target : Bytes, pattern : BytesView) -> Int? {
   target[:].rev_find(pattern)
 }
+
+///|
+/// Returns true if this bytes view starts with the given prefix.
+pub fn BytesView::has_prefix(self : BytesView, prefix : BytesView) -> Bool {
+  self.find(prefix) is Some(i) && i == 0
+}
+
+///|
+/// Returns true if this bytes starts with the given prefix.
+pub fn Bytes::has_prefix(self : Bytes, prefix : BytesView) -> Bool {
+  self[:].has_prefix(prefix)
+}
+
+///|
+/// Returns true if this bytes view ends with the given suffix.
+pub fn BytesView::has_suffix(self : BytesView, suffix : BytesView) -> Bool {
+  self.rev_find(suffix) is Some(i) && i == self.length() - suffix.length()
+}
+
+///|
+/// Returns true if this bytes ends with the given suffix.
+pub fn Bytes::has_suffix(self : Bytes, suffix : BytesView) -> Bool {
+  self[:].has_suffix(suffix)
+}
+
+///|
+/// Removes the given prefix from the view if it exists.
+///
+/// Returns `Some(suffix)` if the view starts with the given prefix.
+/// Returns `None` otherwise.
+pub fn BytesView::chop_prefix(
+  self : BytesView,
+  prefix : BytesView,
+) -> BytesView? {
+  let prefix_len = prefix.length()
+  if self.length() >= prefix_len && self.sub(end=prefix_len) == prefix {
+    Some(self.sub(start=prefix_len))
+  } else {
+    None
+  }
+}
+
+///|
+/// Removes the given prefix from the bytes if it exists.
+pub fn Bytes::chop_prefix(self : Bytes, prefix : BytesView) -> BytesView? {
+  self[:].chop_prefix(prefix)
+}
+
+///|
+/// Removes the given suffix from the view if it exists.
+///
+/// Returns `Some(prefix)` if the view ends with the given suffix.
+/// Returns `None` otherwise.
+pub fn BytesView::chop_suffix(
+  self : BytesView,
+  suffix : BytesView,
+) -> BytesView? {
+  let self_len = self.length()
+  let suffix_len = suffix.length()
+  if self_len >= suffix_len && self.sub(start=self_len - suffix_len) == suffix {
+    Some(self.sub(end=self_len - suffix_len))
+  } else {
+    None
+  }
+}
+
+///|
+/// Removes the given suffix from the bytes if it exists.
+pub fn Bytes::chop_suffix(self : Bytes, suffix : BytesView) -> BytesView? {
+  self[:].chop_suffix(suffix)
+}
