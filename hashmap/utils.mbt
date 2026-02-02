@@ -351,12 +351,11 @@ pub impl[K : Show, V : Show] Show for HashMap[K, V] with output(self, logger) {
     if i > 0 {
       logger.write_string(", ")
     }
-    logger
-    ..write_string("(")
-    ..write_object(k)
-    ..write_string(", ")
-    ..write_object(v)
-    ..write_string(")")
+    logger.write_string("(")
+    logger.write_object(k)
+    logger.write_string(", ")
+    logger.write_object(v)
+    logger.write_string(")")
   })
   logger.write_string("])")
 }

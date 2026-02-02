@@ -297,11 +297,11 @@ pub fn Json::stringify(
             buf.write_string(indent_str(depth, indent))
             stack.push(WriteFrame::Array(arr, i=0))
           }
-        String(s) =>
-          buf
-          ..write_char('\"')
-          ..write_string(escape(s, escape_slash~))
-          ..write_char('\"')
+        String(s) => {
+          buf.write_char('\"')
+          buf.write_string(escape(s, escape_slash~))
+          buf.write_char('\"')
+        }
         Number(n, repr~) =>
           match repr {
             None => buf.write_object(n)
@@ -348,11 +348,10 @@ pub fn Json::stringify(
                 buf.write_char(',')
                 buf.write_string(indent_str(depth, indent))
               }
-              buf
-              ..write_char('\"')
-              ..write_string(escape(k, escape_slash~))
-              ..write_char('\"')
-              ..write_char(':')
+              buf.write_char('\"')
+              buf.write_string(escape(k, escape_slash~))
+              buf.write_char('\"')
+              buf.write_char(':')
               if indent > 0 {
                 buf.write_char(' ')
               }

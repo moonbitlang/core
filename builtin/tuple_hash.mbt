@@ -15,7 +15,8 @@
 ///|
 pub impl[A : Hash, B : Hash] Hash for (A, B) with hash_combine(self, hasher) {
   let (a, b) = self
-  hasher..combine(a)..combine(b)
+  hasher.combine(a)
+  hasher.combine(b)
 }
 
 ///|
@@ -24,7 +25,9 @@ pub impl[A : Hash, B : Hash, C : Hash] Hash for (A, B, C) with hash_combine(
   hasher,
 ) {
   let (a, b, c) = self
-  hasher..combine(a)..combine(b)..combine(c)
+  hasher.combine(a)
+  hasher.combine(b)
+  hasher.combine(c)
 }
 
 ///|
@@ -33,7 +36,10 @@ pub impl[A : Hash, B : Hash, C : Hash, D : Hash] Hash for (A, B, C, D) with hash
   hasher,
 ) {
   let (a, b, c, d) = self
-  hasher..combine(a)..combine(b)..combine(c)..combine(d)
+  hasher.combine(a)
+  hasher.combine(b)
+  hasher.combine(c)
+  hasher.combine(d)
 }
 
 ///|
@@ -45,7 +51,11 @@ pub impl[A : Hash, B : Hash, C : Hash, D : Hash, E : Hash] Hash for (
   E,
 ) with hash_combine(self, hasher) {
   let (a, b, c, d, e) = self
-  hasher..combine(a)..combine(b)..combine(c)..combine(d)..combine(e)
+  hasher.combine(a)
+  hasher.combine(b)
+  hasher.combine(c)
+  hasher.combine(d)
+  hasher.combine(e)
 }
 
 ///|
@@ -58,7 +68,12 @@ pub impl[A : Hash, B : Hash, C : Hash, D : Hash, E : Hash, F : Hash] Hash for (
   F,
 ) with hash_combine(self, hasher) {
   let (a, b, c, d, e, f) = self
-  hasher..combine(a)..combine(b)..combine(c)..combine(d)..combine(e)..combine(f)
+  hasher.combine(a)
+  hasher.combine(b)
+  hasher.combine(c)
+  hasher.combine(d)
+  hasher.combine(e)
+  hasher.combine(f)
 }
 
 ///|
@@ -72,12 +87,11 @@ pub impl[A : Hash, B : Hash, C : Hash, D : Hash, E : Hash, F : Hash, G : Hash] H
   G,
 ) with hash_combine(self, hasher) {
   let (a, b, c, d, e, f, g) = self
-  hasher
-  ..combine(a)
-  ..combine(b)
-  ..combine(c)
-  ..combine(d)
-  ..combine(e)
-  ..combine(f)
-  ..combine(g)
+  hasher.combine(a)
+  hasher.combine(b)
+  hasher.combine(c)
+  hasher.combine(d)
+  hasher.combine(e)
+  hasher.combine(f)
+  hasher.combine(g)
 }

@@ -14,8 +14,12 @@
 
 ///|
 test "Bool hash function" {
-  inspect(Hasher::new(seed=0)..combine(true).finalize(), content="-205818221")
-  inspect(Hasher::new(seed=0)..combine(false).finalize(), content="148298089")
+  let h1 = Hasher::new(seed=0)
+  h1.combine(true)
+  inspect(h1.finalize(), content="-205818221")
+  let h2 = Hasher::new(seed=0)
+  h2.combine(false)
+  inspect(h2.finalize(), content="148298089")
 }
 
 ///|

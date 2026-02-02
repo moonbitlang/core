@@ -180,14 +180,13 @@ test "combine byte" {
 ///|
 test "combine all" {
   let hasher = Hasher::new(seed=0)
-  hasher
-  ..combine_int(1)
-  ..combine_int64(2147483648)
-  ..combine_uint(2)
-  ..combine_uint64(4294967296)
-  ..combine_double(1.234)
-  ..combine_string("Moonbit")
-  ..combine_bytes(Bytes::make(10, b'1'))
+  hasher.combine_int(1)
+  hasher.combine_int64(2147483648)
+  hasher.combine_uint(2)
+  hasher.combine_uint64(4294967296)
+  hasher.combine_double(1.234)
+  hasher.combine_string("Moonbit")
+  hasher.combine_bytes(Bytes::make(10, b'1'))
   inspect(hasher.finalize(), content="1982681228")
   inspect(hasher.finalize() == hasher.finalize(), content="true")
 }

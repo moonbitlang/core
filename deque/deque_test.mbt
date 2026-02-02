@@ -871,12 +871,11 @@ test "deque truncate" {
   // Test split case (head_len < len)
   // Push and pop to create a wrap-around situation
   let dq = @deque.from_array([1, 2, 3, 4, 5, 6])
-  dq
-  ..unsafe_pop_front()
-  ..unsafe_pop_front()
-  ..unsafe_pop_front()
-  ..push_back(7)
-  ..push_back(8)
+  dq.unsafe_pop_front()
+  dq.unsafe_pop_front()
+  dq.unsafe_pop_front()
+  dq.push_back(7)
+  dq.push_back(8)
   // Current layout: [7, 8, X, 4, 5, 6]
   @json.json_inspect(dq.as_views(), content=[[4, 5, 6], [7, 8]])
   dq.truncate(42)
@@ -910,34 +909,65 @@ test "deque retain" {
   fn dq() raise {
     // Push and pop to create a wrap-around situation
     let dq = @deque.from_array([1, 2, 3, 4, 5, 6])
-    dq
-    ..unsafe_pop_front()
-    ..unsafe_pop_front()
-    ..unsafe_pop_front()
-    ..push_back(7)
-    ..push_back(8)
+    dq.unsafe_pop_front()
+    dq.unsafe_pop_front()
+    dq.unsafe_pop_front()
+    dq.push_back(7)
+    dq.push_back(8)
     // Current layout: [7, 8, X, 4, 5, 6]
     @json.json_inspect(dq.as_views(), content=[[4, 5, 6], [7, 8]])
     dq
   }
 
-  @json.json_inspect(dq()..retain(is_even).as_views(), content=[[4, 6, 8], []])
-  @json.json_inspect(dq()..retain(x => x >= 5).as_views(), content=[
-    [5, 6, 7],
-    [8],
-  ])
-  @json.json_inspect(dq()..retain(x => x >= 7).as_views(), content=[[7, 8], []])
-  @json.json_inspect(dq()..retain(_ => false).as_views(), content=[[], []])
-  @json.json_inspect(dq()..retain(_ => true).as_views(), content=[
-    [4, 5, 6],
-    [7, 8],
-  ])
+  @json.json_inspect(
+    dq()
+    |> x => {
+      x.retain(is_even)
+      x.as_views()
+    },
+    content=[[4, 6, 8], []],
+  )
+  @json.json_inspect(
+    dq()
+    |> x => {
+      x.retain(y => y >= 5)
+      x.as_views()
+    },
+    content=[[5, 6, 7], [8]],
+  )
+  @json.json_inspect(
+    dq()
+    |> x => {
+      x.retain(y => y >= 7)
+      x.as_views()
+    },
+    content=[[7, 8], []],
+  )
+  @json.json_inspect(
+    dq()
+    |> x => {
+      x.retain(_ => false)
+      x.as_views()
+    },
+    content=[[], []],
+  )
+  @json.json_inspect(
+    dq()
+    |> x => {
+      x.retain(_ => true)
+      x.as_views()
+    },
+    content=[[4, 5, 6], [7, 8]],
+  )
 }
 
 ///|
 test "deque retain clears full wrapped deque" {
   let dq = @deque.new(capacity=4)
-  dq..push_back(1)..push_back(2)..push_back(3)..push_back(4)
+  dq.push_back(1)
+  dq.push_back(2)
+  dq.push_back(3)
+  dq.push_back(4)
   ignore(dq.pop_front())
   dq.push_back(5)
   inspect(dq.as_views(), content="([2, 3, 4], [5])")
@@ -966,39 +996,57 @@ test "deque retain_map" {
   fn dq() raise {
     // Push and pop to create a wrap-around situation
     let dq = @deque.from_array([1, 2, 3, 4, 5, 6])
-    dq
-    ..unsafe_pop_front()
-    ..unsafe_pop_front()
-    ..unsafe_pop_front()
-    ..push_back(7)
-    ..push_back(8)
+    dq.unsafe_pop_front()
+    dq.unsafe_pop_front()
+    dq.unsafe_pop_front()
+    dq.push_back(7)
+    dq.push_back(8)
     // Current layout: [7, 8, X, 4, 5, 6]
     @json.json_inspect(dq.as_views(), content=[[4, 5, 6], [7, 8]])
     dq
   }
 
-  @json.json_inspect(dq()..retain_map(inc_if_even).as_views(), content=[
-    [5, 7, 9],
-    [],
-  ])
-  @json.json_inspect(dq()..retain_map(inc_if(x => x >= 5)).as_views(), content=[
-    [6, 7, 8],
-    [9],
-  ])
-  @json.json_inspect(dq()..retain_map(inc_if(x => x >= 7)).as_views(), content=[
-    [8, 9],
-    [],
-  ])
-  @json.json_inspect(dq()..retain_map(Option::Some(_)).as_views(), content=[
-    [4, 5, 6],
-    [7, 8],
-  ])
+  @json.json_inspect(
+    dq()
+    |> x => {
+      x.retain_map(inc_if_even)
+      x.as_views()
+    },
+    content=[[5, 7, 9], []],
+  )
+  @json.json_inspect(
+    dq()
+    |> x => {
+      x.retain_map(inc_if(y => y >= 5))
+      x.as_views()
+    },
+    content=[[6, 7, 8], [9]],
+  )
+  @json.json_inspect(
+    dq()
+    |> x => {
+      x.retain_map(inc_if(y => y >= 7))
+      x.as_views()
+    },
+    content=[[8, 9], []],
+  )
+  @json.json_inspect(
+    dq()
+    |> x => {
+      x.retain_map(Option::Some(_))
+      x.as_views()
+    },
+    content=[[4, 5, 6], [7, 8]],
+  )
 }
 
 ///|
 test "deque retain_map clears full wrapped deque" {
   let dq = @deque.new(capacity=4)
-  dq..push_back(1)..push_back(2)..push_back(3)..push_back(4)
+  dq.push_back(1)
+  dq.push_back(2)
+  dq.push_back(3)
+  dq.push_back(4)
   ignore(dq.pop_front())
   dq.push_back(5)
   inspect(dq.as_views(), content="([2, 3, 4], [5])")
@@ -1117,7 +1165,9 @@ test "flatten when wrapped around" {
 test "drain when wrapped around" {
   // when the area to be drained is wrapped around
   let dq = @deque.from_array([4, 5, 6])
-  dq..push_front(3)..push_front(2)..push_front(1)
+  dq.push_front(3)
+  dq.push_front(2)
+  dq.push_front(1)
   inspect(dq.as_views(), content="([1, 2, 3], [4, 5, 6])")
   let dq2 = dq.drain(start=2, len=2)
   inspect(dq.as_views(), content="([1, 2], [5, 6])")
@@ -1125,7 +1175,9 @@ test "drain when wrapped around" {
 
   // when the area to be drained is not wrapped around
   let dq = @deque.from_array([4, 5, 6])
-  dq..push_front(3)..push_front(2)..push_front(1)
+  dq.push_front(3)
+  dq.push_front(2)
+  dq.push_front(1)
   inspect(dq.as_views(), content="([1, 2, 3], [4, 5, 6])")
   let dq2 = dq.drain(start=1, len=2)
   inspect(dq.as_views(), content="([1], [4, 5, 6])")
@@ -1133,7 +1185,10 @@ test "drain when wrapped around" {
 
   // when the start is larger than len
   let dq = @deque.from_array([5, 6])
-  dq..push_front(4)..push_front(3)..push_front(2)..push_front(1)
+  dq.push_front(4)
+  dq.push_front(3)
+  dq.push_front(2)
+  dq.push_front(1)
   inspect(dq.as_views(), content="([1, 2], [3, 4, 5, 6])")
   let dq2 = dq.drain(start=3, len=2)
   inspect(dq.as_views(), content="([1, 2], [3, 6])")
@@ -1171,7 +1226,10 @@ test "drain edge cases" {
 test "drain complementary tests" {
   // when back is drained completely
   let dq = @deque.from_array([5, 6])
-  dq..push_front(4)..push_front(3)..push_front(2)..push_front(1)
+  dq.push_front(4)
+  dq.push_front(3)
+  dq.push_front(2)
+  dq.push_front(1)
   inspect(dq.as_views(), content="([1, 2], [3, 4, 5, 6])")
   let dq2 = dq.drain(start=1, len=5)
   inspect(dq.as_views(), content="([1], [])")
@@ -1179,7 +1237,10 @@ test "drain complementary tests" {
 
   // when front is drained completely
   let dq = @deque.from_array([5, 6])
-  dq..push_front(4)..push_front(3)..push_front(2)..push_front(1)
+  dq.push_front(4)
+  dq.push_front(3)
+  dq.push_front(2)
+  dq.push_front(1)
   inspect(dq.as_views(), content="([1, 2], [3, 4, 5, 6])")
   let dq2 = dq.drain(start=0, len=5)
   inspect(dq.as_views(), content="([6], [])")
@@ -1187,7 +1248,10 @@ test "drain complementary tests" {
 
   // when only back is drained
   let dq = @deque.from_array([5, 6])
-  dq..push_front(4)..push_front(3)..push_front(2)..push_front(1)
+  dq.push_front(4)
+  dq.push_front(3)
+  dq.push_front(2)
+  dq.push_front(1)
   inspect(dq.as_views(), content="([1, 2], [3, 4, 5, 6])")
   let dq2 = dq.drain(start=2, len=4)
   inspect(dq.as_views(), content="([1, 2], [])")
@@ -1226,7 +1290,8 @@ test "binary_search_by on multiple elements deque" {
 ///|
 test "binary_search when wrapped around" {
   let dq = @deque.from_array([5, 7, 9])
-  dq..push_front(3)..push_front(1)
+  dq.push_front(3)
+  dq.push_front(1)
   let found_first = dq.binary_search(1)
   inspect(found_first, content="Ok(0)")
   let found_middle = dq.binary_search(5)
@@ -1259,9 +1324,10 @@ test "binary_search on wrapped deque with first/mid/last checks" {
 ///|
 test "binary_search with minimal wrap around" {
   let dq = @deque.new(capacity=2)
-  dq..push_back(1)..push_back(2)
-  dq..unsafe_pop_front()
-  dq..push_back(3)
+  dq.push_back(1)
+  dq.push_back(2)
+  dq.unsafe_pop_front()
+  dq.push_back(3)
   let found = dq.binary_search(2)
   inspect(found, content="Ok(0)")
   let not_found = dq.binary_search(1)
@@ -1271,9 +1337,14 @@ test "binary_search with minimal wrap around" {
 ///|
 test "binary_search with edge wrap around" {
   let dq = @deque.new(capacity=4)
-  dq..push_back(1)..push_back(3)..push_back(5)..push_back(7)
-  dq..unsafe_pop_front()..unsafe_pop_front()
-  dq..push_back(9)..push_back(11)
+  dq.push_back(1)
+  dq.push_back(3)
+  dq.push_back(5)
+  dq.push_back(7)
+  dq.unsafe_pop_front()
+  dq.unsafe_pop_front()
+  dq.push_back(9)
+  dq.push_back(11)
   inspect(dq.as_views(), content="([5, 7], [9, 11])") // Verify wrapped state
   let found = dq.binary_search(7) // Find existing element
   inspect(found, content="Ok(1)")
@@ -1285,9 +1356,14 @@ test "binary_search with edge wrap around" {
 /// Test binary search with wrap-around buffer
 test "deque_binary_search_wrap_around" {
   let dq = @deque.new(capacity=4)
-  dq..push_back(1)..push_back(3)..push_back(5)..push_back(7)
-  dq..unsafe_pop_front()..unsafe_pop_front()
-  dq..push_back(9)..push_back(11)
+  dq.push_back(1)
+  dq.push_back(3)
+  dq.push_back(5)
+  dq.push_back(7)
+  dq.unsafe_pop_front()
+  dq.unsafe_pop_front()
+  dq.push_back(9)
+  dq.push_back(11)
   inspect(dq.as_views(), content="([5, 7], [9, 11])")
   // 4. Verify binary search functionality
   inspect(dq.binary_search(7), content="Ok(1)")
@@ -1639,11 +1715,10 @@ test "append_empty_after_pushes" {
 test "append_folded_but_has_space" {
   let d1 = @deque.from_array([1, 2, 3, 4, 5, 6, 7, 8])
   inspect(d1.as_views(), content="([1, 2, 3, 4, 5, 6, 7, 8], [])")
-  d1
-  ..unsafe_pop_front()
-  ..unsafe_pop_front()
-  ..unsafe_pop_front()
-  ..unsafe_pop_back()
+  d1.unsafe_pop_front()
+  d1.unsafe_pop_front()
+  d1.unsafe_pop_front()
+  d1.unsafe_pop_back()
   inspect(d1.as_views(), content="([4, 5, 6, 7], [])")
   d1.append(@deque.from_array([9, 10, 11]))
   inspect(d1.as_views(), content="([4, 5, 6, 7, 9], [10, 11])")

@@ -406,7 +406,8 @@ pub fn[K : Hash + Eq, V] HashMap::contains(
 /// ```mbt check
 /// test {
 ///   let map = @hashmap.new()
-///   map..set("a", 1)..set("b", 2)
+///   map.set("a", 1)
+///   map.set("b", 2)
 ///   inspect(map.contains_kv("a", 1), content="true")
 ///   inspect(map.contains_kv("a", 2), content="false")
 ///   inspect(map.contains_kv("c", 3), content="false")

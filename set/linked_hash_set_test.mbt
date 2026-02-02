@@ -296,10 +296,9 @@ test "from_iter empty iter" {
 ///|
 test "remove item causes break when psl < i" {
   let set = @set.Set::new()
-  set
-  ..add(1)
-  ..add(11) // This goes to a different bucket due to hash collision
-  ..remove(21) // Key doesn't exist, will cause psl < i and break
+  set.add(1)
+  set.add(11) // This goes to a different bucket due to hash collision
+  set.remove(21) // Key doesn't exist, will cause psl < i and break
   assert_eq(set.length(), 2)
 }
 
@@ -311,7 +310,9 @@ test "to_array_empty" {
 ///|
 test "to_array_non_empty" {
   let set = @set.Set::new()
-  set..add(1)..add(2)..add(3)
+  set.add(1)
+  set.add(2)
+  set.add(3)
   inspect(set.to_array(), content="[1, 2, 3]")
 }
 
@@ -351,18 +352,25 @@ test "equal: empty sets" {
 ///|
 test "equal: same elements different order" {
   let set1 = @set.Set::new()
-  set1..add(1)..add(2)..add(3)
+  set1.add(1)
+  set1.add(2)
+  set1.add(3)
   let set2 = @set.Set::new()
-  set2..add(3)..add(2)..add(1)
+  set2.add(3)
+  set2.add(2)
+  set2.add(1)
   inspect(set1 == set2, content="true")
 }
 
 ///|
 test "equal: subset" {
   let set1 = @set.Set::new()
-  set1..add(1)..add(2)..add(3)
+  set1.add(1)
+  set1.add(2)
+  set1.add(3)
   let set2 = @set.Set::new()
-  set2..add(1)..add(2)
+  set2.add(1)
+  set2.add(2)
   inspect(set1 == set2, content="false")
   inspect(set2 == set1, content="false")
 }
@@ -396,9 +404,13 @@ test "equal: large sets with one difference" {
 ///|
 test "equal: after removal" {
   let set1 = @set.Set::new()
-  set1..add(1)..add(2)..add(3)
+  set1.add(1)
+  set1.add(2)
+  set1.add(3)
   let set2 = @set.Set::new()
-  set2..add(1)..add(2)..add(3)
+  set2.add(1)
+  set2.add(2)
+  set2.add(3)
   set1.remove(2)
   inspect(set1 == set2, content="false")
   set2.remove(2)
@@ -408,7 +420,9 @@ test "equal: after removal" {
 ///|
 test "equal: after clear" {
   let set1 = @set.Set::new()
-  set1..add(1)..add(2)..add(3)
+  set1.add(1)
+  set1.add(2)
+  set1.add(3)
   let set2 = @set.Set::new()
   inspect(set1 == set2, content="false")
   set1.clear()
@@ -418,9 +432,13 @@ test "equal: after clear" {
 ///|
 test "equal: with string elements" {
   let set1 = @set.Set::new()
-  set1..add("apple")..add("banana")..add("cherry")
+  set1.add("apple")
+  set1.add("banana")
+  set1.add("cherry")
   let set2 = @set.Set::new()
-  set2..add("apple")..add("banana")..add("cherry")
+  set2.add("apple")
+  set2.add("banana")
+  set2.add("cherry")
   inspect(set1 == set2, content="true")
   set1.remove("banana")
   inspect(set1 == set2, content="false")
@@ -429,7 +447,9 @@ test "equal: with string elements" {
 ///|
 test "equal: reflexivity" {
   let set = @set.Set::new()
-  set..add(1)..add(2)..add(3)
+  set.add(1)
+  set.add(2)
+  set.add(3)
   inspect(set == set, content="true")
 }
 

@@ -174,13 +174,27 @@ test "Int16::compare" {
 
 ///|
 test "Int16::hash" {
-  inspect(Hasher::new(seed=0)..combine(1).finalize(), content="-205818221")
-  inspect(Hasher::new(seed=0)..combine(-1).finalize(), content="67608159")
-  inspect(Hasher::new(seed=0)..combine(32767).finalize(), content="929308064")
-  inspect(Hasher::new(seed=0)..combine(-32768).finalize(), content="-841328155")
-  inspect(Hasher::new(seed=0)..combine(0).finalize(), content="148298089")
-  inspect(Hasher::new(seed=0)..combine(12345).finalize(), content="-393624961")
-  inspect(Hasher::new(seed=0)..combine(-12345).finalize(), content="1221658118")
+  let h1 = Hasher::new(seed=0)
+  h1.combine(1)
+  inspect(h1.finalize(), content="-205818221")
+  let h2 = Hasher::new(seed=0)
+  h2.combine(-1)
+  inspect(h2.finalize(), content="67608159")
+  let h3 = Hasher::new(seed=0)
+  h3.combine(32767)
+  inspect(h3.finalize(), content="929308064")
+  let h4 = Hasher::new(seed=0)
+  h4.combine(-32768)
+  inspect(h4.finalize(), content="-841328155")
+  let h5 = Hasher::new(seed=0)
+  h5.combine(0)
+  inspect(h5.finalize(), content="148298089")
+  let h6 = Hasher::new(seed=0)
+  h6.combine(12345)
+  inspect(h6.finalize(), content="-393624961")
+  let h7 = Hasher::new(seed=0)
+  h7.combine(-12345)
+  inspect(h7.finalize(), content="1221658118")
 }
 
 ///|

@@ -63,20 +63,20 @@ impl Show for SourceLocRepr with output(self, logger) {
     _ => (pkg, None)
   }
   if package_name is Some(pkg_name) {
-    logger..write_view(pkg_name)..write_char('/')
+    logger.write_view(pkg_name)
+    logger.write_char('/')
   }
-  logger
-  ..write_view(self.filename)
-  ..write_char(':')
-  ..write_view(self.start_line)
-  ..write_char(':')
-  ..write_view(self.start_column)
-  ..write_char('-')
-  ..write_view(self.end_line)
-  ..write_char(':')
-  ..write_view(self.end_column)
-  ..write_char('@')
-  ..write_view(module_name)
+  logger.write_view(self.filename)
+  logger.write_char(':')
+  logger.write_view(self.start_line)
+  logger.write_char(':')
+  logger.write_view(self.start_column)
+  logger.write_char('-')
+  logger.write_view(self.end_line)
+  logger.write_char(':')
+  logger.write_view(self.end_column)
+  logger.write_char('@')
+  logger.write_view(module_name)
 }
 
 ///|
@@ -102,15 +102,15 @@ fn SourceLocRepr::parse(repr : String) -> SourceLocRepr {
 
 ///|
 fn SourceLocRepr::to_json_string(self : SourceLocRepr) -> String {
-  StringBuilder::new()
-  ..write_string("{\"pkg\":\"\{self.pkg}\"")
-  ..write_string(",\"filename\":")
-  ..write_object(self.filename)
-  ..write_string(",\"start_line\":\{self.start_line}")
-  ..write_string(",\"start_column\":\{self.start_column}")
-  ..write_string(",\"end_line\":\{self.end_line}")
-  ..write_string(",\"end_column\":\{self.end_column}}")
-  .to_string()
+  let sb = StringBuilder::new()
+  sb.write_string("{\"pkg\":\"\{self.pkg}\"")
+  sb.write_string(",\"filename\":")
+  sb.write_object(self.filename)
+  sb.write_string(",\"start_line\":\{self.start_line}")
+  sb.write_string(",\"start_column\":\{self.start_column}")
+  sb.write_string(",\"end_line\":\{self.end_line}")
+  sb.write_string(",\"end_column\":\{self.end_column}}")
+  sb.to_string()
 }
 
 ///|

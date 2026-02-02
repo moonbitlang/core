@@ -36,7 +36,9 @@ test {
 ///|
 test {
   let unit = ()
-  inspect(Hasher::new(seed=0)..combine(unit).finalize(), content="148298089")
+  let h = Hasher::new(seed=0)
+  h.combine(unit)
+  inspect(h.finalize(), content="148298089")
 }
 
 ///|

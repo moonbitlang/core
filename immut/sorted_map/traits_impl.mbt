@@ -61,7 +61,8 @@ pub impl[K : Hash, V : Hash] Hash for SortedMap[K, V] with hash_combine(
   hasher,
 ) {
   for e in self {
-    hasher..combine(e.0)..combine(e.1)
+    hasher.combine(e.0)
+    hasher.combine(e.1)
   }
 }
 

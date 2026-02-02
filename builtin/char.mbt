@@ -489,7 +489,10 @@ pub impl Show for Char with output(self, logger) {
   logger.write_char('\'')
   match self {
     // Handle characters that need special escape sequences
-    '\'' | '\\' => logger..write_char('\\')..write_char(self)
+    '\'' | '\\' => {
+      logger.write_char('\\')
+      logger.write_char(self)
+    }
     '\n' => logger.write_string("\\n")
     '\r' => logger.write_string("\\r")
     '\b' => logger.write_string("\\b")

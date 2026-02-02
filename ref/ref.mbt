@@ -14,7 +14,9 @@
 
 ///|
 pub impl[X : Show] Show for Ref[X] with output(self, logger) {
-  logger..write_string("{val: ")..write_object(self.val)..write_string("}")
+  logger.write_string("{val: ")
+  logger.write_object(self.val)
+  logger.write_string("}")
 }
 
 ///|

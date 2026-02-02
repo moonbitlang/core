@@ -507,7 +507,8 @@ pub impl Show for BytesView with output(self, logger) {
     if byte is (' '..='~') && byte != '"' && byte != '\\' {
       logger.write_char(byte.to_char())
     } else {
-      logger..write_string("\\x")..write_string(byte.to_hex())
+      logger.write_string("\\x")
+      logger.write_string(byte.to_hex())
     }
   }
   logger.write_string("\"")
@@ -655,7 +656,8 @@ pub impl ToJson for BytesView with to_json(self) -> Json {
     if byte is (' '..='~') && byte != '"' && byte != '\\' {
       sb.write_char(byte.to_char())
     } else {
-      sb..write_string("\\x")..write_string(byte.to_hex())
+      sb.write_string("\\x")
+      sb.write_string(byte.to_hex())
     }
   }
   Json::string(sb.to_string())
