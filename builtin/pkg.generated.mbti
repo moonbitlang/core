@@ -298,13 +298,14 @@ pub fn[X] Iter::repeat(X) -> Self[X]
 #deprecated
 pub fn[X] Iter::run(Self[X], (X) -> IterResult) -> IterResult
 pub fn[X] Iter::singleton(X) -> Self[X]
-#alias("_[_:_]")
-pub fn[X] Iter::sub(Self[X], start? : Int, end? : Int) -> Self[X]
 pub fn[X] Iter::take(Self[X], Int) -> Self[X]
 pub fn[X] Iter::take_while(Self[X], (X) -> Bool) -> Self[X]
 pub fn[X] Iter::tap(Self[X], (X) -> Unit) -> Self[X]
 #alias(collect)
 pub fn[X] Iter::to_array(Self[X]) -> Array[X]
+#alias("_[_:_]")
+#alias(sub, deprecated)
+pub fn[X] Iter::view(Self[X], start? : Int, end? : Int) -> Self[X]
 pub impl[T] Add for Iter[T]
 pub impl[X : Show] Show for Iter[X]
 pub impl[X : ToJson] ToJson for Iter[X]
