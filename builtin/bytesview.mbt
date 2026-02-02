@@ -168,7 +168,8 @@ pub fn BytesView::unsafe_get(self : BytesView, index : Int) -> Byte {
 /// }
 /// ```
 #alias("_[_:_]")
-pub fn Bytes::sub(self : Bytes, start? : Int = 0, end? : Int) -> BytesView {
+#alias(sub, deprecated="Use _[_:_ instead")
+pub fn Bytes::view(self : Bytes, start? : Int = 0, end? : Int) -> BytesView {
   let len = self.length()
   let end = match end {
     None => len
@@ -195,7 +196,8 @@ pub fn Bytes::sub(self : Bytes, start? : Int = 0, end? : Int) -> BytesView {
 /// }
 /// ```
 #alias("_[_:_]")
-pub fn BytesView::sub(
+#alias(sub, deprecated="Use _[_:_] instead")
+pub fn BytesView::view(
   self : BytesView,
   start? : Int = 0,
   end? : Int,

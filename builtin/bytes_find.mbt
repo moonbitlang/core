@@ -66,7 +66,7 @@ pub fn Bytes::rev_find(target : Bytes, pattern : BytesView) -> Int? {
 /// Returns true if this bytes view starts with the given prefix.
 pub fn BytesView::has_prefix(self : BytesView, prefix : BytesView) -> Bool {
   let prefix_len = prefix.length()
-  self.length() >= prefix_len && self.sub(end=prefix_len) == prefix
+  self.length() >= prefix_len && self[:prefix_len] == prefix
 }
 
 ///|
@@ -78,7 +78,9 @@ pub fn Bytes::has_prefix(self : Bytes, prefix : BytesView) -> Bool {
 ///|
 /// Returns true if this bytes view ends with the given suffix.
 pub fn BytesView::has_suffix(self : BytesView, suffix : BytesView) -> Bool {
-  self.rev_find(suffix) is Some(i) && i == self.length() - suffix.length()
+  let self_len = self.length()
+  let suffix_len = suffix.length()
+  self_len >= suffix_len && self[self_len - suffix_len:] == suffix
 }
 
 ///|
@@ -97,8 +99,8 @@ pub fn BytesView::chop_prefix(
   prefix : BytesView,
 ) -> BytesView? {
   let prefix_len = prefix.length()
-  if self.length() >= prefix_len && self.sub(end=prefix_len) == prefix {
-    Some(self.sub(start=prefix_len))
+  if self.length() >= prefix_len && self[:prefix_len] == prefix {
+    Some(self[prefix_len:])
   } else {
     None
   }
@@ -121,8 +123,8 @@ pub fn BytesView::chop_suffix(
 ) -> BytesView? {
   let self_len = self.length()
   let suffix_len = suffix.length()
-  if self_len >= suffix_len && self.sub(start=self_len - suffix_len) == suffix {
-    Some(self.sub(end=self_len - suffix_len))
+  if self_len >= suffix_len && self[self_len - suffix_len:] == suffix {
+    Some(self[:self_len - suffix_len])
   } else {
     None
   }
