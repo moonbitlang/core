@@ -626,6 +626,31 @@ pub fn BytesView::lexical_compare(self : BytesView, other : BytesView) -> Int {
 }
 
 ///|
+/// Creates a new bytes view from a byte array.
+///
+/// Parameters:
+///
+/// * `array` : An array of bytes to be converted.
+///
+/// Returns a bytes view containing the same bytes as the input array.
+pub fn BytesView::from_array(arr : ArrayView[Byte]) -> BytesView {
+  Bytes::from_array(arr)[:]
+}
+
+///|
+/// Creates a new bytes view from an iterator of bytes.
+///
+/// Parameters:
+///
+/// * `iterator` : An iterator that yields bytes.
+///
+/// Returns a bytes view containing all the bytes from the iterator.
+#alias(from_iterator, deprecated)
+pub fn BytesView::from_iter(iter : Iter[Byte]) -> BytesView {
+  Bytes::from_iter(iter)[:]
+}
+
+///|
 /// Retrieves the underlying `Bytes` from a `View`.
 pub fn BytesView::data(self : BytesView) -> Bytes {
   self.bytes()
@@ -646,6 +671,24 @@ pub fn BytesView::to_bytes(self : BytesView) -> Bytes {
   let bytes = FixedArray::make(self.length(), (0 : Byte))
   bytes.blit_from_bytes(0, self.bytes(), self.start_offset(), self.length())
   unsafe_to_bytes(bytes)
+}
+
+///|
+/// Return an unchecked string, containing the subsequence of `self` that starts at
+/// `offset` and has length `length`. Both `offset` and `length`
+/// are indexed by byte.
+///
+/// Note this function does not validate the encoding of the byte sequence,
+/// it simply copy the bytes into a new String.
+pub fn BytesView::to_unchecked_string(
+  self : BytesView,
+  offset? : Int = 0,
+  length? : Int,
+) -> String {
+  let len = self.length()
+  let length = if length is Some(l) { l } else { len - offset }
+  guard offset >= 0 && length >= 0 && offset + length <= len
+  self.data().to_unchecked_string(offset=self.start_offset() + offset, length~)
 }
 
 ///|
