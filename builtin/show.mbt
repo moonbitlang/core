@@ -100,7 +100,8 @@ pub impl Show for String with output(self, logger) {
     match code {
       '"' | '\\' as c => {
         flush_segment(seg, i)
-        logger..write_char('\\')..write_char(c.unsafe_to_char())
+        logger.write_char('\\')
+        logger.write_char(c.unsafe_to_char())
         // Advance both pointers: continue with next index, new segment starts after current char
         continue i + 1, i + 1
       }
@@ -126,12 +127,11 @@ pub impl Show for String with output(self, logger) {
       }
       code =>
         if code < ' ' {
-          // has to be ascii  
+          // has to be ascii
           flush_segment(seg, i)
-          logger
-          ..write_string("\\u{")
-          ..write_string(code.to_byte().to_hex())
-          ..write_char('}')
+          logger.write_string("\\u{")
+          logger.write_string(code.to_byte().to_hex())
+          logger.write_char('}')
           continue i + 1, i + 1
         } else {
           // Normal character, keep scanning; only advance index.
@@ -182,16 +182,27 @@ pub fn String::escape(self : String) -> String {
 pub impl[X : Show] Show for X? with output(self, logger) {
   match self {
     None => logger.write_string("None")
-    Some(arg) =>
-      logger..write_string("Some(")..write_object(arg)..write_string(")")
+    Some(arg) => {
+      logger.write_string("Some(")
+      logger.write_object(arg)
+      logger.write_string(")")
+    }
   }
 }
 
 ///|
 pub impl[T : Show, E : Show] Show for Result[T, E] with output(self, logger) {
   match self {
-    Ok(x) => logger..write_string("Ok(")..write_object(x)..write_string(")")
-    Err(e) => logger..write_string("Err(")..write_object(e)..write_string(")")
+    Ok(x) => {
+      logger.write_string("Ok(")
+      logger.write_object(x)
+      logger.write_string(")")
+    }
+    Err(e) => {
+      logger.write_string("Err(")
+      logger.write_object(e)
+      logger.write_string(")")
+    }
   }
 }
 

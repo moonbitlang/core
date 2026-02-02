@@ -174,9 +174,15 @@ test "UInt16::compare" {
 
 ///|
 test "UInt16::hash" {
-  inspect(Hasher::new(seed=0)..combine(0).finalize(), content="148298089")
-  inspect(Hasher::new(seed=0)..combine(123).finalize(), content="-868461090")
-  inspect(Hasher::new(seed=0)..combine(65535).finalize(), content="-888052495")
+  let h1 = Hasher::new(seed=0)
+  h1.combine(0)
+  inspect(h1.finalize(), content="148298089")
+  let h2 = Hasher::new(seed=0)
+  h2.combine(123)
+  inspect(h2.finalize(), content="-868461090")
+  let h3 = Hasher::new(seed=0)
+  h3.combine(65535)
+  inspect(h3.finalize(), content="-888052495")
 }
 
 ///|

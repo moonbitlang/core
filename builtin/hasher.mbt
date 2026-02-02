@@ -605,7 +605,10 @@ pub impl Hash for UInt64 with hash_combine(self, hasher) {
 pub impl[X : Hash] Hash for X? with hash_combine(self, hasher) {
   match self {
     None => hasher.combine_int(0)
-    Some(x) => hasher..combine_int(1)..combine(x)
+    Some(x) => {
+      hasher.combine_int(1)
+      hasher.combine(x)
+    }
   }
 }
 
@@ -637,8 +640,14 @@ pub impl[T : Hash, E : Hash] Hash for Result[T, E] with hash_combine(
   hasher,
 ) {
   match self {
-    Ok(x) => hasher..combine_int(0)..combine(x)
-    Err(x) => hasher..combine_int(1)..combine(x)
+    Ok(x) => {
+      hasher.combine_int(0)
+      hasher.combine(x)
+    }
+    Err(x) => {
+      hasher.combine_int(1)
+      hasher.combine(x)
+    }
   }
 }
 

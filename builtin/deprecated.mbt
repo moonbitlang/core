@@ -16,9 +16,9 @@
 #deprecated("check `@encoding/utf8.encode`")
 #coverage.skip
 pub fn Bytes::of_string(str : String) -> Bytes {
-  FixedArray::make(str.length() * 2, Byte::default())
-  ..blit_from_string(0, str, 0, str.length())
-  .unsafe_reinterpret_as_bytes()
+  let arr = FixedArray::make(str.length() * 2, Byte::default())
+  arr.blit_from_string(0, str, 0, str.length())
+  arr.unsafe_reinterpret_as_bytes()
 }
 
 ///|

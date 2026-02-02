@@ -26,24 +26,42 @@ test "overflow" {
 
 ///|
 test "hash" {
-  inspect(Hasher::new(seed=0)..combine(0).finalize(), content="148298089")
-  inspect(Hasher::new(seed=0)..combine(1).finalize(), content="-205818221")
-  inspect(Hasher::new(seed=0)..combine(2).finalize(), content="527729046")
-  inspect(Hasher::new(seed=0)..combine(3).finalize(), content="-2136036233")
-  inspect(Hasher::new(seed=0)..combine(4).finalize(), content="-43556126")
-  inspect(Hasher::new(seed=0)..combine(5).finalize(), content="-2146748363")
-  inspect(Hasher::new(seed=0)..combine(6).finalize(), content="-1455877728")
-  inspect(Hasher::new(seed=0)..combine(7).finalize(), content="-427046664")
-  inspect(Hasher::new(seed=0)..combine(8).finalize(), content="-1629857596")
-  inspect(Hasher::new(seed=0)..combine(9).finalize(), content="970764038")
-  inspect(
-    Hasher::new(seed=0)..combine(0x7fffffff).finalize(),
-    content="1225377669",
-  )
-  inspect(
-    Hasher::new(seed=0)..combine(0x7fffffff + 1).finalize(),
-    content="1509677505",
-  )
+  let h0 = Hasher::new(seed=0)
+  h0.combine(0)
+  inspect(h0.finalize(), content="148298089")
+  let h1 = Hasher::new(seed=0)
+  h1.combine(1)
+  inspect(h1.finalize(), content="-205818221")
+  let h2 = Hasher::new(seed=0)
+  h2.combine(2)
+  inspect(h2.finalize(), content="527729046")
+  let h3 = Hasher::new(seed=0)
+  h3.combine(3)
+  inspect(h3.finalize(), content="-2136036233")
+  let h4 = Hasher::new(seed=0)
+  h4.combine(4)
+  inspect(h4.finalize(), content="-43556126")
+  let h5 = Hasher::new(seed=0)
+  h5.combine(5)
+  inspect(h5.finalize(), content="-2146748363")
+  let h6 = Hasher::new(seed=0)
+  h6.combine(6)
+  inspect(h6.finalize(), content="-1455877728")
+  let h7 = Hasher::new(seed=0)
+  h7.combine(7)
+  inspect(h7.finalize(), content="-427046664")
+  let h8 = Hasher::new(seed=0)
+  h8.combine(8)
+  inspect(h8.finalize(), content="-1629857596")
+  let h9 = Hasher::new(seed=0)
+  h9.combine(9)
+  inspect(h9.finalize(), content="970764038")
+  let h10 = Hasher::new(seed=0)
+  h10.combine(0x7fffffff)
+  inspect(h10.finalize(), content="1225377669")
+  let h11 = Hasher::new(seed=0)
+  h11.combine(0x7fffffff + 1)
+  inspect(h11.finalize(), content="1509677505")
 }
 
 ///|

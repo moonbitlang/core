@@ -22,69 +22,75 @@ fn h() -> Hasher {
 
 ///|
 test "hash_combine for 2-tuple" {
-  assert_eq(
-    h()..combine(1)..combine("hello").finalize(),
-    h()..combine((1, "hello")).finalize(),
-  )
+  let h1 = h()
+  h1.combine(1)
+  h1.combine("hello")
+  let h2 = h()
+  h2.combine((1, "hello"))
+  assert_eq(h1.finalize(), h2.finalize())
 }
 
 ///|
 test "hash_combine for 3-tuple" {
-  assert_eq(
-    h()..combine(1)..combine("hello")..combine(3.14).finalize(),
-    h()..combine((1, "hello", 3.14)).finalize(),
-  )
+  let h1 = h()
+  h1.combine(1)
+  h1.combine("hello")
+  h1.combine(3.14)
+  let h2 = h()
+  h2.combine((1, "hello", 3.14))
+  assert_eq(h1.finalize(), h2.finalize())
 }
 
 ///|
 test "hash_combine for 4-tuple" {
-  assert_eq(
-    h()..combine(1)..combine("hello")..combine(3.14)..combine(15).finalize(),
-    h()..combine((1, "hello", 3.14, 15)).finalize(),
-  )
+  let h1 = h()
+  h1.combine(1)
+  h1.combine("hello")
+  h1.combine(3.14)
+  h1.combine(15)
+  let h2 = h()
+  h2.combine((1, "hello", 3.14, 15))
+  assert_eq(h1.finalize(), h2.finalize())
 }
 
 ///|
 test "hash_combine for 5-tuple" {
-  assert_eq(
-    h()
-    ..combine(1)
-    ..combine("hello")
-    ..combine(3.14)
-    ..combine(15)
-    ..combine('a')
-    .finalize(),
-    h()..combine((1, "hello", 3.14, 15, 'a')).finalize(),
-  )
+  let h1 = h()
+  h1.combine(1)
+  h1.combine("hello")
+  h1.combine(3.14)
+  h1.combine(15)
+  h1.combine('a')
+  let h2 = h()
+  h2.combine((1, "hello", 3.14, 15, 'a'))
+  assert_eq(h1.finalize(), h2.finalize())
 }
 
 ///|
 test "hash_combine for 6-tuple" {
-  assert_eq(
-    h()
-    ..combine(1)
-    ..combine("hello")
-    ..combine(3.14)
-    ..combine(15)
-    ..combine('a')
-    ..combine(0x12345678UL)
-    .finalize(),
-    h()..combine((1, "hello", 3.14, 15, 'a', 0x12345678UL)).finalize(),
-  )
+  let h1 = h()
+  h1.combine(1)
+  h1.combine("hello")
+  h1.combine(3.14)
+  h1.combine(15)
+  h1.combine('a')
+  h1.combine(0x12345678UL)
+  let h2 = h()
+  h2.combine((1, "hello", 3.14, 15, 'a', 0x12345678UL))
+  assert_eq(h1.finalize(), h2.finalize())
 }
 
 ///|
 test "hash_combine for 7-tuple" {
-  assert_eq(
-    h()
-    ..combine(1)
-    ..combine("hello")
-    ..combine(3.14)
-    ..combine(15)
-    ..combine('a')
-    ..combine(0x12345678UL)
-    ..combine(b's')
-    .finalize(),
-    h()..combine((1, "hello", 3.14, 15, 'a', 0x12345678UL, b's')).finalize(),
-  )
+  let h1 = h()
+  h1.combine(1)
+  h1.combine("hello")
+  h1.combine(3.14)
+  h1.combine(15)
+  h1.combine('a')
+  h1.combine(0x12345678UL)
+  h1.combine(b's')
+  let h2 = h()
+  h2.combine((1, "hello", 3.14, 15, 'a', 0x12345678UL, b's'))
+  assert_eq(h1.finalize(), h2.finalize())
 }

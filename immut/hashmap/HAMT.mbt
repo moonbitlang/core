@@ -759,7 +759,10 @@ pub impl[K : Hash, V : Hash] Hash for HashMap[K, V] with hash_combine(
   hasher,
 ) {
   hasher.combine(
-    self.fold(init=0, (acc, k, v) => acc ^
-      Hasher::new()..combine((k, v)).finalize()),
+    self.fold(init=0, (acc, k, v) => {
+      let h = Hasher::new()
+      h.combine((k, v))
+      acc ^ h.finalize()
+    }),
   )
 }

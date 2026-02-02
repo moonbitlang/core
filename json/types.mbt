@@ -30,29 +30,29 @@ pub(all) suberror ParseError {
 ///|
 pub impl Show for ParseError with output(self, logger) {
   match self {
-    InvalidChar({ line, column }, c) =>
-      logger
-      ..write_string("Invalid character ")
-      ..write_string(repr(c))
-      ..write_string(" at line ")
-      ..write_object(line)
-      ..write_string(", column ")
-      ..write_object(column)
+    InvalidChar({ line, column }, c) => {
+      logger.write_string("Invalid character ")
+      logger.write_string(repr(c))
+      logger.write_string(" at line ")
+      logger.write_object(line)
+      logger.write_string(", column ")
+      logger.write_object(column)
+    }
     InvalidEof => logger.write_string("Unexpected end of file")
-    InvalidNumber({ line, column }, s) =>
-      logger
-      ..write_string("Invalid number ")
-      ..write_string(s)
-      ..write_string(" at line ")
-      ..write_object(line)
-      ..write_string(", column ")
-      ..write_object(column)
-    InvalidIdentEscape({ line, column }) =>
-      logger
-      ..write_string("Invalid escape sequence in identifier at line ")
-      ..write_object(line)
-      ..write_string(", column ")
-      ..write_object(column)
+    InvalidNumber({ line, column }, s) => {
+      logger.write_string("Invalid number ")
+      logger.write_string(s)
+      logger.write_string(" at line ")
+      logger.write_object(line)
+      logger.write_string(", column ")
+      logger.write_object(column)
+    }
+    InvalidIdentEscape({ line, column }) => {
+      logger.write_string("Invalid escape sequence in identifier at line ")
+      logger.write_object(line)
+      logger.write_string(", column ")
+      logger.write_object(column)
+    }
     DepthLimitExceeded =>
       logger.write_string(
         "Depth limit exceeded, please increase the max_nesting_depth parameter",

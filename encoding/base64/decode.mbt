@@ -78,7 +78,8 @@ pub fn decode(
               let b0 = ((quartet[0] << 2) | (quartet[1] >> 4)).to_byte()
               let b1 = (((quartet[1] & 0x0F) << 4) | (quartet[2] >> 2)).to_byte()
               guard (quartet[2] & 0x03) == 0 else { raise Malformed(text) }
-              buffer..write_byte(b0)..write_byte(b1)
+              buffer.write_byte(b0)
+              buffer.write_byte(b1)
             }
             // check no rest
             if ignore_whitespace {
@@ -104,7 +105,9 @@ pub fn decode(
           let b0 = ((quartet[0] << 2) | (quartet[1] >> 4)).to_byte()
           let b1 = (((quartet[1] & 0x0F) << 4) | (quartet[2] >> 2)).to_byte()
           let b2 = (((quartet[2] & 0x03) << 6) | quartet[3]).to_byte()
-          buffer..write_byte(b0)..write_byte(b1)..write_byte(b2)
+          buffer.write_byte(b0)
+          buffer.write_byte(b1)
+          buffer.write_byte(b2)
         }
       }
     }
@@ -121,7 +124,8 @@ pub fn decode(
       let b0 = ((quartet[0] << 2) | (quartet[1] >> 4)).to_byte()
       let b1 = (((quartet[1] & 0x0F) << 4) | (quartet[2] >> 2)).to_byte()
       guard (quartet[2] & 0x03) == 0 else { raise Malformed(text) }
-      buffer..write_byte(b0)..write_byte(b1)
+      buffer.write_byte(b0)
+      buffer.write_byte(b1)
     }
     _ => ()
   }
@@ -153,7 +157,9 @@ pub fn decode_lossy(
           let b0 = ((quartet[0] << 2) | (quartet[1] >> 4)).to_byte()
           let b1 = (((quartet[1] & 0x0F) << 4) | (quartet[2] >> 2)).to_byte()
           let b2 = (((quartet[2] & 0x03) << 6) | quartet[3]).to_byte()
-          buffer..write_byte(b0)..write_byte(b1)..write_byte(b2)
+          buffer.write_byte(b0)
+          buffer.write_byte(b1)
+          buffer.write_byte(b2)
         }
       }
     }
@@ -164,7 +170,8 @@ pub fn decode_lossy(
   } else if count == 3 {
     let b0 = ((quartet[0] << 2) | (quartet[1] >> 4)).to_byte()
     let b1 = (((quartet[1] & 0x0F) << 4) | (quartet[2] >> 2)).to_byte()
-    buffer..write_byte(b0)..write_byte(b1)
+    buffer.write_byte(b0)
+    buffer.write_byte(b1)
   }
   buffer.to_bytes()
 }

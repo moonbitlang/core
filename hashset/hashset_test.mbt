@@ -417,5 +417,7 @@ test "@hashset.to_array/multiple" {
   set.add(2)
   set.add(3)
   set.add(4)
-  inspect(set.to_array()..sort().to_string(), content="[1, 2, 3, 4]")
+  let arr = set.to_array()
+  arr.sort()
+  inspect(arr.to_string(), content="[1, 2, 3, 4]")
 }
