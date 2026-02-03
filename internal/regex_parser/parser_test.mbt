@@ -62,8 +62,8 @@ fn parse(
 ///|
 test "parse/simple_char" {
   let pat = parse(profile=profile_unicode(), mode=String, "abc")
-  inspect(
-    @debug.render(pat.to_repr(), max_depth=10),
+  debug_inspect(
+    pat,
     content=(
       #|Sequence(
       #|  <ReadOnlyArray:
@@ -76,8 +76,8 @@ test "parse/simple_char" {
 ///|
 test "parse/dot_wildcard" {
   let pat = parse(profile=profile_unicode(), mode=String, "a.b")
-  inspect(
-    @debug.render(pat.to_repr(), max_depth=10),
+  debug_inspect(
+    pat,
     content=(
       #|Sequence(
       #|  <ReadOnlyArray:
@@ -90,8 +90,8 @@ test "parse/dot_wildcard" {
 ///|
 test "parse/quantifiers" {
   let pat = parse(profile=profile_unicode(), mode=String, "a*b+c?")
-  inspect(
-    @debug.render(pat.to_repr(), max_depth=10),
+  debug_inspect(
+    pat,
     content=(
       #|Sequence(
       #|  <ReadOnlyArray:
@@ -108,18 +108,18 @@ test "parse/quantifiers" {
 ///|
 test "parse/quantifier_range" {
   let pat1 = parse(profile=profile_unicode(), mode=String, "a{3}")
-  inspect(
-    @debug.render(pat1.to_repr(), max_depth=10),
+  debug_inspect(
+    pat1,
     content="Quantifier({ min: 3, max: Some(3), mode: Greedy }, Char([(97, 97)]))",
   )
   let pat2 = parse(profile=profile_unicode(), mode=String, "a{2,}")
-  inspect(
-    @debug.render(pat2.to_repr(), max_depth=10),
+  debug_inspect(
+    pat2,
     content="Quantifier({ min: 2, max: None, mode: Greedy }, Char([(97, 97)]))",
   )
   let pat3 = parse(profile=profile_unicode(), mode=String, "a{1,5}")
-  inspect(
-    @debug.render(pat3.to_repr(), max_depth=10),
+  debug_inspect(
+    pat3,
     content="Quantifier({ min: 1, max: Some(5), mode: Greedy }, Char([(97, 97)]))",
   )
 }
@@ -127,13 +127,13 @@ test "parse/quantifier_range" {
 ///|
 test "parse/non_greedy_quantifier" {
   let pat1 = parse(profile=profile_unicode(), mode=String, "a*?")
-  inspect(
-    @debug.render(pat1.to_repr(), max_depth=10),
+  debug_inspect(
+    pat1,
     content="Quantifier({ min: 0, max: None, mode: NonGreedy }, Char([(97, 97)]))",
   )
   let pat2 = parse(profile=profile_unicode(), mode=String, "a+?")
-  inspect(
-    @debug.render(pat2.to_repr(), max_depth=10),
+  debug_inspect(
+    pat2,
     content="Quantifier({ min: 1, max: None, mode: NonGreedy }, Char([(97, 97)]))",
   )
 }
@@ -141,8 +141,8 @@ test "parse/non_greedy_quantifier" {
 ///|
 test "parse/alternation" {
   let pat = parse(profile=profile_unicode(), mode=String, "a|b|c")
-  inspect(
-    @debug.render(pat.to_repr(), max_depth=10),
+  debug_inspect(
+    pat,
     content=(
       #|Alternation(
       #|  <ReadOnlyArray:
@@ -155,8 +155,8 @@ test "parse/alternation" {
 ///|
 test "parse/groups" {
   let pat1 = parse(profile=profile_unicode(), mode=String, "(abc)")
-  inspect(
-    @debug.render(pat1.to_repr(), max_depth=10),
+  debug_inspect(
+    pat1,
     content=(
       #|Capture(
       #|  name=None,
@@ -168,8 +168,8 @@ test "parse/groups" {
     ),
   )
   let pat2 = parse(profile=profile_unicode(), mode=String, "(a|b)")
-  inspect(
-    @debug.render(pat2.to_repr(), max_depth=10),
+  debug_inspect(
+    pat2,
     content=(
       #|Capture(
       #|  name=None,
@@ -182,8 +182,8 @@ test "parse/groups" {
 ///|
 test "parse/non_capture_group" {
   let pat1 = parse(profile=profile_unicode(), mode=String, "(?:abc)")
-  inspect(
-    @debug.render(pat1.to_repr(), max_depth=10),
+  debug_inspect(
+    pat1,
     content=(
       #|Sequence(
       #|  <ReadOnlyArray:
@@ -192,8 +192,8 @@ test "parse/non_capture_group" {
     ),
   )
   let pat2 = parse(profile=profile_unicode(), mode=String, "a(?:b|c)d")
-  inspect(
-    @debug.render(pat2.to_repr(), max_depth=10),
+  debug_inspect(
+    pat2,
     content=(
       #|Sequence(
       #|  <ReadOnlyArray:
@@ -210,8 +210,8 @@ test "parse/non_capture_group" {
 ///|
 test "parse/named_groups" {
   let pat = parse(profile=profile_unicode(), mode=String, "(?<name>abc)")
-  inspect(
-    @debug.render(pat.to_repr(), max_depth=10),
+  debug_inspect(
+    pat,
     content=(
       #|Capture(
       #|  name=Some("name"),
@@ -227,31 +227,17 @@ test "parse/named_groups" {
 ///|
 test "parse/character_class" {
   let pat1 = parse(profile=profile_unicode(), mode=String, "[abc]")
-  inspect(
-    @debug.render(pat1.to_repr(), max_depth=10),
-    content="Char([(97, 99)])",
-  )
+  debug_inspect(pat1, content="Char([(97, 99)])")
   let pat2 = parse(profile=profile_unicode(), mode=String, "[a-z]")
-  inspect(
-    @debug.render(pat2.to_repr(), max_depth=10),
-    content="Char([(97, 122)])",
-  )
+  debug_inspect(pat2, content="Char([(97, 122)])")
   let pat3 = parse(profile=profile_unicode(), mode=String, "[^abc]")
-  inspect(
-    @debug.render(pat3.to_repr(), max_depth=10),
-    content="Char([(0, 96), (100, 1114111)])",
-  )
+  debug_inspect(pat3, content="Char([(0, 96), (100, 1114111)])")
 }
 
 ///|
 test "parse/error_nested_character_class" {
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_unicode(), mode=String, "[[a-z][0-9]]"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_unicode(), mode=String, "[[a-z][0-9]]"),
     content=(
       #|Err(ParserError(at=1, hint="Unsupported nested character class"))
     ),
@@ -261,23 +247,14 @@ test "parse/error_nested_character_class" {
 ///|
 test "parse/posix_classes" {
   let pat_digit = parse(profile=profile_unicode(), mode=String, "[[:digit:]]")
-  inspect(
-    @debug.render(pat_digit.to_repr(), max_depth=10),
-    content="Char([(48, 57)])",
-  )
+  debug_inspect(pat_digit, content="Char([(48, 57)])")
   let pat_alpha = parse(profile=profile_unicode(), mode=String, "[[:alpha:]]")
-  inspect(
-    @debug.render(pat_alpha.to_repr(), max_depth=10),
-    content="Char([(65, 90), (97, 122)])",
-  )
+  debug_inspect(pat_alpha, content="Char([(65, 90), (97, 122)])")
   let pat_space = parse(profile=profile_unicode(), mode=String, "[[:space:]]")
-  inspect(
-    @debug.render(pat_space.to_repr(), max_depth=10),
-    content="Char([(9, 13), (32, 32)])",
-  )
+  debug_inspect(pat_space, content="Char([(9, 13), (32, 32)])")
   let pat_word = parse(profile=profile_unicode(), mode=String, "[[:word:]]")
-  inspect(
-    @debug.render(pat_word.to_repr(), max_depth=10),
+  debug_inspect(
+    pat_word,
     content="Char([(48, 57), (65, 90), (95, 95), (97, 122)])",
   )
 }
@@ -285,13 +262,13 @@ test "parse/posix_classes" {
 ///|
 test "parse/escape_sequences" {
   let pat1 = parse(profile=profile_unicode(), mode=String, "\\n\\r\\t")
-  inspect(
-    @debug.render(pat1.to_repr(), max_depth=10),
+  debug_inspect(
+    pat1,
     content="Sequence(<ReadOnlyArray: [Char([(10, 10)]), Char([(13, 13)]), Char([(9, 9)])]>)",
   )
   let pat2 = parse(profile=profile_unicode(), mode=String, "\\f\\v")
-  inspect(
-    @debug.render(pat2.to_repr(), max_depth=10),
+  debug_inspect(
+    pat2,
     content="Sequence(<ReadOnlyArray: [Char([(12, 12)]), Char([(11, 11)])]>)",
   )
 }
@@ -299,24 +276,15 @@ test "parse/escape_sequences" {
 ///|
 test "parse/unicode_escape" {
   let pat1 = parse(profile=profile_unicode(), mode=String, "\\u0041")
-  inspect(
-    @debug.render(pat1.to_repr(), max_depth=10),
-    content="Char([(65, 65)])",
-  )
+  debug_inspect(pat1, content="Char([(65, 65)])")
   let pat2 = parse(profile=profile_unicode(), mode=String, "\\u{1F600}")
-  inspect(
-    @debug.render(pat2.to_repr(), max_depth=10),
-    content="Char([(128512, 128512)])",
-  )
+  debug_inspect(pat2, content="Char([(128512, 128512)])")
 }
 
 ///|
 test "parse/hex_escape_bytes_mode" {
   let pat = parse(profile=profile_bytes(), mode=Bytes, "\\x41")
-  inspect(
-    @debug.render(pat.to_repr(), max_depth=10),
-    content="Char([(65, 65)])",
-  )
+  debug_inspect(pat, content="Char([(65, 65)])")
 }
 
 ///|
@@ -326,8 +294,8 @@ test "parse/escaped_metacharacters" {
     mode=String,
     "\\^\\$\\.\\*\\+\\?\\(\\)\\[\\]\\{\\}\\|",
   )
-  inspect(
-    @debug.render(pat.to_repr(), max_depth=10),
+  debug_inspect(
+    pat,
     content=(
       #|Sequence(
       #|  <ReadOnlyArray:
@@ -354,8 +322,8 @@ test "parse/escaped_metacharacters" {
 ///|
 test "parse/anchors" {
   let pat = parse(profile=profile_unicode(), mode=String, "^abc$")
-  inspect(
-    @debug.render(pat.to_repr(), max_depth=10),
+  debug_inspect(
+    pat,
     content=(
       #|Sequence(
       #|  <ReadOnlyArray:
@@ -374,8 +342,8 @@ test "parse/anchors" {
 ///|
 test "parse/word_boundary" {
   let pat1 = parse(profile=profile_unicode(), mode=String, "\\bword\\b")
-  inspect(
-    @debug.render(pat1.to_repr(), max_depth=10),
+  debug_inspect(
+    pat1,
     content=(
       #|Sequence(
       #|  <ReadOnlyArray:
@@ -391,17 +359,14 @@ test "parse/word_boundary" {
     ),
   )
   let pat2 = parse(profile=profile_unicode(), mode=String, "\\B")
-  inspect(
-    @debug.render(pat2.to_repr(), max_depth=10),
-    content="Assertion(NotWordBoundary)",
-  )
+  debug_inspect(pat2, content="Assertion(NotWordBoundary)")
 }
 
 ///|
 test "parse/ignore_case_flag" {
   let pat = parse(profile=profile_unicode(), mode=String, "(?i:abc)")
-  inspect(
-    @debug.render(pat.to_repr(), max_depth=10),
+  debug_inspect(
+    pat,
     content=(
       #|Sequence(
       #|  <ReadOnlyArray:
@@ -423,8 +388,8 @@ test "parse/practical_date_ymd" {
     mode=String,
     "^([[:digit:]]{4})-([[:digit:]]{2})-([[:digit:]]{2})$",
   )
-  inspect(
-    @debug.render(pat.to_repr(), max_depth=10),
+  debug_inspect(
+    pat,
     content=(
       #|Sequence(
       #|  <ReadOnlyArray:
@@ -459,8 +424,8 @@ test "parse/practical_identifier" {
     mode=String,
     "^[A-Za-z_][A-Za-z0-9_]*$",
   )
-  inspect(
-    @debug.render(pat.to_repr(), max_depth=10),
+  debug_inspect(
+    pat,
     content=(
       #|Sequence(
       #|  <ReadOnlyArray:
@@ -481,42 +446,25 @@ test "parse/practical_identifier" {
 ///|
 test "parse/escaped_in_char_class" {
   let pat1 = parse(profile=profile_unicode(), mode=String, "[\\n\\r\\t]")
-  inspect(
-    @debug.render(pat1.to_repr(), max_depth=10),
-    content="Char([(9, 10), (13, 13)])",
-  )
+  debug_inspect(pat1, content="Char([(9, 10), (13, 13)])")
   let pat2 = parse(profile=profile_unicode(), mode=String, "[\\-\\]]")
-  inspect(
-    @debug.render(pat2.to_repr(), max_depth=10),
-    content="Char([(45, 45), (93, 93)])",
-  )
+  debug_inspect(pat2, content="Char([(45, 45), (93, 93)])")
 }
 
 ///|
 test "parse/char_class_with_unicode_escape" {
   let pat1 = parse(profile=profile_unicode(), mode=String, "[\\u0041-\\u005A]")
-  inspect(
-    @debug.render(pat1.to_repr(), max_depth=10),
-    content="Char([(65, 90)])",
-  )
+  debug_inspect(pat1, content="Char([(65, 90)])")
   let pat2 = parse(profile=profile_unicode(), mode=String, "[\\u{41}-\\u{5A}]")
-  inspect(
-    @debug.render(pat2.to_repr(), max_depth=10),
-    content="Char([(65, 90)])",
-  )
+  debug_inspect(pat2, content="Char([(65, 90)])")
 }
 
 // Error tests using try-catch
 
 ///|
 test "parse/error_use_posix_class" {
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_unicode(), mode=String, "\\d"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_unicode(), mode=String, "\\d"),
     content=(
       #|Err(
       #|  ParserError(
@@ -530,13 +478,8 @@ test "parse/error_use_posix_class" {
 
 ///|
 test "parse/error_use_posix_class_in_char_class" {
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_unicode(), mode=String, "[\\d]"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_unicode(), mode=String, "[\\d]"),
     content=(
       #|Err(
       #|  ParserError(
@@ -550,13 +493,8 @@ test "parse/error_use_posix_class_in_char_class" {
 
 ///|
 test "parse/error_byte_escape_in_string_mode" {
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_unicode(), mode=String, "[\\x41]"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_unicode(), mode=String, "[\\x41]"),
     content=(
       #|Err(ParserError(at=5, hint="Byte escape sequences are not allowed"))
     ),
@@ -565,13 +503,8 @@ test "parse/error_byte_escape_in_string_mode" {
 
 ///|
 test "parse/error_byte_escape_in_string_mode_term" {
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_unicode(), mode=String, "\\x41"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_unicode(), mode=String, "\\x41"),
     content=(
       #|Err(ParserError(at=4, hint="Byte escape sequences are not allowed"))
     ),
@@ -580,13 +513,8 @@ test "parse/error_byte_escape_in_string_mode_term" {
 
 ///|
 test "parse/error_unicode_escape_in_bytes_mode" {
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_bytes(), mode=Bytes, "[\\u0041]"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_bytes(), mode=Bytes, "[\\u0041]"),
     content=(
       #|Err(ParserError(at=1, hint="Unicode escape sequences are not allowed"))
     ),
@@ -595,13 +523,8 @@ test "parse/error_unicode_escape_in_bytes_mode" {
 
 ///|
 test "parse/error_unicode_escape_out_of_range_in_class" {
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_bytes(), mode=String, "[\\u0100]"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_bytes(), mode=String, "[\\u0100]"),
     content=(
       #|Err(ParserError(at=1, hint="Character out of range"))
     ),
@@ -610,13 +533,8 @@ test "parse/error_unicode_escape_out_of_range_in_class" {
 
 ///|
 test "parse/error_unicode_escape_in_bytes_mode_term" {
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_bytes(), mode=Bytes, "\\u0041"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_bytes(), mode=Bytes, "\\u0041"),
     content=(
       #|Err(ParserError(at=6, hint="Unicode escape sequences are not allowed"))
     ),
@@ -625,13 +543,8 @@ test "parse/error_unicode_escape_in_bytes_mode_term" {
 
 ///|
 test "parse/error_unicode_brace_escape_in_bytes_mode" {
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_bytes(), mode=Bytes, "[\\u{41}]"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_bytes(), mode=Bytes, "[\\u{41}]"),
     content=(
       #|Err(ParserError(at=7, hint="Unicode escape sequences are not allowed"))
     ),
@@ -640,13 +553,8 @@ test "parse/error_unicode_brace_escape_in_bytes_mode" {
 
 ///|
 test "parse/error_unsupported_posix_class" {
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_unicode(), mode=String, "[[:foo:]]"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_unicode(), mode=String, "[[:foo:]]"),
     content=(
       #|Err(ParserError(at=1, hint="Unsupported POSIX character class"))
     ),
@@ -655,13 +563,8 @@ test "parse/error_unsupported_posix_class" {
 
 ///|
 test "parse/error_unclosed_char_class" {
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_unicode(), mode=String, "[abc"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_unicode(), mode=String, "[abc"),
     content=(
       #|Err(ParserError(at=4, hint="Unclosed character class"))
     ),
@@ -670,13 +573,8 @@ test "parse/error_unclosed_char_class" {
 
 ///|
 test "parse/error_unclosed_group" {
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_unicode(), mode=String, "("),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_unicode(), mode=String, "("),
     content=(
       #|Err(ParserError(at=1, hint="Unclosed group"))
     ),
@@ -685,13 +583,8 @@ test "parse/error_unclosed_group" {
 
 ///|
 test "parse/error_invalid_quantifier" {
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_unicode(), mode=String, "a{abc}"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_unicode(), mode=String, "a{abc}"),
     content=(
       #|Err(ParserError(at=1, hint="Invalid quantifier"))
     ),
@@ -700,13 +593,8 @@ test "parse/error_invalid_quantifier" {
 
 ///|
 test "parse/error_invalid_quantifier_range" {
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_unicode(), mode=String, "a{5,2}"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_unicode(), mode=String, "a{5,2}"),
     content=(
       #|Err(ParserError(at=6, hint="Invalid quantifier"))
     ),
@@ -715,13 +603,8 @@ test "parse/error_invalid_quantifier_range" {
 
 ///|
 test "parse/error_quantifier_too_large" {
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_unicode(), mode=String, "a{999}"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_unicode(), mode=String, "a{999}"),
     content=(
       #|Err(ParserError(at=2, hint="Quantifier too large"))
     ),
@@ -730,16 +613,11 @@ test "parse/error_quantifier_too_large" {
 
 ///|
 test "parse/error_quantifier_too_large_overflow" {
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(
-          profile=profile_unicode(),
-          mode=String,
-          "a{99999999999999999999}",
-        ),
-      ),
-      max_depth=10,
+  debug_inspect(
+    try? parse(
+      profile=profile_unicode(),
+      mode=String,
+      "a{99999999999999999999}",
     ),
     content=(
       #|Err(ParserError(at=2, hint="Quantifier too large"))
@@ -749,13 +627,8 @@ test "parse/error_quantifier_too_large_overflow" {
 
 ///|
 test "parse/error_max_quantifier_too_large" {
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_unicode(), mode=String, "a{1,999}"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_unicode(), mode=String, "a{1,999}"),
     content=(
       #|Err(ParserError(at=4, hint="Quantifier too large"))
     ),
@@ -764,13 +637,8 @@ test "parse/error_max_quantifier_too_large" {
 
 ///|
 test "parse/error_possessive_quantifier" {
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_unicode(), mode=String, "a++"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_unicode(), mode=String, "a++"),
     content=(
       #|Err(ParserError(at=2, hint="Unsupported possessive quantifier"))
     ),
@@ -779,13 +647,8 @@ test "parse/error_possessive_quantifier" {
 
 ///|
 test "parse/error_lookahead" {
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_unicode(), mode=String, "(?=abc)"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_unicode(), mode=String, "(?=abc)"),
     content=(
       #|Err(ParserError(at=0, hint="Unsupported lookahead assertion"))
     ),
@@ -794,13 +657,8 @@ test "parse/error_lookahead" {
 
 ///|
 test "parse/error_negative_lookahead" {
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_unicode(), mode=String, "(?!abc)"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_unicode(), mode=String, "(?!abc)"),
     content=(
       #|Err(ParserError(at=0, hint="Unsupported negative lookahead assertion"))
     ),
@@ -809,13 +667,8 @@ test "parse/error_negative_lookahead" {
 
 ///|
 test "parse/error_lookbehind" {
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_unicode(), mode=String, "(?<=abc)"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_unicode(), mode=String, "(?<=abc)"),
     content=(
       #|Err(ParserError(at=0, hint="Unsupported lookbehind assertion"))
     ),
@@ -824,13 +677,8 @@ test "parse/error_lookbehind" {
 
 ///|
 test "parse/error_negative_lookbehind" {
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_unicode(), mode=String, "(?<!abc)"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_unicode(), mode=String, "(?<!abc)"),
     content=(
       #|Err(ParserError(at=0, hint="Unsupported negative lookbehind assertion"))
     ),
@@ -839,13 +687,8 @@ test "parse/error_negative_lookbehind" {
 
 ///|
 test "parse/error_invalid_group" {
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_unicode(), mode=String, "(?<>abc)"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_unicode(), mode=String, "(?<>abc)"),
     content=(
       #|Err(ParserError(at=0, hint="Invalid group"))
     ),
@@ -854,13 +697,8 @@ test "parse/error_invalid_group" {
 
 ///|
 test "parse/error_invalid_flags" {
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_unicode(), mode=String, "(?xyz:abc)"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_unicode(), mode=String, "(?xyz:abc)"),
     content=(
       #|Err(ParserError(at=6, hint="Invalid group"))
     ),
@@ -869,13 +707,8 @@ test "parse/error_invalid_flags" {
 
 ///|
 test "parse/error_bare_posix_class" {
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_unicode(), mode=String, "[:digit:]"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_unicode(), mode=String, "[:digit:]"),
     content=(
       #|Err(
       #|  ParserError(
@@ -889,13 +722,8 @@ test "parse/error_bare_posix_class" {
 
 ///|
 test "parse/error_invalid_char_range" {
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_unicode(), mode=String, "[z-a]"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_unicode(), mode=String, "[z-a]"),
     content=(
       #|Err(ParserError(at=3, hint="Invalid character class range"))
     ),
@@ -904,13 +732,8 @@ test "parse/error_invalid_char_range" {
 
 ///|
 test "parse/error_char_range_over_sets" {
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_unicode(), mode=String, "[a-[:digit:]]"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_unicode(), mode=String, "[a-[:digit:]]"),
     content=(
       #|Err(ParserError(at=4, hint="Character class range over sets"))
     ),
@@ -919,13 +742,8 @@ test "parse/error_char_range_over_sets" {
 
 ///|
 test "parse/error_unsupported_class_set_expression" {
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_unicode(), mode=String, "[a--b]"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_unicode(), mode=String, "[a--b]"),
     content=(
       #|Err(ParserError(at=2, hint="Unsupported character class set expression"))
     ),
@@ -934,13 +752,8 @@ test "parse/error_unsupported_class_set_expression" {
 
 ///|
 test "parse/error_class_set_ampersand" {
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_unicode(), mode=String, "[a&&b]"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_unicode(), mode=String, "[a&&b]"),
     content=(
       #|Err(ParserError(at=2, hint="Unsupported character class set expression"))
     ),
@@ -949,13 +762,8 @@ test "parse/error_class_set_ampersand" {
 
 ///|
 test "parse/error_unexpected_char_in_range" {
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_unicode(), mode=String, "[a-]"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_unicode(), mode=String, "[a-]"),
     content=(
       #|Err(ParserError(at=3, hint="Unexpected character"))
     ),
@@ -965,13 +773,8 @@ test "parse/error_unexpected_char_in_range" {
 ///|
 test "parse/error_invalid_escape" {
   // \q is not a valid escape sequence
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_unicode(), mode=String, "\\q"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_unicode(), mode=String, "\\q"),
     content=(
       #|Err(ParserError(at=0, hint="Invalid escape sequence"))
     ),
@@ -980,13 +783,8 @@ test "parse/error_invalid_escape" {
 
 ///|
 test "parse/error_unicode_out_of_range" {
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_bytes(), mode=String, "[\\u{FFFFFF}]"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_bytes(), mode=String, "[\\u{FFFFFF}]"),
     content=(
       #|Err(ParserError(at=11, hint="Character out of range"))
     ),
@@ -995,13 +793,8 @@ test "parse/error_unicode_out_of_range" {
 
 ///|
 test "parse/error_unicode_brace_out_of_range_term" {
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_unicode(), mode=String, "\\u{110000}"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_unicode(), mode=String, "\\u{110000}"),
     content=(
       #|Err(ParserError(at=10, hint="Character out of range"))
     ),
@@ -1010,13 +803,8 @@ test "parse/error_unicode_brace_out_of_range_term" {
 
 ///|
 test "parse/error_invalid_posix_class" {
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_unicode(), mode=String, "[[:abc"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_unicode(), mode=String, "[[:abc"),
     content=(
       #|Err(ParserError(at=1, hint="Invalid POSIX character class"))
     ),
@@ -1028,68 +816,47 @@ test "parse/error_invalid_posix_class" {
 ///|
 test "parse/hex_escape_in_char_class_bytes_mode" {
   let pat = parse(profile=profile_bytes(), mode=Bytes, "[\\x41\\x5A]")
-  inspect(
-    @debug.render(pat.to_repr(), max_depth=10),
-    content="Char([(65, 65), (90, 90)])",
-  )
+  debug_inspect(pat, content="Char([(65, 65), (90, 90)])")
 }
 
 ///|
 test "parse/hex_escape_lowercase_in_char_class_bytes_mode" {
   let pat = parse(profile=profile_bytes(), mode=Bytes, "[\\x4f]")
-  inspect(
-    @debug.render(pat.to_repr(), max_depth=10),
-    content="Char([(79, 79)])",
-  )
+  debug_inspect(pat, content="Char([(79, 79)])")
 }
 
 ///|
 test "parse/escape_sequences_in_char_class" {
   let pat = parse(profile=profile_unicode(), mode=String, "[\\n\\r\\t]")
-  inspect(
-    @debug.render(pat.to_repr(), max_depth=10),
-    content="Char([(9, 10), (13, 13)])",
-  )
+  debug_inspect(pat, content="Char([(9, 10), (13, 13)])")
 }
 
 ///|
 test "parse/unicode_escape_in_char_class" {
   let pat = parse(profile=profile_unicode(), mode=String, "[\\u0041\\u{1f600}]")
-  inspect(
-    @debug.render(pat.to_repr(), max_depth=10),
-    content="Char([(65, 65), (128512, 128512)])",
-  )
+  debug_inspect(pat, content="Char([(65, 65), (128512, 128512)])")
 }
 
 ///|
 test "parse/unicode_escape_lowercase_in_char_class" {
   let pat = parse(profile=profile_unicode(), mode=String, "[\\u00af]")
-  inspect(
-    @debug.render(pat.to_repr(), max_depth=10),
-    content="Char([(175, 175)])",
-  )
+  debug_inspect(pat, content="Char([(175, 175)])")
 }
 
 ///|
 test "parse/lowercase_hex_unicode" {
   let pat1 = parse(profile=profile_unicode(), mode=String, "\\u00ab")
-  inspect(
-    @debug.render(pat1.to_repr(), max_depth=10),
-    content="Char([(171, 171)])",
-  )
+  debug_inspect(pat1, content="Char([(171, 171)])")
   let pat2 = parse(profile=profile_unicode(), mode=String, "\\u{abc}")
-  inspect(
-    @debug.render(pat2.to_repr(), max_depth=10),
-    content="Char([(2748, 2748)])",
-  )
+  debug_inspect(pat2, content="Char([(2748, 2748)])")
 }
 
 ///|
 test "parse/ignore_case_alternation" {
   // Cover alternation inside ignore case
   let pat = parse(profile=profile_unicode(), mode=String, "(?i:a|b|c)")
-  inspect(
-    @debug.render(pat.to_repr(), max_depth=10),
+  debug_inspect(
+    pat,
     content=(
       #|Alternation(
       #|  <ReadOnlyArray:
@@ -1106,8 +873,8 @@ test "parse/ignore_case_alternation" {
 ///|
 test "parse/ignore_case_with_groups" {
   let pat = parse(profile=profile_unicode(), mode=String, "(?i:(abc))")
-  inspect(
-    @debug.render(pat.to_repr(), max_depth=10),
+  debug_inspect(
+    pat,
     content=(
       #|Capture(
       #|  name=None,
@@ -1127,8 +894,8 @@ test "parse/ignore_case_with_groups" {
 ///|
 test "parse/ignore_case_with_anchors" {
   let pat = parse(profile=profile_unicode(), mode=String, "(?i:^abc$)")
-  inspect(
-    @debug.render(pat.to_repr(), max_depth=10),
+  debug_inspect(
+    pat,
     content=(
       #|Sequence(
       #|  <ReadOnlyArray:
@@ -1147,13 +914,8 @@ test "parse/ignore_case_with_anchors" {
 ///|
 test "parse/parser_error_show" {
   // Cover syntax_error.mbt line 8: Show for ParserError
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_unicode(), mode=String, "\\d"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_unicode(), mode=String, "\\d"),
     content=(
       #|Err(
       #|  ParserError(
@@ -1167,13 +929,8 @@ test "parse/parser_error_show" {
 
 ///|
 test "parse/double_dash_at_start_of_class" {
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_unicode(), mode=String, "[a-z--[aeiou]]"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_unicode(), mode=String, "[a-z--[aeiou]]"),
     content=(
       #|Err(ParserError(at=4, hint="Unsupported character class set expression"))
     ),
@@ -1185,84 +942,58 @@ test "parse/double_dash_at_start_of_class" {
 ///|
 test "parse/posix_class_ascii" {
   let pat = parse(profile=profile_unicode(), mode=String, "[[:ascii:]]")
-  inspect(
-    @debug.render(pat.to_repr(), max_depth=10),
-    content="Char([(0, 127)])",
-  )
+  debug_inspect(pat, content="Char([(0, 127)])")
 }
 
 ///|
 test "parse/posix_class_upper" {
   let pat = parse(profile=profile_unicode(), mode=String, "[[:upper:]]")
-  inspect(
-    @debug.render(pat.to_repr(), max_depth=10),
-    content="Char([(65, 90)])",
-  )
+  debug_inspect(pat, content="Char([(65, 90)])")
 }
 
 ///|
 test "parse/posix_class_lower" {
   let pat = parse(profile=profile_unicode(), mode=String, "[[:lower:]]")
-  inspect(
-    @debug.render(pat.to_repr(), max_depth=10),
-    content="Char([(97, 122)])",
-  )
+  debug_inspect(pat, content="Char([(97, 122)])")
 }
 
 ///|
 test "parse/posix_class_alnum" {
   let pat = parse(profile=profile_unicode(), mode=String, "[[:alnum:]]")
-  inspect(
-    @debug.render(pat.to_repr(), max_depth=10),
-    content="Char([(48, 57), (65, 90), (97, 122)])",
-  )
+  debug_inspect(pat, content="Char([(48, 57), (65, 90), (97, 122)])")
 }
 
 ///|
 test "parse/posix_class_xdigit" {
   let pat = parse(profile=profile_unicode(), mode=String, "[[:xdigit:]]")
-  inspect(
-    @debug.render(pat.to_repr(), max_depth=10),
-    content="Char([(48, 57), (65, 70), (97, 102)])",
-  )
+  debug_inspect(pat, content="Char([(48, 57), (65, 70), (97, 102)])")
 }
 
 ///|
 test "parse/posix_class_blank" {
   let pat = parse(profile=profile_unicode(), mode=String, "[[:blank:]]")
-  inspect(
-    @debug.render(pat.to_repr(), max_depth=10),
-    content="Char([(9, 9), (32, 32)])",
-  )
+  debug_inspect(pat, content="Char([(9, 9), (32, 32)])")
 }
 
 ///|
 test "parse/backspace_in_char_class" {
   // \b in character class means backspace (0x08)
   let pat = parse(profile=profile_unicode(), mode=String, "[\\b]")
-  inspect(@debug.render(pat.to_repr(), max_depth=10), content="Char([(8, 8)])")
+  debug_inspect(pat, content="Char([(8, 8)])")
 }
 
 ///|
 test "parse/formfeed_in_char_class" {
   // \f in character class means formfeed (0x0c = 12)
   let pat = parse(profile=profile_unicode(), mode=String, "[\\f]")
-  inspect(
-    @debug.render(pat.to_repr(), max_depth=10),
-    content="Char([(12, 12)])",
-  )
+  debug_inspect(pat, content="Char([(12, 12)])")
 }
 
 ///|
 test "parse/parser_error_show_impl" {
   // Show for ParserError via debug rendering
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_unicode(), mode=String, "\\d"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_unicode(), mode=String, "\\d"),
     content=(
       #|Err(
       #|  ParserError(
@@ -1291,32 +1022,18 @@ test "parse/parser_error_to_string" {
 test "parse/escaped_special_chars_in_class" {
   // Cover more escape sequences in character class: / " : &
   let pat1 = parse(profile=profile_unicode(), mode=String, "[\\/]")
-  inspect(
-    @debug.render(pat1.to_repr(), max_depth=10),
-    content="Char([(47, 47)])",
-  )
+  debug_inspect(pat1, content="Char([(47, 47)])")
   let pat2 = parse(profile=profile_unicode(), mode=String, "[\\:]")
-  inspect(
-    @debug.render(pat2.to_repr(), max_depth=10),
-    content="Char([(58, 58)])",
-  )
+  debug_inspect(pat2, content="Char([(58, 58)])")
   let pat3 = parse(profile=profile_unicode(), mode=String, "[\\&]")
-  inspect(
-    @debug.render(pat3.to_repr(), max_depth=10),
-    content="Char([(38, 38)])",
-  )
+  debug_inspect(pat3, content="Char([(38, 38)])")
 }
 
 ///|
 test "parse/error_triple_ampersand" {
   // Triple ampersand triggers set expression error
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_unicode(), mode=String, "[a&&&b]"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_unicode(), mode=String, "[a&&&b]"),
     content=(
       #|Err(ParserError(at=2, hint="Unsupported character class set expression"))
     ),
@@ -1326,8 +1043,8 @@ test "parse/error_triple_ampersand" {
 ///|
 test "parse/non_capture_group_inside_capture" {
   let pat = parse(profile=profile_unicode(), mode=String, "(a(?:b)c)")
-  inspect(
-    @debug.render(pat.to_repr(), max_depth=10),
+  debug_inspect(
+    pat,
     content=(
       #|Capture(
       #|  name=None,
@@ -1343,8 +1060,8 @@ test "parse/non_capture_group_inside_capture" {
 ///|
 test "parse/quantifier_non_greedy_question" {
   let pat = parse(profile=profile_unicode(), mode=String, "a??")
-  inspect(
-    @debug.render(pat.to_repr(), max_depth=10),
+  debug_inspect(
+    pat,
     content=(
       #|Quantifier(
       #|  { min: 0, max: Some(1), mode: NonGreedy },
@@ -1357,8 +1074,8 @@ test "parse/quantifier_non_greedy_question" {
 ///|
 test "parse/quantifier_range_non_greedy" {
   let pat = parse(profile=profile_unicode(), mode=String, "a{2,5}?")
-  inspect(
-    @debug.render(pat.to_repr(), max_depth=10),
+  debug_inspect(
+    pat,
     content=(
       #|Quantifier(
       #|  { min: 2, max: Some(5), mode: NonGreedy },
@@ -1372,8 +1089,8 @@ test "parse/quantifier_range_non_greedy" {
 test "parse/nested_ignore_case" {
   // Test nested (?i:...) where ignore_case is already true
   let pat = parse(profile=profile_unicode(), mode=String, "(?i:(?i:abc))")
-  inspect(
-    @debug.render(pat.to_repr(), max_depth=10),
+  debug_inspect(
+    pat,
     content=(
       #|Sequence(
       #|  <ReadOnlyArray:
@@ -1390,13 +1107,8 @@ test "parse/nested_ignore_case" {
 ///|
 test "parse/error_unmatched_paren" {
   // Extra closing paren should trigger unexpected char error
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_unicode(), mode=String, "abc)"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_unicode(), mode=String, "abc)"),
     content=(
       #|Err(ParserError(at=3, hint="Unexpected character"))
     ),
@@ -1406,13 +1118,8 @@ test "parse/error_unmatched_paren" {
 ///|
 test "parse/error_empty_quantifier" {
   // Quantifier on empty pattern should trigger error
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_unicode(), mode=String, "*"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_unicode(), mode=String, "*"),
     content=(
       #|Err(ParserError(at=0, hint="Unexpected character"))
     ),
@@ -1423,32 +1130,21 @@ test "parse/error_empty_quantifier" {
 test "parse/unicode_4digit_in_char_class" {
   // \u0041 inside character class
   let pat = parse(profile=profile_unicode(), mode=String, "[\\u0041]")
-  inspect(
-    @debug.render(pat.to_repr(), max_depth=10),
-    content="Char([(65, 65)])",
-  )
+  debug_inspect(pat, content="Char([(65, 65)])")
 }
 
 ///|
 test "parse/unicode_brace_in_char_class" {
   // \u{41} inside character class
   let pat = parse(profile=profile_unicode(), mode=String, "[\\u{41}]")
-  inspect(
-    @debug.render(pat.to_repr(), max_depth=10),
-    content="Char([(65, 65)])",
-  )
+  debug_inspect(pat, content="Char([(65, 65)])")
 }
 
 ///|
 test "parse/error_dDsSwW_in_char_class" {
   // \d, \D, \s, \S, \w, \W should error inside character class too
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_unicode(), mode=String, "[\\w]"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_unicode(), mode=String, "[\\w]"),
     content=(
       #|Err(
       #|  ParserError(
@@ -1464,8 +1160,8 @@ test "parse/error_dDsSwW_in_char_class" {
 test "parse/ignore_case_quantifier" {
   // (?i:a+) should work
   let pat = parse(profile=profile_unicode(), mode=String, "(?i:a+)")
-  inspect(
-    @debug.render(pat.to_repr(), max_depth=10),
+  debug_inspect(
+    pat,
     content=(
       #|Quantifier(
       #|  { min: 1, max: None, mode: Greedy },
@@ -1478,13 +1174,8 @@ test "parse/ignore_case_quantifier" {
 ///|
 test "parse/error_non_ascii_in_bytes_mode" {
   // Non-ASCII character in bytes mode should trigger CHARACTER_OUT_OF_RANGE
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_bytes(), mode=Bytes, "中"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_bytes(), mode=Bytes, "中"),
     content=(
       #|Err(ParserError(at=0, hint="Character out of range"))
     ),
@@ -1494,13 +1185,8 @@ test "parse/error_non_ascii_in_bytes_mode" {
 ///|
 test "parse/error_non_ascii_in_bytes_mode_char_class" {
   // Non-ASCII character in character class in bytes mode
-  inspect(
-    @debug.render(
-      @debug.Debug::to_repr(
-        try? parse(profile=profile_bytes(), mode=Bytes, "[中]"),
-      ),
-      max_depth=10,
-    ),
+  debug_inspect(
+    try? parse(profile=profile_bytes(), mode=Bytes, "[中]"),
     content=(
       #|Err(ParserError(at=2, hint="Character out of range"))
     ),
