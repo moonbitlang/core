@@ -67,11 +67,7 @@ test "parse/simple_char" {
     content=(
       #|Sequence(
       #|  <ReadOnlyArray:
-      #|    [
-      #|      Char([(97, 97)]),
-      #|      Char([(98, 98)]),
-      #|      Char([(99, 99)]),
-      #|    ]>,
+      #|    [Char([(97, 97)]), Char([(98, 98)]), Char([(99, 99)])]>,
       #|)
     ),
   )
@@ -85,11 +81,7 @@ test "parse/dot_wildcard" {
     content=(
       #|Sequence(
       #|  <ReadOnlyArray:
-      #|    [
-      #|      Char([(97, 97)]),
-      #|      Char([(0, 1114111)]),
-      #|      Char([(98, 98)]),
-      #|    ]>,
+      #|    [Char([(97, 97)]), Char([(0, 1114111)]), Char([(98, 98)])]>,
       #|)
     ),
   )
@@ -104,30 +96,9 @@ test "parse/quantifiers" {
       #|Sequence(
       #|  <ReadOnlyArray:
       #|    [
-      #|      Quantifier(
-      #|        {
-      #|          min: 0,
-      #|          max: None,
-      #|          mode: Greedy,
-      #|        },
-      #|        Char([(97, 97)]),
-      #|      ),
-      #|      Quantifier(
-      #|        {
-      #|          min: 1,
-      #|          max: None,
-      #|          mode: Greedy,
-      #|        },
-      #|        Char([(98, 98)]),
-      #|      ),
-      #|      Quantifier(
-      #|        {
-      #|          min: 0,
-      #|          max: Some(1),
-      #|          mode: Greedy,
-      #|        },
-      #|        Char([(99, 99)]),
-      #|      ),
+      #|      Quantifier({ min: 0, max: None, mode: Greedy }, Char([(97, 97)])),
+      #|      Quantifier({ min: 1, max: None, mode: Greedy }, Char([(98, 98)])),
+      #|      Quantifier({ min: 0, max: Some(1), mode: Greedy }, Char([(99, 99)])),
       #|    ]>,
       #|)
     ),
@@ -139,44 +110,17 @@ test "parse/quantifier_range" {
   let pat1 = parse(profile=profile_unicode(), mode=String, "a{3}")
   inspect(
     @debug.render(pat1.to_repr(), max_depth=10),
-    content=(
-      #|Quantifier(
-      #|  {
-      #|    min: 3,
-      #|    max: Some(3),
-      #|    mode: Greedy,
-      #|  },
-      #|  Char([(97, 97)]),
-      #|)
-    ),
+    content="Quantifier({ min: 3, max: Some(3), mode: Greedy }, Char([(97, 97)]))",
   )
   let pat2 = parse(profile=profile_unicode(), mode=String, "a{2,}")
   inspect(
     @debug.render(pat2.to_repr(), max_depth=10),
-    content=(
-      #|Quantifier(
-      #|  {
-      #|    min: 2,
-      #|    max: None,
-      #|    mode: Greedy,
-      #|  },
-      #|  Char([(97, 97)]),
-      #|)
-    ),
+    content="Quantifier({ min: 2, max: None, mode: Greedy }, Char([(97, 97)]))",
   )
   let pat3 = parse(profile=profile_unicode(), mode=String, "a{1,5}")
   inspect(
     @debug.render(pat3.to_repr(), max_depth=10),
-    content=(
-      #|Quantifier(
-      #|  {
-      #|    min: 1,
-      #|    max: Some(5),
-      #|    mode: Greedy,
-      #|  },
-      #|  Char([(97, 97)]),
-      #|)
-    ),
+    content="Quantifier({ min: 1, max: Some(5), mode: Greedy }, Char([(97, 97)]))",
   )
 }
 
@@ -185,30 +129,12 @@ test "parse/non_greedy_quantifier" {
   let pat1 = parse(profile=profile_unicode(), mode=String, "a*?")
   inspect(
     @debug.render(pat1.to_repr(), max_depth=10),
-    content=(
-      #|Quantifier(
-      #|  {
-      #|    min: 0,
-      #|    max: None,
-      #|    mode: NonGreedy,
-      #|  },
-      #|  Char([(97, 97)]),
-      #|)
-    ),
+    content="Quantifier({ min: 0, max: None, mode: NonGreedy }, Char([(97, 97)]))",
   )
   let pat2 = parse(profile=profile_unicode(), mode=String, "a+?")
   inspect(
     @debug.render(pat2.to_repr(), max_depth=10),
-    content=(
-      #|Quantifier(
-      #|  {
-      #|    min: 1,
-      #|    max: None,
-      #|    mode: NonGreedy,
-      #|  },
-      #|  Char([(97, 97)]),
-      #|)
-    ),
+    content="Quantifier({ min: 1, max: None, mode: NonGreedy }, Char([(97, 97)]))",
   )
 }
 
@@ -220,11 +146,7 @@ test "parse/alternation" {
     content=(
       #|Alternation(
       #|  <ReadOnlyArray:
-      #|    [
-      #|      Char([(97, 97)]),
-      #|      Char([(98, 98)]),
-      #|      Char([(99, 99)]),
-      #|    ]>,
+      #|    [Char([(97, 97)]), Char([(98, 98)]), Char([(99, 99)])]>,
       #|)
     ),
   )
@@ -240,11 +162,7 @@ test "parse/groups" {
       #|  name=None,
       #|  Sequence(
       #|    <ReadOnlyArray:
-      #|      [
-      #|        Char([(97, 97)]),
-      #|        Char([(98, 98)]),
-      #|        Char([(99, 99)]),
-      #|      ]>,
+      #|      [Char([(97, 97)]), Char([(98, 98)]), Char([(99, 99)])]>,
       #|  ),
       #|)
     ),
@@ -255,13 +173,7 @@ test "parse/groups" {
     content=(
       #|Capture(
       #|  name=None,
-      #|  Alternation(
-      #|    <ReadOnlyArray:
-      #|      [
-      #|        Char([(97, 97)]),
-      #|        Char([(98, 98)]),
-      #|      ]>,
-      #|  ),
+      #|  Alternation(<ReadOnlyArray: [Char([(97, 97)]), Char([(98, 98)])]>),
       #|)
     ),
   )
@@ -275,11 +187,7 @@ test "parse/non_capture_group" {
     content=(
       #|Sequence(
       #|  <ReadOnlyArray:
-      #|    [
-      #|      Char([(97, 97)]),
-      #|      Char([(98, 98)]),
-      #|      Char([(99, 99)]),
-      #|    ]>,
+      #|    [Char([(97, 97)]), Char([(98, 98)]), Char([(99, 99)])]>,
       #|)
     ),
   )
@@ -291,13 +199,7 @@ test "parse/non_capture_group" {
       #|  <ReadOnlyArray:
       #|    [
       #|      Char([(97, 97)]),
-      #|      Alternation(
-      #|        <ReadOnlyArray:
-      #|          [
-      #|            Char([(98, 98)]),
-      #|            Char([(99, 99)]),
-      #|          ]>,
-      #|      ),
+      #|      Alternation(<ReadOnlyArray: [Char([(98, 98)]), Char([(99, 99)])]>),
       #|      Char([(100, 100)]),
       #|    ]>,
       #|)
@@ -315,11 +217,7 @@ test "parse/named_groups" {
       #|  name=Some("name"),
       #|  Sequence(
       #|    <ReadOnlyArray:
-      #|      [
-      #|        Char([(97, 97)]),
-      #|        Char([(98, 98)]),
-      #|        Char([(99, 99)]),
-      #|      ]>,
+      #|      [Char([(97, 97)]), Char([(98, 98)]), Char([(99, 99)])]>,
       #|  ),
       #|)
     ),
@@ -355,12 +253,7 @@ test "parse/error_nested_character_class" {
       max_depth=10,
     ),
     content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=1,
-      #|    hint="Unsupported nested character class",
-      #|  ),
-      #|)
+      #|Err(ParserError(at=1, hint="Unsupported nested character class"))
     ),
   )
 }
@@ -385,16 +278,7 @@ test "parse/posix_classes" {
   let pat_word = parse(profile=profile_unicode(), mode=String, "[[:word:]]")
   inspect(
     @debug.render(pat_word.to_repr(), max_depth=10),
-    content=(
-      #|Char(
-      #|  [
-      #|    (48, 57),
-      #|    (65, 90),
-      #|    (95, 95),
-      #|    (97, 122),
-      #|  ],
-      #|)
-    ),
+    content="Char([(48, 57), (65, 90), (95, 95), (97, 122)])",
   )
 }
 
@@ -403,29 +287,12 @@ test "parse/escape_sequences" {
   let pat1 = parse(profile=profile_unicode(), mode=String, "\\n\\r\\t")
   inspect(
     @debug.render(pat1.to_repr(), max_depth=10),
-    content=(
-      #|Sequence(
-      #|  <ReadOnlyArray:
-      #|    [
-      #|      Char([(10, 10)]),
-      #|      Char([(13, 13)]),
-      #|      Char([(9, 9)]),
-      #|    ]>,
-      #|)
-    ),
+    content="Sequence(<ReadOnlyArray: [Char([(10, 10)]), Char([(13, 13)]), Char([(9, 9)])]>)",
   )
   let pat2 = parse(profile=profile_unicode(), mode=String, "\\f\\v")
   inspect(
     @debug.render(pat2.to_repr(), max_depth=10),
-    content=(
-      #|Sequence(
-      #|  <ReadOnlyArray:
-      #|    [
-      #|      Char([(12, 12)]),
-      #|      Char([(11, 11)]),
-      #|    ]>,
-      #|)
-    ),
+    content="Sequence(<ReadOnlyArray: [Char([(12, 12)]), Char([(11, 11)])]>)",
   )
 }
 
@@ -513,24 +380,12 @@ test "parse/word_boundary" {
       #|Sequence(
       #|  <ReadOnlyArray:
       #|    [
-      #|      Alternation(
-      #|        <ReadOnlyArray:
-      #|          [
-      #|            Assertion(StartOfWord),
-      #|            Assertion(EndOfWord),
-      #|          ]>,
-      #|      ),
+      #|      Alternation(<ReadOnlyArray: [Assertion(StartOfWord), Assertion(EndOfWord)]>),
       #|      Char([(119, 119)]),
       #|      Char([(111, 111)]),
       #|      Char([(114, 114)]),
       #|      Char([(100, 100)]),
-      #|      Alternation(
-      #|        <ReadOnlyArray:
-      #|          [
-      #|            Assertion(StartOfWord),
-      #|            Assertion(EndOfWord),
-      #|          ]>,
-      #|      ),
+      #|      Alternation(<ReadOnlyArray: [Assertion(StartOfWord), Assertion(EndOfWord)]>),
       #|    ]>,
       #|)
     ),
@@ -577,38 +432,17 @@ test "parse/practical_date_ymd" {
       #|      Assertion(StartOfInput),
       #|      Capture(
       #|        name=None,
-      #|        Quantifier(
-      #|          {
-      #|            min: 4,
-      #|            max: Some(4),
-      #|            mode: Greedy,
-      #|          },
-      #|          Char([(48, 57)]),
-      #|        ),
+      #|        Quantifier({ min: 4, max: Some(4), mode: Greedy }, Char([(48, 57)])),
       #|      ),
       #|      Char([(45, 45)]),
       #|      Capture(
       #|        name=None,
-      #|        Quantifier(
-      #|          {
-      #|            min: 2,
-      #|            max: Some(2),
-      #|            mode: Greedy,
-      #|          },
-      #|          Char([(48, 57)]),
-      #|        ),
+      #|        Quantifier({ min: 2, max: Some(2), mode: Greedy }, Char([(48, 57)])),
       #|      ),
       #|      Char([(45, 45)]),
       #|      Capture(
       #|        name=None,
-      #|        Quantifier(
-      #|          {
-      #|            min: 2,
-      #|            max: Some(2),
-      #|            mode: Greedy,
-      #|          },
-      #|          Char([(48, 57)]),
-      #|        ),
+      #|        Quantifier({ min: 2, max: Some(2), mode: Greedy }, Char([(48, 57)])),
       #|      ),
       #|      Assertion(EndOfInput),
       #|    ]>,
@@ -632,27 +466,10 @@ test "parse/practical_identifier" {
       #|  <ReadOnlyArray:
       #|    [
       #|      Assertion(StartOfInput),
-      #|      Char(
-      #|        [
-      #|          (65, 90),
-      #|          (95, 95),
-      #|          (97, 122),
-      #|        ],
-      #|      ),
+      #|      Char([(65, 90), (95, 95), (97, 122)]),
       #|      Quantifier(
-      #|        {
-      #|          min: 0,
-      #|          max: None,
-      #|          mode: Greedy,
-      #|        },
-      #|        Char(
-      #|          [
-      #|            (48, 57),
-      #|            (65, 90),
-      #|            (95, 95),
-      #|            (97, 122),
-      #|          ],
-      #|        ),
+      #|        { min: 0, max: None, mode: Greedy },
+      #|        Char([(48, 57), (65, 90), (95, 95), (97, 122)]),
       #|      ),
       #|      Assertion(EndOfInput),
       #|    ]>,
@@ -741,12 +558,7 @@ test "parse/error_byte_escape_in_string_mode" {
       max_depth=10,
     ),
     content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=5,
-      #|    hint="Byte escape sequences are not allowed",
-      #|  ),
-      #|)
+      #|Err(ParserError(at=5, hint="Byte escape sequences are not allowed"))
     ),
   )
 }
@@ -761,12 +573,7 @@ test "parse/error_byte_escape_in_string_mode_term" {
       max_depth=10,
     ),
     content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=4,
-      #|    hint="Byte escape sequences are not allowed",
-      #|  ),
-      #|)
+      #|Err(ParserError(at=4, hint="Byte escape sequences are not allowed"))
     ),
   )
 }
@@ -781,12 +588,7 @@ test "parse/error_unicode_escape_in_bytes_mode" {
       max_depth=10,
     ),
     content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=1,
-      #|    hint="Unicode escape sequences are not allowed",
-      #|  ),
-      #|)
+      #|Err(ParserError(at=1, hint="Unicode escape sequences are not allowed"))
     ),
   )
 }
@@ -801,12 +603,7 @@ test "parse/error_unicode_escape_out_of_range_in_class" {
       max_depth=10,
     ),
     content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=1,
-      #|    hint="Character out of range",
-      #|  ),
-      #|)
+      #|Err(ParserError(at=1, hint="Character out of range"))
     ),
   )
 }
@@ -821,12 +618,7 @@ test "parse/error_unicode_escape_in_bytes_mode_term" {
       max_depth=10,
     ),
     content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=6,
-      #|    hint="Unicode escape sequences are not allowed",
-      #|  ),
-      #|)
+      #|Err(ParserError(at=6, hint="Unicode escape sequences are not allowed"))
     ),
   )
 }
@@ -841,12 +633,7 @@ test "parse/error_unicode_brace_escape_in_bytes_mode" {
       max_depth=10,
     ),
     content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=7,
-      #|    hint="Unicode escape sequences are not allowed",
-      #|  ),
-      #|)
+      #|Err(ParserError(at=7, hint="Unicode escape sequences are not allowed"))
     ),
   )
 }
@@ -861,12 +648,7 @@ test "parse/error_unsupported_posix_class" {
       max_depth=10,
     ),
     content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=1,
-      #|    hint="Unsupported POSIX character class",
-      #|  ),
-      #|)
+      #|Err(ParserError(at=1, hint="Unsupported POSIX character class"))
     ),
   )
 }
@@ -881,12 +663,7 @@ test "parse/error_unclosed_char_class" {
       max_depth=10,
     ),
     content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=4,
-      #|    hint="Unclosed character class",
-      #|  ),
-      #|)
+      #|Err(ParserError(at=4, hint="Unclosed character class"))
     ),
   )
 }
@@ -901,12 +678,7 @@ test "parse/error_unclosed_group" {
       max_depth=10,
     ),
     content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=1,
-      #|    hint="Unclosed group",
-      #|  ),
-      #|)
+      #|Err(ParserError(at=1, hint="Unclosed group"))
     ),
   )
 }
@@ -921,12 +693,7 @@ test "parse/error_invalid_quantifier" {
       max_depth=10,
     ),
     content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=1,
-      #|    hint="Invalid quantifier",
-      #|  ),
-      #|)
+      #|Err(ParserError(at=1, hint="Invalid quantifier"))
     ),
   )
 }
@@ -941,12 +708,7 @@ test "parse/error_invalid_quantifier_range" {
       max_depth=10,
     ),
     content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=6,
-      #|    hint="Invalid quantifier",
-      #|  ),
-      #|)
+      #|Err(ParserError(at=6, hint="Invalid quantifier"))
     ),
   )
 }
@@ -961,12 +723,7 @@ test "parse/error_quantifier_too_large" {
       max_depth=10,
     ),
     content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=2,
-      #|    hint="Quantifier too large",
-      #|  ),
-      #|)
+      #|Err(ParserError(at=2, hint="Quantifier too large"))
     ),
   )
 }
@@ -985,12 +742,7 @@ test "parse/error_quantifier_too_large_overflow" {
       max_depth=10,
     ),
     content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=2,
-      #|    hint="Quantifier too large",
-      #|  ),
-      #|)
+      #|Err(ParserError(at=2, hint="Quantifier too large"))
     ),
   )
 }
@@ -1005,12 +757,7 @@ test "parse/error_max_quantifier_too_large" {
       max_depth=10,
     ),
     content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=4,
-      #|    hint="Quantifier too large",
-      #|  ),
-      #|)
+      #|Err(ParserError(at=4, hint="Quantifier too large"))
     ),
   )
 }
@@ -1025,12 +772,7 @@ test "parse/error_possessive_quantifier" {
       max_depth=10,
     ),
     content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=2,
-      #|    hint="Unsupported possessive quantifier",
-      #|  ),
-      #|)
+      #|Err(ParserError(at=2, hint="Unsupported possessive quantifier"))
     ),
   )
 }
@@ -1045,12 +787,7 @@ test "parse/error_lookahead" {
       max_depth=10,
     ),
     content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=0,
-      #|    hint="Unsupported lookahead assertion",
-      #|  ),
-      #|)
+      #|Err(ParserError(at=0, hint="Unsupported lookahead assertion"))
     ),
   )
 }
@@ -1065,12 +802,7 @@ test "parse/error_negative_lookahead" {
       max_depth=10,
     ),
     content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=0,
-      #|    hint="Unsupported negative lookahead assertion",
-      #|  ),
-      #|)
+      #|Err(ParserError(at=0, hint="Unsupported negative lookahead assertion"))
     ),
   )
 }
@@ -1085,12 +817,7 @@ test "parse/error_lookbehind" {
       max_depth=10,
     ),
     content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=0,
-      #|    hint="Unsupported lookbehind assertion",
-      #|  ),
-      #|)
+      #|Err(ParserError(at=0, hint="Unsupported lookbehind assertion"))
     ),
   )
 }
@@ -1105,12 +832,7 @@ test "parse/error_negative_lookbehind" {
       max_depth=10,
     ),
     content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=0,
-      #|    hint="Unsupported negative lookbehind assertion",
-      #|  ),
-      #|)
+      #|Err(ParserError(at=0, hint="Unsupported negative lookbehind assertion"))
     ),
   )
 }
@@ -1125,12 +847,7 @@ test "parse/error_invalid_group" {
       max_depth=10,
     ),
     content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=0,
-      #|    hint="Invalid group",
-      #|  ),
-      #|)
+      #|Err(ParserError(at=0, hint="Invalid group"))
     ),
   )
 }
@@ -1145,12 +862,7 @@ test "parse/error_invalid_flags" {
       max_depth=10,
     ),
     content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=6,
-      #|    hint="Invalid group",
-      #|  ),
-      #|)
+      #|Err(ParserError(at=6, hint="Invalid group"))
     ),
   )
 }
@@ -1185,12 +897,7 @@ test "parse/error_invalid_char_range" {
       max_depth=10,
     ),
     content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=3,
-      #|    hint="Invalid character class range",
-      #|  ),
-      #|)
+      #|Err(ParserError(at=3, hint="Invalid character class range"))
     ),
   )
 }
@@ -1205,12 +912,7 @@ test "parse/error_char_range_over_sets" {
       max_depth=10,
     ),
     content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=4,
-      #|    hint="Character class range over sets",
-      #|  ),
-      #|)
+      #|Err(ParserError(at=4, hint="Character class range over sets"))
     ),
   )
 }
@@ -1225,12 +927,7 @@ test "parse/error_unsupported_class_set_expression" {
       max_depth=10,
     ),
     content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=2,
-      #|    hint="Unsupported character class set expression",
-      #|  ),
-      #|)
+      #|Err(ParserError(at=2, hint="Unsupported character class set expression"))
     ),
   )
 }
@@ -1245,12 +942,7 @@ test "parse/error_class_set_ampersand" {
       max_depth=10,
     ),
     content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=2,
-      #|    hint="Unsupported character class set expression",
-      #|  ),
-      #|)
+      #|Err(ParserError(at=2, hint="Unsupported character class set expression"))
     ),
   )
 }
@@ -1265,12 +957,7 @@ test "parse/error_unexpected_char_in_range" {
       max_depth=10,
     ),
     content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=3,
-      #|    hint="Unexpected character",
-      #|  ),
-      #|)
+      #|Err(ParserError(at=3, hint="Unexpected character"))
     ),
   )
 }
@@ -1286,12 +973,7 @@ test "parse/error_invalid_escape" {
       max_depth=10,
     ),
     content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=0,
-      #|    hint="Invalid escape sequence",
-      #|  ),
-      #|)
+      #|Err(ParserError(at=0, hint="Invalid escape sequence"))
     ),
   )
 }
@@ -1306,12 +988,7 @@ test "parse/error_unicode_out_of_range" {
       max_depth=10,
     ),
     content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=11,
-      #|    hint="Character out of range",
-      #|  ),
-      #|)
+      #|Err(ParserError(at=11, hint="Character out of range"))
     ),
   )
 }
@@ -1326,12 +1003,7 @@ test "parse/error_unicode_brace_out_of_range_term" {
       max_depth=10,
     ),
     content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=10,
-      #|    hint="Character out of range",
-      #|  ),
-      #|)
+      #|Err(ParserError(at=10, hint="Character out of range"))
     ),
   )
 }
@@ -1346,12 +1018,7 @@ test "parse/error_invalid_posix_class" {
       max_depth=10,
     ),
     content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=1,
-      #|    hint="Invalid POSIX character class",
-      #|  ),
-      #|)
+      #|Err(ParserError(at=1, hint="Invalid POSIX character class"))
     ),
   )
 }
@@ -1508,12 +1175,7 @@ test "parse/double_dash_at_start_of_class" {
       max_depth=10,
     ),
     content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=4,
-      #|    hint="Unsupported character class set expression",
-      #|  ),
-      #|)
+      #|Err(ParserError(at=4, hint="Unsupported character class set expression"))
     ),
   )
 }
@@ -1552,15 +1214,7 @@ test "parse/posix_class_alnum" {
   let pat = parse(profile=profile_unicode(), mode=String, "[[:alnum:]]")
   inspect(
     @debug.render(pat.to_repr(), max_depth=10),
-    content=(
-      #|Char(
-      #|  [
-      #|    (48, 57),
-      #|    (65, 90),
-      #|    (97, 122),
-      #|  ],
-      #|)
-    ),
+    content="Char([(48, 57), (65, 90), (97, 122)])",
   )
 }
 
@@ -1569,15 +1223,7 @@ test "parse/posix_class_xdigit" {
   let pat = parse(profile=profile_unicode(), mode=String, "[[:xdigit:]]")
   inspect(
     @debug.render(pat.to_repr(), max_depth=10),
-    content=(
-      #|Char(
-      #|  [
-      #|    (48, 57),
-      #|    (65, 70),
-      #|    (97, 102),
-      #|  ],
-      #|)
-    ),
+    content="Char([(48, 57), (65, 70), (97, 102)])",
   )
 }
 
@@ -1672,12 +1318,7 @@ test "parse/error_triple_ampersand" {
       max_depth=10,
     ),
     content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=2,
-      #|    hint="Unsupported character class set expression",
-      #|  ),
-      #|)
+      #|Err(ParserError(at=2, hint="Unsupported character class set expression"))
     ),
   )
 }
@@ -1692,11 +1333,7 @@ test "parse/non_capture_group_inside_capture" {
       #|  name=None,
       #|  Sequence(
       #|    <ReadOnlyArray:
-      #|      [
-      #|        Char([(97, 97)]),
-      #|        Char([(98, 98)]),
-      #|        Char([(99, 99)]),
-      #|      ]>,
+      #|      [Char([(97, 97)]), Char([(98, 98)]), Char([(99, 99)])]>,
       #|  ),
       #|)
     ),
@@ -1710,11 +1347,7 @@ test "parse/quantifier_non_greedy_question" {
     @debug.render(pat.to_repr(), max_depth=10),
     content=(
       #|Quantifier(
-      #|  {
-      #|    min: 0,
-      #|    max: Some(1),
-      #|    mode: NonGreedy,
-      #|  },
+      #|  { min: 0, max: Some(1), mode: NonGreedy },
       #|  Char([(97, 97)]),
       #|)
     ),
@@ -1728,11 +1361,7 @@ test "parse/quantifier_range_non_greedy" {
     @debug.render(pat.to_repr(), max_depth=10),
     content=(
       #|Quantifier(
-      #|  {
-      #|    min: 2,
-      #|    max: Some(5),
-      #|    mode: NonGreedy,
-      #|  },
+      #|  { min: 2, max: Some(5), mode: NonGreedy },
       #|  Char([(97, 97)]),
       #|)
     ),
@@ -1769,12 +1398,7 @@ test "parse/error_unmatched_paren" {
       max_depth=10,
     ),
     content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=3,
-      #|    hint="Unexpected character",
-      #|  ),
-      #|)
+      #|Err(ParserError(at=3, hint="Unexpected character"))
     ),
   )
 }
@@ -1790,12 +1414,7 @@ test "parse/error_empty_quantifier" {
       max_depth=10,
     ),
     content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=0,
-      #|    hint="Unexpected character",
-      #|  ),
-      #|)
+      #|Err(ParserError(at=0, hint="Unexpected character"))
     ),
   )
 }
@@ -1849,11 +1468,7 @@ test "parse/ignore_case_quantifier" {
     @debug.render(pat.to_repr(), max_depth=10),
     content=(
       #|Quantifier(
-      #|  {
-      #|    min: 1,
-      #|    max: None,
-      #|    mode: Greedy,
-      #|  },
+      #|  { min: 1, max: None, mode: Greedy },
       #|  Char([(65, 65), (97, 97)]),
       #|)
     ),
@@ -1871,12 +1486,7 @@ test "parse/error_non_ascii_in_bytes_mode" {
       max_depth=10,
     ),
     content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=0,
-      #|    hint="Character out of range",
-      #|  ),
-      #|)
+      #|Err(ParserError(at=0, hint="Character out of range"))
     ),
   )
 }
@@ -1892,12 +1502,7 @@ test "parse/error_non_ascii_in_bytes_mode_char_class" {
       max_depth=10,
     ),
     content=(
-      #|Err(
-      #|  ParserError(
-      #|    at=2,
-      #|    hint="Character out of range",
-      #|  ),
-      #|)
+      #|Err(ParserError(at=2, hint="Character out of range"))
     ),
   )
 }
