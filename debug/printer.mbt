@@ -501,22 +501,20 @@ fn max_line_width(lines : Array[String]) -> Int {
 fn with_resizing(
   _root_size : Int,
   threshold : Int,
-  f : (Array[Content]) -> Content,
-  children : Array[Content],
+  rendered_children : Content,
 ) -> Content {
   // `threshold=0` is used by tests/users to force multi-line output.
   // In that mode we should never run the compaction pass.
-  let rendered = f(children)
   if threshold <= 0 {
-    rendered
+    rendered_children
   } else {
-    let compacted = rendered.compact()
+    let compacted = rendered_children.compact()
     // Compacting is intended to produce a single line for the current node.
     // Still, we use the max line width to be safe.
     if max_line_width(compacted.lines) <= threshold {
       compacted
     } else {
-      rendered
+      rendered_children
     }
   }
 }

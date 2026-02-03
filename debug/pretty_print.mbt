@@ -253,8 +253,7 @@ fn render_repr(threshold : Int, info : Repr) -> Content {
   with_resizing(
     info_size(label),
     threshold,
-    fn(children) { pretty_print_repr_go(label, children) },
-    children,
+    pretty_print_repr_go(label, children),
   )
 }
 
