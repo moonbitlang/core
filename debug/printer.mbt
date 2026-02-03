@@ -94,12 +94,7 @@ fn surround_lines(
   match lines {
     [] => [start + finish]
     [item] => [start + item + finish]
-    [first, ..] => {
-      let n = lines.length()
-      let middle = if n <= 2 { [] } else { lines[1:n - 1].to_array() }
-      let last = lines[n - 1]
-      [start + first] + middle + [last + finish]
-    }
+    [first, .. middle, last] => [start + first, ..middle, last + finish]
   }
 }
 
@@ -149,32 +144,23 @@ fn no_parens(r : ContentParens) -> Content {
 /// ```text
 /// [a, b]
 /// ```
-#warnings("-deprecated")
 fn compact_lines(lines : Array[String]) -> Array[String] {
   match lines {
     [] => []
     [x] => [x]
-    [first, ..] => {
-      let n = lines.length()
-      let last = lines[n - 1]
-
+    [first, .. middle, last] =>
       // Special-case bracket/brace blocks: "[ ... ]" and "{ ... }"
       // produced by `bracket_seq_lines`.
       if (first == "[" && last == "]") || (first == "{" && last == "}") {
-        let middle : ArrayView[String] = if n <= 2 {
-          []
-        } else {
-          lines[1:n - 1]
-        }
         let parts : Array[String] = []
         for m in middle {
-          let t = m.trim_space().to_string()
+          let t = m.trim().to_string()
           if t != "" {
             parts.push(t)
           }
         }
-        let joined0 = parts.join(" "[:])
-        let joined = match joined0.strip_suffix(","[:]) {
+        let joined0 = parts.join(" ")
+        let joined = match joined0.strip_suffix(",") {
           Some(sv) => sv.to_string()
           None => joined0
         }
@@ -184,11 +170,11 @@ fn compact_lines(lines : Array[String]) -> Array[String] {
         // - records/maps: { field: value, field: value }
         if first == "{" {
           let inner0 = joined
-          let inner1 = match inner0.strip_prefix(" "[:]) {
+          let inner1 = match inner0.strip_prefix(" ") {
             Some(sv) => sv.to_string()
             None => inner0
           }
-          let inner = match inner1.strip_suffix(" "[:]) {
+          let inner = match inner1.strip_suffix(" ") {
             Some(sv) => sv.to_string()
             None => inner1
           }
@@ -200,7 +186,6 @@ fn compact_lines(lines : Array[String]) -> Array[String] {
         } else {
           ["[" + joined + "]"]
         }
-      } else {
         // Special-case parenthesized call-like blocks produced by `comma_seq_lines`:
         //
         // ```text
@@ -215,43 +200,28 @@ fn compact_lines(lines : Array[String]) -> Array[String] {
         // ```text
         // Enum(a, b)
         // ```
-        match (first.strip_suffix("("[:]), last) {
-          (Some(_), ")") => {
-            let middle : ArrayView[String] = if n <= 2 {
-              []
-            } else {
-              lines[1:n - 1]
-            }
-            let parts : Array[String] = []
-            for m in middle {
-              let t = m.trim_space().to_string()
-              if t != "" {
-                parts.push(t)
-              }
-            }
-            let joined0 = parts.join(" "[:])
-            let joined = match joined0.strip_suffix(","[:]) {
-              Some(sv) => sv.to_string()
-              None => joined0
-            }
-            [first + joined + last]
-          }
-          _ => {
-            let middle : ArrayView[String] = if n <= 2 {
-              []
-            } else {
-              lines[1:n - 1]
-            }
-            let parts : Array[StringView] = [first]
-            for m in middle {
-              parts.push(m.trim_space())
-            }
-            parts.push(last.trim_space())
-            [parts.join(" "[:])]
+      } else if first.has_suffix("(") && last == ")" {
+        let parts : Array[String] = []
+        for m in middle {
+          let t = m.trim()
+          if t != "" {
+            parts.push(t.to_string())
           }
         }
+        let joined0 = parts.join(" ")
+        let joined = match joined0.strip_suffix(",") {
+          Some(sv) => sv.to_string()
+          None => joined0
+        }
+        [first + joined + last]
+      } else {
+        let parts : Array[StringView] = [first]
+        for m in middle {
+          parts.push(m.trim())
+        }
+        parts.push(last.trim())
+        [parts.join(" ")]
       }
-    }
   }
 }
 
@@ -308,7 +278,7 @@ fn bracket_seq_lines(
           let last_i = lines.length() - 1
           lines[last_i] = lines[last_i] + ","
         }
-        [open] + lines + [close]
+        [open, ..lines, close]
       } else {
         // single-line item stays on one line
         let inner = compact_lines(item)
@@ -326,9 +296,11 @@ fn bracket_seq_lines(
               [open + x + close]
             }
           _ =>
-            [open] +
-            indent_spaces(indent_by, { size: 0, lines: item }).lines +
-            [close]
+            [
+              open,
+              ..indent_spaces(indent_by, { size: 0, lines: item }).lines,
+              close,
+            ]
         }
       }
     _ => {
@@ -339,15 +311,12 @@ fn bracket_seq_lines(
         match item_lines {
           [] => ()
           [x] => out.push(" ".repeat(indent_by) + x + ",")
-          [first, ..] => {
-            let n = item_lines.length()
+          [first, .. middle, last] => {
             out.push(" ".repeat(indent_by) + first)
-            if n > 2 {
-              for mid in item_lines[1:n - 1] {
-                out.push(" ".repeat(indent_by) + mid)
-              }
+            for mid in middle {
+              out.push(" ".repeat(indent_by) + mid)
             }
-            out.push(" ".repeat(indent_by) + item_lines[n - 1] + ",")
+            out.push(" ".repeat(indent_by) + last + ",")
           }
         }
       }
@@ -381,17 +350,17 @@ fn comma_seq_lines(
     let lines = match contents {
       [] => [begin + end]
       [item] => surround_lines(begin, end, item)
-      [first, ..] => {
-        let n = contents.length()
-        let middle = if n <= 2 { [] } else { contents[1:n - 1].to_array() }
-        let last = contents[n - 1]
+      [first, .. middle, last] => {
         let space = spacer(begin)
-        let middle_lines = middle.fold(init=[], fn(acc, item) {
-          acc + surround_lines(space, ",", item)
-        })
-        surround_lines(begin, ",", first) +
-        middle_lines +
-        surround_lines(space, end, last)
+        let middle_lines = []
+        for item in middle {
+          middle_lines.append(surround_lines(space, ",", item))
+        }
+        [
+          ..surround_lines(begin, ",", first),
+          ..middle_lines,
+          ..surround_lines(space, end, last),
+        ]
       }
     }
     lines.filter(fn(line) { line != "" })
@@ -412,19 +381,13 @@ fn comma_seq_lines(
         match item_lines {
           [] => [begin + end]
           [x] => [begin + x + end]
-          _ => {
-            let out : Array[String] = [begin]
-            let last_i = item_lines.length() - 1
-            for i, line in item_lines {
-              if i == last_i {
-                out.push(" ".repeat(indent_by) + line + ",")
-              } else {
-                out.push(" ".repeat(indent_by) + line)
-              }
-            }
-            out.push(end)
-            out
-          }
+          [.. pre_lines, last_line] =>
+            [
+              begin,
+              ..pre_lines.iter().map(line => " ".repeat(indent_by) + line),
+              " ".repeat(indent_by) + last_line,
+              end,
+            ]
         }
       }
       _ => {
@@ -434,15 +397,12 @@ fn comma_seq_lines(
           match item_lines {
             [] => ()
             [x] => out.push(" ".repeat(indent_by) + x + ",")
-            [first, ..] => {
-              let n = item_lines.length()
+            [first, .. middle, last] => {
               out.push(" ".repeat(indent_by) + first)
-              if n > 2 {
-                for mid in item_lines[1:n - 1] {
-                  out.push(" ".repeat(indent_by) + mid)
-                }
+              for mid in middle {
+                out.push(" ".repeat(indent_by) + mid)
               }
-              out.push(" ".repeat(indent_by) + item_lines[n - 1] + ",")
+              out.push(" ".repeat(indent_by) + last + ",")
             }
           }
         }
@@ -474,22 +434,7 @@ fn comma_seq(
 ///|
 /// Convert content into a final `String` with newline separators.
 fn print_content(r : ContentParens) -> String {
-  r.lines.join("\n"[:])
-}
-
-///|
-/// Measure the maximum line width (in characters).
-fn max_line_width(lines : Array[String]) -> Int {
-  let mut m = 0
-  for line in lines {
-    // `String::length()` counts UTF-16 code units; this is good enough for a
-    // debug pretty printer.
-    let w = line.length()
-    if w > m {
-      m = w
-    }
-  }
-  m
+  r.lines.join("\n")
 }
 
 ///|
@@ -511,7 +456,9 @@ fn with_resizing(
     let compacted = rendered_children.compact()
     // Compacting is intended to produce a single line for the current node.
     // Still, we use the max line width to be safe.
-    if max_line_width(compacted.lines) <= threshold {
+    // `String::length()` counts UTF-16 code units; this is good enough for a
+    // debug pretty printer.
+    if compacted.lines.all(line => line.length() <= threshold) {
       compacted
     } else {
       rendered_children
