@@ -23,7 +23,7 @@ priv enum ReprDelta {
 
 ///|
 /// Default max relative error for `DoubleLit` comparisons.
-let default_max_relative_error : Double = 0.000000000001
+const DEFAULT_MAX_RELATIVE_ERROR : Double = 0.000000000001
 
 ///|
 /// Absolute value for `Double`.
@@ -90,35 +90,7 @@ fn info_approx_eq(max_relative_error : Double, x : Repr, y : Repr) -> Bool {
 ///|
 /// Labels that are treated as structural "containers" (may be collapsed in diffs).
 fn info_is_unimportant(info : Repr) -> Bool {
-  match info {
-    MapEntry(_, _) | Tuple(_) | Array(_) | Record(_) => true
-    _ => false
-  }
-}
-
-///|
-/// Child nodes of a `Repr` node.
-fn info_children(info : Repr) -> Array[Repr] {
-  info.children()
-}
-
-///|
-/// A shallow copy of `info` containing only its "label" (children replaced).
-fn info_shallow(info : Repr) -> Repr {
-  info.shallow()
-}
-
-///|
-/// Returns `true` iff `p` holds for every element.
-fn[T] tree_all(xs : Array[T], p : (T) -> Bool) -> Bool {
-  let mut ok = true
-  for x in xs {
-    if !p(x) {
-      ok = false
-      break
-    }
-  }
-  ok
+  info is (MapEntry(_, _) | Tuple(_) | Array(_) | Record(_))
 }
 
 ///|
@@ -128,40 +100,29 @@ fn diff_info_with(
   right : Repr,
   max_relative_error~ : Double,
 ) -> ReprDelta {
-  fn differing(d : ReprDelta) -> Bool {
-    match d {
-      Same(_, _) => false
-      _ => true
-    }
-  }
-
   fn go(left_node : Repr, right_node : Repr) -> ReprDelta {
     if info_approx_eq(max_relative_error, left_node, right_node) {
-      let xs = info_children(left_node)
-      let ys = info_children(right_node)
+      let xs = left_node.children()
+      let ys = right_node.children()
       let xlen = xs.length()
       let ylen = ys.length()
       let min_len = if xlen < ylen { xlen } else { ylen }
-      let children : Array[ReprDelta] = for i = 0, acc = [] {
-        if i < min_len {
-          continue i + 1, acc + [go(xs[i], ys[i])]
-        } else {
-          break acc
-        }
+      let children : Array[ReprDelta] = []
+      for i in 0..<min_len {
+        children.push(go(xs[i], ys[i]))
       }
-      let children = if xlen < ylen {
-        children + ys[min_len:ylen].to_array().map(fn(t) { Extra2(t) })
-      } else if xlen > ylen {
-        children + xs[min_len:xlen].to_array().map(fn(t) { Extra1(t) })
-      } else {
-        children
+      for t in xs[min_len:] {
+        children.push(Extra1(t))
+      }
+      for t in ys[min_len:] {
+        children.push(Extra2(t))
       }
       if info_is_unimportant(left_node) &&
         !children.is_empty() &&
-        tree_all(children, differing) {
+        children.all(d => !(d is Same(_, _))) {
         Different(left_node, right_node)
       } else {
-        Same(info_shallow(left_node), children)
+        Same(left_node.shallow(), children)
       }
     } else {
       Different(left_node, right_node)
@@ -181,7 +142,7 @@ fn diff_info_with(
 fn diff_repr(
   x : Repr,
   y : Repr,
-  max_relative_error? : Double = default_max_relative_error,
+  max_relative_error? : Double = DEFAULT_MAX_RELATIVE_ERROR,
 ) -> ReprDelta {
   diff_info_with(x, y, max_relative_error~)
 }
@@ -214,9 +175,9 @@ fn pretty_print_delta(
 /// Prune a `ReprDelta` using max_depth (replacing with `Same(Omitted, [])`).
 fn prune_delta(max_depth : Int?, delta : ReprDelta) -> ReprDelta {
   fn go(d : Int, node : ReprDelta) -> ReprDelta {
-    match node {
-      Same(label, children) =>
-        if d <= 0 {
+    if d <= 0 {
+      match node {
+        Same(label, children) =>
           if children.is_empty() {
             node
           } else if !label.info_adds_depth() {
@@ -224,28 +185,19 @@ fn prune_delta(max_depth : Int?, delta : ReprDelta) -> ReprDelta {
           } else {
             Same(Repr::omitted(), [])
           }
-        } else {
+        Different(_, _) | Extra1(_) | Extra2(_) => Same(Repr::omitted(), [])
+      }
+    } else {
+      match node {
+        Same(label, children) => {
           let next_depth = if label.info_adds_depth() { d - 1 } else { d }
           Same(label, children.map(fn(child) { go(next_depth, child) }))
         }
-      Different(left, right) =>
-        if d <= 0 {
-          Same(Repr::omitted(), [])
-        } else {
+        Different(left, right) =>
           Different(prune_info(left, depth=d), prune_info(right, depth=d))
-        }
-      Extra1(x) =>
-        if d <= 0 {
-          Same(Repr::omitted(), [])
-        } else {
-          Extra1(prune_info(x, depth=d))
-        }
-      Extra2(x) =>
-        if d <= 0 {
-          Same(Repr::omitted(), [])
-        } else {
-          Extra2(prune_info(x, depth=d))
-        }
+        Extra1(x) => Extra1(prune_info(x, depth=d))
+        Extra2(x) => Extra2(prune_info(x, depth=d))
+      }
     }
   }
 
@@ -266,27 +218,21 @@ fn delta_root_size(delta : ReprDelta) -> Int {
 
 ///|
 /// ANSI escape reset.
-fn ansi_reset() -> String {
-  "\u001b[0m"
-}
+const ANSI_RESET : String = "\u001b[0m"
 
 ///|
 /// ANSI escape for red.
-fn ansi_red() -> String {
-  "\u001b[31m"
-}
+const ANSI_RED : String = "\u001b[31m"
 
 ///|
 /// ANSI escape for green.
-fn ansi_green() -> String {
-  "\u001b[32m"
-}
+const ANSI_GREEN : String = "\u001b[32m"
 
 ///|
 /// Mark removed content with `-` (and optionally ANSI color).
 fn mark_removed(use_ansi : Bool, x : ContentParens) -> ContentParens {
   if use_ansi {
-    surround(ansi_red() + "-", ansi_reset(), x)
+    surround(ANSI_RED + "-", ANSI_RESET, x)
   } else {
     surround("-", "", x)
   }
@@ -296,7 +242,7 @@ fn mark_removed(use_ansi : Bool, x : ContentParens) -> ContentParens {
 /// Mark added content with `+` (and optionally ANSI color).
 fn mark_added(use_ansi : Bool, x : ContentParens) -> ContentParens {
   if use_ansi {
-    surround(ansi_green() + "+", ansi_reset(), x)
+    surround(ANSI_GREEN + "+", ANSI_RESET, x)
   } else {
     surround("+", "", x)
   }
