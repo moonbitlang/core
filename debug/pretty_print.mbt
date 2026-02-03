@@ -77,10 +77,7 @@ fn prune_info(
 /// `RecordField` / `EnumLabeledArg` / `MapEntry` do not count as a depth level,
 /// so field names / labels can still be preserved when pruning.
 fn Repr::info_adds_depth(info : Repr) -> Bool {
-  match info {
-    RecordField(_, _) | EnumLabeledArg(_, _) | MapEntry(_, _) => false
-    _ => true
-  }
+  !(info is (RecordField(_, _) | EnumLabeledArg(_, _) | MapEntry(_, _)))
 }
 
 ///|
@@ -111,46 +108,12 @@ fn info_size(info : Repr) -> Int {
 ///|
 /// Returns `true` when a record field name can be printed without quotes.
 fn is_unquoted_key(key : String) -> Bool {
-  fn is_lower_alpha_ascii(ch : Char) -> Bool {
-    ch >= 'a' && ch <= 'z'
-  }
-
-  fn is_upper_alpha_ascii(ch : Char) -> Bool {
-    ch >= 'A' && ch <= 'Z'
-  }
-
-  fn is_numeric_ascii(ch : Char) -> Bool {
-    ch >= '0' && ch <= '9'
-  }
-
-  fn is_unquoted_key_head(ch : Char) -> Bool {
-    ch == '_' || is_lower_alpha_ascii(ch)
-  }
-
-  fn is_unquoted_key_tail(ch : Char) -> Bool {
-    ch == '_' ||
-    is_lower_alpha_ascii(ch) ||
-    is_upper_alpha_ascii(ch) ||
-    is_numeric_ascii(ch)
-  }
-
-  if key.is_empty() {
-    false
-  } else {
-    let chars = key.to_array()
-    let head = chars[0]
-    if !is_unquoted_key_head(head) {
-      false
-    } else {
-      for i = 1, ok = true
-          i < chars.length()
-          i = i + 1, ok = ok && is_unquoted_key_tail(chars[i]) {
-
-      } else {
-        ok
-      }
-    }
-  }
+  key is ['a'..='z' | '_', .. rest] &&
+  (loop rest {
+    ['a'..='z' | 'A'..='Z' | '0'..='9' | '_', .. rest] => continue rest
+    [_, ..] => false
+    [] => true
+  })
 }
 
 ///|
