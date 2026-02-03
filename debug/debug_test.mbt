@@ -444,15 +444,16 @@ test "Debug for hash-based collections" {
 }
 
 ///|
-test "assert_eq" {
-  fn output(x : Result[Unit, Error]) -> String {
-    match x {
-      Err(Failure::Failure(s)) => s
-      Ok(_) => "ok"
-      Err(e) => "\{e}"
-    }
+fn output(x : Result[Unit, Error]) -> String {
+  match x {
+    Err(Failure::Failure(s)) => s
+    Ok(_) => "ok"
+    Err(e) => "\{e}"
   }
+}
 
+///|
+test "assert_eq" {
   inspect(output(try? @debug.assert_eq(1, 1)), content="ok")
   inspect(
     output(try? @debug.assert_eq(1, 2)),
@@ -500,6 +501,80 @@ test "assert_eq" {
       #|  "k1": -1 +2,
       #|  -"k2": 2 +"k3": 5,
       #|}
+    ),
+  )
+  inspect(
+    output(try? @debug.assert_eq(1, 2, msg="numbers mismatch")),
+    content=(
+      #|debug_blackbox_test/debug_test.mbt:607:17-607:63@moonbitlang/core FAILED: numbers mismatch
+    ),
+  )
+  inspect(
+    output(try? @debug.assert_eq(Some(1), Some(2))),
+    content=(
+      #|debug_blackbox_test/debug_test.mbt:613:17-613:51@moonbitlang/core FAILED: `Some(1) != Some(2)`
+      #|diff:
+      #|Some(-1 +2)
+    ),
+  )
+  inspect(
+    output(try? @debug.assert_eq(Result::Ok(1), Err("e"))),
+    content=(
+      #|debug_blackbox_test/debug_test.mbt:621:17-621:58@moonbitlang/core FAILED: `Ok(1) != Err("e")`
+      #|diff:
+      #|-Ok(1) +Err("e")
+    ),
+  )
+}
+
+///|
+test "assert_eq for arrays" {
+  inspect(
+    output(try? @debug.assert_eq([1, 2], [1, 2, 3])),
+    content=(
+      #|debug_blackbox_test/debug_test.mbt:634:17-634:52@moonbitlang/core FAILED: `[1, 2] != [1, 2, 3]`
+      #|diff:
+      #|[1, 2, +3]
+    ),
+  )
+  inspect(
+    output(try? @debug.assert_eq([1, 2], [1, 2, 3, 4])),
+    content=(
+      #|debug_blackbox_test/debug_test.mbt:642:17-642:55@moonbitlang/core FAILED: `[1, 2] != [1, 2, 3, 4]`
+      #|diff:
+      #|[1, 2, +3, +4]
+    ),
+  )
+  inspect(
+    output(try? @debug.assert_eq([1, 2, 3], [1, 2])),
+    content=(
+      #|debug_blackbox_test/debug_test.mbt:650:17-650:52@moonbitlang/core FAILED: `[1, 2, 3] != [1, 2]`
+      #|diff:
+      #|[1, 2, -3]
+    ),
+  )
+  inspect(
+    output(try? @debug.assert_eq([1, 2, 3, 4], [1, 2])),
+    content=(
+      #|debug_blackbox_test/debug_test.mbt:658:17-658:55@moonbitlang/core FAILED: `[1, 2, 3, 4] != [1, 2]`
+      #|diff:
+      #|[1, 2, -3, -4]
+    ),
+  )
+  inspect(
+    output(try? @debug.assert_eq([1, 2, 3, 4], [1, 4])),
+    content=(
+      #|debug_blackbox_test/debug_test.mbt:667:17-667:55@moonbitlang/core FAILED: `[1, 2, 3, 4] != [1, 4]`
+      #|diff:
+      #|[1, -2 +4, -3, -4]
+    ),
+  )
+  inspect(
+    output(try? @debug.assert_eq([1, 4], [1, 2, 3, 4])),
+    content=(
+      #|debug_blackbox_test/debug_test.mbt:676:17-676:55@moonbitlang/core FAILED: `[1, 4] != [1, 2, 3, 4]`
+      #|diff:
+      #|[1, -4 +2, +3, +4]
     ),
   )
 }
