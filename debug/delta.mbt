@@ -253,14 +253,13 @@ fn mark_added(use_ansi : Bool, x : ContentParens) -> ContentParens {
 fn render_delta(threshold : Int, use_ansi : Bool, delta : ReprDelta) -> Content {
   match delta {
     Same(label, children_delta) => {
-      let children = children_delta.map(fn(child) {
-        render_delta(threshold, use_ansi, child)
-      })
+      let children = children_delta.map(child => render_delta(
+        threshold, use_ansi, child,
+      ))
       with_resizing(
         delta_root_size(delta),
         threshold,
-        fn(children) { pretty_print_repr_go(label, children) },
-        children,
+        pretty_print_repr_go(label, children),
       )
     }
     Different(left, right) => {
@@ -271,17 +270,14 @@ fn render_delta(threshold : Int, use_ansi : Bool, delta : ReprDelta) -> Content 
       with_resizing(
         0,
         threshold,
-        fn(children) {
-          match children {
-            [left, right] =>
-              no_parens(
-                mark_removed(use_ansi, left.no_wrap()) +
-                mark_added(use_ansi, right.no_wrap()),
-              )
-            _ => empty_content()
-          }
+        match children {
+          [left, right] =>
+            no_parens(
+              mark_removed(use_ansi, left.no_wrap()) +
+              mark_added(use_ansi, right.no_wrap()),
+            )
+          _ => empty_content()
         },
-        children,
       )
     }
     Extra1(x) => {
@@ -289,13 +285,10 @@ fn render_delta(threshold : Int, use_ansi : Bool, delta : ReprDelta) -> Content 
       with_resizing(
         0,
         threshold,
-        fn(children) {
-          match children {
-            [x] => no_parens(mark_removed(use_ansi, x.no_wrap()))
-            _ => empty_content()
-          }
+        match children {
+          [x] => no_parens(mark_removed(use_ansi, x.no_wrap()))
+          _ => empty_content()
         },
-        children,
       )
     }
     Extra2(x) => {
@@ -303,13 +296,10 @@ fn render_delta(threshold : Int, use_ansi : Bool, delta : ReprDelta) -> Content 
       with_resizing(
         0,
         threshold,
-        fn(children) {
-          match children {
-            [x] => no_parens(mark_added(use_ansi, x.no_wrap()))
-            _ => empty_content()
-          }
+        match children {
+          [x] => no_parens(mark_added(use_ansi, x.no_wrap()))
+          _ => empty_content()
         },
-        children,
       )
     }
   }
