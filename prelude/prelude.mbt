@@ -82,15 +82,7 @@ pub using @debug {debug, type Repr, trait Debug, debug_inspect}
 /// # Returns
 /// The original value, unchanged.
 ///
-/// # Examples
-/// ```mbt check
-/// test {
-///   let val : Ref[Int] = { val: 1 }
-///   let x : Int = 5
-///   assert_eq(x |> tap(n => val.val += n), 5)
-///   assert_eq(val.val, 6)
-/// }
-/// ```
+#deprecated("use `value |> x => { ... ; x} instead")
 pub fn[T] tap(value : T, f : (T) -> Unit raise) -> T raise {
   f(value)
   value
