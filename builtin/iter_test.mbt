@@ -52,7 +52,7 @@ test "take" {
   inspect(exb, content="123")
   // normal take
   let evaluated = []
-  let collected = (1).until(20).tap(evaluated.push(_)).take(10).collect()
+  let collected = (1).until(20).tap(x => evaluated.push(x)).take(10).collect()
   inspect(collected, content="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]")
   inspect(evaluated, content="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]")
   // take with concat
@@ -281,7 +281,7 @@ test "filter_map" {
   inspect(r1, content="[3, 4, 5]")
   let r2 : Array[Unit] = arr.iter().filter_map(_x => None).collect()
   inspect(r2, content="[]")
-  let r3 : Array[Unit] = [].iter().filter_map(Option::Some(_)).collect()
+  let r3 : Array[Unit] = [].iter().filter_map(x => Some(x)).collect()
   inspect(r3, content="[]")
   // Test using next() directly to ensure the closure is executed
   let it1 = [1, 2, 3, 4, 5]

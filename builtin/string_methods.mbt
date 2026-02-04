@@ -1445,7 +1445,7 @@ test "View::to_lower" {
 /// Converts this string to uppercase.
 pub fn StringView::to_upper(self : StringView) -> StringView {
   // TODO: deal with non-ascii characters
-  guard self.find_by(_.is_ascii_lowercase()) is Some(idx) else { return self }
+  guard self.find_by(Char::is_ascii_lowercase) is Some(idx) else { return self }
   let buf = StringBuilder::new(size_hint=self.length())
   let head = self.view(end_offset=idx)
   buf.write_substring(head.data(), head.start_offset(), head.length())
@@ -1463,7 +1463,7 @@ pub fn StringView::to_upper(self : StringView) -> StringView {
 /// Converts this string to uppercase.
 pub fn String::to_upper(self : String) -> String {
   // TODO: deal with non-ascii characters
-  guard self.find_by(_.is_ascii_lowercase()) is Some(idx) else { return self }
+  guard self.find_by(Char::is_ascii_lowercase) is Some(idx) else { return self }
   let buf = StringBuilder::new(size_hint=self.length())
   let head = self.view(end_offset=idx)
   buf.write_substring(head.data(), head.start_offset(), head.length())
