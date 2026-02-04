@@ -385,7 +385,7 @@ fn comma_seq_lines(
             [
               begin,
               ..pre_lines.iter().map(line => " ".repeat(indent_by) + line),
-              " ".repeat(indent_by) + last_line,
+              " ".repeat(indent_by) + last_line + ",",
               end,
             ]
         }
