@@ -101,7 +101,7 @@ test "generic unit usage" {
   let items = [1, 2, 3, 4, 5]
 
   // Process for side effects only
-  items.each(fn(x) {
+  items.each(x => {
     // Side effect: processing each item
     let processed = x * 2
     assert_true(processed > 0) // Simulated processing validation

@@ -259,7 +259,7 @@ pub fn[K : Eq] HashSet::intersection(
       (Leaf(key1, bucket1), Leaf(key2, bucket2)) => {
         let keys1 = bucket1.add(key1)
         let keys2 = bucket2.add(key2)
-        match keys1.filter(keys2.contains(_)) {
+        match keys1.filter(k => keys2.contains(k)) {
           Empty => None
           More(head, tail~) => Some(Leaf(head, tail))
         }
@@ -434,7 +434,7 @@ impl[A : Eq] Eq for Node[A] with equal(self, other) {
       {
         let keys1 = xs.add(x)
         let keys2 = ys.add(y)
-        keys1.iter().all(keys2.contains(_))
+        keys1.iter().all(k => keys2.contains(k))
       }
     (Flat(x, pathx), Flat(y, pathy)) => pathx == pathy && x == y
     (Branch(xs), Branch(ys)) => xs == ys

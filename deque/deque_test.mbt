@@ -1033,7 +1033,7 @@ test "deque retain_map" {
   @json.json_inspect(
     dq()
     |> x => {
-      x.retain_map(Option::Some(_))
+      x.retain_map(x => Some(x))
       x.as_views()
     },
     content=[[4, 5, 6], [7, 8]],

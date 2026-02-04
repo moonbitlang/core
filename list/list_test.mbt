@@ -23,7 +23,7 @@ test "from_array" {
 ///|
 test "pipe" {
   debug_inspect(
-    1 |> @list.List::prepend(@list.empty(), _),
+    1 |> x => { @list.List::prepend(@list.empty(), x) },
     content="<List: [1]>",
   )
 }

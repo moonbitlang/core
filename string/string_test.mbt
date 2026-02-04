@@ -579,11 +579,11 @@ test "String::fold" {
   let s = "this is a long string"
   inspect(s.fold(init=0, (acc, c) => acc + c.to_int()), content="1980")
   inspect(
-    s.fold(init=@list.empty(), _.prepend(_)).rev(),
+    s.fold(init=@list.empty(), (acc, x) => acc.prepend(x)).rev(),
     content="@list.from_array(['t', 'h', 'i', 's', ' ', 'i', 's', ' ', 'a', ' ', 'l', 'o', 'n', 'g', ' ', 's', 't', 'r', 'i', 'n', 'g'])",
   )
   inspect(
-    s.rev_fold(init=@list.empty(), _.prepend(_)),
+    s.rev_fold(init=@list.empty(), (acc, x) => acc.prepend(x)),
     content="@list.from_array(['t', 'h', 'i', 's', ' ', 'i', 's', ' ', 'a', ' ', 'l', 'o', 'n', 'g', ' ', 's', 't', 'r', 'i', 'n', 'g'])",
   )
 }
