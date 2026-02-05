@@ -25,6 +25,10 @@ pub(all) enum ArgAction {
   Count
   /// Allow multiple values by appending.
   Append
+  /// Show help and exit (flags only).
+  Help
+  /// Show version and exit (flags only).
+  Version
 } derive(Eq, Show)
 
 ///|
@@ -34,6 +38,7 @@ struct Arg {
   short : Char?
   long : String?
   help : String
+  long_help : String
   takes_value : Bool
   action : ArgAction
   multiple : Bool
@@ -64,6 +69,7 @@ pub fn Arg::new(name : String) -> Arg {
     short: None,
     long: None,
     help: "",
+    long_help: "",
     takes_value: false,
     action: ArgAction::SetTrue,
     multiple: false,
@@ -111,6 +117,11 @@ pub fn Arg::long(self : Arg, value : String) -> Arg {
 ///|
 pub fn Arg::help(self : Arg, text : String) -> Arg {
   Arg::{ ..self, help: text }
+}
+
+///|
+pub fn Arg::long_help(self : Arg, text : String) -> Arg {
+  Arg::{ ..self, long_help: text }
 }
 
 ///|

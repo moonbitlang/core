@@ -13,14 +13,14 @@
 // limitations under the License.
 
 ///|
-test "help plain" {
+test "help short" {
   let cmd = @arg_parser.Command::new("demo")
     .about("demo")
     .arg(@arg_parser.Arg::new("count").long("count").option())
     .arg(@arg_parser.Arg::new("name").index(0))
   let mut text = ""
-  try cmd.parse(argv=["--help"]) catch {
-    @arg_parser.Help::Help(t) => text = t
+  try cmd.parse(argv=["-h"]) catch {
+    @arg_parser.Help::Short(t) => text = t
     _ => panic()
   } noraise {
     _ => panic()
@@ -30,18 +30,109 @@ test "help plain" {
 }
 
 ///|
-test "help man" {
-  let cmd = @arg_parser.Command::new("demo").about("demo")
+test "help long" {
+  let cmd = @arg_parser.Command::new("demo")
+    .about("short about")
+    .long_about("long about")
+    .arg(
+      @arg_parser.Arg::new("mode")
+      .long("mode")
+      .help("short help")
+      .long_help("long help"),
+    )
   let mut text = ""
-  try cmd.parse(argv=["--help=man"]) catch {
-    @arg_parser.Help::Help(t) => text = t
+  try cmd.parse(argv=["--help"]) catch {
+    @arg_parser.Help::Long(t) => text = t
     _ => panic()
   } noraise {
     _ => panic()
   }
-  inspect(text.contains("NAME"), content="true")
-  inspect(text.contains("SYNOPSIS"), content="true")
-  inspect(text.contains("OPTIONS"), content="true")
+  inspect(text.contains("long about"), content="true")
+  inspect(text.contains("long help"), content="true")
+}
+
+///|
+test "version short and long" {
+  let cmd = @arg_parser.Command::new("demo")
+    .version("1.2.3")
+    .long_version("demo 1.2.3 (build)")
+  let mut short = ""
+  try cmd.parse(argv=["-V"]) catch {
+    @arg_parser.Version::Short(t) => short = t
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+  inspect(short, content="1.2.3")
+  let mut long = ""
+  try cmd.parse(argv=["--version"]) catch {
+    @arg_parser.Version::Long(t) => long = t
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+  inspect(long, content="demo 1.2.3 (build)")
+  let help = cmd.render_help()
+  assert_true(help.contains("--version"))
+}
+
+///|
+test "action help and version" {
+  let cmd = @arg_parser.Command::new("demo")
+    .about("short about")
+    .long_about("long about")
+    .version("1.0")
+    .long_version("demo 1.0")
+    .arg(@arg_parser.Arg::new("assist").long("assist").action(@arg_parser.ArgAction::Help))
+    .arg(@arg_parser.Arg::new("ver").long("ver").action(@arg_parser.ArgAction::Version))
+  let mut help = ""
+  try cmd.parse(argv=["--assist"]) catch {
+    @arg_parser.Help::Long(t) => help = t
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+  inspect(help.contains("long about"), content="true")
+  let mut ver = ""
+  try cmd.parse(argv=["--ver"]) catch {
+    @arg_parser.Version::Long(t) => ver = t
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+  inspect(ver, content="demo 1.0")
+}
+
+///|
+test "version fallback uses long when short missing" {
+  let cmd = @arg_parser.Command::new("demo").long_version("demo 9.9")
+  let mut text = ""
+  try cmd.parse(argv=["-V"]) catch {
+    @arg_parser.Version::Short(t) => text = t
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+  inspect(text, content="demo 9.9")
+}
+
+///|
+test "disable version flag allows custom version option" {
+  let cmd = @arg_parser.Command::new("demo")
+    .version("1.0")
+    .disable_version_flag()
+    .arg(@arg_parser.Arg::new("version").long("version"))
+  let matches = cmd.parse(argv=["--version"]) catch { _ => panic() }
+  assert_true(matches.get_flag("version"))
+}
+
+///|
+test "disable help flag allows custom help option" {
+  let cmd = @arg_parser.Command::new("demo")
+    .disable_help_flag()
+    .arg(@arg_parser.Arg::new("help").long("help"))
+  let matches = cmd.parse(argv=["--help"]) catch { _ => panic() }
+  assert_true(matches.get_flag("help"))
 }
 
 ///|
@@ -80,7 +171,8 @@ test "missing value for option" {
 test "unknown option" {
   let cmd = @arg_parser.Command::new("demo")
   try cmd.parse(argv=["--nope"]) catch {
-    @arg_parser.ArgumentError::UnknownArgument(opt, _) => inspect(opt, content="--nope")
+    @arg_parser.ArgumentError::UnknownArgument(opt, _) =>
+      inspect(opt, content="--nope")
     _ => panic()
   } noraise {
     _ => panic()
@@ -250,63 +342,69 @@ test "multiple positional captures rest" {
 }
 
 ///|
-test "subcommand help and man" {
+test "subcommand help short and long" {
   let sub = @arg_parser.Command::new("echo")
-    .about("echo help")
+    .about("echo short")
+    .long_about("echo long")
     .arg(@arg_parser.Arg::new("msg").index(0))
   let root = @arg_parser.Command::new("root").about("root help").subcommand(sub)
-  let mut text_plain = ""
+  let mut text_short = ""
+  try root.parse(argv=["echo", "-h"]) catch {
+    @arg_parser.Help::Short(t) => text_short = t
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+  inspect(text_short.contains("Usage: echo"), content="true")
+  inspect(text_short.contains("echo short"), content="true")
+  let mut text_long = ""
   try root.parse(argv=["echo", "--help"]) catch {
-    @arg_parser.Help::Help(t) => text_plain = t
+    @arg_parser.Help::Long(t) => text_long = t
     _ => panic()
   } noraise {
     _ => panic()
   }
-  inspect(text_plain.contains("Usage: echo"), content="true")
-  let mut text_man = ""
-  try root.parse(argv=["echo", "--help=man"]) catch {
-    @arg_parser.Help::Help(t) => text_man = t
-    _ => panic()
-  } noraise {
-    _ => panic()
-  }
-  inspect(text_man.contains("NAME"), content="true")
-  inspect(text_man.contains("echo - echo help"), content="true")
+  inspect(text_long.contains("echo long"), content="true")
 }
 
 ///|
 test "help subcommand shows target help" {
-  let echo = @arg_parser.Command::new("echo").about("echo help")
+  let echo = @arg_parser.Command::new("echo")
+    .about("echo short")
+    .long_about("echo long")
   let tools = @arg_parser.Command::new("tools")
     .about("tools help")
     .subcommand(echo)
   let root = @arg_parser.Command::new("root")
-    .about("root help")
+    .about("root short")
+    .long_about("root long")
     .subcommand(tools)
   let mut text_root = ""
   try root.parse(argv=["help"]) catch {
-    @arg_parser.Help::Help(t) => text_root = t
+    @arg_parser.Help::Long(t) => text_root = t
     _ => panic()
   } noraise {
     _ => panic()
   }
   inspect(text_root.contains("Usage: root"), content="true")
+  inspect(text_root.contains("root long"), content="true")
   let mut text_nested = ""
   try root.parse(argv=["help", "tools", "echo"]) catch {
-    @arg_parser.Help::Help(t) => text_nested = t
+    @arg_parser.Help::Long(t) => text_nested = t
     _ => panic()
   } noraise {
     _ => panic()
   }
   inspect(text_nested.contains("Usage: echo"), content="true")
-  let mut text_man = ""
-  try root.parse(argv=["help", "tools", "echo", "--help=man"]) catch {
-    @arg_parser.Help::Help(t) => text_man = t
+  inspect(text_nested.contains("echo long"), content="true")
+  let mut text_short = ""
+  try root.parse(argv=["help", "tools", "echo", "-h"]) catch {
+    @arg_parser.Help::Short(t) => text_short = t
     _ => panic()
   } noraise {
     _ => panic()
   }
-  inspect(text_man.contains("NAME"), content="true")
+  inspect(text_short.contains("echo short"), content="true")
   inspect(
     root.render_help().contains("Print help for the subcommand(s)."),
     content="true",
@@ -381,7 +479,8 @@ test "short group unknown flag errors" {
     @arg_parser.Arg::new("verbose").short('v'),
   )
   try cmd.parse(argv=["-vz"]) catch {
-    @arg_parser.ArgumentError::UnknownArgument(arg, _) => inspect(arg, content="-z")
+    @arg_parser.ArgumentError::UnknownArgument(arg, _) =>
+      inspect(arg, content="-z")
     _ => panic()
   } noraise {
     _ => panic()
@@ -403,7 +502,8 @@ test "no- flag rejected when not negatable" {
     @arg_parser.Arg::new("verbose").long("verbose"),
   )
   try cmd.parse(argv=["--no-verbose"]) catch {
-    @arg_parser.ArgumentError::UnknownArgument(arg, _) => inspect(arg, content="--no-verbose")
+    @arg_parser.ArgumentError::UnknownArgument(arg, _) =>
+      inspect(arg, content="--no-verbose")
     _ => panic()
   } noraise {
     _ => panic()
@@ -435,7 +535,8 @@ test "root arg after subcommand errors when not global" {
     .arg(@arg_parser.Arg::new("verbose").long("verbose"))
     .subcommand(sub)
   try root.parse(argv=["echo", "--verbose", "hi"]) catch {
-    @arg_parser.ArgumentError::UnknownArgument(arg, _) => inspect(arg, content="--verbose")
+    @arg_parser.ArgumentError::UnknownArgument(arg, _) =>
+      inspect(arg, content="--verbose")
     _ => panic()
   } noraise {
     _ => panic()
@@ -492,7 +593,8 @@ test "negation rejects inline values" {
     @arg_parser.Arg::new("verbose").long("verbose").negatable(),
   )
   try cmd.parse(argv=["--no-verbose=true"]) catch {
-    @arg_parser.ArgumentError::InvalidArgument(arg) => inspect(arg, content="--no-verbose=true")
+    @arg_parser.ArgumentError::InvalidArgument(arg) =>
+      inspect(arg, content="--no-verbose=true")
     _ => panic()
   } noraise {
     _ => panic()
@@ -565,7 +667,9 @@ test "command visible alias shows in help" {
 test "hidden command omits from help but still parses" {
   let hidden = @arg_parser.Command::new("secret").hide()
   let visible = @arg_parser.Command::new("show")
-  let root = @arg_parser.Command::new("root").subcommand(hidden).subcommand(visible)
+  let root = @arg_parser.Command::new("root")
+    .subcommand(hidden)
+    .subcommand(visible)
   let text = root.render_help()
   assert_false(text.contains("secret"))
   assert_true(text.contains("show"))
@@ -585,14 +689,14 @@ test "hidden arg omitted from help but still parses" {
 }
 
 ///|
-test "hide long help only hides in man" {
+test "hide long help only hides in long help" {
   let cmd = @arg_parser.Command::new("demo").arg(
     @arg_parser.Arg::new("token").long("token").hide_long_help(),
   )
   let plain = cmd.render_help()
   assert_true(plain.contains("--token"))
-  let man = cmd.render_help(mode=@arg_parser.HelpMode::Man)
-  assert_false(man.contains("--token"))
+  let long = cmd.render_long_help()
+  assert_false(long.contains("--token"))
 }
 
 ///|
@@ -617,7 +721,8 @@ test "exclusive arg group rejects multiple" {
     .arg(@arg_parser.Arg::new("fast").long("fast").group("mode"))
     .arg(@arg_parser.Arg::new("slow").long("slow").group("mode"))
   try cmd.parse(argv=["--fast", "--slow"]) catch {
-    @arg_parser.ArgumentError::GroupConflict(name) => inspect(name, content="mode")
+    @arg_parser.ArgumentError::GroupConflict(name) =>
+      inspect(name, content="mode")
     _ => panic()
   } noraise {
     _ => panic()
@@ -641,7 +746,8 @@ test "required option missing" {
     @arg_parser.Arg::new("mode").long("mode").option().required(),
   )
   try cmd.parse(argv=[]) catch {
-    @arg_parser.ArgumentError::MissingRequired(name) => inspect(name, content="mode")
+    @arg_parser.ArgumentError::MissingRequired(name) =>
+      inspect(name, content="mode")
     _ => panic()
   } noraise {
     _ => panic()
@@ -668,9 +774,9 @@ test "min and max values enforced" {
   } noraise {
     _ => panic()
   }
-  try cmd.parse(argv=[
-    "--tag", "a", "--tag", "b", "--tag", "c", "--tag", "d",
-  ]) catch {
+  try
+    cmd.parse(argv=["--tag", "a", "--tag", "b", "--tag", "c", "--tag", "d"])
+  catch {
     @arg_parser.ArgumentError::TooManyValues(name, got, max) => {
       inspect(name, content="tag")
       inspect(got, content="4")

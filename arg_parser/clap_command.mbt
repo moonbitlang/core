@@ -17,6 +17,11 @@
 struct Command {
   name : String
   about : String
+  long_about : String
+  version : String
+  long_version : String
+  version_flag : Bool
+  help_flag : Bool
   args : Array[Arg]
   subcommands : Array[Command]
   help_subcommand : Bool
@@ -28,14 +33,20 @@ struct Command {
 
 ///|
 priv suberror ParseError {
-  Help(String)
+  Help(String, Bool)
+  Version(String, Bool)
   Arg(ArgumentError)
   Build(ArgBuildError)
 }
 
 ///|
-fn raise_help(text : String) -> Unit raise ParseError {
-  raise ParseError::Help(text)
+fn raise_help(text : String, long_help : Bool) -> Unit raise ParseError {
+  raise ParseError::Help(text, long_help)
+}
+
+///|
+fn raise_version(text : String, long_version : Bool) -> Unit raise ParseError {
+  raise ParseError::Version(text, long_version)
 }
 
 ///|
@@ -71,6 +82,11 @@ pub fn Command::new(name : String) -> Command {
   Command::{
     name,
     about: "",
+    long_about: "",
+    version: "",
+    long_version: "",
+    version_flag: true,
+    help_flag: true,
     args: [],
     subcommands: [],
     help_subcommand: true,
@@ -84,6 +100,29 @@ pub fn Command::new(name : String) -> Command {
 ///|
 pub fn Command::about(self : Command, text : String) -> Command {
   Command::{ ..self, about: text }
+}
+
+///|
+pub fn Command::long_about(self : Command, text : String) -> Command {
+  Command::{ ..self, long_about: text }
+}
+
+///|
+pub fn Command::version(self : Command, text : String) -> Command {
+  Command::{ ..self, version: text }
+}
+
+///|
+pub fn Command::long_version(self : Command, text : String) -> Command {
+  Command::{ ..self, long_version: text }
+}
+
+///|
+pub fn Command::disable_version_flag(
+  self : Command,
+  disabled? : Bool = true,
+) -> Command {
+  Command::{ ..self, version_flag: !disabled }
 }
 
 ///|
@@ -119,6 +158,15 @@ pub fn Command::disable_help_subcommand(
 }
 
 ///|
+/// Disable the built-in `help` flag (`-h`, `--help`).
+pub fn Command::disable_help_flag(
+  self : Command,
+  disabled? : Bool = true,
+) -> Command {
+  Command::{ ..self, help_flag: !disabled }
+}
+
+///|
 pub fn Command::group(self : Command, group : ArgGroup) -> Command {
   let groups = clone_array(self.groups)
   groups.push(group)
@@ -148,11 +196,22 @@ pub fn Command::visible_alias(self : Command, alias_name : String) -> Command {
 }
 
 ///|
-pub fn Command::render_help(
-  self : Command,
-  mode? : HelpMode = HelpMode::Plain,
-) -> String {
-  render_help_with_mode(self, mode)
+pub fn Command::render_help(self : Command) -> String {
+  render_help_short(self)
+}
+
+///|
+pub fn Command::render_long_help(self : Command) -> String {
+  render_help_long(self)
+}
+
+///|
+fn render_help_for_style(cmd : Command, long_help : Bool) -> String {
+  if long_help {
+    cmd.render_long_help()
+  } else {
+    cmd.render_help()
+  }
 }
 
 ///|
@@ -168,14 +227,19 @@ fn default_argv() -> Array[String] {
 ///|
 /// Parse using explicit argv array (excluding program name).
 ///
-/// Help is returned as `Help::Help(text)` instead of printing/exiting.
+/// Help is returned as `Help::Short(text)` or `Help::Long(text)` instead of printing/exiting.
+/// `-h` yields short help; `--help` yields long help.
+/// `-V` yields short version; `--version` yields long version.
 pub fn Command::parse(
   self : Command,
   argv? : Array[String] = default_argv(),
   env? : Map[String, String] = @env.get_env_vars(),
 ) -> Matches raise {
   parse_command(self, argv, env, []) catch {
-    ParseError::Help(text) => raise Help::Help(text)
+    ParseError::Help(text, long_help) =>
+      if long_help { raise Help::Long(text) } else { raise Help::Short(text) }
+    ParseError::Version(text, long_version) =>
+      if long_version { raise Version::Long(text) } else { raise Version::Short(text) }
     ParseError::Arg(err) => raise err
     ParseError::Build(err) => raise err
   }
@@ -217,12 +281,17 @@ fn parse_command(
       }
       break
     }
-    if arg == "-h" || arg == "--help" {
-      raise_help(cmd.render_help())
+    if help_flag_enabled(cmd) && arg == "-h" {
+      raise_help(cmd.render_help(), false)
     }
-    if arg.has_prefix("--help=") {
-      let mode = help_mode(arg)
-      raise_help(cmd.render_help(mode~))
+    if help_flag_enabled(cmd) && arg == "--help" {
+      raise_help(cmd.render_long_help(), true)
+    }
+    if version_flag_enabled(cmd) && arg == "-V" {
+      raise_version(command_version(cmd, false), false)
+    }
+    if version_flag_enabled(cmd) && arg == "--version" {
+      raise_version(command_version(cmd, true), true)
     }
     if should_parse_as_positional(
         arg, positionals, positional_values, long_index, short_index,
@@ -277,7 +346,12 @@ fn parse_command(
               Err(e) => raise_arg(e)
             }
           } else {
-            apply_flag(matches, spec, ValueSource::Argv)
+            match spec.action {
+              ArgAction::Help => raise_help(cmd.render_long_help(), true)
+              ArgAction::Version =>
+                raise_version(command_version(cmd, true), true)
+              _ => apply_flag(matches, spec, ValueSource::Argv)
+            }
           }
       }
       i = i + 1
@@ -288,8 +362,11 @@ fn parse_command(
       let mut pos = 1
       while pos < arg.length() {
         let short = arg.get_char(pos).unwrap()
-        if short == 'h' {
-          raise_help(cmd.render_help())
+        if short == 'h' && help_flag_enabled(cmd) {
+          raise_help(cmd.render_help(), false)
+        }
+        if short == 'V' && version_flag_enabled(cmd) {
+          raise_version(command_version(cmd, false), false)
         }
         let spec = match short_index.get(short) {
           Some(v) => v
@@ -315,7 +392,11 @@ fn parse_command(
           }
           break
         } else {
-          apply_flag(matches, spec, ValueSource::Argv)
+          match spec.action {
+            ArgAction::Help => raise_help(cmd.render_help(), false)
+            ArgAction::Version => raise_version(command_version(cmd, false), false)
+            _ => apply_flag(matches, spec, ValueSource::Argv)
+          }
         }
         pos = pos + 1
       }
@@ -324,9 +405,9 @@ fn parse_command(
     }
     if help_subcommand_enabled(cmd) && arg == "help" {
       let rest = argv[i + 1:].to_array()
-      let (target, mode) = resolve_help_target(cmd, rest)
-      let text = target.render_help(mode~)
-      raise_help(text)
+      let (target, long_help) = resolve_help_target(cmd, rest)
+      let text = render_help_for_style(target, long_help)
+      raise_help(text, long_help)
     }
     if cmd.subcommands.length() > 0 {
       match find_subcommand(cmd.subcommands, arg) {
@@ -390,12 +471,36 @@ fn help_subcommand_enabled(cmd : Command) -> Bool {
 }
 
 ///|
+fn help_flag_enabled(cmd : Command) -> Bool {
+  cmd.help_flag
+}
+
+///|
+fn version_flag_enabled(cmd : Command) -> Bool {
+  cmd.version_flag && (cmd.version != "" || cmd.long_version != "")
+}
+
+///|
+fn command_version(cmd : Command, long_version : Bool) -> String {
+  if long_version {
+    if cmd.long_version != "" { cmd.long_version } else { cmd.version }
+  } else if cmd.version != "" {
+    cmd.version
+  } else {
+    cmd.long_version
+  }
+}
+
+///|
 fn validate_command(cmd : Command) -> Unit raise ArgBuildError {
   validate_group_defs(cmd.groups)
   validate_group_refs(cmd)
   validate_arg_defs(cmd.args)
   validate_subcommand_defs(cmd.subcommands)
   validate_help_subcommand(cmd)
+  validate_help_flag(cmd)
+  validate_version_flag(cmd)
+  validate_version_actions(cmd)
   for arg in cmd.args {
     validate_arg(arg)
   }
@@ -420,6 +525,39 @@ fn validate_arg(arg : Arg) -> Unit raise ArgBuildError {
   }
   if arg.action == ArgAction::Count && arg.takes_value {
     raise ArgBuildError::Unsupported("count is only supported for flags")
+  }
+  if arg.action == ArgAction::Help || arg.action == ArgAction::Version {
+    if arg.takes_value {
+      raise ArgBuildError::Unsupported("help/version actions require flags")
+    }
+    if arg.negatable {
+      raise ArgBuildError::Unsupported(
+        "help/version actions do not support negatable",
+      )
+    }
+    if arg.env is Some(_) ||
+      arg.default_value is Some(_) ||
+      arg.default_values is Some(_) {
+      raise ArgBuildError::Unsupported(
+        "help/version actions do not support env/defaults",
+      )
+    }
+    if arg.min_values is Some(_) || arg.max_values is Some(_) || arg.multiple {
+      raise ArgBuildError::Unsupported(
+        "help/version actions do not support multiple values",
+      )
+    }
+    let has_option = arg.long is Some(_) ||
+      arg.short is Some(_) ||
+      arg.aliases.length() > 0 ||
+      arg.visible_aliases.length() > 0 ||
+      arg.short_aliases.length() > 0 ||
+      arg.visible_short_aliases.length() > 0
+    if !has_option {
+      raise ArgBuildError::Unsupported(
+        "help/version actions require short/long option",
+      )
+    }
   }
   if (arg.min_values is Some(_) || arg.max_values is Some(_)) &&
     !arg.takes_value {
@@ -538,6 +676,66 @@ fn validate_help_subcommand(cmd : Command) -> Unit raise ArgBuildError {
     raise ArgBuildError::Unsupported(
       "subcommand name reserved for built-in help: help (disable with disable_help_subcommand)",
     )
+  }
+}
+
+///|
+fn validate_help_flag(cmd : Command) -> Unit raise ArgBuildError {
+  if !help_flag_enabled(cmd) {
+    return
+  }
+  for arg in cmd.args {
+    for name in collect_long_names(arg) {
+      if name == "help" {
+        raise ArgBuildError::Unsupported(
+          "option name reserved for built-in help: --help (disable with disable_help_flag)",
+        )
+      }
+    }
+    for short in collect_short_names(arg) {
+      if short == 'h' {
+        raise ArgBuildError::Unsupported(
+          "option name reserved for built-in help: -h (disable with disable_help_flag)",
+        )
+      }
+    }
+  }
+}
+
+///|
+fn validate_version_flag(cmd : Command) -> Unit raise ArgBuildError {
+  if !version_flag_enabled(cmd) {
+    return
+  }
+  for arg in cmd.args {
+    for name in collect_long_names(arg) {
+      if name == "version" {
+        raise ArgBuildError::Unsupported(
+          "option name reserved for built-in version: --version (disable with disable_version_flag)",
+        )
+      }
+    }
+    for short in collect_short_names(arg) {
+      if short == 'V' {
+        raise ArgBuildError::Unsupported(
+          "option name reserved for built-in version: -V (disable with disable_version_flag)",
+        )
+      }
+    }
+  }
+}
+
+///|
+fn validate_version_actions(cmd : Command) -> Unit raise ArgBuildError {
+  if cmd.version != "" || cmd.long_version != "" {
+    return
+  }
+  for arg in cmd.args {
+    if arg.action == ArgAction::Version {
+      raise ArgBuildError::Unsupported(
+        "version action requires command version text",
+      )
+    }
   }
 }
 
@@ -703,6 +901,10 @@ fn assign_value(
         }
         Err(e) => Err(e)
       }
+    ArgAction::Help =>
+      Err(ArgumentError::InvalidArgument("help action does not take values"))
+    ArgAction::Version =>
+      Err(ArgumentError::InvalidArgument("version action does not take values"))
   }
 }
 
@@ -767,6 +969,8 @@ fn apply_env(
           Err(e) => return Err(e)
         }
       ArgAction::Append => ()
+      ArgAction::Help => ()
+      ArgAction::Version => ()
     }
   }
   Ok(())
@@ -785,7 +989,6 @@ fn apply_defaults(matches : Matches, args : Array[Arg]) -> Unit {
       Some(values) if values.length() > 0 =>
         for value in values {
           let _ = add_value(matches, arg.name, value, arg, ValueSource::Default)
-
         }
       _ =>
         match arg.default_value {
@@ -797,7 +1000,6 @@ fn apply_defaults(matches : Matches, args : Array[Arg]) -> Unit {
               arg,
               ValueSource::Default,
             )
-
           }
           None => ()
         }
@@ -864,6 +1066,8 @@ fn apply_flag(matches : Matches, arg : Arg, source : ValueSource) -> Unit {
       matches.counts[arg.name] = current + 1
       matches.flags[arg.name] = true
     }
+    ArgAction::Help => ()
+    ArgAction::Version => ()
     _ => matches.flags[arg.name] = true
   }
   matches.flag_sources[arg.name] = source
@@ -1371,8 +1575,8 @@ fn find_subcommand(subs : Array[Command], name : String) -> Command? {
 fn resolve_help_target(
   cmd : Command,
   argv : Array[String],
-) -> (Command, HelpMode) raise ParseError {
-  let (mode, targets) = split_help_mode(argv)
+) -> (Command, Bool) raise ParseError {
+  let (long_help, targets) = split_help_style(argv, help_flag_enabled(cmd))
   let mut current = cmd
   let mut subs = cmd.subcommands
   for name in targets {
@@ -1390,25 +1594,24 @@ fn resolve_help_target(
         raise_arg(ArgumentError::InvalidArgument("unknown subcommand: " + name))
     }
   }
-  (current, mode)
+  (current, long_help)
 }
 
 ///|
-fn split_help_mode(argv : Array[String]) -> (HelpMode, Array[String]) {
+fn split_help_style(argv : Array[String], help_flag : Bool) -> (Bool, Array[String]) {
   if argv.length() == 0 {
-    return (HelpMode::Plain, argv)
+    return (true, argv)
+  }
+  if !help_flag {
+    return (true, argv)
   }
   let last = argv[argv.length() - 1]
-  if last == "-h" || last == "--help" || last.has_prefix("--help=") {
-    let mode = if last.has_prefix("--help=") {
-      help_mode(last)
-    } else {
-      HelpMode::Plain
-    }
+  if last == "-h" || last == "--help" {
+    let long_help = last == "--help"
     let rest = argv[:argv.length() - 1].to_array()
-    (mode, rest)
+    (long_help, rest)
   } else {
-    (HelpMode::Plain, argv)
+    (true, argv)
   }
 }
 
@@ -1435,12 +1638,6 @@ fn split_long(arg : String) -> (String, String?) {
 }
 
 ///|
-fn help_mode(arg : String) -> HelpMode {
-  match arg.strip_prefix("--help=") {
-    Some(view) => if view == "man" { HelpMode::Man } else { HelpMode::Plain }
-    None => HelpMode::Plain
-  }
-}
 
 ///|
 fn[T] clone_array(arr : Array[T]) -> Array[T] {

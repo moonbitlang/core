@@ -25,9 +25,16 @@ pub(all) suberror ArgumentError {
 pub impl Show for ArgumentError
 
 pub suberror Help {
-  Help(String)
+  Short(String)
+  Long(String)
 }
 pub impl Show for Help
+
+pub suberror Version {
+  Short(String)
+  Long(String)
+}
+pub impl Show for Version
 
 // Types and methods
 type Arg
@@ -46,6 +53,7 @@ pub fn Arg::hide_long_help(Self, value? : Bool) -> Self
 pub fn Arg::index(Self, Int) -> Self
 pub fn Arg::last(Self, value? : Bool) -> Self
 pub fn Arg::long(Self, String) -> Self
+pub fn Arg::long_help(Self, String) -> Self
 pub fn Arg::max_values(Self, Int) -> Self
 pub fn Arg::min_values(Self, Int) -> Self
 pub fn Arg::multiple(Self, value? : Bool) -> Self
@@ -65,6 +73,8 @@ pub(all) enum ArgAction {
   SetFalse
   Count
   Append
+  Help
+  Version
 }
 pub impl Eq for ArgAction
 pub impl Show for ArgAction
@@ -79,21 +89,20 @@ pub fn Command::about(Self, String) -> Self
 pub fn Command::alias_name(Self, String) -> Self
 pub fn Command::arg(Self, Arg) -> Self
 pub fn Command::args(Self, Array[Arg]) -> Self
+pub fn Command::disable_help_flag(Self, disabled? : Bool) -> Self
 pub fn Command::disable_help_subcommand(Self, disabled? : Bool) -> Self
+pub fn Command::disable_version_flag(Self, disabled? : Bool) -> Self
 pub fn Command::group(Self, ArgGroup) -> Self
 pub fn Command::hide(Self, value? : Bool) -> Self
+pub fn Command::long_about(Self, String) -> Self
+pub fn Command::long_version(Self, String) -> Self
 pub fn Command::new(String) -> Self
 pub fn Command::parse(Self, argv? : Array[String], env? : Map[String, String]) -> Matches raise
-pub fn Command::render_help(Self, mode? : HelpMode) -> String
+pub fn Command::render_help(Self) -> String
+pub fn Command::render_long_help(Self) -> String
 pub fn Command::subcommand(Self, Self) -> Self
+pub fn Command::version(Self, String) -> Self
 pub fn Command::visible_alias(Self, String) -> Self
-
-pub(all) enum HelpMode {
-  Plain
-  Man
-}
-pub impl Eq for HelpMode
-pub impl Show for HelpMode
 
 type Matches
 pub fn Matches::count_of(Self, String) -> Int

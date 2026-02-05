@@ -39,7 +39,7 @@ test "arg builders and defaults" {
 }
 
 ///|
-test "help and man include groups and defaults" {
+test "help and long help include groups and defaults" {
   let sub = @arg_parser.Command::new("sub").visible_alias("s")
   let cmd = @arg_parser.Command::new("demo")
     .subcommand(sub)
@@ -83,10 +83,10 @@ test "help and man include groups and defaults" {
   assert_true(help.contains("default: v"))
   assert_true(help.contains("required"))
   assert_true(help.contains("--[no-]flag"))
-  let man = cmd.render_help(mode=@arg_parser.HelpMode::Man)
-  assert_true(man.contains("GROUPS"))
-  assert_true(man.contains("ARGUMENTS"))
-  assert_true(man.contains("COMMANDS"))
+  let long = cmd.render_long_help()
+  assert_true(long.contains("Groups:"))
+  assert_true(long.contains("Arguments:"))
+  assert_true(long.contains("Commands:"))
 }
 
 ///|
@@ -96,7 +96,7 @@ test "parse branches and env errors" {
   )
   let mut text = ""
   try cmd.parse(argv=["-vh"]) catch {
-    @arg_parser.Help::Help(t) => text = t
+    @arg_parser.Help::Short(t) => text = t
     _ => panic()
   } noraise {
     _ => panic()
@@ -106,8 +106,7 @@ test "parse branches and env errors" {
     @arg_parser.Arg::new("count").short('c').option(),
   )
   try cmd2.parse(argv=["-c"]) catch {
-    @arg_parser.ArgumentError::MissingValue(opt) =>
-      inspect(opt, content="-c")
+    @arg_parser.ArgumentError::MissingValue(opt) => inspect(opt, content="-c")
     _ => panic()
   } noraise {
     _ => panic()
@@ -348,7 +347,8 @@ test "default argv path" {
 test "no- prefix unknown target errors" {
   let cmd = @arg_parser.Command::new("demo")
   try cmd.parse(argv=["--no-missing"]) catch {
-    @arg_parser.ArgumentError::UnknownArgument(arg, _) => inspect(arg, content="--no-missing")
+    @arg_parser.ArgumentError::UnknownArgument(arg, _) =>
+      inspect(arg, content="--no-missing")
     _ => panic()
   } noraise {
     _ => panic()
@@ -432,12 +432,32 @@ test "help subcommand unknown target" {
 }
 
 ///|
-test "help subcommand -h uses plain mode" {
+test "help subcommand -h uses short help" {
   let sub = @arg_parser.Command::new("run")
-  let root = @arg_parser.Command::new("root").subcommand(sub)
+  let root = @arg_parser.Command::new("root")
+    .about("short root")
+    .long_about("long root")
+    .subcommand(sub)
   try root.parse(argv=["help", "-h"]) catch {
-    @arg_parser.Help::Help(text) =>
-      inspect(text.contains("Usage: root"), content="true")
+    @arg_parser.Help::Short(text) => {
+      inspect(text.contains("short root"), content="true")
+      inspect(text.contains("long root"), content="false")
+    }
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
+test "help subcommand -h errors when help flag disabled" {
+  let sub = @arg_parser.Command::new("run")
+  let root = @arg_parser.Command::new("root")
+    .disable_help_flag()
+    .subcommand(sub)
+  try root.parse(argv=["help", "-h"]) catch {
+    @arg_parser.ArgumentError::InvalidArgument(msg) =>
+      inspect(msg, content="unexpected help argument: -h")
     _ => panic()
   } noraise {
     _ => panic()
@@ -562,9 +582,7 @@ test "env count for flag" {
     .action(@arg_parser.ArgAction::Count)
     .env("COUNT"),
   )
-  let matches = cmd.parse(argv=[], env={ "COUNT": "2" }) catch {
-    _ => panic()
-  }
+  let matches = cmd.parse(argv=[], env={ "COUNT": "2" }) catch { _ => panic() }
   assert_eq(matches.count_of("count"), 2)
   assert_true(matches.get_flag("count"))
 }
@@ -613,9 +631,7 @@ test "env set flag parses false" {
     .action(@arg_parser.ArgAction::Set)
     .env("FLAG"),
   )
-  let matches = cmd.parse(argv=[], env={ "FLAG": "0" }) catch {
-    _ => panic()
-  }
+  let matches = cmd.parse(argv=[], env={ "FLAG": "0" }) catch { _ => panic() }
   assert_false(matches.get_flag("flag"))
 }
 
@@ -671,9 +687,7 @@ test "env append on flag ignored" {
     .action(@arg_parser.ArgAction::Append)
     .env("FLAG"),
   )
-  let matches = cmd.parse(argv=[], env={ "FLAG": "1" }) catch {
-    _ => panic()
-  }
+  let matches = cmd.parse(argv=[], env={ "FLAG": "1" }) catch { _ => panic() }
   assert_false(matches.get_flag("flag"))
   match matches.source_of("flag") {
     None => ()
@@ -707,9 +721,7 @@ test "setfalse flag from argv" {
 ///|
 test "set flag action from argv" {
   let cmd = @arg_parser.Command::new("demo").arg(
-    @arg_parser.Arg::new("flag")
-    .long("flag")
-    .action(@arg_parser.ArgAction::Set),
+    @arg_parser.Arg::new("flag").long("flag").action(@arg_parser.ArgAction::Set),
   )
   let matches = cmd.parse(argv=["--flag"]) catch { _ => panic() }
   assert_true(matches.get_flag("flag"))
@@ -746,10 +758,7 @@ test "positional-only settings with long errors" {
 ///|
 test "negatable option errors" {
   let cmd = @arg_parser.Command::new("demo").arg(
-    @arg_parser.Arg::new("flag")
-    .long("flag")
-    .option()
-    .negatable(),
+    @arg_parser.Arg::new("flag").long("flag").option().negatable(),
   )
   try cmd.parse(argv=[]) catch {
     @arg_parser.ArgBuildError::Unsupported(msg) =>
@@ -809,11 +818,7 @@ test "min values require value-taking arguments" {
 ///|
 test "max values less than min errors" {
   let cmd = @arg_parser.Command::new("demo").arg(
-    @arg_parser.Arg::new("tag")
-    .long("tag")
-    .option()
-    .min_values(2)
-    .max_values(1),
+    @arg_parser.Arg::new("tag").long("tag").option().min_values(2).max_values(1),
   )
   try cmd.parse(argv=[]) catch {
     @arg_parser.ArgBuildError::Unsupported(msg) =>
@@ -851,10 +856,7 @@ test "max values less than one errors" {
 ///|
 test "multiple values require multiple or append" {
   let cmd = @arg_parser.Command::new("demo").arg(
-    @arg_parser.Arg::new("tag")
-    .long("tag")
-    .option()
-    .min_values(2),
+    @arg_parser.Arg::new("tag").long("tag").option().min_values(2),
   )
   try cmd.parse(argv=[]) catch {
     @arg_parser.ArgBuildError::Unsupported(msg) =>
@@ -892,10 +894,7 @@ test "default values require value-taking arguments" {
 ///|
 test "default_values require multiple or append" {
   let cmd = @arg_parser.Command::new("demo").arg(
-    @arg_parser.Arg::new("tag")
-    .long("tag")
-    .option()
-    .default_values(["a", "b"]),
+    @arg_parser.Arg::new("tag").long("tag").option().default_values(["a", "b"]),
   )
   try cmd.parse(argv=[]) catch {
     @arg_parser.ArgBuildError::Unsupported(msg) =>
@@ -1000,6 +999,57 @@ test "help subcommand reserved name errors" {
           #|subcommand name reserved for built-in help: help (disable with disable_help_subcommand)
         ),
       )
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
+test "version flag reserved name errors" {
+  let cmd = @arg_parser.Command::new("root")
+    .version("1.0")
+    .arg(@arg_parser.Arg::new("version").long("version"))
+  try cmd.parse(argv=[]) catch {
+    @arg_parser.ArgBuildError::Unsupported(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|option name reserved for built-in version: --version (disable with disable_version_flag)
+        ),
+      )
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
+test "help flag reserved name errors" {
+  let cmd = @arg_parser.Command::new("root")
+    .arg(@arg_parser.Arg::new("help").long("help"))
+  try cmd.parse(argv=[]) catch {
+    @arg_parser.ArgBuildError::Unsupported(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|option name reserved for built-in help: --help (disable with disable_help_flag)
+        ),
+      )
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
+test "version action requires text" {
+  let cmd = @arg_parser.Command::new("root").arg(
+    @arg_parser.Arg::new("ver").long("ver").action(@arg_parser.ArgAction::Version),
+  )
+  try cmd.parse(argv=[]) catch {
+    @arg_parser.ArgBuildError::Unsupported(msg) =>
+      inspect(msg, content="version action requires command version text")
     _ => panic()
   } noraise {
     _ => panic()

@@ -6,9 +6,9 @@ Design goals:
 
 - Builder-style API (`Command`, `Arg`) inspired by Rust clap (no derive macros).
 - Subcommands.
-- Built-in help/man generation (`-h`, `--help`, `--help=man`) + `help` subcommand.
+- Built-in help generation (`-h` short, `--help` long) + `help` subcommand (disableable).
 - Structured decoding from `Matches` via `FromMatches` (you control parsing).
-- No special treatment for `--version` (define it yourself if you want it).
+- Built-in version flag (`-V`, `--version`) when version text is set (disableable).
 - Optional env var fallbacks per argument.
 
 ## Quick Start
@@ -33,10 +33,11 @@ assert_eq(matches.value_of("name").unwrap(), "alice")
 
 There is one parsing entry point:
 
-- `Command::parse(argv?=..., env?=...) -> Matches raise { Help, ArgumentError, ArgBuildError }`
+- `Command::parse(argv?=..., env?=...) -> Matches raise { Help, Version, ArgumentError, ArgBuildError }`
   - Returns `matches` on success.
-  - Raises `Help::Help(help_text)` when `-h/--help/--help=man` is present.
-  - Raises `Help::Help(help_text)` for the `help` subcommand.
+  - Raises `Help::Short(help_text)` for `-h` and `Help::Long(help_text)` for `--help`.
+  - Raises `Help::Long(help_text)` for the `help` subcommand (use `help ... -h` for short).
+  - Raises `Version::Short(version_text)` for `-V` and `Version::Long(version_text)` for `--version`.
   - Raises `ArgBuildError::Unsupported(_)` for invalid arg specs.
 
 If `argv` is omitted, `parse()` reads the current process arguments
@@ -44,27 +45,52 @@ If `argv` is omitted, `parse()` reads the current process arguments
 If `env` is omitted, it defaults to the current process environment via
 `@env.get_env_vars()`. Pass `env={...}` to override.
 
-On help (`-h/--help/--help=man`), `parse` raises `Help::Help`. Decide in
+On help (`-h/--help`), `parse` raises `Help::Short` or `Help::Long`. Decide in
 your app whether to print and exit, or show help in some other way.
 
-## Help / Manpage
+## Help
 
 Help text is generated from the command definition:
 
-- `-h` / `--help`: short help
-- `--help=man`: a manpage-like text
+- `-h`: short help
+- `--help`: long help
 - `help [command...]`: subcommand form of help (enabled when a command has subcommands)
+  - Defaults to long help; pass `-h` for short help.
 
 You can also render help without parsing:
 
-- `Command::render_help(mode? : HelpMode = HelpMode::Plain) -> String`
-  - Use `HelpMode::Man` for a manpage-like output.
+- `Command::render_help() -> String` (short help)
+- `Command::render_long_help() -> String` (long help)
+
+Help text sources:
+
+- `Command::about(...)` for short help, `Command::long_about(...)` for long help
+- `Arg::help(...)` for short help, `Arg::long_help(...)` for long help
+- If the short text is empty, long text is used as a fallback (and vice versa).
 
 Visibility controls:
 
 - `Command::hide()` hides a subcommand from help output (still parsed).
 - `Arg::hide()` hides an argument from all help output.
-- `Arg::hide_long_help()` hides an argument from `HelpMode::Man` only.
+- `Arg::hide_long_help()` hides an argument from long help only.
+
+## Version
+
+Version text is generated from the command definition (when set):
+
+- `-V`: short version
+- `--version`: long version
+
+You can also disable the built-in help/version flags:
+
+- `Command::disable_help_flag()`
+- `Command::disable_version_flag()`
+
+Version text sources:
+
+- `Command::version(...)` for short version
+- `Command::long_version(...)` for long version
+- If the short text is empty, long text is used as a fallback (and vice versa).
 
 ## Subcommands
 
@@ -93,6 +119,9 @@ let root = Command::new("root").subcommand(run)
 
 The built-in `help` subcommand is enabled by default when a command has
 subcommands. Use `.disable_help_subcommand()` if you want to reserve `help` for
+your own subcommand. Use `.disable_help_flag()` if you want to reserve `-h/--help`
+for your own option (and to disable `help ... -h/--help` shortcuts).
+
 your own subcommand.
 
 ## Options and Positionals
@@ -100,7 +129,7 @@ your own subcommand.
 ### Constructors
 
 Start with `Arg::new("name")` and chain setters like
-`.short(...)`, `.long(...)`, `.option()`, `.help(...)`, `.env(...)`,
+`.short(...)`, `.long(...)`, `.option()`, `.help(...)`, `.long_help(...)`, `.env(...)`,
 `.default_value(...)`, `.required(...)`, `.min_values(...)`, etc.
 
 ### Options
@@ -113,6 +142,17 @@ Start with `Arg::new("name")` and chain setters like
 - Default values: set `.default_value("x")` to use when neither argv nor env provides a value
 - Required: set `.required()` to require the arg be present
 - Arity: use `.min_values(n)`, `.max_values(n)`, or `.num_values(min, max)`
+
+### Actions
+
+Control how values are stored with `.action(...)`:
+
+- `ArgAction::Set` (default for value-taking args)
+- `ArgAction::SetTrue` / `ArgAction::SetFalse` (flags)
+- `ArgAction::Count` (count repetitions)
+- `ArgAction::Append` (collect multiple values)
+- `ArgAction::Help` (emit help; short for short flag, long for long)
+- `ArgAction::Version` (emit version; short for short flag, long for long)
 
 ### Counting Flags
 

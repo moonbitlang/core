@@ -35,7 +35,15 @@ pub suberror ArgBuildError {
 } derive(Show)
 
 ///|
-/// Errors raised when help or version information is requested.
+/// Errors raised when help information is requested.
 pub suberror Help {
-  Help(String)
+  Short(String)
+  Long(String)
+} derive(Show)
+
+///|
+/// Errors raised when version information is requested.
+pub suberror Version {
+  Short(String)
+  Long(String)
 } derive(Show)
