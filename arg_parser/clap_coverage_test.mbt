@@ -106,16 +106,13 @@ test "parse branches and env errors" {
   let cmd2 = @arg_parser.Command::new("demo").arg(
     @arg_parser.Arg::new("count").short('c').option(),
   )
-  let mut saw_missing = false
-  let _ = cmd2.parse(argv=["-c"]) catch {
-    @arg_parser.CommandError::Arg(@arg_parser.ArgumentError::MissingValue(opt)) => {
-      saw_missing = true
-      assert_eq(opt, "-c")
-      @arg_parser.Matches::new()
-    }
+  try cmd2.parse(argv=["-c"]) catch {
+    @arg_parser.CommandError::Arg(@arg_parser.ArgumentError::MissingValue(opt)) =>
+      inspect(opt, content="-c")
+    _ => panic()
+  } noraise {
     _ => panic()
   }
-  assert_true(saw_missing)
   let cmd3 = @arg_parser.Command::new("demo").arg(
     @arg_parser.Arg::new("flag")
     .long("flag")
@@ -130,29 +127,33 @@ test "parse branches and env errors" {
     .option()
     .action(@arg_parser.ArgAction::SetTrue),
   )
-  let mut saw_invalid = false
-  let _ = cmd4.parse(argv=["--flag", "maybe"]) catch {
-    @arg_parser.CommandError::Arg(@arg_parser.ArgumentError::InvalidValue(msg)) => {
-      saw_invalid = true
-      assert_true(msg.contains("invalid bool"))
-      @arg_parser.Matches::new()
-    }
+  try cmd4.parse(argv=["--flag", "maybe"]) catch {
+    @arg_parser.CommandError::Arg(@arg_parser.ArgumentError::InvalidValue(msg)) =>
+      inspect(
+        msg,
+        content=(
+          #|invalid bool: maybe
+        ),
+      )
+    _ => panic()
+  } noraise {
     _ => panic()
   }
-  assert_true(saw_invalid)
   let cmd5 = @arg_parser.Command::new("demo").arg(
     @arg_parser.Arg::new("verbose").long("verbose").env("VERBOSE"),
   )
-  let mut saw_env_invalid = false
-  let _ = cmd5.parse(argv=[], env={ "VERBOSE": "nope" }) catch {
-    @arg_parser.CommandError::Arg(@arg_parser.ArgumentError::InvalidValue(msg)) => {
-      saw_env_invalid = true
-      assert_true(msg.contains("invalid bool"))
-      @arg_parser.Matches::new()
-    }
+  try cmd5.parse(argv=[], env={ "VERBOSE": "nope" }) catch {
+    @arg_parser.CommandError::Arg(@arg_parser.ArgumentError::InvalidValue(msg)) =>
+      inspect(
+        msg,
+        content=(
+          #|invalid bool: nope
+        ),
+      )
+    _ => panic()
+  } noraise {
     _ => panic()
   }
-  assert_true(saw_env_invalid)
   let cmd6 = @arg_parser.Command::new("demo").arg(
     @arg_parser.Arg::new("mode").long("mode").option().env("MODE"),
   )
@@ -202,22 +203,18 @@ test "global aliases and merge semantics" {
 ///|
 test "unknown short without hint" {
   let cmd = @arg_parser.Command::new("demo")
-  let mut saw = false
-  let _ = cmd.parse(argv=["-z"]) catch {
+  try cmd.parse(argv=["-z"]) catch {
     @arg_parser.CommandError::Arg(
       @arg_parser.ArgumentError::UnknownArgument(arg, hint)
-    ) => {
-      saw = true
-      assert_eq(arg, "-z")
+    ) =>
       match hint {
-        None => ()
+        None => inspect(arg, content="-z")
         Some(_) => panic()
       }
-      @arg_parser.Matches::new()
-    }
+    _ => panic()
+  } noraise {
     _ => panic()
   }
-  assert_true(saw)
 }
 
 ///|
@@ -260,15 +257,18 @@ test "matches helpers" {
     None => ()
     Some(_) => panic()
   }
-  let mut saw_missing = false
-  let _ : String = m.get_one("x") catch {
-    @arg_parser.ArgumentError::InvalidValue(_) => {
-      saw_missing = true
-      ""
-    }
+  try m.get_one("x") catch {
+    @arg_parser.ArgumentError::InvalidValue(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|value not found: x
+        ),
+      )
+    _ => panic()
+  } noraise {
     _ => panic()
   }
-  assert_true(saw_missing)
   let opt : String? = m.get_option("x") catch { _ => None }
   match opt {
     None => ()
@@ -280,24 +280,30 @@ test "matches helpers" {
     @arg_parser.Arg::new("tag").long("tag").option().multiple(),
   )
   let m2 = cmd.parse(argv=["--tag", "1", "--tag", "2"]) catch { _ => panic() }
-  let mut saw_count = false
-  let _opt : String? = m2.get_option("tag") catch {
-    @arg_parser.ArgumentError::InvalidValueCount(_) => {
-      saw_count = true
-      None
-    }
+  try m2.get_option("tag") catch {
+    @arg_parser.ArgumentError::InvalidValueCount(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|invalid value count for tag: 2
+        ),
+      )
+    _ => panic()
+  } noraise {
     _ => panic()
   }
-  assert_true(saw_count)
-  let mut saw_one = false
-  let _one : String = m2.get_one("tag") catch {
-    @arg_parser.ArgumentError::InvalidValueCount(_) => {
-      saw_one = true
-      ""
-    }
+  try m2.get_one("tag") catch {
+    @arg_parser.ArgumentError::InvalidValueCount(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|invalid value count for tag: 2
+        ),
+      )
+    _ => panic()
+  } noraise {
     _ => panic()
   }
-  assert_true(saw_one)
   let tags : Array[String] = m2.get_array("tag")
   inspect(tags, content="[\"1\", \"2\"]")
   let cmd2 = @arg_parser.Command::new("demo").arg(
@@ -326,13 +332,9 @@ test "command args builder" {
 test "visible alias does not duplicate subcommand names" {
   let sub = @arg_parser.Command::new("run").visible_alias("r")
   let cmd = @arg_parser.Command::new("root").subcommand(sub)
-  let mut saw_build = false
-  let _ = cmd.parse(argv=["run"]) catch {
-    @arg_parser.CommandError::Build(@arg_parser.ArgBuildError::Unsupported(_)) => {
-      saw_build = true
-      @arg_parser.Matches::new()
-    }
-    _ => @arg_parser.Matches::new()
+  try cmd.parse(argv=["run"]) catch {
+    _ => panic()
+  } noraise {
+    _ => ()
   }
-  assert_false(saw_build)
 }

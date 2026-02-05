@@ -43,18 +43,12 @@ test "parse invalid int" {
     @arg_parser.Arg::new("count").long("count").option(),
   )
   let matches = cmd.parse(argv=["--count", "oops"]) catch { _ => panic() }
-  let mut saw_invalid = false
-  let _count : Int = @strconv.parse_int(
-    matches.get_one("count") catch {
-      _ => ""
-    },
-  ) catch {
-    _ => {
-      saw_invalid = true
-      0
-    }
+  let count_str = matches.get_one("count") catch { _ => "" }
+  try @strconv.parse_int(count_str) catch {
+    @strconv.StrConvError(err) => inspect(err, content="invalid syntax")
+  } noraise {
+    _ => panic()
   }
-  assert_true(saw_invalid)
 }
 
 ///|

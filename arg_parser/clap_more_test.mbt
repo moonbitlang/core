@@ -71,33 +71,26 @@ test "missing value for option" {
   let cmd = @arg_parser.Command::new("demo").arg(
     @arg_parser.Arg::new("count").long("count").option(),
   )
-  let mut saw = false
-  let _ = cmd.parse(argv=["--count"]) catch {
-    @arg_parser.CommandError::Arg(@arg_parser.ArgumentError::MissingValue(opt)) => {
-      saw = true
-      assert_eq(opt, "--count")
-      @arg_parser.Matches::new()
-    }
+  try cmd.parse(argv=["--count"]) catch {
+    @arg_parser.CommandError::Arg(@arg_parser.ArgumentError::MissingValue(opt)) =>
+      inspect(opt, content="--count")
+    _ => panic()
+  } noraise {
     _ => panic()
   }
-  assert_true(saw)
 }
 
 ///|
 test "unknown option" {
   let cmd = @arg_parser.Command::new("demo")
-  let mut saw = false
-  let _ = cmd.parse(argv=["--nope"]) catch {
+  try cmd.parse(argv=["--nope"]) catch {
     @arg_parser.CommandError::Arg(
       @arg_parser.ArgumentError::UnknownArgument(opt, _)
-    ) => {
-      saw = true
-      assert_eq(opt, "--nope")
-      @arg_parser.Matches::new()
-    }
+    ) => inspect(opt, content="--nope")
+    _ => panic()
+  } noraise {
     _ => panic()
   }
-  assert_true(saw)
 }
 
 ///|
@@ -105,19 +98,21 @@ test "unknown option suggests closest" {
   let cmd = @arg_parser.Command::new("demo").arg(
     @arg_parser.Arg::new("verbose").long("verbose"),
   )
-  let mut saw = false
-  let _ = cmd.parse(argv=["--verbsoe"]) catch {
+  try cmd.parse(argv=["--verbsoe"]) catch {
     @arg_parser.CommandError::Arg(
       @arg_parser.ArgumentError::UnknownArgument(arg, hint)
-    ) => {
-      saw = true
-      assert_eq(arg, "--verbsoe")
-      assert_eq(hint.unwrap(), "--verbose")
-      @arg_parser.Matches::new()
-    }
+    ) =>
+      match hint {
+        Some(value) => {
+          inspect(arg, content="--verbsoe")
+          inspect(value, content="--verbose")
+        }
+        None => panic()
+      }
+    _ => panic()
+  } noraise {
     _ => panic()
   }
-  assert_true(saw)
 }
 
 ///|
@@ -231,15 +226,12 @@ test "too many positional args" {
   let cmd = @arg_parser.Command::new("demo").arg(
     @arg_parser.Arg::new("name").index(0),
   )
-  let mut saw = false
-  let _ = cmd.parse(argv=["a", "b"]) catch {
-    @arg_parser.CommandError::Arg(@arg_parser.ArgumentError::TooManyPositionals) => {
-      saw = true
-      @arg_parser.Matches::new()
-    }
+  try cmd.parse(argv=["a", "b"]) catch {
+    @arg_parser.CommandError::Arg(@arg_parser.ArgumentError::TooManyPositionals) => ()
+    _ => panic()
+  } noraise {
     _ => panic()
   }
-  assert_true(saw)
 }
 
 ///|
@@ -406,18 +398,14 @@ test "short group unknown flag errors" {
   let cmd = @arg_parser.Command::new("demo").arg(
     @arg_parser.Arg::new("verbose").short('v'),
   )
-  let mut saw = false
-  let _ = cmd.parse(argv=["-vz"]) catch {
+  try cmd.parse(argv=["-vz"]) catch {
     @arg_parser.CommandError::Arg(
       @arg_parser.ArgumentError::UnknownArgument(arg, _)
-    ) => {
-      saw = true
-      assert_eq(arg, "-z")
-      @arg_parser.Matches::new()
-    }
+    ) => inspect(arg, content="-z")
+    _ => panic()
+  } noraise {
     _ => panic()
   }
-  assert_true(saw)
 }
 
 ///|
@@ -434,18 +422,14 @@ test "no- flag rejected when not negatable" {
   let cmd = @arg_parser.Command::new("demo").arg(
     @arg_parser.Arg::new("verbose").long("verbose"),
   )
-  let mut saw = false
-  let _ = cmd.parse(argv=["--no-verbose"]) catch {
+  try cmd.parse(argv=["--no-verbose"]) catch {
     @arg_parser.CommandError::Arg(
       @arg_parser.ArgumentError::UnknownArgument(arg, _)
-    ) => {
-      saw = true
-      assert_eq(arg, "--no-verbose")
-      @arg_parser.Matches::new()
-    }
+    ) => inspect(arg, content="--no-verbose")
+    _ => panic()
+  } noraise {
     _ => panic()
   }
-  assert_true(saw)
 }
 
 ///|
@@ -472,18 +456,14 @@ test "root arg after subcommand errors when not global" {
   let root = @arg_parser.Command::new("root")
     .arg(@arg_parser.Arg::new("verbose").long("verbose"))
     .subcommand(sub)
-  let mut saw = false
-  let _ = root.parse(argv=["echo", "--verbose", "hi"]) catch {
+  try root.parse(argv=["echo", "--verbose", "hi"]) catch {
     @arg_parser.CommandError::Arg(
       @arg_parser.ArgumentError::UnknownArgument(arg, _)
-    ) => {
-      saw = true
-      assert_eq(arg, "--verbose")
-      @arg_parser.Matches::new()
-    }
+    ) => inspect(arg, content="--verbose")
+    _ => panic()
+  } noraise {
     _ => panic()
   }
-  assert_true(saw)
 }
 
 ///|
@@ -535,18 +515,14 @@ test "negation rejects inline values" {
   let cmd = @arg_parser.Command::new("demo").arg(
     @arg_parser.Arg::new("verbose").long("verbose").negatable(),
   )
-  let mut saw = false
-  let _ = cmd.parse(argv=["--no-verbose=true"]) catch {
+  try cmd.parse(argv=["--no-verbose=true"]) catch {
     @arg_parser.CommandError::Arg(
       @arg_parser.ArgumentError::InvalidArgument(arg)
-    ) => {
-      saw = true
-      assert_eq(arg, "--no-verbose=true")
-      @arg_parser.Matches::new()
-    }
+    ) => inspect(arg, content="--no-verbose=true")
+    _ => panic()
+  } noraise {
     _ => panic()
   }
-  assert_true(saw)
 }
 
 ///|
@@ -617,16 +593,13 @@ test "required arg group errors when empty" {
     .group(@arg_parser.ArgGroup::new("mode").required())
     .arg(@arg_parser.Arg::new("fast").long("fast").group("mode"))
     .arg(@arg_parser.Arg::new("slow").long("slow").group("mode"))
-  let mut saw = false
-  let _ = cmd.parse(argv=[]) catch {
-    @arg_parser.CommandError::Arg(@arg_parser.ArgumentError::MissingGroup(name)) => {
-      saw = true
-      assert_eq(name, "mode")
-      @arg_parser.Matches::new()
-    }
+  try cmd.parse(argv=[]) catch {
+    @arg_parser.CommandError::Arg(@arg_parser.ArgumentError::MissingGroup(name)) =>
+      inspect(name, content="mode")
+    _ => panic()
+  } noraise {
     _ => panic()
   }
-  assert_true(saw)
 }
 
 ///|
@@ -635,18 +608,14 @@ test "exclusive arg group rejects multiple" {
     .group(@arg_parser.ArgGroup::new("mode").multiple(value=false))
     .arg(@arg_parser.Arg::new("fast").long("fast").group("mode"))
     .arg(@arg_parser.Arg::new("slow").long("slow").group("mode"))
-  let mut saw = false
-  let _ = cmd.parse(argv=["--fast", "--slow"]) catch {
+  try cmd.parse(argv=["--fast", "--slow"]) catch {
     @arg_parser.CommandError::Arg(
       @arg_parser.ArgumentError::GroupConflict(name)
-    ) => {
-      saw = true
-      assert_eq(name, "mode")
-      @arg_parser.Matches::new()
-    }
+    ) => inspect(name, content="mode")
+    _ => panic()
+  } noraise {
     _ => panic()
   }
-  assert_true(saw)
 }
 
 ///|
@@ -665,18 +634,14 @@ test "required option missing" {
   let cmd = @arg_parser.Command::new("demo").arg(
     @arg_parser.Arg::new("mode").long("mode").option().required(),
   )
-  let mut saw = false
-  let _ = cmd.parse(argv=[]) catch {
+  try cmd.parse(argv=[]) catch {
     @arg_parser.CommandError::Arg(
       @arg_parser.ArgumentError::MissingRequired(name)
-    ) => {
-      saw = true
-      assert_eq(name, "mode")
-      @arg_parser.Matches::new()
-    }
+    ) => inspect(name, content="mode")
+    _ => panic()
+  } noraise {
     _ => panic()
   }
-  assert_true(saw)
 }
 
 ///|
@@ -689,36 +654,32 @@ test "min and max values enforced" {
     .min_values(2)
     .max_values(3),
   )
-  let mut saw_too_few = false
-  let _ = cmd.parse(argv=["--tag", "a"]) catch {
+  try cmd.parse(argv=["--tag", "a"]) catch {
     @arg_parser.CommandError::Arg(
       @arg_parser.ArgumentError::TooFewValues(name, got, min)
     ) => {
-      saw_too_few = true
-      assert_eq(name, "tag")
-      assert_eq(got, 1)
-      assert_eq(min, 2)
-      @arg_parser.Matches::new()
+      inspect(name, content="tag")
+      inspect(got, content="1")
+      inspect(min, content="2")
     }
     _ => panic()
+  } noraise {
+    _ => panic()
   }
-  assert_true(saw_too_few)
-  let mut saw_too_many = false
-  let _ = cmd.parse(argv=[
+  try cmd.parse(argv=[
     "--tag", "a", "--tag", "b", "--tag", "c", "--tag", "d",
   ]) catch {
     @arg_parser.CommandError::Arg(
       @arg_parser.ArgumentError::TooManyValues(name, got, max)
     ) => {
-      saw_too_many = true
-      assert_eq(name, "tag")
-      assert_eq(got, 4)
-      assert_eq(max, 3)
-      @arg_parser.Matches::new()
+      inspect(name, content="tag")
+      inspect(got, content="4")
+      inspect(max, content="3")
     }
     _ => panic()
+  } noraise {
+    _ => panic()
   }
-  assert_true(saw_too_many)
 }
 
 ///|
@@ -726,16 +687,18 @@ test "duplicate long option errors" {
   let cmd = @arg_parser.Command::new("demo")
     .arg(@arg_parser.Arg::new("one").long("dup"))
     .arg(@arg_parser.Arg::new("two").long("dup"))
-  let mut saw = false
-  let _ = cmd.parse(argv=[]) catch {
-    @arg_parser.CommandError::Build(@arg_parser.ArgBuildError::Unsupported(msg)) => {
-      saw = true
-      assert_true(msg.contains("duplicate long option"))
-      @arg_parser.Matches::new()
-    }
+  try cmd.parse(argv=[]) catch {
+    @arg_parser.CommandError::Build(@arg_parser.ArgBuildError::Unsupported(msg)) =>
+      inspect(
+        msg,
+        content=(
+          #|duplicate long option: --dup
+        ),
+      )
+    _ => panic()
+  } noraise {
     _ => panic()
   }
-  assert_true(saw)
 }
 
 ///|
@@ -743,14 +706,16 @@ test "duplicate subcommand alias errors" {
   let sub1 = @arg_parser.Command::new("run").alias_name("r")
   let sub2 = @arg_parser.Command::new("redo").alias_name("r")
   let cmd = @arg_parser.Command::new("root").subcommand(sub1).subcommand(sub2)
-  let mut saw = false
-  let _ = cmd.parse(argv=[]) catch {
-    @arg_parser.CommandError::Build(@arg_parser.ArgBuildError::Unsupported(msg)) => {
-      saw = true
-      assert_true(msg.contains("duplicate subcommand"))
-      @arg_parser.Matches::new()
-    }
+  try cmd.parse(argv=[]) catch {
+    @arg_parser.CommandError::Build(@arg_parser.ArgBuildError::Unsupported(msg)) =>
+      inspect(
+        msg,
+        content=(
+          #|duplicate subcommand: r
+        ),
+      )
+    _ => panic()
+  } noraise {
     _ => panic()
   }
-  assert_true(saw)
 }
