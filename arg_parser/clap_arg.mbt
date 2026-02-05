@@ -51,6 +51,8 @@ struct Arg {
   short_aliases : Array[Char]
   visible_aliases : Array[String]
   visible_short_aliases : Array[Char]
+  hidden : Bool
+  hide_long_help : Bool
   global : Bool
   negatable : Bool
 }
@@ -79,6 +81,8 @@ pub fn Arg::new(name : String) -> Arg {
     short_aliases: [],
     visible_aliases: [],
     visible_short_aliases: [],
+    hidden: false,
+    hide_long_help: false,
     global: false,
     negatable: false,
   }
@@ -216,6 +220,16 @@ pub fn Arg::visible_short_alias(self : Arg, name : Char) -> Arg {
   let aliases = clone_array_arg(self.visible_short_aliases)
   aliases.push(name)
   Arg::{ ..self, visible_short_aliases: aliases }
+}
+
+///|
+pub fn Arg::hide(self : Arg, value? : Bool = true) -> Arg {
+  Arg::{ ..self, hidden: value }
+}
+
+///|
+pub fn Arg::hide_long_help(self : Arg, value? : Bool = true) -> Arg {
+  Arg::{ ..self, hide_long_help: value }
 }
 
 ///|

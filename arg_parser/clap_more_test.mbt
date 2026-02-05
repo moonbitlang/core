@@ -562,6 +562,40 @@ test "command visible alias shows in help" {
 }
 
 ///|
+test "hidden command omits from help but still parses" {
+  let hidden = @arg_parser.Command::new("secret").hide()
+  let visible = @arg_parser.Command::new("show")
+  let root = @arg_parser.Command::new("root").subcommand(hidden).subcommand(visible)
+  let text = root.render_help()
+  assert_false(text.contains("secret"))
+  assert_true(text.contains("show"))
+  let matches = root.parse(argv=["secret"]) catch { _ => panic() }
+  assert_eq(matches.subcommand_name().unwrap(), "secret")
+}
+
+///|
+test "hidden arg omitted from help but still parses" {
+  let cmd = @arg_parser.Command::new("demo").arg(
+    @arg_parser.Arg::new("secret").long("secret").hide(),
+  )
+  let text = cmd.render_help()
+  assert_false(text.contains("--secret"))
+  let matches = cmd.parse(argv=["--secret"]) catch { _ => panic() }
+  assert_true(matches.get_flag("secret"))
+}
+
+///|
+test "hide long help only hides in man" {
+  let cmd = @arg_parser.Command::new("demo").arg(
+    @arg_parser.Arg::new("token").long("token").hide_long_help(),
+  )
+  let plain = cmd.render_help()
+  assert_true(plain.contains("--token"))
+  let man = cmd.render_help(mode=@arg_parser.HelpMode::Man)
+  assert_false(man.contains("--token"))
+}
+
+///|
 test "required arg group errors when empty" {
   let cmd = @arg_parser.Command::new("demo")
     .group(@arg_parser.ArgGroup::new("mode").required())

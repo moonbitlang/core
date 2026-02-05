@@ -23,6 +23,7 @@ struct Command {
   groups : Array[ArgGroup]
   aliases : Array[String]
   visible_aliases : Array[String]
+  hidden : Bool
 }
 
 ///|
@@ -76,6 +77,7 @@ pub fn Command::new(name : String) -> Command {
     groups: [],
     aliases: [],
     visible_aliases: [],
+    hidden: false,
   }
 }
 
@@ -121,6 +123,12 @@ pub fn Command::group(self : Command, group : ArgGroup) -> Command {
   let groups = clone_array(self.groups)
   groups.push(group)
   Command::{ ..self, groups, }
+}
+
+///|
+/// Hide a command from help output.
+pub fn Command::hide(self : Command, value? : Bool = true) -> Command {
+  Command::{ ..self, hidden: value }
 }
 
 ///|

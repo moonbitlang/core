@@ -23,34 +23,36 @@ pub(all) enum HelpMode {
 /// Render short help text for a clap-style command.
 fn render_help_plain(cmd : Command) -> String {
   let lines = Array::new(capacity=16)
-  lines.push("Usage: " + cmd.name + usage_tail(cmd))
+  lines.push("Usage: " + cmd.name + usage_tail(cmd, HelpMode::Plain))
   if cmd.about != "" {
     lines.push("")
     lines.push(cmd.about)
   }
   lines.push("")
-  if cmd.subcommands.length() > 0 {
+  let sub_entries = subcommand_entries(cmd, HelpMode::Plain)
+  if sub_entries.length() > 0 {
     lines.push("Commands:")
-    for entry in subcommand_entries(cmd) {
+    for entry in sub_entries {
       lines.push(entry)
     }
     lines.push("")
   }
-  if has_positionals(cmd) {
+  if has_positionals(cmd, HelpMode::Plain) {
     lines.push("Arguments:")
-    for entry in positional_entries(cmd) {
+    for entry in positional_entries(cmd, HelpMode::Plain) {
       lines.push(entry)
     }
     lines.push("")
   }
   lines.push("Options:")
-  for entry in option_entries(cmd) {
+  for entry in option_entries(cmd, HelpMode::Plain) {
     lines.push(entry)
   }
-  if cmd.groups.length() > 0 {
+  let groups = group_entries(cmd, HelpMode::Plain)
+  if groups.length() > 0 {
     lines.push("")
     lines.push("Groups:")
-    for entry in group_entries(cmd) {
+    for entry in groups {
       lines.push(entry)
     }
   }
@@ -69,35 +71,37 @@ fn render_help_man(cmd : Command) -> String {
   }
   lines.push("")
   lines.push("SYNOPSIS")
-  lines.push("  " + cmd.name + usage_tail(cmd))
+  lines.push("  " + cmd.name + usage_tail(cmd, HelpMode::Man))
   lines.push("")
   if cmd.about != "" {
     lines.push("DESCRIPTION")
     lines.push("  " + cmd.about)
     lines.push("")
   }
-  if cmd.subcommands.length() > 0 {
+  let sub_entries = subcommand_entries(cmd, HelpMode::Man)
+  if sub_entries.length() > 0 {
     lines.push("COMMANDS")
-    for entry in subcommand_entries(cmd) {
+    for entry in sub_entries {
       lines.push(entry)
     }
     lines.push("")
   }
-  if has_positionals(cmd) {
+  if has_positionals(cmd, HelpMode::Man) {
     lines.push("ARGUMENTS")
-    for entry in positional_entries(cmd) {
+    for entry in positional_entries(cmd, HelpMode::Man) {
       lines.push(entry)
     }
     lines.push("")
   }
   lines.push("OPTIONS")
-  for entry in option_entries(cmd) {
+  for entry in option_entries(cmd, HelpMode::Man) {
     lines.push(entry)
   }
-  if cmd.groups.length() > 0 {
+  let groups = group_entries(cmd, HelpMode::Man)
+  if groups.length() > 0 {
     lines.push("")
     lines.push("GROUPS")
-    for entry in group_entries(cmd) {
+    for entry in groups {
       lines.push(entry)
     }
   }
@@ -113,15 +117,15 @@ fn render_help_with_mode(cmd : Command, mode : HelpMode) -> String {
 }
 
 ///|
-fn usage_tail(cmd : Command) -> String {
+fn usage_tail(cmd : Command, mode : HelpMode) -> String {
   let mut tail = ""
-  if has_options(cmd) {
+  if has_options(cmd, mode) {
     tail = tail + " [options]"
   }
-  if cmd.subcommands.length() > 0 {
+  if has_subcommands_for_help(cmd, mode) {
     tail = tail + " <command>"
   }
-  let pos = positional_usage(cmd)
+  let pos = positional_usage(cmd, mode)
   if pos != "" {
     tail = tail + " " + pos
   }
@@ -129,8 +133,11 @@ fn usage_tail(cmd : Command) -> String {
 }
 
 ///|
-fn has_options(cmd : Command) -> Bool {
+fn has_options(cmd : Command, mode : HelpMode) -> Bool {
   for arg in cmd.args {
+    if arg_hidden_in_mode(arg, mode) {
+      continue
+    }
     if arg.long is Some(_) || arg.short is Some(_) {
       return true
     }
@@ -139,9 +146,12 @@ fn has_options(cmd : Command) -> Bool {
 }
 
 ///|
-fn positional_usage(cmd : Command) -> String {
+fn positional_usage(cmd : Command, mode : HelpMode) -> String {
   let parts = Array::new(capacity=cmd.args.length())
   for arg in positional_args(cmd.args) {
+    if arg_hidden_in_mode(arg, mode) {
+      continue
+    }
     let required = is_required_arg(arg)
     if arg.multiple {
       if required {
@@ -159,9 +169,9 @@ fn positional_usage(cmd : Command) -> String {
 }
 
 ///|
-fn has_positionals(cmd : Command) -> Bool {
+fn has_positionals(cmd : Command, mode : HelpMode) -> Bool {
   for arg in cmd.args {
-    if is_positional_arg(arg) {
+    if is_positional_arg(arg) && !arg_hidden_in_mode(arg, mode) {
       return true
     }
   }
@@ -169,12 +179,15 @@ fn has_positionals(cmd : Command) -> Bool {
 }
 
 ///|
-fn option_entries(cmd : Command) -> Array[String] {
+fn option_entries(cmd : Command, mode : HelpMode) -> Array[String] {
   let entries = Array::new(capacity=cmd.args.length() + 1)
   let display = Array::new(capacity=cmd.args.length() + 1)
   display.push(("-h, --help[=plain|man]", "Show help information."))
   for arg in cmd.args {
     if arg.long is None && arg.short is None {
+      continue
+    }
+    if arg_hidden_in_mode(arg, mode) {
       continue
     }
     let mut name = arg_display(arg)
@@ -200,10 +213,13 @@ fn option_entries(cmd : Command) -> Array[String] {
 }
 
 ///|
-fn positional_entries(cmd : Command) -> Array[String] {
+fn positional_entries(cmd : Command, mode : HelpMode) -> Array[String] {
   let entries = Array::new(capacity=cmd.args.length())
   let display = Array::new(capacity=cmd.args.length())
   for arg in positional_args(cmd.args) {
+    if arg_hidden_in_mode(arg, mode) {
+      continue
+    }
     let name = positional_display(arg)
     let doc = arg_doc(arg)
     display.push((name, doc))
@@ -224,9 +240,12 @@ fn positional_entries(cmd : Command) -> Array[String] {
 }
 
 ///|
-fn subcommand_entries(cmd : Command) -> Array[String] {
+fn subcommand_entries(cmd : Command, mode : HelpMode) -> Array[String] {
   let display = Array::new(capacity=cmd.subcommands.length() + 1)
   for sub in cmd.subcommands {
+    if command_hidden_in_mode(sub, mode) {
+      continue
+    }
     display.push((command_display(sub), sub.about))
   }
   if help_subcommand_enabled(cmd) {
@@ -249,12 +268,15 @@ fn subcommand_entries(cmd : Command) -> Array[String] {
 }
 
 ///|
-fn group_entries(cmd : Command) -> Array[String] {
+fn group_entries(cmd : Command, mode : HelpMode) -> Array[String] {
   let entries = Array::new(capacity=cmd.groups.length())
   let display = Array::new(capacity=cmd.groups.length())
   for group in cmd.groups {
     let name = group_label(group)
-    let members = group_members(cmd, group)
+    let members = group_members(cmd, group, mode)
+    if members == "" {
+      continue
+    }
     display.push((name, members))
   }
   let mut max_len = 0
@@ -349,6 +371,33 @@ fn arg_doc(arg : Arg) -> String {
 }
 
 ///|
+fn arg_hidden_in_mode(arg : Arg, mode : HelpMode) -> Bool {
+  if arg.hidden {
+    true
+  } else {
+    mode == HelpMode::Man && arg.hide_long_help
+  }
+}
+
+///|
+fn command_hidden_in_mode(cmd : Command, _mode : HelpMode) -> Bool {
+  cmd.hidden
+}
+
+///|
+fn has_subcommands_for_help(cmd : Command, mode : HelpMode) -> Bool {
+  if help_subcommand_enabled(cmd) {
+    return true
+  }
+  for sub in cmd.subcommands {
+    if !command_hidden_in_mode(sub, mode) {
+      return true
+    }
+  }
+  false
+}
+
+///|
 fn is_required_arg(arg : Arg) -> Bool {
   if arg.required {
     true
@@ -377,9 +426,12 @@ fn group_label(group : ArgGroup) -> String {
 }
 
 ///|
-fn group_members(cmd : Command, group : ArgGroup) -> String {
+fn group_members(cmd : Command, group : ArgGroup, mode : HelpMode) -> String {
   let members = []
   for arg in cmd.args {
+    if arg_hidden_in_mode(arg, mode) {
+      continue
+    }
     if arg.groups.contains(group.name) {
       members.push(group_member_display(arg))
     }

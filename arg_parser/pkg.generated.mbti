@@ -41,6 +41,8 @@ pub fn Arg::flag(Self) -> Self
 pub fn Arg::global(Self, value? : Bool) -> Self
 pub fn Arg::group(Self, String) -> Self
 pub fn Arg::help(Self, String) -> Self
+pub fn Arg::hide(Self, value? : Bool) -> Self
+pub fn Arg::hide_long_help(Self, value? : Bool) -> Self
 pub fn Arg::index(Self, Int) -> Self
 pub fn Arg::last(Self, value? : Bool) -> Self
 pub fn Arg::long(Self, String) -> Self
@@ -79,6 +81,7 @@ pub fn Command::arg(Self, Arg) -> Self
 pub fn Command::args(Self, Array[Arg]) -> Self
 pub fn Command::disable_help_subcommand(Self, disabled? : Bool) -> Self
 pub fn Command::group(Self, ArgGroup) -> Self
+pub fn Command::hide(Self, value? : Bool) -> Self
 pub fn Command::new(String) -> Self
 pub fn Command::parse(Self, argv? : Array[String], env? : Map[String, String]) -> Matches raise
 pub fn Command::render_help(Self, mode? : HelpMode) -> String

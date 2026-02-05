@@ -60,6 +60,12 @@ You can also render help without parsing:
 - `Command::render_help(mode? : HelpMode = HelpMode::Plain) -> String`
   - Use `HelpMode::Man` for a manpage-like output.
 
+Visibility controls:
+
+- `Command::hide()` hides a subcommand from help output (still parsed).
+- `Arg::hide()` hides an argument from all help output.
+- `Arg::hide_long_help()` hides an argument from `HelpMode::Man` only.
+
 ## Subcommands
 
 ```mbt nocheck
