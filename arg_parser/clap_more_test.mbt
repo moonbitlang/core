@@ -18,14 +18,12 @@ test "help plain" {
     .about("demo")
     .arg(@arg_parser.Arg::new("count").long("count").option())
     .arg(@arg_parser.Arg::new("name").index(0))
-  let res : Result[@arg_parser.Matches, @arg_parser.CommandError] = try? cmd.parse(argv=[
-      "--help",
-    ],
-  )
-  let text = match res {
-    Ok(_) => panic()
-    Err(@arg_parser.CommandError::Help(t)) => t
-    Err(_) => panic()
+  let mut text = ""
+  try cmd.parse(argv=["--help"]) catch {
+    @arg_parser.Help::Help(t) => text = t
+    _ => panic()
+  } noraise {
+    _ => panic()
   }
   inspect(text.contains("Usage: demo"), content="true")
   inspect(text.contains("Options:"), content="true")
@@ -34,14 +32,12 @@ test "help plain" {
 ///|
 test "help man" {
   let cmd = @arg_parser.Command::new("demo").about("demo")
-  let res : Result[@arg_parser.Matches, @arg_parser.CommandError] = try? cmd.parse(argv=[
-      "--help=man",
-    ],
-  )
-  let text = match res {
-    Ok(_) => panic()
-    Err(@arg_parser.CommandError::Help(t)) => t
-    Err(_) => panic()
+  let mut text = ""
+  try cmd.parse(argv=["--help=man"]) catch {
+    @arg_parser.Help::Help(t) => text = t
+    _ => panic()
+  } noraise {
+    _ => panic()
   }
   inspect(text.contains("NAME"), content="true")
   inspect(text.contains("SYNOPSIS"), content="true")
@@ -72,7 +68,7 @@ test "missing value for option" {
     @arg_parser.Arg::new("count").long("count").option(),
   )
   try cmd.parse(argv=["--count"]) catch {
-    @arg_parser.CommandError::Arg(@arg_parser.ArgumentError::MissingValue(opt)) =>
+    @arg_parser.ArgumentError::MissingValue(opt) =>
       inspect(opt, content="--count")
     _ => panic()
   } noraise {
@@ -84,9 +80,7 @@ test "missing value for option" {
 test "unknown option" {
   let cmd = @arg_parser.Command::new("demo")
   try cmd.parse(argv=["--nope"]) catch {
-    @arg_parser.CommandError::Arg(
-      @arg_parser.ArgumentError::UnknownArgument(opt, _)
-    ) => inspect(opt, content="--nope")
+    @arg_parser.ArgumentError::UnknownArgument(opt, _) => inspect(opt, content="--nope")
     _ => panic()
   } noraise {
     _ => panic()
@@ -99,9 +93,7 @@ test "unknown option suggests closest" {
     @arg_parser.Arg::new("verbose").long("verbose"),
   )
   try cmd.parse(argv=["--verbsoe"]) catch {
-    @arg_parser.CommandError::Arg(
-      @arg_parser.ArgumentError::UnknownArgument(arg, hint)
-    ) =>
+    @arg_parser.ArgumentError::UnknownArgument(arg, hint) =>
       match hint {
         Some(value) => {
           inspect(arg, content="--verbsoe")
@@ -227,7 +219,7 @@ test "too many positional args" {
     @arg_parser.Arg::new("name").index(0),
   )
   try cmd.parse(argv=["a", "b"]) catch {
-    @arg_parser.CommandError::Arg(@arg_parser.ArgumentError::TooManyPositionals) => ()
+    @arg_parser.ArgumentError::TooManyPositionals => ()
     _ => panic()
   } noraise {
     _ => panic()
@@ -263,24 +255,20 @@ test "subcommand help and man" {
     .about("echo help")
     .arg(@arg_parser.Arg::new("msg").index(0))
   let root = @arg_parser.Command::new("root").about("root help").subcommand(sub)
-  let res_plain : Result[@arg_parser.Matches, @arg_parser.CommandError] = try? root.parse(argv=[
-      "echo", "--help",
-    ],
-  )
-  let text_plain = match res_plain {
-    Ok(_) => panic()
-    Err(@arg_parser.CommandError::Help(t)) => t
-    Err(_) => panic()
+  let mut text_plain = ""
+  try root.parse(argv=["echo", "--help"]) catch {
+    @arg_parser.Help::Help(t) => text_plain = t
+    _ => panic()
+  } noraise {
+    _ => panic()
   }
   inspect(text_plain.contains("Usage: echo"), content="true")
-  let res_man : Result[@arg_parser.Matches, @arg_parser.CommandError] = try? root.parse(argv=[
-      "echo", "--help=man",
-    ],
-  )
-  let text_man = match res_man {
-    Ok(_) => panic()
-    Err(@arg_parser.CommandError::Help(t)) => t
-    Err(_) => panic()
+  let mut text_man = ""
+  try root.parse(argv=["echo", "--help=man"]) catch {
+    @arg_parser.Help::Help(t) => text_man = t
+    _ => panic()
+  } noraise {
+    _ => panic()
   }
   inspect(text_man.contains("NAME"), content="true")
   inspect(text_man.contains("echo - echo help"), content="true")
@@ -295,34 +283,28 @@ test "help subcommand shows target help" {
   let root = @arg_parser.Command::new("root")
     .about("root help")
     .subcommand(tools)
-  let res_root : Result[@arg_parser.Matches, @arg_parser.CommandError] = try? root.parse(argv=[
-      "help",
-    ],
-  )
-  let text_root = match res_root {
-    Ok(_) => panic()
-    Err(@arg_parser.CommandError::Help(t)) => t
-    Err(_) => panic()
+  let mut text_root = ""
+  try root.parse(argv=["help"]) catch {
+    @arg_parser.Help::Help(t) => text_root = t
+    _ => panic()
+  } noraise {
+    _ => panic()
   }
   inspect(text_root.contains("Usage: root"), content="true")
-  let res_nested : Result[@arg_parser.Matches, @arg_parser.CommandError] = try? root.parse(argv=[
-      "help", "tools", "echo",
-    ],
-  )
-  let text_nested = match res_nested {
-    Ok(_) => panic()
-    Err(@arg_parser.CommandError::Help(t)) => t
-    Err(_) => panic()
+  let mut text_nested = ""
+  try root.parse(argv=["help", "tools", "echo"]) catch {
+    @arg_parser.Help::Help(t) => text_nested = t
+    _ => panic()
+  } noraise {
+    _ => panic()
   }
   inspect(text_nested.contains("Usage: echo"), content="true")
-  let res_man : Result[@arg_parser.Matches, @arg_parser.CommandError] = try? root.parse(argv=[
-      "help", "tools", "echo", "--help=man",
-    ],
-  )
-  let text_man = match res_man {
-    Ok(_) => panic()
-    Err(@arg_parser.CommandError::Help(t)) => t
-    Err(_) => panic()
+  let mut text_man = ""
+  try root.parse(argv=["help", "tools", "echo", "--help=man"]) catch {
+    @arg_parser.Help::Help(t) => text_man = t
+    _ => panic()
+  } noraise {
+    _ => panic()
   }
   inspect(text_man.contains("NAME"), content="true")
   inspect(
@@ -399,9 +381,7 @@ test "short group unknown flag errors" {
     @arg_parser.Arg::new("verbose").short('v'),
   )
   try cmd.parse(argv=["-vz"]) catch {
-    @arg_parser.CommandError::Arg(
-      @arg_parser.ArgumentError::UnknownArgument(arg, _)
-    ) => inspect(arg, content="-z")
+    @arg_parser.ArgumentError::UnknownArgument(arg, _) => inspect(arg, content="-z")
     _ => panic()
   } noraise {
     _ => panic()
@@ -423,9 +403,7 @@ test "no- flag rejected when not negatable" {
     @arg_parser.Arg::new("verbose").long("verbose"),
   )
   try cmd.parse(argv=["--no-verbose"]) catch {
-    @arg_parser.CommandError::Arg(
-      @arg_parser.ArgumentError::UnknownArgument(arg, _)
-    ) => inspect(arg, content="--no-verbose")
+    @arg_parser.ArgumentError::UnknownArgument(arg, _) => inspect(arg, content="--no-verbose")
     _ => panic()
   } noraise {
     _ => panic()
@@ -457,9 +435,7 @@ test "root arg after subcommand errors when not global" {
     .arg(@arg_parser.Arg::new("verbose").long("verbose"))
     .subcommand(sub)
   try root.parse(argv=["echo", "--verbose", "hi"]) catch {
-    @arg_parser.CommandError::Arg(
-      @arg_parser.ArgumentError::UnknownArgument(arg, _)
-    ) => inspect(arg, content="--verbose")
+    @arg_parser.ArgumentError::UnknownArgument(arg, _) => inspect(arg, content="--verbose")
     _ => panic()
   } noraise {
     _ => panic()
@@ -516,9 +492,7 @@ test "negation rejects inline values" {
     @arg_parser.Arg::new("verbose").long("verbose").negatable(),
   )
   try cmd.parse(argv=["--no-verbose=true"]) catch {
-    @arg_parser.CommandError::Arg(
-      @arg_parser.ArgumentError::InvalidArgument(arg)
-    ) => inspect(arg, content="--no-verbose=true")
+    @arg_parser.ArgumentError::InvalidArgument(arg) => inspect(arg, content="--no-verbose=true")
     _ => panic()
   } noraise {
     _ => panic()
@@ -594,7 +568,7 @@ test "required arg group errors when empty" {
     .arg(@arg_parser.Arg::new("fast").long("fast").group("mode"))
     .arg(@arg_parser.Arg::new("slow").long("slow").group("mode"))
   try cmd.parse(argv=[]) catch {
-    @arg_parser.CommandError::Arg(@arg_parser.ArgumentError::MissingGroup(name)) =>
+    @arg_parser.ArgumentError::MissingGroup(name) =>
       inspect(name, content="mode")
     _ => panic()
   } noraise {
@@ -609,9 +583,7 @@ test "exclusive arg group rejects multiple" {
     .arg(@arg_parser.Arg::new("fast").long("fast").group("mode"))
     .arg(@arg_parser.Arg::new("slow").long("slow").group("mode"))
   try cmd.parse(argv=["--fast", "--slow"]) catch {
-    @arg_parser.CommandError::Arg(
-      @arg_parser.ArgumentError::GroupConflict(name)
-    ) => inspect(name, content="mode")
+    @arg_parser.ArgumentError::GroupConflict(name) => inspect(name, content="mode")
     _ => panic()
   } noraise {
     _ => panic()
@@ -635,9 +607,7 @@ test "required option missing" {
     @arg_parser.Arg::new("mode").long("mode").option().required(),
   )
   try cmd.parse(argv=[]) catch {
-    @arg_parser.CommandError::Arg(
-      @arg_parser.ArgumentError::MissingRequired(name)
-    ) => inspect(name, content="mode")
+    @arg_parser.ArgumentError::MissingRequired(name) => inspect(name, content="mode")
     _ => panic()
   } noraise {
     _ => panic()
@@ -655,9 +625,7 @@ test "min and max values enforced" {
     .max_values(3),
   )
   try cmd.parse(argv=["--tag", "a"]) catch {
-    @arg_parser.CommandError::Arg(
-      @arg_parser.ArgumentError::TooFewValues(name, got, min)
-    ) => {
+    @arg_parser.ArgumentError::TooFewValues(name, got, min) => {
       inspect(name, content="tag")
       inspect(got, content="1")
       inspect(min, content="2")
@@ -669,9 +637,7 @@ test "min and max values enforced" {
   try cmd.parse(argv=[
     "--tag", "a", "--tag", "b", "--tag", "c", "--tag", "d",
   ]) catch {
-    @arg_parser.CommandError::Arg(
-      @arg_parser.ArgumentError::TooManyValues(name, got, max)
-    ) => {
+    @arg_parser.ArgumentError::TooManyValues(name, got, max) => {
       inspect(name, content="tag")
       inspect(got, content="4")
       inspect(max, content="3")
@@ -688,7 +654,7 @@ test "duplicate long option errors" {
     .arg(@arg_parser.Arg::new("one").long("dup"))
     .arg(@arg_parser.Arg::new("two").long("dup"))
   try cmd.parse(argv=[]) catch {
-    @arg_parser.CommandError::Build(@arg_parser.ArgBuildError::Unsupported(msg)) =>
+    @arg_parser.ArgBuildError::Unsupported(msg) =>
       inspect(
         msg,
         content=(
@@ -707,7 +673,7 @@ test "duplicate subcommand alias errors" {
   let sub2 = @arg_parser.Command::new("redo").alias_name("r")
   let cmd = @arg_parser.Command::new("root").subcommand(sub1).subcommand(sub2)
   try cmd.parse(argv=[]) catch {
-    @arg_parser.CommandError::Build(@arg_parser.ArgBuildError::Unsupported(msg)) =>
+    @arg_parser.ArgBuildError::Unsupported(msg) =>
       inspect(
         msg,
         content=(

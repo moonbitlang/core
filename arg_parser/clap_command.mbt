@@ -160,16 +160,16 @@ fn default_argv() -> Array[String] {
 ///|
 /// Parse using explicit argv array (excluding program name).
 ///
-/// Help is returned as `CommandError::Help(text)` instead of printing/exiting.
+/// Help is returned as `Help::Help(text)` instead of printing/exiting.
 pub fn Command::parse(
   self : Command,
   argv? : Array[String] = default_argv(),
   env? : Map[String, String] = @env.get_env_vars(),
-) -> Matches raise CommandError {
+) -> Matches raise {
   parse_command(self, argv, env, []) catch {
-    ParseError::Help(text) => raise CommandError::Help(text)
-    ParseError::Arg(err) => raise CommandError::Arg(err)
-    ParseError::Build(err) => raise CommandError::Build(err)
+    ParseError::Help(text) => raise Help::Help(text)
+    ParseError::Arg(err) => raise err
+    ParseError::Build(err) => raise err
   }
 }
 

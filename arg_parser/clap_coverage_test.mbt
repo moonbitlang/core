@@ -94,20 +94,19 @@ test "parse branches and env errors" {
   let cmd = @arg_parser.Command::new("demo").arg(
     @arg_parser.Arg::new("verbose").short('v'),
   )
-  let res : Result[@arg_parser.Matches, @arg_parser.CommandError] = try? cmd.parse(argv=[
-      "-vh",
-    ],
-  )
-  match res {
-    Err(@arg_parser.CommandError::Help(text)) =>
-      assert_true(text.contains("Usage:"))
+  let mut text = ""
+  try cmd.parse(argv=["-vh"]) catch {
+    @arg_parser.Help::Help(t) => text = t
+    _ => panic()
+  } noraise {
     _ => panic()
   }
+  assert_true(text.contains("Usage:"))
   let cmd2 = @arg_parser.Command::new("demo").arg(
     @arg_parser.Arg::new("count").short('c').option(),
   )
   try cmd2.parse(argv=["-c"]) catch {
-    @arg_parser.CommandError::Arg(@arg_parser.ArgumentError::MissingValue(opt)) =>
+    @arg_parser.ArgumentError::MissingValue(opt) =>
       inspect(opt, content="-c")
     _ => panic()
   } noraise {
@@ -128,7 +127,7 @@ test "parse branches and env errors" {
     .action(@arg_parser.ArgAction::SetTrue),
   )
   try cmd4.parse(argv=["--flag", "maybe"]) catch {
-    @arg_parser.CommandError::Arg(@arg_parser.ArgumentError::InvalidValue(msg)) =>
+    @arg_parser.ArgumentError::InvalidValue(msg) =>
       inspect(
         msg,
         content=(
@@ -143,7 +142,7 @@ test "parse branches and env errors" {
     @arg_parser.Arg::new("verbose").long("verbose").env("VERBOSE"),
   )
   try cmd5.parse(argv=[], env={ "VERBOSE": "nope" }) catch {
-    @arg_parser.CommandError::Arg(@arg_parser.ArgumentError::InvalidValue(msg)) =>
+    @arg_parser.ArgumentError::InvalidValue(msg) =>
       inspect(
         msg,
         content=(
@@ -204,9 +203,7 @@ test "global aliases and merge semantics" {
 test "unknown short without hint" {
   let cmd = @arg_parser.Command::new("demo")
   try cmd.parse(argv=["-z"]) catch {
-    @arg_parser.CommandError::Arg(
-      @arg_parser.ArgumentError::UnknownArgument(arg, hint)
-    ) =>
+    @arg_parser.ArgumentError::UnknownArgument(arg, hint) =>
       match hint {
         None => inspect(arg, content="-z")
         Some(_) => panic()
@@ -351,9 +348,7 @@ test "default argv path" {
 test "no- prefix unknown target errors" {
   let cmd = @arg_parser.Command::new("demo")
   try cmd.parse(argv=["--no-missing"]) catch {
-    @arg_parser.CommandError::Arg(
-      @arg_parser.ArgumentError::UnknownArgument(arg, _)
-    ) => inspect(arg, content="--no-missing")
+    @arg_parser.ArgumentError::UnknownArgument(arg, _) => inspect(arg, content="--no-missing")
     _ => panic()
   } noraise {
     _ => panic()
@@ -369,7 +364,7 @@ test "short option invalid bool errors" {
     .action(@arg_parser.ArgAction::SetTrue),
   )
   try cmd.parse(argv=["-fmaybe"]) catch {
-    @arg_parser.CommandError::Arg(@arg_parser.ArgumentError::InvalidValue(msg)) =>
+    @arg_parser.ArgumentError::InvalidValue(msg) =>
       inspect(
         msg,
         content=(
@@ -405,9 +400,7 @@ test "help subcommand rejects option argument" {
   let sub = @arg_parser.Command::new("run")
   let root = @arg_parser.Command::new("root").subcommand(sub)
   try root.parse(argv=["help", "--nope"]) catch {
-    @arg_parser.CommandError::Arg(
-      @arg_parser.ArgumentError::InvalidArgument(msg)
-    ) =>
+    @arg_parser.ArgumentError::InvalidArgument(msg) =>
       inspect(
         msg,
         content=(
@@ -425,9 +418,7 @@ test "help subcommand unknown target" {
   let sub = @arg_parser.Command::new("run")
   let root = @arg_parser.Command::new("root").subcommand(sub)
   try root.parse(argv=["help", "nope"]) catch {
-    @arg_parser.CommandError::Arg(
-      @arg_parser.ArgumentError::InvalidArgument(msg)
-    ) =>
+    @arg_parser.ArgumentError::InvalidArgument(msg) =>
       inspect(
         msg,
         content=(
@@ -445,7 +436,7 @@ test "help subcommand -h uses plain mode" {
   let sub = @arg_parser.Command::new("run")
   let root = @arg_parser.Command::new("root").subcommand(sub)
   try root.parse(argv=["help", "-h"]) catch {
-    @arg_parser.CommandError::Help(text) =>
+    @arg_parser.Help::Help(text) =>
       inspect(text.contains("Usage: root"), content="true")
     _ => panic()
   } noraise {
@@ -527,7 +518,7 @@ test "setfalse option invalid value errors" {
     .action(@arg_parser.ArgAction::SetFalse),
   )
   try cmd.parse(argv=["--flag", "maybe"]) catch {
-    @arg_parser.CommandError::Arg(@arg_parser.ArgumentError::InvalidValue(msg)) =>
+    @arg_parser.ArgumentError::InvalidValue(msg) =>
       inspect(
         msg,
         content=(
@@ -550,7 +541,7 @@ test "env invalid for option errors" {
     .env("FLAG"),
   )
   try cmd.parse(argv=[], env={ "FLAG": "nope" }) catch {
-    @arg_parser.CommandError::Arg(@arg_parser.ArgumentError::InvalidValue(msg)) =>
+    @arg_parser.ArgumentError::InvalidValue(msg) =>
       inspect(
         msg,
         content=(
@@ -587,7 +578,7 @@ test "env count invalid value errors" {
     .env("COUNT"),
   )
   try cmd.parse(argv=[], env={ "COUNT": "nope" }) catch {
-    @arg_parser.CommandError::Arg(@arg_parser.ArgumentError::InvalidValue(msg)) =>
+    @arg_parser.ArgumentError::InvalidValue(msg) =>
       inspect(
         msg,
         content=(
@@ -637,7 +628,7 @@ test "env setfalse invalid value errors" {
     .env("FLAG"),
   )
   try cmd.parse(argv=[], env={ "FLAG": "nope" }) catch {
-    @arg_parser.CommandError::Arg(@arg_parser.ArgumentError::InvalidValue(msg)) =>
+    @arg_parser.ArgumentError::InvalidValue(msg) =>
       inspect(
         msg,
         content=(
@@ -659,7 +650,7 @@ test "env set invalid value errors" {
     .env("FLAG"),
   )
   try cmd.parse(argv=[], env={ "FLAG": "nope" }) catch {
-    @arg_parser.CommandError::Arg(@arg_parser.ArgumentError::InvalidValue(msg)) =>
+    @arg_parser.ArgumentError::InvalidValue(msg) =>
       inspect(
         msg,
         content=(
@@ -739,7 +730,7 @@ test "positional-only settings with long errors" {
     @arg_parser.Arg::new("pos").index(0).long("pos"),
   )
   try cmd.parse(argv=[]) catch {
-    @arg_parser.CommandError::Build(@arg_parser.ArgBuildError::Unsupported(msg)) =>
+    @arg_parser.ArgBuildError::Unsupported(msg) =>
       inspect(
         msg,
         content=(
@@ -761,7 +752,7 @@ test "negatable option errors" {
     .negatable(),
   )
   try cmd.parse(argv=[]) catch {
-    @arg_parser.CommandError::Build(@arg_parser.ArgBuildError::Unsupported(msg)) =>
+    @arg_parser.ArgBuildError::Unsupported(msg) =>
       inspect(
         msg,
         content=(
@@ -783,7 +774,7 @@ test "count option errors" {
     .action(@arg_parser.ArgAction::Count),
   )
   try cmd.parse(argv=[]) catch {
-    @arg_parser.CommandError::Build(@arg_parser.ArgBuildError::Unsupported(msg)) =>
+    @arg_parser.ArgBuildError::Unsupported(msg) =>
       inspect(
         msg,
         content=(
@@ -802,7 +793,7 @@ test "min values require value-taking arguments" {
     @arg_parser.Arg::new("flag").long("flag").min_values(1),
   )
   try cmd.parse(argv=[]) catch {
-    @arg_parser.CommandError::Build(@arg_parser.ArgBuildError::Unsupported(msg)) =>
+    @arg_parser.ArgBuildError::Unsupported(msg) =>
       inspect(
         msg,
         content=(
@@ -825,7 +816,7 @@ test "max values less than min errors" {
     .max_values(1),
   )
   try cmd.parse(argv=[]) catch {
-    @arg_parser.CommandError::Build(@arg_parser.ArgBuildError::Unsupported(msg)) =>
+    @arg_parser.ArgBuildError::Unsupported(msg) =>
       inspect(
         msg,
         content=(
@@ -844,7 +835,7 @@ test "max values less than one errors" {
     @arg_parser.Arg::new("tag").long("tag").option().max_values(0),
   )
   try cmd.parse(argv=[]) catch {
-    @arg_parser.CommandError::Build(@arg_parser.ArgBuildError::Unsupported(msg)) =>
+    @arg_parser.ArgBuildError::Unsupported(msg) =>
       inspect(
         msg,
         content=(
@@ -866,7 +857,7 @@ test "multiple values require multiple or append" {
     .min_values(2),
   )
   try cmd.parse(argv=[]) catch {
-    @arg_parser.CommandError::Build(@arg_parser.ArgBuildError::Unsupported(msg)) =>
+    @arg_parser.ArgBuildError::Unsupported(msg) =>
       inspect(
         msg,
         content=(
@@ -885,7 +876,7 @@ test "default values require value-taking arguments" {
     @arg_parser.Arg::new("flag").long("flag").default_value("x"),
   )
   try cmd.parse(argv=[]) catch {
-    @arg_parser.CommandError::Build(@arg_parser.ArgBuildError::Unsupported(msg)) =>
+    @arg_parser.ArgBuildError::Unsupported(msg) =>
       inspect(
         msg,
         content=(
@@ -907,7 +898,7 @@ test "default_values require multiple or append" {
     .default_values(["a", "b"]),
   )
   try cmd.parse(argv=[]) catch {
-    @arg_parser.CommandError::Build(@arg_parser.ArgBuildError::Unsupported(msg)) =>
+    @arg_parser.ArgBuildError::Unsupported(msg) =>
       inspect(
         msg,
         content=(
@@ -926,7 +917,7 @@ test "duplicate group errors" {
     .group(@arg_parser.ArgGroup::new("mode"))
     .group(@arg_parser.ArgGroup::new("mode"))
   try cmd.parse(argv=[]) catch {
-    @arg_parser.CommandError::Build(@arg_parser.ArgBuildError::Unsupported(msg)) =>
+    @arg_parser.ArgBuildError::Unsupported(msg) =>
       inspect(
         msg,
         content=(
@@ -945,7 +936,7 @@ test "unknown group errors" {
     .group(@arg_parser.ArgGroup::new("other"))
     .arg(@arg_parser.Arg::new("fast").long("fast").group("mode"))
   try cmd.parse(argv=[]) catch {
-    @arg_parser.CommandError::Build(@arg_parser.ArgBuildError::Unsupported(msg)) =>
+    @arg_parser.ArgBuildError::Unsupported(msg) =>
       inspect(
         msg,
         content=(
@@ -964,7 +955,7 @@ test "duplicate arg name errors" {
     .arg(@arg_parser.Arg::new("dup").long("one"))
     .arg(@arg_parser.Arg::new("dup").long("two"))
   try cmd.parse(argv=[]) catch {
-    @arg_parser.CommandError::Build(@arg_parser.ArgBuildError::Unsupported(msg)) =>
+    @arg_parser.ArgBuildError::Unsupported(msg) =>
       inspect(
         msg,
         content=(
@@ -983,7 +974,7 @@ test "duplicate short option errors" {
     .arg(@arg_parser.Arg::new("one").short('v'))
     .arg(@arg_parser.Arg::new("two").short('v'))
   try cmd.parse(argv=[]) catch {
-    @arg_parser.CommandError::Build(@arg_parser.ArgBuildError::Unsupported(msg)) =>
+    @arg_parser.ArgBuildError::Unsupported(msg) =>
       inspect(
         msg,
         content=(
@@ -1002,7 +993,7 @@ test "help subcommand reserved name errors" {
     @arg_parser.Command::new("help"),
   )
   try cmd.parse(argv=[]) catch {
-    @arg_parser.CommandError::Build(@arg_parser.ArgBuildError::Unsupported(msg)) =>
+    @arg_parser.ArgBuildError::Unsupported(msg) =>
       inspect(
         msg,
         content=(
@@ -1042,9 +1033,7 @@ test "suggestion handles empty candidate" {
     @arg_parser.Arg::new("empty").long("").option(),
   )
   try cmd.parse(argv=["--unknown"]) catch {
-    @arg_parser.CommandError::Arg(
-      @arg_parser.ArgumentError::UnknownArgument(arg, hint)
-    ) =>
+    @arg_parser.ArgumentError::UnknownArgument(arg, hint) =>
       match hint {
         None => inspect(arg, content="--unknown")
         Some(_) => panic()

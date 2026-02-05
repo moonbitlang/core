@@ -24,12 +24,10 @@ pub(all) suberror ArgumentError {
 }
 pub impl Show for ArgumentError
 
-pub suberror CommandError {
-  Arg(ArgumentError)
-  Build(ArgBuildError)
+pub suberror Help {
   Help(String)
 }
-pub impl Show for CommandError
+pub impl Show for Help
 
 // Types and methods
 type Arg
@@ -82,7 +80,7 @@ pub fn Command::args(Self, Array[Arg]) -> Self
 pub fn Command::disable_help_subcommand(Self, disabled? : Bool) -> Self
 pub fn Command::group(Self, ArgGroup) -> Self
 pub fn Command::new(String) -> Self
-pub fn Command::parse(Self, argv? : Array[String], env? : Map[String, String]) -> Matches raise CommandError
+pub fn Command::parse(Self, argv? : Array[String], env? : Map[String, String]) -> Matches raise
 pub fn Command::render_help(Self, mode? : HelpMode) -> String
 pub fn Command::subcommand(Self, Self) -> Self
 pub fn Command::visible_alias(Self, String) -> Self

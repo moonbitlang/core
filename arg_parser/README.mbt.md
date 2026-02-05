@@ -33,18 +33,18 @@ assert_eq(matches.value_of("name").unwrap(), "alice")
 
 There is one parsing entry point:
 
-- `Command::parse(argv?=..., env?=...) -> Matches raise CommandError`
+- `Command::parse(argv?=..., env?=...) -> Matches raise { Help, ArgumentError, ArgBuildError }`
   - Returns `matches` on success.
-  - Raises `CommandError::Help(help_text)` when `-h/--help/--help=man` is present.
-  - Raises `CommandError::Help(help_text)` for the `help` subcommand.
-  - Raises `CommandError::Build(ArgBuildError::Unsupported(_))` for invalid arg specs.
+  - Raises `Help::Help(help_text)` when `-h/--help/--help=man` is present.
+  - Raises `Help::Help(help_text)` for the `help` subcommand.
+  - Raises `ArgBuildError::Unsupported(_)` for invalid arg specs.
 
 If `argv` is omitted, `parse()` reads the current process arguments
 (`@env.args()[1:]`). For tests, pass `argv=[...]`.
 If `env` is omitted, it defaults to the current process environment via
 `@env.get_env_vars()`. Pass `env={...}` to override.
 
-On help (`-h/--help/--help=man`), `parse` raises `CommandError::Help`. Decide in
+On help (`-h/--help/--help=man`), `parse` raises `Help::Help`. Decide in
 your app whether to print and exit, or show help in some other way.
 
 ## Help / Manpage

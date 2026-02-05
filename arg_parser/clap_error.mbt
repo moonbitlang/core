@@ -35,9 +35,7 @@ pub suberror ArgBuildError {
 } derive(Show)
 
 ///|
-/// Errors raised when parsing command lines.
-pub suberror CommandError {
-  Arg(ArgumentError)
-  Build(ArgBuildError)
+/// Errors raised when help or version information is requested.
+pub suberror Help {
   Help(String)
 } derive(Show)
