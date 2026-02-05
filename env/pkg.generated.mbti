@@ -6,7 +6,17 @@ pub fn args() -> Array[String]
 
 pub fn current_dir() -> String?
 
+pub fn exit(Int) -> Unit
+
+pub fn get_env_var(String) -> String?
+
+pub fn get_env_vars() -> Map[String, String]
+
 pub fn now() -> UInt64
+
+pub fn set_env_var(String, String) -> Unit
+
+pub fn unset_env_var(String) -> Unit
 
 // Errors
 

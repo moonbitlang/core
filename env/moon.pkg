@@ -3,6 +3,7 @@ import {
 }
 
 options(
+  native_stub: [ "native_stub.c" ],
   targets: {
     "env_js.mbt": [ "js" ],
     "env_native.mbt": [ "native", "llvm" ],

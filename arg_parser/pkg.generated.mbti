@@ -1,0 +1,126 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/arg_parser"
+
+// Values
+
+// Errors
+pub suberror ArgBuildError {
+  Unsupported(String)
+}
+pub impl Show for ArgBuildError
+
+pub(all) suberror ArgumentError {
+  UnknownArgument(String, String?)
+  InvalidArgument(String)
+  MissingValue(String)
+  MissingRequired(String)
+  TooFewValues(String, Int, Int)
+  TooManyValues(String, Int, Int)
+  TooManyPositionals
+  InvalidValue(String)
+  InvalidValueCount(String)
+  MissingGroup(String)
+  GroupConflict(String)
+}
+pub impl Show for ArgumentError
+
+pub suberror CommandError {
+  Arg(ArgumentError)
+  Build(ArgBuildError)
+  Help(String)
+}
+pub impl Show for CommandError
+
+// Types and methods
+type Arg
+pub fn Arg::action(Self, ArgAction) -> Self
+pub fn Arg::alias_name(Self, String) -> Self
+pub fn Arg::allow_hyphen_values(Self, value? : Bool) -> Self
+pub fn Arg::default_value(Self, String) -> Self
+pub fn Arg::default_values(Self, Array[String]) -> Self
+pub fn Arg::env(Self, String) -> Self
+pub fn Arg::flag(Self) -> Self
+pub fn Arg::global(Self, value? : Bool) -> Self
+pub fn Arg::group(Self, String) -> Self
+pub fn Arg::help(Self, String) -> Self
+pub fn Arg::index(Self, Int) -> Self
+pub fn Arg::last(Self, value? : Bool) -> Self
+pub fn Arg::long(Self, String) -> Self
+pub fn Arg::max_values(Self, Int) -> Self
+pub fn Arg::min_values(Self, Int) -> Self
+pub fn Arg::multiple(Self, value? : Bool) -> Self
+pub fn Arg::negatable(Self, value? : Bool) -> Self
+pub fn Arg::new(String) -> Self
+pub fn Arg::num_values(Self, Int, Int) -> Self
+pub fn Arg::option(Self) -> Self
+pub fn Arg::required(Self, value? : Bool) -> Self
+pub fn Arg::short(Self, Char) -> Self
+pub fn Arg::short_alias(Self, Char) -> Self
+pub fn Arg::visible_alias(Self, String) -> Self
+pub fn Arg::visible_short_alias(Self, Char) -> Self
+
+pub(all) enum ArgAction {
+  Set
+  SetTrue
+  SetFalse
+  Count
+  Append
+}
+pub impl Eq for ArgAction
+pub impl Show for ArgAction
+
+type ArgGroup
+pub fn ArgGroup::multiple(Self, value? : Bool) -> Self
+pub fn ArgGroup::new(String) -> Self
+pub fn ArgGroup::required(Self, value? : Bool) -> Self
+
+type Command
+pub fn Command::about(Self, String) -> Self
+pub fn Command::alias_name(Self, String) -> Self
+pub fn Command::arg(Self, Arg) -> Self
+pub fn Command::args(Self, Array[Arg]) -> Self
+pub fn Command::disable_help_subcommand(Self, disabled? : Bool) -> Self
+pub fn Command::group(Self, ArgGroup) -> Self
+pub fn Command::new(String) -> Self
+pub fn Command::parse(Self, argv? : Array[String], env? : Map[String, String]) -> Matches raise CommandError
+pub fn Command::render_help(Self, mode? : HelpMode) -> String
+pub fn Command::subcommand(Self, Self) -> Self
+pub fn Command::visible_alias(Self, String) -> Self
+
+pub(all) enum HelpMode {
+  Plain
+  Man
+}
+pub impl Eq for HelpMode
+pub impl Show for HelpMode
+
+type Matches
+pub fn Matches::count_of(Self, String) -> Int
+pub fn[T : FromMatches] Matches::decode(Self) -> T raise ArgumentError
+pub fn Matches::get_array(Self, String) -> Array[String]
+pub fn Matches::get_flag(Self, String) -> Bool
+pub fn Matches::get_one(Self, String) -> String raise ArgumentError
+pub fn Matches::get_option(Self, String) -> String? raise ArgumentError
+pub fn Matches::new() -> Self
+pub fn Matches::source_of(Self, String) -> ValueSource?
+pub fn Matches::subcommand_matches(Self, String) -> Self?
+pub fn Matches::subcommand_name(Self) -> String?
+pub fn Matches::value_of(Self, String) -> String?
+pub fn Matches::value_sources_of(Self, String) -> Array[ValueSource]?
+pub fn Matches::values_of(Self, String) -> Array[String]?
+
+pub enum ValueSource {
+  Argv
+  Env
+  Default
+}
+pub impl Eq for ValueSource
+pub impl Show for ValueSource
+
+// Type aliases
+
+// Traits
+pub(open) trait FromMatches {
+  from_matches(Matches) -> Self raise ArgumentError
+}
+
