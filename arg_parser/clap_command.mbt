@@ -134,11 +134,9 @@ pub fn Command::alias_name(self : Command, alias_name : String) -> Command {
 ///|
 /// Add a visible command alias (accepted by the parser and shown in help).
 pub fn Command::visible_alias(self : Command, alias_name : String) -> Command {
-  let aliases = clone_array(self.aliases)
-  aliases.push(alias_name)
   let visible = clone_array(self.visible_aliases)
   visible.push(alias_name)
-  Command::{ ..self, aliases, visible_aliases: visible }
+  Command::{ ..self, visible_aliases: visible }
 }
 
 ///|

@@ -321,3 +321,18 @@ test "command args builder" {
   assert_true(m.get_flag("a"))
   assert_true(m.get_flag("b"))
 }
+
+///|
+test "visible alias does not duplicate subcommand names" {
+  let sub = @arg_parser.Command::new("run").visible_alias("r")
+  let cmd = @arg_parser.Command::new("root").subcommand(sub)
+  let mut saw_build = false
+  let _ = cmd.parse(argv=["run"]) catch {
+    @arg_parser.CommandError::Build(@arg_parser.ArgBuildError::Unsupported(_)) => {
+      saw_build = true
+      @arg_parser.Matches::new()
+    }
+    _ => @arg_parser.Matches::new()
+  }
+  assert_false(saw_build)
+}
