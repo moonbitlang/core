@@ -1,5 +1,6 @@
 import {
   "moonbitlang/core/builtin",
+  "moonbitlang/core/encoding/utf8",
 }
 
 options(
