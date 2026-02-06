@@ -160,7 +160,7 @@ test "parse branches and env errors" {
     @arg_parser.Arg::new("mode").long("mode").option().env("MODE"),
   )
   let m6 = cmd6.parse(argv=[], env={}) catch { _ => panic() }
-  let m6_mode = m6.get_one("mode") catch { _ => panic() }
+  let m6_mode = m6.get_one("mode")
   match m6_mode {
     None => ()
     Some(_) => panic()
@@ -238,7 +238,7 @@ test "positionals ordering and hyphen values" {
 ///|
 test "matches helpers" {
   let m = @arg_parser.Matches::new()
-  let x_opt : String? = m.get_one("x") catch { _ => panic() }
+  let x_opt : String? = m.get_one("x")
   match x_opt {
     None => ()
     Some(_) => panic()
@@ -263,7 +263,7 @@ test "matches helpers" {
     None => ()
     Some(_) => panic()
   }
-  let opt : String? = m.get_one("x") catch { _ => None }
+  let opt : String? = m.get_one("x")
   match opt {
     None => ()
     Some(_) => panic()
@@ -285,18 +285,7 @@ test "matches helpers" {
     @arg_parser.Arg::new("tag").long("tag").option().multiple(),
   )
   let m2 = cmd.parse(argv=["--tag", "1", "--tag", "2"]) catch { _ => panic() }
-  try m2.get_one("tag") catch {
-    @arg_parser.ArgumentError::InvalidValueCount(msg) =>
-      inspect(
-        msg,
-        content=(
-          #|invalid value count for tag: 2
-        ),
-      )
-    _ => panic()
-  } noraise {
-    _ => panic()
-  }
+  assert_eq(m2.get_one("tag").unwrap_or(""), "1")
   let tags : Array[String] = m2.get_many("tag").unwrap_or([])
   assert_eq(tags[0], "1")
   inspect(tags, content="[\"1\", \"2\"]")
@@ -1265,14 +1254,14 @@ test "global values missing do not propagate" {
     .arg(@arg_parser.Arg::new("verbose").long("verbose").global())
     .subcommand(sub)
   let matches = root.parse(argv=["run"]) catch { _ => panic() }
-  let root_cfg : String? = matches.get_one("config") catch { _ => panic() }
+  let root_cfg : String? = matches.get_one("config")
   match root_cfg {
     None => ()
     Some(_) => panic()
   }
   assert_false(matches.get_flag("verbose"))
   let subm = matches.subcommand_matches("run").unwrap()
-  let sub_cfg : String? = subm.get_one("config") catch { _ => panic() }
+  let sub_cfg : String? = subm.get_one("config")
   match sub_cfg {
     None => ()
     Some(_) => panic()

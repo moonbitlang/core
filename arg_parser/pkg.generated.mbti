@@ -119,7 +119,7 @@ type Matches
 pub fn Matches::count_of(Self, String) -> Int
 pub fn Matches::get_flag(Self, String) -> Bool
 pub fn Matches::get_many(Self, String) -> Array[String]?
-pub fn Matches::get_one(Self, String) -> String? raise ArgumentError
+pub fn Matches::get_one(Self, String) -> String?
 pub fn Matches::new() -> Self
 pub fn Matches::subcommand(Self) -> (String, Self)?
 pub fn Matches::subcommand_matches(Self, String) -> Self?

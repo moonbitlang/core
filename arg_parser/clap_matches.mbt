@@ -112,20 +112,9 @@ fn highest_source(sources : Array[ValueSource]) -> ValueSource? {
 }
 
 ///|
-pub fn Matches::get_one(
-  self : Matches,
-  name : String,
-) -> String? raise ArgumentError {
+pub fn Matches::get_one(self : Matches, name : String) -> String? {
   guard self.values.get(name) is Some(values) else { return None }
-  guard values.length() <= 1 else {
-    raise ArgumentError::InvalidValueCount(
-      "invalid value count for " + name + ": " + values.length().to_string(),
-    )
-  }
-  match values.get(0) {
-    Some(value) => Some(value)
-    None => None
-  }
+  values.get(0)
 }
 
 ///|
