@@ -1165,6 +1165,7 @@ fn apply_defaults(matches : Matches, args : Array[Arg]) -> Unit {
       Some(values) if values.length() > 0 =>
         for value in values {
           let _ = add_value(matches, arg.name, value, arg, ValueSource::Default)
+
         }
       _ =>
         match arg.default_value {
@@ -1176,6 +1177,7 @@ fn apply_defaults(matches : Matches, args : Array[Arg]) -> Unit {
               arg,
               ValueSource::Default,
             )
+
           }
           None => ()
         }
