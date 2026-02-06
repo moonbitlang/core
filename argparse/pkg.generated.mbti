@@ -1,0 +1,198 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/argparse"
+
+// Values
+pub fn[T : FromMatches] from_matches(Matches) -> T raise ArgumentError
+
+// Errors
+pub suberror ArgBuildError {
+  Unsupported(String)
+}
+pub impl Show for ArgBuildError
+
+pub(all) suberror ArgumentError {
+  UnknownArgument(String, String?)
+  InvalidArgument(String)
+  MissingValue(String)
+  MissingRequired(String)
+  TooFewValues(String, Int, Int)
+  TooManyValues(String, Int, Int)
+  TooManyPositionals
+  InvalidValue(String)
+  MissingGroup(String)
+  GroupConflict(String)
+}
+pub impl Show for ArgumentError
+
+pub suberror DisplayHelp {
+  Short(String)
+  Long(String)
+}
+pub impl Show for DisplayHelp
+
+pub suberror DisplayVersion {
+  Short(String)
+  Long(String)
+}
+pub impl Show for DisplayVersion
+
+// Types and methods
+pub enum ArgSpec {
+  Flag(FlagArg)
+  Option(OptionArg)
+  Positional(PositionalArg)
+}
+pub fn ArgSpec::flag(FlagArg) -> Self
+pub fn ArgSpec::option(OptionArg) -> Self
+pub fn ArgSpec::positional(PositionalArg) -> Self
+
+pub struct Command {
+  name : String
+  args : Array[ArgSpec]
+  subcommands : Array[Command]
+  about : String?
+  long_about : String?
+  version : String?
+  long_version : String?
+  aliases : Array[String]
+  visible_aliases : Array[String]
+  disable_help_flag : Bool
+  disable_version_flag : Bool
+  disable_help_subcommand : Bool
+  arg_required_else_help : Bool
+  subcommand_required : Bool
+  hidden : Bool
+
+  fn new(String, args? : Array[ArgSpec], subcommands? : Array[Command], about? : String, long_about? : String, version? : String, long_version? : String, aliases? : Array[String], visible_aliases? : Array[String], disable_help_flag? : Bool, disable_version_flag? : Bool, disable_help_subcommand? : Bool, arg_required_else_help? : Bool, subcommand_required? : Bool, hidden? : Bool) -> Command
+}
+pub fn Command::new(String, args? : Array[ArgSpec], subcommands? : Array[Self], about? : String, long_about? : String, version? : String, long_version? : String, aliases? : Array[String], visible_aliases? : Array[String], disable_help_flag? : Bool, disable_version_flag? : Bool, disable_help_subcommand? : Bool, arg_required_else_help? : Bool, subcommand_required? : Bool, hidden? : Bool) -> Self
+pub fn Command::parse(Self, argv? : Array[String], env? : Map[String, String]) -> Matches raise
+pub fn Command::render_help(Self) -> String
+pub fn Command::render_long_help(Self) -> String
+
+pub enum FlagAction {
+  SetTrue
+  SetFalse
+  Count
+  Help
+  Version
+}
+pub impl Eq for FlagAction
+pub impl Show for FlagAction
+
+pub struct FlagArg {
+  name : String
+  short : Char?
+  long : String?
+  about : String?
+  long_about : String?
+  action : FlagAction
+  env : String?
+  default_value : String?
+  requires : Array[String]
+  conflicts_with : Array[String]
+  group : String?
+  required : Bool
+  global : Bool
+  negatable : Bool
+  aliases : Array[String]
+  short_aliases : Array[Char]
+  visible_aliases : Array[String]
+  visible_short_aliases : Array[Char]
+  hidden : Bool
+  hide_long_help : Bool
+}
+pub fn FlagArg::new(String, short? : Char?, long? : String?, about? : String?, long_about? : String?, action? : FlagAction, env? : String?, default_value? : String?, requires? : Array[String], conflicts_with? : Array[String], group? : String?, required? : Bool, global? : Bool, negatable? : Bool, aliases? : Array[String], short_aliases? : Array[Char], visible_aliases? : Array[String], visible_short_aliases? : Array[Char], hidden? : Bool, hide_long_help? : Bool) -> Self
+
+type Matches
+pub fn Matches::count_of(Self, String) -> Int
+pub fn Matches::flags_map(Self) -> Map[String, Bool]
+pub fn Matches::get_flag(Self, String) -> Bool
+pub fn Matches::get_many(Self, String) -> Array[String]?
+pub fn Matches::get_one(Self, String) -> String?
+pub fn Matches::new() -> Self
+pub fn Matches::subcommand(Self) -> (String, Self)?
+pub fn Matches::subcommand_matches(Self, String) -> Self?
+pub fn Matches::subcommand_name(Self) -> String?
+pub fn Matches::value_source(Self, String) -> ValueSource?
+pub fn Matches::values_map(Self) -> Map[String, Array[String]]
+
+pub enum OptionAction {
+  Set
+  Append
+}
+pub impl Eq for OptionAction
+pub impl Show for OptionAction
+
+pub struct OptionArg {
+  name : String
+  short : Char?
+  long : String?
+  about : String?
+  long_about : String?
+  action : OptionAction
+  env : String?
+  default_value : String?
+  default_values : Array[String]?
+  num_args : ValueRange?
+  multiple : Bool
+  allow_hyphen_values : Bool
+  last : Bool
+  requires : Array[String]
+  conflicts_with : Array[String]
+  group : String?
+  required : Bool
+  global : Bool
+  aliases : Array[String]
+  short_aliases : Array[Char]
+  visible_aliases : Array[String]
+  visible_short_aliases : Array[Char]
+  hidden : Bool
+  hide_long_help : Bool
+}
+pub fn OptionArg::new(String, short? : Char?, long? : String?, about? : String?, long_about? : String?, action? : OptionAction, env? : String?, default_value? : String?, default_values? : Array[String]?, num_args? : ValueRange?, multiple? : Bool, allow_hyphen_values? : Bool, last? : Bool, requires? : Array[String], conflicts_with? : Array[String], group? : String?, required? : Bool, global? : Bool, aliases? : Array[String], short_aliases? : Array[Char], visible_aliases? : Array[String], visible_short_aliases? : Array[Char], hidden? : Bool, hide_long_help? : Bool) -> Self
+
+pub struct PositionalArg {
+  name : String
+  index : Int?
+  about : String?
+  long_about : String?
+  env : String?
+  default_value : String?
+  default_values : Array[String]?
+  num_args : ValueRange?
+  multiple : Bool
+  allow_hyphen_values : Bool
+  last : Bool
+  requires : Array[String]
+  conflicts_with : Array[String]
+  group : String?
+  required : Bool
+  global : Bool
+  hidden : Bool
+  hide_long_help : Bool
+}
+pub fn PositionalArg::new(String, index? : Int?, about? : String?, long_about? : String?, env? : String?, default_value? : String?, default_values? : Array[String]?, num_args? : ValueRange?, multiple? : Bool, allow_hyphen_values? : Bool, last? : Bool, requires? : Array[String], conflicts_with? : Array[String], group? : String?, required? : Bool, global? : Bool, hidden? : Bool, hide_long_help? : Bool) -> Self
+
+type ValueRange
+pub fn ValueRange::empty() -> Self
+pub fn ValueRange::new(lower? : Int?, upper? : Int?, lower_inclusive? : Bool, upper_inclusive? : Bool) -> Self
+pub fn ValueRange::single() -> Self
+pub impl Eq for ValueRange
+pub impl Show for ValueRange
+
+pub enum ValueSource {
+  Argv
+  Env
+  Default
+}
+pub impl Eq for ValueSource
+pub impl Show for ValueSource
+
+// Type aliases
+
+// Traits
+pub(open) trait FromMatches {
+  from_matches(Matches) -> Self raise ArgumentError
+}
+

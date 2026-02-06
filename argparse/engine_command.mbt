@@ -1,0 +1,1893 @@
+// Copyright 2026 International Digital Economy Academy
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+///|
+/// Clap-style command specification (builder API + parser).
+priv struct EngineCommand {
+  name : String
+  about : String
+  long_about : String
+  version : String
+  long_version : String
+  version_flag : Bool
+  help_flag : Bool
+  args : Array[EngineArg]
+  subcommands : Array[EngineCommand]
+  help_subcommand : Bool
+  subcommand_required : Bool
+  arg_required_else_help : Bool
+  groups : Array[EngineArgGroup]
+  aliases : Array[String]
+  visible_aliases : Array[String]
+  hidden : Bool
+}
+
+///|
+priv suberror ParseError {
+  EngineDisplayHelp(String, Bool)
+  EngineDisplayVersion(String, Bool)
+  EngineArg(EngineArgumentError)
+  Build(EngineArgBuildError)
+}
+
+///|
+fn raise_help(text : String, long_help : Bool) -> Unit raise ParseError {
+  raise ParseError::EngineDisplayHelp(text, long_help)
+}
+
+///|
+fn raise_version(text : String, long_version : Bool) -> Unit raise ParseError {
+  raise ParseError::EngineDisplayVersion(text, long_version)
+}
+
+///|
+fn[T] raise_arg(err : EngineArgumentError) -> T raise ParseError {
+  raise ParseError::EngineArg(err)
+}
+
+///|
+fn[T] raise_build(err : EngineArgBuildError) -> T raise ParseError {
+  raise ParseError::Build(err)
+}
+
+///|
+fn[T] raise_unknown_long(
+  name : String,
+  long_index : Map[String, EngineArg],
+) -> T raise ParseError {
+  let hint = suggest_long(name, long_index)
+  raise_arg(EngineArgumentError::UnknownArgument("--" + name, hint))
+}
+
+///|
+fn[T] raise_unknown_short(
+  short : Char,
+  short_index : Map[Char, EngineArg],
+) -> T raise ParseError {
+  let hint = suggest_short(short, short_index)
+  raise_arg(EngineArgumentError::UnknownArgument("-" + short.to_string(), hint))
+}
+
+///|
+fn EngineCommand::new(name : String) -> EngineCommand {
+  EngineCommand::{
+    name,
+    about: "",
+    long_about: "",
+    version: "",
+    long_version: "",
+    version_flag: true,
+    help_flag: true,
+    args: [],
+    subcommands: [],
+    help_subcommand: true,
+    subcommand_required: false,
+    arg_required_else_help: false,
+    groups: [],
+    aliases: [],
+    visible_aliases: [],
+    hidden: false,
+  }
+}
+
+///|
+fn EngineCommand::about(self : EngineCommand, text : String) -> EngineCommand {
+  EngineCommand::{ ..self, about: text }
+}
+
+///|
+fn EngineCommand::long_about(
+  self : EngineCommand,
+  text : String,
+) -> EngineCommand {
+  EngineCommand::{ ..self, long_about: text }
+}
+
+///|
+fn EngineCommand::version(self : EngineCommand, text : String) -> EngineCommand {
+  EngineCommand::{ ..self, version: text }
+}
+
+///|
+fn EngineCommand::long_version(
+  self : EngineCommand,
+  text : String,
+) -> EngineCommand {
+  EngineCommand::{ ..self, long_version: text }
+}
+
+///|
+fn EngineCommand::disable_version_flag(
+  self : EngineCommand,
+  disabled? : Bool = true,
+) -> EngineCommand {
+  EngineCommand::{ ..self, version_flag: !disabled }
+}
+
+///|
+fn EngineCommand::arg(self : EngineCommand, arg : EngineArg) -> EngineCommand {
+  let args = clone_array(self.args)
+  args.push(arg)
+  EngineCommand::{ ..self, args, }
+}
+
+///|
+fn EngineCommand::subcommand(
+  self : EngineCommand,
+  sub : EngineCommand,
+) -> EngineCommand {
+  let subs = clone_array(self.subcommands)
+  subs.push(sub)
+  EngineCommand::{ ..self, subcommands: subs }
+}
+
+///|
+/// Disable the built-in `help` subcommand (enabled by default).
+fn EngineCommand::disable_help_subcommand(
+  self : EngineCommand,
+  disabled? : Bool = true,
+) -> EngineCommand {
+  EngineCommand::{ ..self, help_subcommand: !disabled }
+}
+
+///|
+/// Require that one of the configured subcommands be present.
+fn EngineCommand::subcommand_required(
+  self : EngineCommand,
+  required? : Bool = true,
+) -> EngineCommand {
+  EngineCommand::{ ..self, subcommand_required: required }
+}
+
+///|
+/// Show short help when no argv tokens are provided.
+fn EngineCommand::arg_required_else_help(
+  self : EngineCommand,
+  enabled? : Bool = true,
+) -> EngineCommand {
+  EngineCommand::{ ..self, arg_required_else_help: enabled }
+}
+
+///|
+/// Disable the built-in `help` flag (`-h`, `--help`).
+fn EngineCommand::disable_help_flag(
+  self : EngineCommand,
+  disabled? : Bool = true,
+) -> EngineCommand {
+  EngineCommand::{ ..self, help_flag: !disabled }
+}
+
+///|
+/// Hide a command from help output.
+fn EngineCommand::hide(
+  self : EngineCommand,
+  value? : Bool = true,
+) -> EngineCommand {
+  EngineCommand::{ ..self, hidden: value }
+}
+
+///|
+/// Add a command alias (accepted by the parser).
+fn EngineCommand::alias_name(
+  self : EngineCommand,
+  alias_name : String,
+) -> EngineCommand {
+  let aliases = clone_array(self.aliases)
+  aliases.push(alias_name)
+  EngineCommand::{ ..self, aliases, }
+}
+
+///|
+/// Add a visible command alias (accepted by the parser and shown in help).
+fn EngineCommand::visible_alias(
+  self : EngineCommand,
+  alias_name : String,
+) -> EngineCommand {
+  let visible = clone_array(self.visible_aliases)
+  visible.push(alias_name)
+  EngineCommand::{ ..self, visible_aliases: visible }
+}
+
+///|
+fn EngineCommand::render_help(self : EngineCommand) -> String {
+  render_help_short(self)
+}
+
+///|
+fn EngineCommand::render_long_help(self : EngineCommand) -> String {
+  render_help_long(self)
+}
+
+///|
+fn render_help_for_style(cmd : EngineCommand, long_help : Bool) -> String {
+  if long_help {
+    cmd.render_long_help()
+  } else {
+    cmd.render_help()
+  }
+}
+
+///|
+fn default_argv() -> Array[String] {
+  let args = @env.args()
+  if args.length() > 1 {
+    args[1:].to_array()
+  } else {
+    []
+  }
+}
+
+///|
+/// Parse using explicit argv array (excluding program name).
+///
+/// EngineDisplayHelp is returned as `EngineDisplayHelp::Short(text)` or `EngineDisplayHelp::Long(text)` instead of printing/exiting.
+/// `-h` yields short help; `--help` yields long help.
+/// `-V` yields short version; `--version` yields long version.
+fn EngineCommand::parse(
+  self : EngineCommand,
+  argv? : Array[String] = default_argv(),
+  env? : Map[String, String] = @env.get_env_vars(),
+) -> EngineMatches raise {
+  parse_command(self, argv, env, []) catch {
+    ParseError::EngineDisplayHelp(text, long_help) =>
+      if long_help {
+        raise EngineDisplayHelp::Long(text)
+      } else {
+        raise EngineDisplayHelp::Short(text)
+      }
+    ParseError::EngineDisplayVersion(text, long_version) =>
+      if long_version {
+        raise EngineDisplayVersion::Long(text)
+      } else {
+        raise EngineDisplayVersion::Short(text)
+      }
+    ParseError::EngineArg(err) => raise err
+    ParseError::Build(err) => raise err
+  }
+}
+
+///|
+fn parse_command(
+  cmd : EngineCommand,
+  argv : Array[String],
+  env : Map[String, String],
+  inherited_globals : Array[EngineArg],
+) -> EngineMatches raise ParseError {
+  validate_command(cmd) catch {
+    err => raise_build(err)
+  }
+  if cmd.arg_required_else_help && argv.length() == 0 {
+    raise_help(cmd.render_help(), false)
+  }
+  let matches = EngineMatches::new()
+  let globals_here = collect_globals(cmd.args)
+  let child_globals = concat_globals(inherited_globals, globals_here)
+  let long_index = build_long_index(inherited_globals, cmd.args)
+  let short_index = build_short_index(inherited_globals, cmd.args)
+  let positionals = positional_args(cmd.args)
+  let positional_values = []
+  let last_pos_idx = last_positional_index(positionals)
+  let mut i = 0
+  while i < argv.length() {
+    let arg = argv[i]
+    let force_positional = match last_pos_idx {
+      Some(idx) => positional_values.length() >= idx
+      None => false
+    }
+    if force_positional {
+      positional_values.push(arg)
+      i = i + 1
+      continue
+    }
+    if arg == "--" {
+      for rest in argv[i + 1:] {
+        positional_values.push(rest)
+      }
+      break
+    }
+    if help_flag_enabled(cmd) && arg == "-h" {
+      raise_help(cmd.render_help(), false)
+    }
+    if help_flag_enabled(cmd) && arg == "--help" {
+      raise_help(cmd.render_long_help(), true)
+    }
+    if version_flag_enabled(cmd) && arg == "-V" {
+      raise_version(command_version(cmd, false), false)
+    }
+    if version_flag_enabled(cmd) && arg == "--version" {
+      raise_version(command_version(cmd, true), true)
+    }
+    if should_parse_as_positional(
+        arg, positionals, positional_values, long_index, short_index,
+      ) {
+      positional_values.push(arg)
+      i = i + 1
+      continue
+    }
+    if arg.has_prefix("--") {
+      let (name, inline) = split_long(arg)
+      match long_index.get(name) {
+        None =>
+          // Support `--no-<flag>` when the underlying flag is marked `negatable`.
+          if name.has_prefix("no-") {
+            let target = match name.strip_prefix("no-") {
+              Some(view) => view.to_string()
+              None => ""
+            }
+            match long_index.get(target) {
+              None => raise_unknown_long(name, long_index)
+              Some(spec) => {
+                if !spec.negatable || spec.takes_value {
+                  raise_unknown_long(name, long_index)
+                }
+                if inline is Some(_) {
+                  raise_arg(EngineArgumentError::InvalidArgument(arg))
+                }
+                let value = match spec.action {
+                  EngineArgAction::SetFalse => true
+                  _ => false
+                }
+                matches.flags[spec.name] = value
+                matches.flag_sources[spec.name] = EngineValueSource::Argv
+              }
+            }
+          } else {
+            raise_unknown_long(name, long_index)
+          }
+        Some(spec) =>
+          if spec.takes_value {
+            let value = if inline is Some(v) {
+              v
+            } else {
+              if i + 1 >= argv.length() {
+                raise_arg(EngineArgumentError::MissingValue("--" + name))
+              }
+              i = i + 1
+              argv[i]
+            }
+            match assign_value(matches, spec, value, EngineValueSource::Argv) {
+              Ok(_) => ()
+              Err(e) => raise_arg(e)
+            }
+          } else {
+            match spec.action {
+              EngineArgAction::Help => raise_help(cmd.render_long_help(), true)
+              EngineArgAction::Version =>
+                raise_version(command_version(cmd, true), true)
+              _ => apply_flag(matches, spec, EngineValueSource::Argv)
+            }
+          }
+      }
+      i = i + 1
+      continue
+    }
+    if arg.has_prefix("-") && arg != "-" {
+      // Parse short groups like `-abc` and short values like `-c3`.
+      let mut pos = 1
+      while pos < arg.length() {
+        let short = arg.get_char(pos).unwrap()
+        if short == 'h' && help_flag_enabled(cmd) {
+          raise_help(cmd.render_help(), false)
+        }
+        if short == 'V' && version_flag_enabled(cmd) {
+          raise_version(command_version(cmd, false), false)
+        }
+        let spec = match short_index.get(short) {
+          Some(v) => v
+          None => raise_unknown_short(short, short_index)
+        }
+        if spec.takes_value {
+          let value = if pos + 1 < arg.length() {
+            let rest0 = arg.unsafe_substring(start=pos + 1, end=arg.length())
+            match rest0.strip_prefix("=") {
+              Some(view) => view.to_string()
+              None => rest0
+            }
+          } else {
+            if i + 1 >= argv.length() {
+              raise_arg(
+                EngineArgumentError::MissingValue("-" + short.to_string()),
+              )
+            }
+            i = i + 1
+            argv[i]
+          }
+          match assign_value(matches, spec, value, EngineValueSource::Argv) {
+            Ok(_) => ()
+            Err(e) => raise_arg(e)
+          }
+          break
+        } else {
+          match spec.action {
+            EngineArgAction::Help => raise_help(cmd.render_help(), false)
+            EngineArgAction::Version =>
+              raise_version(command_version(cmd, false), false)
+            _ => apply_flag(matches, spec, EngineValueSource::Argv)
+          }
+        }
+        pos = pos + 1
+      }
+      i = i + 1
+      continue
+    }
+    if help_subcommand_enabled(cmd) && arg == "help" {
+      let rest = argv[i + 1:].to_array()
+      let (target, long_help) = resolve_help_target(cmd, rest)
+      let text = render_help_for_style(target, long_help)
+      raise_help(text, long_help)
+    }
+    if cmd.subcommands.length() > 0 {
+      match find_subcommand(cmd.subcommands, arg) {
+        Some(sub) => {
+          let rest = argv[i + 1:].to_array()
+          let sub_matches = parse_command(sub, rest, env, child_globals)
+          matches.subcommand = Some((sub.name, sub_matches))
+          // Merge argv-provided globals from the subcommand parse into the parent
+          // so globals work even when they appear after the subcommand name.
+          merge_globals_from_child(matches, sub_matches, child_globals)
+          let env_args = concat_globals(inherited_globals, cmd.args)
+          let parent_matches = finalize_matches(
+            cmd, matches, positionals, positional_values, env_args, env,
+          )
+          match parent_matches.subcommand {
+            Some((sub_name, sub_m)) => {
+              // After parent parsing, copy the final globals into the subcommand.
+              propagate_globals_to_child(parent_matches, sub_m, child_globals)
+              parent_matches.subcommand = Some((sub_name, sub_m))
+            }
+            None => ()
+          }
+          return parent_matches
+        }
+        None => ()
+      }
+    }
+    positional_values.push(arg)
+    i = i + 1
+  }
+  let env_args = concat_globals(inherited_globals, cmd.args)
+  finalize_matches(cmd, matches, positionals, positional_values, env_args, env)
+}
+
+///|
+fn finalize_matches(
+  cmd : EngineCommand,
+  matches : EngineMatches,
+  positionals : Array[EngineArg],
+  positional_values : Array[String],
+  env_args : Array[EngineArg],
+  env : Map[String, String],
+) -> EngineMatches raise ParseError {
+  match assign_positionals(matches, positionals, positional_values) {
+    Ok(_) => ()
+    Err(e) => raise_arg(e)
+  }
+  match apply_env(matches, env_args, env) {
+    Ok(_) => ()
+    Err(e) => raise_arg(e)
+  }
+  apply_defaults(matches, env_args)
+  validate_values(cmd, matches)
+  validate_relationships(matches, env_args)
+  validate_groups(cmd, matches)
+  validate_command_policies(cmd, matches)
+  matches
+}
+
+///|
+fn help_subcommand_enabled(cmd : EngineCommand) -> Bool {
+  cmd.help_subcommand && cmd.subcommands.length() > 0
+}
+
+///|
+fn help_flag_enabled(cmd : EngineCommand) -> Bool {
+  cmd.help_flag
+}
+
+///|
+fn version_flag_enabled(cmd : EngineCommand) -> Bool {
+  cmd.version_flag && (cmd.version != "" || cmd.long_version != "")
+}
+
+///|
+fn command_version(cmd : EngineCommand, long_version : Bool) -> String {
+  if long_version {
+    if cmd.long_version != "" {
+      cmd.long_version
+    } else {
+      cmd.version
+    }
+  } else if cmd.version != "" {
+    cmd.version
+  } else {
+    cmd.long_version
+  }
+}
+
+///|
+fn validate_command(cmd : EngineCommand) -> Unit raise EngineArgBuildError {
+  validate_group_defs(cmd.groups)
+  validate_group_refs(cmd)
+  validate_arg_defs(cmd.args)
+  validate_subcommand_defs(cmd.subcommands)
+  validate_subcommand_required_policy(cmd)
+  validate_help_subcommand(cmd)
+  validate_help_flag(cmd)
+  validate_version_flag(cmd)
+  validate_version_actions(cmd)
+  for arg in cmd.args {
+    validate_arg(arg)
+  }
+  for sub in cmd.subcommands {
+    validate_command(sub)
+  }
+}
+
+///|
+fn validate_arg(arg : EngineArg) -> Unit raise EngineArgBuildError {
+  let positional = is_positional_arg(arg)
+  let has_positional_only = arg.index is Some(_) ||
+    arg.allow_hyphen_values ||
+    arg.last
+  if !positional && has_positional_only {
+    raise EngineArgBuildError::Unsupported(
+      "positional-only settings require no short/long/aliases",
+    )
+  }
+  if arg.negatable && arg.takes_value {
+    raise EngineArgBuildError::Unsupported(
+      "negatable is only supported for flags",
+    )
+  }
+  if arg.action == EngineArgAction::Count && arg.takes_value {
+    raise EngineArgBuildError::Unsupported("count is only supported for flags")
+  }
+  if arg.action == EngineArgAction::Help ||
+    arg.action == EngineArgAction::Version {
+    if arg.takes_value {
+      raise EngineArgBuildError::Unsupported(
+        "help/version actions require flags",
+      )
+    }
+    if arg.negatable {
+      raise EngineArgBuildError::Unsupported(
+        "help/version actions do not support negatable",
+      )
+    }
+    if arg.env is Some(_) ||
+      arg.default_value is Some(_) ||
+      arg.default_values is Some(_) {
+      raise EngineArgBuildError::Unsupported(
+        "help/version actions do not support env/defaults",
+      )
+    }
+    if arg.num_args is Some(_) || arg.multiple {
+      raise EngineArgBuildError::Unsupported(
+        "help/version actions do not support multiple values",
+      )
+    }
+    let has_option = arg.long is Some(_) ||
+      arg.short is Some(_) ||
+      arg.aliases.length() > 0 ||
+      arg.visible_aliases.length() > 0 ||
+      arg.short_aliases.length() > 0 ||
+      arg.visible_short_aliases.length() > 0
+    if !has_option {
+      raise EngineArgBuildError::Unsupported(
+        "help/version actions require short/long option",
+      )
+    }
+  }
+  if arg.num_args is Some(_) && !arg.takes_value {
+    raise EngineArgBuildError::Unsupported(
+      "min/max values require value-taking arguments",
+    )
+  }
+  let (min, max) = arg_min_max_for_validate(arg)
+  let allow_multi = arg.multiple || arg.action == EngineArgAction::Append
+  if (min > 1 || (max is Some(m) && m > 1)) && !allow_multi {
+    raise EngineArgBuildError::Unsupported(
+      "multiple values require multiple/append",
+    )
+  }
+  if (arg.default_value is Some(_) || arg.default_values is Some(_)) &&
+    !arg.takes_value {
+    raise EngineArgBuildError::Unsupported(
+      "default values require value-taking arguments",
+    )
+  }
+  match arg.default_values {
+    Some(values) if values.length() > 1 &&
+      !arg.multiple &&
+      arg.action != EngineArgAction::Append =>
+      raise EngineArgBuildError::Unsupported(
+        "default_values require multiple/append arguments",
+      )
+    _ => ()
+  }
+}
+
+///|
+fn validate_group_defs(
+  groups : Array[EngineArgGroup],
+) -> Unit raise EngineArgBuildError {
+  let seen : Map[String, Bool] = {}
+  for group in groups {
+    if seen.get(group.name) is Some(_) {
+      raise EngineArgBuildError::Unsupported("duplicate group: " + group.name)
+    }
+    seen[group.name] = true
+  }
+  for group in groups {
+    for required in group.requires {
+      if required == group.name {
+        raise EngineArgBuildError::Unsupported(
+          "group cannot require itself: " + group.name,
+        )
+      }
+      if seen.get(required) is None {
+        raise EngineArgBuildError::Unsupported(
+          "unknown group requires target: " + group.name + " -> " + required,
+        )
+      }
+    }
+    for conflict in group.conflicts_with {
+      if conflict == group.name {
+        raise EngineArgBuildError::Unsupported(
+          "group cannot conflict with itself: " + group.name,
+        )
+      }
+      if seen.get(conflict) is None {
+        raise EngineArgBuildError::Unsupported(
+          "unknown group conflicts_with target: " +
+          group.name +
+          " -> " +
+          conflict,
+        )
+      }
+    }
+  }
+}
+
+///|
+fn validate_group_refs(cmd : EngineCommand) -> Unit raise EngineArgBuildError {
+  if cmd.groups.length() == 0 {
+    return
+  }
+  let group_index : Map[String, Bool] = {}
+  for group in cmd.groups {
+    group_index[group.name] = true
+  }
+  let arg_index : Map[String, Bool] = {}
+  for arg in cmd.args {
+    arg_index[arg.name] = true
+  }
+  for arg in cmd.args {
+    for name in arg.groups {
+      if group_index.get(name) is None {
+        raise EngineArgBuildError::Unsupported("unknown group: " + name)
+      }
+    }
+  }
+  for group in cmd.groups {
+    for name in group.args {
+      if arg_index.get(name) is None {
+        raise EngineArgBuildError::Unsupported(
+          "unknown group arg: " + group.name + " -> " + name,
+        )
+      }
+    }
+  }
+}
+
+///|
+fn validate_arg_defs(args : Array[EngineArg]) -> Unit raise EngineArgBuildError {
+  let seen_names : Map[String, Bool] = {}
+  let seen_long : Map[String, Bool] = {}
+  let seen_short : Map[Char, Bool] = {}
+  for arg in args {
+    if seen_names.get(arg.name) is Some(_) {
+      raise EngineArgBuildError::Unsupported("duplicate arg name: " + arg.name)
+    }
+    seen_names[arg.name] = true
+    for name in collect_long_names(arg) {
+      if seen_long.get(name) is Some(_) {
+        raise EngineArgBuildError::Unsupported(
+          "duplicate long option: --" + name,
+        )
+      }
+      seen_long[name] = true
+    }
+    for short in collect_short_names(arg) {
+      if seen_short.get(short) is Some(_) {
+        raise EngineArgBuildError::Unsupported(
+          "duplicate short option: -" + short.to_string(),
+        )
+      }
+      seen_short[short] = true
+    }
+  }
+  for arg in args {
+    for required in arg.requires {
+      if required == arg.name {
+        raise EngineArgBuildError::Unsupported(
+          "arg cannot require itself: " + arg.name,
+        )
+      }
+      if seen_names.get(required) is None {
+        raise EngineArgBuildError::Unsupported(
+          "unknown requires target: " + arg.name + " -> " + required,
+        )
+      }
+    }
+    for conflict in arg.conflicts_with {
+      if conflict == arg.name {
+        raise EngineArgBuildError::Unsupported(
+          "arg cannot conflict with itself: " + arg.name,
+        )
+      }
+      if seen_names.get(conflict) is None {
+        raise EngineArgBuildError::Unsupported(
+          "unknown conflicts_with target: " + arg.name + " -> " + conflict,
+        )
+      }
+    }
+  }
+}
+
+///|
+fn validate_subcommand_defs(
+  subs : Array[EngineCommand],
+) -> Unit raise EngineArgBuildError {
+  if subs.length() == 0 {
+    return
+  }
+  let seen : Map[String, Bool] = {}
+  for sub in subs {
+    for name in collect_subcommand_names(sub) {
+      if seen.get(name) is Some(_) {
+        raise EngineArgBuildError::Unsupported("duplicate subcommand: " + name)
+      }
+      seen[name] = true
+    }
+  }
+}
+
+///|
+fn validate_subcommand_required_policy(
+  cmd : EngineCommand,
+) -> Unit raise EngineArgBuildError {
+  if cmd.subcommand_required && cmd.subcommands.length() == 0 {
+    raise EngineArgBuildError::Unsupported(
+      "subcommand_required requires at least one subcommand",
+    )
+  }
+}
+
+///|
+fn validate_help_subcommand(
+  cmd : EngineCommand,
+) -> Unit raise EngineArgBuildError {
+  if !help_subcommand_enabled(cmd) {
+    return
+  }
+  if find_subcommand(cmd.subcommands, "help") is Some(_) {
+    raise EngineArgBuildError::Unsupported(
+      "subcommand name reserved for built-in help: help (disable with disable_help_subcommand)",
+    )
+  }
+}
+
+///|
+fn validate_help_flag(cmd : EngineCommand) -> Unit raise EngineArgBuildError {
+  if !help_flag_enabled(cmd) {
+    return
+  }
+  for arg in cmd.args {
+    for name in collect_long_names(arg) {
+      if name == "help" {
+        raise EngineArgBuildError::Unsupported(
+          "option name reserved for built-in help: --help (disable with disable_help_flag)",
+        )
+      }
+    }
+    for short in collect_short_names(arg) {
+      if short == 'h' {
+        raise EngineArgBuildError::Unsupported(
+          "option name reserved for built-in help: -h (disable with disable_help_flag)",
+        )
+      }
+    }
+  }
+}
+
+///|
+fn validate_version_flag(cmd : EngineCommand) -> Unit raise EngineArgBuildError {
+  if !version_flag_enabled(cmd) {
+    return
+  }
+  for arg in cmd.args {
+    for name in collect_long_names(arg) {
+      if name == "version" {
+        raise EngineArgBuildError::Unsupported(
+          "option name reserved for built-in version: --version (disable with disable_version_flag)",
+        )
+      }
+    }
+    for short in collect_short_names(arg) {
+      if short == 'V' {
+        raise EngineArgBuildError::Unsupported(
+          "option name reserved for built-in version: -V (disable with disable_version_flag)",
+        )
+      }
+    }
+  }
+}
+
+///|
+fn validate_version_actions(
+  cmd : EngineCommand,
+) -> Unit raise EngineArgBuildError {
+  if cmd.version != "" || cmd.long_version != "" {
+    return
+  }
+  for arg in cmd.args {
+    if arg.action == EngineArgAction::Version {
+      raise EngineArgBuildError::Unsupported(
+        "version action requires command version text",
+      )
+    }
+  }
+}
+
+///|
+fn validate_command_policies(
+  cmd : EngineCommand,
+  matches : EngineMatches,
+) -> Unit raise ParseError {
+  if cmd.subcommand_required &&
+    cmd.subcommands.length() > 0 &&
+    matches.subcommand is None {
+    raise_arg(EngineArgumentError::MissingRequired("subcommand"))
+  }
+}
+
+///|
+fn validate_groups(
+  cmd : EngineCommand,
+  matches : EngineMatches,
+) -> Unit raise ParseError {
+  if cmd.groups.length() == 0 {
+    return
+  }
+  let group_presence : Map[String, Int] = {}
+  for group in cmd.groups {
+    let mut count = 0
+    for arg in cmd.args {
+      if !arg_in_group(arg, group) {
+        continue
+      }
+      if matches_has_value_or_flag(matches, arg.name) {
+        count = count + 1
+      }
+    }
+    group_presence[group.name] = count
+    if group.required && count == 0 {
+      raise_arg(EngineArgumentError::MissingGroup(group.name))
+    }
+    if !group.multiple && count > 1 {
+      raise_arg(EngineArgumentError::GroupConflict(group.name))
+    }
+  }
+  for group in cmd.groups {
+    let count = group_presence[group.name]
+    if count == 0 {
+      continue
+    }
+    for required in group.requires {
+      if group_presence.get(required).unwrap_or(0) == 0 {
+        raise_arg(EngineArgumentError::MissingGroup(required))
+      }
+    }
+    for conflict in group.conflicts_with {
+      if group_presence.get(conflict).unwrap_or(0) > 0 {
+        raise_arg(
+          EngineArgumentError::GroupConflict(
+            group.name + " conflicts with " + conflict,
+          ),
+        )
+      }
+    }
+  }
+}
+
+///|
+fn arg_in_group(arg : EngineArg, group : EngineArgGroup) -> Bool {
+  arg.groups.contains(group.name) || group.args.contains(arg.name)
+}
+
+///|
+fn validate_values(
+  cmd : EngineCommand,
+  matches : EngineMatches,
+) -> Unit raise ParseError {
+  for arg in cmd.args {
+    let present = matches_has_value_or_flag(matches, arg.name)
+    if arg.required && !present {
+      raise_arg(EngineArgumentError::MissingRequired(arg.name))
+    }
+    if !arg.takes_value {
+      continue
+    }
+    let values = matches.values.get(arg.name).unwrap_or([])
+    let count = values.length()
+    let (min, max) = arg_min_max(arg)
+    if count < min {
+      raise_arg(EngineArgumentError::TooFewValues(arg.name, count, min))
+    }
+    match max {
+      Some(max) if count > max =>
+        raise_arg(EngineArgumentError::TooManyValues(arg.name, count, max))
+      _ => ()
+    }
+  }
+}
+
+///|
+fn validate_relationships(
+  matches : EngineMatches,
+  args : Array[EngineArg],
+) -> Unit raise ParseError {
+  for arg in args {
+    if !matches_has_value_or_flag(matches, arg.name) {
+      continue
+    }
+    for required in arg.requires {
+      if !matches_has_value_or_flag(matches, required) {
+        raise_arg(EngineArgumentError::MissingRequired(required))
+      }
+    }
+    for conflict in arg.conflicts_with {
+      if matches_has_value_or_flag(matches, conflict) {
+        raise_arg(
+          EngineArgumentError::InvalidArgument(
+            "conflicting arguments: " + arg.name + " and " + conflict,
+          ),
+        )
+      }
+    }
+  }
+}
+
+///|
+fn is_positional_arg(arg : EngineArg) -> Bool {
+  arg.short is None &&
+  arg.long is None &&
+  arg.aliases.length() == 0 &&
+  arg.short_aliases.length() == 0 &&
+  arg.visible_aliases.length() == 0 &&
+  arg.visible_short_aliases.length() == 0
+}
+
+///|
+fn assign_positionals(
+  matches : EngineMatches,
+  positionals : Array[EngineArg],
+  values : Array[String],
+) -> Result[Unit, EngineArgumentError] {
+  let mut cursor = 0
+  for idx in 0..<positionals.length() {
+    let arg = positionals[idx]
+    let remaining = values.length() - cursor
+    if arg.multiple {
+      let mut taken = 0
+      while cursor + taken < values.length() {
+        match
+          add_value(
+            matches,
+            arg.name,
+            values[cursor + taken],
+            arg,
+            EngineValueSource::Argv,
+          ) {
+          Ok(_) => ()
+          Err(e) => return Err(e)
+        }
+        taken = taken + 1
+      }
+      cursor = values.length()
+      continue
+    }
+    if remaining > 0 {
+      match
+        add_value(
+          matches,
+          arg.name,
+          values[cursor],
+          arg,
+          EngineValueSource::Argv,
+        ) {
+        Ok(_) => ()
+        Err(e) => return Err(e)
+      }
+      cursor = cursor + 1
+    }
+  }
+  if cursor < values.length() {
+    return Err(EngineArgumentError::TooManyPositionals)
+  }
+  Ok(())
+}
+
+///|
+fn add_value(
+  matches : EngineMatches,
+  name : String,
+  value : String,
+  arg : EngineArg,
+  source : EngineValueSource,
+) -> Result[Unit, EngineArgumentError] {
+  if arg.multiple || arg.action == EngineArgAction::Append {
+    let arr = matches.values.get(name).unwrap_or([])
+    arr.push(value)
+    matches.values[name] = arr
+    let srcs = matches.value_sources.get(name).unwrap_or([])
+    srcs.push(source)
+    matches.value_sources[name] = srcs
+  } else {
+    matches.values[name] = [value]
+    matches.value_sources[name] = [source]
+  }
+  Ok(())
+}
+
+///|
+fn assign_value(
+  matches : EngineMatches,
+  arg : EngineArg,
+  value : String,
+  source : EngineValueSource,
+) -> Result[Unit, EngineArgumentError] {
+  match arg.action {
+    EngineArgAction::Append => add_value(matches, arg.name, value, arg, source)
+    EngineArgAction::Set => add_value(matches, arg.name, value, arg, source)
+    EngineArgAction::SetTrue =>
+      match parse_bool(value) {
+        Ok(flag) => {
+          matches.flags[arg.name] = flag
+          matches.flag_sources[arg.name] = source
+          Ok(())
+        }
+        Err(e) => Err(e)
+      }
+    EngineArgAction::SetFalse =>
+      match parse_bool(value) {
+        Ok(flag) => {
+          matches.flags[arg.name] = !flag
+          matches.flag_sources[arg.name] = source
+          Ok(())
+        }
+        Err(e) => Err(e)
+      }
+    EngineArgAction::Count =>
+      match parse_count(value) {
+        Ok(count) => {
+          matches.counts[arg.name] = count
+          matches.flags[arg.name] = count > 0
+          matches.flag_sources[arg.name] = source
+          Ok(())
+        }
+        Err(e) => Err(e)
+      }
+    EngineArgAction::Help =>
+      Err(
+        EngineArgumentError::InvalidArgument("help action does not take values"),
+      )
+    EngineArgAction::Version =>
+      Err(
+        EngineArgumentError::InvalidArgument(
+          "version action does not take values",
+        ),
+      )
+  }
+}
+
+///|
+fn apply_env(
+  matches : EngineMatches,
+  args : Array[EngineArg],
+  env : Map[String, String],
+) -> Result[Unit, EngineArgumentError] {
+  for arg in args {
+    let name = arg.name
+    if matches_has_value_or_flag(matches, name) {
+      continue
+    }
+    let env_name = match arg.env {
+      Some(value) => value
+      None => continue
+    }
+    let value = match env.get(env_name) {
+      Some(v) => v
+      None => continue
+    }
+    if arg.takes_value {
+      match assign_value(matches, arg, value, EngineValueSource::Env) {
+        Ok(_) => ()
+        Err(e) => return Err(e)
+      }
+      continue
+    }
+    match arg.action {
+      EngineArgAction::Count =>
+        match parse_count(value) {
+          Ok(count) => {
+            matches.counts[name] = count
+            matches.flags[name] = count > 0
+            matches.flag_sources[name] = EngineValueSource::Env
+          }
+          Err(e) => return Err(e)
+        }
+      EngineArgAction::SetFalse =>
+        match parse_bool(value) {
+          Ok(flag) => {
+            matches.flags[name] = !flag
+            matches.flag_sources[name] = EngineValueSource::Env
+          }
+          Err(e) => return Err(e)
+        }
+      EngineArgAction::SetTrue =>
+        match parse_bool(value) {
+          Ok(flag) => {
+            matches.flags[name] = flag
+            matches.flag_sources[name] = EngineValueSource::Env
+          }
+          Err(e) => return Err(e)
+        }
+      EngineArgAction::Set =>
+        match parse_bool(value) {
+          Ok(flag) => {
+            matches.flags[name] = flag
+            matches.flag_sources[name] = EngineValueSource::Env
+          }
+          Err(e) => return Err(e)
+        }
+      EngineArgAction::Append => ()
+      EngineArgAction::Help => ()
+      EngineArgAction::Version => ()
+    }
+  }
+  Ok(())
+}
+
+///|
+fn apply_defaults(matches : EngineMatches, args : Array[EngineArg]) -> Unit {
+  for arg in args {
+    if !arg.takes_value {
+      continue
+    }
+    if matches_has_value_or_flag(matches, arg.name) {
+      continue
+    }
+    match arg.default_values {
+      Some(values) if values.length() > 0 =>
+        for value in values {
+          let _ = add_value(
+            matches,
+            arg.name,
+            value,
+            arg,
+            EngineValueSource::Default,
+          )
+        }
+      _ =>
+        match arg.default_value {
+          Some(value) => {
+            let _ = add_value(
+              matches,
+              arg.name,
+              value,
+              arg,
+              EngineValueSource::Default,
+            )
+          }
+          None => ()
+        }
+    }
+  }
+}
+
+///|
+fn matches_has_value_or_flag(matches : EngineMatches, name : String) -> Bool {
+  matches.flags.get(name) is Some(_) || matches.values.get(name) is Some(_)
+}
+
+///|
+fn collect_long_names(arg : EngineArg) -> Array[String] {
+  let names = []
+  match arg.long {
+    Some(value) => names.push(value)
+    None => ()
+  }
+  for name in arg.aliases {
+    names.push(name)
+  }
+  for name in arg.visible_aliases {
+    names.push(name)
+  }
+  names
+}
+
+///|
+fn collect_short_names(arg : EngineArg) -> Array[Char] {
+  let names = []
+  match arg.short {
+    Some(value) => names.push(value)
+    None => ()
+  }
+  for name in arg.short_aliases {
+    names.push(name)
+  }
+  for name in arg.visible_short_aliases {
+    names.push(name)
+  }
+  names
+}
+
+///|
+fn collect_subcommand_names(cmd : EngineCommand) -> Array[String] {
+  let names = [cmd.name]
+  for name in cmd.aliases {
+    names.push(name)
+  }
+  for name in cmd.visible_aliases {
+    names.push(name)
+  }
+  names
+}
+
+///|
+fn apply_flag(
+  matches : EngineMatches,
+  arg : EngineArg,
+  source : EngineValueSource,
+) -> Unit {
+  match arg.action {
+    EngineArgAction::SetTrue => matches.flags[arg.name] = true
+    EngineArgAction::SetFalse => matches.flags[arg.name] = false
+    EngineArgAction::Count => {
+      let current = matches.counts.get(arg.name).unwrap_or(0)
+      matches.counts[arg.name] = current + 1
+      matches.flags[arg.name] = true
+    }
+    EngineArgAction::Help => ()
+    EngineArgAction::Version => ()
+    _ => matches.flags[arg.name] = true
+  }
+  matches.flag_sources[arg.name] = source
+}
+
+///|
+fn parse_bool(value : String) -> Result[Bool, EngineArgumentError] {
+  if value == "1" || value == "true" || value == "yes" || value == "on" {
+    Ok(true)
+  } else if value == "0" || value == "false" || value == "no" || value == "off" {
+    Ok(false)
+  } else {
+    Err(EngineArgumentError::InvalidValue("invalid bool: " + value))
+  }
+}
+
+///|
+fn parse_count(value : String) -> Result[Int, EngineArgumentError] {
+  let res : Result[Int, Error] = try? @strconv.parse_int(value)
+  match res {
+    Ok(v) => Ok(v)
+    Err(_) => Err(EngineArgumentError::InvalidValue("invalid int: " + value))
+  }
+}
+
+///|
+fn suggest_long(name : String, long_index : Map[String, EngineArg]) -> String? {
+  let candidates = map_string_keys(long_index)
+  match suggest_name(name, candidates) {
+    Some(best) => Some("--" + best)
+    None => None
+  }
+}
+
+///|
+fn suggest_short(short : Char, short_index : Map[Char, EngineArg]) -> String? {
+  let candidates = map_char_keys(short_index)
+  let input = short.to_string()
+  match suggest_name(input, candidates) {
+    Some(best) => Some("-" + best)
+    None => None
+  }
+}
+
+///|
+fn map_string_keys(map : Map[String, EngineArg]) -> Array[String] {
+  let keys = []
+  for key, _ in map {
+    keys.push(key)
+  }
+  keys
+}
+
+///|
+fn map_char_keys(map : Map[Char, EngineArg]) -> Array[String] {
+  let keys = []
+  for key, _ in map {
+    keys.push(key.to_string())
+  }
+  keys
+}
+
+///|
+fn suggest_name(input : String, candidates : Array[String]) -> String? {
+  let mut best : String? = None
+  let mut best_dist = 0
+  let mut has_best = false
+  let max_dist = suggestion_threshold(input.length())
+  for cand in candidates {
+    let dist = levenshtein(input, cand)
+    if !has_best || dist < best_dist {
+      best_dist = dist
+      best = Some(cand)
+      has_best = true
+    }
+  }
+  match best {
+    Some(name) if best_dist <= max_dist => Some(name)
+    _ => None
+  }
+}
+
+///|
+fn suggestion_threshold(len : Int) -> Int {
+  if len <= 4 {
+    1
+  } else if len <= 8 {
+    2
+  } else {
+    3
+  }
+}
+
+///|
+fn levenshtein(a : String, b : String) -> Int {
+  let aa = string_chars(a)
+  let bb = string_chars(b)
+  let m = aa.length()
+  let n = bb.length()
+  if m == 0 {
+    return n
+  }
+  if n == 0 {
+    return m
+  }
+  let mut prev = Array::new(capacity=n + 1)
+  let mut curr = Array::new(capacity=n + 1)
+  let mut j = 0
+  while j <= n {
+    prev.push(j)
+    curr.push(0)
+    j = j + 1
+  }
+  let mut i = 1
+  while i <= m {
+    curr[0] = i
+    let mut j2 = 1
+    while j2 <= n {
+      let cost = if aa[i - 1] == bb[j2 - 1] { 0 } else { 1 }
+      let del = prev[j2] + 1
+      let ins = curr[j2 - 1] + 1
+      let sub = prev[j2 - 1] + cost
+      curr[j2] = min3(del, ins, sub)
+      j2 = j2 + 1
+    }
+    let temp = prev
+    prev = curr
+    curr = temp
+    i = i + 1
+  }
+  prev[n]
+}
+
+///|
+fn string_chars(s : String) -> Array[Char] {
+  let out = []
+  for ch in s {
+    out.push(ch)
+  }
+  out
+}
+
+///|
+fn min3(a : Int, b : Int, c : Int) -> Int {
+  let m = if a < b { a } else { b }
+  if c < m {
+    c
+  } else {
+    m
+  }
+}
+
+///|
+fn build_long_index(
+  globals : Array[EngineArg],
+  args : Array[EngineArg],
+) -> Map[String, EngineArg] {
+  let index : Map[String, EngineArg] = {}
+  for arg in globals {
+    if arg.long is Some(name) {
+      index[name] = arg
+    }
+    for alias_name in arg.aliases {
+      index[alias_name] = arg
+    }
+    for alias_name in arg.visible_aliases {
+      index[alias_name] = arg
+    }
+  }
+  for arg in args {
+    if arg.long is Some(name) {
+      index[name] = arg
+    }
+    for alias_name in arg.aliases {
+      index[alias_name] = arg
+    }
+    for alias_name in arg.visible_aliases {
+      index[alias_name] = arg
+    }
+  }
+  index
+}
+
+///|
+fn build_short_index(
+  globals : Array[EngineArg],
+  args : Array[EngineArg],
+) -> Map[Char, EngineArg] {
+  let index : Map[Char, EngineArg] = {}
+  for arg in globals {
+    if arg.short is Some(value) {
+      index[value] = arg
+    }
+    for alias_name in arg.short_aliases {
+      index[alias_name] = arg
+    }
+    for alias_name in arg.visible_short_aliases {
+      index[alias_name] = arg
+    }
+  }
+  for arg in args {
+    if arg.short is Some(value) {
+      index[value] = arg
+    }
+    for alias_name in arg.short_aliases {
+      index[alias_name] = arg
+    }
+    for alias_name in arg.visible_short_aliases {
+      index[alias_name] = arg
+    }
+  }
+  index
+}
+
+///|
+fn collect_globals(args : Array[EngineArg]) -> Array[EngineArg] {
+  let out = []
+  for arg in args {
+    if arg.global &&
+      (
+        arg.long is Some(_) ||
+        arg.short is Some(_) ||
+        arg.aliases.length() > 0 ||
+        arg.short_aliases.length() > 0 ||
+        arg.visible_aliases.length() > 0 ||
+        arg.visible_short_aliases.length() > 0
+      ) {
+      out.push(arg)
+    }
+  }
+  out
+}
+
+///|
+fn concat_globals(
+  parent : Array[EngineArg],
+  more : Array[EngineArg],
+) -> Array[EngineArg] {
+  let out = clone_array(parent)
+  for arg in more {
+    out.push(arg)
+  }
+  out
+}
+
+///|
+fn merge_globals_from_child(
+  parent : EngineMatches,
+  child : EngineMatches,
+  globals : Array[EngineArg],
+) -> Unit {
+  for arg in globals {
+    let name = arg.name
+    if arg.takes_value {
+      let parent_vals = parent.values.get(name)
+      let child_vals = child.values.get(name)
+      let parent_srcs = parent.value_sources.get(name)
+      let child_srcs = child.value_sources.get(name)
+      if arg.multiple || arg.action == EngineArgAction::Append {
+        let merged = []
+        let merged_srcs = []
+        if parent_vals is Some(pv) {
+          for v in pv {
+            merged.push(v)
+          }
+        }
+        if parent_srcs is Some(ps) {
+          for s in ps {
+            merged_srcs.push(s)
+          }
+        }
+        if child_vals is Some(cv) {
+          for v in cv {
+            merged.push(v)
+          }
+        }
+        if child_srcs is Some(cs) {
+          for s in cs {
+            merged_srcs.push(s)
+          }
+        }
+        if merged.length() > 0 {
+          parent.values[name] = merged
+          parent.value_sources[name] = merged_srcs
+        }
+      } else {
+        let chosen = if child_vals is Some(cv) && cv.length() > 0 {
+          cv
+        } else if parent_vals is Some(pv) && pv.length() > 0 {
+          pv
+        } else {
+          []
+        }
+        if chosen.length() > 0 {
+          parent.values[name] = clone_array(chosen)
+          let chosen_srcs = if child_srcs is Some(cs) && cs.length() > 0 {
+            cs
+          } else if parent_srcs is Some(ps) && ps.length() > 0 {
+            ps
+          } else {
+            []
+          }
+          if chosen_srcs.length() > 0 {
+            parent.value_sources[name] = clone_array(chosen_srcs)
+          }
+        }
+      }
+    } else {
+      match child.flags.get(name) {
+        Some(v) => {
+          parent.flags[name] = v
+          match child.flag_sources.get(name) {
+            Some(src) => parent.flag_sources[name] = src
+            None => ()
+          }
+          if arg.action == EngineArgAction::Count {
+            let parent_count = parent.counts.get(name).unwrap_or(0)
+            let child_count = child.counts.get(name).unwrap_or(0)
+            let total = parent_count + child_count
+            parent.counts[name] = total
+            parent.flags[name] = total > 0
+            if parent.flag_sources.get(name) is Some(_) ||
+              child.flag_sources.get(name) is Some(_) {
+              parent.flag_sources[name] = EngineValueSource::Argv
+            }
+          }
+        }
+        None => ()
+      }
+    }
+  }
+}
+
+///|
+fn propagate_globals_to_child(
+  parent : EngineMatches,
+  child : EngineMatches,
+  globals : Array[EngineArg],
+) -> Unit {
+  for arg in globals {
+    let name = arg.name
+    if arg.takes_value {
+      match parent.values.get(name) {
+        Some(values) => {
+          child.values[name] = clone_array(values)
+          match parent.value_sources.get(name) {
+            Some(srcs) => child.value_sources[name] = clone_array(srcs)
+            None => ()
+          }
+        }
+        None => ()
+      }
+    } else {
+      match parent.flags.get(name) {
+        Some(v) => {
+          child.flags[name] = v
+          match parent.flag_sources.get(name) {
+            Some(src) => child.flag_sources[name] = src
+            None => ()
+          }
+          if arg.action == EngineArgAction::Count {
+            match parent.counts.get(name) {
+              Some(c) => child.counts[name] = c
+              None => ()
+            }
+          }
+        }
+        None => ()
+      }
+    }
+  }
+}
+
+///|
+
+///|
+
+///|
+fn positional_args(args : Array[EngineArg]) -> Array[EngineArg] {
+  let with_index = []
+  let without_index = []
+  for arg in args {
+    if arg.long is None && arg.short is None {
+      if arg.index is Some(idx) {
+        with_index.push((idx, arg))
+      } else {
+        without_index.push(arg)
+      }
+    }
+  }
+  sort_positionals(with_index)
+  let ordered = []
+  for item in with_index {
+    let (_, arg) = item
+    ordered.push(arg)
+  }
+  for arg in without_index {
+    ordered.push(arg)
+  }
+  ordered
+}
+
+///|
+fn last_positional_index(positionals : Array[EngineArg]) -> Int? {
+  let mut i = 0
+  while i < positionals.length() {
+    if positionals[i].last {
+      return Some(i)
+    }
+    i = i + 1
+  }
+  None
+}
+
+///|
+fn next_positional(
+  positionals : Array[EngineArg],
+  collected : Array[String],
+) -> EngineArg? {
+  if collected.length() < positionals.length() {
+    Some(positionals[collected.length()])
+  } else {
+    None
+  }
+}
+
+///|
+fn should_parse_as_positional(
+  arg : String,
+  positionals : Array[EngineArg],
+  collected : Array[String],
+  long_index : Map[String, EngineArg],
+  short_index : Map[Char, EngineArg],
+) -> Bool {
+  if !arg.has_prefix("-") || arg == "-" {
+    return false
+  }
+  let next = match next_positional(positionals, collected) {
+    Some(v) => v
+    None => return false
+  }
+  let allow = next.allow_hyphen_values || is_negative_number(arg)
+  if !allow {
+    return false
+  }
+  if arg.has_prefix("--") {
+    let (name, _) = split_long(arg)
+    return long_index.get(name) is None
+  }
+  let short = arg.get_char(1)
+  match short {
+    Some(ch) => short_index.get(ch) is None
+    None => true
+  }
+}
+
+///|
+fn is_negative_number(arg : String) -> Bool {
+  if arg.length() < 2 {
+    return false
+  }
+  guard arg.get_char(0) is Some('-') else { return false }
+  let mut i = 1
+  while i < arg.length() {
+    let ch = arg.get_char(i).unwrap()
+    if ch < '0' || ch > '9' {
+      return false
+    }
+    i = i + 1
+  }
+  true
+}
+
+///|
+fn sort_positionals(items : Array[(Int, EngineArg)]) -> Unit {
+  let mut i = 1
+  while i < items.length() {
+    let key = items[i]
+    let mut j = i - 1
+    while j >= 0 && items[j].0 > key.0 {
+      items[j + 1] = items[j]
+      if j == 0 {
+        j = -1
+      } else {
+        j = j - 1
+      }
+    }
+    items[j + 1] = key
+    i = i + 1
+  }
+}
+
+///|
+fn find_subcommand(
+  subs : Array[EngineCommand],
+  name : String,
+) -> EngineCommand? {
+  for sub in subs {
+    if sub.name == name {
+      return Some(sub)
+    }
+    for alias_name in sub.aliases {
+      if alias_name == name {
+        return Some(sub)
+      }
+    }
+    for alias_name in sub.visible_aliases {
+      if alias_name == name {
+        return Some(sub)
+      }
+    }
+  }
+  None
+}
+
+///|
+fn resolve_help_target(
+  cmd : EngineCommand,
+  argv : Array[String],
+) -> (EngineCommand, Bool) raise ParseError {
+  let (long_help, targets) = split_help_style(argv, help_flag_enabled(cmd))
+  let mut current = cmd
+  let mut subs = cmd.subcommands
+  for name in targets {
+    if name.has_prefix("-") {
+      raise_arg(
+        EngineArgumentError::InvalidArgument(
+          "unexpected help argument: " + name,
+        ),
+      )
+    }
+    match find_subcommand(subs, name) {
+      Some(sub) => {
+        current = sub
+        subs = sub.subcommands
+      }
+      None =>
+        raise_arg(
+          EngineArgumentError::InvalidArgument("unknown subcommand: " + name),
+        )
+    }
+  }
+  (current, long_help)
+}
+
+///|
+fn split_help_style(
+  argv : Array[String],
+  help_flag : Bool,
+) -> (Bool, Array[String]) {
+  if argv.length() == 0 {
+    return (true, argv)
+  }
+  if !help_flag {
+    return (true, argv)
+  }
+  let last = argv[argv.length() - 1]
+  if last == "-h" || last == "--help" {
+    let long_help = last == "--help"
+    let rest = argv[:argv.length() - 1].to_array()
+    (long_help, rest)
+  } else {
+    (true, argv)
+  }
+}
+
+///|
+fn split_long(arg : String) -> (String, String?) {
+  let parts = []
+  for part in arg.split("=") {
+    parts.push(part.to_string())
+  }
+  if parts.length() <= 1 {
+    let name = match parts[0].strip_prefix("--") {
+      Some(view) => view.to_string()
+      None => parts[0]
+    }
+    (name, None)
+  } else {
+    let name = match parts[0].strip_prefix("--") {
+      Some(view) => view.to_string()
+      None => parts[0]
+    }
+    let value = parts[1:].to_array().join("=")
+    (name, Some(value))
+  }
+}
+
+///|
+
+///|
+fn[T] clone_array(arr : Array[T]) -> Array[T] {
+  let out = Array::new(capacity=arr.length())
+  for value in arr {
+    out.push(value)
+  }
+  out
+}
