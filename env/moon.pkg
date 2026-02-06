@@ -8,6 +8,7 @@ options(
   targets: {
     "env_js.mbt": [ "js" ],
     "env_native.mbt": [ "native", "llvm" ],
+    "env_native_wbtest.mbt": [ "native", "llvm" ],
     "env_wasm.mbt": [ "wasm", "wasm-gc" ],
   },
 )

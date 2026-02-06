@@ -101,6 +101,13 @@ fn current_dir_internal() -> String? {
   if res == 0 {
     None
   } else {
-    Some(@utf8.decode_lossy(buf))
+    let mut end = buf.length()
+    for i in 0..<buf.length() {
+      if buf[i] == b'\x00' {
+        end = i
+        break
+      }
+    }
+    Some(@utf8.decode_lossy(buf[:end]))
   }
 }
