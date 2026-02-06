@@ -20,56 +20,64 @@ fn get_cli_args_internal() -> Array[String] {
   let tmp = get_cli_args_ffi()
   let res = Array::new(capacity=tmp.length())
   for i in 0..<tmp.length() {
-    res.push(utf8_bytes_to_mbt_string(tmp[i]))
+    res.push(@utf8.decode_lossy(tmp[i]))
   }
   res
 }
 
 ///|
-fn utf8_bytes_to_mbt_string(bytes : Bytes) -> String {
-  let res = StringBuilder::new()
-  let len = bytes.length()
-  let mut i = 0
-  while i < len {
-    let mut c = bytes[i].to_int()
-    // zero byte indicates end of string
-    if c == 0 {
-      break
-    } else if c < 0x80 {
-      res.write_char(c.unsafe_to_char())
-      i += 1
-    } else if c < 0xE0 {
-      if i + 1 >= len {
-        break
-      }
-      c = ((c & 0x1F) << 6) | (bytes[i + 1].to_int() & 0x3F)
-      res.write_char(c.unsafe_to_char())
-      i += 2
-    } else if c < 0xF0 {
-      if i + 2 >= len {
-        break
-      }
-      c = ((c & 0x0F) << 12) |
-        ((bytes[i + 1].to_int() & 0x3F) << 6) |
-        (bytes[i + 2].to_int() & 0x3F)
-      res.write_char(c.unsafe_to_char())
-      i += 3
-    } else {
-      if i + 3 >= len {
-        break
-      }
-      c = ((c & 0x07) << 18) |
-        ((bytes[i + 1].to_int() & 0x3F) << 12) |
-        ((bytes[i + 2].to_int() & 0x3F) << 6) |
-        (bytes[i + 3].to_int() & 0x3F)
-      c -= 0x10000
-      res.write_char(((c >> 10) + 0xD800).unsafe_to_char())
-      res.write_char(((c & 0x3FF) + 0xDC00).unsafe_to_char())
-      i += 4
-    }
+fn get_env_var_internal(key : String) -> String? {
+  let key_bytes = @utf8.encode(key)
+  if get_env_var_exists_ffi(key_bytes) {
+    Some(@utf8.decode_lossy(get_env_var_ffi(key_bytes)))
+  } else {
+    None
   }
-  res.to_string()
 }
+
+///|
+#borrow(_key)
+extern "C" fn get_env_var_ffi(_key : Bytes) -> Bytes = "get_env_var"
+
+///|
+#borrow(_key)
+extern "C" fn get_env_var_exists_ffi(_key : Bytes) -> Bool = "get_env_var_exists"
+
+///|
+fn get_env_vars_internal() -> Map[String, String] {
+  let tmp = get_env_vars_ffi()
+  let res = {}
+  for i = 0; i < tmp.length(); i = i + 2 {
+    let key = @utf8.decode_lossy(tmp[i])
+    let value = @utf8.decode_lossy(tmp[i + 1])
+    res[key] = value
+  }
+  res
+}
+
+///|
+extern "C" fn get_env_vars_ffi() -> FixedArray[Bytes] = "get_env_vars"
+
+///|
+fn set_env_var_internal(key : String, value : String) -> Unit {
+  set_env_var_ffi(@utf8.encode(key), @utf8.encode(value))
+}
+
+///|
+#borrow(_key, _value)
+extern "C" fn set_env_var_ffi(_key : Bytes, _value : Bytes) -> Unit = "set_env_var"
+
+///|
+fn unset_env_var_internal(key : String) -> Unit {
+  unset_env_var_ffi(@utf8.encode(key))
+}
+
+///|
+#borrow(_key)
+extern "C" fn unset_env_var_ffi(_key : Bytes) -> Unit = "unset_env_var"
+
+///|
+extern "C" fn exit_internal(code : Int) = "exit"
 
 ///|
 extern "c" fn time(ptr : Int) -> UInt64 = "time"
@@ -93,6 +101,13 @@ fn current_dir_internal() -> String? {
   if res == 0 {
     None
   } else {
-    Some(utf8_bytes_to_mbt_string(buf))
+    let mut end = buf.length()
+    for i in 0..<buf.length() {
+      if buf[i] == b'\x00' {
+        end = i
+        break
+      }
+    }
+    Some(@utf8.decode_lossy(buf[:end]))
   }
 }

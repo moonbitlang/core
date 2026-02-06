@@ -29,6 +29,26 @@ test "command line arguments" {
 }
 ```
 
+## Environment Variables
+
+Read and write environment variables for the current process:
+
+```mbt nocheck
+let key = "ENV_TEST_KEY"
+@env.set_env_var(key, "value")
+@env.get_env_var(key) // => Some("value")
+@env.get_env_vars() // => contains key
+@env.unset_env_var(key)
+```
+
+## Process Exit
+
+Exit the program with a specific status code:
+
+```mbt nocheck
+@env.exit(1)
+```
+
 ## Current Time
 
 Get the current time in milliseconds since Unix epoch:

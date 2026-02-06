@@ -1,0 +1,150 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/arg_parser"
+
+// Values
+pub fn[T : FromMatches] from_matches(Matches) -> T raise ArgumentError
+
+// Errors
+pub suberror ArgBuildError {
+  Unsupported(String)
+}
+pub impl Show for ArgBuildError
+
+pub(all) suberror ArgumentError {
+  UnknownArgument(String, String?)
+  InvalidArgument(String)
+  MissingValue(String)
+  MissingRequired(String)
+  TooFewValues(String, Int, Int)
+  TooManyValues(String, Int, Int)
+  TooManyPositionals
+  InvalidValue(String)
+  InvalidValueCount(String)
+  MissingGroup(String)
+  GroupConflict(String)
+}
+pub impl Show for ArgumentError
+
+pub suberror Help {
+  Short(String)
+  Long(String)
+}
+pub impl Show for Help
+
+pub suberror Version {
+  Short(String)
+  Long(String)
+}
+pub impl Show for Version
+
+// Types and methods
+type Arg
+pub fn Arg::action(Self, ArgAction) -> Self
+pub fn Arg::alias_name(Self, String) -> Self
+pub fn Arg::allow_hyphen_values(Self, value? : Bool) -> Self
+pub fn Arg::conflicts_with(Self, String) -> Self
+pub fn Arg::conflicts_with_all(Self, Array[String]) -> Self
+pub fn Arg::default_value(Self, String) -> Self
+pub fn Arg::default_values(Self, Array[String]) -> Self
+pub fn Arg::env(Self, String) -> Self
+pub fn Arg::flag(Self) -> Self
+pub fn Arg::global(Self, value? : Bool) -> Self
+pub fn Arg::group(Self, String) -> Self
+pub fn Arg::help(Self, String) -> Self
+pub fn Arg::hide(Self, value? : Bool) -> Self
+pub fn Arg::hide_long_help(Self, value? : Bool) -> Self
+pub fn Arg::index(Self, Int) -> Self
+pub fn Arg::last(Self, value? : Bool) -> Self
+pub fn Arg::long(Self, String) -> Self
+pub fn Arg::long_help(Self, String) -> Self
+pub fn Arg::multiple(Self, value? : Bool) -> Self
+pub fn Arg::negatable(Self, value? : Bool) -> Self
+pub fn Arg::new(String) -> Self
+pub fn Arg::num_args(Self, ValueRange) -> Self
+pub fn Arg::option(Self) -> Self
+pub fn Arg::required(Self, value? : Bool) -> Self
+pub fn Arg::requires(Self, String) -> Self
+pub fn Arg::requires_all(Self, Array[String]) -> Self
+pub fn Arg::short(Self, Char) -> Self
+pub fn Arg::short_alias(Self, Char) -> Self
+pub fn Arg::visible_alias(Self, String) -> Self
+pub fn Arg::visible_short_alias(Self, Char) -> Self
+
+pub(all) enum ArgAction {
+  Set
+  SetTrue
+  SetFalse
+  Count
+  Append
+  Help
+  Version
+}
+pub impl Eq for ArgAction
+pub impl Show for ArgAction
+
+type ArgGroup
+pub fn ArgGroup::arg(Self, String) -> Self
+pub fn ArgGroup::args(Self, Array[String]) -> Self
+pub fn ArgGroup::conflicts_with(Self, String) -> Self
+pub fn ArgGroup::conflicts_with_all(Self, Array[String]) -> Self
+pub fn ArgGroup::multiple(Self, value? : Bool) -> Self
+pub fn ArgGroup::new(String) -> Self
+pub fn ArgGroup::required(Self, value? : Bool) -> Self
+pub fn ArgGroup::requires(Self, String) -> Self
+pub fn ArgGroup::requires_all(Self, Array[String]) -> Self
+
+type Command
+pub fn Command::about(Self, String) -> Self
+pub fn Command::alias_name(Self, String) -> Self
+pub fn Command::arg(Self, Arg) -> Self
+pub fn Command::arg_required_else_help(Self, enabled? : Bool) -> Self
+pub fn Command::args(Self, Array[Arg]) -> Self
+pub fn Command::disable_help_flag(Self, disabled? : Bool) -> Self
+pub fn Command::disable_help_subcommand(Self, disabled? : Bool) -> Self
+pub fn Command::disable_version_flag(Self, disabled? : Bool) -> Self
+pub fn Command::group(Self, ArgGroup) -> Self
+pub fn Command::hide(Self, value? : Bool) -> Self
+pub fn Command::long_about(Self, String) -> Self
+pub fn Command::long_version(Self, String) -> Self
+pub fn Command::new(String) -> Self
+pub fn Command::parse(Self, argv? : Array[String], env? : Map[String, String]) -> Matches raise
+pub fn Command::render_help(Self) -> String
+pub fn Command::render_long_help(Self) -> String
+pub fn Command::subcommand(Self, Self) -> Self
+pub fn Command::subcommand_required(Self, required? : Bool) -> Self
+pub fn Command::version(Self, String) -> Self
+pub fn Command::visible_alias(Self, String) -> Self
+
+type Matches
+pub fn Matches::count_of(Self, String) -> Int
+pub fn Matches::get_flag(Self, String) -> Bool
+pub fn Matches::get_many(Self, String) -> Array[String]?
+pub fn Matches::get_one(Self, String) -> String?
+pub fn Matches::new() -> Self
+pub fn Matches::subcommand(Self) -> (String, Self)?
+pub fn Matches::subcommand_matches(Self, String) -> Self?
+pub fn Matches::subcommand_name(Self) -> String?
+pub fn Matches::value_source(Self, String) -> ValueSource?
+
+type ValueRange
+pub fn ValueRange::empty() -> Self
+pub fn ValueRange::new(lower? : Int?, upper? : Int?, lower_inclusive? : Bool, upper_inclusive? : Bool) -> Self
+pub fn ValueRange::single() -> Self
+pub impl Eq for ValueRange
+pub impl Show for ValueRange
+
+pub enum ValueSource {
+  Argv
+  Env
+  Default
+}
+pub impl Eq for ValueSource
+pub impl Show for ValueSource
+
+// Type aliases
+
+// Traits
+pub(open) trait FromMatches {
+  from_matches(Matches) -> Self raise ArgumentError
+}
+

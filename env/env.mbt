@@ -19,6 +19,37 @@ pub fn args() -> Array[String] {
 }
 
 ///|
+/// Get all environment variables for the current process.
+pub fn get_env_vars() -> Map[String, String] {
+  get_env_vars_internal()
+}
+
+///|
+/// Get a specific environment variable.
+/// Returns `None` if the variable is not set.
+pub fn get_env_var(key : String) -> String? {
+  get_env_var_internal(key)
+}
+
+///|
+/// Set an environment variable.
+pub fn set_env_var(key : String, value : String) -> Unit {
+  set_env_var_internal(key, value)
+}
+
+///|
+/// Unset an environment variable.
+pub fn unset_env_var(key : String) -> Unit {
+  unset_env_var_internal(key)
+}
+
+///|
+/// Exit the program immediately with the given exit code.
+pub fn exit(code : Int) -> Unit {
+  exit_internal(code)
+}
+
+///|
 /// Get the current time in milliseconds since the Unix epoch.
 pub fn now() -> UInt64 {
   now_internal()
