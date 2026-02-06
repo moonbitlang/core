@@ -144,6 +144,46 @@ test "disable help flag allows custom help option" {
 }
 
 ///|
+test "arg_required_else_help emits short help on empty argv" {
+  let cmd = @arg_parser.Command::new("demo")
+    .about("demo app")
+    .arg_required_else_help()
+  let mut text = ""
+  try cmd.parse(argv=[]) catch {
+    @arg_parser.Help::Short(t) => text = t
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+  assert_true(text.contains("Usage: demo"))
+}
+
+///|
+test "subcommand_required errors without subcommand" {
+  let run = @arg_parser.Command::new("run")
+  let cmd = @arg_parser.Command::new("demo")
+    .subcommand_required()
+    .subcommand(run)
+  try cmd.parse(argv=[]) catch {
+    @arg_parser.ArgumentError::MissingRequired(name) =>
+      inspect(name, content="subcommand")
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
+test "subcommand_required passes with subcommand" {
+  let run = @arg_parser.Command::new("run")
+  let cmd = @arg_parser.Command::new("demo")
+    .subcommand_required()
+    .subcommand(run)
+  let matches = cmd.parse(argv=["run"]) catch { _ => panic() }
+  assert_eq(matches.subcommand_name().unwrap(), "run")
+}
+
+///|
 test "user handles --version" {
   let cmd = @arg_parser.Command::new("demo").arg(
     @arg_parser.Arg::new("version").long("version").help("show version"),
@@ -746,6 +786,41 @@ test "group accepts one member when exclusive" {
   let matches = cmd.parse(argv=["--fast"]) catch { _ => panic() }
   assert_true(matches.get_flag("fast"))
   assert_false(matches.get_flag("slow"))
+}
+
+///|
+test "group requires another group when present" {
+  let cmd = @arg_parser.Command::new("demo")
+    .group(@arg_parser.ArgGroup::new("mode").requires("output"))
+    .group(@arg_parser.ArgGroup::new("output"))
+    .arg(@arg_parser.Arg::new("fast").long("fast").group("mode"))
+    .arg(@arg_parser.Arg::new("json").long("json").group("output"))
+  try cmd.parse(argv=["--fast"]) catch {
+    @arg_parser.ArgumentError::MissingGroup(name) =>
+      inspect(name, content="output")
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+  let matches = cmd.parse(argv=["--fast", "--json"]) catch { _ => panic() }
+  assert_true(matches.get_flag("fast"))
+  assert_true(matches.get_flag("json"))
+}
+
+///|
+test "group conflicts_with rejects conflicting groups" {
+  let cmd = @arg_parser.Command::new("demo")
+    .group(@arg_parser.ArgGroup::new("mode").conflicts_with("output"))
+    .group(@arg_parser.ArgGroup::new("output"))
+    .arg(@arg_parser.Arg::new("fast").long("fast").group("mode"))
+    .arg(@arg_parser.Arg::new("json").long("json").group("output"))
+  try cmd.parse(argv=["--fast", "--json"]) catch {
+    @arg_parser.ArgumentError::GroupConflict(name) =>
+      inspect(name, content="mode conflicts with output")
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
 }
 
 ///|

@@ -84,14 +84,19 @@ pub impl Eq for ArgAction
 pub impl Show for ArgAction
 
 type ArgGroup
+pub fn ArgGroup::conflicts_with(Self, String) -> Self
+pub fn ArgGroup::conflicts_with_all(Self, Array[String]) -> Self
 pub fn ArgGroup::multiple(Self, value? : Bool) -> Self
 pub fn ArgGroup::new(String) -> Self
 pub fn ArgGroup::required(Self, value? : Bool) -> Self
+pub fn ArgGroup::requires(Self, String) -> Self
+pub fn ArgGroup::requires_all(Self, Array[String]) -> Self
 
 type Command
 pub fn Command::about(Self, String) -> Self
 pub fn Command::alias_name(Self, String) -> Self
 pub fn Command::arg(Self, Arg) -> Self
+pub fn Command::arg_required_else_help(Self, enabled? : Bool) -> Self
 pub fn Command::args(Self, Array[Arg]) -> Self
 pub fn Command::disable_help_flag(Self, disabled? : Bool) -> Self
 pub fn Command::disable_help_subcommand(Self, disabled? : Bool) -> Self
@@ -105,6 +110,7 @@ pub fn Command::parse(Self, argv? : Array[String], env? : Map[String, String]) -
 pub fn Command::render_help(Self) -> String
 pub fn Command::render_long_help(Self) -> String
 pub fn Command::subcommand(Self, Self) -> Self
+pub fn Command::subcommand_required(Self, required? : Bool) -> Self
 pub fn Command::version(Self, String) -> Self
 pub fn Command::visible_alias(Self, String) -> Self
 

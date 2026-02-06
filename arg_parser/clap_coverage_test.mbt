@@ -949,6 +949,82 @@ test "unknown group errors" {
 }
 
 ///|
+test "unknown group requires target errors" {
+  let cmd = @arg_parser.Command::new("demo").group(
+    @arg_parser.ArgGroup::new("mode").requires("output"),
+  )
+  try cmd.parse(argv=[]) catch {
+    @arg_parser.ArgBuildError::Unsupported(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|unknown group requires target: mode -> output
+        ),
+      )
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
+test "unknown group conflicts_with target errors" {
+  let cmd = @arg_parser.Command::new("demo").group(
+    @arg_parser.ArgGroup::new("mode").conflicts_with("output"),
+  )
+  try cmd.parse(argv=[]) catch {
+    @arg_parser.ArgBuildError::Unsupported(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|unknown group conflicts_with target: mode -> output
+        ),
+      )
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
+test "group self requires errors" {
+  let cmd = @arg_parser.Command::new("demo").group(
+    @arg_parser.ArgGroup::new("mode").requires("mode"),
+  )
+  try cmd.parse(argv=[]) catch {
+    @arg_parser.ArgBuildError::Unsupported(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|group cannot require itself: mode
+        ),
+      )
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
+test "group self conflicts_with errors" {
+  let cmd = @arg_parser.Command::new("demo").group(
+    @arg_parser.ArgGroup::new("mode").conflicts_with("mode"),
+  )
+  try cmd.parse(argv=[]) catch {
+    @arg_parser.ArgBuildError::Unsupported(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|group cannot conflict with itself: mode
+        ),
+      )
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
 test "unknown requires target errors" {
   let cmd = @arg_parser.Command::new("demo").arg(
     @arg_parser.Arg::new("mode").long("mode").option().requires("config"),
@@ -1129,6 +1205,23 @@ test "version action requires text" {
   try cmd.parse(argv=[]) catch {
     @arg_parser.ArgBuildError::Unsupported(msg) =>
       inspect(msg, content="version action requires command version text")
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
+test "subcommand_required without subcommands errors" {
+  let cmd = @arg_parser.Command::new("root").subcommand_required()
+  try cmd.parse(argv=[]) catch {
+    @arg_parser.ArgBuildError::Unsupported(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|subcommand_required requires at least one subcommand
+        ),
+      )
     _ => panic()
   } noraise {
     _ => panic()

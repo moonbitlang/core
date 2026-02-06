@@ -25,6 +25,8 @@ struct Command {
   args : Array[Arg]
   subcommands : Array[Command]
   help_subcommand : Bool
+  subcommand_required : Bool
+  arg_required_else_help : Bool
   groups : Array[ArgGroup]
   aliases : Array[String]
   visible_aliases : Array[String]
@@ -90,6 +92,8 @@ pub fn Command::new(name : String) -> Command {
     args: [],
     subcommands: [],
     help_subcommand: true,
+    subcommand_required: false,
+    arg_required_else_help: false,
     groups: [],
     aliases: [],
     visible_aliases: [],
@@ -155,6 +159,24 @@ pub fn Command::disable_help_subcommand(
   disabled? : Bool = true,
 ) -> Command {
   Command::{ ..self, help_subcommand: !disabled }
+}
+
+///|
+/// Require that one of the configured subcommands be present.
+pub fn Command::subcommand_required(
+  self : Command,
+  required? : Bool = true,
+) -> Command {
+  Command::{ ..self, subcommand_required: required }
+}
+
+///|
+/// Show short help when no argv tokens are provided.
+pub fn Command::arg_required_else_help(
+  self : Command,
+  enabled? : Bool = true,
+) -> Command {
+  Command::{ ..self, arg_required_else_help: enabled }
 }
 
 ///|
@@ -262,6 +284,9 @@ fn parse_command(
 ) -> Matches raise ParseError {
   validate_command(cmd) catch {
     err => raise_build(err)
+  }
+  if cmd.arg_required_else_help && argv.length() == 0 {
+    raise_help(cmd.render_help(), false)
   }
   let matches = Matches::new()
   let globals_here = collect_globals(cmd.args)
@@ -472,6 +497,7 @@ fn finalize_matches(
   validate_values(cmd, matches)
   validate_relationships(matches, env_args)
   validate_groups(cmd, matches)
+  validate_command_policies(cmd, matches)
   matches
 }
 
@@ -511,6 +537,7 @@ fn validate_command(cmd : Command) -> Unit raise ArgBuildError {
   validate_group_refs(cmd)
   validate_arg_defs(cmd.args)
   validate_subcommand_defs(cmd.subcommands)
+  validate_subcommand_required_policy(cmd)
   validate_help_subcommand(cmd)
   validate_help_flag(cmd)
   validate_version_flag(cmd)
@@ -618,6 +645,35 @@ fn validate_group_defs(groups : Array[ArgGroup]) -> Unit raise ArgBuildError {
     }
     seen[group.name] = true
   }
+  for group in groups {
+    for required in group.requires {
+      if required == group.name {
+        raise ArgBuildError::Unsupported(
+          "group cannot require itself: " + group.name,
+        )
+      }
+      if seen.get(required) is None {
+        raise ArgBuildError::Unsupported(
+          "unknown group requires target: " + group.name + " -> " + required,
+        )
+      }
+    }
+    for conflict in group.conflicts_with {
+      if conflict == group.name {
+        raise ArgBuildError::Unsupported(
+          "group cannot conflict with itself: " + group.name,
+        )
+      }
+      if seen.get(conflict) is None {
+        raise ArgBuildError::Unsupported(
+          "unknown group conflicts_with target: " +
+          group.name +
+          " -> " +
+          conflict,
+        )
+      }
+    }
+  }
 }
 
 ///|
@@ -708,6 +764,17 @@ fn validate_subcommand_defs(subs : Array[Command]) -> Unit raise ArgBuildError {
 }
 
 ///|
+fn validate_subcommand_required_policy(
+  cmd : Command,
+) -> Unit raise ArgBuildError {
+  if cmd.subcommand_required && cmd.subcommands.length() == 0 {
+    raise ArgBuildError::Unsupported(
+      "subcommand_required requires at least one subcommand",
+    )
+  }
+}
+
+///|
 fn validate_help_subcommand(cmd : Command) -> Unit raise ArgBuildError {
   if !help_subcommand_enabled(cmd) {
     return
@@ -780,10 +847,23 @@ fn validate_version_actions(cmd : Command) -> Unit raise ArgBuildError {
 }
 
 ///|
+fn validate_command_policies(
+  cmd : Command,
+  matches : Matches,
+) -> Unit raise ParseError {
+  if cmd.subcommand_required &&
+    cmd.subcommands.length() > 0 &&
+    matches.subcommand is None {
+    raise_arg(ArgumentError::MissingRequired("subcommand"))
+  }
+}
+
+///|
 fn validate_groups(cmd : Command, matches : Matches) -> Unit raise ParseError {
   if cmd.groups.length() == 0 {
     return
   }
+  let group_presence : Map[String, Int] = {}
   for group in cmd.groups {
     let mut count = 0
     for arg in cmd.args {
@@ -794,11 +874,32 @@ fn validate_groups(cmd : Command, matches : Matches) -> Unit raise ParseError {
         count = count + 1
       }
     }
+    group_presence[group.name] = count
     if group.required && count == 0 {
       raise_arg(ArgumentError::MissingGroup(group.name))
     }
     if !group.multiple && count > 1 {
       raise_arg(ArgumentError::GroupConflict(group.name))
+    }
+  }
+  for group in cmd.groups {
+    let count = group_presence[group.name]
+    if count == 0 {
+      continue
+    }
+    for required in group.requires {
+      if group_presence.get(required).unwrap_or(0) == 0 {
+        raise_arg(ArgumentError::MissingGroup(required))
+      }
+    }
+    for conflict in group.conflicts_with {
+      if group_presence.get(conflict).unwrap_or(0) > 0 {
+        raise_arg(
+          ArgumentError::GroupConflict(
+            group.name + " conflicts with " + conflict,
+          ),
+        )
+      }
     }
   }
 }

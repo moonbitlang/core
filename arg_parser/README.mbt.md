@@ -122,7 +122,10 @@ subcommands. Use `.disable_help_subcommand()` if you want to reserve `help` for
 your own subcommand. Use `.disable_help_flag()` if you want to reserve `-h/--help`
 for your own option (and to disable `help ... -h/--help` shortcuts).
 
-your own subcommand.
+Command-level parse policies:
+
+- `.subcommand_required()` requires one subcommand to be present.
+- `.arg_required_else_help()` raises short help when `argv` is empty.
 
 ## Options and Positionals
 
@@ -223,6 +226,19 @@ let cmd = Command::new("demo")
   .arg(Arg::new("red").long("red").group("color"))
   .arg(Arg::new("blue").long("blue").group("color"))
 ```
+
+You can also express lightweight group relationships:
+
+```mbt nocheck
+///|
+let cmd = Command::new("demo")
+  .group(ArgGroup::new("mode").requires("output"))
+  .group(ArgGroup::new("output").conflicts_with("debug"))
+  .group(ArgGroup::new("debug"))
+```
+
+- If any arg in `mode` is present, at least one arg in `output` must be present.
+- `output` and `debug` groups cannot be present together.
 
 ## Argument Relationships
 
