@@ -43,6 +43,8 @@ pub fn[T : Show] println(T) -> Unit
 
 pub fn[T : Show] repr(T) -> String
 
+pub fn set_hash_seed(Int) -> Unit
+
 // Errors
 pub(all) suberror BenchError {
   BenchError(String)
@@ -377,10 +379,11 @@ pub fn[K, V] Map::keys(Self[K, V]) -> Iter[K]
 #alias(size, deprecated)
 pub fn[K, V] Map::length(Self[K, V]) -> Int
 pub fn[K, V, V2] Map::map(Self[K, V], (K, V) -> V2) -> Self[K, V2]
-pub fn[K : Eq, V] Map::merge(Self[K, V], Self[K, V]) -> Self[K, V]
-pub fn[K : Eq, V] Map::merge_in_place(Self[K, V], Self[K, V]) -> Unit
+pub fn[K : Hash + Eq, V] Map::merge(Self[K, V], Self[K, V]) -> Self[K, V]
+pub fn[K : Hash + Eq, V] Map::merge_in_place(Self[K, V], Self[K, V]) -> Unit
 pub fn[K, V] Map::new(capacity? : Int) -> Self[K, V]
 pub fn[K : Hash + Eq, V] Map::of(FixedArray[(K, V)]) -> Self[K, V]
+pub fn[K : Hash + Eq, V] Map::rehash_with_seed(Self[K, V], Int) -> Unit
 pub fn[K : Hash + Eq, V] Map::remove(Self[K, V], K) -> Unit
 pub fn[K, V] Map::retain(Self[K, V], (K, V) -> Bool) -> Unit
 #alias("_[_]=_")

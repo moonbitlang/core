@@ -44,6 +44,7 @@ struct Map[K, V] {
   mut capacity : Int // current capacity
   mut capacity_mask : Int // capacity_mask = capacity - 1, used to find idx
   mut grow_at : Int // threshold that triggers grow
+  mut hash_seed : Int
   mut head : Entry[K, V]? // head of linked list
   mut tail : Int // tail of linked list
 }
@@ -61,6 +62,7 @@ pub fn[K, V] Map::new(capacity? : Int = 8) -> Map[K, V] {
     capacity,
     capacity_mask: capacity - 1,
     grow_at: calc_grow_threshold(capacity),
+    hash_seed: next_hash_seed(),
     entries: FixedArray::make(capacity, None),
     head: None,
     tail: -1,
@@ -106,7 +108,12 @@ pub fn[K : Hash + Eq, V] Map::from_array(arr : ArrayView[(K, V)]) -> Map[K, V] {
 /// ```
 #alias("_[_]=_")
 pub fn[K : Hash + Eq, V] Map::set(self : Map[K, V], key : K, value : V) -> Unit {
-  self.set_with_hash(key, value, key.hash())
+  self.set_with_hash(key, value, self.key_hash(key))
+}
+
+///|
+fn[K : Hash, V] Map::key_hash(self : Map[K, V], key : K) -> Int {
+  hash_with_seed(key, self.hash_seed)
 }
 
 ///|
@@ -214,7 +221,7 @@ fn[K, V] Map::set_entry(
 /// }
 /// ```
 pub fn[K : Hash + Eq, V] Map::get(self : Map[K, V], key : K) -> V? {
-  let hash = key.hash()
+  let hash = self.key_hash(key)
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { break None }
     if entry.hash == hash && entry.key == key {
@@ -230,7 +237,7 @@ pub fn[K : Hash + Eq, V] Map::get(self : Map[K, V], key : K) -> V? {
 ///|
 #alias("_[_]")
 pub fn[K : Hash + Eq, V] Map::at(self : Map[K, V], key : K) -> V {
-  let hash = key.hash()
+  let hash = self.key_hash(key)
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry)
     if entry.hash == hash && entry.key == key {
@@ -269,7 +276,7 @@ pub fn[K : Hash + Eq, V] Map::get_or_default(
   key : K,
   default : V,
 ) -> V {
-  let hash = key.hash()
+  let hash = self.key_hash(key)
   for i = 0, idx = hash & self.capacity_mask {
     match self.entries[idx] {
       Some(entry) => {
@@ -293,7 +300,7 @@ pub fn[K : Hash + Eq, V] Map::get_or_init(
   key : K,
   default : () -> V,
 ) -> V {
-  let hash = key.hash()
+  let hash = self.key_hash(key)
   let (idx, psl, new_value, push_away) = for psl = 0, idx = hash &
                                                self.capacity_mask {
     match self.entries[idx] {
@@ -338,7 +345,7 @@ pub fn[K : Hash + Eq, V] Map::get_or_init(
 /// Check if the hash map contains a key.
 pub fn[K : Hash + Eq, V] Map::contains(self : Map[K, V], key : K) -> Bool {
   // inline Map::get to avoid boxing
-  let hash = key.hash()
+  let hash = self.key_hash(key)
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { break false }
     if entry.hash == hash && entry.key == key {
@@ -379,7 +386,7 @@ pub fn[K : Hash + Eq, V : Eq] Map::contains_kv(
   value : V,
 ) -> Bool {
   // inline Map::get to avoid boxing
-  let hash = key.hash()
+  let hash = self.key_hash(key)
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { break false }
     if entry.hash == hash && entry.key == key && entry.value == value {
@@ -414,7 +421,7 @@ pub fn[K : Hash + Eq, V : Eq] Map::contains_kv(
 /// }
 /// ```
 pub fn[K : Hash + Eq, V] Map::remove(self : Map[K, V], key : K) -> Unit {
-  self.remove_with_hash(key, key.hash())
+  self.remove_with_hash(key, self.key_hash(key))
 }
 
 ///|
@@ -492,6 +499,29 @@ fn[K : Eq, V] Map::grow(self : Map[K, V]) -> Unit {
   loop old_head {
     Some({ next, key, value, hash, .. }) => {
       self.set_with_hash(key, value, hash)
+      continue next
+    }
+    None => break
+  }
+}
+
+///|
+pub fn[K : Hash + Eq, V] Map::rehash_with_seed(
+  self : Map[K, V],
+  seed : Int,
+) -> Unit {
+  if self.hash_seed == seed {
+    return
+  }
+  let old_head = self.head
+  self.entries = FixedArray::make(self.capacity, None)
+  self.size = 0
+  self.head = None
+  self.tail = -1
+  self.hash_seed = seed
+  loop old_head {
+    Some({ next, key, value, .. }) => {
+      self.set_with_hash(key, value, self.key_hash(key))
       continue next
     }
     None => break
@@ -656,7 +686,7 @@ pub impl[K : Hash + Eq, V : Eq] Eq for Map[K, V] with equal(
   guard self.size == that.size else { return false }
   for k, v in self {
     guard that.contains_kv(k, v) else { return false }
-  } else {
+  } nobreak {
     true
   }
 }
@@ -702,6 +732,7 @@ pub fn[K, V, V2] Map::map(self : Map[K, V], f : (K, V) -> V2) -> Map[K, V2] {
     size: self.size,
     capacity_mask: self.capacity_mask,
     grow_at: self.grow_at,
+    hash_seed: self.hash_seed,
     head: None,
     tail: self.tail,
   }
@@ -734,6 +765,7 @@ pub fn[K, V] Map::copy(self : Map[K, V]) -> Map[K, V] {
     size: self.size,
     capacity_mask: self.capacity_mask,
     grow_at: self.grow_at,
+    hash_seed: self.hash_seed,
     head: None,
     tail: self.tail,
   }
@@ -781,7 +813,10 @@ pub fn[K, V] Map::copy(self : Map[K, V]) -> Map[K, V] {
 ///   @json.json_inspect(merged, content={ "a": 1, "b": 3, "c": 4 })
 /// }
 /// ```
-pub fn[K : Eq, V] Map::merge(self : Map[K, V], other : Map[K, V]) -> Map[K, V] {
+pub fn[K : Hash + Eq, V] Map::merge(
+  self : Map[K, V],
+  other : Map[K, V],
+) -> Map[K, V] {
   let result = self.copy()
   result.merge_in_place(other)
   result
@@ -811,7 +846,7 @@ pub fn[K : Eq, V] Map::merge(self : Map[K, V], other : Map[K, V]) -> Map[K, V] {
 ///   @json.json_inspect(map1, content={ "a": 1, "b": 3, "c": 4 })
 /// }
 /// ```
-pub fn[K : Eq, V] Map::merge_in_place(
+pub fn[K : Hash + Eq, V] Map::merge_in_place(
   self : Map[K, V],
   other : Map[K, V],
 ) -> Unit {
@@ -819,8 +854,8 @@ pub fn[K : Eq, V] Map::merge_in_place(
     return
   }
   loop other.head {
-    Some({ key, value, next, hash, .. }) => {
-      self.set_with_hash(key, value, hash)
+    Some({ key, value, next, .. }) => {
+      self.set_with_hash(key, value, self.key_hash(key))
       continue next
     }
     None => break
@@ -945,7 +980,7 @@ pub fn[K : Hash + Eq, V] Map::update(
   key : K,
   f : (V?) -> V?,
 ) -> Unit {
-  let hash = key.hash()
+  let hash = self.key_hash(key)
   let (idx, psl, new_value, push_away) = for psl = 0, idx = hash &
                                                self.capacity_mask {
     match self.entries[idx] {
@@ -1051,7 +1086,7 @@ fn BytesView::equal_to_bytes(self : Self, other : Bytes) -> Bool {
 /// }
 /// ```
 pub fn[V] Map::get_from_bytes(map : Self[Bytes, V], key : BytesView) -> V? {
-  let hash = key.hash()
+  let hash = hash_with_seed(key, map.hash_seed)
   for i = 0, idx = hash & map.capacity_mask {
     guard map.entries[idx] is Some(entry) else { break None }
     if entry.hash == hash && key.equal_to_bytes(entry.key) {
@@ -1088,7 +1123,7 @@ pub fn[V] Map::get_from_bytes(map : Self[Bytes, V], key : BytesView) -> V? {
 /// }
 /// ```
 pub fn[V] Map::get_from_string(map : Self[String, V], key : StringView) -> V? {
-  let hash = key.hash()
+  let hash = hash_with_seed(key, map.hash_seed)
   for i = 0, idx = hash & map.capacity_mask {
     guard map.entries[idx] is Some(entry) else { break None }
     if entry.hash == hash && key.equal_to_string(entry.key) {

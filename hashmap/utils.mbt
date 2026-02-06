@@ -21,7 +21,7 @@ fn[K : Show, V : Show] HashMap::_debug_entries(self : HashMap[K, V]) -> String {
       Some({ psl, key, value, .. }) =>
         continue s + "(\{psl},\{key},\{value})", i + 1
     }
-  } else {
+  } nobreak {
     s
   }
 }
@@ -82,7 +82,7 @@ pub fn[K, V] HashMap::iter(self : HashMap[K, V]) -> Iter[(K, V)] {
       if entry is Some({ key, value, .. }) {
         return Some((key, value))
       }
-    } else {
+    } nobreak {
       None
     }
   })
@@ -171,7 +171,7 @@ pub fn[K, V] HashMap::to_array(self : HashMap[K, V]) -> Array[(K, V)] {
       break Array::make(self.size, (key, value))
     }
     i += 1
-  } else {
+  } nobreak {
     []
   }
   if !res.is_empty() {
@@ -390,7 +390,7 @@ pub fn[K, V] HashMap::keys(self : HashMap[K, V]) -> Iter[K] {
     if entry is Some({ key, .. }) {
       break Some(key)
     }
-  } else {
+  } nobreak {
     None
   })
   iter.iter()
@@ -426,7 +426,7 @@ pub fn[K, V] HashMap::values(self : HashMap[K, V]) -> Iter[V] {
     if entry is Some({ value, .. }) {
       break Some(value)
     }
-  } else {
+  } nobreak {
     None
   })
   iter.iter()
@@ -479,6 +479,7 @@ test "retain" {
   let hashmap : HashMap[String, Int] = {
     capacity: 8,
     capacity_mask: 7,
+    hash_seed: 0,
     size: 4,
     entries: [
       Some({ psl: 2, hash: 448974246, key: "c", value: 3 }),

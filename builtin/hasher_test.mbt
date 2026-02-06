@@ -264,3 +264,16 @@ test "hash_combine for UInt" {
   Hash::hash_combine(value, hasher)
   inspect(hasher.finalize(), content="1161967057")
 }
+
+///|
+test "set_hash_seed changes default Hash::hash seed" {
+  set_hash_seed(0)
+  let h0 = Hash::hash("moonbit")
+  set_hash_seed(2026)
+  let h1 = Hash::hash("moonbit")
+  let hasher = Hasher::new(seed=2026)
+  hasher.combine("moonbit")
+  inspect(h0 == h1, content="false")
+  inspect(h1 == hasher.finalize(), content="true")
+  set_hash_seed(0)
+}

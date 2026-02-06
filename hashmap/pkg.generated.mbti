@@ -42,10 +42,11 @@ pub fn[K, V] HashMap::keys(Self[K, V]) -> Iter[K]
 #alias(size, deprecated)
 pub fn[K, V] HashMap::length(Self[K, V]) -> Int
 pub fn[K, V, V2] HashMap::map(Self[K, V], (K, V) -> V2) -> Self[K, V2]
-pub fn[K : Eq, V] HashMap::merge(Self[K, V], Self[K, V]) -> Self[K, V]
-pub fn[K : Eq, V] HashMap::merge_in_place(Self[K, V], Self[K, V]) -> Unit
+pub fn[K : Hash + Eq, V] HashMap::merge(Self[K, V], Self[K, V]) -> Self[K, V]
+pub fn[K : Hash + Eq, V] HashMap::merge_in_place(Self[K, V], Self[K, V]) -> Unit
 #as_free_fn
 pub fn[K, V] HashMap::new(capacity? : Int) -> Self[K, V]
+pub fn[K : Hash + Eq, V] HashMap::rehash_with_seed(Self[K, V], Int) -> Unit
 pub fn[K : Hash + Eq, V] HashMap::remove(Self[K, V], K) -> Unit
 pub fn[K, V] HashMap::retain(Self[K, V], (K, V) -> Bool) -> Unit
 #alias("_[_]=_")
