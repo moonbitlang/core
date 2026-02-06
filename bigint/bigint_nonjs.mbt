@@ -417,7 +417,7 @@ fn BigInt::split(self : BigInt, half : Int) -> (BigInt, BigInt) {
     if self.limbs[i] > 0 {
       break i + 1
     }
-  } else {
+  } nobreak {
     1
   }
   let lower = FixedArray::make(lower_len, 0U)
@@ -579,7 +579,7 @@ fn BigInt::grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
   let a = FixedArray::make(a_len + 1, 0UL)
   for i in 0..<a_len {
     a[i] = dividend.limbs[i].to_uint64()
-  } else {
+  } nobreak {
     if dividend.limbs.length() > i {
       a[i] = dividend.limbs[i].to_uint64()
     }

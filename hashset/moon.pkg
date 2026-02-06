@@ -5,7 +5,7 @@ import {
   "moonbitlang/core/quickcheck",
 }
 
-import "test" {
+import {
   "moonbitlang/core/int",
   "moonbitlang/core/json",
-}
+} for "test"

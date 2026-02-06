@@ -44,7 +44,6 @@ test "String::escape" {
 test "panic codepoint_at1" {
   let str = "Hello🤣🤣🤣"
   let _ = str.iter().nth(8).unwrap()
-
 }
 
 ///|

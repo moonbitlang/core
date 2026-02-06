@@ -300,7 +300,6 @@ pub fn[T] Array::insert(self : Array[T], index : Int, value : T) -> Unit {
     )
   }
   let _ = JSArray::ofAnyArray(self).splice1(index, 0, JSValue::ofAny(value))
-
 }
 
 ///|

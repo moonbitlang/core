@@ -40,9 +40,9 @@ test "wrap0 with error" {
 
 ///|
 test "wrap2 with error result" {
-  let f : (Int, Int) -> Unit raise Failure = (_, _) => raise Failure::Failure(
-    "error",
-  )
+  let f : (Int, Int) -> Unit raise Failure = (_, _) => {
+    raise Failure::Failure("error")
+  }
   let r = try? f(1, 2)
   inspect(
     r,

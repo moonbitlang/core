@@ -42,8 +42,9 @@ fn iter_count(name? : String, inner : () -> Unit, count : UInt) -> Summary {
   } else {
     target_batch_size.ceil().to_int()
   }
-  let samples = Array::makei(count, _ => iter_n_microseconds(inner, batch_size) /
-    batch_size.to_double())
+  let samples = Array::makei(count, _ => {
+    iter_n_microseconds(inner, batch_size) / batch_size.to_double()
+  })
   samples.sort()
   winsorize(sorted_data=samples, 5.0)
   Summary::new(name?, sorted_data=samples, batch_size)

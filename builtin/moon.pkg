@@ -2,7 +2,7 @@ import {
   "moonbitlang/core/abort",
 }
 
-import "test" {
+import {
   "moonbitlang/core/char",
   "moonbitlang/core/int",
   "moonbitlang/core/double",
@@ -19,7 +19,9 @@ import "test" {
   "moonbitlang/core/random",
   "moonbitlang/core/math",
   "moonbitlang/core/buffer",
-}
+} for "test"
+
+warnings = "-test_unqualified_package"
 
 options(
   targets: {
@@ -51,5 +53,4 @@ options(
     "stringbuilder_buffer.mbt": [ "not", "js" ],
     "stringbuilder_concat.mbt": [ "js" ],
   },
-  "warn-list": "-test_unqualified_package",
 )

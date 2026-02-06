@@ -63,10 +63,12 @@ test "SparseArray::union" {
 test "SparseArray::intersection partial" {
   let left = @sparse_array.singleton(0, 1).add(1, 2).add(2, 3)
   let right = @sparse_array.singleton(0, 10).add(1, 20).add(2, 30)
-  let inter = left.intersection(right, (x, y) => if x == 2 {
-    None
-  } else {
-    Some(x + y)
+  let inter = left.intersection(right, (x, y) => {
+    if x == 2 {
+      None
+    } else {
+      Some(x + y)
+    }
   })
   guard inter is Some(result) else { fail("expected intersection result") }
   inspect(

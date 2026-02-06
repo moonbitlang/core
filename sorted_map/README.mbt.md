@@ -26,7 +26,6 @@ You can create an empty SortedMap or a SortedMap from other containers.
 test {
   let _map1 : @sorted_map.SortedMap[Int, String] = @sorted_map.new()
   let _map2 = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
-
 }
 ```
 

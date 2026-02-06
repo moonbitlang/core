@@ -1805,7 +1805,6 @@ test "integration - boundary stress test" {
 
     // Extract an int64 spanning boundaries
     let _int64_val = view.unsafe_extract_uint64_be(offset, 48)
-
   }
 
   // If we get here without crashes, the boundary handling is working

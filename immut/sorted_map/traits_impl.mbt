@@ -24,7 +24,7 @@ pub impl[K : Eq, V : Eq] Eq for SortedMap[K, V] with equal(self, other) -> Bool 
   let iter1 = other.iter()
   while iter.next() is Some(a) && iter1.next() is Some(b) {
     guard a == b else { break false }
-  } else {
+  } nobreak {
     true
   }
 }
@@ -42,7 +42,7 @@ pub impl[K : Compare, V : Compare] Compare for SortedMap[K, V] with compare(
   while iter.next() is Some(a) && iter1.next() is Some(b) {
     let cmp = a.compare(b)
     guard cmp is 0 else { break cmp }
-  } else {
+  } nobreak {
     0
   }
 }

@@ -11,7 +11,6 @@ You can create a queue manually by using the `new` or construct it using the `fr
 test {
   let _queue : @queue.Queue[Int] = @queue.new()
   let _queue1 = @queue.from_array([1, 2, 3])
-
 }
 ```
 
@@ -89,7 +88,6 @@ You can copy a queue using the `copy` method.
 test {
   let queue = @queue.from_array([1, 2, 3])
   let _queue2 = queue.copy()
-
 }
 ```
 

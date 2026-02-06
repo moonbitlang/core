@@ -37,18 +37,15 @@ test "BytesView::to_bytes partial view" {
 test "panic BytesView out of bounds" {
   let view = b"\x01\x02"[:]
   let _ = view[2]
-
 }
 
 ///|
 test "panic Bytes sub invalid index" {
   let _ = b"\x01\x02"[2:1]
-
 }
 
 ///|
 test "panic BytesView sub invalid index" {
   let view = b"\x01\x02"[:]
   let _ = view[2:1]
-
 }

@@ -16,5 +16,4 @@
 test "panic lex_assert_char with EOF" {
   // This case will trigger line L90 where we hit EOF
   let _ = @json.parse("t")
-
 }

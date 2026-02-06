@@ -21,7 +21,7 @@ fn[K : Show, V : Show] HashMap::_debug_entries(self : HashMap[K, V]) -> String {
       Some({ psl, key, value, .. }) =>
         continue s + "(\{psl},\{key},\{value})", i + 1
     }
-  } else {
+  } nobreak {
     s
   }
 }
@@ -82,7 +82,7 @@ pub fn[K, V] HashMap::iter(self : HashMap[K, V]) -> Iter[(K, V)] {
       if entry is Some({ key, value, .. }) {
         return Some((key, value))
       }
-    } else {
+    } nobreak {
       None
     }
   })
@@ -171,7 +171,7 @@ pub fn[K, V] HashMap::to_array(self : HashMap[K, V]) -> Array[(K, V)] {
       break Array::make(self.size, (key, value))
     }
     i += 1
-  } else {
+  } nobreak {
     []
   }
   if !res.is_empty() {
@@ -384,14 +384,16 @@ pub impl[K : Show, V : Show] Show for HashMap[K, V] with output(self, logger) {
 /// ```
 pub fn[K, V] HashMap::keys(self : HashMap[K, V]) -> Iter[K] {
   let mut i = 0
-  let iter = Iter::new(() => while i < self.entries.length() {
-    let entry = self.entries[i]
-    i += 1
-    if entry is Some({ key, .. }) {
-      break Some(key)
+  let iter = Iter::new(() => {
+    while i < self.entries.length() {
+      let entry = self.entries[i]
+      i += 1
+      if entry is Some({ key, .. }) {
+        break Some(key)
+      }
+    } nobreak {
+      None
     }
-  } else {
-    None
   })
   iter.iter()
 }
@@ -420,14 +422,16 @@ pub fn[K, V] HashMap::keys(self : HashMap[K, V]) -> Iter[K] {
 /// ```
 pub fn[K, V] HashMap::values(self : HashMap[K, V]) -> Iter[V] {
   let mut i = 0
-  let iter = Iter::new(() => while i < self.entries.length() {
-    let entry = self.entries[i]
-    i += 1
-    if entry is Some({ value, .. }) {
-      break Some(value)
+  let iter = Iter::new(() => {
+    while i < self.entries.length() {
+      let entry = self.entries[i]
+      i += 1
+      if entry is Some({ value, .. }) {
+        break Some(value)
+      }
+    } nobreak {
+      None
     }
-  } else {
-    None
   })
   iter.iter()
 }

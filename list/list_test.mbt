@@ -398,20 +398,24 @@ test "contain" {
 
 ///|
 test "unfold" {
-  let ls = @list.unfold(init=0, i => if i == 3 {
-    None
-  } else {
-    Some((i, i + 1))
+  let ls = @list.unfold(init=0, i => {
+    if i == 3 {
+      None
+    } else {
+      Some((i, i + 1))
+    }
   })
   debug_inspect(ls, content="<List: [0, 1, 2]>")
 }
 
 ///|
 test "rev_unfold" {
-  let ls = @list.rev_unfold(init=0, i => if i == 3 {
-    None
-  } else {
-    Some((i, i + 1))
+  let ls = @list.rev_unfold(init=0, i => {
+    if i == 3 {
+      None
+    } else {
+      Some((i, i + 1))
+    }
   })
   debug_inspect(ls, content="<List: [2, 1, 0]>")
 }
@@ -519,18 +523,21 @@ test "find" {
 ///|
 test "findi" {
   debug_inspect(
-    @list.from_array([1, 3, 5, 8]).findi((element, i) => element % 2 == 0 &&
-      i == 3),
+    @list.from_array([1, 3, 5, 8]).findi((element, i) => {
+      element % 2 == 0 && i == 3
+    }),
     content="Some(8)",
   )
   debug_inspect(
-    @list.from_array([1, 3, 8, 5]).findi((element, i) => element % 2 == 0 &&
-      i == 3),
+    @list.from_array([1, 3, 8, 5]).findi((element, i) => {
+      element % 2 == 0 && i == 3
+    }),
     content="None",
   )
   debug_inspect(
-    (@list.empty() : @list.List[Int]).findi((element, i) => element % 2 == 0 &&
-      i == 3),
+    (@list.empty() : @list.List[Int]).findi((element, i) => {
+      element % 2 == 0 && i == 3
+    }),
     content="None",
   )
 }
@@ -1088,10 +1095,12 @@ test "complex list recursion safety" {
   // Create very large lists and ensure operations are stack safe
 
   // Create a large list using unfold
-  let large = @list.unfold(init=0, i => if i < 10000 {
-    Some((i, i + 1))
-  } else {
-    None
+  let large = @list.unfold(init=0, i => {
+    if i < 10000 {
+      Some((i, i + 1))
+    } else {
+      None
+    }
   })
 
   // Verify operations on large list work correctly without stack overflow
@@ -1177,10 +1186,12 @@ test "compare" {
 test "flat_map and filter_map skip empties" {
   let ls = @list.from_array([0, 1, 2])
   debug_inspect(
-    ls.flat_map(x => if x == 0 {
-      @list.empty()
-    } else {
-      @list.from_array([x, x])
+    ls.flat_map(x => {
+      if x == 0 {
+        @list.empty()
+      } else {
+        @list.from_array([x, x])
+      }
     }),
     content="<List: [1, 1, 2, 2]>",
   )

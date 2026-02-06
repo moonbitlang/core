@@ -19,9 +19,11 @@ let re_profile_utf16 : @re.Profile = @re.Profile::new(
     @re.RecharSet::char_range('A', 'Z') +
     @re.RecharSet::char_range('0', '9') +
     @re.RecharSet::char('_'),
-  category=c => match c {
-    'a'..='z' | 'A'..='Z' | '0'..='9' | '_' => @re.Category::word()
-    '\n' => @re.Category::newline()
-    _ => @re.Category::not_word()
+  category=c => {
+    match c {
+      'a'..='z' | 'A'..='Z' | '0'..='9' | '_' => @re.Category::word()
+      '\n' => @re.Category::newline()
+      _ => @re.Category::not_word()
+    }
   },
 )

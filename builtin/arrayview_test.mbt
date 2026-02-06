@@ -94,28 +94,24 @@ test "negative index2" {
 test "panic negative index1" {
   let arr = [1, 2, 3]
   let _ = arr[-4:]
-
 }
 
 ///|
 test "panic negative index2" {
   let arr = [1, 2, 3]
   let _ = arr[:-4]
-
 }
 
 ///|
 test "panic negative index3" {
   let arr = [1, 2, 3]
   let _ = arr[-1:-2]
-
 }
 
 ///|
 test "panic negative index4" {
   let arr = [1, 2, 3]
   let _ = arr[-1:-3]
-
 }
 
 ///|
@@ -129,7 +125,6 @@ test "ArrayView::start_offset" {
 test "panic FixedArray sub invalid range" {
   let arr : FixedArray[Int] = [1, 2, 3]
   let _ = arr[2:1]
-
 }
 
 ///|
@@ -143,28 +138,24 @@ test "ArrayView equality mismatch" {
 test "panic negative index5" {
   let arr = [1, 2, 3][:]
   let _ = arr[-4:]
-
 }
 
 ///|
 test "panic negative index6" {
   let arr = [1, 2, 3][:]
   let _ = arr[:-4]
-
 }
 
 ///|
 test "panic negative index7" {
   let arr = [1, 2, 3][:]
   let _ = arr[-1:-2]
-
 }
 
 ///|
 test "panic negative index8" {
   let arr = [1, 2, 3][:]
   let _ = arr[-1:-3]
-
 }
 
 ///|

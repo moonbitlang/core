@@ -193,7 +193,7 @@ pub fn[A] HashSet::length(self : HashSet[A]) -> Int {
       Branch(children) =>
         for i = 0, total_size = 0; i < children.data.length(); {
           continue i + 1, total_size + node_size(children.data[i])
-        } else {
+        } nobreak {
           total_size
         }
     }
@@ -431,11 +431,11 @@ impl[A : Eq] Eq for Node[A] with equal(self, other) {
   match (self, other) {
     (Leaf(x, xs), Leaf(y, ys)) =>
       xs.length() == ys.length() &&
-      {
+      ({
         let keys1 = xs.add(x)
         let keys2 = ys.add(y)
         keys1.iter().all(k => keys2.contains(k))
-      }
+      })
     (Flat(x, pathx), Flat(y, pathy)) => pathx == pathy && x == y
     (Branch(xs), Branch(ys)) => xs == ys
     _ => false

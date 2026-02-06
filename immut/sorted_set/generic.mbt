@@ -97,7 +97,7 @@ pub impl[A : Eq] Eq for SortedSet[A] with equal(self, other) -> Bool {
   let iter1 = other.iter()
   while iter.next() is Some(a) && iter1.next() is Some(b) {
     guard a == b else { break false }
-  } else {
+  } nobreak {
     true
   }
 }
@@ -112,7 +112,7 @@ pub impl[A : Compare] Compare for SortedSet[A] with compare(self, other) -> Int 
   while iter.next() is Some(a) && iter1.next() is Some(b) {
     let cmp = a.compare(b)
     guard cmp is 0 else { break cmp }
-  } else {
+  } nobreak {
     0
   }
 }

@@ -84,7 +84,7 @@ test "arbitrary_iter_break" {
   for _ in iter {
     i = i + 1
     break
-  } else {
+  } nobreak {
     panic()
   }
   inspect(i, content="1")
@@ -120,5 +120,4 @@ test "arbitrary size branches" {
   guard result is Err(_) else { fail("expected Err from Result arbitrary") }
   let rs4 = @splitmix.RandomState::default()
   let _ : FixedArray[Int] = @quickcheck.Arbitrary::arbitrary(3, rs4)
-
 }

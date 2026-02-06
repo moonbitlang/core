@@ -2146,7 +2146,7 @@ pub fn[A] Deque::binary_search_by(
       // guarantee we land on the left-most occurrence.
       continue i, h
     }
-  } else {
+  } nobreak {
     // When the loop finishes, `i == j`.  If the deque is non-empty and the
     // element at `i` matches, we found the left-most index; otherwise `i` is
     // the correct insertion point.

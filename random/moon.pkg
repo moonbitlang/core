@@ -6,6 +6,6 @@ import {
   "moonbitlang/core/bigint",
 }
 
-import "test" {
+import {
   "moonbitlang/core/bench",
-}
+} for "test"

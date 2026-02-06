@@ -466,7 +466,9 @@ test "from_json rejects non-array" {
 ///|
 test "iter" {
   let mut s = ""
-  @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).each(x => s += x.to_string())
+  @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).each(x => {
+    s += x.to_string()
+  })
   inspect(s, content="123456789")
   let empty : @sorted_set.SortedSet[Int] = @sorted_set.from_array([])
   s = ""

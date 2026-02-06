@@ -22,10 +22,10 @@ pub fn BytesView::find(target : BytesView, pattern : BytesView) -> Int? {
   for i in 0..<=(target_len - pattern_len) {
     for j in 0..<pattern_len {
       guard target.unsafe_get(i + j) == pattern.unsafe_get(j) else { break }
-    } else {
+    } nobreak {
       return Some(i)
     }
-  } else {
+  } nobreak {
     None
   }
 }
@@ -47,10 +47,10 @@ pub fn BytesView::rev_find(target : BytesView, pattern : BytesView) -> Int? {
   for i = target_len - pattern_len; i >= 0; i = i - 1 {
     for j in 0..<pattern_len {
       guard target.unsafe_get(i + j) == pattern.unsafe_get(j) else { break }
-    } else {
+    } nobreak {
       return Some(i)
     }
-  } else {
+  } nobreak {
     None
   }
 }

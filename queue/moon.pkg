@@ -3,9 +3,9 @@ import {
   "moonbitlang/core/quickcheck",
 }
 
-import "test" {
+import {
   "moonbitlang/core/array",
-}
+} for "test"
 
 options(
   targets: { "panic_test.mbt": [ "not", "native", "llvm" ] },

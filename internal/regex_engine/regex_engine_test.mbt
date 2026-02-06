@@ -19,10 +19,12 @@ let profile : @regex_engine.Profile = @regex_engine.Profile::new(
     @regex_engine.RecharSet::char_range('A', 'Z') +
     @regex_engine.RecharSet::char_range('0', '9') +
     @regex_engine.RecharSet::char('_'),
-  category=c => match c {
-    'a'..='z' | 'A'..='Z' | '0'..='9' | '_' => @regex_engine.Category::word()
-    '\n' => @regex_engine.Category::newline()
-    _ => @regex_engine.Category::not_word()
+  category=c => {
+    match c {
+      'a'..='z' | 'A'..='Z' | '0'..='9' | '_' => @regex_engine.Category::word()
+      '\n' => @regex_engine.Category::newline()
+      _ => @regex_engine.Category::not_word()
+    }
   },
 )
 
@@ -33,10 +35,12 @@ let profile_ascii : @regex_engine.Profile = @regex_engine.Profile::new(
     @regex_engine.RecharSet::char_range('A', 'Z') +
     @regex_engine.RecharSet::char_range('0', '9') +
     @regex_engine.RecharSet::char('_'),
-  category=c => match c {
-    'a'..='z' | 'A'..='Z' | '0'..='9' | '_' => @regex_engine.Category::word()
-    '\n' => @regex_engine.Category::newline()
-    _ => @regex_engine.Category::not_word()
+  category=c => {
+    match c {
+      'a'..='z' | 'A'..='Z' | '0'..='9' | '_' => @regex_engine.Category::word()
+      '\n' => @regex_engine.Category::newline()
+      _ => @regex_engine.Category::not_word()
+    }
   },
 )
 

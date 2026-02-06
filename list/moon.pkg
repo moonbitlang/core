@@ -5,8 +5,8 @@ import {
   "moonbitlang/core/json",
 }
 
-import "test" {
-}
+import {
+} for "test"
 
 options(
   targets: { "panic_test.mbt": [ "not", "native" ] },

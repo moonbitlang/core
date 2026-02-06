@@ -365,7 +365,7 @@ pub impl[A : Compare] Compare for PriorityQueue[A] with compare(self, other) {
     if cmp != 0 {
       return cmp
     }
-  } else {
+  } nobreak {
     return 0
   }
 }
