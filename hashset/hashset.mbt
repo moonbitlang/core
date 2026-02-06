@@ -18,6 +18,17 @@
 let default_init_capacity = 8
 
 ///|
+let hash_seed_counter : Ref[UInt64] = { val: 0UL }
+
+///|
+fn next_hash_seed() -> Int {
+  hash_seed_counter.val += 1UL
+  let h = Hasher::new()
+  h.combine_uint64(hash_seed_counter.val)
+  h.finalize()
+}
+
+///|
 /// Create new hash set.
 #as_free_fn
 pub fn[K] HashSet::new(capacity? : Int = default_init_capacity) -> HashSet[K] {
@@ -27,6 +38,7 @@ pub fn[K] HashSet::new(capacity? : Int = default_init_capacity) -> HashSet[K] {
     capacity,
     capacity_mask: capacity - 1,
     grow_at: calc_grow_threshold(capacity),
+    hash_seed: next_hash_seed(),
     entries: FixedArray::make(capacity, None),
   }
 }
@@ -63,7 +75,14 @@ pub fn[K : Hash + Eq] HashSet::from_array(arr : ArrayView[K]) -> HashSet[K] {
 /// ```
 #alias(insert, deprecated)
 pub fn[K : Hash + Eq] HashSet::add(self : HashSet[K], key : K) -> Unit {
-  self.add_with_hash(key, key.hash())
+  self.add_with_hash(key, self.key_hash(key))
+}
+
+///|
+fn[K : Hash] HashSet::key_hash(self : HashSet[K], key : K) -> Int {
+  let h = Hasher::new(seed=self.hash_seed)
+  h.combine(key)
+  h.finalize()
 }
 
 ///|
@@ -136,7 +155,7 @@ fn[K] HashSet::set_entry(
 /// Check if the hash set contains a key.
 pub fn[K : Hash + Eq] HashSet::contains(self : HashSet[K], key : K) -> Bool {
   // inline lookup to avoid unnecessary allocations
-  let hash = key.hash()
+  let hash = self.key_hash(key)
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { break false }
     if entry.hash == hash && entry.key == key {
@@ -171,7 +190,7 @@ pub fn[K : Hash + Eq] HashSet::contains(self : HashSet[K], key : K) -> Bool {
 /// }
 /// ```
 pub fn[K : Hash + Eq] HashSet::remove(self : HashSet[K], key : K) -> Unit {
-  let hash = key.hash()
+  let hash = self.key_hash(key)
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { break }
     if entry.hash == hash && entry.key == key {
@@ -219,6 +238,25 @@ fn[K : Eq] HashSet::grow(self : HashSet[K]) -> Unit {
   for i in 0..<old_entries.length() {
     if old_entries[i] is Some({ key, hash, .. }) {
       self.add_with_hash(key, hash)
+    }
+  }
+}
+
+///|
+pub fn[K : Hash + Eq] HashSet::rehash_with_seed(
+  self : HashSet[K],
+  seed : Int,
+) -> Unit {
+  if self.hash_seed == seed {
+    return
+  }
+  let old_entries = self.entries
+  self.entries = FixedArray::make(self.capacity, None)
+  self.size = 0
+  self.hash_seed = seed
+  for i in 0..<old_entries.length() {
+    if old_entries[i] is Some({ key, .. }) {
+      self.add_with_hash(key, self.key_hash(key))
     }
   }
 }
@@ -299,7 +337,7 @@ pub fn[K] HashSet::iter(self : HashSet[K]) -> Iter[K] {
       if entry is Some({ key, .. }) {
         return Some(key)
       }
-    } else {
+    } nobreak {
       None
     }
   })
@@ -644,6 +682,7 @@ pub fn[K] HashSet::copy(self : HashSet[K]) -> HashSet[K] {
     size: self.size,
     capacity_mask: self.capacity_mask,
     grow_at: self.grow_at,
+    hash_seed: self.hash_seed,
   }
   for i in 0..<self.capacity {
     other.entries[i] = self.entries[i]

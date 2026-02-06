@@ -553,3 +553,20 @@ test "hashmap default" {
   let map : @hashmap.HashMap[Int, Int] = Default::default()
   inspect(map.length(), content="0")
 }
+
+///|
+test "hashmap merge and rehash across different seeds" {
+  @builtin.set_hash_seed(11)
+  let map1 : @hashmap.HashMap[String, Int] = @hashmap.new()
+  map1.set("x", 1)
+  @builtin.set_hash_seed(22)
+  let map2 : @hashmap.HashMap[String, Int] = @hashmap.new()
+  map2.set("y", 2)
+  map1.merge_in_place(map2)
+  inspect(map1.get("x"), content="Some(1)")
+  inspect(map1.get("y"), content="Some(2)")
+  map1.rehash_with_seed(333)
+  inspect(map1.get("x"), content="Some(1)")
+  inspect(map1.get("y"), content="Some(2)")
+  @builtin.set_hash_seed(0)
+}

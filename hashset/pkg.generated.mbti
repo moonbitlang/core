@@ -42,6 +42,7 @@ pub fn[K] HashSet::iter(Self[K]) -> Iter[K]
 pub fn[K] HashSet::length(Self[K]) -> Int
 #as_free_fn
 pub fn[K] HashSet::new(capacity? : Int) -> Self[K]
+pub fn[K : Hash + Eq] HashSet::rehash_with_seed(Self[K], Int) -> Unit
 pub fn[K : Hash + Eq] HashSet::remove(Self[K], K) -> Unit
 pub fn[K : Hash + Eq] HashSet::remove_and_check(Self[K], K) -> Bool
 pub fn[K : Hash + Eq] HashSet::symmetric_difference(Self[K], Self[K]) -> Self[K]

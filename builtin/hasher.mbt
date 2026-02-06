@@ -72,30 +72,51 @@ struct Hasher {
 ///   inspect(h1.finalize() != h2.finalize(), content="true") // Different seeds produce different hashes
 /// }
 /// ```
-pub fn Hasher::new(seed? : Int = seed) -> Hasher {
+pub fn Hasher::new(seed? : Int = get_hash_seed()) -> Hasher {
   { acc: seed.reinterpret_as_uint() + GPRIME5 }
 }
 
 ///|
-#cfg(not(target="js"))
-let seed : Int = 0
+let global_hash_seed : Ref[Int] = { val: 0 }
 
 ///|
-#cfg(target="js")
-let seed : Int = random_seed()
+let hash_seed_counter : Ref[UInt64] = { val: 0UL }
 
 ///|
-#cfg(target="js")
-extern "js" fn random_seed() -> Int =
-  #|() => {
-  #|  if (globalThis.crypto?.getRandomValues) {
-  #|    const array = new Uint32Array(1);
-  #|    globalThis.crypto.getRandomValues(array);
-  #|    return array[0] | 0; // Convert to signed 32
-  #|  } else {
-  #|    return Math.floor(Math.random() * 0x100000000) | 0; // Fallback to Math.random
-  #|  }
-  #|}
+fn get_hash_seed() -> Int {
+  global_hash_seed.val
+}
+
+///|
+pub fn set_hash_seed(seed : Int) -> Unit {
+  global_hash_seed.val = seed
+  hash_seed_counter.val = 0UL
+}
+
+///|
+fn next_hash_seed() -> Int {
+  hash_seed_counter.val += 1UL
+  let state = splitmix64(
+    global_hash_seed.val.reinterpret_as_uint().to_uint64() +
+    hash_seed_counter.val,
+  )
+  (state ^ (state >> 32)).to_uint().reinterpret_as_int()
+}
+
+///|
+fn[T : Hash] hash_with_seed(value : T, seed : Int) -> Int {
+  let hasher = Hasher::new(seed~)
+  hasher.combine(value)
+  hasher.finalize()
+}
+
+///|
+fn splitmix64(state : UInt64) -> UInt64 {
+  let mut z = state + 0x9E3779B97F4A7C15UL
+  z = (z ^ (z >> 30)) * 0xBF58476D1CE4E5B9UL
+  z = (z ^ (z >> 27)) * 0x94D049BB133111EBUL
+  z ^ (z >> 31)
+}
 
 ///|
 /// Combines a hashable value with the current state of the hasher. This is

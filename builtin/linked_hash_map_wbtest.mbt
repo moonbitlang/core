@@ -546,7 +546,7 @@ test "remove_entry_head" {
   assert_eq(head.prev, -1)
   assert_true(head.next is None)
   assert_eq(head.psl, 0)
-  assert_eq(head.hash, (2).hash())
+  assert_eq(head.hash, map.key_hash(2))
   assert_eq(head.key, 2)
   assert_eq(head.value, 2)
 }
@@ -564,7 +564,7 @@ test "remove_entry_tail" {
   assert_eq(tail.prev, -1)
   assert_true(tail.next is None)
   assert_eq(tail.psl, 0)
-  assert_eq(tail.hash, (1).hash())
+  assert_eq(tail.hash, map.key_hash(1))
   assert_eq(tail.key, 1)
   assert_eq(tail.value, 1)
 }

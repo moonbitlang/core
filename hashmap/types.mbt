@@ -45,6 +45,7 @@ struct HashMap[K, V] {
   mut entries : FixedArray[Entry[K, V]?]
   mut capacity : Int
   mut capacity_mask : Int // capacity_mask = capacity - 1, used to find idx
+  mut hash_seed : Int
   // size of field `entries`, it is redundant but useful for performance
   // so we don't need do `self.entries.length()` every time
   mut size : Int // active key-value pairs count
@@ -59,7 +60,7 @@ pub impl[K : Hash + Eq, V : Eq] Eq for HashMap[K, V] with equal(
   guard self.size == that.size else { return false }
   for k, v in self {
     guard that.contains_kv(k, v) else { return false }
-  } else {
+  } nobreak {
     true
   }
 }

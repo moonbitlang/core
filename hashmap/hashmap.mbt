@@ -42,7 +42,19 @@ pub fn[K, V] HashMap::new(capacity? : Int = 8) -> HashMap[K, V] {
     capacity,
     entries: FixedArray::make(capacity, None),
     capacity_mask: capacity - 1,
+    hash_seed: next_hash_seed(),
   }
+}
+
+///|
+let hash_seed_counter : Ref[UInt64] = { val: 0UL }
+
+///|
+fn next_hash_seed() -> Int {
+  hash_seed_counter.val += 1UL
+  let h = Hasher::new()
+  h.combine_uint64(hash_seed_counter.val)
+  h.finalize()
 }
 
 ///|
@@ -106,7 +118,14 @@ pub fn[K : Hash + Eq, V] HashMap::set(
   key : K,
   value : V,
 ) -> Unit {
-  self.set_with_hash(key, value, key.hash())
+  self.set_with_hash(key, value, self.key_hash(key))
+}
+
+///|
+fn[K : Hash, V] HashMap::key_hash(self : HashMap[K, V], key : K) -> Int {
+  let h = Hasher::new(seed=self.hash_seed)
+  h.combine(key)
+  h.finalize()
 }
 
 ///|
@@ -204,7 +223,7 @@ fn[K, V] HashMap::push_away(
 /// ```
 pub fn[K : Hash + Eq, V] HashMap::get(self : HashMap[K, V], key : K) -> V? {
   // self.get_with_hash(key, key.hash())
-  let hash = key.hash()
+  let hash = self.key_hash(key)
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { break None }
     if entry.hash == hash && entry.key == key {
@@ -237,7 +256,7 @@ pub fn[K : Hash + Eq, V] HashMap::get(self : HashMap[K, V], key : K) -> V? {
 /// ```
 #alias("_[_]")
 pub fn[K : Hash + Eq, V] HashMap::at(self : HashMap[K, V], key : K) -> V {
-  let hash = key.hash()
+  let hash = self.key_hash(key)
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry)
     if entry.hash == hash && entry.key == key {
@@ -278,7 +297,7 @@ pub fn[K : Hash + Eq, V] HashMap::get_or_init(
   key : K,
   init : () -> V,
 ) -> V {
-  let hash = key.hash()
+  let hash = self.key_hash(key)
   let (idx, psl, new_value, push_away) = for psl = 0, idx = hash &
                                                self.capacity_mask {
     match self.entries[idx] {
@@ -340,7 +359,7 @@ pub fn[K : Hash + Eq, V] HashMap::get_or_default(
   key : K,
   default : V,
 ) -> V {
-  let hash = key.hash()
+  let hash = self.key_hash(key)
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { break default }
     if entry.hash == hash && entry.key == key {
@@ -376,7 +395,7 @@ pub fn[K : Hash + Eq, V] HashMap::contains(
   self : HashMap[K, V],
   key : K,
 ) -> Bool {
-  let hash = key.hash()
+  let hash = self.key_hash(key)
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { return false }
     if entry.hash == hash && entry.key == key {
@@ -418,7 +437,7 @@ pub fn[K : Hash + Eq, V : Eq] HashMap::contains_kv(
   key : K,
   value : V,
 ) -> Bool {
-  let hash = key.hash()
+  let hash = self.key_hash(key)
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { return false }
     if entry.hash == hash && entry.key == key && entry.value == value {
@@ -453,7 +472,7 @@ pub fn[K : Hash + Eq, V : Eq] HashMap::contains_kv(
 /// }
 /// ```
 pub fn[K : Hash + Eq, V] HashMap::remove(self : HashMap[K, V], key : K) -> Unit {
-  self.remove_with_hash(key, key.hash())
+  self.remove_with_hash(key, self.key_hash(key))
 }
 
 ///|
@@ -504,6 +523,25 @@ fn[K : Eq, V] HashMap::grow(self : HashMap[K, V]) -> Unit {
   for i in 0..<old_entries.length() {
     if old_entries[i] is Some({ key, value, hash, .. }) {
       self.set_with_hash(key, value, hash)
+    }
+  }
+}
+
+///|
+pub fn[K : Hash + Eq, V] HashMap::rehash_with_seed(
+  self : HashMap[K, V],
+  seed : Int,
+) -> Unit {
+  if self.hash_seed == seed {
+    return
+  }
+  let old_entries = self.entries
+  self.entries = FixedArray::make(self.capacity, None)
+  self.size = 0
+  self.hash_seed = seed
+  for i in 0..<old_entries.length() {
+    if old_entries[i] is Some({ key, value, .. }) {
+      self.set_with_hash(key, value, self.key_hash(key))
     }
   }
 }
@@ -577,6 +615,7 @@ pub fn[K, V, V2] HashMap::map(
     entries: FixedArray::make(self.capacity, None),
     size: self.size,
     capacity_mask: self.capacity_mask,
+    hash_seed: self.hash_seed,
   }
   if self.size == 0 {
     return other
@@ -597,6 +636,7 @@ pub fn[K, V] HashMap::copy(self : HashMap[K, V]) -> HashMap[K, V] {
     entries: FixedArray::make(self.capacity, None),
     size: self.size,
     capacity_mask: self.capacity_mask,
+    hash_seed: self.hash_seed,
   }
   if self.size == 0 {
     return other
@@ -635,7 +675,7 @@ pub fn[K, V] HashMap::copy(self : HashMap[K, V]) -> HashMap[K, V] {
 ///   @json.json_inspect(merged, content=[["a", 1], ["b", 3], ["c", 4]])
 /// }
 /// ```
-pub fn[K : Eq, V] HashMap::merge(
+pub fn[K : Hash + Eq, V] HashMap::merge(
   self : HashMap[K, V],
   other : HashMap[K, V],
 ) -> HashMap[K, V] {
@@ -668,7 +708,7 @@ pub fn[K : Eq, V] HashMap::merge(
 ///   @json.json_inspect(merged, content=[["a", 1], ["b", 3], ["c", 4]])
 /// }
 /// ```
-pub fn[K : Eq, V] HashMap::merge_in_place(
+pub fn[K : Hash + Eq, V] HashMap::merge_in_place(
   self : HashMap[K, V],
   other : HashMap[K, V],
 ) -> Unit {
@@ -676,8 +716,8 @@ pub fn[K : Eq, V] HashMap::merge_in_place(
     return
   }
   for entry in other.entries {
-    if entry is Some({ key, value, hash, .. }) {
-      self.set_with_hash(key, value, hash)
+    if entry is Some({ key, value, .. }) {
+      self.set_with_hash(key, value, self.key_hash(key))
     }
   }
 }

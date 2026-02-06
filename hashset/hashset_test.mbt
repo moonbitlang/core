@@ -421,3 +421,15 @@ test "@hashset.to_array/multiple" {
   arr.sort()
   inspect(arr.to_string(), content="[1, 2, 3, 4]")
 }
+
+///|
+test "hashset rehash_with_seed keeps entries" {
+  @builtin.set_hash_seed(7)
+  let set : @hashset.HashSet[String] = @hashset.new()
+  set.add("a")
+  set.add("b")
+  set.rehash_with_seed(123)
+  inspect(set.contains("a"), content="true")
+  inspect(set.contains("b"), content="true")
+  @builtin.set_hash_seed(0)
+}

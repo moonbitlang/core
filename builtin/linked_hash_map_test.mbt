@@ -661,3 +661,20 @@ test "Map::set updating existing key should not grow" {
     assert_eq(map.get(i.to_string()), Some(i * 10))
   }
 }
+
+///|
+test "Map merge and rehash across different seeds" {
+  set_hash_seed(1)
+  let map1 : Map[String, Int] = {}
+  map1.set("a", 1)
+  set_hash_seed(2)
+  let map2 : Map[String, Int] = {}
+  map2.set("b", 2)
+  map1.merge_in_place(map2)
+  inspect(map1.get("a"), content="Some(1)")
+  inspect(map1.get("b"), content="Some(2)")
+  map1.rehash_with_seed(999)
+  inspect(map1.get("a"), content="Some(1)")
+  inspect(map1.get("b"), content="Some(2)")
+  set_hash_seed(0)
+}
