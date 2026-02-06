@@ -1,3 +1,5 @@
+warnings = "-35"
+
 options(
   virtual: { "has-default": true },
 )

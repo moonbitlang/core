@@ -151,10 +151,12 @@ test "stringify with replacer" {
     ),
   )
   // custom logic
-  let replacer = @json.Replacer::new((idx, value) => match idx {
-    "b" => None
-    "d" => None
-    _ => Some(value)
+  let replacer = @json.Replacer::new((idx, value) => {
+    match idx {
+      "b" => None
+      "d" => None
+      _ => Some(value)
+    }
   })
   inspect(
     json.stringify(replacer~),
@@ -188,9 +190,11 @@ test "stringify with replace recursively" {
     ),
   )
   // custom logic
-  let replacer = @json.Replacer::new((idx, value) => match idx {
-    "b" => None
-    _ => Some(value)
+  let replacer = @json.Replacer::new((idx, value) => {
+    match idx {
+      "b" => None
+      _ => Some(value)
+    }
   })
   inspect(
     json.stringify(replacer~),
@@ -538,9 +542,11 @@ test "transformer" {
   // custom function
   let json : Json = { "a": 1.0, "b": { "c": 2.0, "d": [3.0, 4.0] } }
   let newjson = json.transform(
-    @json.Replacer::new((_, value) => match value {
-      Number(n, ..) => Some(Json::number(n * 10))
-      other => Some(other)
+    @json.Replacer::new((_, value) => {
+      match value {
+        Number(n, ..) => Some(Json::number(n * 10))
+        other => Some(other)
+      }
     }),
   )
   @json.json_inspect(newjson, content={ "a": 10, "b": { "c": 20, "d": [3, 4] } })
@@ -558,9 +564,11 @@ test "transformer" {
 test "transformer with array" {
   let json : Json = [1.0, { "a": 2.0 }, [3.0, 4.0]]
   let newjson = json.transform(
-    @json.Replacer::new((_, value) => match value {
-      Number(n, ..) => Some(Json::number(n + 1))
-      other => Some(other)
+    @json.Replacer::new((_, value) => {
+      match value {
+        Number(n, ..) => Some(Json::number(n + 1))
+        other => Some(other)
+      }
     }),
   )
   @json.json_inspect(newjson, content=[1, { "a": 3 }, [3, 4]])
@@ -587,5 +595,4 @@ fn[A : FromJson] test_json_export(x : A) -> A {
 ///|
 test {
   let _ : Int = test_json_export(42)
-
 }

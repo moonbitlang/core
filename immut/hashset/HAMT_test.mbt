@@ -41,7 +41,7 @@ test "Set" {
 test "@hashset.size" {
   for i = 0, set = @hashset.new(); i < 20; i = i + 1, set = set.add(i) {
     assert_eq(set.length(), i)
-  } else {
+  } nobreak {
     assert_eq(set.add(0).length(), 20)
   }
   let set = @hashset.new()

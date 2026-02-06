@@ -71,7 +71,6 @@ test {
 test "panic random with invalid seed length" {
   let short_seed = b"short seed"
   let _ = @random.Rand::chacha8(seed=short_seed)
-
 }
 
 ///|
@@ -96,9 +95,10 @@ test "uint64 modulo bias handling with large limit" {
 ///|
 test "bench random" (b : @bench.T) {
   let r = @random.Rand::new()
-  b.bench(() => for i in 0..<1000000 {
-    let _ = r.uint64(limit=10000000000000000000UL)
-
+  b.bench(() => {
+    for i in 0..<1000000 {
+      let _ = r.uint64(limit=10000000000000000000UL)
+    }
   })
 }
 

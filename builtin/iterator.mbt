@@ -37,7 +37,7 @@ pub fn[X] Iter::next(self : Iter[X]) -> X? {
 pub fn[X] Iter::run(self : Iter[X], f : (X) -> IterResult) -> IterResult {
   while self.next() is Some(x) {
     guard f(x) is IterContinue else { break IterEnd }
-  } else {
+  } nobreak {
     IterContinue
   }
 }
@@ -95,7 +95,7 @@ pub fn[X] Iter::any(self : Iter[X], f : (X) -> Bool) -> Bool {
     if f(x) {
       break true
     }
-  } else {
+  } nobreak {
     false
   }
 }
@@ -105,7 +105,7 @@ pub fn[X] Iter::any(self : Iter[X], f : (X) -> Bool) -> Bool {
 pub fn[X] Iter::all(self : Iter[X], f : (X) -> Bool) -> Bool {
   while self.next() is Some(x) {
     guard f(x) else { break false }
-  } else {
+  } nobreak {
     true
   }
 }
@@ -276,7 +276,7 @@ pub fn[X] Iter::filter(self : Iter[X], f : (X) -> Bool) -> Iter[X] {
       if f(x) {
         break Some(x)
       }
-    } else {
+    } nobreak {
       None
     }
   }
@@ -355,7 +355,7 @@ pub fn[X, Y] Iter::filter_map(self : Iter[X], f : (X) -> Y?) -> Iter[Y] {
         Some(_) as y => break y
         None => ()
       }
-    } else {
+    } nobreak {
       None
     }
   }
@@ -549,7 +549,7 @@ pub fn[X] Iter::drop(self : Iter[X], n : Int) -> Iter[X] {
     while remaining > 0 {
       guard self.next() is Some(_) else { break None }
       remaining -= 1
-    } else {
+    } nobreak {
       self.next()
     }
   }
@@ -611,7 +611,7 @@ pub fn[X] Iter::find_first(self : Iter[X], f : (X) -> Bool) -> X? {
     if f(x) {
       break Some(x)
     }
-  } else {
+  } nobreak {
     None
   }
 }
@@ -808,7 +808,7 @@ pub fn[X : Eq] Iter::contains(self : Iter[X], value : X) -> Bool {
     if x == value {
       break true
     }
-  } else {
+  } nobreak {
     false
   }
 }
@@ -821,7 +821,7 @@ pub fn[X] Iter::nth(self : Iter[X], n : Int) -> X? {
   guard n >= 0 else { None }
   for _ in 0..<n {
     guard self.next() is Some(_) else { break None }
-  } else {
+  } nobreak {
     self.next()
   }
 }
@@ -891,7 +891,7 @@ pub fn[X, Y] Iter2::run(
 ) -> IterResult {
   while self.0.next() is Some((x, y)) {
     guard f(x, y) is IterContinue else { break IterEnd }
-  } else {
+  } nobreak {
     IterContinue
   }
 }

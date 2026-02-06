@@ -164,7 +164,7 @@ pub fn[X] SparseArray::intersection(
       }
       None => continue rest.remove(idx), index, elem_info.remove(idx)
     }
-  } else {
+  } nobreak {
     if elem_info == empty_bitset {
       None
     } else if elem_info == inter_elem_info {
@@ -201,7 +201,7 @@ pub fn[X] SparseArray::difference(
           }
         }
     }
-  } else {
+  } nobreak {
     if elem_info == empty_bitset {
       None
     } else if elem_info == self_elem_info {
@@ -237,7 +237,7 @@ pub fn[X] SparseArray::filter(
         continue rest.remove(idx), index + 1, elem_info
       }
     }
-  } else {
+  } nobreak {
     if elem_info == empty_bitset {
       None
     } else if elem_info == self_elem_info {

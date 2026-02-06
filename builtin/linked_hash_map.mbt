@@ -656,7 +656,7 @@ pub impl[K : Hash + Eq, V : Eq] Eq for Map[K, V] with equal(
   guard self.size == that.size else { return false }
   for k, v in self {
     guard that.contains_kv(k, v) else { return false }
-  } else {
+  } nobreak {
     true
   }
 }

@@ -52,15 +52,15 @@ pub fn[A] T::makei(len : Int, f : (Int) -> A raise?) -> T[A] raise? {
   let quot = len / branching_factor
   let rem = len % branching_factor
   let leaves = if rem == 0 {
-    Array::makei(quot, k => FixedArray::makei(branching_factor, i => f(
-      k * branching_factor + i,
-    )))
+    Array::makei(quot, k => {
+      FixedArray::makei(branching_factor, i => f(k * branching_factor + i))
+    })
   } else {
     let arr : Array[FixedArray[A]] = Array::make(quot + 1, [])
     for k in 0..<quot {
-      arr[k] = FixedArray::makei(branching_factor, i => f(
-        k * branching_factor + i,
-      ))
+      arr[k] = FixedArray::makei(branching_factor, i => {
+        f(k * branching_factor + i)
+      })
     }
     arr[quot] = FixedArray::makei(rem, i => f(quot * branching_factor + i))
     arr
@@ -433,7 +433,7 @@ pub impl[A : Compare] Compare for T[A] with compare(self, other) {
   for i in 0..<len_self {
     let cmp = self[i].compare(other[i])
     guard cmp is 0 else { break cmp }
-  } else {
+  } nobreak {
     return 0
   }
 }
@@ -459,10 +459,9 @@ fn[A] from_leaves(leaves : ArrayView[FixedArray[A]], cap : Int) -> Tree[A] {
     let rem = len % child_cap
     let times = child_cap / branching_factor
     let arr = if rem == 0 {
-      FixedArray::makei(quot, i => from_leaves(
-        leaves[i * times:(i + 1) * times],
-        child_cap,
-      ))
+      FixedArray::makei(quot, i => {
+        from_leaves(leaves[i * times:(i + 1) * times], child_cap)
+      })
     } else {
       let arr = FixedArray::make(quot + 1, Tree::Empty)
       for i in 0..<quot {

@@ -26,9 +26,11 @@ struct ChaCha8 {
 ///|
 /// [seed] must be 32 bytes long.
 pub fn ChaCha8::new(seed : Bytes) -> ChaCha8 {
-  let seed = FixedArray::makei(SEED_CHUNK_NUM * 2, i => match seed[i * 4:] {
-    [u32le(x), ..] => x
-    _ => abort("seed must be 32 bytes long")
+  let seed = FixedArray::makei(SEED_CHUNK_NUM * 2, i => {
+    match seed[i * 4:] {
+      [u32le(x), ..] => x
+      _ => abort("seed must be 32 bytes long")
+    }
   })
   let buffer = FixedArray::make(BUFFER_CHUNK_NUM * 2, 0U)
   chacha_block(seed, buffer, 0)

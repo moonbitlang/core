@@ -7,6 +7,6 @@ import {
   "moonbitlang/core/list",
 }
 
-import "test" {
+import {
   "moonbitlang/core/int",
-}
+} for "test"

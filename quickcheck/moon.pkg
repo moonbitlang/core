@@ -5,9 +5,9 @@ import {
   "moonbitlang/core/array",
 }
 
-import "test" {
+import {
   "moonbitlang/core/bigint",
   "moonbitlang/core/float",
   "moonbitlang/core/double",
   "moonbitlang/core/tuple",
-}
+} for "test"

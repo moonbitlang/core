@@ -130,6 +130,5 @@ You can copy a priority queue using the `copy` method.
 test {
   let pq = @priority_queue.from_array([1, 2, 3])
   let _pq2 = pq.copy()
-
 }
 ```

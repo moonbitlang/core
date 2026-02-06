@@ -637,7 +637,7 @@ pub fn[A, B] FixedArray::fold(
 ) -> B raise? {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(acc, self[i])
-  } else {
+  } nobreak {
     acc
   }
 }
@@ -648,8 +648,9 @@ test "fold" {
   inspect(sum, content="1")
   let sum = ([1] : FixedArray[_]).fold(init=2, (sum, elem) => sum + elem)
   inspect(sum, content="3")
-  let sum = ([1, 2, 3, 4, 5] : FixedArray[_]).fold(init=0, (sum, elem) => sum +
-    elem)
+  let sum = ([1, 2, 3, 4, 5] : FixedArray[_]).fold(init=0, (sum, elem) => {
+    sum + elem
+  })
   inspect(sum, content="15")
 }
 
@@ -670,7 +671,7 @@ pub fn[A, B] FixedArray::rev_fold(
 ) -> B raise? {
   for i = self.length() - 1, acc = init; i >= 0; {
     continue i - 1, f(acc, self[i])
-  } else {
+  } nobreak {
     acc
   }
 }
@@ -681,8 +682,9 @@ test "rev_fold" {
   inspect(sum, content="1")
   let sum = ([1] : FixedArray[_]).rev_fold(init=2, (sum, elem) => sum + elem)
   inspect(sum, content="3")
-  let sum = ([1, 2, 3, 4, 5] : FixedArray[_]).rev_fold(init=0, (sum, elem) => sum +
-    elem)
+  let sum = ([1, 2, 3, 4, 5] : FixedArray[_]).rev_fold(init=0, (sum, elem) => {
+    sum + elem
+  })
   inspect(sum, content="15")
 }
 
@@ -703,7 +705,7 @@ pub fn[A, B] FixedArray::foldi(
 ) -> B raise? {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(i, acc, self[i])
-  } else {
+  } nobreak {
     acc
   }
 }
@@ -741,7 +743,7 @@ pub fn[A, B] FixedArray::rev_foldi(
   let len = self.length()
   for i = len - 1, acc = init; i >= 0; {
     continue i - 1, f(len - i - 1, acc, self[i])
-  } else {
+  } nobreak {
     acc
   }
 }
@@ -1267,7 +1269,7 @@ pub impl[T : Compare] Compare for FixedArray[T] with compare(self, other) {
   for i in 0..<len_self {
     let cmp = self.unsafe_get(i).compare(other.unsafe_get(i))
     guard cmp == 0 else { break cmp }
-  } else {
+  } nobreak {
     0
   }
 }
@@ -1297,10 +1299,12 @@ pub impl[T : Compare] Compare for FixedArray[T] with compare(self, other) {
 pub impl[T] Add for FixedArray[T] with add(self, other) {
   let slen = self.length()
   let nlen = other.length()
-  FixedArray::makei(slen + nlen, i => if i < slen {
-    self[i]
-  } else {
-    other[i - slen]
+  FixedArray::makei(slen + nlen, i => {
+    if i < slen {
+      self[i]
+    } else {
+      other[i - slen]
+    }
   })
 }
 

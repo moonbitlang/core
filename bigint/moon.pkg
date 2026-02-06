@@ -9,6 +9,8 @@ import {
   "moonbitlang/core/uint16",
 }
 
+warnings = "-29"
+
 options(
   targets: {
     "bigint_js.mbt": [ "js" ],
@@ -16,5 +18,4 @@ options(
     "bigint_nonjs.mbt": [ "not", "js" ],
     "bigint_nonjs_wbtest.mbt": [ "not", "js" ],
   },
-  "warn-list": "-29",
 )

@@ -4,6 +4,6 @@ import {
   "moonbitlang/core/quickcheck",
 }
 
-import "test" {
+import {
   "moonbitlang/core/array",
-}
+} for "test"

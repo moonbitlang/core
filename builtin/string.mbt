@@ -81,7 +81,7 @@ pub fn String::char_length(
         abort("invalid surrogate pair")
       }
     }
-  } else {
+  } nobreak {
     char_count
   }
 }
@@ -424,7 +424,7 @@ pub fn String::char_length_eq(
         abort("invalid surrogate pair")
       }
     }
-  } else {
+  } nobreak {
     count == len && index == end_offset
   }
 }
@@ -452,7 +452,7 @@ pub fn String::char_length_ge(
         abort("invalid surrogate pair")
       }
     }
-  } else {
+  } nobreak {
     count >= len
   }
 }

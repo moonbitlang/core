@@ -18,7 +18,6 @@ test "panic blit_to with dst_offset out of bounds" {
   let dst = FixedArray::make(3, 0)
   // dst_offset + len > dst.length()
   let _ = src.blit_to(dst, len=2, dst_offset=2)
-
 }
 
 ///|

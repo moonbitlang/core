@@ -340,7 +340,7 @@ pub impl[V : Eq] Eq for SortedSet[V] with equal(self, other) {
   let iter1 = other.iter()
   while iter.next() is Some(a) && iter1.next() is Some(b) {
     guard a == b else { break false }
-  } else {
+  } nobreak {
     true
   }
 }
@@ -475,34 +475,36 @@ pub fn[V : Compare] SortedSet::range(
 ) -> Iter[V] {
   let mut curr_node = self.root
   let parents = []
-  let iter = Iter::new(() => loop curr_node {
-    Some({ value, left, right, height: _ }) => {
-      let cmp_key_low = value.compare(low)
-      let cmp_key_high = value.compare(high)
-      if cmp_key_low < 0 {
-        // `key < low`, the left subtree and the value itself
-        // should not be visited
-        continue right
-      } else if cmp_key_high > 0 {
-        // `key > high`, the right subtree and the value itself
-        // should not be visited
-        continue left
-        // `low <= value <= high`,
-        // the value itself falls in the range,
-        // and both the left and right sub tree need to be visited
-      } else if left is None {
+  let iter = Iter::new(() => {
+    loop curr_node {
+      Some({ value, left, right, height: _ }) => {
+        let cmp_key_low = value.compare(low)
+        let cmp_key_high = value.compare(high)
+        if cmp_key_low < 0 {
+          // `key < low`, the left subtree and the value itself
+          // should not be visited
+          continue right
+        } else if cmp_key_high > 0 {
+          // `key > high`, the right subtree and the value itself
+          // should not be visited
+          continue left
+          // `low <= value <= high`,
+          // the value itself falls in the range,
+          // and both the left and right sub tree need to be visited
+        } else if left is None {
+          curr_node = right
+          Some(value)
+        } else {
+          parents.push((value, right))
+          continue left
+        }
+      }
+      None if parents.pop() is Some((value, right)) => {
         curr_node = right
         Some(value)
-      } else {
-        parents.push((value, right))
-        continue left
       }
+      None => None
     }
-    None if parents.pop() is Some((value, right)) => {
-      curr_node = right
-      Some(value)
-    }
-    None => None
   })
   iter.iter()
 }

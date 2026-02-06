@@ -387,9 +387,9 @@ test "Map::retain - complex predicate with string operations" {
     "date": 4,
     "elderberry": 10,
   }
-  map.retain((k, v) => k.strip_prefix("a") is Some(_) ||
-    k.strip_suffix("y") is Some(_) ||
-    v >= 10)
+  map.retain((k, v) => {
+    k.strip_prefix("a") is Some(_) || k.strip_suffix("y") is Some(_) || v >= 10
+  })
   inspect(map.length(), content="3")
   inspect(map.get("apple"), content="Some(5)") // starts with "a"
   inspect(map.get("banana"), content="None") // no match

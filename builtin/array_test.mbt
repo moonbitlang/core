@@ -548,7 +548,6 @@ test "array_chunks" {
 test "panic_array_chunks_by_zero" {
   let arr = [1, 2, 3, 4, 5]
   let _ = arr.chunks(0)
-
 }
 
 ///|
@@ -591,7 +590,6 @@ test "array_suffixes" {
 test "panic_array_windows_by_zero" {
   let arr = [1, 2, 3, 4, 5]
   let _ = arr.windows(0)
-
 }
 
 ///|

@@ -280,7 +280,7 @@ pub impl[T : Eq] Eq for Array[T] with equal(self, other) {
   guard self_len == other_len else { return false }
   for i in 0..<self_len {
     guard self.unsafe_get(i) == other.unsafe_get(i) else { break false }
-  } else {
+  } nobreak {
     true
   }
 }
@@ -332,7 +332,7 @@ pub impl[T : Compare] Compare for Array[T] with compare(self, other) {
   for i in 0..<len_self {
     let cmp = self.unsafe_get(i).compare(other.unsafe_get(i))
     guard cmp is 0 else { break cmp }
-  } else {
+  } nobreak {
     0
   }
 }
@@ -827,7 +827,7 @@ pub fn[T : Eq] Array::contains(self : Array[T], value : T) -> Bool {
     if v == value {
       break true
     }
-  } else {
+  } nobreak {
     false
   }
 }
@@ -1001,7 +1001,7 @@ pub fn[T] Array::search_by(self : Array[T], f : (T) -> Bool) -> Int? {
     if f(v) {
       break Some(i)
     }
-  } else {
+  } nobreak {
     None
   }
 }
@@ -1155,7 +1155,7 @@ pub fn[T] Array::retain(self : Array[T], f : (T) -> Bool raise?) -> Unit raise? 
       continue i + 1, j + 1
     }
     continue i + 1, j
-  } else {
+  } nobreak {
     // we use `else` here to capture `j`
     self.unsafe_truncate_to_length(j)
   }
@@ -1265,7 +1265,7 @@ pub fn[A, B] Array::fold(
 ) -> B raise? {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(acc, self[i])
-  } else {
+  } nobreak {
     acc
   }
 }
@@ -1290,7 +1290,7 @@ pub fn[A, B] Array::rev_fold(
 ) -> B raise? {
   for i = self.length() - 1, acc = init; i >= 0; {
     continue i - 1, f(acc, self[i])
-  } else {
+  } nobreak {
     acc
   }
 }
@@ -1315,7 +1315,7 @@ pub fn[A, B] Array::foldi(
 ) -> B raise? {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(i, acc, self[i])
-  } else {
+  } nobreak {
     acc
   }
 }
@@ -1341,7 +1341,7 @@ pub fn[A, B] Array::rev_foldi(
   let len = self.length()
   for i = len - 1, acc = init; i >= 0; {
     continue i - 1, f(len - i - 1, acc, self[i])
-  } else {
+  } nobreak {
     acc
   }
 }

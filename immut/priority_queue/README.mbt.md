@@ -13,7 +13,6 @@ You can use `new()` or `of()` to create an immutable priority queue.
 test {
   let _queue1 : @priority_queue.PriorityQueue[Int] = @priority_queue.new()
   let _queue2 = @priority_queue.from_array([1, 2, 3])
-
 }
 ```
 

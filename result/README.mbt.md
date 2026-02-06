@@ -13,7 +13,6 @@ You can create a `Result` value using the `Ok` and `Err` constructors, remember 
 test {
   let _result : Result[Int, String] = Ok(42)
   let _error : Result[Int, String] = Err("Error message")
-
 }
 ```
 
@@ -23,7 +22,6 @@ Or use the `ok` and `err` functions to create a `Result` value.
 test {
   let _result : Result[String, Unit] = Ok("yes")
   let _error : Result[Int, String] = Err("error")
-
 }
 ```
 

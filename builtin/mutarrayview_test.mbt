@@ -151,28 +151,24 @@ test "negative index2" {
 test "panic negative index1" {
   let arr = [1, 2, 3]
   let _ = arr.mut_view(start=-4)
-
 }
 
 ///|
 test "panic negative index2" {
   let arr = [1, 2, 3]
   let _ = arr.mut_view(end=-4)
-
 }
 
 ///|
 test "panic negative index3" {
   let arr = [1, 2, 3]
   let _ = arr.mut_view(start=-1, end=-2)
-
 }
 
 ///|
 test "panic negative index4" {
   let arr = [1, 2, 3]
   let _ = arr.mut_view(start=-1, end=-3)
-
 }
 
 ///|
@@ -180,7 +176,6 @@ test "panic negative index5" {
   let arr = [1, 2, 3]
   let view = arr.mut_view()
   let _ = view.mut_view(start=-4)
-
 }
 
 ///|
@@ -188,7 +183,6 @@ test "panic negative index6" {
   let arr = [1, 2, 3]
   let view = arr.mut_view()
   let _ = view.mut_view(end=-4)
-
 }
 
 ///|
@@ -196,7 +190,6 @@ test "panic negative index7" {
   let arr = [1, 2, 3]
   let view = arr.mut_view()
   let _ = view.mut_view(start=-1, end=-2)
-
 }
 
 ///|
@@ -204,7 +197,6 @@ test "panic negative index8" {
   let arr = [1, 2, 3]
   let view = arr.mut_view()
   let _ = view.mut_view(start=-1, end=-3)
-
 }
 
 ///|
@@ -274,7 +266,6 @@ test "panic MutArrayView index out of bounds" {
   let arr = [1, 2]
   let view = arr.mut_view()
   let _ = view[2]
-
 }
 
 ///|
@@ -288,7 +279,6 @@ test "panic MutArrayView set out of bounds" {
 test "panic FixedArray mut_view invalid range" {
   let arr : FixedArray[Int] = [1, 2, 3]
   let _ = arr.mut_view(start=2, end=1)
-
 }
 
 ///|
@@ -296,7 +286,6 @@ test "panic MutArrayView sub invalid range" {
   let arr = [1, 2, 3]
   let view = arr.mut_view()
   let _ = view[2:1]
-
 }
 
 ///|

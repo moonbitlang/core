@@ -3,6 +3,6 @@ import {
   "moonbitlang/core/uint",
 }
 
-import "test" {
+import {
   "moonbitlang/core/buffer",
-}
+} for "test"

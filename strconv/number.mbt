@@ -26,8 +26,9 @@ priv struct Number {
 ///|
 /// Returns the remaining slice, the parsed number, and the number of digits parsed.
 fn parse_digits(s : StringView, x : UInt64) -> (StringView, UInt64, Int) {
-  s.fold_digits(x, (digit, acc : UInt64) => acc * 10UL +
-    UInt64::extend_uint(digit.reinterpret_as_uint()))
+  s.fold_digits(x, (digit, acc : UInt64) => {
+    acc * 10UL + UInt64::extend_uint(digit.reinterpret_as_uint())
+  })
 }
 
 ///|
@@ -56,11 +57,12 @@ fn parse_scientific(s : StringView) -> (StringView, Int64)? {
     s = rest
   }
   if s is ['0'..='9', ..] {
-    let (s, exp_num, _) = s.fold_digits(exp_num, (digit, exp_num : Int64) => if exp_num <
-      0x10000L {
-      10L * exp_num + digit.to_int64() // no overflows here
-    } else {
-      exp_num
+    let (s, exp_num, _) = s.fold_digits(exp_num, (digit, exp_num : Int64) => {
+      if exp_num < 0x10000L {
+        10L * exp_num + digit.to_int64() // no overflows here
+      } else {
+        exp_num
+      }
     })
     if neg_exp {
       Some((s, -exp_num))

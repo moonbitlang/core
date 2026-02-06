@@ -3,7 +3,7 @@ import {
   "moonbitlang/core/int16",
 }
 
-import "test" {
+import {
   "moonbitlang/core/char",
   "moonbitlang/core/json",
-}
+} for "test"

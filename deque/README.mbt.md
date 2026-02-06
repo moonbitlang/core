@@ -13,7 +13,6 @@ You can create a deque manually via the `new()` or construct it using the `of()`
 test {
   let _dv : @deque.Deque[Int] = @deque.new()
   let _dv = @deque.from_array([1, 2, 3, 4, 5])
-
 }
 ```
 
@@ -23,7 +22,6 @@ If you want to set the length at creation time to minimize expansion consumption
 ///|
 test {
   let _dv : @deque.Deque[Int] = @deque.new(capacity=10)
-
 }
 ```
 

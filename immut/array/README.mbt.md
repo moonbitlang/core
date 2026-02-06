@@ -15,7 +15,6 @@ test {
   let _arr2 : @array.T[Int] = @array.new()
   let _arr3 = @array.from_iter((1).until(5))
   let _arr4 = @array.from_array([1, 2, 3])
-
 }
 ```
 

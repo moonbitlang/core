@@ -2,9 +2,9 @@ import {
   "moonbitlang/core/builtin",
 }
 
-import "test" {
+import {
   "moonbitlang/core/char",
-}
+} for "test"
 
 options(
   targets: {
