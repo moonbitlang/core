@@ -1,9 +1,9 @@
 import {
   "moonbitlang/core/builtin",
-  "moonbitlang/core/internal/regex_engine" as @re,
+  "moonbitlang/core/internal/regex_engine" @re,
 }
 
-import "test" {
+import {
   "moonbitlang/core/array",
   "moonbitlang/core/double",
   "moonbitlang/core/uint",
@@ -13,4 +13,4 @@ import "test" {
   "moonbitlang/core/error",
   "moonbitlang/core/json",
   "moonbitlang/core/float",
-}
+} for "test"

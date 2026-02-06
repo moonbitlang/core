@@ -4,9 +4,9 @@ import {
   "moonbitlang/core/uint",
 }
 
-import "test" {
+import {
   "moonbitlang/core/math",
-}
+} for "test"
 
 options(
   targets: {

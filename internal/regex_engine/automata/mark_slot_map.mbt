@@ -52,10 +52,12 @@ fn MarkSlotMap::add_mark(self : MarkSlotMap, mark : Mark) -> MarkSlotMap {
 ///|
 fn MarkSlotMap::assign_slot(self : MarkSlotMap, slot : Slot) -> MarkSlotMap {
   MarkSlotMap(
-    self.0.map_with_key((_mark, prev_slot) => if prev_slot.is_assigned() {
-      prev_slot
-    } else {
-      slot
+    self.0.map_with_key((_mark, prev_slot) => {
+      if prev_slot.is_assigned() {
+        prev_slot
+      } else {
+        slot
+      }
     }),
   )
 }

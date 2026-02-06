@@ -248,10 +248,12 @@ fn ThreadSet::remove_duplicates(self : ThreadSet, next : Expr) -> ThreadSet {
 ///|
 fn ThreadSet::assign_slot(desc : ThreadSet, slot : Slot) -> ThreadSet {
   guard slot.is_assigned() else { panic() }
-  desc.map(thread => match thread {
-    End(marks) => End(marks.assign_slot(slot))
-    Exp(marks, expr) => Exp(marks.assign_slot(slot), expr)
-    Seq(pref, first, next) => Seq(pref, first.assign_slot(slot), next)
+  desc.map(thread => {
+    match thread {
+      End(marks) => End(marks.assign_slot(slot))
+      Exp(marks, expr) => Exp(marks.assign_slot(slot), expr)
+      Seq(pref, first, next) => Seq(pref, first.assign_slot(slot), next)
+    }
   })
 }
 
@@ -259,20 +261,22 @@ fn ThreadSet::assign_slot(desc : ThreadSet, slot : Slot) -> ThreadSet {
 fn ThreadSet::iter(self : ThreadSet) -> Iter[Thread] {
   let mut node = self
   let parents = []
-  Iter::new(() => loop node {
-    Node(t=thread, l=Empty, r=right, ..) => {
-      node = right
-      Some(thread)
+  Iter::new(() => {
+    loop node {
+      Node(t=thread, l=Empty, r=right, ..) => {
+        node = right
+        Some(thread)
+      }
+      Node(t=thread, l=left, r=right, ..) => {
+        parents.push((thread, right))
+        continue left
+      }
+      Empty if parents.pop() is Some((thread, right)) => {
+        node = right
+        Some(thread)
+      }
+      Empty => None
     }
-    Node(t=thread, l=left, r=right, ..) => {
-      parents.push((thread, right))
-      continue left
-    }
-    Empty if parents.pop() is Some((thread, right)) => {
-      node = right
-      Some(thread)
-    }
-    Empty => None
   })
 }
 
@@ -280,9 +284,11 @@ fn ThreadSet::iter(self : ThreadSet) -> Iter[Thread] {
 fn ThreadSet::iter_marks(self : ThreadSet) -> Iter[MarkSlotMap] {
   self
   .iter()
-  .flat_map(thread => match thread {
-    End(marks) | Exp(marks, _) => Iter::singleton(marks)
-    Seq(_pref, first, _next) => first.iter_marks()
+  .flat_map(thread => {
+    match thread {
+      End(marks) | Exp(marks, _) => Iter::singleton(marks)
+      Seq(_pref, first, _next) => first.iter_marks()
+    }
   })
 }
 

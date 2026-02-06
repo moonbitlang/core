@@ -9,8 +9,8 @@ import {
   "moonbitlang/core/buffer",
 }
 
-import "test" {
+import {
   "moonbitlang/core/result",
   "moonbitlang/core/unit",
   "moonbitlang/core/bigint",
-}
+} for "test"

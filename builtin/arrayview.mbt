@@ -720,7 +720,7 @@ pub fn[T : Eq] ArrayView::contains(self : ArrayView[T], value : T) -> Bool {
     if v == value {
       break true
     }
-  } else {
+  } nobreak {
     false
   }
 }
@@ -741,7 +741,7 @@ pub fn[T : Eq] ArrayView::search(self : ArrayView[T], value : T) -> Int? {
     if self.unsafe_get(i) == value {
       break Some(i)
     }
-  } else {
+  } nobreak {
     None
   }
 }
@@ -768,7 +768,7 @@ pub fn[T : Eq] ArrayView::starts_with(
     if self.unsafe_get(i) != prefix.unsafe_get(i) {
       break false
     }
-  } else {
+  } nobreak {
     true
   }
 }
@@ -797,7 +797,7 @@ pub fn[T : Eq] ArrayView::ends_with(
     if self.unsafe_get(self_len - suffix_len + i) != suffix.unsafe_get(i) {
       break false
     }
-  } else {
+  } nobreak {
     true
   }
 }
@@ -825,7 +825,7 @@ pub fn[T : Compare] ArrayView::binary_search(
     } else {
       continue i, h
     }
-  } else {
+  } nobreak {
     if i < len && self.unsafe_get(i) == value {
       Ok(i)
     } else {
@@ -858,7 +858,7 @@ pub fn[T] ArrayView::binary_search_by(
     } else {
       continue i, h
     }
-  } else {
+  } nobreak {
     if i < len && cmp(self.unsafe_get(i)) == 0 {
       Ok(i)
     } else {
@@ -884,7 +884,7 @@ pub fn[A, B] ArrayView::fold(
 ) -> B raise? {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(acc, self[i])
-  } else {
+  } nobreak {
     acc
   }
 }
@@ -906,7 +906,7 @@ pub fn[A, B] ArrayView::rev_fold(
 ) -> B raise? {
   for i = self.length() - 1, acc = init; i >= 0; {
     continue i - 1, f(acc, self[i])
-  } else {
+  } nobreak {
     acc
   }
 }
@@ -928,7 +928,7 @@ pub fn[A, B] ArrayView::foldi(
 ) -> B raise? {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(i, acc, self[i])
-  } else {
+  } nobreak {
     acc
   }
 }
@@ -939,8 +939,9 @@ pub fn[A, B] ArrayView::foldi(
 /// # Example
 /// ```mbt check
 /// test {
-///   let sum = [1, 2, 3, 4, 5][:].rev_foldi(init=0, (index, sum, _elem) => sum +
-///     index)
+///   let sum = [1, 2, 3, 4, 5][:].rev_foldi(init=0, (index, sum, _elem) => {
+///     sum + index
+///   })
 ///   inspect(sum, content="10")
 /// }
 /// ```
@@ -952,7 +953,7 @@ pub fn[A, B] ArrayView::rev_foldi(
   let len = self.length()
   for i = len - 1, acc = init; i >= 0; {
     continue i - 1, f(len - i - 1, acc, self[i])
-  } else {
+  } nobreak {
     acc
   }
 }
@@ -1152,7 +1153,7 @@ pub impl[T : Eq] Eq for ArrayView[T] with equal(self, other) -> Bool {
     if !(self[i] == other[i]) {
       return false
     }
-  } else {
+  } nobreak {
     true
   }
 }
@@ -1166,7 +1167,7 @@ pub impl[T : Compare] Compare for ArrayView[T] with compare(self, other) -> Int 
   for i in 0..<len_self {
     let cmp = self[i].compare(other[i])
     guard cmp == 0 else { break cmp }
-  } else {
+  } nobreak {
     0
   }
 }

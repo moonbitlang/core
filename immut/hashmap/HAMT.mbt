@@ -344,7 +344,7 @@ pub fn[K, V] HashMap::length(self : HashMap[K, V]) -> Int {
       Branch(children) =>
         for i = 0, total_size = 0; i < children.data.length(); {
           continue i + 1, total_size + node_size(children.data[i])
-        } else {
+        } nobreak {
           total_size
         }
     }
@@ -444,7 +444,7 @@ fn[K : Eq, V] @list.List::union_with(
         res[i] = (kv1.0, f(kv1.0, kv1.1, kv2.1))
         break
       }
-    } else {
+    } nobreak {
       res.push(kv2)
     }
   }

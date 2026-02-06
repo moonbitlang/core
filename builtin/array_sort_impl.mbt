@@ -92,7 +92,7 @@ fn[T : Compare] merge(arr : MutArrayView[T], mid : Int) -> Unit {
       arr[p] = buf[p2]
       continue p1, p2 - 1, p - 1
     }
-  } else {
+  } nobreak {
     p2
   }
   for i = buf_remaining; i >= 0; i = i - 1 {
@@ -116,7 +116,7 @@ fn[T : Compare] find_streak(arr : MutArrayView[T]) -> (Int, Bool) {
         continue
       }
       break idx
-    } else {
+    } nobreak {
       len
     }
     (end, true)
@@ -126,7 +126,7 @@ fn[T : Compare] find_streak(arr : MutArrayView[T]) -> (Int, Bool) {
         continue
       }
       break idx
-    } else {
+    } nobreak {
       len
     }
     (end, false)
@@ -392,9 +392,11 @@ fn[T : Compare] fixed_choose_pivot(arr : MutArrayView[T]) -> (Int, Bool) {
   if len >= 8 {
     let a = len / 4 * 1
     let c = len / 4 * 3
-    let sort_2 = (a : Int, b : Int) => if arr[a] > arr[b] {
-      arr.swap(a, b)
-      swaps += 1
+    let sort_2 = (a : Int, b : Int) => {
+      if arr[a] > arr[b] {
+        arr.swap(a, b)
+        swaps += 1
+      }
     }
     let sort_3 = (a : Int, b : Int, c : Int) => {
       sort_2(a, b)

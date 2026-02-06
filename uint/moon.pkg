@@ -2,6 +2,6 @@ import {
   "moonbitlang/core/builtin",
 }
 
-import "test" {
+import {
   "moonbitlang/core/buffer",
-}
+} for "test"

@@ -13,7 +13,6 @@ You can create an empty set using `new()` or construct it using `from_array()`.
 test {
   let _set1 = @hashset.from_array([1, 2, 3, 4, 5])
   let _set2 : @hashset.HashSet[String] = @hashset.new()
-
 }
 ```
 

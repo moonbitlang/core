@@ -47,7 +47,7 @@ pub fn[A] Queue::from_array(arr : ArrayView[A]) -> Queue[A] {
   let last = { content: arr[length - 1], next: None }
   let first = for i = length - 2, x = last; i >= 0; {
     continue i - 1, { content: arr[i], next: Some(x) }
-  } else {
+  } nobreak {
     x
   }
   { length, first: Some(first), last: Some(last) }

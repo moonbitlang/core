@@ -4,6 +4,6 @@ import {
   "moonbitlang/core/quickcheck/splitmix",
 }
 
-import "test" {
+import {
   "moonbitlang/core/char",
-}
+} for "test"

@@ -2,7 +2,7 @@ import {
   "moonbitlang/core/builtin",
 }
 
-import "test" {
+import {
   "moonbitlang/core/uint16",
   "moonbitlang/core/json",
-}
+} for "test"

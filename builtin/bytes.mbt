@@ -359,7 +359,7 @@ pub impl Eq for Bytes with equal(self : Bytes, other : Bytes) -> Bool {
       if self[i] != other[i] {
         break false
       }
-    } else {
+    } nobreak {
       true
     }
   }
@@ -410,7 +410,7 @@ pub impl Compare for Bytes with compare(self, other) {
     if cmp != 0 {
       break cmp
     }
-  } else {
+  } nobreak {
     0
   }
 }

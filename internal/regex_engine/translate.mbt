@@ -53,15 +53,19 @@ fn translate(
         Some(max) => {
           let repeater = match q.mode {
             Greedy =>
-              rem => @automata.e_alt(ctx~, [
-                @automata.e_seq(ctx~, pref2, @automata.e_copy(ctx~, cr), rem),
-                @automata.e_eps,
-              ])
+              rem => {
+                @automata.e_alt(ctx~, [
+                  @automata.e_seq(ctx~, pref2, @automata.e_copy(ctx~, cr), rem),
+                  @automata.e_eps,
+                ])
+              }
             NonGreedy =>
-              rem => @automata.e_alt(ctx~, [
-                @automata.e_eps,
-                @automata.e_seq(ctx~, pref2, @automata.e_copy(ctx~, cr), rem),
-              ])
+              rem => {
+                @automata.e_alt(ctx~, [
+                  @automata.e_eps,
+                  @automata.e_seq(ctx~, pref2, @automata.e_copy(ctx~, cr), rem),
+                ])
+              }
           }
           iter(max - q.min, repeater, @automata.e_eps)
         }

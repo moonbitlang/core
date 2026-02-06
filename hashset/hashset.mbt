@@ -299,7 +299,7 @@ pub fn[K] HashSet::iter(self : HashSet[K]) -> Iter[K] {
       if entry is Some({ key, .. }) {
         return Some(key)
       }
-    } else {
+    } nobreak {
       None
     }
   })

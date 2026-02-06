@@ -15,7 +15,6 @@ You can create an empty map using `new()` or construct it using `from_array()`.
 test {
   let _map1 : Map[String, Int] = {}
   let _map2 = { "one": 1, "two": 2, "three": 3, "four": 4, "five": 5 }
-
 }
 ```
 

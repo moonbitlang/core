@@ -114,7 +114,6 @@ test "UInt16 default value" {
   let value : UInt16 = 42
   // This may be random per process
   let _ = value.hash()
-
 }
 ```
 

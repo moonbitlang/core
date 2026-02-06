@@ -47,7 +47,7 @@ fn brute_force_find(haystack : StringView, needle : StringView) -> Int? {
         if haystack.unsafe_get(i + j) != needle.unsafe_get(j) {
           break
         }
-      } else {
+      } nobreak {
         return Some(i)
       }
       i += 1
@@ -81,7 +81,7 @@ fn boyer_moore_horspool_find(
       if haystack.unsafe_get(i + j) != needle.unsafe_get(j) {
         break
       }
-    } else {
+    } nobreak {
       return Some(i)
     }
   }
@@ -197,7 +197,7 @@ fn brute_force_rev_find(haystack : StringView, needle : StringView) -> Int? {
         if haystack.unsafe_get(i + j) != needle.unsafe_get(j) {
           break
         }
-      } else {
+      } nobreak {
         return Some(i)
       }
       i -= 1
@@ -229,7 +229,7 @@ fn boyer_moore_horspool_rev_find(
       if haystack.unsafe_get(i + j) != needle.unsafe_get(j) {
         break
       }
-    } else {
+    } nobreak {
       return Some(i)
     }
   }
@@ -547,7 +547,7 @@ pub fn StringView::contains_any(self : StringView, chars~ : StringView) -> Bool 
         if chars.contains_char(c) {
           break true
         }
-      } else {
+      } nobreak {
         false
       }
   }
