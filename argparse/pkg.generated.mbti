@@ -1,0 +1,131 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/argparse"
+
+// Values
+pub fn[T : FromMatches] from_matches(Matches) -> T raise ArgParseError
+
+// Errors
+pub suberror ArgBuildError {
+  Unsupported(String)
+}
+pub impl Show for ArgBuildError
+
+pub(all) suberror ArgParseError {
+  UnknownArgument(String, String?)
+  InvalidArgument(String)
+  MissingValue(String)
+  MissingRequired(String)
+  TooFewValues(String, Int, Int)
+  TooManyValues(String, Int, Int)
+  TooManyPositionals
+  InvalidValue(String)
+  MissingGroup(String)
+  GroupConflict(String)
+}
+pub impl Show for ArgParseError
+
+pub suberror DisplayHelp {
+  Message(String)
+}
+pub impl Show for DisplayHelp
+
+pub suberror DisplayVersion {
+  Message(String)
+}
+pub impl Show for DisplayVersion
+
+// Types and methods
+pub struct ArgGroup {
+  // private fields
+
+  fn new(String, required? : Bool, multiple? : Bool, args? : Array[String], requires? : Array[String], conflicts_with? : Array[String]) -> ArgGroup
+}
+pub fn ArgGroup::new(String, required? : Bool, multiple? : Bool, args? : Array[String], requires? : Array[String], conflicts_with? : Array[String]) -> Self
+
+pub struct Command {
+  // private fields
+
+  fn new(String, args? : Array[&ArgLike], subcommands? : Array[Command], about? : String, version? : String, disable_help_flag? : Bool, disable_version_flag? : Bool, disable_help_subcommand? : Bool, arg_required_else_help? : Bool, subcommand_required? : Bool, hidden? : Bool, groups? : Array[ArgGroup]) -> Command
+}
+pub fn Command::new(String, args? : Array[&ArgLike], subcommands? : Array[Self], about? : String, version? : String, disable_help_flag? : Bool, disable_version_flag? : Bool, disable_help_subcommand? : Bool, arg_required_else_help? : Bool, subcommand_required? : Bool, hidden? : Bool, groups? : Array[ArgGroup]) -> Self
+pub fn Command::parse(Self, argv? : Array[String], env? : Map[String, String]) -> Matches raise
+pub fn Command::render_help(Self) -> String
+
+pub(all) enum FlagAction {
+  SetTrue
+  SetFalse
+  Count
+  Help
+  Version
+}
+pub impl Eq for FlagAction
+pub impl Show for FlagAction
+
+pub struct FlagArg {
+  // private fields
+
+  fn new(String, short? : Char, long? : String, about? : String, action? : FlagAction, env? : String, requires? : Array[String], conflicts_with? : Array[String], group? : String, required? : Bool, global? : Bool, negatable? : Bool, hidden? : Bool) -> FlagArg
+}
+pub fn FlagArg::new(String, short? : Char, long? : String, about? : String, action? : FlagAction, env? : String, requires? : Array[String], conflicts_with? : Array[String], group? : String, required? : Bool, global? : Bool, negatable? : Bool, hidden? : Bool) -> Self
+pub impl ArgLike for FlagArg
+
+pub struct Matches {
+  flags : Map[String, Bool]
+  values : Map[String, Array[String]]
+  flag_counts : Map[String, Int]
+  sources : Map[String, ValueSource]
+  subcommand : (String, Matches)?
+  // private fields
+}
+
+pub(all) enum OptionAction {
+  Set
+  Append
+}
+pub impl Eq for OptionAction
+pub impl Show for OptionAction
+
+pub struct OptionArg {
+  // private fields
+
+  fn new(String, short? : Char, long? : String, about? : String, action? : OptionAction, env? : String, default_values? : Array[String], num_args? : ValueRange, allow_hyphen_values? : Bool, last? : Bool, requires? : Array[String], conflicts_with? : Array[String], group? : String, required? : Bool, global? : Bool, hidden? : Bool) -> OptionArg
+}
+pub fn OptionArg::new(String, short? : Char, long? : String, about? : String, action? : OptionAction, env? : String, default_values? : Array[String], num_args? : ValueRange, allow_hyphen_values? : Bool, last? : Bool, requires? : Array[String], conflicts_with? : Array[String], group? : String, required? : Bool, global? : Bool, hidden? : Bool) -> Self
+pub impl ArgLike for OptionArg
+
+pub struct PositionalArg {
+  // private fields
+
+  fn new(String, index? : Int, about? : String, env? : String, default_values? : Array[String], num_args? : ValueRange, allow_hyphen_values? : Bool, last? : Bool, requires? : Array[String], conflicts_with? : Array[String], group? : String, required? : Bool, global? : Bool, hidden? : Bool) -> PositionalArg
+}
+pub fn PositionalArg::new(String, index? : Int, about? : String, env? : String, default_values? : Array[String], num_args? : ValueRange, allow_hyphen_values? : Bool, last? : Bool, requires? : Array[String], conflicts_with? : Array[String], group? : String, required? : Bool, global? : Bool, hidden? : Bool) -> Self
+pub impl ArgLike for PositionalArg
+
+pub struct ValueRange {
+  // private fields
+
+  fn new(lower? : Int, upper? : Int, lower_inclusive? : Bool, upper_inclusive? : Bool) -> ValueRange
+}
+pub fn ValueRange::empty() -> Self
+pub fn ValueRange::new(lower? : Int, upper? : Int, lower_inclusive? : Bool, upper_inclusive? : Bool) -> Self
+pub fn ValueRange::single() -> Self
+pub impl Eq for ValueRange
+pub impl Show for ValueRange
+
+pub enum ValueSource {
+  Argv
+  Env
+  Default
+}
+pub impl Eq for ValueSource
+pub impl Show for ValueSource
+
+// Type aliases
+
+// Traits
+trait ArgLike
+
+pub(open) trait FromMatches {
+  from_matches(Matches) -> Self raise ArgParseError
+}
+
