@@ -32,6 +32,85 @@ pub(all) enum ArgAction {
 } derive(Eq, Show)
 
 ///|
+/// Number-of-values constraint for an argument.
+struct ValueRange {
+  lower : Int?
+  upper : Int?
+  lower_inclusive : Bool
+  upper_inclusive : Bool
+} derive(Eq, Show)
+
+///|
+pub fn ValueRange::empty() -> ValueRange {
+  ValueRange::{
+    lower: Some(0),
+    upper: Some(0),
+    lower_inclusive: true,
+    upper_inclusive: true,
+  }
+}
+
+///|
+pub fn ValueRange::single() -> ValueRange {
+  ValueRange::{
+    lower: Some(1),
+    upper: Some(1),
+    lower_inclusive: true,
+    upper_inclusive: true,
+  }
+}
+
+///|
+pub fn ValueRange::new(
+  lower? : Int? = None,
+  upper? : Int? = None,
+  lower_inclusive? : Bool = true,
+  upper_inclusive? : Bool = true,
+) -> ValueRange {
+  ValueRange::{ lower, upper, lower_inclusive, upper_inclusive }
+}
+
+///|
+fn resolve_value_range(range : ValueRange) -> (Int, Int?) {
+  let min = match range.lower {
+    Some(value) => if range.lower_inclusive { value } else { value + 1 }
+    None => 0
+  }
+  let max = match range.upper {
+    Some(value) => Some(if range.upper_inclusive { value } else { value - 1 })
+    None => None
+  }
+  (min, max)
+}
+
+///|
+fn validate_value_range(range : ValueRange) -> (Int, Int?) raise ArgBuildError {
+  let (min, max) = resolve_value_range(range)
+  match max {
+    Some(max_value) if max_value < min =>
+      raise ArgBuildError::Unsupported("max values must be >= min values")
+    _ => ()
+  }
+  (min, max)
+}
+
+///|
+fn arg_min_max_for_validate(arg : Arg) -> (Int, Int?) raise ArgBuildError {
+  match arg.num_args {
+    Some(range) => validate_value_range(range)
+    None => (0, None)
+  }
+}
+
+///|
+fn arg_min_max(arg : Arg) -> (Int, Int?) {
+  match arg.num_args {
+    Some(range) => resolve_value_range(range)
+    None => (0, None)
+  }
+}
+
+///|
 /// A clap-style argument definition (builder API).
 struct Arg {
   name : String
@@ -52,8 +131,7 @@ struct Arg {
   requires : Array[String]
   conflicts_with : Array[String]
   required : Bool
-  min_values : Int?
-  max_values : Int?
+  num_args : ValueRange?
   aliases : Array[String]
   short_aliases : Array[Char]
   visible_aliases : Array[String]
@@ -85,8 +163,7 @@ pub fn Arg::new(name : String) -> Arg {
     requires: [],
     conflicts_with: [],
     required: false,
-    min_values: None,
-    max_values: None,
+    num_args: None,
     aliases: [],
     short_aliases: [],
     visible_aliases: [],
@@ -153,18 +230,8 @@ pub fn Arg::required(self : Arg, value? : Bool = true) -> Arg {
 }
 
 ///|
-pub fn Arg::min_values(self : Arg, value : Int) -> Arg {
-  Arg::{ ..self, min_values: Some(value) }
-}
-
-///|
-pub fn Arg::max_values(self : Arg, value : Int) -> Arg {
-  Arg::{ ..self, max_values: Some(value) }
-}
-
-///|
-pub fn Arg::num_values(self : Arg, min : Int, max : Int) -> Arg {
-  Arg::{ ..self, min_values: Some(min), max_values: Some(max) }
+pub fn Arg::num_args(self : Arg, range : ValueRange) -> Arg {
+  Arg::{ ..self, num_args: Some(range) }
 }
 
 ///|

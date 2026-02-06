@@ -386,10 +386,8 @@ fn is_required_arg(arg : Arg) -> Bool {
   if arg.required {
     true
   } else {
-    match arg.min_values {
-      Some(min) => min > 0
-      None => false
-    }
+    let (min, _) = arg_min_max(arg)
+    min > 0
   }
 }
 

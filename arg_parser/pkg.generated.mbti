@@ -2,6 +2,7 @@
 package "moonbitlang/core/arg_parser"
 
 // Values
+pub fn[T : FromMatches] from_matches(Matches) -> T raise ArgumentError
 
 // Errors
 pub suberror ArgBuildError {
@@ -56,12 +57,10 @@ pub fn Arg::index(Self, Int) -> Self
 pub fn Arg::last(Self, value? : Bool) -> Self
 pub fn Arg::long(Self, String) -> Self
 pub fn Arg::long_help(Self, String) -> Self
-pub fn Arg::max_values(Self, Int) -> Self
-pub fn Arg::min_values(Self, Int) -> Self
 pub fn Arg::multiple(Self, value? : Bool) -> Self
 pub fn Arg::negatable(Self, value? : Bool) -> Self
 pub fn Arg::new(String) -> Self
-pub fn Arg::num_values(Self, Int, Int) -> Self
+pub fn Arg::num_args(Self, ValueRange) -> Self
 pub fn Arg::option(Self) -> Self
 pub fn Arg::required(Self, value? : Bool) -> Self
 pub fn Arg::requires(Self, String) -> Self
@@ -116,18 +115,24 @@ pub fn Command::visible_alias(Self, String) -> Self
 
 type Matches
 pub fn Matches::count_of(Self, String) -> Int
-pub fn[T : FromMatches] Matches::decode(Self) -> T raise ArgumentError
 pub fn Matches::get_array(Self, String) -> Array[String]
 pub fn Matches::get_flag(Self, String) -> Bool
+pub fn Matches::get_many(Self, String) -> Array[String]?
 pub fn Matches::get_one(Self, String) -> String raise ArgumentError
 pub fn Matches::get_option(Self, String) -> String? raise ArgumentError
 pub fn Matches::new() -> Self
 pub fn Matches::source_of(Self, String) -> ValueSource?
+pub fn Matches::subcommand(Self) -> (String, Self)?
 pub fn Matches::subcommand_matches(Self, String) -> Self?
 pub fn Matches::subcommand_name(Self) -> String?
-pub fn Matches::value_of(Self, String) -> String?
-pub fn Matches::value_sources_of(Self, String) -> Array[ValueSource]?
-pub fn Matches::values_of(Self, String) -> Array[String]?
+pub fn Matches::value_source(Self, String) -> ValueSource?
+
+type ValueRange
+pub fn ValueRange::empty() -> Self
+pub fn ValueRange::new(lower? : Int?, upper? : Int?, lower_inclusive? : Bool, upper_inclusive? : Bool) -> Self
+pub fn ValueRange::single() -> Self
+pub impl Eq for ValueRange
+pub impl Show for ValueRange
 
 pub enum ValueSource {
   Argv

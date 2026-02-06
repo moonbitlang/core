@@ -69,12 +69,12 @@ impl FromMatches for Config with from_matches(m : @arg_parser.Matches) -> Config
 }
 
 ///|
-test "decode from matches" {
+test "from_matches helper" {
   let cmd = @arg_parser.Command::new("demo")
     .arg(@arg_parser.Arg::new("count").long("count").option())
     .arg(@arg_parser.Arg::new("name").index(0))
   let matches = cmd.parse(argv=["--count", "2", "alice"]) catch { _ => panic() }
-  let cfg : Config = matches.decode() catch {
+  let cfg : Config = @arg_parser.from_matches(matches) catch {
     _ => Config::{ count: 0, name: "" }
   }
   assert_eq(cfg.count, 2)

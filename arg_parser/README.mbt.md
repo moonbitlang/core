@@ -7,7 +7,7 @@ Design goals:
 - Builder-style API (`Command`, `Arg`) inspired by Rust clap (no derive macros).
 - Subcommands.
 - Built-in help generation (`-h` short, `--help` long) + `help` subcommand (disableable).
-- Structured decoding from `Matches` via `FromMatches` (you control parsing).
+- Structured decoding from `Matches` via `FromMatches` + `from_matches` (you control parsing).
 - Built-in version flag (`-V`, `--version`) when version text is set (disableable).
 - Optional env var fallbacks per argument.
 
@@ -26,7 +26,7 @@ let matches = cmd.parse(argv=["-v", "--count=2", "alice"]) catch {
   _ => panic()
 }
 assert_true(matches.get_flag("verbose"))
-assert_eq(matches.value_of("name").unwrap(), "alice")
+assert_eq(matches.get_one("name") catch { _ => "" }, "alice")
 ```
 
 ## Parsing APIs
@@ -104,7 +104,7 @@ let m = root.parse(argv=["echo", "hi"]) catch { _ => panic() }
 
 assert_eq(m.subcommand_name().unwrap(), "echo")
 let sub = m.subcommand_matches("echo").unwrap()
-assert_eq(sub.value_of("msg").unwrap(), "hi")
+assert_eq(sub.get_one("msg") catch { _ => "" }, "hi")
 ```
 
 You can add aliases:
@@ -133,7 +133,7 @@ Command-level parse policies:
 
 Start with `Arg::new("name")` and chain setters like
 `.short(...)`, `.long(...)`, `.option()`, `.help(...)`, `.long_help(...)`, `.env(...)`,
-`.default_value(...)`, `.required(...)`, `.min_values(...)`, etc.
+`.default_value(...)`, `.required(...)`, `.num_args(...)`, etc.
 
 ### Options
 
@@ -144,7 +144,12 @@ Start with `Arg::new("name")` and chain setters like
 - Env fallback: set `.env("NAME")` to read from the environment when not present in argv
 - Default values: set `.default_value("x")` to use when neither argv nor env provides a value
 - Required: set `.required()` to require the arg be present
-- Arity: use `.min_values(n)`, `.max_values(n)`, or `.num_values(min, max)`
+- Arity: use `.num_args(...)` with `ValueRange`:
+  - exact 1 value: `.num_args(ValueRange::single())`
+  - exact 0 values: `.num_args(ValueRange::empty())`
+  - general range: `.num_args(ValueRange::new(lower=Some(1), upper=Some(3)))`
+  - bounds can be inclusive/exclusive with
+    `.new(lower=..., upper=..., lower_inclusive=..., upper_inclusive=...)`
 
 ### Actions
 
@@ -179,7 +184,7 @@ assert_eq(m.count_of("verbose"), 3)
 - `.allow_hyphen_values()` allows values like `-1` or `-foo` without `--`.
 - `.last()` treats the positional as a trailing var-arg and stops option parsing.
 - `.default_value(...)` can be used for a missing positional.
-- `.required()` and `.min_values(...)` affect positional usage in help.
+- `.required()` and `.num_args(...)` affect positional usage in help.
 
 ## Negation (`--no-...`)
 
@@ -262,16 +267,15 @@ let cmd = Command::new("demo")
 Raw access:
 
 - `matches.get_flag("flag") -> Bool`
-- `matches.value_of("name") -> String?`
-- `matches.values_of("name") -> Array[String]?`
-- `matches.source_of("name") -> ValueSource?`
-- `matches.value_sources_of("name") -> Array[ValueSource]?`
+- `matches.value_source("name") -> ValueSource?` (alias: `source_of`)
+- `matches.subcommand() -> (String, Matches)?`
 - `matches.count_of("flag") -> Int` (for `ArgAction::Count`)
 
 Convenience access:
 
 - `matches.get_one("count") : String`
 - `matches.get_option("count") : String?`
+- `matches.get_many("tag") : Array[String]?`
 - `matches.get_array("tag") : Array[String]`
 
 ## Value Sources
@@ -282,14 +286,13 @@ Each value/flag is tagged with where it came from:
 - `ValueSource::Env`
 - `ValueSource::Default`
 
-Use `matches.source_of(name)` for the overall source, or
-`matches.value_sources_of(name)` for per-value sources. `ValueSource::Default`
+Use `matches.value_source(name)` for the overall source. `ValueSource::Default`
 is used when a value comes from `.default_value(...)` / `.default_values(...)`.
 
 ## Reconstructing Structured Configs
 
 For more complicated “decode into a struct/enum” workflows, implement
-`FromMatches` and call `matches.decode()`:
+`FromMatches` and call `from_matches(matches)`:
 
 ```mbt nocheck
 ///|
@@ -309,7 +312,7 @@ impl FromMatches for Config with from_matches(m : Matches) -> Config raise Argum
 }
 
 ///|
-let cfg : Config = matches.decode()
+let cfg : Config = from_matches(matches)
 ```
 
 ## Errors

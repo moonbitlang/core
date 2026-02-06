@@ -583,7 +583,7 @@ fn validate_arg(arg : Arg) -> Unit raise ArgBuildError {
         "help/version actions do not support env/defaults",
       )
     }
-    if arg.min_values is Some(_) || arg.max_values is Some(_) || arg.multiple {
+    if arg.num_args is Some(_) || arg.multiple {
       raise ArgBuildError::Unsupported(
         "help/version actions do not support multiple values",
       )
@@ -600,21 +600,12 @@ fn validate_arg(arg : Arg) -> Unit raise ArgBuildError {
       )
     }
   }
-  if (arg.min_values is Some(_) || arg.max_values is Some(_)) &&
-    !arg.takes_value {
+  if arg.num_args is Some(_) && !arg.takes_value {
     raise ArgBuildError::Unsupported(
       "min/max values require value-taking arguments",
     )
   }
-  match (arg.min_values, arg.max_values) {
-    (Some(min), Some(max)) if max < min =>
-      raise ArgBuildError::Unsupported("max values must be >= min values")
-    (_, Some(max)) if max < 1 =>
-      raise ArgBuildError::Unsupported("max values must be >= 1")
-    _ => ()
-  }
-  let min = arg.min_values.unwrap_or(0)
-  let max = arg.max_values
+  let (min, max) = arg_min_max_for_validate(arg)
   let allow_multi = arg.multiple || arg.action == ArgAction::Append
   if (min > 1 || (max is Some(m) && m > 1)) && !allow_multi {
     raise ArgBuildError::Unsupported("multiple values require multiple/append")
@@ -916,11 +907,11 @@ fn validate_values(cmd : Command, matches : Matches) -> Unit raise ParseError {
     }
     let values = matches.values.get(arg.name).unwrap_or([])
     let count = values.length()
-    let min = arg.min_values.unwrap_or(0)
+    let (min, max) = arg_min_max(arg)
     if count < min {
       raise_arg(ArgumentError::TooFewValues(arg.name, count, min))
     }
-    match arg.max_values {
+    match max {
       Some(max) if count > max =>
         raise_arg(ArgumentError::TooManyValues(arg.name, count, max))
       _ => ()
@@ -1156,7 +1147,6 @@ fn apply_defaults(matches : Matches, args : Array[Arg]) -> Unit {
       Some(values) if values.length() > 0 =>
         for value in values {
           let _ = add_value(matches, arg.name, value, arg, ValueSource::Default)
-
         }
       _ =>
         match arg.default_value {
@@ -1168,7 +1158,6 @@ fn apply_defaults(matches : Matches, args : Array[Arg]) -> Unit {
               arg,
               ValueSource::Default,
             )
-
           }
           None => ()
         }

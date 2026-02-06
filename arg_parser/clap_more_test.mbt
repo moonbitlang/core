@@ -198,7 +198,7 @@ test "long inline value" {
     @arg_parser.Arg::new("count").long("count").option(),
   )
   let matches = cmd.parse(argv=["--count=3"]) catch { _ => panic() }
-  assert_eq(matches.value_of("count").unwrap(), "3")
+  assert_eq(matches.get_one("count") catch { _ => "" }, "3")
 }
 
 ///|
@@ -259,7 +259,7 @@ test "env fallback for option" {
   let matches = cmd.parse(argv=[], env={ "MODE": "fast" }) catch {
     _ => panic()
   }
-  assert_eq(matches.value_of("mode").unwrap(), "fast")
+  assert_eq(matches.get_one("mode") catch { _ => "" }, "fast")
   assert_eq(matches.source_of("mode").unwrap().to_string(), "Env")
 }
 
@@ -275,7 +275,7 @@ test "argv overrides env" {
   let matches = cmd.parse(argv=["--mode", "slow"], env={ "MODE": "fast" }) catch {
     _ => panic()
   }
-  assert_eq(matches.value_of("mode").unwrap(), "slow")
+  assert_eq(matches.get_one("mode") catch { _ => "" }, "slow")
   assert_eq(matches.source_of("mode").unwrap().to_string(), "Argv")
 }
 
@@ -297,7 +297,7 @@ test "default value for option" {
     @arg_parser.Arg::new("mode").long("mode").option().default_value("fast"),
   )
   let matches = cmd.parse(argv=[]) catch { _ => panic() }
-  assert_eq(matches.value_of("mode").unwrap(), "fast")
+  assert_eq(matches.get_one("mode") catch { _ => "" }, "fast")
   assert_eq(matches.source_of("mode").unwrap().to_string(), "Default")
 }
 
@@ -307,7 +307,7 @@ test "default value for positional" {
     @arg_parser.Arg::new("name").index(0).default_value("guest"),
   )
   let matches = cmd.parse(argv=[]) catch { _ => panic() }
-  assert_eq(matches.value_of("name").unwrap(), "guest")
+  assert_eq(matches.get_one("name") catch { _ => "" }, "guest")
   assert_eq(matches.source_of("name").unwrap().to_string(), "Default")
 }
 
@@ -317,7 +317,7 @@ test "-- terminator treats following args as positional" {
     @arg_parser.Arg::new("name").index(0),
   )
   let matches = cmd.parse(argv=["--", "--count"]) catch { _ => panic() }
-  assert_eq(matches.value_of("name").unwrap(), "--count")
+  assert_eq(matches.get_one("name") catch { _ => "" }, "--count")
 }
 
 ///|
@@ -326,7 +326,7 @@ test "negative number positional parses without --" {
     @arg_parser.Arg::new("num").index(0),
   )
   let matches = cmd.parse(argv=["-12"]) catch { _ => panic() }
-  assert_eq(matches.value_of("num").unwrap(), "-12")
+  assert_eq(matches.get_one("num") catch { _ => "" }, "-12")
 }
 
 ///|
@@ -335,7 +335,7 @@ test "allow hyphen positional accepts dash values" {
     @arg_parser.Arg::new("name").index(0).allow_hyphen_values(),
   )
   let matches = cmd.parse(argv=["-file"]) catch { _ => panic() }
-  assert_eq(matches.value_of("name").unwrap(), "-file")
+  assert_eq(matches.get_one("name") catch { _ => "" }, "-file")
 }
 
 ///|
@@ -347,8 +347,8 @@ test "last positional captures option-like tokens" {
   let matches = cmd.parse(argv=["run", "--verbose", "-x"]) catch {
     _ => panic()
   }
-  assert_eq(matches.value_of("cmd").unwrap(), "run")
-  let rest = matches.values_of("args").unwrap()
+  assert_eq(matches.get_one("cmd") catch { _ => "" }, "run")
+  let rest = matches.get_many("args").unwrap()
   inspect(rest, content="[\"--verbose\", \"-x\"]")
   assert_false(matches.get_flag("verbose"))
 }
@@ -374,7 +374,7 @@ test "multiple named values" {
   let matches = cmd.parse(argv=["--tag", "a", "--tag", "b"]) catch {
     _ => panic()
   }
-  let values = matches.values_of("tag").unwrap()
+  let values = matches.get_many("tag").unwrap()
   inspect(values, content="[\"a\", \"b\"]")
 }
 
@@ -384,8 +384,8 @@ test "multiple positional captures rest" {
     .arg(@arg_parser.Arg::new("first").index(0))
     .arg(@arg_parser.Arg::new("rest").index(1).multiple())
   let matches = cmd.parse(argv=["x", "y", "z"]) catch { _ => panic() }
-  assert_eq(matches.value_of("first").unwrap(), "x")
-  let rest = matches.values_of("rest").unwrap()
+  assert_eq(matches.get_one("first") catch { _ => "" }, "x")
+  let rest = matches.get_many("rest").unwrap()
   inspect(rest, content="[\"y\", \"z\"]")
 }
 
@@ -477,7 +477,7 @@ test "non-multiple keeps last option value" {
   let matches = cmd.parse(argv=["--tag", "a", "--tag", "b"]) catch {
     _ => panic()
   }
-  let values = matches.values_of("tag").unwrap()
+  let values = matches.get_many("tag").unwrap()
   inspect(values, content="[\"b\"]")
 }
 
@@ -487,7 +487,7 @@ test "short option takes value" {
     @arg_parser.Arg::new("count").short('c').option(),
   )
   let matches = cmd.parse(argv=["-c", "3"]) catch { _ => panic() }
-  assert_eq(matches.value_of("count").unwrap(), "3")
+  assert_eq(matches.get_one("count") catch { _ => "" }, "3")
 }
 
 ///|
@@ -496,7 +496,7 @@ test "short option attached value" {
     @arg_parser.Arg::new("count").short('c').option(),
   )
   let matches = cmd.parse(argv=["-c3"]) catch { _ => panic() }
-  assert_eq(matches.value_of("count").unwrap(), "3")
+  assert_eq(matches.get_one("count") catch { _ => "" }, "3")
 }
 
 ///|
@@ -612,7 +612,7 @@ test "short option takes value with equals" {
     @arg_parser.Arg::new("count").short('c').option(),
   )
   let matches = cmd.parse(argv=["-c=3"]) catch { _ => panic() }
-  assert_eq(matches.value_of("count").unwrap(), "3")
+  assert_eq(matches.get_one("count") catch { _ => "" }, "3")
 }
 
 ///|
@@ -622,7 +622,7 @@ test "short group with value attached" {
     .arg(@arg_parser.Arg::new("count").short('c').option())
   let matches = cmd.parse(argv=["-vc3"]) catch { _ => panic() }
   assert_true(matches.get_flag("verbose"))
-  assert_eq(matches.value_of("count").unwrap(), "3")
+  assert_eq(matches.get_one("count") catch { _ => "" }, "3")
 }
 
 ///|
@@ -632,7 +632,7 @@ test "short group with value in next argv" {
     .arg(@arg_parser.Arg::new("count").short('c').option())
   let matches = cmd.parse(argv=["-vc", "3"]) catch { _ => panic() }
   assert_true(matches.get_flag("verbose"))
-  assert_eq(matches.value_of("count").unwrap(), "3")
+  assert_eq(matches.get_one("count") catch { _ => "" }, "3")
 }
 
 ///|
@@ -658,9 +658,9 @@ test "global option last wins across subcommand boundary" {
   let matches = root.parse(argv=["--config", "a", "run", "--config", "b"]) catch {
     _ => panic()
   }
-  assert_eq(matches.value_of("config").unwrap(), "b")
+  assert_eq(matches.get_one("config") catch { _ => "" }, "b")
   let subm = matches.subcommand_matches("run").unwrap()
-  assert_eq(subm.value_of("config").unwrap(), "b")
+  assert_eq(subm.get_one("config") catch { _ => "" }, "b")
 }
 
 ///|
@@ -672,9 +672,9 @@ test "global option merges multiple values" {
   let matches = root.parse(argv=["--tag", "a", "run", "--tag", "b"]) catch {
     _ => panic()
   }
-  inspect(matches.values_of("tag").unwrap(), content="[\"a\", \"b\"]")
+  inspect(matches.get_many("tag").unwrap(), content="[\"a\", \"b\"]")
   let subm = matches.subcommand_matches("run").unwrap()
-  inspect(subm.values_of("tag").unwrap(), content="[\"a\", \"b\"]")
+  inspect(subm.get_many("tag").unwrap(), content="[\"a\", \"b\"]")
 }
 
 ///|
@@ -683,7 +683,7 @@ test "arg long alias parses" {
     @arg_parser.Arg::new("color").long("color").option().alias_name("colour"),
   )
   let matches = cmd.parse(argv=["--colour", "blue"]) catch { _ => panic() }
-  assert_eq(matches.value_of("color").unwrap(), "blue")
+  assert_eq(matches.get_one("color") catch { _ => "" }, "blue")
 }
 
 ///|
@@ -852,8 +852,8 @@ test "requires relationship enforces dependent arg" {
   let matches = cmd.parse(argv=["--mode", "fast", "--config", "cfg.toml"]) catch {
     _ => panic()
   }
-  assert_eq(matches.value_of("mode").unwrap(), "fast")
-  assert_eq(matches.value_of("config").unwrap(), "cfg.toml")
+  assert_eq(matches.get_one("mode") catch { _ => "" }, "fast")
+  assert_eq(matches.get_one("config") catch { _ => "" }, "cfg.toml")
 }
 
 ///|
@@ -884,8 +884,7 @@ test "min and max values enforced" {
     .long("tag")
     .option()
     .multiple()
-    .min_values(2)
-    .max_values(3),
+    .num_args(@arg_parser.ValueRange::new(lower=Some(2), upper=Some(3))),
   )
   try cmd.parse(argv=["--tag", "a"]) catch {
     @arg_parser.ArgumentError::TooFewValues(name, got, min) => {

@@ -50,10 +50,11 @@ pub(open) trait FromMatches {
 }
 
 ///|
-pub fn[T : FromMatches] Matches::decode(
-  self : Matches,
+/// Decode a full argument struct/enum from `Matches`.
+pub fn[T : FromMatches] from_matches(
+  matches : Matches,
 ) -> T raise ArgumentError {
-  T::from_matches(self)
+  T::from_matches(matches)
 }
 
 ///|
@@ -62,19 +63,6 @@ pub fn[T : FromMatches] Matches::decode(
 /// Resolved flag value (false if never set).
 pub fn Matches::get_flag(self : Matches, name : String) -> Bool {
   self.flags.get(name).unwrap_or(false)
-}
-
-///|
-pub fn Matches::value_of(self : Matches, name : String) -> String? {
-  match self.values.get(name) {
-    Some(values) if values.length() > 0 => Some(values[0])
-    _ => None
-  }
-}
-
-///|
-pub fn Matches::values_of(self : Matches, name : String) -> Array[String]? {
-  self.values.get(name)
 }
 
 ///|
@@ -97,12 +85,9 @@ pub fn Matches::source_of(self : Matches, name : String) -> ValueSource? {
 }
 
 ///|
-/// Sources for each collected value (if any).
-pub fn Matches::value_sources_of(
-  self : Matches,
-  name : String,
-) -> Array[ValueSource]? {
-  self.value_sources.get(name)
+/// Clap-style alias for `source_of`.
+pub fn Matches::value_source(self : Matches, name : String) -> ValueSource? {
+  self.source_of(name)
 }
 
 ///|
@@ -166,6 +151,12 @@ pub fn Matches::get_option(
 }
 
 ///|
+/// Clap-style many-values accessor.
+pub fn Matches::get_many(self : Matches, name : String) -> Array[String]? {
+  self.values.get(name)
+}
+
+///|
 pub fn Matches::get_array(self : Matches, name : String) -> Array[String] {
   guard self.values.get(name) is Some(values) else { return [] }
   values
@@ -177,6 +168,12 @@ pub fn Matches::subcommand_name(self : Matches) -> String? {
     Some((name, _)) => Some(name)
     None => None
   }
+}
+
+///|
+/// Return the parsed subcommand tuple `(name, matches)` if present.
+pub fn Matches::subcommand(self : Matches) -> (String, Matches)? {
+  self.subcommand
 }
 
 ///|
