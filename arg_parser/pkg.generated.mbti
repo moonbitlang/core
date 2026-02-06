@@ -83,6 +83,8 @@ pub impl Eq for ArgAction
 pub impl Show for ArgAction
 
 type ArgGroup
+pub fn ArgGroup::arg(Self, String) -> Self
+pub fn ArgGroup::args(Self, Array[String]) -> Self
 pub fn ArgGroup::conflicts_with(Self, String) -> Self
 pub fn ArgGroup::conflicts_with_all(Self, Array[String]) -> Self
 pub fn ArgGroup::multiple(Self, value? : Bool) -> Self
@@ -115,13 +117,10 @@ pub fn Command::visible_alias(Self, String) -> Self
 
 type Matches
 pub fn Matches::count_of(Self, String) -> Int
-pub fn Matches::get_array(Self, String) -> Array[String]
 pub fn Matches::get_flag(Self, String) -> Bool
 pub fn Matches::get_many(Self, String) -> Array[String]?
-pub fn Matches::get_one(Self, String) -> String raise ArgumentError
-pub fn Matches::get_option(Self, String) -> String? raise ArgumentError
+pub fn Matches::get_one(Self, String) -> String? raise ArgumentError
 pub fn Matches::new() -> Self
-pub fn Matches::source_of(Self, String) -> ValueSource?
 pub fn Matches::subcommand(Self) -> (String, Self)?
 pub fn Matches::subcommand_matches(Self, String) -> Self?
 pub fn Matches::subcommand_name(Self) -> String?

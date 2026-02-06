@@ -18,6 +18,7 @@ struct ArgGroup {
   name : String
   required : Bool
   multiple : Bool
+  args : Array[String]
   requires : Array[String]
   conflicts_with : Array[String]
 }
@@ -28,6 +29,7 @@ pub fn ArgGroup::new(name : String) -> ArgGroup {
     name,
     required: false,
     multiple: true,
+    args: [],
     requires: [],
     conflicts_with: [],
   }
@@ -41,6 +43,22 @@ pub fn ArgGroup::required(self : ArgGroup, value? : Bool = true) -> ArgGroup {
 ///|
 pub fn ArgGroup::multiple(self : ArgGroup, value? : Bool = true) -> ArgGroup {
   ArgGroup::{ ..self, multiple: value }
+}
+
+///|
+pub fn ArgGroup::arg(self : ArgGroup, name : String) -> ArgGroup {
+  let args = clone_array_group(self.args)
+  args.push(name)
+  ArgGroup::{ ..self, args, }
+}
+
+///|
+pub fn ArgGroup::args(self : ArgGroup, names : Array[String]) -> ArgGroup {
+  let args = clone_array_group(self.args)
+  for name in names {
+    args.push(name)
+  }
+  ArgGroup::{ ..self, args, }
 }
 
 ///|

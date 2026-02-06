@@ -676,10 +676,23 @@ fn validate_group_refs(cmd : Command) -> Unit raise ArgBuildError {
   for group in cmd.groups {
     group_index[group.name] = true
   }
+  let arg_index : Map[String, Bool] = {}
+  for arg in cmd.args {
+    arg_index[arg.name] = true
+  }
   for arg in cmd.args {
     for name in arg.groups {
       if group_index.get(name) is None {
         raise ArgBuildError::Unsupported("unknown group: " + name)
+      }
+    }
+  }
+  for group in cmd.groups {
+    for name in group.args {
+      if arg_index.get(name) is None {
+        raise ArgBuildError::Unsupported(
+          "unknown group arg: " + group.name + " -> " + name,
+        )
       }
     }
   }
@@ -858,7 +871,7 @@ fn validate_groups(cmd : Command, matches : Matches) -> Unit raise ParseError {
   for group in cmd.groups {
     let mut count = 0
     for arg in cmd.args {
-      if !arg.groups.contains(group.name) {
+      if !arg_in_group(arg, group) {
         continue
       }
       if matches_has_value_or_flag(matches, arg.name) {
@@ -893,6 +906,11 @@ fn validate_groups(cmd : Command, matches : Matches) -> Unit raise ParseError {
       }
     }
   }
+}
+
+///|
+fn arg_in_group(arg : Arg, group : ArgGroup) -> Bool {
+  arg.groups.contains(group.name) || group.args.contains(arg.name)
 }
 
 ///|

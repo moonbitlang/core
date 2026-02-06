@@ -39,7 +39,7 @@ test "arg builders and defaults" {
     .num_args(@arg_parser.ValueRange::new(lower=Some(1), upper=Some(2))),
   )
   let m3 = cmd3.parse(argv=["--tag", "x"]) catch { _ => panic() }
-  assert_eq(m3.get_one("tag") catch { _ => "" }, "x")
+  assert_eq(m3.get_one("tag").unwrap_or(""), "x")
 }
 
 ///|
@@ -160,7 +160,7 @@ test "parse branches and env errors" {
     @arg_parser.Arg::new("mode").long("mode").option().env("MODE"),
   )
   let m6 = cmd6.parse(argv=[], env={}) catch { _ => panic() }
-  let m6_mode = m6.get_option("mode") catch { _ => panic() }
+  let m6_mode = m6.get_one("mode") catch { _ => panic() }
   match m6_mode {
     None => ()
     Some(_) => panic()
@@ -195,11 +195,11 @@ test "global aliases and merge semantics" {
     _ => panic()
   }
   assert_true(matches.get_flag("color"))
-  assert_eq(matches.get_one("config") catch { _ => "" }, "a")
+  assert_eq(matches.get_one("config").unwrap_or(""), "a")
   assert_eq(matches.count_of("verbose"), 3)
   let subm = matches.subcommand_matches("run").unwrap()
   assert_true(subm.get_flag("color"))
-  assert_eq(subm.get_one("config") catch { _ => "" }, "a")
+  assert_eq(subm.get_one("config").unwrap_or(""), "a")
   assert_eq(subm.count_of("verbose"), 3)
 }
 
@@ -225,25 +225,21 @@ test "positionals ordering and hyphen values" {
     .arg(@arg_parser.Arg::new("a").index(0))
     .arg(@arg_parser.Arg::new("rest").multiple())
   let m = cmd.parse(argv=["x", "y", "z"]) catch { _ => panic() }
-  assert_eq(m.get_one("a") catch { _ => "" }, "x")
-  assert_eq(m.get_one("b") catch { _ => "" }, "y")
+  assert_eq(m.get_one("a").unwrap_or(""), "x")
+  assert_eq(m.get_one("b").unwrap_or(""), "y")
   inspect(m.get_many("rest").unwrap(), content="[\"z\"]")
   let cmd2 = @arg_parser.Command::new("demo").arg(
     @arg_parser.Arg::new("name").index(0).allow_hyphen_values(),
   )
   let m2 = cmd2.parse(argv=["--file"]) catch { _ => panic() }
-  assert_eq(m2.get_one("name") catch { _ => "" }, "--file")
+  assert_eq(m2.get_one("name").unwrap_or(""), "--file")
 }
 
 ///|
 test "matches helpers" {
   let m = @arg_parser.Matches::new()
-  let x_opt : String? = m.get_option("x") catch { _ => panic() }
+  let x_opt : String? = m.get_one("x") catch { _ => panic() }
   match x_opt {
-    None => ()
-    Some(_) => panic()
-  }
-  match m.source_of("x") {
     None => ()
     Some(_) => panic()
   }
@@ -263,19 +259,11 @@ test "matches helpers" {
     None => ()
     Some(_) => panic()
   }
-  try m.get_one("x") catch {
-    @arg_parser.ArgumentError::InvalidValue(msg) =>
-      inspect(
-        msg,
-        content=(
-          #|value not found: x
-        ),
-      )
-    _ => panic()
-  } noraise {
-    _ => panic()
+  match m.get_one("x") {
+    None => ()
+    Some(_) => panic()
   }
-  let opt : String? = m.get_option("x") catch { _ => None }
+  let opt : String? = m.get_one("x") catch { _ => None }
   match opt {
     None => ()
     Some(_) => panic()
@@ -284,7 +272,7 @@ test "matches helpers" {
     None => ()
     Some(_) => panic()
   }
-  let arr : Array[String] = m.get_array("x")
+  let arr : Array[String] = m.get_many("x").unwrap_or([])
   inspect(arr, content="[]")
   let sub = @arg_parser.Command::new("run")
   let root = @arg_parser.Command::new("root").subcommand(sub)
@@ -297,18 +285,6 @@ test "matches helpers" {
     @arg_parser.Arg::new("tag").long("tag").option().multiple(),
   )
   let m2 = cmd.parse(argv=["--tag", "1", "--tag", "2"]) catch { _ => panic() }
-  try m2.get_option("tag") catch {
-    @arg_parser.ArgumentError::InvalidValueCount(msg) =>
-      inspect(
-        msg,
-        content=(
-          #|invalid value count for tag: 2
-        ),
-      )
-    _ => panic()
-  } noraise {
-    _ => panic()
-  }
   try m2.get_one("tag") catch {
     @arg_parser.ArgumentError::InvalidValueCount(msg) =>
       inspect(
@@ -321,18 +297,19 @@ test "matches helpers" {
   } noraise {
     _ => panic()
   }
-  let tags : Array[String] = m2.get_array("tag")
+  let tags : Array[String] = m2.get_many("tag").unwrap_or([])
+  assert_eq(tags[0], "1")
   inspect(tags, content="[\"1\", \"2\"]")
   inspect(m2.get_many("tag"), content="Some([\"1\", \"2\"])")
   let cmd2 = @arg_parser.Command::new("demo").arg(
     @arg_parser.Arg::new("flag").long("flag").option(),
   )
   let m3 = cmd2.parse(argv=["--flag", "maybe"]) catch { _ => panic() }
-  assert_eq(m3.get_one("flag") catch { _ => "" }, "maybe")
+  assert_eq(m3.get_one("flag").unwrap_or(""), "maybe")
   let m_true = cmd2.parse(argv=["--flag", "true"]) catch { _ => panic() }
-  assert_eq(m_true.get_one("flag") catch { _ => "" }, "true")
+  assert_eq(m_true.get_one("flag").unwrap_or(""), "true")
   let m_false = cmd2.parse(argv=["--flag", "false"]) catch { _ => panic() }
-  assert_eq(m_false.get_one("flag") catch { _ => "" }, "false")
+  assert_eq(m_false.get_one("flag").unwrap_or(""), "false")
 }
 
 ///|
@@ -406,7 +383,7 @@ test "subcommand fallback to positional" {
     .subcommand(sub)
     .arg(@arg_parser.Arg::new("name").index(0))
   let m = cmd.parse(argv=["value"]) catch { _ => panic() }
-  assert_eq(m.get_one("name") catch { _ => "" }, "value")
+  assert_eq(m.get_one("name").unwrap_or(""), "value")
 }
 
 ///|
@@ -711,7 +688,7 @@ test "env append on flag ignored" {
   )
   let matches = cmd.parse(argv=[], env={ "FLAG": "1" }) catch { _ => panic() }
   assert_false(matches.get_flag("flag"))
-  match matches.source_of("flag") {
+  match matches.value_source("flag") {
     None => ()
     Some(_) => panic()
   }
@@ -724,9 +701,9 @@ test "sort positionals with descending indices" {
     .arg(@arg_parser.Arg::new("b").index(1))
     .arg(@arg_parser.Arg::new("a").index(0))
   let matches = cmd.parse(argv=["x", "y", "z"]) catch { _ => panic() }
-  assert_eq(matches.get_one("a") catch { _ => "" }, "x")
-  assert_eq(matches.get_one("b") catch { _ => "" }, "y")
-  assert_eq(matches.get_one("c") catch { _ => "" }, "z")
+  assert_eq(matches.get_one("a").unwrap_or(""), "x")
+  assert_eq(matches.get_one("b").unwrap_or(""), "y")
+  assert_eq(matches.get_one("c").unwrap_or(""), "z")
 }
 
 ///|
@@ -750,12 +727,12 @@ test "set flag action from argv" {
 }
 
 ///|
-test "get_option returns value" {
+test "get_one returns value" {
   let cmd = @arg_parser.Command::new("demo").arg(
     @arg_parser.Arg::new("count").long("count").option(),
   )
   let matches = cmd.parse(argv=["--count", "1"]) catch { _ => panic() }
-  assert_eq(matches.get_option("count").unwrap(), "1")
+  assert_eq(matches.get_one("count").unwrap(), "1")
 }
 
 ///|
@@ -973,6 +950,25 @@ test "unknown group errors" {
         msg,
         content=(
           #|unknown group: mode
+        ),
+      )
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
+test "unknown group arg errors" {
+  let cmd = @arg_parser.Command::new("demo")
+    .group(@arg_parser.ArgGroup::new("mode").arg("fast"))
+    .arg(@arg_parser.Arg::new("slow").long("slow"))
+  try cmd.parse(argv=[]) catch {
+    @arg_parser.ArgBuildError::Unsupported(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|unknown group arg: mode -> fast
         ),
       )
     _ => panic()
@@ -1269,14 +1265,14 @@ test "global values missing do not propagate" {
     .arg(@arg_parser.Arg::new("verbose").long("verbose").global())
     .subcommand(sub)
   let matches = root.parse(argv=["run"]) catch { _ => panic() }
-  let root_cfg : String? = matches.get_option("config") catch { _ => panic() }
+  let root_cfg : String? = matches.get_one("config") catch { _ => panic() }
   match root_cfg {
     None => ()
     Some(_) => panic()
   }
   assert_false(matches.get_flag("verbose"))
   let subm = matches.subcommand_matches("run").unwrap()
-  let sub_cfg : String? = subm.get_option("config") catch { _ => panic() }
+  let sub_cfg : String? = subm.get_one("config") catch { _ => panic() }
   match sub_cfg {
     None => ()
     Some(_) => panic()

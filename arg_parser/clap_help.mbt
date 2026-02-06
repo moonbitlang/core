@@ -414,7 +414,7 @@ fn group_members(cmd : Command, group : ArgGroup, long_help : Bool) -> String {
     if arg_hidden_in_style(arg, long_help) {
       continue
     }
-    if arg.groups.contains(group.name) {
+    if arg_in_group(arg, group) {
       members.push(group_member_display(arg))
     }
   }

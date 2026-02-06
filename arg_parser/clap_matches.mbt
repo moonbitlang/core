@@ -73,7 +73,7 @@ pub fn Matches::count_of(self : Matches, name : String) -> Int {
 
 ///|
 /// Source for the argument as a whole.
-pub fn Matches::source_of(self : Matches, name : String) -> ValueSource? {
+pub fn Matches::value_source(self : Matches, name : String) -> ValueSource? {
   match self.flag_sources.get(name) {
     Some(v) => Some(v)
     None =>
@@ -82,12 +82,6 @@ pub fn Matches::source_of(self : Matches, name : String) -> ValueSource? {
         None => None
       }
   }
-}
-
-///|
-/// Clap-style alias for `source_of`.
-pub fn Matches::value_source(self : Matches, name : String) -> ValueSource? {
-  self.source_of(name)
 }
 
 ///|
@@ -121,22 +115,6 @@ fn highest_source(sources : Array[ValueSource]) -> ValueSource? {
 pub fn Matches::get_one(
   self : Matches,
   name : String,
-) -> String raise ArgumentError {
-  guard self.values.get(name) is Some(values) else {
-    raise ArgumentError::InvalidValue("value not found: " + name)
-  }
-  guard values.length() == 1 else {
-    raise ArgumentError::InvalidValueCount(
-      "invalid value count for " + name + ": " + values.length().to_string(),
-    )
-  }
-  values[0]
-}
-
-///|
-pub fn Matches::get_option(
-  self : Matches,
-  name : String,
 ) -> String? raise ArgumentError {
   guard self.values.get(name) is Some(values) else { return None }
   guard values.length() <= 1 else {
@@ -154,12 +132,6 @@ pub fn Matches::get_option(
 /// Clap-style many-values accessor.
 pub fn Matches::get_many(self : Matches, name : String) -> Array[String]? {
   self.values.get(name)
-}
-
-///|
-pub fn Matches::get_array(self : Matches, name : String) -> Array[String] {
-  guard self.values.get(name) is Some(values) else { return [] }
-  values
 }
 
 ///|

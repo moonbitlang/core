@@ -26,7 +26,7 @@ let matches = cmd.parse(argv=["-v", "--count=2", "alice"]) catch {
   _ => panic()
 }
 assert_true(matches.get_flag("verbose"))
-assert_eq(matches.get_one("name") catch { _ => "" }, "alice")
+assert_eq(matches.get_one("name").unwrap_or(""), "alice")
 ```
 
 ## Parsing APIs
@@ -104,7 +104,7 @@ let m = root.parse(argv=["echo", "hi"]) catch { _ => panic() }
 
 assert_eq(m.subcommand_name().unwrap(), "echo")
 let sub = m.subcommand_matches("echo").unwrap()
-assert_eq(sub.get_one("msg") catch { _ => "" }, "hi")
+assert_eq(sub.get_one("msg").unwrap_or(""), "hi")
 ```
 
 You can add aliases:
@@ -232,6 +232,16 @@ let cmd = Command::new("demo")
   .arg(Arg::new("blue").long("blue").group("color"))
 ```
 
+Group membership can be declared from either side:
+
+```mbt nocheck
+///|
+let cmd = Command::new("demo")
+  .group(ArgGroup::new("mode").required().args(["fast", "slow"]))
+  .arg(Arg::new("fast").long("fast"))
+  .arg(Arg::new("slow").long("slow"))
+```
+
 You can also express lightweight group relationships:
 
 ```mbt nocheck
@@ -267,16 +277,14 @@ let cmd = Command::new("demo")
 Raw access:
 
 - `matches.get_flag("flag") -> Bool`
-- `matches.value_source("name") -> ValueSource?` (alias: `source_of`)
+- `matches.value_source("name") -> ValueSource?`
 - `matches.subcommand() -> (String, Matches)?`
 - `matches.count_of("flag") -> Int` (for `ArgAction::Count`)
 
 Convenience access:
 
-- `matches.get_one("count") : String`
-- `matches.get_option("count") : String?`
+- `matches.get_one("count") : String?`
 - `matches.get_many("tag") : Array[String]?`
-- `matches.get_array("tag") : Array[String]`
 
 ## Value Sources
 
@@ -303,11 +311,17 @@ struct Config {
 
 ///|
 impl FromMatches for Config with from_matches(m : Matches) -> Config raise ArgumentError {
-  let count_str = m.get_one("count")
+  let count_str = match m.get_one("count") {
+    Some(value) => value
+    None => raise ArgumentError::InvalidValue("value not found: count")
+  }
   let count = @strconv.parse_int(count_str) catch {
     _ => raise ArgumentError::InvalidValue("invalid int: " + count_str)
   }
-  let name = m.get_one("name")
+  let name = match m.get_one("name") {
+    Some(value) => value
+    None => raise ArgumentError::InvalidValue("value not found: name")
+  }
   Config::{ count, name }
 }
 

@@ -30,10 +30,10 @@ test "validated getters" {
     .arg(@arg_parser.Arg::new("count").long("count").option())
     .arg(@arg_parser.Arg::new("name").index(0))
   let matches = cmd.parse(argv=["--count", "3", "alice"]) catch { _ => panic() }
-  let count_str = matches.get_one("count") catch { _ => "" }
+  let count_str = matches.get_one("count").unwrap_or("")
   let count : Int = @strconv.parse_int(count_str) catch { _ => -1 }
   assert_eq(count, 3)
-  let name : String = matches.get_one("name") catch { _ => "" }
+  let name : String = matches.get_one("name").unwrap_or("")
   assert_eq(name, "alice")
 }
 
@@ -43,7 +43,7 @@ test "parse invalid int" {
     @arg_parser.Arg::new("count").long("count").option(),
   )
   let matches = cmd.parse(argv=["--count", "oops"]) catch { _ => panic() }
-  let count_str = matches.get_one("count") catch { _ => "" }
+  let count_str = matches.get_one("count").unwrap_or("")
   try @strconv.parse_int(count_str) catch {
     @strconv.StrConvError(err) => inspect(err, content="invalid syntax")
   } noraise {
@@ -59,12 +59,20 @@ struct Config {
 
 ///|
 impl FromMatches for Config with from_matches(m : @arg_parser.Matches) -> Config raise @arg_parser.ArgumentError {
-  let count_str = m.get_one("count")
+  let count_str = match m.get_one("count") {
+    Some(value) => value
+    None =>
+      raise @arg_parser.ArgumentError::InvalidValue("value not found: count")
+  }
   let count = @strconv.parse_int(count_str) catch {
     _ =>
       raise @arg_parser.ArgumentError::InvalidValue("invalid int: " + count_str)
   }
-  let name = m.get_one("name")
+  let name = match m.get_one("name") {
+    Some(value) => value
+    None =>
+      raise @arg_parser.ArgumentError::InvalidValue("value not found: name")
+  }
   Config::{ count, name }
 }
 

@@ -28,8 +28,8 @@ test "clap builder parsing" {
     _ => panic()
   }
   assert_true(matches.get_flag("verbose"))
-  assert_eq(matches.get_one("count") catch { _ => "" }, "3")
-  assert_eq(matches.get_one("name") catch { _ => "" }, "alice")
+  assert_eq(matches.get_one("count").unwrap_or(""), "3")
+  assert_eq(matches.get_one("name").unwrap_or(""), "alice")
 }
 
 ///|
@@ -41,5 +41,5 @@ test "clap subcommand" {
   let matches = cmd.parse(argv=["echo", "hi"]) catch { _ => panic() }
   assert_eq(matches.subcommand_name().unwrap(), "echo")
   let subm = matches.subcommand_matches("echo").unwrap()
-  assert_eq(subm.get_one("msg") catch { _ => "" }, "hi")
+  assert_eq(subm.get_one("msg").unwrap_or(""), "hi")
 }
