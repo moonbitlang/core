@@ -126,10 +126,14 @@ test "combine string" {
     hasher.finalize()
   }
   inspect(hash(""), content="46947589")
-  inspect(hash("abc"), content="-771846975")
+  inspect(hash("abc"), content=(
+    #|-1179289474
+  ))
   inspect(
     hash("a quick brown fox jumps over the lazy dog"),
-    content="432119934",
+    content=(
+      #|2041047900
+    ),
   )
   inspect(hash("") == hash(""), content="true")
   inspect(hash("abc") == hash("abc"), content="true")
@@ -153,10 +157,18 @@ test "combine bytes" {
   ]
   let b3 : Bytes = [128, 0, 0, 0, 0, 0, 0]
   let b4 : Bytes = [127, 255, 255, 255, 255, 255, 255]
-  inspect(hash(b1), content="2001377227")
-  inspect(hash(b2), content="-1020996018")
-  inspect(hash(b3), content="-1280010923")
-  inspect(hash(b4), content="-198077265")
+  inspect(hash(b1), content=(
+    #|1464222053
+  ))
+  inspect(hash(b2), content=(
+    #|657230597
+  ))
+  inspect(hash(b3), content=(
+    #|191042624
+  ))
+  inspect(hash(b4), content=(
+    #|-873914461
+  ))
   inspect(hash(b1) == hash(b1), content="true")
   inspect(hash(b2) == hash(b2), content="true")
   inspect(hash(b1) == hash(b2), content="false")
@@ -169,9 +181,15 @@ test "combine byte" {
     hasher.combine_byte(v)
     hasher.finalize()
   }
-  inspect(hash(b'0'), content="-1971641254")
-  inspect(hash(b'1'), content="1943578595")
-  inspect(hash(b'2'), content="1881073354")
+  inspect(hash(b'0'), content=(
+    #|1212501170
+  ))
+  inspect(hash(b'1'), content=(
+    #|-1225996110
+  ))
+  inspect(hash(b'2'), content=(
+    #|205742900
+  ))
   inspect(hash(b'0') == hash(b'0'), content="true")
   inspect(hash(b'1') == hash(b'1'), content="true")
   inspect(hash(b'0') == hash(b'1'), content="false")
@@ -187,7 +205,9 @@ test "combine all" {
   hasher.combine_double(1.234)
   hasher.combine_string("Moonbit")
   hasher.combine_bytes(Bytes::make(10, b'1'))
-  inspect(hasher.finalize(), content="1982681228")
+  inspect(hasher.finalize(), content=(
+    #|-1843024895
+  ))
   inspect(hasher.finalize() == hasher.finalize(), content="true")
 }
 
@@ -226,7 +246,9 @@ test "Result::hash_combine Ok case" {
   let hasher = Hasher::new(seed=0)
   let ok_result : Result[Int, String] = Ok(42)
   hasher.combine(ok_result)
-  inspect(hasher.finalize(), content="-1948635851")
+  inspect(hasher.finalize(), content=(
+    #|-2139784891
+  ))
 }
 
 ///|
@@ -234,7 +256,9 @@ test "Result::hash_combine Err case" {
   let hasher = Hasher::new(seed=0)
   let err_result : Result[Int, String] = Err("error")
   hasher.combine(err_result)
-  inspect(hasher.finalize(), content="1953766574")
+  inspect(hasher.finalize(), content=(
+    #|-544046459
+  ))
 }
 
 ///|
@@ -242,7 +266,9 @@ test "option hash" {
   let hasher = @builtin.Hasher::new(seed=0)
   let some_val : Int? = Some(42)
   hasher.combine(some_val)
-  inspect(hasher.finalize(), content="2103260413")
+  inspect(hasher.finalize(), content=(
+    #|1892291193
+  ))
   let hasher2 = @builtin.Hasher::new(seed=0)
   let none_val : Int? = None
   hasher2.combine(none_val)

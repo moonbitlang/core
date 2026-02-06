@@ -232,7 +232,9 @@ test "can_convert_to_int64" {
 ///   let hasher = Hasher::new(seed=0)
 ///   let big = 12345N
 ///   hasher.combine(big)
-///   inspect(hasher.finalize(), content="890579181")
+///   inspect(hasher.finalize(), content=(
+///   #|2087801009
+/// ))
 /// }
 /// ```
 pub impl Hash for BigInt with hash_combine(self, hasher) {

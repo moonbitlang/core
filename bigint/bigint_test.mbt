@@ -1096,7 +1096,9 @@ test "@bigint.BigInt::hash" {
       x.combine(0N)
       x.finalize()
     }
-  inspect(hash1, content="-813420232")
+  inspect(hash1, content=(
+    #|-558656237
+  ))
   assert_eq(0N.hash(), (-0N).hash())
 
   // Positive and negative of same magnitude should have different hashes
@@ -1108,7 +1110,9 @@ test "@bigint.BigInt::hash" {
       x.combine(42N)
       x.finalize()
     }
-  inspect(hash2, content="2103260413")
+  inspect(hash2, content=(
+    #|1892291193
+  ))
 
   // Test small negative numbers
   let hash3 = Hasher::new(seed=0)
@@ -1116,7 +1120,9 @@ test "@bigint.BigInt::hash" {
       x.combine(-42N)
       x.finalize()
     }
-  inspect(hash3, content="-504604139")
+  inspect(hash3, content=(
+    #|-656719133
+  ))
 
   // Test larger numbers
   let large = 123456789N
@@ -1125,13 +1131,17 @@ test "@bigint.BigInt::hash" {
       x.combine(large)
       x.finalize()
     }
-  inspect(hash4, content="275171670")
+  inspect(hash4, content=(
+    #|1502272368
+  ))
   let hash5 = Hasher::new(seed=0)
     |> x => {
       x.combine(-large)
       x.finalize()
     }
-  inspect(hash5, content="-200902609")
+  inspect(hash5, content=(
+    #|1123961036
+  ))
 
   // Test very large numbers (multi-limb)
   let very_large = 12345678901234567890123456789N
@@ -1140,13 +1150,17 @@ test "@bigint.BigInt::hash" {
       x.combine(very_large)
       x.finalize()
     }
-  inspect(hash6, content="2115080653")
+  inspect(hash6, content=(
+    #|918362983
+  ))
   let hash7 = Hasher::new(seed=0)
     |> x => {
       x.combine(-very_large)
       x.finalize()
     }
-  inspect(hash7, content="-1781872667")
+  inspect(hash7, content=(
+    #|394358188
+  ))
 
   // Test that equal BigInts have equal hashes
   let a = 987654321098765432N
@@ -1156,13 +1170,17 @@ test "@bigint.BigInt::hash" {
       x.combine(a)
       x.finalize()
     }
-  inspect(hash8, content="-1950963429")
+  inspect(hash8, content=(
+    #|669869531
+  ))
   let hash9 = Hasher::new(seed=0)
     |> x => {
       x.combine(b)
       x.finalize()
     }
-  inspect(hash9, content="-1950963429")
+  inspect(hash9, content=(
+    #|669869531
+  ))
 
   // Test that different BigInts have different hashes (usually)
   let c = a + 1N
@@ -1171,7 +1189,9 @@ test "@bigint.BigInt::hash" {
       x.combine(c)
       x.finalize()
     }
-  inspect(hash10, content="-959383658")
+  inspect(hash10, content=(
+    #|2146617695
+  ))
 }
 
 ///|

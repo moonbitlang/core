@@ -43,11 +43,20 @@ const GPRIME5 : UInt = 0x165667B1
 ///   let hasher = Hasher::new(seed=0)
 ///   hasher.combine_int(42)
 ///   hasher.combine_string("hello")
-///   inspect(hasher.finalize(), content="860601284")
+///   inspect(hasher.finalize(), content=(
+///   #|-1929254126
+/// ))
 /// }
 /// ```
 struct Hasher {
-  mut acc : UInt
+  seed : UInt
+  mut total_len : Int
+  mut v1 : UInt
+  mut v2 : UInt
+  mut v3 : UInt
+  mut v4 : UInt
+  mut memsize : Int
+  mut mem : FixedArray[Byte]
 }
 
 ///|
@@ -73,7 +82,17 @@ struct Hasher {
 /// }
 /// ```
 pub fn Hasher::new(seed? : Int = seed) -> Hasher {
-  { acc: seed.reinterpret_as_uint() + GPRIME5 }
+  let seed = seed.reinterpret_as_uint()
+  {
+    seed,
+    total_len: 0,
+    v1: seed + GPRIME1 + GPRIMES2,
+    v2: seed + GPRIMES2,
+    v3: seed,
+    v4: seed - GPRIME1,
+    memsize: 0,
+    mem: FixedArray::make(16, 0),
+  }
 }
 
 ///|
@@ -114,7 +133,9 @@ extern "js" fn random_seed() -> Int =
 ///   let hasher = Hasher::new(seed=0)
 ///   hasher.combine(42)
 ///   hasher.combine("hello")
-///   inspect(hasher.finalize(), content="860601284")
+///   inspect(hasher.finalize(), content=(
+///   #|-1929254126
+/// ))
 /// }
 /// ```
 pub fn[T : Hash] Hasher::combine(self : Hasher, value : T) -> Unit {
@@ -209,9 +230,7 @@ pub fn Hasher::combine_int(self : Hasher, value : Int) -> Unit {
 /// }
 /// ```
 pub fn Hasher::combine_int64(self : Hasher, value : Int64) -> Unit {
-  self.acc += 8
-  self.consume4(value.reinterpret_as_uint64().to_uint())
-  self.consume4((value.reinterpret_as_uint64() >> 32).to_uint())
+  self.combine_uint64(value.reinterpret_as_uint64())
 }
 
 ///|
@@ -234,8 +253,10 @@ pub fn Hasher::combine_int64(self : Hasher, value : Int64) -> Unit {
 /// }
 /// ```
 pub fn Hasher::combine_uint(self : Hasher, value : UInt) -> Unit {
-  self.acc += 4
-  self.consume4(value)
+  self.push_byte((value & 0xFFU).to_byte())
+  self.push_byte(((value >> 8) & 0xFFU).to_byte())
+  self.push_byte(((value >> 16) & 0xFFU).to_byte())
+  self.push_byte(((value >> 24) & 0xFFU).to_byte())
 }
 
 ///|
@@ -258,7 +279,20 @@ pub fn Hasher::combine_uint(self : Hasher, value : UInt) -> Unit {
 /// }
 /// ```
 pub fn Hasher::combine_uint64(self : Hasher, value : UInt64) -> Unit {
-  self.combine_int64(value.reinterpret_as_int64())
+  self.push_byte((value & 0xFFUL).to_uint().to_byte())
+  self.push_byte(((value >> 8) & 0xFFUL).to_uint().to_byte())
+  self.push_byte(((value >> 16) & 0xFFUL).to_uint().to_byte())
+  self.push_byte(((value >> 24) & 0xFFUL).to_uint().to_byte())
+  self.push_byte(((value >> 32) & 0xFFUL).to_uint().to_byte())
+  self.push_byte(((value >> 40) & 0xFFUL).to_uint().to_byte())
+  self.push_byte(((value >> 48) & 0xFFUL).to_uint().to_byte())
+  self.push_byte(((value >> 56) & 0xFFUL).to_uint().to_byte())
+}
+
+///|
+fn Hasher::combine_uint16(self : Hasher, value : UInt16) -> Unit {
+  self.push_byte((value & 0xFF).to_byte())
+  self.push_byte(((value >> 8) & 0xFF).to_byte())
 }
 
 ///|
@@ -327,11 +361,13 @@ fn Float::reinterpret_as_uint(self : Float) -> UInt = "%f32.to_i32_reinterpret"
 /// test {
 ///   let hasher = Hasher::new(seed=0)
 ///   hasher.combine_byte(b'\xFF')
-///   inspect(hasher.finalize(), content="1955036104")
+///   inspect(hasher.finalize(), content=(
+///   #|-1766008628
+/// ))
 /// }
 /// ```
 pub fn Hasher::combine_byte(self : Hasher, value : Byte) -> Unit {
-  self.consume1(value)
+  self.push_byte(value)
 }
 
 ///|
@@ -350,22 +386,13 @@ pub fn Hasher::combine_byte(self : Hasher, value : Byte) -> Unit {
 /// test {
 ///   let hasher = Hasher::new(seed=0)
 ///   hasher.combine_bytes(b"\xFF\x00\xFF\x00")
-///   inspect(hasher.finalize(), content="-686861102")
+///   inspect(hasher.finalize(), content=(
+///   #|-771288068
+/// ))
 /// }
 /// ```
 pub fn Hasher::combine_bytes(self : Hasher, value : Bytes) -> Unit {
-  let mut remain = value.length()
-  let mut cur = 0
-  while remain >= 4 {
-    self.consume4(endian32(value, cur))
-    cur += 4
-    remain -= 4
-  }
-  while remain >= 1 {
-    self.consume1(value[cur])
-    cur += 1
-    remain -= 1
-  }
+  self.update_bytes(value, 0, value.length())
 }
 
 ///|
@@ -383,12 +410,14 @@ pub fn Hasher::combine_bytes(self : Hasher, value : Bytes) -> Unit {
 /// test {
 ///   let hasher = Hasher::new(seed=0)
 ///   hasher.combine_string("hello")
-///   inspect(hasher.finalize(), content="-655549713")
+///   inspect(hasher.finalize(), content=(
+///   #|-1916221897
+/// ))
 /// }
 /// ```
 pub fn Hasher::combine_string(self : Hasher, value : String) -> Unit {
   for i in 0..<value.length() {
-    self.combine_uint(value.unsafe_get(i).to_int().reinterpret_as_uint())
+    self.combine_uint16(value.unsafe_get(i))
   }
 }
 
@@ -431,16 +460,42 @@ pub fn Hasher::combine_char(self : Hasher, value : Char) -> Unit {
 /// test {
 ///   let hasher = Hasher::new(seed=0)
 ///   hasher.combine_byte(b'\xFF')
-///   inspect(hasher.finalize(), content="1955036104")
+///   inspect(hasher.finalize(), content=(
+///   #|-1766008628
+/// ))
 /// }
 /// ```
 pub fn Hasher::finalize(self : Hasher) -> Int {
-  self.avalanche().reinterpret_as_int()
+  let mut acc = if self.total_len >= 16 {
+    let mut acc = rotl(self.v1, 1) +
+      rotl(self.v2, 7) +
+      rotl(self.v3, 12) +
+      rotl(self.v4, 18)
+    acc = xxh32_merge_round(acc, self.v1)
+    acc = xxh32_merge_round(acc, self.v2)
+    acc = xxh32_merge_round(acc, self.v3)
+    xxh32_merge_round(acc, self.v4)
+  } else {
+    self.seed + GPRIME5
+  }
+  acc += self.total_len.reinterpret_as_uint()
+  let mut i = 0
+  while i + 4 <= self.memsize {
+    acc += read_u32_from_mem(self.mem, i) * GPRIME3
+    acc = rotl(acc, 17) * GPRIME4
+    i += 4
+  }
+  while i < self.memsize {
+    acc += self.mem[i].to_uint() * GPRIME5
+    acc = rotl(acc, 11) * GPRIME1
+    i += 1
+  }
+  xxh32_avalanche(acc).reinterpret_as_int()
 }
 
 ///|
-fn Hasher::avalanche(self : Hasher) -> UInt {
-  let mut acc = self.acc
+fn xxh32_avalanche(acc : UInt) -> UInt {
+  let mut acc = acc
   acc = acc ^ (acc >> 15)
   acc *= GPRIMES2
   acc = acc ^ (acc >> 13)
@@ -450,13 +505,76 @@ fn Hasher::avalanche(self : Hasher) -> UInt {
 }
 
 ///|
-fn Hasher::consume4(self : Hasher, input : UInt) -> Unit {
-  self.acc = rotl(self.acc + input * GPRIME3, 17) * GPRIME4
+fn xxh32_round(acc : UInt, input : UInt) -> UInt {
+  rotl(acc + input * GPRIMES2, 13) * GPRIME1
 }
 
 ///|
-fn Hasher::consume1(self : Hasher, input : Byte) -> Unit {
-  self.acc = rotl(self.acc + input.to_uint() * GPRIME5, 11) * GPRIME1
+fn xxh32_merge_round(acc : UInt, value : UInt) -> UInt {
+  let mut acc = acc ^ xxh32_round(0, value)
+  acc = acc * GPRIME1 + GPRIME4
+  acc
+}
+
+///|
+fn Hasher::process_mem_block(self : Hasher) -> Unit {
+  self.v1 = xxh32_round(self.v1, read_u32_from_mem(self.mem, 0))
+  self.v2 = xxh32_round(self.v2, read_u32_from_mem(self.mem, 4))
+  self.v3 = xxh32_round(self.v3, read_u32_from_mem(self.mem, 8))
+  self.v4 = xxh32_round(self.v4, read_u32_from_mem(self.mem, 12))
+}
+
+///|
+fn Hasher::push_byte(self : Hasher, value : Byte) -> Unit {
+  self.total_len += 1
+  self.mem[self.memsize] = value
+  self.memsize += 1
+  if self.memsize == 16 {
+    self.process_mem_block()
+    self.memsize = 0
+  }
+}
+
+///|
+fn Hasher::update_bytes(
+  self : Hasher,
+  bytes : Bytes,
+  start : Int,
+  len : Int,
+) -> Unit {
+  guard len > 0 else { return }
+  self.total_len += len
+  let mut idx = 0
+  if self.memsize + len < 16 {
+    for i in 0..<len {
+      self.mem[self.memsize + i] = bytes.unsafe_get(start + i)
+    }
+    self.memsize += len
+    return
+  }
+  if self.memsize > 0 {
+    let fill = 16 - self.memsize
+    for i in 0..<fill {
+      self.mem[self.memsize + i] = bytes.unsafe_get(start + i)
+    }
+    self.process_mem_block()
+    self.memsize = 0
+    idx = fill
+  }
+  while idx + 16 <= len {
+    self.v1 = xxh32_round(self.v1, read_u32_from_bytes(bytes, start + idx + 0))
+    self.v2 = xxh32_round(self.v2, read_u32_from_bytes(bytes, start + idx + 4))
+    self.v3 = xxh32_round(self.v3, read_u32_from_bytes(bytes, start + idx + 8))
+    self.v4 = xxh32_round(self.v4, read_u32_from_bytes(bytes, start + idx + 12))
+    idx += 16
+  }
+  if idx < len {
+    let remain = len - idx
+    for i in 0..<remain {
+      self.mem[i] = bytes.unsafe_get(start + idx + i)
+    }
+    self.memsize = remain
+  }
 }
 
 ///|
@@ -465,7 +583,17 @@ fn rotl(x : UInt, r : Int) -> UInt {
 }
 
 ///|
-fn endian32(input : Bytes, cur : Int) -> UInt {
+fn read_u32_from_bytes(input : Bytes, cur : Int) -> UInt {
+  input[cur + 0].to_uint() |
+  (
+    (input[cur + 1].to_uint() << 8) |
+    (input[cur + 2].to_uint() << 16) |
+    (input[cur + 3].to_uint() << 24)
+  )
+}
+
+///|
+fn read_u32_from_mem(input : FixedArray[Byte], cur : Int) -> UInt {
   input[cur + 0].to_uint() |
   (
     (input[cur + 1].to_uint() << 8) |
@@ -506,7 +634,7 @@ pub impl Hash for StringView with hash_combine(
 ) -> Unit {
   let str = self.str()
   for i in self.start()..<self.end() {
-    hasher.combine_uint(str.unsafe_get(i).to_int().reinterpret_as_uint())
+    hasher.combine_uint16(str.unsafe_get(i))
   }
 }
 
@@ -596,7 +724,9 @@ pub impl Hash for UInt64 with hash_combine(self, hasher) {
 ///   let some_value : Int? = Some(42)
 ///   let none_value : Int? = None
 ///   hasher.combine(some_value)
-///   inspect(hasher.finalize(), content="2103260413")
+///   inspect(hasher.finalize(), content=(
+///   #|1892291193
+/// ))
 ///   let hasher2 = Hasher::new(seed=0)
 ///   hasher2.combine(none_value)
 ///   inspect(hasher2.finalize(), content="148298089")
@@ -629,10 +759,14 @@ pub impl[X : Hash] Hash for X? with hash_combine(self, hasher) {
 ///   let ok_result : Result[Int, String] = Ok(42)
 ///   let err_result : Result[Int, String] = Err("error")
 ///   hasher.combine(ok_result)
-///   inspect(hasher.finalize(), content="-1948635851")
+///   inspect(hasher.finalize(), content=(
+///   #|-2139784891
+/// ))
 ///   let hasher = Hasher::new(seed=0)
 ///   hasher.combine(err_result)
-///   inspect(hasher.finalize(), content="1953766574")
+///   inspect(hasher.finalize(), content=(
+///   #|-544046459
+/// ))
 /// }
 /// ```
 pub impl[T : Hash, E : Hash] Hash for Result[T, E] with hash_combine(
@@ -653,21 +787,5 @@ pub impl[T : Hash, E : Hash] Hash for Result[T, E] with hash_combine(
 
 ///|
 pub impl Hash for BytesView with hash_combine(self : BytesView, hasher : Hasher) {
-  let mut start = self.start()
-  let data = self.bytes()
-  let mut rest = self.len()
-  while rest >= 4 {
-    let mut result : UInt = 0
-    for i in 0..<=3 {
-      result = result | (data.unsafe_get(i + start).to_uint() << (8 * i))
-    }
-    hasher.combine_uint(result)
-    rest -= 4
-    start += 4
-  }
-  while rest >= 1 {
-    hasher.combine_byte(data.unsafe_get(start))
-    rest -= 1
-    start += 1
-  }
+  hasher.update_bytes(self.bytes(), self.start(), self.len())
 }

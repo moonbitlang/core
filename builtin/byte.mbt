@@ -213,7 +213,9 @@ pub fn Byte::to_string(self : Byte) -> String {
 /// test {
 ///   let hasher = Hasher::new(seed=0)
 ///   hasher.combine_byte(b'\xFF')
-///   inspect(hasher.finalize(), content="1955036104")
+///   inspect(hasher.finalize(), content=(
+///   #|-1766008628
+/// ))
 /// }
 /// ```
 pub impl Hash for Byte with hash_combine(self, hasher) {

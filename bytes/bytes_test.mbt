@@ -102,16 +102,24 @@ test "hash" {
   ])
   let h1 = Hasher::new(seed=0)
   h1.combine(b1)
-  inspect(h1.finalize(), content="-892426428")
+  inspect(h1.finalize(), content=(
+    #|1464222053
+  ))
   let h2 = Hasher::new(seed=0)
   h2.combine(b2)
-  inspect(h2.finalize(), content="404189")
+  inspect(h2.finalize(), content=(
+    #|657230597
+  ))
   let h3 = Hasher::new(seed=0)
   h3.combine(b3)
-  inspect(h3.finalize(), content="-1666368731")
+  inspect(h3.finalize(), content=(
+    #|-983520567
+  ))
   let h4 = Hasher::new(seed=0)
   h4.combine(b4)
-  inspect(h4.finalize(), content="1297183151")
+  inspect(h4.finalize(), content=(
+    #|-1652773543
+  ))
   inspect(b1.hash() == b1.hash(), content="true")
   inspect(b2.hash() == b2.hash(), content="true")
   inspect(b1.hash() == b2.hash(), content="false")

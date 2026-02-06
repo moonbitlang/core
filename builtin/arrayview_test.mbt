@@ -441,10 +441,14 @@ test "arrayview_hash" {
   let arr : Array[ArrayView[Int]] = @quickcheck.samples(20)
   let h1 = Hasher::new(seed=0)
   h1.combine(arr[5:9])
-  inspect(h1.finalize(), content="-966877954")
+  inspect(h1.finalize(), content=(
+    #|834198146
+  ))
   let h2 = Hasher::new(seed=0)
   h2.combine(arr[10:15])
-  inspect(h2.finalize(), content="-951019668")
+  inspect(h2.finalize(), content=(
+    #|294378857
+  ))
 }
 
 ///|
