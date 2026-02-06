@@ -625,7 +625,6 @@ test "pad_right" {
 test "panic rev_get2" {
   let str = "Hello🤣🤣🤣"
   let _ = str.rev_iter().nth(8).unwrap()
-
 }
 
 ///|

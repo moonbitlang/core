@@ -12,7 +12,6 @@ You can create an empty map using `new()` or construct it using `from_array()`.
 ///|
 test {
   let _map2 : @hashmap.HashMap[String, Int] = @hashmap.new()
-
 }
 ```
 
@@ -117,6 +116,5 @@ Or use `iter()` to get an iterator of hashmap.
 test {
   let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
   let _iter = map.iter()
-
 }
 ```

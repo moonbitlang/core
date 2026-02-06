@@ -11,20 +11,18 @@ import {
   "moonbitlang/core/priority_queue",
   "moonbitlang/core/buffer",
   "moonbitlang/core/ref",
-  "moonbitlang/core/error",
-  "moonbitlang/core/immut/array" as @immut_array,
-  "moonbitlang/core/immut/priority_queue" as @immut_priority_queue,
-  "moonbitlang/core/immut/sorted_map" as @immut_sorted_map,
-  "moonbitlang/core/immut/sorted_set" as @immut_sorted_set,
-  "moonbitlang/core/immut/hashmap" as @immut_hashmap,
-  "moonbitlang/core/immut/hashset" as @immut_hashset,
+  "moonbitlang/core/immut/array" @immut_array,
+  "moonbitlang/core/immut/priority_queue" @immut_priority_queue,
+  "moonbitlang/core/immut/sorted_map" @immut_sorted_map,
+  "moonbitlang/core/immut/sorted_set" @immut_sorted_set,
+  "moonbitlang/core/immut/hashmap" @immut_hashmap,
+  "moonbitlang/core/immut/hashset" @immut_hashset,
 }
 
-import "test" {
+import {
   "moonbitlang/core/int",
   "moonbitlang/core/ref",
-}
+  "moonbitlang/core/error",
+} for "test"
 
-options(
-  "warn-list": "-alert_visibility-test_unqualified_package",
-)
+warnings = "-alert_visibility-test_unqualified_package"

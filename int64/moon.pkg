@@ -4,6 +4,6 @@ import {
   "moonbitlang/core/int16",
 }
 
-import "test" {
+import {
   "moonbitlang/core/buffer",
-}
+} for "test"

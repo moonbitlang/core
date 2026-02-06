@@ -119,7 +119,7 @@ pub impl[A : @json.FromJson] @json.FromJson for List[A] with from_json(
   }
   for i = arr.length() - 1, list = Empty; i >= 0; {
     continue i - 1, list.prepend(A::from_json(arr[i], path.add_index(i)))
-  } else {
+  } nobreak {
     list
   }
 }
@@ -152,7 +152,7 @@ pub fn[A : @json.FromJson] List::from_json(
 pub fn[A] List::from_array(arr : ArrayView[A]) -> List[A] {
   for i = arr.length() - 1, list = Empty; i >= 0; {
     continue i - 1, More(arr[i], tail=list)
-  } else {
+  } nobreak {
     list
   }
 }
@@ -1487,13 +1487,15 @@ pub fn[A] List::find_index(
 /// ```mbt check
 /// test {
 ///   assert_eq(
-///     @list.from_array([1, 3, 5, 8]).findi((element, index) => element % 2 == 0 &&
-///       index == 3),
+///     @list.from_array([1, 3, 5, 8]).findi((element, index) => {
+///       element % 2 == 0 && index == 3
+///     }),
 ///     Some(8),
 ///   )
 ///   assert_eq(
-///     @list.from_array([1, 3, 8, 5]).findi((element, index) => element % 2 == 0 &&
-///       index == 3),
+///     @list.from_array([1, 3, 8, 5]).findi((element, index) => {
+///       element % 2 == 0 && index == 3
+///     }),
 ///     None,
 ///   )
 /// }

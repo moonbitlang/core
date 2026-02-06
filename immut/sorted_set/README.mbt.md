@@ -17,7 +17,6 @@ test {
   let _set2 = @sorted_set.singleton(1)
   let _set4 = @sorted_set.from_array([1])
   let _set5 = @sorted_set.from_array([1])
-
 }
 ```
 
@@ -162,8 +161,9 @@ test {
   let arr = []
   @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).each(v => arr.push(v))
   assert_eq(arr, [1, 2, 3, 4, 5, 6, 7, 8, 9])
-  let val = @sorted_set.from_array([1, 2, 3, 4, 5]).fold(init=0, (acc, x) => acc +
-    x)
+  let val = @sorted_set.from_array([1, 2, 3, 4, 5]).fold(init=0, (acc, x) => {
+    acc + x
+  })
   assert_eq(val, 15)
   let set = @sorted_set.from_array([1, 2, 3])
   assert_eq(set.map(x => x * 2).to_array(), [2, 4, 6])

@@ -136,13 +136,15 @@ struct Replacer((String, Json) -> Json?)
 /// test {
 ///   // Transform numbers and exclude sensitive fields
 ///   ignore(
-///     @json.Replacer::new((key, value) => match key {
-///       "password" | "secret" => None // exclude sensitive fields
-///       _ =>
-///         match value {
-///           Number(n, ..) => Some(Json::number(n * 2.0)) // double all numbers
-///           _ => Some(value) // keep other values as-is
-///         }
+///     @json.Replacer::new((key, value) => {
+///       match key {
+///         "password" | "secret" => None // exclude sensitive fields
+///         _ =>
+///           match value {
+///             Number(n, ..) => Some(Json::number(n * 2.0)) // double all numbers
+///             _ => Some(value) // keep other values as-is
+///           }
+///       }
 ///     }),
 ///   )
 /// }
@@ -231,20 +233,24 @@ pub fn Replacer::exclude(array : ArrayView[StringView]) -> Replacer {
 ///   ignore(json.stringify(replacer=exclude_replacer)) // {"a":1,"b":2,"c":3}
 ///
 ///   // Custom transformation
-///   let transform_replacer = @json.Replacer::new((_key, value) => match value {
-///     Number(n, ..) => Some(Json::number(n * 10.0)) // multiply numbers by 10
-///     _ => Some(value) // keep other values unchanged
+///   let transform_replacer = @json.Replacer::new((_key, value) => {
+///     match value {
+///       Number(n, ..) => Some(Json::number(n * 10.0)) // multiply numbers by 10
+///       _ => Some(value) // keep other values unchanged
+///     }
 ///   })
 ///   ignore(json.stringify(replacer=transform_replacer)) // {"a":10,"b":20,"c":30,"password":"secret"}
 ///
 ///   // Filter and transform
-///   let filter_replacer = @json.Replacer::new((key, value) => match key {
-///     "password" => None // exclude password
-///     _ =>
-///       match value {
-///         Number(n, ..) => Some(Json::number(n + 100.0)) // add 100 to numbers
-///         _ => Some(value)
-///       }
+///   let filter_replacer = @json.Replacer::new((key, value) => {
+///     match key {
+///       "password" => None // exclude password
+///       _ =>
+///         match value {
+///           Number(n, ..) => Some(Json::number(n + 100.0)) // add 100 to numbers
+///           _ => Some(value)
+///         }
+///     }
 ///   })
 ///   ignore(json.stringify(replacer=filter_replacer)) // {"a":101,"b":102,"c":103}
 /// }
@@ -425,13 +431,15 @@ fn escape(str : String, escape_slash~ : Bool) -> String {
 ///   // Remove sensitive data and double numeric values  
 ///   ignore(
 ///     json.transform(
-///       @json.Replacer::new((key, value) => match key {
-///         "password" => None // exclude password fields
-///         _ =>
-///           match value {
-///             Number(n, ..) => Some(Json::number(n * 2.0)) // double numbers
-///             _ => Some(value) // keep other values
-///           }
+///       @json.Replacer::new((key, value) => {
+///         match key {
+///           "password" => None // exclude password fields
+///           _ =>
+///             match value {
+///               Number(n, ..) => Some(Json::number(n * 2.0)) // double numbers
+///               _ => Some(value) // keep other values
+///             }
+///         }
 ///       }),
 ///     ),
 ///   )

@@ -225,7 +225,7 @@ pub fn[K : Compare, V] SortedMap::from_array(
   for i = 0, mp = Empty; i < array.length(); {
     let (k, v) = array[i]
     continue i + 1, mp.add(k, v)
-  } else {
+  } nobreak {
     mp
   }
 }

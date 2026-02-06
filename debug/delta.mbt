@@ -253,9 +253,9 @@ fn mark_added(use_ansi : Bool, x : ContentParens) -> ContentParens {
 fn render_delta(threshold : Int, use_ansi : Bool, delta : ReprDelta) -> Content {
   match delta {
     Same(label, children_delta) => {
-      let children = children_delta.map(child => render_delta(
-        threshold, use_ansi, child,
-      ))
+      let children = children_delta.map(child => {
+        render_delta(threshold, use_ansi, child)
+      })
       with_resizing(
         delta_root_size(delta),
         threshold,

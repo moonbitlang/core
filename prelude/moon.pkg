@@ -6,6 +6,4 @@ import {
   "moonbitlang/core/debug",
 }
 
-options(
-  "warn-list": "-test_unqualified_package",
-)
+warnings = "-test_unqualified_package"

@@ -264,7 +264,6 @@ test "panic FixedArray::set_utf8_char/invalid_code_point" {
   let invalid_char = (0x110001).unsafe_to_char()
   // This should trigger the "Char out of range" panic
   let _ = buf.set_utf8_char(0, invalid_char)
-
 }
 
 ///|

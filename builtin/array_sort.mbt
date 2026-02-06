@@ -130,7 +130,7 @@ pub fn[T : Compare] ArrayView::is_sorted(self : ArrayView[T]) -> Bool {
     if self[i - 1] > self[i] {
       break false
     }
-  } else {
+  } nobreak {
     true
   }
 }

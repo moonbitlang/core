@@ -3,5 +3,5 @@ import {
   "moonbitlang/core/quickcheck",
 }
 
-import "test" {
-}
+import {
+} for "test"

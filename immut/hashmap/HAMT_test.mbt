@@ -16,7 +16,7 @@
 test "HAMT::size" {
   for i = 0, map = @hashmap.new(); i < 20; i = i + 1, map = map.add(i, i) {
     assert_eq(map.length(), i)
-  } else {
+  } nobreak {
     assert_eq(map.add(0, 0).length(), 20)
   }
 }

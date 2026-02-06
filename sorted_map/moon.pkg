@@ -6,6 +6,6 @@ import {
   "moonbitlang/core/json",
 }
 
-import "test" {
+import {
   "moonbitlang/core/array",
-}
+} for "test"

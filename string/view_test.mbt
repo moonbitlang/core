@@ -138,7 +138,6 @@ test "panic out of bounds1" {
   let str = "Hello🤣🤣🤣"
   let view = str.view(start_offset=1, end_offset=7)
   let _ = view.iter().nth(5).unwrap()
-
 }
 
 ///|
@@ -146,7 +145,6 @@ test "panic out of bounds2" {
   let str = "Hello🤣🤣🤣"
   let view = str.view(start_offset=1, end_offset=7)
   let _ = view.view(start_offset=7)
-
 }
 
 ///|
@@ -154,7 +152,6 @@ test "panic out of bounds3" {
   let str = "Hello🤣🤣🤣"
   let view = str.view(start_offset=1, end_offset=7)
   let _ = view.view(end_offset=7)
-
 }
 
 ///|
@@ -162,7 +159,6 @@ test "panic out of bounds4" {
   let str = "hello"
   let view = str.view(start_offset=0, end_offset=0)
   let _ = view.iter().nth(0).unwrap()
-
 }
 
 ///|
@@ -223,7 +219,6 @@ test "panic negative index 1" {
   let str = "hello"
   let str_view = str[:]
   let _ = str_view.view(start_offset=-6)
-
 }
 
 ///|
@@ -232,7 +227,6 @@ test "panic negative index 2" {
   let str = "hello"
   let str_view = str.view()
   let _ = str_view.view(end_offset=-6)
-
 }
 
 ///|
@@ -241,7 +235,6 @@ test "panic negative index 3" {
   let str = "hello"
   let str_view = str.view(start_offset=1, end_offset=4)
   let _ = str_view.view(start_offset=-4)
-
 }
 
 ///|
@@ -250,7 +243,6 @@ test "panic negative index 4" {
   let str = "hello"
   let str_view = str.view(start_offset=1, end_offset=4)
   let _ = str_view.view(end_offset=4)
-
 }
 
 ///|
@@ -259,7 +251,6 @@ test "panic negative index 5" {
   let str = "hello"
   let str_view = str.view(start_offset=1, end_offset=4)
   let _ = str_view.view(start_offset=4)
-
 }
 
 ///|
@@ -268,7 +259,6 @@ test "panic negative index 6" {
   let str = "hello"
   let str_view = str.view(start_offset=1, end_offset=4)
   let _ = str_view.view(end_offset=4)
-
 }
 
 ///|
@@ -277,7 +267,6 @@ test "panic negative index 7" {
   let str = "hello"
   let str_view = str.view(start_offset=1, end_offset=4)
   let _ = str_view.view(start_offset=-1, end_offset=-2)
-
 }
 
 ///|
@@ -286,7 +275,6 @@ test "panic negative index 8" {
   let str = "hello"
   let str_view = str.view(start_offset=1, end_offset=4)
   let _ = str_view.view(start_offset=-1, end_offset=1)
-
 }
 
 ///|
@@ -295,7 +283,6 @@ test "panic negative index 9" {
   let str = "hello"
   let str_view = str.view(start_offset=1, end_offset=4)
   let _ = str_view.view(start_offset=2, end_offset=-2)
-
 }
 
 ///|
@@ -326,21 +313,18 @@ test "stringview rev_iter" {
 test "panic stringview negative index1" {
   let str = "hello🤣😭😂"
   let _ = str.view(start_offset=-9)
-
 }
 
 ///|
 test "panic stringview negative index2" {
   let str = "hello🤣😭😂"
   let _ = str.view(end_offset=-9)
-
 }
 
 ///|
 test "panic stringview negative index3" {
   let str = "hello🤣😭😂"
   let _ = str.view(start_offset=-1, end_offset=-2)
-
 }
 
 ///|
@@ -412,7 +396,6 @@ test "panic_length_ge invalid surrogate pair" {
   let view = invalid_surrogate_pair[:]
   // This should abort with "invalid surrogate pair"
   let _ = view.char_length_ge(1)
-
 }
 
 ///|

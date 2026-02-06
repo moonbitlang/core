@@ -478,7 +478,7 @@ pub impl[K : Hash + Eq] Eq for Set[K] with equal(self, other) {
   guard self.size == other.size else { return false }
   for k in self {
     guard other.contains(k) else { return false }
-  } else {
+  } nobreak {
     true
   }
 }

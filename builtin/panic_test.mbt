@@ -233,5 +233,4 @@ test "panic set_utf16be_char with invalid code point" {
 ///|
 test "panic" {
   let _ : Int = Option::None.unwrap()
-
 }
