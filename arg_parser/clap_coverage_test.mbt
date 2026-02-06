@@ -341,6 +341,7 @@ test "default argv path" {
     @arg_parser.Arg::new("rest").index(0).multiple().last(),
   )
   let _ = cmd.parse() catch { _ => panic() }
+
 }
 
 ///|
