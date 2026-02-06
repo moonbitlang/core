@@ -41,6 +41,8 @@ type Arg
 pub fn Arg::action(Self, ArgAction) -> Self
 pub fn Arg::alias_name(Self, String) -> Self
 pub fn Arg::allow_hyphen_values(Self, value? : Bool) -> Self
+pub fn Arg::conflicts_with(Self, String) -> Self
+pub fn Arg::conflicts_with_all(Self, Array[String]) -> Self
 pub fn Arg::default_value(Self, String) -> Self
 pub fn Arg::default_values(Self, Array[String]) -> Self
 pub fn Arg::env(Self, String) -> Self
@@ -62,6 +64,8 @@ pub fn Arg::new(String) -> Self
 pub fn Arg::num_values(Self, Int, Int) -> Self
 pub fn Arg::option(Self) -> Self
 pub fn Arg::required(Self, value? : Bool) -> Self
+pub fn Arg::requires(Self, String) -> Self
+pub fn Arg::requires_all(Self, Array[String]) -> Self
 pub fn Arg::short(Self, Char) -> Self
 pub fn Arg::short_alias(Self, Char) -> Self
 pub fn Arg::visible_alias(Self, String) -> Self

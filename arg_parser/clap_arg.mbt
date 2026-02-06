@@ -49,6 +49,8 @@ struct Arg {
   default_value : String?
   default_values : Array[String]?
   groups : Array[String]
+  requires : Array[String]
+  conflicts_with : Array[String]
   required : Bool
   min_values : Int?
   max_values : Int?
@@ -80,6 +82,8 @@ pub fn Arg::new(name : String) -> Arg {
     default_value: None,
     default_values: None,
     groups: [],
+    requires: [],
+    conflicts_with: [],
     required: false,
     min_values: None,
     max_values: None,
@@ -168,6 +172,38 @@ pub fn Arg::group(self : Arg, name : String) -> Arg {
   let groups = clone_array_arg(self.groups)
   groups.push(name)
   Arg::{ ..self, groups, }
+}
+
+///|
+pub fn Arg::requires(self : Arg, name : String) -> Arg {
+  let requires = clone_array_arg(self.requires)
+  requires.push(name)
+  Arg::{ ..self, requires, }
+}
+
+///|
+pub fn Arg::requires_all(self : Arg, names : Array[String]) -> Arg {
+  let requires = clone_array_arg(self.requires)
+  for name in names {
+    requires.push(name)
+  }
+  Arg::{ ..self, requires, }
+}
+
+///|
+pub fn Arg::conflicts_with(self : Arg, name : String) -> Arg {
+  let conflicts_with = clone_array_arg(self.conflicts_with)
+  conflicts_with.push(name)
+  Arg::{ ..self, conflicts_with, }
+}
+
+///|
+pub fn Arg::conflicts_with_all(self : Arg, names : Array[String]) -> Arg {
+  let conflicts_with = clone_array_arg(self.conflicts_with)
+  for name in names {
+    conflicts_with.push(name)
+  }
+  Arg::{ ..self, conflicts_with, }
 }
 
 ///|

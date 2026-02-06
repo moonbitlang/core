@@ -83,8 +83,16 @@ test "action help and version" {
     .long_about("long about")
     .version("1.0")
     .long_version("demo 1.0")
-    .arg(@arg_parser.Arg::new("assist").long("assist").action(@arg_parser.ArgAction::Help))
-    .arg(@arg_parser.Arg::new("ver").long("ver").action(@arg_parser.ArgAction::Version))
+    .arg(
+      @arg_parser.Arg::new("assist")
+      .long("assist")
+      .action(@arg_parser.ArgAction::Help),
+    )
+    .arg(
+      @arg_parser.Arg::new("ver")
+      .long("ver")
+      .action(@arg_parser.ArgAction::Version),
+    )
   let mut help = ""
   try cmd.parse(argv=["--assist"]) catch {
     @arg_parser.Help::Long(t) => help = t
@@ -748,6 +756,46 @@ test "required option missing" {
   try cmd.parse(argv=[]) catch {
     @arg_parser.ArgumentError::MissingRequired(name) =>
       inspect(name, content="mode")
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
+test "requires relationship enforces dependent arg" {
+  let cmd = @arg_parser.Command::new("demo")
+    .arg(@arg_parser.Arg::new("mode").long("mode").option().requires("config"))
+    .arg(@arg_parser.Arg::new("config").long("config").option())
+  try cmd.parse(argv=["--mode", "fast"]) catch {
+    @arg_parser.ArgumentError::MissingRequired(name) =>
+      inspect(name, content="config")
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+  let matches = cmd.parse(argv=["--mode", "fast", "--config", "cfg.toml"]) catch {
+    _ => panic()
+  }
+  assert_eq(matches.value_of("mode").unwrap(), "fast")
+  assert_eq(matches.value_of("config").unwrap(), "cfg.toml")
+}
+
+///|
+test "conflicts_with relationship rejects conflicting args" {
+  let cmd = @arg_parser.Command::new("demo")
+    .arg(
+      @arg_parser.Arg::new("verbose").long("verbose").conflicts_with("quiet"),
+    )
+    .arg(@arg_parser.Arg::new("quiet").long("quiet"))
+  try cmd.parse(argv=["--verbose", "--quiet"]) catch {
+    @arg_parser.ArgumentError::InvalidArgument(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|conflicting arguments: verbose and quiet
+        ),
+      )
     _ => panic()
   } noraise {
     _ => panic()

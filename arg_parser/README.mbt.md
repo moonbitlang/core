@@ -224,6 +224,23 @@ let cmd = Command::new("demo")
   .arg(Arg::new("blue").long("blue").group("color"))
 ```
 
+## Argument Relationships
+
+Use `requires` and `conflicts_with` to model argument dependencies:
+
+```mbt nocheck
+///|
+let cmd = Command::new("demo")
+  .arg(Arg::new("mode").long("mode").option().requires("config"))
+  .arg(Arg::new("config").long("config").option())
+  .arg(Arg::new("verbose").long("verbose").conflicts_with("quiet"))
+  .arg(Arg::new("quiet").long("quiet"))
+```
+
+- If `mode` is provided, `config` must also be present.
+- `verbose` and `quiet` cannot be used together.
+- Relationship targets must refer to existing argument names.
+
 ## Reading Values (`Matches`)
 
 Raw access:

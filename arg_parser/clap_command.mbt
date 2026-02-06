@@ -237,9 +237,17 @@ pub fn Command::parse(
 ) -> Matches raise {
   parse_command(self, argv, env, []) catch {
     ParseError::Help(text, long_help) =>
-      if long_help { raise Help::Long(text) } else { raise Help::Short(text) }
+      if long_help {
+        raise Help::Long(text)
+      } else {
+        raise Help::Short(text)
+      }
     ParseError::Version(text, long_version) =>
-      if long_version { raise Version::Long(text) } else { raise Version::Short(text) }
+      if long_version {
+        raise Version::Long(text)
+      } else {
+        raise Version::Short(text)
+      }
     ParseError::Arg(err) => raise err
     ParseError::Build(err) => raise err
   }
@@ -394,7 +402,8 @@ fn parse_command(
         } else {
           match spec.action {
             ArgAction::Help => raise_help(cmd.render_help(), false)
-            ArgAction::Version => raise_version(command_version(cmd, false), false)
+            ArgAction::Version =>
+              raise_version(command_version(cmd, false), false)
             _ => apply_flag(matches, spec, ValueSource::Argv)
           }
         }
@@ -461,6 +470,7 @@ fn finalize_matches(
   }
   apply_defaults(matches, env_args)
   validate_values(cmd, matches)
+  validate_relationships(matches, env_args)
   validate_groups(cmd, matches)
   matches
 }
@@ -483,7 +493,11 @@ fn version_flag_enabled(cmd : Command) -> Bool {
 ///|
 fn command_version(cmd : Command, long_version : Bool) -> String {
   if long_version {
-    if cmd.long_version != "" { cmd.long_version } else { cmd.version }
+    if cmd.long_version != "" {
+      cmd.long_version
+    } else {
+      cmd.version
+    }
   } else if cmd.version != "" {
     cmd.version
   } else {
@@ -649,6 +663,32 @@ fn validate_arg_defs(args : Array[Arg]) -> Unit raise ArgBuildError {
       seen_short[short] = true
     }
   }
+  for arg in args {
+    for required in arg.requires {
+      if required == arg.name {
+        raise ArgBuildError::Unsupported(
+          "arg cannot require itself: " + arg.name,
+        )
+      }
+      if seen_names.get(required) is None {
+        raise ArgBuildError::Unsupported(
+          "unknown requires target: " + arg.name + " -> " + required,
+        )
+      }
+    }
+    for conflict in arg.conflicts_with {
+      if conflict == arg.name {
+        raise ArgBuildError::Unsupported(
+          "arg cannot conflict with itself: " + arg.name,
+        )
+      }
+      if seen_names.get(conflict) is None {
+        raise ArgBuildError::Unsupported(
+          "unknown conflicts_with target: " + arg.name + " -> " + conflict,
+        )
+      }
+    }
+  }
 }
 
 ///|
@@ -783,6 +823,32 @@ fn validate_values(cmd : Command, matches : Matches) -> Unit raise ParseError {
       Some(max) if count > max =>
         raise_arg(ArgumentError::TooManyValues(arg.name, count, max))
       _ => ()
+    }
+  }
+}
+
+///|
+fn validate_relationships(
+  matches : Matches,
+  args : Array[Arg],
+) -> Unit raise ParseError {
+  for arg in args {
+    if !matches_has_value_or_flag(matches, arg.name) {
+      continue
+    }
+    for required in arg.requires {
+      if !matches_has_value_or_flag(matches, required) {
+        raise_arg(ArgumentError::MissingRequired(required))
+      }
+    }
+    for conflict in arg.conflicts_with {
+      if matches_has_value_or_flag(matches, conflict) {
+        raise_arg(
+          ArgumentError::InvalidArgument(
+            "conflicting arguments: " + arg.name + " and " + conflict,
+          ),
+        )
+      }
     }
   }
 }
@@ -1598,7 +1664,10 @@ fn resolve_help_target(
 }
 
 ///|
-fn split_help_style(argv : Array[String], help_flag : Bool) -> (Bool, Array[String]) {
+fn split_help_style(
+  argv : Array[String],
+  help_flag : Bool,
+) -> (Bool, Array[String]) {
   if argv.length() == 0 {
     return (true, argv)
   }

@@ -949,6 +949,82 @@ test "unknown group errors" {
 }
 
 ///|
+test "unknown requires target errors" {
+  let cmd = @arg_parser.Command::new("demo").arg(
+    @arg_parser.Arg::new("mode").long("mode").option().requires("config"),
+  )
+  try cmd.parse(argv=[]) catch {
+    @arg_parser.ArgBuildError::Unsupported(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|unknown requires target: mode -> config
+        ),
+      )
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
+test "unknown conflicts_with target errors" {
+  let cmd = @arg_parser.Command::new("demo").arg(
+    @arg_parser.Arg::new("verbose").long("verbose").conflicts_with("quiet"),
+  )
+  try cmd.parse(argv=[]) catch {
+    @arg_parser.ArgBuildError::Unsupported(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|unknown conflicts_with target: verbose -> quiet
+        ),
+      )
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
+test "self requires errors" {
+  let cmd = @arg_parser.Command::new("demo").arg(
+    @arg_parser.Arg::new("mode").long("mode").option().requires("mode"),
+  )
+  try cmd.parse(argv=[]) catch {
+    @arg_parser.ArgBuildError::Unsupported(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|arg cannot require itself: mode
+        ),
+      )
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
+test "self conflicts_with errors" {
+  let cmd = @arg_parser.Command::new("demo").arg(
+    @arg_parser.Arg::new("verbose").long("verbose").conflicts_with("verbose"),
+  )
+  try cmd.parse(argv=[]) catch {
+    @arg_parser.ArgBuildError::Unsupported(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|arg cannot conflict with itself: verbose
+        ),
+      )
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
 test "duplicate arg name errors" {
   let cmd = @arg_parser.Command::new("demo")
     .arg(@arg_parser.Arg::new("dup").long("one"))
@@ -1026,8 +1102,9 @@ test "version flag reserved name errors" {
 
 ///|
 test "help flag reserved name errors" {
-  let cmd = @arg_parser.Command::new("root")
-    .arg(@arg_parser.Arg::new("help").long("help"))
+  let cmd = @arg_parser.Command::new("root").arg(
+    @arg_parser.Arg::new("help").long("help"),
+  )
   try cmd.parse(argv=[]) catch {
     @arg_parser.ArgBuildError::Unsupported(msg) =>
       inspect(
@@ -1045,7 +1122,9 @@ test "help flag reserved name errors" {
 ///|
 test "version action requires text" {
   let cmd = @arg_parser.Command::new("root").arg(
-    @arg_parser.Arg::new("ver").long("ver").action(@arg_parser.ArgAction::Version),
+    @arg_parser.Arg::new("ver")
+    .long("ver")
+    .action(@arg_parser.ArgAction::Version),
   )
   try cmd.parse(argv=[]) catch {
     @arg_parser.ArgBuildError::Unsupported(msg) =>
