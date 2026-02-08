@@ -1140,8 +1140,8 @@ pub fn StringView::before(
   self : StringView,
   needle : StringView,
 ) -> StringView? {
-  match self.split_once(needle) {
-    Some((before, _after)) => Some(before)
+  match self.find(needle) {
+    Some(index) => Some(self.view(end_offset=index))
     None => None
   }
 }
@@ -1163,8 +1163,8 @@ pub fn String::before(self : String, needle : StringView) -> StringView? {
 /// 
 /// If the separator is empty, it returns the full string.
 pub fn StringView::after(self : StringView, needle : StringView) -> StringView? {
-  match self.split_once(needle) {
-    Some((_before, after)) => Some(after)
+  match self.find(needle) {
+    Some(index) => Some(self.view(start_offset=index + needle.length()))
     None => None
   }
 }
