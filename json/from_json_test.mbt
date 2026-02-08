@@ -408,6 +408,17 @@ test "int roundtrip" {
 }
 
 ///|
+test "int from_json rejects fractional numbers" {
+  let res : Result[Int, _] = try? @json.from_json(Json::number(1.5))
+  inspect(
+    res,
+    content=(
+      #|Err(JsonDecodeError((, "Int::from_json: expected integer")))
+    ),
+  )
+}
+
+///|
 test "uint roundtrip" {
   let u = 123U.to_json()
   let v : UInt = @json.from_json(u)
@@ -415,6 +426,17 @@ test "uint roundtrip" {
   let u = 4294967295U.to_json()
   let v : UInt = @json.from_json(u)
   inspect(v, content="4294967295")
+}
+
+///|
+test "uint from_json rejects fractional numbers" {
+  let res : Result[UInt, _] = try? @json.from_json(Json::number(3.14))
+  inspect(
+    res,
+    content=(
+      #|Err(JsonDecodeError((, "UInt::from_json: expected integer")))
+    ),
+  )
 }
 
 ///|

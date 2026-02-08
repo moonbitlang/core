@@ -13,6 +13,8 @@
 // limitations under the License.
 
 ///|
+/// A JSON Pointer path (RFC 6901) used to locate values in a JSON document.
+/// This is primarily used in decode errors to indicate where a failure occurred.
 enum JsonPath {
   Root
   Key(JsonPath, mut key~ : String)
@@ -20,11 +22,13 @@ enum JsonPath {
 } derive(Eq)
 
 ///|
+/// Append an array index segment to the current JSON path.
 pub fn JsonPath::add_index(self : JsonPath, index : Int) -> JsonPath {
   Index(self, index~)
 }
 
 ///|
+/// Append an object key segment to the current JSON path.
 pub fn JsonPath::add_key(self : JsonPath, key : String) -> JsonPath {
   Key(self, key~)
 }

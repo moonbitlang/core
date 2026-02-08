@@ -162,6 +162,9 @@ test "stringify with replacer" {
       #|{"a":1,"c":3}
     ),
   )
+  // keep none with indentation should still be compact
+  let replacer = @json.Replacer::keep([])
+  inspect(json.stringify(indent=2, replacer~), content="{}")
 }
 
 ///|
