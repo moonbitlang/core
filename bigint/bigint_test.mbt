@@ -49,6 +49,18 @@ test "bit_length negative non_power_of_two" {
 }
 
 ///|
+test "int64 comparison helpers" {
+  let one = 1N
+  inspect(one.equal_int64(1L), content="true")
+  inspect(one.compare_int64(1L), content="0")
+  let neg_one = -1N
+  inspect(neg_one.equal_int64(-1L), content="true")
+  inspect(neg_one.compare_int64(1L), content="-1")
+  let overflow = 9223372036854775808N
+  inspect(overflow.equal_int64(0L), content="false")
+}
+
+///|
 test "to_octets pads larger length" {
   let n = @bigint.BigInt::from_string("010203", radix=16)
   inspect(n.to_octets(length=5), content="b\"\\x00\\x00\\x01\\x02\\x03\"")
