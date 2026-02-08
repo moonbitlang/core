@@ -675,9 +675,11 @@ pub fn Double::to_uint64(Double) -> UInt64
 pub fn Double::trunc(Double) -> Double
 pub fn Double::until(Double, Double, step? : Double, inclusive? : Bool) -> Iter[Double]
 
+pub fn String::after(String, StringView) -> StringView?
 #alias("_[_]")
 #alias(code_unit_at)
 pub fn String::at(String, Int) -> UInt16
+pub fn String::before(String, StringView) -> StringView?
 #alias(codepoint_length, deprecated)
 pub fn String::char_length(String, start_offset? : Int, end_offset? : Int) -> Int
 pub fn String::char_length_eq(String, Int, start_offset? : Int, end_offset? : Int) -> Bool
@@ -721,6 +723,7 @@ pub fn[A] String::rev_fold(String, init~ : A, (A, Char) -> A raise?) -> A raise?
 #alias(rev_iterator, deprecated)
 pub fn String::rev_iter(String) -> Iter[Char]
 pub fn String::split(String, StringView) -> Iter[StringView]
+pub fn String::split_once(String, StringView) -> (StringView, StringView)?
 #alias(chop_prefix)
 pub fn String::strip_prefix(String, StringView) -> StringView?
 #alias(chop_suffix)
@@ -963,9 +966,11 @@ pub fn BytesView::to_fixedarray(Self) -> FixedArray[Byte]
 #alias(sub, deprecated)
 pub fn BytesView::view(Self, start? : Int, end? : Int) -> Self
 
+pub fn StringView::after(Self, Self) -> Self?
 #alias("_[_]")
 #alias(code_unit_at)
 pub fn StringView::at(Self, Int) -> UInt16
+pub fn StringView::before(Self, Self) -> Self?
 pub fn StringView::char_length(Self) -> Int
 pub fn StringView::char_length_eq(Self, Int) -> Bool
 pub fn StringView::char_length_ge(Self, Int) -> Bool
@@ -1007,6 +1012,7 @@ pub fn[A] StringView::rev_fold(Self, init~ : A, (A, Char) -> A raise?) -> A rais
 #alias(rev_iterator, deprecated)
 pub fn StringView::rev_iter(Self) -> Iter[Char]
 pub fn StringView::split(Self, Self) -> Iter[Self]
+pub fn StringView::split_once(Self, Self) -> (Self, Self)?
 pub fn StringView::start_offset(Self) -> Int
 #alias(chop_prefix)
 pub fn StringView::strip_prefix(Self, Self) -> Self?

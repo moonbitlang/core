@@ -1094,6 +1094,92 @@ pub fn String::split(self : String, sep : StringView) -> Iter[StringView] {
 }
 
 ///|
+/// Splits the string into a pair at the first occurrence of the separator.
+/// 
+/// Returns None if the separator is not found.
+/// 
+/// If the separator is empty, it splits at the start of the string, returning
+/// an empty prefix and the full string as the suffix.
+pub fn StringView::split_once(
+  self : StringView,
+  needle : StringView,
+) -> (StringView, StringView)? {
+  match self.find(needle) {
+    Some(index) =>
+      Some(
+        (
+          self.view(end_offset=index),
+          self.view(start_offset=index + needle.length()),
+        ),
+      )
+    None => None
+  }
+}
+
+///|
+/// Splits the string into a pair at the first occurrence of the separator.
+/// 
+/// Returns None if the separator is not found.
+/// 
+/// If the separator is empty, it splits at the start of the string, returning
+/// an empty prefix and the full string as the suffix.
+pub fn String::split_once(
+  self : String,
+  needle : StringView,
+) -> (StringView, StringView)? {
+  self[:].split_once(needle)
+}
+
+///|
+/// Returns the substring before the first occurrence of the separator.
+/// 
+/// Returns None if the separator is not found.
+/// 
+/// If the separator is empty, it returns an empty string.
+pub fn StringView::before(
+  self : StringView,
+  needle : StringView,
+) -> StringView? {
+  match self.split_once(needle) {
+    Some((before, _after)) => Some(before)
+    None => None
+  }
+}
+
+///|
+/// Returns the substring before the first occurrence of the separator.
+/// 
+/// Returns None if the separator is not found.
+/// 
+/// If the separator is empty, it returns an empty string.
+pub fn String::before(self : String, needle : StringView) -> StringView? {
+  self[:].before(needle)
+}
+
+///|
+/// Returns the substring after the first occurrence of the separator.
+/// 
+/// Returns None if the separator is not found.
+/// 
+/// If the separator is empty, it returns the full string.
+pub fn StringView::after(self : StringView, needle : StringView) -> StringView? {
+  match self.split_once(needle) {
+    Some((_before, after)) => Some(after)
+    None => None
+  }
+}
+
+///|
+/// Returns the substring after the first occurrence of the separator.
+/// 
+/// Returns None if the separator is not found.
+/// 
+/// If the separator is empty, it returns the full string.
+pub fn String::after(self : String, needle : StringView) -> StringView? {
+  self[:].after(needle)
+}
+
+///|
 test "split" {
   assert_eq("a,b,c".split(",").map(StringView::to_string).collect(), [
     "a", "b", "c",
@@ -1126,6 +1212,23 @@ test "split" {
   assert_eq("a😀b😀c".split("😀").map(StringView::to_string).collect(), [
     "a", "b", "c",
   ])
+}
+
+///|
+test "split_once before after" {
+  inspect("a=b=c".split_once("="), content="Some((\"a\", \"b=c\"))")
+  inspect("a=b=c".before("="), content="Some(\"a\")")
+  inspect("a=b=c".after("="), content="Some(\"b=c\")")
+  inspect("nope".split_once("="), content="None")
+  inspect("nope".before("="), content="None")
+  inspect("nope".after("="), content="None")
+  inspect("".split_once(""), content="Some((\"\", \"\"))")
+  inspect("".before(""), content="Some(\"\")")
+  inspect("".after(""), content="Some(\"\")")
+  inspect("hello".split_once(""), content="Some((\"\", \"hello\"))")
+  inspect("hello".before(""), content="Some(\"\")")
+  inspect("hello".after(""), content="Some(\"hello\")")
+  inspect("😊::🚀".split_once("::"), content="Some((\"😊\", \"🚀\"))")
 }
 
 ///|
