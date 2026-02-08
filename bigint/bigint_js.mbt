@@ -19,6 +19,35 @@ type BigInt
 let zero = 0N
 
 ///|
+/// Converts a string representation in the specified radix to a `BigInt` value.
+/// The string can optionally start with a minus sign (-) to indicate a negative
+/// number, followed by one or more digits valid for the radix.
+///
+/// Parameters:
+///
+/// * `str` : The string to be converted. Must be a valid number string in the
+/// given radix.
+/// * `radix` : The base to use for parsing (2 to 36). Defaults to 10.
+///
+/// Returns a `BigInt` value representing the number in the input string.
+///
+/// Throws a panic if:
+///
+/// * The input string is empty
+/// * The input string contains digits not valid for the given radix
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let pos = @bigint.BigInt::from_string("12345")
+///   let neg = @bigint.BigInt::from_string("-12345")
+///   let hex = @bigint.BigInt::from_string("ff", radix=16)
+///   inspect(pos, content="12345")
+///   inspect(neg, content="-12345")
+///   inspect(hex, content="255")
+/// }
+/// ```
 pub fn BigInt::from_string(str : String, radix? : Int = 10) -> BigInt {
   if str.length() == 0 {
     abort("empty string")
@@ -97,6 +126,30 @@ pub impl Show for BigInt with output(self, logger) {
 }
 
 ///|
+/// Converts a `BigInt` value to a string representation in the specified radix.
+///
+/// Parameters:
+///
+/// * `self` : The `BigInt` value to convert to a string.
+/// * `radix` : The base to use for formatting (2 to 36). Defaults to 10.
+///
+/// Returns a string containing the representation of the number in the given
+/// radix, with a leading minus sign for negative numbers. Digits above 9 use
+/// lowercase letters (`a` to `z`).
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let n = 12345678901234567890N
+///   inspect(n.to_string(), content="12345678901234567890")
+///   inspect(n.to_string(radix=16), content="ab54a98ceb1f0ad2")
+///   let neg = -42N
+///   inspect(neg.to_string(), content="-42")
+///   let zero = 0N
+///   inspect(zero.to_string(), content="0")
+/// }
+/// ```
 pub fn BigInt::to_string(self : BigInt, radix? : Int = 10) -> String {
   if radix < 2 || radix > 36 {
     abort("radix must be between 2 and 36")
@@ -545,7 +598,7 @@ pub extern "js" fn BigInt::bit_length(self : BigInt) -> Int =
 /// Returns the number of trailing zero bits in the binary representation of 
 /// the absolute value of this BigInt.
 ///
-/// For zero, it returns -1.
+/// For zero, it returns 0.
 ///
 /// Example:
 /// ```mbt check
