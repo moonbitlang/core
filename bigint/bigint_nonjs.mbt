@@ -1931,12 +1931,17 @@ fn can_convert_to_int(x : BigInt) -> Bool {
 
 ///|
 fn can_convert_to_int64(x : BigInt) -> Bool {
-  x.len <= 2 &&
-  (if x.sign == Negative {
-    x.limbs[1] < 0x80000000 || (x.limbs[1] == 0x80000000 && x.limbs[0] == 0)
+  if x.len == 1 {
+    true
+  } else if x.len == 2 {
+    if x.sign == Negative {
+      x.limbs[1] < 0x80000000 || (x.limbs[1] == 0x80000000 && x.limbs[0] == 0)
+    } else {
+      x.limbs[1] < 0x80000000
+    }
   } else {
-    x.limbs[1] < 0x80000000
-  })
+    false
+  }
 }
 
 ///|

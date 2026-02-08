@@ -168,7 +168,29 @@ pub fn BigInt::compare_int(self : BigInt, other : Int) -> Int {
 }
 
 ///|
-/// Compare a `BigInt` with an `Int64`.
+/// Compares a `BigInt` with an `Int64` and returns their relative order.
+///
+/// Parameters:
+///
+/// * `self` : The `BigInt` value to compare.
+/// * `other` : The `Int64` value to compare against.
+///
+/// Returns an integer indicating the relative order:
+///
+/// * A negative value if `self` is less than `other`
+/// * Zero if `self` equals `other`
+/// * A positive value if `self` is greater than `other`
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let big = 42N
+///   inspect(big.compare_int64(24L), content="1") // 42 > 24
+///   inspect(big.compare_int64(42L), content="0") // 42 = 42
+///   inspect(big.compare_int64(100L), content="-1") // 42 < 100
+/// }
+/// ```
 pub fn BigInt::compare_int64(self : BigInt, other : Int64) -> Int {
   guard can_convert_to_int64(self) else {
     return if is_neg(self) { -1 } else { 1 }
