@@ -196,6 +196,38 @@ test "global option merges parent and child values" {
 }
 
 ///|
+test "global append keeps parent argv over child env/default" {
+  let child = @argparse.Command("run")
+  let cmd = @argparse.Command(
+    "demo",
+    args=[
+      @argparse.OptionArg(
+        "profile",
+        long="profile",
+        action=@argparse.OptionAction::Append,
+        env="PROFILE",
+        default_values=["def"],
+        global=true,
+      ),
+    ],
+    subcommands=[child],
+  )
+
+  let matches = cmd.parse(argv=["--profile", "parent", "run"], env={
+    "PROFILE": "env",
+  }) catch {
+    _ => panic()
+  }
+  assert_true(matches.values is { "profile": ["parent"], .. })
+  assert_true(matches.sources is { "profile": @argparse.ValueSource::Argv, .. })
+  assert_true(
+    matches.subcommand is Some(("run", sub)) &&
+    sub.values is { "profile": ["parent"], .. } &&
+    sub.sources is { "profile": @argparse.ValueSource::Argv, .. },
+  )
+}
+
+///|
 test "global scalar keeps parent argv over child env/default" {
   let child = @argparse.Command("run")
   let cmd = @argparse.Command(
@@ -250,6 +282,59 @@ test "global count merges parent and child occurrences" {
   assert_true(
     matches.subcommand is Some(("run", sub)) &&
     sub.flag_counts is { "verbose": 3, .. },
+  )
+}
+
+///|
+test "global count keeps parent argv over child env fallback" {
+  let child = @argparse.Command("run")
+  let cmd = @argparse.Command(
+    "demo",
+    args=[
+      @argparse.FlagArg(
+        "verbose",
+        short='v',
+        long="verbose",
+        action=@argparse.FlagAction::Count,
+        env="VERBOSE",
+        global=true,
+      ),
+    ],
+    subcommands=[child],
+  )
+
+  let matches = cmd.parse(argv=["-v", "run"], env={ "VERBOSE": "1" }) catch {
+    _ => panic()
+  }
+  assert_true(matches.flag_counts is { "verbose": 1, .. })
+  assert_true(matches.sources is { "verbose": @argparse.ValueSource::Argv, .. })
+  assert_true(
+    matches.subcommand is Some(("run", sub)) &&
+    sub.flag_counts is { "verbose": 1, .. } &&
+    sub.sources is { "verbose": @argparse.ValueSource::Argv, .. },
+  )
+}
+
+///|
+test "global flag keeps parent argv over child env fallback" {
+  let child = @argparse.Command("run")
+  let cmd = @argparse.Command(
+    "demo",
+    args=[
+      @argparse.FlagArg("verbose", long="verbose", env="VERBOSE", global=true),
+    ],
+    subcommands=[child],
+  )
+
+  let matches = cmd.parse(argv=["--verbose", "run"], env={ "VERBOSE": "0" }) catch {
+    _ => panic()
+  }
+  assert_true(matches.flags is { "verbose": true, .. })
+  assert_true(matches.sources is { "verbose": @argparse.ValueSource::Argv, .. })
+  assert_true(
+    matches.subcommand is Some(("run", sub)) &&
+    sub.flags is { "verbose": true, .. } &&
+    sub.sources is { "verbose": @argparse.ValueSource::Argv, .. },
   )
 }
 

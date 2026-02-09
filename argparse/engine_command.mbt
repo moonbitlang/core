@@ -1313,41 +1313,61 @@ fn merge_globals_from_child(
       let child_vals = child.values.get(name)
       let parent_srcs = parent.value_sources.get(name)
       let child_srcs = child.value_sources.get(name)
+      let has_parent = parent_vals is Some(pv) && pv.length() > 0
+      let has_child = child_vals is Some(cv) && cv.length() > 0
+      if !has_parent && !has_child {
+        continue
+      }
+      let parent_source = source_from_values(parent_srcs)
+      let child_source = source_from_values(child_srcs)
       if arg.multiple || arg.action == EngineArgAction::Append {
-        let merged = []
-        let merged_srcs = []
-        if parent_vals is Some(pv) {
-          for v in pv {
-            merged.push(v)
+        let both_argv = parent_source is Some(EngineValueSource::Argv) &&
+          child_source is Some(EngineValueSource::Argv)
+        if both_argv {
+          let merged = []
+          let merged_srcs = []
+          if parent_vals is Some(pv) {
+            for v in pv {
+              merged.push(v)
+            }
           }
-        }
-        if parent_srcs is Some(ps) {
-          for s in ps {
-            merged_srcs.push(s)
+          if parent_srcs is Some(ps) {
+            for s in ps {
+              merged_srcs.push(s)
+            }
           }
-        }
-        if child_vals is Some(cv) {
-          for v in cv {
-            merged.push(v)
+          if child_vals is Some(cv) {
+            for v in cv {
+              merged.push(v)
+            }
           }
-        }
-        if child_srcs is Some(cs) {
-          for s in cs {
-            merged_srcs.push(s)
+          if child_srcs is Some(cs) {
+            for s in cs {
+              merged_srcs.push(s)
+            }
           }
-        }
-        if merged.length() > 0 {
-          parent.values[name] = merged
-          parent.value_sources[name] = merged_srcs
+          if merged.length() > 0 {
+            parent.values[name] = merged
+            parent.value_sources[name] = merged_srcs
+          }
+        } else {
+          let choose_child = has_child &&
+            (!has_parent || prefer_child_source(parent_source, child_source))
+          if choose_child {
+            if child_vals is Some(cv) && cv.length() > 0 {
+              parent.values[name] = clone_array(cv)
+            }
+            if child_srcs is Some(cs) && cs.length() > 0 {
+              parent.value_sources[name] = clone_array(cs)
+            }
+          } else if parent_vals is Some(pv) && pv.length() > 0 {
+            parent.values[name] = clone_array(pv)
+            if parent_srcs is Some(ps) && ps.length() > 0 {
+              parent.value_sources[name] = clone_array(ps)
+            }
+          }
         }
       } else {
-        let has_parent = parent_vals is Some(pv) && pv.length() > 0
-        let has_child = child_vals is Some(cv) && cv.length() > 0
-        if !has_parent && !has_child {
-          continue
-        }
-        let parent_source = source_from_values(parent_srcs)
-        let child_source = source_from_values(child_srcs)
         let choose_child = has_child &&
           (!has_parent || prefer_child_source(parent_source, child_source))
         if choose_child {
@@ -1368,24 +1388,46 @@ fn merge_globals_from_child(
       match child.flags.get(name) {
         Some(v) =>
           if arg.action == EngineArgAction::Count {
-            let parent_count = parent.counts.get(name).unwrap_or(0)
-            let child_count = child.counts.get(name).unwrap_or(0)
-            let total = parent_count + child_count
-            parent.counts[name] = total
-            parent.flags[name] = total > 0
-            match
-              strongest_source(
-                parent.flag_sources.get(name),
-                child.flag_sources.get(name),
-              ) {
-              Some(src) => parent.flag_sources[name] = src
-              None => ()
+            let has_parent = parent.flags.get(name) is Some(_)
+            let parent_source = parent.flag_sources.get(name)
+            let child_source = child.flag_sources.get(name)
+            let both_argv = parent_source is Some(EngineValueSource::Argv) &&
+              child_source is Some(EngineValueSource::Argv)
+            if both_argv {
+              let parent_count = parent.counts.get(name).unwrap_or(0)
+              let child_count = child.counts.get(name).unwrap_or(0)
+              let total = parent_count + child_count
+              parent.counts[name] = total
+              parent.flags[name] = total > 0
+              match strongest_source(parent_source, child_source) {
+                Some(src) => parent.flag_sources[name] = src
+                None => ()
+              }
+            } else {
+              let choose_child = !has_parent ||
+                prefer_child_source(parent_source, child_source)
+              if choose_child {
+                let child_count = child.counts.get(name).unwrap_or(0)
+                parent.counts[name] = child_count
+                parent.flags[name] = child_count > 0
+                match child_source {
+                  Some(src) => parent.flag_sources[name] = src
+                  None => ()
+                }
+              }
             }
           } else {
-            parent.flags[name] = v
-            match child.flag_sources.get(name) {
-              Some(src) => parent.flag_sources[name] = src
-              None => ()
+            let has_parent = parent.flags.get(name) is Some(_)
+            let parent_source = parent.flag_sources.get(name)
+            let child_source = child.flag_sources.get(name)
+            let choose_child = !has_parent ||
+              prefer_child_source(parent_source, child_source)
+            if choose_child {
+              parent.flags[name] = v
+              match child_source {
+                Some(src) => parent.flag_sources[name] = src
+                None => ()
+              }
             }
           }
         None => ()
