@@ -28,9 +28,9 @@ let matches = cmd.parse(argv=["-v", "--count=2", "alice"], env={}) catch {
   _ => panic()
 }
 
-assert_true(matches.get_flag("verbose"))
-assert_eq(matches.get_one("count").unwrap_or(""), "2")
-assert_eq(matches.get_one("name").unwrap_or(""), "alice")
+assert_true(matches.flags.get("verbose").unwrap_or(false))
+assert_eq(matches.values.get("count").unwrap_or([])[0], "2")
+assert_eq(matches.values.get("name").unwrap_or([])[0], "alice")
 ```
 
 ## Handle Help and Version
@@ -75,18 +75,18 @@ let matches = cmd.parse(argv=["--verbose", "--name", "alice", "echo", "hi"], env
   _ => panic()
 }
 
-match matches.flags_map().get("verbose") {
+match matches.flags.get("verbose") {
   Some(v) => assert_true(v)
   None => panic()
 }
 
-match matches.values_map().get("name") {
+match matches.values.get("name") {
   Some(values) => assert_eq(values[0], "alice")
   None => panic()
 }
 
-match matches.subcommand() {
-  Some(("echo", sub)) => assert_eq(sub.get_one("msg").unwrap_or(""), "hi")
+match matches.subcommand {
+  Some(("echo", sub)) => assert_eq(sub.values.get("msg").unwrap_or([])[0], "hi")
   _ => panic()
 }
 ```

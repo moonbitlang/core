@@ -128,6 +128,18 @@ fn parse_command(
     }
     if arg.has_prefix("--") {
       let (name, inline) = split_long(arg)
+      if help_flag_enabled(cmd) && name == "help" {
+        if inline is Some(_) {
+          raise ArgParseError::InvalidArgument(arg)
+        }
+        raise_help(render_help_long(cmd), true)
+      }
+      if version_flag_enabled(cmd) && name == "version" {
+        if inline is Some(_) {
+          raise ArgParseError::InvalidArgument(arg)
+        }
+        raise_version(command_version(cmd, true), true)
+      }
       match long_index.get(name) {
         None =>
           // Support `--no-<flag>` when the underlying flag is marked `negatable`.
@@ -172,6 +184,9 @@ fn parse_command(
               Err(e) => raise e
             }
           } else {
+            if inline is Some(_) {
+              raise ArgParseError::InvalidArgument(arg)
+            }
             match spec.action {
               EngineArgAction::Help => raise_help(render_help_long(cmd), true)
               EngineArgAction::Version =>
@@ -247,7 +262,8 @@ fn parse_command(
           merge_globals_from_child(matches, sub_matches, child_globals)
           let env_args = concat_globals(inherited_globals, args)
           let parent_matches = finalize_matches(
-            cmd, args, groups, matches, positionals, positional_values, env_args, env,
+            cmd, args, groups, matches, positionals, positional_values, env_args,
+            env,
           )
           match parent_matches.subcommand {
             Some((sub_name, sub_m)) => {
@@ -310,7 +326,8 @@ fn help_flag_enabled(cmd : Command) -> Bool {
 
 ///|
 fn version_flag_enabled(cmd : Command) -> Bool {
-  !cmd.disable_version_flag && (cmd.version is Some(_) || cmd.long_version is Some(_))
+  !cmd.disable_version_flag &&
+  (cmd.version is Some(_) || cmd.long_version is Some(_))
 }
 
 ///|
@@ -365,9 +382,7 @@ fn validate_arg(arg : EngineArg) -> Unit raise ArgBuildError {
     )
   }
   if arg.negatable && arg.takes_value {
-    raise ArgBuildError::Unsupported(
-      "negatable is only supported for flags",
-    )
+    raise ArgBuildError::Unsupported("negatable is only supported for flags")
   }
   if arg.action == EngineArgAction::Count && arg.takes_value {
     raise ArgBuildError::Unsupported("count is only supported for flags")
@@ -375,9 +390,7 @@ fn validate_arg(arg : EngineArg) -> Unit raise ArgBuildError {
   if arg.action == EngineArgAction::Help ||
     arg.action == EngineArgAction::Version {
     if arg.takes_value {
-      raise ArgBuildError::Unsupported(
-        "help/version actions require flags",
-      )
+      raise ArgBuildError::Unsupported("help/version actions require flags")
     }
     if arg.negatable {
       raise ArgBuildError::Unsupported(
@@ -416,9 +429,7 @@ fn validate_arg(arg : EngineArg) -> Unit raise ArgBuildError {
   let (min, max) = arg_min_max_for_validate(arg)
   let allow_multi = arg.multiple || arg.action == EngineArgAction::Append
   if (min > 1 || (max is Some(m) && m > 1)) && !allow_multi {
-    raise ArgBuildError::Unsupported(
-      "multiple values require multiple/append",
-    )
+    raise ArgBuildError::Unsupported("multiple values require multiple/append")
   }
   if (arg.default_value is Some(_) || arg.default_values is Some(_)) &&
     !arg.takes_value {
@@ -525,9 +536,7 @@ fn validate_arg_defs(args : Array[EngineArg]) -> Unit raise ArgBuildError {
     seen_names[arg.name] = true
     for name in collect_long_names(arg) {
       if seen_long.get(name) is Some(_) {
-        raise ArgBuildError::Unsupported(
-          "duplicate long option: --" + name,
-        )
+        raise ArgBuildError::Unsupported("duplicate long option: --" + name)
       }
       seen_long[name] = true
     }
@@ -569,9 +578,7 @@ fn validate_arg_defs(args : Array[EngineArg]) -> Unit raise ArgBuildError {
 }
 
 ///|
-fn validate_subcommand_defs(
-  subs : Array[Command],
-) -> Unit raise ArgBuildError {
+fn validate_subcommand_defs(subs : Array[Command]) -> Unit raise ArgBuildError {
   if subs.length() == 0 {
     return
   }
@@ -598,9 +605,7 @@ fn validate_subcommand_required_policy(
 }
 
 ///|
-fn validate_help_subcommand(
-  cmd : Command,
-) -> Unit raise ArgBuildError {
+fn validate_help_subcommand(cmd : Command) -> Unit raise ArgBuildError {
   if !help_subcommand_enabled(cmd) {
     return
   }
@@ -658,9 +663,7 @@ fn validate_version_flag(cmd : Command) -> Unit raise ArgBuildError {
 }
 
 ///|
-fn validate_version_actions(
-  cmd : Command,
-) -> Unit raise ArgBuildError {
+fn validate_version_actions(cmd : Command) -> Unit raise ArgBuildError {
   if cmd.version is Some(_) || cmd.long_version is Some(_) {
     return
   }
@@ -910,15 +913,9 @@ fn assign_value(
         Err(e) => Err(e)
       }
     EngineArgAction::Help =>
-      Err(
-        ArgParseError::InvalidArgument("help action does not take values"),
-      )
+      Err(ArgParseError::InvalidArgument("help action does not take values"))
     EngineArgAction::Version =>
-      Err(
-        ArgParseError::InvalidArgument(
-          "version action does not take values",
-        ),
-      )
+      Err(ArgParseError::InvalidArgument("version action does not take values"))
   }
 }
 
@@ -1585,10 +1582,7 @@ fn sort_positionals(items : Array[(Int, EngineArg)]) -> Unit {
 }
 
 ///|
-fn find_subcommand(
-  subs : Array[Command],
-  name : String,
-) -> Command? {
+fn find_subcommand(subs : Array[Command], name : String) -> Command? {
   for sub in subs {
     if sub.name == name {
       return Some(sub)
@@ -1617,9 +1611,7 @@ fn resolve_help_target(
   let mut subs = cmd.subcommands
   for name in targets {
     if name.has_prefix("-") {
-      raise ArgParseError::InvalidArgument(
-        "unexpected help argument: " + name,
-      )
+      raise ArgParseError::InvalidArgument("unexpected help argument: " + name)
     }
     match find_subcommand(subs, name) {
       Some(sub) => {

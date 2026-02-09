@@ -84,9 +84,7 @@ fn validate_value_range(
 }
 
 ///|
-fn arg_min_max_for_validate(
-  arg : EngineArg,
-) -> (Int, Int?) raise ArgBuildError {
+fn arg_min_max_for_validate(arg : EngineArg) -> (Int, Int?) raise ArgBuildError {
   match arg.num_args {
     Some(range) => validate_value_range(range)
     None => (0, None)

@@ -22,90 +22,12 @@ pub enum ValueSource {
 
 ///|
 /// Parse results for declarative commands.
-struct Matches {
+pub struct Matches {
   flags : Map[String, Bool]
   values : Map[String, Array[String]]
   counts : Map[String, Int]
   value_sources : Map[String, ValueSource]
   subcommand : (String, Matches)?
-
-  fn new() -> Matches
-}
-
-///|
-pub fn Matches::new() -> Matches {
-  Matches::{
-    flags: {},
-    values: {},
-    counts: {},
-    value_sources: {},
-    subcommand: None,
-  }
-}
-
-///|
-/// Raw flag map for direct pattern matching.
-pub fn Matches::flags_map(self : Matches) -> Map[String, Bool] {
-  self.flags
-}
-
-///|
-/// Raw value map for direct pattern matching.
-pub fn Matches::values_map(self : Matches) -> Map[String, Array[String]] {
-  self.values
-}
-
-///|
-/// Raw subcommand pair `(name, matches)` if present.
-pub fn Matches::subcommand(self : Matches) -> (String, Matches)? {
-  self.subcommand
-}
-
-///|
-/// Resolved flag value (`false` if absent).
-pub fn Matches::get_flag(self : Matches, name : String) -> Bool {
-  self.flags.get(name).unwrap_or(false)
-}
-
-///|
-/// First value for an argument (`None` if absent).
-pub fn Matches::get_one(self : Matches, name : String) -> String? {
-  guard self.values.get(name) is Some(values) else { return None }
-  values.get(0)
-}
-
-///|
-/// All values for an argument (`None` if absent).
-pub fn Matches::get_many(self : Matches, name : String) -> Array[String]? {
-  self.values.get(name)
-}
-
-///|
-/// Count for count-style args.
-pub fn Matches::count_of(self : Matches, name : String) -> Int {
-  self.counts.get(name).unwrap_or(0)
-}
-
-///|
-/// Source for an argument as a whole.
-pub fn Matches::value_source(self : Matches, name : String) -> ValueSource? {
-  self.value_sources.get(name)
-}
-
-///|
-pub fn Matches::subcommand_name(self : Matches) -> String? {
-  match self.subcommand {
-    Some((name, _)) => Some(name)
-    None => None
-  }
-}
-
-///|
-pub fn Matches::subcommand_matches(self : Matches, name : String) -> Matches? {
-  match self.subcommand {
-    Some((sub_name, matches)) if sub_name == name => Some(matches)
-    _ => None
-  }
 }
 
 ///|

@@ -72,18 +72,13 @@ pub struct FlagArg {
 pub fn FlagArg::new(String, short? : Char, long? : String, about? : String, long_about? : String, action? : FlagAction, env? : String, default_value? : String, requires? : Array[String], conflicts_with? : Array[String], group? : String, required? : Bool, global? : Bool, negatable? : Bool, aliases? : Array[String], short_aliases? : Array[Char], visible_aliases? : Array[String], visible_short_aliases? : Array[Char], hidden? : Bool, hide_long_help? : Bool) -> Self
 pub impl ArgLike for FlagArg
 
-type Matches
-pub fn Matches::count_of(Self, String) -> Int
-pub fn Matches::flags_map(Self) -> Map[String, Bool]
-pub fn Matches::get_flag(Self, String) -> Bool
-pub fn Matches::get_many(Self, String) -> Array[String]?
-pub fn Matches::get_one(Self, String) -> String?
-pub fn Matches::new() -> Self
-pub fn Matches::subcommand(Self) -> (String, Self)?
-pub fn Matches::subcommand_matches(Self, String) -> Self?
-pub fn Matches::subcommand_name(Self) -> String?
-pub fn Matches::value_source(Self, String) -> ValueSource?
-pub fn Matches::values_map(Self) -> Map[String, Array[String]]
+pub struct Matches {
+  flags : Map[String, Bool]
+  values : Map[String, Array[String]]
+  counts : Map[String, Int]
+  value_sources : Map[String, ValueSource]
+  subcommand : (String, Matches)?
+}
 
 pub enum OptionAction {
   Set

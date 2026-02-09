@@ -27,11 +27,8 @@ test "declarative parse basics" {
   let matches = cmd.parse(argv=["-v", "--count", "3", "alice"], env=empty_env()) catch {
     _ => panic()
   }
-  assert_true(matches.get_flag("verbose"))
-  assert_eq(matches.get_one("count").unwrap_or(""), "3")
-  assert_eq(matches.get_one("name").unwrap_or(""), "alice")
-  inspect(matches.flags_map().get("verbose"), content="Some(true)")
-  inspect(matches.values_map().get("name"), content="Some([\"alice\"])")
+  assert_true(matches.flags is { "verbose": true, .. })
+  assert_true(matches.values is { "count": ["3"], "name": ["alice"], .. })
 }
 
 ///|
@@ -93,7 +90,10 @@ test "relationships and num args" {
   }
 
   try
-    num_args_cmd.parse(argv=["--tag", "a", "--tag", "b", "--tag", "c"], env=empty_env())
+    num_args_cmd.parse(
+      argv=["--tag", "a", "--tag", "b", "--tag", "c"],
+      env=empty_env(),
+    )
   catch {
     @argparse.ArgParseError::TooManyValues(name, got, max) => {
       inspect(name, content="tag")
@@ -125,7 +125,8 @@ test "arg groups required and multiple" {
   }
 
   try cmd.parse(argv=["--fast", "--slow"], env=empty_env()) catch {
-    @argparse.ArgParseError::GroupConflict(name) => inspect(name, content="mode")
+    @argparse.ArgParseError::GroupConflict(name) =>
+      inspect(name, content="mode")
     _ => panic()
   } noraise {
     _ => panic()
@@ -147,7 +148,8 @@ test "arg groups requires and conflicts" {
   )
 
   try requires_cmd.parse(argv=["--fast"], env=empty_env()) catch {
-    @argparse.ArgParseError::MissingGroup(name) => inspect(name, content="output")
+    @argparse.ArgParseError::MissingGroup(name) =>
+      inspect(name, content="output")
     _ => panic()
   } noraise {
     _ => panic()
@@ -176,15 +178,18 @@ test "arg groups requires and conflicts" {
 
 ///|
 test "subcommand parsing" {
-  let echo = @argparse.Command("echo", args=[@argparse.PositionalArg("msg", index=0)])
+  let echo = @argparse.Command("echo", args=[
+    @argparse.PositionalArg("msg", index=0),
+  ])
   let root = @argparse.Command("root", subcommands=[echo])
 
-  let matches = root.parse(argv=["echo", "hi"], env=empty_env()) catch { _ => panic() }
-  assert_eq(matches.subcommand_name().unwrap_or(""), "echo")
-
-  let sub = matches.subcommand_matches("echo").unwrap()
-  assert_eq(sub.get_one("msg").unwrap_or(""), "hi")
-  inspect(sub.values_map().get("msg"), content="Some([\"hi\"])")
+  let matches = root.parse(argv=["echo", "hi"], env=empty_env()) catch {
+    _ => panic()
+  }
+  assert_true(
+    matches.subcommand is Some(("echo", sub)) &&
+    sub.values is { "msg": ["hi"], .. },
+  )
 }
 
 ///|
@@ -234,27 +239,29 @@ test "full help snapshot" {
 ///|
 test "value source precedence argv env default" {
   let cmd = @argparse.Command("demo", args=[
-    @argparse.OptionArg(
-      "level",
-      long="level",
-      env="LEVEL",
-      default_value="1",
-    ),
+    @argparse.OptionArg("level", long="level", env="LEVEL", default_value="1"),
   ])
 
   let from_default = cmd.parse(argv=[], env=empty_env()) catch { _ => panic() }
-  inspect(from_default.get_one("level"), content="Some(\"1\")")
-  inspect(from_default.value_source("level"), content="Some(Default)")
+  assert_true(from_default.values is { "level": ["1"], .. })
+  assert_true(
+    from_default.value_sources
+    is { "level": @argparse.ValueSource::Default, .. },
+  )
 
-  let from_env = cmd.parse(argv=[], env={"LEVEL": "2"}) catch { _ => panic() }
-  inspect(from_env.get_one("level"), content="Some(\"2\")")
-  inspect(from_env.value_source("level"), content="Some(Env)")
+  let from_env = cmd.parse(argv=[], env={ "LEVEL": "2" }) catch { _ => panic() }
+  assert_true(from_env.values is { "level": ["2"], .. })
+  assert_true(
+    from_env.value_sources is { "level": @argparse.ValueSource::Env, .. },
+  )
 
-  let from_argv = cmd.parse(argv=["--level", "3"], env={"LEVEL": "2"}) catch {
+  let from_argv = cmd.parse(argv=["--level", "3"], env={ "LEVEL": "2" }) catch {
     _ => panic()
   }
-  inspect(from_argv.get_one("level"), content="Some(\"3\")")
-  inspect(from_argv.value_source("level"), content="Some(Argv)")
+  assert_true(from_argv.values is { "level": ["3"], .. })
+  assert_true(
+    from_argv.value_sources is { "level": @argparse.ValueSource::Argv, .. },
+  )
 }
 
 ///|
@@ -263,13 +270,15 @@ test "omitted env does not read process environment by default" {
     @argparse.OptionArg("count", long="count", env="COUNT"),
   ])
   let matches = cmd.parse(argv=[]) catch { _ => panic() }
-  inspect(matches.get_one("count"), content="None")
-  inspect(matches.value_source("count"), content="None")
+  assert_true(matches.values is { "count"? : None, .. })
+  assert_true(matches.value_sources is { "count"? : None, .. })
 }
 
 ///|
 test "aliases and multiple values" {
-  let serve = @argparse.Command("serve", aliases=["srv"], visible_aliases=["run"])
+  let serve = @argparse.Command("serve", aliases=["srv"], visible_aliases=[
+    "run",
+  ])
   let cmd = @argparse.Command(
     "demo",
     args=[
@@ -288,21 +297,22 @@ test "aliases and multiple values" {
   let alias_long = cmd.parse(argv=["--times", "2"], env=empty_env()) catch {
     _ => panic()
   }
-  inspect(alias_long.get_one("count"), content="Some(\"2\")")
+  assert_true(alias_long.values is { "count": ["2"], .. })
 
   let alias_short = cmd.parse(argv=["-c", "3"], env=empty_env()) catch {
     _ => panic()
   }
-  inspect(alias_short.get_one("count"), content="Some(\"3\")")
+  assert_true(alias_short.values is { "count": ["3"], .. })
 
   let multi = cmd.parse(argv=["--tag", "a", "--tag", "b"], env=empty_env()) catch {
     _ => panic()
   }
-  inspect(multi.get_one("tag"), content="Some(\"a\")")
-  inspect(multi.get_many("tag"), content="Some([\"a\", \"b\"])")
+  assert_true(multi.values is { "tag": ["a", "b"], .. })
 
-  let sub_alias = cmd.parse(argv=["srv"], env=empty_env()) catch { _ => panic() }
-  inspect(sub_alias.subcommand_name(), content="Some(\"serve\")")
+  let sub_alias = cmd.parse(argv=["srv"], env=empty_env()) catch {
+    _ => panic()
+  }
+  assert_true(sub_alias.subcommand is Some(("serve", _)))
 }
 
 ///|
@@ -322,13 +332,15 @@ test "negatable and conflicts" {
   let no_cache = cmd.parse(argv=["--no-cache"], env=empty_env()) catch {
     _ => panic()
   }
-  inspect(no_cache.get_flag("cache"), content="false")
-  inspect(no_cache.value_source("cache"), content="Some(Argv)")
+  assert_true(no_cache.flags is { "cache": false, .. })
+  assert_true(
+    no_cache.value_sources is { "cache": @argparse.ValueSource::Argv, .. },
+  )
 
   let no_failfast = cmd.parse(argv=["--no-failfast"], env=empty_env()) catch {
     _ => panic()
   }
-  inspect(no_failfast.get_flag("failfast"), content="true")
+  assert_true(no_failfast.flags is { "failfast": true, .. })
 
   try cmd.parse(argv=["--verbose", "--quiet"], env=empty_env()) catch {
     @argparse.ArgParseError::InvalidArgument(msg) =>
@@ -340,22 +352,57 @@ test "negatable and conflicts" {
 }
 
 ///|
-test "command policies" {
-  let help_cmd = @argparse.Command("demo", arg_required_else_help=true)
-  try help_cmd.parse(argv=[], env=empty_env()) catch {
-    @argparse.DisplayHelp::Short(text) => inspect(text.contains("Usage:"), content="true")
+test "flag does not accept inline value" {
+  let cmd = @argparse.Command("demo", args=[
+    @argparse.FlagArg("verbose", long="verbose"),
+  ])
+  try cmd.parse(argv=["--verbose=true"], env=empty_env()) catch {
+    @argparse.ArgParseError::InvalidArgument(arg) =>
+      inspect(arg, content="--verbose=true")
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
+test "built-in long flags do not accept inline value" {
+  let cmd = @argparse.Command("demo", version="1.2.3")
+
+  try cmd.parse(argv=["--help=1"], env=empty_env()) catch {
+    @argparse.ArgParseError::InvalidArgument(arg) =>
+      inspect(arg, content="--help=1")
     _ => panic()
   } noraise {
     _ => panic()
   }
 
-  let sub_cmd = @argparse.Command(
-    "demo",
-    subcommand_required=true,
-    subcommands=[@argparse.Command("echo")],
-  )
+  try cmd.parse(argv=["--version=1"], env=empty_env()) catch {
+    @argparse.ArgParseError::InvalidArgument(arg) =>
+      inspect(arg, content="--version=1")
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
+test "command policies" {
+  let help_cmd = @argparse.Command("demo", arg_required_else_help=true)
+  try help_cmd.parse(argv=[], env=empty_env()) catch {
+    @argparse.DisplayHelp::Short(text) =>
+      inspect(text.contains("Usage:"), content="true")
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+
+  let sub_cmd = @argparse.Command("demo", subcommand_required=true, subcommands=[
+    @argparse.Command("echo"),
+  ])
   try sub_cmd.parse(argv=[], env=empty_env()) catch {
-    @argparse.ArgParseError::MissingRequired(name) => inspect(name, content="subcommand")
+    @argparse.ArgParseError::MissingRequired(name) =>
+      inspect(name, content="subcommand")
     _ => panic()
   } noraise {
     _ => panic()

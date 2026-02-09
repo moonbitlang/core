@@ -159,7 +159,19 @@ fn build_matches(cmd : Command, raw : EngineMatches) -> Matches {
     Some((name, sub_raw)) =>
       match find_decl_subcommand(cmd.subcommands, name) {
         Some(sub_spec) => Some((name, build_matches(sub_spec, sub_raw)))
-        None => Some((name, Matches()))
+        None =>
+          Some(
+            (
+              name,
+              Matches::{
+                flags: {},
+                values: {},
+                counts: {},
+                value_sources: {},
+                subcommand: None,
+              },
+            ),
+          )
       }
     None => None
   }
@@ -249,16 +261,14 @@ fn add_arg_to_group_membership(
       groups[i] = EngineArgGroup::{ ..groups[i], args, }
     }
     None =>
-      groups.push(
-        EngineArgGroup::{
-          name: group_name,
-          required: false,
-          multiple: true,
-          args: [arg_name],
-          requires: [],
-          conflicts_with: [],
-        },
-      )
+      groups.push(EngineArgGroup::{
+        name: group_name,
+        required: false,
+        multiple: true,
+        args: [arg_name],
+        requires: [],
+        conflicts_with: [],
+      })
   }
 }
 
