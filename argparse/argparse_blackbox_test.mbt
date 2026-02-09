@@ -196,6 +196,37 @@ test "global option merges parent and child values" {
 }
 
 ///|
+test "global scalar keeps parent argv over child env/default" {
+  let child = @argparse.Command("run")
+  let cmd = @argparse.Command(
+    "demo",
+    args=[
+      @argparse.OptionArg(
+        "profile",
+        long="profile",
+        env="PROFILE",
+        default_values=["def"],
+        global=true,
+      ),
+    ],
+    subcommands=[child],
+  )
+
+  let matches = cmd.parse(argv=["--profile", "parent", "run"], env={
+    "PROFILE": "env",
+  }) catch {
+    _ => panic()
+  }
+  assert_true(matches.values is { "profile": ["parent"], .. })
+  assert_true(matches.sources is { "profile": @argparse.ValueSource::Argv, .. })
+  assert_true(
+    matches.subcommand is Some(("run", sub)) &&
+    sub.values is { "profile": ["parent"], .. } &&
+    sub.sources is { "profile": @argparse.ValueSource::Argv, .. },
+  )
+}
+
+///|
 test "global count merges parent and child occurrences" {
   let child = @argparse.Command("run")
   let cmd = @argparse.Command(
@@ -219,6 +250,37 @@ test "global count merges parent and child occurrences" {
   assert_true(
     matches.subcommand is Some(("run", sub)) &&
     sub.flag_counts is { "verbose": 3, .. },
+  )
+}
+
+///|
+test "global count source keeps env across subcommand merge" {
+  let child = @argparse.Command("run")
+  let cmd = @argparse.Command(
+    "demo",
+    args=[
+      @argparse.FlagArg(
+        "verbose",
+        short='v',
+        long="verbose",
+        action=@argparse.FlagAction::Count,
+        env="VERBOSE",
+        global=true,
+      ),
+    ],
+    subcommands=[child],
+  )
+
+  let matches = cmd.parse(argv=["run"], env={ "VERBOSE": "1" }) catch {
+    _ => panic()
+  }
+  assert_true(matches.flags is { "verbose": true, .. })
+  assert_true(matches.flag_counts is { "verbose": 1, .. })
+  assert_true(matches.sources is { "verbose": @argparse.ValueSource::Env, .. })
+  assert_true(
+    matches.subcommand is Some(("run", sub)) &&
+    sub.flag_counts is { "verbose": 1, .. } &&
+    sub.sources is { "verbose": @argparse.ValueSource::Env, .. },
   )
 }
 
@@ -473,6 +535,26 @@ test "positionals force mode and dash handling" {
   } noraise {
     _ => panic()
   }
+}
+
+///|
+test "bounded positional does not greedily consume later required values" {
+  let cmd = @argparse.Command("demo", args=[
+    @argparse.PositionalArg(
+      "first",
+      index=0,
+      num_args=@argparse.ValueRange(lower=1, upper=2),
+    ),
+    @argparse.PositionalArg("second", index=1, required=true),
+  ])
+
+  let two = cmd.parse(argv=["a", "b"], env=empty_env()) catch { _ => panic() }
+  assert_true(two.values is { "first": ["a"], "second": ["b"], .. })
+
+  let three = cmd.parse(argv=["a", "b", "c"], env=empty_env()) catch {
+    _ => panic()
+  }
+  assert_true(three.values is { "first": ["a", "b"], "second": ["c"], .. })
 }
 
 ///|

@@ -752,8 +752,24 @@ fn assign_positionals(
     let arg = positionals[idx]
     let remaining = values.length() - cursor
     if arg.multiple {
+      let (min, max) = arg_min_max(arg)
+      let reserve = remaining_positional_min(positionals, idx + 1)
+      let mut take = remaining - reserve
+      if take < 0 {
+        take = 0
+      }
+      match max {
+        Some(max_count) if take > max_count => take = max_count
+        _ => ()
+      }
+      if take < min {
+        take = min
+      }
+      if take > remaining {
+        take = remaining
+      }
       let mut taken = 0
-      while cursor + taken < values.length() {
+      while taken < take {
         match
           add_value(
             matches,
@@ -767,7 +783,7 @@ fn assign_positionals(
         }
         taken = taken + 1
       }
-      cursor = values.length()
+      cursor = cursor + taken
       continue
     }
     if remaining > 0 {
@@ -789,6 +805,29 @@ fn assign_positionals(
     return Err(ArgParseError::TooManyPositionals)
   }
   Ok(())
+}
+
+///|
+fn positional_min_required(arg : EngineArg) -> Int {
+  let (min, _) = arg_min_max(arg)
+  if min > 0 {
+    min
+  } else if arg.required {
+    1
+  } else {
+    0
+  }
+}
+
+///|
+fn remaining_positional_min(positionals : Array[EngineArg], start : Int) -> Int {
+  let mut total = 0
+  let mut idx = start
+  while idx < positionals.length() {
+    total = total + positional_min_required(positionals[idx])
+    idx = idx + 1
+  }
+  total
 }
 
 ///|
@@ -1211,6 +1250,57 @@ fn concat_globals(
 }
 
 ///|
+fn source_priority(source : EngineValueSource?) -> Int {
+  match source {
+    Some(EngineValueSource::Argv) => 3
+    Some(EngineValueSource::Env) => 2
+    Some(EngineValueSource::Default) => 1
+    None => 0
+  }
+}
+
+///|
+fn prefer_child_source(
+  parent_source : EngineValueSource?,
+  child_source : EngineValueSource?,
+) -> Bool {
+  let parent_priority = source_priority(parent_source)
+  let child_priority = source_priority(child_source)
+  if child_priority > parent_priority {
+    true
+  } else if child_priority < parent_priority {
+    false
+  } else {
+    child_source is Some(EngineValueSource::Argv)
+  }
+}
+
+///|
+fn strongest_source(
+  parent_source : EngineValueSource?,
+  child_source : EngineValueSource?,
+) -> EngineValueSource? {
+  if prefer_child_source(parent_source, child_source) {
+    child_source
+  } else {
+    match parent_source {
+      Some(source) => Some(source)
+      None => child_source
+    }
+  }
+}
+
+///|
+fn source_from_values(
+  sources : Array[EngineValueSource]?,
+) -> EngineValueSource? {
+  match sources {
+    Some(items) if items.length() > 0 => highest_source(items)
+    _ => None
+  }
+}
+
+///|
 fn merge_globals_from_child(
   parent : EngineMatches,
   child : EngineMatches,
@@ -1251,47 +1341,53 @@ fn merge_globals_from_child(
           parent.value_sources[name] = merged_srcs
         }
       } else {
-        let chosen = if child_vals is Some(cv) && cv.length() > 0 {
-          cv
-        } else if parent_vals is Some(pv) && pv.length() > 0 {
-          pv
-        } else {
-          []
+        let has_parent = parent_vals is Some(pv) && pv.length() > 0
+        let has_child = child_vals is Some(cv) && cv.length() > 0
+        if !has_parent && !has_child {
+          continue
         }
-        if chosen.length() > 0 {
-          parent.values[name] = clone_array(chosen)
-          let chosen_srcs = if child_srcs is Some(cs) && cs.length() > 0 {
-            cs
-          } else if parent_srcs is Some(ps) && ps.length() > 0 {
-            ps
-          } else {
-            []
+        let parent_source = source_from_values(parent_srcs)
+        let child_source = source_from_values(child_srcs)
+        let choose_child = has_child &&
+          (!has_parent || prefer_child_source(parent_source, child_source))
+        if choose_child {
+          if child_vals is Some(cv) && cv.length() > 0 {
+            parent.values[name] = clone_array(cv)
           }
-          if chosen_srcs.length() > 0 {
-            parent.value_sources[name] = clone_array(chosen_srcs)
+          if child_srcs is Some(cs) && cs.length() > 0 {
+            parent.value_sources[name] = clone_array(cs)
+          }
+        } else if parent_vals is Some(pv) && pv.length() > 0 {
+          parent.values[name] = clone_array(pv)
+          if parent_srcs is Some(ps) && ps.length() > 0 {
+            parent.value_sources[name] = clone_array(ps)
           }
         }
       }
     } else {
       match child.flags.get(name) {
-        Some(v) => {
-          parent.flags[name] = v
-          match child.flag_sources.get(name) {
-            Some(src) => parent.flag_sources[name] = src
-            None => ()
-          }
+        Some(v) =>
           if arg.action == EngineArgAction::Count {
             let parent_count = parent.counts.get(name).unwrap_or(0)
             let child_count = child.counts.get(name).unwrap_or(0)
             let total = parent_count + child_count
             parent.counts[name] = total
             parent.flags[name] = total > 0
-            if parent.flag_sources.get(name) is Some(_) ||
-              child.flag_sources.get(name) is Some(_) {
-              parent.flag_sources[name] = EngineValueSource::Argv
+            match
+              strongest_source(
+                parent.flag_sources.get(name),
+                child.flag_sources.get(name),
+              ) {
+              Some(src) => parent.flag_sources[name] = src
+              None => ()
+            }
+          } else {
+            parent.flags[name] = v
+            match child.flag_sources.get(name) {
+              Some(src) => parent.flag_sources[name] = src
+              None => ()
             }
           }
-        }
         None => ()
       }
     }
