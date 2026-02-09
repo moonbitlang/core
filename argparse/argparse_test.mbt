@@ -245,23 +245,18 @@ test "value source precedence argv env default" {
   let from_default = cmd.parse(argv=[], env=empty_env()) catch { _ => panic() }
   assert_true(from_default.values is { "level": ["1"], .. })
   assert_true(
-    from_default.value_sources
-    is { "level": @argparse.ValueSource::Default, .. },
+    from_default.sources is { "level": @argparse.ValueSource::Default, .. },
   )
 
   let from_env = cmd.parse(argv=[], env={ "LEVEL": "2" }) catch { _ => panic() }
   assert_true(from_env.values is { "level": ["2"], .. })
-  assert_true(
-    from_env.value_sources is { "level": @argparse.ValueSource::Env, .. },
-  )
+  assert_true(from_env.sources is { "level": @argparse.ValueSource::Env, .. })
 
   let from_argv = cmd.parse(argv=["--level", "3"], env={ "LEVEL": "2" }) catch {
     _ => panic()
   }
   assert_true(from_argv.values is { "level": ["3"], .. })
-  assert_true(
-    from_argv.value_sources is { "level": @argparse.ValueSource::Argv, .. },
-  )
+  assert_true(from_argv.sources is { "level": @argparse.ValueSource::Argv, .. })
 }
 
 ///|
@@ -271,7 +266,7 @@ test "omitted env does not read process environment by default" {
   ])
   let matches = cmd.parse(argv=[]) catch { _ => panic() }
   assert_true(matches.values is { "count"? : None, .. })
-  assert_true(matches.value_sources is { "count"? : None, .. })
+  assert_true(matches.sources is { "count"? : None, .. })
 }
 
 ///|
@@ -333,9 +328,7 @@ test "negatable and conflicts" {
     _ => panic()
   }
   assert_true(no_cache.flags is { "cache": false, .. })
-  assert_true(
-    no_cache.value_sources is { "cache": @argparse.ValueSource::Argv, .. },
-  )
+  assert_true(no_cache.sources is { "cache": @argparse.ValueSource::Argv, .. })
 
   let no_failfast = cmd.parse(argv=["--no-failfast"], env=empty_env()) catch {
     _ => panic()

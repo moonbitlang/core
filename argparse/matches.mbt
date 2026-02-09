@@ -25,8 +25,8 @@ pub enum ValueSource {
 pub struct Matches {
   flags : Map[String, Bool]
   values : Map[String, Array[String]]
-  counts : Map[String, Int]
-  value_sources : Map[String, ValueSource]
+  flag_counts : Map[String, Int]
+  sources : Map[String, ValueSource]
   subcommand : (String, Matches)?
 }
 

@@ -127,8 +127,8 @@ pub fn Command::parse(
 fn build_matches(cmd : Command, raw : EngineMatches) -> Matches {
   let flags : Map[String, Bool] = {}
   let values : Map[String, Array[String]] = {}
-  let counts : Map[String, Int] = {}
-  let value_sources : Map[String, ValueSource] = {}
+  let flag_counts : Map[String, Int] = {}
+  let sources : Map[String, ValueSource] = {}
 
   for spec in cmd.args {
     let name = arg_name(spec)
@@ -138,11 +138,11 @@ fn build_matches(cmd : Command, raw : EngineMatches) -> Matches {
     }
     let count = raw.count_of(name)
     if count > 0 {
-      counts[name] = count
+      flag_counts[name] = count
     }
     match raw.value_source(name) {
       Some(source) => {
-        value_sources[name] = convert_source(source)
+        sources[name] = convert_source(source)
         if is_flag_spec(spec) {
           if is_count_flag_spec(spec) {
             flags[name] = count > 0
@@ -166,8 +166,8 @@ fn build_matches(cmd : Command, raw : EngineMatches) -> Matches {
               Matches::{
                 flags: {},
                 values: {},
-                counts: {},
-                value_sources: {},
+                flag_counts: {},
+                sources: {},
                 subcommand: None,
               },
             ),
@@ -176,7 +176,7 @@ fn build_matches(cmd : Command, raw : EngineMatches) -> Matches {
     None => None
   }
 
-  Matches::{ flags, values, counts, value_sources, subcommand }
+  Matches::{ flags, values, flag_counts, sources, subcommand }
 }
 
 ///|
