@@ -42,8 +42,19 @@ test "display help and version" {
   } noraise {
     _ => panic()
   }
-  inspect(help.contains("Usage:"), content="true")
+  inspect(
+    help,
+    content=(
+      #|Usage: demo
+      #|
+      #|demo app
+      #|
+      #|Options:
+      #|  -h, --help     Show help information.
+      #|  -V, --version  Show version information.
 
+    ),
+  )
   let mut version = ""
   try cmd.parse(argv=["--version"], env=empty_env()) catch {
     @argparse.DisplayVersion::Long(text) => version = text
@@ -169,7 +180,13 @@ test "arg groups requires and conflicts" {
 
   try conflict_cmd.parse(argv=["--fast", "--json"], env=empty_env()) catch {
     @argparse.ArgParseError::GroupConflict(msg) =>
-      inspect(msg.contains("mode conflicts with output"), content="true")
+      inspect(
+        msg,
+        content=(
+          #|mode conflicts with output
+
+        ),
+      )
     _ => panic()
   } noraise {
     _ => panic()
@@ -329,7 +346,13 @@ test "negatable and conflicts" {
 
   try cmd.parse(argv=["--verbose", "--quiet"], env=empty_env()) catch {
     @argparse.ArgParseError::InvalidArgument(msg) =>
-      inspect(msg.contains("conflicting arguments"), content="true")
+      inspect(
+        msg,
+        content=(
+          #|conflicting arguments: verbose and quiet
+
+        ),
+      )
     _ => panic()
   } noraise {
     _ => panic()
@@ -376,7 +399,16 @@ test "command policies" {
   let help_cmd = @argparse.Command("demo", arg_required_else_help=true)
   try help_cmd.parse(argv=[], env=empty_env()) catch {
     @argparse.DisplayHelp::Short(text) =>
-      inspect(text.contains("Usage:"), content="true")
+      inspect(
+        text,
+        content=(
+          #|Usage: demo
+          #|
+          #|Options:
+          #|  -h, --help  Show help information.
+
+        ),
+      )
     _ => panic()
   } noraise {
     _ => panic()
