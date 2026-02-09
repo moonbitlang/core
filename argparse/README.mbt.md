@@ -90,3 +90,23 @@ match matches.subcommand() {
   _ => panic()
 }
 ```
+
+## Argument Groups
+
+Define group rules declaratively:
+
+```mbt nocheck
+///|
+let cmd = @argparse.Command(
+  "demo",
+  groups=[
+    @argparse.ArgGroup("mode", required=true, multiple=false),
+    @argparse.ArgGroup("output", args=["json"]),
+  ],
+  args=[
+    @argparse.FlagArg("fast", long="fast", group="mode"),
+    @argparse.FlagArg("slow", long="slow", group="mode"),
+    @argparse.FlagArg("json", long="json"),
+  ],
+)
+```

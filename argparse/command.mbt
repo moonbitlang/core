@@ -17,6 +17,7 @@
 pub struct Command {
   priv name : String
   priv args : Array[Arg]
+  priv groups : Array[ArgGroup]
   priv subcommands : Array[Command]
   priv about : String?
   priv long_about : String?
@@ -47,6 +48,7 @@ pub struct Command {
     arg_required_else_help? : Bool,
     subcommand_required? : Bool,
     hidden? : Bool,
+    groups? : Array[ArgGroup],
   ) -> Command
 }
 
@@ -67,10 +69,12 @@ pub fn Command::new(
   arg_required_else_help? : Bool = false,
   subcommand_required? : Bool = false,
   hidden? : Bool = false,
+  groups? : Array[ArgGroup] = [],
 ) -> Command {
   Command::{
     name,
     args: normalize_args(args),
+    groups: clone_array_cmd(groups),
     subcommands: clone_array_cmd(subcommands),
     about,
     long_about,
@@ -196,48 +200,66 @@ fn command_engine_args(cmd : Command) -> Array[EngineArg] {
 
 ///|
 fn command_engine_groups(cmd : Command) -> Array[EngineArgGroup] {
-  collect_implicit_groups(cmd.args)
-}
-
-///|
-fn collect_implicit_groups(specs : Array[Arg]) -> Array[EngineArgGroup] {
-  let group_names : Array[String] = []
-  let group_members : Array[Array[String]] = []
-
-  for spec in specs {
-    match spec.group {
-      Some(group_name) => {
-        let mut idx : Int? = None
-        for i = 0; i < group_names.length(); i = i + 1 {
-          if group_names[i] == group_name {
-            idx = Some(i)
-            break
-          }
-        }
-        match idx {
-          Some(i) => group_members[i].push(arg_name(spec))
-          None => {
-            group_names.push(group_name)
-            group_members.push([arg_name(spec)])
-          }
-        }
-      }
+  let groups = Array::new(capacity=cmd.groups.length())
+  for group in cmd.groups {
+    groups.push(group_to_engine(group))
+  }
+  for arg in cmd.args {
+    match arg.group {
+      Some(group_name) =>
+        add_arg_to_group_membership(groups, group_name, arg_name(arg))
       None => ()
     }
   }
+  groups
+}
 
-  let out = Array::new(capacity=group_names.length())
-  for i = 0; i < group_names.length(); i = i + 1 {
-    out.push(EngineArgGroup::{
-      name: group_names[i],
-      required: false,
-      multiple: true,
-      args: clone_array_cmd(group_members[i]),
-      requires: [],
-      conflicts_with: [],
-    })
+///|
+fn group_to_engine(group : ArgGroup) -> EngineArgGroup {
+  EngineArgGroup::{
+    name: group.name,
+    required: group.required,
+    multiple: group.multiple,
+    args: clone_array_cmd(group.args),
+    requires: clone_array_cmd(group.requires),
+    conflicts_with: clone_array_cmd(group.conflicts_with),
   }
-  out
+}
+
+///|
+fn add_arg_to_group_membership(
+  groups : Array[EngineArgGroup],
+  group_name : String,
+  arg_name : String,
+) -> Unit {
+  let mut idx : Int? = None
+  for i = 0; i < groups.length(); i = i + 1 {
+    if groups[i].name == group_name {
+      idx = Some(i)
+      break
+    }
+  }
+  match idx {
+    Some(i) => {
+      if groups[i].args.contains(arg_name) {
+        return
+      }
+      let args = clone_array_cmd(groups[i].args)
+      args.push(arg_name)
+      groups[i] = EngineArgGroup::{ ..groups[i], args, }
+    }
+    None =>
+      groups.push(
+        EngineArgGroup::{
+          name: group_name,
+          required: false,
+          multiple: true,
+          args: [arg_name],
+          requires: [],
+          conflicts_with: [],
+        },
+      )
+  }
 }
 
 ///|

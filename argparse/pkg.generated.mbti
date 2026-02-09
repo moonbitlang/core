@@ -37,12 +37,19 @@ pub suberror DisplayVersion {
 pub impl Show for DisplayVersion
 
 // Types and methods
+pub struct ArgGroup {
+  // private fields
+
+  fn new(String, required? : Bool, multiple? : Bool, args? : Array[String], requires? : Array[String], conflicts_with? : Array[String]) -> ArgGroup
+}
+pub fn ArgGroup::new(String, required? : Bool, multiple? : Bool, args? : Array[String], requires? : Array[String], conflicts_with? : Array[String]) -> Self
+
 pub struct Command {
   // private fields
 
-  fn new(String, args? : Array[&ArgLike], subcommands? : Array[Command], about? : String, long_about? : String, version? : String, long_version? : String, aliases? : Array[String], visible_aliases? : Array[String], disable_help_flag? : Bool, disable_version_flag? : Bool, disable_help_subcommand? : Bool, arg_required_else_help? : Bool, subcommand_required? : Bool, hidden? : Bool) -> Command
+  fn new(String, args? : Array[&ArgLike], subcommands? : Array[Command], about? : String, long_about? : String, version? : String, long_version? : String, aliases? : Array[String], visible_aliases? : Array[String], disable_help_flag? : Bool, disable_version_flag? : Bool, disable_help_subcommand? : Bool, arg_required_else_help? : Bool, subcommand_required? : Bool, hidden? : Bool, groups? : Array[ArgGroup]) -> Command
 }
-pub fn Command::new(String, args? : Array[&ArgLike], subcommands? : Array[Self], about? : String, long_about? : String, version? : String, long_version? : String, aliases? : Array[String], visible_aliases? : Array[String], disable_help_flag? : Bool, disable_version_flag? : Bool, disable_help_subcommand? : Bool, arg_required_else_help? : Bool, subcommand_required? : Bool, hidden? : Bool) -> Self
+pub fn Command::new(String, args? : Array[&ArgLike], subcommands? : Array[Self], about? : String, long_about? : String, version? : String, long_version? : String, aliases? : Array[String], visible_aliases? : Array[String], disable_help_flag? : Bool, disable_version_flag? : Bool, disable_help_subcommand? : Bool, arg_required_else_help? : Bool, subcommand_required? : Bool, hidden? : Bool, groups? : Array[ArgGroup]) -> Self
 pub fn Command::parse(Self, argv? : Array[String], env? : Map[String, String]) -> Matches raise
 pub fn Command::render_help(Self) -> String
 pub fn Command::render_long_help(Self) -> String

@@ -107,6 +107,74 @@ test "relationships and num args" {
 }
 
 ///|
+test "arg groups required and multiple" {
+  let cmd = @argparse.Command(
+    "demo",
+    groups=[@argparse.ArgGroup("mode", required=true, multiple=false)],
+    args=[
+      @argparse.FlagArg("fast", long="fast", group="mode"),
+      @argparse.FlagArg("slow", long="slow", group="mode"),
+    ],
+  )
+
+  try cmd.parse(argv=[], env=empty_env()) catch {
+    @argparse.ArgParseError::MissingGroup(name) => inspect(name, content="mode")
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+
+  try cmd.parse(argv=["--fast", "--slow"], env=empty_env()) catch {
+    @argparse.ArgParseError::GroupConflict(name) => inspect(name, content="mode")
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
+test "arg groups requires and conflicts" {
+  let requires_cmd = @argparse.Command(
+    "demo",
+    groups=[
+      @argparse.ArgGroup("mode", args=["fast"], requires=["output"]),
+      @argparse.ArgGroup("output", args=["json"]),
+    ],
+    args=[
+      @argparse.FlagArg("fast", long="fast"),
+      @argparse.FlagArg("json", long="json"),
+    ],
+  )
+
+  try requires_cmd.parse(argv=["--fast"], env=empty_env()) catch {
+    @argparse.ArgParseError::MissingGroup(name) => inspect(name, content="output")
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+
+  let conflict_cmd = @argparse.Command(
+    "demo",
+    groups=[
+      @argparse.ArgGroup("mode", args=["fast"], conflicts_with=["output"]),
+      @argparse.ArgGroup("output", args=["json"]),
+    ],
+    args=[
+      @argparse.FlagArg("fast", long="fast"),
+      @argparse.FlagArg("json", long="json"),
+    ],
+  )
+
+  try conflict_cmd.parse(argv=["--fast", "--json"], env=empty_env()) catch {
+    @argparse.ArgParseError::GroupConflict(msg) =>
+      inspect(msg.contains("mode conflicts with output"), content="true")
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
 test "subcommand parsing" {
   let echo = @argparse.Command("echo", args=[@argparse.PositionalArg("msg", index=0)])
   let root = @argparse.Command("root", subcommands=[echo])
