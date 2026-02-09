@@ -393,9 +393,7 @@ fn validate_arg(arg : EngineArg) -> Unit raise ArgBuildError {
         "help/version actions do not support negatable",
       )
     }
-    if arg.env is Some(_) ||
-      arg.default_value is Some(_) ||
-      arg.default_values is Some(_) {
+    if arg.env is Some(_) || arg.default_values is Some(_) {
       raise ArgBuildError::Unsupported(
         "help/version actions do not support env/defaults",
       )
@@ -420,10 +418,11 @@ fn validate_arg(arg : EngineArg) -> Unit raise ArgBuildError {
   let (min, max) = arg_min_max_for_validate(arg)
   let allow_multi = arg.multiple || arg.action == EngineArgAction::Append
   if (min > 1 || (max is Some(m) && m > 1)) && !allow_multi {
-    raise ArgBuildError::Unsupported("multiple values require multiple/append")
+    raise ArgBuildError::Unsupported(
+      "multiple values require action=Append or num_args allowing >1",
+    )
   }
-  if (arg.default_value is Some(_) || arg.default_values is Some(_)) &&
-    !arg.takes_value {
+  if arg.default_values is Some(_) && !arg.takes_value {
     raise ArgBuildError::Unsupported(
       "default values require value-taking arguments",
     )
@@ -433,7 +432,7 @@ fn validate_arg(arg : EngineArg) -> Unit raise ArgBuildError {
       !arg.multiple &&
       arg.action != EngineArgAction::Append =>
       raise ArgBuildError::Unsupported(
-        "default_values require multiple/append arguments",
+        "default_values require action=Append or num_args allowing >1",
       )
     _ => ()
   }
@@ -947,19 +946,7 @@ fn apply_defaults(matches : EngineMatches, args : Array[EngineArg]) -> Unit {
             EngineValueSource::Default,
           )
         }
-      _ =>
-        match arg.default_value {
-          Some(value) => {
-            let _ = add_value(
-              matches,
-              arg.name,
-              value,
-              arg,
-              EngineValueSource::Default,
-            )
-          }
-          None => ()
-        }
+      _ => ()
     }
   }
 }

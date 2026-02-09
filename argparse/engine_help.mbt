@@ -354,13 +354,10 @@ fn arg_doc(arg : EngineArg, long_help : Bool) -> String {
     None => ()
   }
   match arg.default_values {
-    Some(values) if values.length() > 0 =>
+    Some(values) if values.length() > 1 =>
       notes.push("defaults: " + values.join(", "))
-    _ =>
-      match arg.default_value {
-        Some(value) => notes.push("default: " + value)
-        None => ()
-      }
+    Some(values) if values.length() == 1 => notes.push("default: " + values[0])
+    _ => ()
   }
   if is_required_arg(arg) {
     notes.push("required")

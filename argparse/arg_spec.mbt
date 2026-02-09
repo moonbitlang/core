@@ -42,7 +42,6 @@ priv struct Arg {
   flag_action : FlagAction
   option_action : OptionAction
   env : String?
-  default_value : String?
   default_values : Array[String]?
   num_args : ValueRange?
   multiple : Bool
@@ -75,7 +74,6 @@ pub struct FlagArg {
     about? : String,
     action? : FlagAction,
     env? : String,
-    default_value? : String,
     requires? : Array[String],
     conflicts_with? : Array[String],
     group? : String,
@@ -99,7 +97,6 @@ pub fn FlagArg::new(
   about? : String,
   action? : FlagAction = FlagAction::SetTrue,
   env? : String,
-  default_value? : String,
   requires? : Array[String] = [],
   conflicts_with? : Array[String] = [],
   group? : String,
@@ -120,7 +117,6 @@ pub fn FlagArg::new(
       flag_action: action,
       option_action: OptionAction::Set,
       env,
-      default_value,
       default_values: None,
       num_args: None,
       multiple: false,
@@ -149,10 +145,8 @@ pub struct OptionArg {
     about? : String,
     action? : OptionAction,
     env? : String,
-    default_value? : String,
     default_values? : Array[String],
     num_args? : ValueRange,
-    multiple? : Bool,
     allow_hyphen_values? : Bool,
     last? : Bool,
     requires? : Array[String],
@@ -177,10 +171,8 @@ pub fn OptionArg::new(
   about? : String,
   action? : OptionAction = OptionAction::Set,
   env? : String,
-  default_value? : String,
   default_values? : Array[String],
   num_args? : ValueRange,
-  multiple? : Bool = false,
   allow_hyphen_values? : Bool = false,
   last? : Bool = false,
   requires? : Array[String] = [],
@@ -202,10 +194,9 @@ pub fn OptionArg::new(
       flag_action: FlagAction::SetTrue,
       option_action: action,
       env,
-      default_value,
       default_values: clone_optional_array_string(default_values),
       num_args,
-      multiple,
+      multiple: allows_multiple_values(num_args, action),
       allow_hyphen_values,
       last,
       requires: clone_array_spec(requires),
@@ -229,10 +220,8 @@ pub struct PositionalArg {
     index? : Int,
     about? : String,
     env? : String,
-    default_value? : String,
     default_values? : Array[String],
     num_args? : ValueRange,
-    multiple? : Bool,
     allow_hyphen_values? : Bool,
     last? : Bool,
     requires? : Array[String],
@@ -255,10 +244,8 @@ pub fn PositionalArg::new(
   index? : Int,
   about? : String,
   env? : String,
-  default_value? : String,
   default_values? : Array[String],
   num_args? : ValueRange,
-  multiple? : Bool = false,
   allow_hyphen_values? : Bool = false,
   last? : Bool = false,
   requires? : Array[String] = [],
@@ -280,10 +267,9 @@ pub fn PositionalArg::new(
       flag_action: FlagAction::SetTrue,
       option_action: OptionAction::Set,
       env,
-      default_value,
       default_values: clone_optional_array_string(default_values),
       num_args,
-      multiple,
+      multiple: range_allows_multiple(num_args),
       allow_hyphen_values,
       last,
       requires: clone_array_spec(requires),
@@ -310,6 +296,39 @@ fn is_flag_spec(arg : Arg) -> Bool {
 ///|
 fn is_count_flag_spec(arg : Arg) -> Bool {
   arg.is_flag && arg.flag_action == FlagAction::Count
+}
+
+///|
+fn allows_multiple_values(
+  num_args : ValueRange?,
+  action : OptionAction,
+) -> Bool {
+  action == OptionAction::Append || range_allows_multiple(num_args)
+}
+
+///|
+fn range_allows_multiple(range : ValueRange?) -> Bool {
+  match range {
+    Some(r) => {
+      let min = match r.lower {
+        Some(value) => if r.lower_inclusive { value } else { value + 1 }
+        None => 0
+      }
+      let max = match r.upper {
+        Some(value) => Some(if r.upper_inclusive { value } else { value - 1 })
+        None => None
+      }
+      if min > 1 {
+        true
+      } else {
+        match max {
+          Some(value) => value > 1
+          None => true
+        }
+      }
+    }
+    None => false
+  }
 }
 
 ///|

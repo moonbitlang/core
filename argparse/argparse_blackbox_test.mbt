@@ -54,7 +54,11 @@ test "render long help snapshot with groups and hidden entries" {
         group="mode",
       ),
       @argparse.PositionalArg("target", index=0, required=true),
-      @argparse.PositionalArg("rest", index=1, multiple=true),
+      @argparse.PositionalArg(
+        "rest",
+        index=1,
+        num_args=@argparse.ValueRange(lower=0),
+      ),
       @argparse.PositionalArg("secret", index=2, hidden=true),
     ],
   )
@@ -94,7 +98,6 @@ test "render help conversion coverage snapshot" {
         short='f',
         about="f",
         env="F_ENV",
-        default_value="1",
         requires=["opt"],
         required=true,
         global=true,
@@ -119,10 +122,8 @@ test "render help conversion coverage snapshot" {
         "pos",
         about="pos",
         env="POS_ENV",
-        default_value="p",
         default_values=["p1", "p2"],
         num_args=@argparse.ValueRange(lower=0, upper=2),
-        multiple=true,
         allow_hyphen_values=true,
         last=true,
         requires=["opt"],
@@ -173,7 +174,7 @@ test "global option merges parent and child values" {
         "profile",
         short='p',
         long="profile",
-        multiple=true,
+        action=@argparse.OptionAction::Append,
         global=true,
       ),
     ],
@@ -443,7 +444,7 @@ test "positionals force mode and dash handling" {
     @argparse.PositionalArg(
       "tail",
       index=0,
-      multiple=true,
+      num_args=@argparse.ValueRange(lower=0),
       last=true,
       allow_hyphen_values=true,
     ),
@@ -555,10 +556,13 @@ test "env parsing for settrue setfalse count and invalid values" {
 ///|
 test "defaults and value range helpers through public API" {
   let defaults = @argparse.Command("demo", args=[
-    @argparse.OptionArg("mode", long="mode", multiple=true, default_values=[
-      "a", "b",
-    ]),
-    @argparse.OptionArg("one", long="one", default_value="x"),
+    @argparse.OptionArg(
+      "mode",
+      long="mode",
+      default_values=["a", "b"],
+      num_args=@argparse.ValueRange(lower=0),
+    ),
+    @argparse.OptionArg("one", long="one", default_values=["x"]),
   ])
   let by_default = defaults.parse(argv=[], env=empty_env()) catch {
     _ => panic()
@@ -577,7 +581,6 @@ test "defaults and value range helpers through public API" {
     @argparse.OptionArg(
       "tag",
       long="tag",
-      multiple=true,
       num_args=@argparse.ValueRange(upper=2),
     ),
   ])
@@ -601,7 +604,6 @@ test "defaults and value range helpers through public API" {
     @argparse.OptionArg(
       "tag",
       long="tag",
-      multiple=true,
       num_args=@argparse.ValueRange(lower=1),
     ),
   ])
@@ -643,7 +645,11 @@ test "from_matches uses public decoding hook" {
 ///|
 test "default argv path is reachable" {
   let cmd = @argparse.Command("demo", args=[
-    @argparse.PositionalArg("rest", multiple=true, allow_hyphen_values=true),
+    @argparse.PositionalArg(
+      "rest",
+      num_args=@argparse.ValueRange(lower=0),
+      allow_hyphen_values=true,
+    ),
   ])
   let _ = cmd.parse(env=empty_env()) catch { _ => panic() }
 }
@@ -728,43 +734,16 @@ test "validation branches exposed through parse" {
     _ => panic()
   }
 
-  try
-    @argparse.Command("demo", args=[
-      @argparse.OptionArg(
-        "x",
-        long="x",
-        num_args=@argparse.ValueRange(lower=2, upper=2),
-      ),
-    ]).parse(argv=[], env=empty_env())
-  catch {
-    @argparse.ArgBuildError::Unsupported(msg) =>
-      inspect(
-        msg,
-        content=(
-          #|multiple values require multiple/append
-        ),
-      )
-    _ => panic()
-  } noraise {
+  let ranged = @argparse.Command("demo", args=[
+    @argparse.OptionArg(
+      "x",
+      long="x",
+      num_args=@argparse.ValueRange(lower=2, upper=2),
+    ),
+  ]).parse(argv=["--x", "a", "--x", "b"], env=empty_env()) catch {
     _ => panic()
   }
-
-  try
-    @argparse.Command("demo", args=[
-      @argparse.FlagArg("f", long="f", default_value="1"),
-    ]).parse(argv=[], env=empty_env())
-  catch {
-    @argparse.ArgBuildError::Unsupported(msg) =>
-      inspect(
-        msg,
-        content=(
-          #|default values require value-taking arguments
-        ),
-      )
-    _ => panic()
-  } noraise {
-    _ => panic()
-  }
+  assert_true(ranged.values is { "x": ["a", "b"], .. })
 
   try
     @argparse.Command("demo", args=[
@@ -775,7 +754,7 @@ test "validation branches exposed through parse" {
       inspect(
         msg,
         content=(
-          #|default_values require multiple/append arguments
+          #|default_values require action=Append or num_args allowing >1
         ),
       )
     _ => panic()
@@ -789,7 +768,6 @@ test "validation branches exposed through parse" {
         "x",
         long="x",
         num_args=@argparse.ValueRange(lower=3, upper=2),
-        multiple=true,
       ),
     ]).parse(argv=[], env=empty_env())
   catch {

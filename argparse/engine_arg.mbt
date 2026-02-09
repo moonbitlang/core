@@ -113,7 +113,6 @@ priv struct EngineArg {
   allow_hyphen_values : Bool
   last : Bool
   env : String?
-  default_value : String?
   default_values : Array[String]?
   groups : Array[String]
   requires : Array[String]
@@ -141,7 +140,6 @@ fn EngineArg::new(name : String) -> EngineArg {
     allow_hyphen_values: false,
     last: false,
     env: None,
-    default_value: None,
     default_values: None,
     groups: [],
     requires: [],
@@ -185,20 +183,11 @@ fn EngineArg::env(self : EngineArg, name : String) -> EngineArg {
 }
 
 ///|
-fn EngineArg::default_value(self : EngineArg, value : String) -> EngineArg {
-  EngineArg::{ ..self, default_value: Some(value), default_values: None }
-}
-
-///|
 fn EngineArg::default_values(
   self : EngineArg,
   values : Array[String],
 ) -> EngineArg {
-  EngineArg::{
-    ..self,
-    default_value: None,
-    default_values: Some(clone_array_arg(values)),
-  }
+  EngineArg::{ ..self, default_values: Some(clone_array_arg(values)) }
 }
 
 ///|

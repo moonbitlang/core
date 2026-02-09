@@ -303,10 +303,6 @@ fn to_engine_arg(arg : Arg) -> EngineArg {
       Some(v) => out = out.env(v)
       None => ()
     }
-    match arg.default_value {
-      Some(v) => out = out.default_value(v)
-      None => ()
-    }
     match arg.group {
       Some(group) => out = out.group(group)
       None => ()
@@ -343,10 +339,6 @@ fn to_engine_arg(arg : Arg) -> EngineArg {
     }
     match arg.env {
       Some(v) => out = out.env(v)
-      None => ()
-    }
-    match arg.default_value {
-      Some(v) => out = out.default_value(v)
       None => ()
     }
     match arg.default_values {
@@ -402,10 +394,6 @@ fn to_engine_arg(arg : Arg) -> EngineArg {
     }
     match arg.env {
       Some(v) => out = out.env(v)
-      None => ()
-    }
-    match arg.default_value {
-      Some(v) => out = out.default_value(v)
       None => ()
     }
     match arg.default_values {

@@ -83,7 +83,6 @@ test "relationships and num args" {
     @argparse.OptionArg(
       "tag",
       long="tag",
-      multiple=true,
       num_args=@argparse.ValueRange(lower=2, upper=2),
     ),
   ])
@@ -219,12 +218,9 @@ test "full help snapshot" {
         long="verbose",
         about="Enable verbose mode",
       ),
-      @argparse.OptionArg(
-        "count",
-        long="count",
-        about="Repeat count",
-        default_value="1",
-      ),
+      @argparse.OptionArg("count", long="count", about="Repeat count", default_values=[
+        "1",
+      ]),
       @argparse.PositionalArg("name", index=0, about="Target name"),
     ],
     subcommands=[@argparse.Command("echo", about="Echo a message")],
@@ -254,7 +250,7 @@ test "full help snapshot" {
 ///|
 test "value source precedence argv env default" {
   let cmd = @argparse.Command("demo", args=[
-    @argparse.OptionArg("level", long="level", env="LEVEL", default_value="1"),
+    @argparse.OptionArg("level", long="level", env="LEVEL", default_values=["1"]),
   ])
 
   let from_default = cmd.parse(argv=[], env=empty_env()) catch { _ => panic() }
@@ -291,7 +287,11 @@ test "options and multiple values" {
     "demo",
     args=[
       @argparse.OptionArg("count", short='c', long="count"),
-      @argparse.OptionArg("tag", long="tag", multiple=true),
+      @argparse.OptionArg(
+        "tag",
+        long="tag",
+        action=@argparse.OptionAction::Append,
+      ),
     ],
     subcommands=[serve],
   )

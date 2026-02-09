@@ -67,9 +67,9 @@ pub impl Show for FlagAction
 pub struct FlagArg {
   // private fields
 
-  fn new(String, short? : Char, long? : String, about? : String, action? : FlagAction, env? : String, default_value? : String, requires? : Array[String], conflicts_with? : Array[String], group? : String, required? : Bool, global? : Bool, negatable? : Bool, hidden? : Bool) -> FlagArg
+  fn new(String, short? : Char, long? : String, about? : String, action? : FlagAction, env? : String, requires? : Array[String], conflicts_with? : Array[String], group? : String, required? : Bool, global? : Bool, negatable? : Bool, hidden? : Bool) -> FlagArg
 }
-pub fn FlagArg::new(String, short? : Char, long? : String, about? : String, action? : FlagAction, env? : String, default_value? : String, requires? : Array[String], conflicts_with? : Array[String], group? : String, required? : Bool, global? : Bool, negatable? : Bool, hidden? : Bool) -> Self
+pub fn FlagArg::new(String, short? : Char, long? : String, about? : String, action? : FlagAction, env? : String, requires? : Array[String], conflicts_with? : Array[String], group? : String, required? : Bool, global? : Bool, negatable? : Bool, hidden? : Bool) -> Self
 pub impl ArgLike for FlagArg
 
 pub struct Matches {
@@ -90,17 +90,17 @@ pub impl Show for OptionAction
 pub struct OptionArg {
   // private fields
 
-  fn new(String, short? : Char, long? : String, about? : String, action? : OptionAction, env? : String, default_value? : String, default_values? : Array[String], num_args? : ValueRange, multiple? : Bool, allow_hyphen_values? : Bool, last? : Bool, requires? : Array[String], conflicts_with? : Array[String], group? : String, required? : Bool, global? : Bool, hidden? : Bool) -> OptionArg
+  fn new(String, short? : Char, long? : String, about? : String, action? : OptionAction, env? : String, default_values? : Array[String], num_args? : ValueRange, allow_hyphen_values? : Bool, last? : Bool, requires? : Array[String], conflicts_with? : Array[String], group? : String, required? : Bool, global? : Bool, hidden? : Bool) -> OptionArg
 }
-pub fn OptionArg::new(String, short? : Char, long? : String, about? : String, action? : OptionAction, env? : String, default_value? : String, default_values? : Array[String], num_args? : ValueRange, multiple? : Bool, allow_hyphen_values? : Bool, last? : Bool, requires? : Array[String], conflicts_with? : Array[String], group? : String, required? : Bool, global? : Bool, hidden? : Bool) -> Self
+pub fn OptionArg::new(String, short? : Char, long? : String, about? : String, action? : OptionAction, env? : String, default_values? : Array[String], num_args? : ValueRange, allow_hyphen_values? : Bool, last? : Bool, requires? : Array[String], conflicts_with? : Array[String], group? : String, required? : Bool, global? : Bool, hidden? : Bool) -> Self
 pub impl ArgLike for OptionArg
 
 pub struct PositionalArg {
   // private fields
 
-  fn new(String, index? : Int, about? : String, env? : String, default_value? : String, default_values? : Array[String], num_args? : ValueRange, multiple? : Bool, allow_hyphen_values? : Bool, last? : Bool, requires? : Array[String], conflicts_with? : Array[String], group? : String, required? : Bool, global? : Bool, hidden? : Bool) -> PositionalArg
+  fn new(String, index? : Int, about? : String, env? : String, default_values? : Array[String], num_args? : ValueRange, allow_hyphen_values? : Bool, last? : Bool, requires? : Array[String], conflicts_with? : Array[String], group? : String, required? : Bool, global? : Bool, hidden? : Bool) -> PositionalArg
 }
-pub fn PositionalArg::new(String, index? : Int, about? : String, env? : String, default_value? : String, default_values? : Array[String], num_args? : ValueRange, multiple? : Bool, allow_hyphen_values? : Bool, last? : Bool, requires? : Array[String], conflicts_with? : Array[String], group? : String, required? : Bool, global? : Bool, hidden? : Bool) -> Self
+pub fn PositionalArg::new(String, index? : Int, about? : String, env? : String, default_values? : Array[String], num_args? : ValueRange, allow_hyphen_values? : Bool, last? : Bool, requires? : Array[String], conflicts_with? : Array[String], group? : String, required? : Bool, global? : Bool, hidden? : Bool) -> Self
 pub impl ArgLike for PositionalArg
 
 pub struct ValueRange {
