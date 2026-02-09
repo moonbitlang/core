@@ -21,6 +21,9 @@ type Regex
 pub fn Regex::execute(Self, StringView, last_index? : Int) -> MatchResult?
 
 // Type aliases
+#deprecated
+pub using @builtin {type StringView as View}
+
 pub using @builtin {trait ToStringView}
 
 // Traits

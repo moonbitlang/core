@@ -48,3 +48,7 @@ pub fn of(arr : ArrayView[Byte]) -> Bytes {
 pub fn from_array(arr : ArrayView[Byte]) -> Bytes {
   Bytes::from_array(arr)
 }
+
+///|
+#deprecated("@bytes.View is deprecated, use BytesView instead.")
+pub type View = BytesView

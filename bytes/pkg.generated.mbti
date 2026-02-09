@@ -1,6 +1,10 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/bytes"
 
+import {
+  "moonbitlang/core/builtin",
+}
+
 // Values
 
 // Errors
@@ -17,6 +21,8 @@ pub fn MatchResult::group(Self, Int) -> BytesView?
 pub fn MatchResult::named_group(Self, String) -> BytesView?
 
 // Type aliases
+#deprecated
+pub using @builtin {type BytesView as View}
 
 // Traits
 
