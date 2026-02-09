@@ -270,44 +270,36 @@ test "omitted env does not read process environment by default" {
 }
 
 ///|
-test "aliases and multiple values" {
-  let serve = @argparse.Command("serve", aliases=["srv"], visible_aliases=[
-    "run",
-  ])
+test "options and multiple values" {
+  let serve = @argparse.Command("serve")
   let cmd = @argparse.Command(
     "demo",
     args=[
-      @argparse.OptionArg(
-        "count",
-        long="count",
-        aliases=["times"],
-        short_aliases=['c'],
-        visible_aliases=["total"],
-      ),
+      @argparse.OptionArg("count", short='c', long="count"),
       @argparse.OptionArg("tag", long="tag", multiple=true),
     ],
     subcommands=[serve],
   )
 
-  let alias_long = cmd.parse(argv=["--times", "2"], env=empty_env()) catch {
+  let long_count = cmd.parse(argv=["--count", "2"], env=empty_env()) catch {
     _ => panic()
   }
-  assert_true(alias_long.values is { "count": ["2"], .. })
+  assert_true(long_count.values is { "count": ["2"], .. })
 
-  let alias_short = cmd.parse(argv=["-c", "3"], env=empty_env()) catch {
+  let short_count = cmd.parse(argv=["-c", "3"], env=empty_env()) catch {
     _ => panic()
   }
-  assert_true(alias_short.values is { "count": ["3"], .. })
+  assert_true(short_count.values is { "count": ["3"], .. })
 
   let multi = cmd.parse(argv=["--tag", "a", "--tag", "b"], env=empty_env()) catch {
     _ => panic()
   }
   assert_true(multi.values is { "tag": ["a", "b"], .. })
 
-  let sub_alias = cmd.parse(argv=["srv"], env=empty_env()) catch {
+  let subcommand = cmd.parse(argv=["serve"], env=empty_env()) catch {
     _ => panic()
   }
-  assert_true(sub_alias.subcommand is Some(("serve", _)))
+  assert_true(subcommand.subcommand is Some(("serve", _)))
 }
 
 ///|

@@ -106,7 +106,6 @@ priv struct EngineArg {
   short : Char?
   long : String?
   help : String
-  long_help : String
   takes_value : Bool
   action : EngineArgAction
   multiple : Bool
@@ -121,12 +120,7 @@ priv struct EngineArg {
   conflicts_with : Array[String]
   required : Bool
   num_args : EngineValueRange?
-  aliases : Array[String]
-  short_aliases : Array[Char]
-  visible_aliases : Array[String]
-  visible_short_aliases : Array[Char]
   hidden : Bool
-  hide_long_help : Bool
   global : Bool
   negatable : Bool
 
@@ -140,7 +134,6 @@ fn EngineArg::new(name : String) -> EngineArg {
     short: None,
     long: None,
     help: "",
-    long_help: "",
     takes_value: false,
     action: EngineArgAction::SetTrue,
     multiple: false,
@@ -155,12 +148,7 @@ fn EngineArg::new(name : String) -> EngineArg {
     conflicts_with: [],
     required: false,
     num_args: None,
-    aliases: [],
-    short_aliases: [],
-    visible_aliases: [],
-    visible_short_aliases: [],
     hidden: false,
-    hide_long_help: false,
     global: false,
     negatable: false,
   }
@@ -189,11 +177,6 @@ fn EngineArg::long(self : EngineArg, value : String) -> EngineArg {
 ///|
 fn EngineArg::help(self : EngineArg, text : String) -> EngineArg {
   EngineArg::{ ..self, help: text }
-}
-
-///|
-fn EngineArg::long_help(self : EngineArg, text : String) -> EngineArg {
-  EngineArg::{ ..self, long_help: text }
 }
 
 ///|
@@ -293,44 +276,8 @@ fn EngineArg::negatable(self : EngineArg, value? : Bool = true) -> EngineArg {
 }
 
 ///|
-fn EngineArg::alias_name(self : EngineArg, name : String) -> EngineArg {
-  let aliases = clone_array_arg(self.aliases)
-  aliases.push(name)
-  EngineArg::{ ..self, aliases, }
-}
-
-///|
-fn EngineArg::short_alias(self : EngineArg, name : Char) -> EngineArg {
-  let aliases = clone_array_arg(self.short_aliases)
-  aliases.push(name)
-  EngineArg::{ ..self, short_aliases: aliases }
-}
-
-///|
-fn EngineArg::visible_alias(self : EngineArg, name : String) -> EngineArg {
-  let aliases = clone_array_arg(self.visible_aliases)
-  aliases.push(name)
-  EngineArg::{ ..self, visible_aliases: aliases }
-}
-
-///|
-fn EngineArg::visible_short_alias(self : EngineArg, name : Char) -> EngineArg {
-  let aliases = clone_array_arg(self.visible_short_aliases)
-  aliases.push(name)
-  EngineArg::{ ..self, visible_short_aliases: aliases }
-}
-
-///|
 fn EngineArg::hide(self : EngineArg, value? : Bool = true) -> EngineArg {
   EngineArg::{ ..self, hidden: value }
-}
-
-///|
-fn EngineArg::hide_long_help(
-  self : EngineArg,
-  value? : Bool = true,
-) -> EngineArg {
-  EngineArg::{ ..self, hide_long_help: value }
 }
 
 ///|

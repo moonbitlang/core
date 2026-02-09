@@ -249,15 +249,7 @@ fn group_entries(cmd : Command, long_help : Bool) -> Array[String] {
 
 ///|
 fn command_display(cmd : Command) -> String {
-  if cmd.visible_aliases.length() == 0 {
-    cmd.name
-  } else {
-    let items = [cmd.name]
-    for alias_name in cmd.visible_aliases {
-      items.push(alias_name)
-    }
-    items.join(", ")
-  }
+  cmd.name
 }
 
 ///|
@@ -266,18 +258,12 @@ fn arg_display(arg : EngineArg) -> String {
   if arg.short is Some(short) {
     parts.push("-" + short.to_string())
   }
-  for alias_name in arg.visible_short_aliases {
-    parts.push("-" + alias_name.to_string())
-  }
   if arg.long is Some(long) {
     if arg.negatable && !arg.takes_value {
       parts.push("--[no-]" + long)
     } else {
       parts.push("--" + long)
     }
-  }
-  for alias_name in arg.visible_aliases {
-    parts.push("--" + alias_name)
   }
   if parts.length() == 0 {
     arg.name
@@ -297,34 +283,14 @@ fn positional_display(arg : EngineArg) -> String {
 
 ///|
 fn command_about(cmd : Command, long_help : Bool) -> String {
-  let about = cmd.about.unwrap_or("")
-  let long_about = cmd.long_about.unwrap_or("")
-  if long_help {
-    if long_about != "" {
-      long_about
-    } else {
-      about
-    }
-  } else if about != "" {
-    about
-  } else {
-    long_about
-  }
+  let _ = long_help
+  cmd.about.unwrap_or("")
 }
 
 ///|
 fn arg_help(arg : EngineArg, long_help : Bool) -> String {
-  if long_help {
-    if arg.long_help != "" {
-      arg.long_help
-    } else {
-      arg.help
-    }
-  } else if arg.help != "" {
-    arg.help
-  } else {
-    arg.long_help
-  }
+  let _ = long_help
+  arg.help
 }
 
 ///|
@@ -358,11 +324,8 @@ fn arg_doc(arg : EngineArg, long_help : Bool) -> String {
 
 ///|
 fn arg_hidden_in_style(arg : EngineArg, long_help : Bool) -> Bool {
-  if arg.hidden {
-    true
-  } else {
-    long_help && arg.hide_long_help
-  }
+  let _ = long_help
+  arg.hidden
 }
 
 ///|

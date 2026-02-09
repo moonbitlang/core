@@ -22,8 +22,8 @@ fn raise_help(text : String, long_help : Bool) -> Unit raise {
 }
 
 ///|
-fn raise_version(text : String, long_version : Bool) -> Unit raise {
-  if long_version {
+fn raise_version(text : String, is_long : Bool) -> Unit raise {
+  if is_long {
     raise DisplayVersion::Long(text)
   } else {
     raise DisplayVersion::Short(text)
@@ -326,25 +326,13 @@ fn help_flag_enabled(cmd : Command) -> Bool {
 
 ///|
 fn version_flag_enabled(cmd : Command) -> Bool {
-  !cmd.disable_version_flag &&
-  (cmd.version is Some(_) || cmd.long_version is Some(_))
+  !cmd.disable_version_flag && cmd.version is Some(_)
 }
 
 ///|
-fn command_version(cmd : Command, long_version : Bool) -> String {
-  let short = cmd.version.unwrap_or("")
-  let long = cmd.long_version.unwrap_or("")
-  if long_version {
-    if long != "" {
-      long
-    } else {
-      short
-    }
-  } else if short != "" {
-    short
-  } else {
-    long
-  }
+fn command_version(cmd : Command, is_long : Bool) -> String {
+  let _ = is_long
+  cmd.version.unwrap_or("")
 }
 
 ///|
@@ -378,7 +366,7 @@ fn validate_arg(arg : EngineArg) -> Unit raise ArgBuildError {
     arg.last
   if !positional && has_positional_only {
     raise ArgBuildError::Unsupported(
-      "positional-only settings require no short/long/aliases",
+      "positional-only settings require no short/long",
     )
   }
   if arg.negatable && arg.takes_value {
@@ -409,12 +397,7 @@ fn validate_arg(arg : EngineArg) -> Unit raise ArgBuildError {
         "help/version actions do not support multiple values",
       )
     }
-    let has_option = arg.long is Some(_) ||
-      arg.short is Some(_) ||
-      arg.aliases.length() > 0 ||
-      arg.visible_aliases.length() > 0 ||
-      arg.short_aliases.length() > 0 ||
-      arg.visible_short_aliases.length() > 0
+    let has_option = arg.long is Some(_) || arg.short is Some(_)
     if !has_option {
       raise ArgBuildError::Unsupported(
         "help/version actions require short/long option",
@@ -664,7 +647,7 @@ fn validate_version_flag(cmd : Command) -> Unit raise ArgBuildError {
 
 ///|
 fn validate_version_actions(cmd : Command) -> Unit raise ArgBuildError {
-  if cmd.version is Some(_) || cmd.long_version is Some(_) {
+  if cmd.version is Some(_) {
     return
   }
   for arg in command_engine_args(cmd) {
@@ -794,12 +777,7 @@ fn validate_relationships(
 
 ///|
 fn is_positional_arg(arg : EngineArg) -> Bool {
-  arg.short is None &&
-  arg.long is None &&
-  arg.aliases.length() == 0 &&
-  arg.short_aliases.length() == 0 &&
-  arg.visible_aliases.length() == 0 &&
-  arg.visible_short_aliases.length() == 0
+  arg.short is None && arg.long is None
 }
 
 ///|
@@ -1036,12 +1014,6 @@ fn collect_long_names(arg : EngineArg) -> Array[String] {
     Some(value) => names.push(value)
     None => ()
   }
-  for name in arg.aliases {
-    names.push(name)
-  }
-  for name in arg.visible_aliases {
-    names.push(name)
-  }
   names
 }
 
@@ -1052,25 +1024,12 @@ fn collect_short_names(arg : EngineArg) -> Array[Char] {
     Some(value) => names.push(value)
     None => ()
   }
-  for name in arg.short_aliases {
-    names.push(name)
-  }
-  for name in arg.visible_short_aliases {
-    names.push(name)
-  }
   names
 }
 
 ///|
 fn collect_subcommand_names(cmd : Command) -> Array[String] {
-  let names = [cmd.name]
-  for name in cmd.aliases {
-    names.push(name)
-  }
-  for name in cmd.visible_aliases {
-    names.push(name)
-  }
-  names
+  [cmd.name]
 }
 
 ///|
@@ -1251,22 +1210,10 @@ fn build_long_index(
     if arg.long is Some(name) {
       index[name] = arg
     }
-    for alias_name in arg.aliases {
-      index[alias_name] = arg
-    }
-    for alias_name in arg.visible_aliases {
-      index[alias_name] = arg
-    }
   }
   for arg in args {
     if arg.long is Some(name) {
       index[name] = arg
-    }
-    for alias_name in arg.aliases {
-      index[alias_name] = arg
-    }
-    for alias_name in arg.visible_aliases {
-      index[alias_name] = arg
     }
   }
   index
@@ -1282,22 +1229,10 @@ fn build_short_index(
     if arg.short is Some(value) {
       index[value] = arg
     }
-    for alias_name in arg.short_aliases {
-      index[alias_name] = arg
-    }
-    for alias_name in arg.visible_short_aliases {
-      index[alias_name] = arg
-    }
   }
   for arg in args {
     if arg.short is Some(value) {
       index[value] = arg
-    }
-    for alias_name in arg.short_aliases {
-      index[alias_name] = arg
-    }
-    for alias_name in arg.visible_short_aliases {
-      index[alias_name] = arg
     }
   }
   index
@@ -1307,15 +1242,7 @@ fn build_short_index(
 fn collect_globals(args : Array[EngineArg]) -> Array[EngineArg] {
   let out = []
   for arg in args {
-    if arg.global &&
-      (
-        arg.long is Some(_) ||
-        arg.short is Some(_) ||
-        arg.aliases.length() > 0 ||
-        arg.short_aliases.length() > 0 ||
-        arg.visible_aliases.length() > 0 ||
-        arg.visible_short_aliases.length() > 0
-      ) {
+    if arg.global && (arg.long is Some(_) || arg.short is Some(_)) {
       out.push(arg)
     }
   }
@@ -1586,16 +1513,6 @@ fn find_subcommand(subs : Array[Command], name : String) -> Command? {
   for sub in subs {
     if sub.name == name {
       return Some(sub)
-    }
-    for alias_name in sub.aliases {
-      if alias_name == name {
-        return Some(sub)
-      }
-    }
-    for alias_name in sub.visible_aliases {
-      if alias_name == name {
-        return Some(sub)
-      }
     }
   }
   None

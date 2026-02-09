@@ -20,11 +20,7 @@ pub struct Command {
   priv groups : Array[ArgGroup]
   priv subcommands : Array[Command]
   priv about : String?
-  priv long_about : String?
   priv version : String?
-  priv long_version : String?
-  priv aliases : Array[String]
-  priv visible_aliases : Array[String]
   priv disable_help_flag : Bool
   priv disable_version_flag : Bool
   priv disable_help_subcommand : Bool
@@ -37,11 +33,7 @@ pub struct Command {
     args? : Array[&ArgLike],
     subcommands? : Array[Command],
     about? : String,
-    long_about? : String,
     version? : String,
-    long_version? : String,
-    aliases? : Array[String],
-    visible_aliases? : Array[String],
     disable_help_flag? : Bool,
     disable_version_flag? : Bool,
     disable_help_subcommand? : Bool,
@@ -58,11 +50,7 @@ pub fn Command::new(
   args? : Array[&ArgLike] = [],
   subcommands? : Array[Command] = [],
   about? : String,
-  long_about? : String,
   version? : String,
-  long_version? : String,
-  aliases? : Array[String] = [],
-  visible_aliases? : Array[String] = [],
   disable_help_flag? : Bool = false,
   disable_version_flag? : Bool = false,
   disable_help_subcommand? : Bool = false,
@@ -77,11 +65,7 @@ pub fn Command::new(
     groups: clone_array_cmd(groups),
     subcommands: clone_array_cmd(subcommands),
     about,
-    long_about,
     version,
-    long_version,
-    aliases: clone_array_cmd(aliases),
-    visible_aliases: clone_array_cmd(visible_aliases),
     disable_help_flag,
     disable_version_flag,
     disable_help_subcommand,
@@ -185,9 +169,6 @@ fn find_decl_subcommand(subs : Array[Command], name : String) -> Command? {
     if sub.name == name {
       return Some(sub)
     }
-    if sub.aliases.contains(name) || sub.visible_aliases.contains(name) {
-      return Some(sub)
-    }
   }
   None
 }
@@ -288,10 +269,6 @@ fn to_engine_arg(arg : Arg) -> EngineArg {
       Some(v) => out = out.help(v)
       None => ()
     }
-    match arg.long_about {
-      Some(v) => out = out.long_help(v)
-      None => ()
-    }
     match arg.env {
       Some(v) => out = out.env(v)
       None => ()
@@ -311,18 +288,6 @@ fn to_engine_arg(arg : Arg) -> EngineArg {
     for name in arg.conflicts_with {
       out = out.conflicts_with(name)
     }
-    for name in arg.aliases {
-      out = out.alias_name(name)
-    }
-    for name in arg.short_aliases {
-      out = out.short_alias(name)
-    }
-    for name in arg.visible_aliases {
-      out = out.visible_alias(name)
-    }
-    for name in arg.visible_short_aliases {
-      out = out.visible_short_alias(name)
-    }
     if arg.required {
       out = out.required()
     }
@@ -335,9 +300,6 @@ fn to_engine_arg(arg : Arg) -> EngineArg {
     if arg.hidden {
       out = out.hide()
     }
-    if arg.hide_long_help {
-      out = out.hide_long_help()
-    }
     out
   } else if arg.is_positional {
     let mut out = EngineArg(arg.name).option()
@@ -347,10 +309,6 @@ fn to_engine_arg(arg : Arg) -> EngineArg {
     }
     match arg.about {
       Some(v) => out = out.help(v)
-      None => ()
-    }
-    match arg.long_about {
-      Some(v) => out = out.long_help(v)
       None => ()
     }
     match arg.env {
@@ -397,9 +355,6 @@ fn to_engine_arg(arg : Arg) -> EngineArg {
     if arg.hidden {
       out = out.hide()
     }
-    if arg.hide_long_help {
-      out = out.hide_long_help()
-    }
     out
   } else {
     let mut out = EngineArg(arg.name).option()
@@ -413,10 +368,6 @@ fn to_engine_arg(arg : Arg) -> EngineArg {
     }
     match arg.about {
       Some(v) => out = out.help(v)
-      None => ()
-    }
-    match arg.long_about {
-      Some(v) => out = out.long_help(v)
       None => ()
     }
     match arg.env {
@@ -446,18 +397,6 @@ fn to_engine_arg(arg : Arg) -> EngineArg {
     for name in arg.conflicts_with {
       out = out.conflicts_with(name)
     }
-    for name in arg.aliases {
-      out = out.alias_name(name)
-    }
-    for name in arg.short_aliases {
-      out = out.short_alias(name)
-    }
-    for name in arg.visible_aliases {
-      out = out.visible_alias(name)
-    }
-    for name in arg.visible_short_aliases {
-      out = out.visible_short_alias(name)
-    }
     if arg.multiple {
       out = out.multiple()
     }
@@ -475,9 +414,6 @@ fn to_engine_arg(arg : Arg) -> EngineArg {
     }
     if arg.hidden {
       out = out.hide()
-    }
-    if arg.hide_long_help {
-      out = out.hide_long_help()
     }
     out
   }

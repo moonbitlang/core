@@ -37,7 +37,6 @@ priv struct Arg {
   long : String?
   index : Int?
   about : String?
-  long_about : String?
   is_flag : Bool
   is_positional : Bool
   flag_action : FlagAction
@@ -55,12 +54,7 @@ priv struct Arg {
   required : Bool
   global : Bool
   negatable : Bool
-  aliases : Array[String]
-  short_aliases : Array[Char]
-  visible_aliases : Array[String]
-  visible_short_aliases : Array[Char]
   hidden : Bool
-  hide_long_help : Bool
 }
 
 ///|
@@ -79,7 +73,6 @@ pub struct FlagArg {
     short? : Char,
     long? : String,
     about? : String,
-    long_about? : String,
     action? : FlagAction,
     env? : String,
     default_value? : String,
@@ -89,12 +82,7 @@ pub struct FlagArg {
     required? : Bool,
     global? : Bool,
     negatable? : Bool,
-    aliases? : Array[String],
-    short_aliases? : Array[Char],
-    visible_aliases? : Array[String],
-    visible_short_aliases? : Array[Char],
     hidden? : Bool,
-    hide_long_help? : Bool,
   ) -> FlagArg
 }
 
@@ -109,7 +97,6 @@ pub fn FlagArg::new(
   short? : Char,
   long? : String,
   about? : String,
-  long_about? : String,
   action? : FlagAction = FlagAction::SetTrue,
   env? : String,
   default_value? : String,
@@ -119,12 +106,7 @@ pub fn FlagArg::new(
   required? : Bool = false,
   global? : Bool = false,
   negatable? : Bool = false,
-  aliases? : Array[String] = [],
-  short_aliases? : Array[Char] = [],
-  visible_aliases? : Array[String] = [],
-  visible_short_aliases? : Array[Char] = [],
   hidden? : Bool = false,
-  hide_long_help? : Bool = false,
 ) -> FlagArg {
   FlagArg::{
     arg: Arg::{
@@ -133,7 +115,6 @@ pub fn FlagArg::new(
       long,
       index: None,
       about,
-      long_about,
       is_flag: true,
       is_positional: false,
       flag_action: action,
@@ -151,12 +132,7 @@ pub fn FlagArg::new(
       required,
       global,
       negatable,
-      aliases: clone_array_spec(aliases),
-      short_aliases: clone_array_spec(short_aliases),
-      visible_aliases: clone_array_spec(visible_aliases),
-      visible_short_aliases: clone_array_spec(visible_short_aliases),
       hidden,
-      hide_long_help,
     },
   }
 }
@@ -171,7 +147,6 @@ pub struct OptionArg {
     short? : Char,
     long? : String,
     about? : String,
-    long_about? : String,
     action? : OptionAction,
     env? : String,
     default_value? : String,
@@ -185,12 +160,7 @@ pub struct OptionArg {
     group? : String,
     required? : Bool,
     global? : Bool,
-    aliases? : Array[String],
-    short_aliases? : Array[Char],
-    visible_aliases? : Array[String],
-    visible_short_aliases? : Array[Char],
     hidden? : Bool,
-    hide_long_help? : Bool,
   ) -> OptionArg
 }
 
@@ -205,7 +175,6 @@ pub fn OptionArg::new(
   short? : Char,
   long? : String,
   about? : String,
-  long_about? : String,
   action? : OptionAction = OptionAction::Set,
   env? : String,
   default_value? : String,
@@ -219,12 +188,7 @@ pub fn OptionArg::new(
   group? : String,
   required? : Bool = false,
   global? : Bool = false,
-  aliases? : Array[String] = [],
-  short_aliases? : Array[Char] = [],
-  visible_aliases? : Array[String] = [],
-  visible_short_aliases? : Array[Char] = [],
   hidden? : Bool = false,
-  hide_long_help? : Bool = false,
 ) -> OptionArg {
   OptionArg::{
     arg: Arg::{
@@ -233,7 +197,6 @@ pub fn OptionArg::new(
       long,
       index: None,
       about,
-      long_about,
       is_flag: false,
       is_positional: false,
       flag_action: FlagAction::SetTrue,
@@ -251,12 +214,7 @@ pub fn OptionArg::new(
       required,
       global,
       negatable: false,
-      aliases: clone_array_spec(aliases),
-      short_aliases: clone_array_spec(short_aliases),
-      visible_aliases: clone_array_spec(visible_aliases),
-      visible_short_aliases: clone_array_spec(visible_short_aliases),
       hidden,
-      hide_long_help,
     },
   }
 }
@@ -270,7 +228,6 @@ pub struct PositionalArg {
     name : String,
     index? : Int,
     about? : String,
-    long_about? : String,
     env? : String,
     default_value? : String,
     default_values? : Array[String],
@@ -284,7 +241,6 @@ pub struct PositionalArg {
     required? : Bool,
     global? : Bool,
     hidden? : Bool,
-    hide_long_help? : Bool,
   ) -> PositionalArg
 }
 
@@ -298,7 +254,6 @@ pub fn PositionalArg::new(
   name : String,
   index? : Int,
   about? : String,
-  long_about? : String,
   env? : String,
   default_value? : String,
   default_values? : Array[String],
@@ -312,7 +267,6 @@ pub fn PositionalArg::new(
   required? : Bool = false,
   global? : Bool = false,
   hidden? : Bool = false,
-  hide_long_help? : Bool = false,
 ) -> PositionalArg {
   PositionalArg::{
     arg: Arg::{
@@ -321,7 +275,6 @@ pub fn PositionalArg::new(
       long: None,
       index,
       about,
-      long_about,
       is_flag: false,
       is_positional: true,
       flag_action: FlagAction::SetTrue,
@@ -339,12 +292,7 @@ pub fn PositionalArg::new(
       required,
       global,
       negatable: false,
-      aliases: [],
-      short_aliases: [],
-      visible_aliases: [],
-      visible_short_aliases: [],
       hidden,
-      hide_long_help,
     },
   }
 }
