@@ -66,11 +66,11 @@ fn resolve_value_range(range : EngineValueRange) -> (Int, Int?) {
 ///|
 fn validate_value_range(
   range : EngineValueRange,
-) -> (Int, Int?) raise EngineArgBuildError {
+) -> (Int, Int?) raise ArgBuildError {
   let (min, max) = resolve_value_range(range)
   match max {
     Some(max_value) if max_value < min =>
-      raise EngineArgBuildError::Unsupported("max values must be >= min values")
+      raise ArgBuildError::Unsupported("max values must be >= min values")
     _ => ()
   }
   (min, max)
@@ -79,7 +79,7 @@ fn validate_value_range(
 ///|
 fn arg_min_max_for_validate(
   arg : EngineArg,
-) -> (Int, Int?) raise EngineArgBuildError {
+) -> (Int, Int?) raise ArgBuildError {
   match arg.num_args {
     Some(range) => validate_value_range(range)
     None => (0, None)

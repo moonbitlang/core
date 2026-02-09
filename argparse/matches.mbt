@@ -109,13 +109,13 @@ pub fn Matches::subcommand_matches(self : Matches, name : String) -> Matches? {
 ///|
 /// Decode a full argument struct/enum from `Matches`.
 pub(open) trait FromMatches {
-  from_matches(matches : Matches) -> Self raise ArgumentError
+  from_matches(matches : Matches) -> Self raise ArgParseError
 }
 
 ///|
 /// Decode a full argument struct/enum from `Matches`.
 pub fn[T : FromMatches] from_matches(
   matches : Matches,
-) -> T raise ArgumentError {
+) -> T raise ArgParseError {
   T::from_matches(matches)
 }

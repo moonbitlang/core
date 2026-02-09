@@ -44,7 +44,7 @@ let cmd = @argparse.Command("demo", about="demo app", version="1.2.3")
 try cmd.parse(argv=["--help"], env={}) catch {
   @argparse.DisplayHelp::Long(text) => println(text)
   @argparse.DisplayVersion::Long(text) => println(text)
-  @argparse.ArgumentError::UnknownArgument(arg, _) => {
+  @argparse.ArgParseError::UnknownArgument(arg, _) => {
     println("Unknown argument: " + arg)
   }
   _ => panic()

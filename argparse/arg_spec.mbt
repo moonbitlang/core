@@ -14,7 +14,7 @@
 
 ///|
 /// Behavior for flag args.
-pub enum FlagAction {
+pub(all) enum FlagAction {
   SetTrue
   SetFalse
   Count

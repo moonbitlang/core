@@ -14,18 +14,18 @@
 
 ///|
 /// Render short help text for a clap-style command.
-fn render_help_short(cmd : EngineCommand) -> String {
+fn render_help_short(cmd : Command) -> String {
   render_help_with_style(cmd, false)
 }
 
 ///|
 /// Render long help text for a clap-style command.
-fn render_help_long(cmd : EngineCommand) -> String {
+fn render_help_long(cmd : Command) -> String {
   render_help_with_style(cmd, true)
 }
 
 ///|
-fn render_help_with_style(cmd : EngineCommand, long_help : Bool) -> String {
+fn render_help_with_style(cmd : Command, long_help : Bool) -> String {
   let lines = Array::new(capacity=16)
   lines.push("Usage: " + cmd.name + usage_tail(cmd, long_help))
   let about = command_about(cmd, long_help)
@@ -65,7 +65,7 @@ fn render_help_with_style(cmd : EngineCommand, long_help : Bool) -> String {
 }
 
 ///|
-fn usage_tail(cmd : EngineCommand, long_help : Bool) -> String {
+fn usage_tail(cmd : Command, long_help : Bool) -> String {
   let mut tail = ""
   if has_options(cmd, long_help) {
     tail = tail + " [options]"
@@ -81,8 +81,8 @@ fn usage_tail(cmd : EngineCommand, long_help : Bool) -> String {
 }
 
 ///|
-fn has_options(cmd : EngineCommand, long_help : Bool) -> Bool {
-  for arg in cmd.args {
+fn has_options(cmd : Command, long_help : Bool) -> Bool {
+  for arg in command_engine_args(cmd) {
     if arg_hidden_in_style(arg, long_help) {
       continue
     }
@@ -94,9 +94,9 @@ fn has_options(cmd : EngineCommand, long_help : Bool) -> Bool {
 }
 
 ///|
-fn positional_usage(cmd : EngineCommand, long_help : Bool) -> String {
-  let parts = Array::new(capacity=cmd.args.length())
-  for arg in positional_args(cmd.args) {
+fn positional_usage(cmd : Command, long_help : Bool) -> String {
+  let parts = Array::new(capacity=command_engine_args(cmd).length())
+  for arg in positional_args(command_engine_args(cmd)) {
     if arg_hidden_in_style(arg, long_help) {
       continue
     }
@@ -117,8 +117,8 @@ fn positional_usage(cmd : EngineCommand, long_help : Bool) -> String {
 }
 
 ///|
-fn has_positionals(cmd : EngineCommand, long_help : Bool) -> Bool {
-  for arg in cmd.args {
+fn has_positionals(cmd : Command, long_help : Bool) -> Bool {
+  for arg in command_engine_args(cmd) {
     if is_positional_arg(arg) && !arg_hidden_in_style(arg, long_help) {
       return true
     }
@@ -127,16 +127,16 @@ fn has_positionals(cmd : EngineCommand, long_help : Bool) -> Bool {
 }
 
 ///|
-fn option_entries(cmd : EngineCommand, long_help : Bool) -> Array[String] {
-  let entries = Array::new(capacity=cmd.args.length() + 2)
-  let display = Array::new(capacity=cmd.args.length() + 2)
+fn option_entries(cmd : Command, long_help : Bool) -> Array[String] {
+  let entries = Array::new(capacity=command_engine_args(cmd).length() + 2)
+  let display = Array::new(capacity=command_engine_args(cmd).length() + 2)
   if help_flag_enabled(cmd) {
     display.push(("-h, --help", "Show help information."))
   }
   if version_flag_enabled(cmd) {
     display.push(("-V, --version", "Show version information."))
   }
-  for arg in cmd.args {
+  for arg in command_engine_args(cmd) {
     if arg.long is None && arg.short is None {
       continue
     }
@@ -166,10 +166,10 @@ fn option_entries(cmd : EngineCommand, long_help : Bool) -> Array[String] {
 }
 
 ///|
-fn positional_entries(cmd : EngineCommand, long_help : Bool) -> Array[String] {
-  let entries = Array::new(capacity=cmd.args.length())
-  let display = Array::new(capacity=cmd.args.length())
-  for arg in positional_args(cmd.args) {
+fn positional_entries(cmd : Command, long_help : Bool) -> Array[String] {
+  let entries = Array::new(capacity=command_engine_args(cmd).length())
+  let display = Array::new(capacity=command_engine_args(cmd).length())
+  for arg in positional_args(command_engine_args(cmd)) {
     if arg_hidden_in_style(arg, long_help) {
       continue
     }
@@ -193,7 +193,7 @@ fn positional_entries(cmd : EngineCommand, long_help : Bool) -> Array[String] {
 }
 
 ///|
-fn subcommand_entries(cmd : EngineCommand, long_help : Bool) -> Array[String] {
+fn subcommand_entries(cmd : Command, long_help : Bool) -> Array[String] {
   let display = Array::new(capacity=cmd.subcommands.length() + 1)
   for sub in cmd.subcommands {
     if command_hidden_in_style(sub, long_help) {
@@ -221,10 +221,10 @@ fn subcommand_entries(cmd : EngineCommand, long_help : Bool) -> Array[String] {
 }
 
 ///|
-fn group_entries(cmd : EngineCommand, long_help : Bool) -> Array[String] {
-  let entries = Array::new(capacity=cmd.groups.length())
-  let display = Array::new(capacity=cmd.groups.length())
-  for group in cmd.groups {
+fn group_entries(cmd : Command, long_help : Bool) -> Array[String] {
+  let entries = Array::new(capacity=command_engine_groups(cmd).length())
+  let display = Array::new(capacity=command_engine_groups(cmd).length())
+  for group in command_engine_groups(cmd) {
     let name = group_label(group)
     let members = group_members(cmd, group, long_help)
     if members == "" {
@@ -248,7 +248,7 @@ fn group_entries(cmd : EngineCommand, long_help : Bool) -> Array[String] {
 }
 
 ///|
-fn command_display(cmd : EngineCommand) -> String {
+fn command_display(cmd : Command) -> String {
   if cmd.visible_aliases.length() == 0 {
     cmd.name
   } else {
@@ -296,17 +296,19 @@ fn positional_display(arg : EngineArg) -> String {
 }
 
 ///|
-fn command_about(cmd : EngineCommand, long_help : Bool) -> String {
+fn command_about(cmd : Command, long_help : Bool) -> String {
+  let about = cmd.about.unwrap_or("")
+  let long_about = cmd.long_about.unwrap_or("")
   if long_help {
-    if cmd.long_about != "" {
-      cmd.long_about
+    if long_about != "" {
+      long_about
     } else {
-      cmd.about
+      about
     }
-  } else if cmd.about != "" {
-    cmd.about
+  } else if about != "" {
+    about
   } else {
-    cmd.long_about
+    long_about
   }
 }
 
@@ -364,12 +366,12 @@ fn arg_hidden_in_style(arg : EngineArg, long_help : Bool) -> Bool {
 }
 
 ///|
-fn command_hidden_in_style(cmd : EngineCommand, _long_help : Bool) -> Bool {
+fn command_hidden_in_style(cmd : Command, _long_help : Bool) -> Bool {
   cmd.hidden
 }
 
 ///|
-fn has_subcommands_for_help(cmd : EngineCommand, long_help : Bool) -> Bool {
+fn has_subcommands_for_help(cmd : Command, long_help : Bool) -> Bool {
   if help_subcommand_enabled(cmd) {
     return true
   }
@@ -409,12 +411,12 @@ fn group_label(group : EngineArgGroup) -> String {
 
 ///|
 fn group_members(
-  cmd : EngineCommand,
+  cmd : Command,
   group : EngineArgGroup,
   long_help : Bool,
 ) -> String {
   let members = []
-  for arg in cmd.args {
+  for arg in command_engine_args(cmd) {
     if arg_hidden_in_style(arg, long_help) {
       continue
     }

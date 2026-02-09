@@ -2,7 +2,7 @@
 package "moonbitlang/core/argparse"
 
 // Values
-pub fn[T : FromMatches] from_matches(Matches) -> T raise ArgumentError
+pub fn[T : FromMatches] from_matches(Matches) -> T raise ArgParseError
 
 // Errors
 pub suberror ArgBuildError {
@@ -10,7 +10,7 @@ pub suberror ArgBuildError {
 }
 pub impl Show for ArgBuildError
 
-pub(all) suberror ArgumentError {
+pub(all) suberror ArgParseError {
   UnknownArgument(String, String?)
   InvalidArgument(String)
   MissingValue(String)
@@ -22,7 +22,7 @@ pub(all) suberror ArgumentError {
   MissingGroup(String)
   GroupConflict(String)
 }
-pub impl Show for ArgumentError
+pub impl Show for ArgParseError
 
 pub suberror DisplayHelp {
   Short(String)
@@ -47,7 +47,7 @@ pub fn Command::parse(Self, argv? : Array[String], env? : Map[String, String]) -
 pub fn Command::render_help(Self) -> String
 pub fn Command::render_long_help(Self) -> String
 
-pub enum FlagAction {
+pub(all) enum FlagAction {
   SetTrue
   SetFalse
   Count
@@ -122,6 +122,6 @@ pub impl Show for ValueSource
 trait ArgLike
 
 pub(open) trait FromMatches {
-  from_matches(Matches) -> Self raise ArgumentError
+  from_matches(Matches) -> Self raise ArgParseError
 }
 

@@ -14,7 +14,7 @@
 
 ///|
 /// Errors raised during parsing or decoding of arguments.
-pub(all) suberror ArgumentError {
+pub(all) suberror ArgParseError {
   UnknownArgument(String, String?)
   InvalidArgument(String)
   MissingValue(String)

@@ -99,144 +99,23 @@ fn normalize_args(args : Array[&ArgLike]) -> Array[Arg] {
 ///|
 /// Render short help text without parsing.
 pub fn Command::render_help(self : Command) -> String {
-  to_engine_command(self).render_help()
+  render_help_short(self)
 }
 
 ///|
 /// Render long help text without parsing.
 pub fn Command::render_long_help(self : Command) -> String {
-  to_engine_command(self).render_long_help()
+  render_help_long(self)
 }
 
 ///|
 /// Parse argv/environment according to this command spec.
 pub fn Command::parse(
   self : Command,
-  argv? : Array[String],
-  env? : Map[String, String],
+  argv? : Array[String] = default_argv(),
+  env? : Map[String, String] = {},
 ) -> Matches raise {
-  let raw = match (argv, env) {
-    (Some(actual_argv), Some(actual_env)) =>
-      to_engine_command(self).parse(argv=actual_argv, env=actual_env) catch {
-        EngineDisplayHelp::Short(text) => raise DisplayHelp::Short(text)
-        EngineDisplayHelp::Long(text) => raise DisplayHelp::Long(text)
-        EngineDisplayVersion::Short(text) => raise DisplayVersion::Short(text)
-        EngineDisplayVersion::Long(text) => raise DisplayVersion::Long(text)
-        EngineArgumentError::UnknownArgument(arg, hint) =>
-          raise ArgumentError::UnknownArgument(arg, hint)
-        EngineArgumentError::InvalidArgument(msg) =>
-          raise ArgumentError::InvalidArgument(msg)
-        EngineArgumentError::MissingValue(msg) =>
-          raise ArgumentError::MissingValue(msg)
-        EngineArgumentError::MissingRequired(name) =>
-          raise ArgumentError::MissingRequired(name)
-        EngineArgumentError::TooFewValues(name, got, min) =>
-          raise ArgumentError::TooFewValues(name, got, min)
-        EngineArgumentError::TooManyValues(name, got, max) =>
-          raise ArgumentError::TooManyValues(name, got, max)
-        EngineArgumentError::TooManyPositionals =>
-          raise ArgumentError::TooManyPositionals
-        EngineArgumentError::InvalidValue(msg) =>
-          raise ArgumentError::InvalidValue(msg)
-        EngineArgumentError::MissingGroup(name) =>
-          raise ArgumentError::MissingGroup(name)
-        EngineArgumentError::GroupConflict(name) =>
-          raise ArgumentError::GroupConflict(name)
-        EngineArgBuildError::Unsupported(msg) =>
-          raise ArgBuildError::Unsupported(msg)
-        _ => panic()
-      }
-    (Some(actual_argv), None) =>
-      to_engine_command(self).parse(argv=actual_argv) catch {
-        EngineDisplayHelp::Short(text) => raise DisplayHelp::Short(text)
-        EngineDisplayHelp::Long(text) => raise DisplayHelp::Long(text)
-        EngineDisplayVersion::Short(text) => raise DisplayVersion::Short(text)
-        EngineDisplayVersion::Long(text) => raise DisplayVersion::Long(text)
-        EngineArgumentError::UnknownArgument(arg, hint) =>
-          raise ArgumentError::UnknownArgument(arg, hint)
-        EngineArgumentError::InvalidArgument(msg) =>
-          raise ArgumentError::InvalidArgument(msg)
-        EngineArgumentError::MissingValue(msg) =>
-          raise ArgumentError::MissingValue(msg)
-        EngineArgumentError::MissingRequired(name) =>
-          raise ArgumentError::MissingRequired(name)
-        EngineArgumentError::TooFewValues(name, got, min) =>
-          raise ArgumentError::TooFewValues(name, got, min)
-        EngineArgumentError::TooManyValues(name, got, max) =>
-          raise ArgumentError::TooManyValues(name, got, max)
-        EngineArgumentError::TooManyPositionals =>
-          raise ArgumentError::TooManyPositionals
-        EngineArgumentError::InvalidValue(msg) =>
-          raise ArgumentError::InvalidValue(msg)
-        EngineArgumentError::MissingGroup(name) =>
-          raise ArgumentError::MissingGroup(name)
-        EngineArgumentError::GroupConflict(name) =>
-          raise ArgumentError::GroupConflict(name)
-        EngineArgBuildError::Unsupported(msg) =>
-          raise ArgBuildError::Unsupported(msg)
-        _ => panic()
-      }
-    (None, Some(actual_env)) =>
-      to_engine_command(self).parse(env=actual_env) catch {
-        EngineDisplayHelp::Short(text) => raise DisplayHelp::Short(text)
-        EngineDisplayHelp::Long(text) => raise DisplayHelp::Long(text)
-        EngineDisplayVersion::Short(text) => raise DisplayVersion::Short(text)
-        EngineDisplayVersion::Long(text) => raise DisplayVersion::Long(text)
-        EngineArgumentError::UnknownArgument(arg, hint) =>
-          raise ArgumentError::UnknownArgument(arg, hint)
-        EngineArgumentError::InvalidArgument(msg) =>
-          raise ArgumentError::InvalidArgument(msg)
-        EngineArgumentError::MissingValue(msg) =>
-          raise ArgumentError::MissingValue(msg)
-        EngineArgumentError::MissingRequired(name) =>
-          raise ArgumentError::MissingRequired(name)
-        EngineArgumentError::TooFewValues(name, got, min) =>
-          raise ArgumentError::TooFewValues(name, got, min)
-        EngineArgumentError::TooManyValues(name, got, max) =>
-          raise ArgumentError::TooManyValues(name, got, max)
-        EngineArgumentError::TooManyPositionals =>
-          raise ArgumentError::TooManyPositionals
-        EngineArgumentError::InvalidValue(msg) =>
-          raise ArgumentError::InvalidValue(msg)
-        EngineArgumentError::MissingGroup(name) =>
-          raise ArgumentError::MissingGroup(name)
-        EngineArgumentError::GroupConflict(name) =>
-          raise ArgumentError::GroupConflict(name)
-        EngineArgBuildError::Unsupported(msg) =>
-          raise ArgBuildError::Unsupported(msg)
-        _ => panic()
-      }
-    (None, None) =>
-      to_engine_command(self).parse() catch {
-        EngineDisplayHelp::Short(text) => raise DisplayHelp::Short(text)
-        EngineDisplayHelp::Long(text) => raise DisplayHelp::Long(text)
-        EngineDisplayVersion::Short(text) => raise DisplayVersion::Short(text)
-        EngineDisplayVersion::Long(text) => raise DisplayVersion::Long(text)
-        EngineArgumentError::UnknownArgument(arg, hint) =>
-          raise ArgumentError::UnknownArgument(arg, hint)
-        EngineArgumentError::InvalidArgument(msg) =>
-          raise ArgumentError::InvalidArgument(msg)
-        EngineArgumentError::MissingValue(msg) =>
-          raise ArgumentError::MissingValue(msg)
-        EngineArgumentError::MissingRequired(name) =>
-          raise ArgumentError::MissingRequired(name)
-        EngineArgumentError::TooFewValues(name, got, min) =>
-          raise ArgumentError::TooFewValues(name, got, min)
-        EngineArgumentError::TooManyValues(name, got, max) =>
-          raise ArgumentError::TooManyValues(name, got, max)
-        EngineArgumentError::TooManyPositionals =>
-          raise ArgumentError::TooManyPositionals
-        EngineArgumentError::InvalidValue(msg) =>
-          raise ArgumentError::InvalidValue(msg)
-        EngineArgumentError::MissingGroup(name) =>
-          raise ArgumentError::MissingGroup(name)
-        EngineArgumentError::GroupConflict(name) =>
-          raise ArgumentError::GroupConflict(name)
-        EngineArgBuildError::Unsupported(msg) =>
-          raise ArgBuildError::Unsupported(msg)
-        _ => panic()
-      }
-  }
+  let raw = parse_command(self, argv, env, [])
   build_matches(self, raw)
 }
 
@@ -307,61 +186,17 @@ fn convert_source(source : EngineValueSource) -> ValueSource {
 }
 
 ///|
-fn to_engine_command(cmd : Command) -> EngineCommand {
-  let mut out = EngineCommand::new(cmd.name)
-
-  match cmd.about {
-    Some(text) => out = out.about(text)
-    None => ()
-  }
-  match cmd.long_about {
-    Some(text) => out = out.long_about(text)
-    None => ()
-  }
-  match cmd.version {
-    Some(text) => out = out.version(text)
-    None => ()
-  }
-  match cmd.long_version {
-    Some(text) => out = out.long_version(text)
-    None => ()
-  }
-  for alias_name in cmd.aliases {
-    out = out.alias_name(alias_name)
-  }
-  for visible_alias_name in cmd.visible_aliases {
-    out = out.visible_alias(visible_alias_name)
-  }
-
-  if cmd.hidden {
-    out = out.hide()
-  }
-  if cmd.disable_help_flag {
-    out = out.disable_help_flag()
-  }
-  if cmd.disable_version_flag {
-    out = out.disable_version_flag()
-  }
-  if cmd.disable_help_subcommand {
-    out = out.disable_help_subcommand()
-  }
-  if cmd.arg_required_else_help {
-    out = out.arg_required_else_help()
-  }
-  if cmd.subcommand_required {
-    out = out.subcommand_required()
-  }
-  for group in collect_implicit_groups(cmd.args) {
-    out = out.group(group)
-  }
-
+fn command_engine_args(cmd : Command) -> Array[EngineArg] {
+  let args = Array::new(capacity=cmd.args.length())
   for spec in cmd.args {
-    out = out.arg(to_engine_arg(spec))
+    args.push(to_engine_arg(spec))
   }
-  for sub in cmd.subcommands {
-    out = out.subcommand(to_engine_command(sub))
-  }
-  out
+  args
+}
+
+///|
+fn command_engine_groups(cmd : Command) -> Array[EngineArgGroup] {
+  collect_implicit_groups(cmd.args)
 }
 
 ///|
