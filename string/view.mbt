@@ -14,3 +14,7 @@
 
 ///|
 pub using @builtin {trait ToStringView}
+
+///|
+#deprecated("@string.View is deprecated, use StringView instead.")
+pub type View = StringView
