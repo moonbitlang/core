@@ -24,6 +24,8 @@ pub(open) trait FromJson {
 }
 
 ///|
+/// Decode a Json value into a concrete type that implements `FromJson`.
+/// The `path` parameter is used to annotate errors with a JSON Pointer location.
 pub fn[T : FromJson] from_json(
   json : Json,
   path? : JsonPath = Root,
@@ -52,6 +54,9 @@ pub impl FromJson for Int with from_json(json, path) {
     n != @double.neg_infinity else {
     decode_error(path, "Int::from_json: expected number")
   }
+  if n != n.trunc() {
+    decode_error(path, "Int::from_json: expected integer")
+  }
   // Range check before conversion to avoid silent wrap/truncation
   let max_ok = 2147483647.0
   let min_ok = -2147483648.0
@@ -79,6 +84,9 @@ pub impl FromJson for UInt with from_json(json, path) {
     n != @double.infinity &&
     n != @double.neg_infinity else {
     decode_error(path, "UInt::from_json: expected number")
+  }
+  if n != n.trunc() {
+    decode_error(path, "UInt::from_json: expected integer")
   }
   // Range check before conversion to avoid silent wrap/truncation
   let max_ok = 4294967295.0

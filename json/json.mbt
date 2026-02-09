@@ -13,79 +13,6 @@
 // limitations under the License.
 
 ///|
-/// Try to get this element as a Null
-#deprecated("Suggestion: `if json is Null { Some(()) } else { None }`")
-pub fn Json::as_null(self : Json) -> Unit? {
-  guard self is Null else { return None }
-  Some(())
-}
-
-///|
-/// Try to get this element as a Boolean
-#deprecated("Suggestion: `if json is True { Some(true) } else if json is False { Some(false) } else { None }`")
-pub fn Json::as_bool(self : Json) -> Bool? {
-  match self {
-    True => Some(true)
-    False => Some(false)
-    _ => None
-  }
-}
-
-///|
-/// Try to get this element as a Number
-#deprecated("Suggestion: `if json is Number(n) { Some(n) } else { None }`")
-pub fn Json::as_number(self : Json) -> Double? {
-  guard self is Number(n, ..) else { return None }
-  Some(n)
-}
-
-///|
-/// Try to get this element as a String
-#deprecated("Suggestion: `if json is String(s) { Some(s) } else { None }`")
-pub fn Json::as_string(self : Json) -> String? {
-  guard self is String(s) else { return None }
-  Some(s)
-}
-
-///|
-/// Try to get this element as an Array
-#deprecated("Suggestion: `if json is Array(array) { Some(array) } else { None }`")
-pub fn Json::as_array(self : Json) -> Array[Json]? {
-  guard self is Array(arr) else { return None }
-  Some(arr)
-}
-
-///|
-/// Try to get this element as a Json Array and get the element at the `index` as a Json Value
-#deprecated("Suggestion: `if json is Array(array) { array.get(index) } else { None }`")
-pub fn Json::item(self : Json, index : Int) -> Json? {
-  if self is Array(arr) {
-    arr.get(index)
-  } else {
-    None
-  }
-}
-
-///|
-/// Try to get this element as an Object
-#deprecated
-pub fn Json::as_object(self : Json) -> Map[String, Json]? {
-  guard self is Object(obj) else { return None }
-  Some(obj)
-}
-
-///|
-/// Try to get this element as a Json Object and get the element with the `key` as a Json Value
-#deprecated("Suggestion: `if json is Object(obj) { obj.get(key) } else { None }`")
-pub fn Json::value(self : Json, key : String) -> Json? {
-  if self is Object(obj) {
-    obj.get(key)
-  } else {
-    None
-  }
-}
-
-///|
 fn indent_str(level : Int, indent : Int) -> String {
   if indent == 0 {
     ""
@@ -284,7 +211,6 @@ pub fn Json::stringify(
           } else {
             depth += 1
             buf.write_char('{')
-            buf.write_string(indent_str(depth, indent))
             // After child value printed, we resume from this frame
             stack.push(WriteFrame::Object(members.iter(), first=true))
           }
@@ -344,7 +270,9 @@ pub fn Json::stringify(
                   continue None
                 }
               }
-              if !first {
+              if first {
+                buf.write_string(indent_str(depth, indent))
+              } else {
                 buf.write_char(',')
                 buf.write_string(indent_str(depth, indent))
               }
@@ -361,7 +289,9 @@ pub fn Json::stringify(
             None => {
               depth -= 1
               ignore(stack.pop())
-              buf.write_string(indent_str(depth, indent))
+              if !first {
+                buf.write_string(indent_str(depth, indent))
+              }
               buf.write_char('}')
               continue None
             }
@@ -373,8 +303,31 @@ pub fn Json::stringify(
 
 ///|
 fn escape(str : String, escape_slash~ : Bool) -> String {
+  let mut needs_escape = false
+  for c in str.iter() {
+    match c {
+      '"' | '\\' | '\n' | '\r' | '\b' | '\t' => {
+        needs_escape = true
+        break
+      }
+      '/' if escape_slash => {
+        needs_escape = true
+        break
+      }
+      _ => {
+        let code = c.to_int()
+        if code == 0x0C || code < ' ' {
+          needs_escape = true
+          break
+        }
+      }
+    }
+  }
+  if !needs_escape {
+    return str
+  }
   let buf = StringBuilder::new(size_hint=str.length())
-  for c in str {
+  for c in str.iter() {
     match c {
       '"' => buf.write_string("\\\"")
       '\\' => buf.write_string("\\\\")
