@@ -128,15 +128,30 @@ fn has_positionals(cmd : Command, long_help : Bool) -> Bool {
 
 ///|
 fn option_entries(cmd : Command, long_help : Bool) -> Array[String] {
-  let entries = Array::new(capacity=command_engine_args(cmd).length() + 2)
-  let display = Array::new(capacity=command_engine_args(cmd).length() + 2)
-  if help_flag_enabled(cmd) {
-    display.push(("-h, --help", "Show help information."))
+  let args = command_engine_args(cmd)
+  let entries = Array::new(capacity=args.length() + 2)
+  let display = Array::new(capacity=args.length() + 2)
+  let builtin_help_short = help_flag_enabled(cmd) &&
+    !has_short_option(args, 'h')
+  let builtin_help_long = help_flag_enabled(cmd) &&
+    !has_long_option(args, "help")
+  let builtin_version_short = version_flag_enabled(cmd) &&
+    !has_short_option(args, 'V')
+  let builtin_version_long = version_flag_enabled(cmd) &&
+    !has_long_option(args, "version")
+  let builtin_help_label = builtin_option_label(
+    builtin_help_short, builtin_help_long, "-h", "--help",
+  )
+  if builtin_help_label is Some(label) {
+    display.push((label, "Show help information."))
   }
-  if version_flag_enabled(cmd) {
-    display.push(("-V, --version", "Show version information."))
+  let builtin_version_label = builtin_option_label(
+    builtin_version_short, builtin_version_long, "-V", "--version",
+  )
+  if builtin_version_label is Some(label) {
+    display.push((label, "Show version information."))
   }
-  for arg in command_engine_args(cmd) {
+  for arg in args {
     if arg.long is None && arg.short is None {
       continue
     }
@@ -163,6 +178,44 @@ fn option_entries(cmd : Command, long_help : Bool) -> Array[String] {
     entries.push("  " + name + padding + doc)
   }
   entries
+}
+
+///|
+fn has_long_option(args : Array[EngineArg], name : String) -> Bool {
+  for arg in args {
+    if arg.long is Some(long) && long == name {
+      return true
+    }
+  }
+  false
+}
+
+///|
+fn has_short_option(args : Array[EngineArg], value : Char) -> Bool {
+  for arg in args {
+    if arg.short is Some(short) && short == value {
+      return true
+    }
+  }
+  false
+}
+
+///|
+fn builtin_option_label(
+  has_short : Bool,
+  has_long : Bool,
+  short_label : String,
+  long_label : String,
+) -> String? {
+  if has_short && has_long {
+    Some(short_label + ", " + long_label)
+  } else if has_short {
+    Some(short_label)
+  } else if has_long {
+    Some(long_label)
+  } else {
+    None
+  }
 }
 
 ///|

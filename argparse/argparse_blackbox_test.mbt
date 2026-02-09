@@ -1018,75 +1018,58 @@ test "validation branches exposed through parse" {
     _ => panic()
   }
 
-  try
-    @argparse.Command("demo", args=[@argparse.FlagArg("h", long="help")]).parse(
-      argv=[],
-      env=empty_env(),
-    )
-  catch {
-    @argparse.ArgBuildError::Unsupported(msg) =>
-      inspect(
-        msg,
-        content=(
-          #|option name reserved for built-in help: --help (disable with disable_help_flag)
-        ),
-      )
-    _ => panic()
-  } noraise {
+  let custom_help = @argparse.Command("demo", args=[
+    @argparse.FlagArg(
+      "custom_help",
+      short='h',
+      long="help",
+      about="custom help",
+    ),
+  ])
+  let help_short = custom_help.parse(argv=["-h"], env=empty_env()) catch {
     _ => panic()
   }
+  let help_long = custom_help.parse(argv=["--help"], env=empty_env()) catch {
+    _ => panic()
+  }
+  assert_true(help_short.flags is { "custom_help": true, .. })
+  assert_true(help_long.flags is { "custom_help": true, .. })
+  inspect(
+    custom_help.render_help(),
+    content=(
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help  custom help
+    ),
+  )
 
-  try
-    @argparse.Command("demo", args=[@argparse.FlagArg("h", short='h')]).parse(
-      argv=[],
-      env=empty_env(),
-    )
-  catch {
-    @argparse.ArgBuildError::Unsupported(msg) =>
-      inspect(
-        msg,
-        content=(
-          #|option name reserved for built-in help: -h (disable with disable_help_flag)
-        ),
-      )
-    _ => panic()
-  } noraise {
+  let custom_version = @argparse.Command("demo", version="1.0", args=[
+    @argparse.FlagArg(
+      "custom_version",
+      short='V',
+      long="version",
+      about="custom version",
+    ),
+  ])
+  let version_short = custom_version.parse(argv=["-V"], env=empty_env()) catch {
     _ => panic()
   }
-
-  try
-    @argparse.Command("demo", version="1.0", args=[
-      @argparse.FlagArg("v", long="version"),
-    ]).parse(argv=[], env=empty_env())
-  catch {
-    @argparse.ArgBuildError::Unsupported(msg) =>
-      inspect(
-        msg,
-        content=(
-          #|option name reserved for built-in version: --version (disable with disable_version_flag)
-        ),
-      )
-    _ => panic()
-  } noraise {
+  let version_long = custom_version.parse(argv=["--version"], env=empty_env()) catch {
     _ => panic()
   }
-
-  try
-    @argparse.Command("demo", version="1.0", args=[
-      @argparse.FlagArg("v", short='V'),
-    ]).parse(argv=[], env=empty_env())
-  catch {
-    @argparse.ArgBuildError::Unsupported(msg) =>
-      inspect(
-        msg,
-        content=(
-          #|option name reserved for built-in version: -V (disable with disable_version_flag)
-        ),
-      )
-    _ => panic()
-  } noraise {
-    _ => panic()
-  }
+  assert_true(version_short.flags is { "custom_version": true, .. })
+  assert_true(version_long.flags is { "custom_version": true, .. })
+  inspect(
+    custom_version.render_help(),
+    content=(
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help     Show help information.
+      #|  -V, --version  custom version
+    ),
+  )
 
   try
     @argparse.Command("demo", args=[

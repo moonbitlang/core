@@ -86,6 +86,14 @@ fn parse_command(
   let child_globals = concat_globals(inherited_globals, globals_here)
   let long_index = build_long_index(inherited_globals, args)
   let short_index = build_short_index(inherited_globals, args)
+  let builtin_help_short = help_flag_enabled(cmd) &&
+    short_index.get('h') is None
+  let builtin_help_long = help_flag_enabled(cmd) &&
+    long_index.get("help") is None
+  let builtin_version_short = version_flag_enabled(cmd) &&
+    short_index.get('V') is None
+  let builtin_version_long = version_flag_enabled(cmd) &&
+    long_index.get("version") is None
   let positionals = positional_args(args)
   let positional_values = []
   let last_pos_idx = last_positional_index(positionals)
@@ -107,16 +115,16 @@ fn parse_command(
       i = i + 1
       continue
     }
-    if help_flag_enabled(cmd) && arg == "-h" {
+    if builtin_help_short && arg == "-h" {
       raise_help(render_help_short(cmd), false)
     }
-    if help_flag_enabled(cmd) && arg == "--help" {
+    if builtin_help_long && arg == "--help" {
       raise_help(render_help_long(cmd), true)
     }
-    if version_flag_enabled(cmd) && arg == "-V" {
+    if builtin_version_short && arg == "-V" {
       raise_version(command_version(cmd, false), false)
     }
-    if version_flag_enabled(cmd) && arg == "--version" {
+    if builtin_version_long && arg == "--version" {
       raise_version(command_version(cmd, true), true)
     }
     if should_parse_as_positional(
@@ -128,13 +136,13 @@ fn parse_command(
     }
     if arg.has_prefix("--") {
       let (name, inline) = split_long(arg)
-      if help_flag_enabled(cmd) && name == "help" {
+      if builtin_help_long && name == "help" {
         if inline is Some(_) {
           raise ArgParseError::InvalidArgument(arg)
         }
         raise_help(render_help_long(cmd), true)
       }
-      if version_flag_enabled(cmd) && name == "version" {
+      if builtin_version_long && name == "version" {
         if inline is Some(_) {
           raise ArgParseError::InvalidArgument(arg)
         }
@@ -203,10 +211,10 @@ fn parse_command(
       let mut pos = 1
       while pos < arg.length() {
         let short = arg.get_char(pos).unwrap()
-        if short == 'h' && help_flag_enabled(cmd) {
+        if short == 'h' && builtin_help_short {
           raise_help(render_help_short(cmd), false)
         }
-        if short == 'V' && version_flag_enabled(cmd) {
+        if short == 'V' && builtin_version_short {
           raise_version(command_version(cmd, false), false)
         }
         let spec = match short_index.get(short) {
@@ -247,7 +255,9 @@ fn parse_command(
     }
     if help_subcommand_enabled(cmd) && arg == "help" {
       let rest = argv[i + 1:].to_array()
-      let (target, long_help) = resolve_help_target(cmd, rest)
+      let (target, long_help) = resolve_help_target(
+        cmd, rest, builtin_help_short, builtin_help_long,
+      )
       let text = render_help_for_style(target, long_help)
       raise_help(text, long_help)
     }
@@ -347,8 +357,6 @@ fn validate_command(
   validate_subcommand_defs(cmd.subcommands)
   validate_subcommand_required_policy(cmd)
   validate_help_subcommand(cmd)
-  validate_help_flag(cmd)
-  validate_version_flag(cmd)
   validate_version_actions(cmd)
   for arg in args {
     validate_arg(arg)
@@ -596,52 +604,6 @@ fn validate_help_subcommand(cmd : Command) -> Unit raise ArgBuildError {
     raise ArgBuildError::Unsupported(
       "subcommand name reserved for built-in help: help (disable with disable_help_subcommand)",
     )
-  }
-}
-
-///|
-fn validate_help_flag(cmd : Command) -> Unit raise ArgBuildError {
-  if !help_flag_enabled(cmd) {
-    return
-  }
-  for arg in command_engine_args(cmd) {
-    for name in collect_long_names(arg) {
-      if name == "help" {
-        raise ArgBuildError::Unsupported(
-          "option name reserved for built-in help: --help (disable with disable_help_flag)",
-        )
-      }
-    }
-    for short in collect_short_names(arg) {
-      if short == 'h' {
-        raise ArgBuildError::Unsupported(
-          "option name reserved for built-in help: -h (disable with disable_help_flag)",
-        )
-      }
-    }
-  }
-}
-
-///|
-fn validate_version_flag(cmd : Command) -> Unit raise ArgBuildError {
-  if !version_flag_enabled(cmd) {
-    return
-  }
-  for arg in command_engine_args(cmd) {
-    for name in collect_long_names(arg) {
-      if name == "version" {
-        raise ArgBuildError::Unsupported(
-          "option name reserved for built-in version: --version (disable with disable_version_flag)",
-        )
-      }
-    }
-    for short in collect_short_names(arg) {
-      if short == 'V' {
-        raise ArgBuildError::Unsupported(
-          "option name reserved for built-in version: -V (disable with disable_version_flag)",
-        )
-      }
-    }
   }
 }
 
@@ -1522,8 +1484,12 @@ fn find_subcommand(subs : Array[Command], name : String) -> Command? {
 fn resolve_help_target(
   cmd : Command,
   argv : Array[String],
+  builtin_help_short : Bool,
+  builtin_help_long : Bool,
 ) -> (Command, Bool) raise {
-  let (long_help, targets) = split_help_style(argv, help_flag_enabled(cmd))
+  let (long_help, targets) = split_help_style(
+    argv, builtin_help_short, builtin_help_long,
+  )
   let mut current = cmd
   let mut subs = cmd.subcommands
   for name in targets {
@@ -1545,16 +1511,17 @@ fn resolve_help_target(
 ///|
 fn split_help_style(
   argv : Array[String],
-  help_flag : Bool,
+  help_short : Bool,
+  help_long : Bool,
 ) -> (Bool, Array[String]) {
   if argv.length() == 0 {
     return (true, argv)
   }
-  if !help_flag {
+  if !help_short && !help_long {
     return (true, argv)
   }
   let last = argv[argv.length() - 1]
-  if last == "-h" || last == "--help" {
+  if (last == "-h" && help_short) || (last == "--help" && help_long) {
     let long_help = last == "--help"
     let rest = argv[:argv.length() - 1].to_array()
     (long_help, rest)
@@ -1584,8 +1551,6 @@ fn split_long(arg : String) -> (String, String?) {
     (name, Some(value))
   }
 }
-
-///|
 
 ///|
 fn[T] clone_array(arr : Array[T]) -> Array[T] {
