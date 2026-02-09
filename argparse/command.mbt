@@ -104,17 +104,22 @@ pub fn Command::parse(
   env? : Map[String, String] = {},
 ) -> Matches raise {
   let raw = parse_command(self, argv, env, [])
-  build_matches(self, raw)
+  build_matches(self, raw, [])
 }
 
 ///|
-fn build_matches(cmd : Command, raw : EngineMatches) -> Matches {
+fn build_matches(
+  cmd : Command,
+  raw : EngineMatches,
+  inherited_globals : Array[Arg],
+) -> Matches {
   let flags : Map[String, Bool] = {}
   let values : Map[String, Array[String]] = {}
   let flag_counts : Map[String, Int] = {}
   let sources : Map[String, ValueSource] = {}
+  let specs = concat_decl_specs(inherited_globals, cmd.args)
 
-  for spec in cmd.args {
+  for spec in specs {
     let name = arg_name(spec)
     match raw.get_many(name) {
       Some(vs) => values[name] = clone_array_cmd(vs)
@@ -138,11 +143,16 @@ fn build_matches(cmd : Command, raw : EngineMatches) -> Matches {
       None => ()
     }
   }
+  let child_globals = concat_decl_specs(
+    inherited_globals,
+    collect_decl_globals(cmd.args),
+  )
 
   let subcommand = match raw.subcommand() {
     Some((name, sub_raw)) =>
       match find_decl_subcommand(cmd.subcommands, name) {
-        Some(sub_spec) => Some((name, build_matches(sub_spec, sub_raw)))
+        Some(sub_spec) =>
+          Some((name, build_matches(sub_spec, sub_raw, child_globals)))
         None =>
           Some(
             (
@@ -161,6 +171,26 @@ fn build_matches(cmd : Command, raw : EngineMatches) -> Matches {
   }
 
   Matches::{ flags, values, flag_counts, sources, subcommand }
+}
+
+///|
+fn collect_decl_globals(args : Array[Arg]) -> Array[Arg] {
+  let globals = []
+  for arg in args {
+    if arg.global && (arg.long is Some(_) || arg.short is Some(_)) {
+      globals.push(arg)
+    }
+  }
+  globals
+}
+
+///|
+fn concat_decl_specs(parent : Array[Arg], more : Array[Arg]) -> Array[Arg] {
+  let out = clone_array_cmd(parent)
+  for arg in more {
+    out.push(arg)
+  }
+  out
 }
 
 ///|

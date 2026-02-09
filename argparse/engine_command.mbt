@@ -92,6 +92,12 @@ fn parse_command(
   let mut i = 0
   while i < argv.length() {
     let arg = argv[i]
+    if arg == "--" {
+      for rest in argv[i + 1:] {
+        positional_values.push(rest)
+      }
+      break
+    }
     let force_positional = match last_pos_idx {
       Some(idx) => positional_values.length() >= idx
       None => false
@@ -100,12 +106,6 @@ fn parse_command(
       positional_values.push(arg)
       i = i + 1
       continue
-    }
-    if arg == "--" {
-      for rest in argv[i + 1:] {
-        positional_values.push(rest)
-      }
-      break
     }
     if help_flag_enabled(cmd) && arg == "-h" {
       raise_help(render_help_short(cmd), false)

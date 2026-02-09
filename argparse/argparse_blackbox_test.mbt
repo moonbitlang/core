@@ -188,7 +188,10 @@ test "global option merges parent and child values" {
   }
   assert_true(matches.values is { "profile": ["parent", "child"], .. })
   assert_true(matches.sources is { "profile": @argparse.ValueSource::Argv, .. })
-  assert_true(matches.subcommand is Some(("run", _)))
+  assert_true(
+    matches.subcommand is Some(("run", sub)) &&
+    sub.values is { "profile": ["parent", "child"], .. },
+  )
 }
 
 ///|
@@ -212,7 +215,10 @@ test "global count merges parent and child occurrences" {
     _ => panic()
   }
   assert_true(matches.flag_counts is { "verbose": 3, .. })
-  assert_true(matches.subcommand is Some(("run", _)))
+  assert_true(
+    matches.subcommand is Some(("run", sub)) &&
+    sub.flag_counts is { "verbose": 3, .. },
+  )
 }
 
 ///|
@@ -231,7 +237,6 @@ test "help subcommand styles and errors" {
           #|
           #|Options:
           #|  -h, --help  Show help information.
-
         ),
       )
     _ => panic()
@@ -250,7 +255,6 @@ test "help subcommand styles and errors" {
           #|
           #|Options:
           #|  -h, --help  Show help information.
-
         ),
       )
     _ => panic()
@@ -271,7 +275,6 @@ test "help subcommand styles and errors" {
           #|
           #|Options:
           #|  -h, --help  Show help information.
-
         ),
       )
     _ => panic()
@@ -285,7 +288,6 @@ test "help subcommand styles and errors" {
         msg,
         content=(
           #|unexpected help argument: --bad
-
         ),
       )
     _ => panic()
@@ -299,7 +301,6 @@ test "help subcommand styles and errors" {
         msg,
         content=(
           #|unknown subcommand: missing
-
         ),
       )
     _ => panic()
@@ -383,6 +384,22 @@ test "long and short value parsing branches" {
 }
 
 ///|
+test "append option action is publicly selectable" {
+  let cmd = @argparse.Command("demo", args=[
+    @argparse.OptionArg(
+      "tag",
+      long="tag",
+      action=@argparse.OptionAction::Append,
+    ),
+  ])
+  let appended = cmd.parse(argv=["--tag", "a", "--tag", "b"], env=empty_env()) catch {
+    _ => panic()
+  }
+  assert_true(appended.values is { "tag": ["a", "b"], .. })
+  assert_true(appended.sources is { "tag": @argparse.ValueSource::Argv, .. })
+}
+
+///|
 test "negation parsing and invalid negation forms" {
   let cmd = @argparse.Command("demo", args=[
     @argparse.FlagArg("cache", long="cache", negatable=true),
@@ -439,7 +456,7 @@ test "positionals force mode and dash handling" {
   let dashed = force_cmd.parse(argv=["--", "p", "q"], env=empty_env()) catch {
     _ => panic()
   }
-  assert_true(dashed.values is { "tail": ["--", "p", "q"], .. })
+  assert_true(dashed.values is { "tail": ["p", "q"], .. })
 
   let negative_cmd = @argparse.Command("demo", args=[
     @argparse.PositionalArg("n", index=0),
@@ -501,7 +518,6 @@ test "env parsing for settrue setfalse count and invalid values" {
         msg,
         content=(
           #|invalid bool: bad
-
         ),
       )
     _ => panic()
@@ -515,7 +531,6 @@ test "env parsing for settrue setfalse count and invalid values" {
         msg,
         content=(
           #|invalid bool: bad
-
         ),
       )
     _ => panic()
@@ -529,7 +544,6 @@ test "env parsing for settrue setfalse count and invalid values" {
         msg,
         content=(
           #|invalid int: bad
-
         ),
       )
     _ => panic()
@@ -646,7 +660,6 @@ test "validation branches exposed through parse" {
         msg,
         content=(
           #|positional-only settings require no short/long
-
         ),
       )
     _ => panic()
@@ -664,7 +677,6 @@ test "validation branches exposed through parse" {
         msg,
         content=(
           #|help/version actions require short/long option
-
         ),
       )
     _ => panic()
@@ -687,7 +699,6 @@ test "validation branches exposed through parse" {
         msg,
         content=(
           #|help/version actions do not support negatable
-
         ),
       )
     _ => panic()
@@ -710,7 +721,6 @@ test "validation branches exposed through parse" {
         msg,
         content=(
           #|help/version actions do not support env/defaults
-
         ),
       )
     _ => panic()
@@ -732,7 +742,6 @@ test "validation branches exposed through parse" {
         msg,
         content=(
           #|multiple values require multiple/append
-
         ),
       )
     _ => panic()
@@ -750,7 +759,6 @@ test "validation branches exposed through parse" {
         msg,
         content=(
           #|default values require value-taking arguments
-
         ),
       )
     _ => panic()
@@ -768,7 +776,6 @@ test "validation branches exposed through parse" {
         msg,
         content=(
           #|default_values require multiple/append arguments
-
         ),
       )
     _ => panic()
@@ -791,7 +798,6 @@ test "validation branches exposed through parse" {
         msg,
         content=(
           #|max values must be >= min values
-
         ),
       )
     _ => panic()
@@ -810,7 +816,6 @@ test "validation branches exposed through parse" {
         msg,
         content=(
           #|duplicate group: g
-
         ),
       )
     _ => panic()
@@ -829,7 +834,6 @@ test "validation branches exposed through parse" {
         msg,
         content=(
           #|group cannot require itself: g
-
         ),
       )
     _ => panic()
@@ -847,7 +851,6 @@ test "validation branches exposed through parse" {
         msg,
         content=(
           #|group cannot conflict with itself: g
-
         ),
       )
     _ => panic()
@@ -866,7 +869,6 @@ test "validation branches exposed through parse" {
         msg,
         content=(
           #|unknown group arg: g -> missing
-
         ),
       )
     _ => panic()
@@ -885,7 +887,6 @@ test "validation branches exposed through parse" {
         msg,
         content=(
           #|duplicate arg name: x
-
         ),
       )
     _ => panic()
@@ -904,7 +905,6 @@ test "validation branches exposed through parse" {
         msg,
         content=(
           #|duplicate long option: --same
-
         ),
       )
     _ => panic()
@@ -923,7 +923,6 @@ test "validation branches exposed through parse" {
         msg,
         content=(
           #|duplicate short option: -s
-
         ),
       )
     _ => panic()
@@ -941,7 +940,6 @@ test "validation branches exposed through parse" {
         msg,
         content=(
           #|arg cannot require itself: x
-
         ),
       )
     _ => panic()
@@ -959,7 +957,6 @@ test "validation branches exposed through parse" {
         msg,
         content=(
           #|arg cannot conflict with itself: x
-
         ),
       )
     _ => panic()
@@ -978,7 +975,6 @@ test "validation branches exposed through parse" {
         msg,
         content=(
           #|duplicate subcommand: x
-
         ),
       )
     _ => panic()
@@ -997,7 +993,6 @@ test "validation branches exposed through parse" {
         msg,
         content=(
           #|subcommand_required requires at least one subcommand
-
         ),
       )
     _ => panic()
@@ -1016,7 +1011,6 @@ test "validation branches exposed through parse" {
         msg,
         content=(
           #|subcommand name reserved for built-in help: help (disable with disable_help_subcommand)
-
         ),
       )
     _ => panic()
@@ -1035,7 +1029,6 @@ test "validation branches exposed through parse" {
         msg,
         content=(
           #|option name reserved for built-in help: --help (disable with disable_help_flag)
-
         ),
       )
     _ => panic()
@@ -1054,7 +1047,6 @@ test "validation branches exposed through parse" {
         msg,
         content=(
           #|option name reserved for built-in help: -h (disable with disable_help_flag)
-
         ),
       )
     _ => panic()
@@ -1072,7 +1064,6 @@ test "validation branches exposed through parse" {
         msg,
         content=(
           #|option name reserved for built-in version: --version (disable with disable_version_flag)
-
         ),
       )
     _ => panic()
@@ -1090,7 +1081,6 @@ test "validation branches exposed through parse" {
         msg,
         content=(
           #|option name reserved for built-in version: -V (disable with disable_version_flag)
-
         ),
       )
     _ => panic()
@@ -1108,7 +1098,6 @@ test "validation branches exposed through parse" {
         msg,
         content=(
           #|version action requires command version text
-
         ),
       )
     _ => panic()

@@ -52,7 +52,6 @@ test "display help and version" {
       #|Options:
       #|  -h, --help     Show help information.
       #|  -V, --version  Show version information.
-
     ),
   )
   let mut version = ""
@@ -184,7 +183,6 @@ test "arg groups requires and conflicts" {
         msg,
         content=(
           #|mode conflicts with output
-
         ),
       )
     _ => panic()
@@ -350,7 +348,6 @@ test "negatable and conflicts" {
         msg,
         content=(
           #|conflicting arguments: verbose and quiet
-
         ),
       )
     _ => panic()
@@ -406,7 +403,6 @@ test "command policies" {
           #|
           #|Options:
           #|  -h, --help  Show help information.
-
         ),
       )
     _ => panic()

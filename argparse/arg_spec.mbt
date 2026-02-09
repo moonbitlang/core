@@ -24,7 +24,7 @@ pub(all) enum FlagAction {
 
 ///|
 /// Behavior for option args.
-pub enum OptionAction {
+pub(all) enum OptionAction {
   Set
   Append
 } derive(Eq, Show)

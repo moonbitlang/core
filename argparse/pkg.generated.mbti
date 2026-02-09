@@ -80,7 +80,7 @@ pub struct Matches {
   subcommand : (String, Matches)?
 }
 
-pub enum OptionAction {
+pub(all) enum OptionAction {
   Set
   Append
 }
