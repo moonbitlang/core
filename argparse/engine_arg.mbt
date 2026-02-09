@@ -38,6 +38,13 @@ priv struct EngineValueRange {
   upper : Int?
   lower_inclusive : Bool
   upper_inclusive : Bool
+
+  fn new(
+    lower? : Int?,
+    upper? : Int?,
+    lower_inclusive? : Bool,
+    upper_inclusive? : Bool,
+  ) -> EngineValueRange
 }
 
 ///|
@@ -124,6 +131,8 @@ priv struct EngineArg {
   hide_long_help : Bool
   global : Bool
   negatable : Bool
+
+  fn new(name : String) -> EngineArg
 }
 
 ///|

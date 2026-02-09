@@ -101,9 +101,13 @@ pub struct PositionalArg {
 pub fn PositionalArg::new(String, index? : Int, about? : String, long_about? : String, env? : String, default_value? : String, default_values? : Array[String], num_args? : ValueRange, multiple? : Bool, allow_hyphen_values? : Bool, last? : Bool, requires? : Array[String], conflicts_with? : Array[String], group? : String, required? : Bool, global? : Bool, hidden? : Bool, hide_long_help? : Bool) -> Self
 pub impl ArgLike for PositionalArg
 
-type ValueRange
+pub struct ValueRange {
+  // private fields
+
+  fn new(lower? : Int, upper? : Int, lower_inclusive? : Bool, upper_inclusive? : Bool) -> ValueRange
+}
 pub fn ValueRange::empty() -> Self
-pub fn ValueRange::new(lower? : Int?, upper? : Int?, lower_inclusive? : Bool, upper_inclusive? : Bool) -> Self
+pub fn ValueRange::new(lower? : Int, upper? : Int, lower_inclusive? : Bool, upper_inclusive? : Bool) -> Self
 pub fn ValueRange::single() -> Self
 pub impl Eq for ValueRange
 pub impl Show for ValueRange

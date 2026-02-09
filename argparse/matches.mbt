@@ -28,6 +28,8 @@ struct Matches {
   counts : Map[String, Int]
   value_sources : Map[String, ValueSource]
   subcommand : (String, Matches)?
+
+  fn new() -> Matches
 }
 
 ///|

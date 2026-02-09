@@ -10,17 +10,17 @@ let cmd = @argparse.Command(
   "demo",
   about="demo app",
   args=[
-    @argparse.FlagArg::new(
+    @argparse.FlagArg(
       "verbose",
       short='v',
       long="verbose",
     ),
-    @argparse.OptionArg::new(
+    @argparse.OptionArg(
       "count",
       long="count",
       env="COUNT",
     ),
-    @argparse.PositionalArg::new("name", index=0),
+    @argparse.PositionalArg("name", index=0),
   ],
 )
 
@@ -61,13 +61,13 @@ Use raw maps if you prefer pattern matching:
 ///|
 let echo = @argparse.Command(
   "echo",
-  args=[@argparse.PositionalArg::new("msg", index=0)],
+  args=[@argparse.PositionalArg("msg", index=0)],
 )
 let cmd = @argparse.Command(
   "demo",
   args=[
-    @argparse.FlagArg::new("verbose", long="verbose"),
-    @argparse.OptionArg::new("name", long="name"),
+    @argparse.FlagArg("verbose", long="verbose"),
+    @argparse.OptionArg("name", long="name"),
   ],
   subcommands=[echo],
 )

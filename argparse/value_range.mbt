@@ -14,37 +14,34 @@
 
 ///|
 /// Number-of-values constraint for an argument.
-struct ValueRange {
-  lower : Int?
-  upper : Int?
-  lower_inclusive : Bool
-  upper_inclusive : Bool
+pub struct ValueRange {
+  priv lower : Int?
+  priv upper : Int?
+  priv lower_inclusive : Bool
+  priv upper_inclusive : Bool
+
+  fn new(
+    lower? : Int,
+    upper? : Int,
+    lower_inclusive? : Bool,
+    upper_inclusive? : Bool,
+  ) -> ValueRange
 } derive(Eq, Show)
 
 ///|
 pub fn ValueRange::empty() -> ValueRange {
-  ValueRange::{
-    lower: Some(0),
-    upper: Some(0),
-    lower_inclusive: true,
-    upper_inclusive: true,
-  }
+  ValueRange(lower=0, upper=0)
 }
 
 ///|
 pub fn ValueRange::single() -> ValueRange {
-  ValueRange::{
-    lower: Some(1),
-    upper: Some(1),
-    lower_inclusive: true,
-    upper_inclusive: true,
-  }
+  ValueRange(lower=1, upper=1)
 }
 
 ///|
 pub fn ValueRange::new(
-  lower? : Int? = None,
-  upper? : Int? = None,
+  lower? : Int,
+  upper? : Int,
   lower_inclusive? : Bool = true,
   upper_inclusive? : Bool = true,
 ) -> ValueRange {

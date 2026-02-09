@@ -81,7 +81,7 @@ fn parse_command(
   if cmd.arg_required_else_help && argv.length() == 0 {
     raise_help(render_help_short(cmd), false)
   }
-  let matches = EngineMatches::new()
+  let matches = EngineMatches()
   let globals_here = collect_globals(args)
   let child_globals = concat_globals(inherited_globals, globals_here)
   let long_index = build_long_index(inherited_globals, args)

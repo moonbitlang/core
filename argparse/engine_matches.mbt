@@ -21,6 +21,8 @@ priv struct EngineMatches {
   flag_sources : Map[String, EngineValueSource]
   value_sources : Map[String, Array[EngineValueSource]]
   mut subcommand : (String, EngineMatches)?
+
+  fn new() -> EngineMatches
 }
 
 ///|

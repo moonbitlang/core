@@ -155,7 +155,7 @@ fn build_matches(cmd : Command, raw : EngineMatches) -> Matches {
     Some((name, sub_raw)) =>
       match find_decl_subcommand(cmd.subcommands, name) {
         Some(sub_spec) => Some((name, build_matches(sub_spec, sub_raw)))
-        None => Some((name, Matches::new()))
+        None => Some((name, Matches()))
       }
     None => None
   }
@@ -243,7 +243,7 @@ fn collect_implicit_groups(specs : Array[Arg]) -> Array[EngineArgGroup] {
 ///|
 fn to_engine_arg(arg : Arg) -> EngineArg {
   if arg.is_flag {
-    let mut out = EngineArg::new(arg.name).flag()
+    let mut out = EngineArg(arg.name).flag()
     match arg.short {
       Some(v) => out = out.short(v)
       None => ()
@@ -308,7 +308,7 @@ fn to_engine_arg(arg : Arg) -> EngineArg {
     }
     out
   } else if arg.is_positional {
-    let mut out = EngineArg::new(arg.name).option()
+    let mut out = EngineArg(arg.name).option()
     match arg.index {
       Some(v) => out = out.index(v)
       None => ()
@@ -370,7 +370,7 @@ fn to_engine_arg(arg : Arg) -> EngineArg {
     }
     out
   } else {
-    let mut out = EngineArg::new(arg.name).option()
+    let mut out = EngineArg(arg.name).option()
     match arg.short {
       Some(v) => out = out.short(v)
       None => ()
@@ -453,7 +453,7 @@ fn to_engine_arg(arg : Arg) -> EngineArg {
 
 ///|
 fn convert_value_range(range : ValueRange) -> EngineValueRange {
-  EngineValueRange::new(
+  EngineValueRange(
     lower=range.lower,
     upper=range.upper,
     lower_inclusive=range.lower_inclusive,
