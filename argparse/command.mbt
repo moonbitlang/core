@@ -15,25 +15,25 @@
 ///|
 /// Declarative command specification.
 pub struct Command {
-  name : String
-  args : Array[ArgSpec]
-  subcommands : Array[Command]
-  about : String?
-  long_about : String?
-  version : String?
-  long_version : String?
-  aliases : Array[String]
-  visible_aliases : Array[String]
-  disable_help_flag : Bool
-  disable_version_flag : Bool
-  disable_help_subcommand : Bool
-  arg_required_else_help : Bool
-  subcommand_required : Bool
-  hidden : Bool
+  priv name : String
+  priv args : Array[Arg]
+  priv subcommands : Array[Command]
+  priv about : String?
+  priv long_about : String?
+  priv version : String?
+  priv long_version : String?
+  priv aliases : Array[String]
+  priv visible_aliases : Array[String]
+  priv disable_help_flag : Bool
+  priv disable_version_flag : Bool
+  priv disable_help_subcommand : Bool
+  priv arg_required_else_help : Bool
+  priv subcommand_required : Bool
+  priv hidden : Bool
 
   fn new(
     name : String,
-    args? : Array[ArgSpec],
+    args? : Array[&ArgLike],
     subcommands? : Array[Command],
     about? : String,
     long_about? : String,
@@ -53,7 +53,7 @@ pub struct Command {
 ///|
 pub fn Command::new(
   name : String,
-  args? : Array[ArgSpec] = [],
+  args? : Array[&ArgLike] = [],
   subcommands? : Array[Command] = [],
   about? : String,
   long_about? : String,
@@ -70,7 +70,7 @@ pub fn Command::new(
 ) -> Command {
   Command::{
     name,
-    args: clone_array_cmd(args),
+    args: normalize_args(args),
     subcommands: clone_array_cmd(subcommands),
     about,
     long_about,
@@ -85,6 +85,15 @@ pub fn Command::new(
     subcommand_required,
     hidden,
   }
+}
+
+///|
+fn normalize_args(args : Array[&ArgLike]) -> Array[Arg] {
+  let out = Array::new(capacity=args.length())
+  for arg in args {
+    out.push(arg.to_arg())
+  }
+  out
 }
 
 ///|
@@ -342,6 +351,9 @@ fn to_engine_command(cmd : Command) -> EngineCommand {
   if cmd.subcommand_required {
     out = out.subcommand_required()
   }
+  for group in collect_implicit_groups(cmd.args) {
+    out = out.group(group)
+  }
 
   for spec in cmd.args {
     out = out.arg(to_engine_arg(spec))
@@ -353,217 +365,254 @@ fn to_engine_command(cmd : Command) -> EngineCommand {
 }
 
 ///|
-fn to_engine_arg(spec : ArgSpec) -> EngineArg {
-  match spec {
-    Flag(flag) => {
-      let mut out = EngineArg::new(flag.name).flag()
-      match flag.short {
-        Some(v) => out = out.short(v)
-        None => ()
+fn collect_implicit_groups(specs : Array[Arg]) -> Array[EngineArgGroup] {
+  let group_names : Array[String] = []
+  let group_members : Array[Array[String]] = []
+
+  for spec in specs {
+    match spec.group {
+      Some(group_name) => {
+        let mut idx : Int? = None
+        for i = 0; i < group_names.length(); i = i + 1 {
+          if group_names[i] == group_name {
+            idx = Some(i)
+            break
+          }
+        }
+        match idx {
+          Some(i) => group_members[i].push(arg_name(spec))
+          None => {
+            group_names.push(group_name)
+            group_members.push([arg_name(spec)])
+          }
+        }
       }
-      match flag.long {
-        Some(v) => out = out.long(v)
-        None => ()
-      }
-      match flag.about {
-        Some(v) => out = out.help(v)
-        None => ()
-      }
-      match flag.long_about {
-        Some(v) => out = out.long_help(v)
-        None => ()
-      }
-      match flag.env {
-        Some(v) => out = out.env(v)
-        None => ()
-      }
-      match flag.default_value {
-        Some(v) => out = out.default_value(v)
-        None => ()
-      }
-      match flag.group {
-        Some(group) => out = out.group(group)
-        None => ()
-      }
-      out = out.action(convert_flag_action(flag.action))
-      for name in flag.requires {
-        out = out.requires(name)
-      }
-      for name in flag.conflicts_with {
-        out = out.conflicts_with(name)
-      }
-      for name in flag.aliases {
-        out = out.alias_name(name)
-      }
-      for name in flag.short_aliases {
-        out = out.short_alias(name)
-      }
-      for name in flag.visible_aliases {
-        out = out.visible_alias(name)
-      }
-      for name in flag.visible_short_aliases {
-        out = out.visible_short_alias(name)
-      }
-      if flag.required {
-        out = out.required()
-      }
-      if flag.global {
-        out = out.global()
-      }
-      if flag.negatable {
-        out = out.negatable()
-      }
-      if flag.hidden {
-        out = out.hide()
-      }
-      if flag.hide_long_help {
-        out = out.hide_long_help()
-      }
-      out
+      None => ()
     }
-    Option(option) => {
-      let mut out = EngineArg::new(option.name).option()
-      match option.short {
-        Some(v) => out = out.short(v)
-        None => ()
-      }
-      match option.long {
-        Some(v) => out = out.long(v)
-        None => ()
-      }
-      match option.about {
-        Some(v) => out = out.help(v)
-        None => ()
-      }
-      match option.long_about {
-        Some(v) => out = out.long_help(v)
-        None => ()
-      }
-      match option.env {
-        Some(v) => out = out.env(v)
-        None => ()
-      }
-      match option.default_value {
-        Some(v) => out = out.default_value(v)
-        None => ()
-      }
-      match option.default_values {
-        Some(vs) => out = out.default_values(vs)
-        None => ()
-      }
-      match option.num_args {
-        Some(range) => out = out.num_args(convert_value_range(range))
-        None => ()
-      }
-      match option.group {
-        Some(group) => out = out.group(group)
-        None => ()
-      }
-      out = out.action(convert_option_action(option.action))
-      for name in option.requires {
-        out = out.requires(name)
-      }
-      for name in option.conflicts_with {
-        out = out.conflicts_with(name)
-      }
-      for name in option.aliases {
-        out = out.alias_name(name)
-      }
-      for name in option.short_aliases {
-        out = out.short_alias(name)
-      }
-      for name in option.visible_aliases {
-        out = out.visible_alias(name)
-      }
-      for name in option.visible_short_aliases {
-        out = out.visible_short_alias(name)
-      }
-      if option.multiple {
-        out = out.multiple()
-      }
-      if option.allow_hyphen_values {
-        out = out.allow_hyphen_values()
-      }
-      if option.last {
-        out = out.last()
-      }
-      if option.required {
-        out = out.required()
-      }
-      if option.global {
-        out = out.global()
-      }
-      if option.hidden {
-        out = out.hide()
-      }
-      if option.hide_long_help {
-        out = out.hide_long_help()
-      }
-      out
+  }
+
+  let out = Array::new(capacity=group_names.length())
+  for i = 0; i < group_names.length(); i = i + 1 {
+    out.push(EngineArgGroup::{
+      name: group_names[i],
+      required: false,
+      multiple: true,
+      args: clone_array_cmd(group_members[i]),
+      requires: [],
+      conflicts_with: [],
+    })
+  }
+  out
+}
+
+///|
+fn to_engine_arg(arg : Arg) -> EngineArg {
+  if arg.is_flag {
+    let mut out = EngineArg::new(arg.name).flag()
+    match arg.short {
+      Some(v) => out = out.short(v)
+      None => ()
     }
-    Positional(position) => {
-      let mut out = EngineArg::new(position.name).option()
-      match position.index {
-        Some(v) => out = out.index(v)
-        None => ()
-      }
-      match position.about {
-        Some(v) => out = out.help(v)
-        None => ()
-      }
-      match position.long_about {
-        Some(v) => out = out.long_help(v)
-        None => ()
-      }
-      match position.env {
-        Some(v) => out = out.env(v)
-        None => ()
-      }
-      match position.default_value {
-        Some(v) => out = out.default_value(v)
-        None => ()
-      }
-      match position.default_values {
-        Some(vs) => out = out.default_values(vs)
-        None => ()
-      }
-      match position.num_args {
-        Some(range) => out = out.num_args(convert_value_range(range))
-        None => ()
-      }
-      match position.group {
-        Some(group) => out = out.group(group)
-        None => ()
-      }
-      for name in position.requires {
-        out = out.requires(name)
-      }
-      for name in position.conflicts_with {
-        out = out.conflicts_with(name)
-      }
-      if position.multiple {
-        out = out.multiple()
-      }
-      if position.allow_hyphen_values {
-        out = out.allow_hyphen_values()
-      }
-      if position.last {
-        out = out.last()
-      }
-      if position.required {
-        out = out.required()
-      }
-      if position.global {
-        out = out.global()
-      }
-      if position.hidden {
-        out = out.hide()
-      }
-      if position.hide_long_help {
-        out = out.hide_long_help()
-      }
-      out
+    match arg.long {
+      Some(v) => out = out.long(v)
+      None => ()
     }
+    match arg.about {
+      Some(v) => out = out.help(v)
+      None => ()
+    }
+    match arg.long_about {
+      Some(v) => out = out.long_help(v)
+      None => ()
+    }
+    match arg.env {
+      Some(v) => out = out.env(v)
+      None => ()
+    }
+    match arg.default_value {
+      Some(v) => out = out.default_value(v)
+      None => ()
+    }
+    match arg.group {
+      Some(group) => out = out.group(group)
+      None => ()
+    }
+    out = out.action(convert_flag_action(arg.flag_action))
+    for name in arg.requires {
+      out = out.requires(name)
+    }
+    for name in arg.conflicts_with {
+      out = out.conflicts_with(name)
+    }
+    for name in arg.aliases {
+      out = out.alias_name(name)
+    }
+    for name in arg.short_aliases {
+      out = out.short_alias(name)
+    }
+    for name in arg.visible_aliases {
+      out = out.visible_alias(name)
+    }
+    for name in arg.visible_short_aliases {
+      out = out.visible_short_alias(name)
+    }
+    if arg.required {
+      out = out.required()
+    }
+    if arg.global {
+      out = out.global()
+    }
+    if arg.negatable {
+      out = out.negatable()
+    }
+    if arg.hidden {
+      out = out.hide()
+    }
+    if arg.hide_long_help {
+      out = out.hide_long_help()
+    }
+    out
+  } else if arg.is_positional {
+    let mut out = EngineArg::new(arg.name).option()
+    match arg.index {
+      Some(v) => out = out.index(v)
+      None => ()
+    }
+    match arg.about {
+      Some(v) => out = out.help(v)
+      None => ()
+    }
+    match arg.long_about {
+      Some(v) => out = out.long_help(v)
+      None => ()
+    }
+    match arg.env {
+      Some(v) => out = out.env(v)
+      None => ()
+    }
+    match arg.default_value {
+      Some(v) => out = out.default_value(v)
+      None => ()
+    }
+    match arg.default_values {
+      Some(vs) => out = out.default_values(vs)
+      None => ()
+    }
+    match arg.num_args {
+      Some(range) => out = out.num_args(convert_value_range(range))
+      None => ()
+    }
+    match arg.group {
+      Some(group) => out = out.group(group)
+      None => ()
+    }
+    for name in arg.requires {
+      out = out.requires(name)
+    }
+    for name in arg.conflicts_with {
+      out = out.conflicts_with(name)
+    }
+    if arg.multiple {
+      out = out.multiple()
+    }
+    if arg.allow_hyphen_values {
+      out = out.allow_hyphen_values()
+    }
+    if arg.last {
+      out = out.last()
+    }
+    if arg.required {
+      out = out.required()
+    }
+    if arg.global {
+      out = out.global()
+    }
+    if arg.hidden {
+      out = out.hide()
+    }
+    if arg.hide_long_help {
+      out = out.hide_long_help()
+    }
+    out
+  } else {
+    let mut out = EngineArg::new(arg.name).option()
+    match arg.short {
+      Some(v) => out = out.short(v)
+      None => ()
+    }
+    match arg.long {
+      Some(v) => out = out.long(v)
+      None => ()
+    }
+    match arg.about {
+      Some(v) => out = out.help(v)
+      None => ()
+    }
+    match arg.long_about {
+      Some(v) => out = out.long_help(v)
+      None => ()
+    }
+    match arg.env {
+      Some(v) => out = out.env(v)
+      None => ()
+    }
+    match arg.default_value {
+      Some(v) => out = out.default_value(v)
+      None => ()
+    }
+    match arg.default_values {
+      Some(vs) => out = out.default_values(vs)
+      None => ()
+    }
+    match arg.num_args {
+      Some(range) => out = out.num_args(convert_value_range(range))
+      None => ()
+    }
+    match arg.group {
+      Some(group) => out = out.group(group)
+      None => ()
+    }
+    out = out.action(convert_option_action(arg.option_action))
+    for name in arg.requires {
+      out = out.requires(name)
+    }
+    for name in arg.conflicts_with {
+      out = out.conflicts_with(name)
+    }
+    for name in arg.aliases {
+      out = out.alias_name(name)
+    }
+    for name in arg.short_aliases {
+      out = out.short_alias(name)
+    }
+    for name in arg.visible_aliases {
+      out = out.visible_alias(name)
+    }
+    for name in arg.visible_short_aliases {
+      out = out.visible_short_alias(name)
+    }
+    if arg.multiple {
+      out = out.multiple()
+    }
+    if arg.allow_hyphen_values {
+      out = out.allow_hyphen_values()
+    }
+    if arg.last {
+      out = out.last()
+    }
+    if arg.required {
+      out = out.required()
+    }
+    if arg.global {
+      out = out.global()
+    }
+    if arg.hidden {
+      out = out.hide()
+    }
+    if arg.hide_long_help {
+      out = out.hide_long_help()
+    }
+    out
   }
 }
 

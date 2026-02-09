@@ -14,16 +14,10 @@
 
 ///|
 test "declarative parse basics" {
-  let cmd = @argparse.Command::new("demo", args=[
-    @argparse.ArgSpec::flag(
-      @argparse.FlagArg::new("verbose", short=Some('v'), long=Some("verbose")),
-    ),
-    @argparse.ArgSpec::option(
-      @argparse.OptionArg::new("count", long=Some("count"), env=Some("COUNT")),
-    ),
-    @argparse.ArgSpec::positional(
-      @argparse.PositionalArg::new("name", index=Some(0)),
-    ),
+  let cmd = @argparse.Command("demo", args=[
+    @argparse.FlagArg::new("verbose", short='v', long="verbose"),
+    @argparse.OptionArg::new("count", long="count", env="COUNT"),
+    @argparse.PositionalArg::new("name", index=0),
   ])
   let matches = cmd.parse(argv=["-v", "--count", "3", "alice"], env={}) catch {
     _ => panic()
@@ -37,7 +31,7 @@ test "declarative parse basics" {
 
 ///|
 test "display help and version" {
-  let cmd = @argparse.Command::new("demo", about="demo app", version="1.2.3")
+  let cmd = @argparse.Command("demo", about="demo app", version="1.2.3")
 
   let mut help = ""
   try cmd.parse(argv=["-h"], env={}) catch {
@@ -60,13 +54,9 @@ test "display help and version" {
 
 ///|
 test "relationships and num args" {
-  let requires_cmd = @argparse.Command::new("demo", args=[
-    @argparse.ArgSpec::option(
-      @argparse.OptionArg::new("mode", long=Some("mode"), requires=["config"]),
-    ),
-    @argparse.ArgSpec::option(
-      @argparse.OptionArg::new("config", long=Some("config")),
-    ),
+  let requires_cmd = @argparse.Command("demo", args=[
+    @argparse.OptionArg::new("mode", long="mode", requires=["config"]),
+    @argparse.OptionArg::new("config", long="config"),
   ])
 
   try requires_cmd.parse(argv=["--mode", "fast"], env={}) catch {
@@ -77,14 +67,12 @@ test "relationships and num args" {
     _ => panic()
   }
 
-  let num_args_cmd = @argparse.Command::new("demo", args=[
-    @argparse.ArgSpec::option(
-      @argparse.OptionArg::new(
-        "tag",
-        long=Some("tag"),
-        multiple=true,
-        num_args=Some(@argparse.ValueRange::new(lower=Some(2), upper=Some(2))),
-      ),
+  let num_args_cmd = @argparse.Command("demo", args=[
+    @argparse.OptionArg::new(
+      "tag",
+      long="tag",
+      multiple=true,
+      num_args=@argparse.ValueRange::new(lower=Some(2), upper=Some(2)),
     ),
   ])
 
@@ -115,12 +103,10 @@ test "relationships and num args" {
 
 ///|
 test "subcommand parsing" {
-  let echo = @argparse.Command::new("echo", args=[
-    @argparse.ArgSpec::positional(
-      @argparse.PositionalArg::new("msg", index=Some(0)),
-    ),
+  let echo = @argparse.Command("echo", args=[
+    @argparse.PositionalArg::new("msg", index=0),
   ])
-  let root = @argparse.Command::new("root", subcommands=[echo])
+  let root = @argparse.Command("root", subcommands=[echo])
 
   let matches = root.parse(argv=["echo", "hi"], env={}) catch { _ => panic() }
   assert_eq(matches.subcommand_name().unwrap_or(""), "echo")
@@ -132,35 +118,29 @@ test "subcommand parsing" {
 
 ///|
 test "full help snapshot" {
-  let cmd = @argparse.Command::new(
+  let cmd = @argparse.Command(
     "demo",
     about="Demo command",
     args=[
-      @argparse.ArgSpec::flag(
-        @argparse.FlagArg::new(
-          "verbose",
-          short=Some('v'),
-          long=Some("verbose"),
-          about=Some("Enable verbose mode"),
-        ),
+      @argparse.FlagArg::new(
+        "verbose",
+        short='v',
+        long="verbose",
+        about="Enable verbose mode",
       ),
-      @argparse.ArgSpec::option(
-        @argparse.OptionArg::new(
-          "count",
-          long=Some("count"),
-          about=Some("Repeat count"),
-          default_value=Some("1"),
-        ),
+      @argparse.OptionArg::new(
+        "count",
+        long="count",
+        about="Repeat count",
+        default_value="1",
       ),
-      @argparse.ArgSpec::positional(
-        @argparse.PositionalArg::new(
-          "name",
-          index=Some(0),
-          about=Some("Target name"),
-        ),
+      @argparse.PositionalArg::new(
+        "name",
+        index=0,
+        about="Target name",
       ),
     ],
-    subcommands=[@argparse.Command::new("echo", about="Echo a message")],
+    subcommands=[@argparse.Command("echo", about="Echo a message")],
   )
   inspect(
     cmd.render_help(),

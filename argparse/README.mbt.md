@@ -6,27 +6,21 @@ Declarative argument parsing for MoonBit with constructor-style APIs.
 
 ```mbt nocheck
 ///|
-let cmd = @argparse.Command::new(
+let cmd = @argparse.Command(
   "demo",
   about="demo app",
   args=[
-    @argparse.ArgSpec::flag(
-      @argparse.FlagArg::new(
-        "verbose",
-        short=Some('v'),
-        long=Some("verbose"),
-      ),
+    @argparse.FlagArg::new(
+      "verbose",
+      short='v',
+      long="verbose",
     ),
-    @argparse.ArgSpec::option(
-      @argparse.OptionArg::new(
-        "count",
-        long=Some("count"),
-        env=Some("COUNT"),
-      ),
+    @argparse.OptionArg::new(
+      "count",
+      long="count",
+      env="COUNT",
     ),
-    @argparse.ArgSpec::positional(
-      @argparse.PositionalArg::new("name", index=Some(0)),
-    ),
+    @argparse.PositionalArg::new("name", index=0),
   ],
 )
 
@@ -35,14 +29,29 @@ let matches = cmd.parse(argv=["-v", "--count=2", "alice"], env={}) catch {
 }
 
 assert_true(matches.get_flag("verbose"))
+assert_eq(matches.get_one("count").unwrap_or(""), "2")
 assert_eq(matches.get_one("name").unwrap_or(""), "alice")
 ```
 
-## Parsing
+## Handle Help and Version
 
-- `Command::parse(argv?=..., env?=...) -> Matches raise { DisplayHelp, DisplayVersion, ArgumentError, ArgBuildError }`
-- `DisplayHelp::Short/Long` for `-h` / `--help`
-- `DisplayVersion::Short/Long` for `-V` / `--version`
+`parse` raises instead of exiting, so callers decide what to do:
+
+```mbt nocheck
+///|
+let cmd = @argparse.Command("demo", about="demo app", version="1.2.3")
+
+try cmd.parse(argv=["--help"], env={}) catch {
+  @argparse.DisplayHelp::Long(text) => println(text)
+  @argparse.DisplayVersion::Long(text) => println(text)
+  @argparse.ArgumentError::UnknownArgument(arg, _) => {
+    println("Unknown argument: " + arg)
+  }
+  _ => panic()
+} noraise {
+  _ => ()
+}
+```
 
 ## Destructuring Matches
 
@@ -50,18 +59,19 @@ Use raw maps if you prefer pattern matching:
 
 ```mbt nocheck
 ///|
-let cmd = @argparse.Command::new(
+let echo = @argparse.Command(
+  "echo",
+  args=[@argparse.PositionalArg::new("msg", index=0)],
+)
+let cmd = @argparse.Command(
   "demo",
   args=[
-    @argparse.ArgSpec::flag(
-      @argparse.FlagArg::new("verbose", long=Some("verbose")),
-    ),
-    @argparse.ArgSpec::option(
-      @argparse.OptionArg::new("name", long=Some("name")),
-    ),
+    @argparse.FlagArg::new("verbose", long="verbose"),
+    @argparse.OptionArg::new("name", long="name"),
   ],
+  subcommands=[echo],
 )
-let matches = cmd.parse(argv=["--verbose", "--name", "alice"], env={}) catch {
+let matches = cmd.parse(argv=["--verbose", "--name", "alice", "echo", "hi"], env={}) catch {
   _ => panic()
 }
 
@@ -73,5 +83,10 @@ match matches.flags_map().get("verbose") {
 match matches.values_map().get("name") {
   Some(values) => assert_eq(values[0], "alice")
   None => panic()
+}
+
+match matches.subcommand() {
+  Some(("echo", sub)) => assert_eq(sub.get_one("msg").unwrap_or(""), "hi")
+  _ => panic()
 }
 ```

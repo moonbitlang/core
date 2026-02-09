@@ -189,6 +189,16 @@ fn EngineCommand::disable_help_flag(
 }
 
 ///|
+fn EngineCommand::group(
+  self : EngineCommand,
+  group : EngineArgGroup,
+) -> EngineCommand {
+  let groups = clone_array(self.groups)
+  groups.push(group)
+  EngineCommand::{ ..self, groups, }
+}
+
+///|
 /// Hide a command from help output.
 fn EngineCommand::hide(
   self : EngineCommand,
