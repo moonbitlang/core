@@ -32,46 +32,41 @@ pub enum OptionAction {
 ///|
 /// Unified argument model used by the parser internals.
 priv struct Arg {
-  priv name : String
-  priv short : Char?
-  priv long : String?
-  priv index : Int?
-  priv about : String?
-  priv long_about : String?
-  priv is_flag : Bool
-  priv is_positional : Bool
-  priv flag_action : FlagAction
-  priv option_action : OptionAction
-  priv env : String?
-  priv default_value : String?
-  priv default_values : Array[String]?
-  priv num_args : ValueRange?
-  priv multiple : Bool
-  priv allow_hyphen_values : Bool
-  priv last : Bool
-  priv requires : Array[String]
-  priv conflicts_with : Array[String]
-  priv group : String?
-  priv required : Bool
-  priv global : Bool
-  priv negatable : Bool
-  priv aliases : Array[String]
-  priv short_aliases : Array[Char]
-  priv visible_aliases : Array[String]
-  priv visible_short_aliases : Array[Char]
-  priv hidden : Bool
-  priv hide_long_help : Bool
+  name : String
+  short : Char?
+  long : String?
+  index : Int?
+  about : String?
+  long_about : String?
+  is_flag : Bool
+  is_positional : Bool
+  flag_action : FlagAction
+  option_action : OptionAction
+  env : String?
+  default_value : String?
+  default_values : Array[String]?
+  num_args : ValueRange?
+  multiple : Bool
+  allow_hyphen_values : Bool
+  last : Bool
+  requires : Array[String]
+  conflicts_with : Array[String]
+  group : String?
+  required : Bool
+  global : Bool
+  negatable : Bool
+  aliases : Array[String]
+  short_aliases : Array[Char]
+  visible_aliases : Array[String]
+  visible_short_aliases : Array[Char]
+  hidden : Bool
+  hide_long_help : Bool
 }
 
 ///|
 /// Trait for declarative arg constructors.
 trait ArgLike {
   to_arg(Self) -> Arg
-}
-
-///|
-impl ArgLike for Arg with to_arg(self : Arg) -> Arg {
-  self
 }
 
 ///|
@@ -104,7 +99,7 @@ pub struct FlagArg {
 }
 
 ///|
-impl ArgLike for FlagArg with to_arg(self : FlagArg) -> Arg {
+pub impl ArgLike for FlagArg with to_arg(self : FlagArg) {
   self.arg
 }
 
@@ -200,7 +195,7 @@ pub struct OptionArg {
 }
 
 ///|
-impl ArgLike for OptionArg with to_arg(self : OptionArg) -> Arg {
+pub impl ArgLike for OptionArg with to_arg(self : OptionArg) {
   self.arg
 }
 
@@ -294,7 +289,7 @@ pub struct PositionalArg {
 }
 
 ///|
-impl ArgLike for PositionalArg with to_arg(self : PositionalArg) -> Arg {
+pub impl ArgLike for PositionalArg with to_arg(self : PositionalArg) {
   self.arg
 }
 
