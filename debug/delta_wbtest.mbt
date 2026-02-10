@@ -42,7 +42,7 @@ test "diff: arrays keep per-element when some children same" {
   let x = Repr::array([Repr::integer("1"), Repr::integer("2")])
   let y = Repr::array([Repr::integer("1"), Repr::integer("3")])
   let delta = diff_repr(x, y)
-  guard delta is Same(Array([]), [Same(Integer("1"), []), _]) else {
+  guard delta is Same(Array([]), [Same(Integer("1"), []), ..]) else {
     fail("expected Same(Array, children...)")
   }
 }
