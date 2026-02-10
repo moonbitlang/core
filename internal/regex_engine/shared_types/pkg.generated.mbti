@@ -41,8 +41,6 @@ pub struct Profile {
   valid : @rechar_set.RecharSet
   word : @rechar_set.RecharSet
   category : (Int) -> Category
-
-  fn new(valid~ : @rechar_set.RecharSet, word~ : @rechar_set.RecharSet, category~ : (Int) -> Category) -> Profile
 }
 pub fn Profile::new(valid~ : @rechar_set.RecharSet, word~ : @rechar_set.RecharSet, category~ : (Int) -> Category) -> Self
 
