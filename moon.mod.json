@@ -5,5 +5,5 @@
   "repository": "https://github.com/moonbitlang/core",
   "license": "Apache-2.0",
   "keywords": ["core","standard library"],
-  "warn-list": "+test_unqualified_package+missing_doc"  
+  "warn-list": "+test_unqualified_package"  
 }

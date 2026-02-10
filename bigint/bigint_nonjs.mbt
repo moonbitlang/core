@@ -579,11 +579,11 @@ fn BigInt::grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
   let a = FixedArray::make(a_len + 1, 0UL)
   for i in 0..<a_len {
     a[i] = dividend.limbs[i].to_uint64()
-  } nobreak {
-    if dividend.limbs.length() > i {
-      a[i] = dividend.limbs[i].to_uint64()
-    }
   }
+  if dividend.limbs.length() > a_len {
+    a[a_len] = dividend.limbs[a_len].to_uint64()
+  }
+
   // invariant : divisor.limbs.last() >= radix / 2
   // if b[b_len - 1] < radix / 2 {
   //   panic()
@@ -594,7 +594,7 @@ fn BigInt::grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
   let v2 = b[b_len - 2]
   let q = FixedArray::make(a_len - b_len, 0U)
   // D2 - D7 loop through m to 0
-  for i = q.length() - 1; i >= 0; i = i - 1 {
+  for i in q.length()>..0 {
     let u0 = a[i + b_len]
     let u1 = a[i + b_len - 1]
     let u2 = a[i + b_len - 2]
