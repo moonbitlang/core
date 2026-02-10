@@ -4,18 +4,21 @@ Declarative argument parsing for MoonBit.
 
 ## Argument Shape Rule
 
-If an argument has neither `short` nor `long`, it is parsed as a positional
-argument.
-
-This applies even for `OptionArg("name")`. For readability, prefer
-`PositionalArg("name", index=...)` when you mean positional input.
+`FlagArg` and `OptionArg` must provide at least one of `short` or `long`.
+Arguments without both are positional-only and should be declared with
+`PositionalArg`.
 
 ```mbt check
 ///|
-test "name-only option behaves as positional" {
+test "name-only option is rejected" {
   let cmd = @argparse.Command("demo", args=[@argparse.OptionArg("input")])
-  let matches = cmd.parse(argv=["file.txt"], env={}) catch { _ => panic() }
-  assert_true(matches.values is { "input": ["file.txt"], .. })
+  try cmd.parse(argv=["file.txt"], env={}) catch {
+    @argparse.ArgBuildError::Unsupported(msg) =>
+      inspect(msg, content="flag/option args require short/long")
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
 }
 ```
 

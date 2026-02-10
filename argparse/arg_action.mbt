@@ -48,33 +48,16 @@ fn arg_action(arg : Arg) -> ArgAction {
 }
 
 ///|
-fn resolve_value_range(range : ValueRange) -> (Int, Int?) {
-  let min = match range.lower {
-    Some(value) => if range.lower_inclusive { value } else { value + 1 }
-    None => 0
-  }
-  let max = match range.upper {
-    Some(value) => Some(if range.upper_inclusive { value } else { value - 1 })
-    None => None
-  }
-  (min, max)
-}
-
-///|
-fn validate_value_range(range : ValueRange) -> (Int, Int?) raise ArgBuildError {
-  let (min, max) = resolve_value_range(range)
-  match max {
-    Some(max_value) if max_value < min =>
-      raise ArgBuildError::Unsupported("max values must be >= min values")
-    _ => ()
-  }
-  (min, max)
-}
-
-///|
 fn arg_min_max_for_validate(arg : Arg) -> (Int, Int?) raise ArgBuildError {
   match arg.num_args {
-    Some(range) => validate_value_range(range)
+    Some(range) => {
+      match range.upper {
+        Some(max_value) if max_value < range.lower =>
+          raise ArgBuildError::Unsupported("max values must be >= min values")
+        _ => ()
+      }
+      (range.lower, range.upper)
+    }
     None => (0, None)
   }
 }
@@ -82,7 +65,7 @@ fn arg_min_max_for_validate(arg : Arg) -> (Int, Int?) raise ArgBuildError {
 ///|
 fn arg_min_max(arg : Arg) -> (Int, Int?) {
   match arg.num_args {
-    Some(range) => resolve_value_range(range)
+    Some(range) => (range.lower, range.upper)
     None => (0, None)
   }
 }
