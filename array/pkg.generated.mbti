@@ -1,9 +1,9 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/array"
 
-import {
-  "moonbitlang/core/builtin",
-}
+import(
+  "moonbitlang/core/builtin"
+)
 
 // Values
 pub fn[A, B, C] zip_with(Array[A], Array[B], (A, B) -> C raise?) -> Array[C] raise?

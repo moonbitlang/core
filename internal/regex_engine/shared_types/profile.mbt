@@ -20,11 +20,17 @@ pub struct Profile {
   valid : RecharSet
   word : RecharSet
   category : (Rechar) -> Category
+
+  fn new(
+    valid~ : RecharSet,
+    word~ : RecharSet,
+    category~ : (Rechar) -> Category,
+  ) -> Profile
 }
 
 ///|
 /// Create a new instance.
-pub fn Profile::new(
+fn Profile::new(
   valid~ : RecharSet,
   word~ : RecharSet,
   category~ : (Rechar) -> Category,
