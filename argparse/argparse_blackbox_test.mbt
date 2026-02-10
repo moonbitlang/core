@@ -801,7 +801,7 @@ test "defaults and value range helpers through public API" {
       "mode",
       long="mode",
       default_values=["a", "b"],
-      num_args=@argparse.ValueRange(lower=0),
+      num_args=@argparse.ValueRange(lower=1),
     ),
     @argparse.OptionArg("one", long="one", default_values=["x"]),
   ])
@@ -822,24 +822,17 @@ test "defaults and value range helpers through public API" {
     @argparse.OptionArg(
       "tag",
       long="tag",
-      num_args=@argparse.ValueRange(upper=2),
+      action=@argparse.OptionAction::Append,
+      num_args=@argparse.ValueRange(lower=1, upper=2),
     ),
   ])
-  try
-    upper_only.parse(
-      argv=["--tag", "a", "--tag", "b", "--tag", "c"],
-      env=empty_env(),
-    )
-  catch {
-    @argparse.ArgParseError::TooManyValues(name, got, max) => {
-      assert_true(name == "tag")
-      assert_true(got == 3)
-      assert_true(max == 2)
-    }
-    _ => panic()
-  } noraise {
+  let upper_parsed = upper_only.parse(
+    argv=["--tag", "a", "--tag", "b", "--tag", "c"],
+    env=empty_env(),
+  ) catch {
     _ => panic()
   }
+  assert_true(upper_parsed.values is { "tag": ["a", "b", "c"], .. })
 
   let lower_only = @argparse.Command("demo", args=[
     @argparse.OptionArg(
@@ -848,12 +841,13 @@ test "defaults and value range helpers through public API" {
       num_args=@argparse.ValueRange(lower=1),
     ),
   ])
-  try lower_only.parse(argv=[], env=empty_env()) catch {
-    @argparse.ArgParseError::TooFewValues(name, got, min) => {
-      assert_true(name == "tag")
-      assert_true(got == 0)
-      assert_true(min == 1)
-    }
+  let lower_absent = lower_only.parse(argv=[], env=empty_env()) catch {
+    _ => panic()
+  }
+  assert_true(lower_absent.values is { "tag"? : None, .. })
+
+  try lower_only.parse(argv=["--tag"], env=empty_env()) catch {
+    @argparse.ArgParseError::MissingValue(name) => assert_true(name == "--tag")
     _ => panic()
   } noraise {
     _ => panic()
@@ -886,6 +880,49 @@ test "num_args options consume argv values in one occurrence" {
 }
 
 ///|
+test "set options reject duplicate occurrences" {
+  let cmd = @argparse.Command("demo", args=[
+    @argparse.OptionArg("mode", long="mode"),
+  ])
+  try cmd.parse(argv=["--mode", "a", "--mode", "b"], env=empty_env()) catch {
+    @argparse.ArgParseError::InvalidArgument(msg) =>
+      inspect(msg, content="argument '--mode' cannot be used multiple times")
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
+test "flag and option args require short or long names" {
+  try
+    @argparse.Command("demo", args=[@argparse.OptionArg("input")]).parse(
+      argv=[],
+      env=empty_env(),
+    )
+  catch {
+    @argparse.ArgBuildError::Unsupported(msg) =>
+      inspect(msg, content="flag/option args require short/long")
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+
+  try
+    @argparse.Command("demo", args=[@argparse.FlagArg("verbose")]).parse(
+      argv=[],
+      env=empty_env(),
+    )
+  catch {
+    @argparse.ArgBuildError::Unsupported(msg) =>
+      inspect(msg, content="flag/option args require short/long")
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
 test "num_args range option consumes optional extra argv value" {
   let cmd = @argparse.Command("demo", args=[
     @argparse.OptionArg(
@@ -899,6 +936,74 @@ test "num_args range option consumes optional extra argv value" {
   }
   assert_true(parsed.values is { "arg": ["x", "y"], .. })
   assert_true(parsed.sources is { "arg": @argparse.ValueSource::Argv, .. })
+}
+
+///|
+test "num_args range option stops at the next option token" {
+  let cmd = @argparse.Command("demo", args=[
+    @argparse.OptionArg(
+      "arg",
+      short='a',
+      long="arg",
+      num_args=@argparse.ValueRange(lower=1, upper=2),
+    ),
+    @argparse.FlagArg("verbose", long="verbose"),
+  ])
+
+  let stopped = cmd.parse(argv=["--arg", "x", "--verbose"], env=empty_env()) catch {
+    _ => panic()
+  }
+  assert_true(stopped.values is { "arg": ["x"], .. })
+  assert_true(stopped.flags is { "verbose": true, .. })
+
+  let inline = cmd.parse(argv=["--arg=x", "y", "--verbose"], env=empty_env()) catch {
+    _ => panic()
+  }
+  assert_true(inline.values is { "arg": ["x", "y"], .. })
+  assert_true(inline.flags is { "verbose": true, .. })
+
+  let short_inline = cmd.parse(argv=["-ax", "y", "--verbose"], env=empty_env()) catch {
+    _ => panic()
+  }
+  assert_true(short_inline.values is { "arg": ["x", "y"], .. })
+  assert_true(short_inline.flags is { "verbose": true, .. })
+}
+
+///|
+test "option num_args cannot be flag-like" {
+  try
+    @argparse.Command("demo", args=[
+      @argparse.OptionArg(
+        "opt",
+        long="opt",
+        num_args=@argparse.ValueRange(lower=0, upper=1),
+      ),
+      @argparse.FlagArg("verbose", long="verbose"),
+    ]).parse(argv=["--opt", "--verbose"], env=empty_env())
+  catch {
+    @argparse.ArgBuildError::Unsupported(msg) =>
+      inspect(msg, content="option args require at least one value")
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+
+  try
+    @argparse.Command("demo", args=[
+      @argparse.OptionArg(
+        "opt",
+        long="opt",
+        required=true,
+        num_args=@argparse.ValueRange(lower=0, upper=0),
+      ),
+    ]).parse(argv=["--opt"], env=empty_env())
+  catch {
+    @argparse.ArgBuildError::Unsupported(msg) =>
+      inspect(msg, content="option args require at least one value")
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
 }
 
 ///|
@@ -986,7 +1091,7 @@ test "validation branches exposed through parse" {
       inspect(
         msg,
         content=(
-          #|help/version actions require short/long option
+          #|flag/option args require short/long
         ),
       )
     _ => panic()
@@ -1038,16 +1143,24 @@ test "validation branches exposed through parse" {
     _ => panic()
   }
 
-  let ranged = @argparse.Command("demo", args=[
-    @argparse.OptionArg(
-      "x",
-      long="x",
-      num_args=@argparse.ValueRange(lower=2, upper=2),
-    ),
-  ]).parse(argv=["--x", "a", "--x", "b"], env=empty_env()) catch {
+  try
+    @argparse.Command("demo", args=[
+      @argparse.OptionArg(
+        "x",
+        long="x",
+        num_args=@argparse.ValueRange(lower=2, upper=2),
+      ),
+    ]).parse(argv=["--x", "a", "--x", "b"], env=empty_env())
+  catch {
+    @argparse.ArgParseError::TooFewValues(name, got, min) => {
+      assert_true(name == "x")
+      assert_true(got == 1)
+      assert_true(min == 2)
+    }
+    _ => panic()
+  } noraise {
     _ => panic()
   }
-  assert_true(ranged.values is { "x": ["a", "b"], .. })
 
   try
     @argparse.Command("demo", args=[

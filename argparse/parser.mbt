@@ -188,31 +188,62 @@ fn parse_command(
           }
         Some(spec) =>
           if arg_takes_value(spec) {
-            let (value, values_start) = if inline is Some(v) {
-              (v, i + 1)
+            match check_duplicate_set_occurrence(matches, spec) {
+              Ok(_) => ()
+              Err(e) => raise e
+            }
+            let min_values = option_occurrence_min(spec)
+            let accepts_values = option_accepts_values(spec)
+            let mut values_start = i + 1
+            let mut consumed_first = false
+            if inline is Some(v) {
+              if !accepts_values {
+                raise ArgParseError::InvalidArgument(arg)
+              }
+              match assign_value(matches, spec, v, ValueSource::Argv) {
+                Ok(_) => ()
+                Err(e) => raise e
+              }
+              consumed_first = true
             } else {
-              if i + 1 >= argv.length() ||
-                should_stop_option_value(
+              let can_take_next = i + 1 < argv.length() &&
+                !should_stop_option_value(
                   argv[i + 1],
                   spec,
                   long_index,
                   short_index,
-                ) {
+                )
+              if can_take_next && accepts_values {
+                i = i + 1
+                match assign_value(matches, spec, argv[i], ValueSource::Argv) {
+                  Ok(_) => ()
+                  Err(e) => raise e
+                }
+                values_start = i + 1
+                consumed_first = true
+              } else if min_values > 0 {
                 raise ArgParseError::MissingValue("--\{name}")
+              } else {
+                mark_option_present(matches, spec, ValueSource::Argv)
               }
-              i = i + 1
-              (argv[i], i + 1)
             }
-            match assign_value(matches, spec, value, ValueSource::Argv) {
-              Ok(_) => ()
-              Err(e) => raise e
-            }
-            match
-              consume_additional_option_values(
-                matches, spec, argv, values_start, long_index, short_index,
-              ) {
-              Ok(consumed) => i = i + consumed
-              Err(e) => raise e
+            if consumed_first {
+              let consumed_more = match
+                consume_additional_option_values(
+                  matches, spec, argv, values_start, long_index, short_index,
+                ) {
+                Ok(consumed) => consumed
+                Err(e) => raise e
+              }
+              i = i + consumed_more
+              let occurrence_values = 1 + consumed_more
+              if occurrence_values < min_values {
+                raise ArgParseError::TooFewValues(
+                  spec.name,
+                  occurrence_values,
+                  min_values,
+                )
+              }
             }
           } else {
             if inline is Some(_) {
@@ -244,36 +275,67 @@ fn parse_command(
           None => raise_unknown_short(short, short_index)
         }
         if arg_takes_value(spec) {
-          let (value, values_start) = if pos + 1 < arg.length() {
+          match check_duplicate_set_occurrence(matches, spec) {
+            Ok(_) => ()
+            Err(e) => raise e
+          }
+          let min_values = option_occurrence_min(spec)
+          let accepts_values = option_accepts_values(spec)
+          let mut values_start = i + 1
+          let mut consumed_first = false
+          if pos + 1 < arg.length() {
             let rest = arg.unsafe_substring(start=pos + 1, end=arg.length())
             let inline = match rest.strip_prefix("=") {
               Some(view) => view.to_string()
               None => rest
             }
-            (inline, i + 1)
+            if !accepts_values {
+              raise ArgParseError::InvalidArgument(arg)
+            }
+            match assign_value(matches, spec, inline, ValueSource::Argv) {
+              Ok(_) => ()
+              Err(e) => raise e
+            }
+            consumed_first = true
           } else {
-            if i + 1 >= argv.length() ||
-              should_stop_option_value(
+            let can_take_next = i + 1 < argv.length() &&
+              !should_stop_option_value(
                 argv[i + 1],
                 spec,
                 long_index,
                 short_index,
-              ) {
+              )
+            if can_take_next && accepts_values {
+              i = i + 1
+              match assign_value(matches, spec, argv[i], ValueSource::Argv) {
+                Ok(_) => ()
+                Err(e) => raise e
+              }
+              values_start = i + 1
+              consumed_first = true
+            } else if min_values > 0 {
               raise ArgParseError::MissingValue("-\{short}")
+            } else {
+              mark_option_present(matches, spec, ValueSource::Argv)
             }
-            i = i + 1
-            (argv[i], i + 1)
           }
-          match assign_value(matches, spec, value, ValueSource::Argv) {
-            Ok(_) => ()
-            Err(e) => raise e
-          }
-          match
-            consume_additional_option_values(
-              matches, spec, argv, values_start, long_index, short_index,
-            ) {
-            Ok(consumed) => i = i + consumed
-            Err(e) => raise e
+          if consumed_first {
+            let consumed_more = match
+              consume_additional_option_values(
+                matches, spec, argv, values_start, long_index, short_index,
+              ) {
+              Ok(consumed) => consumed
+              Err(e) => raise e
+            }
+            i = i + consumed_more
+            let occurrence_values = 1 + consumed_more
+            if occurrence_values < min_values {
+              raise ArgParseError::TooFewValues(
+                spec.name,
+                occurrence_values,
+                min_values,
+              )
+            }
           }
           break
         } else {
@@ -403,6 +465,15 @@ fn validate_command(
 ///|
 fn validate_arg(arg : Arg) -> Unit raise ArgBuildError {
   let positional = is_positional_arg(arg)
+  let has_option_name = arg.long is Some(_) || arg.short is Some(_)
+  if positional && has_option_name {
+    raise ArgBuildError::Unsupported(
+      "positional args do not support short/long",
+    )
+  }
+  if !positional && !has_option_name {
+    raise ArgBuildError::Unsupported("flag/option args require short/long")
+  }
   let has_positional_only = arg.index is Some(_) || arg.last
   if !positional && has_positional_only {
     raise ArgBuildError::Unsupported(
@@ -447,6 +518,9 @@ fn validate_arg(arg : Arg) -> Unit raise ArgBuildError {
     )
   }
   let (min, max) = arg_min_max_for_validate(arg)
+  if !positional && arg_takes_value(arg) && arg.num_args is Some(_) && min == 0 {
+    raise ArgBuildError::Unsupported("option args require at least one value")
+  }
   let allow_multi = arg.multiple || arg_action(arg) == ArgAction::Append
   if (min > 1 || (max is Some(m) && m > 1)) && !allow_multi {
     raise ArgBuildError::Unsupported(
@@ -719,16 +793,21 @@ fn validate_values(args : Array[Arg], matches : Matches) -> Unit raise {
     if !arg_takes_value(arg) {
       continue
     }
+    if !present {
+      continue
+    }
     let values = matches.values.get(arg.name).unwrap_or([])
     let count = values.length()
     let (min, max) = arg_min_max(arg)
     if count < min {
       raise ArgParseError::TooFewValues(arg.name, count, min)
     }
-    match max {
-      Some(max) if count > max =>
-        raise ArgParseError::TooManyValues(arg.name, count, max)
-      _ => ()
+    if arg_action(arg) != ArgAction::Append {
+      match max {
+        Some(max) if count > max =>
+          raise ArgParseError::TooManyValues(arg.name, count, max)
+        _ => ()
+      }
     }
   }
 }
@@ -756,7 +835,7 @@ fn validate_relationships(matches : Matches, args : Array[Arg]) -> Unit raise {
 
 ///|
 fn is_positional_arg(arg : Arg) -> Bool {
-  arg.short is None && arg.long is None
+  arg.is_positional
 }
 
 ///|
@@ -907,6 +986,76 @@ fn assign_value(
     ArgAction::Version =>
       Err(ArgParseError::InvalidArgument("version action does not take values"))
   }
+}
+
+///|
+fn option_occurrence_min(arg : Arg) -> Int {
+  match arg.num_args {
+    Some(_) => {
+      let (min, _) = arg_min_max(arg)
+      min
+    }
+    None => 1
+  }
+}
+
+///|
+fn option_accepts_values(arg : Arg) -> Bool {
+  match arg.num_args {
+    Some(_) => {
+      let (_, max) = arg_min_max(arg)
+      match max {
+        Some(max_count) => max_count > 0
+        None => true
+      }
+    }
+    None => true
+  }
+}
+
+///|
+fn option_conflict_label(arg : Arg) -> String {
+  match arg.long {
+    Some(name) => "--\{name}"
+    None =>
+      match arg.short {
+        Some(short) => "-\{short}"
+        None => arg.name
+      }
+  }
+}
+
+///|
+fn check_duplicate_set_occurrence(
+  matches : Matches,
+  arg : Arg,
+) -> Result[Unit, ArgParseError] {
+  if arg_action(arg) != ArgAction::Set {
+    return Ok(())
+  }
+  match matches.values.get(arg.name) {
+    Some(_) =>
+      Err(
+        ArgParseError::InvalidArgument(
+          "argument '\{option_conflict_label(arg)}' cannot be used multiple times",
+        ),
+      )
+    None => Ok(())
+  }
+}
+
+///|
+fn mark_option_present(
+  matches : Matches,
+  arg : Arg,
+  source : ValueSource,
+) -> Unit {
+  if matches.values.get(arg.name) is None {
+    matches.values[arg.name] = []
+  }
+  let srcs = matches.value_sources.get(arg.name).unwrap_or([])
+  srcs.push(source)
+  matches.value_sources[arg.name] = srcs
 }
 
 ///|
@@ -1601,7 +1750,7 @@ fn positional_args(args : Array[Arg]) -> Array[Arg] {
   let with_index = []
   let without_index = []
   for arg in args {
-    if arg.long is None && arg.short is None {
+    if is_positional_arg(arg) {
       if arg.index is Some(idx) {
         with_index.push((idx, arg))
       } else {
