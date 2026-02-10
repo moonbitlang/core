@@ -239,6 +239,7 @@ pub fn[K, V] SortedMap::to_array(self : SortedMap[K, V]) -> Array[(K, V)] {
 }
 
 ///|
+/// Return an iterator via `iter`.
 #alias(iterator, deprecated)
 pub fn[K, V] SortedMap::iter(self : SortedMap[K, V]) -> Iter[(K, V)] {
   let todo_list = []
@@ -259,12 +260,14 @@ pub fn[K, V] SortedMap::iter(self : SortedMap[K, V]) -> Iter[(K, V)] {
 }
 
 ///|
+/// Return an iterator via `iter2`.
 #alias(iterator2, deprecated)
 pub fn[K, V] SortedMap::iter2(self : SortedMap[K, V]) -> Iter2[K, V] {
   self.iter()
 }
 
 ///|
+/// Create from `iter`.
 #as_free_fn
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)

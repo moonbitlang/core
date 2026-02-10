@@ -13,12 +13,14 @@
 // limitations under the License.
 
 ///|
+/// Type `Position` used by this package APIs.
 pub(all) struct Position {
   line : Int // 1-based
   column : Int // 0-based
 } derive(Eq, ToJson)
 
 ///|
+/// Error type `ParseError`.
 pub(all) suberror ParseError {
   InvalidChar(Position, Char)
   InvalidEof

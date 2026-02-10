@@ -89,6 +89,7 @@ fn[V] new_node_update_height(
 // Manipulations
 
 ///|
+/// Set operation `add`.
 pub fn[V : Compare] SortedSet::add(self : SortedSet[V], value : V) -> Unit {
   let (new_root, inserted) = add_node(self.root, value)
   if self.root != new_root {
@@ -100,6 +101,7 @@ pub fn[V : Compare] SortedSet::add(self : SortedSet[V], value : V) -> Unit {
 }
 
 ///|
+/// Set operation `remove`.
 pub fn[V : Compare] SortedSet::remove(self : SortedSet[V], value : V) -> Unit {
   if self.root is Some(old_root) {
     let (new_root, deleted) = delete_node(old_root, value)
@@ -437,6 +439,7 @@ pub fn[V] SortedSet::iter(self : SortedSet[V]) -> Iter[V] {
 }
 
 ///|
+/// Create from `iter`.
 #as_free_fn
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
@@ -468,6 +471,7 @@ impl[T : Show] Show for Node[T] with output(self, logger) {
 }
 
 ///|
+/// Function `range`.
 pub fn[V : Compare] SortedSet::range(
   self : SortedSet[V],
   low : V,

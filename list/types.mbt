@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+/// Type `List` used by this package APIs.
 #alias(T, deprecated)
 pub enum List[A] {
   Empty

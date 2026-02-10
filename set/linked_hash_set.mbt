@@ -484,6 +484,7 @@ pub impl[K : Hash + Eq] Eq for Set[K] with equal(self, other) {
 }
 
 ///|
+/// Create from `iter`.
 #as_free_fn
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
@@ -532,6 +533,7 @@ pub fn[K] Set::copy(self : Set[K]) -> Set[K] {
 }
 
 ///|
+/// Set operation `difference`.
 pub fn[K : Hash + Eq] Set::difference(self : Set[K], other : Set[K]) -> Set[K] {
   let m = Set::new()
   self.each(k => if !other.contains(k) { m.add(k) })
@@ -539,6 +541,7 @@ pub fn[K : Hash + Eq] Set::difference(self : Set[K], other : Set[K]) -> Set[K] {
 }
 
 ///|
+/// Set operation `symmetric_difference`.
 pub fn[K : Hash + Eq] Set::symmetric_difference(
   self : Set[K],
   other : Set[K],
@@ -550,6 +553,7 @@ pub fn[K : Hash + Eq] Set::symmetric_difference(
 }
 
 ///|
+/// Set operation `union`.
 pub fn[K : Hash + Eq] Set::union(self : Set[K], other : Set[K]) -> Set[K] {
   let m = Set::new()
   self.each(k => m.add(k))
@@ -558,6 +562,7 @@ pub fn[K : Hash + Eq] Set::union(self : Set[K], other : Set[K]) -> Set[K] {
 }
 
 ///|
+/// Set operation `intersection`.
 pub fn[K : Hash + Eq] Set::intersection(
   self : Set[K],
   other : Set[K],

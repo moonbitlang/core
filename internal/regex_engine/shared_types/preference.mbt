@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+/// Type `Preference` used by this package APIs.
 pub(all) enum Preference {
   Shortest
   Longest

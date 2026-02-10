@@ -16,42 +16,58 @@
 struct RecharSet(Tree)
 
 ///|
+/// Create an empty character set.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(@rechar_set.RecharSet::empty().is_empty(), content="true")
+/// }
+/// ```
 pub fn RecharSet::empty() -> RecharSet {
   RecharSet(Empty)
 }
 
 ///|
+/// Create a character set containing a single character.
 pub fn RecharSet::char(c : Rechar) -> RecharSet {
   RecharSet(nn(Empty, c, c, Empty))
 }
 
 ///|
+/// Create a character set from an inclusive range.
 pub fn RecharSet::char_range(lo : Rechar, hi : Rechar) -> RecharSet {
   guard lo <= hi else { panic() }
   RecharSet(nn(Empty, lo, hi, Empty))
 }
 
 ///|
+/// Return `true` if the set contains no intervals.
 pub fn RecharSet::is_empty(self : RecharSet) -> Bool {
   self.0 is Empty
 }
 
 ///|
+/// Return whether `self` is a subset of `other`.
 pub fn RecharSet::is_subset(self : RecharSet, other : RecharSet) -> Bool {
   difference(self.0, other.0) is Empty
 }
 
 ///|
+/// Get the smallest interval in the set.
 pub fn RecharSet::first_interval(self : RecharSet) -> (Rechar, Rechar)? {
   leftmost(self.0)
 }
 
 ///|
+/// Get the largest interval in the set.
 pub fn RecharSet::last_interval(self : RecharSet) -> (Rechar, Rechar)? {
   rightmost(self.0)
 }
 
 ///|
+/// Return whether the set contains character `c`.
 pub fn RecharSet::contains(self : RecharSet, c : Rechar) -> Bool {
   loop self.0 {
     Empty => false
@@ -253,11 +269,13 @@ fn difference(t1 : Tree, t2 : Tree) -> Tree {
 }
 
 ///|
+/// Return the union of two character sets.
 pub fn RecharSet::union(self : RecharSet, other : RecharSet) -> RecharSet {
   RecharSet(union(self.0, other.0))
 }
 
 ///|
+/// Return the intersection of two character sets.
 pub fn RecharSet::intersection(
   self : RecharSet,
   other : RecharSet,
@@ -266,11 +284,13 @@ pub fn RecharSet::intersection(
 }
 
 ///|
+/// Return the set difference `self \ other`.
 pub fn RecharSet::difference(self : RecharSet, other : RecharSet) -> RecharSet {
   RecharSet(difference(self.0, other.0))
 }
 
 ///|
+/// Map each interval boundary through `f` and rebuild a set.
 pub fn RecharSet::offset_by(self : RecharSet, f : (Int) -> Int) -> RecharSet {
   fn aux(t : Tree) -> Tree {
     match t {
@@ -283,6 +303,7 @@ pub fn RecharSet::offset_by(self : RecharSet, f : (Int) -> Int) -> RecharSet {
 }
 
 ///|
+/// Iterate intervals in ascending order.
 pub fn RecharSet::intervals(self : RecharSet) -> Iter[(Rechar, Rechar)] {
   let mut node = self.0
   let parents = []
@@ -306,6 +327,7 @@ pub fn RecharSet::intervals(self : RecharSet) -> Iter[(Rechar, Rechar)] {
 }
 
 ///|
+/// Build a set from sorted non-overlapping intervals.
 pub fn RecharSet::from_sorted_array(
   arr : ArrayView[(Rechar, Rechar)],
 ) -> RecharSet {

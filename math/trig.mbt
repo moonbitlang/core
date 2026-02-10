@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+/// Numeric constant `PI`.
 pub const PI = 0x3.243F6A8885A308CA8A54
 
 ///|

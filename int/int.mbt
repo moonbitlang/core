@@ -21,6 +21,7 @@ pub let max_value = 2147483647
 pub let min_value = -2147483648
 
 ///|
+/// Return absolute value.
 #deprecated("Use Int::abs instead")
 pub fn abs(x : Int) -> Int {
   Int::abs(x)

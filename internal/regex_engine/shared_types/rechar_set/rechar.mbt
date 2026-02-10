@@ -13,4 +13,5 @@
 // limitations under the License.
 
 ///|
+/// Type `Rechar` used by this package APIs.
 pub type Rechar = Int

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+/// Function `compile`.
 pub fn compile(profile~ : Profile, ast : Pattern) -> Regex {
   let ast = if ast.is_anchored() {
     capture(ast)

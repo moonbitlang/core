@@ -48,6 +48,7 @@ pub struct State {
 }
 
 ///|
+/// Constant `st_dummy`.
 pub let st_dummy : State = {
   slot: Slot::unassigned(),
   cat: @shared_types.Category::dummy(),
@@ -90,16 +91,19 @@ fn State::new(
 }
 
 ///|
+/// Function `start`.
 pub fn State::start(cat : @shared_types.Category, expr : Expr) -> State {
   State::new(Slot::unassigned(), cat, ts_exp(MarkSlotMap::empty(), expr))
 }
 
 ///|
+/// Function `slot`.
 pub fn State::slot(self : State) -> Slot {
   self.slot
 }
 
 ///|
+/// Function `status`.
 pub fn State::status(self : State) -> Status {
   match self.desc.first() {
     None => Failed

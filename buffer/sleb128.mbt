@@ -60,6 +60,25 @@ pub impl Leb128 for Int64 with output(self, buffer) {
 }
 
 ///|
+/// Encode a value as signed LEB128 and append it to the buffer.
+///
+/// This works for types implementing `Leb128`, currently including `Int` and
+/// `Int64`.
+///
+/// Parameters:
+///
+/// - `buffer`: destination buffer.
+/// - `value`: value to encode.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let buf = @buffer.new()
+///   buf.write_leb128(127)
+///   inspect(buf.contents().length() > 0, content="true")
+/// }
+/// ```
 pub fn[A : Leb128] Buffer::write_leb128(buffer : Buffer, value : A) -> Unit {
   value.output(buffer)
 }

@@ -13,19 +13,25 @@
 // limitations under the License.
 
 ///|
+/// Numeric constant `not_a_number`.
 pub let not_a_number : Double = 0x7FF8000000000001L.reinterpret_as_double()
 
 ///|
+/// Numeric constant `infinity`.
 pub let infinity : Double = 0x7FF0000000000000L.reinterpret_as_double()
 
 ///|
+/// Numeric constant `neg_infinity`.
 pub let neg_infinity : Double = 0xFFF0000000000000L.reinterpret_as_double()
 
 ///|
+/// Max value constant for this type.
 pub let max_value : Double = 0x7FEFFFFFFFFFFFFFL.reinterpret_as_double()
 
 ///|
+/// Min value constant for this type.
 pub let min_value : Double = 0xFFEFFFFFFFFFFFFFL.reinterpret_as_double()
 
 ///|
+/// Numeric constant `min_positive`.
 pub let min_positive : Double = 0x0010000000000000L.reinterpret_as_double()

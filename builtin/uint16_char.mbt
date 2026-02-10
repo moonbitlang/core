@@ -64,11 +64,13 @@ pub fn UInt16::is_surrogate(self : Self) -> Bool {
 }
 
 ///|
+/// Unsafe variant of `to_char`.
 pub fn UInt16::unsafe_to_char(self : UInt16) -> Char {
   self.to_int().unsafe_to_char()
 }
 
 ///|
+/// Convert to `char`.
 pub fn UInt16::to_char(self : UInt16) -> Char? {
   if self is (0..=0xD7FF) || self is (0xE000..<_) {
     Some(self.unsafe_to_char())
@@ -158,11 +160,13 @@ pub impl ToJson for UInt16 with to_json(self : UInt16) -> Json {
 }
 
 ///|
+/// Convert to `uint`.
 pub fn UInt16::to_uint(self : UInt16) -> UInt {
   self.to_int().reinterpret_as_uint()
 }
 
 ///|
+/// Convert to `uint64`.
 pub fn UInt16::to_uint64(self : UInt16) -> UInt64 {
   self.to_int().to_uint64()
 }

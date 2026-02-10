@@ -13,30 +13,35 @@
 // limitations under the License.
 
 ///|
+/// Construct `ok` variant.
 #deprecated("Use `Ok(value)` instead")
 pub fn[T, E] ok(value : T) -> Result[T, E] {
   Ok(value)
 }
 
 ///|
+/// Construct `err` variant.
 #deprecated("Use `Err(value)` instead")
 pub fn[T, E] err(value : E) -> Result[T, E] {
   Err(value)
 }
 
 ///|
+/// Return whether the value ok.
 #deprecated("use `x is Ok(_)` instead")
 pub fn[T, E] Result::is_ok(self : Result[T, E]) -> Bool {
   self is Ok(_)
 }
 
 ///|
+/// Return whether the value err.
 #deprecated("use `x is Err(_)` instead")
 pub fn[T, E] Result::is_err(self : Result[T, E]) -> Bool {
   self is Err(_)
 }
 
 ///|
+/// Function `fold`.
 #deprecated("use `match result { Ok(value) => ok(value); Err(error) => err(error) }` instead")
 pub fn[T, E, V] Result::fold(
   self : Result[T, E],

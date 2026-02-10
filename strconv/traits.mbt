@@ -19,6 +19,9 @@
 // - Implements Eisel-Lemire algorithm to speed up floating point parsing.
 
 ///|
+/// Trait for parsing values from textual input.
+///
+/// Implement either `from_str` (preferred) or legacy `from_string`.
 pub(open) trait FromStr {
   #as_free_fn
   from_str(StringView) -> Self raise StrConvError = _

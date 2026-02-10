@@ -18,6 +18,15 @@
 struct Pattern(@re.Pattern)
 
 ///|
+/// Create an epsilon pattern that matches an empty sequence.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let _p : @bytes.Pattern = @bytes.Pattern::epsilon()
+/// }
+/// ```
 #internal(internal, "not intended for public use")
 #doc(hidden)
 pub fn Pattern::epsilon() -> Pattern {
@@ -25,6 +34,15 @@ pub fn Pattern::epsilon() -> Pattern {
 }
 
 ///|
+/// Create a pattern that matches nothing.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let _p : @bytes.Pattern = @bytes.Pattern::empty()
+/// }
+/// ```
 #internal(internal, "not intended for public use")
 #doc(hidden)
 pub fn Pattern::empty() -> Pattern {
@@ -32,6 +50,7 @@ pub fn Pattern::empty() -> Pattern {
 }
 
 ///|
+/// Create a single-character-class pattern from an inclusive integer range.
 #internal(internal, "not intended for public use")
 #doc(hidden)
 pub fn Pattern::char_range(lo : Int, hi : Int) -> Pattern {
@@ -39,6 +58,7 @@ pub fn Pattern::char_range(lo : Int, hi : Int) -> Pattern {
 }
 
 ///|
+/// Create a single-character-class pattern from sorted disjoint intervals.
 #internal(internal, "not intended for public use")
 #doc(hidden)
 pub fn Pattern::char_set(cs : ReadOnlyArray[(Int, Int)]) -> Pattern {
@@ -46,6 +66,7 @@ pub fn Pattern::char_set(cs : ReadOnlyArray[(Int, Int)]) -> Pattern {
 }
 
 ///|
+/// Concatenate multiple patterns into a sequence.
 #internal(internal, "not intended for public use")
 #doc(hidden)
 pub fn Pattern::seq(pats : ReadOnlyArray[Pattern]) -> Pattern {
@@ -53,6 +74,7 @@ pub fn Pattern::seq(pats : ReadOnlyArray[Pattern]) -> Pattern {
 }
 
 ///|
+/// Build an alternation that matches any of the input patterns.
 #internal(internal, "not intended for public use")
 #doc(hidden)
 pub fn Pattern::alt(pats : ReadOnlyArray[Pattern]) -> Pattern {
@@ -60,6 +82,11 @@ pub fn Pattern::alt(pats : ReadOnlyArray[Pattern]) -> Pattern {
 }
 
 ///|
+/// Apply repetition bounds and greediness to a pattern.
+///
+/// - `min`: minimum repetition count.
+/// - `max`: optional maximum repetition count.
+/// - `greedy`: `true` for greedy, `false` for non-greedy.
 #internal(internal, "not intended for public use")
 #doc(hidden)
 pub fn Pattern::quantifier(
@@ -82,6 +109,7 @@ pub fn Pattern::quantifier(
 }
 
 ///|
+/// Wrap a pattern in a capturing group, optionally named.
 #internal(internal, "not intended for public use")
 #doc(hidden)
 pub fn Pattern::capture(pat : Pattern, name? : String) -> Pattern {
@@ -89,6 +117,7 @@ pub fn Pattern::capture(pat : Pattern, name? : String) -> Pattern {
 }
 
 ///|
+/// Create a start-of-input assertion pattern.
 #internal(internal, "not intended for public use")
 #doc(hidden)
 pub fn Pattern::start_of_input() -> Pattern {
@@ -96,6 +125,7 @@ pub fn Pattern::start_of_input() -> Pattern {
 }
 
 ///|
+/// Create an end-of-input assertion pattern.
 #internal(internal, "not intended for public use")
 #doc(hidden)
 pub fn Pattern::end_of_input() -> Pattern {

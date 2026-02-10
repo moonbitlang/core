@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+/// Create a new instance.
 #deprecated("Use `Rand::new()` instead")
 pub fn new(seed? : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456") -> Rand {
   if seed.length() != 32 {

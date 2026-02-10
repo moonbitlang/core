@@ -90,6 +90,17 @@ pub fn[T] ArrayView::is_empty(self : ArrayView[T]) -> Bool {
 }
 
 ///|
+/// Return the starting index of this view in the underlying array.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let arr = [10, 20, 30]
+///   let v = arr[1:]
+///   inspect(v.start_offset(), content="1")
+/// }
+/// ```
 pub fn[T] ArrayView::start_offset(self : Self[T]) -> Int {
   self.start()
 }
@@ -495,6 +506,19 @@ pub fn[T] FixedArray::get_view(
 }
 
 ///|
+/// Return an iterator over suffix views of this array view.
+///
+/// Set `include_empty=true` to include the empty suffix at the end.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let v = [1, 2][:]
+///   inspect(v.suffixes().collect(), content="[[1, 2], [2]]")
+///   inspect(v.suffixes(include_empty=true).collect(), content="[[1, 2], [2], []]")
+/// }
+/// ```
 pub fn[T] ArrayView::suffixes(
   self : Self[T],
   include_empty? : Bool = false,
@@ -552,6 +576,18 @@ pub fn[X] ArrayView::iter(self : ArrayView[X]) -> Iter[X] {
 }
 
 ///|
+/// Return a reverse iterator over elements of this view.
+///
+/// Deprecated alias for reverse iteration; prefer `rev_iterator`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let values = [1, 2, 3][:].rev_iter().collect()
+///   inspect(values, content="[3, 2, 1]")
+/// }
+/// ```
 #alias(rev_iterator, deprecated)
 pub fn[X] ArrayView::rev_iter(self : ArrayView[X]) -> Iter[X] {
   let mut i = self.length()

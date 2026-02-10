@@ -44,6 +44,7 @@ pub fn[K, V] SortedMap::keys(self : SortedMap[K, V]) -> Array[K] {
 }
 
 ///|
+/// Function `elems`.
 #deprecated("Use `values` instead")
 #coverage.skip
 pub fn[K, V] SortedMap::elems(self : SortedMap[K, V]) -> Array[V] {

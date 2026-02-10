@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+/// Validate input and return whether it is valid.
 pub fn valid(input : StringView) -> Bool {
   try {
     parse(input) |> ignore

@@ -393,6 +393,7 @@ fn Parser::disjunction(
 }
 
 ///|
+/// Parse input into this package's structured value.
 pub fn parse(
   profile~ : Profile,
   mode~ : Mode,

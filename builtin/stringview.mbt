@@ -415,6 +415,19 @@ pub fn StringView::from_iter(iter : Iter[Char]) -> StringView {
 }
 
 ///|
+/// Error type returned by `make_safe` when view indices are invalid.
+///
+/// - `IndexOutOfBounds`: index exceeds valid range.
+/// - `InvalidIndex`: index splits a UTF-16 surrogate pair.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let result = try? "x"[2:]
+///   inspect(result is Err(IndexOutOfBounds), content="true")
+/// }
+/// ```
 pub suberror CreatingViewError {
   IndexOutOfBounds
   InvalidIndex

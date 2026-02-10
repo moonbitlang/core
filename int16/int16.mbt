@@ -13,9 +13,11 @@
 // limitations under the License.
 
 ///|
+/// Max value constant for this type.
 pub let max_value : Int16 = 32767
 
 ///|
+/// Min value constant for this type.
 pub let min_value : Int16 = -32768
 
 ///|
@@ -94,6 +96,7 @@ pub impl Neg for Int16 with neg(self : Int16) -> Int16 {
 }
 
 ///|
+/// Return absolute value.
 pub fn Int16::abs(self : Int16) -> Int16 {
   if self < 0 {
     -self
@@ -204,22 +207,27 @@ pub fn Int16::from_byte(self : Byte) -> Int16 = "%byte_to_i16"
 ///   inspect(Int16::from_int64(small), content="42") // 42 fits in Int16, remains unchanged
 /// }
 /// ```
+/// Create from `int64`.
 #cfg(not(target="js"))
+/// Convert `Int64` to `Int16`.
 pub fn Int16::from_int64(self : Int64) -> Int16 = "%i64_to_i16"
 
 ///|
+/// Convert `Int64` to `Int16`.
 #cfg(target="js")
 pub fn Int16::from_int64(self : Int64) -> Int16 {
   Int16::from_int(self.to_int())
 }
 
 ///|
+/// Convert to `int64`.
 #cfg(target="js")
 pub fn Int16::to_int64(self : Int16) -> Int64 {
   self.to_int().to_int64()
 }
 
 ///|
+/// Convert to `int64`.
 #cfg(not(target="js"))
 pub fn Int16::to_int64(self : Int16) -> Int64 = "%i16_to_i64"
 
@@ -267,6 +275,7 @@ pub fn Int16::to_int(self : Int16) -> Int = "%i16_to_i32"
 pub fn Int16::to_byte(self : Int16) -> Byte = "%i16_to_byte"
 
 ///|
+/// Convert to `string`.
 pub fn Int16::to_string(self : Int16, radix? : Int = 10) -> String {
   self.to_int().to_string(radix~)
 }

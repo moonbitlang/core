@@ -541,6 +541,16 @@ pub fn Bytes::to_fixedarray(self : Bytes, len? : Int) -> FixedArray[Byte] {
 }
 
 ///|
+/// Copy this bytes view into a new fixed array.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let arr = b"abcd"[1:3].to_fixedarray()
+///   inspect(arr, content="[b'\\x62', b'\\x63']")
+/// }
+/// ```
 pub fn BytesView::to_fixedarray(self : BytesView) -> FixedArray[Byte] {
   let len = self.length()
   let arr = unsafe_to_fixedarray(UninitializedArray::make(len))
@@ -604,6 +614,17 @@ pub fn Bytes::to_array(self : Bytes) -> Array[Byte] {
 }
 
 ///|
+/// Copy this bytes view into a new mutable array.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let arr = b"ab"[:].to_array()
+///   inspect(arr.length(), content="2")
+///   inspect(arr[0], content="b'\\x61'")
+/// }
+/// ```
 pub fn BytesView::to_array(self : BytesView) -> Array[Byte] {
   let len = self.length()
   let rv = Array::make(len, b'0')

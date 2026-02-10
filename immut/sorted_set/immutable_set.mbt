@@ -19,6 +19,7 @@
 // Construct an empty ImmutableSet.
 
 ///|
+/// Create a new instance.
 #as_free_fn
 pub fn[A] SortedSet::new() -> SortedSet[A] {
   Empty
@@ -778,6 +779,7 @@ pub impl[A : ToJson] ToJson for SortedSet[A] with to_json(self) {
 }
 
 ///|
+/// Convert to `json`.
 pub fn[A : ToJson] SortedSet::to_json(self : SortedSet[A]) -> Json {
   ToJson::to_json(self)
 }
@@ -800,6 +802,7 @@ pub impl[A : @json.FromJson + Compare] @json.FromJson for SortedSet[A] with from
 }
 
 ///|
+/// Create from `json`.
 #as_free_fn
 pub fn[A : @json.FromJson + Compare] SortedSet::from_json(
   json : Json,

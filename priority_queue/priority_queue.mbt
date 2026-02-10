@@ -84,6 +84,7 @@ pub fn[A] PriorityQueue::copy(self : PriorityQueue[A]) -> PriorityQueue[A] {
 }
 
 ///|
+/// Convert to `array`.
 pub fn[A : Compare] PriorityQueue::to_array(
   self : PriorityQueue[A],
 ) -> Array[A] {
@@ -105,6 +106,7 @@ pub fn[A : Compare] PriorityQueue::to_array(
 }
 
 ///|
+/// Return an iterator via `iter`.
 #alias(iterator, deprecated)
 pub fn[A : Compare] PriorityQueue::iter(self : PriorityQueue[A]) -> Iter[A] {
   self.to_array().iter()
@@ -120,6 +122,7 @@ pub impl[A : ToJson + Compare] ToJson for PriorityQueue[A] with to_json(self) {
 }
 
 ///|
+/// Create from `iter`.
 #as_free_fn
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
@@ -169,6 +172,7 @@ fn[A : Compare] merges(x : Node[A]?) -> Node[A]? {
 }
 
 ///|
+/// Return length.
 pub fn[A] PriorityQueue::length(self : PriorityQueue[A]) -> Int {
   self.len
 }

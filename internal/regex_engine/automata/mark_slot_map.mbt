@@ -63,6 +63,7 @@ fn MarkSlotMap::assign_slot(self : MarkSlotMap, slot : Slot) -> MarkSlotMap {
 }
 
 ///|
+/// Function `get_slot`.
 pub fn MarkSlotMap::get_slot(self : MarkSlotMap, mark : Mark) -> Slot {
   match self.0.get(mark) {
     None => Slot::unassigned()
@@ -71,6 +72,7 @@ pub fn MarkSlotMap::get_slot(self : MarkSlotMap, mark : Mark) -> Slot {
 }
 
 ///|
+/// Return an iterator via `iter2`.
 pub fn MarkSlotMap::iter2(self : MarkSlotMap) -> Iter2[Mark, Slot] {
   self.0.iter2()
 }

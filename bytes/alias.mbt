@@ -21,6 +21,7 @@ pub fn default() -> Bytes {
 }
 
 ///|
+/// Create from `fixedarray`.
 #deprecated("Use `Bytes::from_array` instead")
 #doc(hidden)
 pub fn from_fixedarray(arr : FixedArray[Byte], len? : Int) -> Bytes {
@@ -28,6 +29,7 @@ pub fn from_fixedarray(arr : FixedArray[Byte], len? : Int) -> Bytes {
 }
 
 ///|
+/// Create from `iter`.
 #deprecated("Use `Bytes::from_iter` instead")
 #alias(from_iterator, deprecated="Use `Bytes::from_iter` instead")
 #doc(hidden)
@@ -36,6 +38,7 @@ pub fn from_iter(iter : Iter[Byte]) -> Bytes {
 }
 
 ///|
+/// Function `of`.
 #deprecated("Use `Bytes::from_array` instead")
 #doc(hidden)
 pub fn of(arr : ArrayView[Byte]) -> Bytes {
@@ -43,6 +46,7 @@ pub fn of(arr : ArrayView[Byte]) -> Bytes {
 }
 
 ///|
+/// Create from `array`.
 #deprecated("Use `Bytes::from_array` instead")
 #doc(hidden)
 pub fn from_array(arr : ArrayView[Byte]) -> Bytes {
@@ -50,5 +54,6 @@ pub fn from_array(arr : ArrayView[Byte]) -> Bytes {
 }
 
 ///|
+/// Type `View` used by this package APIs.
 #deprecated("@bytes.View is deprecated, use BytesView instead.")
 pub type View = BytesView

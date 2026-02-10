@@ -411,6 +411,19 @@ pub fn BytesView::to_uint64_le(self : BytesView) -> UInt64 {
 }
 
 ///|
+/// Interpret the first 4 bytes as a big-endian signed `Int`.
+///
+/// Deprecated: prefer bit-pattern matching (`u32be`) directly.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let bytes = b"\x00\x00\x00\x2A"
+///   guard bytes is [u32be(u), ..]
+///   inspect(u.reinterpret_as_int(), content="42")
+/// }
+/// ```
 #deprecated
 #doc(hidden)
 pub fn BytesView::to_int_be(self : BytesView) -> Int {
@@ -419,6 +432,19 @@ pub fn BytesView::to_int_be(self : BytesView) -> Int {
 }
 
 ///|
+/// Interpret the first 4 bytes as a little-endian signed `Int`.
+///
+/// Deprecated: prefer bit-pattern matching (`u32le`) directly.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let bytes = b"\x2A\x00\x00\x00"
+///   guard bytes is [u32le(u), ..]
+///   inspect(u.reinterpret_as_int(), content="42")
+/// }
+/// ```
 #deprecated
 #doc(hidden)
 pub fn BytesView::to_int_le(self : BytesView) -> Int {
@@ -427,6 +453,19 @@ pub fn BytesView::to_int_le(self : BytesView) -> Int {
 }
 
 ///|
+/// Interpret the first 8 bytes as a big-endian signed `Int64`.
+///
+/// Deprecated: prefer bit-pattern matching (`u64be`) directly.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let bytes = b"\x00\x00\x00\x00\x00\x00\x00\x2A"
+///   guard bytes is [u64be(u), ..]
+///   inspect(u.reinterpret_as_int64(), content="42")
+/// }
+/// ```
 #deprecated
 #doc(hidden)
 pub fn BytesView::to_int64_be(self : BytesView) -> Int64 {
@@ -435,6 +474,19 @@ pub fn BytesView::to_int64_be(self : BytesView) -> Int64 {
 }
 
 ///|
+/// Interpret the first 8 bytes as a little-endian signed `Int64`.
+///
+/// Deprecated: prefer bit-pattern matching (`u64le`) directly.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let bytes = b"\x2A\x00\x00\x00\x00\x00\x00\x00"
+///   guard bytes is [u64le(u), ..]
+///   inspect(u.reinterpret_as_int64(), content="42")
+/// }
+/// ```
 #deprecated
 #doc(hidden)
 pub fn BytesView::to_int64_le(self : BytesView) -> Int64 {
@@ -639,6 +691,19 @@ pub fn BytesView::start_offset(self : BytesView) -> Int {
 }
 
 ///|
+/// Return a `Bytes` value containing exactly this view's range.
+///
+/// If the view spans the full underlying bytes, this returns the original value
+/// without copying; otherwise it allocates and copies.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let b = b"hello"
+///   inspect(b[1:4].to_bytes().length(), content="3")
+/// }
+/// ```
 pub fn BytesView::to_bytes(self : BytesView) -> Bytes {
   if self.length() == self.bytes().length() {
     // If the view covers the entire bytes, return the original bytes to avoid copying

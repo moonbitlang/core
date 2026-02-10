@@ -639,6 +639,7 @@ pub impl Eq for Float with equal(self : Float, other : Float) -> Bool = "%f32.eq
 pub impl Eq for Float with not_equal(self : Float, other : Float) -> Bool = "%f32.ne"
 
 ///|
+/// Operator helper `op_neq`.
 #deprecated("Use `a != b` instead")
 #doc(hidden)
 pub fn Float::op_neq(self : Float, other : Float) -> Bool = "%f32.ne"
@@ -876,10 +877,13 @@ pub fn Float::from_uint(self : UInt) -> Float = "%u32.to_f32"
 ///   inspect(Float::from_uint64(big).to_double(), content="18446744073709552000")
 /// }
 /// ```
+/// Create from `uint64`.
 #cfg(not(target="js"))
+/// Convert `UInt64` to `Float`.
 pub fn Float::from_uint64(self : UInt64) -> Float = "%u64.to_f32"
 
 ///|
+/// Convert `UInt64` to `Float`.
 #cfg(target="js")
 pub fn Float::from_uint64(self : UInt64) -> Float {
   Float::from_double(self.to_double())
@@ -917,10 +921,13 @@ test "Float::from_uint64" {
 ///   inspect(f.to_double(), content="42")
 /// }
 /// ```
+/// Create from `int64`.
 #cfg(not(target="js"))
+/// Convert `Int64` to `Float`.
 pub fn Float::from_int64(self : Int64) -> Float = "%i64.to_f32"
 
 ///|
+/// Convert `Int64` to `Float`.
 #cfg(target="js")
 pub fn Float::from_int64(self : Int64) -> Float {
   Float::from_double(self.to_double())

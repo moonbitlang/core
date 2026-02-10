@@ -13,6 +13,18 @@
 // limitations under the License.
 
 ///|
+/// Encode a UTF-16 string into raw bytes.
+///
+/// Deprecated: use `@encoding/utf8.encode` for text encoding.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let bytes = Bytes::from_array([b'A'])
+///   inspect(bytes.length(), content="1")
+/// }
+/// ```
 #deprecated("check `@encoding/utf8.encode`")
 #coverage.skip
 pub fn Bytes::of_string(str : String) -> Bytes {
@@ -22,6 +34,19 @@ pub fn Bytes::of_string(str : String) -> Bytes {
 }
 
 ///|
+/// Return a copied `Bytes` value.
+///
+/// Deprecated because `Bytes` is immutable and copying is usually unnecessary.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let a = b"abc"
+///   let b = Bytes::makei(a.length(), i => a[i])
+///   inspect(a == b, content="true")
+/// }
+/// ```
 #deprecated("Bytes are immutable. Use `FixedArray::blit_from_bytes` if it's really necessary.")
 pub fn Bytes::copy(self : Bytes) -> Bytes {
   Bytes::makei(self.length(), i => self[i])

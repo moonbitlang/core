@@ -23,6 +23,18 @@ fn[T] unsafe_reinterpret_from_fixed_array(
 ) -> ReadOnlyArray[T] = "%identity"
 
 ///|
+/// Access element at `index` in a read-only array.
+///
+/// Panics if index is out of bounds.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let a : ReadOnlyArray[Int] = [10, 20, 30]
+///   inspect(a.at(1), content="20")
+/// }
+/// ```
 #alias("_[_]")
 pub fn[T] ReadOnlyArray::at(self : ReadOnlyArray[T], index : Int) -> T {
   self.unsafe_reinterpret_to_fixed_array()[index]

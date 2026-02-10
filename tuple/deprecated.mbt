@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+/// Function `pair`.
 #deprecated
 #coverage.skip
 pub fn[T, U] pair(x : T, y : U) -> (T, U) {
@@ -20,6 +21,7 @@ pub fn[T, U] pair(x : T, y : U) -> (T, U) {
 }
 
 ///|
+/// Function `fst`.
 #deprecated("use `tuple.0` instead")
 #coverage.skip
 pub fn[T, U] fst(tuple : (T, U)) -> T {
@@ -27,6 +29,7 @@ pub fn[T, U] fst(tuple : (T, U)) -> T {
 }
 
 ///|
+/// Function `snd`.
 #deprecated("use `tuple.1` instead")
 #coverage.skip
 pub fn[T, U] snd(tuple : (T, U)) -> U {
@@ -34,6 +37,7 @@ pub fn[T, U] snd(tuple : (T, U)) -> U {
 }
 
 ///|
+/// Function `map_fst`.
 #deprecated("use `{ let (a,b) = tuple; (f(a),b) }` instead")
 #coverage.skip
 pub fn[T, U, V] map_fst(f : (T) -> U, tuple : (T, V)) -> (U, V) {
@@ -41,6 +45,7 @@ pub fn[T, U, V] map_fst(f : (T) -> U, tuple : (T, V)) -> (U, V) {
 }
 
 ///|
+/// Function `map_snd`.
 #deprecated("use `{ let (a,b) = tuple; (a,f(b)) }` instead")
 #coverage.skip
 pub fn[T, U, V] map_snd(f : (T) -> U, tuple : (V, T)) -> (V, U) {
@@ -48,6 +53,7 @@ pub fn[T, U, V] map_snd(f : (T) -> U, tuple : (V, T)) -> (V, U) {
 }
 
 ///|
+/// Function `map_both`.
 #deprecated("use `{ let (a,b) = tuple; (f(a),f(b)) }` instead")
 #coverage.skip
 pub fn[T, U, V, W] map_both(
@@ -75,6 +81,7 @@ pub fn[T, U, V] curry(f : (T, U) -> V) -> (T) -> (U) -> V {
 }
 
 ///|
+/// Function `uncurry`.
 #deprecated
 #coverage.skip
 pub fn[T, U, V] uncurry(f : (T) -> (U) -> V) -> (T, U) -> V {

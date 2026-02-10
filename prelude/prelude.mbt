@@ -122,6 +122,7 @@ pub fn[T, R] then(value : T, f : (T) -> R raise?) -> R raise? {
 }
 
 ///|
+/// Numeric constant `null`.
 pub let null : Json = @builtin.null
 
 ///|
@@ -140,9 +141,11 @@ pub fn[T] dump(t : T, name? : String, loc~ : SourceLoc) -> T {
 }
 
 ///|
+/// Type `Iterator`.
 #deprecated("The name `Iterator` is deprecated, use `Iter` instead. Note that if you have defined `iterator()` method to support `for .. in` loop, you should also rename `iterator()` to `iter()`. See https://github.com/moonbitlang/core/pull/3127 for more details.")
 pub type Iterator[X] = Iter[X]
 
 ///|
+/// Type `Iterator2`.
 #deprecated("The name `Iterator2` is deprecated, use `Iter2` instead. Note that if you have defined `iterator2()` method to support `for .. in` loop, you should also rename `iterator2()` to `iter2()`. See https://github.com/moonbitlang/core/pull/3127 for more details.")
 pub type Iterator2[X, Y] = Iter2[X, Y]

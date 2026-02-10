@@ -13,12 +13,15 @@
 // limitations under the License.
 
 ///|
+/// Max value constant for this type.
 pub let max_value : UInt16 = 65535
 
 ///|
+/// Min value constant for this type.
 pub let min_value : UInt16 = 0
 
 ///|
+/// Function `reinterpret_as_int16`.
 #deprecated("Use `Int16::reinterpret_from_uint16` instead")
 pub fn UInt16::reinterpret_as_int16(self : UInt16) -> Int16 {
   Int16::from_int(self.to_int())

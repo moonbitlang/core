@@ -318,6 +318,7 @@ pub fn[K] HashSet::to_array(self : HashSet[K]) -> Array[K] {
 }
 
 ///|
+/// Create from `iter`.
 #as_free_fn
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)

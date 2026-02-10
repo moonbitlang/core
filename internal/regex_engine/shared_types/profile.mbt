@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+/// Type `Profile` used by this package APIs.
 pub struct Profile {
   lb : Rechar
   ub : Rechar
@@ -22,6 +23,7 @@ pub struct Profile {
 }
 
 ///|
+/// Create a new instance.
 pub fn Profile::new(
   valid~ : RecharSet,
   word~ : RecharSet,

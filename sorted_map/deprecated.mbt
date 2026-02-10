@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+/// Return an iterator of keys.
 #deprecated("Use `keys_as_iter` instead. `keys` will return `Iter[K]` instead of `Array[K]` in the future.")
 #coverage.skip
 pub fn[K, V] SortedMap::keys(self : SortedMap[K, V]) -> Array[K] {
@@ -22,6 +23,7 @@ pub fn[K, V] SortedMap::keys(self : SortedMap[K, V]) -> Array[K] {
 }
 
 ///|
+/// Return an iterator of values.
 #deprecated("Use `values_as_iter` instead. `values` will return `Iter[V]` instead of `Array[V]` in the future.")
 #coverage.skip
 pub fn[K, V] SortedMap::values(self : SortedMap[K, V]) -> Array[V] {

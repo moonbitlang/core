@@ -13,6 +13,9 @@
 // limitations under the License.
 
 ///|
+/// Trait for values that can be viewed as `StringView`.
+///
+/// Types implementing this trait provide zero-copy access to string-like data.
 pub trait ToStringView {
   to_string_view(Self) -> StringView
 }

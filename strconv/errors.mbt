@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+/// Error type `StrConvError`.
 pub(all) suberror StrConvError {
   StrConvError(String)
 }

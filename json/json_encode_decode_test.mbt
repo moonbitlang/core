@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+/// Type `AllThree`.
 pub(all) struct AllThree {
   ints : Array[Int]
   floats : Array[Double]

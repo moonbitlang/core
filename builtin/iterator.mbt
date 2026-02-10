@@ -32,6 +32,10 @@ pub fn[X] Iter::next(self : Iter[X]) -> X? {
 }
 
 ///|
+/// Consume iterator elements while callback returns `IterContinue`.
+///
+/// Deprecated: prefer explicit loops.
+/// Function `run`.
 #locals(f)
 #deprecated("write a loop instead.")
 pub fn[X] Iter::run(self : Iter[X], f : (X) -> IterResult) -> IterResult {
@@ -43,6 +47,10 @@ pub fn[X] Iter::run(self : Iter[X], f : (X) -> IterResult) -> IterResult {
 }
 
 ///|
+/// Consume iterator elements and ignore final continuation state.
+///
+/// Deprecated: prefer explicit loops.
+/// Function `just_run`.
 #deprecated("write a loop instead.")
 pub fn[X] Iter::just_run(self : Iter[X], f : (X) -> IterResult) -> Unit {
   while self.next() is Some(x) {
@@ -89,6 +97,8 @@ pub fn[X] Iter::each(self : Iter[X], f : (X) -> Unit raise?) -> Unit raise? {
 }
 
 ///|
+/// Return `true` if any element satisfies predicate `f`.
+/// Function `any`.
 #locals(f)
 pub fn[X] Iter::any(self : Iter[X], f : (X) -> Bool) -> Bool {
   while self.next() is Some(x) {
@@ -101,6 +111,8 @@ pub fn[X] Iter::any(self : Iter[X], f : (X) -> Bool) -> Bool {
 }
 
 ///|
+/// Return `true` if all elements satisfy predicate `f`.
+/// Function `all`.
 #locals(f)
 pub fn[X] Iter::all(self : Iter[X], f : (X) -> Bool) -> Bool {
   while self.next() is Some(x) {
@@ -669,12 +681,16 @@ pub fn[X] Iter::to_array(self : Iter[X]) -> Array[X] {
 }
 
 ///|
+/// Return this iterator itself.
+/// Return an iterator via `iter`.
 #alias(iterator)
 pub fn[X] Iter::iter(self : Iter[X]) -> Iter[X] {
   self
 }
 
 ///|
+/// Return an indexed view of this iterator.
+/// Return an iterator via `iter2`.
 #alias(iterator2)
 pub fn[X] Iter::iter2(self : Iter[X]) -> Iter2[Int, X] {
   let mut i = 0
@@ -748,6 +764,8 @@ pub fn[X] Iter::intersperse(self : Iter[X], sep : X) -> Iter[X] {
 }
 
 ///|
+/// Return a sliced iterator view in range `[start, end)`.
+/// Function `view`.
 #alias("_[_:_]")
 #alias(sub, deprecated="Use _[_:_] instead")
 pub fn[X] Iter::view(self : Iter[X], start? : Int = 0, end? : Int) -> Iter[X] {
@@ -827,6 +845,7 @@ pub fn[X] Iter::nth(self : Iter[X], n : Int) -> X? {
 }
 
 ///|
+/// Return the maximum element, or `None` if empty.
 pub fn[X : Compare] Iter::maximum(self : Iter[X]) -> X? {
   guard self.next() is Some(x) else { return None }
   let mut res = x
@@ -839,6 +858,7 @@ pub fn[X : Compare] Iter::maximum(self : Iter[X]) -> X? {
 }
 
 ///|
+/// Return the minimum element, or `None` if empty.
 pub fn[X : Compare] Iter::minimum(self : Iter[X]) -> X? {
   guard self.next() is Some(x) else { return None }
   let mut res = x
@@ -858,23 +878,29 @@ pub fn[X : Compare] Iter::minimum(self : Iter[X]) -> X? {
 pub(all) struct Iter2[X, Y](Iter[(X, Y)])
 
 ///|
+/// Construct an `Iter2` from a pair-producing function.
 pub fn[X, Y] Iter2::new(f : () -> (X, Y)?) -> Iter2[X, Y] {
   Iter2(Iter::new(f))
 }
 
 ///|
+/// Convert to plain iterator of pairs.
+/// Return an iterator via `iter`.
 #alias(iterator)
 pub fn[X, Y] Iter2::iter(self : Iter2[X, Y]) -> Iter[(X, Y)] {
   self.0
 }
 
 ///|
+/// Return this two-variable iterator itself.
+/// Return an iterator via `iter2`.
 #alias(iterator2)
 pub fn[X, Y] Iter2::iter2(self : Iter2[X, Y]) -> Iter2[X, Y] {
   self
 }
 
 ///|
+/// Get the next pair from the iterator.
 pub fn[X, Y] Iter2::next(self : Iter2[X, Y]) -> (X, Y)? {
   self.0.next()
 }
@@ -885,6 +911,7 @@ pub impl[X : Show, Y : Show] Show for Iter2[X, Y] with output(self, logger) {
 }
 
 ///|
+/// Consume pairs while callback returns `IterContinue`.
 pub fn[X, Y] Iter2::run(
   self : Iter2[X, Y],
   f : (X, Y) -> IterResult,
@@ -897,11 +924,13 @@ pub fn[X, Y] Iter2::run(
 }
 
 ///|
+/// Apply callback to each pair.
 pub fn[X, Y] Iter2::each(self : Iter2[X, Y], f : (X, Y) -> Unit) -> Unit {
   self.0.each(pair => f(pair.0, pair.1))
 }
 
 ///|
+/// Concatenate two `Iter2` streams.
 pub fn[X, Y] Iter2::concat(
   self : Iter2[X, Y],
   other : Iter2[X, Y],
@@ -910,6 +939,7 @@ pub fn[X, Y] Iter2::concat(
 }
 
 ///|
+/// Collect all pairs into an array.
 pub fn[X, Y] Iter2::to_array(self : Iter2[X, Y]) -> Array[(X, Y)] {
   self.0.to_array()
 }

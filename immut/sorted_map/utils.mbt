@@ -60,6 +60,7 @@ pub fn[K, V] SortedMap::length(self : SortedMap[K, V]) -> Int {
 }
 
 ///|
+/// Return whether the value empty.
 pub fn[K, V] SortedMap::is_empty(self : SortedMap[K, V]) -> Bool {
   self.length() == 0
 }
@@ -231,6 +232,7 @@ pub fn[K : Compare, V] SortedMap::from_array(
 }
 
 ///|
+/// Return an iterator via `iter`.
 #alias(iterator, deprecated)
 pub fn[K, V] SortedMap::iter(self : SortedMap[K, V]) -> Iter[(K, V)] {
   let mut curr_node = self
@@ -255,6 +257,7 @@ pub fn[K, V] SortedMap::iter(self : SortedMap[K, V]) -> Iter[(K, V)] {
 }
 
 ///|
+/// Return an iterator via `iter2`.
 #alias(iterator2, deprecated)
 pub fn[K, V] SortedMap::iter2(self : SortedMap[K, V]) -> Iter2[K, V] {
   self.iter()
@@ -343,6 +346,7 @@ pub fn[K : Compare, V] SortedMap::range(
 }
 
 ///|
+/// Create from `iter`.
 #as_free_fn
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
@@ -431,6 +435,7 @@ pub fn[K, V] SortedMap::rev_values(self : SortedMap[K, V]) -> Iter[V] {
 }
 
 ///|
+/// Convert to `json`.
 pub fn[K : Show, V : ToJson] SortedMap::to_json(self : SortedMap[K, V]) -> Json {
   ToJson::to_json(self)
 }

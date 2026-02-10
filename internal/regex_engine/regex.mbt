@@ -25,6 +25,7 @@ struct Regex {
 }
 
 ///|
+/// Function `group_names`.
 pub fn Regex::group_names(self : Regex) -> ReadOnlyArray[String?] {
   self.groups
 }

@@ -216,6 +216,19 @@ pub fn[T] Array::get(self : Array[T], index : Int) -> T? {
 }
 
 ///|
+/// Write `val` to `idx` without bounds checking.
+///
+/// This is unsafe: caller must ensure `0 <= idx < self.length()`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let arr = [1, 2, 3]
+///   arr.unsafe_set(1, 99)
+///   inspect(arr, content="[1, 99, 3]")
+/// }
+/// ```
 #intrinsic("%array.unsafe_set")
 pub fn[T] Array::unsafe_set(self : Array[T], idx : Int, val : T) -> Unit {
   self.buffer()[idx] = val
@@ -1548,6 +1561,23 @@ pub fn[T] Array::windows(self : Array[T], size : Int) -> Array[ArrayView[T]] {
 }
 
 ///|
+/// Return an iterator over all suffix views of this array.
+///
+/// Suffixes are yielded from longest to shortest. Set `include_empty=true` to
+/// include the final empty suffix.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let xs = [1, 2]
+///   inspect(xs.suffixes().collect(), content="[[1, 2], [2]]")
+///   inspect(
+///     xs.suffixes(include_empty=true).collect(),
+///     content="[[1, 2], [2], []]",
+///   )
+/// }
+/// ```
 pub fn[T] Array::suffixes(
   self : Array[T],
   include_empty? : Bool = false,

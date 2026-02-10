@@ -257,6 +257,7 @@ test "compare" {
 }
 
 ///|
+/// Extract the wrapped value with `unwrap` semantics.
 pub fn[T, E] Result::unwrap(self : Result[T, E]) -> T {
   match self {
     Ok(x) => x
@@ -325,6 +326,7 @@ test "unwrap_or_default" {
 }
 
 ///|
+/// Extract the wrapped value with `unwrap_or_error` semantics.
 pub fn[T, E : Error] Result::unwrap_or_error(self : Result[T, E]) -> T raise E {
   match self {
     Ok(x) => x

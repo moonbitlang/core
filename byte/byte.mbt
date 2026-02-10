@@ -13,7 +13,9 @@
 // limitations under the License.
 
 ///|
+/// Max value constant for this type.
 pub let max_value : Byte = b'\xFF'
 
 ///|
+/// Min value constant for this type.
 pub let min_value : Byte = b'\x00'

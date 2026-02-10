@@ -57,6 +57,15 @@ pub impl Show for UInt16 with output(self, logger) {
 }
 
 ///|
+/// Convert a byte to a two-digit lowercase hexadecimal string.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(Byte::to_hex(b'\x0f'), content="0f")
+/// }
+/// ```
 pub fn Byte::to_hex(b : Byte) -> String {
   fn to_hex_digit(i : Byte) -> Char {
     if i < 10 {
