@@ -1,5 +1,5 @@
 warnings = "-35"
 
 options(
-  virtual: { "has-default": true },
+  virtual: { "has-default": true }, // virtual is reserved in MoonBit lexer
 )
