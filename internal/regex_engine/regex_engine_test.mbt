@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-let profile : @regex_engine.Profile = @regex_engine.Profile::new(
+let profile : @regex_engine.Profile = @regex_engine.Profile(
   valid=@regex_engine.RecharSet::char_range(0, 0x10FFFF),
   word=@regex_engine.RecharSet::char_range('a', 'z') +
     @regex_engine.RecharSet::char_range('A', 'Z') +
@@ -29,7 +29,7 @@ let profile : @regex_engine.Profile = @regex_engine.Profile::new(
 )
 
 ///|
-let profile_ascii : @regex_engine.Profile = @regex_engine.Profile::new(
+let profile_ascii : @regex_engine.Profile = @regex_engine.Profile(
   valid=@regex_engine.RecharSet::char_range(0, 0x7f),
   word=@regex_engine.RecharSet::char_range('a', 'z') +
     @regex_engine.RecharSet::char_range('A', 'Z') +
