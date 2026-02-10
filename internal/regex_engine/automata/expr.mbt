@@ -92,6 +92,9 @@ impl Hash for Expr with hash_combine(self, hasher) {
 }
 
 ///|
+/// Deep-copy an expression tree into a fresh context.
+///
+/// The copied expression reuses semantic structure but receives fresh node ids.
 pub fn e_copy(ctx~ : Context, e : Expr) -> Expr {
   match e.def {
     Chr(c) => e_cset(ctx~, c)
@@ -109,14 +112,19 @@ pub fn e_copy(ctx~ : Context, e : Expr) -> Expr {
 let e_empty : Expr = Expr::{ id: EXPR_ID_EMPTY, def: Alt([]) }
 
 ///|
+/// Canonical epsilon expression.
 pub let e_eps : Expr = Expr::{ id: EXPR_ID_EPS, def: Eps }
 
 ///|
+/// Return whether the expression is epsilon.
 pub fn is_eps(e : Expr) -> Bool {
   e.def is Eps
 }
 
 ///|
+/// Create a character-set expression.
+///
+/// Returns `e_empty` if the provided character set is empty.
 pub fn e_cset(ctx~ : Context, c : @shared_types.RecharSet) -> Expr {
   if c.is_empty() {
     e_empty
@@ -126,6 +134,7 @@ pub fn e_cset(ctx~ : Context, c : @shared_types.RecharSet) -> Expr {
 }
 
 ///|
+/// Create a repetition expression node.
 pub fn e_rep(
   ctx~ : Context,
   mode : @shared_types.QuantifierMode,
@@ -136,16 +145,19 @@ pub fn e_rep(
 }
 
 ///|
+/// Create a capture-mark expression node.
 pub fn e_mark(ctx~ : Context, m : Mark) -> Expr {
   Expr::{ id: ctx.new_expr_id(), def: Mark(m) }
 }
 
 ///|
+/// Create a zero-width "before-category" assertion node.
 pub fn e_before(ctx~ : Context, cat : @shared_types.Category) -> Expr {
   Expr::{ id: ctx.new_expr_id(), def: Before(cat) }
 }
 
 ///|
+/// Create a zero-width "after-category" assertion node.
 pub fn e_after(ctx~ : Context, cat : @shared_types.Category) -> Expr {
   Expr::{ id: ctx.new_expr_id(), def: After(cat) }
 }

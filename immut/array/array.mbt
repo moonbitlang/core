@@ -89,6 +89,7 @@ pub fn[A] T::from_array(arr : ArrayView[A]) -> T[A] {
 }
 
 ///|
+/// Create from `iter`.
 #as_free_fn
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
@@ -127,6 +128,7 @@ pub fn[A] T::from_iter(iter : Iter[A]) -> T[A] {
 //-----------------------------------------------------------------------------
 
 ///|
+/// Convert to `array`.
 pub fn[A] T::to_array(self : T[A]) -> Array[A] {
   if self.is_empty() {
     []
@@ -142,11 +144,13 @@ pub fn[A] T::to_array(self : T[A]) -> Array[A] {
 //-----------------------------------------------------------------------------
 
 ///|
+/// Return whether the value empty.
 pub fn[A] T::is_empty(self : T[A]) -> Bool {
   self.size == 0
 }
 
 ///|
+/// Return length.
 pub fn[A] T::length(self : T[A]) -> Int {
   self.size
 }

@@ -260,6 +260,7 @@ pub fn Repr::omitted() -> Repr {
 }
 
 ///|
+/// Function `unit`.
 #doc(hidden)
 pub fn Repr::unit() -> Repr {
   UnitLit

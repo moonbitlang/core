@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+/// Operator helper `op_lt`.
 #coverage.skip
 #deprecated
 #doc(hidden)
@@ -21,6 +22,7 @@ pub fn[T : Compare] op_lt(self_ : T, other : T) -> Bool {
 }
 
 ///|
+/// Operator helper `op_gt`.
 #coverage.skip
 #deprecated
 #doc(hidden)
@@ -29,6 +31,7 @@ pub fn[T : Compare] op_gt(self_ : T, other : T) -> Bool {
 }
 
 ///|
+/// Operator helper `op_le`.
 #coverage.skip
 #deprecated
 #doc(hidden)
@@ -37,6 +40,7 @@ pub fn[T : Compare] op_le(self_ : T, other : T) -> Bool {
 }
 
 ///|
+/// Operator helper `op_ge`.
 #coverage.skip
 #deprecated
 #doc(hidden)
@@ -45,6 +49,7 @@ pub fn[T : Compare] op_ge(self_ : T, other : T) -> Bool {
 }
 
 ///|
+/// Operator helper `op_notequal`.
 #coverage.skip
 pub fn[T : Eq] op_notequal(x : T, y : T) -> Bool {
   !(x == y)

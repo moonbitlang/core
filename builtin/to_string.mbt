@@ -699,6 +699,16 @@ extern "js" fn uint64_to_string_js(num : UInt64, radix : Int) -> String =
 //==========================================
 
 ///|
+/// Convert `UInt16` to string with optional radix.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect((255 : UInt16).to_string(), content="255")
+///   inspect((255 : UInt16).to_string(radix=16), content="ff")
+/// }
+/// ```
 pub fn UInt16::to_string(self : UInt16, radix? : Int = 10) -> String {
   self.to_int().to_string(radix~)
 }

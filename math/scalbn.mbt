@@ -28,6 +28,7 @@
 ///
 
 ///|
+/// Scale by power-of-two exponent.
 pub fn scalbn(x : Double, exp : Int) -> Double {
   let mut n = exp
   let mut y : Double = x

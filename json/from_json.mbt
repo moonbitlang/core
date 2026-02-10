@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+/// Error type `JsonDecodeError`.
 pub(all) suberror JsonDecodeError {
   JsonDecodeError((JsonPath, String))
 } derive(Eq, Show, ToJson)
@@ -24,6 +25,7 @@ pub(open) trait FromJson {
 }
 
 ///|
+/// Create from `json`.
 pub fn[T : FromJson] from_json(
   json : Json,
   path? : JsonPath = Root,

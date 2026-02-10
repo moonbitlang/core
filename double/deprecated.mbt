@@ -67,6 +67,7 @@ pub fn Double::min_normal() -> Double {
 }
 
 ///|
+/// Function `pow`.
 #deprecated("Use `@math.pow` instead")
 #warnings("-deprecated")
 pub fn pow(m : Double, n : Double) -> Double {
@@ -74,6 +75,7 @@ pub fn pow(m : Double, n : Double) -> Double {
 }
 
 ///|
+/// Return whether the value close.
 #deprecated("Use `Double::is_close` instead")
 pub fn is_close(
   d : Double,
@@ -85,12 +87,14 @@ pub fn is_close(
 }
 
 ///|
+/// Create from `int`.
 #deprecated("Use `Double::from_int` instead")
 pub fn from_int(i : Int) -> Double {
   Double::from_int(i)
 }
 
 ///|
+/// Return absolute value.
 #deprecated("Use `x.abs()` instead")
 pub fn abs(x : Double) -> Double {
   x.abs()

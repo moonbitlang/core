@@ -479,6 +479,7 @@ pub impl ToJson for Json with to_json(self) {
 }
 
 ///|
+/// Inspect JSON value with snapshot-friendly formatting.
 #callsite(autofill(args_loc, loc))
 #alias(inspect, deprecated="Use `json_inspect` without package name instead.")
 pub fn json_inspect(

@@ -100,6 +100,7 @@ pub fn[A] UninitializedArray::length(self : UninitializedArray[A]) -> Int {
 }
 
 ///|
+/// Unsafe variant of `blit`.
 #internal(unsafe, "For internal use only.")
 #doc(hidden)
 pub fn[T] UninitializedArray::unsafe_blit(

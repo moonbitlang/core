@@ -13,7 +13,9 @@
 // limitations under the License.
 
 ///|
+/// Min value constant for this type.
 pub let min_value : UInt64 = 0UL
 
 ///|
+/// Max value constant for this type.
 pub let max_value : UInt64 = 18446744073709551615UL

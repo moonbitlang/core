@@ -32,16 +32,19 @@ pub fn Bitset::index_of(self : Bitset, idx : Int) -> Int {
 }
 
 ///|
+/// Function `first_idx`.
 pub fn Bitset::first_idx(self : Bitset) -> Int {
   self.0.ctz()
 }
 
 ///|
+/// Set operation `union`.
 pub fn Bitset::union(self : Bitset, other : Bitset) -> Bitset {
   Bitset(self.0 | other.0)
 }
 
 ///|
+/// Set operation `intersection`.
 pub fn Bitset::intersection(self : Bitset, other : Bitset) -> Bitset {
   Bitset(self.0 & other.0)
 }

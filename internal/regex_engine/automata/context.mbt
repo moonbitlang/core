@@ -20,6 +20,7 @@ struct Context {
 }
 
 ///|
+/// Create a new instance.
 pub fn Context::new() -> Context {
   Context::{
     next_expr_id: EXPR_ID_RESERVED + 1,

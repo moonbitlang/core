@@ -102,6 +102,7 @@ pub impl[V : @json.FromJson] @json.FromJson for SortedMap[String, V] with from_j
 }
 
 ///|
+/// Create from `json`.
 #as_free_fn
 pub fn[V : @json.FromJson] SortedMap::from_json(
   json : Json,

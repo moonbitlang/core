@@ -473,6 +473,7 @@ pub fn StringView::to_array(self : StringView) -> Array[Char] {
 }
 
 ///|
+/// Convert to `bytes`.
 #deprecated("Check `@encoding/utf8.encode`")
 #coverage.skip
 pub fn StringView::to_bytes(self : StringView) -> Bytes {
@@ -1645,6 +1646,7 @@ test "fold with raise" {
 }
 
 ///|
+/// Function `rev_fold`.
 pub fn[A] StringView::rev_fold(
   self : StringView,
   init~ : A,
@@ -1658,6 +1660,7 @@ pub fn[A] StringView::rev_fold(
 }
 
 ///|
+/// Function `rev_fold`.
 pub fn[A] String::rev_fold(
   self : String,
   init~ : A,

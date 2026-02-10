@@ -43,12 +43,14 @@ pub fn Decimal::from_int64(v : Int64) -> Decimal {
 }
 
 ///|
+/// Function `parse_decimal`.
 #deprecated("use `@strconv.parse_double` instead")
 pub fn parse_decimal(str : StringView) -> Decimal raise StrConvError {
   parse_decimal_from_view(str)
 }
 
 ///|
+/// Function `parse_decimal`.
 #deprecated("use `@strconv.parse_double` instead")
 pub fn Decimal::parse_decimal(str : StringView) -> Decimal raise StrConvError {
   parse_decimal_from_view(str)
@@ -70,6 +72,7 @@ pub fn Decimal::shift(self : Decimal, s : Int) -> Unit {
 }
 
 ///|
+/// Parse input into this package's structured value.
 #deprecated("use `@strconv.from_str` instead")
 pub fn[A : FromStr] parse(str : StringView) -> A raise StrConvError {
   A::from_str(str)

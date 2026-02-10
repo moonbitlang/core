@@ -13,6 +13,16 @@
 // limitations under the License.
 
 ///|
+/// JSON value type used by core serialization APIs.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let value : Json = Json::array([Json::number(1.0), Json::null()])
+///   inspect(value.stringify(), content="[1,null]")
+/// }
+/// ```
 pub enum Json {
   Null
   True
@@ -46,6 +56,17 @@ pub fn Json::null() -> Json {
 }
 
 ///|
+/// JSON `null` constant.
+///
+/// Equivalent to `Json::null()`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(null.stringify(), content="null")
+/// }
+/// ```
 pub let null : Json = Null
 
 ///|

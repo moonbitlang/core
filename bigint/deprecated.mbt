@@ -13,6 +13,18 @@
 // limitations under the License.
 
 ///|
+/// Arithmetic right shift for bigint values.
+///
+/// Deprecated: use the infix operator `>>` instead.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let x = @bigint.BigInt::from_int(16)
+///   inspect((x >> 2).to_int(), content="4")
+/// }
+/// ```
 #deprecated("Use infix bitwise operator `>>` instead")
 #coverage.skip
 pub fn BigInt::asr(self : BigInt, n : Int) -> BigInt {

@@ -228,6 +228,7 @@ pub fn[K : Hash + Eq, V] Map::get(self : Map[K, V], key : K) -> V? {
 }
 
 ///|
+/// Get value with `at` access semantics.
 #alias("_[_]")
 pub fn[K : Hash + Eq, V] Map::at(self : Map[K, V], key : K) -> V {
   let hash = key.hash()
@@ -599,12 +600,14 @@ pub fn[K, V] Map::iter(self : Map[K, V]) -> Iter[(K, V)] {
 }
 
 ///|
+/// Return an iterator via `iter2`.
 #alias(iterator2, deprecated)
 pub fn[K, V] Map::iter2(self : Map[K, V]) -> Iter2[K, V] {
   self.iter()
 }
 
 ///|
+/// Return an iterator of keys.
 pub fn[K, V] Map::keys(self : Map[K, V]) -> Iter[K] {
   let mut curr_entry = self.head
   Iter::new(fn() {
@@ -619,6 +622,7 @@ pub fn[K, V] Map::keys(self : Map[K, V]) -> Iter[K] {
 }
 
 ///|
+/// Return an iterator of values.
 pub fn[K, V] Map::values(self : Map[K, V]) -> Iter[V] {
   let mut curr_entry = self.head
   Iter::new(fn() {
@@ -662,6 +666,7 @@ pub impl[K : Hash + Eq, V : Eq] Eq for Map[K, V] with equal(
 }
 
 ///|
+/// Function `of`.
 pub fn[K : Hash + Eq, V] Map::of(arr : FixedArray[(K, V)]) -> Map[K, V] {
   let length = arr.length()
   let mut capacity = length.next_power_of_two()
@@ -678,6 +683,7 @@ pub fn[K : Hash + Eq, V] Map::of(arr : FixedArray[(K, V)]) -> Map[K, V] {
 }
 
 ///|
+/// Create from `iter`.
 #alias(from_iterator, deprecated)
 pub fn[K : Hash + Eq, V] Map::from_iter(iter : Iter[(K, V)]) -> Map[K, V] {
   let m = {}

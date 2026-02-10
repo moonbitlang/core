@@ -986,6 +986,7 @@ pub fn debug_inspect(
 }
 
 ///|
+/// Assert two values are equal for debugging/tests.
 #callsite(autofill(loc))
 pub fn[T : Eq + Debug] assert_eq(
   a : T,

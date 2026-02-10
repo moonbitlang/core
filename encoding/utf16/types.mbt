@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+/// Type `Endian` used by this package APIs.
 pub(all) enum Endian {
   Little
   Big

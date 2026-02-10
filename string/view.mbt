@@ -16,5 +16,6 @@
 pub using @builtin {trait ToStringView}
 
 ///|
+/// Type `View` used by this package APIs.
 #deprecated("@string.View is deprecated, use StringView instead.")
 pub type View = StringView

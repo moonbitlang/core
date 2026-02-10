@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+/// Error type `Malformed`.
 pub suberror Malformed {
   Malformed(BytesView)
 }

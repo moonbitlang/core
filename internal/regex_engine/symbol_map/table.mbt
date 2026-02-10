@@ -13,6 +13,9 @@
 // limitations under the License.
 
 ///|
+/// Character remapping table used by regex symbol-map construction.
+///
+/// `map_set` applies the mapping to an entire character set.
 pub trait Table {
   map(self : Self, c : @shared_types.Rechar) -> @shared_types.Rechar
   map_set(self : Self, set : @shared_types.RecharSet) -> @shared_types.RecharSet = _

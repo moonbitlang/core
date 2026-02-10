@@ -13,12 +13,15 @@
 // limitations under the License.
 
 ///|
+/// Min value constant for this type.
 pub let min_value : UInt = 0U
 
 ///|
+/// Max value constant for this type.
 pub let max_value : UInt = 4294967295U
 
 ///|
+/// Convert to `int64`.
 pub fn UInt::to_int64(self : UInt) -> Int64 {
   self.to_uint64().reinterpret_as_int64()
 }

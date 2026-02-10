@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+/// Conditional option helper `when`.
 #deprecated("Use `if condition { Some(value()) } else { None }` instead")
 pub fn[T] when(condition : Bool, value : () -> T) -> T? {
   if condition {
@@ -23,6 +24,7 @@ pub fn[T] when(condition : Bool, value : () -> T) -> T? {
 }
 
 ///|
+/// Conditional option helper `unless`.
 #deprecated("Use `if !condition { Some(value()) } else { None }` instead")
 pub fn[T] unless(condition : Bool, value : () -> T) -> T? {
   if !condition {
@@ -33,12 +35,14 @@ pub fn[T] unless(condition : Bool, value : () -> T) -> T? {
 }
 
 ///|
+/// Return an empty value.
 #deprecated("Use `None` instead")
 pub fn[T] empty() -> T? {
   None
 }
 
 ///|
+/// Function `some`.
 #deprecated("Use `Some(value)` instead")
 pub fn[T] some(value : T) -> T? {
   Some(value)

@@ -87,6 +87,7 @@ pub fn String::char_length(
 }
 
 ///|
+/// Unsafe variant of `substring`.
 #intrinsic("%string.substring")
 pub fn String::unsafe_substring(
   str : String,
@@ -261,6 +262,7 @@ pub fn String::iter(self : String) -> Iter[Char] {
 }
 
 ///|
+/// Return an iterator via `iter2`.
 #alias(iterator2, deprecated)
 pub fn String::iter2(self : String) -> Iter2[Int, Char] {
   self.iter().iter2()

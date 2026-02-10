@@ -22,16 +22,19 @@ pub(all) struct SparseArray[X] {
 } derive(Eq)
 
 ///|
+/// Return an empty value.
 pub fn[X] empty() -> SparseArray[X] {
   { elem_info: empty_bitset, data: [] }
 }
 
 ///|
+/// Create a singleton value.
 pub fn[X] singleton(idx : Int, value : X) -> SparseArray[X] {
   { elem_info: empty_bitset.add(idx), data: [value] }
 }
 
 ///|
+/// Get value with `get` access semantics.
 pub fn[X] SparseArray::get(self : SparseArray[X], idx : Int) -> X? {
   if self.elem_info.has(idx) {
     Some(self.data[self.elem_info.index_of(idx)])
@@ -46,6 +49,7 @@ fn[X] SparseArray::unsafe_get(self : SparseArray[X], idx : Int) -> X {
 }
 
 ///|
+/// Create a two-element value.
 pub fn[X] doubleton(
   idx1 : Int,
   value1 : X,
@@ -213,6 +217,7 @@ pub fn[X] SparseArray::difference(
 }
 
 ///|
+/// Function `map`.
 pub fn[X, Y] SparseArray::map(
   self : SparseArray[X],
   f : (X) -> Y raise?,
@@ -221,6 +226,7 @@ pub fn[X, Y] SparseArray::map(
 }
 
 ///|
+/// Function `filter`.
 pub fn[X] SparseArray::filter(
   self : SparseArray[X],
   pred : (X) -> X? raise?,
@@ -251,6 +257,7 @@ pub fn[X] SparseArray::filter(
 // replace an existing element in the sparse array.
 
 ///|
+/// Function `replace`.
 pub fn[X] SparseArray::replace(
   self : SparseArray[X],
   idx : Int,

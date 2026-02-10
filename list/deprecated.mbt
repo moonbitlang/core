@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+/// Function `rev_fold`.
 #deprecated("use `_.to_array().rev_fold(...)` instead")
 pub fn[A, B] List::rev_fold(self : List[A], init~ : B, f : (B, A) -> B) -> B {
   let xs = self.to_array()
@@ -24,6 +25,7 @@ pub fn[A, B] List::rev_fold(self : List[A], init~ : B, f : (B, A) -> B) -> B {
 }
 
 ///|
+/// Function `rev_foldi`.
 #deprecated("use `_.rev().foldi(...)` instead")
 pub fn[A, B] List::rev_foldi(
   self : List[A],
@@ -34,6 +36,7 @@ pub fn[A, B] List::rev_foldi(
 }
 
 ///|
+/// Function `tail`.
 #deprecated("use `unsafe_tail` instead")
 pub fn[A] List::tail(self : List[A]) -> List[A] {
   match self {

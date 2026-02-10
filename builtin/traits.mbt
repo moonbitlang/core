@@ -146,11 +146,13 @@ impl Show with to_string(self) {
 }
 
 ///|
+/// Function `write_object`.
 pub fn[Obj : Show] &Logger::write_object(self : &Logger, obj : Obj) -> Unit {
   obj.output(self)
 }
 
 ///|
+/// Function `write_iter`.
 pub fn[T : Show] &Logger::write_iter(
   self : &Logger,
   iter : Iter[T],
@@ -177,6 +179,7 @@ pub fn[T : Show] &Logger::write_iter(
 // TODO: Logger::write_double(self:Logger, val:Double) -> Unit
 
 ///|
+/// Function `repr`.
 pub fn[T : Show] repr(t : T) -> String {
   let logger = StringBuilder::new()
   t.output(logger)

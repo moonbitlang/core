@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+/// Error type `Malformed`.
 pub suberror Malformed {
   Malformed(BytesView)
 }
@@ -23,6 +24,7 @@ pub suberror Malformed {
 const U_REP = '\u{FFFD}'
 
 ///|
+/// Decode input bytes/text into structured output.
 pub fn decode(
   bytes : BytesView,
   ignore_bom? : Bool = false,

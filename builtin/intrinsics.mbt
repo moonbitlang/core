@@ -62,6 +62,10 @@ pub fn[T] ignore(t : T) -> Unit = "%ignore"
 pub fn[T] physical_equal(a : T, b : T) -> Bool = "%refeq"
 
 ///|
+/// Abort evaluation with a message and source location.
+///
+/// This function never returns.
+/// Function `abort`.
 #callsite(autofill(loc))
 pub fn[T] abort(string : String, loc~ : SourceLoc) -> T {
   @abort.abort(
@@ -74,6 +78,9 @@ pub fn[T] abort(string : String, loc~ : SourceLoc) -> T {
 }
 
 ///|
+/// Raise a panic with no payload.
+///
+/// This function never returns.
 pub fn[T] panic() -> T = "%panic"
 
 // Bool primitive ops
@@ -655,6 +662,7 @@ pub fn Int::shr(self : Int, other : Int) -> Int = "%i32_shr"
 pub fn Int::ctz(self : Int) -> Int = "%i32_ctz"
 
 ///|
+/// Count leading zero bits in a 32-bit integer.
 pub fn Int::clz(self : Int) -> Int = "%i32_clz"
 
 ///|
@@ -760,6 +768,7 @@ pub impl Compare for Int with op_gt(x, y) = "%i32.gt"
 pub impl Compare for Int with op_ge(x, y) = "%i32.ge"
 
 ///|
+/// Return `true` if integer is strictly positive.
 pub fn Int::is_pos(self : Int) -> Bool = "%i32_is_pos"
 
 ///|
@@ -786,9 +795,11 @@ pub fn Int::is_pos(self : Int) -> Bool = "%i32_is_pos"
 pub fn Int::is_neg(self : Int) -> Bool = "%i32_is_neg"
 
 ///|
+/// Return `true` if integer is non-positive (`<= 0`).
 pub fn Int::is_non_pos(self : Int) -> Bool = "%i32_is_non_pos"
 
 ///|
+/// Return `true` if integer is non-negative (`>= 0`).
 pub fn Int::is_non_neg(self : Int) -> Bool = "%i32_is_non_neg"
 
 ///|
@@ -1123,6 +1134,8 @@ pub impl Eq for Double with equal(self : Double, other : Double) -> Bool = "%f64
 pub impl Eq for Double with not_equal(self : Double, other : Double) -> Bool = "%f64_ne"
 
 ///|
+/// Deprecated inequality helper; use `a != b`.
+/// Operator helper `op_neq`.
 #deprecated("Use `a != b` instead")
 #doc(hidden)
 pub fn Double::op_neq(self : Double, other : Double) -> Bool = "%f64_ne"
@@ -1259,6 +1272,8 @@ pub fn Char::to_uint(self : Char) -> UInt {
 }
 
 ///|
+/// Deprecated constructor from raw code point.
+/// Create from `int`.
 #deprecated("Use `Int::unsafe_to_char` instead, and use `Int::to_char` for safe conversion")
 pub fn Char::from_int(val : Int) -> Char = "%char_from_int"
 
@@ -1527,9 +1542,13 @@ pub fn Bytes::new(len : Int) -> Bytes {
 pub fn Int::to_byte(self : Int) -> Byte = "%i32_to_byte"
 
 ///|
+/// Convert integer to char without validity checks.
+///
+/// Undefined behavior for surrogate or out-of-range values.
 pub fn Int::unsafe_to_char(self : Int) -> Char = "%char_from_int"
 
 ///|
+/// Convert integer to `Char` if it is a valid Unicode scalar value.
 pub fn Int::to_char(self : Int) -> Char? {
   if self is (0..=0xD7FF) || self is (0xE000..=0x10FFFF) {
     Some(self.unsafe_to_char())
@@ -1615,6 +1634,8 @@ pub fn[T] FixedArray::at(self : FixedArray[T], idx : Int) -> T = "%fixedarray.ge
 pub fn[T] FixedArray::unsafe_get(self : FixedArray[T], idx : Int) -> T = "%fixedarray.unsafe_get"
 
 ///|
+/// Set fixed-array element without safe bounds checks.
+/// Unsafe variant of `set`.
 #internal(unsafe, "Panic if index is out of bounds")
 #doc(hidden)
 pub fn[T] FixedArray::unsafe_set(
@@ -1738,6 +1759,8 @@ pub fn String::length(self : String) -> Int = "%string_length"
 pub fn String::at(self : String, idx : Int) -> UInt16 = "%string_get"
 
 ///|
+/// Get string UTF-16 code unit without bounds checks.
+/// Unsafe variant of `get`.
 #internal(unsafe, "Undefined behavior if index is out of bounds.")
 #doc(hidden)
 pub fn String::unsafe_get(self : String, idx : Int) -> UInt16 = "%string.unsafe_get"
@@ -2114,6 +2137,8 @@ pub impl Eq for UInt with equal(self : UInt, other : UInt) -> Bool = "%u32.eq"
 pub impl Eq for UInt with not_equal(self : UInt, other : UInt) -> Bool = "%u32.ne"
 
 ///|
+/// Deprecated inequality helper; use `a != b`.
+/// Operator helper `op_neq`.
 #deprecated("Use `a != b` instead")
 #doc(hidden)
 pub fn UInt::op_neq(self : UInt, other : UInt) -> Bool = "%u32.ne"
@@ -2556,18 +2581,26 @@ pub fn UInt::to_byte(self : UInt) -> Byte {
 pub fn UInt::to_double(self : UInt) -> Double = "%u32.to_f64"
 
 ///|
+/// Convert `Int` to `Float` (deprecated alias).
+/// Convert to `float`.
 #deprecated("Use `Float::from_int` instead")
 pub fn Int::to_float(self : Int) -> Float = "%i32.to_f32"
 
 ///|
+/// Reinterpret `Int` bit pattern as `Float` (deprecated alias).
+/// Function `reinterpret_as_float`.
 #deprecated("Use `Float::reinterpret_from_int` instead")
 pub fn Int::reinterpret_as_float(self : Int) -> Float = "%i32.to_f32_reinterpret"
 
 ///|
+/// Reinterpret `UInt` bit pattern as `Float` (deprecated alias).
+/// Function `reinterpret_as_float`.
 #deprecated("Use `Float::reinterpret_from_uint` instead")
 pub fn UInt::reinterpret_as_float(self : UInt) -> Float = "%i32.to_f32_reinterpret"
 
 ///|
+/// Convert `Byte` to `Float` (deprecated alias).
+/// Convert to `float`.
 #deprecated("Use `Float::from_byte` instead")
 pub fn Byte::to_float(self : Byte) -> Float = "%byte.to_f32"
 
@@ -2579,14 +2612,19 @@ pub fn Byte::to_double(self : Byte) -> Double {
 
 ///|
 /// TODO: enable skip_current_package=false
+/// Convert `Double` to `Float` (deprecated alias).
 #deprecated("Use `Float::from_double` instead", skip_current_package=true)
 pub fn Double::to_float(self : Double) -> Float = "%f64.to_f32"
 
 ///|
+/// Convert `UInt` to `Float` (deprecated alias).
+/// Convert to `float`.
 #deprecated("Use `Float::from_uint` instead")
 pub fn UInt::to_float(self : UInt) -> Float = "%u32.to_f32"
 
 ///|
+/// Convert `Int` to `Int16` (deprecated alias).
+/// Convert to `int16`.
 #deprecated("Use `Int16::from_int` instead")
 pub fn Int::to_int16(self : Int) -> Int16 = "%i32_to_i16"
 

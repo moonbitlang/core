@@ -25,6 +25,7 @@ struct MatchResult {
 }
 
 ///|
+/// Return match `before` view.
 #internal(experimental, "subject to breaking change without notice")
 pub fn MatchResult::before(self : MatchResult) -> StringView {
   guard self.result.group(0) is Some((start, _end)) else { panic() }
@@ -32,6 +33,7 @@ pub fn MatchResult::before(self : MatchResult) -> StringView {
 }
 
 ///|
+/// Return match `after` view.
 #internal(experimental, "subject to breaking change without notice")
 pub fn MatchResult::after(self : MatchResult) -> StringView {
   guard self.result.group(0) is Some((_start, end)) else { panic() }
@@ -39,6 +41,7 @@ pub fn MatchResult::after(self : MatchResult) -> StringView {
 }
 
 ///|
+/// Return match `content` view.
 #internal(experimental, "subject to breaking change without notice")
 pub fn MatchResult::content(self : MatchResult) -> StringView {
   guard self.result.group(0) is Some((start, end)) else { panic() }
@@ -46,6 +49,7 @@ pub fn MatchResult::content(self : MatchResult) -> StringView {
 }
 
 ///|
+/// Access capture `group` information.
 #internal(experimental, "subject to breaking change without notice")
 pub fn MatchResult::group(self : MatchResult, group_index : Int) -> StringView? {
   match self.result.group(group_index) {
@@ -55,6 +59,7 @@ pub fn MatchResult::group(self : MatchResult, group_index : Int) -> StringView? 
 }
 
 ///|
+/// Access capture `named_group` information.
 #internal(experimental, "subject to breaking change without notice")
 pub fn MatchResult::named_group(
   self : MatchResult,
@@ -67,6 +72,7 @@ pub fn MatchResult::named_group(
 }
 
 ///|
+/// Compile a pattern into an internal regex representation.
 #internal(internal, "not intended for public use")
 #doc(hidden)
 pub fn Regex::internal_compile_pattern(pat : Pattern) -> Regex {
@@ -75,6 +81,7 @@ pub fn Regex::internal_compile_pattern(pat : Pattern) -> Regex {
 }
 
 ///|
+/// Execute using this compiled object.
 #internal(experimental, "subject to breaking change without notice")
 pub fn Regex::execute(
   self : Regex,

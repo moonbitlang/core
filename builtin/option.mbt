@@ -22,6 +22,7 @@ pub impl[X : Eq] Eq for X? with equal(self, other) {
 }
 
 ///|
+/// Convert to `string`.
 pub fn[X : Show] Option::to_string(self : X?) -> String {
   match self {
     None => "None"
@@ -86,6 +87,7 @@ pub impl[X : Compare] Compare for X? with compare(self, other) {
 }
 
 ///|
+/// Extract the wrapped value with `unwrap_or_error` semantics.
 #alias(or_error, deprecated)
 pub fn[T, Err : Error] Option::unwrap_or_error(
   self : T?,
@@ -104,6 +106,7 @@ pub impl[X] Default for X? with default() {
 }
 
 ///|
+/// Return an iterator via `iter`.
 #alias(iterator, deprecated)
 pub fn[T] Option::iter(self : T?) -> Iter[T] {
   match self {
@@ -200,6 +203,7 @@ pub fn[T, U] Option::bind(self : T?, f : (T) -> U? raise?) -> U? raise? {
 }
 
 ///|
+/// Flatten nested option/result value.
 #deprecated("use `option.bind(x => x)` instead")
 pub fn[T] Option::flatten(self : T??) -> T? {
   match self {

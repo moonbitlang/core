@@ -401,6 +401,9 @@ pub fn ArrayView::unsafe_extract_int64_be(
 //--------------------------------
 
 ///|
+/// Forward to `ArrayView::unsafe_extract_bit`.
+///
+/// Extract one bit starting at `offset`.
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn Array::unsafe_extract_bit(
@@ -412,6 +415,9 @@ pub fn Array::unsafe_extract_bit(
 }
 
 ///|
+/// Forward to `ArrayView::unsafe_extract_byte`.
+///
+/// Extract `len` bits (2..8) as `UInt`.
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn Array::unsafe_extract_byte(
@@ -423,6 +429,9 @@ pub fn Array::unsafe_extract_byte(
 }
 
 ///|
+/// Forward to `ArrayView::unsafe_extract_uint_le`.
+///
+/// Extract bit field (9..32 bits), little-endian.
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn Array::unsafe_extract_uint_le(
@@ -434,6 +443,9 @@ pub fn Array::unsafe_extract_uint_le(
 }
 
 ///|
+/// Forward to `ArrayView::unsafe_extract_uint_be`.
+///
+/// Extract bit field (9..32 bits), big-endian.
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn Array::unsafe_extract_uint_be(
@@ -445,6 +457,9 @@ pub fn Array::unsafe_extract_uint_be(
 }
 
 ///|
+/// Forward to `ArrayView::unsafe_extract_uint64_le`.
+///
+/// Extract bit field (33..64 bits), little-endian.
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn Array::unsafe_extract_uint64_le(
@@ -456,6 +471,9 @@ pub fn Array::unsafe_extract_uint64_le(
 }
 
 ///|
+/// Forward to `ArrayView::unsafe_extract_uint64_be`.
+///
+/// Extract bit field (33..64 bits), big-endian.
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn Array::unsafe_extract_uint64_be(
@@ -467,6 +485,9 @@ pub fn Array::unsafe_extract_uint64_be(
 }
 
 ///|
+/// Forward to `ArrayView::unsafe_extract_bytesview`.
+///
+/// Extract a sub-view by bit range.
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn Array::unsafe_extract_bytesview(
@@ -482,6 +503,7 @@ pub fn Array::unsafe_extract_bytesview(
 //--------------------------------
 
 ///|
+/// Forward to `ArrayView::unsafe_extract_bit` for fixed arrays.
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn FixedArray::unsafe_extract_bit(
@@ -493,6 +515,7 @@ pub fn FixedArray::unsafe_extract_bit(
 }
 
 ///|
+/// Forward to `ArrayView::unsafe_extract_byte` for fixed arrays.
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn FixedArray::unsafe_extract_byte(
@@ -504,6 +527,7 @@ pub fn FixedArray::unsafe_extract_byte(
 }
 
 ///|
+/// Forward to `ArrayView::unsafe_extract_uint_le` for fixed arrays.
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn FixedArray::unsafe_extract_uint_le(
@@ -515,6 +539,7 @@ pub fn FixedArray::unsafe_extract_uint_le(
 }
 
 ///|
+/// Forward to `ArrayView::unsafe_extract_uint_be` for fixed arrays.
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn FixedArray::unsafe_extract_uint_be(
@@ -526,6 +551,7 @@ pub fn FixedArray::unsafe_extract_uint_be(
 }
 
 ///|
+/// Forward to `ArrayView::unsafe_extract_uint64_le` for fixed arrays.
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn FixedArray::unsafe_extract_uint64_le(
@@ -537,6 +563,7 @@ pub fn FixedArray::unsafe_extract_uint64_le(
 }
 
 ///|
+/// Forward to `ArrayView::unsafe_extract_uint64_be` for fixed arrays.
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn FixedArray::unsafe_extract_uint64_be(
@@ -548,6 +575,7 @@ pub fn FixedArray::unsafe_extract_uint64_be(
 }
 
 ///|
+/// Forward to `ArrayView::unsafe_extract_bytesview` for fixed arrays.
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn FixedArray::unsafe_extract_bytesview(
@@ -932,6 +960,7 @@ pub fn BytesView::unsafe_extract_int64_be(
 //--------------------------------
 
 ///|
+/// Forward to `BytesView::unsafe_extract_bit`.
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn Bytes::unsafe_extract_bit(bs : Bytes, offset : Int, len : Int) -> UInt {
@@ -939,6 +968,7 @@ pub fn Bytes::unsafe_extract_bit(bs : Bytes, offset : Int, len : Int) -> UInt {
 }
 
 ///|
+/// Forward to `BytesView::unsafe_extract_byte`.
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn Bytes::unsafe_extract_byte(bs : Bytes, offset : Int, len : Int) -> UInt {
@@ -946,6 +976,7 @@ pub fn Bytes::unsafe_extract_byte(bs : Bytes, offset : Int, len : Int) -> UInt {
 }
 
 ///|
+/// Forward to `BytesView::unsafe_extract_uint_le`.
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn Bytes::unsafe_extract_uint_le(
@@ -957,6 +988,7 @@ pub fn Bytes::unsafe_extract_uint_le(
 }
 
 ///|
+/// Forward to `BytesView::unsafe_extract_uint_be`.
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn Bytes::unsafe_extract_uint_be(
@@ -968,6 +1000,7 @@ pub fn Bytes::unsafe_extract_uint_be(
 }
 
 ///|
+/// Forward to `BytesView::unsafe_extract_uint64_le`.
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn Bytes::unsafe_extract_uint64_le(
@@ -979,6 +1012,7 @@ pub fn Bytes::unsafe_extract_uint64_le(
 }
 
 ///|
+/// Forward to `BytesView::unsafe_extract_uint64_be`.
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn Bytes::unsafe_extract_uint64_be(
@@ -990,6 +1024,7 @@ pub fn Bytes::unsafe_extract_uint64_be(
 }
 
 ///|
+/// Forward to `BytesView::unsafe_extract_bytesview`.
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn Bytes::unsafe_extract_bytesview(

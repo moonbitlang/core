@@ -13,9 +13,11 @@
 // limitations under the License.
 
 ///|
+/// Max value constant for this type.
 pub let max_value = 9223372036854775807L
 
 ///|
+/// Min value constant for this type.
 pub let min_value = -9223372036854775808L
 
 ///|
@@ -27,6 +29,7 @@ pub fn from_int(i : Int) -> Int64 {
 }
 
 ///|
+/// Return absolute value.
 #deprecated("Use Int64::abs instead")
 #doc(hidden)
 pub fn abs(x : Int64) -> Int64 {

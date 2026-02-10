@@ -16,11 +16,13 @@
 struct SymbolMap(@sorted_set.SortedSet[@shared_types.Rechar])
 
 ///|
+/// Create a new instance.
 pub fn new() -> SymbolMap {
   SymbolMap(@sorted_set.new())
 }
 
 ///|
+/// Function `split`.
 pub fn SymbolMap::split(
   self : SymbolMap,
   set : @shared_types.RecharSet,
@@ -35,6 +37,7 @@ pub fn SymbolMap::split(
 }
 
 ///|
+/// Function `finalize`.
 pub fn SymbolMap::finalize(
   self : SymbolMap,
   lb : @shared_types.Rechar,

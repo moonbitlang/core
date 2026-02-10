@@ -13,11 +13,13 @@
 // limitations under the License.
 
 ///|
+/// Error type `Malformed`.
 pub suberror Malformed {
   Malformed(BytesView)
 }
 
 ///|
+/// Decode input bytes/text into structured output.
 pub fn decode(
   bytes : BytesView,
   ignore_bom? : Bool = false,

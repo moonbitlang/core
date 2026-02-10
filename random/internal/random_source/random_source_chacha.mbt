@@ -51,6 +51,7 @@ const BUFFER_CHUNK_NUM = 32
 const SEED_CHUNK_NUM = 4
 
 ///|
+/// Function `next`.
 pub fn ChaCha8::next(self : ChaCha8) -> UInt64? {
   let i = self.i
   if i >= self.n {
@@ -64,6 +65,7 @@ pub fn ChaCha8::next(self : ChaCha8) -> UInt64? {
 }
 
 ///|
+/// Function `refill`.
 pub fn ChaCha8::refill(self : ChaCha8) -> Unit {
   self.counter += COUNTER_INC
   if self.counter == COUNTER_MAX {

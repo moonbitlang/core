@@ -25,6 +25,7 @@ struct MatchResult {
 }
 
 ///|
+/// Return match `before` view.
 #internal(experimental, "subject to breaking change without notice")
 pub fn MatchResult::before(self : MatchResult) -> BytesView {
   guard self.result.group(0) is Some((start, _end)) else { panic() }
@@ -32,6 +33,7 @@ pub fn MatchResult::before(self : MatchResult) -> BytesView {
 }
 
 ///|
+/// Return match `after` view.
 #internal(experimental, "subject to breaking change without notice")
 pub fn MatchResult::after(self : MatchResult) -> BytesView {
   guard self.result.group(0) is Some((_start, end)) else { panic() }
@@ -39,6 +41,7 @@ pub fn MatchResult::after(self : MatchResult) -> BytesView {
 }
 
 ///|
+/// Return match `content` view.
 #internal(experimental, "subject to breaking change without notice")
 pub fn MatchResult::content(self : MatchResult) -> BytesView {
   guard self.result.group(0) is Some((start, end)) else { panic() }
@@ -46,6 +49,7 @@ pub fn MatchResult::content(self : MatchResult) -> BytesView {
 }
 
 ///|
+/// Access capture `group` information.
 #internal(experimental, "subject to breaking change without notice")
 pub fn MatchResult::group(self : MatchResult, group_index : Int) -> BytesView? {
   match self.result.group(group_index) {
@@ -55,6 +59,7 @@ pub fn MatchResult::group(self : MatchResult, group_index : Int) -> BytesView? {
 }
 
 ///|
+/// Access capture `named_group` information.
 #internal(experimental, "subject to breaking change without notice")
 pub fn MatchResult::named_group(
   self : MatchResult,
@@ -67,6 +72,7 @@ pub fn MatchResult::named_group(
 }
 
 ///|
+/// Compile a pattern into an internal regex representation.
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn BytesRegex::internal_compile_pattern(pat : @re.Pattern) -> BytesRegex {
@@ -74,6 +80,7 @@ pub fn BytesRegex::internal_compile_pattern(pat : @re.Pattern) -> BytesRegex {
 }
 
 ///|
+/// Execute using this compiled object.
 #internal(experimental, "subject to breaking change without notice")
 pub fn BytesRegex::execute(
   self : BytesRegex,

@@ -24,6 +24,20 @@ struct Bench {
 }
 
 ///|
+/// Create an empty benchmark collector.
+///
+/// The returned `Bench` value can run benchmarks via `bench` and export
+/// collected summaries with `dump_summaries`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let b = @bench.new()
+///   let json = b.dump_summaries()
+///   inspect(json, content="[]")
+/// }
+/// ```
 #as_free_fn
 pub fn Bench::new() -> Bench {
   let buffer = StringBuilder::new()

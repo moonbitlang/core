@@ -32,6 +32,7 @@ fn category_from_symbol(
 }
 
 ///|
+/// Access capture `group` information.
 pub fn MatchResult::group(self : MatchResult, index : Int) -> (Int, Int)? {
   let start_pos = self.0.get(index * 2)
   guard start_pos is Some(start_pos) && start_pos >= 0 else { None }
@@ -58,6 +59,7 @@ fn Regex::find_start_state(self : Regex, cat : Category) -> State {
 }
 
 ///|
+/// Execute using this compiled object.
 pub fn[T : Input] Regex::execute(
   self : Regex,
   input : T,

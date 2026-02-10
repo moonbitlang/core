@@ -13,6 +13,9 @@
 // limitations under the License.
 
 ///|
+/// Abstract character input for regex execution.
+///
+/// Provides random access by index and total length.
 pub trait Input {
   length(Self) -> Int
   get(Self, Int) -> Rechar

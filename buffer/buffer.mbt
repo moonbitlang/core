@@ -861,6 +861,22 @@ pub fn Buffer::write_char_utf16be(buf : Self, value : Char) -> Unit {
 }
 
 ///|
+/// Write a UTF-8 encoded string view into the buffer.
+///
+/// Parameters:
+///
+/// - `buf`: destination buffer.
+/// - `string`: string view to encode as UTF-8 bytes.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let buf = @buffer.new()
+///   buf.write_string_utf8("Hi")
+///   inspect(buf.contents().length(), content="2")
+/// }
+/// ```
 pub fn Buffer::write_string_utf8(buf : Self, string : StringView) -> Unit {
   for ch in string {
     buf.write_char_utf8(ch)
@@ -868,6 +884,22 @@ pub fn Buffer::write_string_utf8(buf : Self, string : StringView) -> Unit {
 }
 
 ///|
+/// Write a string view into the buffer as UTF-16 little-endian code units.
+///
+/// Parameters:
+///
+/// - `buf`: destination buffer.
+/// - `string`: string view to encode in UTF-16LE.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let buf = @buffer.new()
+///   buf.write_string_utf16le("A")
+///   inspect(buf.contents().length(), content="2")
+/// }
+/// ```
 #alias(write_stringview, deprecated="use write_string_utf16le instead")
 pub fn Buffer::write_string_utf16le(buf : Self, string : StringView) -> Unit {
   let len = string.length()
@@ -882,6 +914,22 @@ pub fn Buffer::write_string_utf16le(buf : Self, string : StringView) -> Unit {
 }
 
 ///|
+/// Write a string view into the buffer as UTF-16 big-endian code units.
+///
+/// Parameters:
+///
+/// - `buf`: destination buffer.
+/// - `string`: string view to encode in UTF-16BE.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let buf = @buffer.new()
+///   buf.write_string_utf16be("A")
+///   inspect(buf.contents().length(), content="2")
+/// }
+/// ```
 pub fn Buffer::write_string_utf16be(buf : Self, string : StringView) -> Unit {
   let len = string.length()
   buf.grow_if_necessary(buf.len + len * 2)
@@ -1067,6 +1115,22 @@ pub fn Buffer::to_bytes(self : Buffer) -> Bytes {
 }
 
 ///|
+/// Return a read-only byte view over the current buffer contents.
+///
+/// The view length equals `self.length()`. It shares underlying storage with
+/// the buffer, so later writes to the buffer may affect subsequent reads.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let buf = @buffer.new()
+///   buf.write_byte(b'A')
+///   let v = buf.view()
+///   inspect(v.length(), content="1")
+///   inspect(v[0], content="b'\\x41'")
+/// }
+/// ```
 pub fn Buffer::view(self : Buffer) -> ArrayView[Byte] {
   self.data[0:self.len]
 }

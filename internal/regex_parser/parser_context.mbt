@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+/// Type `Mode` used by this package APIs.
 pub(all) enum Mode {
   Bytes
   String

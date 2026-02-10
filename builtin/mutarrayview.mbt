@@ -407,6 +407,7 @@ pub fn[T] MutArrayView::to_array(self : MutArrayView[T]) -> Array[T] {
 // limitations under the License.
 
 ///|
+/// Return an iterator via `iter`.
 #alias(iterator, deprecated)
 pub fn[X] MutArrayView::iter(self : MutArrayView[X]) -> Iter[X] {
   let mut i = 0
@@ -419,6 +420,7 @@ pub fn[X] MutArrayView::iter(self : MutArrayView[X]) -> Iter[X] {
 }
 
 ///|
+/// Function `rev_iter`.
 #alias(rev_iterator, deprecated)
 pub fn[X] MutArrayView::rev_iter(self : MutArrayView[X]) -> Iter[X] {
   let mut i = self.length()
@@ -430,6 +432,7 @@ pub fn[X] MutArrayView::rev_iter(self : MutArrayView[X]) -> Iter[X] {
 }
 
 ///|
+/// Return an iterator via `iter2`.
 #alias(iterator2, deprecated)
 pub fn[X] MutArrayView::iter2(self : MutArrayView[X]) -> Iter2[Int, X] {
   let mut i = 0

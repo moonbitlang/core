@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+/// Function `samples`.
 pub fn[X : Arbitrary] samples(x : Int) -> Array[X] {
   let rs = @splitmix.new()
   let array = Array::make(x, X::arbitrary(0, rs))

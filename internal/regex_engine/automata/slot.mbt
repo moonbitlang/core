@@ -42,6 +42,7 @@ pub fn Slot::unassigned() -> Slot {
 }
 
 ///|
+/// Return whether the value assigned.
 pub fn Slot::is_assigned(self : Slot) -> Bool {
   self.0 != -1
 }

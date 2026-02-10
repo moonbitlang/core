@@ -1494,12 +1494,34 @@ test "FixedArray::join" {
 }
 
 ///|
+/// Return an iterator over elements of the fixed array.
+///
+/// Deprecated alias; prefer `iterator`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(([1, 2, 3] : FixedArray[Int]).iter().collect(), content="[1, 2, 3]")
+/// }
+/// ```
 #alias(iterator, deprecated)
 pub fn[X] FixedArray::iter(self : FixedArray[X]) -> Iter[X] {
   self[:].iter()
 }
 
 ///|
+/// Return an index-value iterator over the fixed array.
+///
+/// Deprecated alias; prefer `iterator2`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(([10, 20] : FixedArray[Int]).iter2(), content="[(0, 10), (1, 20)]")
+/// }
+/// ```
 #alias(iterator2, deprecated)
 pub fn[X] FixedArray::iter2(self : FixedArray[X]) -> Iter2[Int, X] {
   self[:].iter2()

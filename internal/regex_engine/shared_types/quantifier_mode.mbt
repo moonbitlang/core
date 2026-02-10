@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+/// Type `QuantifierMode` used by this package APIs.
 pub(all) enum QuantifierMode {
   Greedy
   NonGreedy
