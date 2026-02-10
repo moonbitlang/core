@@ -1503,3 +1503,636 @@ test "validation branches exposed through parse" {
     _ => panic()
   }
 }
+
+///|
+test "builtin and custom help/version dispatch edge paths" {
+  let versioned = @argparse.Command("demo", version="1.2.3")
+  try versioned.parse(argv=["-V"], env=empty_env()) catch {
+    @argparse.DisplayVersion::Message(text) => assert_true(text == "1.2.3")
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+
+  try versioned.parse(argv=["--help"], env=empty_env()) catch {
+    @argparse.DisplayHelp::Message(text) =>
+      assert_true(text.has_prefix("Usage: demo"))
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+
+  try versioned.parse(argv=["-hV"], env=empty_env()) catch {
+    @argparse.DisplayHelp::Message(_) => ()
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+
+  try versioned.parse(argv=["-Vh"], env=empty_env()) catch {
+    @argparse.DisplayVersion::Message(text) => assert_true(text == "1.2.3")
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+
+  let long_help = @argparse.Command("demo", args=[
+    @argparse.FlagArg(
+      "assist",
+      long="assist",
+      action=@argparse.FlagAction::Help,
+    ),
+  ])
+  try long_help.parse(argv=["--assist"], env=empty_env()) catch {
+    @argparse.DisplayHelp::Message(text) =>
+      assert_true(text.has_prefix("Usage: demo"))
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+
+  let short_help = @argparse.Command("demo", args=[
+    @argparse.FlagArg("assist", short='?', action=@argparse.FlagAction::Help),
+  ])
+  try short_help.parse(argv=["-?"], env=empty_env()) catch {
+    @argparse.DisplayHelp::Message(text) =>
+      assert_true(text.has_prefix("Usage: demo"))
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
+test "subcommand lookup falls back to positional value" {
+  let cmd = @argparse.Command(
+    "demo",
+    args=[@argparse.PositionalArg("input", index=0)],
+    subcommands=[@argparse.Command("run")],
+  )
+  let parsed = cmd.parse(argv=["raw"], env=empty_env()) catch { _ => panic() }
+  assert_true(parsed.values is { "input": ["raw"], .. })
+  assert_true(parsed.subcommand is None)
+}
+
+///|
+test "group validation catches unknown requires target" {
+  try
+    @argparse.Command("demo", groups=[
+      @argparse.ArgGroup("g", requires=["missing"]),
+    ]).parse(argv=[], env=empty_env())
+  catch {
+    @argparse.ArgBuildError::Unsupported(msg) =>
+      inspect(msg, content="unknown group requires target: g -> missing")
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
+test "group validation catches unknown conflicts_with target" {
+  try
+    @argparse.Command("demo", groups=[
+      @argparse.ArgGroup("g", conflicts_with=["missing"]),
+    ]).parse(argv=[], env=empty_env())
+  catch {
+    @argparse.ArgBuildError::Unsupported(msg) =>
+      inspect(msg, content="unknown group conflicts_with target: g -> missing")
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
+test "group assignment auto-creates missing group definition" {
+  let cmd = @argparse.Command("demo", groups=[@argparse.ArgGroup("known")], args=[
+    @argparse.FlagArg("x", long="x", group="missing"),
+  ])
+  let parsed = cmd.parse(argv=["--x"], env=empty_env()) catch { _ => panic() }
+  assert_true(parsed.flags is { "x": true, .. })
+  let help = cmd.render_help()
+  assert_true(help.has_prefix("Usage: demo [options]"))
+}
+
+///|
+test "arg validation catches unknown requires target" {
+  try
+    @argparse.Command("demo", args=[
+      @argparse.OptionArg("mode", long="mode", requires=["missing"]),
+    ]).parse(argv=["--mode", "fast"], env=empty_env())
+  catch {
+    @argparse.ArgBuildError::Unsupported(msg) =>
+      inspect(msg, content="unknown requires target: mode -> missing")
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
+test "arg validation catches unknown conflicts_with target" {
+  try
+    @argparse.Command("demo", args=[
+      @argparse.OptionArg("mode", long="mode", conflicts_with=["missing"]),
+    ]).parse(argv=["--mode", "fast"], env=empty_env())
+  catch {
+    @argparse.ArgBuildError::Unsupported(msg) =>
+      inspect(msg, content="unknown conflicts_with target: mode -> missing")
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
+test "empty groups without presence do not fail" {
+  let grouped_ok = @argparse.Command(
+    "demo",
+    groups=[@argparse.ArgGroup("left"), @argparse.ArgGroup("right")],
+    args=[
+      @argparse.FlagArg("l", long="left", group="left"),
+      @argparse.FlagArg("r", long="right", group="right"),
+    ],
+  )
+  let parsed = grouped_ok.parse(argv=["--left"], env=empty_env()) catch {
+    _ => panic()
+  }
+  assert_true(parsed.flags is { "l": true, .. })
+}
+
+///|
+test "help rendering edge paths stay stable" {
+  let required_many = @argparse.Command("demo", args=[
+    @argparse.PositionalArg(
+      "files",
+      index=0,
+      required=true,
+      num_args=@argparse.ValueRange(lower=1),
+    ),
+  ])
+  let required_help = required_many.render_help()
+  assert_true(required_help.has_prefix("Usage: demo <files...>"))
+
+  let short_only_builtin = @argparse.Command("demo", args=[
+    @argparse.OptionArg("helpopt", long="help"),
+  ])
+  let short_only_text = short_only_builtin.render_help()
+  assert_true(short_only_text.has_prefix("Usage: demo"))
+  try short_only_builtin.parse(argv=["-h"], env=empty_env()) catch {
+    @argparse.DisplayHelp::Message(_) => ()
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+  try short_only_builtin.parse(argv=["--help"], env=empty_env()) catch {
+    @argparse.ArgParseError::MissingValue(name) => assert_true(name == "--help")
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+
+  let long_only_builtin = @argparse.Command("demo", args=[
+    @argparse.FlagArg("custom_h", short='h'),
+  ])
+  let long_only_text = long_only_builtin.render_help()
+  assert_true(long_only_text.has_prefix("Usage: demo"))
+  try long_only_builtin.parse(argv=["--help"], env=empty_env()) catch {
+    @argparse.DisplayHelp::Message(_) => ()
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+  let custom_h = long_only_builtin.parse(argv=["-h"], env=empty_env()) catch {
+    _ => panic()
+  }
+  assert_true(custom_h.flags is { "custom_h": true, .. })
+
+  let empty_options = @argparse.Command(
+    "demo",
+    disable_help_flag=true,
+    disable_version_flag=true,
+  )
+  let empty_options_help = empty_options.render_help()
+  assert_true(empty_options_help.has_prefix("Usage: demo"))
+
+  let implicit_group = @argparse.Command("demo", args=[
+    @argparse.PositionalArg("item", index=0, group="dyn"),
+  ])
+  let implicit_group_help = implicit_group.render_help()
+  assert_true(implicit_group_help.has_prefix("Usage: demo [item]"))
+
+  let sub_visible = @argparse.Command("demo", disable_help_subcommand=true, subcommands=[
+    @argparse.Command("run"),
+  ])
+  let sub_help = sub_visible.render_help()
+  assert_true(sub_help.has_prefix("Usage: demo <command>"))
+}
+
+///|
+test "parse error formatting covers public variants" {
+  assert_true(
+    @argparse.ArgParseError::UnknownArgument("--oops", None).to_string() ==
+    "error: unexpected argument '--oops' found",
+  )
+  assert_true(
+    @argparse.ArgParseError::InvalidArgument("--bad").to_string() ==
+    "error: unexpected argument '--bad' found",
+  )
+  assert_true(
+    @argparse.ArgParseError::InvalidArgument("custom message").to_string() ==
+    "error: custom message",
+  )
+  assert_true(
+    @argparse.ArgParseError::MissingValue("--name").to_string() ==
+    "error: a value is required for '--name' but none was supplied",
+  )
+  assert_true(
+    @argparse.ArgParseError::MissingRequired("name").to_string() ==
+    "error: the following required argument was not provided: 'name'",
+  )
+  assert_true(
+    @argparse.ArgParseError::TooFewValues("tag", 1, 2).to_string() ==
+    "error: 'tag' requires at least 2 values but only 1 were provided",
+  )
+  assert_true(
+    @argparse.ArgParseError::TooManyValues("tag", 3, 2).to_string() ==
+    "error: 'tag' allows at most 2 values but 3 were provided",
+  )
+  assert_true(
+    @argparse.ArgParseError::InvalidValue("bad int").to_string() ==
+    "error: bad int",
+  )
+  assert_true(
+    @argparse.ArgParseError::MissingGroup("mode").to_string() ==
+    "error: the following required argument group was not provided: 'mode'",
+  )
+  assert_true(
+    @argparse.ArgParseError::GroupConflict("mode").to_string() ==
+    "error: group conflict mode",
+  )
+}
+
+///|
+test "range constructors with open lower bound still validate shape rules" {
+  try
+    @argparse.Command("demo", args=[
+      @argparse.OptionArg(
+        "tag",
+        long="tag",
+        num_args=@argparse.ValueRange::new(upper=2),
+      ),
+    ]).parse(argv=["--tag", "x"], env=empty_env())
+  catch {
+    @argparse.ArgBuildError::Unsupported(msg) =>
+      inspect(msg, content="option args require at least one value")
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
+test "short option with bounded values reports per occurrence too few values" {
+  let cmd = @argparse.Command("demo", args=[
+    @argparse.OptionArg(
+      "x",
+      short='x',
+      num_args=@argparse.ValueRange(lower=2, upper=2),
+    ),
+    @argparse.FlagArg("verbose", short='v'),
+  ])
+  try cmd.parse(argv=["-x", "a", "-v"], env=empty_env()) catch {
+    @argparse.ArgParseError::TooFewValues(name, got, min) => {
+      assert_true(name == "x")
+      assert_true(got == 1)
+      assert_true(min == 2)
+    }
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
+test "version action dispatches on custom long and short flags" {
+  let cmd = @argparse.Command("demo", version="2.0.0", args=[
+    @argparse.FlagArg(
+      "show_long",
+      long="show-version",
+      action=@argparse.FlagAction::Version,
+    ),
+    @argparse.FlagArg(
+      "show_short",
+      short='S',
+      action=@argparse.FlagAction::Version,
+    ),
+  ])
+
+  try cmd.parse(argv=["--show-version"], env=empty_env()) catch {
+    @argparse.DisplayVersion::Message(text) => assert_true(text == "2.0.0")
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+
+  try cmd.parse(argv=["-S"], env=empty_env()) catch {
+    @argparse.DisplayVersion::Message(text) => assert_true(text == "2.0.0")
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
+test "required and env-fed ranged values validate after parsing" {
+  let required_cmd = @argparse.Command("demo", args=[
+    @argparse.OptionArg("input", long="input", required=true),
+  ])
+  try required_cmd.parse(argv=[], env=empty_env()) catch {
+    @argparse.ArgParseError::MissingRequired(name) =>
+      assert_true(name == "input")
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+
+  let env_min_cmd = @argparse.Command("demo", args=[
+    @argparse.OptionArg(
+      "pair",
+      long="pair",
+      env="PAIR",
+      num_args=@argparse.ValueRange(lower=2, upper=3),
+    ),
+  ])
+  try env_min_cmd.parse(argv=[], env={ "PAIR": "one" }) catch {
+    @argparse.ArgParseError::TooFewValues(name, got, min) => {
+      assert_true(name == "pair")
+      assert_true(got == 1)
+      assert_true(min == 2)
+    }
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
+test "positionals hit balancing branches and explicit index sorting" {
+  let cmd = @argparse.Command("demo", args=[
+    @argparse.PositionalArg(
+      "first",
+      index=0,
+      num_args=@argparse.ValueRange(lower=2, upper=3),
+    ),
+    @argparse.PositionalArg("late", index=2, required=true),
+    @argparse.PositionalArg(
+      "mid",
+      index=1,
+      num_args=@argparse.ValueRange(lower=2, upper=2),
+    ),
+  ])
+
+  try cmd.parse(argv=["a"], env=empty_env()) catch {
+    @argparse.ArgParseError::TooFewValues(name, got, min) => {
+      assert_true(name == "first")
+      assert_true(got == 1)
+      assert_true(min == 2)
+    }
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
+test "positional max clamp leaves trailing value for next positional" {
+  let cmd = @argparse.Command("demo", args=[
+    @argparse.PositionalArg(
+      "items",
+      index=0,
+      num_args=@argparse.ValueRange(lower=0, upper=2),
+    ),
+    @argparse.PositionalArg("tail", index=1),
+  ])
+
+  let parsed = cmd.parse(argv=["a", "b", "c"], env=empty_env()) catch {
+    _ => panic()
+  }
+  assert_true(parsed.values is { "items": ["a", "b"], "tail": ["c"], .. })
+}
+
+///|
+test "open upper range options honor stop rules for option-like values" {
+  let cmd = @argparse.Command("demo", args=[
+    @argparse.OptionArg(
+      "arg",
+      long="arg",
+      allow_hyphen_values=true,
+      num_args=@argparse.ValueRange(lower=1),
+    ),
+    @argparse.FlagArg("verbose", long="verbose"),
+    @argparse.FlagArg("cache", long="cache", negatable=true),
+    @argparse.FlagArg("quiet", short='q'),
+  ])
+
+  let known_long = cmd.parse(argv=["--arg", "x", "--verbose"], env=empty_env()) catch {
+    _ => panic()
+  }
+  assert_true(known_long.values is { "arg": ["x"], .. })
+  assert_true(known_long.flags is { "verbose": true, .. })
+
+  let negated = cmd.parse(argv=["--arg", "x", "--no-cache"], env=empty_env()) catch {
+    _ => panic()
+  }
+  assert_true(negated.values is { "arg": ["x"], .. })
+  assert_true(negated.flags is { "cache": false, .. })
+
+  let unknown_long_value = cmd.parse(
+    argv=["--arg", "x", "--mystery"],
+    env=empty_env(),
+  ) catch {
+    _ => panic()
+  }
+  assert_true(unknown_long_value.values is { "arg": ["x", "--mystery"], .. })
+
+  let known_short = cmd.parse(argv=["--arg", "x", "-q"], env=empty_env()) catch {
+    _ => panic()
+  }
+  assert_true(known_short.values is { "arg": ["x"], .. })
+  assert_true(known_short.flags is { "quiet": true, .. })
+
+  let cmd_with_rest = @argparse.Command("demo", args=[
+    @argparse.OptionArg(
+      "arg",
+      long="arg",
+      allow_hyphen_values=true,
+      num_args=@argparse.ValueRange(lower=1),
+    ),
+    @argparse.PositionalArg(
+      "rest",
+      index=0,
+      num_args=@argparse.ValueRange(lower=0),
+      allow_hyphen_values=true,
+    ),
+  ])
+  let sentinel_stop = cmd_with_rest.parse(
+    argv=["--arg", "x", "--", "tail"],
+    env=empty_env(),
+  ) catch {
+    _ => panic()
+  }
+  assert_true(sentinel_stop.values is { "arg": ["x"], "rest": ["tail"], .. })
+}
+
+///|
+test "fixed upper range avoids consuming additional option values" {
+  let cmd = @argparse.Command("demo", args=[
+    @argparse.OptionArg(
+      "one",
+      long="one",
+      num_args=@argparse.ValueRange(lower=1, upper=1),
+    ),
+    @argparse.FlagArg("verbose", long="verbose"),
+  ])
+
+  let parsed = cmd.parse(argv=["--one", "x", "--verbose"], env=empty_env()) catch {
+    _ => panic()
+  }
+  assert_true(parsed.values is { "one": ["x"], .. })
+  assert_true(parsed.flags is { "verbose": true, .. })
+}
+
+///|
+test "short-only set options use short label in duplicate errors" {
+  let cmd = @argparse.Command("demo", args=[
+    @argparse.OptionArg("mode", short='m'),
+  ])
+  try cmd.parse(argv=["-m", "a", "-m", "b"], env=empty_env()) catch {
+    @argparse.ArgParseError::InvalidArgument(msg) =>
+      inspect(msg, content="argument '-m' cannot be used multiple times")
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
+test "unknown short suggestion can be absent" {
+  let cmd = @argparse.Command("demo", disable_help_flag=true, args=[
+    @argparse.OptionArg("name", long="name"),
+  ])
+
+  try cmd.parse(argv=["-x"], env=empty_env()) catch {
+    @argparse.ArgParseError::UnknownArgument(arg, hint) => {
+      assert_true(arg == "-x")
+      assert_true(hint is None)
+    }
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
+test "setfalse flags apply false when present" {
+  let cmd = @argparse.Command("demo", args=[
+    @argparse.FlagArg(
+      "failfast",
+      long="failfast",
+      action=@argparse.FlagAction::SetFalse,
+    ),
+  ])
+  let parsed = cmd.parse(argv=["--failfast"], env=empty_env()) catch {
+    _ => panic()
+  }
+  assert_true(parsed.flags is { "failfast": false, .. })
+  assert_true(parsed.sources is { "failfast": @argparse.ValueSource::Argv, .. })
+}
+
+///|
+test "allow_hyphen positional treats unknown long token as value" {
+  let cmd = @argparse.Command("demo", args=[
+    @argparse.PositionalArg("input", index=0, allow_hyphen_values=true),
+    @argparse.FlagArg("known", long="known"),
+  ])
+  let parsed = cmd.parse(argv=["--mystery"], env=empty_env()) catch {
+    _ => panic()
+  }
+  assert_true(parsed.values is { "input": ["--mystery"], .. })
+}
+
+///|
+test "global value from child default is merged back to parent" {
+  let cmd = @argparse.Command(
+    "demo",
+    args=[
+      @argparse.OptionArg(
+        "mode",
+        long="mode",
+        default_values=["safe"],
+        global=true,
+      ),
+      @argparse.OptionArg("unused", long="unused", global=true),
+    ],
+    subcommands=[@argparse.Command("run")],
+  )
+
+  let parsed = cmd.parse(argv=["run"], env=empty_env()) catch { _ => panic() }
+  assert_true(parsed.values is { "mode": ["safe"], "unused"? : None, .. })
+  assert_true(parsed.sources is { "mode": @argparse.ValueSource::Default, .. })
+  assert_true(
+    parsed.subcommand is Some(("run", sub)) &&
+    sub.values is { "mode": ["safe"], .. } &&
+    sub.sources is { "mode": @argparse.ValueSource::Default, .. },
+  )
+}
+
+///|
+test "global append env value from child is merged back to parent" {
+  let cmd = @argparse.Command(
+    "demo",
+    args=[
+      @argparse.OptionArg(
+        "tag",
+        long="tag",
+        action=@argparse.OptionAction::Append,
+        env="TAG",
+        global=true,
+      ),
+    ],
+    subcommands=[@argparse.Command("run")],
+  )
+
+  let parsed = cmd.parse(argv=["run"], env={ "TAG": "env-tag" }) catch {
+    _ => panic()
+  }
+  assert_true(parsed.values is { "tag": ["env-tag"], .. })
+  assert_true(parsed.sources is { "tag": @argparse.ValueSource::Env, .. })
+  assert_true(
+    parsed.subcommand is Some(("run", sub)) &&
+    sub.values is { "tag": ["env-tag"], .. } &&
+    sub.sources is { "tag": @argparse.ValueSource::Env, .. },
+  )
+}
+
+///|
+test "global flag set in child argv is merged back to parent" {
+  let cmd = @argparse.Command(
+    "demo",
+    args=[@argparse.FlagArg("verbose", long="verbose", global=true)],
+    subcommands=[@argparse.Command("run")],
+  )
+
+  let parsed = cmd.parse(argv=["run", "--verbose"], env=empty_env()) catch {
+    _ => panic()
+  }
+  assert_true(parsed.flags is { "verbose": true, .. })
+  assert_true(parsed.sources is { "verbose": @argparse.ValueSource::Argv, .. })
+  assert_true(
+    parsed.subcommand is Some(("run", sub)) &&
+    sub.flags is { "verbose": true, .. } &&
+    sub.sources is { "verbose": @argparse.ValueSource::Argv, .. },
+  )
+}
