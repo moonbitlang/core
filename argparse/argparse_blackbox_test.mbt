@@ -463,6 +463,44 @@ test "help subcommand styles and errors" {
 }
 
 ///|
+test "subcommand help includes inherited global options" {
+  let leaf = @argparse.Command("echo", about="echo")
+  let cmd = @argparse.Command(
+    "demo",
+    args=[
+      @argparse.FlagArg(
+        "verbose",
+        short='v',
+        long="verbose",
+        about="Enable verbose mode",
+        global=true,
+      ),
+    ],
+    subcommands=[leaf],
+  )
+
+  try cmd.parse(argv=["echo", "-h"], env=empty_env()) catch {
+    @argparse.DisplayHelp::Message(text) => {
+      assert_true(text.contains("Usage: echo [options]"))
+      assert_true(text.contains("-v, --verbose"))
+    }
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+
+  try cmd.parse(argv=["help", "echo"], env=empty_env()) catch {
+    @argparse.DisplayHelp::Message(text) => {
+      assert_true(text.contains("Usage: echo [options]"))
+      assert_true(text.contains("-v, --verbose"))
+    }
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
 test "unknown argument suggestions are exposed" {
   let cmd = @argparse.Command("demo", args=[
     @argparse.FlagArg("verbose", short='v', long="verbose"),
@@ -1102,6 +1140,24 @@ test "validation branches exposed through parse" {
         msg,
         content=(
           #|duplicate long option: --same
+        ),
+      )
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+
+  try
+    @argparse.Command("demo", args=[
+      @argparse.FlagArg("hello", long="hello", negatable=true),
+      @argparse.FlagArg("x", long="no-hello"),
+    ]).parse(argv=[], env=empty_env())
+  catch {
+    @argparse.ArgBuildError::Unsupported(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|duplicate long option: --no-hello
         ),
       )
     _ => panic()
