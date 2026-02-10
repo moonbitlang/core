@@ -45,17 +45,8 @@ pub fn ArgGroup::new(
     name,
     required,
     multiple,
-    args: clone_array_group_decl(args),
-    requires: clone_array_group_decl(requires),
-    conflicts_with: clone_array_group_decl(conflicts_with),
+    args: args.copy(),
+    requires: requires.copy(),
+    conflicts_with: conflicts_with.copy(),
   }
-}
-
-///|
-fn[T] clone_array_group_decl(arr : Array[T]) -> Array[T] {
-  let out = Array::new(capacity=arr.length())
-  for value in arr {
-    out.push(value)
-  }
-  out
 }
