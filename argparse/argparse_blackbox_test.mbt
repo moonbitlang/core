@@ -83,6 +83,7 @@ test "render long help snapshot with groups and hidden entries" {
       #|
       #|Groups:
       #|  mode (required, exclusive)  -f, --fast, -p, --path <path>
+      #|
     ),
   )
 }
@@ -142,6 +143,7 @@ test "render help conversion coverage snapshot" {
       #|
       #|Options:
       #|  -h, --help  Show help information.
+      #|
     ),
   )
 }
@@ -375,7 +377,7 @@ test "help subcommand styles and errors" {
   let cmd = @argparse.Command("demo", subcommands=[leaf])
 
   try cmd.parse(argv=["help", "echo", "-h"], env=empty_env()) catch {
-    @argparse.DisplayHelp::Short(text) =>
+    @argparse.DisplayHelp::Message(text) =>
       inspect(
         text,
         content=(
@@ -385,6 +387,7 @@ test "help subcommand styles and errors" {
           #|
           #|Options:
           #|  -h, --help  Show help information.
+          #|
         ),
       )
     _ => panic()
@@ -393,7 +396,7 @@ test "help subcommand styles and errors" {
   }
 
   try cmd.parse(argv=["help", "echo", "--help"], env=empty_env()) catch {
-    @argparse.DisplayHelp::Long(text) =>
+    @argparse.DisplayHelp::Message(text) =>
       inspect(
         text,
         content=(
@@ -403,6 +406,7 @@ test "help subcommand styles and errors" {
           #|
           #|Options:
           #|  -h, --help  Show help information.
+          #|
         ),
       )
     _ => panic()
@@ -411,7 +415,7 @@ test "help subcommand styles and errors" {
   }
 
   try cmd.parse(argv=["help"], env=empty_env()) catch {
-    @argparse.DisplayHelp::Long(text) =>
+    @argparse.DisplayHelp::Message(text) =>
       inspect(
         text,
         content=(
@@ -423,6 +427,7 @@ test "help subcommand styles and errors" {
           #|
           #|Options:
           #|  -h, --help  Show help information.
+          #|
         ),
       )
     _ => panic()
@@ -703,7 +708,7 @@ test "env parsing for settrue setfalse count and invalid values" {
       inspect(
         msg,
         content=(
-          #|invalid bool: bad
+          #|invalid value 'bad' for boolean flag; expected one of: 1, 0, true, false, yes, no, on, off
         ),
       )
     _ => panic()
@@ -716,7 +721,7 @@ test "env parsing for settrue setfalse count and invalid values" {
       inspect(
         msg,
         content=(
-          #|invalid bool: bad
+          #|invalid value 'bad' for boolean flag; expected one of: 1, 0, true, false, yes, no, on, off
         ),
       )
     _ => panic()
@@ -729,7 +734,7 @@ test "env parsing for settrue setfalse count and invalid values" {
       inspect(
         msg,
         content=(
-          #|invalid int: bad
+          #|invalid value 'bad' for count; expected a non-negative integer
         ),
       )
     _ => panic()
@@ -742,7 +747,7 @@ test "env parsing for settrue setfalse count and invalid values" {
       inspect(
         msg,
         content=(
-          #|invalid int: -1
+          #|invalid value '-1' for count; expected a non-negative integer
         ),
       )
     _ => panic()
@@ -1233,6 +1238,7 @@ test "validation branches exposed through parse" {
       #|
       #|Options:
       #|  -h, --help  custom help
+      #|
     ),
   )
 
@@ -1260,6 +1266,7 @@ test "validation branches exposed through parse" {
       #|Options:
       #|  -h, --help     Show help information.
       #|  -V, --version  custom version
+      #|
     ),
   )
 

@@ -76,7 +76,7 @@ test "help snapshot" {
     @argparse.OptionArg("count", long="count", about="repeat count"),
   ])
   try cmd.parse(argv=["--help"], env={}) catch {
-    @argparse.DisplayHelp::Long(text) =>
+    @argparse.DisplayHelp::Message(text) =>
       inspect(
         text,
         content=(
@@ -89,6 +89,7 @@ test "help snapshot" {
           #|  -V, --version    Show version information.
           #|  -v, --verbose    verbose mode
           #|  --count <count>  repeat count
+          #|
         ),
       )
     _ => panic()
@@ -117,6 +118,7 @@ test "custom version option overrides built-in version flag" {
       #|Options:
       #|  -h, --help     Show help information.
       #|  -V, --version  custom version flag
+      #|
     ),
   )
 }

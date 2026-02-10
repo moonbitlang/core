@@ -37,7 +37,7 @@ test "display help and version" {
 
   let mut help = ""
   try cmd.parse(argv=["-h"], env=empty_env()) catch {
-    @argparse.DisplayHelp::Short(text) => help = text
+    @argparse.DisplayHelp::Message(text) => help = text
     _ => panic()
   } noraise {
     _ => panic()
@@ -52,16 +52,35 @@ test "display help and version" {
       #|Options:
       #|  -h, --help     Show help information.
       #|  -V, --version  Show version information.
+      #|
     ),
   )
   let mut version = ""
   try cmd.parse(argv=["--version"], env=empty_env()) catch {
-    @argparse.DisplayVersion::Long(text) => version = text
+    @argparse.DisplayVersion::Message(text) => version = text
     _ => panic()
   } noraise {
     _ => panic()
   }
   inspect(version, content="1.2.3")
+}
+
+///|
+test "parse error show is readable" {
+  inspect(
+    @argparse.ArgParseError::UnknownArgument("--verbse", Some("--verbose")).to_string(),
+    content=(
+      #|error: unexpected argument '--verbse' found
+      #|
+      #|  tip: a similar argument exists: '--verbose'
+    ),
+  )
+  inspect(
+    @argparse.ArgParseError::TooManyPositionals.to_string(),
+    content=(
+      #|error: too many positional arguments were provided
+    ),
+  )
 }
 
 ///|
@@ -243,6 +262,7 @@ test "full help snapshot" {
       #|  -h, --help       Show help information.
       #|  -v, --verbose    Enable verbose mode
       #|  --count <count>  Repeat count (default: 1)
+      #|
     ),
   )
 }
@@ -395,7 +415,7 @@ test "built-in long flags do not accept inline value" {
 test "command policies" {
   let help_cmd = @argparse.Command("demo", arg_required_else_help=true)
   try help_cmd.parse(argv=[], env=empty_env()) catch {
-    @argparse.DisplayHelp::Short(text) =>
+    @argparse.DisplayHelp::Message(text) =>
       inspect(
         text,
         content=(
@@ -403,6 +423,7 @@ test "command policies" {
           #|
           #|Options:
           #|  -h, --help  Show help information.
+          #|
         ),
       )
     _ => panic()

@@ -25,7 +25,46 @@ pub(all) suberror ArgParseError {
   InvalidValue(String)
   MissingGroup(String)
   GroupConflict(String)
-} derive(Show)
+}
+
+///|
+pub impl Show for ArgParseError with output(self : ArgParseError, logger) {
+  logger.write_string(self.arg_parse_error_message())
+}
+
+///|
+fn ArgParseError::arg_parse_error_message(self : ArgParseError) -> String {
+  match self {
+    ArgParseError::UnknownArgument(arg, Some(hint)) =>
+      (
+        $|error: unexpected argument '\{arg}' found
+        $|
+        $|  tip: a similar argument exists: '\{hint}'
+      )
+    ArgParseError::UnknownArgument(arg, None) =>
+      "error: unexpected argument '\{arg}' found"
+    ArgParseError::InvalidArgument(arg) =>
+      if arg.has_prefix("-") {
+        "error: unexpected argument '\{arg}' found"
+      } else {
+        "error: \{arg}"
+      }
+    ArgParseError::MissingValue(arg) =>
+      "error: a value is required for '\{arg}' but none was supplied"
+    ArgParseError::MissingRequired(name) =>
+      "error: the following required argument was not provided: '\{name}'"
+    ArgParseError::TooFewValues(name, got, min) =>
+      "error: '\{name}' requires at least \{min} values but only \{got} were provided"
+    ArgParseError::TooManyValues(name, got, max) =>
+      "error: '\{name}' allows at most \{max} values but \{got} were provided"
+    ArgParseError::TooManyPositionals =>
+      "error: too many positional arguments were provided"
+    ArgParseError::InvalidValue(msg) => "error: \{msg}"
+    ArgParseError::MissingGroup(name) =>
+      "error: the following required argument group was not provided: '\{name}'"
+    ArgParseError::GroupConflict(name) => "error: group conflict \{name}"
+  }
+}
 
 ///|
 /// Errors raised when building argument specifications.
@@ -36,13 +75,11 @@ pub suberror ArgBuildError {
 ///|
 /// Errors raised when help information is requested.
 pub suberror DisplayHelp {
-  Short(String)
-  Long(String)
+  Message(String)
 } derive(Show)
 
 ///|
 /// Errors raised when version information is requested.
 pub suberror DisplayVersion {
-  Short(String)
-  Long(String)
+  Message(String)
 } derive(Show)

@@ -26,42 +26,77 @@ fn render_help_long(cmd : Command) -> String {
 
 ///|
 fn render_help_with_style(cmd : Command, long_help : Bool) -> String {
-  let lines = Array::new(capacity=16)
-  lines.push("Usage: " + cmd.name + usage_tail(cmd, long_help))
+  let usage_line = "Usage: " + cmd.name + usage_tail(cmd, long_help)
   let about = command_about(cmd, long_help)
-  if about != "" {
-    lines.push("")
-    lines.push(about)
+  let about_section = if about == "" {
+    ""
+  } else {
+    (
+      $|
+      $|
+      $|\{about}
+    )
   }
-  lines.push("")
-  let sub_entries = subcommand_entries(cmd, long_help)
-  if sub_entries.length() > 0 {
-    lines.push("Commands:")
-    for entry in sub_entries {
-      lines.push(entry)
+  let command_entries = subcommand_entries(cmd, long_help)
+  let commands_section = if command_entries.length() == 0 {
+    ""
+  } else {
+    let body = command_entries.join("\n")
+    (
+      $|
+      $|
+      $|Commands:
+      $|\{body}
+    )
+  }
+  let arguments_section = if has_positionals(cmd, long_help) {
+    let entries = positional_entries(cmd, long_help)
+    if entries.length() == 0 {
+      ""
+    } else {
+      let body = entries.join("\n")
+      (
+        $|
+        $|
+        $|Arguments:
+        $|\{body}
+      )
     }
-    lines.push("")
+  } else {
+    ""
   }
-  if has_positionals(cmd, long_help) {
-    lines.push("Arguments:")
-    for entry in positional_entries(cmd, long_help) {
-      lines.push(entry)
-    }
-    lines.push("")
+  let option_lines = option_entries(cmd, long_help)
+  let options_section = if option_lines.length() == 0 {
+    (
+      $|
+      $|
+      $|Options:
+    )
+  } else {
+    let body = option_lines.join("\n")
+    (
+      $|
+      $|
+      $|Options:
+      $|\{body}
+    )
   }
-  lines.push("Options:")
-  for entry in option_entries(cmd, long_help) {
-    lines.push(entry)
+  let group_lines = group_entries(cmd, long_help)
+  let groups_section = if group_lines.length() == 0 {
+    ""
+  } else {
+    let body = group_lines.join("\n")
+    (
+      $|
+      $|
+      $|Groups:
+      $|\{body}
+    )
   }
-  let groups = group_entries(cmd, long_help)
-  if groups.length() > 0 {
-    lines.push("")
-    lines.push("Groups:")
-    for entry in groups {
-      lines.push(entry)
-    }
-  }
-  lines.join("\n")
+  (
+    $|\{usage_line}\{about_section}\{commands_section}\{arguments_section}\{options_section}\{groups_section}
+    $|
+  )
 }
 
 ///|

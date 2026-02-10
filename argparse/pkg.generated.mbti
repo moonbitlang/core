@@ -25,14 +25,12 @@ pub(all) suberror ArgParseError {
 pub impl Show for ArgParseError
 
 pub suberror DisplayHelp {
-  Short(String)
-  Long(String)
+  Message(String)
 }
 pub impl Show for DisplayHelp
 
 pub suberror DisplayVersion {
-  Short(String)
-  Long(String)
+  Message(String)
 }
 pub impl Show for DisplayVersion
 

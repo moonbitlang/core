@@ -13,21 +13,13 @@
 // limitations under the License.
 
 ///|
-fn raise_help(text : String, long_help : Bool) -> Unit raise {
-  if long_help {
-    raise DisplayHelp::Long(text)
-  } else {
-    raise DisplayHelp::Short(text)
-  }
+fn raise_help(text : String) -> Unit raise {
+  raise DisplayHelp::Message(text)
 }
 
 ///|
-fn raise_version(text : String, is_long : Bool) -> Unit raise {
-  if is_long {
-    raise DisplayVersion::Long(text)
-  } else {
-    raise DisplayVersion::Short(text)
-  }
+fn raise_version(text : String) -> Unit raise {
+  raise DisplayVersion::Message(text)
 }
 
 ///|
@@ -36,7 +28,7 @@ fn[T] raise_unknown_long(
   long_index : Map[String, Arg],
 ) -> T raise {
   let hint = suggest_long(name, long_index)
-  raise ArgParseError::UnknownArgument("--" + name, hint)
+  raise ArgParseError::UnknownArgument("--\{name}", hint)
 }
 
 ///|
@@ -45,7 +37,7 @@ fn[T] raise_unknown_short(
   short_index : Map[Char, Arg],
 ) -> T raise {
   let hint = suggest_short(short, short_index)
-  raise ArgParseError::UnknownArgument("-" + short.to_string(), hint)
+  raise ArgParseError::UnknownArgument("-\{short}", hint)
 }
 
 ///|
@@ -79,7 +71,7 @@ fn parse_command(
   let subcommands = cmd.subcommands
   validate_command(cmd, args, groups)
   if cmd.arg_required_else_help && argv.length() == 0 {
-    raise_help(render_help_short(cmd), false)
+    raise_help(render_help_short(cmd))
   }
   let matches = new_matches_parse_state()
   let globals_here = collect_globals(args)
@@ -116,16 +108,16 @@ fn parse_command(
       continue
     }
     if builtin_help_short && arg == "-h" {
-      raise_help(render_help_short(cmd), false)
+      raise_help(render_help_short(cmd))
     }
     if builtin_help_long && arg == "--help" {
-      raise_help(render_help_long(cmd), true)
+      raise_help(render_help_long(cmd))
     }
     if builtin_version_short && arg == "-V" {
-      raise_version(command_version(cmd, false), false)
+      raise_version(command_version(cmd))
     }
     if builtin_version_long && arg == "--version" {
-      raise_version(command_version(cmd, true), true)
+      raise_version(command_version(cmd))
     }
     if should_parse_as_positional(
         arg, positionals, positional_values, long_index, short_index,
@@ -140,13 +132,13 @@ fn parse_command(
         if inline is Some(_) {
           raise ArgParseError::InvalidArgument(arg)
         }
-        raise_help(render_help_long(cmd), true)
+        raise_help(render_help_long(cmd))
       }
       if builtin_version_long && name == "version" {
         if inline is Some(_) {
           raise ArgParseError::InvalidArgument(arg)
         }
-        raise_version(command_version(cmd, true), true)
+        raise_version(command_version(cmd))
       }
       match long_index.get(name) {
         None =>
@@ -185,7 +177,7 @@ fn parse_command(
               v
             } else {
               if i + 1 >= argv.length() {
-                raise ArgParseError::MissingValue("--" + name)
+                raise ArgParseError::MissingValue("--\{name}")
               }
               i = i + 1
               argv[i]
@@ -211,9 +203,8 @@ fn parse_command(
               raise ArgParseError::InvalidArgument(arg)
             }
             match arg_action(spec) {
-              ArgAction::Help => raise_help(render_help_long(cmd), true)
-              ArgAction::Version =>
-                raise_version(command_version(cmd, true), true)
+              ArgAction::Help => raise_help(render_help_long(cmd))
+              ArgAction::Version => raise_version(command_version(cmd))
               _ => apply_flag(matches, spec, ValueSource::Argv)
             }
           }
@@ -227,10 +218,10 @@ fn parse_command(
       while pos < arg.length() {
         let short = arg.get_char(pos).unwrap()
         if short == 'h' && builtin_help_short {
-          raise_help(render_help_short(cmd), false)
+          raise_help(render_help_short(cmd))
         }
         if short == 'V' && builtin_version_short {
-          raise_version(command_version(cmd, false), false)
+          raise_version(command_version(cmd))
         }
         let spec = match short_index.get(short) {
           Some(v) => v
@@ -245,7 +236,7 @@ fn parse_command(
             }
           } else {
             if i + 1 >= argv.length() {
-              raise ArgParseError::MissingValue("-" + short.to_string())
+              raise ArgParseError::MissingValue("-\{short}")
             }
             i = i + 1
             argv[i]
@@ -269,9 +260,8 @@ fn parse_command(
           break
         } else {
           match arg_action(spec) {
-            ArgAction::Help => raise_help(render_help_short(cmd), false)
-            ArgAction::Version =>
-              raise_version(command_version(cmd, false), false)
+            ArgAction::Help => raise_help(render_help_short(cmd))
+            ArgAction::Version => raise_version(command_version(cmd))
             _ => apply_flag(matches, spec, ValueSource::Argv)
           }
         }
@@ -286,7 +276,7 @@ fn parse_command(
         cmd, rest, builtin_help_short, builtin_help_long,
       )
       let text = render_help_for_style(target, long_help)
-      raise_help(text, long_help)
+      raise_help(text)
     }
     if subcommands.length() > 0 {
       match find_subcommand(subcommands, arg) {
@@ -367,8 +357,7 @@ fn version_flag_enabled(cmd : Command) -> Bool {
 }
 
 ///|
-fn command_version(cmd : Command, is_long : Bool) -> String {
-  let _ = is_long
+fn command_version(cmd : Command) -> String {
   cmd.version.unwrap_or("")
 }
 
@@ -469,7 +458,7 @@ fn validate_group_defs(groups : Array[ArgGroup]) -> Unit raise ArgBuildError {
   let seen : Map[String, Bool] = {}
   for group in groups {
     if seen.get(group.name) is Some(_) {
-      raise ArgBuildError::Unsupported("duplicate group: " + group.name)
+      raise ArgBuildError::Unsupported("duplicate group: \{group.name}")
     }
     seen[group.name] = true
   }
@@ -477,27 +466,24 @@ fn validate_group_defs(groups : Array[ArgGroup]) -> Unit raise ArgBuildError {
     for required in group.requires {
       if required == group.name {
         raise ArgBuildError::Unsupported(
-          "group cannot require itself: " + group.name,
+          "group cannot require itself: \{group.name}",
         )
       }
       if seen.get(required) is None {
         raise ArgBuildError::Unsupported(
-          "unknown group requires target: " + group.name + " -> " + required,
+          "unknown group requires target: \{group.name} -> \{required}",
         )
       }
     }
     for conflict in group.conflicts_with {
       if conflict == group.name {
         raise ArgBuildError::Unsupported(
-          "group cannot conflict with itself: " + group.name,
+          "group cannot conflict with itself: \{group.name}",
         )
       }
       if seen.get(conflict) is None {
         raise ArgBuildError::Unsupported(
-          "unknown group conflicts_with target: " +
-          group.name +
-          " -> " +
-          conflict,
+          "unknown group conflicts_with target: \{group.name} -> \{conflict}",
         )
       }
     }
@@ -524,7 +510,7 @@ fn validate_group_refs(
     match arg.group {
       Some(name) =>
         if group_index.get(name) is None {
-          raise ArgBuildError::Unsupported("unknown group: " + name)
+          raise ArgBuildError::Unsupported("unknown group: \{name}")
         }
       None => ()
     }
@@ -533,7 +519,7 @@ fn validate_group_refs(
     for name in group.args {
       if arg_index.get(name) is None {
         raise ArgBuildError::Unsupported(
-          "unknown group arg: " + group.name + " -> " + name,
+          "unknown group arg: \{group.name} -> \{name}",
         )
       }
     }
@@ -547,20 +533,18 @@ fn validate_arg_defs(args : Array[Arg]) -> Unit raise ArgBuildError {
   let seen_short : Map[Char, Bool] = {}
   for arg in args {
     if seen_names.get(arg.name) is Some(_) {
-      raise ArgBuildError::Unsupported("duplicate arg name: " + arg.name)
+      raise ArgBuildError::Unsupported("duplicate arg name: \{arg.name}")
     }
     seen_names[arg.name] = true
     for name in collect_long_names(arg) {
       if seen_long.get(name) is Some(_) {
-        raise ArgBuildError::Unsupported("duplicate long option: --" + name)
+        raise ArgBuildError::Unsupported("duplicate long option: --\{name}")
       }
       seen_long[name] = true
     }
     for short in collect_short_names(arg) {
       if seen_short.get(short) is Some(_) {
-        raise ArgBuildError::Unsupported(
-          "duplicate short option: -" + short.to_string(),
-        )
+        raise ArgBuildError::Unsupported("duplicate short option: -\{short}")
       }
       seen_short[short] = true
     }
@@ -569,24 +553,24 @@ fn validate_arg_defs(args : Array[Arg]) -> Unit raise ArgBuildError {
     for required in arg.requires {
       if required == arg.name {
         raise ArgBuildError::Unsupported(
-          "arg cannot require itself: " + arg.name,
+          "arg cannot require itself: \{arg.name}",
         )
       }
       if seen_names.get(required) is None {
         raise ArgBuildError::Unsupported(
-          "unknown requires target: " + arg.name + " -> " + required,
+          "unknown requires target: \{arg.name} -> \{required}",
         )
       }
     }
     for conflict in arg.conflicts_with {
       if conflict == arg.name {
         raise ArgBuildError::Unsupported(
-          "arg cannot conflict with itself: " + arg.name,
+          "arg cannot conflict with itself: \{arg.name}",
         )
       }
       if seen_names.get(conflict) is None {
         raise ArgBuildError::Unsupported(
-          "unknown conflicts_with target: " + arg.name + " -> " + conflict,
+          "unknown conflicts_with target: \{arg.name} -> \{conflict}",
         )
       }
     }
@@ -602,7 +586,7 @@ fn validate_subcommand_defs(subs : Array[Command]) -> Unit raise ArgBuildError {
   for sub in subs {
     for name in collect_subcommand_names(sub) {
       if seen.get(name) is Some(_) {
-        raise ArgBuildError::Unsupported("duplicate subcommand: " + name)
+        raise ArgBuildError::Unsupported("duplicate subcommand: \{name}")
       }
       seen[name] = true
     }
@@ -696,7 +680,7 @@ fn validate_groups(
     for conflict in group.conflicts_with {
       if group_presence.get(conflict).unwrap_or(0) > 0 {
         raise ArgParseError::GroupConflict(
-          group.name + " conflicts with " + conflict,
+          "\{group.name} conflicts with \{conflict}",
         )
       }
     }
@@ -747,7 +731,7 @@ fn validate_relationships(matches : Matches, args : Array[Arg]) -> Unit raise {
     for conflict in arg.conflicts_with {
       if matches_has_value_or_flag(matches, conflict) {
         raise ArgParseError::InvalidArgument(
-          "conflicting arguments: " + arg.name + " and " + conflict,
+          "conflicting arguments: \{arg.name} and \{conflict}",
         )
       }
     }
@@ -1131,7 +1115,11 @@ fn parse_bool(value : String) -> Result[Bool, ArgParseError] {
   } else if value == "0" || value == "false" || value == "no" || value == "off" {
     Ok(false)
   } else {
-    Err(ArgParseError::InvalidValue("invalid bool: " + value))
+    Err(
+      ArgParseError::InvalidValue(
+        "invalid value '\{value}' for boolean flag; expected one of: 1, 0, true, false, yes, no, on, off",
+      ),
+    )
   }
 }
 
@@ -1143,9 +1131,18 @@ fn parse_count(value : String) -> Result[Int, ArgParseError] {
       if v >= 0 {
         Ok(v)
       } else {
-        Err(ArgParseError::InvalidValue("invalid int: " + value))
+        Err(
+          ArgParseError::InvalidValue(
+            "invalid value '\{value}' for count; expected a non-negative integer",
+          ),
+        )
       }
-    Err(_) => Err(ArgParseError::InvalidValue("invalid int: " + value))
+    Err(_) =>
+      Err(
+        ArgParseError::InvalidValue(
+          "invalid value '\{value}' for count; expected a non-negative integer",
+        ),
+      )
   }
 }
 
@@ -1153,7 +1150,7 @@ fn parse_count(value : String) -> Result[Int, ArgParseError] {
 fn suggest_long(name : String, long_index : Map[String, Arg]) -> String? {
   let candidates = map_string_keys(long_index)
   match suggest_name(name, candidates) {
-    Some(best) => Some("--" + best)
+    Some(best) => Some("--\{best}")
     None => None
   }
 }
@@ -1163,7 +1160,7 @@ fn suggest_short(short : Char, short_index : Map[Char, Arg]) -> String? {
   let candidates = map_char_keys(short_index)
   let input = short.to_string()
   match suggest_name(input, candidates) {
-    Some(best) => Some("-" + best)
+    Some(best) => Some("-\{best}")
     None => None
   }
 }
@@ -1696,7 +1693,7 @@ fn resolve_help_target(
   let mut subs = cmd.subcommands
   for name in targets {
     if name.has_prefix("-") {
-      raise ArgParseError::InvalidArgument("unexpected help argument: " + name)
+      raise ArgParseError::InvalidArgument("unexpected help argument: \{name}")
     }
     match find_subcommand(subs, name) {
       Some(sub) => {
@@ -1704,7 +1701,7 @@ fn resolve_help_target(
         subs = sub.subcommands
       }
       None =>
-        raise ArgParseError::InvalidArgument("unknown subcommand: " + name)
+        raise ArgParseError::InvalidArgument("unknown subcommand: \{name}")
     }
   }
   (current, long_help)
