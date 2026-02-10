@@ -315,7 +315,7 @@ pub fn Rand::shuffle(
   if limit < 0 {
     abort("Rand::shuffle: invalid argument limit")
   }
-  for i = limit - 1; i > 0; i = i - 1 {
+  for i in limit>..1 {
     let j = self.int(limit=i + 1)
     swap(i, j)
   }

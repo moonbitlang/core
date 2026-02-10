@@ -368,7 +368,7 @@ pub fn[T] FixedArray::rev_each(
   self : FixedArray[T],
   f : (T) -> Unit raise?,
 ) -> Unit raise? {
-  for i = self.length() - 1; i >= 0; i = i - 1 {
+  for i in self.length()>..0 {
     f(self[i])
   }
 }
