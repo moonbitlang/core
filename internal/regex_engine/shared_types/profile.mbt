@@ -30,7 +30,7 @@ pub struct Profile {
 
 ///|
 /// Create a new instance.
-fn Profile::new(
+pub fn Profile::new(
   valid~ : RecharSet,
   word~ : RecharSet,
   category~ : (Rechar) -> Category,
