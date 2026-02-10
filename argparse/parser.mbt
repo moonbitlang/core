@@ -48,12 +48,17 @@ fn render_help_for_context(
   let help_cmd = if inherited_globals.length() == 0 {
     cmd
   } else {
-    Command::{
-      ..cmd,
-      args: concat_globals(inherited_globals, command_args(cmd)),
-    }
+    Command::{ ..cmd, args: inherited_globals + cmd.args }
   }
   render_help(help_cmd)
+}
+
+///|
+fn raise_context_help(
+  cmd : Command,
+  inherited_globals : Array[Arg],
+) -> Unit raise {
+  raise_help(render_help_for_context(cmd, inherited_globals))
 }
 
 ///|
@@ -73,16 +78,16 @@ fn parse_command(
   env : Map[String, String],
   inherited_globals : Array[Arg],
 ) -> Matches raise {
-  let args = command_args(cmd)
+  let args = cmd.args
   let groups = command_groups(cmd)
   let subcommands = cmd.subcommands
   validate_command(cmd, args, groups)
   if cmd.arg_required_else_help && argv.length() == 0 {
-    raise_help(render_help_for_context(cmd, inherited_globals))
+    raise_context_help(cmd, inherited_globals)
   }
   let matches = new_matches_parse_state()
   let globals_here = collect_globals(args)
-  let child_globals = concat_globals(inherited_globals, globals_here)
+  let child_globals = inherited_globals + globals_here
   let long_index = build_long_index(inherited_globals, args)
   let short_index = build_short_index(inherited_globals, args)
   let builtin_help_short = help_flag_enabled(cmd) &&
@@ -115,10 +120,10 @@ fn parse_command(
       continue
     }
     if builtin_help_short && arg == "-h" {
-      raise_help(render_help_for_context(cmd, inherited_globals))
+      raise_context_help(cmd, inherited_globals)
     }
     if builtin_help_long && arg == "--help" {
-      raise_help(render_help_for_context(cmd, inherited_globals))
+      raise_context_help(cmd, inherited_globals)
     }
     if builtin_version_short && arg == "-V" {
       raise_version(command_version(cmd))
@@ -139,7 +144,7 @@ fn parse_command(
         if inline is Some(_) {
           raise ArgParseError::InvalidArgument(arg)
         }
-        raise_help(render_help_for_context(cmd, inherited_globals))
+        raise_context_help(cmd, inherited_globals)
       }
       if builtin_version_long && name == "version" {
         if inline is Some(_) {
@@ -180,38 +185,56 @@ fn parse_command(
           }
         Some(spec) =>
           if arg_takes_value(spec) {
-            let value = if inline is Some(v) {
-              v
-            } else {
-              if i + 1 >= argv.length() {
-                raise ArgParseError::MissingValue("--\{name}")
+            check_duplicate_set_occurrence(matches, spec)
+            let min_values = option_occurrence_min(spec)
+            let accepts_values = option_accepts_values(spec)
+            let mut values_start = i + 1
+            let mut consumed_first = false
+            if inline is Some(v) {
+              if !accepts_values {
+                raise ArgParseError::InvalidArgument(arg)
               }
-              i = i + 1
-              argv[i]
+              assign_value(matches, spec, v, ValueSource::Argv)
+              consumed_first = true
+            } else {
+              let can_take_next = i + 1 < argv.length() &&
+                !should_stop_option_value(
+                  argv[i + 1],
+                  spec,
+                  long_index,
+                  short_index,
+                )
+              if can_take_next && accepts_values {
+                i = i + 1
+                assign_value(matches, spec, argv[i], ValueSource::Argv)
+                values_start = i + 1
+                consumed_first = true
+              } else if min_values > 0 {
+                raise ArgParseError::MissingValue("--\{name}")
+              } else {
+                mark_option_present(matches, spec, ValueSource::Argv)
+              }
             }
-            match assign_value(matches, spec, value, ValueSource::Argv) {
-              Ok(_) => ()
-              Err(e) => raise e
-            }
-            match
-              consume_required_option_values(
-                matches,
-                spec,
-                argv,
-                i + 1,
-                long_index,
-                short_index,
-              ) {
-              Ok(consumed) => i = i + consumed
-              Err(e) => raise e
+            if consumed_first {
+              let consumed_more = consume_additional_option_values(
+                matches, spec, argv, values_start, long_index, short_index,
+              )
+              i = i + consumed_more
+              let occurrence_values = 1 + consumed_more
+              if occurrence_values < min_values {
+                raise ArgParseError::TooFewValues(
+                  spec.name,
+                  occurrence_values,
+                  min_values,
+                )
+              }
             }
           } else {
             if inline is Some(_) {
               raise ArgParseError::InvalidArgument(arg)
             }
             match arg_action(spec) {
-              ArgAction::Help =>
-                raise_help(render_help_for_context(cmd, inherited_globals))
+              ArgAction::Help => raise_context_help(cmd, inherited_globals)
               ArgAction::Version => raise_version(command_version(cmd))
               _ => apply_flag(matches, spec, ValueSource::Argv)
             }
@@ -226,7 +249,7 @@ fn parse_command(
       while pos < arg.length() {
         let short = arg.get_char(pos).unwrap()
         if short == 'h' && builtin_help_short {
-          raise_help(render_help_for_context(cmd, inherited_globals))
+          raise_context_help(cmd, inherited_globals)
         }
         if short == 'V' && builtin_version_short {
           raise_version(command_version(cmd))
@@ -236,40 +259,59 @@ fn parse_command(
           None => raise_unknown_short(short, short_index)
         }
         if arg_takes_value(spec) {
-          let value = if pos + 1 < arg.length() {
-            let rest0 = arg.unsafe_substring(start=pos + 1, end=arg.length())
-            match rest0.strip_prefix("=") {
+          check_duplicate_set_occurrence(matches, spec)
+          let min_values = option_occurrence_min(spec)
+          let accepts_values = option_accepts_values(spec)
+          let mut values_start = i + 1
+          let mut consumed_first = false
+          if pos + 1 < arg.length() {
+            let rest = arg.unsafe_substring(start=pos + 1, end=arg.length())
+            let inline = match rest.strip_prefix("=") {
               Some(view) => view.to_string()
-              None => rest0
+              None => rest
             }
+            if !accepts_values {
+              raise ArgParseError::InvalidArgument(arg)
+            }
+            assign_value(matches, spec, inline, ValueSource::Argv)
+            consumed_first = true
           } else {
-            if i + 1 >= argv.length() {
+            let can_take_next = i + 1 < argv.length() &&
+              !should_stop_option_value(
+                argv[i + 1],
+                spec,
+                long_index,
+                short_index,
+              )
+            if can_take_next && accepts_values {
+              i = i + 1
+              assign_value(matches, spec, argv[i], ValueSource::Argv)
+              values_start = i + 1
+              consumed_first = true
+            } else if min_values > 0 {
               raise ArgParseError::MissingValue("-\{short}")
+            } else {
+              mark_option_present(matches, spec, ValueSource::Argv)
             }
-            i = i + 1
-            argv[i]
           }
-          match assign_value(matches, spec, value, ValueSource::Argv) {
-            Ok(_) => ()
-            Err(e) => raise e
-          }
-          match
-            consume_required_option_values(
-              matches,
-              spec,
-              argv,
-              i + 1,
-              long_index,
-              short_index,
-            ) {
-            Ok(consumed) => i = i + consumed
-            Err(e) => raise e
+          if consumed_first {
+            let consumed_more = consume_additional_option_values(
+              matches, spec, argv, values_start, long_index, short_index,
+            )
+            i = i + consumed_more
+            let occurrence_values = 1 + consumed_more
+            if occurrence_values < min_values {
+              raise ArgParseError::TooFewValues(
+                spec.name,
+                occurrence_values,
+                min_values,
+              )
+            }
           }
           break
         } else {
           match arg_action(spec) {
-            ArgAction::Help =>
-              raise_help(render_help_for_context(cmd, inherited_globals))
+            ArgAction::Help => raise_context_help(cmd, inherited_globals)
             ArgAction::Version => raise_version(command_version(cmd))
             _ => apply_flag(matches, spec, ValueSource::Argv)
           }
@@ -292,11 +334,14 @@ fn parse_command(
         Some(sub) => {
           let rest = argv[i + 1:].to_array()
           let sub_matches = parse_command(sub, rest, env, child_globals)
+          let child_local_non_globals = collect_non_global_names(sub.args)
           matches.parsed_subcommand = Some((sub.name, sub_matches))
           // Merge argv-provided globals from the subcommand parse into the parent
           // so globals work even when they appear after the subcommand name.
-          merge_globals_from_child(matches, sub_matches, child_globals)
-          let env_args = concat_globals(inherited_globals, args)
+          merge_globals_from_child(
+            matches, sub_matches, child_globals, child_local_non_globals,
+          )
+          let env_args = inherited_globals + args
           let parent_matches = finalize_matches(
             cmd, args, groups, matches, positionals, positional_values, env_args,
             env,
@@ -304,7 +349,9 @@ fn parse_command(
           match parent_matches.parsed_subcommand {
             Some((sub_name, sub_m)) => {
               // After parent parsing, copy the final globals into the subcommand.
-              propagate_globals_to_child(parent_matches, sub_m, child_globals)
+              propagate_globals_to_child(
+                parent_matches, sub_m, child_globals, child_local_non_globals,
+              )
               parent_matches.parsed_subcommand = Some((sub_name, sub_m))
             }
             None => ()
@@ -317,7 +364,7 @@ fn parse_command(
     positional_values.push(arg)
     i = i + 1
   }
-  let env_args = concat_globals(inherited_globals, args)
+  let env_args = inherited_globals + args
   finalize_matches(
     cmd, args, groups, matches, positionals, positional_values, env_args, env,
   )
@@ -334,14 +381,8 @@ fn finalize_matches(
   env_args : Array[Arg],
   env : Map[String, String],
 ) -> Matches raise {
-  match assign_positionals(matches, positionals, positional_values) {
-    Ok(_) => ()
-    Err(e) => raise e
-  }
-  match apply_env(matches, env_args, env) {
-    Ok(_) => ()
-    Err(e) => raise e
-  }
+  assign_positionals(matches, positionals, positional_values)
+  apply_env(matches, env_args, env)
   apply_defaults(matches, env_args)
   validate_values(args, matches)
   validate_relationships(matches, env_args)
@@ -387,16 +428,23 @@ fn validate_command(
     validate_arg(arg)
   }
   for sub in cmd.subcommands {
-    validate_command(sub, command_args(sub), command_groups(sub))
+    validate_command(sub, sub.args, command_groups(sub))
   }
 }
 
 ///|
 fn validate_arg(arg : Arg) -> Unit raise ArgBuildError {
   let positional = is_positional_arg(arg)
-  let has_positional_only = arg.index is Some(_) ||
-    arg.allow_hyphen_values ||
-    arg.last
+  let has_option_name = arg.long is Some(_) || arg.short is Some(_)
+  if positional && has_option_name {
+    raise ArgBuildError::Unsupported(
+      "positional args do not support short/long",
+    )
+  }
+  if !positional && !has_option_name {
+    raise ArgBuildError::Unsupported("flag/option args require short/long")
+  }
+  let has_positional_only = arg.index is Some(_) || arg.last
   if !positional && has_positional_only {
     raise ArgBuildError::Unsupported(
       "positional-only settings require no short/long",
@@ -440,6 +488,9 @@ fn validate_arg(arg : Arg) -> Unit raise ArgBuildError {
     )
   }
   let (min, max) = arg_min_max_for_validate(arg)
+  if !positional && arg_takes_value(arg) && arg.num_args is Some(_) && min == 0 {
+    raise ArgBuildError::Unsupported("option args require at least one value")
+  }
   let allow_multi = arg.multiple || arg_action(arg) == ArgAction::Append
   if (min > 1 || (max is Some(m) && m > 1)) && !allow_multi {
     raise ArgBuildError::Unsupported(
@@ -630,7 +681,7 @@ fn validate_version_actions(cmd : Command) -> Unit raise ArgBuildError {
   if cmd.version is Some(_) {
     return
   }
-  for arg in command_args(cmd) {
+  for arg in cmd.args {
     if arg_action(arg) == ArgAction::Version {
       raise ArgBuildError::Unsupported(
         "version action requires command version text",
@@ -712,16 +763,21 @@ fn validate_values(args : Array[Arg], matches : Matches) -> Unit raise {
     if !arg_takes_value(arg) {
       continue
     }
+    if !present {
+      continue
+    }
     let values = matches.values.get(arg.name).unwrap_or([])
     let count = values.length()
     let (min, max) = arg_min_max(arg)
     if count < min {
       raise ArgParseError::TooFewValues(arg.name, count, min)
     }
-    match max {
-      Some(max) if count > max =>
-        raise ArgParseError::TooManyValues(arg.name, count, max)
-      _ => ()
+    if arg_action(arg) != ArgAction::Append {
+      match max {
+        Some(max) if count > max =>
+          raise ArgParseError::TooManyValues(arg.name, count, max)
+        _ => ()
+      }
     }
   }
 }
@@ -749,7 +805,7 @@ fn validate_relationships(matches : Matches, args : Array[Arg]) -> Unit raise {
 
 ///|
 fn is_positional_arg(arg : Arg) -> Bool {
-  arg.short is None && arg.long is None
+  arg.is_positional
 }
 
 ///|
@@ -757,7 +813,7 @@ fn assign_positionals(
   matches : Matches,
   positionals : Array[Arg],
   values : Array[String],
-) -> Result[Unit, ArgParseError] {
+) -> Unit raise ArgParseError {
   let mut cursor = 0
   for idx in 0..<positionals.length() {
     let arg = positionals[idx]
@@ -781,35 +837,26 @@ fn assign_positionals(
       }
       let mut taken = 0
       while taken < take {
-        match
-          add_value(
-            matches,
-            arg.name,
-            values[cursor + taken],
-            arg,
-            ValueSource::Argv,
-          ) {
-          Ok(_) => ()
-          Err(e) => return Err(e)
-        }
+        add_value(
+          matches,
+          arg.name,
+          values[cursor + taken],
+          arg,
+          ValueSource::Argv,
+        )
         taken = taken + 1
       }
       cursor = cursor + taken
       continue
     }
     if remaining > 0 {
-      match
-        add_value(matches, arg.name, values[cursor], arg, ValueSource::Argv) {
-        Ok(_) => ()
-        Err(e) => return Err(e)
-      }
+      add_value(matches, arg.name, values[cursor], arg, ValueSource::Argv)
       cursor = cursor + 1
     }
   }
   if cursor < values.length() {
-    return Err(ArgParseError::TooManyPositionals)
+    raise ArgParseError::TooManyPositionals
   }
-  Ok(())
 }
 
 ///|
@@ -842,7 +889,7 @@ fn add_value(
   value : String,
   arg : Arg,
   source : ValueSource,
-) -> Result[Unit, ArgParseError] {
+) -> Unit {
   if arg.multiple || arg_action(arg) == ArgAction::Append {
     let arr = matches.values.get(name).unwrap_or([])
     arr.push(value)
@@ -854,7 +901,6 @@ fn add_value(
     matches.values[name] = [value]
     matches.value_sources[name] = [source]
   }
-  Ok(())
 }
 
 ///|
@@ -863,124 +909,167 @@ fn assign_value(
   arg : Arg,
   value : String,
   source : ValueSource,
-) -> Result[Unit, ArgParseError] {
+) -> Unit raise ArgParseError {
   match arg_action(arg) {
     ArgAction::Append => add_value(matches, arg.name, value, arg, source)
     ArgAction::Set => add_value(matches, arg.name, value, arg, source)
-    ArgAction::SetTrue =>
-      match parse_bool(value) {
-        Ok(flag) => {
-          matches.flags[arg.name] = flag
-          matches.flag_sources[arg.name] = source
-          Ok(())
-        }
-        Err(e) => Err(e)
-      }
-    ArgAction::SetFalse =>
-      match parse_bool(value) {
-        Ok(flag) => {
-          matches.flags[arg.name] = !flag
-          matches.flag_sources[arg.name] = source
-          Ok(())
-        }
-        Err(e) => Err(e)
-      }
-    ArgAction::Count =>
-      match parse_count(value) {
-        Ok(count) => {
-          matches.counts[arg.name] = count
-          matches.flags[arg.name] = count > 0
-          matches.flag_sources[arg.name] = source
-          Ok(())
-        }
-        Err(e) => Err(e)
-      }
+    ArgAction::SetTrue => {
+      let flag = parse_bool(value)
+      matches.flags[arg.name] = flag
+      matches.flag_sources[arg.name] = source
+    }
+    ArgAction::SetFalse => {
+      let flag = parse_bool(value)
+      matches.flags[arg.name] = !flag
+      matches.flag_sources[arg.name] = source
+    }
+    ArgAction::Count => {
+      let count = parse_count(value)
+      matches.counts[arg.name] = count
+      matches.flags[arg.name] = count > 0
+      matches.flag_sources[arg.name] = source
+    }
     ArgAction::Help =>
-      Err(ArgParseError::InvalidArgument("help action does not take values"))
+      raise ArgParseError::InvalidArgument("help action does not take values")
     ArgAction::Version =>
-      Err(ArgParseError::InvalidArgument("version action does not take values"))
+      raise ArgParseError::InvalidArgument(
+        "version action does not take values",
+      )
   }
 }
 
 ///|
-fn required_option_value_count(matches : Matches, arg : Arg) -> Int {
+fn option_occurrence_min(arg : Arg) -> Int {
+  match arg.num_args {
+    Some(_) => {
+      let (min, _) = arg_min_max(arg)
+      min
+    }
+    None => 1
+  }
+}
+
+///|
+fn option_accepts_values(arg : Arg) -> Bool {
+  match arg.num_args {
+    Some(_) => {
+      let (_, max) = arg_min_max(arg)
+      match max {
+        Some(max_count) => max_count > 0
+        None => true
+      }
+    }
+    None => true
+  }
+}
+
+///|
+fn option_conflict_label(arg : Arg) -> String {
+  match arg.long {
+    Some(name) => "--\{name}"
+    None =>
+      match arg.short {
+        Some(short) => "-\{short}"
+        None => arg.name
+      }
+  }
+}
+
+///|
+fn check_duplicate_set_occurrence(
+  matches : Matches,
+  arg : Arg,
+) -> Unit raise ArgParseError {
+  if arg_action(arg) != ArgAction::Set {
+    return
+  }
+  if matches.values.get(arg.name) is Some(_) {
+    raise ArgParseError::InvalidArgument(
+      "argument '\{option_conflict_label(arg)}' cannot be used multiple times",
+    )
+  }
+}
+
+///|
+fn mark_option_present(
+  matches : Matches,
+  arg : Arg,
+  source : ValueSource,
+) -> Unit {
+  if matches.values.get(arg.name) is None {
+    matches.values[arg.name] = []
+  }
+  let srcs = matches.value_sources.get(arg.name).unwrap_or([])
+  srcs.push(source)
+  matches.value_sources[arg.name] = srcs
+}
+
+///|
+fn required_option_value_count(arg : Arg) -> Int {
   match arg.num_args {
     None => 0
     Some(_) => {
-      let (min, _) = arg_min_max(arg)
-      if min <= 0 {
-        return 0
-      }
-      let count = matches.values.get(arg.name).unwrap_or([]).length()
-      if count >= min {
-        0
-      } else {
-        min - count
+      let (_, max) = arg_min_max(arg)
+      match max {
+        Some(max_count) if max_count <= 1 => 0
+        Some(max_count) => max_count - 1
+        None => -1
       }
     }
   }
 }
 
 ///|
-fn consume_required_option_values(
+fn consume_additional_option_values(
   matches : Matches,
   arg : Arg,
   argv : Array[String],
   start : Int,
   long_index : Map[String, Arg],
   short_index : Map[Char, Arg],
-) -> Result[Int, ArgParseError] {
-  let need = required_option_value_count(matches, arg)
-  if need == 0 {
-    return Ok(0)
+) -> Int raise ArgParseError {
+  let max_more = required_option_value_count(arg)
+  if max_more == 0 {
+    return 0
   }
   let mut consumed = 0
-  while consumed < need && start + consumed < argv.length() {
-    let value = argv[start + consumed]
-    if starts_known_option(value, long_index, short_index) {
+  while start + consumed < argv.length() {
+    if max_more > 0 && consumed >= max_more {
       break
     }
-    match assign_value(matches, arg, value, ValueSource::Argv) {
-      Ok(_) => ()
-      Err(e) => return Err(e)
+    let value = argv[start + consumed]
+    if should_stop_option_value(value, arg, long_index, short_index) {
+      break
     }
+    assign_value(matches, arg, value, ValueSource::Argv)
     consumed = consumed + 1
   }
-  Ok(consumed)
+  consumed
 }
 
 ///|
-fn starts_known_option(
-  arg : String,
-  long_index : Map[String, Arg],
-  short_index : Map[Char, Arg],
+fn should_stop_option_value(
+  value : String,
+  arg : Arg,
+  _long_index : Map[String, Arg],
+  _short_index : Map[Char, Arg],
 ) -> Bool {
-  if !arg.has_prefix("-") || arg == "-" {
+  if !value.has_prefix("-") || value == "-" {
     return false
   }
-  if arg.has_prefix("--") {
-    let (name, _) = split_long(arg)
-    if long_index.get(name) is Some(_) {
-      return true
-    }
-    if name.has_prefix("no-") {
-      let target = match name.strip_prefix("no-") {
-        Some(view) => view.to_string()
-        None => ""
-      }
-      match long_index.get(target) {
-        Some(spec) => !arg_takes_value(spec) && spec.negatable
-        None => false
-      }
-    } else {
-      false
-    }
-  } else {
-    match arg.get_char(1) {
-      Some(ch) => short_index.get(ch) is Some(_)
-      None => false
-    }
+  if arg.allow_hyphen_values {
+    // Rust clap parity:
+    // - `clap_builder/src/parser/parser.rs`: `parse_long_arg` / `parse_short_arg`
+    //   return `ParseResult::MaybeHyphenValue` when the pending arg in
+    //   `ParseState::Opt` or `ParseState::Pos` has `allow_hyphen_values`.
+    // - `clap_builder/src/builder/arg.rs` (`Arg::allow_hyphen_values` docs):
+    //   prior args with this setting take precedence over known flags/options.
+    // - `tests/builder/opts.rs` (`leading_hyphen_with_flag_after`):
+    //   a pending option consumes `-f` as a value rather than parsing flag `-f`.
+    // This also means `--` is consumed as a value while the option remains pending.
+    return false
   }
+  true
 }
 
 ///|
@@ -988,7 +1077,7 @@ fn apply_env(
   matches : Matches,
   args : Array[Arg],
   env : Map[String, String],
-) -> Result[Unit, ArgParseError] {
+) -> Unit raise ArgParseError {
   for arg in args {
     let name = arg.name
     if matches_has_value_or_flag(matches, name) {
@@ -1003,52 +1092,36 @@ fn apply_env(
       None => continue
     }
     if arg_takes_value(arg) {
-      match assign_value(matches, arg, value, ValueSource::Env) {
-        Ok(_) => ()
-        Err(e) => return Err(e)
-      }
+      assign_value(matches, arg, value, ValueSource::Env)
       continue
     }
     match arg_action(arg) {
-      ArgAction::Count =>
-        match parse_count(value) {
-          Ok(count) => {
-            matches.counts[name] = count
-            matches.flags[name] = count > 0
-            matches.flag_sources[name] = ValueSource::Env
-          }
-          Err(e) => return Err(e)
-        }
-      ArgAction::SetFalse =>
-        match parse_bool(value) {
-          Ok(flag) => {
-            matches.flags[name] = !flag
-            matches.flag_sources[name] = ValueSource::Env
-          }
-          Err(e) => return Err(e)
-        }
-      ArgAction::SetTrue =>
-        match parse_bool(value) {
-          Ok(flag) => {
-            matches.flags[name] = flag
-            matches.flag_sources[name] = ValueSource::Env
-          }
-          Err(e) => return Err(e)
-        }
-      ArgAction::Set =>
-        match parse_bool(value) {
-          Ok(flag) => {
-            matches.flags[name] = flag
-            matches.flag_sources[name] = ValueSource::Env
-          }
-          Err(e) => return Err(e)
-        }
+      ArgAction::Count => {
+        let count = parse_count(value)
+        matches.counts[name] = count
+        matches.flags[name] = count > 0
+        matches.flag_sources[name] = ValueSource::Env
+      }
+      ArgAction::SetFalse => {
+        let flag = parse_bool(value)
+        matches.flags[name] = !flag
+        matches.flag_sources[name] = ValueSource::Env
+      }
+      ArgAction::SetTrue => {
+        let flag = parse_bool(value)
+        matches.flags[name] = flag
+        matches.flag_sources[name] = ValueSource::Env
+      }
+      ArgAction::Set => {
+        let flag = parse_bool(value)
+        matches.flags[name] = flag
+        matches.flag_sources[name] = ValueSource::Env
+      }
       ArgAction::Append => ()
       ArgAction::Help => ()
       ArgAction::Version => ()
     }
   }
-  Ok(())
 }
 
 ///|
@@ -1123,40 +1196,31 @@ fn apply_flag(matches : Matches, arg : Arg, source : ValueSource) -> Unit {
 }
 
 ///|
-fn parse_bool(value : String) -> Result[Bool, ArgParseError] {
+fn parse_bool(value : String) -> Bool raise ArgParseError {
   if value == "1" || value == "true" || value == "yes" || value == "on" {
-    Ok(true)
+    true
   } else if value == "0" || value == "false" || value == "no" || value == "off" {
-    Ok(false)
+    false
   } else {
-    Err(
-      ArgParseError::InvalidValue(
-        "invalid value '\{value}' for boolean flag; expected one of: 1, 0, true, false, yes, no, on, off",
-      ),
+    raise ArgParseError::InvalidValue(
+      "invalid value '\{value}' for boolean flag; expected one of: 1, 0, true, false, yes, no, on, off",
     )
   }
 }
 
 ///|
-fn parse_count(value : String) -> Result[Int, ArgParseError] {
-  let res : Result[Int, Error] = try? @strconv.parse_int(value)
-  match res {
-    Ok(v) =>
-      if v >= 0 {
-        Ok(v)
-      } else {
-        Err(
-          ArgParseError::InvalidValue(
-            "invalid value '\{value}' for count; expected a non-negative integer",
-          ),
-        )
-      }
-    Err(_) =>
-      Err(
-        ArgParseError::InvalidValue(
-          "invalid value '\{value}' for count; expected a non-negative integer",
-        ),
+fn parse_count(value : String) -> Int raise ArgParseError {
+  try @strconv.parse_int(value) catch {
+    _ =>
+      raise ArgParseError::InvalidValue(
+        "invalid value '\{value}' for count; expected a non-negative integer",
       )
+  } noraise {
+    _..<0 =>
+      raise ArgParseError::InvalidValue(
+        "invalid value '\{value}' for count; expected a non-negative integer",
+      )
+    v => v
   }
 }
 
@@ -1334,12 +1398,14 @@ fn collect_globals(args : Array[Arg]) -> Array[Arg] {
 }
 
 ///|
-fn concat_globals(parent : Array[Arg], more : Array[Arg]) -> Array[Arg] {
-  let out = clone_array(parent)
-  for arg in more {
-    out.push(arg)
+fn collect_non_global_names(args : Array[Arg]) -> Map[String, Bool] {
+  let names : Map[String, Bool] = {}
+  for arg in args {
+    if !arg.global {
+      names[arg.name] = true
+    }
   }
-  out
+  names
 }
 
 ///|
@@ -1396,9 +1462,13 @@ fn merge_globals_from_child(
   parent : Matches,
   child : Matches,
   globals : Array[Arg],
+  child_local_non_globals : Map[String, Bool],
 ) -> Unit {
   for arg in globals {
     let name = arg.name
+    if child_local_non_globals.get(name) is Some(_) {
+      continue
+    }
     if arg_takes_value(arg) {
       let parent_vals = parent.values.get(name)
       let child_vals = child.values.get(name)
@@ -1446,15 +1516,15 @@ fn merge_globals_from_child(
             (!has_parent || prefer_child_source(parent_source, child_source))
           if choose_child {
             if child_vals is Some(cv) && cv.length() > 0 {
-              parent.values[name] = clone_array(cv)
+              parent.values[name] = cv.copy()
             }
             if child_srcs is Some(cs) && cs.length() > 0 {
-              parent.value_sources[name] = clone_array(cs)
+              parent.value_sources[name] = cs.copy()
             }
           } else if parent_vals is Some(pv) && pv.length() > 0 {
-            parent.values[name] = clone_array(pv)
+            parent.values[name] = pv.copy()
             if parent_srcs is Some(ps) && ps.length() > 0 {
-              parent.value_sources[name] = clone_array(ps)
+              parent.value_sources[name] = ps.copy()
             }
           }
         }
@@ -1463,15 +1533,15 @@ fn merge_globals_from_child(
           (!has_parent || prefer_child_source(parent_source, child_source))
         if choose_child {
           if child_vals is Some(cv) && cv.length() > 0 {
-            parent.values[name] = clone_array(cv)
+            parent.values[name] = cv.copy()
           }
           if child_srcs is Some(cs) && cs.length() > 0 {
-            parent.value_sources[name] = clone_array(cs)
+            parent.value_sources[name] = cs.copy()
           }
         } else if parent_vals is Some(pv) && pv.length() > 0 {
-          parent.values[name] = clone_array(pv)
+          parent.values[name] = pv.copy()
           if parent_srcs is Some(ps) && ps.length() > 0 {
-            parent.value_sources[name] = clone_array(ps)
+            parent.value_sources[name] = ps.copy()
           }
         }
       }
@@ -1532,15 +1602,19 @@ fn propagate_globals_to_child(
   parent : Matches,
   child : Matches,
   globals : Array[Arg],
+  child_local_non_globals : Map[String, Bool],
 ) -> Unit {
   for arg in globals {
     let name = arg.name
+    if child_local_non_globals.get(name) is Some(_) {
+      continue
+    }
     if arg_takes_value(arg) {
       match parent.values.get(name) {
         Some(values) => {
-          child.values[name] = clone_array(values)
+          child.values[name] = values.copy()
           match parent.value_sources.get(name) {
-            Some(srcs) => child.value_sources[name] = clone_array(srcs)
+            Some(srcs) => child.value_sources[name] = srcs.copy()
             None => ()
           }
         }
@@ -1568,15 +1642,11 @@ fn propagate_globals_to_child(
 }
 
 ///|
-
-///|
-
-///|
 fn positional_args(args : Array[Arg]) -> Array[Arg] {
   let with_index = []
   let without_index = []
   for arg in args {
-    if arg.long is None && arg.short is None {
+    if is_positional_arg(arg) {
       if arg.index is Some(idx) {
         with_index.push((idx, arg))
       } else {
@@ -1610,11 +1680,44 @@ fn last_positional_index(positionals : Array[Arg]) -> Int? {
 
 ///|
 fn next_positional(positionals : Array[Arg], collected : Array[String]) -> Arg? {
-  if collected.length() < positionals.length() {
-    Some(positionals[collected.length()])
-  } else {
-    None
+  let target = collected.length()
+  let total = target + 1
+  let mut cursor = 0
+  for idx in 0..<positionals.length() {
+    if cursor >= total {
+      break
+    }
+    let arg = positionals[idx]
+    let remaining = total - cursor
+    let take = if arg.multiple {
+      let (min, max) = arg_min_max(arg)
+      let reserve = remaining_positional_min(positionals, idx + 1)
+      let mut take = remaining - reserve
+      if take < 0 {
+        take = 0
+      }
+      match max {
+        Some(max_count) if take > max_count => take = max_count
+        _ => ()
+      }
+      if take < min {
+        take = min
+      }
+      if take > remaining {
+        take = remaining
+      }
+      take
+    } else if remaining > 0 {
+      1
+    } else {
+      0
+    }
+    if take > 0 && target < cursor + take {
+      return Some(arg)
+    }
+    cursor = cursor + take
   }
+  None
 }
 
 ///|
@@ -1721,10 +1824,7 @@ fn resolve_help_target(
     }
     match find_subcommand(subs, name) {
       Some(sub) => {
-        current_globals = concat_globals(
-          current_globals,
-          collect_globals(command_args(current)),
-        )
+        current_globals = current_globals + collect_globals(current.args)
         current = sub
         subs = sub.subcommands
       }
@@ -1755,13 +1855,4 @@ fn split_long(arg : String) -> (String, String?) {
     let value = parts[1:].to_array().join("=")
     (name, Some(value))
   }
-}
-
-///|
-fn[T] clone_array(arr : Array[T]) -> Array[T] {
-  let out = Array::new(capacity=arr.length())
-  for value in arr {
-    out.push(value)
-  }
-  out
 }

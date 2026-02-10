@@ -15,10 +15,8 @@
 ///|
 /// Number-of-values constraint for an argument.
 pub struct ValueRange {
-  priv lower : Int?
+  priv lower : Int
   priv upper : Int?
-  priv lower_inclusive : Bool
-  priv upper_inclusive : Bool
 
   fn new(
     lower? : Int,
@@ -45,5 +43,13 @@ pub fn ValueRange::new(
   lower_inclusive? : Bool = true,
   upper_inclusive? : Bool = true,
 ) -> ValueRange {
-  ValueRange::{ lower, upper, lower_inclusive, upper_inclusive }
+  let lower = match lower {
+    None => 0
+    Some(lower) => if lower_inclusive { lower } else { lower + 1 }
+  }
+  let upper = match upper {
+    None => None
+    Some(upper) => Some(if upper_inclusive { upper } else { upper - 1 })
+  }
+  ValueRange::{ lower, upper }
 }

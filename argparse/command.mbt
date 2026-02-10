@@ -61,9 +61,9 @@ pub fn Command::new(
 ) -> Command {
   Command::{
     name,
-    args: normalize_args(args),
-    groups: clone_array_cmd(groups),
-    subcommands: clone_array_cmd(subcommands),
+    args: args.map(x => x.to_arg()),
+    groups: groups.copy(),
+    subcommands: subcommands.copy(),
     about,
     version,
     disable_help_flag,
@@ -73,15 +73,6 @@ pub fn Command::new(
     subcommand_required,
     hidden,
   }
-}
-
-///|
-fn normalize_args(args : Array[&ArgLike]) -> Array[Arg] {
-  let out = Array::new(capacity=args.length())
-  for arg in args {
-    out.push(arg.to_arg())
-  }
-  out
 }
 
 ///|
@@ -111,12 +102,12 @@ fn build_matches(
   let values : Map[String, Array[String]] = {}
   let flag_counts : Map[String, Int] = {}
   let sources : Map[String, ValueSource] = {}
-  let specs = concat_decl_specs(inherited_globals, cmd.args)
+  let specs = inherited_globals + cmd.args
 
   for spec in specs {
     let name = arg_name(spec)
     match raw.values.get(name) {
-      Some(vs) => values[name] = clone_array_cmd(vs)
+      Some(vs) => values[name] = vs.copy()
       None => ()
     }
     let count = raw.counts.get(name).unwrap_or(0)
@@ -145,10 +136,10 @@ fn build_matches(
       None => ()
     }
   }
-  let child_globals = concat_decl_specs(
-    inherited_globals,
-    collect_decl_globals(cmd.args),
-  )
+  let child_globals = inherited_globals +
+    cmd.args.filter(arg => {
+      arg.global && (arg.long is Some(_) || arg.short is Some(_))
+    })
 
   let subcommand = match raw.parsed_subcommand {
     Some((name, sub_raw)) =>
@@ -190,26 +181,6 @@ fn build_matches(
 }
 
 ///|
-fn collect_decl_globals(args : Array[Arg]) -> Array[Arg] {
-  let globals = []
-  for arg in args {
-    if arg.global && (arg.long is Some(_) || arg.short is Some(_)) {
-      globals.push(arg)
-    }
-  }
-  globals
-}
-
-///|
-fn concat_decl_specs(parent : Array[Arg], more : Array[Arg]) -> Array[Arg] {
-  let out = clone_array_cmd(parent)
-  for arg in more {
-    out.push(arg)
-  }
-  out
-}
-
-///|
 fn find_decl_subcommand(subs : Array[Command], name : String) -> Command? {
   for sub in subs {
     if sub.name == name {
@@ -220,17 +191,8 @@ fn find_decl_subcommand(subs : Array[Command], name : String) -> Command? {
 }
 
 ///|
-fn command_args(cmd : Command) -> Array[Arg] {
-  let args = Array::new(capacity=cmd.args.length())
-  for spec in cmd.args {
-    args.push(spec)
-  }
-  args
-}
-
-///|
 fn command_groups(cmd : Command) -> Array[ArgGroup] {
-  let groups = clone_array_cmd(cmd.groups)
+  let groups = cmd.groups.copy()
   for arg in cmd.args {
     match arg.group {
       Some(group_name) =>
@@ -259,8 +221,7 @@ fn add_arg_to_group_membership(
       if groups[i].args.contains(arg_name) {
         return
       }
-      let args = clone_array_cmd(groups[i].args)
-      args.push(arg_name)
+      let args = [..groups[i].args, arg_name]
       groups[i] = ArgGroup::{ ..groups[i], args, }
     }
     None =>
@@ -273,13 +234,4 @@ fn add_arg_to_group_membership(
         conflicts_with: [],
       })
   }
-}
-
-///|
-fn[T] clone_array_cmd(arr : Array[T]) -> Array[T] {
-  let out = Array::new(capacity=arr.length())
-  for value in arr {
-    out.push(value)
-  }
-  out
 }
