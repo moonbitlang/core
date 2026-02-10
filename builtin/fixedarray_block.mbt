@@ -49,7 +49,7 @@ pub fn[A] FixedArray::unsafe_blit(
       dst[dst_offset + i] = src[src_offset + i]
     }
   } else {
-    for i = len - 1; i >= 0; i = i - 1 {
+    for i in len>..0 {
       dst[dst_offset + i] = src[src_offset + i]
     }
   }
@@ -67,7 +67,7 @@ fn[T] UninitializedArray::unsafe_blit_fixed(
   src_offset : Int,
   len : Int,
 ) -> Unit {
-  for i = len - 1; i >= 0; i = i - 1 {
+  for i in len>..0 {
     dst[dst_offset + i] = src[src_offset + i]
   }
 }

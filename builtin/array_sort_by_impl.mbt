@@ -198,10 +198,10 @@ fn[T] fixed_choose_pivot_by(
 ///|
 fn[T] fixed_heap_sort_by(arr : MutArrayView[T], cmp : (T, T) -> Int) -> Unit {
   let len = arr.length()
-  for i = len / 2 - 1; i >= 0; i = i - 1 {
+  for i in (len / 2)>..0 {
     fixed_sift_down_by(arr, i, cmp)
   }
-  for i = len - 1; i > 0; i = i - 1 {
+  for i in len>..1 {
     arr.swap(0, i)
     fixed_sift_down_by(arr.slice(0, i), 0, cmp)
   }

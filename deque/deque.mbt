@@ -290,7 +290,7 @@ pub fn[A] Deque::blit_to(
       dst.len = new_len
     }
     // Copy in reverse order
-    for i = len - 1; i >= 0; i = i - 1 {
+    for i in len>..0 {
       let dst_idx = (dst.head + dst_offset + i) % dst.buf.length()
       let src_idx = (self.head + src_offset + i) % self.buf.length()
       dst.buf[dst_idx] = self.buf[src_idx]
@@ -464,7 +464,7 @@ pub fn[A] Deque::remove(self : Deque[A], index : Int) -> A {
   if index < self.len / 2 {
     // Shift front elements right
     let new_head = (self.head + 1) % cap
-    for i = index - 1; i >= 0; i = i - 1 {
+    for i in index>..0 {
       let to = (self.head + i + 1) % cap
       let from = (self.head + i) % cap
       self.buf[to] = self.buf[from]
@@ -2331,7 +2331,7 @@ pub fn[A] Deque::shuffle_in_place(
 ) -> Unit {
   let n = self.len
   let buf_length = self.buf.length()
-  for i = n - 1; i > 0; i = i - 1 {
+  for i in n>..1 {
     let j = rand(i + 1)
     // Calculate circular buffer positions
     let i_pos = (self.head + i) % buf_length

@@ -218,7 +218,7 @@ fn boyer_moore_horspool_rev_find(
   guard needle_len > 0 else { return Some(haystack_len) }
   guard haystack_len >= needle_len else { return None }
   let skip_table = FixedArray::make(1 << 8, needle_len)
-  for i = needle_len - 1; i > 0; i = i - 1 {
+  for i in needle_len>..1 {
     skip_table[needle.unsafe_get(i).to_int() & 0xFF] = i
   }
   for i = haystack_len - needle_len

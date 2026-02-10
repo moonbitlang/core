@@ -413,7 +413,7 @@ fn BigInt::split(self : BigInt, half : Int) -> (BigInt, BigInt) {
   if self.len <= half {
     return ({ ..self, sign: Positive }, zero)
   }
-  let lower_len = for i = half - 1; i > 0; i = i - 1 {
+  let lower_len = for i in half>..1 {
     if self.limbs[i] > 0 {
       break i + 1
     }
@@ -536,7 +536,7 @@ fn BigInt::grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
     let a = ret.limbs
     let x = number.to_uint64()
     let mut y = 0UL
-    for i = self.len - 1; i >= 0; i = i - 1 {
+    for i in self.len>..0 {
       y = y << radix_bit_len
       y += a[i].to_uint64()
       a[i] = ((y / x) & radix_mask).to_uint()
@@ -761,7 +761,7 @@ pub impl Shr for BigInt with shr(self : BigInt, n : Int) -> BigInt {
     let new_limbs = FixedArray::make(new_len, 0U)
     let a = self.limbs
     let mut carry = 0UL
-    for i = self.len - 1; i >= lz; i = i - 1 {
+    for i in self.len>..lz {
       let x = a[i].to_uint64()
       new_limbs[i - lz] = ((x >> r) | carry).to_uint()
       carry = (x << (radix_bit_len - r)) % radix
@@ -841,7 +841,7 @@ pub impl Compare for BigInt with compare(self, other) {
       other_len - self_len
     }
   }
-  for i = self_len - 1; i >= 0; i = i - 1 {
+  for i in self_len>..0 {
     if self.limbs[i] != other.limbs[i] {
       return if self.sign == Positive {
         self.limbs[i].compare(other.limbs[i])
@@ -937,7 +937,7 @@ pub fn BigInt::to_string(self : BigInt, radix? : Int = 10) -> String {
   let s = if self.sign == Negative { "-" } else { "" }
   let v = Array::make(decimal_len, 0L)
   let mut v_idx = 0
-  for i = self.len - 1; i >= 0; i = i - 1 {
+  for i in self.len>..0 {
     let mut x = self.limbs[i].to_int64()
     for j in 0..<v_idx {
       let y = (v[j] << radix_bit_len) | x
@@ -1048,7 +1048,7 @@ fn BigInt::to_string_radix(self : BigInt, radix : Int) -> String {
       if is_negative {
         builder.write_char('-')
       }
-      for i = digits.length() - 1; i >= 0; i = i - 1 {
+      for i in digits.length()>..0 {
         builder.write_char(digits[i])
       }
       builder.to_string()
@@ -1069,7 +1069,7 @@ fn BigInt::to_string_radix_pow2(self : BigInt, shift : Int) -> String {
     builder.write_char('-')
   }
   let mask = (1UL << shift) - 1UL
-  for pos = digit_len - 1; pos >= 0; pos = pos - 1 {
+  for pos in digit_len>..0 {
     let bit_index = pos * shift
     let limb_index = bit_index / radix_bit_len
     let offset = bit_index % radix_bit_len
@@ -1154,7 +1154,7 @@ fn BigInt::from_string_radix_pow2(
   let b_len = (total_bits + radix_bit_len - 1) / radix_bit_len
   let limbs = FixedArray::make(b_len, 0U)
   let mut bit_pos = 0
-  for i = len - 1; i >= first; i = i - 1 {
+  for i in len>..first {
     let digit = digit_from_char(input.unsafe_get(i).to_int())
     if digit < 0 || digit >= radix {
       abort("invalid character")
@@ -1837,7 +1837,7 @@ pub fn BigInt::to_uint64(self : BigInt) -> UInt64 {
   let len = 64 / radix_bit_len
   let len = if value.len < len { value.len } else { len }
   let mut result = 0UL
-  for i = len - 1; i >= 0; i = i - 1 {
+  for i in len>..0 {
     result = result << radix_bit_len
     result = result | (value.limbs[i].to_uint64() & radix_mask)
   }

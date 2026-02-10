@@ -82,7 +82,7 @@ pub fn BigInt::to_hex(self : BigInt, uppercase? : Bool = true) -> String {
   } else {
     StringBuilder::new(size_hint=self.len * digits_per_limb)
   }
-  for i = self.len - 1; i >= 0; i = i - 1 { // TODO: reverse iteration would be a bit faster.
+  for i in self.len>..0 {
     // split the limb into 4-bit chunks
     let mut x = self.limbs[i]
     let digits = FixedArray::make(digits_per_limb, '0')

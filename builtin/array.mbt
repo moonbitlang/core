@@ -1872,7 +1872,7 @@ pub fn[T] Array::shuffle_in_place(
   rand~ : (Int) -> Int,
 ) -> Unit {
   let n = self.length()
-  for i = n - 1; i > 0; i = i - 1 {
+  for i in n>..1 {
     let j = rand(i + 1) % (i + 1)
     // for safety, perf is not a concern here
     // TODO: maybe return an error later

@@ -305,7 +305,7 @@ fn Decimal::assign(self : Decimal, v : Int64) -> Unit {
 
   // reverse the buf
   self.digits_num = 0
-  for i = n - 1; i >= 0; i = i - 1 {
+  for i in n>..0 {
     self.digits[self.digits_num] = buf[i]
     self.digits_num += 1
   }
