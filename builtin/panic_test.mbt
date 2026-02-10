@@ -227,7 +227,7 @@ test "panic set_utf16le_char with invalid code point" {
 test "panic set_utf16be_char with invalid code point" {
   let arr = FixedArray::makei(10, _ => b'\x00')
   let char = (0x110000).unsafe_to_char()
-  arr.set_utf16le_char(0, char) |> ignore
+  arr.set_utf16be_char(0, char) |> ignore
 }
 
 ///|

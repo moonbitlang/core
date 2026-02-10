@@ -17,7 +17,7 @@ import {
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/test",
   "moonbitlang/core/random",
-  "moonbitlang/core/math",
+  "moonbitlang/core/math", // FIXME: IDE false alarm unused package
   "moonbitlang/core/buffer",
 } for "test"
 
