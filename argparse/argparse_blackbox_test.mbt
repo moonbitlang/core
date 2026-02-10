@@ -28,7 +28,7 @@ impl @argparse.FromMatches for DecodeName with from_matches(
 }
 
 ///|
-test "render long help snapshot with groups and hidden entries" {
+test "render help snapshot with groups and hidden entries" {
   let cmd = @argparse.Command(
     "render",
     groups=[
@@ -63,7 +63,7 @@ test "render long help snapshot with groups and hidden entries" {
     ],
   )
   inspect(
-    cmd.render_long_help(),
+    cmd.render_help(),
     content=(
       #|Usage: render [options] <command> <target> [rest...]
       #|

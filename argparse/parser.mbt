@@ -41,18 +41,8 @@ fn[T] raise_unknown_short(
 }
 
 ///|
-fn render_help_for_style(cmd : Command, long_help : Bool) -> String {
-  if long_help {
-    render_help_long(cmd)
-  } else {
-    render_help_short(cmd)
-  }
-}
-
-///|
 fn render_help_for_context(
   cmd : Command,
-  long_help : Bool,
   inherited_globals : Array[Arg],
 ) -> String {
   let help_cmd = if inherited_globals.length() == 0 {
@@ -63,7 +53,7 @@ fn render_help_for_context(
       args: concat_globals(inherited_globals, command_args(cmd)),
     }
   }
-  render_help_for_style(help_cmd, long_help)
+  render_help(help_cmd)
 }
 
 ///|
@@ -88,7 +78,7 @@ fn parse_command(
   let subcommands = cmd.subcommands
   validate_command(cmd, args, groups)
   if cmd.arg_required_else_help && argv.length() == 0 {
-    raise_help(render_help_for_context(cmd, false, inherited_globals))
+    raise_help(render_help_for_context(cmd, inherited_globals))
   }
   let matches = new_matches_parse_state()
   let globals_here = collect_globals(args)
@@ -125,10 +115,10 @@ fn parse_command(
       continue
     }
     if builtin_help_short && arg == "-h" {
-      raise_help(render_help_for_context(cmd, false, inherited_globals))
+      raise_help(render_help_for_context(cmd, inherited_globals))
     }
     if builtin_help_long && arg == "--help" {
-      raise_help(render_help_for_context(cmd, true, inherited_globals))
+      raise_help(render_help_for_context(cmd, inherited_globals))
     }
     if builtin_version_short && arg == "-V" {
       raise_version(command_version(cmd))
@@ -149,7 +139,7 @@ fn parse_command(
         if inline is Some(_) {
           raise ArgParseError::InvalidArgument(arg)
         }
-        raise_help(render_help_for_context(cmd, true, inherited_globals))
+        raise_help(render_help_for_context(cmd, inherited_globals))
       }
       if builtin_version_long && name == "version" {
         if inline is Some(_) {
@@ -221,9 +211,7 @@ fn parse_command(
             }
             match arg_action(spec) {
               ArgAction::Help =>
-                raise_help(
-                  render_help_for_context(cmd, true, inherited_globals),
-                )
+                raise_help(render_help_for_context(cmd, inherited_globals))
               ArgAction::Version => raise_version(command_version(cmd))
               _ => apply_flag(matches, spec, ValueSource::Argv)
             }
@@ -238,7 +226,7 @@ fn parse_command(
       while pos < arg.length() {
         let short = arg.get_char(pos).unwrap()
         if short == 'h' && builtin_help_short {
-          raise_help(render_help_for_context(cmd, false, inherited_globals))
+          raise_help(render_help_for_context(cmd, inherited_globals))
         }
         if short == 'V' && builtin_version_short {
           raise_version(command_version(cmd))
@@ -281,7 +269,7 @@ fn parse_command(
         } else {
           match arg_action(spec) {
             ArgAction::Help =>
-              raise_help(render_help_for_context(cmd, false, inherited_globals))
+              raise_help(render_help_for_context(cmd, inherited_globals))
             ArgAction::Version => raise_version(command_version(cmd))
             _ => apply_flag(matches, spec, ValueSource::Argv)
           }
@@ -293,10 +281,10 @@ fn parse_command(
     }
     if help_subcommand_enabled(cmd) && arg == "help" {
       let rest = argv[i + 1:].to_array()
-      let (target, long_help, target_globals) = resolve_help_target(
+      let (target, target_globals) = resolve_help_target(
         cmd, rest, builtin_help_short, builtin_help_long, inherited_globals,
       )
-      let text = render_help_for_context(target, long_help, target_globals)
+      let text = render_help_for_context(target, target_globals)
       raise_help(text)
     }
     if subcommands.length() > 0 {
@@ -313,7 +301,7 @@ fn parse_command(
             cmd, args, groups, matches, positionals, positional_values, env_args,
             env,
           )
-          match parent_matches.raw_subcommand() {
+          match parent_matches.parsed_subcommand {
             Some((sub_name, sub_m)) => {
               // After parent parsing, copy the final globals into the subcommand.
               propagate_globals_to_child(parent_matches, sub_m, child_globals)
@@ -655,7 +643,7 @@ fn validate_version_actions(cmd : Command) -> Unit raise ArgBuildError {
 fn validate_command_policies(cmd : Command, matches : Matches) -> Unit raise {
   if cmd.subcommand_required &&
     cmd.subcommands.length() > 0 &&
-    matches.raw_subcommand() is None {
+    matches.parsed_subcommand is None {
     raise ArgParseError::MissingRequired("subcommand")
   }
 }
@@ -1712,10 +1700,18 @@ fn resolve_help_target(
   builtin_help_short : Bool,
   builtin_help_long : Bool,
   inherited_globals : Array[Arg],
-) -> (Command, Bool, Array[Arg]) raise {
-  let (long_help, targets) = split_help_style(
-    argv, builtin_help_short, builtin_help_long,
-  )
+) -> (Command, Array[Arg]) raise {
+  let targets = if argv.length() == 0 {
+    argv
+  } else {
+    let last = argv[argv.length() - 1]
+    if (last == "-h" && builtin_help_short) ||
+      (last == "--help" && builtin_help_long) {
+      argv[:argv.length() - 1].to_array()
+    } else {
+      argv
+    }
+  }
   let mut current = cmd
   let mut current_globals = inherited_globals
   let mut subs = cmd.subcommands
@@ -1736,29 +1732,7 @@ fn resolve_help_target(
         raise ArgParseError::InvalidArgument("unknown subcommand: \{name}")
     }
   }
-  (current, long_help, current_globals)
-}
-
-///|
-fn split_help_style(
-  argv : Array[String],
-  help_short : Bool,
-  help_long : Bool,
-) -> (Bool, Array[String]) {
-  if argv.length() == 0 {
-    return (true, argv)
-  }
-  if !help_short && !help_long {
-    return (true, argv)
-  }
-  let last = argv[argv.length() - 1]
-  if (last == "-h" && help_short) || (last == "--help" && help_long) {
-    let long_help = last == "--help"
-    let rest = argv[:argv.length() - 1].to_array()
-    (long_help, rest)
-  } else {
-    (true, argv)
-  }
+  (current, current_globals)
 }
 
 ///|

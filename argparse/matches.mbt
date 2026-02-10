@@ -50,28 +50,6 @@ fn new_matches_parse_state() -> Matches {
 }
 
 ///|
-fn Matches::get_flag(self : Matches, name : String) -> Bool {
-  self.flags.get(name).unwrap_or(false)
-}
-
-///|
-fn Matches::count_of(self : Matches, name : String) -> Int {
-  self.counts.get(name).unwrap_or(0)
-}
-
-///|
-fn Matches::value_source(self : Matches, name : String) -> ValueSource? {
-  match self.flag_sources.get(name) {
-    Some(v) => Some(v)
-    None =>
-      match self.value_sources.get(name) {
-        Some(sources) => highest_source(sources)
-        None => None
-      }
-  }
-}
-
-///|
 fn highest_source(sources : Array[ValueSource]) -> ValueSource? {
   if sources.length() == 0 {
     return None
@@ -96,16 +74,6 @@ fn highest_source(sources : Array[ValueSource]) -> ValueSource? {
   } else {
     None
   }
-}
-
-///|
-fn Matches::get_many(self : Matches, name : String) -> Array[String]? {
-  self.values.get(name)
-}
-
-///|
-fn Matches::raw_subcommand(self : Matches) -> (String, Matches)? {
-  self.parsed_subcommand
 }
 
 ///|

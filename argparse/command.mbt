@@ -85,15 +85,9 @@ fn normalize_args(args : Array[&ArgLike]) -> Array[Arg] {
 }
 
 ///|
-/// Render short help text without parsing.
+/// Render help text without parsing.
 pub fn Command::render_help(self : Command) -> String {
-  render_help_short(self)
-}
-
-///|
-/// Render long help text without parsing.
-pub fn Command::render_long_help(self : Command) -> String {
-  render_help_long(self)
+  render_help(self)
 }
 
 ///|
@@ -121,22 +115,30 @@ fn build_matches(
 
   for spec in specs {
     let name = arg_name(spec)
-    match raw.get_many(name) {
+    match raw.values.get(name) {
       Some(vs) => values[name] = clone_array_cmd(vs)
       None => ()
     }
-    let count = raw.count_of(name)
+    let count = raw.counts.get(name).unwrap_or(0)
     if count > 0 {
       flag_counts[name] = count
     }
-    match raw.value_source(name) {
+    let source = match raw.flag_sources.get(name) {
+      Some(v) => Some(v)
+      None =>
+        match raw.value_sources.get(name) {
+          Some(vs) => highest_source(vs)
+          None => None
+        }
+    }
+    match source {
       Some(source) => {
         sources[name] = source
         if is_flag_spec(spec) {
           if is_count_flag_spec(spec) {
             flags[name] = count > 0
           } else {
-            flags[name] = raw.get_flag(name)
+            flags[name] = raw.flags.get(name).unwrap_or(false)
           }
         }
       }
@@ -148,7 +150,7 @@ fn build_matches(
     collect_decl_globals(cmd.args),
   )
 
-  let subcommand = match raw.raw_subcommand() {
+  let subcommand = match raw.parsed_subcommand {
     Some((name, sub_raw)) =>
       match find_decl_subcommand(cmd.subcommands, name) {
         Some(sub_spec) =>
