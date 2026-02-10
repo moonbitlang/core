@@ -15,7 +15,7 @@
 ///|
 
 ///|
-let re_profile : @re.Profile = @re.Profile::new(
+let re_profile : @re.Profile = @re.Profile(
   valid=@re.RecharSet::char_range(0, 255),
   word=@re.RecharSet::char_range('a', 'z') +
     @re.RecharSet::char_range('A', 'Z') +
