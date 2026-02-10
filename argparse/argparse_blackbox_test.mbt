@@ -583,6 +583,24 @@ test "negation parsing and invalid negation forms" {
   } noraise {
     _ => panic()
   }
+
+  let count_cmd = @argparse.Command("demo", args=[
+    @argparse.FlagArg(
+      "verbose",
+      long="verbose",
+      action=@argparse.FlagAction::Count,
+      negatable=true,
+    ),
+  ])
+  let reset = count_cmd.parse(
+    argv=["--verbose", "--no-verbose"],
+    env=empty_env(),
+  ) catch {
+    _ => panic()
+  }
+  assert_true(reset.flags is { "verbose": false, .. })
+  assert_true(reset.flag_counts is { "verbose"? : None, .. })
+  assert_true(reset.sources is { "verbose": @argparse.ValueSource::Argv, .. })
 }
 
 ///|
@@ -718,6 +736,19 @@ test "env parsing for settrue setfalse count and invalid values" {
   } noraise {
     _ => panic()
   }
+
+  try cmd.parse(argv=[], env={ "V": "-1" }) catch {
+    @argparse.ArgParseError::InvalidValue(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|invalid int: -1
+        ),
+      )
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
 }
 
 ///|
@@ -793,6 +824,22 @@ test "defaults and value range helpers through public API" {
       #|({lower: Some(0), upper: Some(0), lower_inclusive: true, upper_inclusive: true}, {lower: Some(1), upper: Some(1), lower_inclusive: true, upper_inclusive: true})
     ),
   )
+}
+
+///|
+test "num_args options consume argv values in one occurrence" {
+  let cmd = @argparse.Command("demo", args=[
+    @argparse.OptionArg(
+      "tag",
+      long="tag",
+      num_args=@argparse.ValueRange(lower=2, upper=2),
+    ),
+  ])
+  let parsed = cmd.parse(argv=["--tag", "a", "b"], env=empty_env()) catch {
+    _ => panic()
+  }
+  assert_true(parsed.values is { "tag": ["a", "b"], .. })
+  assert_true(parsed.sources is { "tag": @argparse.ValueSource::Argv, .. })
 }
 
 ///|

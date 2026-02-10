@@ -169,6 +169,9 @@ fn parse_command(
                   EngineArgAction::SetFalse => true
                   _ => false
                 }
+                if spec.action == EngineArgAction::Count {
+                  matches.counts[spec.name] = 0
+                }
                 matches.flags[spec.name] = value
                 matches.flag_sources[spec.name] = EngineValueSource::Argv
               }
@@ -189,6 +192,18 @@ fn parse_command(
             }
             match assign_value(matches, spec, value, EngineValueSource::Argv) {
               Ok(_) => ()
+              Err(e) => raise e
+            }
+            match
+              consume_required_option_values(
+                matches,
+                spec,
+                argv,
+                i + 1,
+                long_index,
+                short_index,
+              ) {
+              Ok(consumed) => i = i + consumed
               Err(e) => raise e
             }
           } else {
@@ -237,6 +252,18 @@ fn parse_command(
           }
           match assign_value(matches, spec, value, EngineValueSource::Argv) {
             Ok(_) => ()
+            Err(e) => raise e
+          }
+          match
+            consume_required_option_values(
+              matches,
+              spec,
+              argv,
+              i + 1,
+              long_index,
+              short_index,
+            ) {
+            Ok(consumed) => i = i + consumed
             Err(e) => raise e
           }
           break
@@ -898,6 +925,87 @@ fn assign_value(
 }
 
 ///|
+fn required_option_value_count(matches : EngineMatches, arg : EngineArg) -> Int {
+  match arg.num_args {
+    None => 0
+    Some(_) => {
+      let (min, _) = arg_min_max(arg)
+      if min <= 0 {
+        return 0
+      }
+      let count = matches.values.get(arg.name).unwrap_or([]).length()
+      if count >= min {
+        0
+      } else {
+        min - count
+      }
+    }
+  }
+}
+
+///|
+fn consume_required_option_values(
+  matches : EngineMatches,
+  arg : EngineArg,
+  argv : Array[String],
+  start : Int,
+  long_index : Map[String, EngineArg],
+  short_index : Map[Char, EngineArg],
+) -> Result[Int, ArgParseError] {
+  let need = required_option_value_count(matches, arg)
+  if need == 0 {
+    return Ok(0)
+  }
+  let mut consumed = 0
+  while consumed < need && start + consumed < argv.length() {
+    let value = argv[start + consumed]
+    if starts_known_option(value, long_index, short_index) {
+      break
+    }
+    match assign_value(matches, arg, value, EngineValueSource::Argv) {
+      Ok(_) => ()
+      Err(e) => return Err(e)
+    }
+    consumed = consumed + 1
+  }
+  Ok(consumed)
+}
+
+///|
+fn starts_known_option(
+  arg : String,
+  long_index : Map[String, EngineArg],
+  short_index : Map[Char, EngineArg],
+) -> Bool {
+  if !arg.has_prefix("-") || arg == "-" {
+    return false
+  }
+  if arg.has_prefix("--") {
+    let (name, _) = split_long(arg)
+    if long_index.get(name) is Some(_) {
+      return true
+    }
+    if name.has_prefix("no-") {
+      let target = match name.strip_prefix("no-") {
+        Some(view) => view.to_string()
+        None => ""
+      }
+      match long_index.get(target) {
+        Some(spec) => !spec.takes_value && spec.negatable
+        None => false
+      }
+    } else {
+      false
+    }
+  } else {
+    match arg.get_char(1) {
+      Some(ch) => short_index.get(ch) is Some(_)
+      None => false
+    }
+  }
+}
+
+///|
 fn apply_env(
   matches : EngineMatches,
   args : Array[EngineArg],
@@ -1056,7 +1164,12 @@ fn parse_bool(value : String) -> Result[Bool, ArgParseError] {
 fn parse_count(value : String) -> Result[Int, ArgParseError] {
   let res : Result[Int, Error] = try? @strconv.parse_int(value)
   match res {
-    Ok(v) => Ok(v)
+    Ok(v) =>
+      if v >= 0 {
+        Ok(v)
+      } else {
+        Err(ArgParseError::InvalidValue("invalid int: " + value))
+      }
     Err(_) => Err(ArgParseError::InvalidValue("invalid int: " + value))
   }
 }
