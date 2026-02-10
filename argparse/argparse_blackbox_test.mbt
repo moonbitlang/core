@@ -886,6 +886,53 @@ test "num_args options consume argv values in one occurrence" {
 }
 
 ///|
+test "num_args range option consumes optional extra argv value" {
+  let cmd = @argparse.Command("demo", args=[
+    @argparse.OptionArg(
+      "arg",
+      long="arg",
+      num_args=@argparse.ValueRange(lower=1, upper=2),
+    ),
+  ])
+  let parsed = cmd.parse(argv=["--arg", "x", "y"], env=empty_env()) catch {
+    _ => panic()
+  }
+  assert_true(parsed.values is { "arg": ["x", "y"], .. })
+  assert_true(parsed.sources is { "arg": @argparse.ValueSource::Argv, .. })
+}
+
+///|
+test "option values reject hyphen tokens unless allow_hyphen_values is enabled" {
+  let strict = @argparse.Command("demo", args=[
+    @argparse.OptionArg("pattern", long="pattern"),
+  ])
+  let mut rejected = false
+  try strict.parse(argv=["--pattern", "-file"], env=empty_env()) catch {
+    @argparse.ArgParseError::MissingValue(name) => {
+      assert_true(name == "--pattern")
+      rejected = true
+    }
+    @argparse.ArgParseError::UnknownArgument(arg, _) => {
+      assert_true(arg == "-f")
+      rejected = true
+    }
+    _ => panic()
+  } noraise {
+    _ => ()
+  }
+  assert_true(rejected)
+
+  let permissive = @argparse.Command("demo", args=[
+    @argparse.OptionArg("pattern", long="pattern", allow_hyphen_values=true),
+  ])
+  let parsed = permissive.parse(argv=["--pattern", "-file"], env=empty_env()) catch {
+    _ => panic()
+  }
+  assert_true(parsed.values is { "pattern": ["-file"], .. })
+  assert_true(parsed.sources is { "pattern": @argparse.ValueSource::Argv, .. })
+}
+
+///|
 test "from_matches uses public decoding hook" {
   let cmd = @argparse.Command("demo", args=[
     @argparse.OptionArg("name", long="name"),

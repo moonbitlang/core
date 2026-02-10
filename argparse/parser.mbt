@@ -180,27 +180,28 @@ fn parse_command(
           }
         Some(spec) =>
           if arg_takes_value(spec) {
-            let value = if inline is Some(v) {
-              v
+            let (value, values_start) = if inline is Some(v) {
+              (v, i + 1)
             } else {
-              if i + 1 >= argv.length() {
+              if i + 1 >= argv.length() ||
+                should_stop_option_value(
+                  argv[i + 1],
+                  spec,
+                  long_index,
+                  short_index,
+                ) {
                 raise ArgParseError::MissingValue("--\{name}")
               }
               i = i + 1
-              argv[i]
+              (argv[i], i + 1)
             }
             match assign_value(matches, spec, value, ValueSource::Argv) {
               Ok(_) => ()
               Err(e) => raise e
             }
             match
-              consume_required_option_values(
-                matches,
-                spec,
-                argv,
-                i + 1,
-                long_index,
-                short_index,
+              consume_additional_option_values(
+                matches, spec, argv, values_start, long_index, short_index,
               ) {
               Ok(consumed) => i = i + consumed
               Err(e) => raise e
@@ -236,31 +237,33 @@ fn parse_command(
           None => raise_unknown_short(short, short_index)
         }
         if arg_takes_value(spec) {
-          let value = if pos + 1 < arg.length() {
-            let rest0 = arg.unsafe_substring(start=pos + 1, end=arg.length())
-            match rest0.strip_prefix("=") {
+          let (value, values_start) = if pos + 1 < arg.length() {
+            let rest = arg.unsafe_substring(start=pos + 1, end=arg.length())
+            let inline = match rest.strip_prefix("=") {
               Some(view) => view.to_string()
-              None => rest0
+              None => rest
             }
+            (inline, i + 1)
           } else {
-            if i + 1 >= argv.length() {
+            if i + 1 >= argv.length() ||
+              should_stop_option_value(
+                argv[i + 1],
+                spec,
+                long_index,
+                short_index,
+              ) {
               raise ArgParseError::MissingValue("-\{short}")
             }
             i = i + 1
-            argv[i]
+            (argv[i], i + 1)
           }
           match assign_value(matches, spec, value, ValueSource::Argv) {
             Ok(_) => ()
             Err(e) => raise e
           }
           match
-            consume_required_option_values(
-              matches,
-              spec,
-              argv,
-              i + 1,
-              long_index,
-              short_index,
+            consume_additional_option_values(
+              matches, spec, argv, values_start, long_index, short_index,
             ) {
             Ok(consumed) => i = i + consumed
             Err(e) => raise e
@@ -394,9 +397,7 @@ fn validate_command(
 ///|
 fn validate_arg(arg : Arg) -> Unit raise ArgBuildError {
   let positional = is_positional_arg(arg)
-  let has_positional_only = arg.index is Some(_) ||
-    arg.allow_hyphen_values ||
-    arg.last
+  let has_positional_only = arg.index is Some(_) || arg.last
   if !positional && has_positional_only {
     raise ArgBuildError::Unsupported(
       "positional-only settings require no short/long",
@@ -903,26 +904,22 @@ fn assign_value(
 }
 
 ///|
-fn required_option_value_count(matches : Matches, arg : Arg) -> Int {
+fn required_option_value_count(arg : Arg) -> Int {
   match arg.num_args {
     None => 0
     Some(_) => {
-      let (min, _) = arg_min_max(arg)
-      if min <= 0 {
-        return 0
-      }
-      let count = matches.values.get(arg.name).unwrap_or([]).length()
-      if count >= min {
-        0
-      } else {
-        min - count
+      let (_, max) = arg_min_max(arg)
+      match max {
+        Some(max_count) if max_count <= 1 => 0
+        Some(max_count) => max_count - 1
+        None => -1
       }
     }
   }
 }
 
 ///|
-fn consume_required_option_values(
+fn consume_additional_option_values(
   matches : Matches,
   arg : Arg,
   argv : Array[String],
@@ -930,14 +927,17 @@ fn consume_required_option_values(
   long_index : Map[String, Arg],
   short_index : Map[Char, Arg],
 ) -> Result[Int, ArgParseError] {
-  let need = required_option_value_count(matches, arg)
-  if need == 0 {
+  let max_more = required_option_value_count(arg)
+  if max_more == 0 {
     return Ok(0)
   }
   let mut consumed = 0
-  while consumed < need && start + consumed < argv.length() {
+  while start + consumed < argv.length() {
+    if max_more > 0 && consumed >= max_more {
+      break
+    }
     let value = argv[start + consumed]
-    if starts_known_option(value, long_index, short_index) {
+    if should_stop_option_value(value, arg, long_index, short_index) {
       break
     }
     match assign_value(matches, arg, value, ValueSource::Argv) {
@@ -950,16 +950,35 @@ fn consume_required_option_values(
 }
 
 ///|
-fn starts_known_option(
-  arg : String,
+fn should_stop_option_value(
+  value : String,
+  arg : Arg,
   long_index : Map[String, Arg],
   short_index : Map[Char, Arg],
 ) -> Bool {
-  if !arg.has_prefix("-") || arg == "-" {
+  if value == "--" {
+    return true
+  }
+  if !value.has_prefix("-") || value == "-" {
     return false
   }
-  if arg.has_prefix("--") {
-    let (name, _) = split_long(arg)
+  if !arg.allow_hyphen_values {
+    return true
+  }
+  starts_known_option(value, long_index, short_index)
+}
+
+///|
+fn starts_known_option(
+  value : String,
+  long_index : Map[String, Arg],
+  short_index : Map[Char, Arg],
+) -> Bool {
+  if !value.has_prefix("-") || value == "-" {
+    return false
+  }
+  if value.has_prefix("--") {
+    let (name, _) = split_long(value)
     if long_index.get(name) is Some(_) {
       return true
     }
@@ -976,7 +995,7 @@ fn starts_known_option(
       false
     }
   } else {
-    match arg.get_char(1) {
+    match value.get_char(1) {
       Some(ch) => short_index.get(ch) is Some(_)
       None => false
     }
