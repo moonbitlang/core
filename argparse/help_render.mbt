@@ -82,7 +82,7 @@ fn usage_tail(cmd : Command, long_help : Bool) -> String {
 
 ///|
 fn has_options(cmd : Command, long_help : Bool) -> Bool {
-  for arg in command_engine_args(cmd) {
+  for arg in command_args(cmd) {
     if arg_hidden_in_style(arg, long_help) {
       continue
     }
@@ -95,8 +95,8 @@ fn has_options(cmd : Command, long_help : Bool) -> Bool {
 
 ///|
 fn positional_usage(cmd : Command, long_help : Bool) -> String {
-  let parts = Array::new(capacity=command_engine_args(cmd).length())
-  for arg in positional_args(command_engine_args(cmd)) {
+  let parts = Array::new(capacity=command_args(cmd).length())
+  for arg in positional_args(command_args(cmd)) {
     if arg_hidden_in_style(arg, long_help) {
       continue
     }
@@ -118,7 +118,7 @@ fn positional_usage(cmd : Command, long_help : Bool) -> String {
 
 ///|
 fn has_positionals(cmd : Command, long_help : Bool) -> Bool {
-  for arg in command_engine_args(cmd) {
+  for arg in command_args(cmd) {
     if is_positional_arg(arg) && !arg_hidden_in_style(arg, long_help) {
       return true
     }
@@ -128,7 +128,7 @@ fn has_positionals(cmd : Command, long_help : Bool) -> Bool {
 
 ///|
 fn option_entries(cmd : Command, long_help : Bool) -> Array[String] {
-  let args = command_engine_args(cmd)
+  let args = command_args(cmd)
   let entries = Array::new(capacity=args.length() + 2)
   let display = Array::new(capacity=args.length() + 2)
   let builtin_help_short = help_flag_enabled(cmd) &&
@@ -159,7 +159,7 @@ fn option_entries(cmd : Command, long_help : Bool) -> Array[String] {
       continue
     }
     let mut name = arg_display(arg)
-    if arg.takes_value {
+    if arg_takes_value(arg) {
       name = name + " <" + arg.name + ">"
     }
     let doc = arg_doc(arg, long_help)
@@ -181,7 +181,7 @@ fn option_entries(cmd : Command, long_help : Bool) -> Array[String] {
 }
 
 ///|
-fn has_long_option(args : Array[EngineArg], name : String) -> Bool {
+fn has_long_option(args : Array[Arg], name : String) -> Bool {
   for arg in args {
     if arg.long is Some(long) && long == name {
       return true
@@ -191,7 +191,7 @@ fn has_long_option(args : Array[EngineArg], name : String) -> Bool {
 }
 
 ///|
-fn has_short_option(args : Array[EngineArg], value : Char) -> Bool {
+fn has_short_option(args : Array[Arg], value : Char) -> Bool {
   for arg in args {
     if arg.short is Some(short) && short == value {
       return true
@@ -220,9 +220,9 @@ fn builtin_option_label(
 
 ///|
 fn positional_entries(cmd : Command, long_help : Bool) -> Array[String] {
-  let entries = Array::new(capacity=command_engine_args(cmd).length())
-  let display = Array::new(capacity=command_engine_args(cmd).length())
-  for arg in positional_args(command_engine_args(cmd)) {
+  let entries = Array::new(capacity=command_args(cmd).length())
+  let display = Array::new(capacity=command_args(cmd).length())
+  for arg in positional_args(command_args(cmd)) {
     if arg_hidden_in_style(arg, long_help) {
       continue
     }
@@ -275,9 +275,9 @@ fn subcommand_entries(cmd : Command, long_help : Bool) -> Array[String] {
 
 ///|
 fn group_entries(cmd : Command, long_help : Bool) -> Array[String] {
-  let entries = Array::new(capacity=command_engine_groups(cmd).length())
-  let display = Array::new(capacity=command_engine_groups(cmd).length())
-  for group in command_engine_groups(cmd) {
+  let entries = Array::new(capacity=command_groups(cmd).length())
+  let display = Array::new(capacity=command_groups(cmd).length())
+  for group in command_groups(cmd) {
     let name = group_label(group)
     let members = group_members(cmd, group, long_help)
     if members == "" {
@@ -306,13 +306,13 @@ fn command_display(cmd : Command) -> String {
 }
 
 ///|
-fn arg_display(arg : EngineArg) -> String {
+fn arg_display(arg : Arg) -> String {
   let parts = Array::new(capacity=2)
   if arg.short is Some(short) {
     parts.push("-" + short.to_string())
   }
   if arg.long is Some(long) {
-    if arg.negatable && !arg.takes_value {
+    if arg.negatable && !arg_takes_value(arg) {
       parts.push("--[no-]" + long)
     } else {
       parts.push("--" + long)
@@ -326,7 +326,7 @@ fn arg_display(arg : EngineArg) -> String {
 }
 
 ///|
-fn positional_display(arg : EngineArg) -> String {
+fn positional_display(arg : Arg) -> String {
   if arg.multiple {
     arg.name + "..."
   } else {
@@ -341,13 +341,13 @@ fn command_about(cmd : Command, long_help : Bool) -> String {
 }
 
 ///|
-fn arg_help(arg : EngineArg, long_help : Bool) -> String {
+fn arg_help(arg : Arg, long_help : Bool) -> String {
   let _ = long_help
-  arg.help
+  arg.about.unwrap_or("")
 }
 
 ///|
-fn arg_doc(arg : EngineArg, long_help : Bool) -> String {
+fn arg_doc(arg : Arg, long_help : Bool) -> String {
   let notes = []
   match arg.env {
     Some(env_name) => notes.push("env: " + env_name)
@@ -373,7 +373,7 @@ fn arg_doc(arg : EngineArg, long_help : Bool) -> String {
 }
 
 ///|
-fn arg_hidden_in_style(arg : EngineArg, long_help : Bool) -> Bool {
+fn arg_hidden_in_style(arg : Arg, long_help : Bool) -> Bool {
   let _ = long_help
   arg.hidden
 }
@@ -397,7 +397,7 @@ fn has_subcommands_for_help(cmd : Command, long_help : Bool) -> Bool {
 }
 
 ///|
-fn is_required_arg(arg : EngineArg) -> Bool {
+fn is_required_arg(arg : Arg) -> Bool {
   if arg.required {
     true
   } else {
@@ -407,7 +407,7 @@ fn is_required_arg(arg : EngineArg) -> Bool {
 }
 
 ///|
-fn group_label(group : EngineArgGroup) -> String {
+fn group_label(group : ArgGroup) -> String {
   let flags = []
   if group.required {
     flags.push("required")
@@ -423,13 +423,9 @@ fn group_label(group : EngineArgGroup) -> String {
 }
 
 ///|
-fn group_members(
-  cmd : Command,
-  group : EngineArgGroup,
-  long_help : Bool,
-) -> String {
+fn group_members(cmd : Command, group : ArgGroup, long_help : Bool) -> String {
   let members = []
-  for arg in command_engine_args(cmd) {
+  for arg in command_args(cmd) {
     if arg_hidden_in_style(arg, long_help) {
       continue
     }
@@ -441,11 +437,11 @@ fn group_members(
 }
 
 ///|
-fn group_member_display(arg : EngineArg) -> String {
+fn group_member_display(arg : Arg) -> String {
   let base = arg_display(arg)
   if is_positional_arg(arg) {
     base
-  } else if arg.takes_value {
+  } else if arg_takes_value(arg) {
     base + " <" + arg.name + ">"
   } else {
     base

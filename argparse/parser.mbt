@@ -33,7 +33,7 @@ fn raise_version(text : String, is_long : Bool) -> Unit raise {
 ///|
 fn[T] raise_unknown_long(
   name : String,
-  long_index : Map[String, EngineArg],
+  long_index : Map[String, Arg],
 ) -> T raise {
   let hint = suggest_long(name, long_index)
   raise ArgParseError::UnknownArgument("--" + name, hint)
@@ -42,7 +42,7 @@ fn[T] raise_unknown_long(
 ///|
 fn[T] raise_unknown_short(
   short : Char,
-  short_index : Map[Char, EngineArg],
+  short_index : Map[Char, Arg],
 ) -> T raise {
   let hint = suggest_short(short, short_index)
   raise ArgParseError::UnknownArgument("-" + short.to_string(), hint)
@@ -72,16 +72,16 @@ fn parse_command(
   cmd : Command,
   argv : Array[String],
   env : Map[String, String],
-  inherited_globals : Array[EngineArg],
-) -> EngineMatches raise {
-  let args = command_engine_args(cmd)
-  let groups = command_engine_groups(cmd)
+  inherited_globals : Array[Arg],
+) -> Matches raise {
+  let args = command_args(cmd)
+  let groups = command_groups(cmd)
   let subcommands = cmd.subcommands
   validate_command(cmd, args, groups)
   if cmd.arg_required_else_help && argv.length() == 0 {
     raise_help(render_help_short(cmd), false)
   }
-  let matches = EngineMatches()
+  let matches = new_matches_parse_state()
   let globals_here = collect_globals(args)
   let child_globals = concat_globals(inherited_globals, globals_here)
   let long_index = build_long_index(inherited_globals, args)
@@ -159,28 +159,28 @@ fn parse_command(
             match long_index.get(target) {
               None => raise_unknown_long(name, long_index)
               Some(spec) => {
-                if !spec.negatable || spec.takes_value {
+                if !spec.negatable || arg_takes_value(spec) {
                   raise_unknown_long(name, long_index)
                 }
                 if inline is Some(_) {
                   raise ArgParseError::InvalidArgument(arg)
                 }
-                let value = match spec.action {
-                  EngineArgAction::SetFalse => true
+                let value = match arg_action(spec) {
+                  ArgAction::SetFalse => true
                   _ => false
                 }
-                if spec.action == EngineArgAction::Count {
+                if arg_action(spec) == ArgAction::Count {
                   matches.counts[spec.name] = 0
                 }
                 matches.flags[spec.name] = value
-                matches.flag_sources[spec.name] = EngineValueSource::Argv
+                matches.flag_sources[spec.name] = ValueSource::Argv
               }
             }
           } else {
             raise_unknown_long(name, long_index)
           }
         Some(spec) =>
-          if spec.takes_value {
+          if arg_takes_value(spec) {
             let value = if inline is Some(v) {
               v
             } else {
@@ -190,7 +190,7 @@ fn parse_command(
               i = i + 1
               argv[i]
             }
-            match assign_value(matches, spec, value, EngineValueSource::Argv) {
+            match assign_value(matches, spec, value, ValueSource::Argv) {
               Ok(_) => ()
               Err(e) => raise e
             }
@@ -210,11 +210,11 @@ fn parse_command(
             if inline is Some(_) {
               raise ArgParseError::InvalidArgument(arg)
             }
-            match spec.action {
-              EngineArgAction::Help => raise_help(render_help_long(cmd), true)
-              EngineArgAction::Version =>
+            match arg_action(spec) {
+              ArgAction::Help => raise_help(render_help_long(cmd), true)
+              ArgAction::Version =>
                 raise_version(command_version(cmd, true), true)
-              _ => apply_flag(matches, spec, EngineValueSource::Argv)
+              _ => apply_flag(matches, spec, ValueSource::Argv)
             }
           }
       }
@@ -236,7 +236,7 @@ fn parse_command(
           Some(v) => v
           None => raise_unknown_short(short, short_index)
         }
-        if spec.takes_value {
+        if arg_takes_value(spec) {
           let value = if pos + 1 < arg.length() {
             let rest0 = arg.unsafe_substring(start=pos + 1, end=arg.length())
             match rest0.strip_prefix("=") {
@@ -250,7 +250,7 @@ fn parse_command(
             i = i + 1
             argv[i]
           }
-          match assign_value(matches, spec, value, EngineValueSource::Argv) {
+          match assign_value(matches, spec, value, ValueSource::Argv) {
             Ok(_) => ()
             Err(e) => raise e
           }
@@ -268,11 +268,11 @@ fn parse_command(
           }
           break
         } else {
-          match spec.action {
-            EngineArgAction::Help => raise_help(render_help_short(cmd), false)
-            EngineArgAction::Version =>
+          match arg_action(spec) {
+            ArgAction::Help => raise_help(render_help_short(cmd), false)
+            ArgAction::Version =>
               raise_version(command_version(cmd, false), false)
-            _ => apply_flag(matches, spec, EngineValueSource::Argv)
+            _ => apply_flag(matches, spec, ValueSource::Argv)
           }
         }
         pos = pos + 1
@@ -293,7 +293,7 @@ fn parse_command(
         Some(sub) => {
           let rest = argv[i + 1:].to_array()
           let sub_matches = parse_command(sub, rest, env, child_globals)
-          matches.subcommand = Some((sub.name, sub_matches))
+          matches.parsed_subcommand = Some((sub.name, sub_matches))
           // Merge argv-provided globals from the subcommand parse into the parent
           // so globals work even when they appear after the subcommand name.
           merge_globals_from_child(matches, sub_matches, child_globals)
@@ -302,11 +302,11 @@ fn parse_command(
             cmd, args, groups, matches, positionals, positional_values, env_args,
             env,
           )
-          match parent_matches.subcommand {
+          match parent_matches.raw_subcommand() {
             Some((sub_name, sub_m)) => {
               // After parent parsing, copy the final globals into the subcommand.
               propagate_globals_to_child(parent_matches, sub_m, child_globals)
-              parent_matches.subcommand = Some((sub_name, sub_m))
+              parent_matches.parsed_subcommand = Some((sub_name, sub_m))
             }
             None => ()
           }
@@ -327,14 +327,14 @@ fn parse_command(
 ///|
 fn finalize_matches(
   cmd : Command,
-  args : Array[EngineArg],
-  groups : Array[EngineArgGroup],
-  matches : EngineMatches,
-  positionals : Array[EngineArg],
+  args : Array[Arg],
+  groups : Array[ArgGroup],
+  matches : Matches,
+  positionals : Array[Arg],
   positional_values : Array[String],
-  env_args : Array[EngineArg],
+  env_args : Array[Arg],
   env : Map[String, String],
-) -> EngineMatches raise {
+) -> Matches raise {
   match assign_positionals(matches, positionals, positional_values) {
     Ok(_) => ()
     Err(e) => raise e
@@ -375,8 +375,8 @@ fn command_version(cmd : Command, is_long : Bool) -> String {
 ///|
 fn validate_command(
   cmd : Command,
-  args : Array[EngineArg],
-  groups : Array[EngineArgGroup],
+  args : Array[Arg],
+  groups : Array[ArgGroup],
 ) -> Unit raise ArgBuildError {
   validate_group_defs(groups)
   validate_group_refs(args, groups)
@@ -389,12 +389,12 @@ fn validate_command(
     validate_arg(arg)
   }
   for sub in cmd.subcommands {
-    validate_command(sub, command_engine_args(sub), command_engine_groups(sub))
+    validate_command(sub, command_args(sub), command_groups(sub))
   }
 }
 
 ///|
-fn validate_arg(arg : EngineArg) -> Unit raise ArgBuildError {
+fn validate_arg(arg : Arg) -> Unit raise ArgBuildError {
   let positional = is_positional_arg(arg)
   let has_positional_only = arg.index is Some(_) ||
     arg.allow_hyphen_values ||
@@ -404,15 +404,14 @@ fn validate_arg(arg : EngineArg) -> Unit raise ArgBuildError {
       "positional-only settings require no short/long",
     )
   }
-  if arg.negatable && arg.takes_value {
+  if arg.negatable && arg_takes_value(arg) {
     raise ArgBuildError::Unsupported("negatable is only supported for flags")
   }
-  if arg.action == EngineArgAction::Count && arg.takes_value {
+  if arg_action(arg) == ArgAction::Count && arg_takes_value(arg) {
     raise ArgBuildError::Unsupported("count is only supported for flags")
   }
-  if arg.action == EngineArgAction::Help ||
-    arg.action == EngineArgAction::Version {
-    if arg.takes_value {
+  if arg_action(arg) == ArgAction::Help || arg_action(arg) == ArgAction::Version {
+    if arg_takes_value(arg) {
       raise ArgBuildError::Unsupported("help/version actions require flags")
     }
     if arg.negatable {
@@ -437,19 +436,19 @@ fn validate_arg(arg : EngineArg) -> Unit raise ArgBuildError {
       )
     }
   }
-  if arg.num_args is Some(_) && !arg.takes_value {
+  if arg.num_args is Some(_) && !arg_takes_value(arg) {
     raise ArgBuildError::Unsupported(
       "min/max values require value-taking arguments",
     )
   }
   let (min, max) = arg_min_max_for_validate(arg)
-  let allow_multi = arg.multiple || arg.action == EngineArgAction::Append
+  let allow_multi = arg.multiple || arg_action(arg) == ArgAction::Append
   if (min > 1 || (max is Some(m) && m > 1)) && !allow_multi {
     raise ArgBuildError::Unsupported(
       "multiple values require action=Append or num_args allowing >1",
     )
   }
-  if arg.default_values is Some(_) && !arg.takes_value {
+  if arg.default_values is Some(_) && !arg_takes_value(arg) {
     raise ArgBuildError::Unsupported(
       "default values require value-taking arguments",
     )
@@ -457,7 +456,7 @@ fn validate_arg(arg : EngineArg) -> Unit raise ArgBuildError {
   match arg.default_values {
     Some(values) if values.length() > 1 &&
       !arg.multiple &&
-      arg.action != EngineArgAction::Append =>
+      arg_action(arg) != ArgAction::Append =>
       raise ArgBuildError::Unsupported(
         "default_values require action=Append or num_args allowing >1",
       )
@@ -466,9 +465,7 @@ fn validate_arg(arg : EngineArg) -> Unit raise ArgBuildError {
 }
 
 ///|
-fn validate_group_defs(
-  groups : Array[EngineArgGroup],
-) -> Unit raise ArgBuildError {
+fn validate_group_defs(groups : Array[ArgGroup]) -> Unit raise ArgBuildError {
   let seen : Map[String, Bool] = {}
   for group in groups {
     if seen.get(group.name) is Some(_) {
@@ -509,8 +506,8 @@ fn validate_group_defs(
 
 ///|
 fn validate_group_refs(
-  args : Array[EngineArg],
-  groups : Array[EngineArgGroup],
+  args : Array[Arg],
+  groups : Array[ArgGroup],
 ) -> Unit raise ArgBuildError {
   if groups.length() == 0 {
     return
@@ -524,10 +521,12 @@ fn validate_group_refs(
     arg_index[arg.name] = true
   }
   for arg in args {
-    for name in arg.groups {
-      if group_index.get(name) is None {
-        raise ArgBuildError::Unsupported("unknown group: " + name)
-      }
+    match arg.group {
+      Some(name) =>
+        if group_index.get(name) is None {
+          raise ArgBuildError::Unsupported("unknown group: " + name)
+        }
+      None => ()
     }
   }
   for group in groups {
@@ -542,7 +541,7 @@ fn validate_group_refs(
 }
 
 ///|
-fn validate_arg_defs(args : Array[EngineArg]) -> Unit raise ArgBuildError {
+fn validate_arg_defs(args : Array[Arg]) -> Unit raise ArgBuildError {
   let seen_names : Map[String, Bool] = {}
   let seen_long : Map[String, Bool] = {}
   let seen_short : Map[Char, Bool] = {}
@@ -638,8 +637,8 @@ fn validate_version_actions(cmd : Command) -> Unit raise ArgBuildError {
   if cmd.version is Some(_) {
     return
   }
-  for arg in command_engine_args(cmd) {
-    if arg.action == EngineArgAction::Version {
+  for arg in command_args(cmd) {
+    if arg_action(arg) == ArgAction::Version {
       raise ArgBuildError::Unsupported(
         "version action requires command version text",
       )
@@ -648,22 +647,19 @@ fn validate_version_actions(cmd : Command) -> Unit raise ArgBuildError {
 }
 
 ///|
-fn validate_command_policies(
-  cmd : Command,
-  matches : EngineMatches,
-) -> Unit raise {
+fn validate_command_policies(cmd : Command, matches : Matches) -> Unit raise {
   if cmd.subcommand_required &&
     cmd.subcommands.length() > 0 &&
-    matches.subcommand is None {
+    matches.raw_subcommand() is None {
     raise ArgParseError::MissingRequired("subcommand")
   }
 }
 
 ///|
 fn validate_groups(
-  args : Array[EngineArg],
-  groups : Array[EngineArgGroup],
-  matches : EngineMatches,
+  args : Array[Arg],
+  groups : Array[ArgGroup],
+  matches : Matches,
 ) -> Unit raise {
   if groups.length() == 0 {
     return
@@ -708,21 +704,19 @@ fn validate_groups(
 }
 
 ///|
-fn arg_in_group(arg : EngineArg, group : EngineArgGroup) -> Bool {
-  arg.groups.contains(group.name) || group.args.contains(arg.name)
+fn arg_in_group(arg : Arg, group : ArgGroup) -> Bool {
+  let from_arg = arg.group is Some(name) && name == group.name
+  from_arg || group.args.contains(arg.name)
 }
 
 ///|
-fn validate_values(
-  args : Array[EngineArg],
-  matches : EngineMatches,
-) -> Unit raise {
+fn validate_values(args : Array[Arg], matches : Matches) -> Unit raise {
   for arg in args {
     let present = matches_has_value_or_flag(matches, arg.name)
     if arg.required && !present {
       raise ArgParseError::MissingRequired(arg.name)
     }
-    if !arg.takes_value {
+    if !arg_takes_value(arg) {
       continue
     }
     let values = matches.values.get(arg.name).unwrap_or([])
@@ -740,10 +734,7 @@ fn validate_values(
 }
 
 ///|
-fn validate_relationships(
-  matches : EngineMatches,
-  args : Array[EngineArg],
-) -> Unit raise {
+fn validate_relationships(matches : Matches, args : Array[Arg]) -> Unit raise {
   for arg in args {
     if !matches_has_value_or_flag(matches, arg.name) {
       continue
@@ -764,14 +755,14 @@ fn validate_relationships(
 }
 
 ///|
-fn is_positional_arg(arg : EngineArg) -> Bool {
+fn is_positional_arg(arg : Arg) -> Bool {
   arg.short is None && arg.long is None
 }
 
 ///|
 fn assign_positionals(
-  matches : EngineMatches,
-  positionals : Array[EngineArg],
+  matches : Matches,
+  positionals : Array[Arg],
   values : Array[String],
 ) -> Result[Unit, ArgParseError] {
   let mut cursor = 0
@@ -803,7 +794,7 @@ fn assign_positionals(
             arg.name,
             values[cursor + taken],
             arg,
-            EngineValueSource::Argv,
+            ValueSource::Argv,
           ) {
           Ok(_) => ()
           Err(e) => return Err(e)
@@ -815,13 +806,7 @@ fn assign_positionals(
     }
     if remaining > 0 {
       match
-        add_value(
-          matches,
-          arg.name,
-          values[cursor],
-          arg,
-          EngineValueSource::Argv,
-        ) {
+        add_value(matches, arg.name, values[cursor], arg, ValueSource::Argv) {
         Ok(_) => ()
         Err(e) => return Err(e)
       }
@@ -835,7 +820,7 @@ fn assign_positionals(
 }
 
 ///|
-fn positional_min_required(arg : EngineArg) -> Int {
+fn positional_min_required(arg : Arg) -> Int {
   let (min, _) = arg_min_max(arg)
   if min > 0 {
     min
@@ -847,7 +832,7 @@ fn positional_min_required(arg : EngineArg) -> Int {
 }
 
 ///|
-fn remaining_positional_min(positionals : Array[EngineArg], start : Int) -> Int {
+fn remaining_positional_min(positionals : Array[Arg], start : Int) -> Int {
   let mut total = 0
   let mut idx = start
   while idx < positionals.length() {
@@ -859,13 +844,13 @@ fn remaining_positional_min(positionals : Array[EngineArg], start : Int) -> Int 
 
 ///|
 fn add_value(
-  matches : EngineMatches,
+  matches : Matches,
   name : String,
   value : String,
-  arg : EngineArg,
-  source : EngineValueSource,
+  arg : Arg,
+  source : ValueSource,
 ) -> Result[Unit, ArgParseError] {
-  if arg.multiple || arg.action == EngineArgAction::Append {
+  if arg.multiple || arg_action(arg) == ArgAction::Append {
     let arr = matches.values.get(name).unwrap_or([])
     arr.push(value)
     matches.values[name] = arr
@@ -881,15 +866,15 @@ fn add_value(
 
 ///|
 fn assign_value(
-  matches : EngineMatches,
-  arg : EngineArg,
+  matches : Matches,
+  arg : Arg,
   value : String,
-  source : EngineValueSource,
+  source : ValueSource,
 ) -> Result[Unit, ArgParseError] {
-  match arg.action {
-    EngineArgAction::Append => add_value(matches, arg.name, value, arg, source)
-    EngineArgAction::Set => add_value(matches, arg.name, value, arg, source)
-    EngineArgAction::SetTrue =>
+  match arg_action(arg) {
+    ArgAction::Append => add_value(matches, arg.name, value, arg, source)
+    ArgAction::Set => add_value(matches, arg.name, value, arg, source)
+    ArgAction::SetTrue =>
       match parse_bool(value) {
         Ok(flag) => {
           matches.flags[arg.name] = flag
@@ -898,7 +883,7 @@ fn assign_value(
         }
         Err(e) => Err(e)
       }
-    EngineArgAction::SetFalse =>
+    ArgAction::SetFalse =>
       match parse_bool(value) {
         Ok(flag) => {
           matches.flags[arg.name] = !flag
@@ -907,7 +892,7 @@ fn assign_value(
         }
         Err(e) => Err(e)
       }
-    EngineArgAction::Count =>
+    ArgAction::Count =>
       match parse_count(value) {
         Ok(count) => {
           matches.counts[arg.name] = count
@@ -917,15 +902,15 @@ fn assign_value(
         }
         Err(e) => Err(e)
       }
-    EngineArgAction::Help =>
+    ArgAction::Help =>
       Err(ArgParseError::InvalidArgument("help action does not take values"))
-    EngineArgAction::Version =>
+    ArgAction::Version =>
       Err(ArgParseError::InvalidArgument("version action does not take values"))
   }
 }
 
 ///|
-fn required_option_value_count(matches : EngineMatches, arg : EngineArg) -> Int {
+fn required_option_value_count(matches : Matches, arg : Arg) -> Int {
   match arg.num_args {
     None => 0
     Some(_) => {
@@ -945,12 +930,12 @@ fn required_option_value_count(matches : EngineMatches, arg : EngineArg) -> Int 
 
 ///|
 fn consume_required_option_values(
-  matches : EngineMatches,
-  arg : EngineArg,
+  matches : Matches,
+  arg : Arg,
   argv : Array[String],
   start : Int,
-  long_index : Map[String, EngineArg],
-  short_index : Map[Char, EngineArg],
+  long_index : Map[String, Arg],
+  short_index : Map[Char, Arg],
 ) -> Result[Int, ArgParseError] {
   let need = required_option_value_count(matches, arg)
   if need == 0 {
@@ -962,7 +947,7 @@ fn consume_required_option_values(
     if starts_known_option(value, long_index, short_index) {
       break
     }
-    match assign_value(matches, arg, value, EngineValueSource::Argv) {
+    match assign_value(matches, arg, value, ValueSource::Argv) {
       Ok(_) => ()
       Err(e) => return Err(e)
     }
@@ -974,8 +959,8 @@ fn consume_required_option_values(
 ///|
 fn starts_known_option(
   arg : String,
-  long_index : Map[String, EngineArg],
-  short_index : Map[Char, EngineArg],
+  long_index : Map[String, Arg],
+  short_index : Map[Char, Arg],
 ) -> Bool {
   if !arg.has_prefix("-") || arg == "-" {
     return false
@@ -991,7 +976,7 @@ fn starts_known_option(
         None => ""
       }
       match long_index.get(target) {
-        Some(spec) => !spec.takes_value && spec.negatable
+        Some(spec) => !arg_takes_value(spec) && spec.negatable
         None => false
       }
     } else {
@@ -1007,8 +992,8 @@ fn starts_known_option(
 
 ///|
 fn apply_env(
-  matches : EngineMatches,
-  args : Array[EngineArg],
+  matches : Matches,
+  args : Array[Arg],
   env : Map[String, String],
 ) -> Result[Unit, ArgParseError] {
   for arg in args {
@@ -1024,59 +1009,59 @@ fn apply_env(
       Some(v) => v
       None => continue
     }
-    if arg.takes_value {
-      match assign_value(matches, arg, value, EngineValueSource::Env) {
+    if arg_takes_value(arg) {
+      match assign_value(matches, arg, value, ValueSource::Env) {
         Ok(_) => ()
         Err(e) => return Err(e)
       }
       continue
     }
-    match arg.action {
-      EngineArgAction::Count =>
+    match arg_action(arg) {
+      ArgAction::Count =>
         match parse_count(value) {
           Ok(count) => {
             matches.counts[name] = count
             matches.flags[name] = count > 0
-            matches.flag_sources[name] = EngineValueSource::Env
+            matches.flag_sources[name] = ValueSource::Env
           }
           Err(e) => return Err(e)
         }
-      EngineArgAction::SetFalse =>
+      ArgAction::SetFalse =>
         match parse_bool(value) {
           Ok(flag) => {
             matches.flags[name] = !flag
-            matches.flag_sources[name] = EngineValueSource::Env
+            matches.flag_sources[name] = ValueSource::Env
           }
           Err(e) => return Err(e)
         }
-      EngineArgAction::SetTrue =>
+      ArgAction::SetTrue =>
         match parse_bool(value) {
           Ok(flag) => {
             matches.flags[name] = flag
-            matches.flag_sources[name] = EngineValueSource::Env
+            matches.flag_sources[name] = ValueSource::Env
           }
           Err(e) => return Err(e)
         }
-      EngineArgAction::Set =>
+      ArgAction::Set =>
         match parse_bool(value) {
           Ok(flag) => {
             matches.flags[name] = flag
-            matches.flag_sources[name] = EngineValueSource::Env
+            matches.flag_sources[name] = ValueSource::Env
           }
           Err(e) => return Err(e)
         }
-      EngineArgAction::Append => ()
-      EngineArgAction::Help => ()
-      EngineArgAction::Version => ()
+      ArgAction::Append => ()
+      ArgAction::Help => ()
+      ArgAction::Version => ()
     }
   }
   Ok(())
 }
 
 ///|
-fn apply_defaults(matches : EngineMatches, args : Array[EngineArg]) -> Unit {
+fn apply_defaults(matches : Matches, args : Array[Arg]) -> Unit {
   for arg in args {
-    if !arg.takes_value {
+    if !arg_takes_value(arg) {
       continue
     }
     if matches_has_value_or_flag(matches, arg.name) {
@@ -1085,13 +1070,7 @@ fn apply_defaults(matches : EngineMatches, args : Array[EngineArg]) -> Unit {
     match arg.default_values {
       Some(values) if values.length() > 0 =>
         for value in values {
-          let _ = add_value(
-            matches,
-            arg.name,
-            value,
-            arg,
-            EngineValueSource::Default,
-          )
+          let _ = add_value(matches, arg.name, value, arg, ValueSource::Default)
         }
       _ => ()
     }
@@ -1099,12 +1078,12 @@ fn apply_defaults(matches : EngineMatches, args : Array[EngineArg]) -> Unit {
 }
 
 ///|
-fn matches_has_value_or_flag(matches : EngineMatches, name : String) -> Bool {
+fn matches_has_value_or_flag(matches : Matches, name : String) -> Bool {
   matches.flags.get(name) is Some(_) || matches.values.get(name) is Some(_)
 }
 
 ///|
-fn collect_long_names(arg : EngineArg) -> Array[String] {
+fn collect_long_names(arg : Arg) -> Array[String] {
   let names = []
   match arg.long {
     Some(value) => names.push(value)
@@ -1114,7 +1093,7 @@ fn collect_long_names(arg : EngineArg) -> Array[String] {
 }
 
 ///|
-fn collect_short_names(arg : EngineArg) -> Array[Char] {
+fn collect_short_names(arg : Arg) -> Array[Char] {
   let names = []
   match arg.short {
     Some(value) => names.push(value)
@@ -1129,21 +1108,17 @@ fn collect_subcommand_names(cmd : Command) -> Array[String] {
 }
 
 ///|
-fn apply_flag(
-  matches : EngineMatches,
-  arg : EngineArg,
-  source : EngineValueSource,
-) -> Unit {
-  match arg.action {
-    EngineArgAction::SetTrue => matches.flags[arg.name] = true
-    EngineArgAction::SetFalse => matches.flags[arg.name] = false
-    EngineArgAction::Count => {
+fn apply_flag(matches : Matches, arg : Arg, source : ValueSource) -> Unit {
+  match arg_action(arg) {
+    ArgAction::SetTrue => matches.flags[arg.name] = true
+    ArgAction::SetFalse => matches.flags[arg.name] = false
+    ArgAction::Count => {
       let current = matches.counts.get(arg.name).unwrap_or(0)
       matches.counts[arg.name] = current + 1
       matches.flags[arg.name] = true
     }
-    EngineArgAction::Help => ()
-    EngineArgAction::Version => ()
+    ArgAction::Help => ()
+    ArgAction::Version => ()
     _ => matches.flags[arg.name] = true
   }
   matches.flag_sources[arg.name] = source
@@ -1175,7 +1150,7 @@ fn parse_count(value : String) -> Result[Int, ArgParseError] {
 }
 
 ///|
-fn suggest_long(name : String, long_index : Map[String, EngineArg]) -> String? {
+fn suggest_long(name : String, long_index : Map[String, Arg]) -> String? {
   let candidates = map_string_keys(long_index)
   match suggest_name(name, candidates) {
     Some(best) => Some("--" + best)
@@ -1184,7 +1159,7 @@ fn suggest_long(name : String, long_index : Map[String, EngineArg]) -> String? {
 }
 
 ///|
-fn suggest_short(short : Char, short_index : Map[Char, EngineArg]) -> String? {
+fn suggest_short(short : Char, short_index : Map[Char, Arg]) -> String? {
   let candidates = map_char_keys(short_index)
   let input = short.to_string()
   match suggest_name(input, candidates) {
@@ -1194,7 +1169,7 @@ fn suggest_short(short : Char, short_index : Map[Char, EngineArg]) -> String? {
 }
 
 ///|
-fn map_string_keys(map : Map[String, EngineArg]) -> Array[String] {
+fn map_string_keys(map : Map[String, Arg]) -> Array[String] {
   let keys = []
   for key, _ in map {
     keys.push(key)
@@ -1203,7 +1178,7 @@ fn map_string_keys(map : Map[String, EngineArg]) -> Array[String] {
 }
 
 ///|
-fn map_char_keys(map : Map[Char, EngineArg]) -> Array[String] {
+fn map_char_keys(map : Map[Char, Arg]) -> Array[String] {
   let keys = []
   for key, _ in map {
     keys.push(key.to_string())
@@ -1303,10 +1278,10 @@ fn min3(a : Int, b : Int, c : Int) -> Int {
 
 ///|
 fn build_long_index(
-  globals : Array[EngineArg],
-  args : Array[EngineArg],
-) -> Map[String, EngineArg] {
-  let index : Map[String, EngineArg] = {}
+  globals : Array[Arg],
+  args : Array[Arg],
+) -> Map[String, Arg] {
+  let index : Map[String, Arg] = {}
   for arg in globals {
     if arg.long is Some(name) {
       index[name] = arg
@@ -1321,11 +1296,8 @@ fn build_long_index(
 }
 
 ///|
-fn build_short_index(
-  globals : Array[EngineArg],
-  args : Array[EngineArg],
-) -> Map[Char, EngineArg] {
-  let index : Map[Char, EngineArg] = {}
+fn build_short_index(globals : Array[Arg], args : Array[Arg]) -> Map[Char, Arg] {
+  let index : Map[Char, Arg] = {}
   for arg in globals {
     if arg.short is Some(value) {
       index[value] = arg
@@ -1340,7 +1312,7 @@ fn build_short_index(
 }
 
 ///|
-fn collect_globals(args : Array[EngineArg]) -> Array[EngineArg] {
+fn collect_globals(args : Array[Arg]) -> Array[Arg] {
   let out = []
   for arg in args {
     if arg.global && (arg.long is Some(_) || arg.short is Some(_)) {
@@ -1351,10 +1323,7 @@ fn collect_globals(args : Array[EngineArg]) -> Array[EngineArg] {
 }
 
 ///|
-fn concat_globals(
-  parent : Array[EngineArg],
-  more : Array[EngineArg],
-) -> Array[EngineArg] {
+fn concat_globals(parent : Array[Arg], more : Array[Arg]) -> Array[Arg] {
   let out = clone_array(parent)
   for arg in more {
     out.push(arg)
@@ -1363,19 +1332,19 @@ fn concat_globals(
 }
 
 ///|
-fn source_priority(source : EngineValueSource?) -> Int {
+fn source_priority(source : ValueSource?) -> Int {
   match source {
-    Some(EngineValueSource::Argv) => 3
-    Some(EngineValueSource::Env) => 2
-    Some(EngineValueSource::Default) => 1
+    Some(ValueSource::Argv) => 3
+    Some(ValueSource::Env) => 2
+    Some(ValueSource::Default) => 1
     None => 0
   }
 }
 
 ///|
 fn prefer_child_source(
-  parent_source : EngineValueSource?,
-  child_source : EngineValueSource?,
+  parent_source : ValueSource?,
+  child_source : ValueSource?,
 ) -> Bool {
   let parent_priority = source_priority(parent_source)
   let child_priority = source_priority(child_source)
@@ -1384,15 +1353,15 @@ fn prefer_child_source(
   } else if child_priority < parent_priority {
     false
   } else {
-    child_source is Some(EngineValueSource::Argv)
+    child_source is Some(ValueSource::Argv)
   }
 }
 
 ///|
 fn strongest_source(
-  parent_source : EngineValueSource?,
-  child_source : EngineValueSource?,
-) -> EngineValueSource? {
+  parent_source : ValueSource?,
+  child_source : ValueSource?,
+) -> ValueSource? {
   if prefer_child_source(parent_source, child_source) {
     child_source
   } else {
@@ -1404,9 +1373,7 @@ fn strongest_source(
 }
 
 ///|
-fn source_from_values(
-  sources : Array[EngineValueSource]?,
-) -> EngineValueSource? {
+fn source_from_values(sources : Array[ValueSource]?) -> ValueSource? {
   match sources {
     Some(items) if items.length() > 0 => highest_source(items)
     _ => None
@@ -1415,13 +1382,13 @@ fn source_from_values(
 
 ///|
 fn merge_globals_from_child(
-  parent : EngineMatches,
-  child : EngineMatches,
-  globals : Array[EngineArg],
+  parent : Matches,
+  child : Matches,
+  globals : Array[Arg],
 ) -> Unit {
   for arg in globals {
     let name = arg.name
-    if arg.takes_value {
+    if arg_takes_value(arg) {
       let parent_vals = parent.values.get(name)
       let child_vals = child.values.get(name)
       let parent_srcs = parent.value_sources.get(name)
@@ -1433,9 +1400,9 @@ fn merge_globals_from_child(
       }
       let parent_source = source_from_values(parent_srcs)
       let child_source = source_from_values(child_srcs)
-      if arg.multiple || arg.action == EngineArgAction::Append {
-        let both_argv = parent_source is Some(EngineValueSource::Argv) &&
-          child_source is Some(EngineValueSource::Argv)
+      if arg.multiple || arg_action(arg) == ArgAction::Append {
+        let both_argv = parent_source is Some(ValueSource::Argv) &&
+          child_source is Some(ValueSource::Argv)
         if both_argv {
           let merged = []
           let merged_srcs = []
@@ -1500,12 +1467,12 @@ fn merge_globals_from_child(
     } else {
       match child.flags.get(name) {
         Some(v) =>
-          if arg.action == EngineArgAction::Count {
+          if arg_action(arg) == ArgAction::Count {
             let has_parent = parent.flags.get(name) is Some(_)
             let parent_source = parent.flag_sources.get(name)
             let child_source = child.flag_sources.get(name)
-            let both_argv = parent_source is Some(EngineValueSource::Argv) &&
-              child_source is Some(EngineValueSource::Argv)
+            let both_argv = parent_source is Some(ValueSource::Argv) &&
+              child_source is Some(ValueSource::Argv)
             if both_argv {
               let parent_count = parent.counts.get(name).unwrap_or(0)
               let child_count = child.counts.get(name).unwrap_or(0)
@@ -1551,13 +1518,13 @@ fn merge_globals_from_child(
 
 ///|
 fn propagate_globals_to_child(
-  parent : EngineMatches,
-  child : EngineMatches,
-  globals : Array[EngineArg],
+  parent : Matches,
+  child : Matches,
+  globals : Array[Arg],
 ) -> Unit {
   for arg in globals {
     let name = arg.name
-    if arg.takes_value {
+    if arg_takes_value(arg) {
       match parent.values.get(name) {
         Some(values) => {
           child.values[name] = clone_array(values)
@@ -1576,7 +1543,7 @@ fn propagate_globals_to_child(
             Some(src) => child.flag_sources[name] = src
             None => ()
           }
-          if arg.action == EngineArgAction::Count {
+          if arg_action(arg) == ArgAction::Count {
             match parent.counts.get(name) {
               Some(c) => child.counts[name] = c
               None => ()
@@ -1594,7 +1561,7 @@ fn propagate_globals_to_child(
 ///|
 
 ///|
-fn positional_args(args : Array[EngineArg]) -> Array[EngineArg] {
+fn positional_args(args : Array[Arg]) -> Array[Arg] {
   let with_index = []
   let without_index = []
   for arg in args {
@@ -1619,7 +1586,7 @@ fn positional_args(args : Array[EngineArg]) -> Array[EngineArg] {
 }
 
 ///|
-fn last_positional_index(positionals : Array[EngineArg]) -> Int? {
+fn last_positional_index(positionals : Array[Arg]) -> Int? {
   let mut i = 0
   while i < positionals.length() {
     if positionals[i].last {
@@ -1631,10 +1598,7 @@ fn last_positional_index(positionals : Array[EngineArg]) -> Int? {
 }
 
 ///|
-fn next_positional(
-  positionals : Array[EngineArg],
-  collected : Array[String],
-) -> EngineArg? {
+fn next_positional(positionals : Array[Arg], collected : Array[String]) -> Arg? {
   if collected.length() < positionals.length() {
     Some(positionals[collected.length()])
   } else {
@@ -1645,10 +1609,10 @@ fn next_positional(
 ///|
 fn should_parse_as_positional(
   arg : String,
-  positionals : Array[EngineArg],
+  positionals : Array[Arg],
   collected : Array[String],
-  long_index : Map[String, EngineArg],
-  short_index : Map[Char, EngineArg],
+  long_index : Map[String, Arg],
+  short_index : Map[Char, Arg],
 ) -> Bool {
   if !arg.has_prefix("-") || arg == "-" {
     return false
@@ -1690,7 +1654,7 @@ fn is_negative_number(arg : String) -> Bool {
 }
 
 ///|
-fn sort_positionals(items : Array[(Int, EngineArg)]) -> Unit {
+fn sort_positionals(items : Array[(Int, Arg)]) -> Unit {
   let mut i = 1
   while i < items.length() {
     let key = items[i]

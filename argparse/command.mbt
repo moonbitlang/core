@@ -110,7 +110,7 @@ pub fn Command::parse(
 ///|
 fn build_matches(
   cmd : Command,
-  raw : EngineMatches,
+  raw : Matches,
   inherited_globals : Array[Arg],
 ) -> Matches {
   let flags : Map[String, Bool] = {}
@@ -131,7 +131,7 @@ fn build_matches(
     }
     match raw.value_source(name) {
       Some(source) => {
-        sources[name] = convert_source(source)
+        sources[name] = source
         if is_flag_spec(spec) {
           if is_count_flag_spec(spec) {
             flags[name] = count > 0
@@ -148,7 +148,7 @@ fn build_matches(
     collect_decl_globals(cmd.args),
   )
 
-  let subcommand = match raw.subcommand() {
+  let subcommand = match raw.raw_subcommand() {
     Some((name, sub_raw)) =>
       match find_decl_subcommand(cmd.subcommands, name) {
         Some(sub_spec) =>
@@ -163,6 +163,10 @@ fn build_matches(
                 flag_counts: {},
                 sources: {},
                 subcommand: None,
+                counts: {},
+                flag_sources: {},
+                value_sources: {},
+                parsed_subcommand: None,
               },
             ),
           )
@@ -170,7 +174,17 @@ fn build_matches(
     None => None
   }
 
-  Matches::{ flags, values, flag_counts, sources, subcommand }
+  Matches::{
+    flags,
+    values,
+    flag_counts,
+    sources,
+    subcommand,
+    counts: {},
+    flag_sources: {},
+    value_sources: {},
+    parsed_subcommand: None,
+  }
 }
 
 ///|
@@ -204,29 +218,17 @@ fn find_decl_subcommand(subs : Array[Command], name : String) -> Command? {
 }
 
 ///|
-fn convert_source(source : EngineValueSource) -> ValueSource {
-  match source {
-    EngineValueSource::Argv => ValueSource::Argv
-    EngineValueSource::Env => ValueSource::Env
-    EngineValueSource::Default => ValueSource::Default
-  }
-}
-
-///|
-fn command_engine_args(cmd : Command) -> Array[EngineArg] {
+fn command_args(cmd : Command) -> Array[Arg] {
   let args = Array::new(capacity=cmd.args.length())
   for spec in cmd.args {
-    args.push(to_engine_arg(spec))
+    args.push(spec)
   }
   args
 }
 
 ///|
-fn command_engine_groups(cmd : Command) -> Array[EngineArgGroup] {
-  let groups = Array::new(capacity=cmd.groups.length())
-  for group in cmd.groups {
-    groups.push(group_to_engine(group))
-  }
+fn command_groups(cmd : Command) -> Array[ArgGroup] {
+  let groups = clone_array_cmd(cmd.groups)
   for arg in cmd.args {
     match arg.group {
       Some(group_name) =>
@@ -238,20 +240,8 @@ fn command_engine_groups(cmd : Command) -> Array[EngineArgGroup] {
 }
 
 ///|
-fn group_to_engine(group : ArgGroup) -> EngineArgGroup {
-  EngineArgGroup::{
-    name: group.name,
-    required: group.required,
-    multiple: group.multiple,
-    args: clone_array_cmd(group.args),
-    requires: clone_array_cmd(group.requires),
-    conflicts_with: clone_array_cmd(group.conflicts_with),
-  }
-}
-
-///|
 fn add_arg_to_group_membership(
-  groups : Array[EngineArgGroup],
+  groups : Array[ArgGroup],
   group_name : String,
   arg_name : String,
 ) -> Unit {
@@ -269,10 +259,10 @@ fn add_arg_to_group_membership(
       }
       let args = clone_array_cmd(groups[i].args)
       args.push(arg_name)
-      groups[i] = EngineArgGroup::{ ..groups[i], args, }
+      groups[i] = ArgGroup::{ ..groups[i], args, }
     }
     None =>
-      groups.push(EngineArgGroup::{
+      groups.push(ArgGroup::{
         name: group_name,
         required: false,
         multiple: true,
@@ -280,189 +270,6 @@ fn add_arg_to_group_membership(
         requires: [],
         conflicts_with: [],
       })
-  }
-}
-
-///|
-fn to_engine_arg(arg : Arg) -> EngineArg {
-  if arg.is_flag {
-    let mut out = EngineArg(arg.name).flag()
-    match arg.short {
-      Some(v) => out = out.short(v)
-      None => ()
-    }
-    match arg.long {
-      Some(v) => out = out.long(v)
-      None => ()
-    }
-    match arg.about {
-      Some(v) => out = out.help(v)
-      None => ()
-    }
-    match arg.env {
-      Some(v) => out = out.env(v)
-      None => ()
-    }
-    match arg.group {
-      Some(group) => out = out.group(group)
-      None => ()
-    }
-    out = out.action(convert_flag_action(arg.flag_action))
-    for name in arg.requires {
-      out = out.requires(name)
-    }
-    for name in arg.conflicts_with {
-      out = out.conflicts_with(name)
-    }
-    if arg.required {
-      out = out.required()
-    }
-    if arg.global {
-      out = out.global()
-    }
-    if arg.negatable {
-      out = out.negatable()
-    }
-    if arg.hidden {
-      out = out.hide()
-    }
-    out
-  } else if arg.is_positional {
-    let mut out = EngineArg(arg.name).option()
-    match arg.index {
-      Some(v) => out = out.index(v)
-      None => ()
-    }
-    match arg.about {
-      Some(v) => out = out.help(v)
-      None => ()
-    }
-    match arg.env {
-      Some(v) => out = out.env(v)
-      None => ()
-    }
-    match arg.default_values {
-      Some(vs) => out = out.default_values(vs)
-      None => ()
-    }
-    match arg.num_args {
-      Some(range) => out = out.num_args(convert_value_range(range))
-      None => ()
-    }
-    match arg.group {
-      Some(group) => out = out.group(group)
-      None => ()
-    }
-    for name in arg.requires {
-      out = out.requires(name)
-    }
-    for name in arg.conflicts_with {
-      out = out.conflicts_with(name)
-    }
-    if arg.multiple {
-      out = out.multiple()
-    }
-    if arg.allow_hyphen_values {
-      out = out.allow_hyphen_values()
-    }
-    if arg.last {
-      out = out.last()
-    }
-    if arg.required {
-      out = out.required()
-    }
-    if arg.global {
-      out = out.global()
-    }
-    if arg.hidden {
-      out = out.hide()
-    }
-    out
-  } else {
-    let mut out = EngineArg(arg.name).option()
-    match arg.short {
-      Some(v) => out = out.short(v)
-      None => ()
-    }
-    match arg.long {
-      Some(v) => out = out.long(v)
-      None => ()
-    }
-    match arg.about {
-      Some(v) => out = out.help(v)
-      None => ()
-    }
-    match arg.env {
-      Some(v) => out = out.env(v)
-      None => ()
-    }
-    match arg.default_values {
-      Some(vs) => out = out.default_values(vs)
-      None => ()
-    }
-    match arg.num_args {
-      Some(range) => out = out.num_args(convert_value_range(range))
-      None => ()
-    }
-    match arg.group {
-      Some(group) => out = out.group(group)
-      None => ()
-    }
-    out = out.action(convert_option_action(arg.option_action))
-    for name in arg.requires {
-      out = out.requires(name)
-    }
-    for name in arg.conflicts_with {
-      out = out.conflicts_with(name)
-    }
-    if arg.multiple {
-      out = out.multiple()
-    }
-    if arg.allow_hyphen_values {
-      out = out.allow_hyphen_values()
-    }
-    if arg.last {
-      out = out.last()
-    }
-    if arg.required {
-      out = out.required()
-    }
-    if arg.global {
-      out = out.global()
-    }
-    if arg.hidden {
-      out = out.hide()
-    }
-    out
-  }
-}
-
-///|
-fn convert_value_range(range : ValueRange) -> EngineValueRange {
-  EngineValueRange(
-    lower=range.lower,
-    upper=range.upper,
-    lower_inclusive=range.lower_inclusive,
-    upper_inclusive=range.upper_inclusive,
-  )
-}
-
-///|
-fn convert_flag_action(action : FlagAction) -> EngineArgAction {
-  match action {
-    FlagAction::SetTrue => EngineArgAction::SetTrue
-    FlagAction::SetFalse => EngineArgAction::SetFalse
-    FlagAction::Count => EngineArgAction::Count
-    FlagAction::Help => EngineArgAction::Help
-    FlagAction::Version => EngineArgAction::Version
-  }
-}
-
-///|
-fn convert_option_action(action : OptionAction) -> EngineArgAction {
-  match action {
-    OptionAction::Set => EngineArgAction::Set
-    OptionAction::Append => EngineArgAction::Append
   }
 }
 

@@ -78,6 +78,7 @@ pub struct Matches {
   flag_counts : Map[String, Int]
   sources : Map[String, ValueSource]
   subcommand : (String, Matches)?
+  // private fields
 }
 
 pub(all) enum OptionAction {
