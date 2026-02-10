@@ -57,6 +57,14 @@ fn render_help_for_context(
 }
 
 ///|
+fn raise_context_help(
+  cmd : Command,
+  inherited_globals : Array[Arg],
+) -> Unit raise {
+  raise_help(render_help_for_context(cmd, inherited_globals))
+}
+
+///|
 fn default_argv() -> Array[String] {
   let args = @env.args()
   if args.length() > 1 {
@@ -78,7 +86,7 @@ fn parse_command(
   let subcommands = cmd.subcommands
   validate_command(cmd, args, groups)
   if cmd.arg_required_else_help && argv.length() == 0 {
-    raise_help(render_help_for_context(cmd, inherited_globals))
+    raise_context_help(cmd, inherited_globals)
   }
   let matches = new_matches_parse_state()
   let globals_here = collect_globals(args)
@@ -115,10 +123,10 @@ fn parse_command(
       continue
     }
     if builtin_help_short && arg == "-h" {
-      raise_help(render_help_for_context(cmd, inherited_globals))
+      raise_context_help(cmd, inherited_globals)
     }
     if builtin_help_long && arg == "--help" {
-      raise_help(render_help_for_context(cmd, inherited_globals))
+      raise_context_help(cmd, inherited_globals)
     }
     if builtin_version_short && arg == "-V" {
       raise_version(command_version(cmd))
@@ -139,7 +147,7 @@ fn parse_command(
         if inline is Some(_) {
           raise ArgParseError::InvalidArgument(arg)
         }
-        raise_help(render_help_for_context(cmd, inherited_globals))
+        raise_context_help(cmd, inherited_globals)
       }
       if builtin_version_long && name == "version" {
         if inline is Some(_) {
@@ -211,8 +219,7 @@ fn parse_command(
               raise ArgParseError::InvalidArgument(arg)
             }
             match arg_action(spec) {
-              ArgAction::Help =>
-                raise_help(render_help_for_context(cmd, inherited_globals))
+              ArgAction::Help => raise_context_help(cmd, inherited_globals)
               ArgAction::Version => raise_version(command_version(cmd))
               _ => apply_flag(matches, spec, ValueSource::Argv)
             }
@@ -227,7 +234,7 @@ fn parse_command(
       while pos < arg.length() {
         let short = arg.get_char(pos).unwrap()
         if short == 'h' && builtin_help_short {
-          raise_help(render_help_for_context(cmd, inherited_globals))
+          raise_context_help(cmd, inherited_globals)
         }
         if short == 'V' && builtin_version_short {
           raise_version(command_version(cmd))
@@ -271,8 +278,7 @@ fn parse_command(
           break
         } else {
           match arg_action(spec) {
-            ArgAction::Help =>
-              raise_help(render_help_for_context(cmd, inherited_globals))
+            ArgAction::Help => raise_context_help(cmd, inherited_globals)
             ArgAction::Version => raise_version(command_version(cmd))
             _ => apply_flag(matches, spec, ValueSource::Argv)
           }

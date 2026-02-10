@@ -16,7 +16,7 @@
 /// Render help text for a clap-style command.
 fn render_help(cmd : Command) -> String {
   let usage_line = "Usage: \{cmd.name}\{usage_tail(cmd)}"
-  let about = command_about(cmd)
+  let about = cmd.about.unwrap_or("")
   let about_section = if about == "" {
     ""
   } else {
@@ -26,58 +26,14 @@ fn render_help(cmd : Command) -> String {
       $|\{about}
     )
   }
-  let command_lines = subcommand_entries(cmd)
-  let commands_section = if command_lines.length() == 0 {
-    ""
-  } else {
-    let body = command_lines.join("\n")
-    (
-      $|
-      $|
-      $|Commands:
-      $|\{body}
-    )
-  }
-  let argument_lines = positional_entries(cmd)
-  let arguments_section = if argument_lines.length() == 0 {
-    ""
-  } else {
-    let body = argument_lines.join("\n")
-    (
-      $|
-      $|
-      $|Arguments:
-      $|\{body}
-    )
-  }
-  let option_lines = option_entries(cmd)
-  let options_section = if option_lines.length() == 0 {
-    (
-      $|
-      $|
-      $|Options:
-    )
-  } else {
-    let body = option_lines.join("\n")
-    (
-      $|
-      $|
-      $|Options:
-      $|\{body}
-    )
-  }
-  let group_lines = group_entries(cmd)
-  let groups_section = if group_lines.length() == 0 {
-    ""
-  } else {
-    let body = group_lines.join("\n")
-    (
-      $|
-      $|
-      $|Groups:
-      $|\{body}
-    )
-  }
+  let commands_section = render_section("Commands:", subcommand_entries(cmd))
+  let arguments_section = render_section("Arguments:", positional_entries(cmd))
+  let options_section = render_section(
+    "Options:",
+    option_entries(cmd),
+    keep_empty=true,
+  )
+  let groups_section = render_section("Groups:", group_entries(cmd))
   (
     $|\{usage_line}\{about_section}\{commands_section}\{arguments_section}\{options_section}\{groups_section}
     $|
@@ -103,7 +59,7 @@ fn usage_tail(cmd : Command) -> String {
 ///|
 fn has_options(cmd : Command) -> Bool {
   for arg in command_args(cmd) {
-    if arg_hidden(arg) {
+    if arg.hidden {
       continue
     }
     if arg.long is Some(_) || arg.short is Some(_) {
@@ -117,7 +73,7 @@ fn has_options(cmd : Command) -> Bool {
 fn positional_usage(cmd : Command) -> String {
   let parts = Array::new(capacity=command_args(cmd).length())
   for arg in positional_args(command_args(cmd)) {
-    if arg_hidden(arg) {
+    if arg.hidden {
       continue
     }
     let required = is_required_arg(arg)
@@ -164,7 +120,7 @@ fn option_entries(cmd : Command) -> Array[String] {
     if arg.long is None && arg.short is None {
       continue
     }
-    if arg_hidden(arg) {
+    if arg.hidden {
       continue
     }
     let name = if arg_takes_value(arg) {
@@ -219,7 +175,7 @@ fn builtin_option_label(
 fn positional_entries(cmd : Command) -> Array[String] {
   let display = Array::new(capacity=command_args(cmd).length())
   for arg in positional_args(command_args(cmd)) {
-    if arg_hidden(arg) {
+    if arg.hidden {
       continue
     }
     display.push((positional_display(arg), arg_doc(arg)))
@@ -231,10 +187,10 @@ fn positional_entries(cmd : Command) -> Array[String] {
 fn subcommand_entries(cmd : Command) -> Array[String] {
   let display = Array::new(capacity=cmd.subcommands.length() + 1)
   for sub in cmd.subcommands {
-    if command_hidden(sub) {
+    if sub.hidden {
       continue
     }
-    display.push((command_display(sub), command_about(sub)))
+    display.push((sub.name, sub.about.unwrap_or("")))
   }
   if help_subcommand_enabled(cmd) {
     display.push(("help", "Print help for the subcommand(s)."))
@@ -256,6 +212,33 @@ fn group_entries(cmd : Command) -> Array[String] {
 }
 
 ///|
+fn render_section(
+  header : String,
+  lines : Array[String],
+  keep_empty? : Bool = false,
+) -> String {
+  if lines.length() == 0 {
+    if keep_empty {
+      (
+        $|
+        $|
+        $|\{header}
+      )
+    } else {
+      ""
+    }
+  } else {
+    let body = lines.join("\n")
+    (
+      $|
+      $|
+      $|\{header}
+      $|\{body}
+    )
+  }
+}
+
+///|
 fn format_entries(display : Array[(String, String)]) -> Array[String] {
   let entries = Array::new(capacity=display.length())
   let mut max_len = 0
@@ -271,11 +254,6 @@ fn format_entries(display : Array[(String, String)]) -> Array[String] {
     entries.push("  \{name}\{padding}\{doc}")
   }
   entries
-}
-
-///|
-fn command_display(cmd : Command) -> String {
-  cmd.name
 }
 
 ///|
@@ -308,16 +286,6 @@ fn positional_display(arg : Arg) -> String {
 }
 
 ///|
-fn command_about(cmd : Command) -> String {
-  cmd.about.unwrap_or("")
-}
-
-///|
-fn arg_help(arg : Arg) -> String {
-  arg.about.unwrap_or("")
-}
-
-///|
 fn arg_doc(arg : Arg) -> String {
   let notes = []
   match arg.env {
@@ -335,7 +303,7 @@ fn arg_doc(arg : Arg) -> String {
   if is_required_arg(arg) {
     notes.push("required")
   }
-  let help = arg_help(arg)
+  let help = arg.about.unwrap_or("")
   if help == "" {
     notes.join(", ")
   } else if notes.length() > 0 {
@@ -347,22 +315,12 @@ fn arg_doc(arg : Arg) -> String {
 }
 
 ///|
-fn arg_hidden(arg : Arg) -> Bool {
-  arg.hidden
-}
-
-///|
-fn command_hidden(cmd : Command) -> Bool {
-  cmd.hidden
-}
-
-///|
 fn has_subcommands_for_help(cmd : Command) -> Bool {
   if help_subcommand_enabled(cmd) {
     return true
   }
   for sub in cmd.subcommands {
-    if !command_hidden(sub) {
+    if !sub.hidden {
       return true
     }
   }
@@ -400,7 +358,7 @@ fn group_label(group : ArgGroup) -> String {
 fn group_members(cmd : Command, group : ArgGroup) -> String {
   let members = []
   for arg in command_args(cmd) {
-    if arg_hidden(arg) {
+    if arg.hidden {
       continue
     }
     if arg_in_group(arg, group) {
