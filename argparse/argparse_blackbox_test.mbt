@@ -1924,7 +1924,7 @@ test "positional max clamp leaves trailing value for next positional" {
 }
 
 ///|
-test "open upper range options honor stop rules for option-like values" {
+test "open upper range options consume option-like values with allow_hyphen_values" {
   let cmd = @argparse.Command("demo", args=[
     @argparse.OptionArg(
       "arg",
@@ -1940,14 +1940,14 @@ test "open upper range options honor stop rules for option-like values" {
   let known_long = cmd.parse(argv=["--arg", "x", "--verbose"], env=empty_env()) catch {
     _ => panic()
   }
-  assert_true(known_long.values is { "arg": ["x"], .. })
-  assert_true(known_long.flags is { "verbose": true, .. })
+  assert_true(known_long.values is { "arg": ["x", "--verbose"], .. })
+  assert_true(known_long.flags is { "verbose"? : None, .. })
 
   let negated = cmd.parse(argv=["--arg", "x", "--no-cache"], env=empty_env()) catch {
     _ => panic()
   }
-  assert_true(negated.values is { "arg": ["x"], .. })
-  assert_true(negated.flags is { "cache": false, .. })
+  assert_true(negated.values is { "arg": ["x", "--no-cache"], .. })
+  assert_true(negated.flags is { "cache"? : None, .. })
 
   let unknown_long_value = cmd.parse(
     argv=["--arg", "x", "--mystery"],
@@ -1960,8 +1960,8 @@ test "open upper range options honor stop rules for option-like values" {
   let known_short = cmd.parse(argv=["--arg", "x", "-q"], env=empty_env()) catch {
     _ => panic()
   }
-  assert_true(known_short.values is { "arg": ["x"], .. })
-  assert_true(known_short.flags is { "quiet": true, .. })
+  assert_true(known_short.values is { "arg": ["x", "-q"], .. })
+  assert_true(known_short.flags is { "quiet"? : None, .. })
 
   let cmd_with_rest = @argparse.Command("demo", args=[
     @argparse.OptionArg(
@@ -1983,7 +1983,9 @@ test "open upper range options honor stop rules for option-like values" {
   ) catch {
     _ => panic()
   }
-  assert_true(sentinel_stop.values is { "arg": ["x"], "rest": ["tail"], .. })
+  assert_true(
+    sentinel_stop.values is { "arg": ["x", "--", "tail"], "rest"? : None, .. },
+  )
 }
 
 ///|
@@ -2002,6 +2004,35 @@ test "fixed upper range avoids consuming additional option values" {
   }
   assert_true(parsed.values is { "one": ["x"], .. })
   assert_true(parsed.flags is { "verbose": true, .. })
+}
+
+///|
+test "bounded long options report too few values when next token is another option" {
+  let cmd = @argparse.Command("demo", args=[
+    @argparse.OptionArg(
+      "arg",
+      long="arg",
+      num_args=@argparse.ValueRange(lower=2, upper=2),
+    ),
+    @argparse.FlagArg("verbose", long="verbose"),
+  ])
+
+  let ok = cmd.parse(argv=["--arg", "x", "y", "--verbose"], env=empty_env()) catch {
+    _ => panic()
+  }
+  assert_true(ok.values is { "arg": ["x", "y"], .. })
+  assert_true(ok.flags is { "verbose": true, .. })
+
+  try cmd.parse(argv=["--arg", "x", "--verbose"], env=empty_env()) catch {
+    @argparse.ArgParseError::TooFewValues(name, got, min) => {
+      assert_true(name == "arg")
+      assert_true(got == 1)
+      assert_true(min == 2)
+    }
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
 }
 
 ///|

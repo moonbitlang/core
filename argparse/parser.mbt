@@ -1108,53 +1108,25 @@ fn consume_additional_option_values(
 fn should_stop_option_value(
   value : String,
   arg : Arg,
-  long_index : Map[String, Arg],
-  short_index : Map[Char, Arg],
-) -> Bool {
-  if value == "--" {
-    return true
-  }
-  if !value.has_prefix("-") || value == "-" {
-    return false
-  }
-  if !arg.allow_hyphen_values {
-    return true
-  }
-  starts_known_option(value, long_index, short_index)
-}
-
-///|
-fn starts_known_option(
-  value : String,
-  long_index : Map[String, Arg],
-  short_index : Map[Char, Arg],
+  _long_index : Map[String, Arg],
+  _short_index : Map[Char, Arg],
 ) -> Bool {
   if !value.has_prefix("-") || value == "-" {
     return false
   }
-  if value.has_prefix("--") {
-    let (name, _) = split_long(value)
-    if long_index.get(name) is Some(_) {
-      return true
-    }
-    if name.has_prefix("no-") {
-      let target = match name.strip_prefix("no-") {
-        Some(view) => view.to_string()
-        None => ""
-      }
-      match long_index.get(target) {
-        Some(spec) => !arg_takes_value(spec) && spec.negatable
-        None => false
-      }
-    } else {
-      false
-    }
-  } else {
-    match value.get_char(1) {
-      Some(ch) => short_index.get(ch) is Some(_)
-      None => false
-    }
+  if arg.allow_hyphen_values {
+    // Rust clap parity:
+    // - `clap_builder/src/parser/parser.rs`: `parse_long_arg` / `parse_short_arg`
+    //   return `ParseResult::MaybeHyphenValue` when the pending arg in
+    //   `ParseState::Opt` or `ParseState::Pos` has `allow_hyphen_values`.
+    // - `clap_builder/src/builder/arg.rs` (`Arg::allow_hyphen_values` docs):
+    //   prior args with this setting take precedence over known flags/options.
+    // - `tests/builder/opts.rs` (`leading_hyphen_with_flag_after`):
+    //   a pending option consumes `-f` as a value rather than parsing flag `-f`.
+    // This also means `--` is consumed as a value while the option remains pending.
+    return false
   }
+  true
 }
 
 ///|
