@@ -185,10 +185,7 @@ fn parse_command(
           }
         Some(spec) =>
           if arg_takes_value(spec) {
-            match check_duplicate_set_occurrence(matches, spec) {
-              Ok(_) => ()
-              Err(e) => raise e
-            }
+            check_duplicate_set_occurrence(matches, spec)
             let min_values = option_occurrence_min(spec)
             let accepts_values = option_accepts_values(spec)
             let mut values_start = i + 1
@@ -197,10 +194,7 @@ fn parse_command(
               if !accepts_values {
                 raise ArgParseError::InvalidArgument(arg)
               }
-              match assign_value(matches, spec, v, ValueSource::Argv) {
-                Ok(_) => ()
-                Err(e) => raise e
-              }
+              assign_value(matches, spec, v, ValueSource::Argv)
               consumed_first = true
             } else {
               let can_take_next = i + 1 < argv.length() &&
@@ -212,10 +206,7 @@ fn parse_command(
                 )
               if can_take_next && accepts_values {
                 i = i + 1
-                match assign_value(matches, spec, argv[i], ValueSource::Argv) {
-                  Ok(_) => ()
-                  Err(e) => raise e
-                }
+                assign_value(matches, spec, argv[i], ValueSource::Argv)
                 values_start = i + 1
                 consumed_first = true
               } else if min_values > 0 {
@@ -225,13 +216,9 @@ fn parse_command(
               }
             }
             if consumed_first {
-              let consumed_more = match
-                consume_additional_option_values(
-                  matches, spec, argv, values_start, long_index, short_index,
-                ) {
-                Ok(consumed) => consumed
-                Err(e) => raise e
-              }
+              let consumed_more = consume_additional_option_values(
+                matches, spec, argv, values_start, long_index, short_index,
+              )
               i = i + consumed_more
               let occurrence_values = 1 + consumed_more
               if occurrence_values < min_values {
@@ -272,10 +259,7 @@ fn parse_command(
           None => raise_unknown_short(short, short_index)
         }
         if arg_takes_value(spec) {
-          match check_duplicate_set_occurrence(matches, spec) {
-            Ok(_) => ()
-            Err(e) => raise e
-          }
+          check_duplicate_set_occurrence(matches, spec)
           let min_values = option_occurrence_min(spec)
           let accepts_values = option_accepts_values(spec)
           let mut values_start = i + 1
@@ -289,10 +273,7 @@ fn parse_command(
             if !accepts_values {
               raise ArgParseError::InvalidArgument(arg)
             }
-            match assign_value(matches, spec, inline, ValueSource::Argv) {
-              Ok(_) => ()
-              Err(e) => raise e
-            }
+            assign_value(matches, spec, inline, ValueSource::Argv)
             consumed_first = true
           } else {
             let can_take_next = i + 1 < argv.length() &&
@@ -304,10 +285,7 @@ fn parse_command(
               )
             if can_take_next && accepts_values {
               i = i + 1
-              match assign_value(matches, spec, argv[i], ValueSource::Argv) {
-                Ok(_) => ()
-                Err(e) => raise e
-              }
+              assign_value(matches, spec, argv[i], ValueSource::Argv)
               values_start = i + 1
               consumed_first = true
             } else if min_values > 0 {
@@ -317,13 +295,9 @@ fn parse_command(
             }
           }
           if consumed_first {
-            let consumed_more = match
-              consume_additional_option_values(
-                matches, spec, argv, values_start, long_index, short_index,
-              ) {
-              Ok(consumed) => consumed
-              Err(e) => raise e
-            }
+            let consumed_more = consume_additional_option_values(
+              matches, spec, argv, values_start, long_index, short_index,
+            )
             i = i + consumed_more
             let occurrence_values = 1 + consumed_more
             if occurrence_values < min_values {
@@ -407,14 +381,8 @@ fn finalize_matches(
   env_args : Array[Arg],
   env : Map[String, String],
 ) -> Matches raise {
-  match assign_positionals(matches, positionals, positional_values) {
-    Ok(_) => ()
-    Err(e) => raise e
-  }
-  match apply_env(matches, env_args, env) {
-    Ok(_) => ()
-    Err(e) => raise e
-  }
+  assign_positionals(matches, positionals, positional_values)
+  apply_env(matches, env_args, env)
   apply_defaults(matches, env_args)
   validate_values(args, matches)
   validate_relationships(matches, env_args)
@@ -845,7 +813,7 @@ fn assign_positionals(
   matches : Matches,
   positionals : Array[Arg],
   values : Array[String],
-) -> Result[Unit, ArgParseError] {
+) -> Unit raise ArgParseError {
   let mut cursor = 0
   for idx in 0..<positionals.length() {
     let arg = positionals[idx]
@@ -869,35 +837,26 @@ fn assign_positionals(
       }
       let mut taken = 0
       while taken < take {
-        match
-          add_value(
-            matches,
-            arg.name,
-            values[cursor + taken],
-            arg,
-            ValueSource::Argv,
-          ) {
-          Ok(_) => ()
-          Err(e) => return Err(e)
-        }
+        add_value(
+          matches,
+          arg.name,
+          values[cursor + taken],
+          arg,
+          ValueSource::Argv,
+        )
         taken = taken + 1
       }
       cursor = cursor + taken
       continue
     }
     if remaining > 0 {
-      match
-        add_value(matches, arg.name, values[cursor], arg, ValueSource::Argv) {
-        Ok(_) => ()
-        Err(e) => return Err(e)
-      }
+      add_value(matches, arg.name, values[cursor], arg, ValueSource::Argv)
       cursor = cursor + 1
     }
   }
   if cursor < values.length() {
-    return Err(ArgParseError::TooManyPositionals)
+    raise ArgParseError::TooManyPositionals
   }
-  Ok(())
 }
 
 ///|
@@ -930,7 +889,7 @@ fn add_value(
   value : String,
   arg : Arg,
   source : ValueSource,
-) -> Result[Unit, ArgParseError] {
+) -> Unit {
   if arg.multiple || arg_action(arg) == ArgAction::Append {
     let arr = matches.values.get(name).unwrap_or([])
     arr.push(value)
@@ -942,7 +901,6 @@ fn add_value(
     matches.values[name] = [value]
     matches.value_sources[name] = [source]
   }
-  Ok(())
 }
 
 ///|
@@ -951,42 +909,32 @@ fn assign_value(
   arg : Arg,
   value : String,
   source : ValueSource,
-) -> Result[Unit, ArgParseError] {
+) -> Unit raise ArgParseError {
   match arg_action(arg) {
     ArgAction::Append => add_value(matches, arg.name, value, arg, source)
     ArgAction::Set => add_value(matches, arg.name, value, arg, source)
-    ArgAction::SetTrue =>
-      match parse_bool(value) {
-        Ok(flag) => {
-          matches.flags[arg.name] = flag
-          matches.flag_sources[arg.name] = source
-          Ok(())
-        }
-        Err(e) => Err(e)
-      }
-    ArgAction::SetFalse =>
-      match parse_bool(value) {
-        Ok(flag) => {
-          matches.flags[arg.name] = !flag
-          matches.flag_sources[arg.name] = source
-          Ok(())
-        }
-        Err(e) => Err(e)
-      }
-    ArgAction::Count =>
-      match parse_count(value) {
-        Ok(count) => {
-          matches.counts[arg.name] = count
-          matches.flags[arg.name] = count > 0
-          matches.flag_sources[arg.name] = source
-          Ok(())
-        }
-        Err(e) => Err(e)
-      }
+    ArgAction::SetTrue => {
+      let flag = parse_bool(value)
+      matches.flags[arg.name] = flag
+      matches.flag_sources[arg.name] = source
+    }
+    ArgAction::SetFalse => {
+      let flag = parse_bool(value)
+      matches.flags[arg.name] = !flag
+      matches.flag_sources[arg.name] = source
+    }
+    ArgAction::Count => {
+      let count = parse_count(value)
+      matches.counts[arg.name] = count
+      matches.flags[arg.name] = count > 0
+      matches.flag_sources[arg.name] = source
+    }
     ArgAction::Help =>
-      Err(ArgParseError::InvalidArgument("help action does not take values"))
+      raise ArgParseError::InvalidArgument("help action does not take values")
     ArgAction::Version =>
-      Err(ArgParseError::InvalidArgument("version action does not take values"))
+      raise ArgParseError::InvalidArgument(
+        "version action does not take values",
+      )
   }
 }
 
@@ -1031,18 +979,14 @@ fn option_conflict_label(arg : Arg) -> String {
 fn check_duplicate_set_occurrence(
   matches : Matches,
   arg : Arg,
-) -> Result[Unit, ArgParseError] {
+) -> Unit raise ArgParseError {
   if arg_action(arg) != ArgAction::Set {
-    return Ok(())
+    return
   }
-  match matches.values.get(arg.name) {
-    Some(_) =>
-      Err(
-        ArgParseError::InvalidArgument(
-          "argument '\{option_conflict_label(arg)}' cannot be used multiple times",
-        ),
-      )
-    None => Ok(())
+  if matches.values.get(arg.name) is Some(_) {
+    raise ArgParseError::InvalidArgument(
+      "argument '\{option_conflict_label(arg)}' cannot be used multiple times",
+    )
   }
 }
 
@@ -1083,10 +1027,10 @@ fn consume_additional_option_values(
   start : Int,
   long_index : Map[String, Arg],
   short_index : Map[Char, Arg],
-) -> Result[Int, ArgParseError] {
+) -> Int raise ArgParseError {
   let max_more = required_option_value_count(arg)
   if max_more == 0 {
-    return Ok(0)
+    return 0
   }
   let mut consumed = 0
   while start + consumed < argv.length() {
@@ -1097,13 +1041,10 @@ fn consume_additional_option_values(
     if should_stop_option_value(value, arg, long_index, short_index) {
       break
     }
-    match assign_value(matches, arg, value, ValueSource::Argv) {
-      Ok(_) => ()
-      Err(e) => return Err(e)
-    }
+    assign_value(matches, arg, value, ValueSource::Argv)
     consumed = consumed + 1
   }
-  Ok(consumed)
+  consumed
 }
 
 ///|
@@ -1136,7 +1077,7 @@ fn apply_env(
   matches : Matches,
   args : Array[Arg],
   env : Map[String, String],
-) -> Result[Unit, ArgParseError] {
+) -> Unit raise ArgParseError {
   for arg in args {
     let name = arg.name
     if matches_has_value_or_flag(matches, name) {
@@ -1151,52 +1092,36 @@ fn apply_env(
       None => continue
     }
     if arg_takes_value(arg) {
-      match assign_value(matches, arg, value, ValueSource::Env) {
-        Ok(_) => ()
-        Err(e) => return Err(e)
-      }
+      assign_value(matches, arg, value, ValueSource::Env)
       continue
     }
     match arg_action(arg) {
-      ArgAction::Count =>
-        match parse_count(value) {
-          Ok(count) => {
-            matches.counts[name] = count
-            matches.flags[name] = count > 0
-            matches.flag_sources[name] = ValueSource::Env
-          }
-          Err(e) => return Err(e)
-        }
-      ArgAction::SetFalse =>
-        match parse_bool(value) {
-          Ok(flag) => {
-            matches.flags[name] = !flag
-            matches.flag_sources[name] = ValueSource::Env
-          }
-          Err(e) => return Err(e)
-        }
-      ArgAction::SetTrue =>
-        match parse_bool(value) {
-          Ok(flag) => {
-            matches.flags[name] = flag
-            matches.flag_sources[name] = ValueSource::Env
-          }
-          Err(e) => return Err(e)
-        }
-      ArgAction::Set =>
-        match parse_bool(value) {
-          Ok(flag) => {
-            matches.flags[name] = flag
-            matches.flag_sources[name] = ValueSource::Env
-          }
-          Err(e) => return Err(e)
-        }
+      ArgAction::Count => {
+        let count = parse_count(value)
+        matches.counts[name] = count
+        matches.flags[name] = count > 0
+        matches.flag_sources[name] = ValueSource::Env
+      }
+      ArgAction::SetFalse => {
+        let flag = parse_bool(value)
+        matches.flags[name] = !flag
+        matches.flag_sources[name] = ValueSource::Env
+      }
+      ArgAction::SetTrue => {
+        let flag = parse_bool(value)
+        matches.flags[name] = flag
+        matches.flag_sources[name] = ValueSource::Env
+      }
+      ArgAction::Set => {
+        let flag = parse_bool(value)
+        matches.flags[name] = flag
+        matches.flag_sources[name] = ValueSource::Env
+      }
       ArgAction::Append => ()
       ArgAction::Help => ()
       ArgAction::Version => ()
     }
   }
-  Ok(())
 }
 
 ///|
@@ -1271,40 +1196,31 @@ fn apply_flag(matches : Matches, arg : Arg, source : ValueSource) -> Unit {
 }
 
 ///|
-fn parse_bool(value : String) -> Result[Bool, ArgParseError] {
+fn parse_bool(value : String) -> Bool raise ArgParseError {
   if value == "1" || value == "true" || value == "yes" || value == "on" {
-    Ok(true)
+    true
   } else if value == "0" || value == "false" || value == "no" || value == "off" {
-    Ok(false)
+    false
   } else {
-    Err(
-      ArgParseError::InvalidValue(
-        "invalid value '\{value}' for boolean flag; expected one of: 1, 0, true, false, yes, no, on, off",
-      ),
+    raise ArgParseError::InvalidValue(
+      "invalid value '\{value}' for boolean flag; expected one of: 1, 0, true, false, yes, no, on, off",
     )
   }
 }
 
 ///|
-fn parse_count(value : String) -> Result[Int, ArgParseError] {
-  let res : Result[Int, Error] = try? @strconv.parse_int(value)
-  match res {
-    Ok(v) =>
-      if v >= 0 {
-        Ok(v)
-      } else {
-        Err(
-          ArgParseError::InvalidValue(
-            "invalid value '\{value}' for count; expected a non-negative integer",
-          ),
-        )
-      }
-    Err(_) =>
-      Err(
-        ArgParseError::InvalidValue(
-          "invalid value '\{value}' for count; expected a non-negative integer",
-        ),
+fn parse_count(value : String) -> Int raise ArgParseError {
+  try @strconv.parse_int(value) catch {
+    _ =>
+      raise ArgParseError::InvalidValue(
+        "invalid value '\{value}' for count; expected a non-negative integer",
       )
+  } noraise {
+    _..<0 =>
+      raise ArgParseError::InvalidValue(
+        "invalid value '\{value}' for count; expected a non-negative integer",
+      )
+    v => v
   }
 }
 
