@@ -46,14 +46,27 @@ fn usage_tail(cmd : Command) -> String {
   if has_options(cmd) {
     tail = "\{tail} [options]"
   }
-  if has_subcommands_for_help(cmd) {
-    tail = "\{tail} <command>"
-  }
   let pos = positional_usage(cmd)
   if pos != "" {
     tail = "\{tail} \{pos}"
   }
+  let sub = subcommand_usage(cmd)
+  if sub != "" {
+    tail = "\{tail} \{sub}"
+  }
   tail
+}
+
+///|
+fn subcommand_usage(cmd : Command) -> String {
+  if !has_subcommands_for_help(cmd) {
+    return ""
+  }
+  if cmd.subcommand_required {
+    "<command>"
+  } else {
+    "[command]"
+  }
 }
 
 ///|
@@ -200,8 +213,8 @@ fn subcommand_entries(cmd : Command) -> Array[String] {
 
 ///|
 fn group_entries(cmd : Command) -> Array[String] {
-  let display = Array::new(capacity=command_groups(cmd).length())
-  for group in command_groups(cmd) {
+  let display = Array::new(capacity=cmd.groups.length())
+  for group in cmd.groups {
     let members = group_members(cmd, group)
     if members == "" {
       continue

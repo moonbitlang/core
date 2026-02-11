@@ -49,16 +49,26 @@ fn arg_action(arg : Arg) -> ArgAction {
 
 ///|
 fn arg_min_max_for_validate(arg : Arg) -> (Int, Int?) raise ArgBuildError {
-  match arg.num_args {
-    Some(range) => {
-      match range.upper {
-        Some(max_value) if max_value < range.lower =>
-          raise ArgBuildError::Unsupported("max values must be >= min values")
-        _ => ()
-      }
-      (range.lower, range.upper)
+  if arg.num_args is Some(range) {
+    if range.lower < 0 {
+      raise ArgBuildError::Unsupported("min values must be >= 0")
     }
-    None => (0, None)
+    if range.upper is Some(max_value) {
+      if max_value < 0 {
+        raise ArgBuildError::Unsupported("max values must be >= 0")
+      }
+      if max_value < range.lower {
+        raise ArgBuildError::Unsupported("max values must be >= min values")
+      }
+      if range.lower == 0 && max_value == 0 {
+        raise ArgBuildError::Unsupported(
+          "empty value range (0..0) is unsupported",
+        )
+      }
+    }
+    (range.lower, range.upper)
+  } else {
+    (0, None)
   }
 }
 
