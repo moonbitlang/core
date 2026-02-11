@@ -64,9 +64,9 @@ pub impl Show for FlagAction
 pub struct FlagArg {
   // private fields
 
-  fn new(String, short? : Char, long? : String, about? : String, action? : FlagAction, env? : String, requires? : Array[String], conflicts_with? : Array[String], group? : String, required? : Bool, global? : Bool, negatable? : Bool, hidden? : Bool) -> FlagArg
+  fn new(String, short? : Char, long? : String, about? : String, action? : FlagAction, env? : String, requires? : Array[String], conflicts_with? : Array[String], required? : Bool, global? : Bool, negatable? : Bool, hidden? : Bool) -> FlagArg
 }
-pub fn FlagArg::new(String, short? : Char, long? : String, about? : String, action? : FlagAction, env? : String, requires? : Array[String], conflicts_with? : Array[String], group? : String, required? : Bool, global? : Bool, negatable? : Bool, hidden? : Bool) -> Self
+pub fn FlagArg::new(String, short? : Char, long? : String, about? : String, action? : FlagAction, env? : String, requires? : Array[String], conflicts_with? : Array[String], required? : Bool, global? : Bool, negatable? : Bool, hidden? : Bool) -> Self
 pub impl ArgLike for FlagArg
 
 pub struct Matches {
@@ -88,26 +88,25 @@ pub impl Show for OptionAction
 pub struct OptionArg {
   // private fields
 
-  fn new(String, short? : Char, long? : String, about? : String, action? : OptionAction, env? : String, default_values? : Array[String], num_args? : ValueRange, allow_hyphen_values? : Bool, last? : Bool, requires? : Array[String], conflicts_with? : Array[String], group? : String, required? : Bool, global? : Bool, hidden? : Bool) -> OptionArg
+  fn new(String, short? : Char, long? : String, about? : String, action? : OptionAction, env? : String, default_values? : Array[String], allow_hyphen_values? : Bool, last? : Bool, requires? : Array[String], conflicts_with? : Array[String], required? : Bool, global? : Bool, hidden? : Bool) -> OptionArg
 }
-pub fn OptionArg::new(String, short? : Char, long? : String, about? : String, action? : OptionAction, env? : String, default_values? : Array[String], num_args? : ValueRange, allow_hyphen_values? : Bool, last? : Bool, requires? : Array[String], conflicts_with? : Array[String], group? : String, required? : Bool, global? : Bool, hidden? : Bool) -> Self
+pub fn OptionArg::new(String, short? : Char, long? : String, about? : String, action? : OptionAction, env? : String, default_values? : Array[String], allow_hyphen_values? : Bool, last? : Bool, requires? : Array[String], conflicts_with? : Array[String], required? : Bool, global? : Bool, hidden? : Bool) -> Self
 pub impl ArgLike for OptionArg
 
 pub struct PositionalArg {
   // private fields
 
-  fn new(String, index? : Int, about? : String, env? : String, default_values? : Array[String], num_args? : ValueRange, allow_hyphen_values? : Bool, last? : Bool, requires? : Array[String], conflicts_with? : Array[String], group? : String, required? : Bool, global? : Bool, hidden? : Bool) -> PositionalArg
+  fn new(String, index? : Int, about? : String, env? : String, default_values? : Array[String], num_args? : ValueRange, allow_hyphen_values? : Bool, last? : Bool, requires? : Array[String], conflicts_with? : Array[String], required? : Bool, global? : Bool, hidden? : Bool) -> PositionalArg
 }
-pub fn PositionalArg::new(String, index? : Int, about? : String, env? : String, default_values? : Array[String], num_args? : ValueRange, allow_hyphen_values? : Bool, last? : Bool, requires? : Array[String], conflicts_with? : Array[String], group? : String, required? : Bool, global? : Bool, hidden? : Bool) -> Self
+pub fn PositionalArg::new(String, index? : Int, about? : String, env? : String, default_values? : Array[String], num_args? : ValueRange, allow_hyphen_values? : Bool, last? : Bool, requires? : Array[String], conflicts_with? : Array[String], required? : Bool, global? : Bool, hidden? : Bool) -> Self
 pub impl ArgLike for PositionalArg
 
 pub struct ValueRange {
   // private fields
 
-  fn new(lower? : Int, upper? : Int, lower_inclusive? : Bool, upper_inclusive? : Bool) -> ValueRange
+  fn new(lower? : Int, upper? : Int) -> ValueRange
 }
-pub fn ValueRange::empty() -> Self
-pub fn ValueRange::new(lower? : Int, upper? : Int, lower_inclusive? : Bool, upper_inclusive? : Bool) -> Self
+pub fn ValueRange::new(lower? : Int, upper? : Int) -> Self
 pub fn ValueRange::single() -> Self
 pub impl Eq for ValueRange
 pub impl Show for ValueRange
