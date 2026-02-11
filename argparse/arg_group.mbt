@@ -22,6 +22,7 @@ pub struct ArgGroup {
   priv requires : Array[String]
   priv conflicts_with : Array[String]
 
+  /// Create an argument group.
   fn new(
     name : String,
     required? : Bool,
@@ -33,6 +34,12 @@ pub struct ArgGroup {
 }
 
 ///|
+/// Create an argument group.
+///
+/// Notes:
+/// - `required=true` means at least one member of the group must be present.
+/// - `multiple=false` means group members are mutually exclusive.
+/// - `requires` and `conflicts_with` can reference either group names or arg names.
 pub fn ArgGroup::new(
   name : String,
   required? : Bool = false,
