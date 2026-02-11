@@ -48,10 +48,7 @@ fn render_help_for_context(
   let help_cmd = if inherited_globals.length() == 0 {
     cmd
   } else {
-    Command::{
-      ..cmd,
-      args: concat_globals(inherited_globals, command_args(cmd)),
-    }
+    Command::{ ..cmd, args: inherited_globals + cmd.args }
   }
   render_help(help_cmd)
 }
@@ -81,7 +78,7 @@ fn parse_command(
   env : Map[String, String],
   inherited_globals : Array[Arg],
 ) -> Matches raise {
-  let args = command_args(cmd)
+  let args = cmd.args
   let groups = command_groups(cmd)
   let subcommands = cmd.subcommands
   validate_command(cmd, args, groups)
@@ -90,7 +87,7 @@ fn parse_command(
   }
   let matches = new_matches_parse_state()
   let globals_here = collect_globals(args)
-  let child_globals = concat_globals(inherited_globals, globals_here)
+  let child_globals = inherited_globals + globals_here
   let long_index = build_long_index(inherited_globals, args)
   let short_index = build_short_index(inherited_globals, args)
   let builtin_help_short = help_flag_enabled(cmd) &&
@@ -363,16 +360,14 @@ fn parse_command(
         Some(sub) => {
           let rest = argv[i + 1:].to_array()
           let sub_matches = parse_command(sub, rest, env, child_globals)
-          let child_local_non_globals = collect_non_global_names(
-            command_args(sub),
-          )
+          let child_local_non_globals = collect_non_global_names(sub.args)
           matches.parsed_subcommand = Some((sub.name, sub_matches))
           // Merge argv-provided globals from the subcommand parse into the parent
           // so globals work even when they appear after the subcommand name.
           merge_globals_from_child(
             matches, sub_matches, child_globals, child_local_non_globals,
           )
-          let env_args = concat_globals(inherited_globals, args)
+          let env_args = inherited_globals + args
           let parent_matches = finalize_matches(
             cmd, args, groups, matches, positionals, positional_values, env_args,
             env,
@@ -395,7 +390,7 @@ fn parse_command(
     positional_values.push(arg)
     i = i + 1
   }
-  let env_args = concat_globals(inherited_globals, args)
+  let env_args = inherited_globals + args
   finalize_matches(
     cmd, args, groups, matches, positionals, positional_values, env_args, env,
   )
@@ -465,7 +460,7 @@ fn validate_command(
     validate_arg(arg)
   }
   for sub in cmd.subcommands {
-    validate_command(sub, command_args(sub), command_groups(sub))
+    validate_command(sub, sub.args, command_groups(sub))
   }
 }
 
@@ -718,7 +713,7 @@ fn validate_version_actions(cmd : Command) -> Unit raise ArgBuildError {
   if cmd.version is Some(_) {
     return
   }
-  for arg in command_args(cmd) {
+  for arg in cmd.args {
     if arg_action(arg) == ArgAction::Version {
       raise ArgBuildError::Unsupported(
         "version action requires command version text",
@@ -1498,15 +1493,6 @@ fn collect_non_global_names(args : Array[Arg]) -> Map[String, Bool] {
 }
 
 ///|
-fn concat_globals(parent : Array[Arg], more : Array[Arg]) -> Array[Arg] {
-  let out = clone_array(parent)
-  for arg in more {
-    out.push(arg)
-  }
-  out
-}
-
-///|
 fn source_priority(source : ValueSource?) -> Int {
   match source {
     Some(ValueSource::Argv) => 3
@@ -1614,15 +1600,15 @@ fn merge_globals_from_child(
             (!has_parent || prefer_child_source(parent_source, child_source))
           if choose_child {
             if child_vals is Some(cv) && cv.length() > 0 {
-              parent.values[name] = clone_array(cv)
+              parent.values[name] = cv.copy()
             }
             if child_srcs is Some(cs) && cs.length() > 0 {
-              parent.value_sources[name] = clone_array(cs)
+              parent.value_sources[name] = cs.copy()
             }
           } else if parent_vals is Some(pv) && pv.length() > 0 {
-            parent.values[name] = clone_array(pv)
+            parent.values[name] = pv.copy()
             if parent_srcs is Some(ps) && ps.length() > 0 {
-              parent.value_sources[name] = clone_array(ps)
+              parent.value_sources[name] = ps.copy()
             }
           }
         }
@@ -1631,15 +1617,15 @@ fn merge_globals_from_child(
           (!has_parent || prefer_child_source(parent_source, child_source))
         if choose_child {
           if child_vals is Some(cv) && cv.length() > 0 {
-            parent.values[name] = clone_array(cv)
+            parent.values[name] = cv.copy()
           }
           if child_srcs is Some(cs) && cs.length() > 0 {
-            parent.value_sources[name] = clone_array(cs)
+            parent.value_sources[name] = cs.copy()
           }
         } else if parent_vals is Some(pv) && pv.length() > 0 {
-          parent.values[name] = clone_array(pv)
+          parent.values[name] = pv.copy()
           if parent_srcs is Some(ps) && ps.length() > 0 {
-            parent.value_sources[name] = clone_array(ps)
+            parent.value_sources[name] = ps.copy()
           }
         }
       }
@@ -1710,9 +1696,9 @@ fn propagate_globals_to_child(
     if arg_takes_value(arg) {
       match parent.values.get(name) {
         Some(values) => {
-          child.values[name] = clone_array(values)
+          child.values[name] = values.copy()
           match parent.value_sources.get(name) {
-            Some(srcs) => child.value_sources[name] = clone_array(srcs)
+            Some(srcs) => child.value_sources[name] = srcs.copy()
             None => ()
           }
         }
@@ -1738,10 +1724,6 @@ fn propagate_globals_to_child(
     }
   }
 }
-
-///|
-
-///|
 
 ///|
 fn positional_args(args : Array[Arg]) -> Array[Arg] {
@@ -1926,10 +1908,7 @@ fn resolve_help_target(
     }
     match find_subcommand(subs, name) {
       Some(sub) => {
-        current_globals = concat_globals(
-          current_globals,
-          collect_globals(command_args(current)),
-        )
+        current_globals = current_globals + collect_globals(current.args)
         current = sub
         subs = sub.subcommands
       }
@@ -1960,13 +1939,4 @@ fn split_long(arg : String) -> (String, String?) {
     let value = parts[1:].to_array().join("=")
     (name, Some(value))
   }
-}
-
-///|
-fn[T] clone_array(arr : Array[T]) -> Array[T] {
-  let out = Array::new(capacity=arr.length())
-  for value in arr {
-    out.push(value)
-  }
-  out
 }

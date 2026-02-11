@@ -58,7 +58,7 @@ fn usage_tail(cmd : Command) -> String {
 
 ///|
 fn has_options(cmd : Command) -> Bool {
-  for arg in command_args(cmd) {
+  for arg in cmd.args {
     if arg.hidden {
       continue
     }
@@ -71,8 +71,8 @@ fn has_options(cmd : Command) -> Bool {
 
 ///|
 fn positional_usage(cmd : Command) -> String {
-  let parts = Array::new(capacity=command_args(cmd).length())
-  for arg in positional_args(command_args(cmd)) {
+  let parts = Array::new(capacity=cmd.args.length())
+  for arg in positional_args(cmd.args) {
     if arg.hidden {
       continue
     }
@@ -94,7 +94,7 @@ fn positional_usage(cmd : Command) -> String {
 
 ///|
 fn option_entries(cmd : Command) -> Array[String] {
-  let args = command_args(cmd)
+  let args = cmd.args
   let display = Array::new(capacity=args.length() + 2)
   let builtin_help_short = help_flag_enabled(cmd) &&
     !has_short_option(args, 'h')
@@ -173,8 +173,8 @@ fn builtin_option_label(
 
 ///|
 fn positional_entries(cmd : Command) -> Array[String] {
-  let display = Array::new(capacity=command_args(cmd).length())
-  for arg in positional_args(command_args(cmd)) {
+  let display = Array::new(capacity=cmd.args.length())
+  for arg in positional_args(cmd.args) {
     if arg.hidden {
       continue
     }
@@ -357,7 +357,7 @@ fn group_label(group : ArgGroup) -> String {
 ///|
 fn group_members(cmd : Command, group : ArgGroup) -> String {
   let members = []
-  for arg in command_args(cmd) {
+  for arg in cmd.args {
     if arg.hidden {
       continue
     }

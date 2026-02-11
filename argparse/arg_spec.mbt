@@ -122,8 +122,8 @@ pub fn FlagArg::new(
       multiple: false,
       allow_hyphen_values: false,
       last: false,
-      requires: clone_array_spec(requires),
-      conflicts_with: clone_array_spec(conflicts_with),
+      requires: requires.copy(),
+      conflicts_with: conflicts_with.copy(),
       group,
       required,
       global,
@@ -194,13 +194,13 @@ pub fn OptionArg::new(
       flag_action: FlagAction::SetTrue,
       option_action: action,
       env,
-      default_values: clone_optional_array_string(default_values),
+      default_values: default_values.map(Array::copy),
       num_args,
       multiple: allows_multiple_values(num_args, action),
       allow_hyphen_values,
       last,
-      requires: clone_array_spec(requires),
-      conflicts_with: clone_array_spec(conflicts_with),
+      requires: requires.copy(),
+      conflicts_with: conflicts_with.copy(),
       group,
       required,
       global,
@@ -267,13 +267,13 @@ pub fn PositionalArg::new(
       flag_action: FlagAction::SetTrue,
       option_action: OptionAction::Set,
       env,
-      default_values: clone_optional_array_string(default_values),
+      default_values: default_values.map(Array::copy),
       num_args,
       multiple: range_allows_multiple(num_args),
       allow_hyphen_values,
       last,
-      requires: clone_array_spec(requires),
-      conflicts_with: clone_array_spec(conflicts_with),
+      requires: requires.copy(),
+      conflicts_with: conflicts_with.copy(),
       group,
       required,
       global,
@@ -328,22 +328,5 @@ fn range_allows_multiple(range : ValueRange?) -> Bool {
       }
     }
     None => false
-  }
-}
-
-///|
-fn[T] clone_array_spec(arr : Array[T]) -> Array[T] {
-  let out = Array::new(capacity=arr.length())
-  for value in arr {
-    out.push(value)
-  }
-  out
-}
-
-///|
-fn clone_optional_array_string(values : Array[String]?) -> Array[String]? {
-  match values {
-    Some(arr) => Some(clone_array_spec(arr))
-    None => None
   }
 }
