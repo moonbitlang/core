@@ -309,24 +309,15 @@ fn allows_multiple_values(
 ///|
 fn range_allows_multiple(range : ValueRange?) -> Bool {
   match range {
-    Some(r) => {
-      let min = match r.lower {
-        Some(value) => if r.lower_inclusive { value } else { value + 1 }
-        None => 0
-      }
-      let max = match r.upper {
-        Some(value) => Some(if r.upper_inclusive { value } else { value - 1 })
-        None => None
-      }
-      if min > 1 {
+    Some(r) =>
+      if r.lower > 1 {
         true
       } else {
-        match max {
+        match r.upper {
           Some(value) => value > 1
           None => true
         }
       }
-    }
     None => false
   }
 }

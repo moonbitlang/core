@@ -874,7 +874,7 @@ test "defaults and value range helpers through public API" {
   inspect(
     (empty_range, single_range),
     content=(
-      #|({lower: Some(0), upper: Some(0), lower_inclusive: true, upper_inclusive: true}, {lower: Some(1), upper: Some(1), lower_inclusive: true, upper_inclusive: true})
+      #|({lower: 0, upper: Some(0)}, {lower: 1, upper: Some(1)})
     ),
   )
 }
