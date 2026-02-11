@@ -59,10 +59,11 @@ pub fn Command::new(
   hidden? : Bool = false,
   groups? : Array[ArgGroup] = [],
 ) -> Command {
+  let args = args.map(a => a.to_arg())
   Command::{
     name,
-    args: args.map(x => x.to_arg()),
-    groups: groups.copy(),
+    args,
+    groups: build_command_groups(args, groups),
     subcommands: subcommands.copy(),
     about,
     version,
@@ -191,9 +192,12 @@ fn find_decl_subcommand(subs : Array[Command], name : String) -> Command? {
 }
 
 ///|
-fn command_groups(cmd : Command) -> Array[ArgGroup] {
-  let groups = cmd.groups.copy()
-  for arg in cmd.args {
+fn build_command_groups(
+  args : Array[Arg],
+  groups : Array[ArgGroup],
+) -> Array[ArgGroup] {
+  let groups = groups.copy()
+  for arg in args {
     match arg.group {
       Some(group_name) =>
         add_arg_to_group_membership(groups, group_name, arg_name(arg))
@@ -209,13 +213,7 @@ fn add_arg_to_group_membership(
   group_name : String,
   arg_name : String,
 ) -> Unit {
-  let mut idx : Int? = None
-  for i = 0; i < groups.length(); i = i + 1 {
-    if groups[i].name == group_name {
-      idx = Some(i)
-      break
-    }
-  }
+  let idx = groups.search_by(g => g.name == group_name)
   match idx {
     Some(i) => {
       if groups[i].args.contains(arg_name) {

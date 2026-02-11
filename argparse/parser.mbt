@@ -79,7 +79,7 @@ fn parse_command(
   inherited_globals : Array[Arg],
 ) -> Matches raise {
   let args = cmd.args
-  let groups = command_groups(cmd)
+  let groups = cmd.groups
   let subcommands = cmd.subcommands
   validate_command(cmd, args, groups)
   if cmd.arg_required_else_help && argv.length() == 0 {
@@ -428,7 +428,7 @@ fn validate_command(
     validate_arg(arg)
   }
   for sub in cmd.subcommands {
-    validate_command(sub, sub.args, command_groups(sub))
+    validate_command(sub, sub.args, sub.groups)
   }
 }
 

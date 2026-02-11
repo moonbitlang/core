@@ -200,8 +200,8 @@ fn subcommand_entries(cmd : Command) -> Array[String] {
 
 ///|
 fn group_entries(cmd : Command) -> Array[String] {
-  let display = Array::new(capacity=command_groups(cmd).length())
-  for group in command_groups(cmd) {
+  let display = Array::new(capacity=cmd.groups.length())
+  for group in cmd.groups {
     let members = group_members(cmd, group)
     if members == "" {
       continue
