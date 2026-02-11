@@ -363,10 +363,15 @@ fn parse_command(
         Some(sub) => {
           let rest = argv[i + 1:].to_array()
           let sub_matches = parse_command(sub, rest, env, child_globals)
+          let child_local_non_globals = collect_non_global_names(
+            command_args(sub),
+          )
           matches.parsed_subcommand = Some((sub.name, sub_matches))
           // Merge argv-provided globals from the subcommand parse into the parent
           // so globals work even when they appear after the subcommand name.
-          merge_globals_from_child(matches, sub_matches, child_globals)
+          merge_globals_from_child(
+            matches, sub_matches, child_globals, child_local_non_globals,
+          )
           let env_args = concat_globals(inherited_globals, args)
           let parent_matches = finalize_matches(
             cmd, args, groups, matches, positionals, positional_values, env_args,
@@ -375,7 +380,9 @@ fn parse_command(
           match parent_matches.parsed_subcommand {
             Some((sub_name, sub_m)) => {
               // After parent parsing, copy the final globals into the subcommand.
-              propagate_globals_to_child(parent_matches, sub_m, child_globals)
+              propagate_globals_to_child(
+                parent_matches, sub_m, child_globals, child_local_non_globals,
+              )
               parent_matches.parsed_subcommand = Some((sub_name, sub_m))
             }
             None => ()
@@ -1480,6 +1487,17 @@ fn collect_globals(args : Array[Arg]) -> Array[Arg] {
 }
 
 ///|
+fn collect_non_global_names(args : Array[Arg]) -> Map[String, Bool] {
+  let names : Map[String, Bool] = {}
+  for arg in args {
+    if !arg.global {
+      names[arg.name] = true
+    }
+  }
+  names
+}
+
+///|
 fn concat_globals(parent : Array[Arg], more : Array[Arg]) -> Array[Arg] {
   let out = clone_array(parent)
   for arg in more {
@@ -1542,9 +1560,13 @@ fn merge_globals_from_child(
   parent : Matches,
   child : Matches,
   globals : Array[Arg],
+  child_local_non_globals : Map[String, Bool],
 ) -> Unit {
   for arg in globals {
     let name = arg.name
+    if child_local_non_globals.get(name) is Some(_) {
+      continue
+    }
     if arg_takes_value(arg) {
       let parent_vals = parent.values.get(name)
       let child_vals = child.values.get(name)
@@ -1678,9 +1700,13 @@ fn propagate_globals_to_child(
   parent : Matches,
   child : Matches,
   globals : Array[Arg],
+  child_local_non_globals : Map[String, Bool],
 ) -> Unit {
   for arg in globals {
     let name = arg.name
+    if child_local_non_globals.get(name) is Some(_) {
+      continue
+    }
     if arg_takes_value(arg) {
       match parent.values.get(name) {
         Some(values) => {
@@ -1756,11 +1782,44 @@ fn last_positional_index(positionals : Array[Arg]) -> Int? {
 
 ///|
 fn next_positional(positionals : Array[Arg], collected : Array[String]) -> Arg? {
-  if collected.length() < positionals.length() {
-    Some(positionals[collected.length()])
-  } else {
-    None
+  let target = collected.length()
+  let total = target + 1
+  let mut cursor = 0
+  for idx in 0..<positionals.length() {
+    if cursor >= total {
+      break
+    }
+    let arg = positionals[idx]
+    let remaining = total - cursor
+    let take = if arg.multiple {
+      let (min, max) = arg_min_max(arg)
+      let reserve = remaining_positional_min(positionals, idx + 1)
+      let mut take = remaining - reserve
+      if take < 0 {
+        take = 0
+      }
+      match max {
+        Some(max_count) if take > max_count => take = max_count
+        _ => ()
+      }
+      if take < min {
+        take = min
+      }
+      if take > remaining {
+        take = remaining
+      }
+      take
+    } else if remaining > 0 {
+      1
+    } else {
+      0
+    }
+    if take > 0 && target < cursor + take {
+      return Some(arg)
+    }
+    cursor = cursor + take
   }
+  None
 }
 
 ///|

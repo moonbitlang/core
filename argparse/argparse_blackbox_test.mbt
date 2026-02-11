@@ -684,6 +684,22 @@ test "positionals force mode and dash handling" {
 }
 
 ///|
+test "variadic positional keeps accepting hyphen values after first token" {
+  let cmd = @argparse.Command("demo", args=[
+    @argparse.PositionalArg(
+      "tail",
+      index=0,
+      num_args=@argparse.ValueRange(lower=0),
+      allow_hyphen_values=true,
+    ),
+  ])
+  let parsed = cmd.parse(argv=["a", "-b", "--mystery"], env=empty_env()) catch {
+    _ => panic()
+  }
+  assert_true(parsed.values is { "tail": ["a", "-b", "--mystery"], .. })
+}
+
+///|
 test "bounded positional does not greedily consume later required values" {
   let cmd = @argparse.Command("demo", args=[
     @argparse.PositionalArg(
@@ -2117,6 +2133,35 @@ test "global value from child default is merged back to parent" {
     parsed.subcommand is Some(("run", sub)) &&
     sub.values is { "mode": ["safe"], .. } &&
     sub.sources is { "mode": @argparse.ValueSource::Default, .. },
+  )
+}
+
+///|
+test "child local arg with global name does not update parent global" {
+  let cmd = @argparse.Command(
+    "demo",
+    args=[
+      @argparse.OptionArg(
+        "mode",
+        long="mode",
+        default_values=["safe"],
+        global=true,
+      ),
+    ],
+    subcommands=[
+      @argparse.Command("run", args=[@argparse.OptionArg("mode", long="mode")]),
+    ],
+  )
+
+  let parsed = cmd.parse(argv=["run", "--mode", "fast"], env=empty_env()) catch {
+    _ => panic()
+  }
+  assert_true(parsed.values is { "mode": ["safe"], .. })
+  assert_true(parsed.sources is { "mode": @argparse.ValueSource::Default, .. })
+  assert_true(
+    parsed.subcommand is Some(("run", sub)) &&
+    sub.values is { "mode": ["fast"], .. } &&
+    sub.sources is { "mode": @argparse.ValueSource::Argv, .. },
   )
 }
 
