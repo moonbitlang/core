@@ -2,4 +2,5 @@ import {
   "moonbitlang/core/builtin",
   "moonbitlang/core/env",
   "moonbitlang/core/strconv",
+  "moonbitlang/core/set",
 }

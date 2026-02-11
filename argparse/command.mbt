@@ -27,7 +27,9 @@ pub struct Command {
   priv arg_required_else_help : Bool
   priv subcommand_required : Bool
   priv hidden : Bool
+  priv mut build_error : ArgBuildError?
 
+  /// Create a declarative command specification.
   fn new(
     name : String,
     args? : Array[&ArgLike],
@@ -45,6 +47,12 @@ pub struct Command {
 }
 
 ///|
+/// Create a declarative command specification.
+///
+/// Notes:
+/// - `args` accepts `FlagArg` / `OptionArg` / `PositionalArg` via `ArgLike`.
+/// - `groups` explicitly declares all group memberships and policies.
+/// - Built-in `--help`/`--version` behavior can be disabled with the flags below.
 pub fn Command::new(
   name : String,
   args? : Array[&ArgLike] = [],
@@ -59,10 +67,12 @@ pub fn Command::new(
   hidden? : Bool = false,
   groups? : Array[ArgGroup] = [],
 ) -> Command {
-  Command::{
+  let (parsed_args, arg_error) = collect_args(args)
+  let groups = groups.copy()
+  let cmd = Command::{
     name,
-    args: args.map(x => x.to_arg()),
-    groups: groups.copy(),
+    args: parsed_args,
+    groups,
     subcommands: subcommands.copy(),
     about,
     version,
@@ -72,7 +82,14 @@ pub fn Command::new(
     arg_required_else_help,
     subcommand_required,
     hidden,
+    build_error: arg_error,
   }
+  if cmd.build_error is None {
+    validate_command(cmd, parsed_args, groups, @set.new()) catch {
+      err => cmd.build_error = Some(err)
+    }
+  }
+  cmd
 }
 
 ///|
@@ -83,12 +100,20 @@ pub fn Command::render_help(self : Command) -> String {
 
 ///|
 /// Parse argv/environment according to this command spec.
+///
+/// Error and event model:
+/// - Raises `DisplayHelp::Message` / `DisplayVersion::Message` for display
+///   actions instead of exiting the process.
+/// - Raises `ArgBuildError` when the command definition is invalid.
+/// - Raises `ArgParseError` when user input does not satisfy the definition.
+///
+/// Value precedence is `argv > env > default_values`.
 pub fn Command::parse(
   self : Command,
   argv? : Array[String] = default_argv(),
   env? : Map[String, String] = {},
 ) -> Matches raise {
-  let raw = parse_command(self, argv, env, [])
+  let raw = parse_command(self, argv, env, [], {}, {})
   build_matches(self, raw, [])
 }
 
@@ -143,26 +168,25 @@ fn build_matches(
 
   let subcommand = match raw.parsed_subcommand {
     Some((name, sub_raw)) =>
-      match find_decl_subcommand(cmd.subcommands, name) {
-        Some(sub_spec) =>
-          Some((name, build_matches(sub_spec, sub_raw, child_globals)))
-        None =>
-          Some(
-            (
-              name,
-              Matches::{
-                flags: {},
-                values: {},
-                flag_counts: {},
-                sources: {},
-                subcommand: None,
-                counts: {},
-                flag_sources: {},
-                value_sources: {},
-                parsed_subcommand: None,
-              },
-            ),
-          )
+      if find_decl_subcommand(cmd.subcommands, name) is Some(sub_spec) {
+        Some((name, build_matches(sub_spec, sub_raw, child_globals)))
+      } else {
+        Some(
+          (
+            name,
+            Matches::{
+              flags: {},
+              values: {},
+              flag_counts: {},
+              sources: {},
+              subcommand: None,
+              counts: {},
+              flag_sources: {},
+              value_sources: {},
+              parsed_subcommand: None,
+            },
+          ),
+        )
       }
     None => None
   }
@@ -191,47 +215,19 @@ fn find_decl_subcommand(subs : Array[Command], name : String) -> Command? {
 }
 
 ///|
-fn command_groups(cmd : Command) -> Array[ArgGroup] {
-  let groups = cmd.groups.copy()
-  for arg in cmd.args {
-    match arg.group {
-      Some(group_name) =>
-        add_arg_to_group_membership(groups, group_name, arg_name(arg))
-      None => ()
+fn collect_args(specs : Array[&ArgLike]) -> (Array[Arg], ArgBuildError?) {
+  let args = specs.map(spec => spec.to_arg())
+  let ctx = ValidationCtx::new()
+  let mut first_error : ArgBuildError? = None
+  for spec in specs {
+    spec.validate(ctx) catch {
+      err => if first_error is None { first_error = Some(err) }
     }
   }
-  groups
-}
-
-///|
-fn add_arg_to_group_membership(
-  groups : Array[ArgGroup],
-  group_name : String,
-  arg_name : String,
-) -> Unit {
-  let mut idx : Int? = None
-  for i = 0; i < groups.length(); i = i + 1 {
-    if groups[i].name == group_name {
-      idx = Some(i)
-      break
+  if first_error is None {
+    ctx.finalize() catch {
+      err => first_error = Some(err)
     }
   }
-  match idx {
-    Some(i) => {
-      if groups[i].args.contains(arg_name) {
-        return
-      }
-      let args = [..groups[i].args, arg_name]
-      groups[i] = ArgGroup::{ ..groups[i], args, }
-    }
-    None =>
-      groups.push(ArgGroup::{
-        name: group_name,
-        required: false,
-        multiple: true,
-        args: [arg_name],
-        requires: [],
-        conflicts_with: [],
-      })
-  }
+  (args, first_error)
 }

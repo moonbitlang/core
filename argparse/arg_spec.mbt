@@ -49,7 +49,6 @@ priv struct Arg {
   last : Bool
   requires : Array[String]
   conflicts_with : Array[String]
-  group : String?
   required : Bool
   global : Bool
   negatable : Bool
@@ -60,6 +59,7 @@ priv struct Arg {
 /// Trait for declarative arg constructors.
 trait ArgLike {
   to_arg(Self) -> Arg
+  validate(Self, ValidationCtx) -> Unit raise ArgBuildError
 }
 
 ///|
@@ -67,6 +67,7 @@ trait ArgLike {
 pub struct FlagArg {
   priv arg : Arg
 
+  /// Create a flag argument.
   fn new(
     name : String,
     short? : Char,
@@ -76,7 +77,6 @@ pub struct FlagArg {
     env? : String,
     requires? : Array[String],
     conflicts_with? : Array[String],
-    group? : String,
     required? : Bool,
     global? : Bool,
     negatable? : Bool,
@@ -90,6 +90,18 @@ pub impl ArgLike for FlagArg with to_arg(self : FlagArg) {
 }
 
 ///|
+pub impl ArgLike for FlagArg with validate(self, ctx) {
+  validate_flag_arg(self.arg, ctx)
+}
+
+///|
+/// Create a flag argument.
+///
+/// At least one of `short` or `long` must be provided.
+///
+/// `global=true` makes the flag available in subcommands.
+///
+/// If `negatable=true`, `--no-<long>` is accepted for long flags.
 pub fn FlagArg::new(
   name : String,
   short? : Char,
@@ -99,7 +111,6 @@ pub fn FlagArg::new(
   env? : String,
   requires? : Array[String] = [],
   conflicts_with? : Array[String] = [],
-  group? : String,
   required? : Bool = false,
   global? : Bool = false,
   negatable? : Bool = false,
@@ -124,7 +135,6 @@ pub fn FlagArg::new(
       last: false,
       requires: requires.copy(),
       conflicts_with: conflicts_with.copy(),
-      group,
       required,
       global,
       negatable,
@@ -138,6 +148,7 @@ pub fn FlagArg::new(
 pub struct OptionArg {
   priv arg : Arg
 
+  /// Create an option argument.
   fn new(
     name : String,
     short? : Char,
@@ -146,12 +157,10 @@ pub struct OptionArg {
     action? : OptionAction,
     env? : String,
     default_values? : Array[String],
-    num_args? : ValueRange,
     allow_hyphen_values? : Bool,
     last? : Bool,
     requires? : Array[String],
     conflicts_with? : Array[String],
-    group? : String,
     required? : Bool,
     global? : Bool,
     hidden? : Bool,
@@ -164,6 +173,18 @@ pub impl ArgLike for OptionArg with to_arg(self : OptionArg) {
 }
 
 ///|
+pub impl ArgLike for OptionArg with validate(self, ctx) {
+  validate_option_arg(self.arg, ctx)
+}
+
+///|
+/// Create an option argument that consumes one value per occurrence.
+///
+/// At least one of `short` or `long` must be provided.
+///
+/// Use `action=Append` for repeated occurrences.
+///
+/// `global=true` makes the option available in subcommands.
 pub fn OptionArg::new(
   name : String,
   short? : Char,
@@ -172,12 +193,10 @@ pub fn OptionArg::new(
   action? : OptionAction = OptionAction::Set,
   env? : String,
   default_values? : Array[String],
-  num_args? : ValueRange,
   allow_hyphen_values? : Bool = false,
   last? : Bool = false,
   requires? : Array[String] = [],
   conflicts_with? : Array[String] = [],
-  group? : String,
   required? : Bool = false,
   global? : Bool = false,
   hidden? : Bool = false,
@@ -195,13 +214,12 @@ pub fn OptionArg::new(
       option_action: action,
       env,
       default_values: default_values.map(Array::copy),
-      num_args,
-      multiple: allows_multiple_values(num_args, action),
+      num_args: None,
+      multiple: allows_multiple_values(action),
       allow_hyphen_values,
       last,
       requires: requires.copy(),
       conflicts_with: conflicts_with.copy(),
-      group,
       required,
       global,
       negatable: false,
@@ -215,6 +233,7 @@ pub fn OptionArg::new(
 pub struct PositionalArg {
   priv arg : Arg
 
+  /// Create a positional argument.
   fn new(
     name : String,
     index? : Int,
@@ -226,7 +245,6 @@ pub struct PositionalArg {
     last? : Bool,
     requires? : Array[String],
     conflicts_with? : Array[String],
-    group? : String,
     required? : Bool,
     global? : Bool,
     hidden? : Bool,
@@ -239,6 +257,23 @@ pub impl ArgLike for PositionalArg with to_arg(self : PositionalArg) {
 }
 
 ///|
+pub impl ArgLike for PositionalArg with validate(self, ctx) {
+  validate_positional_arg(self.arg, ctx)
+}
+
+///|
+/// Create a positional argument.
+///
+/// Positional ordering:
+/// - `index` is zero-based.
+/// - Indexed positionals are sorted by `index`.
+/// - Unindexed positionals are appended after indexed ones in declaration order.
+///
+/// `num_args` controls the accepted value count.
+///
+/// For indexed positionals that are not the last positional, `num_args` must be
+/// omitted or exactly `ValueRange::single()` (`1..1`); other ranges are rejected
+/// at build time.
 pub fn PositionalArg::new(
   name : String,
   index? : Int,
@@ -250,7 +285,6 @@ pub fn PositionalArg::new(
   last? : Bool = false,
   requires? : Array[String] = [],
   conflicts_with? : Array[String] = [],
-  group? : String,
   required? : Bool = false,
   global? : Bool = false,
   hidden? : Bool = false,
@@ -274,7 +308,6 @@ pub fn PositionalArg::new(
       last,
       requires: requires.copy(),
       conflicts_with: conflicts_with.copy(),
-      group,
       required,
       global,
       negatable: false,
@@ -299,24 +332,17 @@ fn is_count_flag_spec(arg : Arg) -> Bool {
 }
 
 ///|
-fn allows_multiple_values(
-  num_args : ValueRange?,
-  action : OptionAction,
-) -> Bool {
-  action == OptionAction::Append || range_allows_multiple(num_args)
+fn allows_multiple_values(action : OptionAction) -> Bool {
+  action == OptionAction::Append
 }
 
 ///|
 fn range_allows_multiple(range : ValueRange?) -> Bool {
   match range {
     Some(r) =>
-      if r.lower > 1 {
-        true
-      } else {
-        match r.upper {
-          Some(value) => value > 1
-          None => true
-        }
+      match r.upper {
+        Some(upper) => r.lower != upper || r.lower > 1
+        None => true
       }
     None => false
   }

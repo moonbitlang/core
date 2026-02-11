@@ -98,121 +98,30 @@ test "relationships and num args" {
     _ => panic()
   }
 
-  let num_args_cmd = @argparse.Command("demo", args=[
-    @argparse.OptionArg(
-      "tag",
-      long="tag",
-      num_args=@argparse.ValueRange(lower=2, upper=2),
-    ),
-  ])
-
-  try num_args_cmd.parse(argv=["--tag", "a"], env=empty_env()) catch {
-    @argparse.ArgParseError::TooFewValues(name, got, min) => {
-      inspect(name, content="tag")
-      inspect(got, content="1")
-      inspect(min, content="2")
-    }
-    _ => panic()
-  } noraise {
-    _ => panic()
-  }
-
-  try
-    num_args_cmd.parse(
-      argv=["--tag", "a", "--tag", "b", "--tag", "c"],
-      env=empty_env(),
-    )
-  catch {
-    @argparse.ArgParseError::TooFewValues(name, got, min) => {
-      inspect(name, content="tag")
-      inspect(got, content="1")
-      inspect(min, content="2")
-    }
-    _ => panic()
-  } noraise {
-    _ => panic()
-  }
-
-  let append_num_args_cmd = @argparse.Command("demo", args=[
+  let appended = @argparse.Command("demo", args=[
     @argparse.OptionArg(
       "tag",
       long="tag",
       action=@argparse.OptionAction::Append,
-      num_args=@argparse.ValueRange(lower=1, upper=2),
     ),
-  ])
-  let appended = append_num_args_cmd.parse(
-    argv=["--tag", "a", "--tag", "b", "--tag", "c"],
-    env=empty_env(),
-  ) catch {
+  ]).parse(argv=["--tag", "a", "--tag", "b", "--tag", "c"], env=empty_env()) catch {
     _ => panic()
   }
   assert_true(appended.values is { "tag": ["a", "b", "c"], .. })
-
-  let append_fixed_cmd = @argparse.Command("demo", args=[
-    @argparse.OptionArg(
-      "tag",
-      long="tag",
-      action=@argparse.OptionAction::Append,
-      num_args=@argparse.ValueRange(lower=2, upper=2),
-    ),
-  ])
-  try
-    append_fixed_cmd.parse(argv=["--tag", "a", "--tag", "b"], env=empty_env())
-  catch {
-    @argparse.ArgParseError::TooFewValues(name, got, min) => {
-      inspect(name, content="tag")
-      inspect(got, content="1")
-      inspect(min, content="2")
-    }
-    _ => panic()
-  } noraise {
-    _ => panic()
-  }
-
-  try
-    @argparse.Command("demo", args=[
-      @argparse.OptionArg(
-        "opt",
-        long="opt",
-        num_args=@argparse.ValueRange(lower=0, upper=1),
-      ),
-      @argparse.FlagArg("verbose", long="verbose"),
-    ]).parse(argv=["--opt", "--verbose"], env=empty_env())
-  catch {
-    @argparse.ArgBuildError::Unsupported(msg) =>
-      inspect(msg, content="option args require at least one value")
-    _ => panic()
-  } noraise {
-    _ => panic()
-  }
-
-  try
-    @argparse.Command("demo", args=[
-      @argparse.OptionArg(
-        "opt",
-        long="opt",
-        num_args=@argparse.ValueRange(lower=0, upper=0),
-        required=true,
-      ),
-    ]).parse(argv=["--opt"], env=empty_env())
-  catch {
-    @argparse.ArgBuildError::Unsupported(msg) =>
-      inspect(msg, content="option args require at least one value")
-    _ => panic()
-  } noraise {
-    _ => panic()
-  }
 }
 
 ///|
 test "arg groups required and multiple" {
   let cmd = @argparse.Command(
     "demo",
-    groups=[@argparse.ArgGroup("mode", required=true, multiple=false)],
+    groups=[
+      @argparse.ArgGroup("mode", required=true, multiple=false, args=[
+        "fast", "slow",
+      ]),
+    ],
     args=[
-      @argparse.FlagArg("fast", long="fast", group="mode"),
-      @argparse.FlagArg("slow", long="slow", group="mode"),
+      @argparse.FlagArg("fast", long="fast"),
+      @argparse.FlagArg("slow", long="slow"),
     ],
   )
 
@@ -318,7 +227,7 @@ test "full help snapshot" {
   inspect(
     cmd.render_help(),
     content=(
-      #|Usage: demo [options] <command> [name]
+      #|Usage: demo [options] [name] [command]
       #|
       #|Demo command
       #|
@@ -505,6 +414,7 @@ test "command policies" {
   let sub_cmd = @argparse.Command("demo", subcommand_required=true, subcommands=[
     @argparse.Command("echo"),
   ])
+  assert_true(sub_cmd.render_help().has_prefix("Usage: demo <command>"))
   try sub_cmd.parse(argv=[], env=empty_env()) catch {
     @argparse.ArgParseError::MissingRequired(name) =>
       inspect(name, content="subcommand")

@@ -18,38 +18,22 @@ pub struct ValueRange {
   priv lower : Int
   priv upper : Int?
 
-  fn new(
-    lower? : Int,
-    upper? : Int,
-    lower_inclusive? : Bool,
-    upper_inclusive? : Bool,
-  ) -> ValueRange
+  /// Create a value-count range.
+  fn new(lower? : Int, upper? : Int) -> ValueRange
 } derive(Eq, Show)
 
 ///|
-pub fn ValueRange::empty() -> ValueRange {
-  ValueRange(lower=0, upper=0)
-}
-
-///|
+/// Exact single-value range (`1..1`).
 pub fn ValueRange::single() -> ValueRange {
   ValueRange(lower=1, upper=1)
 }
 
 ///|
-pub fn ValueRange::new(
-  lower? : Int,
-  upper? : Int,
-  lower_inclusive? : Bool = true,
-  upper_inclusive? : Bool = true,
-) -> ValueRange {
-  let lower = match lower {
-    None => 0
-    Some(lower) => if lower_inclusive { lower } else { lower + 1 }
-  }
-  let upper = match upper {
-    None => None
-    Some(upper) => Some(if upper_inclusive { upper } else { upper - 1 })
-  }
+/// Create a value-count range.
+///
+/// Examples:
+/// - `ValueRange(lower=0)` means `0..`.
+/// - `ValueRange(lower=1, upper=3)` means `1..=3`.
+pub fn ValueRange::new(lower? : Int = 0, upper? : Int) -> ValueRange {
   ValueRange::{ lower, upper }
 }
