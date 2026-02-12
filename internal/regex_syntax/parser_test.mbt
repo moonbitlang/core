@@ -51,10 +51,10 @@ fn profile_bytes() -> @re.Profile {
 ///|
 fn parse(
   profile~ : @re.Profile,
-  mode~ : @regex_parser.Mode,
+  mode~ : @regex_syntax.Mode,
   pattern : StringView,
-) -> @re.Pattern raise @regex_parser.ParserError {
-  @regex_parser.parse(profile~, mode~, pattern)
+) -> @re.Pattern raise @regex_syntax.ParserError {
+  @regex_syntax.parse(profile~, mode~, pattern)
 }
 
 // Basic parsing tests

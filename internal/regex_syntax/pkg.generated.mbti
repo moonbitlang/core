@@ -1,5 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "moonbitlang/core/internal/regex_parser"
+package "moonbitlang/core/internal/regex_syntax"
 
 import {
   "moonbitlang/core/debug",
