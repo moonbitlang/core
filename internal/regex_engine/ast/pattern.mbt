@@ -139,21 +139,9 @@ pub fn preference(pref : @shared_types.Preference, expr : Pattern) -> Pattern {
 }
 
 ///|
-/// Prefer longest match when ambiguous.
-pub fn longest(expr : Pattern) -> Pattern {
-  preference(Longest, expr)
-}
-
-///|
 /// Prefer shortest match when ambiguous.
 pub fn shortest(expr : Pattern) -> Pattern {
   preference(Shortest, expr)
-}
-
-///|
-/// Prefer first alternative when ambiguous.
-pub fn first(expr : Pattern) -> Pattern {
-  preference(First, expr)
 }
 
 ///|

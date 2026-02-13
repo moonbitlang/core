@@ -13,20 +13,24 @@
 // limitations under the License.
 
 ///|
+using @shared_types {type Preference}
+
+///|
 pub using @shared_types {
   type Profile,
   type Rechar,
   type RecharSet,
-  type Preference,
   type Category,
   type QuantifierMode,
 }
 
 ///|
+using @ast {type Assertion}
+
+///|
 pub using @ast {
-  type Pattern,
-  type Assertion,
   type Quantifier,
+  type Pattern,
   char,
   epsilon,
   seq,
@@ -35,8 +39,6 @@ pub using @ast {
   quantifier,
   preference,
   shortest,
-  longest,
-  first,
   capture,
   assertion,
   start_of_input,

@@ -44,7 +44,6 @@ pub struct Profile {
 
   fn new(valid~ : @rechar_set.RecharSet, word~ : @rechar_set.RecharSet, category~ : (Int) -> Category) -> Profile
 }
-pub fn Profile::new(valid~ : @rechar_set.RecharSet, word~ : @rechar_set.RecharSet, category~ : (Int) -> Category) -> Self
 
 pub(all) enum QuantifierMode {
   Greedy

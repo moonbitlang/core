@@ -49,12 +49,6 @@ pub fn RecharSet::is_empty(self : RecharSet) -> Bool {
 }
 
 ///|
-/// Return whether `self` is a subset of `other`.
-pub fn RecharSet::is_subset(self : RecharSet, other : RecharSet) -> Bool {
-  difference(self.0, other.0) is Empty
-}
-
-///|
 /// Get the smallest interval in the set.
 pub fn RecharSet::first_interval(self : RecharSet) -> (Rechar, Rechar)? {
   leftmost(self.0)
@@ -270,22 +264,19 @@ fn difference(t1 : Tree, t2 : Tree) -> Tree {
 
 ///|
 /// Return the union of two character sets.
-pub fn RecharSet::union(self : RecharSet, other : RecharSet) -> RecharSet {
+fn RecharSet::union(self : RecharSet, other : RecharSet) -> RecharSet {
   RecharSet(union(self.0, other.0))
 }
 
 ///|
 /// Return the intersection of two character sets.
-pub fn RecharSet::intersection(
-  self : RecharSet,
-  other : RecharSet,
-) -> RecharSet {
+fn RecharSet::intersection(self : RecharSet, other : RecharSet) -> RecharSet {
   RecharSet(intersection(self.0, other.0))
 }
 
 ///|
 /// Return the set difference `self \ other`.
-pub fn RecharSet::difference(self : RecharSet, other : RecharSet) -> RecharSet {
+fn RecharSet::difference(self : RecharSet, other : RecharSet) -> RecharSet {
   RecharSet(difference(self.0, other.0))
 }
 
