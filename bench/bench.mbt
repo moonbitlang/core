@@ -82,7 +82,7 @@ pub fn single_bench(
 /// Keep a value to prevent the optimizer from removing 
 /// the calculation that produces it.
 pub fn[Any] Bench::keep(self : Bench, value : Any) -> Unit {
-  let trait_object : &OpaqueValue = value
+  let trait_object : &OpaqueValue = @ref.new(value)
   self._storage = trait_object
 }
 

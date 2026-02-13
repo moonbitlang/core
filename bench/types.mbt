@@ -16,6 +16,9 @@
 priv trait OpaqueValue {}
 
 ///|
+impl[X] OpaqueValue for Ref[X]
+
+///|
 #alias(T)
 struct Bench {
   buffer : StringBuilder
@@ -42,5 +45,5 @@ struct Bench {
 pub fn Bench::new() -> Bench {
   let buffer = StringBuilder::new()
   let summaries = Array::new()
-  { buffer, summaries, _storage: () }
+  { buffer, summaries, _storage: @ref.new(()) }
 }
