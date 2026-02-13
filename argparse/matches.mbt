@@ -30,7 +30,7 @@ pub struct Matches {
   subcommand : (String, Matches)?
   priv counts : Map[String, Int]
   priv flag_sources : Map[String, ValueSource]
-  priv value_sources : Map[String, Array[ValueSource]]
+  priv value_sources : Map[String, ValueSource]
   priv mut parsed_subcommand : (String, Matches)?
 }
 
@@ -46,33 +46,6 @@ fn new_matches_parse_state() -> Matches {
     flag_sources: {},
     value_sources: {},
     parsed_subcommand: None,
-  }
-}
-
-///|
-fn highest_source(sources : Array[ValueSource]) -> ValueSource? {
-  if sources.length() == 0 {
-    return None
-  }
-  let mut saw_env = false
-  let mut saw_default = false
-  for s in sources {
-    if s == ValueSource::Argv {
-      return Some(ValueSource::Argv)
-    }
-    if s == ValueSource::Env {
-      saw_env = true
-    }
-    if s == ValueSource::Default {
-      saw_default = true
-    }
-  }
-  if saw_env {
-    Some(ValueSource::Env)
-  } else if saw_default {
-    Some(ValueSource::Default)
-  } else {
-    None
   }
 }
 
