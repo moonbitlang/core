@@ -3,6 +3,7 @@ import {
   "moonbitlang/core/double",
   "moonbitlang/core/array",
   "moonbitlang/core/json",
+  "moonbitlang/core/ref",
 }
 
 options(
