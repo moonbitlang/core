@@ -26,10 +26,6 @@ pub let end_of_word : Pattern
 
 pub let epsilon : Pattern
 
-pub fn first(Pattern) -> Pattern
-
-pub fn longest(Pattern) -> Pattern
-
 pub let not_word_boundary : Pattern
 
 pub fn preference(@shared_types.Preference, Pattern) -> Pattern
