@@ -37,7 +37,7 @@ pub struct Slot(Int) derive(Eq, Hash)
 /// Returns the special unassigned slot value (-1).
 ///
 /// Note: This is the only slot value that is considered "unassigned".
-pub fn Slot::unassigned() -> Slot {
+fn Slot::unassigned() -> Slot {
   Slot(-1)
 }
 
