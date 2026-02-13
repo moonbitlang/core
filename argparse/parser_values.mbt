@@ -98,12 +98,10 @@ fn add_value(
     let arr = matches.values.get(name).unwrap_or([])
     arr.push(value)
     matches.values[name] = arr
-    let srcs = matches.value_sources.get(name).unwrap_or([])
-    srcs.push(source)
-    matches.value_sources[name] = srcs
+    matches.value_sources[name] = source
   } else {
     matches.values[name] = [value]
-    matches.value_sources[name] = [source]
+    matches.value_sources[name] = source
   }
 }
 

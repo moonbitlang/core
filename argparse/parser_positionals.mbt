@@ -25,7 +25,7 @@ fn positional_args(args : Array[Arg]) -> Array[Arg] {
       }
     }
   }
-  sort_positionals(with_index)
+  with_index.sort_by_key(pair => pair.0)
   let ordered = []
   for item in with_index {
     let (_, arg) = item
@@ -35,18 +35,6 @@ fn positional_args(args : Array[Arg]) -> Array[Arg] {
     ordered.push(arg)
   }
   ordered
-}
-
-///|
-fn last_positional_index(positionals : Array[Arg]) -> Int? {
-  let mut i = 0
-  while i < positionals.length() {
-    if positionals[i].last {
-      return Some(i)
-    }
-    i = i + 1
-  }
-  None
 }
 
 ///|
@@ -136,23 +124,4 @@ fn is_negative_number(arg : String) -> Bool {
     i = i + 1
   }
   true
-}
-
-///|
-fn sort_positionals(items : Array[(Int, Arg)]) -> Unit {
-  let mut i = 1
-  while i < items.length() {
-    let key = items[i]
-    let mut j = i - 1
-    while j >= 0 && items[j].0 > key.0 {
-      items[j + 1] = items[j]
-      if j == 0 {
-        j = -1
-      } else {
-        j = j - 1
-      }
-    }
-    items[j + 1] = key
-    i = i + 1
-  }
 }
