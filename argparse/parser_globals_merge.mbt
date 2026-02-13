@@ -54,14 +54,6 @@ fn strongest_source(
 }
 
 ///|
-fn source_from_values(sources : Array[ValueSource]?) -> ValueSource? {
-  match sources {
-    Some(items) if items.length() > 0 => highest_source(items)
-    _ => None
-  }
-}
-
-///|
 fn merge_global_value_from_child(
   parent : Matches,
   child : Matches,
@@ -70,29 +62,21 @@ fn merge_global_value_from_child(
 ) -> Unit {
   let parent_vals = parent.values.get(name)
   let child_vals = child.values.get(name)
-  let parent_srcs = parent.value_sources.get(name)
-  let child_srcs = child.value_sources.get(name)
+  let parent_source = parent.value_sources.get(name)
+  let child_source = child.value_sources.get(name)
   let has_parent = parent_vals is Some(pv) && pv.length() > 0
   let has_child = child_vals is Some(cv) && cv.length() > 0
   if !has_parent && !has_child {
     return
   }
-  let parent_source = source_from_values(parent_srcs)
-  let child_source = source_from_values(child_srcs)
   if arg.multiple || arg_action(arg) == ArgAction::Append {
     let both_argv = parent_source is Some(ValueSource::Argv) &&
       child_source is Some(ValueSource::Argv)
     if both_argv {
       let merged = []
-      let merged_srcs = []
       if parent_vals is Some(pv) {
         for v in pv {
           merged.push(v)
-        }
-      }
-      if parent_srcs is Some(ps) {
-        for s in ps {
-          merged_srcs.push(s)
         }
       }
       if child_vals is Some(cv) {
@@ -100,14 +84,9 @@ fn merge_global_value_from_child(
           merged.push(v)
         }
       }
-      if child_srcs is Some(cs) {
-        for s in cs {
-          merged_srcs.push(s)
-        }
-      }
       if merged.length() > 0 {
         parent.values[name] = merged
-        parent.value_sources[name] = merged_srcs
+        parent.value_sources[name] = ValueSource::Argv
       }
     } else {
       let choose_child = has_child &&
@@ -116,13 +95,15 @@ fn merge_global_value_from_child(
         if child_vals is Some(cv) && cv.length() > 0 {
           parent.values[name] = cv.copy()
         }
-        if child_srcs is Some(cs) && cs.length() > 0 {
-          parent.value_sources[name] = cs.copy()
+        match child_source {
+          Some(src) => parent.value_sources[name] = src
+          None => ()
         }
       } else if parent_vals is Some(pv) && pv.length() > 0 {
         parent.values[name] = pv.copy()
-        if parent_srcs is Some(ps) && ps.length() > 0 {
-          parent.value_sources[name] = ps.copy()
+        match parent_source {
+          Some(src) => parent.value_sources[name] = src
+          None => ()
         }
       }
     }
@@ -133,13 +114,15 @@ fn merge_global_value_from_child(
       if child_vals is Some(cv) && cv.length() > 0 {
         parent.values[name] = cv.copy()
       }
-      if child_srcs is Some(cs) && cs.length() > 0 {
-        parent.value_sources[name] = cs.copy()
+      match child_source {
+        Some(src) => parent.value_sources[name] = src
+        None => ()
       }
     } else if parent_vals is Some(pv) && pv.length() > 0 {
       parent.values[name] = pv.copy()
-      if parent_srcs is Some(ps) && ps.length() > 0 {
-        parent.value_sources[name] = ps.copy()
+      match parent_source {
+        Some(src) => parent.value_sources[name] = src
+        None => ()
       }
     }
   }
@@ -238,7 +221,7 @@ fn propagate_globals_to_child(
         Some(values) => {
           child.values[name] = values.copy()
           match parent.value_sources.get(name) {
-            Some(srcs) => child.value_sources[name] = srcs.copy()
+            Some(src) => child.value_sources[name] = src
             None => ()
           }
         }

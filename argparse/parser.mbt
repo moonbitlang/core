@@ -124,7 +124,7 @@ fn parse_command(
     long_index.get("version") is None
   let positionals = positional_args(args)
   let positional_values = []
-  let last_pos_idx = last_positional_index(positionals)
+  let last_pos_idx = positionals.search_by(arg => arg.last)
   let mut i = 0
   let mut positional_arg_found = false
   while i < argv.length() {

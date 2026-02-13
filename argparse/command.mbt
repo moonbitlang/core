@@ -143,7 +143,7 @@ fn build_matches(
       Some(v) => Some(v)
       None =>
         match raw.value_sources.get(name) {
-          Some(vs) => highest_source(vs)
+          Some(v) => Some(v)
           None => None
         }
     }
