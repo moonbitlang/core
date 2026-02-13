@@ -28,10 +28,6 @@ pub let end_of_word : @ast.Pattern
 
 pub let epsilon : @ast.Pattern
 
-pub fn first(@ast.Pattern) -> @ast.Pattern
-
-pub fn longest(@ast.Pattern) -> @ast.Pattern
-
 pub let not_word_boundary : @ast.Pattern
 
 pub fn preference(@shared_types.Preference, @ast.Pattern) -> @ast.Pattern
@@ -59,13 +55,9 @@ pub fn[T : Input] Regex::execute(Self, T, Int) -> MatchResult?
 pub fn Regex::group_names(Self) -> ReadOnlyArray[String?]
 
 // Type aliases
-pub using @ast {type Assertion}
-
 pub using @shared_types {type Category}
 
 pub using @ast {type Pattern}
-
-pub using @shared_types {type Preference}
 
 pub using @shared_types {type Profile}
 
