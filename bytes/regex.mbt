@@ -204,3 +204,23 @@ pub fn BytesRegex::execute(
       Some(MatchResult::{ input, group_names: self.re.group_names(), result })
   }
 }
+
+///|
+/// Escapes regex metacharacters in `input` so it is treated literally.
+///
+/// This is useful when building a regex from user-provided text.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let literal = "a+b(c)"
+///   let regex = @bytes.BytesRegex(@bytes.BytesRegex::escape(literal))
+///   inspect(regex.execute(b"a+b(c)") is Some(_), content="true")
+///   inspect(regex.execute(b"abcc") is Some(_), content="false")
+/// }
+/// ```
+#internal(experimental, "subject to breaking change without notice")
+pub fn BytesRegex::escape(input : StringView) -> StringView {
+  @regex_syntax.escape(input)
+}

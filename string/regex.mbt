@@ -200,3 +200,23 @@ pub fn Regex::execute(
       Some(MatchResult::{ input, group_names: self.re.group_names(), result })
   }
 }
+
+///|
+/// Escapes regex metacharacters in `input` so it is treated literally.
+///
+/// This is useful when building a regex from user-provided text.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let literal = "a+b(c)"
+///   let regex = @string.Regex(@string.Regex::escape(literal))
+///   inspect(regex.execute("a+b(c)") is Some(_), content="true")
+///   inspect(regex.execute("abcc") is Some(_), content="false")
+/// }
+/// ```
+#internal(experimental, "subject to breaking change without notice")
+pub fn Regex::escape(input : StringView) -> StringView {
+  @regex_syntax.escape(input)
+}

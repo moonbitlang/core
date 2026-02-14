@@ -22,6 +22,7 @@ pub struct Regex {
 
   fn new(StringView) -> Regex raise
 }
+pub fn Regex::escape(StringView) -> StringView
 pub fn Regex::execute(Self, StringView, last_index? : Int) -> MatchResult?
 pub fn Regex::new(StringView) -> Self raise
 

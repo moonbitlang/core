@@ -8,6 +8,8 @@ import {
 }
 
 // Values
+pub fn escape(StringView) -> StringView
+
 pub fn parse(profile~ : @shared_types.Profile, mode~ : Mode, StringView) -> @ast.Pattern raise ParserError
 
 // Errors
