@@ -150,10 +150,16 @@ fn validate_flag_arg(
   ctx : ValidationCtx,
 ) -> Unit raise ArgBuildError {
   validate_named_option_arg(arg)
-  guard arg.index is None &&
-    !arg.last &&
-    arg.num_args is None &&
-    arg.default_values is None
+  if arg.index is Some(_) || arg.last {
+    raise ArgBuildError::Unsupported(
+      "positional-only settings require no short/long",
+    )
+  }
+  if arg.num_args is Some(_) {
+    raise ArgBuildError::Unsupported(
+      "min/max values require value-taking arguments",
+    )
+  }
   if arg.flag_action is (Help | Version) {
     guard !arg.negatable else {
       raise ArgBuildError::Unsupported(
@@ -171,6 +177,11 @@ fn validate_flag_arg(
       )
     }
   }
+  if arg.default_values is Some(_) {
+    raise ArgBuildError::Unsupported(
+      "default values require value-taking arguments",
+    )
+  }
   ctx.record_arg(arg)
 }
 
@@ -180,7 +191,19 @@ fn validate_option_arg(
   ctx : ValidationCtx,
 ) -> Unit raise ArgBuildError {
   validate_named_option_arg(arg)
-  guard arg.index is None && !arg.last && !arg.negatable && arg.num_args is None
+  if arg.index is Some(_) || arg.last {
+    raise ArgBuildError::Unsupported(
+      "positional-only settings require no short/long",
+    )
+  }
+  guard !arg.negatable else {
+    raise ArgBuildError::Unsupported("negatable is only supported for flags")
+  }
+  guard arg.num_args is None else {
+    raise ArgBuildError::Unsupported(
+      "min/max values require value-taking arguments",
+    )
+  }
   validate_default_values(arg)
   ctx.record_arg(arg)
 }
@@ -190,7 +213,14 @@ fn validate_positional_arg(
   arg : Arg,
   ctx : ValidationCtx,
 ) -> Unit raise ArgBuildError {
-  guard arg.long is None && arg.short is None && !arg.negatable
+  if arg.long is Some(_) || arg.short is Some(_) {
+    raise ArgBuildError::Unsupported(
+      "positional args do not support short/long",
+    )
+  }
+  guard !arg.negatable else {
+    raise ArgBuildError::Unsupported("negatable is only supported for flags")
+  }
   let (min, max) = arg_min_max_for_validate(arg)
   if (min > 1 || (max is Some(m) && m > 1)) && !arg.multiple {
     raise ArgBuildError::Unsupported(
