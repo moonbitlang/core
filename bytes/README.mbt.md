@@ -172,3 +172,38 @@ test "bytes prefix/suffix" {
   inspect(bytes.chop_prefix(b"zz"[:]), content="None")
 }
 ```
+
+## Regular Expressions
+
+Use `BytesRegex` for byte-oriented regex matching, replacement, and splitting:
+
+- Syntax follows MoonBit `lexmatch` regex literals.
+- Supported constructs include `.`, character classes (`[abc]`, `[^abc]`,
+  `[a-z]`, `[[:digit:]]`), quantifiers (`*`, `+`, `?`, `{n}`, `{n,}`,
+  `{n,m}` with non-greedy forms), grouping/alternation (`(...)`, `(?:...)`
+  for non-capturing groups, `(?<name>...)`, `a|b`), and
+  assertions/modifiers (`^`, `$`, `\b`, `\B`, `(?i:...)`).
+- Common escapes include `\n`, `\r`, `\t`, `\f`, `\v`, `\xHH`; Unicode
+  escapes `\uXXXX` and `\u{X...}` are not supported in `BytesRegex`.
+- `^` and `$` are non-multiline anchors: they match only the start/end of the
+  whole input, not per-line boundaries.
+- `\d`, `\D`, `\s`, `\S`, `\w`, and `\W` are not supported; use POSIX
+  character classes such as `[[:digit:]]`, `[[:space:]]`, `[[:word:]]`.
+- POSIX character classes in this engine are ASCII-based.
+- See <https://github.com/moonbitlang/lexmatch_spec> for full grammar.
+
+```mbt check
+///|
+test "bytes regex basics" {
+  let regex = @bytes.BytesRegex("[[:digit:]]+")
+
+  guard regex.execute(b"id=42") is Some(m) else { fail("Expected match") }
+  inspect(m.content(), content="b\"42\"")
+
+  let replaced = regex.replace_by(b"a1b22", _m => b"#")
+  inspect(replaced, content="b\"a#b#\"")
+
+  let replaced_limited = regex.replace_by(b"a1b22c333", _m => b"#", limit=2)
+  inspect(replaced_limited, content="b\"a#b#c333\"")
+}
+```

@@ -1,5 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "moonbitlang/core/internal/regex_parser"
+package "moonbitlang/core/internal/regex_syntax"
 
 import {
   "moonbitlang/core/debug",
@@ -8,6 +8,8 @@ import {
 }
 
 // Values
+pub fn escape(StringView) -> StringView
+
 pub fn parse(profile~ : @shared_types.Profile, mode~ : Mode, StringView) -> @ast.Pattern raise ParserError
 
 // Errors
