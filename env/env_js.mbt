@@ -38,3 +38,84 @@ extern "js" fn current_dir_internal() -> String? =
   #|     return null;
   #|   }
   #| }
+
+///|
+fn get_env_var_internal(key : String) -> String? {
+  if is_env_var_exists_internal(key) {
+    Some(get_env_var_value_internal(key))
+  } else {
+    None
+  }
+}
+
+///|
+extern "js" fn is_env_var_exists_internal(key : String) -> Bool =
+  #| function(key) {
+  #|   if (typeof process === "undefined" || typeof process.env === "undefined") {
+  #|     return false;
+  #|   }
+  #|   return Object.prototype.hasOwnProperty.call(process.env, key);
+  #| }
+
+///|
+extern "js" fn get_env_var_value_internal(key : String) -> String =
+  #| function(key) {
+  #|   if (typeof process === "undefined" || typeof process.env === "undefined") {
+  #|     return "";
+  #|   }
+  #|   const value = process.env[key];
+  #|   return value === undefined ? "" : String(value);
+  #| }
+
+///|
+fn get_env_vars_internal() -> Map[String, String] {
+  let tmp = get_env_vars_array_internal()
+  let res = {}
+  for i = 0; i < tmp.length(); i = i + 2 {
+    res[tmp[i]] = tmp[i + 1]
+  }
+  res
+}
+
+///|
+extern "js" fn get_env_vars_array_internal() -> Array[String] =
+  #| function() {
+  #|   if (typeof process === "undefined" || typeof process.env === "undefined") {
+  #|     return [];
+  #|   }
+  #|   const result = [];
+  #|   for (const key in process.env) {
+  #|     const value = process.env[key];
+  #|     if (value !== undefined) {
+  #|       result.push(key);
+  #|       result.push(String(value));
+  #|     }
+  #|   }
+  #|   return result;
+  #| }
+
+///|
+fn set_env_var_internal(key : String, value : String) -> Unit {
+  set_env_var_ffi(key, value)
+}
+
+///|
+extern "js" fn set_env_var_ffi(key : String, value : String) -> Unit =
+  #| function(key, value) {
+  #|   if (typeof process !== "undefined" && typeof process.env !== "undefined") {
+  #|     process.env[key] = value;
+  #|   }
+  #| }
+
+///|
+fn unset_env_var_internal(key : String) -> Unit {
+  unset_env_var_ffi(key)
+}
+
+///|
+extern "js" fn unset_env_var_ffi(key : String) -> Unit =
+  #| function(key) {
+  #|   if (typeof process !== "undefined" && typeof process.env !== "undefined") {
+  #|     delete process.env[key];
+  #|   }
+  #| }

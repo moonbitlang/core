@@ -72,6 +72,42 @@ fn utf8_bytes_to_mbt_string(bytes : Bytes) -> String {
 }
 
 ///|
+fn mbt_string_to_utf8_bytes(str : String, append_nul : Bool) -> Bytes {
+  let res : Array[Byte] = []
+  let len = str.length()
+  let mut i = 0
+  while i < len {
+    let mut c = str.code_unit_at(i).to_int()
+    if 0xD800 <= c && c <= 0xDBFF {
+      c -= 0xD800
+      i = i + 1
+      let l = str.code_unit_at(i).to_int() - 0xDC00
+      c = (c << 10) + l + 0x10000
+    }
+    if c < 0x80 {
+      res.push(c.to_byte())
+    } else if c < 0x800 {
+      res.push((0xc0 + (c >> 6)).to_byte())
+      res.push((0x80 + (c & 0x3f)).to_byte())
+    } else if c < 0x10000 {
+      res.push((0xe0 + (c >> 12)).to_byte())
+      res.push((0x80 + ((c >> 6) & 0x3f)).to_byte())
+      res.push((0x80 + (c & 0x3f)).to_byte())
+    } else {
+      res.push((0xf0 + (c >> 18)).to_byte())
+      res.push((0x80 + ((c >> 12) & 0x3f)).to_byte())
+      res.push((0x80 + ((c >> 6) & 0x3f)).to_byte())
+      res.push((0x80 + (c & 0x3f)).to_byte())
+    }
+    i = i + 1
+  }
+  if append_nul {
+    res.push((0).to_byte())
+  }
+  Bytes::from_array(res)
+}
+
+///|
 extern "c" fn time(ptr : Int) -> UInt64 = "time"
 
 ///|
@@ -96,3 +132,57 @@ fn current_dir_internal() -> String? {
     Some(utf8_bytes_to_mbt_string(buf))
   }
 }
+
+///|
+fn get_env_var_internal(key : String) -> String? {
+  let key = mbt_string_to_utf8_bytes(key, true)
+  if get_env_var_exists_ffi(key) {
+    Some(utf8_bytes_to_mbt_string(get_env_var_ffi(key)))
+  } else {
+    None
+  }
+}
+
+///|
+#borrow(_key)
+extern "c" fn get_env_var_ffi(_key : Bytes) -> Bytes = "moonbit_rt_get_env_var"
+
+///|
+#borrow(_key)
+extern "c" fn get_env_var_exists_ffi(_key : Bytes) -> Bool = "moonbit_rt_get_env_var_exists"
+
+///|
+fn get_env_vars_internal() -> Map[String, String] {
+  let env_vars = get_env_vars_ffi()
+  let res = {}
+  for i = 0; i < env_vars.length(); i = i + 2 {
+    res[utf8_bytes_to_mbt_string(env_vars[i])] = utf8_bytes_to_mbt_string(
+      env_vars[i + 1],
+    )
+  }
+  res
+}
+
+///|
+extern "c" fn get_env_vars_ffi() -> FixedArray[Bytes] = "moonbit_rt_get_env_vars"
+
+///|
+fn set_env_var_internal(key : String, value : String) -> Unit {
+  set_env_var_ffi(
+    mbt_string_to_utf8_bytes(key, true),
+    mbt_string_to_utf8_bytes(value, true),
+  )
+}
+
+///|
+#borrow(_key, _value)
+extern "c" fn set_env_var_ffi(_key : Bytes, _value : Bytes) -> Unit = "moonbit_rt_set_env_var"
+
+///|
+fn unset_env_var_internal(key : String) -> Unit {
+  unset_env_var_ffi(mbt_string_to_utf8_bytes(key, true))
+}
+
+///|
+#borrow(_key)
+extern "c" fn unset_env_var_ffi(_key : Bytes) -> Unit = "moonbit_rt_unset_env_var"
