@@ -73,6 +73,12 @@ pub using @builtin {
 pub using @debug {debug, type Repr, trait Debug, debug_inspect}
 
 ///|
+pub using @string {type Regex}
+
+///|
+pub using @bytes {type BytesRegex}
+
+///|
 /// Applies a function to a value and returns the original value.
 ///
 /// # Parameters

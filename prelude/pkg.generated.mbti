@@ -4,9 +4,11 @@ package "moonbitlang/core/prelude"
 import {
   "moonbitlang/core/bigint",
   "moonbitlang/core/builtin",
+  "moonbitlang/core/bytes",
   "moonbitlang/core/debug",
   "moonbitlang/core/json",
   "moonbitlang/core/set",
+  "moonbitlang/core/string",
 }
 
 // Values
@@ -76,6 +78,8 @@ pub using @builtin {type ArrayView}
 
 pub using @bigint {type BigInt}
 
+pub using @bytes {type BytesRegex}
+
 pub using @builtin {type Failure}
 
 pub using @builtin {type Hasher}
@@ -99,6 +103,8 @@ pub using @builtin {type Json}
 pub using @builtin {type Map}
 
 pub using @builtin {type MutArrayView}
+
+pub using @string {type Regex}
 
 pub using @debug {type Repr}
 
