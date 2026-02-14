@@ -13,8 +13,9 @@
 // limitations under the License.
 
 ///|
-let re_profile_utf16 : @re.Profile = @re.Profile(
-  valid=@re.RecharSet::char_range(0, 65535),
+let re_profile_unicode : @re.Profile = @re.Profile(
+  valid=@re.RecharSet::char_range(0, 0x10FFFF) -
+    @re.RecharSet::char_range(0xD800, 0xDFFF),
   word=@re.RecharSet::char_range('a', 'z') +
     @re.RecharSet::char_range('A', 'Z') +
     @re.RecharSet::char_range('0', '9') +
@@ -26,4 +27,11 @@ let re_profile_utf16 : @re.Profile = @re.Profile(
       _ => @re.Category::not_word()
     }
   },
+)
+
+///|
+let re_profile_utf16 : @re.Profile = @re.Profile(
+  valid=@re.RecharSet::char_range(0, 65535),
+  word=re_profile_unicode.word,
+  category=re_profile_unicode.category,
 )

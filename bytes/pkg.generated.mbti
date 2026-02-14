@@ -10,8 +10,13 @@ import {
 // Errors
 
 // Types and methods
-type BytesRegex
+pub struct BytesRegex {
+  // private fields
+
+  fn new(StringView) -> BytesRegex raise
+}
 pub fn BytesRegex::execute(Self, BytesView, last_index? : Int) -> MatchResult?
+pub fn BytesRegex::new(StringView) -> Self raise
 
 type MatchResult
 pub fn MatchResult::after(Self) -> BytesView
