@@ -224,21 +224,7 @@ pub(all) suberror SnapshotError {
 }
 
 ///|
-/// Error type for benchmark snapshot helpers.
-///
-/// This is used by benchmark-related testing utilities to signal validation
-/// failures.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let err : BenchError = BenchError("benchmark output mismatch")
-///   match err {
-///     BenchError(msg) => inspect(msg, content="benchmark output mismatch")
-///   }
-/// }
-/// ```
+#deprecated
 pub(all) suberror BenchError {
   BenchError(String)
 }
