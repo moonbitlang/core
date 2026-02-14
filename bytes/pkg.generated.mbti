@@ -17,7 +17,10 @@ pub struct BytesRegex {
 }
 pub fn BytesRegex::escape(StringView) -> StringView
 pub fn BytesRegex::execute(Self, BytesView, last_index? : Int) -> MatchResult?
+pub fn BytesRegex::find(Self, BytesView) -> Iter[MatchResult]
 pub fn BytesRegex::new(StringView) -> Self raise
+pub fn BytesRegex::replace_by(Self, BytesView, (MatchResult) -> BytesView, limit? : Int) -> BytesView
+pub fn BytesRegex::split(Self, BytesView) -> Iter[BytesView]
 
 type MatchResult
 pub fn MatchResult::after(Self) -> BytesView

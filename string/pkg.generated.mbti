@@ -24,7 +24,10 @@ pub struct Regex {
 }
 pub fn Regex::escape(StringView) -> StringView
 pub fn Regex::execute(Self, StringView, last_index? : Int) -> MatchResult?
+pub fn Regex::find(Self, StringView) -> Iter[MatchResult]
 pub fn Regex::new(StringView) -> Self raise
+pub fn Regex::replace_by(Self, StringView, (MatchResult) -> StringView, limit? : Int) -> StringView
+pub fn Regex::split(Self, StringView) -> Iter[StringView]
 
 // Type aliases
 #deprecated
