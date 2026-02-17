@@ -862,6 +862,24 @@ pub fn[A] Deque::as_views(self : Deque[A]) -> (ArrayView[A], ArrayView[A]) {
 }
 
 ///|
+pub fn[A] Deque::as_mut_views(
+  self : Deque[A],
+) -> (MutArrayView[A], MutArrayView[A]) {
+  guard self.len != 0 else { ([].mut_view(), [].mut_view()) }
+  let { buf, head, len, .. } = self
+  let cap = buf.length()
+  let head_len = cap - head
+  if head_len >= len {
+    (buf.mut_view(start=head, end=head + len), [].mut_view())
+  } else {
+    (
+      buf.mut_view(start=head, end=cap),
+      buf.mut_view(start=0, end=len - head_len),
+    )
+  }
+}
+
+///|
 /// Compares two deques for equality. Returns `true` if both deques contain the
 /// same elements in the same order.
 ///
@@ -2358,4 +2376,30 @@ pub fn[A] Deque::shuffle(self : Deque[A], rand~ : (Int) -> Int) -> Deque[A] {
   new_deque.shuffle_in_place(rand~)
   // Return the shuffled copy
   new_deque
+}
+
+///|
+pub fn[A] Deque::make_contiguous(self : Deque[A]) -> MutArrayView[A] {
+  let view = self.as_views()
+  if view.0 is [] {
+    return self.buf.mut_view(
+      start=view.1.start_offset(),
+      end=view.1.start_offset() + view.1.length(),
+    )
+  } else if view.1 is [] {
+    return self.buf.mut_view(
+      start=view.0.start_offset(),
+      end=view.0.start_offset() + view.0.length(),
+    )
+  }
+  let new_buf = UninitializedArray::make(self.len)
+  new_buf.unsafe_blit(0, self.buf, view.0.start_offset(), view.0.length())
+  new_buf.unsafe_blit(
+    view.0.length(),
+    self.buf,
+    view.1.start_offset(),
+    view.1.length(),
+  )
+  self.buf = new_buf
+  new_buf.mut_view(end=self.len)
 }
