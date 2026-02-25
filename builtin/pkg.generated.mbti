@@ -48,12 +48,6 @@ pub(all) suberror BenchError {
   BenchError(String)
 }
 
-pub suberror CreatingViewError {
-  IndexOutOfBounds
-  InvalidIndex
-}
-pub impl Show for CreatingViewError
-
 pub(all) suberror Failure {
   Failure(String)
 }
@@ -729,7 +723,7 @@ pub fn String::strip_prefix(String, StringView) -> StringView?
 #alias(chop_suffix)
 pub fn String::strip_suffix(String, StringView) -> StringView?
 #alias("_[_:_]")
-pub fn String::sub(String, start? : Int, end? : Int) -> StringView raise CreatingViewError
+pub fn String::sub(String, start? : Int, end? : Int) -> StringView
 #deprecated
 pub fn String::substring(String, start? : Int, end? : Int) -> String
 pub fn String::suffixes(String, include_empty? : Bool) -> Iter[StringView]
@@ -1019,7 +1013,7 @@ pub fn StringView::strip_prefix(Self, Self) -> Self?
 #alias(chop_suffix)
 pub fn StringView::strip_suffix(Self, Self) -> Self?
 #alias("_[_:_]")
-pub fn StringView::sub(Self, start? : Int, end? : Int) -> Self raise CreatingViewError
+pub fn StringView::sub(Self, start? : Int, end? : Int) -> Self
 pub fn StringView::suffixes(Self, include_empty? : Bool) -> Iter[Self]
 pub fn StringView::to_array(Self) -> Array[Char]
 #deprecated

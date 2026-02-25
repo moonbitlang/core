@@ -102,7 +102,7 @@ pub(open) trait Logger {
 
 ///|
 impl Logger with write_substring(self, value, start, len) {
-  self.write_view(try! value[start:start + len])
+  self.write_view(value[start:start + len])
 }
 
 ///|

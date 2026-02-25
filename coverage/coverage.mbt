@@ -116,14 +116,14 @@ pub fn end() -> Unit {
     let mut start = 0
     for j in 0..<str.length() {
       if str.unsafe_get(j) == '\n' {
-        line_buf.write_view(try! str[start:j])
+        line_buf.write_view(str[start:j])
         println(line_buf.to_string())
         line_buf.reset()
         start = j + 1
       }
     }
     if start < str.length() {
-      line_buf.write_view(try! str[start:])
+      line_buf.write_view(str[start:])
     }
   }
   let trailing_line = line_buf.to_string()

@@ -718,28 +718,28 @@ test "String::op_as_view basic usage" {
 }
 
 ///|
-test "String::op_as_view error cases" {
-  let str = "Hello🤣World"
+test "panic String::op_as_view splits surrogate pair end" {
+  ignore("Hello🤣World"[:6])
+}
 
-  // InvalidIndex - splits surrogate pair
-  let view1 = try? str[:6]
-  inspect(view1, content="Err(InvalidIndex)")
+///|
+test "panic String::op_as_view beyond string length" {
+  ignore("Hello🤣World"[0:20])
+}
 
-  // IndexOutOfBounds - beyond string length
-  let view2 = try? str[0:20]
-  inspect(view2, content="Err(IndexOutOfBounds)")
+///|
+test "panic String::op_as_view negative index too large" {
+  ignore("Hello🤣World"[-20:])
+}
 
-  // IndexOutOfBounds - negative index too large
-  let view3 = try? str[-20:]
-  inspect(view3, content="Err(IndexOutOfBounds)")
+///|
+test "panic String::op_as_view start > end" {
+  ignore("Hello🤣World"[5:3])
+}
 
-  // IndexOutOfBounds - start > end
-  let view4 = try? str[5:3]
-  inspect(view4, content="Err(IndexOutOfBounds)")
-
-  // InvalidIndex - start on trailing surrogate
-  let view5 = try? str[6:8]
-  inspect(view5, content="Err(InvalidIndex)")
+///|
+test "panic String::op_as_view start on trailing surrogate" {
+  ignore("Hello🤣World"[6:8])
 }
 
 ///|
@@ -758,13 +758,16 @@ test "String::op_as_view with surrogate pairs" {
   let view3 = str[7:9]
   inspect(view3, content="😭")
 
-  // Invalid - splits first emoji
-  let view4 = try? str[5:6]
-  inspect(view4, content="Err(InvalidIndex)")
+}
 
-  // Invalid - splits second emoji
-  let view5 = try? str[7:8]
-  inspect(view5, content="Err(InvalidIndex)")
+///|
+test "panic String::op_as_view splits first emoji" {
+  ignore("Hello🤣😭😂World"[5:6])
+}
+
+///|
+test "panic String::op_as_view splits second emoji" {
+  ignore("Hello🤣😭😂World"[7:8])
 }
 
 ///|
@@ -793,28 +796,28 @@ test "StringView::op_as_view basic usage" {
 }
 
 ///|
-test "StringView::op_as_view error cases" {
-  let str = "Hello🤣World"[1:-1] // "ello🤣Worl"
+test "panic StringView::op_as_view beyond view range" {
+  ignore("Hello🤣World"[1:-1][0:15])
+}
 
-  // IndexOutOfBounds - beyond view range
-  let view1 = try? str[0:15]
-  inspect(view1, content="Err(IndexOutOfBounds)")
+///|
+test "panic StringView::op_as_view negative index too large" {
+  ignore("Hello🤣World"[1:-1][-20:])
+}
 
-  // IndexOutOfBounds - negative index too large
-  let view2 = try? str[-20:]
-  inspect(view2, content="Err(IndexOutOfBounds)")
+///|
+test "panic StringView::op_as_view start > end" {
+  ignore("Hello🤣World"[1:-1][5:3])
+}
 
-  // IndexOutOfBounds - start > end
-  let view3 = try? str[5:3]
-  inspect(view3, content="Err(IndexOutOfBounds)")
+///|
+test "panic StringView::op_as_view splits surrogate pair" {
+  ignore("Hello🤣World"[1:-1][:5])
+}
 
-  // InvalidIndex - splits surrogate pair
-  let view4 = try? str[:5]
-  inspect(view4, content="Err(InvalidIndex)")
-
-  // IndexOutOfBounds - start beyond view
-  let view5 = try? str[11:]
-  inspect(view5, content="Err(IndexOutOfBounds)")
+///|
+test "panic StringView::op_as_view start beyond view" {
+  ignore("Hello🤣World"[1:-1][11:])
 }
 
 ///|
@@ -833,13 +836,16 @@ test "StringView::op_as_view with surrogate pairs" {
   let view3 = str[6:8]
   inspect(view3, content="😭")
 
-  // Invalid - splits first emoji
-  let view4 = try? str[4:5]
-  inspect(view4, content="Err(InvalidIndex)")
+}
 
-  // Invalid - splits second emoji
-  let view5 = try? str[6:7]
-  inspect(view5, content="Err(InvalidIndex)")
+///|
+test "panic StringView::op_as_view splits first emoji in view" {
+  ignore("Hello🤣😭😂World"[1:-1][4:5])
+}
+
+///|
+test "panic StringView::op_as_view splits second emoji in view" {
+  ignore("Hello🤣😭😂World"[1:-1][6:7])
 }
 
 ///|
@@ -907,10 +913,11 @@ test "StringView::op_as_view with complex Unicode" {
   // View starting with emoji
   let view4 = str[5:]
   inspect(view4, content="🤣😭😂🌍World")
+}
 
-  // Invalid - splits emoji
-  let view5 = try? str[5:6]
-  inspect(view5, content="Err(InvalidIndex)")
+///|
+test "panic String::op_as_view splits emoji in complex Unicode" {
+  ignore("Hello🤣😭😂🌍World"[5:6])
 }
 
 ///|
@@ -966,12 +973,18 @@ test "StringView::op_as_view boundary validation" {
   inspect(view3, content="Hello🤣World")
   let view4 = str[-1:]
   inspect(view4, content="d")
+}
 
-  // Test invalid boundaries
-  let view5 = try? str[str.length() + 1:]
-  inspect(view5, content="Err(IndexOutOfBounds)")
-  let view6 = try? str[-str.length() - 1:]
-  inspect(view6, content="Err(IndexOutOfBounds)")
+///|
+test "panic String::op_as_view boundary beyond length" {
+  let str = "Hello🤣World"
+  ignore(str[str.length() + 1:])
+}
+
+///|
+test "panic String::op_as_view boundary negative too large" {
+  let str = "Hello🤣World"
+  ignore(str[-str.length() - 1:])
 }
 
 ///|
@@ -1004,17 +1017,11 @@ test "panic view op_get out of bounds" {
   view.code_unit_at(5) |> ignore
 }
 
-// Added test to cover start index pointing to trailing surrogate
-// in StringView::op_as_view. Using a view that begins partway through a string
-// and attempting to create a subview starting on the trailing surrogate
-// of an emoji should raise `InvalidIndex`.
-
 ///|
-test "StringView::op_as_view start on trailing surrogate" {
+test "panic StringView::op_as_view start on trailing surrogate" {
   let base = "Hello🤣😭😂World"
   let view = base[1:-1] // "ello🤣😭😂Worl"
-  let result = try? view[5:]
-  inspect(result, content="Err(InvalidIndex)")
+  ignore(view[5:])
 }
 
 ///|

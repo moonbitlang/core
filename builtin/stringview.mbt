@@ -414,30 +414,12 @@ pub fn StringView::from_iter(iter : Iter[Char]) -> StringView {
   String::from_iter(iter)
 }
 
-///|
-/// Error type returned by `make_safe` when view indices are invalid.
-///
-/// - `IndexOutOfBounds`: index exceeds valid range.
-/// - `InvalidIndex`: index splits a UTF-16 surrogate pair.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let result = try? "x"[2:]
-///   inspect(result is Err(IndexOutOfBounds), content="true")
-/// }
-/// ```
-pub suberror CreatingViewError {
-  IndexOutOfBounds
-  InvalidIndex
-} derive(Show)
 
 ///|
 /// Creates a view of a string with proper UTF-16 boundary validation.
-/// 
+///
 /// # Parameters
-/// 
+///
 /// - `start` : Starting UTF-16 code unit index (default: 0)
 ///   - If positive: counts from the beginning of the string
 ///   - If negative: counts from the end of the string (e.g., -1 means last position)
@@ -445,72 +427,58 @@ pub suberror CreatingViewError {
 ///   - If `None`: extends to the end of the string
 ///   - If positive: counts from the beginning of the string
 ///   - If negative: counts from the end of the string
-/// 
+///
 /// # Returns
-/// 
+///
 /// - A `View` representing the specified substring range
-/// 
-/// # Errors
-/// 
-/// - `IndexOutOfBounds` : If start or end indices are out of valid range
-/// - `InvalidIndex` : If start or end position would split a UTF-16 surrogate pair
-/// 
+///
+/// # Panics
+///
+/// - If start or end indices are out of valid range
+/// - If start or end position would split a UTF-16 surrogate pair
+///
 /// This prevents creating views that would split surrogate pairs, which would
 /// result in invalid Unicode characters.
-/// 
+///
 /// # Performance
-/// 
+///
 /// This function has O(1) complexity as it only performs boundary checks
 /// without scanning the string content.
-/// 
+///
 /// # Examples
-/// 
-/// ```mbt nocheck
-/// let str = "Hello🤣World"
-/// let view1 =  str[0:5]
-/// inspect(
-///   view1,
-///   content=(
-///     "Hello"
-///   ),
-/// )
-/// let view2 = try? str[-5:]
-/// inspect(
-///   view2,
-///   content=(
-///     #|Ok("World")
-///   ),
-/// )
-/// let view3 = try? str[:6]
-/// inspect(view3, content="Err(InvalidIndex)")
+///
+/// ```mbt check
+/// test {
+///   let str = "Hello🤣World"
+///   let view1 = str[0:5]
+///   inspect(view1, content="Hello")
+///   let view2 = str[-5:]
+///   inspect(view2, content="World")
+/// }
 /// ```
 #alias("_[_:_]")
-pub fn String::sub(
-  self : String,
-  start? : Int = 0,
-  end? : Int,
-) -> StringView raise CreatingViewError {
+pub fn String::sub(self : String, start? : Int = 0, end? : Int) -> StringView {
   let len = self.length()
   let end = match end {
     None => len
     Some(end) => if end < 0 { len + end } else { end }
   }
   let start = if start < 0 { len + start } else { start }
-  guard start >= 0 && start <= end && end <= len else { raise IndexOutOfBounds }
-  if start < len && self.unsafe_get(start).is_trailing_surrogate() {
-    raise InvalidIndex
+  guard start >= 0 && start <= end && end <= len
+  if start < len {
+    guard !self.unsafe_get(start).is_trailing_surrogate()
   }
-  if end < len && self.unsafe_get(end).is_trailing_surrogate() {
-    raise InvalidIndex
+  if end < len {
+    guard !self.unsafe_get(end).is_trailing_surrogate()
   }
   StringView::make_view(self, start, end)
 }
 
 ///|
 /// Creates a subview of an existing view with proper UTF-16 boundary validation.
-/// 
+///
 /// # Parameters
-/// 
+///
 /// - `start` : Starting UTF-16 code unit index relative to this view (default: 0)
 ///   - If positive: counts from the beginning of this view
 ///   - If negative: counts from the end of this view
@@ -518,26 +486,26 @@ pub fn String::sub(
 ///   - If `None`: extends to the end of this view
 ///   - If positive: counts from the beginning of this view
 ///   - If negative: counts from the end of this view
-/// 
+///
 /// # Returns
-/// 
+///
 /// - A `View` representing the specified subrange of this view
-/// 
-/// # Errors
-/// 
-/// - `IndexOutOfBounds` : If start or end indices are out of this view's range
-/// - `InvalidIndex` : If start or end position would split a UTF-16 surrogate pair
-/// 
+///
+/// # Panics
+///
+/// - If start or end indices are out of this view's range
+/// - If start or end position would split a UTF-16 surrogate pair
+///
 /// This prevents creating views that would split surrogate pairs, which would
 /// result in invalid Unicode characters.
-/// 
+///
 /// # Performance
-/// 
+///
 /// This function has O(1) complexity as it only performs boundary checks
 /// without scanning the string content.
-/// 
+///
 /// # Examples
-/// 
+///
 /// ```mbt check
 /// test {
 ///   let str = "Hello🤣World"[1:-1] // "ello🤣Worl"
@@ -545,8 +513,6 @@ pub fn String::sub(
 ///   inspect(view1, content="ello🤣")
 ///   let view2 = str[-2:]
 ///   inspect(view2, content="rl")
-///   let view3 = try? str[:5]
-///   inspect(view3, content="Err(InvalidIndex)")
 /// }
 /// ```
 #alias("_[_:_]")
@@ -554,7 +520,7 @@ pub fn StringView::sub(
   self : StringView,
   start? : Int = 0,
   end? : Int,
-) -> StringView raise CreatingViewError {
+) -> StringView {
   let str_len = self.str().length()
 
   // Calculate absolute positions in the original string
@@ -571,17 +537,14 @@ pub fn StringView::sub(
   // Validate bounds against the original string
   guard abs_start >= self.start() &&
     abs_start <= abs_end &&
-    abs_end <= self.end() else {
-    raise IndexOutOfBounds
-  }
+    abs_end <= self.end()
 
   // Check for surrogate pair boundaries
-  if abs_start < str_len &&
-    self.str().unsafe_get(abs_start).is_trailing_surrogate() {
-    raise InvalidIndex
+  if abs_start < str_len {
+    guard !self.str().unsafe_get(abs_start).is_trailing_surrogate()
   }
-  if abs_end < str_len && self.str().unsafe_get(abs_end).is_trailing_surrogate() {
-    raise InvalidIndex
+  if abs_end < str_len {
+    guard !self.str().unsafe_get(abs_end).is_trailing_surrogate()
   }
   StringView::make_view(self.str(), abs_start, abs_end)
 }
