@@ -414,7 +414,6 @@ pub fn StringView::from_iter(iter : Iter[Char]) -> StringView {
   String::from_iter(iter)
 }
 
-
 ///|
 /// Creates a view of a string with proper UTF-16 boundary validation.
 ///
