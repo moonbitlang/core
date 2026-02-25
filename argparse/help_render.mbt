@@ -131,14 +131,14 @@ fn option_entries(cmd : Command) -> Array[String] {
     display.push((label, "Show version information."))
   }
   for arg in args {
-    if !(arg.info is (Option(long~, short~, ..) | Flag(long~, short~, ..)) &&
-      (long is Some(_) || short is Some(_))) {
+    guard arg.info is (Option(long~, short~, ..) | Flag(long~, short~, ..)) &&
+      (long is Some(_) || short is Some(_)) else {
       continue
     }
     if arg.hidden {
       continue
     }
-    let name = if arg_takes_value(arg) {
+    let name = if arg.info is Option(_) {
       "\{arg_display(arg)} <\{arg.name}>"
     } else {
       arg_display(arg)
@@ -396,11 +396,9 @@ fn group_members(cmd : Command, group : ArgGroup) -> String {
 ///|
 fn group_member_display(arg : Arg) -> String {
   let base = arg_display(arg)
-  if is_positional_arg(arg) {
-    base
-  } else if arg_takes_value(arg) {
-    "\{base} <\{arg.name}>"
-  } else {
-    base
+  match arg.info {
+    Flag(_) => base
+    Option(_) => "\{base} <\{arg.name}>"
+    Positional(_) => base
   }
 }
