@@ -216,7 +216,7 @@ fn parse_command(
             raise_unknown_long(name, long_index)
           }
         Some(spec) =>
-          if arg_takes_value(spec) {
+          if spec.info is (Option(_) | Positional(_)) {
             check_duplicate_set_occurrence(matches, spec)
             if inline is Some(v) {
               assign_value(matches, spec, v, ValueSource::Argv)
@@ -269,7 +269,7 @@ fn parse_command(
           Some(v) => v
           None => raise_unknown_short(short, short_index)
         }
-        if arg_takes_value(spec) {
+        if spec.info is (Option(_) | Positional(_)) {
           check_duplicate_set_occurrence(matches, spec)
           if pos + 1 < arg.length() {
             let rest = arg.unsafe_substring(start=pos + 1, end=arg.length())
