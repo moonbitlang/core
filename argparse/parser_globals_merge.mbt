@@ -69,7 +69,7 @@ fn merge_global_value_from_child(
   if !has_parent && !has_child {
     return
   }
-  if arg.multiple || arg_action(arg) == ArgAction::Append {
+  if arg.multiple || arg.info is Option(action=Append, ..) {
     let both_argv = parent_source is Some(ValueSource::Argv) &&
       child_source is Some(ValueSource::Argv)
     if both_argv {
@@ -137,7 +137,7 @@ fn merge_global_flag_from_child(
 ) -> Unit {
   match child.flags.get(name) {
     Some(v) =>
-      if arg_action(arg) == ArgAction::Count {
+      if arg.info is Flag(action=Count, ..) {
         let has_parent = parent.flags.get(name) is Some(_)
         let parent_source = parent.flag_sources.get(name)
         let child_source = child.flag_sources.get(name)
@@ -235,7 +235,7 @@ fn propagate_globals_to_child(
             Some(src) => child.flag_sources[name] = src
             None => ()
           }
-          if arg_action(arg) == ArgAction::Count {
+          if arg.info is Flag(action=Count, ..) {
             match parent.counts.get(name) {
               Some(c) => child.counts[name] = c
               None => ()

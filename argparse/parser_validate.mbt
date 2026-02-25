@@ -227,7 +227,7 @@ fn validate_default_values(arg : Arg) -> Unit raise ArgBuildError {
     default_values is Some(values) &&
     values.length() > 1 &&
     !arg.multiple &&
-    arg_action(arg) != ArgAction::Append {
+    !(arg.info is Option(action=Append, ..)) {
     raise ArgBuildError::Unsupported(
       "default_values with multiple entries require action=Append",
     )
@@ -370,7 +370,7 @@ fn validate_help_subcommand(cmd : Command) -> Unit raise ArgBuildError {
 ///|
 fn validate_version_actions(cmd : Command) -> Unit raise ArgBuildError {
   if cmd.version is None &&
-    cmd.args.any(arg => arg_action(arg) is ArgAction::Version) {
+    cmd.args.any(arg => arg.info is Flag(action=Version, ..)) {
     raise ArgBuildError::Unsupported(
       "version action requires command version text",
     )
@@ -490,7 +490,7 @@ fn validate_values(
     if count < min {
       raise ArgParseError::TooFewValues(arg.name, count, min)
     }
-    if arg_action(arg) != ArgAction::Append {
+    if !(arg.info is Option(action=Append, ..)) {
       match max {
         Some(max) if count > max =>
           raise ArgParseError::TooManyValues(arg.name, count, max)

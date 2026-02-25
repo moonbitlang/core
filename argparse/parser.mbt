@@ -187,31 +187,21 @@ fn parse_command(
       match long_index.get(name) {
         None =>
           // Support `--no-<flag>` when the underlying flag is marked `negatable`.
-          if name.has_prefix("no-") {
-            let target = match name.strip_prefix("no-") {
-              Some(view) => view.to_string()
-              None => ""
+          if name is [.. "no-", .. target] &&
+            long_index.get(target.to_string())
+            is Some({ info: Flag(negatable=true, action~, ..), .. } as spec) {
+            if inline is Some(_) {
+              raise ArgParseError::InvalidArgument(arg)
             }
-            match long_index.get(target) {
-              None => raise_unknown_long(name, long_index)
-              Some(spec) => {
-                if !(spec.info is Flag(negatable=true, ..)) {
-                  raise_unknown_long(name, long_index)
-                }
-                if inline is Some(_) {
-                  raise ArgParseError::InvalidArgument(arg)
-                }
-                let value = match arg_action(spec) {
-                  ArgAction::SetFalse => true
-                  _ => false
-                }
-                if arg_action(spec) == ArgAction::Count {
-                  matches.counts[spec.name] = 0
-                }
-                matches.flags[spec.name] = value
-                matches.flag_sources[spec.name] = ValueSource::Argv
-              }
+            let value = match action {
+              SetFalse => true
+              _ => false
             }
+            if action is Count {
+              matches.counts[spec.name] = 0
+            }
+            matches.flags[spec.name] = value
+            matches.flag_sources[spec.name] = ValueSource::Argv
           } else {
             raise_unknown_long(name, long_index)
           }
@@ -239,9 +229,10 @@ fn parse_command(
             if inline is Some(_) {
               raise ArgParseError::InvalidArgument(arg)
             }
-            match arg_action(spec) {
-              ArgAction::Help => raise_context_help(cmd, inherited_globals)
-              ArgAction::Version =>
+            match spec.info {
+              Flag(action=Help, ..) =>
+                raise_context_help(cmd, inherited_globals)
+              Flag(action=Version, ..) =>
                 raise_version(
                   version_text_for_long_action(
                     cmd, name, inherited_version_long,
@@ -295,9 +286,9 @@ fn parse_command(
           }
           break
         } else {
-          match arg_action(spec) {
-            ArgAction::Help => raise_context_help(cmd, inherited_globals)
-            ArgAction::Version =>
+          match spec.info {
+            Flag(action=Help, ..) => raise_context_help(cmd, inherited_globals)
+            Flag(action=Version, ..) =>
               raise_version(
                 version_text_for_short_action(
                   cmd, short, inherited_version_short,
