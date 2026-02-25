@@ -196,10 +196,10 @@ fn merge_globals_from_child(
     if child_local_non_globals.contains(name) {
       continue
     }
-    if arg_takes_value(arg) {
-      merge_global_value_from_child(parent, child, arg, name)
-    } else {
-      merge_global_flag_from_child(parent, child, arg, name)
+    match arg.info {
+      Option(_) | Positional(_) =>
+        merge_global_value_from_child(parent, child, arg, name)
+      Flag(_) => merge_global_flag_from_child(parent, child, arg, name)
     }
   }
 }
@@ -216,7 +216,7 @@ fn propagate_globals_to_child(
     if child_local_non_globals.contains(name) {
       continue
     }
-    if arg_takes_value(arg) {
+    if arg.info is (Option(_) | Positional(_)) {
       match parent.values.get(name) {
         Some(values) => {
           child.values[name] = values.copy()

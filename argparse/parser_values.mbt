@@ -217,7 +217,7 @@ fn apply_env(
       Some(v) => v
       None => continue
     }
-    if arg_takes_value(arg) {
+    if arg.info is (Option(_) | Positional(_)) {
       assign_value(matches, arg, value, ValueSource::Env)
       continue
     }

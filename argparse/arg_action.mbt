@@ -25,11 +25,6 @@ priv enum ArgAction {
 } derive(Eq)
 
 ///|
-fn arg_takes_value(arg : Arg) -> Bool {
-  !(arg.info is Flag(_))
-}
-
-///|
 fn arg_action(arg : Arg) -> ArgAction {
   match arg.info {
     Flag(action~, ..) =>
