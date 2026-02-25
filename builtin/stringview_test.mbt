@@ -105,19 +105,37 @@ test "StringView comparisons" {
 }
 
 ///|
-test "StringView sub errors" {
-  let s = "A😀B"
-  inspect(try? s[0:2], content="Err(InvalidIndex)")
-  inspect(try? s[0:10], content="Err(IndexOutOfBounds)")
-  let view = s[1:-1]
-  inspect(try? view[:1], content="Err(InvalidIndex)")
-  inspect(try? view[0:10], content="Err(IndexOutOfBounds)")
+test "StringView sub valid cases" {
   let slice = "abcd"[:][1:-1]
   inspect(slice.to_string(), content="bc")
   let tail = "abcd"[-2:]
   inspect(tail.to_string(), content="cd")
   let tail_view = "abcd"[:][-2:]
   inspect(tail_view.to_string(), content="cd")
+}
+
+///|
+test "panic String::sub invalid index" {
+  ignore("A😀B"[0:2])
+}
+
+///|
+test "panic String::sub index out of bounds" {
+  ignore("A😀B"[0:10])
+}
+
+///|
+test "panic StringView::sub invalid index" {
+  let s = "A😀B"
+  let view = s[1:-1]
+  ignore(view[:1])
+}
+
+///|
+test "panic StringView::sub index out of bounds" {
+  let s = "A😀B"
+  let view = s[1:-1]
+  ignore(view[0:10])
 }
 
 ///|
@@ -151,13 +169,13 @@ test "StringView compare physical equal" {
 }
 
 ///|
-test "String::sub invalid start index" {
+test "panic String::sub invalid start index" {
   let s = "\u{1F600}A"
-  inspect(try? s[1:], content="Err(InvalidIndex)")
+  ignore(s[1:])
 }
 
 ///|
-test "StringView::sub invalid start index" {
+test "panic StringView::sub invalid start index" {
   let view = "\u{1F600}A"[:]
-  inspect(try? view[1:], content="Err(InvalidIndex)")
+  ignore(view[1:])
 }

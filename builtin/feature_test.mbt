@@ -88,7 +88,7 @@ test "labeld_break/cross_threshold" {
 test "try!" {
   let a = "hello world"
   fn hello() noraise {
-    try! a[1:]
+    a[1:]
   }
 
   inspect(hello(), content="ello world")

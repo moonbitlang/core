@@ -29,7 +29,7 @@ struct MatchResult {
 #internal(experimental, "subject to breaking change without notice")
 pub fn MatchResult::before(self : MatchResult) -> StringView {
   guard self.result.group(0) is Some((start, _end)) else { panic() }
-  try! self.input[0:start]
+  self.input[0:start]
 }
 
 ///|
@@ -37,7 +37,7 @@ pub fn MatchResult::before(self : MatchResult) -> StringView {
 #internal(experimental, "subject to breaking change without notice")
 pub fn MatchResult::after(self : MatchResult) -> StringView {
   guard self.result.group(0) is Some((_start, end)) else { panic() }
-  try! self.input[end:self.input.length()]
+  self.input[end:self.input.length()]
 }
 
 ///|
@@ -45,7 +45,7 @@ pub fn MatchResult::after(self : MatchResult) -> StringView {
 #internal(experimental, "subject to breaking change without notice")
 pub fn MatchResult::content(self : MatchResult) -> StringView {
   guard self.result.group(0) is Some((start, end)) else { panic() }
-  try! self.input[start:end]
+  self.input[start:end]
 }
 
 ///|
@@ -54,7 +54,7 @@ pub fn MatchResult::content(self : MatchResult) -> StringView {
 pub fn MatchResult::group(self : MatchResult, group_index : Int) -> StringView? {
   match self.result.group(group_index) {
     None => None
-    Some((start, end)) => Some(try! self.input[start:end])
+    Some((start, end)) => Some(self.input[start:end])
   }
 }
 
