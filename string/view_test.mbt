@@ -757,7 +757,6 @@ test "String::op_as_view with surrogate pairs" {
   // View from middle of emoji sequence
   let view3 = str[7:9]
   inspect(view3, content="😭")
-
 }
 
 ///|
@@ -835,7 +834,6 @@ test "StringView::op_as_view with surrogate pairs" {
   // View from middle of emoji sequence
   let view3 = str[6:8]
   inspect(view3, content="😭")
-
 }
 
 ///|
