@@ -88,9 +88,9 @@ pub impl Show for OptionAction
 pub struct OptionArg {
   // private fields
 
-  fn new(String, short? : Char, long? : String, about? : String, action? : OptionAction, env? : String, default_values? : Array[String], allow_hyphen_values? : Bool, last? : Bool, requires? : Array[String], conflicts_with? : Array[String], required? : Bool, global? : Bool, hidden? : Bool) -> OptionArg
+  fn new(String, short? : Char, long? : String, about? : String, action? : OptionAction, env? : String, default_values? : Array[String], allow_hyphen_values? : Bool, requires? : Array[String], conflicts_with? : Array[String], required? : Bool, global? : Bool, hidden? : Bool) -> OptionArg
 }
-pub fn OptionArg::new(String, short? : Char, long? : String, about? : String, action? : OptionAction, env? : String, default_values? : Array[String], allow_hyphen_values? : Bool, last? : Bool, requires? : Array[String], conflicts_with? : Array[String], required? : Bool, global? : Bool, hidden? : Bool) -> Self
+pub fn OptionArg::new(String, short? : Char, long? : String, about? : String, action? : OptionAction, env? : String, default_values? : Array[String], allow_hyphen_values? : Bool, requires? : Array[String], conflicts_with? : Array[String], required? : Bool, global? : Bool, hidden? : Bool) -> Self
 pub impl ArgLike for OptionArg
 
 pub struct PositionalArg {

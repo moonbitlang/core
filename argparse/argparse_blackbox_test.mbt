@@ -110,7 +110,6 @@ test "render help conversion coverage snapshot" {
         default_values=["x", "y"],
         env="OPT_ENV",
         allow_hyphen_values=true,
-        last=true,
         required=true,
         global=true,
         hidden=true,
