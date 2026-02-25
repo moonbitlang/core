@@ -51,11 +51,7 @@ fn build_short_index(globals : Array[Arg], args : Array[Arg]) -> Map[Char, Arg] 
 
 ///|
 fn collect_globals(args : Array[Arg]) -> Array[Arg] {
-  args.filter(arg => {
-    arg.global &&
-    arg.info is (Flag(long~, short~, ..) | Option(long~, short~, ..)) &&
-    (long is Some(_) || short is Some(_))
-  })
+  args.filter(arg => arg.global && arg.info is (Flag(_) | Option(_)))
 }
 
 ///|

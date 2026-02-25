@@ -239,7 +239,7 @@ pub fn OptionArg::new(
       // index: None,
       // num_args: None,
       //
-      multiple: allows_multiple_values(action),
+      multiple: action is Append,
     },
   }
 }
@@ -339,21 +339,6 @@ pub fn PositionalArg::new(
 ///|
 fn arg_name(arg : Arg) -> String {
   arg.name
-}
-
-///|
-fn is_flag_spec(arg : Arg) -> Bool {
-  arg.info is Flag(_)
-}
-
-///|
-fn is_count_flag_spec(arg : Arg) -> Bool {
-  arg.info is Flag(action=Count, ..)
-}
-
-///|
-fn allows_multiple_values(action : OptionAction) -> Bool {
-  action == OptionAction::Append
 }
 
 ///|

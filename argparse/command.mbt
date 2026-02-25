@@ -131,34 +131,26 @@ fn build_matches(
 
   for spec in specs {
     let name = arg_name(spec)
-    match raw.values.get(name) {
-      Some(vs) => values[name] = vs.copy()
-      None => ()
+    if raw.values.get(name) is Some(vs) {
+      values[name] = vs.copy()
     }
-    let count = raw.counts.get(name).unwrap_or(0)
+    let count = raw.counts.get_or_default(name, 0)
     if count > 0 {
       flag_counts[name] = count
     }
     let source = match raw.flag_sources.get(name) {
       Some(v) => Some(v)
-      None =>
-        match raw.value_sources.get(name) {
-          Some(v) => Some(v)
-          None => None
-        }
+      None => raw.value_sources.get(name)
     }
-    match source {
-      Some(source) => {
-        sources[name] = source
-        if is_flag_spec(spec) {
-          if is_count_flag_spec(spec) {
-            flags[name] = count > 0
-          } else {
-            flags[name] = raw.flags.get(name).unwrap_or(false)
-          }
+    if source is Some(source) {
+      sources[name] = source
+      if spec.info is Flag(action~, ..) {
+        if action is Count {
+          flags[name] = count > 0
+        } else {
+          flags[name] = raw.flags.get(name).unwrap_or(false)
         }
       }
-      None => ()
     }
   }
   let child_globals = inherited_globals +
