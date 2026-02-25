@@ -163,7 +163,9 @@ fn build_matches(
   }
   let child_globals = inherited_globals +
     cmd.args.filter(arg => {
-      arg.global && (arg.long is Some(_) || arg.short is Some(_))
+      arg.global &&
+      arg.info is (Option(long~, short~, ..) | Flag(long~, short~, ..)) &&
+      (long is Some(_) || short is Some(_))
     })
 
   let subcommand = match raw.parsed_subcommand {
