@@ -53,15 +53,14 @@ priv enum ArgInfo {
     long~ : String?,
     action~ : OptionAction,
     default_values~ : Array[String]?,
-    allow_hyphen_values~ : Bool,
-    last~ : Bool
+    allow_hyphen_values~ : Bool
   )
   Positional(
     index~ : Int?,
     num_args~ : ValueRange?,
+    last~ : Bool,
     default_values~ : Array[String]?,
-    allow_hyphen_values~ : Bool,
-    last~ : Bool
+    allow_hyphen_values~ : Bool
   )
 }
 
@@ -168,7 +167,6 @@ pub struct OptionArg {
     env? : String,
     default_values? : Array[String],
     allow_hyphen_values? : Bool,
-    last? : Bool,
     requires? : Array[String],
     conflicts_with? : Array[String],
     required? : Bool,
@@ -204,7 +202,6 @@ pub fn OptionArg::new(
   env? : String,
   default_values? : Array[String],
   allow_hyphen_values? : Bool = false,
-  last? : Bool = false,
   requires? : Array[String] = [],
   conflicts_with? : Array[String] = [],
   required? : Bool = false,
@@ -228,7 +225,6 @@ pub fn OptionArg::new(
         action~,
         default_values=default_values.map(Array::copy),
         allow_hyphen_values~,
-        last~,
       ),
       //
       // flag_action: FlagAction::SetTrue,
@@ -319,9 +315,9 @@ pub fn PositionalArg::new(
       info: Positional(
         index~,
         num_args~,
+        last~,
         default_values=default_values.map(Array::copy),
         allow_hyphen_values~,
-        last~,
       ),
       // short: None,
       // long: None,
