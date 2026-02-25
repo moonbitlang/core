@@ -32,27 +32,34 @@ pub(all) enum OptionAction {
 ///|
 /// Unified argument model used by the parser internals.
 priv struct Arg {
+  // All
   name : String
-  short : Char?
-  long : String?
-  index : Int?
   about : String?
-  is_flag : Bool
-  is_positional : Bool
-  flag_action : FlagAction
-  option_action : OptionAction
   env : String?
-  default_values : Array[String]?
-  num_args : ValueRange?
-  multiple : Bool
-  allow_hyphen_values : Bool
-  last : Bool
   requires : Array[String]
   conflicts_with : Array[String]
   required : Bool
   global : Bool
-  negatable : Bool
   hidden : Bool
+  // Flag and Option
+  short : Char?
+  long : String?
+  // Flag
+  flag_action : FlagAction
+  negatable : Bool
+  // Option
+  option_action : OptionAction
+  // Positional
+  index : Int?
+  num_args : ValueRange?
+  // Option and Positional
+  default_values : Array[String]?
+  allow_hyphen_values : Bool
+  last : Bool
+  // other
+  is_flag : Bool
+  is_positional : Bool
+  multiple : Bool
 }
 
 ///|
@@ -119,26 +126,31 @@ pub fn FlagArg::new(
   FlagArg::{
     arg: Arg::{
       name,
-      short,
-      long,
-      index: None,
       about,
-      is_flag: true,
-      is_positional: false,
-      flag_action: action,
-      option_action: OptionAction::Set,
       env,
-      default_values: None,
-      num_args: None,
-      multiple: false,
-      allow_hyphen_values: false,
-      last: false,
+      global,
+      hidden,
       requires: requires.copy(),
       conflicts_with: conflicts_with.copy(),
       required,
-      global,
+      //
+      short,
+      long,
+      flag_action: action,
       negatable,
-      hidden,
+      //
+      option_action: OptionAction::Set,
+      //
+      index: None,
+      num_args: None,
+      //
+      default_values: None,
+      allow_hyphen_values: false,
+      last: false,
+      //
+      is_flag: true,
+      is_positional: false,
+      multiple: false,
     },
   }
 }
@@ -204,26 +216,32 @@ pub fn OptionArg::new(
   OptionArg::{
     arg: Arg::{
       name,
-      short,
-      long,
-      index: None,
       about,
-      is_flag: false,
-      is_positional: false,
-      flag_action: FlagAction::SetTrue,
-      option_action: action,
       env,
-      default_values: default_values.map(Array::copy),
-      num_args: None,
-      multiple: allows_multiple_values(action),
-      allow_hyphen_values,
-      last,
       requires: requires.copy(),
       conflicts_with: conflicts_with.copy(),
       required,
       global,
-      negatable: false,
       hidden,
+      //
+      short,
+      long,
+      //
+      flag_action: FlagAction::SetTrue,
+      negatable: false,
+      //
+      option_action: action,
+      //
+      index: None,
+      num_args: None,
+      //
+      default_values: default_values.map(Array::copy),
+      allow_hyphen_values,
+      last,
+      //
+      is_flag: false,
+      is_positional: false,
+      multiple: allows_multiple_values(action),
     },
   }
 }
@@ -292,26 +310,32 @@ pub fn PositionalArg::new(
   PositionalArg::{
     arg: Arg::{
       name,
-      short: None,
-      long: None,
-      index,
       about,
-      is_flag: false,
-      is_positional: true,
-      flag_action: FlagAction::SetTrue,
-      option_action: OptionAction::Set,
       env,
-      default_values: default_values.map(Array::copy),
-      num_args,
-      multiple: range_allows_multiple(num_args),
-      allow_hyphen_values,
-      last,
       requires: requires.copy(),
       conflicts_with: conflicts_with.copy(),
       required,
       global,
-      negatable: false,
       hidden,
+      //
+      short: None,
+      long: None,
+      //
+      flag_action: FlagAction::SetTrue,
+      negatable: false,
+      //
+      option_action: OptionAction::Set,
+      //
+      index,
+      num_args,
+      //
+      default_values: default_values.map(Array::copy),
+      allow_hyphen_values,
+      last,
+      //
+      is_flag: false,
+      is_positional: true,
+      multiple: range_allows_multiple(num_args),
     },
   }
 }
