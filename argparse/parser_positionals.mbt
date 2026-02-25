@@ -17,8 +17,8 @@ fn positional_args(args : Array[Arg]) -> Array[Arg] {
   let with_index = []
   let without_index = []
   for arg in args {
-    if is_positional_arg(arg) {
-      if arg.index is Some(idx) {
+    if arg.info is Positional(index~, ..) {
+      if index is Some(idx) {
         with_index.push((idx, arg))
       } else {
         without_index.push(arg)
@@ -94,7 +94,12 @@ fn should_parse_as_positional(
     Some(v) => v
     None => return false
   }
-  let allow = next.allow_hyphen_values || is_negative_number(arg)
+  let next_allow = match next.info {
+    Flag(_) => false
+    Option(allow_hyphen_values~, ..) | Positional(allow_hyphen_values~, ..) =>
+      allow_hyphen_values
+  }
+  let allow = next_allow || is_negative_number(arg)
   if !allow {
     return false
   }

@@ -49,21 +49,41 @@ fn ValidationCtx::record_arg(
       "arg '\{arg.name}' shadows an inherited global; rename the arg or mark it global",
     )
   }
-  if arg.long is Some(name) {
+  fn check_long(name) raise _ {
     if !self.seen_long.add_and_check(name) {
       raise ArgBuildError::Unsupported("duplicate long option: --\{name}")
     }
-    if arg.negatable && !self.seen_long.add_and_check("no-\{name}") {
-      raise ArgBuildError::Unsupported("duplicate long option: --no-\{name}")
+  }
+  fn check_short(short) raise _ {
+    if !self.seen_short.add_and_check(short) {
+      raise ArgBuildError::Unsupported("duplicate short option: -\{short}")
     }
   }
-  if arg.short is Some(short) && !self.seen_short.add_and_check(short) {
-    raise ArgBuildError::Unsupported("duplicate short option: -\{short}")
-  }
-  if arg.is_positional &&
-    arg.index is Some(index) &&
-    !self.seen_positional_indices.add_and_check(index) {
-    raise ArgBuildError::Unsupported("duplicate positional index: \{index}")
+  match arg.info {
+    Flag(long~, short~, negatable~, ..) => {
+      if long is Some(name) {
+        check_long(name)
+        if negatable {
+          check_long("no-\{name}")
+        }
+      }
+      if short is Some(short) {
+        check_short(short)
+      }
+    }
+    Option(long~, short~, ..) => {
+      if long is Some(name) {
+        check_long(name)
+      }
+      if short is Some(short) {
+        check_short(short)
+      }
+    }
+    Positional(index~, ..) =>
+      if index is Some(index) &&
+        !self.seen_positional_indices.add_and_check(index) {
+        raise ArgBuildError::Unsupported("duplicate positional index: \{index}")
+      }
   }
   self.args.push(arg)
 }
@@ -129,15 +149,12 @@ fn validate_indexed_positional_num_args(
   let mut idx = 0
   while idx + 1 < positionals.length() {
     let arg = positionals[idx]
-    if arg.index is Some(_) {
-      match arg.num_args {
-        Some(range) =>
-          if !(range.lower == 1 && range.upper is Some(1)) {
-            raise ArgBuildError::Unsupported(
-              "indexed positional '\{arg.name}' cannot set num_args unless it is the last positional or exactly 1..1",
-            )
-          }
-        None => ()
+    guard arg.info is Positional(index~, num_args~, ..)
+    if index is Some(_) && num_args is Some(range) {
+      if !(range is { lower: 1, upper: Some(1) }) {
+        raise ArgBuildError::Unsupported(
+          "indexed positional '\{arg.name}' cannot set num_args unless it is the last positional or exactly 1..1",
+        )
       }
     }
     idx = idx + 1
@@ -150,18 +167,9 @@ fn validate_flag_arg(
   ctx : ValidationCtx,
 ) -> Unit raise ArgBuildError {
   validate_named_option_arg(arg)
-  if arg.index is Some(_) || arg.last {
-    raise ArgBuildError::Unsupported(
-      "positional-only settings require no short/long",
-    )
-  }
-  if arg.num_args is Some(_) {
-    raise ArgBuildError::Unsupported(
-      "min/max values require value-taking arguments",
-    )
-  }
-  if arg.flag_action is (Help | Version) {
-    guard !arg.negatable else {
+  guard arg.info is Flag(action~, negatable~, ..)
+  if action is (Help | Version) {
+    guard !negatable else {
       raise ArgBuildError::Unsupported(
         "help/version actions do not support negatable",
       )
@@ -177,11 +185,6 @@ fn validate_flag_arg(
       )
     }
   }
-  if arg.default_values is Some(_) {
-    raise ArgBuildError::Unsupported(
-      "default values require value-taking arguments",
-    )
-  }
   ctx.record_arg(arg)
 }
 
@@ -191,19 +194,6 @@ fn validate_option_arg(
   ctx : ValidationCtx,
 ) -> Unit raise ArgBuildError {
   validate_named_option_arg(arg)
-  if arg.index is Some(_) || arg.last {
-    raise ArgBuildError::Unsupported(
-      "positional-only settings require no short/long",
-    )
-  }
-  guard !arg.negatable else {
-    raise ArgBuildError::Unsupported("negatable is only supported for flags")
-  }
-  guard arg.num_args is None else {
-    raise ArgBuildError::Unsupported(
-      "min/max values require value-taking arguments",
-    )
-  }
   validate_default_values(arg)
   ctx.record_arg(arg)
 }
@@ -213,14 +203,6 @@ fn validate_positional_arg(
   arg : Arg,
   ctx : ValidationCtx,
 ) -> Unit raise ArgBuildError {
-  if arg.long is Some(_) || arg.short is Some(_) {
-    raise ArgBuildError::Unsupported(
-      "positional args do not support short/long",
-    )
-  }
-  guard !arg.negatable else {
-    raise ArgBuildError::Unsupported("negatable is only supported for flags")
-  }
   let (min, max) = arg_min_max_for_validate(arg)
   if (min > 1 || (max is Some(m) && m > 1)) && !arg.multiple {
     raise ArgBuildError::Unsupported(
@@ -233,14 +215,16 @@ fn validate_positional_arg(
 
 ///|
 fn validate_named_option_arg(arg : Arg) -> Unit raise ArgBuildError {
-  guard arg.long is Some(_) || arg.short is Some(_) else {
+  guard arg.info is (Flag(long~, short~, ..) | Option(long~, short~, ..))
+  guard long is Some(_) || short is Some(_) else {
     raise ArgBuildError::Unsupported("flag/option args require short/long")
   }
 }
 
 ///|
 fn validate_default_values(arg : Arg) -> Unit raise ArgBuildError {
-  if arg.default_values is Some(values) &&
+  if arg.info is (Option(default_values~, ..) | Positional(default_values~, ..)) &&
+    default_values is Some(values) &&
     values.length() > 1 &&
     !arg.multiple &&
     arg_action(arg) != ArgAction::Append {
@@ -544,5 +528,5 @@ fn validate_relationships(
 
 ///|
 fn is_positional_arg(arg : Arg) -> Bool {
-  arg.is_positional
+  arg.info is Positional(_)
 }
