@@ -19,12 +19,12 @@ fn build_long_index(
 ) -> Map[String, Arg] {
   let index : Map[String, Arg] = {}
   for arg in globals {
-    if arg.long is Some(name) {
+    if arg.info is (Flag(long~, ..) | Option(long~, ..)) && long is Some(name) {
       index[name] = arg
     }
   }
   for arg in args {
-    if arg.long is Some(name) {
+    if arg.info is (Flag(long~, ..) | Option(long~, ..)) && long is Some(name) {
       index[name] = arg
     }
   }
@@ -35,12 +35,14 @@ fn build_long_index(
 fn build_short_index(globals : Array[Arg], args : Array[Arg]) -> Map[Char, Arg] {
   let index : Map[Char, Arg] = {}
   for arg in globals {
-    if arg.short is Some(value) {
+    if arg.info is (Flag(short~, ..) | Option(short~, ..)) &&
+      short is Some(value) {
       index[value] = arg
     }
   }
   for arg in args {
-    if arg.short is Some(value) {
+    if arg.info is (Flag(short~, ..) | Option(short~, ..)) &&
+      short is Some(value) {
       index[value] = arg
     }
   }
@@ -49,7 +51,11 @@ fn build_short_index(globals : Array[Arg], args : Array[Arg]) -> Map[Char, Arg] 
 
 ///|
 fn collect_globals(args : Array[Arg]) -> Array[Arg] {
-  args.filter(arg => arg.global && (arg.long is Some(_) || arg.short is Some(_)))
+  args.filter(arg => {
+    arg.global &&
+    arg.info is (Flag(long~, short~, ..) | Option(long~, short~, ..)) &&
+    (long is Some(_) || short is Some(_))
+  })
 }
 
 ///|

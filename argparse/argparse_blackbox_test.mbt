@@ -1138,23 +1138,6 @@ test "default argv path is reachable" {
 test "validation branches exposed through parse" {
   try
     @argparse.Command("demo", args=[
-      @argparse.OptionArg("x", long="x", last=true),
-    ]).parse(argv=[], env=empty_env())
-  catch {
-    @argparse.ArgBuildError::Unsupported(msg) =>
-      inspect(
-        msg,
-        content=(
-          #|positional-only settings require no short/long
-        ),
-      )
-    _ => panic()
-  } noraise {
-    _ => panic()
-  }
-
-  try
-    @argparse.Command("demo", args=[
       @argparse.FlagArg("f", action=@argparse.FlagAction::Help),
     ]).parse(argv=[], env=empty_env())
   catch {
