@@ -94,7 +94,7 @@ fn add_value(
   arg : Arg,
   source : ValueSource,
 ) -> Unit {
-  if arg.multiple || arg_action(arg) == ArgAction::Append {
+  if arg.multiple || arg.info is Option(action=Append, ..) {
     let arr = matches.values.get(name).unwrap_or([])
     arr.push(value)
     matches.values[name] = arr
@@ -112,28 +112,30 @@ fn assign_value(
   value : String,
   source : ValueSource,
 ) -> Unit raise ArgParseError {
-  match arg_action(arg) {
-    ArgAction::Append => add_value(matches, arg.name, value, arg, source)
-    ArgAction::Set => add_value(matches, arg.name, value, arg, source)
-    ArgAction::SetTrue => {
+  match arg.info {
+    Option(action=Append, ..) =>
+      add_value(matches, arg.name, value, arg, source)
+    Option(action=Set, ..) | Positional(_) =>
+      add_value(matches, arg.name, value, arg, source)
+    Flag(action=SetTrue, ..) => {
       let flag = parse_bool(value)
       matches.flags[arg.name] = flag
       matches.flag_sources[arg.name] = source
     }
-    ArgAction::SetFalse => {
+    Flag(action=SetFalse, ..) => {
       let flag = parse_bool(value)
       matches.flags[arg.name] = !flag
       matches.flag_sources[arg.name] = source
     }
-    ArgAction::Count => {
+    Flag(action=Count, ..) => {
       let count = parse_count(value)
       matches.counts[arg.name] = count
       matches.flags[arg.name] = count > 0
       matches.flag_sources[arg.name] = source
     }
-    ArgAction::Help =>
+    Flag(action=Help, ..) =>
       raise ArgParseError::InvalidArgument("help action does not take values")
-    ArgAction::Version =>
+    Flag(action=Version, ..) =>
       raise ArgParseError::InvalidArgument(
         "version action does not take values",
       )
@@ -161,9 +163,7 @@ fn check_duplicate_set_occurrence(
   matches : Matches,
   arg : Arg,
 ) -> Unit raise ArgParseError {
-  if arg_action(arg) != ArgAction::Set {
-    return
-  }
+  guard arg.info is (Option(action=Set, ..) | Positional(_)) else { return }
   if matches.values.get(arg.name) is Some(_) {
     raise ArgParseError::InvalidArgument(
       "argument '\{option_conflict_label(arg)}' cannot be used multiple times",
@@ -221,31 +221,29 @@ fn apply_env(
       assign_value(matches, arg, value, ValueSource::Env)
       continue
     }
-    match arg_action(arg) {
-      ArgAction::Count => {
+    match arg.info {
+      Flag(action=Count, ..) => {
         let count = parse_count(value)
         matches.counts[name] = count
         matches.flags[name] = count > 0
         matches.flag_sources[name] = ValueSource::Env
       }
-      ArgAction::SetFalse => {
+      Flag(action=SetFalse, ..) => {
         let flag = parse_bool(value)
         matches.flags[name] = !flag
         matches.flag_sources[name] = ValueSource::Env
       }
-      ArgAction::SetTrue => {
+      Flag(action=SetTrue, ..) => {
         let flag = parse_bool(value)
         matches.flags[name] = flag
         matches.flag_sources[name] = ValueSource::Env
       }
-      ArgAction::Set => {
+      Option(action=Set, ..) | Positional(_) => {
         let flag = parse_bool(value)
         matches.flags[name] = flag
         matches.flag_sources[name] = ValueSource::Env
       }
-      ArgAction::Append => ()
-      ArgAction::Help => ()
-      ArgAction::Version => ()
+      Flag(action=Help | Version, ..) | Option(action=Append, ..) => ()
     }
   }
 }
@@ -278,16 +276,16 @@ fn matches_has_value_or_flag(matches : Matches, name : String) -> Bool {
 
 ///|
 fn apply_flag(matches : Matches, arg : Arg, source : ValueSource) -> Unit {
-  match arg_action(arg) {
-    ArgAction::SetTrue => matches.flags[arg.name] = true
-    ArgAction::SetFalse => matches.flags[arg.name] = false
-    ArgAction::Count => {
+  match arg.info {
+    Flag(action=SetTrue, ..) => matches.flags[arg.name] = true
+    Flag(action=SetFalse, ..) => matches.flags[arg.name] = false
+    Flag(action=Count, ..) => {
       let current = matches.counts.get(arg.name).unwrap_or(0)
       matches.counts[arg.name] = current + 1
       matches.flags[arg.name] = true
     }
-    ArgAction::Help => ()
-    ArgAction::Version => ()
+    Flag(action=Help, ..) => ()
+    Flag(action=Version, ..) => ()
     _ => matches.flags[arg.name] = true
   }
   matches.flag_sources[arg.name] = source

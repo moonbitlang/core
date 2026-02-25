@@ -13,38 +13,6 @@
 // limitations under the License.
 
 ///|
-/// Parser-internal action model used for control flow.
-priv enum ArgAction {
-  Set
-  SetTrue
-  SetFalse
-  Count
-  Append
-  Help
-  Version
-} derive(Eq)
-
-///|
-fn arg_action(arg : Arg) -> ArgAction {
-  match arg.info {
-    Flag(action~, ..) =>
-      match action {
-        FlagAction::SetTrue => ArgAction::SetTrue
-        FlagAction::SetFalse => ArgAction::SetFalse
-        FlagAction::Count => ArgAction::Count
-        FlagAction::Help => ArgAction::Help
-        FlagAction::Version => ArgAction::Version
-      }
-    Option(action~, ..) =>
-      match action {
-        OptionAction::Set => ArgAction::Set
-        OptionAction::Append => ArgAction::Append
-      }
-    Positional(_) => ArgAction::Set
-  }
-}
-
-///|
 fn arg_min_max_for_validate(arg : Arg) -> (Int, Int?) raise ArgBuildError {
   if arg.info is Positional(num_args=Some(range), ..) {
     if range.lower < 0 {
