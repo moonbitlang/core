@@ -474,11 +474,9 @@ fn validate_values(
     if arg.required && !present {
       raise ArgParseError::MissingRequired(arg.name)
     }
-    if !arg_takes_value(arg) {
-      continue
-    }
+    guard arg.info is (Option(_) | Positional(_)) else { continue }
     if !present {
-      if is_positional_arg(arg) {
+      if arg.info is Positional(_) {
         let (min, _) = arg_min_max(arg)
         if min > 0 {
           raise ArgParseError::TooFewValues(arg.name, 0, min)
@@ -524,9 +522,4 @@ fn validate_relationships(
       }
     }
   }
-}
-
-///|
-fn is_positional_arg(arg : Arg) -> Bool {
-  arg.info is Positional(_)
 }
