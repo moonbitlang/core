@@ -26,30 +26,32 @@ priv enum ArgAction {
 
 ///|
 fn arg_takes_value(arg : Arg) -> Bool {
-  !arg.is_flag
+  !(arg.info is Flag(_))
 }
 
 ///|
 fn arg_action(arg : Arg) -> ArgAction {
-  if arg.is_flag {
-    match arg.flag_action {
-      FlagAction::SetTrue => ArgAction::SetTrue
-      FlagAction::SetFalse => ArgAction::SetFalse
-      FlagAction::Count => ArgAction::Count
-      FlagAction::Help => ArgAction::Help
-      FlagAction::Version => ArgAction::Version
-    }
-  } else {
-    match arg.option_action {
-      OptionAction::Set => ArgAction::Set
-      OptionAction::Append => ArgAction::Append
-    }
+  match arg.info {
+    Flag(action~, ..) =>
+      match action {
+        FlagAction::SetTrue => ArgAction::SetTrue
+        FlagAction::SetFalse => ArgAction::SetFalse
+        FlagAction::Count => ArgAction::Count
+        FlagAction::Help => ArgAction::Help
+        FlagAction::Version => ArgAction::Version
+      }
+    Option(action~, ..) =>
+      match action {
+        OptionAction::Set => ArgAction::Set
+        OptionAction::Append => ArgAction::Append
+      }
+    Positional(_) => ArgAction::Set
   }
 }
 
 ///|
 fn arg_min_max_for_validate(arg : Arg) -> (Int, Int?) raise ArgBuildError {
-  if arg.num_args is Some(range) {
+  if arg.info is Positional(num_args=Some(range), ..) {
     if range.lower < 0 {
       raise ArgBuildError::Unsupported("min values must be >= 0")
     }
@@ -74,8 +76,8 @@ fn arg_min_max_for_validate(arg : Arg) -> (Int, Int?) raise ArgBuildError {
 
 ///|
 fn arg_min_max(arg : Arg) -> (Int, Int?) {
-  match arg.num_args {
-    Some(range) => (range.lower, range.upper)
-    None => (0, None)
+  match arg.info {
+    Positional(num_args=Some(range), ..) => (range.lower, range.upper)
+    _ => (0, None)
   }
 }

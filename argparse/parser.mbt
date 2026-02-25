@@ -103,11 +103,11 @@ fn parse_command(
   let child_version_long = inherited_version_long.copy()
   let child_version_short = inherited_version_short.copy()
   for global in globals_here {
-    if arg_action(global) == ArgAction::Version {
-      if global.long is Some(name) {
+    if global.info is Flag(long~, short~, action=Version, ..) {
+      if long is Some(name) {
         child_version_long[name] = command_version(cmd)
       }
-      if global.short is Some(short) {
+      if short is Some(short) {
         child_version_short[short] = command_version(cmd)
       }
     }
@@ -124,7 +124,9 @@ fn parse_command(
     long_index.get("version") is None
   let positionals = positional_args(args)
   let positional_values = []
-  let last_pos_idx = positionals.search_by(arg => arg.last)
+  let last_pos_idx = positionals.search_by(arg => {
+    arg.info is Positional(last=true, ..)
+  })
   let mut i = 0
   let mut positional_arg_found = false
   while i < argv.length() {
@@ -193,7 +195,7 @@ fn parse_command(
             match long_index.get(target) {
               None => raise_unknown_long(name, long_index)
               Some(spec) => {
-                if !spec.negatable || arg_takes_value(spec) {
+                if !(spec.info is Flag(negatable=true, ..)) {
                   raise_unknown_long(name, long_index)
                 }
                 if inline is Some(_) {
@@ -412,9 +414,7 @@ fn version_text_for_long_action(
   inherited_version_long : Map[String, String],
 ) -> String {
   for arg in cmd.args {
-    if arg.long is Some(name) &&
-      name == long &&
-      arg_action(arg) == ArgAction::Version {
+    if arg.info is Flag(long=Some(name), action=Version, ..) && name == long {
       return command_version(cmd)
     }
   }
@@ -428,9 +428,7 @@ fn version_text_for_short_action(
   inherited_version_short : Map[Char, String],
 ) -> String {
   for arg in cmd.args {
-    if arg.short is Some(value) &&
-      value == short &&
-      arg_action(arg) == ArgAction::Version {
+    if arg.info is Flag(short=Some(value), action=Version, ..) && value == short {
       return command_version(cmd)
     }
   }

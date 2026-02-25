@@ -75,7 +75,8 @@ fn has_options(cmd : Command) -> Bool {
     if arg.hidden {
       continue
     }
-    if arg.long is Some(_) || arg.short is Some(_) {
+    if arg.info is (Option(long~, short~, ..) | Flag(long~, short~, ..)) &&
+      (long is Some(_) || short is Some(_)) {
       return true
     }
   }
@@ -130,7 +131,8 @@ fn option_entries(cmd : Command) -> Array[String] {
     display.push((label, "Show version information."))
   }
   for arg in args {
-    if arg.long is None && arg.short is None {
+    if !(arg.info is (Option(long~, short~, ..) | Flag(long~, short~, ..)) &&
+      (long is Some(_) || short is Some(_))) {
       continue
     }
     if arg.hidden {
@@ -149,7 +151,9 @@ fn option_entries(cmd : Command) -> Array[String] {
 ///|
 fn has_long_option(args : Array[Arg], name : String) -> Bool {
   for arg in args {
-    if arg.long is Some(long) && long == name {
+    if arg.info is (Option(long~, ..) | Flag(long~, ..)) &&
+      long is Some(long) &&
+      long == name {
       return true
     }
   }
@@ -159,7 +163,9 @@ fn has_long_option(args : Array[Arg], name : String) -> Bool {
 ///|
 fn has_short_option(args : Array[Arg], value : Char) -> Bool {
   for arg in args {
-    if arg.short is Some(short) && short == value {
+    if arg.info is (Option(short~, ..) | Flag(short~, ..)) &&
+      short is Some(short) &&
+      short == value {
       return true
     }
   }
@@ -272,11 +278,16 @@ fn format_entries(display : Array[(String, String)]) -> Array[String] {
 ///|
 fn arg_display(arg : Arg) -> String {
   let parts = Array::new(capacity=2)
-  if arg.short is Some(short) {
+  let (short, long) = match arg.info {
+    Option(short~, long~, ..) => (short, long)
+    Flag(short~, long~, ..) => (short, long)
+    Positional(_) => (None, None)
+  }
+  if short is Some(short) {
     parts.push("-\{short}")
   }
-  if arg.long is Some(long) {
-    if arg.negatable && !arg_takes_value(arg) {
+  if long is Some(long) {
+    if arg.info is Flag(negatable=true, ..) {
       parts.push("--[no-]\{long}")
     } else {
       parts.push("--\{long}")
@@ -305,13 +316,14 @@ fn arg_doc(arg : Arg) -> String {
     Some(env_name) => notes.push("env: \{env_name}")
     None => ()
   }
-  match arg.default_values {
-    Some(values) if values.length() > 1 => {
+  if arg.info is (Option(default_values~, ..) | Positional(default_values~, ..)) &&
+    default_values is Some(values) {
+    if values.length() > 1 {
       let defaults = values.join(", ")
       notes.push("defaults: \{defaults}")
+    } else if values.length() == 1 {
+      notes.push("default: \{values[0]}")
     }
-    Some(values) if values.length() == 1 => notes.push("default: \{values[0]}")
-    _ => ()
   }
   if is_required_arg(arg) {
     notes.push("required")

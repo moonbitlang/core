@@ -142,13 +142,17 @@ fn assign_value(
 
 ///|
 fn option_conflict_label(arg : Arg) -> String {
-  match arg.long {
-    Some(name) => "--\{name}"
-    None =>
-      match arg.short {
-        Some(short) => "-\{short}"
-        None => arg.name
+  match arg.info {
+    Flag(long~, short~, ..) | Option(long~, short~, ..) =>
+      match long {
+        Some(name) => "--\{name}"
+        None =>
+          match short {
+            Some(short) => "-\{short}"
+            None => arg.name
+          }
       }
+    Positional(_) => arg.name
   }
 }
 
@@ -177,7 +181,9 @@ fn should_stop_option_value(
   if !value.has_prefix("-") || value == "-" {
     return false
   }
-  if arg.allow_hyphen_values {
+  if arg.info
+    is (Option(allow_hyphen_values~, ..) | Positional(allow_hyphen_values~, ..)) &&
+    allow_hyphen_values {
     // Rust clap parity:
     // - `clap_builder/src/parser/parser.rs`: `parse_long_arg` / `parse_short_arg`
     //   return `ParseResult::MaybeHyphenValue` when the pending arg in
@@ -247,13 +253,15 @@ fn apply_env(
 ///|
 fn apply_defaults(matches : Matches, args : Array[Arg]) -> Unit {
   for arg in args {
-    if !arg_takes_value(arg) {
-      continue
+    let default_values = match arg.info {
+      Flag(_) => continue
+      Option(default_values~, ..) | Positional(default_values~, ..) =>
+        default_values
     }
     if matches_has_value_or_flag(matches, arg.name) {
       continue
     }
-    match arg.default_values {
+    match default_values {
       Some(values) if values.length() > 0 =>
         for value in values {
           let _ = add_value(matches, arg.name, value, arg, ValueSource::Default)
