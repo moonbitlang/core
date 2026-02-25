@@ -17,6 +17,7 @@ changelog should follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 #### Changed
 
 - `@json.inspect` has been migrated to `json_inspect`
+- `String::sub` and `StringView::sub` now panic on invalid indices instead of raising `CreatingViewError`. The `CreatingViewError` type has been removed.
 
 ### MoonBit Language Changes
 
