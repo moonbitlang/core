@@ -65,13 +65,6 @@ priv enum ArgInfo {
 }
 
 ///|
-/// Trait for declarative arg constructors.
-trait ArgLike {
-  to_arg(Self) -> Arg
-  validate(Self, ValidationCtx) -> Unit raise ArgBuildError
-}
-
-///|
 /// Declarative flag constructor wrapper.
 pub struct FlagArg {
   priv arg : Arg
@@ -91,16 +84,6 @@ pub struct FlagArg {
     negatable? : Bool,
     hidden? : Bool,
   ) -> FlagArg
-}
-
-///|
-pub impl ArgLike for FlagArg with to_arg(self : FlagArg) {
-  self.arg
-}
-
-///|
-pub impl ArgLike for FlagArg with validate(self, ctx) {
-  validate_flag_arg(self.arg, ctx)
 }
 
 ///|
@@ -177,16 +160,6 @@ pub struct OptionArg {
     global? : Bool,
     hidden? : Bool,
   ) -> OptionArg
-}
-
-///|
-pub impl ArgLike for OptionArg with to_arg(self : OptionArg) {
-  self.arg
-}
-
-///|
-pub impl ArgLike for OptionArg with validate(self, ctx) {
-  validate_option_arg(self.arg, ctx)
 }
 
 ///|
@@ -269,16 +242,6 @@ pub struct PositionalArg {
     global? : Bool,
     hidden? : Bool,
   ) -> PositionalArg
-}
-
-///|
-pub impl ArgLike for PositionalArg with to_arg(self : PositionalArg) {
-  self.arg
-}
-
-///|
-pub impl ArgLike for PositionalArg with validate(self, ctx) {
-  validate_positional_arg(self.arg, ctx)
 }
 
 ///|
