@@ -26,7 +26,7 @@ priv struct ValidationCtx {
 fn ValidationCtx::new(
   inherited_global_names? : @set.Set[String] = @set.new(),
 ) -> ValidationCtx {
-  ValidationCtx::{
+  {
     inherited_global_names: inherited_global_names.copy(),
     seen_names: @set.new(),
     seen_long: @set.new(),
@@ -42,10 +42,10 @@ fn ValidationCtx::record_arg(
   arg : Arg,
 ) -> Unit raise ArgBuildError {
   if !self.seen_names.add_and_check(arg.name) {
-    raise ArgBuildError::Unsupported("duplicate arg name: \{arg.name}")
+    raise Unsupported("duplicate arg name: \{arg.name}")
   }
   if !arg.global && self.inherited_global_names.contains(arg.name) {
-    raise ArgBuildError::Unsupported(
+    raise Unsupported(
       "arg '\{arg.name}' shadows an inherited global; rename the arg or mark it global",
     )
   }
@@ -82,7 +82,7 @@ fn ValidationCtx::record_arg(
     Positional(index~, ..) =>
       if index is Some(index) &&
         !self.seen_positional_indices.add_and_check(index) {
-        raise ArgBuildError::Unsupported("duplicate positional index: \{index}")
+        raise Unsupported("duplicate positional index: \{index}")
       }
   }
   self.args.push(arg)
@@ -131,7 +131,7 @@ fn validate_inherited_global_shadowing(
       continue
     }
     if inherited_global_names.contains(arg.name) {
-      raise ArgBuildError::Unsupported(
+      raise Unsupported(
         "arg '\{arg.name}' shadows an inherited global; rename the arg or mark it global",
       )
     }
@@ -152,7 +152,7 @@ fn validate_indexed_positional_num_args(
     guard arg.info is Positional(index~, num_args~, ..)
     if index is Some(_) && num_args is Some(range) {
       if !(range is { lower: 1, upper: Some(1) }) {
-        raise ArgBuildError::Unsupported(
+        raise Unsupported(
           "indexed positional '\{arg.name}' cannot set num_args unless it is the last positional or exactly 1..1",
         )
       }
@@ -170,19 +170,13 @@ fn validate_flag_arg(
   guard arg.info is Flag(action~, negatable~, ..)
   if action is (Help | Version) {
     guard !negatable else {
-      raise ArgBuildError::Unsupported(
-        "help/version actions do not support negatable",
-      )
+      raise Unsupported("help/version actions do not support negatable")
     }
     guard arg.env is None else {
-      raise ArgBuildError::Unsupported(
-        "help/version actions do not support env/defaults",
-      )
+      raise Unsupported("help/version actions do not support env/defaults")
     }
     guard !arg.multiple else {
-      raise ArgBuildError::Unsupported(
-        "help/version actions do not support multiple values",
-      )
+      raise Unsupported("help/version actions do not support multiple values")
     }
   }
   ctx.record_arg(arg)
@@ -205,7 +199,7 @@ fn validate_positional_arg(
 ) -> Unit raise ArgBuildError {
   let (min, max) = arg_min_max_for_validate(arg)
   if (min > 1 || (max is Some(m) && m > 1)) && !arg.multiple {
-    raise ArgBuildError::Unsupported(
+    raise Unsupported(
       "multiple values require action=Append or num_args allowing >1",
     )
   }
@@ -217,7 +211,7 @@ fn validate_positional_arg(
 fn validate_named_option_arg(arg : Arg) -> Unit raise ArgBuildError {
   guard arg.info is (Flag(long~, short~, ..) | Option(long~, short~, ..))
   guard long is Some(_) || short is Some(_) else {
-    raise ArgBuildError::Unsupported("flag/option args require short/long")
+    raise Unsupported("flag/option args require short/long")
   }
 }
 
@@ -228,7 +222,7 @@ fn validate_default_values(arg : Arg) -> Unit raise ArgBuildError {
     values.length() > 1 &&
     !arg.multiple &&
     !(arg.info is Option(action=Append, ..)) {
-    raise ArgBuildError::Unsupported(
+    raise Unsupported(
       "default_values with multiple entries require action=Append",
     )
   }
@@ -246,30 +240,26 @@ fn validate_group_defs(
   }
   for group in groups {
     if !seen.add_and_check(group.name) {
-      raise ArgBuildError::Unsupported("duplicate group: \{group.name}")
+      raise Unsupported("duplicate group: \{group.name}")
     }
   }
   for group in groups {
     for required in group.requires {
       if required == group.name {
-        raise ArgBuildError::Unsupported(
-          "group cannot require itself: \{group.name}",
-        )
+        raise Unsupported("group cannot require itself: \{group.name}")
       }
       if !seen.contains(required) && !arg_seen.contains(required) {
-        raise ArgBuildError::Unsupported(
+        raise Unsupported(
           "unknown group requires target: \{group.name} -> \{required}",
         )
       }
     }
     for conflict in group.conflicts_with {
       if conflict == group.name {
-        raise ArgBuildError::Unsupported(
-          "group cannot conflict with itself: \{group.name}",
-        )
+        raise Unsupported("group cannot conflict with itself: \{group.name}")
       }
       if !seen.contains(conflict) && !arg_seen.contains(conflict) {
-        raise ArgBuildError::Unsupported(
+        raise Unsupported(
           "unknown group conflicts_with target: \{group.name} -> \{conflict}",
         )
       }
@@ -292,9 +282,7 @@ fn validate_group_refs(
   for group in groups {
     for name in group.args {
       if !arg_index.contains(name) {
-        raise ArgBuildError::Unsupported(
-          "unknown group arg: \{group.name} -> \{name}",
-        )
+        raise Unsupported("unknown group arg: \{group.name} -> \{name}")
       }
     }
   }
@@ -308,24 +296,18 @@ fn validate_requires_conflicts_targets(
   for arg in args {
     for required in arg.requires {
       if required == arg.name {
-        raise ArgBuildError::Unsupported(
-          "arg cannot require itself: \{arg.name}",
-        )
+        raise Unsupported("arg cannot require itself: \{arg.name}")
       }
       if !seen_names.contains(required) {
-        raise ArgBuildError::Unsupported(
-          "unknown requires target: \{arg.name} -> \{required}",
-        )
+        raise Unsupported("unknown requires target: \{arg.name} -> \{required}")
       }
     }
     for conflict in arg.conflicts_with {
       if conflict == arg.name {
-        raise ArgBuildError::Unsupported(
-          "arg cannot conflict with itself: \{arg.name}",
-        )
+        raise Unsupported("arg cannot conflict with itself: \{arg.name}")
       }
       if !seen_names.contains(conflict) {
-        raise ArgBuildError::Unsupported(
+        raise Unsupported(
           "unknown conflicts_with target: \{arg.name} -> \{conflict}",
         )
       }
@@ -341,7 +323,7 @@ fn validate_subcommand_defs(subs : Array[Command]) -> Unit raise ArgBuildError {
   let seen : @set.Set[String] = @set.new()
   for sub in subs {
     if !seen.add_and_check(sub.name) {
-      raise ArgBuildError::Unsupported("duplicate subcommand: \{sub.name}")
+      raise Unsupported("duplicate subcommand: \{sub.name}")
     }
   }
 }
@@ -351,9 +333,7 @@ fn validate_subcommand_required_policy(
   cmd : Command,
 ) -> Unit raise ArgBuildError {
   if cmd.subcommand_required && cmd.subcommands.length() == 0 {
-    raise ArgBuildError::Unsupported(
-      "subcommand_required requires at least one subcommand",
-    )
+    raise Unsupported("subcommand_required requires at least one subcommand")
   }
 }
 
@@ -361,7 +341,7 @@ fn validate_subcommand_required_policy(
 fn validate_help_subcommand(cmd : Command) -> Unit raise ArgBuildError {
   if help_subcommand_enabled(cmd) &&
     cmd.subcommands.any(cmd => cmd.name == "help") {
-    raise ArgBuildError::Unsupported(
+    raise Unsupported(
       "subcommand name reserved for built-in help: help (disable with disable_help_subcommand)",
     )
   }
@@ -371,9 +351,7 @@ fn validate_help_subcommand(cmd : Command) -> Unit raise ArgBuildError {
 fn validate_version_actions(cmd : Command) -> Unit raise ArgBuildError {
   if cmd.version is None &&
     cmd.args.any(arg => arg.info is Flag(action=Version, ..)) {
-    raise ArgBuildError::Unsupported(
-      "version action requires command version text",
-    )
+    raise Unsupported("version action requires command version text")
   }
 }
 
@@ -385,7 +363,7 @@ fn validate_command_policies(
   if cmd.subcommand_required &&
     cmd.subcommands.length() > 0 &&
     matches.parsed_subcommand is None {
-    raise ArgParseError::MissingRequired("subcommand")
+    raise MissingRequired("subcommand")
   }
 }
 
@@ -419,10 +397,10 @@ fn validate_groups(
     }
     group_presence[group.name] = count
     if group.required && count == 0 {
-      raise ArgParseError::MissingGroup(group.name)
+      raise MissingGroup(group.name)
     }
     if !group.multiple && count > 1 {
-      raise ArgParseError::GroupConflict(group.name)
+      raise GroupConflict(group.name)
     }
   }
   for group in groups {
@@ -433,26 +411,22 @@ fn validate_groups(
     for required in group.requires {
       if group_seen.contains(required) {
         if group_presence.get(required).unwrap_or(0) == 0 {
-          raise ArgParseError::MissingGroup(required)
+          raise MissingGroup(required)
         }
       } else if arg_seen.contains(required) {
         if !matches_has_value_or_flag(matches, required) {
-          raise ArgParseError::MissingRequired(required)
+          raise MissingRequired(required)
         }
       }
     }
     for conflict in group.conflicts_with {
       if group_seen.contains(conflict) {
         if group_presence.get(conflict).unwrap_or(0) > 0 {
-          raise ArgParseError::GroupConflict(
-            "\{group.name} conflicts with \{conflict}",
-          )
+          raise GroupConflict("\{group.name} conflicts with \{conflict}")
         }
       } else if arg_seen.contains(conflict) {
         if matches_has_value_or_flag(matches, conflict) {
-          raise ArgParseError::GroupConflict(
-            "\{group.name} conflicts with \{conflict}",
-          )
+          raise GroupConflict("\{group.name} conflicts with \{conflict}")
         }
       }
     }
@@ -472,14 +446,14 @@ fn validate_values(
   for arg in args {
     let present = matches_has_value_or_flag(matches, arg.name)
     if arg.required && !present {
-      raise ArgParseError::MissingRequired(arg.name)
+      raise MissingRequired(arg.name)
     }
     guard arg.info is (Option(_) | Positional(_)) else { continue }
     if !present {
       if arg.info is Positional(_) {
         let (min, _) = arg_min_max(arg)
         if min > 0 {
-          raise ArgParseError::TooFewValues(arg.name, 0, min)
+          raise TooFewValues(arg.name, 0, min)
         }
       }
       continue
@@ -488,12 +462,11 @@ fn validate_values(
     let count = values.length()
     let (min, max) = arg_min_max(arg)
     if count < min {
-      raise ArgParseError::TooFewValues(arg.name, count, min)
+      raise TooFewValues(arg.name, count, min)
     }
     if !(arg.info is Option(action=Append, ..)) {
       match max {
-        Some(max) if count > max =>
-          raise ArgParseError::TooManyValues(arg.name, count, max)
+        Some(max) if count > max => raise TooManyValues(arg.name, count, max)
         _ => ()
       }
     }
@@ -511,12 +484,12 @@ fn validate_relationships(
     }
     for required in arg.requires {
       if !matches_has_value_or_flag(matches, required) {
-        raise ArgParseError::MissingRequired(required)
+        raise MissingRequired(required)
       }
     }
     for conflict in arg.conflicts_with {
       if matches_has_value_or_flag(matches, conflict) {
-        raise ArgParseError::InvalidArgument(
+        raise InvalidArgument(
           "conflicting arguments: \{arg.name} and \{conflict}",
         )
       }
