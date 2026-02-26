@@ -26,7 +26,7 @@ Arguments without both are positional-only and should be declared with
 ```mbt check
 ///|
 test "name-only option is rejected" {
-  let cmd = @argparse.Command("demo", args=[@argparse.OptionArg("input")])
+  let cmd = @argparse.Command("demo", options=[OptionArg("input")])
   try cmd.parse(argv=["file.txt"], env={}) catch {
     @argparse.ArgBuildError::Unsupported(msg) =>
       inspect(msg, content="flag/option args require short/long")
@@ -42,11 +42,12 @@ test "name-only option is rejected" {
 ```mbt check
 ///|
 test "flag option positional" {
-  let cmd = @argparse.Command("demo", args=[
-    @argparse.FlagArg("verbose", short='v', long="verbose"),
-    @argparse.OptionArg("count", long="count"),
-    @argparse.PositionalArg("name", index=0),
-  ])
+  let cmd = @argparse.Command(
+    "demo",
+    flags=[FlagArg("verbose", short='v', long="verbose")],
+    options=[OptionArg("count", long="count")],
+    positionals=[PositionalArg("name", index=0)],
+  )
   let matches = cmd.parse(argv=["-v", "--count", "2", "alice"], env={}) catch {
     _ => panic()
   }
@@ -56,12 +57,12 @@ test "flag option positional" {
 
 ///|
 test "subcommand with global flag" {
-  let echo = @argparse.Command("echo", args=[
-    @argparse.PositionalArg("msg", index=0),
+  let echo = @argparse.Command("echo", positionals=[
+    PositionalArg("msg", index=0),
   ])
   let cmd = @argparse.Command(
     "demo",
-    args=[@argparse.FlagArg("verbose", short='v', long="verbose", global=true)],
+    flags=[FlagArg("verbose", short='v', long="verbose", global=true)],
     subcommands=[echo],
   )
   let matches = cmd.parse(argv=["--verbose", "echo", "hi"], env={}) catch {
@@ -84,15 +85,13 @@ help text:
 ```mbt check
 ///|
 test "help snapshot" {
-  let cmd = @argparse.Command("demo", about="demo app", version="1.0.0", args=[
-    @argparse.FlagArg(
-      "verbose",
-      short='v',
-      long="verbose",
-      about="verbose mode",
-    ),
-    @argparse.OptionArg("count", long="count", about="repeat count"),
-  ])
+  let cmd = @argparse.Command(
+    "demo",
+    about="demo app",
+    version="1.0.0",
+    flags=[FlagArg("verbose", short='v', long="verbose", about="verbose mode")],
+    options=[OptionArg("count", long="count", about="repeat count")],
+  )
   try cmd.parse(argv=["--help"], env={}) catch {
     @argparse.DisplayHelp::Message(text) =>
       inspect(
@@ -118,8 +117,8 @@ test "help snapshot" {
 
 ///|
 test "custom version option overrides built-in version flag" {
-  let cmd = @argparse.Command("demo", version="1.0.0", args=[
-    @argparse.FlagArg(
+  let cmd = @argparse.Command("demo", version="1.0.0", flags=[
+    FlagArg(
       "custom_version",
       short='V',
       long="version",
