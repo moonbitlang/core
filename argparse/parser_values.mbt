@@ -230,12 +230,8 @@ fn apply_env(
         matches.flags[name] = flag
         matches.flag_sources[name] = Env
       }
-      Option(action=Set, ..) | Positional(_) => {
-        let flag = parse_bool(value)
-        matches.flags[name] = flag
-        matches.flag_sources[name] = Env
-      }
-      Flag(action=Help | Version, ..) | Option(action=Append, ..) => ()
+      Option(_) | Positional(_) => ()
+      Flag(action=Help | Version, ..) => ()
     }
   }
 }

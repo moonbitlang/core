@@ -99,43 +99,185 @@ fn validate_command(
   cmd : Command,
   args : Array[Arg],
   groups : Array[ArgGroup],
-  inherited_global_names : @set.Set[String],
+  inherited_globals : Array[Arg],
 ) -> Unit raise ArgBuildError {
   match cmd.build_error {
     Some(err) => raise err
     None => ()
   }
-  validate_inherited_global_shadowing(args, inherited_global_names)
+  validate_inherited_global_shadowing(args, inherited_globals)
   validate_group_defs(args, groups)
   validate_group_refs(args, groups)
   validate_subcommand_defs(cmd.subcommands)
   validate_subcommand_required_policy(cmd)
   validate_help_subcommand(cmd)
   validate_version_actions(cmd)
-  let child_inherited_global_names = inherited_global_names.copy()
-  for global in collect_globals(args) {
-    child_inherited_global_names.add(global.name)
-  }
+  let child_inherited_globals = merge_inherited_globals(
+    inherited_globals,
+    collect_globals(args),
+  )
   for sub in cmd.subcommands {
-    validate_command(sub, sub.args, sub.groups, child_inherited_global_names)
+    validate_command(sub, sub.args, sub.groups, child_inherited_globals)
   }
 }
 
 ///|
 fn validate_inherited_global_shadowing(
   args : Array[Arg],
-  inherited_global_names : @set.Set[String],
+  inherited_globals : Array[Arg],
 ) -> Unit raise ArgBuildError {
   for arg in args {
-    if arg.global {
-      continue
+    if inherited_globals.iter().find_first(g => g.name == arg.name)
+      is Some(inherited_arg) {
+      if !arg.global {
+        raise Unsupported(
+          "arg '\{arg.name}' shadows an inherited global; rename the arg or mark it global",
+        )
+      }
+      if !global_override_compatible(inherited_arg, arg) {
+        raise Unsupported(
+          "global arg '\{arg.name}' is incompatible with inherited global definition",
+        )
+      }
     }
-    if inherited_global_names.contains(arg.name) {
-      raise Unsupported(
-        "arg '\{arg.name}' shadows an inherited global; rename the arg or mark it global",
-      )
+    match arg.info {
+      Flag(long~, short~, negatable~, ..) => {
+        if long is Some(name) {
+          validate_inherited_global_long_collision(arg, name, inherited_globals)
+          if negatable {
+            validate_inherited_global_long_collision(
+              arg,
+              "no-\{name}",
+              inherited_globals,
+            )
+          }
+        }
+        if short is Some(value) {
+          validate_inherited_global_short_collision(
+            arg, value, inherited_globals,
+          )
+        }
+      }
+      Option(long~, short~, ..) => {
+        if long is Some(name) {
+          validate_inherited_global_long_collision(arg, name, inherited_globals)
+        }
+        if short is Some(value) {
+          validate_inherited_global_short_collision(
+            arg, value, inherited_globals,
+          )
+        }
+      }
+      Positional(_) => ()
     }
   }
+}
+
+///|
+fn merge_inherited_globals(
+  inherited_globals : Array[Arg],
+  globals_here : Array[Arg],
+) -> Array[Arg] {
+  let merged = inherited_globals.copy()
+  for global in globals_here {
+    match merged.search_by(arg => arg.name == global.name) {
+      Some(idx) => merged[idx] = global
+      None => merged.push(global)
+    }
+  }
+  merged
+}
+
+///|
+fn global_override_compatible(inherited_arg : Arg, arg : Arg) -> Bool {
+  match inherited_arg.info {
+    Flag(action=inherited_action, ..) =>
+      match arg.info {
+        Flag(action~, ..) => inherited_action == action
+        _ => false
+      }
+    Option(action=inherited_action, ..) =>
+      match arg.info {
+        Option(action~, ..) => inherited_action == action
+        _ => false
+      }
+    Positional(_) => false
+  }
+}
+
+///|
+fn validate_inherited_global_long_collision(
+  arg : Arg,
+  long : String,
+  inherited_globals : Array[Arg],
+) -> Unit raise ArgBuildError {
+  if inherited_global_long_owner(arg.name, long, inherited_globals)
+    is Some(owner) {
+    raise Unsupported(
+      "arg '\{arg.name}' long option --\{long} conflicts with inherited global '\{owner}'",
+    )
+  }
+}
+
+///|
+fn validate_inherited_global_short_collision(
+  arg : Arg,
+  short : Char,
+  inherited_globals : Array[Arg],
+) -> Unit raise ArgBuildError {
+  if inherited_global_short_owner(arg.name, short, inherited_globals)
+    is Some(owner) {
+    raise Unsupported(
+      "arg '\{arg.name}' short option -\{short} conflicts with inherited global '\{owner}'",
+    )
+  }
+}
+
+///|
+fn inherited_global_long_owner(
+  current_name : String,
+  long : String,
+  inherited_globals : Array[Arg],
+) -> String? {
+  for inherited in inherited_globals {
+    if inherited.name == current_name {
+      continue
+    }
+    match inherited.info {
+      Flag(long=inherited_long, negatable~, ..) =>
+        if inherited_long is Some(name) &&
+          (name == long || (negatable && "no-\{name}" == long)) {
+          return Some(inherited.name)
+        }
+      Option(long=inherited_long, ..) =>
+        if inherited_long is Some(name) && name == long {
+          return Some(inherited.name)
+        }
+      Positional(_) => ()
+    }
+  }
+  None
+}
+
+///|
+fn inherited_global_short_owner(
+  current_name : String,
+  short : Char,
+  inherited_globals : Array[Arg],
+) -> String? {
+  for inherited in inherited_globals {
+    if inherited.name == current_name {
+      continue
+    }
+    match inherited.info {
+      Flag(short=inherited_short, ..) | Option(short=inherited_short, ..) =>
+        if inherited_short is Some(value) && value == short {
+          return Some(inherited.name)
+        }
+      Positional(_) => ()
+    }
+  }
+  None
 }
 
 ///|
