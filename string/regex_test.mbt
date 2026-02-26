@@ -134,3 +134,227 @@ test "bitor/alternation" {
   inspect(regex.execute("dog") is Some(_), content="true")
   inspect(regex.execute("cow") is Some(_), content="false")
 }
+
+///|
+test "complex/email_pattern" {
+  // Build readable email pattern using + and |
+  // Use simpler character class - avoid complex mixing with POSIX classes
+  // Put - at end to avoid it being interpreted as a range operator
+  let username = @string.Regex("[a-zA-Z0-9_.+\\-]+")
+  let domain_part = @string.Regex("[a-zA-Z0-9\\-]+")
+  let tld = @string.Regex("com") | @string.Regex("org") | @string.Regex("net")
+  let email = username +
+    @string.Regex::string("@") +
+    domain_part +
+    @string.Regex::string(".") +
+    tld
+  guard email.execute("user@example.com") is Some(m) else {
+    fail("Expected email match")
+  }
+  inspect(m.content(), content="user@example.com")
+  inspect(
+    email.execute("test.user+tag@my-domain.org") is Some(_),
+    content="true",
+  )
+  inspect(email.execute("invalid@.com") is Some(_), content="false")
+}
+
+///|
+test "complex/url_protocol" {
+  // Build URL pattern with multiple protocol support
+  let http = @string.Regex::string("http")
+  let https = @string.Regex::string("https")
+  let ftp = @string.Regex::string("ftp")
+  let protocol = http | https | ftp
+  let url = protocol + @string.Regex::string("://") + @string.Regex("[^/]+")
+  guard url.execute("https://example.com") is Some(m) else {
+    fail("Expected URL match")
+  }
+  inspect(m.content(), content="https://example.com")
+  guard url.execute("ftp://files.server.org") is Some(m2) else {
+    fail("Expected FTP URL match")
+  }
+  inspect(m2.content(), content="ftp://files.server.org")
+  inspect(url.execute("gopher://old.site") is Some(_), content="false")
+}
+
+///|
+test "complex/date_formats" {
+  // Support multiple date formats using | for readability
+  let year = @string.Regex("[[:digit:]]{4}")
+  let month = @string.Regex("[[:digit:]]{2}")
+  let day = @string.Regex("[[:digit:]]{2}")
+  let dash_sep = @string.Regex::string("-")
+  let slash_sep = @string.Regex::string("/")
+  let dot_sep = @string.Regex::string(".")
+  let sep = dash_sep | slash_sep | dot_sep
+  let date = year + sep + month + sep + day
+  guard date.execute("2026-02-26") is Some(m1) else {
+    fail("Expected dash date match")
+  }
+  inspect(m1.content(), content="2026-02-26")
+  guard date.execute("2026/02/26") is Some(m2) else {
+    fail("Expected slash date match")
+  }
+  inspect(m2.content(), content="2026/02/26")
+  guard date.execute("2026.02.26") is Some(m3) else {
+    fail("Expected dot date match")
+  }
+  inspect(m3.content(), content="2026.02.26")
+}
+
+///|
+test "complex/programming_identifier" {
+  // Match valid programming identifiers with optional namespace
+  let start_char = @string.Regex("[[:alpha:]_]")
+  let id_char = @string.Regex("[[:alnum:]_]")
+  let identifier = start_char + id_char.repeat(min=0)
+  let namespace_sep = @string.Regex::string("::")
+  let namespaced_id = (identifier + namespace_sep).repeat(min=0) + identifier
+  guard namespaced_id.execute("std::string::length") is Some(m) else {
+    fail("Expected namespaced identifier match")
+  }
+  inspect(m.content(), content="std::string::length")
+  guard namespaced_id.execute("_internal_var") is Some(m2) else {
+    fail("Expected simple identifier match")
+  }
+  inspect(m2.content(), content="_internal_var")
+  // Test should fail to match if starting with digit
+  guard namespaced_id.execute("123invalid") is Some(m3) else {
+    fail("Expected match somewhere in string")
+  }
+  // The match should skip the leading digits
+  inspect(m3.before().length() > 0, content="true")
+}
+
+///|
+test "complex/log_level" {
+  // Match log levels with readable alternatives
+  let debug = @string.Regex::string("DEBUG")
+  let info = @string.Regex::string("INFO")
+  // Fixed: Put WARNING before WARN since WARN is a prefix of WARNING
+  let warn = @string.Regex::string("WARNING") | @string.Regex::string("WARN")
+  let error = @string.Regex::string("ERROR")
+  let fatal = @string.Regex::string("FATAL")
+  let level = debug | info | warn | error | fatal
+  // Fixed: Use [^\\]] to match anything except closing bracket
+  // Otherwise .+ is greedy and matches past the ]
+  let timestamp = @string.Regex::string("[") +
+    @string.Regex("[^\\]]+") +
+    @string.Regex::string("]")
+  let log_line = timestamp + @string.Regex::string(" ") + level
+  guard log_line.execute("[2026-02-26 10:30:45] ERROR") is Some(m) else {
+    fail("Expected log line match")
+  }
+  inspect(m.content(), content="[2026-02-26 10:30:45] ERROR")
+  guard log_line.execute("[10:30] WARNING") is Some(m2) else {
+    fail("Expected warning match")
+  }
+  inspect(m2.content(), content="[10:30] WARNING")
+}
+
+///|
+test "complex/phone_number" {
+  // Match phone with optional country code and various formats
+  let plus = @string.Regex::string("+")
+  let country = plus + @string.Regex("[[:digit:]]{1,3}")
+  let space = @string.Regex::string(" ")
+  let dash = @string.Regex::string("-")
+  let lparen = @string.Regex::string("(")
+  let rparen = @string.Regex::string(")")
+  let area = @string.Regex("[[:digit:]]{3}")
+  let prefix = @string.Regex("[[:digit:]]{3}")
+  let line = @string.Regex("[[:digit:]]{4}")
+  let phone = country.repeat(min=0, max=1) +
+    space.repeat(min=0, max=1) +
+    ((lparen + area + rparen) | area) +
+    (space | dash).repeat(min=0, max=1) +
+    prefix +
+    (space | dash).repeat(min=0, max=1) +
+    line
+  guard phone.execute("+1 (555)123-4567") is Some(m) else {
+    fail("Expected phone match")
+  }
+  inspect(m.content(), content="+1 (555)123-4567")
+}
+
+///|
+test "complex/semantic_version" {
+  // Match semantic versioning with optional pre-release and build metadata
+  let digits = @string.Regex("[[:digit:]]+")
+  let dot = @string.Regex::string(".")
+  let major_minor_patch = digits + dot + digits + dot + digits
+  let dash = @string.Regex::string("-")
+  // Fixed: pre-release and build can contain dots (e.g., "beta.1", "build.123")
+  // Put - at the very end to avoid range interpretation
+  let alphanum = @string.Regex("[a-zA-Z0-9.\\-]+")
+  let pre_release = dash + alphanum
+  let plus = @string.Regex::string("+")
+  let build_meta = plus + alphanum
+  let semver = major_minor_patch +
+    pre_release.repeat(min=0, max=1) +
+    build_meta.repeat(min=0, max=1)
+  guard semver.execute("1.2.3") is Some(m1) else {
+    fail("Expected simple version match")
+  }
+  inspect(m1.content(), content="1.2.3")
+  guard semver.execute("2.0.0-beta.1+20260226") is Some(m2) else {
+    fail("Expected full version match")
+  }
+  inspect(m2.content(), content="2.0.0-beta.1+20260226")
+}
+
+///|
+test "complex/hex_color" {
+  // Match hex colors in different formats
+  let hash = @string.Regex::string("#")
+  let hex = @string.Regex("[0-9a-fA-F]")
+  // Match longest first to avoid short match on long colors
+  let alpha_color = hash + hex + hex + hex + hex + hex + hex + hex + hex
+  let long_color = hash + hex + hex + hex + hex + hex + hex
+  let short_color = hash + hex + hex + hex
+  let color = alpha_color | long_color | short_color
+  guard color.execute("#FFF") is Some(m1) else {
+    fail("Expected short hex match")
+  }
+  inspect(m1.content(), content="#FFF")
+  guard color.execute("#FF5733") is Some(m2) else {
+    fail("Expected long hex match")
+  }
+  inspect(m2.content(), content="#FF5733")
+  guard color.execute("#FF5733AA") is Some(m3) else {
+    fail("Expected alpha hex match")
+  }
+  inspect(m3.content(), content="#FF5733AA")
+}
+
+///|
+test "complex/json_number" {
+  // Match JSON number format
+  let minus = @string.Regex::string("-")
+  let plus_sign = @string.Regex::string("+")
+  let zero = @string.Regex::string("0")
+  let digit19 = @string.Regex("[1-9]")
+  let digit = @string.Regex("[[:digit:]]")
+  let int = zero | (digit19 + digit.repeat(min=0))
+  let dot = @string.Regex::string(".")
+  let frac = dot + digit.repeat(min=1)
+  let e = @string.Regex::string("e") | @string.Regex::string("E")
+  let exp = e + (plus_sign | minus).repeat(min=0, max=1) + digit.repeat(min=1)
+  let number = minus.repeat(min=0, max=1) +
+    int +
+    frac.repeat(min=0, max=1) +
+    exp.repeat(min=0, max=1)
+  guard number.execute("-42") is Some(m1) else {
+    fail("Expected integer match")
+  }
+  inspect(m1.content(), content="-42")
+  guard number.execute("3.14159") is Some(m2) else {
+    fail("Expected float match")
+  }
+  inspect(m2.content(), content="3.14159")
+  guard number.execute("6.022e23") is Some(m3) else {
+    fail("Expected scientific match")
+  }
+  inspect(m3.content(), content="6.022e23")
+}
