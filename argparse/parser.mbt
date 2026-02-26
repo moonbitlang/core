@@ -14,12 +14,12 @@
 
 ///|
 fn raise_help(text : String) -> Unit raise DisplayHelp {
-  raise DisplayHelp::Message(text)
+  raise Message(text)
 }
 
 ///|
 fn raise_version(text : String) -> Unit raise DisplayVersion {
-  raise DisplayVersion::Message(text)
+  raise Message(text)
 }
 
 ///|
@@ -28,7 +28,7 @@ fn[T] raise_unknown_long(
   long_index : Map[String, Arg],
 ) -> T raise ArgParseError {
   let hint = suggest_long(name, long_index)
-  raise ArgParseError::UnknownArgument("--\{name}", hint)
+  raise UnknownArgument("--\{name}", hint)
 }
 
 ///|
@@ -37,12 +37,12 @@ fn[T] raise_unknown_short(
   short_index : Map[Char, Arg],
 ) -> T raise ArgParseError {
   let hint = suggest_short(short, short_index)
-  raise ArgParseError::UnknownArgument("-\{short}", hint)
+  raise UnknownArgument("-\{short}", hint)
 }
 
 ///|
 fn[T] raise_subcommand_conflict(name : String) -> T raise ArgParseError {
-  raise ArgParseError::InvalidArgument(
+  raise InvalidArgument(
     "subcommand '\{name}' cannot be used with positional arguments",
   )
 }
@@ -55,7 +55,7 @@ fn render_help_for_context(
   let help_cmd = if inherited_globals.length() == 0 {
     cmd
   } else {
-    Command::{ ..cmd, args: inherited_globals + cmd.args }
+    { ..cmd, args: inherited_globals + cmd.args }
   }
   render_help(help_cmd)
 }
@@ -201,7 +201,7 @@ fn parse_command(
               matches.counts[spec.name] = 0
             }
             matches.flags[spec.name] = value
-            matches.flag_sources[spec.name] = ValueSource::Argv
+            matches.flag_sources[spec.name] = Argv
           } else {
             raise_unknown_long(name, long_index)
           }
@@ -209,7 +209,7 @@ fn parse_command(
           if spec.info is (Option(_) | Positional(_)) {
             check_duplicate_set_occurrence(matches, spec)
             if inline is Some(v) {
-              assign_value(matches, spec, v, ValueSource::Argv)
+              assign_value(matches, spec, v, Argv)
             } else {
               let can_take_next = i + 1 < argv.length() &&
                 !should_stop_option_value(
@@ -220,7 +220,7 @@ fn parse_command(
                 )
               if can_take_next {
                 i = i + 1
-                assign_value(matches, spec, argv[i], ValueSource::Argv)
+                assign_value(matches, spec, argv[i], Argv)
               } else {
                 raise ArgParseError::MissingValue("--\{name}")
               }
@@ -238,7 +238,7 @@ fn parse_command(
                     cmd, name, inherited_version_long,
                   ),
                 )
-              _ => apply_flag(matches, spec, ValueSource::Argv)
+              _ => apply_flag(matches, spec, Argv)
             }
           }
       }
@@ -268,7 +268,7 @@ fn parse_command(
               Some(view) => view.to_string()
               None => rest
             }
-            assign_value(matches, spec, inline, ValueSource::Argv)
+            assign_value(matches, spec, inline, Argv)
           } else {
             let can_take_next = i + 1 < argv.length() &&
               !should_stop_option_value(
@@ -279,7 +279,7 @@ fn parse_command(
               )
             if can_take_next {
               i = i + 1
-              assign_value(matches, spec, argv[i], ValueSource::Argv)
+              assign_value(matches, spec, argv[i], Argv)
             } else {
               raise ArgParseError::MissingValue("-\{short}")
             }
@@ -294,7 +294,7 @@ fn parse_command(
                   cmd, short, inherited_version_short,
                 ),
               )
-            _ => apply_flag(matches, spec, ValueSource::Argv)
+            _ => apply_flag(matches, spec, Argv)
           }
         }
         pos = pos + 1

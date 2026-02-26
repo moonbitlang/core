@@ -15,9 +15,9 @@
 ///|
 fn source_priority(source : ValueSource?) -> Int {
   match source {
-    Some(ValueSource::Argv) => 3
-    Some(ValueSource::Env) => 2
-    Some(ValueSource::Default) => 1
+    Some(Argv) => 3
+    Some(Env) => 2
+    Some(Default) => 1
     None => 0
   }
 }
@@ -34,7 +34,7 @@ fn prefer_child_source(
   } else if child_priority < parent_priority {
     false
   } else {
-    child_source is Some(ValueSource::Argv)
+    child_source is Some(Argv)
   }
 }
 
@@ -70,8 +70,7 @@ fn merge_global_value_from_child(
     return
   }
   if arg.multiple || arg.info is Option(action=Append, ..) {
-    let both_argv = parent_source is Some(ValueSource::Argv) &&
-      child_source is Some(ValueSource::Argv)
+    let both_argv = parent_source is Some(Argv) && child_source is Some(Argv)
     if both_argv {
       let merged = []
       if parent_vals is Some(pv) {
@@ -86,7 +85,7 @@ fn merge_global_value_from_child(
       }
       if merged.length() > 0 {
         parent.values[name] = merged
-        parent.value_sources[name] = ValueSource::Argv
+        parent.value_sources[name] = Argv
       }
     } else {
       let choose_child = has_child &&
@@ -141,8 +140,8 @@ fn merge_global_flag_from_child(
         let has_parent = parent.flags.get(name) is Some(_)
         let parent_source = parent.flag_sources.get(name)
         let child_source = child.flag_sources.get(name)
-        let both_argv = parent_source is Some(ValueSource::Argv) &&
-          child_source is Some(ValueSource::Argv)
+        let both_argv = parent_source is Some(Argv) &&
+          child_source is Some(Argv)
         if both_argv {
           let parent_count = parent.counts.get(name).unwrap_or(0)
           let child_count = child.counts.get(name).unwrap_or(0)

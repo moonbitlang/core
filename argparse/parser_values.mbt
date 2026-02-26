@@ -41,25 +41,19 @@ fn assign_positionals(
       }
       let mut taken = 0
       while taken < take {
-        add_value(
-          matches,
-          arg.name,
-          values[cursor + taken],
-          arg,
-          ValueSource::Argv,
-        )
+        add_value(matches, arg.name, values[cursor + taken], arg, Argv)
         taken = taken + 1
       }
       cursor = cursor + taken
       continue
     }
     if remaining > 0 {
-      add_value(matches, arg.name, values[cursor], arg, ValueSource::Argv)
+      add_value(matches, arg.name, values[cursor], arg, Argv)
       cursor = cursor + 1
     }
   }
   if cursor < values.length() {
-    raise ArgParseError::TooManyPositionals
+    raise TooManyPositionals
   }
 }
 
@@ -134,11 +128,9 @@ fn assign_value(
       matches.flag_sources[arg.name] = source
     }
     Flag(action=Help, ..) =>
-      raise ArgParseError::InvalidArgument("help action does not take values")
+      raise InvalidArgument("help action does not take values")
     Flag(action=Version, ..) =>
-      raise ArgParseError::InvalidArgument(
-        "version action does not take values",
-      )
+      raise InvalidArgument("version action does not take values")
   }
 }
 
@@ -165,7 +157,7 @@ fn check_duplicate_set_occurrence(
 ) -> Unit raise ArgParseError {
   guard arg.info is (Option(action=Set, ..) | Positional(_)) else { return }
   if matches.values.get(arg.name) is Some(_) {
-    raise ArgParseError::InvalidArgument(
+    raise InvalidArgument(
       "argument '\{option_conflict_label(arg)}' cannot be used multiple times",
     )
   }
@@ -218,7 +210,7 @@ fn apply_env(
       None => continue
     }
     if arg.info is (Option(_) | Positional(_)) {
-      assign_value(matches, arg, value, ValueSource::Env)
+      assign_value(matches, arg, value, Env)
       continue
     }
     match arg.info {
@@ -226,22 +218,22 @@ fn apply_env(
         let count = parse_count(value)
         matches.counts[name] = count
         matches.flags[name] = count > 0
-        matches.flag_sources[name] = ValueSource::Env
+        matches.flag_sources[name] = Env
       }
       Flag(action=SetFalse, ..) => {
         let flag = parse_bool(value)
         matches.flags[name] = !flag
-        matches.flag_sources[name] = ValueSource::Env
+        matches.flag_sources[name] = Env
       }
       Flag(action=SetTrue, ..) => {
         let flag = parse_bool(value)
         matches.flags[name] = flag
-        matches.flag_sources[name] = ValueSource::Env
+        matches.flag_sources[name] = Env
       }
       Option(action=Set, ..) | Positional(_) => {
         let flag = parse_bool(value)
         matches.flags[name] = flag
-        matches.flag_sources[name] = ValueSource::Env
+        matches.flag_sources[name] = Env
       }
       Flag(action=Help | Version, ..) | Option(action=Append, ..) => ()
     }
@@ -262,7 +254,7 @@ fn apply_defaults(matches : Matches, args : Array[Arg]) -> Unit {
     match default_values {
       Some(values) if values.length() > 0 =>
         for value in values {
-          let _ = add_value(matches, arg.name, value, arg, ValueSource::Default)
+          let _ = add_value(matches, arg.name, value, arg, Default)
         }
       _ => ()
     }
@@ -298,7 +290,7 @@ fn parse_bool(value : String) -> Bool raise ArgParseError {
   } else if value == "0" || value == "false" || value == "no" || value == "off" {
     false
   } else {
-    raise ArgParseError::InvalidValue(
+    raise InvalidValue(
       "invalid value '\{value}' for boolean flag; expected one of: 1, 0, true, false, yes, no, on, off",
     )
   }
@@ -308,12 +300,12 @@ fn parse_bool(value : String) -> Bool raise ArgParseError {
 fn parse_count(value : String) -> Int raise ArgParseError {
   try @strconv.parse_int(value) catch {
     _ =>
-      raise ArgParseError::InvalidValue(
+      raise InvalidValue(
         "invalid value '\{value}' for count; expected a non-negative integer",
       )
   } noraise {
     _..<0 =>
-      raise ArgParseError::InvalidValue(
+      raise InvalidValue(
         "invalid value '\{value}' for count; expected a non-negative integer",
       )
     v => v

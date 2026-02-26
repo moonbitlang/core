@@ -35,34 +35,32 @@ pub impl Show for ArgParseError with output(self : ArgParseError, logger) {
 ///|
 fn ArgParseError::arg_parse_error_message(self : ArgParseError) -> String {
   match self {
-    ArgParseError::UnknownArgument(arg, Some(hint)) =>
+    UnknownArgument(arg, Some(hint)) =>
       (
         $|error: unexpected argument '\{arg}' found
         $|
         $|  tip: a similar argument exists: '\{hint}'
       )
-    ArgParseError::UnknownArgument(arg, None) =>
-      "error: unexpected argument '\{arg}' found"
-    ArgParseError::InvalidArgument(arg) =>
+    UnknownArgument(arg, None) => "error: unexpected argument '\{arg}' found"
+    InvalidArgument(arg) =>
       if arg.has_prefix("-") {
         "error: unexpected argument '\{arg}' found"
       } else {
         "error: \{arg}"
       }
-    ArgParseError::MissingValue(arg) =>
+    MissingValue(arg) =>
       "error: a value is required for '\{arg}' but none was supplied"
-    ArgParseError::MissingRequired(name) =>
+    MissingRequired(name) =>
       "error: the following required argument was not provided: '\{name}'"
-    ArgParseError::TooFewValues(name, got, min) =>
+    TooFewValues(name, got, min) =>
       "error: '\{name}' requires at least \{min} values but only \{got} were provided"
-    ArgParseError::TooManyValues(name, got, max) =>
+    TooManyValues(name, got, max) =>
       "error: '\{name}' allows at most \{max} values but \{got} were provided"
-    ArgParseError::TooManyPositionals =>
-      "error: too many positional arguments were provided"
-    ArgParseError::InvalidValue(msg) => "error: \{msg}"
-    ArgParseError::MissingGroup(name) =>
+    TooManyPositionals => "error: too many positional arguments were provided"
+    InvalidValue(msg) => "error: \{msg}"
+    MissingGroup(name) =>
       "error: the following required argument group was not provided: '\{name}'"
-    ArgParseError::GroupConflict(name) => "error: group conflict \{name}"
+    GroupConflict(name) => "error: group conflict \{name}"
   }
 }
 

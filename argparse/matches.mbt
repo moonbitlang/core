@@ -36,7 +36,7 @@ pub struct Matches {
 
 ///|
 fn new_matches_parse_state() -> Matches {
-  Matches::{
+  {
     flags: {},
     values: {},
     flag_counts: {},

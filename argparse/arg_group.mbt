@@ -48,7 +48,7 @@ pub fn ArgGroup::new(
   requires? : Array[String] = [],
   conflicts_with? : Array[String] = [],
 ) -> ArgGroup {
-  ArgGroup::{
+  {
     name,
     required,
     multiple,

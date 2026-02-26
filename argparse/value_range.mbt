@@ -35,5 +35,5 @@ pub fn ValueRange::single() -> ValueRange {
 /// - `ValueRange(lower=0)` means `0..`.
 /// - `ValueRange(lower=1, upper=3)` means `1..=3`.
 pub fn ValueRange::new(lower? : Int = 0, upper? : Int) -> ValueRange {
-  ValueRange::{ lower, upper }
+  { lower, upper }
 }

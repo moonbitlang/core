@@ -168,7 +168,7 @@ fn build_matches(
         Some(
           (
             name,
-            Matches::{
+            {
               flags: {},
               values: {},
               flag_counts: {},
@@ -185,7 +185,7 @@ fn build_matches(
     None => None
   }
 
-  Matches::{
+  {
     flags,
     values,
     flag_counts,
