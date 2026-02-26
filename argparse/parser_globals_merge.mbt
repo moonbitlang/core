@@ -59,7 +59,7 @@ fn merge_global_value_from_child(
   child : Matches,
   arg : Arg,
   name : String,
-) -> Unit {
+) -> Unit raise ArgParseError {
   let parent_vals = parent.values.get(name)
   let child_vals = child.values.get(name)
   let parent_source = parent.value_sources.get(name)
@@ -107,6 +107,15 @@ fn merge_global_value_from_child(
       }
     }
   } else {
+    if has_parent &&
+      has_child &&
+      parent_source is Some(Argv) &&
+      child_source is Some(Argv) &&
+      arg.info is Option(action=Set, ..) {
+      raise InvalidArgument(
+        "argument '\{global_option_conflict_label(arg)}' cannot be used multiple times",
+      )
+    }
     let choose_child = has_child &&
       (!has_parent || prefer_child_source(parent_source, child_source))
     if choose_child {
@@ -145,9 +154,15 @@ fn merge_global_flag_from_child(
         if both_argv {
           let parent_count = parent.counts.get(name).unwrap_or(0)
           let child_count = child.counts.get(name).unwrap_or(0)
-          let total = parent_count + child_count
-          parent.counts[name] = total
-          parent.flags[name] = total > 0
+          if child_count == 0 && !v {
+            // `--no-<flag>` after a subcommand should reset an earlier argv count.
+            parent.counts[name] = 0
+            parent.flags[name] = false
+          } else {
+            let total = parent_count + child_count
+            parent.counts[name] = total
+            parent.flags[name] = total > 0
+          }
           match strongest_source(parent_source, child_source) {
             Some(src) => parent.flag_sources[name] = src
             None => ()
@@ -189,7 +204,7 @@ fn merge_globals_from_child(
   child : Matches,
   globals : Array[Arg],
   child_local_non_globals : @set.Set[String],
-) -> Unit {
+) -> Unit raise ArgParseError {
   for arg in globals {
     let name = arg.name
     if child_local_non_globals.contains(name) {
@@ -200,6 +215,22 @@ fn merge_globals_from_child(
         merge_global_value_from_child(parent, child, arg, name)
       Flag(_) => merge_global_flag_from_child(parent, child, arg, name)
     }
+  }
+}
+
+///|
+fn global_option_conflict_label(arg : Arg) -> String {
+  match arg.info {
+    Flag(long~, short~, ..) | Option(long~, short~, ..) =>
+      match long {
+        Some(name) => "--\{name}"
+        None =>
+          match short {
+            Some(short) => "-\{short}"
+            None => arg.name
+          }
+      }
+    Positional(_) => arg.name
   }
 }
 
@@ -244,5 +275,12 @@ fn propagate_globals_to_child(
         None => ()
       }
     }
+  }
+  match child.parsed_subcommand {
+    Some((sub_name, sub_m)) => {
+      propagate_globals_to_child(parent, sub_m, globals, @set.new())
+      child.parsed_subcommand = Some((sub_name, sub_m))
+    }
+    None => ()
   }
 }

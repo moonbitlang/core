@@ -297,7 +297,7 @@ fn parse_command(
             _ => apply_flag(matches, spec, Argv)
           }
         }
-        pos = pos + 1
+        pos = pos + short.utf16_len()
       }
       i = i + 1
       continue
