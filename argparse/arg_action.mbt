@@ -16,19 +16,17 @@
 fn arg_min_max_for_validate(arg : Arg) -> (Int, Int?) raise ArgBuildError {
   if arg.info is Positional(num_args=Some(range), ..) {
     if range.lower < 0 {
-      raise ArgBuildError::Unsupported("min values must be >= 0")
+      raise Unsupported("min values must be >= 0")
     }
     if range.upper is Some(max_value) {
       if max_value < 0 {
-        raise ArgBuildError::Unsupported("max values must be >= 0")
+        raise Unsupported("max values must be >= 0")
       }
       if max_value < range.lower {
-        raise ArgBuildError::Unsupported("max values must be >= min values")
+        raise Unsupported("max values must be >= min values")
       }
       if range.lower == 0 && max_value == 0 {
-        raise ArgBuildError::Unsupported(
-          "empty value range (0..0) is unsupported",
-        )
+        raise Unsupported("empty value range (0..0) is unsupported")
       }
     }
     (range.lower, range.upper)

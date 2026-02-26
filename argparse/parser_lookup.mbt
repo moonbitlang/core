@@ -83,10 +83,10 @@ fn resolve_help_target(
   let mut subs = cmd.subcommands
   for name in targets {
     if name.has_prefix("-") {
-      raise ArgParseError::InvalidArgument("unexpected help argument: \{name}")
+      raise InvalidArgument("unexpected help argument: \{name}")
     }
     guard subs.iter().find_first(sub => sub.name == name) is Some(sub) else {
-      raise ArgParseError::InvalidArgument("unknown subcommand: \{name}")
+      raise InvalidArgument("unknown subcommand: \{name}")
     }
     current_globals = current_globals + collect_globals(current.args)
     current = sub

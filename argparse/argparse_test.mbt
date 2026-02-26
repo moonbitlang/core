@@ -99,11 +99,7 @@ test "relationships and num args" {
   }
 
   let appended = @argparse.Command("demo", args=[
-    @argparse.OptionArg(
-      "tag",
-      long="tag",
-      action=@argparse.OptionAction::Append,
-    ),
+    @argparse.OptionArg("tag", long="tag", action=Append),
   ]).parse(argv=["--tag", "a", "--tag", "b", "--tag", "c"], env=empty_env()) catch {
     _ => panic()
   }
@@ -115,9 +111,7 @@ test "arg groups required and multiple" {
   let cmd = @argparse.Command(
     "demo",
     groups=[
-      @argparse.ArgGroup("mode", required=true, multiple=false, args=[
-        "fast", "slow",
-      ]),
+      ArgGroup("mode", required=true, multiple=false, args=["fast", "slow"]),
     ],
     args=[
       @argparse.FlagArg("fast", long="fast"),
@@ -146,8 +140,8 @@ test "arg groups requires and conflicts" {
   let requires_cmd = @argparse.Command(
     "demo",
     groups=[
-      @argparse.ArgGroup("mode", args=["fast"], requires=["output"]),
-      @argparse.ArgGroup("output", args=["json"]),
+      ArgGroup("mode", args=["fast"], requires=["output"]),
+      ArgGroup("output", args=["json"]),
     ],
     args=[
       @argparse.FlagArg("fast", long="fast"),
@@ -166,8 +160,8 @@ test "arg groups requires and conflicts" {
   let conflict_cmd = @argparse.Command(
     "demo",
     groups=[
-      @argparse.ArgGroup("mode", args=["fast"], conflicts_with=["output"]),
-      @argparse.ArgGroup("output", args=["json"]),
+      ArgGroup("mode", args=["fast"], conflicts_with=["output"]),
+      ArgGroup("output", args=["json"]),
     ],
     args=[
       @argparse.FlagArg("fast", long="fast"),
@@ -222,7 +216,7 @@ test "full help snapshot" {
       ]),
       @argparse.PositionalArg("name", index=0, about="Target name"),
     ],
-    subcommands=[@argparse.Command("echo", about="Echo a message")],
+    subcommands=[Command("echo", about="Echo a message")],
   )
   inspect(
     cmd.render_help(),
@@ -255,19 +249,17 @@ test "value source precedence argv env default" {
 
   let from_default = cmd.parse(argv=[], env=empty_env()) catch { _ => panic() }
   assert_true(from_default.values is { "level": ["1"], .. })
-  assert_true(
-    from_default.sources is { "level": @argparse.ValueSource::Default, .. },
-  )
+  assert_true(from_default.sources is { "level": Default, .. })
 
   let from_env = cmd.parse(argv=[], env={ "LEVEL": "2" }) catch { _ => panic() }
   assert_true(from_env.values is { "level": ["2"], .. })
-  assert_true(from_env.sources is { "level": @argparse.ValueSource::Env, .. })
+  assert_true(from_env.sources is { "level": Env, .. })
 
   let from_argv = cmd.parse(argv=["--level", "3"], env={ "LEVEL": "2" }) catch {
     _ => panic()
   }
   assert_true(from_argv.values is { "level": ["3"], .. })
-  assert_true(from_argv.sources is { "level": @argparse.ValueSource::Argv, .. })
+  assert_true(from_argv.sources is { "level": Argv, .. })
 }
 
 ///|
@@ -287,11 +279,7 @@ test "options and multiple values" {
     "demo",
     args=[
       @argparse.OptionArg("count", short='c', long="count"),
-      @argparse.OptionArg(
-        "tag",
-        long="tag",
-        action=@argparse.OptionAction::Append,
-      ),
+      @argparse.OptionArg("tag", long="tag", action=Append),
     ],
     subcommands=[serve],
   )
@@ -324,7 +312,7 @@ test "negatable and conflicts" {
     @argparse.FlagArg(
       "failfast",
       long="failfast",
-      action=@argparse.FlagAction::SetFalse,
+      action=SetFalse,
       negatable=true,
     ),
     @argparse.FlagArg("verbose", long="verbose", conflicts_with=["quiet"]),
@@ -335,7 +323,7 @@ test "negatable and conflicts" {
     _ => panic()
   }
   assert_true(no_cache.flags is { "cache": false, .. })
-  assert_true(no_cache.sources is { "cache": @argparse.ValueSource::Argv, .. })
+  assert_true(no_cache.sources is { "cache": Argv, .. })
 
   let no_failfast = cmd.parse(argv=["--no-failfast"], env=empty_env()) catch {
     _ => panic()
@@ -412,7 +400,7 @@ test "command policies" {
   }
 
   let sub_cmd = @argparse.Command("demo", subcommand_required=true, subcommands=[
-    @argparse.Command("echo"),
+    Command("echo"),
   ])
   assert_true(sub_cmd.render_help().has_prefix("Usage: demo <command>"))
   try sub_cmd.parse(argv=[], env=empty_env()) catch {

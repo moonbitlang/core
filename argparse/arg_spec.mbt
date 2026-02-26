@@ -116,7 +116,7 @@ pub fn FlagArg::new(
   short? : Char,
   long? : String,
   about? : String,
-  action? : FlagAction = FlagAction::SetTrue,
+  action? : FlagAction = SetTrue,
   env? : String,
   requires? : Array[String] = [],
   conflicts_with? : Array[String] = [],
@@ -125,8 +125,8 @@ pub fn FlagArg::new(
   negatable? : Bool = false,
   hidden? : Bool = false,
 ) -> FlagArg {
-  FlagArg::{
-    arg: Arg::{
+  {
+    arg: {
       name,
       about,
       env,
@@ -198,7 +198,7 @@ pub fn OptionArg::new(
   short? : Char,
   long? : String,
   about? : String,
-  action? : OptionAction = OptionAction::Set,
+  action? : OptionAction = Set,
   env? : String,
   default_values? : Array[String],
   allow_hyphen_values? : Bool = false,
@@ -208,8 +208,8 @@ pub fn OptionArg::new(
   global? : Bool = false,
   hidden? : Bool = false,
 ) -> OptionArg {
-  OptionArg::{
-    arg: Arg::{
+  {
+    arg: {
       name,
       about,
       env,
@@ -301,8 +301,8 @@ pub fn PositionalArg::new(
   global? : Bool = false,
   hidden? : Bool = false,
 ) -> PositionalArg {
-  PositionalArg::{
-    arg: Arg::{
+  {
+    arg: {
       name,
       about,
       env,
