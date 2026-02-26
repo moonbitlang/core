@@ -113,7 +113,7 @@ fn transl_asrt(ctx : @automata.Context, asrt : Assertion) -> @automata.Expr {
       @automata.e_seq(
         ctx~,
         First,
-        @automata.e_after(ctx~, Category::inexistant_or_non_word()),
+        @automata.e_after(ctx~, Category::inexistant_or_non_word_end()),
         @automata.e_before(ctx~, Category::word()),
       )
     EndOfWord =>
@@ -121,7 +121,7 @@ fn transl_asrt(ctx : @automata.Context, asrt : Assertion) -> @automata.Expr {
         ctx~,
         First,
         @automata.e_after(ctx~, Category::word()),
-        @automata.e_before(ctx~, Category::inexistant_or_non_word()),
+        @automata.e_before(ctx~, Category::inexistant_or_non_word_start()),
       )
     NotWordBoundary =>
       @automata.e_alt(ctx~, [
@@ -134,8 +134,8 @@ fn transl_asrt(ctx : @automata.Context, asrt : Assertion) -> @automata.Expr {
         @automata.e_seq(
           ctx~,
           First,
-          @automata.e_after(ctx~, Category::inexistant_or_non_word()),
-          @automata.e_before(ctx~, Category::inexistant_or_non_word()),
+          @automata.e_after(ctx~, Category::inexistant_or_non_word_end()),
+          @automata.e_before(ctx~, Category::inexistant_or_non_word_start()),
         ),
       ])
     StartOfInput => @automata.e_after(ctx~, Category::inexistant())
