@@ -160,7 +160,14 @@ fn Parser::character_class(
   let (rest, char_set) = Parser::class_contents(rest, ctx~)
   match rest {
     [']', .. rest] =>
-      (rest, if neg { ctx.profile.valid - char_set } else { char_set })
+      (
+        rest,
+        if neg {
+          ctx.profile.valid - char_set
+        } else {
+          char_set & ctx.profile.valid
+        },
+      )
     [] => raise ctx.error_at(rest, HINT_UNCLOSED_CHAR_CLASS)
     _ => panic()
   }
