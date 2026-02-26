@@ -49,26 +49,43 @@ pub fn Category::word() -> Category {
 
 ///|
 /// Category representing a non-word character.
-pub fn Category::not_word() -> Category {
+pub fn Category::not_word_start() -> Category {
   Category(4)
+}
+
+///|
+/// Category representing a non-word character.
+pub fn Category::not_word_end() -> Category {
+  Category(8)
+}
+
+///|
+/// Category representing a non-word character.
+pub fn Category::not_word() -> Category {
+  Category(4 | 8)
 }
 
 ///|
 /// Category representing a newline character.
 pub fn Category::newline() -> Category {
-  Category(8)
+  Category(16)
 }
 
 ///|
 /// Convenience category: outside input or newline.
 pub fn Category::inexistant_or_newline() -> Category {
-  Category(1 | 8)
+  Category(1 | 16)
 }
 
 ///|
 /// Convenience category: outside input or non-word.
-pub fn Category::inexistant_or_non_word() -> Category {
+pub fn Category::inexistant_or_non_word_start() -> Category {
   Category(1 | 4)
+}
+
+///|
+pub fn Category::inexistant_or_non_word_end() -> Category {
+  Category(1 | 8)
 }
 
 ///|

@@ -28,7 +28,10 @@ fn symbolize(
         symbol_map.split(RecharSet::char('\n'))
       Assertion(StartOfWord)
       | Assertion(EndOfWord)
-      | Assertion(NotWordBoundary) => symbol_map.split(profile.word)
+      | Assertion(NotWordBoundary) =>
+        for split in profile.word_symbolize_splits {
+          symbol_map.split(split)
+        }
       Assertion(StartOfInput) | Assertion(EndOfInput) => ()
       Preference(_, r) => aux(r)
       Capture(r, ..) => aux(r)

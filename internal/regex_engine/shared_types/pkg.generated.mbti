@@ -15,12 +15,15 @@ pub struct Category(Int)
 pub fn Category::dummy() -> Self
 pub fn Category::inexistant() -> Self
 pub fn Category::inexistant_or_newline() -> Self
-pub fn Category::inexistant_or_non_word() -> Self
+pub fn Category::inexistant_or_non_word_end() -> Self
+pub fn Category::inexistant_or_non_word_start() -> Self
 #deprecated
 pub fn Category::inner(Self) -> Int
 pub fn Category::intersects(Self, Self) -> Bool
 pub fn Category::newline() -> Self
 pub fn Category::not_word() -> Self
+pub fn Category::not_word_end() -> Self
+pub fn Category::not_word_start() -> Self
 pub fn Category::word() -> Self
 pub impl Add for Category
 pub impl Eq for Category
@@ -40,11 +43,12 @@ pub struct Profile {
   ub : Int
   valid : @rechar_set.RecharSet
   word : @rechar_set.RecharSet
+  word_symbolize_splits : ReadOnlyArray[@rechar_set.RecharSet]
   category : (Int) -> Category
 
-  fn new(valid~ : @rechar_set.RecharSet, word~ : @rechar_set.RecharSet, category~ : (Int) -> Category) -> Profile
+  fn new(valid~ : @rechar_set.RecharSet, word~ : @rechar_set.RecharSet, word_symbolize_splits? : ReadOnlyArray[@rechar_set.RecharSet], category~ : (Int) -> Category) -> Profile
 }
-pub fn Profile::new(valid~ : @rechar_set.RecharSet, word~ : @rechar_set.RecharSet, category~ : (Int) -> Category) -> Self
+pub fn Profile::new(valid~ : @rechar_set.RecharSet, word~ : @rechar_set.RecharSet, word_symbolize_splits? : ReadOnlyArray[@rechar_set.RecharSet], category~ : (Int) -> Category) -> Self
 
 pub(all) enum QuantifierMode {
   Greedy
