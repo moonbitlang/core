@@ -85,7 +85,7 @@ pub fn Command::new(
     build_error: arg_error,
   }
   if cmd.build_error is None {
-    validate_command(cmd, parsed_args, groups, @set.new()) catch {
+    validate_command(cmd, parsed_args, groups, []) catch {
       err => cmd.build_error = Some(err)
     }
   }

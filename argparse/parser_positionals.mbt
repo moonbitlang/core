@@ -126,7 +126,7 @@ fn is_negative_number(arg : String) -> Bool {
     if ch < '0' || ch > '9' {
       return false
     }
-    i = i + 1
+    i = i + ch.utf16_len()
   }
   true
 }

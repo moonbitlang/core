@@ -2325,3 +2325,180 @@ test "global flag set in child argv is merged back to parent" {
     sub.sources is { "verbose": Argv, .. },
   )
 }
+
+///|
+test "global count negation after subcommand resets merged state" {
+  let cmd = @argparse.Command(
+    "demo",
+    args=[
+      @argparse.FlagArg(
+        "verbose",
+        long="verbose",
+        action=Count,
+        negatable=true,
+        global=true,
+      ),
+    ],
+    subcommands=[Command("run")],
+  )
+
+  let parsed = cmd.parse(
+    argv=["--verbose", "run", "--no-verbose"],
+    env=empty_env(),
+  ) catch {
+    _ => panic()
+  }
+  assert_true(parsed.flags is { "verbose": false, .. })
+  assert_true(parsed.flag_counts.get("verbose") is None)
+  assert_true(parsed.sources is { "verbose": Argv, .. })
+  assert_true(
+    parsed.subcommand is Some(("run", sub)) &&
+    sub.flags is { "verbose": false, .. } &&
+    sub.flag_counts.get("verbose") is None &&
+    sub.sources is { "verbose": Argv, .. },
+  )
+}
+
+///|
+test "global set option rejects duplicate occurrences across subcommands" {
+  let cmd = @argparse.Command(
+    "demo",
+    args=[@argparse.OptionArg("mode", long="mode", global=true)],
+    subcommands=[Command("run")],
+  )
+  try
+    cmd.parse(argv=["--mode", "a", "run", "--mode", "b"], env=empty_env())
+  catch {
+    @argparse.ArgParseError::InvalidArgument(msg) => {
+      assert_true(msg.contains("--mode"))
+      assert_true(msg.contains("cannot be used multiple times"))
+    }
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
+test "global override with incompatible inherited type is rejected" {
+  try
+    @argparse.Command(
+      "demo",
+      args=[
+        @argparse.OptionArg("mode", long="mode", required=true, global=true),
+      ],
+      subcommands=[
+        Command("run", args=[
+          @argparse.FlagArg("mode", long="mode", global=true),
+        ]),
+      ],
+    ).parse(argv=["run", "--mode"], env=empty_env())
+  catch {
+    @argparse.ArgBuildError::Unsupported(msg) =>
+      assert_true(msg.contains("incompatible"))
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
+test "child local long alias collision with inherited global is rejected" {
+  try
+    @argparse.Command(
+      "demo",
+      args=[@argparse.FlagArg("verbose", long="verbose", global=true)],
+      subcommands=[
+        Command("run", args=[@argparse.OptionArg("local", long="verbose")]),
+      ],
+    ).parse(argv=["run", "--verbose"], env=empty_env())
+  catch {
+    @argparse.ArgBuildError::Unsupported(msg) => {
+      assert_true(msg.contains("long option"))
+      assert_true(msg.contains("inherited global"))
+    }
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
+test "child local short alias collision with inherited global is rejected" {
+  try
+    @argparse.Command(
+      "demo",
+      args=[@argparse.FlagArg("verbose", short='v', global=true)],
+      subcommands=[
+        Command("run", args=[@argparse.OptionArg("local", short='v')]),
+      ],
+    ).parse(argv=["run", "-v"], env=empty_env())
+  catch {
+    @argparse.ArgBuildError::Unsupported(msg) => {
+      assert_true(msg.contains("short option"))
+      assert_true(msg.contains("inherited global"))
+    }
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
+test "nested subcommands inherit finalized globals from ancestors" {
+  let leaf = @argparse.Command("leaf")
+  let mid = @argparse.Command("mid", subcommands=[leaf])
+  let cmd = @argparse.Command(
+    "demo",
+    args=[@argparse.FlagArg("verbose", long="verbose", global=true)],
+    subcommands=[mid],
+  )
+
+  let parsed = cmd.parse(argv=["--verbose", "mid", "leaf"], env=empty_env()) catch {
+    _ => panic()
+  }
+  assert_true(parsed.flags is { "verbose": true, .. })
+  assert_true(
+    parsed.subcommand is Some(("mid", mid_matches)) &&
+    mid_matches.flags is { "verbose": true, .. } &&
+    mid_matches.subcommand is Some(("leaf", leaf_matches)) &&
+    leaf_matches.flags is { "verbose": true, .. } &&
+    leaf_matches.sources is { "verbose": Argv, .. },
+  )
+}
+
+///|
+test "non-bmp short option token does not panic" {
+  let cmd = @argparse.Command("demo", args=[
+    @argparse.FlagArg("party", short='🎉'),
+  ])
+  let parsed = cmd.parse(argv=["-🎉"], env=empty_env()) catch { _ => panic() }
+  assert_true(parsed.flags is { "party": true, .. })
+}
+
+///|
+test "non-bmp hyphen token reports unknown argument without panic" {
+  let cmd = @argparse.Command("demo", args=[
+    @argparse.PositionalArg("value", index=0),
+  ])
+  try cmd.parse(argv=["-🎉"], env=empty_env()) catch {
+    @argparse.ArgParseError::UnknownArgument(arg, hint) => {
+      assert_true(arg == "-🎉")
+      assert_true(hint is None)
+    }
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
+test "option env values remain string values instead of flags" {
+  let cmd = @argparse.Command("demo", args=[
+    @argparse.OptionArg("mode", long="mode", env="MODE"),
+  ])
+  let parsed = cmd.parse(argv=[], env={ "MODE": "fast" }) catch { _ => panic() }
+  assert_true(parsed.values is { "mode": ["fast"], .. })
+  assert_true(parsed.flags.get("mode") is None)
+  assert_true(parsed.sources is { "mode": Env, .. })
+}
