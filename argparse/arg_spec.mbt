@@ -78,14 +78,14 @@ pub struct FlagArg {
 
   /// Create a flag argument.
   fn new(
-    name : String,
+    name : StringView,
     short? : Char,
-    long? : String,
-    about? : String,
+    long? : StringView,
+    about? : StringView,
     action? : FlagAction,
-    env? : String,
-    requires? : Array[String],
-    conflicts_with? : Array[String],
+    env? : StringView,
+    requires? : ArrayView[String],
+    conflicts_with? : ArrayView[String],
     required? : Bool,
     global? : Bool,
     negatable? : Bool,
@@ -112,19 +112,23 @@ pub impl ArgLike for FlagArg with validate(self, ctx) {
 ///
 /// If `negatable=true`, `--no-<long>` is accepted for long flags.
 pub fn FlagArg::new(
-  name : String,
+  name : StringView,
   short? : Char,
-  long? : String,
-  about? : String,
+  long? : StringView,
+  about? : StringView,
   action? : FlagAction = SetTrue,
-  env? : String,
-  requires? : Array[String] = [],
-  conflicts_with? : Array[String] = [],
+  env? : StringView,
+  requires? : ArrayView[String] = [],
+  conflicts_with? : ArrayView[String] = [],
   required? : Bool = false,
   global? : Bool = false,
   negatable? : Bool = false,
   hidden? : Bool = false,
 ) -> FlagArg {
+  let name = name.to_string()
+  let long = long.map(v => v.to_string())
+  let about = about.map(v => v.to_string())
+  let env = env.map(v => v.to_string())
   {
     arg: {
       name,
@@ -132,8 +136,8 @@ pub fn FlagArg::new(
       env,
       global,
       hidden,
-      requires: requires.copy(),
-      conflicts_with: conflicts_with.copy(),
+      requires: requires.to_array(),
+      conflicts_with: conflicts_with.to_array(),
       required,
       //
       info: Flag(short~, long~, action~, negatable~),
@@ -159,16 +163,16 @@ pub struct OptionArg {
 
   /// Create an option argument.
   fn new(
-    name : String,
+    name : StringView,
     short? : Char,
-    long? : String,
-    about? : String,
+    long? : StringView,
+    about? : StringView,
     action? : OptionAction,
-    env? : String,
-    default_values? : Array[String],
+    env? : StringView,
+    default_values? : ArrayView[String],
     allow_hyphen_values? : Bool,
-    requires? : Array[String],
-    conflicts_with? : Array[String],
+    requires? : ArrayView[String],
+    conflicts_with? : ArrayView[String],
     required? : Bool,
     global? : Bool,
     hidden? : Bool,
@@ -194,27 +198,31 @@ pub impl ArgLike for OptionArg with validate(self, ctx) {
 ///
 /// `global=true` makes the option available in subcommands.
 pub fn OptionArg::new(
-  name : String,
+  name : StringView,
   short? : Char,
-  long? : String,
-  about? : String,
+  long? : StringView,
+  about? : StringView,
   action? : OptionAction = Set,
-  env? : String,
-  default_values? : Array[String],
+  env? : StringView,
+  default_values? : ArrayView[String],
   allow_hyphen_values? : Bool = false,
-  requires? : Array[String] = [],
-  conflicts_with? : Array[String] = [],
+  requires? : ArrayView[String] = [],
+  conflicts_with? : ArrayView[String] = [],
   required? : Bool = false,
   global? : Bool = false,
   hidden? : Bool = false,
 ) -> OptionArg {
+  let name = name.to_string()
+  let long = long.map(v => v.to_string())
+  let about = about.map(v => v.to_string())
+  let env = env.map(v => v.to_string())
   {
     arg: {
       name,
       about,
       env,
-      requires: requires.copy(),
-      conflicts_with: conflicts_with.copy(),
+      requires: requires.to_array(),
+      conflicts_with: conflicts_with.to_array(),
       required,
       global,
       hidden,
@@ -223,7 +231,7 @@ pub fn OptionArg::new(
         short~,
         long~,
         action~,
-        default_values=default_values.map(Array::copy),
+        default_values=default_values.map(values => values.to_array()),
         allow_hyphen_values~,
       ),
       //
@@ -247,16 +255,16 @@ pub struct PositionalArg {
 
   /// Create a positional argument.
   fn new(
-    name : String,
+    name : StringView,
     index? : Int,
-    about? : String,
-    env? : String,
-    default_values? : Array[String],
+    about? : StringView,
+    env? : StringView,
+    default_values? : ArrayView[String],
     num_args? : ValueRange,
     allow_hyphen_values? : Bool,
     last? : Bool,
-    requires? : Array[String],
-    conflicts_with? : Array[String],
+    requires? : ArrayView[String],
+    conflicts_with? : ArrayView[String],
     required? : Bool,
     global? : Bool,
     hidden? : Bool,
@@ -287,27 +295,30 @@ pub impl ArgLike for PositionalArg with validate(self, ctx) {
 /// omitted or exactly `ValueRange::single()` (`1..1`); other ranges are rejected
 /// at build time.
 pub fn PositionalArg::new(
-  name : String,
+  name : StringView,
   index? : Int,
-  about? : String,
-  env? : String,
-  default_values? : Array[String],
+  about? : StringView,
+  env? : StringView,
+  default_values? : ArrayView[String],
   num_args? : ValueRange,
   allow_hyphen_values? : Bool = false,
   last? : Bool = false,
-  requires? : Array[String] = [],
-  conflicts_with? : Array[String] = [],
+  requires? : ArrayView[String] = [],
+  conflicts_with? : ArrayView[String] = [],
   required? : Bool = false,
   global? : Bool = false,
   hidden? : Bool = false,
 ) -> PositionalArg {
+  let name = name.to_string()
+  let about = about.map(v => v.to_string())
+  let env = env.map(v => v.to_string())
   {
     arg: {
       name,
       about,
       env,
-      requires: requires.copy(),
-      conflicts_with: conflicts_with.copy(),
+      requires: requires.to_array(),
+      conflicts_with: conflicts_with.to_array(),
       required,
       global,
       hidden,
@@ -316,7 +327,7 @@ pub fn PositionalArg::new(
         index~,
         num_args~,
         last~,
-        default_values=default_values.map(Array::copy),
+        default_values=default_values.map(values => values.to_array()),
         allow_hyphen_values~,
       ),
       // short: None,

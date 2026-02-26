@@ -31,18 +31,18 @@ pub struct Command {
 
   /// Create a declarative command specification.
   fn new(
-    name : String,
-    args? : Array[&ArgLike],
-    subcommands? : Array[Command],
-    about? : String,
-    version? : String,
+    name : StringView,
+    args? : ArrayView[&ArgLike],
+    subcommands? : ArrayView[Command],
+    about? : StringView,
+    version? : StringView,
     disable_help_flag? : Bool,
     disable_version_flag? : Bool,
     disable_help_subcommand? : Bool,
     arg_required_else_help? : Bool,
     subcommand_required? : Bool,
     hidden? : Bool,
-    groups? : Array[ArgGroup],
+    groups? : ArrayView[ArgGroup],
   ) -> Command
 }
 
@@ -54,28 +54,28 @@ pub struct Command {
 /// - `groups` explicitly declares all group memberships and policies.
 /// - Built-in `--help`/`--version` behavior can be disabled with the flags below.
 pub fn Command::new(
-  name : String,
-  args? : Array[&ArgLike] = [],
-  subcommands? : Array[Command] = [],
-  about? : String,
-  version? : String,
+  name : StringView,
+  args? : ArrayView[&ArgLike] = [],
+  subcommands? : ArrayView[Command] = [],
+  about? : StringView,
+  version? : StringView,
   disable_help_flag? : Bool = false,
   disable_version_flag? : Bool = false,
   disable_help_subcommand? : Bool = false,
   arg_required_else_help? : Bool = false,
   subcommand_required? : Bool = false,
   hidden? : Bool = false,
-  groups? : Array[ArgGroup] = [],
+  groups? : ArrayView[ArgGroup] = [],
 ) -> Command {
   let (parsed_args, arg_error) = collect_args(args)
-  let groups = groups.copy()
+  let groups = groups.to_array()
   let cmd = Command::{
-    name,
+    name: name.to_string(),
     args: parsed_args,
     groups,
-    subcommands: subcommands.copy(),
-    about,
-    version,
+    subcommands: subcommands.to_array(),
+    about: about.map(v => v.to_string()),
+    version: version.map(v => v.to_string()),
     disable_help_flag,
     disable_version_flag,
     disable_help_subcommand,
@@ -110,7 +110,7 @@ pub fn Command::render_help(self : Command) -> String {
 /// Value precedence is `argv > env > default_values`.
 pub fn Command::parse(
   self : Command,
-  argv? : Array[String] = default_argv(),
+  argv? : ArrayView[String] = default_argv(),
   env? : Map[String, String] = {},
 ) -> Matches raise {
   let raw = parse_command(self, argv, env, [], {}, {})
@@ -209,7 +209,7 @@ fn find_decl_subcommand(subs : Array[Command], name : String) -> Command? {
 }
 
 ///|
-fn collect_args(specs : Array[&ArgLike]) -> (Array[Arg], ArgBuildError?) {
+fn collect_args(specs : ArrayView[&ArgLike]) -> (Array[Arg], ArgBuildError?) {
   let args = specs.map(spec => spec.to_arg())
   let ctx = ValidationCtx::new()
   let mut first_error : ArgBuildError? = None

@@ -81,7 +81,7 @@ fn default_argv() -> Array[String] {
 ///|
 fn parse_command(
   cmd : Command,
-  argv : Array[String],
+  argv : ArrayView[String],
   env : Map[String, String],
   inherited_globals : Array[Arg],
   inherited_version_long : Map[String, String],

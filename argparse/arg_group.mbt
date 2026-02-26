@@ -24,12 +24,12 @@ pub struct ArgGroup {
 
   /// Create an argument group.
   fn new(
-    name : String,
+    name : StringView,
     required? : Bool,
     multiple? : Bool,
-    args? : Array[String],
-    requires? : Array[String],
-    conflicts_with? : Array[String],
+    args? : ArrayView[String],
+    requires? : ArrayView[String],
+    conflicts_with? : ArrayView[String],
   ) -> ArgGroup
 }
 
@@ -41,19 +41,19 @@ pub struct ArgGroup {
 /// - `multiple=false` means group members are mutually exclusive.
 /// - `requires` and `conflicts_with` can reference either group names or arg names.
 pub fn ArgGroup::new(
-  name : String,
+  name : StringView,
   required? : Bool = false,
   multiple? : Bool = true,
-  args? : Array[String] = [],
-  requires? : Array[String] = [],
-  conflicts_with? : Array[String] = [],
+  args? : ArrayView[String] = [],
+  requires? : ArrayView[String] = [],
+  conflicts_with? : ArrayView[String] = [],
 ) -> ArgGroup {
   {
-    name,
+    name: name.to_string(),
     required,
     multiple,
-    args: args.copy(),
-    requires: requires.copy(),
-    conflicts_with: conflicts_with.copy(),
+    args: args.to_array(),
+    requires: requires.to_array(),
+    conflicts_with: conflicts_with.to_array(),
   }
 }
