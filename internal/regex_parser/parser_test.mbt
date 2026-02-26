@@ -15,7 +15,8 @@
 ///|
 fn profile_unicode() -> @re.Profile {
   @re.Profile(
-    valid=@re.RecharSet::char_range(0, 0x10FFFF),
+    valid=@re.RecharSet::char_range(0, 0x10FFFF) -
+      @re.RecharSet::char_range(0xD800, 0xDFFF),
     word=@re.RecharSet::char_range('a', 'z') +
       @re.RecharSet::char_range('A', 'Z') +
       @re.RecharSet::char_range('0', '9') +
@@ -81,7 +82,11 @@ test "parse/dot_wildcard" {
     content=(
       #|Sequence(
       #|  <ReadOnlyArray:
-      #|    [Char([(97, 97)]), Char([(0, 1114111)]), Char([(98, 98)])]>,
+      #|    [
+      #|      Char([(97, 97)]),
+      #|      Char([(0, 55295), (57344, 1114111)]),
+      #|      Char([(98, 98)]),
+      #|    ]>,
       #|)
     ),
   )
@@ -231,7 +236,18 @@ test "parse/character_class" {
   let pat2 = parse(profile=profile_unicode(), mode=String, "[a-z]")
   debug_inspect(pat2, content="Char([(97, 122)])")
   let pat3 = parse(profile=profile_unicode(), mode=String, "[^abc]")
-  debug_inspect(pat3, content="Char([(0, 96), (100, 1114111)])")
+  debug_inspect(
+    pat3,
+    content=(
+      #|Char([(0, 96), (100, 55295), (57344, 1114111)])
+    ),
+  )
+}
+
+///|
+test "parse/character_class_range_clipped_to_profile_valid" {
+  let pat = parse(profile=profile_unicode(), mode=String, "[\\uD7FF-\\uE000]")
+  debug_inspect(pat, content="Char([(55295, 55295), (57344, 57344)])")
 }
 
 ///|
