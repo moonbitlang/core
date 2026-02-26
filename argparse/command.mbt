@@ -32,7 +32,9 @@ pub struct Command {
   /// Create a declarative command specification.
   fn new(
     name : StringView,
-    args? : ArrayView[&ArgLike],
+    flags? : ArrayView[FlagArg],
+    options? : ArrayView[OptionArg],
+    positionals? : ArrayView[PositionalArg],
     subcommands? : ArrayView[Command],
     about? : StringView,
     version? : StringView,
@@ -50,12 +52,14 @@ pub struct Command {
 /// Create a declarative command specification.
 ///
 /// Notes:
-/// - `args` accepts `FlagArg` / `OptionArg` / `PositionalArg` via `ArgLike`.
+/// - `flags` / `options` / `positionals` declare command arguments by kind.
 /// - `groups` explicitly declares all group memberships and policies.
 /// - Built-in `--help`/`--version` behavior can be disabled with the flags below.
 pub fn Command::new(
   name : StringView,
-  args? : ArrayView[&ArgLike] = [],
+  flags? : ArrayView[FlagArg] = [],
+  options? : ArrayView[OptionArg] = [],
+  positionals? : ArrayView[PositionalArg] = [],
   subcommands? : ArrayView[Command] = [],
   about? : StringView,
   version? : StringView,
@@ -67,7 +71,7 @@ pub fn Command::new(
   hidden? : Bool = false,
   groups? : ArrayView[ArgGroup] = [],
 ) -> Command {
-  let (parsed_args, arg_error) = collect_args(args)
+  let (parsed_args, arg_error) = collect_args(flags, options, positionals)
   let groups = groups.to_array()
   let cmd = Command::{
     name: name.to_string(),
@@ -209,12 +213,35 @@ fn find_decl_subcommand(subs : Array[Command], name : String) -> Command? {
 }
 
 ///|
-fn collect_args(specs : ArrayView[&ArgLike]) -> (Array[Arg], ArgBuildError?) {
-  let args = specs.map(spec => spec.to_arg())
+fn collect_args(
+  flags : ArrayView[FlagArg],
+  options : ArrayView[OptionArg],
+  positionals : ArrayView[PositionalArg],
+) -> (Array[Arg], ArgBuildError?) {
+  let args : Array[Arg] = []
+  for flag in flags {
+    args.push(flag.arg)
+  }
+  for option in options {
+    args.push(option.arg)
+  }
+  for positional in positionals {
+    args.push(positional.arg)
+  }
   let ctx = ValidationCtx::new()
   let mut first_error : ArgBuildError? = None
-  for spec in specs {
-    spec.validate(ctx) catch {
+  for flag in flags {
+    validate_flag_arg(flag.arg, ctx) catch {
+      err => if first_error is None { first_error = Some(err) }
+    }
+  }
+  for option in options {
+    validate_option_arg(option.arg, ctx) catch {
+      err => if first_error is None { first_error = Some(err) }
+    }
+  }
+  for positional in positionals {
+    validate_positional_arg(positional.arg, ctx) catch {
       err => if first_error is None { first_error = Some(err) }
     }
   }
