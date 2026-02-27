@@ -131,16 +131,20 @@ fn Regex::re(self : Regex) -> @re.Regex {
 ///
 /// `\d`, `\D`, `\s`, `\S`, `\w`, and `\W` are not supported; use POSIX
 /// character classes instead.
-/// 
+///
 /// POSIX character classes are ASCII-based.
+///
+/// In character classes, the dash `-` is used to specify ranges (e.g., `[a-z]`).
+/// To match a literal dash, it must be escaped as `\-`. Placing a dash at the
+/// start or end of a character class (e.g., `[-a]` or `[a-]`) is not supported.
 ///
 /// For full grammar and semantics, see:
 /// <https://github.com/moonbitlang/lexmatch_spec>
-/// 
+///
 /// Raises when `pattern` is not a valid regex pattern.
-/// 
+///
 /// Example:
-/// 
+///
 /// ```mbt check
 /// test {
 ///   let regex = @string.Regex("[[:digit:]]+")
