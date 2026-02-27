@@ -1975,6 +1975,40 @@ test "positionals honor explicit index sorting with last ranged positional" {
 }
 
 ///|
+test "mixed indexed and unindexed positionals keep inferred order" {
+  let cmd = @argparse.Command("demo", positionals=[
+    PositionalArg("first"),
+    PositionalArg("second", index=1),
+  ])
+
+  let parsed = cmd.parse(argv=["a", "b"], env=empty_env()) catch {
+    _ => panic()
+  }
+  assert_true(parsed.values is { "first": ["a"], "second": ["b"], .. })
+}
+
+///|
+test "positional indices cannot skip values" {
+  try
+    @argparse.Command("demo", positionals=[PositionalArg("late", index=1)]).parse(
+      argv=["x"],
+      env=empty_env(),
+    )
+  catch {
+    @argparse.ArgBuildError::Unsupported(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|positional indices cannot skip values; missing index: 0
+        ),
+      )
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
 test "positional num_args lower bound rejects missing argv values" {
   let cmd = @argparse.Command("demo", positionals=[
     PositionalArg("first", index=0, num_args=ValueRange(lower=2, upper=3)),
