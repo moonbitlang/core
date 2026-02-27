@@ -97,3 +97,6 @@ const HINT_UNSUPPORTED_NESTED_CHAR_CLASS = "Unsupported nested character class"
 
 ///|
 const HINT_USE_POSIX_CHARACTER_CLASS = "Use POSIX character class instead of \\w, \\W, \\d, \\D, \\s, \\S"
+
+///|
+const HINT_DASH_AT_BOUNDARY = "Dash at the start or end of character class is not supported, use \\- to match a literal dash"

@@ -781,7 +781,42 @@ test "parse/error_unexpected_char_in_range" {
   debug_inspect(
     try? parse(profile=profile_unicode(), mode=String, "[a-]"),
     content=(
-      #|Err(ParserError(at=3, hint="Unexpected character"))
+      #|Err(
+      #|  ParserError(
+      #|    at=2,
+      #|    hint="Dash at the start or end of character class is not supported, use \\- to match a literal dash",
+      #|  ),
+      #|)
+    ),
+  )
+}
+
+///|
+test "parse/error_dash_at_start" {
+  debug_inspect(
+    try? parse(profile=profile_unicode(), mode=String, "[-a]"),
+    content=(
+      #|Err(
+      #|  ParserError(
+      #|    at=1,
+      #|    hint="Dash at the start or end of character class is not supported, use \\- to match a literal dash",
+      #|  ),
+      #|)
+    ),
+  )
+}
+
+///|
+test "parse/error_dash_at_start_negated" {
+  debug_inspect(
+    try? parse(profile=profile_unicode(), mode=String, "[^-a]"),
+    content=(
+      #|Err(
+      #|  ParserError(
+      #|    at=2,
+      #|    hint="Dash at the start or end of character class is not supported, use \\- to match a literal dash",
+      #|  ),
+      #|)
     ),
   )
 }

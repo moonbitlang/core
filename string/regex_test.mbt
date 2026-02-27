@@ -655,3 +655,24 @@ test "add/with_any_quantifier_and_empty_wrappers" {
   guard re.execute("abc. ") is Some(m) else { fail("Expected match") }
   inspect(m.content(), content="abc. ")
 }
+
+///|
+test "should_raise" {
+  assert_true(
+    [
+      try? @string.Regex::new("[-a]"),
+      try? @string.Regex::new("[^-a]"),
+      try? @string.Regex::new("[a-]"),
+    ].all(it => it is Err(_)),
+  )
+}
+
+///|
+test "escaped_dash_in_char_class" {
+  let regex = @string.Regex::new("[a\\-z]")
+  inspect(regex.execute("a-z") is Some(_), content="true")
+  inspect(regex.execute("b") is Some(_), content="false")
+  inspect(regex.execute("-") is Some(_), content="true")
+  inspect(regex.execute("a") is Some(_), content="true")
+  inspect(regex.execute("z") is Some(_), content="true")
+}

@@ -111,8 +111,7 @@ fn Parser::class_contents(
             match rest {
               ['-', '-', ..] =>
                 raise ctx.error_at(rest, HINT_UNSUPPORTED_CLASS_SET_EXPRESSION)
-              ['-', ']', ..] =>
-                raise ctx.error_at(rest, offset=1, HINT_UNEXPECTED_CHAR)
+              ['-', ']', ..] => raise ctx.error_at(rest, HINT_DASH_AT_BOUNDARY)
               ['-', .. rest] => {
                 let (rest2, right) = Parser::class_atom(rest, ctx~)
                 match right {
@@ -156,6 +155,11 @@ fn Parser::character_class(
     ['[', '^', .. rest] => (rest, true)
     ['[', .. rest] => (rest, false)
     _ => raise ctx.error_at(rest, HINT_UNEXPECTED_CHAR)
+  }
+  // Check for dash at the start of character class
+  match rest {
+    ['-', ..] => raise ctx.error_at(rest, HINT_DASH_AT_BOUNDARY)
+    _ => ()
   }
   let (rest, char_set) = Parser::class_contents(rest, ctx~)
   match rest {
