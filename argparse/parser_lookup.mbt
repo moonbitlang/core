@@ -18,12 +18,7 @@ fn build_long_index(
   args : Array[Arg],
 ) -> Map[String, Arg] {
   let index : Map[String, Arg] = {}
-  for arg in globals {
-    if arg.info is (Flag(long~, ..) | Option(long~, ..)) && long is Some(name) {
-      index[name] = arg
-    }
-  }
-  for arg in args {
+  for arg in globals.iter() + args.iter() {
     if arg.info is (Flag(long~, ..) | Option(long~, ..)) && long is Some(name) {
       index[name] = arg
     }
@@ -34,13 +29,7 @@ fn build_long_index(
 ///|
 fn build_short_index(globals : Array[Arg], args : Array[Arg]) -> Map[Char, Arg] {
   let index : Map[Char, Arg] = {}
-  for arg in globals {
-    if arg.info is (Flag(short~, ..) | Option(short~, ..)) &&
-      short is Some(value) {
-      index[value] = arg
-    }
-  }
-  for arg in args {
+  for arg in globals.iter() + args.iter() {
     if arg.info is (Flag(short~, ..) | Option(short~, ..)) &&
       short is Some(value) {
       index[value] = arg
@@ -62,32 +51,26 @@ fn collect_non_global_names(args : Array[Arg]) -> @set.Set[String] {
 ///|
 fn resolve_help_target(
   cmd : Command,
-  argv : Array[String],
+  argv : ArrayView[String],
   builtin_help_short : Bool,
   builtin_help_long : Bool,
   inherited_globals : Array[Arg],
   command_path : String,
 ) -> (Command, Array[Arg], String) raise ArgParseError {
-  let targets = if argv.length() == 0 {
-    argv
-  } else {
-    let last = argv[argv.length() - 1]
-    if (last == "-h" && builtin_help_short) ||
-      (last == "--help" && builtin_help_long) {
-      argv[:argv.length() - 1].to_array()
-    } else {
-      argv
-    }
+  let targets = match argv {
+    [.. pre, "-h"] if builtin_help_short => pre
+    [.. pre, "--help"] if builtin_help_long => pre
+    _ => argv
   }
   let mut current = cmd
   let mut current_path = command_path
   let mut current_globals = inherited_globals
-  let mut subs = cmd.subcommands
   for name in targets {
     if name.has_prefix("-") {
       raise InvalidArgument("unexpected help argument: \{name}")
     }
-    guard subs.iter().find_first(sub => sub.name == name) is Some(sub) else {
+    guard current.subcommands.iter().find_first(sub => sub.name == name)
+      is Some(sub) else {
       raise InvalidArgument("unknown subcommand: \{name}")
     }
     current_globals = current_globals + collect_globals(current.args)
@@ -97,29 +80,18 @@ fn resolve_help_target(
     } else {
       "\{current_path} \{sub.name}"
     }
-    subs = sub.subcommands
   }
   (current, current_globals, current_path)
 }
 
 ///|
+/// "--long=value" -> ("long", Some("value"))
+/// "--long" -> ("long", None)
+/// panic if arg is not [.."--", ..]
 fn split_long(arg : String) -> (String, String?) {
-  let parts = []
-  for part in arg.split("=") {
-    parts.push(part.to_string())
-  }
-  if parts.length() <= 1 {
-    let name = match parts[0].strip_prefix("--") {
-      Some(view) => view.to_string()
-      None => parts[0]
-    }
-    (name, None)
+  if arg.split_once("=") is Some((name, value)) {
+    (name.strip_prefix("--").unwrap().to_string(), Some(value.to_string()))
   } else {
-    let name = match parts[0].strip_prefix("--") {
-      Some(view) => view.to_string()
-      None => parts[0]
-    }
-    let value = parts[1:].to_array().join("=")
-    (name, Some(value))
+    (arg.strip_prefix("--").unwrap().to_string(), None)
   }
 }

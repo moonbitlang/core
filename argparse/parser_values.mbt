@@ -156,7 +156,7 @@ fn check_duplicate_set_occurrence(
   arg : Arg,
 ) -> Unit raise ArgParseError {
   guard arg.info is (Option(action=Set, ..) | Positional(_)) else { return }
-  if matches.values.get(arg.name) is Some(_) {
+  if matches.values.contains(arg.name) {
     raise InvalidArgument(
       "argument '\{option_conflict_label(arg)}' cannot be used multiple times",
     )
@@ -198,19 +198,9 @@ fn apply_env(
 ) -> Unit raise ArgParseError {
   for arg in args {
     let name = arg.name
-    if matches_has_value_or_flag(matches, name) {
-      continue
-    }
-    let env_name = match arg.env {
-      Some(value) => value
-      None => continue
-    }
-    let value = match env.get(env_name) {
-      Some(v) => v
-      None => continue
-    }
-    if arg.info is (Option(_) | Positional(_)) {
-      assign_value(matches, arg, value, Env)
+    guard !matches_has_value_or_flag(matches, name) &&
+      arg.env is Some(env_name) &&
+      env.get(env_name) is Some(value) else {
       continue
     }
     match arg.info {
@@ -230,7 +220,7 @@ fn apply_env(
         matches.flags[name] = flag
         matches.flag_sources[name] = Env
       }
-      Option(_) | Positional(_) => ()
+      Option(_) | Positional(_) => assign_value(matches, arg, value, Env)
       Flag(action=Help | Version, ..) => ()
     }
   }
@@ -259,7 +249,7 @@ fn apply_defaults(matches : Matches, args : Array[Arg]) -> Unit {
 
 ///|
 fn matches_has_value_or_flag(matches : Matches, name : String) -> Bool {
-  matches.flags.get(name) is Some(_) || matches.values.get(name) is Some(_)
+  matches.flags.contains(name) || matches.values.contains(name)
 }
 
 ///|
@@ -272,8 +262,8 @@ fn apply_flag(matches : Matches, arg : Arg, source : ValueSource) -> Unit {
       matches.counts[arg.name] = current + 1
       matches.flags[arg.name] = true
     }
-    Flag(action=Help, ..) => ()
-    Flag(action=Version, ..) => ()
+    Flag(action=Help, ..) => panic()
+    Flag(action=Version, ..) => panic()
     _ => matches.flags[arg.name] = true
   }
   matches.flag_sources[arg.name] = source
@@ -281,14 +271,13 @@ fn apply_flag(matches : Matches, arg : Arg, source : ValueSource) -> Unit {
 
 ///|
 fn parse_bool(value : String) -> Bool raise ArgParseError {
-  if value == "1" || value == "true" || value == "yes" || value == "on" {
-    true
-  } else if value == "0" || value == "false" || value == "no" || value == "off" {
-    false
-  } else {
-    raise InvalidValue(
-      "invalid value '\{value}' for boolean flag; expected one of: 1, 0, true, false, yes, no, on, off",
-    )
+  match value {
+    "1" | "true" | "yes" | "on" => true
+    "0" | "false" | "no" | "off" => false
+    _ =>
+      raise InvalidValue(
+        "invalid value '\{value}' for boolean flag; expected one of: 1, 0, true, false, yes, no, on, off",
+      )
   }
 }
 

@@ -84,9 +84,7 @@ fn should_parse_as_positional(
   long_index : Map[String, Arg],
   short_index : Map[Char, Arg],
 ) -> Bool {
-  if !arg.has_prefix("-") || arg == "-" {
-    return false
-  }
+  guard arg is ['-', .. rest] else { return false }
   let next = match next_positional(positionals, collected) {
     Some(v) => v
     None => return false
@@ -96,34 +94,19 @@ fn should_parse_as_positional(
     Option(allow_hyphen_values~, ..) | Positional(allow_hyphen_values~, ..) =>
       allow_hyphen_values
   }
-  let allow = next_allow || is_negative_number(arg)
+  let allow = next_allow || rest lexmatch? "[0-9]*"
   if !allow {
     return false
   }
-  if arg.has_prefix("--") {
-    let (name, _) = split_long(arg)
-    return long_index.get(name) is None
-  }
-  let short = arg.get_char(1)
-  match short {
-    Some(ch) => short_index.get(ch) is None
-    None => true
-  }
-}
-
-///|
-fn is_negative_number(arg : String) -> Bool {
-  if arg.length() < 2 {
-    return false
-  }
-  guard arg.get_char(0) is Some('-') else { return false }
-  let mut i = 1
-  while i < arg.length() {
-    let ch = arg.get_char(i).unwrap()
-    if ch < '0' || ch > '9' {
-      return false
+  match rest {
+    ['-', .. rest] => {
+      let name = match rest.before("=") {
+        Some(name) => name
+        None => rest
+      }
+      !long_index.contains(name.to_string())
     }
-    i = i + ch.utf16_len()
+    [ch, ..] => !short_index.contains(ch)
+    [] => true
   }
-  true
 }
