@@ -209,19 +209,9 @@ fn apply_env(
 ) -> Unit raise ArgParseError {
   for arg in args {
     let name = arg.name
-    if matches_has_value_or_flag(matches, name) {
-      continue
-    }
-    let env_name = match arg.env {
-      Some(value) => value
-      None => continue
-    }
-    let value = match env.get(env_name) {
-      Some(v) => v
-      None => continue
-    }
-    if arg.info is (OptionInfo(_) | PositionalInfo(_)) {
-      assign_value(matches, arg, value, Env)
+    guard !matches_has_value_or_flag(matches, name) &&
+      arg.env is Some(env_name) &&
+      env.get(env_name) is Some(value) else {
       continue
     }
     match arg.info {
@@ -241,7 +231,8 @@ fn apply_env(
         matches.flags[name] = flag
         matches.flag_sources[name] = Env
       }
-      OptionInfo(_) | PositionalInfo(_) => ()
+      OptionInfo(_) | PositionalInfo(_) =>
+        assign_value(matches, arg, value, Env)
       FlagInfo(action=Help | Version, ..) => ()
     }
   }
@@ -283,8 +274,8 @@ fn apply_flag(matches : Matches, arg : Arg, source : ValueSource) -> Unit {
       matches.counts[arg.name] = current + 1
       matches.flags[arg.name] = true
     }
-    FlagInfo(action=Help, ..) => ()
-    FlagInfo(action=Version, ..) => ()
+    FlagInfo(action=Help, ..) => panic()
+    FlagInfo(action=Version, ..) => panic()
     _ => matches.flags[arg.name] = true
   }
   matches.flag_sources[arg.name] = source
