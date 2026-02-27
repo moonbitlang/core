@@ -92,11 +92,25 @@ pub let epsilon : Pattern = Pattern::{ desc: Sequence([]), nullable: true }
 ///|
 /// Concatenate patterns.
 pub fn seq(exprs : ReadOnlyArray[Pattern]) -> Pattern {
-  match exprs {
+  // Flatten nested Sequence nodes to avoid deep nesting
+  let flatten = []
+  for expr in exprs {
+    if expr.desc is Sequence(nested) {
+      for e in nested {
+        flatten.push(e)
+      }
+    } else {
+      flatten.push(expr)
+    }
+  }
+  match flatten {
     [] => epsilon
     [expr] => expr
     exprs =>
-      Pattern::{ desc: Sequence(exprs), nullable: exprs.all(e => e.nullable) }
+      Pattern::{
+        desc: Sequence(ReadOnlyArray::from_array(exprs)),
+        nullable: exprs.all(e => e.nullable),
+      }
   }
 }
 

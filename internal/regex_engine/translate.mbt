@@ -144,26 +144,37 @@ fn transl_asrt(ctx : @automata.Context, asrt : Assertion) -> @automata.Expr {
 }
 
 ///|
+/// NOTE:
+/// `exprs` must be normalized to not contain nested `Sequence` nodes.
+/// We rely on `@regex_engine.seq` to perform that flattening so preference
+/// boundaries are interpreted consistently in this translator.
 fn transl_seq(
   tc : TranslateContext,
   exprs : ReadOnlyArray[Pattern],
 ) -> @automata.Expr {
+  fn compose(
+    pref2 : Preference,
+    cr : @automata.Expr,
+    cr2 : @automata.Expr,
+  ) -> @automata.Expr {
+    if @automata.is_eps(cr2) {
+      // When the suffix is epsilon, `cr` is the effective tail of this
+      // sequence, so we must keep the preference boundary for it.
+      enforce_pref(tc.ctx, tc.pref, pref2, cr)
+    } else if @automata.is_eps(cr) {
+      cr2
+    } else {
+      @automata.e_seq(ctx=tc.ctx, pref2, cr, cr2)
+    }
+  }
+
   fn go(i : Int) -> @automata.Expr {
     if i >= exprs.length() {
       @automata.e_eps
-    } else if i == exprs.length() - 1 {
-      let (cr, pref2) = translate(tc, exprs[i])
-      enforce_pref(tc.ctx, tc.pref, pref2, cr)
     } else {
       let (cr, pref2) = translate(tc, exprs[i])
       let cr2 = go(i + 1)
-      if @automata.is_eps(cr2) {
-        cr
-      } else if @automata.is_eps(cr) {
-        cr2
-      } else {
-        @automata.e_seq(ctx=tc.ctx, pref2, cr, cr2)
-      }
+      compose(pref2, cr, cr2)
     }
   }
 
