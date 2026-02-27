@@ -111,6 +111,34 @@ test "finite quantifiers greedy vs non-greedy compile" {
 }
 
 ///|
+test "nested sequence vs flattened sequence preserve effective-tail preference" {
+  let any = @regex_engine.char(@regex_engine.RecharSet::char_range(0, 0x10FFFF))
+  let dot = @regex_engine.char(@regex_engine.RecharSet::char('.'))
+  let space = @regex_engine.char(@regex_engine.RecharSet::char(' '))
+  let reluctant_any = @regex_engine.shortest(
+    @regex_engine.quantifier(any, { min: 0, max: None, mode: Greedy }),
+  )
+  let nested_pat = @regex_engine.seq([
+    @regex_engine.seq([reluctant_any, dot]),
+    @regex_engine.epsilon,
+    space,
+  ])
+  let flat_pat = @regex_engine.seq([
+    reluctant_any, dot, @regex_engine.epsilon, space,
+  ])
+  let nested_re = @regex_engine.compile(profile~, nested_pat)
+  let flat_re = @regex_engine.compile(profile~, flat_pat)
+  guard nested_re.execute("abc. "[:], 0) is Some(nested_match) else {
+    fail("Expected nested match")
+  }
+  guard flat_re.execute("abc. "[:], 0) is Some(flat_match) else {
+    fail("Expected flattened match")
+  }
+  assert_eq(nested_match.group(0), Some((0, 5)))
+  assert_eq(flat_match.group(0), Some((0, 5)))
+}
+
+///|
 test "epsilon in sequences (translate eps optimizations)" {
   let a = @regex_engine.char(@regex_engine.RecharSet::char('a'))
   let pat1 = @regex_engine.seq([

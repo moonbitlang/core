@@ -639,3 +639,19 @@ test "complex/json_number" {
     ),
   )
 }
+
+///|
+test "add/with_any_quantifier" {
+  let re1 = @string.Regex(".*?\\.")
+  let re2 = re1 + @string.Regex::string(" ")
+  guard re1.execute("abc.") is Some(_) else { fail("Expected match") }
+  guard re2.execute("abc. ") is Some(_) else { fail("Expected match") }
+}
+
+///|
+test "add/with_any_quantifier_and_empty_wrappers" {
+  let empty = @string.Regex::string("")
+  let re = empty + @string.Regex(".*?\\.") + empty + @string.Regex::string(" ")
+  guard re.execute("abc. ") is Some(m) else { fail("Expected match") }
+  inspect(m.content(), content="abc. ")
+}
