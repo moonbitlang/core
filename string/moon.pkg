@@ -11,7 +11,7 @@ import {
   "moonbitlang/core/json",
   "moonbitlang/core/array",
   "moonbitlang/core/quickcheck",
-  "moonbitlang/core/encoding/utf8", 
+  "moonbitlang/core/encoding/utf8",
   "moonbitlang/core/encoding/utf16",
 } for "test"
 
