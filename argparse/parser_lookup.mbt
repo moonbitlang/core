@@ -83,15 +83,3 @@ fn resolve_help_target(
   }
   (current, current_globals, current_path)
 }
-
-///|
-/// "--long=value" -> ("long", Some("value"))
-/// "--long" -> ("long", None)
-/// panic if arg is not [.."--", ..]
-fn split_long(arg : String) -> (String, String?) {
-  if arg.split_once("=") is Some((name, value)) {
-    (name.strip_prefix("--").unwrap().to_string(), Some(value.to_string()))
-  } else {
-    (arg.strip_prefix("--").unwrap().to_string(), None)
-  }
-}
