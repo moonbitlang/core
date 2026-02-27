@@ -2431,3 +2431,79 @@ test "option env values remain string values instead of flags" {
   assert_true(parsed.flags.get("mode") is None)
   assert_true(parsed.sources is { "mode": Env, .. })
 }
+
+///|
+test "nested global override deduplicates count merge by name" {
+  let leaf = @argparse.Command("leaf")
+  let mid = @argparse.Command(
+    "mid",
+    flags=[FlagArg("verbose", long="verbose", action=Count, global=true)],
+    subcommands=[leaf],
+  )
+  let root = @argparse.Command(
+    "root",
+    flags=[FlagArg("verbose", long="verbose", action=Count, global=true)],
+    subcommands=[mid],
+  )
+
+  let parsed = root.parse(argv=["mid", "leaf", "--verbose"], env=empty_env()) catch {
+    _ => panic()
+  }
+  assert_true(parsed.flag_counts is { "verbose": 1, .. })
+  assert_true(
+    parsed.subcommand is Some(("mid", sub_mid)) &&
+    sub_mid.flag_counts is { "verbose": 1, .. } &&
+    sub_mid.subcommand is Some(("leaf", sub_leaf)) &&
+    sub_leaf.flag_counts is { "verbose": 1, .. },
+  )
+}
+
+///|
+test "nested global override keeps single set value without false duplicate error" {
+  let leaf = @argparse.Command("leaf")
+  let mid = @argparse.Command(
+    "mid",
+    options=[OptionArg("mode", long="mode", global=true)],
+    subcommands=[leaf],
+  )
+  let root = @argparse.Command(
+    "root",
+    options=[OptionArg("mode", long="mode", global=true)],
+    subcommands=[mid],
+  )
+
+  let parsed = root.parse(
+    argv=["mid", "leaf", "--mode", "fast"],
+    env=empty_env(),
+  ) catch {
+    _ => panic()
+  }
+  assert_true(parsed.values is { "mode": ["fast"], .. })
+  assert_true(
+    parsed.subcommand is Some(("mid", sub_mid)) &&
+    sub_mid.values is { "mode": ["fast"], .. } &&
+    sub_mid.subcommand is Some(("leaf", sub_leaf)) &&
+    sub_leaf.values is { "mode": ["fast"], .. },
+  )
+}
+
+///|
+test "global override with different negatable setting is rejected" {
+  try
+    @argparse.Command(
+      "demo",
+      flags=[FlagArg("verbose", long="verbose", negatable=true, global=true)],
+      subcommands=[
+        Command("run", flags=[
+          FlagArg("verbose", long="verbose", negatable=false, global=true),
+        ]),
+      ],
+    ).parse(argv=["run"], env=empty_env())
+  catch {
+    @argparse.ArgBuildError::Unsupported(msg) =>
+      assert_true(msg.contains("incompatible"))
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}

@@ -191,9 +191,10 @@ fn merge_inherited_globals(
 ///|
 fn global_override_compatible(inherited_arg : Arg, arg : Arg) -> Bool {
   match inherited_arg.info {
-    Flag(action=inherited_action, ..) =>
+    Flag(action=inherited_action, negatable=inherited_negatable, ..) =>
       match arg.info {
-        Flag(action~, ..) => inherited_action == action
+        Flag(action~, negatable~, ..) =>
+          inherited_action == action && inherited_negatable == negatable
         _ => false
       }
     Option(action=inherited_action, ..) =>
