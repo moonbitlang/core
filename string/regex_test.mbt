@@ -16,26 +16,32 @@
 test "execute/non_capture_group" {
   let regex = @string.Regex("(?:ab)(c)(?:d)")
   guard regex.execute("abcd") is Some(m) else { fail("Expected match") }
-  debug_inspect(m, content=(
-    #|{
-    #|  input: <StringView: "abcd">,
-    #|  group_names: <ReadOnlyArray: [None, None]>,
-    #|  result: MatchResult([0, 4, 2, 3]),
-    #|}
-  ))
+  debug_inspect(
+    m,
+    content=(
+      #|{
+      #|  input: <StringView: "abcd">,
+      #|  group_names: <ReadOnlyArray: [None, None]>,
+      #|  result: MatchResult([0, 4, 2, 3]),
+      #|}
+    ),
+  )
 }
 
 ///|
 test "execute/non_capture_with_named_group" {
   let regex = @string.Regex("(?:a)(b)(?:c)(?<d>d)")
   guard regex.execute("abcd") is Some(m) else { fail("Expected match") }
-  debug_inspect(m, content=(
-    #|{
-    #|  input: <StringView: "abcd">,
-    #|  group_names: <ReadOnlyArray: [None, None, Some("d")]>,
-    #|  result: MatchResult([0, 4, 1, 2, 3, 4]),
-    #|}
-  ))
+  debug_inspect(
+    m,
+    content=(
+      #|{
+      #|  input: <StringView: "abcd">,
+      #|  group_names: <ReadOnlyArray: [None, None, Some("d")]>,
+      #|  result: MatchResult([0, 4, 1, 2, 3, 4]),
+      #|}
+    ),
+  )
 }
 
 ///|
@@ -44,13 +50,16 @@ test "execute/any_char_on_supplementary_plane" {
   guard regex.execute("😀") is Some(m) else {
     fail("Expected match for supplementary-plane Unicode escape")
   }
-  debug_inspect(m, content=(
-    #|{
-    #|  input: <StringView: "😀">,
-    #|  group_names: <ReadOnlyArray: [None]>,
-    #|  result: MatchResult([0, 2]),
-    #|}
-  ))
+  debug_inspect(
+    m,
+    content=(
+      #|{
+      #|  input: <StringView: "😀">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 2]),
+      #|}
+    ),
+  )
 }
 
 ///|
@@ -81,13 +90,16 @@ test "compile/unicode_escape_supplementary_plane" {
   guard regex.execute("a😀b") is Some(m) else {
     fail("Expected match for supplementary-plane Unicode escape")
   }
-  debug_inspect(m, content=(
-    #|{
-    #|  input: <StringView: "a😀b">,
-    #|  group_names: <ReadOnlyArray: [None]>,
-    #|  result: MatchResult([1, 3]),
-    #|}
-  ))
+  debug_inspect(
+    m,
+    content=(
+      #|{
+      #|  input: <StringView: "a😀b">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([1, 3]),
+      #|}
+    ),
+  )
 }
 
 ///|
@@ -96,16 +108,22 @@ test "string/literal_metacharacters" {
   guard regex.execute("xa+b(c)y") is Some(m) else {
     fail("Expected literal match")
   }
-  debug_inspect(m, content=(
-    #|{
-    #|  input: <StringView: "xa+b(c)y">,
-    #|  group_names: <ReadOnlyArray: [None]>,
-    #|  result: MatchResult([1, 7]),
-    #|}
-  ))
-  debug_inspect(regex.execute("xabccy"), content=(
-    #|None
-  ))
+  debug_inspect(
+    m,
+    content=(
+      #|{
+      #|  input: <StringView: "xa+b(c)y">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([1, 7]),
+      #|}
+    ),
+  )
+  debug_inspect(
+    regex.execute("xabccy"),
+    content=(
+      #|None
+    ),
+  )
 }
 
 ///|
@@ -119,20 +137,26 @@ test "repeat/greedy_and_nongreedy" {
   guard nongreedy.execute("a12345") is Some(m2) else {
     fail("Expected non-greedy match")
   }
-  debug_inspect(m1, content=(
-    #|{
-    #|  input: <StringView: "a12345">,
-    #|  group_names: <ReadOnlyArray: [None]>,
-    #|  result: MatchResult([1, 5]),
-    #|}
-  ))
-  debug_inspect(m2, content=(
-    #|{
-    #|  input: <StringView: "a12345">,
-    #|  group_names: <ReadOnlyArray: [None]>,
-    #|  result: MatchResult([1, 3]),
-    #|}
-  ))
+  debug_inspect(
+    m1,
+    content=(
+      #|{
+      #|  input: <StringView: "a12345">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([1, 5]),
+      #|}
+    ),
+  )
+  debug_inspect(
+    m2,
+    content=(
+      #|{
+      #|  input: <StringView: "a12345">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([1, 3]),
+      #|}
+    ),
+  )
 }
 
 ///|
@@ -165,30 +189,39 @@ test "add/sequence" {
   guard regex.execute("xxabcdyy") is Some(m) else {
     fail("Expected concatenated match")
   }
-  debug_inspect(m, content=(
-    #|{
-    #|  input: <StringView: "xxabcdyy">,
-    #|  group_names: <ReadOnlyArray: [None]>,
-    #|  result: MatchResult([2, 6]),
-    #|}
-  ))
+  debug_inspect(
+    m,
+    content=(
+      #|{
+      #|  input: <StringView: "xxabcdyy">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([2, 6]),
+      #|}
+    ),
+  )
 }
 
 ///|
 test "bitor/alternation" {
   let regex = @string.Regex::string("cat") | @string.Regex::string("dog")
-  debug_inspect(regex.execute("dog"), content=(
-    #|Some(
-    #|  {
-    #|    input: <StringView: "dog">,
-    #|    group_names: <ReadOnlyArray: [None]>,
-    #|    result: MatchResult([0, 3]),
-    #|  },
-    #|)
-  ))
-  debug_inspect(regex.execute("cow"), content=(
-    #|None
-  ))
+  debug_inspect(
+    regex.execute("dog"),
+    content=(
+      #|Some(
+      #|  {
+      #|    input: <StringView: "dog">,
+      #|    group_names: <ReadOnlyArray: [None]>,
+      #|    result: MatchResult([0, 3]),
+      #|  },
+      #|)
+    ),
+  )
+  debug_inspect(
+    regex.execute("cow"),
+    content=(
+      #|None
+    ),
+  )
 }
 
 ///|
@@ -207,23 +240,29 @@ test "complex/email_pattern" {
   guard email.execute("user@example.com") is Some(m) else {
     fail("Expected email match")
   }
-  debug_inspect(m, content=(
-    #|{
-    #|  input: <StringView: "user@example.com">,
-    #|  group_names: <ReadOnlyArray: [None]>,
-    #|  result: MatchResult([0, 16]),
-    #|}
-  ))
+  debug_inspect(
+    m,
+    content=(
+      #|{
+      #|  input: <StringView: "user@example.com">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 16]),
+      #|}
+    ),
+  )
   guard email.execute("test.user+tag@my-domain.org") is Some(x) else {
     fail("Expected complex email match")
   }
-  debug_inspect(x, content=(
-    #|{
-    #|  input: <StringView: "test.user+tag@my-domain.org">,
-    #|  group_names: <ReadOnlyArray: [None]>,
-    #|  result: MatchResult([0, 27]),
-    #|}
-  ))
+  debug_inspect(
+    x,
+    content=(
+      #|{
+      #|  input: <StringView: "test.user+tag@my-domain.org">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 27]),
+      #|}
+    ),
+  )
 }
 
 ///|
@@ -237,26 +276,35 @@ test "complex/url_protocol" {
   guard url.execute("https://example.com") is Some(m) else {
     fail("Expected URL match")
   }
-  debug_inspect(m, content=(
-    #|{
-    #|  input: <StringView: "https://example.com">,
-    #|  group_names: <ReadOnlyArray: [None]>,
-    #|  result: MatchResult([0, 19]),
-    #|}
-  ))
+  debug_inspect(
+    m,
+    content=(
+      #|{
+      #|  input: <StringView: "https://example.com">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 19]),
+      #|}
+    ),
+  )
   guard url.execute("ftp://files.server.org") is Some(m2) else {
     fail("Expected FTP URL match")
   }
-  debug_inspect(m2, content=(
-    #|{
-    #|  input: <StringView: "ftp://files.server.org">,
-    #|  group_names: <ReadOnlyArray: [None]>,
-    #|  result: MatchResult([0, 22]),
-    #|}
-  ))
-  debug_inspect(url.execute("gopher://old.site"), content=(
-    #|None
-  ))
+  debug_inspect(
+    m2,
+    content=(
+      #|{
+      #|  input: <StringView: "ftp://files.server.org">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 22]),
+      #|}
+    ),
+  )
+  debug_inspect(
+    url.execute("gopher://old.site"),
+    content=(
+      #|None
+    ),
+  )
 }
 
 ///|
@@ -273,33 +321,42 @@ test "complex/date_formats" {
   guard date.execute("2026-02-26") is Some(m1) else {
     fail("Expected dash date match")
   }
-  debug_inspect(m1, content=(
-    #|{
-    #|  input: <StringView: "2026-02-26">,
-    #|  group_names: <ReadOnlyArray: [None]>,
-    #|  result: MatchResult([0, 10]),
-    #|}
-  ))
+  debug_inspect(
+    m1,
+    content=(
+      #|{
+      #|  input: <StringView: "2026-02-26">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 10]),
+      #|}
+    ),
+  )
   guard date.execute("2026/02/26") is Some(m2) else {
     fail("Expected slash date match")
   }
-  debug_inspect(m2, content=(
-    #|{
-    #|  input: <StringView: "2026/02/26">,
-    #|  group_names: <ReadOnlyArray: [None]>,
-    #|  result: MatchResult([0, 10]),
-    #|}
-  ))
+  debug_inspect(
+    m2,
+    content=(
+      #|{
+      #|  input: <StringView: "2026/02/26">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 10]),
+      #|}
+    ),
+  )
   guard date.execute("2026.02.26") is Some(m3) else {
     fail("Expected dot date match")
   }
-  debug_inspect(m3, content=(
-    #|{
-    #|  input: <StringView: "2026.02.26">,
-    #|  group_names: <ReadOnlyArray: [None]>,
-    #|  result: MatchResult([0, 10]),
-    #|}
-  ))
+  debug_inspect(
+    m3,
+    content=(
+      #|{
+      #|  input: <StringView: "2026.02.26">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 10]),
+      #|}
+    ),
+  )
 }
 
 ///|
@@ -313,34 +370,43 @@ test "complex/programming_identifier" {
   guard namespaced_id.execute("std::string::length") is Some(m) else {
     fail("Expected namespaced identifier match")
   }
-  debug_inspect(m, content=(
-    #|{
-    #|  input: <StringView: "std::string::length">,
-    #|  group_names: <ReadOnlyArray: [None]>,
-    #|  result: MatchResult([0, 19]),
-    #|}
-  ))
+  debug_inspect(
+    m,
+    content=(
+      #|{
+      #|  input: <StringView: "std::string::length">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 19]),
+      #|}
+    ),
+  )
   guard namespaced_id.execute("_internal_var") is Some(m2) else {
     fail("Expected simple identifier match")
   }
-  debug_inspect(m2, content=(
-    #|{
-    #|  input: <StringView: "_internal_var">,
-    #|  group_names: <ReadOnlyArray: [None]>,
-    #|  result: MatchResult([0, 13]),
-    #|}
-  ))
+  debug_inspect(
+    m2,
+    content=(
+      #|{
+      #|  input: <StringView: "_internal_var">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 13]),
+      #|}
+    ),
+  )
   // Test should fail to match if starting with digit - the match skips leading digits
   guard namespaced_id.execute("123invalid") is Some(m3) else {
     fail("Expected match somewhere in string")
   }
-  debug_inspect(m3, content=(
-    #|{
-    #|  input: <StringView: "123invalid">,
-    #|  group_names: <ReadOnlyArray: [None]>,
-    #|  result: MatchResult([3, 10]),
-    #|}
-  ))
+  debug_inspect(
+    m3,
+    content=(
+      #|{
+      #|  input: <StringView: "123invalid">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([3, 10]),
+      #|}
+    ),
+  )
 }
 
 ///|
@@ -362,23 +428,29 @@ test "complex/log_level" {
   guard log_line.execute("[2026-02-26 10:30:45] ERROR") is Some(m) else {
     fail("Expected log line match")
   }
-  debug_inspect(m, content=(
-    #|{
-    #|  input: <StringView: "[2026-02-26 10:30:45] ERROR">,
-    #|  group_names: <ReadOnlyArray: [None]>,
-    #|  result: MatchResult([0, 27]),
-    #|}
-  ))
+  debug_inspect(
+    m,
+    content=(
+      #|{
+      #|  input: <StringView: "[2026-02-26 10:30:45] ERROR">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 27]),
+      #|}
+    ),
+  )
   guard log_line.execute("[10:30] WARNING") is Some(m2) else {
     fail("Expected warning match")
   }
-  debug_inspect(m2, content=(
-    #|{
-    #|  input: <StringView: "[10:30] WARNING">,
-    #|  group_names: <ReadOnlyArray: [None]>,
-    #|  result: MatchResult([0, 15]),
-    #|}
-  ))
+  debug_inspect(
+    m2,
+    content=(
+      #|{
+      #|  input: <StringView: "[10:30] WARNING">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 15]),
+      #|}
+    ),
+  )
 }
 
 ///|
@@ -403,13 +475,16 @@ test "complex/phone_number" {
   guard phone.execute("+1 (555)123-4567") is Some(m) else {
     fail("Expected phone match")
   }
-  debug_inspect(m, content=(
-    #|{
-    #|  input: <StringView: "+1 (555)123-4567">,
-    #|  group_names: <ReadOnlyArray: [None]>,
-    #|  result: MatchResult([0, 16]),
-    #|}
-  ))
+  debug_inspect(
+    m,
+    content=(
+      #|{
+      #|  input: <StringView: "+1 (555)123-4567">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 16]),
+      #|}
+    ),
+  )
 }
 
 ///|
@@ -431,23 +506,29 @@ test "complex/semantic_version" {
   guard semver.execute("1.2.3") is Some(m1) else {
     fail("Expected simple version match")
   }
-  debug_inspect(m1, content=(
-    #|{
-    #|  input: <StringView: "1.2.3">,
-    #|  group_names: <ReadOnlyArray: [None]>,
-    #|  result: MatchResult([0, 5]),
-    #|}
-  ))
+  debug_inspect(
+    m1,
+    content=(
+      #|{
+      #|  input: <StringView: "1.2.3">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 5]),
+      #|}
+    ),
+  )
   guard semver.execute("2.0.0-beta.1+20260226") is Some(m2) else {
     fail("Expected full version match")
   }
-  debug_inspect(m2, content=(
-    #|{
-    #|  input: <StringView: "2.0.0-beta.1+20260226">,
-    #|  group_names: <ReadOnlyArray: [None]>,
-    #|  result: MatchResult([0, 21]),
-    #|}
-  ))
+  debug_inspect(
+    m2,
+    content=(
+      #|{
+      #|  input: <StringView: "2.0.0-beta.1+20260226">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 21]),
+      #|}
+    ),
+  )
 }
 
 ///|
@@ -463,33 +544,42 @@ test "complex/hex_color" {
   guard color.execute("#FFF") is Some(m1) else {
     fail("Expected short hex match")
   }
-  debug_inspect(m1, content=(
-    #|{
-    #|  input: <StringView: "#FFF">,
-    #|  group_names: <ReadOnlyArray: [None]>,
-    #|  result: MatchResult([0, 4]),
-    #|}
-  ))
+  debug_inspect(
+    m1,
+    content=(
+      #|{
+      #|  input: <StringView: "#FFF">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 4]),
+      #|}
+    ),
+  )
   guard color.execute("#FF5733") is Some(m2) else {
     fail("Expected long hex match")
   }
-  debug_inspect(m2, content=(
-    #|{
-    #|  input: <StringView: "#FF5733">,
-    #|  group_names: <ReadOnlyArray: [None]>,
-    #|  result: MatchResult([0, 7]),
-    #|}
-  ))
+  debug_inspect(
+    m2,
+    content=(
+      #|{
+      #|  input: <StringView: "#FF5733">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 7]),
+      #|}
+    ),
+  )
   guard color.execute("#FF5733AA") is Some(m3) else {
     fail("Expected alpha hex match")
   }
-  debug_inspect(m3, content=(
-    #|{
-    #|  input: <StringView: "#FF5733AA">,
-    #|  group_names: <ReadOnlyArray: [None]>,
-    #|  result: MatchResult([0, 9]),
-    #|}
-  ))
+  debug_inspect(
+    m3,
+    content=(
+      #|{
+      #|  input: <StringView: "#FF5733AA">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 9]),
+      #|}
+    ),
+  )
 }
 
 ///|
@@ -512,31 +602,40 @@ test "complex/json_number" {
   guard number.execute("-42") is Some(m1) else {
     fail("Expected integer match")
   }
-  debug_inspect(m1, content=(
-    #|{
-    #|  input: <StringView: "-42">,
-    #|  group_names: <ReadOnlyArray: [None]>,
-    #|  result: MatchResult([0, 3]),
-    #|}
-  ))
+  debug_inspect(
+    m1,
+    content=(
+      #|{
+      #|  input: <StringView: "-42">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 3]),
+      #|}
+    ),
+  )
   guard number.execute("3.14159") is Some(m2) else {
     fail("Expected float match")
   }
-  debug_inspect(m2, content=(
-    #|{
-    #|  input: <StringView: "3.14159">,
-    #|  group_names: <ReadOnlyArray: [None]>,
-    #|  result: MatchResult([0, 7]),
-    #|}
-  ))
+  debug_inspect(
+    m2,
+    content=(
+      #|{
+      #|  input: <StringView: "3.14159">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 7]),
+      #|}
+    ),
+  )
   guard number.execute("6.022e23") is Some(m3) else {
     fail("Expected scientific match")
   }
-  debug_inspect(m3, content=(
-    #|{
-    #|  input: <StringView: "6.022e23">,
-    #|  group_names: <ReadOnlyArray: [None]>,
-    #|  result: MatchResult([0, 8]),
-    #|}
-  ))
+  debug_inspect(
+    m3,
+    content=(
+      #|{
+      #|  input: <StringView: "6.022e23">,
+      #|  group_names: <ReadOnlyArray: [None]>,
+      #|  result: MatchResult([0, 8]),
+      #|}
+    ),
+  )
 }
