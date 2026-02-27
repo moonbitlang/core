@@ -79,6 +79,21 @@ fn default_argv() -> Array[String] {
 }
 
 ///|
+fn merge_global_defs(
+  inherited_globals : Array[Arg],
+  globals_here : Array[Arg],
+) -> Array[Arg] {
+  let merged = inherited_globals.copy()
+  for global in globals_here {
+    match merged.search_by(arg => arg.name == global.name) {
+      Some(idx) => merged[idx] = global
+      None => merged.push(global)
+    }
+  }
+  merged
+}
+
+///|
 fn parse_command(
   cmd : Command,
   argv : ArrayView[String],
@@ -99,7 +114,7 @@ fn parse_command(
   }
   let matches = new_matches_parse_state()
   let globals_here = collect_globals(args)
-  let child_globals = inherited_globals + globals_here
+  let child_globals = merge_global_defs(inherited_globals, globals_here)
   let child_version_long = inherited_version_long.copy()
   let child_version_short = inherited_version_short.copy()
   for global in globals_here {
