@@ -2,6 +2,7 @@ import {
   "moonbitlang/core/builtin",
   "moonbitlang/core/list",
   "moonbitlang/core/hashmap",
+  "moonbitlang/core/debug",
   "moonbitlang/core/internal/regex_engine/automata",
   "moonbitlang/core/internal/regex_engine/shared_types",
   "moonbitlang/core/internal/regex_engine/ast",

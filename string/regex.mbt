@@ -26,13 +26,16 @@ pub struct Regex {
 const MAX_REPEAT_QUANTIFIER = 256
 
 ///|
+using @debug {trait Debug, type Repr}
+
+///|
 /// Result of one successful match produced by `Regex::execute`.
 #internal(experimental, "subject to breaking change without notice")
 struct MatchResult {
   input : StringView
   group_names : ReadOnlyArray[String?]
   result : @re.MatchResult
-}
+} derive(Debug)
 
 ///|
 /// Return match `before` view.
