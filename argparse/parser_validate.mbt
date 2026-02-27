@@ -91,6 +91,7 @@ fn ValidationCtx::record_arg(
 ///|
 fn ValidationCtx::finalize(self : ValidationCtx) -> Unit raise ArgBuildError {
   validate_requires_conflicts_targets(self.args, self.seen_names)
+  validate_positional_index_layout(self.args)
   validate_indexed_positional_num_args(self.args)
 }
 
@@ -301,6 +302,26 @@ fn validate_indexed_positional_num_args(
       }
     }
     idx = idx + 1
+  }
+}
+
+///|
+fn validate_positional_index_layout(
+  args : Array[Arg],
+) -> Unit raise ArgBuildError {
+  let indexed = positional_indexed_args(args)
+  let mut expected = 0
+  for item in indexed {
+    let (index, _) = item
+    if index < expected {
+      raise Unsupported("duplicate positional index: \{index}")
+    }
+    if index > expected {
+      raise Unsupported(
+        "positional indices cannot skip values; missing index: \{expected}",
+      )
+    }
+    expected = expected + 1
   }
 }
 

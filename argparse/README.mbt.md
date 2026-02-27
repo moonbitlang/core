@@ -10,8 +10,9 @@ predictable subset of its behavior.
 Positional behavior is deterministic and intentionally strict:
 
 - `index` is zero-based.
-- Indexed positionals are ordered by ascending `index`.
-- Unindexed positionals are appended after indexed ones in declaration order.
+- Positionals without `index` get inferred indices in declaration order.
+- All positionals are ordered by the resolved index.
+- Positional indices cannot skip values.
 - For indexed positionals that are not last, `num_args` must be omitted or exactly
   `ValueRange::single()` (`1..1`).
 - If a positional has `num_args.lower > 0` and no value is provided, parsing raises

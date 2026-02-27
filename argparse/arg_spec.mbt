@@ -249,8 +249,9 @@ pub struct PositionalArg {
 ///
 /// Positional ordering:
 /// - `index` is zero-based.
-/// - Indexed positionals are sorted by `index`.
-/// - Unindexed positionals are appended after indexed ones in declaration order.
+/// - Positionals without `index` get inferred indices in declaration order.
+/// - All positionals are ordered by the resolved index.
+/// - Positional indices cannot skip values.
 ///
 /// `num_args` controls the accepted value count.
 ///
