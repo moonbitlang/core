@@ -676,3 +676,72 @@ test "escaped_dash_in_char_class" {
   inspect(regex.execute("a") is Some(_), content="true")
   inspect(regex.execute("z") is Some(_), content="true")
 }
+
+///|
+test "capture/simple_named_group" {
+  let digit = @string.Regex("[[:digit:]]+").capture("number")
+  let regex = @string.Regex::string("ID: ") + digit
+  guard regex.execute("ID: 12345") is Some(m) else { fail("Expected match") }
+  inspect(m.content(), content="ID: 12345")
+  inspect(
+    m.named_group("number"),
+    content=(
+      #|Some("12345")
+    ),
+  )
+}
+
+///|
+test "capture/email_with_named_groups" {
+  let user = @string.Regex("[[:alpha:]]+").capture("user")
+  let domain = @string.Regex("[[:alpha:]]+").capture("domain")
+  let tld = @string.Regex("[[:alpha:]]+").capture("tld")
+  let email = user +
+    @string.Regex::string("@") +
+    domain +
+    @string.Regex::string(".") +
+    tld
+  guard email.execute("john@example.com") is Some(m) else {
+    fail("Expected match")
+  }
+  inspect(m.content(), content="john@example.com")
+  inspect(
+    m.named_group("user"),
+    content=(
+      #|Some("john")
+    ),
+  )
+  inspect(
+    m.named_group("domain"),
+    content=(
+      #|Some("example")
+    ),
+  )
+  inspect(
+    m.named_group("tld"),
+    content=(
+      #|Some("com")
+    ),
+  )
+}
+
+///|
+test "capture/multiple_captures_same_pattern" {
+  let word = @string.Regex("[[:alpha:]]+")
+  let first = word.capture("first")
+  let second = word.capture("second")
+  let regex = first + @string.Regex::string(" ") + second
+  guard regex.execute("hello world") is Some(m) else { fail("Expected match") }
+  inspect(
+    m.named_group("first"),
+    content=(
+      #|Some("hello")
+    ),
+  )
+  inspect(
+    m.named_group("second"),
+    content=(
+      #|Some("world")
+    ),
+  )
+}

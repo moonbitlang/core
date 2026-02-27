@@ -316,7 +316,7 @@ pub impl BitOr for Regex with lor(self, other) -> Regex {
 ///   inspect(second.content(), content="34")
 /// }
 /// ```
-/// 
+///
 /// ```mbt check
 /// test {
 ///   let anchored = @string.Regex("^ab$")
@@ -335,4 +335,64 @@ pub fn Regex::execute(
     Some(result) =>
       Some(MatchResult::{ input, group_names: self.re().group_names(), result })
   }
+}
+
+///|
+/// Wraps this regex in a named capture group.
+///
+/// Returns a new regex that captures the entire match of `self` with the
+/// specified `group_name`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let digit = @string.Regex("[[:digit:]]+").capture("number")
+///   let regex = @string.Regex::string("ID: ") + digit
+///   guard regex.execute("ID: 12345") is Some(m) else { fail("Expected match") }
+///   inspect(
+///     m.named_group("number"),
+///     content=(
+///       #|Some("12345")
+///     ),
+///   )
+/// }
+/// ```
+///
+/// ```mbt check
+/// test {
+///   let user = @string.Regex("[[:alpha:]]+").capture("user")
+///   let domain = @string.Regex("[[:alpha:]]+").capture("domain")
+///   let tld = @string.Regex("[[:alpha:]]+").capture("tld")
+///   let email = user +
+///     @string.Regex::string("@") +
+///     domain +
+///     @string.Regex::string(".") +
+///     tld
+///   guard email.execute("john@example.com") is Some(m) else {
+///     fail("Expected match")
+///   }
+///   inspect(
+///     m.named_group("user"),
+///     content=(
+///       #|Some("john")
+///     ),
+///   )
+///   inspect(
+///     m.named_group("domain"),
+///     content=(
+///       #|Some("example")
+///     ),
+///   )
+///   inspect(
+///     m.named_group("tld"),
+///     content=(
+///       #|Some("com")
+///     ),
+///   )
+/// }
+/// ```
+#internal(experimental, "subject to breaking change without notice")
+pub fn Regex::capture(self : Regex, group_name : String) -> Regex {
+  { pat: @re.capture(name=group_name, self.pat), re: None }
 }
