@@ -3,6 +3,7 @@ package "moonbitlang/core/string"
 
 import {
   "moonbitlang/core/builtin",
+  "moonbitlang/core/debug",
 }
 
 // Values
@@ -16,6 +17,7 @@ pub fn MatchResult::before(Self) -> StringView
 pub fn MatchResult::content(Self) -> StringView
 pub fn MatchResult::group(Self, Int) -> StringView?
 pub fn MatchResult::named_group(Self, String) -> StringView?
+pub impl @debug.Debug for MatchResult
 
 pub struct Regex {
   // private fields

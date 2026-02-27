@@ -3,6 +3,7 @@ import {
   "moonbitlang/core/char",
   "moonbitlang/core/internal/regex_engine" @re,
   "moonbitlang/core/internal/regex_parser",
+  "moonbitlang/core/debug",
 }
 
 import {
