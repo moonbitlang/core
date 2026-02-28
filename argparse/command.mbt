@@ -112,6 +112,7 @@ pub fn Command::render_help(self : Command) -> String {
 /// - Raises `ArgParseError` when user input does not satisfy the definition.
 ///
 /// Value precedence is `argv > env > default_values`.
+#as_free_fn
 pub fn Command::parse(
   self : Command,
   argv? : ArrayView[String] = default_argv(),
