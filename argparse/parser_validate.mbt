@@ -476,7 +476,7 @@ fn validate_command_policies(
   if cmd.subcommand_required &&
     cmd.subcommands.length() > 0 &&
     matches.parsed_subcommand is None {
-    raise MissingRequired("subcommand")
+    raise MissingRequired("subcommand", None)
   }
 }
 
@@ -528,7 +528,7 @@ fn validate_groups(
         }
       } else if arg_seen.contains(required) {
         if !matches_has_value_or_flag(matches, required) {
-          raise MissingRequired(required)
+          raise MissingRequired(required, None)
         }
       }
     }
@@ -559,7 +559,7 @@ fn validate_values(
   for arg in args {
     let present = matches_has_value_or_flag(matches, arg.name)
     if arg.required && !present {
-      raise MissingRequired(arg.name)
+      raise MissingRequired(arg.name, None)
     }
     guard arg.info is (Option(_) | Positional(_)) else { continue }
     if !present {
@@ -597,7 +597,7 @@ fn validate_relationships(
     }
     for required in arg.requires {
       if !matches_has_value_or_flag(matches, required) {
-        raise MissingRequired(required)
+        raise MissingRequired(required, Some(arg.name))
       }
     }
     for conflict in arg.conflicts_with {
