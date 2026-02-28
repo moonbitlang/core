@@ -51,12 +51,10 @@ fn[T] raise_subcommand_conflict(name : String) -> T raise ArgParseError {
 fn render_help_for_context(
   cmd : Command,
   inherited_globals : Array[Arg],
+  command_path : String,
 ) -> String {
-  let help_cmd = if inherited_globals.length() == 0 {
-    cmd
-  } else {
-    { ..cmd, args: inherited_globals + cmd.args }
-  }
+  let help_name = if command_path == "" { cmd.name } else { command_path }
+  let help_cmd = { ..cmd, args: inherited_globals + cmd.args, name: help_name }
   render_help(help_cmd)
 }
 
@@ -64,8 +62,9 @@ fn render_help_for_context(
 fn raise_context_help(
   cmd : Command,
   inherited_globals : Array[Arg],
+  command_path : String,
 ) -> Unit raise DisplayHelp {
-  raise_help(render_help_for_context(cmd, inherited_globals))
+  raise_help(render_help_for_context(cmd, inherited_globals, command_path))
 }
 
 ///|
@@ -98,8 +97,9 @@ fn format_error_with_help(
   msg : String,
   cmd : Command,
   inherited_globals : Array[Arg],
+  command_path : String,
 ) -> String {
-  "\{msg}\n\n\{render_help_for_context(cmd, inherited_globals)}"
+  "\{msg}\n\n\{render_help_for_context(cmd, inherited_globals, command_path)}"
 }
 
 ///|
@@ -107,12 +107,14 @@ fn arg_error_for_parse_failure(
   err : ArgParseError,
   cmd : Command,
   inherited_globals : Array[Arg],
+  command_path : String,
 ) -> ArgError {
   Message(
     format_error_with_help(
       err.arg_parse_error_message(),
       cmd,
       inherited_globals,
+      command_path,
     ),
   )
 }
@@ -122,12 +124,14 @@ fn arg_error_for_build_failure(
   err : ArgBuildError,
   cmd : Command,
   inherited_globals : Array[Arg],
+  command_path : String,
 ) -> ArgError {
   Message(
     format_error_with_help(
       err.arg_build_error_message(),
       cmd,
       inherited_globals,
+      command_path,
     ),
   )
 }
@@ -140,75 +144,88 @@ fn parse_command(
   inherited_globals : Array[Arg],
   inherited_version_long : Map[String, String],
   inherited_version_short : Map[Char, String],
+  command_path : String,
 ) -> Matches raise {
   parse_command_impl(
     cmd, argv, env, inherited_globals, inherited_version_long, inherited_version_short,
+    command_path,
   ) catch {
     UnknownArgument(arg, hint) =>
       raise arg_error_for_parse_failure(
         UnknownArgument(arg, hint),
         cmd,
         inherited_globals,
+        command_path,
       )
     InvalidArgument(msg) =>
       raise arg_error_for_parse_failure(
         InvalidArgument(msg),
         cmd,
         inherited_globals,
+        command_path,
       )
     MissingValue(name) =>
       raise arg_error_for_parse_failure(
         MissingValue(name),
         cmd,
         inherited_globals,
+        command_path,
       )
     MissingRequired(name) =>
       raise arg_error_for_parse_failure(
         MissingRequired(name),
         cmd,
         inherited_globals,
+        command_path,
       )
     TooFewValues(name, got, min) =>
       raise arg_error_for_parse_failure(
         TooFewValues(name, got, min),
         cmd,
         inherited_globals,
+        command_path,
       )
     TooManyValues(name, got, max) =>
       raise arg_error_for_parse_failure(
         TooManyValues(name, got, max),
         cmd,
         inherited_globals,
+        command_path,
       )
     TooManyPositionals =>
       raise arg_error_for_parse_failure(
         TooManyPositionals,
         cmd,
         inherited_globals,
+        command_path,
       )
     InvalidValue(msg) =>
       raise arg_error_for_parse_failure(
         InvalidValue(msg),
         cmd,
         inherited_globals,
+        command_path,
       )
     MissingGroup(name) =>
       raise arg_error_for_parse_failure(
         MissingGroup(name),
         cmd,
         inherited_globals,
+        command_path,
       )
     GroupConflict(name) =>
       raise arg_error_for_parse_failure(
         GroupConflict(name),
         cmd,
         inherited_globals,
+        command_path,
       )
     Unsupported(msg) =>
       raise arg_error_for_build_failure(
         Unsupported(msg),
         cmd,
         inherited_globals,
+        command_path,
       )
     err => raise err
   }
@@ -222,6 +239,7 @@ fn parse_command_impl(
   inherited_globals : Array[Arg],
   inherited_version_long : Map[String, String],
   inherited_version_short : Map[Char, String],
+  command_path : String,
 ) -> Matches raise {
   match cmd.build_error {
     Some(err) => raise err
@@ -231,7 +249,7 @@ fn parse_command_impl(
   let groups = cmd.groups
   let subcommands = cmd.subcommands
   if cmd.arg_required_else_help && argv.length() == 0 {
-    raise_context_help(cmd, inherited_globals)
+    raise_context_help(cmd, inherited_globals, command_path)
   }
   let matches = new_matches_parse_state()
   let globals_here = collect_globals(args)
@@ -285,10 +303,10 @@ fn parse_command_impl(
       continue
     }
     if builtin_help_short && arg == "-h" {
-      raise_context_help(cmd, inherited_globals)
+      raise_context_help(cmd, inherited_globals, command_path)
     }
     if builtin_help_long && arg == "--help" {
-      raise_context_help(cmd, inherited_globals)
+      raise_context_help(cmd, inherited_globals, command_path)
     }
     if builtin_version_short && arg == "-V" {
       raise_version(command_version(cmd))
@@ -310,7 +328,7 @@ fn parse_command_impl(
         if inline is Some(_) {
           raise ArgParseError::InvalidArgument(arg)
         }
-        raise_context_help(cmd, inherited_globals)
+        raise_context_help(cmd, inherited_globals, command_path)
       }
       if builtin_version_long && name == "version" {
         if inline is Some(_) {
@@ -365,7 +383,7 @@ fn parse_command_impl(
             }
             match spec.info {
               Flag(action=Help, ..) =>
-                raise_context_help(cmd, inherited_globals)
+                raise_context_help(cmd, inherited_globals, command_path)
               Flag(action=Version, ..) =>
                 raise_version(
                   version_text_for_long_action(
@@ -385,7 +403,7 @@ fn parse_command_impl(
       while pos < arg.length() {
         let short = arg.get_char(pos).unwrap()
         if short == 'h' && builtin_help_short {
-          raise_context_help(cmd, inherited_globals)
+          raise_context_help(cmd, inherited_globals, command_path)
         }
         if short == 'V' && builtin_version_short {
           raise_version(command_version(cmd))
@@ -421,7 +439,8 @@ fn parse_command_impl(
           break
         } else {
           match spec.info {
-            Flag(action=Help, ..) => raise_context_help(cmd, inherited_globals)
+            Flag(action=Help, ..) =>
+              raise_context_help(cmd, inherited_globals, command_path)
             Flag(action=Version, ..) =>
               raise_version(
                 version_text_for_short_action(
@@ -441,10 +460,10 @@ fn parse_command_impl(
         raise_subcommand_conflict("help")
       }
       let rest = argv[i + 1:].to_array()
-      let (target, target_globals) = resolve_help_target(
-        cmd, rest, builtin_help_short, builtin_help_long, inherited_globals,
+      let (target, target_globals, target_path) = resolve_help_target(
+        cmd, rest, builtin_help_short, builtin_help_long, inherited_globals, command_path,
       )
-      let text = render_help_for_context(target, target_globals)
+      let text = render_help_for_context(target, target_globals, target_path)
       raise_help(text)
     }
     if subcommands.iter().find_first(sub => sub.name == arg) is Some(sub) {
@@ -452,8 +471,13 @@ fn parse_command_impl(
         raise_subcommand_conflict(sub.name)
       }
       let rest = argv[i + 1:].to_array()
+      let sub_path = if command_path == "" {
+        sub.name
+      } else {
+        "\{command_path} \{sub.name}"
+      }
       let sub_matches = parse_command(
-        sub, rest, env, child_globals, child_version_long, child_version_short,
+        sub, rest, env, child_globals, child_version_long, child_version_short, sub_path,
       )
       let child_local_non_globals = collect_non_global_names(sub.args)
       matches.parsed_subcommand = Some((sub.name, sub_matches))
