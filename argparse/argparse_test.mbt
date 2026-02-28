@@ -183,7 +183,7 @@ test "subcommand parse errors include subcommand help" {
         content=(
           #|error: unexpected argument '--bad' found
           #|
-          #|Usage: echo [options]
+          #|Usage: demo echo [options]
           #|
           #|Options:
           #|  -h, --help       Show help information.
@@ -269,21 +269,9 @@ test "render_help remains available for pure formatting" {
 test "display help and version" {
   let cmd = @argparse.Command("demo", about="demo app", version="1.2.3")
 
-  inspect(cmd.render_help(), content=(
-    #|Usage: demo
-    #|
-    #|demo app
-    #|
-    #|Options:
-    #|  -h, --help     Show help information.
-    #|  -V, --version  Show version information.
-    #|
-  ))
-
-  try cmd.parse(argv=["--oops"], env=empty_env()) catch {
-    Message(msg) => inspect(msg, content=(
-      #|error: unexpected argument '--oops' found
-      #|
+  inspect(
+    cmd.render_help(),
+    content=(
       #|Usage: demo
       #|
       #|demo app
@@ -292,7 +280,26 @@ test "display help and version" {
       #|  -h, --help     Show help information.
       #|  -V, --version  Show version information.
       #|
-    ))
+    ),
+  )
+
+  try cmd.parse(argv=["--oops"], env=empty_env()) catch {
+    Message(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|error: unexpected argument '--oops' found
+          #|
+          #|Usage: demo
+          #|
+          #|demo app
+          #|
+          #|Options:
+          #|  -h, --help     Show help information.
+          #|  -V, --version  Show version information.
+          #|
+        ),
+      )
     _ => panic()
   } noraise {
     _ => panic()
@@ -308,40 +315,48 @@ test "parse error show is readable" {
   )
 
   try cmd.parse(argv=["--verbse"], env=empty_env()) catch {
-    Message(msg) => inspect(msg, content=(
-      #|error: unexpected argument '--verbse' found
-      #|
-      #|  tip: a similar argument exists: '--verbose'
-      #|
-      #|Usage: demo [options] [name]
-      #|
-      #|Arguments:
-      #|  name  
-      #|
-      #|Options:
-      #|  -h, --help  Show help information.
-      #|  --verbose   
-      #|
-    ))
+    Message(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|error: unexpected argument '--verbse' found
+          #|
+          #|  tip: a similar argument exists: '--verbose'
+          #|
+          #|Usage: demo [options] [name]
+          #|
+          #|Arguments:
+          #|  name  
+          #|
+          #|Options:
+          #|  -h, --help  Show help information.
+          #|  --verbose   
+          #|
+        ),
+      )
     _ => panic()
   } noraise {
     _ => panic()
   }
 
   try cmd.parse(argv=["alice", "bob"], env=empty_env()) catch {
-    Message(msg) => inspect(msg, content=(
-      #|error: too many positional arguments were provided
-      #|
-      #|Usage: demo [options] [name]
-      #|
-      #|Arguments:
-      #|  name  
-      #|
-      #|Options:
-      #|  -h, --help  Show help information.
-      #|  --verbose   
-      #|
-    ))
+    Message(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|error: too many positional arguments were provided
+          #|
+          #|Usage: demo [options] [name]
+          #|
+          #|Arguments:
+          #|  name  
+          #|
+          #|Options:
+          #|  -h, --help  Show help information.
+          #|  --verbose   
+          #|
+        ),
+      )
     _ => panic()
   } noraise {
     _ => panic()
@@ -356,17 +371,21 @@ test "relationships and num args" {
   ])
 
   try requires_cmd.parse(argv=["--mode", "fast"], env=empty_env()) catch {
-    Message(msg) => inspect(msg, content=(
-      #|error: the following required argument was not provided: 'config'
-      #|
-      #|Usage: demo [options]
-      #|
-      #|Options:
-      #|  -h, --help         Show help information.
-      #|  --mode <mode>      
-      #|  --config <config>  
-      #|
-    ))
+    Message(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|error: the following required argument was not provided: 'config'
+          #|
+          #|Usage: demo [options]
+          #|
+          #|Options:
+          #|  -h, --help         Show help information.
+          #|  --mode <mode>      
+          #|  --config <config>  
+          #|
+        ),
+      )
     _ => panic()
   } noraise {
     _ => panic()
@@ -391,40 +410,48 @@ test "arg groups required and multiple" {
   )
 
   try cmd.parse(argv=[], env=empty_env()) catch {
-    Message(msg) => inspect(msg, content=(
-      #|error: the following required argument group was not provided: 'mode'
-      #|
-      #|Usage: demo [options]
-      #|
-      #|Options:
-      #|  -h, --help  Show help information.
-      #|  --fast      
-      #|  --slow      
-      #|
-      #|Groups:
-      #|  mode (required, exclusive)  --fast, --slow
-      #|
-    ))
+    Message(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|error: the following required argument group was not provided: 'mode'
+          #|
+          #|Usage: demo [options]
+          #|
+          #|Options:
+          #|  -h, --help  Show help information.
+          #|  --fast      
+          #|  --slow      
+          #|
+          #|Groups:
+          #|  mode (required, exclusive)  --fast, --slow
+          #|
+        ),
+      )
     _ => panic()
   } noraise {
     _ => panic()
   }
 
   try cmd.parse(argv=["--fast", "--slow"], env=empty_env()) catch {
-    Message(msg) => inspect(msg, content=(
-      #|error: group conflict mode
-      #|
-      #|Usage: demo [options]
-      #|
-      #|Options:
-      #|  -h, --help  Show help information.
-      #|  --fast      
-      #|  --slow      
-      #|
-      #|Groups:
-      #|  mode (required, exclusive)  --fast, --slow
-      #|
-    ))
+    Message(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|error: group conflict mode
+          #|
+          #|Usage: demo [options]
+          #|
+          #|Options:
+          #|  -h, --help  Show help information.
+          #|  --fast      
+          #|  --slow      
+          #|
+          #|Groups:
+          #|  mode (required, exclusive)  --fast, --slow
+          #|
+        ),
+      )
     _ => panic()
   } noraise {
     _ => panic()
@@ -443,21 +470,25 @@ test "arg groups requires and conflicts" {
   )
 
   try requires_cmd.parse(argv=["--fast"], env=empty_env()) catch {
-    Message(msg) => inspect(msg, content=(
-      #|error: the following required argument group was not provided: 'output'
-      #|
-      #|Usage: demo [options]
-      #|
-      #|Options:
-      #|  -h, --help  Show help information.
-      #|  --fast      
-      #|  --json      
-      #|
-      #|Groups:
-      #|  mode    --fast
-      #|  output  --json
-      #|
-    ))
+    Message(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|error: the following required argument group was not provided: 'output'
+          #|
+          #|Usage: demo [options]
+          #|
+          #|Options:
+          #|  -h, --help  Show help information.
+          #|  --fast      
+          #|  --json      
+          #|
+          #|Groups:
+          #|  mode    --fast
+          #|  output  --json
+          #|
+        ),
+      )
     _ => panic()
   } noraise {
     _ => panic()
@@ -473,21 +504,25 @@ test "arg groups requires and conflicts" {
   )
 
   try conflict_cmd.parse(argv=["--fast", "--json"], env=empty_env()) catch {
-    Message(msg) => inspect(msg, content=(
-      #|error: group conflict mode conflicts with output
-      #|
-      #|Usage: demo [options]
-      #|
-      #|Options:
-      #|  -h, --help  Show help information.
-      #|  --fast      
-      #|  --json      
-      #|
-      #|Groups:
-      #|  mode    --fast
-      #|  output  --json
-      #|
-    ))
+    Message(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|error: group conflict mode conflicts with output
+          #|
+          #|Usage: demo [options]
+          #|
+          #|Options:
+          #|  -h, --help  Show help information.
+          #|  --fast      
+          #|  --json      
+          #|
+          #|Groups:
+          #|  mode    --fast
+          #|  output  --json
+          #|
+        ),
+      )
     _ => panic()
   } noraise {
     _ => panic()
@@ -524,24 +559,27 @@ test "full help snapshot" {
     positionals=[PositionalArg("name", about="Target name")],
     subcommands=[Command("echo", about="Echo a message")],
   )
-  inspect(cmd.render_help(), content=(
-    #|Usage: demo [options] [name] [command]
-    #|
-    #|Demo command
-    #|
-    #|Commands:
-    #|  echo  Echo a message
-    #|  help  Print help for the subcommand(s).
-    #|
-    #|Arguments:
-    #|  name  Target name
-    #|
-    #|Options:
-    #|  -h, --help       Show help information.
-    #|  -v, --verbose    Enable verbose mode
-    #|  --count <count>  Repeat count (default: 1)
-    #|
-  ))
+  inspect(
+    cmd.render_help(),
+    content=(
+      #|Usage: demo [options] [name] [command]
+      #|
+      #|Demo command
+      #|
+      #|Commands:
+      #|  echo  Echo a message
+      #|  help  Print help for the subcommand(s).
+      #|
+      #|Arguments:
+      #|  name  Target name
+      #|
+      #|Options:
+      #|  -h, --help       Show help information.
+      #|  -v, --verbose    Enable verbose mode
+      #|  --count <count>  Repeat count (default: 1)
+      #|
+    ),
+  )
 }
 
 ///|
@@ -629,19 +667,23 @@ test "negatable and conflicts" {
   assert_true(no_failfast.flags is { "failfast": true, .. })
 
   try cmd.parse(argv=["--verbose", "--quiet"], env=empty_env()) catch {
-    Message(msg) => inspect(msg, content=(
-      #|error: conflicting arguments: verbose and quiet
-      #|
-      #|Usage: demo [options]
-      #|
-      #|Options:
-      #|  -h, --help       Show help information.
-      #|  --[no-]cache     
-      #|  --[no-]failfast  
-      #|  --verbose        
-      #|  --quiet          
-      #|
-    ))
+    Message(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|error: conflicting arguments: verbose and quiet
+          #|
+          #|Usage: demo [options]
+          #|
+          #|Options:
+          #|  -h, --help       Show help information.
+          #|  --[no-]cache     
+          #|  --[no-]failfast  
+          #|  --verbose        
+          #|  --quiet          
+          #|
+        ),
+      )
     _ => panic()
   } noraise {
     _ => panic()
@@ -652,16 +694,20 @@ test "negatable and conflicts" {
 test "flag does not accept inline value" {
   let cmd = @argparse.Command("demo", flags=[FlagArg("verbose", long="verbose")])
   try cmd.parse(argv=["--verbose=true"], env=empty_env()) catch {
-    Message(msg) => inspect(msg, content=(
-      #|error: unexpected argument '--verbose=true' found
-      #|
-      #|Usage: demo [options]
-      #|
-      #|Options:
-      #|  -h, --help  Show help information.
-      #|  --verbose   
-      #|
-    ))
+    Message(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|error: unexpected argument '--verbose=true' found
+          #|
+          #|Usage: demo [options]
+          #|
+          #|Options:
+          #|  -h, --help  Show help information.
+          #|  --verbose   
+          #|
+        ),
+      )
     _ => panic()
   } noraise {
     _ => panic()
@@ -673,32 +719,40 @@ test "built-in long flags do not accept inline value" {
   let cmd = @argparse.Command("demo", version="1.2.3")
 
   try cmd.parse(argv=["--help=1"], env=empty_env()) catch {
-    Message(msg) => inspect(msg, content=(
-      #|error: unexpected argument '--help=1' found
-      #|
-      #|Usage: demo
-      #|
-      #|Options:
-      #|  -h, --help     Show help information.
-      #|  -V, --version  Show version information.
-      #|
-    ))
+    Message(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|error: unexpected argument '--help=1' found
+          #|
+          #|Usage: demo
+          #|
+          #|Options:
+          #|  -h, --help     Show help information.
+          #|  -V, --version  Show version information.
+          #|
+        ),
+      )
     _ => panic()
   } noraise {
     _ => panic()
   }
 
   try cmd.parse(argv=["--version=1"], env=empty_env()) catch {
-    Message(msg) => inspect(msg, content=(
-      #|error: unexpected argument '--version=1' found
-      #|
-      #|Usage: demo
-      #|
-      #|Options:
-      #|  -h, --help     Show help information.
-      #|  -V, --version  Show version information.
-      #|
-    ))
+    Message(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|error: unexpected argument '--version=1' found
+          #|
+          #|Usage: demo
+          #|
+          #|Options:
+          #|  -h, --help     Show help information.
+          #|  -V, --version  Show version information.
+          #|
+        ),
+      )
     _ => panic()
   } noraise {
     _ => panic()
@@ -708,32 +762,23 @@ test "built-in long flags do not accept inline value" {
 ///|
 test "command policies" {
   let help_cmd = @argparse.Command("demo", arg_required_else_help=true)
-  inspect(help_cmd.render_help(), content=(
-    #|Usage: demo
-    #|
-    #|Options:
-    #|  -h, --help  Show help information.
-    #|
-  ))
+  inspect(
+    help_cmd.render_help(),
+    content=(
+      #|Usage: demo
+      #|
+      #|Options:
+      #|  -h, --help  Show help information.
+      #|
+    ),
+  )
 
   let sub_cmd = @argparse.Command("demo", subcommand_required=true, subcommands=[
     Command("echo"),
   ])
-  inspect(sub_cmd.render_help(), content=(
-    #|Usage: demo <command>
-    #|
-    #|Commands:
-    #|  echo  
-    #|  help  Print help for the subcommand(s).
-    #|
-    #|Options:
-    #|  -h, --help  Show help information.
-    #|
-  ))
-  try sub_cmd.parse(argv=[], env=empty_env()) catch {
-    Message(msg) => inspect(msg, content=(
-      #|error: the following required argument was not provided: 'subcommand'
-      #|
+  inspect(
+    sub_cmd.render_help(),
+    content=(
       #|Usage: demo <command>
       #|
       #|Commands:
@@ -743,7 +788,26 @@ test "command policies" {
       #|Options:
       #|  -h, --help  Show help information.
       #|
-    ))
+    ),
+  )
+  try sub_cmd.parse(argv=[], env=empty_env()) catch {
+    Message(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|error: the following required argument was not provided: 'subcommand'
+          #|
+          #|Usage: demo <command>
+          #|
+          #|Commands:
+          #|  echo  
+          #|  help  Print help for the subcommand(s).
+          #|
+          #|Options:
+          #|  -h, --help  Show help information.
+          #|
+        ),
+      )
     _ => panic()
   } noraise {
     _ => panic()
