@@ -51,17 +51,3 @@ fn new_matches_parse_state() -> Matches {
     parsed_subcommand: None,
   }
 }
-
-///|
-/// Decode a full argument struct/enum from `Matches`.
-pub(open) trait FromMatches {
-  from_matches(matches : Matches) -> Self raise ArgParseError
-}
-
-///|
-/// Decode a full argument struct/enum from `Matches`.
-pub fn[T : FromMatches] from_matches(
-  matches : Matches,
-) -> T raise ArgParseError {
-  T::from_matches(matches)
-}

@@ -6,37 +6,12 @@ import {
 }
 
 // Values
-pub fn[T : FromMatches] from_matches(Matches) -> T raise ArgParseError
 
 // Errors
-pub suberror ArgBuildError {
-  Unsupported(String)
-}
-pub impl Show for ArgBuildError
-
-pub(all) suberror ArgParseError {
-  UnknownArgument(String, String?)
-  InvalidArgument(String)
-  MissingValue(String)
-  MissingRequired(String)
-  TooFewValues(String, Int, Int)
-  TooManyValues(String, Int, Int)
-  TooManyPositionals
-  InvalidValue(String)
-  MissingGroup(String)
-  GroupConflict(String)
-}
-pub impl Show for ArgParseError
-
-pub suberror DisplayHelp {
+pub suberror ArgError {
   Message(String)
 }
-pub impl Show for DisplayHelp
-
-pub suberror DisplayVersion {
-  Message(String)
-}
-pub impl Show for DisplayVersion
+pub impl Show for ArgError
 
 // Types and methods
 pub struct ArgGroup {
@@ -53,7 +28,7 @@ pub struct Command {
 }
 pub fn Command::new(StringView, flags? : ArrayView[FlagArg], options? : ArrayView[OptionArg], positionals? : ArrayView[PositionalArg], subcommands? : ArrayView[Self], about? : StringView, version? : StringView, disable_help_flag? : Bool, disable_version_flag? : Bool, disable_help_subcommand? : Bool, arg_required_else_help? : Bool, subcommand_required? : Bool, hidden? : Bool, groups? : ArrayView[ArgGroup]) -> Self
 #as_free_fn
-pub fn Command::parse(Self, argv? : ArrayView[String], env? : Map[String, String]) -> Matches raise
+pub fn Command::parse(Self, argv? : ArrayView[String], env? : Map[String, String]) -> Matches raise ArgError
 pub fn Command::render_help(Self) -> String
 
 pub(all) enum FlagAction {
@@ -100,9 +75,9 @@ pub fn OptionArg::new(StringView, short? : Char, long? : StringView, about? : St
 pub struct PositionalArg {
   // private fields
 
-  fn new(StringView, index? : Int, about? : StringView, env? : StringView, default_values? : ArrayView[String], num_args? : ValueRange, allow_hyphen_values? : Bool, last? : Bool, requires? : ArrayView[String], conflicts_with? : ArrayView[String], required? : Bool, global? : Bool, hidden? : Bool) -> PositionalArg
+  fn new(StringView, about? : StringView, env? : StringView, default_values? : ArrayView[String], num_args? : ValueRange, allow_hyphen_values? : Bool, last? : Bool, requires? : ArrayView[String], conflicts_with? : ArrayView[String], required? : Bool, global? : Bool, hidden? : Bool) -> PositionalArg
 }
-pub fn PositionalArg::new(StringView, index? : Int, about? : StringView, env? : StringView, default_values? : ArrayView[String], num_args? : ValueRange, allow_hyphen_values? : Bool, last? : Bool, requires? : ArrayView[String], conflicts_with? : ArrayView[String], required? : Bool, global? : Bool, hidden? : Bool) -> Self
+pub fn PositionalArg::new(StringView, about? : StringView, env? : StringView, default_values? : ArrayView[String], num_args? : ValueRange, allow_hyphen_values? : Bool, last? : Bool, requires? : ArrayView[String], conflicts_with? : ArrayView[String], required? : Bool, global? : Bool, hidden? : Bool) -> Self
 
 pub struct ValueRange {
   // private fields
@@ -126,7 +101,4 @@ pub impl @debug.Debug for ValueSource
 // Type aliases
 
 // Traits
-pub(open) trait FromMatches {
-  from_matches(Matches) -> Self raise ArgParseError
-}
 
