@@ -86,31 +86,6 @@ pub fn Byte::lsr(self : Byte, count : Int) -> Byte {
 }
 
 ///|
-/// Prints and returns the value of a given expression for quick and dirty debugging.
-/// This could also be useful to print some logs to trace the progress.
-/// For example, you can put `dump(())` in each line, the execution will print the line number
-/// when it reaches that line.
-#callsite(autofill(loc))
-#deprecated("This function is for debugging only and should not be used in production", skip_current_package=true)
-pub fn[T] dump(t : T, name? : String, loc~ : SourceLoc) -> T {
-  let name = match name {
-    Some(name) => name
-    None => ""
-  }
-  println("dump(\{name}@\{loc}) = \{any_to_string(t)}")
-  t
-}
-
-///|
-test "dump" {
-  let x = 42
-  if false {
-    dump(()) // never reached here
-    assert_eq(dump(x) + x, 84)
-  }
-}
-
-///|
 /// Returns the Unicode code point at the given index without bounds checking.
 #deprecated("Use `s.get_char(i).unwrap()` instead", skip_current_package=true)
 pub fn String::unsafe_char_at(self : String, index : Int) -> Char {

@@ -33,7 +33,7 @@ pub fn debug_inspect(&@debug.Debug, content? : String, loc~ : @builtin.SourceLoc
 
 #deprecated
 #callsite(autofill(loc))
-pub fn[T] dump(T, name? : String, loc~ : @builtin.SourceLoc) -> T
+pub fn[T : @debug.Debug] dump(T, name? : String, loc~ : @builtin.SourceLoc) -> T
 
 #callsite(autofill(loc))
 pub fn[T] fail(String, loc~ : @builtin.SourceLoc) -> T raise @builtin.Failure

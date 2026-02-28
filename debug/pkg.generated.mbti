@@ -21,6 +21,10 @@ pub fn[T : Debug] debug(T) -> Unit
 #callsite(autofill(args_loc, loc))
 pub fn debug_inspect(&Debug, content? : String, loc~ : SourceLoc, args_loc~ : ArgsLoc) -> Unit raise InspectError
 
+#deprecated
+#callsite(autofill(loc))
+pub fn[T : Debug] dump(T, name? : String, loc~ : SourceLoc) -> T
+
 pub fn render(Repr, max_depth? : Int) -> String
 
 pub fn[T : Debug] to_string(T) -> String

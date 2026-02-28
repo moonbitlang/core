@@ -73,6 +73,11 @@ pub using @builtin {
 pub using @debug {debug, type Repr, trait Debug, debug_inspect}
 
 ///|
+#deprecated("for debugging only, not for production")
+#warnings("-deprecated")
+pub using @debug {dump}
+
+///|
 pub using @string {type Regex}
 
 ///|
@@ -130,18 +135,6 @@ pub let null : Json = @builtin.null
 
 ///|
 pub using @json {trait FromJson, json_inspect}
-
-///|
-/// Prints and returns the value of a given expression for quick and dirty debugging.
-/// This could also be useful to print some logs to trace the progress.
-/// For example, you can put `dump(())` in each line, the execution will print the line number
-/// when it reaches that line.
-#callsite(autofill(loc))
-#deprecated("This function is for debugging only and should not be used in production")
-#warnings("-deprecated")
-pub fn[T] dump(t : T, name? : String, loc~ : SourceLoc) -> T {
-  @builtin.dump(t, name?, loc~)
-}
 
 ///|
 /// Type `Iterator`.
