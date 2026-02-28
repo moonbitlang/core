@@ -2,192 +2,303 @@
 
 Declarative argument parsing for MoonBit.
 
-This package is inspired by [`clap`](https://github.com/clap-rs/clap) and intentionally implements a small,
-predictable subset of its behavior.
+This package is inspired by [`clap`](https://github.com/clap-rs/clap) and keeps a
+small, predictable feature set.
 
-## Positional Semantics
+`long` defaults to the argument name. Pass `long=""` to disable long alias.
 
-Positional behavior is deterministic and intentionally strict:
-
-- `index` is zero-based.
-- Positionals without `index` get inferred indices in declaration order.
-- All positionals are ordered by the resolved index.
-- Positional indices cannot skip values.
-- For indexed positionals that are not last, `num_args` must be omitted or exactly
-  `ValueRange::single()` (`1..1`).
-- If a positional has `num_args.lower > 0` and no value is provided, parsing raises
-  `ArgParseError::TooFewValues`.
-
-## Argument Shape Rule
-
-`FlagArg` and `OptionArg` must provide at least one of `short` or `long`.
-Arguments without both are positional-only and should be declared with
-`PositionalArg`.
+## 1. Basic Command
 
 ```mbt check
 ///|
-test "name-only option is rejected" {
-  let cmd = @argparse.Command("demo", options=[OptionArg("input")])
-  try cmd.parse(argv=["file.txt"], env={}) catch {
-    @argparse.ArgBuildError::Unsupported(msg) =>
-      inspect(msg, content="flag/option args require short/long")
-    _ => panic()
+test "basic option + positional success snapshot" {
+  let matches = @argparse.parse(
+    Command("demo", options=[OptionArg("name", long="name")], positionals=[
+      PositionalArg("target"),
+    ]),
+    argv=["--name", "alice", "file.txt"],
+  )
+  @debug.debug_inspect(
+    matches.values,
+    content=(
+      #|{ "name": ["alice"], "target": ["file.txt"] }
+    ),
+  )
+}
+
+///|
+test "basic option + positional failure snapshot" {
+  let cmd = @argparse.Command(
+    "demo",
+    options=[OptionArg("name", long="name")],
+    positionals=[PositionalArg("target")],
+  )
+  try cmd.parse(argv=["--bad"], env={}) catch {
+    Message(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|error: unexpected argument '--bad' found
+          #|
+          #|Usage: demo [options] [target]
+          #|
+          #|Arguments:
+          #|  target  
+          #|
+          #|Options:
+          #|  -h, --help     Show help information.
+          #|  --name <name>  
+          #|
+        ),
+      )
   } noraise {
     _ => panic()
   }
 }
 ```
 
-## Core Patterns
+## 2. Flags And Negation
+
+`flags` stay as `Map[String, Bool]`, so negated flags preserve explicit `false`
+states.
 
 ```mbt check
 ///|
-test "flag option positional" {
-  let matches = @argparse.parse(
-    Command(
-      "demo",
-      // FlagArg("verbose")
-      // OptionArg("count")
-      flags=[FlagArg("verbose", short='v', long="verbose")],
-      options=[OptionArg("count", long="count")],
-      // Test: 0 but passed args
-      // add docs 0,1,2, N
-      positionals=[PositionalArg("name", index=0)],
-    ),
-    argv=["-v", "--count", "2", "alice"],
-  )
-  // CR: Map[String,Bool] -> Set[String]?
-  debug_inspect(
-    matches,
+test "negatable flag success snapshot" {
+  let cmd = @argparse.Command("demo", flags=[
+    FlagArg("cache", long="cache", negatable=true),
+  ])
+
+  let parsed = cmd.parse(argv=["--no-cache"], env={}) catch { _ => panic() }
+  @debug.debug_inspect(
+    parsed.flags,
     content=(
-      #|{
-      #|  flags: { "verbose": true },
-      #|  values: { "count": ["2"], "name": ["alice"] },
-      #|  flag_counts: {},
-      #|  sources: { "verbose": Argv, "count": Argv, "name": Argv },
-      #|  subcommand: None,
-      #|  counts: {},
-      #|  flag_sources: {},
-      #|  value_sources: {},
-      #|  parsed_subcommand: None,
-      #|}
+      #|{ "cache": false }
     ),
   )
 }
 
 ///|
-test "subcommand with global flag" {
-  let matches = @argparse.parse(
-    Command(
-      "demo",
-      flags=[FlagArg("verbose", short='v', long="verbose", global=true)],
-      subcommands=[
-        Command("echo", positionals=[PositionalArg("msg", index=0)]),
-        Command("repeat", positionals=[PositionalArg("msg", index=0)], options=[
-          OptionArg("count", long="count"),
-        ]),
-      ],
-    ),
-    argv=["--verbose", "echo", "hi"],
-  )
-  // FIXME: (upstream) format introduced a new line
-  debug_inspect(
-    matches,
-    content=(
-      #|{
-      #|  flags: { "verbose": true },
-      #|  values: {},
-      #|  flag_counts: {},
-      #|  sources: { "verbose": Argv },
-      #|  subcommand: Some(
-      #|    (
-      #|      "echo",
-      #|      {
-      #|        flags: { "verbose": true },
-      #|        values: { "msg": ["hi"] },
-      #|        flag_counts: {},
-      #|        sources: { "verbose": Argv, "msg": Argv },
-      #|        subcommand: None,
-      #|        counts: {},
-      #|        flag_sources: {},
-      #|        value_sources: {},
-      #|        parsed_subcommand: None,
-      #|      },
-      #|    ),
-      #|  ),
-      #|  counts: {},
-      #|  flag_sources: {},
-      #|  value_sources: {},
-      #|  parsed_subcommand: None,
-      #|}
-    ),
-  )
+test "negatable flag failure snapshot" {
+  let cmd = @argparse.Command("demo", flags=[
+    FlagArg("cache", long="cache", negatable=true),
+  ])
+  try cmd.parse(argv=["--oops"], env={}) catch {
+    Message(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|error: unexpected argument '--oops' found
+          #|
+          #|Usage: demo [options]
+          #|
+          #|Options:
+          #|  -h, --help    Show help information.
+          #|  --[no-]cache  
+          #|
+        ),
+      )
+  } noraise {
+    _ => panic()
+  }
 }
 ```
 
-## Help and Version Snapshots
-
-`parse` raises display events instead of exiting. Snapshot tests work well for
-help text:
+## 3. Subcommands And Globals
 
 ```mbt check
 ///|
-test "help snapshot" {
+test "global count flag success snapshot" {
   let cmd = @argparse.Command(
     "demo",
-    about="demo app",
-    version="1.0.0",
-    flags=[FlagArg("verbose", short='v', long="verbose", about="verbose mode")],
-    options=[OptionArg("count", long="count", about="repeat count")],
+    flags=[
+      FlagArg("verbose", short='v', long="verbose", action=Count, global=true),
+    ],
+    subcommands=[Command("run")],
   )
-  //CR: we need handle `--help` implicitly for the user
-  try cmd.parse(argv=["--help"]) catch {
-    @argparse.DisplayHelp::Message(text) =>
+
+  let parsed = cmd.parse(argv=["-v", "run", "-v"], env={}) catch {
+    _ => panic()
+  }
+  @debug.debug_inspect(
+    parsed.flag_counts,
+    content=(
+      #|{ "verbose": 2 }
+    ),
+  )
+  let child = match parsed.subcommand {
+    Some(("run", sub)) => sub
+    _ => panic()
+  }
+  @debug.debug_inspect(
+    child.flag_counts,
+    content=(
+      #|{ "verbose": 2 }
+    ),
+  )
+}
+
+///|
+test "subcommand context failure snapshot" {
+  let cmd = @argparse.Command(
+    "demo",
+    flags=[
+      FlagArg("verbose", short='v', long="verbose", action=Count, global=true),
+    ],
+    subcommands=[Command("run")],
+  )
+  try cmd.parse(argv=["run", "--oops"], env={}) catch {
+    Message(msg) =>
       inspect(
-        text,
+        msg,
         content=(
-          #|Usage: demo [options]
+          #|error: unexpected argument '--oops' found
           #|
-          #|demo app
+          #|Usage: run [options]
+          #|
+          #|Options:
+          #|  -h, --help     Show help information.
+          #|  -v, --verbose  
+          #|
+        ),
+      )
+  } noraise {
+    _ => panic()
+  }
+}
+```
+
+## 4. Positional Value Ranges
+
+Positionals are parsed in declaration order (no explicit index).
+
+```mbt check
+///|
+test "bounded non-last positional success snapshot" {
+  let cmd = @argparse.Command("demo", positionals=[
+    PositionalArg("first", num_args=ValueRange(lower=1, upper=2)),
+    PositionalArg("second", required=true),
+  ])
+
+  let parsed = cmd.parse(argv=["a", "b", "c"], env={}) catch { _ => panic() }
+  @debug.debug_inspect(
+    parsed.values,
+    content=(
+      #|{ "first": ["a", "b"], "second": ["c"] }
+    ),
+  )
+}
+
+///|
+test "bounded non-last positional failure snapshot" {
+  let cmd = @argparse.Command("demo", positionals=[
+    PositionalArg("first", num_args=ValueRange(lower=1, upper=2)),
+    PositionalArg("second", required=true),
+  ])
+  try cmd.parse(argv=["a", "b", "c", "d"], env={}) catch {
+    Message(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|error: too many positional arguments were provided
+          #|
+          #|Usage: demo <first...> <second>
+          #|
+          #|Arguments:
+          #|  first...  required
+          #|  second    required
+          #|
+          #|Options:
+          #|  -h, --help  Show help information.
+          #|
+        ),
+      )
+  } noraise {
+    _ => panic()
+  }
+}
+```
+
+## 5. Error Snapshot Pattern
+
+`parse` now emits one string error payload (`ArgError::Message`) that already
+contains the full contextual help text.
+
+```mbt check
+///|
+test "root invalid option snapshot" {
+  let cmd = @argparse.Command("demo", options=[
+    OptionArg("count", long="count", about="repeat count"),
+  ])
+
+  try cmd.parse(argv=["--bad"], env={}) catch {
+    Message(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|error: unexpected argument '--bad' found
+          #|
+          #|Usage: demo [options]
           #|
           #|Options:
           #|  -h, --help       Show help information.
-          #|  -V, --version    Show version information.
-          #|  -v, --verbose    verbose mode
           #|  --count <count>  repeat count
           #|
         ),
       )
-    _ => fail("unexpected error")
   } noraise {
-    _ => fail("expected help display event")
+    _ => panic()
   }
 }
 
 ///|
-test "custom version option overrides built-in version flag" {
-  let cmd = @argparse.Command("demo", version="1.0.0", flags=[
-    FlagArg(
-      "custom_version",
-      short='V',
-      long="version",
-      about="custom version flag",
-    ),
+test "subcommand invalid option snapshot" {
+  let cmd = @argparse.Command("demo", subcommands=[
+    Command("echo", options=[OptionArg("times", long="times")]),
   ])
-  let matches = cmd.parse(argv=["--version"], env={}) catch { _ => panic() }
-  assert_true(matches.flags is { "custom_version": true, .. })
+
+  try cmd.parse(argv=["echo", "--oops"], env={}) catch {
+    Message(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|error: unexpected argument '--oops' found
+          #|
+          #|Usage: echo [options]
+          #|
+          #|Options:
+          #|  -h, --help       Show help information.
+          #|  --times <times>  
+          #|
+        ),
+      )
+  } noraise {
+    _ => panic()
+  }
+}
+```
+
+## 6. Rendering Help Without Parsing
+
+```mbt check
+///|
+test "render_help remains pure" {
+  let cmd = @argparse.Command("demo", about="demo app", options=[
+    OptionArg("count", long="count"),
+  ])
+  let help = cmd.render_help()
   inspect(
-    cmd.render_help(),
+    help,
     content=(
       #|Usage: demo [options]
       #|
+      #|demo app
+      #|
       #|Options:
-      #|  -h, --help     Show help information.
-      #|  -V, --version  custom version flag
+      #|  -h, --help       Show help information.
+      #|  --count <count>  
       #|
     ),
   )
 }
 ```
-
-<!-- TODO: add a subcommand `--help` test case, `--x` -->

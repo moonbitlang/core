@@ -18,7 +18,6 @@ priv struct ValidationCtx {
   seen_names : @set.Set[String]
   seen_long : @set.Set[String]
   seen_short : @set.Set[Char]
-  seen_positional_indices : @set.Set[Int]
   args : Array[Arg]
 }
 
@@ -31,7 +30,6 @@ fn ValidationCtx::new(
     seen_names: @set.new(),
     seen_long: @set.new(),
     seen_short: @set.new(),
-    seen_positional_indices: @set.new(),
     args: [],
   }
 }
@@ -79,11 +77,7 @@ fn ValidationCtx::record_arg(
         check_short(short)
       }
     }
-    Positional(index~, ..) =>
-      if index is Some(index) &&
-        !self.seen_positional_indices.add_and_check(index) {
-        raise Unsupported("duplicate positional index: \{index}")
-      }
+    Positional(_) => ()
   }
   self.args.push(arg)
 }
@@ -91,8 +85,6 @@ fn ValidationCtx::record_arg(
 ///|
 fn ValidationCtx::finalize(self : ValidationCtx) -> Unit raise ArgBuildError {
   validate_requires_conflicts_targets(self.args, self.seen_names)
-  validate_positional_index_layout(self.args)
-  validate_indexed_positional_num_args(self.args)
 }
 
 ///|
@@ -283,49 +275,6 @@ fn inherited_global_short_owner(
 }
 
 ///|
-fn validate_indexed_positional_num_args(
-  args : Array[Arg],
-) -> Unit raise ArgBuildError {
-  let positionals = positional_args(args)
-  if positionals.length() <= 1 {
-    return
-  }
-  let mut idx = 0
-  while idx + 1 < positionals.length() {
-    let arg = positionals[idx]
-    guard arg.info is Positional(index~, num_args~, ..)
-    if index is Some(_) && num_args is Some(range) {
-      if !(range is { lower: 1, upper: Some(1) }) {
-        raise Unsupported(
-          "indexed positional '\{arg.name}' cannot set num_args unless it is the last positional or exactly 1..1",
-        )
-      }
-    }
-    idx = idx + 1
-  }
-}
-
-///|
-fn validate_positional_index_layout(
-  args : Array[Arg],
-) -> Unit raise ArgBuildError {
-  let indexed = positional_indexed_args(args)
-  let mut expected = 0
-  for item in indexed {
-    let (index, _) = item
-    if index < expected {
-      raise Unsupported("duplicate positional index: \{index}")
-    }
-    if index > expected {
-      raise Unsupported(
-        "positional indices cannot skip values; missing index: \{expected}",
-      )
-    }
-    expected = expected + 1
-  }
-}
-
-///|
 fn validate_flag_arg(
   arg : Arg,
   ctx : ValidationCtx,
@@ -374,8 +323,8 @@ fn validate_positional_arg(
 ///|
 fn validate_named_option_arg(arg : Arg) -> Unit raise ArgBuildError {
   guard arg.info is (Flag(long~, short~, ..) | Option(long~, short~, ..))
-  guard long is Some(_) || short is Some(_) else {
-    raise Unsupported("flag/option args require short/long")
+  guard long is Some(_) || short is Some(_) || arg.env is Some(_) else {
+    raise Unsupported("flag/option args require short/long/env")
   }
 }
 

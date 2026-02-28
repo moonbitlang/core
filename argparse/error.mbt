@@ -13,8 +13,21 @@
 // limitations under the License.
 
 ///|
-/// Errors raised during parsing or decoding of arguments.
-pub(all) suberror ArgParseError {
+/// Unified error surface exposed by argparse.
+pub suberror ArgError {
+  Message(String)
+}
+
+///|
+pub impl Show for ArgError with output(self : ArgError, logger) {
+  match self {
+    Message(msg) => logger.write_string(msg)
+  }
+}
+
+///|
+/// Internal parse error variants used while parsing.
+priv suberror ArgParseError {
   UnknownArgument(String, String?)
   InvalidArgument(String)
   MissingValue(String)
@@ -25,11 +38,6 @@ pub(all) suberror ArgParseError {
   InvalidValue(String)
   MissingGroup(String)
   GroupConflict(String)
-}
-
-///|
-pub impl Show for ArgParseError with output(self : ArgParseError, logger) {
-  logger.write_string(self.arg_parse_error_message())
 }
 
 ///|
@@ -65,19 +73,26 @@ fn ArgParseError::arg_parse_error_message(self : ArgParseError) -> String {
 }
 
 ///|
-/// Errors raised when building argument specifications.
-pub suberror ArgBuildError {
+/// Internal build errors raised while validating command definitions.
+priv suberror ArgBuildError {
   Unsupported(String)
-} derive(Show)
+}
 
 ///|
-/// Errors raised when help information is requested.
-pub suberror DisplayHelp {
-  Message(String)
-} derive(Show)
+fn ArgBuildError::arg_build_error_message(self : ArgBuildError) -> String {
+  match self {
+    Unsupported(msg) => "error: \{msg}"
+  }
+}
 
 ///|
-/// Errors raised when version information is requested.
-pub suberror DisplayVersion {
+/// Internal control-flow event for displaying help.
+priv suberror DisplayHelp {
   Message(String)
-} derive(Show)
+}
+
+///|
+/// Internal control-flow event for displaying version text.
+priv suberror DisplayVersion {
+  Message(String)
+}

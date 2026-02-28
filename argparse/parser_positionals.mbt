@@ -13,40 +13,25 @@
 // limitations under the License.
 
 ///|
-fn positional_indexed_args(args : Array[Arg]) -> Array[(Int, Arg)] {
-  let entries = []
-  let mut next_index = 0
+fn positional_args(args : Array[Arg]) -> Array[Arg] {
+  let ordered = []
   for arg in args {
-    if arg.info is Positional(index~, ..) {
-      let resolved = match index {
-        Some(value) => {
-          let candidate = value + 1
-          if candidate > next_index {
-            next_index = candidate
-          }
-          value
-        }
-        None => {
-          let value = next_index
-          next_index = value + 1
-          value
-        }
-      }
-      entries.push((resolved, arg))
+    if arg.info is Positional(_) {
+      ordered.push(arg)
     }
   }
-  entries.sort_by_key(pair => pair.0)
-  entries
+  ordered
 }
 
 ///|
-fn positional_args(args : Array[Arg]) -> Array[Arg] {
-  let ordered = []
-  for item in positional_indexed_args(args) {
-    let (_, arg) = item
-    ordered.push(arg)
+fn last_positional_index(positionals : Array[Arg]) -> Int? {
+  for idx in 0..<positionals.length() {
+    let arg = positionals[idx]
+    if arg.info is Positional(last=true, ..) {
+      return Some(idx)
+    }
   }
-  ordered
+  None
 }
 
 ///|
