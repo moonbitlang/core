@@ -16,9 +16,6 @@
 fn println_mono(s : String) -> Unit = "%println"
 
 ///|
-fn[T] any_to_string(any : T) -> String = "%any.to_string"
-
-///|
 /// Prints any value that implements the `Show` trait to the standard output,
 /// followed by a newline.
 ///

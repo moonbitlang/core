@@ -17,10 +17,6 @@ pub fn[T : Eq + Show] assert_not_eq(T, T, msg? : String, loc~ : SourceLoc) -> Un
 #callsite(autofill(loc))
 pub fn assert_true(Bool, msg? : String, loc~ : SourceLoc) -> Unit raise
 
-#deprecated
-#callsite(autofill(loc))
-pub fn[T] dump(T, name? : String, loc~ : SourceLoc) -> T
-
 #callsite(autofill(loc))
 pub fn[T] fail(String, loc~ : SourceLoc) -> T raise Failure
 

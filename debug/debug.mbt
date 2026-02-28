@@ -1401,3 +1401,28 @@ test "Debug for hash-based collections" {
   let immut_hs = @immut_hashset.from_array([3])
   debug_inspect(immut_hs, content="<HashSet: [3]>")
 }
+
+///|
+/// Prints and returns the value of a given expression for quick and dirty debugging.
+/// This could also be useful to print some logs to trace the progress.
+/// For example, you can put `dump(())` in each line, the execution will print the line number
+/// when it reaches that line.
+#callsite(autofill(loc))
+#deprecated("This function is for debugging only and should not be used in production", skip_current_package=true)
+pub fn[T : Debug] dump(t : T, name? : String, loc~ : SourceLoc) -> T {
+  let name = match name {
+    Some(name) => name
+    None => ""
+  }
+  println("dump(\{name}@\{loc}) = \{to_string(t)}")
+  t
+}
+
+///|
+test "dump" {
+  let x = 42
+  if false {
+    dump(()) // never reached here
+    assert_eq(dump(x) + x, 84)
+  }
+}
