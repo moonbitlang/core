@@ -937,6 +937,9 @@ pub fn BytesView::chop_prefix(Self, Self) -> Self?
 pub fn BytesView::chop_suffix(Self, Self) -> Self?
 pub fn BytesView::data(Self) -> Bytes
 pub fn BytesView::find(Self, Self) -> Int?
+pub fn BytesView::from_array(ArrayView[Byte]) -> Self
+#alias(from_iterator, deprecated)
+pub fn BytesView::from_iter(Iter[Byte]) -> Self
 pub fn BytesView::get(Self, Int) -> Byte?
 pub fn BytesView::has_prefix(Self, Self) -> Bool
 pub fn BytesView::has_suffix(Self, Self) -> Bool
@@ -952,6 +955,7 @@ pub fn BytesView::start_offset(Self) -> Int
 pub fn BytesView::to_array(Self) -> Array[Byte]
 pub fn BytesView::to_bytes(Self) -> Bytes
 pub fn BytesView::to_fixedarray(Self) -> FixedArray[Byte]
+pub fn BytesView::to_unchecked_string(Self, offset? : Int, length? : Int) -> String
 #alias("_[_:_]")
 #alias(sub, deprecated)
 pub fn BytesView::view(Self, start? : Int, end? : Int) -> Self
