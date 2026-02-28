@@ -171,9 +171,9 @@ fn parse_command(
         inherited_globals,
         command_path,
       )
-    MissingRequired(name) =>
+    MissingRequired(name, by) =>
       raise arg_error_for_parse_failure(
-        MissingRequired(name),
+        MissingRequired(name, by),
         cmd,
         inherited_globals,
         command_path,
