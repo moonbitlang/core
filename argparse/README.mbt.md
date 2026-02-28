@@ -154,7 +154,7 @@ test "subcommand context failure snapshot" {
         content=(
           #|error: unexpected argument '--oops' found
           #|
-          #|Usage: run [options]
+          #|Usage: demo run [options]
           #|
           #|Options:
           #|  -h, --help     Show help information.
@@ -264,7 +264,7 @@ test "subcommand invalid option snapshot" {
         content=(
           #|error: unexpected argument '--oops' found
           #|
-          #|Usage: echo [options]
+          #|Usage: demo echo [options]
           #|
           #|Options:
           #|  -h, --help       Show help information.

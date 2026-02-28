@@ -66,7 +66,8 @@ fn resolve_help_target(
   builtin_help_short : Bool,
   builtin_help_long : Bool,
   inherited_globals : Array[Arg],
-) -> (Command, Array[Arg]) raise ArgParseError {
+  command_path : String,
+) -> (Command, Array[Arg], String) raise ArgParseError {
   let targets = if argv.length() == 0 {
     argv
   } else {
@@ -79,6 +80,7 @@ fn resolve_help_target(
     }
   }
   let mut current = cmd
+  let mut current_path = command_path
   let mut current_globals = inherited_globals
   let mut subs = cmd.subcommands
   for name in targets {
@@ -90,9 +92,14 @@ fn resolve_help_target(
     }
     current_globals = current_globals + collect_globals(current.args)
     current = sub
+    current_path = if current_path == "" {
+      sub.name
+    } else {
+      "\{current_path} \{sub.name}"
+    }
     subs = sub.subcommands
   }
-  (current, current_globals)
+  (current, current_globals, current_path)
 }
 
 ///|

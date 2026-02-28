@@ -501,7 +501,7 @@ test "subcommand help includes inherited global options" {
         content=(
           #|error: unexpected argument '--bad' found
           #|
-          #|Usage: echo [options]
+          #|Usage: demo echo [options]
           #|
           #|echo
           #|
@@ -2471,7 +2471,7 @@ test "global version action keeps parent version text in subcommand context" {
         content=(
           #|error: unexpected argument '--oops' found
           #|
-          #|Usage: run [options]
+          #|Usage: demo run [options]
           #|
           #|Options:
           #|  -h, --help          Show help information.

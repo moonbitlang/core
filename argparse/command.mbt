@@ -119,7 +119,7 @@ pub fn Command::parse(
   env? : Map[String, String] = {},
 ) -> Matches raise ArgError {
   try {
-    let raw = parse_command(self, argv, env, [], {}, {})
+    let raw = parse_command(self, argv, env, [], {}, {}, self.name)
     build_matches(self, raw, [])
   } catch {
     DisplayHelp::Message(text) => print_and_exit_success(text)
