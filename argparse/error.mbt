@@ -31,7 +31,7 @@ priv suberror ArgParseError {
   UnknownArgument(String, String?)
   InvalidArgument(String)
   MissingValue(String)
-  MissingRequired(String)
+  MissingRequired(String, String?)
   TooFewValues(String, Int, Int)
   TooManyValues(String, Int, Int)
   TooManyPositionals
@@ -58,8 +58,12 @@ fn ArgParseError::arg_parse_error_message(self : ArgParseError) -> String {
       }
     MissingValue(arg) =>
       "error: a value is required for '\{arg}' but none was supplied"
-    MissingRequired(name) =>
-      "error: the following required argument was not provided: '\{name}'"
+    MissingRequired(name, by) =>
+      if by is Some(source) {
+        "error: the following required argument was not provided: '\{name}' (required by '\{source}')"
+      } else {
+        "error: the following required argument was not provided: '\{name}'"
+      }
     TooFewValues(name, got, min) =>
       "error: '\{name}' requires at least \{min} values but only \{got} were provided"
     TooManyValues(name, got, max) =>

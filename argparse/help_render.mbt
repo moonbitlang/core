@@ -339,7 +339,6 @@ fn arg_doc(arg : Arg) -> String {
   }
 }
 
-///|
 fn has_subcommands_for_help(cmd : Command) -> Bool {
   if help_subcommand_enabled(cmd) {
     return true

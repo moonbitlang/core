@@ -375,7 +375,7 @@ test "relationships and num args" {
       inspect(
         msg,
         content=(
-          #|error: the following required argument was not provided: 'config'
+          #|error: the following required argument was not provided: 'config' (required by 'mode')
           #|
           #|Usage: demo [options]
           #|
@@ -384,6 +384,7 @@ test "relationships and num args" {
           #|  --mode <mode>      
           #|  --config <config>  
           #|
+
         ),
       )
     _ => panic()
