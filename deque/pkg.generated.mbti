@@ -13,6 +13,7 @@ import {
 #alias(T, deprecated)
 type Deque[A]
 pub fn[A] Deque::append(Self[A], Self[A]) -> Unit
+pub fn[A] Deque::as_mut_views(Self[A]) -> (MutArrayView[A], MutArrayView[A])
 pub fn[A] Deque::as_views(Self[A]) -> (ArrayView[A], ArrayView[A])
 #alias("_[_]")
 pub fn[A] Deque::at(Self[A], Int) -> A
@@ -50,6 +51,7 @@ pub fn[A] Deque::iter(Self[A]) -> Iter[A]
 pub fn[A] Deque::iter2(Self[A]) -> Iter2[Int, A]
 pub fn Deque::join(Self[String], StringView) -> String
 pub fn[A] Deque::length(Self[A]) -> Int
+pub fn[A] Deque::make_contiguous(Self[A]) -> MutArrayView[A]
 pub fn[A, U] Deque::map(Self[A], (A) -> U) -> Self[U]
 pub fn[A, U] Deque::mapi(Self[A], (Int, A) -> U) -> Self[U]
 #as_free_fn
