@@ -56,7 +56,6 @@ priv enum ArgInfo {
     allow_hyphen_values~ : Bool
   )
   Positional(
-    index~ : Int?,
     num_args~ : ValueRange?,
     last~ : Bool,
     default_values~ : Array[String]?,
@@ -89,7 +88,11 @@ pub struct FlagArg {
 ///|
 /// Create a flag argument.
 ///
-/// At least one of `short` or `long` must be provided.
+/// `long` defaults to `name`.
+///
+/// Pass `long=""` to disable the long form explicitly.
+///
+/// At least one of `short` or `long` or `env` must be available.
 ///
 /// `global=true` makes the flag available in subcommands.
 ///
@@ -97,7 +100,7 @@ pub struct FlagArg {
 pub fn FlagArg::new(
   name : StringView,
   short? : Char,
-  long? : StringView,
+  long? : StringView = name,
   about? : StringView,
   action? : FlagAction = SetTrue,
   env? : StringView,
@@ -109,7 +112,7 @@ pub fn FlagArg::new(
   hidden? : Bool = false,
 ) -> FlagArg {
   let name = name.to_string()
-  let long = long.map(v => v.to_string())
+  let long = if long == "" { None } else { Some(long.to_string()) }
   let about = about.map(v => v.to_string())
   let env = env.map(v => v.to_string())
   {
@@ -165,7 +168,11 @@ pub struct OptionArg {
 ///|
 /// Create an option argument that consumes one value per occurrence.
 ///
-/// At least one of `short` or `long` must be provided.
+/// `long` defaults to `name`.
+///
+/// Pass `long=""` to disable the long form explicitly.
+///
+/// At least one of `short` or `long` or `env` must be available.
 ///
 /// Use `action=Append` for repeated occurrences.
 ///
@@ -173,7 +180,7 @@ pub struct OptionArg {
 pub fn OptionArg::new(
   name : StringView,
   short? : Char,
-  long? : StringView,
+  long? : StringView = name,
   about? : StringView,
   action? : OptionAction = Set,
   env? : StringView,
@@ -186,7 +193,7 @@ pub fn OptionArg::new(
   hidden? : Bool = false,
 ) -> OptionArg {
   let name = name.to_string()
-  let long = long.map(v => v.to_string())
+  let long = if long == "" { None } else { Some(long.to_string()) }
   let about = about.map(v => v.to_string())
   let env = env.map(v => v.to_string())
   {
@@ -229,7 +236,6 @@ pub struct PositionalArg {
   /// Create a positional argument.
   fn new(
     name : StringView,
-    index? : Int,
     about? : StringView,
     env? : StringView,
     default_values? : ArrayView[String],
@@ -247,20 +253,11 @@ pub struct PositionalArg {
 ///|
 /// Create a positional argument.
 ///
-/// Positional ordering:
-/// - `index` is zero-based.
-/// - Positionals without `index` get inferred indices in declaration order.
-/// - All positionals are ordered by the resolved index.
-/// - Positional indices cannot skip values.
+/// Positional ordering is declaration order.
 ///
 /// `num_args` controls the accepted value count.
-///
-/// For indexed positionals that are not the last positional, `num_args` must be
-/// omitted or exactly `ValueRange::single()` (`1..1`); other ranges are rejected
-/// at build time.
 pub fn PositionalArg::new(
   name : StringView,
-  index? : Int,
   about? : StringView,
   env? : StringView,
   default_values? : ArrayView[String],
@@ -288,7 +285,6 @@ pub fn PositionalArg::new(
       hidden,
       //
       info: Positional(
-        index~,
         num_args~,
         last~,
         default_values=default_values.map(values => values.to_array()),

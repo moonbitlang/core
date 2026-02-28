@@ -94,7 +94,128 @@ fn merge_global_defs(
 }
 
 ///|
+fn format_error_with_help(
+  msg : String,
+  cmd : Command,
+  inherited_globals : Array[Arg],
+) -> String {
+  "\{msg}\n\n\{render_help_for_context(cmd, inherited_globals)}"
+}
+
+///|
+fn arg_error_for_parse_failure(
+  err : ArgParseError,
+  cmd : Command,
+  inherited_globals : Array[Arg],
+) -> ArgError {
+  Message(
+    format_error_with_help(
+      err.arg_parse_error_message(),
+      cmd,
+      inherited_globals,
+    ),
+  )
+}
+
+///|
+fn arg_error_for_build_failure(
+  err : ArgBuildError,
+  cmd : Command,
+  inherited_globals : Array[Arg],
+) -> ArgError {
+  Message(
+    format_error_with_help(
+      err.arg_build_error_message(),
+      cmd,
+      inherited_globals,
+    ),
+  )
+}
+
+///|
 fn parse_command(
+  cmd : Command,
+  argv : ArrayView[String],
+  env : Map[String, String],
+  inherited_globals : Array[Arg],
+  inherited_version_long : Map[String, String],
+  inherited_version_short : Map[Char, String],
+) -> Matches raise {
+  parse_command_impl(
+    cmd, argv, env, inherited_globals, inherited_version_long, inherited_version_short,
+  ) catch {
+    UnknownArgument(arg, hint) =>
+      raise arg_error_for_parse_failure(
+        UnknownArgument(arg, hint),
+        cmd,
+        inherited_globals,
+      )
+    InvalidArgument(msg) =>
+      raise arg_error_for_parse_failure(
+        InvalidArgument(msg),
+        cmd,
+        inherited_globals,
+      )
+    MissingValue(name) =>
+      raise arg_error_for_parse_failure(
+        MissingValue(name),
+        cmd,
+        inherited_globals,
+      )
+    MissingRequired(name) =>
+      raise arg_error_for_parse_failure(
+        MissingRequired(name),
+        cmd,
+        inherited_globals,
+      )
+    TooFewValues(name, got, min) =>
+      raise arg_error_for_parse_failure(
+        TooFewValues(name, got, min),
+        cmd,
+        inherited_globals,
+      )
+    TooManyValues(name, got, max) =>
+      raise arg_error_for_parse_failure(
+        TooManyValues(name, got, max),
+        cmd,
+        inherited_globals,
+      )
+    TooManyPositionals =>
+      raise arg_error_for_parse_failure(
+        TooManyPositionals,
+        cmd,
+        inherited_globals,
+      )
+    InvalidValue(msg) =>
+      raise arg_error_for_parse_failure(
+        InvalidValue(msg),
+        cmd,
+        inherited_globals,
+      )
+    MissingGroup(name) =>
+      raise arg_error_for_parse_failure(
+        MissingGroup(name),
+        cmd,
+        inherited_globals,
+      )
+    GroupConflict(name) =>
+      raise arg_error_for_parse_failure(
+        GroupConflict(name),
+        cmd,
+        inherited_globals,
+      )
+    Unsupported(msg) =>
+      raise arg_error_for_build_failure(
+        Unsupported(msg),
+        cmd,
+        inherited_globals,
+      )
+    err => raise err
+  }
+}
+
+///|
+fn parse_command_impl(
   cmd : Command,
   argv : ArrayView[String],
   env : Map[String, String],
@@ -139,9 +260,7 @@ fn parse_command(
     long_index.get("version") is None
   let positionals = positional_args(args)
   let positional_values = []
-  let last_pos_idx = positionals.search_by(arg => {
-    arg.info is Positional(last=true, ..)
-  })
+  let last_pos_idx = last_positional_index(positionals)
   let mut i = 0
   let mut positional_arg_found = false
   while i < argv.length() {

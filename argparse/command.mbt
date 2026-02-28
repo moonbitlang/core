@@ -105,11 +105,11 @@ pub fn Command::render_help(self : Command) -> String {
 ///|
 /// Parse argv/environment according to this command spec.
 ///
-/// Error and event model:
-/// - Raises `DisplayHelp::Message` / `DisplayVersion::Message` for display
-///   actions instead of exiting the process.
-/// - Raises `ArgBuildError` when the command definition is invalid.
-/// - Raises `ArgParseError` when user input does not satisfy the definition.
+/// Behavior:
+/// - Help/version requests print output immediately and terminate with exit code
+///   `0`.
+/// - Parse/build failures raise `ArgError::Message` where the payload includes
+///   the error text and full contextual help output.
 ///
 /// Value precedence is `argv > env > default_values`.
 #as_free_fn
@@ -117,9 +117,16 @@ pub fn Command::parse(
   self : Command,
   argv? : ArrayView[String] = default_argv(),
   env? : Map[String, String] = {},
-) -> Matches raise {
-  let raw = parse_command(self, argv, env, [], {}, {})
-  build_matches(self, raw, [])
+) -> Matches raise ArgError {
+  try {
+    let raw = parse_command(self, argv, env, [], {}, {})
+    build_matches(self, raw, [])
+  } catch {
+    DisplayHelp::Message(text) => print_and_exit_success(text)
+    DisplayVersion::Message(text) => print_and_exit_success(text)
+    ArgError::Message(msg) => raise Message(msg)
+    _ => panic()
+  }
 }
 
 ///|
