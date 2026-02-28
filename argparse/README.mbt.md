@@ -43,37 +43,84 @@ test "name-only option is rejected" {
 ```mbt check
 ///|
 test "flag option positional" {
-  let cmd = @argparse.Command(
-    "demo",
-    flags=[FlagArg("verbose", short='v', long="verbose")],
-    options=[OptionArg("count", long="count")],
-    positionals=[PositionalArg("name", index=0)],
+  let matches = @argparse.parse(
+    Command(
+      "demo",
+      // FlagArg("verbose")
+      // OptionArg("count")
+      flags=[FlagArg("verbose", short='v', long="verbose")],
+      options=[OptionArg("count", long="count")],
+      // Test: 0 but passed args
+      // add docs 0,1,2, N
+      positionals=[PositionalArg("name", index=0)],
+    ),
+    argv=["-v", "--count", "2", "alice"],
   )
-  let matches = cmd.parse(argv=["-v", "--count", "2", "alice"], env={}) catch {
-    _ => panic()
-  }
-  assert_true(matches.flags is { "verbose": true, .. })
-  assert_true(matches.values is { "count": ["2"], "name": ["alice"], .. })
+  // CR: Map[String,Bool] -> Set[String]?
+  debug_inspect(
+    matches,
+    content=(
+      #|{
+      #|  flags: { "verbose": true },
+      #|  values: { "count": ["2"], "name": ["alice"] },
+      #|  flag_counts: {},
+      #|  sources: { "verbose": Argv, "count": Argv, "name": Argv },
+      #|  subcommand: None,
+      #|  counts: {},
+      #|  flag_sources: {},
+      #|  value_sources: {},
+      #|  parsed_subcommand: None,
+      #|}
+    ),
+  )
 }
 
 ///|
 test "subcommand with global flag" {
-  let echo = @argparse.Command("echo", positionals=[
-    PositionalArg("msg", index=0),
-  ])
-  let cmd = @argparse.Command(
-    "demo",
-    flags=[FlagArg("verbose", short='v', long="verbose", global=true)],
-    subcommands=[echo],
+  let matches = @argparse.parse(
+    Command(
+      "demo",
+      flags=[FlagArg("verbose", short='v', long="verbose", global=true)],
+      subcommands=[
+        Command("echo", positionals=[PositionalArg("msg", index=0)]),
+        Command("repeat", positionals=[PositionalArg("msg", index=0)], options=[
+          OptionArg("count", long="count"),
+        ]),
+      ],
+    ),
+    argv=["--verbose", "echo", "hi"],
   )
-  let matches = cmd.parse(argv=["--verbose", "echo", "hi"], env={}) catch {
-    _ => panic()
-  }
-  assert_true(matches.flags is { "verbose": true, .. })
-  assert_true(
-    matches.subcommand is Some(("echo", sub)) &&
-    sub.flags is { "verbose": true, .. } &&
-    sub.values is { "msg": ["hi"], .. },
+  // FIXME: (upstream) format introduced a new line
+  debug_inspect(
+    matches,
+    content=(
+      #|{
+      #|  flags: { "verbose": true },
+      #|  values: {},
+      #|  flag_counts: {},
+      #|  sources: { "verbose": Argv },
+      #|  subcommand: Some(
+      #|    (
+      #|      "echo",
+      #|      {
+      #|        flags: { "verbose": true },
+      #|        values: { "msg": ["hi"] },
+      #|        flag_counts: {},
+      #|        sources: { "verbose": Argv, "msg": Argv },
+      #|        subcommand: None,
+      #|        counts: {},
+      #|        flag_sources: {},
+      #|        value_sources: {},
+      #|        parsed_subcommand: None,
+      #|      },
+      #|    ),
+      #|  ),
+      #|  counts: {},
+      #|  flag_sources: {},
+      #|  value_sources: {},
+      #|  parsed_subcommand: None,
+      #|}
+    ),
   )
 }
 ```
@@ -93,7 +140,8 @@ test "help snapshot" {
     flags=[FlagArg("verbose", short='v', long="verbose", about="verbose mode")],
     options=[OptionArg("count", long="count", about="repeat count")],
   )
-  try cmd.parse(argv=["--help"], env={}) catch {
+  //CR: we need handle `--help` implicitly for the user
+  try cmd.parse(argv=["--help"]) catch {
     @argparse.DisplayHelp::Message(text) =>
       inspect(
         text,
@@ -110,9 +158,9 @@ test "help snapshot" {
           #|
         ),
       )
-    _ => panic()
+    _ => fail("unexpected error")
   } noraise {
-    _ => panic()
+    _ => fail("expected help display event")
   }
 }
 
@@ -141,3 +189,5 @@ test "custom version option overrides built-in version flag" {
   )
 }
 ```
+
+<!-- TODO: add a subcommand `--help` test case, `--x` -->
