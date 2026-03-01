@@ -13,12 +13,12 @@
 // limitations under the License.
 
 ///|
-fn raise_help(text : String) -> Unit raise DisplayHelp {
+fn[T] raise_help(text : String) -> T raise DisplayHelp {
   raise Message(text)
 }
 
 ///|
-fn raise_version(text : String) -> Unit raise DisplayVersion {
+fn[T] raise_version(text : String) -> T raise DisplayVersion {
   raise Message(text)
 }
 
@@ -59,11 +59,11 @@ fn render_help_for_context(
 }
 
 ///|
-fn raise_context_help(
+fn[T] raise_context_help(
   cmd : Command,
   inherited_globals : Array[Arg],
   command_path : String,
-) -> Unit raise DisplayHelp {
+) -> T raise DisplayHelp {
   raise_help(render_help_for_context(cmd, inherited_globals, command_path))
 }
 
@@ -266,247 +266,199 @@ fn parse_command_impl(
       }
     }
   }
+
   let long_index = build_long_index(inherited_globals, args)
   let short_index = build_short_index(inherited_globals, args)
-  let builtin_help_short = help_flag_enabled(cmd) &&
-    short_index.get('h') is None
-  let builtin_help_long = help_flag_enabled(cmd) &&
-    long_index.get("help") is None
+
+  let builtin_help_short = help_flag_enabled(cmd) && !short_index.contains('h')
+  let builtin_help_long = help_flag_enabled(cmd) && !long_index.contains("help")
   let builtin_version_short = version_flag_enabled(cmd) &&
-    short_index.get('V') is None
+    !short_index.contains('V')
   let builtin_version_long = version_flag_enabled(cmd) &&
-    long_index.get("version") is None
+    !long_index.contains("version")
+
   let positionals = positional_args(args)
   let positional_values = []
   let last_pos_idx = last_positional_index(positionals)
-  let mut i = 0
   let mut positional_arg_found = false
-  while i < argv.length() {
-    let arg = argv[i]
-    if arg == "--" {
-      if i + 1 < argv.length() {
+
+  loop argv {
+    [] => ()
+    ["--", .. rest_argv] => positional_values.append(rest_argv)
+    [arg, .. rest_argv] => {
+      let force_positional = last_pos_idx is Some(idx) &&
+        positional_values.length() >= idx
+      let rest_argv = if force_positional ||
+        should_parse_as_positional(
+          arg, positionals, positional_values, long_index, short_index,
+        ) {
+        positional_values.push(arg)
         positional_arg_found = true
-      }
-      for rest in argv[i + 1:] {
-        positional_values.push(rest)
-      }
-      break
-    }
-    let force_positional = match last_pos_idx {
-      Some(idx) => positional_values.length() >= idx
-      None => false
-    }
-    if force_positional {
-      positional_values.push(arg)
-      positional_arg_found = true
-      i = i + 1
-      continue
-    }
-    if builtin_help_short && arg == "-h" {
-      raise_context_help(cmd, inherited_globals, command_path)
-    }
-    if builtin_help_long && arg == "--help" {
-      raise_context_help(cmd, inherited_globals, command_path)
-    }
-    if builtin_version_short && arg == "-V" {
-      raise_version(command_version(cmd))
-    }
-    if builtin_version_long && arg == "--version" {
-      raise_version(command_version(cmd))
-    }
-    if should_parse_as_positional(
-        arg, positionals, positional_values, long_index, short_index,
-      ) {
-      positional_values.push(arg)
-      positional_arg_found = true
-      i = i + 1
-      continue
-    }
-    if arg.has_prefix("--") {
-      let (name, inline) = split_long(arg)
-      if builtin_help_long && name == "help" {
-        if inline is Some(_) {
-          raise ArgParseError::InvalidArgument(arg)
+        rest_argv
+      } else if arg is [.. "--", .. name_value] {
+        // name_value is not ""
+        let (name, inline) = match name_value.split_once("=") {
+          None => (name_value.to_string(), None)
+          Some((name, inline)) => (name.to_string(), Some(inline))
         }
-        raise_context_help(cmd, inherited_globals, command_path)
-      }
-      if builtin_version_long && name == "version" {
-        if inline is Some(_) {
-          raise ArgParseError::InvalidArgument(arg)
-        }
-        raise_version(command_version(cmd))
-      }
-      match long_index.get(name) {
-        None =>
-          // Support `--no-<flag>` when the underlying flag is marked `negatable`.
-          if name is [.. "no-", .. target] &&
-            long_index.get(target.to_string())
-            is Some({ info: Flag(negatable=true, action~, ..), .. } as spec) {
-            if inline is Some(_) {
-              raise ArgParseError::InvalidArgument(arg)
-            }
-            let value = match action {
-              SetFalse => true
-              _ => false
-            }
-            if action is Count {
-              matches.counts[spec.name] = 0
-            }
-            matches.flags[spec.name] = value
-            matches.flag_sources[spec.name] = Argv
-          } else {
-            raise_unknown_long(name, long_index)
+        if builtin_help_long && name == "help" {
+          guard inline is None else {
+            raise ArgParseError::InvalidArgument(arg)
           }
-        Some(spec) =>
-          if spec.info is (Option(_) | Positional(_)) {
-            check_duplicate_set_occurrence(matches, spec)
-            if inline is Some(v) {
-              assign_value(matches, spec, v, Argv)
-            } else {
-              let can_take_next = i + 1 < argv.length() &&
-                !should_stop_option_value(
-                  argv[i + 1],
-                  spec,
-                  long_index,
-                  short_index,
-                )
-              if can_take_next {
-                i = i + 1
-                assign_value(matches, spec, argv[i], Argv)
-              } else {
-                raise ArgParseError::MissingValue("--\{name}")
+          raise_context_help(cmd, inherited_globals, command_path)
+        } else if builtin_version_long && name == "version" {
+          guard inline is None else {
+            raise ArgParseError::InvalidArgument(arg)
+          }
+          raise_version(command_version(cmd))
+        } else if long_index.get(name) is Some(spec) {
+          match spec.info {
+            Flag(action~, ..) => {
+              guard inline is None else {
+                raise ArgParseError::InvalidArgument(arg)
+              }
+              match action {
+                Help => raise_context_help(cmd, inherited_globals, command_path)
+                Version =>
+                  raise_version(
+                    version_text_for_long_action(
+                      cmd, name, inherited_version_long,
+                    ),
+                  )
+                _ => {
+                  apply_flag(matches, spec, Argv)
+                  rest_argv
+                }
               }
             }
-          } else {
-            if inline is Some(_) {
-              raise ArgParseError::InvalidArgument(arg)
+            Option(_) | Positional(_) => {
+              check_duplicate_set_occurrence(matches, spec)
+              if inline is Some(v) {
+                assign_value(matches, spec, v.to_string(), Argv)
+                rest_argv
+              } else {
+                guard rest_argv is [next, .. rest_argv] &&
+                  !should_stop_option_value(next, spec, long_index, short_index) else {
+                  raise ArgParseError::MissingValue("--\{name}")
+                }
+                assign_value(matches, spec, next, Argv)
+                rest_argv
+              }
+            }
+          }
+          // Support `--no-<flag>` when the underlying flag is marked `negatable`.
+        } else if name is [.. "no-", .. target] &&
+          long_index.get(target.to_string())
+          is Some({ info: Flag(negatable=true, action~, ..), .. } as spec) {
+          guard inline is None else {
+            raise ArgParseError::InvalidArgument(arg)
+          }
+          if action is Count {
+            matches.counts[spec.name] = 0
+          }
+          matches.flags[spec.name] = match action {
+            SetFalse => true
+            _ => false
+          }
+          matches.flag_sources[spec.name] = Argv
+          rest_argv
+        } else {
+          raise_unknown_long(name, long_index)
+        }
+      } else if arg is ['-', .. shorts] && shorts is [_, ..] {
+        // Parse short groups like `-abc` and short values like `-c3`.
+        inner~: loop shorts {
+          [] => rest_argv
+          ['h', ..] if builtin_help_short =>
+            raise_context_help(cmd, inherited_globals, command_path)
+          ['V', ..] if builtin_version_short =>
+            raise_version(command_version(cmd))
+          [short, .. rest_shorts] => {
+            guard short_index.get(short) is Some(spec) else {
+              raise_unknown_short(short, short_index)
             }
             match spec.info {
               Flag(action=Help, ..) =>
                 raise_context_help(cmd, inherited_globals, command_path)
               Flag(action=Version, ..) =>
                 raise_version(
-                  version_text_for_long_action(
-                    cmd, name, inherited_version_long,
+                  version_text_for_short_action(
+                    cmd, short, inherited_version_short,
                   ),
                 )
-              _ => apply_flag(matches, spec, Argv)
+              Flag(_) => {
+                apply_flag(matches, spec, Argv)
+                continue inner~ rest_shorts
+              }
+              Option(_) => {
+                check_duplicate_set_occurrence(matches, spec)
+                match rest_shorts {
+                  [] => {
+                    guard rest_argv is [value, .. rest_rest_argv] &&
+                      !should_stop_option_value(
+                        value, spec, long_index, short_index,
+                      ) else {
+                      raise ArgParseError::MissingValue("-\{short}")
+                    }
+                    assign_value(matches, spec, value, Argv)
+                    rest_rest_argv
+                  }
+                  ['=', .. inline] | inline => {
+                    assign_value(matches, spec, inline.to_string(), Argv)
+                    rest_argv
+                  }
+                }
+              }
+              Positional(_) => panic()
             }
           }
-      }
-      i = i + 1
-      continue
-    }
-    if arg.has_prefix("-") && arg != "-" {
-      // Parse short groups like `-abc` and short values like `-c3`.
-      let mut pos = 1
-      while pos < arg.length() {
-        let short = arg.get_char(pos).unwrap()
-        if short == 'h' && builtin_help_short {
-          raise_context_help(cmd, inherited_globals, command_path)
         }
-        if short == 'V' && builtin_version_short {
-          raise_version(command_version(cmd))
-        }
-        let spec = match short_index.get(short) {
-          Some(v) => v
-          None => raise_unknown_short(short, short_index)
-        }
-        if spec.info is (Option(_) | Positional(_)) {
-          check_duplicate_set_occurrence(matches, spec)
-          if pos + 1 < arg.length() {
-            let rest = arg.unsafe_substring(start=pos + 1, end=arg.length())
-            let inline = match rest.strip_prefix("=") {
-              Some(view) => view.to_string()
-              None => rest
-            }
-            assign_value(matches, spec, inline, Argv)
-          } else {
-            let can_take_next = i + 1 < argv.length() &&
-              !should_stop_option_value(
-                argv[i + 1],
-                spec,
-                long_index,
-                short_index,
-              )
-            if can_take_next {
-              i = i + 1
-              assign_value(matches, spec, argv[i], Argv)
-            } else {
-              raise ArgParseError::MissingValue("-\{short}")
-            }
-          }
-          break
+      } else if help_subcommand_enabled(cmd) && arg == "help" {
+        guard !positional_arg_found else { raise_subcommand_conflict("help") }
+        let (target, target_globals, target_path) = resolve_help_target(
+          cmd, rest_argv, builtin_help_short, builtin_help_long, inherited_globals,
+          command_path,
+        )
+        raise_context_help(target, target_globals, target_path)
+      } else if subcommands.iter().find_first(sub => sub.name == arg)
+        is Some(sub) {
+        guard !positional_arg_found else { raise_subcommand_conflict(sub.name) }
+
+        let sub_path = if command_path == "" {
+          sub.name
         } else {
-          match spec.info {
-            Flag(action=Help, ..) =>
-              raise_context_help(cmd, inherited_globals, command_path)
-            Flag(action=Version, ..) =>
-              raise_version(
-                version_text_for_short_action(
-                  cmd, short, inherited_version_short,
-                ),
-              )
-            _ => apply_flag(matches, spec, Argv)
-          }
+          "\{command_path} \{sub.name}"
         }
-        pos = pos + short.utf16_len()
-      }
-      i = i + 1
-      continue
-    }
-    if help_subcommand_enabled(cmd) && arg == "help" {
-      if positional_arg_found {
-        raise_subcommand_conflict("help")
-      }
-      let rest = argv[i + 1:].to_array()
-      let (target, target_globals, target_path) = resolve_help_target(
-        cmd, rest, builtin_help_short, builtin_help_long, inherited_globals, command_path,
-      )
-      let text = render_help_for_context(target, target_globals, target_path)
-      raise_help(text)
-    }
-    if subcommands.iter().find_first(sub => sub.name == arg) is Some(sub) {
-      if positional_arg_found {
-        raise_subcommand_conflict(sub.name)
-      }
-      let rest = argv[i + 1:].to_array()
-      let sub_path = if command_path == "" {
-        sub.name
-      } else {
-        "\{command_path} \{sub.name}"
-      }
-      let sub_matches = parse_command(
-        sub, rest, env, child_globals, child_version_long, child_version_short, sub_path,
-      )
-      let child_local_non_globals = collect_non_global_names(sub.args)
-      matches.parsed_subcommand = Some((sub.name, sub_matches))
-      // Merge argv-provided globals from the subcommand parse into the parent
-      // so globals work even when they appear after the subcommand name.
-      merge_globals_from_child(
-        matches, sub_matches, child_globals, child_local_non_globals,
-      )
-      let env_args = inherited_globals + args
-      let parent_matches = finalize_matches(
-        cmd, args, groups, matches, positionals, positional_values, env_args, env,
-      )
-      validate_relationships(parent_matches, args)
-      match parent_matches.parsed_subcommand {
-        Some((sub_name, sub_m)) => {
+        let sub_matches = parse_command(
+          sub, rest_argv, env, child_globals, child_version_long, child_version_short,
+          sub_path,
+        )
+        let child_local_non_globals = collect_non_global_names(sub.args)
+        matches.parsed_subcommand = Some((sub.name, sub_matches))
+        // Merge argv-provided globals from the subcommand parse into the parent
+        // so globals work even when they appear after the subcommand name.
+        merge_globals_from_child(
+          matches, sub_matches, child_globals, child_local_non_globals,
+        )
+        let env_args = inherited_globals + args
+        let parent_matches = finalize_matches(
+          cmd, args, groups, matches, positionals, positional_values, env_args, env,
+        )
+        validate_relationships(parent_matches, args)
+        if parent_matches.parsed_subcommand is Some((_, sub_m)) {
           // After parent parsing, copy the final globals into the subcommand.
           propagate_globals_to_child(
             parent_matches, sub_m, child_globals, child_local_non_globals,
           )
-          parent_matches.parsed_subcommand = Some((sub_name, sub_m))
         }
-        None => ()
+        return parent_matches
+      } else { // arg is positional
+        positional_values.push(arg)
+        positional_arg_found = true
+        rest_argv
       }
-      return parent_matches
+      continue rest_argv
     }
-
-    positional_values.push(arg)
-    positional_arg_found = true
-    i = i + 1
   }
   let env_args = inherited_globals + args
   let final_matches = finalize_matches(

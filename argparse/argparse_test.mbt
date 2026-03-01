@@ -300,7 +300,6 @@ test "display help and version" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -334,7 +333,6 @@ test "parse error show is readable" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -357,7 +355,6 @@ test "parse error show is readable" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -384,10 +381,8 @@ test "relationships and num args" {
           #|  --mode <mode>      
           #|  --config <config>  
           #|
-
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -429,7 +424,6 @@ test "arg groups required and multiple" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -453,7 +447,6 @@ test "arg groups required and multiple" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -490,7 +483,6 @@ test "arg groups requires and conflicts" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -524,7 +516,6 @@ test "arg groups requires and conflicts" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -685,7 +676,6 @@ test "negatable and conflicts" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -709,7 +699,6 @@ test "flag does not accept inline value" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -734,7 +723,6 @@ test "built-in long flags do not accept inline value" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -754,7 +742,6 @@ test "built-in long flags do not accept inline value" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -809,7 +796,6 @@ test "command policies" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
