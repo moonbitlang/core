@@ -84,7 +84,7 @@ fn should_parse_as_positional(
   long_index : Map[String, Arg],
   short_index : Map[Char, Arg],
 ) -> Bool {
-  guard arg is ['-', .. rest] else { return false }
+  guard arg is ['-', .. rest] && !(rest is "") else { return false }
   let next = match next_positional(positionals, collected) {
     Some(v) => v
     None => return false
