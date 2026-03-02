@@ -104,12 +104,12 @@ pub fn Double::clamp(self : Double, min~ : Double, max~ : Double) -> Double {
 ///
 /// ```mbt check
 /// test {
-///   inspect(0.0.lerp(10.0, 0.25), content="2.5")
-///   inspect(5.0.lerp(15.0, 0.0), content="5")
-///   inspect(5.0.lerp(15.0, 1.0), content="15")
+///   inspect(0.0.lerp(target=10.0, t=0.25), content="2.5")
+///   inspect(5.0.lerp(target=15.0, t=0.0), content="5")
+///   inspect(5.0.lerp(target=15.0, t=1.0), content="15")
 /// }
 /// ```
-pub fn Double::lerp(self : Double, target : Double, t : Double) -> Double {
+pub fn Double::lerp(self : Double, target~ : Double, t~ : Double) -> Double {
   self + (target - self) * t
 }
 

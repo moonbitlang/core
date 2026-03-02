@@ -38,7 +38,7 @@ pub fn Float::is_inf(Float) -> Bool
 pub fn Float::is_nan(Float) -> Bool
 pub fn Float::is_neg_inf(Float) -> Bool
 pub fn Float::is_pos_inf(Float) -> Bool
-pub fn Float::lerp(Float, Float, Float) -> Float
+pub fn Float::lerp(Float, target~ : Float, t~ : Float) -> Float
 #as_free_fn(deprecated)
 #deprecated
 pub fn Float::pow(Float, Float) -> Float

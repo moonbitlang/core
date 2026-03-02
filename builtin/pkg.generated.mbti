@@ -646,7 +646,7 @@ pub fn Double::is_inf(Double) -> Bool
 pub fn Double::is_nan(Double) -> Bool
 pub fn Double::is_neg_inf(Double) -> Bool
 pub fn Double::is_pos_inf(Double) -> Bool
-pub fn Double::lerp(Double, Double, Double) -> Double
+pub fn Double::lerp(Double, target~ : Double, t~ : Double) -> Double
 #deprecated
 pub fn Double::pow(Double, Double) -> Double
 #deprecated
