@@ -56,8 +56,8 @@ fn resolve_help_target(
   builtin_help_short : Bool,
   builtin_help_long : Bool,
   inherited_globals : Array[Arg],
-  command_path : String,
-) -> (Command, Array[Arg], String) raise ArgParseError {
+  command_path : Array[String],
+) -> (Command, Array[Arg], Array[String]) raise ArgParseError {
   let targets = match argv {
     [.. pre, "-h"] if builtin_help_short => pre
     [.. pre, "--help"] if builtin_help_long => pre
@@ -79,11 +79,7 @@ fn resolve_help_target(
       collect_globals(current.args),
     )
     current = sub
-    current_path = if current_path == "" {
-      sub.name
-    } else {
-      "\{current_path} \{sub.name}"
-    }
+    current_path = current_path + [sub.name]
   }
   (current, current_globals, current_path)
 }

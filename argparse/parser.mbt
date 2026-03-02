@@ -51,9 +51,13 @@ fn[T] raise_subcommand_conflict(name : String) -> T raise ArgParseError {
 fn help_context_command(
   cmd : Command,
   inherited_globals : Array[Arg],
-  command_path : String,
+  command_path : Array[String],
 ) -> Command {
-  let help_name = if command_path == "" { cmd.name } else { command_path }
+  let help_name = if command_path == [] {
+    cmd.name
+  } else {
+    command_path.join(" ")
+  }
   { ..cmd, args: inherited_globals + cmd.args, name: help_name }
 }
 
@@ -61,7 +65,7 @@ fn help_context_command(
 fn render_help_for_context(
   cmd : Command,
   inherited_globals : Array[Arg],
-  command_path : String,
+  command_path : Array[String],
 ) -> String {
   let help_cmd = help_context_command(cmd, inherited_globals, command_path)
   render_help(help_cmd)
@@ -71,7 +75,7 @@ fn render_help_for_context(
 fn[T] raise_context_help(
   cmd : Command,
   inherited_globals : Array[Arg],
-  command_path : String,
+  command_path : Array[String],
 ) -> T raise DisplayHelp {
   raise_help(render_help_for_context(cmd, inherited_globals, command_path))
 }
@@ -121,7 +125,7 @@ fn format_error_with_help(
   msg : String,
   cmd : Command,
   inherited_globals : Array[Arg],
-  command_path : String,
+  command_path : Array[String],
 ) -> String {
   "\{msg}\n\n\{render_help_for_context(cmd, inherited_globals, command_path)}"
 }
@@ -184,7 +188,7 @@ fn group_usage_expr(
 fn missing_group_error_message(
   cmd : Command,
   inherited_globals : Array[Arg],
-  command_path : String,
+  command_path : Array[String],
   group_name : String,
 ) -> String {
   let help_cmd = help_context_command(cmd, inherited_globals, command_path)
@@ -203,7 +207,7 @@ fn arg_error_for_parse_failure(
   err : ArgParseError,
   cmd : Command,
   inherited_globals : Array[Arg],
-  command_path : String,
+  command_path : Array[String],
 ) -> ArgError {
   match err {
     MissingGroup(name) =>
@@ -246,7 +250,7 @@ fn parse_command(
   inherited_globals : Array[Arg],
   inherited_version_long : Map[String, String],
   inherited_version_short : Map[Char, String],
-  command_path : String,
+  command_path : Array[String],
   seed_matches? : Matches = new_matches_parse_state(),
 ) -> Matches raise {
   parse_command_impl(
@@ -339,7 +343,7 @@ fn parse_command_impl(
   inherited_globals : Array[Arg],
   inherited_version_long : Map[String, String],
   inherited_version_short : Map[Char, String],
-  command_path : String,
+  command_path : Array[String],
   seed_matches : Matches,
 ) -> Matches raise {
   match cmd.build_error {
@@ -521,11 +525,7 @@ fn parse_command_impl(
         is Some(sub) {
         guard !positional_arg_found else { raise_subcommand_conflict(sub.name) }
 
-        let sub_path = if command_path == "" {
-          sub.name
-        } else {
-          "\{command_path} \{sub.name}"
-        }
+        let sub_path = command_path + [sub.name]
         let child_local_non_globals = collect_non_global_names(sub.args)
         let child_seed = seed_child_globals_from_parent(
           matches, child_globals, child_local_non_globals,

@@ -32,7 +32,7 @@ test "resolve_help_target merges inherited globals by name" {
     true,
     true,
     [],
-    "demo",
+    ["demo"],
   ) catch {
     _ => panic()
   }
