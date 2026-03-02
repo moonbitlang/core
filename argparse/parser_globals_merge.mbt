@@ -199,6 +199,41 @@ fn merge_global_flag_from_child(
 }
 
 ///|
+fn seed_child_globals_from_parent(
+  parent : Matches,
+  globals : Array[Arg],
+  child_local_non_globals : @set.Set[String],
+) -> Matches {
+  let seed = new_matches_parse_state()
+  let seen : @set.Set[String] = @set.new()
+  for arg in globals {
+    let name = arg.name
+    if child_local_non_globals.contains(name) || !seen.add_and_check(name) {
+      continue
+    }
+    if arg.info is (OptionInfo(_) | PositionalInfo(_)) {
+      if parent.values.get(name) is Some(_) &&
+        parent.value_sources.get(name) is Some(Argv) {
+        // Presence marker only: avoid duplicating parent argv values in child.
+        seed.values[name] = []
+        seed.value_sources[name] = Argv
+      }
+      continue
+    }
+    if parent.flags.get(name) is Some(v) &&
+      parent.flag_sources.get(name) is Some(Argv) {
+      seed.flags[name] = v
+      seed.flag_sources[name] = Argv
+      if arg.info is FlagInfo(action=Count, ..) {
+        // Presence marker only: count is rebuilt from child argv tokens.
+        seed.counts[name] = 0
+      }
+    }
+  }
+  seed
+}
+
+///|
 fn merge_globals_from_child(
   parent : Matches,
   child : Matches,

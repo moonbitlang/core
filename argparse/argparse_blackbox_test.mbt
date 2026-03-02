@@ -2554,6 +2554,80 @@ test "child global arg with inherited global name updates parent global" {
 }
 
 ///|
+test "child global override env/default win over inherited definition" {
+  let cmd = @argparse.Command(
+    "demo",
+    options=[
+      Option(
+        "mode",
+        long="mode",
+        env="ROOT_MODE",
+        default_values=["safe"],
+        global=true,
+      ),
+    ],
+    subcommands=[
+      Command("run", options=[
+        Option(
+          "mode",
+          long="mode",
+          env="RUN_MODE",
+          default_values=["fast"],
+          global=true,
+        ),
+      ]),
+    ],
+  )
+
+  let from_env = cmd.parse(argv=["run"], env={
+    "ROOT_MODE": "root-env",
+    "RUN_MODE": "run-env",
+  }) catch {
+    _ => panic()
+  }
+  assert_true(from_env.values is { "mode": ["run-env"], .. })
+  assert_true(from_env.sources is { "mode": Env, .. })
+  assert_true(
+    from_env.subcommand is Some(("run", sub)) &&
+    sub.values is { "mode": ["run-env"], .. } &&
+    sub.sources is { "mode": Env, .. },
+  )
+
+  let from_default = cmd.parse(argv=["run"], env={}) catch { _ => panic() }
+  assert_true(from_default.values is { "mode": ["fast"], .. })
+  assert_true(from_default.sources is { "mode": Default, .. })
+  assert_true(
+    from_default.subcommand is Some(("run", sub)) &&
+    sub.values is { "mode": ["fast"], .. } &&
+    sub.sources is { "mode": Default, .. },
+  )
+}
+
+///|
+test "inherited argv global satisfies child required global override" {
+  let cmd = @argparse.Command(
+    "demo",
+    options=[Option("mode", long="mode", global=true)],
+    subcommands=[
+      Command("run", options=[
+        Option("mode", long="mode", required=true, global=true),
+      ]),
+    ],
+  )
+
+  let parsed = cmd.parse(argv=["--mode", "fast", "run"], env=empty_env()) catch {
+    _ => panic()
+  }
+  assert_true(parsed.values is { "mode": ["fast"], .. })
+  assert_true(parsed.sources is { "mode": Argv, .. })
+  assert_true(
+    parsed.subcommand is Some(("run", sub)) &&
+    sub.values is { "mode": ["fast"], .. } &&
+    sub.sources is { "mode": Argv, .. },
+  )
+}
+
+///|
 test "child local arg shadowing inherited global is rejected at build time" {
   try
     @argparse.Command(

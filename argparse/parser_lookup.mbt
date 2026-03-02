@@ -80,7 +80,10 @@ fn resolve_help_target(
     guard subs.iter().find_first(sub => sub.name == name) is Some(sub) else {
       raise InvalidArgument("unknown subcommand: \{name}")
     }
-    current_globals = current_globals + collect_globals(current.args)
+    current_globals = merge_global_defs(
+      current_globals,
+      collect_globals(current.args),
+    )
     current = sub
     current_path = if current_path == "" {
       sub.name
