@@ -14,6 +14,10 @@
 
 ///|
 /// Behavior for flag args.
+///
+/// - `SetTrue` / `SetFalse` set a boolean value.
+/// - `Count` increments `Matches.flag_counts`.
+/// - `Help` / `Version` display output and exit successfully when triggered.
 pub(all) enum FlagAction {
   SetTrue
   SetFalse
@@ -24,6 +28,9 @@ pub(all) enum FlagAction {
 
 ///|
 /// Behavior for option args.
+///
+/// - `Set` keeps the last provided value.
+/// - `Append` keeps all provided values in order.
 pub(all) enum OptionAction {
   Set
   Append
@@ -92,15 +99,14 @@ pub struct Flag {
 ///|
 /// Create a flag argument.
 ///
-/// `long` defaults to `name`.
-///
-/// Pass `long=""` to disable the long form explicitly.
-///
-/// At least one of `short` or `long` or `env` must be available.
-///
-/// `global=true` makes the flag available in subcommands.
-///
-/// If `negatable=true`, `--no-<long>` is accepted for long flags.
+/// Notes:
+/// - `long` defaults to `name`.
+/// - Use `long=""` to disable the long form.
+/// - At least one of `short`, `long`, or `env` must be available.
+/// - `global=true` makes the flag available in subcommands.
+/// - `negatable=true` accepts `--no-<long>` for long flags.
+/// - If `env` is set, accepted boolean values are:
+///   `1`, `0`, `true`, `false`, `yes`, `no`, `on`, `off`.
 pub fn Flag::new(
   name : StringView,
   short? : Char,
@@ -159,17 +165,16 @@ pub struct Option {
 }
 
 ///|
-/// Create an option argument that consumes one value per occurrence.
+/// Create an option argument.
 ///
-/// `long` defaults to `name`.
-///
-/// Pass `long=""` to disable the long form explicitly.
-///
-/// At least one of `short` or `long` or `env` must be available.
-///
-/// Use `action=Append` for repeated occurrences.
-///
-/// `global=true` makes the option available in subcommands.
+/// Notes:
+/// - `long` defaults to `name`.
+/// - Use `long=""` to disable the long form.
+/// - At least one of `short`, `long`, or `env` must be available.
+/// - Use `action=Append` to keep repeated occurrences.
+/// - `global=true` makes the option available in subcommands.
+/// - `allow_hyphen_values=true` allows values like `-1` or `--raw` to be
+///   consumed as this option's value when parsing argv.
 pub fn Option::new(
   name : StringView,
   short? : Char,
@@ -234,10 +239,15 @@ pub struct Positional {
 ///|
 /// Create a positional argument.
 ///
-/// Positional ordering is declaration order.
-///
-/// `num_args` controls the accepted value count.
-/// Use `num_args=ValueRange::single()` for a required single positional.
+/// Notes:
+/// - Positional order follows declaration order.
+/// - `num_args` controls accepted value count.
+/// - If `num_args` is omitted, the default is an optional single value
+///   (`0..=1`).
+/// - Use `num_args=ValueRange::single()` for a required single positional.
+/// - `allow_hyphen_values=true` allows leading-`-` tokens to be consumed as
+///   positional values (unless they match a declared option).
+/// - Tokens after `--` are always treated as positional values.
 pub fn Positional::new(
   name : StringView,
   about? : StringView,

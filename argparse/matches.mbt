@@ -25,6 +25,12 @@ pub enum ValueSource {
 
 ///|
 /// Parse results for declarative commands.
+///
+/// - `flags` stores final boolean states for flag args.
+/// - `values` stores collected option/positional values.
+/// - `flag_counts` stores occurrence counts for `FlagAction::Count`.
+/// - `sources` records the final source (`Argv` / `Env` / `Default`) per arg.
+/// - `subcommand` stores nested matches for the selected subcommand.
 pub struct Matches {
   flags : Map[String, Bool]
   values : Map[String, Array[String]]
