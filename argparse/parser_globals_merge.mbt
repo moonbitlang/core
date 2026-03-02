@@ -69,7 +69,7 @@ fn merge_global_value_from_child(
   if !has_parent && !has_child {
     return
   }
-  if arg.multiple || arg.info is Option(action=Append, ..) {
+  if arg.multiple || arg.info is OptionInfo(action=Append, ..) {
     let both_argv = parent_source is Some(Argv) && child_source is Some(Argv)
     if both_argv {
       let merged = []
@@ -111,7 +111,7 @@ fn merge_global_value_from_child(
       has_child &&
       parent_source is Some(Argv) &&
       child_source is Some(Argv) &&
-      arg.info is Option(action=Set, ..) {
+      arg.info is OptionInfo(action=Set, ..) {
       raise InvalidArgument(
         "argument '\{global_option_conflict_label(arg)}' cannot be used multiple times",
       )
@@ -145,7 +145,7 @@ fn merge_global_flag_from_child(
 ) -> Unit {
   match child.flags.get(name) {
     Some(v) =>
-      if arg.info is Flag(action=Count, ..) {
+      if arg.info is FlagInfo(action=Count, ..) {
         let has_parent = parent.flags.get(name) is Some(_)
         let parent_source = parent.flag_sources.get(name)
         let child_source = child.flag_sources.get(name)
@@ -211,9 +211,9 @@ fn merge_globals_from_child(
       continue
     }
     match arg.info {
-      Option(_) | Positional(_) =>
+      OptionInfo(_) | PositionalInfo(_) =>
         merge_global_value_from_child(parent, child, arg, name)
-      Flag(_) => merge_global_flag_from_child(parent, child, arg, name)
+      FlagInfo(_) => merge_global_flag_from_child(parent, child, arg, name)
     }
   }
 }
@@ -221,7 +221,7 @@ fn merge_globals_from_child(
 ///|
 fn global_option_conflict_label(arg : Arg) -> String {
   match arg.info {
-    Flag(long~, short~, ..) | Option(long~, short~, ..) =>
+    FlagInfo(long~, short~, ..) | OptionInfo(long~, short~, ..) =>
       match long {
         Some(name) => "--\{name}"
         None =>
@@ -230,7 +230,7 @@ fn global_option_conflict_label(arg : Arg) -> String {
             None => arg.name
           }
       }
-    Positional(_) => arg.name
+    PositionalInfo(_) => arg.name
   }
 }
 
@@ -246,7 +246,7 @@ fn propagate_globals_to_child(
     if child_local_non_globals.contains(name) {
       continue
     }
-    if arg.info is (Option(_) | Positional(_)) {
+    if arg.info is (OptionInfo(_) | PositionalInfo(_)) {
       match parent.values.get(name) {
         Some(values) => {
           child.values[name] = values.copy()
@@ -265,7 +265,7 @@ fn propagate_globals_to_child(
             Some(src) => child.flag_sources[name] = src
             None => ()
           }
-          if arg.info is Flag(action=Count, ..) {
+          if arg.info is FlagInfo(action=Count, ..) {
             match parent.counts.get(name) {
               Some(c) => child.counts[name] = c
               None => ()

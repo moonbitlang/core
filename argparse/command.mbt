@@ -32,9 +32,9 @@ pub struct Command {
   /// Create a declarative command specification.
   fn new(
     name : StringView,
-    flags? : ArrayView[FlagArg],
-    options? : ArrayView[OptionArg],
-    positionals? : ArrayView[PositionalArg],
+    flags? : ArrayView[Flag],
+    options? : ArrayView[Option],
+    positionals? : ArrayView[Positional],
     subcommands? : ArrayView[Command],
     about? : StringView,
     version? : StringView,
@@ -57,9 +57,9 @@ pub struct Command {
 /// - Built-in `--help`/`--version` behavior can be disabled with the flags below.
 pub fn Command::new(
   name : StringView,
-  flags? : ArrayView[FlagArg] = [],
-  options? : ArrayView[OptionArg] = [],
-  positionals? : ArrayView[PositionalArg] = [],
+  flags? : ArrayView[Flag] = [],
+  options? : ArrayView[Option] = [],
+  positionals? : ArrayView[Positional] = [],
   subcommands? : ArrayView[Command] = [],
   about? : StringView,
   version? : StringView,
@@ -156,7 +156,7 @@ fn build_matches(
     }
     if source is Some(source) {
       sources[name] = source
-      if spec.info is Flag(action~, ..) {
+      if spec.info is FlagInfo(action~, ..) {
         if action is Count {
           flags[name] = count > 0
         } else {
@@ -168,7 +168,7 @@ fn build_matches(
   let child_globals = inherited_globals +
     cmd.args.filter(arg => {
       arg.global &&
-      arg.info is (Option(long~, short~, ..) | Flag(long~, short~, ..)) &&
+      arg.info is (OptionInfo(long~, short~, ..) | FlagInfo(long~, short~, ..)) &&
       (long is Some(_) || short is Some(_))
     })
 
@@ -222,9 +222,9 @@ fn find_decl_subcommand(subs : Array[Command], name : String) -> Command? {
 
 ///|
 fn collect_args(
-  flags : ArrayView[FlagArg],
-  options : ArrayView[OptionArg],
-  positionals : ArrayView[PositionalArg],
+  flags : ArrayView[Flag],
+  options : ArrayView[Option],
+  positionals : ArrayView[Positional],
 ) -> (Array[Arg], ArgBuildError?) {
   let args : Array[Arg] = []
   for flag in flags {

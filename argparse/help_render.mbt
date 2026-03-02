@@ -75,7 +75,7 @@ fn has_options(cmd : Command) -> Bool {
     if arg.hidden {
       continue
     }
-    if arg.info is (Option(long~, short~, ..) | Flag(long~, short~, ..)) &&
+    if arg.info is (OptionInfo(long~, short~, ..) | FlagInfo(long~, short~, ..)) &&
       (long is Some(_) || short is Some(_)) {
       return true
     }
@@ -131,14 +131,15 @@ fn option_entries(cmd : Command) -> Array[String] {
     display.push((label, "Show version information."))
   }
   for arg in args {
-    guard arg.info is (Option(long~, short~, ..) | Flag(long~, short~, ..)) &&
+    guard arg.info
+      is (OptionInfo(long~, short~, ..) | FlagInfo(long~, short~, ..)) &&
       (long is Some(_) || short is Some(_)) else {
       continue
     }
     if arg.hidden {
       continue
     }
-    let name = if arg.info is Option(_) {
+    let name = if arg.info is OptionInfo(_) {
       "\{arg_display(arg)} <\{arg.name}>"
     } else {
       arg_display(arg)
@@ -151,7 +152,7 @@ fn option_entries(cmd : Command) -> Array[String] {
 ///|
 fn has_long_option(args : Array[Arg], name : String) -> Bool {
   for arg in args {
-    if arg.info is (Option(long~, ..) | Flag(long~, ..)) &&
+    if arg.info is (OptionInfo(long~, ..) | FlagInfo(long~, ..)) &&
       long is Some(long) &&
       long == name {
       return true
@@ -163,7 +164,7 @@ fn has_long_option(args : Array[Arg], name : String) -> Bool {
 ///|
 fn has_short_option(args : Array[Arg], value : Char) -> Bool {
   for arg in args {
-    if arg.info is (Option(short~, ..) | Flag(short~, ..)) &&
+    if arg.info is (OptionInfo(short~, ..) | FlagInfo(short~, ..)) &&
       short is Some(short) &&
       short == value {
       return true
@@ -279,15 +280,15 @@ fn format_entries(display : Array[(String, String)]) -> Array[String] {
 fn arg_display(arg : Arg) -> String {
   let parts = Array::new(capacity=2)
   let (short, long) = match arg.info {
-    Option(short~, long~, ..) => (short, long)
-    Flag(short~, long~, ..) => (short, long)
-    Positional(_) => (None, None)
+    OptionInfo(short~, long~, ..) => (short, long)
+    FlagInfo(short~, long~, ..) => (short, long)
+    PositionalInfo(_) => (None, None)
   }
   if short is Some(short) {
     parts.push("-\{short}")
   }
   if long is Some(long) {
-    if arg.info is Flag(negatable=true, ..) {
+    if arg.info is FlagInfo(negatable=true, ..) {
       parts.push("--[no-]\{long}")
     } else {
       parts.push("--\{long}")
@@ -316,7 +317,8 @@ fn arg_doc(arg : Arg) -> String {
     Some(env_name) => notes.push("env: \{env_name}")
     None => ()
   }
-  if arg.info is (Option(default_values~, ..) | Positional(default_values~, ..)) &&
+  if arg.info
+    is (OptionInfo(default_values~, ..) | PositionalInfo(default_values~, ..)) &&
     default_values is Some(values) {
     if values.length() > 1 {
       let defaults = values.join(", ")
@@ -339,6 +341,7 @@ fn arg_doc(arg : Arg) -> String {
   }
 }
 
+///|
 fn has_subcommands_for_help(cmd : Command) -> Bool {
   if help_subcommand_enabled(cmd) {
     return true
@@ -396,8 +399,8 @@ fn group_members(cmd : Command, group : ArgGroup) -> String {
 fn group_member_display(arg : Arg) -> String {
   let base = arg_display(arg)
   match arg.info {
-    Flag(_) => base
-    Option(_) => "\{base} <\{arg.name}>"
-    Positional(_) => base
+    FlagInfo(_) => base
+    OptionInfo(_) => "\{base} <\{arg.name}>"
+    PositionalInfo(_) => base
   }
 }

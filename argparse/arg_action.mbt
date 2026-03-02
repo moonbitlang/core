@@ -14,7 +14,7 @@
 
 ///|
 fn arg_min_max_for_validate(arg : Arg) -> (Int, Int?) raise ArgBuildError {
-  if arg.info is Positional(num_args=Some(range), ..) {
+  if arg.info is PositionalInfo(num_args=Some(range), ..) {
     if range.lower < 0 {
       raise Unsupported("min values must be >= 0")
     }
@@ -38,7 +38,7 @@ fn arg_min_max_for_validate(arg : Arg) -> (Int, Int?) raise ArgBuildError {
 ///|
 fn arg_min_max(arg : Arg) -> (Int, Int?) {
   match arg.info {
-    Positional(num_args=Some(range), ..) => (range.lower, range.upper)
+    PositionalInfo(num_args=Some(range), ..) => (range.lower, range.upper)
     _ => (0, None)
   }
 }

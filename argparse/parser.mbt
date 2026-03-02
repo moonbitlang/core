@@ -257,7 +257,7 @@ fn parse_command_impl(
   let child_version_long = inherited_version_long.copy()
   let child_version_short = inherited_version_short.copy()
   for global in globals_here {
-    if global.info is Flag(long~, short~, action=Version, ..) {
+    if global.info is FlagInfo(long~, short~, action=Version, ..) {
       if long is Some(name) {
         child_version_long[name] = command_version(cmd)
       }
@@ -341,7 +341,7 @@ fn parse_command_impl(
           // Support `--no-<flag>` when the underlying flag is marked `negatable`.
           if name is [.. "no-", .. target] &&
             long_index.get(target.to_string())
-            is Some({ info: Flag(negatable=true, action~, ..), .. } as spec) {
+            is Some({ info: FlagInfo(negatable=true, action~, ..), .. } as spec) {
             if inline is Some(_) {
               raise ArgParseError::InvalidArgument(arg)
             }
@@ -358,7 +358,7 @@ fn parse_command_impl(
             raise_unknown_long(name, long_index)
           }
         Some(spec) =>
-          if spec.info is (Option(_) | Positional(_)) {
+          if spec.info is (OptionInfo(_) | PositionalInfo(_)) {
             check_duplicate_set_occurrence(matches, spec)
             if inline is Some(v) {
               assign_value(matches, spec, v, Argv)
@@ -382,9 +382,9 @@ fn parse_command_impl(
               raise ArgParseError::InvalidArgument(arg)
             }
             match spec.info {
-              Flag(action=Help, ..) =>
+              FlagInfo(action=Help, ..) =>
                 raise_context_help(cmd, inherited_globals, command_path)
-              Flag(action=Version, ..) =>
+              FlagInfo(action=Version, ..) =>
                 raise_version(
                   version_text_for_long_action(
                     cmd, name, inherited_version_long,
@@ -412,7 +412,7 @@ fn parse_command_impl(
           Some(v) => v
           None => raise_unknown_short(short, short_index)
         }
-        if spec.info is (Option(_) | Positional(_)) {
+        if spec.info is (OptionInfo(_) | PositionalInfo(_)) {
           check_duplicate_set_occurrence(matches, spec)
           if pos + 1 < arg.length() {
             let rest = arg.unsafe_substring(start=pos + 1, end=arg.length())
@@ -439,9 +439,9 @@ fn parse_command_impl(
           break
         } else {
           match spec.info {
-            Flag(action=Help, ..) =>
+            FlagInfo(action=Help, ..) =>
               raise_context_help(cmd, inherited_globals, command_path)
-            Flag(action=Version, ..) =>
+            FlagInfo(action=Version, ..) =>
               raise_version(
                 version_text_for_short_action(
                   cmd, short, inherited_version_short,
@@ -563,7 +563,7 @@ fn version_text_for_long_action(
   inherited_version_long : Map[String, String],
 ) -> String {
   for arg in cmd.args {
-    if arg.info is Flag(long=Some(name), action=Version, ..) && name == long {
+    if arg.info is FlagInfo(long=Some(name), action=Version, ..) && name == long {
       return command_version(cmd)
     }
   }
@@ -577,7 +577,8 @@ fn version_text_for_short_action(
   inherited_version_short : Map[Char, String],
 ) -> String {
   for arg in cmd.args {
-    if arg.info is Flag(short=Some(value), action=Version, ..) && value == short {
+    if arg.info is FlagInfo(short=Some(value), action=Version, ..) &&
+      value == short {
       return command_version(cmd)
     }
   }
