@@ -166,7 +166,7 @@ fn check_duplicate_set_occurrence(
   guard arg.info is (OptionInfo(action=Set, ..) | PositionalInfo(_)) else {
     return
   }
-  if matches.values.get(arg.name) is Some(_) {
+  if matches.values.get(arg.name) is Some(values) && values.length() > 0 {
     raise InvalidArgument(
       "argument '\{option_conflict_label(arg)}' cannot be used multiple times",
     )
