@@ -48,13 +48,22 @@ fn[T] raise_subcommand_conflict(name : String) -> T raise ArgParseError {
 }
 
 ///|
+fn help_context_command(
+  cmd : Command,
+  inherited_globals : Array[Arg],
+  command_path : String,
+) -> Command {
+  let help_name = if command_path == "" { cmd.name } else { command_path }
+  { ..cmd, args: inherited_globals + cmd.args, name: help_name }
+}
+
+///|
 fn render_help_for_context(
   cmd : Command,
   inherited_globals : Array[Arg],
   command_path : String,
 ) -> String {
-  let help_name = if command_path == "" { cmd.name } else { command_path }
-  let help_cmd = { ..cmd, args: inherited_globals + cmd.args, name: help_name }
+  let help_cmd = help_context_command(cmd, inherited_globals, command_path)
   render_help(help_cmd)
 }
 
@@ -103,20 +112,115 @@ fn format_error_with_help(
 }
 
 ///|
+fn arg_usage_token_for_group(arg : Arg) -> String {
+  let base = match arg.info {
+    OptionInfo(long~, short~, ..) | FlagInfo(long~, short~, ..) =>
+      if long is Some(long) {
+        "--\{long}"
+      } else if short is Some(short) {
+        "-\{short}"
+      } else {
+        arg.name
+      }
+    PositionalInfo(_) =>
+      if arg.multiple {
+        "<\{arg.name}...>"
+      } else {
+        "<\{arg.name}>"
+      }
+  }
+  if arg.info is OptionInfo(_) {
+    "\{base} <\{arg.name}>"
+  } else {
+    base
+  }
+}
+
+///|
+fn group_usage_expr(
+  groups : Array[ArgGroup],
+  args : Array[Arg],
+  name : String,
+) -> String? {
+  for group in groups {
+    if group.name != name {
+      continue
+    }
+    let members = []
+    for member_name in group.args {
+      if args.search_by(arg => arg.name == member_name) is Some(idx) {
+        let item = args[idx]
+        if item.hidden {
+          continue
+        }
+        members.push(arg_usage_token_for_group(item))
+      }
+    }
+    if members.length() == 0 {
+      return None
+    }
+    let joined = members.join("|")
+    return Some("<\{joined}>")
+  }
+  None
+}
+
+///|
+fn missing_group_error_message(
+  cmd : Command,
+  inherited_globals : Array[Arg],
+  command_path : String,
+  group_name : String,
+) -> String {
+  let help_cmd = help_context_command(cmd, inherited_globals, command_path)
+  if group_usage_expr(help_cmd.groups, help_cmd.args, group_name) is Some(expr) {
+    (
+      $|error: the following required arguments were not provided:
+      $|  \{expr}
+    )
+  } else {
+    MissingGroup(group_name).arg_parse_error_message()
+  }
+}
+
+///|
 fn arg_error_for_parse_failure(
   err : ArgParseError,
   cmd : Command,
   inherited_globals : Array[Arg],
   command_path : String,
 ) -> ArgError {
-  Message(
-    format_error_with_help(
-      err.arg_parse_error_message(),
-      cmd,
-      inherited_globals,
-      command_path,
-    ),
-  )
+  match err {
+    MissingGroup(name) =>
+      Message(
+        format_error_with_help(
+          missing_group_error_message(
+            cmd, inherited_globals, command_path, name,
+          ),
+          cmd,
+          inherited_globals,
+          command_path,
+        ),
+      )
+    GroupConflict(_) =>
+      Message(
+        format_error_with_help(
+          err.arg_parse_error_message(),
+          cmd,
+          inherited_globals,
+          command_path,
+        ),
+      )
+    _ =>
+      Message(
+        format_error_with_help(
+          err.arg_parse_error_message(),
+          cmd,
+          inherited_globals,
+          command_path,
+        ),
+      )
+  }
 }
 
 ///|
