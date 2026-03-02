@@ -62,7 +62,6 @@ priv enum ArgInfo {
   )
   PositionalInfo(
     num_args~ : ValueRange?,
-    last~ : Bool,
     default_values~ : Array[String]?,
     allow_hyphen_values~ : Bool
   )
@@ -140,7 +139,6 @@ pub fn Flag::new(
       //
       // default_values: None,
       // allow_hyphen_values: false,
-      // last: false,
       //
       multiple: false,
     },
@@ -246,10 +244,8 @@ pub struct Positional {
     default_values? : ArrayView[String],
     num_args? : ValueRange,
     allow_hyphen_values? : Bool,
-    last? : Bool,
     requires? : ArrayView[String],
     conflicts_with? : ArrayView[String],
-    required? : Bool,
     global? : Bool,
     hidden? : Bool,
   ) -> Positional
@@ -261,6 +257,7 @@ pub struct Positional {
 /// Positional ordering is declaration order.
 ///
 /// `num_args` controls the accepted value count.
+/// Use `num_args=ValueRange::single()` for a required single positional.
 pub fn Positional::new(
   name : StringView,
   about? : StringView,
@@ -268,10 +265,8 @@ pub fn Positional::new(
   default_values? : ArrayView[String],
   num_args? : ValueRange,
   allow_hyphen_values? : Bool = false,
-  last? : Bool = false,
   requires? : ArrayView[String] = [],
   conflicts_with? : ArrayView[String] = [],
-  required? : Bool = false,
   global? : Bool = false,
   hidden? : Bool = false,
 ) -> Positional {
@@ -285,13 +280,12 @@ pub fn Positional::new(
       env,
       requires: requires.to_array(),
       conflicts_with: conflicts_with.to_array(),
-      required,
+      required: false,
       global,
       hidden,
       //
       info: PositionalInfo(
         num_args~,
-        last~,
         default_values=default_values.map(values => values.to_array()),
         allow_hyphen_values~,
       ),

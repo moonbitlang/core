@@ -41,7 +41,7 @@ test "render help snapshot with groups and hidden entries" {
       ),
     ],
     positionals=[
-      Positional("target", required=true),
+      Positional("target", num_args=@argparse.ValueRange::single()),
       Positional("rest", num_args=ValueRange(lower=0)),
       Positional("secret", hidden=true),
     ],
@@ -84,7 +84,6 @@ test "render help conversion coverage snapshot" {
         about="f",
         env="F_ENV",
         requires=["opt"],
-        required=true,
         global=true,
         hidden=true,
       ),
@@ -111,10 +110,8 @@ test "render help conversion coverage snapshot" {
         default_values=["p1", "p2"],
         num_args=ValueRange(lower=0, upper=2),
         allow_hyphen_values=true,
-        last=true,
         requires=["opt"],
         conflicts_with=["f"],
-        required=true,
         global=true,
         hidden=true,
       ),
@@ -746,14 +743,9 @@ test "negation parsing and invalid negation forms" {
 }
 
 ///|
-test "positionals force mode and dash handling" {
+test "positionals dash handling and separator" {
   let force_cmd = @argparse.Command("demo", positionals=[
-    Positional(
-      "tail",
-      num_args=ValueRange(lower=0),
-      last=true,
-      allow_hyphen_values=true,
-    ),
+    Positional("tail", num_args=ValueRange(lower=0), allow_hyphen_values=true),
   ])
   let forced = force_cmd.parse(argv=["a", "--x", "-y"], env=empty_env()) catch {
     _ => panic()
@@ -809,7 +801,7 @@ test "variadic positional keeps accepting hyphen values after first token" {
 test "bounded positional does not greedily consume later required values" {
   let cmd = @argparse.Command("demo", positionals=[
     Positional("first", num_args=ValueRange(lower=1, upper=2)),
-    Positional("second", required=true),
+    Positional("second", num_args=@argparse.ValueRange::single()),
   ])
 
   let two = cmd.parse(argv=["a", "b"], env=empty_env()) catch { _ => panic() }
@@ -825,7 +817,7 @@ test "bounded positional does not greedily consume later required values" {
 test "indexed non-last positional allows explicit single num_args" {
   let cmd = @argparse.Command("demo", positionals=[
     Positional("first", num_args=@argparse.ValueRange::single()),
-    Positional("second", required=true),
+    Positional("second", num_args=@argparse.ValueRange::single()),
   ])
 
   let parsed = cmd.parse(argv=["a", "b"], env=empty_env()) catch {
@@ -839,7 +831,7 @@ test "empty positional value range is rejected at build time" {
   try
     @argparse.Command("demo", positionals=[
       Positional("skip", num_args=ValueRange(lower=0, upper=0)),
-      Positional("name", required=true),
+      Positional("name", num_args=@argparse.ValueRange::single()),
     ]).parse(argv=["alice"], env=empty_env())
   catch {
     Message(msg) =>
@@ -2184,7 +2176,7 @@ test "empty groups without presence do not fail" {
 ///|
 test "help rendering edge paths stay stable" {
   let required_many = @argparse.Command("demo", positionals=[
-    Positional("files", required=true, num_args=ValueRange(lower=1)),
+    Positional("files", num_args=ValueRange(lower=1)),
   ])
   let required_help = required_many.render_help()
   assert_true(required_help.has_prefix("Usage: demo <files...>"))
@@ -2473,7 +2465,7 @@ test "subcommand help puts required options in usage" {
       "run",
       about="Run a file",
       options=[Option("mode", short='m', required=true)],
-      positionals=[Positional("file", required=true)],
+      positionals=[Positional("file", num_args=@argparse.ValueRange::single())],
     ),
   ])
 
@@ -2539,7 +2531,7 @@ test "required and env-fed ranged values validate after parsing" {
 }
 
 ///|
-test "positionals honor explicit index sorting with last ranged positional" {
+test "positionals keep declaration order with ranged positional" {
   let cmd = @argparse.Command("demo", positionals=[
     Positional("late", num_args=ValueRange(lower=2, upper=2)),
     Positional("first"),
