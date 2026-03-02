@@ -172,12 +172,10 @@ fn build_matches(
       }
     }
   }
-  let child_globals = inherited_globals +
-    cmd.args.filter(arg => {
-      arg.global &&
-      arg.info is (OptionInfo(long~, short~, ..) | FlagInfo(long~, short~, ..)) &&
-      (long is Some(_) || short is Some(_))
-    })
+  let child_globals = merge_global_defs(
+    inherited_globals,
+    collect_globals(cmd.args),
+  )
 
   let subcommand = match raw.parsed_subcommand {
     Some((name, sub_raw)) =>

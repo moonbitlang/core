@@ -14,7 +14,7 @@
 
 ///|
 #cfg(target="native")
-extern "c" fn runtime_native_exit(code : Int) -> Unit = "exit"
+extern "c" fn runtime_native_exit(code : Int) = "exit"
 
 ///|
 #cfg(target="native")
