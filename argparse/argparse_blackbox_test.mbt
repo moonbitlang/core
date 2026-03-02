@@ -350,7 +350,6 @@ test "subcommand cannot follow positional arguments" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -437,7 +436,6 @@ test "help subcommand styles and errors" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -460,7 +458,6 @@ test "help subcommand styles and errors" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -500,7 +497,6 @@ test "subcommand help includes inherited global options" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -529,7 +525,6 @@ test "unknown argument suggestions are exposed" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -551,7 +546,6 @@ test "unknown argument suggestions are exposed" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -571,7 +565,6 @@ test "unknown argument suggestions are exposed" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -613,7 +606,6 @@ test "long and short value parsing branches" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -633,7 +625,6 @@ test "long and short value parsing branches" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -681,7 +672,6 @@ test "negation parsing and invalid negation forms" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -702,7 +692,6 @@ test "negation parsing and invalid negation forms" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -723,7 +712,6 @@ test "negation parsing and invalid negation forms" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -780,7 +768,6 @@ test "positionals dash handling and separator" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -851,7 +838,6 @@ test "empty positional value range is rejected at build time" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -889,7 +875,6 @@ test "env parsing for settrue setfalse count and invalid values" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -911,7 +896,6 @@ test "env parsing for settrue setfalse count and invalid values" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -933,7 +917,6 @@ test "env parsing for settrue setfalse count and invalid values" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -955,7 +938,6 @@ test "env parsing for settrue setfalse count and invalid values" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -1005,7 +987,6 @@ test "defaults and value range helpers through public API" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -1043,7 +1024,6 @@ test "options consume exactly one value per occurrence" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -1067,7 +1047,6 @@ test "set options reject duplicate occurrences" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -1094,7 +1073,6 @@ test "flag and option args require short or long names" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -1118,7 +1096,6 @@ test "flag and option args require short or long names" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -1164,7 +1141,6 @@ test "option parsing stops at the next option token" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -1185,7 +1161,6 @@ test "option parsing stops at the next option token" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -1212,7 +1187,6 @@ test "options always require a value" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -1248,7 +1222,6 @@ test "option values reject hyphen tokens unless allow_hyphen_values is enabled" 
       )
       rejected = true
     }
-    _ => panic()
   } noraise {
     _ => rejected = true
   }
@@ -1295,7 +1268,6 @@ test "validation branches exposed through parse" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -1319,7 +1291,6 @@ test "validation branches exposed through parse" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -1344,7 +1315,6 @@ test "validation branches exposed through parse" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -1369,7 +1339,6 @@ test "validation branches exposed through parse" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -1393,7 +1362,6 @@ test "validation branches exposed through parse" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -1419,7 +1387,6 @@ test "validation branches exposed through parse" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -1445,7 +1412,6 @@ test "validation branches exposed through parse" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -1471,7 +1437,6 @@ test "validation branches exposed through parse" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -1503,7 +1468,6 @@ test "validation branches exposed through parse" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -1527,7 +1491,6 @@ test "validation branches exposed through parse" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -1551,7 +1514,6 @@ test "validation branches exposed through parse" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -1575,7 +1537,6 @@ test "validation branches exposed through parse" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -1601,7 +1562,6 @@ test "validation branches exposed through parse" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -1627,7 +1587,6 @@ test "validation branches exposed through parse" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -1653,7 +1612,6 @@ test "validation branches exposed through parse" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -1679,7 +1637,6 @@ test "validation branches exposed through parse" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -1704,7 +1661,6 @@ test "validation branches exposed through parse" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -1729,7 +1685,6 @@ test "validation branches exposed through parse" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -1758,7 +1713,6 @@ test "validation branches exposed through parse" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -1782,7 +1736,6 @@ test "validation branches exposed through parse" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -1810,7 +1763,6 @@ test "validation branches exposed through parse" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -1880,7 +1832,6 @@ test "validation branches exposed through parse" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -1916,7 +1867,6 @@ test "builtin and custom help/version dispatch edge paths" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -1983,7 +1933,6 @@ test "group validation catches unknown requires target" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -2010,7 +1959,6 @@ test "group validation catches unknown conflicts_with target" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -2053,7 +2001,6 @@ test "group requires/conflicts can target argument names" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -2089,7 +2036,6 @@ test "group requires/conflicts can target argument names" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -2127,7 +2073,6 @@ test "arg validation catches unknown requires target" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -2154,7 +2099,6 @@ test "arg validation catches unknown conflicts_with target" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -2201,7 +2145,6 @@ test "help rendering edge paths stay stable" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -2256,7 +2199,6 @@ test "unified error message formatting remains stable" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -2276,7 +2218,6 @@ test "unified error message formatting remains stable" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -2312,7 +2253,6 @@ test "options require one value per occurrence" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -2345,7 +2285,6 @@ test "short options require one value before next option token" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -2389,7 +2328,6 @@ test "version action dispatches on custom long and short flags" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -2432,7 +2370,6 @@ test "global version action keeps parent version text in subcommand context" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -2452,7 +2389,6 @@ test "global version action keeps parent version text in subcommand context" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -2489,7 +2425,6 @@ test "subcommand help puts required options in usage" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -2515,7 +2450,6 @@ test "required and env-fed ranged values validate after parsing" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -2593,7 +2527,6 @@ test "positional num_args lower bound rejects missing argv values" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -2707,7 +2640,6 @@ test "missing option values are reported when next token is another option" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -2731,7 +2663,6 @@ test "short-only set options use short label in duplicate errors" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -2757,7 +2688,6 @@ test "unknown short suggestion can be absent" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -2864,7 +2794,6 @@ test "child local arg shadowing inherited global is rejected at build time" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -2965,7 +2894,6 @@ test "global set option rejects duplicate occurrences across subcommands" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -3000,7 +2928,6 @@ test "global override with incompatible inherited type is rejected" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -3033,7 +2960,6 @@ test "child local long alias collision with inherited global is rejected" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -3064,7 +2990,6 @@ test "child local short alias collision with inherited global is rejected" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -3120,7 +3045,6 @@ test "non-bmp hyphen token reports unknown argument without panic" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
@@ -3223,7 +3147,6 @@ test "global override with different negatable setting is rejected" {
           #|
         ),
       )
-    _ => panic()
   } noraise {
     _ => panic()
   }
