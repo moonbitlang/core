@@ -56,6 +56,25 @@ test "abs" {
 }
 
 ///|
+test "Double::clamp" {
+  inspect(0.5.clamp(min=0.0, max=1.0), content="0.5")
+  inspect((-1.0).clamp(min=0.0, max=1.0), content="0")
+  inspect(2.0.clamp(min=0.0, max=1.0), content="1")
+}
+
+///|
+test "panic Double::clamp with invalid range" {
+  ignore(0.5.clamp(min=1.0, max=0.0))
+}
+
+///|
+test "Double::lerp" {
+  inspect(0.0.lerp(10.0, 0.25), content="2.5")
+  inspect(5.0.lerp(15.0, 0.0), content="5")
+  inspect(5.0.lerp(15.0, 1.0), content="15")
+}
+
+///|
 test "panic is_close with invalid relative tolerance" {
   ignore(1.0.is_close(1.0, relative_tolerance=-1.0))
 }

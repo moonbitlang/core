@@ -57,6 +57,63 @@ pub fn Double::from_int(i : Int) -> Double {
 pub fn Double::abs(self : Double) -> Double = "%f64.abs"
 
 ///|
+/// Clamps the value between `min` and `max` (inclusive).
+///
+/// Parameters:
+///
+/// * `self` : The value to clamp.
+/// * `min` : The lower bound of the range.
+/// * `max` : The upper bound of the range.
+///
+/// Returns `min` if `self < min`, `max` if `self > max`, and `self` otherwise.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(0.5.clamp(min=0.0, max=1.0), content="0.5")
+///   inspect((-1.0).clamp(min=0.0, max=1.0), content="0")
+///   inspect(2.0.clamp(min=0.0, max=1.0), content="1")
+/// }
+/// ```
+pub fn Double::clamp(self : Double, min~ : Double, max~ : Double) -> Double {
+  guard min <= max
+  if self < min {
+    min
+  } else if self > max {
+    max
+  } else {
+    self
+  }
+}
+
+///|
+/// Performs linear interpolation from `self` to `target` by factor `t`.
+///
+/// The interpolation formula is `self + (target - self) * t`.
+///
+/// Parameters:
+///
+/// * `self` : The start value.
+/// * `target` : The end value.
+/// * `t` : The interpolation factor.
+///
+/// Returns the interpolated value.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(0.0.lerp(10.0, 0.25), content="2.5")
+///   inspect(5.0.lerp(15.0, 0.0), content="5")
+///   inspect(5.0.lerp(15.0, 1.0), content="15")
+/// }
+/// ```
+pub fn Double::lerp(self : Double, target : Double, t : Double) -> Double {
+  self + (target - self) * t
+}
+
+///|
 /// Returns the sign of the double.
 /// - If the double is positive, returns 1.0.
 /// - If the double is negative, returns -1.0.

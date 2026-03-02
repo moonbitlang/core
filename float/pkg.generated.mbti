@@ -24,6 +24,7 @@ pub let not_a_number : Float
 pub fn Float::abs(Float) -> Float
 #as_free_fn
 pub fn Float::ceil(Float) -> Float
+pub fn Float::clamp(Float, min~ : Float, max~ : Float) -> Float
 #as_free_fn
 pub fn Float::floor(Float) -> Float
 pub fn Float::from_byte(Byte) -> Float
@@ -37,6 +38,7 @@ pub fn Float::is_inf(Float) -> Bool
 pub fn Float::is_nan(Float) -> Bool
 pub fn Float::is_neg_inf(Float) -> Bool
 pub fn Float::is_pos_inf(Float) -> Bool
+pub fn Float::lerp(Float, Float, Float) -> Float
 #as_free_fn(deprecated)
 #deprecated
 pub fn Float::pow(Float, Float) -> Float

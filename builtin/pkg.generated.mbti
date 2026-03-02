@@ -636,6 +636,7 @@ pub fn UInt64::trunc_double(Double) -> UInt64
 
 pub fn Double::abs(Double) -> Double
 pub fn Double::ceil(Double) -> Double
+pub fn Double::clamp(Double, min~ : Double, max~ : Double) -> Double
 pub fn Double::convert_uint(UInt) -> Double
 pub fn Double::convert_uint64(UInt64) -> Double
 pub fn Double::floor(Double) -> Double
@@ -645,6 +646,7 @@ pub fn Double::is_inf(Double) -> Bool
 pub fn Double::is_nan(Double) -> Bool
 pub fn Double::is_neg_inf(Double) -> Bool
 pub fn Double::is_pos_inf(Double) -> Bool
+pub fn Double::lerp(Double, Double, Double) -> Double
 #deprecated
 pub fn Double::pow(Double, Double) -> Double
 #deprecated
