@@ -129,17 +129,7 @@ pub fn Flag::new(
       requires: requires.to_array(),
       conflicts_with: conflicts_with.to_array(),
       required,
-      //
       info: FlagInfo(short~, long~, action~, negatable~),
-      //
-      // option_action: OptionAction::Set,
-      //
-      // index: None,
-      // num_args: None,
-      //
-      // default_values: None,
-      // allow_hyphen_values: false,
-      //
       multiple: false,
     },
   }
@@ -209,7 +199,6 @@ pub fn Option::new(
       required,
       global,
       hidden,
-      //
       info: OptionInfo(
         short~,
         long~,
@@ -217,15 +206,6 @@ pub fn Option::new(
         default_values=default_values.map(values => values.to_array()),
         allow_hyphen_values~,
       ),
-      //
-      // flag_action: FlagAction::SetTrue,
-      // negatable: false,
-      //
-      // option_action: action,
-      //
-      // index: None,
-      // num_args: None,
-      //
       multiple: action is Append,
     },
   }
@@ -283,20 +263,11 @@ pub fn Positional::new(
       required: false,
       global,
       hidden,
-      //
       info: PositionalInfo(
         num_args~,
         default_values=default_values.map(values => values.to_array()),
         allow_hyphen_values~,
       ),
-      // short: None,
-      // long: None,
-      //
-      // flag_action: FlagAction::SetTrue,
-      // negatable: false,
-      //
-      // option_action: OptionAction::Set,
-      //
       multiple: range_allows_multiple(num_args),
     },
   }
@@ -309,12 +280,9 @@ fn arg_name(arg : Arg) -> String {
 
 ///|
 fn range_allows_multiple(range : ValueRange?) -> Bool {
-  match range {
-    Some(r) =>
-      match r.upper {
-        Some(upper) => r.lower != upper || r.lower > 1
-        None => true
-      }
-    None => false
-  }
+  range is Some(r) &&
+  (match r.upper {
+    Some(upper) => r.lower != upper || r.lower > 1
+    None => true
+  })
 }

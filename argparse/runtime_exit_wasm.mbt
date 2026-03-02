@@ -13,21 +13,11 @@
 // limitations under the License.
 
 ///|
-#cfg(target="wasm-gc")
+#cfg(any(target="wasm", target="wasm-gc"))
 fn runtime_wasm_exit(code : Int) -> Unit = "__moonbit_sys_unstable" "exit"
 
 ///|
-#cfg(target="wasm-gc")
-fn runtime_exit_success_wasm() -> Unit {
-  runtime_wasm_exit(0)
-}
-
-///|
-#cfg(target="wasm")
-fn runtime_wasm_exit(code : Int) -> Unit = "__moonbit_sys_unstable" "exit"
-
-///|
-#cfg(target="wasm")
-fn runtime_exit_success_wasm() -> Unit {
+#cfg(any(target="wasm", target="wasm-gc"))
+fn runtime_exit_success() -> Unit {
   runtime_wasm_exit(0)
 }

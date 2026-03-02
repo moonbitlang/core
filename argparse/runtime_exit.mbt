@@ -13,9 +13,6 @@
 // limitations under the License.
 
 ///|
-fn println_runtime(s : String) -> Unit = "%println"
-
-///|
 fn trim_single_trailing_newline(text : String) -> String {
   match text.strip_suffix("\n") {
     Some(view) => view.to_string()
@@ -25,31 +22,7 @@ fn trim_single_trailing_newline(text : String) -> String {
 
 ///|
 fn[T] print_and_exit_success(text : String) -> T {
-  println_runtime(trim_single_trailing_newline(text))
+  println(trim_single_trailing_newline(text))
   runtime_exit_success()
   panic()
-}
-
-///|
-#cfg(target="native")
-fn runtime_exit_success() -> Unit {
-  runtime_exit_success_native()
-}
-
-///|
-#cfg(target="js")
-fn runtime_exit_success() -> Unit {
-  runtime_exit_success_js()
-}
-
-///|
-#cfg(target="wasm-gc")
-fn runtime_exit_success() -> Unit {
-  runtime_exit_success_wasm()
-}
-
-///|
-#cfg(target="wasm")
-fn runtime_exit_success() -> Unit {
-  runtime_exit_success_wasm()
 }
