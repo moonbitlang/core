@@ -419,7 +419,7 @@ test "arg groups required and multiple" {
           #|  --slow      
           #|
           #|Groups:
-          #|  mode (required, exclusive)  --fast, --slow
+          #|  mode [required] [exclusive]  --fast, --slow
           #|
         ),
       )
@@ -442,7 +442,7 @@ test "arg groups required and multiple" {
           #|  --slow      
           #|
           #|Groups:
-          #|  mode (required, exclusive)  --fast, --slow
+          #|  mode [required] [exclusive]  --fast, --slow
           #|
         ),
       )
@@ -566,7 +566,7 @@ test "full help snapshot" {
       #|Options:
       #|  -h, --help       Show help information.
       #|  -v, --verbose    Enable verbose mode
-      #|  --count <count>  Repeat count (default: 1)
+      #|  --count <count>  Repeat count [default: 1]
       #|
     ),
   )

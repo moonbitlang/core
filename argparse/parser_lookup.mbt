@@ -18,13 +18,7 @@ fn build_long_index(
   args : Array[Arg],
 ) -> Map[String, Arg] {
   let index : Map[String, Arg] = {}
-  for arg in globals {
-    if arg.info is (FlagInfo(long~, ..) | OptionInfo(long~, ..)) &&
-      long is Some(name) {
-      index[name] = arg
-    }
-  }
-  for arg in args {
+  for arg in globals.iter() + args.iter() {
     if arg.info is (FlagInfo(long~, ..) | OptionInfo(long~, ..)) &&
       long is Some(name) {
       index[name] = arg
@@ -70,16 +64,10 @@ fn resolve_help_target(
   inherited_globals : Array[Arg],
   command_path : String,
 ) -> (Command, Array[Arg], String) raise ArgParseError {
-  let targets = if argv.length() == 0 {
-    argv
-  } else {
-    let last = argv[argv.length() - 1]
-    if (last == "-h" && builtin_help_short) ||
-      (last == "--help" && builtin_help_long) {
-      argv[:argv.length() - 1].to_array()
-    } else {
-      argv
-    }
+  let targets = match argv {
+    [.. pre, "-h"] if builtin_help_short => pre
+    [.. pre, "--help"] if builtin_help_long => pre
+    _ => argv
   }
   let mut current = cmd
   let mut current_path = command_path
