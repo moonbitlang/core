@@ -226,6 +226,63 @@ pub fn Float::is_nan(self : Float) -> Bool {
 }
 
 ///|
+/// Clamps the value between `min` and `max` (inclusive).
+///
+/// Parameters:
+///
+/// * `self` : The value to clamp.
+/// * `min` : The lower bound of the range.
+/// * `max` : The upper bound of the range.
+///
+/// Returns `min` if `self < min`, `max` if `self > max`, and `self` otherwise.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect((0.5 : Float).clamp(min=0.0, max=1.0), content="0.5")
+///   inspect((-1.0 : Float).clamp(min=0.0, max=1.0), content="0")
+///   inspect((2.0 : Float).clamp(min=0.0, max=1.0), content="1")
+/// }
+/// ```
+pub fn Float::clamp(self : Float, min~ : Float, max~ : Float) -> Float {
+  guard min <= max
+  if self < min {
+    min
+  } else if self > max {
+    max
+  } else {
+    self
+  }
+}
+
+///|
+/// Performs linear interpolation from `self` to `target` by factor `t`.
+///
+/// The interpolation formula is `self + (target - self) * t`.
+///
+/// Parameters:
+///
+/// * `self` : The start value.
+/// * `target` : The end value.
+/// * `t` : The interpolation factor.
+///
+/// Returns the interpolated value.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect((0.0 : Float).lerp(10.0, 0.25), content="2.5")
+///   inspect((5.0 : Float).lerp(15.0, 0.0), content="5")
+///   inspect((5.0 : Float).lerp(15.0, 1.0), content="15")
+/// }
+/// ```
+pub fn Float::lerp(self : Float, target : Float, t : Float) -> Float {
+  self + (target - self) * t
+}
+
+///|
 /// Determines whether two floating-point numbers are approximately equal within
 /// specified tolerances.
 /// The implementation follows the algorithm described in PEP 485 for Python's

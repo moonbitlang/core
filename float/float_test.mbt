@@ -165,6 +165,25 @@ test "to_le_bytes for zero" {
 }
 
 ///|
+test "Float::clamp" {
+  inspect((0.5 : Float).clamp(min=0.0, max=1.0), content="0.5")
+  inspect((-1.0 : Float).clamp(min=0.0, max=1.0), content="0")
+  inspect((2.0 : Float).clamp(min=0.0, max=1.0), content="1")
+}
+
+///|
+test "panic Float::clamp with invalid range" {
+  ignore((0.5 : Float).clamp(min=1.0, max=0.0))
+}
+
+///|
+test "Float::lerp" {
+  inspect((0.0 : Float).lerp(10.0, 0.25), content="2.5")
+  inspect((5.0 : Float).lerp(15.0, 0.0), content="5")
+  inspect((5.0 : Float).lerp(15.0, 1.0), content="15")
+}
+
+///|
 test "Float::is_close - infinity should return false" {
   inspect(@float.infinity.is_close(1.0), content="false")
 }
