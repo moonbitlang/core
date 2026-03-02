@@ -14,6 +14,9 @@
 
 ///|
 /// Unified error surface exposed by argparse.
+///
+/// `Message` is display-ready text intended for end users.
+/// For parse/build failures it already includes the contextual help message.
 pub suberror ArgError {
   Message(String)
 }

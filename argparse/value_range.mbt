@@ -31,7 +31,9 @@ pub fn ValueRange::single() -> ValueRange {
 ///|
 /// Create a value-count range.
 ///
-/// Examples:
+/// Notes:
+/// - `lower` defaults to `0`.
+/// - `upper` omitted means no upper bound.
 /// - `ValueRange(lower=0)` means `0..`.
 /// - `ValueRange(lower=1, upper=3)` means `1..=3`.
 pub fn ValueRange::new(lower? : Int = 0, upper? : Int) -> ValueRange {
