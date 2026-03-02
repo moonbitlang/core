@@ -15,7 +15,15 @@
 ///|
 /// Render help text for a clap-style command.
 fn render_help(cmd : Command) -> String {
-  let usage_line = "Usage: \{cmd.name}\{usage_tail(cmd)}"
+  render_help_with_usage_override(cmd, None)
+}
+
+///|
+fn render_help_with_usage_override(
+  cmd : Command,
+  usage_line : String?,
+) -> String {
+  let usage_line = usage_line.unwrap_or("Usage: \{cmd.name}\{usage_tail(cmd)}")
   let about = cmd.about.unwrap_or("")
   let about_section = if about == "" {
     ""
@@ -43,6 +51,10 @@ fn render_help(cmd : Command) -> String {
 ///|
 fn usage_tail(cmd : Command) -> String {
   let mut tail = ""
+  let required_options = required_option_usage(cmd)
+  if required_options != "" {
+    tail = "\{tail} \{required_options}"
+  }
   if has_options(cmd) {
     tail = "\{tail} [options]"
   }
@@ -76,11 +88,53 @@ fn has_options(cmd : Command) -> Bool {
       continue
     }
     if arg.info is (OptionInfo(long~, short~, ..) | FlagInfo(long~, short~, ..)) &&
-      (long is Some(_) || short is Some(_)) {
+      (long is Some(_) || short is Some(_)) &&
+      !is_required_arg(arg) {
       return true
     }
   }
   false
+}
+
+///|
+fn required_option_usage(cmd : Command) -> String {
+  let parts = Array::new(capacity=cmd.args.length())
+  for arg in cmd.args {
+    if arg.hidden || !is_required_arg(arg) {
+      continue
+    }
+    if arg.info is PositionalInfo(_) {
+      continue
+    }
+    if required_option_token(arg) is Some(token) {
+      parts.push(token)
+    }
+  }
+  parts.join(" ")
+}
+
+///|
+fn required_option_token(arg : Arg) -> String? {
+  let prefix = match arg.info {
+    OptionInfo(long~, short~, ..) | FlagInfo(long~, short~, ..) =>
+      if long is Some(long) {
+        Some("--\{long}")
+      } else if short is Some(short) {
+        Some("-\{short}")
+      } else {
+        None
+      }
+    PositionalInfo(_) => None
+  }
+  match prefix {
+    Some(prefix) =>
+      if arg.info is OptionInfo(_) {
+        Some("\{prefix} <\{arg.name}>")
+      } else {
+        Some(prefix)
+      }
+    None => None
+  }
 }
 
 ///|
@@ -327,7 +381,7 @@ fn arg_doc(arg : Arg) -> String {
       notes.push("default: \{values[0]}")
     }
   }
-  if is_required_arg(arg) {
+  if is_required_arg(arg) && arg.info is PositionalInfo(_) {
     notes.push("required")
   }
   let help = arg.about.unwrap_or("")

@@ -412,7 +412,8 @@ test "arg groups required and multiple" {
       inspect(
         msg,
         content=(
-          #|error: the following required argument group was not provided: 'mode'
+          #|error: the following required arguments were not provided:
+          #|  <--fast|--slow>
           #|
           #|Usage: demo [options]
           #|
@@ -472,7 +473,8 @@ test "arg groups requires and conflicts" {
       inspect(
         msg,
         content=(
-          #|error: the following required argument group was not provided: 'output'
+          #|error: the following required arguments were not provided:
+          #|  <--json>
           #|
           #|Usage: demo [options]
           #|

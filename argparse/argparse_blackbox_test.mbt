@@ -49,7 +49,7 @@ test "render help snapshot with groups and hidden entries" {
   inspect(
     cmd.render_help(),
     content=(
-      #|Usage: render [options] <target> [rest...] [command]
+      #|Usage: render --path <path> [options] <target> [rest...] [command]
       #|
       #|Commands:
       #|  run   run
@@ -63,7 +63,7 @@ test "render help snapshot with groups and hidden entries" {
       #|  -h, --help         Show help information.
       #|  -f, --fast         
       #|  --[no-]cache       cache
-      #|  -p, --path <path>  env: PATH_ENV, defaults: a, b, required
+      #|  -p, --path <path>  env: PATH_ENV, defaults: a, b
       #|
       #|Groups:
       #|  mode (required, exclusive)  -f, --fast, -p, --path <path>
@@ -2467,6 +2467,43 @@ test "global version action keeps parent version text in subcommand context" {
 }
 
 ///|
+test "subcommand help puts required options in usage" {
+  let cmd = @argparse.Command("demo", subcommands=[
+    Command(
+      "run",
+      about="Run a file",
+      options=[Option("mode", short='m', required=true)],
+      positionals=[Positional("file", required=true)],
+    ),
+  ])
+
+  try cmd.parse(argv=["run", "--oops"], env=empty_env()) catch {
+    Message(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|error: unexpected argument '--oops' found
+          #|
+          #|Usage: demo run --mode <mode> <file>
+          #|
+          #|Run a file
+          #|
+          #|Arguments:
+          #|  file  required
+          #|
+          #|Options:
+          #|  -h, --help         Show help information.
+          #|  -m, --mode <mode>  
+          #|
+        ),
+      )
+    _ => panic()
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
 test "required and env-fed ranged values validate after parsing" {
   let required_cmd = @argparse.Command("demo", options=[
     Option("input", long="input", required=true),
@@ -2478,11 +2515,11 @@ test "required and env-fed ranged values validate after parsing" {
         content=(
           #|error: the following required argument was not provided: 'input'
           #|
-          #|Usage: demo [options]
+          #|Usage: demo --input <input>
           #|
           #|Options:
           #|  -h, --help       Show help information.
-          #|  --input <input>  required
+          #|  --input <input>  
           #|
         ),
       )
@@ -2959,7 +2996,7 @@ test "global override with incompatible inherited type is rejected" {
         content=(
           #|error: global arg 'mode' is incompatible with inherited global definition
           #|
-          #|Usage: demo [options] [command]
+          #|Usage: demo --mode <mode> [command]
           #|
           #|Commands:
           #|  run   
@@ -2967,7 +3004,7 @@ test "global override with incompatible inherited type is rejected" {
           #|
           #|Options:
           #|  -h, --help     Show help information.
-          #|  --mode <mode>  required
+          #|  --mode <mode>  
           #|
         ),
       )
