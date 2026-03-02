@@ -39,7 +39,8 @@ pub struct ArgGroup {
 /// Notes:
 /// - `required=true` means at least one member of the group must be present.
 /// - `multiple=false` means group members are mutually exclusive.
-/// - `requires` and `conflicts_with` can reference either group names or arg names.
+/// - `requires` and `conflicts_with` may reference either group names or
+///   argument names.
 pub fn ArgGroup::new(
   name : StringView,
   required? : Bool = false,

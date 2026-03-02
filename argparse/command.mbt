@@ -52,9 +52,14 @@ pub struct Command {
 /// Create a declarative command specification.
 ///
 /// Notes:
-/// - `flags` / `options` / `positionals` declare command arguments by kind.
-/// - `groups` explicitly declares all group memberships and policies.
-/// - Built-in `--help`/`--version` behavior can be disabled with the flags below.
+/// - `flags`, `options`, and `positionals` declare arguments by kind.
+/// - `groups` declares argument-group membership and policies.
+/// - `disable_help_flag` / `disable_version_flag` disable built-in
+///   `--help` / `--version`.
+/// - `disable_help_subcommand` disables built-in `help <subcommand>` routing.
+/// - `arg_required_else_help=true` prints help when no argv tokens are provided.
+/// - `subcommand_required=true` requires selecting a subcommand.
+/// - `hidden=true` omits this command from parent command listings.
 pub fn Command::new(
   name : StringView,
   flags? : ArrayView[Flag] = [],
