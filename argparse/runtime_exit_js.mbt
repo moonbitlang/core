@@ -25,7 +25,7 @@ extern "js" fn runtime_js_try_exit(code : Int) -> Bool =
 
 ///|
 #cfg(target="js")
-fn runtime_exit_success_js() -> Unit {
+fn runtime_exit_success() -> Unit {
   if !runtime_js_try_exit(0) {
     panic()
   }

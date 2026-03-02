@@ -18,6 +18,6 @@ extern "c" fn runtime_native_exit(code : Int) -> Unit = "exit"
 
 ///|
 #cfg(target="native")
-fn runtime_exit_success_native() -> Unit {
+fn runtime_exit_success() -> Unit {
   runtime_native_exit(0)
 }
