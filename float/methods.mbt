@@ -273,12 +273,12 @@ pub fn Float::clamp(self : Float, min~ : Float, max~ : Float) -> Float {
 ///
 /// ```mbt check
 /// test {
-///   inspect((0.0 : Float).lerp(10.0, 0.25), content="2.5")
-///   inspect((5.0 : Float).lerp(15.0, 0.0), content="5")
-///   inspect((5.0 : Float).lerp(15.0, 1.0), content="15")
+///   inspect((0.0 : Float).lerp(target=10.0, t=0.25), content="2.5")
+///   inspect((5.0 : Float).lerp(target=15.0, t=0.0), content="5")
+///   inspect((5.0 : Float).lerp(target=15.0, t=1.0), content="15")
 /// }
 /// ```
-pub fn Float::lerp(self : Float, target : Float, t : Float) -> Float {
+pub fn Float::lerp(self : Float, target~ : Float, t~ : Float) -> Float {
   self + (target - self) * t
 }
 
