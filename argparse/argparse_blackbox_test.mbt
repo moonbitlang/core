@@ -2532,6 +2532,29 @@ test "global value from child default is merged back to parent" {
 }
 
 ///|
+test "env-only global is propagated to nested subcommand matches" {
+  let cmd = @argparse.Command(
+    "demo",
+    options=[Option("level", long="", env="LEVEL", global=true)],
+    subcommands=[Command("run", subcommands=[Command("leaf")])],
+  )
+
+  let parsed = cmd.parse(argv=["run", "leaf"], env={ "LEVEL": "5" }) catch {
+    _ => panic()
+  }
+  assert_true(parsed.values is { "level": ["5"], .. })
+  assert_true(parsed.sources is { "level": Env, .. })
+  assert_true(
+    parsed.subcommand is Some(("run", sub_run)) &&
+    sub_run.values is { "level": ["5"], .. } &&
+    sub_run.sources is { "level": Env, .. } &&
+    sub_run.subcommand is Some(("leaf", sub_leaf)) &&
+    sub_leaf.values is { "level": ["5"], .. } &&
+    sub_leaf.sources is { "level": Env, .. },
+  )
+}
+
+///|
 test "child global arg with inherited global name updates parent global" {
   let cmd = @argparse.Command(
     "demo",
