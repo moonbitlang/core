@@ -270,7 +270,7 @@ fn apply_defaults(matches : Matches, args : Array[Arg]) -> Unit {
 
 ///|
 fn matches_has_value_or_flag(matches : Matches, name : String) -> Bool {
-  matches.flags.get(name) is Some(_) || matches.values.get(name) is Some(_)
+  matches.flags.contains(name) || matches.values.contains(name)
 }
 
 ///|
@@ -292,14 +292,13 @@ fn apply_flag(matches : Matches, arg : Arg, source : ValueSource) -> Unit {
 
 ///|
 fn parse_bool(value : String) -> Bool raise ArgParseError {
-  if value == "1" || value == "true" || value == "yes" || value == "on" {
-    true
-  } else if value == "0" || value == "false" || value == "no" || value == "off" {
-    false
-  } else {
-    raise InvalidValue(
-      "invalid value '\{value}' for boolean flag; expected one of: 1, 0, true, false, yes, no, on, off",
-    )
+  match value {
+    "1" | "true" | "yes" | "on" => true
+    "0" | "false" | "no" | "off" => false
+    _ =>
+      raise InvalidValue(
+        "invalid value '\{value}' for boolean flag; expected one of: 1, 0, true, false, yes, no, on, off",
+      )
   }
 }
 

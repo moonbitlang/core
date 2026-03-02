@@ -65,6 +65,17 @@ states.
 ///|
 test "negatable flag success snapshot" {
   let cmd = @argparse.Command("demo", flags=[Flag("cache", negatable=true)])
+  inspect(
+    cmd.render_help(),
+    content=(
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help    Show help information.
+      #|  --[no-]cache  
+      #|
+    ),
+  )
 
   let parsed = try! cmd.parse(argv=["--no-cache"], env={})
   @debug.debug_inspect(
@@ -73,29 +84,6 @@ test "negatable flag success snapshot" {
       #|{ "cache": false }
     ),
   )
-}
-
-///|
-test "negatable flag failure snapshot" {
-  let cmd = @argparse.Command("demo", flags=[Flag("cache", negatable=true)])
-  try cmd.parse(argv=["--oops"], env={}) catch {
-    Message(msg) =>
-      inspect(
-        msg,
-        content=(
-          #|error: unexpected argument '--oops' found
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help    Show help information.
-          #|  --[no-]cache  
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
 }
 ```
 
@@ -165,6 +153,18 @@ test "value source precedence snapshots" {
     Option("level", env="LEVEL", default_values=["1"]),
   ])
 
+  inspect(
+    cmd.render_help(),
+    content=(
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help       Show help information.
+      #|  --level <level>  [env: LEVEL] [default: 1]
+      #|
+    ),
+  )
+
   let from_default = try! cmd.parse(argv=[], env={})
   @debug.debug_inspect(
     from_default.values,
@@ -215,6 +215,18 @@ test "value source precedence snapshots" {
 ///|
 test "option input forms snapshot" {
   let cmd = @argparse.Command("demo", options=[Option("count", short='c')])
+
+  inspect(
+    cmd.render_help(),
+    content=(
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help           Show help information.
+      #|  -c, --count <count>  
+      #|
+    ),
+  )
 
   let long_split = try! cmd.parse(argv=["--count", "2"], env={})
   @debug.debug_inspect(
@@ -332,7 +344,7 @@ test "arg group required and exclusive failure snapshot" {
           #|  --slow      
           #|
           #|Groups:
-          #|  mode (required, exclusive)  --fast, --slow
+          #|  mode [required] [exclusive]  --fast, --slow
           #|
         ),
       )

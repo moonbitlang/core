@@ -63,10 +63,10 @@ test "render help snapshot with groups and hidden entries" {
       #|  -h, --help         Show help information.
       #|  -f, --fast         
       #|  --[no-]cache       cache
-      #|  -p, --path <path>  env: PATH_ENV, defaults: a, b
+      #|  -p, --path <path>  [env: PATH_ENV] [default: a, b]
       #|
       #|Groups:
-      #|  mode (required, exclusive)  -f, --fast, -p, --path <path>
+      #|  mode [required] [exclusive]  -f, --fast, -p, --path <path>
       #|
     ),
   )
@@ -869,9 +869,9 @@ test "env parsing for settrue setfalse count and invalid values" {
           #|
           #|Options:
           #|  -h, --help  Show help information.
-          #|  --on        env: ON
-          #|  --off       env: OFF
-          #|  --v         env: V
+          #|  --on        [env: ON]
+          #|  --off       [env: OFF]
+          #|  --v         [env: V]
           #|
         ),
       )
@@ -890,9 +890,9 @@ test "env parsing for settrue setfalse count and invalid values" {
           #|
           #|Options:
           #|  -h, --help  Show help information.
-          #|  --on        env: ON
-          #|  --off       env: OFF
-          #|  --v         env: V
+          #|  --on        [env: ON]
+          #|  --off       [env: OFF]
+          #|  --v         [env: V]
           #|
         ),
       )
@@ -911,9 +911,9 @@ test "env parsing for settrue setfalse count and invalid values" {
           #|
           #|Options:
           #|  -h, --help  Show help information.
-          #|  --on        env: ON
-          #|  --off       env: OFF
-          #|  --v         env: V
+          #|  --on        [env: ON]
+          #|  --off       [env: OFF]
+          #|  --v         [env: V]
           #|
         ),
       )
@@ -932,9 +932,9 @@ test "env parsing for settrue setfalse count and invalid values" {
           #|
           #|Options:
           #|  -h, --help  Show help information.
-          #|  --on        env: ON
-          #|  --off       env: OFF
-          #|  --v         env: V
+          #|  --on        [env: ON]
+          #|  --off       [env: OFF]
+          #|  --v         [env: V]
           #|
         ),
       )
@@ -1311,7 +1311,7 @@ test "validation branches exposed through parse" {
           #|
           #|Options:
           #|  -h, --help  Show help information.
-          #|  --f         env: F
+          #|  --f         [env: F]
           #|
         ),
       )
@@ -1358,7 +1358,7 @@ test "validation branches exposed through parse" {
           #|
           #|Options:
           #|  -h, --help  Show help information.
-          #|  --x <x>     defaults: a, b
+          #|  --x <x>     [default: a, b]
           #|
         ),
       )
@@ -2790,7 +2790,7 @@ test "child local arg shadowing inherited global is rejected at build time" {
           #|
           #|Options:
           #|  -h, --help     Show help information.
-          #|  --mode <mode>  env: MODE, default: safe
+          #|  --mode <mode>  [env: MODE] [default: safe]
           #|
         ),
       )
