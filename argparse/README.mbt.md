@@ -16,6 +16,7 @@ test "basic option + positional success snapshot" {
   let matches = @argparse.parse(
     Command("demo", options=[Option("name")], positionals=[Positional("target")]),
     argv=["--name", "alice", "file.txt"],
+    env={},
   )
   @debug.debug_inspect(
     matches.values,
@@ -65,7 +66,7 @@ states.
 test "negatable flag success snapshot" {
   let cmd = @argparse.Command("demo", flags=[Flag("cache", negatable=true)])
 
-  let parsed = cmd.parse(argv=["--no-cache"], env={}) catch { _ => panic() }
+  let parsed = try! cmd.parse(argv=["--no-cache"], env={})
   @debug.debug_inspect(
     parsed.flags,
     content=(
@@ -109,16 +110,14 @@ test "global count flag success snapshot" {
     subcommands=[Command("run")],
   )
 
-  let parsed = cmd.parse(argv=["-v", "run", "-v"], env={}) catch {
-    _ => panic()
-  }
+  let parsed = try! cmd.parse(argv=["-v", "run", "-v"], env={})
   @debug.debug_inspect(
     parsed.flag_counts,
     content=(
       #|{ "verbose": 2 }
     ),
   )
-  guard parsed.subcommand is Some(("run", child)) else { panic() }
+  guard parsed.subcommand is Some(("run", child))
   @debug.debug_inspect(
     child.flag_counts,
     content=(
@@ -166,7 +165,7 @@ test "value source precedence snapshots" {
     Option("level", env="LEVEL", default_values=["1"]),
   ])
 
-  let from_default = cmd.parse(argv=[], env={}) catch { _ => panic() }
+  let from_default = try! cmd.parse(argv=[], env={})
   @debug.debug_inspect(
     from_default.values,
     content=(
@@ -180,7 +179,7 @@ test "value source precedence snapshots" {
     ),
   )
 
-  let from_env = cmd.parse(argv=[], env={ "LEVEL": "2" }) catch { _ => panic() }
+  let from_env = try! cmd.parse(argv=[], env={ "LEVEL": "2" })
   @debug.debug_inspect(
     from_env.values,
     content=(
@@ -194,9 +193,7 @@ test "value source precedence snapshots" {
     ),
   )
 
-  let from_argv = cmd.parse(argv=["--level", "3"], env={ "LEVEL": "2" }) catch {
-    _ => panic()
-  }
+  let from_argv = try! cmd.parse(argv=["--level", "3"], env={ "LEVEL": "2" })
   @debug.debug_inspect(
     from_argv.values,
     content=(
@@ -219,9 +216,7 @@ test "value source precedence snapshots" {
 test "option input forms snapshot" {
   let cmd = @argparse.Command("demo", options=[Option("count", short='c')])
 
-  let long_split = cmd.parse(argv=["--count", "2"], env={}) catch {
-    _ => panic()
-  }
+  let long_split = try! cmd.parse(argv=["--count", "2"], env={})
   @debug.debug_inspect(
     long_split.values,
     content=(
@@ -229,7 +224,7 @@ test "option input forms snapshot" {
     ),
   )
 
-  let long_inline = cmd.parse(argv=["--count=3"], env={}) catch { _ => panic() }
+  let long_inline = try! cmd.parse(argv=["--count=3"], env={})
   @debug.debug_inspect(
     long_inline.values,
     content=(
@@ -237,7 +232,7 @@ test "option input forms snapshot" {
     ),
   )
 
-  let short_split = cmd.parse(argv=["-c", "4"], env={}) catch { _ => panic() }
+  let short_split = try! cmd.parse(argv=["-c", "4"], env={})
   @debug.debug_inspect(
     short_split.values,
     content=(
@@ -245,7 +240,7 @@ test "option input forms snapshot" {
     ),
   )
 
-  let short_attached = cmd.parse(argv=["-c5"], env={}) catch { _ => panic() }
+  let short_attached = try! cmd.parse(argv=["-c5"], env={})
   @debug.debug_inspect(
     short_attached.values,
     content=(
@@ -259,9 +254,7 @@ test "double-dash separator snapshot" {
   let cmd = @argparse.Command("demo", positionals=[
     Positional("tail", num_args=ValueRange(lower=0), allow_hyphen_values=true),
   ])
-  let parsed = cmd.parse(argv=["--", "--x", "-y"], env={}) catch {
-    _ => panic()
-  }
+  let parsed = try! cmd.parse(argv=["--", "--x", "-y"], env={})
   @debug.debug_inspect(
     parsed.values,
     content=(
@@ -284,9 +277,7 @@ test "requires relationship success and failure snapshots" {
     Option("config"),
   ])
 
-  let ok = cmd.parse(argv=["--mode", "fast", "--config", "cfg.toml"], env={}) catch {
-    _ => panic()
-  }
+  let ok = try! cmd.parse(argv=["--mode", "fast", "--config", "cfg.toml"], env={})
   @debug.debug_inspect(
     ok.values,
     content=(
@@ -388,7 +379,7 @@ test "conflicts_with success and failure snapshots" {
     Flag("quiet"),
   ])
 
-  let ok = cmd.parse(argv=["--verbose"], env={}) catch { _ => panic() }
+  let ok = try! cmd.parse(argv=["--verbose"], env={})
   @debug.debug_inspect(
     ok.flags,
     content=(
@@ -430,7 +421,7 @@ test "bounded non-last positional success snapshot" {
     Positional("second", num_args=@argparse.ValueRange::single()),
   ])
 
-  let parsed = cmd.parse(argv=["a", "b", "c"], env={}) catch { _ => panic() }
+  let parsed = try! cmd.parse(argv=["a", "b", "c"], env={})
   @debug.debug_inspect(
     parsed.values,
     content=(
@@ -474,22 +465,20 @@ test "positional passthrough keeps child argv after double-dash snapshot" {
     "wrap",
     options=[Option("config"), Option("mode")],
     positionals=[
-      Positional("child_argv", num_args=ValueRange(lower=0), allow_hyphen_values=true),
+      Positional(
+        "child_argv",
+        num_args=ValueRange(lower=0),
+        allow_hyphen_values=true,
+      ),
     ],
   )
 
-  let parsed = cmd.parse(argv=[
-    "--config",
-    "cfg.toml",
-    "--",
-    "child",
-    "--mode",
-    "fast",
-    "--",
-    "--flag",
-  ], env={}) catch {
-    _ => panic()
-  }
+  let parsed = try! cmd.parse(
+    argv=[
+      "--config", "cfg.toml", "--", "child", "--mode", "fast", "--", "--flag",
+    ],
+    env={},
+  )
   @debug.debug_inspect(
     parsed.values,
     content=(
@@ -507,19 +496,18 @@ test "without separator outer parser still consumes its own option names snapsho
     "wrap",
     options=[Option("config"), Option("mode")],
     positionals=[
-      Positional("child_argv", num_args=ValueRange(lower=0), allow_hyphen_values=true),
+      Positional(
+        "child_argv",
+        num_args=ValueRange(lower=0),
+        allow_hyphen_values=true,
+      ),
     ],
   )
 
-  let parsed = cmd.parse(argv=[
-    "--config",
-    "cfg.toml",
-    "child",
-    "--mode",
-    "fast",
-  ], env={}) catch {
-    _ => panic()
-  }
+  let parsed = try! cmd.parse(
+    argv=["--config", "cfg.toml", "child", "--mode", "fast"],
+    env={},
+  )
   @debug.debug_inspect(
     parsed.values,
     content=(
