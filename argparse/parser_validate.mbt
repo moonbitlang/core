@@ -58,7 +58,7 @@ fn ValidationCtx::record_arg(
     }
   }
   match arg.info {
-    Flag(long~, short~, negatable~, ..) => {
+    FlagInfo(long~, short~, negatable~, ..) => {
       if long is Some(name) {
         check_long(name)
         if negatable {
@@ -69,7 +69,7 @@ fn ValidationCtx::record_arg(
         check_short(short)
       }
     }
-    Option(long~, short~, ..) => {
+    OptionInfo(long~, short~, ..) => {
       if long is Some(name) {
         check_long(name)
       }
@@ -77,7 +77,7 @@ fn ValidationCtx::record_arg(
         check_short(short)
       }
     }
-    Positional(_) => ()
+    PositionalInfo(_) => ()
   }
   self.args.push(arg)
 }
@@ -134,7 +134,7 @@ fn validate_inherited_global_shadowing(
       }
     }
     match arg.info {
-      Flag(long~, short~, negatable~, ..) => {
+      FlagInfo(long~, short~, negatable~, ..) => {
         if long is Some(name) {
           validate_inherited_global_long_collision(arg, name, inherited_globals)
           if negatable {
@@ -151,7 +151,7 @@ fn validate_inherited_global_shadowing(
           )
         }
       }
-      Option(long~, short~, ..) => {
+      OptionInfo(long~, short~, ..) => {
         if long is Some(name) {
           validate_inherited_global_long_collision(arg, name, inherited_globals)
         }
@@ -161,7 +161,7 @@ fn validate_inherited_global_shadowing(
           )
         }
       }
-      Positional(_) => ()
+      PositionalInfo(_) => ()
     }
   }
 }
@@ -184,18 +184,18 @@ fn merge_inherited_globals(
 ///|
 fn global_override_compatible(inherited_arg : Arg, arg : Arg) -> Bool {
   match inherited_arg.info {
-    Flag(action=inherited_action, negatable=inherited_negatable, ..) =>
+    FlagInfo(action=inherited_action, negatable=inherited_negatable, ..) =>
       match arg.info {
-        Flag(action~, negatable~, ..) =>
+        FlagInfo(action~, negatable~, ..) =>
           inherited_action == action && inherited_negatable == negatable
         _ => false
       }
-    Option(action=inherited_action, ..) =>
+    OptionInfo(action=inherited_action, ..) =>
       match arg.info {
-        Option(action~, ..) => inherited_action == action
+        OptionInfo(action~, ..) => inherited_action == action
         _ => false
       }
-    Positional(_) => false
+    PositionalInfo(_) => false
   }
 }
 
@@ -238,16 +238,16 @@ fn inherited_global_long_owner(
       continue
     }
     match inherited.info {
-      Flag(long=inherited_long, negatable~, ..) =>
+      FlagInfo(long=inherited_long, negatable~, ..) =>
         if inherited_long is Some(name) &&
           (name == long || (negatable && "no-\{name}" == long)) {
           return Some(inherited.name)
         }
-      Option(long=inherited_long, ..) =>
+      OptionInfo(long=inherited_long, ..) =>
         if inherited_long is Some(name) && name == long {
           return Some(inherited.name)
         }
-      Positional(_) => ()
+      PositionalInfo(_) => ()
     }
   }
   None
@@ -264,11 +264,12 @@ fn inherited_global_short_owner(
       continue
     }
     match inherited.info {
-      Flag(short=inherited_short, ..) | Option(short=inherited_short, ..) =>
+      FlagInfo(short=inherited_short, ..)
+      | OptionInfo(short=inherited_short, ..) =>
         if inherited_short is Some(value) && value == short {
           return Some(inherited.name)
         }
-      Positional(_) => ()
+      PositionalInfo(_) => ()
     }
   }
   None
@@ -280,7 +281,7 @@ fn validate_flag_arg(
   ctx : ValidationCtx,
 ) -> Unit raise ArgBuildError {
   validate_named_option_arg(arg)
-  guard arg.info is Flag(action~, negatable~, ..)
+  guard arg.info is FlagInfo(action~, negatable~, ..)
   if action is (Help | Version) {
     guard !negatable else {
       raise Unsupported("help/version actions do not support negatable")
@@ -322,7 +323,8 @@ fn validate_positional_arg(
 
 ///|
 fn validate_named_option_arg(arg : Arg) -> Unit raise ArgBuildError {
-  guard arg.info is (Flag(long~, short~, ..) | Option(long~, short~, ..))
+  guard arg.info
+    is (FlagInfo(long~, short~, ..) | OptionInfo(long~, short~, ..))
   guard long is Some(_) || short is Some(_) || arg.env is Some(_) else {
     raise Unsupported("flag/option args require short/long/env")
   }
@@ -330,11 +332,12 @@ fn validate_named_option_arg(arg : Arg) -> Unit raise ArgBuildError {
 
 ///|
 fn validate_default_values(arg : Arg) -> Unit raise ArgBuildError {
-  if arg.info is (Option(default_values~, ..) | Positional(default_values~, ..)) &&
+  if arg.info
+    is (OptionInfo(default_values~, ..) | PositionalInfo(default_values~, ..)) &&
     default_values is Some(values) &&
     values.length() > 1 &&
     !arg.multiple &&
-    !(arg.info is Option(action=Append, ..)) {
+    !(arg.info is OptionInfo(action=Append, ..)) {
     raise Unsupported(
       "default_values with multiple entries require action=Append",
     )
@@ -463,7 +466,7 @@ fn validate_help_subcommand(cmd : Command) -> Unit raise ArgBuildError {
 ///|
 fn validate_version_actions(cmd : Command) -> Unit raise ArgBuildError {
   if cmd.version is None &&
-    cmd.args.any(arg => arg.info is Flag(action=Version, ..)) {
+    cmd.args.any(arg => arg.info is FlagInfo(action=Version, ..)) {
     raise Unsupported("version action requires command version text")
   }
 }
@@ -561,9 +564,9 @@ fn validate_values(
     if arg.required && !present {
       raise MissingRequired(arg.name, None)
     }
-    guard arg.info is (Option(_) | Positional(_)) else { continue }
+    guard arg.info is (OptionInfo(_) | PositionalInfo(_)) else { continue }
     if !present {
-      if arg.info is Positional(_) {
+      if arg.info is PositionalInfo(_) {
         let (min, _) = arg_min_max(arg)
         if min > 0 {
           raise TooFewValues(arg.name, 0, min)
@@ -577,7 +580,7 @@ fn validate_values(
     if count < min {
       raise TooFewValues(arg.name, count, min)
     }
-    if !(arg.info is Option(action=Append, ..)) {
+    if !(arg.info is OptionInfo(action=Append, ..)) {
       match max {
         Some(max) if count > max => raise TooManyValues(arg.name, count, max)
         _ => ()

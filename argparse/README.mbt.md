@@ -13,8 +13,8 @@ small, predictable feature set.
 ///|
 test "basic option + positional success snapshot" {
   let matches = @argparse.parse(
-    Command("demo", options=[OptionArg("name", long="name")], positionals=[
-      PositionalArg("target"),
+    Command("demo", options=[Option("name", long="name")], positionals=[
+      Positional("target"),
     ]),
     argv=["--name", "alice", "file.txt"],
   )
@@ -28,11 +28,9 @@ test "basic option + positional success snapshot" {
 
 ///|
 test "basic option + positional failure snapshot" {
-  let cmd = @argparse.Command(
-    "demo",
-    options=[OptionArg("name", long="name")],
-    positionals=[PositionalArg("target")],
-  )
+  let cmd = @argparse.Command("demo", options=[Option("name", long="name")], positionals=[
+    Positional("target"),
+  ])
   try cmd.parse(argv=["--bad"], env={}) catch {
     Message(msg) =>
       inspect(
@@ -66,7 +64,7 @@ states.
 ///|
 test "negatable flag success snapshot" {
   let cmd = @argparse.Command("demo", flags=[
-    FlagArg("cache", long="cache", negatable=true),
+    Flag("cache", long="cache", negatable=true),
   ])
 
   let parsed = cmd.parse(argv=["--no-cache"], env={}) catch { _ => panic() }
@@ -81,7 +79,7 @@ test "negatable flag success snapshot" {
 ///|
 test "negatable flag failure snapshot" {
   let cmd = @argparse.Command("demo", flags=[
-    FlagArg("cache", long="cache", negatable=true),
+    Flag("cache", long="cache", negatable=true),
   ])
   try cmd.parse(argv=["--oops"], env={}) catch {
     Message(msg) =>
@@ -111,9 +109,7 @@ test "negatable flag failure snapshot" {
 test "global count flag success snapshot" {
   let cmd = @argparse.Command(
     "demo",
-    flags=[
-      FlagArg("verbose", short='v', long="verbose", action=Count, global=true),
-    ],
+    flags=[Flag("verbose", short='v', action=Count, global=true)],
     subcommands=[Command("run")],
   )
 
@@ -126,10 +122,7 @@ test "global count flag success snapshot" {
       #|{ "verbose": 2 }
     ),
   )
-  let child = match parsed.subcommand {
-    Some(("run", sub)) => sub
-    _ => panic()
-  }
+  guard parsed.subcommand is Some(("run", child)) else { panic() }
   @debug.debug_inspect(
     child.flag_counts,
     content=(
@@ -142,9 +135,7 @@ test "global count flag success snapshot" {
 test "subcommand context failure snapshot" {
   let cmd = @argparse.Command(
     "demo",
-    flags=[
-      FlagArg("verbose", short='v', long="verbose", action=Count, global=true),
-    ],
+    flags=[Flag("verbose", short='v', action=Count, global=true)],
     subcommands=[Command("run")],
   )
   try cmd.parse(argv=["run", "--oops"], env={}) catch {
@@ -176,8 +167,8 @@ Positionals are parsed in declaration order (no explicit index).
 ///|
 test "bounded non-last positional success snapshot" {
   let cmd = @argparse.Command("demo", positionals=[
-    PositionalArg("first", num_args=ValueRange(lower=1, upper=2)),
-    PositionalArg("second", required=true),
+    Positional("first", num_args=ValueRange(lower=1, upper=2)),
+    Positional("second", required=true),
   ])
 
   let parsed = cmd.parse(argv=["a", "b", "c"], env={}) catch { _ => panic() }
@@ -192,8 +183,8 @@ test "bounded non-last positional success snapshot" {
 ///|
 test "bounded non-last positional failure snapshot" {
   let cmd = @argparse.Command("demo", positionals=[
-    PositionalArg("first", num_args=ValueRange(lower=1, upper=2)),
-    PositionalArg("second", required=true),
+    Positional("first", num_args=ValueRange(lower=1, upper=2)),
+    Positional("second", required=true),
   ])
   try cmd.parse(argv=["a", "b", "c", "d"], env={}) catch {
     Message(msg) =>
@@ -228,7 +219,7 @@ contains the full contextual help text.
 ///|
 test "root invalid option snapshot" {
   let cmd = @argparse.Command("demo", options=[
-    OptionArg("count", long="count", about="repeat count"),
+    Option("count", long="count", about="repeat count"),
   ])
 
   try cmd.parse(argv=["--bad"], env={}) catch {
@@ -254,7 +245,7 @@ test "root invalid option snapshot" {
 ///|
 test "subcommand invalid option snapshot" {
   let cmd = @argparse.Command("demo", subcommands=[
-    Command("echo", options=[OptionArg("times", long="times")]),
+    Command("echo", options=[Option("times", long="times")]),
   ])
 
   try cmd.parse(argv=["echo", "--oops"], env={}) catch {
@@ -284,7 +275,7 @@ test "subcommand invalid option snapshot" {
 ///|
 test "render_help remains pure" {
   let cmd = @argparse.Command("demo", about="demo app", options=[
-    OptionArg("count", long="count"),
+    Option("count", long="count"),
   ])
   let help = cmd.render_help()
   inspect(

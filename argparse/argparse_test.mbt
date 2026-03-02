@@ -21,9 +21,9 @@ fn empty_env() -> Map[String, String] {
 test "declarative parse basics" {
   let cmd = @argparse.Command(
     "demo",
-    flags=[FlagArg("verbose", short='v', long="verbose")],
-    options=[OptionArg("count", long="count", env="COUNT")],
-    positionals=[PositionalArg("name")],
+    flags=[Flag("verbose", short='v', long="verbose")],
+    options=[Option("count", long="count", env="COUNT")],
+    positionals=[Positional("name")],
   )
   let matches = cmd.parse(argv=["-v", "--count", "3", "alice"], env=empty_env()) catch {
     _ => panic()
@@ -37,8 +37,8 @@ test "declarative parse basics" {
 
 ///|
 test "long defaults to name when omitted" {
-  let cmd = @argparse.Command("demo", flags=[FlagArg("verbose")], options=[
-    OptionArg("count"),
+  let cmd = @argparse.Command("demo", flags=[Flag("verbose")], options=[
+    Option("count"),
   ])
   let matches = cmd.parse(argv=["--verbose", "--count", "3"], env=empty_env()) catch {
     _ => panic()
@@ -51,8 +51,8 @@ test "long defaults to name when omitted" {
 test "long empty string disables long alias" {
   let cmd = @argparse.Command(
     "demo",
-    flags=[FlagArg("verbose", short='v', long="")],
-    options=[OptionArg("count", short='c', long="")],
+    flags=[Flag("verbose", short='v', long="")],
+    options=[Option("count", short='c', long="")],
   )
 
   let matches = cmd.parse(argv=["-v", "-c", "3"], env=empty_env()) catch {
@@ -105,8 +105,8 @@ test "long empty string disables long alias" {
 ///|
 test "declaration order controls positional parsing" {
   let cmd = @argparse.Command("demo", positionals=[
-    PositionalArg("first"),
-    PositionalArg("second"),
+    Positional("first"),
+    Positional("second"),
   ])
 
   let parsed = cmd.parse(argv=["a", "b"], env=empty_env()) catch {
@@ -118,8 +118,8 @@ test "declaration order controls positional parsing" {
 ///|
 test "bounded non-last positional remains supported" {
   let cmd = @argparse.Command("demo", positionals=[
-    PositionalArg("first", num_args=ValueRange(lower=1, upper=2)),
-    PositionalArg("second", required=true),
+    Positional("first", num_args=ValueRange(lower=1, upper=2)),
+    Positional("second", required=true),
   ])
 
   let two = cmd.parse(argv=["a", "b"], env=empty_env()) catch { _ => panic() }
@@ -134,7 +134,7 @@ test "bounded non-last positional remains supported" {
 ///|
 test "negatable flag preserves false state" {
   let cmd = @argparse.Command("demo", flags=[
-    FlagArg("cache", long="cache", negatable=true),
+    Flag("cache", long="cache", negatable=true),
   ])
 
   let no_cache = cmd.parse(argv=["--no-cache"], env=empty_env()) catch {
@@ -147,7 +147,7 @@ test "negatable flag preserves false state" {
 ///|
 test "parse failure message contains error and contextual help" {
   let cmd = @argparse.Command("demo", options=[
-    OptionArg("count", long="count", about="repeat count"),
+    Option("count", long="count", about="repeat count"),
   ])
 
   try cmd.parse(argv=["--bad"], env=empty_env()) catch {
@@ -173,7 +173,7 @@ test "parse failure message contains error and contextual help" {
 ///|
 test "subcommand parse errors include subcommand help" {
   let cmd = @argparse.Command("demo", subcommands=[
-    Command("echo", options=[OptionArg("times", long="times")]),
+    Command("echo", options=[Option("times", long="times")]),
   ])
 
   try cmd.parse(argv=["echo", "--bad"], env=empty_env()) catch {
@@ -199,7 +199,7 @@ test "subcommand parse errors include subcommand help" {
 ///|
 test "build errors are surfaced as ArgError message with help" {
   let cmd = @argparse.Command("demo", flags=[
-    FlagArg("fast", long="fast", requires=["missing"]),
+    Flag("fast", long="fast", requires=["missing"]),
   ])
 
   try cmd.parse(argv=[], env=empty_env()) catch {
@@ -224,7 +224,7 @@ test "build errors are surfaced as ArgError message with help" {
 
 ///|
 test "unknown argument keeps suggestion in final message" {
-  let cmd = @argparse.Command("demo", flags=[FlagArg("verbose", long="verbose")])
+  let cmd = @argparse.Command("demo", flags=[Flag("verbose", long="verbose")])
 
   try cmd.parse(argv=["--verbse"], env=empty_env()) catch {
     Message(msg) =>
@@ -253,9 +253,9 @@ test "render_help remains available for pure formatting" {
   let cmd = @argparse.Command(
     "demo",
     about="Demo command",
-    flags=[FlagArg("verbose", short='v', long="verbose")],
-    options=[OptionArg("count", long="count")],
-    positionals=[PositionalArg("name")],
+    flags=[Flag("verbose", short='v', long="verbose")],
+    options=[Option("count", long="count")],
+    positionals=[Positional("name")],
     subcommands=[Command("echo")],
   )
 
@@ -308,11 +308,9 @@ test "display help and version" {
 
 ///|
 test "parse error show is readable" {
-  let cmd = @argparse.Command(
-    "demo",
-    flags=[FlagArg("verbose", long="verbose")],
-    positionals=[PositionalArg("name")],
-  )
+  let cmd = @argparse.Command("demo", flags=[Flag("verbose", long="verbose")], positionals=[
+    Positional("name"),
+  ])
 
   try cmd.parse(argv=["--verbse"], env=empty_env()) catch {
     Message(msg) =>
@@ -366,8 +364,8 @@ test "parse error show is readable" {
 ///|
 test "relationships and num args" {
   let requires_cmd = @argparse.Command("demo", options=[
-    OptionArg("mode", long="mode", requires=["config"]),
-    OptionArg("config", long="config"),
+    Option("mode", long="mode", requires=["config"]),
+    Option("config", long="config"),
   ])
 
   try requires_cmd.parse(argv=["--mode", "fast"], env=empty_env()) catch {
@@ -384,7 +382,6 @@ test "relationships and num args" {
           #|  --mode <mode>      
           #|  --config <config>  
           #|
-
         ),
       )
     _ => panic()
@@ -393,7 +390,7 @@ test "relationships and num args" {
   }
 
   let appended = @argparse.Command("demo", options=[
-    OptionArg("tag", long="tag", action=Append),
+    Option("tag", long="tag", action=Append),
   ]).parse(argv=["--tag", "a", "--tag", "b", "--tag", "c"], env=empty_env()) catch {
     _ => panic()
   }
@@ -407,7 +404,7 @@ test "arg groups required and multiple" {
     groups=[
       ArgGroup("mode", required=true, multiple=false, args=["fast", "slow"]),
     ],
-    flags=[FlagArg("fast", long="fast"), FlagArg("slow", long="slow")],
+    flags=[Flag("fast", long="fast"), Flag("slow", long="slow")],
   )
 
   try cmd.parse(argv=[], env=empty_env()) catch {
@@ -467,7 +464,7 @@ test "arg groups requires and conflicts" {
       ArgGroup("mode", args=["fast"], requires=["output"]),
       ArgGroup("output", args=["json"]),
     ],
-    flags=[FlagArg("fast", long="fast"), FlagArg("json", long="json")],
+    flags=[Flag("fast", long="fast"), Flag("json", long="json")],
   )
 
   try requires_cmd.parse(argv=["--fast"], env=empty_env()) catch {
@@ -501,7 +498,7 @@ test "arg groups requires and conflicts" {
       ArgGroup("mode", args=["fast"], conflicts_with=["output"]),
       ArgGroup("output", args=["json"]),
     ],
-    flags=[FlagArg("fast", long="fast"), FlagArg("json", long="json")],
+    flags=[Flag("fast", long="fast"), Flag("json", long="json")],
   )
 
   try conflict_cmd.parse(argv=["--fast", "--json"], env=empty_env()) catch {
@@ -532,7 +529,7 @@ test "arg groups requires and conflicts" {
 
 ///|
 test "subcommand parsing" {
-  let echo = @argparse.Command("echo", positionals=[PositionalArg("msg")])
+  let echo = @argparse.Command("echo", positionals=[Positional("msg")])
   let root = @argparse.Command("root", subcommands=[echo])
 
   let matches = root.parse(argv=["echo", "hi"], env=empty_env()) catch {
@@ -550,14 +547,12 @@ test "full help snapshot" {
     "demo",
     about="Demo command",
     flags=[
-      FlagArg("verbose", short='v', long="verbose", about="Enable verbose mode"),
+      Flag("verbose", short='v', long="verbose", about="Enable verbose mode"),
     ],
     options=[
-      OptionArg("count", long="count", about="Repeat count", default_values=[
-        "1",
-      ]),
+      Option("count", long="count", about="Repeat count", default_values=["1"]),
     ],
-    positionals=[PositionalArg("name", about="Target name")],
+    positionals=[Positional("name", about="Target name")],
     subcommands=[Command("echo", about="Echo a message")],
   )
   inspect(
@@ -586,7 +581,7 @@ test "full help snapshot" {
 ///|
 test "value source precedence argv env default" {
   let cmd = @argparse.Command("demo", options=[
-    OptionArg("level", long="level", env="LEVEL", default_values=["1"]),
+    Option("level", long="level", env="LEVEL", default_values=["1"]),
   ])
 
   let from_default = cmd.parse(argv=[], env=empty_env()) catch { _ => panic() }
@@ -607,7 +602,7 @@ test "value source precedence argv env default" {
 ///|
 test "omitted env does not read process environment by default" {
   let cmd = @argparse.Command("demo", options=[
-    OptionArg("count", long="count", env="COUNT"),
+    Option("count", long="count", env="COUNT"),
   ])
   let matches = cmd.parse(argv=[]) catch { _ => panic() }
   assert_true(matches.values is { "count"? : None, .. })
@@ -620,8 +615,8 @@ test "options and multiple values" {
   let cmd = @argparse.Command(
     "demo",
     options=[
-      OptionArg("count", short='c', long="count"),
-      OptionArg("tag", long="tag", action=Append),
+      Option("count", short='c', long="count"),
+      Option("tag", long="tag", action=Append),
     ],
     subcommands=[serve],
   )
@@ -650,10 +645,10 @@ test "options and multiple values" {
 ///|
 test "negatable and conflicts" {
   let cmd = @argparse.Command("demo", flags=[
-    FlagArg("cache", long="cache", negatable=true),
-    FlagArg("failfast", long="failfast", action=SetFalse, negatable=true),
-    FlagArg("verbose", long="verbose", conflicts_with=["quiet"]),
-    FlagArg("quiet", long="quiet"),
+    Flag("cache", long="cache", negatable=true),
+    Flag("failfast", long="failfast", action=SetFalse, negatable=true),
+    Flag("verbose", long="verbose", conflicts_with=["quiet"]),
+    Flag("quiet", long="quiet"),
   ])
 
   let no_cache = cmd.parse(argv=["--no-cache"], env=empty_env()) catch {
@@ -693,7 +688,7 @@ test "negatable and conflicts" {
 
 ///|
 test "flag does not accept inline value" {
-  let cmd = @argparse.Command("demo", flags=[FlagArg("verbose", long="verbose")])
+  let cmd = @argparse.Command("demo", flags=[Flag("verbose", long="verbose")])
   try cmd.parse(argv=["--verbose=true"], env=empty_env()) catch {
     Message(msg) =>
       inspect(

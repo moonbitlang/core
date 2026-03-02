@@ -16,7 +16,7 @@
 fn positional_args(args : Array[Arg]) -> Array[Arg] {
   let ordered = []
   for arg in args {
-    if arg.info is Positional(_) {
+    if arg.info is PositionalInfo(_) {
       ordered.push(arg)
     }
   }
@@ -27,7 +27,7 @@ fn positional_args(args : Array[Arg]) -> Array[Arg] {
 fn last_positional_index(positionals : Array[Arg]) -> Int? {
   for idx in 0..<positionals.length() {
     let arg = positionals[idx]
-    if arg.info is Positional(last=true, ..) {
+    if arg.info is PositionalInfo(last=true, ..) {
       return Some(idx)
     }
   }
@@ -92,9 +92,9 @@ fn should_parse_as_positional(
     None => return false
   }
   let next_allow = match next.info {
-    Flag(_) => false
-    Option(allow_hyphen_values~, ..) | Positional(allow_hyphen_values~, ..) =>
-      allow_hyphen_values
+    FlagInfo(_) => false
+    OptionInfo(allow_hyphen_values~, ..)
+    | PositionalInfo(allow_hyphen_values~, ..) => allow_hyphen_values
   }
   let allow = next_allow || is_negative_number(arg)
   if !allow {
