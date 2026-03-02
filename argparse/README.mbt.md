@@ -7,15 +7,14 @@ small, predictable feature set.
 
 `long` defaults to the argument name. Pass `long=""` to disable long alias.
 
-## 1. Basic Command
+
+## Quick Start
 
 ```mbt check
 ///|
 test "basic option + positional success snapshot" {
   let matches = @argparse.parse(
-    Command("demo", options=[Option("name", long="name")], positionals=[
-      Positional("target"),
-    ]),
+    Command("demo", options=[Option("name")], positionals=[Positional("target")]),
     argv=["--name", "alice", "file.txt"],
   )
   @debug.debug_inspect(
@@ -28,7 +27,7 @@ test "basic option + positional success snapshot" {
 
 ///|
 test "basic option + positional failure snapshot" {
-  let cmd = @argparse.Command("demo", options=[Option("name", long="name")], positionals=[
+  let cmd = @argparse.Command("demo", options=[Option("name")], positionals=[
     Positional("target"),
   ])
   try cmd.parse(argv=["--bad"], env={}) catch {
@@ -55,7 +54,8 @@ test "basic option + positional failure snapshot" {
 }
 ```
 
-## 2. Flags And Negation
+
+## Flags And Negation
 
 `flags` stay as `Map[String, Bool]`, so negated flags preserve explicit `false`
 states.
@@ -63,9 +63,7 @@ states.
 ```mbt check
 ///|
 test "negatable flag success snapshot" {
-  let cmd = @argparse.Command("demo", flags=[
-    Flag("cache", long="cache", negatable=true),
-  ])
+  let cmd = @argparse.Command("demo", flags=[Flag("cache", negatable=true)])
 
   let parsed = cmd.parse(argv=["--no-cache"], env={}) catch { _ => panic() }
   @debug.debug_inspect(
@@ -78,9 +76,7 @@ test "negatable flag success snapshot" {
 
 ///|
 test "negatable flag failure snapshot" {
-  let cmd = @argparse.Command("demo", flags=[
-    Flag("cache", long="cache", negatable=true),
-  ])
+  let cmd = @argparse.Command("demo", flags=[Flag("cache", negatable=true)])
   try cmd.parse(argv=["--oops"], env={}) catch {
     Message(msg) =>
       inspect(
@@ -102,7 +98,7 @@ test "negatable flag failure snapshot" {
 }
 ```
 
-## 3. Subcommands And Globals
+## Subcommands And Globals
 
 ```mbt check
 ///|
@@ -159,7 +155,275 @@ test "subcommand context failure snapshot" {
 }
 ```
 
-## 4. Positional Value Ranges
+## Value Sources (argv > env > default_values)
+
+Value precedence is `argv > env > default_values`.
+
+```mbt check
+///|
+test "value source precedence snapshots" {
+  let cmd = @argparse.Command("demo", options=[
+    Option("level", env="LEVEL", default_values=["1"]),
+  ])
+
+  let from_default = cmd.parse(argv=[], env={}) catch { _ => panic() }
+  @debug.debug_inspect(
+    from_default.values,
+    content=(
+      #|{ "level": ["1"] }
+    ),
+  )
+  @debug.debug_inspect(
+    from_default.sources,
+    content=(
+      #|{ "level": Default }
+    ),
+  )
+
+  let from_env = cmd.parse(argv=[], env={ "LEVEL": "2" }) catch { _ => panic() }
+  @debug.debug_inspect(
+    from_env.values,
+    content=(
+      #|{ "level": ["2"] }
+    ),
+  )
+  @debug.debug_inspect(
+    from_env.sources,
+    content=(
+      #|{ "level": Env }
+    ),
+  )
+
+  let from_argv = cmd.parse(argv=["--level", "3"], env={ "LEVEL": "2" }) catch {
+    _ => panic()
+  }
+  @debug.debug_inspect(
+    from_argv.values,
+    content=(
+      #|{ "level": ["3"] }
+    ),
+  )
+  @debug.debug_inspect(
+    from_argv.sources,
+    content=(
+      #|{ "level": Argv }
+    ),
+  )
+}
+```
+
+## Input Forms
+
+```mbt check
+///|
+test "option input forms snapshot" {
+  let cmd = @argparse.Command("demo", options=[Option("count", short='c')])
+
+  let long_split = cmd.parse(argv=["--count", "2"], env={}) catch {
+    _ => panic()
+  }
+  @debug.debug_inspect(
+    long_split.values,
+    content=(
+      #|{ "count": ["2"] }
+    ),
+  )
+
+  let long_inline = cmd.parse(argv=["--count=3"], env={}) catch { _ => panic() }
+  @debug.debug_inspect(
+    long_inline.values,
+    content=(
+      #|{ "count": ["3"] }
+    ),
+  )
+
+  let short_split = cmd.parse(argv=["-c", "4"], env={}) catch { _ => panic() }
+  @debug.debug_inspect(
+    short_split.values,
+    content=(
+      #|{ "count": ["4"] }
+    ),
+  )
+
+  let short_attached = cmd.parse(argv=["-c5"], env={}) catch { _ => panic() }
+  @debug.debug_inspect(
+    short_attached.values,
+    content=(
+      #|{ "count": ["5"] }
+    ),
+  )
+}
+
+///|
+test "double-dash separator snapshot" {
+  let cmd = @argparse.Command("demo", positionals=[
+    Positional(
+      "tail",
+      num_args=ValueRange(lower=0),
+      last=true,
+      allow_hyphen_values=true,
+    ),
+  ])
+  let parsed = cmd.parse(argv=["--", "--x", "-y"], env={}) catch {
+    _ => panic()
+  }
+  @debug.debug_inspect(
+    parsed.values,
+    content=(
+      #|{ "tail": ["--x", "-y"] }
+    ),
+  )
+}
+```
+
+## Constraints And Policies
+
+`parse` raises a single string error (`ArgError::Message`) that includes the
+error and full contextual help.
+
+```mbt check
+///|
+test "requires relationship success and failure snapshots" {
+  let cmd = @argparse.Command("demo", options=[
+    Option("mode", requires=["config"]),
+    Option("config"),
+  ])
+
+  let ok = cmd.parse(argv=["--mode", "fast", "--config", "cfg.toml"], env={}) catch {
+    _ => panic()
+  }
+  @debug.debug_inspect(
+    ok.values,
+    content=(
+      #|{ "mode": ["fast"], "config": ["cfg.toml"] }
+    ),
+  )
+
+  try cmd.parse(argv=["--mode", "fast"], env={}) catch {
+    Message(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|error: the following required argument was not provided: 'config' (required by 'mode')
+          #|
+          #|Usage: demo [options]
+          #|
+          #|Options:
+          #|  -h, --help         Show help information.
+          #|  --mode <mode>      
+          #|  --config <config>  
+          #|
+        ),
+      )
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
+test "arg group required and exclusive failure snapshot" {
+  let cmd = @argparse.Command(
+    "demo",
+    groups=[
+      ArgGroup("mode", required=true, multiple=false, args=["fast", "slow"]),
+    ],
+    flags=[Flag("fast"), Flag("slow")],
+  )
+
+  try cmd.parse(argv=[], env={}) catch {
+    Message(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|error: the following required arguments were not provided:
+          #|  <--fast|--slow>
+          #|
+          #|Usage: demo [options]
+          #|
+          #|Options:
+          #|  -h, --help  Show help information.
+          #|  --fast      
+          #|  --slow      
+          #|
+          #|Groups:
+          #|  mode (required, exclusive)  --fast, --slow
+          #|
+        ),
+      )
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
+test "subcommand required policy failure snapshot" {
+  let cmd = @argparse.Command("demo", subcommand_required=true, subcommands=[
+    Command("echo"),
+  ])
+
+  try cmd.parse(argv=[], env={}) catch {
+    Message(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|error: the following required argument was not provided: 'subcommand'
+          #|
+          #|Usage: demo <command>
+          #|
+          #|Commands:
+          #|  echo  
+          #|  help  Print help for the subcommand(s).
+          #|
+          #|Options:
+          #|  -h, --help  Show help information.
+          #|
+        ),
+      )
+  } noraise {
+    _ => panic()
+  }
+}
+```
+
+```mbt check
+///|
+test "conflicts_with success and failure snapshots" {
+  let cmd = @argparse.Command("demo", flags=[
+    Flag("verbose", conflicts_with=["quiet"]),
+    Flag("quiet"),
+  ])
+
+  let ok = cmd.parse(argv=["--verbose"], env={}) catch { _ => panic() }
+  @debug.debug_inspect(
+    ok.flags,
+    content=(
+      #|{ "verbose": true }
+    ),
+  )
+
+  try cmd.parse(argv=["--verbose", "--quiet"], env={}) catch {
+    Message(msg) =>
+      inspect(
+        msg,
+        content=(
+          #|error: conflicting arguments: verbose and quiet
+          #|
+          #|Usage: demo [options]
+          #|
+          #|Options:
+          #|  -h, --help  Show help information.
+          #|  --verbose   
+          #|  --quiet     
+          #|
+        ),
+      )
+  } noraise {
+    _ => panic()
+  }
+}
+```
+
+## Positional Value Ranges
 
 Positionals are parsed in declaration order (no explicit index).
 
@@ -207,89 +471,5 @@ test "bounded non-last positional failure snapshot" {
   } noraise {
     _ => panic()
   }
-}
-```
-
-## 5. Error Snapshot Pattern
-
-`parse` now emits one string error payload (`ArgError::Message`) that already
-contains the full contextual help text.
-
-```mbt check
-///|
-test "root invalid option snapshot" {
-  let cmd = @argparse.Command("demo", options=[
-    Option("count", long="count", about="repeat count"),
-  ])
-
-  try cmd.parse(argv=["--bad"], env={}) catch {
-    Message(msg) =>
-      inspect(
-        msg,
-        content=(
-          #|error: unexpected argument '--bad' found
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help       Show help information.
-          #|  --count <count>  repeat count
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-}
-
-///|
-test "subcommand invalid option snapshot" {
-  let cmd = @argparse.Command("demo", subcommands=[
-    Command("echo", options=[Option("times", long="times")]),
-  ])
-
-  try cmd.parse(argv=["echo", "--oops"], env={}) catch {
-    Message(msg) =>
-      inspect(
-        msg,
-        content=(
-          #|error: unexpected argument '--oops' found
-          #|
-          #|Usage: demo echo [options]
-          #|
-          #|Options:
-          #|  -h, --help       Show help information.
-          #|  --times <times>  
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-}
-```
-
-## 6. Rendering Help Without Parsing
-
-```mbt check
-///|
-test "render_help remains pure" {
-  let cmd = @argparse.Command("demo", about="demo app", options=[
-    Option("count", long="count"),
-  ])
-  let help = cmd.render_help()
-  inspect(
-    help,
-    content=(
-      #|Usage: demo [options]
-      #|
-      #|demo app
-      #|
-      #|Options:
-      #|  -h, --help       Show help information.
-      #|  --count <count>  
-      #|
-    ),
-  )
 }
 ```
