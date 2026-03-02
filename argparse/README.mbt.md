@@ -441,7 +441,7 @@ test "bounded non-last positional failure snapshot" {
       inspect(
         msg,
         content=(
-          #|error: too many positional arguments were provided
+          #|error: unexpected value 'd' for '<second>' found; no more were expected
           #|
           #|Usage: demo <first...> <second>
           #|
