@@ -224,23 +224,6 @@ fn arg_error_for_parse_failure(
 }
 
 ///|
-fn arg_error_for_build_failure(
-  err : ArgBuildError,
-  cmd : Command,
-  inherited_globals : Array[Arg],
-  command_path : String,
-) -> ArgError {
-  Message(
-    format_error_with_help(
-      err.arg_build_error_message(),
-      cmd,
-      inherited_globals,
-      command_path,
-    ),
-  )
-}
-
-///|
 fn parse_command(
   cmd : Command,
   argv : ArrayView[String],
@@ -325,11 +308,8 @@ fn parse_command(
         command_path,
       )
     Unsupported(msg) =>
-      raise arg_error_for_build_failure(
-        Unsupported(msg),
-        cmd,
-        inherited_globals,
-        command_path,
+      raise ArgError::Message(
+        "error: command definition validation failed: \{msg}",
       )
     err => raise err
   }
@@ -492,9 +472,10 @@ fn parse_command_impl(
     }
     if arg.has_prefix("-") && arg != "-" {
       // Parse short groups like `-abc` and short values like `-c3`.
-      let mut pos = 1
-      while pos < arg.length() {
-        let short = arg.get_char(pos).unwrap()
+      let chars = arg.iter()
+      ignore(chars.next())
+      let mut consumed_next = false
+      while chars.next() is Some(short) {
         if short == 'h' && builtin_help_short {
           raise_context_help(cmd, inherited_globals, command_path)
         }
@@ -507,8 +488,8 @@ fn parse_command_impl(
         }
         if spec.info is (OptionInfo(_) | PositionalInfo(_)) {
           check_duplicate_set_occurrence(matches, spec)
-          if pos + 1 < arg.length() {
-            let rest = arg.unsafe_substring(start=pos + 1, end=arg.length())
+          let rest = String::from_iter(chars)
+          if rest != "" {
             let inline = match rest.strip_prefix("=") {
               Some(view) => view.to_string()
               None => rest
@@ -523,8 +504,8 @@ fn parse_command_impl(
                 short_index,
               )
             if can_take_next {
-              i = i + 1
-              assign_value(matches, spec, argv[i], Argv)
+              consumed_next = true
+              assign_value(matches, spec, argv[i + 1], Argv)
             } else {
               raise ArgParseError::MissingValue("-\{short}")
             }
@@ -543,9 +524,8 @@ fn parse_command_impl(
             _ => apply_flag(matches, spec, Argv)
           }
         }
-        pos = pos + short.utf16_len()
       }
-      i = i + 1
+      i = i + 1 + (if consumed_next { 1 } else { 0 })
       continue
     }
     if help_subcommand_enabled(cmd) && arg == "help" {

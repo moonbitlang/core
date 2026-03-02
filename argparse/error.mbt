@@ -16,7 +16,8 @@
 /// Unified error surface exposed by argparse.
 ///
 /// `Message` is display-ready text intended for end users.
-/// For parse/build failures it already includes the contextual help message.
+/// Parse failures include contextual help; command-definition validation
+/// failures are returned as plain validation messages.
 pub suberror ArgError {
   Message(String)
 }
@@ -86,13 +87,6 @@ fn ArgParseError::arg_parse_error_message(self : ArgParseError) -> String {
 /// Internal build errors raised while validating command definitions.
 priv suberror ArgBuildError {
   Unsupported(String)
-}
-
-///|
-fn ArgBuildError::arg_build_error_message(self : ArgBuildError) -> String {
-  match self {
-    Unsupported(msg) => "error: \{msg}"
-  }
 }
 
 ///|

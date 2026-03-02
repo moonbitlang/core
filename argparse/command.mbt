@@ -113,8 +113,10 @@ pub fn Command::render_help(self : Command) -> String {
 /// Behavior:
 /// - Help/version requests print output immediately and terminate with exit code
 ///   `0`.
-/// - Parse/build failures raise `ArgError::Message` where the payload includes
-///   the error text and full contextual help output.
+/// - Parse failures raise `ArgError::Message` where the payload includes the
+///   error text and full contextual help output.
+/// - Command-definition validation failures raise `ArgError::Message` with a
+///   validation-failure message (without appended help).
 ///
 /// Value precedence is `argv > env > default_values`.
 #as_free_fn
