@@ -24,17 +24,6 @@ fn positional_args(args : Array[Arg]) -> Array[Arg] {
 }
 
 ///|
-fn last_positional_index(positionals : Array[Arg]) -> Int? {
-  for idx in 0..<positionals.length() {
-    let arg = positionals[idx]
-    if arg.info is PositionalInfo(last=true, ..) {
-      return Some(idx)
-    }
-  }
-  None
-}
-
-///|
 fn next_positional(positionals : Array[Arg], collected : Array[String]) -> Arg? {
   let target = collected.length()
   let total = target + 1

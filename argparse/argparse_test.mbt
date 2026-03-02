@@ -119,7 +119,7 @@ test "declaration order controls positional parsing" {
 test "bounded non-last positional remains supported" {
   let cmd = @argparse.Command("demo", positionals=[
     Positional("first", num_args=ValueRange(lower=1, upper=2)),
-    Positional("second", required=true),
+    Positional("second", num_args=@argparse.ValueRange::single()),
   ])
 
   let two = cmd.parse(argv=["a", "b"], env=empty_env()) catch { _ => panic() }

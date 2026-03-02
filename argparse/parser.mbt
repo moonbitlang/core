@@ -382,7 +382,6 @@ fn parse_command_impl(
     long_index.get("version") is None
   let positionals = positional_args(args)
   let positional_values = []
-  let last_pos_idx = last_positional_index(positionals)
   let mut i = 0
   let mut positional_arg_found = false
   while i < argv.length() {
@@ -395,16 +394,6 @@ fn parse_command_impl(
         positional_values.push(rest)
       }
       break
-    }
-    let force_positional = match last_pos_idx {
-      Some(idx) => positional_values.length() >= idx
-      None => false
-    }
-    if force_positional {
-      positional_values.push(arg)
-      positional_arg_found = true
-      i = i + 1
-      continue
     }
     if builtin_help_short && arg == "-h" {
       raise_context_help(cmd, inherited_globals, command_path)

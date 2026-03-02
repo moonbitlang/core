@@ -75,9 +75,9 @@ pub impl Show for OptionAction
 pub struct Positional {
   // private fields
 
-  fn new(StringView, about? : StringView, env? : StringView, default_values? : ArrayView[String], num_args? : ValueRange, allow_hyphen_values? : Bool, last? : Bool, requires? : ArrayView[String], conflicts_with? : ArrayView[String], required? : Bool, global? : Bool, hidden? : Bool) -> Positional
+  fn new(StringView, about? : StringView, env? : StringView, default_values? : ArrayView[String], num_args? : ValueRange, allow_hyphen_values? : Bool, requires? : ArrayView[String], conflicts_with? : ArrayView[String], global? : Bool, hidden? : Bool) -> Positional
 }
-pub fn Positional::new(StringView, about? : StringView, env? : StringView, default_values? : ArrayView[String], num_args? : ValueRange, allow_hyphen_values? : Bool, last? : Bool, requires? : ArrayView[String], conflicts_with? : ArrayView[String], required? : Bool, global? : Bool, hidden? : Bool) -> Self
+pub fn Positional::new(StringView, about? : StringView, env? : StringView, default_values? : ArrayView[String], num_args? : ValueRange, allow_hyphen_values? : Bool, requires? : ArrayView[String], conflicts_with? : ArrayView[String], global? : Bool, hidden? : Bool) -> Self
 
 pub struct ValueRange {
   // private fields
