@@ -296,9 +296,9 @@ fn parse_command(
         inherited_globals,
         command_path,
       )
-    TooManyPositionals =>
+    TooManyPositionals(value, arg) =>
       raise arg_error_for_parse_failure(
-        TooManyPositionals,
+        TooManyPositionals(value, arg),
         cmd,
         inherited_globals,
         command_path,

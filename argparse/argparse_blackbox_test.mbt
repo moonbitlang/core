@@ -756,7 +756,7 @@ test "positionals dash handling and separator" {
       inspect(
         msg,
         content=(
-          #|error: too many positional arguments were provided
+          #|error: unexpected value 'y' for '<n>' found; no more were expected
           #|
           #|Usage: demo [n]
           #|
@@ -1014,7 +1014,7 @@ test "options consume exactly one value per occurrence" {
       inspect(
         msg,
         content=(
-          #|error: too many positional arguments were provided
+          #|error: unexpected value 'b' found; no more were expected
           #|
           #|Usage: demo [options]
           #|
@@ -1130,7 +1130,7 @@ test "option parsing stops at the next option token" {
       inspect(
         msg,
         content=(
-          #|error: too many positional arguments were provided
+          #|error: unexpected value 'y' found; no more were expected
           #|
           #|Usage: demo [options]
           #|
@@ -1150,7 +1150,7 @@ test "option parsing stops at the next option token" {
       inspect(
         msg,
         content=(
-          #|error: too many positional arguments were provided
+          #|error: unexpected value 'y' found; no more were expected
           #|
           #|Usage: demo [options]
           #|
@@ -1329,7 +1329,7 @@ test "validation branches exposed through parse" {
       inspect(
         msg,
         content=(
-          #|error: too many positional arguments were provided
+          #|error: unexpected value 'b' found; no more were expected
           #|
           #|Usage: demo [options]
           #|

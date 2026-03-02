@@ -53,7 +53,17 @@ fn assign_positionals(
     }
   }
   if cursor < values.length() {
-    raise TooManyPositionals
+    let overflow_label = if positionals.length() > 0 {
+      let last = positionals[positionals.length() - 1]
+      if last.multiple {
+        Some("<\{last.name}...>")
+      } else {
+        Some("<\{last.name}>")
+      }
+    } else {
+      None
+    }
+    raise TooManyPositionals(values[cursor], overflow_label)
   }
 }
 

@@ -34,7 +34,7 @@ priv suberror ArgParseError {
   MissingRequired(String, String?)
   TooFewValues(String, Int, Int)
   TooManyValues(String, Int, Int)
-  TooManyPositionals
+  TooManyPositionals(String, String?)
   InvalidValue(String)
   MissingGroup(String)
   GroupConflict(String)
@@ -68,7 +68,10 @@ fn ArgParseError::arg_parse_error_message(self : ArgParseError) -> String {
       "error: '\{name}' requires at least \{min} values but only \{got} were provided"
     TooManyValues(name, got, max) =>
       "error: '\{name}' allows at most \{max} values but \{got} were provided"
-    TooManyPositionals => "error: too many positional arguments were provided"
+    TooManyPositionals(value, Some(arg)) =>
+      "error: unexpected value '\{value}' for '\{arg}' found; no more were expected"
+    TooManyPositionals(value, None) =>
+      "error: unexpected value '\{value}' found; no more were expected"
     InvalidValue(msg) => "error: \{msg}"
     MissingGroup(name) =>
       "error: the following required argument group was not provided: '\{name}'"

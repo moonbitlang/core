@@ -340,7 +340,7 @@ test "parse error show is readable" {
       inspect(
         msg,
         content=(
-          #|error: too many positional arguments were provided
+          #|error: unexpected value 'bob' for '<name>' found; no more were expected
           #|
           #|Usage: demo [options] [name]
           #|
