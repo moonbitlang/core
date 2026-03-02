@@ -56,7 +56,7 @@ test "render help snapshot with groups and hidden entries" {
       #|  help  Print help for the subcommand(s).
       #|
       #|Arguments:
-      #|  target   required
+      #|  target   
       #|  rest...  
       #|
       #|Options:
@@ -852,7 +852,7 @@ test "empty positional value range is rejected at build time" {
           #|
           #|Arguments:
           #|  skip  
-          #|  name  required
+          #|  name  
           #|
           #|Options:
           #|  -h, --help  Show help information.
@@ -1420,7 +1420,7 @@ test "validation branches exposed through parse" {
           #|Usage: demo <x...>
           #|
           #|Arguments:
-          #|  x...  required
+          #|  x...  
           #|
           #|Options:
           #|  -h, --help  Show help information.
@@ -2489,7 +2489,7 @@ test "subcommand help puts required options in usage" {
           #|Run a file
           #|
           #|Arguments:
-          #|  file  required
+          #|  file  
           #|
           #|Options:
           #|  -h, --help         Show help information.
@@ -2594,7 +2594,7 @@ test "positional num_args lower bound rejects missing argv values" {
           #|Usage: demo <first...>
           #|
           #|Arguments:
-          #|  first...  required
+          #|  first...  
           #|
           #|Options:
           #|  -h, --help  Show help information.

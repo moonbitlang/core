@@ -381,9 +381,6 @@ fn arg_doc(arg : Arg) -> String {
       notes.push("default: \{values[0]}")
     }
   }
-  if is_required_arg(arg) && arg.info is PositionalInfo(_) {
-    notes.push("required")
-  }
   let help = arg.about.unwrap_or("")
   if help == "" {
     notes.join(", ")
