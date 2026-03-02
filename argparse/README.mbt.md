@@ -257,12 +257,7 @@ test "option input forms snapshot" {
 ///|
 test "double-dash separator snapshot" {
   let cmd = @argparse.Command("demo", positionals=[
-    Positional(
-      "tail",
-      num_args=ValueRange(lower=0),
-      last=true,
-      allow_hyphen_values=true,
-    ),
+    Positional("tail", num_args=ValueRange(lower=0), allow_hyphen_values=true),
   ])
   let parsed = cmd.parse(argv=["--", "--x", "-y"], env={}) catch {
     _ => panic()
@@ -432,7 +427,7 @@ Positionals are parsed in declaration order (no explicit index).
 test "bounded non-last positional success snapshot" {
   let cmd = @argparse.Command("demo", positionals=[
     Positional("first", num_args=ValueRange(lower=1, upper=2)),
-    Positional("second", required=true),
+    Positional("second", num_args=@argparse.ValueRange::single()),
   ])
 
   let parsed = cmd.parse(argv=["a", "b", "c"], env={}) catch { _ => panic() }
@@ -448,7 +443,7 @@ test "bounded non-last positional success snapshot" {
 test "bounded non-last positional failure snapshot" {
   let cmd = @argparse.Command("demo", positionals=[
     Positional("first", num_args=ValueRange(lower=1, upper=2)),
-    Positional("second", required=true),
+    Positional("second", num_args=@argparse.ValueRange::single()),
   ])
   try cmd.parse(argv=["a", "b", "c", "d"], env={}) catch {
     Message(msg) =>

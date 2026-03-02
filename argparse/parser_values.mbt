@@ -62,8 +62,6 @@ fn positional_min_required(arg : Arg) -> Int {
   let (min, _) = arg_min_max(arg)
   if min > 0 {
     min
-  } else if arg.required {
-    1
   } else {
     0
   }
