@@ -47,15 +47,20 @@ priv struct Arg {
 
 ///|
 priv enum ArgInfo {
-  Flag(short~ : Char?, long~ : String?, action~ : FlagAction, negatable~ : Bool)
-  Option(
+  FlagInfo(
+    short~ : Char?,
+    long~ : String?,
+    action~ : FlagAction,
+    negatable~ : Bool
+  )
+  OptionInfo(
     short~ : Char?,
     long~ : String?,
     action~ : OptionAction,
     default_values~ : Array[String]?,
     allow_hyphen_values~ : Bool
   )
-  Positional(
+  PositionalInfo(
     num_args~ : ValueRange?,
     last~ : Bool,
     default_values~ : Array[String]?,
@@ -65,7 +70,7 @@ priv enum ArgInfo {
 
 ///|
 /// Declarative flag constructor wrapper.
-pub struct FlagArg {
+pub struct Flag {
   priv arg : Arg
 
   /// Create a flag argument.
@@ -82,7 +87,7 @@ pub struct FlagArg {
     global? : Bool,
     negatable? : Bool,
     hidden? : Bool,
-  ) -> FlagArg
+  ) -> Flag
 }
 
 ///|
@@ -97,7 +102,7 @@ pub struct FlagArg {
 /// `global=true` makes the flag available in subcommands.
 ///
 /// If `negatable=true`, `--no-<long>` is accepted for long flags.
-pub fn FlagArg::new(
+pub fn Flag::new(
   name : StringView,
   short? : Char,
   long? : StringView = name,
@@ -110,7 +115,7 @@ pub fn FlagArg::new(
   global? : Bool = false,
   negatable? : Bool = false,
   hidden? : Bool = false,
-) -> FlagArg {
+) -> Flag {
   let name = name.to_string()
   let long = if long == "" { None } else { Some(long.to_string()) }
   let about = about.map(v => v.to_string())
@@ -126,7 +131,7 @@ pub fn FlagArg::new(
       conflicts_with: conflicts_with.to_array(),
       required,
       //
-      info: Flag(short~, long~, action~, negatable~),
+      info: FlagInfo(short~, long~, action~, negatable~),
       //
       // option_action: OptionAction::Set,
       //
@@ -144,7 +149,7 @@ pub fn FlagArg::new(
 
 ///|
 /// Declarative option constructor wrapper.
-pub struct OptionArg {
+pub struct Option {
   priv arg : Arg
 
   /// Create an option argument.
@@ -162,7 +167,7 @@ pub struct OptionArg {
     required? : Bool,
     global? : Bool,
     hidden? : Bool,
-  ) -> OptionArg
+  ) -> Option
 }
 
 ///|
@@ -177,7 +182,7 @@ pub struct OptionArg {
 /// Use `action=Append` for repeated occurrences.
 ///
 /// `global=true` makes the option available in subcommands.
-pub fn OptionArg::new(
+pub fn Option::new(
   name : StringView,
   short? : Char,
   long? : StringView = name,
@@ -191,7 +196,7 @@ pub fn OptionArg::new(
   required? : Bool = false,
   global? : Bool = false,
   hidden? : Bool = false,
-) -> OptionArg {
+) -> Option {
   let name = name.to_string()
   let long = if long == "" { None } else { Some(long.to_string()) }
   let about = about.map(v => v.to_string())
@@ -207,7 +212,7 @@ pub fn OptionArg::new(
       global,
       hidden,
       //
-      info: Option(
+      info: OptionInfo(
         short~,
         long~,
         action~,
@@ -230,7 +235,7 @@ pub fn OptionArg::new(
 
 ///|
 /// Declarative positional constructor wrapper.
-pub struct PositionalArg {
+pub struct Positional {
   priv arg : Arg
 
   /// Create a positional argument.
@@ -247,7 +252,7 @@ pub struct PositionalArg {
     required? : Bool,
     global? : Bool,
     hidden? : Bool,
-  ) -> PositionalArg
+  ) -> Positional
 }
 
 ///|
@@ -256,7 +261,7 @@ pub struct PositionalArg {
 /// Positional ordering is declaration order.
 ///
 /// `num_args` controls the accepted value count.
-pub fn PositionalArg::new(
+pub fn Positional::new(
   name : StringView,
   about? : StringView,
   env? : StringView,
@@ -269,7 +274,7 @@ pub fn PositionalArg::new(
   required? : Bool = false,
   global? : Bool = false,
   hidden? : Bool = false,
-) -> PositionalArg {
+) -> Positional {
   let name = name.to_string()
   let about = about.map(v => v.to_string())
   let env = env.map(v => v.to_string())
@@ -284,7 +289,7 @@ pub fn PositionalArg::new(
       global,
       hidden,
       //
-      info: Positional(
+      info: PositionalInfo(
         num_args~,
         last~,
         default_values=default_values.map(values => values.to_array()),

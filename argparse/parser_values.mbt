@@ -88,7 +88,7 @@ fn add_value(
   arg : Arg,
   source : ValueSource,
 ) -> Unit {
-  if arg.multiple || arg.info is Option(action=Append, ..) {
+  if arg.multiple || arg.info is OptionInfo(action=Append, ..) {
     let arr = matches.values.get(name).unwrap_or([])
     arr.push(value)
     matches.values[name] = arr
@@ -107,29 +107,29 @@ fn assign_value(
   source : ValueSource,
 ) -> Unit raise ArgParseError {
   match arg.info {
-    Option(action=Append, ..) =>
+    OptionInfo(action=Append, ..) =>
       add_value(matches, arg.name, value, arg, source)
-    Option(action=Set, ..) | Positional(_) =>
+    OptionInfo(action=Set, ..) | PositionalInfo(_) =>
       add_value(matches, arg.name, value, arg, source)
-    Flag(action=SetTrue, ..) => {
+    FlagInfo(action=SetTrue, ..) => {
       let flag = parse_bool(value)
       matches.flags[arg.name] = flag
       matches.flag_sources[arg.name] = source
     }
-    Flag(action=SetFalse, ..) => {
+    FlagInfo(action=SetFalse, ..) => {
       let flag = parse_bool(value)
       matches.flags[arg.name] = !flag
       matches.flag_sources[arg.name] = source
     }
-    Flag(action=Count, ..) => {
+    FlagInfo(action=Count, ..) => {
       let count = parse_count(value)
       matches.counts[arg.name] = count
       matches.flags[arg.name] = count > 0
       matches.flag_sources[arg.name] = source
     }
-    Flag(action=Help, ..) =>
+    FlagInfo(action=Help, ..) =>
       raise InvalidArgument("help action does not take values")
-    Flag(action=Version, ..) =>
+    FlagInfo(action=Version, ..) =>
       raise InvalidArgument("version action does not take values")
   }
 }
@@ -137,7 +137,7 @@ fn assign_value(
 ///|
 fn option_conflict_label(arg : Arg) -> String {
   match arg.info {
-    Flag(long~, short~, ..) | Option(long~, short~, ..) =>
+    FlagInfo(long~, short~, ..) | OptionInfo(long~, short~, ..) =>
       match long {
         Some(name) => "--\{name}"
         None =>
@@ -146,7 +146,7 @@ fn option_conflict_label(arg : Arg) -> String {
             None => arg.name
           }
       }
-    Positional(_) => arg.name
+    PositionalInfo(_) => arg.name
   }
 }
 
@@ -155,7 +155,9 @@ fn check_duplicate_set_occurrence(
   matches : Matches,
   arg : Arg,
 ) -> Unit raise ArgParseError {
-  guard arg.info is (Option(action=Set, ..) | Positional(_)) else { return }
+  guard arg.info is (OptionInfo(action=Set, ..) | PositionalInfo(_)) else {
+    return
+  }
   if matches.values.get(arg.name) is Some(_) {
     raise InvalidArgument(
       "argument '\{option_conflict_label(arg)}' cannot be used multiple times",
@@ -174,7 +176,8 @@ fn should_stop_option_value(
     return false
   }
   if arg.info
-    is (Option(allow_hyphen_values~, ..) | Positional(allow_hyphen_values~, ..)) &&
+    is (OptionInfo(allow_hyphen_values~, ..)
+    | PositionalInfo(allow_hyphen_values~, ..)) &&
     allow_hyphen_values {
     // Rust clap parity:
     // - `clap_builder/src/parser/parser.rs`: `parse_long_arg` / `parse_short_arg`
@@ -209,29 +212,29 @@ fn apply_env(
       Some(v) => v
       None => continue
     }
-    if arg.info is (Option(_) | Positional(_)) {
+    if arg.info is (OptionInfo(_) | PositionalInfo(_)) {
       assign_value(matches, arg, value, Env)
       continue
     }
     match arg.info {
-      Flag(action=Count, ..) => {
+      FlagInfo(action=Count, ..) => {
         let count = parse_count(value)
         matches.counts[name] = count
         matches.flags[name] = count > 0
         matches.flag_sources[name] = Env
       }
-      Flag(action=SetFalse, ..) => {
+      FlagInfo(action=SetFalse, ..) => {
         let flag = parse_bool(value)
         matches.flags[name] = !flag
         matches.flag_sources[name] = Env
       }
-      Flag(action=SetTrue, ..) => {
+      FlagInfo(action=SetTrue, ..) => {
         let flag = parse_bool(value)
         matches.flags[name] = flag
         matches.flag_sources[name] = Env
       }
-      Option(_) | Positional(_) => ()
-      Flag(action=Help | Version, ..) => ()
+      OptionInfo(_) | PositionalInfo(_) => ()
+      FlagInfo(action=Help | Version, ..) => ()
     }
   }
 }
@@ -240,8 +243,8 @@ fn apply_env(
 fn apply_defaults(matches : Matches, args : Array[Arg]) -> Unit {
   for arg in args {
     let default_values = match arg.info {
-      Flag(_) => continue
-      Option(default_values~, ..) | Positional(default_values~, ..) =>
+      FlagInfo(_) => continue
+      OptionInfo(default_values~, ..) | PositionalInfo(default_values~, ..) =>
         default_values
     }
     if matches_has_value_or_flag(matches, arg.name) {
@@ -265,15 +268,15 @@ fn matches_has_value_or_flag(matches : Matches, name : String) -> Bool {
 ///|
 fn apply_flag(matches : Matches, arg : Arg, source : ValueSource) -> Unit {
   match arg.info {
-    Flag(action=SetTrue, ..) => matches.flags[arg.name] = true
-    Flag(action=SetFalse, ..) => matches.flags[arg.name] = false
-    Flag(action=Count, ..) => {
+    FlagInfo(action=SetTrue, ..) => matches.flags[arg.name] = true
+    FlagInfo(action=SetFalse, ..) => matches.flags[arg.name] = false
+    FlagInfo(action=Count, ..) => {
       let current = matches.counts.get(arg.name).unwrap_or(0)
       matches.counts[arg.name] = current + 1
       matches.flags[arg.name] = true
     }
-    Flag(action=Help, ..) => ()
-    Flag(action=Version, ..) => ()
+    FlagInfo(action=Help, ..) => ()
+    FlagInfo(action=Version, ..) => ()
     _ => matches.flags[arg.name] = true
   }
   matches.flag_sources[arg.name] = source
