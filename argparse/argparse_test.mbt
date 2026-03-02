@@ -197,7 +197,7 @@ test "subcommand parse errors include subcommand help" {
 }
 
 ///|
-test "build errors are surfaced as ArgError message with help" {
+test "build errors are surfaced as validation failure message" {
   let cmd = @argparse.Command("demo", flags=[
     Flag("fast", long="fast", requires=["missing"]),
   ])
@@ -207,14 +207,7 @@ test "build errors are surfaced as ArgError message with help" {
       inspect(
         msg,
         content=(
-          #|error: unknown requires target: fast -> missing
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|  --fast      
-          #|
+          #|error: command definition validation failed: unknown requires target: fast -> missing
         ),
       )
   } noraise {

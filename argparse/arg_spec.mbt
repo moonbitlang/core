@@ -292,7 +292,7 @@ fn arg_name(arg : Arg) -> String {
 fn range_allows_multiple(range : ValueRange?) -> Bool {
   range is Some(r) &&
   (match r.upper {
-    Some(upper) => r.lower != upper || r.lower > 1
+    Some(upper) => upper > 1
     None => true
   })
 }

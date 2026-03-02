@@ -825,17 +825,7 @@ test "empty positional value range is rejected at build time" {
       inspect(
         msg,
         content=(
-          #|error: empty value range (0..0) is unsupported
-          #|
-          #|Usage: demo [skip] <name>
-          #|
-          #|Arguments:
-          #|  skip  
-          #|  name  
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|
+          #|error: command definition validation failed: empty value range (0..0) is unsupported
         ),
       )
   } noraise {
@@ -1064,13 +1054,7 @@ test "flag and option args require short or long names" {
       inspect(
         msg,
         content=(
-          #|error: flag/option args require short/long/env
-          #|
-          #|Usage: demo
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|
+          #|error: command definition validation failed: flag/option args require short/long/env
         ),
       )
   } noraise {
@@ -1087,13 +1071,7 @@ test "flag and option args require short or long names" {
       inspect(
         msg,
         content=(
-          #|error: flag/option args require short/long/env
-          #|
-          #|Usage: demo
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|
+          #|error: command definition validation failed: flag/option args require short/long/env
         ),
       )
   } noraise {
@@ -1259,13 +1237,7 @@ test "validation branches exposed through parse" {
       inspect(
         msg,
         content=(
-          #|error: flag/option args require short/long/env
-          #|
-          #|Usage: demo
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|
+          #|error: command definition validation failed: flag/option args require short/long/env
         ),
       )
   } noraise {
@@ -1281,14 +1253,7 @@ test "validation branches exposed through parse" {
       inspect(
         msg,
         content=(
-          #|error: help/version actions do not support negatable
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|  --[no-]f    
-          #|
+          #|error: command definition validation failed: help/version actions do not support negatable
         ),
       )
   } noraise {
@@ -1305,14 +1270,7 @@ test "validation branches exposed through parse" {
       inspect(
         msg,
         content=(
-          #|error: help/version actions do not support env/defaults
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|  --f         [env: F]
-          #|
+          #|error: command definition validation failed: help/version actions do not support env/defaults
         ),
       )
   } noraise {
@@ -1352,14 +1310,7 @@ test "validation branches exposed through parse" {
       inspect(
         msg,
         content=(
-          #|error: default_values with multiple entries require action=Append
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|  --x <x>     [default: a, b]
-          #|
+          #|error: command definition validation failed: default_values with multiple entries require action=Append
         ),
       )
   } noraise {
@@ -1375,16 +1326,7 @@ test "validation branches exposed through parse" {
       inspect(
         msg,
         content=(
-          #|error: max values must be >= min values
-          #|
-          #|Usage: demo <x...>
-          #|
-          #|Arguments:
-          #|  x...  
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|
+          #|error: command definition validation failed: max values must be >= min values
         ),
       )
   } noraise {
@@ -1400,16 +1342,7 @@ test "validation branches exposed through parse" {
       inspect(
         msg,
         content=(
-          #|error: min values must be >= 0
-          #|
-          #|Usage: demo [x...]
-          #|
-          #|Arguments:
-          #|  x...  
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|
+          #|error: command definition validation failed: min values must be >= 0
         ),
       )
   } noraise {
@@ -1425,16 +1358,7 @@ test "validation branches exposed through parse" {
       inspect(
         msg,
         content=(
-          #|error: max values must be >= 0
-          #|
-          #|Usage: demo [x...]
-          #|
-          #|Arguments:
-          #|  x...  
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|
+          #|error: command definition validation failed: max values must be >= 0
         ),
       )
   } noraise {
@@ -1459,13 +1383,7 @@ test "validation branches exposed through parse" {
       inspect(
         msg,
         content=(
-          #|error: duplicate group: g
-          #|
-          #|Usage: demo
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|
+          #|error: command definition validation failed: duplicate group: g
         ),
       )
   } noraise {
@@ -1482,13 +1400,7 @@ test "validation branches exposed through parse" {
       inspect(
         msg,
         content=(
-          #|error: group cannot require itself: g
-          #|
-          #|Usage: demo
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|
+          #|error: command definition validation failed: group cannot require itself: g
         ),
       )
   } noraise {
@@ -1505,13 +1417,7 @@ test "validation branches exposed through parse" {
       inspect(
         msg,
         content=(
-          #|error: group cannot conflict with itself: g
-          #|
-          #|Usage: demo
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|
+          #|error: command definition validation failed: group cannot conflict with itself: g
         ),
       )
   } noraise {
@@ -1528,13 +1434,7 @@ test "validation branches exposed through parse" {
       inspect(
         msg,
         content=(
-          #|error: unknown group arg: g -> missing
-          #|
-          #|Usage: demo
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|
+          #|error: command definition validation failed: unknown group arg: g -> missing
         ),
       )
   } noraise {
@@ -1551,15 +1451,7 @@ test "validation branches exposed through parse" {
       inspect(
         msg,
         content=(
-          #|error: duplicate arg name: x
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|  --x <x>     
-          #|  --y <x>     
-          #|
+          #|error: command definition validation failed: duplicate arg name: x
         ),
       )
   } noraise {
@@ -1576,15 +1468,7 @@ test "validation branches exposed through parse" {
       inspect(
         msg,
         content=(
-          #|error: duplicate long option: --same
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|  --same <x>  
-          #|  --same <y>  
-          #|
+          #|error: command definition validation failed: duplicate long option: --same
         ),
       )
   } noraise {
@@ -1601,15 +1485,7 @@ test "validation branches exposed through parse" {
       inspect(
         msg,
         content=(
-          #|error: duplicate long option: --no-hello
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help    Show help information.
-          #|  --[no-]hello  
-          #|  --no-hello    
-          #|
+          #|error: command definition validation failed: duplicate long option: --no-hello
         ),
       )
   } noraise {
@@ -1626,15 +1502,7 @@ test "validation branches exposed through parse" {
       inspect(
         msg,
         content=(
-          #|error: duplicate short option: -s
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help   Show help information.
-          #|  -s, --x <x>  
-          #|  -s, --y <y>  
-          #|
+          #|error: command definition validation failed: duplicate short option: -s
         ),
       )
   } noraise {
@@ -1651,14 +1519,7 @@ test "validation branches exposed through parse" {
       inspect(
         msg,
         content=(
-          #|error: arg cannot require itself: x
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|  --x         
-          #|
+          #|error: command definition validation failed: arg cannot require itself: x
         ),
       )
   } noraise {
@@ -1675,14 +1536,7 @@ test "validation branches exposed through parse" {
       inspect(
         msg,
         content=(
-          #|error: arg cannot conflict with itself: x
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|  --x         
-          #|
+          #|error: command definition validation failed: arg cannot conflict with itself: x
         ),
       )
   } noraise {
@@ -1699,18 +1553,7 @@ test "validation branches exposed through parse" {
       inspect(
         msg,
         content=(
-          #|error: duplicate subcommand: x
-          #|
-          #|Usage: demo [command]
-          #|
-          #|Commands:
-          #|  x     
-          #|  x     
-          #|  help  Print help for the subcommand(s).
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|
+          #|error: command definition validation failed: duplicate subcommand: x
         ),
       )
   } noraise {
@@ -1727,13 +1570,7 @@ test "validation branches exposed through parse" {
       inspect(
         msg,
         content=(
-          #|error: subcommand_required requires at least one subcommand
-          #|
-          #|Usage: demo
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|
+          #|error: command definition validation failed: subcommand_required requires at least one subcommand
         ),
       )
   } noraise {
@@ -1750,17 +1587,7 @@ test "validation branches exposed through parse" {
       inspect(
         msg,
         content=(
-          #|error: subcommand name reserved for built-in help: help (disable with disable_help_subcommand)
-          #|
-          #|Usage: demo [command]
-          #|
-          #|Commands:
-          #|  help  
-          #|  help  Print help for the subcommand(s).
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|
+          #|error: command definition validation failed: subcommand name reserved for built-in help: help (disable with disable_help_subcommand)
         ),
       )
   } noraise {
@@ -1822,14 +1649,7 @@ test "validation branches exposed through parse" {
       inspect(
         msg,
         content=(
-          #|error: version action requires command version text
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|  --v         
-          #|
+          #|error: command definition validation failed: version action requires command version text
         ),
       )
   } noraise {
@@ -1924,13 +1744,7 @@ test "group validation catches unknown requires target" {
       inspect(
         msg,
         content=(
-          #|error: unknown group requires target: g -> missing
-          #|
-          #|Usage: demo
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|
+          #|error: command definition validation failed: unknown group requires target: g -> missing
         ),
       )
   } noraise {
@@ -1950,13 +1764,7 @@ test "group validation catches unknown conflicts_with target" {
       inspect(
         msg,
         content=(
-          #|error: unknown group conflicts_with target: g -> missing
-          #|
-          #|Usage: demo
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|
+          #|error: command definition validation failed: unknown group conflicts_with target: g -> missing
         ),
       )
   } noraise {
@@ -2063,14 +1871,7 @@ test "arg validation catches unknown requires target" {
       inspect(
         msg,
         content=(
-          #|error: unknown requires target: mode -> missing
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help     Show help information.
-          #|  --mode <mode>  
-          #|
+          #|error: command definition validation failed: unknown requires target: mode -> missing
         ),
       )
   } noraise {
@@ -2089,14 +1890,7 @@ test "arg validation catches unknown conflicts_with target" {
       inspect(
         msg,
         content=(
-          #|error: unknown conflicts_with target: mode -> missing
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help     Show help information.
-          #|  --mode <mode>  
-          #|
+          #|error: command definition validation failed: unknown conflicts_with target: mode -> missing
         ),
       )
   } noraise {
@@ -2780,18 +2574,7 @@ test "child local arg shadowing inherited global is rejected at build time" {
       inspect(
         msg,
         content=(
-          #|error: arg 'mode' shadows an inherited global; rename the arg or mark it global
-          #|
-          #|Usage: demo [options] [command]
-          #|
-          #|Commands:
-          #|  run   
-          #|  help  Print help for the subcommand(s).
-          #|
-          #|Options:
-          #|  -h, --help     Show help information.
-          #|  --mode <mode>  [env: MODE] [default: safe]
-          #|
+          #|error: command definition validation failed: arg 'mode' shadows an inherited global; rename the arg or mark it global
         ),
       )
   } noraise {
@@ -2914,18 +2697,7 @@ test "global override with incompatible inherited type is rejected" {
       inspect(
         msg,
         content=(
-          #|error: global arg 'mode' is incompatible with inherited global definition
-          #|
-          #|Usage: demo --mode <mode> [command]
-          #|
-          #|Commands:
-          #|  run   
-          #|  help  Print help for the subcommand(s).
-          #|
-          #|Options:
-          #|  -h, --help     Show help information.
-          #|  --mode <mode>  
-          #|
+          #|error: command definition validation failed: global arg 'mode' is incompatible with inherited global definition
         ),
       )
   } noraise {
@@ -2946,18 +2718,7 @@ test "child local long alias collision with inherited global is rejected" {
       inspect(
         msg,
         content=(
-          #|error: arg 'local' long option --verbose conflicts with inherited global 'verbose'
-          #|
-          #|Usage: demo [options] [command]
-          #|
-          #|Commands:
-          #|  run   
-          #|  help  Print help for the subcommand(s).
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|  --verbose   
-          #|
+          #|error: command definition validation failed: arg 'local' long option --verbose conflicts with inherited global 'verbose'
         ),
       )
   } noraise {
@@ -2976,18 +2737,7 @@ test "child local short alias collision with inherited global is rejected" {
       inspect(
         msg,
         content=(
-          #|error: arg 'local' short option -v conflicts with inherited global 'verbose'
-          #|
-          #|Usage: demo [options] [command]
-          #|
-          #|Commands:
-          #|  run   
-          #|  help  Print help for the subcommand(s).
-          #|
-          #|Options:
-          #|  -h, --help     Show help information.
-          #|  -v, --verbose  
-          #|
+          #|error: command definition validation failed: arg 'local' short option -v conflicts with inherited global 'verbose'
         ),
       )
   } noraise {
@@ -3133,21 +2883,30 @@ test "global override with different negatable setting is rejected" {
       inspect(
         msg,
         content=(
-          #|error: global arg 'verbose' is incompatible with inherited global definition
-          #|
-          #|Usage: demo [options] [command]
-          #|
-          #|Commands:
-          #|  run   
-          #|  help  Print help for the subcommand(s).
-          #|
-          #|Options:
-          #|  -h, --help      Show help information.
-          #|  --[no-]verbose  
-          #|
+          #|error: command definition validation failed: global arg 'verbose' is incompatible with inherited global definition
         ),
       )
   } noraise {
     _ => panic()
   }
+}
+
+///|
+test "positional range 0..1 renders as single optional value" {
+  let cmd = @argparse.Command("demo", positionals=[
+    Positional("x", num_args=ValueRange(lower=0, upper=1)),
+  ])
+  inspect(
+    cmd.render_help(),
+    content=(
+      #|Usage: demo [x]
+      #|
+      #|Arguments:
+      #|  x  
+      #|
+      #|Options:
+      #|  -h, --help  Show help information.
+      #|
+    ),
+  )
 }
