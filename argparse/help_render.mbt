@@ -368,25 +368,23 @@ fn positional_display(arg : Arg) -> String {
 fn arg_doc(arg : Arg) -> String {
   let notes = []
   match arg.env {
-    Some(env_name) => notes.push("env: \{env_name}")
+    Some(env_name) => notes.push("[env: \{env_name}]")
     None => ()
   }
   if arg.info
     is (OptionInfo(default_values~, ..) | PositionalInfo(default_values~, ..)) &&
     default_values is Some(values) {
-    if values.length() > 1 {
+    if values.length() > 0 {
       let defaults = values.join(", ")
-      notes.push("defaults: \{defaults}")
-    } else if values.length() == 1 {
-      notes.push("default: \{values[0]}")
+      notes.push("[default: \{defaults}]")
     }
   }
   let help = arg.about.unwrap_or("")
   if help == "" {
-    notes.join(", ")
+    notes.join(" ")
   } else if notes.length() > 0 {
-    let notes_text = notes.join(", ")
-    "\{help} (\{notes_text})"
+    let notes_text = notes.join(" ")
+    "\{help} \{notes_text}"
   } else {
     help
   }
@@ -417,18 +415,18 @@ fn is_required_arg(arg : Arg) -> Bool {
 
 ///|
 fn group_label(group : ArgGroup) -> String {
-  let flags = []
+  let tags = []
   if group.required {
-    flags.push("required")
+    tags.push("[required]")
   }
   if !group.multiple {
-    flags.push("exclusive")
+    tags.push("[exclusive]")
   }
-  if flags.length() == 0 {
+  if tags.length() == 0 {
     group.name
   } else {
-    let flags_text = flags.join(", ")
-    "\{group.name} (\{flags_text})"
+    let tags_text = tags.join(" ")
+    "\{group.name} \{tags_text}"
   }
 }
 
