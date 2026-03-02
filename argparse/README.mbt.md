@@ -196,8 +196,8 @@ test "bounded non-last positional failure snapshot" {
           #|Usage: demo <first...> <second>
           #|
           #|Arguments:
-          #|  first...  required
-          #|  second    required
+          #|  first...  
+          #|  second    
           #|
           #|Options:
           #|  -h, --help  Show help information.
