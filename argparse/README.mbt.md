@@ -467,4 +467,64 @@ test "bounded non-last positional failure snapshot" {
     _ => panic()
   }
 }
+
+///|
+test "positional passthrough keeps child argv after double-dash snapshot" {
+  let cmd = @argparse.Command(
+    "wrap",
+    options=[Option("config"), Option("mode")],
+    positionals=[
+      Positional("child_argv", num_args=ValueRange(lower=0), allow_hyphen_values=true),
+    ],
+  )
+
+  let parsed = cmd.parse(argv=[
+    "--config",
+    "cfg.toml",
+    "--",
+    "child",
+    "--mode",
+    "fast",
+    "--",
+    "--flag",
+  ], env={}) catch {
+    _ => panic()
+  }
+  @debug.debug_inspect(
+    parsed.values,
+    content=(
+      #|{
+      #|  "config": ["cfg.toml"],
+      #|  "child_argv": ["child", "--mode", "fast", "--", "--flag"],
+      #|}
+    ),
+  )
+}
+
+///|
+test "without separator outer parser still consumes its own option names snapshot" {
+  let cmd = @argparse.Command(
+    "wrap",
+    options=[Option("config"), Option("mode")],
+    positionals=[
+      Positional("child_argv", num_args=ValueRange(lower=0), allow_hyphen_values=true),
+    ],
+  )
+
+  let parsed = cmd.parse(argv=[
+    "--config",
+    "cfg.toml",
+    "child",
+    "--mode",
+    "fast",
+  ], env={}) catch {
+    _ => panic()
+  }
+  @debug.debug_inspect(
+    parsed.values,
+    content=(
+      #|{ "config": ["cfg.toml"], "mode": ["fast"], "child_argv": ["child"] }
+    ),
+  )
+}
 ```
