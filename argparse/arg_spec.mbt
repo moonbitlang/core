@@ -143,10 +143,11 @@ pub fn Flag::new(
 
 ///|
 /// Declarative option constructor wrapper.
-pub struct Option {
+pub struct Optional {
   priv arg : Arg
 
   /// Create an option argument.
+  // FIXME(upstram) rename does not work here
   fn new(
     name : StringView,
     short? : Char,
@@ -161,7 +162,7 @@ pub struct Option {
     required? : Bool,
     global? : Bool,
     hidden? : Bool,
-  ) -> Option
+  ) -> Optional
 }
 
 ///|
@@ -175,7 +176,7 @@ pub struct Option {
 /// - `global=true` makes the option available in subcommands.
 /// - `allow_hyphen_values=true` allows values like `-1` or `--raw` to be
 ///   consumed as this option's value when parsing argv.
-pub fn Option::new(
+pub fn Optional::new(
   name : StringView,
   short? : Char,
   long? : StringView = name,
@@ -189,7 +190,7 @@ pub fn Option::new(
   required? : Bool = false,
   global? : Bool = false,
   hidden? : Bool = false,
-) -> Option {
+) -> Optional {
   let name = name.to_string()
   let long = if long == "" { None } else { Some(long.to_string()) }
   let about = about.map(v => v.to_string())

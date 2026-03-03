@@ -17,12 +17,12 @@ test "resolve_help_target merges inherited globals by name" {
   let leaf = Command("leaf")
   let mid = Command(
     "mid",
-    options=[Option("mode", long="mid-mode", global=true)],
+    options=[Optional("mode", long="mid-mode", global=true)],
     subcommands=[leaf],
   )
   let root = Command(
     "demo",
-    options=[Option("mode", long="root-mode", global=true)],
+    options=[Optional("mode", long="root-mode", global=true)],
     subcommands=[mid],
   )
 

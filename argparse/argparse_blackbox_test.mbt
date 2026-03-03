@@ -31,7 +31,7 @@ test "render help snapshot with groups and hidden entries" {
       Flag("cache", long="cache", negatable=true, about="cache"),
     ],
     options=[
-      Option(
+      Optional(
         "path",
         short='p',
         long="path",
@@ -89,7 +89,7 @@ test "render help conversion coverage snapshot" {
       ),
     ],
     options=[
-      Option(
+      Optional(
         "opt",
         short='o',
         about="opt",
@@ -148,7 +148,7 @@ test "global option merges parent and child values" {
   let cmd = @argparse.Command(
     "demo",
     options=[
-      Option("profile", short='p', long="profile", action=Append, global=true),
+      Optional("profile", short='p', long="profile", action=Append, global=true),
     ],
     subcommands=[child],
   )
@@ -172,8 +172,8 @@ test "global requires is validated after parent-child merge" {
   let cmd = @argparse.Command(
     "demo",
     options=[
-      Option("mode", long="mode", requires=["config"], global=true),
-      Option("config", long="config", global=true),
+      Optional("mode", long="mode", requires=["config"], global=true),
+      Optional("config", long="config", global=true),
     ],
     subcommands=[Command("run")],
   )
@@ -197,7 +197,7 @@ test "global append keeps parent argv over child env/default" {
   let cmd = @argparse.Command(
     "demo",
     options=[
-      Option(
+      Optional(
         "profile",
         long="profile",
         action=Append,
@@ -229,7 +229,7 @@ test "global scalar keeps parent argv over child env/default" {
   let cmd = @argparse.Command(
     "demo",
     options=[
-      Option(
+      Optional(
         "profile",
         long="profile",
         env="PROFILE",
@@ -573,7 +573,7 @@ test "unknown argument suggestions are exposed" {
 ///|
 test "long and short value parsing branches" {
   let cmd = @argparse.Command("demo", options=[
-    Option("count", short='c', long="count"),
+    Optional("count", short='c', long="count"),
   ])
 
   let long_inline = cmd.parse(argv=["--count=2"], env=empty_env()) catch {
@@ -633,7 +633,7 @@ test "long and short value parsing branches" {
 ///|
 test "append option action is publicly selectable" {
   let cmd = @argparse.Command("demo", options=[
-    Option("tag", long="tag", action=Append),
+    Optional("tag", long="tag", action=Append),
   ])
   let appended = cmd.parse(argv=["--tag", "a", "--tag", "b"], env=empty_env()) catch {
     _ => panic()
@@ -647,7 +647,7 @@ test "negation parsing and invalid negation forms" {
   let cmd = @argparse.Command(
     "demo",
     flags=[Flag("cache", long="cache", negatable=true)],
-    options=[Option("path", long="path")],
+    options=[Optional("path", long="path")],
   )
 
   let off = cmd.parse(argv=["--no-cache"], env=empty_env()) catch {
@@ -936,8 +936,8 @@ test "env parsing for settrue setfalse count and invalid values" {
 ///|
 test "defaults and value range helpers through public API" {
   let defaults = @argparse.Command("demo", options=[
-    Option("mode", long="mode", action=Append, default_values=["a", "b"]),
-    Option("one", long="one", default_values=["x"]),
+    Optional("mode", long="mode", action=Append, default_values=["a", "b"]),
+    Optional("one", long="one", default_values=["x"]),
   ])
   let by_default = defaults.parse(argv=[], env=empty_env()) catch {
     _ => panic()
@@ -946,7 +946,7 @@ test "defaults and value range helpers through public API" {
   assert_true(by_default.sources is { "mode": Default, "one": Default, .. })
 
   let upper_only = @argparse.Command("demo", options=[
-    Option("tag", long="tag", action=Append),
+    Optional("tag", long="tag", action=Append),
   ])
   let upper_parsed = upper_only.parse(
     argv=["--tag", "a", "--tag", "b", "--tag", "c"],
@@ -956,7 +956,9 @@ test "defaults and value range helpers through public API" {
   }
   assert_true(upper_parsed.values is { "tag": ["a", "b", "c"], .. })
 
-  let lower_only = @argparse.Command("demo", options=[Option("tag", long="tag")])
+  let lower_only = @argparse.Command("demo", options=[
+    Optional("tag", long="tag"),
+  ])
   let lower_absent = lower_only.parse(argv=[], env=empty_env()) catch {
     _ => panic()
   }
@@ -992,7 +994,7 @@ test "defaults and value range helpers through public API" {
 
 ///|
 test "options consume exactly one value per occurrence" {
-  let cmd = @argparse.Command("demo", options=[Option("tag", long="tag")])
+  let cmd = @argparse.Command("demo", options=[Optional("tag", long="tag")])
   let parsed = cmd.parse(argv=["--tag", "a"], env=empty_env()) catch {
     _ => panic()
   }
@@ -1021,7 +1023,7 @@ test "options consume exactly one value per occurrence" {
 
 ///|
 test "set options reject duplicate occurrences" {
-  let cmd = @argparse.Command("demo", options=[Option("mode", long="mode")])
+  let cmd = @argparse.Command("demo", options=[Optional("mode", long="mode")])
   try cmd.parse(argv=["--mode", "a", "--mode", "b"], env=empty_env()) catch {
     Message(msg) =>
       inspect(
@@ -1045,7 +1047,7 @@ test "set options reject duplicate occurrences" {
 ///|
 test "flag and option args require short or long names" {
   try
-    @argparse.Command("demo", options=[Option("input", long="")]).parse(
+    @argparse.Command("demo", options=[Optional("input", long="")]).parse(
       argv=[],
       env=empty_env(),
     )
@@ -1082,7 +1084,7 @@ test "flag and option args require short or long names" {
 ///|
 test "append options collect values across repeated occurrences" {
   let cmd = @argparse.Command("demo", options=[
-    Option("arg", long="arg", action=Append),
+    Optional("arg", long="arg", action=Append),
   ])
   let parsed = cmd.parse(argv=["--arg", "x", "--arg", "y"], env=empty_env()) catch {
     _ => panic()
@@ -1094,7 +1096,7 @@ test "append options collect values across repeated occurrences" {
 ///|
 test "option parsing stops at the next option token" {
   let cmd = @argparse.Command("demo", flags=[Flag("verbose", long="verbose")], options=[
-    Option("arg", short='a', long="arg"),
+    Optional("arg", short='a', long="arg"),
   ])
 
   let stopped = cmd.parse(argv=["--arg", "x", "--verbose"], env=empty_env()) catch {
@@ -1147,7 +1149,7 @@ test "option parsing stops at the next option token" {
 ///|
 test "options always require a value" {
   let cmd = @argparse.Command("demo", flags=[Flag("verbose", long="verbose")], options=[
-    Option("opt", long="opt"),
+    Optional("opt", long="opt"),
   ])
   try cmd.parse(argv=["--opt", "--verbose"], env=empty_env()) catch {
     Message(msg) =>
@@ -1170,7 +1172,7 @@ test "options always require a value" {
   }
 
   let zero_value_required = @argparse.Command("demo", options=[
-    Option("opt", long="opt", required=true),
+    Optional("opt", long="opt", required=true),
   ]).parse(argv=["--opt", "x"], env=empty_env()) catch {
     _ => panic()
   }
@@ -1180,7 +1182,7 @@ test "options always require a value" {
 ///|
 test "option values reject hyphen tokens unless allow_hyphen_values is enabled" {
   let strict = @argparse.Command("demo", options=[
-    Option("pattern", long="pattern"),
+    Optional("pattern", long="pattern"),
   ])
   let mut rejected = false
   try strict.parse(argv=["--pattern", "-file"], env=empty_env()) catch {
@@ -1206,7 +1208,7 @@ test "option values reject hyphen tokens unless allow_hyphen_values is enabled" 
   assert_true(rejected)
 
   let permissive = @argparse.Command("demo", options=[
-    Option("pattern", long="pattern", allow_hyphen_values=true),
+    Optional("pattern", long="pattern", allow_hyphen_values=true),
   ])
   let parsed = permissive.parse(argv=["--pattern", "-file"], env=empty_env()) catch {
     _ => panic()
@@ -1278,7 +1280,7 @@ test "validation branches exposed through parse" {
   }
 
   try
-    @argparse.Command("demo", options=[Option("x", long="x")]).parse(
+    @argparse.Command("demo", options=[Optional("x", long="x")]).parse(
       argv=["--x", "a", "b"],
       env=empty_env(),
     )
@@ -1303,7 +1305,7 @@ test "validation branches exposed through parse" {
 
   try
     @argparse.Command("demo", options=[
-      Option("x", long="x", default_values=["a", "b"]),
+      Optional("x", long="x", default_values=["a", "b"]),
     ]).parse(argv=[], env=empty_env())
   catch {
     Message(msg) =>
@@ -1443,8 +1445,8 @@ test "validation branches exposed through parse" {
 
   try
     @argparse.Command("demo", options=[
-      Option("x", long="x"),
-      Option("x", long="y"),
+      Optional("x", long="x"),
+      Optional("x", long="y"),
     ]).parse(argv=[], env=empty_env())
   catch {
     Message(msg) =>
@@ -1460,8 +1462,8 @@ test "validation branches exposed through parse" {
 
   try
     @argparse.Command("demo", options=[
-      Option("x", long="same"),
-      Option("y", long="same"),
+      Optional("x", long="same"),
+      Optional("y", long="same"),
     ]).parse(argv=[], env=empty_env())
   catch {
     Message(msg) =>
@@ -1494,8 +1496,8 @@ test "validation branches exposed through parse" {
 
   try
     @argparse.Command("demo", options=[
-      Option("x", short='s'),
-      Option("y", short='s'),
+      Optional("x", short='s'),
+      Optional("y", short='s'),
     ]).parse(argv=[], env=empty_env())
   catch {
     Message(msg) =>
@@ -1778,7 +1780,7 @@ test "group requires/conflicts can target argument names" {
     "demo",
     groups=[ArgGroup("mode", args=["fast"], requires=["config"])],
     flags=[Flag("fast", long="fast")],
-    options=[Option("config", long="config")],
+    options=[Optional("config", long="config")],
   )
 
   let ok = requires_cmd.parse(
@@ -1817,7 +1819,7 @@ test "group requires/conflicts can target argument names" {
     "demo",
     groups=[ArgGroup("mode", args=["fast"], conflicts_with=["config"])],
     flags=[Flag("fast", long="fast")],
-    options=[Option("config", long="config")],
+    options=[Optional("config", long="config")],
   )
 
   try
@@ -1864,7 +1866,7 @@ test "group without members has no parse effect" {
 test "arg validation catches unknown requires target" {
   try
     @argparse.Command("demo", options=[
-      Option("mode", long="mode", requires=["missing"]),
+      Optional("mode", long="mode", requires=["missing"]),
     ]).parse(argv=["--mode", "fast"], env=empty_env())
   catch {
     Message(msg) =>
@@ -1883,7 +1885,7 @@ test "arg validation catches unknown requires target" {
 test "arg validation catches unknown conflicts_with target" {
   try
     @argparse.Command("demo", options=[
-      Option("mode", long="mode", conflicts_with=["missing"]),
+      Optional("mode", long="mode", conflicts_with=["missing"]),
     ]).parse(argv=["--mode", "fast"], env=empty_env())
   catch {
     Message(msg) =>
@@ -1920,7 +1922,7 @@ test "help rendering edge paths stay stable" {
   assert_true(required_help.has_prefix("Usage: demo <files...>"))
 
   let short_only_builtin = @argparse.Command("demo", options=[
-    Option("helpopt", long="help"),
+    Optional("helpopt", long="help"),
   ])
   let short_only_text = short_only_builtin.render_help()
   assert_true(short_only_text.has_prefix("Usage: demo"))
@@ -1976,7 +1978,7 @@ test "help rendering edge paths stay stable" {
 
 ///|
 test "unified error message formatting remains stable" {
-  let cmd = @argparse.Command("demo", options=[Option("tag", long="tag")])
+  let cmd = @argparse.Command("demo", options=[Optional("tag", long="tag")])
 
   try cmd.parse(argv=["--oops"], env=empty_env()) catch {
     Message(msg) =>
@@ -2019,16 +2021,15 @@ test "unified error message formatting remains stable" {
 
 ///|
 test "options require one value per occurrence" {
-  let with_value = @argparse.Command("demo", options=[Option("tag", long="tag")]).parse(
-    argv=["--tag", "x"],
-    env=empty_env(),
-  ) catch {
+  let with_value = @argparse.Command("demo", options=[
+    Optional("tag", long="tag"),
+  ]).parse(argv=["--tag", "x"], env=empty_env()) catch {
     _ => panic()
   }
   assert_true(with_value.values is { "tag": ["x"], .. })
 
   try
-    @argparse.Command("demo", options=[Option("tag", long="tag")]).parse(
+    @argparse.Command("demo", options=[Optional("tag", long="tag")]).parse(
       argv=["--tag"],
       env=empty_env(),
     )
@@ -2055,7 +2056,7 @@ test "options require one value per occurrence" {
 ///|
 test "short options require one value before next option token" {
   let cmd = @argparse.Command("demo", flags=[Flag("verbose", short='v')], options=[
-    Option("x", short='x'),
+    Optional("x", short='x'),
   ])
   let ok = cmd.parse(argv=["-x", "a", "-v"], env=empty_env()) catch {
     _ => panic()
@@ -2194,7 +2195,7 @@ test "subcommand help puts required options in usage" {
     Command(
       "run",
       about="Run a file",
-      options=[Option("mode", short='m', required=true)],
+      options=[Optional("mode", short='m', required=true)],
       positionals=[Positional("file", num_args=@argparse.ValueRange::single())],
     ),
   ])
@@ -2227,7 +2228,7 @@ test "subcommand help puts required options in usage" {
 ///|
 test "required and env-fed ranged values validate after parsing" {
   let required_cmd = @argparse.Command("demo", options=[
-    Option("input", long="input", required=true),
+    Optional("input", long="input", required=true),
   ])
   try required_cmd.parse(argv=[], env=empty_env()) catch {
     Message(msg) =>
@@ -2249,7 +2250,7 @@ test "required and env-fed ranged values validate after parsing" {
   }
 
   let env_min_cmd = @argparse.Command("demo", options=[
-    Option("pair", long="pair", env="PAIR"),
+    Optional("pair", long="pair", env="PAIR"),
   ])
   let env_value = env_min_cmd.parse(argv=[], env={ "PAIR": "one" }) catch {
     _ => panic()
@@ -2348,7 +2349,7 @@ test "options with allow_hyphen_values accept option-like single values" {
       Flag("cache", long="cache", negatable=true),
       Flag("quiet", short='q'),
     ],
-    options=[Option("arg", long="arg", allow_hyphen_values=true)],
+    options=[Optional("arg", long="arg", allow_hyphen_values=true)],
   )
 
   let known_long = cmd.parse(argv=["--arg", "--verbose"], env=empty_env()) catch {
@@ -2379,7 +2380,7 @@ test "options with allow_hyphen_values accept option-like single values" {
 
   let cmd_with_rest = @argparse.Command(
     "demo",
-    options=[Option("arg", long="arg", allow_hyphen_values=true)],
+    options=[Optional("arg", long="arg", allow_hyphen_values=true)],
     positionals=[
       Positional("rest", num_args=ValueRange(lower=0), allow_hyphen_values=true),
     ],
@@ -2396,7 +2397,7 @@ test "options with allow_hyphen_values accept option-like single values" {
 ///|
 test "single-value options avoid consuming additional option values" {
   let cmd = @argparse.Command("demo", flags=[Flag("verbose", long="verbose")], options=[
-    Option("one", long="one"),
+    Optional("one", long="one"),
   ])
 
   let parsed = cmd.parse(argv=["--one", "x", "--verbose"], env=empty_env()) catch {
@@ -2409,7 +2410,7 @@ test "single-value options avoid consuming additional option values" {
 ///|
 test "missing option values are reported when next token is another option" {
   let cmd = @argparse.Command("demo", flags=[Flag("verbose", long="verbose")], options=[
-    Option("arg", long="arg"),
+    Optional("arg", long="arg"),
   ])
 
   let ok = cmd.parse(argv=["--arg", "x", "--verbose"], env=empty_env()) catch {
@@ -2441,7 +2442,7 @@ test "missing option values are reported when next token is another option" {
 
 ///|
 test "short-only set options use short label in duplicate errors" {
-  let cmd = @argparse.Command("demo", options=[Option("mode", short='m')])
+  let cmd = @argparse.Command("demo", options=[Optional("mode", short='m')])
   try cmd.parse(argv=["-m", "a", "-m", "b"], env=empty_env()) catch {
     Message(msg) =>
       inspect(
@@ -2465,7 +2466,7 @@ test "short-only set options use short label in duplicate errors" {
 ///|
 test "unknown short suggestion can be absent" {
   let cmd = @argparse.Command("demo", disable_help_flag=true, options=[
-    Option("name", long="name"),
+    Optional("name", long="name"),
   ])
 
   try cmd.parse(argv=["-x"], env=empty_env()) catch {
@@ -2515,8 +2516,8 @@ test "global value from child default is merged back to parent" {
   let cmd = @argparse.Command(
     "demo",
     options=[
-      Option("mode", long="mode", default_values=["safe"], global=true),
-      Option("unused", long="unused", global=true),
+      Optional("mode", long="mode", default_values=["safe"], global=true),
+      Optional("unused", long="unused", global=true),
     ],
     subcommands=[Command("run")],
   )
@@ -2535,7 +2536,7 @@ test "global value from child default is merged back to parent" {
 test "env-only global is propagated to nested subcommand matches" {
   let cmd = @argparse.Command(
     "demo",
-    options=[Option("level", long="", env="LEVEL", global=true)],
+    options=[Optional("level", long="", env="LEVEL", global=true)],
     subcommands=[Command("run", subcommands=[Command("leaf")])],
   )
 
@@ -2558,9 +2559,11 @@ test "env-only global is propagated to nested subcommand matches" {
 test "child global arg with inherited global name updates parent global" {
   let cmd = @argparse.Command(
     "demo",
-    options=[Option("mode", long="mode", default_values=["safe"], global=true)],
+    options=[
+      Optional("mode", long="mode", default_values=["safe"], global=true),
+    ],
     subcommands=[
-      Command("run", options=[Option("mode", long="mode", global=true)]),
+      Command("run", options=[Optional("mode", long="mode", global=true)]),
     ],
   )
 
@@ -2581,7 +2584,7 @@ test "child global override env/default win over inherited definition" {
   let cmd = @argparse.Command(
     "demo",
     options=[
-      Option(
+      Optional(
         "mode",
         long="mode",
         env="ROOT_MODE",
@@ -2591,7 +2594,7 @@ test "child global override env/default win over inherited definition" {
     ],
     subcommands=[
       Command("run", options=[
-        Option(
+        Optional(
           "mode",
           long="mode",
           env="RUN_MODE",
@@ -2630,10 +2633,10 @@ test "child global override env/default win over inherited definition" {
 test "inherited argv global satisfies child required global override" {
   let cmd = @argparse.Command(
     "demo",
-    options=[Option("mode", long="mode", global=true)],
+    options=[Optional("mode", long="mode", global=true)],
     subcommands=[
       Command("run", options=[
-        Option("mode", long="mode", required=true, global=true),
+        Optional("mode", long="mode", required=true, global=true),
       ]),
     ],
   )
@@ -2656,7 +2659,7 @@ test "child local arg shadowing inherited global is rejected at build time" {
     @argparse.Command(
       "demo",
       options=[
-        Option(
+        Optional(
           "mode",
           long="mode",
           env="MODE",
@@ -2664,7 +2667,7 @@ test "child local arg shadowing inherited global is rejected at build time" {
           global=true,
         ),
       ],
-      subcommands=[Command("run", options=[Option("mode", long="mode")])],
+      subcommands=[Command("run", options=[Optional("mode", long="mode")])],
     ).parse(argv=["run"], env=empty_env())
   catch {
     Message(msg) =>
@@ -2683,7 +2686,7 @@ test "child local arg shadowing inherited global is rejected at build time" {
 test "global append env value from child is merged back to parent" {
   let cmd = @argparse.Command(
     "demo",
-    options=[Option("tag", long="tag", action=Append, env="TAG", global=true)],
+    options=[Optional("tag", long="tag", action=Append, env="TAG", global=true)],
     subcommands=[Command("run")],
   )
 
@@ -2750,7 +2753,7 @@ test "global count negation after subcommand resets merged state" {
 test "global set option rejects duplicate occurrences across subcommands" {
   let cmd = @argparse.Command(
     "demo",
-    options=[Option("mode", long="mode", global=true)],
+    options=[Optional("mode", long="mode", global=true)],
     subcommands=[Command("run")],
   )
   try
@@ -2784,7 +2787,7 @@ test "global override with incompatible inherited type is rejected" {
   try
     @argparse.Command(
       "demo",
-      options=[Option("mode", long="mode", required=true, global=true)],
+      options=[Optional("mode", long="mode", required=true, global=true)],
       subcommands=[
         Command("run", flags=[Flag("mode", long="mode", global=true)]),
       ],
@@ -2808,7 +2811,7 @@ test "child local long alias collision with inherited global is rejected" {
     @argparse.Command(
       "demo",
       flags=[Flag("verbose", long="verbose", global=true)],
-      subcommands=[Command("run", options=[Option("local", long="verbose")])],
+      subcommands=[Command("run", options=[Optional("local", long="verbose")])],
     ).parse(argv=["run", "--verbose"], env=empty_env())
   catch {
     Message(msg) =>
@@ -2827,7 +2830,7 @@ test "child local long alias collision with inherited global is rejected" {
 test "child local short alias collision with inherited global is rejected" {
   try
     @argparse.Command("demo", flags=[Flag("verbose", short='v', global=true)], subcommands=[
-      Command("run", options=[Option("local", short='v')]),
+      Command("run", options=[Optional("local", short='v')]),
     ]).parse(argv=["run", "-v"], env=empty_env())
   catch {
     Message(msg) =>
@@ -2900,7 +2903,7 @@ test "non-bmp hyphen token reports unknown argument without panic" {
 ///|
 test "option env values remain string values instead of flags" {
   let cmd = @argparse.Command("demo", options=[
-    Option("mode", long="mode", env="MODE"),
+    Optional("mode", long="mode", env="MODE"),
   ])
   let parsed = cmd.parse(argv=[], env={ "MODE": "fast" }) catch { _ => panic() }
   assert_true(parsed.values is { "mode": ["fast"], .. })
@@ -2939,12 +2942,12 @@ test "nested global override keeps single set value without false duplicate erro
   let leaf = @argparse.Command("leaf")
   let mid = @argparse.Command(
     "mid",
-    options=[Option("mode", long="mode", global=true)],
+    options=[Optional("mode", long="mode", global=true)],
     subcommands=[leaf],
   )
   let root = @argparse.Command(
     "root",
-    options=[Option("mode", long="mode", global=true)],
+    options=[Optional("mode", long="mode", global=true)],
     subcommands=[mid],
   )
 

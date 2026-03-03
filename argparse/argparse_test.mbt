@@ -22,7 +22,7 @@ test "declarative parse basics" {
   let cmd = @argparse.Command(
     "demo",
     flags=[Flag("verbose", short='v', long="verbose")],
-    options=[Option("count", long="count", env="COUNT")],
+    options=[Optional("count", long="count", env="COUNT")],
     positionals=[Positional("name")],
   )
   let matches = cmd.parse(argv=["-v", "--count", "3", "alice"], env=empty_env()) catch {
@@ -38,7 +38,7 @@ test "declarative parse basics" {
 ///|
 test "long defaults to name when omitted" {
   let cmd = @argparse.Command("demo", flags=[Flag("verbose")], options=[
-    Option("count"),
+    Optional("count"),
   ])
   let matches = cmd.parse(argv=["--verbose", "--count", "3"], env=empty_env()) catch {
     _ => panic()
@@ -52,7 +52,7 @@ test "long empty string disables long alias" {
   let cmd = @argparse.Command(
     "demo",
     flags=[Flag("verbose", short='v', long="")],
-    options=[Option("count", short='c', long="")],
+    options=[Optional("count", short='c', long="")],
   )
 
   let matches = cmd.parse(argv=["-v", "-c", "3"], env=empty_env()) catch {
@@ -147,7 +147,7 @@ test "negatable flag preserves false state" {
 ///|
 test "parse failure message contains error and contextual help" {
   let cmd = @argparse.Command("demo", options=[
-    Option("count", long="count", about="repeat count"),
+    Optional("count", long="count", about="repeat count"),
   ])
 
   try cmd.parse(argv=["--bad"], env=empty_env()) catch {
@@ -173,7 +173,7 @@ test "parse failure message contains error and contextual help" {
 ///|
 test "subcommand parse errors include subcommand help" {
   let cmd = @argparse.Command("demo", subcommands=[
-    Command("echo", options=[Option("times", long="times")]),
+    Command("echo", options=[Optional("times", long="times")]),
   ])
 
   try cmd.parse(argv=["echo", "--bad"], env=empty_env()) catch {
@@ -247,7 +247,7 @@ test "render_help remains available for pure formatting" {
     "demo",
     about="Demo command",
     flags=[Flag("verbose", short='v', long="verbose")],
-    options=[Option("count", long="count")],
+    options=[Optional("count", long="count")],
     positionals=[Positional("name")],
     subcommands=[Command("echo")],
   )
@@ -354,8 +354,8 @@ test "parse error show is readable" {
 ///|
 test "relationships and num args" {
   let requires_cmd = @argparse.Command("demo", options=[
-    Option("mode", long="mode", requires=["config"]),
-    Option("config", long="config"),
+    Optional("mode", long="mode", requires=["config"]),
+    Optional("config", long="config"),
   ])
 
   try requires_cmd.parse(argv=["--mode", "fast"], env=empty_env()) catch {
@@ -379,7 +379,7 @@ test "relationships and num args" {
   }
 
   let appended = @argparse.Command("demo", options=[
-    Option("tag", long="tag", action=Append),
+    Optional("tag", long="tag", action=Append),
   ]).parse(argv=["--tag", "a", "--tag", "b", "--tag", "c"], env=empty_env()) catch {
     _ => panic()
   }
@@ -537,7 +537,7 @@ test "full help snapshot" {
       Flag("verbose", short='v', long="verbose", about="Enable verbose mode"),
     ],
     options=[
-      Option("count", long="count", about="Repeat count", default_values=["1"]),
+      Optional("count", long="count", about="Repeat count", default_values=["1"]),
     ],
     positionals=[Positional("name", about="Target name")],
     subcommands=[Command("echo", about="Echo a message")],
@@ -568,7 +568,7 @@ test "full help snapshot" {
 ///|
 test "value source precedence argv env default" {
   let cmd = @argparse.Command("demo", options=[
-    Option("level", long="level", env="LEVEL", default_values=["1"]),
+    Optional("level", long="level", env="LEVEL", default_values=["1"]),
   ])
 
   let from_default = cmd.parse(argv=[], env=empty_env()) catch { _ => panic() }
@@ -589,7 +589,7 @@ test "value source precedence argv env default" {
 ///|
 test "omitted env does not read process environment by default" {
   let cmd = @argparse.Command("demo", options=[
-    Option("count", long="count", env="COUNT"),
+    Optional("count", long="count", env="COUNT"),
   ])
   let matches = cmd.parse(argv=[]) catch { _ => panic() }
   assert_true(matches.values is { "count"? : None, .. })
@@ -602,8 +602,8 @@ test "options and multiple values" {
   let cmd = @argparse.Command(
     "demo",
     options=[
-      Option("count", short='c', long="count"),
-      Option("tag", long="tag", action=Append),
+      Optional("count", short='c', long="count"),
+      Optional("tag", long="tag", action=Append),
     ],
     subcommands=[serve],
   )
