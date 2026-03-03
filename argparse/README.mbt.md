@@ -6,6 +6,8 @@ This package is inspired by [`clap`](https://github.com/clap-rs/clap) and keeps 
 small, predictable feature set.
 
 `long` defaults to the argument name. Pass `long=""` to disable long alias.
+Argument constructors are named `FlagArg` / `OptionArg` / `PositionArg` to
+avoid shadowing built-in types like `Option`.
 
 
 ## Quick Start
@@ -17,8 +19,8 @@ both the parse error and the full contextual help text.
 ///|
 test "basic option + positional success snapshot" {
   let matches = @argparse.parse(
-    Command("demo", options=[Optional("name")], positionals=[
-      Positional("target"),
+    Command("demo", options=[OptionArg("name")], positionals=[
+      PositionArg("target"),
     ]),
     argv=["--name", "alice", "file.txt"],
     env={},
@@ -33,8 +35,8 @@ test "basic option + positional success snapshot" {
 
 ///|
 test "basic option + positional failure snapshot" {
-  let cmd = @argparse.Command("demo", options=[Optional("name")], positionals=[
-    Positional("target"),
+  let cmd = @argparse.Command("demo", options=[OptionArg("name")], positionals=[
+    PositionArg("target"),
   ])
   try cmd.parse(argv=["--bad"], env={}) catch {
     err =>
@@ -69,8 +71,8 @@ contextual help text.
 ```mbt nocheck
 ///|
 async fn main {
-  let cmd = @argparse.Command("demo", options=[@argparse.Optional("name")], positionals=[
-    @argparse.Positional("target"),
+  let cmd = @argparse.Command("demo", options=[@argparse.OptionArg("name")], positionals=[
+    @argparse.PositionArg("target"),
   ])
   let _ = cmd.parse()
 }
@@ -85,7 +87,7 @@ states.
 ```mbt check
 ///|
 test "negatable flag success snapshot" {
-  let cmd = @argparse.Command("demo", flags=[Flag("cache", negatable=true)])
+  let cmd = @argparse.Command("demo", flags=[FlagArg("cache", negatable=true)])
   inspect(
     cmd.render_help(),
     content=(
@@ -115,7 +117,7 @@ test "negatable flag success snapshot" {
 test "global count flag success snapshot" {
   let cmd = @argparse.Command(
     "demo",
-    flags=[Flag("verbose", short='v', action=Count, global=true)],
+    flags=[FlagArg("verbose", short='v', action=Count, global=true)],
     subcommands=[Command("run")],
   )
 
@@ -139,7 +141,7 @@ test "global count flag success snapshot" {
 test "subcommand context failure snapshot" {
   let cmd = @argparse.Command(
     "demo",
-    flags=[Flag("verbose", short='v', action=Count, global=true)],
+    flags=[FlagArg("verbose", short='v', action=Count, global=true)],
     subcommands=[Command("run")],
   )
   try cmd.parse(argv=["run", "--oops"], env={}) catch {
@@ -171,7 +173,7 @@ Value precedence is `argv > env > default_values`.
 ///|
 test "value source precedence snapshots" {
   let cmd = @argparse.Command("demo", options=[
-    Optional("level", env="LEVEL", default_values=["1"]),
+    OptionArg("level", env="LEVEL", default_values=["1"]),
   ])
 
   inspect(
@@ -235,7 +237,7 @@ test "value source precedence snapshots" {
 ```mbt check
 ///|
 test "option input forms snapshot" {
-  let cmd = @argparse.Command("demo", options=[Optional("count", short='c')])
+  let cmd = @argparse.Command("demo", options=[OptionArg("count", short='c')])
 
   inspect(
     cmd.render_help(),
@@ -285,7 +287,7 @@ test "option input forms snapshot" {
 ///|
 test "double-dash separator snapshot" {
   let cmd = @argparse.Command("demo", positionals=[
-    Positional("tail", num_args=ValueRange(lower=0), allow_hyphen_values=true),
+    PositionArg("tail", num_args=ValueRange(lower=0), allow_hyphen_values=true),
   ])
   let parsed = try! cmd.parse(argv=["--", "--x", "-y"], env={})
   @debug.debug_inspect(
@@ -306,8 +308,8 @@ full contextual help.
 ///|
 test "requires relationship success and failure snapshots" {
   let cmd = @argparse.Command("demo", options=[
-    Optional("mode", requires=["config"]),
-    Optional("config"),
+    OptionArg("mode", requires=["config"]),
+    OptionArg("config"),
   ])
 
   let ok = try! cmd.parse(argv=["--mode", "fast", "--config", "cfg.toml"], env={})
@@ -346,7 +348,7 @@ test "arg group required and exclusive failure snapshot" {
     groups=[
       ArgGroup("mode", required=true, multiple=false, args=["fast", "slow"]),
     ],
-    flags=[Flag("fast"), Flag("slow")],
+    flags=[FlagArg("fast"), FlagArg("slow")],
   )
 
   try cmd.parse(argv=[], env={}) catch {
@@ -408,8 +410,8 @@ test "subcommand required policy failure snapshot" {
 ///|
 test "conflicts_with success and failure snapshots" {
   let cmd = @argparse.Command("demo", flags=[
-    Flag("verbose", conflicts_with=["quiet"]),
-    Flag("quiet"),
+    FlagArg("verbose", conflicts_with=["quiet"]),
+    FlagArg("quiet"),
   ])
 
   let ok = try! cmd.parse(argv=["--verbose"], env={})
@@ -442,7 +444,7 @@ test "conflicts_with success and failure snapshots" {
 }
 ```
 
-## Positional Value Ranges
+## PositionArg Value Ranges
 
 Positionals are parsed in declaration order (no explicit index).
 
@@ -450,8 +452,8 @@ Positionals are parsed in declaration order (no explicit index).
 ///|
 test "bounded non-last positional success snapshot" {
   let cmd = @argparse.Command("demo", positionals=[
-    Positional("first", num_args=ValueRange(lower=1, upper=2)),
-    Positional("second", num_args=@argparse.ValueRange::single()),
+    PositionArg("first", num_args=ValueRange(lower=1, upper=2)),
+    PositionArg("second", num_args=@argparse.ValueRange::single()),
   ])
 
   let parsed = try! cmd.parse(argv=["a", "b", "c"], env={})
@@ -466,8 +468,8 @@ test "bounded non-last positional success snapshot" {
 ///|
 test "bounded non-last positional failure snapshot" {
   let cmd = @argparse.Command("demo", positionals=[
-    Positional("first", num_args=ValueRange(lower=1, upper=2)),
-    Positional("second", num_args=@argparse.ValueRange::single()),
+    PositionArg("first", num_args=ValueRange(lower=1, upper=2)),
+    PositionArg("second", num_args=@argparse.ValueRange::single()),
   ])
   try cmd.parse(argv=["a", "b", "c", "d"], env={}) catch {
     err =>
@@ -497,9 +499,9 @@ test "bounded non-last positional failure snapshot" {
 ///|
 let cmd : @argparse.Command = Command(
   "wrap",
-  options=[Optional("config"), Optional("mode")],
+  options=[OptionArg("config"), OptionArg("mode")],
   positionals=[
-    Positional(
+    PositionArg(
       "child_argv",
       num_args=ValueRange(lower=0),
       allow_hyphen_values=true,

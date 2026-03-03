@@ -32,9 +32,9 @@ pub struct Command {
   /// Create a declarative command specification.
   fn new(
     name : StringView,
-    flags? : ArrayView[Flag],
-    options? : ArrayView[Optional],
-    positionals? : ArrayView[Positional],
+    flags? : ArrayView[FlagArg],
+    options? : ArrayView[OptionArg],
+    positionals? : ArrayView[PositionArg],
     subcommands? : ArrayView[Command],
     about? : StringView,
     version? : StringView,
@@ -62,9 +62,9 @@ pub struct Command {
 /// - `hidden=true` omits this command from parent command listings.
 pub fn Command::new(
   name : StringView,
-  flags? : ArrayView[Flag] = [],
-  options? : ArrayView[Optional] = [],
-  positionals? : ArrayView[Positional] = [],
+  flags? : ArrayView[FlagArg] = [],
+  options? : ArrayView[OptionArg] = [],
+  positionals? : ArrayView[PositionArg] = [],
   subcommands? : ArrayView[Command] = [],
   about? : StringView,
   version? : StringView,
@@ -229,9 +229,9 @@ fn find_decl_subcommand(subs : Array[Command], name : String) -> Command? {
 
 ///|
 fn collect_args(
-  flags : ArrayView[Flag],
-  options : ArrayView[Optional],
-  positionals : ArrayView[Positional],
+  flags : ArrayView[FlagArg],
+  options : ArrayView[OptionArg],
+  positionals : ArrayView[PositionArg],
 ) -> (Array[Arg], ArgBuildError?) {
   let args : Array[Arg] = []
   for flag in flags {

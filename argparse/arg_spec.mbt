@@ -76,7 +76,7 @@ priv enum ArgInfo {
 
 ///|
 /// Declarative flag constructor wrapper.
-pub struct Flag {
+pub struct FlagArg {
   priv arg : Arg
 
   /// Create a flag argument.
@@ -93,7 +93,7 @@ pub struct Flag {
     global? : Bool,
     negatable? : Bool,
     hidden? : Bool,
-  ) -> Flag
+  ) -> FlagArg
 }
 
 ///|
@@ -107,7 +107,7 @@ pub struct Flag {
 /// - `negatable=true` accepts `--no-<long>` for long flags.
 /// - If `env` is set, accepted boolean values are:
 ///   `1`, `0`, `true`, `false`, `yes`, `no`, `on`, `off`.
-pub fn Flag::new(
+pub fn FlagArg::new(
   name : StringView,
   short? : Char,
   long? : StringView = name,
@@ -120,7 +120,7 @@ pub fn Flag::new(
   global? : Bool = false,
   negatable? : Bool = false,
   hidden? : Bool = false,
-) -> Flag {
+) -> FlagArg {
   let name = name.to_string()
   let long = if long == "" { None } else { Some(long.to_string()) }
   let about = about.map(v => v.to_string())
@@ -143,7 +143,8 @@ pub fn Flag::new(
 
 ///|
 /// Declarative option constructor wrapper.
-pub struct Optional {
+/// Named `OptionArg` to avoid shadowing the built-in `Option` type.
+pub struct OptionArg {
   priv arg : Arg
 
   /// Create an option argument.
@@ -162,7 +163,7 @@ pub struct Optional {
     required? : Bool,
     global? : Bool,
     hidden? : Bool,
-  ) -> Optional
+  ) -> OptionArg
 }
 
 ///|
@@ -176,7 +177,7 @@ pub struct Optional {
 /// - `global=true` makes the option available in subcommands.
 /// - `allow_hyphen_values=true` allows values like `-1` or `--raw` to be
 ///   consumed as this option's value when parsing argv.
-pub fn Optional::new(
+pub fn OptionArg::new(
   name : StringView,
   short? : Char,
   long? : StringView = name,
@@ -190,7 +191,7 @@ pub fn Optional::new(
   required? : Bool = false,
   global? : Bool = false,
   hidden? : Bool = false,
-) -> Optional {
+) -> OptionArg {
   let name = name.to_string()
   let long = if long == "" { None } else { Some(long.to_string()) }
   let about = about.map(v => v.to_string())
@@ -219,7 +220,7 @@ pub fn Optional::new(
 
 ///|
 /// Declarative positional constructor wrapper.
-pub struct Positional {
+pub struct PositionArg {
   priv arg : Arg
 
   /// Create a positional argument.
@@ -234,14 +235,14 @@ pub struct Positional {
     conflicts_with? : ArrayView[String],
     global? : Bool,
     hidden? : Bool,
-  ) -> Positional
+  ) -> PositionArg
 }
 
 ///|
 /// Create a positional argument.
 ///
 /// Notes:
-/// - Positional order follows declaration order.
+/// - PositionArg order follows declaration order.
 /// - `num_args` controls accepted value count.
 /// - If `num_args` is omitted, the default is an optional single value
 ///   (`0..=1`).
@@ -249,7 +250,7 @@ pub struct Positional {
 /// - `allow_hyphen_values=true` allows leading-`-` tokens to be consumed as
 ///   positional values (unless they match a declared option).
 /// - Tokens after `--` are always treated as positional values.
-pub fn Positional::new(
+pub fn PositionArg::new(
   name : StringView,
   about? : StringView,
   env? : StringView,
@@ -260,7 +261,7 @@ pub fn Positional::new(
   conflicts_with? : ArrayView[String] = [],
   global? : Bool = false,
   hidden? : Bool = false,
-) -> Positional {
+) -> PositionArg {
   let name = name.to_string()
   let about = about.map(v => v.to_string())
   let env = env.map(v => v.to_string())
