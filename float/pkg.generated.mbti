@@ -39,6 +39,8 @@ pub fn Float::is_nan(Float) -> Bool
 pub fn Float::is_neg_inf(Float) -> Bool
 pub fn Float::is_pos_inf(Float) -> Bool
 pub fn Float::lerp(Float, target~ : Float, t~ : Float) -> Float
+pub fn Float::max(Float, Float) -> Float
+pub fn Float::min(Float, Float) -> Float
 #as_free_fn(deprecated)
 #deprecated
 pub fn Float::pow(Float, Float) -> Float
@@ -48,6 +50,7 @@ pub fn Float::reinterpret_from_int(Int) -> Float
 pub fn Float::reinterpret_from_uint(UInt) -> Float
 #as_free_fn
 pub fn Float::round(Float) -> Float
+pub fn Float::signum(Float) -> Float
 pub fn Float::sqrt(Float) -> Float
 pub fn Float::to_be_bytes(Float) -> Bytes
 pub fn Float::to_double(Float) -> Double

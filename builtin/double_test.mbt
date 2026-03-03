@@ -192,3 +192,21 @@ test "Double::is_neg_inf" {
 test "min equal to neg max" {
   assert_true(@double.min_value == -@double.max_value)
 }
+
+///|
+test "Double::min and Double::max" {
+  assert_eq(1.0.min(2.0), 1.0)
+  assert_eq(2.0.min(1.0), 1.0)
+  assert_eq(1.0.max(2.0), 2.0)
+  assert_eq(2.0.max(1.0), 2.0)
+}
+
+///|
+test "Double::min and Double::max with NaN" {
+  assert_eq(@double.not_a_number.min(1.0), 1.0)
+  assert_eq(1.0.min(@double.not_a_number), 1.0)
+  assert_eq(@double.not_a_number.max(1.0), 1.0)
+  assert_eq(1.0.max(@double.not_a_number), 1.0)
+  assert_true(@double.not_a_number.min(@double.not_a_number).is_nan())
+  assert_true(@double.not_a_number.max(@double.not_a_number).is_nan())
+}

@@ -211,3 +211,29 @@ test "Float::until with NaN step" {
   }
   inspect(values, content="[1]")
 }
+
+///|
+test "Float::min and Float::max" {
+  assert_eq((1.0 : Float).min(2.0), 1.0)
+  assert_eq((2.0 : Float).min(1.0), 1.0)
+  assert_eq((1.0 : Float).max(2.0), 2.0)
+  assert_eq((2.0 : Float).max(1.0), 2.0)
+}
+
+///|
+test "Float::min and Float::max with NaN" {
+  assert_eq(@float.not_a_number.min(1.0), 1.0)
+  assert_eq((1.0 : Float).min(@float.not_a_number), 1.0)
+  assert_eq(@float.not_a_number.max(1.0), 1.0)
+  assert_eq((1.0 : Float).max(@float.not_a_number), 1.0)
+  assert_true(@float.not_a_number.min(@float.not_a_number).is_nan())
+  assert_true(@float.not_a_number.max(@float.not_a_number).is_nan())
+}
+
+///|
+test "Float::signum" {
+  assert_eq((-2.0 : Float).signum(), -1.0)
+  assert_eq((1.0 : Float).signum(), 1.0)
+  assert_eq((0.0 : Float).signum(), 0.0)
+  assert_true(@float.not_a_number.signum().is_nan())
+}

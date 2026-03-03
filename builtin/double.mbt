@@ -57,6 +57,38 @@ pub fn Double::from_int(i : Int) -> Double {
 pub fn Double::abs(self : Double) -> Double = "%f64.abs"
 
 ///|
+/// Returns the minimum of two double-precision floating-point values.
+///
+/// If exactly one argument is NaN, returns the other argument.
+pub fn Double::min(self : Double, other : Double) -> Double {
+  if self.is_nan() {
+    other
+  } else if other.is_nan() {
+    self
+  } else if self < other {
+    self
+  } else {
+    other
+  }
+}
+
+///|
+/// Returns the maximum of two double-precision floating-point values.
+///
+/// If exactly one argument is NaN, returns the other argument.
+pub fn Double::max(self : Double, other : Double) -> Double {
+  if self.is_nan() {
+    other
+  } else if other.is_nan() {
+    self
+  } else if self > other {
+    self
+  } else {
+    other
+  }
+}
+
+///|
 /// Clamps the value between `min` and `max` (inclusive).
 ///
 /// Parameters:
