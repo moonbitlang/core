@@ -226,6 +226,38 @@ pub fn Float::is_nan(self : Float) -> Bool {
 }
 
 ///|
+/// Returns the minimum of two floating-point values.
+///
+/// If exactly one argument is NaN, returns the other argument.
+pub fn Float::min(self : Float, other : Float) -> Float {
+  if self.is_nan() {
+    other
+  } else if other.is_nan() {
+    self
+  } else if self < other {
+    self
+  } else {
+    other
+  }
+}
+
+///|
+/// Returns the maximum of two floating-point values.
+///
+/// If exactly one argument is NaN, returns the other argument.
+pub fn Float::max(self : Float, other : Float) -> Float {
+  if self.is_nan() {
+    other
+  } else if other.is_nan() {
+    self
+  } else if self > other {
+    self
+  } else {
+    other
+  }
+}
+
+///|
 /// Clamps the value between `min` and `max` (inclusive).
 ///
 /// Parameters:
@@ -280,6 +312,21 @@ pub fn Float::clamp(self : Float, min~ : Float, max~ : Float) -> Float {
 /// ```
 pub fn Float::lerp(self : Float, target~ : Float, t~ : Float) -> Float {
   self + (target - self) * t
+}
+
+///|
+/// Returns the sign of the float.
+/// - If the float is positive, returns 1.0.
+/// - If the float is negative, returns -1.0.
+/// - Otherwise, returns the float itself (0.0, -0.0 and NaN).
+pub fn Float::signum(self : Float) -> Float {
+  if self < 0.0 {
+    -1.0
+  } else if self > 0.0 {
+    1.0
+  } else {
+    self
+  }
 }
 
 ///|

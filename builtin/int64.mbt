@@ -59,6 +59,39 @@ pub fn Int64::abs(self : Int64) -> Int64 {
 }
 
 ///|
+/// Returns the minimum of two 64-bit signed integers.
+pub fn Int64::min(self : Int64, other : Int64) -> Int64 {
+  if self < other {
+    self
+  } else {
+    other
+  }
+}
+
+///|
+/// Returns the maximum of two 64-bit signed integers.
+pub fn Int64::max(self : Int64, other : Int64) -> Int64 {
+  if self > other {
+    self
+  } else {
+    other
+  }
+}
+
+///|
+/// Clamps the value `self` between `min` and `max`.
+pub fn Int64::clamp(self : Int64, min~ : Int64, max~ : Int64) -> Int64 {
+  guard min <= max
+  if self < min {
+    min
+  } else if self > max {
+    max
+  } else {
+    self
+  }
+}
+
+///|
 pub impl Hash for Int64 with hash_combine(self, hasher) {
   hasher.combine_int64(self)
 }

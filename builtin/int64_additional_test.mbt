@@ -39,3 +39,17 @@ test "int64 conversions and defaults" {
   assert_eq(u_hi.ctz(), 32)
   assert_eq(UInt64::trunc_double(1234567.89), 1234567UL)
 }
+
+///|
+test "Int64::min, Int64::max and Int64::clamp" {
+  assert_eq(1L.min(2L), 1L)
+  assert_eq(2L.max(1L), 2L)
+  assert_eq(1L.clamp(min=0L, max=2L), 1L)
+  assert_eq((-1L).clamp(min=0L, max=2L), 0L)
+  assert_eq(3L.clamp(min=0L, max=2L), 2L)
+}
+
+///|
+test "panic Int64::clamp with invalid range" {
+  ignore(1L.clamp(min=2L, max=1L))
+}
