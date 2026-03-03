@@ -24,9 +24,9 @@ pub fn ArgGroup::new(StringView, required? : Bool, multiple? : Bool, args? : Arr
 pub struct Command {
   // private fields
 
-  fn new(StringView, flags? : ArrayView[Flag], options? : ArrayView[Option], positionals? : ArrayView[Positional], subcommands? : ArrayView[Command], about? : StringView, version? : StringView, disable_help_flag? : Bool, disable_version_flag? : Bool, disable_help_subcommand? : Bool, arg_required_else_help? : Bool, subcommand_required? : Bool, hidden? : Bool, groups? : ArrayView[ArgGroup]) -> Command
+  fn new(StringView, flags? : ArrayView[Flag], options? : ArrayView[Optional], positionals? : ArrayView[Positional], subcommands? : ArrayView[Command], about? : StringView, version? : StringView, disable_help_flag? : Bool, disable_version_flag? : Bool, disable_help_subcommand? : Bool, arg_required_else_help? : Bool, subcommand_required? : Bool, hidden? : Bool, groups? : ArrayView[ArgGroup]) -> Command
 }
-pub fn Command::new(StringView, flags? : ArrayView[Flag], options? : ArrayView[Option], positionals? : ArrayView[Positional], subcommands? : ArrayView[Self], about? : StringView, version? : StringView, disable_help_flag? : Bool, disable_version_flag? : Bool, disable_help_subcommand? : Bool, arg_required_else_help? : Bool, subcommand_required? : Bool, hidden? : Bool, groups? : ArrayView[ArgGroup]) -> Self
+pub fn Command::new(StringView, flags? : ArrayView[Flag], options? : ArrayView[Optional], positionals? : ArrayView[Positional], subcommands? : ArrayView[Self], about? : StringView, version? : StringView, disable_help_flag? : Bool, disable_version_flag? : Bool, disable_help_subcommand? : Bool, arg_required_else_help? : Bool, subcommand_required? : Bool, hidden? : Bool, groups? : ArrayView[ArgGroup]) -> Self
 #as_free_fn
 pub fn Command::parse(Self, argv? : ArrayView[String], env? : Map[String, String]) -> Matches raise ArgError
 pub fn Command::render_help(Self) -> String
@@ -58,19 +58,19 @@ pub struct Matches {
 }
 pub impl @debug.Debug for Matches
 
-pub struct Option {
-  // private fields
-
-  fn new(StringView, short? : Char, long? : StringView, about? : StringView, action? : OptionAction, env? : StringView, default_values? : ArrayView[String], allow_hyphen_values? : Bool, requires? : ArrayView[String], conflicts_with? : ArrayView[String], required? : Bool, global? : Bool, hidden? : Bool) -> Option
-}
-pub fn Option::new(StringView, short? : Char, long? : StringView, about? : StringView, action? : OptionAction, env? : StringView, default_values? : ArrayView[String], allow_hyphen_values? : Bool, requires? : ArrayView[String], conflicts_with? : ArrayView[String], required? : Bool, global? : Bool, hidden? : Bool) -> Self
-
 pub(all) enum OptionAction {
   Set
   Append
 }
 pub impl Eq for OptionAction
 pub impl Show for OptionAction
+
+pub struct Optional {
+  // private fields
+
+  fn new(StringView, short? : Char, long? : StringView, about? : StringView, action? : OptionAction, env? : StringView, default_values? : ArrayView[String], allow_hyphen_values? : Bool, requires? : ArrayView[String], conflicts_with? : ArrayView[String], required? : Bool, global? : Bool, hidden? : Bool) -> Optional
+}
+pub fn Optional::new(StringView, short? : Char, long? : StringView, about? : StringView, action? : OptionAction, env? : StringView, default_values? : ArrayView[String], allow_hyphen_values? : Bool, requires? : ArrayView[String], conflicts_with? : ArrayView[String], required? : Bool, global? : Bool, hidden? : Bool) -> Self
 
 pub struct Positional {
   // private fields
