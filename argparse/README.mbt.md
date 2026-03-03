@@ -14,7 +14,9 @@ small, predictable feature set.
 ///|
 test "basic option + positional success snapshot" {
   let matches = @argparse.parse(
-    Command("demo", options=[Option("name")], positionals=[Positional("target")]),
+    Command("demo", options=[Optional("name")], positionals=[
+      Positional("target"),
+    ]),
     argv=["--name", "alice", "file.txt"],
     env={},
   )
@@ -28,7 +30,7 @@ test "basic option + positional success snapshot" {
 
 ///|
 test "basic option + positional failure snapshot" {
-  let cmd = @argparse.Command("demo", options=[Option("name")], positionals=[
+  let cmd = @argparse.Command("demo", options=[Optional("name")], positionals=[
     Positional("target"),
   ])
   try cmd.parse(argv=["--bad"], env={}) catch {
@@ -150,7 +152,7 @@ Value precedence is `argv > env > default_values`.
 ///|
 test "value source precedence snapshots" {
   let cmd = @argparse.Command("demo", options=[
-    Option("level", env="LEVEL", default_values=["1"]),
+    Optional("level", env="LEVEL", default_values=["1"]),
   ])
 
   inspect(
@@ -214,7 +216,7 @@ test "value source precedence snapshots" {
 ```mbt check
 ///|
 test "option input forms snapshot" {
-  let cmd = @argparse.Command("demo", options=[Option("count", short='c')])
+  let cmd = @argparse.Command("demo", options=[Optional("count", short='c')])
 
   inspect(
     cmd.render_help(),
@@ -285,8 +287,8 @@ error and full contextual help.
 ///|
 test "requires relationship success and failure snapshots" {
   let cmd = @argparse.Command("demo", options=[
-    Option("mode", requires=["config"]),
-    Option("config"),
+    Optional("mode", requires=["config"]),
+    Optional("config"),
   ])
 
   let ok = try! cmd.parse(argv=["--mode", "fast", "--config", "cfg.toml"], env={})
@@ -476,7 +478,7 @@ test "bounded non-last positional failure snapshot" {
 ///|
 let cmd : @argparse.Command = Command(
   "wrap",
-  options=[Option("config"), Option("mode")],
+  options=[Optional("config"), Optional("mode")],
   positionals=[
     Positional(
       "child_argv",

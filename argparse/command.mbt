@@ -33,7 +33,7 @@ pub struct Command {
   fn new(
     name : StringView,
     flags? : ArrayView[Flag],
-    options? : ArrayView[Option],
+    options? : ArrayView[Optional],
     positionals? : ArrayView[Positional],
     subcommands? : ArrayView[Command],
     about? : StringView,
@@ -63,7 +63,7 @@ pub struct Command {
 pub fn Command::new(
   name : StringView,
   flags? : ArrayView[Flag] = [],
-  options? : ArrayView[Option] = [],
+  options? : ArrayView[Optional] = [],
   positionals? : ArrayView[Positional] = [],
   subcommands? : ArrayView[Command] = [],
   about? : StringView,
@@ -228,7 +228,7 @@ fn find_decl_subcommand(subs : Array[Command], name : String) -> Command? {
 ///|
 fn collect_args(
   flags : ArrayView[Flag],
-  options : ArrayView[Option],
+  options : ArrayView[Optional],
   positionals : ArrayView[Positional],
 ) -> (Array[Arg], ArgBuildError?) {
   let args : Array[Arg] = []
