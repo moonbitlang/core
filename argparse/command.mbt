@@ -113,10 +113,9 @@ pub fn Command::render_help(self : Command) -> String {
 /// Behavior:
 /// - Help/version requests print output immediately and terminate with exit code
 ///   `0`.
-/// - Parse failures raise `ArgError::Message` where the payload includes the
-///   error text and full contextual help output.
-/// - Command-definition validation failures raise `ArgError::Message` with a
-///   validation-failure message (without appended help).
+/// - Parse failures raise display-ready error text with full contextual help.
+/// - Command-definition validation failures raise display-ready validation
+///   text (without appended help).
 ///
 /// Value precedence is `argv > env > default_values`.
 #as_free_fn
@@ -124,15 +123,18 @@ pub fn Command::parse(
   self : Command,
   argv? : ArrayView[String] = default_argv(),
   env? : Map[String, String] = {},
-) -> Matches raise ArgError {
+) -> Matches raise {
   try {
     let raw = parse_command(self, argv, env, [], {}, {}, self.name)
     build_matches(self, raw, [])
   } catch {
     DisplayHelp::Message(text) => print_and_exit_success(text)
     DisplayVersion::Message(text) => print_and_exit_success(text)
-    ArgError::Message(msg) => raise Message(msg)
-    _ => panic()
+    ArgError::Message(_) as err => raise err
+    err => {
+      println(err.to_string())
+      panic()
+    }
   }
 }
 

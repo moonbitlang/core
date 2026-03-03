@@ -13,17 +13,17 @@
 // limitations under the License.
 
 ///|
-/// Unified error surface exposed by argparse.
+/// Internal error surface used by argparse.
 ///
 /// `Message` is display-ready text intended for end users.
 /// Parse failures include contextual help; command-definition validation
 /// failures are returned as plain validation messages.
-pub suberror ArgError {
+priv suberror ArgError {
   Message(String)
 }
 
 ///|
-pub impl Show for ArgError with output(self : ArgError, logger) {
+impl Show for ArgError with output(self : ArgError, logger) {
   match self {
     Message(msg) => logger.write_string(msg)
   }

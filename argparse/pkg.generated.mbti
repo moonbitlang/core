@@ -8,10 +8,6 @@ import {
 // Values
 
 // Errors
-pub suberror ArgError {
-  Message(String)
-}
-pub impl Show for ArgError
 
 // Types and methods
 pub struct ArgGroup {
@@ -28,7 +24,7 @@ pub struct Command {
 }
 pub fn Command::new(StringView, flags? : ArrayView[Flag], options? : ArrayView[Optional], positionals? : ArrayView[Positional], subcommands? : ArrayView[Self], about? : StringView, version? : StringView, disable_help_flag? : Bool, disable_version_flag? : Bool, disable_help_subcommand? : Bool, arg_required_else_help? : Bool, subcommand_required? : Bool, hidden? : Bool, groups? : ArrayView[ArgGroup]) -> Self
 #as_free_fn
-pub fn Command::parse(Self, argv? : ArrayView[String], env? : Map[String, String]) -> Matches raise ArgError
+pub fn Command::parse(Self, argv? : ArrayView[String], env? : Map[String, String]) -> Matches raise
 pub fn Command::render_help(Self) -> String
 
 pub struct Flag {

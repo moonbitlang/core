@@ -10,6 +10,9 @@ small, predictable feature set.
 
 ## Quick Start
 
+For tests, snapshotting the failure message is the recommended way to cover
+both the parse error and the full contextual help text.
+
 ```mbt check
 ///|
 test "basic option + positional success snapshot" {
@@ -34,9 +37,9 @@ test "basic option + positional failure snapshot" {
     Positional("target"),
   ])
   try cmd.parse(argv=["--bad"], env={}) catch {
-    Message(msg) =>
+    err =>
       inspect(
-        msg,
+        err,
         content=(
           #|error: unexpected argument '--bad' found
           #|
@@ -54,6 +57,22 @@ test "basic option + positional failure snapshot" {
   } noraise {
     _ => panic()
   }
+}
+```
+
+### Using it for async CLI
+
+You can call `cmd.parse()` directly inside `async fn main`.
+On parse failure, argparse automatically prints the error message with full
+contextual help text.
+
+```mbt nocheck
+///|
+async fn main {
+  let cmd = @argparse.Command("demo", options=[@argparse.Optional("name")], positionals=[
+    @argparse.Positional("target"),
+  ])
+  let _ = cmd.parse()
 }
 ```
 
@@ -124,9 +143,9 @@ test "subcommand context failure snapshot" {
     subcommands=[Command("run")],
   )
   try cmd.parse(argv=["run", "--oops"], env={}) catch {
-    Message(msg) =>
+    err =>
       inspect(
-        msg,
+        err,
         content=(
           #|error: unexpected argument '--oops' found
           #|
@@ -280,8 +299,8 @@ test "double-dash separator snapshot" {
 
 ## Constraints And Policies
 
-`parse` raises a single string error (`ArgError::Message`) that includes the
-error and full contextual help.
+`parse` raises a single display-ready error string that includes the error and
+full contextual help.
 
 ```mbt check
 ///|
@@ -300,9 +319,9 @@ test "requires relationship success and failure snapshots" {
   )
 
   try cmd.parse(argv=["--mode", "fast"], env={}) catch {
-    Message(msg) =>
+    err =>
       inspect(
-        msg,
+        err,
         content=(
           #|error: the following required argument was not provided: 'config' (required by 'mode')
           #|
@@ -331,9 +350,9 @@ test "arg group required and exclusive failure snapshot" {
   )
 
   try cmd.parse(argv=[], env={}) catch {
-    Message(msg) =>
+    err =>
       inspect(
-        msg,
+        err,
         content=(
           #|error: the following required arguments were not provided:
           #|  <--fast|--slow>
@@ -362,9 +381,9 @@ test "subcommand required policy failure snapshot" {
   ])
 
   try cmd.parse(argv=[], env={}) catch {
-    Message(msg) =>
+    err =>
       inspect(
-        msg,
+        err,
         content=(
           #|error: the following required argument was not provided: 'subcommand'
           #|
@@ -402,9 +421,9 @@ test "conflicts_with success and failure snapshots" {
   )
 
   try cmd.parse(argv=["--verbose", "--quiet"], env={}) catch {
-    Message(msg) =>
+    err =>
       inspect(
-        msg,
+        err,
         content=(
           #|error: conflicting arguments: verbose and quiet
           #|
@@ -451,9 +470,9 @@ test "bounded non-last positional failure snapshot" {
     Positional("second", num_args=@argparse.ValueRange::single()),
   ])
   try cmd.parse(argv=["a", "b", "c", "d"], env={}) catch {
-    Message(msg) =>
+    err =>
       inspect(
-        msg,
+        err,
         content=(
           #|error: unexpected value 'd' for '<second>' found; no more were expected
           #|
