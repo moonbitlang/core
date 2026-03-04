@@ -470,7 +470,7 @@ test "unsafe_pop_front after many push_front" {
     dq.push_front(i)
   }
   // Pop all elements except one
-  for i in 0..<9 {
+  for _ in 0..<9 {
     dq.unsafe_pop_front()
   }
   // Now head should be at the end of buffer

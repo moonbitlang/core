@@ -133,7 +133,7 @@ test "string benchmarks" {
   // Benchmark string concatenation
   bencher.bench(name="string_concat", fn() {
     let mut result = ""
-    for i in 0..<5 {
+    for _ in 0..<5 {
       result = result + "x"
     }
   })
@@ -141,7 +141,7 @@ test "string benchmarks" {
   // Benchmark StringBuilder (should be faster)
   bencher.bench(name="stringbuilder", fn() {
     let builder = StringBuilder::new()
-    for i in 0..<5 {
+    for _ in 0..<5 {
       builder.write_string("x")
     }
     ignore(builder.to_string())

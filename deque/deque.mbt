@@ -662,7 +662,7 @@ test "unsafe_pop_front after many push_front" {
   for i in 0..<10 {
     dq.push_front(i)
   }
-  for i in 0..<10 {
+  for _ in 0..<10 {
     dq.unsafe_pop_front()
   }
   assert_eq(dq.len, 0)

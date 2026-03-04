@@ -132,7 +132,7 @@ fn chacha_block(
     let mut b13 = buf[13 * 4 + i]
     let mut b14 = buf[14 * 4 + i]
     let mut b15 = buf[15 * 4 + i]
-    for round in 0..<4 {
+    for _ in 0..<4 {
       let Quadruple(tb1_0, tb1_1, tb1_2, tb1_3) = qr(Quadruple(b0, b4, b8, b12))
       b0 = tb1_0
       b4 = tb1_1
@@ -292,7 +292,7 @@ test "output" {
     }
   }
 
-  for i in 0..<372 {
+  for _ in 0..<372 {
     let x = uint64(s)
     res.push(x)
   }

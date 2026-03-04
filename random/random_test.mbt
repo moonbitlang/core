@@ -96,7 +96,7 @@ test "uint64 modulo bias handling with large limit" {
 test "bench random" (b : @bench.T) {
   let r = @random.Rand::new()
   b.bench(() => {
-    for i in 0..<1000000 {
+    for _ in 0..<1000000 {
       let _ = r.uint64(limit=10000000000000000000UL)
     }
   })

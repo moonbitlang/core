@@ -36,7 +36,7 @@ fn random_test_gen(rng : Random, times : Int, max_lvl : Int) -> Array[Op] {
   // Start constructing the array
   let ret = []
   let mut cur_len = 0
-  for i in 0..<times {
+  for _ in 0..<times {
     let op = rng.int(limit=op_count)
     match op {
       0 => {
@@ -110,7 +110,7 @@ fn execute_array_test(rs : Array[Op]) -> Unit raise {
 /// Compute the power of the branching factor.
 fn branching_factor_power(a : Int) -> Int {
   let mut ret = 1
-  for i in 0..<a {
+  for _ in 0..<a {
     ret *= branching_factor
   }
   ret

@@ -295,7 +295,7 @@ fn miller_rabin_test(
   // (step 3) 
   let w3_len = w3.bit_length()
   // (step 4)
-  next~: for i in 0..<iters {
+  next~: for _ in 0..<iters {
     // (step 4.1) obtain a random BigInt b where 1 < b < w-1
     let rand_b = for {
       let x = rand.bigint(w3_len)
@@ -311,7 +311,7 @@ fn miller_rabin_test(
       continue next~
     }
     // (step 4.5)
-    for j in 1..<a {
+    for _ in 1..<a {
       // (step 4.5.1) z = z^2 mod w
       z = z.pow(2, modulus=w)
       // (step 4.5.2)
