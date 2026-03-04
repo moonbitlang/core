@@ -13,6 +13,23 @@
 // limitations under the License.
 
 ///|
+/// A simple mutable reference type that allows you to store and modify a value of any type.
+/// 
+/// ```mbt check
+/// test {
+///   let x = @ref.Ref(42)
+///   assert_eq(x.val, 42)
+///   x.val = 100
+///   assert_eq(x.val, 100)
+/// }
+/// ```
+pub(all) struct Ref[T] {
+  mut val : T
+
+  fn[T] new(value : T) -> Ref[T]
+}
+
+///|
 pub impl[X : Show] Show for Ref[X] with output(self, logger) {
   logger.write_string("{val: ")
   logger.write_object(self.val)

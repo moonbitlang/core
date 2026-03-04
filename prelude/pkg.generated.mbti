@@ -6,6 +6,7 @@ import {
   "moonbitlang/core/builtin",
   "moonbitlang/core/debug",
   "moonbitlang/core/json",
+  "moonbitlang/core/ref",
   "moonbitlang/core/set",
   "moonbitlang/core/string",
 }
@@ -100,6 +101,8 @@ pub using @builtin {type Json}
 pub using @builtin {type Map}
 
 pub using @builtin {type MutArrayView}
+
+pub using @ref {type Ref}
 
 pub using @string {type Regex}
 

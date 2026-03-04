@@ -3,4 +3,5 @@ import {
   "moonbitlang/core/hashset",
   "moonbitlang/core/immut/sorted_map" @immut/sorted_map,
   "moonbitlang/core/internal/regex_engine/shared_types",
+  "moonbitlang/core/ref",
 }

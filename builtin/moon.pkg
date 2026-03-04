@@ -12,7 +12,6 @@ import {
   "moonbitlang/core/uint",
   "moonbitlang/core/json",
   "moonbitlang/core/bigint",
-  "moonbitlang/core/ref",
   "moonbitlang/core/float",
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/test",

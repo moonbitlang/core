@@ -131,12 +131,12 @@ fn check_array_eq(a : Array[Int], t : T[Int]) -> Unit raise {
 ///|
 /// Generate a random array of length `n`.
 fn random_array(n : Int) -> Array[Int] {
-  let rng = Random({ val: 0 })
+  let rng = Random(@ref.Ref(0))
   Array::makei(n, i => rng.int(limit=i))
 }
 
 ///|
-struct Random(Ref[UInt64])
+struct Random(@ref.Ref[UInt64])
 
 ///|
 fn Random::int(self : Random, limit~ : Int) -> Int {
