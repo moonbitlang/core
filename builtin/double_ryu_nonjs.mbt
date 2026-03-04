@@ -612,7 +612,7 @@ fn to_chars(v : FloatingDecimal64, sign : Bool) -> String {
         output /= 10
       }
       index += olength
-      for i in olength..<(exp + 1) {
+      for _ in olength..<(exp + 1) {
         result[index] = b'0'
         index += 1
       }

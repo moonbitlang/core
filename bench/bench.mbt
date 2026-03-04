@@ -15,7 +15,7 @@
 ///|
 fn iter_n_microseconds(inner : () -> Unit, k : Int) -> Double {
   let ts = monotonic_clock_start()
-  for i in 0..<k {
+  for _ in 0..<k {
     inner()
   }
   let diff = monotonic_clock_end(ts)

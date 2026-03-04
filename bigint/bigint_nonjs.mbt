@@ -952,7 +952,7 @@ pub fn BigInt::to_string(self : BigInt, radix? : Int = 10) -> String {
   }
   let mut ret = ""
   for i in 0..<(v_idx - 1) {
-    for j in 0..<decimal_radix_bit_len {
+    for _ in 0..<decimal_radix_bit_len {
       let x = v[i] % 10L
       v[i] /= 10L
       ret = x.to_string() + ret

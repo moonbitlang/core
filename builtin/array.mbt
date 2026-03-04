@@ -1252,7 +1252,7 @@ pub fn[T] Array::flatten(self : Array[Array[T]]) -> Array[T] {
 /// ```
 pub fn[T] Array::repeat(self : Array[T], times : Int) -> Array[T] {
   let v = Array::new(capacity=self.length() * times)
-  for i in 0..<times {
+  for _ in 0..<times {
     v.append(self)
   }
   v

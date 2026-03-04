@@ -529,7 +529,7 @@ pub impl Show for Decimal with output(self, logger) {
   if self.decimal_point <= 0 {
     // zeros filling between the decimal point and the digits
     logger.write_string("0.")
-    for i in 0..<-self.decimal_point {
+    for _ in 0..<-self.decimal_point {
       logger.write_char('0')
     }
     for i in 0..<self.digits_num {
@@ -548,7 +548,7 @@ pub impl Show for Decimal with output(self, logger) {
     for i in 0..<self.digits_num {
       logger.write_string(self.digits[i].to_int().to_string())
     }
-    for i in 0..<(self.decimal_point - self.digits_num) {
+    for _ in 0..<(self.decimal_point - self.digits_num) {
       logger.write_char('0')
     }
   }
