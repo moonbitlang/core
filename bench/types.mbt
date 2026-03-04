@@ -16,7 +16,7 @@
 priv trait OpaqueValue {}
 
 ///|
-impl[X] OpaqueValue for Ref[X]
+impl[X] OpaqueValue for @ref.Ref[X]
 
 ///|
 #alias(T)

@@ -189,7 +189,7 @@ pub impl[T : Debug] Debug for MutArrayView[T] with to_repr(self) {
 }
 
 ///|
-pub impl[T : Debug] Debug for Ref[T] with to_repr(self) {
+pub impl[T : Debug] Debug for @ref.Ref[T] with to_repr(self) {
   Repr::opaque_("Ref", self.val.to_repr())
 }
 
@@ -1361,7 +1361,7 @@ test "core data structures Debug implementations" {
   let buf = @buffer.new()
   buf.write_bytes(b"ab")
   debug_inspect(buf, content="<Buffer: [0x61, 0x62]>")
-  let r : Ref[Int] = @ref.new(1)
+  let r : @ref.Ref[Int] = @ref.new(1)
   debug_inspect(r, content="<Ref: 1>")
   let mv : MutArrayView[Int] = [1, 2, 3].mut_view(start=1, end=3)
   debug_inspect(mv, content="<MutArrayView: [2, 3]>")

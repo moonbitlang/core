@@ -110,7 +110,7 @@ fn ThreadSet::make_node(
 }
 
 ///|
-let rand_state : Ref[Int] = { val: 0 }
+let rand_state : @ref.Ref[Int] = @ref.Ref(0)
 
 ///|
 fn rand_int() -> Int {

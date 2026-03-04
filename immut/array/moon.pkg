@@ -4,6 +4,10 @@ import {
   "moonbitlang/core/array" @_,
 }
 
+import {
+  "moonbitlang/core/ref",
+} for "wbtest"
+
 options(
   targets: {
     "panic_test.mbt": [ "not", "native", "llvm" ],

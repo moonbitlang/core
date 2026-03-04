@@ -145,3 +145,6 @@ pub type Iterator[X] = Iter[X]
 /// Type `Iterator2`.
 #deprecated("The name `Iterator2` is deprecated, use `Iter2` instead. Note that if you have defined `iterator2()` method to support `for .. in` loop, you should also rename `iterator2()` to `iter2()`. See https://github.com/moonbitlang/core/pull/3127 for more details.")
 pub type Iterator2[X, Y] = Iter2[X, Y]
+
+///|
+pub using @ref {type Ref}

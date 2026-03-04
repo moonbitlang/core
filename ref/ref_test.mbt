@@ -82,7 +82,7 @@ test "update with identity function" {
 
 ///|
 test "Ref::new with string" {
-  let r = Ref::new("hello")
+  let r = @ref.Ref("hello")
   inspect(r, content="{val: \"hello\"}")
 }
 
@@ -127,6 +127,6 @@ test "update with error handling" {
 
 ///|
 test "arbitrary ref samples" {
-  let samples = (@quickcheck.samples(3) : Array[Ref[Int]])
+  let samples = (@quickcheck.samples(3) : Array[@ref.Ref[Int]])
   inspect(samples.length(), content="3")
 }
