@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+#warnings("-deprecated")
 test "Iter2::run empty iterator" {
   let iter : Iter2[Unit, Unit] = Iter2::new(() => None)
   let result = iter.run((_, _) => IterContinue)

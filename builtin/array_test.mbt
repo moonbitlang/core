@@ -1228,6 +1228,7 @@ test "zip_to_iter2" {
 }
 
 ///|
+#warnings("-deprecated")
 test "zip_to_iter2 early termination" {
   // This test should trigger the uncovered line 301: break IterEnd
   // We create an iterator that terminates early when it encounters a specific value

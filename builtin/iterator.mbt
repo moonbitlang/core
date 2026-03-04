@@ -38,6 +38,7 @@ pub fn[X] Iter::next(self : Iter[X]) -> X? {
 /// Function `run`.
 #locals(f)
 #deprecated("write a loop instead.")
+#warnings("-deprecated")
 pub fn[X] Iter::run(self : Iter[X], f : (X) -> IterResult) -> IterResult {
   while self.next() is Some(x) {
     guard f(x) is IterContinue else { break IterEnd }
@@ -52,6 +53,7 @@ pub fn[X] Iter::run(self : Iter[X], f : (X) -> IterResult) -> IterResult {
 /// Deprecated: prefer explicit loops.
 /// Function `just_run`.
 #deprecated("write a loop instead.")
+#warnings("-deprecated")
 pub fn[X] Iter::just_run(self : Iter[X], f : (X) -> IterResult) -> Unit {
   while self.next() is Some(x) {
     if f(x) is IterEnd {
@@ -912,6 +914,8 @@ pub impl[X : Show, Y : Show] Show for Iter2[X, Y] with output(self, logger) {
 
 ///|
 /// Consume pairs while callback returns `IterContinue`.
+#warnings("-deprecated")
+#deprecated("write a loop instead.")
 pub fn[X, Y] Iter2::run(
   self : Iter2[X, Y],
   f : (X, Y) -> IterResult,

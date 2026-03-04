@@ -16,15 +16,7 @@
 /// Control signal used by deprecated iterator callbacks.
 ///
 /// `IterContinue` keeps iteration running, `IterEnd` stops it.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   inspect(IterResult::IterContinue == IterResult::IterContinue, content="true")
-///   inspect(IterResult::IterEnd == IterResult::IterContinue, content="false")
-/// }
-/// ```
+#deprecated
 pub(all) enum IterResult {
   IterEnd // false
   IterContinue // true
