@@ -46,20 +46,21 @@ pub fn MatchResult::group(self : MatchResult, index : Int) -> (Int, Int)? {
 }
 
 ///|
-fn Regex::find_start_state(self : Regex, cat : Category) -> State {
+fn Regex::find_start_state(self : Regex, cat : Category) -> StateId {
   for i in 0..<self.start_states.length() {
-    let (cat2, state) = self.start_states[i]
+    let (cat2, state_id) = self.start_states[i]
     if cat2 == cat {
-      return state
+      return state_id
     }
   }
-  let state = find_state(
+  let state_id = find_state(
     self.state_table,
+    self.states,
     self.symbol_repr.length(),
     @automata.State::start(cat, self.expr),
   )
-  self.start_states.push((cat, state))
-  state
+  self.start_states.push((cat, state_id))
+  state_id
 }
 
 ///|
@@ -83,10 +84,11 @@ pub fn[T : Input] Regex::execute(
       prev_symbol,
     )
   }
-  let start_state = self.find_start_state(start_cat)
+  let start_state_id = self.find_start_state(start_cat)
   let positions = Positions::new()
-  let mut state = start_state
+  let mut state_id = start_state_id
   while pos < end {
+    let state = self.states[state_id]
     let ch = input.get(pos)
     let symbol = self.symbol_table.map(ch)
     // INVARIANT: The start state is never a break state.
@@ -94,8 +96,8 @@ pub fn[T : Input] Regex::execute(
     //   `/[]/`  -> `seq(shortest(char(any)), capture(empty))`
     //   `/^[]/` -> `capture(seq(start_of_input, empty))`
     // This ensures the executor can safely access state.transitions[symbol] without checking.
-    let next_state = state.transitions[symbol]
-    state = if next_state.kind is Pending {
+    let next_state_id = state.transitions[symbol]
+    state_id = if next_state_id == PENDING_STATE_ID {
       let cat = category_from_symbol(
         profile=self.profile,
         symbol_repr=self.symbol_repr,
@@ -107,16 +109,18 @@ pub fn[T : Input] Regex::execute(
         symbol,
         next_cat=cat,
       )
-      let next_state = find_state(
+      let next_state_id = find_state(
         self.state_table,
+        self.states,
         self.symbol_repr.length(),
         next_desc,
       )
-      state.transitions[symbol] = next_state
-      next_state
+      state.transitions[symbol] = next_state_id
+      next_state_id
     } else {
-      next_state
+      next_state_id
     }
+    let state = self.states[state_id]
     let slot = state.desc.slot()
     if slot.is_assigned() {
       positions.set(slot, pos)
@@ -126,6 +130,7 @@ pub fn[T : Input] Regex::execute(
     }
     pos += 1
   }
+  let state = self.states[state_id]
   let matched = match state.desc.status() {
     Failed => None
     Running => {
