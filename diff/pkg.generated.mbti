@@ -1,0 +1,38 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/diff"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn[T : Hash + Eq] diff(old~ : ArrayView[T], new~ : ArrayView[T], cutoff? : Int) -> Array[Edit]
+
+pub fn group_edits(Array[Edit], radius? : Int) -> Array[Hunk]
+
+// Errors
+
+// Types and methods
+pub enum Edit {
+  Delete(old_index~ : Int, new_index~ : Int, old_len~ : Int)
+  Insert(old_index~ : Int, new_index~ : Int, new_len~ : Int)
+  Equal(mut old_index~ : Int, mut new_index~ : Int, mut len~ : Int)
+}
+pub fn[T] Edit::take_tagged_view_from(Self, old~ : ArrayView[T], new~ : ArrayView[T]) -> (EditTag, ArrayView[T])
+pub impl @debug.Debug for Edit
+
+pub enum EditTag {
+  Delete
+  Insert
+  Equal
+}
+
+pub struct Hunk(ArrayView[Edit])
+#deprecated
+pub fn Hunk::inner(Self) -> ArrayView[Edit]
+pub fn[T : Show] Hunk::render_with(Self, old~ : ArrayView[T], new~ : ArrayView[T]) -> String
+
+// Type aliases
+
+// Traits
+
