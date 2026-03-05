@@ -79,6 +79,35 @@ test "execute with lastIndex and cached transitions/start-state" {
 }
 
 ///|
+test "execute with lastIndex and cached failure transitions" {
+  let pat = @regex_engine.char(@regex_engine.RecharSet::char('a'))
+  let re = @regex_engine.compile(profile~, pat)
+  assert_true(re.execute("bb"[:], 1) is None)
+  // second run hits cached start state + failed transition
+  assert_true(re.execute("bb"[:], 1) is None)
+}
+
+///|
+test "nested stars execute repeatedly" {
+  let a = @regex_engine.char(@regex_engine.RecharSet::char('a'))
+  let inner = @regex_engine.quantifier(a, { min: 0, max: None, mode: Greedy })
+  let outer = @regex_engine.quantifier(inner, {
+    min: 0,
+    max: None,
+    mode: Greedy,
+  })
+  let pat = @regex_engine.seq([
+    @regex_engine.start_of_input, outer, @regex_engine.end_of_input,
+  ])
+  let re = @regex_engine.compile(profile~, pat)
+  guard re.execute("aaa"[:], 0) is Some(mr1) else { fail("Expected match") }
+  assert_eq(mr1.group(0), Some((0, 3)))
+  // Repeat the same execution path to exercise cached transitions.
+  guard re.execute("aaa"[:], 0) is Some(mr2) else { fail("Expected match") }
+  assert_eq(mr2.group(0), Some((0, 3)))
+}
+
+///|
 test "alternation compiles and matches" {
   let pat = @regex_engine.alt([
     @regex_engine.char(@regex_engine.RecharSet::char('a')),

@@ -13,16 +13,21 @@
 // limitations under the License.
 
 ///|
+type StateId = Int
+
+///|
+const PENDING_STATE_ID : StateId = -1
+
+///|
 priv struct State {
   kind : StateKind
   desc : @automata.State
-  transitions : FixedArray[State] // indexed by symbol
+  transitions : FixedArray[StateId] // indexed by symbol
   mut final_ : @list.List[(Category, @automata.Slot, @automata.Status)]
 }
 
 ///|
 priv enum StateKind {
-  Pending
   Break
   Normal
 }
@@ -43,25 +48,22 @@ fn State::new(desc : @automata.State, num_symbols : Int) -> State {
     transitions: if is_break {
       []
     } else {
-      FixedArray::make(num_symbols, pending_state)
+      FixedArray::make(num_symbols, PENDING_STATE_ID)
     },
     final_: @list.empty(),
   }
 }
 
 ///|
-let pending_state : State = {
-  kind: Pending,
-  desc: @automata.st_dummy,
-  transitions: [],
-  final_: @list.empty(),
-}
-
-///|
 fn find_state(
-  table : @hashmap.HashMap[@automata.State, State],
+  table : @hashmap.HashMap[@automata.State, StateId],
+  states : Array[State],
   num_symbols : Int,
   desc : @automata.State,
-) -> State {
-  table.get_or_init(desc, () => State::new(desc, num_symbols))
+) -> StateId {
+  table.get_or_init(desc, () => {
+    let state_id = states.length()
+    states.push(State::new(desc, num_symbols))
+    state_id
+  })
 }

@@ -20,8 +20,9 @@ struct Regex {
   groups : ReadOnlyArray[String?]
   symbol_table : &@symbol_map.Table
   symbol_repr : ReadOnlyArray[Rechar]
-  start_states : Array[(Category, State)]
-  state_table : @hashmap.HashMap[@automata.State, State]
+  start_states : Array[(Category, StateId)]
+  state_table : @hashmap.HashMap[@automata.State, StateId]
+  states : Array[State]
 }
 
 ///|
@@ -48,5 +49,6 @@ fn Regex::new(
     symbol_repr,
     start_states: [],
     state_table: @hashmap.HashMap::new(),
+    states: [],
   }
 }
