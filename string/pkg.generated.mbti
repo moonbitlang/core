@@ -32,6 +32,7 @@ pub fn Regex::repeat(Self, min? : Int, max? : Int, greedy? : Bool) -> Self
 pub fn Regex::replace_by(Self, StringView, (MatchResult) -> StringView, limit? : Int) -> StringView
 pub fn Regex::split(Self, StringView) -> Iter[StringView]
 pub fn Regex::string(StringView) -> Self
+pub fn Regex::unsafe_from_string(StringView) -> Self
 pub impl Add for Regex
 pub impl BitOr for Regex
 

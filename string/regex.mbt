@@ -163,6 +163,30 @@ pub fn Regex::new(pattern : StringView) -> Regex raise {
 }
 
 ///|
+/// Compiles a regex pattern string into a `Regex` object, panicking on invalid patterns.
+///
+/// This function is equivalent to `Regex::new(pattern)` but converts any compilation
+/// error into a panic instead of raising an exception.
+///
+/// The regex syntax follows the same rules as `Regex::new`.
+///
+/// Panics when `pattern` is not a valid regex pattern.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let regex = @string.Regex::unsafe_from_string("[[:digit:]]+")
+///   guard regex.execute("a12b") is Some(m) else { fail("Expected match") }
+///   inspect(m.content(), content="12")
+/// }
+/// ```
+#internal(experimental, "subject to breaking change without notice")
+pub fn Regex::unsafe_from_string(pattern : StringView) -> Regex {
+  try! Regex::new(pattern)
+}
+
+///|
 /// Builds a regex that matches `str` literally.
 ///
 /// This is equivalent to `Regex::new(Regex::escape(str))`.
