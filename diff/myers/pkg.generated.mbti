@@ -1,0 +1,44 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/diff/myers"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn group_edits(Array[Edit], radius? : Int) -> Array[Array[Edit]]
+
+pub fn[T : Hash + Eq] plain_diff(old~ : MutArrayView[T], new~ : MutArrayView[T], cutoff? : Int) -> Array[Edit]
+
+// Errors
+
+// Types and methods
+pub(all) enum Edit {
+  Delete(mut old_index~ : Int, mut new_index~ : Int, mut old_len~ : Int)
+  Insert(mut old_index~ : Int, mut new_index~ : Int, mut new_len~ : Int)
+  Equal(mut old_index~ : Int, mut new_index~ : Int, mut len~ : Int)
+}
+pub fn Edit::tag(Self) -> EditTag
+pub impl @debug.Debug for Edit
+
+pub enum EditTag {
+  Del
+  Ins
+  Eql
+}
+
+pub struct HunkHeader(Range, Range)
+
+
+pub fn HunkHeader::new(Array[Edit]) -> Self
+pub impl Show for HunkHeader
+
+pub struct Range(Int, Int)
+
+
+pub impl Show for Range
+
+// Type aliases
+
+// Traits
+
