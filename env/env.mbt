@@ -29,3 +29,27 @@ pub fn now() -> UInt64 {
 pub fn current_dir() -> String? {
   current_dir_internal()
 }
+
+///|
+/// Get an environment variable by key. Returns `None` if the key does not exist.
+pub fn get_env_var(key : String) -> String? {
+  get_env_var_internal(key)
+}
+
+///|
+/// Get all environment variables.
+pub fn get_env_vars() -> Map[String, String] {
+  get_env_vars_internal()
+}
+
+///|
+/// Set an environment variable.
+pub fn set_env_var(key : String, value : String) -> Unit {
+  set_env_var_internal(key, value)
+}
+
+///|
+/// Unset an environment variable.
+pub fn unset_env_var(key : String) -> Unit {
+  unset_env_var_internal(key)
+}

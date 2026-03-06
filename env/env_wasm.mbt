@@ -18,7 +18,29 @@ priv type XStringReadHandle
 
 ///|
 #external
+priv type XStringCreateHandle
+
+///|
+#external
 priv type XExternString
+
+///|
+fn begin_create_string() -> XStringCreateHandle = "__moonbit_fs_unstable" "begin_create_string"
+
+///|
+fn string_append_char(handle : XStringCreateHandle, ch : Char) = "__moonbit_fs_unstable" "string_append_char"
+
+///|
+fn finish_create_string(handle : XStringCreateHandle) -> XExternString = "__moonbit_fs_unstable" "finish_create_string"
+
+///|
+fn string_to_extern(s : String) -> XExternString {
+  let handle = begin_create_string()
+  for i = 0; i < s.length(); i = i + 1 {
+    string_append_char(handle, s.code_unit_at(i).unsafe_to_char())
+  }
+  finish_create_string(handle)
+}
 
 ///|
 fn begin_read_string(s : XExternString) -> XStringReadHandle = "__moonbit_fs_unstable" "begin_read_string"
@@ -107,3 +129,48 @@ fn current_dir_internal() -> String? {
 
 ///|
 fn current_dir_ffi() -> XExternString = "__moonbit_fs_unstable" "current_dir"
+
+///|
+fn get_env_var_internal(key : String) -> String? {
+  let key = string_to_extern(key)
+  if get_env_var_exists_ffi(key) {
+    Some(string_from_extern(get_env_var_ffi(key)))
+  } else {
+    None
+  }
+}
+
+///|
+fn get_env_var_ffi(key : XExternString) -> XExternString = "__moonbit_fs_unstable" "get_env_var"
+
+///|
+fn get_env_var_exists_ffi(key : XExternString) -> Bool = "__moonbit_fs_unstable" "get_env_var_exists"
+
+///|
+fn get_env_vars_internal() -> Map[String, String] {
+  let tmp = string_array_from_extern(get_env_vars_ffi())
+  let res = {}
+  for i = 0; i < tmp.length(); i = i + 2 {
+    res[tmp[i]] = tmp[i + 1]
+  }
+  res
+}
+
+///|
+fn get_env_vars_ffi() -> XExternStringArray = "__moonbit_fs_unstable" "get_env_vars"
+
+///|
+fn set_env_var_internal(key : String, value : String) -> Unit {
+  set_env_var_ffi(string_to_extern(key), string_to_extern(value))
+}
+
+///|
+fn set_env_var_ffi(key : XExternString, value : XExternString) = "__moonbit_fs_unstable" "set_env_var"
+
+///|
+fn unset_env_var_internal(key : String) -> Unit {
+  unset_env_var_ffi(string_to_extern(key))
+}
+
+///|
+fn unset_env_var_ffi(key : XExternString) = "__moonbit_fs_unstable" "unset_env_var"
