@@ -13,11 +13,11 @@
 // limitations under the License.
 
 ///|
-#cfg(target="native")
+#cfg(any(target="native", target="llvm"))
 extern "c" fn runtime_native_exit(code : Int) = "exit"
 
 ///|
-#cfg(target="native")
+#cfg(any(target="native", target="llvm"))
 fn runtime_exit_success() -> Unit {
   runtime_native_exit(0)
 }
