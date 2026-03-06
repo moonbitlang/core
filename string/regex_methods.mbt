@@ -44,7 +44,6 @@ fn StringView::next_char_index(self : StringView, index : Int) -> Int {
 ///   inspect(result, content="a[12]b[3]")
 /// }
 /// ```
-#internal(experimental, "subject to breaking change without notice")
 pub fn Regex::replace_by(
   regex : Regex,
   str : StringView,
@@ -94,7 +93,6 @@ pub fn Regex::replace_by(
 ///   inspect(matches[1].content(), content="3")
 /// }
 /// ```
-#internal(experimental, "subject to breaking change without notice")
 pub fn Regex::find(regex : Regex, str : StringView) -> Iter[MatchResult] {
   let mut search_index = 0
   let len = str.length()
@@ -133,7 +131,6 @@ pub fn Regex::find(regex : Regex, str : StringView) -> Iter[MatchResult] {
 ///   inspect(parts[2], content="b")
 /// }
 /// ```
-#internal(experimental, "subject to breaking change without notice")
 pub fn Regex::split(regex : Regex, str : StringView) -> Iter[StringView] {
   let mut copy_index = 0
   let mut search_index = 0
