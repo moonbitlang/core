@@ -14,7 +14,6 @@
 
 ///|
 /// A compiled regular expression for string-oriented matching.
-#internal(experimental, "subject to breaking change without notice")
 pub struct Regex {
   priv pat : @re.Pattern
   priv mut re : @re.Regex?
@@ -30,7 +29,6 @@ using @debug {trait Debug, type Repr}
 
 ///|
 /// Result of one successful match produced by `Regex::execute`.
-#internal(experimental, "subject to breaking change without notice")
 struct MatchResult {
   input : StringView
   group_names : ReadOnlyArray[String?]
@@ -39,7 +37,6 @@ struct MatchResult {
 
 ///|
 /// Return match `before` view.
-#internal(experimental, "subject to breaking change without notice")
 pub fn MatchResult::before(self : MatchResult) -> StringView {
   guard self.result.group(0) is Some((start, _end)) else { panic() }
   self.input[0:start]
@@ -47,7 +44,6 @@ pub fn MatchResult::before(self : MatchResult) -> StringView {
 
 ///|
 /// Return match `after` view.
-#internal(experimental, "subject to breaking change without notice")
 pub fn MatchResult::after(self : MatchResult) -> StringView {
   guard self.result.group(0) is Some((_start, end)) else { panic() }
   self.input[end:self.input.length()]
@@ -55,7 +51,6 @@ pub fn MatchResult::after(self : MatchResult) -> StringView {
 
 ///|
 /// Return match `content` view.
-#internal(experimental, "subject to breaking change without notice")
 pub fn MatchResult::content(self : MatchResult) -> StringView {
   guard self.result.group(0) is Some((start, end)) else { panic() }
   self.input[start:end]
@@ -63,7 +58,6 @@ pub fn MatchResult::content(self : MatchResult) -> StringView {
 
 ///|
 /// Access capture `group` information.
-#internal(experimental, "subject to breaking change without notice")
 pub fn MatchResult::group(self : MatchResult, group_index : Int) -> StringView? {
   match self.result.group(group_index) {
     None => None
@@ -73,7 +67,6 @@ pub fn MatchResult::group(self : MatchResult, group_index : Int) -> StringView? 
 
 ///|
 /// Access capture `named_group` information.
-#internal(experimental, "subject to breaking change without notice")
 pub fn MatchResult::named_group(
   self : MatchResult,
   name : String,
@@ -152,7 +145,6 @@ fn Regex::re(self : Regex) -> @re.Regex {
 ///   inspect(m.content(), content="12")
 /// }
 /// ```
-#internal(experimental, "subject to breaking change without notice")
 pub fn Regex::new(pattern : StringView) -> Regex raise {
   let pat = @regex_parser.parse(
     profile=re_profile_unicode,
@@ -181,7 +173,6 @@ pub fn Regex::new(pattern : StringView) -> Regex raise {
 ///   inspect(m.content(), content="12")
 /// }
 /// ```
-#internal(experimental, "subject to breaking change without notice")
 pub fn Regex::unsafe_from_string(pattern : StringView) -> Regex {
   try! Regex::new(pattern)
 }
@@ -348,7 +339,6 @@ pub impl BitOr for Regex with lor(self, other) -> Regex {
 ///   inspect(anchored.execute("xaby", last_index=1) is Some(_), content="false")
 /// }
 /// ```
-#internal(experimental, "subject to breaking change without notice")
 pub fn Regex::execute(
   self : Regex,
   input : StringView,
@@ -416,7 +406,6 @@ pub fn Regex::execute(
 ///   )
 /// }
 /// ```
-#internal(experimental, "subject to breaking change without notice")
 pub fn Regex::capture(self : Regex, group_name : String) -> Regex {
   { pat: @re.capture(name=group_name, self.pat), re: None }
 }
