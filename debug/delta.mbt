@@ -17,6 +17,7 @@
 priv enum ReprDelta {
   Same(Repr, Array[ReprDelta])
   Different(Repr, Repr)
+  Moved(Repr, Repr)
   Extra1(Repr)
   Extra2(Repr)
 }
@@ -94,42 +95,383 @@ fn info_is_unimportant(info : Repr) -> Bool {
 }
 
 ///|
+priv struct ReprDiffTreeIndex {
+  nodes : Array[Repr]
+  children : Array[Array[Int]]
+  parent : Array[Int]
+}
+
+///|
+priv struct ReprActionIndex {
+  updates : @hashmap.HashMap[Int, Int]
+  moves : @hashmap.HashMap[Int, Int]
+}
+
+///|
+priv struct ReprSiblingPair {
+  src_idx : Int
+  dst_idx : Int
+  src_id : Int
+  dst_id : Int
+}
+
+///|
+let delta_none_node_id : Int = -1
+
+///|
+fn build_diff_tree_index(root : Repr) -> ReprDiffTreeIndex {
+  let nodes : Array[Repr] = []
+  let children : Array[Array[Int]] = []
+  let parent : Array[Int] = []
+
+  fn visit(node : Repr, parent_id : Int) -> Int {
+    let node_id = nodes.length()
+    nodes.push(node)
+    children.push([])
+    parent.push(parent_id)
+    for child in node.children() {
+      let child_id = visit(child, node_id)
+      children[node_id].push(child_id)
+    }
+    node_id
+  }
+
+  ignore(visit(root, delta_none_node_id))
+  { nodes, children, parent }
+}
+
+///|
+fn build_mapping_arrays(
+  src_count : Int,
+  dst_count : Int,
+  pairs : Array[(Int, Int)],
+) -> (Array[Int], Array[Int]) {
+  let src_to_dst = Array::makei(src_count, _ => delta_none_node_id)
+  let dst_to_src = Array::makei(dst_count, _ => delta_none_node_id)
+  for pair in pairs {
+    let (src_id, dst_id) = pair
+    if src_id >= 0 && src_id < src_count && dst_id >= 0 && dst_id < dst_count {
+      src_to_dst[src_id] = dst_id
+      dst_to_src[dst_id] = src_id
+    }
+  }
+  (src_to_dst, dst_to_src)
+}
+
+///|
+fn build_action_index(actions : Array[ReprEditAction]) -> ReprActionIndex {
+  let updates : @hashmap.HashMap[Int, Int] = @hashmap.new()
+  let moves : @hashmap.HashMap[Int, Int] = @hashmap.new()
+  for action in actions {
+    match action {
+      Update(src_id, dst_id) => updates.set(src_id, dst_id)
+      Move(src_id, dst_id) => moves.set(src_id, dst_id)
+      Insert(_) | Delete(_) => ()
+    }
+  }
+  { updates, moves }
+}
+
+///|
+fn repr_edit_action_to_delta(
+  action : ReprEditAction,
+  src_nodes : Array[Repr],
+  dst_nodes : Array[Repr],
+) -> ReprDelta {
+  match action {
+    Insert(dst_id) =>
+      if dst_id >= 0 && dst_id < dst_nodes.length() {
+        Extra2(dst_nodes[dst_id])
+      } else {
+        Extra2(Repr::omitted())
+      }
+    Delete(src_id) =>
+      if src_id >= 0 && src_id < src_nodes.length() {
+        Extra1(src_nodes[src_id])
+      } else {
+        Extra1(Repr::omitted())
+      }
+    Update(src_id, dst_id) => {
+      let left = if src_id >= 0 && src_id < src_nodes.length() {
+        src_nodes[src_id]
+      } else {
+        Repr::omitted()
+      }
+      let right = if dst_id >= 0 && dst_id < dst_nodes.length() {
+        dst_nodes[dst_id]
+      } else {
+        Repr::omitted()
+      }
+      Different(left, right)
+    }
+    Move(src_id, dst_id) => {
+      let left = if src_id >= 0 && src_id < src_nodes.length() {
+        src_nodes[src_id]
+      } else {
+        Repr::omitted()
+      }
+      let right = if dst_id >= 0 && dst_id < dst_nodes.length() {
+        dst_nodes[dst_id]
+      } else {
+        Repr::omitted()
+      }
+      Moved(left, right)
+    }
+  }
+}
+
+///|
+fn action_has_pair(
+  index : @hashmap.HashMap[Int, Int],
+  src_id : Int,
+  dst_id : Int,
+) -> Bool {
+  match index.get(src_id) {
+    Some(mapped_dst) => mapped_dst == dst_id
+    None => false
+  }
+}
+
+///|
+/// Longest increasing subsequence on destination indices.
+///
+/// Input pairs are in source order; LIS on `dst_idx` gives an order-preserving
+/// anchor set. Non-anchor mapped siblings are then treated as reorder/move in
+/// surrounding segments.
+///
+/// Complexity: `O(n^2)` (sufficient for debug-scale sibling lists).
+fn longest_increasing_dst_pairs(
+  pairs : Array[ReprSiblingPair],
+) -> Array[ReprSiblingPair] {
+  if pairs.is_empty() {
+    return []
+  }
+  let n = pairs.length()
+  let dp = Array::makei(n, _ => 1)
+  let prev = Array::makei(n, _ => -1)
+  let mut best_idx = 0
+  for i in 0..<n {
+    for j in 0..<i {
+      if pairs[j].dst_idx < pairs[i].dst_idx && dp[j] + 1 > dp[i] {
+        dp[i] = dp[j] + 1
+        prev[i] = j
+      }
+    }
+    if dp[i] > dp[best_idx] {
+      best_idx = i
+    }
+  }
+  let anchor_indices : Array[Int] = []
+  let mut cursor = best_idx
+  while cursor != -1 {
+    anchor_indices.push(cursor)
+    cursor = prev[cursor]
+  }
+  let anchors : Array[ReprSiblingPair] = []
+  while anchor_indices.pop() is Some(idx) {
+    anchors.push(pairs[idx])
+  }
+  anchors
+}
+
+///|
+/// Reconstruct a tree-shaped diff from matcher mapping + edit actions.
+///
+/// Design:
+/// - Mapping provides structural correspondence.
+/// - Action index provides explicit UPDATE/MOVE hints.
+/// - Sibling ordering is reconstructed by anchor alignment:
+///   1) keep mapped in-parent pairs
+///   2) compute order-preserving anchors via LIS
+///   3) emit gaps as delete/insert/move segments
+///   4) recurse on anchors
+///
+/// This produces a stable, human-oriented delta tree rather than a minimal
+/// machine patch script.
+fn repr_edit_script_to_delta(
+  left : Repr,
+  right : Repr,
+  pairs : Array[(Int, Int)],
+  actions : Array[ReprEditAction],
+  max_relative_error~ : Double,
+) -> ReprDelta {
+  let src_tree = build_diff_tree_index(left)
+  let dst_tree = build_diff_tree_index(right)
+  let (src_to_dst, dst_to_src) = build_mapping_arrays(
+    src_tree.nodes.length(),
+    dst_tree.nodes.length(),
+    pairs,
+  )
+  let action_index = build_action_index(actions)
+
+  fn go(src_id : Int, dst_id : Int) -> ReprDelta {
+    let left_node = src_tree.nodes[src_id]
+    let right_node = dst_tree.nodes[dst_id]
+
+    if !info_approx_eq(max_relative_error, left_node, right_node) {
+      // Prefer explicit action classification when available, otherwise fall back
+      // to generic Different.
+      if action_has_pair(action_index.moves, src_id, dst_id) {
+        return repr_edit_action_to_delta(
+          Move(src_id, dst_id),
+          src_tree.nodes,
+          dst_tree.nodes,
+        )
+      }
+      if action_has_pair(action_index.updates, src_id, dst_id) {
+        return repr_edit_action_to_delta(
+          Update(src_id, dst_id),
+          src_tree.nodes,
+          dst_tree.nodes,
+        )
+      }
+      return Different(left_node, right_node)
+    }
+
+    let children_delta : Array[ReprDelta] = []
+    let src_children = src_tree.children[src_id]
+    let dst_children = dst_tree.children[dst_id]
+    let dst_index : @hashmap.HashMap[Int, Int] = @hashmap.new()
+    for j in 0..<dst_children.length() {
+      dst_index.set(dst_children[j], j)
+    }
+    let in_parent_pairs : Array[ReprSiblingPair] = []
+    for i in 0..<src_children.length() {
+      let src_child = src_children[i]
+      let mapped_dst = src_to_dst[src_child]
+      if mapped_dst != delta_none_node_id &&
+        dst_tree.parent[mapped_dst] == dst_id {
+        match dst_index.get(mapped_dst) {
+          Some(j) =>
+            in_parent_pairs.push({
+              src_idx: i,
+              dst_idx: j,
+              src_id: src_child,
+              dst_id: mapped_dst,
+            })
+          None => ()
+        }
+      }
+    }
+    // Anchors preserve relative sibling order under the same parent.
+    let anchors = longest_increasing_dst_pairs(in_parent_pairs)
+
+    fn emit_segment(
+      src_begin : Int,
+      src_end : Int,
+      dst_begin : Int,
+      dst_end : Int,
+    ) -> Unit {
+      // Left-side children in the gap become DELETE or MOVE.
+      for i in src_begin..<src_end {
+        let src_child = src_children[i]
+        let mapped_dst = src_to_dst[src_child]
+        if mapped_dst == delta_none_node_id {
+          children_delta.push(
+            repr_edit_action_to_delta(
+              Delete(src_child),
+              src_tree.nodes,
+              dst_tree.nodes,
+            ),
+          )
+        } else if dst_tree.parent[mapped_dst] != dst_id {
+          children_delta.push(
+            repr_edit_action_to_delta(
+              Move(src_child, mapped_dst),
+              src_tree.nodes,
+              dst_tree.nodes,
+            ),
+          )
+        } else {
+          // Mapped under same parent but outside anchors => sibling reorder.
+          children_delta.push(
+            repr_edit_action_to_delta(
+              Move(src_child, mapped_dst),
+              src_tree.nodes,
+              dst_tree.nodes,
+            ),
+          )
+        }
+      }
+      // Right-side unmatched children in the gap become INSERT.
+      for j in dst_begin..<dst_end {
+        let dst_child = dst_children[j]
+        if dst_to_src[dst_child] == delta_none_node_id {
+          children_delta.push(
+            repr_edit_action_to_delta(
+              Insert(dst_child),
+              src_tree.nodes,
+              dst_tree.nodes,
+            ),
+          )
+        }
+      }
+    }
+
+    let mut prev_src = 0
+    let mut prev_dst = 0
+    for anchor in anchors {
+      emit_segment(prev_src, anchor.src_idx, prev_dst, anchor.dst_idx)
+      children_delta.push(go(anchor.src_id, anchor.dst_id))
+      prev_src = anchor.src_idx + 1
+      prev_dst = anchor.dst_idx + 1
+    }
+    emit_segment(
+      prev_src,
+      src_children.length(),
+      prev_dst,
+      dst_children.length(),
+    )
+
+    if children_delta.is_empty() &&
+      action_has_pair(action_index.moves, src_id, dst_id) {
+      repr_edit_action_to_delta(
+        Move(src_id, dst_id),
+        src_tree.nodes,
+        dst_tree.nodes,
+      )
+    } else if info_is_unimportant(left_node) &&
+      !children_delta.is_empty() &&
+      children_delta.all(d => !(d is Same(_, _))) {
+      // Collapse "purely changed" container nodes into one Different for a
+      // shorter and usually clearer diff.
+      Different(left_node, right_node)
+    } else {
+      Same(left_node.shallow(), children_delta)
+    }
+  }
+
+  if src_tree.nodes.is_empty() || dst_tree.nodes.is_empty() {
+    return Different(left, right)
+  }
+  let mapped_root = src_to_dst[0]
+  // Prefer root-to-root. If source root maps elsewhere, we still render from
+  // that mapped root so users can inspect matched structure.
+  if mapped_root == 0 {
+    go(0, 0)
+  } else if mapped_root != delta_none_node_id {
+    go(0, mapped_root)
+  } else {
+    Different(left, right)
+  }
+}
+
+///|
 /// Core `Repr` diff: returns a `ReprDelta` describing differences.
 fn diff_info_with(
   left : Repr,
   right : Repr,
   max_relative_error~ : Double,
 ) -> ReprDelta {
-  fn go(left_node : Repr, right_node : Repr) -> ReprDelta {
-    if info_approx_eq(max_relative_error, left_node, right_node) {
-      let xs = left_node.children()
-      let ys = right_node.children()
-      let xlen = xs.length()
-      let ylen = ys.length()
-      let min_len = if xlen < ylen { xlen } else { ylen }
-      let children : Array[ReprDelta] = []
-      for i in 0..<min_len {
-        children.push(go(xs[i], ys[i]))
-      }
-      for t in xs[min_len:] {
-        children.push(Extra1(t))
-      }
-      for t in ys[min_len:] {
-        children.push(Extra2(t))
-      }
-      if info_is_unimportant(left_node) &&
-        !children.is_empty() &&
-        children.all(d => !(d is Same(_, _))) {
-        Different(left_node, right_node)
-      } else {
-        Same(left_node.shallow(), children)
-      }
-    } else {
-      Different(left_node, right_node)
-    }
-  }
-
-  go(left, right)
+  let match_result = repr_match(left, right)
+  let actions = repr_edit_script(left, right)
+  repr_edit_script_to_delta(
+    left,
+    right,
+    match_result.mapping,
+    actions,
+    max_relative_error~,
+  )
 }
 
 ///|
@@ -185,7 +527,8 @@ fn prune_delta(max_depth : Int?, delta : ReprDelta) -> ReprDelta {
           } else {
             Same(Repr::omitted(), [])
           }
-        Different(_, _) | Extra1(_) | Extra2(_) => Same(Repr::omitted(), [])
+        Different(_, _) | Moved(_, _) | Extra1(_) | Extra2(_) =>
+          Same(Repr::omitted(), [])
       }
     } else {
       match node {
@@ -195,6 +538,8 @@ fn prune_delta(max_depth : Int?, delta : ReprDelta) -> ReprDelta {
         }
         Different(left, right) =>
           Different(prune_info(left, depth=d), prune_info(right, depth=d))
+        Moved(left, right) =>
+          Moved(prune_info(left, depth=d), prune_info(right, depth=d))
         Extra1(x) => Extra1(prune_info(x, depth=d))
         Extra2(x) => Extra2(prune_info(x, depth=d))
       }
@@ -249,6 +594,16 @@ fn mark_added(use_ansi : Bool, x : ContentParens) -> ContentParens {
 }
 
 ///|
+/// Mark moved content with `~` (and optionally ANSI color).
+fn mark_moved(use_ansi : Bool, x : ContentParens) -> ContentParens {
+  if use_ansi {
+    surround("\u001b[36m~", ANSI_RESET, x)
+  } else {
+    surround("~", "", x)
+  }
+}
+
+///|
 /// Render a `ReprDelta` as `Content` with resizing decisions.
 fn render_delta(threshold : Int, use_ansi : Bool, delta : ReprDelta) -> Content {
   match delta {
@@ -276,6 +631,26 @@ fn render_delta(threshold : Int, use_ansi : Bool, delta : ReprDelta) -> Content 
               mark_removed(use_ansi, left.no_wrap()) +
               mark_added(use_ansi, right.no_wrap()),
             )
+          _ => empty_content()
+        },
+      )
+    }
+    Moved(left, right) => {
+      let children : Array[Content] = [
+        render_repr(threshold, left),
+        render_repr(threshold, right),
+      ]
+      with_resizing(
+        0,
+        threshold,
+        match children {
+          [left, right] => {
+            let rendered = print_content(
+              mark_moved(use_ansi, left.no_wrap()) +
+              surround(" -> ", "", right.no_wrap()),
+            )
+            no_parens(verbatim(rendered))
+          }
           _ => empty_content()
         },
       )
