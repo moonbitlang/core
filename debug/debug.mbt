@@ -1443,11 +1443,7 @@ test "Debug for Error" {
 
   let result : Result[Unit, Error] = try? fail_with_error()
   match result {
-    Err(e) =>
-      debug_inspect(
-        e,
-        content="InspectError(\"test error\")",
-      )
+    Err(e) => debug_inspect(e, content="InspectError(\"test error\")")
     Ok(_) => fail("expected error")
   }
 }
