@@ -1426,3 +1426,28 @@ test "dump" {
     assert_eq(dump(x) + x, 84)
   }
 }
+
+///|
+fn error_to_repr(e : Error) -> Repr = "%error.to_repr"
+
+///|
+pub impl Debug for Error with to_repr(self) {
+  error_to_repr(self)
+}
+
+///|
+test "Debug for Error" {
+  fn fail_with_error() -> Unit raise {
+    raise InspectError::InspectError("test error")
+  }
+
+  let result : Result[Unit, Error] = try? fail_with_error()
+  match result {
+    Err(e) =>
+      debug_inspect(
+        e,
+        content="<moonbitlang/core/builtin.InspectError.InspectError: ...>",
+      )
+    Ok(_) => fail("expected error")
+  }
+}
