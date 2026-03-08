@@ -1446,8 +1446,46 @@ test "Debug for Error" {
     Err(e) =>
       debug_inspect(
         e,
-        content="<moonbitlang/core/builtin.InspectError.InspectError: ...>",
+        content="InspectError(\"test error\")",
       )
     Ok(_) => fail("expected error")
+  }
+}
+
+///|
+test "Debug for builtin errors" {
+  debug_inspect(
+    InspectError::InspectError("inspect msg"),
+    content="InspectError(\"inspect msg\")",
+  )
+  debug_inspect(
+    Failure::Failure("failure msg"),
+    content="Failure(\"failure msg\")",
+  )
+  debug_inspect(
+    SnapshotError::SnapshotError("snapshot msg"),
+    content="SnapshotError(\"snapshot msg\")",
+  )
+}
+
+///|
+pub impl Debug for InspectError with to_repr(self) {
+  match self {
+    InspectError(msg) => Repr::ctor("InspectError", [(None, Repr::string(msg))])
+  }
+}
+
+///|
+pub impl Debug for Failure with to_repr(self) {
+  match self {
+    Failure(msg) => Repr::ctor("Failure", [(None, Repr::string(msg))])
+  }
+}
+
+///|
+pub impl Debug for SnapshotError with to_repr(self) {
+  match self {
+    SnapshotError(msg) =>
+      Repr::ctor("SnapshotError", [(None, Repr::string(msg))])
   }
 }
