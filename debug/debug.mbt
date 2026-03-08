@@ -1426,3 +1426,62 @@ test "dump" {
     assert_eq(dump(x) + x, 84)
   }
 }
+
+///|
+fn error_to_repr(e : Error) -> Repr = "%error.to_repr"
+
+///|
+pub impl Debug for Error with to_repr(self) {
+  error_to_repr(self)
+}
+
+///|
+pub impl Debug for InspectError with to_repr(self) {
+  match self {
+    InspectError(msg) => Repr::ctor("InspectError", [(None, Repr::string(msg))])
+  }
+}
+
+///|
+pub impl Debug for Failure with to_repr(self) {
+  match self {
+    Failure(msg) => Repr::ctor("Failure", [(None, Repr::string(msg))])
+  }
+}
+
+///|
+pub impl Debug for SnapshotError with to_repr(self) {
+  match self {
+    SnapshotError(msg) =>
+      Repr::ctor("SnapshotError", [(None, Repr::string(msg))])
+  }
+}
+
+///|
+test "Debug for Error" {
+  fn fail_with_error() -> Unit raise {
+    raise InspectError::InspectError("test error")
+  }
+
+  let result : Result[Unit, Error] = try? fail_with_error()
+  match result {
+    Err(e) => debug_inspect(e, content="InspectError(\"test error\")")
+    Ok(_) => fail("expected error")
+  }
+}
+
+///|
+test "Debug for builtin errors" {
+  debug_inspect(
+    InspectError::InspectError("inspect msg"),
+    content="InspectError(\"inspect msg\")",
+  )
+  debug_inspect(
+    Failure::Failure("failure msg"),
+    content="Failure(\"failure msg\")",
+  )
+  debug_inspect(
+    SnapshotError::SnapshotError("snapshot msg"),
+    content="SnapshotError(\"snapshot msg\")",
+  )
+}
