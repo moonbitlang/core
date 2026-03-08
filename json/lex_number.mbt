@@ -17,7 +17,7 @@ fn ParseContext::lex_decimal_integer(
   ctx : ParseContext,
   start~ : Int,
 ) -> (Double, StringView?) raise ParseError {
-  for {
+  for ;; {
     match ctx.read_char() {
       Some('.') => return ctx.lex_decimal_point(start~)
       Some('e' | 'E') => return ctx.lex_decimal_exponent(start~)
@@ -54,7 +54,7 @@ fn ParseContext::lex_decimal_fraction(
   ctx : ParseContext,
   start~ : Int,
 ) -> (Double, StringView?) raise ParseError {
-  for {
+  for ;; {
     match ctx.read_char() {
       Some('e' | 'E') => return ctx.lex_decimal_exponent(start~)
       Some(c) => {
@@ -109,7 +109,7 @@ fn ParseContext::lex_decimal_exponent_integer(
   ctx : ParseContext,
   start~ : Int,
 ) -> (Double, StringView?) {
-  for {
+  for ;; {
     match ctx.read_char() {
       Some(c) => {
         if c >= '0' && c <= '9' {

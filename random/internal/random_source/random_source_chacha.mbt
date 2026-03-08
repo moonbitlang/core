@@ -284,7 +284,7 @@ test "output" {
   let s = ChaCha8::new(b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456")
   let res = Array::new(capacity=372)
   fn uint64(s : ChaCha8) -> UInt64 {
-    for {
+    for ;; {
       if s.next() is Some(x) {
         return x
       }

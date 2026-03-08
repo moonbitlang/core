@@ -59,6 +59,7 @@ pub impl[T : Debug, E : Debug] Debug for Result[T, E]
 pub impl[T : Debug] Debug for FixedArray[T]
 pub impl[T : Debug] Debug for ReadOnlyArray[T]
 pub impl Debug for Bytes
+pub impl Debug for Error
 pub impl Debug for @buffer.Buffer
 pub impl[T : Debug] Debug for Array[T]
 pub impl[T : Debug] Debug for ArrayView[T]
