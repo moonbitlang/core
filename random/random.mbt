@@ -25,7 +25,7 @@ pub(open) trait Source {
 
 ///|
 impl Source for @random_source.ChaCha8 with next(self : @random_source.ChaCha8) -> UInt64 {
-  for {
+  for ;; {
     if self.next() is Some(x) {
       return x
     }
