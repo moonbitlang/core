@@ -22,7 +22,7 @@ fn ParseContext::lex_string(ctx : ParseContext) -> String raise ParseError {
     }
   }
 
-  for {
+  for ;; {
     match ctx.read_char() {
       Some('"') => {
         flush(ctx.offset - 1)

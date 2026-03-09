@@ -250,7 +250,7 @@ pub fn is_probable_prime(
 /// }
 /// ```
 pub fn probable_prime(bits : Int, rand : @random.Rand) -> @bigint.BigInt {
-  for {
+  for ;; {
     let b = rand.bigint(bits)
     if is_probable_prime(b, rand) {
       break b
@@ -297,7 +297,7 @@ fn miller_rabin_test(
   // (step 4)
   next~: for _ in 0..<iters {
     // (step 4.1) obtain a random BigInt b where 1 < b < w-1
-    let rand_b = for {
+    let rand_b = for ;; {
       let x = rand.bigint(w3_len)
       if x < w3 {
         break x
