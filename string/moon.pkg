@@ -13,6 +13,7 @@ import {
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/encoding/utf8",
   "moonbitlang/core/encoding/utf16",
+  "moonbitlang/core/bench",
 } for "test"
 
 options(
