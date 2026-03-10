@@ -71,13 +71,14 @@ pub fn[T : Input] Regex::execute(
   lastIndex : Int,
 ) -> MatchResult? {
   guard lastIndex >= 0 && lastIndex <= input.length() else { panic() }
+  let { states, symbol_table, .. } = self
   let mut pos = lastIndex
   let end = input.length()
   let start_cat = if pos == 0 {
     Category::inexistant()
   } else {
     let prev = input.get(pos - 1)
-    let prev_symbol = self.symbol_table.map(prev)
+    let prev_symbol = symbol_table.map(prev)
     category_from_symbol(
       profile=self.profile,
       symbol_repr=self.symbol_repr,
@@ -88,15 +89,15 @@ pub fn[T : Input] Regex::execute(
   let positions = Positions::new()
   let mut state_id = start_state_id
   while pos < end {
-    let state = self.states[state_id]
+    let state = states.unsafe_get(state_id)
     let ch = input.get(pos)
-    let symbol = self.symbol_table.map(ch)
+    let symbol = symbol_table.map(ch)
     // INVARIANT: The start state is never a break state.
     // Empty character classes like `/[]/` are transformed during compilation:
     //   `/[]/`  -> `seq(shortest(char(any)), capture(empty))`
     //   `/^[]/` -> `capture(seq(start_of_input, empty))`
     // This ensures the executor can safely access state.transitions[symbol] without checking.
-    let next_state_id = state.transitions[symbol]
+    let next_state_id = state.transitions.unsafe_get(symbol)
     state_id = if next_state_id == PENDING_STATE_ID {
       let cat = category_from_symbol(
         profile=self.profile,
@@ -111,7 +112,7 @@ pub fn[T : Input] Regex::execute(
       )
       let next_state_id = find_state(
         self.state_table,
-        self.states,
+        states,
         self.symbol_repr.length(),
         next_desc,
       )
@@ -120,17 +121,22 @@ pub fn[T : Input] Regex::execute(
     } else {
       next_state_id
     }
-    let state = self.states[state_id]
+    let state = states.unsafe_get(state_id)
     let slot = state.desc.slot()
     if slot.is_assigned() {
-      positions.set(slot, pos)
+      // NOTE: we manually inline `Positions::set` here to avoid the overhead
+      // of callee-owned RC (reference counting) operations.
+      if slot.0 >= positions.0.length() {
+        positions.0.resize(slot.0 + 1, -1)
+      }
+      positions.0[slot.0] = pos
     }
     if state.kind is Break {
       break
     }
     pos += 1
   }
-  let state = self.states[state_id]
+  let state = states.unsafe_get(state_id)
   let matched = match state.desc.status() {
     Failed => None
     Running => {
@@ -140,7 +146,7 @@ pub fn[T : Input] Regex::execute(
         Category::inexistant()
       } else {
         let ch = input.get(pos)
-        let symbol = self.symbol_table.map(ch)
+        let symbol = symbol_table.map(ch)
         category_from_symbol(
           profile=self.profile,
           symbol_repr=self.symbol_repr,

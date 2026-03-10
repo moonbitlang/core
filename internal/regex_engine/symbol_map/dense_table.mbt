@@ -17,5 +17,5 @@ priv struct DenseTable(FixedArray[@shared_types.Rechar])
 
 ///|
 impl Table for DenseTable with map(self, c) {
-  self.0[c]
+  self.0.unsafe_get(c)
 }
