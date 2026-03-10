@@ -28,7 +28,7 @@ pub impl Input for BytesView with length(self) {
 
 ///|
 pub impl Input for BytesView with get(self, index) {
-  self[index].to_int()
+  self.unsafe_get(index).to_int()
 }
 
 ///|
@@ -38,5 +38,5 @@ pub impl Input for StringView with length(self) {
 
 ///|
 pub impl Input for StringView with get(self, index) {
-  self[index].to_int()
+  self.unsafe_get(index).to_int()
 }
