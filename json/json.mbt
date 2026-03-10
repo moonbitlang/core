@@ -121,7 +121,11 @@ priv enum WriteFrame {
 /// - `None` to exclude the property from the output
 /// 
 /// Only applies to object properties, not array elements.
-struct Replacer((String, Json) -> Json?)
+pub struct Replacer {
+  priv f : (String, Json) -> Json?
+
+  fn new(f : (String, Json) -> Json?) -> Replacer
+}
 
 ///|
 /// Create a new Replacer with a custom function.
@@ -150,7 +154,7 @@ struct Replacer((String, Json) -> Json?)
 /// }
 /// ```
 pub fn Replacer::new(f : (String, Json) -> Json?) -> Replacer {
-  Replacer(f)
+  { f, }
 }
 
 ///|
@@ -172,15 +176,15 @@ pub fn Replacer::new(f : (String, Json) -> Json?) -> Replacer {
 /// }
 /// ```
 pub fn Replacer::keep(array : ArrayView[StringView]) -> Replacer {
-  Replacer((idx, value) => if array.contains(idx) { Some(value) } else { None })
+  { f: fn(idx, value) { if array.contains(idx) { Some(value) } else { None } } }
 }
 
 ///|
 /// Create a Replacer that excludes the specified property keys.
 /// All other properties will be included in the output.
-/// 
+///
 /// ## Example
-/// 
+///
 /// ```mbt check
 /// test {
 ///   let replacer = @json.Replacer::exclude(["password", "secret", "private"])
@@ -194,7 +198,7 @@ pub fn Replacer::keep(array : ArrayView[StringView]) -> Replacer {
 /// }
 /// ```
 pub fn Replacer::exclude(array : ArrayView[StringView]) -> Replacer {
-  Replacer((idx, value) => if array.contains(idx) { None } else { Some(value) })
+  { f: fn(idx, value) { if array.contains(idx) { None } else { Some(value) } } }
 }
 
 ///|
@@ -344,7 +348,7 @@ pub fn Json::stringify(
             Some((k, v)) => {
               let mut v2 = v
               if replacer is Some(replacer) {
-                if replacer(k, v) is Some(v) {
+                if (replacer.f)(k, v) is Some(v) {
                   v2 = v
                 } else {
                   continue None
@@ -459,7 +463,7 @@ pub fn Json::transform(self : Self, replacer : Replacer) -> Json {
       .iter()
       .filter_map(pair => {
         let (k, v) = pair
-        if replacer(k, v) is Some(v2) {
+        if (replacer.f)(k, v) is Some(v2) {
           Some((k, v2.transform(replacer)))
         } else {
           None
