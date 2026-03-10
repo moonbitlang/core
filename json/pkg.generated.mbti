@@ -47,7 +47,11 @@ pub(all) struct Position {
 pub impl Eq for Position
 pub impl ToJson for Position
 
-type Replacer
+pub struct Replacer {
+  // private fields
+
+  fn new((String, Json) -> Json?) -> Replacer
+}
 pub fn Replacer::exclude(ArrayView[StringView]) -> Self
 pub fn Replacer::keep(ArrayView[StringView]) -> Self
 pub fn Replacer::new((String, Json) -> Json?) -> Self
