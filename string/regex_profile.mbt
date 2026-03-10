@@ -19,7 +19,7 @@ let word_set : @re.RecharSet = @re.RecharSet::char_range('a', 'z') +
   @re.RecharSet::char('_')
 
 ///|
-let re_profile_unicode : @re.Profile = @re.Profile(
+let re_profile_unicode : @re.Profile = Profile(
   valid=@re.RecharSet::char_range(0, 0x10FFFF) -
     @re.RecharSet::char_range(0xD800, 0xDFFF),
   word=word_set,
@@ -33,7 +33,7 @@ let re_profile_unicode : @re.Profile = @re.Profile(
 )
 
 ///|
-let re_profile_utf16 : @re.Profile = @re.Profile(
+let re_profile_utf16 : @re.Profile = Profile(
   valid=@re.RecharSet::char_range(0, 0xFFFF),
   word=re_profile_unicode.word,
   word_symbolize_splits=[
