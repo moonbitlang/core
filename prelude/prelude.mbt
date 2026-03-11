@@ -25,6 +25,7 @@ pub using @builtin {
   assert_not_eq,
   assert_true,
   assert_false,
+  debug_assert,
   fail,
   ignore,
   inspect,
