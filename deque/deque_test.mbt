@@ -275,6 +275,20 @@ test "copy" {
 }
 
 ///|
+test "append self keeps order" {
+  let dq = @deque.from_array([1, 2, 3])
+  dq.append(dq)
+  inspect(dq, content="@deque.from_array([1, 2, 3, 1, 2, 3])")
+}
+
+///|
+test "blit_to self overlap copies as memmove" {
+  let dq = @deque.from_array([1, 2, 3, 4, 5])
+  dq.blit_to(dq, src_offset=0, dst_offset=1, len=4)
+  inspect(dq, content="@deque.from_array([1, 1, 2, 3, 4])")
+}
+
+///|
 test "Deque::set" {
   let dv = @deque.from_array([1, 2, 3, 4, 5])
   dv[1] = 3
