@@ -44,6 +44,11 @@ test "panic from_string empty" {
 }
 
 ///|
+test "panic from_string sign only" {
+  @bigint.BigInt::from_string("-") |> ignore
+}
+
+///|
 test "panic from_string invalid character" {
   @bigint.BigInt::from_string("12a") |> ignore
 }

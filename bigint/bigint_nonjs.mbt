@@ -1221,6 +1221,9 @@ fn BigInt::from_string_dec(input : String) -> BigInt {
     abort("empty string")
   }
   let sign : Sign = if input.unsafe_get(0) == '-' { Negative } else { Positive }
+  if sign == Negative && len == 1 {
+    abort("invalid character")
+  }
   let mut b_len = (
       unchecked_double_to_int(len.to_double() / decimal_ratio) +
       1 +

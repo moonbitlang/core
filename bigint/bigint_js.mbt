@@ -58,6 +58,9 @@ pub fn BigInt::from_string(str : String, radix? : Int = 10) -> BigInt {
   if radix != 10 {
     return BigInt::from_string_radix(str, radix)
   }
+  if str == "-" {
+    abort("invalid character")
+  }
   BigInt::js_from_string(str)
 }
 
