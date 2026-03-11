@@ -912,6 +912,7 @@ pub impl[X : Show, Y : Show] Show for Iter2[X, Y] with output(self, logger) {
 
 ///|
 /// Consume pairs while callback returns `IterContinue`.
+#deprecated("write a loop instead.")
 pub fn[X, Y] Iter2::run(
   self : Iter2[X, Y],
   f : (X, Y) -> IterResult,

@@ -17,14 +17,7 @@
 ///
 /// `IterContinue` keeps iteration running, `IterEnd` stops it.
 ///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   inspect(IterResult::IterContinue == IterResult::IterContinue, content="true")
-///   inspect(IterResult::IterEnd == IterResult::IterContinue, content="false")
-/// }
-/// ```
+#deprecated(skip_current_package=true)
 pub(all) enum IterResult {
   IterEnd // false
   IterContinue // true

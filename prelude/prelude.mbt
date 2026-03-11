@@ -60,7 +60,6 @@ pub using @builtin {
   type Hasher,
   type Iter,
   type Iter2,
-  type IterResult,
   type Json,
   type Map,
   type InspectError,
@@ -68,6 +67,11 @@ pub using @builtin {
   type SourceLoc,
   type StringBuilder,
 }
+
+///|
+#deprecated
+#warnings("-deprecated")
+pub using @builtin {type IterResult}
 
 ///|
 pub using @debug {debug, type Repr, trait Debug, debug_inspect}
