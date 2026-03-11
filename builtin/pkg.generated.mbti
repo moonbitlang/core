@@ -313,10 +313,12 @@ pub fn[X, Y] Iter2::iter(Self[X, Y]) -> Iter[(X, Y)]
 pub fn[X, Y] Iter2::iter2(Self[X, Y]) -> Self[X, Y]
 pub fn[X, Y] Iter2::new(() -> (X, Y)?) -> Self[X, Y]
 pub fn[X, Y] Iter2::next(Self[X, Y]) -> (X, Y)?
+#deprecated
 pub fn[X, Y] Iter2::run(Self[X, Y], (X, Y) -> IterResult) -> IterResult
 pub fn[X, Y] Iter2::to_array(Self[X, Y]) -> Array[(X, Y)]
 pub impl[X : Show, Y : Show] Show for Iter2[X, Y]
 
+#deprecated
 pub(all) enum IterResult {
   IterEnd
   IterContinue
