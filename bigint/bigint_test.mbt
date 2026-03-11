@@ -933,6 +933,22 @@ test "equal_int64" {
 }
 
 ///|
+test "equal_uint and equal_uint64" {
+  assert_true(@bigint.BigInt::equal_uint(0N, 0U))
+  assert_true(@bigint.BigInt::equal_uint(42N, 42U))
+  assert_true(@bigint.BigInt::equal_uint(4294967295N, 4294967295U))
+  assert_false(@bigint.BigInt::equal_uint(-1N, 4294967295U))
+  assert_false(@bigint.BigInt::equal_uint(4294967296N, 0U))
+
+  assert_true(@bigint.BigInt::equal_uint64(0N, 0UL))
+  assert_true(
+    @bigint.BigInt::equal_uint64(18446744073709551615N, 18446744073709551615UL),
+  )
+  assert_false(@bigint.BigInt::equal_uint64(-1N, 18446744073709551615UL))
+  assert_false(@bigint.BigInt::equal_uint64(18446744073709551616N, 0UL))
+}
+
+///|
 test "compare_int" {
   // Test with zero
   assert_eq(@bigint.BigInt::compare_int(0N, 0), 0)
@@ -1098,6 +1114,24 @@ test "compare_int64" {
   assert_eq(@bigint.BigInt::compare_int64(neg_val_32bit, -4294967296L), 0)
   assert_eq(@bigint.BigInt::compare_int64(neg_val_32bit, -4294967295L), -1)
   assert_eq(@bigint.BigInt::compare_int64(neg_val_32bit, -4294967297L), 1)
+}
+
+///|
+test "compare_uint and compare_uint64" {
+  assert_eq(@bigint.BigInt::compare_uint(0N, 0U), 0)
+  assert_eq(@bigint.BigInt::compare_uint(1N, 0U), 1)
+  assert_eq(@bigint.BigInt::compare_uint(-1N, 0U), -1)
+  assert_eq(@bigint.BigInt::compare_uint(4294967296N, 4294967295U), 1)
+
+  assert_eq(@bigint.BigInt::compare_uint64(0N, 0UL), 0)
+  assert_eq(@bigint.BigInt::compare_uint64(1N, 0UL), 1)
+  assert_eq(@bigint.BigInt::compare_uint64(-1N, 0UL), -1)
+  assert_eq(
+    @bigint.BigInt::compare_uint64(
+      18446744073709551616N, 18446744073709551615UL,
+    ),
+    1,
+  )
 }
 
 ///|

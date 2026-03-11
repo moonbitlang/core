@@ -135,6 +135,24 @@ pub fn BigInt::equal_int64(self : BigInt, other : Int64) -> Bool {
 }
 
 ///|
+/// Tests whether a `BigInt` value is equal to a `UInt` value.
+///
+/// This is a convenience helper mirroring `equal_int`/`equal_int64` and avoids
+/// forcing callers to construct a temporary `BigInt` manually.
+pub fn BigInt::equal_uint(self : BigInt, other : UInt) -> Bool {
+  self == BigInt::from_uint(other)
+}
+
+///|
+/// Tests whether a `BigInt` value is equal to a `UInt64` value.
+///
+/// This is a convenience helper mirroring `equal_int`/`equal_int64` and avoids
+/// forcing callers to construct a temporary `BigInt` manually.
+pub fn BigInt::equal_uint64(self : BigInt, other : UInt64) -> Bool {
+  self == BigInt::from_uint64(other)
+}
+
+///|
 /// Compares a `BigInt` with an `Int` and returns their relative order.
 ///
 /// Parameters:
@@ -197,6 +215,18 @@ pub fn BigInt::compare_int64(self : BigInt, other : Int64) -> Int {
   }
   let self = self.to_int64()
   Int64::compare(self, other)
+}
+
+///|
+/// Compares a `BigInt` with a `UInt` and returns their relative order.
+pub fn BigInt::compare_uint(self : BigInt, other : UInt) -> Int {
+  self.compare(BigInt::from_uint(other))
+}
+
+///|
+/// Compares a `BigInt` with a `UInt64` and returns their relative order.
+pub fn BigInt::compare_uint64(self : BigInt, other : UInt64) -> Int {
+  self.compare(BigInt::from_uint64(other))
 }
 
 ///|
