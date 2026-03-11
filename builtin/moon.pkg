@@ -27,6 +27,8 @@ options(
     "array_nonjs_test.mbt": [ "not", "js" ],
     "arraycore_js.mbt": [ "js" ],
     "arraycore_nonjs.mbt": [ "not", "js" ],
+    "assert_debug.mbt": [ "debug" ],
+    "assert_release.mbt": [ "not", "debug" ],
     "double_mod_js.mbt": [ "js" ],
     "double_mod_nonjs.mbt": [ "not", "js" ],
     "double_pow_js.mbt": [ "js" ],
