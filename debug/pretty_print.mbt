@@ -55,7 +55,7 @@ fn prune_info(
       if children.is_empty() {
         node
       } else if !node.info_adds_depth() {
-        node.with_children(children.map(fn(child) { go(d, child) }))
+        node.with_children(children.map(child => go(d, child)))
       } else {
         replacement
       }
@@ -63,7 +63,7 @@ fn prune_info(
       node
     } else {
       let next_depth = if node.info_adds_depth() { d - 1 } else { d }
-      node.with_children(children.map(fn(child) { go(next_depth, child) }))
+      node.with_children(children.map(child => go(next_depth, child)))
     }
   }
 
@@ -247,9 +247,7 @@ fn pretty_print_repr_go(label : Repr, children : Array[Content]) -> Content {
 /// Render a `Repr` as `Content` with resizing decisions.
 fn render_repr(threshold : Int, info : Repr) -> Content {
   let label = info.shallow()
-  let children = info
-    .children()
-    .map(fn(child) { render_repr(threshold, child) })
+  let children = info.children().map(child => render_repr(threshold, child))
   with_resizing(
     info_size(label),
     threshold,

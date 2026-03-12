@@ -18,13 +18,6 @@
 // so that
 
 ///|
-fn id(s : String) -> String {
-  let sb = StringBuilder::new()
-  sb.write_string(s)
-  sb.to_string()
-}
-
-///|
 test "stringbuilder" {
   let buf = StringBuilder::new()
   buf.write_string("hello")
@@ -46,7 +39,14 @@ test "is_empty method" {
 ///|
 test {
   let data = ["a", "b", "c", "hello world"]
-  @json.json_inspect(data.map(id), content=["a", "b", "c", "hello world"])
+  @json.json_inspect(
+    data.map(fn(s) {
+      let sb = StringBuilder::new()
+      sb.write_string(s)
+      sb.to_string()
+    }),
+    content=["a", "b", "c", "hello world"],
+  )
   // assert_eq({ let sb = StringBuilder::new(); sb.write_string("hello"); sb.to_string() }, "hello")
 }
 

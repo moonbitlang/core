@@ -286,19 +286,19 @@ test "filter_map" {
   // Test using next() directly to ensure the closure is executed
   let it1 = [1, 2, 3, 4, 5]
     .iter()
-    .filter_map(fn(x) { if x % 2 == 0 { Some(x * 10) } else { None } })
+    .filter_map(x => if x % 2 == 0 { Some(x * 10) } else { None })
   inspect(it1.next(), content="Some(20)")
   inspect(it1.next(), content="Some(40)")
   inspect(it1.next(), content="None")
   // Test None branch inside while loop
   let it2 = [1, 2, 3]
     .iter()
-    .filter_map(fn(x) { if x == 2 { None } else { Some(x) } })
+    .filter_map(x => if x == 2 { None } else { Some(x) })
   inspect(it2.next(), content="Some(1)")
   inspect(it2.next(), content="Some(3)")
   inspect(it2.next(), content="None")
   // Test iter exhaustion (else branch)
-  let it3 : Iter[Unit] = [1].iter().filter_map(fn(_) { None })
+  let it3 : Iter[Unit] = [1].iter().filter_map(_ => None)
   inspect(it3.next(), content="None")
 }
 
@@ -725,7 +725,7 @@ test "Iter::contains method" {
 
 ///|
 test "Iter::flatten method" {
-  let nested = [[1, 2], [3, 4], [5, 6]].iter().map(Array::iter)
+  let nested = [[1, 2], [3, 4], [5, 6]].iter().map(x => x.iter())
   let flattened = nested.flatten().collect()
   inspect(flattened, content="[1, 2, 3, 4, 5, 6]")
 }

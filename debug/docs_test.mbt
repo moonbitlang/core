@@ -96,7 +96,7 @@ fn tag_repr(tag : Tag) -> Repr {
 fn example_repr(example : Example) -> Repr {
   Repr::record({
     "answer": Repr::integer(example.answer.to_string()),
-    "xs": Repr::array(example.xs.map(fn(x) { Repr::integer(x.to_string()) })),
+    "xs": Repr::array(example.xs.map(x => Repr::integer(x.to_string()))),
     "tag": tag_repr(example.tag),
   })
 }
@@ -155,7 +155,7 @@ struct Numbers {
 
 ///|
 fn numbers_repr(value : Numbers) -> Repr {
-  Repr::array(value.xs.map(fn(x) { Repr::integer(x.to_string()) }))
+  Repr::array(value.xs.map(x => Repr::integer(x.to_string())))
 }
 
 ///|
@@ -300,7 +300,7 @@ struct OpaqueExample {
 fn opaque_repr(value : OpaqueExample) -> Repr {
   Repr::opaque_(
     value.label,
-    Repr::array(value.xs.map(fn(x) { Repr::integer(x.to_string()) })),
+    Repr::array(value.xs.map(x => Repr::integer(x.to_string()))),
   )
 }
 

@@ -234,7 +234,7 @@ fn Content::compact(r : Content) -> Content {
 ///|
 /// Indent every line by a fixed prefix.
 fn indent(prefix : String, r : ContentParens) -> ContentParens {
-  with_lines(r, fn(lines) { lines.map(fn(line) { prefix + line }) })
+  with_lines(r, lines => lines.map(line => prefix + line))
 }
 
 ///|
@@ -307,7 +307,7 @@ fn bracket_seq_lines(
       // Multi-line always uses trailing comma style to match expectation.
       let out : Array[String] = [open]
       for item in contents {
-        let item_lines = item.filter(fn(line) { line != "" })
+        let item_lines = item.filter(line => line != "")
         match item_lines {
           [] => ()
           [x] => out.push(" ".repeat(indent_by) + x + ",")
@@ -363,7 +363,7 @@ fn comma_seq_lines(
         ]
       }
     }
-    lines.filter(fn(line) { line != "" })
+    lines.filter(line => line != "")
   } else {
     // Multi-line layout with trailing comma style:
     //
@@ -377,7 +377,7 @@ fn comma_seq_lines(
     match contents {
       [] => [begin + end]
       [item] => {
-        let item_lines = item.filter(fn(line) { line != "" })
+        let item_lines = item.filter(line => line != "")
         match item_lines {
           [] => [begin + end]
           [x] => [begin + x + end]
@@ -393,7 +393,7 @@ fn comma_seq_lines(
       _ => {
         let out : Array[String] = [begin]
         for item in contents {
-          let item_lines = item.filter(fn(line) { line != "" })
+          let item_lines = item.filter(line => line != "")
           match item_lines {
             [] => ()
             [x] => out.push(" ".repeat(indent_by) + x + ",")
@@ -426,7 +426,7 @@ fn comma_seq(
   }
   {
     size,
-    lines: comma_seq_lines(begin, end, contents.map(fn(c) { c.lines })),
+    lines: comma_seq_lines(begin, end, contents.map(c => c.lines)),
     needs_parens: false,
   }
 }

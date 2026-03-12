@@ -24,7 +24,7 @@ fn suggest_long(name : String, long_index : Map[String, Arg]) -> String? {
 
 ///|
 fn suggest_short(short : Char, short_index : Map[Char, Arg]) -> String? {
-  let candidates = short_index.keys().map(Char::to_string).collect()
+  let candidates = short_index.keys().map(c => c.to_string()).collect()
   let input = short.to_string()
   if suggest_name(input, candidates) is Some(best) {
     Some("-\{best}")

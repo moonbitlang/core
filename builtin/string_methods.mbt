@@ -1182,35 +1182,33 @@ pub fn String::after(self : String, needle : StringView) -> StringView? {
 
 ///|
 test "split" {
-  assert_eq("a,b,c".split(",").map(StringView::to_string).collect(), [
+  assert_eq("a,b,c".split(",").map(x => x.to_string()).collect(), [
     "a", "b", "c",
   ])
-  assert_eq("a,b,c".split("").map(StringView::to_string).collect(), [
+  assert_eq("a,b,c".split("").map(x => x.to_string()).collect(), [
     "a", ",", "b", ",", "c",
   ])
   assert_eq(
-    "apple::orange::banana".split("::").map(StringView::to_string).collect(),
+    "apple::orange::banana".split("::").map(x => x.to_string()).collect(),
     ["apple", "orange", "banana"],
   )
-  assert_eq("abc".split("").map(StringView::to_string).collect(), [
-    "a", "b", "c",
-  ])
-  assert_eq("hello".split(",").map(StringView::to_string).collect(), ["hello"])
-  assert_eq(",a,b,c".split(",").map(StringView::to_string).collect(), [
+  assert_eq("abc".split("").map(x => x.to_string()).collect(), ["a", "b", "c"])
+  assert_eq("hello".split(",").map(x => x.to_string()).collect(), ["hello"])
+  assert_eq(",a,b,c".split(",").map(x => x.to_string()).collect(), [
     "", "a", "b", "c",
   ])
-  assert_eq("a,b,c,".split(",").map(StringView::to_string).collect(), [
+  assert_eq("a,b,c,".split(",").map(x => x.to_string()).collect(), [
     "a", "b", "c", "",
   ])
-  assert_eq("a,b,c".split("").map(StringView::to_string).collect(), [
+  assert_eq("a,b,c".split("").map(x => x.to_string()).collect(), [
     "a", ",", "b", ",", "c",
   ])
-  assert_eq("".split("").map(StringView::to_string).collect(), [])
-  assert_eq("".split(",").map(StringView::to_string).collect(), [""])
-  assert_eq("😀,😃,😄".split(",").map(StringView::to_string).collect(), [
+  assert_eq("".split("").map(x => x.to_string()).collect(), [])
+  assert_eq("".split(",").map(x => x.to_string()).collect(), [""])
+  assert_eq("😀,😃,😄".split(",").map(x => x.to_string()).collect(), [
     "😀", "😃", "😄",
   ])
-  assert_eq("a😀b😀c".split("😀").map(StringView::to_string).collect(), [
+  assert_eq("a😀b😀c".split("😀").map(x => x.to_string()).collect(), [
     "a", "b", "c",
   ])
 }
@@ -1549,7 +1547,9 @@ test "View::to_lower" {
 /// Converts this string to uppercase.
 pub fn StringView::to_upper(self : StringView) -> StringView {
   // TODO: deal with non-ascii characters
-  guard self.find_by(Char::is_ascii_lowercase) is Some(idx) else { return self }
+  guard self.find_by(c => c.is_ascii_lowercase()) is Some(idx) else {
+    return self
+  }
   let buf = StringBuilder::new(size_hint=self.length())
   let head = self.view(end_offset=idx)
   buf.write_substring(head.data(), head.start_offset(), head.length())
@@ -1567,7 +1567,9 @@ pub fn StringView::to_upper(self : StringView) -> StringView {
 /// Converts this string to uppercase.
 pub fn String::to_upper(self : String) -> String {
   // TODO: deal with non-ascii characters
-  guard self.find_by(Char::is_ascii_lowercase) is Some(idx) else { return self }
+  guard self.find_by(c => c.is_ascii_lowercase()) is Some(idx) else {
+    return self
+  }
   let buf = StringBuilder::new(size_hint=self.length())
   let head = self.view(end_offset=idx)
   buf.write_substring(head.data(), head.start_offset(), head.length())

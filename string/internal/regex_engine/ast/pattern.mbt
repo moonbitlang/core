@@ -65,8 +65,8 @@ pub enum PatternDesc {
 pub fn Pattern::is_anchored(self : Pattern) -> Bool {
   match self.desc {
     Char(_) => false
-    Sequence(exprs) => exprs.any(fn(e) { e.is_anchored() })
-    Alternation(exprs) => exprs.all(fn(e) { e.is_anchored() })
+    Sequence(exprs) => exprs.any(e => e.is_anchored())
+    Alternation(exprs) => exprs.all(e => e.is_anchored())
     Quantifier(q, expr) => q.min > 0 && expr.is_anchored()
     Preference(_, expr) => expr.is_anchored()
     Capture(expr, ..) => expr.is_anchored()

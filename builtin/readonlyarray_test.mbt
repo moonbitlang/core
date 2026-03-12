@@ -55,7 +55,7 @@ test "ReadOnlyArray functional methods" {
   let arr : ReadOnlyArray[Int] = [1, 2, 3]
 
   // Test map
-  let doubled = arr.map(fn(x) { x * 2 })
+  let doubled = arr.map(x => x * 2)
   inspect(doubled[0], content="2")
   inspect(doubled[2], content="6")
 
@@ -83,8 +83,8 @@ test "ReadOnlyArray search methods" {
 
   // Test all/any
   let even_arr : ReadOnlyArray[Int] = [2, 4, 6]
-  inspect(even_arr.all(fn(x) { x % 2 == 0 }), content="true")
-  inspect(arr.any(fn(x) { x % 2 == 0 }), content="true")
+  inspect(even_arr.all(x => x % 2 == 0), content="true")
+  inspect(arr.any(x => x % 2 == 0), content="true")
 }
 
 ///|

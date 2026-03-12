@@ -128,9 +128,9 @@ test "bind" {
 ///|
 test "flatten" {
   let a : Int?? = Some(Some(42))
-  assert_eq(a.bind(fn(x) { x }), Some(42))
+  assert_eq(a.bind(x => x), Some(42))
   let b : Int?? = Some(None)
-  assert_eq(b.bind(fn(x) { x }), None)
+  assert_eq(b.bind(x => x), None)
 }
 
 ///|

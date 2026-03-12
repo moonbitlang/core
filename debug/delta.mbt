@@ -181,7 +181,7 @@ fn prune_delta(max_depth : Int?, delta : ReprDelta) -> ReprDelta {
           if children.is_empty() {
             node
           } else if !label.info_adds_depth() {
-            Same(label, children.map(fn(child) { go(d, child) }))
+            Same(label, children.map(child => go(d, child)))
           } else {
             Same(Repr::omitted(), [])
           }
@@ -191,7 +191,7 @@ fn prune_delta(max_depth : Int?, delta : ReprDelta) -> ReprDelta {
       match node {
         Same(label, children) => {
           let next_depth = if label.info_adds_depth() { d - 1 } else { d }
-          Same(label, children.map(fn(child) { go(next_depth, child) }))
+          Same(label, children.map(child => go(next_depth, child)))
         }
         Different(left, right) =>
           Different(prune_info(left, depth=d), prune_info(right, depth=d))

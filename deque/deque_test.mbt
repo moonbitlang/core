@@ -1914,7 +1914,7 @@ test "chunk_by_non_decreasing" {
   let d = @deque.from_array([1, 1, 2, 3, 2, 3, 2, 3, 4])
   let chunks = d.chunk_by((x, y) => x <= y)
   inspect(
-    chunks.to_array().map(fn(c) { c.to_array() }),
+    chunks.to_array().map(c => c.to_array()),
     content="[[1, 1, 2, 3], [2, 3], [2, 3, 4]]",
   )
 }
@@ -1932,7 +1932,7 @@ test "chunk_by_empty" {
 test "chunk_by_single_element" {
   let d = @deque.from_array([42])
   let chunks = d.chunk_by((x, y) => x == y)
-  inspect(chunks.to_array().map(fn(c) { c.to_array() }), content="[[42]]")
+  inspect(chunks.to_array().map(c => c.to_array()), content="[[42]]")
 }
 
 ///|
@@ -1940,10 +1940,7 @@ test "chunk_by_single_element" {
 test "chunk_by_all_true" {
   let d = @deque.from_array([1, 2, 3, 4])
   let chunks = d.chunk_by((_, _) => true)
-  inspect(
-    chunks.to_array().map(fn(c) { c.to_array() }),
-    content="[[1, 2, 3, 4]]",
-  )
+  inspect(chunks.to_array().map(c => c.to_array()), content="[[1, 2, 3, 4]]")
 }
 
 ///|
@@ -1952,7 +1949,7 @@ test "chunk_by_all_false" {
   let d = @deque.from_array([1, 2, 3, 4])
   let chunks = d.chunk_by((_, _) => false)
   inspect(
-    chunks.to_array().map(fn(c) { c.to_array() }),
+    chunks.to_array().map(c => c.to_array()),
     content="[[1], [2], [3], [4]]",
   )
 }
