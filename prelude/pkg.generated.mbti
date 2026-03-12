@@ -47,6 +47,7 @@ pub fn inspect(&@builtin.Show, content? : String, loc~ : @builtin.SourceLoc, arg
 #callsite(autofill(args_loc, loc))
 pub fn json_inspect(&@builtin.ToJson, content? : @builtin.Json, loc~ : @builtin.SourceLoc, args_loc~ : @builtin.ArgsLoc) -> Unit raise @builtin.InspectError
 
+#deprecated
 pub fn not(Bool) -> Bool
 
 pub let null : @builtin.Json

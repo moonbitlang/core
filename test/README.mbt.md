@@ -166,7 +166,7 @@ test "property testing" {
   // Test the property with multiple values
   let test_values = [0, 2, 4, 6, 8, 10]
   for value in test_values {
-    if not(is_even(value)) {
+    if !is_even(value) {
       @test.fail("Expected \{value} to be even")
     }
   }

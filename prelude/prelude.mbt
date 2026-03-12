@@ -69,6 +69,10 @@ pub using @builtin {
 }
 
 ///|
+#deprecated("Use !expr instead")
+pub using @builtin {not}
+
+///|
 #deprecated
 #warnings("-deprecated")
 pub using @builtin {type IterResult}
