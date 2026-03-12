@@ -1,5 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "moonbitlang/core/internal/regex_engine/symbol_map"
+package "moonbitlang/core/string/internal/regex_engine/symbol_map"
 
 import {
   "moonbitlang/core/internal/regex_engine/shared_types/rechar_set",

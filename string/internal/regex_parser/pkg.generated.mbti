@@ -1,10 +1,10 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "moonbitlang/core/internal/regex_parser"
+package "moonbitlang/core/string/internal/regex_parser"
 
 import {
   "moonbitlang/core/debug",
-  "moonbitlang/core/internal/regex_engine/ast",
   "moonbitlang/core/internal/regex_engine/shared_types",
+  "moonbitlang/core/string/internal/regex_engine/ast",
 }
 
 // Values
