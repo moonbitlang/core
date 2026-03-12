@@ -203,8 +203,8 @@ extern "js" fn MyInt64::mod_u_bigint(
 
 ///|
 impl Div for MyInt64 with div(self : MyInt64, other : MyInt64) -> MyInt64 {
-  guard not(other.hi == 0 && other.lo == 0) else { panic() }
-  if not(try_get_int64_wasm_helper()) {
+  guard !(other.hi == 0 && other.lo == 0) else { panic() }
+  if !try_get_int64_wasm_helper() {
     // Fallback to BigInt if WebAssembly is not available
     return self.div_bigint(other)
   }
@@ -222,8 +222,8 @@ impl Div for MyInt64 with div(self : MyInt64, other : MyInt64) -> MyInt64 {
 
 ///|
 fn MyInt64::div_u(self : MyInt64, other : MyInt64) -> MyInt64 {
-  guard not(other.hi == 0 && other.lo == 0) else { panic() }
-  if not(try_get_int64_wasm_helper()) {
+  guard !(other.hi == 0 && other.lo == 0) else { panic() }
+  if !try_get_int64_wasm_helper() {
     // Fallback to BigInt if WebAssembly is not available
     return self.div_u_bigint(other)
   }
@@ -241,8 +241,8 @@ fn MyInt64::div_u(self : MyInt64, other : MyInt64) -> MyInt64 {
 
 ///|
 impl Mod for MyInt64 with mod(self : MyInt64, other : MyInt64) -> MyInt64 {
-  guard not(other.hi == 0 && other.lo == 0) else { panic() }
-  if not(try_get_int64_wasm_helper()) {
+  guard !(other.hi == 0 && other.lo == 0) else { panic() }
+  if !try_get_int64_wasm_helper() {
     // Fallback to BigInt if WebAssembly is not available
     return self.mod_bigint(other)
   }
@@ -260,8 +260,8 @@ impl Mod for MyInt64 with mod(self : MyInt64, other : MyInt64) -> MyInt64 {
 
 ///|
 fn MyInt64::mod_u(self : MyInt64, other : MyInt64) -> MyInt64 {
-  guard not(other.hi == 0 && other.lo == 0) else { panic() }
-  if not(try_get_int64_wasm_helper()) {
+  guard !(other.hi == 0 && other.lo == 0) else { panic() }
+  if !try_get_int64_wasm_helper() {
     // Fallback to BigInt if WebAssembly is not available
     return self.mod_u_bigint(other)
   }
