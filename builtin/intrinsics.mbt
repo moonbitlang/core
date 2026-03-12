@@ -95,14 +95,7 @@ pub fn[T] panic() -> T = "%panic"
 /// Returns the logical NOT of the input value: `true` if the input is `false`,
 /// and `false` if the input is `true`.
 ///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   inspect(not(true), content="false")
-///   inspect(not(false), content="true")
-/// }
-/// ```
+#deprecated
 pub fn not(x : Bool) -> Bool = "%bool_not"
 
 ///|

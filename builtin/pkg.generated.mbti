@@ -25,6 +25,7 @@ pub fn[T] ignore(T) -> Unit
 #callsite(autofill(args_loc, loc))
 pub fn inspect(&Show, content? : String, loc~ : SourceLoc, args_loc~ : ArgsLoc) -> Unit raise InspectError
 
+#deprecated
 pub fn not(Bool) -> Bool
 
 pub let null : Json

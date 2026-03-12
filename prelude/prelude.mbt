@@ -31,7 +31,6 @@ pub using @builtin {
   panic,
   physical_equal,
   println,
-  not,
   repr,
   trait Eq,
   trait Compare,
@@ -70,6 +69,7 @@ pub using @builtin {
 
 ///|
 #deprecated("Use !expr instead")
+#warnings("-deprecated")
 pub using @builtin {not}
 
 ///|

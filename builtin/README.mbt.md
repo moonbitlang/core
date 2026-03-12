@@ -274,7 +274,7 @@ test "utilities" {
   ignore(value) // Discards the value
 
   // Boolean negation
-  let result = not(false)
+  let result = !false
   inspect(result, content="true")
 
   // Physical equality (reference equality)
