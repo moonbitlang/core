@@ -583,7 +583,7 @@ pub fn[K : Eq, V] HashMap::difference(
       (Leaf(key1, value1, bucket1), Leaf(key2, value2, bucket2)) => {
         let kvs1 = bucket1.add((key1, value1))
         let kvs2 = bucket2.add((key2, value2))
-        match kvs1.filter(kv => not(kvs2.lookup(kv.0) is Some(_))) {
+        match kvs1.filter(kv => !(kvs2.lookup(kv.0) is Some(_))) {
           Empty => None
           More(head, tail~) => Some(Leaf(head.0, head.1, tail))
         }
