@@ -685,7 +685,7 @@ test "StringView::repeat" {
 ///|
 test "StringView::split take" {
   inspect(
-    "a,b,c,d"[:].split(",").take(2).map(StringView::to_string).collect(),
+    "a,b,c,d"[:].split(",").take(2).map(x => x.to_string()).collect(),
     content=(
       #|["a", "b"]
     ),

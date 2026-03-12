@@ -153,7 +153,7 @@ fn Repr::with_children(self : Repr, children : Array[Repr]) -> Repr {
 pub fn Repr::traverse(self : Repr, f : (Repr) -> Repr) -> Repr {
   fn go(node : Repr) -> Repr {
     let children = node.children()
-    let next_children = children.map(fn(child) { go(child) })
+    let next_children = children.map(child => go(child))
     f(node.with_children(next_children))
   }
 
@@ -220,7 +220,7 @@ pub fn Repr::array(children : Array[Repr]) -> Repr {
 /// Construct a `Record` node from pre-built child `Repr`s.
 #doc(hidden)
 pub fn Repr::record(fields : Map[String, Repr]) -> Repr {
-  Record(fields.to_array().map(fn(p) { RecordField(p.0, p.1) }))
+  Record(fields.to_array().map(p => RecordField(p.0, p.1)))
 }
 
 ///|

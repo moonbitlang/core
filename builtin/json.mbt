@@ -245,7 +245,7 @@ pub impl ToJson for String with to_json(self : String) -> Json {
 
 ///|
 pub impl[X : ToJson] ToJson for Array[X] with to_json(self) {
-  Array(self.map(ToJson::to_json))
+  Array(self.map(x => x.to_json()))
 }
 
 ///|
