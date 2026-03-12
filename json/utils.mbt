@@ -14,17 +14,15 @@
 
 ///|
 fn offset_to_position(input : StringView, offset : Int) -> Position {
-  let mut line = 1
-  let mut column = 0
-  for i in 0..<offset {
+  for i in 0..<offset; line = 1, column = 0 {
     if input.unsafe_get(i) == '\n' {
-      line += 1
-      column = 0
+      continue line + 1, 0
     } else {
-      column += 1
+      continue line, column + 1
     }
+  } nobreak {
+    Position::{ line, column }
   }
-  return Position::{ line, column }
 }
 
 ///|

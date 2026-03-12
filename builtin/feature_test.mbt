@@ -53,13 +53,15 @@ test {
 
 ///|
 fn labeld_break(xss : Array[Array[Double]]) -> Double? {
-  let mut threshold = 0.0
-  mylabel~: for xs in xss {
-    for x in xs {
-      threshold += x
+  mylabel~: for xs in xss; threshold = 0.0 {
+    for x in xs; threshold = threshold {
+      let threshold = threshold + x
       if threshold > 10.0 {
         break mylabel~ Some(threshold)
       }
+      continue threshold
+    } nobreak {
+      continue threshold
     }
   } nobreak {
     None

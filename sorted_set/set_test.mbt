@@ -114,18 +114,16 @@ test "iter early termination in left subtree" {
   // This test should trigger the uncovered line 381 in sorted_set/set.mbt
   // We need a tree structure where the iterator terminates while traversing the left subtree
   let set = @sorted_set.from_array([5, 3, 7, 1, 4, 6, 8])
-  let mut count = 0
-  let mut found_target = false
-
   // Create an iterator that terminates when it finds value 3
   // Since the tree is sorted and 3 is in the left subtree of 5,
   // this should cause go(left) to return IterEnd, triggering line 381
-  for x in set.iter() {
-    count += 1
+  let (count, found_target) = for x in set.iter(); count = 0 {
     if x == 3 {
-      found_target = true
-      break // This should propagate up and trigger the uncovered line
+      break (count + 1, true) // This should propagate up and trigger the uncovered line
     }
+    continue count + 1
+  } nobreak {
+    (count, false)
   }
   inspect(found_target, content="true")
   inspect(count, content="2") // Should visit 1, then 3 and terminate

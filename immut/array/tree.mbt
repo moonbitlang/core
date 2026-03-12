@@ -325,18 +325,16 @@ fn[A] Tree::eachi(
       }
     Node(ns, None) => {
       let child_shift = shift - num_bits
-      let mut start = start
-      for i in 0..<ns.length() {
+      for i in 0..<ns.length(); start = start {
         ns[i].eachi(f, child_shift, start)
-        start += 1 << shift
+        continue start + (1 << shift)
       }
     }
     Node(ns, Some(sizes)) => {
       let child_shift = shift - num_bits
-      let mut start = start
-      for i in 0..<ns.length() {
+      for i in 0..<ns.length(); start = start {
         ns[i].eachi(f, child_shift, start)
-        start += sizes[i]
+        continue start + sizes[i]
       }
     }
   }
@@ -738,20 +736,25 @@ impl[A : Show] Show for Tree[A] with output(self, logger : &Logger) {
     match t {
       Empty => indent_str("Empty", ident)
       Leaf(l) => {
-        let mut s = "Leaf("
-        for i in 0..<l.length() {
-          s += l[i].to_string()
+        let s = for i in 0..<l.length(); s = "Leaf(" {
+          let s = s + l[i].to_string()
           if i != l.length() - 1 {
-            s += ", "
+            continue s + ", "
+          } else {
+            continue s
           }
+        } nobreak {
+          s
         }
-        s += ")"
-        indent_str(s, ident) + "\n"
+        indent_str(s + ")", ident) + "\n"
       }
       Node(children, _sizes) => {
-        let mut s = indent_str("Node(", ident) + "\n"
-        for i in 0..<children.length() {
-          s += aux(children[i], ident + 2)
+        let s = for
+          i in 0..<children.length()
+          s = indent_str("Node(", ident) + "\n" {
+          continue s + aux(children[i], ident + 2)
+        } nobreak {
+          s
         }
         s + indent_str(")", ident) + "\n"
       }

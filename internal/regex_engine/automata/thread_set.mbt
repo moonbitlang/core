@@ -219,30 +219,31 @@ fn ThreadSet::split_at_first_match(self : ThreadSet) -> (ThreadSet, ThreadSet) {
 ///|
 fn ThreadSet::remove_duplicates(self : ThreadSet, next : Expr) -> ThreadSet {
   let seen = @hashset.HashSet::new()
-  let mut result = ts_empty
-  for thread in self {
+  for thread in self; result = ts_empty {
     match thread {
-      End(_) => {
-        result += ts_one(thread)
-        break
-      }
+      End(_) => break result + ts_one(thread)
       Exp(marks, { def: Eps, .. }) =>
         if !seen.contains(next.id) {
           seen.add(next.id)
-          result += ts_exp(marks, next)
+          continue result + ts_exp(marks, next)
+        } else {
+          continue result
         }
       Exp(_, { id, .. }) =>
         if !seen.contains(id) {
           seen.add(id)
-          result += ts_one(thread)
+          continue result + ts_one(thread)
+        } else {
+          continue result
         }
       Seq(pref, first, next) => {
         let first_dedup = first.remove_duplicates(next)
-        result += ts_seq(pref, first_dedup, next)
+        continue result + ts_seq(pref, first_dedup, next)
       }
     }
+  } nobreak {
+    result
   }
-  result
 }
 
 ///|

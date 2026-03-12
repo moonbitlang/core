@@ -94,11 +94,11 @@ pub impl[V : @json.FromJson] @json.FromJson for SortedMap[String, V] with from_j
       (path, "@immut/sorted_map.from_json: expected object"),
     )
   }
-  let mut map = new()
-  for k, v in obj {
-    map = map.add(k, V::from_json(v, path.add_key(k)))
+  for k, v in obj; map = (new() : SortedMap[String, V]) {
+    continue map.add(k, V::from_json(v, path.add_key(k)))
+  } nobreak {
+    map
   }
-  map
 }
 
 ///|

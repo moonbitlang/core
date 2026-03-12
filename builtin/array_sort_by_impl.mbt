@@ -89,21 +89,24 @@ fn[T] fixed_try_bubble_sort_by(
   cmp : (T, T) -> Int,
 ) -> Bool {
   let max_tries = 8
-  let mut tries = 0
-  for i in 1..<arr.length() {
+  for i in 1..<arr.length(); tries = 0 {
     let mut sorted = true
     for j = i; j > 0 && cmp(arr[j - 1], arr[j]) > 0; j = j - 1 {
       sorted = false
       arr.swap(j, j - 1)
     }
     if !sorted {
-      tries += 1
+      let tries = tries + 1
       if tries > max_tries {
-        return false
+        break false
       }
+      continue tries
+    } else {
+      continue tries
     }
+  } nobreak {
+    true
   }
-  true
 }
 
 ///|
@@ -136,16 +139,21 @@ fn[T] fixed_partition_by(
 ) -> (Int, Bool) {
   arr.swap(pivot_index, arr.length() - 1)
   let pivot = arr[arr.length() - 1]
-  let mut i = 0
-  let mut partitioned = true
-  for j in 0..<(arr.length() - 1) {
+  let (i, partitioned) = for
+    j in 0..<(arr.length() - 1)
+    i = 0, partitioned = true {
     if cmp(arr[j], pivot) < 0 {
       if i != j {
         arr.swap(i, j)
-        partitioned = false
+        continue i + 1, false
+      } else {
+        continue i + 1, partitioned
       }
-      i = i + 1
+    } else {
+      continue i, partitioned
     }
+  } nobreak {
+    (i, partitioned)
   }
   arr.swap(i, arr.length() - 1)
   (i, partitioned)

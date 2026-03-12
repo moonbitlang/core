@@ -43,11 +43,11 @@ pub fn[A] PriorityQueue::new() -> PriorityQueue[A] {
 pub fn[A : Compare] PriorityQueue::from_array(
   array : ArrayView[A],
 ) -> PriorityQueue[A] {
-  let mut pq = new()
-  for i in 0..<array.length() {
-    pq = pq.push(array[i])
+  for i in 0..<array.length(); pq = (new() : PriorityQueue[A]) {
+    continue pq.push(array[i])
+  } nobreak {
+    pq
   }
-  pq
 }
 
 ///|

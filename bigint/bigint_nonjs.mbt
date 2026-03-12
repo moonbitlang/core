@@ -535,12 +535,13 @@ fn BigInt::grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
     }
     let a = ret.limbs
     let x = number.to_uint64()
-    let mut y = 0UL
-    for i in self.len>..0 {
-      y = y << radix_bit_len
-      y += a[i].to_uint64()
+    let y = for i in self.len>..0; y = 0UL {
+      let y = y << radix_bit_len
+      let y = y + a[i].to_uint64()
       a[i] = ((y / x) & radix_mask).to_uint()
-      y %= x
+      continue y % x
+    } nobreak {
+      y
     }
     if ret.limbs[ret.len - 1] == 0 {
       return (
@@ -694,11 +695,12 @@ pub impl Shl for BigInt with shl(self : BigInt, n : Int) -> BigInt {
     let lz = n / radix_bit_len // number of leading zeros
     let mut len = self.len + lz
     if r != 0 {
-      let mut carry = 0UL
-      for i in 0..<self.len {
-        carry = carry | (a[i].to_uint64() << r)
+      let carry = for i in 0..<self.len; carry = 0UL {
+        let carry = carry | (a[i].to_uint64() << r)
         new_limbs[i + lz] = (carry % radix).to_uint()
-        carry = carry >> radix_bit_len
+        continue carry >> radix_bit_len
+      } nobreak {
+        carry
       }
       if carry != 0 {
         new_limbs[self.len + lz] = carry.to_uint()
@@ -760,11 +762,12 @@ pub impl Shr for BigInt with shr(self : BigInt, n : Int) -> BigInt {
   } else {
     let new_limbs = FixedArray::make(new_len, 0U)
     let a = self.limbs
-    let mut carry = 0UL
-    for i in self.len>..lz {
+    let carry = for i in self.len>..lz; carry = 0UL {
       let x = a[i].to_uint64()
       new_limbs[i - lz] = ((x >> r) | carry).to_uint()
-      carry = (x << (radix_bit_len - r)) % radix
+      continue (x << (radix_bit_len - r)) % radix
+    } nobreak {
+      carry
     }
     if new_len > 1 && new_limbs[new_len - 1] == 0 {
       new_len -= 1
@@ -1103,13 +1106,14 @@ fn BigInt::from_string_radix(input : String, radix : Int) -> BigInt {
         abort("invalid character")
       }
       let base = BigInt::from_int(radix)
-      let mut acc = zero
-      for i in start..<len {
+      let acc = for i in start..<len; acc = zero {
         let digit = digit_from_char(input.unsafe_get(i).to_int())
         if digit < 0 || digit >= radix {
           abort("invalid character")
         }
-        acc = acc * base + BigInt::from_int(digit)
+        continue acc * base + BigInt::from_int(digit)
+      } nobreak {
+        acc
       }
       if sign == Negative {
         -acc
@@ -1153,8 +1157,7 @@ fn BigInt::from_string_radix_pow2(
   let total_bits = digits_count * shift
   let b_len = (total_bits + radix_bit_len - 1) / radix_bit_len
   let limbs = FixedArray::make(b_len, 0U)
-  let mut bit_pos = 0
-  for i in len>..first {
+  for i in len>..first; bit_pos = 0 {
     let digit = digit_from_char(input.unsafe_get(i).to_int())
     if digit < 0 || digit >= radix {
       abort("invalid character")
@@ -1167,7 +1170,7 @@ fn BigInt::from_string_radix_pow2(
       let hi = val >> (radix_bit_len - offset)
       limbs[limb_index + 1] = (limbs[limb_index + 1].to_uint64() | hi).to_uint()
     }
-    bit_pos += shift
+    continue bit_pos + shift
   }
   let b_len = normalize_len(limbs, b_len)
   let sign = if b_len == 1 && limbs[0] == 0 { Positive } else { sign }

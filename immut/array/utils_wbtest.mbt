@@ -35,30 +35,30 @@ fn random_test_gen(rng : Random, times : Int, max_lvl : Int) -> Array[Op] {
 
   // Start constructing the array
   let ret = []
-  let mut cur_len = 0
-  for _ in 0..<times {
+  for _ in 0..<times; cur_len = 0 {
     let op = rng.int(limit=op_count)
     match op {
       0 => {
         // push_end
         ret.push(Op::PushEnd(rng.int(limit=max_val)))
-        cur_len += 1
+        continue cur_len + 1
       }
       1 => {
         // concat
         let len = rng.int(limit=max_len)
         let a = Array::make(len, rng.int(limit=max_val))
-        cur_len += len
         ret.push(Op::Concat(a))
+        continue cur_len + len
       }
       2 => {
         // set
         if cur_len == 0 {
-          continue
+          continue cur_len
         }
         let idx = rng.int(limit=cur_len)
         let val = rng.int(limit=max_val)
         ret.push(Op::Set(idx, val))
+        continue cur_len
       }
       _ => abort("Invalid op")
     }
@@ -109,11 +109,11 @@ fn execute_array_test(rs : Array[Op]) -> Unit raise {
 ///|
 /// Compute the power of the branching factor.
 fn branching_factor_power(a : Int) -> Int {
-  let mut ret = 1
-  for _ in 0..<a {
-    ret *= branching_factor
+  for _ in 0..<a; ret = 1 {
+    continue ret * branching_factor
+  } nobreak {
+    ret
   }
-  ret
 }
 
 ///|

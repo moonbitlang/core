@@ -66,8 +66,7 @@ fn ParseContext::lex_hex_digits(
   ctx : ParseContext,
   n : Int,
 ) -> Int raise ParseError {
-  let mut r = 0
-  for _ in 0..<n {
+  for _ in 0..<n; r = 0 {
     match ctx.read_char() {
       Some(c) =>
         if c >= 'A' {
@@ -75,18 +74,19 @@ fn ParseContext::lex_hex_digits(
           if d > 15 {
             ctx.invalid_char(shift=-1)
           }
-          r = (r << 4) | d
+          continue (r << 4) | d
         } else if c >= '0' {
           let d = c.to_int() - '0'.to_int()
           if d > 9 {
             ctx.invalid_char(shift=-1)
           }
-          r = (r << 4) | d
+          continue (r << 4) | d
         } else {
           ctx.invalid_char(shift=-1)
         }
       None => raise InvalidEof
     }
+  } nobreak {
+    r
   }
-  r
 }

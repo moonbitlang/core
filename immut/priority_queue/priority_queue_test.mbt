@@ -186,14 +186,19 @@ test "complex" {
 
   let arr = (0).until(1000, inclusive=true).collect()
   arr.shuffle_in_place(rand~)
-  let mut pq = @priority_queue.new()
-  for i in 0..<=1000 {
-    pq = pq.push(arr[i])
+  let pq = for
+    i in 0..<=1000
+    pq = (@priority_queue.new() : @priority_queue.PriorityQueue[Int]) {
+    continue pq.push(arr[i])
+  } nobreak {
+    pq
   }
   inspect(pq.length(), content="1001")
-  for i in 0..<=1000 {
+  let pq = for i in 0..<=1000; pq = pq {
     assert_eq(pq.peek(), Some(1000 - i))
-    pq = pq.pop().unwrap()
+    continue pq.pop().unwrap()
+  } nobreak {
+    pq
   }
   inspect(pq.iter(), content="[]")
   inspect(pq.length(), content="0")

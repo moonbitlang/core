@@ -18,8 +18,7 @@ fn assign_positionals(
   positionals : Array[Arg],
   values : Array[String],
 ) -> Unit raise ArgParseError {
-  let mut cursor = 0
-  for idx in 0..<positionals.length() {
+  let cursor = for idx in 0..<positionals.length(); cursor = 0 {
     let arg = positionals[idx]
     let remaining = values.length() - cursor
     if arg.multiple {
@@ -44,13 +43,16 @@ fn assign_positionals(
         add_value(matches, arg.name, values[cursor + taken], arg, Argv)
         taken = taken + 1
       }
-      cursor = cursor + taken
-      continue
+      continue cursor + taken
     }
     if remaining > 0 {
       add_value(matches, arg.name, values[cursor], arg, Argv)
-      cursor = cursor + 1
+      continue cursor + 1
+    } else {
+      continue cursor
     }
+  } nobreak {
+    cursor
   }
   if cursor < values.length() {
     let overflow_label = if positionals.length() > 0 {

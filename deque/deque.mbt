@@ -1149,17 +1149,19 @@ pub fn[A : Eq] Deque::contains(self : Deque[A], value : A) -> Bool {
 pub fn[A] Deque::extract_if(self : Deque[A], f : (A) -> Bool) -> Deque[A] {
   guard self.length() != 0 else { from_array([]) }
   let removed = from_array([])
-  let mut write = 0
-  for read in 0..<self.length() {
+  let write = for read in 0..<self.length(); write = 0 {
     let elem = self[read]
     if f(elem) {
       removed.push_back(elem)
+      continue write
     } else {
       if read != write {
         self[write] = elem
       }
-      write += 1
+      continue write + 1
     }
+  } nobreak {
+    write
   }
   let total_len = self.length()
   for i in write..<total_len {
@@ -1850,18 +1852,18 @@ pub fn[A] Deque::chunk_by(
 /// }
 /// ```
 pub fn[A] Deque::flatten(self : Deque[Deque[A]]) -> Deque[A] {
-  let mut len = 0
-  for deque in self {
-    len += deque.length()
+  let len = for deque in self; len = 0 {
+    continue len + deque.length()
+  } nobreak {
+    len
   }
   let target = Deque::{ buf: UninitializedArray::make(len), len, head: 0 }
-  let mut i = 0
-  for deque in self {
+  for deque in self; i = 0 {
     let (front, back) = deque.as_views()
     target.buf.unsafe_blit(i, deque.buf, front.start_offset(), front.length())
-    i += front.length()
+    let i = i + front.length()
     target.buf.unsafe_blit(i, deque.buf, back.start_offset(), back.length())
-    i += back.length()
+    continue i + back.length()
   }
   target
 }

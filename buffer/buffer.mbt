@@ -160,16 +160,18 @@ pub fn from_array(arr : ArrayView[Byte]) -> Buffer {
 /// Create a buffer from an iterator.
 pub fn from_iter(iter : Iter[Byte]) -> Buffer {
   let buf = new()
-  let mut capacity = buf.data.length()
-  for byte in iter {
+  for byte in iter; capacity = buf.data.length() {
     // inline write_byte and grow_if_necessary
     // only call grow_if_necessary when necessary
-    if buf.len == capacity {
+    let capacity = if buf.len == capacity {
       buf.grow_if_necessary(capacity + 1)
-      capacity = buf.data.length()
+      buf.data.length()
+    } else {
+      capacity
     }
     buf.data[buf.len] = byte
     buf.len += 1
+    continue capacity
   }
   buf
 }

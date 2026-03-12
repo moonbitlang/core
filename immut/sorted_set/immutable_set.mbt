@@ -794,11 +794,11 @@ pub impl[A : @json.FromJson + Compare] @json.FromJson for SortedSet[A] with from
       (path, "@immut/sorted_set.from_json: expected array"),
     )
   }
-  let mut set = new()
-  for i, x in arr {
-    set = set.add(A::from_json(x, path.add_index(i)))
+  for i, x in arr; set = (new() : SortedSet[A]) {
+    continue set.add(A::from_json(x, path.add_index(i)))
+  } nobreak {
+    set
   }
-  set
 }
 
 ///|

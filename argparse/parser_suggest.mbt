@@ -35,21 +35,19 @@ fn suggest_short(short : Char, short_index : Map[Char, Arg]) -> String? {
 
 ///|
 fn suggest_name(input : String, candidates : Array[String]) -> String? {
-  let mut best : String? = None
-  let mut best_dist = 0
-  let mut has_best = false
   let max_dist = suggestion_threshold(input.length())
-  for cand in candidates {
+  for cand in candidates; best = (None : String?), best_dist = 0 {
     let dist = levenshtein(input, cand)
-    if !has_best || dist < best_dist {
-      best_dist = dist
-      best = Some(cand)
-      has_best = true
+    if best is None || dist < best_dist {
+      continue Some(cand), dist
+    } else {
+      continue best, best_dist
     }
-  }
-  match best {
-    Some(name) if best_dist <= max_dist => Some(name)
-    _ => None
+  } nobreak {
+    match best {
+      Some(name) if best_dist <= max_dist => Some(name)
+      _ => None
+    }
   }
 }
 

@@ -187,9 +187,10 @@ test "bench - monotonic clock functionality" {
   let start = monotonic_clock_start()
 
   // Do some simple work
-  let mut result = 0
-  for _ in 0..<1000 {
-    result += 1
+  let result = for _ in 0..<1000; result = 0 {
+    continue result + 1
+  } nobreak {
+    result
   }
   ignore(result)
   let elapsed = monotonic_clock_end(start)

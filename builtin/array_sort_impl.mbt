@@ -316,21 +316,24 @@ fn fixed_get_limit(len : Int) -> Int {
 /// Returns whether the array is sorted.
 fn[T : Compare] fixed_try_bubble_sort(arr : MutArrayView[T]) -> Bool {
   let max_tries = 8
-  let mut tries = 0
-  for i in 1..<arr.length() {
+  for i in 1..<arr.length(); tries = 0 {
     let mut sorted = true
     for j = i; j > 0 && arr[j - 1] > arr[j]; j = j - 1 {
       sorted = false
       arr.swap(j, j - 1)
     }
     if !sorted {
-      tries += 1
+      let tries = tries + 1
       if tries > max_tries {
-        return false
+        break false
       }
+      continue tries
+    } else {
+      continue tries
     }
+  } nobreak {
+    true
   }
-  true
 }
 
 ///|
@@ -362,16 +365,21 @@ fn[T : Compare] fixed_partition(
 ) -> (Int, Bool) {
   arr.swap(pivot_index, arr.length() - 1)
   let pivot = arr[arr.length() - 1]
-  let mut i = 0
-  let mut partitioned = true
-  for j in 0..<(arr.length() - 1) {
+  let (i, partitioned) = for
+    j in 0..<(arr.length() - 1)
+    i = 0, partitioned = true {
     if arr[j] < pivot {
       if i != j {
         arr.swap(i, j)
-        partitioned = false
+        continue i + 1, false
+      } else {
+        continue i + 1, partitioned
       }
-      i = i + 1
+    } else {
+      continue i, partitioned
     }
+  } nobreak {
+    (i, partitioned)
   }
   arr.swap(i, arr.length() - 1)
   (i, partitioned)
@@ -516,12 +524,11 @@ test "stable_sort_complex" {
   let run_lens = [86, 64, 21, 20, 22]
   let total_len = run_lens.fold(init=0, (acc, x) => acc + x)
   let arr = FixedArray::make(total_len, 0)
-  let mut index = 0
-  for i in 0..<run_lens.length() {
+  for i in 0..<run_lens.length(); index = 0 {
     for j in 0..<run_lens[i] {
-      arr[index] = j
-      index += 1
+      arr[index + j] = j
     }
+    continue index + run_lens[i]
   }
   assert_false(arr.is_sorted())
   arr.mut_view().stable_sort()

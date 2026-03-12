@@ -336,9 +336,10 @@ test "rev_values with complex tree" {
 ///|
 test "range on empty map" {
   let empty : @sorted_map.SortedMap[Int, String] = @sorted_map.new()
-  let mut count = 0
-  for _, _ in empty.range(low=1, high=5) {
-    count = count + 1
+  let count = for _, _ in empty.range(low=1, high=5); count = 0 {
+    continue count + 1
+  } nobreak {
+    count
   }
   inspect(count, content="0")
 }
@@ -346,9 +347,10 @@ test "range on empty map" {
 ///|
 test "range with no matches" {
   let map = @sorted_map.from_array([(1, "a"), (2, "b"), (3, "c")])
-  let mut count = 0
-  for _, _ in map.range(low=10, high=20) {
-    count = count + 1
+  let count = for _, _ in map.range(low=10, high=20); count = 0 {
+    continue count + 1
+  } nobreak {
+    count
   }
   inspect(count, content="0")
 }
@@ -452,9 +454,10 @@ test "range with inverted bounds" {
     (4, "d"),
     (5, "e"),
   ])
-  let mut count = 0
-  for _, _ in map.range(low=5, high=2) {
-    count = count + 1
+  let count = for _, _ in map.range(low=5, high=2); count = 0 {
+    continue count + 1
+  } nobreak {
+    count
   }
   inspect(count, content="0")
 }
@@ -468,12 +471,14 @@ test "range with early termination" {
     (4, "d"),
     (5, "e"),
   ])
-  let mut count = 0
-  for _, _ in map.range(low=1, high=5) {
-    count = count + 1
+  let count = for _, _ in map.range(low=1, high=5); count = 0 {
+    let count = count + 1
     if count == 2 {
-      break
+      break count
     }
+    continue count
+  } nobreak {
+    count
   }
   inspect(count, content="2")
 }
@@ -482,9 +487,10 @@ test "range with early termination" {
 test "range on large dataset" {
   let arr = Array::makei(100, fn(i) { (i, "val\{i}") })
   let map = @sorted_map.from_array(arr[:])
-  let mut count = 0
-  for _, _ in map.range(low=25, high=75) {
-    count = count + 1
+  let count = for _, _ in map.range(low=25, high=75); count = 0 {
+    continue count + 1
+  } nobreak {
+    count
   }
   inspect(count, content="51")
 }

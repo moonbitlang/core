@@ -235,11 +235,11 @@ pub fn FixedArray::unsafe_write_uint16_be(
 #intrinsic("%bytes.unsafe_read_uint64_le")
 #doc(hidden)
 pub fn Bytes::unsafe_read_uint64_le(bytes : Bytes, index : Int) -> UInt64 {
-  let mut result : UInt64 = 0
-  for i in 0..<=7 {
-    result = result | (bytes.unsafe_get(i + index).to_uint64() << (8 * i))
+  for i in 0..<=7; result = (0 : UInt64) {
+    continue result | (bytes.unsafe_get(i + index).to_uint64() << (8 * i))
+  } nobreak {
+    result
   }
-  result
 }
 
 ///|
@@ -266,11 +266,11 @@ pub fn Bytes::unsafe_read_uint64_le(bytes : Bytes, index : Int) -> UInt64 {
 #intrinsic("%bytes.unsafe_read_uint64_be")
 #doc(hidden)
 pub fn Bytes::unsafe_read_uint64_be(bytes : Bytes, index : Int) -> UInt64 {
-  let mut result : UInt64 = 0
-  for i in 0..<=7 {
-    result = result | (bytes.unsafe_get(i + index).to_uint64() << (8 * (7 - i)))
+  for i in 0..<=7; result = (0 : UInt64) {
+    continue result | (bytes.unsafe_get(i + index).to_uint64() << (8 * (7 - i)))
+  } nobreak {
+    result
   }
-  result
 }
 
 ///|
@@ -297,11 +297,11 @@ pub fn Bytes::unsafe_read_uint64_be(bytes : Bytes, index : Int) -> UInt64 {
 #intrinsic("%bytes.unsafe_read_uint32_le")
 #doc(hidden)
 pub fn Bytes::unsafe_read_uint32_le(bytes : Bytes, index : Int) -> UInt {
-  let mut result : UInt = 0
-  for i in 0..<=3 {
-    result = result | (bytes.unsafe_get(i + index).to_uint() << (8 * i))
+  for i in 0..<=3; result = (0 : UInt) {
+    continue result | (bytes.unsafe_get(i + index).to_uint() << (8 * i))
+  } nobreak {
+    result
   }
-  result
 }
 
 ///|
@@ -328,11 +328,11 @@ pub fn Bytes::unsafe_read_uint32_le(bytes : Bytes, index : Int) -> UInt {
 #intrinsic("%bytes.unsafe_read_uint32_be")
 #doc(hidden)
 pub fn Bytes::unsafe_read_uint32_be(bytes : Bytes, index : Int) -> UInt {
-  let mut result : UInt = 0
-  for i in 0..<=3 {
-    result = result | (bytes.unsafe_get(i + index).to_uint() << (8 * (3 - i)))
+  for i in 0..<=3; result = (0 : UInt) {
+    continue result | (bytes.unsafe_get(i + index).to_uint() << (8 * (3 - i)))
+  } nobreak {
+    result
   }
-  result
 }
 
 ///|
@@ -357,11 +357,11 @@ pub fn Bytes::unsafe_read_uint32_be(bytes : Bytes, index : Int) -> UInt {
 #intrinsic("%bytes.unsafe_read_uint16_le")
 #doc(hidden)
 pub fn Bytes::unsafe_read_uint16_le(bytes : Bytes, index : Int) -> UInt16 {
-  let mut result : UInt16 = 0
-  for i in 0..<=1 {
-    result = result | (bytes.unsafe_get(i + index).to_uint16() << (8 * i))
+  for i in 0..<=1; result = (0 : UInt16) {
+    continue result | (bytes.unsafe_get(i + index).to_uint16() << (8 * i))
+  } nobreak {
+    result
   }
-  result
 }
 
 ///|
@@ -386,11 +386,11 @@ pub fn Bytes::unsafe_read_uint16_le(bytes : Bytes, index : Int) -> UInt16 {
 #intrinsic("%bytes.unsafe_read_uint16_be")
 #doc(hidden)
 pub fn Bytes::unsafe_read_uint16_be(bytes : Bytes, index : Int) -> UInt16 {
-  let mut result : UInt16 = 0
-  for i in 0..<=1 {
-    result = result | (bytes.unsafe_get(i + index).to_uint16() << (8 * (1 - i)))
+  for i in 0..<=1; result = (0 : UInt16) {
+    continue result | (bytes.unsafe_get(i + index).to_uint16() << (8 * (1 - i)))
+  } nobreak {
+    result
   }
-  result
 }
 
 ///|

@@ -1604,11 +1604,11 @@ pub fn[A] StringView::fold(
   init~ : A,
   f : (A, Char) -> A raise?,
 ) -> A raise? {
-  let mut rv = init
-  for c in self {
-    rv = f(rv, c)
+  for c in self; rv = (init : A) {
+    continue f(rv, c)
+  } nobreak {
+    rv
   }
-  rv
 }
 
 ///|
@@ -1654,11 +1654,11 @@ pub fn[A] StringView::rev_fold(
   init~ : A,
   f : (A, Char) -> A raise?,
 ) -> A raise? {
-  let mut rv = init
-  for c in self.rev_iter() {
-    rv = f(rv, c)
+  for c in self.rev_iter(); rv = (init : A) {
+    continue f(rv, c)
+  } nobreak {
+    rv
   }
-  rv
 }
 
 ///|

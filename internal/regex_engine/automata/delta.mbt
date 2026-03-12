@@ -169,15 +169,21 @@ fn find_slot(ctx~ : Context, desc : ThreadSet) -> Slot {
   if ctx.book_dirty {
     ctx.book.clear()
   }
-  let mut has_unassigned_slots = false
-  for marks in desc.iter_marks() {
-    for _mark, slot in marks {
+  let has_unassigned_slots = for
+    marks in desc.iter_marks()
+    has_unassigned_slots = false {
+    for _mark, slot in marks; has_unassigned_slots = has_unassigned_slots {
       if slot.is_assigned() {
         ctx.book.mark_used(slot)
+        continue has_unassigned_slots
       } else {
-        has_unassigned_slots = true
+        continue true
       }
+    } nobreak {
+      continue has_unassigned_slots
     }
+  } nobreak {
+    has_unassigned_slots
   }
   if !has_unassigned_slots {
     Slot::unassigned()

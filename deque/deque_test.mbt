@@ -780,13 +780,14 @@ test "deque guard iter coverage improvement" {
     for i in 0..<=n {
       dq.push_front(i)
     }
-    let mut sym = -1
     for t in 0..<=n {
-      for elem in dq.iter() {
-        sym = elem
+      let sym = for elem in dq.iter(); sym = -1 {
         if elem == t {
-          break
+          break elem
         }
+        continue elem
+      } nobreak {
+        sym
       }
       assert_eq(sym, t)
     }
@@ -815,14 +816,14 @@ test "deque guard iter after push_front and push_back" {
   let arr = FixedArray::from_iter(dq.iter())
   assert_eq(arr, [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14])
   for t in 0..<=15 {
-    let mut count = 0
-    let mut expect = -2
-    for i in dq.iter() {
-      count += 1
-      expect = i
+    let (count, expect) = for i in dq.iter(); count = 0, expect = -2 {
+      let count = count + 1
       if i == t - 1 {
-        break
+        break (count, i)
       }
+      continue count, i
+    } nobreak {
+      (count, expect)
     }
     assert_eq(count, t + 1)
     assert_eq(expect, t - 1)
@@ -837,13 +838,14 @@ test "deque guard iter2 coverage improvement" {
     for i in 0..<=n {
       dq.push_front(i)
     }
-    let mut sym = (-1, -1)
     for t in 0..<=n {
-      for index, elem in dq.iter2() {
-        sym = (index, elem)
+      let sym = for index, elem in dq.iter2(); sym = (-1, -1) {
         if elem == n - t {
-          break
+          break (index, elem)
         }
+        continue (index, elem)
+      } nobreak {
+        sym
       }
       assert_eq(sym, (t, n - t))
     }
