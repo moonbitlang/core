@@ -15,6 +15,7 @@
 ///|
 /// Trait for types that can be converted to human-readable debugging info.
 pub(open) trait Debug {
+  #as_free_fn
   to_repr(Self) -> Repr
 }
 

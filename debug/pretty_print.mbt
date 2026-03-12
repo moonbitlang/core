@@ -143,14 +143,14 @@ fn pretty_print_repr_go(label : Repr, children : Array[Content]) -> Content {
     }
     DoubleLit(x) => {
       let needs_parens = 1.0 / x < 0.0
-      leaf(x, needs_parens~)
+      leaf(x.to_string(), needs_parens~)
     }
     FloatLit(x) => {
       let needs_parens : Bool = (1.0 : Float) / x < (0.0 : Float)
-      leaf(x, needs_parens~)
+      leaf(x.to_string(), needs_parens~)
     }
-    BoolLit(x) => leaf(x)
-    CharLit(x) => leaf(x)
+    BoolLit(x) => leaf(x.to_string())
+    CharLit(x) => leaf(x.escape())
     StringLit(x) => no_parens(verbatim(quote_string_literal(x)))
     Tuple(_) => comma_seq("(", ")", children.map(x => x.no_wrap()))
     Enum(name, _) =>
@@ -276,6 +276,11 @@ pub fn render(r : Repr, max_depth? : Int) -> String {
   let threshold = default_threshold
   let info = prune_repr_info(max_depth, r)
   print_content(render_repr(threshold, info).no_wrap())
+}
+
+///|
+pub impl Show for Repr with output(self, logger) {
+  logger.write_string(render(self))
 }
 
 ///|

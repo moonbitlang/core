@@ -34,7 +34,7 @@ pub impl Show for ParseError with output(self, logger) {
   match self {
     InvalidChar({ line, column }, c) => {
       logger.write_string("Invalid character ")
-      logger.write_string(repr(c))
+      logger.write_string(c.escape())
       logger.write_string(" at line ")
       logger.write_object(line)
       logger.write_string(", column ")

@@ -32,7 +32,6 @@ pub using @builtin {
   panic,
   physical_equal,
   println,
-  repr,
   trait Eq,
   trait Compare,
   trait Hash,
@@ -74,12 +73,17 @@ pub using @builtin {
 pub using @builtin {not}
 
 ///|
+#deprecated("use `to_repr` for debugging representation")
+#warnings("-deprecated")
+pub using @builtin {repr}
+
+///|
 #deprecated
 #warnings("-deprecated")
 pub using @builtin {type IterResult}
 
 ///|
-pub using @debug {debug, type Repr, trait Debug, debug_inspect}
+pub using @debug {debug, type Repr, trait Debug, debug_inspect, to_repr}
 
 ///|
 #deprecated("for debugging only, not for production")
