@@ -502,14 +502,17 @@ fn validate_groups(
     arg_seen.add(arg.name)
   }
   for group in groups {
-    let mut count = 0
-    for arg in args {
+    let count = for arg in args; count = 0 {
       if !arg_in_group(arg, group) {
-        continue
+        continue count
       }
       if matches_has_value_or_flag(matches, arg.name) {
-        count = count + 1
+        continue count + 1
+      } else {
+        continue count
       }
+    } nobreak {
+      count
     }
     group_presence[group.name] = count
     if group.required && count == 0 {

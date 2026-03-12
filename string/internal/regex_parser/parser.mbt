@@ -225,16 +225,16 @@ fn Parser::quant_bound(
   digits : StringView,
   ctx~ : ParserContext,
 ) -> Int raise ParserError {
-  let mut value = 0
-  for c in digits {
+  for c in digits; value = 0 {
     let digit = c.to_int() - '0'.to_int()
     let next = value * 10 + digit
     guard next <= MAX_QUANT else {
       raise ctx.error_at(digits, HINT_QUANTIFIER_TOO_LARGE)
     }
-    value = next
+    continue next
+  } nobreak {
+    value
   }
-  value
 }
 
 ///|

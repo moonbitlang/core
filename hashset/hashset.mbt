@@ -270,11 +270,12 @@ pub fn[K] HashSet::eachi(
   self : HashSet[K],
   f : (Int, K) -> Unit raise?,
 ) -> Unit raise? {
-  let mut idx = 0
-  for i in 0..<self.capacity {
+  for i in 0..<self.capacity; idx = 0 {
     if self.entries[i] is Some({ key, .. }) {
       f(idx, key)
-      idx += 1
+      continue idx + 1
+    } else {
+      continue idx
     }
   }
 }
@@ -449,17 +450,15 @@ fn calc_grow_threshold(capacity : Int) -> Int {
 
 ///|
 fn[K : Show] HashSet::_debug_entries(self : HashSet[K]) -> String {
-  let mut s = ""
-  for i in 0..<self.entries.length() {
-    if i > 0 {
-      s += ","
-    }
-    match self.entries[i] {
-      None => s += "_"
-      Some({ psl, key, .. }) => s += "(\{psl},\{key})"
-    }
+  for i in 0..<self.entries.length(); s = "" {
+    let s = if i > 0 { s + "," } else { s }
+    continue match self.entries[i] {
+        None => s + "_"
+        Some({ psl, key, .. }) => s + "(\{psl},\{key})"
+      }
+  } nobreak {
+    s
   }
-  s
 }
 
 ///|

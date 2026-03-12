@@ -420,14 +420,14 @@ fn comma_seq(
   end : String,
   contents : Array[ContentParens],
 ) -> Content {
-  let mut size = 0
-  for c in contents {
-    size += c.size
-  }
-  {
-    size,
-    lines: comma_seq_lines(begin, end, contents.map(c => c.lines)),
-    needs_parens: false,
+  for c in contents; size = 0 {
+    continue size + c.size
+  } nobreak {
+    {
+      size,
+      lines: comma_seq_lines(begin, end, contents.map(c => c.lines)),
+      needs_parens: false,
+    }
   }
 }
 

@@ -139,12 +139,14 @@ test "HAMT::iter2" {
 ///|
 test "HAMT::iter2 with early break" {
   let data = @hashmap.from_array([(1, "a"), (2, "b"), (3, "c")])
-  let mut count = 0
-  for _k, _v in data.iter2() {
-    count += 1
+  let count = for _k, _v in data.iter2(); count = 0 {
+    let count = count + 1
     if count == 2 {
-      break
+      break count
     }
+    continue count
+  } nobreak {
+    count
   }
   assert_eq(count, 2)
 }

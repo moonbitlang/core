@@ -73,11 +73,11 @@ fn Summary::new(
 
 ///|
 fn sum(data : Array[Double]) -> Double {
-  let mut sum = 0.0
-  for i in data {
-    sum += i
+  for i in data; sum = 0.0 {
+    continue sum + i
+  } nobreak {
+    sum
   }
-  sum
 }
 
 ///|
@@ -106,12 +106,12 @@ fn variance(data : Array[Double], mean~ : Double) -> Double {
   if data.length() < 2 {
     return 0.0
   }
-  let mut v = 0.0
-  for i in data {
+  for i in data; v = 0.0 {
     let d = i - mean
-    v += d * d
+    continue v + d * d
+  } nobreak {
+    v / (data.length() - 1).to_double()
   }
-  v / (data.length() - 1).to_double()
 }
 
 ///|

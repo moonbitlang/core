@@ -100,12 +100,15 @@ fn SymbolMap::each_intervals(
   if self.0.is_empty() {
     f(lb, ub)
   } else {
-    let mut last_stop = lb
-    for stop in self.0 {
+    let last_stop = for stop in self.0; last_stop = lb {
       if stop - 1 >= last_stop {
         f(last_stop, stop - 1)
-        last_stop = stop
+        continue stop
+      } else {
+        continue last_stop
       }
+    } nobreak {
+      last_stop
     }
     if ub >= last_stop {
       f(last_stop, ub)

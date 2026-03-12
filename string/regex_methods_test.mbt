@@ -187,9 +187,10 @@ test "split/word_boundaries" {
 test "split/non_word_boundary_does_not_break_surrogate_pair" {
   let regex = @string.Regex("\\B")
   let result = regex.split("a😀b").to_array()
-  let mut has_broken_part = false
-  for part in result {
-    has_broken_part = has_broken_part || has_unpaired_surrogate(part)
+  let has_broken_part = for part in result; has_broken_part = false {
+    continue has_broken_part || has_unpaired_surrogate(part)
+  } nobreak {
+    has_broken_part
   }
   inspect(has_broken_part, content="false")
 }

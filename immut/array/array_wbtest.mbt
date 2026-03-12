@@ -28,25 +28,27 @@ test "mix" {
     v,
     content="@immut/array.from_array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99])",
   )
-  let mut v2 = v
-  for i in 0..<100 {
-    v2 = v2.set(i, i * 2)
+  let v2 = for i in 0..<100; v2 = v {
+    continue v2.set(i, i * 2)
+  } nobreak {
+    v2
   }
   let mut ct = 0
   v.each(e => ct = ct + e)
   inspect(ct, content="4950")
   v2.each(e => ct = ct + e)
   inspect(ct, content="14850")
-  v2 = v2.map(e => e * 2)
+  let v2 = v2.map(e => e * 2)
   let ct1 = v2.fold((a, b) => a + b, init=0)
   let ct2 = v2.rev_fold((a, b) => a + b, init=0)
   inspect(ct1, content="19800")
   inspect(ct2, content="19800")
   inspect(v.tree.is_empty_tree(), content="false")
   let large_const = branching_factor * branching_factor + 1
-  let mut v = new()
-  for i in 0..<large_const {
-    v = v.push(i)
+  let v = for i in 0..<large_const; v = (new() : T[Int]) {
+    continue v.push(i)
+  } nobreak {
+    v
   }
   let vec = []
   v.eachi((i, _e) => vec.push(i))

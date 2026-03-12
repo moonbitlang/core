@@ -1428,9 +1428,10 @@ pub fn FixedArray::join(
     return ""
   }
   let first = self[0]
-  let mut size_hint = first.length()
-  for i in 1..<len {
-    size_hint += separator.length() + self[i].length()
+  let size_hint = for i in 1..<len; size_hint = first.length() {
+    continue size_hint + separator.length() + self[i].length()
+  } nobreak {
+    size_hint
   }
   let string = StringBuilder::new(size_hint~)
   if separator.length() == 0 {

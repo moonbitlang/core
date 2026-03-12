@@ -101,12 +101,12 @@ pub impl Arbitrary for Char with arbitrary(_, rs) {
 ///|
 pub impl Arbitrary for String with arbitrary(size, rs) {
   let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
-  let mut s = ""
-  for i in 0..<len {
+  for i in 0..<len; s = "" {
     let c : Char = Arbitrary::arbitrary(i, rs)
-    s = s + c.to_string()
+    continue s + c.to_string()
+  } nobreak {
+    s
   }
-  s
 }
 
 ///|

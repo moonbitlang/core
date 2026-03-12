@@ -244,26 +244,45 @@ fn collect_args(
     args.push(positional.arg)
   }
   let ctx = ValidationCtx::new()
-  let mut first_error : ArgBuildError? = None
-  for flag in flags {
+  let first_error : ArgBuildError? = for
+    flag in flags
+    first_error = (None : ArgBuildError?) {
     validate_flag_arg(flag.arg, ctx) catch {
-      err => if first_error is None { first_error = Some(err) }
+      err => if first_error is None { continue Some(err) }
     }
+    continue first_error
+  } nobreak {
+    first_error
   }
-  for option in options {
+  let first_error : ArgBuildError? = for
+    option in options
+    first_error = first_error {
     validate_option_arg(option.arg, ctx) catch {
-      err => if first_error is None { first_error = Some(err) }
+      err => if first_error is None { continue Some(err) }
     }
+    continue first_error
+  } nobreak {
+    first_error
   }
-  for positional in positionals {
+  let first_error : ArgBuildError? = for
+    positional in positionals
+    first_error = first_error {
     validate_positional_arg(positional.arg, ctx) catch {
-      err => if first_error is None { first_error = Some(err) }
+      err => if first_error is None { continue Some(err) }
     }
+    continue first_error
+  } nobreak {
+    first_error
   }
-  if first_error is None {
-    ctx.finalize() catch {
-      err => first_error = Some(err)
+  let first_error = if first_error is None {
+    try {
+      ctx.finalize()
+      None
+    } catch {
+      err => Some(err)
     }
+  } else {
+    first_error
   }
   (args, first_error)
 }

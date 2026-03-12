@@ -17,11 +17,11 @@
 #deprecated("use `_.to_array().rev_fold(...)` instead")
 pub fn[A, B] List::rev_fold(self : List[A], init~ : B, f : (B, A) -> B) -> B {
   let xs = self.to_array()
-  let mut acc = init
-  for x in xs.rev_iter() {
-    acc = f(acc, x)
+  for x in xs.rev_iter(); acc = (init : B) {
+    continue f(acc, x)
+  } nobreak {
+    acc
   }
-  acc
 }
 
 ///|

@@ -69,30 +69,31 @@ fn resolve_help_target(
     [.. pre, "--help"] if builtin_help_long => pre
     _ => argv
   }
-  let mut current = cmd
-  let mut current_path = command_path
-  let mut current_globals = inherited_globals
-  let mut subs = cmd.subcommands
-  for name in targets {
+  for
+    name in targets
+    current = cmd,
+    current_path = command_path,
+    current_globals = inherited_globals,
+    subs = cmd.subcommands {
     if name.has_prefix("-") {
       raise InvalidArgument("unexpected help argument: \{name}")
     }
     guard subs.iter().find_first(sub => sub.name == name) is Some(sub) else {
       raise InvalidArgument("unknown subcommand: \{name}")
     }
-    current_globals = merge_global_defs(
+    let current_globals = merge_global_defs(
       current_globals,
       collect_globals(current.args),
     )
-    current = sub
-    current_path = if current_path == "" {
+    let current_path = if current_path == "" {
       sub.name
     } else {
       "\{current_path} \{sub.name}"
     }
-    subs = sub.subcommands
+    continue sub, current_path, current_globals, sub.subcommands
+  } nobreak {
+    (current, current_globals, current_path)
   }
-  (current, current_globals, current_path)
 }
 
 ///|

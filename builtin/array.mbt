@@ -1226,15 +1226,15 @@ pub fn[T] Array::resize(self : Array[T], new_len : Int, f : T) -> Unit {
 /// }
 /// ```
 pub fn[T] Array::flatten(self : Array[Array[T]]) -> Array[T] {
-  let mut len = 0
-  for x in self {
-    len += x.length()
+  let len = for x in self; len = 0 {
+    continue len + x.length()
+  } nobreak {
+    len
   }
   let res = Array::make_uninit(len)
-  let mut i = 0
-  for xs in self {
+  for xs in self; i = 0 {
     res.unsafe_blit(i, xs, 0, xs.length())
-    i += xs.length()
+    continue i + xs.length()
   }
   res
 }
@@ -1276,8 +1276,8 @@ pub fn[A, B] Array::fold(
   init~ : B,
   f : (B, A) -> B raise?,
 ) -> B raise? {
-  for i = 0, acc = init; i < self.length(); {
-    continue i + 1, f(acc, self[i])
+  for item in self; acc = init {
+    continue f(acc, item)
   } nobreak {
     acc
   }
@@ -1429,19 +1429,20 @@ pub fn[T : Eq] Array::dedup(self : Array[T]) -> Unit {
 #locals(f)
 pub fn[T] Array::extract_if(self : Array[T], f : (T) -> Bool) -> Array[T] {
   let removed = []
-  let mut write = 0
-  for read in 0..<self.length() {
+  for read in 0..<self.length(); write = 0 {
     let elem = self[read]
     if f(elem) {
       removed.push(elem)
+      continue write
     } else {
       if read != write {
         self[write] = elem
       }
-      write += 1
+      continue write + 1
     }
+  } nobreak {
+    self.truncate(write)
   }
-  self.truncate(write)
   removed
 }
 
@@ -1787,18 +1788,18 @@ pub fn[A] Array::retain_map(self : Array[A], f : (A) -> A?) -> Unit {
   }
   let buf = self.buffer()
   let len = self.length()
-  let mut write_idx = 0
-  for read_idx in 0..<len {
+  for read_idx in 0..<len; write_idx = 0 {
     let val = buf[read_idx]
     match f(val) {
       Some(new_val) => {
         buf[write_idx] = new_val
-        write_idx += 1
+        continue write_idx + 1
       }
-      None => ()
+      None => continue write_idx
     }
+  } nobreak {
+    self.unsafe_truncate_to_length(write_idx)
   }
-  self.unsafe_truncate_to_length(write_idx)
 }
 
 ///|

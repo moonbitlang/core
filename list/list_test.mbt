@@ -38,11 +38,14 @@ test "length" {
 ///|
 test "iter" {
   let ls = @list.from_array([1, 2, 3, 4, 5])
-  let mut failed = false
-  for i, x in ls {
+  let failed = for i, x in ls; failed = false {
     if x != i + 1 {
-      failed = true
+      continue true
+    } else {
+      continue failed
     }
+  } nobreak {
+    failed
   }
   debug_inspect(failed, content="false")
 }

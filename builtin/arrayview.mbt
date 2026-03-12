@@ -1104,11 +1104,12 @@ pub fn[A : ToStringView] ArrayView::join(
     [] => ""
     [hd, .. tl] => {
       let hd = hd.to_string_view()
-      let mut size_hint = hd.length()
-      for s in tl {
-        size_hint += s.to_string_view().length() + separator.length()
+      let size_hint = for s in tl; size_hint = hd.length() {
+        continue size_hint + s.to_string_view().length() + separator.length()
+      } nobreak {
+        size_hint
       }
-      size_hint = size_hint << 1
+      let size_hint = size_hint << 1
       let buf = StringBuilder::new(size_hint~)
       // buf.write_string(hd)
       buf.write_view(hd)

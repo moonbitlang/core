@@ -113,14 +113,17 @@ pub fn end() -> Unit {
   let line_buf = StringBuilder::new()
   for i in 0..<sbuf.0.length() {
     let str = sbuf.0[i]
-    let mut start = 0
-    for j in 0..<str.length() {
+    let start = for j in 0..<str.length(); start = 0 {
       if str.unsafe_get(j) == '\n' {
         line_buf.write_view(str[start:j])
         println(line_buf.to_string())
         line_buf.reset()
-        start = j + 1
+        continue j + 1
+      } else {
+        continue start
       }
+    } nobreak {
+      start
     }
     if start < str.length() {
       line_buf.write_view(str[start:])

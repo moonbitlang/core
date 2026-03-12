@@ -27,10 +27,9 @@ fn positional_args(args : Array[Arg]) -> Array[Arg] {
 fn next_positional(positionals : Array[Arg], collected : Array[String]) -> Arg? {
   let target = collected.length()
   let total = target + 1
-  let mut cursor = 0
-  for idx in 0..<positionals.length() {
+  for idx in 0..<positionals.length(); cursor = 0 {
     if cursor >= total {
-      break
+      break None
     }
     let arg = positionals[idx]
     let remaining = total - cursor
@@ -58,11 +57,12 @@ fn next_positional(positionals : Array[Arg], collected : Array[String]) -> Arg? 
       0
     }
     if take > 0 && target < cursor + take {
-      return Some(arg)
+      break Some(arg)
     }
-    cursor = cursor + take
+    continue cursor + take
+  } nobreak {
+    None
   }
-  None
 }
 
 ///|

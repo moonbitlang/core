@@ -670,9 +670,10 @@ test "@sorted_set.symmetric_difference/overlapping" {
 ///|
 test "range on empty set" {
   let empty : @sorted_set.SortedSet[Int] = @sorted_set.new()
-  let mut count = 0
-  for _ in empty.range(low=1, high=5) {
-    count = count + 1
+  let count = for _ in empty.range(low=1, high=5); count = 0 {
+    continue count + 1
+  } nobreak {
+    count
   }
   inspect(count, content="0")
 }
@@ -680,9 +681,10 @@ test "range on empty set" {
 ///|
 test "range with no matches" {
   let set = @sorted_set.from_array([1, 2, 3])
-  let mut count = 0
-  for _ in set.range(low=10, high=20) {
-    count = count + 1
+  let count = for _ in set.range(low=10, high=20); count = 0 {
+    continue count + 1
+  } nobreak {
+    count
   }
   inspect(count, content="0")
 }
@@ -750,9 +752,10 @@ test "range with gaps in data" {
 ///|
 test "range with inverted bounds" {
   let set = @sorted_set.from_array([1, 2, 3, 4, 5])
-  let mut count = 0
-  for _ in set.range(low=5, high=2) {
-    count = count + 1
+  let count = for _ in set.range(low=5, high=2); count = 0 {
+    continue count + 1
+  } nobreak {
+    count
   }
   inspect(count, content="0")
 }
@@ -760,12 +763,14 @@ test "range with inverted bounds" {
 ///|
 test "range with early termination" {
   let set = @sorted_set.from_array([1, 2, 3, 4, 5])
-  let mut count = 0
-  for _ in set.range(low=1, high=5) {
-    count = count + 1
+  let count = for _ in set.range(low=1, high=5); count = 0 {
+    let count = count + 1
     if count == 2 {
-      break
+      break count
     }
+    continue count
+  } nobreak {
+    count
   }
   inspect(count, content="2")
 }
@@ -774,9 +779,10 @@ test "range with early termination" {
 test "range on large dataset" {
   let arr = Array::makei(100, fn(i) { i })
   let set = @sorted_set.from_array(arr[:])
-  let mut count = 0
-  for _ in set.range(low=25, high=75) {
-    count = count + 1
+  let count = for _ in set.range(low=25, high=75); count = 0 {
+    continue count + 1
+  } nobreak {
+    count
   }
   inspect(count, content="51")
 }

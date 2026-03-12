@@ -515,9 +515,10 @@ test "call stack overflow" {
 test "stringify deep nested array" {
   // Build a deeply nested JSON array like [[[[[]]]]] with depth = 6000
   let depth = 6000
-  let mut j : Json = []
-  for _ in 1..<=depth {
-    j = [j]
+  let j : Json = for _ in 1..<=depth; j = ([] : Json) {
+    continue [j]
+  } nobreak {
+    j
   }
   let s = j.stringify()
   let expected = depth * 2 + 2 // each [ and ] plus the outermost []
@@ -528,9 +529,10 @@ test "stringify deep nested array" {
 test "stringify deep nested object" {
   // Build a deeply nested object like {"a":{"a":{ ... {"a":null}}}} with depth = 6000
   let depth = 6000
-  let mut j : Json = null
-  for _ in 1..<=depth {
-    j = { "a": j }
+  let j : Json = for _ in 1..<=depth; j = (null : Json) {
+    continue { "a": j }
+  } nobreak {
+    j
   }
   let s = j.stringify()
   let expected = depth * 6 + 4 // each {"a": } plus the outermost null

@@ -29,13 +29,14 @@ test "compare with shared prefix" {
 ///|
 test "iter early termination - value" {
   let set = @sorted_set.from_array([1, 2, 3])
-  let mut count = 0
-  for x in set {
+  let count = for x in set; count = 0 {
     if x == 2 {
-      break
+      break count
     } else {
-      count = count + 1
+      continue count + 1
     }
+  } nobreak {
+    count
   }
   inspect(count, content="1")
 }
@@ -121,12 +122,14 @@ test "rev_iter with early termination on right subtree" {
     .add(3) // right child
 
   // Create an iter that stops after processing the first element (from right)
-  let mut count = 0
-  for _ in set.rev_iter() {
-    count = count + 1
+  let count = for _ in set.rev_iter(); count = 0 {
+    let count = count + 1
     if count == 1 {
-      break
+      break count
     }
+    continue count
+  } nobreak {
+    count
   }
 
   // Verify that we stopped after processing the first element

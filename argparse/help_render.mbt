@@ -315,12 +315,15 @@ fn render_section(
 ///|
 fn format_entries(display : Array[(String, String)]) -> Array[String] {
   let entries = Array::new(capacity=display.length())
-  let mut max_len = 0
-  for item in display {
+  let max_len = for item in display; max_len = 0 {
     let (name, _) = item
     if name.length() > max_len {
-      max_len = name.length()
+      continue name.length()
+    } else {
+      continue max_len
     }
+  } nobreak {
+    max_len
   }
   for item in display {
     let (name, doc) = item

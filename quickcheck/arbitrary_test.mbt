@@ -110,12 +110,16 @@ test "arbitrary size branches" {
   let rs2 = @splitmix.RandomState::default()
   let _ : UInt64 = @quickcheck.Arbitrary::arbitrary(4, rs2)
   let rs3 = @splitmix.RandomState::default()
-  let mut result : Result[Int, Int] = Ok(0)
-  for _ in 0..<64 {
-    result = @quickcheck.Arbitrary::arbitrary(1, rs3)
+  let result : Result[Int, Int] = for
+    _ in 0..<64
+    result = (Ok(0) : Result[Int, Int]) {
+    let result = @quickcheck.Arbitrary::arbitrary(1, rs3)
     if result is Err(_) {
-      break
+      break result
     }
+    continue result
+  } nobreak {
+    result
   }
   guard result is Err(_) else { fail("expected Err from Result arbitrary") }
   let rs4 = @splitmix.RandomState::default()
