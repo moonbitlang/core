@@ -27,7 +27,7 @@ test {
   )
   let v = "\u{00AD}Hello, \u{2060}世界\t\n!\u{1D173}"
   inspect(
-    repr(v),
+    to_repr(v),
     content=(
       #|"­Hello, ⁠世界\t\n!𝅳"
     ),

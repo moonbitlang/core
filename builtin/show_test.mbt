@@ -793,16 +793,16 @@ test "char show hex digits" {
   // inspect('\x01', content="\x01")
   // FIXME: inspect('\x0b') will not work with update test
   // inspect('\x0b', content="\x0b")
-  inspect('\u{01}' |> repr, content="'\\u{01}'")
-  inspect('\u{0b}' |> repr, content="'\\u{0b}'")
+  inspect('\u{01}' |> to_repr, content="'\\u{01}'")
+  inspect('\u{0b}' |> to_repr, content="'\\u{0b}'")
 }
 
 ///|
 test "char show hex digits extended" {
-  inspect('\u{0605}' |> repr, content="'\\u{0605}'")
-  inspect('\u{FDD0}' |> repr, content="'\\u{fdd0}'")
-  inspect('\u{1FFFE}' |> repr, content="'\\u{01fffe}'")
-  inspect('\u{10FFFE}' |> repr, content="'\\u{10fffe}'")
+  inspect('\u{0605}' |> to_repr, content="'\\u{0605}'")
+  inspect('\u{FDD0}' |> to_repr, content="'\\u{fdd0}'")
+  inspect('\u{1FFFE}' |> to_repr, content="'\\u{01fffe}'")
+  inspect('\u{10FFFE}' |> to_repr, content="'\\u{10fffe}'")
 }
 
 ///|

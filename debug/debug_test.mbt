@@ -579,3 +579,14 @@ test "assert_eq for arrays" {
     ),
   )
 }
+
+///|
+test "repr" {
+  let v = "3"
+  inspect(
+    "hello \{Debug::to_repr(v)}",
+    content=(
+      #|hello "3"
+    ),
+  )
+}

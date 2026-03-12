@@ -180,6 +180,7 @@ pub fn[T : Show] &Logger::write_iter(
 
 ///|
 /// Function `repr`.
+#deprecated("use `to_repr` for debugging representation")
 pub fn[T : Show] repr(t : T) -> String {
   let logger = StringBuilder::new()
   t.output(logger)

@@ -34,11 +34,13 @@ pub fn[T : Debug] to_string(T) -> String
 
 // Types and methods
 type Repr
+pub impl Show for Repr
 
 // Type aliases
 
 // Traits
 pub(open) trait Debug {
+  #as_free_fn
   to_repr(Self) -> Repr
 }
 pub impl Debug for Unit

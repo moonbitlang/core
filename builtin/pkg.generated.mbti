@@ -40,6 +40,7 @@ pub fn[T] physical_equal(T, T) -> Bool
 
 pub fn[T : Show] println(T) -> Unit
 
+#deprecated
 pub fn[T : Show] repr(T) -> String
 
 // Errors
