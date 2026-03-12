@@ -14,7 +14,7 @@
 
 ///|
 fn profile_unicode() -> @re.Profile {
-  @re.Profile(
+  Profile(
     valid=@re.RecharSet::char_range(0, 0x10FFFF) -
       @re.RecharSet::char_range(0xD800, 0xDFFF),
     word=@re.RecharSet::char_range('a', 'z') +
@@ -33,7 +33,7 @@ fn profile_unicode() -> @re.Profile {
 
 ///|
 fn profile_bytes() -> @re.Profile {
-  @re.Profile(
+  Profile(
     valid=@re.RecharSet::char_range(0, 255),
     word=@re.RecharSet::char_range('a', 'z') +
       @re.RecharSet::char_range('A', 'Z') +
