@@ -855,3 +855,52 @@ test "Show for Char special cases" {
   '\u{1F}'.output(ctrl_1f_buf)
   inspect(ctrl_1f_buf.to_string(), content="'\\u{1f}'")
 }
+
+///|
+test "Char::escape" {
+  // ASCII printable
+  inspect('a'.escape(), content="'a'")
+  inspect('a'.escape(quote=false), content="a")
+  inspect('Z'.escape(), content="'Z'")
+  inspect(' '.escape(), content="' '")
+  inspect('~'.escape(), content="'~'")
+  // Special escape sequences
+  inspect('\''.escape(), content="'\\''")
+  inspect('\\'.escape(), content="'\\\\'")
+  inspect('\n'.escape(), content="'\\n'")
+  inspect('\n'.escape(quote=false), content="\\n")
+  inspect('\r'.escape(), content="'\\r'")
+  inspect('\b'.escape(), content="'\\b'")
+  inspect('\t'.escape(), content="'\\t'")
+  // Non-printable control characters
+  inspect('\u{0}'.escape(), content="'\\u{00}'")
+  inspect('\u{01}'.escape(), content="'\\u{01}'")
+  inspect('\u{1F}'.escape(), content="'\\u{1f}'")
+  // Printable Unicode (displayed as-is)
+  inspect('中'.escape(), content="'中'")
+  inspect('中'.escape(quote=false), content="中")
+}
+
+///|
+test "String::escape" {
+  // Basic string
+  inspect("hello".escape(), content="\"hello\"")
+  inspect("hello".escape(quote=false), content="hello")
+  // Special escape sequences
+  inspect("a\nb".escape(), content="\"a\\nb\"")
+  inspect("a\nb".escape(quote=false), content="a\\nb")
+  inspect("a\rb".escape(), content="\"a\\rb\"")
+  inspect("a\tb".escape(), content="\"a\\tb\"")
+  inspect("a\bb".escape(), content="\"a\\bb\"")
+  // Quote and backslash escaping
+  inspect("a\"b".escape(), content="\"a\\\"b\"")
+  inspect("a\\b".escape(), content="\"a\\\\b\"")
+  // Control characters
+  inspect("a\u{01}b".escape(), content="\"a\\u{01}b\"")
+  // Empty string
+  inspect("".escape(), content="\"\"")
+  inspect("".escape(quote=false), content="")
+  // Unicode (displayed as-is)
+  inspect("你好".escape(), content="\"你好\"")
+  inspect("你好".escape(quote=false), content="你好")
+}

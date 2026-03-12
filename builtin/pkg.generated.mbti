@@ -471,6 +471,7 @@ pub fn Byte::to_uint(Byte) -> UInt
 pub fn Byte::to_uint16(Byte) -> UInt16
 pub fn Byte::to_uint64(Byte) -> UInt64
 
+pub fn Char::escape(Char, quote? : Bool) -> String
 #deprecated
 pub fn Char::from_int(Int) -> Char
 pub fn Char::is_ascii(Char) -> Bool
@@ -691,7 +692,7 @@ pub fn String::char_length_ge(String, Int, start_offset? : Int, end_offset? : In
 pub fn String::contains(String, StringView) -> Bool
 pub fn String::contains_any(String, chars~ : StringView) -> Bool
 pub fn String::contains_char(String, Char) -> Bool
-pub fn String::escape(String) -> String
+pub fn String::escape(String, quote? : Bool) -> String
 pub fn String::find(String, StringView) -> Int?
 pub fn String::find_by(String, (Char) -> Bool) -> Int?
 pub fn[A] String::fold(String, init~ : A, (A, Char) -> A raise?) -> A raise?

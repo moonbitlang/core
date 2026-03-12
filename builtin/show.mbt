@@ -85,23 +85,46 @@ test "to_hex_digit" {
 }
 
 ///|
-pub impl Show for String with output(self, logger) {
-  logger.write_char('"')
+/// Returns the escaped representation of a string.
+///
+/// When `quote` is true (default), the result is wrapped in double quotes
+/// like a MoonBit string literal.
+///
+/// Escape rules:
+/// - Double quote and backslash are backslash-escaped: `\"`, `\\`
+/// - Common control characters use named escapes: `\n`, `\r`, `\b`, `\t`
+/// - Other control characters (< U+0020) use `\u{hex}` format
+/// - All other characters are displayed as-is
+///
+/// ```mbt check
+/// test {
+///   inspect("Hello \n".escape(), content="\"Hello \\n\"")
+///   inspect("Hello \n".escape(quote=false), content="Hello \\n")
+/// }
+/// ```
+pub fn String::escape(self : String, quote? : Bool = true) -> String {
+  let buf = StringBuilder::new()
+  self.escape_to(buf, quote~)
+  buf.to_string()
+}
+
+///|
+fn String::escape_to(
+  self : String,
+  logger : &Logger,
+  quote? : Bool = true,
+) -> Unit {
+  if quote {
+    logger.write_char('"')
+  }
+  let len = self.length()
   fn flush_segment(seg : Int, i : Int) {
     if i > seg {
       logger.write_substring(self, seg, i - seg)
     }
   }
-  // The loop keeps two pieces of state:
-  //   i   : the current scanning position
-  //   seg : the beginning index of the current "plain" segment that has
-  //         no escaping requirements. Whenever we meet a character that
-  //         needs escaping, we flush the segment [seg, i) and reset seg.
-  let len = self.length()
   for i = 0, seg = 0 {
     if i >= len {
-      // If we reached the end of the string, flush any remaining segment
-      // and break out of the loop.
       flush_segment(seg, i)
       break
     }
@@ -111,7 +134,6 @@ pub impl Show for String with output(self, logger) {
         flush_segment(seg, i)
         logger.write_char('\\')
         logger.write_char(c.unsafe_to_char())
-        // Advance both pointers: continue with next index, new segment starts after current char
         continue i + 1, i + 1
       }
       '\n' => {
@@ -136,55 +158,42 @@ pub impl Show for String with output(self, logger) {
       }
       code =>
         if code < ' ' {
-          // has to be ascii
           flush_segment(seg, i)
           logger.write_string("\\u{")
           logger.write_string(code.to_byte().to_hex())
           logger.write_char('}')
           continue i + 1, i + 1
         } else {
-          // Normal character, keep scanning; only advance index.
           continue i + 1, seg
         }
     }
   }
-  logger.write_char('"')
+  if quote {
+    logger.write_char('"')
+  }
+}
+
+///|
+pub impl Show for String with output(self, logger) {
+  self.escape_to(logger)
 }
 
 ///|
 /// This is different from `Show::output`,
-/// here it returns the original string without escaping. 
+/// here it returns the original string without escaping.
 /// The rationale is in string interpolation,
 /// we want to show the original string, not the escaped one.
 /// # Examples
-/// 
+///
 /// ```mbt check
 /// test {
 ///   let str = "Hello \n"
 ///   inspect(str.to_string(), content="Hello \n")
-///   inspect(str.escape(), content="\"Hello \\n\"")
+///   inspect(str.escape(quote=true), content="\"Hello \\n\"")
 /// }
 /// ```
 pub impl Show for String with to_string(self) {
   self
-}
-
-///|
-/// Returns a valid MoonBit string literal representation of a string,
-/// add quotes and escape special characters.
-/// # Examples
-/// 
-/// ```mbt check
-/// test {
-///   let str = "Hello \n"
-///   inspect(str.to_string(), content="Hello \n")
-///   inspect(str.escape(), content="\"Hello \\n\"")
-/// }
-/// ```
-pub fn String::escape(self : String) -> String {
-  let buf = StringBuilder::new()
-  Show::output(self, buf)
-  buf.to_string()
 }
 
 ///|

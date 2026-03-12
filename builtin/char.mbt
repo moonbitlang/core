@@ -444,51 +444,38 @@ fn char_to_string(char : Char) -> String {
 }
 
 ///|
-/// Show implementation for Char that produces a human-readable representation
-/// of characters suitable for debugging and display purposes.
-/// 
-/// The output format follows Rust/C-style character literal syntax with single quotes.
-/// 
-/// ## Format Rules
-/// 
-/// 1. **Wrapper**: All characters are wrapped in single quotes: `'c'`
-/// 
-/// 2. **Special escape sequences**: Common control characters use backslash escapes:
-///    - `\'` for single quote (U+0027)
-///    - `\\` for backslash (U+005C)
-///    - `\n` for line feed (U+000A)
-///    - `\r` for carriage return (U+000D)
-///    - `\b` for backspace (U+0008)
-///    - `\t` for horizontal tab (U+0009)
-/// 
-/// 3. **ASCII printable range**: Characters from space (U+0020) to tilde (U+007E)
-///    are displayed as-is: `'A'`, `'5'`, `'@'`
-/// 
-/// 4. **Unicode escape sequences**: Non-printable characters use `\u{...}` format
-///    with minimal hex digits (no leading zeros)
-/// 
-/// ## When Char::to_hex is Called
-/// 
-/// The `Char::to_hex` function is called for characters that:
-/// - Are not in the ASCII printable range (U+0020 to U+007E)
-/// - Are not one of the special escape sequences
-/// - Fail the `is_printable()` check (control chars, format chars, private use, etc.)
-/// 
-/// For such characters, `Char::to_hex` converts the entire Unicode code point
-/// to its minimal hexadecimal string representation.
-/// 
-/// ## Examples
-/// 
-/// - ASCII printable: `'A'` displays as `'A'`
-/// - Special escape: `'\n'` displays as `'\n'`  
-/// - Non-printable: `'\u{0}'` displays as `'\u{0}'`
-/// - Emoji: `'\u{1F600}'` displays as `'\u{1f600}'`
-pub impl Show for Char with output(self, logger) {
+/// Returns the escaped representation of a character.
+///
+/// When `quote` is true (default), the result is wrapped in single quotes
+/// like a MoonBit character literal.
+///
+/// Escape rules:
+/// - Single quote and backslash are backslash-escaped: `\'`, `\\`
+/// - Common control characters use named escapes: `\n`, `\r`, `\b`, `\t`
+/// - ASCII printable characters (U+0020 to U+007E) are displayed as-is
+/// - Printable Unicode characters outside ASCII are displayed as-is
+/// - Non-printable characters use `\u{hex}` format
+///
+/// ```mbt check
+/// test {
+///   inspect('a'.escape(), content="'a'")
+///   inspect('a'.escape(quote=false), content="a")
+///   inspect('\n'.escape(), content="'\\n'")
+///   inspect('\n'.escape(quote=false), content="\\n")
+/// }
+/// ```
+pub fn Char::escape(self : Char, quote? : Bool = true) -> String {
+  let buf = StringBuilder::new()
+  self.escape_to(buf, quote~)
+  buf.to_string()
+}
 
-  // Start with opening single quote
-  logger.write_char('\'')
+///|
+fn Char::escape_to(self : Char, logger : &Logger, quote? : Bool = true) -> Unit {
+  if quote {
+    logger.write_char('\'')
+  }
   match self {
-    // Handle characters that need special escape sequences
     '\'' | '\\' => {
       logger.write_char('\\')
       logger.write_char(self)
@@ -497,26 +484,24 @@ pub impl Show for Char with output(self, logger) {
     '\r' => logger.write_string("\\r")
     '\b' => logger.write_string("\\b")
     '\t' => logger.write_string("\\t")
-
-    // ASCII printable characters (space through tilde): display as-is
     ' '..='~' => logger.write_char(self)
-
-    // All other characters: check if they're printable
     _ =>
       if !self.is_printable() {
-        // Non-printable characters get Unicode escape sequences: \u{...}
         logger.write_string("\\u{")
         logger.write_string(self.to_hex())
         logger.write_char('}')
       } else {
-        // Printable Unicode characters outside ASCII range: display as-is
-        // Examples: emoji, accented letters, CJK characters, etc.
         logger.write_char(self)
       }
   }
+  if quote {
+    logger.write_char('\'')
+  }
+}
 
-  // End with closing single quote
-  logger.write_char('\'')
+///|
+pub impl Show for Char with output(self, logger) {
+  self.escape_to(logger)
 }
 
 ///|
