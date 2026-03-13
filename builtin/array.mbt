@@ -437,6 +437,10 @@ pub fn[T] Array::append(self : Array[T], other : ArrayView[T]) -> Unit {
 ///   inspect(sum, content="6")
 /// }
 /// ```
+/// This method uses the array iterator. Structural mutations during traversal
+/// are unsupported: appended elements are not visited, and shrinking the array
+/// with operations such as `remove`, `truncate`, `clear`, or `drain` may cause
+/// later iterator steps to fail.
 #locals(f)
 pub fn[T] Array::each(self : Array[T], f : (T) -> Unit raise?) -> Unit raise? {
   for v in self {
@@ -1260,6 +1264,13 @@ pub fn[T] Array::repeat(self : Array[T], times : Int) -> Array[T] {
 
 ///|
 /// Fold out values from an array according to certain rules.
+/// This method traverses the array through `self.iter()`, so the traversal
+/// bounds are fixed when folding starts.
+///
+/// Structural mutations to `self` inside `f` are unsupported. Appended
+/// elements are not visited, and shrinking the array with operations such as
+/// `remove`, `truncate`, `clear`, or `drain` may cause later fold steps to
+/// fail.
 ///
 /// Example:
 ///
@@ -1638,6 +1649,14 @@ pub fn[T] Array::split(
 /// * `array` : The array to create an iterator from.
 ///
 /// Returns an iterator that yields each element of the array in order.
+/// This iterator is created from `self[:]`, so the traversal bounds are fixed
+/// when iteration starts.
+///
+/// Structural mutations after the iterator is created are unsupported.
+/// Appended elements are not visited, and shrinking the array with operations
+/// such as `remove`, `truncate`, `clear`, or `drain` may cause later iterator
+/// steps to fail. The same caveat applies to `rev_iter()`, `iter2()`, and
+/// helpers built on top of them such as `each()`, `eachi()`, and `fold()`.
 ///
 /// Example:
 ///
