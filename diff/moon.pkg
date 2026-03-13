@@ -1,0 +1,13 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/int",
+  "moonbitlang/core/debug",
+}
+
+import {
+  "moonbitlang/core/ref",
+} for "wbtest"
+
+options(
+  targets: { "indexer_wbtest.mbt": [ "not", "js" ] },
+)
