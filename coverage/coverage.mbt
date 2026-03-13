@@ -39,11 +39,11 @@ pub fn CoverageCounter::incr(self : CoverageCounter, idx : Int) -> Unit {
 pub impl Show for CoverageCounter with output(self, logger) {
   let CoverageCounter(self) = self
   logger.write_char('[')
-  for i in 0..<self.length() {
+  for i, v in self {
     if i != 0 {
       logger.write_string(", ")
     }
-    Show::output(self[i], logger)
+    Show::output(v, logger)
   }
   logger.write_char(']')
 }
@@ -111,8 +111,7 @@ pub fn end() -> Unit {
   let sbuf = StringBuffer::StringBuffer([])
   coverage_log(counters.val, sbuf)
   let line_buf = StringBuilder::new()
-  for i in 0..<sbuf.0.length() {
-    let str = sbuf.0[i]
+  for str in sbuf.0 {
     let start = for j in 0..<str.length(); start = 0 {
       if str.unsafe_get(j) == '\n' {
         line_buf.write_view(str[start:j])

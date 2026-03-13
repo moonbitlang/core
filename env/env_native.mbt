@@ -19,8 +19,8 @@ fn get_cli_args_ffi() -> FixedArray[Bytes] = "$moonbit.get_cli_args"
 fn get_cli_args_internal() -> Array[String] {
   let tmp = get_cli_args_ffi()
   let res = Array::new(capacity=tmp.length())
-  for i in 0..<tmp.length() {
-    res.push(utf8_bytes_to_mbt_string(tmp[i]))
+  for t in tmp {
+    res.push(utf8_bytes_to_mbt_string(t))
   }
   res
 }

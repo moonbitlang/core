@@ -52,8 +52,8 @@ test "mix" {
   }
   let vec = []
   v.eachi((i, _e) => vec.push(i))
-  for i in 0..<large_const {
-    assert_eq(vec[i], i)
+  for i, v in vec {
+    assert_eq(v, i)
   }
 }
 
@@ -131,8 +131,8 @@ fn gen_concat_seq(n : Int, len_gen : (Int) -> Int) -> Array[Op] {
 /// to be concatenated is given as an array.
 fn gen_concat_seq_from_len_array(len : Array[Int]) -> Array[Op] {
   let ret = []
-  for i in 0..<len.length() {
-    ret.push(Op::Concat(random_array(len[i])))
+  for l in len {
+    ret.push(Op::Concat(random_array(l)))
   }
   ret
 }

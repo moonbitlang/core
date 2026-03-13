@@ -43,8 +43,8 @@ pub fn[A] PriorityQueue::new() -> PriorityQueue[A] {
 pub fn[A : Compare] PriorityQueue::from_array(
   array : ArrayView[A],
 ) -> PriorityQueue[A] {
-  for i in 0..<array.length(); pq = (new() : PriorityQueue[A]) {
-    continue pq.push(array[i])
+  for x in array; pq = (new() : PriorityQueue[A]) {
+    continue pq.push(x)
   } nobreak {
     pq
   }
@@ -363,8 +363,8 @@ pub impl[A : Compare] Compare for PriorityQueue[A] with compare(self, other) {
   }
   let self_arr = self.to_array()
   let other_arr = other.to_array()
-  for i in 0..<self_arr.length() {
-    let cmp = self_arr[i].compare(other_arr[i])
+  for i, x in self_arr {
+    let cmp = x.compare(other_arr[i])
     if cmp != 0 {
       return cmp
     }

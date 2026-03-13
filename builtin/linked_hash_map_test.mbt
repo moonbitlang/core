@@ -437,8 +437,8 @@ test "Map::retain - with hash collisions simulation" {
   let map : Map[String, Int] = Map::new()
   // Create keys that might have similar hash values
   let keys = ["a", "aa", "aaa", "aaaa", "aaaaa", "aaaaaa"]
-  for i in 0..<keys.length() {
-    map.set(keys[i], i + 1)
+  for i, k in keys {
+    map.set(k, i + 1)
   }
 
   // Keep only keys with odd length

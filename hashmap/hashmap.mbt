@@ -501,8 +501,8 @@ fn[K : Eq, V] HashMap::grow(self : HashMap[K, V]) -> Unit {
   self.capacity = new_capacity
   self.capacity_mask = new_capacity - 1
   self.size = 0
-  for i in 0..<old_entries.length() {
-    if old_entries[i] is Some({ key, value, hash, .. }) {
+  for entry in old_entries {
+    if entry is Some({ key, value, hash, .. }) {
       self.set_with_hash(key, value, hash)
     }
   }
@@ -767,8 +767,8 @@ test "arbitrary" {
     [("", -4), ("v", -2), (")xh", 1), ("C\u{10}\u{0e}", -3), ("|", 0)],
     [("", 1), ("b", -1)],
   ]
-  for i in 0..<samples.length() {
-    verify_content(samples[i], data[i])
+  for i, sample in samples {
+    verify_content(sample, data[i])
   }
 }
 
@@ -823,8 +823,8 @@ test "clear" {
   m.clear()
   inspect(m.length(), content="0")
   inspect(m.capacity(), content="8")
-  for i in 0..<m.capacity() {
-    @test.same_object(m.entries[i], None)
+  for entry in m.entries {
+    @test.same_object(entry, None)
   }
 }
 

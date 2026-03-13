@@ -25,8 +25,7 @@ test "@math.lnf Test" {
     1.1786550283432007, 1.4469189643859863, @float.not_a_number, @float.not_a_number,
     @float.infinity,
   ]
-  for i in 0..<data.length() {
-    let x = data[i]
+  for i, x in data {
     let res = @math.lnf(x)
     let libm_res = libm_results[i]
     assert_true(

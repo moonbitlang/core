@@ -595,11 +595,11 @@ test "equal_key_value_mismatch" {
 ///|
 fn[K : Show, V : Show] Map::_debug_entries(self : Map[K, V]) -> String {
   let buf = StringBuilder::new()
-  for i in 0..<self.entries.length() {
+  for i, entry in self.entries {
     if i > 0 {
       buf.write_char(',')
     }
-    match self.entries[i] {
+    match entry {
       None => buf.write_char('_')
       Some({ psl, key, value, .. }) =>
         buf.write_string("(\{psl},\{key},\{value})")
