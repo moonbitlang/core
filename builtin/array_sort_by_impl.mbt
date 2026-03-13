@@ -19,13 +19,8 @@ fn[T] fixed_quick_sort_by(
   pred : T?,
   limit : Int,
 ) -> Unit {
-  let mut limit = limit
-  let mut arr = arr
-  let mut pred = pred
-  let mut was_partitioned = true
-  let mut balanced = true
   let bubble_sort_len = 16
-  while true {
+  for limit = limit, arr = arr, pred = pred, was_partitioned = true, balanced = true {
     let len = arr.length()
     if len <= bubble_sort_len {
       if len >= 2 {
@@ -47,21 +42,19 @@ fn[T] fixed_quick_sort_by(
       }
     }
     let (pivot, partitioned) = fixed_partition_by(arr, cmp, pivot_index)
-    was_partitioned = partitioned
-    balanced = minimum(pivot, len - pivot) >= len / 8
-    if !balanced {
-      limit -= 1
-    }
-    if pred is Some(pred) {
+    let was_partitioned = partitioned
+    let balanced = minimum(pivot, len - pivot) >= len / 8
+    let limit = if !balanced { limit - 1 } else { limit }
+    if pred is Some(p) {
       // pred is less than all elements in arr
       // If pivot equals to pred, then we can skip all elements that are equal to pred.
-      if cmp(pred, arr[pivot]) == 0 {
-        let mut i = pivot
-        while i < len && cmp(pred, arr[i]) == 0 {
-          i = i + 1
+      if cmp(p, arr[pivot]) == 0 {
+        let i = for i = pivot; i < len && cmp(p, arr[i]) == 0; {
+          continue i + 1
+        } nobreak {
+          i
         }
-        arr = arr.slice(i, len)
-        continue
+        continue limit, arr.slice(i, len), pred, was_partitioned, balanced
       }
     }
     let left = arr.slice(0, pivot)
@@ -69,11 +62,10 @@ fn[T] fixed_quick_sort_by(
     // Reduce the stack depth by only call quick_sort on the smaller partition.
     if left.length() < right.length() {
       fixed_quick_sort_by(left, cmp, pred, limit)
-      pred = Some(arr[pivot])
-      arr = right
+      continue limit, right, Some(arr[pivot]), was_partitioned, balanced
     } else {
       fixed_quick_sort_by(right, cmp, Some(arr[pivot]), limit)
-      arr = left
+      continue limit, left, pred, was_partitioned, balanced
     }
   }
 }
@@ -90,10 +82,11 @@ fn[T] fixed_try_bubble_sort_by(
 ) -> Bool {
   let max_tries = 8
   for i in 1..<arr.length(); tries = 0 {
-    let mut sorted = true
-    for j = i; j > 0 && cmp(arr[j - 1], arr[j]) > 0; j = j - 1 {
-      sorted = false
+    let sorted = for j = i, sorted = true; j > 0 && cmp(arr[j - 1], arr[j]) > 0; {
       arr.swap(j, j - 1)
+      continue j - 1, false
+    } nobreak {
+      sorted
     }
     if !sorted {
       let tries = tries + 1
@@ -221,19 +214,18 @@ fn[T] fixed_sift_down_by(
   index : Int,
   cmp : (T, T) -> Int,
 ) -> Unit {
-  let mut index = index
   let len = arr.length()
-  let mut child = index * 2 + 1
-  while child < len {
-    if child + 1 < len && cmp(arr[child], arr[child + 1]) < 0 {
-      child = child + 1
+  for index = index, child = index * 2 + 1; child < len; {
+    let child = if child + 1 < len && cmp(arr[child], arr[child + 1]) < 0 {
+      child + 1
+    } else {
+      child
     }
     if cmp(arr[index], arr[child]) >= 0 {
       return
     }
     arr.swap(index, child)
-    index = child
-    child = index * 2 + 1
+    continue child, child * 2 + 1
   }
 }
 

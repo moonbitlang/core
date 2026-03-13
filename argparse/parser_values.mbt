@@ -81,13 +81,11 @@ fn positional_min_required(arg : Arg) -> Int {
 
 ///|
 fn remaining_positional_min(positionals : Array[Arg], start : Int) -> Int {
-  let mut total = 0
-  let mut idx = start
-  while idx < positionals.length() {
-    total = total + positional_min_required(positionals[idx])
-    idx = idx + 1
+  for idx = start, total = 0; idx < positionals.length(); {
+    continue idx + 1, total + positional_min_required(positionals[idx])
+  } nobreak {
+    total
   }
-  total
 }
 
 ///|

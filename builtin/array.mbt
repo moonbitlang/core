@@ -1403,12 +1403,14 @@ pub fn[T : Eq] Array::dedup(self : Array[T]) -> Unit {
   if self.is_empty() {
     return
   }
-  let mut w = 1
-  for i in 1..<self.length() {
+  let w = for i in 1..<self.length(); w = 1 {
     if self[i] != self[w - 1] {
       self[w] = self[i]
-      w = w + 1
+      continue w + 1
     }
+    continue w
+  } nobreak {
+    w
   }
   self.unsafe_truncate_to_length(w)
 }
@@ -1528,12 +1530,14 @@ pub fn[T] Array::chunk_by(
   if self.is_empty() {
     return chunks
   }
-  let mut start = 0
-  for i in 1..<self.length() {
+  let start = for i in 1..<self.length(); start = 0 {
     if !pred(self[i - 1], self[i]) {
       chunks.push(self[start:i])
-      start = i
+      continue i
     }
+    continue start
+  } nobreak {
+    start
   }
   chunks.push(self[start:self.length()])
   chunks
@@ -1628,15 +1632,16 @@ pub fn[T] Array::split(
   pred : (T) -> Bool raise?,
 ) -> Array[Array[T]] raise? {
   let chunks = []
-  let mut i = 0
-  while i < self.length() {
+  for i = 0; i < self.length(); {
     let chunk = []
-    while i < self.length() && !pred(self[i]) {
+    let i = for i = i; i < self.length() && !pred(self[i]); {
       chunk.push(self[i])
-      i = i + 1
+      continue i + 1
+    } nobreak {
+      i
     }
     chunks.push(chunk)
-    i = i + 1
+    continue i + 1
   }
   chunks
 }
