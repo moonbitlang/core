@@ -33,18 +33,16 @@ fn int_to_string_hex(
   digit_start : Int,
   total_len : Int,
 ) -> Unit {
-  let mut offset = total_len - digit_start
-  let mut n = num
-
   // Process 2 hex digits (1 byte) at a time
-  while offset >= 2 {
-    offset = offset - 2
+  let (offset, n) = for offset = total_len - digit_start, n = num; offset >= 2 {
     let byte_val = n.land(0xFFU).reinterpret_as_int()
     let hi = byte_val / 16
     let lo = byte_val % 16
-    buffer.unsafe_set(digit_start + offset, ALPHABET.unsafe_get(hi))
-    buffer.unsafe_set(digit_start + offset + 1, ALPHABET.unsafe_get(lo))
-    n = n >> 8
+    buffer.unsafe_set(digit_start + offset - 2, ALPHABET.unsafe_get(hi))
+    buffer.unsafe_set(digit_start + offset - 1, ALPHABET.unsafe_get(lo))
+    continue offset - 2, n >> 8
+  } nobreak {
+    (offset, n)
   }
 
   // Handle remaining single hex digit
@@ -64,27 +62,23 @@ fn int_to_string_generic(
   total_len : Int,
   radix : Int,
 ) -> Unit {
-  let mut offset = total_len - digit_start
-  let mut n = num
   let base = radix.reinterpret_as_uint()
   if (radix & (radix - 1)) == 0 {
     // Power-of-two radix: use bit shifts
     let shift = radix.ctz()
     let mask = base - 1U
-    while n > 0U {
-      offset = offset - 1
+    for offset = total_len - digit_start, n = num; n > 0U {
       let digit = n.land(mask).reinterpret_as_int()
-      buffer.unsafe_set(digit_start + offset, ALPHABET.unsafe_get(digit))
-      n = n >> shift
+      buffer.unsafe_set(digit_start + offset - 1, ALPHABET.unsafe_get(digit))
+      continue offset - 1, n >> shift
     }
   } else {
     // General radix: use division
-    while n > 0U {
-      offset = offset - 1
+    for offset = total_len - digit_start, n = num; n > 0U {
       let q = n / base
       let digit = (n - q * base).reinterpret_as_int()
-      buffer.unsafe_set(digit_start + offset, ALPHABET.unsafe_get(digit))
-      n = q
+      buffer.unsafe_set(digit_start + offset - 1, ALPHABET.unsafe_get(digit))
+      continue offset - 1, q
     }
   }
 }
@@ -98,52 +92,48 @@ fn int_to_string_dec(
   digit_start : Int,
   total_len : Int,
 ) -> Unit {
-  let mut num = num
-  let mut offset = total_len - digit_start
-
   // Process digits in groups of 4 (chunks of 10000)
-  while num >= 10000U {
+  let (num, offset) = for num = num, offset = total_len - digit_start; num >= 10000U {
     let t = num / 10000U
     let r = (num % 10000U).reinterpret_as_int()
-    num = t
     let d1 = r / 100
     let d2 = r % 100
-    offset = offset - 4
     let d1_hi = (0x30 + d1 / 10).to_uint16()
     let d1_lo = (0x30 + d1 % 10).to_uint16()
     let d2_hi = (0x30 + d2 / 10).to_uint16()
     let d2_lo = (0x30 + d2 % 10).to_uint16()
-    buffer.unsafe_set(digit_start + offset, d1_hi)
-    buffer.unsafe_set(digit_start + offset + 1, d1_lo)
-    buffer.unsafe_set(digit_start + offset + 2, d2_hi)
-    buffer.unsafe_set(digit_start + offset + 3, d2_lo)
+    buffer.unsafe_set(digit_start + offset - 4, d1_hi)
+    buffer.unsafe_set(digit_start + offset - 3, d1_lo)
+    buffer.unsafe_set(digit_start + offset - 2, d2_hi)
+    buffer.unsafe_set(digit_start + offset - 1, d2_lo)
+    continue t, offset - 4
+  } nobreak {
+    (num, offset)
   }
 
   // Handle remaining digits (< 10000)
-  let mut remaining = num.reinterpret_as_int()
-
   // Process pairs of digits
-  while remaining >= 100 {
+  let (remaining, offset) = for remaining = num.reinterpret_as_int(), offset = offset
+    remaining >= 100 {
     let t = remaining / 100
     let d = remaining % 100
-    remaining = t
-    offset = offset - 2
     let d_hi = (0x30 + d / 10).to_uint16()
     let d_lo = (0x30 + d % 10).to_uint16()
-    buffer.unsafe_set(digit_start + offset, d_hi)
-    buffer.unsafe_set(digit_start + offset + 1, d_lo)
+    buffer.unsafe_set(digit_start + offset - 2, d_hi)
+    buffer.unsafe_set(digit_start + offset - 1, d_lo)
+    continue t, offset - 2
+  } nobreak {
+    (remaining, offset)
   }
 
   // Handle final 1 or 2 digits
   if remaining >= 10 {
-    offset = offset - 2
     let d_hi = (0x30 + remaining / 10).to_uint16()
     let d_lo = (0x30 + remaining % 10).to_uint16()
-    buffer.unsafe_set(digit_start + offset, d_hi)
-    buffer.unsafe_set(digit_start + offset + 1, d_lo)
+    buffer.unsafe_set(digit_start + offset - 2, d_hi)
+    buffer.unsafe_set(digit_start + offset - 1, d_lo)
   } else {
-    offset = offset - 1
-    buffer.unsafe_set(digit_start + offset, (0x30 + remaining).to_uint16())
+    buffer.unsafe_set(digit_start + offset - 1, (0x30 + remaining).to_uint16())
   }
 }
 
@@ -200,14 +190,12 @@ fn radix_count32(value : UInt, radix : Int) -> Int {
   if value == 0U {
     return 1
   }
-  let mut num = value
   let base = radix.reinterpret_as_uint()
-  let mut count = 0
-  while num > 0U {
-    count = count + 1
-    num = num / base
+  for num = value, count = 0; num > 0U {
+    continue num / base, count + 1
+  } nobreak {
+    count
   }
-  count
 }
 
 ///|
@@ -432,14 +420,12 @@ fn radix_count64(value : UInt64, radix : Int) -> Int {
   if value == 0UL {
     return 1
   }
-  let mut num = value
   let base = radix.to_uint64()
-  let mut count = 0
-  while num > 0UL {
-    count = count + 1
-    num = num / base
+  for num = value, count = 0; num > 0UL {
+    continue num / base, count + 1
+  } nobreak {
+    count
   }
-  count
 }
 
 ///|
@@ -451,18 +437,16 @@ fn int64_to_string_hex(
   digit_start : Int,
   total_len : Int,
 ) -> Unit {
-  let mut offset = total_len - digit_start
-  let mut n = num
-
   // Process 2 hex digits (1 byte) at a time
-  while offset >= 2 {
-    offset = offset - 2
+  let (offset, n) = for offset = total_len - digit_start, n = num; offset >= 2 {
     let byte_val = n.land(0xFFUL).to_int()
     let hi = byte_val / 16
     let lo = byte_val % 16
-    buffer.unsafe_set(digit_start + offset, ALPHABET.unsafe_get(hi))
-    buffer.unsafe_set(digit_start + offset + 1, ALPHABET.unsafe_get(lo))
-    n = n >> 8
+    buffer.unsafe_set(digit_start + offset - 2, ALPHABET.unsafe_get(hi))
+    buffer.unsafe_set(digit_start + offset - 1, ALPHABET.unsafe_get(lo))
+    continue offset - 2, n >> 8
+  } nobreak {
+    (offset, n)
   }
 
   // Handle remaining single hex digit
@@ -482,27 +466,23 @@ fn int64_to_string_generic(
   total_len : Int,
   radix : Int,
 ) -> Unit {
-  let mut offset = total_len - digit_start
-  let mut n = num
   let base = radix.to_uint64()
   if (radix & (radix - 1)) == 0 {
     // Power-of-two radix: use bit shifts
     let shift = radix.ctz()
     let mask = base - 1UL
-    while n > 0UL {
-      offset = offset - 1
+    for offset = total_len - digit_start, n = num; n > 0UL {
       let digit = n.land(mask).to_int()
-      buffer.unsafe_set(digit_start + offset, ALPHABET.unsafe_get(digit))
-      n = n >> shift
+      buffer.unsafe_set(digit_start + offset - 1, ALPHABET.unsafe_get(digit))
+      continue offset - 1, n >> shift
     }
   } else {
     // General radix: use division
-    while n > 0UL {
-      offset = offset - 1
+    for offset = total_len - digit_start, n = num; n > 0UL {
       let q = n / base
       let digit = (n - q * base).to_int()
-      buffer.unsafe_set(digit_start + offset, ALPHABET.unsafe_get(digit))
-      n = q
+      buffer.unsafe_set(digit_start + offset - 1, ALPHABET.unsafe_get(digit))
+      continue offset - 1, q
     }
   }
 }
@@ -516,52 +496,48 @@ fn int64_to_string_dec(
   digit_start : Int,
   total_len : Int,
 ) -> Unit {
-  let mut num = num
-  let mut offset = total_len - digit_start
-
   // Process digits in groups of 4 (chunks of 10000)
-  while num >= 10000UL {
+  let (num, offset) = for num = num, offset = total_len - digit_start; num >= 10000UL {
     let t = num / 10000UL
     let r = (num % 10000UL).to_int()
-    num = t
     let d1 = r / 100
     let d2 = r % 100
-    offset = offset - 4
     let d1_hi = (0x30 + d1 / 10).to_uint16()
     let d1_lo = (0x30 + d1 % 10).to_uint16()
     let d2_hi = (0x30 + d2 / 10).to_uint16()
     let d2_lo = (0x30 + d2 % 10).to_uint16()
-    buffer.unsafe_set(digit_start + offset, d1_hi)
-    buffer.unsafe_set(digit_start + offset + 1, d1_lo)
-    buffer.unsafe_set(digit_start + offset + 2, d2_hi)
-    buffer.unsafe_set(digit_start + offset + 3, d2_lo)
+    buffer.unsafe_set(digit_start + offset - 4, d1_hi)
+    buffer.unsafe_set(digit_start + offset - 3, d1_lo)
+    buffer.unsafe_set(digit_start + offset - 2, d2_hi)
+    buffer.unsafe_set(digit_start + offset - 1, d2_lo)
+    continue t, offset - 4
+  } nobreak {
+    (num, offset)
   }
 
   // Handle remaining digits (< 10000)
-  let mut remaining = num.to_int()
-
   // Process pairs of digits
-  while remaining >= 100 {
+  let (remaining, offset) = for remaining = num.to_int(), offset = offset
+    remaining >= 100 {
     let t = remaining / 100
     let d = remaining % 100
-    remaining = t
-    offset = offset - 2
     let d_hi = (0x30 + d / 10).to_uint16()
     let d_lo = (0x30 + d % 10).to_uint16()
-    buffer.unsafe_set(digit_start + offset, d_hi)
-    buffer.unsafe_set(digit_start + offset + 1, d_lo)
+    buffer.unsafe_set(digit_start + offset - 2, d_hi)
+    buffer.unsafe_set(digit_start + offset - 1, d_lo)
+    continue t, offset - 2
+  } nobreak {
+    (remaining, offset)
   }
 
   // Handle final 1 or 2 digits
   if remaining >= 10 {
-    offset = offset - 2
     let d_hi = (0x30 + remaining / 10).to_uint16()
     let d_lo = (0x30 + remaining % 10).to_uint16()
-    buffer.unsafe_set(digit_start + offset, d_hi)
-    buffer.unsafe_set(digit_start + offset + 1, d_lo)
+    buffer.unsafe_set(digit_start + offset - 2, d_hi)
+    buffer.unsafe_set(digit_start + offset - 1, d_lo)
   } else {
-    offset = offset - 1
-    buffer.unsafe_set(digit_start + offset, (0x30 + remaining).to_uint16())
+    buffer.unsafe_set(digit_start + offset - 1, (0x30 + remaining).to_uint16())
   }
 }
 

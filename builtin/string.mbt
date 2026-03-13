@@ -328,17 +328,17 @@ fn String::offset_of_nth_char_forward(
   guard start_offset >= 0 && start_offset <= end_offset else {
     abort("Invalid start index")
   }
-  let mut utf16_offset = start_offset
-  let mut char_count = 0
-  while utf16_offset < end_offset && char_count < n {
+  let (utf16_offset, char_count) = for utf16_offset = start_offset, char_count = 0
+    utf16_offset < end_offset && char_count < n {
     let c = self.unsafe_get(utf16_offset)
     // check if this is a surrogate pair
     if c.is_leading_surrogate() {
-      utf16_offset = utf16_offset + 2
+      continue utf16_offset + 2, char_count + 1
     } else {
-      utf16_offset = utf16_offset + 1
+      continue utf16_offset + 1, char_count + 1
     }
-    char_count = char_count + 1
+  } nobreak {
+    (utf16_offset, char_count)
   }
   // Return None if either:
   // 1. We couldn't reach the requested character offset
@@ -360,18 +360,18 @@ fn String::offset_of_nth_char_backward(
   start_offset~ : Int,
   end_offset~ : Int,
 ) -> Int? {
-  let mut char_count = 0
-  let mut utf16_offset = end_offset
-  // Iterating backwards from the end of the string. 
+  // Iterating backwards from the end of the string.
   // Invariant: utf16_offset always points to the previous character
-  while utf16_offset - 1 >= start_offset && char_count < n {
+  let (utf16_offset, char_count) = for utf16_offset = end_offset, char_count = 0
+    utf16_offset - 1 >= start_offset && char_count < n {
     let c = self.unsafe_get(utf16_offset - 1)
     if c.is_trailing_surrogate() {
-      utf16_offset = utf16_offset - 2
+      continue utf16_offset - 2, char_count + 1
     } else {
-      utf16_offset = utf16_offset - 1
+      continue utf16_offset - 1, char_count + 1
     }
-    char_count = char_count + 1
+  } nobreak {
+    (utf16_offset, char_count)
   }
   if char_count < n || utf16_offset < start_offset {
     None
