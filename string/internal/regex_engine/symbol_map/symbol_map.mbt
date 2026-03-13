@@ -50,7 +50,7 @@ pub fn SymbolMap::finalize(
   if ub < 128 {
     self.each_intervals(0, ub, (lo, hi) => {
       let symbol = repr.length()
-      repr.push(lo)
+      repr.push(Int::max(lo, lb))
       for c in lo..<=hi {
         table[c] = symbol
       }
@@ -58,14 +58,14 @@ pub fn SymbolMap::finalize(
   } else {
     self.each_intervals(0, 127, (lo, hi) => {
       let symbol = repr.length()
-      repr.push(lo)
+      repr.push(Int::max(lo, lb))
       for c in lo..<=hi {
         table[c] = symbol
       }
     })
     self.each_intervals(128, ub, (lo, hi) => {
       let symbol = repr.length()
-      repr.push(lo)
+      repr.push(Int::max(lo, lb))
       // (lo, hi, symbol)
       table.push(lo)
       table.push(hi)
