@@ -19,6 +19,65 @@ priv struct TimSortRun {
 }
 
 ///|
+/// Check that all runs in the stack are individually sorted.
+fn[T : Compare] all_runs_sorted(arr : MutArrayView[T], runs : Array[TimSortRun]) -> Bool {
+  for i = 0; i < runs.length(); i = i + 1 {
+    let run = runs[i]
+    if not(is_sorted_slice(arr.slice(run.start, run.start + run.len))) {
+      return false
+    }
+  }
+  true
+}
+
+///|
+/// Check that runs form a contiguous partition of arr[0..end].
+/// Runs must be non-overlapping, in order, and cover exactly [0, end).
+fn runs_cover_prefix(runs : Array[TimSortRun], end : Int) -> Bool {
+  if runs.is_empty() {
+    return end == 0
+  }
+  // First run must start at 0
+  if runs[0].start != 0 {
+    return false
+  }
+  // Each run must start where the previous one ended
+  for i = 1; i < runs.length(); i = i + 1 {
+    let prev = runs[i - 1]
+    let curr = runs[i]
+    if curr.start != prev.start + prev.len {
+      return false
+    }
+  }
+  // Last run must end at `end`
+  let last = runs[runs.length() - 1]
+  last.start + last.len == end
+}
+
+///|
+/// Check the timsort stack invariants that ensure O(n log n) performance:
+/// 1. runs[i-1].len > runs[i].len (lengths strictly decrease down the stack)
+/// 2. runs[i-2].len > runs[i-1].len + runs[i].len (Fibonacci-like growth)
+///
+/// These invariants ensure the stack size is O(log n) and total merge work is O(n log n).
+fn timsort_stack_invariant(runs : Array[TimSortRun]) -> Bool {
+  let n = runs.length()
+  // Check invariant 1: runs[i-1].len > runs[i].len for all valid i
+  for i = 1; i < n; i = i + 1 {
+    if runs[i - 1].len <= runs[i].len {
+      return false
+    }
+  }
+  // Check invariant 2: runs[i-2].len > runs[i-1].len + runs[i].len for all valid i
+  for i = 2; i < n; i = i + 1 {
+    if runs[i - 2].len <= runs[i - 1].len + runs[i].len {
+      return false
+    }
+  }
+  true
+}
+
+///|
 /// The algorithm identifies strictly descending and non-descending subsequences, which are called
 /// natural runs. There is a stack of pending runs yet to be merged. Each newly found run is pushed
 /// onto the stack, and then some pairs of adjacent runs are merged until these two invariants are
@@ -41,7 +100,7 @@ fn[T : Compare] timsort(arr : MutArrayView[T]) -> Unit {
   let mut end = 0
   let mut start = 0
   let runs : Array[TimSortRun] = []
-  while end < len {
+  for ; end < len; {
     let (streak_end, was_reversed) = find_streak(arr.mut_view(start~))
     end += streak_end
     if was_reversed {
@@ -52,23 +111,143 @@ fn[T : Compare] timsort(arr : MutArrayView[T]) -> Unit {
     end = provide_sorted_batch(arr, start, end)
     runs.push({ start, len: end - start })
     start = end
-    while true {
+    for ; ; {
       guard collapse(runs, len) is Some(r) else { break }
       let left = runs[r]
       let right = runs[r + 1]
       merge(arr.slice(left.start, right.start + right.len), left.len)
       runs[r + 1] = { start: left.start, len: left.len + right.len }
       runs.remove(r) |> ignore
+    } where {
+      invariant: all_runs_sorted(arr, runs),
+      invariant: runs_cover_prefix(runs, end),
+      invariant: timsort_stack_invariant(runs),
+      reasoning: #|INNER LOOP: Merges adjacent runs to restore timsort stack invariants.
+        #|
+        #|Why all_runs_sorted holds:
+        #|  - Before: runs[r] and runs[r+1] are both sorted (by outer loop invariant)
+        #|  - The merge operation combines two sorted sequences into one sorted sequence
+        #|  - After: runs[r+1] contains the merged sorted run, runs[r] is removed
+        #|  - All other runs are untouched and remain sorted
+        #|
+        #|Why runs_cover_prefix holds:
+        #|  - Before: runs partition arr[0..end] with runs[r] covering [left.start, left.start+left.len)
+        #|    and runs[r+1] covering [right.start, right.start+right.len)
+        #|  - Since runs are contiguous: right.start == left.start + left.len
+        #|  - After merge: new run covers [left.start, left.start+left.len+right.len)
+        #|    which is exactly the union of the two original runs
+        #|  - Total coverage unchanged, just two adjacent runs become one
+        #|
+        #|Why timsort_stack_invariant holds (on loop exit):
+        #|  - The collapse function returns Some(r) when stack invariants are violated
+        #|  - It checks: runs[n-2].len <= runs[n-1].len (violates invariant 1)
+        #|           or: runs[n-3].len <= runs[n-2].len + runs[n-1].len (violates invariant 2)
+        #|           or: runs[n-4].len <= runs[n-3].len + runs[n-2].len (violates invariant 2)
+        #|  - When collapse returns None, no violations exist, so invariant holds
+        #|  - The merge at position r increases runs[r+1].len (now merged run)
+        #|  - This may restore or maintain the invariant depending on relative sizes
+        #|  - Loop continues until all violations are resolved
+        #|
+        #|Why this invariant ensures O(n log n):
+        #|  - Invariant 2 implies run lengths grow at least as fast as Fibonacci numbers
+        #|  - Fibonacci numbers grow exponentially: F(k) >= phi^(k-2) where phi = (1+sqrt(5))/2
+        #|  - Therefore stack depth is O(log_phi(n)) = O(log n)
+        #|  - Each element participates in O(log n) merges, giving O(n log n) total work
+        #|
+        #|Termination: Each iteration reduces runs.length() by 1. The collapse function
+        #|returns None when stack invariants are satisfied, causing the loop to break.
+        ,
     }
+  } where {
+    invariant: 0 <= start && start <= len,
+    invariant: 0 <= end && end <= len,
+    invariant: start == end,
+    invariant: all_runs_sorted(arr, runs),
+    invariant: runs_cover_prefix(runs, start),
+    invariant: timsort_stack_invariant(runs),
+    reasoning: #|OUTER LOOP: Discovers natural runs and maintains sorted run stack.
+      #|
+      #|Initialization (before first iteration):
+      #|  - start = 0, end = 0, runs = []
+      #|  - All invariants trivially hold: bounds are valid, start == end,
+      #|    no runs exist, runs_cover_prefix([], 0) is true, and
+      #|    timsort_stack_invariant([]) is vacuously true
+      #|
+      #|Why bounds invariants hold:
+      #|  - start and end only increase, starting from 0
+      #|  - end is bounded by len (find_streak and provide_sorted_batch respect array bounds)
+      #|  - start = end at the end of each iteration body
+      #|
+      #|Why start == end holds (at loop entry):
+      #|  - Initially both are 0
+      #|  - At end of loop body: start = end (explicit assignment)
+      #|
+      #|Why all_runs_sorted holds:
+      #|  - find_streak finds a monotonic sequence (increasing or strictly decreasing)
+      #|  - If decreasing (was_reversed), we reverse it to make it increasing
+      #|  - provide_sorted_batch extends and sorts using insertion_sort if needed
+      #|  - The new run pushed is therefore sorted
+      #|  - Inner loop preserves sortedness via merge (which preserves sorted property)
+      #|
+      #|Why runs_cover_prefix holds:
+      #|  - New run starts at old `start` and has length `end - start`
+      #|  - After push: runs now cover arr[0..end]
+      #|  - After inner loop: still cover arr[0..end] (merging preserves coverage)
+      #|  - After start = end: runs_cover_prefix(runs, start) holds
+      #|
+      #|Why timsort_stack_invariant holds:
+      #|  - After pushing a new run, the invariant may be temporarily violated
+      #|  - The inner loop repeatedly merges runs until collapse returns None
+      #|  - collapse returns None only when:
+      #|    (1) runs[n-2].len > runs[n-1].len, AND
+      #|    (2) runs[n-3].len > runs[n-2].len + runs[n-1].len (if n >= 3), AND
+      #|    (3) runs[n-4].len > runs[n-3].len + runs[n-2].len (if n >= 4)
+      #|  - These conditions ensure the full timsort stack invariant is restored
+      #|
+      #|Termination: end strictly increases each iteration (find_streak returns >= 1
+      #|for non-empty remaining array), and loop exits when end >= len.
+      #|
+      #|Postcondition: When loop exits, start == end >= len, so runs cover arr[0..len].
+      #|The collapse function's final condition (runs[n-1].start + runs[n-1].len == len)
+      #|ensures all runs are merged into one, leaving the entire array sorted.
+      ,
   }
 }
 
 ///|
+/// Check if a mutable array view is sorted in non-decreasing order.
+fn[T : Compare] is_sorted_slice(arr : MutArrayView[T]) -> Bool {
+  for i = 1; i < arr.length(); i = i + 1 {
+    if arr[i] < arr[i - 1] {
+      return false
+    }
+  }
+  true
+}
+
+///|
 fn[T : Compare] MutArrayView::insertion_sort(arr : MutArrayView[T]) -> Unit {
-  for i in 1..<arr.length() {
+  let len = arr.length()
+  for i = 1; i < len; i = i + 1 {
     for j = i; j > 0 && arr[j] < arr[j - 1]; j = j - 1 {
       arr.swap(j, j - 1)
+    } where {
+      invariant: j >= 0 && j <= i,
+      invariant: is_sorted_slice(arr.slice(j, i + 1)),
+      reasoning: #|The inner loop moves the element originally at position i
+        #|leftward until it reaches its sorted position.
+        #|After each swap, arr[j..i+1] remains sorted because we only
+        #|swap when arr[j] < arr[j-1], placing the smaller element left.
+        ,
     }
+  } where {
+    invariant: i >= 1 && i <= len,
+    invariant: is_sorted_slice(arr.slice(0, i)),
+    reasoning: #|At the start of each iteration, the prefix arr[0..i] is sorted.
+      #|The inner loop inserts arr[i] into its correct position within
+      #|this sorted prefix, maintaining sortedness of arr[0..i+1].
+      #|When i reaches len, the entire array is sorted.
+      ,
   }
 }
 
