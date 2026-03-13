@@ -299,13 +299,11 @@ fn[T : Compare] fixed_quick_sort(
 
 ///|
 fn fixed_get_limit(len : Int) -> Int {
-  let mut len = len
-  let mut limit = 0
-  while len > 0 {
-    len = len / 2
-    limit += 1
+  for len = len, limit = 0; len > 0 {
+    continue len / 2, limit + 1
+  } nobreak {
+    limit
   }
-  limit
 }
 
 ///|

@@ -826,13 +826,12 @@ pub fn Bytes::repeat(self : Self, count : Int) -> Bytes {
   guard total / count == len
   let arr = FixedArray::make(total, (0 : Byte))
   arr.blit_from_bytes(0, self, 0, len)
-  let mut filled = len
-  while filled < total {
+  for filled = len; filled < total {
     let remaining = total - filled
     let copy_len = if filled < remaining { filled } else { remaining }
     let src = unsafe_to_bytes(arr)
     arr.blit_from_bytes(filled, src, 0, copy_len)
-    filled = filled + copy_len
+    continue filled + copy_len
   }
   unsafe_to_bytes(arr)
 }

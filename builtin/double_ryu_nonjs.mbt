@@ -104,16 +104,14 @@ fn pow5Factor(value : UInt64) -> Int {
   if value % 625UL != 0UL {
     return 3
   }
-  let mut count = 4
-  let mut value = value / 625UL
-  while value > 0UL {
-    if value % 5UL != 0UL {
-      return count
+  for count = 4, v = value / 625UL; v > 0UL {
+    if v % 5UL != 0UL {
+      break count
     }
-    value = value / 5UL
-    count = count + 1
+    continue count + 1, v / 5UL
+  } nobreak {
+    abort("IllegalArgumentException \{value}")
   }
-  abort("IllegalArgumentException \{value}")
 }
 
 ///|
@@ -536,17 +534,19 @@ fn to_chars(v : FloatingDecimal64, sign : Bool) -> String {
     result[index] = b'-'
     index += 1
   }
-  let mut output = v.mantissa
+  let output = v.mantissa
   let olength = decimal_length17(output)
   let mut exp : Int = v.exponent + olength - 1
   let scientificNotation = !(exp >= -6 && exp < 21)
   if scientificNotation {
     // Print the decimal digits.
-    for i in 0..<(olength - 1) {
+    let output = for i in 0..<(olength - 1); output = output {
       let c = output % 10
-      output /= 10
       // 48 is ASCII '0', the same applies below.
       result[index + olength - i] = (48 + c.to_int()).to_byte()
+      continue output / 10
+    } nobreak {
+      output
     }
     result[index] = (48 + output.to_int() % 10).to_byte()
     if olength > 1 {
@@ -592,40 +592,39 @@ fn to_chars(v : FloatingDecimal64, sign : Bool) -> String {
     if exp < 0 {
       // Decimal dot is before any of the digits.
       result[index] = b'0'
-      index += 1
-      result[index] = b'.'
-      index += 1
+      result[index + 1] = b'.'
+      index += 2
       for i = -1; i > exp; i = i - 1 {
-        result[index] = b'0'
-        index += 1
+        result[index - i - 1] = b'0'
       }
-      let current = index
-      for i in 0..<olength {
+      let current = index + (-1 - exp)
+      for i in 0..<olength; output = output {
         result[current + olength - i - 1] = (48 + (output % 10).to_int()).to_byte()
-        output /= 10
-        index += 1
+        continue output / 10
       }
+      index = current + olength
     } else if exp + 1 >= olength {
       // Decimal dot is after any of the digits.
-      for i in 0..<olength {
+      for i in 0..<olength; output = output {
         result[index + olength - i - 1] = (48 + (output % 10).to_int()).to_byte()
-        output /= 10
+        continue output / 10
       }
       index += olength
-      for _ in olength..<(exp + 1) {
-        result[index] = b'0'
-        index += 1
+      for i in olength..<(exp + 1) {
+        result[index + i - olength] = b'0'
       }
+      index += exp + 1 - olength
     } else {
       // Decimal dot is somewhere between the digits.
-      let mut current = index + 1
-      for i in 0..<olength {
-        if olength - i - 1 == exp {
+      for i in 0..<olength; current = index + 1, output = output {
+        let current = if olength - i - 1 == exp {
           result[current + olength - i - 1] = b'.'
-          current -= 1
+          current - 1
+        } else {
+          current
         }
         result[current + olength - i - 1] = (48 + (output % 10).to_int()).to_byte()
-        output /= 10
+        continue current, output / 10
       }
       index += olength + 1
     }
@@ -675,22 +674,17 @@ fn ryu_to_string(val : Double) -> String {
     (ieeeExponent == 0 && ieeeMantissa == 0UL) {
     return copy_special_str(ieeeSign, ieeeExponent != 0, ieeeMantissa != 0UL)
   }
-  let mut v : FloatingDecimal64 = { mantissa: 0UL, exponent: 0 }
-  let small = d2d_small_int(ieeeMantissa, ieeeExponent)
-  match small {
-    Some(f) => {
-      let mut x = f
-      while true {
+  let v = match d2d_small_int(ieeeMantissa, ieeeExponent) {
+    Some(f) =>
+      for x = f; ; {
         let q : UInt64 = x.mantissa / 10
         let r = x.mantissa - 10UL * q
         if r != 0 {
-          break
+          break x
         }
-        x = { mantissa: q, exponent: x.exponent + 1 }
+        continue { mantissa: q, exponent: x.exponent + 1 }
       }
-      v = x
-    }
-    None => v = d2d(ieeeMantissa, ieeeExponent.reinterpret_as_uint())
+    None => d2d(ieeeMantissa, ieeeExponent.reinterpret_as_uint())
   }
   to_chars(v, ieeeSign)
 }

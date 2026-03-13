@@ -84,12 +84,9 @@ pub fn BigInt::to_hex(self : BigInt, uppercase? : Bool = true) -> String {
   }
   for i in self.len>..0 {
     // split the limb into 4-bit chunks
-    let mut x = self.limbs[i]
     let digits = FixedArray::make(digits_per_limb, '0')
-    let mut idx = 0
-    while x > 0 {
+    let idx = for x = self.limbs[i], idx = 0; x > 0 {
       let y = x % 16
-      x /= 16
       digits[idx] = if y < 10 {
         (y.reinterpret_as_int() + '0'.to_int()).unsafe_to_char()
       } else if uppercase {
@@ -97,11 +94,11 @@ pub fn BigInt::to_hex(self : BigInt, uppercase? : Bool = true) -> String {
       } else {
         (y.reinterpret_as_int() - 10 + 'a'.to_int()).unsafe_to_char()
       }
-      idx += 1
+      continue x / 16, idx + 1
+    } nobreak {
+      idx
     }
-    if i != self.len - 1 {
-      idx = digits_per_limb
-    }
+    let idx = if i != self.len - 1 { digits_per_limb } else { idx }
     for j in 0..<idx {
       buf.write_char(digits[idx - 1 - j])
     }
@@ -151,7 +148,7 @@ pub fn BigInt::from_hex(input : String) -> BigInt {
   let nb_char = radix_bit_len / 4 // number of char per limb
   let quotient = number_len / nb_char
   let mod = number_len % nb_char
-  let mut b_len = if mod == 0 { quotient } else { quotient + 1 }
+  let b_len = if mod == 0 { quotient } else { quotient + 1 }
   let b = FixedArray::make(b_len, 0U)
   if mod != 0 {
     let start = len - quotient * nb_char - mod
@@ -166,8 +163,10 @@ pub fn BigInt::from_hex(input : String) -> BigInt {
       b[i] = (b[i] << 4) | char_from_hex(input.unsafe_get(start + j).to_int())
     }
   }
-  while b[b_len - 1] == 0 && b_len > 1 {
-    b_len -= 1
+  let b_len = for b_len = b_len; b[b_len - 1] == 0 && b_len > 1 {
+    continue b_len - 1
+  } nobreak {
+    b_len
   }
   let sign = if b_len == 1 && b[0] == 0 { Positive } else { sign }
   { limbs: b, sign, len: b_len }

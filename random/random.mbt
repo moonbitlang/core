@@ -143,14 +143,16 @@ pub fn Rand::uint64(self : Rand, limit? : UInt64 = 0) -> UInt64 {
     // limit is a power of 2, mask to get the unbiased result.
     return self.next() & (limit - 1)
   }
-  let mut r = umul128(self.next(), limit)
-  if r.lo < limit {
-    let thresh = limit.lnot() % limit
-    while r.lo < thresh {
-      r = umul128(self.next(), limit)
-    }
+  let r = umul128(self.next(), limit)
+  if r.lo >= limit {
+    return r.hi
   }
-  r.hi
+  let thresh = limit.lnot() % limit
+  for r = r; r.lo < thresh {
+    continue umul128(self.next(), limit)
+  } nobreak {
+    r.hi
+  }
 }
 
 ///|

@@ -480,12 +480,9 @@ fn[A] from_leaves(leaves : ArrayView[FixedArray[A]], cap : Int) -> Tree[A] {
 
 ///|
 fn shift_cap_of_size(size : Int) -> (Int, Int) {
-  let mut cap = branching_factor
-  let mut depth = 0
-  while cap < size {
-    cap *= branching_factor
-    depth += 1
+  for cap = branching_factor, depth = 0; cap < size {
+    continue cap * branching_factor, depth + 1
+  } nobreak {
+    (num_bits * depth, cap)
   }
-  let shift = num_bits * depth
-  (shift, cap)
 }

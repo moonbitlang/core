@@ -51,10 +51,11 @@ fn StringBuilder::grow_if_necessary(
     return
   }
   // current_len is at least 1
-  let mut enough_space = current_len
   // double the enough_space until it larger than required
-  while enough_space < required {
-    enough_space = enough_space * 2
+  let enough_space = for enough_space = current_len; enough_space < required {
+    continue enough_space * 2
+  } nobreak {
+    enough_space
   }
   let new_data = FixedArray::make(enough_space, Byte::default())
   new_data.unsafe_blit(0, self.data, 0, self.len)
