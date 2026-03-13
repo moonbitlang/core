@@ -18,7 +18,7 @@ struct Regex {
   ctx : @automata.Context
   expr : @automata.Expr
   groups : ReadOnlyArray[String?]
-  symbol_table : &@symbol_map.Table
+  symbol_table : @symbol_map.Table
   symbol_repr : ReadOnlyArray[Rechar]
   start_states : Array[(Category, StateId)]
   state_table : @hashmap.HashMap[@automata.State, StateId]
@@ -37,7 +37,7 @@ fn Regex::new(
   ctx : @automata.Context,
   expr : @automata.Expr,
   groups : ReadOnlyArray[String?],
-  symbol_table : &@symbol_map.Table,
+  symbol_table : @symbol_map.Table,
   symbol_repr : ReadOnlyArray[Rechar],
 ) -> Regex {
   Regex::{

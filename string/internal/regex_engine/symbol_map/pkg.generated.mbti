@@ -12,14 +12,14 @@ pub fn new() -> SymbolMap
 
 // Types and methods
 type SymbolMap
-pub fn SymbolMap::finalize(Self, Int, Int) -> (&Table, ReadOnlyArray[Int])
+pub fn SymbolMap::finalize(Self, Int, Int) -> (Table, ReadOnlyArray[Int])
 pub fn SymbolMap::split(Self, @rechar_set.RecharSet) -> Unit
+
+type Table
+pub fn Table::map(Self, Int) -> Int
+pub fn Table::map_set(Self, @rechar_set.RecharSet) -> @rechar_set.RecharSet
 
 // Type aliases
 
 // Traits
-pub trait Table {
-  map(Self, Int) -> Int
-  map_set(Self, @rechar_set.RecharSet) -> @rechar_set.RecharSet
-}
 

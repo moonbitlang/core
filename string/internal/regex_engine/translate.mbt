@@ -17,13 +17,13 @@ priv struct TranslateContext {
   ctx : @automata.Context
   pref : Preference
   groups : Array[String?]
-  symbol_table : &@symbol_map.Table
+  symbol_table : @symbol_map.Table
 }
 
 ///|
 fn TranslateContext::new(
   ctx : @automata.Context,
-  symbol_table : &@symbol_map.Table,
+  symbol_table : @symbol_map.Table,
 ) -> TranslateContext {
   TranslateContext::{ ctx, pref: First, groups: [], symbol_table }
 }

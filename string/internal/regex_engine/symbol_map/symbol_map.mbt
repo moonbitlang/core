@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-struct SymbolMap(@sorted_set.SortedSet[@shared_types.Rechar])
+struct SymbolMap(@sorted_set.SortedSet[Rechar])
 
 ///|
 /// Create a new instance.
@@ -42,51 +42,37 @@ pub fn SymbolMap::finalize(
   self : SymbolMap,
   lb : @shared_types.Rechar,
   ub : @shared_types.Rechar,
-) -> (&Table, ReadOnlyArray[@shared_types.Rechar]) {
-  if ub - lb < 1024 {
-    let (table, repr) = self.finalize_dense(lb, ub)
-    (table as &Table, repr)
+) -> (Table, ReadOnlyArray[@shared_types.Rechar]) {
+  // Most cases lb is 0
+  guard lb >= 0 else { panic() }
+  let repr = []
+  let table = Array::make(128, -1)
+  if ub < 128 {
+    self.each_intervals(0, ub, (lo, hi) => {
+      let symbol = repr.length()
+      repr.push(lo)
+      for c in lo..<=hi {
+        table[c] = symbol
+      }
+    })
   } else {
-    let (table, repr) = self.finalize_sparse(lb, ub)
-    (table as &Table, repr)
+    self.each_intervals(0, 127, (lo, hi) => {
+      let symbol = repr.length()
+      repr.push(lo)
+      for c in lo..<=hi {
+        table[c] = symbol
+      }
+    })
+    self.each_intervals(128, ub, (lo, hi) => {
+      let symbol = repr.length()
+      repr.push(lo)
+      // (lo, hi, symbol)
+      table.push(lo)
+      table.push(hi)
+      table.push(symbol)
+    })
   }
-}
-
-///|
-fn SymbolMap::finalize_dense(
-  self : SymbolMap,
-  lb : @shared_types.Rechar,
-  ub : @shared_types.Rechar,
-) -> (DenseTable, ReadOnlyArray[@shared_types.Rechar]) {
-  let repr = []
-  let table = FixedArray::make(ub - lb + 1, 0)
-  self.each_intervals(lb, ub, (lo, hi) => {
-    let symbol = repr.length()
-    repr.push(lo)
-    for c in lo..<=hi {
-      table[c] = symbol
-    }
-  })
-  (DenseTable(table), ReadOnlyArray::from_array(repr))
-}
-
-///|
-fn SymbolMap::finalize_sparse(
-  self : SymbolMap,
-  lb : @shared_types.Rechar,
-  ub : @shared_types.Rechar,
-) -> (SparseTable, ReadOnlyArray[@shared_types.Rechar]) {
-  let repr = []
-  let entries = []
-  self.each_intervals(lb, ub, (lo, hi) => {
-    let symbol = repr.length()
-    repr.push(lo)
-    entries.push({ lo, hi, symbol })
-  })
-  (
-    SparseTable(ReadOnlyArray::from_array(entries)),
-    ReadOnlyArray::from_array(repr),
-  )
+  (Table(FixedArray::from_array(table)), ReadOnlyArray::from_array(repr))
 }
 
 ///|
@@ -101,6 +87,9 @@ fn SymbolMap::each_intervals(
     f(lb, ub)
   } else {
     let last_stop = for stop in self.0; last_stop = lb {
+      if stop > ub {
+        break last_stop
+      }
       if stop - 1 >= last_stop {
         f(last_stop, stop - 1)
         continue stop

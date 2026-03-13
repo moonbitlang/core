@@ -13,16 +13,33 @@
 // limitations under the License.
 
 ///|
-/// Character remapping table used by regex symbol-map construction.
-///
-/// `map_set` applies the mapping to an entire character set.
-pub trait Table {
-  map(self : Self, c : @shared_types.Rechar) -> @shared_types.Rechar
-  map_set(self : Self, set : @shared_types.RecharSet) -> @shared_types.RecharSet = _
+struct Table(FixedArray[Rechar])
+
+///|
+pub fn Table::map(self : Table, c : Rechar) -> Rechar {
+  if c < 128 {
+    self.0.unsafe_get(c)
+  } else {
+    let arr = self.0
+    let mut left = 0
+    let mut right = (arr.length() - 128) / 3 - 1
+    while left <= right {
+      let mid = left + (right - left) / 2
+      let entry_base = 128 + mid * 3
+      if c < arr[entry_base] {
+        right = mid - 1
+      } else if c > arr[entry_base + 1] {
+        left = mid + 1
+      } else {
+        // c is within [lo, hi]
+        return arr[entry_base + 2]
+      }
+    }
+    panic()
+  }
 }
 
 ///|
-impl Table with map_set(self, set) {
-  // This is safe because map(c) keeps the order
+pub fn Table::map_set(self : Table, set : RecharSet) -> RecharSet {
   set.offset_by(c => self.map(c))
 }
