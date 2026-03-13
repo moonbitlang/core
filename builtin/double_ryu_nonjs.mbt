@@ -104,7 +104,7 @@ fn pow5Factor(value : UInt64) -> Int {
   if value % 625UL != 0UL {
     return 3
   }
-  for count = 4, v = value / 625UL; v > 0UL {
+  for count = 4, v = value / 625UL; v > 0UL; {
     if v % 5UL != 0UL {
       break count
     }
@@ -676,7 +676,7 @@ fn ryu_to_string(val : Double) -> String {
   }
   let v = match d2d_small_int(ieeeMantissa, ieeeExponent) {
     Some(f) =>
-      for x = f; ; {
+      for x = f {
         let q : UInt64 = x.mantissa / 10
         let r = x.mantissa - 10UL * q
         if r != 0 {

@@ -177,7 +177,7 @@ pub fn BigInt::from_uint64(n : UInt64) -> BigInt {
     return { limbs: FixedArray::make(1, 0), sign: Positive, len: 1 }
   }
   let limbs = FixedArray::make(64 / radix_bit_len, 0U)
-  let i = for m = n, i = 0; m > 0 {
+  let i = for m = n, i = 0; m > 0; {
     limbs[i] = (m % radix).to_uint()
     continue m / radix, i + 1
   } nobreak {
@@ -250,7 +250,7 @@ pub impl Add for BigInt with add(self : BigInt, other : BigInt) -> BigInt {
   let self_len = self.len
   let other_len = other.len
   let limbs = FixedArray::make(1 + max(self_len, other_len), 0U)
-  let i = for carry = 0UL, i = 0; i < self_len || i < other_len || carry != 0 {
+  let i = for carry = 0UL, i = 0; i < self_len || i < other_len || carry != 0; {
     let a = if i < self_len { self.limbs[i].to_uint64() } else { 0 }
     let b = if i < other_len { other.limbs[i].to_uint64() } else { 0 }
     let sum = a + b + carry
@@ -302,7 +302,7 @@ pub impl Sub for BigInt with sub(self : BigInt, other : BigInt) -> BigInt {
   let self_len = self.len
   let other_len = other.len
   let limbs = FixedArray::make(max(self_len, other_len), 0U)
-  let i = for borrow = 0L, i = 0; i < self_len || i < other_len || borrow != 0L {
+  let i = for borrow = 0L, i = 0; i < self_len || i < other_len || borrow != 0L; {
     let a = if i < self_len { self.limbs[i].to_int64() } else { 0 }
     let b = if i < other_len { other.limbs[i].to_int64() } else { 0 }
     let diff = a - b - borrow // 0 <= a < radix, 0 <= b < radix, 0 <= borrow <= 1 => -radix <= diff < radix
@@ -319,7 +319,7 @@ pub impl Sub for BigInt with sub(self : BigInt, other : BigInt) -> BigInt {
     i
   }
   // Ensure the result has at least one limb with a value of zero if the result is zero
-  let i = for i = i; i > 1 && limbs[i - 1] == 0 {
+  let i = for i = i; i > 1 && limbs[i - 1] == 0; {
     continue i - 1
   } nobreak {
     i
@@ -960,7 +960,7 @@ pub fn BigInt::to_string(self : BigInt, radix? : Int = 10) -> String {
       ret = x.to_string() + ret
     }
   }
-  let ret = for x = v[v_idx - 1], ret = ret; x > 0L { // v_idx is at least 1, we check is_zero() at the beginning.
+  let ret = for x = v[v_idx - 1], ret = ret; x > 0L; { // v_idx is at least 1, we check is_zero() at the beginning.
     let y = x % 10L
     continue x / 10L, y.to_string() + ret
   } nobreak {
@@ -1909,7 +1909,7 @@ pub fn BigInt::ctz(self : BigInt) -> Int {
   }
 
   // Find first non-zero limb
-  let i = for i = 0; i < self.len && self.limbs[i] == 0 {
+  let i = for i = 0; i < self.len && self.limbs[i] == 0; {
     continue i + 1
   } nobreak {
     i

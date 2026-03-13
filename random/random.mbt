@@ -148,7 +148,7 @@ pub fn Rand::uint64(self : Rand, limit? : UInt64 = 0) -> UInt64 {
     return r.hi
   }
   let thresh = limit.lnot() % limit
-  for r = r; r.lo < thresh {
+  for r = r; r.lo < thresh; {
     continue umul128(self.next(), limit)
   } nobreak {
     r.hi

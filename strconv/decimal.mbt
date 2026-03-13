@@ -251,12 +251,12 @@ fn Decimal::rounded_integer(self : Decimal) -> Int64 {
   if self.decimal_point > 20 {
     return 0xFFFFFFFFFFFFFFFFL
   }
-  let (n, i) = for n = 0L, i = 0; i < self.decimal_point && i < self.digits_num {
+  let (n, i) = for n = 0L, i = 0; i < self.decimal_point && i < self.digits_num; {
     continue n * 10L + self.digits[i].to_int64(), i + 1
   } nobreak {
     (n, i)
   }
-  let n = for n = n, i = i; i < self.decimal_point {
+  let n = for n = n, i = i; i < self.decimal_point; {
     continue n * 10L, i + 1
   } nobreak {
     n
@@ -295,7 +295,7 @@ fn Decimal::assign(self : Decimal, v : Int64) -> Unit {
   let buf = FixedArray::make(24, Byte::default())
 
   // write value to buf
-  let n = for n = 0, v = v; v > 0 {
+  let n = for n = 0, v = v; v > 0; {
     let v1 = v / 10
     buf[n] = (v - v1 * 10).to_byte()
     continue n + 1, v1

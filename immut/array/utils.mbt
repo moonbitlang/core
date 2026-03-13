@@ -49,7 +49,7 @@ fn radix_indexing(index : Int, shift : Int) -> Int {
 /// Get the index of the branch that contains the given index.
 /// For example, if the sizes are [0, 3, 6, 10] and the index is 5, the function should return 2.
 fn get_branch_index(sizes : FixedArray[Int], index : Int) -> Int {
-  let lo = for lo = 0, hi = sizes.length(); LINEAR_THRESHOLD < hi - lo {
+  let lo = for lo = 0, hi = sizes.length(); LINEAR_THRESHOLD < hi - lo; {
     let mid = (lo + hi) / 2
     if sizes[mid] <= index {
       continue mid, hi
@@ -59,7 +59,7 @@ fn get_branch_index(sizes : FixedArray[Int], index : Int) -> Int {
   } nobreak {
     lo
   }
-  for lo = lo; sizes[lo] <= index {
+  for lo = lo; sizes[lo] <= index; {
     continue lo + 1
   } nobreak {
     lo

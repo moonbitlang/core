@@ -299,7 +299,7 @@ fn[T : Compare] fixed_quick_sort(
 
 ///|
 fn fixed_get_limit(len : Int) -> Int {
-  for len = len, limit = 0; len > 0 {
+  for len = len, limit = 0; len > 0; {
     continue len / 2, limit + 1
   } nobreak {
     limit
