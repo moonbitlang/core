@@ -16,6 +16,9 @@
 
 ///|
 /// An `ArrayView` represents a view into a section of an array without copying the data.
+/// It stores its own start offset and length when it is created, so iteration
+/// over a view keeps using those bounds even if the underlying array is later
+/// structurally modified.
 ///
 /// # Example
 ///
@@ -552,6 +555,13 @@ pub fn[T] ArrayView::suffixes(
 /// * `array_view` : The array view to iterate over.
 ///
 /// Returns an iterator that yields elements of type `A` from the array view.
+/// The iterator uses the view's stored length, so structural mutations to the
+/// underlying array after the view is created do not change how many steps the
+/// iterator attempts to take.
+///
+/// Structural shrinking of the underlying array is unsupported and may cause
+/// later iterator steps to fail. The same caveat applies to `rev_iter()` and
+/// `iter2()`.
 ///
 /// Example:
 ///
