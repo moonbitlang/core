@@ -216,8 +216,8 @@ fn[K : Eq] HashSet::grow(self : HashSet[K]) -> Unit {
   self.capacity_mask = self.capacity - 1
   self.grow_at = calc_grow_threshold(self.capacity)
   self.size = 0
-  for i in 0..<old_entries.length() {
-    if old_entries[i] is Some({ key, hash, .. }) {
+  for entry in old_entries {
+    if entry is Some({ key, hash, .. }) {
       self.add_with_hash(key, hash)
     }
   }
@@ -570,8 +570,8 @@ test "clear" {
   m.clear()
   inspect(m.length(), content="0")
   inspect(m.capacity(), content="8")
-  for i in 0..<m.capacity() {
-    @test.same_object(m.entries[i], None)
+  for entry in m.entries {
+    @test.same_object(entry, None)
   }
 }
 

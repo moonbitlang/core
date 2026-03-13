@@ -608,8 +608,7 @@ test "shift" {
     (195312L, 9, "99999744"),
     (1953125L, 9, "1000000000"),
   ]
-  for i in 0..<tests.length() {
-    let t = tests[i]
+  for t in tests {
     let d = Decimal::from_int64_priv(t.0)
     d.shift_priv(t.1)
     assert_eq(d.to_string(), t.2)

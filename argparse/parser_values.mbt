@@ -18,8 +18,7 @@ fn assign_positionals(
   positionals : Array[Arg],
   values : Array[String],
 ) -> Unit raise ArgParseError {
-  let cursor = for idx in 0..<positionals.length(); cursor = 0 {
-    let arg = positionals[idx]
+  let cursor = for idx, arg in positionals; cursor = 0 {
     let remaining = values.length() - cursor
     if arg.multiple {
       let (min, max) = arg_min_max(arg)

@@ -26,8 +26,7 @@ test "sinhf Test" {
     -4.126732349395752, -11.357978820800781, -30.925823211669922, -0.0625406950712204,
     -1.2740025520324707, -3.869236707687378, -10.667085647583008, -29.051111221313477,
   ]
-  for i in 0..<data.length() {
-    let x = data[i]
+  for i, x in data {
     let res = @math.sinhf(x)
     let libm_res = libm_results[i]
     assert_true(
@@ -50,8 +49,7 @@ test "coshf Test" {
     11.401915550231934, 30.941986083984375, 1.0019537210464478, 1.6195933818817139,
     3.9963724613189697, 10.71385669708252, 29.068317413330078,
   ]
-  for i in 0..<data.length() {
-    let x = data[i]
+  for i, x in data {
     let res = @math.coshf(x)
     let libm_res = libm_results[i]
     assert_true(
@@ -74,8 +72,7 @@ test "tanhf Test" {
     -0.996146559715271, -0.9994776248931885, -0.06241874769330025, -0.7866188287734985,
     -0.9681872129440308, -0.9956345558166504, -0.9994080662727356,
   ]
-  for i in 0..<data.length() {
-    let x = data[i]
+  for i, x in data {
     let res = @math.tanhf(x)
     let libm_res = libm_results[i]
     assert_true(
@@ -99,8 +96,7 @@ test "asinhf Test" {
     -0.06245937943458557, -0.924884557723999, -1.4712419509887695, -1.8380275964736938,
     -2.1097605228424072,
   ]
-  for i in 0..<data.length() {
-    let x = data[i]
+  for i, x in data {
     let res = @math.asinhf(x)
     let libm_res = libm_results[i]
     assert_true(
@@ -119,8 +115,7 @@ test "acoshf Test" {
     2.558979034423828, 2.703575849533081, 2.829735040664673, 2.941657304763794, 3.0422470569610596,
     0.6931471824645996, 1.450574517250061, 1.8472460508346558, 2.1259288787841797,
   ]
-  for i in 0..<data.length() {
-    let x = data[i]
+  for i, x in data {
     let res = @math.acoshf(x)
     let libm_res = libm_results[i]
     assert_true(
@@ -143,8 +138,7 @@ test "atanhf Test" {
     1.256152868270874, 1.8317806720733643, -0.12565721571445465, -0.22891654074192047,
     -0.3372275233268738, -0.45377853512763977, -0.5832173824310303,
   ]
-  for i in 0..<data.length() {
-    let x = data[i]
+  for i, x in data {
     let res = @math.atanhf(x)
     let libm_res = libm_results[i]
     assert_true(

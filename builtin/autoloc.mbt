@@ -141,11 +141,10 @@ pub fn ArgsLoc::to_json(self : ArgsLoc) -> String {
   let buf = StringBuilder::new(size_hint=10)
   let ArgsLoc(self) = self
   buf.write_char('[')
-  for i in 0..<self.length() {
+  for i, item in self {
     if i != 0 {
       buf.write_string(", ")
     }
-    let item = self[i]
     match item {
       None => buf.write_string("null")
       Some(loc) => buf.write_string(loc.to_json_string())

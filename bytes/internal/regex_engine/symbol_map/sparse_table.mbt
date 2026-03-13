@@ -26,19 +26,17 @@ priv struct SparseTable(ReadOnlyArray[SparseTableEntry])
 ///|
 impl Table for SparseTable with map(self, c) {
   let arr = self.0
-  let mut left = 0
-  let mut right = arr.length() - 1
-  while left <= right {
+  for left = 0, right = arr.length() - 1; left <= right; {
     let mid = left + (right - left) / 2
     let entry = arr[mid]
     if c < entry.lo {
-      right = mid - 1
+      continue left, mid - 1
     } else if c > entry.hi {
-      left = mid + 1
+      continue mid + 1, right
     } else {
-      // c is within [lo, hi]
-      return entry.symbol
+      break entry.symbol
     }
+  } nobreak {
+    panic()
   }
-  panic()
 }
