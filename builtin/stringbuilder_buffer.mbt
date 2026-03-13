@@ -52,7 +52,7 @@ fn StringBuilder::grow_if_necessary(
   }
   // current_len is at least 1
   // double the enough_space until it larger than required
-  let enough_space = for enough_space = current_len; enough_space < required {
+  let enough_space = for enough_space = current_len; enough_space < required; {
     continue enough_space * 2
   } nobreak {
     enough_space

@@ -85,7 +85,7 @@ pub fn BigInt::to_hex(self : BigInt, uppercase? : Bool = true) -> String {
   for i in self.len>..0 {
     // split the limb into 4-bit chunks
     let digits = FixedArray::make(digits_per_limb, '0')
-    let idx = for x = self.limbs[i], idx = 0; x > 0 {
+    let idx = for x = self.limbs[i], idx = 0; x > 0; {
       let y = x % 16
       digits[idx] = if y < 10 {
         (y.reinterpret_as_int() + '0'.to_int()).unsafe_to_char()
@@ -163,7 +163,7 @@ pub fn BigInt::from_hex(input : String) -> BigInt {
       b[i] = (b[i] << 4) | char_from_hex(input.unsafe_get(start + j).to_int())
     }
   }
-  let b_len = for b_len = b_len; b[b_len - 1] == 0 && b_len > 1 {
+  let b_len = for b_len = b_len; b[b_len - 1] == 0 && b_len > 1; {
     continue b_len - 1
   } nobreak {
     b_len

@@ -34,7 +34,7 @@ fn int_to_string_hex(
   total_len : Int,
 ) -> Unit {
   // Process 2 hex digits (1 byte) at a time
-  let (offset, n) = for offset = total_len - digit_start, n = num; offset >= 2 {
+  let (offset, n) = for offset = total_len - digit_start, n = num; offset >= 2; {
     let byte_val = n.land(0xFFU).reinterpret_as_int()
     let hi = byte_val / 16
     let lo = byte_val % 16
@@ -67,14 +67,14 @@ fn int_to_string_generic(
     // Power-of-two radix: use bit shifts
     let shift = radix.ctz()
     let mask = base - 1U
-    for offset = total_len - digit_start, n = num; n > 0U {
+    for offset = total_len - digit_start, n = num; n > 0U; {
       let digit = n.land(mask).reinterpret_as_int()
       buffer.unsafe_set(digit_start + offset - 1, ALPHABET.unsafe_get(digit))
       continue offset - 1, n >> shift
     }
   } else {
     // General radix: use division
-    for offset = total_len - digit_start, n = num; n > 0U {
+    for offset = total_len - digit_start, n = num; n > 0U; {
       let q = n / base
       let digit = (n - q * base).reinterpret_as_int()
       buffer.unsafe_set(digit_start + offset - 1, ALPHABET.unsafe_get(digit))
@@ -93,7 +93,8 @@ fn int_to_string_dec(
   total_len : Int,
 ) -> Unit {
   // Process digits in groups of 4 (chunks of 10000)
-  let (num, offset) = for num = num, offset = total_len - digit_start; num >= 10000U {
+  let (num, offset) = for num = num, offset = total_len - digit_start; num >=
+                         10000U; {
     let t = num / 10000U
     let r = (num % 10000U).reinterpret_as_int()
     let d1 = r / 100
@@ -113,8 +114,8 @@ fn int_to_string_dec(
 
   // Handle remaining digits (< 10000)
   // Process pairs of digits
-  let (remaining, offset) = for remaining = num.reinterpret_as_int(), offset = offset
-    remaining >= 100 {
+  let (remaining, offset) = for remaining = num.reinterpret_as_int(), offset = offset; remaining >=
+                               100; {
     let t = remaining / 100
     let d = remaining % 100
     let d_hi = (0x30 + d / 10).to_uint16()
@@ -191,7 +192,7 @@ fn radix_count32(value : UInt, radix : Int) -> Int {
     return 1
   }
   let base = radix.reinterpret_as_uint()
-  for num = value, count = 0; num > 0U {
+  for num = value, count = 0; num > 0U; {
     continue num / base, count + 1
   } nobreak {
     count
@@ -421,7 +422,7 @@ fn radix_count64(value : UInt64, radix : Int) -> Int {
     return 1
   }
   let base = radix.to_uint64()
-  for num = value, count = 0; num > 0UL {
+  for num = value, count = 0; num > 0UL; {
     continue num / base, count + 1
   } nobreak {
     count
@@ -438,7 +439,7 @@ fn int64_to_string_hex(
   total_len : Int,
 ) -> Unit {
   // Process 2 hex digits (1 byte) at a time
-  let (offset, n) = for offset = total_len - digit_start, n = num; offset >= 2 {
+  let (offset, n) = for offset = total_len - digit_start, n = num; offset >= 2; {
     let byte_val = n.land(0xFFUL).to_int()
     let hi = byte_val / 16
     let lo = byte_val % 16
@@ -471,14 +472,14 @@ fn int64_to_string_generic(
     // Power-of-two radix: use bit shifts
     let shift = radix.ctz()
     let mask = base - 1UL
-    for offset = total_len - digit_start, n = num; n > 0UL {
+    for offset = total_len - digit_start, n = num; n > 0UL; {
       let digit = n.land(mask).to_int()
       buffer.unsafe_set(digit_start + offset - 1, ALPHABET.unsafe_get(digit))
       continue offset - 1, n >> shift
     }
   } else {
     // General radix: use division
-    for offset = total_len - digit_start, n = num; n > 0UL {
+    for offset = total_len - digit_start, n = num; n > 0UL; {
       let q = n / base
       let digit = (n - q * base).to_int()
       buffer.unsafe_set(digit_start + offset - 1, ALPHABET.unsafe_get(digit))
@@ -497,7 +498,8 @@ fn int64_to_string_dec(
   total_len : Int,
 ) -> Unit {
   // Process digits in groups of 4 (chunks of 10000)
-  let (num, offset) = for num = num, offset = total_len - digit_start; num >= 10000UL {
+  let (num, offset) = for num = num, offset = total_len - digit_start; num >=
+                         10000UL; {
     let t = num / 10000UL
     let r = (num % 10000UL).to_int()
     let d1 = r / 100
@@ -517,8 +519,8 @@ fn int64_to_string_dec(
 
   // Handle remaining digits (< 10000)
   // Process pairs of digits
-  let (remaining, offset) = for remaining = num.to_int(), offset = offset
-    remaining >= 100 {
+  let (remaining, offset) = for remaining = num.to_int(), offset = offset; remaining >=
+                               100; {
     let t = remaining / 100
     let d = remaining % 100
     let d_hi = (0x30 + d / 10).to_uint16()

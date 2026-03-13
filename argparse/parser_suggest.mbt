@@ -76,14 +76,14 @@ fn levenshtein(a : String, b : String) -> Int {
   }
   let mut prev = Array::new(capacity=n + 1)
   let mut curr = Array::new(capacity=n + 1)
-  for j = 0; j <= n {
+  for j = 0; j <= n; {
     prev.push(j)
     curr.push(0)
     continue j + 1
   }
-  for i = 1; i <= m {
+  for i = 1; i <= m; {
     curr[0] = i
-    for j2 = 1; j2 <= n {
+    for j2 = 1; j2 <= n; {
       let cost = if aa[i - 1] == bb[j2 - 1] { 0 } else { 1 }
       let del = prev[j2] + 1
       let ins = curr[j2 - 1] + 1
