@@ -1348,29 +1348,29 @@ pub fn[A] Deque::retain_map(self : Deque[A], f : (A) -> A?) -> Unit {
   guard !self.is_empty() else { return }
   let { head, buf, .. } = self
   let cap = buf.length()
-  let mut idx = head
-  let mut kept_len = 0
   let (front, back) = self.as_views()
-  for cur in front {
+  let (idx, kept_len) = for cur in front; idx = head, kept_len = 0 {
     if f(cur) is Some(v) {
       buf[idx] = v
-      idx += 1
-      kept_len += 1
+      continue idx + 1, kept_len + 1
     }
+    continue idx, kept_len
+  } nobreak {
+    (idx, kept_len)
   }
   if back.length() == 0 {
     self.truncate(kept_len)
     return
   }
-  for cur in back {
-    if idx == cap {
-      idx = 0
-    }
+  let kept_len = for cur in back; idx = idx, kept_len = kept_len {
+    let idx = if idx == cap { 0 } else { idx }
     if f(cur) is Some(v) {
       buf[idx] = v
-      idx += 1
-      kept_len += 1
+      continue idx + 1, kept_len + 1
     }
+    continue idx, kept_len
+  } nobreak {
+    kept_len
   }
   self.truncate(kept_len)
 }
@@ -1405,29 +1405,29 @@ pub fn[A] Deque::retain(self : Deque[A], f : (A) -> Bool) -> Unit {
   guard !self.is_empty() else { return }
   let { head, buf, .. } = self
   let cap = buf.length()
-  let mut idx = head
-  let mut kept_len = 0
   let (front, back) = self.as_views()
-  for cur in front {
+  let (idx, kept_len) = for cur in front; idx = head, kept_len = 0 {
     if f(cur) {
       buf[idx] = cur
-      idx += 1
-      kept_len += 1
+      continue idx + 1, kept_len + 1
     }
+    continue idx, kept_len
+  } nobreak {
+    (idx, kept_len)
   }
   if back.length() == 0 {
     self.truncate(kept_len)
     return
   }
-  for cur in back {
-    if idx == cap {
-      idx = 0
-    }
+  let kept_len = for cur in back; idx = idx, kept_len = kept_len {
+    let idx = if idx == cap { 0 } else { idx }
     if f(cur) {
       buf[idx] = cur
-      idx += 1
-      kept_len += 1
+      continue idx + 1, kept_len + 1
     }
+    continue idx, kept_len
+  } nobreak {
+    kept_len
   }
   self.truncate(kept_len)
 }
@@ -1755,17 +1755,19 @@ pub impl[A : @json.FromJson] @json.FromJson for Deque[A] with from_json(
 pub fn[A] Deque::chunks(self : Deque[A], size : Int) -> Deque[Deque[A]] {
   guard size > 0
   let chunks = from_array([])
-  let mut i = 0
-  while i < self.length() {
+  for i = 0; i < self.length(); {
     let chunk = Deque::new(capacity=size)
-    for _ in 0..<size {
+    let i = for _ in 0..<size; i = i {
       if i >= self.length() {
-        break
+        break i
       }
       chunk.push_back(self[i])
-      i = i + 1
+      continue i + 1
+    } nobreak {
+      i
     }
     chunks.push_back(chunk)
+    continue i
   }
   chunks
 }
@@ -1809,16 +1811,17 @@ pub fn[A] Deque::chunk_by(
   pred : (A, A) -> Bool raise?,
 ) -> Deque[Deque[A]] raise? {
   let chunks = from_array([])
-  let mut i = 0
-  while i < self.length() {
+  for i = 0; i < self.length(); {
     let chunk = from_array([])
     chunk.push_back(self[i])
-    i = i + 1
-    while i < self.length() && pred(self[i - 1], self[i]) {
+    let i = for i = i + 1; i < self.length() && pred(self[i - 1], self[i]); {
       chunk.push_back(self[i])
-      i = i + 1
+      continue i + 1
+    } nobreak {
+      i
     }
     chunks.push_back(chunk)
+    continue i
   }
   chunks
 }
@@ -2276,14 +2279,11 @@ pub impl[A : Compare] Compare for Deque[A] with compare(self, other) {
 pub fn[A] Deque::rev_in_place(self : Deque[A]) -> Unit {
   guard self.len > 0 else { return }
   let cap = self.buf.length()
-  let mut left = self.head
-  let mut right = self.tail_index()
-  for _ in 0..<(self.len / 2) {
+  for _ in 0..<(self.len / 2); left = self.head, right = self.tail_index() {
     let temp = self.buf[left]
     self.buf[left] = self.buf[right]
     self.buf[right] = temp
-    left = (left + 1) % cap
-    right = (right - 1 + cap) % cap
+    continue (left + 1) % cap, (right - 1 + cap) % cap
   }
 }
 

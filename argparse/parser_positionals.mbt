@@ -106,13 +106,12 @@ fn is_negative_number(arg : String) -> Bool {
     return false
   }
   guard arg.get_char(0) is Some('-') else { return false }
-  let mut i = 1
-  while i < arg.length() {
+  for i = 1; i < arg.length(); {
     let ch = arg.get_char(i).unwrap()
     if ch < '0' || ch > '9' {
       return false
     }
-    i = i + ch.utf16_len()
+    continue i + ch.utf16_len()
   }
   true
 }

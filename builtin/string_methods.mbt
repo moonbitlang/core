@@ -35,23 +35,19 @@ fn brute_force_find(haystack : StringView, needle : StringView) -> Int? {
   guard haystack_len >= needle_len else { return None }
   let needle_first = needle.unsafe_get(0)
   let forward_len = haystack_len - needle_len
-  let mut i = 0
-  while i <= forward_len {
-    // Skip positions where first charcode doesn't match
-    while i <= forward_len && haystack.unsafe_get(i) != needle_first {
-      i += 1
+  for i = 0; i <= forward_len; {
+    if haystack.unsafe_get(i) != needle_first {
+      continue i + 1
     }
-    if i <= forward_len {
-      // Check remaining charcodes for full match
-      for j in 1..<needle_len {
-        if haystack.unsafe_get(i + j) != needle.unsafe_get(j) {
-          break
-        }
-      } nobreak {
-        return Some(i)
+    // Check remaining charcodes for full match
+    for j in 1..<needle_len {
+      if haystack.unsafe_get(i + j) != needle.unsafe_get(j) {
+        break
       }
-      i += 1
+    } nobreak {
+      return Some(i)
     }
+    continue i + 1
   }
   None
 }
@@ -185,23 +181,19 @@ fn brute_force_rev_find(haystack : StringView, needle : StringView) -> Int? {
   guard needle_len > 0 else { return Some(haystack_len) }
   guard haystack_len >= needle_len else { return None }
   let needle_first = needle.unsafe_get(0)
-  let mut i = haystack_len - needle_len
-  while i >= 0 {
-    // Skip positions where first charcode doesn't match
-    while i >= 0 && haystack.unsafe_get(i) != needle_first {
-      i -= 1
+  for i = haystack_len - needle_len; i >= 0; {
+    if haystack.unsafe_get(i) != needle_first {
+      continue i - 1
     }
-    if i >= 0 {
-      // Check remaining charcodes for full match
-      for j in 1..<needle_len {
-        if haystack.unsafe_get(i + j) != needle.unsafe_get(j) {
-          break
-        }
-      } nobreak {
-        return Some(i)
+    // Check remaining charcodes for full match
+    for j in 1..<needle_len {
+      if haystack.unsafe_get(i + j) != needle.unsafe_get(j) {
+        break
       }
-      i -= 1
+    } nobreak {
+      return Some(i)
     }
+    continue i - 1
   }
   None
 }
@@ -607,15 +599,14 @@ pub fn StringView::contains_char(self : StringView, c : Char) -> Bool {
     let high = 0xD800 + (adj >> 10)
     let low = 0xDC00 + (adj & 0x3FF)
     // Search surrogate pair
-    let mut i = 0
-    while i < len - 1 {
+    for i = 0; i < len - 1; {
       if self.unsafe_get(i).to_int() == high {
-        i += 1
-        if self.unsafe_get(i).to_int() == low {
+        if self.unsafe_get(i + 1).to_int() == low {
           return true
         }
+        continue i + 2
       }
-      i += 1
+      continue i + 1
     }
   }
   false

@@ -38,20 +38,17 @@ fn[T : Compare] timsort(arr : MutArrayView[T]) -> Unit {
     MutArrayView::insertion_sort(arr)
     return
   }
-  let mut end = 0
-  let mut start = 0
   let runs : Array[TimSortRun] = []
-  while end < len {
+  for start = 0, end = 0; end < len; {
     let (streak_end, was_reversed) = find_streak(arr.mut_view(start~))
-    end += streak_end
+    let end = end + streak_end
     if was_reversed {
       arr.mut_view(start~, end~).rev_in_place()
     }
     // Insert some more elements into the run if it's too short. Insertion sort is faster than
     // merge sort on short sequences, so this significantly improves performance.
-    end = provide_sorted_batch(arr, start, end)
+    let end = provide_sorted_batch(arr, start, end)
     runs.push({ start, len: end - start })
-    start = end
     while true {
       guard collapse(runs, len) is Some(r) else { break }
       let left = runs[r]
@@ -60,6 +57,7 @@ fn[T : Compare] timsort(arr : MutArrayView[T]) -> Unit {
       runs[r + 1] = { start: left.start, len: left.len + right.len }
       runs.remove(r) |> ignore
     }
+    continue end, end
   }
 }
 
@@ -238,13 +236,8 @@ fn[T : Compare] fixed_quick_sort(
   pred : T?,
   limit : Int,
 ) -> Unit {
-  let mut limit = limit
-  let mut arr = arr
-  let mut pred = pred
-  let mut was_partitioned = true
-  let mut balanced = true
   let bubble_sort_len = 16
-  while true {
+  for limit = limit, arr = arr, pred = pred, was_partitioned = true, balanced = true {
     let len = arr.length()
     if len <= bubble_sort_len {
       if len >= 2 {
@@ -266,21 +259,19 @@ fn[T : Compare] fixed_quick_sort(
       }
     }
     let (pivot, partitioned) = fixed_partition(arr, pivot_index)
-    was_partitioned = partitioned
-    balanced = minimum(pivot, len - pivot) >= len / 8
-    if !balanced {
-      limit -= 1
-    }
-    if pred is Some(pred) {
+    let was_partitioned = partitioned
+    let balanced = minimum(pivot, len - pivot) >= len / 8
+    let limit = if !balanced { limit - 1 } else { limit }
+    if pred is Some(p) {
       // pred is less than all elements in arr
       // If pivot equals to pred, then we can skip all elements that are equal to pred.
-      if pred == arr[pivot] {
-        let mut i = pivot
-        while i < len && pred == arr[i] {
-          i = i + 1
+      if p == arr[pivot] {
+        let i = for i = pivot; i < len && p == arr[i]; {
+          continue i + 1
+        } nobreak {
+          i
         }
-        arr = arr.slice(i, len)
-        continue
+        continue limit, arr.slice(i, len), pred, was_partitioned, balanced
       }
     }
     let left = arr.slice(0, pivot)
@@ -288,11 +279,10 @@ fn[T : Compare] fixed_quick_sort(
     // Reduce the stack depth by only call fixed_quick_sort on the smaller fixed_partition.
     if left.length() < right.length() {
       fixed_quick_sort(left, pred, limit)
-      pred = Some(arr[pivot])
-      arr = right
+      continue limit, right, Some(arr[pivot]), was_partitioned, balanced
     } else {
       fixed_quick_sort(right, Some(arr[pivot]), limit)
-      arr = left
+      continue limit, left, pred, was_partitioned, balanced
     }
   }
 }
@@ -315,10 +305,11 @@ fn fixed_get_limit(len : Int) -> Int {
 fn[T : Compare] fixed_try_bubble_sort(arr : MutArrayView[T]) -> Bool {
   let max_tries = 8
   for i in 1..<arr.length(); tries = 0 {
-    let mut sorted = true
-    for j = i; j > 0 && arr[j - 1] > arr[j]; j = j - 1 {
-      sorted = false
+    let sorted = for j = i, sorted = true; j > 0 && arr[j - 1] > arr[j]; {
       arr.swap(j, j - 1)
+      continue j - 1, false
+    } nobreak {
+      sorted
     }
     if !sorted {
       let tries = tries + 1
@@ -438,19 +429,18 @@ fn[T : Compare] fixed_heap_sort(arr : MutArrayView[T]) -> Unit {
 
 ///|
 fn[T : Compare] fixed_sift_down(arr : MutArrayView[T], index : Int) -> Unit {
-  let mut index = index
   let len = arr.length()
-  let mut child = index * 2 + 1
-  while child < len {
-    if child + 1 < len && arr[child] < arr[child + 1] {
-      child = child + 1
+  for index = index, child = index * 2 + 1; child < len; {
+    let child = if child + 1 < len && arr[child] < arr[child + 1] {
+      child + 1
+    } else {
+      child
     }
     if arr[index] >= arr[child] {
       return
     }
     arr.swap(index, child)
-    index = child
-    child = index * 2 + 1
+    continue child, child * 2 + 1
   }
 }
 

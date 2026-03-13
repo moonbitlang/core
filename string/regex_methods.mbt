@@ -51,24 +51,27 @@ pub fn Regex::replace_by(
   limit? : Int,
 ) -> StringView {
   let buf = StringBuilder::new()
-  let mut copy_index = 0
-  let mut search_index = 0
-  let mut replaced = 0
-  while search_index <= str.length() {
+  let copy_index = for copy_index = 0, search_index = 0, replaced = 0; search_index <=
+                      str.length(); {
     if limit is Some(limit) && replaced >= limit {
-      break
+      break copy_index
     }
     match regex.execute(str, last_index=search_index) {
-      None => break
+      None => break copy_index
       Some(m) => {
-        guard m.result.group(0) is Some((start, end)) else { break }
+        guard m.result.group(0) is Some((start, end)) else { break copy_index }
         buf.write_stringview(str[copy_index:start])
         buf.write_stringview(replacer(m))
-        copy_index = end
-        search_index = if start == end { str.next_char_index(end) } else { end }
-        replaced += 1
+        let search_index = if start == end {
+          str.next_char_index(end)
+        } else {
+          end
+        }
+        continue end, search_index, replaced + 1
       }
     }
+  } nobreak {
+    copy_index
   }
   buf.write_stringview(str[copy_index:])
   buf.to_string()[:]

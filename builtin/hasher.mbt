@@ -354,17 +354,15 @@ pub fn Hasher::combine_byte(self : Hasher, value : Byte) -> Unit {
 /// }
 /// ```
 pub fn Hasher::combine_bytes(self : Hasher, value : Bytes) -> Unit {
-  let mut remain = value.length()
-  let mut cur = 0
-  while remain >= 4 {
+  let (cur, remain) = for cur = 0, remain = value.length(); remain >= 4; {
     self.consume4(endian32(value, cur))
-    cur += 4
-    remain -= 4
+    continue cur + 4, remain - 4
+  } nobreak {
+    (cur, remain)
   }
-  while remain >= 1 {
+  for cur = cur, remain = remain; remain >= 1; {
     self.consume1(value[cur])
-    cur += 1
-    remain -= 1
+    continue cur + 1, remain - 1
   }
 }
 
@@ -653,22 +651,20 @@ pub impl[T : Hash, E : Hash] Hash for Result[T, E] with hash_combine(
 
 ///|
 pub impl Hash for BytesView with hash_combine(self : BytesView, hasher : Hasher) {
-  let mut start = self.start()
   let data = self.bytes()
-  let mut rest = self.len()
-  while rest >= 4 {
+  let (start, rest) = for start = self.start(), rest = self.len(); rest >= 4; {
     let result = for i in 0..<=3; result = (0 : UInt) {
       continue result | (data.unsafe_get(i + start).to_uint() << (8 * i))
     } nobreak {
       result
     }
     hasher.combine_uint(result)
-    rest -= 4
-    start += 4
+    continue start + 4, rest - 4
+  } nobreak {
+    (start, rest)
   }
-  while rest >= 1 {
+  for start = start, rest = rest; rest >= 1; {
     hasher.combine_byte(data.unsafe_get(start))
-    rest -= 1
-    start += 1
+    continue start + 1, rest - 1
   }
 }
