@@ -301,6 +301,8 @@ pub fn[X] Iter::to_array(Self[X]) -> Array[X]
 #alias("_[_:_]")
 #alias(sub, deprecated)
 pub fn[X] Iter::view(Self[X], start? : Int, end? : Int) -> Self[X]
+#alias(combine)
+pub fn[X, Y] Iter::zip(Self[X], Self[Y]) -> Self[(X, Y)]
 pub impl[T] Add for Iter[T]
 pub impl[X : Show] Show for Iter[X]
 pub impl[X : ToJson] ToJson for Iter[X]

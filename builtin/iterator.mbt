@@ -664,6 +664,50 @@ pub fn[X] Iter::concat(self : Iter[X], other : Iter[X]) -> Iter[X] {
 }
 
 ///|
+/// Combines two iterators element-wise into an iterator of pairs.
+///
+/// The resulting iterator stops as soon as either input iterator is exhausted.
+///
+/// # Type Parameters
+///
+/// - `X`: The element type of `self`.
+/// - `Y`: The element type of `other`.
+///
+/// # Arguments
+///
+/// * `self` - The first input iterator.
+/// * `other` - The second input iterator.
+///
+/// # Returns
+///
+/// Returns a new iterator yielding tuples `(x, y)` where `x` comes from `self`
+/// and `y` comes from `other`.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   let numbers = (1).until(5)
+///   let letters = ["a", "b", "c"].iter()
+///   inspect(
+///     numbers.zip(letters).collect(),
+///     content="[(1, \"a\"), (2, \"b\"), (3, \"c\")]",
+///   )
+/// }
+/// ```
+///
+/// # Note
+/// The old iterators `self` and `other` must not be used again after calling `zip`.
+#alias(combine)
+pub fn[X, Y] Iter::zip(self : Iter[X], other : Iter[Y]) -> Iter[(X, Y)] {
+  fn() {
+    guard self.next() is Some(x) else { None }
+    guard other.next() is Some(y) else { None }
+    Some((x, y))
+  }
+}
+
+///|
 pub impl[T] Add for Iter[T] with add(self, other) {
   self.concat(other)
 }

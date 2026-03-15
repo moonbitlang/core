@@ -360,6 +360,37 @@ test "concat" {
 }
 
 ///|
+test "zip" {
+  let numbers = (1).until(6)
+  let letters = ["a", "b", "c"].iter()
+  inspect(
+    numbers.zip(letters).collect(),
+    content="[(1, \"a\"), (2, \"b\"), (3, \"c\")]",
+  )
+}
+
+///|
+test "zip alias combine" {
+  let numbers = (1).until(4)
+  let letters = ["x", "y", "z", "w"].iter()
+  inspect(
+    numbers.combine(letters).collect(),
+    content="[(1, \"x\"), (2, \"y\"), (3, \"z\")]",
+  )
+}
+
+///|
+test "zip short-circuits when either side ends" {
+  let lhs_evaluated = []
+  let rhs_evaluated = []
+  let lhs = (1).until(10).tap(x => lhs_evaluated.push(x))
+  let rhs = [10, 20].iter().tap(x => rhs_evaluated.push(x))
+  inspect(lhs.zip(rhs).collect(), content="[(1, 10), (2, 20)]")
+  inspect(lhs_evaluated, content="[1, 2, 3]")
+  inspect(rhs_evaluated, content="[10, 20]")
+}
+
+///|
 test "collect" {
   let arr = ['1', '2', '3', '4', '5']
   let iter = arr.iter()
