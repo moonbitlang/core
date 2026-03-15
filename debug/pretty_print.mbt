@@ -23,19 +23,12 @@ let default_max_depth : Int = 16
 let default_threshold : Int = 70
 
 ///|
-/// Prune a `Repr` using max_depth (replacing with `Omitted`).
-fn prune_repr_info(max_depth : Int?, info : Repr) -> Repr {
-  match max_depth {
-    None => info
-    Some(depth) => prune_info(info, depth~)
-  }
-}
-
-///|
-/// Prune a `Repr` tree to a given depth (replacing pruned subtrees).
+/// Prune a `Repr` tree to a given depth (replacing pruned subtrees with
+/// `Repr::omitted()`). Returns `self` unchanged when `max_depth` is `None`.
 ///
 /// Parameters:
-/// - `depth~`: maximum depth. Values `<= 0` are treated as `1`.
+/// - `max_depth~`: optional maximum depth. `None` means no pruning.
+///   Values `<= 0` are treated as `1`.
 /// - `replacement?`: the node used to replace pruned subtrees.
 ///   Defaults to `Repr::omitted()`.
 ///
@@ -44,30 +37,35 @@ fn prune_repr_info(max_depth : Int?, info : Repr) -> Repr {
 /// - When the depth budget is exhausted and the node has children:
 ///   - if `info_adds_depth() == false`, pruning continues into its children;
 ///   - otherwise the whole subtree is replaced by `replacement`.
-fn prune_info(
-  info : Repr,
+fn Repr::prune_info(
+  self : Repr,
   replacement? : Repr = Repr::omitted(),
-  depth~ : Int,
+  max_depth~ : Int?,
 ) -> Repr {
-  fn go(d : Int, node : Repr) -> Repr {
-    let children = node.children()
-    if d <= 0 {
-      if children.is_empty() {
-        node
-      } else if !node.info_adds_depth() {
-        node.with_children(children.map(child => go(d, child)))
-      } else {
-        replacement
+  match max_depth {
+    None => self
+    Some(depth) => {
+      fn go(d : Int, node : Repr) -> Repr {
+        let children = node.children()
+        if d <= 0 {
+          if children.is_empty() {
+            node
+          } else if !node.info_adds_depth() {
+            node.with_children(children.map(child => go(d, child)))
+          } else {
+            replacement
+          }
+        } else if children.is_empty() {
+          node
+        } else {
+          let next_depth = if node.info_adds_depth() { d - 1 } else { d }
+          node.with_children(children.map(child => go(next_depth, child)))
+        }
       }
-    } else if children.is_empty() {
-      node
-    } else {
-      let next_depth = if node.info_adds_depth() { d - 1 } else { d }
-      node.with_children(children.map(child => go(next_depth, child)))
+
+      go(Int::max(1, depth), self)
     }
   }
-
-  go(Int::max(1, depth), info)
 }
 
 ///|
@@ -117,30 +115,22 @@ fn is_unquoted_key(key : String) -> Bool {
 }
 
 ///|
-/// Escape a string as a literal (used for quoted keys and `String` values).
-fn quote_string_literal(s : String) -> String {
-  s.escape()
-}
-
-///|
 /// Pretty-print a record field name (quoted when needed).
 fn pretty_print_label(name : String) -> String {
   if is_unquoted_key(name) {
     name
   } else {
-    quote_string_literal(name)
+    name.escape()
   }
 }
 
 ///|
 /// Render a single `Repr` node (label + rendered children) into `Content`.
-fn pretty_print_repr_go(label : Repr, children : Array[Content]) -> Content {
-  match label {
+fn Repr::pretty_print(self : Repr, children : Array[Content]) -> Content {
+  match self {
     UnitLit => comma_seq("(", ")", [])
-    Integer(s) => {
-      let needs_parens = s.length() > 0 && s.code_unit_at(0) == '-'
-      no_parens(content_parens(if needs_parens { 1 } else { 0 }, [s]))
-    }
+    Integer(s) =>
+      no_parens(content_parens(if s is ['-', ..] { 1 } else { 0 }, [s]))
     DoubleLit(x) => {
       let needs_parens = 1.0 / x < 0.0
       leaf(x.to_string(), needs_parens~)
@@ -151,7 +141,7 @@ fn pretty_print_repr_go(label : Repr, children : Array[Content]) -> Content {
     }
     BoolLit(x) => leaf(x.to_string())
     CharLit(x) => leaf(x.escape())
-    StringLit(x) => no_parens(verbatim(quote_string_literal(x)))
+    StringLit(x) => no_parens(verbatim(x.escape()))
     Tuple(_) => comma_seq("(", ")", children.map(x => x.no_wrap()))
     Enum(name, _) =>
       match children {
@@ -191,13 +181,9 @@ fn pretty_print_repr_go(label : Repr, children : Array[Content]) -> Content {
                   print_content(surround("", ": ", k)) + one,
                 ]),
               )
-            [first, ..] => {
-              let n = v.lines.length()
-              let rest = if n <= 1 { [] } else { v.lines[1:n].to_array() }
-              // put the key and the first line of value on the same line
-              // then keep the remaining lines of the value as-is.
+            [first, .. rest] => {
               let head = print_content(surround("", ": ", k)) + first
-              no_parens(content_parens(1 + k.size + v.size, [head] + rest))
+              no_parens(content_parens(1 + k.size + v.size, [head, ..rest]))
             }
           }
         }
@@ -210,13 +196,10 @@ fn pretty_print_repr_go(label : Repr, children : Array[Content]) -> Content {
             [] => empty_content()
             [first] =>
               no_parens(content_parens(1 + val.size, [name + "=" + first]))
-            [first, ..] => {
-              let n = val.lines.length()
-              let rest = if n <= 1 { [] } else { val.lines[1:n].to_array() }
+            [first, .. rest] =>
               no_parens(
-                content_parens(1 + val.size, [name + "=" + first] + rest),
+                content_parens(1 + val.size, [name + "=" + first, ..rest]),
               )
-            }
           }
         _ => empty_content()
       }
@@ -228,13 +211,10 @@ fn pretty_print_repr_go(label : Repr, children : Array[Content]) -> Content {
           match v.lines {
             [] => empty_content()
             [one] => no_parens(content_parens(1 + v.size, [label + ": " + one]))
-            [first, ..] => {
-              let n = v.lines.length()
-              let rest = if n <= 1 { [] } else { v.lines[1:n].to_array() }
+            [first, .. rest] =>
               no_parens(
-                content_parens(1 + v.size, [label + ": " + first] + rest),
+                content_parens(1 + v.size, [label + ": " + first, ..rest]),
               )
-            }
           }
         }
         _ => empty_content()
@@ -245,14 +225,10 @@ fn pretty_print_repr_go(label : Repr, children : Array[Content]) -> Content {
 
 ///|
 /// Render a `Repr` as `Content` with resizing decisions.
-fn render_repr(threshold : Int, info : Repr) -> Content {
-  let label = info.shallow()
-  let children = info.children().map(child => render_repr(threshold, child))
-  with_resizing(
-    info_size(label),
-    threshold,
-    pretty_print_repr_go(label, children),
-  )
+fn Repr::render_repr(self : Repr, threshold : Int) -> Content {
+  let label = self.shallow()
+  let children = self.children().map(child => child.render_repr(threshold))
+  with_resizing(info_size(label), threshold, label.pretty_print(children))
 }
 
 ///|
@@ -262,7 +238,7 @@ fn render_repr(threshold : Int, info : Repr) -> Content {
 /// - `max_depth?`: maximum expansion depth; deeper subtrees are replaced with `...`.
 ///   Defaults to `4` when `None`. Values `<= 0` are treated as `1`.
 /// - `compact_threshold?`: compact-vs-multiline layout threshold.
-///   The printer uses a heuristic “size” for nodes; when the structure is deemed
+///   The printer uses a heuristic "size" for nodes; when the structure is deemed
 ///   small enough under this threshold, it is kept on one line, otherwise it is
 ///   broken into multiple lines.
 ///   Larger values prefer single-line output. Defaults to `80` when `None`.
@@ -272,8 +248,8 @@ pub fn render(r : Repr, max_depth? : Int) -> String {
     None => Some(default_max_depth)
   }
   let threshold = default_threshold
-  let info = prune_repr_info(max_depth, r)
-  print_content(render_repr(threshold, info).no_wrap())
+  let info = r.prune_info(max_depth~)
+  print_content(info.render_repr(threshold).no_wrap())
 }
 
 ///|
