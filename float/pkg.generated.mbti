@@ -2,17 +2,32 @@
 package "moonbitlang/core/float"
 
 // Values
+pub const INFINITY : Float = 0x1.0p128
+
+pub const MAX_VALUE : Float = 0x1.fffffep127
+
+pub const MIN_POSITIVE : Float = 0x1.0p-126
+
+pub const MIN_VALUE : Float = -0x1.fffffep127
+
+pub const NEG_INFINITY : Float = -0x1.0p128
+
 #deprecated
 pub fn default() -> Float
 
+#deprecated
 pub let infinity : Float
 
+#deprecated
 pub let max_value : Float
 
+#deprecated
 pub let min_positive : Float
 
+#deprecated
 pub let min_value : Float
 
+#deprecated
 pub let neg_infinity : Float
 
 pub let not_a_number : Float

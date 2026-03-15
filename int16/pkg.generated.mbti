@@ -2,8 +2,14 @@
 package "moonbitlang/core/int16"
 
 // Values
+pub const MAX_VALUE : Int16 = 32767
+
+pub const MIN_VALUE : Int16 = -32768
+
+#deprecated
 pub let max_value : Int16
 
+#deprecated
 pub let min_value : Int16
 
 // Errors

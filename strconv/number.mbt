@@ -171,9 +171,9 @@ fn parse_inf_nan(rest : StringView) -> Double raise StrConvError {
     "(?i:nan)" => @double.not_a_number
     "(?i:inf(inity)?)" =>
       if pos {
-        @double.infinity
+        @double.INFINITY
       } else {
-        @double.neg_infinity
+        @double.NEG_INFINITY
       }
     _ => syntax_err()
   }
@@ -198,7 +198,7 @@ fn checked_mul(a : UInt64, b : UInt64) -> UInt64? {
   if b.clz() == 0 || a.clz() == 0 {
     return None
   }
-  let quotient : UInt64 = @uint64.max_value / b
+  let quotient : UInt64 = @uint64.MAX_VALUE / b
   if a > quotient {
     return None
   }

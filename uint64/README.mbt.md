@@ -10,10 +10,10 @@ The package defines the minimum and maximum values for UInt64:
 ///|
 test "UInt64 constants" {
   // Minimum value of UInt64
-  inspect(@uint64.min_value, content="0")
+  inspect(@uint64.MIN_VALUE, content="0")
 
   // Maximum value of UInt64
-  inspect(@uint64.max_value, content="18446744073709551615")
+  inspect(@uint64.MAX_VALUE, content="18446744073709551615")
 }
 ```
 
@@ -40,8 +40,8 @@ test "UInt64 arithmetic" {
   inspect(a / b, content="2")
 
   // Overflow behavior
-  inspect(@uint64.max_value + 1UL, content="0") // Wraps around to 0
-  inspect(@uint64.min_value - 1UL, content="18446744073709551615") // Underflow wraps to maximum value
+  inspect(@uint64.MAX_VALUE + 1UL, content="0") // Wraps around to 0
+  inspect(@uint64.MIN_VALUE - 1UL, content="18446744073709551615") // Underflow wraps to maximum value
 }
 ```
 

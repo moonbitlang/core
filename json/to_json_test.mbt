@@ -76,13 +76,13 @@ test "Double::to_json" {
     ),
   )
   inspect(
-    @double.infinity.to_json(),
+    @double.INFINITY.to_json(),
     content=(
       #|String("Infinity")
     ),
   )
   inspect(
-    @double.neg_infinity.to_json(),
+    @double.NEG_INFINITY.to_json(),
     content=(
       #|String("-Infinity")
     ),

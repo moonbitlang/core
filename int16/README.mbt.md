@@ -9,8 +9,8 @@ The `Int16` type represents values from -32768 to 32767 (inclusive). The package
 ```mbt check
 ///|
 test "int16 range" {
-  inspect(@int16.min_value, content="-32768")
-  inspect(@int16.max_value, content="32767")
+  inspect(@int16.MIN_VALUE, content="-32768")
+  inspect(@int16.MAX_VALUE, content="32767")
 }
 ```
 
@@ -31,10 +31,10 @@ test "int16 arithmetic" {
   inspect(a / b, content="2")
 
   // Overflow behavior
-  let max = @int16.max_value
-  let min = @int16.min_value
-  inspect(max + 1, content="-32768") // Wraps around to min_value
-  inspect(min - 1, content="32767") // Wraps around to max_value
+  let max = @int16.MAX_VALUE
+  let min = @int16.MIN_VALUE
+  inspect(max + 1, content="-32768") // Wraps around to MIN_VALUE
+  inspect(min - 1, content="32767") // Wraps around to MAX_VALUE
 }
 ```
 

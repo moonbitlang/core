@@ -10,14 +10,14 @@ The package provides several important constants and special floating-point valu
 ///|
 test "special values" {
   // Special values
-  inspect(@double.infinity, content="Infinity")
-  inspect(@double.neg_infinity, content="-Infinity")
+  inspect(@double.INFINITY, content="Infinity")
+  inspect(@double.NEG_INFINITY, content="-Infinity")
   inspect(@double.not_a_number, content="NaN")
 
   // Limits
-  inspect(@double.max_value, content="1.7976931348623157e+308")
-  inspect(@double.min_value, content="-1.7976931348623157e+308")
-  inspect(@double.min_positive, content="2.2250738585072014e-308")
+  inspect(@double.MAX_VALUE, content="1.7976931348623157e+308")
+  inspect(@double.MIN_VALUE, content="-1.7976931348623157e+308")
+  inspect(@double.MIN_POSITIVE, content="2.2250738585072014e-308")
 }
 ```
 
@@ -55,9 +55,9 @@ Functions for testing special floating-point values and comparing numbers:
 test "special value testing" {
   // Testing for special values
   inspect(@double.not_a_number.is_nan(), content="true")
-  inspect(@double.infinity.is_inf(), content="true")
-  inspect(@double.infinity.is_pos_inf(), content="true")
-  inspect(@double.neg_infinity.is_neg_inf(), content="true")
+  inspect(@double.INFINITY.is_inf(), content="true")
+  inspect(@double.INFINITY.is_pos_inf(), content="true")
+  inspect(@double.NEG_INFINITY.is_neg_inf(), content="true")
 
   // Approximate equality
   let relative_tolerance = 1.e-9

@@ -42,7 +42,7 @@ test "write_leb128 Int" {
       #|b"@"
     ),
   )
-  buffer.test_leb128(@int.min_value)
+  buffer.test_leb128(@int.MIN_VALUE)
   inspect(
     buffer.to_bytes(),
     content=(

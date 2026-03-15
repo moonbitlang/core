@@ -14,10 +14,20 @@
 
 ///|
 /// Min value constant for this type.
+pub const MIN_VALUE : UInt = 0U
+
+///|
+/// Min value constant for this type.
+#deprecated("Use `MIN_VALUE` instead")
 pub let min_value : UInt = 0U
 
 ///|
 /// Max value constant for this type.
+pub const MAX_VALUE : UInt = 4294967295U
+
+///|
+/// Max value constant for this type.
+#deprecated("Use `MAX_VALUE` instead")
 pub let max_value : UInt = 4294967295U
 
 ///|

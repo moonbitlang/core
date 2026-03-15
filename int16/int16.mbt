@@ -14,10 +14,20 @@
 
 ///|
 /// Max value constant for this type.
+pub const MAX_VALUE : Int16 = 32767
+
+///|
+/// Max value constant for this type.
+#deprecated("Use `MAX_VALUE` instead")
 pub let max_value : Int16 = 32767
 
 ///|
 /// Min value constant for this type.
+pub const MIN_VALUE : Int16 = -32768
+
+///|
+/// Min value constant for this type.
+#deprecated("Use `MIN_VALUE` instead")
 pub let min_value : Int16 = -32768
 
 ///|

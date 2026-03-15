@@ -125,7 +125,7 @@ const LN2_LO = 1.90821492927058770002e-10 // 3dea39ef 35793c76
 
 ///|
 fn normalize(f : Double) -> (Double, Int) {
-  if f.abs() < @double.min_positive {
+  if f.abs() < @double.MIN_POSITIVE {
     return (f * (1L << 52).to_double(), -52)
   }
   (f, 0)

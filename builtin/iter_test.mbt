@@ -378,31 +378,31 @@ test "until" {
   inspect(0L.until(10, step=0), content="[]")
   // inclusive
   inspect(
-    (@int.max_value - 2).until(@int.max_value - 1),
+    (@int.MAX_VALUE - 2).until(@int.MAX_VALUE - 1),
     content="[2147483645]",
   )
   inspect(
-    (@int.max_value - 2).until(@int.max_value - 1, inclusive=true),
+    (@int.MAX_VALUE - 2).until(@int.MAX_VALUE - 1, inclusive=true),
     content="[2147483645, 2147483646]",
   )
-  inspect((@int.max_value - 1).until(@int.max_value), content="[2147483646]")
+  inspect((@int.MAX_VALUE - 1).until(@int.MAX_VALUE), content="[2147483646]")
   inspect(
-    (@int.max_value - 1)
-    .until(@int.max_value, inclusive=true)
+    (@int.MAX_VALUE - 1)
+    .until(@int.MAX_VALUE, inclusive=true)
     .concat([0].iter()),
     content="[2147483646, 2147483647, 0]",
   )
-  inspect((@int.max_value - 1).until(@int.max_value), content="[2147483646]")
+  inspect((@int.MAX_VALUE - 1).until(@int.MAX_VALUE), content="[2147483646]")
   inspect(
-    (@int.max_value - 1).until(@int.max_value, inclusive=true),
+    (@int.MAX_VALUE - 1).until(@int.MAX_VALUE, inclusive=true),
     content="[2147483646, 2147483647]",
   )
   inspect(
-    (@int64.max_value - 2).until(@int64.max_value - 1L, inclusive=true),
+    (@int64.MAX_VALUE - 2).until(@int64.MAX_VALUE - 1L, inclusive=true),
     content="[9223372036854775805, 9223372036854775806]",
   )
   inspect(
-    (@int64.max_value - 1).until(@int64.max_value, inclusive=true),
+    (@int64.MAX_VALUE - 1).until(@int64.MAX_VALUE, inclusive=true),
     content="[9223372036854775806, 9223372036854775807]",
   )
   inspect(

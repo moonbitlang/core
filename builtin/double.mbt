@@ -199,8 +199,8 @@ pub fn Double::is_nan(self : Double) -> Bool {
 ///
 /// ```mbt check
 /// test {
-///   inspect(@double.infinity.is_inf(), content="true")
-///   inspect(@double.neg_infinity.is_inf(), content="true")
+///   inspect(@double.INFINITY.is_inf(), content="true")
+///   inspect(@double.NEG_INFINITY.is_inf(), content="true")
 ///   inspect(42.0.is_inf(), content="false")
 /// }
 /// ```
@@ -221,8 +221,8 @@ pub fn Double::is_inf(self : Double) -> Bool {
 ///
 /// ```mbt check
 /// test {
-///   inspect(@double.infinity.is_pos_inf(), content="true")
-///   inspect(@double.neg_infinity.is_pos_inf(), content="false")
+///   inspect(@double.INFINITY.is_pos_inf(), content="true")
+///   inspect(@double.NEG_INFINITY.is_pos_inf(), content="false")
 ///   inspect(42.0.is_pos_inf(), content="false") // TODO: better formatter
 /// }
 /// ```
@@ -321,7 +321,7 @@ pub impl Show for Double with output(self, logger) {
 ///   let y = 1.000000001
 ///   inspect(x.is_close(y), content="false")
 ///   inspect(x.is_close(y, relative_tolerance=1.0e-10), content="false")
-///   inspect(@double.infinity.is_close(@double.infinity), content="true")
+///   inspect(@double.INFINITY.is_close(@double.INFINITY), content="true")
 /// }
 /// ```
 pub fn Double::is_close(

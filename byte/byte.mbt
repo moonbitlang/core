@@ -14,8 +14,18 @@
 
 ///|
 /// Max value constant for this type.
+pub const MAX_VALUE : Byte = b'\xFF'
+
+///|
+/// Max value constant for this type.
+#deprecated("Use `MAX_VALUE` instead")
 pub let max_value : Byte = b'\xFF'
 
 ///|
 /// Min value constant for this type.
+pub const MIN_VALUE : Byte = b'\x00'
+
+///|
+/// Min value constant for this type.
+#deprecated("Use `MIN_VALUE` instead")
 pub let min_value : Byte = b'\x00'

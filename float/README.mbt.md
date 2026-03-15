@@ -10,24 +10,24 @@ The package defines several special floating-point values:
 ///|
 test "special float values" {
   // Infinity values
-  inspect(@float.infinity, content="Infinity")
-  inspect(@float.neg_infinity, content="-Infinity")
+  inspect(@float.INFINITY, content="Infinity")
+  inspect(@float.NEG_INFINITY, content="-Infinity")
 
   // Not a Number
   inspect(@float.not_a_number, content="NaN")
 
   // Bounds
-  inspect(@float.max_value, content="3.4028234663852886e+38")
-  inspect(@float.min_value, content="-3.4028234663852886e+38")
-  inspect(@float.min_positive, content="1.1754943508222875e-38")
+  inspect(@float.MAX_VALUE, content="3.4028234663852886e+38")
+  inspect(@float.MIN_VALUE, content="-3.4028234663852886e+38")
+  inspect(@float.MIN_POSITIVE, content="1.1754943508222875e-38")
 }
 
 ///|
 test "checking special values" {
   // Testing for special values
-  inspect(@float.infinity.is_inf(), content="true")
-  inspect(@float.neg_infinity.is_neg_inf(), content="true")
-  inspect(@float.infinity.is_pos_inf(), content="true")
+  inspect(@float.INFINITY.is_inf(), content="true")
+  inspect(@float.NEG_INFINITY.is_neg_inf(), content="true")
+  inspect(@float.INFINITY.is_pos_inf(), content="true")
   inspect(@float.not_a_number.is_nan(), content="true")
 }
 ```

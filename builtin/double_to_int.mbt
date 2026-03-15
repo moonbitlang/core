@@ -23,10 +23,10 @@
 /// Returns an 32-bit integer value according to the following rules:
 ///
 /// * Returns 0 if the input is NaN
-/// * Returns `@int.max_value` (2147483647) if the input is greater than or
-///   equal to `@int.max_value`
-/// * Returns `@int.min_value` (-2147483648) if the input is less than or equal
-///   to `@int.min_value`
+/// * Returns `@int.MAX_VALUE` (2147483647) if the input is greater than or
+///   equal to `@int.MAX_VALUE`
+/// * Returns `@int.MIN_VALUE` (-2147483648) if the input is less than or equal
+///   to `@int.MIN_VALUE`
 /// * Otherwise returns the integer part of the input by truncating towards zero
 ///
 /// Example:

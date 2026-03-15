@@ -159,9 +159,9 @@ fn ParseContext::lex_number_end(
         return (i.to_double(), None)
       _ =>
         return if s is ['-', ..] {
-          (@double.neg_infinity, Some(s))
+          (@double.NEG_INFINITY, Some(s))
         } else {
-          (@double.infinity, Some(s))
+          (@double.INFINITY, Some(s))
         }
     }
   } else {
@@ -172,9 +172,9 @@ fn ParseContext::lex_number_end(
       // If parsing fails as a double, treat it as infinity and preserve the string
       Err(_) =>
         if s is ['-', ..] {
-          (@double.neg_infinity, Some(s))
+          (@double.NEG_INFINITY, Some(s))
         } else {
-          (@double.infinity, Some(s))
+          (@double.INFINITY, Some(s))
         }
     }
   }

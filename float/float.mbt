@@ -39,10 +39,15 @@ pub let not_a_number : Float = Float::reinterpret_from_int(0x7FC00000)
 ///
 /// ```mbt check
 /// test {
-///   inspect(@float.infinity.is_pos_inf(), content="true")
-///   inspect(@float.infinity > 1.0, content="true")
+///   inspect(@float.INFINITY.is_pos_inf(), content="true")
+///   inspect(@float.INFINITY > 1.0, content="true")
 /// }
 /// ```
+pub const INFINITY : Float = 0x1.0p128
+
+///|
+/// Represents positive infinity as a floating-point value.
+#deprecated("Use `INFINITY` instead")
 pub let infinity : Float = Float::reinterpret_from_int(0x7F800000)
 
 ///|
@@ -56,10 +61,15 @@ pub let infinity : Float = Float::reinterpret_from_int(0x7F800000)
 ///
 /// ```mbt check
 /// test {
-///   inspect(@float.neg_infinity.is_neg_inf(), content="true")
-///   inspect(@float.neg_infinity < (-1.0 : Float), content="true")
+///   inspect(@float.NEG_INFINITY.is_neg_inf(), content="true")
+///   inspect(@float.NEG_INFINITY < (-1.0 : Float), content="true")
 /// }
 /// ```
+pub const NEG_INFINITY : Float = -0x1.0p128
+
+///|
+/// Represents negative infinity for 32-bit floating-point numbers.
+#deprecated("Use `NEG_INFINITY` instead")
 pub let neg_infinity : Float = Float::reinterpret_from_int(0xFF800000)
 
 ///|
@@ -70,10 +80,15 @@ pub let neg_infinity : Float = Float::reinterpret_from_int(0xFF800000)
 ///
 /// ```mbt check
 /// test {
-///   inspect(@float.max_value < @float.infinity, content="true")
-///   inspect(@float.max_value > 0.0, content="true")
+///   inspect(@float.MAX_VALUE < @float.INFINITY, content="true")
+///   inspect(@float.MAX_VALUE > 0.0, content="true")
 /// }
 /// ```
+pub const MAX_VALUE : Float = 0x1.fffffep127
+
+///|
+/// Represents the maximum finite value of a 32-bit floating-point number.
+#deprecated("Use `MAX_VALUE` instead")
 pub let max_value : Float = Float::reinterpret_from_int(0x7F7FFFFF)
 
 ///|
@@ -83,10 +98,15 @@ pub let max_value : Float = Float::reinterpret_from_int(0x7F7FFFFF)
 ///
 /// ```mbt check
 /// test {
-///   inspect(@float.min_value < -1.0, content="true")
-///   inspect(@float.min_value > @float.neg_infinity, content="true")
+///   inspect(@float.MIN_VALUE < -1.0, content="true")
+///   inspect(@float.MIN_VALUE > @float.NEG_INFINITY, content="true")
 /// }
 /// ```
+pub const MIN_VALUE : Float = -0x1.fffffep127
+
+///|
+/// Represents the smallest finite negative Float value.
+#deprecated("Use `MIN_VALUE` instead")
 pub let min_value : Float = Float::reinterpret_from_int(0xFF7FFFFF)
 
 ///|
@@ -97,10 +117,15 @@ pub let min_value : Float = Float::reinterpret_from_int(0xFF7FFFFF)
 ///
 /// ```mbt check
 /// test {
-///   inspect(@float.min_positive > 0.0, content="true")
-///   inspect(@float.min_positive < 1.2e-38, content="true")
+///   inspect(@float.MIN_POSITIVE > 0.0, content="true")
+///   inspect(@float.MIN_POSITIVE < 1.2e-38, content="true")
 /// }
 /// ```
+pub const MIN_POSITIVE : Float = 0x1.0p-126
+
+///|
+/// Represents the smallest positive normalized floating-point number.
+#deprecated("Use `MIN_POSITIVE` instead")
 pub let min_positive : Float = Float::reinterpret_from_int(0x00800000)
 
 ///|

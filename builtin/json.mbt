@@ -85,7 +85,7 @@ pub let null : Json = Null
 /// test {
 ///   inspect(Json::number(3.14), content="Number(3.14)")
 ///   inspect(
-///     Json::number(@double.infinity, repr="1e9999999999999999999999999999999").stringify(),
+///     Json::number(@double.INFINITY, repr="1e9999999999999999999999999999999").stringify(),
 ///     content="1e9999999999999999999999999999999",
 ///   )
 /// }

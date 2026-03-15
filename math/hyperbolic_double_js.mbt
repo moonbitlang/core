@@ -37,8 +37,8 @@
 ///   inspect(@math.sinh(1000.0), content="Infinity")
 ///   inspect(@math.sinh(-1000.0), content="-Infinity")
 ///   inspect(@math.sinh(@double.not_a_number), content="NaN")
-///   inspect(@math.sinh(@double.infinity), content="Infinity")
-///   inspect(@math.sinh(@double.neg_infinity), content="-Infinity")
+///   inspect(@math.sinh(@double.INFINITY), content="Infinity")
+///   inspect(@math.sinh(@double.NEG_INFINITY), content="-Infinity")
 /// }
 /// ```
 pub fn sinh(x : Double) -> Double = "Math" "sinh"
@@ -68,8 +68,8 @@ pub fn sinh(x : Double) -> Double = "Math" "sinh"
 ///   inspect(@math.cosh(1000.0), content="Infinity")
 ///   inspect(@math.cosh(-1000.0), content="Infinity")
 ///   inspect(@math.cosh(@double.not_a_number), content="NaN")
-///   inspect(@math.cosh(@double.infinity), content="Infinity")
-///   inspect(@math.cosh(@double.neg_infinity), content="Infinity")
+///   inspect(@math.cosh(@double.INFINITY), content="Infinity")
+///   inspect(@math.cosh(@double.NEG_INFINITY), content="Infinity")
 /// }
 /// ```
 pub fn cosh(x : Double) -> Double = "Math" "cosh"
@@ -100,8 +100,8 @@ pub fn cosh(x : Double) -> Double = "Math" "cosh"
 ///   inspect(@math.tanh(1000.0), content="1")
 ///   inspect(@math.tanh(-1000.0), content="-1")
 ///   inspect(@math.tanh(@double.not_a_number), content="NaN")
-///   inspect(@math.tanh(@double.infinity), content="1")
-///   inspect(@math.tanh(@double.neg_infinity), content="-1")
+///   inspect(@math.tanh(@double.INFINITY), content="1")
+///   inspect(@math.tanh(@double.NEG_INFINITY), content="-1")
 /// }
 /// ```
 pub fn tanh(x : Double) -> Double = "Math" "tanh"
@@ -131,8 +131,8 @@ pub fn tanh(x : Double) -> Double = "Math" "tanh"
 ///   inspect(@math.asinh(1000.0), content="7.600902709541988")
 ///   inspect(@math.asinh(-1000.0), content="-7.600902709541988")
 ///   inspect(@math.asinh(@double.not_a_number), content="NaN")
-///   inspect(@math.asinh(@double.infinity), content="Infinity")
-///   inspect(@math.asinh(@double.neg_infinity), content="-Infinity")
+///   inspect(@math.asinh(@double.INFINITY), content="Infinity")
+///   inspect(@math.asinh(@double.NEG_INFINITY), content="-Infinity")
 /// }
 /// ```
 pub fn asinh(x : Double) -> Double = "Math" "asinh"
@@ -163,8 +163,8 @@ pub fn asinh(x : Double) -> Double = "Math" "asinh"
 ///   inspect(@math.acosh(-1.0), content="NaN")
 ///   inspect(@math.acosh(-2.0), content="NaN")
 ///   inspect(@math.acosh(@double.not_a_number), content="NaN")
-///   inspect(@math.acosh(@double.infinity), content="Infinity")
-///   inspect(@math.acosh(@double.neg_infinity), content="NaN")
+///   inspect(@math.acosh(@double.INFINITY), content="Infinity")
+///   inspect(@math.acosh(@double.NEG_INFINITY), content="NaN")
 /// }
 /// ```
 pub fn acosh(x : Double) -> Double = "Math" "acosh"
@@ -196,8 +196,8 @@ pub fn acosh(x : Double) -> Double = "Math" "acosh"
 ///   inspect(@math.atanh(-1.0), content="-Infinity")
 ///   inspect(@math.atanh(1.5), content="NaN")
 ///   inspect(@math.atanh(@double.not_a_number), content="NaN")
-///   inspect(@math.atanh(@double.infinity), content="NaN")
-///   inspect(@math.atanh(@double.neg_infinity), content="NaN")
+///   inspect(@math.atanh(@double.INFINITY), content="NaN")
+///   inspect(@math.atanh(@double.NEG_INFINITY), content="NaN")
 /// }
 /// ```
 pub fn atanh(x : Double) -> Double = "Math" "atanh"
