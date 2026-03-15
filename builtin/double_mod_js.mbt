@@ -33,7 +33,7 @@
 ///   inspect(5.0.mod(3.0), content="2")
 ///   inspect((-5.0).mod(3.0), content="-2")
 ///   inspect(5.0.mod(@double.not_a_number), content="NaN")
-///   inspect(@double.INFINITY.mod(3.0), content="NaN")
+///   inspect(@double.infinity.mod(3.0), content="NaN")
 /// }
 /// ```
 extern "js" fn Double::mod_ffi(self : Double, other : Double) -> Double =

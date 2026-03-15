@@ -38,8 +38,8 @@
 ///   inspect(@math.cbrt(10.0), content="2.154434690031884")
 ///   inspect(@math.cbrt(1000.0), content="10")
 ///   inspect(@math.cbrt(@double.not_a_number), content="NaN")
-///   inspect(@math.cbrt(@double.INFINITY), content="Infinity")
-///   inspect(@math.cbrt(@double.NEG_INFINITY), content="-Infinity")
+///   inspect(@math.cbrt(@double.infinity), content="Infinity")
+///   inspect(@math.cbrt(@double.neg_infinity), content="-Infinity")
 /// }
 /// ```
 pub fn cbrt(x : Double) -> Double {
@@ -100,10 +100,10 @@ pub fn cbrt(x : Double) -> Double {
 ///   inspect(@math.hypot(7.0, 24.0), content="25")
 ///   inspect(@math.hypot(@double.not_a_number, 1.0), content="NaN")
 ///   inspect(@math.hypot(1.0, @double.not_a_number), content="NaN")
-///   inspect(@math.hypot(@double.INFINITY, 1.0), content="Infinity")
-///   inspect(@math.hypot(1.0, @double.INFINITY), content="Infinity")
-///   inspect(@math.hypot(@double.NEG_INFINITY, 1.0), content="Infinity")
-///   inspect(@math.hypot(1.0, @double.NEG_INFINITY), content="Infinity")
+///   inspect(@math.hypot(@double.infinity, 1.0), content="Infinity")
+///   inspect(@math.hypot(1.0, @double.infinity), content="Infinity")
+///   inspect(@math.hypot(@double.neg_infinity, 1.0), content="Infinity")
+///   inspect(@math.hypot(1.0, @double.neg_infinity), content="Infinity")
 /// }
 /// ```
 pub fn hypot(x : Double, y : Double) -> Double {
@@ -111,7 +111,7 @@ pub fn hypot(x : Double, y : Double) -> Double {
     return @double.not_a_number
   }
   if x.is_inf() || y.is_inf() {
-    return @double.INFINITY
+    return @double.infinity
   }
   let x = x.abs()
   let y = y.abs()

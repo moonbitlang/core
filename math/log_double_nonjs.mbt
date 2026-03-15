@@ -65,7 +65,7 @@ pub fn ln(x : Double) -> Double {
   } else if x.is_nan() || x.is_inf() {
     return x
   } else if x == 0.0 {
-    return @double.NEG_INFINITY
+    return @double.neg_infinity
   }
   let (f1, ki) = frexp(x)
   let (f, k) = if f1 < SQRT2 / 2.0 {
@@ -137,7 +137,7 @@ pub fn log10(x : Double) -> Double {
   } else if x.is_nan() || x.is_inf() {
     return x
   } else if x == 0.0 {
-    return @double.NEG_INFINITY
+    return @double.neg_infinity
   }
   let ivln10 = 4.34294481903251816668e-01
   let log10_2hi = 3.01029995663611771306e-01
@@ -177,8 +177,8 @@ pub fn log10(x : Double) -> Double {
 ///   inspect(@math.ln_1p(@double.not_a_number), content="NaN")
 ///   inspect(@math.ln_1p(-1.0), content="-Infinity")
 ///   inspect(@math.ln_1p(-2.0), content="NaN")
-///   inspect(@math.ln_1p(@double.INFINITY), content="Infinity")
-///   inspect(@math.ln_1p(@double.NEG_INFINITY), content="NaN")
+///   inspect(@math.ln_1p(@double.infinity), content="Infinity")
+///   inspect(@math.ln_1p(@double.neg_infinity), content="NaN")
 /// }
 /// ```
 pub fn ln_1p(x : Double) -> Double {
@@ -186,10 +186,10 @@ pub fn ln_1p(x : Double) -> Double {
     return @double.not_a_number
   }
   if x == -1.0 {
-    return @double.NEG_INFINITY
+    return @double.neg_infinity
   }
   if x.is_inf() {
-    return @double.INFINITY
+    return @double.infinity
   }
   let ln2_hi = 6.93147180369123816490e-01
   let ln2_lo = 1.90821492927058770002e-10

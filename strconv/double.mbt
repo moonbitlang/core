@@ -267,13 +267,13 @@ test "parse_double" {
 
 ///|
 test "parse_double_inf" {
-  assert_eq(parse_double("inf"), @double.INFINITY)
-  assert_eq(parse_double("+Inf"), @double.INFINITY)
-  assert_eq(parse_double("-Inf"), @double.NEG_INFINITY)
-  assert_eq(parse_double("+Infinity"), @double.INFINITY)
-  assert_eq(parse_double("-Infinity"), @double.NEG_INFINITY)
-  assert_eq(parse_double("+INFINITY"), @double.INFINITY)
-  assert_eq(parse_double("-INFINITY"), @double.NEG_INFINITY)
+  assert_eq(parse_double("inf"), @double.infinity)
+  assert_eq(parse_double("+Inf"), @double.infinity)
+  assert_eq(parse_double("-Inf"), @double.neg_infinity)
+  assert_eq(parse_double("+Infinity"), @double.infinity)
+  assert_eq(parse_double("-Infinity"), @double.neg_infinity)
+  assert_eq(parse_double("+INFINITY"), @double.infinity)
+  assert_eq(parse_double("-INFINITY"), @double.neg_infinity)
 }
 
 ///|

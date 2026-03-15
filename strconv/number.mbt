@@ -171,9 +171,9 @@ fn parse_inf_nan(rest : StringView) -> Double raise StrConvError {
     "(?i:nan)" => @double.not_a_number
     "(?i:inf(inity)?)" =>
       if pos {
-        @double.INFINITY
+        @double.infinity
       } else {
-        @double.NEG_INFINITY
+        @double.neg_infinity
       }
     _ => syntax_err()
   }

@@ -15,44 +15,15 @@
 ///|
 test "@math.lnf Test" {
   let data : Array[Float] = [
-    1,
-    2,
-    3,
-    4,
-    5,
-    6.5,
-    7.5,
-    8.5,
-    9.5,
-    10.5,
-    0.25,
-    1.25,
-    2.25,
-    3.25,
-    4.25,
-    @float.NEG_INFINITY,
-    @float.not_a_number,
-    @float.INFINITY,
+    1, 2, 3, 4, 5, 6.5, 7.5, 8.5, 9.5, 10.5, 0.25, 1.25, 2.25, 3.25, 4.25, @float.neg_infinity,
+    @float.not_a_number, @float.infinity,
   ]
   let libm_results : Array[Float] = [
-    0,
-    0.6931471824645996,
-    1.0986123085021973,
-    1.3862943649291992,
-    1.6094379425048828,
-    1.8718022108078003,
-    2.0149030685424805,
-    2.140066146850586,
-    2.2512917518615723,
-    2.3513753414154053,
-    -1.3862943649291992,
-    0.2231435477733612,
-    0.8109301924705505,
-    1.1786550283432007,
-    1.4469189643859863,
-    @float.not_a_number,
-    @float.not_a_number,
-    @float.INFINITY,
+    0, 0.6931471824645996, 1.0986123085021973, 1.3862943649291992, 1.6094379425048828,
+    1.8718022108078003, 2.0149030685424805, 2.140066146850586, 2.2512917518615723,
+    2.3513753414154053, -1.3862943649291992, 0.2231435477733612, 0.8109301924705505,
+    1.1786550283432007, 1.4469189643859863, @float.not_a_number, @float.not_a_number,
+    @float.infinity,
   ]
   for i, x in data {
     let res = @math.lnf(x)
@@ -75,11 +46,11 @@ test "@math.ln_1p" {
   inspect(@math.ln_1pf(-1), content="-Infinity")
   inspect(@math.ln_1pf(-2), content="NaN")
   inspect(@math.ln_1pf(@float.not_a_number), content="NaN")
-  inspect(@math.ln_1pf(@float.INFINITY), content="Infinity")
-  inspect(@math.ln_1pf(@float.NEG_INFINITY), content="NaN")
+  inspect(@math.ln_1pf(@float.infinity), content="Infinity")
+  inspect(@math.ln_1pf(@float.neg_infinity), content="NaN")
   assert_true(@math.ln_1p(@double.not_a_number).is_nan())
-  assert_true(@math.ln_1p(@double.INFINITY).is_pos_inf())
-  assert_true(@math.ln_1p(@double.NEG_INFINITY).is_nan())
+  assert_true(@math.ln_1p(@double.infinity).is_pos_inf())
+  assert_true(@math.ln_1p(@double.neg_infinity).is_nan())
   assert_true(@math.ln_1p(-1.0).is_neg_inf())
   assert_eq(@math.ln_1p(0.0), 0.0)
 }
@@ -108,14 +79,14 @@ test "@math.log2 @math.log10" {
   assert_eq(@math.log10(15.0), 1.1760912590556813)
   assert_true(@math.log10(-1.0).is_nan())
   assert_true(@math.log10(0.0).is_neg_inf())
-  assert_true(@math.log10(@double.INFINITY).is_pos_inf())
+  assert_true(@math.log10(@double.infinity).is_pos_inf())
 }
 
 ///|
 test "ln" {
   assert_true(@math.ln(@double.not_a_number).is_nan())
-  assert_true(@math.ln(@double.INFINITY).is_pos_inf())
-  assert_true(@math.ln(@double.NEG_INFINITY).is_nan())
+  assert_true(@math.ln(@double.infinity).is_pos_inf())
+  assert_true(@math.ln(@double.neg_infinity).is_nan())
   assert_true(@math.ln(-1.0).is_nan())
   assert_true(@math.ln(0.0).is_neg_inf())
   assert_true(@math.ln(-0.0).is_neg_inf())

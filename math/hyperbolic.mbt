@@ -47,8 +47,8 @@ fn k_expo2f(x : Float) -> Float {
 ///   inspect(@math.sinhf(1000), content="Infinity")
 ///   inspect(@math.sinhf(-1000), content="-Infinity")
 ///   inspect(@math.sinhf(@float.not_a_number), content="NaN")
-///   inspect(@math.sinhf(@float.INFINITY), content="Infinity")
-///   inspect(@math.sinhf(@float.NEG_INFINITY), content="-Infinity")
+///   inspect(@math.sinhf(@float.infinity), content="Infinity")
+///   inspect(@math.sinhf(@float.neg_infinity), content="-Infinity")
 /// }
 /// ```
 pub fn sinhf(x : Float) -> Float {
@@ -103,8 +103,8 @@ pub fn sinhf(x : Float) -> Float {
 ///   inspect(@math.coshf(1000), content="Infinity")
 ///   inspect(@math.coshf(-1000), content="Infinity")
 ///   inspect(@math.coshf(@float.not_a_number), content="NaN")
-///   inspect(@math.coshf(@float.INFINITY), content="Infinity")
-///   inspect(@math.coshf(@float.NEG_INFINITY), content="Infinity")
+///   inspect(@math.coshf(@float.infinity), content="Infinity")
+///   inspect(@math.coshf(@float.neg_infinity), content="Infinity")
 /// }
 /// ```
 pub fn coshf(x : Float) -> Float {
@@ -159,8 +159,8 @@ pub fn coshf(x : Float) -> Float {
 ///   inspect(@math.tanhf(1000), content="1")
 ///   inspect(@math.tanhf(-1000), content="-1")
 ///   inspect(@math.tanhf(@float.not_a_number), content="NaN")
-///   inspect(@math.tanhf(@float.INFINITY), content="1")
-///   inspect(@math.tanhf(@float.NEG_INFINITY), content="-1")
+///   inspect(@math.tanhf(@float.infinity), content="1")
+///   inspect(@math.tanhf(@float.neg_infinity), content="-1")
 /// }
 /// ```
 pub fn tanhf(x : Float) -> Float {
@@ -221,8 +221,8 @@ pub fn tanhf(x : Float) -> Float {
 ///   inspect(@math.asinhf(2), content="1.4436354637145996")
 ///   inspect(@math.asinhf(1000), content="7.600902557373047")
 ///   inspect(@math.asinhf(@float.not_a_number), content="NaN")
-///   inspect(@math.asinhf(@float.INFINITY), content="Infinity")
-///   inspect(@math.asinhf(@float.NEG_INFINITY), content="-Infinity")
+///   inspect(@math.asinhf(@float.infinity), content="Infinity")
+///   inspect(@math.asinhf(@float.neg_infinity), content="-Infinity")
 /// }
 /// ```
 pub fn asinhf(x : Float) -> Float {
@@ -278,8 +278,8 @@ pub fn asinhf(x : Float) -> Float {
 ///   inspect(@math.acoshf(-1), content="NaN")
 ///   inspect(@math.acoshf(-2), content="NaN")
 ///   inspect(@math.acoshf(@float.not_a_number), content="NaN")
-///   inspect(@math.acoshf(@float.INFINITY), content="Infinity")
-///   inspect(@math.acoshf(@float.NEG_INFINITY), content="NaN")
+///   inspect(@math.acoshf(@float.infinity), content="Infinity")
+///   inspect(@math.acoshf(@float.neg_infinity), content="NaN")
 /// }
 /// ```
 pub fn acoshf(x : Float) -> Float {
@@ -328,8 +328,8 @@ pub fn acoshf(x : Float) -> Float {
 ///   inspect(@math.atanhf(-1), content="-Infinity")
 ///   inspect(@math.atanhf(1.5), content="NaN")
 ///   inspect(@math.atanhf(@float.not_a_number), content="NaN")
-///   inspect(@math.atanhf(@float.INFINITY), content="NaN")
-///   inspect(@math.atanhf(@float.NEG_INFINITY), content="NaN")
+///   inspect(@math.atanhf(@float.infinity), content="NaN")
+///   inspect(@math.atanhf(@float.neg_infinity), content="NaN")
 /// }
 /// ```
 pub fn atanhf(x : Float) -> Float {

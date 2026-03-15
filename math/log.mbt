@@ -95,7 +95,7 @@ pub fn lnf(x : Float) -> Float {
   }
   if ix - 0x00800000U >= 0x7f800000U - 0x00800000U {
     if ix * 2 == 0 {
-      return @float.NEG_INFINITY
+      return @float.neg_infinity
     }
     if ix == 0x7f800000U {
       return x
@@ -146,8 +146,8 @@ pub fn lnf(x : Float) -> Float {
 ///   inspect(@math.ln_1pf(-1), content="-Infinity")
 ///   inspect(@math.ln_1pf(-2), content="NaN")
 ///   inspect(@math.ln_1pf(@float.not_a_number), content="NaN")
-///   inspect(@math.ln_1pf(@float.INFINITY), content="Infinity")
-///   inspect(@math.ln_1pf(@float.NEG_INFINITY), content="NaN")
+///   inspect(@math.ln_1pf(@float.infinity), content="Infinity")
+///   inspect(@math.ln_1pf(@float.neg_infinity), content="NaN")
 /// }
 /// ```
 pub fn ln_1pf(x : Float) -> Float {
