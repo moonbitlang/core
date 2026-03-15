@@ -118,7 +118,7 @@ pub fn hypotf(x : Float, y : Float) -> Float {
   let x = x.abs()
   let y = y.abs()
   if x.is_inf() || y.is_inf() {
-    return @float.infinity
+    return @float.INFINITY
   }
   let (x, y) = if y > x { (y, x) } else { (x, y) }
   if x * epsilon >= y {

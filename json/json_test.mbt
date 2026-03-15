@@ -312,11 +312,11 @@ test "stringify number" {
     9223372036854775807,
     9223372036854775808,
     999999999999223372036854775808,
-    @double.min_value.to_json(),
-    @double.max_value.to_json(),
+    @double.MIN_VALUE.to_json(),
+    @double.MAX_VALUE.to_json(),
     @double.not_a_number.to_json(),
-    @double.infinity.to_json(),
-    @double.neg_infinity.to_json(),
+    @double.INFINITY.to_json(),
+    @double.NEG_INFINITY.to_json(),
   ]
   inspect(nums[0].stringify(), content="0")
   inspect(nums[1].stringify(), content="0")

@@ -35,13 +35,13 @@ pub fn Double::nan() -> Double {
 
 ///|
 /// Returns positive infinity if sign >= 0, negative infinity if sign < 0.
-#deprecated("Use `@double.infinity` and `@double.neg_infinity` instead")
+#deprecated("Use `@double.INFINITY` and `@double.NEG_INFINITY` instead")
 #coverage.skip
 pub fn Double::inf(sign : Int) -> Double {
   if sign >= 0 {
-    infinity
+    INFINITY
   } else {
-    neg_infinity
+    NEG_INFINITY
   }
 }
 
@@ -57,13 +57,13 @@ pub fn Double::inf(sign : Int) -> Double {
 ///
 /// ```mbt check
 /// test {
-///   inspect(@double.min_positive, content="2.2250738585072014e-308")
+///   inspect(@double.MIN_POSITIVE, content="2.2250738585072014e-308")
 /// }
 /// ```
-#deprecated("Use `@double.min_positive` instead")
+#deprecated("Use `@double.MIN_POSITIVE` instead")
 #coverage.skip
 pub fn Double::min_normal() -> Double {
-  min_positive
+  MIN_POSITIVE
 }
 
 ///|

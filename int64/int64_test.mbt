@@ -32,7 +32,7 @@ test "from_int" {
 
 ///|
 test "Int64::min_value" {
-  let min_value = @int64.min_value
+  let min_value = @int64.MIN_VALUE
   assert_eq(min_value, -9223372036854775808L)
 }
 
@@ -49,8 +49,8 @@ test "Int64::ctz boundary cases" {
   inspect(Int64::ctz(0L), content="64")
   inspect(Int64::ctz(1L), content="0")
   inspect(Int64::ctz(-1L), content="0")
-  inspect(Int64::ctz(@int64.min_value), content="63")
-  inspect(Int64::ctz(@int64.max_value), content="0")
+  inspect(Int64::ctz(@int64.MIN_VALUE), content="63")
+  inspect(Int64::ctz(@int64.MAX_VALUE), content="0")
 }
 
 ///|
@@ -80,8 +80,8 @@ test "Int64::ctz mixed cases" {
 test "Int64::clz boundary cases" {
   inspect(Int64::clz(0L), content="64")
   inspect(Int64::clz(1L), content="63")
-  inspect(Int64::clz(@int64.max_value), content="1")
-  inspect(Int64::clz(@int64.min_value), content="0")
+  inspect(Int64::clz(@int64.MAX_VALUE), content="1")
+  inspect(Int64::clz(@int64.MIN_VALUE), content="0")
   inspect(Int64::clz(-1L), content="0")
 }
 
@@ -106,8 +106,8 @@ test "Int64::popcnt boundary cases" {
   inspect(Int64::popcnt(0L), content="0")
   inspect(Int64::popcnt(1L), content="1")
   inspect(Int64::popcnt(-1L), content="64")
-  inspect(Int64::popcnt(@int64.min_value), content="1")
-  inspect(Int64::popcnt(@int64.max_value), content="63")
+  inspect(Int64::popcnt(@int64.MIN_VALUE), content="1")
+  inspect(Int64::popcnt(@int64.MAX_VALUE), content="63")
 }
 
 ///|

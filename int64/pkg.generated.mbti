@@ -2,8 +2,14 @@
 package "moonbitlang/core/int64"
 
 // Values
+pub const MAX_VALUE : Int64 = 9223372036854775807
+
+pub const MIN_VALUE : Int64 = -9223372036854775808
+
+#deprecated
 pub let max_value : Int64
 
+#deprecated
 pub let min_value : Int64
 
 // Errors

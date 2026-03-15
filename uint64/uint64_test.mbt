@@ -15,13 +15,13 @@
 ///|
 test "to_be_bytes" {
   inspect(
-    @uint64.max_value.to_be_bytes(),
+    @uint64.MAX_VALUE.to_be_bytes(),
     content=(
       #|b"\xff\xff\xff\xff\xff\xff\xff\xff"
     ),
   )
   inspect(
-    @uint64.min_value.to_be_bytes(),
+    @uint64.MIN_VALUE.to_be_bytes(),
     content=(
       #|b"\x00\x00\x00\x00\x00\x00\x00\x00"
     ),
@@ -37,13 +37,13 @@ test "to_be_bytes" {
 ///|
 test "to_le_bytes" {
   inspect(
-    @uint64.max_value.to_le_bytes(),
+    @uint64.MAX_VALUE.to_le_bytes(),
     content=(
       #|b"\xff\xff\xff\xff\xff\xff\xff\xff"
     ),
   )
   inspect(
-    @uint64.min_value.to_le_bytes(),
+    @uint64.MIN_VALUE.to_le_bytes(),
     content=(
       #|b"\x00\x00\x00\x00\x00\x00\x00\x00"
     ),

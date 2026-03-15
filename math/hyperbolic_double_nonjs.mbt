@@ -54,8 +54,8 @@
 ///   inspect(@math.sinh(1000.0), content="Infinity")
 ///   inspect(@math.sinh(-1000.0), content="-Infinity")
 ///   inspect(@math.sinh(@double.not_a_number), content="NaN")
-///   inspect(@math.sinh(@double.infinity), content="Infinity")
-///   inspect(@math.sinh(@double.neg_infinity), content="-Infinity")
+///   inspect(@math.sinh(@double.INFINITY), content="Infinity")
+///   inspect(@math.sinh(@double.NEG_INFINITY), content="-Infinity")
 /// }
 /// ```
 pub fn sinh(x : Double) -> Double {
@@ -114,8 +114,8 @@ pub fn sinh(x : Double) -> Double {
 ///   inspect(@math.cosh(1000.0), content="Infinity")
 ///   inspect(@math.cosh(-1000.0), content="Infinity")
 ///   inspect(@math.cosh(@double.not_a_number), content="NaN")
-///   inspect(@math.cosh(@double.infinity), content="Infinity")
-///   inspect(@math.cosh(@double.neg_infinity), content="Infinity")
+///   inspect(@math.cosh(@double.INFINITY), content="Infinity")
+///   inspect(@math.cosh(@double.NEG_INFINITY), content="Infinity")
 /// }
 /// ```
 pub fn cosh(x : Double) -> Double {
@@ -123,7 +123,7 @@ pub fn cosh(x : Double) -> Double {
     return x
   }
   if x.is_inf() {
-    return @double.infinity
+    return @double.INFINITY
   }
   let ix = get_high_word(x).reinterpret_as_int() & 0x7fffffff
   if ix < 0x3fd62e43 {
@@ -147,7 +147,7 @@ pub fn cosh(x : Double) -> Double {
     let t = 0.5 * w
     return t * w
   }
-  @double.infinity
+  @double.INFINITY
 }
 
 ///|
@@ -176,8 +176,8 @@ pub fn cosh(x : Double) -> Double {
 ///   inspect(@math.tanh(1000.0), content="1")
 ///   inspect(@math.tanh(-1000.0), content="-1")
 ///   inspect(@math.tanh(@double.not_a_number), content="NaN")
-///   inspect(@math.tanh(@double.infinity), content="1")
-///   inspect(@math.tanh(@double.neg_infinity), content="-1")
+///   inspect(@math.tanh(@double.INFINITY), content="1")
+///   inspect(@math.tanh(@double.NEG_INFINITY), content="-1")
 /// }
 /// ```
 pub fn tanh(x : Double) -> Double {
@@ -237,8 +237,8 @@ pub fn tanh(x : Double) -> Double {
 ///   inspect(@math.asinh(1000.0), content="7.600902709541988")
 ///   inspect(@math.asinh(-1000.0), content="-7.600902709541988")
 ///   inspect(@math.asinh(@double.not_a_number), content="NaN")
-///   inspect(@math.asinh(@double.infinity), content="Infinity")
-///   inspect(@math.asinh(@double.neg_infinity), content="-Infinity")
+///   inspect(@math.asinh(@double.INFINITY), content="Infinity")
+///   inspect(@math.asinh(@double.NEG_INFINITY), content="-Infinity")
 /// }
 /// ```
 pub fn asinh(x : Double) -> Double {
@@ -295,10 +295,10 @@ pub fn asinh(x : Double) -> Double {
 ///   inspect(@math.acosh(2.0), content="1.3169578969248166")
 ///   inspect(@math.acosh(1000.0), content="7.600902209541989")
 ///   inspect(@math.acosh(@double.not_a_number), content="NaN")
-///   inspect(@math.acosh(@double.infinity), content="Infinity")
+///   inspect(@math.acosh(@double.INFINITY), content="Infinity")
 ///   inspect(@math.acosh(-1.0), content="NaN")
 ///   inspect(@math.acosh(-2.0), content="NaN")
-///   inspect(@math.acosh(@double.neg_infinity), content="NaN")
+///   inspect(@math.acosh(@double.NEG_INFINITY), content="NaN")
 /// }
 /// ```
 pub fn acosh(x : Double) -> Double {
@@ -309,7 +309,7 @@ pub fn acosh(x : Double) -> Double {
   } else if x == 1.0 {
     return 0.0
   } else if x.is_pos_inf() {
-    return @double.infinity
+    return @double.INFINITY
   } else if hx >= 0x41b00000 {
     return ln(x) + LN2
   } else if hx > 0x40000000 {
@@ -348,7 +348,7 @@ pub fn acosh(x : Double) -> Double {
 ///   inspect(@math.atanh(-1.0), content="-Infinity")
 ///   inspect(@math.atanh(1.5), content="NaN")
 ///   inspect(@math.atanh(@double.not_a_number), content="NaN")
-///   inspect(@math.atanh(@double.infinity), content="NaN")
+///   inspect(@math.atanh(@double.INFINITY), content="NaN")
 /// }
 /// ```
 pub fn atanh(x : Double) -> Double {
@@ -358,10 +358,10 @@ pub fn atanh(x : Double) -> Double {
     return @double.not_a_number
   }
   if x == 1.0 {
-    return @double.infinity
+    return @double.INFINITY
   }
   if x == -1.0 {
-    return @double.neg_infinity
+    return @double.NEG_INFINITY
   }
   if ix < 0x3e300000 && 1.0e300 + x > 0.0 {
     return x

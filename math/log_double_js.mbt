@@ -105,8 +105,8 @@ pub fn log10(x : Double) -> Double = "Math" "log10"
 ///   inspect(@math.ln_1p(@double.not_a_number), content="NaN")
 ///   inspect(@math.ln_1p(-1.0), content="-Infinity")
 ///   inspect(@math.ln_1p(-2.0), content="NaN")
-///   inspect(@math.ln_1p(@double.infinity), content="Infinity")
-///   inspect(@math.ln_1p(@double.neg_infinity), content="NaN")
+///   inspect(@math.ln_1p(@double.INFINITY), content="Infinity")
+///   inspect(@math.ln_1p(@double.NEG_INFINITY), content="NaN")
 /// }
 /// ```
 pub fn ln_1p(x : Double) -> Double = "Math" "log1p"

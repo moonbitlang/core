@@ -32,8 +32,8 @@
 ///   inspect(@math.sin(-5.0), content="0.9589242746631385")
 ///   inspect(@math.sin(31415926535897.9323846), content="0.0012091232715481885")
 ///   inspect(@math.sin(@double.not_a_number), content="NaN")
-///   inspect(@math.sin(@double.infinity), content="NaN")
-///   inspect(@math.sin(@double.neg_infinity), content="NaN")
+///   inspect(@math.sin(@double.INFINITY), content="NaN")
+///   inspect(@math.sin(@double.NEG_INFINITY), content="NaN")
 /// }
 /// ```
 pub fn sin(x : Double) -> Double {
@@ -75,8 +75,8 @@ pub fn sin(x : Double) -> Double {
 ///   inspect(@math.cos(-5.0), content="0.28366218546322625")
 ///   inspect(@math.cos(31415926535897.9323846), content="0.9999992690101899")
 ///   inspect(@math.cos(@double.not_a_number), content="NaN")
-///   inspect(@math.cos(@double.infinity), content="NaN")
-///   inspect(@math.cos(@double.neg_infinity), content="NaN")
+///   inspect(@math.cos(@double.INFINITY), content="NaN")
+///   inspect(@math.cos(@double.NEG_INFINITY), content="NaN")
 /// }
 /// ```
 pub fn cos(x : Double) -> Double {

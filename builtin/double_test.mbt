@@ -27,18 +27,18 @@ test "is_close" {
   inspect(123.1.is_close(123.0, absolute_tolerance=0.1), content="true")
   inspect(123.1.is_close(123.0, relative_tolerance=0.1), content="true")
   inspect(123.1.is_close(100.0, relative_tolerance=0.1), content="false")
-  inspect(@double.infinity.is_close(@double.infinity), content="true")
-  inspect(@double.infinity.is_close(@double.neg_infinity), content="false")
-  inspect(@double.neg_infinity.is_close(@double.infinity), content="false")
-  inspect(@double.neg_infinity.is_close(@double.neg_infinity), content="true")
-  inspect(@double.not_a_number.is_close(@double.infinity), content="false")
-  inspect(@double.not_a_number.is_close(@double.neg_infinity), content="false")
+  inspect(@double.INFINITY.is_close(@double.INFINITY), content="true")
+  inspect(@double.INFINITY.is_close(@double.NEG_INFINITY), content="false")
+  inspect(@double.NEG_INFINITY.is_close(@double.INFINITY), content="false")
+  inspect(@double.NEG_INFINITY.is_close(@double.NEG_INFINITY), content="true")
+  inspect(@double.not_a_number.is_close(@double.INFINITY), content="false")
+  inspect(@double.not_a_number.is_close(@double.NEG_INFINITY), content="false")
   inspect(@double.not_a_number.is_close(@double.not_a_number), content="false")
   inspect(@double.not_a_number.is_close(123.0), content="false")
   inspect(123.1.is_close(@double.not_a_number), content="false")
-  inspect(@double.infinity.is_close(@double.not_a_number), content="false")
-  inspect(@double.neg_infinity.is_close(@double.not_a_number), content="false")
-  inspect(0.0.is_close(@double.neg_infinity), content="false")
+  inspect(@double.INFINITY.is_close(@double.not_a_number), content="false")
+  inspect(@double.NEG_INFINITY.is_close(@double.not_a_number), content="false")
+  inspect(0.0.is_close(@double.NEG_INFINITY), content="false")
 }
 
 ///|
@@ -160,37 +160,37 @@ test "Double::is_nan" {
   assert_true(@double.not_a_number.is_nan())
   assert_false(0.0.is_nan())
   assert_false(12345.678.is_nan())
-  assert_false(@double.infinity.is_nan())
-  assert_false(@double.neg_infinity.is_nan())
+  assert_false(@double.INFINITY.is_nan())
+  assert_false(@double.NEG_INFINITY.is_nan())
 }
 
 ///|
 test "Double::is_inf" {
-  assert_true(@double.infinity.is_inf())
-  assert_true(@double.neg_infinity.is_inf())
+  assert_true(@double.INFINITY.is_inf())
+  assert_true(@double.NEG_INFINITY.is_inf())
   assert_false(0.0.is_inf())
   assert_false(12345.678.is_inf())
 }
 
 ///|
 test "Double::is_pos_inf" {
-  assert_true(@double.infinity.is_pos_inf())
-  assert_false(@double.neg_infinity.is_pos_inf())
+  assert_true(@double.INFINITY.is_pos_inf())
+  assert_false(@double.NEG_INFINITY.is_pos_inf())
   assert_false(0.0.is_pos_inf())
   assert_false(12345.678.is_pos_inf())
 }
 
 ///|
 test "Double::is_neg_inf" {
-  assert_false(@double.infinity.is_neg_inf())
-  assert_true(@double.neg_infinity.is_neg_inf())
+  assert_false(@double.INFINITY.is_neg_inf())
+  assert_true(@double.NEG_INFINITY.is_neg_inf())
   assert_false(0.0.is_neg_inf())
   assert_false(12345.678.is_neg_inf())
 }
 
 ///|
 test "min equal to neg max" {
-  assert_true(@double.min_value == -@double.max_value)
+  assert_true(@double.MIN_VALUE == -@double.MAX_VALUE)
 }
 
 ///|

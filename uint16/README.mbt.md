@@ -12,10 +12,10 @@ The package defines the minimum and maximum values for UInt16:
 ///|
 test "UInt16 constants" {
   // Minimum value of UInt16
-  inspect(@uint16.min_value, content="0")
+  inspect(@uint16.MIN_VALUE, content="0")
 
   // Maximum value of UInt16
-  inspect(@uint16.max_value, content="65535")
+  inspect(@uint16.MAX_VALUE, content="65535")
 }
 ```
 
@@ -42,8 +42,8 @@ test "UInt16 arithmetic" {
   inspect(a / b, content="2")
 
   // Overflow behavior
-  inspect(@uint16.max_value + 1, content="0") // Wraps around to 0
-  inspect(@uint16.min_value - 1, content="65535") // Underflow wraps to maximum value
+  inspect(@uint16.MAX_VALUE + 1, content="0") // Wraps around to 0
+  inspect(@uint16.MIN_VALUE - 1, content="65535") // Underflow wraps to maximum value
 }
 ```
 

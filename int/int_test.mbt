@@ -70,8 +70,8 @@ test "abs function coverage" {
   inspect(Int::abs(5), content="5")
   inspect(Int::abs(-5), content="5")
   inspect(Int::abs(0), content="0")
-  assert_eq(Int::abs(@int.min_value), @int.min_value.abs())
-  assert_eq(Int::abs(@int.max_value), @int.max_value)
+  assert_eq(Int::abs(@int.MIN_VALUE), @int.MIN_VALUE.abs())
+  assert_eq(Int::abs(@int.MAX_VALUE), @int.MAX_VALUE)
 }
 
 ///|

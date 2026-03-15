@@ -24,10 +24,10 @@
 /// Returns a 32-bit unsigned integer value according to the following rules:
 ///
 /// * Returns 0 if the input is NaN
-/// * Returns `@uint.max_value` (4294967295U) if the input is greater than or
-///   equal to `@uint.max_value`
-/// * Returns `@uint.min_value` (0U) if the input is less than or equal
-///   to `@uint.min_value`
+/// * Returns `@uint.MAX_VALUE` (4294967295U) if the input is greater than or
+///   equal to `@uint.MAX_VALUE`
+/// * Returns `@uint.MIN_VALUE` (0U) if the input is less than or equal
+///   to `@uint.MIN_VALUE`
 /// * Otherwise returns the integer part of the input by truncating towards zero
 ///
 /// Example:

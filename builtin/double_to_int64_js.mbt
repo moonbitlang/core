@@ -53,10 +53,10 @@ extern "js" fn MyInt64::from_double(value : Double) -> MyInt64 =
 /// Returns an 64-bit integer value according to the following rules:
 ///
 /// * Returns 0 if the input is NaN
-/// * Returns `@int64.max_value` (9223372036854775807L) if the input is greater than or
-///   equal to `@int64.max_value`
-/// * Returns `@int64.min_value` (-9223372036854775808L) if the input is less than or equal
-///   to `@int64.min_value`
+/// * Returns `@int64.MAX_VALUE` (9223372036854775807L) if the input is greater than or
+///   equal to `@int64.MAX_VALUE`
+/// * Returns `@int64.MIN_VALUE` (-9223372036854775808L) if the input is less than or equal
+///   to `@int64.MIN_VALUE`
 /// * Otherwise returns the integer part of the input by truncating towards zero
 ///
 /// Example:

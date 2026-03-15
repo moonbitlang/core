@@ -46,8 +46,8 @@ test "sinf function comprehensive" {
 
   // Testing special values
   assert_true(@math.sinf(@float.not_a_number).is_nan())
-  assert_true(@math.sinf(@float.infinity).is_nan())
-  assert_true(@math.sinf(@float.neg_infinity).is_nan())
+  assert_true(@math.sinf(@float.INFINITY).is_nan())
+  assert_true(@math.sinf(@float.NEG_INFINITY).is_nan())
 }
 
 ///|
@@ -71,8 +71,8 @@ test "cosf function comprehensive" {
 
   // Testing special values
   inspect(@math.cosf(@float.not_a_number), content="NaN")
-  inspect(@math.cosf(@float.infinity), content="NaN")
-  inspect(@math.cosf(@float.neg_infinity), content="NaN")
+  inspect(@math.cosf(@float.INFINITY), content="NaN")
+  inspect(@math.cosf(@float.NEG_INFINITY), content="NaN")
 }
 
 ///|
@@ -100,8 +100,8 @@ test "tanf function comprehensive" {
 
   // Testing special values
   assert_true(@math.tanf(@float.not_a_number).is_nan())
-  assert_true(@math.tanf(@float.infinity).is_nan())
-  assert_true(@math.tanf(@float.neg_infinity).is_nan())
+  assert_true(@math.tanf(@float.INFINITY).is_nan())
+  assert_true(@math.tanf(@float.NEG_INFINITY).is_nan())
 }
 
 ///|
@@ -122,8 +122,8 @@ test "asinf function comprehensive" {
 
   // Testing special values
   assert_true(@math.asinf(@float.not_a_number).is_nan())
-  assert_true(@math.asinf(@float.infinity).is_nan())
-  assert_true(@math.asinf(@float.neg_infinity).is_nan())
+  assert_true(@math.asinf(@float.INFINITY).is_nan())
+  assert_true(@math.asinf(@float.NEG_INFINITY).is_nan())
 }
 
 ///|
@@ -144,8 +144,8 @@ test "acosf function comprehensive" {
 
   // Testing special values
   assert_true(@math.acosf(@float.not_a_number).is_nan())
-  assert_true(@math.acosf(@float.infinity).is_nan())
-  assert_true(@math.acosf(@float.neg_infinity).is_nan())
+  assert_true(@math.acosf(@float.INFINITY).is_nan())
+  assert_true(@math.acosf(@float.NEG_INFINITY).is_nan())
 }
 
 ///|
@@ -162,8 +162,8 @@ test "atanf function comprehensive" {
 
   // Testing special values
   assert_true(@math.atanf(@float.not_a_number).is_nan())
-  assert_true(@math.atanf(@float.infinity).is_close(1.570796251296997))
-  assert_true(@math.atanf(@float.neg_infinity).is_close(-1.570796251296997))
+  assert_true(@math.atanf(@float.INFINITY).is_close(1.570796251296997))
+  assert_true(@math.atanf(@float.NEG_INFINITY).is_close(-1.570796251296997))
 }
 
 ///|
@@ -196,15 +196,15 @@ test "atan2f function comprehensive" {
   assert_true(@math.atan2f(0.0, 0.0).is_close(0.0))
 
   // Testing with infinity
-  assert_true(@math.atan2f(@float.infinity, @float.infinity).is_close(pi / 4.0))
+  assert_true(@math.atan2f(@float.INFINITY, @float.INFINITY).is_close(pi / 4.0))
   assert_true(
-    @math.atan2f(@float.infinity, @float.neg_infinity).is_close(pi * 3.0 / 4.0),
+    @math.atan2f(@float.INFINITY, @float.NEG_INFINITY).is_close(pi * 3.0 / 4.0),
   )
   assert_true(
-    @math.atan2f(@float.neg_infinity, @float.infinity).is_close(-pi / 4.0),
+    @math.atan2f(@float.NEG_INFINITY, @float.INFINITY).is_close(-pi / 4.0),
   )
   assert_true(
-    @math.atan2f(@float.neg_infinity, @float.neg_infinity).is_close(
+    @math.atan2f(@float.NEG_INFINITY, @float.NEG_INFINITY).is_close(
       -pi * 3.0 / 4.0,
     ),
   )
@@ -323,13 +323,13 @@ test "atan2f additional edge cases" {
   let result1 = @math.atan2f(-0.0, -1.0)
   assert_true(result1.is_close(-pi))
   // Test case where x = infinity and y is negative finite
-  let result2 = @math.atan2f(-1.0, @float.infinity)
+  let result2 = @math.atan2f(-1.0, @float.INFINITY)
   assert_true(
     result2.is_close(-0.0, absolute_tolerance=1.0e-6) ||
     result2.is_close(0.0, absolute_tolerance=1.0e-6),
   )
   // Test case where x = infinity and y = neg_infinity
-  let result3 = @math.atan2f(@float.neg_infinity, @float.infinity)
+  let result3 = @math.atan2f(@float.NEG_INFINITY, @float.INFINITY)
   assert_true(result3.is_close(-pi / 4.0))
   // Test very large y compared to x (should approach ±π/2)
   let huge_y : Float = 1.0e20
@@ -449,31 +449,31 @@ test "atan2 double - zero and axis cases" {
 test "atan2 double - infinity combinations" {
   // Test x is inf, y is inf (line 369-375)
   inspect(
-    @math.atan2(@double.infinity, @double.infinity),
+    @math.atan2(@double.INFINITY, @double.INFINITY),
     content="0.7853981633974483",
   )
   inspect(
-    @math.atan2(@double.neg_infinity, @double.infinity),
+    @math.atan2(@double.NEG_INFINITY, @double.INFINITY),
     content="-0.7853981633974483",
   )
   inspect(
-    @math.atan2(@double.infinity, @double.neg_infinity),
+    @math.atan2(@double.INFINITY, @double.NEG_INFINITY),
     content="2.356194490192345",
   )
   inspect(
-    @math.atan2(@double.neg_infinity, @double.neg_infinity),
+    @math.atan2(@double.NEG_INFINITY, @double.NEG_INFINITY),
     content="-2.356194490192345",
   )
 
   // Test x is inf, y is finite (line 377-382)
-  inspect(@math.atan2(1.0, @double.infinity), content="0")
-  inspect(@math.atan2(-1.0, @double.infinity), content="0")
-  inspect(@math.atan2(1.0, @double.neg_infinity), content="3.141592653589793")
-  inspect(@math.atan2(-1.0, @double.neg_infinity), content="-3.141592653589793")
+  inspect(@math.atan2(1.0, @double.INFINITY), content="0")
+  inspect(@math.atan2(-1.0, @double.INFINITY), content="0")
+  inspect(@math.atan2(1.0, @double.NEG_INFINITY), content="3.141592653589793")
+  inspect(@math.atan2(-1.0, @double.NEG_INFINITY), content="-3.141592653589793")
 
   // Test y is inf, x is finite (line 385-386)
-  inspect(@math.atan2(@double.infinity, 1.0), content="1.5707963267948966")
-  inspect(@math.atan2(@double.neg_infinity, 1.0), content="-1.5707963267948966")
+  inspect(@math.atan2(@double.INFINITY, 1.0), content="1.5707963267948966")
+  inspect(@math.atan2(@double.NEG_INFINITY, 1.0), content="-1.5707963267948966")
 }
 
 ///|
@@ -528,7 +528,7 @@ test "rem_pio2 double - negative value coverage" {
 ///|
 test "atan2 double branch coverage" {
   inspect(@math.atan2(0.0, 2.0), content="0")
-  inspect(@math.atan2(@double.infinity, 2.0), content="1.5707963267948966")
+  inspect(@math.atan2(@double.INFINITY, 2.0), content="1.5707963267948966")
   assert_true(
     @math.atan2(1.0e200, 2.0).is_close(
       @math.PI / 2.0,
@@ -560,7 +560,7 @@ test "sin/cos huge arguments" {
 ///|
 test "atan2f branch coverage" {
   let pi = Float::from_double(@math.PI)
-  assert_true(@math.atan2f(-1.0, @float.neg_infinity).is_close(-pi))
+  assert_true(@math.atan2f(-1.0, @float.NEG_INFINITY).is_close(-pi))
   assert_true(
     @math.atan2f(1.0e20, 2.0).is_close(pi / 2.0, absolute_tolerance=1.0e-5),
   )
@@ -577,6 +577,6 @@ test "tan large argument reduction" {
     let t = @math.tan(v)
     assert_true(!t.is_nan())
   }
-  assert_true(@math.tan(@double.infinity).is_nan())
+  assert_true(@math.tan(@double.INFINITY).is_nan())
   assert_true(@math.tan(@double.not_a_number).is_nan())
 }

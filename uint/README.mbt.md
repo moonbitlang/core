@@ -13,8 +13,8 @@ test "uint basics" {
   inspect(@uint.default(), content="0")
 
   // Maximum and minimum values
-  inspect(@uint.max_value, content="4294967295")
-  inspect(@uint.min_value, content="0")
+  inspect(@uint.MAX_VALUE, content="4294967295")
+  inspect(@uint.MIN_VALUE, content="0")
 }
 ```
 

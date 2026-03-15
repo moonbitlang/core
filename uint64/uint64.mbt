@@ -14,8 +14,18 @@
 
 ///|
 /// Min value constant for this type.
+pub const MIN_VALUE : UInt64 = 0UL
+
+///|
+/// Min value constant for this type.
+#deprecated("Use `MIN_VALUE` instead")
 pub let min_value : UInt64 = 0UL
 
 ///|
 /// Max value constant for this type.
+pub const MAX_VALUE : UInt64 = 18446744073709551615UL
+
+///|
+/// Max value constant for this type.
+#deprecated("Use `MAX_VALUE` instead")
 pub let max_value : UInt64 = 18446744073709551615UL

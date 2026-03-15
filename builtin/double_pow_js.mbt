@@ -34,7 +34,7 @@
 ///   inspect(@math.pow(x, 0.0), content="1")
 ///   inspect(@math.pow(-1.0, 2.0), content="1")
 ///   inspect(@math.pow(0.0, 0.0), content="1")
-///   inspect(@math.pow(@double.infinity, -1.0), content="0")
+///   inspect(@math.pow(@double.INFINITY, -1.0), content="0")
 /// }
 /// ```
 #deprecated("Use `@math.pow` instead")

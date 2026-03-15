@@ -50,8 +50,8 @@ pub impl FromJson for Bool with from_json(json, path) {
 ///|
 pub impl FromJson for Int with from_json(json, path) {
   guard json is Number(n, ..) &&
-    n != @double.infinity &&
-    n != @double.neg_infinity else {
+    n != @double.INFINITY &&
+    n != @double.NEG_INFINITY else {
     decode_error(path, "Int::from_json: expected number")
   }
   // Range check before conversion to avoid silent wrap/truncation
@@ -78,8 +78,8 @@ pub impl FromJson for Int64 with from_json(json, path) {
 ///|
 pub impl FromJson for UInt with from_json(json, path) {
   guard json is Number(n, ..) &&
-    n != @double.infinity &&
-    n != @double.neg_infinity else {
+    n != @double.INFINITY &&
+    n != @double.NEG_INFINITY else {
     decode_error(path, "UInt::from_json: expected number")
   }
   // Range check before conversion to avoid silent wrap/truncation
@@ -106,9 +106,9 @@ pub impl FromJson for UInt64 with from_json(json, path) {
 pub impl FromJson for Double with from_json(json, path) {
   match json {
     String("NaN") => @double.not_a_number
-    String("Infinity") => @double.infinity
-    String("-Infinity") => @double.neg_infinity
-    Number(n, ..) if n != @double.infinity && n != @double.neg_infinity => n
+    String("Infinity") => @double.INFINITY
+    String("-Infinity") => @double.NEG_INFINITY
+    Number(n, ..) if n != @double.INFINITY && n != @double.NEG_INFINITY => n
     _ => decode_error(path, "Double::from_json: expected number")
   }
 }
@@ -117,9 +117,9 @@ pub impl FromJson for Double with from_json(json, path) {
 pub impl FromJson for Float with from_json(json, path) {
   match json {
     String("NaN") => @float.not_a_number
-    String("Infinity") => @float.infinity
-    String("-Infinity") => @float.neg_infinity
-    Number(n, ..) if n != @double.infinity && n != @double.neg_infinity =>
+    String("Infinity") => @float.INFINITY
+    String("-Infinity") => @float.NEG_INFINITY
+    Number(n, ..) if n != @double.INFINITY && n != @double.NEG_INFINITY =>
       Float::from_double(n)
     _ => decode_error(path, "Float::from_json: expected number")
   }

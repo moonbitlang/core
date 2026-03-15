@@ -2,8 +2,14 @@
 package "moonbitlang/core/uint64"
 
 // Values
+pub const MAX_VALUE : UInt64 = 18446744073709551615
+
+pub const MIN_VALUE : UInt64 = 0
+
+#deprecated
 pub let max_value : UInt64
 
+#deprecated
 pub let min_value : UInt64
 
 // Errors

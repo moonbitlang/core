@@ -2,11 +2,17 @@
 package "moonbitlang/core/int"
 
 // Values
+pub const MAX_VALUE : Int = 2147483647
+
+pub const MIN_VALUE : Int = -2147483648
+
 #deprecated
 pub fn abs(Int) -> Int
 
+#deprecated
 pub let max_value : Int
 
+#deprecated
 pub let min_value : Int
 
 // Errors

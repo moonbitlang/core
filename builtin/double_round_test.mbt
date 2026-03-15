@@ -18,10 +18,10 @@ test "trunc" {
     @double.not_a_number.trunc().reinterpret_as_uint64(),
     @double.not_a_number.reinterpret_as_uint64(),
   )
-  assert_eq(@double.infinity.trunc(), @double.infinity)
-  assert_eq(@double.neg_infinity.trunc(), @double.neg_infinity)
-  assert_eq(@double.max_value.trunc(), @double.max_value)
-  assert_eq(@double.min_value.trunc(), @double.min_value)
+  assert_eq(@double.INFINITY.trunc(), @double.INFINITY)
+  assert_eq(@double.NEG_INFINITY.trunc(), @double.NEG_INFINITY)
+  assert_eq(@double.MAX_VALUE.trunc(), @double.MAX_VALUE)
+  assert_eq(@double.MIN_VALUE.trunc(), @double.MIN_VALUE)
   assert_eq(0.0.trunc(), 0.0)
   assert_eq((-0.0).trunc(), -0.0)
   assert_eq(0.001.trunc(), 0.0)
@@ -53,10 +53,10 @@ test "ceil" {
     @double.not_a_number.ceil().reinterpret_as_uint64(),
     @double.not_a_number.reinterpret_as_uint64(),
   )
-  assert_eq(@double.infinity.ceil(), @double.infinity)
-  assert_eq(@double.neg_infinity.ceil(), @double.neg_infinity)
-  assert_eq(@double.max_value.ceil(), @double.max_value)
-  assert_eq(@double.min_value.ceil(), @double.min_value)
+  assert_eq(@double.INFINITY.ceil(), @double.INFINITY)
+  assert_eq(@double.NEG_INFINITY.ceil(), @double.NEG_INFINITY)
+  assert_eq(@double.MAX_VALUE.ceil(), @double.MAX_VALUE)
+  assert_eq(@double.MIN_VALUE.ceil(), @double.MIN_VALUE)
   assert_eq(0.0.ceil(), 0.0)
   assert_eq((-0.0).ceil(), -0.0)
   assert_eq(0.001.ceil(), 1.0)
@@ -88,10 +88,10 @@ test "floor" {
     @double.not_a_number.floor().reinterpret_as_uint64(),
     @double.not_a_number.reinterpret_as_uint64(),
   )
-  assert_eq(@double.infinity.floor(), @double.infinity)
-  assert_eq(@double.neg_infinity.floor(), @double.neg_infinity)
-  assert_eq(@double.max_value.floor(), @double.max_value)
-  assert_eq(@double.min_value.floor(), @double.min_value)
+  assert_eq(@double.INFINITY.floor(), @double.INFINITY)
+  assert_eq(@double.NEG_INFINITY.floor(), @double.NEG_INFINITY)
+  assert_eq(@double.MAX_VALUE.floor(), @double.MAX_VALUE)
+  assert_eq(@double.MIN_VALUE.floor(), @double.MIN_VALUE)
   assert_eq(0.0.floor(), 0.0)
   assert_eq((-0.0).floor(), -0.0)
   assert_eq(0.001.floor(), 0.0)
@@ -123,10 +123,10 @@ test "round" {
     @double.not_a_number.round().reinterpret_as_uint64(),
     @double.not_a_number.reinterpret_as_uint64(),
   )
-  assert_eq(@double.infinity.round(), @double.infinity)
-  assert_eq(@double.neg_infinity.round(), @double.neg_infinity)
-  assert_eq(@double.max_value.round(), @double.max_value)
-  assert_eq(@double.min_value.round(), @double.min_value)
+  assert_eq(@double.INFINITY.round(), @double.INFINITY)
+  assert_eq(@double.NEG_INFINITY.round(), @double.NEG_INFINITY)
+  assert_eq(@double.MAX_VALUE.round(), @double.MAX_VALUE)
+  assert_eq(@double.MIN_VALUE.round(), @double.MIN_VALUE)
   assert_eq(0.0.round(), 0.0)
   assert_eq((-0.0).round(), -0.0)
   assert_eq(0.001.round(), 0.0)

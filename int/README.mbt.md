@@ -14,8 +14,8 @@ test "basic int operations" {
   inspect(Int::abs(42), content="42")
 
   // Access min/max values
-  inspect(@int.min_value, content="-2147483648")
-  inspect(@int.max_value, content="2147483647")
+  inspect(@int.MIN_VALUE, content="-2147483648")
+  inspect(@int.MAX_VALUE, content="2147483647")
 }
 ```
 

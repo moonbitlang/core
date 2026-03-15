@@ -9,8 +9,8 @@ The package provides constants for the minimum and maximum values of a byte:
 ```mbt check
 ///|
 test "byte constants" {
-  inspect(@byte.min_value, content="b'\\x00'")
-  inspect(@byte.max_value, content="b'\\xFF'")
+  inspect(@byte.MIN_VALUE, content="b'\\x00'")
+  inspect(@byte.MAX_VALUE, content="b'\\xFF'")
 }
 ```
 

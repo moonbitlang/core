@@ -14,10 +14,20 @@
 
 ///|
 /// Maximum value of an integer.
+pub const MAX_VALUE = 2147483647
+
+///|
+/// Maximum value of an integer.
+#deprecated("Use `MAX_VALUE` instead")
 pub let max_value = 2147483647
 
 ///|
 /// Minimum value of an integer.
+pub const MIN_VALUE = -2147483648
+
+///|
+/// Minimum value of an integer.
+#deprecated("Use `MIN_VALUE` instead")
 pub let min_value = -2147483648
 
 ///|

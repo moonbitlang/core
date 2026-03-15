@@ -14,8 +14,8 @@ test "basic operations" {
   inspect(Int64::from_int(-12345) == i, content="true")
 
   // Max and min values
-  inspect(@int64.max_value, content="9223372036854775807")
-  inspect(@int64.min_value, content="-9223372036854775808")
+  inspect(@int64.MAX_VALUE, content="9223372036854775807")
+  inspect(@int64.MIN_VALUE, content="-9223372036854775808")
 
   // Absolute value
   inspect(Int64::abs(i), content="12345")

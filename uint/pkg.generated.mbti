@@ -2,10 +2,16 @@
 package "moonbitlang/core/uint"
 
 // Values
+pub const MAX_VALUE : UInt = 4294967295
+
+pub const MIN_VALUE : UInt = 0
+
 pub fn default() -> UInt
 
+#deprecated
 pub let max_value : UInt
 
+#deprecated
 pub let min_value : UInt
 
 // Errors

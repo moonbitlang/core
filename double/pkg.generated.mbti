@@ -2,6 +2,16 @@
 package "moonbitlang/core/double"
 
 // Values
+pub const INFINITY : Double = 0x1.0p1024
+
+pub const MAX_VALUE : Double = 0x1.fffffffffffffp1023
+
+pub const MIN_POSITIVE : Double = 0x1.0p-1022
+
+pub const MIN_VALUE : Double = -0x1.fffffffffffffp1023
+
+pub const NEG_INFINITY : Double = -0x1.0p1024
+
 #deprecated
 pub fn abs(Double) -> Double
 
@@ -12,17 +22,22 @@ pub fn floor(Double) -> Double
 #deprecated
 pub fn from_int(Int) -> Double
 
+#deprecated
 pub let infinity : Double
 
 #deprecated
 pub fn is_close(Double, Double, relative_tolerance? : Double, absolute_tolerance? : Double) -> Bool
 
+#deprecated
 pub let max_value : Double
 
+#deprecated
 pub let min_positive : Double
 
+#deprecated
 pub let min_value : Double
 
+#deprecated
 pub let neg_infinity : Double
 
 pub let not_a_number : Double

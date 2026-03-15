@@ -22,8 +22,8 @@
 ///
 /// Returns an integer representation of the float value. Specifically:
 /// * `0` for `@float.not_a_number` (NaN),
-/// * `@int.max_value` (2147483647) for values greater than `@int.max_value`,
-/// * `@int.min_value` (-2147483648) for values less than `@int.min_value`.
+/// * `@int.MAX_VALUE` (2147483647) for values greater than `@int.MAX_VALUE`,
+/// * `@int.MIN_VALUE` (-2147483648) for values less than `@int.MIN_VALUE`.
 /// * truncated (towards zero) integer value for other cases.
 ///
 /// Examples:
@@ -33,8 +33,8 @@
 ///   inspect((1.5 : Float).to_int(), content="1")
 ///   inspect((-1.5 : Float).to_int(), content="-1")
 ///   inspect(@float.not_a_number.to_int(), content="0")
-///   inspect(@float.infinity.to_int(), content="2147483647")
-///   inspect(@float.neg_infinity.to_int(), content="-2147483648")
+///   inspect(@float.INFINITY.to_int(), content="2147483647")
+///   inspect(@float.NEG_INFINITY.to_int(), content="-2147483648")
 /// }
 /// ```
 pub fn Float::to_int(self : Float) -> Int = "%f32.to_i32_saturate"

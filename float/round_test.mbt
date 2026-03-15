@@ -18,10 +18,10 @@ test "trunc" {
     @float.not_a_number.trunc().reinterpret_as_uint(),
     @float.not_a_number.reinterpret_as_uint(),
   )
-  assert_eq(@float.infinity.trunc(), @float.infinity)
-  assert_eq(@float.neg_infinity.trunc(), @float.neg_infinity)
-  assert_eq(@float.max_value.trunc(), @float.max_value)
-  assert_eq(@float.min_value.trunc(), @float.min_value)
+  assert_eq(@float.INFINITY.trunc(), @float.INFINITY)
+  assert_eq(@float.NEG_INFINITY.trunc(), @float.NEG_INFINITY)
+  assert_eq(@float.MAX_VALUE.trunc(), @float.MAX_VALUE)
+  assert_eq(@float.MIN_VALUE.trunc(), @float.MIN_VALUE)
   assert_eq((0.0 : Float).trunc(), 0.0)
   assert_eq((-0.0 : Float).trunc(), -0.0)
   assert_eq((0.001 : Float).trunc(), 0.0)
@@ -52,10 +52,10 @@ test "ceil" {
     @float.not_a_number.ceil().reinterpret_as_uint(),
     @float.not_a_number.reinterpret_as_uint(),
   )
-  assert_eq(@float.infinity.ceil(), @float.infinity)
-  assert_eq(@float.neg_infinity.ceil(), @float.neg_infinity)
-  assert_eq(@float.max_value.ceil(), @float.max_value)
-  assert_eq(@float.min_value.ceil(), @float.min_value)
+  assert_eq(@float.INFINITY.ceil(), @float.INFINITY)
+  assert_eq(@float.NEG_INFINITY.ceil(), @float.NEG_INFINITY)
+  assert_eq(@float.MAX_VALUE.ceil(), @float.MAX_VALUE)
+  assert_eq(@float.MIN_VALUE.ceil(), @float.MIN_VALUE)
   assert_eq((0.0 : Float).ceil(), 0.0)
   assert_eq((-0.0 : Float).ceil(), -0.0)
   assert_eq((0.001 : Float).ceil(), 1.0)
@@ -86,10 +86,10 @@ test "floor" {
     @float.not_a_number.floor().reinterpret_as_uint(),
     @float.not_a_number.reinterpret_as_uint(),
   )
-  assert_eq(@float.infinity.floor(), @float.infinity)
-  assert_eq(@float.neg_infinity.floor(), @float.neg_infinity)
-  assert_eq(@float.max_value.floor(), @float.max_value)
-  assert_eq(@float.min_value.floor(), @float.min_value)
+  assert_eq(@float.INFINITY.floor(), @float.INFINITY)
+  assert_eq(@float.NEG_INFINITY.floor(), @float.NEG_INFINITY)
+  assert_eq(@float.MAX_VALUE.floor(), @float.MAX_VALUE)
+  assert_eq(@float.MIN_VALUE.floor(), @float.MIN_VALUE)
   assert_eq((0.0 : Float).floor(), 0.0)
   assert_eq((-0.0 : Float).floor(), -0.0)
   assert_eq((0.001 : Float).floor(), 0.0)
@@ -120,10 +120,10 @@ test "round" {
     @float.not_a_number.round().reinterpret_as_uint(),
     @float.not_a_number.reinterpret_as_uint(),
   )
-  assert_eq(@float.infinity.round(), @float.infinity)
-  assert_eq(@float.neg_infinity.round(), @float.neg_infinity)
-  assert_eq(@float.max_value.round(), @float.max_value)
-  assert_eq(@float.min_value.round(), @float.min_value)
+  assert_eq(@float.INFINITY.round(), @float.INFINITY)
+  assert_eq(@float.NEG_INFINITY.round(), @float.NEG_INFINITY)
+  assert_eq(@float.MAX_VALUE.round(), @float.MAX_VALUE)
+  assert_eq(@float.MIN_VALUE.round(), @float.MIN_VALUE)
   assert_eq((0.0 : Float).round(), 0.0)
   assert_eq((-0.0 : Float).round(), -0.0)
   assert_eq((0.001 : Float).round(), 0.0)
