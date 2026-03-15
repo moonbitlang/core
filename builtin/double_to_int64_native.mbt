@@ -59,31 +59,30 @@ pub fn Double::to_int64(self : Double) -> Int64 {
 fn Double::to_unchecked_uint64(self : Double) -> UInt64 = "%f64_to_i64"
 
 ///|
-/// Converts a double-precision floating-point number to a 64-bit integer.
-/// Handles special cases including NaN and numbers outside the valid Int range.
+/// Converts a double-precision floating-point number to a 64-bit unsigned
+/// integer. Handles special cases including NaN and numbers outside the valid
+/// UInt64 range.
 ///
 /// Parameters:
 ///
 /// * `self` : The double-precision floating-point number to be converted.
 ///
-/// Returns an 64-bit integer value according to the following rules:
+/// Returns a 64-bit unsigned integer value according to the following rules:
 ///
 /// * Returns 0 if the input is NaN
-/// * Returns `@int64.MAX_VALUE` (9223372036854775807L) if the input is greater than or
-///   equal to `@int64.MAX_VALUE`
-/// * Returns `@int64.MIN_VALUE` (-9223372036854775808L) if the input is less than or equal
-///   to `@int64.MIN_VALUE`
+/// * Returns `@uint64.MAX_VALUE` (18446744073709551615UL) if the input is
+///   greater than or equal to 9223372036854775807
+/// * Returns 0 if the input is less than or equal to 0
 /// * Otherwise returns the integer part of the input by truncating towards zero
 ///
 /// Example:
 ///
 /// ```mbt check
 /// test {
-///   inspect(42.0.to_int64(), content="42")
-///   inspect((-42.5).to_int64(), content="-42")
-///   inspect((0.0 / 0.0).to_int64(), content="0") // NaN
-///   inspect((1.0 / 0.0).to_int64(), content="9223372036854775807") // Infinity
-///   inspect((-1.0 / 0.0).to_int64(), content="-9223372036854775808") // -Infinity
+///   inspect(42.0.to_uint64(), content="42")
+///   inspect((0.0 / 0.0).to_uint64(), content="0") // NaN
+///   inspect((1.0 / 0.0).to_uint64(), content="18446744073709551615") // Infinity
+///   inspect((-1.0 / 0.0).to_uint64(), content="0") // -Infinity
 /// }
 /// ```
 pub fn Double::to_uint64(self : Double) -> UInt64 {
