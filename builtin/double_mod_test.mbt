@@ -37,9 +37,9 @@ test "mod" {
   inspect(0.5 % 1.5e-323, content="1e-323")
   inspect(4.0e-310 % 3.0e-310, content="1e-310")
   // inf
-  inspect(1.0 % @double.INFINITY, content="1")
-  assert_true((@double.INFINITY % @double.INFINITY).is_nan())
-  assert_true((@double.INFINITY % 1).is_nan())
+  inspect(1.0 % @double.infinity, content="1")
+  assert_true((@double.infinity % @double.infinity).is_nan())
+  assert_true((@double.infinity % 1).is_nan())
   // division by zero
   assert_true((1.0 % 0).is_nan())
   assert_true((1.0 % -0).is_nan())

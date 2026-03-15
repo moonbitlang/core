@@ -123,7 +123,7 @@ test "scalbn" {
   inspect(scalbn(1.0, -1992), content="0")
   inspect(scalbn(1.0, 3070), content="Infinity")
   inspect(scalbn(1.0, -2961), content="0")
-  inspect(scalbn(@double.INFINITY, 10), content="Infinity")
+  inspect(scalbn(@double.infinity, 10), content="Infinity")
   inspect(scalbn(@double.not_a_number, 10), content="NaN")
   inspect(scalbn(0.0, 10), content="0")
 }

@@ -190,8 +190,8 @@ pub fn exp(x : Double) -> Double {
 ///   inspect(@math.expm1(-1.0), content="-0.6321205588285577")
 ///   inspect(@math.expm1(-2.0), content="-0.8646647167633873")
 ///   inspect(@math.expm1(@double.not_a_number), content="NaN")
-///   inspect(@math.expm1(@double.INFINITY), content="Infinity")
-///   inspect(@math.expm1(@double.NEG_INFINITY), content="-1")
+///   inspect(@math.expm1(@double.infinity), content="Infinity")
+///   inspect(@math.expm1(@double.neg_infinity), content="-1")
 /// }
 /// ```
 pub fn expm1(x : Double) -> Double {
@@ -200,7 +200,7 @@ pub fn expm1(x : Double) -> Double {
   }
   let o_threshold = 7.09782712893383973096e+02
   if x > o_threshold {
-    return @double.INFINITY
+    return @double.infinity
   }
   if x.is_inf() {
     return -1.0

@@ -150,8 +150,8 @@ pub fn Float::to_le_bytes(self : Float) -> Bytes {
 ///
 /// ```mbt check
 /// test {
-///   inspect(@float.INFINITY.is_inf(), content="true")
-///   inspect(@float.NEG_INFINITY.is_inf(), content="true")
+///   inspect(@float.infinity.is_inf(), content="true")
+///   inspect(@float.neg_infinity.is_inf(), content="true")
 ///   inspect((1.0 : Float).is_inf(), content="false")
 /// }
 /// ```
@@ -172,13 +172,13 @@ pub fn Float::is_inf(self : Float) -> Bool {
 ///
 /// ```mbt check
 /// test {
-///   inspect(@float.INFINITY.is_pos_inf(), content="true")
+///   inspect(@float.infinity.is_pos_inf(), content="true")
 ///   inspect((1.0 : Float).is_pos_inf(), content="false")
-///   inspect(@float.NEG_INFINITY.is_pos_inf(), content="false")
+///   inspect(@float.neg_infinity.is_pos_inf(), content="false")
 /// }
 /// ```
 pub fn Float::is_pos_inf(self : Float) -> Bool {
-  self > MAX_VALUE
+  self > max_value
 }
 
 ///|
@@ -194,13 +194,13 @@ pub fn Float::is_pos_inf(self : Float) -> Bool {
 ///
 /// ```mbt check
 /// test {
-///   inspect(@float.NEG_INFINITY.is_neg_inf(), content="true")
+///   inspect(@float.neg_infinity.is_neg_inf(), content="true")
 ///   inspect((1.0 : Float).is_neg_inf(), content="false")
-///   inspect(@float.INFINITY.is_neg_inf(), content="false")
+///   inspect(@float.infinity.is_neg_inf(), content="false")
 /// }
 /// ```
 pub fn Float::is_neg_inf(self : Float) -> Bool {
-  self < MIN_VALUE
+  self < min_value
 }
 
 ///|
@@ -218,7 +218,7 @@ pub fn Float::is_neg_inf(self : Float) -> Bool {
 /// test {
 ///   inspect(@float.not_a_number.is_nan(), content="true")
 ///   inspect((1.0 : Float).is_nan(), content="false")
-///   inspect(@float.INFINITY.is_nan(), content="false")
+///   inspect(@float.infinity.is_nan(), content="false")
 /// }
 /// ```
 pub fn Float::is_nan(self : Float) -> Bool {
@@ -356,7 +356,7 @@ pub fn Float::signum(self : Float) -> Float {
 ///   let y = 1.000000001
 ///   inspect(x.is_close(y), content="false")
 ///   inspect(x.is_close(y, relative_tolerance=1.0e-10), content="false")
-///   inspect(@float.INFINITY.is_close(@float.INFINITY), content="true")
+///   inspect(@float.infinity.is_close(@float.infinity), content="true")
 /// }
 /// ```
 pub fn Float::is_close(
