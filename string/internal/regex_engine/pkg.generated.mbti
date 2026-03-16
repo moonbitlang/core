@@ -57,7 +57,7 @@ pub fn MatchResult::group(Self, Int) -> (Int, Int)?
 pub impl @debug.Debug for MatchResult
 
 type Regex
-pub fn[T : Input] Regex::execute(Self, T, Int) -> MatchResult?
+pub fn Regex::execute(Self, StringView, Int) -> MatchResult?
 pub fn Regex::group_names(Self) -> ReadOnlyArray[String?]
 
 // Type aliases
@@ -80,10 +80,4 @@ pub type Rechar = Int
 pub using @rechar_set {type RecharSet}
 
 // Traits
-pub trait Input {
-  length(Self) -> Int
-  get(Self, Int) -> Int
-}
-pub impl Input for BytesView
-pub impl Input for StringView
 
