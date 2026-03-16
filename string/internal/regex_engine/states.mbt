@@ -18,15 +18,17 @@ fn Regex::get_state(self : Regex, state_id : StateId) -> @automata.State {
 }
 
 ///|
-fn Regex::stablize_start_state(self : Regex, cat : Category) -> StateId {
+fn Regex::stablize_start_state(self : Regex, prev_cat : Category) -> StateId {
   for i in 0..<self.start_states.length() {
-    let (cat2, state_id) = self.start_states[i]
-    if cat2 == cat {
+    let (cat, state_id) = self.start_states[i]
+    if cat == prev_cat {
       return state_id
     }
   }
-  let state_id = self.stablize_state(@automata.State::start(cat, self.expr))
-  self.start_states.push((cat, state_id))
+  let state_id = self.stablize_state(
+    @automata.State::start(prev_cat, self.expr),
+  )
+  self.start_states.push((prev_cat, state_id))
   state_id
 }
 
@@ -90,32 +92,27 @@ fn Regex::stablize_final(
   self : Regex,
   state_id : StateId,
   state : @automata.State,
-  symbol : Rechar,
+  next_cat : Category,
 ) -> (@automata.Slot, @automata.Status) {
   let state_index = state_id.index()
-  let final_cat = category_from_symbol(
-    profile=self.profile,
-    symbol_repr=self.symbol_repr,
-    symbol,
-  )
   loop self.final_table[state_index] {
     Empty => {
       let next_state = @automata.delta(
         ctx=self.ctx,
         state,
         NULL_SYMBOL,
-        next_cat=final_cat,
+        next_cat~,
       )
       let slot = next_state.slot()
       let status = next_state.status()
       self.final_table[state_index] = @list.cons(
-        (final_cat, slot, status),
+        (next_cat, slot, status),
         self.final_table[state_index],
       )
       (slot, status)
     }
     More(head, tail~) =>
-      if head.0 == final_cat {
+      if head.0 == next_cat {
         (head.1, head.2)
       } else {
         continue tail

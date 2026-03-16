@@ -54,18 +54,17 @@ pub fn Regex::execute(
 ) -> MatchResult? {
   guard last_index >= 0 && last_index <= input.length() else { panic() }
   let symbol_table = self.symbol_table
-  let start_cat = if last_index == 0 {
-    Category::inexistant()
-  } else {
-    let prev = input.unsafe_get(last_index - 1).to_int()
-    let prev_symbol = symbol_table.map(prev)
-    category_from_symbol(
-      profile=self.profile,
-      symbol_repr=self.symbol_repr,
-      prev_symbol,
-    )
-  }
-  let start_state_id = self.stablize_start_state(start_cat)
+  let prev_cat = category_from_symbol(
+    profile=self.profile,
+    symbol_repr=self.symbol_repr,
+    if last_index == 0 {
+      NULL_SYMBOL
+    } else {
+      let ch = input.unsafe_get(last_index - 1).to_int()
+      symbol_table.map(ch)
+    },
+  )
+  let start_state_id = self.stablize_start_state(prev_cat)
   let positions = Positions::new()
   let mut transition_table = self.transition_table
   let data = input.data()
@@ -105,11 +104,9 @@ pub fn Regex::execute(
   let matched = match state.status() {
     Failed => None
     Running => {
-      // Some states require checking the next character's category to determine
-      // whether they match (e.g., for end-of-input anchors or boundary assertions)
-      let (slot, status) = self.stablize_final(
-        state_id,
-        state,
+      let next_cat = category_from_symbol(
+        profile=self.profile,
+        symbol_repr=self.symbol_repr,
         if pos >= end {
           NULL_SYMBOL
         } else {
@@ -117,6 +114,9 @@ pub fn Regex::execute(
           symbol_table.map(ch)
         },
       )
+      // Some states require checking the next character's category to determine
+      // whether they match (e.g., for end-of-input anchors or boundary assertions)
+      let (slot, status) = self.stablize_final(state_id, state, next_cat)
       match status {
         Failed | Running => None
         Match(marks) => {
