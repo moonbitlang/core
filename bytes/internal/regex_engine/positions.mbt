@@ -17,24 +17,26 @@ priv struct Positions(Array[Int])
 
 ///|
 fn Positions::new() -> Positions {
-  Positions([])
+  Positions(Array::make(8, -1))
 }
 
 ///|
 #alias("_[_]=_")
 fn Positions::set(self : Positions, slot : @automata.Slot, pos : Int) -> Unit {
-  if slot.0 >= self.0.length() {
-    self.0.resize(slot.0 + 1, -1)
+  // Slot::unassigned() uses index 0, so writing it is harmless and keeps this path branchless.
+  if slot.index >= self.0.length() {
+    self.0.resize(slot.index + 8, -1)
   }
-  self.0[slot.0] = pos
+  self.0[slot.index] = pos
 }
 
 ///|
 #alias("_[_]")
 fn Positions::get(self : Positions, slot : @automata.Slot) -> Int {
-  if slot.0 >= self.0.length() {
+  debug_assert(() => slot.is_assigned())
+  if slot.index >= self.0.length() {
     -1
   } else {
-    self.0[slot.0]
+    self.0[slot.index]
   }
 }
