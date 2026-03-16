@@ -21,7 +21,7 @@
 ///
 /// # Special Value
 ///
-/// A slot value of -1 represents an "unassigned" slot, indicating that a slot
+/// A slot with index = 0 represents an "unassigned" slot, indicating that a slot
 /// has not been assigned. This is checked via `is_assigned()`.
 ///
 /// # How It Works
@@ -31,18 +31,26 @@
 ///    position is stored at that slot index in the `Positions` storage
 /// 3. After matching completes, captured substrings are extracted using
 ///    `MarkSlotMap` (mark → slot mapping) + `Positions` (slot → position values)
-pub struct Slot(Int) derive(Eq, Hash)
+#valtype
+pub struct Slot {
+  index : Int
+} derive(Eq, Hash)
 
 ///|
-/// Returns the special unassigned slot value (-1).
+fn Slot::from_index(index : Int) -> Slot {
+  { index, }
+}
+
+///|
+/// Returns the special unassigned slot value (index = 0).
 ///
 /// Note: This is the only slot value that is considered "unassigned".
 pub fn Slot::unassigned() -> Slot {
-  Slot(-1)
+  { index: 0 }
 }
 
 ///|
 /// Return whether the value assigned.
 pub fn Slot::is_assigned(self : Slot) -> Bool {
-  self.0 != -1
+  self.index > 0
 }

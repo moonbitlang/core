@@ -52,9 +52,9 @@ pub fn MarkSlotMap::iter2(Self) -> Iter2[Mark, Slot]
 pub impl Eq for MarkSlotMap
 pub impl Hash for MarkSlotMap
 
-pub struct Slot(Int)
-#deprecated
-pub fn Slot::inner(Self) -> Int
+pub struct Slot {
+  index : Int
+}
 pub fn Slot::is_assigned(Self) -> Bool
 pub fn Slot::unassigned() -> Self
 pub impl Eq for Slot

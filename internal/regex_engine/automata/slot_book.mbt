@@ -34,14 +34,15 @@ priv struct SlotBook(FixedArray[Int])
 
 ///|
 fn SlotBook::empty() -> SlotBook {
-  SlotBook(FixedArray::make(4, 0))
+  let book = SlotBook(FixedArray::make(4, 0))
+  book.0[0] = 1 // Reserve index 0 as unassigned slot
+  book
 }
 
 ///|
 fn SlotBook::mark_used(self : SlotBook, slot : Slot) -> Unit {
-  guard slot.is_assigned() else { () }
-  let index = slot.0 / 32
-  let bit = slot.0 % 32
+  let index = slot.index / 32
+  let bit = slot.index % 32
   self.0[index] = self.0[index] | (1 << bit)
 }
 
@@ -50,10 +51,10 @@ fn SlotBook::find_unused(self : SlotBook) -> Slot {
   for i = 0; i < self.0.length(); i = i + 1 {
     if self.0[i] != -1 {
       let bit = self.0[i].lnot().ctz()
-      return Slot(i * 32 + bit)
+      return Slot::from_index(i * 32 + bit)
     }
   }
-  Slot(self.0.length() * 32)
+  Slot::from_index(self.0.length() * 32)
 }
 
 ///|
@@ -73,7 +74,7 @@ fn next_pow_of_two(n : Int) -> Int {
 
 ///|
 fn SlotBook::need_grow(self : SlotBook, slot : Slot) -> Bool {
-  slot.0 >= 32 * self.0.length()
+  slot.index >= 32 * self.0.length()
 }
 
 ///|

@@ -123,14 +123,12 @@ pub fn[T : Input] Regex::execute(
     }
     let state = states.unsafe_get(state_id)
     let slot = state.desc.slot()
-    if slot.is_assigned() {
-      // NOTE: we manually inline `Positions::set` here to avoid the overhead
-      // of callee-owned RC (reference counting) operations.
-      if slot.0 >= positions.0.length() {
-        positions.0.resize(slot.0 + 1, -1)
-      }
-      positions.0[slot.0] = pos
+    // NOTE: we manually inline `Positions::set` here to avoid the overhead
+    // of callee-owned RC (reference counting) operations.
+    if slot.index >= positions.0.length() {
+      positions.0.resize(slot.index + 8, -1)
     }
+    positions.0[slot.index] = pos
     if state.kind is Break {
       break
     }
