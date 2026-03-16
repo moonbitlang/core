@@ -90,9 +90,14 @@ fn Regex::stablize_final(
   self : Regex,
   state_id : StateId,
   state : @automata.State,
-  final_cat : Category,
+  symbol : Rechar,
 ) -> (@automata.Slot, @automata.Status) {
   let state_index = state_id.index()
+  let final_cat = category_from_symbol(
+    profile=self.profile,
+    symbol_repr=self.symbol_repr,
+    symbol,
+  )
   loop self.final_table[state_index] {
     Empty => {
       let next_state = @automata.delta(

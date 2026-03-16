@@ -29,22 +29,6 @@ let profile : @regex_engine.Profile = Profile(
 )
 
 ///|
-let profile_ascii : @regex_engine.Profile = Profile(
-  valid=@regex_engine.RecharSet::char_range(0, 0x7f),
-  word=@regex_engine.RecharSet::char_range('a', 'z') +
-    @regex_engine.RecharSet::char_range('A', 'Z') +
-    @regex_engine.RecharSet::char_range('0', '9') +
-    @regex_engine.RecharSet::char('_'),
-  category=c => {
-    match c {
-      'a'..='z' | 'A'..='Z' | '0'..='9' | '_' => @regex_engine.Category::word()
-      '\n' => @regex_engine.Category::newline()
-      _ => @regex_engine.Category::not_word()
-    }
-  },
-)
-
-///|
 test "abc" {
   let pat = @regex_engine.seq([
     @regex_engine.char(@regex_engine.RecharSet::char('a')),
@@ -68,7 +52,7 @@ test "anchored start-of-input mismatch" {
 }
 
 ///|
-test "execute with lastIndex and cached transitions/start-state" {
+test "execute with last_index and cached transitions/start-state" {
   let pat = @regex_engine.char(@regex_engine.RecharSet::char('a'))
   let re = @regex_engine.compile(profile~, pat)
   guard re.execute("ba"[:], 1) is Some(mr) else { fail("Expected match") }
@@ -79,7 +63,7 @@ test "execute with lastIndex and cached transitions/start-state" {
 }
 
 ///|
-test "execute with lastIndex and cached failure transitions" {
+test "execute with last_index and cached failure transitions" {
   let pat = @regex_engine.char(@regex_engine.RecharSet::char('a'))
   let re = @regex_engine.compile(profile~, pat)
   assert_true(re.execute("bb"[:], 1) is None)
@@ -218,14 +202,6 @@ test "word boundary assertions" {
   let re3 = @regex_engine.compile(profile~, pat3)
   guard re3.execute("ab"[:], 0) is Some(mr3) else { fail("Expected match") }
   assert_eq(mr3.group(0), Some((0, 2)))
-}
-
-///|
-test "bytesview input" {
-  let pat = @regex_engine.char(@regex_engine.RecharSet::char('a'))
-  let re = @regex_engine.compile(profile=profile_ascii, pat)
-  guard re.execute(b"a"[:], 0) is Some(mr) else { fail("Expected match") }
-  assert_eq(mr.group(0), Some((0, 1)))
 }
 
 ///|

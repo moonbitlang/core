@@ -47,19 +47,17 @@ pub fn MatchResult::group(self : MatchResult, index : Int) -> (Int, Int)? {
 
 ///|
 /// Execute using this compiled object.
-pub fn[T : Input] Regex::execute(
+pub fn Regex::execute(
   self : Regex,
-  input : T,
-  lastIndex : Int,
+  input : StringView,
+  last_index : Int,
 ) -> MatchResult? {
-  guard lastIndex >= 0 && lastIndex <= input.length() else { panic() }
+  guard last_index >= 0 && last_index <= input.length() else { panic() }
   let symbol_table = self.symbol_table
-  let mut pos = lastIndex
-  let end = input.length()
-  let start_cat = if pos == 0 {
+  let start_cat = if last_index == 0 {
     Category::inexistant()
   } else {
-    let prev = input.get(pos - 1)
+    let prev = input.unsafe_get(last_index - 1).to_int()
     let prev_symbol = symbol_table.map(prev)
     category_from_symbol(
       profile=self.profile,
@@ -70,9 +68,12 @@ pub fn[T : Input] Regex::execute(
   let start_state_id = self.stablize_start_state(start_cat)
   let positions = Positions::new()
   let mut transition_table = self.transition_table
+  let data = input.data()
+  let mut pos = input.start_offset() + last_index
+  let end = input.start_offset() + input.length()
   let mut state_id = start_state_id
   while pos < end {
-    let ch = input.get(pos)
+    let ch = data.unsafe_get(pos).to_int()
     let symbol = symbol_table.map(ch)
     // INVARIANT: The start state is never a break state.
     // Empty character classes like `/[]/` are transformed during compilation:
@@ -106,18 +107,16 @@ pub fn[T : Input] Regex::execute(
     Running => {
       // Some states require checking the next character's category to determine
       // whether they match (e.g., for end-of-input anchors or boundary assertions)
-      let final_cat = if pos == end {
-        Category::inexistant()
-      } else {
-        let ch = input.get(pos)
-        let symbol = symbol_table.map(ch)
-        category_from_symbol(
-          profile=self.profile,
-          symbol_repr=self.symbol_repr,
-          symbol,
-        )
-      }
-      let (slot, status) = self.stablize_final(state_id, state, final_cat)
+      let (slot, status) = self.stablize_final(
+        state_id,
+        state,
+        if pos >= end {
+          NULL_SYMBOL
+        } else {
+          let ch = data.unsafe_get(pos).to_int()
+          symbol_table.map(ch)
+        },
+      )
       match status {
         Failed | Running => None
         Match(marks) => {
@@ -132,8 +131,9 @@ pub fn[T : Input] Regex::execute(
     None => None
     Some(marks) => {
       let mark_pos = Array::make(self.groups.length() * 2, -1)
+      let shift = input.start_offset()
       for mark, slot in marks {
-        mark_pos[mark.0] = positions.get(slot)
+        mark_pos[mark.0] = positions.get(slot) - shift
       }
       Some(MatchResult(mark_pos))
     }
