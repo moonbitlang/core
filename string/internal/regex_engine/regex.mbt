@@ -22,7 +22,12 @@ struct Regex {
   symbol_repr : ReadOnlyArray[Rechar]
   start_states : Array[(Category, StateId)]
   state_table : @hashmap.HashMap[@automata.State, StateId]
-  states : Array[State]
+  mut transition_table : FixedArray[StateId]
+  mut final_table : FixedArray[
+    @list.List[(Category, @automata.Slot, @automata.Status)],
+  ]
+  mut states : FixedArray[@automata.State]
+  mut num_states : Int
 }
 
 ///|
@@ -49,6 +54,14 @@ fn Regex::new(
     symbol_repr,
     start_states: [],
     state_table: @hashmap.HashMap::new(),
+    transition_table: [],
+    final_table: [],
     states: [],
+    num_states: 0,
   }
+}
+
+///|
+fn Regex::num_symbols(self : Regex) -> Int {
+  self.symbol_repr.length()
 }
