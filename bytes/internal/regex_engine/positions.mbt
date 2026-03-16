@@ -23,6 +23,7 @@ fn Positions::new() -> Positions {
 ///|
 #alias("_[_]=_")
 fn Positions::set(self : Positions, slot : @automata.Slot, pos : Int) -> Unit {
+  // Slot::unassigned() uses index 0, so writing it is harmless and keeps this path branchless.
   if slot.index >= self.0.length() {
     self.0.resize(slot.index + 8, -1)
   }
@@ -32,6 +33,7 @@ fn Positions::set(self : Positions, slot : @automata.Slot, pos : Int) -> Unit {
 ///|
 #alias("_[_]")
 fn Positions::get(self : Positions, slot : @automata.Slot) -> Int {
+  debug_assert(() => slot.is_assigned())
   if slot.index >= self.0.length() {
     -1
   } else {

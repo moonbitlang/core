@@ -125,6 +125,7 @@ pub fn[T : Input] Regex::execute(
     let slot = state.desc.slot()
     // NOTE: we manually inline `Positions::set` here to avoid the overhead
     // of callee-owned RC (reference counting) operations.
+    // Slot::unassigned() uses index 0, so writing it is harmless and keeps this path branchless.
     if slot.index >= positions.0.length() {
       positions.0.resize(slot.index + 8, -1)
     }
