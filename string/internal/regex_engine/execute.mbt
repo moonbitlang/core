@@ -46,24 +46,6 @@ pub fn MatchResult::group(self : MatchResult, index : Int) -> (Int, Int)? {
 }
 
 ///|
-fn Regex::find_start_state(self : Regex, cat : Category) -> StateId {
-  for i in 0..<self.start_states.length() {
-    let (cat2, state_id) = self.start_states[i]
-    if cat2 == cat {
-      return state_id
-    }
-  }
-  let state_id = find_state(
-    self.state_table,
-    self.states,
-    self.symbol_repr.length(),
-    @automata.State::start(cat, self.expr),
-  )
-  self.start_states.push((cat, state_id))
-  state_id
-}
-
-///|
 /// Execute using this compiled object.
 pub fn[T : Input] Regex::execute(
   self : Regex,
@@ -71,7 +53,7 @@ pub fn[T : Input] Regex::execute(
   lastIndex : Int,
 ) -> MatchResult? {
   guard lastIndex >= 0 && lastIndex <= input.length() else { panic() }
-  let { states, symbol_table, .. } = self
+  let symbol_table = self.symbol_table
   let mut pos = lastIndex
   let end = input.length()
   let start_cat = if pos == 0 {
@@ -85,11 +67,11 @@ pub fn[T : Input] Regex::execute(
       prev_symbol,
     )
   }
-  let start_state_id = self.find_start_state(start_cat)
+  let start_state_id = self.stablize_start_state(start_cat)
   let positions = Positions::new()
+  let mut transition_table = self.transition_table
   let mut state_id = start_state_id
   while pos < end {
-    let state = states.unsafe_get(state_id)
     let ch = input.get(pos)
     let symbol = symbol_table.map(ch)
     // INVARIANT: The start state is never a break state.
@@ -97,32 +79,15 @@ pub fn[T : Input] Regex::execute(
     //   `/[]/`  -> `seq(shortest(char(any)), capture(empty))`
     //   `/^[]/` -> `capture(seq(start_of_input, empty))`
     // This ensures the executor can safely access state.transitions[symbol] without checking.
-    let next_state_id = state.transitions.unsafe_get(symbol)
-    state_id = if next_state_id == PENDING_STATE_ID {
-      let cat = category_from_symbol(
-        profile=self.profile,
-        symbol_repr=self.symbol_repr,
-        symbol,
-      )
-      let next_desc = @automata.delta(
-        ctx=self.ctx,
-        state.desc,
-        symbol,
-        next_cat=cat,
-      )
-      let next_state_id = find_state(
-        self.state_table,
-        states,
-        self.symbol_repr.length(),
-        next_desc,
-      )
-      state.transitions[symbol] = next_state_id
-      next_state_id
-    } else {
-      next_state_id
+    let transition_index = state_id.transition_base() + symbol
+    let prev_state_id = state_id
+    state_id = transition_table.unsafe_get(transition_index)
+    if state_id.is_pending() {
+      state_id = self.stablize_next_state(prev_state_id, symbol)
+      transition_table = self.transition_table
+      transition_table[transition_index] = state_id
     }
-    let state = states.unsafe_get(state_id)
-    let slot = state.desc.slot()
+    let slot = state_id.slot()
     // NOTE: we manually inline `Positions::set` here to avoid the overhead
     // of callee-owned RC (reference counting) operations.
     // Slot::unassigned() uses index 0, so writing it is harmless and keeps this path branchless.
@@ -130,13 +95,13 @@ pub fn[T : Input] Regex::execute(
       positions.0.resize(slot.index + 8, -1)
     }
     positions.0[slot.index] = pos
-    if state.kind is Break {
+    if state_id.is_break() {
       break
     }
     pos += 1
   }
-  let state = states.unsafe_get(state_id)
-  let matched = match state.desc.status() {
+  let state = self.get_state(state_id)
+  let matched = match state.status() {
     Failed => None
     Running => {
       // Some states require checking the next character's category to determine
@@ -152,26 +117,7 @@ pub fn[T : Input] Regex::execute(
           symbol,
         )
       }
-      let (slot, status) = loop state.final_ {
-        Empty => {
-          let next_desc = @automata.delta(
-            ctx=self.ctx,
-            state.desc,
-            NULL_SYMBOL,
-            next_cat=final_cat,
-          )
-          let slot = next_desc.slot()
-          let status = next_desc.status()
-          state.final_ = @list.cons((final_cat, slot, status), state.final_)
-          (slot, status)
-        }
-        More(head, tail~) =>
-          if head.0 == final_cat {
-            (head.1, head.2)
-          } else {
-            continue tail
-          }
-      }
+      let (slot, status) = self.stablize_final(state_id, state, final_cat)
       match status {
         Failed | Running => None
         Match(marks) => {
