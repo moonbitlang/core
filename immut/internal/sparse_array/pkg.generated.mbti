@@ -11,21 +11,13 @@ pub fn[X] singleton(Int, X) -> SparseArray[X]
 // Errors
 
 // Types and methods
-pub(all) struct Bitset(UInt)
-pub fn Bitset::add(Self, Int) -> Self
+pub struct Bitset(UInt)
 pub fn Bitset::first_idx(Self) -> Int
-pub fn Bitset::has(Self, Int) -> Bool
-pub fn Bitset::index_of(Self, Int) -> Int
 #deprecated
 pub fn Bitset::inner(Self) -> UInt
-pub fn Bitset::intersection(Self, Self) -> Self
-#alias(size, deprecated)
-pub fn Bitset::length(Self) -> Int
-pub fn Bitset::remove(Self, Int) -> Self
-pub fn Bitset::union(Self, Self) -> Self
 pub impl Eq for Bitset
 
-pub(all) struct SparseArray[X] {
+pub struct SparseArray[X] {
   elem_info : Bitset
   data : FixedArray[X]
 }

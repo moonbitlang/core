@@ -7,7 +7,7 @@ pub fn[A : Hash] of(A) -> Path
 // Errors
 
 // Types and methods
-pub(all) struct Path(UInt)
+pub struct Path(UInt)
 pub fn Path::idx(Self) -> Int
 #deprecated
 pub fn Path::inner(Self) -> UInt
