@@ -20,9 +20,15 @@ Parse 64-bit integers and unsigned integers:
 ```mbt check
 ///|
 test "parse_int64_uint" {
-  inspect(@strconv.parse_int64("9223372036854775807"[:]), content="9223372036854775807")
+  inspect(
+    @strconv.parse_int64("9223372036854775807"[:]),
+    content="9223372036854775807",
+  )
   inspect(@strconv.parse_uint("42"[:]), content="42")
-  inspect(@strconv.parse_uint64("18446744073709551615"[:]), content="18446744073709551615")
+  inspect(
+    @strconv.parse_uint64("18446744073709551615"[:]),
+    content="18446744073709551615",
+  )
 }
 ```
 
