@@ -1,35 +1,67 @@
 # Strconv
 
-This package implements conversions to and from string representations of basic data types.
+String-to-value and value-to-string conversions for basic data types.
 
-# Usage
+## Parsing Integers
 
-## Parse
-
-Use `parse_bool`, `parse_double`, `parse_int`, and `parse_int64` convert strings to values.
+Parse integers in various bases:
 
 ```mbt check
 ///|
-test {
-  let b = @strconv.parse_bool("true")
-  assert_eq(b, true)
-  let i1 = @strconv.parse_int("1234567")
-  assert_eq(i1, 1234567)
-  let i2 = @strconv.parse_int("101", base=2)
-  assert_eq(i2, 5)
-  let d = @strconv.parse_double("123.4567")
-  assert_eq(d, 123.4567)
+test "parse_int" {
+  inspect(@strconv.parse_int("42"[:]), content="42")
+  inspect(@strconv.parse_int("101"[:], base=2), content="5")
+  inspect(@strconv.parse_int("ff"[:], base=16), content="255")
 }
 ```
 
-For types that implement the `FromStr` trait, you can also use helper function `parse` to convert a string to a value.
+Parse 64-bit integers and unsigned integers:
 
 ```mbt check
 ///|
-test {
-  let a : Int = @strconv.from_str("123")
-  assert_eq(a, 123)
-  let b : Bool = @strconv.from_str("true")
-  assert_eq(b, true)
+test "parse_int64_uint" {
+  inspect(@strconv.parse_int64("9223372036854775807"[:]), content="9223372036854775807")
+  inspect(@strconv.parse_uint("42"[:]), content="42")
+  inspect(@strconv.parse_uint64("18446744073709551615"[:]), content="18446744073709551615")
+}
+```
+
+## Parsing Other Types
+
+```mbt check
+///|
+test "parse_other" {
+  inspect(@strconv.parse_bool("true"[:]), content="true")
+  inspect(@strconv.parse_double("3.14"[:]), content="3.14")
+}
+```
+
+## FromStr Trait
+
+Types implementing `FromStr` can be parsed using `from_str`:
+
+```mbt check
+///|
+test "from_str" {
+  let i : Int = @strconv.from_str("123"[:])
+  inspect(i, content="123")
+  let b : Bool = @strconv.from_str("false"[:])
+  inspect(b, content="false")
+  let d : Double = @strconv.from_str("2.718"[:])
+  inspect(d, content="2.718")
+}
+```
+
+`FromStr` is implemented for `Bool`, `Int`, `Int64`, `UInt`, `UInt64`, and `Double`.
+
+## Error Handling
+
+Parse functions raise `StrConvError` on invalid input:
+
+```mbt check
+///|
+test "error_handling" {
+  let result : Result[Int, _] = try? @strconv.parse_int("abc"[:])
+  inspect(result is Err(_), content="true")
 }
 ```
