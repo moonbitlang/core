@@ -8,6 +8,6 @@ Terminates program execution with an error message. The `abort` function always 
 ///|
 test "abort" {
   let result : Result[Int, _] = try? abort("something went wrong")
-  inspect(result.is_err(), content="true")
+  inspect(result is Err(_), content="true")
 }
 ```
