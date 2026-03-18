@@ -10,7 +10,7 @@ Use `encode` to convert a string to UTF-8 bytes. Set `bom=true` to prepend the U
 ///|
 test "encode" {
   let bytes = @utf8.encode("hi"[:])
-  inspect(bytes, content="b\"\\x68\\x69\"")
+  inspect(bytes, content="b\"hi\"")
 }
 ```
 
@@ -18,7 +18,7 @@ test "encode" {
 ///|
 test "encode_with_bom" {
   let bytes = @utf8.encode("hi"[:], bom=true)
-  inspect(bytes, content="b\"\\xEF\\xBB\\xBF\\x68\\x69\"")
+  inspect(bytes, content="b\"\\xef\\xbb\\xbfhi\"")
 }
 ```
 

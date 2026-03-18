@@ -10,7 +10,7 @@ Use `encode` to convert a string to ASCII bytes. Panics if the string contains n
 ///|
 test "encode" {
   let bytes = @ascii.encode("hello"[:])
-  inspect(bytes, content="b\"\\x68\\x65\\x6C\\x6C\\x6F\"")
+  inspect(bytes, content="b\"hello\"")
 }
 ```
 

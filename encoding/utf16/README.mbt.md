@@ -10,7 +10,7 @@ Use `encode` to convert a string to UTF-16 bytes. Default endianness is little-e
 ///|
 test "encode" {
   let bytes = @utf16.encode("hi"[:])
-  inspect(bytes, content="b\"\\x68\\x00\\x69\\x00\"")
+  inspect(bytes, content="b\"h\\x00i\\x00\"")
 }
 ```
 
@@ -20,7 +20,7 @@ Use `endianness` to specify byte order and `bom=true` to prepend a Byte Order Ma
 ///|
 test "encode_big_endian_with_bom" {
   let bytes = @utf16.encode("hi"[:], endianness=Big, bom=true)
-  inspect(bytes, content="b\"\\xFE\\xFF\\x00\\x68\\x00\\x69\"")
+  inspect(bytes, content="b\"\\xfe\\xff\\x00h\\x00i\"")
 }
 ```
 
