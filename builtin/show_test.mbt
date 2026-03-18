@@ -904,3 +904,9 @@ test "String::escape" {
   inspect("你好".escape(), content="\"你好\"")
   inspect("你好".escape(quote=false), content="你好")
 }
+
+///|
+test "StringView::escape" {
+  inspect("xxhelloxx"[2:7].escape(), content="\"hello\"")
+  inspect("xxhelloxx"[2:7].escape(quote=false), content="hello")
+}
