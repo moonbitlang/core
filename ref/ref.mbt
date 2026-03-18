@@ -137,7 +137,7 @@ test "swap" {
 }
 
 ///|
-/// Function `update`.
+/// Applies `f` to the current value and stores the result.
 pub fn[T] Ref::update(self : Ref[T], f : (T) -> T raise?) -> Unit raise? {
   self.val = f(self.val)
 }
