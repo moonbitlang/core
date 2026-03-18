@@ -78,13 +78,20 @@ pub fn MatchResult::named_group(
 }
 
 ///|
-/// Compile a pattern into an internal regex representation.
 /// DO NOT call this function even in this package.
 #internal(internal, "not intended for public use")
 #doc(hidden)
 pub fn Regex::internal_compile_pattern(pat : Pattern) -> Regex {
   let lowered_pat = re_lower_to_utf16(pat.0)
   { pat: pat.0, re: Some(@re.compile(profile=re_profile_utf16, lowered_pat)) }
+}
+
+///|
+/// DO NOT call this function even in this package.
+#internal(internal, "not intended for public use")
+#doc(hidden)
+pub fn Regex::internal_from_string(pat : String) -> Regex {
+  try! Regex::new(pat[:])
 }
 
 ///|
