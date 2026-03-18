@@ -215,3 +215,47 @@ test {
   assert_eq(dv.search(6), None)
 }
 ```
+
+## Insert & Remove
+
+Insert or remove elements at arbitrary positions:
+
+```mbt check
+///|
+test {
+  let dv = @deque.from_array([1, 2, 4])
+  dv.insert(2, 3)
+  inspect(dv, content="@deque.from_array([1, 2, 3, 4])")
+  let removed = dv.remove(0)
+  inspect(removed, content="1")
+  inspect(dv, content="@deque.from_array([2, 3, 4])")
+}
+```
+
+## Filter and Drain
+
+Use `filter()` to create a filtered copy, or `drain()` to remove a range of elements:
+
+```mbt check
+///|
+test {
+  let dv = @deque.from_array([1, 2, 3, 4, 5])
+  let evens = dv.filter(x => x % 2 == 0)
+  inspect(evens, content="@deque.from_array([2, 4])")
+  let dv2 = @deque.from_array([1, 2, 3, 4, 5])
+  let drained = dv2.drain(start=1, len=2)
+  inspect(drained, content="@deque.from_array([2, 3])")
+  inspect(dv2, content="@deque.from_array([1, 4, 5])")
+}
+```
+
+## Reverse and Flatten
+
+```mbt check
+///|
+test {
+  let dv = @deque.from_array([3, 1, 2])
+  dv.rev_in_place()
+  inspect(dv, content="@deque.from_array([2, 1, 3])")
+}
+```
