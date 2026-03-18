@@ -34,7 +34,7 @@ Core types available in every MoonBit program:
 
 - `println`, `abort`, `panic`, `fail` — output and error handling
 - `inspect`, `debug_inspect`, `debug`, `to_repr` — debugging
-- `assert_eq`, `assert_not_eq`, `assert_true`, `assert_false` — assertions
+- `assert_eq`, `assert_not_eq`, `assert_true`, `assert_false`, `debug_assert` — assertions
 - `ignore`, `physical_equal` — utilities
 - `json_inspect` — JSON-based snapshot testing
 - `null` — JSON null constant
