@@ -89,7 +89,7 @@ pub fn[A] T::from_array(arr : ArrayView[A]) -> T[A] {
 }
 
 ///|
-/// Create from `iter`.
+/// Creates an immutable array from an iterator of values.
 #as_free_fn
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
@@ -128,7 +128,7 @@ pub fn[A] T::from_iter(iter : Iter[A]) -> T[A] {
 //-----------------------------------------------------------------------------
 
 ///|
-/// Convert to `array`.
+/// Returns a mutable array containing all elements.
 pub fn[A] T::to_array(self : T[A]) -> Array[A] {
   if self.is_empty() {
     []
@@ -274,7 +274,7 @@ pub impl[A] Add for T[A] with add(self, other) {
 //-----------------------------------------------------------------------------
 
 ///|
-/// Return an iterator over the array.
+/// Returns an iterator over the elements of the array.
 #alias(iterator, deprecated)
 pub fn[A] T::iter(self : T[A]) -> Iter[A] {
   self.tree.iter()

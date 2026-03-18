@@ -50,7 +50,7 @@ pub fn[A] SortedSet::rev_iter(self : SortedSet[A]) -> Iter[A] {
 }
 
 ///|
-/// Return an iterator via `iter`.
+/// Returns an iterator over elements in ascending order.
 #alias(iterator, deprecated)
 pub fn[A] SortedSet::iter(self : SortedSet[A]) -> Iter[A] {
   let mut curr_node = self
@@ -75,7 +75,7 @@ pub fn[A] SortedSet::iter(self : SortedSet[A]) -> Iter[A] {
 }
 
 ///|
-/// Create from `iter`.
+/// Creates a sorted set from an iterator of values.
 #as_free_fn
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)

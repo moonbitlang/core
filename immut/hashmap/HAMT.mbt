@@ -682,14 +682,14 @@ pub fn[K, V] HashMap::iter(self : HashMap[K, V]) -> Iter[(K, V)] {
 }
 
 ///|
-/// Convert to `Iter`
+/// Returns a two-element iterator over key-value pairs.
 #alias(iterator2, deprecated)
 pub fn[K, V] HashMap::iter2(self : HashMap[K, V]) -> Iter2[K, V] {
   self.iter()
 }
 
 ///|
-/// Create from `iter`.
+/// Creates a hash map from an iterator of key-value pairs.
 #as_free_fn
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
@@ -709,7 +709,7 @@ pub impl[K : Show, V : Show] Show for HashMap[K, V] with output(self, logger) {
 }
 
 ///|
-/// Create from `array`.
+/// Creates a hash map from an array of key-value pairs.
 #as_free_fn
 #alias(of, deprecated="Use from_array instead")
 #as_free_fn(of, deprecated="Use from_array instead")
@@ -726,7 +726,7 @@ pub fn[K : Eq + Hash, V] HashMap::from_array(
 }
 
 ///|
-/// Convert to an array of key-value pairs.
+/// Returns an array of all key-value pairs.
 pub fn[K, V] HashMap::to_array(self : HashMap[K, V]) -> Array[(K, V)] {
   let arr = Array::new(capacity=self.length())
   self.each((k, v) => arr.push((k, v)))
