@@ -51,9 +51,9 @@ struct Set[K] {
 // Implementations
 
 ///|
-/// Create a hash set.
-/// The capacity of the set will be the smallest power of 2 that is
-/// greater than or equal to the provided [capacity].
+/// Creates an empty insertion-ordered hash set with an optional initial capacity.
+/// The capacity will be rounded up to the smallest power of 2 that is
+/// greater than or equal to the provided `capacity`.
 #as_free_fn
 pub fn[K] Set::new(capacity? : Int = 8) -> Set[K] {
   let capacity = capacity.next_power_of_two()
@@ -69,7 +69,7 @@ pub fn[K] Set::new(capacity? : Int = 8) -> Set[K] {
 }
 
 ///|
-/// Create a hash set from array.
+/// Creates a hash set containing all elements from the given array, preserving insertion order.
 #as_free_fn
 #alias(of, deprecated="Use from_array instead")
 #as_free_fn(of, deprecated="Use from_array instead")
@@ -533,7 +533,7 @@ pub fn[K] Set::copy(self : Set[K]) -> Set[K] {
 }
 
 ///|
-/// Set operation `difference`.
+/// Returns a new set containing elements in `self` that are not in `other`.
 pub fn[K : Hash + Eq] Set::difference(self : Set[K], other : Set[K]) -> Set[K] {
   let m = Set::new()
   self.each(k => if !other.contains(k) { m.add(k) })
@@ -541,7 +541,7 @@ pub fn[K : Hash + Eq] Set::difference(self : Set[K], other : Set[K]) -> Set[K] {
 }
 
 ///|
-/// Set operation `symmetric_difference`.
+/// Returns a new set containing elements in exactly one of the two sets.
 pub fn[K : Hash + Eq] Set::symmetric_difference(
   self : Set[K],
   other : Set[K],
@@ -553,7 +553,7 @@ pub fn[K : Hash + Eq] Set::symmetric_difference(
 }
 
 ///|
-/// Set operation `union`.
+/// Returns a new set containing all elements from both sets.
 pub fn[K : Hash + Eq] Set::union(self : Set[K], other : Set[K]) -> Set[K] {
   let m = Set::new()
   self.each(k => m.add(k))
@@ -562,7 +562,7 @@ pub fn[K : Hash + Eq] Set::union(self : Set[K], other : Set[K]) -> Set[K] {
 }
 
 ///|
-/// Set operation `intersection`.
+/// Returns a new set containing only elements present in both sets.
 pub fn[K : Hash + Eq] Set::intersection(
   self : Set[K],
   other : Set[K],
@@ -582,7 +582,7 @@ pub impl[X : ToJson] ToJson for Set[X] with to_json(self) {
 }
 
 ///|
-/// Check if two sets have no common elements.
+/// Returns `true` if the two sets have no elements in common.
 pub fn[K : Hash + Eq] Set::is_disjoint(self : Set[K], other : Set[K]) -> Bool {
   if self.length() <= other.length() {
     for k in self {
@@ -601,7 +601,7 @@ pub fn[K : Hash + Eq] Set::is_disjoint(self : Set[K], other : Set[K]) -> Bool {
 }
 
 ///|
-/// Check if the current set is a subset of another set.
+/// Returns `true` if every element of `self` is also in `other`.
 pub fn[K : Hash + Eq] Set::is_subset(self : Set[K], other : Set[K]) -> Bool {
   if self.length() <= other.length() {
     for k in self {
@@ -616,7 +616,7 @@ pub fn[K : Hash + Eq] Set::is_subset(self : Set[K], other : Set[K]) -> Bool {
 }
 
 ///|
-/// Check if the current set is a superset of another set.
+/// Returns `true` if every element of `other` is also in `self`.
 pub fn[K : Hash + Eq] Set::is_superset(self : Set[K], other : Set[K]) -> Bool {
   other.is_subset(self)
 }
