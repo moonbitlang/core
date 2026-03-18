@@ -25,7 +25,7 @@ pub impl[K : Eq, V : Eq] Eq for SortedMap[K, V] with equal(self, other) {
 }
 
 ///|
-/// Returns a new sorted map.
+/// Creates an empty sorted map.
 #as_free_fn
 pub fn[K, V] SortedMap::new() -> SortedMap[K, V] {
   { root: None, size: 0 }
@@ -75,7 +75,7 @@ pub fn[K : Compare, V] SortedMap::set(
 }
 
 ///|
-/// Removes a key-value pair.
+/// Removes the entry for the given key. Does nothing if the key is not present.
 pub fn[K : Compare, V] SortedMap::remove(
   self : SortedMap[K, V],
   key : K,
@@ -92,7 +92,7 @@ pub fn[K : Compare, V] SortedMap::remove(
 }
 
 ///|
-/// Gets a value by a key.
+/// Returns the value associated with the key, or `None` if not found.
 pub fn[K : Compare, V] SortedMap::get(self : SortedMap[K, V], key : K) -> V? {
   loop self.root {
     Some(node) => {
@@ -110,7 +110,7 @@ pub fn[K : Compare, V] SortedMap::get(self : SortedMap[K, V], key : K) -> V? {
 }
 
 ///|
-/// Gets a value by a key.
+/// Returns the value for the key. Panics if the key is not present.
 #alias("_[_]")
 pub fn[K : Compare, V] SortedMap::at(self : SortedMap[K, V], key : K) -> V {
   loop self.root {
@@ -129,7 +129,7 @@ pub fn[K : Compare, V] SortedMap::at(self : SortedMap[K, V], key : K) -> V {
 }
 
 ///|
-/// Checks if map contains a key-value pair.
+/// Returns `true` if the map contains the given key.
 pub fn[K : Compare, V] SortedMap::contains(
   self : SortedMap[K, V],
   key : K,
@@ -141,7 +141,7 @@ pub fn[K : Compare, V] SortedMap::contains(
 }
 
 ///|
-/// Returns true if map is empty.
+/// Returns `true` if the map contains no entries.
 pub fn[K, V] SortedMap::is_empty(self : SortedMap[K, V]) -> Bool {
   self.size == 0
 }
@@ -154,14 +154,14 @@ pub fn[K, V] SortedMap::length(self : SortedMap[K, V]) -> Int {
 }
 
 ///|
-/// Clears the map.
+/// Removes all entries from the map.
 pub fn[K, V] SortedMap::clear(self : SortedMap[K, V]) -> Unit {
   self.root = None
   self.size = 0
 }
 
 ///|
-/// Iterates the map.
+/// Calls `f` on each key-value pair in ascending key order.
 pub fn[K, V] SortedMap::each(
   self : SortedMap[K, V],
   f : (K, V) -> Unit raise?,
@@ -178,7 +178,7 @@ pub fn[K, V] SortedMap::each(
 }
 
 ///|
-/// Iterates the map with index.
+/// Calls `f` on each key-value pair with its index (0-based), in ascending key order.
 pub fn[K, V] SortedMap::eachi(
   self : SortedMap[K, V],
   f : (Int, K, V) -> Unit raise?,
@@ -191,7 +191,7 @@ pub fn[K, V] SortedMap::eachi(
 }
 
 ///|
-/// Returns all keys in the map.
+/// Returns an iterator over the keys in ascending order.
 pub fn[K, V] SortedMap::keys_as_iter(self : SortedMap[K, V]) -> Iter[K] {
   let todo_list = []
   let mut next_node = self.root
@@ -211,7 +211,7 @@ pub fn[K, V] SortedMap::keys_as_iter(self : SortedMap[K, V]) -> Iter[K] {
 }
 
 ///|
-/// Returns all values in the map.
+/// Returns an iterator over the values in ascending key order.
 pub fn[K, V] SortedMap::values_as_iter(self : SortedMap[K, V]) -> Iter[V] {
   let todo_list = []
   let mut next_node = self.root
@@ -231,7 +231,7 @@ pub fn[K, V] SortedMap::values_as_iter(self : SortedMap[K, V]) -> Iter[V] {
 }
 
 ///|
-/// Converts the map to an array.
+/// Returns an array of all key-value pairs in ascending key order.
 pub fn[K, V] SortedMap::to_array(self : SortedMap[K, V]) -> Array[(K, V)] {
   let arr = Array::new(capacity=self.size)
   self.each((k, v) => arr.push((k, v)))
@@ -267,7 +267,7 @@ pub fn[K, V] SortedMap::iter2(self : SortedMap[K, V]) -> Iter2[K, V] {
 }
 
 ///|
-/// Create from `iter`.
+/// Creates a sorted map from an iterator of key-value pairs.
 #as_free_fn
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
