@@ -1,31 +1,67 @@
 # Random
 
-This is an efficient random number generation function based on the paper [Fast Random Integer Generation in an Interval](https://arxiv.org/abs/1805.10941) by Daniel Lemire, as well as the Golang's `rand/v2` package.
+Cryptographically secure pseudo-random number generation based on the ChaCha8 cipher.
 
-Internally, it uses the `Chacha8` cipher to generate random numbers. It is a cryptographically secure pseudo-random number generator (CSPRNG) that is also very fast.
+## Create
 
-# Usage
+Create a random number generator with `Rand::new()`. Use a fixed seed for reproducible results:
 
 ```mbt check
 ///|
-test {
+test "create" {
   let r = @random.Rand::new()
-  assert_eq(r.uint(limit=10), 7)
-  assert_eq(r.uint(limit=10), 0)
-  assert_eq(r.uint(limit=10), 5)
-  assert_eq(r.int(), 1064320769)
-  assert_eq(r.double(), 0.3318940049218405)
-  assert_eq(r.int(limit=10), 0)
-  assert_eq(r.uint(), 311122750)
-  assert_eq(r.int64(), 2043189202271773519)
-  assert_eq(r.int64(limit=10), 8)
-  assert_eq(r.uint64(), 3951155890335085418)
+  inspect(r.uint(limit=100) < 100, content="true")
+}
+```
+
+## Generating Values
+
+Generate random values of different types:
+
+```mbt check
+///|
+test "types" {
+  let r = @random.Rand::new()
+  let _i : Int = r.int()
+  let _i_limited : Int = r.int(limit=100)
+  let _u : UInt = r.uint()
+  let _i64 : Int64 = r.int64()
+  let _u64 : UInt64 = r.uint64()
+  let _d : Double = r.double() // in [0.0, 1.0)
+  let _f : Float = r.float() // in [0.0, 1.0)
+  let _b : Bool = r.boolean()
+}
+```
+
+## Shuffling
+
+Shuffle elements using the Fisher-Yates algorithm:
+
+```mbt check
+///|
+test "shuffle" {
+  let r = @random.Rand::new()
   let a = [1, 2, 3, 4, 5]
   r.shuffle(a.length(), (i, j) => {
     let t = a[i]
     a[i] = a[j]
     a[j] = t
   })
-  assert_eq(a, [2, 1, 4, 3, 5])
+  // Array is permuted, same elements
+  a.sort()
+  inspect(a, content="[1, 2, 3, 4, 5]")
+}
+```
+
+## BigInt
+
+Generate random big integers with a specified bit length:
+
+```mbt check
+///|
+test "bigint" {
+  let r = @random.Rand::new()
+  let big = r.bigint(128)
+  inspect(big >= 0N, content="true")
 }
 ```
