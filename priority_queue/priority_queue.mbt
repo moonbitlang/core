@@ -68,7 +68,7 @@ fn[A] copy_node(x : Node[A]?) -> Node[A]? {
 }
 
 ///|
-/// Returns a shallow copy of the queue.
+/// Returns a deep copy of the queue.
 ///
 /// # Example
 /// ```mbt check
