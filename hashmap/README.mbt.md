@@ -109,12 +109,60 @@ test {
 }
 ```
 
-Or use `iter()` to get an iterator of hashmap.
+Or use `iter()`, `keys()`, or `values()` to get iterators:
 
 ```mbt check
 ///|
 test {
-  let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
+  let map = @hashmap.from_array([("a", 1)])
   let _iter = map.iter()
+  let _keys = map.keys()
+  let _vals = map.values()
+}
+```
+
+## Get or Initialize
+
+Use `get_or_init()` to get a value or initialize it if missing:
+
+```mbt check
+///|
+test {
+  let map : @hashmap.HashMap[String, Int] = @hashmap.new()
+  let val = map.get_or_init("key", () => 42)
+  assert_eq(val, 42)
+  assert_eq(map.get("key"), Some(42))
+}
+```
+
+## Transform and Filter
+
+Use `map()` to transform values and `retain()` to filter in place:
+
+```mbt check
+///|
+test {
+  let map = @hashmap.from_array([(1, "a"), (2, "b")])
+  let mapped = map.map((k, _v) => k * 10)
+  assert_eq(mapped.get(1), Some(10))
+  let map2 = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
+  map2.retain((_k, v) => v > 1)
+  assert_eq(map2.contains("a"), false)
+  assert_eq(map2.contains("b"), true)
+}
+```
+
+## Merging
+
+Use `merge()` to combine two maps:
+
+```mbt check
+///|
+test {
+  let m1 = @hashmap.from_array([("a", 1)])
+  let m2 = @hashmap.from_array([("b", 2)])
+  let merged = m1.merge(m2)
+  assert_eq(merged.get("a"), Some(1))
+  assert_eq(merged.get("b"), Some(2))
 }
 ```
