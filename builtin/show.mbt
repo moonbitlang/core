@@ -126,7 +126,10 @@ pub fn String::escape(self : String, quote? : Bool = true) -> String {
 ///   inspect("Hello\nWorld"[:6].escape(quote=false), content="Hello\\n")
 /// }
 /// ```
-pub fn StringView::escape(self : StringView, quote? : Bool = true) -> String {
+pub fn StringView::escape(
+  self : StringView,
+  quote? : Bool = true,
+) -> StringView {
   let buf = StringBuilder::new()
   self.escape_to(buf, quote~)
   buf.to_string()
