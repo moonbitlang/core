@@ -144,13 +144,13 @@ pub fn[A] T::to_array(self : T[A]) -> Array[A] {
 //-----------------------------------------------------------------------------
 
 ///|
-/// Return whether the value empty.
+/// Returns `true` if the array contains no elements.
 pub fn[A] T::is_empty(self : T[A]) -> Bool {
   self.size == 0
 }
 
 ///|
-/// Return length.
+/// Returns the number of elements in the array.
 pub fn[A] T::length(self : T[A]) -> Int {
   self.size
 }
