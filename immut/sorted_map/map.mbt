@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-/// Create a new map with a key-value pair inserted.
+/// Returns a new map with the key-value pair added or updated.
 /// O(log n).
 ///
 #alias(insert, deprecated)
@@ -82,8 +82,8 @@ fn[K, V] glue(l : SortedMap[K, V], r : SortedMap[K, V]) -> SortedMap[K, V] {
 }
 
 ///|
-/// Create a new map with a key-value pair removed. O(log n).
-/// If the key is not a member or map, the original map is returned.
+/// Returns a new map with the given key removed. O(log n).
+/// If the key is not present, the original map is returned.
 pub fn[K : Compare, V] SortedMap::remove(
   self : SortedMap[K, V],
   key : K,
@@ -121,7 +121,7 @@ pub fn[K, V] SortedMap::filter_with_key(
 }
 
 ///|
-/// Convert to an array of key-value pairs.
+/// Returns an array of all key-value pairs in ascending key order.
 pub fn[K, V] SortedMap::to_array(self : SortedMap[K, V]) -> Array[(K, V)] {
   let arr = []
   self.each((k, v) => arr.push((k, v)))

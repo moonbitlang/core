@@ -68,7 +68,7 @@ fn[A] copy_node(x : Node[A]?) -> Node[A]? {
 }
 
 ///|
-/// Return a copy of the queue.
+/// Returns a shallow copy of the queue.
 ///
 /// # Example
 /// ```mbt check
@@ -84,7 +84,7 @@ pub fn[A] PriorityQueue::copy(self : PriorityQueue[A]) -> PriorityQueue[A] {
 }
 
 ///|
-/// Convert to `array`.
+/// Returns an array of all elements in descending priority order.
 pub fn[A : Compare] PriorityQueue::to_array(
   self : PriorityQueue[A],
 ) -> Array[A] {
@@ -106,7 +106,7 @@ pub fn[A : Compare] PriorityQueue::to_array(
 }
 
 ///|
-/// Return an iterator via `iter`.
+/// Returns an iterator over elements in descending priority order.
 #alias(iterator, deprecated)
 pub fn[A : Compare] PriorityQueue::iter(self : PriorityQueue[A]) -> Iter[A] {
   self.to_array().iter()
@@ -122,7 +122,7 @@ pub impl[A : ToJson + Compare] ToJson for PriorityQueue[A] with to_json(self) {
 }
 
 ///|
-/// Create from `iter`.
+/// Creates a priority queue from an iterator of values.
 #as_free_fn
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
@@ -172,7 +172,7 @@ fn[A : Compare] merges(x : Node[A]?) -> Node[A]? {
 }
 
 ///|
-/// Return length.
+/// Returns the number of elements in the queue.
 pub fn[A] PriorityQueue::length(self : PriorityQueue[A]) -> Int {
   self.len
 }

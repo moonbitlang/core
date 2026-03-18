@@ -19,7 +19,7 @@
 // Construct an empty ImmutableSet.
 
 ///|
-/// Create a new instance.
+/// Creates an empty immutable sorted set.
 #as_free_fn
 pub fn[A] SortedSet::new() -> SortedSet[A] {
   Empty
@@ -51,7 +51,7 @@ pub fn[A : Compare] SortedSet::from_array(array : ArrayView[A]) -> SortedSet[A] 
 }
 
 ///|
-/// Convert ImmutableSet[T] to Array[T], the result must be ordered.
+/// Returns an array of all elements in ascending order.
 pub fn[A] SortedSet::to_array(self : SortedSet[A]) -> Array[A] {
   let arr = []
   fn aux(set : SortedSet[A]) {
@@ -291,7 +291,7 @@ pub fn[A] SortedSet::is_empty(self : SortedSet[A]) -> Bool {
 }
 
 ///|
-/// Return true if value contain in sorted_set
+/// Returns `true` if the set contains the given value.
 pub fn[A : Compare] SortedSet::contains(self : SortedSet[A], value : A) -> Bool {
   match self {
     Empty => false
