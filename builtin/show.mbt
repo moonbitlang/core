@@ -104,13 +104,37 @@ test "to_hex_digit" {
 /// ```
 pub fn String::escape(self : String, quote? : Bool = true) -> String {
   let buf = StringBuilder::new()
+  self[:].escape_to(buf, quote~)
+  buf.to_string()
+}
+
+///|
+/// Returns the escaped representation of a string view.
+///
+/// When `quote` is true (default), the result is wrapped in double quotes
+/// like a MoonBit string literal.
+///
+/// Escape rules:
+/// - Double quote and backslash are backslash-escaped: `\"`, `\\`
+/// - Common control characters use named escapes: `\n`, `\r`, `\b`, `\t`
+/// - Other control characters (< U+0020) use `\u{hex}` format
+/// - All other characters are displayed as-is
+///
+/// ```mbt check
+/// test {
+///   inspect("Hello\nWorld"[:6].escape(), content="\"Hello\\n\"")
+///   inspect("Hello\nWorld"[:6].escape(quote=false), content="Hello\\n")
+/// }
+/// ```
+pub fn StringView::escape(self : StringView, quote? : Bool = true) -> String {
+  let buf = StringBuilder::new()
   self.escape_to(buf, quote~)
   buf.to_string()
 }
 
 ///|
-fn String::escape_to(
-  self : String,
+fn StringView::escape_to(
+  self : StringView,
   logger : &Logger,
   quote? : Bool = true,
 ) -> Unit {
@@ -120,7 +144,7 @@ fn String::escape_to(
   let len = self.length()
   fn flush_segment(seg : Int, i : Int) {
     if i > seg {
-      logger.write_substring(self, seg, i - seg)
+      logger.write_view(self[seg:i])
     }
   }
   for i = 0, seg = 0 {
@@ -175,7 +199,7 @@ fn String::escape_to(
 
 ///|
 pub impl Show for String with output(self, logger) {
-  self.escape_to(logger)
+  self[:].escape_to(logger)
 }
 
 ///|

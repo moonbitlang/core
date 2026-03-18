@@ -988,6 +988,7 @@ pub fn StringView::contains(Self, Self) -> Bool
 pub fn StringView::contains_any(Self, chars~ : Self) -> Bool
 pub fn StringView::contains_char(Self, Char) -> Bool
 pub fn StringView::data(Self) -> String
+pub fn StringView::escape(Self, quote? : Bool) -> String
 pub fn StringView::find(Self, Self) -> Int?
 pub fn StringView::find_by(Self, (Char) -> Bool) -> Int?
 pub fn[A] StringView::fold(Self, init~ : A, (A, Char) -> A raise?) -> A raise?
