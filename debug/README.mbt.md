@@ -52,7 +52,7 @@ test "debug_inspect" {
   @debug.debug_inspect(
     { "key": 42 },
     content=(
-      #|{"key": 42}
+      #|{ "key": 42 }
     ),
   )
 }
