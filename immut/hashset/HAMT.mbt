@@ -392,7 +392,7 @@ pub fn[A] HashSet::iter(self : HashSet[A]) -> Iter[A] {
 }
 
 ///|
-/// Create from `iter`.
+/// Creates a hash set from an iterator of values.
 #as_free_fn
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
@@ -410,7 +410,7 @@ pub impl[A : Show] Show for HashSet[A] with output(self, logger) {
 }
 
 ///|
-/// Create from `array`.
+/// Creates a hash set from an array of values.
 #as_free_fn
 #alias(of, deprecated="Use from_array instead")
 #as_free_fn(of, deprecated="Use from_array instead")

@@ -232,7 +232,7 @@ pub fn[K : Compare, V] SortedMap::from_array(
 }
 
 ///|
-/// Return an iterator via `iter`.
+/// Returns an iterator over key-value pairs in ascending key order.
 #alias(iterator, deprecated)
 pub fn[K, V] SortedMap::iter(self : SortedMap[K, V]) -> Iter[(K, V)] {
   let mut curr_node = self
@@ -257,7 +257,7 @@ pub fn[K, V] SortedMap::iter(self : SortedMap[K, V]) -> Iter[(K, V)] {
 }
 
 ///|
-/// Return an iterator via `iter2`.
+/// Returns a two-element iterator over key-value pairs in ascending key order.
 #alias(iterator2, deprecated)
 pub fn[K, V] SortedMap::iter2(self : SortedMap[K, V]) -> Iter2[K, V] {
   self.iter()
@@ -346,7 +346,7 @@ pub fn[K : Compare, V] SortedMap::range(
 }
 
 ///|
-/// Create from `iter`.
+/// Creates a sorted map from an iterator of key-value pairs.
 #as_free_fn
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
