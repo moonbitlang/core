@@ -37,4 +37,7 @@ Core types available in every MoonBit program:
 - `assert_eq`, `assert_not_eq`, `assert_true`, `assert_false`, `debug_assert` — assertions
 - `ignore`, `physical_equal` — utilities
 - `json_inspect` — JSON-based snapshot testing
-- `null` — JSON null constant
+
+## Re-exported Constants
+
+- `null` — JSON null value
