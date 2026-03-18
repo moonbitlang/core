@@ -35,9 +35,13 @@
 pub fn[T] ignore(t : T) -> Unit = "%ignore"
 
 ///|
-/// Tests if two values are physically equal (i.e., point to the same memory
-/// location). Unlike structural equality testing (`==`), this function checks if
-/// two references point to exactly the same object in memory.
+/// Tests whether two values are physically equal.
+///
+/// This function is intended only for performance optimizations. Do not depend
+/// on its result for program semantics.
+///
+/// NOTE: The result of `physical_equal` may not be consistent across different
+/// backends and/or different compiler optimization settings.
 ///
 /// Parameters:
 ///
@@ -45,8 +49,8 @@ pub fn[T] ignore(t : T) -> Unit = "%ignore"
 /// * `second` : The second value to compare.
 /// * `T` : The type parameter representing the type of values being compared.
 ///
-/// Returns `true` if both values refer to the same object in memory, `false`
-/// otherwise.
+/// Returns a backend- and optimization-dependent result indicating whether the
+/// two values are physically equal.
 ///
 /// Example:
 ///
