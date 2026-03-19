@@ -49,6 +49,9 @@ fn Buffer::grow_if_necessary(self : Buffer, required : Int) -> Unit {
     if space >= required {
       break space
     }
+    if space > 1073741823 { // Int max / 2, prevent overflow
+      break required
+    }
     continue space * 2
   }
   if enough_space != self.data.length() {
