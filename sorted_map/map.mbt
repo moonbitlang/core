@@ -129,6 +129,37 @@ pub fn[K : Compare, V] SortedMap::at(self : SortedMap[K, V], key : K) -> V {
 }
 
 ///|
+/// Returns the value for the key if present, otherwise inserts the value
+/// produced by `init` and returns it.
+pub fn[K : Compare, V] SortedMap::get_or_init(
+  self : SortedMap[K, V],
+  key : K,
+  init : () -> V,
+) -> V {
+  match self.get(key) {
+    Some(v) => v
+    None => {
+      let v = init()
+      self.set(key, v)
+      v
+    }
+  }
+}
+
+///|
+/// Returns the value for the key if present, otherwise returns `default`.
+pub fn[K : Compare, V] SortedMap::get_or_default(
+  self : SortedMap[K, V],
+  key : K,
+  default : V,
+) -> V {
+  match self.get(key) {
+    Some(v) => v
+    None => default
+  }
+}
+
+///|
 /// Returns `true` if the map contains the given key.
 pub fn[K : Compare, V] SortedMap::contains(
   self : SortedMap[K, V],
