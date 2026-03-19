@@ -245,7 +245,7 @@ pub fn Repr::literal(value : String) -> Repr {
 #doc(hidden)
 pub fn Repr::map(contents : Array[(Repr, Repr)]) -> Repr {
   Map(
-    contents.map(fn(pair) {
+    contents.map(pair => {
       let (k, v) = pair
       MapEntry(k, v)
     }),
@@ -274,7 +274,7 @@ pub fn Repr::unit() -> Repr {
 pub fn Repr::ctor(name : String, args : Array[(String?, Repr)]) -> Repr {
   Enum(
     name,
-    args.map(fn(arg) {
+    args.map(arg => {
       let (label, value) = arg
       match label {
         None => value

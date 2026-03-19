@@ -269,7 +269,7 @@ pub impl[K : Debug, V : Debug] Debug for Map[K, V] with to_repr(self) {
   Repr::map(
     self
     .to_array()
-    .map(fn(kv) {
+    .map(kv => {
       let (k, v) = kv
       (k.to_repr(), v.to_repr())
     }),
