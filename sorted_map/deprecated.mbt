@@ -18,7 +18,7 @@
 #coverage.skip
 pub fn[K, V] SortedMap::keys(self : SortedMap[K, V]) -> Array[K] {
   let keys = Array::new(capacity=self.size)
-  self.each(fn(k, _v) { keys.push(k) })
+  self.each((k, _v) => keys.push(k))
   keys
 }
 
@@ -28,6 +28,6 @@ pub fn[K, V] SortedMap::keys(self : SortedMap[K, V]) -> Array[K] {
 #coverage.skip
 pub fn[K, V] SortedMap::values(self : SortedMap[K, V]) -> Array[V] {
   let values = Array::new(capacity=self.size)
-  self.each(fn(_k, v) { values.push(v) })
+  self.each((_k, v) => values.push(v))
   values
 }
