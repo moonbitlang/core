@@ -165,10 +165,7 @@ pub fn[K : Compare, V] SortedMap::contains(
   self : SortedMap[K, V],
   key : K,
 ) -> Bool {
-  match self.get(key) {
-    Some(_) => true
-    None => false
-  }
+  self.get(key) is Some(_)
 }
 
 ///|

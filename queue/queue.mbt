@@ -165,10 +165,7 @@ pub fn[A] Queue::unsafe_peek(self : Queue[A]) -> A {
 /// }
 /// ```
 pub fn[A] Queue::peek(self : Queue[A]) -> A? {
-  match self.first {
-    None => None
-    Some(first) => Some(first.content)
-  }
+  self.first.map(first => first.content)
 }
 
 ///|
