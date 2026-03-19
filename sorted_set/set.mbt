@@ -317,9 +317,7 @@ pub fn[V : Compare] SortedSet::subset(
   self : SortedSet[V],
   src : SortedSet[V],
 ) -> Bool {
-  let mut ret = true
-  self.each(x => if !src.contains(x) { ret = false })
-  ret
+  self.iter().all(x => src.contains(x))
 }
 
 ///|
@@ -328,9 +326,7 @@ pub fn[V : Compare] SortedSet::disjoint(
   self : SortedSet[V],
   src : SortedSet[V],
 ) -> Bool {
-  let mut ret = true
-  self.each(x => if src.contains(x) { ret = false })
-  ret
+  self.iter().all(x => !src.contains(x))
 }
 
 // General collection operations
