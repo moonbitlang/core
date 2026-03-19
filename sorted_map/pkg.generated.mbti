@@ -30,6 +30,8 @@ pub fn[K : Compare, V] SortedMap::from_array(ArrayView[(K, V)]) -> Self[K, V]
 #as_free_fn
 pub fn[K : Compare, V] SortedMap::from_iter(Iter[(K, V)]) -> Self[K, V]
 pub fn[K : Compare, V] SortedMap::get(Self[K, V], K) -> V?
+pub fn[K : Compare, V] SortedMap::get_or_default(Self[K, V], K, V) -> V
+pub fn[K : Compare, V] SortedMap::get_or_init(Self[K, V], K, () -> V) -> V
 pub fn[K, V] SortedMap::is_empty(Self[K, V]) -> Bool
 #alias(iterator, deprecated)
 pub fn[K, V] SortedMap::iter(Self[K, V]) -> Iter[(K, V)]
