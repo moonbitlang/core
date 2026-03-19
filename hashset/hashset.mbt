@@ -437,6 +437,24 @@ pub impl[K : Hash + Eq] Sub for HashSet[K] with sub(self, other) {
 }
 
 ///|
+/// Removes all elements for which the predicate returns `false`.
+pub fn[K] HashSet::retain(self : HashSet[K], f : (K) -> Bool) -> Unit {
+  let size = self.size
+  let mut j = 0
+  for i = 0; j < size; i = i + 1 {
+    while self.entries[i] is Some(entry) {
+      j = j + 1
+      if f(entry.key) {
+        break
+      } else {
+        self.shift_back(i)
+        self.size -= 1
+      }
+    }
+  }
+}
+
+///|
 pub impl[X : @quickcheck.Arbitrary + Eq + Hash] @quickcheck.Arbitrary for HashSet[
   X,
 ] with arbitrary(size, rs) {
