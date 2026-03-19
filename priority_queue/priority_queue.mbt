@@ -79,8 +79,7 @@ fn[A] copy_node(x : Node[A]?) -> Node[A]? {
 /// }
 /// ```
 pub fn[A] PriorityQueue::copy(self : PriorityQueue[A]) -> PriorityQueue[A] {
-  let new_que : PriorityQueue[A] = { len: self.len, top: copy_node(self.top) }
-  new_que
+  { len: self.len, top: copy_node(self.top) }
 }
 
 ///|
