@@ -6,8 +6,7 @@ Terminates program execution with an error message. The `abort` function always 
 
 ```mbt check
 ///|
-test "abort" {
-  let result : Result[Int, _] = try? abort("something went wrong")
-  inspect(result is Err(_), content="true")
+test "panic abort" {
+  abort("something went wrong")
 }
 ```
