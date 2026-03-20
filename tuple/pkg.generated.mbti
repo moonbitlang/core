@@ -2,7 +2,6 @@
 package "moonbitlang/core/tuple"
 
 import {
-  "moonbitlang/core/debug",
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/quickcheck/splitmix",
 }
@@ -39,67 +38,40 @@ pub fn[T, U, V] uncurry((T) -> (U) -> V) -> (T, U) -> V
 
 // Types and methods
 pub impl[A : Default, B : Default] Default for (A, B)
-pub impl[A : @debug.Debug, B : @debug.Debug] @debug.Debug for (A, B)
 pub impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (A, B)
 
 pub impl[A : Default, B : Default, C : Default] Default for (A, B, C)
-pub impl[A : @debug.Debug, B : @debug.Debug, C : @debug.Debug] @debug.Debug for (A, B, C)
 pub impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (A, B, C)
 
 pub impl[A : Default, B : Default, C : Default, D : Default] Default for (A, B, C, D)
-pub impl[A : @debug.Debug, B : @debug.Debug, C : @debug.Debug, D : @debug.Debug] @debug.Debug for (A, B, C, D)
 pub impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary, D : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (A, B, C, D)
 
 pub impl[A : Default, B : Default, C : Default, D : Default, E : Default] Default for (A, B, C, D, E)
-pub impl[A : @debug.Debug, B : @debug.Debug, C : @debug.Debug, D : @debug.Debug, E : @debug.Debug] @debug.Debug for (A, B, C, D, E)
 pub impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary, D : @quickcheck.Arbitrary, E : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (A, B, C, D, E)
 
 pub impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default] Default for (A, B, C, D, E, F)
-pub impl[A : @debug.Debug, B : @debug.Debug, C : @debug.Debug, D : @debug.Debug, E : @debug.Debug, F : @debug.Debug] @debug.Debug for (A, B, C, D, E, F)
 pub impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary, D : @quickcheck.Arbitrary, E : @quickcheck.Arbitrary, F : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (A, B, C, D, E, F)
 
 pub impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default] Default for (A, B, C, D, E, F, G)
-pub impl[A : @debug.Debug, B : @debug.Debug, C : @debug.Debug, D : @debug.Debug, E : @debug.Debug, F : @debug.Debug, G : @debug.Debug] @debug.Debug for (A, B, C, D, E, F, G)
 pub impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary, D : @quickcheck.Arbitrary, E : @quickcheck.Arbitrary, F : @quickcheck.Arbitrary, G : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (A, B, C, D, E, F, G)
 
 pub impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default] Default for (A, B, C, D, E, F, G, H)
-pub impl[A : @debug.Debug, B : @debug.Debug, C : @debug.Debug, D : @debug.Debug, E : @debug.Debug, F : @debug.Debug, G : @debug.Debug, H : @debug.Debug] @debug.Debug for (A, B, C, D, E, F, G, H)
 
 pub impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default] Default for (A, B, C, D, E, F, G, H, I)
-pub impl[A : @debug.Debug, B : @debug.Debug, C : @debug.Debug, D : @debug.Debug, E : @debug.Debug, F : @debug.Debug, G : @debug.Debug, H : @debug.Debug, I : @debug.Debug] @debug.Debug for (A, B, C, D, E, F, G, H, I)
 
 pub impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default] Default for (A, B, C, D, E, F, G, H, I, J)
-pub impl[A : @debug.Debug, B : @debug.Debug, C : @debug.Debug, D : @debug.Debug, E : @debug.Debug, F : @debug.Debug, G : @debug.Debug, H : @debug.Debug, I : @debug.Debug, J : @debug.Debug] @debug.Debug for (A, B, C, D, E, F, G, H, I, J)
 
 pub impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default] Default for (A, B, C, D, E, F, G, H, I, J, K)
-pub impl[A : @debug.Debug, B : @debug.Debug, C : @debug.Debug, D : @debug.Debug, E : @debug.Debug, F : @debug.Debug, G : @debug.Debug, H : @debug.Debug, I : @debug.Debug, J : @debug.Debug, K : @debug.Debug] @debug.Debug for (A, B, C, D, E, F, G, H, I, J, K)
 
 pub impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default, L : Default] Default for (A, B, C, D, E, F, G, H, I, J, K, L)
-pub impl[A : @debug.Debug, B : @debug.Debug, C : @debug.Debug, D : @debug.Debug, E : @debug.Debug, F : @debug.Debug, G : @debug.Debug, H : @debug.Debug, I : @debug.Debug, J : @debug.Debug, K : @debug.Debug, L : @debug.Debug] @debug.Debug for (A, B, C, D, E, F, G, H, I, J, K, L)
 
 pub impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default, L : Default, M : Default] Default for (A, B, C, D, E, F, G, H, I, J, K, L, M)
-pub impl[A : @debug.Debug, B : @debug.Debug, C : @debug.Debug, D : @debug.Debug, E : @debug.Debug, F : @debug.Debug, G : @debug.Debug, H : @debug.Debug, I : @debug.Debug, J : @debug.Debug, K : @debug.Debug, L : @debug.Debug, M : @debug.Debug] @debug.Debug for (A, B, C, D, E, F, G, H, I, J, K, L, M)
 
 pub impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default, L : Default, M : Default, N : Default] Default for (A, B, C, D, E, F, G, H, I, J, K, L, M, N)
-pub impl[A : @debug.Debug, B : @debug.Debug, C : @debug.Debug, D : @debug.Debug, E : @debug.Debug, F : @debug.Debug, G : @debug.Debug, H : @debug.Debug, I : @debug.Debug, J : @debug.Debug, K : @debug.Debug, L : @debug.Debug, M : @debug.Debug, N : @debug.Debug] @debug.Debug for (A, B, C, D, E, F, G, H, I, J, K, L, M, N)
 
 pub impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default, L : Default, M : Default, N : Default, O : Default] Default for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O)
-pub impl[A : @debug.Debug, B : @debug.Debug, C : @debug.Debug, D : @debug.Debug, E : @debug.Debug, F : @debug.Debug, G : @debug.Debug, H : @debug.Debug, I : @debug.Debug, J : @debug.Debug, K : @debug.Debug, L : @debug.Debug, M : @debug.Debug, N : @debug.Debug, O : @debug.Debug] @debug.Debug for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O)
 
 pub impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default, L : Default, M : Default, N : Default, O : Default, P : Default] Default for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P)
-pub impl[A : @debug.Debug, B : @debug.Debug, C : @debug.Debug, D : @debug.Debug, E : @debug.Debug, F : @debug.Debug, G : @debug.Debug, H : @debug.Debug, I : @debug.Debug, J : @debug.Debug, K : @debug.Debug, L : @debug.Debug, M : @debug.Debug, N : @debug.Debug, O : @debug.Debug, P : @debug.Debug] @debug.Debug for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P)
-
-pub impl[A : @debug.Debug, B : @debug.Debug, C : @debug.Debug, D : @debug.Debug, E : @debug.Debug, F : @debug.Debug, G : @debug.Debug, H : @debug.Debug, I : @debug.Debug, J : @debug.Debug, K : @debug.Debug, L : @debug.Debug, M : @debug.Debug, N : @debug.Debug, O : @debug.Debug, P : @debug.Debug, Q : @debug.Debug] @debug.Debug for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q)
-
-pub impl[A : @debug.Debug, B : @debug.Debug, C : @debug.Debug, D : @debug.Debug, E : @debug.Debug, F : @debug.Debug, G : @debug.Debug, H : @debug.Debug, I : @debug.Debug, J : @debug.Debug, K : @debug.Debug, L : @debug.Debug, M : @debug.Debug, N : @debug.Debug, O : @debug.Debug, P : @debug.Debug, Q : @debug.Debug, R : @debug.Debug] @debug.Debug for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R)
-
-pub impl[A : @debug.Debug, B : @debug.Debug, C : @debug.Debug, D : @debug.Debug, E : @debug.Debug, F : @debug.Debug, G : @debug.Debug, H : @debug.Debug, I : @debug.Debug, J : @debug.Debug, K : @debug.Debug, L : @debug.Debug, M : @debug.Debug, N : @debug.Debug, O : @debug.Debug, P : @debug.Debug, Q : @debug.Debug, R : @debug.Debug, S : @debug.Debug] @debug.Debug for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S)
-
-pub impl[A : @debug.Debug, B : @debug.Debug, C : @debug.Debug, D : @debug.Debug, E : @debug.Debug, F : @debug.Debug, G : @debug.Debug, H : @debug.Debug, I : @debug.Debug, J : @debug.Debug, K : @debug.Debug, L : @debug.Debug, M : @debug.Debug, N : @debug.Debug, O : @debug.Debug, P : @debug.Debug, Q : @debug.Debug, R : @debug.Debug, S : @debug.Debug, T : @debug.Debug] @debug.Debug for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T)
-
-pub impl[A : @debug.Debug, B : @debug.Debug, C : @debug.Debug, D : @debug.Debug, E : @debug.Debug, F : @debug.Debug, G : @debug.Debug, H : @debug.Debug, I : @debug.Debug, J : @debug.Debug, K : @debug.Debug, L : @debug.Debug, M : @debug.Debug, N : @debug.Debug, O : @debug.Debug, P : @debug.Debug, Q : @debug.Debug, R : @debug.Debug, S : @debug.Debug, T : @debug.Debug, U : @debug.Debug] @debug.Debug for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U)
-
-pub impl[A : @debug.Debug, B : @debug.Debug, C : @debug.Debug, D : @debug.Debug, E : @debug.Debug, F : @debug.Debug, G : @debug.Debug, H : @debug.Debug, I : @debug.Debug, J : @debug.Debug, K : @debug.Debug, L : @debug.Debug, M : @debug.Debug, N : @debug.Debug, O : @debug.Debug, P : @debug.Debug, Q : @debug.Debug, R : @debug.Debug, S : @debug.Debug, T : @debug.Debug, U : @debug.Debug, V : @debug.Debug] @debug.Debug for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V)
 
 // Type aliases
 

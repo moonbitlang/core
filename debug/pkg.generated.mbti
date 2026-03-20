@@ -61,6 +61,27 @@ pub impl[T : Debug] Debug for MutArrayView[T]
 pub impl Debug for SnapshotError
 pub impl Debug for SourceLoc
 pub impl Debug for StringBuilder
+pub impl[A : Debug, B : Debug] Debug for (A, B)
+pub impl[A : Debug, B : Debug, C : Debug] Debug for (A, B, C)
+pub impl[A : Debug, B : Debug, C : Debug, D : Debug] Debug for (A, B, C, D)
+pub impl[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug] Debug for (A, B, C, D, E)
+pub impl[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug, F : Debug] Debug for (A, B, C, D, E, F)
+pub impl[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug, F : Debug, G : Debug] Debug for (A, B, C, D, E, F, G)
+pub impl[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug, F : Debug, G : Debug, H : Debug] Debug for (A, B, C, D, E, F, G, H)
+pub impl[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug, F : Debug, G : Debug, H : Debug, I : Debug] Debug for (A, B, C, D, E, F, G, H, I)
+pub impl[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug, F : Debug, G : Debug, H : Debug, I : Debug, J : Debug] Debug for (A, B, C, D, E, F, G, H, I, J)
+pub impl[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug, F : Debug, G : Debug, H : Debug, I : Debug, J : Debug, K : Debug] Debug for (A, B, C, D, E, F, G, H, I, J, K)
+pub impl[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug, F : Debug, G : Debug, H : Debug, I : Debug, J : Debug, K : Debug, L : Debug] Debug for (A, B, C, D, E, F, G, H, I, J, K, L)
+pub impl[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug, F : Debug, G : Debug, H : Debug, I : Debug, J : Debug, K : Debug, L : Debug, M : Debug] Debug for (A, B, C, D, E, F, G, H, I, J, K, L, M)
+pub impl[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug, F : Debug, G : Debug, H : Debug, I : Debug, J : Debug, K : Debug, L : Debug, M : Debug, N : Debug] Debug for (A, B, C, D, E, F, G, H, I, J, K, L, M, N)
+pub impl[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug, F : Debug, G : Debug, H : Debug, I : Debug, J : Debug, K : Debug, L : Debug, M : Debug, N : Debug, O : Debug] Debug for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O)
+pub impl[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug, F : Debug, G : Debug, H : Debug, I : Debug, J : Debug, K : Debug, L : Debug, M : Debug, N : Debug, O : Debug, P : Debug] Debug for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P)
+pub impl[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug, F : Debug, G : Debug, H : Debug, I : Debug, J : Debug, K : Debug, L : Debug, M : Debug, N : Debug, O : Debug, P : Debug, Q : Debug] Debug for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q)
+pub impl[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug, F : Debug, G : Debug, H : Debug, I : Debug, J : Debug, K : Debug, L : Debug, M : Debug, N : Debug, O : Debug, P : Debug, Q : Debug, R : Debug] Debug for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R)
+pub impl[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug, F : Debug, G : Debug, H : Debug, I : Debug, J : Debug, K : Debug, L : Debug, M : Debug, N : Debug, O : Debug, P : Debug, Q : Debug, R : Debug, S : Debug] Debug for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S)
+pub impl[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug, F : Debug, G : Debug, H : Debug, I : Debug, J : Debug, K : Debug, L : Debug, M : Debug, N : Debug, O : Debug, P : Debug, Q : Debug, R : Debug, S : Debug, T : Debug] Debug for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T)
+pub impl[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug, F : Debug, G : Debug, H : Debug, I : Debug, J : Debug, K : Debug, L : Debug, M : Debug, N : Debug, O : Debug, P : Debug, Q : Debug, R : Debug, S : Debug, T : Debug, U : Debug] Debug for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U)
+pub impl[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug, F : Debug, G : Debug, H : Debug, I : Debug, J : Debug, K : Debug, L : Debug, M : Debug, N : Debug, O : Debug, P : Debug, Q : Debug, R : Debug, S : Debug, T : Debug, U : Debug, V : Debug] Debug for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V)
 pub impl Debug for BytesView
 pub impl Debug for StringView
 
