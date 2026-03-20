@@ -743,6 +743,9 @@ pub impl[K : Eq + Hash + @quickcheck.Arbitrary, V : @quickcheck.Arbitrary] @quic
 
 ///|
 impl[K : Eq, V : Eq] Eq for Node[K, V] with equal(self, other) {
+  if physical_equal(self, other) {
+    return true
+  }
   match (self, other) {
     (Flat(key1, value1, path1), Flat(key2, value2, path2)) =>
       path1 == path2 && key1 == key2 && value1 == value2

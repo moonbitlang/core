@@ -385,7 +385,8 @@ pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
 
 ///|
 pub impl[A : Eq] Eq for T[A] with equal(self, other) {
-  self.size == other.size && self.tree == other.tree
+  physical_equal(self, other) ||
+  (self.size == other.size && self.tree == other.tree)
 }
 
 ///|

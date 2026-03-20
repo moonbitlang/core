@@ -92,6 +92,9 @@ test {
 
 ///|
 pub impl[A : Eq] Eq for SortedSet[A] with equal(self, other) -> Bool {
+  if physical_equal(self, other) {
+    return true
+  }
   // There's no `Iter::zip` (https://github.com/moonbitlang/core/issues/994#issuecomment-2350935193),
   // so we have to use the manual implementation below:
   guard self.length() == other.length() else { return false }
