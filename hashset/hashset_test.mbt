@@ -421,3 +421,38 @@ test "@hashset.to_array/multiple" {
   arr.sort()
   inspect(arr.to_string(), content="[1, 2, 3, 4]")
 }
+
+///|
+test "retain/partial" {
+  let set = @hashset.from_array([1, 2, 3, 4, 5, 6])
+  set.retain(x => x % 2 == 0)
+  assert_eq(set.length(), 3)
+  assert_true(set.contains(2))
+  assert_true(set.contains(4))
+  assert_true(set.contains(6))
+  assert_false(set.contains(1))
+  assert_false(set.contains(3))
+  assert_false(set.contains(5))
+}
+
+///|
+test "retain/all_removed" {
+  let set = @hashset.from_array([1, 2, 3])
+  set.retain(_x => false)
+  assert_eq(set.length(), 0)
+  assert_true(set.is_empty())
+}
+
+///|
+test "retain/none_removed" {
+  let set = @hashset.from_array([1, 2, 3])
+  set.retain(_x => true)
+  assert_eq(set.length(), 3)
+}
+
+///|
+test "retain/empty_set" {
+  let set : @hashset.HashSet[Int] = @hashset.new()
+  set.retain(_x => true)
+  assert_eq(set.length(), 0)
+}
