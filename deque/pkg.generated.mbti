@@ -2,6 +2,7 @@
 package "moonbitlang/core/deque"
 
 import {
+  "moonbitlang/core/debug",
   "moonbitlang/core/json",
 }
 
@@ -80,6 +81,8 @@ pub fn[A] Deque::shrink_to_fit(Self[A]) -> Unit
 pub fn[A] Deque::shuffle(Self[A], rand~ : (Int) -> Int) -> Self[A]
 pub fn[A] Deque::shuffle_in_place(Self[A], rand~ : (Int) -> Int) -> Unit
 pub fn[A] Deque::to_array(Self[A]) -> Array[A]
+#deprecated
+pub fn[A : @debug.Debug] Deque::to_repr(Self[A]) -> @debug.Repr
 pub fn[A] Deque::truncate(Self[A], Int) -> Unit
 pub impl[A] Add for Deque[A]
 pub impl[A : Compare] Compare for Deque[A]
@@ -87,6 +90,7 @@ pub impl[A : Eq] Eq for Deque[A]
 pub impl[A : Hash] Hash for Deque[A]
 pub impl[A : Show] Show for Deque[A]
 pub impl[A : ToJson] ToJson for Deque[A]
+pub impl[A : @debug.Debug] @debug.Debug for Deque[A]
 pub impl[A : @json.FromJson] @json.FromJson for Deque[A]
 
 // Type aliases

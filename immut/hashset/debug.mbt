@@ -14,3 +14,21 @@
 
 ///|
 using @debug {trait Debug, type Repr}
+
+///|
+pub impl[K : Debug] Debug for HashSet[K] with to_repr(self) {
+  let xs : Array[Repr] = self.iter().to_array().map(x => @debug.to_repr(x))
+  Repr::opaque_("HashSet", Repr::array(xs))
+}
+
+///|
+#deprecated("use `to_repr(a)` instead", skip_current_package=true)
+pub fn[K : Debug] HashSet::to_repr(self : HashSet[K]) -> Repr {
+  @debug.to_repr(self)
+}
+
+///|
+test "Debug for HashSet" {
+  let hs : HashSet[Int] = from_array([3])
+  @debug.debug_inspect(hs, content="<HashSet: [3]>")
+}

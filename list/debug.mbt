@@ -14,3 +14,23 @@
 
 ///|
 using @debug {trait Debug, type Repr}
+
+///|
+pub impl[A : Debug] Debug for List[A] with to_repr(self) {
+  Repr::opaque_(
+    "List",
+    Repr::array(self.to_array().map(x => @debug.to_repr(x))),
+  )
+}
+
+///|
+#deprecated("use `to_repr(a)` instead", skip_current_package=true)
+pub fn[A : Debug] List::to_repr(self : List[A]) -> Repr {
+  @debug.to_repr(self)
+}
+
+///|
+test "Debug for List" {
+  let xs : List[Int] = from_array([1, 2, 3])
+  @debug.debug_inspect(xs, content="<List: [1, 2, 3]>")
+}

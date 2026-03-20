@@ -2,6 +2,7 @@
 package "moonbitlang/core/immut/hashset"
 
 import {
+  "moonbitlang/core/debug",
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/quickcheck/splitmix",
 }
@@ -34,10 +35,13 @@ pub fn[A] HashSet::length(Self[A]) -> Int
 #as_free_fn
 pub fn[A] HashSet::new() -> Self[A]
 pub fn[A : Eq + Hash] HashSet::remove(Self[A], A) -> Self[A]
+#deprecated
+pub fn[K : @debug.Debug] HashSet::to_repr(Self[K]) -> @debug.Repr
 pub fn[K : Eq] HashSet::union(Self[K], Self[K]) -> Self[K]
 pub impl[A : Eq] Eq for HashSet[A]
 pub impl[A : Hash] Hash for HashSet[A]
 pub impl[A : Show] Show for HashSet[A]
+pub impl[K : @debug.Debug] @debug.Debug for HashSet[K]
 pub impl[K : Eq + Hash + @quickcheck.Arbitrary] @quickcheck.Arbitrary for HashSet[K]
 
 // Type aliases

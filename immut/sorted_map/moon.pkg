@@ -2,6 +2,7 @@ import {
   "moonbitlang/core/builtin",
   "moonbitlang/core/tuple",
   "moonbitlang/core/array",
+  "moonbitlang/core/debug",
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/json",
 }

@@ -14,3 +14,23 @@
 
 ///|
 using @debug {trait Debug, type Repr}
+
+///|
+pub impl[A : Debug + Compare] Debug for PriorityQueue[A] with to_repr(self) {
+  let xs : Array[Repr] = self.to_array().map(x => @debug.to_repr(x))
+  Repr::opaque_("PriorityQueue", Repr::array(xs))
+}
+
+///|
+#deprecated("use `to_repr(a)` instead", skip_current_package=true)
+pub fn[A : Debug + Compare] PriorityQueue::to_repr(
+  self : PriorityQueue[A],
+) -> Repr {
+  @debug.to_repr(self)
+}
+
+///|
+test "Debug for PriorityQueue" {
+  let pq : PriorityQueue[Int] = from_array([3, 1, 2])
+  @debug.debug_inspect(pq, content="<PriorityQueue: [3, 2, 1]>")
+}

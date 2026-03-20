@@ -2,6 +2,7 @@
 package "moonbitlang/core/immut/sorted_map"
 
 import {
+  "moonbitlang/core/debug",
   "moonbitlang/core/json",
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/quickcheck/splitmix",
@@ -68,6 +69,8 @@ pub fn[K, V] SortedMap::rev_values(Self[K, V]) -> Iter[V]
 pub fn[K, V] SortedMap::singleton(K, V) -> Self[K, V]
 pub fn[K, V] SortedMap::to_array(Self[K, V]) -> Array[(K, V)]
 pub fn[K : Show, V : ToJson] SortedMap::to_json(Self[K, V]) -> Json
+#deprecated
+pub fn[K : @debug.Debug, V : @debug.Debug] SortedMap::to_repr(Self[K, V]) -> @debug.Repr
 pub fn[K, V] SortedMap::values(Self[K, V]) -> Iter[V]
 pub impl[K : Compare, V : Compare] Compare for SortedMap[K, V]
 pub impl[K, V] Default for SortedMap[K, V]
@@ -75,6 +78,7 @@ pub impl[K : Eq, V : Eq] Eq for SortedMap[K, V]
 pub impl[K : Hash, V : Hash] Hash for SortedMap[K, V]
 pub impl[K : Show, V : Show] Show for SortedMap[K, V]
 pub impl[K : Show, V : ToJson] ToJson for SortedMap[K, V]
+pub impl[K : @debug.Debug, V : @debug.Debug] @debug.Debug for SortedMap[K, V]
 pub impl[V : @json.FromJson] @json.FromJson for SortedMap[String, V]
 pub impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for SortedMap[K, V]
 

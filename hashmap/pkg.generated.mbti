@@ -2,6 +2,7 @@
 package "moonbitlang/core/hashmap"
 
 import {
+  "moonbitlang/core/debug",
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/quickcheck/splitmix",
 }
@@ -52,11 +53,14 @@ pub fn[K, V] HashMap::retain(Self[K, V], (K, V) -> Bool) -> Unit
 #alias("_[_]=_")
 pub fn[K : Hash + Eq, V] HashMap::set(Self[K, V], K, V) -> Unit
 pub fn[K, V] HashMap::to_array(Self[K, V]) -> Array[(K, V)]
+#deprecated
+pub fn[K : @debug.Debug, V : @debug.Debug] HashMap::to_repr(Self[K, V]) -> @debug.Repr
 pub fn[K, V] HashMap::values(Self[K, V]) -> Iter[V]
 pub impl[K, V] Default for HashMap[K, V]
 pub impl[K : Hash + Eq, V : Eq] Eq for HashMap[K, V]
 pub impl[K : Show, V : Show] Show for HashMap[K, V]
 pub impl[K : Show, V : ToJson] ToJson for HashMap[K, V]
+pub impl[K : @debug.Debug, V : @debug.Debug] @debug.Debug for HashMap[K, V]
 pub impl[K : @quickcheck.Arbitrary + Hash + Eq, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for HashMap[K, V]
 
 // Type aliases

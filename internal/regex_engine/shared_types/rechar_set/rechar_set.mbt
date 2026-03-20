@@ -351,5 +351,5 @@ pub impl BitAnd for RecharSet with land(self, other) {
 
 ///|
 pub impl @debug.Debug for RecharSet with to_repr(self) {
-  @debug.Debug::to_repr(self.intervals().to_array())
+  @debug.to_repr(self.intervals().to_array())
 }
