@@ -431,6 +431,9 @@ pub impl[A : Hash] Hash for HashSet[A] with hash_combine(self, hasher) {
 
 ///|
 impl[A : Eq] Eq for Node[A] with equal(self, other) {
+  if physical_equal(self, other) {
+    return true
+  }
   match (self, other) {
     (Leaf(x, xs), Leaf(y, ys)) =>
       xs.length() == ys.length() &&

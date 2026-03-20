@@ -18,4 +18,4 @@
 pub enum List[A] {
   Empty
   More(A, mut tail~ : List[A])
-} derive(Eq)
+}

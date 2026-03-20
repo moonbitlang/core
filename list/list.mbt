@@ -72,6 +72,18 @@ pub fn[A] List::prepend(self : List[A], head : A) -> List[A] {
 }
 
 ///|
+pub impl[A : Eq] Eq for List[A] with equal(self, other) -> Bool {
+  if physical_equal(self, other) {
+    return true
+  }
+  match (self, other) {
+    (Empty, Empty) => true
+    (More(x, tail=xs), More(y, tail=ys)) => x == y && xs == ys
+    _ => false
+  }
+}
+
+///|
 /// Show implementation for List.
 /// Outputs the list in the format @list.from_array([element1, element2, ...]).
 pub impl[A : Show] Show for List[A] with output(xs, logger) {
