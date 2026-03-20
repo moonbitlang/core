@@ -14,3 +14,23 @@
 
 ///|
 using @debug {trait Debug, type Repr}
+
+///|
+pub impl[A : Debug] Debug for Deque[A] with to_repr(self) {
+  Repr::opaque_(
+    "Deque",
+    Repr::array(self.to_array().map(x => @debug.to_repr(x))),
+  )
+}
+
+///|
+#deprecated("use `to_repr(a)` instead", skip_current_package=true)
+pub fn[A : Debug] Deque::to_repr(self : Deque[A]) -> Repr {
+  @debug.to_repr(self)
+}
+
+///|
+test "Debug for Deque" {
+  let dq : Deque[Int] = from_array([1, 2, 3])
+  @debug.debug_inspect(dq, content="<Deque: [1, 2, 3]>")
+}

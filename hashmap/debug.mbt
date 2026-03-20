@@ -14,3 +14,28 @@
 
 ///|
 using @debug {trait Debug, type Repr}
+
+///|
+pub impl[K : Debug, V : Debug] Debug for HashMap[K, V] with to_repr(self) {
+  let entries : Array[(Repr, Repr)] = self
+    .to_array()
+    .map(kv => (@debug.to_repr(kv.0), @debug.to_repr(kv.1)))
+  Repr::opaque_("HashMap", Repr::map(entries))
+}
+
+///|
+#deprecated("use `to_repr(a)` instead", skip_current_package=true)
+pub fn[K : Debug, V : Debug] HashMap::to_repr(self : HashMap[K, V]) -> Repr {
+  @debug.to_repr(self)
+}
+
+///|
+test "Debug for HashMap" {
+  let hm : HashMap[Int, String] = from_array([(2, "b")])
+  @debug.debug_inspect(
+    hm,
+    content=(
+      #|<HashMap: { 2: "b" }>
+    ),
+  )
+}

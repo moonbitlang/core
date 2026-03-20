@@ -14,3 +14,23 @@
 
 ///|
 using @debug {trait Debug, type Repr}
+
+///|
+pub impl[K : Debug] Debug for SortedSet[K] with to_repr(self) {
+  Repr::opaque_(
+    "SortedSet",
+    Repr::array(self.to_array().map(x => @debug.to_repr(x))),
+  )
+}
+
+///|
+#deprecated("use `to_repr(a)` instead", skip_current_package=true)
+pub fn[K : Debug] SortedSet::to_repr(self : SortedSet[K]) -> Repr {
+  @debug.to_repr(self)
+}
+
+///|
+test "Debug for SortedSet" {
+  let ss : SortedSet[Int] = from_array([3, 1, 2])
+  @debug.debug_inspect(ss, content="<SortedSet: [1, 2, 3]>")
+}

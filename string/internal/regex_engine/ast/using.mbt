@@ -14,8 +14,3 @@
 
 ///|
 using @debug {trait Debug, type Repr}
-
-///|
-fn[T : Debug] _suppress_unused_warning_of_debug_trait(x : T) -> Unit {
-  ignore(x.to_repr())
-}

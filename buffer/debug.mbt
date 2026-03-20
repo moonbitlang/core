@@ -14,3 +14,21 @@
 
 ///|
 using @debug {trait Debug, type Repr}
+
+///|
+pub impl Debug for Buffer with to_repr(self) {
+  Repr::opaque_("Buffer", @debug.to_repr(self.to_bytes().to_array()))
+}
+
+///|
+#deprecated("use `to_repr(a)` instead", skip_current_package=true)
+pub fn Buffer::to_repr(self : Buffer) -> Repr {
+  @debug.to_repr(self)
+}
+
+///|
+test "Debug for Buffer" {
+  let buf = new()
+  buf.write_bytes(b"ab")
+  @debug.debug_inspect(buf, content="<Buffer: [0x61, 0x62]>")
+}

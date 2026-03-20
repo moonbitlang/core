@@ -2,6 +2,7 @@
 package "moonbitlang/core/queue"
 
 import {
+  "moonbitlang/core/debug",
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/quickcheck/splitmix",
 }
@@ -36,8 +37,11 @@ pub fn[A] Queue::new() -> Self[A]
 pub fn[A] Queue::peek(Self[A]) -> A?
 pub fn[A] Queue::pop(Self[A]) -> A?
 pub fn[A] Queue::push(Self[A], A) -> Unit
+#deprecated
+pub fn[A : @debug.Debug] Queue::to_repr(Self[A]) -> @debug.Repr
 pub fn[A] Queue::transfer(Self[A], Self[A]) -> Unit
 pub impl[A : Show] Show for Queue[A]
+pub impl[A : @debug.Debug] @debug.Debug for Queue[A]
 pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Queue[X]
 
 // Type aliases

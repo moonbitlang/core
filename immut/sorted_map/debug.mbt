@@ -14,3 +14,30 @@
 
 ///|
 using @debug {trait Debug, type Repr}
+
+///|
+pub impl[K : Debug, V : Debug] Debug for SortedMap[K, V] with to_repr(self) {
+  Repr::opaque_(
+    "SortedMap",
+    Repr::map(
+      self.to_array().map(kv => (@debug.to_repr(kv.0), @debug.to_repr(kv.1))),
+    ),
+  )
+}
+
+///|
+#deprecated("use `to_repr(a)` instead", skip_current_package=true)
+pub fn[K : Debug, V : Debug] SortedMap::to_repr(self : SortedMap[K, V]) -> Repr {
+  @debug.to_repr(self)
+}
+
+///|
+test "Debug for SortedMap" {
+  let sm : SortedMap[Int, String] = from_array([(1, "a"), (2, "b")])
+  @debug.debug_inspect(
+    sm,
+    content=(
+      #|<SortedMap: { 1: "a", 2: "b" }>
+    ),
+  )
+}

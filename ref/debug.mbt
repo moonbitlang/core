@@ -14,3 +14,20 @@
 
 ///|
 using @debug {trait Debug, type Repr}
+
+///|
+pub impl[T : Debug] Debug for Ref[T] with to_repr(self) {
+  Repr::opaque_("Ref", @debug.to_repr(self.val))
+}
+
+///|
+#deprecated("use `to_repr(a)` instead", skip_current_package=true)
+pub fn[T : Debug] Ref::to_repr(self : Ref[T]) -> Repr {
+  @debug.to_repr(self)
+}
+
+///|
+test "Debug for Ref" {
+  let r : Ref[Int] = new(1)
+  @debug.debug_inspect(r, content="<Ref: 1>")
+}

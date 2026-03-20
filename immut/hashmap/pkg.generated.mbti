@@ -2,6 +2,7 @@
 package "moonbitlang/core/immut/hashmap"
 
 import {
+  "moonbitlang/core/debug",
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/quickcheck/splitmix",
 }
@@ -50,6 +51,8 @@ pub fn[K : Eq + Hash, V] HashMap::remove(Self[K, V], K) -> Self[K, V]
 #as_free_fn
 pub fn[K : Hash, V] HashMap::singleton(K, V) -> Self[K, V]
 pub fn[K, V] HashMap::to_array(Self[K, V]) -> Array[(K, V)]
+#deprecated
+pub fn[K : @debug.Debug, V : @debug.Debug] HashMap::to_repr(Self[K, V]) -> @debug.Repr
 #alias(merge)
 pub fn[K : Eq, V] HashMap::union(Self[K, V], Self[K, V]) -> Self[K, V]
 pub fn[K : Eq, V] HashMap::union_with(Self[K, V], Self[K, V], (K, V, V) -> V raise?) -> Self[K, V] raise?
@@ -58,6 +61,7 @@ pub fn[K, V] HashMap::values(Self[K, V]) -> Iter[V]
 pub impl[K : Eq, V : Eq] Eq for HashMap[K, V]
 pub impl[K : Hash, V : Hash] Hash for HashMap[K, V]
 pub impl[K : Show, V : Show] Show for HashMap[K, V]
+pub impl[K : @debug.Debug, V : @debug.Debug] @debug.Debug for HashMap[K, V]
 pub impl[K : Eq + Hash + @quickcheck.Arbitrary, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for HashMap[K, V]
 
 // Type aliases

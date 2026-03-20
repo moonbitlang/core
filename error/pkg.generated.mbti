@@ -1,13 +1,20 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/error"
 
+import {
+  "moonbitlang/core/debug",
+}
+
 // Values
 
 // Errors
 
 // Types and methods
+#deprecated
+pub fn Error::to_repr(Self) -> @debug.Repr
 pub impl Show for Error
 pub impl ToJson for Error
+pub impl @debug.Debug for Error
 
 // Type aliases
 

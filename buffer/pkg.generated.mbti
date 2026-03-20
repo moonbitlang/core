@@ -1,6 +1,10 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/buffer"
 
+import {
+  "moonbitlang/core/debug",
+}
+
 // Values
 pub fn from_array(ArrayView[Byte]) -> Buffer
 
@@ -20,6 +24,8 @@ pub fn Buffer::length(Self) -> Int
 pub fn Buffer::reset(Self) -> Unit
 #alias(contents)
 pub fn Buffer::to_bytes(Self) -> Bytes
+#deprecated
+pub fn Buffer::to_repr(Self) -> @debug.Repr
 pub fn Buffer::view(Self) -> ArrayView[Byte]
 pub fn Buffer::write_byte(Self, Byte) -> Unit
 pub fn Buffer::write_bytes(Self, Bytes) -> Unit
@@ -52,6 +58,7 @@ pub fn Buffer::write_uint_be(Self, UInt) -> Unit
 pub fn Buffer::write_uint_le(Self, UInt) -> Unit
 pub impl Logger for Buffer
 pub impl Show for Buffer
+pub impl @debug.Debug for Buffer
 
 // Type aliases
 

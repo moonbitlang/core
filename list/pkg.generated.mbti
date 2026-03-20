@@ -2,6 +2,7 @@
 package "moonbitlang/core/list"
 
 import {
+  "moonbitlang/core/debug",
   "moonbitlang/core/json",
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/quickcheck/splitmix",
@@ -100,6 +101,8 @@ pub fn[A] List::take(Self[A], Int) -> Self[A]
 pub fn[A] List::take_while(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 pub fn[A] List::to_array(Self[A]) -> Array[A]
 pub fn[A : ToJson] List::to_json(Self[A]) -> Json
+#deprecated
+pub fn[A : @debug.Debug] List::to_repr(Self[A]) -> @debug.Repr
 #as_free_fn
 pub fn[A, S] List::unfold((S) -> (A, S)? raise?, init~ : S) -> Self[A] raise?
 pub fn[A] List::unsafe_tail(Self[A]) -> Self[A]
@@ -113,6 +116,7 @@ pub impl[A : Eq] Eq for List[A]
 pub impl[A : Hash] Hash for List[A]
 pub impl[A : Show] Show for List[A]
 pub impl[A : ToJson] ToJson for List[A]
+pub impl[A : @debug.Debug] @debug.Debug for List[A]
 pub impl[A : @json.FromJson] @json.FromJson for List[A]
 pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for List[X]
 
