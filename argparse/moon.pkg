@@ -5,7 +5,6 @@ import {
   "moonbitlang/core/strconv",
   "moonbitlang/core/set",
   "moonbitlang/core/debug",
-  "moonbitlang/core/tuple",
 }
 
 warnings = "+unnecessary_annotation"
