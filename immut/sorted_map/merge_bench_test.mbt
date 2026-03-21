@@ -13,7 +13,11 @@
 // limitations under the License.
 
 ///|
-fn make_map(start : Int, end : Int, step~ : Int = 1) -> @sorted_map.SortedMap[Int, Int] {
+fn make_map(
+  start : Int,
+  end : Int,
+  step? : Int = 1,
+) -> @sorted_map.SortedMap[Int, Int] {
   let mut m : @sorted_map.SortedMap[Int, Int] = @sorted_map.new()
   for i = start; i < end; i = i + step {
     m = m.add(i, i)
