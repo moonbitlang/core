@@ -164,12 +164,21 @@ pub fn[K : Compare, V] SortedMap::merge(
     (Empty, _) => other
     (_, Empty) => self
     (_, Tree(k2, value=v2, l2, r2, ..)) => {
-      let (l1, _, r1) = self.split(k2)
-      let merged_l = l1.merge(l2)
-      let merged_r = r1.merge(r2)
+      let s = self.split(k2)
+      let merged_l = s.left.merge(l2)
+      let merged_r = s.right.merge(r2)
       join(merged_l, k2, v2, merged_r)
     }
   }
+}
+
+///|
+/// Result of splitting a map by key. Uses value type to avoid heap allocation.
+#valtype
+priv struct SplitResult[K, V] {
+  left : SortedMap[K, V]
+  found : V?
+  right : SortedMap[K, V]
 }
 
 ///|
@@ -177,19 +186,19 @@ pub fn[K : Compare, V] SortedMap::merge(
 fn[K : Compare, V] SortedMap::split(
   self : SortedMap[K, V],
   key : K,
-) -> (SortedMap[K, V], V?, SortedMap[K, V]) {
+) -> SplitResult[K, V] {
   match self {
-    Empty => (Empty, None, Empty)
+    Empty => { left: Empty, found: None, right: Empty }
     Tree(k, value=v, l, r, ..) => {
       let c = key.compare(k)
       if c == 0 {
-        (l, Some(v), r)
+        { left: l, found: Some(v), right: r }
       } else if c < 0 {
-        let (ll, found, lr) = l.split(key)
-        (ll, found, join(lr, k, v, r))
+        let s = l.split(key)
+        { left: s.left, found: s.found, right: join(s.right, k, v, r) }
       } else {
-        let (rl, found, rr) = r.split(key)
-        (join(l, k, v, rl), found, rr)
+        let s = r.split(key)
+        { left: join(l, k, v, s.left), found: s.found, right: s.right }
       }
     }
   }

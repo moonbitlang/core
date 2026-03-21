@@ -6,6 +6,10 @@ import {
   "moonbitlang/core/json",
 }
 
+import {
+  "moonbitlang/core/bench",
+} for "test"
+
 options(
   targets: { "panic_wbtest.mbt": [ "not", "native", "llvm" ] },
 )
