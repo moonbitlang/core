@@ -72,6 +72,34 @@ test "subset" {
     ),
     content="false",
   )
+  // element not in other but previously missed by buggy self-reference
+  inspect(
+    @sorted_set.from_array([1, 2, 5]).subset(
+      @sorted_set.from_array([1, 2, 3, 4]),
+    ),
+    content="false",
+  )
+  inspect(
+    @sorted_set.from_array([0, 3, 4]).subset(
+      @sorted_set.from_array([1, 2, 3, 4]),
+    ),
+    content="false",
+  )
+  // exact match
+  inspect(
+    @sorted_set.from_array([1, 2, 3]).subset(@sorted_set.from_array([1, 2, 3])),
+    content="true",
+  )
+  // empty is subset of anything
+  inspect(
+    @sorted_set.new().subset(@sorted_set.from_array([1, 2, 3])),
+    content="true",
+  )
+  // nothing is subset of empty (except empty)
+  inspect(
+    @sorted_set.from_array([1]).subset(@sorted_set.new()),
+    content="false",
+  )
 }
 
 ///|
