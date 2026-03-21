@@ -262,7 +262,30 @@ pub fn[V : Compare] SortedSet::difference(
   src : SortedSet[V],
 ) -> SortedSet[V] {
   let ret = new()
-  self.each(x => if !src.contains(x) { ret.add(x) })
+  let it1 = self.iter()
+  let it2 = src.iter()
+  let mut a = it1.next()
+  let mut b = it2.next()
+  while a is Some(va) {
+    match b {
+      None => {
+        ret.add(va)
+        a = it1.next()
+      }
+      Some(vb) => {
+        let c = va.compare(vb)
+        if c < 0 {
+          ret.add(va)
+          a = it1.next()
+        } else if c > 0 {
+          b = it2.next()
+        } else {
+          a = it1.next()
+          b = it2.next()
+        }
+      }
+    }
+  }
   ret
 }
 
@@ -293,10 +316,38 @@ pub fn[V : Compare] SortedSet::symmetric_difference(
   self : SortedSet[V],
   other : SortedSet[V],
 ) -> SortedSet[V] {
-  // TODO: Optimize this function to avoid creating two intermediate sets.
-  let set1 = self.difference(other)
-  let set2 = other.difference(self)
-  set1.union(set2)
+  let ret = new()
+  let it1 = self.iter()
+  let it2 = other.iter()
+  let mut a = it1.next()
+  let mut b = it2.next()
+  while true {
+    match (a, b) {
+      (Some(va), Some(vb)) => {
+        let c = va.compare(vb)
+        if c < 0 {
+          ret.add(va)
+          a = it1.next()
+        } else if c > 0 {
+          ret.add(vb)
+          b = it2.next()
+        } else {
+          a = it1.next()
+          b = it2.next()
+        }
+      }
+      (Some(va), None) => {
+        ret.add(va)
+        a = it1.next()
+      }
+      (None, Some(vb)) => {
+        ret.add(vb)
+        b = it2.next()
+      }
+      (None, None) => break
+    }
+  }
+  ret
 }
 
 ///|
@@ -307,7 +358,22 @@ pub fn[V : Compare] SortedSet::intersection(
   src : SortedSet[V],
 ) -> SortedSet[V] {
   let ret = new()
-  self.each(x => if src.contains(x) { ret.add(x) })
+  let it1 = self.iter()
+  let it2 = src.iter()
+  let mut a = it1.next()
+  let mut b = it2.next()
+  while a is Some(va) && b is Some(vb) {
+    let c = va.compare(vb)
+    if c < 0 {
+      a = it1.next()
+    } else if c > 0 {
+      b = it2.next()
+    } else {
+      ret.add(va)
+      a = it1.next()
+      b = it2.next()
+    }
+  }
   ret
 }
 
@@ -317,7 +383,27 @@ pub fn[V : Compare] SortedSet::subset(
   self : SortedSet[V],
   src : SortedSet[V],
 ) -> Bool {
-  self.iter().all(x => src.contains(x))
+  let it1 = self.iter()
+  let it2 = src.iter()
+  let mut a = it1.next()
+  let mut b = it2.next()
+  while a is Some(va) {
+    match b {
+      None => return false
+      Some(vb) => {
+        let c = va.compare(vb)
+        if c < 0 {
+          return false
+        } else if c > 0 {
+          b = it2.next()
+        } else {
+          a = it1.next()
+          b = it2.next()
+        }
+      }
+    }
+  }
+  true
 }
 
 ///|
@@ -326,7 +412,21 @@ pub fn[V : Compare] SortedSet::disjoint(
   self : SortedSet[V],
   src : SortedSet[V],
 ) -> Bool {
-  self.iter().all(x => !src.contains(x))
+  let it1 = self.iter()
+  let it2 = src.iter()
+  let mut a = it1.next()
+  let mut b = it2.next()
+  while a is Some(va) && b is Some(vb) {
+    let c = va.compare(vb)
+    if c < 0 {
+      a = it1.next()
+    } else if c > 0 {
+      b = it2.next()
+    } else {
+      return false
+    }
+  }
+  true
 }
 
 // General collection operations
