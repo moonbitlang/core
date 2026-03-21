@@ -555,23 +555,11 @@ pub fn[A : Compare] SortedSet::subset(
   self : SortedSet[A],
   other : SortedSet[A],
 ) -> Bool {
-  match (self, other) {
-    (Empty, _) => true
-    (_, Empty) => false
-    (
-      Node(left=l1, value=v1, right=r1, ..),
-      Node(left=l2, value=v2, right=r2, ..),
-    ) => {
-      let compare_result = v1.compare(v2)
-      if compare_result == 0 {
-        l1.subset(l2) && r1.subset(r2)
-      } else if compare_result < 0 {
-        Node(left=l1, value=v1, right=Empty, size=1).subset(l2) &&
-        r1.subset(self)
-      } else {
-        Node(left=Empty, value=v1, right=r1, size=1).subset(r2) &&
-        l1.subset(self)
-      }
+  match self {
+    Empty => true
+    Node(left=l1, value=v1, right=r1, ..) => {
+      let (l2, found, r2) = other.split(v1)
+      found && l1.subset(l2) && r1.subset(r2)
     }
   }
 }
