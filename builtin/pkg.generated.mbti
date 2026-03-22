@@ -51,7 +51,9 @@ pub(all) suberror BenchError {
 
 pub(all) suberror Failure {
   Failure(String)
-} derive(Show, ToJson)
+}
+pub impl Show for Failure
+pub impl ToJson for Failure
 
 pub(all) suberror InspectError {
   InspectError(String)
@@ -62,10 +64,11 @@ pub(all) suberror SnapshotError {
 }
 
 // Types and methods
-pub(all) struct ArgsLoc(Array[SourceLoc?]) derive(Show)
+pub(all) struct ArgsLoc(Array[SourceLoc?])
 #deprecated
 pub fn ArgsLoc::inner(Self) -> Array[SourceLoc?]
 pub fn ArgsLoc::to_json(Self) -> String
+pub impl Show for ArgsLoc
 
 type Array[T]
 #alias(every)
@@ -325,7 +328,8 @@ pub impl[X : Show, Y : Show] Show for Iter2[X, Y]
 pub(all) enum IterResult {
   IterEnd
   IterContinue
-} derive(Eq)
+}
+pub impl Eq for IterResult
 
 pub enum Json {
   Null
