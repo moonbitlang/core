@@ -386,6 +386,7 @@ pub fn[K : Compare, V] SortedMap::range(
 ///   inspect(map2.length(), content="4")
 /// }
 /// ```
+#alias(clone, deprecated)
 pub fn[K, V] SortedMap::copy(self : SortedMap[K, V]) -> SortedMap[K, V] {
   fn copy_node(node : Node[K, V]?) -> Node[K, V]? {
     match node {

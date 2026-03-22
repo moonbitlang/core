@@ -1550,6 +1550,7 @@ pub fn[X] FixedArray::iter2(self : FixedArray[X]) -> Iter2[Int, X] {
 /// }
 /// ```
 #cfg(not(target="js"))
+#alias(clone, deprecated)
 pub fn[T] FixedArray::copy(self : FixedArray[T]) -> FixedArray[T] {
   let len = self.length()
   if len == 0 {
@@ -1583,6 +1584,7 @@ pub fn[T] FixedArray::copy(self : FixedArray[T]) -> FixedArray[T] {
 /// }
 /// ```
 #cfg(target="js")
+#alias(clone, deprecated)
 pub fn[T] FixedArray::copy(self : FixedArray[T]) -> FixedArray[T] {
   JSArray::ofAnyFixedArray(self).copy().toAnyFixedArray()
 }

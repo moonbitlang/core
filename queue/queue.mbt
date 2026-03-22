@@ -292,6 +292,7 @@ pub fn[A, B] Queue::fold(self : Queue[A], init~ : B, f : (B, A) -> B) -> B {
 ///   assert_eq(queue2.length(), 4)
 /// }
 /// ```
+#alias(clone, deprecated)
 pub fn[A] Queue::copy(self : Queue[A]) -> Queue[A] {
   guard self.first is Some({ content, next }) else { return new() }
   let first = { content, next: None }

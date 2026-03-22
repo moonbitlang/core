@@ -590,6 +590,7 @@ pub fn[K, V, V2] HashMap::map(
 
 ///|
 /// Copy the map, creating a new map with the same key-value pairs.
+#alias(clone, deprecated)
 pub fn[K, V] HashMap::copy(self : HashMap[K, V]) -> HashMap[K, V] {
   let other = {
     capacity: self.capacity,

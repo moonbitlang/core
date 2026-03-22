@@ -732,6 +732,7 @@ pub fn[K, V, V2] Map::map(self : Map[K, V], f : (K, V) -> V2) -> Map[K, V2] {
 
 ///|
 /// Copy the map, creating a new map with the same key-value pairs and order of insertion.
+#alias(clone, deprecated)
 pub fn[K, V] Map::copy(self : Map[K, V]) -> Map[K, V] {
   // copy structure
   let other = {

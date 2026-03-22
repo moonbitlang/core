@@ -655,6 +655,7 @@ pub fn[K : Hash + Eq] HashSet::remove_and_check(
 
 ///|
 /// Copy the set, creating a new set with the same keys.
+#alias(clone, deprecated)
 pub fn[K] HashSet::copy(self : HashSet[K]) -> HashSet[K] {
   let other = {
     capacity: self.capacity,
