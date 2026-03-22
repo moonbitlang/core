@@ -51,9 +51,7 @@ pub(all) suberror BenchError {
 
 pub(all) suberror Failure {
   Failure(String)
-}
-pub impl Show for Failure
-pub impl ToJson for Failure
+} derive(Show, ToJson)
 
 pub(all) suberror InspectError {
   InspectError(String)
@@ -64,11 +62,10 @@ pub(all) suberror SnapshotError {
 }
 
 // Types and methods
-pub(all) struct ArgsLoc(Array[SourceLoc?])
+pub(all) struct ArgsLoc(Array[SourceLoc?]) derive(Show)
 #deprecated
 pub fn ArgsLoc::inner(Self) -> Array[SourceLoc?]
 pub fn ArgsLoc::to_json(Self) -> String
-pub impl Show for ArgsLoc
 
 type Array[T]
 #alias(every)
@@ -328,8 +325,7 @@ pub impl[X : Show, Y : Show] Show for Iter2[X, Y]
 pub(all) enum IterResult {
   IterEnd
   IterContinue
-}
-pub impl Eq for IterResult
+} derive(Eq)
 
 pub enum Json {
   Null
@@ -728,10 +724,13 @@ pub fn String::repeat(String, Int) -> String
 pub fn String::replace(String, old~ : StringView, new~ : StringView) -> String
 pub fn String::replace_all(String, old~ : StringView, new~ : StringView) -> String
 pub fn String::rev(String) -> String
+pub fn String::rev_after(String, StringView) -> StringView?
+pub fn String::rev_before(String, StringView) -> StringView?
 pub fn String::rev_find(String, StringView) -> Int?
 pub fn[A] String::rev_fold(String, init~ : A, (A, Char) -> A raise?) -> A raise?
 #alias(rev_iterator, deprecated)
 pub fn String::rev_iter(String) -> Iter[Char]
+pub fn String::rev_split_once(String, StringView) -> (StringView, StringView)?
 pub fn String::split(String, StringView) -> Iter[StringView]
 pub fn String::split_once(String, StringView) -> (StringView, StringView)?
 #alias(chop_prefix)
@@ -1018,10 +1017,13 @@ pub fn StringView::repeat(Self, Int) -> Self
 pub fn StringView::replace(Self, old~ : Self, new~ : Self) -> Self
 pub fn StringView::replace_all(Self, old~ : Self, new~ : Self) -> Self
 pub fn StringView::rev(Self) -> String
+pub fn StringView::rev_after(Self, Self) -> Self?
+pub fn StringView::rev_before(Self, Self) -> Self?
 pub fn StringView::rev_find(Self, Self) -> Int?
 pub fn[A] StringView::rev_fold(Self, init~ : A, (A, Char) -> A raise?) -> A raise?
 #alias(rev_iterator, deprecated)
 pub fn StringView::rev_iter(Self) -> Iter[Char]
+pub fn StringView::rev_split_once(Self, Self) -> (Self, Self)?
 pub fn StringView::split(Self, Self) -> Iter[Self]
 pub fn StringView::split_once(Self, Self) -> (Self, Self)?
 pub fn StringView::start_offset(Self) -> Int
