@@ -25,6 +25,7 @@ pub fn[A] Deque::chunk_by(Self[A], (A, A) -> Bool raise?) -> Self[Self[A]] raise
 pub fn[A] Deque::chunks(Self[A], Int) -> Self[Self[A]]
 pub fn[A] Deque::clear(Self[A]) -> Unit
 pub fn[A : Eq] Deque::contains(Self[A], A) -> Bool
+#alias(clone, deprecated)
 pub fn[A] Deque::copy(Self[A]) -> Self[A]
 pub fn[A] Deque::drain(Self[A], start~ : Int, len? : Int) -> Self[A]
 pub fn[A] Deque::each(Self[A], (A) -> Unit) -> Unit

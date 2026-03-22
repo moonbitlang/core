@@ -503,6 +503,7 @@ pub impl[K] Default for Set[K] with default() {
 
 ///|
 /// Copy the set, creating a new set with the same keys and order of insertion.
+#alias(clone, deprecated)
 pub fn[K] Set::copy(self : Set[K]) -> Set[K] {
   // copy structure
   let other = {

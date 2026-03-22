@@ -15,6 +15,7 @@ type T[A]
 #alias("_[_]")
 pub fn[A] T::at(Self[A], Int) -> A
 pub fn[A] T::concat(Self[A], Self[A]) -> Self[A]
+#alias(clone, deprecated)
 #deprecated
 pub fn[A] T::copy(Self[A]) -> Self[A]
 pub fn[A] T::each(Self[A], (A) -> Unit raise?) -> Unit raise?

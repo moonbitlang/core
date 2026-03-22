@@ -78,6 +78,7 @@ fn[A] copy_node(x : Node[A]?) -> Node[A]? {
 ///   inspect(queue2.length(), content="4")
 /// }
 /// ```
+#alias(clone, deprecated)
 pub fn[A] PriorityQueue::copy(self : PriorityQueue[A]) -> PriorityQueue[A] {
   { len: self.len, top: copy_node(self.top) }
 }

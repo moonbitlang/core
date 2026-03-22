@@ -14,6 +14,7 @@ import {
 #alias(T, deprecated)
 type Queue[A]
 pub fn[A] Queue::clear(Self[A]) -> Unit
+#alias(clone, deprecated)
 pub fn[A] Queue::copy(Self[A]) -> Self[A]
 pub fn[A] Queue::each(Self[A], (A) -> Unit) -> Unit
 pub fn[A] Queue::eachi(Self[A], (Int, A) -> Unit) -> Unit

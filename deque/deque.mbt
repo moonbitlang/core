@@ -213,6 +213,7 @@ test "from_array_empty" {
 ///   inspect(copied, content="@deque.from_array([1, 2, 3, 4, 5])")
 /// }
 /// ```
+#alias(clone, deprecated)
 pub fn[A] Deque::copy(self : Deque[A]) -> Deque[A] {
   let len = self.len
   let buf = UninitializedArray::make(len)

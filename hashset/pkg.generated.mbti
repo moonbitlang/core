@@ -19,6 +19,7 @@ pub fn[K : Hash + Eq] HashSet::add_and_check(Self[K], K) -> Bool
 pub fn[K] HashSet::capacity(Self[K]) -> Int
 pub fn[K] HashSet::clear(Self[K]) -> Unit
 pub fn[K : Hash + Eq] HashSet::contains(Self[K], K) -> Bool
+#alias(clone, deprecated)
 pub fn[K] HashSet::copy(Self[K]) -> Self[K]
 pub fn[K : Hash + Eq] HashSet::difference(Self[K], Self[K]) -> Self[K]
 pub fn[K] HashSet::each(Self[K], (K) -> Unit raise?) -> Unit raise?

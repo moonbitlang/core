@@ -47,6 +47,7 @@ pub fn[V : Compare] SortedSet::from_array(array : ArrayView[V]) -> SortedSet[V] 
 /// It is just copying the tree structure, not the values.
 /// 
 #alias(deep_clone, deprecated)
+#alias(clone, deprecated)
 pub fn[V] SortedSet::copy(self : SortedSet[V]) -> SortedSet[V] {
   match self.root {
     None => new()

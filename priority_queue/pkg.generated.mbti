@@ -14,6 +14,7 @@ import {
 #alias(T, deprecated)
 type PriorityQueue[A]
 pub fn[A] PriorityQueue::clear(Self[A]) -> Unit
+#alias(clone, deprecated)
 pub fn[A] PriorityQueue::copy(Self[A]) -> Self[A]
 #alias(of, deprecated)
 #as_free_fn(of, deprecated)

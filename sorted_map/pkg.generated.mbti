@@ -18,6 +18,7 @@ type SortedMap[K, V]
 pub fn[K : Compare, V] SortedMap::at(Self[K, V], K) -> V
 pub fn[K, V] SortedMap::clear(Self[K, V]) -> Unit
 pub fn[K : Compare, V] SortedMap::contains(Self[K, V], K) -> Bool
+#alias(clone, deprecated)
 pub fn[K, V] SortedMap::copy(Self[K, V]) -> Self[K, V]
 pub fn[K, V] SortedMap::each(Self[K, V], (K, V) -> Unit raise?) -> Unit raise?
 pub fn[K, V] SortedMap::eachi(Self[K, V], (Int, K, V) -> Unit raise?) -> Unit raise?

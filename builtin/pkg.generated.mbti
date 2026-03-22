@@ -88,6 +88,7 @@ pub fn[T] Array::chunk_by(Self[T], (T, T) -> Bool raise?) -> Self[ArrayView[T]] 
 pub fn[T] Array::chunks(Self[T], Int) -> Self[ArrayView[T]]
 pub fn[T] Array::clear(Self[T]) -> Unit
 pub fn[T : Eq] Array::contains(Self[T], T) -> Bool
+#alias(clone, deprecated)
 pub fn[T] Array::copy(Self[T]) -> Self[T]
 pub fn[T : Eq] Array::dedup(Self[T]) -> Unit
 pub fn[T] Array::drain(Self[T], Int, Int) -> Self[T]
@@ -356,6 +357,7 @@ pub fn[K, V] Map::capacity(Self[K, V]) -> Int
 pub fn[K, V] Map::clear(Self[K, V]) -> Unit
 pub fn[K : Hash + Eq, V] Map::contains(Self[K, V], K) -> Bool
 pub fn[K : Hash + Eq, V : Eq] Map::contains_kv(Self[K, V], K, V) -> Bool
+#alias(clone, deprecated)
 pub fn[K, V] Map::copy(Self[K, V]) -> Self[K, V]
 pub fn[K, V] Map::each(Self[K, V], (K, V) -> Unit raise?) -> Unit raise?
 pub fn[K, V] Map::eachi(Self[K, V], (Int, K, V) -> Unit raise?) -> Unit raise?
@@ -818,6 +820,7 @@ pub fn FixedArray::blit_from_bytesview(Self[Byte], Int, BytesView) -> Unit
 pub fn FixedArray::blit_from_string(Self[Byte], Int, String, Int, Int) -> Unit
 pub fn[A] FixedArray::blit_to(Self[A], Self[A], len~ : Int, src_offset? : Int, dst_offset? : Int) -> Unit
 pub fn[T : Eq] FixedArray::contains(Self[T], T) -> Bool
+#alias(clone, deprecated)
 pub fn[T] FixedArray::copy(Self[T]) -> Self[T]
 pub fn[T] FixedArray::each(Self[T], (T) -> Unit raise?) -> Unit raise?
 pub fn[T] FixedArray::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
@@ -920,6 +923,7 @@ pub fn[T] ReadOnlyArray::view(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 pub fn Bytes::at(Bytes, Int) -> Byte
 pub fn Bytes::chop_prefix(Bytes, BytesView) -> BytesView?
 pub fn Bytes::chop_suffix(Bytes, BytesView) -> BytesView?
+#alias(clone, deprecated)
 #deprecated
 pub fn Bytes::copy(Bytes) -> Bytes
 pub fn Bytes::find(Bytes, BytesView) -> Int?
