@@ -69,6 +69,15 @@ fn[V] copy_tree(node : Node[V]?) -> Node[V]? {
 }
 
 ///|
+/// Counts the number of nodes in a tree.
+fn[V] tree_count(node : Node[V]?) -> Int {
+  match node {
+    None => 0
+    Some(n) => 1 + tree_count(n.left) + tree_count(n.right)
+  }
+}
+
+///|
 fn[V] new_node(
   value : V,
   left? : Node[V]? = None,
@@ -144,15 +153,17 @@ pub fn[V : Compare] SortedSet::union(
   self : SortedSet[V],
   src : SortedSet[V],
 ) -> SortedSet[V] {
-  fn aux(a : Node[V]?, b : Node[V]?) -> Node[V]? {
+  fn aux(a : Node[V]?, b : Node[V]?) -> (Node[V]?, Int) {
     match (a, b) {
-      (Some(_), None) => a
-      (None, Some(_)) => b
+      (Some(_), None) => (a, tree_count(a))
+      (None, Some(_)) => (b, tree_count(b))
       (Some({ value: va, left: la, right: ra, .. }), Some(_)) => {
         let (l, r) = split(b, va)
-        Some(join(aux(la, l), va, aux(ra, r)))
+        let (left, lsize) = aux(la, l)
+        let (right, rsize) = aux(ra, r)
+        (Some(join(left, va, right)), lsize + 1 + rsize)
       }
-      (None, None) => None
+      (None, None) => (None, 0)
     }
   }
 
@@ -160,13 +171,8 @@ pub fn[V : Compare] SortedSet::union(
     (Some(_), Some(_)) => {
       let t1 = copy_tree(self.root)
       let t2 = copy_tree(src.root)
-      let t = aux(t1, t2)
-      let mut ct = 0
-      let ret = { root: t, size: 0 }
-      // TODO: optimize this. Avoid counting the size of the set.
-      ret.each(_x => ct = ct + 1)
-      ret.size = ct
-      ret
+      let (t, ct) = aux(t1, t2)
+      { root: t, size: ct }
     }
     (Some(_), None) => { root: copy_tree(self.root), size: self.size }
     (None, Some(_)) => { root: copy_tree(src.root), size: src.size }
@@ -189,6 +195,54 @@ fn[V : Compare] split(root : Node[V]?, value : V) -> (Node[V]?, Node[V]?) {
         let (l, r) = split(node.right, value)
         (Some(join(node.left, node.value, l)), r)
       }
+    }
+  }
+}
+
+///|
+/// Like `split`, but also returns whether the pivot value was found in the tree.
+fn[V : Compare] split_member(
+  root : Node[V]?,
+  value : V,
+) -> (Node[V]?, Bool, Node[V]?) {
+  match root {
+    None => (None, false, None)
+    Some(node) => {
+      let comp = value.compare(node.value)
+      if comp == 0 {
+        (node.left, true, node.right)
+      } else if comp < 0 {
+        let (l, found, r) = split_member(node.left, value)
+        (l, found, Some(join(r, node.value, node.right)))
+      } else {
+        let (l, found, r) = split_member(node.right, value)
+        (Some(join(node.left, node.value, l)), found, r)
+      }
+    }
+  }
+}
+
+///|
+/// Joins two trees where all elements in `left` are less than all elements in `right`.
+fn[V] join2(left : Node[V]?, right : Node[V]?) -> Node[V]? {
+  match (left, right) {
+    (None, _) => right
+    (_, None) => left
+    _ => {
+      let (min, right2) = split_min(right.unwrap())
+      Some(join(left, min, right2))
+    }
+  }
+}
+
+///|
+/// Removes and returns the minimum element from a non-empty tree.
+fn[V] split_min(node : Node[V]) -> (V, Node[V]?) {
+  match node.left {
+    None => (node.value, node.right)
+    Some(left) => {
+      let (min, new_left) = split_min(left)
+      (min, Some(join(new_left, node.value, node.right)))
     }
   }
 }
@@ -262,9 +316,27 @@ pub fn[V : Compare] SortedSet::difference(
   self : SortedSet[V],
   src : SortedSet[V],
 ) -> SortedSet[V] {
-  let ret = new()
-  self.each(x => if !src.contains(x) { ret.add(x) })
-  ret
+  fn aux(a : Node[V]?, b : Node[V]?) -> (Node[V]?, Int) {
+    match (a, b) {
+      (None, _) => (None, 0)
+      (Some(_), None) => (a, tree_count(a))
+      (Some({ value: va, left: la, right: ra, .. }), Some(_)) => {
+        let (lb, found, rb) = split_member(b, va)
+        let (left, lsize) = aux(la, lb)
+        let (right, rsize) = aux(ra, rb)
+        if found {
+          (join2(left, right), lsize + rsize)
+        } else {
+          (Some(join(left, va, right)), lsize + 1 + rsize)
+        }
+      }
+    }
+  }
+
+  let t1 = copy_tree(self.root)
+  let t2 = copy_tree(src.root)
+  let (t, ct) = aux(t1, t2)
+  { root: t, size: ct }
 }
 
 ///|
@@ -294,10 +366,28 @@ pub fn[V : Compare] SortedSet::symmetric_difference(
   self : SortedSet[V],
   other : SortedSet[V],
 ) -> SortedSet[V] {
-  // TODO: Optimize this function to avoid creating two intermediate sets.
-  let set1 = self.difference(other)
-  let set2 = other.difference(self)
-  set1.union(set2)
+  fn aux(a : Node[V]?, b : Node[V]?) -> (Node[V]?, Int) {
+    match (a, b) {
+      (None, Some(_)) => (b, tree_count(b))
+      (Some(_), None) => (a, tree_count(a))
+      (Some({ value: va, left: la, right: ra, .. }), Some(_)) => {
+        let (lb, found, rb) = split_member(b, va)
+        let (left, lsize) = aux(la, lb)
+        let (right, rsize) = aux(ra, rb)
+        if found {
+          (join2(left, right), lsize + rsize)
+        } else {
+          (Some(join(left, va, right)), lsize + 1 + rsize)
+        }
+      }
+      (None, None) => (None, 0)
+    }
+  }
+
+  let t1 = copy_tree(self.root)
+  let t2 = copy_tree(other.root)
+  let (t, ct) = aux(t1, t2)
+  { root: t, size: ct }
 }
 
 ///|
@@ -307,9 +397,26 @@ pub fn[V : Compare] SortedSet::intersection(
   self : SortedSet[V],
   src : SortedSet[V],
 ) -> SortedSet[V] {
-  let ret = new()
-  self.each(x => if src.contains(x) { ret.add(x) })
-  ret
+  fn aux(a : Node[V]?, b : Node[V]?) -> (Node[V]?, Int) {
+    match (a, b) {
+      (None, _) | (_, None) => (None, 0)
+      (Some({ value: va, left: la, right: ra, .. }), Some(_)) => {
+        let (lb, found, rb) = split_member(b, va)
+        let (left, lsize) = aux(la, lb)
+        let (right, rsize) = aux(ra, rb)
+        if found {
+          (Some(join(left, va, right)), lsize + 1 + rsize)
+        } else {
+          (join2(left, right), lsize + rsize)
+        }
+      }
+    }
+  }
+
+  let t1 = copy_tree(self.root)
+  let t2 = copy_tree(src.root)
+  let (t, ct) = aux(t1, t2)
+  { root: t, size: ct }
 }
 
 ///|
