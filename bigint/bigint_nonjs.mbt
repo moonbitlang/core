@@ -757,7 +757,17 @@ pub impl Shr for BigInt with shr(self : BigInt, n : Int) -> BigInt {
   if r == 0 {
     let new_limbs = FixedArray::make(new_len, 0U)
     new_limbs.unsafe_blit(0, self.limbs, lz, new_len)
-    { limbs: new_limbs, sign: self.sign, len: new_len }
+    let result = { limbs: new_limbs, sign: self.sign, len: new_len }
+    // For negative numbers with floor division semantics, check if any
+    // dropped low limbs were non-zero and round toward negative infinity
+    if self.sign == Negative {
+      for i in 0..<lz {
+        if self.limbs[i] != 0 {
+          return result - 1
+        }
+      }
+    }
+    result
   } else {
     let new_limbs = FixedArray::make(new_len, 0U)
     let a = self.limbs
@@ -1338,8 +1348,8 @@ pub fn BigInt::pow(self : BigInt, exp : BigInt, modulus? : BigInt) -> BigInt {
     }
     Some(modulus) => {
       guard !(modulus.is_zero() || modulus.sign == Negative)
-      let mut result = 1N
-      let mut base = self
+      let mut result = 1N % modulus
+      let mut base = (self % modulus + modulus) % modulus
       let mut exp = exp
       while exp > 0 {
         if exp % 2 == 1 {
@@ -1876,15 +1886,13 @@ pub fn BigInt::bit_length(self : BigInt) -> Int {
   let mut bit_length = (self.len - 1) * radix_bit_len +
     (radix_bit_len - self.limbs[self.len - 1].clz())
   if self.sign == Negative {
-    // check if this number is a power of two
-    let mut pow2 = self.limbs[0].popcnt() == 1
-    for i in 1..<self.len {
-      if !pow2 {
-        break
-      }
-      pow2 = self.limbs[i] == 0
+    // Check if the magnitude is a power of two (exactly one bit set
+    // across all limbs). For example, -2^32 has limbs [0, 1].
+    let mut total_bits = 0
+    for i in 0..<self.len {
+      total_bits += self.limbs[i].popcnt()
     }
-    if pow2 {
+    if total_bits == 1 {
       bit_length -= 1
     }
   }
