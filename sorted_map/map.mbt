@@ -255,7 +255,7 @@ pub fn[K, V] SortedMap::values_as_iter(self : SortedMap[K, V]) -> Iter[V] {
       }
       None => None
     }
-  }).iter()
+  })
 }
 
 ///|
@@ -332,12 +332,12 @@ pub fn[K : Compare, V] SortedMap::range(
         let cmp_key_low = key.compare(low)
         let cmp_key_high = key.compare(high)
         if cmp_key_low < 0 {
-          // `key > low`, the left subtree and the value itself
-          // should not be visited
+          // `key < low`, the left subtree and the key itself
+          // are all below the range, skip to the right subtree
           continue right
         } else if cmp_key_high > 0 {
-          // `key > right`, the right subtree and the value itself
-          // should not be visited
+          // `key > high`, the right subtree and the key itself
+          // are all above the range, skip to the left subtree
           continue left
           // `low <= key <= high`,
           // the value itself falls in the range,
