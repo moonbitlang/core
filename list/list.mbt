@@ -1381,8 +1381,9 @@ pub fn[A, E] List::scan_left(
     (_, Empty, _) => ()
     (Empty, _, _) => panic()
     (More(_) as dest, More(x, tail=xs), acc) => {
-      dest.tail = More(f(acc, x), tail=Empty)
-      continue (dest.tail, xs, f(acc, x))
+      let next = f(acc, x)
+      dest.tail = More(next, tail=Empty)
+      continue (dest.tail, xs, next)
     }
   }
   dest
