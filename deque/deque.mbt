@@ -1148,8 +1148,8 @@ pub fn[A : Eq] Deque::contains(self : Deque[A], value : A) -> Bool {
 /// ```
 #locals(f)
 pub fn[A] Deque::extract_if(self : Deque[A], f : (A) -> Bool) -> Deque[A] {
-  guard self.length() != 0 else { from_array([]) }
-  let removed = from_array([])
+  guard self.length() != 0 else { new() }
+  let removed = new(capacity=self.length())
   let write = for read in 0..<self.length(); write = 0 {
     let elem = self[read]
     if f(elem) {
@@ -1200,7 +1200,7 @@ pub fn[A] Deque::filter(
   self : Deque[A],
   f : (A) -> Bool raise?,
 ) -> Deque[A] raise? {
-  let dq = from_array([])
+  let dq = new(capacity=self.length())
   for v in self {
     if f(v) {
       dq.push_back(v)
@@ -1621,9 +1621,9 @@ pub fn[A] Deque::to_array(self : Deque[A]) -> Array[A] {
   if len == 0 {
     []
   } else {
-    let xs = Array::make(len, self[0])
+    let xs = Array::new(capacity=len)
     for i in 0..<len {
-      xs[i] = self[i]
+      xs.push(self[i])
     }
     xs
   }
