@@ -56,14 +56,42 @@ pub fn[A : Compare] PriorityQueue::from_array(
 
 ///|
 fn[A] copy_node(x : Node[A]?) -> Node[A]? {
+  // Use an explicit work stack to avoid stack overflow on deep sibling chains.
+  // Each stack entry is (original_node, cloned_parent, relation) where relation
+  // indicates whether original_node is the child or sibling of cloned_parent.
   match x {
     None => None
-    Some(node) =>
-      Some({
-        content: node.content,
-        sibling: copy_node(node.sibling),
-        child: copy_node(node.child),
-      })
+    Some(root) => {
+      let cloned_root : Node[A] = {
+        content: root.content,
+        sibling: None,
+        child: None,
+      }
+      // Stack entries: (original_node, cloned_node_to_fill)
+      // We process child and sibling links iteratively
+      let stack : Array[(Node[A], Node[A])] = [(root, cloned_root)]
+      while stack.pop() is Some((orig, clone)) {
+        if orig.child is Some(child) {
+          let cloned_child : Node[A] = {
+            content: child.content,
+            sibling: None,
+            child: None,
+          }
+          clone.child = Some(cloned_child)
+          stack.push((child, cloned_child))
+        }
+        if orig.sibling is Some(sib) {
+          let cloned_sib : Node[A] = {
+            content: sib.content,
+            sibling: None,
+            child: None,
+          }
+          clone.sibling = Some(cloned_sib)
+          stack.push((sib, cloned_sib))
+        }
+      }
+      Some(cloned_root)
+    }
   }
 }
 
