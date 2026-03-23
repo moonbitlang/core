@@ -50,7 +50,9 @@ pub fn Regex::replace_by(
   replacer : (MatchResult) -> StringView,
   limit? : Int,
 ) -> StringView {
-  let buf = StringBuilder::new()
+  // Delay buffer creation until we find the first match to avoid
+  // unnecessary allocation when the regex doesn't match at all.
+  let mut buf : StringBuilder? = None
   let copy_index = for copy_index = 0, search_index = 0, replaced = 0; search_index <=
                       str.length(); {
     if limit is Some(limit) && replaced >= limit {
@@ -60,8 +62,16 @@ pub fn Regex::replace_by(
       None => break copy_index
       Some(m) => {
         guard m.result.group(0) is Some((start, end)) else { break copy_index }
-        buf.write_stringview(str[copy_index:start])
-        buf.write_stringview(replacer(m))
+        let b = match buf {
+          Some(b) => b
+          None => {
+            let b = StringBuilder::new()
+            buf = Some(b)
+            b
+          }
+        }
+        b.write_stringview(str[copy_index:start])
+        b.write_stringview(replacer(m))
         let search_index = if start == end {
           str.next_char_index(end)
         } else {
@@ -73,8 +83,13 @@ pub fn Regex::replace_by(
   } nobreak {
     copy_index
   }
-  buf.write_stringview(str[copy_index:])
-  buf.to_string()[:]
+  match buf {
+    None => str
+    Some(b) => {
+      b.write_stringview(str[copy_index:])
+      b.to_string()[:]
+    }
+  }
 }
 
 ///|
