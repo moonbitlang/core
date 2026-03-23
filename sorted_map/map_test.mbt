@@ -349,3 +349,96 @@ test "@sorted_map.merge_in_place empty maps" {
   map1.merge_in_place(map1)
   inspect(map1.to_array(), content="[(1, \"a\"), (2, \"b\")]")
 }
+
+///|
+test "get_or_init inserts when absent" {
+  let map = @sorted_map.from_array([(1, "a"), (3, "c")])
+  let v = map.get_or_init(2, fn() { "b" })
+  inspect(v, content="b")
+  inspect(map.get(2), content="Some(\"b\")")
+  inspect(map.length(), content="3")
+}
+
+///|
+test "get_or_init returns existing value" {
+  let map = @sorted_map.from_array([(1, "a"), (2, "b")])
+  let mut called = false
+  let v = map.get_or_init(2, fn() {
+    called = true
+    "c"
+  })
+  inspect(v, content="b")
+  // init function should not be called when key exists
+  inspect(called, content="false")
+  inspect(map.get(2), content="Some(\"b\")")
+}
+
+///|
+test "get_or_default returns default when absent" {
+  let map = @sorted_map.from_array([(1, "a"), (3, "c")])
+  inspect(map.get_or_default(2, "x"), content="x")
+  // map should not be modified
+  inspect(map.contains(2), content="false")
+  inspect(map.length(), content="2")
+}
+
+///|
+test "get_or_default returns existing value" {
+  let map = @sorted_map.from_array([(1, "a"), (2, "b")])
+  inspect(map.get_or_default(2, "x"), content="b")
+}
+
+///|
+test "range with inverted bounds returns empty" {
+  let map = @sorted_map.from_array([
+    (1, "a"),
+    (2, "b"),
+    (3, "c"),
+    (4, "d"),
+    (5, "e"),
+  ])
+  inspect(map.range(5, 1), content="[]")
+}
+
+///|
+test "range with out-of-bounds keys" {
+  let map = @sorted_map.from_array([
+    (1, "a"),
+    (2, "b"),
+    (3, "c"),
+    (4, "d"),
+    (5, "e"),
+  ])
+  inspect(
+    map.range(0, 10),
+    content=(
+      #|[(1, "a"), (2, "b"), (3, "c"), (4, "d"), (5, "e")]
+    ),
+  )
+}
+
+///|
+test "range on empty map" {
+  let map : @sorted_map.SortedMap[Int, String] = @sorted_map.new()
+  inspect(map.range(1, 5), content="[]")
+}
+
+///|
+test "copy independence" {
+  let map1 = @sorted_map.from_array([(1, "a"), (2, "b"), (3, "c")])
+  let map2 = map1.copy()
+  // Modify the copy
+  map2.set(4, "d")
+  map2.remove(1)
+  map2.set(2, "x")
+  // Original should be unchanged
+  inspect(map1.length(), content="3")
+  inspect(map1.get(1), content="Some(\"a\")")
+  inspect(map1.get(2), content="Some(\"b\")")
+  inspect(map1.contains(4), content="false")
+  // Copy should reflect modifications
+  inspect(map2.length(), content="3")
+  inspect(map2.contains(1), content="false")
+  inspect(map2.get(2), content="Some(\"x\")")
+  inspect(map2.get(4), content="Some(\"d\")")
+}
