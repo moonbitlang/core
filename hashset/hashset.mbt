@@ -37,7 +37,7 @@ pub fn[K] HashSet::new(capacity? : Int = default_init_capacity) -> HashSet[K] {
 #alias(of, deprecated="Use from_array instead")
 #as_free_fn(of, deprecated="Use from_array instead")
 pub fn[K : Hash + Eq] HashSet::from_array(arr : ArrayView[K]) -> HashSet[K] {
-  let m = new()
+  let m = new(capacity=arr.length() * 2)
   arr.each(e => m.add(e))
   m
 }
