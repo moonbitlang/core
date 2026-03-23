@@ -73,7 +73,7 @@ pub fn[K, V] HashMap::new(capacity? : Int = 8) -> HashMap[K, V] {
 pub fn[K : Hash + Eq, V] HashMap::from_array(
   arr : ArrayView[(K, V)],
 ) -> HashMap[K, V] {
-  let m = new(capacity=arr.length())
+  let m = new(capacity=arr.length() * 2)
   arr.each(e => m.set(e.0, e.1))
   m
 }
