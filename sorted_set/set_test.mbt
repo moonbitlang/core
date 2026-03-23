@@ -343,3 +343,55 @@ test "@sorted_set.symmetric_difference/identical" {
   let result = set1.symmetric_difference(set2)
   inspect(result, content="@sorted_set.from_array([])")
 }
+
+///|
+test "intersection with empty set" {
+  let set1 = @sorted_set.from_array([1, 2, 3])
+  let empty : @sorted_set.SortedSet[Int] = @sorted_set.new()
+  inspect(set1.intersection(empty), content="@sorted_set.from_array([])")
+  inspect(empty.intersection(set1), content="@sorted_set.from_array([])")
+}
+
+///|
+test "intersection size is correct" {
+  let set1 = @sorted_set.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+  let set2 = @sorted_set.from_array([5, 6, 7, 8, 9, 10, 11, 12, 13, 14])
+  let result = set1.intersection(set2)
+  inspect(result, content="@sorted_set.from_array([5, 6, 7, 8, 9, 10])")
+  assert_eq(result.length(), 6)
+}
+
+///|
+test "difference with empty set" {
+  let set1 = @sorted_set.from_array([1, 2, 3])
+  let empty : @sorted_set.SortedSet[Int] = @sorted_set.new()
+  inspect(set1.difference(empty), content="@sorted_set.from_array([1, 2, 3])")
+  inspect(empty.difference(set1), content="@sorted_set.from_array([])")
+}
+
+///|
+test "difference size is correct" {
+  let set1 = @sorted_set.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+  let set2 = @sorted_set.from_array([5, 6, 7, 8, 9, 10, 11, 12, 13, 14])
+  let result = set1.difference(set2)
+  inspect(result, content="@sorted_set.from_array([1, 2, 3, 4])")
+  assert_eq(result.length(), 4)
+}
+
+///|
+test "union size is correct" {
+  let set1 = @sorted_set.from_array([1, 2, 3, 4, 5])
+  let set2 = @sorted_set.from_array([3, 4, 5, 6, 7])
+  let result = set1.union(set2)
+  inspect(result, content="@sorted_set.from_array([1, 2, 3, 4, 5, 6, 7])")
+  assert_eq(result.length(), 7)
+}
+
+///|
+test "symmetric_difference size is correct" {
+  let set1 = @sorted_set.from_array([1, 2, 3, 4, 5])
+  let set2 = @sorted_set.from_array([3, 4, 5, 6, 7])
+  let result = set1.symmetric_difference(set2)
+  inspect(result, content="@sorted_set.from_array([1, 2, 6, 7])")
+  assert_eq(result.length(), 4)
+}
