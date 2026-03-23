@@ -16,7 +16,7 @@
 struct RangeImpl[T] {
   lo : T
   hi : T
-} derive(Show, ToJson)
+} derive(ToJson)
 
 // pub
 // priv
@@ -47,8 +47,12 @@ fn[T : Range] my_range(lo : T, hi : T) -> RangeImpl[T] {
 
 ///|
 test {
-  @json.json_inspect(my_range(1, 10), content={ "lo": 1, "hi": 10 })
-  @json.json_inspect(my_range("a", "z"), content={ "lo": "a", "hi": "z" })
+  let int_range = my_range(1, 10)
+  debug_inspect((int_range.lo, int_range.hi), content="(1, 10)")
+  @json.json_inspect(int_range, content={ "lo": 1, "hi": 10 })
+  let string_range = my_range("a", "z")
+  debug_inspect((string_range.lo, string_range.hi), content="(\"a\", \"z\")")
+  @json.json_inspect(string_range, content={ "lo": "a", "hi": "z" })
 }
 
 ///|

@@ -27,13 +27,16 @@ test "Bool hash function with struct" {
   struct TestHash {
     flag : Bool
     x : Int
-  } derive(Hash, Eq, Show)
+  } derive(Hash, Eq)
   // type MyInt Int derive(Show) this does not work
   // let m : Map[TestHash, Char] = {}
+  let a = { flag: true, x: 1 }
+  let b = { flag: false, x: 1 }
+  debug_inspect((a.flag, a.x, b.flag, b.x), content="(true, 1, false, 1)")
   let m = {}
-  m[{ flag: true, x: 1 }] = '3'
-  m[{ flag: false, x: 1 }] = '3'
-  inspect(m, content="{{flag: true, x: 1}: '3', {flag: false, x: 1}: '3'}")
+  m[a] = '3'
+  m[b] = '3'
+  debug_inspect((m[a], m[b]), content="('3', '3')")
 }
 
 ///|

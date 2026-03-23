@@ -18,7 +18,7 @@ trait FromString {
 }
 
 ///|
-struct MyInt(Int) derive(Show)
+struct MyInt(Int)
 
 // _ allow in names
 
@@ -28,7 +28,7 @@ impl FromString for MyInt with from_string(_s) {
 }
 
 ///|
-struct MyString(String) derive(Show)
+struct MyString(String)
 
 ///|
 impl FromString for MyString with from_string(_s) {
@@ -49,12 +49,9 @@ fn need_string(_x : MyString) -> Unit {
 test {
   let u0 : MyString = FromString::from_string("")
   let u1 : MyInt = FromString::from_string("")
-  inspect(
-    (u0, u1),
-    content=(
-      #|(MyString(""), MyInt(0))
-    ),
-  )
+  let MyString(s) = u0
+  let MyInt(i) = u1
+  debug_inspect((s, i), content="(\"\", 0)")
   need_int(FromString::from_string(""))
   need_string(FromString::from_string(""))
   let z = FromString::from_string("")

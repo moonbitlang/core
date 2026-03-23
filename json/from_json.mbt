@@ -16,7 +16,20 @@
 /// Error type `JsonDecodeError`.
 pub(all) suberror JsonDecodeError {
   JsonDecodeError((JsonPath, String))
-} derive(Eq, Show, ToJson)
+} derive(Eq, ToJson)
+
+///|
+pub impl Show for JsonDecodeError with output(self, logger) {
+  match self {
+    JsonDecodeError((path, msg)) => {
+      logger.write_string("JsonDecodeError((")
+      logger.write_object(path)
+      logger.write_string(", ")
+      logger.write_object(msg)
+      logger.write_string("))")
+    }
+  }
+}
 
 ///|
 /// Trait for types that can be converted from `Json`

@@ -124,6 +124,7 @@ pub fn SourceLoc::to_json_string(self : SourceLoc) -> String {
 /// array of optional source locations, where each element corresponds to an
 /// argument's location in the source code. Used internally by the compiler for
 /// error reporting and debugging purposes.
+#warnings("-deprecated_derive")
 pub(all) struct ArgsLoc(Array[SourceLoc?]) derive(Show)
 
 ///|

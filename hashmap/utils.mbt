@@ -497,9 +497,9 @@ test "retain" {
   }
   hashmap.retain((_k, v) => v % 2 == 0)
   inspect(
-    hashmap.entries,
+    hashmap._debug_entries(),
     content=(
-      #|[None, None, None, None, None, None, Some({psl: 0, hash: -765931946, key: "b", value: 2}), Some({psl: 0, hash: -136509641, key: "d", value: 4})]
+      #|_,_,_,_,_,_,(0,b,2),(0,d,4)
     ),
   )
 }

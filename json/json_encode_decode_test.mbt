@@ -18,7 +18,7 @@ pub(all) struct AllThree {
   ints : Array[Int]
   floats : Array[Double]
   strings : Array[String]
-} derive(Eq, Show)
+} derive(Eq)
 
 ///|
 fn[T] array_to_json(arr : Array[T], f~ : (T) -> Json) -> Json {
@@ -38,7 +38,7 @@ fn AllThree::to_json(self : AllThree) -> Json {
 ///|
 suberror DecodeError {
   DecodeError(String)
-} derive(Eq, Show)
+} derive(Eq)
 
 ///|
 fn of_json(jv : Json) -> AllThree raise DecodeError {
@@ -84,11 +84,10 @@ test {
     strings: ["a", "b", "c"],
   }
   let json = all_three.to_json()
-  inspect(
-    try? of_json(json),
-    content=(
-      #|Ok({ints: [1, 2, 3], floats: [1, 2, 3], strings: ["a", "b", "c"]})
-    ),
+  let decoded = of_json(json)
+  debug_inspect(
+    (decoded.ints, decoded.floats, decoded.strings),
+    content="([1, 2, 3], [1, 2, 3], [\"a\", \"b\", \"c\"])",
   )
   // FIXME:
   // note try? `body_no_error` is confusing

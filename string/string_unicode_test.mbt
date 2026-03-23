@@ -16,15 +16,10 @@
 test {
   struct Data {
     val : String
-  } derive(Show)
+  } derive(Debug)
   let data = Data::{ val: "Hello, 世界\t\n!" }
   // TODO: the data type annotation is not needed
-  inspect(
-    data,
-    content=(
-      #|{val: "Hello, 世界\t\n!"}
-    ),
-  )
+  debug_inspect(data, content="{ val: \"Hello, 世界\\t\\n!\" }")
   let v = "\u{00AD}Hello, \u{2060}世界\t\n!\u{1D173}"
   inspect(
     to_repr(v),

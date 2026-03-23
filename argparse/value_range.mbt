@@ -20,7 +20,16 @@ pub struct ValueRange {
 
   /// Create a value-count range.
   fn new(lower? : Int, upper? : Int) -> ValueRange
-} derive(Eq, Show)
+} derive(Eq)
+
+///|
+pub impl Show for ValueRange with output(self, logger) {
+  logger.write_string("{lower: ")
+  logger.write_object(self.lower)
+  logger.write_string(", upper: ")
+  logger.write_object(self.upper)
+  logger.write_char('}')
+}
 
 ///|
 /// Exact single-value range (`1..1`).

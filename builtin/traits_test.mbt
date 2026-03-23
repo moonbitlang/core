@@ -26,11 +26,15 @@ test "hash_data" {
   struct Data {
     x : Array[Int]
     y : FixedArray[Int]
-  } derive(Hash, Eq, Show)
+  } derive(Hash, Eq)
   let data = Data::{ x: [1, 2, 3], y: [4, 5, 6] }
+  debug_inspect(
+    (data.x, data.y),
+    content="([1, 2, 3], <FixedArray: [4, 5, 6]>)",
+  )
   let map = {}
   map[data] = 1
-  inspect(map, content="{{x: [1, 2, 3], y: [4, 5, 6]}: 1}")
+  debug_inspect(map[data], content="1")
 }
 
 ///|
@@ -42,7 +46,7 @@ struct TestLogger {
 struct Pair {
   left : Int
   right : Int
-} derive(Eq, Show)
+} derive(Eq)
 
 ///|
 struct Wrapper {
@@ -65,6 +69,10 @@ test "Eq helpers" {
   inspect(Eq::equal(3, 3), content="true")
   let a : Pair = Pair::{ left: 1, right: 2 }
   let b : Pair = Pair::{ left: 1, right: 3 }
+  debug_inspect(
+    ((a.left, a.right), (b.left, b.right)),
+    content="((1, 2), (1, 3))",
+  )
   inspect(Eq::not_equal(a, b), content="true")
 }
 

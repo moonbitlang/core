@@ -19,7 +19,7 @@ enum Expr {
   Mul(Expr, Expr)
   Div(Expr, Expr)
   Val(String)
-} derive(ToJson, FromJson, Show, Eq)
+} derive(ToJson, FromJson, Eq)
 
 ///|
 test {
@@ -32,11 +32,6 @@ test {
     ),
   )
   let e0 : Expr = @json.from_json(ej)
-  inspect(
-    e0,
-    content=(
-      #|Add(Val("x"), Val("y"))
-    ),
-  )
-  assert_eq(e0, e)
+  debug_inspect(e0 == e, content="true")
+  assert_true(e0 == e)
 }

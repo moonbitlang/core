@@ -39,14 +39,17 @@ test "show output" {
 ///|
 struct TestHash {
   x : Char
-} derive(Hash, Eq, Show)
+} derive(Hash, Eq)
 
 ///|
 test "Char hash function with struct" {
+  let a = { x: 'a' }
+  let b = { x: 'b' }
+  debug_inspect((a.x, b.x), content="('a', 'b')")
   let m = {}
-  m[{ x: 'a' }] = '3'
-  m[{ x: 'b' }] = '3'
-  inspect(m, content="{{x: 'a'}: '3', {x: 'b'}: '3'}")
+  m[a] = '3'
+  m[b] = '3'
+  debug_inspect((m[a], m[b]), content="('3', '3')")
 }
 
 ///|

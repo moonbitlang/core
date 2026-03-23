@@ -28,10 +28,18 @@
 ///   inspect(a.compare(b), content="1") // 1 > 2 in reversed order
 ///   inspect(b.compare(a), content="-1") // 2 < 1 in reversed order
 ///   inspect(a == a, content="true") // Equality works correctly
-///   inspect(a.to_string(), content="Reverse(1)") // Shows wrapped value
+///   debug_inspect(@cmp.maximum(a, b).compare(@cmp.Reverse(1)), content="0")
 /// }
 /// ```
-pub(all) struct Reverse[T](T) derive(Eq, Show, Hash)
+#warnings("-deprecated_derive")
+pub(all) struct Reverse[T](T) derive(Eq, Hash)
+
+///|
+pub impl[T : Show] Show for Reverse[T] with output(self, logger) {
+  logger.write_string("Reverse(")
+  logger.write_object(self.0)
+  logger.write_char(')')
+}
 
 ///|
 pub impl[T : Compare] Compare for Reverse[T] with compare(a, b) {

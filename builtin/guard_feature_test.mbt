@@ -20,7 +20,7 @@ enum Expr {
   Div(Expr, Expr)
   Lit(Int)
   Var(String)
-} derive(Show, ToJson, Eq)
+} derive(ToJson, Eq)
 
 ///|
 fn simplify(e : Expr) -> Expr {
@@ -42,11 +42,10 @@ fn simplify(e : Expr) -> Expr {
 test "simplify" {
   let _ignored = Add(Div(Lit(1), Lit(2)), Div(Lit(1), Lit(2)))
   let e = Sub(Mul(Lit(1), Var("x")), Mul(Lit(1), Var("x")))
-  @json.json_inspect(e, content=[
-    "Sub",
-    ["Mul", ["Lit", 1], ["Var", "x"]],
-    ["Mul", ["Lit", 1], ["Var", "x"]],
-  ])
+  debug_inspect(
+    e == Sub(Mul(Lit(1), Var("x")), Mul(Lit(1), Var("x"))),
+    content="true",
+  )
   let simplified = simplify(e)
-  @json.json_inspect(simplified, content=["Lit", 0])
+  debug_inspect(simplified == Lit(0), content="true")
 }

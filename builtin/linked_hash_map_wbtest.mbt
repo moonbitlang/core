@@ -32,10 +32,10 @@ test "new" {
   let m : Map[String, Int] = Map::new()
   assert_eq(m.size, 0)
   assert_eq(m.capacity, 8)
-  assert_eq(m.head, None)
+  assert_true(m.head is None)
   assert_eq(m.tail, -1)
   for i in 0..<m.capacity {
-    assert_eq(m.entries[i], None)
+    assert_true(m.entries[i] is None)
   }
 }
 
@@ -221,10 +221,10 @@ test "clear" {
   m.clear()
   assert_eq(m.size, 0)
   inspect(m.capacity, content="4")
-  assert_eq(m.head, None)
+  assert_true(m.head is None)
   assert_eq(m.tail, -1)
   for i in 0..<m.capacity {
-    assert_eq(m.entries[i], None)
+    assert_true(m.entries[i] is None)
   }
 }
 
@@ -606,9 +606,4 @@ fn[K : Show, V : Show] Map::_debug_entries(self : Map[K, V]) -> String {
     }
   }
   buf.to_string()
-}
-
-///|
-impl[K : Eq, V] Eq for Entry[K, V] with equal(self, other) {
-  self.hash == other.hash && self.key == other.key
 }

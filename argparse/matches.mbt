@@ -17,6 +17,7 @@ using @debug {trait Debug, type Repr}
 
 ///|
 /// Where a value/flag came from.
+#warnings("-deprecated_derive")
 pub enum ValueSource {
   Argv
   Env

@@ -495,12 +495,6 @@ impl Hash for MyString with hash_combine(self, hasher) {
 }
 
 ///|
-impl Show for MyString with output(self, logger) {
-  let MyString(self) = self
-  logger.write_string(self)
-}
-
-///|
 test "set" {
   let m : HashSet[MyString] = new()
   m.add("a")
@@ -589,7 +583,7 @@ test "clear" {
   inspect(m.length(), content="0")
   inspect(m.capacity(), content="8")
   for entry in m.entries {
-    @test.same_object(entry, None)
+    assert_true(entry is None)
   }
 }
 

@@ -21,7 +21,7 @@ priv struct Entry[K] {
   mut psl : Int
   hash : Int
   key : K
-} derive(Show)
+}
 
 ///|
 /// Mutable linked hash set that maintains the order of insertion, not thread safe.

@@ -22,7 +22,7 @@ priv struct Entry[K, V] {
   hash : Int
   key : K
   mut value : V
-} derive(Show)
+}
 
 ///|
 /// Mutable linked hash map that maintains the order of insertion, not thread safe.

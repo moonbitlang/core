@@ -648,7 +648,7 @@ test "string pattern matching" {
     True
     False
     Other
-  } derive(Show)
+  } derive(Debug)
   fn process_string(s : String) {
     match s {
       [.. "true", ..] => True
@@ -657,11 +657,15 @@ test "string pattern matching" {
     }
   }
 
-  inspect(process_string("truexx"), content="True")
-  // more tests
-  inspect(process_string("false xx"), content="False")
-  inspect(process_string("true"), content="True")
-  inspect(process_string(""), content="Other")
+  debug_inspect(
+    (
+      process_string("truexx"),
+      process_string("false xx"),
+      process_string("true"),
+      process_string(""),
+    ),
+    content="(True, False, True, Other)",
+  )
 }
 
 ///|

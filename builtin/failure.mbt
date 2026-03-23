@@ -36,7 +36,18 @@
 /// ```
 pub(all) suberror Failure {
   Failure(String)
-} derive(ToJson, Show)
+} derive(ToJson)
+
+///|
+pub impl Show for Failure with output(self, logger) {
+  match self {
+    Failure(msg) => {
+      logger.write_string("Failure(")
+      logger.write_object(msg)
+      logger.write_char(')')
+    }
+  }
+}
 
 ///|
 /// Raises a `Failure` error with a given message and source location.

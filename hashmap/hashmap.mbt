@@ -699,12 +699,6 @@ impl Hash for MyString with hash_combine(self, hasher) {
 }
 
 ///|
-#coverage.skip
-impl Show for MyString with output(self, logger) {
-  logger.write_string(self.0)
-}
-
-///|
 fn[K : Hash + Eq, V : Eq] verify_content(
   map : HashMap[K, V],
   expected : Array[(K, V)],
@@ -825,7 +819,7 @@ test "clear" {
   inspect(m.length(), content="0")
   inspect(m.capacity(), content="8")
   for entry in m.entries {
-    @test.same_object(entry, None)
+    assert_true(entry is None)
   }
 }
 

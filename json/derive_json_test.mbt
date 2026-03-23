@@ -17,20 +17,15 @@ struct Hello[A, B] {
   fieldA : A
   fieldB : B
   data : Map[String, A]
-} derive(ToJson, FromJson, Show, Eq)
+} derive(ToJson, FromJson, Eq)
 
 ///|
 test {
   let v = Hello::{ fieldA: 3, fieldB: 2, data: { "a": 3 } }
   let vj = v.to_json()
   let v0 : Hello[Int, Int] = @json.from_json(vj)
-  inspect(
-    v0,
-    content=(
-      #|{fieldA: 3, fieldB: 2, data: {"a": 3}}
-    ),
-  )
-  assert_eq(v0, v)
+  debug_inspect((v0.fieldA, v0.fieldB, v0.data), content="(3, 2, { \"a\": 3 })")
+  assert_true(v0 == v)
 }
 
 // struct Hello2 [A, B] {

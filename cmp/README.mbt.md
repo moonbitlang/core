@@ -31,12 +31,12 @@ test "reverse comparison" {
   let b = @cmp.Reverse(2)
 
   // Normal comparison: 1 < 2, but reversed: 1 > 2
-  inspect(a.compare(b), content="1")
-  inspect(b.compare(a), content="-1")
+  debug_inspect(a.compare(b), content="1")
+  debug_inspect(b.compare(a), content="-1")
 
   // Can be used with generic comparison functions
-  inspect(@cmp.maximum(a, b), content="Reverse(1)")
-  inspect(@cmp.minimum(a, b), content="Reverse(2)")
+  debug_inspect(@cmp.maximum(a, b).compare(@cmp.Reverse(1)), content="0")
+  debug_inspect(@cmp.minimum(a, b).compare(@cmp.Reverse(2)), content="0")
 }
 ```
 
@@ -50,7 +50,7 @@ test "reverse with arrays" {
   // Create an array with reversed integers for descending sort
   let arr = [@cmp.Reverse(3), @cmp.Reverse(1), @cmp.Reverse(4), @cmp.Reverse(2)]
   // When sorted, the array will be in descending order of the wrapped values
-  inspect(arr[0], content="Reverse(3)") // Access first element
+  debug_inspect(arr[0].compare(@cmp.Reverse(3)), content="0") // Access first element
 }
 ```
 
@@ -64,7 +64,7 @@ test "cmp_by_key" {
   struct Person {
     name : String
     age : Int
-  } derive(Show)
+  }
 
   // Compare strings by their length
   let s1 = "hello"
@@ -76,7 +76,7 @@ test "cmp_by_key" {
   let alice = { name: "Alice", age: 25 }
   let bob = { name: "Bob", age: 30 }
   let younger = @cmp.minimum_by_key(alice, bob, p => p.age)
-  inspect(younger, content="{name: \"Alice\", age: 25}")
+  debug_inspect((younger.name, younger.age), content="(\"Alice\", 25)")
 
   // When keys are equal, the first argument is considered the minimum
   let p1 = ("first", 1)

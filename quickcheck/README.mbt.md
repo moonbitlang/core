@@ -72,7 +72,7 @@ Implement `Arbitrary` trait for custom types:
 struct Point {
   x : Int
   y : Int
-} derive(Show)
+}
 
 ///|
 impl Arbitrary for Point with arbitrary(size, r0) {
@@ -84,11 +84,11 @@ impl Arbitrary for Point with arbitrary(size, r0) {
 ///|
 test "custom type generation" {
   let point : Point = @quickcheck.gen()
-  inspect(point, content="{x: 0, y: 0}")
+  debug_inspect((point.x, point.y), content="(0, 0)")
   let points : Array[Point] = @quickcheck.samples(10)
-  inspect(
-    points[6:],
-    content="[{x: 0, y: 1}, {x: -1, y: -5}, {x: -6, y: -6}, {x: -1, y: 7}]",
+  debug_inspect(
+    points[6:].map(p => (p.x, p.y)),
+    content="[(0, 1), (-1, -5), (-6, -6), (-1, 7)]",
   )
 }
 ```

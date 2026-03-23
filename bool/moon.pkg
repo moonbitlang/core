@@ -3,6 +3,5 @@ import {
 }
 
 import {
-  "moonbitlang/core/char",
   "moonbitlang/core/int16",
 } for "test"

@@ -13,22 +13,17 @@
 // limitations under the License.
 
 ///|
-enum H {
-  A(Char)
-} derive(Show)
-
-///|
 test "char nested" {
-  inspect(H::A('中'), content="A('中')")
-  inspect(H::A('\b'), content="A('\\b')")
-  inspect(H::A('\r'), content="A('\\r')")
-  inspect(H::A('\n'), content="A('\\n')")
-  inspect(H::A('\t'), content="A('\\t')")
-  inspect(H::A('\u0000'), content="A('\\u{00}')")
-  inspect(H::A('\u0001'), content="A('\\u{01}')")
-  inspect(H::A('\u0002'), content="A('\\u{02}')")
+  debug_inspect(Some('中'), content="Some('中')")
+  debug_inspect(Some('\b'), content="Some('\\b')")
+  debug_inspect(Some('\r'), content="Some('\\r')")
+  debug_inspect(Some('\n'), content="Some('\\n')")
+  debug_inspect(Some('\t'), content="Some('\\t')")
+  debug_inspect(Some('\u0000'), content="Some('\\u{00}')")
+  debug_inspect(Some('\u0001'), content="Some('\\u{01}')")
+  debug_inspect(Some('\u0002'), content="Some('\\u{02}')")
   // emoji
-  inspect(H::A('🚀'), content="A('🚀')")
+  debug_inspect(Some('🚀'), content="Some('🚀')")
 }
 
 ///|
