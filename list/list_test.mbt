@@ -478,6 +478,23 @@ test "scan_left" {
 }
 
 ///|
+test "scan_left calls f once per element" {
+  // Verify that scan_left evaluates f exactly once per element,
+  // not twice (which was the previous bug)
+  let mut call_count = 0
+  let result = @list.from_array([1, 2, 3]).scan_left(
+    (acc, x) => {
+      call_count += 1
+      acc + x
+    },
+    init=0,
+  )
+  debug_inspect(result, content="<List: [0, 1, 3, 6]>")
+  // Should be called exactly 3 times (once per element), not 6
+  assert_eq(call_count, 3)
+}
+
+///|
 test "scan_right" {
   let el = @list.empty().scan_right((acc, x) => x + acc, init=0)
   let ls = @list.from_array([1, 2, 3, 4]).scan_right(
@@ -785,7 +802,7 @@ test "List::minimum with non-empty list" {
 
 ///|
 test "@list.minimum with empty list" {
-  (@list.empty() : @list.List[Int]).minimum() |> ignore
+  debug_inspect((@list.empty() : @list.List[Int]).minimum(), content="None")
 }
 
 ///|
