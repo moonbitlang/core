@@ -171,6 +171,7 @@ pub fn[A] T::length(self : T[A]) -> Int {
 /// ```
 #alias("_[_]")
 pub fn[A] T::at(self : T[A], index : Int) -> A {
+  guard index >= 0 && index < self.size
   if index == 0 {
     self.tree.get_first()
   } else if index == self.size - 1 {
@@ -222,6 +223,7 @@ pub fn[A] T::get(self : T[A], index : Int) -> A? {
 /// }
 /// ```
 pub fn[A] T::set(self : T[A], index : Int, value : A) -> T[A] {
+  guard index >= 0 && index < self.size
   {
     tree: self.tree.set(index, self.shift, value),
     size: self.size,
