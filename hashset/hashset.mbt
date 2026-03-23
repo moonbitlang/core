@@ -37,7 +37,12 @@ pub fn[K] HashSet::new(capacity? : Int = default_init_capacity) -> HashSet[K] {
 #alias(of, deprecated="Use from_array instead")
 #as_free_fn(of, deprecated="Use from_array instead")
 pub fn[K : Hash + Eq] HashSet::from_array(arr : ArrayView[K]) -> HashSet[K] {
-  let m = new(capacity=arr.length() * 2)
+  let length = arr.length()
+  let mut capacity = length.next_power_of_two()
+  if length >= calc_grow_threshold(capacity) {
+    capacity = capacity * 2
+  }
+  let m = new(capacity~)
   arr.each(e => m.add(e))
   m
 }
