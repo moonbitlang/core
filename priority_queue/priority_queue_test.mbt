@@ -208,3 +208,20 @@ test "priority queue large data" {
   inspect(pq.iter(), content="[]")
   assert_eq(pq.length(), 0)
 }
+
+///|
+test "copy large monotonic queue" {
+  // Monotonic inserts create deep sibling chains in pairing heaps.
+  // This verifies copy() doesn't overflow the stack on large inputs.
+  let pq = @priority_queue.new()
+  for i in 0..<10000 {
+    pq.push(i)
+  }
+  let pq2 = pq.copy()
+  assert_eq(pq2.length(), 10000)
+  assert_eq(pq2.peek(), Some(9999))
+  // Verify independence: mutate original, copy should be unaffected
+  pq.pop() |> ignore
+  assert_eq(pq.peek(), Some(9998))
+  assert_eq(pq2.peek(), Some(9999))
+}
