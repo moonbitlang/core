@@ -1271,3 +1271,38 @@ test "BigInt bit_length negative multi-limb" {
 test "BigInt bit_length zero" {
   inspect(@bigint.BigInt::from_int(0).bit_length(), content="0")
 }
+
+///|
+test "BigInt bit_length negative multi-limb power of two" {
+  // -2^32 has limbs [0, 1] - bit_length should be 32, not 33
+  let neg = @bigint.BigInt::from_string("-4294967296")
+  inspect(neg.bit_length(), content="32")
+  // -2^64 has limbs [0, 0, 1] - bit_length should be 64
+  let neg2 = @bigint.BigInt::from_string("-18446744073709551616")
+  inspect(neg2.bit_length(), content="64")
+}
+
+///|
+test "BigInt right shift negative exact multiple of 32" {
+  // (-4294967297) >> 32 should be -2 (floor division), not -1
+  // -4294967297 = -(2^32 + 1), so >>32 should give -2
+  let neg = @bigint.BigInt::from_string("-4294967297")
+  inspect((neg >> 32).to_string(), content="-2")
+  // -4294967296 = -(2^32), so >>32 should give -1
+  let neg2 = @bigint.BigInt::from_string("-4294967296")
+  inspect((neg2 >> 32).to_string(), content="-1")
+}
+
+///|
+test "BigInt modular exponentiation edge cases" {
+  // 2^0 mod 1 should be 0
+  let base = @bigint.BigInt::from_int(2)
+  let zero = @bigint.BigInt::from_int(0)
+  let one = @bigint.BigInt::from_int(1)
+  inspect(base.pow(zero, modulus=one).to_string(), content="0")
+  // 3^4 mod 10 should be 1
+  let three = @bigint.BigInt::from_int(3)
+  let four = @bigint.BigInt::from_int(4)
+  let ten = @bigint.BigInt::from_int(10)
+  inspect(three.pow(four, modulus=ten).to_string(), content="1")
+}
