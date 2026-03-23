@@ -419,6 +419,10 @@ test "shr" {
     @bigint.BigInt::from_int64(0b1111_1111L) >> 44,
     @bigint.BigInt::from_int64(0),
   )
+  // dropped limbs bug: -(2^33+1) >> 33 should be -2
+  assert_eq(-8589934593N >> 33, -2N)
+  // carry condition bug: -65537 >> 16 should be -2
+  assert_eq(-65537N >> 16, -2N)
 }
 
 ///|

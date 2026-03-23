@@ -781,11 +781,21 @@ pub impl Shr for BigInt with shr(self : BigInt, n : Int) -> BigInt {
     if new_len > 1 && new_limbs[new_len - 1] == 0 {
       new_len -= 1
     }
-    if self.sign == Negative && (carry & (1UL << r)) != carry {
-      { limbs: new_limbs, sign: self.sign, len: new_len } - 1
-    } else {
-      { limbs: new_limbs, sign: self.sign, len: new_len }
+    if self.sign == Negative {
+      let mut has_remainder = carry != 0UL
+      if !has_remainder {
+        for i in 0..<lz {
+          if self.limbs[i] != 0 {
+            has_remainder = true
+            break
+          }
+        }
+      }
+      if has_remainder {
+        return { limbs: new_limbs, sign: self.sign, len: new_len } - 1
+      }
     }
+    { limbs: new_limbs, sign: self.sign, len: new_len }
   }
 }
 
