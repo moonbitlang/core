@@ -57,6 +57,7 @@ let max_mantissa_fast_path : UInt64 = 2UL << mantissa_explicit_bits
 ///
 /// Examples:
 /// ```mbt check
+/// #warnings("-deprecated")
 /// test {
 ///   inspect(@strconv.parse_double("123"), content="123")
 ///   inspect(@strconv.parse_double("12.34"), content="12.34")
@@ -69,6 +70,7 @@ let max_mantissa_fast_path : UInt64 = 2UL << mantissa_explicit_bits
 ///
 /// An exponent value exp scales the mantissa (significand) by 10^exp.
 /// For example, "1.23e2" represents 1.23 × 10² = 123.
+#deprecated("use `@string.parse_double` instead", skip_current_package=true)
 pub fn parse_double(str : StringView) -> Double raise StrConvError {
   guard str.length() > 0 else { syntax_err() }
   guard check_underscore(str) else { syntax_err() }

@@ -69,7 +69,7 @@ let max_mantissa_fast_path : UInt64 = 2UL << mantissa_explicit_bits
 ///
 /// An exponent value exp scales the mantissa (significand) by 10^exp.
 /// For example, "1.23e2" represents 1.23 × 10² = 123.
-pub fn parse_double(str : StringView) -> Double raise StrConvError {
+pub fn parse_double(str : StringView) -> Double raise {
   guard str.length() > 0 else { syntax_err() }
   guard check_underscore(str) else { syntax_err() }
   // validate its a number
@@ -258,7 +258,8 @@ test "parse_double" {
   for t in tests {
     assert_eq(
       Result::Ok(parse_double(t.0)) catch {
-        StrConvError(err) => Err(err)
+        Failure::Failure(err) => Err(err)
+        err => Err(err.to_string())
       },
       t.1,
     )

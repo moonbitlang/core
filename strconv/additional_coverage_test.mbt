@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+#warnings("-deprecated")
 test "parse_uint64 overflow check" {
   let largest_uint64 = "18446744073709551615" // Maximum UInt64 value
   let result = @strconv.parse_uint64(largest_uint64)
@@ -40,6 +41,7 @@ test "parse_uint64 overflow check" {
 }
 
 ///|
+#warnings("-deprecated")
 test "from_string forwarding" {
   let value : Int = @strconv.FromStr::from_str("42")
   inspect(value, content="42")
@@ -53,12 +55,14 @@ test "from_string deprecated bridge" {
 }
 
 ///|
+#warnings("-deprecated")
 test "parse_double slow path with plus and underscores" {
   let value = @strconv.parse_double("+0_0000_0000_0000_0000_0000_12345")
   assert_eq(value, 12345.0)
 }
 
 ///|
+#warnings("-deprecated")
 test "parse_double many digits with leading zero" {
   let value = @strconv.parse_double("0.00000000000000000000012345")
   assert_true(value > 0.0)

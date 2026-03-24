@@ -5,3 +5,5 @@ import {
   "moonbitlang/core/char",
   "moonbitlang/core/array",
 }
+
+warnings = "-deprecated"

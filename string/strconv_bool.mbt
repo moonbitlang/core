@@ -14,7 +14,7 @@
 
 ///|
 /// Parse a string and return the represented boolean value or an error.
-pub fn parse_bool(str : StringView) -> Bool raise StrConvError {
+pub fn parse_bool(str : StringView) -> Bool raise {
   lexmatch str {
     "(true|TRUE|True|t|T|1)" => true
     "(false|FALSE|False|f|F|0)" => false
@@ -43,7 +43,8 @@ test "parse_bool" {
   for t in tests {
     assert_eq(
       Result::Ok(parse_bool(t.0)) catch {
-        StrConvError(err) => Err(err)
+        Failure::Failure(err) => Err(err)
+        err => Err(err.to_string())
       },
       t.1,
     )

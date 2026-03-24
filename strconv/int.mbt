@@ -70,6 +70,7 @@ test {
 /// These underscores do not affect the value.
 /// Examples:
 /// ```mbt check
+/// #warnings("-deprecated")
 /// test {
 ///   inspect(@strconv.parse_int64("123"), content="123")
 ///   inspect(@strconv.parse_int64("0xff", base=0), content="255")
@@ -82,6 +83,7 @@ test {
 /// }
 /// ```
 /// 
+#deprecated("use `@string.parse_int64` instead", skip_current_package=true)
 pub fn parse_int64(
   str : StringView,
   base? : Int = 0,
@@ -137,6 +139,7 @@ pub fn parse_int64(
 ///|
 /// Parse a string in the given base (0, 2 to 36), return a Int number or an error.
 /// If the `~base` argument is 0, the base will be inferred by the prefix.
+#deprecated("use `@string.parse_int` instead", skip_current_package=true)
 pub fn parse_int(str : StringView, base? : Int = 0) -> Int raise StrConvError {
   let n = parse_int64(str, base~)
   if n < INT_MIN.to_int64() || n > INT_MAX.to_int64() {

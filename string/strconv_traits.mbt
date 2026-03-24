@@ -20,24 +20,9 @@
 
 ///|
 /// Trait for parsing values from textual input.
-///
-/// Implement either `from_str` (preferred) or legacy `from_string`.
 pub(open) trait FromStr {
   #as_free_fn
-  from_str(StringView) -> Self raise StrConvError = _
-  #deprecated("use `from_str` instead", skip_current_package=true)
-  from_string(String) -> Self raise StrConvError = _
-}
-
-///|
-#deprecated("replace `impl from_string` with `impl from_str`")
-impl FromStr with from_str(str) {
-  FromStr::from_string(str.to_string())
-}
-
-///|
-impl FromStr with from_string(str) {
-  FromStr::from_str(str)
+  from_str(StringView) -> Self raise
 }
 
 ///|

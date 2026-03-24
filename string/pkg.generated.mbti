@@ -7,45 +7,21 @@ import {
 }
 
 // Values
-#deprecated
-pub fn[A : FromStr] parse(StringView) -> A raise StrConvError
+pub fn parse_bool(StringView) -> Bool raise
 
-pub fn parse_bool(StringView) -> Bool raise StrConvError
+pub fn parse_double(StringView) -> Double raise
 
-#deprecated
-pub fn parse_decimal(StringView) -> Decimal raise StrConvError
+pub fn parse_int(StringView, base? : Int) -> Int raise
 
-pub fn parse_double(StringView) -> Double raise StrConvError
+pub fn parse_int64(StringView, base? : Int) -> Int64 raise
 
-pub fn parse_int(StringView, base? : Int) -> Int raise StrConvError
+pub fn parse_uint(StringView, base? : Int) -> UInt raise
 
-pub fn parse_int64(StringView, base? : Int) -> Int64 raise StrConvError
-
-pub fn parse_uint(StringView, base? : Int) -> UInt raise StrConvError
-
-pub fn parse_uint64(StringView, base? : Int) -> UInt64 raise StrConvError
+pub fn parse_uint64(StringView, base? : Int) -> UInt64 raise
 
 // Errors
-pub(all) suberror StrConvError {
-  StrConvError(String)
-}
-pub impl Show for StrConvError
 
 // Types and methods
-#deprecated
-type Decimal
-#deprecated
-pub fn Decimal::from_int64(Int64) -> Self
-#deprecated
-pub fn Decimal::new() -> Self
-#deprecated
-pub fn Decimal::parse_decimal(StringView) -> Self raise StrConvError
-#deprecated
-pub fn Decimal::shift(Self, Int) -> Unit
-#deprecated
-pub fn Decimal::to_double(Self) -> Double raise StrConvError
-pub impl Show for Decimal
-
 type MatchResult
 pub fn MatchResult::after(Self) -> StringView
 pub fn MatchResult::before(Self) -> StringView
@@ -80,9 +56,7 @@ pub using @builtin {trait ToStringView}
 // Traits
 pub(open) trait FromStr {
   #as_free_fn
-  from_str(StringView) -> Self raise StrConvError = _
-  #deprecated
-  from_string(String) -> Self raise StrConvError = _
+  from_str(StringView) -> Self raise
 }
 pub impl FromStr for Bool
 pub impl FromStr for Int

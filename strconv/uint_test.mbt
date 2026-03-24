@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+#warnings("-deprecated")
 test "@strconv.parse_uint64/base_handling" {
   // Different bases with valid input
   inspect(try? @strconv.parse_uint64("FF", base=16), content="Ok(255)")
@@ -24,6 +25,7 @@ test "@strconv.parse_uint64/base_handling" {
 }
 
 ///|
+#warnings("-deprecated")
 test "@strconv.parse_uint64/underscore" {
   // Valid underscore placements
   inspect(try? @strconv.parse_uint64("1_000_000"), content="Ok(1000000)")
@@ -35,6 +37,7 @@ test "@strconv.parse_uint64/underscore" {
 }
 
 ///|
+#warnings("-deprecated")
 test "panic @strconv.parse_uint64/errors" {
   // Empty string
   ignore(@strconv.parse_uint64(""))
@@ -48,6 +51,7 @@ test "panic @strconv.parse_uint64/errors" {
 }
 
 ///|
+#warnings("-deprecated")
 test "@strconv.parse_uint64/hex_and_edge_cases" {
   // Valid hexadecimal numbers with 0x/0X prefix
   inspect(try? @strconv.parse_uint64("0xDEADBEEF"), content="Ok(3735928559)")
@@ -93,6 +97,7 @@ test "@strconv.parse_uint64/hex_and_edge_cases" {
 }
 
 ///|
+#warnings("-deprecated")
 test "edge cases" {
   // Invalid: Missing digits after hex prefix
   inspect(try? @strconv.parse_uint64("0x"), content="Err(invalid syntax)")

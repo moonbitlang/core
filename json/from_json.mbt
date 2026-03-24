@@ -64,6 +64,9 @@ pub impl FromJson for Int with from_json(json, path) {
 }
 
 ///|
+
+///|
+#warnings("-deprecated")
 pub impl FromJson for Int64 with from_json(json, path) {
   guard json is String(str) else {
     decode_error(
@@ -91,6 +94,9 @@ pub impl FromJson for UInt with from_json(json, path) {
 }
 
 ///|
+
+///|
+#warnings("-deprecated")
 pub impl FromJson for UInt64 with from_json(json, path) {
   guard json is String(str) else {
     decode_error(
