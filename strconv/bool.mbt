@@ -14,6 +14,7 @@
 
 ///|
 /// Parse a string and return the represented boolean value or an error.
+#deprecated("use `@string.parse_bool` instead", skip_current_package=true)
 pub fn parse_bool(str : StringView) -> Bool raise StrConvError {
   lexmatch str {
     "(true|TRUE|True|t|T|1)" => true

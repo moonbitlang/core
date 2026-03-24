@@ -41,10 +41,7 @@ const UINT64_MAX : UInt64 = 0xffffffffffffffffUL
 /// }
 /// ```
 ///
-pub fn parse_uint64(
-  str : StringView,
-  base? : Int = 0,
-) -> UInt64 raise StrConvError {
+pub fn parse_uint64(str : StringView, base? : Int = 0) -> UInt64 raise {
   guard str != "" else { syntax_err() }
   if str is ['+' | '-', ..] {
     syntax_err()
@@ -90,7 +87,7 @@ pub fn parse_uint64(
 ///|
 /// Parse a string in the given base (0, 2 to 36), return an UInt number or an error.
 /// If the `~base` argument is 0, the base will be inferred by the prefix.
-pub fn parse_uint(str : StringView, base? : Int = 0) -> UInt raise StrConvError {
+pub fn parse_uint(str : StringView, base? : Int = 0) -> UInt raise {
   let n = parse_uint64(str, base~)
   if n > UINT_MAX.to_uint64() {
     range_err()
@@ -122,7 +119,8 @@ test "parse_uint64" {
   for t in tests {
     assert_eq(
       Result::Ok(parse_uint64(t.0)) catch {
-        StrConvError(err) => Err(err)
+        Failure::Failure(err) => Err(err)
+        err => Err(err.to_string())
       },
       t.1,
     )
@@ -219,7 +217,8 @@ test "parse_uint64_base" {
   for t in tests {
     assert_eq(
       Result::Ok(parse_uint64(t.0, base=t.1)) catch {
-        StrConvError(err) => Err(err)
+        Failure::Failure(err) => Err(err)
+        err => Err(err.to_string())
       },
       t.2,
     )
@@ -253,7 +252,8 @@ test "parse_uint" {
   for t in tests {
     assert_eq(
       Result::Ok(parse_uint(t.0)) catch {
-        StrConvError(err) => Err(err)
+        Failure::Failure(err) => Err(err)
+        err => Err(err.to_string())
       },
       t.1,
     )
@@ -263,5 +263,10 @@ test "parse_uint" {
 ///|
 test "parse_uint64 uppercase hex and invalid base" {
   inspect(try? parse_uint64("ABCD", base=16), content="Ok(43981)")
-  inspect(try? parse_uint64("1234", base=37), content="Err(invalid base)")
+  inspect(
+    try? parse_uint64("1234", base=37),
+    content=(
+      #|Err(Failure("invalid base"))
+    ),
+  )
 }

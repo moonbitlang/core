@@ -13,19 +13,6 @@
 // limitations under the License.
 
 ///|
-/// Error type `StrConvError`.
-pub(all) suberror StrConvError {
-  StrConvError(String)
-}
-
-///|
-pub impl Show for StrConvError with output(self, logger) {
-  match self {
-    StrConvError(err) => logger.write_string(err)
-  }
-}
-
-///|
 let range_err_str = "value out of range"
 
 ///|
@@ -35,16 +22,16 @@ let syntax_err_str = "invalid syntax"
 let base_err_str = "invalid base"
 
 ///|
-fn[T] range_err() -> T raise StrConvError {
-  raise StrConvError(range_err_str)
+fn[T] range_err() -> T raise {
+  raise Failure::Failure(range_err_str)
 }
 
 ///|
-fn[T] syntax_err() -> T raise StrConvError {
-  raise StrConvError(syntax_err_str)
+fn[T] syntax_err() -> T raise {
+  raise Failure::Failure(syntax_err_str)
 }
 
 ///|
-fn[T] base_err() -> T raise StrConvError {
-  raise StrConvError(base_err_str)
+fn[T] base_err() -> T raise {
+  raise Failure::Failure(base_err_str)
 }

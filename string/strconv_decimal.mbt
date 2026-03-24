@@ -18,6 +18,15 @@
 let max_shift = 59
 
 ///|
+priv struct Decimal {
+  digits : FixedArray[Byte]
+  mut digits_num : Int
+  mut decimal_point : Int
+  mut negative : Bool
+  mut truncated : Bool
+}
+
+///|
 /// Decimal power of ten to binary power of two.
 /// The Ith entry (starting at I = 0) is the largest power of 2 less than (10 ** I)
 let powtab : ReadOnlyArray[Int] = [
@@ -43,12 +52,12 @@ fn Decimal::from_int64_priv(v : Int64) -> Decimal {
 }
 
 ///|
-fn parse_decimal_priv(str : StringView) -> Decimal raise StrConvError {
+fn parse_decimal_priv(str : StringView) -> Decimal raise {
   parse_decimal_from_view(str)
 }
 
 ///|
-fn parse_decimal_from_view(str : StringView) -> Decimal raise StrConvError {
+fn parse_decimal_from_view(str : StringView) -> Decimal raise {
   let d = Decimal::new_priv()
   let mut has_dp = false
   let mut has_digits = false
@@ -125,7 +134,7 @@ fn parse_decimal_from_view(str : StringView) -> Decimal raise StrConvError {
 }
 
 ///|
-fn Decimal::to_double_priv(self : Decimal) -> Double raise StrConvError {
+fn Decimal::to_double_priv(self : Decimal) -> Double raise {
   let mut exponent = 0
   let mut mantissa = 0L
   // check the underflow and overflow
@@ -520,7 +529,7 @@ fn Decimal::trim(self : Decimal) -> Unit {
 }
 
 ///|
-pub impl Show for Decimal with output(self, logger) {
+impl Show for Decimal with output(self, logger) {
   if self.digits_num == 0 {
     logger.write_char('0')
     return
@@ -624,11 +633,36 @@ test "parse decimal with underscore" {
 
 ///|
 test "parse decimal error" {
-  inspect(try? parse_decimal_priv("1e"), content="Err(invalid syntax)")
-  inspect(try? parse_decimal_priv("1e+"), content="Err(invalid syntax)")
-  inspect(try? parse_decimal_priv("1e_"), content="Err(invalid syntax)")
-  inspect(try? parse_decimal_priv("1-23"), content="Err(invalid syntax)")
-  inspect(try? parse_decimal_priv("1.2.3"), content="Err(invalid syntax)")
+  inspect(
+    try? parse_decimal_priv("1e"),
+    content=(
+      #|Err(Failure("invalid syntax"))
+    ),
+  )
+  inspect(
+    try? parse_decimal_priv("1e+"),
+    content=(
+      #|Err(Failure("invalid syntax"))
+    ),
+  )
+  inspect(
+    try? parse_decimal_priv("1e_"),
+    content=(
+      #|Err(Failure("invalid syntax"))
+    ),
+  )
+  inspect(
+    try? parse_decimal_priv("1-23"),
+    content=(
+      #|Err(Failure("invalid syntax"))
+    ),
+  )
+  inspect(
+    try? parse_decimal_priv("1.2.3"),
+    content=(
+      #|Err(Failure("invalid syntax"))
+    ),
+  )
 }
 
 ///|
@@ -674,8 +708,18 @@ test "rounded_integer overflow when decimal_point > 20" {
 ///|
 test "corner cases" {
   inspect(try? parse_decimal_priv(".123"), content="Ok(0.123)")
-  inspect(try? parse_decimal_priv("."), content="Err(invalid syntax)")
-  inspect(try? parse_decimal_priv("-"), content="Err(invalid syntax)")
+  inspect(
+    try? parse_decimal_priv("."),
+    content=(
+      #|Err(Failure("invalid syntax"))
+    ),
+  )
+  inspect(
+    try? parse_decimal_priv("-"),
+    content=(
+      #|Err(Failure("invalid syntax"))
+    ),
+  )
 }
 
 ///|

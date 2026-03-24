@@ -30,6 +30,7 @@ const UINT64_MAX : UInt64 = 0xffffffffffffffffUL
 /// These underscores do not affect the value.
 /// Examples:
 /// ```mbt check
+/// #warnings("-deprecated")
 /// test {
 ///   inspect(@strconv.parse_uint64("123"), content="123")
 ///   inspect(@strconv.parse_uint64("0xff", base=0), content="255")
@@ -41,6 +42,7 @@ const UINT64_MAX : UInt64 = 0xffffffffffffffffUL
 /// }
 /// ```
 /// 
+#deprecated("use `@string.parse_uint64` instead", skip_current_package=true)
 pub fn parse_uint64(
   str : StringView,
   base? : Int = 0,
@@ -90,6 +92,7 @@ pub fn parse_uint64(
 ///|
 /// Parse a string in the given base (0, 2 to 36), return an UInt number or an error.
 /// If the `~base` argument is 0, the base will be inferred by the prefix.
+#deprecated("use `@string.parse_uint` instead", skip_current_package=true)
 pub fn parse_uint(str : StringView, base? : Int = 0) -> UInt raise StrConvError {
   let n = parse_uint64(str, base~)
   if n > UINT_MAX.to_uint64() {

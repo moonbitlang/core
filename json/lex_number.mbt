@@ -144,6 +144,7 @@ fn ParseContext::lex_zero(
 }
 
 ///|
+#warnings("-deprecated")
 fn ParseContext::lex_number_end(
   ctx : ParseContext,
   start : Int,

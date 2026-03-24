@@ -13,18 +13,21 @@
 // limitations under the License.
 
 ///|
+#warnings("-deprecated")
 test "parse_inf_nan positive NaN" {
   let result = @strconv.parse_double("+nan")
   inspect(result.is_nan(), content="true")
 }
 
 ///|
+#warnings("-deprecated")
 test "parse_inf_nan negative NaN" {
   let result = @strconv.parse_double("-nan")
   inspect(result.is_nan(), content="true")
 }
 
 ///|
+#warnings("-deprecated")
 test "from_str generic" {
   let i : Int = @strconv.from_str("123")
   inspect(i, content="123")
