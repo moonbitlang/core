@@ -6,24 +6,32 @@ import {
 }
 
 // Values
-pub fn[T : Hash + Eq] diff(old~ : ArrayView[T], new~ : ArrayView[T], cutoff? : Int) -> Array[Edit]
-
-pub fn group_edits(Array[Edit], radius? : Int) -> Array[Hunk]
 
 // Errors
 
 // Types and methods
+pub struct Diff[T] {
+  old : ArrayView[T]
+  new : ArrayView[T]
+  edits : Array[Edit]
+
+  fn[T : Hash + Eq] new(old~ : ArrayView[T], new~ : ArrayView[T], cutoff? : Int) -> Diff[T]
+}
+pub fn[T] Diff::group(Self[T], radius? : Int) -> Array[Hunk[T]]
+
 pub enum Edit {
   Delete(old_index~ : Int, new_index~ : Int, old_len~ : Int)
   Insert(old_index~ : Int, new_index~ : Int, new_len~ : Int)
-  Equal(mut old_index~ : Int, mut new_index~ : Int, mut len~ : Int)
+  Equal(old_index~ : Int, new_index~ : Int, len~ : Int)
 }
 pub impl @debug.Debug for Edit
 
-pub struct Hunk(ArrayView[Edit])
-#deprecated
-pub fn Hunk::inner(Self) -> ArrayView[Edit]
-pub fn[T : Show] Hunk::render_with(Self, old~ : ArrayView[T], new~ : ArrayView[T]) -> String
+pub struct Hunk[T] {
+  edits : ArrayView[Edit]
+  old : ArrayView[T]
+  new : ArrayView[T]
+}
+pub impl[T : Show] Show for Hunk[T]
 
 // Type aliases
 

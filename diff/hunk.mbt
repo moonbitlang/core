@@ -53,27 +53,25 @@ impl Show for HunkHeader with output(self, logger) {
 }
 
 ///|
-pub struct Hunk(ArrayView[Edit])
+pub struct Hunk[T] {
+  edits : ArrayView[Edit]
+  old : ArrayView[T]
+  new : ArrayView[T]
+}
 
 ///|
-pub fn[T : Show] Hunk::render_with(
-  self : Hunk,
-  old~ : ArrayView[T],
-  new~ : ArrayView[T],
-) -> String {
-  let buf = StringBuilder::new()
-  let header = HunkHeader::new(self.0).to_string()
-  buf.write_string(header)
-  buf.write_char('\n')
-  for edit in self.0 {
+pub impl[T : Show] Show for Hunk[T] with output(self, logger) {
+  let header = HunkHeader::new(self.edits).to_string()
+  logger.write_string(header)
+  logger.write_char('\n')
+  for edit in self.edits {
     let (prefix, slice) = match edit {
-      Insert(..) => ("+", edit.view_from(old~, new~))
-      Delete(..) => ("-", edit.view_from(old~, new~))
-      Equal(..) => (" ", edit.view_from(old~, new~))
+      Insert(..) => ("+", edit.view_from(old=self.old, new=self.new))
+      Delete(..) => ("-", edit.view_from(old=self.old, new=self.new))
+      Equal(..) => (" ", edit.view_from(old=self.old, new=self.new))
     }
     for s in slice {
-      buf.write_string("\{prefix}\{s}\n")
+      logger.write_string("\{prefix}\{s}\n")
     }
   }
-  buf.to_string()
 }

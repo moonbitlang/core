@@ -13,20 +13,16 @@
 // limitations under the License.
 
 ///|
-fn[T : Show] edits_to_string(
-  old~ : ArrayView[T],
-  new~ : ArrayView[T],
-  edits : Array[@diff.Edit],
-) -> String {
+fn[T : Show] edits_to_string(d : @diff.Diff[T]) -> String {
   let lines = Array::new()
-  for edit in edits {
+  for edit in d.edits {
     let (prefix, slice) = match edit {
       Insert(new_index~, new_len~, ..) =>
-        ("+", new.view(start=new_index, end=new_index + new_len))
+        ("+", d.new.view(start=new_index, end=new_index + new_len))
       Delete(old_index~, old_len~, ..) =>
-        ("-", old.view(start=old_index, end=old_index + old_len))
+        ("-", d.old.view(start=old_index, end=old_index + old_len))
       Equal(old_index~, len~, ..) =>
-        (" ", old.view(start=old_index, end=old_index + len))
+        (" ", d.old.view(start=old_index, end=old_index + len))
     }
     for s in slice {
       lines.push("\{prefix} \{s}")
@@ -36,16 +32,8 @@ fn[T : Show] edits_to_string(
 }
 
 ///|
-fn[T : Show] hunks_to_string(
-  old~ : ArrayView[T],
-  new~ : ArrayView[T],
-  hunks : Array[@diff.Hunk],
-) -> String {
-  let lines = Array::new()
-  for hunk in hunks {
-    lines.push(hunk.render_with(old~, new~))
-  }
-  lines.join("\n")
+fn[T : Show] hunks_to_string(hunks : Array[@diff.Hunk[T]]) -> String {
+  hunks.map(fn(h) { h.to_string() }).join("\n")
 }
 
 ///|
@@ -88,9 +76,9 @@ test "condense into one equal" {
       "apple", "pineapple", "banana", "tomato", "carrot", "tomato", "potato", "cabbage",
     ][:]
   assert_eq(old, new)
-  let edits = @diff.diff(old~, new~)
+  let d = @diff.Diff(old~, new~)
   inspect(
-    edits_to_string(old~, new~, edits),
+    edits_to_string(d),
     content=(
       #|  apple
       #|  pineapple
@@ -108,9 +96,9 @@ test "condense into one equal" {
 test "mixed" {
   let old = ["carrot", "tomato", "potato", "cabbage"][:]
   let new = ["apple", "banana", "tomato", "pineapple"][:]
-  let edits = @diff.diff(old~, new~)
+  let d = @diff.Diff(old~, new~)
   inspect(
-    edits_to_string(old~, new~, edits),
+    edits_to_string(d),
     content=(
       #|- carrot
       #|+ apple
@@ -127,9 +115,9 @@ test "mixed" {
 test "delete then insert to hunks" {
   let old = ["fn main() {", "  println(\"foo\")", "}"][:]
   let new = ["fn main() {", "  println(\"bar\")", "}"][:]
-  let edits = @diff.diff(old~, new~)
+  let d = @diff.Diff(old~, new~)
   inspect(
-    edits_to_string(old~, new~, edits),
+    edits_to_string(d),
     content=(
       #|  fn main() {
       #|-   println("foo")
@@ -138,7 +126,7 @@ test "delete then insert to hunks" {
     ),
   )
   inspect(
-    hunks_to_string(old~, new~, @diff.group_edits(edits)),
+    hunks_to_string(d.group()),
     content=(
       #|@@ -1,3 +1,3 @@
       #| fn main() {
@@ -160,9 +148,9 @@ test "large text to hunks" {
       "alert", "chop", "brave", "arise", "bring", "joy", "answer", "count", "begin",
       "casual", "dot", "bottom",
     ][:]
-  let edits = @diff.diff(old~, new~)
+  let d = @diff.Diff(old~, new~)
   inspect(
-    edits_to_string(old~, new~, edits),
+    edits_to_string(d),
     content=(
       #|  alert
       #|  chop
@@ -180,7 +168,7 @@ test "large text to hunks" {
     ),
   )
   inspect(
-    hunks_to_string(old~, new~, @diff.group_edits(edits)),
+    hunks_to_string(d.group()),
     content=(
       #|@@ -3,7 +3,7 @@
       #| brave
@@ -195,7 +183,7 @@ test "large text to hunks" {
     ),
   )
   inspect(
-    hunks_to_string(old~, new~, @diff.group_edits(edits, radius=2)),
+    hunks_to_string(d.group(radius=2)),
     content=(
       #|@@ -4,5 +4,5 @@
       #| arise
@@ -213,9 +201,9 @@ test "large text to hunks" {
 test "diff with Int elements" {
   let old = [1, 2, 3, 4][:]
   let new = [1, 2, 4, 5][:]
-  let edits = @diff.diff(old~, new~)
+  let d = @diff.Diff(old~, new~)
   inspect(
-    edits_to_string(old~, new~, edits),
+    edits_to_string(d),
     content=(
       #|  1
       #|  2
@@ -230,9 +218,9 @@ test "diff with Int elements" {
 test "diff with Bool elements" {
   let old = [true, false, false][:]
   let new = [true, false, true][:]
-  let edits = @diff.diff(old~, new~)
+  let d = @diff.Diff(old~, new~)
   inspect(
-    edits_to_string(old~, new~, edits),
+    edits_to_string(d),
     content=(
       #|  true
       #|  false
@@ -254,9 +242,9 @@ test "diff with struct elements" {
       { id: 3, name: "charlie" },
       { id: 4, name: "david" },
     ][:]
-  let edits = @diff.diff(old~, new~)
+  let d = @diff.Diff(old~, new~)
   inspect(
-    edits_to_string(old~, new~, edits),
+    edits_to_string(d),
     content=(
       #|  User { id: 1, name: alice }
       #|- User { id: 2, name: bob }
@@ -270,9 +258,9 @@ test "diff with struct elements" {
 test "diff with enum elements" {
   let old = [Start, Word("alpha"), Num(1), Stop][:]
   let new = [Start, Num(1), Word("beta"), Stop][:]
-  let edits = @diff.diff(old~, new~)
+  let d = @diff.Diff(old~, new~)
   inspect(
-    edits_to_string(old~, new~, edits),
+    edits_to_string(d),
     content=(
       #|  Start
       #|- Word("alpha")
