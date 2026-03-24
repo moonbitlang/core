@@ -66,20 +66,13 @@ pub fn[T : Show] Hunk::render_with(
   buf.write_string(header)
   buf.write_char('\n')
   for edit in self.0 {
-    let (tag, slice) = edit.take_tagged_view_from(old~, new~)
-    match tag {
-      Insert =>
-        for s in slice {
-          buf.write_string("+\{s}\n")
-        }
-      Delete =>
-        for s in slice {
-          buf.write_string("-\{s}\n")
-        }
-      Equal =>
-        for s in slice {
-          buf.write_string(" \{s}\n")
-        }
+    let (prefix, slice) = match edit {
+      Insert(..) => ("+", edit.view_from(old~, new~))
+      Delete(..) => ("-", edit.view_from(old~, new~))
+      Equal(..) => (" ", edit.view_from(old~, new~))
+    }
+    for s in slice {
+      buf.write_string("\{prefix}\{s}\n")
     }
   }
   buf.to_string()

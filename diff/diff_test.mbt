@@ -20,20 +20,16 @@ fn[T : Show] edits_to_string(
 ) -> String {
   let lines = Array::new()
   for edit in edits {
-    let (tag, slice) = edit.take_tagged_view_from(old~, new~)
-    match tag {
-      Insert =>
-        for s in slice {
-          lines.push("+ \{s}")
-        }
-      Delete =>
-        for s in slice {
-          lines.push("- \{s}")
-        }
-      Equal =>
-        for s in slice {
-          lines.push("  \{s}")
-        }
+    let (prefix, slice) = match edit {
+      Insert(new_index~, new_len~, ..) =>
+        ("+", new.view(start=new_index, end=new_index + new_len))
+      Delete(old_index~, old_len~, ..) =>
+        ("-", old.view(start=old_index, end=old_index + old_len))
+      Equal(old_index~, len~, ..) =>
+        (" ", old.view(start=old_index, end=old_index + len))
+    }
+    for s in slice {
+      lines.push("\{prefix} \{s}")
     }
   }
   lines.join("\n")
