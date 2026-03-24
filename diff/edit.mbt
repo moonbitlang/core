@@ -44,13 +44,6 @@ pub impl @debug.Debug for Edit with to_repr(self) {
 }
 
 ///|
-pub enum EditTag {
-  Delete
-  Insert
-  Equal
-}
-
-///|
 fn Edit::old_range(self : Edit) -> (Int, Int) {
   match self {
     Insert(old_index~, ..) => (old_index, old_index)
@@ -69,18 +62,18 @@ fn Edit::new_range(self : Edit) -> (Int, Int) {
 }
 
 ///|
-pub fn[T] Edit::take_tagged_view_from(
+fn[T] Edit::view_from(
   self : Edit,
   old~ : ArrayView[T],
   new~ : ArrayView[T],
-) -> (EditTag, ArrayView[T]) {
+) -> ArrayView[T] {
   match self {
     Insert(new_index~, new_len~, ..) =>
-      (Insert, new.view(start=new_index, end=new_index + new_len))
+      new.view(start=new_index, end=new_index + new_len)
     Delete(old_index~, old_len~, ..) =>
-      (Delete, old.view(start=old_index, end=old_index + old_len))
+      old.view(start=old_index, end=old_index + old_len)
     Equal(old_index~, len~, ..) =>
-      (Equal, old.view(start=old_index, end=old_index + len))
+      old.view(start=old_index, end=old_index + len)
   }
 }
 
