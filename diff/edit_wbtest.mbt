@@ -13,32 +13,31 @@
 // limitations under the License.
 
 ///|
-test "group_edits handles empty edits" {
-  assert_true(group_edits([]) is [])
+test "group_edit_arrays handles empty edits" {
+  assert_true(group_edit_arrays([]) is [])
 }
 
 ///|
-test "group_edits splits long equal blocks into multiple hunks" {
+test "group_edit_arrays splits long equal blocks into multiple hunks" {
   let edits : Array[Edit] = [
     Edit::Delete(old_index=0, new_index=0, old_len=1),
     Edit::Equal(old_index=1, new_index=0, len=10),
     Edit::Insert(old_index=11, new_index=10, new_len=2),
   ]
+  let groups = group_edit_arrays(edits)
+  assert_eq(groups.length(), 2)
   assert_true(
-    group_edits(edits)
+    groups[0][:]
     is [
-      Hunk(
-        [
-          Delete(old_index=0, new_index=0, old_len=1),
-          Equal(old_index=1, new_index=0, len=3),
-        ]
-      ),
-      Hunk(
-        [
-          Equal(old_index=8, new_index=7, len=3),
-          Insert(old_index=11, new_index=10, new_len=2),
-        ]
-      ),
+      Delete(old_index=0, new_index=0, old_len=1),
+      Equal(old_index=1, new_index=0, len=3),
+    ],
+  )
+  assert_true(
+    groups[1][:]
+    is [
+      Equal(old_index=8, new_index=7, len=3),
+      Insert(old_index=11, new_index=10, new_len=2),
     ],
   )
 }

@@ -16,7 +16,7 @@
 pub enum Edit {
   Delete(old_index~ : Int, new_index~ : Int, old_len~ : Int)
   Insert(old_index~ : Int, new_index~ : Int, new_len~ : Int)
-  Equal(mut old_index~ : Int, mut new_index~ : Int, mut len~ : Int)
+  Equal(old_index~ : Int, new_index~ : Int, len~ : Int)
 }
 
 ///|
@@ -82,59 +82,55 @@ fn[T] Edit::view_from(
 ///
 /// This will leave holes behind in long periods of equal ranges so that
 /// you can build things like unified diffs.
-///
-/// This function may mutate `edits` in place when trimming context from the
-/// leading and trailing `Equal` entries. If you need to keep the original edit
-/// script unchanged, clone it before calling `group_edits`.
-pub fn group_edits(edits : Array[Edit], radius? : Int = 3) -> Array[Hunk] {
+fn group_edit_arrays(
+  edits : Array[Edit],
+  radius? : Int = 3,
+) -> Array[Array[Edit]] {
   if edits.is_empty() {
     return []
   }
-  let mut pending_group = Array::new()
+  let n = edits.length()
+  let mut pending = Array::new()
   let result = Array::new()
-
-  // cut first equal sequence to size limit
-  if edits[0] is (Equal(_) as first_edit) {
-    let offset = first_edit.len.saturating_sub(radius)
-    first_edit.old_index += offset
-    first_edit.new_index += offset
-    first_edit.len -= offset
-  }
-
-  // cut last equal sequence to size limit
-  if edits.last() is Some(Equal(_) as last_edit) {
-    last_edit.len -= last_edit.len.saturating_sub(radius)
-  }
-  for edit in edits {
-    if edit is (Equal(_) as edit) {
-      // End the current group and start a new one whenever
-      // there is a large range with no changes.
-      if edit.len > radius * 2 {
-        pending_group.push(
-          Edit::Equal(
-            old_index=edit.old_index,
-            new_index=edit.new_index,
-            len=radius,
-          ),
-        )
-        result.push(Hunk(pending_group))
-        let offset = edit.len.saturating_sub(radius)
-        pending_group = [
-          Edit::Equal(
-            old_index=edit.old_index + offset,
-            new_index=edit.new_index + offset,
-            len=edit.len - offset,
-          ),
-        ]
-        continue
+  for i, edit in edits {
+    match edit {
+      Equal(old_index~, new_index~, len~) => {
+        // Trim leading context for first edit
+        let (old_index, new_index, len) = if i == 0 {
+          let offset = len.saturating_sub(radius)
+          (old_index + offset, new_index + offset, len - offset)
+        } else {
+          (old_index, new_index, len)
+        }
+        // Trim trailing context for last edit
+        let len = if i == n - 1 {
+          len - len.saturating_sub(radius)
+        } else {
+          len
+        }
+        // Split if this equal range is large enough
+        if len > radius * 2 {
+          pending.push(Edit::Equal(old_index~, new_index~, len=radius))
+          result.push(pending)
+          let offset = len.saturating_sub(radius)
+          pending = [
+            Edit::Equal(
+              old_index=old_index + offset,
+              new_index=new_index + offset,
+              len=len - offset,
+            ),
+          ]
+        } else if len > 0 {
+          pending.push(Edit::Equal(old_index~, new_index~, len~))
+        }
       }
+      _ => pending.push(edit)
     }
-    pending_group.push(edit)
   }
-  if !(pending_group is [] || pending_group is [Equal(_)]) {
-    result.push(Hunk(pending_group[:]))
+  if !(pending is [] || pending is [Equal(_)]) {
+    result.push(pending)
   }
-  return result
+  result
 }
 
 ///|

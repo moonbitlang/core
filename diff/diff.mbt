@@ -528,18 +528,32 @@ fn[T : Eq + Hash] iter_matches(
 }
 
 ///|
-/// `diff(old~, new~, cutoff?)` diffs `old` and `new` (as in /usr/bin/diff),
-/// and returns edit scripts that transforms `old` into `new`.
+pub struct Diff[T] {
+  old : ArrayView[T]
+  new : ArrayView[T]
+  edits : Array[Edit]
+
+  fn[T : Hash + Eq] new(
+    old~ : ArrayView[T],
+    new~ : ArrayView[T],
+    cutoff? : Int,
+  ) -> Diff[T]
+}
+
+///|
+/// `Diff::new(old~, new~, cutoff?)` diffs `old` and `new` (as in /usr/bin/diff),
+/// and returns a `Diff[T]` bundling the source arrays with the edit script
+/// that transforms `old` into `new`.
 ///
 /// The `cutoff` is an upper bound on the minimum edit distance between `old~` and `new~`. When
-/// `cutoff` is exceeded, `diff` returns a correct, but not necessarily minimal
+/// `cutoff` is exceeded, the result is a correct, but not necessarily minimal
 /// diff. It defaults to about `sqrt(old.length() + new.length())`.
 ///
-pub fn[T : Hash + Eq] diff(
+fn[T : Hash + Eq] Diff::new(
   old~ : ArrayView[T],
   new~ : ArrayView[T],
   cutoff? : Int,
-) -> Array[Edit] {
+) -> Diff[T] {
   let result : Array[Edit] = Array::new(capacity=old.length() + new.length())
   let mut prev_old_idx = 0
   let mut prev_new_idx = 0
@@ -632,6 +646,12 @@ pub fn[T : Hash + Eq] diff(
         ),
       )
     }
-    return result
+    return { old, new, edits: result }
   }
+}
+
+///|
+pub fn[T] Diff::group(self : Diff[T], radius? : Int = 3) -> Array[Hunk[T]] {
+  let groups = group_edit_arrays(self.edits, radius~)
+  groups.map(fn(group) { { edits: group[:], old: self.old, new: self.new } })
 }
