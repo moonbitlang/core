@@ -144,7 +144,6 @@ fn ParseContext::lex_zero(
 }
 
 ///|
-#warnings("-deprecated")
 fn ParseContext::lex_number_end(
   ctx : ParseContext,
   start : Int,
@@ -154,7 +153,7 @@ fn ParseContext::lex_number_end(
   if !s.contains(".") && !s.contains("e") && !s.contains("E") {
     // If the string does not contain a decimal point or exponent, it is likely an integer
     // We can try to parse it as an integer first
-    let parsed_int = try? @strconv.parse_int64(s)
+    let parsed_int = try? @internal/strconv.parse_int64(s)
     match parsed_int {
       Ok(i) if i <= 9007199254740991 && i >= -9007199254740991 =>
         return (i.to_double(), None)
@@ -166,7 +165,7 @@ fn ParseContext::lex_number_end(
         }
     }
   } else {
-    let parsed_double = try? @strconv.parse_double(s)
+    let parsed_double = try? @internal/strconv.parse_double(s)
     match parsed_double {
       // For normal values, return without string representation
       Ok(d) => (d, None)

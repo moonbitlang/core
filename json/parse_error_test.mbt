@@ -13,7 +13,6 @@
 // limitations under the License.
 
 ///|
-#warnings("-deprecated")
 test "parse error branches" {
   guard (try? @json.parse("")) is Err(InvalidEof) else {
     fail("expected InvalidEof for empty input")
@@ -91,8 +90,7 @@ test "parse error branches" {
     fail("expected InvalidEof after trailing comma")
   }
   let depth_result : Result[Json, _] = try? @json.parse(
-    "{\"a\":{}}",
-    max_nesting_depth=1,
+    String::make(1025, '[') + String::make(1025, ']'),
   )
   guard depth_result is Err(err) else { fail("expected DepthLimitExceeded") }
   guard err is DepthLimitExceeded else { fail("expected DepthLimitExceeded") }

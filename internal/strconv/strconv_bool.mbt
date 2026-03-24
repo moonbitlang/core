@@ -15,14 +15,18 @@
 ///|
 /// Parse a string and return the represented boolean value or an error.
 pub fn parse_bool(str : StringView) -> Bool raise {
-  @internal/strconv.parse_bool(str)
+  lexmatch str {
+    "(true|TRUE|True|t|T|1)" => true
+    "(false|FALSE|False|f|F|0)" => false
+    _ => syntax_err()
+  }
 }
 
 ///|
 test "parse_bool" {
   let tests : Array[(String, Result[Bool, String])] = [
-    ("", Err("invalid syntax")),
-    ("zutomayo", Err("invalid syntax")),
+    ("", Err(syntax_err_str)),
+    ("zutomayo", Err(syntax_err_str)),
     ("0", Ok(false)),
     ("f", Ok(false)),
     ("F", Ok(false)),
