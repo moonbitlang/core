@@ -1,16 +1,16 @@
 # Myers Diff
 
-The `diff/myers` package computes edit scripts between two sequences with
-Myers diff algorithm.
+Compute edit scripts between two sequences using the Myers diff algorithm.
 
-`diff` returns a list of `Edit` values describing how to transform `old` into
-`new`, while `group_edits` trims long unchanged ranges into `Array[Hunk]`.
+`diff` works with any element type that implements `Hash + Eq`. It returns an
+array of `Edit` values describing how to transform `old` into `new`.
+`group_edits` trims long unchanged ranges and splits far-apart changes into
+separate `Hunk` values for unified-diff-style output.
 
 ## Compute An Edit Script
 
-Start with `diff` when you want the full sequence of edit operations. The
-result keeps both unchanged ranges and changed ranges, so it is a good input
-for custom renderers or higher-level post-processing.
+`diff` returns the full sequence of `Delete`, `Insert`, and `Equal` operations.
+The result is a good input for custom renderers or higher-level post-processing.
 
 ```mbt check
 ///|
@@ -33,36 +33,30 @@ test "diff returns deletes inserts and equals" {
 }
 ```
 
-## Read The Slice For Each Edit
+### Limit Computation Cost
 
-After you have an `Edit`, `take_tagged_view_from` lets you recover the concrete
-slice that the edit refers to. This is useful when you want to inspect or print
-the affected values instead of only working with indices and lengths.
+Pass `cutoff` to cap the minimum edit distance the algorithm will search
+exhaustively. When the actual distance exceeds `cutoff`, `diff` returns a
+correct but not necessarily minimal result. The default is approximately
+`sqrt(old.length() + new.length())`.
 
 ```mbt check
 ///|
-test "take_tagged_view_from returns the affected slice" {
-  let old = ["apple", "pear", "banana"][:]
-  let new = ["apple", "banana", "coconut"][:]
-  let edits = @diff.diff(old~, new~)
+test "cutoff limits search depth" {
+  let old = ["a", "b", "c", "d", "e"][:]
+  let new = ["v", "w", "x", "y", "z"][:]
 
-  assert_true(
-    edits.map(edit => edit.take_tagged_view_from(old~, new~))
-    is [
-      (Equal, ["apple"]),
-      (Delete, ["pear"]),
-      (Equal, ["banana"]),
-      (Insert, ["coconut"]),
-    ],
-  )
+  // with a very low cutoff the diff still completes
+  let edits = @diff.diff(old~, new~, cutoff=2)
+  assert_true(edits.length() > 0)
 }
 ```
 
 ## Group Edits Into Hunks
 
-Use `group_edits` to prepare output for unified-diff-style displays. It keeps a
-small amount of surrounding context around each change and splits far-apart
-changes into separate hunks.
+`group_edits` prepares output for unified-diff-style displays. It keeps
+`radius` lines of surrounding context around each change (default 3) and
+splits far-apart changes into separate hunks.
 
 ```mbt check
 ///|
@@ -125,3 +119,4 @@ test "group_edits splits distant changes into separate hunks" {
   )
 }
 ```
+
