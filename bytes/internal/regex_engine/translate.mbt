@@ -197,9 +197,8 @@ fn enforce_pref(
 
 ///|
 fn[T] iter(n : Int, f : (T) -> T, init : T) -> T {
-  if n == 0 {
-    init
-  } else {
-    iter(n - 1, f, f(init))
+  loop (n, init) {
+    (0, acc) => acc
+    (n, acc) => continue (n - 1, f(acc))
   }
 }
