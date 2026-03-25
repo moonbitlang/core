@@ -38,10 +38,41 @@ struct BigInt {
 }
 
 ///|
+using @debug {trait Debug, type Repr}
+
+///|
 priv enum Sign {
   Positive
   Negative
-} derive(Eq)
+} derive(Eq, @debug.Debug)
+
+///|
+test "internal repr" {
+  struct BigIntRepr {
+    limbs : FixedArray[UInt]
+    sign : Sign
+    len : Int
+  } derive(Debug)
+  fn convert(b : BigInt) -> BigIntRepr {
+    { limbs: b.limbs, sign: b.sign, len: b.len }
+  }
+  @debug.debug_inspect(
+    [0N, 1, 2, 3, 4, -1, -2, -3, -4].map(convert),
+    content=(
+      #|[
+      #|  { limbs: <FixedArray: [0, 0]>, sign: Positive, len: 1 },
+      #|  { limbs: <FixedArray: [1, 0]>, sign: Positive, len: 1 },
+      #|  { limbs: <FixedArray: [2, 0]>, sign: Positive, len: 1 },
+      #|  { limbs: <FixedArray: [3, 0]>, sign: Positive, len: 1 },
+      #|  { limbs: <FixedArray: [4, 0]>, sign: Positive, len: 1 },
+      #|  { limbs: <FixedArray: [1, 0]>, sign: Negative, len: 1 },
+      #|  { limbs: <FixedArray: [2, 0]>, sign: Negative, len: 1 },
+      #|  { limbs: <FixedArray: [3, 0]>, sign: Negative, len: 1 },
+      #|  { limbs: <FixedArray: [4, 0]>, sign: Negative, len: 1 },
+      #|]
+    ),
+  )
+}
 
 // Hyper Params
 
