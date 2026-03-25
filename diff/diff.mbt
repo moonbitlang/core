@@ -652,6 +652,5 @@ fn[T : Hash + Eq] Diff::new(
 
 ///|
 pub fn[T] Diff::group(self : Diff[T], radius? : Int = 3) -> Array[Hunk[T]] {
-  let groups = group_edit_arrays(self.edits, radius~)
-  groups.map(fn(group) { { edits: group[:], old: self.old, new: self.new } })
+  group_edits(self.edits, radius~, old=self.old, new=self.new)
 }
