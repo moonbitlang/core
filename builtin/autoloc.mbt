@@ -41,12 +41,11 @@ fn SourceLoc::repr(self : Self) -> String = "%loc_to_string"
 
 ///|
 pub impl Show for SourceLoc with output(self, logger) {
-  SourceLocRepr::parse(self.repr()).output(logger)
+  logger.write_string(self.repr())
 }
 
 ///|
 priv struct SourceLocRepr {
-  pkg : StringView
   filename : StringView
   start_line : StringView
   start_column : StringView
@@ -55,37 +54,9 @@ priv struct SourceLocRepr {
 }
 
 ///|
-impl Show for SourceLocRepr with output(self, logger) {
-  let pkg = self.pkg
-  let (module_name, package_name) = lexmatch pkg {
-    (("[^/]*/[^/]*" as module_name) "/" (".*" as package_name)) =>
-      (module_name, Some(package_name))
-    _ => (pkg, None)
-  }
-  if package_name is Some(pkg_name) {
-    logger.write_view(pkg_name)
-    logger.write_char('/')
-  }
-  logger.write_view(self.filename)
-  logger.write_char(':')
-  logger.write_view(self.start_line)
-  logger.write_char(':')
-  logger.write_view(self.start_column)
-  logger.write_char('-')
-  logger.write_view(self.end_line)
-  logger.write_char(':')
-  logger.write_view(self.end_column)
-  logger.write_char('@')
-  logger.write_view(module_name)
-}
-
-///|
 fn SourceLocRepr::parse(repr : String) -> SourceLocRepr {
   lexmatch repr[:] {
     (
-      "@"
-      ("[^:]*" as pkg)
-      ":"
       (".+?" as filename)
       ":"
       ("[[:digit:]]+" as start_line)
@@ -95,7 +66,9 @@ fn SourceLocRepr::parse(repr : String) -> SourceLocRepr {
       ("[[:digit:]]+" as end_line)
       ":"
       ("[[:digit:]]+" as end_column)
-    ) => { pkg, filename, start_line, start_column, end_line, end_column }
+      "@"
+      ("[^:]*" as _module)
+    ) => { filename, start_line, start_column, end_line, end_column }
     _ => panic()
   }
 }
@@ -103,8 +76,7 @@ fn SourceLocRepr::parse(repr : String) -> SourceLocRepr {
 ///|
 fn SourceLocRepr::to_json_string(self : SourceLocRepr) -> String {
   let sb = StringBuilder::new()
-  sb.write_string("{\"pkg\":\"\{self.pkg}\"")
-  sb.write_string(",\"filename\":")
+  sb.write_string("{\"filename\":")
   sb.write_object(self.filename)
   sb.write_string(",\"start_line\":\{self.start_line}")
   sb.write_string(",\"start_column\":\{self.start_column}")
