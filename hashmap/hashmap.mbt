@@ -482,13 +482,18 @@ fn[K : Eq, V] HashMap::remove_with_hash(
 
 ///|
 fn[K, V] HashMap::shift_back(self : HashMap[K, V], idx : Int) -> Unit {
-  let next = (idx + 1) & self.capacity_mask
-  match self.entries[next] {
-    None | Some({ psl: 0, .. }) => self.entries[idx] = None
-    Some(entry) => {
-      entry.psl -= 1
-      self.entries[idx] = Some(entry)
-      self.shift_back(next)
+  for cur = idx {
+    let next = (cur + 1) & self.capacity_mask
+    match self.entries[next] {
+      None | Some({ psl: 0, .. }) => {
+        self.entries[cur] = None
+        break
+      }
+      Some(entry) => {
+        entry.psl -= 1
+        self.entries[cur] = Some(entry)
+        continue next
+      }
     }
   }
 }
