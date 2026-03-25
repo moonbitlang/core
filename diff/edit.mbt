@@ -82,10 +82,12 @@ fn[T] Edit::view_from(
 ///
 /// This will leave holes behind in long periods of equal ranges so that
 /// you can build things like unified diffs.
-fn group_edit_arrays(
+fn[T] group_edits(
   edits : Array[Edit],
   radius? : Int = 3,
-) -> Array[Array[Edit]] {
+  old~ : ArrayView[T],
+  new~ : ArrayView[T],
+) -> Array[Hunk[T]] {
   if edits.is_empty() {
     return []
   }
@@ -111,7 +113,7 @@ fn group_edit_arrays(
         // Split if this equal range is large enough
         if len > radius * 2 {
           pending.push(Edit::Equal(old_index~, new_index~, len=radius))
-          result.push(pending)
+          result.push(Hunk::{ edits: pending, old, new })
           let offset = len.saturating_sub(radius)
           pending = [
             Edit::Equal(
@@ -128,7 +130,7 @@ fn group_edit_arrays(
     }
   }
   if !(pending is [] || pending is [Equal(_)]) {
-    result.push(pending)
+    result.push(Hunk::{ edits: pending, old, new })
   }
   result
 }
