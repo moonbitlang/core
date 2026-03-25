@@ -64,7 +64,7 @@ test "tuple Debug implementations" {
   )
 
   @debug.debug_inspect(
-    (1, "a", true, 2.0, 'c', 6, "g", false, 9),
+    (1, "a", true, 2.0, 'c', 6, "g", false, 9N),
     content=(
       #|(1, "a", true, 2, 'c', 6, "g", false, 9)
     ),
