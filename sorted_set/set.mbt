@@ -363,15 +363,20 @@ pub fn[V] SortedSet::each(
   self : SortedSet[V],
   f : (V) -> Unit raise?,
 ) -> Unit raise? {
-  fn dfs(root : Node[V]?) -> Unit raise? {
-    if root is Some(root) {
-      dfs(root.left)
-      f(root.value)
-      dfs(root.right)
+  let mut next_node = self.root
+  let todo_list : Array[(V, Node[V]?)] = []
+  loop next_node {
+    Some({ left, value, right, height: _ }) => {
+      todo_list.push((value, right))
+      continue left
     }
+    None if todo_list.pop() is Some((value, right)) => {
+      f(value)
+      next_node = right
+      continue right
+    }
+    None => ()
   }
-
-  dfs(self.root)
 }
 
 ///|
@@ -396,16 +401,21 @@ pub fn[V] SortedSet::to_array(self : SortedSet[V]) -> Array[V] {
     let padding = self.root.unwrap().value
     let arr = Array::make(self.size, padding)
     let mut i = 0
-    fn dfs(root : Node[V]?) -> Unit {
-      if root is Some(root) {
-        dfs(root.left)
-        arr[i] = root.value
-        i = i + 1
-        dfs(root.right)
+    let mut next_node = self.root
+    let todo_list : Array[(V, Node[V]?)] = []
+    loop next_node {
+      Some({ left, value, right, height: _ }) => {
+        todo_list.push((value, right))
+        continue left
       }
+      None if todo_list.pop() is Some((value, right)) => {
+        arr[i] = value
+        i = i + 1
+        next_node = right
+        continue right
+      }
+      None => ()
     }
-
-    dfs(self.root)
     arr
   }
 }

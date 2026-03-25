@@ -650,19 +650,10 @@ pub fn[A, B] List::foldi(
   init~ : B,
   f : (Int, B, A) -> B raise?,
 ) -> B raise? {
-  fn go(
-    xs : List[A],
-    i : Int,
-    f : (Int, B, A) -> B raise?,
-    acc : B,
-  ) -> B raise? {
-    match xs {
-      Empty => acc
-      More(x, tail=xs) => go(xs, i + 1, f, f(i, acc, x))
-    }
+  loop (self, 0, init) {
+    (Empty, _, acc) => acc
+    (More(x, tail=xs), i, acc) => continue (xs, i + 1, f(i, acc, x))
   }
-
-  go(self, 0, f, init)
 }
 
 ///|

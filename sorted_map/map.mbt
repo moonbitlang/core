@@ -194,15 +194,20 @@ pub fn[K, V] SortedMap::each(
   self : SortedMap[K, V],
   f : (K, V) -> Unit raise?,
 ) -> Unit raise? {
-  fn dfs(root : Node[K, V]?) -> Unit raise? {
-    if root is Some(root) {
-      dfs(root.left)
-      f(root.key, root.value)
-      dfs(root.right)
+  let mut next_node = self.root
+  let todo_list : Array[(K, V, Node[K, V]?)] = []
+  loop next_node {
+    Some({ left, key, value, right, height: _ }) => {
+      todo_list.push((key, value, right))
+      continue left
     }
+    None if todo_list.pop() is Some((key, value, right)) => {
+      f(key, value)
+      next_node = right
+      continue right
+    }
+    None => ()
   }
-
-  dfs(self.root)
 }
 
 ///|
