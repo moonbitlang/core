@@ -188,13 +188,18 @@ pub fn[K : Hash + Eq] HashSet::remove(self : HashSet[K], key : K) -> Unit {
 
 ///|
 fn[K] HashSet::shift_back(self : HashSet[K], idx : Int) -> Unit {
-  let next = (idx + 1) & self.capacity_mask
-  match self.entries[next] {
-    None | Some({ psl: 0, .. }) => self.entries[idx] = None
-    Some(entry) => {
-      entry.psl -= 1
-      self.set_entry(entry, idx)
-      self.shift_back(next)
+  for cur = idx {
+    let next = (cur + 1) & self.capacity_mask
+    match self.entries[next] {
+      None | Some({ psl: 0, .. }) => {
+        self.entries[cur] = None
+        break
+      }
+      Some(entry) => {
+        entry.psl -= 1
+        self.set_entry(entry, cur)
+        continue next
+      }
     }
   }
 }

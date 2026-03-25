@@ -468,13 +468,18 @@ fn[K, V] Map::remove_entry(self : Map[K, V], entry : Entry[K, V]) -> Unit {
 
 ///|
 fn[K, V] Map::shift_back(self : Map[K, V], idx : Int) -> Unit {
-  let next = (idx + 1) & self.capacity_mask
-  match self.entries[next] {
-    None | Some({ psl: 0, .. }) => self.entries[idx] = None
-    Some(entry) => {
-      entry.psl -= 1
-      self.set_entry(entry, idx)
-      self.shift_back(next)
+  for cur = idx {
+    let next = (cur + 1) & self.capacity_mask
+    match self.entries[next] {
+      None | Some({ psl: 0, .. }) => {
+        self.entries[cur] = None
+        break
+      }
+      Some(entry) => {
+        entry.psl -= 1
+        self.set_entry(entry, cur)
+        continue next
+      }
     }
   }
 }
