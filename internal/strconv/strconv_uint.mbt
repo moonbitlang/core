@@ -86,7 +86,7 @@ pub fn parse_uint64(str : StringView, base? : Int = 0) -> UInt64 raise {
 
 ///|
 /// Parse a string in the given base (0, 2 to 36), return an UInt number or an error.
-/// If the `~base` argument is 0, the base will be inferred by the prefix.
+/// If the `base` argument is 0, the base will be inferred by the prefix.
 pub fn parse_uint(str : StringView, base? : Int = 0) -> UInt raise {
   let n = parse_uint64(str, base~)
   if n > UINT_MAX.to_uint64() {

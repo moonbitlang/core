@@ -2,7 +2,6 @@ import {
   "moonbitlang/core/builtin",
   "moonbitlang/core/char",
   "moonbitlang/core/double",
-  "moonbitlang/core/error",
   "moonbitlang/core/internal/strconv" @internal/strconv,
   "moonbitlang/core/string/internal/regex_engine" @re,
   "moonbitlang/core/string/internal/regex_parser",
