@@ -2,6 +2,7 @@
 package "moonbitlang/core/bigint"
 
 import {
+  "moonbitlang/core/debug",
   "moonbitlang/core/json",
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/quickcheck/splitmix",
@@ -68,6 +69,7 @@ pub impl Show for BigInt
 pub impl Shr for BigInt
 pub impl Sub for BigInt
 pub impl ToJson for BigInt
+pub impl @debug.Debug for BigInt
 pub impl @json.FromJson for BigInt
 pub impl @quickcheck.Arbitrary for BigInt
 
