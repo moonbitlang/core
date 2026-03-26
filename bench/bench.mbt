@@ -26,16 +26,14 @@ fn iter_n_microseconds(inner : () -> Unit, k : Int) -> Double {
 fn iter_count(name? : String, inner : () -> Unit, count : UInt) -> Summary {
   let count = count.land(0x7FFFFFFF).reinterpret_as_int()
   let threshold = 100000.0 // 100 ms
-  let target_batch_size = loop 1 {
-    trial => {
-      let single_us = iter_n_microseconds(inner, trial) / trial.to_double()
-      let target_batch_size = threshold /
-        (if single_us < 1.0 { 1.0 } else { single_us })
-      if trial.to_double() * single_us > threshold {
-        break target_batch_size
-      }
-      continue trial * 2
+  let target_batch_size = for trial = 1 {
+    let single_us = iter_n_microseconds(inner, trial) / trial.to_double()
+    let target_batch_size = threshold /
+      (if single_us < 1.0 { 1.0 } else { single_us })
+    if trial.to_double() * single_us > threshold {
+      break target_batch_size
     }
+    continue trial * 2
   }
   let batch_size = if target_batch_size < 1.0 {
     1
