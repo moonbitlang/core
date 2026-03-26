@@ -23,9 +23,11 @@ jobs:
           version: nightly
 
       - name: run tests
+        timeout-minutes: 10
         uses: ./.github/actions/test
 
       - name: Test new allocator
+        timeout-minutes: 10
         run: |
           moon clean
           moon test --target wasm
@@ -33,20 +35,24 @@ jobs:
           MOONC_INTERNAL_PARAMS: allocator = tlsf-mbt |
 
       - name: check
+        timeout-minutes: 10
         run: moon check --deny-warn
 
       - name: moon bundle
         run: moon bundle --all
 
       - name: moon info
+        timeout-minutes: 10
         run: |
           moon info --target wasm,wasm-gc,js,native
           git diff
 
       - name: check core size
+        timeout-minutes: 10
         run: find ./target -name '*.core' | xargs ls -lh
 
       - name: format diff
+        timeout-minutes: 10
         run: |
           moon fmt
           git diff
@@ -72,4 +78,5 @@ jobs:
           moon version --all
 
       - name: run native release tests
+        timeout-minutes: 10
         uses: ./.github/actions/test-native-release
