@@ -71,30 +71,32 @@ fn parse_decimal_from_view(str : StringView) -> Decimal raise {
     _ => str
   }
   // read digits
-  let rest = loop rest {
-    ['_', .. rest] => continue rest
-    ['.', .. rest] => {
-      guard !has_dp else { syntax_err() }
-      has_dp = true
-      d.decimal_point = d.digits_num
-      continue rest
-    }
-    ['0'..='9' as digit, .. rest] => {
-      has_digits = true
-      if digit == '0' && d.digits_num == 0 {
-        // ignore leading zeros
-        d.decimal_point -= 1
+  let rest = for rest = rest {
+    match rest {
+      ['_', .. rest] => continue rest
+      ['.', .. rest] => {
+        guard !has_dp else { syntax_err() }
+        has_dp = true
+        d.decimal_point = d.digits_num
         continue rest
       }
-      if d.digits_num < d.digits.length() {
-        d.digits[d.digits_num] = (digit.to_int() - '0').to_byte()
-        d.digits_num += 1
-      } else if digit != '0' {
-        d.truncated = true
+      ['0'..='9' as digit, .. rest] => {
+        has_digits = true
+        if digit == '0' && d.digits_num == 0 {
+          // ignore leading zeros
+          d.decimal_point -= 1
+          continue rest
+        }
+        if d.digits_num < d.digits.length() {
+          d.digits[d.digits_num] = (digit.to_int() - '0').to_byte()
+          d.digits_num += 1
+        } else if digit != '0' {
+          d.truncated = true
+        }
+        continue rest
       }
-      continue rest
+      rest => break rest
     }
-    rest => rest
   }
   guard has_digits else { syntax_err() }
   if !has_dp {
@@ -114,13 +116,15 @@ fn parse_decimal_from_view(str : StringView) -> Decimal raise {
       }
       guard rest is ['0'..='9', ..] else { syntax_err() }
       let mut exp = 0
-      let rest = loop rest {
-        ['_', .. rest] => continue rest
-        ['0'..='9' as digit, .. rest] => {
-          exp = exp * 10 + (digit.to_int() - '0')
-          continue rest
+      let rest = for rest = rest {
+        match rest {
+          ['_', .. rest] => continue rest
+          ['0'..='9' as digit, .. rest] => {
+            exp = exp * 10 + (digit.to_int() - '0')
+            continue rest
+          }
+          rest => break rest
         }
-        rest => rest
       }
       d.decimal_point += exp_sign * exp
       rest
