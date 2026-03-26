@@ -77,8 +77,22 @@ test "condense into one equal" {
     ][:]
   assert_eq(old, new)
   let d = @diff.Diff(old~, new~)
+  let patience = @diff.Diff(old~, new~, patience=true)
   inspect(
     edits_to_string(d),
+    content=(
+      #|  apple
+      #|  pineapple
+      #|  banana
+      #|  tomato
+      #|  carrot
+      #|  tomato
+      #|  potato
+      #|  cabbage
+    ),
+  )
+  inspect(
+    edits_to_string(patience),
     content=(
       #|  apple
       #|  pineapple
@@ -97,8 +111,21 @@ test "mixed" {
   let old = ["carrot", "tomato", "potato", "cabbage"][:]
   let new = ["apple", "banana", "tomato", "pineapple"][:]
   let d = @diff.Diff(old~, new~)
+  let patience = @diff.Diff(old~, new~, patience=true)
   inspect(
     edits_to_string(d),
+    content=(
+      #|- carrot
+      #|+ apple
+      #|+ banana
+      #|  tomato
+      #|- potato
+      #|- cabbage
+      #|+ pineapple
+    ),
+  )
+  inspect(
+    edits_to_string(patience),
     content=(
       #|- carrot
       #|+ apple
@@ -116,8 +143,18 @@ test "delete then insert to hunks" {
   let old = ["fn main() {", "  println(\"foo\")", "}"][:]
   let new = ["fn main() {", "  println(\"bar\")", "}"][:]
   let d = @diff.Diff(old~, new~)
+  let patience = @diff.Diff(old~, new~, patience=true)
   inspect(
     edits_to_string(d),
+    content=(
+      #|  fn main() {
+      #|-   println("foo")
+      #|+   println("bar")
+      #|  }
+    ),
+  )
+  inspect(
+    edits_to_string(patience),
     content=(
       #|  fn main() {
       #|-   println("foo")
@@ -149,8 +186,27 @@ test "large text to hunks" {
       "casual", "dot", "bottom",
     ][:]
   let d = @diff.Diff(old~, new~)
+  let patience = @diff.Diff(old~, new~, patience=true)
   inspect(
     edits_to_string(d),
+    content=(
+      #|  alert
+      #|  chop
+      #|  brave
+      #|  arise
+      #|  bring
+      #|- boy
+      #|+ joy
+      #|  answer
+      #|  count
+      #|  begin
+      #|  casual
+      #|  dot
+      #|  bottom
+    ),
+  )
+  inspect(
+    edits_to_string(patience),
     content=(
       #|  alert
       #|  chop
@@ -202,8 +258,19 @@ test "diff with Int elements" {
   let old = [1, 2, 3, 4][:]
   let new = [1, 2, 4, 5][:]
   let d = @diff.Diff(old~, new~)
+  let patience = @diff.Diff(old~, new~, patience=true)
   inspect(
     edits_to_string(d),
+    content=(
+      #|  1
+      #|  2
+      #|- 3
+      #|  4
+      #|+ 5
+    ),
+  )
+  inspect(
+    edits_to_string(patience),
     content=(
       #|  1
       #|  2
@@ -219,8 +286,18 @@ test "diff with Bool elements" {
   let old = [true, false, false][:]
   let new = [true, false, true][:]
   let d = @diff.Diff(old~, new~)
+  let patience = @diff.Diff(old~, new~, patience=true)
   inspect(
     edits_to_string(d),
+    content=(
+      #|  true
+      #|  false
+      #|- false
+      #|+ true
+    ),
+  )
+  inspect(
+    edits_to_string(patience),
     content=(
       #|  true
       #|  false
@@ -243,8 +320,18 @@ test "diff with struct elements" {
       { id: 4, name: "david" },
     ][:]
   let d = @diff.Diff(old~, new~)
+  let patience = @diff.Diff(old~, new~, patience=true)
   inspect(
     edits_to_string(d),
+    content=(
+      #|  User { id: 1, name: alice }
+      #|- User { id: 2, name: bob }
+      #|  User { id: 3, name: charlie }
+      #|+ User { id: 4, name: david }
+    ),
+  )
+  inspect(
+    edits_to_string(patience),
     content=(
       #|  User { id: 1, name: alice }
       #|- User { id: 2, name: bob }
@@ -259,6 +346,7 @@ test "diff with enum elements" {
   let old = [Start, Word("alpha"), Num(1), Stop][:]
   let new = [Start, Num(1), Word("beta"), Stop][:]
   let d = @diff.Diff(old~, new~)
+  let patience = @diff.Diff(old~, new~, patience=true)
   inspect(
     edits_to_string(d),
     content=(
@@ -267,6 +355,42 @@ test "diff with enum elements" {
       #|  Num(1)
       #|+ Word("beta")
       #|  Stop
+    ),
+  )
+  inspect(
+    edits_to_string(patience),
+    content=(
+      #|  Start
+      #|- Word("alpha")
+      #|  Num(1)
+      #|+ Word("beta")
+      #|  Stop
+    ),
+  )
+}
+
+///|
+test "patience diff prefers unique anchors" {
+  let old = ["unique", "dup", "dup"][:]
+  let new = ["dup", "unique", "dup"][:]
+  let myers = @diff.Diff(old~, new~)
+  let patience = @diff.Diff(old~, new~, patience=true)
+  inspect(
+    edits_to_string(myers),
+    content=(
+      #|- unique
+      #|  dup
+      #|+ unique
+      #|  dup
+    ),
+  )
+  inspect(
+    edits_to_string(patience),
+    content=(
+      #|+ dup
+      #|  unique
+      #|  dup
+      #|- dup
     ),
   )
 }
