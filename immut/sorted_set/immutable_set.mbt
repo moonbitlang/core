@@ -369,29 +369,31 @@ pub fn[A : Compare] SortedSet::range(
   let todo_list = []
   let mut next_node = self
   Iter::new(fn() {
-    loop next_node {
-      Node(left~, right~, value~, ..) => {
-        let cmp_value_low = value.compare(low)
-        let cmp_value_high = value.compare(high)
-        if cmp_value_low < 0 {
-          // value < low, skip left subtree and current node, visit right
-          continue right
-        } else if cmp_value_high > 0 {
-          // value > high, skip right subtree and current node, visit left
-          continue left
-        } else if left is Empty {
-          next_node = right
-          Some(value)
-        } else {
-          todo_list.push((value, right))
-          continue left
+    for x = next_node {
+      match x {
+        Node(left~, right~, value~, ..) => {
+          let cmp_value_low = value.compare(low)
+          let cmp_value_high = value.compare(high)
+          if cmp_value_low < 0 {
+            // value < low, skip left subtree and current node, visit right
+            continue right
+          } else if cmp_value_high > 0 {
+            // value > high, skip right subtree and current node, visit left
+            continue left
+          } else if left is Empty {
+            next_node = right
+            break Some(value)
+          } else {
+            todo_list.push((value, right))
+            continue left
+          }
         }
+        Empty if todo_list.pop() is Some((value, right)) => {
+          next_node = right
+          break Some(value)
+        }
+        Empty => break None
       }
-      Empty if todo_list.pop() is Some((value, right)) => {
-        next_node = right
-        Some(value)
-      }
-      Empty => None
     }
   })
 }
