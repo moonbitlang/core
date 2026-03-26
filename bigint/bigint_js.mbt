@@ -200,6 +200,8 @@ pub fn BigInt::to_octets(self : BigInt, length? : Int) -> Bytes {
     if v > 0 {
       buf.push(v.to_byte())
       continue v >> 8
+    } else {
+      break
     }
   }
   let buf_len = buf.length()

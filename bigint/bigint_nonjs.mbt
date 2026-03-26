@@ -1072,6 +1072,8 @@ fn BigInt::to_string_radix(self : BigInt, radix : Int) -> String {
           let (q, r) = BigInt::grade_school_div(v, base)
           digits.push(char_from_digit(r.to_int()))
           continue q
+        } else {
+          break
         }
       }
       let builder = StringBuilder::new(
