@@ -2,8 +2,11 @@ import {
   "moonbitlang/core/builtin",
   "moonbitlang/core/int",
   "moonbitlang/core/debug",
+  "moonbitlang/core/list",
+  "moonbitlang/core/hashmap",
 }
 
 import {
+  "moonbitlang/core/json",
   "moonbitlang/core/ref",
 } for "wbtest"
