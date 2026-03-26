@@ -495,12 +495,14 @@ fn[K : Eq, V] Map::grow(self : Map[K, V]) -> Unit {
   self.size = 0
   self.head = None
   self.tail = -1
-  loop old_head {
-    Some({ next, key, value, hash, .. }) => {
-      self.set_with_hash(key, value, hash)
-      continue next
+  for x = old_head {
+    match x {
+      Some({ next, key, value, hash, .. }) => {
+        self.set_with_hash(key, value, hash)
+        continue next
+      }
+      None => break
     }
-    None => break
   }
 }
 
@@ -514,16 +516,18 @@ fn calc_grow_threshold(capacity : Int) -> Int {
 ///|
 pub impl[K : Show, V : Show] Show for Map[K, V] with output(self, logger) {
   logger.write_string("{")
-  loop (0, self.head) {
-    (_, None) => logger.write_string("}")
-    (i, Some({ key, value, next, .. })) => {
-      if i > 0 {
-        logger.write_string(", ")
+  for x = 0, y = self.head {
+    match (x, y) {
+      (_, None) => break logger.write_string("}")
+      (i, Some({ key, value, next, .. })) => {
+        if i > 0 {
+          logger.write_string(", ")
+        }
+        logger.write_object(key)
+        logger.write_string(": ")
+        logger.write_object(value)
+        continue i + 1, next
       }
-      logger.write_object(key)
-      logger.write_string(": ")
-      logger.write_object(value)
-      continue (i + 1, next)
     }
   }
 }
@@ -554,12 +558,14 @@ pub fn[K, V] Map::each(
   self : Map[K, V],
   f : (K, V) -> Unit raise?,
 ) -> Unit raise? {
-  loop self.head {
-    Some({ key, value, next, .. }) => {
-      f(key, value)
-      continue next
+  for x = self.head {
+    match x {
+      Some({ key, value, next, .. }) => {
+        f(key, value)
+        continue next
+      }
+      None => break
     }
-    None => break
   }
 }
 
@@ -570,12 +576,14 @@ pub fn[K, V] Map::eachi(
   self : Map[K, V],
   f : (Int, K, V) -> Unit raise?,
 ) -> Unit raise? {
-  loop (0, self.head) {
-    (i, Some({ key, value, next, .. })) => {
-      f(i, key, value)
-      continue (i + 1, next)
+  for x = 0, y = self.head {
+    match (x, y) {
+      (i, Some({ key, value, next, .. })) => {
+        f(i, key, value)
+        continue i + 1, next
+      }
+      (_, None) => break
     }
-    (_, None) => break
   }
 }
 
@@ -646,13 +654,15 @@ pub fn[K, V] Map::values(self : Map[K, V]) -> Iter[V] {
 pub fn[K, V] Map::to_array(self : Map[K, V]) -> Array[(K, V)] {
   let arr = Array::make_uninit(self.size)
   let mut i = 0
-  loop self.head {
-    Some({ key, value, next, .. }) => {
-      arr.unsafe_set(i, (key, value))
-      i += 1
-      continue next
+  for x = self.head {
+    match x {
+      Some({ key, value, next, .. }) => {
+        arr.unsafe_set(i, (key, value))
+        i += 1
+        continue next
+      }
+      None => break
     }
-    None => break
   }
   arr
 }
@@ -720,16 +730,16 @@ pub fn[K, V, V2] Map::map(self : Map[K, V], f : (K, V) -> V2) -> Map[K, V2] {
     return other
   }
   guard self.entries[self.tail] is Some(last)
-  loop (last, self.tail, None) {
-    ({ prev, psl, hash, key, value, .. }, idx, next) => {
-      let new_value = f(key, value)
-      let new_entry = { prev, next, psl, hash, key, value: new_value }
-      other.entries[idx] = Some(new_entry)
-      if prev != -1 {
-        continue (self.entries[prev].unwrap(), prev, Some(new_entry))
-      } else {
-        other.head = Some(new_entry)
-      }
+  for entry = last, idx = self.tail, next = (None : Entry[K, V2]?) {
+    let { prev, psl, hash, key, value, .. } = entry
+    let new_value = f(key, value)
+    let new_entry = { prev, next, psl, hash, key, value: new_value }
+    other.entries[idx] = Some(new_entry)
+    if prev != -1 {
+      continue self.entries[prev].unwrap(), prev, Some(new_entry)
+    } else {
+      other.head = Some(new_entry)
+      break
     }
   }
   other
@@ -753,15 +763,15 @@ pub fn[K, V] Map::copy(self : Map[K, V]) -> Map[K, V] {
     return other
   }
   guard self.entries[self.tail] is Some(last)
-  loop (last, self.tail, None) {
-    ({ prev, psl, hash, key, value, .. }, idx, next) => {
-      let new_entry = { prev, next, psl, hash, key, value }
-      other.entries[idx] = Some(new_entry)
-      if prev != -1 {
-        continue (self.entries[prev].unwrap(), prev, Some(new_entry))
-      } else {
-        other.head = Some(new_entry)
-      }
+  for entry = last, idx = self.tail, next = (None : Entry[K, V]?) {
+    let { prev, psl, hash, key, value, .. } = entry
+    let new_entry = { prev, next, psl, hash, key, value }
+    other.entries[idx] = Some(new_entry)
+    if prev != -1 {
+      continue self.entries[prev].unwrap(), prev, Some(new_entry)
+    } else {
+      other.head = Some(new_entry)
+      break
     }
   }
   other
@@ -830,12 +840,14 @@ pub fn[K : Eq, V] Map::merge_in_place(
   if physical_equal(self, other) {
     return
   }
-  loop other.head {
-    Some({ key, value, next, hash, .. }) => {
-      self.set_with_hash(key, value, hash)
-      continue next
+  for x = other.head {
+    match x {
+      Some({ key, value, next, hash, .. }) => {
+        self.set_with_hash(key, value, hash)
+        continue next
+      }
+      None => break
     }
-    None => break
   }
 }
 
@@ -865,24 +877,28 @@ pub fn[K : Eq, V] Map::merge_in_place(
 /// ```
 #locals(f)
 pub fn[K, V] Map::retain(self : Map[K, V], f : (K, V) -> Bool) -> Unit {
-  loop (self.head, false) {
-    (Some({ key, value, next, prev: idx, .. }), remove_prev) => {
-      if remove_prev {
-        guard self.entries[idx] is Some(entry)
-        self.remove_entry(entry)
-        self.shift_back(idx)
-        self.size -= 1
+  for x = self.head, y = false {
+    match (x, y) {
+      (Some({ key, value, next, prev: idx, .. }), remove_prev) => {
+        if remove_prev {
+          guard self.entries[idx] is Some(entry)
+          self.remove_entry(entry)
+          self.shift_back(idx)
+          self.size -= 1
+        }
+        continue next, !f(key, value)
       }
-      continue (next, !f(key, value))
+      (None, remove_prev) => {
+        if remove_prev {
+          let idx = self.tail
+          guard self.entries[idx] is Some(entry)
+          self.remove_entry(entry)
+          self.shift_back(idx)
+          self.size -= 1
+        }
+        break
+      }
     }
-    (None, remove_prev) =>
-      if remove_prev {
-        let idx = self.tail
-        guard self.entries[idx] is Some(entry)
-        self.remove_entry(entry)
-        self.shift_back(idx)
-        self.size -= 1
-      }
   }
 }
 
