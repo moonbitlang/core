@@ -94,18 +94,20 @@ pub fn[K : Compare, V] SortedMap::remove(
 ///|
 /// Returns the value associated with the key, or `None` if not found.
 pub fn[K : Compare, V] SortedMap::get(self : SortedMap[K, V], key : K) -> V? {
-  loop self.root {
-    Some(node) => {
-      let cmp = key.compare(node.key)
-      if cmp == 0 {
-        break Some(node.value)
-      } else if cmp > 0 {
-        continue node.right
-      } else {
-        continue node.left
+  for x = self.root {
+    match x {
+      Some(node) => {
+        let cmp = key.compare(node.key)
+        if cmp == 0 {
+          break Some(node.value)
+        } else if cmp > 0 {
+          continue node.right
+        } else {
+          continue node.left
+        }
       }
+      None => break None
     }
-    None => break None
   }
 }
 
@@ -113,18 +115,20 @@ pub fn[K : Compare, V] SortedMap::get(self : SortedMap[K, V], key : K) -> V? {
 /// Returns the value for the key. Panics if the key is not present.
 #alias("_[_]")
 pub fn[K : Compare, V] SortedMap::at(self : SortedMap[K, V], key : K) -> V {
-  loop self.root {
-    Some(node) => {
-      let cmp = key.compare(node.key)
-      if cmp == 0 {
-        break node.value
-      } else if cmp > 0 {
-        continue node.right
-      } else {
-        continue node.left
+  for x = self.root {
+    match x {
+      Some(node) => {
+        let cmp = key.compare(node.key)
+        if cmp == 0 {
+          break node.value
+        } else if cmp > 0 {
+          continue node.right
+        } else {
+          continue node.left
+        }
       }
+      None => panic()
     }
-    None => panic()
   }
 }
 
@@ -224,16 +228,18 @@ pub fn[K, V] SortedMap::keys_as_iter(self : SortedMap[K, V]) -> Iter[K] {
   let todo_list = []
   let mut next_node = self.root
   Iter::new(fn() {
-    loop next_node {
-      Some({ left, key, value: _, right, height: _ }) => {
-        todo_list.push((key, right))
-        continue left
+    for x = next_node {
+      match x {
+        Some({ left, key, value: _, right, height: _ }) => {
+          todo_list.push((key, right))
+          continue left
+        }
+        None if todo_list.pop() is Some((key, right)) => {
+          next_node = right
+          break Some(key)
+        }
+        None => break None
       }
-      None if todo_list.pop() is Some((key, right)) => {
-        next_node = right
-        Some(key)
-      }
-      None => None
     }
   })
 }
@@ -244,16 +250,18 @@ pub fn[K, V] SortedMap::values_as_iter(self : SortedMap[K, V]) -> Iter[V] {
   let todo_list = []
   let mut next_node = self.root
   Iter::new(fn() {
-    loop next_node {
-      Some({ left, key: _, value, right, height: _ }) => {
-        todo_list.push((value, right))
-        continue left
+    for x = next_node {
+      match x {
+        Some({ left, key: _, value, right, height: _ }) => {
+          todo_list.push((value, right))
+          continue left
+        }
+        None if todo_list.pop() is Some((value, right)) => {
+          next_node = right
+          break Some(value)
+        }
+        None => break None
       }
-      None if todo_list.pop() is Some((value, right)) => {
-        next_node = right
-        Some(value)
-      }
-      None => None
     }
   })
 }
@@ -273,16 +281,18 @@ pub fn[K, V] SortedMap::iter(self : SortedMap[K, V]) -> Iter[(K, V)] {
   let todo_list = []
   let mut next_node = self.root
   Iter::new(fn() {
-    loop next_node {
-      Some({ left, key, value, right, height: _ }) => {
-        todo_list.push((key, value, right))
-        continue left
+    for x = next_node {
+      match x {
+        Some({ left, key, value, right, height: _ }) => {
+          todo_list.push((key, value, right))
+          continue left
+        }
+        None if todo_list.pop() is Some((key, value, right)) => {
+          next_node = right
+          break Some((key, value))
+        }
+        None => break None
       }
-      None if todo_list.pop() is Some((key, value, right)) => {
-        next_node = right
-        Some((key, value))
-      }
-      None => None
     }
   })
 }
@@ -327,34 +337,36 @@ pub fn[K : Compare, V] SortedMap::range(
   let todo_list = []
   let mut next_node = self.root
   Iter2::new(fn() {
-    loop next_node {
-      Some({ left, key, value, right, height: _ }) => {
-        let cmp_key_low = key.compare(low)
-        let cmp_key_high = key.compare(high)
-        if cmp_key_low < 0 {
-          // `key < low`, the left subtree and the key itself
-          // are all below the range, skip to the right subtree
-          continue right
-        } else if cmp_key_high > 0 {
-          // `key > high`, the right subtree and the key itself
-          // are all above the range, skip to the left subtree
-          continue left
-          // `low <= key <= high`,
-          // the value itself falls in the range,
-          // and both the left and right sub tree need to be visited
-        } else if left is None {
-          next_node = right
-          Some((key, value))
-        } else {
-          todo_list.push((key, value, right))
-          continue left
+    for x = next_node {
+      match x {
+        Some({ left, key, value, right, height: _ }) => {
+          let cmp_key_low = key.compare(low)
+          let cmp_key_high = key.compare(high)
+          if cmp_key_low < 0 {
+            // `key < low`, the left subtree and the key itself
+            // are all below the range, skip to the right subtree
+            continue right
+          } else if cmp_key_high > 0 {
+            // `key > high`, the right subtree and the key itself
+            // are all above the range, skip to the left subtree
+            continue left
+            // `low <= key <= high`,
+            // the value itself falls in the range,
+            // and both the left and right sub tree need to be visited
+          } else if left is None {
+            next_node = right
+            break Some((key, value))
+          } else {
+            todo_list.push((key, value, right))
+            continue left
+          }
         }
+        None if todo_list.pop() is Some((key, value, right)) => {
+          next_node = right
+          break Some((key, value))
+        }
+        None => break None
       }
-      None if todo_list.pop() is Some((key, value, right)) => {
-        next_node = right
-        Some((key, value))
-      }
-      None => None
     }
   }).iter2()
 }

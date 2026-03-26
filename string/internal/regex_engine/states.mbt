@@ -95,27 +95,29 @@ fn Regex::stablize_final(
   next_cat : Category,
 ) -> (@automata.Slot, @automata.Status) {
   let state_index = state_id.index()
-  loop self.final_table[state_index] {
-    Empty => {
-      let next_state = @automata.delta(
-        ctx=self.ctx,
-        state,
-        NULL_SYMBOL,
-        next_cat~,
-      )
-      let slot = next_state.slot()
-      let status = next_state.status()
-      self.final_table[state_index] = @list.cons(
-        (next_cat, slot, status),
-        self.final_table[state_index],
-      )
-      (slot, status)
-    }
-    More(head, tail~) =>
-      if head.0 == next_cat {
-        (head.1, head.2)
-      } else {
-        continue tail
+  for entry = self.final_table[state_index] {
+    match entry {
+      Empty => {
+        let next_state = @automata.delta(
+          ctx=self.ctx,
+          state,
+          NULL_SYMBOL,
+          next_cat~,
+        )
+        let slot = next_state.slot()
+        let status = next_state.status()
+        self.final_table[state_index] = @list.cons(
+          (next_cat, slot, status),
+          self.final_table[state_index],
+        )
+        break (slot, status)
       }
+      More(head, tail~) =>
+        if head.0 == next_cat {
+          break (head.1, head.2)
+        } else {
+          continue tail
+        }
+    }
   }
 }
