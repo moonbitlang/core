@@ -528,6 +528,78 @@ fn[T : Eq + Hash] iter_matches(
 }
 
 ///|
+fn[T : Eq + Hash] append_myers_matches(
+  matches : Array[(Int, Int)],
+  cutoff : Int?,
+  old : ArrayView[T],
+  new : ArrayView[T],
+  old_offset : Int,
+  new_offset : Int,
+) -> Unit {
+  for old_idx, new_idx in iter_matches(cutoff~, old~, new~) {
+    matches.push((old_offset + old_idx, new_offset + new_idx))
+  }
+}
+
+///|
+fn[T : Eq + Hash] append_patience_matches(
+  matches : Array[(Int, Int)],
+  cutoff : Int?,
+  old : ArrayView[T],
+  new : ArrayView[T],
+  old_offset : Int,
+  new_offset : Int,
+) -> Unit {
+  let anchors = unique_lcs(old~, new~)
+  if anchors.length() == 0 {
+    append_myers_matches(matches, cutoff, old, new, old_offset, new_offset)
+    return
+  }
+
+  let mut prev_old_idx = 0
+  let mut prev_new_idx = 0
+  for i = 0; i < anchors.length(); i = i + 1 {
+    let (old_idx, new_idx) = anchors[i]
+    append_patience_matches(
+      matches,
+      cutoff,
+      old.view(start=prev_old_idx, end=old_idx),
+      new.view(start=prev_new_idx, end=new_idx),
+      old_offset + prev_old_idx,
+      new_offset + prev_new_idx,
+    )
+    matches.push((old_offset + old_idx, new_offset + new_idx))
+    prev_old_idx = old_idx + 1
+    prev_new_idx = new_idx + 1
+  }
+
+  append_patience_matches(
+    matches,
+    cutoff,
+    old.view(start=prev_old_idx, end=old.length()),
+    new.view(start=prev_new_idx, end=new.length()),
+    old_offset + prev_old_idx,
+    new_offset + prev_new_idx,
+  )
+}
+
+///|
+fn[T : Eq + Hash] collect_matches(
+  cutoff : Int?,
+  old : ArrayView[T],
+  new : ArrayView[T],
+  patience : Bool,
+) -> Array[(Int, Int)] {
+  let matches = Array::new(capacity=old.length().min(new.length()))
+  if patience {
+    append_patience_matches(matches, cutoff, old, new, 0, 0)
+  } else {
+    append_myers_matches(matches, cutoff, old, new, 0, 0)
+  }
+  matches
+}
+
+///|
 pub struct Diff[T] {
   old : ArrayView[T]
   new : ArrayView[T]
@@ -537,11 +609,13 @@ pub struct Diff[T] {
     old~ : ArrayView[T],
     new~ : ArrayView[T],
     cutoff? : Int,
+    patience? : Bool,
   ) -> Diff[T]
 }
 
 ///|
-/// `Diff::new(old~, new~, cutoff?)` diffs `old` and `new` (as in /usr/bin/diff),
+/// `Diff::new(old~, new~, cutoff?, patience?)` diffs `old` and `new`
+/// (as in /usr/bin/diff),
 /// and returns a `Diff[T]` bundling the source arrays with the edit script
 /// that transforms `old` into `new`.
 ///
@@ -549,18 +623,25 @@ pub struct Diff[T] {
 /// `cutoff` is exceeded, the result is a correct, but not necessarily minimal
 /// diff. It defaults to about `sqrt(old.length() + new.length())`.
 ///
+/// When `patience` is `true`, the diff first uses `unique_lcs` to find patience-diff
+/// anchors and then runs the existing Myers diff on the unmatched ranges between
+/// those anchors. It defaults to `false`.
+///
 fn[T : Hash + Eq] Diff::new(
   old~ : ArrayView[T],
   new~ : ArrayView[T],
   cutoff? : Int,
+  patience? : Bool = false,
 ) -> Diff[T] {
   let result : Array[Edit] = Array::new(capacity=old.length() + new.length())
+  let matches = collect_matches(cutoff, old, new, patience)
   let mut prev_old_idx = 0
   let mut prev_new_idx = 0
   let mut equal_old_idx = 0
   let mut equal_new_idx = 0
   let mut consecutive_equal_length = 0
-  for old_idx, new_idx in iter_matches(old~, new~, cutoff~) {
+  for pair in matches {
+    let (old_idx, new_idx) = pair
     // emit delete
     if prev_old_idx != old_idx {
       if consecutive_equal_length != 0 {

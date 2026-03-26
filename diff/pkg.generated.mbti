@@ -15,7 +15,7 @@ pub struct Diff[T] {
   new : ArrayView[T]
   edits : Array[Edit]
 
-  fn[T : Hash + Eq] new(old~ : ArrayView[T], new~ : ArrayView[T], cutoff? : Int) -> Diff[T]
+  fn[T : Hash + Eq] new(old~ : ArrayView[T], new~ : ArrayView[T], cutoff? : Int, patience? : Bool) -> Diff[T]
 }
 pub fn[T] Diff::group(Self[T], radius? : Int) -> Array[Hunk[T]]
 
