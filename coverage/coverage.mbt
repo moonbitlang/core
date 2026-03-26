@@ -138,14 +138,16 @@ pub fn end() -> Unit {
 
 ///|
 fn coverage_reset(counters : MList[(String, CoverageCounter)]) -> Unit {
-  loop counters {
-    MCons((_, CoverageCounter(counter)), xs) => {
-      for i in 0..<counter.length() {
-        counter[i] = 0
+  for x = counters {
+    match x {
+      MCons((_, CoverageCounter(counter)), xs) => {
+        for i in 0..<counter.length() {
+          counter[i] = 0
+        }
+        continue xs
       }
-      continue xs
+      MNil => break
     }
-    MNil => ()
   }
 }
 
@@ -160,18 +162,20 @@ fn coverage_log(
     io.output("\n")
   }
   print("{ ")
-  loop (counters, 0) {
-    (MCons((name, counter), xs), ix) => {
-      if ix != 0 {
-        print(", ")
+  for a = counters, b = 0 {
+    match (a, b) {
+      (MCons((name, counter), xs), ix) => {
+        if ix != 0 {
+          print(", ")
+        }
+        print(name.escape())
+        print(": ")
+        let counter_dump = counter.to_string()
+        println(counter_dump)
+        continue xs, ix + 1
       }
-      print(name.escape())
-      print(": ")
-      let counter_dump = counter.to_string()
-      println(counter_dump)
-      continue (xs, ix + 1)
+      (MNil, _) => break
     }
-    (MNil, _) => ()
   }
   print("}")
 }
