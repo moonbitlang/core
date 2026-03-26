@@ -361,6 +361,35 @@ pub fn[A] T::concat(self : T[A], other : T[A]) -> T[A] {
 }
 
 ///|
+/// Split the array into `[0, index)` and `[index, len)`.
+pub fn[A] T::split(self : T[A], index : Int) -> (T[A], T[A]) {
+  guard 0 <= index && index <= self.size else { abort("Index out of bounds") }
+  (self.slice_unchecked(0, index), self.slice_unchecked(index, self.size))
+}
+
+///|
+/// Return the first `count` elements.
+pub fn[A] T::take(self : T[A], count : Int) -> T[A] {
+  let end = if count <= 0 { 0 } else { min(count, self.size) }
+  self.slice_unchecked(0, end)
+}
+
+///|
+/// Drop the first `count` elements.
+pub fn[A] T::drop(self : T[A], count : Int) -> T[A] {
+  let start = if count <= 0 { 0 } else { min(count, self.size) }
+  self.slice_unchecked(start, self.size)
+}
+
+///|
+/// Return the slice `[start, end)`.
+pub fn[A] T::slice(self : T[A], start : Int, end : Int) -> T[A] {
+  guard start <= end else { abort("start index greater than end index") }
+  guard 0 <= start && end <= self.size else { abort("Index out of bounds") }
+  self.slice_unchecked(start, end)
+}
+
+///|
 /// Concat two arrays.
 pub impl[A] Add for T[A] with add(self, other) {
   self.concat(other)
@@ -634,6 +663,45 @@ fn[A] T::normalize_tree(self : T[A]) -> (Tree[A], Int) {
     self.tree.push_end(self.shift, self.tail[0])
   } else {
     self.tree.append_right_leaf(self.shift, self.tail)
+  }
+}
+
+///|
+fn[A] T::slice_unchecked(self : T[A], start : Int, end : Int) -> T[A] {
+  let len = end - start
+  if len == 0 {
+    new()
+  } else if start == 0 && end == self.size {
+    self
+  } else {
+    let tail_offset = self.tail_offset()
+    if start >= tail_offset {
+      make_t(
+        Empty,
+        immutable_slice(self.tail, start - tail_offset, end - tail_offset),
+        len,
+        0,
+      )
+    } else {
+      let tree_end = min(end, tail_offset)
+      let sliced_tree = if tree_end == tail_offset {
+        self.tree
+      } else {
+        self.tree.slice_right(self.shift, tree_end)
+      }
+      let sliced_tree = if start == 0 {
+        sliced_tree
+      } else {
+        sliced_tree.slice_left(self.shift, start)
+      }
+      let (tree, shift) = sliced_tree.shrink_top(self.shift)
+      let tail = if end > tail_offset {
+        immutable_slice(self.tail, 0, end - tail_offset)
+      } else {
+        []
+      }
+      make_t(tree, tail, len, shift)
+    }
   }
 }
 

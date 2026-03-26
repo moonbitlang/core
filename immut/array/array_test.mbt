@@ -277,6 +277,39 @@ test "concat_empty" {
 }
 
 ///|
+test "split" {
+  let values = @array.from_iter((0).until(40))
+  let (left, right) = values.split(13)
+  assert_eq(left.to_array(), Array::makei(13, i => i))
+  assert_eq(right.to_array(), Array::makei(27, i => i + 13))
+  let (empty, all) = values.split(0)
+  assert_eq(empty.to_array(), [])
+  assert_eq(all, values)
+  let (all, empty) = values.split(40)
+  assert_eq(all, values)
+  assert_eq(empty.to_array(), [])
+}
+
+///|
+test "take drop and slice" {
+  let values = @array.from_iter((0).until(40))
+  assert_eq(values.take(5).to_array(), [0, 1, 2, 3, 4])
+  assert_eq(values.take(100), values)
+  assert_eq(values.take(-1).to_array(), [])
+  assert_eq(values.drop(35).to_array(), [35, 36, 37, 38, 39])
+  assert_eq(values.drop(100).to_array(), [])
+  assert_eq(values.drop(-1), values)
+  assert_eq(values.slice(7, 12).to_array(), [7, 8, 9, 10, 11])
+  assert_eq(values.slice(0, 40), values)
+  inspect(
+    values.slice(10, 20),
+    content=(
+      #|@immut/array.from_array([10, 11, 12, 13, 14, 15, 16, 17, 18, 19])
+    ),
+  )
+}
+
+///|
 test "compare" {
   let arr1 = @array.from_array([1, 2, 3])
   let arr2 = @array.from_array([1, 2, 4])

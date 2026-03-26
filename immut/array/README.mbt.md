@@ -58,6 +58,23 @@ test {
 }
 ```
 
+## Range Operations
+
+You can use `split()`, `take()`, `drop()`, and `slice()` to work with subranges without flattening the whole tree.
+
+```mbt check
+///|
+test {
+  let arr = @array.from_iter((0).until(10))
+  let (left, right) = arr.split(4)
+  assert_eq(left.to_array(), [0, 1, 2, 3])
+  assert_eq(right.to_array(), [4, 5, 6, 7, 8, 9])
+  assert_eq(arr.take(3).to_array(), [0, 1, 2])
+  assert_eq(arr.drop(7).to_array(), [7, 8, 9])
+  assert_eq(arr.slice(2, 6).to_array(), [2, 3, 4, 5])
+}
+```
+
 ## Query
 
 You can use `get()` to get the value at the index, `peek()` to read the last element, `length()` to get the length of the array, or `is_empty()` to check whether the array is empty.
@@ -93,7 +110,7 @@ test {
 
 # TODO
 
-- [] Add `split` and other operations that can be derived from `split` and `concat` like `insert` and `delete`.
+- [] Add operations that can be derived from `split` and `concat` like `insert` and `delete`.
 - [] Add an algorithm description in README, since this algorithm does not use the invariant in the ICFP paper. Instead, it uses the "search step invariant" in Hypirion's thesis.
 - [] Add a benchmark to compare the performance with the previous version.
 - [] Add more dedicated APIs derived from the tail-backed layout.

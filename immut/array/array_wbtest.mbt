@@ -150,6 +150,27 @@ test "pop promotes previous leaf into tail" {
 }
 
 ///|
+test "slice within tail stays tail-only" {
+  let values = from_iter((0).until(40))
+  let sliced = values.slice(34, 40)
+  inspect(sliced.tree.is_empty_tree(), content="true")
+  assert_eq(sliced.tail.length(), 6)
+  assert_eq(sliced.tail[0], 34)
+  assert_eq(sliced.tail[5], 39)
+}
+
+///|
+test "slice across tree and tail preserves right tail chunk" {
+  let values = from_iter((0).until(40))
+  let sliced = values.slice(20, 36)
+  inspect(sliced.tree.is_empty_tree(), content="false")
+  assert_eq(sliced.tail.length(), 4)
+  assert_eq(sliced.tail[0], 32)
+  assert_eq(sliced.tail[3], 35)
+  assert_eq(sliced.to_array(), Array::makei(16, i => i + 20))
+}
+
+///|
 /// Generate a sequence of concatenation operations as a test case,
 /// 
 /// Inputs:
