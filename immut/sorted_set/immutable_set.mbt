@@ -192,9 +192,12 @@ pub fn[A : Compare] SortedSet::remove(
 /// }
 /// ```
 pub fn[A] SortedSet::min(self : SortedSet[A]) -> A {
-  match self {
-    Empty => abort("min: there are no values in sorted_set.")
-    Node(left~, value~, ..) => if left is Empty { value } else { left.min() }
+  for cur = self {
+    match cur {
+      Empty => abort("min: there are no values in sorted_set.")
+      Node(left~, value~, ..) =>
+        if left is Empty { break value } else { continue left }
+    }
   }
 }
 
@@ -202,14 +205,16 @@ pub fn[A] SortedSet::min(self : SortedSet[A]) -> A {
 /// Returns the smallest value in the sorted_set.
 /// But returns None when the value does not exist.
 pub fn[A] SortedSet::min_option(self : SortedSet[A]) -> A? {
-  match self {
-    Empty => None
-    Node(left~, value~, ..) =>
-      if left is Empty {
-        Some(value)
-      } else {
-        left.min_option()
-      }
+  for cur = self {
+    match cur {
+      Empty => break None
+      Node(left~, value~, ..) =>
+        if left is Empty {
+          break Some(value)
+        } else {
+          continue left
+        }
+    }
   }
 }
 
@@ -225,9 +230,12 @@ pub fn[A] SortedSet::min_option(self : SortedSet[A]) -> A? {
 /// }
 /// ```
 pub fn[A] SortedSet::max(self : SortedSet[A]) -> A {
-  match self {
-    Empty => abort("max: there are no values in ImmutableSet.")
-    Node(right~, value~, ..) => if right is Empty { value } else { right.max() }
+  for cur = self {
+    match cur {
+      Empty => abort("max: there are no values in ImmutableSet.")
+      Node(right~, value~, ..) =>
+        if right is Empty { break value } else { continue right }
+    }
   }
 }
 
@@ -235,14 +243,16 @@ pub fn[A] SortedSet::max(self : SortedSet[A]) -> A {
 /// Returns the largest value in the ImmutableSet.
 /// But returns None when the value does not exist.
 pub fn[A] SortedSet::max_option(self : SortedSet[A]) -> A? {
-  match self {
-    Empty => None
-    Node(right~, value~, ..) =>
-      if right is Empty {
-        Some(value)
-      } else {
-        right.max_option()
-      }
+  for cur = self {
+    match cur {
+      Empty => break None
+      Node(right~, value~, ..) =>
+        if right is Empty {
+          break Some(value)
+        } else {
+          continue right
+        }
+    }
   }
 }
 
