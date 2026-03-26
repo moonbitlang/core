@@ -397,13 +397,15 @@ pub fn[X, Y] Iter::flat_map(self : Iter[X], f : (X) -> Iter[Y]) -> Iter[Y] {
   let mut current_iter = Some(Iter::empty())
   fn() {
     guard current_iter is Some(iter) else { None }
-    loop iter.next() {
-      Some(_) as elem => elem
-      None => {
-        guard self.next() is Some(x) else { None }
-        let iter = f(x)
-        current_iter = Some(iter)
-        continue iter.next()
+    for x = iter.next() {
+      match x {
+        Some(_) as elem => break elem
+        None => {
+          guard self.next() is Some(x) else { break None }
+          let iter = f(x)
+          current_iter = Some(iter)
+          continue iter.next()
+        }
       }
     }
   }
@@ -590,9 +592,11 @@ pub fn[X] Iter::drop_while(self : Iter[X], f : (X) -> Bool) -> Iter[X] {
   fn() {
     if !dropped {
       dropped = true
-      loop self.next() {
-        Some(x) if f(x) => continue self.next()
-        result => result
+      for x = self.next() {
+        match x {
+          Some(x) if f(x) => continue self.next()
+          result => break result
+        }
       }
     } else {
       self.next()
@@ -750,9 +754,11 @@ pub fn[X] Iter::iter2(self : Iter[X]) -> Iter2[Int, X] {
 /// Returns the last element of the iterator, or `None` if the iterator is empty.
 /// The old iterator `self` must not be used again after calling `last`.
 pub fn[X] Iter::last(self : Iter[X]) -> X? {
-  loop (None, self.next()) {
-    (last, None) => last
-    (_, Some(_) as x) => continue (x, self.next())
+  for x = (None : X?), y = self.next() {
+    match (x, y) {
+      (last, None) => break last
+      (_, Some(_) as x) => continue x, self.next()
+    }
   }
 }
 
