@@ -15,10 +15,13 @@
 ///|
 /// Invariants:
 /// - `shift` = tree height * `num_bits`. When it is 0, we are at the leaf level.
-/// - `size` = the number of elements in the tree.
+/// - `size` = the total number of elements in `tree` and `tail`.
+/// - `tail` stores the right-most chunk and has at most `branching_factor` elements.
+/// - `tree` stores the prefix before `tail`.
 /// - `shift` is not used when `tree` is `Empty`.
 struct T[A] {
   tree : Tree[A]
+  tail : FixedArray[A]
   size : Int
   shift : Int
 }

@@ -43,6 +43,8 @@ pub fn[A] T::makei(Int, (Int) -> A raise?) -> Self[A] raise?
 pub fn[A, B] T::map(Self[A], (A) -> B raise?) -> Self[B] raise?
 #as_free_fn
 pub fn[A] T::new() -> Self[A]
+pub fn[A] T::peek(Self[A]) -> A?
+pub fn[A] T::pop(Self[A]) -> Self[A]?
 pub fn[A] T::push(Self[A], A) -> Self[A]
 #alias(fold_right, deprecated)
 pub fn[A, B] T::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?

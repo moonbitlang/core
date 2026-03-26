@@ -34,6 +34,42 @@ fn[T] immutable_push(arr : FixedArray[T], val : T) -> FixedArray[T] {
 }
 
 ///|
+fn[T] immutable_concat(
+  left : FixedArray[T],
+  right : FixedArray[T],
+) -> FixedArray[T] {
+  let left_len = left.length()
+  let right_len = right.length()
+  if left_len == 0 {
+    right.copy()
+  } else if right_len == 0 {
+    left.copy()
+  } else {
+    FixedArray::makei(left_len + right_len, i => {
+      if i < left_len {
+        left[i]
+      } else {
+        right[i - left_len]
+      }
+    })
+  }
+}
+
+///|
+fn[T] immutable_slice(
+  arr : FixedArray[T],
+  start : Int,
+  end : Int,
+) -> FixedArray[T] {
+  let len = end - start
+  if len <= 0 {
+    []
+  } else {
+    FixedArray::makei(len, i => arr[start + i])
+  }
+}
+
+///|
 /// x >> y as unsigned integers, then reinterpret as signed integers.
 fn shr_as_uint(x : Int, y : Int) -> Int {
   (x.reinterpret_as_uint() >> y).reinterpret_as_int()

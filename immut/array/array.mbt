@@ -20,55 +20,52 @@
 /// Return a new empty array
 #as_free_fn
 pub fn[A] T::new() -> T[A] {
-  { tree: Tree::empty(), size: 0, shift: 0 }
+  make_t(Tree::empty(), [], 0, 0)
 }
 
 ///|
 /// Create a persistent array with a given length and value.
 #as_free_fn
 pub fn[A] T::make(len : Int, value : A) -> T[A] {
-  let quot = len / branching_factor
-  let rem = len % branching_factor
-  let leaves = if rem == 0 {
-    Array::make(quot, FixedArray::make(branching_factor, value))
+  guard len > 0 else { new() }
+  let tail_len = tail_len_of_size(len)
+  let tree_len = len - tail_len
+  let tail = FixedArray::make(tail_len, value)
+  let (tree, shift) = if tree_len == 0 {
+    (Tree::empty(), 0)
   } else {
-    let arr : Array[FixedArray[A]] = Array::make(
-      quot + 1,
+    let leaves = Array::make(
+      tree_len / branching_factor,
       FixedArray::make(branching_factor, value),
     )
-    arr[quot] = FixedArray::make(rem, value)
-    arr
+    let (shift, cap) = shift_cap_of_size(tree_len)
+    (from_leaves(leaves[:], cap), shift)
   }
-  let size = len
-  let (shift, cap) = shift_cap_of_size(size)
-  let tree = if size == 0 { Empty } else { from_leaves(leaves[:], cap) }
-  { shift, tree, size }
+  make_t(tree, tail, len, shift)
 }
 
 ///|
 /// Create a persistent array with a given length and a function to generate values.
 #as_free_fn
 pub fn[A] T::makei(len : Int, f : (Int) -> A raise?) -> T[A] raise? {
-  let quot = len / branching_factor
-  let rem = len % branching_factor
-  let leaves = if rem == 0 {
-    Array::makei(quot, k => {
-      FixedArray::makei(branching_factor, i => f(k * branching_factor + i))
-    })
+  guard len > 0 else { new() }
+  let tail_len = tail_len_of_size(len)
+  let tree_len = len - tail_len
+  let tail = FixedArray::makei(tail_len, i => f(tree_len + i))
+  let (tree, shift) = if tree_len == 0 {
+    (Tree::empty(), 0)
   } else {
-    let arr : Array[FixedArray[A]] = Array::make(quot + 1, [])
+    let quot = tree_len / branching_factor
+    let leaves : Array[FixedArray[A]] = Array::make(quot, [])
     for k in 0..<quot {
-      arr[k] = FixedArray::makei(branching_factor, i => {
+      leaves[k] = FixedArray::makei(branching_factor, i => {
         f(k * branching_factor + i)
       })
     }
-    arr[quot] = FixedArray::makei(rem, i => f(quot * branching_factor + i))
-    arr
+    let (shift, cap) = shift_cap_of_size(tree_len)
+    (from_leaves(leaves[:], cap), shift)
   }
-  let size = len
-  let (shift, cap) = shift_cap_of_size(size)
-  let tree = if size == 0 { Empty } else { from_leaves(leaves[:], cap) }
-  { shift, tree, size }
+  make_t(tree, tail, len, shift)
 }
 
 ///|
@@ -110,17 +107,24 @@ pub fn[A] T::from_iter(iter : Iter[A]) -> T[A] {
       buf = FixedArray::make(branching_factor, x)
     }
   }
-  if index == branching_factor {
-    leaves.push(buf)
-  } else if index > 0 {
+  if index == 0 {
+    return new()
+  }
+  let tail = if index == branching_factor {
+    buf
+  } else {
     let res = FixedArray::make(index, buf[0])
     buf.blit_to(res, len=index)
-    leaves.push(res)
+    res
   }
-  let size = leaves.fold(init=0, (acc, xs) => acc + xs.length())
-  let (shift, cap) = shift_cap_of_size(size)
-  let tree = if size == 0 { Empty } else { from_leaves(leaves[:], cap) }
-  { shift, tree, size }
+  let tree_len = leaves.length() * branching_factor
+  let (tree, shift) = if tree_len == 0 {
+    (Tree::empty(), 0)
+  } else {
+    let (shift, cap) = shift_cap_of_size(tree_len)
+    (from_leaves(leaves[:], cap), shift)
+  }
+  make_t(tree, tail, tree_len + tail.length(), shift)
 }
 
 //-----------------------------------------------------------------------------
@@ -155,6 +159,11 @@ pub fn[A] T::length(self : T[A]) -> Int {
   self.size
 }
 
+///|
+fn[A] T::tail_offset(self : T[A]) -> Int {
+  self.size - self.tail.length()
+}
+
 //-----------------------------------------------------------------------------
 // Lookup
 //-----------------------------------------------------------------------------
@@ -172,9 +181,12 @@ pub fn[A] T::length(self : T[A]) -> Int {
 #alias("_[_]")
 pub fn[A] T::at(self : T[A], index : Int) -> A {
   guard index >= 0 && index < self.size
-  if index == 0 {
+  let tail_offset = self.tail_offset()
+  if index >= tail_offset {
+    self.tail[index - tail_offset]
+  } else if index == 0 {
     self.tree.get_first()
-  } else if index == self.size - 1 {
+  } else if index == tail_offset - 1 {
     self.tree.get_last()
   } else {
     self.tree.get(index, self.shift)
@@ -208,6 +220,16 @@ pub fn[A] T::get(self : T[A], index : Int) -> A? {
   Some(self[index])
 }
 
+///|
+/// Returns the last element in the array.
+pub fn[A] T::peek(self : T[A]) -> A? {
+  if self.size == 0 {
+    None
+  } else {
+    Some(self[self.size - 1])
+  }
+}
+
 //-----------------------------------------------------------------------------
 // Modifier
 //-----------------------------------------------------------------------------
@@ -224,10 +246,21 @@ pub fn[A] T::get(self : T[A], index : Int) -> A? {
 /// ```
 pub fn[A] T::set(self : T[A], index : Int, value : A) -> T[A] {
   guard index >= 0 && index < self.size
-  {
-    tree: self.tree.set(index, self.shift, value),
-    size: self.size,
-    shift: self.shift,
+  let tail_offset = self.tail_offset()
+  if index >= tail_offset {
+    make_t(
+      self.tree,
+      immutable_set(self.tail, index - tail_offset, value),
+      self.size,
+      self.shift,
+    )
+  } else {
+    make_t(
+      self.tree.set(index, self.shift, value),
+      self.tail,
+      self.size,
+      self.shift,
+    )
   }
 }
 
@@ -242,8 +275,46 @@ pub fn[A] T::set(self : T[A], index : Int, value : A) -> T[A] {
 /// }
 /// ```
 pub fn[A] T::push(self : T[A], value : A) -> T[A] {
-  let (tree, shift) = self.tree.push_end(self.shift, value)
-  { tree, size: self.size + 1, shift }
+  if self.tail.length() < branching_factor {
+    make_t(
+      self.tree,
+      immutable_push(self.tail, value),
+      self.size + 1,
+      self.shift,
+    )
+  } else {
+    let (tree, shift) = if self.tree is Empty {
+      (Leaf(self.tail), 0)
+    } else {
+      self.tree.append_right_leaf(self.shift, self.tail)
+    }
+    make_t(tree, [value], self.size + 1, shift)
+  }
+}
+
+///|
+/// Remove the last element from the array.
+pub fn[A] T::pop(self : T[A]) -> T[A]? {
+  if self.size == 0 {
+    None
+  } else if self.size == 1 {
+    Some(new())
+  } else if self.tail.length() > 1 {
+    Some(
+      make_t(
+        self.tree,
+        immutable_slice(self.tail, 0, self.tail.length() - 1),
+        self.size - 1,
+        self.shift,
+      ),
+    )
+  } else {
+    let new_tail = self.tree.last_leaf_elements()
+    let (tree, shift) = self.tree
+      .pop_rightmost_leaf(self.shift)
+      .shrink_top(self.shift)
+    Some(make_t(tree, new_tail, self.size - 1, shift))
+  }
 }
 
 ///|
@@ -255,14 +326,38 @@ pub fn[A] T::concat(self : T[A], other : T[A]) -> T[A] {
   if other.is_empty() {
     return self
   }
+  let size = self.size + other.size
+  if other.tree is Empty {
+    let combined_tail_len = self.tail.length() + other.tail.length()
+    if combined_tail_len <= branching_factor {
+      return make_t(
+        self.tree,
+        immutable_concat(self.tail, other.tail),
+        size,
+        self.shift,
+      )
+    } else if self.tail.length() == 0 {
+      return make_t(self.tree, other.tail, size, self.shift)
+    } else {
+      let (tree, shift) = self.normalize_tree()
+      return make_t(tree, other.tail, size, shift)
+    }
+  }
+  let (left_tree, left_shift) = if self.tree is Empty {
+    (Leaf(self.tail), 0)
+  } else if self.tail.length() == 0 {
+    (self.tree, self.shift)
+  } else {
+    self.normalize_tree()
+  }
   let (tree, shift) = Tree::concat(
-    self.tree,
-    self.shift,
+    left_tree,
+    left_shift,
     other.tree,
     other.shift,
     true,
   )
-  { tree, size: self.size + other.size, shift }
+  make_t(tree, other.tail, size, shift)
 }
 
 ///|
@@ -279,7 +374,9 @@ pub impl[A] Add for T[A] with add(self, other) {
 /// Returns an iterator over the elements of the array.
 #alias(iterator, deprecated)
 pub fn[A] T::iter(self : T[A]) -> Iter[A] {
-  self.tree.iter()
+  let tree_iter = self.tree.iter()
+  let tail_iter = self.tail.iter()
+  tree_iter.concat(tail_iter)
 }
 
 ///|
@@ -296,6 +393,7 @@ pub fn[A] T::iter(self : T[A]) -> Iter[A] {
 /// ```
 pub fn[A] T::each(self : T[A], f : (A) -> Unit raise?) -> Unit raise? {
   self.tree.each(f)
+  self.tail.each(f)
 }
 
 ///|
@@ -312,6 +410,10 @@ pub fn[A] T::each(self : T[A], f : (A) -> Unit raise?) -> Unit raise? {
 /// ```
 pub fn[A] T::eachi(self : T[A], f : (Int, A) -> Unit raise?) -> Unit raise? {
   self.tree.eachi(f, self.shift, 0)
+  let tail_offset = self.tail_offset()
+  for i in 0..<self.tail.length() {
+    f(tail_offset + i, self.tail[i])
+  }
 }
 
 ///|
@@ -330,7 +432,8 @@ pub fn[A, B] T::fold(
   init~ : B,
   f : (B, A) -> B raise?,
 ) -> B raise? {
-  self.tree.fold(init, f)
+  let acc = self.tree.fold(init, f)
+  self.tail.fold(f, init=acc)
 }
 
 ///|
@@ -349,7 +452,8 @@ pub fn[A, B] T::rev_fold(
   init~ : B,
   f : (B, A) -> B raise?,
 ) -> B raise? {
-  self.tree.rev_fold(init, f)
+  let acc = self.tail.rev_fold(f, init~)
+  self.tree.rev_fold(acc, f)
 }
 
 ///|
@@ -363,7 +467,7 @@ pub fn[A, B] T::rev_fold(
 /// }
 /// ```
 pub fn[A, B] T::map(self : T[A], f : (A) -> B raise?) -> T[B] raise? {
-  { tree: self.tree.map(f), size: self.size, shift: self.shift }
+  make_t(self.tree.map(f), self.tail.map(f), self.size, self.shift)
 }
 
 //-----------------------------------------------------------------------------
@@ -387,8 +491,21 @@ pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
 
 ///|
 pub impl[A : Eq] Eq for T[A] with equal(self, other) {
-  physical_equal(self, other) ||
-  (self.size == other.size && self.tree == other.tree)
+  if physical_equal(self, other) {
+    true
+  } else if self.size != other.size {
+    false
+  } else {
+    let left = self.iter()
+    let right = other.iter()
+    for _ in 0..<self.size {
+      match (left.next(), right.next()) {
+        (Some(a), Some(b)) => if a != b { return false }
+        _ => return false
+      }
+    }
+    true
+  }
 }
 
 ///|
@@ -450,6 +567,16 @@ pub impl[A : Compare] Compare for T[A] with compare(self, other) {
 //-----------------------------------------------------------------------------
 
 ///|
+fn[A] make_t(
+  tree : Tree[A],
+  tail : FixedArray[A],
+  size : Int,
+  shift : Int,
+) -> T[A] {
+  { tree, tail, size, shift }
+}
+
+///|
 fn[A] from_leaves(leaves : ArrayView[FixedArray[A]], cap : Int) -> Tree[A] {
   if cap == branching_factor {
     Leaf(leaves[0])
@@ -478,6 +605,35 @@ fn[A] from_leaves(leaves : ArrayView[FixedArray[A]], cap : Int) -> Tree[A] {
       arr
     }
     Node(arr, None)
+  }
+}
+
+///|
+fn tail_len_of_size(size : Int) -> Int {
+  if size <= branching_factor {
+    size
+  } else {
+    let rem = size % branching_factor
+    if rem == 0 {
+      branching_factor
+    } else {
+      rem
+    }
+  }
+}
+
+///|
+fn[A] T::normalize_tree(self : T[A]) -> (Tree[A], Int) {
+  if self.size == 0 {
+    (Tree::empty(), 0)
+  } else if self.tail.length() == 0 {
+    (self.tree, self.shift)
+  } else if self.tail_offset() == 0 {
+    (Leaf(self.tail), 0)
+  } else if self.tail.length() == 1 {
+    self.tree.push_end(self.shift, self.tail[0])
+  } else {
+    self.tree.append_right_leaf(self.shift, self.tail)
   }
 }
 

@@ -36,5 +36,10 @@ pub fn[A] T::copy(self : T[A]) -> T[A] {
     }
   }
 
-  { tree: copy(self.tree), size: self.size, shift: self.shift }
+  {
+    tree: copy(self.tree),
+    tail: self.tail.copy(),
+    size: self.size,
+    shift: self.shift,
+  }
 }

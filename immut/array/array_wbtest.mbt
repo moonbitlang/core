@@ -112,6 +112,44 @@ test "concat-multiple-random-tree" {
 }
 
 ///|
+test "from_iter keeps trailing chunk in tail" {
+  let values = from_iter((0).until(40))
+  inspect(values.tree.is_empty_tree(), content="false")
+  inspect(values.tail.length(), content="8")
+  inspect(values.tail[0], content="32")
+  inspect(values.tail[7], content="39")
+}
+
+///|
+test "push flushes full tail into tree" {
+  let values = from_iter((0).until(branching_factor))
+  let pushed = values.push(branching_factor)
+  inspect(pushed.tree.is_empty_tree(), content="false")
+  inspect(pushed.tail.length(), content="1")
+  inspect(pushed.tail[0], content=branching_factor.to_string())
+}
+
+///|
+test "concat small right array stays in tail" {
+  let left = from_iter((0).until(40))
+  let right = from_iter((40).until(48))
+  let combined = left.concat(right)
+  inspect(combined.tail.length(), content="16")
+  inspect(combined.tail[0], content="32")
+  inspect(combined.tail[15], content="47")
+}
+
+///|
+test "pop promotes previous leaf into tail" {
+  let values = from_iter((0).until(33))
+  let popped = values.pop().unwrap()
+  inspect(popped.tree.is_empty_tree(), content="true")
+  inspect(popped.tail.length(), content="32")
+  inspect(popped.tail[0], content="0")
+  inspect(popped.tail[31], content="31")
+}
+
+///|
 /// Generate a sequence of concatenation operations as a test case,
 /// 
 /// Inputs:
