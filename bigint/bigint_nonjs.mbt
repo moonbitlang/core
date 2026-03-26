@@ -1067,13 +1067,12 @@ fn BigInt::to_string_radix(self : BigInt, radix : Int) -> String {
       let base = BigInt::from_int(radix)
       let value = if is_negative { -self } else { self }
       let digits = []
-      loop value {
-        v =>
-          if v > zero {
-            let (q, r) = BigInt::grade_school_div(v, base)
-            digits.push(char_from_digit(r.to_int()))
-            continue q
-          }
+      for v = value {
+        if v > zero {
+          let (q, r) = BigInt::grade_school_div(v, base)
+          digits.push(char_from_digit(r.to_int()))
+          continue q
+        }
       }
       let builder = StringBuilder::new(
         size_hint=digits.length() + (if is_negative { 1 } else { 0 }),

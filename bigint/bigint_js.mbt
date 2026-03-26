@@ -196,12 +196,11 @@ pub fn BigInt::to_octets(self : BigInt, length? : Int) -> Bytes {
     }
   }
   let buf = []
-  loop self {
-    v =>
-      if v > 0 {
-        buf.push(v.to_byte())
-        continue v >> 8
-      }
+  for v = self {
+    if v > 0 {
+      buf.push(v.to_byte())
+      continue v >> 8
+    }
   }
   let buf_len = buf.length()
   match length {
