@@ -188,13 +188,15 @@ fn[A : Compare] merges(x : Node[A]?) -> Node[A]? {
       (s2, meld(x, s1))
     }
   }
-  loop (x, acc) {
-    (None, acc) => Some(acc)
-    (Some({ sibling: None, .. } as x), acc) => Some(meld(acc, x))
-    (Some({ sibling: Some({ sibling: s2, .. } as s1), .. } as x), acc) => {
-      x.sibling = None
-      s1.sibling = None
-      continue (s2, meld(acc, meld(x, s1)))
+  for siblings = x, merged = acc {
+    match (siblings, merged) {
+      (None, acc) => break Some(acc)
+      (Some({ sibling: None, .. } as x), acc) => break Some(meld(acc, x))
+      (Some({ sibling: Some({ sibling: s2, .. } as s1), .. } as x), acc) => {
+        x.sibling = None
+        s1.sibling = None
+        continue s2, meld(acc, meld(x, s1))
+      }
     }
   }
 }
