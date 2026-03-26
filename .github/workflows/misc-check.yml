@@ -20,6 +20,7 @@ jobs:
           fetch-depth: 0
 
       - name: check `moon.*.json` format
+        timeout-minutes: 10
         shell: bash
         run: |
           _passed=0;
@@ -36,16 +37,19 @@ jobs:
         run: curl --proto '=https' --tlsv1.2 -LsSf https://github.com/korandoru/hawkeye/releases/download/$HAWKEYE_VERSION/hawkeye-installer.sh | sh
 
       - name: Check License Header
+        timeout-minutes: 10
         run: |
           hawkeye check
 
       - name: check typos
+        timeout-minutes: 10
         uses: crate-ci/typos@v1
 
       - name: install moonbit
         uses: ./.github/actions/setup
 
       - name: moon test
+        timeout-minutes: 10
         run: moon test --enable-coverage
 
       - name: coverage report

@@ -49,6 +49,7 @@ jobs:
           echo "prerelease-date=$PRERELEASE_DATE" >> $GITHUB_OUTPUT
 
       - name: check if should skip
+        timeout-minutes: 10
         id: check
         run: |
           LATEST_DATE="${{ steps.latest.outputs.latest-date }}"
@@ -93,6 +94,7 @@ jobs:
           version: pre-release
 
       - name: moon info
+        timeout-minutes: 10
         run: |
           moon info --target wasm,wasm-gc,js,native
           git diff --exit-code
@@ -116,6 +118,7 @@ jobs:
           version: pre-release
 
       - name: format diff
+        timeout-minutes: 10
         run: |
           moon fmt
           git diff --exit-code
@@ -138,19 +141,18 @@ jobs:
           version: pre-release
 
       - name: check
+        timeout-minutes: 10
         run: moon check --deny-warn
 
       - name: run tests
+        timeout-minutes: 10
         uses: ./.github/actions/test
-
-      - name: moon test --doc
-        run: |
-          moon test --doc
 
       - name: moon bundle
         run: moon bundle --all
 
       - name: check coverage
+        timeout-minutes: 10
         run: |
           moon test --enable-coverage
           moon coverage report -f summary > coverage_summary.txt
@@ -158,10 +160,12 @@ jobs:
           cat coverage_summary.txt >> "$GITHUB_STEP_SUMMARY"
 
       - name: check core size
+        timeout-minutes: 10
         if: ${{ matrix.os != 'windows-latest' }}
         run: find ./target -name '*.core' | xargs ls -lh
 
       - name: check core size on windows
+        timeout-minutes: 10
         if: ${{ matrix.os == 'windows-latest' }}
         run: Get-ChildItem -Path ".\target" -Recurse -Filter "*.core" | ForEach-Object { "{0} ({1} bytes)" -f $_.FullName, $_.Length }
 
@@ -183,7 +187,9 @@ jobs:
           version: pre-release
 
       - name: check
+        timeout-minutes: 10
         run: moon check --target native --deny-warn
 
       - name: run native release tests
+        timeout-minutes: 10
         uses: ./.github/actions/test-native-release
