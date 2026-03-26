@@ -42,15 +42,17 @@ pub fn[A : Eq + Hash] HashSet::contains(self : HashSet[A], key : A) -> Bool {
 
 ///|
 fn[A : Eq] Node::contains(self : Node[A], key : A, path : @path.Path) -> Bool {
-  loop (self, path) {
-    (Leaf(key1, bucket), _) => key == key1 || bucket.contains(key)
-    (Flat(key1, path1), path) => path == path1 && key == key1
-    (Branch(children), path) => {
-      let idx = path.idx()
-      if children.get(idx) is Some(child) {
-        continue (child, path.next())
+  for s = self, p = path {
+    match (s, p) {
+      (Leaf(key1, bucket), _) => break key == key1 || bucket.contains(key)
+      (Flat(key1, path1), path) => break path == path1 && key == key1
+      (Branch(children), path) => {
+        let idx = path.idx()
+        if children.get(idx) is Some(child) {
+          continue child, path.next()
+        }
+        break false
       }
-      false
     }
   }
 }
@@ -361,32 +363,34 @@ pub fn[A] HashSet::iter(self : HashSet[A]) -> Iter[A] {
   let mut curr_index = 0
   let parents = []
   Iter::new(fn() {
-    loop curr_node {
-      Tree(Flat(x, _)) => {
-        curr_node = empty
-        Some(x)
+    for cn = curr_node {
+      match cn {
+        Tree(Flat(x, _)) => {
+          curr_node = empty
+          break Some(x)
+        }
+        Tree(Leaf(x, bucket)) => {
+          curr_node = Bucket(bucket)
+          break Some(x)
+        }
+        Bucket(More(x, tail~)) => {
+          curr_node = Bucket(tail)
+          break Some(x)
+        }
+        Tree(Branch(children)) as n if curr_index < children.length() => {
+          let child = children.data[curr_index]
+          parents.push((n, curr_index + 1))
+          curr_index = 0
+          continue Tree(child)
+        }
+        Bucket(Empty) | Tree(Branch(_)) if parents.pop()
+          is Some((parent, parent_index)) => {
+          curr_node = parent
+          curr_index = parent_index
+          continue parent
+        }
+        Bucket(Empty) | Tree(Branch(_)) => break None
       }
-      Tree(Leaf(x, bucket)) => {
-        curr_node = Bucket(bucket)
-        Some(x)
-      }
-      Bucket(More(x, tail~)) => {
-        curr_node = Bucket(tail)
-        Some(x)
-      }
-      Tree(Branch(children)) as n if curr_index < children.length() => {
-        let child = children.data[curr_index]
-        parents.push((n, curr_index + 1))
-        curr_index = 0
-        continue Tree(child)
-      }
-      Bucket(Empty) | Tree(Branch(_)) if parents.pop()
-        is Some((parent, parent_index)) => {
-        curr_node = parent
-        curr_index = parent_index
-        continue parent
-      }
-      Bucket(Empty) | Tree(Branch(_)) => None
     }
   })
 }
@@ -415,11 +419,13 @@ pub impl[A : Show] Show for HashSet[A] with output(self, logger) {
 #alias(of, deprecated="Use from_array instead")
 #as_free_fn(of, deprecated="Use from_array instead")
 pub fn[A : Eq + Hash] HashSet::from_array(arr : ArrayView[A]) -> HashSet[A] {
-  loop (arr.length(), new()) {
-    (0, set) => set
-    (n, set) => {
-      let k = arr[n - 1]
-      continue (n - 1, set.add(k))
+  for n = arr.length(), set = new() {
+    match (n, set) {
+      (0, set) => break set
+      (n, set) => {
+        let k = arr[n - 1]
+        continue n - 1, set.add(k)
+      }
     }
   }
 }
