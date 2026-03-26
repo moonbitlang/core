@@ -196,7 +196,11 @@ pub fn[A] SortedSet::min(self : SortedSet[A]) -> A {
     match cur {
       Empty => abort("min: there are no values in sorted_set.")
       Node(left~, value~, ..) =>
-        if left is Empty { break value } else { continue left }
+        if left is Empty {
+          break value
+        } else {
+          continue left
+        }
     }
   }
 }
@@ -234,7 +238,11 @@ pub fn[A] SortedSet::max(self : SortedSet[A]) -> A {
     match cur {
       Empty => abort("max: there are no values in ImmutableSet.")
       Node(right~, value~, ..) =>
-        if right is Empty { break value } else { continue right }
+        if right is Empty {
+          break value
+        } else {
+          continue right
+        }
     }
   }
 }
