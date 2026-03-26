@@ -27,33 +27,37 @@ pub fn encode(bytes : BytesView, padding? : Bool = true) -> String {
     size_hint += if padding is true { 4 } else { remainder + 1 }
   }
   let builder = StringBuilder::new(size_hint~)
-  loop bytes {
-    [b0, b1, b2, .. rest] => {
-      let n = (b0.to_int() << 16) | (b1.to_int() << 8) | b2.to_int()
-      builder.write_char(BASE64_STD[(n >> 18) & 0x3F].to_char())
-      builder.write_char(BASE64_STD[(n >> 12) & 0x3F].to_char())
-      builder.write_char(BASE64_STD[(n >> 6) & 0x3F].to_char())
-      builder.write_char(BASE64_STD[n & 0x3F].to_char())
-      continue rest
-    }
-    [b0, b1] => {
-      let n = (b0.to_int() << 16) | (b1.to_int() << 8)
-      builder.write_char(BASE64_STD[(n >> 18) & 0x3F].to_char())
-      builder.write_char(BASE64_STD[(n >> 12) & 0x3F].to_char())
-      builder.write_char(BASE64_STD[(n >> 6) & 0x3F].to_char())
-      if padding is true {
-        builder.write_char('=')
+  for remaining = bytes {
+    match remaining {
+      [b0, b1, b2, .. rest] => {
+        let n = (b0.to_int() << 16) | (b1.to_int() << 8) | b2.to_int()
+        builder.write_char(BASE64_STD[(n >> 18) & 0x3F].to_char())
+        builder.write_char(BASE64_STD[(n >> 12) & 0x3F].to_char())
+        builder.write_char(BASE64_STD[(n >> 6) & 0x3F].to_char())
+        builder.write_char(BASE64_STD[n & 0x3F].to_char())
+        continue rest
       }
-    }
-    [b0] => {
-      let n = b0.to_int() << 16
-      builder.write_char(BASE64_STD[(n >> 18) & 0x3F].to_char())
-      builder.write_char(BASE64_STD[(n >> 12) & 0x3F].to_char())
-      if padding is true {
-        builder.write_string("==")
+      [b0, b1] => {
+        let n = (b0.to_int() << 16) | (b1.to_int() << 8)
+        builder.write_char(BASE64_STD[(n >> 18) & 0x3F].to_char())
+        builder.write_char(BASE64_STD[(n >> 12) & 0x3F].to_char())
+        builder.write_char(BASE64_STD[(n >> 6) & 0x3F].to_char())
+        if padding is true {
+          builder.write_char('=')
+        }
+        break
       }
+      [b0] => {
+        let n = b0.to_int() << 16
+        builder.write_char(BASE64_STD[(n >> 18) & 0x3F].to_char())
+        builder.write_char(BASE64_STD[(n >> 12) & 0x3F].to_char())
+        if padding is true {
+          builder.write_string("==")
+        }
+        break
+      }
+      [] => break
     }
-    [] => ()
   }
   builder.to_string()
 }
