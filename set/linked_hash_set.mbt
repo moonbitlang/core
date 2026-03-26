@@ -368,12 +368,14 @@ fn[K : Eq] Set::grow(self : Set[K]) -> Unit {
   self.size = 0
   self.head = None
   self.tail = -1
-  loop old_head {
-    Some({ next, key, hash, .. }) => {
-      self.add_with_hash(key, hash)
-      continue next
+  for x = old_head {
+    match x {
+      Some({ next, key, hash, .. }) => {
+        self.add_with_hash(key, hash)
+        continue next
+      }
+      None => break
     }
-    None => break
   }
 }
 
@@ -382,14 +384,16 @@ fn[K : Eq] Set::grow(self : Set[K]) -> Unit {
 ///|
 pub impl[K : Show] Show for Set[K] with output(self, logger) {
   logger.write_string("{")
-  loop (0, self.head) {
-    (_, None) => logger.write_string("}")
-    (i, Some({ key, next, .. })) => {
-      if i > 0 {
-        logger.write_string(", ")
+  for i = 0, curr = self.head {
+    match (i, curr) {
+      (_, None) => break logger.write_string("}")
+      (i, Some({ key, next, .. })) => {
+        if i > 0 {
+          logger.write_string(", ")
+        }
+        logger.write_object(key)
+        continue i + 1, next
       }
-      logger.write_object(key)
-      continue (i + 1, next)
     }
   }
 }
@@ -417,12 +421,14 @@ pub fn[K] Set::is_empty(self : Set[K]) -> Bool {
 /// Iterate over all keys of the set in the order of insertion.
 #locals(f)
 pub fn[K] Set::each(self : Set[K], f : (K) -> Unit raise?) -> Unit raise? {
-  loop self.head {
-    Some({ key, next, .. }) => {
-      f(key)
-      continue next
+  for x = self.head {
+    match x {
+      Some({ key, next, .. }) => {
+        f(key)
+        continue next
+      }
+      None => break
     }
-    None => break
   }
 }
 
@@ -430,12 +436,14 @@ pub fn[K] Set::each(self : Set[K], f : (K) -> Unit raise?) -> Unit raise? {
 /// Iterate over all keys of the set in the order of insertion, with index.
 #locals(f)
 pub fn[K] Set::eachi(self : Set[K], f : (Int, K) -> Unit raise?) -> Unit raise? {
-  loop (0, self.head) {
-    (i, Some({ key, next, .. })) => {
-      f(i, key)
-      continue (i + 1, next)
+  for i = 0, curr = self.head {
+    match (i, curr) {
+      (i, Some({ key, next, .. })) => {
+        f(i, key)
+        continue i + 1, next
+      }
+      (_, None) => break
     }
-    (_, None) => break
   }
 }
 
@@ -468,12 +476,14 @@ pub fn[K] Set::iter(self : Set[K]) -> Iter[K] {
 /// Converts the hash set to an array.
 pub fn[K] Set::to_array(self : Set[K]) -> Array[K] {
   let arr = Array::new(capacity=self.size)
-  loop self.head {
-    Some({ key, next, .. }) => {
-      arr.push(key)
-      continue next
+  for x = self.head {
+    match x {
+      Some({ key, next, .. }) => {
+        arr.push(key)
+        continue next
+      }
+      None => break
     }
-    None => break
   }
   arr
 }
@@ -524,14 +534,17 @@ pub fn[K] Set::copy(self : Set[K]) -> Set[K] {
     return other
   }
   guard self.entries[self.tail] is Some(last)
-  loop (last, self.tail, None) {
-    ({ prev, psl, hash, key, .. }, idx, next) => {
-      let new_entry = { prev, next, psl, hash, key }
-      other.entries[idx] = Some(new_entry)
-      if prev != -1 {
-        continue (self.entries[prev].unwrap(), prev, Some(new_entry))
-      } else {
-        other.head = Some(new_entry)
+  for entry = last, idx = self.tail, next = (None : Entry[K]?) {
+    match (entry, idx, next) {
+      ({ prev, psl, hash, key, .. }, idx, next) => {
+        let new_entry = { prev, next, psl, hash, key }
+        other.entries[idx] = Some(new_entry)
+        if prev != -1 {
+          continue self.entries[prev].unwrap(), prev, Some(new_entry)
+        } else {
+          other.head = Some(new_entry)
+          break
+        }
       }
     }
   }
