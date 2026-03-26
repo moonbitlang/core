@@ -35,15 +35,17 @@ fn parse_digits(s : StringView, x : UInt64) -> (StringView, UInt64, Int) {
 fn try_parse_19digits(s : StringView, x : UInt64) -> (StringView, UInt64, Int) {
   let mut x = x
   let mut len = 0
-  loop s {
-    ['0'..='9' as ch, .. rest] if x < min_19digit_int => {
-      len += 1
-      x = x * 10UL +
-        UInt64::extend_uint((ch.to_int() - '0').reinterpret_as_uint()) // no overflows here
-      continue rest
+  for s = s {
+    match s {
+      ['0'..='9' as ch, .. rest] if x < min_19digit_int => {
+        len += 1
+        x = x * 10UL +
+          UInt64::extend_uint((ch.to_int() - '0').reinterpret_as_uint()) // no overflows here
+        continue rest
+      }
+      ['_', .. rest] => continue rest
+      s => break (s, x, len)
     }
-    ['_', .. rest] => continue rest
-    s => return (s, x, len)
   }
 }
 
@@ -131,12 +133,14 @@ fn parse_number(s : StringView) -> Number? raise {
   }
   n_digits -= 19
   let mut many_digits = false
-  loop start {
-    ['0' | '.' as ch, .. rest] => {
-      n_digits -= (ch.to_int() - 46) / 2 // '0' = b'.' + 2
-      continue rest
+  for s = start {
+    match s {
+      ['0' | '.' as ch, .. rest] => {
+        n_digits -= (ch.to_int() - 46) / 2 // '0' = b'.' + 2
+        continue rest
+      }
+      _ => break
     }
-    _ => ()
   }
   let mut mantissa = mantissa
   if n_digits > 0 {
