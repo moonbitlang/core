@@ -132,19 +132,23 @@ fn slice_after(tree : Tree, c : Rechar) -> Tree {
 
 ///|
 fn leftmost(t : Tree) -> (Rechar, Rechar)? {
-  match t {
-    Empty => None
-    Node(l=Empty, lo~, hi~, ..) => Some((lo, hi))
-    Node(l~, ..) => leftmost(l)
+  for cur = t {
+    match cur {
+      Empty => break None
+      Node(l=Empty, lo~, hi~, ..) => break Some((lo, hi))
+      Node(l~, ..) => continue l
+    }
   }
 }
 
 ///|
 fn rightmost(t : Tree) -> (Rechar, Rechar)? {
-  match t {
-    Empty => None
-    Node(lo~, hi~, r=Empty, ..) => Some((lo, hi))
-    Node(r~, ..) => rightmost(r)
+  for cur = t {
+    match cur {
+      Empty => break None
+      Node(lo~, hi~, r=Empty, ..) => break Some((lo, hi))
+      Node(r~, ..) => continue r
+    }
   }
 }
 
