@@ -105,34 +105,36 @@ pub fn parse_int64(
     | ['_', '0'..='9' | 'a'..='z' | 'A'..='Z', ..])
   guard has_digit else { syntax_err() }
   // convert
-  loop (rest, 0L, allow_underscore) {
-    (['_'], _, _) =>
-      // the last character cannot be underscore
-      syntax_err()
-    (['_', ..], _, false) => syntax_err()
-    (['_', .. rest], acc, true) => continue (rest, acc, false)
-    ([c, .. rest], acc, _) => {
-      let c = c.to_int()
-      let d = match c {
-        '0'..='9' => c - '0'
-        'a'..='z' => c + (10 - 'a')
-        'A'..='Z' => c + (10 - 'A')
-        _ => syntax_err()
+  for s = rest, acc = 0L, au = allow_underscore {
+    match (s, acc, au) {
+      (['_'], _, _) =>
+        // the last character cannot be underscore
+        syntax_err()
+      (['_', ..], _, false) => syntax_err()
+      (['_', .. rest], acc, true) => continue rest, acc, false
+      ([c, .. rest], acc, _) => {
+        let c = c.to_int()
+        let d = match c {
+          '0'..='9' => c - '0'
+          'a'..='z' => c + (10 - 'a')
+          'A'..='Z' => c + (10 - 'A')
+          _ => syntax_err()
+        }
+        guard d < num_base else { syntax_err() }
+        if neg {
+          guard acc >= overflow_threshold else { range_err() }
+          let next_acc = acc * num_base.to_int64() - d.to_int64()
+          guard next_acc <= acc else { range_err() }
+          continue rest, next_acc, true
+        } else {
+          guard acc < overflow_threshold else { range_err() }
+          let next_acc = acc * num_base.to_int64() + d.to_int64()
+          guard next_acc >= acc else { range_err() }
+          continue rest, next_acc, true
+        }
       }
-      guard d < num_base else { syntax_err() }
-      if neg {
-        guard acc >= overflow_threshold else { range_err() }
-        let next_acc = acc * num_base.to_int64() - d.to_int64()
-        guard next_acc <= acc else { range_err() }
-        continue (rest, next_acc, true)
-      } else {
-        guard acc < overflow_threshold else { range_err() }
-        let next_acc = acc * num_base.to_int64() + d.to_int64()
-        guard next_acc >= acc else { range_err() }
-        continue (rest, next_acc, true)
-      }
+      ([], acc, _) => break acc
     }
-    ([], acc, _) => acc
   }
 }
 
@@ -176,27 +178,29 @@ fn check_underscore(str : StringView) -> Bool {
 
   // Track whether the previous character was an underscore
   let follow_underscore = false
-  loop (rest, allow_underscore, follow_underscore) {
-    // Empty string is valid
-    ([], _, _) => true
-    // String ending with underscore is invalid
-    (['_'], _, _) => false
-    // Underscore not allowed in current position (e.g., between non-digits)
-    (['_', ..], false, _) => false
-    // Valid underscore - continue but mark that next char must be a digit
-    (['_', .. rest], true, _) => continue (rest, false, true)
-    // Handle non-underscore character
-    ([c, .. rest], _, follow_underscore) =>
-      if is_digit(c) {
-        // Digit found - allow underscore in next position
-        continue (rest, true, false)
-      } else if follow_underscore {
-        // Non-digit found after underscore - invalid
-        false
-      } else {
-        // Non-digit found (not after underscore) - continue but don't allow underscores
-        continue (rest, false, false)
-      }
+  for s = rest, au = allow_underscore, fu = follow_underscore {
+    match (s, au, fu) {
+      // Empty string is valid
+      ([], _, _) => break true
+      // String ending with underscore is invalid
+      (['_'], _, _) => break false
+      // Underscore not allowed in current position (e.g., between non-digits)
+      (['_', ..], false, _) => break false
+      // Valid underscore - continue but mark that next char must be a digit
+      (['_', .. rest], true, _) => continue rest, false, true
+      // Handle non-underscore character
+      ([c, .. rest], _, fu) =>
+        if is_digit(c) {
+          // Digit found - allow underscore in next position
+          continue rest, true, false
+        } else if fu {
+          // Non-digit found after underscore - invalid
+          break false
+        } else {
+          // Non-digit found (not after underscore) - continue but don't allow underscores
+          continue rest, false, false
+        }
+    }
   }
 }
 
