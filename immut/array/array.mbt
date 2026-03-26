@@ -111,7 +111,12 @@ pub fn[A] T::from_iter(iter : Iter[A]) -> T[A] {
     return new()
   }
   let tail = if index == branching_factor {
-    buf
+    if leaves.is_empty() {
+      buf
+    } else {
+      leaves.push(buf)
+      []
+    }
   } else {
     let res = FixedArray::make(index, buf[0])
     buf.blit_to(res, len=index)
@@ -184,10 +189,6 @@ pub fn[A] T::at(self : T[A], index : Int) -> A {
   let tail_offset = self.tail_offset()
   if index >= tail_offset {
     self.tail[index - tail_offset]
-  } else if index == 0 {
-    self.tree.get_first()
-  } else if index == tail_offset - 1 {
-    self.tree.get_last()
   } else {
     self.tree.get(index, self.shift)
   }
@@ -246,21 +247,31 @@ pub fn[A] T::peek(self : T[A]) -> A? {
 /// ```
 pub fn[A] T::set(self : T[A], index : Int, value : A) -> T[A] {
   guard index >= 0 && index < self.size
-  let tail_offset = self.tail_offset()
-  if index >= tail_offset {
-    make_t(
-      self.tree,
-      immutable_set(self.tail, index - tail_offset, value),
-      self.size,
-      self.shift,
-    )
-  } else {
+  let tail_len = self.tail.length()
+  if tail_len == 0 {
     make_t(
       self.tree.set(index, self.shift, value),
       self.tail,
       self.size,
       self.shift,
     )
+  } else {
+    let tail_offset = self.tail_offset()
+    if index >= tail_offset {
+      make_t(
+        self.tree,
+        immutable_set(self.tail, index - tail_offset, value),
+        self.size,
+        self.shift,
+      )
+    } else {
+      make_t(
+        self.tree.set(index, self.shift, value),
+        self.tail,
+        self.size,
+        self.shift,
+      )
+    }
   }
 }
 
@@ -308,12 +319,39 @@ pub fn[A] T::pop(self : T[A]) -> T[A]? {
         self.shift,
       ),
     )
-  } else {
+  } else if self.tail.length() == 1 {
     let new_tail = self.tree.last_leaf_elements()
     let (tree, shift) = self.tree
       .pop_rightmost_leaf(self.shift)
       .shrink_top(self.shift)
     Some(make_t(tree, new_tail, self.size - 1, shift))
+  } else {
+    let last_leaf = self.tree.last_leaf_elements()
+    if last_leaf.length() > 1 {
+      let (tree, shift) = self.tree
+        .pop_rightmost_leaf(self.shift)
+        .shrink_top(self.shift)
+      Some(
+        make_t(
+          tree,
+          immutable_slice(last_leaf, 0, last_leaf.length() - 1),
+          self.size - 1,
+          shift,
+        ),
+      )
+    } else {
+      let stripped = self.tree.pop_rightmost_leaf(self.shift)
+      let (promoted_tree, promoted_shift) = stripped.shrink_top(self.shift)
+      if promoted_tree is Empty {
+        Some(new())
+      } else {
+        let new_tail = promoted_tree.last_leaf_elements()
+        let (tree, shift) = promoted_tree
+          .pop_rightmost_leaf(promoted_shift)
+          .shrink_top(promoted_shift)
+        Some(make_t(tree, new_tail, self.size - 1, shift))
+      }
+    }
   }
 }
 
@@ -343,20 +381,20 @@ pub fn[A] T::concat(self : T[A], other : T[A]) -> T[A] {
       return make_t(tree, other.tail, size, shift)
     }
   }
-  let (left_tree, left_shift) = if self.tree is Empty {
-    (Leaf(self.tail), 0)
+  let (tree, shift) = if self.tree is Empty {
+    Tree::concat(Leaf(self.tail), 0, other.tree, other.shift, true)
   } else if self.tail.length() == 0 {
-    (self.tree, self.shift)
+    Tree::concat(self.tree, self.shift, other.tree, other.shift, true)
   } else {
-    self.normalize_tree()
+    Tree::concat_with_suffix(
+      self.tree,
+      self.shift,
+      self.tail,
+      other.tree,
+      other.shift,
+      true,
+    )
   }
-  let (tree, shift) = Tree::concat(
-    left_tree,
-    left_shift,
-    other.tree,
-    other.shift,
-    true,
-  )
   make_t(tree, other.tail, size, shift)
 }
 
@@ -644,7 +682,7 @@ fn tail_len_of_size(size : Int) -> Int {
   } else {
     let rem = size % branching_factor
     if rem == 0 {
-      branching_factor
+      0
     } else {
       rem
     }

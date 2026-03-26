@@ -115,3 +115,18 @@ test "Tree::size for Node without sizes" {
   let result = node_tree.size(6)
   inspect(result >= 3, content="true") // At least the size of the last leaf
 }
+
+///|
+test "Tree::eachi uses cumulative sizes relative to node start" {
+  let tree = Node(
+    FixedArray::from_array([
+      Leaf(FixedArray::from_array([10, 11])),
+      Leaf(FixedArray::from_array([20])),
+      Leaf(FixedArray::from_array([30, 31, 32])),
+    ]),
+    Some(FixedArray::from_array([2, 3, 6])),
+  )
+  let indices = []
+  tree.eachi((i, _value) => indices.push(i), 5, 7)
+  inspect(indices, content="[7, 8, 9, 10, 11, 12]")
+}

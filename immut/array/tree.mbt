@@ -65,30 +65,6 @@ fn[T] new_branch_left(leaf : FixedArray[T], shift : Int) -> Tree[T] {
 //-----------------------------------------------------------------------------
 
 ///|
-/// Get the rightmost child of a tree. 
-fn[T] Tree::get_first(self : Tree[T]) -> T {
-  for cur = self {
-    match cur {
-      Leaf(leaf) => break leaf[0]
-      Node(node, _) => continue node[0]
-      Empty => abort("Index out of bounds")
-    }
-  }
-}
-
-///|
-/// Get the leftmost child of a tree.
-fn[T] Tree::get_last(self : Tree[T]) -> T {
-  for cur = self {
-    match cur {
-      Leaf(leaf) => break leaf[leaf.length() - 1]
-      Node(node, _) => continue node[node.length() - 1]
-      Empty => abort("Index out of bounds")
-    }
-  }
-}
-
-///|
 /// Get the element at the given index.
 /// 
 /// Precondition:
@@ -338,9 +314,9 @@ fn[A] Tree::eachi(
     }
     Node(ns, Some(sizes)) => {
       let child_shift = shift - num_bits
-      for i in 0..<ns.length(); start = start {
-        ns[i].eachi(f, child_shift, start)
-        continue start + sizes[i]
+      for i in 0..<ns.length(); offset = 0 {
+        ns[i].eachi(f, child_shift, start + offset)
+        continue sizes[i]
       }
     }
   }

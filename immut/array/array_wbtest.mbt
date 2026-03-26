@@ -140,13 +140,62 @@ test "concat small right array stays in tail" {
 }
 
 ///|
-test "pop promotes previous leaf into tail" {
+test "concat preserves right tail when right has tree prefix" {
+  let left = from_iter((0).until(40))
+  let right = from_iter((40).until(80))
+  let combined = left.concat(right)
+  assert_eq(combined.tail.length(), 8)
+  assert_eq(combined.tail[0], 72)
+  assert_eq(combined.tail[7], 79)
+  assert_eq(combined.to_array(), Array::makei(80, i => i))
+}
+
+///|
+test "concat with exact-multiple inputs keeps result tree-only" {
+  let left = from_iter((0).until(64))
+  let right = from_iter((64).until(128))
+  let combined = left.concat(right)
+  inspect(combined.tree.is_empty_tree(), content="false")
+  assert_eq(combined.shift, num_bits)
+  assert_eq(combined.tail.length(), 0)
+  assert_eq(combined.to_array(), Array::makei(128, i => i))
+}
+
+///|
+test "pop singleton tail promotes previous leaf into tail" {
   let values = from_iter((0).until(33))
   let popped = values.pop().unwrap()
   inspect(popped.tree.is_empty_tree(), content="true")
-  inspect(popped.tail.length(), content="32")
-  inspect(popped.tail[0], content="0")
-  inspect(popped.tail[31], content="31")
+  assert_eq(popped.shift, 0)
+  assert_eq(popped.tail.length(), branching_factor)
+  assert_eq(popped.tail[0], 0)
+  assert_eq(popped.tail[branching_factor - 1], branching_factor - 1)
+  assert_eq(popped.to_array(), Array::makei(branching_factor, i => i))
+}
+
+///|
+test "pop tree-only suffix promotes partial leaf into tail" {
+  let values = from_iter((0).until(80)).slice(0, 50)
+  let popped = values.pop().unwrap()
+  inspect(popped.tree.is_empty_tree(), content="false")
+  assert_eq(popped.shift, 0)
+  assert_eq(popped.tail.length(), 17)
+  assert_eq(popped.tail[0], 32)
+  assert_eq(popped.tail[16], 48)
+  assert_eq(popped.to_array(), Array::makei(49, i => i))
+}
+
+///|
+test "pop shrinks top after removing last branch" {
+  let size = branching_factor * branching_factor + branching_factor + 1
+  let values = from_iter((0).until(size))
+  let popped = values.pop().unwrap()
+  assert_eq(popped.length(), size - 1)
+  assert_eq(popped.shift, num_bits)
+  assert_eq(popped.tail.length(), branching_factor)
+  assert_eq(popped.tail[0], branching_factor * branching_factor)
+  assert_eq(popped.tail[branching_factor - 1], size - 2)
+  assert_eq(popped.to_array(), Array::makei(size - 1, i => i))
 }
 
 ///|

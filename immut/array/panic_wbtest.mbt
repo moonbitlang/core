@@ -13,18 +13,6 @@
 // limitations under the License.
 
 ///|
-test "panic get_first on empty tree should panic" {
-  let tree : Tree[Int] = Tree::Empty
-  tree.get_first() |> ignore
-}
-
-///|
-test "panic get_last on empty tree should panic" {
-  let tree : Tree[Int] = Tree::Empty
-  tree.get_last() |> ignore
-}
-
-///|
 test "panic get on empty tree should panic" {
   let tree : Tree[Int] = Tree::Empty
   tree.get(0, 5) |> ignore

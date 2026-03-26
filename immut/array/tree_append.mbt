@@ -109,3 +109,64 @@ fn[T] Tree::append_right_leaf(
     }
   }
 }
+
+///|
+/// Concatenate two trees while threading an extra right-most leaf from the left side
+/// through the splice recursion, avoiding a full normalize-then-concat pass.
+fn[T] Tree::concat_with_suffix(
+  left : Tree[T],
+  left_shift : Int,
+  suffix : FixedArray[T],
+  right : Tree[T],
+  right_shift : Int,
+  top : Bool,
+) -> (Tree[T], Int) {
+  if suffix.length() == 0 {
+    return Tree::concat(left, left_shift, right, right_shift, top)
+  }
+  if left_shift > right_shift {
+    let (c, c_shift) = Tree::concat_with_suffix(
+      left.right_child(),
+      left_shift - num_bits,
+      suffix,
+      right,
+      right_shift,
+      false,
+    )
+    guard c_shift == left_shift
+    rebalance(left, c, Empty, left_shift, top)
+  } else if right_shift > left_shift {
+    let (c, c_shift) = Tree::concat_with_suffix(
+      left,
+      left_shift,
+      suffix,
+      right.left_child(),
+      right_shift - num_bits,
+      false,
+    )
+    guard c_shift == right_shift
+    rebalance(Empty, c, right, right_shift, top)
+  } else if left_shift == 0 {
+    let leaves = FixedArray::from_array([left, Leaf(suffix), right])
+    let (node_counts, new_len) = redis_plan(leaves)
+    let new_children = redis(leaves, node_counts, new_len, 0)
+    if top && new_len == 1 {
+      (new_children[0], 0)
+    } else {
+      let node = Node(new_children, compute_sizes(new_children, 0))
+      (node, num_bits)
+    }
+  } else {
+    let (c, c_shift) = Tree::concat_with_suffix(
+      left.right_child(),
+      left_shift - num_bits,
+      suffix,
+      right.left_child(),
+      right_shift - num_bits,
+      false,
+    )
+    guard c_shift == left_shift
+    guard c_shift == right_shift
+    rebalance(left, c, right, left_shift, top)
+  }
+}
