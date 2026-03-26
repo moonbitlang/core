@@ -123,16 +123,18 @@ pub fn[V : Compare] SortedSet::remove(self : SortedSet[V], value : V) -> Unit {
 ///|
 /// Returns `true` if the set contains the given value.
 pub fn[V : Compare] SortedSet::contains(self : SortedSet[V], value : V) -> Bool {
-  loop (self.root, value) {
-    (None, _) => false
-    (Some(node), value) => {
-      let compare_result = value.compare(node.value)
-      if compare_result == 0 {
-        true
-      } else if compare_result < 0 {
-        continue (node.left, value)
-      } else {
-        continue (node.right, value)
+  for root = self.root, value = value {
+    match (root, value) {
+      (None, _) => break false
+      (Some(node), value) => {
+        let compare_result = value.compare(node.value)
+        if compare_result == 0 {
+          break true
+        } else if compare_result < 0 {
+          continue node.left, value
+        } else {
+          continue node.right, value
+        }
       }
     }
   }
@@ -417,20 +419,22 @@ pub fn[V] SortedSet::iter(self : SortedSet[V]) -> Iter[V] {
   let mut curr_node = self.root
   let parents = []
   Iter::new(fn() {
-    loop curr_node {
-      Some({ left: None, value, right, height: _ }) => {
-        curr_node = right
-        Some(value)
+    for x = curr_node {
+      match x {
+        Some({ left: None, value, right, height: _ }) => {
+          curr_node = right
+          break Some(value)
+        }
+        Some({ left, value, right, height: _ }) => {
+          parents.push((value, right))
+          continue left
+        }
+        None if parents.pop() is Some((value, right)) => {
+          curr_node = right
+          break Some(value)
+        }
+        None => break None
       }
-      Some({ left, value, right, height: _ }) => {
-        parents.push((value, right))
-        continue left
-      }
-      None if parents.pop() is Some((value, right)) => {
-        curr_node = right
-        Some(value)
-      }
-      None => None
     }
   })
 }
@@ -477,34 +481,36 @@ pub fn[V : Compare] SortedSet::range(
   let mut curr_node = self.root
   let parents = []
   let iter = Iter::new(() => {
-    loop curr_node {
-      Some({ value, left, right, height: _ }) => {
-        let cmp_key_low = value.compare(low)
-        let cmp_key_high = value.compare(high)
-        if cmp_key_low < 0 {
-          // `key < low`, the left subtree and the value itself
-          // should not be visited
-          continue right
-        } else if cmp_key_high > 0 {
-          // `key > high`, the right subtree and the value itself
-          // should not be visited
-          continue left
-          // `low <= value <= high`,
-          // the value itself falls in the range,
-          // and both the left and right sub tree need to be visited
-        } else if left is None {
-          curr_node = right
-          Some(value)
-        } else {
-          parents.push((value, right))
-          continue left
+    for x = curr_node {
+      match x {
+        Some({ value, left, right, height: _ }) => {
+          let cmp_key_low = value.compare(low)
+          let cmp_key_high = value.compare(high)
+          if cmp_key_low < 0 {
+            // `key < low`, the left subtree and the value itself
+            // should not be visited
+            continue right
+          } else if cmp_key_high > 0 {
+            // `key > high`, the right subtree and the value itself
+            // should not be visited
+            continue left
+            // `low <= value <= high`,
+            // the value itself falls in the range,
+            // and both the left and right sub tree need to be visited
+          } else if left is None {
+            curr_node = right
+            break Some(value)
+          } else {
+            parents.push((value, right))
+            continue left
+          }
         }
+        None if parents.pop() is Some((value, right)) => {
+          curr_node = right
+          break Some(value)
+        }
+        None => break None
       }
-      None if parents.pop() is Some((value, right)) => {
-        curr_node = right
-        Some(value)
-      }
-      None => None
     }
   })
   iter.iter()
