@@ -1,0 +1,39 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/diff"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct Diff[T] {
+  old : ArrayView[T]
+  new : ArrayView[T]
+  edits : Array[Edit]
+
+  fn[T : Hash + Eq] new(old~ : ArrayView[T], new~ : ArrayView[T], cutoff? : Int, patience? : Bool) -> Diff[T]
+}
+pub fn[T] Diff::group(Self[T], radius? : Int) -> Array[Hunk[T]]
+
+pub enum Edit {
+  Delete(old_index~ : Int, new_index~ : Int, old_len~ : Int)
+  Insert(old_index~ : Int, new_index~ : Int, new_len~ : Int)
+  Equal(old_index~ : Int, new_index~ : Int, len~ : Int)
+}
+pub impl @debug.Debug for Edit
+
+pub struct Hunk[T] {
+  edits : ArrayView[Edit]
+  old : ArrayView[T]
+  new : ArrayView[T]
+}
+pub impl[T : Show] Show for Hunk[T]
+
+// Type aliases
+
+// Traits
+
