@@ -5,22 +5,29 @@ package "moonbitlang/core/strconv"
 #deprecated
 pub fn[A : FromStr] parse(StringView) -> A raise StrConvError
 
+#deprecated
 pub fn parse_bool(StringView) -> Bool raise StrConvError
 
 #deprecated
 pub fn parse_decimal(StringView) -> Decimal raise StrConvError
 
+#deprecated
 pub fn parse_double(StringView) -> Double raise StrConvError
 
+#deprecated
 pub fn parse_int(StringView, base? : Int) -> Int raise StrConvError
 
+#deprecated
 pub fn parse_int64(StringView, base? : Int) -> Int64 raise StrConvError
 
+#deprecated
 pub fn parse_uint(StringView, base? : Int) -> UInt raise StrConvError
 
+#deprecated
 pub fn parse_uint64(StringView, base? : Int) -> UInt64 raise StrConvError
 
 // Errors
+#deprecated
 pub(all) suberror StrConvError {
   StrConvError(String)
 }
@@ -44,8 +51,10 @@ pub impl Show for Decimal
 // Type aliases
 
 // Traits
+#deprecated
 pub(open) trait FromStr {
   #as_free_fn
+  #deprecated
   from_str(StringView) -> Self raise StrConvError = _
   #deprecated
   from_string(String) -> Self raise StrConvError = _

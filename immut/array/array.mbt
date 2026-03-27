@@ -89,7 +89,7 @@ pub fn[A] T::from_array(arr : ArrayView[A]) -> T[A] {
 }
 
 ///|
-/// Create from `iter`.
+/// Creates an immutable array from an iterator of values.
 #as_free_fn
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
@@ -128,7 +128,7 @@ pub fn[A] T::from_iter(iter : Iter[A]) -> T[A] {
 //-----------------------------------------------------------------------------
 
 ///|
-/// Convert to `array`.
+/// Returns a mutable array containing all elements.
 pub fn[A] T::to_array(self : T[A]) -> Array[A] {
   if self.is_empty() {
     []
@@ -144,13 +144,13 @@ pub fn[A] T::to_array(self : T[A]) -> Array[A] {
 //-----------------------------------------------------------------------------
 
 ///|
-/// Return whether the value empty.
+/// Returns `true` if the array contains no elements.
 pub fn[A] T::is_empty(self : T[A]) -> Bool {
   self.size == 0
 }
 
 ///|
-/// Return length.
+/// Returns the number of elements in the array.
 pub fn[A] T::length(self : T[A]) -> Int {
   self.size
 }
@@ -171,6 +171,7 @@ pub fn[A] T::length(self : T[A]) -> Int {
 /// ```
 #alias("_[_]")
 pub fn[A] T::at(self : T[A], index : Int) -> A {
+  guard index >= 0 && index < self.size
   if index == 0 {
     self.tree.get_first()
   } else if index == self.size - 1 {
@@ -222,6 +223,7 @@ pub fn[A] T::get(self : T[A], index : Int) -> A? {
 /// }
 /// ```
 pub fn[A] T::set(self : T[A], index : Int, value : A) -> T[A] {
+  guard index >= 0 && index < self.size
   {
     tree: self.tree.set(index, self.shift, value),
     size: self.size,
@@ -274,7 +276,7 @@ pub impl[A] Add for T[A] with add(self, other) {
 //-----------------------------------------------------------------------------
 
 ///|
-/// Return an iterator over the array.
+/// Returns an iterator over the elements of the array.
 #alias(iterator, deprecated)
 pub fn[A] T::iter(self : T[A]) -> Iter[A] {
   self.tree.iter()
@@ -385,7 +387,8 @@ pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
 
 ///|
 pub impl[A : Eq] Eq for T[A] with equal(self, other) {
-  self.size == other.size && self.tree == other.tree
+  physical_equal(self, other) ||
+  (self.size == other.size && self.tree == other.tree)
 }
 
 ///|

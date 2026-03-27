@@ -56,19 +56,47 @@ pub fn[A : Compare] PriorityQueue::from_array(
 
 ///|
 fn[A] copy_node(x : Node[A]?) -> Node[A]? {
+  // Use an explicit work stack to avoid stack overflow on deep sibling chains.
+  // Each stack entry is (original_node, cloned_parent, relation) where relation
+  // indicates whether original_node is the child or sibling of cloned_parent.
   match x {
     None => None
-    Some(node) =>
-      Some({
-        content: node.content,
-        sibling: copy_node(node.sibling),
-        child: copy_node(node.child),
-      })
+    Some(root) => {
+      let cloned_root : Node[A] = {
+        content: root.content,
+        sibling: None,
+        child: None,
+      }
+      // Stack entries: (original_node, cloned_node_to_fill)
+      // We process child and sibling links iteratively
+      let stack : Array[(Node[A], Node[A])] = [(root, cloned_root)]
+      while stack.pop() is Some((orig, clone)) {
+        if orig.child is Some(child) {
+          let cloned_child : Node[A] = {
+            content: child.content,
+            sibling: None,
+            child: None,
+          }
+          clone.child = Some(cloned_child)
+          stack.push((child, cloned_child))
+        }
+        if orig.sibling is Some(sib) {
+          let cloned_sib : Node[A] = {
+            content: sib.content,
+            sibling: None,
+            child: None,
+          }
+          clone.sibling = Some(cloned_sib)
+          stack.push((sib, cloned_sib))
+        }
+      }
+      Some(cloned_root)
+    }
   }
 }
 
 ///|
-/// Return a copy of the queue.
+/// Returns a deep copy of the queue.
 ///
 /// # Example
 /// ```mbt check
@@ -78,13 +106,13 @@ fn[A] copy_node(x : Node[A]?) -> Node[A]? {
 ///   inspect(queue2.length(), content="4")
 /// }
 /// ```
+#alias(clone, deprecated)
 pub fn[A] PriorityQueue::copy(self : PriorityQueue[A]) -> PriorityQueue[A] {
-  let new_que : PriorityQueue[A] = { len: self.len, top: copy_node(self.top) }
-  new_que
+  { len: self.len, top: copy_node(self.top) }
 }
 
 ///|
-/// Convert to `array`.
+/// Returns an array of all elements in descending priority order.
 pub fn[A : Compare] PriorityQueue::to_array(
   self : PriorityQueue[A],
 ) -> Array[A] {
@@ -106,7 +134,7 @@ pub fn[A : Compare] PriorityQueue::to_array(
 }
 
 ///|
-/// Return an iterator via `iter`.
+/// Returns an iterator over elements in descending priority order.
 #alias(iterator, deprecated)
 pub fn[A : Compare] PriorityQueue::iter(self : PriorityQueue[A]) -> Iter[A] {
   self.to_array().iter()
@@ -122,7 +150,7 @@ pub impl[A : ToJson + Compare] ToJson for PriorityQueue[A] with to_json(self) {
 }
 
 ///|
-/// Create from `iter`.
+/// Creates a priority queue from an iterator of values.
 #as_free_fn
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
@@ -160,19 +188,21 @@ fn[A : Compare] merges(x : Node[A]?) -> Node[A]? {
       (s2, meld(x, s1))
     }
   }
-  loop (x, acc) {
-    (None, acc) => Some(acc)
-    (Some({ sibling: None, .. } as x), acc) => Some(meld(acc, x))
-    (Some({ sibling: Some({ sibling: s2, .. } as s1), .. } as x), acc) => {
-      x.sibling = None
-      s1.sibling = None
-      continue (s2, meld(acc, meld(x, s1)))
+  for siblings = x, merged = acc {
+    match (siblings, merged) {
+      (None, acc) => break Some(acc)
+      (Some({ sibling: None, .. } as x), acc) => break Some(meld(acc, x))
+      (Some({ sibling: Some({ sibling: s2, .. } as s1), .. } as x), acc) => {
+        x.sibling = None
+        s1.sibling = None
+        continue s2, meld(acc, meld(x, s1))
+      }
     }
   }
 }
 
 ///|
-/// Return length.
+/// Returns the number of elements in the queue.
 pub fn[A] PriorityQueue::length(self : PriorityQueue[A]) -> Int {
   self.len
 }

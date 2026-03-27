@@ -213,6 +213,7 @@ test "from_array_empty" {
 ///   inspect(copied, content="@deque.from_array([1, 2, 3, 4, 5])")
 /// }
 /// ```
+#alias(clone, deprecated)
 pub fn[A] Deque::copy(self : Deque[A]) -> Deque[A] {
   let len = self.len
   let buf = UninitializedArray::make(len)
@@ -1741,7 +1742,7 @@ pub impl[A : @json.FromJson] @json.FromJson for Deque[A] with from_json(
 ///   let d = @deque.from_array([1, 2, 3, 4, 5])
 ///   let chunks = d.chunks(2)
 ///   inspect(
-///     chunks.to_array().map(fn(c) { c.to_array() }),
+///     chunks.to_array().map(c => c.to_array()),
 ///     content="[[1, 2], [3, 4], [5]]",
 ///   )
 ///   let d : @deque.Deque[Int] = @deque.from_array([])
@@ -1798,7 +1799,7 @@ pub fn[A] Deque::chunks(self : Deque[A], size : Int) -> Deque[Deque[A]] {
 ///   let d = @deque.from_array([1, 1, 2, 3, 2, 3, 2, 3, 4])
 ///   let chunks = d.chunk_by((x, y) => x <= y)
 ///   inspect(
-///     chunks.to_array().map(fn(c) { c.to_array() }),
+///     chunks.to_array().map(c => c.to_array()),
 ///     content="[[1, 1, 2, 3], [2, 3], [2, 3, 4]]",
 ///   )
 ///   let empty : @deque.Deque[Int] = @deque.from_array([])

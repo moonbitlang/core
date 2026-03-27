@@ -51,9 +51,9 @@ struct Set[K] {
 // Implementations
 
 ///|
-/// Create a hash set.
-/// The capacity of the set will be the smallest power of 2 that is
-/// greater than or equal to the provided [capacity].
+/// Creates an empty insertion-ordered hash set with an optional initial capacity.
+/// The capacity will be rounded up to the smallest power of 2 that is
+/// greater than or equal to the provided `capacity`.
 #as_free_fn
 pub fn[K] Set::new(capacity? : Int = 8) -> Set[K] {
   let capacity = capacity.next_power_of_two()
@@ -69,7 +69,7 @@ pub fn[K] Set::new(capacity? : Int = 8) -> Set[K] {
 }
 
 ///|
-/// Create a hash set from array.
+/// Creates a hash set containing all elements from the given array, preserving insertion order.
 #as_free_fn
 #alias(of, deprecated="Use from_array instead")
 #as_free_fn(of, deprecated="Use from_array instead")
@@ -341,13 +341,18 @@ fn[K] Set::remove_entry(self : Set[K], entry : Entry[K]) -> Unit {
 
 ///|
 fn[K] Set::shift_back(self : Set[K], idx : Int) -> Unit {
-  let next = (idx + 1) & self.capacity_mask
-  match self.entries[next] {
-    None | Some({ psl: 0, .. }) => self.entries[idx] = None
-    Some(entry) => {
-      entry.psl -= 1
-      self.set_entry(entry, idx)
-      self.shift_back(next)
+  for cur = idx {
+    let next = (cur + 1) & self.capacity_mask
+    match self.entries[next] {
+      None | Some({ psl: 0, .. }) => {
+        self.entries[cur] = None
+        break
+      }
+      Some(entry) => {
+        entry.psl -= 1
+        self.set_entry(entry, cur)
+        continue next
+      }
     }
   }
 }
@@ -363,12 +368,14 @@ fn[K : Eq] Set::grow(self : Set[K]) -> Unit {
   self.size = 0
   self.head = None
   self.tail = -1
-  loop old_head {
-    Some({ next, key, hash, .. }) => {
-      self.add_with_hash(key, hash)
-      continue next
+  for x = old_head {
+    match x {
+      Some({ next, key, hash, .. }) => {
+        self.add_with_hash(key, hash)
+        continue next
+      }
+      None => break
     }
-    None => break
   }
 }
 
@@ -377,14 +384,16 @@ fn[K : Eq] Set::grow(self : Set[K]) -> Unit {
 ///|
 pub impl[K : Show] Show for Set[K] with output(self, logger) {
   logger.write_string("{")
-  loop (0, self.head) {
-    (_, None) => logger.write_string("}")
-    (i, Some({ key, next, .. })) => {
-      if i > 0 {
-        logger.write_string(", ")
+  for i = 0, curr = self.head {
+    match (i, curr) {
+      (_, None) => break logger.write_string("}")
+      (i, Some({ key, next, .. })) => {
+        if i > 0 {
+          logger.write_string(", ")
+        }
+        logger.write_object(key)
+        continue i + 1, next
       }
-      logger.write_object(key)
-      continue (i + 1, next)
     }
   }
 }
@@ -412,12 +421,14 @@ pub fn[K] Set::is_empty(self : Set[K]) -> Bool {
 /// Iterate over all keys of the set in the order of insertion.
 #locals(f)
 pub fn[K] Set::each(self : Set[K], f : (K) -> Unit raise?) -> Unit raise? {
-  loop self.head {
-    Some({ key, next, .. }) => {
-      f(key)
-      continue next
+  for x = self.head {
+    match x {
+      Some({ key, next, .. }) => {
+        f(key)
+        continue next
+      }
+      None => break
     }
-    None => break
   }
 }
 
@@ -425,12 +436,14 @@ pub fn[K] Set::each(self : Set[K], f : (K) -> Unit raise?) -> Unit raise? {
 /// Iterate over all keys of the set in the order of insertion, with index.
 #locals(f)
 pub fn[K] Set::eachi(self : Set[K], f : (Int, K) -> Unit raise?) -> Unit raise? {
-  loop (0, self.head) {
-    (i, Some({ key, next, .. })) => {
-      f(i, key)
-      continue (i + 1, next)
+  for i = 0, curr = self.head {
+    match (i, curr) {
+      (i, Some({ key, next, .. })) => {
+        f(i, key)
+        continue i + 1, next
+      }
+      (_, None) => break
     }
-    (_, None) => break
   }
 }
 
@@ -463,12 +476,14 @@ pub fn[K] Set::iter(self : Set[K]) -> Iter[K] {
 /// Converts the hash set to an array.
 pub fn[K] Set::to_array(self : Set[K]) -> Array[K] {
   let arr = Array::new(capacity=self.size)
-  loop self.head {
-    Some({ key, next, .. }) => {
-      arr.push(key)
-      continue next
+  for x = self.head {
+    match x {
+      Some({ key, next, .. }) => {
+        arr.push(key)
+        continue next
+      }
+      None => break
     }
-    None => break
   }
   arr
 }
@@ -503,6 +518,7 @@ pub impl[K] Default for Set[K] with default() {
 
 ///|
 /// Copy the set, creating a new set with the same keys and order of insertion.
+#alias(clone, deprecated)
 pub fn[K] Set::copy(self : Set[K]) -> Set[K] {
   // copy structure
   let other = {
@@ -518,14 +534,17 @@ pub fn[K] Set::copy(self : Set[K]) -> Set[K] {
     return other
   }
   guard self.entries[self.tail] is Some(last)
-  loop (last, self.tail, None) {
-    ({ prev, psl, hash, key, .. }, idx, next) => {
-      let new_entry = { prev, next, psl, hash, key }
-      other.entries[idx] = Some(new_entry)
-      if prev != -1 {
-        continue (self.entries[prev].unwrap(), prev, Some(new_entry))
-      } else {
-        other.head = Some(new_entry)
+  for entry = last, idx = self.tail, next = (None : Entry[K]?) {
+    match (entry, idx, next) {
+      ({ prev, psl, hash, key, .. }, idx, next) => {
+        let new_entry = { prev, next, psl, hash, key }
+        other.entries[idx] = Some(new_entry)
+        if prev != -1 {
+          continue self.entries[prev].unwrap(), prev, Some(new_entry)
+        } else {
+          other.head = Some(new_entry)
+          break
+        }
       }
     }
   }
@@ -533,7 +552,7 @@ pub fn[K] Set::copy(self : Set[K]) -> Set[K] {
 }
 
 ///|
-/// Set operation `difference`.
+/// Returns a new set containing elements in `self` that are not in `other`.
 pub fn[K : Hash + Eq] Set::difference(self : Set[K], other : Set[K]) -> Set[K] {
   let m = Set::new()
   self.each(k => if !other.contains(k) { m.add(k) })
@@ -541,7 +560,7 @@ pub fn[K : Hash + Eq] Set::difference(self : Set[K], other : Set[K]) -> Set[K] {
 }
 
 ///|
-/// Set operation `symmetric_difference`.
+/// Returns a new set containing elements in exactly one of the two sets.
 pub fn[K : Hash + Eq] Set::symmetric_difference(
   self : Set[K],
   other : Set[K],
@@ -553,7 +572,7 @@ pub fn[K : Hash + Eq] Set::symmetric_difference(
 }
 
 ///|
-/// Set operation `union`.
+/// Returns a new set containing all elements from both sets.
 pub fn[K : Hash + Eq] Set::union(self : Set[K], other : Set[K]) -> Set[K] {
   let m = Set::new()
   self.each(k => m.add(k))
@@ -562,7 +581,7 @@ pub fn[K : Hash + Eq] Set::union(self : Set[K], other : Set[K]) -> Set[K] {
 }
 
 ///|
-/// Set operation `intersection`.
+/// Returns a new set containing only elements present in both sets.
 pub fn[K : Hash + Eq] Set::intersection(
   self : Set[K],
   other : Set[K],
@@ -582,7 +601,7 @@ pub impl[X : ToJson] ToJson for Set[X] with to_json(self) {
 }
 
 ///|
-/// Check if two sets have no common elements.
+/// Returns `true` if the two sets have no elements in common.
 pub fn[K : Hash + Eq] Set::is_disjoint(self : Set[K], other : Set[K]) -> Bool {
   if self.length() <= other.length() {
     for k in self {
@@ -601,7 +620,7 @@ pub fn[K : Hash + Eq] Set::is_disjoint(self : Set[K], other : Set[K]) -> Bool {
 }
 
 ///|
-/// Check if the current set is a subset of another set.
+/// Returns `true` if every element of `self` is also in `other`.
 pub fn[K : Hash + Eq] Set::is_subset(self : Set[K], other : Set[K]) -> Bool {
   if self.length() <= other.length() {
     for k in self {
@@ -616,7 +635,7 @@ pub fn[K : Hash + Eq] Set::is_subset(self : Set[K], other : Set[K]) -> Bool {
 }
 
 ///|
-/// Check if the current set is a superset of another set.
+/// Returns `true` if every element of `other` is also in `self`.
 pub fn[K : Hash + Eq] Set::is_superset(self : Set[K], other : Set[K]) -> Bool {
   other.is_subset(self)
 }

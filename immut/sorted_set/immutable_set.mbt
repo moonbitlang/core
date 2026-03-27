@@ -19,7 +19,7 @@
 // Construct an empty ImmutableSet.
 
 ///|
-/// Create a new instance.
+/// Creates an empty immutable sorted set.
 #as_free_fn
 pub fn[A] SortedSet::new() -> SortedSet[A] {
   Empty
@@ -51,7 +51,7 @@ pub fn[A : Compare] SortedSet::from_array(array : ArrayView[A]) -> SortedSet[A] 
 }
 
 ///|
-/// Convert ImmutableSet[T] to Array[T], the result must be ordered.
+/// Returns an array of all elements in ascending order.
 pub fn[A] SortedSet::to_array(self : SortedSet[A]) -> Array[A] {
   let arr = []
   fn aux(set : SortedSet[A]) {
@@ -192,9 +192,16 @@ pub fn[A : Compare] SortedSet::remove(
 /// }
 /// ```
 pub fn[A] SortedSet::min(self : SortedSet[A]) -> A {
-  match self {
-    Empty => abort("min: there are no values in sorted_set.")
-    Node(left~, value~, ..) => if left is Empty { value } else { left.min() }
+  for cur = self {
+    match cur {
+      Empty => abort("min: there are no values in sorted_set.")
+      Node(left~, value~, ..) =>
+        if left is Empty {
+          break value
+        } else {
+          continue left
+        }
+    }
   }
 }
 
@@ -202,14 +209,16 @@ pub fn[A] SortedSet::min(self : SortedSet[A]) -> A {
 /// Returns the smallest value in the sorted_set.
 /// But returns None when the value does not exist.
 pub fn[A] SortedSet::min_option(self : SortedSet[A]) -> A? {
-  match self {
-    Empty => None
-    Node(left~, value~, ..) =>
-      if left is Empty {
-        Some(value)
-      } else {
-        left.min_option()
-      }
+  for cur = self {
+    match cur {
+      Empty => break None
+      Node(left~, value~, ..) =>
+        if left is Empty {
+          break Some(value)
+        } else {
+          continue left
+        }
+    }
   }
 }
 
@@ -225,9 +234,16 @@ pub fn[A] SortedSet::min_option(self : SortedSet[A]) -> A? {
 /// }
 /// ```
 pub fn[A] SortedSet::max(self : SortedSet[A]) -> A {
-  match self {
-    Empty => abort("max: there are no values in ImmutableSet.")
-    Node(right~, value~, ..) => if right is Empty { value } else { right.max() }
+  for cur = self {
+    match cur {
+      Empty => abort("max: there are no values in ImmutableSet.")
+      Node(right~, value~, ..) =>
+        if right is Empty {
+          break value
+        } else {
+          continue right
+        }
+    }
   }
 }
 
@@ -235,14 +251,16 @@ pub fn[A] SortedSet::max(self : SortedSet[A]) -> A {
 /// Returns the largest value in the ImmutableSet.
 /// But returns None when the value does not exist.
 pub fn[A] SortedSet::max_option(self : SortedSet[A]) -> A? {
-  match self {
-    Empty => None
-    Node(right~, value~, ..) =>
-      if right is Empty {
-        Some(value)
-      } else {
-        right.max_option()
-      }
+  for cur = self {
+    match cur {
+      Empty => break None
+      Node(right~, value~, ..) =>
+        if right is Empty {
+          break Some(value)
+        } else {
+          continue right
+        }
+    }
   }
 }
 
@@ -291,7 +309,7 @@ pub fn[A] SortedSet::is_empty(self : SortedSet[A]) -> Bool {
 }
 
 ///|
-/// Return true if value contain in sorted_set
+/// Returns `true` if the set contains the given value.
 pub fn[A : Compare] SortedSet::contains(self : SortedSet[A], value : A) -> Bool {
   match self {
     Empty => false
@@ -351,29 +369,31 @@ pub fn[A : Compare] SortedSet::range(
   let todo_list = []
   let mut next_node = self
   Iter::new(fn() {
-    loop next_node {
-      Node(left~, right~, value~, ..) => {
-        let cmp_value_low = value.compare(low)
-        let cmp_value_high = value.compare(high)
-        if cmp_value_low < 0 {
-          // value < low, skip left subtree and current node, visit right
-          continue right
-        } else if cmp_value_high > 0 {
-          // value > high, skip right subtree and current node, visit left
-          continue left
-        } else if left is Empty {
-          next_node = right
-          Some(value)
-        } else {
-          todo_list.push((value, right))
-          continue left
+    for x = next_node {
+      match x {
+        Node(left~, right~, value~, ..) => {
+          let cmp_value_low = value.compare(low)
+          let cmp_value_high = value.compare(high)
+          if cmp_value_low < 0 {
+            // value < low, skip left subtree and current node, visit right
+            continue right
+          } else if cmp_value_high > 0 {
+            // value > high, skip right subtree and current node, visit left
+            continue left
+          } else if left is Empty {
+            next_node = right
+            break Some(value)
+          } else {
+            todo_list.push((value, right))
+            continue left
+          }
         }
+        Empty if todo_list.pop() is Some((value, right)) => {
+          next_node = right
+          break Some(value)
+        }
+        Empty => break None
       }
-      Empty if todo_list.pop() is Some((value, right)) => {
-        next_node = right
-        Some(value)
-      }
-      Empty => None
     }
   })
 }
@@ -567,10 +587,10 @@ pub fn[A : Compare] SortedSet::subset(
         l1.subset(l2) && r1.subset(r2)
       } else if compare_result < 0 {
         Node(left=l1, value=v1, right=Empty, size=1).subset(l2) &&
-        r1.subset(self)
+        r1.subset(other)
       } else {
         Node(left=Empty, value=v1, right=r1, size=1).subset(r2) &&
-        l1.subset(self)
+        l1.subset(other)
       }
     }
   }

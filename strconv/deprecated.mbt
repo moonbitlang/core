@@ -19,7 +19,7 @@
 /// reference:
 /// - <https://nigeltao.github.io/blog/2020/parse-number-f64-simple.html>
 /// - <https://nigeltao.github.io/blog/2020/eisel-lemire.html>
-#deprecated("Decimal will be changed to private. Use `@strconv.parse_double` instead", skip_current_package=true)
+#deprecated("use `@string.parse_double` instead", skip_current_package=true)
 struct Decimal {
   digits : FixedArray[Byte]
   mut digits_num : Int
@@ -30,35 +30,35 @@ struct Decimal {
 
 ///|
 /// Create a zero decimal.
-#deprecated("Decimal will be changed to private. Use `@strconv.parse_double` instead")
+#deprecated("use `@string.parse_double` instead", skip_current_package=true)
 pub fn Decimal::new() -> Decimal {
   Decimal::new_priv()
 }
 
 ///|
 /// Create a decimal with an Int64 value.
-#deprecated("Decimal will be changed to private. Use `@strconv.parse_double` instead")
+#deprecated("use `@string.parse_double` instead", skip_current_package=true)
 pub fn Decimal::from_int64(v : Int64) -> Decimal {
   Decimal::from_int64_priv(v)
 }
 
 ///|
 /// Function `parse_decimal`.
-#deprecated("use `@strconv.parse_double` instead")
+#deprecated("use `@string.parse_double` instead", skip_current_package=true)
 pub fn parse_decimal(str : StringView) -> Decimal raise StrConvError {
   parse_decimal_from_view(str)
 }
 
 ///|
 /// Function `parse_decimal`.
-#deprecated("use `@strconv.parse_double` instead")
+#deprecated("use `@string.parse_double` instead", skip_current_package=true)
 pub fn Decimal::parse_decimal(str : StringView) -> Decimal raise StrConvError {
   parse_decimal_from_view(str)
 }
 
 ///|
 /// Convert the decimal to Double.
-#deprecated("use `@strconv.parse_double` instead to avoid using this method.")
+#deprecated("use `@string.parse_double` instead", skip_current_package=true)
 pub fn Decimal::to_double(self : Decimal) -> Double raise StrConvError {
   self.to_double_priv()
 }
@@ -66,14 +66,14 @@ pub fn Decimal::to_double(self : Decimal) -> Double raise StrConvError {
 ///|
 /// Binary shift left (s > 0) or right (s < 0).
 /// The shift count must not larger than the max_shift to avoid overflow.
-#deprecated("use `@strconv.parse_double` instead to avoid using this method.")
+#deprecated("use `@string.parse_double` instead", skip_current_package=true)
 pub fn Decimal::shift(self : Decimal, s : Int) -> Unit {
   self.shift_priv(s)
 }
 
 ///|
 /// Parse input into this package's structured value.
-#deprecated("use `@strconv.from_str` instead")
+#deprecated("use `@string.from_str` instead", skip_current_package=true)
 pub fn[A : FromStr] parse(str : StringView) -> A raise StrConvError {
   A::from_str(str)
 }

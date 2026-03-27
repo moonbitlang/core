@@ -34,16 +34,18 @@ pub fn[K : Compare, V] SortedMap::contains(
   self : SortedMap[K, V],
   key : K,
 ) -> Bool {
-  loop self {
-    Empty => false
-    Tree(k, l, r, ..) => {
-      let c = key.compare(k)
-      if c == 0 {
-        true
-      } else if c < 0 {
-        continue l
-      } else {
-        continue r
+  for x = self {
+    match x {
+      Empty => break false
+      Tree(k, l, r, ..) => {
+        let c = key.compare(k)
+        if c == 0 {
+          break true
+        } else if c < 0 {
+          continue l
+        } else {
+          continue r
+        }
       }
     }
   }
@@ -81,16 +83,18 @@ fn[K, V] make_tree(
 /// O(log n).
 #alias(lookup, deprecated)
 pub fn[K : Compare, V] SortedMap::get(self : SortedMap[K, V], key : K) -> V? {
-  loop self {
-    Empty => None
-    Tree(k, value~, l, r, ..) => {
-      let c = key.compare(k)
-      if c == 0 {
-        Some(value)
-      } else if c < 0 {
-        continue l
-      } else {
-        continue r
+  for x = self {
+    match x {
+      Empty => break None
+      Tree(k, value~, l, r, ..) => {
+        let c = key.compare(k)
+        if c == 0 {
+          break Some(value)
+        } else if c < 0 {
+          continue l
+        } else {
+          continue r
+        }
       }
     }
   }
@@ -101,16 +105,18 @@ pub fn[K : Compare, V] SortedMap::get(self : SortedMap[K, V], key : K) -> V? {
 /// O(log n).
 #alias("_[_]")
 pub fn[K : Compare, V] SortedMap::at(self : SortedMap[K, V], key : K) -> V {
-  loop self {
-    Empty => panic()
-    Tree(k, value~, l, r, ..) => {
-      let c = key.compare(k)
-      if c == 0 {
-        value
-      } else if c < 0 {
-        continue l
-      } else {
-        continue r
+  for x = self {
+    match x {
+      Empty => break panic()
+      Tree(k, value~, l, r, ..) => {
+        let c = key.compare(k)
+        if c == 0 {
+          break value
+        } else if c < 0 {
+          continue l
+        } else {
+          continue r
+        }
       }
     }
   }
@@ -232,32 +238,34 @@ pub fn[K : Compare, V] SortedMap::from_array(
 }
 
 ///|
-/// Return an iterator via `iter`.
+/// Returns an iterator over key-value pairs in ascending key order.
 #alias(iterator, deprecated)
 pub fn[K, V] SortedMap::iter(self : SortedMap[K, V]) -> Iter[(K, V)] {
   let mut curr_node = self
   let parents = []
   Iter::new(fn() {
-    loop curr_node {
-      Tree(k, value~, Empty, r, ..) => {
-        curr_node = r
-        Some((k, value))
+    for x = curr_node {
+      match x {
+        Tree(k, value~, Empty, r, ..) => {
+          curr_node = r
+          break Some((k, value))
+        }
+        Tree(k, value~, l, r, ..) => {
+          parents.push((k, value, r))
+          continue l
+        }
+        Empty if parents.pop() is Some((k, v, r)) => {
+          curr_node = r
+          break Some((k, v))
+        }
+        Empty => break None
       }
-      Tree(k, value~, l, r, ..) => {
-        parents.push((k, value, r))
-        continue l
-      }
-      Empty if parents.pop() is Some((k, v, r)) => {
-        curr_node = r
-        Some((k, v))
-      }
-      Empty => None
     }
   })
 }
 
 ///|
-/// Return an iterator via `iter2`.
+/// Returns a two-element iterator over key-value pairs in ascending key order.
 #alias(iterator2, deprecated)
 pub fn[K, V] SortedMap::iter2(self : SortedMap[K, V]) -> Iter2[K, V] {
   self.iter()
@@ -318,35 +326,37 @@ pub fn[K : Compare, V] SortedMap::range(
   let todo_list = []
   let mut next_node = self
   Iter2::new(fn() {
-    loop next_node {
-      Tree(k, value~, l, r, ..) => {
-        let cmp_key_low = k.compare(low)
-        let cmp_key_high = k.compare(high)
-        if cmp_key_low < 0 {
-          // k < low, skip left subtree and current node, visit right
-          continue r
-        } else if cmp_key_high > 0 {
-          // k > high, skip right subtree and current node, visit left
-          continue l
-        } else if l is Empty {
-          next_node = r
-          Some((k, value))
-        } else {
-          todo_list.push((k, value, r))
-          continue l
+    for x = next_node {
+      match x {
+        Tree(k, value~, l, r, ..) => {
+          let cmp_key_low = k.compare(low)
+          let cmp_key_high = k.compare(high)
+          if cmp_key_low < 0 {
+            // k < low, skip left subtree and current node, visit right
+            continue r
+          } else if cmp_key_high > 0 {
+            // k > high, skip right subtree and current node, visit left
+            continue l
+          } else if l is Empty {
+            next_node = r
+            break Some((k, value))
+          } else {
+            todo_list.push((k, value, r))
+            continue l
+          }
         }
+        Empty if todo_list.pop() is Some((k, value, r)) => {
+          next_node = r
+          break Some((k, value))
+        }
+        Empty => break None
       }
-      Empty if todo_list.pop() is Some((k, value, r)) => {
-        next_node = r
-        Some((k, value))
-      }
-      Empty => None
     }
   })
 }
 
 ///|
-/// Create from `iter`.
+/// Creates a sorted map from an iterator of key-value pairs.
 #as_free_fn
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
@@ -384,20 +394,22 @@ pub fn[K, V] SortedMap::rev_keys(self : SortedMap[K, V]) -> Iter[K] {
   let mut curr_node = self
   let parents = []
   Iter::new(fn() {
-    loop curr_node {
-      Tree(k, l, Empty, ..) => {
-        curr_node = l
-        Some(k)
+    for x = curr_node {
+      match x {
+        Tree(k, l, Empty, ..) => {
+          curr_node = l
+          break Some(k)
+        }
+        Tree(k, l, r, ..) => {
+          parents.push((k, l))
+          continue r
+        }
+        Empty if parents.pop() is Some((k, l)) => {
+          curr_node = l
+          break Some(k)
+        }
+        Empty => break None
       }
-      Tree(k, l, r, ..) => {
-        parents.push((k, l))
-        continue r
-      }
-      Empty if parents.pop() is Some((k, l)) => {
-        curr_node = l
-        Some(k)
-      }
-      Empty => None
     }
   })
 }
@@ -416,20 +428,22 @@ pub fn[K, V] SortedMap::rev_values(self : SortedMap[K, V]) -> Iter[V] {
   let mut curr_node = self
   let parents = []
   Iter::new(fn() {
-    loop curr_node {
-      Tree(_k, value~, l, Empty, ..) => {
-        curr_node = l
-        Some(value)
+    for x = curr_node {
+      match x {
+        Tree(_k, value~, l, Empty, ..) => {
+          curr_node = l
+          break Some(value)
+        }
+        Tree(_k, value~, l, r, ..) => {
+          parents.push((value, l))
+          continue r
+        }
+        Empty if parents.pop() is Some((v, l)) => {
+          curr_node = l
+          break Some(v)
+        }
+        Empty => break None
       }
-      Tree(_k, value~, l, r, ..) => {
-        parents.push((value, l))
-        continue r
-      }
-      Empty if parents.pop() is Some((v, l)) => {
-        curr_node = l
-        Some(v)
-      }
-      Empty => None
     }
   })
 }

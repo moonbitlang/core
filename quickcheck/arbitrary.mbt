@@ -122,7 +122,7 @@ pub impl[X : Arbitrary] Arbitrary for Iter[X] with arbitrary(size, rs) {
 }
 
 ///|
-/// Function `gen`.
+/// Generates a single random value, optionally with a given size and random state.
 pub fn[T : Arbitrary] gen(size? : Int, state? : @splitmix.RandomState) -> T {
   let size = match size {
     None => 0

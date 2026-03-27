@@ -164,8 +164,7 @@ pub fn StringView::char_length(self : StringView) -> Int {
 
 ///|
 pub impl Show for StringView with output(self, logger) {
-  let substr = self.str().unsafe_substring(start=self.start(), end=self.end())
-  String::output(substr, logger)
+  self.escape_to(logger)
 }
 
 ///|

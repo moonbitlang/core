@@ -1,56 +1,30 @@
-# `byte`
+# Byte
 
-A package for working with bytes (8-bit unsigned integers) in MoonBit.
+Constants for the `Byte` type (8-bit unsigned integer).
 
 ## Constants
 
-The package provides constants for the minimum and maximum values of a byte:
-
 ```mbt check
 ///|
-test "byte constants" {
+test {
   inspect(@byte.MIN_VALUE, content="b'\\x00'")
   inspect(@byte.MAX_VALUE, content="b'\\xFF'")
 }
 ```
 
-## Conversion
-
-Bytes can be converted to other numeric types. The package provides conversion to `UInt64`:
-
-```mbt check
-///|
-test "byte conversion" {
-  let byte = b'A'
-  inspect(byte.to_uint64(), content="65")
-  let byte = b' '
-  inspect(byte.to_uint64(), content="32")
-}
-```
-
 ## Byte Literals
 
-Although not directly part of this package, MoonBit provides byte literals with the `b` prefix:
+MoonBit provides byte literals with the `b` prefix:
 
 ```mbt check
 ///|
-test "byte literals" {
+test {
   // ASCII character
-  let a = b'a'
-  inspect(a.to_uint64(), content="97")
-
-  // Hexadecimal escape sequence
-  let hex = b'\x41'
-  inspect(hex.to_uint64(), content="65")
-
-  // Null byte
-  let null = b'\x00'
-  inspect(null.to_uint64(), content="0")
-
-  // Maximum value
-  let max = b'\xff'
-  inspect(max.to_uint64(), content="255")
+  inspect(b'A'.to_uint64(), content="65")
+  // Hex escape
+  inspect(b'\x41'.to_uint64(), content="65")
+  // Min and max
+  inspect(b'\x00'.to_uint64(), content="0")
+  inspect(b'\xff'.to_uint64(), content="255")
 }
 ```
-
-Note: The same conversion method can be called either as a method (`b.to_uint64()`) or as a package function (`@byte.to_uint64(b)`).

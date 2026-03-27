@@ -2,6 +2,7 @@
 package "moonbitlang/core/immut/array"
 
 import {
+  "moonbitlang/core/debug",
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/quickcheck/splitmix",
 }
@@ -15,6 +16,7 @@ type T[A]
 #alias("_[_]")
 pub fn[A] T::at(Self[A], Int) -> A
 pub fn[A] T::concat(Self[A], Self[A]) -> Self[A]
+#alias(clone, deprecated)
 #deprecated
 pub fn[A] T::copy(Self[A]) -> Self[A]
 pub fn[A] T::each(Self[A], (A) -> Unit raise?) -> Unit raise?
@@ -46,11 +48,14 @@ pub fn[A] T::push(Self[A], A) -> Self[A]
 pub fn[A, B] T::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 pub fn[A] T::set(Self[A], Int, A) -> Self[A]
 pub fn[A] T::to_array(Self[A]) -> Array[A]
+#deprecated
+pub fn[A : @debug.Debug] T::to_repr(Self[A]) -> @debug.Repr
 pub impl[A] Add for T[A]
 pub impl[A : Compare] Compare for T[A]
 pub impl[A : Eq] Eq for T[A]
 pub impl[A : Hash] Hash for T[A]
 pub impl[A : Show] Show for T[A]
+pub impl[A : @debug.Debug] @debug.Debug for T[A]
 pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X]
 
 // Type aliases

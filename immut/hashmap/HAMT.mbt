@@ -74,25 +74,19 @@ fn[K : Eq, V] Node::get_with_path(
   key : K,
   path : @path.Path,
 ) -> V? {
-  loop (self, path) {
-    (Leaf(key1, value1, bucket), _) =>
-      if key == key1 {
-        Some(value1)
-      } else {
-        bucket.lookup(key)
+  for node = self, path = path {
+    match (node, path) {
+      (Leaf(key1, value1, bucket), _) =>
+        break if key == key1 { Some(value1) } else { bucket.lookup(key) }
+      (Flat(key1, value1, path1), path) =>
+        break if path == path1 && key == key1 { Some(value1) } else { None }
+      (Branch(children), path) => {
+        let idx = path.idx()
+        if children.get(idx) is Some(child) {
+          continue child, path.next()
+        }
+        break None
       }
-    (Flat(key1, value1, path1), path) =>
-      if path == path1 && key == key1 {
-        Some(value1)
-      } else {
-        None
-      }
-    (Branch(children), path) => {
-      let idx = path.idx()
-      if children.get(idx) is Some(child) {
-        continue (child, path.next())
-      }
-      None
     }
   }
 }
@@ -651,45 +645,47 @@ pub fn[K, V] HashMap::iter(self : HashMap[K, V]) -> Iter[(K, V)] {
   let mut curr_index = 0
   let parents = []
   Iter::new(fn() {
-    loop curr_node {
-      Tree(Flat(k, v, _)) => {
-        curr_node = empty
-        Some((k, v))
+    for cn = curr_node {
+      match cn {
+        Tree(Flat(k, v, _)) => {
+          curr_node = empty
+          break Some((k, v))
+        }
+        Tree(Leaf(k, v, bucket)) => {
+          curr_node = Bucket(bucket)
+          break Some((k, v))
+        }
+        Bucket(More(pair, tail~)) => {
+          curr_node = Bucket(tail)
+          break Some(pair)
+        }
+        Tree(Branch(children)) as n if curr_index < children.length() => {
+          let child = children.data[curr_index]
+          parents.push((n, curr_index + 1))
+          curr_index = 0
+          continue Tree(child)
+        }
+        Bucket(Empty) | Tree(Branch(_)) if parents.pop()
+          is Some((parent, parent_index)) => {
+          curr_node = parent
+          curr_index = parent_index
+          continue parent
+        }
+        Bucket(Empty) | Tree(Branch(_)) => break None
       }
-      Tree(Leaf(k, v, bucket)) => {
-        curr_node = Bucket(bucket)
-        Some((k, v))
-      }
-      Bucket(More(pair, tail~)) => {
-        curr_node = Bucket(tail)
-        Some(pair)
-      }
-      Tree(Branch(children)) as n if curr_index < children.length() => {
-        let child = children.data[curr_index]
-        parents.push((n, curr_index + 1))
-        curr_index = 0
-        continue Tree(child)
-      }
-      Bucket(Empty) | Tree(Branch(_)) if parents.pop()
-        is Some((parent, parent_index)) => {
-        curr_node = parent
-        curr_index = parent_index
-        continue parent
-      }
-      Bucket(Empty) | Tree(Branch(_)) => None
     }
   })
 }
 
 ///|
-/// Convert to `Iter`
+/// Returns a two-element iterator over key-value pairs.
 #alias(iterator2, deprecated)
 pub fn[K, V] HashMap::iter2(self : HashMap[K, V]) -> Iter2[K, V] {
   self.iter()
 }
 
 ///|
-/// Create from `iter`.
+/// Creates a hash map from an iterator of key-value pairs.
 #as_free_fn
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
@@ -709,24 +705,26 @@ pub impl[K : Show, V : Show] Show for HashMap[K, V] with output(self, logger) {
 }
 
 ///|
-/// Create from `array`.
+/// Creates a hash map from an array of key-value pairs.
 #as_free_fn
 #alias(of, deprecated="Use from_array instead")
 #as_free_fn(of, deprecated="Use from_array instead")
 pub fn[K : Eq + Hash, V] HashMap::from_array(
   arr : ArrayView[(K, V)],
 ) -> HashMap[K, V] {
-  loop (arr.length(), new()) {
-    (0, map) => map
-    (n, map) => {
-      let (k, v) = arr[n - 1]
-      continue (n - 1, map.add(k, v))
+  for n = arr.length(), map = new() {
+    match (n, map) {
+      (0, map) => break map
+      (n, map) => {
+        let (k, v) = arr[n - 1]
+        continue n - 1, map.add(k, v)
+      }
     }
   }
 }
 
 ///|
-/// Convert to an array of key-value pairs.
+/// Returns an array of all key-value pairs.
 pub fn[K, V] HashMap::to_array(self : HashMap[K, V]) -> Array[(K, V)] {
   let arr = Array::new(capacity=self.length())
   self.each((k, v) => arr.push((k, v)))
@@ -743,6 +741,9 @@ pub impl[K : Eq + Hash + @quickcheck.Arbitrary, V : @quickcheck.Arbitrary] @quic
 
 ///|
 impl[K : Eq, V : Eq] Eq for Node[K, V] with equal(self, other) {
+  if physical_equal(self, other) {
+    return true
+  }
   match (self, other) {
     (Flat(key1, value1, path1), Flat(key2, value2, path2)) =>
       path1 == path2 && key1 == key2 && value1 == value2

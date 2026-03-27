@@ -72,6 +72,18 @@ pub fn[A] List::prepend(self : List[A], head : A) -> List[A] {
 }
 
 ///|
+pub impl[A : Eq] Eq for List[A] with equal(self, other) -> Bool {
+  if physical_equal(self, other) {
+    return true
+  }
+  match (self, other) {
+    (Empty, Empty) => true
+    (More(x, tail=xs), More(y, tail=ys)) => x == y && xs == ys
+    _ => false
+  }
+}
+
+///|
 /// Show implementation for List.
 /// Outputs the list in the format @list.from_array([element1, element2, ...]).
 pub impl[A : Show] Show for List[A] with output(xs, logger) {
@@ -160,9 +172,11 @@ pub fn[A] List::from_array(arr : ArrayView[A]) -> List[A] {
 ///|
 /// Get the length of the list.
 pub fn[A] List::length(self : List[A]) -> Int {
-  loop (self, 0) {
-    (Empty, len) => len
-    (More(_, tail=rest), acc) => continue (rest, acc + 1)
+  for x = self, acc = 0 {
+    match (x, acc) {
+      (Empty, len) => break len
+      (More(_, tail=rest), acc) => continue rest, acc + 1
+    }
   }
 }
 
@@ -180,11 +194,13 @@ pub fn[A] List::length(self : List[A]) -> Int {
 /// ```
 #locals(f)
 pub fn[A] List::each(self : List[A], f : (A) -> Unit raise?) -> Unit raise? {
-  loop self {
-    Empty => ()
-    More(head, tail~) => {
-      f(head)
-      continue tail
+  for x = self {
+    match x {
+      Empty => break
+      More(head, tail~) => {
+        f(head)
+        continue tail
+      }
     }
   }
 }
@@ -205,11 +221,13 @@ pub fn[A] List::eachi(
   self : List[A],
   f : (Int, A) -> Unit raise?,
 ) -> Unit raise? {
-  loop (self, 0) {
-    (Empty, _) => ()
-    (More(x, tail=xs), i) => {
-      f(i, x)
-      continue (xs, i + 1)
+  for x = self, i = 0 {
+    match (x, i) {
+      (Empty, _) => break
+      (More(x, tail=xs), i) => {
+        f(i, x)
+        continue xs, i + 1
+      }
     }
   }
 }
@@ -232,14 +250,16 @@ pub fn[A, B] List::map(self : List[A], f : (A) -> B raise?) -> List[B] raise? {
     Empty => Empty
     More(hd, tail~) => {
       let dest = More(f(hd), tail=Empty)
-      loop (dest, tail) {
-        (_, Empty) => ()
-        (More(_) as dest, More(hd, tail~)) => {
-          dest.tail = More(f(hd), tail=Empty)
-          continue (dest.tail, tail)
+      for d = dest, t = tail {
+        match (d, t) {
+          (_, Empty) => break
+          (More(_) as dest, More(hd, tail~)) => {
+            dest.tail = More(f(hd), tail=Empty)
+            continue dest.tail, tail
+          }
+          // unreachable
+          (Empty, _) => panic()
         }
-        // unreachable
-        (Empty, _) => panic()
       }
       dest
     }
@@ -269,14 +289,16 @@ pub fn[A, B] List::mapi(
     Empty => Empty
     More(hd, tail~) => {
       let dest = More(f(0, hd), tail=Empty)
-      loop (1, dest, tail) {
-        (_, _, Empty) => ()
-        (i, More(_) as dest, More(hd, tail~)) => {
-          dest.tail = More(f(i, hd), tail=Empty)
-          continue (i + 1, dest.tail, tail)
+      for i = 1, d = dest, t = tail {
+        match (i, d, t) {
+          (_, _, Empty) => break
+          (i, More(_) as dest, More(hd, tail~)) => {
+            dest.tail = More(f(i, hd), tail=Empty)
+            continue i + 1, dest.tail, tail
+          }
+          // unreachable
+          (_, Empty, _) => panic()
         }
-        // unreachable
-        (_, Empty, _) => panic()
       }
       dest
     }
@@ -301,9 +323,11 @@ pub fn[A, B] List::rev_map(
   self : List[A],
   f : (A) -> B raise?,
 ) -> List[B] raise? {
-  loop (Empty, self) {
-    (acc, Empty) => acc
-    (acc, More(x, tail=xs)) => continue (More(f(x), tail=acc), xs)
+  for a = Empty, b = self {
+    match (a, b) {
+      (acc, Empty) => break acc
+      (acc, More(x, tail=xs)) => continue More(f(x), tail=acc), xs
+    }
   }
 }
 
@@ -326,11 +350,13 @@ pub fn[A] List::to_array(self : List[A]) -> Array[A] {
     Empty => []
     More(x, tail=xs) => {
       let arr = [x]
-      loop xs {
-        Empty => ()
-        More(x, tail=xs) => {
-          arr.push(x)
-          continue xs
+      for cur = xs {
+        match cur {
+          Empty => break
+          More(x, tail=xs) => {
+            arr.push(x)
+            continue xs
+          }
         }
       }
       arr
@@ -355,28 +381,32 @@ pub fn[A] List::filter(
   self : List[A],
   f : (A) -> Bool raise?,
 ) -> List[A] raise? {
-  loop self {
-    Empty => Empty
-    More(head, tail~) =>
-      if !f(head) {
-        continue tail
-      } else {
-        let dest = More(head, tail=Empty)
-        loop (dest, tail) {
-          (_, Empty) => ()
-          (More(_) as dest, More(hd, tail~)) =>
-            if f(hd) {
-              dest.tail = More(hd, tail=Empty)
-              continue (dest.tail, tail)
-            } else {
-              continue (dest, tail)
+  for x = self {
+    match x {
+      Empty => break Empty
+      More(head, tail~) =>
+        if !f(head) {
+          continue tail
+        } else {
+          let dest = More(head, tail=Empty)
+          for d = dest, t = tail {
+            match (d, t) {
+              (_, Empty) => break
+              (More(_) as dest, More(hd, tail~)) =>
+                if f(hd) {
+                  dest.tail = More(hd, tail=Empty)
+                  continue dest.tail, tail
+                } else {
+                  continue dest, tail
+                }
+              (Empty, _) =>
+                // unreachable
+                panic()
             }
-          (Empty, _) =>
-            // unreachable
-            panic()
+          }
+          break dest
         }
-        dest
-      }
+    }
   }
 }
 
@@ -397,9 +427,11 @@ pub fn[A] List::filter(
 /// }
 /// ```
 pub fn[A] List::all(self : List[A], f : (A) -> Bool raise?) -> Bool raise? {
-  loop self {
-    Empty => true
-    More(head, tail~) => if f(head) { continue tail } else { false }
+  for x = self {
+    match x {
+      Empty => break true
+      More(head, tail~) => if f(head) { continue tail } else { break false }
+    }
   }
 }
 
@@ -420,9 +452,11 @@ pub fn[A] List::all(self : List[A], f : (A) -> Bool raise?) -> Bool raise? {
 /// }
 /// ```
 pub fn[A] List::any(self : List[A], f : (A) -> Bool raise?) -> Bool raise? {
-  loop self {
-    Empty => false
-    More(head, tail~) => if f(head) { true } else { continue tail }
+  for x = self {
+    match x {
+      Empty => break false
+      More(head, tail~) => if f(head) { break true } else { continue tail }
+    }
   }
 }
 
@@ -501,10 +535,12 @@ pub fn[A] List::head(self : List[A]) -> A? {
 #internal(unsafe, "Panic if the list is empty")
 #doc(hidden)
 pub fn[A] List::unsafe_last(self : List[A]) -> A {
-  loop self {
-    Empty => abort("last of empty list")
-    More(head, tail=Empty) => head
-    More(_, tail~) => continue tail
+  for x = self {
+    match x {
+      Empty => break abort("last of empty list")
+      More(head, tail=Empty) => break head
+      More(_, tail~) => continue tail
+    }
   }
 }
 
@@ -519,10 +555,12 @@ pub fn[A] List::unsafe_last(self : List[A]) -> A {
 /// }
 /// ```
 pub fn[A] List::last(self : List[A]) -> A? {
-  loop self {
-    Empty => None
-    More(head, tail=Empty) => Some(head)
-    More(_, tail~) => continue tail
+  for x = self {
+    match x {
+      Empty => break None
+      More(head, tail=Empty) => break Some(head)
+      More(_, tail~) => continue tail
+    }
   }
 }
 
@@ -545,14 +583,19 @@ pub fn[A] List::concat(self : List[A], other : List[A]) -> List[A] {
     More(hd, tail=Empty) => More(hd, tail=other)
     More(hd, tail~) => {
       let dest = More(hd, tail=Empty)
-      loop (dest, tail) {
-        (More(_) as dest, Empty) => dest.tail = other
-        (More(_) as dest, More(head, tail~)) => {
-          dest.tail = More(head, tail=Empty)
-          continue (dest.tail, tail)
+      for d = dest, t = tail {
+        match (d, t) {
+          (More(_) as dest, Empty) => {
+            dest.tail = other
+            break
+          }
+          (More(_) as dest, More(head, tail~)) => {
+            dest.tail = More(head, tail=Empty)
+            continue dest.tail, tail
+          }
+          // unreachable
+          (Empty, _) => panic()
         }
-        // unreachable
-        (Empty, _) => panic()
       }
       dest
     }
@@ -573,9 +616,11 @@ pub fn[A] List::concat(self : List[A], other : List[A]) -> List[A] {
 /// }
 /// ```
 pub fn[A] List::rev_concat(self : List[A], other : List[A]) -> List[A] {
-  loop (self, other) {
-    (Empty, other) => other
-    (More(head, tail~), other) => continue (tail, More(head, tail=other))
+  for a = self, b = other {
+    match (a, b) {
+      (Empty, other) => break other
+      (More(head, tail~), other) => continue tail, More(head, tail=other)
+    }
   }
 }
 
@@ -612,9 +657,11 @@ pub fn[A, B] List::fold(
   init~ : B,
   f : (B, A) -> B raise?,
 ) -> B raise? {
-  loop (self, init) {
-    (Empty, acc) => acc
-    (More(head, tail~), acc) => continue (tail, f(acc, head))
+  for x = self, acc = init {
+    match (x, acc) {
+      (Empty, acc) => break acc
+      (More(head, tail~), acc) => continue tail, f(acc, head)
+    }
   }
 }
 
@@ -638,19 +685,12 @@ pub fn[A, B] List::foldi(
   init~ : B,
   f : (Int, B, A) -> B raise?,
 ) -> B raise? {
-  fn go(
-    xs : List[A],
-    i : Int,
-    f : (Int, B, A) -> B raise?,
-    acc : B,
-  ) -> B raise? {
+  for xs = self, i = 0, acc = init {
     match xs {
-      Empty => acc
-      More(x, tail=xs) => go(xs, i + 1, f, f(i, acc, x))
+      Empty => break acc
+      More(x, tail=rest) => continue rest, i + 1, f(i, acc, x)
     }
   }
-
-  go(self, 0, f, init)
 }
 
 ///|
@@ -677,11 +717,13 @@ pub fn[A, B] List::foldi(
 /// ```
 #as_free_fn
 pub fn[A, B] List::zip(self : List[A], other : List[B]) -> List[(A, B)] {
-  let res = loop (self, other, Empty) {
-    (Empty, _, acc) => break acc
-    (_, Empty, acc) => break acc
-    (More(x, tail=xs), More(y, tail=ys), acc) =>
-      continue (xs, ys, More((x, y), tail=acc))
+  let res = for a = self, b = other, acc = Empty {
+    match (a, b, acc) {
+      (Empty, _, acc) => break acc
+      (_, Empty, acc) => break acc
+      (More(x, tail=xs), More(y, tail=ys), acc) =>
+        continue xs, ys, More((x, y), tail=acc)
+    }
   }
   res.reverse_in_place()
 }
@@ -704,40 +746,51 @@ pub fn[A, B] List::flat_map(
   self : List[A],
   f : (A) -> List[B] raise?,
 ) -> List[B] raise? {
-  loop self {
-    Empty => Empty
-    More(head, tail~) =>
-      match f(head) {
-        // continue until we have at least one element
-        Empty => continue tail
-        More(hd, tail=tl) => {
-          let dest = More(hd, tail=Empty)
-          // copy all the elements of `f(head)` first
-          let dest1 = loop (dest, tl) {
-            (dest, Empty) => dest
-            (More(_) as dest, More(hd, tail~)) => {
-              dest.tail = More(hd, tail=Empty)
-              continue (dest.tail, tail)
-            }
-            (Empty, _) => panic()
-          }
-          // continue looping on the `tail` of `self`
-          loop_over_tail~: loop (dest1, tail) {
-            (_, Empty) => ()
-            (More(_) as dest, More(t_hd, tail=Empty)) => dest.tail = f(t_hd)
-            (dest, More(t_hd, tail=t_tl)) =>
-              loop (dest, f(t_hd)) {
-                (dest, Empty) => continue loop_over_tail~ (dest, t_tl)
+  for x = self {
+    match x {
+      Empty => break Empty
+      More(head, tail~) =>
+        match f(head) {
+          // continue until we have at least one element
+          Empty => continue tail
+          More(hd, tail=tl) => {
+            let dest = More(hd, tail=Empty)
+            // copy all the elements of `f(head)` first
+            let dest1 = for d = dest, t = tl {
+              match (d, t) {
+                (dest, Empty) => break dest
                 (More(_) as dest, More(hd, tail~)) => {
                   dest.tail = More(hd, tail=Empty)
-                  continue (dest.tail, tail)
+                  continue dest.tail, tail
                 }
                 (Empty, _) => panic()
               }
+            }
+            // continue looping on the `tail` of `self`
+            loop_over_tail~: for d = dest1, t = tail {
+              match (d, t) {
+                (_, Empty) => break
+                (More(_) as dest, More(t_hd, tail=Empty)) => {
+                  dest.tail = f(t_hd)
+                  break
+                }
+                (dest, More(t_hd, tail=t_tl)) =>
+                  for d2 = dest, t2 = f(t_hd) {
+                    match (d2, t2) {
+                      (dest, Empty) => continue loop_over_tail~ dest, t_tl
+                      (More(_) as dest, More(hd, tail~)) => {
+                        dest.tail = More(hd, tail=Empty)
+                        continue dest.tail, tail
+                      }
+                      (Empty, _) => panic()
+                    }
+                  }
+              }
+            }
+            break dest
           }
-          dest
         }
-      }
+    }
   }
 }
 
@@ -757,28 +810,32 @@ pub fn[A, B] List::filter_map(
   self : List[A],
   f : (A) -> B? raise?,
 ) -> List[B] raise? {
-  loop self {
-    Empty => Empty
-    More(hd, tail~) =>
-      match f(hd) {
-        None => continue tail
-        Some(head) => {
-          let dest = More(head, tail=Empty)
-          loop (dest, tail) {
-            (_, Empty) => ()
-            (More(_) as dest, More(hd, tail~)) =>
-              match f(hd) {
-                None => continue (dest, tail)
-                Some(head) => {
-                  dest.tail = More(head, tail=Empty)
-                  continue (dest.tail, tail)
-                }
+  for x = self {
+    match x {
+      Empty => break Empty
+      More(hd, tail~) =>
+        match f(hd) {
+          None => continue tail
+          Some(head) => {
+            let dest = More(head, tail=Empty)
+            for d = dest, t = tail {
+              match (d, t) {
+                (_, Empty) => break
+                (More(_) as dest, More(hd, tail~)) =>
+                  match f(hd) {
+                    None => continue dest, tail
+                    Some(head) => {
+                      dest.tail = More(head, tail=Empty)
+                      continue dest.tail, tail
+                    }
+                  }
+                (Empty, _) => panic()
               }
-            (Empty, _) => panic()
+            }
+            break dest
           }
-          dest
         }
-      }
+    }
   }
 }
 
@@ -803,10 +860,12 @@ pub fn[A, B] List::filter_map(
 #internal(unsafe, "Panic if the index is out of bounds")
 #doc(hidden)
 pub fn[A] List::unsafe_nth(self : List[A], n : Int) -> A {
-  loop (self, n) {
-    (Empty, _) => abort("nth: index out of bounds")
-    (More(head, tail=_), 0) => head
-    (More(_, tail~), n) => continue (tail, n - 1)
+  for x = self, i = n {
+    match (x, i) {
+      (Empty, _) => break abort("nth: index out of bounds")
+      (More(head, tail=_), 0) => break head
+      (More(_, tail~), n) => continue tail, n - 1
+    }
   }
 }
 
@@ -826,10 +885,12 @@ pub fn[A] List::unsafe_nth(self : List[A], n : Int) -> A {
 /// }
 /// ```
 pub fn[A] List::nth(self : List[A], n : Int) -> A? {
-  loop (self, n) {
-    (Empty, _) => None
-    (More(head, tail=_), 0) => Some(head)
-    (More(_, tail~), n) => continue (tail, n - 1)
+  for x = self, i = n {
+    match (x, i) {
+      (Empty, _) => break None
+      (More(head, tail=_), 0) => break Some(head)
+      (More(_, tail~), n) => continue tail, n - 1
+    }
   }
 }
 
@@ -845,8 +906,15 @@ pub fn[A] List::nth(self : List[A], n : Int) -> A? {
 /// ```
 #as_free_fn
 pub fn[A] List::repeat(n : Int, x : A) -> List[A] {
-  loop (Empty, n) {
-    (acc, n) => if n <= 0 { acc } else { continue (More(x, tail=acc), n - 1) }
+  for acc = Empty, i = n {
+    match (acc, i) {
+      (acc, n) =>
+        if n <= 0 {
+          break acc
+        } else {
+          continue More(x, tail=acc), n - 1
+        }
+    }
   }
 }
 
@@ -867,15 +935,17 @@ pub fn[A] List::intersperse(self : List[A], separator : A) -> List[A] {
     More(head, tail=Empty) => More(head, tail=Empty)
     More(head, tail~) => {
       let dest = More(head, tail=Empty)
-      loop (dest, tail) {
-        (_, Empty) => ()
-        (More(_) as dest, More(hd, tail=tl)) => {
-          let new_tail = More(hd, tail=Empty)
-          dest.tail = More(separator, tail=new_tail)
-          continue (new_tail, tl)
+      for d = dest, t = tail {
+        match (d, t) {
+          (_, Empty) => break
+          (More(_) as dest, More(hd, tail=tl)) => {
+            let new_tail = More(hd, tail=Empty)
+            dest.tail = More(separator, tail=new_tail)
+            continue new_tail, tl
+          }
+          // unreachable
+          (Empty, _) => panic()
         }
-        // unreachable
-        (Empty, _) => panic()
       }
       dest
     }
@@ -919,14 +989,16 @@ pub fn[A, B] List::unzip(self : List[(A, B)]) -> (List[A], List[B]) {
     More((x, y), tail~) => {
       let xs = More(x, tail=Empty)
       let ys = More(y, tail=Empty)
-      loop (tail, xs, ys) {
-        (Empty, _, _) => ()
-        (More((x, y), tail~), More(_) as xptr, More(_) as yptr) => {
-          xptr.tail = More(x, tail=Empty)
-          yptr.tail = More(y, tail=Empty)
-          continue (tail, xptr.tail, yptr.tail)
+      for a = tail, b = xs, c = ys {
+        match (a, b, c) {
+          (Empty, _, _) => break
+          (More((x, y), tail~), More(_) as xptr, More(_) as yptr) => {
+            xptr.tail = More(x, tail=Empty)
+            yptr.tail = More(y, tail=Empty)
+            continue tail, xptr.tail, yptr.tail
+          }
+          (_, _, _) => break abort("unreachable")
         }
-        (_, _, _) => abort("unreachable")
       }
       (xs, ys)
     }
@@ -949,40 +1021,51 @@ pub fn[A, B] List::unzip(self : List[(A, B)]) -> (List[A], List[B]) {
 /// }
 /// ```
 pub fn[A] List::flatten(self : List[List[A]]) -> List[A] {
-  loop self {
-    Empty => Empty
-    More(head, tail~) =>
-      match head {
-        // continue until we have at least one element
-        Empty => continue tail
-        More(hd, tail=tl) => {
-          let dest = More(hd, tail=Empty)
-          // copy all the elements of `head` first
-          let dest1 = loop (dest, tl) {
-            (dest, Empty) => dest
-            (More(_) as dest, More(hd, tail~)) => {
-              dest.tail = More(hd, tail=Empty)
-              continue (dest.tail, tail)
-            }
-            (Empty, _) => panic()
-          }
-          // continue looping on the `tail` of `self`
-          loop_over_tail~: loop (dest1, tail) {
-            (_, Empty) => ()
-            (More(_) as dest, More(t_hd, tail=Empty)) => dest.tail = t_hd
-            (dest, More(t_hd, tail=t_tl)) =>
-              loop (dest, t_hd) {
-                (dest, Empty) => continue loop_over_tail~ (dest, t_tl)
+  for x = self {
+    match x {
+      Empty => break Empty
+      More(head, tail~) =>
+        match head {
+          // continue until we have at least one element
+          Empty => continue tail
+          More(hd, tail=tl) => {
+            let dest = More(hd, tail=Empty)
+            // copy all the elements of `head` first
+            let dest1 = for d = dest, t = tl {
+              match (d, t) {
+                (dest, Empty) => break dest
                 (More(_) as dest, More(hd, tail~)) => {
                   dest.tail = More(hd, tail=Empty)
-                  continue (dest.tail, tail)
+                  continue dest.tail, tail
                 }
                 (Empty, _) => panic()
               }
+            }
+            // continue looping on the `tail` of `self`
+            loop_over_tail~: for d = dest1, t = tail {
+              match (d, t) {
+                (_, Empty) => break
+                (More(_) as dest, More(t_hd, tail=Empty)) => {
+                  dest.tail = t_hd
+                  break
+                }
+                (dest, More(t_hd, tail=t_tl)) =>
+                  for d2 = dest, t2 = t_hd {
+                    match (d2, t2) {
+                      (dest, Empty) => continue loop_over_tail~ dest, t_tl
+                      (More(_) as dest, More(hd, tail~)) => {
+                        dest.tail = More(hd, tail=Empty)
+                        continue dest.tail, tail
+                      }
+                      (Empty, _) => panic()
+                    }
+                  }
+              }
+            }
+            break dest
           }
-          dest
         }
-      }
+    }
   }
 }
 
@@ -1010,17 +1093,19 @@ pub fn[A : Compare] List::unsafe_maximum(self : List[A]) -> A {
   match self {
     Empty => abort("maximum: empty list")
     More(head, tail~) =>
-      loop (tail, head) {
-        (Empty, curr_max) => curr_max
-        (More(item, tail~), curr_max) =>
-          continue (tail, if item > curr_max { item } else { curr_max })
+      for a = tail, b = head {
+        match (a, b) {
+          (Empty, curr_max) => break curr_max
+          (More(item, tail~), curr_max) =>
+            continue tail, if item > curr_max { item } else { curr_max }
+        }
       }
   }
 }
 
 ///|
 /// Get the maximum element of the list.
-/// 
+///
 /// Returns `Some(element)` with the largest element, or `None` if the list is empty.
 /// Elements are compared using the `Compare` trait.
 ///
@@ -1038,17 +1123,19 @@ pub fn[A : Compare] List::maximum(self : List[A]) -> A? {
   match self {
     Empty => None
     More(head, tail~) =>
-      loop (tail, head) {
-        (Empty, curr_max) => Some(curr_max)
-        (More(item, tail~), curr_max) =>
-          continue (tail, if item > curr_max { item } else { curr_max })
+      for a = tail, b = head {
+        match (a, b) {
+          (Empty, curr_max) => break Some(curr_max)
+          (More(item, tail~), curr_max) =>
+            continue tail, if item > curr_max { item } else { curr_max }
+        }
       }
   }
 }
 
 ///|
 /// Get the minimum element of the list.
-/// 
+///
 /// **Warning**: This function panics if the list is empty.
 /// Use `minimum()` for a safe alternative that returns `Option`.
 ///
@@ -1070,17 +1157,19 @@ pub fn[A : Compare] List::unsafe_minimum(self : List[A]) -> A {
   match self {
     Empty => abort("minimum: empty list")
     More(head, tail~) =>
-      loop (tail, head) {
-        (Empty, curr_min) => curr_min
-        (More(item, tail~), curr_min) =>
-          continue (tail, if item < curr_min { item } else { curr_min })
+      for a = tail, b = head {
+        match (a, b) {
+          (Empty, curr_min) => break curr_min
+          (More(item, tail~), curr_min) =>
+            continue tail, if item < curr_min { item } else { curr_min }
+        }
       }
   }
 }
 
 ///|
 /// Get the minimum element of the list.
-/// 
+///
 /// Returns `Some(element)` with the smallest element, or `None` if the list is empty.
 /// Elements are compared using the `Compare` trait.
 ///
@@ -1098,10 +1187,12 @@ pub fn[A : Compare] List::minimum(self : List[A]) -> A? {
   match self {
     Empty => None
     More(head, tail~) =>
-      loop (tail, head) {
-        (Empty, curr_min) => Some(curr_min)
-        (More(item, tail~), curr_min) =>
-          continue (tail, if item < curr_min { item } else { curr_min })
+      for a = tail, b = head {
+        match (a, b) {
+          (Empty, curr_min) => break Some(curr_min)
+          (More(item, tail~), curr_min) =>
+            continue tail, if item < curr_min { item } else { curr_min }
+        }
       }
   }
 }
@@ -1159,9 +1250,11 @@ pub impl[A] Add for List[A] with add(self, other) {
 /// }
 /// ```
 pub fn[A : Eq] List::contains(self : List[A], value : A) -> Bool {
-  loop self {
-    Empty => false
-    More(x, tail=xs) => if x == value { true } else { continue xs }
+  for cur = self {
+    match cur {
+      Empty => break false
+      More(x, tail=xs) => if x == value { break true } else { continue xs }
+    }
   }
 }
 
@@ -1185,13 +1278,15 @@ pub fn[A, S] List::unfold(
     None => Empty
     Some((element, new_state)) => {
       let dest = More(element, tail=Empty)
-      loop (dest, f(new_state)) {
-        (_, None) => ()
-        (More(_) as dest, Some((element, new_state))) => {
-          dest.tail = More(element, tail=Empty)
-          continue (dest.tail, f(new_state))
+      for d = dest, t = f(new_state) {
+        match (d, t) {
+          (_, None) => break
+          (More(_) as dest, Some((element, new_state))) => {
+            dest.tail = More(element, tail=Empty)
+            continue dest.tail, f(new_state)
+          }
+          (Empty, _) => panic()
         }
-        (Empty, _) => panic()
       }
       dest
     }
@@ -1221,9 +1316,11 @@ pub fn[A, S] List::rev_unfold(
   f : (S) -> (A, S)? raise?,
   init~ : S,
 ) -> List[A] raise? {
-  loop (f(init), Empty) {
-    (None, acc) => acc
-    (Some((x, s)), acc) => continue (f(s), More(x, tail=acc))
+  for a = f(init), b = Empty {
+    match (a, b) {
+      (None, acc) => break acc
+      (Some((x, s)), acc) => continue f(s), More(x, tail=acc)
+    }
   }
 }
 
@@ -1248,14 +1345,16 @@ pub fn[A] List::take(self : List[A], n : Int) -> List[A] {
       Empty => Empty
       More(head, tail~) => {
         let dest = More(head, tail=Empty)
-        loop (dest, tail, n - 1) {
-          (_, Empty, _) => ()
-          (_, _, 0) => ()
-          (More(_) as dest, More(x, tail=xs), n) => {
-            dest.tail = More(x, tail=Empty)
-            continue (dest.tail, xs, n - 1)
+        for d = dest, t = tail, i = n - 1 {
+          match (d, t, i) {
+            (_, Empty, _) => break
+            (_, _, 0) => break
+            (More(_) as dest, More(x, tail=xs), n) => {
+              dest.tail = More(x, tail=Empty)
+              continue dest.tail, xs, n - 1
+            }
+            (Empty, _, _) => panic()
           }
-          (Empty, _, _) => panic()
         }
         dest
       }
@@ -1280,10 +1379,12 @@ pub fn[A] List::drop(self : List[A], n : Int) -> List[A] {
   if n <= 0 {
     self
   } else {
-    loop (n, self) {
-      (_, Empty) => Empty
-      (1, More(_, tail=xs)) => xs
-      (n, More(_, tail=xs)) => continue (n - 1, xs)
+    for a = n, b = self {
+      match (a, b) {
+        (_, Empty) => break Empty
+        (1, More(_, tail=xs)) => break xs
+        (n, More(_, tail=xs)) => continue n - 1, xs
+      }
     }
   }
 }
@@ -1309,14 +1410,16 @@ pub fn[A] List::take_while(
     More(head, tail~) =>
       if p(head) {
         let dest = More(head, tail=Empty)
-        loop (dest, tail) {
-          (_, Empty) => ()
-          (More(_) as dest, More(x, tail=xs)) if p(x) => {
-            dest.tail = More(x, tail=Empty)
-            continue (dest.tail, xs)
+        for d = dest, t = tail {
+          match (d, t) {
+            (_, Empty) => break
+            (More(_) as dest, More(x, tail=xs)) if p(x) => {
+              dest.tail = More(x, tail=Empty)
+              continue dest.tail, xs
+            }
+            (More(_), _) => break
+            (Empty, _) => panic()
           }
-          (More(_), _) => ()
-          (Empty, _) => panic()
         }
         dest
       } else {
@@ -1341,9 +1444,16 @@ pub fn[A] List::drop_while(
   self : List[A],
   p : (A) -> Bool raise?,
 ) -> List[A] raise? {
-  loop self {
-    Empty => Empty
-    More(x, tail=xs) => if p(x) { continue xs } else { More(x, tail=xs) }
+  for cur = self {
+    match cur {
+      Empty => break Empty
+      More(x, tail=xs) =>
+        if p(x) {
+          continue xs
+        } else {
+          break More(x, tail=xs)
+        }
+    }
   }
 }
 
@@ -1365,12 +1475,15 @@ pub fn[A, E] List::scan_left(
   init~ : E,
 ) -> List[E] raise? {
   let dest = More(init, tail=Empty)
-  loop (dest, self, init) {
-    (_, Empty, _) => ()
-    (Empty, _, _) => panic()
-    (More(_) as dest, More(x, tail=xs), acc) => {
-      dest.tail = More(f(acc, x), tail=Empty)
-      continue (dest.tail, xs, f(acc, x))
+  for d = dest, s = self, a = init {
+    match (d, s, a) {
+      (_, Empty, _) => break
+      (Empty, _, _) => panic()
+      (More(_) as dest, More(x, tail=xs), acc) => {
+        let next = f(acc, x)
+        dest.tail = More(next, tail=Empty)
+        continue dest.tail, xs, next
+      }
     }
   }
   dest
@@ -1409,9 +1522,11 @@ pub fn[A, B] List::scan_right(
 /// }
 /// ```
 pub fn[A : Eq, B] List::lookup(self : List[(A, B)], v : A) -> B? {
-  loop self {
-    Empty => None
-    More((x, y), tail=xs) => if x == v { Some(y) } else { continue xs }
+  for cur = self {
+    match cur {
+      Empty => break None
+      More((x, y), tail=xs) => if x == v { break Some(y) } else { continue xs }
+    }
   }
 }
 
@@ -1430,14 +1545,16 @@ pub fn[A : Eq, B] List::lookup(self : List[(A, B)], v : A) -> B? {
 /// }
 /// ```
 pub fn[A] List::find(self : List[A], f : (A) -> Bool raise?) -> A? raise? {
-  loop self {
-    Empty => None
-    More(element, tail=list) =>
-      if f(element) {
-        Some(element)
-      } else {
-        continue list
-      }
+  for cur = self {
+    match cur {
+      Empty => break None
+      More(element, tail=list) =>
+        if f(element) {
+          break Some(element)
+        } else {
+          continue list
+        }
+    }
   }
 }
 
@@ -1468,14 +1585,16 @@ pub fn[A] List::find_index(
   self : Self[A],
   f : (A) -> Bool raise?,
 ) -> Int? raise? {
-  loop (self, 0) {
-    (Empty, _) => None
-    (More(element, tail=list), idx) =>
-      if f(element) {
-        Some(idx)
-      } else {
-        continue (list, idx + 1)
-      }
+  for cur = self, idx = 0 {
+    match (cur, idx) {
+      (Empty, _) => break None
+      (More(element, tail=list), idx) =>
+        if f(element) {
+          break Some(idx)
+        } else {
+          continue list, idx + 1
+        }
+    }
   }
 }
 
@@ -1501,17 +1620,16 @@ pub fn[A] List::find_index(
 /// }
 /// ```
 pub fn[A] List::findi(self : List[A], f : (A, Int) -> Bool raise?) -> A? raise? {
-  loop (self, 0) {
-    (list, index) =>
-      match list {
-        Empty => None
-        More(element, tail=list) =>
-          if f(element, index) {
-            Some(element)
-          } else {
-            continue (list, index + 1)
-          }
-      }
+  for list = self, index = 0 {
+    match list {
+      Empty => break None
+      More(element, tail=list) =>
+        if f(element, index) {
+          break Some(element)
+        } else {
+          continue list, index + 1
+        }
+    }
   }
 }
 
@@ -1535,14 +1653,19 @@ pub fn[A] List::remove_at(self : List[A], index : Int) -> List[A] {
     (0, More(_, tail~)) => tail
     (n, More(head, tail~)) => {
       let dest = More(head, tail=Empty)
-      loop (dest, tail, n - 1) {
-        (_, Empty, _) => ()
-        (More(_) as dest, More(_, tail~), 0) => dest.tail = tail
-        (More(_) as dest, More(x, tail=xs), n) => {
-          dest.tail = More(x, tail=Empty)
-          continue (dest.tail, xs, n - 1)
+      for d = dest, t = tail, i = n - 1 {
+        match (d, t, i) {
+          (_, Empty, _) => break
+          (More(_) as dest, More(_, tail~), 0) => {
+            dest.tail = tail
+            break
+          }
+          (More(_) as dest, More(x, tail=xs), n) => {
+            dest.tail = More(x, tail=Empty)
+            continue dest.tail, xs, n - 1
+          }
+          (Empty, _, _) => panic()
         }
-        (Empty, _, _) => panic()
       }
       dest
     }
@@ -1568,16 +1691,19 @@ pub fn[A : Eq] List::remove(self : List[A], elem : A) -> List[A] {
     More(head, tail~) if head == elem => tail
     More(head, tail~) => {
       let dest = More(head, tail~)
-      loop (dest, tail) {
-        (_, Empty) => ()
-        (More(_) as dest, More(x, tail=xs)) =>
-          if x == elem {
-            dest.tail = xs
-          } else {
-            dest.tail = More(x, tail=Empty)
-            continue (dest.tail, xs)
-          }
-        (Empty, _) => panic()
+      for d = dest, t = tail {
+        match (d, t) {
+          (_, Empty) => break
+          (More(_) as dest, More(x, tail=xs)) =>
+            if x == elem {
+              dest.tail = xs
+              break
+            } else {
+              dest.tail = More(x, tail=Empty)
+              continue dest.tail, xs
+            }
+          (Empty, _) => panic()
+        }
       }
       dest
     }
@@ -1598,15 +1724,17 @@ pub fn[A : Eq] List::remove(self : List[A], elem : A) -> List[A] {
 /// }
 /// ```
 pub fn[A : Eq] List::is_prefix(self : List[A], prefix : List[A]) -> Bool {
-  loop (self, prefix) {
-    (_, Empty) => true
-    (Empty, More(_)) => false
-    (More(h1, tail=t1), More(h2, tail=t2)) =>
-      if h1 == h2 {
-        continue (t1, t2)
-      } else {
-        false
-      }
+  for a = self, b = prefix {
+    match (a, b) {
+      (_, Empty) => break true
+      (Empty, More(_)) => break false
+      (More(h1, tail=t1), More(h2, tail=t2)) =>
+        if h1 == h2 {
+          continue t1, t2
+        } else {
+          break false
+        }
+    }
   }
 }
 
@@ -1857,11 +1985,13 @@ fn[A] List::reverse_in_place(self : List[A]) -> List[A] {
   match self {
     Empty | More(_, tail=Empty) => self
     More(head, tail~) =>
-      loop (More(head, tail=Empty), tail) {
-        (result, Empty) => result
-        (result, More(_, tail=xs) as new_result) => {
-          new_result.tail = result
-          continue (new_result, xs)
+      for a = More(head, tail=Empty), b = tail {
+        match (a, b) {
+          (result, Empty) => break result
+          (result, More(_, tail=xs) as new_result) => {
+            new_result.tail = result
+            continue new_result, xs
+          }
         }
       }
   }
@@ -1899,16 +2029,18 @@ fn[A] List::reverse_in_place(self : List[A]) -> List[A] {
 /// }
 /// ```
 pub impl[A : Compare] Compare for List[A] with compare(self, other) {
-  loop (self, other) {
-    (Empty, Empty) => 0
-    (Empty, More(_, tail=_)) => -1
-    (More(_, tail=_), Empty) => 1
-    (More(x, tail=xs), More(y, tail=ys)) => {
-      let cmp = x.compare(y)
-      if cmp != 0 {
-        break cmp
-      } else {
-        continue (xs, ys)
+  for a = self, b = other {
+    match (a, b) {
+      (Empty, Empty) => break 0
+      (Empty, More(_, tail=_)) => break -1
+      (More(_, tail=_), Empty) => break 1
+      (More(x, tail=xs), More(y, tail=ys)) => {
+        let cmp = x.compare(y)
+        if cmp != 0 {
+          break cmp
+        } else {
+          continue xs, ys
+        }
       }
     }
   }

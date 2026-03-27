@@ -31,51 +31,55 @@ pub fn[A] SortedSet::rev_iter(self : SortedSet[A]) -> Iter[A] {
   let mut curr_node = self
   let parents = []
   Iter::new(fn() {
-    loop curr_node {
-      Node(left~, right=Empty, value~, ..) => {
-        curr_node = left
-        Some(value)
+    for x = curr_node {
+      match x {
+        Node(left~, right=Empty, value~, ..) => {
+          curr_node = left
+          break Some(value)
+        }
+        Node(left~, right~, value~, ..) => {
+          parents.push((value, left))
+          continue right
+        }
+        Empty if parents.pop() is Some((value, left)) => {
+          curr_node = left
+          break Some(value)
+        }
+        Empty => break None
       }
-      Node(left~, right~, value~, ..) => {
-        parents.push((value, left))
-        continue right
-      }
-      Empty if parents.pop() is Some((value, left)) => {
-        curr_node = left
-        Some(value)
-      }
-      Empty => None
     }
   })
 }
 
 ///|
-/// Return an iterator via `iter`.
+/// Returns an iterator over elements in ascending order.
 #alias(iterator, deprecated)
 pub fn[A] SortedSet::iter(self : SortedSet[A]) -> Iter[A] {
   let mut curr_node = self
   let parents = []
   Iter::new(fn() {
-    loop curr_node {
-      Node(left=Empty, right~, value~, size=_) => {
-        curr_node = right
-        Some(value)
+    for x = curr_node {
+      match x {
+        Node(left=Empty, right~, value~, size=_) => {
+          curr_node = right
+          break Some(value)
+        }
+        Node(left~, right~, value~, size=_) => {
+          parents.push((value, right))
+          continue left
+        }
+        Empty if parents.pop() is Some((value, right)) => {
+          curr_node = right
+          break Some(value)
+        }
+        Empty => break None
       }
-      Node(left~, right~, value~, size=_) => {
-        parents.push((value, right))
-        continue left
-      }
-      Empty if parents.pop() is Some((value, right)) => {
-        curr_node = right
-        Some(value)
-      }
-      Empty => None
     }
   })
 }
 
 ///|
-/// Create from `iter`.
+/// Creates a sorted set from an iterator of values.
 #as_free_fn
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
@@ -92,6 +96,9 @@ test {
 
 ///|
 pub impl[A : Eq] Eq for SortedSet[A] with equal(self, other) -> Bool {
+  if physical_equal(self, other) {
+    return true
+  }
   // There's no `Iter::zip` (https://github.com/moonbitlang/core/issues/994#issuecomment-2350935193),
   // so we have to use the manual implementation below:
   guard self.length() == other.length() else { return false }

@@ -25,7 +25,7 @@ pub impl[K : Eq, V : Eq] Eq for SortedMap[K, V] with equal(self, other) {
 }
 
 ///|
-/// Returns a new sorted map.
+/// Creates an empty sorted map.
 #as_free_fn
 pub fn[K, V] SortedMap::new() -> SortedMap[K, V] {
   { root: None, size: 0 }
@@ -75,7 +75,7 @@ pub fn[K : Compare, V] SortedMap::set(
 }
 
 ///|
-/// Removes a key-value pair.
+/// Removes the entry for the given key. Does nothing if the key is not present.
 pub fn[K : Compare, V] SortedMap::remove(
   self : SortedMap[K, V],
   key : K,
@@ -92,56 +92,88 @@ pub fn[K : Compare, V] SortedMap::remove(
 }
 
 ///|
-/// Gets a value by a key.
+/// Returns the value associated with the key, or `None` if not found.
 pub fn[K : Compare, V] SortedMap::get(self : SortedMap[K, V], key : K) -> V? {
-  loop self.root {
-    Some(node) => {
-      let cmp = key.compare(node.key)
-      if cmp == 0 {
-        break Some(node.value)
-      } else if cmp > 0 {
-        continue node.right
-      } else {
-        continue node.left
+  for x = self.root {
+    match x {
+      Some(node) => {
+        let cmp = key.compare(node.key)
+        if cmp == 0 {
+          break Some(node.value)
+        } else if cmp > 0 {
+          continue node.right
+        } else {
+          continue node.left
+        }
       }
+      None => break None
     }
-    None => break None
   }
 }
 
 ///|
-/// Gets a value by a key.
+/// Returns the value for the key. Panics if the key is not present.
 #alias("_[_]")
 pub fn[K : Compare, V] SortedMap::at(self : SortedMap[K, V], key : K) -> V {
-  loop self.root {
-    Some(node) => {
-      let cmp = key.compare(node.key)
-      if cmp == 0 {
-        break node.value
-      } else if cmp > 0 {
-        continue node.right
-      } else {
-        continue node.left
+  for x = self.root {
+    match x {
+      Some(node) => {
+        let cmp = key.compare(node.key)
+        if cmp == 0 {
+          break node.value
+        } else if cmp > 0 {
+          continue node.right
+        } else {
+          continue node.left
+        }
       }
+      None => panic()
     }
-    None => panic()
   }
 }
 
 ///|
-/// Checks if map contains a key-value pair.
+/// Returns the value for the key if present, otherwise inserts the value
+/// produced by `init` and returns it.
+pub fn[K : Compare, V] SortedMap::get_or_init(
+  self : SortedMap[K, V],
+  key : K,
+  init : () -> V,
+) -> V {
+  match self.get(key) {
+    Some(v) => v
+    None => {
+      let v = init()
+      self.set(key, v)
+      v
+    }
+  }
+}
+
+///|
+/// Returns the value for the key if present, otherwise returns `default`.
+pub fn[K : Compare, V] SortedMap::get_or_default(
+  self : SortedMap[K, V],
+  key : K,
+  default : V,
+) -> V {
+  match self.get(key) {
+    Some(v) => v
+    None => default
+  }
+}
+
+///|
+/// Returns `true` if the map contains the given key.
 pub fn[K : Compare, V] SortedMap::contains(
   self : SortedMap[K, V],
   key : K,
 ) -> Bool {
-  match self.get(key) {
-    Some(_) => true
-    None => false
-  }
+  self.get(key) is Some(_)
 }
 
 ///|
-/// Returns true if map is empty.
+/// Returns `true` if the map contains no entries.
 pub fn[K, V] SortedMap::is_empty(self : SortedMap[K, V]) -> Bool {
   self.size == 0
 }
@@ -154,14 +186,14 @@ pub fn[K, V] SortedMap::length(self : SortedMap[K, V]) -> Int {
 }
 
 ///|
-/// Clears the map.
+/// Removes all entries from the map.
 pub fn[K, V] SortedMap::clear(self : SortedMap[K, V]) -> Unit {
   self.root = None
   self.size = 0
 }
 
 ///|
-/// Iterates the map.
+/// Calls `f` on each key-value pair in ascending key order.
 pub fn[K, V] SortedMap::each(
   self : SortedMap[K, V],
   f : (K, V) -> Unit raise?,
@@ -178,7 +210,7 @@ pub fn[K, V] SortedMap::each(
 }
 
 ///|
-/// Iterates the map with index.
+/// Calls `f` on each key-value pair with its index (0-based), in ascending key order.
 pub fn[K, V] SortedMap::eachi(
   self : SortedMap[K, V],
   f : (Int, K, V) -> Unit raise?,
@@ -191,47 +223,51 @@ pub fn[K, V] SortedMap::eachi(
 }
 
 ///|
-/// Returns all keys in the map.
+/// Returns an iterator over the keys in ascending order.
 pub fn[K, V] SortedMap::keys_as_iter(self : SortedMap[K, V]) -> Iter[K] {
   let todo_list = []
   let mut next_node = self.root
   Iter::new(fn() {
-    loop next_node {
-      Some({ left, key, value: _, right, height: _ }) => {
-        todo_list.push((key, right))
-        continue left
+    for x = next_node {
+      match x {
+        Some({ left, key, value: _, right, height: _ }) => {
+          todo_list.push((key, right))
+          continue left
+        }
+        None if todo_list.pop() is Some((key, right)) => {
+          next_node = right
+          break Some(key)
+        }
+        None => break None
       }
-      None if todo_list.pop() is Some((key, right)) => {
-        next_node = right
-        Some(key)
-      }
-      None => None
     }
   })
 }
 
 ///|
-/// Returns all values in the map.
+/// Returns an iterator over the values in ascending key order.
 pub fn[K, V] SortedMap::values_as_iter(self : SortedMap[K, V]) -> Iter[V] {
   let todo_list = []
   let mut next_node = self.root
   Iter::new(fn() {
-    loop next_node {
-      Some({ left, key: _, value, right, height: _ }) => {
-        todo_list.push((value, right))
-        continue left
+    for x = next_node {
+      match x {
+        Some({ left, key: _, value, right, height: _ }) => {
+          todo_list.push((value, right))
+          continue left
+        }
+        None if todo_list.pop() is Some((value, right)) => {
+          next_node = right
+          break Some(value)
+        }
+        None => break None
       }
-      None if todo_list.pop() is Some((value, right)) => {
-        next_node = right
-        Some(value)
-      }
-      None => None
     }
-  }).iter()
+  })
 }
 
 ///|
-/// Converts the map to an array.
+/// Returns an array of all key-value pairs in ascending key order.
 pub fn[K, V] SortedMap::to_array(self : SortedMap[K, V]) -> Array[(K, V)] {
   let arr = Array::new(capacity=self.size)
   self.each((k, v) => arr.push((k, v)))
@@ -245,16 +281,18 @@ pub fn[K, V] SortedMap::iter(self : SortedMap[K, V]) -> Iter[(K, V)] {
   let todo_list = []
   let mut next_node = self.root
   Iter::new(fn() {
-    loop next_node {
-      Some({ left, key, value, right, height: _ }) => {
-        todo_list.push((key, value, right))
-        continue left
+    for x = next_node {
+      match x {
+        Some({ left, key, value, right, height: _ }) => {
+          todo_list.push((key, value, right))
+          continue left
+        }
+        None if todo_list.pop() is Some((key, value, right)) => {
+          next_node = right
+          break Some((key, value))
+        }
+        None => break None
       }
-      None if todo_list.pop() is Some((key, value, right)) => {
-        next_node = right
-        Some((key, value))
-      }
-      None => None
     }
   })
 }
@@ -267,7 +305,7 @@ pub fn[K, V] SortedMap::iter2(self : SortedMap[K, V]) -> Iter2[K, V] {
 }
 
 ///|
-/// Create from `iter`.
+/// Creates a sorted map from an iterator of key-value pairs.
 #as_free_fn
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
@@ -299,34 +337,36 @@ pub fn[K : Compare, V] SortedMap::range(
   let todo_list = []
   let mut next_node = self.root
   Iter2::new(fn() {
-    loop next_node {
-      Some({ left, key, value, right, height: _ }) => {
-        let cmp_key_low = key.compare(low)
-        let cmp_key_high = key.compare(high)
-        if cmp_key_low < 0 {
-          // `key > low`, the left subtree and the value itself
-          // should not be visited
-          continue right
-        } else if cmp_key_high > 0 {
-          // `key > right`, the right subtree and the value itself
-          // should not be visited
-          continue left
-          // `low <= key <= high`,
-          // the value itself falls in the range,
-          // and both the left and right sub tree need to be visited
-        } else if left is None {
-          next_node = right
-          Some((key, value))
-        } else {
-          todo_list.push((key, value, right))
-          continue left
+    for x = next_node {
+      match x {
+        Some({ left, key, value, right, height: _ }) => {
+          let cmp_key_low = key.compare(low)
+          let cmp_key_high = key.compare(high)
+          if cmp_key_low < 0 {
+            // `key < low`, the left subtree and the key itself
+            // are all below the range, skip to the right subtree
+            continue right
+          } else if cmp_key_high > 0 {
+            // `key > high`, the right subtree and the key itself
+            // are all above the range, skip to the left subtree
+            continue left
+            // `low <= key <= high`,
+            // the value itself falls in the range,
+            // and both the left and right sub tree need to be visited
+          } else if left is None {
+            next_node = right
+            break Some((key, value))
+          } else {
+            todo_list.push((key, value, right))
+            continue left
+          }
         }
+        None if todo_list.pop() is Some((key, value, right)) => {
+          next_node = right
+          break Some((key, value))
+        }
+        None => break None
       }
-      None if todo_list.pop() is Some((key, value, right)) => {
-        next_node = right
-        Some((key, value))
-      }
-      None => None
     }
   }).iter2()
 }
@@ -358,6 +398,7 @@ pub fn[K : Compare, V] SortedMap::range(
 ///   inspect(map2.length(), content="4")
 /// }
 /// ```
+#alias(clone, deprecated)
 pub fn[K, V] SortedMap::copy(self : SortedMap[K, V]) -> SortedMap[K, V] {
   fn copy_node(node : Node[K, V]?) -> Node[K, V]? {
     match node {

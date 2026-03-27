@@ -14,20 +14,20 @@
 
 ///|
 /// a simple bit set to store a set of integers less than 32
-pub(all) struct Bitset(UInt) derive(Eq)
+pub struct Bitset(UInt) derive(Eq)
 
 ///|
 let empty_bitset : Bitset = Bitset(0)
 
 ///|
 /// Check if the given index is present in the bitset.
-pub fn Bitset::has(self : Bitset, idx : Int) -> Bool {
+fn Bitset::has(self : Bitset, idx : Int) -> Bool {
   (self.0 & (1U << idx)) != 0
 }
 
 ///|
 /// Get the index of the bit in the bitset.
-pub fn Bitset::index_of(self : Bitset, idx : Int) -> Int {
+fn Bitset::index_of(self : Bitset, idx : Int) -> Int {
   (self.0 & ((1U << idx) - 1)).popcnt()
 }
 
@@ -39,32 +39,32 @@ pub fn Bitset::first_idx(self : Bitset) -> Int {
 
 ///|
 /// Set operation `union`.
-pub fn Bitset::union(self : Bitset, other : Bitset) -> Bitset {
+fn Bitset::union(self : Bitset, other : Bitset) -> Bitset {
   Bitset(self.0 | other.0)
 }
 
 ///|
 /// Set operation `intersection`.
-pub fn Bitset::intersection(self : Bitset, other : Bitset) -> Bitset {
+fn Bitset::intersection(self : Bitset, other : Bitset) -> Bitset {
   Bitset(self.0 & other.0)
 }
 
 ///|
 /// Add a new index to the bitset.
-pub fn Bitset::add(self : Bitset, idx : Int) -> Bitset {
+fn Bitset::add(self : Bitset, idx : Int) -> Bitset {
   Bitset(self.0 | (1U << idx))
 }
 
 ///|
 /// Remove an index from the bitset.
-pub fn Bitset::remove(self : Bitset, idx : Int) -> Bitset {
+fn Bitset::remove(self : Bitset, idx : Int) -> Bitset {
   Bitset(self.0 ^ (1U << idx))
 }
 
 ///|
 /// Calculate the size of a bitset
 #alias(size, deprecated)
-pub fn Bitset::length(self : Bitset) -> Int {
+fn Bitset::length(self : Bitset) -> Int {
   let Bitset(self) = self
   self.popcnt()
 }

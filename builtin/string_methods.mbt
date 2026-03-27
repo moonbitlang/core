@@ -641,9 +641,16 @@ pub fn StringView::trim_start(
   self : StringView,
   chars? : StringView = "\t\n\r ",
 ) -> StringView {
-  loop self {
-    [] as v => v
-    [c, .. rest] as v => if chars.contains_char(c) { continue rest } else { v }
+  for x = self {
+    match x {
+      [] as v => break v
+      [c, .. rest] as v =>
+        if chars.contains_char(c) {
+          continue rest
+        } else {
+          break v
+        }
+    }
   }
 }
 
@@ -682,9 +689,16 @@ pub fn StringView::trim_end(
   self : StringView,
   chars? : StringView = "\t\n\r ",
 ) -> StringView {
-  loop self {
-    [] as v => v
-    [.. rest, c] as v => if chars.contains_char(c) { continue rest } else { v }
+  for x = self {
+    match x {
+      [] as v => break v
+      [.. rest, c] as v =>
+        if chars.contains_char(c) {
+          continue rest
+        } else {
+          break v
+        }
+    }
   }
 }
 
@@ -1172,6 +1186,130 @@ pub fn String::after(self : String, needle : StringView) -> StringView? {
 }
 
 ///|
+/// Splits the string into a pair at the last occurrence of the separator.
+///
+/// Returns None if the separator is not found.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect("a::b::c".rev_split_once("::"), content="Some((\"a::b\", \"c\"))")
+///   inspect("nope".rev_split_once("::"), content="None")
+/// }
+/// ```
+pub fn StringView::rev_split_once(
+  self : StringView,
+  needle : StringView,
+) -> (StringView, StringView)? {
+  match self.rev_find(needle) {
+    Some(index) =>
+      Some(
+        (
+          self.view(end_offset=index),
+          self.view(start_offset=index + needle.length()),
+        ),
+      )
+    None => None
+  }
+}
+
+///|
+/// Splits the string into a pair at the last occurrence of the separator.
+///
+/// Returns None if the separator is not found.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect("a::b::c".rev_split_once("::"), content="Some((\"a::b\", \"c\"))")
+/// }
+/// ```
+pub fn String::rev_split_once(
+  self : String,
+  needle : StringView,
+) -> (StringView, StringView)? {
+  self[:].rev_split_once(needle)
+}
+
+///|
+/// Returns the substring before the last occurrence of the separator.
+///
+/// Returns None if the separator is not found.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect("a/b/c.txt".rev_before("/"), content="Some(\"a/b\")")
+/// }
+/// ```
+pub fn StringView::rev_before(
+  self : StringView,
+  needle : StringView,
+) -> StringView? {
+  match self.rev_find(needle) {
+    Some(index) => Some(self.view(end_offset=index))
+    None => None
+  }
+}
+
+///|
+/// Returns the substring before the last occurrence of the separator.
+///
+/// Returns None if the separator is not found.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect("a/b/c.txt".rev_before("/"), content="Some(\"a/b\")")
+/// }
+/// ```
+pub fn String::rev_before(self : String, needle : StringView) -> StringView? {
+  self[:].rev_before(needle)
+}
+
+///|
+/// Returns the substring after the last occurrence of the separator.
+///
+/// Returns None if the separator is not found.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect("a/b/c.txt".rev_after("/"), content="Some(\"c.txt\")")
+/// }
+/// ```
+pub fn StringView::rev_after(
+  self : StringView,
+  needle : StringView,
+) -> StringView? {
+  match self.rev_find(needle) {
+    Some(index) => Some(self.view(start_offset=index + needle.length()))
+    None => None
+  }
+}
+
+///|
+/// Returns the substring after the last occurrence of the separator.
+///
+/// Returns None if the separator is not found.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect("a/b/c.txt".rev_after("/"), content="Some(\"c.txt\")")
+/// }
+/// ```
+pub fn String::rev_after(self : String, needle : StringView) -> StringView? {
+  self[:].rev_after(needle)
+}
+
+///|
 test "split" {
   assert_eq("a,b,c".split(",").map(x => x.to_string()).collect(), [
     "a", "b", "c",
@@ -1219,6 +1357,23 @@ test "split_once before after" {
   inspect("hello".before(""), content="Some(\"\")")
   inspect("hello".after(""), content="Some(\"hello\")")
   inspect("😊::🚀".split_once("::"), content="Some((\"😊\", \"🚀\"))")
+}
+
+///|
+test "rev_split_once rev_before rev_after" {
+  inspect("a=b=c".rev_split_once("="), content="Some((\"a=b\", \"c\"))")
+  inspect("a=b=c".rev_before("="), content="Some(\"a=b\")")
+  inspect("a=b=c".rev_after("="), content="Some(\"c\")")
+  inspect("nope".rev_split_once("="), content="None")
+  inspect("nope".rev_before("="), content="None")
+  inspect("nope".rev_after("="), content="None")
+  inspect("a/b/c.txt".rev_before("/"), content="Some(\"a/b\")")
+  inspect("a/b/c.txt".rev_after("/"), content="Some(\"c.txt\")")
+  inspect("one=two".rev_split_once("="), content="Some((\"one\", \"two\"))")
+  inspect(
+    "😊::🚀::⭐".rev_split_once("::"),
+    content="Some((\"😊::🚀\", \"⭐\"))",
+  )
 }
 
 ///|

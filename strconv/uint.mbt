@@ -30,6 +30,7 @@ const UINT64_MAX : UInt64 = 0xffffffffffffffffUL
 /// These underscores do not affect the value.
 /// Examples:
 /// ```mbt check
+/// #warnings("-deprecated")
 /// test {
 ///   inspect(@strconv.parse_uint64("123"), content="123")
 ///   inspect(@strconv.parse_uint64("0xff", base=0), content="255")
@@ -41,6 +42,7 @@ const UINT64_MAX : UInt64 = 0xffffffffffffffffUL
 /// }
 /// ```
 /// 
+#deprecated("use `@string.parse_uint64` instead", skip_current_package=true)
 pub fn parse_uint64(
   str : StringView,
   base? : Int = 0,
@@ -63,33 +65,36 @@ pub fn parse_uint64(
     is (['0'..='9' | 'a'..='z' | 'A'..='Z', ..]
     | ['_', '0'..='9' | 'a'..='z' | 'A'..='Z', ..])
   guard has_digit else { syntax_err() }
-  loop (rest, 0UL, allow_underscore) {
-    (['_'], _, _) =>
-      // the last character cannot be underscore
-      syntax_err()
-    (['_', ..], _, false) => syntax_err()
-    (['_', .. rest], acc, true) => continue (rest, acc, false)
-    ([c, .. rest], acc, _) => {
-      let c = c.to_int()
-      let d = match c {
-        '0'..='9' => c - '0'
-        'a'..='z' => c + (10 - 'a')
-        'A'..='Z' => c + (10 - 'A')
-        _ => syntax_err()
+  for s = rest, acc = 0UL, au = allow_underscore {
+    match (s, acc, au) {
+      (['_'], _, _) =>
+        // the last character cannot be underscore
+        syntax_err()
+      (['_', ..], _, false) => syntax_err()
+      (['_', .. rest], acc, true) => continue rest, acc, false
+      ([c, .. rest], acc, _) => {
+        let c = c.to_int()
+        let d = match c {
+          '0'..='9' => c - '0'
+          'a'..='z' => c + (10 - 'a')
+          'A'..='Z' => c + (10 - 'A')
+          _ => syntax_err()
+        }
+        guard d < num_base else { syntax_err() }
+        guard acc < overflow_threshold else { range_err() }
+        let next_acc = acc * num_base.to_uint64() + d.to_uint64()
+        guard next_acc >= acc && next_acc <= UINT64_MAX else { range_err() }
+        continue rest, next_acc, true
       }
-      guard d < num_base else { syntax_err() }
-      guard acc < overflow_threshold else { range_err() }
-      let next_acc = acc * num_base.to_uint64() + d.to_uint64()
-      guard next_acc >= acc && next_acc <= UINT64_MAX else { range_err() }
-      continue (rest, next_acc, true)
+      ([], acc, _) => break acc
     }
-    ([], acc, _) => acc
   }
 }
 
 ///|
 /// Parse a string in the given base (0, 2 to 36), return an UInt number or an error.
 /// If the `~base` argument is 0, the base will be inferred by the prefix.
+#deprecated("use `@string.parse_uint` instead", skip_current_package=true)
 pub fn parse_uint(str : StringView, base? : Int = 0) -> UInt raise StrConvError {
   let n = parse_uint64(str, base~)
   if n > UINT_MAX.to_uint64() {

@@ -1,56 +1,65 @@
 # Tuple
 
-Tuple is a fixed-size collection of elements of different types. It is a lightweight data structure that can be used to store multiple values in a single variable. This sub-package introduces utils for binary tuples.
-
-# Usage
+Tuples are fixed-size collections of elements of different types. This package provides `Default` and `Arbitrary` trait implementations for tuples of up to 16 elements.
 
 ## Create
 
-Create a new tuple using the tuple literal syntax.
+Create tuples using literal syntax:
 
 ```mbt check
 ///|
 test {
-  let tuple2 = (1, 2)
-  let tuple3 = (1, 2, 3)
-  inspect((tuple2, tuple3), content="((1, 2), (1, 2, 3))")
+  let pair = (1, "hello")
+  let triple = (1, 2.0, true)
+  inspect(pair, content="(1, \"hello\")")
+  inspect(triple, content="(1, 2, true)")
 }
 ```
 
 ## Access
 
-You can access the elements of the tuple using pattern match or  dot access.
+Access elements using dot notation or pattern matching:
 
 ```mbt check
 ///|
 test {
-  let tuple = (1, 2)
+  let tuple = (1, "hello", true)
+  // Dot access
   assert_eq(tuple.0, 1)
-  assert_eq(tuple.1, 2)
-  let (a, b) = tuple
+  assert_eq(tuple.1, "hello")
+  // Pattern matching
+  let (a, b, c) = tuple
   assert_eq(a, 1)
-  assert_eq(b, 2)
+  assert_eq(b, "hello")
+  assert_eq(c, true)
+}
+```
+
+## Default Values
+
+Tuples implement `Default` when all element types do (up to 16 elements):
+
+```mbt check
+///|
+test {
+  let pair : (Int, String) = Default::default()
+  inspect(pair, content="(0, \"\")")
+  let triple : (Int, Bool, Double) = Default::default()
+  inspect(triple, content="(0, false, 0)")
 }
 ```
 
 ## Transformation
 
-You can transform the tuple using the matrix functions combined with `then`.
+Transform tuples using the pipe operator and closures:
 
-```mbt check  
+```mbt check
 ///|
 test {
   let tuple = (1, 2)
-  let tuple2 = ((pair : (Int, Int)) => (pair.0 + 1, pair.1))(tuple)
-  inspect(tuple2, content="(2, 2)")
-  let tuple3 = tuple |> pair => { (pair.0, pair.1 + 1) }
-  inspect(tuple3, content="(1, 3)")
-  let mapped = tuple |> pair => { (pair.0 + 1, pair.1 - 1) }
-  inspect(mapped, content="(2, 1)")
+  let swapped = tuple |> pair => { (pair.1, pair.0) }
+  inspect(swapped, content="(2, 1)")
+  let mapped = tuple |> pair => { (pair.0 * 2, pair.1 + 10) }
+  inspect(mapped, content="(2, 12)")
 }
 ```
-
-
-
-
-

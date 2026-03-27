@@ -19,6 +19,7 @@
 /// 
 #deprecated("We don't copy immutable array")
 #coverage.skip
+#alias(clone, deprecated)
 pub fn[A] T::copy(self : T[A]) -> T[A] {
   fn copy(t : Tree[A]) -> Tree[A] {
     match t {

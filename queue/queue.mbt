@@ -165,10 +165,7 @@ pub fn[A] Queue::unsafe_peek(self : Queue[A]) -> A {
 /// }
 /// ```
 pub fn[A] Queue::peek(self : Queue[A]) -> A? {
-  match self.first {
-    None => None
-    Some(first) => Some(first.content)
-  }
+  self.first.map(first => first.content)
 }
 
 ///|
@@ -236,12 +233,14 @@ pub fn[A] Queue::pop(self : Queue[A]) -> A? {
 /// }
 /// ```
 pub fn[A] Queue::each(self : Queue[A], f : (A) -> Unit) -> Unit {
-  loop self.first {
-    Some({ content, next }) => {
-      f(content)
-      continue next
+  for x = self.first {
+    match x {
+      Some({ content, next }) => {
+        f(content)
+        continue next
+      }
+      None => break ()
     }
-    None => ()
   }
 }
 
@@ -257,12 +256,14 @@ pub fn[A] Queue::each(self : Queue[A], f : (A) -> Unit) -> Unit {
 /// }
 /// ```
 pub fn[A] Queue::eachi(self : Queue[A], f : (Int, A) -> Unit) -> Unit {
-  loop (self.first, 0) {
-    (Some({ content, next }), index) => {
-      f(index, content)
-      continue (next, index + 1)
+  for x = self.first, index = 0 {
+    match (x, index) {
+      (Some({ content, next }), index) => {
+        f(index, content)
+        continue next, index + 1
+      }
+      (None, _) => break ()
     }
-    (None, _) => ()
   }
 }
 
@@ -278,9 +279,11 @@ pub fn[A] Queue::eachi(self : Queue[A], f : (Int, A) -> Unit) -> Unit {
 /// }
 /// ```
 pub fn[A, B] Queue::fold(self : Queue[A], init~ : B, f : (B, A) -> B) -> B {
-  loop (self.first, init) {
-    (None, acc) => acc
-    (Some({ content, next }), acc) => continue (next, f(acc, content))
+  for x = self.first, acc = init {
+    match (x, acc) {
+      (None, acc) => break acc
+      (Some({ content, next }), acc) => continue next, f(acc, content)
+    }
   }
 }
 
@@ -295,16 +298,19 @@ pub fn[A, B] Queue::fold(self : Queue[A], init~ : B, f : (B, A) -> B) -> B {
 ///   assert_eq(queue2.length(), 4)
 /// }
 /// ```
+#alias(clone, deprecated)
 pub fn[A] Queue::copy(self : Queue[A]) -> Queue[A] {
   guard self.first is Some({ content, next }) else { return new() }
   let first = { content, next: None }
-  let last = loop (first, next) {
-    (pre, Some({ content, next })) => {
-      let curr = { content, next: None }
-      pre.next = Some(curr)
-      continue (curr, next)
+  let last = for pre = first, n = next {
+    match (pre, n) {
+      (pre, Some({ content, next })) => {
+        let curr = { content, next: None }
+        pre.next = Some(curr)
+        continue curr, next
+      }
+      (pre, None) => break pre
     }
-    (pre, None) => pre
   }
   { length: self.length, first: Some(first), last: Some(last) }
 }

@@ -503,6 +503,7 @@ pub fn[A] Array::fill(
 ///   inspect(physical_equal(original, copied), content="false")
 /// }
 /// ```
+#alias(clone, deprecated)
 pub fn[T] Array::copy(self : Array[T]) -> Array[T] {
   let len = self.length()
   if len == 0 {

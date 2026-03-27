@@ -19,6 +19,9 @@ pub impl[K, V] Default for SortedMap[K, V] with default() {
 
 ///|
 pub impl[K : Eq, V : Eq] Eq for SortedMap[K, V] with equal(self, other) -> Bool {
+  if physical_equal(self, other) {
+    return true
+  }
   guard self.length() == other.length() else { return false }
   let iter = self.iter()
   let iter1 = other.iter()

@@ -4,7 +4,7 @@ import {
   "moonbitlang/core/char",
   "moonbitlang/core/double",
   "moonbitlang/core/float",
-  "moonbitlang/core/strconv",
+  "moonbitlang/core/internal/strconv" @internal/strconv,
   "moonbitlang/core/option",
   "moonbitlang/core/buffer",
 }

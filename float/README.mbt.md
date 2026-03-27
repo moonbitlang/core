@@ -92,16 +92,61 @@ test "byte representation" {
 }
 ```
 
-## Method Style
-
-All functions can also be called in method style:
+## Math Functions
 
 ```mbt check
 ///|
-test "method style calls" {
-  let x : Float = 3.14
-  inspect(x.floor(), content="3")
-  inspect(x.ceil(), content="4")
-  inspect(x.round(), content="3")
+test "math functions" {
+  inspect(Float::sqrt(9.0), content="3")
+  inspect(Float::signum(-5.0), content="-1")
+  inspect(Float::min(1.0, 2.0), content="1")
+  inspect(Float::max(1.0, 2.0), content="2")
+}
+```
+
+## Clamping and Interpolation
+
+```mbt check
+///|
+test "clamp and lerp" {
+  inspect(Float::clamp(5.0, min=0.0, max=3.0), content="3")
+  inspect(Float::clamp(-1.0, min=0.0, max=3.0), content="0")
+  inspect(Float::lerp(0.0, target=10.0, t=0.5), content="5")
+}
+```
+
+## Approximate Comparison
+
+```mbt check
+///|
+test "is_close" {
+  let a : Float = 0.1 + 0.2
+  inspect(Float::is_close(a, 0.3, relative_tolerance=1.0e-6), content="true")
+}
+```
+
+## Type Conversions
+
+Convert from other numeric types:
+
+```mbt check
+///|
+test "conversions" {
+  inspect(Float::from_int(42), content="42")
+  inspect(Float::from_double(3.14), content="3.140000104904175")
+  inspect((3.14 : Float).to_double(), content="3.140000104904175")
+  inspect((3.14 : Float).to_int(), content="3")
+}
+```
+
+## Range Iteration
+
+```mbt check
+///|
+test "range" {
+  let values = Float::until(0.0, 1.0, step=0.5).to_array()
+  inspect(values, content="[0, 0.5]")
+  let inclusive = Float::until(0.0, 1.0, step=0.5, inclusive=true).to_array()
+  inspect(inclusive, content="[0, 0.5, 1]")
 }
 ```

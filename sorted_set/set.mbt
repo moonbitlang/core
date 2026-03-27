@@ -47,6 +47,7 @@ pub fn[V : Compare] SortedSet::from_array(array : ArrayView[V]) -> SortedSet[V] 
 /// It is just copying the tree structure, not the values.
 /// 
 #alias(deep_clone, deprecated)
+#alias(clone, deprecated)
 pub fn[V] SortedSet::copy(self : SortedSet[V]) -> SortedSet[V] {
   match self.root {
     None => new()
@@ -89,7 +90,7 @@ fn[V] new_node_update_height(
 // Manipulations
 
 ///|
-/// Set operation `add`.
+/// Adds a value to the set. If the value already exists, it is replaced.
 pub fn[V : Compare] SortedSet::add(self : SortedSet[V], value : V) -> Unit {
   let (new_root, inserted) = add_node(self.root, value)
   if self.root != new_root {
@@ -101,7 +102,7 @@ pub fn[V : Compare] SortedSet::add(self : SortedSet[V], value : V) -> Unit {
 }
 
 ///|
-/// Set operation `remove`.
+/// Removes a value from the set. Does nothing if the value is not present.
 pub fn[V : Compare] SortedSet::remove(self : SortedSet[V], value : V) -> Unit {
   if self.root is Some(old_root) {
     let (new_root, deleted) = delete_node(old_root, value)
@@ -120,25 +121,27 @@ pub fn[V : Compare] SortedSet::remove(self : SortedSet[V], value : V) -> Unit {
 // the original set, and the original sets are not modified.
 
 ///|
-/// Return if a value is contained in the set.
+/// Returns `true` if the set contains the given value.
 pub fn[V : Compare] SortedSet::contains(self : SortedSet[V], value : V) -> Bool {
-  loop (self.root, value) {
-    (None, _) => false
-    (Some(node), value) => {
-      let compare_result = value.compare(node.value)
-      if compare_result == 0 {
-        true
-      } else if compare_result < 0 {
-        continue (node.left, value)
-      } else {
-        continue (node.right, value)
+  for root = self.root, value = value {
+    match (root, value) {
+      (None, _) => break false
+      (Some(node), value) => {
+        let compare_result = value.compare(node.value)
+        if compare_result == 0 {
+          break true
+        } else if compare_result < 0 {
+          continue node.left, value
+        } else {
+          continue node.right, value
+        }
       }
     }
   }
 }
 
 ///|
-/// Returns the union of two sets.
+/// Returns a new set containing all elements from both sets.
 pub fn[V : Compare] SortedSet::union(
   self : SortedSet[V],
   src : SortedSet[V],
@@ -255,7 +258,7 @@ fn[V] join_right(l : Node[V]?, v : V, r : Node[V]?) -> Node[V] {
 }
 
 ///|
-/// Returns the difference of two sets.
+/// Returns a new set containing elements in `self` that are not in `src`.
 #alias(diff, deprecated)
 pub fn[V : Compare] SortedSet::difference(
   self : SortedSet[V],
@@ -300,7 +303,7 @@ pub fn[V : Compare] SortedSet::symmetric_difference(
 }
 
 ///|
-/// Returns the intersection of two sets.
+/// Returns a new set containing only elements present in both sets.
 #alias(intersect, deprecated)
 pub fn[V : Compare] SortedSet::intersection(
   self : SortedSet[V],
@@ -312,25 +315,21 @@ pub fn[V : Compare] SortedSet::intersection(
 }
 
 ///|
-/// Returns if a set is a subset of another set.
+/// Returns `true` if every element of `self` is also in `src`.
 pub fn[V : Compare] SortedSet::subset(
   self : SortedSet[V],
   src : SortedSet[V],
 ) -> Bool {
-  let mut ret = true
-  self.each(x => if !src.contains(x) { ret = false })
-  ret
+  self.iter().all(x => src.contains(x))
 }
 
 ///|
-/// Returns if two sets are disjoint.
+/// Returns `true` if the two sets have no elements in common.
 pub fn[V : Compare] SortedSet::disjoint(
   self : SortedSet[V],
   src : SortedSet[V],
 ) -> Bool {
-  let mut ret = true
-  self.each(x => if src.contains(x) { ret = false })
-  ret
+  self.iter().all(x => !src.contains(x))
 }
 
 // General collection operations
@@ -348,7 +347,7 @@ pub impl[V : Eq] Eq for SortedSet[V] with equal(self, other) {
 }
 
 ///|
-/// Returns if the set is empty.
+/// Returns `true` if the set contains no elements.
 pub fn[V] SortedSet::is_empty(self : SortedSet[V]) -> Bool {
   self.root is None
 }
@@ -361,7 +360,7 @@ pub fn[V] SortedSet::length(self : SortedSet[V]) -> Int {
 }
 
 ///|
-/// Iterates the set.
+/// Iterates over all elements in the set in ascending order.
 pub fn[V] SortedSet::each(
   self : SortedSet[V],
   f : (V) -> Unit raise?,
@@ -378,7 +377,7 @@ pub fn[V] SortedSet::each(
 }
 
 ///|
-/// Iterates the set with index.
+/// Iterates over all elements in the set with their index, in ascending order.
 pub fn[V] SortedSet::eachi(
   self : SortedSet[V],
   f : (Int, V) -> Unit raise?,
@@ -414,32 +413,34 @@ pub fn[V] SortedSet::to_array(self : SortedSet[V]) -> Array[V] {
 }
 
 ///|
-/// Returns an iterator.
+/// Returns an iterator over the elements in ascending order.
 #alias(iterator, deprecated)
 pub fn[V] SortedSet::iter(self : SortedSet[V]) -> Iter[V] {
   let mut curr_node = self.root
   let parents = []
   Iter::new(fn() {
-    loop curr_node {
-      Some({ left: None, value, right, height: _ }) => {
-        curr_node = right
-        Some(value)
+    for x = curr_node {
+      match x {
+        Some({ left: None, value, right, height: _ }) => {
+          curr_node = right
+          break Some(value)
+        }
+        Some({ left, value, right, height: _ }) => {
+          parents.push((value, right))
+          continue left
+        }
+        None if parents.pop() is Some((value, right)) => {
+          curr_node = right
+          break Some(value)
+        }
+        None => break None
       }
-      Some({ left, value, right, height: _ }) => {
-        parents.push((value, right))
-        continue left
-      }
-      None if parents.pop() is Some((value, right)) => {
-        curr_node = right
-        Some(value)
-      }
-      None => None
     }
   })
 }
 
 ///|
-/// Create from `iter`.
+/// Creates a set from an iterator of values.
 #as_free_fn
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
@@ -452,7 +453,7 @@ pub fn[V : Compare] SortedSet::from_iter(iter : Iter[V]) -> SortedSet[V] {
 }
 
 ///|
-/// Converts the set to string.
+/// Outputs the set's string representation to a logger.
 pub impl[V : Show] Show for SortedSet[V] with output(self, logger) {
   logger.write_iter(self.iter(), prefix="@sorted_set.from_array([", suffix="])")
 }
@@ -471,7 +472,7 @@ impl[T : Show] Show for Node[T] with output(self, logger) {
 }
 
 ///|
-/// Function `range`.
+/// Returns an iterator over elements in the range `[low, high]` (inclusive).
 pub fn[V : Compare] SortedSet::range(
   self : SortedSet[V],
   low : V,
@@ -480,34 +481,36 @@ pub fn[V : Compare] SortedSet::range(
   let mut curr_node = self.root
   let parents = []
   let iter = Iter::new(() => {
-    loop curr_node {
-      Some({ value, left, right, height: _ }) => {
-        let cmp_key_low = value.compare(low)
-        let cmp_key_high = value.compare(high)
-        if cmp_key_low < 0 {
-          // `key < low`, the left subtree and the value itself
-          // should not be visited
-          continue right
-        } else if cmp_key_high > 0 {
-          // `key > high`, the right subtree and the value itself
-          // should not be visited
-          continue left
-          // `low <= value <= high`,
-          // the value itself falls in the range,
-          // and both the left and right sub tree need to be visited
-        } else if left is None {
-          curr_node = right
-          Some(value)
-        } else {
-          parents.push((value, right))
-          continue left
+    for x = curr_node {
+      match x {
+        Some({ value, left, right, height: _ }) => {
+          let cmp_key_low = value.compare(low)
+          let cmp_key_high = value.compare(high)
+          if cmp_key_low < 0 {
+            // `key < low`, the left subtree and the value itself
+            // should not be visited
+            continue right
+          } else if cmp_key_high > 0 {
+            // `key > high`, the right subtree and the value itself
+            // should not be visited
+            continue left
+            // `low <= value <= high`,
+            // the value itself falls in the range,
+            // and both the left and right sub tree need to be visited
+          } else if left is None {
+            curr_node = right
+            break Some(value)
+          } else {
+            parents.push((value, right))
+            continue left
+          }
         }
+        None if parents.pop() is Some((value, right)) => {
+          curr_node = right
+          break Some(value)
+        }
+        None => break None
       }
-      None if parents.pop() is Some((value, right)) => {
-        curr_node = right
-        Some(value)
-      }
-      None => None
     }
   })
   iter.iter()

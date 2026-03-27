@@ -225,3 +225,43 @@ test {
   )
 }
 ```
+
+## Creating from Existing Data
+
+Create buffers from existing byte data:
+
+```mbt check
+///|
+test {
+  let buf = @buffer.from_bytes(b"hello")
+  inspect(buf.length(), content="5")
+  let buf2 = @buffer.from_array([b'a', b'b', b'c'][:])
+  inspect(buf2.length(), content="3")
+}
+```
+
+## Writing Strings as UTF-8
+
+Write strings encoded as UTF-8 bytes:
+
+```mbt check
+///|
+test {
+  let buf = @buffer.new()
+  buf.write_string_utf8("hi"[:])
+  inspect(buf.to_bytes(), content="b\"hi\"")
+}
+```
+
+## LEB128 Encoding
+
+Write integers in LEB128 variable-length encoding:
+
+```mbt check
+///|
+test {
+  let buf = @buffer.new()
+  buf.write_leb128(624485)
+  inspect(buf.to_bytes(), content="b\"\\xe5\\x8e&\"")
+}
+```

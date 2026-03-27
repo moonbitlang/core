@@ -32,3 +32,21 @@ test "panic set with empty array" {
   let v1 = v.set(0, 10) // This should trigger the panic in set function
   inspect(v1, content="ImmutableVec::[]")
 }
+
+///|
+test "panic at with negative index" {
+  let v = @array.from_array([1, 2, 3, 4, 5])
+  v[-1] |> ignore
+}
+
+///|
+test "panic at with out-of-bounds index" {
+  let v = @array.from_array([1, 2, 3, 4, 5])
+  v[5] |> ignore
+}
+
+///|
+test "panic at on empty array" {
+  let v : @array.T[Int] = @array.new()
+  v[0] |> ignore
+}

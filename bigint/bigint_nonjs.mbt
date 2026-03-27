@@ -38,10 +38,41 @@ struct BigInt {
 }
 
 ///|
+using @debug {trait Debug, type Repr}
+
+///|
 priv enum Sign {
   Positive
   Negative
-} derive(Eq)
+} derive(Eq, @debug.Debug)
+
+///|
+test "internal repr" {
+  struct BigIntRepr {
+    limbs : FixedArray[UInt]
+    sign : Sign
+    len : Int
+  } derive(Debug)
+  fn convert(b : BigInt) -> BigIntRepr {
+    { limbs: b.limbs, sign: b.sign, len: b.len }
+  }
+  @debug.debug_inspect(
+    [0N, 1, 2, 3, 4, -1, -2, -3, -4].map(convert),
+    content=(
+      #|[
+      #|  { limbs: <FixedArray: [0, 0]>, sign: Positive, len: 1 },
+      #|  { limbs: <FixedArray: [1, 0]>, sign: Positive, len: 1 },
+      #|  { limbs: <FixedArray: [2, 0]>, sign: Positive, len: 1 },
+      #|  { limbs: <FixedArray: [3, 0]>, sign: Positive, len: 1 },
+      #|  { limbs: <FixedArray: [4, 0]>, sign: Positive, len: 1 },
+      #|  { limbs: <FixedArray: [1, 0]>, sign: Negative, len: 1 },
+      #|  { limbs: <FixedArray: [2, 0]>, sign: Negative, len: 1 },
+      #|  { limbs: <FixedArray: [3, 0]>, sign: Negative, len: 1 },
+      #|  { limbs: <FixedArray: [4, 0]>, sign: Negative, len: 1 },
+      #|]
+    ),
+  )
+}
 
 // Hyper Params
 
@@ -1036,13 +1067,14 @@ fn BigInt::to_string_radix(self : BigInt, radix : Int) -> String {
       let base = BigInt::from_int(radix)
       let value = if is_negative { -self } else { self }
       let digits = []
-      loop value {
-        v =>
-          if v > zero {
-            let (q, r) = BigInt::grade_school_div(v, base)
-            digits.push(char_from_digit(r.to_int()))
-            continue q
-          }
+      for v = value {
+        if v > zero {
+          let (q, r) = BigInt::grade_school_div(v, base)
+          digits.push(char_from_digit(r.to_int()))
+          continue q
+        } else {
+          break
+        }
       }
       let builder = StringBuilder::new(
         size_hint=digits.length() + (if is_negative { 1 } else { 0 }),

@@ -1,15 +1,18 @@
 import {
   "moonbitlang/core/builtin",
   "moonbitlang/core/char",
+  "moonbitlang/core/double",
+  "moonbitlang/core/internal/strconv" @internal/strconv,
   "moonbitlang/core/string/internal/regex_engine" @re,
   "moonbitlang/core/string/internal/regex_parser",
   "moonbitlang/core/debug",
+  "moonbitlang/core/uint64",
+  "moonbitlang/core/array",
 }
 
 import {
   "moonbitlang/core/list",
   "moonbitlang/core/json",
-  "moonbitlang/core/array",
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/encoding/utf8",
   "moonbitlang/core/encoding/utf16",

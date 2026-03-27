@@ -22,15 +22,17 @@
 /// Trait for parsing values from textual input.
 ///
 /// Implement either `from_str` (preferred) or legacy `from_string`.
+#deprecated("use `@string.FromStr` instead", skip_current_package=true)
 pub(open) trait FromStr {
   #as_free_fn
+  #deprecated("use `@string.from_str` instead", skip_current_package=true)
   from_str(StringView) -> Self raise StrConvError = _
-  #deprecated("use `from_str` instead", skip_current_package=true)
+  #deprecated("use `@string.from_str` instead", skip_current_package=true)
   from_string(String) -> Self raise StrConvError = _
 }
 
 ///|
-#deprecated("replace `impl from_string` with `impl from_str`")
+#deprecated("replace `impl @strconv.FromStr::from_string` with `impl @string.FromStr::from_str`", skip_current_package=true)
 impl FromStr with from_str(str) {
   FromStr::from_string(str.to_string())
 }

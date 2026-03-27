@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+#warnings("-deprecated")
 test "try_fast_path overflow when shift is too large" {
   // When the shift (exponent - max_exponent_fast_path) is too large,
   // the multiplication of mantissa with int_pow10[shift] will overflow,
@@ -23,6 +24,7 @@ test "try_fast_path overflow when shift is too large" {
 }
 
 ///|
+#warnings("-deprecated")
 test "try_fast_path overflow when mantissa is too large" {
   // When the mantissa after shifting is larger than max_mantissa_fast_path,
   // line 133 will be triggered
@@ -32,6 +34,7 @@ test "try_fast_path overflow when mantissa is too large" {
 }
 
 ///|
+#warnings("-deprecated")
 test "corner cases" {
   inspect(try? @strconv.parse_double(".123"), content="Ok(0.123)")
   inspect(try? @strconv.parse_double("."), content="Err(invalid syntax)")
@@ -39,6 +42,7 @@ test "corner cases" {
 }
 
 ///|
+#warnings("-deprecated")
 test "parse_double infinity and NaN with trailing characters should error" {
   // These should trigger the uncovered line 84 in parse_double
   // parse_inf_nan succeeds but doesn't consume the entire string

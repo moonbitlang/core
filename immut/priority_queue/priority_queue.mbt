@@ -51,7 +51,7 @@ pub fn[A : Compare] PriorityQueue::from_array(
 }
 
 ///|
-/// Convert to `array`.
+/// Returns an array of all elements in descending priority order.
 pub fn[A : Compare] PriorityQueue::to_array(
   self : PriorityQueue[A],
 ) -> Array[A] {
@@ -74,14 +74,14 @@ pub fn[A : Compare] PriorityQueue::to_array(
 }
 
 ///|
-/// Return an iterator via `iter`.
+/// Returns an iterator over elements in descending priority order.
 #alias(iterator, deprecated)
 pub fn[A : Compare] PriorityQueue::iter(self : PriorityQueue[A]) -> Iter[A] {
   self.to_array().iter()
 }
 
 ///|
-/// Create from `iter`.
+/// Creates a priority queue from an iterator of values.
 #as_free_fn
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
@@ -97,9 +97,11 @@ priv struct Path(Int)
 ///|
 /// require: size >= 2
 fn path(size : Int) -> Path {
-  loop (size, 0) {
-    (1, y) => Path(y)
-    (x, y) => continue (x >> 1, (y << 1) | (x & 1))
+  for x = size, y = 0 {
+    match (x, y) {
+      (1, y) => break Path(y)
+      (x, y) => continue x >> 1, (y << 1) | (x & 1)
+    }
   }
 }
 
@@ -316,7 +318,8 @@ pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for Priority
 
 ///|
 pub impl[A : Compare] Eq for PriorityQueue[A] with equal(self, other) {
-  self.length() == other.length() && self.to_array() == other.to_array()
+  physical_equal(self, other) ||
+  (self.length() == other.length() && self.to_array() == other.to_array())
 }
 
 ///|

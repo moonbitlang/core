@@ -395,6 +395,7 @@ pub fn[A] Array::fill(
 ///   inspect(physical_equal(original, copied), content="false")
 /// }
 /// ```
+#alias(clone, deprecated)
 pub fn[T] Array::copy(self : Array[T]) -> Array[T] {
   JSArray::ofAnyArray(self).copy().toAnyArray()
 }

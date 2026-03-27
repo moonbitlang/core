@@ -48,6 +48,7 @@ pub fn Bytes::of_string(str : String) -> Bytes {
 /// }
 /// ```
 #deprecated("Bytes are immutable. Use `FixedArray::blit_from_bytes` if it's really necessary.")
+#alias(clone, deprecated)
 pub fn Bytes::copy(self : Bytes) -> Bytes {
   Bytes::makei(self.length(), i => self[i])
 }

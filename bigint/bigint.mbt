@@ -376,3 +376,8 @@ pub fn BigInt::to_uint16(self : BigInt) -> UInt16 {
 pub fn BigInt::to_int16(self : BigInt) -> Int16 {
   Int16::from_int(self.to_int())
 }
+
+///|
+pub impl @debug.Debug for BigInt with to_repr(self) {
+  @debug.Repr::integer(self.to_string())
+}

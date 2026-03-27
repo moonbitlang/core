@@ -22,6 +22,7 @@ let range_err = "value out of range"
 let base_err = "invalid base"
 
 ///|
+#warnings("-deprecated")
 fn parse_int64_as_result(s : String, base? : Int = 0) -> Result[Int64, String] {
   try @strconv.parse_int64(s, base~) |> Ok catch {
     StrConvError(err) => Err(err)
@@ -29,6 +30,7 @@ fn parse_int64_as_result(s : String, base? : Int = 0) -> Result[Int64, String] {
 }
 
 ///|
+#warnings("-deprecated")
 fn parse_int_as_result(s : String, base? : Int = 0) -> Result[Int, String] {
   try @strconv.parse_int(s, base~) |> Ok catch {
     StrConvError(err) => Err(err)

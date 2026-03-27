@@ -67,20 +67,24 @@ fn[T] new_branch_left(leaf : FixedArray[T], shift : Int) -> Tree[T] {
 ///|
 /// Get the rightmost child of a tree. 
 fn[T] Tree::get_first(self : Tree[T]) -> T {
-  match self {
-    Leaf(leaf) => leaf[0]
-    Node(node, _) => node[0].get_first()
-    Empty => abort("Index out of bounds")
+  for cur = self {
+    match cur {
+      Leaf(leaf) => break leaf[0]
+      Node(node, _) => continue node[0]
+      Empty => abort("Index out of bounds")
+    }
   }
 }
 
 ///|
 /// Get the leftmost child of a tree.
 fn[T] Tree::get_last(self : Tree[T]) -> T {
-  match self {
-    Leaf(leaf) => leaf[leaf.length() - 1]
-    Node(node, _) => node[node.length() - 1].get_last()
-    Empty => abort("Index out of bounds")
+  for cur = self {
+    match cur {
+      Leaf(leaf) => break leaf[leaf.length() - 1]
+      Node(node, _) => continue node[node.length() - 1]
+      Empty => abort("Index out of bounds")
+    }
   }
 }
 
@@ -91,13 +95,15 @@ fn[T] Tree::get_last(self : Tree[T]) -> T {
 /// - `self` is of height `shift / num_bits`.
 fn[T] Tree::get(self : Tree[T], index : Int, shift : Int) -> T {
   fn get_radix(node : Tree[T], shift : Int) -> T {
-    match node {
-      Leaf(leaf) => leaf[index & bitmask]
-      Node(node, None) =>
-        get_radix(node[radix_indexing(index, shift)], shift - num_bits)
-      Node(_, Some(_)) =>
-        abort("Unreachable: Node should not have sizes in get_radix")
-      Empty => abort("Index out of bounds")
+    for cur = node, s = shift {
+      match cur {
+        Leaf(leaf) => break leaf[index & bitmask]
+        Node(node, None) =>
+          continue node[radix_indexing(index, s)], s - num_bits
+        Node(_, Some(_)) =>
+          abort("Unreachable: Node should not have sizes in get_radix")
+        Empty => abort("Index out of bounds")
+      }
     }
   }
 

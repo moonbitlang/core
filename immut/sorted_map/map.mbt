@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-/// Create a new map with a key-value pair inserted.
+/// Returns a new map with the key-value pair added or updated.
 /// O(log n).
 ///
 #alias(insert, deprecated)
@@ -82,8 +82,8 @@ fn[K, V] glue(l : SortedMap[K, V], r : SortedMap[K, V]) -> SortedMap[K, V] {
 }
 
 ///|
-/// Create a new map with a key-value pair removed. O(log n).
-/// If the key is not a member or map, the original map is returned.
+/// Returns a new map with the given key removed. O(log n).
+/// If the key is not present, the original map is returned.
 pub fn[K : Compare, V] SortedMap::remove(
   self : SortedMap[K, V],
   key : K,
@@ -121,7 +121,7 @@ pub fn[K, V] SortedMap::filter_with_key(
 }
 
 ///|
-/// Convert to an array of key-value pairs.
+/// Returns an array of all key-value pairs in ascending key order.
 pub fn[K, V] SortedMap::to_array(self : SortedMap[K, V]) -> Array[(K, V)] {
   let arr = []
   self.each((k, v) => arr.push((k, v)))
@@ -160,9 +160,61 @@ pub fn[K : Compare, V] SortedMap::merge(
   self : SortedMap[K, V],
   other : SortedMap[K, V],
 ) -> SortedMap[K, V] {
-  let mut result = self
-  other.each((k, v) => result = result.add(k, v))
-  result
+  match (self, other) {
+    (Empty, _) => other
+    (_, Empty) => self
+    (_, Tree(k2, value=v2, l2, r2, ..)) => {
+      let (l1, _, r1) = self.split(k2)
+      let merged_l = l1.merge(l2)
+      let merged_r = r1.merge(r2)
+      join(merged_l, k2, v2, merged_r)
+    }
+  }
+}
+
+///|
+/// Splits the map by a key into (keys < k, value at k, keys > k).
+fn[K : Compare, V] SortedMap::split(
+  self : SortedMap[K, V],
+  key : K,
+) -> (SortedMap[K, V], V?, SortedMap[K, V]) {
+  match self {
+    Empty => (Empty, None, Empty)
+    Tree(k, value=v, l, r, ..) => {
+      let c = key.compare(k)
+      if c == 0 {
+        (l, Some(v), r)
+      } else if c < 0 {
+        let (ll, found, lr) = l.split(key)
+        (ll, found, join(lr, k, v, r))
+      } else {
+        let (rl, found, rr) = r.split(key)
+        (join(l, k, v, rl), found, rr)
+      }
+    }
+  }
+}
+
+///|
+/// Joins two trees with a key-value pair where all keys in left < key < all keys in right.
+fn[K, V] join(
+  l : SortedMap[K, V],
+  k : K,
+  v : V,
+  r : SortedMap[K, V],
+) -> SortedMap[K, V] {
+  match (l, r) {
+    (Empty, _) => balance(k, v, Empty, r)
+    (_, Empty) => balance(k, v, l, Empty)
+    (Tree(lk, value=lv, ll, lr, size=ls), Tree(rk, value=rv, rl, rr, size=rs)) =>
+      if ls * ratio < rs {
+        balance(rk, rv, join(l, k, v, rl), rr)
+      } else if rs * ratio < ls {
+        balance(lk, lv, ll, join(lr, k, v, r))
+      } else {
+        make_tree(k, v, l, r)
+      }
+  }
 }
 
 ///|

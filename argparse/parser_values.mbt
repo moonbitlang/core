@@ -303,7 +303,7 @@ fn parse_bool(value : String) -> Bool raise ArgParseError {
 
 ///|
 fn parse_count(value : String) -> Int raise ArgParseError {
-  try @strconv.parse_int(value) catch {
+  try @string.parse_int(value) catch {
     _ =>
       raise InvalidValue(
         "invalid value '\{value}' for count; expected a non-negative integer",

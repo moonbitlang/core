@@ -101,22 +101,53 @@ test "hyperbolic functions" {
 }
 ```
 
-## Special Functions
-
-### Two-argument Functions
-
-Some special mathematical functions taking two arguments:
+## Power and Root Functions
 
 ```mbt check
 ///|
-test "special functions" {
+test "power functions" {
+  inspect(@math.pow(2.0, 10.0), content="1024")
+  inspect(@math.cbrt(27.0), content="3")
+  inspect(@math.hypot(3.0, 4.0), content="5")
+  inspect(@math.scalbn(1.5, 3), content="12")
+}
+```
+
+## Two-argument Functions
+
+```mbt check
+///|
+test "two-argument functions" {
   // atan2 gives the angle in radians between the positive x-axis and the ray to point (x,y)
   inspect(@math.atan2(1.0, 1.0), content="0.7853981633974483")
+}
+```
 
-  // hypot computes sqrt(x*x + y*y) without intermediate overflow
-  inspect(@math.hypot(3.0, 4.0), content="5")
+## Float Variants
 
-  // Cube root
-  inspect(@math.cbrt(8.0), content="2")
+All trigonometric, exponential, and power functions have `Float` variants with an `f` suffix:
+
+```mbt check
+///|
+test "float variants" {
+  inspect(@math.sinf(1.0), content="0.8414709568023682")
+  inspect(@math.cosf(0.0), content="1")
+  inspect(@math.expf(1.0), content="2.7182817459106445")
+  inspect(@math.lnf(1.0), content="0")
+  inspect(@math.powf(2.0, 3.0), content="8")
+}
+```
+
+## Prime Number Functions
+
+Functions for generating and testing probable primes using the Miller-Rabin test:
+
+```mbt check
+///|
+test "primality" {
+  let rng = @random.Rand::new()
+  let prime = @math.probable_prime(64, rng)
+  inspect(@math.is_probable_prime(prime, rng), content="true")
+  inspect(@math.is_probable_prime(4N, rng), content="false")
 }
 ```

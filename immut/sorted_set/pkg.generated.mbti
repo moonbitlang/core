@@ -2,6 +2,7 @@
 package "moonbitlang/core/immut/sorted_set"
 
 import {
+  "moonbitlang/core/debug",
   "moonbitlang/core/json",
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/quickcheck/splitmix",
@@ -60,6 +61,8 @@ pub fn[A : Compare] SortedSet::subset(Self[A], Self[A]) -> Bool
 pub fn[A : Compare] SortedSet::symmetric_difference(Self[A], Self[A]) -> Self[A]
 pub fn[A] SortedSet::to_array(Self[A]) -> Array[A]
 pub fn[A : ToJson] SortedSet::to_json(Self[A]) -> Json
+#deprecated
+pub fn[K : @debug.Debug] SortedSet::to_repr(Self[K]) -> @debug.Repr
 pub fn[A : Compare] SortedSet::union(Self[A], Self[A]) -> Self[A]
 pub impl[A : Compare] Add for SortedSet[A]
 pub impl[A : Compare] Compare for SortedSet[A]
@@ -68,6 +71,7 @@ pub impl[A : Eq] Eq for SortedSet[A]
 pub impl[A : Hash] Hash for SortedSet[A]
 pub impl[A : Show] Show for SortedSet[A]
 pub impl[A : ToJson] ToJson for SortedSet[A]
+pub impl[K : @debug.Debug] @debug.Debug for SortedSet[K]
 pub impl[A : @json.FromJson + Compare] @json.FromJson for SortedSet[A]
 pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for SortedSet[X]
 
