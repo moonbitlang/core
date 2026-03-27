@@ -1,5 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "moonbitlang/core/immut/array"
+package "moonbitlang/core/immut/vector"
 
 import {
   "moonbitlang/core/debug",
@@ -14,57 +14,45 @@ import {
 // Types and methods
 type T[A]
 #alias("_[_]")
-#deprecated
 pub fn[A] T::at(Self[A], Int) -> A
-#deprecated
 pub fn[A] T::concat(Self[A], Self[A]) -> Self[A]
 #alias(clone, deprecated)
 #deprecated
 pub fn[A] T::copy(Self[A]) -> Self[A]
-#deprecated
+pub fn[A] T::drop(Self[A], Int) -> Self[A]
 pub fn[A] T::each(Self[A], (A) -> Unit raise?) -> Unit raise?
-#deprecated
 pub fn[A] T::eachi(Self[A], (Int, A) -> Unit raise?) -> Unit raise?
 #alias(fold_left, deprecated)
-#deprecated
 pub fn[A, B] T::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 #alias(of, deprecated)
-#as_free_fn(deprecated)
-#deprecated
+#as_free_fn(of, deprecated)
+#as_free_fn
 pub fn[A] T::from_array(ArrayView[A]) -> Self[A]
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
-#as_free_fn(deprecated)
-#deprecated
+#as_free_fn
 pub fn[A] T::from_iter(Iter[A]) -> Self[A]
-#deprecated
 pub fn[A] T::get(Self[A], Int) -> A?
-#deprecated
 pub fn[A] T::is_empty(Self[A]) -> Bool
 #alias(iterator, deprecated)
-#deprecated
 pub fn[A] T::iter(Self[A]) -> Iter[A]
-#deprecated
 pub fn[A] T::length(Self[A]) -> Int
-#as_free_fn(deprecated)
-#deprecated
+#as_free_fn
 pub fn[A] T::make(Int, A) -> Self[A]
-#as_free_fn(deprecated)
-#deprecated
+#as_free_fn
 pub fn[A] T::makei(Int, (Int) -> A raise?) -> Self[A] raise?
-#deprecated
 pub fn[A, B] T::map(Self[A], (A) -> B raise?) -> Self[B] raise?
-#as_free_fn(deprecated)
-#deprecated
+#as_free_fn
 pub fn[A] T::new() -> Self[A]
-#deprecated
+pub fn[A] T::peek(Self[A]) -> A?
+pub fn[A] T::pop(Self[A]) -> Self[A]?
 pub fn[A] T::push(Self[A], A) -> Self[A]
 #alias(fold_right, deprecated)
-#deprecated
 pub fn[A, B] T::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
-#deprecated
 pub fn[A] T::set(Self[A], Int, A) -> Self[A]
-#deprecated
+pub fn[A] T::slice(Self[A], Int, Int) -> Self[A]
+pub fn[A] T::split(Self[A], Int) -> (Self[A], Self[A])
+pub fn[A] T::take(Self[A], Int) -> Self[A]
 pub fn[A] T::to_array(Self[A]) -> Array[A]
 #deprecated
 pub fn[A : @debug.Debug] T::to_repr(Self[A]) -> @debug.Repr
