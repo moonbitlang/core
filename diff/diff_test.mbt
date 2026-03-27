@@ -176,6 +176,39 @@ test "delete then insert to hunks" {
 }
 
 ///|
+test "delete then insert to hunks without context" {
+  let old = ["fn main() {", "  println(\"foo\")", "}"][:]
+  let new = ["fn main() {", "  println(\"bar\")", "}"][:]
+  let d = @diff.Diff(old~, new~)
+  let patience = @diff.Diff(old~, new~, patience=true)
+  inspect(
+    hunks_to_string(d.group(radius=0)),
+    content=(
+      #|@@ -2 +2 @@
+      #|-  println("foo")
+      #|+  println("bar")
+      #|
+    ),
+  )
+  inspect(
+    hunks_to_string(patience.group(radius=0)),
+    content=(
+      #|@@ -2 +2 @@
+      #|-  println("foo")
+      #|+  println("bar")
+      #|
+    ),
+  )
+}
+
+///|
+test "panic group with negative radius" {
+  let old = ["fn main() {", "}"][:]
+  let new = old
+  ignore(@diff.Diff(old~, new~).group(radius=-1))
+}
+
+///|
 test "large text to hunks" {
   let old = [
       "alert", "chop", "brave", "arise", "bring", "boy", "answer", "count", "begin",
