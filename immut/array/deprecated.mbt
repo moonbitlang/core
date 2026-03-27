@@ -17,9 +17,9 @@
 /// Since it is an immutable data structure,
 /// it is rarely the case that you would need this function.
 /// 
-#deprecated("We don't copy immutable array")
+#deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
 #coverage.skip
-#alias(clone, deprecated)
+#alias(clone, deprecated="Use the corresponding function in `immut/vector` instead")
 pub fn[A] T::copy(self : T[A]) -> T[A] {
   fn copy(t : Tree[A]) -> Tree[A] {
     match t {
