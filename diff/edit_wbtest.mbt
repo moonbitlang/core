@@ -59,3 +59,14 @@ test "range display for single and empty span" {
     content="@@ -4,0 +3 @@",
   )
 }
+
+///|
+test "range display spans replacement ending with insert" {
+  inspect(
+    HunkHeader::new([
+      Delete(old_index=1, new_index=1, old_len=1),
+      Insert(old_index=1, new_index=1, new_len=1),
+    ]).to_string(),
+    content="@@ -2 +2 @@",
+  )
+}
