@@ -13,13 +13,13 @@
 // limitations under the License.
 
 ///|
-/// Physically copy the array.
+/// Physically copy the vector.
 /// Since it is an immutable data structure,
 /// it is rarely the case that you would need this function.
 /// 
-#deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
+#deprecated("We don't copy immutable vector")
 #coverage.skip
-#alias(clone, deprecated="Use the corresponding function in `immut/vector` instead")
+#alias(clone, deprecated)
 pub fn[A] T::copy(self : T[A]) -> T[A] {
   fn copy(t : Tree[A]) -> Tree[A] {
     match t {
@@ -36,5 +36,10 @@ pub fn[A] T::copy(self : T[A]) -> T[A] {
     }
   }
 
-  { tree: copy(self.tree), size: self.size, shift: self.shift }
+  {
+    tree: copy(self.tree),
+    tail: self.tail.copy(),
+    size: self.size,
+    shift: self.shift,
+  }
 }

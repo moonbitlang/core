@@ -18,14 +18,16 @@
 
 ///|
 /// Return a new empty array
-#as_free_fn
+#deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
+#as_free_fn(deprecated="Use the corresponding function in `immut/vector` instead")
 pub fn[A] T::new() -> T[A] {
   { tree: Tree::empty(), size: 0, shift: 0 }
 }
 
 ///|
 /// Create a persistent array with a given length and value.
-#as_free_fn
+#deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
+#as_free_fn(deprecated="Use the corresponding function in `immut/vector` instead")
 pub fn[A] T::make(len : Int, value : A) -> T[A] {
   let quot = len / branching_factor
   let rem = len % branching_factor
@@ -47,7 +49,8 @@ pub fn[A] T::make(len : Int, value : A) -> T[A] {
 
 ///|
 /// Create a persistent array with a given length and a function to generate values.
-#as_free_fn
+#deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
+#as_free_fn(deprecated="Use the corresponding function in `immut/vector` instead")
 pub fn[A] T::makei(len : Int, f : (Int) -> A raise?) -> T[A] raise? {
   let quot = len / branching_factor
   let rem = len % branching_factor
@@ -81,18 +84,19 @@ pub fn[A] T::makei(len : Int, f : (Int) -> A raise?) -> T[A] raise? {
 ///   assert_eq(v, @array.from_array([1, 2, 3]))
 /// }
 /// ```
-#as_free_fn
-#alias(of, deprecated="Use from_array instead")
-#as_free_fn(of, deprecated="Use from_array instead")
+#deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
+#as_free_fn(deprecated="Use the corresponding function in `immut/vector` instead")
+#alias(of, deprecated="Use the corresponding function in `immut/vector` instead")
 pub fn[A] T::from_array(arr : ArrayView[A]) -> T[A] {
-  makei(arr.length(), i => arr[i])
+  T::makei(arr.length(), i => arr[i])
 }
 
 ///|
 /// Creates an immutable array from an iterator of values.
-#as_free_fn
-#alias(from_iterator, deprecated)
-#as_free_fn(from_iterator, deprecated)
+#deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
+#as_free_fn(deprecated="Use the corresponding function in `immut/vector` instead")
+#alias(from_iterator, deprecated="Use the corresponding function in `immut/vector` instead")
+#as_free_fn(from_iterator, deprecated="Use the corresponding function in `immut/vector` instead")
 pub fn[A] T::from_iter(iter : Iter[A]) -> T[A] {
   let mut buf : FixedArray[A] = []
   let mut index = 0
@@ -129,6 +133,7 @@ pub fn[A] T::from_iter(iter : Iter[A]) -> T[A] {
 
 ///|
 /// Returns a mutable array containing all elements.
+#deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
 pub fn[A] T::to_array(self : T[A]) -> Array[A] {
   if self.is_empty() {
     []
@@ -145,12 +150,14 @@ pub fn[A] T::to_array(self : T[A]) -> Array[A] {
 
 ///|
 /// Returns `true` if the array contains no elements.
+#deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
 pub fn[A] T::is_empty(self : T[A]) -> Bool {
   self.size == 0
 }
 
 ///|
 /// Returns the number of elements in the array.
+#deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
 pub fn[A] T::length(self : T[A]) -> Int {
   self.size
 }
@@ -169,6 +176,7 @@ pub fn[A] T::length(self : T[A]) -> Int {
 ///   inspect(v[0], content="1")
 /// }
 /// ```
+#deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
 #alias("_[_]")
 pub fn[A] T::at(self : T[A], index : Int) -> A {
   guard index >= 0 && index < self.size
@@ -203,6 +211,7 @@ pub fn[A] T::at(self : T[A], index : Int) -> A {
 ///   inspect(v.get(3), content="None")
 /// }
 /// ```
+#deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
 pub fn[A] T::get(self : T[A], index : Int) -> A? {
   guard 0 <= index && index < self.size else { None }
   Some(self[index])
@@ -222,6 +231,7 @@ pub fn[A] T::get(self : T[A], index : Int) -> A? {
 ///   assert_eq(v.set(1, 10), @array.from_array([1, 10, 3, 4, 5]))
 /// }
 /// ```
+#deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
 pub fn[A] T::set(self : T[A], index : Int, value : A) -> T[A] {
   guard index >= 0 && index < self.size
   {
@@ -241,6 +251,7 @@ pub fn[A] T::set(self : T[A], index : Int, value : A) -> T[A] {
 ///   assert_eq(v.push(4), @array.from_array([1, 2, 3, 4]))
 /// }
 /// ```
+#deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
 pub fn[A] T::push(self : T[A], value : A) -> T[A] {
   let (tree, shift) = self.tree.push_end(self.shift, value)
   { tree, size: self.size + 1, shift }
@@ -248,6 +259,7 @@ pub fn[A] T::push(self : T[A], value : A) -> T[A] {
 
 ///|
 /// Given two trees, concatenate them into a new tree.
+#deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
 pub fn[A] T::concat(self : T[A], other : T[A]) -> T[A] {
   if self.is_empty() {
     return other
@@ -277,7 +289,8 @@ pub impl[A] Add for T[A] with add(self, other) {
 
 ///|
 /// Returns an iterator over the elements of the array.
-#alias(iterator, deprecated)
+#deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
+#alias(iterator, deprecated="Use the corresponding function in `immut/vector` instead")
 pub fn[A] T::iter(self : T[A]) -> Iter[A] {
   self.tree.iter()
 }
@@ -294,6 +307,7 @@ pub fn[A] T::iter(self : T[A]) -> Iter[A] {
 ///   assert_eq(arr, [1, 2, 3, 4, 5])
 /// }
 /// ```
+#deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
 pub fn[A] T::each(self : T[A], f : (A) -> Unit raise?) -> Unit raise? {
   self.tree.each(f)
 }
@@ -310,6 +324,7 @@ pub fn[A] T::each(self : T[A], f : (A) -> Unit raise?) -> Unit raise? {
 ///   assert_eq(arr, [0, 2, 6, 12, 20])
 /// }
 /// ```
+#deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
 pub fn[A] T::eachi(self : T[A], f : (Int, A) -> Unit raise?) -> Unit raise? {
   self.tree.eachi(f, self.shift, 0)
 }
@@ -324,7 +339,8 @@ pub fn[A] T::eachi(self : T[A], f : (Int, A) -> Unit raise?) -> Unit raise? {
 ///   assert_eq(v.fold((a, b) => a + b, init=0), 15)
 /// }
 /// ```
-#alias(fold_left, deprecated)
+#deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
+#alias(fold_left, deprecated="Use the corresponding function in `immut/vector` instead")
 pub fn[A, B] T::fold(
   self : T[A],
   init~ : B,
@@ -343,7 +359,8 @@ pub fn[A, B] T::fold(
 ///   assert_eq(v.rev_fold((a, b) => a + b, init=0), 15)
 /// }
 /// ```
-#alias(fold_right, deprecated)
+#deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
+#alias(fold_right, deprecated="Use the corresponding function in `immut/vector` instead")
 pub fn[A, B] T::rev_fold(
   self : T[A],
   init~ : B,
@@ -362,6 +379,7 @@ pub fn[A, B] T::rev_fold(
 ///   assert_eq(v.map(e => e * 2), @array.from_array([2, 4, 6, 8, 10]))
 /// }
 /// ```
+#deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
 pub fn[A, B] T::map(self : T[A], f : (A) -> B raise?) -> T[B] raise? {
   { tree: self.tree.map(f), size: self.size, shift: self.shift }
 }
@@ -375,7 +393,7 @@ pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X] with arbitrar
   size,
   rs,
 ) {
-  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
+  @quickcheck.Arbitrary::arbitrary(size, rs) |> T::from_array
 }
 
 ///|

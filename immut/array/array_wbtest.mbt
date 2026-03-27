@@ -19,7 +19,7 @@ fn[T] Tree::is_empty_tree(self : Tree[T]) -> Bool {
 
 ///|
 test "mix" {
-  let mut v = new()
+  let mut v : T[Int] = T::new()
   inspect(v.tree.is_empty_tree(), content="true")
   for i in 0..<100 {
     v = v.push(i)
@@ -45,7 +45,7 @@ test "mix" {
   inspect(ct2, content="19800")
   inspect(v.tree.is_empty_tree(), content="false")
   let large_const = branching_factor * branching_factor + 1
-  let v = for i in 0..<large_const; v = (new() : T[Int]) {
+  let v = for i in 0..<large_const; v = (T::new() : T[Int]) {
     continue v.push(i)
   } nobreak {
     v
@@ -61,14 +61,14 @@ test "mix" {
 test "get" {
   let bf = branching_factor_power(4)
   let v_content = random_array(bf)
-  let v = from_iter(v_content.iter())
+  let v = T::from_iter(v_content.iter())
   inspect(v.length(), content=bf.to_string())
   inspect(v[0], content=v_content[0].to_string())
   inspect(v[bf - 1], content=v_content[bf - 1].to_string())
   inspect(v[bf / 2], content=v_content[bf / 2].to_string())
   let bf = branching_factor
   let v_content = random_array(bf)
-  let v = from_iter(v_content.iter())
+  let v = T::from_iter(v_content.iter())
   inspect(v.length(), content=bf.to_string())
   inspect(v[0], content=v_content[0].to_string())
   inspect(v[bf - 1], content=v_content[bf - 1].to_string())

@@ -13,24 +13,7 @@
 // limitations under the License.
 
 ///|
-using @debug {trait Debug, type Repr}
-
-///|
-pub impl[A : Debug] Debug for T[A] with to_repr(self) {
-  Repr::opaque_(
-    "Array",
-    Repr::array(self.to_array().map(x => @debug.to_repr(x))),
-  )
-}
-
-///|
-#deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
-pub fn[A : Debug] T::to_repr(self : T[A]) -> Repr {
-  @debug.to_repr(self)
-}
-
-///|
-test "Debug for Array" {
-  let xs : T[Int] = T::from_array([1, 2, 3])
-  @debug.debug_inspect(xs, content="<Array: [1, 2, 3]>")
+test "panic get on empty tree should panic" {
+  let tree : Tree[Int] = Tree::Empty
+  tree.get(0, 5) |> ignore
 }

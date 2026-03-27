@@ -9,8 +9,6 @@ import {
   "moonbitlang/core/ref",
 } for "wbtest"
 
-warnings = "-deprecated"
-
 options(
   targets: {
     "panic_test.mbt": [ "not", "native", "llvm" ],

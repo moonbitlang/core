@@ -13,24 +13,16 @@
 // limitations under the License.
 
 ///|
-using @debug {trait Debug, type Repr}
-
-///|
-pub impl[A : Debug] Debug for T[A] with to_repr(self) {
-  Repr::opaque_(
-    "Array",
-    Repr::array(self.to_array().map(x => @debug.to_repr(x))),
-  )
+test "random property tests" {
+  run_test(104UL, 10, 4)
+  run_test(503UL, 50, 3)
+  run_test(10002UL, 200, 2)
+  run_test(53UL, 4, 1)
 }
 
 ///|
-#deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
-pub fn[A : Debug] T::to_repr(self : T[A]) -> Repr {
-  @debug.to_repr(self)
-}
-
-///|
-test "Debug for Array" {
-  let xs : T[Int] = T::from_array([1, 2, 3])
-  @debug.debug_inspect(xs, content="<Array: [1, 2, 3]>")
+fn run_test(seed : UInt64, rep : Int, max_lvl : Int) -> Unit raise {
+  let rng = Random(@ref.Ref(seed))
+  let rs = random_test_gen(rng, rep, max_lvl)
+  execute_array_test(rs)
 }
