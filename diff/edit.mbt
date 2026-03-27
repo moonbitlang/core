@@ -88,6 +88,7 @@ fn[T] group_edits(
   old~ : ArrayView[T],
   new~ : ArrayView[T],
 ) -> Array[Hunk[T]] {
+  guard radius >= 0 else { abort("radius must be non-negative") }
   if edits.is_empty() {
     return []
   }

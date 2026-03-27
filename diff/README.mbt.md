@@ -74,8 +74,9 @@ test "patience diff keeps unique anchors in place" {
 ## Group Into Hunks And Render
 
 `group` splits the edit script into `Hunk[T]` values, keeping `radius` lines
-of surrounding context (default 3). Each `Hunk[T]` implements `Show`, so you
-can print it directly as unified-diff output.
+of surrounding context (default 3). `radius` must be non-negative, and
+`radius=0` emits hunks without surrounding context. Each `Hunk[T]` implements
+`Show`, so you can print it directly as unified-diff output.
 
 ```mbt check
 ///|
