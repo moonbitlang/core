@@ -69,16 +69,18 @@ pub fn RecharSet::last_interval(self : RecharSet) -> (Rechar, Rechar)? {
 ///|
 /// Return whether the set contains character `c`.
 pub fn RecharSet::contains(self : RecharSet, c : Rechar) -> Bool {
-  loop self.0 {
-    Empty => false
-    Node(l~, lo~, hi~, r~, ..) =>
-      if c < lo {
-        continue l
-      } else if c > hi {
-        continue r
-      } else {
-        true
-      }
+  for node = self.0 {
+    match node {
+      Empty => break false
+      Node(l~, lo~, hi~, r~, ..) =>
+        if c < lo {
+          continue l
+        } else if c > hi {
+          continue r
+        } else {
+          break true
+        }
+    }
   }
 }
 
@@ -312,20 +314,22 @@ pub fn RecharSet::intervals(self : RecharSet) -> Iter[(Rechar, Rechar)] {
   let mut node = self.0
   let parents = []
   Iter::new(fn() {
-    loop node {
-      Node(l=Empty, lo~, hi~, r~, ..) => {
-        node = r
-        Some((lo, hi))
+    for curr = node {
+      match curr {
+        Node(l=Empty, lo~, hi~, r~, ..) => {
+          node = r
+          break Some((lo, hi))
+        }
+        Node(l~, lo~, hi~, r~, ..) => {
+          parents.push((lo, hi, r))
+          continue l
+        }
+        Empty if parents.pop() is Some((lo, hi, r)) => {
+          node = r
+          break Some((lo, hi))
+        }
+        Empty => break None
       }
-      Node(l~, lo~, hi~, r~, ..) => {
-        parents.push((lo, hi, r))
-        continue l
-      }
-      Empty if parents.pop() is Some((lo, hi, r)) => {
-        node = r
-        Some((lo, hi))
-      }
-      Empty => None
     }
   })
 }

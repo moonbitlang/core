@@ -22,29 +22,35 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: check
+        timeout-minutes: 10
         run: moon check --deny-warn --target all
 
       - name: moon info
+        timeout-minutes: 10
         run: |
           moon info --target wasm,wasm-gc,js,native
           git diff --exit-code
 
       - name: format diff
+        timeout-minutes: 10
         run: |
           moon fmt
           git diff --exit-code
 
       - name: run tests
+        timeout-minutes: 10
         uses: ./.github/actions/test
 
       - name: moon bundle
         run: moon bundle --all
 
       - name: check core size
+        timeout-minutes: 10
         if: ${{ matrix.os != 'windows-latest' }}
         run: find ./target -name '*.core' | xargs ls -lh
 
       - name: check core size on windows
+        timeout-minutes: 10
         if: ${{ matrix.os == 'windows-latest' }}
         run: Get-ChildItem -Path ".\target" -Recurse -Filter "*.core" | ForEach-Object { "{0} ({1} bytes)" -f $_.FullName, $_.Length }
 
@@ -62,7 +68,9 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: check
+        timeout-minutes: 10
         run: moon check --target native --deny-warn
 
       - name: run native release tests
+        timeout-minutes: 10
         uses: ./.github/actions/test-native-release

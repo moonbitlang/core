@@ -641,9 +641,16 @@ pub fn StringView::trim_start(
   self : StringView,
   chars? : StringView = "\t\n\r ",
 ) -> StringView {
-  loop self {
-    [] as v => v
-    [c, .. rest] as v => if chars.contains_char(c) { continue rest } else { v }
+  for x = self {
+    match x {
+      [] as v => break v
+      [c, .. rest] as v =>
+        if chars.contains_char(c) {
+          continue rest
+        } else {
+          break v
+        }
+    }
   }
 }
 
@@ -682,9 +689,16 @@ pub fn StringView::trim_end(
   self : StringView,
   chars? : StringView = "\t\n\r ",
 ) -> StringView {
-  loop self {
-    [] as v => v
-    [.. rest, c] as v => if chars.contains_char(c) { continue rest } else { v }
+  for x = self {
+    match x {
+      [] as v => break v
+      [.. rest, c] as v =>
+        if chars.contains_char(c) {
+          continue rest
+        } else {
+          break v
+        }
+    }
   }
 }
 

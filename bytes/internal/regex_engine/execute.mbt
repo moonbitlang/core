@@ -152,25 +152,27 @@ pub fn[T : Input] Regex::execute(
           symbol,
         )
       }
-      let (slot, status) = loop state.final_ {
-        Empty => {
-          let next_desc = @automata.delta(
-            ctx=self.ctx,
-            state.desc,
-            NULL_SYMBOL,
-            next_cat=final_cat,
-          )
-          let slot = next_desc.slot()
-          let status = next_desc.status()
-          state.final_ = @list.cons((final_cat, slot, status), state.final_)
-          (slot, status)
-        }
-        More(head, tail~) =>
-          if head.0 == final_cat {
-            (head.1, head.2)
-          } else {
-            continue tail
+      let (slot, status) = for entry = state.final_ {
+        match entry {
+          Empty => {
+            let next_desc = @automata.delta(
+              ctx=self.ctx,
+              state.desc,
+              NULL_SYMBOL,
+              next_cat=final_cat,
+            )
+            let slot = next_desc.slot()
+            let status = next_desc.status()
+            state.final_ = @list.cons((final_cat, slot, status), state.final_)
+            break (slot, status)
           }
+          More(head, tail~) =>
+            if head.0 == final_cat {
+              break (head.1, head.2)
+            } else {
+              continue tail
+            }
+        }
       }
       match status {
         Failed | Running => None

@@ -285,98 +285,100 @@ pub fn Json::stringify(
   // Explicit stack to replace recursive calls
   let stack : Array[WriteFrame] = []
   let mut depth = 0
-  loop Some(self) {
-    Some(value) => {
-      match value {
-        Object(members) =>
-          if members.is_empty() {
-            buf.write_string("{}")
-          } else {
-            depth += 1
-            buf.write_char('{')
-            buf.write_string(indent_str(depth, indent))
-            // After child value printed, we resume from this frame
-            stack.push(WriteFrame::Object(members.iter(), first=true))
-          }
-        Array(arr) =>
-          if arr.is_empty() {
-            buf.write_string("[]")
-          } else {
-            depth += 1
-            buf.write_char('[')
-            buf.write_string(indent_str(depth, indent))
-            stack.push(WriteFrame::Array(arr, i=0))
-          }
-        String(s) => {
-          buf.write_char('\"')
-          buf.write_string(escape(s, escape_slash~))
-          buf.write_char('\"')
-        }
-        Number(n, repr~) =>
-          match repr {
-            None => buf.write_object(n)
-            Some(r) => buf.write_string(r)
-          }
-        True => buf.write_string("true")
-        False => buf.write_string("false")
-        Null => buf.write_string("null")
-      }
-      continue None
-    }
-    None =>
-      // No current node to write; try to resume a pending container
-      match stack {
-        [] => break
-        [.., WriteFrame::Array(arr, i~) as frame] =>
-          if i < arr.length() {
-            let element = arr[i]
-            frame.i = i + 1
-            if i > 0 {
-              buf.write_char(',')
+  for x = Some(self) {
+    match x {
+      Some(value) => {
+        match value {
+          Object(members) =>
+            if members.is_empty() {
+              buf.write_string("{}")
+            } else {
+              depth += 1
+              buf.write_char('{')
               buf.write_string(indent_str(depth, indent))
+              // After child value printed, we resume from this frame
+              stack.push(WriteFrame::Object(members.iter(), first=true))
             }
-            continue Some(element)
-          } else {
-            depth -= 1
-            ignore(stack.pop())
-            buf.write_string(indent_str(depth, indent))
-            buf.write_char(']')
-            continue None
+          Array(arr) =>
+            if arr.is_empty() {
+              buf.write_string("[]")
+            } else {
+              depth += 1
+              buf.write_char('[')
+              buf.write_string(indent_str(depth, indent))
+              stack.push(WriteFrame::Array(arr, i=0))
+            }
+          String(s) => {
+            buf.write_char('\"')
+            buf.write_string(escape(s, escape_slash~))
+            buf.write_char('\"')
           }
-        [.., WriteFrame::Object(iterator, first~) as frame] =>
-          match iterator.next() {
-            Some((k, v)) => {
-              let mut v2 = v
-              if replacer is Some(replacer) {
-                if (replacer.f)(k, v) is Some(v) {
-                  v2 = v
-                } else {
-                  continue None
-                }
-              }
-              if !first {
+          Number(n, repr~) =>
+            match repr {
+              None => buf.write_object(n)
+              Some(r) => buf.write_string(r)
+            }
+          True => buf.write_string("true")
+          False => buf.write_string("false")
+          Null => buf.write_string("null")
+        }
+        continue None
+      }
+      None =>
+        // No current node to write; try to resume a pending container
+        match stack {
+          [] => break
+          [.., WriteFrame::Array(arr, i~) as frame] =>
+            if i < arr.length() {
+              let element = arr[i]
+              frame.i = i + 1
+              if i > 0 {
                 buf.write_char(',')
                 buf.write_string(indent_str(depth, indent))
               }
-              buf.write_char('\"')
-              buf.write_string(escape(k, escape_slash~))
-              buf.write_char('\"')
-              buf.write_char(':')
-              if indent > 0 {
-                buf.write_char(' ')
-              }
-              frame.first = false
-              continue Some(v2)
-            }
-            None => {
+              continue Some(element)
+            } else {
               depth -= 1
               ignore(stack.pop())
               buf.write_string(indent_str(depth, indent))
-              buf.write_char('}')
+              buf.write_char(']')
               continue None
             }
-          }
-      }
+          [.., WriteFrame::Object(iterator, first~) as frame] =>
+            match iterator.next() {
+              Some((k, v)) => {
+                let mut v2 = v
+                if replacer is Some(replacer) {
+                  if (replacer.f)(k, v) is Some(v) {
+                    v2 = v
+                  } else {
+                    continue None
+                  }
+                }
+                if !first {
+                  buf.write_char(',')
+                  buf.write_string(indent_str(depth, indent))
+                }
+                buf.write_char('\"')
+                buf.write_string(escape(k, escape_slash~))
+                buf.write_char('\"')
+                buf.write_char(':')
+                if indent > 0 {
+                  buf.write_char(' ')
+                }
+                frame.first = false
+                continue Some(v2)
+              }
+              None => {
+                depth -= 1
+                ignore(stack.pop())
+                buf.write_string(indent_str(depth, indent))
+                buf.write_char('}')
+                continue None
+              }
+            }
+        }
+    }
   }
   buf.to_string()
 }

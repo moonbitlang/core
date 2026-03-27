@@ -109,10 +109,12 @@ fn info_size(info : Repr) -> Int {
 /// Returns `true` when a record field name can be printed without quotes.
 fn is_unquoted_key(key : String) -> Bool {
   key is ['a'..='z' | '_', .. rest] &&
-  (loop rest {
-    ['a'..='z' | 'A'..='Z' | '0'..='9' | '_', .. rest] => continue rest
-    [_, ..] => false
-    [] => true
+  (for rest = rest {
+    match rest {
+      ['a'..='z' | 'A'..='Z' | '0'..='9' | '_', .. rest] => continue rest
+      [_, ..] => break false
+      [] => break true
+    }
   })
 }
 

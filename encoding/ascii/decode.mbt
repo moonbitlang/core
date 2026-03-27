@@ -24,13 +24,15 @@ pub suberror Malformed {
 /// Raises `Malformed` if any byte is outside the ASCII range.
 pub fn decode(bytes : BytesView) -> String raise Malformed {
   let t : FixedArray[Byte] = FixedArray::make(bytes.length() * 2, 0)
-  let tlen = loop (0, bytes) {
-    (tlen, []) => tlen
-    (tlen, [0..=0x7F as b, .. rest]) => {
-      t.unsafe_set(tlen, b)
-      continue (tlen + 2, rest)
+  let tlen = for tlen = 0, bs = bytes {
+    match (tlen, bs) {
+      (tlen, []) => break tlen
+      (tlen, [0..=0x7F as b, .. rest]) => {
+        t.unsafe_set(tlen, b)
+        continue tlen + 2, rest
+      }
+      (_, _ as bytes) => raise Malformed(bytes)
     }
-    (_, _ as bytes) => raise Malformed(bytes)
   }
   t.unsafe_reinterpret_as_bytes().to_unchecked_string(offset=0, length=tlen)
 }
@@ -39,16 +41,18 @@ pub fn decode(bytes : BytesView) -> String raise Malformed {
 /// Decodes ASCII bytes into a string, replacing non-ASCII bytes with U+FFFD.
 pub fn decode_lossy(bytes : BytesView) -> String {
   let t : FixedArray[Byte] = FixedArray::make(bytes.length() * 2, 0)
-  let tlen = loop (0, bytes) {
-    (tlen, []) => tlen
-    (tlen, [0..=0x7F as b, .. rest]) => {
-      t.unsafe_set(tlen, b)
-      continue (tlen + 2, rest)
-    }
-    (tlen, [_, .. rest]) => {
-      t.unsafe_set(tlen, 0xFD)
-      t.unsafe_set(tlen + 1, 0xFF)
-      continue (tlen + 2, rest)
+  let tlen = for tlen = 0, bs = bytes {
+    match (tlen, bs) {
+      (tlen, []) => break tlen
+      (tlen, [0..=0x7F as b, .. rest]) => {
+        t.unsafe_set(tlen, b)
+        continue tlen + 2, rest
+      }
+      (tlen, [_, .. rest]) => {
+        t.unsafe_set(tlen, 0xFD)
+        t.unsafe_set(tlen + 1, 0xFF)
+        continue tlen + 2, rest
+      }
     }
   }
   t.unsafe_reinterpret_as_bytes().to_unchecked_string(offset=0, length=tlen)
