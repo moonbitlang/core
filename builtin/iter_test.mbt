@@ -568,20 +568,22 @@ fn Tree::iter(self : Tree) -> Iter[Int] {
   let parents = []
   let mut head = Some(self)
   Iter::new(fn() {
-    loop head {
-      Some(Leaf(x)) => {
-        head = None
-        Some(x)
+    for v = head {
+      match v {
+        Some(Leaf(x)) => {
+          head = None
+          break Some(x)
+        }
+        Some(Node(l, x, r)) => {
+          parents.push((x, r))
+          continue Some(l)
+        }
+        None if parents.pop() is Some((x, r)) => {
+          head = Some(r)
+          break Some(x)
+        }
+        None => break None
       }
-      Some(Node(l, x, r)) => {
-        parents.push((x, r))
-        continue Some(l)
-      }
-      None if parents.pop() is Some((x, r)) => {
-        head = Some(r)
-        Some(x)
-      }
-      None => None
     }
   })
 }
