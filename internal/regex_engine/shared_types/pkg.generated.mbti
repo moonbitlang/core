@@ -11,7 +11,7 @@ import {
 // Errors
 
 // Types and methods
-pub struct Category(Int)
+pub struct Category(Int) derive(Eq, Hash)
 pub fn Category::dummy() -> Self
 pub fn Category::inexistant() -> Self
 pub fn Category::inexistant_or_newline() -> Self
@@ -26,17 +26,12 @@ pub fn Category::not_word_end() -> Self
 pub fn Category::not_word_start() -> Self
 pub fn Category::word() -> Self
 pub impl Add for Category
-pub impl Eq for Category
-pub impl Hash for Category
 
 pub(all) enum Preference {
   Shortest
   Longest
   First
-}
-pub impl Eq for Preference
-pub impl Hash for Preference
-pub impl @debug.Debug for Preference
+} derive(Eq, Hash, @debug.Debug)
 
 pub struct Profile {
   lb : Int
@@ -53,8 +48,7 @@ pub fn Profile::new(valid~ : @rechar_set.RecharSet, word~ : @rechar_set.RecharSe
 pub(all) enum QuantifierMode {
   Greedy
   NonGreedy
-}
-pub impl @debug.Debug for QuantifierMode
+} derive(@debug.Debug)
 
 // Type aliases
 pub type Rechar = Int

@@ -19,8 +19,7 @@ pub fn[Any] Bench::keep(Self, Any) -> Unit
 #as_free_fn
 pub fn Bench::new() -> Self
 
-type Summary
-pub impl ToJson for Summary
+type Summary derive(ToJson)
 
 type Timestamp
 

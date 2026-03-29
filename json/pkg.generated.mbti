@@ -16,10 +16,7 @@ pub fn valid(StringView) -> Bool
 // Errors
 pub(all) suberror JsonDecodeError {
   JsonDecodeError((JsonPath, String))
-}
-pub impl Eq for JsonDecodeError
-pub impl Show for JsonDecodeError
-pub impl ToJson for JsonDecodeError
+} derive(Eq, Show, ToJson)
 
 pub(all) suberror ParseError {
   InvalidChar(Position, Char)
@@ -27,25 +24,20 @@ pub(all) suberror ParseError {
   InvalidNumber(Position, String)
   InvalidIdentEscape(Position)
   DepthLimitExceeded
-}
-pub impl Eq for ParseError
+} derive(Eq, ToJson)
 pub impl Show for ParseError
-pub impl ToJson for ParseError
 
 // Types and methods
-type JsonPath
+type JsonPath derive(Eq)
 pub fn JsonPath::add_index(Self, Int) -> Self
 pub fn JsonPath::add_key(Self, String) -> Self
-pub impl Eq for JsonPath
 pub impl Show for JsonPath
 pub impl ToJson for JsonPath
 
 pub(all) struct Position {
   line : Int
   column : Int
-}
-pub impl Eq for Position
-pub impl ToJson for Position
+} derive(Eq, ToJson)
 
 pub struct Replacer {
   // private fields
