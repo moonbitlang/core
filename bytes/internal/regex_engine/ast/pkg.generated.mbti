@@ -57,8 +57,7 @@ pub enum Assertion {
   StartOfWord
   EndOfWord
   NotWordBoundary
-}
-pub impl @debug.Debug for Assertion
+} derive(@debug.Debug)
 
 pub struct Pattern {
   desc : PatternDesc
@@ -75,15 +74,13 @@ pub enum PatternDesc {
   Preference(@shared_types.Preference, Pattern)
   Capture(name~ : String?, Pattern)
   Assertion(Assertion)
-}
-pub impl @debug.Debug for PatternDesc
+} derive(@debug.Debug)
 
 pub(all) struct Quantifier {
   min : Int
   max : Int?
   mode : @shared_types.QuantifierMode
-}
-pub impl @debug.Debug for Quantifier
+} derive(@debug.Debug)
 
 // Type aliases
 

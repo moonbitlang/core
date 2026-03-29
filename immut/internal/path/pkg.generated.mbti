@@ -7,14 +7,13 @@ pub fn[A : Hash] of(A) -> Path
 // Errors
 
 // Types and methods
-pub struct Path(UInt)
+pub struct Path(UInt) derive(Eq)
 pub fn Path::idx(Self) -> Int
 #deprecated
 pub fn Path::inner(Self) -> UInt
 pub fn Path::is_last(Self) -> Bool
 pub fn Path::next(Self) -> Self
 pub fn Path::push(Self, Int) -> Self
-pub impl Eq for Path
 
 // Type aliases
 
