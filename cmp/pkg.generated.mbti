@@ -17,13 +17,10 @@ pub fn[T, K : Compare] minmax_by_key(T, T, (T) -> K) -> (T, T)
 // Errors
 
 // Types and methods
-pub(all) struct Reverse[T](T)
+pub(all) struct Reverse[T](T) derive(Eq, Hash, Show)
 #deprecated
 pub fn[T] Reverse::inner(Self[T]) -> T
 pub impl[T : Compare] Compare for Reverse[T]
-pub impl[T : Eq] Eq for Reverse[T]
-pub impl[T : Hash] Hash for Reverse[T]
-pub impl[T : Show] Show for Reverse[T]
 
 // Type aliases
 

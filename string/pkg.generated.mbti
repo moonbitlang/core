@@ -22,13 +22,12 @@ pub fn parse_uint64(StringView, base? : Int) -> UInt64 raise
 // Errors
 
 // Types and methods
-type MatchResult
+type MatchResult derive(@debug.Debug)
 pub fn MatchResult::after(Self) -> StringView
 pub fn MatchResult::before(Self) -> StringView
 pub fn MatchResult::content(Self) -> StringView
 pub fn MatchResult::group(Self, Int) -> StringView?
 pub fn MatchResult::named_group(Self, String) -> StringView?
-pub impl @debug.Debug for MatchResult
 
 pub struct Regex {
   // private fields

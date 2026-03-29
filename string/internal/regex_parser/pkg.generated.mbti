@@ -11,9 +11,8 @@ import {
 pub fn parse(profile~ : @shared_types.Profile, mode~ : Mode, StringView) -> @ast.Pattern raise ParserError
 
 // Errors
-type ParserError
+type ParserError derive(@debug.Debug)
 pub impl Show for ParserError
-pub impl @debug.Debug for ParserError
 
 // Types and methods
 pub(all) enum Mode {

@@ -2,9 +2,9 @@
 package "moonbitlang/core/byte"
 
 // Values
-pub const MAX_VALUE : Byte = \xFF
+pub const MAX_VALUE : Byte = b'\xFF'
 
-pub const MIN_VALUE : Byte = \x00
+pub const MIN_VALUE : Byte = b'\x00'
 
 #deprecated
 pub let max_value : Byte

@@ -13,7 +13,7 @@ import {
 
 // Types and methods
 #alias(T, deprecated)
-type HashMap[K, V]
+type HashMap[K, V] derive(Eq)
 pub fn[K : Eq + Hash, V] HashMap::add(Self[K, V], K, V) -> Self[K, V]
 #alias("_[_]")
 pub fn[K : Eq + Hash, V] HashMap::at(Self[K, V], K) -> V
@@ -58,7 +58,6 @@ pub fn[K : Eq, V] HashMap::union(Self[K, V], Self[K, V]) -> Self[K, V]
 pub fn[K : Eq, V] HashMap::union_with(Self[K, V], Self[K, V], (K, V, V) -> V raise?) -> Self[K, V] raise?
 #alias(elems, deprecated)
 pub fn[K, V] HashMap::values(Self[K, V]) -> Iter[V]
-pub impl[K : Eq, V : Eq] Eq for HashMap[K, V]
 pub impl[K : Hash, V : Hash] Hash for HashMap[K, V]
 pub impl[K : Show, V : Show] Show for HashMap[K, V]
 pub impl[K : @debug.Debug, V : @debug.Debug] @debug.Debug for HashMap[K, V]
