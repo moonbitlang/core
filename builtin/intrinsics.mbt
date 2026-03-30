@@ -77,7 +77,7 @@ pub fn[T] abort(msg : String, loc~ : SourceLoc) -> T {
   let concat = "\n  at "
   let concat_length = 6
   let buffer : FixedArray[UInt16] = FixedArray::make(
-    msg.length() + concat_length + loc.length(),
+    msg.length() + concat_length + loc.length() + 1,
     0,
   )
   // TODO : intrinsic
@@ -93,6 +93,7 @@ pub fn[T] abort(msg : String, loc~ : SourceLoc) -> T {
   for i in 0..<loc.length() {
     buffer[offset + i] = loc[i]
   }
+  buffer[msg.length() + concat_length + loc.length()] = 10 // '\n'
   @abort.abort(unsafe_fixedarray_uint16_to_string(buffer))
 }
 
