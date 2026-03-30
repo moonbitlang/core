@@ -75,7 +75,7 @@ pub fn[T] physical_equal(a : T, b : T) -> Bool = "%refeq"
 pub fn[T] abort(msg : String, loc~ : SourceLoc) -> T {
   let loc = loc.repr()
   let concat = "\n  at "
-  let concat_length = 5
+  let concat_length = 6
   let buffer : FixedArray[UInt16] = FixedArray::make(
     msg.length() + concat_length + loc.length(),
     0,
