@@ -798,9 +798,7 @@ pub fn[T] Array::rev(self : Array[T]) -> Array[T] {
 pub fn[T] Array::split_at(self : Array[T], index : Int) -> (Array[T], Array[T]) {
   if index < 0 || index > self.length() {
     let len = self.length()
-    abort(
-      "index out of bounds: the len is from 0 to \{len} but the index is \{index}",
-    )
+    abort(out_of_index(len, index))
   }
   let v1 = Array::make_uninit(index)
   let v2 = Array::make_uninit(self.length() - index)
@@ -1125,10 +1123,7 @@ pub fn[T] Array::binary_search_by(
 /// ```
 pub fn[T] Array::swap(self : Array[T], i : Int, j : Int) -> Unit {
   if i >= self.length() || j >= self.length() || i < 0 || j < 0 {
-    let len = self.length()
-    abort(
-      "index out of bounds: the len is from 0 to \{len} but the index is (\{i}, \{j})",
-    )
+    abort(out_of_index(self.length(), i, index2=j))
   }
   let temp = self.unsafe_get(i)
   self.unsafe_set(i, self.unsafe_get(j))

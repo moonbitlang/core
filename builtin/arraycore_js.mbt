@@ -248,9 +248,7 @@ pub fn[T] Array::unsafe_pop(self : Array[T]) -> T {
 /// ```
 pub fn[T] Array::remove(self : Array[T], index : Int) -> T {
   guard index >= 0 && index < self.length() else {
-    abort(
-      "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
-    )
+    abort(out_of_index(self.length(), index))
   }
   let value = self.buffer()[index]
   let _ = JSArray::ofAnyArray(self).splice(index, 1)
@@ -275,9 +273,7 @@ pub fn[T] Array::remove(self : Array[T], index : Int) -> T {
 /// ```
 pub fn[T] Array::drain(self : Array[T], begin : Int, end : Int) -> Array[T] {
   guard begin >= 0 && end <= self.length() && begin <= end else {
-    abort(
-      "index out of bounds: the len is \{self.length()} but the index is (\{begin}, \{end})",
-    )
+    abort(out_of_index(self.length(), begin, index2=end))
   }
   JSArray::ofAnyArray(self).splice(begin, end - begin).toAnyArray()
 }
@@ -295,9 +291,7 @@ pub fn[T] Array::drain(self : Array[T], begin : Int, end : Int) -> Array[T] {
 /// ```
 pub fn[T] Array::insert(self : Array[T], index : Int, value : T) -> Unit {
   guard index >= 0 && index <= self.length() else {
-    abort(
-      "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
-    )
+    abort(out_of_index(self.length(), index))
   }
   let _ = JSArray::ofAnyArray(self).splice1(index, 0, JSValue::ofAny(value))
 }

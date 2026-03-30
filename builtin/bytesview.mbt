@@ -85,9 +85,7 @@ pub fn BytesView::is_empty(self : BytesView) -> Bool {
 #alias("_[_]")
 pub fn BytesView::at(self : BytesView, index : Int) -> Byte {
   guard index >= 0 && index < self.length() else {
-    abort(
-      "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
-    )
+    abort(out_of_index(self.length(), index))
   }
   self.bytes()[self.start() + index]
 }
