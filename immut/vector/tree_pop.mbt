@@ -49,12 +49,14 @@ fn[A] Tree::pop_rightmost_leaf(self : Tree[A], shift : Int) -> Tree[A] {
 ///|
 fn[A] Tree::shrink_top(self : Tree[A], shift : Int) -> (Tree[A], Int) {
   let mut current_shift = shift
-  loop self {
-    Node(children, _) if current_shift > 0 && children.length() == 1 => {
-      current_shift -= num_bits
-      continue children[0]
+  for tree = self {
+    match tree {
+      Node(children, _) if current_shift > 0 && children.length() == 1 => {
+        current_shift -= num_bits
+        continue children[0]
+      }
+      Empty => break (Empty, 0)
+      current => break (current, current_shift)
     }
-    Empty => (Empty, 0)
-    current => (current, current_shift)
   }
 }

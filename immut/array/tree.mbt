@@ -292,25 +292,27 @@ fn[A] Tree::iter(self : Tree[A]) -> Iter[A] {
   let mut curr_index = 0
   let parents = []
   Iter::new(fn() {
-    loop curr_tree {
-      Node(children, _) as t if curr_index < children.length() => {
-        let child = children.unsafe_get(curr_index)
-        parents.push((t, curr_index + 1))
-        curr_tree = child
-        curr_index = 0
-        continue child
+    for tree = curr_tree {
+      match tree {
+        Node(children, _) as t if curr_index < children.length() => {
+          let child = children.unsafe_get(curr_index)
+          parents.push((t, curr_index + 1))
+          curr_tree = child
+          curr_index = 0
+          continue child
+        }
+        Leaf(elems) if curr_index < elems.length() => {
+          let elem = elems.unsafe_get(curr_index)
+          curr_index += 1
+          break Some(elem)
+        }
+        _ if parents.pop() is Some((parent_tree, parent_index)) => {
+          curr_tree = parent_tree
+          curr_index = parent_index
+          continue parent_tree
+        }
+        _ => break None
       }
-      Leaf(elems) if curr_index < elems.length() => {
-        let elem = elems.unsafe_get(curr_index)
-        curr_index += 1
-        Some(elem)
-      }
-      _ if parents.pop() is Some((parent_tree, parent_index)) => {
-        curr_tree = parent_tree
-        curr_index = parent_index
-        continue parent_tree
-      }
-      _ => None
     }
   })
 }
