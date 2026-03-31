@@ -22,7 +22,7 @@ test "random property tests" {
 
 ///|
 fn run_test(seed : UInt64, rep : Int, max_lvl : Int) -> Unit raise {
-  let rng = Random(@ref.Ref(seed))
+  let rng = Random(Ref(seed))
   let rs = random_test_gen(rng, rep, max_lvl)
   execute_array_test(rs)
 }

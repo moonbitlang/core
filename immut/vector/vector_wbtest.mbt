@@ -107,7 +107,7 @@ test "concat-multiple-full-tree" {
 ///|
 test "concat-multiple-random-tree" {
   let bf = branching_factor_power(2)
-  let rng = Random(@ref.Ref(0UL))
+  let rng = Random(Ref(0UL))
   execute_array_test(gen_concat_seq(2, _i => rng.int(limit=bf)))
 }
 
