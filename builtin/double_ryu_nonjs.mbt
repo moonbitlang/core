@@ -50,11 +50,12 @@ fn log10Pow2(e : Int) -> Int {
 
 ///|
 fn string_from_bytes(bytes : FixedArray[Byte], from : Int, to : Int) -> String {
-  let buf = StringBuilder::new(size_hint=bytes.length())
-  for i in from..<to {
-    buf.write_char(bytes[i].to_char())
+  let len = to - from
+  let buffer = FixedArray::make(len, UInt16::default())
+  for i in 0..<len {
+    buffer[i] = bytes[from + i].to_uint16()
   }
-  buf.to_string()
+  unsafe_fixedarray_uint16_to_string(buffer)
 }
 
 ///|
