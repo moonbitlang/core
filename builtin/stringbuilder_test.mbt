@@ -90,3 +90,9 @@ test "StringBuilder::write_stringview" {
   sb.write_stringview(ascii[1:4])
   inspect(sb.to_string(), content="orl")
 }
+
+///|
+test "panic StringBuilder::write_char with invalid code point" {
+  let sb = StringBuilder::new()
+  sb.write_char((0x110000).unsafe_to_char()) |> ignore
+}

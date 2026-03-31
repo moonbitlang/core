@@ -82,12 +82,14 @@ pub impl Logger for StringBuilder with write_char(self, ch) {
     self.grow_if_necessary(self.len + 1)
     self.data[self.len] = code.to_uint16()
     self.len += 1
-  } else {
+  } else if code <= 0x10FFFFU {
     self.grow_if_necessary(self.len + 2)
     let code = code - 0x10000U
     self.data[self.len] = (0xD800U + (code >> 10)).to_uint16()
     self.data[self.len + 1] = (0xDC00U + code.land(0x3FFU)).to_uint16()
     self.len += 2
+  } else {
+    abort("invalid code point")
   }
 }
 
