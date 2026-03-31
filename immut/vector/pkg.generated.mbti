@@ -12,7 +12,6 @@ import {
 // Errors
 
 // Types and methods
-#alias(T, deprecated)
 type Vector[A]
 #alias("_[_]")
 pub fn[A] Vector::at(Self[A], Int) -> A
