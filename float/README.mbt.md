@@ -134,8 +134,31 @@ Convert from other numeric types:
 test "conversions" {
   inspect(Float::from_int(42), content="42")
   inspect(Float::from_double(3.14), content="3.140000104904175")
+  inspect(Float::from_int64(100L), content="100")
+  inspect(Float::from_uint(42U), content="42")
+  inspect(Float::from_byte(b'\x41'), content="65")
   inspect((3.14 : Float).to_double(), content="3.140000104904175")
   inspect((3.14 : Float).to_int(), content="3")
+}
+```
+
+## Bit Reinterpretation
+
+Reinterpret the bit pattern of a float as an integer and vice versa (no conversion, just reinterpreting the 32 bits):
+
+```mbt check
+///|
+test "reinterpret" {
+  let f : Float = 1.0
+  let bits = f.reinterpret_as_int()
+  inspect(bits, content="1065353216") // IEEE 754: 0x3F800000
+  let roundtrip = Float::reinterpret_from_int(bits)
+  inspect(roundtrip, content="1")
+  // unsigned variant
+  let ubits = f.reinterpret_as_uint()
+  inspect(ubits, content="1065353216")
+  let roundtrip2 = Float::reinterpret_from_uint(ubits)
+  inspect(roundtrip2, content="1")
 }
 ```
 
