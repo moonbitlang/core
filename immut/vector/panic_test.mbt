@@ -47,6 +47,6 @@ test "panic at with out-of-bounds index" {
 
 ///|
 test "panic at on empty vector" {
-  let v : @vector.T[Int] = @vector.new()
+  let v : @vector.Vector[Int] = @vector.new()
   v[0] |> ignore
 }

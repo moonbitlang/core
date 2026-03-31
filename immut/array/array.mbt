@@ -87,6 +87,7 @@ pub fn[A] T::makei(len : Int, f : (Int) -> A raise?) -> T[A] raise? {
 #deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
 #as_free_fn(deprecated="Use the corresponding function in `immut/vector` instead")
 #alias(of, deprecated="Use the corresponding function in `immut/vector` instead")
+#as_free_fn(of, deprecated="Use the corresponding function in `immut/vector` instead")
 pub fn[A] T::from_array(arr : ArrayView[A]) -> T[A] {
   T::makei(arr.length(), i => arr[i])
 }

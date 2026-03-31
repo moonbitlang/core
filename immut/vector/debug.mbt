@@ -16,7 +16,7 @@
 using @debug {trait Debug, type Repr}
 
 ///|
-pub impl[A : Debug] Debug for T[A] with to_repr(self) {
+pub impl[A : Debug] Debug for Vector[A] with to_repr(self) {
   Repr::opaque_(
     "Vector",
     Repr::array(self.to_array().map(x => @debug.to_repr(x))),
@@ -25,12 +25,12 @@ pub impl[A : Debug] Debug for T[A] with to_repr(self) {
 
 ///|
 #deprecated("use `to_repr(a)` instead", skip_current_package=true)
-pub fn[A : Debug] T::to_repr(self : T[A]) -> Repr {
+pub fn[A : Debug] Vector::to_repr(self : Vector[A]) -> Repr {
   @debug.to_repr(self)
 }
 
 ///|
 test "Debug for Vector" {
-  let xs : T[Int] = from_array([1, 2, 3])
+  let xs : Vector[Int] = from_array([1, 2, 3])
   @debug.debug_inspect(xs, content="<Vector: [1, 2, 3]>")
 }

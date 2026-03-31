@@ -45,7 +45,7 @@ test "mix" {
   inspect(ct2, content="19800")
   inspect(v.tree.is_empty_tree(), content="false")
   let large_const = branching_factor * branching_factor + 1
-  let v = for i in 0..<large_const; v = (new() : T[Int]) {
+  let v = for i in 0..<large_const; v = (new() : Vector[Int]) {
     continue v.push(i)
   } nobreak {
     v
