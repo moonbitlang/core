@@ -15,14 +15,14 @@
 ///|
 test "is_empty" {
   let v = @vector.from_array([1, 2, 3, 4, 5])
-  let ve : @vector.T[Int] = @vector.new()
+  let ve : @vector.Vector[Int] = @vector.new()
   inspect(v.is_empty(), content="false")
   inspect(ve.is_empty(), content="true")
 }
 
 ///|
 test "arbitrary samples" {
-  let samples = (@quickcheck.samples(3) : Array[@vector.T[Int]])
+  let samples = (@quickcheck.samples(3) : Array[@vector.Vector[Int]])
   inspect(samples.length(), content="3")
 }
 
@@ -43,7 +43,7 @@ test "set with valid index at end" {
 ///|
 test "to_string" {
   let v = @vector.from_array([1, 2, 3, 4, 5])
-  let ve : @vector.T[Int] = @vector.new()
+  let ve : @vector.Vector[Int] = @vector.new()
   inspect(v, content="@immut/vector.from_array([1, 2, 3, 4, 5])")
   inspect(ve, content="@immut/vector.from_array([])")
 }
@@ -65,7 +65,7 @@ test "to_array" {
 
 ///|
 test "to_array empty" {
-  let v : @vector.T[Int] = @vector.new()
+  let v : @vector.Vector[Int] = @vector.new()
   inspect(v.to_array().to_string(), content="[]")
 }
 
@@ -83,7 +83,7 @@ test "iter" {
 ///|
 test "length" {
   let v = @vector.from_array([1, 2, 3, 4, 5])
-  let ve : @vector.T[Int] = @vector.new()
+  let ve : @vector.Vector[Int] = @vector.new()
   inspect(v.length(), content="5")
   inspect(ve.length(), content="0")
 }
@@ -129,7 +129,7 @@ test "from_array" {
 
 ///|
 test "iteri" {
-  let v : @vector.T[Int] = @vector.new()
+  let v : @vector.Vector[Int] = @vector.new()
   v.eachi((_i, _e) => abort("never reach"))
   let v = @vector.from_array([1, 2, 3, 4, 5])
   let mut s = 0
@@ -142,7 +142,7 @@ test "iteri" {
 
 ///|
 test "equal" {
-  let v0 : @vector.T[Int] = @vector.from_array([])
+  let v0 : @vector.Vector[Int] = @vector.from_array([])
   let v1 = @vector.from_array([1, 2, 3, 4, 5])
   let v2 = @vector.from_array([1, 2, 3, 4, 5])
   let v3 = @vector.from_array([1, 2, 3, 4, 6])
@@ -251,7 +251,7 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let pq : @vector.T[Int] = @vector.from_iter(Iter::empty())
+  let pq : @vector.Vector[Int] = @vector.from_iter(Iter::empty())
   inspect(pq, content="@immut/vector.from_array([])")
 }
 
@@ -262,7 +262,7 @@ test "hash" {
   inspect(l1.hash() == l2.hash(), content="true")
   let l3 = @vector.from_array([5, 4, 3, 2, 1])
   inspect(l1.hash() == l3.hash(), content="false")
-  let l4 : @vector.T[Int] = @vector.from_array([])
+  let l4 : @vector.Vector[Int] = @vector.from_array([])
   inspect(l1.hash() == l4.hash(), content="false")
   inspect(l4.hash() == l4.hash(), content="true")
 }
@@ -270,10 +270,10 @@ test "hash" {
 ///|
 test "concat_empty" {
   let a = @vector.from_array([1, 2, 3])
-  let b : @vector.T[Int] = @vector.new()
+  let b : @vector.Vector[Int] = @vector.new()
   let c = a.concat(b)
   inspect(c, content="@immut/vector.from_array([1, 2, 3])")
-  let a : @vector.T[Int] = @vector.new()
+  let a : @vector.Vector[Int] = @vector.new()
   let b = @vector.from_array([1, 2, 3])
   let c = a.concat(b)
   inspect(c, content="@immut/vector.from_array([1, 2, 3])")
@@ -317,7 +317,7 @@ test "compare" {
   let arr1 = @vector.from_array([1, 2, 3])
   let arr2 = @vector.from_array([1, 2, 4])
   let arr3 = @vector.from_array([1, 2])
-  let empty : @vector.T[Int] = @vector.new()
+  let empty : @vector.Vector[Int] = @vector.new()
   inspect(arr1.compare(arr2), content="-1")
   inspect(arr1.compare(arr3), content="1")
   inspect(arr3.compare(arr1), content="-1")

@@ -13,20 +13,20 @@
 // limitations under the License.
 
 //-----------------------------------------------------------------------------
-// Constructors (construct T or convert other types to T)
+// Constructors (construct Vector or convert other types to Vector)
 //-----------------------------------------------------------------------------
 
 ///|
 /// Return a new empty vector
 #as_free_fn
-pub fn[A] T::new() -> T[A] {
+pub fn[A] Vector::new() -> Vector[A] {
   make_t(Tree::empty(), [], 0, 0)
 }
 
 ///|
 /// Create a persistent vector with a given length and value.
 #as_free_fn
-pub fn[A] T::make(len : Int, value : A) -> T[A] {
+pub fn[A] Vector::make(len : Int, value : A) -> Vector[A] {
   guard len > 0 else { new() }
   let tail_len = tail_len_of_size(len)
   let tree_len = len - tail_len
@@ -47,7 +47,7 @@ pub fn[A] T::make(len : Int, value : A) -> T[A] {
 ///|
 /// Create a persistent vector with a given length and a function to generate values.
 #as_free_fn
-pub fn[A] T::makei(len : Int, f : (Int) -> A raise?) -> T[A] raise? {
+pub fn[A] Vector::makei(len : Int, f : (Int) -> A raise?) -> Vector[A] raise? {
   guard len > 0 else { new() }
   let tail_len = tail_len_of_size(len)
   let tree_len = len - tail_len
@@ -81,8 +81,8 @@ pub fn[A] T::makei(len : Int, f : (Int) -> A raise?) -> T[A] raise? {
 #as_free_fn
 #alias(of, deprecated="Use from_array instead")
 #as_free_fn(of, deprecated="Use from_array instead")
-pub fn[A] T::from_array(arr : ArrayView[A]) -> T[A] {
-  T::makei(arr.length(), i => arr[i])
+pub fn[A] Vector::from_array(arr : ArrayView[A]) -> Vector[A] {
+  Vector::makei(arr.length(), i => arr[i])
 }
 
 ///|
@@ -90,7 +90,7 @@ pub fn[A] T::from_array(arr : ArrayView[A]) -> T[A] {
 #as_free_fn
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
-pub fn[A] T::from_iter(iter : Iter[A]) -> T[A] {
+pub fn[A] Vector::from_iter(iter : Iter[A]) -> Vector[A] {
   let mut buf : FixedArray[A] = []
   let mut index = 0
   let leaves = []
@@ -133,12 +133,12 @@ pub fn[A] T::from_iter(iter : Iter[A]) -> T[A] {
 }
 
 //-----------------------------------------------------------------------------
-// Converter (convert T to other types)
+// Converter (convert Vector to other types)
 //-----------------------------------------------------------------------------
 
 ///|
 /// Returns a mutable array containing all elements.
-pub fn[A] T::to_array(self : T[A]) -> Array[A] {
+pub fn[A] Vector::to_array(self : Vector[A]) -> Array[A] {
   if self.is_empty() {
     []
   } else {
@@ -154,18 +154,18 @@ pub fn[A] T::to_array(self : T[A]) -> Array[A] {
 
 ///|
 /// Returns `true` if the vector contains no elements.
-pub fn[A] T::is_empty(self : T[A]) -> Bool {
+pub fn[A] Vector::is_empty(self : Vector[A]) -> Bool {
   self.size == 0
 }
 
 ///|
 /// Returns the number of elements in the vector.
-pub fn[A] T::length(self : T[A]) -> Int {
+pub fn[A] Vector::length(self : Vector[A]) -> Int {
   self.size
 }
 
 ///|
-fn[A] T::tail_offset(self : T[A]) -> Int {
+fn[A] Vector::tail_offset(self : Vector[A]) -> Int {
   self.size - self.tail.length()
 }
 
@@ -184,7 +184,7 @@ fn[A] T::tail_offset(self : T[A]) -> Int {
 /// }
 /// ```
 #alias("_[_]")
-pub fn[A] T::at(self : T[A], index : Int) -> A {
+pub fn[A] Vector::at(self : Vector[A], index : Int) -> A {
   guard index >= 0 && index < self.size
   let tail_offset = self.tail_offset()
   if index >= tail_offset {
@@ -216,14 +216,14 @@ pub fn[A] T::at(self : T[A], index : Int) -> A {
 ///   inspect(v.get(3), content="None")
 /// }
 /// ```
-pub fn[A] T::get(self : T[A], index : Int) -> A? {
+pub fn[A] Vector::get(self : Vector[A], index : Int) -> A? {
   guard 0 <= index && index < self.size else { None }
   Some(self[index])
 }
 
 ///|
 /// Returns the last element in the vector.
-pub fn[A] T::peek(self : T[A]) -> A? {
+pub fn[A] Vector::peek(self : Vector[A]) -> A? {
   if self.size == 0 {
     None
   } else {
@@ -245,7 +245,7 @@ pub fn[A] T::peek(self : T[A]) -> A? {
 ///   assert_eq(v.set(1, 10), @vector.from_array([1, 10, 3, 4, 5]))
 /// }
 /// ```
-pub fn[A] T::set(self : T[A], index : Int, value : A) -> T[A] {
+pub fn[A] Vector::set(self : Vector[A], index : Int, value : A) -> Vector[A] {
   guard index >= 0 && index < self.size
   let tail_len = self.tail.length()
   if tail_len == 0 {
@@ -285,7 +285,7 @@ pub fn[A] T::set(self : T[A], index : Int, value : A) -> T[A] {
 ///   assert_eq(v.push(4), @vector.from_array([1, 2, 3, 4]))
 /// }
 /// ```
-pub fn[A] T::push(self : T[A], value : A) -> T[A] {
+pub fn[A] Vector::push(self : Vector[A], value : A) -> Vector[A] {
   if self.tail.length() < branching_factor {
     make_t(
       self.tree,
@@ -305,7 +305,7 @@ pub fn[A] T::push(self : T[A], value : A) -> T[A] {
 
 ///|
 /// Remove the last element from the vector.
-pub fn[A] T::pop(self : T[A]) -> T[A]? {
+pub fn[A] Vector::pop(self : Vector[A]) -> Vector[A]? {
   if self.size == 0 {
     None
   } else if self.size == 1 {
@@ -357,7 +357,7 @@ pub fn[A] T::pop(self : T[A]) -> T[A]? {
 
 ///|
 /// Given two trees, concatenate them into a new tree.
-pub fn[A] T::concat(self : T[A], other : T[A]) -> T[A] {
+pub fn[A] Vector::concat(self : Vector[A], other : Vector[A]) -> Vector[A] {
   if self.is_empty() {
     return other
   }
@@ -400,28 +400,31 @@ pub fn[A] T::concat(self : T[A], other : T[A]) -> T[A] {
 
 ///|
 /// Split the vector into `[0, index)` and `[index, len)`.
-pub fn[A] T::split(self : T[A], index : Int) -> (T[A], T[A]) {
+pub fn[A] Vector::split(
+  self : Vector[A],
+  index : Int,
+) -> (Vector[A], Vector[A]) {
   guard 0 <= index && index <= self.size else { abort("Index out of bounds") }
   (self.slice_unchecked(0, index), self.slice_unchecked(index, self.size))
 }
 
 ///|
 /// Return the first `count` elements.
-pub fn[A] T::take(self : T[A], count : Int) -> T[A] {
+pub fn[A] Vector::take(self : Vector[A], count : Int) -> Vector[A] {
   let end = if count <= 0 { 0 } else { min(count, self.size) }
   self.slice_unchecked(0, end)
 }
 
 ///|
 /// Drop the first `count` elements.
-pub fn[A] T::drop(self : T[A], count : Int) -> T[A] {
+pub fn[A] Vector::drop(self : Vector[A], count : Int) -> Vector[A] {
   let start = if count <= 0 { 0 } else { min(count, self.size) }
   self.slice_unchecked(start, self.size)
 }
 
 ///|
 /// Return the slice `[start, end)`.
-pub fn[A] T::slice(self : T[A], start : Int, end : Int) -> T[A] {
+pub fn[A] Vector::slice(self : Vector[A], start : Int, end : Int) -> Vector[A] {
   guard start <= end else { abort("start index greater than end index") }
   guard 0 <= start && end <= self.size else { abort("Index out of bounds") }
   self.slice_unchecked(start, end)
@@ -429,7 +432,7 @@ pub fn[A] T::slice(self : T[A], start : Int, end : Int) -> T[A] {
 
 ///|
 /// Concat two vectors.
-pub impl[A] Add for T[A] with add(self, other) {
+pub impl[A] Add for Vector[A] with add(self, other) {
   self.concat(other)
 }
 
@@ -440,7 +443,7 @@ pub impl[A] Add for T[A] with add(self, other) {
 ///|
 /// Returns an iterator over the elements of the vector.
 #alias(iterator, deprecated)
-pub fn[A] T::iter(self : T[A]) -> Iter[A] {
+pub fn[A] Vector::iter(self : Vector[A]) -> Iter[A] {
   let tree_iter = self.tree.iter()
   let tail_iter = self.tail.iter()
   tree_iter.concat(tail_iter)
@@ -458,7 +461,7 @@ pub fn[A] T::iter(self : T[A]) -> Iter[A] {
 ///   assert_eq(arr, [1, 2, 3, 4, 5])
 /// }
 /// ```
-pub fn[A] T::each(self : T[A], f : (A) -> Unit raise?) -> Unit raise? {
+pub fn[A] Vector::each(self : Vector[A], f : (A) -> Unit raise?) -> Unit raise? {
   self.tree.each(f)
   self.tail.each(f)
 }
@@ -475,7 +478,10 @@ pub fn[A] T::each(self : T[A], f : (A) -> Unit raise?) -> Unit raise? {
 ///   assert_eq(arr, [0, 2, 6, 12, 20])
 /// }
 /// ```
-pub fn[A] T::eachi(self : T[A], f : (Int, A) -> Unit raise?) -> Unit raise? {
+pub fn[A] Vector::eachi(
+  self : Vector[A],
+  f : (Int, A) -> Unit raise?,
+) -> Unit raise? {
   self.tree.eachi(f, self.shift, 0)
   let tail_offset = self.tail_offset()
   for i in 0..<self.tail.length() {
@@ -494,8 +500,8 @@ pub fn[A] T::eachi(self : T[A], f : (Int, A) -> Unit raise?) -> Unit raise? {
 /// }
 /// ```
 #alias(fold_left, deprecated)
-pub fn[A, B] T::fold(
-  self : T[A],
+pub fn[A, B] Vector::fold(
+  self : Vector[A],
   init~ : B,
   f : (B, A) -> B raise?,
 ) -> B raise? {
@@ -514,8 +520,8 @@ pub fn[A, B] T::fold(
 /// }
 /// ```
 #alias(fold_right, deprecated)
-pub fn[A, B] T::rev_fold(
-  self : T[A],
+pub fn[A, B] Vector::rev_fold(
+  self : Vector[A],
   init~ : B,
   f : (B, A) -> B raise?,
 ) -> B raise? {
@@ -533,7 +539,10 @@ pub fn[A, B] T::rev_fold(
 ///   assert_eq(v.map(e => e * 2), @vector.from_array([2, 4, 6, 8, 10]))
 /// }
 /// ```
-pub fn[A, B] T::map(self : T[A], f : (A) -> B raise?) -> T[B] raise? {
+pub fn[A, B] Vector::map(
+  self : Vector[A],
+  f : (A) -> B raise?,
+) -> Vector[B] raise? {
   make_t(self.tree.map(f), self.tail.map(f), self.size, self.shift)
 }
 
@@ -542,22 +551,22 @@ pub fn[A, B] T::map(self : T[A], f : (A) -> B raise?) -> T[B] raise? {
 //-----------------------------------------------------------------------------
 
 ///|
-pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X] with arbitrary(
+pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Vector[X] with arbitrary(
   size,
   rs,
 ) {
-  @quickcheck.Arbitrary::arbitrary(size, rs) |> T::from_array
+  @quickcheck.Arbitrary::arbitrary(size, rs) |> Vector::from_array
 }
 
 ///|
-pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
+pub impl[A : Hash] Hash for Vector[A] with hash_combine(self, hasher) {
   for e in self {
     hasher.combine(e)
   }
 }
 
 ///|
-pub impl[A : Eq] Eq for T[A] with equal(self, other) {
+pub impl[A : Eq] Eq for Vector[A] with equal(self, other) {
   if physical_equal(self, other) {
     true
   } else if self.size != other.size {
@@ -576,7 +585,7 @@ pub impl[A : Eq] Eq for T[A] with equal(self, other) {
 }
 
 ///|
-pub impl[A : Show] Show for T[A] with output(self, logger) {
+pub impl[A : Show] Show for Vector[A] with output(self, logger) {
   logger.write_iter(
     self.iter(),
     prefix="@immut/vector.from_array([",
@@ -616,7 +625,7 @@ pub impl[A : Show] Show for T[A] with output(self, logger) {
 ///   inspect(arr1.compare(arr1), content="0") // arr1 = arr1
 /// }
 /// ```
-pub impl[A : Compare] Compare for T[A] with compare(self, other) {
+pub impl[A : Compare] Compare for Vector[A] with compare(self, other) {
   let len_self = self.length()
   let len_other = other.length()
   let cmp = len_self.compare(len_other)
@@ -639,7 +648,7 @@ fn[A] make_t(
   tail : FixedArray[A],
   size : Int,
   shift : Int,
-) -> T[A] {
+) -> Vector[A] {
   { tree, tail, size, shift }
 }
 
@@ -690,7 +699,7 @@ fn tail_len_of_size(size : Int) -> Int {
 }
 
 ///|
-fn[A] T::normalize_tree(self : T[A]) -> (Tree[A], Int) {
+fn[A] Vector::normalize_tree(self : Vector[A]) -> (Tree[A], Int) {
   if self.size == 0 {
     (Tree::empty(), 0)
   } else if self.tail.length() == 0 {
@@ -705,7 +714,11 @@ fn[A] T::normalize_tree(self : T[A]) -> (Tree[A], Int) {
 }
 
 ///|
-fn[A] T::slice_unchecked(self : T[A], start : Int, end : Int) -> T[A] {
+fn[A] Vector::slice_unchecked(
+  self : Vector[A],
+  start : Int,
+  end : Int,
+) -> Vector[A] {
   let len = end - start
   if len == 0 {
     new()

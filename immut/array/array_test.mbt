@@ -117,6 +117,11 @@ test "push" {
 }
 
 ///|
+test "of alias" {
+  inspect(@array.of([1, 2, 3]), content="@immut/array.from_array([1, 2, 3])")
+}
+
+///|
 test "from_array" {
   let v = @array.from_array([1, 1, 4, 5, 1, 4])
   let vv = @array.from_array(Array::make(30, 1))

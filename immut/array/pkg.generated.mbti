@@ -29,6 +29,7 @@ pub fn[A] T::eachi(Self[A], (Int, A) -> Unit raise?) -> Unit raise?
 #deprecated
 pub fn[A, B] T::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 #alias(of, deprecated)
+#as_free_fn(of, deprecated)
 #as_free_fn(deprecated)
 #deprecated
 pub fn[A] T::from_array(ArrayView[A]) -> Self[A]

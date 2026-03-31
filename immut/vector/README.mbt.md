@@ -12,7 +12,7 @@ You can create an empty vector using `new()` or construct it using `of()`, or us
 ///|
 test {
   let _arr1 = @vector.from_array([1, 2, 3, 4, 5])
-  let _arr2 : @vector.T[Int] = @vector.new()
+  let _arr2 : @vector.Vector[Int] = @vector.new()
   let _arr3 = @vector.from_iter((1).until(5))
   let _arr4 = @vector.from_array([1, 2, 3])
 }

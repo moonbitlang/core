@@ -20,7 +20,7 @@
 #deprecated("We don't copy immutable vector")
 #coverage.skip
 #alias(clone, deprecated)
-pub fn[A] T::copy(self : T[A]) -> T[A] {
+pub fn[A] Vector::copy(self : Vector[A]) -> Vector[A] {
   fn copy(t : Tree[A]) -> Tree[A] {
     match t {
       Leaf(l) => Leaf(l.copy())
