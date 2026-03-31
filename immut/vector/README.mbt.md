@@ -69,7 +69,7 @@ test {
 test {
   let v1 = @vector.from_array([1, 2, 3])
   let v2 = v1.set(1, 20)
-  assert_eq(v1.to_array(), [1, 2, 3])   // original unchanged
+  assert_eq(v1.to_array(), [1, 2, 3]) // original unchanged
   assert_eq(v2.to_array(), [1, 20, 3])
 }
 ```
