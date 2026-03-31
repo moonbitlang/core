@@ -115,9 +115,7 @@ pub fn[T] MutArrayView::start_offset(self : MutArrayView[T]) -> Int {
 #alias("_[_]")
 pub fn[T] MutArrayView::at(self : MutArrayView[T], index : Int) -> T {
   guard index >= 0 && index < self.len() else {
-    abort(
-      "index out of bounds: the len is from 0 to \{self.len()} but the index is \{index}",
-    )
+    abort(out_of_index(self.len(), index))
   }
   self.buf()[self.start() + index]
 }
@@ -179,9 +177,7 @@ pub fn[T] MutArrayView::set(
   value : T,
 ) -> Unit {
   guard index >= 0 && index < self.len() else {
-    abort(
-      "index out of bounds: the len is from 0 to \{self.len()} but the index is \{index}",
-    )
+    abort(out_of_index(self.len(), index))
   }
   self.buf()[self.start() + index] = value
 }

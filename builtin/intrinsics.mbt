@@ -71,14 +71,37 @@ pub fn[T] physical_equal(a : T, b : T) -> Bool = "%refeq"
 /// This function never returns.
 /// Function `abort`.
 #callsite(autofill(loc))
-pub fn[T] abort(string : String, loc~ : SourceLoc) -> T {
-  @abort.abort(
-    (
-      $|\{string}
-      $|  at \{loc}
-      $|
-    ),
+#cfg(not(target="js"))
+pub fn[T] abort(msg : String, loc~ : SourceLoc) -> T {
+  let loc = loc.repr()
+  let concat = "\n  at "
+  let concat_length = 6
+  let buffer : FixedArray[UInt16] = FixedArray::make(
+    msg.length() + concat_length + loc.length() + 1,
+    0,
   )
+  // TODO : intrinsic
+  let mut offset = 0
+  for i in 0..<msg.length() {
+    buffer[i] = msg[i]
+  }
+  offset += msg.length()
+  for i in 0..<concat_length {
+    buffer[offset + i] = concat[i]
+  }
+  offset += concat_length
+  for i in 0..<loc.length() {
+    buffer[offset + i] = loc[i]
+  }
+  buffer[msg.length() + concat_length + loc.length()] = 10 // '\n'
+  @abort.abort(unsafe_fixedarray_uint16_to_string(buffer))
+}
+
+///|
+#callsite(autofill(loc))
+#cfg(target="js")
+pub fn[T] abort(msg : String, loc~ : SourceLoc) -> T {
+  @abort.abort(msg + "\n  at " + loc.repr() + "\n")
 }
 
 ///|

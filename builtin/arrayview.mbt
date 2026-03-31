@@ -135,9 +135,7 @@ pub fn[T] ArrayView::start_offset(self : Self[T]) -> Int {
 #alias("_[_]")
 pub fn[T] ArrayView::at(self : ArrayView[T], index : Int) -> T {
   guard index >= 0 && index < self.len() else {
-    abort(
-      "index out of bounds: the len is from 0 to \{self.len()} but the index is \{index}",
-    )
+    abort(out_of_index(self.len(), index))
   }
   self.buf()[self.start() + index]
 }

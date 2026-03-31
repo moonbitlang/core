@@ -320,9 +320,7 @@ pub fn[T] Array::unsafe_pop(self : Array[T]) -> T {
 /// ```
 pub fn[T] Array::remove(self : Array[T], index : Int) -> T {
   guard index >= 0 && index < self.length() else {
-    abort(
-      "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
-    )
+    abort(out_of_index(self.length(), index))
   }
   let value = self.unsafe_get(index)
   UninitializedArray::unsafe_blit(
@@ -388,9 +386,7 @@ pub fn[T] Array::drain(self : Array[T], begin : Int, end : Int) -> Array[T] {
 /// ```
 pub fn[T] Array::insert(self : Array[T], index : Int, value : T) -> Unit {
   guard index >= 0 && index <= self.length() else {
-    abort(
-      "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
-    )
+    abort(out_of_index(self.length(), index))
   }
   if self.length() == self.buffer().0.length() {
     self.realloc()
