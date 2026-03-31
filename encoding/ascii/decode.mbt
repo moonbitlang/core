@@ -19,41 +19,54 @@ pub suberror Malformed {
 }
 
 ///|
+fn unsafe_fixedarray_uint16_to_string(buffer : FixedArray[UInt16]) -> String = "%string.unsafe_from_uint16_fixedarray"
+
+///|
+fn finish_string(buffer : FixedArray[UInt16], len : Int) -> String {
+  if len == buffer.length() {
+    unsafe_fixedarray_uint16_to_string(buffer)
+  } else {
+    let data = FixedArray::make(len, UInt16::default())
+    data.unsafe_blit(0, buffer, 0, len)
+    unsafe_fixedarray_uint16_to_string(data)
+  }
+}
+
+///|
 /// Decodes an ASCII byte array into a string.
 ///
 /// Raises `Malformed` if any byte is outside the ASCII range.
 pub fn decode(bytes : BytesView) -> String raise Malformed {
-  let t : FixedArray[Byte] = FixedArray::make(bytes.length() * 2, 0)
+  let t : FixedArray[UInt16] = FixedArray::make(bytes.length(), 0)
   let tlen = for tlen = 0, bs = bytes {
     match (tlen, bs) {
       (tlen, []) => break tlen
       (tlen, [0..=0x7F as b, .. rest]) => {
-        t.unsafe_set(tlen, b)
-        continue tlen + 2, rest
+        t.unsafe_set(tlen, b.to_uint16())
+        continue tlen + 1, rest
       }
       (_, _ as bytes) => raise Malformed(bytes)
     }
   }
-  t.unsafe_reinterpret_as_bytes().to_unchecked_string(offset=0, length=tlen)
+  finish_string(t, tlen)
 }
 
 ///|
 /// Decodes ASCII bytes into a string, replacing non-ASCII bytes with U+FFFD.
 pub fn decode_lossy(bytes : BytesView) -> String {
-  let t : FixedArray[Byte] = FixedArray::make(bytes.length() * 2, 0)
+  let t : FixedArray[UInt16] = FixedArray::make(bytes.length(), 0)
   let tlen = for tlen = 0, bs = bytes {
     match (tlen, bs) {
       (tlen, []) => break tlen
       (tlen, [0..=0x7F as b, .. rest]) => {
-        t.unsafe_set(tlen, b)
-        continue tlen + 2, rest
+        t.unsafe_set(tlen, b.to_uint16())
+        continue tlen + 1, rest
       }
       (tlen, [_, .. rest]) => {
-        t.unsafe_set(tlen, 0xFD)
-        t.unsafe_set(tlen + 1, 0xFF)
-        continue tlen + 2, rest
+        t.unsafe_set(tlen, 0xFFFD)
+        continue tlen + 1, rest
       }
     }
   }
-  t.unsafe_reinterpret_as_bytes().to_unchecked_string(offset=0, length=tlen)
+  finish_string(t, tlen)
 }
