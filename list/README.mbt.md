@@ -165,21 +165,105 @@ test {
 }
 ```
 
-#### Filter
+#### Filter & Filter Map
 
-Keep elements that satisfy a predicate.
+`filter` keeps elements matching a predicate. `filter_map` transforms and filters in one pass.
 
 ```mbt check
 ///|
 test {
-  let list = @list.from_array([1, 2, 3, 4, 5]).filter(x => x % 2 == 0)
-  assert_eq(list, @list.from_array([2, 4]))
+  let list = @list.from_array([1, 2, 3, 4, 5])
+  assert_eq(list.filter(fn(x) { x % 2 == 0 }), @list.from_array([2, 4]))
+  let fm = list.filter_map(fn(x) { if x > 3 { Some(x * 10) } else { None } })
+  assert_eq(fm, @list.from_array([40, 50]))
+}
+```
+
+#### Fold
+
+`fold` reduces from left to right. `foldi` includes the index.
+
+```mbt check
+///|
+test {
+  let list = @list.from_array([1, 2, 3])
+  assert_eq(list.fold(init=0, fn(acc, x) { acc + x }), 6)
+  let indexed = list.foldi(init="", fn(i, acc, x) {
+    acc + i.to_string() + ":" + x.to_string() + " "
+  })
+  inspect(indexed, content="0:1 1:2 2:3 ")
+}
+```
+
+#### Find, Any, All, Contains
+
+```mbt check
+///|
+test {
+  let list = @list.from_array([1, 2, 3, 4, 5])
+  assert_eq(list.find(fn(x) { x > 3 }), Some(4))
+  assert_eq(list.find_index(fn(x) { x == 3 }), Some(2))
+  assert_eq(list.any(fn(x) { x > 4 }), true)
+  assert_eq(list.all(fn(x) { x > 0 }), true)
+  assert_eq(list.contains(3), true)
+  assert_eq(list.contains(9), false)
+}
+```
+
+#### Flat Map
+
+```mbt check
+///|
+test {
+  let list = @list.from_array([1, 2, 3])
+  let result = list.flat_map(fn(x) { @list.from_array([x, x * 10]) })
+  assert_eq(result, @list.from_array([1, 10, 2, 20, 3, 30]))
 }
 ```
 
 ---
 
 ### Advanced Operations
+
+#### Take & Drop
+
+`take(n)` keeps the first `n` elements. `drop(n)` skips them. `take_while` and `drop_while` use a predicate.
+
+```mbt check
+///|
+test {
+  let list = @list.from_array([1, 2, 3, 4, 5])
+  assert_eq(list.take(3), @list.from_array([1, 2, 3]))
+  assert_eq(list.drop(3), @list.from_array([4, 5]))
+  assert_eq(list.take_while(fn(x) { x < 4 }), @list.from_array([1, 2, 3]))
+  assert_eq(list.drop_while(fn(x) { x < 4 }), @list.from_array([4, 5]))
+}
+```
+
+#### Remove
+
+`remove(x)` removes the first occurrence. `remove_at(i)` removes by index.
+
+```mbt check
+///|
+test {
+  let list = @list.from_array([1, 2, 3, 2, 1])
+  assert_eq(list.remove(2), @list.from_array([1, 3, 2, 1]))
+  assert_eq(list.remove_at(0), @list.from_array([2, 3, 2, 1]))
+}
+```
+
+#### Last, Minimum, Maximum
+
+```mbt check
+///|
+test {
+  let list = @list.from_array([3, 1, 4, 1, 5])
+  assert_eq(list.last(), Some(5))
+  assert_eq(list.minimum(), Some(1))
+  assert_eq(list.maximum(), Some(5))
+}
+```
 
 #### Reverse
 
@@ -229,6 +313,113 @@ Sort the list in ascending order.
 test {
   let list = @list.from_array([3, 1, 4, 1, 5, 9]).sort()
   assert_eq(list, @list.from_array([1, 1, 3, 4, 5, 9]))
+}
+```
+
+#### Intersperse & Intercalate
+
+`intersperse` inserts a separator between every pair of elements. `intercalate` joins a list of lists with a separator list.
+
+```mbt check
+///|
+test {
+  let list = @list.from_array([1, 2, 3])
+  assert_eq(list.intersperse(0), @list.from_array([1, 0, 2, 0, 3]))
+  let nested = @list.from_array([
+    @list.from_array([1, 2]),
+    @list.from_array([3, 4]),
+    @list.from_array([5]),
+  ])
+  let sep = @list.from_array([0])
+  assert_eq(nested.intercalate(sep), @list.from_array([1, 2, 0, 3, 4, 0, 5]))
+}
+```
+
+#### Zip & Unzip
+
+```mbt check
+///|
+test {
+  let a = @list.from_array([1, 2, 3])
+  let b = @list.from_array(["a", "b", "c"])
+  let zipped = @list.zip(a, b)
+  assert_eq(zipped, @list.from_array([(1, "a"), (2, "b"), (3, "c")]))
+  let (xs, ys) = zipped.unzip()
+  assert_eq(xs, @list.from_array([1, 2, 3]))
+  assert_eq(ys, @list.from_array(["a", "b", "c"]))
+}
+```
+
+#### Scan
+
+`scan_left` produces a list of successive fold results. `scan_right` does the same from right to left.
+
+```mbt check
+///|
+test {
+  let list = @list.from_array([1, 2, 3])
+  assert_eq(
+    list.scan_left(fn(acc, x) { acc + x }, init=0),
+    @list.from_array([0, 1, 3, 6]),
+  )
+}
+```
+
+#### Prefix & Suffix
+
+```mbt check
+///|
+test {
+  let list = @list.from_array([1, 2, 3, 4, 5])
+  assert_eq(list.is_prefix(@list.from_array([1, 2, 3])), true)
+  assert_eq(list.is_suffix(@list.from_array([4, 5])), true)
+}
+```
+
+#### Lookup
+
+Look up a value in an association list (list of key-value pairs):
+
+```mbt check
+///|
+test {
+  let assoc = @list.from_array([("a", 1), ("b", 2), ("c", 3)])
+  assert_eq(assoc.lookup("b"), Some(2))
+  assert_eq(assoc.lookup("z"), None)
+}
+```
+
+#### Unfold
+
+Build a list from a seed value. `unfold` produces elements in order; `rev_unfold` in reverse.
+
+```mbt check
+///|
+test {
+  let list = @list.unfold(init=1, fn(n) {
+    if n > 5 {
+      None
+    } else {
+      Some((n, n + 1))
+    }
+  })
+  assert_eq(list, @list.from_array([1, 2, 3, 4, 5]))
+}
+```
+
+---
+
+### Iterators
+
+`iter()` returns an `Iter`. `from_iter()` constructs a list from an iterator.
+
+```mbt check
+///|
+test {
+  let list = @list.from_array([1, 2, 3])
+  inspect(list.iter(), content="[1, 2, 3]")
+  let list2 = @list.from_iter([4, 5, 6].iter())
+  assert_eq(list2, @list.from_array([4, 5, 6]))
 }
 ```
 
