@@ -106,6 +106,20 @@ test "membership and queries" {
 }
 ```
 
+## Iterator
+
+`iter()` returns an `Iter` over the set's elements.
+
+```mbt check
+///|
+test "iter" {
+  let set = @hashset.from_array([1, 2, 3])
+  let arr = set.iter().to_array()
+  arr.sort()
+  assert_eq(arr, [1, 2, 3])
+}
+```
+
 ## Structural Sharing
 
 Immutable sets share structure efficiently:
