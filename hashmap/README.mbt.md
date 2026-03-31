@@ -152,9 +152,60 @@ test {
 }
 ```
 
+## Index Access
+
+Use subscript syntax `map[key]` for direct access. Panics if the key is not found.
+
+```mbt check
+///|
+test {
+  let map = @hashmap.from_array([("x", 10), ("y", 20)])
+  assert_eq(map["x"], 10)
+  map["z"] = 30
+  assert_eq(map["z"], 30)
+}
+```
+
+## Contains Key-Value
+
+`contains_kv()` checks whether a specific key-value pair exists (not just the key).
+
+```mbt check
+///|
+test {
+  let map = @hashmap.from_array([("a", 1), ("b", 2)])
+  assert_eq(map.contains_kv("a", 1), true)
+  assert_eq(map.contains_kv("a", 99), false)
+}
+```
+
+## Copy
+
+`copy()` creates a shallow clone.
+
+```mbt check
+///|
+test {
+  let map = @hashmap.from_array([("a", 1)])
+  let cloned = map.copy()
+  cloned.set("b", 2)
+  assert_eq(map.contains("b"), false) // original unchanged
+}
+```
+
+## From Iterator
+
+```mbt check
+///|
+test {
+  let map = @hashmap.from_iter([("a", 1), ("b", 2)].iter())
+  assert_eq(map.length(), 2)
+}
+```
+
 ## Merging
 
-Use `merge()` to combine two maps:
+`merge()` returns a new map combining both. `merge_in_place()` mutates the receiver. On key conflicts, the right map's value wins.
 
 ```mbt check
 ///|
@@ -164,5 +215,10 @@ test {
   let merged = m1.merge(m2)
   assert_eq(merged.get("a"), Some(1))
   assert_eq(merged.get("b"), Some(2))
+  // merge_in_place
+  let m3 = @hashmap.from_array([("x", 1)])
+  let m4 = @hashmap.from_array([("y", 2)])
+  m3.merge_in_place(m4)
+  assert_eq(m3.contains("y"), true)
 }
 ```
