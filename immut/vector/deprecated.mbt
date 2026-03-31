@@ -21,25 +21,5 @@
 #coverage.skip
 #alias(clone, deprecated)
 pub fn[A] Vector::copy(self : Vector[A]) -> Vector[A] {
-  fn copy(t : Tree[A]) -> Tree[A] {
-    match t {
-      Leaf(l) => Leaf(l.copy())
-      Empty => Empty
-      Node(node, sizes) =>
-        Node(
-          FixedArray::makei(node.length(), i => copy(node[i])),
-          match sizes {
-            Some(sizes) => Some(FixedArray::copy(sizes))
-            None => None
-          },
-        )
-    }
-  }
-
-  {
-    tree: copy(self.tree),
-    tail: self.tail.copy(),
-    size: self.size,
-    shift: self.shift,
-  }
+  self
 }

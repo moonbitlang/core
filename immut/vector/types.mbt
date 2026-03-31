@@ -19,7 +19,6 @@
 /// - `tail` stores the right-most chunk and has at most `branching_factor` elements.
 /// - `tree` stores the prefix before `tail`.
 /// - `shift` is not used when `tree` is `Empty`.
-#alias(T, deprecated)
 struct Vector[A] {
   tree : Tree[A]
   tail : FixedArray[A]
