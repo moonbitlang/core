@@ -212,6 +212,103 @@ test "string regex basics" {
 }
 ```
 
+## Parsing
+
+Parse primitive types from strings. All parsing functions raise on invalid input.
+
+```mbt check
+///|
+test "parse numbers" {
+  // integers (decimal by default)
+  inspect(@string.parse_int("42"[:]), content="42")
+  inspect(@string.parse_int("-17"[:]), content="-17")
+  // explicit base
+  inspect(@string.parse_int("ff"[:], base=16), content="255")
+  inspect(@string.parse_int("101"[:], base=2), content="5")
+  // unsigned
+  inspect(@string.parse_uint("42"[:]), content="42")
+  // 64-bit
+  inspect(@string.parse_int64("9999999999"[:]), content="9999999999")
+  inspect(
+    @string.parse_uint64("18446744073709551615"[:]),
+    content="18446744073709551615",
+  )
+  // double
+  inspect(@string.parse_double("3.14"[:]), content="3.14")
+  // bool
+  inspect(@string.parse_bool("true"[:]), content="true")
+}
+```
+
+The `FromStr` trait provides a generic `from_str()` method for `Bool`, `Int`, `Int64`, `UInt`, `UInt64`, and `Double`.
+
+## Regex Match Results
+
+`MatchResult` gives access to the matched text, its context, and capture groups:
+
+```mbt check
+///|
+test "match result" {
+  let re = @string.Regex("([[:alpha:]]+)=([[:digit:]]+)")
+  guard re.execute("key=42") is Some(m) else { fail("no match") }
+  inspect(m.content(), content="key=42")
+  inspect(m.before(), content="")
+  inspect(m.after(), content="")
+  inspect(m.group(1), content="Some(\"key\")")
+  inspect(m.group(2), content="Some(\"42\")")
+}
+```
+
+Named capture groups via `(?<name>...)`:
+
+```mbt check
+///|
+test "named groups" {
+  let re = @string.Regex("(?<name>[[:alpha:]]+):(?<val>[[:digit:]]+)")
+  guard re.execute("age:30") is Some(m) else { fail("no match") }
+  inspect(m.named_group("name"), content="Some(\"age\")")
+  inspect(m.named_group("val"), content="Some(\"30\")")
+}
+```
+
+## Regex Find & Split
+
+`find()` returns an iterator over all non-overlapping matches. `split()` splits a string at each match boundary.
+
+```mbt check
+///|
+test "find and split" {
+  let digits = @string.Regex("[[:digit:]]+")
+  let matches = digits
+    .find("a1b22c333")
+    .map(fn(m) { m.content().to_string() })
+    .collect()
+  inspect(matches, content="[\"1\", \"22\", \"333\"]")
+  let parts = digits.split("a1b22c333").map(fn(v) { v.to_string() }).collect()
+  inspect(parts, content="[\"a\", \"b\", \"c\", \"\"]")
+}
+```
+
+## Regex Combinators
+
+Build complex patterns programmatically with `Regex::string()`, `Regex::repeat()`, `Regex::capture()`, `+` (sequence), and `|` (alternation):
+
+```mbt check
+///|
+test "regex combinators" {
+  // match "abc" literally
+  let abc = @string.Regex::string("abc"[:])
+  inspect(abc.execute("xabcy") is Some(_), content="true")
+  // repeat: match 2 to 4 digits
+  let digits = @string.Regex("[[:digit:]]").repeat(min=2, max=4)
+  guard digits.execute("a12345") is Some(m) else { fail("no match") }
+  inspect(m.content(), content="1234") // greedy: takes max
+  // alternation with |
+  let either = @string.Regex::string("cat"[:]) | @string.Regex::string("dog"[:])
+  inspect(either.execute("I have a dog") is Some(_), content="true")
+}
+```
+
 ## Performance Notes
 
 - Use `StringBuilder` or `Buffer` for building strings incrementally rather than
