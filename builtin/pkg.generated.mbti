@@ -2,8 +2,7 @@
 package "moonbitlang/core/builtin"
 
 // Values
-#callsite(autofill(loc))
-pub fn[T] abort(String, loc~ : SourceLoc) -> T
+pub fn[T] abort(String) -> T
 
 #callsite(autofill(loc))
 pub fn[T : Eq + Show] assert_eq(T, T, msg? : String, loc~ : SourceLoc) -> Unit raise
