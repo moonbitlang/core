@@ -93,9 +93,70 @@ test {
 }
 ```
 
+## Add & Remove with Check
+
+`add_and_check()` returns `true` if the element was newly added (not already present). `remove_and_check()` returns `true` if the element was actually removed.
+
+```mbt check
+///|
+test {
+  let set = @hashset.from_array([1, 2, 3])
+  assert_eq(set.add_and_check(4), true) // new element
+  assert_eq(set.add_and_check(4), false) // already exists
+  assert_eq(set.remove_and_check(4), true) // removed
+  assert_eq(set.remove_and_check(4), false) // not present
+}
+```
+
+## Retain
+
+`retain()` keeps only elements that satisfy a predicate, removing the rest in place.
+
+```mbt check
+///|
+test {
+  let set = @hashset.from_array([1, 2, 3, 4, 5])
+  set.retain(fn(x) { x % 2 == 0 })
+  assert_eq(set.contains(1), false)
+  assert_eq(set.contains(2), true)
+}
+```
+
+## Copy
+
+`copy()` creates a shallow clone of the set.
+
+```mbt check
+///|
+test {
+  let set = @hashset.from_array([1, 2, 3])
+  let cloned = set.copy()
+  cloned.add(4)
+  assert_eq(set.contains(4), false) // original unchanged
+  assert_eq(cloned.contains(4), true)
+}
+```
+
+## Iterators & Conversion
+
+`iter()` returns an iterator. `to_array()` collects elements into an array. `from_iter()` constructs a set from an iterator.
+
+```mbt check
+///|
+test {
+  let set = @hashset.from_array([1, 2, 3])
+  let arr = set.to_array()
+  arr.sort()
+  assert_eq(arr, [1, 2, 3])
+  // from_iter
+  let set2 = @hashset.from_iter([4, 5, 6].iter())
+  assert_eq(set2.length(), 3)
+}
+```
+
 ## Set Operations
 
-You can use `union()`, `intersection()`, `difference()` and `symmetric_difference()` to perform set operations.
+`union()`, `intersection()`, `difference()`, and `symmetric_difference()` return new sets. These also have operator aliases: `|` (union), `&` (intersection), `-` (difference), `^` (symmetric difference).
 
 ```mbt check
 ///|
@@ -112,6 +173,28 @@ test {
   assert_eq(m1.intersection(m2) |> to_sorted_array, ["b", "c"])
   assert_eq(m1.difference(m2) |> to_sorted_array, ["a"])
   assert_eq(m1.symmetric_difference(m2) |> to_sorted_array, ["a", "d"])
+  // operator aliases
+  assert_eq((m1 | m2) |> to_sorted_array, ["a", "b", "c", "d"])
+  assert_eq((m1 & m2) |> to_sorted_array, ["b", "c"])
+  assert_eq((m1 - m2) |> to_sorted_array, ["a"])
+  assert_eq((m1 ^ m2) |> to_sorted_array, ["a", "d"])
+}
+```
+
+## Set Predicates
+
+`is_subset()`, `is_superset()`, and `is_disjoint()` test set relationships.
+
+```mbt check
+///|
+test {
+  let small = @hashset.from_array([1, 2])
+  let big = @hashset.from_array([1, 2, 3, 4])
+  let other = @hashset.from_array([5, 6])
+  assert_eq(small.is_subset(big), true)
+  assert_eq(big.is_superset(small), true)
+  assert_eq(small.is_disjoint(other), true)
+  assert_eq(small.is_disjoint(big), false)
 }
 ```
 
