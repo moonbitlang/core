@@ -57,46 +57,72 @@ test {
 }
 ```
 
+## From Iterator
+
+```mbt check
+///|
+test {
+  let queue = @queue.from_iter([1, 2, 3].iter())
+  assert_eq(queue.length(), 3)
+}
+```
+
 ## Traverse
 
-You can traverse the queue using the `each` method.
+`each()` iterates over elements in FIFO order. `eachi()` provides the index. `fold()` reduces the queue to a single value.
 
 ```mbt check
 ///|
 test {
   let queue = @queue.from_array([1, 2, 3])
-  let mut sum = 0
-  queue.each(x => sum += x)
+  // each
+  let buf = []
+  queue.each(fn(x) { buf.push(x) })
+  assert_eq(buf, [1, 2, 3])
+  // eachi
+  let pairs = []
+  queue.eachi(fn(i, x) { pairs.push((i, x)) })
+  assert_eq(pairs, [(0, 1), (1, 2), (2, 3)])
+  // fold
+  let sum = queue.fold(init=0, fn(acc, x) { acc + x })
   assert_eq(sum, 6)
 }
 ```
 
-You can fold the queue using the `fold` method.
+## Iterator
+
+`iter()` returns an `Iter` over the queue's elements.
+
 ```mbt check
 ///|
 test {
   let queue = @queue.from_array([1, 2, 3])
-  let sum = queue.fold(init=0, (acc, x) => acc + x)
-  assert_eq(sum, 6)
+  inspect(queue.iter(), content="[1, 2, 3]")
 }
 ```
 
 ## Copy and Transfer
-You can copy a queue using the `copy` method.
+
+`copy()` creates a shallow clone. `transfer()` moves all elements from one queue to the end of another, emptying the source.
+
 ```mbt check
 ///|
 test {
   let queue = @queue.from_array([1, 2, 3])
-  let _queue2 = queue.copy()
+  let cloned = queue.copy()
+  assert_eq(cloned.pop(), Some(1))
+  assert_eq(queue.length(), 3) // original unchanged
 }
 ```
 
-Transfer the elements from one queue to another using the `transfer` method.
 ```mbt check
 ///|
 test {
-  let dst : @queue.Queue[Int] = @queue.new()
-  let src : @queue.Queue[Int] = @queue.from_array([5, 6, 7, 8])
+  let dst = @queue.from_array([1, 2])
+  let src = @queue.from_array([3, 4])
   src.transfer(dst)
+  assert_eq(src.is_empty(), true)
+  assert_eq(dst.length(), 4)
+  assert_eq(dst.pop(), Some(1))
 }
 ```
