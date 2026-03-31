@@ -115,6 +115,77 @@ test {
 }
 ```
 
+### Symmetric Difference
+
+Elements in one set but not both:
+
+```mbt check
+///|
+test {
+  let a = @sorted_set.from_array([1, 2, 3])
+  let b = @sorted_set.from_array([2, 3, 4])
+  assert_eq(a.symmetric_difference(b).to_array(), [1, 4])
+}
+```
+
+### Range Queries
+
+`range(low, high)` returns an iterator over elements in `[low, high]`:
+
+```mbt check
+///|
+test {
+  let set = @sorted_set.from_array([1, 3, 5, 7, 9, 11])
+  let in_range = set.range(3, 9).collect()
+  assert_eq(in_range, [3, 5, 7, 9])
+}
+```
+
+### Indexed Iteration
+
+`eachi` iterates with an index (in sorted order):
+
+```mbt check
+///|
+test {
+  let set = @sorted_set.from_array([10, 20, 30])
+  let pairs = []
+  set.eachi(fn(i, v) { pairs.push((i, v)) })
+  assert_eq(pairs, [(0, 10), (1, 20), (2, 30)])
+}
+```
+
+### Iterators & Conversion
+
+```mbt check
+///|
+test {
+  let set = @sorted_set.from_array([3, 1, 2])
+  // iter returns elements in sorted order
+  inspect(set.iter(), content="[1, 2, 3]")
+  // to_array
+  assert_eq(set.to_array(), [1, 2, 3])
+  // from_iter
+  let set2 = @sorted_set.from_iter([4, 5, 6].iter())
+  assert_eq(set2.to_array(), [4, 5, 6])
+}
+```
+
+### Copy
+
+`copy()` creates a shallow clone:
+
+```mbt check
+///|
+test {
+  let set = @sorted_set.from_array([1, 2, 3])
+  let cloned = set.copy()
+  cloned.add(4)
+  assert_eq(set.to_array(), [1, 2, 3]) // original unchanged
+  assert_eq(cloned.to_array(), [1, 2, 3, 4])
+}
+```
+
 ### Stringify
 
 SortedSet implements to_string (i.e. Show trait), which allows you to directly output it.
