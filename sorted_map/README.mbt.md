@@ -272,6 +272,71 @@ test {
 }
 ```
 
+### Index Access
+
+Use subscript syntax `map[key]` (the `at` operator) for direct access. Panics if the key is not found.
+
+```mbt check
+///|
+test {
+  let map = @sorted_map.from_array([(1, "one"), (2, "two")])
+  assert_eq(map[1], "one")
+  assert_eq(map[2], "two")
+}
+```
+
+### Get with Default
+
+`get_or_default()` returns a fallback value when the key is missing. `get_or_init()` lazily initializes and inserts the value if absent.
+
+```mbt check
+///|
+test {
+  let map = @sorted_map.from_array([(1, "one")])
+  assert_eq(map.get_or_default(1, "???"), "one")
+  assert_eq(map.get_or_default(2, "???"), "???")
+  // get_or_init inserts the value if missing
+  let val = map.get_or_init(3, fn() { "three" })
+  assert_eq(val, "three")
+  assert_eq(map.contains(3), true) // now in the map
+}
+```
+
+### Copy
+
+`copy()` creates a shallow clone of the map.
+
+```mbt check
+///|
+test {
+  let map = @sorted_map.from_array([(1, "a"), (2, "b")])
+  let cloned = map.copy()
+  cloned.set(3, "c")
+  assert_eq(map.contains(3), false) // original unchanged
+  assert_eq(cloned.contains(3), true)
+}
+```
+
+### Merging
+
+`merge()` returns a new map combining both. `merge_in_place()` mutates the receiver. On key conflicts, the right map wins.
+
+```mbt check
+///|
+test {
+  let m1 = @sorted_map.from_array([(1, "a"), (2, "b")])
+  let m2 = @sorted_map.from_array([(2, "B"), (3, "c")])
+  let merged = m1.merge(m2)
+  assert_eq(merged.get(2), Some("B")) // right wins
+  assert_eq(merged.get(3), Some("c"))
+  // merge_in_place
+  let m3 = @sorted_map.from_array([(1, "x")])
+  let m4 = @sorted_map.from_array([(2, "y")])
+  m3.merge_in_place(m4)
+  assert_eq(m3.contains(2), true)
+}
+```
+
 ### Error Handling Best Practices
 
 When working with keys that might not exist, prefer using pattern matching for safety:
