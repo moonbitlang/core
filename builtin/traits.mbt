@@ -121,18 +121,25 @@ impl Logger with write_char(self, value) {
 
 ///|
 /// Trait for types that can be converted to `String`
+#must_implement_one(output, to_string)
 pub(open) trait Show {
   // `output` is used for composition of aggregate structure.
   // `output` writes a string representation of `self` to a logger.
   // `output` should produce a valid MoonBit-syntax representation if possible.
   // For example, `Show::output` for `String` should be quoted
-  output(Self, &Logger) -> Unit
+  output(Self, &Logger) -> Unit = _
   // `to_string` should be used by end users of `Show`,
   // for printing, interpolation, etc. only, and should not be used for composition.
   // By default `to_string` is implemented using `output` and a buffer,
   // but some types, such as `String`, may override `to_string`,
   // for different (unescaped) behavior when interpolated/printed directly
   to_string(Self) -> String = _
+}
+
+///|
+/// Default implementation for `Show::output`, uses `Show::to_string`.
+impl Show with output(self, logger) {
+  logger.write_string(self.to_string())
 }
 
 ///|
