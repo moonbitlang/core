@@ -121,14 +121,40 @@ test {
 }
 ```
 
-## Copy and Transfer
+## From Iterator
 
-You can copy a priority queue using the `copy` method.
+```mbt check
+///|
+test {
+  let pq = @priority_queue.from_iter([3, 1, 2].iter())
+  assert_eq(pq.peek(), Some(3))
+}
+```
+
+## Iterator & Conversion
+
+`iter()` returns elements in descending priority order. `to_array()` collects them into an array.
+
+```mbt check
+///|
+test {
+  let pq = @priority_queue.from_array([3, 1, 4, 1, 5])
+  let arr = pq.to_array()
+  // to_array returns elements sorted by priority (descending)
+  assert_eq(arr, [5, 4, 3, 1, 1])
+}
+```
+
+## Copy
+
+`copy()` creates a shallow clone.
 
 ```mbt check
 ///|
 test {
   let pq = @priority_queue.from_array([1, 2, 3])
-  let _pq2 = pq.copy()
+  let pq2 = pq.copy()
+  assert_eq(pq2.pop(), Some(3))
+  assert_eq(pq.length(), 3) // original unchanged
 }
 ```
