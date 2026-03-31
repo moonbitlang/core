@@ -14,7 +14,7 @@
 
 ///|
 struct StringBuilder {
-  mut data : FixedArray[Byte]
+  mut data : FixedArray[UInt16]
   mut len : Int
 }
 
@@ -30,8 +30,8 @@ struct StringBuilder {
 /// Returns a new `StringBuilder` instance with the specified initial capacity.
 ///
 pub fn StringBuilder::new(size_hint? : Int = 0) -> StringBuilder {
-  let initial = if size_hint < 1 { 1 } else { size_hint }
-  let data : FixedArray[Byte] = FixedArray::make(initial, 0)
+  let initial = if size_hint < 1 { 1 } else { (size_hint + 1) / 2 }
+  let data : FixedArray[UInt16] = FixedArray::make(initial, 0)
   { data, len: 0 }
 }
 
@@ -57,7 +57,7 @@ fn StringBuilder::grow_if_necessary(
   } nobreak {
     enough_space
   }
-  let new_data = FixedArray::make(enough_space, Byte::default())
+  let new_data = FixedArray::make(enough_space, UInt16::default())
   new_data.unsafe_blit(0, self.data, 0, self.len)
   self.data = new_data
 }
@@ -65,17 +65,30 @@ fn StringBuilder::grow_if_necessary(
 ///|
 /// Writes a string to the StringBuilder.
 pub impl Logger for StringBuilder with write_string(self, str) {
-  self.grow_if_necessary(self.len + str.length() * 2)
-  self.data.blit_from_string(self.len, str, 0, str.length())
-  self.len += str.length() * 2
+  let str_len = str.length()
+  self.grow_if_necessary(self.len + str_len)
+  // TODO: add an intrinsic to copy UTF-16 code units from String directly.
+  for i in 0..<str_len {
+    self.data[self.len + i] = str.unsafe_get(i)
+  }
+  self.len += str_len
 }
 
 ///|
 /// Writes a character to the StringBuilder.
 pub impl Logger for StringBuilder with write_char(self, ch) {
-  self.grow_if_necessary(self.len + 4)
-  let inc = self.data.set_utf16le_char(self.len, ch)
-  self.len += inc
+  let code = ch.to_uint()
+  if code <= 0xFFFFU {
+    self.grow_if_necessary(self.len + 1)
+    self.data[self.len] = code.to_uint16()
+    self.len += 1
+  } else {
+    self.grow_if_necessary(self.len + 2)
+    let code = code - 0x10000U
+    self.data[self.len] = (0xD800U + (code >> 10)).to_uint16()
+    self.data[self.len + 1] = (0xDC00U + code.land(0x3FFU)).to_uint16()
+    self.len += 2
+  }
 }
 
 ///|
@@ -101,32 +114,31 @@ pub impl Logger for StringBuilder with write_view(
   self : StringBuilder,
   str : StringView,
 ) -> Unit {
-  self.grow_if_necessary(self.len + str.length() * 2)
-  self.data.blit_from_string(
-    self.len,
-    str.data(),
-    str.start_offset(),
-    str.length(),
-  )
-  self.len += str.length() * 2
+  let str_len = str.length()
+  self.grow_if_necessary(self.len + str_len)
+  // TODO: add an intrinsic to copy UTF-16 code units from StringView directly.
+  for i in 0..<str_len {
+    self.data[self.len + i] = str.unsafe_get(i)
+  }
+  self.len += str_len
 }
 
 ///|
 /// Returns the current content of the StringBuilder as a string.
 pub fn StringBuilder::to_string(self : StringBuilder) -> String {
-  self.data
-  .unsafe_reinterpret_as_bytes()
-  .to_unchecked_string(offset=0, length=self.len)
+  if self.len == self.data.length() {
+    unsafe_fixedarray_uint16_to_string(self.data)
+  } else {
+    let data = FixedArray::make(self.len, UInt16::default())
+    data.unsafe_blit(0, self.data, 0, self.len)
+    unsafe_fixedarray_uint16_to_string(data)
+  }
 }
 
 ///|
 /// TODO: improve perf
 pub impl Show for StringBuilder with output(self, logger) {
-  logger.write_string(
-    self.data
-    .unsafe_reinterpret_as_bytes()
-    .to_unchecked_string(offset=0, length=self.len),
-  )
+  logger.write_string(self.to_string())
 }
 
 ///|
