@@ -26,9 +26,9 @@ test "Diff computes deletes inserts and equals" {
     d.edits[:]
     is [
       Equal(old_index=0, new_index=0, len=1),
-      Delete(old_index=1, new_index=1, old_len=1),
+      Delete(old_index=1, new_index=1, len=1),
       Equal(old_index=2, new_index=1, len=1),
-      Insert(old_index=3, new_index=2, new_len=1),
+      Insert(old_index=3, new_index=2, len=1),
     ],
   )
 }
@@ -54,18 +54,18 @@ test "patience diff keeps unique anchors in place" {
   assert_true(
     myers.edits[:]
     is [
-      Delete(old_index=0, new_index=0, old_len=1),
+      Delete(old_index=0, new_index=0, len=1),
       Equal(old_index=1, new_index=0, len=1),
-      Insert(old_index=2, new_index=1, new_len=1),
+      Insert(old_index=2, new_index=1, len=1),
       Equal(old_index=2, new_index=2, len=1),
     ],
   )
   assert_true(
     patience.edits[:]
     is [
-      Insert(old_index=0, new_index=0, new_len=1),
+      Insert(old_index=0, new_index=0, len=1),
       Equal(old_index=0, new_index=1, len=2),
-      Delete(old_index=2, new_index=3, old_len=1),
+      Delete(old_index=2, new_index=3, len=1),
     ],
   )
 }

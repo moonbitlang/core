@@ -17,10 +17,10 @@ fn[T : Show] edits_to_string(d : @diff.Diff[T]) -> String {
   let lines = Array::new()
   for edit in d.edits {
     let (prefix, slice) = match edit {
-      Insert(new_index~, new_len~, ..) =>
-        ("+", d.new.view(start=new_index, end=new_index + new_len))
-      Delete(old_index~, old_len~, ..) =>
-        ("-", d.old.view(start=old_index, end=old_index + old_len))
+      Insert(new_index~, len~, ..) =>
+        ("+", d.new.view(start=new_index, end=new_index + len))
+      Delete(old_index~, len~, ..) =>
+        ("-", d.old.view(start=old_index, end=old_index + len))
       Equal(old_index~, len~, ..) =>
         (" ", d.old.view(start=old_index, end=old_index + len))
     }
@@ -209,8 +209,8 @@ test "replacement insert uses post-delete old cursor" {
   assert_true(
     d.edits[:]
     is [
-      Delete(old_index=0, new_index=0, old_len=1),
-      Insert(old_index=1, new_index=0, new_len=2),
+      Delete(old_index=0, new_index=0, len=1),
+      Insert(old_index=1, new_index=0, len=2),
       Equal(old_index=1, new_index=2, len=1),
     ],
   )
