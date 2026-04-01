@@ -663,7 +663,7 @@ fn[T : Hash + Eq] Diff::new(
         Delete(
           old_index=prev_old_idx,
           new_index=prev_new_idx,
-          old_len=old_idx - prev_old_idx,
+          len=old_idx - prev_old_idx,
         ),
       )
       prev_old_idx = old_idx
@@ -684,7 +684,7 @@ fn[T : Hash + Eq] Diff::new(
         Insert(
           old_index=prev_old_idx,
           new_index=prev_new_idx,
-          new_len=new_idx - prev_new_idx,
+          len=new_idx - prev_new_idx,
         ),
       )
     }
@@ -715,7 +715,7 @@ fn[T : Hash + Eq] Diff::new(
         Delete(
           old_index=prev_old_idx,
           new_index=prev_new_idx,
-          old_len=old.length() - prev_old_idx,
+          len=old.length() - prev_old_idx,
         ),
       )
       // update prev_old_idx
@@ -729,7 +729,7 @@ fn[T : Hash + Eq] Diff::new(
         Insert(
           old_index=prev_old_idx,
           new_index=prev_new_idx,
-          new_len=new.length() - prev_new_idx,
+          len=new.length() - prev_new_idx,
         ),
       )
     }

@@ -24,19 +24,19 @@ using @debug {type Repr, trait Debug}
 /// self-contained, which simplifies deriving hunk headers and grouping edits
 /// into hunks.
 pub enum Edit {
-  /// Delete `old_len` elements starting at `old_index` from `old`.
+  /// Delete `len` elements starting at `old_index` from `old`.
   ///
   /// `new_index` is the aligned position in `new` where this deletion occurs.
   /// Although a deletion contributes an empty range on the `new` side, storing
   /// it directly simplifies hunk-header generation and edit grouping.
-  Delete(old_index~ : Int, new_index~ : Int, old_len~ : Int)
-  /// Insert `new_len` elements starting at `new_index` from `new`.
+  Delete(old_index~ : Int, new_index~ : Int, len~ : Int)
+  /// Insert `len` elements starting at `new_index` from `new`.
   ///
   /// `old_index` is the aligned position in `old` immediately before this
   /// insertion point. Although an insertion contributes an empty range on the
   /// `old` side, storing it directly simplifies hunk-header generation and
   /// edit grouping.
-  Insert(old_index~ : Int, new_index~ : Int, new_len~ : Int)
+  Insert(old_index~ : Int, new_index~ : Int, len~ : Int)
   /// Keep `len` equal elements starting at `old_index` in `old` and `new_index`
   /// in `new`.
   Equal(old_index~ : Int, new_index~ : Int, len~ : Int)
@@ -49,7 +49,7 @@ pub enum Edit {
 fn Edit::old_range(self : Edit) -> (Int, Int) {
   match self {
     Insert(old_index~, ..) => (old_index, old_index)
-    Delete(old_index~, old_len~, ..) => (old_index, old_index + old_len)
+    Delete(old_index~, len~, ..) => (old_index, old_index + len)
     Equal(old_index~, len~, ..) => (old_index, old_index + len)
   }
 }
@@ -60,7 +60,7 @@ fn Edit::old_range(self : Edit) -> (Int, Int) {
 /// Deletions consume no elements from `new`, so they map to an empty range.
 fn Edit::new_range(self : Edit) -> (Int, Int) {
   match self {
-    Insert(new_index~, new_len~, ..) => (new_index, new_index + new_len)
+    Insert(new_index~, len~, ..) => (new_index, new_index + len)
     Delete(new_index~, ..) => (new_index, new_index)
     Equal(new_index~, len~, ..) => (new_index, new_index + len)
   }
@@ -73,10 +73,10 @@ fn[T] Edit::view_from(
   new~ : ArrayView[T],
 ) -> ArrayView[T] {
   match self {
-    Insert(new_index~, new_len~, ..) =>
-      new.view(start=new_index, end=new_index + new_len)
-    Delete(old_index~, old_len~, ..) =>
-      old.view(start=old_index, end=old_index + old_len)
+    Insert(new_index~, len~, ..) =>
+      new.view(start=new_index, end=new_index + len)
+    Delete(old_index~, len~, ..) =>
+      old.view(start=old_index, end=old_index + len)
     Equal(old_index~, len~, ..) =>
       old.view(start=old_index, end=old_index + len)
   }
