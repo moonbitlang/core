@@ -15,9 +15,14 @@ pub struct Diff[T] {
   new : ArrayView[T]
   edits : Array[Edit]
 
-  fn[T : Hash + Eq] new(old~ : ArrayView[T], new~ : ArrayView[T], cutoff? : Int, patience? : Bool) -> Diff[T]
+  fn[T : Hash + Eq] new(old~ : ArrayView[T], new~ : ArrayView[T], cutoff? : Int, algorithm? : DiffAlgorithm) -> Diff[T]
 }
 pub fn[T] Diff::group(Self[T], radius? : Int) -> Array[Hunk[T]]
+
+pub(all) enum DiffAlgorithm {
+  Myers
+  Patience
+}
 
 pub enum Edit {
   Delete(old_index~ : Int, new_index~ : Int, old_len~ : Int)
