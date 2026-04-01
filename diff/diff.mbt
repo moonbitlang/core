@@ -666,6 +666,7 @@ fn[T : Hash + Eq] Diff::new(
           old_len=old_idx - prev_old_idx,
         ),
       )
+      prev_old_idx = old_idx
     }
     // emit insert
     if prev_new_idx != new_idx {
