@@ -584,7 +584,6 @@ fn[T : Eq + Hash] append_patience_matches(
 }
 
 ///|
-///|
 pub(all) enum DiffAlgorithm {
   Myers
   Patience

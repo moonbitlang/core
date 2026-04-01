@@ -13,35 +13,16 @@
 // limitations under the License.
 
 ///|
+using @debug {type Repr, trait Debug}
+
+///|
+/// TODO: docs
 pub enum Edit {
+  /// TODO: docs
   Delete(old_index~ : Int, new_index~ : Int, old_len~ : Int)
   Insert(old_index~ : Int, new_index~ : Int, new_len~ : Int)
   Equal(old_index~ : Int, new_index~ : Int, len~ : Int)
-}
-
-///|
-pub impl @debug.Debug for Edit with to_repr(self) {
-  match self {
-    Insert(old_index~, new_index~, new_len~) =>
-      @debug.Repr::ctor("Insert", [
-        (Some("old_index"), @debug.Repr::integer(old_index.to_string())),
-        (Some("new_index"), @debug.Repr::integer(new_index.to_string())),
-        (Some("new_len"), @debug.Repr::integer(new_len.to_string())),
-      ])
-    Delete(old_index~, new_index~, old_len~) =>
-      @debug.Repr::ctor("Delete", [
-        (Some("old_index"), @debug.Repr::integer(old_index.to_string())),
-        (Some("new_index"), @debug.Repr::integer(new_index.to_string())),
-        (Some("old_len"), @debug.Repr::integer(old_len.to_string())),
-      ])
-    Equal(old_index~, new_index~, len~) =>
-      @debug.Repr::ctor("Equal", [
-        (Some("old_index"), @debug.Repr::integer(old_index.to_string())),
-        (Some("new_index"), @debug.Repr::integer(new_index.to_string())),
-        (Some("len"), @debug.Repr::integer(len.to_string())),
-      ])
-  }
-}
+} derive(Debug)
 
 ///|
 fn Edit::old_range(self : Edit) -> (Int, Int) {
