@@ -28,8 +28,7 @@ pub enum Edit {
   Delete(old_index~ : Int, new_index~ : Int, old_len~ : Int)
   Insert(old_index~ : Int, new_index~ : Int, new_len~ : Int)
   Equal(old_index~ : Int, new_index~ : Int, len~ : Int)
-}
-pub impl @debug.Debug for Edit
+} derive(@debug.Debug)
 
 pub struct Hunk[T] {
   edits : ArrayView[Edit]
