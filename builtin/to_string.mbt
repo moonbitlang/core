@@ -650,13 +650,7 @@ pub fn Int64::to_string(self : Int64, radix? : Int = 10) -> String {
 ///|
 #cfg(target="js")
 extern "js" fn int64_to_string_js(num : Int64, radix : Int) -> String =
-  #|(num, radix) => {
-  #|  let val = (BigInt(num.hi >>> 0) << 32n) | BigInt(num.lo >>> 0);
-  #|  if (val & (1n << 63n)) {
-  #|    val = val - (1n << 64n);
-  #|  }
-  #|  return val.toString(radix);
-  #|}
+  #|(num, radix) => BigInt.asIntN(64, num).toString(radix)
 
 ///|
 /// Converts an unsigned 64-bit integer to its string representation in the specified radix (base).
@@ -668,9 +662,7 @@ pub fn UInt64::to_string(self : UInt64, radix? : Int = 10) -> String {
 ///|
 #cfg(target="js")
 extern "js" fn uint64_to_string_js(num : UInt64, radix : Int) -> String =
-  #|(num, radix) => {
-  #|  return (BigInt(num.hi >>> 0) << 32n | BigInt(num.lo >>> 0)).toString(radix);
-  #|}
+  #|(num, radix) => num.toString(radix)
 
 //==========================================
 // Int16 and UInt16
