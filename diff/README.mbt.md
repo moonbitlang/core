@@ -1,7 +1,7 @@
 # Diff
 
 Compute edit scripts between two sequences using the Myers diff algorithm by
-default, or patience diff when you pass `patience=true`.
+default, or patience diff when you pass `algorithm=@diff.Patience`.
 
 `Diff` works with any element type that implements `Hash + Eq`. Constructing a
 `Diff[T]` bundles the source arrays with the edit script. Call `group` on the
@@ -36,11 +36,11 @@ test "Diff computes deletes inserts and equals" {
 
 ## Prefer Unique Anchors With Patience Diff
 
-Pass `patience=true` to `Diff(old~, new~, patience=true)` to enable patience
-diff. This first finds elements that appear exactly once in both inputs and
-uses them as anchors, then runs Myers diff on the unmatched ranges between
-those anchors. This can produce more stable result when repeated elements move
-around.
+Pass `algorithm=@diff.Patience` to `Diff(old~, new~, algorithm=@diff.Patience)` to enable
+patience diff. This first finds elements that appear exactly once in both
+inputs and uses them as anchors, then runs Myers diff on the unmatched ranges
+between those anchors. This can produce more stable result when repeated
+elements move around.
 
 ```mbt check
 ///|
@@ -49,7 +49,7 @@ test "patience diff keeps unique anchors in place" {
   let new = ["dup", "unique", "dup"][:]
 
   let myers = @diff.Diff(old~, new~)
-  let patience = @diff.Diff(old~, new~, patience=true)
+  let patience = @diff.Diff(old~, new~, algorithm=@diff.Patience)
 
   assert_true(
     myers.edits[:]

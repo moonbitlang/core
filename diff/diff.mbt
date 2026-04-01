@@ -584,17 +584,23 @@ fn[T : Eq + Hash] append_patience_matches(
 }
 
 ///|
+///|
+pub(all) enum DiffAlgorithm {
+  Myers
+  Patience
+}
+
+///|
 fn[T : Eq + Hash] collect_matches(
   cutoff : Int?,
   old : ArrayView[T],
   new : ArrayView[T],
-  patience : Bool,
+  algorithm : DiffAlgorithm,
 ) -> Array[(Int, Int)] {
   let matches = Array::new(capacity=old.length().min(new.length()))
-  if patience {
-    append_patience_matches(matches, cutoff, old, new, 0, 0)
-  } else {
-    append_myers_matches(matches, cutoff, old, new, 0, 0)
+  match algorithm {
+    Patience => append_patience_matches(matches, cutoff, old, new, 0, 0)
+    Myers => append_myers_matches(matches, cutoff, old, new, 0, 0)
   }
   matches
 }
@@ -609,12 +615,12 @@ pub struct Diff[T] {
     old~ : ArrayView[T],
     new~ : ArrayView[T],
     cutoff? : Int,
-    patience? : Bool,
+    algorithm? : DiffAlgorithm,
   ) -> Diff[T]
 }
 
 ///|
-/// `Diff::new(old~, new~, cutoff?, patience?)` diffs `old` and `new`
+/// `Diff::new(old~, new~, cutoff?, algorithm?)` diffs `old` and `new`
 /// (as in /usr/bin/diff),
 /// and returns a `Diff[T]` bundling the source arrays with the edit script
 /// that transforms `old` into `new`.
@@ -623,18 +629,18 @@ pub struct Diff[T] {
 /// `cutoff` is exceeded, the result is a correct, but not necessarily minimal
 /// diff. It defaults to about `sqrt(old.length() + new.length())`.
 ///
-/// When `patience` is `true`, the diff first uses `unique_lcs` to find patience-diff
-/// anchors and then runs the existing Myers diff on the unmatched ranges between
-/// those anchors. It defaults to `false`.
+/// The `algorithm` selects the diff strategy. `Myers` (the default) uses the
+/// classic Myers O(ND) algorithm. `Patience` first finds elements unique to
+/// both inputs as anchors, then runs Myers on the unmatched ranges between them.
 ///
 fn[T : Hash + Eq] Diff::new(
   old~ : ArrayView[T],
   new~ : ArrayView[T],
   cutoff? : Int,
-  patience? : Bool = false,
+  algorithm? : DiffAlgorithm = Myers,
 ) -> Diff[T] {
   let result : Array[Edit] = Array::new(capacity=old.length() + new.length())
-  let matches = collect_matches(cutoff, old, new, patience)
+  let matches = collect_matches(cutoff, old, new, algorithm)
   let mut prev_old_idx = 0
   let mut prev_new_idx = 0
   let mut equal_old_idx = 0
