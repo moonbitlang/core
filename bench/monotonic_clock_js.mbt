@@ -21,4 +21,4 @@ pub extern "js" fn monotonic_clock_start() -> Timestamp =
 
 ///|
 pub extern "js" fn monotonic_clock_end(ts : Timestamp) -> Double =
-  #| (ts) => (performance.now() - ts) * 1000.0
+  #| (ts) => (performance.now() - ts) * 1000000.0

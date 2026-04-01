@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn iter_n_microseconds(inner : () -> Unit, k : Int) -> Double {
+fn iter_n_nanoseconds(inner : () -> Unit, k : Int) -> Double {
   let ts = monotonic_clock_start()
   for _ in 0..<k {
     inner()
@@ -25,12 +25,12 @@ fn iter_n_microseconds(inner : () -> Unit, k : Int) -> Double {
 ///|
 fn iter_count(name? : String, inner : () -> Unit, count : UInt) -> Summary {
   let count = count.land(0x7FFFFFFF).reinterpret_as_int()
-  let threshold = 100000.0 // 100 ms
+  let threshold = 100000000.0 // 100 ms
   let target_batch_size = for trial = 1 {
-    let single_us = iter_n_microseconds(inner, trial) / trial.to_double()
+    let single_ns = iter_n_nanoseconds(inner, trial) / trial.to_double()
     let target_batch_size = threshold /
-      (if single_us < 1.0 { 1.0 } else { single_us })
-    if trial.to_double() * single_us > threshold {
+      (if single_ns < 1.0 { 1.0 } else { single_ns })
+    if trial.to_double() * single_ns > threshold {
       break target_batch_size
     }
     continue trial * 2
@@ -41,7 +41,7 @@ fn iter_count(name? : String, inner : () -> Unit, count : UInt) -> Summary {
     target_batch_size.ceil().to_int()
   }
   let samples = Array::makei(count, _ => {
-    iter_n_microseconds(inner, batch_size) / batch_size.to_double()
+    iter_n_nanoseconds(inner, batch_size) / batch_size.to_double()
   })
   samples.sort()
   winsorize(sorted_data=samples, 5.0)

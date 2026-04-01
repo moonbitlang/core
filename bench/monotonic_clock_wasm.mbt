@@ -42,13 +42,13 @@ fn instant_elapsed_as_secs_f64(x : Timestamp) -> Double = "__moonbit_time_unstab
 pub fn monotonic_clock_start() -> Timestamp = "__moonbit_time_unstable" "instant_now"
 
 ///|
-/// Compute elapsed time in microseconds since `ts`.
+/// Compute elapsed time in nanoseconds since `ts`.
 ///
 /// Parameters:
 ///
 /// - `ts`: a timestamp created by `monotonic_clock_start`.
 ///
-/// Returns elapsed time in microseconds.
+/// Returns elapsed time in nanoseconds.
 ///
 /// Example:
 ///
@@ -60,11 +60,11 @@ pub fn monotonic_clock_start() -> Timestamp = "__moonbit_time_unstable" "instant
 ///     x = x + 1
 ///   }
 ///   ignore(x)
-///   let elapsed_us = @bench.monotonic_clock_end(start)
-///   inspect(elapsed_us >= 0.0, content="true")
+///   let elapsed_ns = @bench.monotonic_clock_end(start)
+///   inspect(elapsed_ns >= 0.0, content="true")
 /// }
 /// ```
 pub fn monotonic_clock_end(ts : Timestamp) -> Double {
   let elapsed_secs : Double = instant_elapsed_as_secs_f64(ts)
-  elapsed_secs * 1000000.0
+  elapsed_secs * 1000000000.0
 }
