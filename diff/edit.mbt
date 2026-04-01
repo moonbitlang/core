@@ -16,15 +16,36 @@
 using @debug {type Repr, trait Debug}
 
 ///|
-/// TODO: docs
+/// One step in an edit script that transforms `old` into `new`.
+///
+/// Every constructor stores the start positions of the affected range in both
+/// sequences. Length fields then describe how many elements are deleted,
+/// inserted, or shared. Storing both coordinates on every step keeps the edit
+/// self-contained, which simplifies deriving hunk headers and grouping edits
+/// into hunks.
 pub enum Edit {
-  /// TODO: docs
+  /// Delete `old_len` elements starting at `old_index` from `old`.
+  ///
+  /// `new_index` is the aligned position in `new` where this deletion occurs.
+  /// Although a deletion contributes an empty range on the `new` side, storing
+  /// it directly simplifies hunk-header generation and edit grouping.
   Delete(old_index~ : Int, new_index~ : Int, old_len~ : Int)
+  /// Insert `new_len` elements starting at `new_index` from `new`.
+  ///
+  /// `old_index` is the aligned position in `old` immediately before this
+  /// insertion point. Although an insertion contributes an empty range on the
+  /// `old` side, storing it directly simplifies hunk-header generation and
+  /// edit grouping.
   Insert(old_index~ : Int, new_index~ : Int, new_len~ : Int)
+  /// Keep `len` equal elements starting at `old_index` in `old` and `new_index`
+  /// in `new`.
   Equal(old_index~ : Int, new_index~ : Int, len~ : Int)
 } derive(Debug)
 
 ///|
+/// Return the half-open range `[start, end)` covered by this edit in `old`.
+///
+/// Insertions consume no elements from `old`, so they map to an empty range.
 fn Edit::old_range(self : Edit) -> (Int, Int) {
   match self {
     Insert(old_index~, ..) => (old_index, old_index)
@@ -34,6 +55,9 @@ fn Edit::old_range(self : Edit) -> (Int, Int) {
 }
 
 ///|
+/// Return the half-open range `[start, end)` covered by this edit in `new`.
+///
+/// Deletions consume no elements from `new`, so they map to an empty range.
 fn Edit::new_range(self : Edit) -> (Int, Int) {
   match self {
     Insert(new_index~, new_len~, ..) => (new_index, new_index + new_len)
