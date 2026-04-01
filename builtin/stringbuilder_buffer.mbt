@@ -63,14 +63,25 @@ fn StringBuilder::grow_if_necessary(
 }
 
 ///|
+fn FixedArray::unsafe_blit_from_string(
+  self : FixedArray[UInt16],
+  dst_offset : Int,
+  str : String,
+  str_offset : Int,
+  len : Int,
+) -> Unit {
+  let end_str_offset = str_offset + len
+  for i = str_offset, j = dst_offset; i < end_str_offset; i = i + 1, j = j + 1 {
+    self[j] = str.unsafe_get(i)
+  }
+}
+
+///|
 /// Writes a string to the StringBuilder.
 pub impl Logger for StringBuilder with write_string(self, str) {
   let str_len = str.length()
   self.grow_if_necessary(self.len + str_len)
-  // TODO: add an intrinsic to copy UTF-16 code units from String directly.
-  for i in 0..<str_len {
-    self.data[self.len + i] = str.unsafe_get(i)
-  }
+  self.data.unsafe_blit_from_string(self.len, str, 0, str_len)
   self.len += str_len
 }
 
@@ -118,10 +129,12 @@ pub impl Logger for StringBuilder with write_view(
 ) -> Unit {
   let str_len = str.length()
   self.grow_if_necessary(self.len + str_len)
-  // TODO: add an intrinsic to copy UTF-16 code units from StringView directly.
-  for i in 0..<str_len {
-    self.data[self.len + i] = str.unsafe_get(i)
-  }
+  self.data.unsafe_blit_from_string(
+    self.len,
+    str.data(),
+    str.start_offset(),
+    str_len,
+  )
   self.len += str_len
 }
 
