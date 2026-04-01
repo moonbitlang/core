@@ -202,6 +202,21 @@ test "delete then insert to hunks without context" {
 }
 
 ///|
+test "replacement insert uses post-delete old cursor" {
+  let old = ["x", "a"][:]
+  let new = ["y", "z", "a"][:]
+  let d = @diff.Diff(old~, new~)
+  assert_true(
+    d.edits[:]
+    is [
+      Delete(old_index=0, new_index=0, old_len=1),
+      Insert(old_index=1, new_index=0, new_len=2),
+      Equal(old_index=1, new_index=2, len=1),
+    ],
+  )
+}
+
+///|
 test "panic group with negative radius" {
   let old = ["fn main() {", "}"][:]
   let new = old
