@@ -108,14 +108,7 @@ fn mbt_string_to_utf8_bytes(str : String, append_nul : Bool) -> Bytes {
 }
 
 ///|
-extern "c" fn time(ptr : Int) -> UInt64 = "time"
-
-///|
-fn now_internal() -> UInt64 {
-  // time returns seconds since 1970-01-01 00:00:00 UTC
-  // to be consistent with other backends, we convert to milliseconds
-  time(0) * 1000
-}
+extern "c" fn now_internal() -> UInt64 = "moonbit_get_ms_since_epoch"
 
 ///|
 #borrow(ptr)
