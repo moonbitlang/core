@@ -159,5 +159,6 @@ pub impl Show for StringBuilder with output(self, logger) {
 ///|
 /// Resets the string builder to an empty state.
 pub fn StringBuilder::reset(self : StringBuilder) -> Unit {
+  self.data = FixedArray::make(self.data.length(), UInt16::default())
   self.len = 0
 }
