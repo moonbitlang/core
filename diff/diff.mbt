@@ -556,11 +556,15 @@ fn[T : Eq + Hash] append_patience_matches(
     return
   }
 
+  // Patience diff only selects one layer of unique anchors here.
+  // Bram Cohen noted that recursively searching subranges did not feel
+  // better in practice: https://bramcohen.livejournal.com/73318.html
+  // so unmatched gaps fall back to Myers instead of recursing.
   let mut prev_old_idx = 0
   let mut prev_new_idx = 0
   for i = 0; i < anchors.length(); i = i + 1 {
     let (old_idx, new_idx) = anchors[i]
-    append_patience_matches(
+    append_myers_matches(
       matches,
       cutoff,
       old.view(start=prev_old_idx, end=old_idx),
@@ -573,7 +577,7 @@ fn[T : Eq + Hash] append_patience_matches(
     prev_new_idx = new_idx + 1
   }
 
-  append_patience_matches(
+  append_myers_matches(
     matches,
     cutoff,
     old.view(start=prev_old_idx, end=old.length()),
