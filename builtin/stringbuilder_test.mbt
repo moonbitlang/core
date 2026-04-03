@@ -37,6 +37,17 @@ test "is_empty method" {
 }
 
 ///|
+test "reset does not mutate returned string" {
+  let buf = StringBuilder::new(size_hint=10)
+  buf.write_string("hello")
+  let first = buf.to_string()
+  buf.reset()
+  buf.write_string("bye")
+  inspect(first, content="hello")
+  inspect(buf.to_string(), content="bye")
+}
+
+///|
 test {
   let data = ["a", "b", "c", "hello world"]
   @json.json_inspect(
