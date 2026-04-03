@@ -255,11 +255,10 @@ pub extern "js" fn BigInt::from_uint(x : UInt) -> BigInt =
 
 ///|
 pub extern "js" fn BigInt::from_int64(x : Int64) -> BigInt =
-  #|(x) => BigInt(x.hi) * 0x100000000n + BigInt(x.lo >>> 0)
+  #|(x) => BigInt.asIntN(64, x)
 
 ///|
-pub extern "js" fn BigInt::from_uint64(x : UInt64) -> BigInt =
-  #|(x) => BigInt(x.hi >>> 0) * 0x100000000n + BigInt(x.lo >>> 0)
+pub fn BigInt::from_uint64(x : UInt64) -> BigInt = "%identity"
 
 ///|
 pub extern "js" fn BigInt::is_zero(self : BigInt) -> Bool =
