@@ -269,6 +269,7 @@ pub fn Regex::repeat(
 ///   inspect(m.content(), content="abcd")
 /// }
 /// ```
+#intrinsic("%regex.seq")
 pub impl Add for Regex with add(self, other) -> Regex {
   { pat: @re.seq([self.pat, other.pat]), re: None }
 }
@@ -285,6 +286,7 @@ pub impl Add for Regex with add(self, other) -> Regex {
 ///   inspect(regex.execute("cow") is Some(_), content="false")
 /// }
 /// ```
+#intrinsic("%regex.alt")
 pub impl BitOr for Regex with lor(self, other) -> Regex {
   { pat: @re.alt([self.pat, other.pat]), re: None }
 }
