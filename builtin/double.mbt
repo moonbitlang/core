@@ -290,8 +290,8 @@ pub fn Double::to_string(self : Double) -> String {
 // }
 
 ///|
-pub impl Show for Double with output(self, logger) {
-  logger.write_string(self.to_string())
+pub impl Show for Double with to_string(self) {
+  Double::to_string(self)
 }
 
 ///|
