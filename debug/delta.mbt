@@ -194,9 +194,12 @@ fn prune_delta(max_depth : Int?, delta : ReprDelta) -> ReprDelta {
           Same(label, children.map(child => go(next_depth, child)))
         }
         Different(left, right) =>
-          Different(prune_info(left, depth=d), prune_info(right, depth=d))
-        Extra1(x) => Extra1(prune_info(x, depth=d))
-        Extra2(x) => Extra2(prune_info(x, depth=d))
+          Different(
+            left.prune_info(max_depth=Some(d)),
+            right.prune_info(max_depth=Some(d)),
+          )
+        Extra1(x) => Extra1(x.prune_info(max_depth=Some(d)))
+        Extra2(x) => Extra2(x.prune_info(max_depth=Some(d)))
       }
     }
   }
@@ -259,13 +262,13 @@ fn render_delta(threshold : Int, use_ansi : Bool, delta : ReprDelta) -> Content 
       with_resizing(
         delta_root_size(delta),
         threshold,
-        pretty_print_repr_go(label, children),
+        label.pretty_print(children),
       )
     }
     Different(left, right) => {
       let children : Array[Content] = [
-        render_repr(threshold, left),
-        render_repr(threshold, right),
+        left.render_repr(threshold),
+        right.render_repr(threshold),
       ]
       with_resizing(
         0,
@@ -281,7 +284,7 @@ fn render_delta(threshold : Int, use_ansi : Bool, delta : ReprDelta) -> Content 
       )
     }
     Extra1(x) => {
-      let children : Array[Content] = [render_repr(threshold, x)]
+      let children : Array[Content] = [x.render_repr(threshold)]
       with_resizing(
         0,
         threshold,
@@ -292,7 +295,7 @@ fn render_delta(threshold : Int, use_ansi : Bool, delta : ReprDelta) -> Content 
       )
     }
     Extra2(x) => {
-      let children : Array[Content] = [render_repr(threshold, x)]
+      let children : Array[Content] = [x.render_repr(threshold)]
       with_resizing(
         0,
         threshold,
