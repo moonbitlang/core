@@ -354,15 +354,22 @@ pub fn Hasher::combine_byte(self : Hasher, value : Byte) -> Unit {
 /// }
 /// ```
 pub fn Hasher::combine_bytes(self : Hasher, value : Bytes) -> Unit {
-  let (cur, remain) = for cur = 0, remain = value.length(); remain >= 4; {
-    self.consume4(endian32(value, cur))
-    continue cur + 4, remain - 4
-  } nobreak {
-    (cur, remain)
-  }
-  for cur = cur, remain = remain; remain >= 1; {
-    self.consume1(value[cur])
-    continue cur + 1, remain - 1
+  for data = value.view(); ; {
+    if data is [u32le(x), .. rest] {
+      self.consume4(x)
+      continue rest
+    } else {
+      if data is [b0, .. data] {
+        self.consume1(b0)
+        if data is [b1, .. data] {
+          self.consume1(b1)
+          if data is [b2, ..] {
+            self.consume1(b2)
+          }
+        }
+      }
+      break
+    }
   }
 }
 
@@ -460,16 +467,6 @@ fn Hasher::consume1(self : Hasher, input : Byte) -> Unit {
 ///|
 fn rotl(x : UInt, r : Int) -> UInt {
   (x << r) | (x >> (32 - r))
-}
-
-///|
-fn endian32(input : Bytes, cur : Int) -> UInt {
-  input[cur + 0].to_uint() |
-  (
-    (input[cur + 1].to_uint() << 8) |
-    (input[cur + 2].to_uint() << 16) |
-    (input[cur + 3].to_uint() << 24)
-  )
 }
 
 ///|
@@ -651,20 +648,22 @@ pub impl[T : Hash, E : Hash] Hash for Result[T, E] with hash_combine(
 
 ///|
 pub impl Hash for BytesView with hash_combine(self : BytesView, hasher : Hasher) {
-  let data = self.bytes()
-  let (start, rest) = for start = self.start(), rest = self.len(); rest >= 4; {
-    let result = for i in 0..<=3; result = (0 : UInt) {
-      continue result | (data.unsafe_get(i + start).to_uint() << (8 * i))
-    } nobreak {
-      result
+  for data = self {
+    if data is [u32le(x), .. rest] {
+      hasher.combine_uint(x)
+      continue rest
+    } else {
+      // only 0-3 bytes left
+      if data is [b0, .. data] {
+        hasher.combine_byte(b0)
+        if data is [b1, .. data] {
+          hasher.combine_byte(b1)
+          if data is [b2, ..] {
+            hasher.combine_byte(b2)
+          }
+        }
+      }
+      break
     }
-    hasher.combine_uint(result)
-    continue start + 4, rest - 4
-  } nobreak {
-    (start, rest)
-  }
-  for start = start, rest = rest; rest >= 1; {
-    hasher.combine_byte(data.unsafe_get(start))
-    continue start + 1, rest - 1
   }
 }
