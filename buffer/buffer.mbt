@@ -49,6 +49,11 @@ fn Buffer::grow_if_necessary(self : Buffer, required : Int) -> Unit {
     if space >= required {
       break space
     }
+    // Guard against integer overflow: when space > Int max / 2 (1073741823),
+    // doubling would exceed 32-bit Int range. Fall back to exact allocation.
+    if space > 1073741823 {
+      break required
+    }
     continue space * 2
   }
   if enough_space != self.data.length() {
