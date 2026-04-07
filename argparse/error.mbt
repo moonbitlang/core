@@ -30,6 +30,32 @@ impl Show for ArgError with output(self : ArgError, logger) {
 }
 
 ///|
+impl @debug.Debug for ArgError with to_repr(self) {
+  match self {
+    Message(msg) => @debug.Repr::literal(msg)
+  }
+}
+
+///|
+test "ArgError debug keeps display text" {
+  let err : Error = ArgError::Message(
+    (
+      $|error: unexpected argument '--bad' found
+      $|
+      $|Usage: demo [options]
+    ),
+  )
+  inspect(
+    err.to_string(),
+    content=(
+      #|error: unexpected argument '--bad' found
+      #|
+      #|Usage: demo [options]
+    ),
+  )
+}
+
+///|
 /// Internal parse error variants used while parsing.
 priv suberror ArgParseError {
   UnknownArgument(String, String?)
