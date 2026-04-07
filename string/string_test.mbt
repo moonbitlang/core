@@ -643,6 +643,7 @@ test "length_eq" {
 }
 
 ///|
+#warnings("-deprecated_syntax")
 test "string pattern matching" {
   enum Token {
     True

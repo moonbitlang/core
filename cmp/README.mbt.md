@@ -60,6 +60,7 @@ With `@cmp.maximum_by_key()` and `@cmp.minimum_by_key()`, it is possible to comp
 
 ```mbt check
 ///|
+#warnings("-deprecated_syntax")
 test "cmp_by_key" {
   struct Person {
     name : String

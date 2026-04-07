@@ -31,6 +31,7 @@
 ///   inspect(a.to_string(), content="Reverse(1)") // Shows wrapped value
 /// }
 /// ```
+#warnings("-deprecated_syntax")
 pub(all) struct Reverse[T](T) derive(Eq, Show, Hash)
 
 ///|

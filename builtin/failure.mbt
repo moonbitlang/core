@@ -34,6 +34,7 @@
 ///   @json.json_inspect(err, content=["Failure", "Test assertion failed"])
 /// }
 /// ```
+#warnings("-deprecated_syntax")
 pub(all) suberror Failure {
   Failure(String)
 } derive(ToJson, Show)

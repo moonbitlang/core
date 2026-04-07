@@ -15,6 +15,7 @@
 // Types
 
 ///|
+#warnings("-deprecated_syntax")
 priv struct Entry[K, V] {
   mut prev : Int
   mut next : Entry[K, V]?

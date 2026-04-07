@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+#warnings("-deprecated_syntax")
 struct RangeImpl[T] {
   lo : T
   hi : T

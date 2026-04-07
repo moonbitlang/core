@@ -23,6 +23,7 @@ test "Bool hash function" {
 }
 
 ///|
+#warnings("-deprecated_syntax")
 test "Bool hash function with struct" {
   struct TestHash {
     flag : Bool

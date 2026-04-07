@@ -14,6 +14,7 @@
 
 ///|
 /// Error type `JsonDecodeError`.
+#warnings("-deprecated_syntax")
 pub(all) suberror JsonDecodeError {
   JsonDecodeError((JsonPath, String))
 } derive(Eq, Show, ToJson)

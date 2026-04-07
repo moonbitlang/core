@@ -197,6 +197,7 @@ test "Map::to_json" {
 }
 
 ///|
+#warnings("-deprecated_syntax")
 struct Opt {
   x : Int?
   t : Int??

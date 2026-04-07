@@ -18,6 +18,7 @@ trait FromString {
 }
 
 ///|
+#warnings("-deprecated_syntax")
 struct MyInt(Int) derive(Show)
 
 // _ allow in names
@@ -28,6 +29,7 @@ impl FromString for MyInt with from_string(_s) {
 }
 
 ///|
+#warnings("-deprecated_syntax")
 struct MyString(String) derive(Show)
 
 ///|

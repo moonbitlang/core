@@ -14,6 +14,7 @@
 
 ///|
 /// Type `AllThree`.
+#warnings("-deprecated_syntax")
 pub(all) struct AllThree {
   ints : Array[Int]
   floats : Array[Double]
@@ -36,6 +37,7 @@ fn AllThree::to_json(self : AllThree) -> Json {
 }
 
 ///|
+#warnings("-deprecated_syntax")
 suberror DecodeError {
   DecodeError(String)
 } derive(Eq, Show)

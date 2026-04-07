@@ -18,6 +18,7 @@
 /// - `SetTrue` / `SetFalse` set a boolean value.
 /// - `Count` increments `Matches.flag_counts`.
 /// - `Help` / `Version` display output and exit successfully when triggered.
+#warnings("-deprecated_syntax")
 pub(all) enum FlagAction {
   SetTrue
   SetFalse
@@ -31,6 +32,7 @@ pub(all) enum FlagAction {
 ///
 /// - `Set` keeps the last provided value.
 /// - `Append` keeps all provided values in order.
+#warnings("-deprecated_syntax")
 pub(all) enum OptionAction {
   Set
   Append
