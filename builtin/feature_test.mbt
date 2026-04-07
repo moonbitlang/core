@@ -16,7 +16,7 @@
 struct RangeImpl[T] {
   lo : T
   hi : T
-} derive(Show, ToJson)
+} derive(ToJson)
 
 // pub
 // priv
