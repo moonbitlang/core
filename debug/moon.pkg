@@ -7,12 +7,14 @@ import {
   "moonbitlang/core/uint",
   "moonbitlang/core/uint16",
   "moonbitlang/core/uint64",
+  "moonbitlang/core/set",
 }
 
 import {
   "moonbitlang/core/deque",
   "moonbitlang/core/error",
   "moonbitlang/core/queue",
+  "moonbitlang/core/list"
 } for "test"
 
 warnings = "-alert_visibility-test_unqualified_package"
