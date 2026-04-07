@@ -32,14 +32,14 @@ test "inspect" {
 fn output(x : Result[Unit, Error]) -> StringView {
   match x {
     Err(Failure::Failure(s)) =>
-      if (s =~ (re"FAILED:", after=next)) {
+      if s =~ (re"FAILED:", after=next) {
         "FAILED:\{next}"
       } else {
         s
       }
     Ok(_) => "ok"
     Err(e) =>
-      if ("\{e}" =~ (re"FAILED:", after=next)) {
+      if "\{e}" =~ (re"FAILED:", after=next) {
         "FAILED:\{next}"
       } else {
         "\{e}"
