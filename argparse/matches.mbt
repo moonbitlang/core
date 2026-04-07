@@ -17,6 +17,7 @@ using @debug {trait Debug, type Repr}
 
 ///|
 /// Where a value/flag came from.
+#warnings("-deprecated_syntax")
 pub enum ValueSource {
   Argv
   Env

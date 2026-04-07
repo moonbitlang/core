@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+#warnings("-deprecated_syntax")
 priv struct Entry[K] {
   mut psl : Int
   hash : Int

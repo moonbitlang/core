@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+#warnings("-deprecated_syntax")
 struct RandomState {
   mut seed : UInt64
   gamma : UInt64

@@ -69,6 +69,7 @@ Implement `Arbitrary` trait for custom types:
 
 ```mbt check
 ///|
+#warnings("-deprecated_syntax")
 struct Point {
   x : Int
   y : Int

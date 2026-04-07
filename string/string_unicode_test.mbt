@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+#warnings("-deprecated_syntax")
 test {
   struct Data {
     val : String

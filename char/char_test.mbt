@@ -37,6 +37,7 @@ test "show output" {
 }
 
 ///|
+#warnings("-deprecated_syntax")
 struct TestHash {
   x : Char
 } derive(Hash, Eq, Show)

@@ -22,6 +22,7 @@ test "write_iter with trailing" {
 }
 
 ///|
+#warnings("-deprecated_syntax")
 test "hash_data" {
   struct Data {
     x : Array[Int]
@@ -39,6 +40,7 @@ struct TestLogger {
 }
 
 ///|
+#warnings("-deprecated_syntax")
 struct Pair {
   left : Int
   right : Int

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+#warnings("-deprecated_syntax")
 struct Hello[A, B] {
   fieldA : A
   fieldB : B

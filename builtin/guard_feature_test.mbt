@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+#warnings("-deprecated_syntax")
 enum Expr {
   Add(Expr, Expr)
   Sub(Expr, Expr)

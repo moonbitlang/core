@@ -14,6 +14,7 @@
 
 ///|
 /// Number-of-values constraint for an argument.
+#warnings("-deprecated_syntax")
 pub struct ValueRange {
   priv lower : Int
   priv upper : Int?
