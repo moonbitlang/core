@@ -30,7 +30,12 @@ test "show error" {
   inspect(try! f(true), content="ok")
   inspect(
     try? f(false),
-    content="Err(moonbitlang/core/error_blackbox_test.IntError.IntError)",
+    content="Err(<moonbitlang/core/error_blackbox_test.IntError.IntError: ...>)",
+  )
+  inspect(
+    (IntError(42) : Error).to_string() ==
+    @debug.to_string((IntError(42) : Error)),
+    content="true",
   )
 }
 
