@@ -23,18 +23,22 @@ test "Bool hash function" {
 }
 
 ///|
-#warnings("-deprecated_syntax")
 test "Bool hash function with struct" {
   struct TestHash {
     flag : Bool
     x : Int
-  } derive(Hash, Eq, Show)
+  } derive(Hash, Eq, Debug)
   // type MyInt Int derive(Show) this does not work
   // let m : Map[TestHash, Char] = {}
   let m = {}
   m[{ flag: true, x: 1 }] = '3'
   m[{ flag: false, x: 1 }] = '3'
-  inspect(m, content="{{flag: true, x: 1}: '3', {flag: false, x: 1}: '3'}")
+  debug_inspect(
+    m,
+    content=(
+      #|{ { flag: true, x: 1 }: '3', { flag: false, x: 1 }: '3' }
+    ),
+  )
 }
 
 ///|

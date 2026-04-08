@@ -69,11 +69,10 @@ Implement `Arbitrary` trait for custom types:
 
 ```mbt check
 ///|
-#warnings("-deprecated_syntax")
 struct Point {
   x : Int
   y : Int
-} derive(Show)
+} derive(Debug)
 
 ///|
 impl Arbitrary for Point with arbitrary(size, r0) {
@@ -85,11 +84,19 @@ impl Arbitrary for Point with arbitrary(size, r0) {
 ///|
 test "custom type generation" {
   let point : Point = @quickcheck.gen()
-  inspect(point, content="{x: 0, y: 0}")
+  debug_inspect(
+    point,
+    content=(
+      #|{ x: 0, y: 0 }
+    ),
+  )
   let points : Array[Point] = @quickcheck.samples(10)
-  inspect(
+  debug_inspect(
     points[6:],
-    content="[{x: 0, y: 1}, {x: -1, y: -5}, {x: -6, y: -6}, {x: -1, y: 7}]",
+    content=(
+      #|<ArrayView:
+      #|  [{ x: 0, y: 1 }, { x: -1, y: -5 }, { x: -6, y: -6 }, { x: -1, y: 7 }]>
+    ),
   )
 }
 ```

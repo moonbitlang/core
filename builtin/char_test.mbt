@@ -13,23 +13,22 @@
 // limitations under the License.
 
 ///|
-#warnings("-deprecated_syntax")
 enum H {
   A(Char)
-} derive(Show)
+} derive(Debug)
 
 ///|
 test "char nested" {
-  inspect(H::A('中'), content="A('中')")
-  inspect(H::A('\b'), content="A('\\b')")
-  inspect(H::A('\r'), content="A('\\r')")
-  inspect(H::A('\n'), content="A('\\n')")
-  inspect(H::A('\t'), content="A('\\t')")
-  inspect(H::A('\u0000'), content="A('\\u{00}')")
-  inspect(H::A('\u0001'), content="A('\\u{01}')")
-  inspect(H::A('\u0002'), content="A('\\u{02}')")
+  debug_inspect(H::A('中'), content="A('中')")
+  debug_inspect(H::A('\b'), content="A('\\b')")
+  debug_inspect(H::A('\r'), content="A('\\r')")
+  debug_inspect(H::A('\n'), content="A('\\n')")
+  debug_inspect(H::A('\t'), content="A('\\t')")
+  debug_inspect(H::A('\u0000'), content="A('\\u{00}')")
+  debug_inspect(H::A('\u0001'), content="A('\\u{01}')")
+  debug_inspect(H::A('\u0002'), content="A('\\u{02}')")
   // emoji
-  inspect(H::A('🚀'), content="A('🚀')")
+  debug_inspect(H::A('🚀'), content="A('🚀')")
 }
 
 ///|

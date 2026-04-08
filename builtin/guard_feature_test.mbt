@@ -13,7 +13,6 @@
 // limitations under the License.
 
 ///|
-#warnings("-deprecated_syntax")
 enum Expr {
   Add(Expr, Expr)
   Sub(Expr, Expr)
@@ -21,7 +20,7 @@ enum Expr {
   Div(Expr, Expr)
   Lit(Int)
   Var(String)
-} derive(Show, ToJson, Eq)
+} derive(Debug, ToJson, Eq)
 
 ///|
 fn simplify(e : Expr) -> Expr {

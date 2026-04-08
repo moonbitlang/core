@@ -13,24 +13,38 @@
 // limitations under the License.
 
 ///|
-#warnings("-deprecated_syntax")
 struct H {
   x : Int
   y : Int
-} derive(@quickcheck.Arbitrary, Show)
+} derive(@quickcheck.Arbitrary, Debug)
 
 ///|
 test {
   let state = @splitmix.RandomState::default()
   let size = 10
   let v : H = @quickcheck.gen(state~, size~)
-  inspect(v, content="{x: 6, y: 4}")
+  debug_inspect(
+    v,
+    content=(
+      #|{ x: 6, y: 4 }
+    ),
+  )
   let state = state.split()
   let v : H = @quickcheck.gen(state~, size~)
-  inspect(v, content="{x: 1, y: -6}")
+  debug_inspect(
+    v,
+    content=(
+      #|{ x: 1, y: -6 }
+    ),
+  )
   let state = state.split()
   let v : H = @quickcheck.gen(state~, size~)
-  inspect(v, content="{x: -9, y: 1}")
+  debug_inspect(
+    v,
+    content=(
+      #|{ x: -9, y: 1 }
+    ),
+  )
 }
 
 ///|
