@@ -1304,8 +1304,9 @@ pub impl Shl for UInt
 pub impl Shl for UInt16
 pub impl Shl for UInt64
 
+#must_implement_one(output, to_string)
 pub(open) trait Show {
-  output(Self, &Logger) -> Unit
+  output(Self, &Logger) -> Unit = _
   to_string(Self) -> String = _
 }
 pub impl Show for Unit

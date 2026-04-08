@@ -40,8 +40,8 @@ pub(all) type SourceLoc
 fn SourceLoc::repr(self : Self) -> String = "%loc_to_string"
 
 ///|
-pub impl Show for SourceLoc with output(self, logger) {
-  logger.write_string(self.repr())
+pub impl Show for SourceLoc with to_string(self) {
+  self.repr()
 }
 
 ///|

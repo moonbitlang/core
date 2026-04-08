@@ -13,7 +13,9 @@
 // limitations under the License.
 
 ///|
-fn Error::to_string(self : Error) -> String = "%error.to_string"
+fn Error::to_string(self : Error) -> String {
+  @debug.to_string(self)
+}
 
 ///|
 /// Implements `Show` trait for `Error` type by converting the error into a
