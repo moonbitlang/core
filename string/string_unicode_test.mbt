@@ -13,17 +13,16 @@
 // limitations under the License.
 
 ///|
-#warnings("-deprecated_syntax")
 test {
   struct Data {
     val : String
-  } derive(Show)
+  } derive(Debug)
   let data = Data::{ val: "Hello, 世界\t\n!" }
   // TODO: the data type annotation is not needed
-  inspect(
+  debug_inspect(
     data,
     content=(
-      #|{val: "Hello, 世界\t\n!"}
+      #|{ val: "Hello, 世界\t\n!" }
     ),
   )
   let v = "\u{00AD}Hello, \u{2060}世界\t\n!\u{1D173}"

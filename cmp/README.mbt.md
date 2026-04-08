@@ -60,12 +60,11 @@ With `@cmp.maximum_by_key()` and `@cmp.minimum_by_key()`, it is possible to comp
 
 ```mbt check
 ///|
-#warnings("-deprecated_syntax")
 test "cmp_by_key" {
   struct Person {
     name : String
     age : Int
-  } derive(Show)
+  } derive(Debug)
 
   // Compare strings by their length
   let s1 = "hello"
@@ -77,7 +76,12 @@ test "cmp_by_key" {
   let alice = { name: "Alice", age: 25 }
   let bob = { name: "Bob", age: 30 }
   let younger = @cmp.minimum_by_key(alice, bob, p => p.age)
-  inspect(younger, content="{name: \"Alice\", age: 25}")
+  debug_inspect(
+    younger,
+    content=(
+      #|{ name: "Alice", age: 25 }
+    ),
+  )
 
   // When keys are equal, the first argument is considered the minimum
   let p1 = ("first", 1)

@@ -22,16 +22,20 @@ test "write_iter with trailing" {
 }
 
 ///|
-#warnings("-deprecated_syntax")
 test "hash_data" {
   struct Data {
     x : Array[Int]
     y : FixedArray[Int]
-  } derive(Hash, Eq, Show)
+  } derive(Hash, Eq, Debug)
   let data = Data::{ x: [1, 2, 3], y: [4, 5, 6] }
   let map = {}
   map[data] = 1
-  inspect(map, content="{{x: [1, 2, 3], y: [4, 5, 6]}: 1}")
+  debug_inspect(
+    map,
+    content=(
+      #|{ { x: [1, 2, 3], y: <FixedArray: [4, 5, 6]> }: 1 }
+    ),
+  )
 }
 
 ///|
@@ -40,11 +44,10 @@ struct TestLogger {
 }
 
 ///|
-#warnings("-deprecated_syntax")
 struct Pair {
   left : Int
   right : Int
-} derive(Eq, Show)
+} derive(Eq, Debug)
 
 ///|
 struct Wrapper {

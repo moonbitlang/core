@@ -13,14 +13,13 @@
 // limitations under the License.
 
 ///|
-#warnings("-deprecated_syntax")
 enum Expr {
   Add(Expr, Expr)
   Sub(Expr, Expr)
   Mul(Expr, Expr)
   Div(Expr, Expr)
   Val(String)
-} derive(ToJson, FromJson, Show, Eq)
+} derive(ToJson, FromJson, Debug, Eq)
 
 ///|
 test {
@@ -33,11 +32,11 @@ test {
     ),
   )
   let e0 : Expr = @json.from_json(ej)
-  inspect(
+  debug_inspect(
     e0,
     content=(
       #|Add(Val("x"), Val("y"))
     ),
   )
-  assert_eq(e0, e)
+  assert_true(e0 == e)
 }

@@ -14,12 +14,11 @@
 
 ///|
 /// Type `AllThree`.
-#warnings("-deprecated_syntax")
 pub(all) struct AllThree {
   ints : Array[Int]
   floats : Array[Double]
   strings : Array[String]
-} derive(Eq, Show)
+} derive(Eq, Debug)
 
 ///|
 fn[T] array_to_json(arr : Array[T], f~ : (T) -> Json) -> Json {
@@ -37,10 +36,9 @@ fn AllThree::to_json(self : AllThree) -> Json {
 }
 
 ///|
-#warnings("-deprecated_syntax")
 suberror DecodeError {
   DecodeError(String)
-} derive(Eq, Show)
+} derive(Eq, Debug)
 
 ///|
 fn of_json(jv : Json) -> AllThree raise DecodeError {
@@ -86,10 +84,10 @@ test {
     strings: ["a", "b", "c"],
   }
   let json = all_three.to_json()
-  inspect(
+  debug_inspect(
     try? of_json(json),
     content=(
-      #|Ok({ints: [1, 2, 3], floats: [1, 2, 3], strings: ["a", "b", "c"]})
+      #|Ok({ ints: [1, 2, 3], floats: [1, 2, 3], strings: ["a", "b", "c"] })
     ),
   )
   // FIXME:

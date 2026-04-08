@@ -643,13 +643,12 @@ test "length_eq" {
 }
 
 ///|
-#warnings("-deprecated_syntax")
 test "string pattern matching" {
   enum Token {
     True
     False
     Other
-  } derive(Show)
+  } derive(Debug)
   fn process_string(s : String) {
     match s {
       [.. "true", ..] => True
@@ -658,11 +657,11 @@ test "string pattern matching" {
     }
   }
 
-  inspect(process_string("truexx"), content="True")
+  debug_inspect(process_string("truexx"), content="True")
   // more tests
-  inspect(process_string("false xx"), content="False")
-  inspect(process_string("true"), content="True")
-  inspect(process_string(""), content="Other")
+  debug_inspect(process_string("false xx"), content="False")
+  debug_inspect(process_string("true"), content="True")
+  debug_inspect(process_string(""), content="Other")
 }
 
 ///|

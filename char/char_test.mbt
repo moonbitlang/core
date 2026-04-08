@@ -37,17 +37,21 @@ test "show output" {
 }
 
 ///|
-#warnings("-deprecated_syntax")
 struct TestHash {
   x : Char
-} derive(Hash, Eq, Show)
+} derive(Hash, Eq, Debug)
 
 ///|
 test "Char hash function with struct" {
   let m = {}
   m[{ x: 'a' }] = '3'
   m[{ x: 'b' }] = '3'
-  inspect(m, content="{{x: 'a'}: '3', {x: 'b'}: '3'}")
+  debug_inspect(
+    m,
+    content=(
+      #|{ { x: 'a' }: '3', { x: 'b' }: '3' }
+    ),
+  )
 }
 
 ///|
