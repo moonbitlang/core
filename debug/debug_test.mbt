@@ -29,6 +29,24 @@ test "inspect" {
 }
 
 ///|
+test "debug repr for json" {
+  @debug.debug_inspect(Json::null(), content="Null")
+  @debug.debug_inspect(Json::boolean(true), content="True")
+  @debug.debug_inspect(
+    Json::number(@double.infinity, repr="1e999999999"),
+    content=(
+      #|Number(Infinity, repr=Some("1e999999999"))
+    ),
+  )
+  @debug.debug_inspect(
+    Json::object({ "nested": Json::array([Json::number(1.0), Json::null()]) }),
+    content=(
+      #|Object({ "nested": Array([Number(1), Null]) })
+    ),
+  )
+}
+
+///|
 fn output(x : Result[Unit, Error]) -> StringView {
   match x {
     Err(Failure::Failure(s)) =>
