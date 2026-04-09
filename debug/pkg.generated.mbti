@@ -56,6 +56,7 @@ pub impl Debug for Failure
 pub impl Debug for InspectError
 pub impl[A] Debug for Iter[A]
 pub impl[A, B] Debug for Iter2[A, B]
+pub impl Debug for Json
 pub impl[K : Debug, V : Debug] Debug for Map[K, V]
 pub impl[T : Debug] Debug for MutArrayView[T]
 pub impl Debug for SnapshotError
