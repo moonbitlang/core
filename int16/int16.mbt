@@ -131,6 +131,11 @@ pub impl Show for Int16 with output(self, logger) {
 }
 
 ///|
+pub impl Show for Int16 with to_string(self) {
+  Int16::to_string(self)
+}
+
+///|
 /// reinterpret as an unsigned integer with binary complement
 pub fn Int16::reinterpret_as_uint16(self : Int16) -> UInt16 {
   self.to_int().to_uint16()

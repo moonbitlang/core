@@ -295,6 +295,11 @@ pub impl Show for Double with output(self, logger) {
 }
 
 ///|
+pub impl Show for Double with to_string(self) {
+  Double::to_string(self)
+}
+
+///|
 /// Determines whether two floating-point numbers are approximately equal within
 /// specified tolerances.
 /// The implementation follows the algorithm described in PEP 485 for Python's
