@@ -63,7 +63,7 @@ impl Shr for Num with shr(self, i) {
 }
 
 ///|
-test "deprecated operator helpers" {
+test "operator trait methods on builtin types" {
   inspect(Add::add(1, 2), content="3")
   inspect(Sub::sub(5, 3), content="2")
   inspect(Mul::mul(2, 3), content="6")
@@ -75,14 +75,13 @@ test "deprecated operator helpers" {
 }
 
 ///|
-#warnings("-deprecated")
-test "deprecated operator defaults" {
-  inspect(Add::op_add(num(8), num(3)).value, content="11")
-  inspect(Sub::op_sub(num(8), num(3)).value, content="5")
-  inspect(Mul::op_mul(num(4), num(3)).value, content="12")
-  inspect(Div::op_div(num(9), num(3)).value, content="3")
-  inspect(Mod::op_mod(num(10), num(3)).value, content="1")
-  inspect(Neg::op_neg(num(4)).value, content="-4")
-  inspect(Shl::op_shl(num(1), 4).value, content="16")
-  inspect(Shr::op_shr(num(16), 2).value, content="4")
+test "operator trait methods on custom types" {
+  inspect(Add::add(num(8), num(3)).value, content="11")
+  inspect(Sub::sub(num(8), num(3)).value, content="5")
+  inspect(Mul::mul(num(4), num(3)).value, content="12")
+  inspect(Div::div(num(9), num(3)).value, content="3")
+  inspect(Mod::mod(num(10), num(3)).value, content="1")
+  inspect(Neg::neg(num(4)).value, content="-4")
+  inspect(Shl::shl(num(1), 4).value, content="16")
+  inspect(Shr::shr(num(16), 2).value, content="4")
 }
