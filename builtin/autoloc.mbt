@@ -45,6 +45,11 @@ pub impl Show for SourceLoc with output(self, logger) {
 }
 
 ///|
+pub impl Show for SourceLoc with to_string(self) {
+  self.repr()
+}
+
+///|
 priv struct SourceLocRepr {
   filename : StringView
   start_line : StringView
