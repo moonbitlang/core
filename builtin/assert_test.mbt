@@ -13,6 +13,15 @@
 // limitations under the License.
 
 ///|
+struct ShowOnly(Int) derive(Eq)
+
+///|
+impl Show for ShowOnly with output(self, logger) {
+  let ShowOnly(value) = self
+  logger.write_object(value)
+}
+
+///|
 test "panic assert_not_eq with equal values" {
   let str = "test"
   ignore(assert_not_eq(str, str))
@@ -31,4 +40,10 @@ test "panic assert_eq with unequal values" {
 ///|
 test "panic assert_true with false" {
   ignore(assert_true(false))
+}
+
+///|
+test "legacy assert_eq still works for Show-only types" {
+  assert_eq(ShowOnly(1), ShowOnly(1))
+  assert_not_eq(ShowOnly(1), ShowOnly(2))
 }

@@ -1,7 +1,23 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/test"
 
+import {
+  "moonbitlang/core/debug",
+}
+
 // Values
+#callsite(autofill(loc))
+pub fn[T : Eq + @debug.Debug] assert_eq(T, T, msg? : String, loc~ : SourceLoc) -> Unit raise
+
+#callsite(autofill(loc))
+pub fn[T : Eq + @debug.Debug] assert_not_eq(T, T, msg? : String, loc~ : SourceLoc) -> Unit raise
+
+#callsite(autofill(loc))
+pub fn[T : @debug.Debug] assert_not_same_object(T, T, loc~ : SourceLoc) -> Unit raise
+
+#callsite(autofill(loc))
+pub fn[T : @debug.Debug] assert_same_object(T, T, loc~ : SourceLoc) -> Unit raise
+
 #callsite(autofill(loc))
 pub fn[T] fail(String, loc~ : SourceLoc) -> T raise
 
