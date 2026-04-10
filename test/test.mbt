@@ -77,6 +77,7 @@ pub fn[T : Eq + Debug] assert_not_eq(
 /// @test.same_object(a, a)
 /// @test.is_not(a, b)
 /// ```
+#deprecated("use `@test.assert_same_object` instead", skip_current_package=true)
 #callsite(autofill(loc))
 pub fn[T : Show] same_object(a : T, b : T, loc~ : SourceLoc) -> Unit raise {
   if !physical_equal(a, b) {
@@ -121,6 +122,7 @@ pub fn[T : Debug] assert_same_object(
 /// @test.is_not(a, b)
 /// @test.same_object(a, a)
 /// ```
+#deprecated("use `@test.assert_not_same_object` instead", skip_current_package=true)
 #callsite(autofill(loc))
 #alias(is_not, deprecated)
 pub fn[T : Show] not_same_object(a : T, b : T, loc~ : SourceLoc) -> Unit raise {

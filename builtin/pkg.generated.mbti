@@ -4,12 +4,14 @@ package "moonbitlang/core/builtin"
 // Values
 pub fn[T] abort(String) -> T
 
+#deprecated
 #callsite(autofill(loc))
 pub fn[T : Eq + Show] assert_eq(T, T, msg? : String, loc~ : SourceLoc) -> Unit raise
 
 #callsite(autofill(loc))
 pub fn assert_false(Bool, msg? : String, loc~ : SourceLoc) -> Unit raise
 
+#deprecated
 #callsite(autofill(loc))
 pub fn[T : Eq + Show] assert_not_eq(T, T, msg? : String, loc~ : SourceLoc) -> Unit raise
 
