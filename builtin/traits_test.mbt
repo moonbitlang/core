@@ -74,11 +74,10 @@ test "Eq helpers" {
 }
 
 ///|
-#warnings("-deprecated")
-test "Eq op_equal default" {
+test "Eq::equal on custom impl" {
   let a = Wrapper::{ value: 1 }
   let b = Wrapper::{ value: 2 }
-  inspect(Eq::op_equal(a, b), content="false")
+  inspect(Eq::equal(a, b), content="false")
 }
 
 ///|

@@ -1059,9 +1059,7 @@ pub fn StringView::view(Self, start_offset? : Int, end_offset? : Int) -> Self
 
 // Traits
 pub(open) trait Add {
-  add(Self, Self) -> Self = _
-  #deprecated
-  op_add(Self, Self) -> Self = _
+  add(Self, Self) -> Self
 }
 pub impl Add for Byte
 pub impl Add for Int
@@ -1166,9 +1164,7 @@ pub impl Default for Bytes
 pub impl Default for StringView
 
 pub(open) trait Div {
-  div(Self, Self) -> Self = _
-  #deprecated
-  op_div(Self, Self) -> Self = _
+  div(Self, Self) -> Self
 }
 pub impl Div for Byte
 pub impl Div for Int
@@ -1179,9 +1175,7 @@ pub impl Div for UInt64
 pub impl Div for Double
 
 pub(open) trait Eq {
-  equal(Self, Self) -> Bool = _
-  #deprecated
-  op_equal(Self, Self) -> Bool = _
+  equal(Self, Self) -> Bool
   not_equal(Self, Self) -> Bool = _
 }
 pub impl Eq for Unit
@@ -1258,9 +1252,7 @@ pub fn[T : Show] &Logger::write_iter(Self, Iter[T], prefix? : String, suffix? : 
 pub fn[Obj : Show] &Logger::write_object(Self, Obj) -> Unit
 
 pub(open) trait Mod {
-  mod(Self, Self) -> Self = _
-  #deprecated
-  op_mod(Self, Self) -> Self = _
+  mod(Self, Self) -> Self
 }
 pub impl Mod for Byte
 pub impl Mod for Int
@@ -1271,9 +1263,7 @@ pub impl Mod for UInt64
 pub impl Mod for Double
 
 pub(open) trait Mul {
-  mul(Self, Self) -> Self = _
-  #deprecated
-  op_mul(Self, Self) -> Self = _
+  mul(Self, Self) -> Self
 }
 pub impl Mul for Byte
 pub impl Mul for Int
@@ -1284,18 +1274,14 @@ pub impl Mul for UInt64
 pub impl Mul for Double
 
 pub(open) trait Neg {
-  neg(Self) -> Self = _
-  #deprecated
-  op_neg(Self) -> Self = _
+  neg(Self) -> Self
 }
 pub impl Neg for Int
 pub impl Neg for Int64
 pub impl Neg for Double
 
 pub(open) trait Shl {
-  shl(Self, Int) -> Self = _
-  #deprecated
-  op_shl(Self, Int) -> Self = _
+  shl(Self, Int) -> Self
 }
 pub impl Shl for Byte
 pub impl Shl for Int
@@ -1343,9 +1329,7 @@ pub impl Show for BytesView
 pub impl Show for StringView
 
 pub(open) trait Shr {
-  shr(Self, Int) -> Self = _
-  #deprecated
-  op_shr(Self, Int) -> Self = _
+  shr(Self, Int) -> Self
 }
 pub impl Shr for Byte
 pub impl Shr for Int
@@ -1355,9 +1339,7 @@ pub impl Shr for UInt16
 pub impl Shr for UInt64
 
 pub(open) trait Sub {
-  sub(Self, Self) -> Self = _
-  #deprecated
-  op_sub(Self, Self) -> Self = _
+  sub(Self, Self) -> Self
 }
 pub impl Sub for Byte
 pub impl Sub for Int
