@@ -30,7 +30,12 @@
 /// }
 /// ```
 pub impl Show for Float with output(self, logger) {
-  logger.write_string(self.to_double().to_string())
+  logger.write_string(self.to_string())
+}
+
+///|
+pub impl Show for Float with to_string(self) {
+  self.to_double().to_string()
 }
 
 ///|
