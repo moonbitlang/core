@@ -1110,3 +1110,50 @@ test "stringview lexical_compare" {
   // Test comparison with special characters
   inspect("hello!".view().lexical_compare("hello?".view()), content="-1") // '!' < '?'
 }
+
+///|
+test "stringview compare_ignore_ascii_case" {
+  // Equal under ASCII folding
+  inspect("".view().compare_ignore_ascii_case("".view()), content="0")
+  inspect("abc".view().compare_ignore_ascii_case("ABC".view()), content="0")
+  inspect(
+    "MoonBit".view().compare_ignore_ascii_case("MOONBIT".view()),
+    content="0",
+  )
+
+  // Less / greater after folding
+  inspect("ABC".view().compare_ignore_ascii_case("abd".view()), content="-1")
+  inspect("abd".view().compare_ignore_ascii_case("ABC".view()), content="1")
+
+  // Prefix relationship
+  inspect("ab".view().compare_ignore_ascii_case("ABC".view()), content="-1")
+  inspect("ABC".view().compare_ignore_ascii_case("ab".view()), content="1")
+
+  // Sub-views with different start offsets but equal-under-fold contents
+  let long_a = "xyzHELLOxyz"
+  let long_b = "qqhelloqq"
+  inspect(
+    long_a
+    .view(start_offset=3, end_offset=8)
+    .compare_ignore_ascii_case(long_b.view(start_offset=2, end_offset=7)),
+    content="0",
+  )
+
+  // Sub-views where the underlying strings differ outside the view bounds —
+  // only the view contents should affect the result.
+  let s = "AAABBBccc"
+  let t = "XXXbbbDDD"
+  inspect(
+    s
+    .view(start_offset=3, end_offset=6)
+    .compare_ignore_ascii_case(t.view(start_offset=3, end_offset=6)),
+    content="0",
+  )
+
+  // Non-ASCII letters are NOT folded
+  assert_true("Ä".view().compare_ignore_ascii_case("ä".view()) != 0)
+
+  // Surrogate pairs
+  inspect("A🤣".view().compare_ignore_ascii_case("a🤣".view()), content="0")
+  assert_true("a🤣".view().compare_ignore_ascii_case("a😭".view()) != 0)
+}
