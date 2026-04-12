@@ -1157,3 +1157,65 @@ test "stringview compare_ignore_ascii_case" {
   inspect("A🤣".view().compare_ignore_ascii_case("a🤣".view()), content="0")
   assert_true("a🤣".view().compare_ignore_ascii_case("a😭".view()) != 0)
 }
+
+///|
+test "stringview equal_ignore_ascii_case" {
+  // Equal under ASCII folding
+  inspect("".view().equal_ignore_ascii_case("".view()), content="true")
+  inspect("abc".view().equal_ignore_ascii_case("ABC".view()), content="true")
+  inspect(
+    "MoonBit".view().equal_ignore_ascii_case("MOONBIT".view()),
+    content="true",
+  )
+
+  // Length mismatch fast path
+  inspect("ab".view().equal_ignore_ascii_case("ABC".view()), content="false")
+  inspect("ABC".view().equal_ignore_ascii_case("ab".view()), content="false")
+
+  // Same length but different content
+  inspect("abc".view().equal_ignore_ascii_case("abd".view()), content="false")
+
+  // Sub-views with different start offsets but equal-under-fold contents
+  let long_a = "xyzHELLOxyz"
+  let long_b = "qqhelloqq"
+  inspect(
+    long_a
+    .view(start_offset=3, end_offset=8)
+    .equal_ignore_ascii_case(long_b.view(start_offset=2, end_offset=7)),
+    content="true",
+  )
+
+  // Sub-views where the underlying strings differ outside the view bounds —
+  // only the view contents should affect the result.
+  let s = "AAABBBccc"
+  let t = "XXXbbbDDD"
+  inspect(
+    s
+    .view(start_offset=3, end_offset=6)
+    .equal_ignore_ascii_case(t.view(start_offset=3, end_offset=6)),
+    content="true",
+  )
+
+  // Non-ASCII letters are NOT folded
+  inspect("Ä".view().equal_ignore_ascii_case("ä".view()), content="false")
+
+  // Surrogate pairs
+  inspect(
+    "A🤣".view().equal_ignore_ascii_case("a🤣".view()),
+    content="true",
+  )
+  inspect(
+    "a🤣".view().equal_ignore_ascii_case("a😭".view()),
+    content="false",
+  )
+
+  // Cross-check with compare_ignore_ascii_case
+  let cases = [("Foo", "FOO"), ("Foo", "Bar"), ("Foo", "FoO!"), ("ä", "Ä")]
+  for c in cases {
+    let (x, y) = c
+    assert_eq(
+      x.view().equal_ignore_ascii_case(y.view()),
+      x.view().compare_ignore_ascii_case(y.view()) == 0,
+    )
+  }
+}

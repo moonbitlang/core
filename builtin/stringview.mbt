@@ -432,6 +432,57 @@ pub fn StringView::compare_ignore_ascii_case(
 }
 
 ///|
+/// Tests two string views for equality, treating ASCII letters as
+/// case-insensitive.
+///
+/// ASCII `'A'..'Z'` are folded onto `'a'..'z'` before comparison; all other
+/// code units (including non-ASCII letters like `'Ä'`) are compared by their
+/// raw UTF-16 value. Use this for ASCII-only protocol text — HTTP headers,
+/// file extensions, identifiers — not for human-language text where Unicode
+/// case folding matters.
+///
+/// Equivalent to `self.compare_ignore_ascii_case(other) == 0` but short-
+/// circuits on length mismatch and on the first differing code unit, so it
+/// is preferred when only equality is needed.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   inspect(
+///     "Hello".view().equal_ignore_ascii_case("hello".view()),
+///     content="true",
+///   )
+///   inspect(
+///     "Hello".view().equal_ignore_ascii_case("world".view()),
+///     content="false",
+///   )
+///   inspect("abc".view().equal_ignore_ascii_case("ab".view()), content="false")
+/// }
+/// ```
+pub fn StringView::equal_ignore_ascii_case(
+  self : StringView,
+  other : StringView,
+) -> Bool {
+  let len = self.length()
+  if len != other.length() {
+    return false
+  }
+  for i in 0..<len {
+    let a = self.str().unsafe_get(self.start() + i)
+    let b = other.str().unsafe_get(other.start() + i)
+    // Fast path: identical code units need no folding.
+    if a == b {
+      continue
+    }
+    if ascii_fold_lower_u16(a) != ascii_fold_lower_u16(b) {
+      return false
+    }
+  }
+  true
+}
+
+///|
 /// Creates a `View` into a `String`.
 /// 
 /// # Example

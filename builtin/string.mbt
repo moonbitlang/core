@@ -534,6 +534,34 @@ pub fn String::compare_ignore_ascii_case(self : String, other : String) -> Int {
 }
 
 ///|
+/// Tests two strings for equality, treating ASCII letters as case-insensitive.
+///
+/// ASCII `'A'..'Z'` are folded onto `'a'..'z'` before comparison; all other
+/// code units (including non-ASCII letters like `'Ä'`) are compared by their
+/// raw UTF-16 value. Use this for ASCII-only protocol text — HTTP headers,
+/// file extensions, identifiers — not for human-language text where Unicode
+/// case folding matters.
+///
+/// Equivalent to `self.compare_ignore_ascii_case(other) == 0` but short-
+/// circuits on length mismatch and on the first differing code unit, so it
+/// is preferred when only equality is needed.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   inspect("Hello".equal_ignore_ascii_case("hello"), content="true")
+///   inspect("Hello".equal_ignore_ascii_case("world"), content="false")
+///   inspect("abc".equal_ignore_ascii_case("ab"), content="false")
+///   // Non-ASCII letters are NOT folded
+///   inspect("Ä".equal_ignore_ascii_case("ä"), content="false")
+/// }
+/// ```
+pub fn String::equal_ignore_ascii_case(self : String, other : String) -> Bool {
+  self[:].equal_ignore_ascii_case(other[:])
+}
+
+///|
 /// Convert char array to string.
 ///
 /// ```mbt check
