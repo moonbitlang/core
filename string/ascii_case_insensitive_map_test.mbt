@@ -13,171 +13,151 @@
 // limitations under the License.
 
 // ----------------------------------------------------------------------------
-// Sketch: ASCII case-insensitive map built on top of `String::to_lower`.
+// Sketch: ASCII case-insensitive key wrapper for `Map`.
 //
-// This is intentionally NOT a public API. It lives in a test file to
-// demonstrate one way to layer ASCII-case-insensitive lookup on top of the
-// existing `Map[String, V]` and the new `*_ignore_ascii_case` primitives,
-// without paying an O(n) scan per lookup.
+// Instead of wrapping the whole Map, we wrap only the *key* type by providing
+// custom `Hash` and `Eq` that fold ASCII letters.  Then `Map[AsciiCaseInsensitiveString, V]`
+// gives us O(1) case-insensitive lookup for free.
 //
-// Design notes
-// ------------
-// - Keys are folded to ASCII lowercase at insert time and at lookup time. The
-//   wrapper stores the *original* (un-folded) key alongside the value so
-//   iteration can return what the caller actually inserted.
-// - Lookups stay O(1) because the underlying `Map` hashes the folded form.
-// - Equality of two keys (after fold) is verified to agree with
-//   `String::equal_ignore_ascii_case`, which is the contract this map relies
-//   on. If that contract ever broke, the cross-check tests below would fail.
-// - This sketch uses `String::to_lower` for folding because, as of writing,
-//   `String::to_lower` is itself ASCII-only in moonbitlang/core (see the
-//   TODO in builtin/string.mbt). If `to_lower` is ever upgraded to full
-//   Unicode case folding, this sketch would silently change semantics — a
-//   real production version should fold using a dedicated ASCII-only helper.
+// This is the same pattern as Rust's `unicase::Ascii` or .NET's
+// `StringComparer.OrdinalIgnoreCase`.
+//
+// This sketch is intentionally private; it lives in a test file to verify the
+// design works.
 // ----------------------------------------------------------------------------
 
 ///|
-priv struct AsciiCaseInsensitiveMap[V] {
-  // folded_key -> (original_key, value)
-  inner : Map[String, (String, V)]
+/// A newtype wrapper around `String` whose `Hash` and `Eq` implementations fold
+/// ASCII uppercase letters to lowercase. Use as `Map[AsciiCaseInsensitiveString, V]`
+/// to get an O(1) ASCII-case-insensitive hash map with no additional wrapper code.
+priv struct AsciiCaseInsensitiveString {
+  raw : String
 }
 
 ///|
-fn[V] AsciiCaseInsensitiveMap::new() -> AsciiCaseInsensitiveMap[V] {
-  { inner: Map::new() }
+fn AsciiCaseInsensitiveString::new(s : String) -> AsciiCaseInsensitiveString {
+  { raw: s }
 }
 
 ///|
-fn[V] AsciiCaseInsensitiveMap::set(
-  self : AsciiCaseInsensitiveMap[V],
-  key : String,
-  value : V,
-) -> Unit {
-  self.inner[key.to_lower()] = (key, value)
-}
-
-///|
-fn[V] AsciiCaseInsensitiveMap::get(
-  self : AsciiCaseInsensitiveMap[V],
-  key : String,
-) -> V? {
-  match self.inner.get(key.to_lower()) {
-    Some((_, v)) => Some(v)
-    None => None
+/// Hash the folded (ASCII-lowered) code units so that "Foo" and "FOO" land in
+/// the same bucket.
+impl Hash for AsciiCaseInsensitiveString with hash_combine(self, hasher) {
+  let s = self.raw
+  for i in 0..<s.length() {
+    let mut c = s.unsafe_get(i)
+    // Fold ASCII 'A'..'Z' (0x41..0x5A) to 'a'..'z' (0x61..0x7A).
+    if c >= ('A' : UInt16) && c <= ('Z' : UInt16) {
+      c = c + (32 : UInt16)
+    }
+    hasher.combine_uint(c.to_int().reinterpret_as_uint())
   }
 }
 
 ///|
-fn[V] AsciiCaseInsensitiveMap::contains(
-  self : AsciiCaseInsensitiveMap[V],
-  key : String,
-) -> Bool {
-  self.inner.contains(key.to_lower())
+/// Two keys are equal iff they are equal under ASCII case folding.
+impl Eq for AsciiCaseInsensitiveString with equal(self, other) {
+  self.raw.equal_ignore_ascii_case(other.raw)
 }
 
-///|
-fn[V] AsciiCaseInsensitiveMap::length(self : AsciiCaseInsensitiveMap[V]) -> Int {
-  self.inner.length()
-}
+// ---------------------------------------------------------------------------
+// Tests — the point of this file.
+// ---------------------------------------------------------------------------
 
 ///|
-fn[V] AsciiCaseInsensitiveMap::remove(
-  self : AsciiCaseInsensitiveMap[V],
-  key : String,
-) -> Unit {
-  self.inner.remove(key.to_lower())
-}
+test "AsciiCaseInsensitiveString basic insert and lookup" {
+  let m : Map[AsciiCaseInsensitiveString, Int] = {}
+  let key = AsciiCaseInsensitiveString::new
+  m[key("Content-Type")] = 1
+  m[key("Content-Length")] = 2
+  m[key("Host")] = 3
 
-///|
-test "AsciiCaseInsensitiveMap basic insert and lookup" {
-  let m : AsciiCaseInsensitiveMap[Int] = AsciiCaseInsensitiveMap::new()
-  m.set("Content-Type", 1)
-  m.set("Content-Length", 2)
-  m.set("Host", 3)
-
-  // All three keys present, regardless of casing on the lookup side
+  // All three keys present, regardless of lookup casing
   inspect(m.length(), content="3")
-  inspect(m.get("Content-Type"), content="Some(1)")
-  inspect(m.get("content-type"), content="Some(1)")
-  inspect(m.get("CONTENT-TYPE"), content="Some(1)")
-  inspect(m.get("cOnTeNt-TyPe"), content="Some(1)")
-  inspect(m.get("Content-Length"), content="Some(2)")
-  inspect(m.get("CONTENT-LENGTH"), content="Some(2)")
-  inspect(m.get("HOST"), content="Some(3)")
+  inspect(m.get(key("Content-Type")), content="Some(1)")
+  inspect(m.get(key("content-type")), content="Some(1)")
+  inspect(m.get(key("CONTENT-TYPE")), content="Some(1)")
+  inspect(m.get(key("cOnTeNt-TyPe")), content="Some(1)")
+  inspect(m.get(key("Content-Length")), content="Some(2)")
+  inspect(m.get(key("CONTENT-LENGTH")), content="Some(2)")
+  inspect(m.get(key("HOST")), content="Some(3)")
 
   // Misses
-  inspect(m.get("Accept"), content="None")
-  inspect(m.get("Content"), content="None")
-  inspect(m.contains("CONTENT-TYPE"), content="true")
-  inspect(m.contains("Accept"), content="false")
+  inspect(m.get(key("Accept")), content="None")
+  inspect(m.get(key("Content")), content="None")
+  inspect(m.contains(key("CONTENT-TYPE")), content="true")
+  inspect(m.contains(key("Accept")), content="false")
 }
 
 ///|
-test "AsciiCaseInsensitiveMap update overrides existing entry under any casing" {
-  let m : AsciiCaseInsensitiveMap[String] = AsciiCaseInsensitiveMap::new()
-  m.set("Accept", "first")
-  m.set("ACCEPT", "second")
-  m.set("accept", "third")
+test "AsciiCaseInsensitiveString update overrides under any casing" {
+  let m : Map[AsciiCaseInsensitiveString, String] = {}
+  let key = AsciiCaseInsensitiveString::new
+  m[key("Accept")] = "first"
+  m[key("ACCEPT")] = "second"
+  m[key("accept")] = "third"
 
-  // All three inserts collapse to the same folded key, so only one entry exists
+  // All three inserts collapse to one entry
   inspect(m.length(), content="1")
-  inspect(m.get("Accept"), content="Some(\"third\")")
-  inspect(m.get("accept"), content="Some(\"third\")")
-  inspect(m.get("ACCEPT"), content="Some(\"third\")")
+  inspect(m.get(key("Accept")), content="Some(\"third\")")
+  inspect(m.get(key("accept")), content="Some(\"third\")")
+  inspect(m.get(key("ACCEPT")), content="Some(\"third\")")
 }
 
 ///|
-test "AsciiCaseInsensitiveMap remove respects case-insensitivity" {
-  let m : AsciiCaseInsensitiveMap[Int] = AsciiCaseInsensitiveMap::new()
-  m.set("X-Custom-Header", 42)
-  inspect(m.contains("x-custom-header"), content="true")
-  m.remove("X-CUSTOM-HEADER")
-  inspect(m.contains("X-Custom-Header"), content="false")
+test "AsciiCaseInsensitiveString remove respects case-insensitivity" {
+  let m : Map[AsciiCaseInsensitiveString, Int] = {}
+  let key = AsciiCaseInsensitiveString::new
+  m[key("X-Custom-Header")] = 42
+  inspect(m.contains(key("x-custom-header")), content="true")
+  m.remove(key("X-CUSTOM-HEADER"))
+  inspect(m.contains(key("X-Custom-Header")), content="false")
   inspect(m.length(), content="0")
 }
 
 ///|
-test "AsciiCaseInsensitiveMap respects ASCII-only fold semantics" {
+test "AsciiCaseInsensitiveString respects ASCII-only fold semantics" {
+  let m : Map[AsciiCaseInsensitiveString, Int] = {}
+  let key = AsciiCaseInsensitiveString::new
+
   // Non-ASCII letters are NOT folded, matching `equal_ignore_ascii_case`.
-  let m : AsciiCaseInsensitiveMap[Int] = AsciiCaseInsensitiveMap::new()
-  m.set("Ä", 1)
-  m.set("ä", 2)
-  // Two distinct entries because Ä and ä are different under ASCII fold
+  m[key("Ä")] = 1
+  m[key("ä")] = 2
+  // Two distinct entries
   inspect(m.length(), content="2")
-  inspect(m.get("Ä"), content="Some(1)")
-  inspect(m.get("ä"), content="Some(2)")
+  inspect(m.get(key("Ä")), content="Some(1)")
+  inspect(m.get(key("ä")), content="Some(2)")
 
   // Mixed ASCII + non-ASCII: ASCII parts fold, non-ASCII parts don't
-  let m2 : AsciiCaseInsensitiveMap[Int] = AsciiCaseInsensitiveMap::new()
-  m2.set("CaféAU", 1)
-  inspect(m2.get("caféau"), content="Some(1)")
-  inspect(m2.get("CAFÉAU"), content="None") // É != é
+  let m2 : Map[AsciiCaseInsensitiveString, Int] = {}
+  m2[key("CaféAU")] = 1
+  inspect(m2.get(key("caféau")), content="Some(1)")
+  inspect(m2.get(key("CAFÉAU")), content="None") // É != é
 }
 
 ///|
-test "AsciiCaseInsensitiveMap agrees with equal_ignore_ascii_case" {
-  // Contract: two keys hit the same map entry iff they are
-  // equal_ignore_ascii_case-equal. This is the critical invariant the map
-  // relies on; if it broke, the wrapper would either lose entries or
-  // collide incorrectly.
+test "AsciiCaseInsensitiveString agrees with equal_ignore_ascii_case" {
+  // Contract: two keys collide in the map iff they are
+  // equal_ignore_ascii_case-equal.
+  let key = AsciiCaseInsensitiveString::new
   let key_pairs = [
-    ("Content-Type", "content-type"), // ASCII fold
-    ("HOST", "host"), // ASCII fold
-    ("X-1", "x-1"), // digits unaffected
-    ("foo_bar", "FOO_BAR"), // underscore unaffected
-    ("Content-Type", "Content-Length"), // genuine difference
-    ("Ä", "ä"), // non-ASCII NOT folded
-    ("café", "CAFé"), // partial fold
-    ("café", "CAFÉ"), // É != é
-    ("a🤣", "A🤣"), // surrogate pair preserved
-    ("", ""), // empty
-    ("", "x"), // empty vs non-empty
+    ("Content-Type", "content-type"),
+    ("HOST", "host"),
+    ("X-1", "x-1"),
+    ("foo_bar", "FOO_BAR"),
+    ("Content-Type", "Content-Length"),
+    ("Ä", "ä"),
+    ("café", "CAFé"),
+    ("café", "CAFÉ"),
+    ("a🤣", "A🤣"),
+    ("", ""),
+    ("", "x"),
   ]
   for pair in key_pairs {
     let (k1, k2) = pair
-    let m : AsciiCaseInsensitiveMap[Int] = AsciiCaseInsensitiveMap::new()
-    m.set(k1, 1)
-    let map_says_same = m.contains(k2)
+    let m : Map[AsciiCaseInsensitiveString, Int] = {}
+    m[key(k1)] = 1
+    let map_says_same = m.contains(key(k2))
     let api_says_same = k1.equal_ignore_ascii_case(k2)
     assert_eq(map_says_same, api_says_same)
   }
