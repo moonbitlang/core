@@ -497,6 +497,43 @@ pub fn String::lexical_compare(self : String, other : String) -> Int {
 }
 
 ///|
+/// Performs a lexicographical comparison of two strings, treating ASCII
+/// letters as case-insensitive.
+///
+/// Each pair of UTF-16 code units is compared after folding ASCII `'A'..'Z'`
+/// onto `'a'..'z'`. Non-ASCII code units are compared by their raw value, so
+/// this function does **not** perform Unicode case folding (e.g. `'Ä'` and
+/// `'ä'` are still considered different). Use this when you only need to
+/// match ASCII identifiers, headers, file extensions, or similar protocol
+/// text — not for human-language text where locale-dependent folding matters.
+///
+/// Aside from case folding, the semantics match `lexical_compare`: characters
+/// are compared one by one and, when one string is a prefix of the other, the
+/// shorter string is considered less. The result is independent of which
+/// string is `self`.
+///
+/// # Returns
+///
+/// - A negative integer if `self` is less than `other`
+/// - Zero if `self` is equal to `other` under ASCII case folding
+/// - A positive integer if `self` is greater than `other`
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   inspect("Hello".compare_ignore_ascii_case("hello"), content="0")
+///   inspect("ABC".compare_ignore_ascii_case("abd"), content="-1")
+///   inspect("abc".compare_ignore_ascii_case("AB"), content="1")
+///   // Non-ASCII letters are NOT folded
+///   inspect("Ä".compare_ignore_ascii_case("ä") != 0, content="true")
+/// }
+/// ```
+pub fn String::compare_ignore_ascii_case(self : String, other : String) -> Int {
+  self[:].compare_ignore_ascii_case(other[:])
+}
+
+///|
 /// Convert char array to string.
 ///
 /// ```mbt check

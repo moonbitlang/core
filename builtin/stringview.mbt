@@ -371,6 +371,67 @@ pub fn StringView::lexical_compare(
 }
 
 ///|
+/// Folds an ASCII uppercase code unit (`'A'..'Z'`) to its lowercase form. Code
+/// units outside that range — including all non-ASCII code units — are returned
+/// unchanged.
+fn ascii_fold_lower_u16(c : UInt16) -> UInt16 {
+  if c >= ('A' : UInt16) && c <= ('Z' : UInt16) {
+    c + (32 : UInt16)
+  } else {
+    c
+  }
+}
+
+///|
+/// Performs a lexicographical comparison of two string views, treating ASCII
+/// letters as case-insensitive.
+///
+/// Each pair of UTF-16 code units is compared after folding ASCII `'A'..'Z'`
+/// onto `'a'..'z'`. Non-ASCII code units are compared by their raw value, so
+/// this function does **not** perform Unicode case folding (e.g. `'Ä'` and
+/// `'ä'` are still considered different). Use this when you only need to
+/// match ASCII identifiers, headers, file extensions, or similar protocol
+/// text — not for human-language text where locale-dependent folding matters.
+///
+/// Aside from case folding, the semantics match `lexical_compare`: characters
+/// are compared one by one (UTF-16 code unit by code unit) and, when one view
+/// is a prefix of the other, the shorter view is considered less. The result
+/// is independent of which view is `self`.
+///
+/// # Returns
+///
+/// - A negative integer if `self` is less than `other`
+/// - Zero if `self` is equal to `other` under ASCII case folding
+/// - A positive integer if `self` is greater than `other`
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   inspect("Hello".view().compare_ignore_ascii_case("hello".view()), content="0")
+///   inspect("ABC".view().compare_ignore_ascii_case("abd".view()), content="-1")
+///   inspect("abc".view().compare_ignore_ascii_case("AB".view()), content="1")
+/// }
+/// ```
+pub fn StringView::compare_ignore_ascii_case(
+  self : StringView,
+  other : StringView,
+) -> Int {
+  let self_len = self.length()
+  let other_len = other.length()
+  let min_len = if self_len < other_len { self_len } else { other_len }
+  for i in 0..<min_len {
+    let a = ascii_fold_lower_u16(self.str().unsafe_get(self.start() + i))
+    let b = ascii_fold_lower_u16(other.str().unsafe_get(other.start() + i))
+    let cmp = a.compare(b)
+    if cmp != 0 {
+      return cmp
+    }
+  }
+  self_len.compare(other_len)
+}
+
+///|
 /// Creates a `View` into a `String`.
 /// 
 /// # Example

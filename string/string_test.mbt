@@ -100,6 +100,69 @@ test "lexical_compare" {
 }
 
 ///|
+test "compare_ignore_ascii_case" {
+  // Equal under ASCII folding
+  inspect("".compare_ignore_ascii_case(""), content="0")
+  inspect("abc".compare_ignore_ascii_case("abc"), content="0")
+  inspect("ABC".compare_ignore_ascii_case("abc"), content="0")
+  inspect("aBc".compare_ignore_ascii_case("AbC"), content="0")
+  inspect(
+    "Hello, World!".compare_ignore_ascii_case("HELLO, WORLD!"),
+    content="0",
+  )
+
+  // Less / greater after folding (independent of input casing)
+  inspect("ABC".compare_ignore_ascii_case("abd"), content="-1")
+  inspect("abd".compare_ignore_ascii_case("ABC"), content="1")
+  inspect("Apple".compare_ignore_ascii_case("banana"), content="-1")
+  inspect("Banana".compare_ignore_ascii_case("apple"), content="1")
+
+  // Prefix relationship: shorter is less
+  inspect("ab".compare_ignore_ascii_case("ABC"), content="-1")
+  inspect("ABC".compare_ignore_ascii_case("ab"), content="1")
+  inspect("".compare_ignore_ascii_case("a"), content="-1")
+  inspect("A".compare_ignore_ascii_case(""), content="1")
+
+  // Non-letter ASCII is unaffected
+  inspect("123".compare_ignore_ascii_case("123"), content="0")
+  inspect("foo_bar".compare_ignore_ascii_case("FOO_BAR"), content="0")
+  inspect("hello!".compare_ignore_ascii_case("HELLO?"), content="-1")
+
+  // Boundary: '@' (0x40) is just below 'A', '[' (0x5B) is just above 'Z'.
+  // Neither is folded — they must compare by their raw value.
+  inspect("@".compare_ignore_ascii_case("`"), content="-1") // '@' (0x40) < '`' (0x60)
+  inspect("[".compare_ignore_ascii_case("{"), content="-1") // '[' (0x5B) < '{' (0x7B)
+  // 'Z' folds to 'z' (0x7A); '[' (0x5B) is not folded. So 'z' > '['.
+  inspect("Z".compare_ignore_ascii_case("["), content="1")
+  inspect("[".compare_ignore_ascii_case("Z"), content="-1")
+
+  // Non-ASCII letters are NOT folded (would need Unicode case folding)
+  assert_true("Ä".compare_ignore_ascii_case("ä") != 0)
+  assert_true("Ä".compare_ignore_ascii_case("Ä") == 0)
+
+  // Non-ASCII compares by raw UTF-16 code units. ASCII letters fold, but
+  // 'é' (U+00E9) and 'É' (U+00C9) are NOT folded to each other.
+  inspect("café".compare_ignore_ascii_case("CAFé"), content="0")
+  assert_true("café".compare_ignore_ascii_case("CAFÉ") != 0)
+  assert_true("café".compare_ignore_ascii_case("cafe") != 0)
+
+  // Surrogate pairs (emoji) — same emoji compares equal even with different casing on neighbors
+  inspect("A🤣".compare_ignore_ascii_case("a🤣"), content="0")
+  assert_true("a🤣".compare_ignore_ascii_case("a😭") != 0)
+
+  // Antisymmetry / consistency spot checks
+  // "MoonBit" folds to "moonbit"; "MOONBIX" folds to "moonbix".
+  // 't' (0x74) < 'x' (0x78), so "moonbit" < "moonbix".
+  let a = "MoonBit"
+  let b = "moonbit"
+  let c = "MOONBIX"
+  inspect(a.compare_ignore_ascii_case(b), content="0")
+  inspect(b.compare_ignore_ascii_case(a), content="0")
+  assert_true(a.compare_ignore_ascii_case(c) < 0)
+  assert_true(c.compare_ignore_ascii_case(a) > 0)
+}
+
+///|
 test "Show::output" {
   fn repr(s : String) {
     let buf = StringBuilder::new(size_hint=0)
