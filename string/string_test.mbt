@@ -163,6 +163,67 @@ test "compare_ignore_ascii_case" {
 }
 
 ///|
+test "equal_ignore_ascii_case" {
+  // Equal under ASCII folding
+  inspect("".equal_ignore_ascii_case(""), content="true")
+  inspect("abc".equal_ignore_ascii_case("abc"), content="true")
+  inspect("ABC".equal_ignore_ascii_case("abc"), content="true")
+  inspect("aBc".equal_ignore_ascii_case("AbC"), content="true")
+  inspect(
+    "Hello, World!".equal_ignore_ascii_case("HELLO, WORLD!"),
+    content="true",
+  )
+
+  // Length mismatch fast-path
+  inspect("ab".equal_ignore_ascii_case("ABC"), content="false")
+  inspect("ABC".equal_ignore_ascii_case("ab"), content="false")
+  inspect("".equal_ignore_ascii_case("a"), content="false")
+  inspect("a".equal_ignore_ascii_case(""), content="false")
+
+  // Same length but different content
+  inspect("abc".equal_ignore_ascii_case("abd"), content="false")
+  inspect("ABC".equal_ignore_ascii_case("ABD"), content="false")
+
+  // Non-letter ASCII is unaffected
+  inspect("123".equal_ignore_ascii_case("123"), content="true")
+  inspect("foo_bar".equal_ignore_ascii_case("FOO_BAR"), content="true")
+  inspect("hello!".equal_ignore_ascii_case("HELLO?"), content="false")
+
+  // Boundary: '@' (0x40) and '[' (0x5B) must NOT be folded
+  inspect("@".equal_ignore_ascii_case("`"), content="false") // '@' vs '`'
+  inspect("[".equal_ignore_ascii_case("{"), content="false") // '[' vs '{'
+  inspect("Z".equal_ignore_ascii_case("z"), content="true") // sanity check at the upper boundary
+  inspect("A".equal_ignore_ascii_case("a"), content="true") // sanity check at the lower boundary
+
+  // Non-ASCII letters are NOT folded
+  inspect("Ä".equal_ignore_ascii_case("ä"), content="false")
+  inspect("Ä".equal_ignore_ascii_case("Ä"), content="true")
+  inspect("café".equal_ignore_ascii_case("CAFÉ"), content="false")
+  inspect("café".equal_ignore_ascii_case("CAFé"), content="true")
+
+  // Surrogate pairs (emoji)
+  inspect("A🤣".equal_ignore_ascii_case("a🤣"), content="true")
+  inspect("a🤣".equal_ignore_ascii_case("a😭"), content="false")
+
+  // Cross-check: equal_ignore_ascii_case agrees with compare_ignore_ascii_case == 0
+  let pairs = [
+    ("Content-Type", "content-type"),
+    ("Content-Type", "Content-Length"),
+    ("UTF-8", "utf-8"),
+    ("MoonBit", "moonbit"),
+    ("MoonBit", "MOONBIX"),
+    ("Ä", "ä"),
+    ("a🤣", "A🤣"),
+    ("", ""),
+    ("", "x"),
+  ]
+  for pair in pairs {
+    let (x, y) = pair
+    assert_eq(x.equal_ignore_ascii_case(y), x.compare_ignore_ascii_case(y) == 0)
+  }
+}
+
+///|
 test "Show::output" {
   fn repr(s : String) {
     let buf = StringBuilder::new(size_hint=0)
