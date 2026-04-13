@@ -374,7 +374,7 @@ test "map" {
     (0, "zero"),
   ])
   let n = m.map_with_key((_, v) => v + "X")
-  assert_eq(
+  @test.assert_eq(
     n.debug_tree(),
     "(3,threeX,(1,oneX,(0,zeroX,_,_),(2,twoX,_,_)),(8,eightX,_,_))",
   )
@@ -390,7 +390,7 @@ test "map_with_key" {
     (0, "zero"),
   ])
   let n = m.map_with_key((k, v) => "\{k}-\{v}")
-  assert_eq(
+  @test.assert_eq(
     n.debug_tree(),
     "(3,3-three,(1,1-one,(0,0-zero,_,_),(2,2-two,_,_)),(8,8-eight,_,_))",
   )
@@ -443,7 +443,7 @@ test "split_max" {
     (2, "two"),
     (0, "zero"),
   ])
-  assert_eq(
+  @test.assert_eq(
     m.debug_tree(),
     "(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
   )
@@ -465,7 +465,7 @@ test "split_min" {
     (1, "one"),
     (0, "zero"),
   ])
-  assert_eq(
+  @test.assert_eq(
     m.debug_tree(),
     "(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
   )
@@ -487,7 +487,7 @@ test "glue" {
     (2, "two"),
     (0, "zero"),
   ])
-  assert_eq(
+  @test.assert_eq(
     m.debug_tree(),
     "(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
   )

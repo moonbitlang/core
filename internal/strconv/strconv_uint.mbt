@@ -119,7 +119,7 @@ test "parse_uint64" {
     ("12345%", Err(syntax_err_str)),
   ]
   for t in tests {
-    assert_eq(
+    @test.assert_eq(
       Result::Ok(parse_uint64(t.0)) catch {
         Failure::Failure(err) => Err(err)
         err => Err(err.to_string())
@@ -217,7 +217,7 @@ test "parse_uint64_base" {
     ("0x-f", 0, Err(syntax_err_str)),
   ]
   for t in tests {
-    assert_eq(
+    @test.assert_eq(
       Result::Ok(parse_uint64(t.0, base=t.1)) catch {
         Failure::Failure(err) => Err(err)
         err => Err(err.to_string())
@@ -252,7 +252,7 @@ test "parse_uint" {
     ("123%45", Err(syntax_err_str)),
   ]
   for t in tests {
-    assert_eq(
+    @test.assert_eq(
       Result::Ok(parse_uint(t.0)) catch {
         Failure::Failure(err) => Err(err)
         err => Err(err.to_string())

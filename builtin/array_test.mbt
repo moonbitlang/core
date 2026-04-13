@@ -1088,7 +1088,7 @@ test "copy" {
   let arr = [1, 2, 3, 4, 5]
   let copied = arr.copy()
   assert_eq(copied, [1, 2, 3, 4, 5])
-  @test.not_same_object(arr, copied)
+  @test.assert_not_same_object(arr, copied)
   inspect(([] : Array[Int]).copy(), content="[]")
 }
 

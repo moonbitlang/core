@@ -4,6 +4,7 @@ import {
   "moonbitlang/core/array",
   "moonbitlang/core/json",
   "moonbitlang/core/ref",
+  "moonbitlang/core/test",
 }
 
 options(

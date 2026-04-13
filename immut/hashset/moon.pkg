@@ -6,8 +6,10 @@ import {
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/immut/internal/path",
   "moonbitlang/core/list",
+  "moonbitlang/core/test",
 }
 
 import {
   "moonbitlang/core/int",
+  "moonbitlang/core/test",
 } for "test"

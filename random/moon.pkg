@@ -4,8 +4,10 @@ import {
   "moonbitlang/core/float",
   "moonbitlang/core/random/internal/random_source",
   "moonbitlang/core/bigint",
+  "moonbitlang/core/test",
 }
 
 import {
   "moonbitlang/core/bench",
+  "moonbitlang/core/test",
 } for "test"

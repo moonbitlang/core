@@ -5,10 +5,12 @@ import {
   "moonbitlang/core/debug",
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/json",
+  "moonbitlang/core/test",
 }
 
 import {
   "moonbitlang/core/bench",
+  "moonbitlang/core/test",
 } for "test"
 
 options(

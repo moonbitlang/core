@@ -10,6 +10,10 @@ import {
   "moonbitlang/core/debug",
 }
 
+import {
+  "moonbitlang/core/test",
+} for "wbtest"
+
 warnings = "-29"
 
 options(

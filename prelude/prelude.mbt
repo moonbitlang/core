@@ -19,6 +19,7 @@ pub using @set {type Set}
 pub using @bigint {type BigInt}
 
 ///|
+#warnings("-deprecated")
 pub using @builtin {
   abort,
   assert_eq,

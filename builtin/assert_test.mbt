@@ -22,6 +22,7 @@ impl Show for ShowOnly with output(self, logger) {
 }
 
 ///|
+#warnings("-deprecated")
 test "panic assert_not_eq with equal values" {
   let str = "test"
   ignore(assert_not_eq(str, str))
@@ -33,6 +34,7 @@ test "panic assert_false with true" {
 }
 
 ///|
+#warnings("-deprecated")
 test "panic assert_eq with unequal values" {
   ignore(assert_eq(1, 2))
 }
@@ -43,7 +45,8 @@ test "panic assert_true with false" {
 }
 
 ///|
+#warnings("-deprecated")
 test "legacy assert_eq still works for Show-only types" {
-  assert_eq(ShowOnly(1), ShowOnly(1))
-  assert_not_eq(ShowOnly(1), ShowOnly(2))
+  @builtin.assert_eq(ShowOnly(1), ShowOnly(1))
+  @builtin.assert_not_eq(ShowOnly(1), ShowOnly(2))
 }

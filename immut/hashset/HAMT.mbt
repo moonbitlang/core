@@ -463,11 +463,11 @@ pub impl[K : Eq + Hash + @quickcheck.Arbitrary] @quickcheck.Arbitrary for HashSe
 
 ///|
 test "hash" {
-  assert_eq(
+  @test.assert_eq(
     Hash::hash(from_array([1, 2, 3, 4])),
     Hash::hash(from_array([3, 2]).add(1).add(4)),
   )
-  assert_not_eq(
+  @test.assert_not_eq(
     Hash::hash(from_array([1, 2, 3])),
     Hash::hash(from_array([1, 2, 4])),
   )
@@ -475,6 +475,6 @@ test "hash" {
 
 ///|
 test "eq" {
-  assert_eq(from_array([1, 2, 3, 4]), from_array([3, 2]).add(1).add(4))
-  assert_not_eq(from_array([1, 2, 3]), from_array([1, 2, 4]))
+  @test.assert_eq(from_array([1, 2, 3, 4]), from_array([3, 2]).add(1).add(4))
+  @test.assert_not_eq(from_array([1, 2, 3]), from_array([1, 2, 4]))
 }

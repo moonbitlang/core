@@ -441,12 +441,13 @@ test "add duplicate in collision leaf" {
 }
 
 ///|
+#warnings("-deprecated")
 test "collision equal coverage" {
   let a = MyString("a")
   let b = MyString("b")
   let set1 = @hashset.new().add(a).add(b)
   let set2 = @hashset.new().add(b).add(a)
-  assert_eq(set1, set2)
+  @builtin.assert_eq(set1, set2)
 }
 
 ///|

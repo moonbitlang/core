@@ -485,7 +485,7 @@ fn[K : Show] HashSet::_debug_entries(self : HashSet[K]) -> String {
 }
 
 ///|
-priv struct MyString(String) derive(Eq)
+priv struct MyString(String) derive(Eq, Debug)
 
 ///|
 impl Hash for MyString with hash(self) {
@@ -497,12 +497,6 @@ impl Hash for MyString with hash(self) {
 impl Hash for MyString with hash_combine(self, hasher) {
   let MyString(self) = self
   hasher.combine_string(self)
-}
-
-///|
-impl Show for MyString with output(self, logger) {
-  let MyString(self) = self
-  logger.write_string(self)
 }
 
 ///|
@@ -594,7 +588,7 @@ test "clear" {
   inspect(m.length(), content="0")
   inspect(m.capacity(), content="8")
   for entry in m.entries {
-    @test.same_object(entry, None)
+    @test.assert_same_object(entry, None)
   }
 }
 
