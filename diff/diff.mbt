@@ -97,200 +97,198 @@ fn[T : Eq] diag(
   // c: current edit distance (search depth)
   // fmin, fmax: diagonal range for forward search
   // bmin, bmax: diagonal range for backward search
-  loop (1, fmid, fmid, bmid, bmid) {
-    (c, fmin, fmax, bmin, bmax) => {
-      // Extend diagonal range for forward search
-      // Each iteration expands search range as edit distance increases by 1
-      let fmin = if fmin > dmin {
-        forward_search_diagonal[diagonal_shift + fmin - 2] = -1 // mark unused diagonal
-        fmin - 1 // extend to next diagonal
-      } else {
-        fmin + 1 // boundary constraint
-      }
-      let fmax = if fmax < dmax {
-        forward_search_diagonal[diagonal_shift + fmax + 2] = -1 // mark unused diagonal  
-        fmax + 1 // extend to previous diagonal
-      } else {
-        fmax - 1 // boundary constraint
+  for c = 1, fmin = fmid, fmax = fmid, bmin = bmid, bmax = bmid {
+    // Extend diagonal range for forward search
+    // Each iteration expands search range as edit distance increases by 1
+    let fmin = if fmin > dmin {
+      forward_search_diagonal[diagonal_shift + fmin - 2] = -1 // mark unused diagonal
+      fmin - 1 // extend to next diagonal
+    } else {
+      fmin + 1 // boundary constraint
+    }
+    let fmax = if fmax < dmax {
+      forward_search_diagonal[diagonal_shift + fmax + 2] = -1 // mark unused diagonal  
+      fmax + 1 // extend to previous diagonal
+    } else {
+      fmax - 1 // boundary constraint
+    }
+
+    // Process all diagonals for forward search
+    let mut forward_result : Partition? = None
+    let mut d = fmax
+    while d >= fmin {
+      // Get farthest reachable points on adjacent diagonals
+      // tlo: x coordinate on lower-left diagonal (d-1), position after deletion
+      // thi: x coordinate on upper-right diagonal (d+1), position after insertion
+      let tlo = forward_search_diagonal[diagonal_shift + d - 1]
+      let thi = forward_search_diagonal[diagonal_shift + d + 1]
+
+      // Choose better path: transfer from diagonal that reaches farther x coordinate
+      // This embodies Myers algorithm's greedy strategy: prioritize paths that go farther
+      let x = if tlo >= thi { tlo + 1 } else { thi }
+
+      // Search for matching sequence along diagonal (Snake)
+      // This is key optimization of Myers algorithm: freely extend matching elements
+      let mut x_cur = x
+      let mut y_cur = x_cur - d // from diagonal relation k = x - y, we get y = x - k
+      while x_cur < lhs_limit &&
+            y_cur < rhs_limit &&
+            lhs_get(x_cur) == rhs_get(y_cur) {
+        x_cur += 1
+        y_cur += 1
       }
 
-      // Process all diagonals for forward search
-      let mut forward_result : Partition? = None
+      // Update farthest reachable point on current diagonal
+      forward_search_diagonal[diagonal_shift + d] = x_cur
+
+      // Check if meeting with backward search
+      // Meeting conditions: parity matches && diagonal is in backward search range && forward/backward search points overlap
+      if odd &&
+        bmin <= d &&
+        d <= bmax &&
+        backward_search_diagonal[diagonal_shift + d] <=
+        forward_search_diagonal[diagonal_shift + d] {
+        forward_result = Some({
+          lhs_midpoint: x_cur,
+          rhs_midpoint: y_cur,
+          lo_minimal: true, // forward path is optimal
+          hi_minimal: true, // backward path is also optimal
+        })
+        break // found meeting point, exit early
+      }
+      d -= 2 // Myers algorithm characteristic: only check diagonals with same parity
+    }
+
+    // If forward search found solution, return directly
+    match forward_result {
+      Some(result) => break result
+      None => ()
+    }
+
+    // Similarly extend diagonal range for backward search
+    let bmin = if bmin > dmin {
+      backward_search_diagonal[diagonal_shift + bmin - 2] = @int.MAX_VALUE // mark unused diagonal as max value
+      bmin - 1
+    } else {
+      bmin + 1
+    }
+    let bmax = if bmax < dmax {
+      backward_search_diagonal[diagonal_shift + bmax + 2] = @int.MAX_VALUE // mark unused diagonal as max value
+      bmax + 1
+    } else {
+      bmax - 1
+    }
+
+    // Process all diagonals for backward search
+    let mut backward_result : Partition? = None
+    let mut d = bmax
+    while d >= bmin {
+      // Get nearest reachable points on adjacent diagonals (backward search in reverse direction)
+      let tlo = backward_search_diagonal[diagonal_shift + d - 1]
+      let thi = backward_search_diagonal[diagonal_shift + d + 1]
+
+      // Backward search selection strategy: choose point with smaller x coordinate (closer to start)
+      let x = if tlo < thi { tlo } else { thi - 1 }
+
+      // Search backward for matching sequence (reverse Snake)
+      let mut x_cur = x
+      let mut y_cur = x_cur - d
+      while x_cur > lhs_offset &&
+            y_cur > rhs_offset &&
+            lhs_get(x_cur - 1) == rhs_get(y_cur - 1) {
+        x_cur -= 1
+        y_cur -= 1
+      }
+
+      // Update nearest reachable point on current diagonal
+      backward_search_diagonal[diagonal_shift + d] = x_cur
+
+      // Check if meeting with forward search (meeting condition for even case)
+      if !odd &&
+        fmin <= d &&
+        d <= fmax &&
+        backward_search_diagonal[diagonal_shift + d] <=
+        forward_search_diagonal[diagonal_shift + d] {
+        backward_result = Some({
+          lhs_midpoint: x_cur,
+          rhs_midpoint: y_cur,
+          lo_minimal: true,
+          hi_minimal: true,
+        })
+        break
+      }
+      d -= 2
+    }
+
+    // If backward search found solution, return directly
+    match backward_result {
+      Some(result) => break result
+      None => ()
+    }
+
+    // Heuristic handling: if computation cost too high, abandon finding optimal solution
+    // This is important mechanism for Myers algorithm to handle difficult cases
+    if !find_minimal && c >= too_expensive {
+      // Find diagonal in forward search that maximizes x + y
+      // This indicates processing maximum number of elements overall
+      let mut fxybest = -1
+      let mut fxbest = fmax
       let mut d = fmax
       while d >= fmin {
-        // Get farthest reachable points on adjacent diagonals
-        // tlo: x coordinate on lower-left diagonal (d-1), position after deletion
-        // thi: x coordinate on upper-right diagonal (d+1), position after insertion
-        let tlo = forward_search_diagonal[diagonal_shift + d - 1]
-        let thi = forward_search_diagonal[diagonal_shift + d + 1]
-
-        // Choose better path: transfer from diagonal that reaches farther x coordinate
-        // This embodies Myers algorithm's greedy strategy: prioritize paths that go farther
-        let x = if tlo >= thi { tlo + 1 } else { thi }
-
-        // Search for matching sequence along diagonal (Snake)
-        // This is key optimization of Myers algorithm: freely extend matching elements
-        let mut x_cur = x
-        let mut y_cur = x_cur - d // from diagonal relation k = x - y, we get y = x - k
-        while x_cur < lhs_limit &&
-              y_cur < rhs_limit &&
-              lhs_get(x_cur) == rhs_get(y_cur) {
-          x_cur += 1
-          y_cur += 1
+        let x = lhs_limit.min(forward_search_diagonal[diagonal_shift + d]) // limit to valid range
+        let y = x - d
+        let (x, y) = if rhs_limit < y {
+          (rhs_limit + d, rhs_limit)
+        } else {
+          (x, y)
         }
-
-        // Update farthest reachable point on current diagonal
-        forward_search_diagonal[diagonal_shift + d] = x_cur
-
-        // Check if meeting with backward search
-        // Meeting conditions: parity matches && diagonal is in backward search range && forward/backward search points overlap
-        if odd &&
-          bmin <= d &&
-          d <= bmax &&
-          backward_search_diagonal[diagonal_shift + d] <=
-          forward_search_diagonal[diagonal_shift + d] {
-          forward_result = Some({
-            lhs_midpoint: x_cur,
-            rhs_midpoint: y_cur,
-            lo_minimal: true, // forward path is optimal
-            hi_minimal: true, // backward path is also optimal
-          })
-          break // found meeting point, exit early
-        }
-        d -= 2 // Myers algorithm characteristic: only check diagonals with same parity
-      }
-
-      // If forward search found solution, return directly
-      match forward_result {
-        Some(result) => break result
-        None => ()
-      }
-
-      // Similarly extend diagonal range for backward search
-      let bmin = if bmin > dmin {
-        backward_search_diagonal[diagonal_shift + bmin - 2] = @int.MAX_VALUE // mark unused diagonal as max value
-        bmin - 1
-      } else {
-        bmin + 1
-      }
-      let bmax = if bmax < dmax {
-        backward_search_diagonal[diagonal_shift + bmax + 2] = @int.MAX_VALUE // mark unused diagonal as max value
-        bmax + 1
-      } else {
-        bmax - 1
-      }
-
-      // Process all diagonals for backward search
-      let mut backward_result : Partition? = None
-      let mut d = bmax
-      while d >= bmin {
-        // Get nearest reachable points on adjacent diagonals (backward search in reverse direction)
-        let tlo = backward_search_diagonal[diagonal_shift + d - 1]
-        let thi = backward_search_diagonal[diagonal_shift + d + 1]
-
-        // Backward search selection strategy: choose point with smaller x coordinate (closer to start)
-        let x = if tlo < thi { tlo } else { thi - 1 }
-
-        // Search backward for matching sequence (reverse Snake)
-        let mut x_cur = x
-        let mut y_cur = x_cur - d
-        while x_cur > lhs_offset &&
-              y_cur > rhs_offset &&
-              lhs_get(x_cur - 1) == rhs_get(y_cur - 1) {
-          x_cur -= 1
-          y_cur -= 1
-        }
-
-        // Update nearest reachable point on current diagonal
-        backward_search_diagonal[diagonal_shift + d] = x_cur
-
-        // Check if meeting with forward search (meeting condition for even case)
-        if !odd &&
-          fmin <= d &&
-          d <= fmax &&
-          backward_search_diagonal[diagonal_shift + d] <=
-          forward_search_diagonal[diagonal_shift + d] {
-          backward_result = Some({
-            lhs_midpoint: x_cur,
-            rhs_midpoint: y_cur,
-            lo_minimal: true,
-            hi_minimal: true,
-          })
-          break
+        if fxybest < x + y {
+          fxybest = x + y
+          fxbest = x
         }
         d -= 2
       }
 
-      // If backward search found solution, return directly
-      match backward_result {
-        Some(result) => break result
-        None => ()
+      // Find diagonal in backward search that minimizes x + y
+      // This indicates reasonable partition point closest to start
+      let mut bxybest = @int.MAX_VALUE
+      let mut bxbest = bmax
+      let mut d = bmax
+      while d >= bmin {
+        let x = lhs_offset.max(backward_search_diagonal[diagonal_shift + d]) // limit to valid range
+        let y = x - d
+        let (x, y) = if y < rhs_offset {
+          (rhs_offset + d, rhs_offset)
+        } else {
+          (x, y)
+        }
+        if x + y < bxybest {
+          bxybest = x + y
+          bxbest = x
+        }
+        d -= 2
       }
 
-      // Heuristic handling: if computation cost too high, abandon finding optimal solution
-      // This is important mechanism for Myers algorithm to handle difficult cases
-      if !find_minimal && c >= too_expensive {
-        // Find diagonal in forward search that maximizes x + y
-        // This indicates processing maximum number of elements overall
-        let mut fxybest = -1
-        let mut fxbest = fmax
-        let mut d = fmax
-        while d >= fmin {
-          let x = lhs_limit.min(forward_search_diagonal[diagonal_shift + d]) // limit to valid range
-          let y = x - d
-          let (x, y) = if rhs_limit < y {
-            (rhs_limit + d, rhs_limit)
-          } else {
-            (x, y)
-          }
-          if fxybest < x + y {
-            fxybest = x + y
-            fxbest = x
-          }
-          d -= 2
-        }
-
-        // Find diagonal in backward search that minimizes x + y
-        // This indicates reasonable partition point closest to start
-        let mut bxybest = @int.MAX_VALUE
-        let mut bxbest = bmax
-        let mut d = bmax
-        while d >= bmin {
-          let x = lhs_offset.max(backward_search_diagonal[diagonal_shift + d]) // limit to valid range
-          let y = x - d
-          let (x, y) = if y < rhs_offset {
-            (rhs_offset + d, rhs_offset)
-          } else {
-            (x, y)
-          }
-          if x + y < bxybest {
-            bxybest = x + y
-            bxbest = x
-          }
-          d -= 2
-        }
-
-        // Choose better heuristic partition point
-        // Compare "quality" of forward and backward, choose side that processes more elements
-        if lhs_limit + rhs_limit - bxybest < fxybest - (lhs_offset + rhs_offset) {
-          break {
-            lhs_midpoint: fxbest,
-            rhs_midpoint: fxybest - fxbest,
-            lo_minimal: true,
-            hi_minimal: false, // right half is not optimal
-          }
-        } else {
-          break {
-            lhs_midpoint: bxbest,
-            rhs_midpoint: bxybest - bxbest,
-            lo_minimal: false, // left half is not optimal
-            hi_minimal: true,
-          }
+      // Choose better heuristic partition point
+      // Compare "quality" of forward and backward, choose side that processes more elements
+      if lhs_limit + rhs_limit - bxybest < fxybest - (lhs_offset + rhs_offset) {
+        break {
+          lhs_midpoint: fxbest,
+          rhs_midpoint: fxybest - fxbest,
+          lo_minimal: true,
+          hi_minimal: false, // right half is not optimal
         }
       } else {
-        // Continue next round of search, edit distance increases by 1
-        continue (c + 1, fmin, fmax, bmin, bmax)
+        break {
+          lhs_midpoint: bxbest,
+          rhs_midpoint: bxybest - bxbest,
+          lo_minimal: false, // left half is not optimal
+          hi_minimal: true,
+        }
       }
+    } else {
+      // Continue next round of search, edit distance increases by 1
+      continue c + 1, fmin, fmax, bmin, bmax
     }
   }
 }
