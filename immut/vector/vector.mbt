@@ -592,7 +592,7 @@ pub fn[A] Vector::filter(
   self : Vector[A],
   f : (A) -> Bool raise?,
 ) -> Vector[A] raise? {
-  let arr : Array[A] = []
+  let arr : Array[A] = Array::new(capacity=self.size)
   self.each(value => if f(value) { arr.push(value) })
   from_array(arr)
 }
