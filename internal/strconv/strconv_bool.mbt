@@ -41,7 +41,7 @@ test "parse_bool" {
     ("True", Ok(true)),
   ]
   for t in tests {
-    assert_eq(
+    @test.assert_eq(
       Result::Ok(parse_bool(t.0)) catch {
         Failure::Failure(err) => Err(err)
         err => Err(err.to_string())

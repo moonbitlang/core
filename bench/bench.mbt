@@ -200,9 +200,9 @@ test "bench - monotonic clock functionality" {
 ///|
 test "bench - keep stores value" {
   let b = new()
-  assert_eq(b.summaries.length(), 0)
+  @test.assert_eq(b.summaries.length(), 0)
   b.keep(123)
-  assert_eq(b.summaries.length(), 0)
+  @test.assert_eq(b.summaries.length(), 0)
   b.keep(456)
-  assert_eq(b.summaries.length(), 0)
+  @test.assert_eq(b.summaries.length(), 0)
 }

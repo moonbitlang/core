@@ -590,8 +590,8 @@ test "from_int64" {
 ///|
 test "parse_decimal" {
   let s = "0.0000000000000000000000000000007888609052210118054117285652827862296732064351090230047702789306640625"
-  assert_eq(parse_decimal_priv(s).to_string(), s)
-  assert_eq(parse_decimal_priv("1.0e-10").to_string(), "0.0000000001")
+  @test.assert_eq(parse_decimal_priv(s).to_string(), s)
+  @test.assert_eq(parse_decimal_priv("1.0e-10").to_string(), "0.0000000001")
 }
 
 ///|
@@ -624,7 +624,7 @@ test "shift" {
   for t in tests {
     let d = Decimal::from_int64_priv(t.0)
     d.shift_priv(t.1)
-    assert_eq(d.to_string(), t.2)
+    @test.assert_eq(d.to_string(), t.2)
   }
 }
 

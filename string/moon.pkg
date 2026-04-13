@@ -1,13 +1,12 @@
 import {
   "moonbitlang/core/builtin",
   "moonbitlang/core/char",
-  "moonbitlang/core/double",
   "moonbitlang/core/internal/strconv" @internal/strconv,
   "moonbitlang/core/string/internal/regex_engine" @re,
   "moonbitlang/core/string/internal/regex_parser",
   "moonbitlang/core/debug",
-  "moonbitlang/core/uint64",
   "moonbitlang/core/array",
+  "moonbitlang/core/test",
 }
 
 import {
@@ -17,6 +16,7 @@ import {
   "moonbitlang/core/encoding/utf8",
   "moonbitlang/core/encoding/utf16",
   "moonbitlang/core/bench",
+  "moonbitlang/core/test",
 } for "test"
 
 options(

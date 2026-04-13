@@ -65,7 +65,7 @@ test "next" {
   let r = Rand::new()
   let n = r.next()
   let exp = 13219109469176600229UL
-  assert_eq(n, exp)
+  @test.assert_eq(n, exp)
 }
 
 ///|
@@ -160,7 +160,7 @@ test "UInt64" {
   let r = Rand::new()
   let n = r.uint64()
   let exp = 13219109469176600229UL
-  assert_eq(n, exp)
+  @test.assert_eq(n, exp)
   let r = Rand::new()
   let n = r.uint64(limit=10UL)
   inspect(n, content="7")
@@ -268,29 +268,29 @@ fn umul128(a : UInt64, b : UInt64) -> UInt128 {
 ///|
 test "umul128" {
   let r = umul128(0x123456789ABCDEF0, 0xFEDCBA9876543210)
-  assert_eq(r.hi, 1305938385386173474UL)
-  assert_eq(r.lo, 2552847189736476416UL)
+  @test.assert_eq(r.hi, 1305938385386173474UL)
+  @test.assert_eq(r.lo, 2552847189736476416UL)
 }
 
 ///|
 test "umul128: handles small numbers correctly" {
   let r = umul128(1UL, 1UL)
-  assert_eq(r.hi, 0UL)
-  assert_eq(r.lo, 1UL)
+  @test.assert_eq(r.hi, 0UL)
+  @test.assert_eq(r.lo, 1UL)
 }
 
 ///|
 test "umul128: handles large numbers correctly" {
   let r = umul128(1UL, 0xFFFFFFFFFFFFFFFFUL)
-  assert_eq(r.hi, 0UL)
-  assert_eq(r.lo, 0xFFFFFFFFFFFFFFFFUL)
+  @test.assert_eq(r.hi, 0UL)
+  @test.assert_eq(r.lo, 0xFFFFFFFFFFFFFFFFUL)
 }
 
 ///|
 test "umul128: handles zero correctly" {
   let r = umul128(0UL, 0UL)
-  assert_eq(r.hi, 0UL)
-  assert_eq(r.lo, 0UL)
+  @test.assert_eq(r.hi, 0UL)
+  @test.assert_eq(r.lo, 0UL)
 }
 
 ///|

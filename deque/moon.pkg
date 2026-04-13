@@ -3,7 +3,12 @@ import {
   "moonbitlang/core/json",
   "moonbitlang/core/array",
   "moonbitlang/core/debug",
+  "moonbitlang/core/test",
 }
+
+import {
+  "moonbitlang/core/test",
+} for "test"
 
 options(
   targets: { "panic_test.mbt": [ "not", "native", "llvm" ] },

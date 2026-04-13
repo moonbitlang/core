@@ -93,8 +93,8 @@ pub impl[A : Show] Show for Deque[A] with output(self, logger) {
 ///   let dq1 = @deque.from_array([1, 2, 3])
 ///   let dq2 = @deque.from_array([1, 2, 3])
 ///   let dq3 = @deque.from_array([1, 2, 3, 4])
-///   assert_eq(dq1.hash(), dq2.hash()) // same elements → same hash
-///   assert_not_eq(dq1.hash(), dq3.hash()) // different elements → different hash
+///   @test.assert_eq(dq1.hash(), dq2.hash()) // same elements → same hash
+///   @test.assert_not_eq(dq1.hash(), dq3.hash()) // different elements → different hash
 /// }
 /// ```
 ///
@@ -560,7 +560,7 @@ fn[A] Deque::realloc(self : Deque[A]) -> Unit {
 /// ```mbt check
 /// test {
 ///   let dv = @deque.from_array([1, 2, 3, 4, 5])
-///   assert_eq(dv.front(), Some(1))
+///   @test.assert_eq(dv.front(), Some(1))
 /// }
 /// ```
 pub fn[A] Deque::front(self : Deque[A]) -> A? {
@@ -578,7 +578,7 @@ pub fn[A] Deque::front(self : Deque[A]) -> A? {
 /// ```mbt check
 /// test {
 ///   let dv = @deque.from_array([1, 2, 3, 4, 5])
-///   assert_eq(dv.back(), Some(5))
+///   @test.assert_eq(dv.back(), Some(5))
 /// }
 /// ```
 pub fn[A] Deque::back(self : Deque[A]) -> A? {
@@ -599,7 +599,7 @@ pub fn[A] Deque::back(self : Deque[A]) -> A? {
 /// test {
 ///   let dv = @deque.from_array([1, 2, 3, 4, 5])
 ///   dv.push_front(0)
-///   assert_eq(dv.front(), Some(0))
+///   @test.assert_eq(dv.front(), Some(0))
 /// }
 /// ```
 pub fn[A] Deque::push_front(self : Deque[A], value : A) -> Unit {
@@ -622,7 +622,7 @@ pub fn[A] Deque::push_front(self : Deque[A], value : A) -> Unit {
 /// test {
 ///   let dv = @deque.from_array([1, 2, 3, 4, 5])
 ///   dv.push_back(6)
-///   assert_eq(dv.back(), Some(6))
+///   @test.assert_eq(dv.back(), Some(6))
 /// }
 /// ```
 pub fn[A] Deque::push_back(self : Deque[A], value : A) -> Unit {
@@ -643,7 +643,7 @@ pub fn[A] Deque::push_back(self : Deque[A], value : A) -> Unit {
 /// test {
 ///   let dv = @deque.from_array([1, 2, 3, 4, 5])
 ///   dv.unsafe_pop_front()
-///   assert_eq(dv.front(), Some(2))
+///   @test.assert_eq(dv.front(), Some(2))
 /// }
 /// ```
 #internal(unsafe, "Panic if the deque is empty.")
@@ -666,7 +666,7 @@ test "unsafe_pop_front after many push_front" {
   for _ in 0..<10 {
     dq.unsafe_pop_front()
   }
-  assert_eq(dq.len, 0)
+  @test.assert_eq(dq.len, 0)
 }
 
 ///|
@@ -696,7 +696,7 @@ test "unsafe_pop_front after many push_front" {
 /// test {
 ///   let dv = @deque.from_array([1, 2, 3, 4, 5])
 ///   dv.unsafe_pop_back()
-///   assert_eq(dv.back(), Some(4))
+///   @test.assert_eq(dv.back(), Some(4))
 /// }
 /// ```
 #internal(unsafe, "Panic if the deque is empty.")
@@ -737,7 +737,7 @@ pub fn[A] Deque::unsafe_pop_back(self : Deque[A]) -> Unit {
 /// ```mbt check
 /// test {
 ///   let dv = @deque.from_array([1, 2, 3, 4, 5])
-///   assert_eq(dv.pop_front(), Some(1))
+///   @test.assert_eq(dv.pop_front(), Some(1))
 /// }
 /// ```
 pub fn[A] Deque::pop_front(self : Deque[A]) -> A? {
@@ -757,7 +757,7 @@ pub fn[A] Deque::pop_front(self : Deque[A]) -> A? {
 /// ```mbt check
 /// test {
 ///   let dv = @deque.from_array([1, 2, 3, 4, 5])
-///   assert_eq(dv.pop_back(), Some(5))
+///   @test.assert_eq(dv.pop_back(), Some(5))
 /// }
 /// ```
 pub fn[A] Deque::pop_back(self : Deque[A]) -> A? {
@@ -1009,7 +1009,7 @@ pub fn[A] Deque::clear(self : Deque[A]) -> Unit {
 /// test {
 ///   let dv = @deque.from_array([3, 4, 5])
 ///   let dv2 = dv.map(x => x + 1)
-///   assert_eq(dv2, @deque.from_array([4, 5, 6]))
+///   @test.assert_eq(dv2, @deque.from_array([4, 5, 6]))
 /// }
 /// ```
 pub fn[A, U] Deque::map(self : Deque[A], f : (A) -> U) -> Deque[U] {
@@ -1034,7 +1034,7 @@ pub fn[A, U] Deque::map(self : Deque[A], f : (A) -> U) -> Deque[U] {
 /// test {
 ///   let dv = @deque.from_array([3, 4, 5])
 ///   let dv2 = dv.mapi((i, x) => x + i) // @deque.from_array([3, 5, 7])
-///   assert_eq(dv2, @deque.from_array([3, 5, 7]))
+///   @test.assert_eq(dv2, @deque.from_array([3, 5, 7]))
 /// }
 /// ```
 pub fn[A, U] Deque::mapi(self : Deque[A], f : (Int, A) -> U) -> Deque[U] {

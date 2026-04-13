@@ -19,7 +19,7 @@
 /// ```mbt check
 /// test {
 ///   let queue : @queue.Queue[Int] = @queue.new()
-///   assert_eq(queue.length(), 0)
+///   @test.assert_eq(queue.length(), 0)
 /// }
 /// ```
 #as_free_fn
@@ -35,7 +35,7 @@ pub fn[A] Queue::new() -> Queue[A] {
 /// test {
 ///   let array = Array::makei(3, idx => idx + 1)
 ///   let queue : @queue.Queue[Int] = @queue.from_array(array)
-///   assert_eq(queue.length(), 3)
+///   @test.assert_eq(queue.length(), 3)
 /// }
 /// ```
 #as_free_fn
@@ -87,7 +87,7 @@ pub fn[A] Queue::clear(self : Queue[A]) -> Unit {
 /// ```mbt check
 /// test {
 ///   let queue : @queue.Queue[Int] = @queue.new()
-///   assert_eq(queue.length(), 0)
+///   @test.assert_eq(queue.length(), 0)
 /// }
 /// ```
 pub fn[A] Queue::length(self : Queue[A]) -> Int {
@@ -141,7 +141,7 @@ pub fn[A] Queue::push(self : Queue[A], x : A) -> Unit {
 /// ```mbt check
 /// test {
 ///   let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
-///   assert_eq(queue.unsafe_peek(), 1)
+///   @test.assert_eq(queue.unsafe_peek(), 1)
 /// }
 /// ```
 #internal(unsafe, "Panics if the queue is empty.")
@@ -161,7 +161,7 @@ pub fn[A] Queue::unsafe_peek(self : Queue[A]) -> A {
 /// ```mbt check
 /// test {
 ///   let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
-///   assert_eq(queue.peek(), Some(1))
+///   @test.assert_eq(queue.peek(), Some(1))
 /// }
 /// ```
 pub fn[A] Queue::peek(self : Queue[A]) -> A? {
@@ -175,7 +175,7 @@ pub fn[A] Queue::peek(self : Queue[A]) -> A? {
 /// ```mbt check
 /// test {
 ///   let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
-///   assert_eq(queue.unsafe_pop(), 1)
+///   @test.assert_eq(queue.unsafe_pop(), 1)
 /// }
 /// ```
 #internal(unsafe, "Panics if the queue is empty.")
@@ -203,7 +203,7 @@ pub fn[A] Queue::unsafe_pop(self : Queue[A]) -> A {
 /// ```mbt check
 /// test {
 ///   let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
-///   assert_eq(queue.pop(), Some(1))
+///   @test.assert_eq(queue.pop(), Some(1))
 /// }
 /// ```
 pub fn[A] Queue::pop(self : Queue[A]) -> A? {
@@ -275,7 +275,7 @@ pub fn[A] Queue::eachi(self : Queue[A], f : (Int, A) -> Unit) -> Unit {
 /// test {
 ///   let queue : @queue.Queue[Int] = @queue.new()
 ///   let sum = queue.fold(init=0, (acc, x) => acc + x)
-///   assert_eq(sum, 0)
+///   @test.assert_eq(sum, 0)
 /// }
 /// ```
 pub fn[A, B] Queue::fold(self : Queue[A], init~ : B, f : (B, A) -> B) -> B {
@@ -295,7 +295,7 @@ pub fn[A, B] Queue::fold(self : Queue[A], init~ : B, f : (B, A) -> B) -> B {
 /// test {
 ///   let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
 ///   let queue2 : @queue.Queue[Int] = queue.copy()
-///   assert_eq(queue2.length(), 4)
+///   @test.assert_eq(queue2.length(), 4)
 /// }
 /// ```
 #alias(clone, deprecated)
@@ -359,7 +359,7 @@ pub fn[A] Queue::transfer(self : Queue[A], dst : Queue[A]) -> Unit {
 /// test {
 ///   let queue : @queue.Queue[Int] = @queue.from_array([5, 6, 7, 8])
 ///   let sum = queue.iter().fold((x, y) => x + y, init=0)
-///   assert_eq(sum, 26)
+///   @test.assert_eq(sum, 26)
 /// }
 /// ```
 #alias(iterator, deprecated)
@@ -383,7 +383,7 @@ pub fn[A] Queue::iter(self : Queue[A]) -> Iter[A] {
 /// ```mbt check
 /// test {
 ///   let queue : @queue.Queue[Int] = @queue.from_iter(Iter::empty())
-///   assert_eq(queue.length(), 0)
+///   @test.assert_eq(queue.length(), 0)
 /// }
 /// ```
 #as_free_fn
@@ -401,18 +401,18 @@ pub fn[A] Queue::from_iter(iter : Iter[A]) -> Queue[A] {
 test "from_fixed_array_2" {
   let q = from_array([1, 2, 3, 4])
   q.push(11)
-  assert_eq(q, from_array([1, 2, 3, 4, 11]))
+  @test.assert_eq(q, from_array([1, 2, 3, 4, 11]))
   q.unsafe_pop() |> ignore
-  assert_eq(q, from_array([2, 3, 4, 11]))
+  @test.assert_eq(q, from_array([2, 3, 4, 11]))
 }
 
 ///|
 test "from_array_2" {
   let q = from_array([1, 2, 3, 4])
   q.push(11)
-  assert_eq(q, from_array([1, 2, 3, 4, 11]))
+  @test.assert_eq(q, from_array([1, 2, 3, 4, 11]))
   q.unsafe_pop() |> ignore
-  assert_eq(q, from_array([2, 3, 4, 11]))
+  @test.assert_eq(q, from_array([2, 3, 4, 11]))
 }
 
 ///|
@@ -424,7 +424,7 @@ test "equal" {
   assert_false(queue == queue3)
   queue.unsafe_pop() |> ignore
   assert_false(queue == queue2)
-  assert_eq(queue, from_array([2, 3, 4]))
+  @test.assert_eq(queue, from_array([2, 3, 4]))
 }
 
 ///|
@@ -434,18 +434,18 @@ test "push" {
   queue.push(2)
   queue.push(3)
   queue.push(1)
-  assert_eq(queue.length(), 4)
-  assert_eq(queue, from_array([1, 2, 3, 1]))
+  @test.assert_eq(queue.length(), 4)
+  @test.assert_eq(queue, from_array([1, 2, 3, 1]))
 }
 
 ///|
 test "copy" {
   let queue : Queue[Int] = from_array([1, 2, 3, 4])
   let queue2 : Queue[Int] = queue.copy()
-  assert_eq(queue2.length(), 4)
-  assert_eq(queue2, from_array([1, 2, 3, 4]))
-  assert_eq(queue.length(), 4)
-  assert_eq(queue, from_array([1, 2, 3, 4]))
+  @test.assert_eq(queue2.length(), 4)
+  @test.assert_eq(queue2, from_array([1, 2, 3, 4]))
+  @test.assert_eq(queue.length(), 4)
+  @test.assert_eq(queue, from_array([1, 2, 3, 4]))
 }
 
 ///|
@@ -453,9 +453,9 @@ test "transfer" {
   let queue : Queue[Int] = from_array([1, 2, 3, 4])
   let queue2 : Queue[Int] = from_array([5, 6, 7, 8])
   queue.transfer(queue2)
-  assert_eq(queue.length(), 0)
-  assert_eq(queue2.length(), 8)
-  assert_eq(queue2, from_array([5, 6, 7, 8, 1, 2, 3, 4]))
+  @test.assert_eq(queue.length(), 0)
+  @test.assert_eq(queue2.length(), 8)
+  @test.assert_eq(queue2, from_array([5, 6, 7, 8, 1, 2, 3, 4]))
 }
 
 ///|
