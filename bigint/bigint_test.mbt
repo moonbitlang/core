@@ -422,6 +422,18 @@ test "shr" {
 }
 
 ///|
+test "shr_negative_floor_division" {
+  // -(2^32 + 1) >> 32 should be -2 (floor division)
+  assert_eq((-4294967297N) >> 32, -2N)
+  // -(2^32) >> 32 should be -1 (exact division)
+  assert_eq((-4294967296N) >> 32, -1N)
+  // -(2^33 + 1) >> 33 should be -2
+  assert_eq(-8589934593N >> 33, -2N)
+  // -(2^16 + 1) >> 16 should be -2
+  assert_eq(-65537N >> 16, -2N)
+}
+
+///|
 test "decimal_string" {
   let a = @bigint.BigInt::from_string("0")
   inspect(a.to_string(), content="0")
