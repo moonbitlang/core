@@ -1909,14 +1909,11 @@ pub fn BigInt::bit_length(self : BigInt) -> Int {
     (radix_bit_len - self.limbs[self.len - 1].clz())
   if self.sign == Negative {
     // check if this number is a power of two
-    let mut pow2 = self.limbs[0].popcnt() == 1
-    for i in 1..<self.len {
-      if !pow2 {
-        break
-      }
-      pow2 = self.limbs[i] == 0
+    let mut total_bits = 0
+    for i in 0..<self.len {
+      total_bits += self.limbs[i].popcnt()
     }
-    if pow2 {
+    if total_bits == 1 {
       bit_length -= 1
     }
   }

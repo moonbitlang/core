@@ -1271,3 +1271,13 @@ test "BigInt bit_length negative multi-limb" {
 test "BigInt bit_length zero" {
   inspect(@bigint.BigInt::from_int(0).bit_length(), content="0")
 }
+
+///|
+test "BigInt bit_length negative multi-limb power of two" {
+  // -2^32 has limbs [0, 1], bit_length should be 32 not 33
+  let neg_2_32 = @bigint.BigInt::from_string("-4294967296")
+  inspect(neg_2_32.bit_length(), content="32")
+  // -2^64 has limbs [0, 0, 1], bit_length should be 64
+  let neg_2_64 = @bigint.BigInt::from_string("-18446744073709551616")
+  inspect(neg_2_64.bit_length(), content="64")
+}
