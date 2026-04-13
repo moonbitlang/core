@@ -327,7 +327,7 @@ extern "js" fn BigInt::modpow_ffi(
   #|(x, y, z) => {
   #|  if (z === 1n) return 0n;
   #|  let result = 1n;
-  #|  x = x % z;
+  #|  x = ((x % z) + z) % z;
   #|  while (y > 0n) {
   #|    if (y & 1n) {
   #|       result = (result * x) % z;
