@@ -247,6 +247,22 @@ pub fn[A] Vector::peek(self : Vector[A]) -> A? {
   }
 }
 
+///|
+/// Returns `true` if the vector contains the given value.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let v = @vector.from_array([1, 2, 3, 4, 5])
+///   inspect(v.contains(3), content="true")
+///   inspect(v.contains(6), content="false")
+/// }
+/// ```
+pub fn[A : Eq] Vector::contains(self : Vector[A], value : A) -> Bool {
+  // TODO: optimize this to scan the tree and tail directly instead of going through `iter`.
+  self.iter().contains(value)
+}
+
 //-----------------------------------------------------------------------------
 // Modifier
 //-----------------------------------------------------------------------------
@@ -560,6 +576,45 @@ pub fn[A, B] Vector::map(
   f : (A) -> B raise?,
 ) -> Vector[B] raise? {
   make_t(self.tree.map(f), self.tail.map(f), self.size, self.shift)
+}
+
+///|
+/// Creates a new vector containing only the elements that satisfy the predicate.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let v = @vector.from_array([1, 2, 3, 4, 5])
+///   assert_eq(v.filter(x => x % 2 == 0), @vector.from_array([2, 4]))
+/// }
+/// ```
+pub fn[A] Vector::filter(
+  self : Vector[A],
+  f : (A) -> Bool raise?,
+) -> Vector[A] raise? {
+  let arr : Array[A] = Array::new(capacity=self.size)
+  self.each(value => if f(value) { arr.push(value) })
+  from_array(arr)
+}
+
+///|
+/// Returns a new vector with the elements in reverse order.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let v = @vector.from_array([1, 2, 3, 4, 5])
+///   assert_eq(v.rev(), @vector.from_array([5, 4, 3, 2, 1]))
+/// }
+/// ```
+pub fn[A] Vector::rev(self : Vector[A]) -> Vector[A] {
+  if self.size == 0 {
+    new()
+  } else {
+    let arr = Array::make(self.size, self[0])
+    self.eachi((i, value) => arr[self.size - 1 - i] = value)
+    from_array(arr)
+  }
 }
 
 //-----------------------------------------------------------------------------
