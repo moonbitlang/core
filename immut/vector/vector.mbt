@@ -24,6 +24,22 @@ pub fn[A] Vector::new() -> Vector[A] {
 }
 
 ///|
+/// Create a vector with a single element.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let v = @vector.singleton(42)
+///   assert_eq(v, @vector.from_array([42]))
+///   assert_eq(v.length(), 1)
+/// }
+/// ```
+#as_free_fn
+pub fn[A] Vector::singleton(value : A) -> Vector[A] {
+  make_t(Tree::empty(), [value], 1, 0)
+}
+
+///|
 /// Create a persistent vector with a given length and value.
 #as_free_fn
 pub fn[A] Vector::make(len : Int, value : A) -> Vector[A] {

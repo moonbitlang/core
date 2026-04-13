@@ -49,6 +49,13 @@ test "to_string" {
 }
 
 ///|
+test "singleton" {
+  let v = @vector.singleton(7)
+  inspect(v, content="@immut/vector.from_array([7])")
+  inspect(v.length(), content="1")
+}
+
+///|
 test "make with full leaf" {
   let v = @vector.make(32, 7)
   inspect(v.length(), content="32")
