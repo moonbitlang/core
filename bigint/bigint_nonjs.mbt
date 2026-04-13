@@ -1388,8 +1388,8 @@ pub fn BigInt::pow(self : BigInt, exp : BigInt, modulus? : BigInt) -> BigInt {
     }
     Some(modulus) => {
       guard !(modulus.is_zero() || modulus.sign == Negative)
-      let mut result = 1N
-      let mut base = self
+      let mut result = 1N % modulus
+      let mut base = (self % modulus + modulus) % modulus
       let mut exp = exp
       while exp > 0 {
         if exp % 2 == 1 {

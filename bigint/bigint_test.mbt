@@ -1293,3 +1293,21 @@ test "BigInt bit_length negative multi-limb power of two" {
   let neg_2_64 = @bigint.BigInt::from_string("-18446744073709551616")
   inspect(neg_2_64.bit_length(), content="64")
 }
+
+///|
+test "BigInt modpow modulus=1 returns 0" {
+  // 2^0 mod 1 should be 0, not 1
+  inspect(2N.pow(0N, modulus=1N), content="0")
+}
+
+///|
+test "BigInt modpow sanity check" {
+  // 3^4 = 81, 81 mod 10 = 1
+  inspect(3N.pow(4N, modulus=10N), content="1")
+}
+
+///|
+test "BigInt modpow negative base normalization" {
+  // (-3)^3 = -27, -27 mod 10 = 3 (canonical non-negative)
+  inspect((-3N).pow(3N, modulus=10N), content="3")
+}
