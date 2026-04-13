@@ -211,6 +211,41 @@ test "map" {
 }
 
 ///|
+test "filter" {
+  let values = @vector.from_iter((0).until(40))
+  inspect(
+    values.filter(x => x % 7 == 0),
+    content="@immut/vector.from_array([0, 7, 14, 21, 28, 35])",
+  )
+  inspect(values.filter(_ => false), content="@immut/vector.from_array([])")
+}
+
+///|
+test "rev" {
+  let values = @vector.from_iter((0).until(40))
+  inspect(
+    values.rev(),
+    content=(
+      #|@immut/vector.from_array([39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0])
+    ),
+  )
+  inspect(
+    (@vector.new() : @vector.Vector[Int]).rev(),
+    content="@immut/vector.from_array([])",
+  )
+}
+
+///|
+test "contains" {
+  let values = @vector.from_iter((0).until(40))
+  inspect(values.contains(0), content="true")
+  inspect(values.contains(31), content="true")
+  inspect(values.contains(39), content="true")
+  inspect(values.contains(40), content="false")
+  inspect((@vector.new() : @vector.Vector[Int]).contains(1), content="false")
+}
+
+///|
 test "new" {
   let v = @vector.make(5, 1)
   let v2 = @vector.make(33, 10)

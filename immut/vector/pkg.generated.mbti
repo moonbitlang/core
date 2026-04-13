@@ -16,12 +16,14 @@ type Vector[A]
 #alias("_[_]")
 pub fn[A] Vector::at(Self[A], Int) -> A
 pub fn[A] Vector::concat(Self[A], Self[A]) -> Self[A]
+pub fn[A : Eq] Vector::contains(Self[A], A) -> Bool
 #alias(clone, deprecated)
 #deprecated
 pub fn[A] Vector::copy(Self[A]) -> Self[A]
 pub fn[A] Vector::drop(Self[A], Int) -> Self[A]
 pub fn[A] Vector::each(Self[A], (A) -> Unit raise?) -> Unit raise?
 pub fn[A] Vector::eachi(Self[A], (Int, A) -> Unit raise?) -> Unit raise?
+pub fn[A] Vector::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 #alias(fold_left, deprecated)
 pub fn[A, B] Vector::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 #alias(of, deprecated)
@@ -47,6 +49,7 @@ pub fn[A] Vector::new() -> Self[A]
 pub fn[A] Vector::peek(Self[A]) -> A?
 pub fn[A] Vector::pop(Self[A]) -> Self[A]?
 pub fn[A] Vector::push(Self[A], A) -> Self[A]
+pub fn[A] Vector::rev(Self[A]) -> Self[A]
 #alias(fold_right, deprecated)
 pub fn[A, B] Vector::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 pub fn[A] Vector::set(Self[A], Int, A) -> Self[A]
