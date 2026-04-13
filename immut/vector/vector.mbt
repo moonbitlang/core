@@ -608,7 +608,13 @@ pub fn[A] Vector::filter(
 /// }
 /// ```
 pub fn[A] Vector::rev(self : Vector[A]) -> Vector[A] {
-  self.rev_fold(init=new(), (vec, value) => vec.push(value))
+  if self.size == 0 {
+    new()
+  } else {
+    let arr = Array::make(self.size, self[0])
+    self.eachi((i, value) => arr[self.size - 1 - i] = value)
+    from_array(arr)
+  }
 }
 
 //-----------------------------------------------------------------------------
