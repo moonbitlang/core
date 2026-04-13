@@ -50,6 +50,8 @@ pub fn[A] Vector::push(Self[A], A) -> Self[A]
 #alias(fold_right, deprecated)
 pub fn[A, B] Vector::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 pub fn[A] Vector::set(Self[A], Int, A) -> Self[A]
+#as_free_fn
+pub fn[A] Vector::singleton(A) -> Self[A]
 pub fn[A] Vector::slice(Self[A], Int, Int) -> Self[A]
 pub fn[A] Vector::split(Self[A], Int) -> (Self[A], Self[A])
 pub fn[A] Vector::take(Self[A], Int) -> Self[A]
