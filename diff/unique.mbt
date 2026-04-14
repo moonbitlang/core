@@ -54,9 +54,9 @@ fn[T : Eq + Hash] find_unique(
   let match_lines = match_lines
     .iter()
     .filter(p => p.1.new_count == 1 && p.1.old_count == 1)
+    .map(p => p.1)
   let unique_match_lines = []
-  for pair in match_lines {
-    let (_, record) = pair
+  for record in match_lines {
     unique_match_lines.push((record.old_idx, record.new_idx))
   }
   // Sorting by `old_idx` turns the LIS over `new_idx` into a common
