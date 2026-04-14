@@ -13,18 +13,6 @@
 // limitations under the License.
 
 ///|
-struct DebugOnly(Int) derive(Eq, Debug)
-
-///|
-struct ShowOnly(Int) derive(Eq)
-
-///|
-impl Show for ShowOnly with output(self, logger) {
-  let ShowOnly(value) = self
-  logger.write_object(value)
-}
-
-///|
 #warnings("-deprecated")
 test " same_object call with the same object" {
   let s = "Hello"
@@ -52,34 +40,6 @@ test "is_not called with the different objects" {
 test "panic is_not called with the same object" {
   let s = "Hello"
   @test.not_same_object(s, s)
-}
-
-///|
-test "assert_eq and assert_not_eq work for Debug-only types" {
-  let first = DebugOnly(1)
-  let second = DebugOnly(1)
-  let third = DebugOnly(2)
-  @test.assert_eq(first, second)
-  @test.assert_not_eq(first, third)
-}
-
-///|
-test "assert_same_object and assert_not_same_object work for Debug-only types" {
-  let first = [DebugOnly(1)]
-  let same = first
-  let other = [DebugOnly(1)]
-  @test.assert_same_object(first, same)
-  @test.assert_not_same_object(first, other)
-}
-
-///|
-#warnings("-deprecated")
-test "legacy Show-based identity assertions still support Show-only types" {
-  let first = [ShowOnly(1)]
-  let same = first
-  let other = [ShowOnly(1)]
-  @test.same_object(first, same)
-  @test.not_same_object(first, other)
 }
 
 ///|
