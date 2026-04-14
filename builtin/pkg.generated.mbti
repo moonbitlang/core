@@ -225,6 +225,7 @@ pub fn[T] ArrayView::to_array(Self[T]) -> Array[T]
 #alias("_[_:_]")
 #alias(sub, deprecated)
 pub fn[T] ArrayView::view(Self[T], start? : Int, end? : Int) -> Self[T]
+pub impl[T] Add for ArrayView[T]
 pub impl[T : Compare] Compare for ArrayView[T]
 pub impl[T : Eq] Eq for ArrayView[T]
 pub impl[A : Hash] Hash for ArrayView[A]

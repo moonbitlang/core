@@ -482,3 +482,120 @@ test "ArrayView::iter2 empty" {
   let iter = view.iter2()
   assert_eq(iter.next(), None)
 }
+
+///|
+test "ArrayView::op_add basic" {
+  let a = [1, 2, 3][:]
+  let b = [4, 5][:]
+  inspect(a + b, content="[1, 2, 3, 4, 5]")
+}
+
+///|
+test "ArrayView::op_add sliced views" {
+  let a = [0, 1, 2, 3, 4, 5][1:4]
+  let b = [10, 20, 30, 40][1:3]
+  inspect(a + b, content="[1, 2, 3, 20, 30]")
+}
+
+///|
+test "ArrayView::op_add empty left" {
+  let a = [1, 2, 3][0:0]
+  let b = [4, 5, 6][:]
+  let result = a + b
+  inspect(result, content="[4, 5, 6]")
+  assert_eq(result.length(), 3)
+}
+
+///|
+test "ArrayView::op_add empty right" {
+  let a = [1, 2, 3][:]
+  let b = [4, 5, 6][1:1]
+  let result = a + b
+  inspect(result, content="[1, 2, 3]")
+  assert_eq(result.length(), 3)
+}
+
+///|
+test "ArrayView::op_add both empty" {
+  let a : ArrayView[Int] = [1, 2, 3][0:0]
+  let b : ArrayView[Int] = [4, 5][1:1]
+  let result = a + b
+  inspect(result, content="[]")
+  assert_eq(result.length(), 0)
+  assert_true(result.is_empty())
+}
+
+///|
+test "ArrayView::op_add does not mutate sources" {
+  let arr_a = [1, 2, 3, 4]
+  let arr_b = [5, 6, 7]
+  let a = arr_a[1:3]
+  let b = arr_b[:2]
+  let _ = a + b
+  inspect(arr_a, content="[1, 2, 3, 4]")
+  inspect(arr_b, content="[5, 6, 7]")
+  inspect(a, content="[2, 3]")
+  inspect(b, content="[5, 6]")
+}
+
+///|
+test "ArrayView::op_add result is independent of source mutation" {
+  let arr_a = [1, 2, 3, 4]
+  let arr_b = [5, 6, 7, 8]
+  let a = arr_a[1:3]
+  let b = arr_b[1:3]
+  let result = a + b
+  arr_a[1] = 99
+  arr_b[2] = 88
+  inspect(result, content="[2, 3, 6, 7]")
+}
+
+///|
+test "ArrayView::op_add full slice equals Array Add" {
+  let a = [1, 2, 3]
+  let b = [4, 5, 6]
+  let view_sum = a[:] + b[:]
+  let array_sum = a + b
+  assert_eq(view_sum.length(), array_sum.length())
+  for i in 0..<view_sum.length() {
+    assert_eq(view_sum[i], array_sum[i])
+  }
+}
+
+///|
+test "ArrayView::op_add generic string elements" {
+  let a = ["hello", "world"][:]
+  let b = ["foo"][:]
+  let expected =
+    #|["hello", "world", "foo"]
+  inspect(a + b, content=expected)
+}
+
+///|
+test "ArrayView::op_add chained" {
+  let a = [1, 2][:]
+  let b = [3, 4][:]
+  let c = [5, 6][:]
+  inspect(a + b + c, content="[1, 2, 3, 4, 5, 6]")
+}
+
+///|
+test "ArrayView::op_add tail and head slices" {
+  let v = [1, 2, 3, 4, 5, 6]
+  let head = v[:3]
+  let tail = v[3:]
+  inspect(head + tail, content="[1, 2, 3, 4, 5, 6]")
+  inspect(tail + head, content="[4, 5, 6, 1, 2, 3]")
+}
+
+///|
+test "ArrayView::op_add large" {
+  let n = 100
+  let a = Array::makei(n, i => i)
+  let b = Array::makei(n, i => i + n)
+  let result = a[:] + b[:]
+  assert_eq(result.length(), 2 * n)
+  for i in 0..<(2 * n) {
+    assert_eq(result[i], i)
+  }
+}

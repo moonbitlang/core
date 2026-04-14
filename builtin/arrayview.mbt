@@ -1226,4 +1226,43 @@ pub impl[A : Hash] Hash for ArrayView[A] with hash_combine(self, hasher) {
   }
 }
 
+///|
+/// Concatenates two array views into a new view backed by a freshly allocated
+/// array. The resulting view contains all elements from `self` followed by all
+/// elements from `other`.
+///
+/// Note: although `+` looks cheap, this allocates a new owned `Array[T]`
+/// because views cannot own data — the returned view spans the whole new
+/// array.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let a = [1, 2, 3, 4, 5][1:4]
+///   let b = [10, 20, 30][:2]
+///   inspect(a + b, content="[2, 3, 4, 10, 20]")
+/// }
+/// ```
+pub impl[T] Add for ArrayView[T] with add(self, other) {
+  let len_self = self.length()
+  let len_other = other.length()
+  let result = Array::make_uninit(len_self + len_other)
+  UninitializedArray::unsafe_blit(
+    result.buffer(),
+    0,
+    self.buf(),
+    self.start(),
+    len_self,
+  )
+  UninitializedArray::unsafe_blit(
+    result.buffer(),
+    len_self,
+    other.buf(),
+    other.start(),
+    len_other,
+  )
+  result[:]
+}
+
 // #endregion
