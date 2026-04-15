@@ -18,15 +18,15 @@
 /// `value` stores the current pile entry, and `prev` points to the entry chosen
 /// from the previous pile so the final increasing chain can be reconstructed
 /// once the last pile is known.
-priv struct BackPointer[T] {
-  value : T
-  prev : BackPointer[T]?
+priv struct BackPointer {
+  value : (Int, Int)
+  prev : BackPointer?
 }
 
 ///|
 /// Materialize the predecessor chain ending at `self`, preserving left-to-right
 /// subsequence order.
-fn[T] BackPointer::to_array(self : BackPointer[T]) -> Array[T] {
+fn BackPointer::to_array(self : BackPointer) -> Array[(Int, Int)] {
   let result = []
   let mut self = self
   while self.prev is Some(prev) {

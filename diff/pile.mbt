@@ -14,23 +14,19 @@
 
 ///|
 /// `Pile[T]` models one pile in patience sorting.
-///
-/// `top` is the visible card consulted by binary search. `stack` retains older
-/// cards underneath it so the pile still behaves like a stack.
-priv struct Pile[T](Array[T])
+priv struct Pile(Array[BackPointer])
 
 ///|
-fn[T] Pile::new(top : T) -> Pile[T] {
+fn Pile::new(top : BackPointer) -> Pile {
   Pile([top])
 }
 
 ///|
-/// Push a new card onto the pile, demoting the old top underneath it.
-fn[T] Pile::push(self : Pile[T], t : T) -> Unit {
+fn Pile::push(self : Pile, t : BackPointer) -> Unit {
   self.0.push(t)
 }
 
 ///|
-fn[T] Pile::top(self : Pile[T]) -> T {
+fn Pile::top(self : Pile) -> BackPointer {
   self.0[self.0.length() - 1]
 }

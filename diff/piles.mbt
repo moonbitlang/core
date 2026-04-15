@@ -18,26 +18,26 @@
 ///
 /// The patience-sorting step only compares pile tops, so each pile stores the
 /// current tail candidate for one subsequence length.
-priv struct Piles[T](Array[Pile[T]])
+priv struct Piles(Array[Pile])
 
 ///|
-fn[T] Piles::is_empty(self : Piles[T]) -> Bool {
+fn Piles::is_empty(self : Piles) -> Bool {
   self.0.is_empty()
 }
 
 ///|
 /// Start a new pile with a single visible card.
-fn[T] Piles::put_back(self : Piles[T], singleton : T) -> Unit {
+fn Piles::put_back(self : Piles, singleton : BackPointer) -> Unit {
   self.0.push(Pile::new(singleton))
 }
 
 ///|
-fn[T] Piles::last(self : Piles[T]) -> Pile[T]? {
+fn Piles::last(self : Piles) -> Pile? {
   self.0.last()
 }
 
 ///|
-fn[T] Piles::op_get(self : Piles[T], i : Int) -> Pile[T] {
+fn Piles::op_get(self : Piles, i : Int) -> Pile {
   self.0[i]
 }
 
@@ -48,7 +48,7 @@ fn[T] Piles::op_get(self : Piles[T], i : Int) -> Pile[T] {
 /// array returned by `find_unique`, so the chosen chain can later be mapped
 /// back to `(old_idx, new_idx)` pairs.
 fn Piles::put_by_binary_search(
-  self : Piles[BackPointer[(Int, Int)]],
+  self : Piles,
   new_idx~ : Int,
   place~ : Int,
 ) -> Unit {
