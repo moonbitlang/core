@@ -751,3 +751,59 @@ test "ArrayView::rev matches Array::rev" {
     assert_eq(view_rev[i], array_rev[i])
   }
 }
+
+///|
+test "ArrayView::filter_map basic" {
+  let v = [1, 2, 3, 4, 5][:]
+  let r = v.filter_map(x => if x % 2 == 0 { Some(x * 10) } else { None })
+  inspect(r, content="[20, 40]")
+}
+
+///|
+test "ArrayView::filter_map sliced view" {
+  let v = [1, 2, 3, 4, 5, 6][1:5]
+  let r = v.filter_map(x => if x > 2 { Some(x) } else { None })
+  inspect(r, content="[3, 4, 5]")
+}
+
+///|
+test "ArrayView::filter_map empty view" {
+  let v : ArrayView[Int] = [1, 2, 3][0:0]
+  let r = v.filter_map(x => Some(x))
+  inspect(r, content="[]")
+  assert_true(r.is_empty())
+}
+
+///|
+test "ArrayView::filter_map all none" {
+  let v = [1, 2, 3][:]
+  let r : Array[Int] = v.filter_map(_ => None)
+  inspect(r, content="[]")
+}
+
+///|
+test "ArrayView::filter_map all some (type change)" {
+  let v = [1, 2, 3][:]
+  let r = v.filter_map(x => Some(x.to_string()))
+  inspect(
+    r,
+    content=(
+      #|["1", "2", "3"]
+    ),
+  )
+}
+
+///|
+test "ArrayView::filter_map preserves order" {
+  let v = [5, 1, 4, 2, 3][:]
+  let r = v.filter_map(x => if x >= 3 { Some(x * 2) } else { None })
+  inspect(r, content="[10, 8, 6]")
+}
+
+///|
+test "ArrayView::filter_map does not mutate source" {
+  let arr = [1, 2, 3, 4]
+  let v = arr[:]
+  let _ = v.filter_map(x => Some(x + 100))
+  inspect(arr, content="[1, 2, 3, 4]")
+}

@@ -1146,6 +1146,34 @@ pub fn[T] ArrayView::filter(
 }
 
 ///|
+/// Apply a function to each element of the view, keeping only the `Some`
+/// results. Returns a freshly allocated `Array`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let v = [1, 2, 3, 4, 5][1:4]
+///   inspect(
+///     v.filter_map(x => if x % 2 == 0 { Some(x * 10) } else { None }),
+///     content="[20, 40]",
+///   )
+/// }
+/// ```
+pub fn[A, B] ArrayView::filter_map(
+  self : ArrayView[A],
+  f : (A) -> B? raise?,
+) -> Array[B] raise? {
+  let result = []
+  for x in self {
+    if f(x) is Some(x) {
+      result.push(x)
+    }
+  }
+  result
+}
+
+///|
 /// Copy the view elements to a new array
 ///
 /// # Example
