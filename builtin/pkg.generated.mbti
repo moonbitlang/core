@@ -213,6 +213,8 @@ pub fn[T] ArrayView::length(Self[T]) -> Int
 pub fn[T : Compare] ArrayView::lexical_compare(Self[T], Self[T]) -> Int
 pub fn[T, U] ArrayView::map(Self[T], (T) -> U raise?) -> Array[U] raise?
 pub fn[T, U] ArrayView::mapi(Self[T], (Int, T) -> U raise?) -> Array[U] raise?
+pub fn[T] ArrayView::rev_each(Self[T], (T) -> Unit raise?) -> Unit raise?
+pub fn[T] ArrayView::rev_eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
 pub fn[A, B] ArrayView::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 pub fn[A, B] ArrayView::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
 #alias(rev_iterator, deprecated)

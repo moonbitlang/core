@@ -691,6 +691,55 @@ pub fn[T] ArrayView::eachi(
 }
 
 ///|
+/// Iterates over the elements of the array view in reverse order (last to
+/// first).
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let v = [1, 2, 3, 4, 5][1:4]
+///   let out = []
+///   v.rev_each(x => out.push(x))
+///   inspect(out, content="[4, 3, 2]")
+/// }
+/// ```
+pub fn[T] ArrayView::rev_each(
+  self : ArrayView[T],
+  f : (T) -> Unit raise?,
+) -> Unit raise? {
+  let len = self.length()
+  for i in 0..<len {
+    f(self.unsafe_get(len - i - 1))
+  }
+}
+
+///|
+/// Iterates over the elements of the array view in reverse order, passing the
+/// view-relative index of each element (0 for the first element yielded, the
+/// last position of the view).
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let v = [10, 20, 30][:]
+///   let out = []
+///   v.rev_eachi((i, x) => out.push((i, x)))
+///   inspect(out, content="[(0, 30), (1, 20), (2, 10)]")
+/// }
+/// ```
+pub fn[T] ArrayView::rev_eachi(
+  self : ArrayView[T],
+  f : (Int, T) -> Unit raise?,
+) -> Unit raise? {
+  let len = self.length()
+  for i in 0..<len {
+    f(i, self.unsafe_get(len - i - 1))
+  }
+}
+
+///|
 /// Checks if all elements in the array view match the condition.
 /// 
 /// # Example
