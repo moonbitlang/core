@@ -599,3 +599,60 @@ test "ArrayView::op_add large" {
     assert_eq(result[i], i)
   }
 }
+
+///|
+test "ArrayView::rev_each basic" {
+  let v = [1, 2, 3, 4, 5][:]
+  let out = []
+  v.rev_each(x => out.push(x))
+  inspect(out, content="[5, 4, 3, 2, 1]")
+}
+
+///|
+test "ArrayView::rev_each sliced view" {
+  let v = [1, 2, 3, 4, 5][1:4]
+  let out = []
+  v.rev_each(x => out.push(x))
+  inspect(out, content="[4, 3, 2]")
+}
+
+///|
+test "ArrayView::rev_each empty" {
+  let v : ArrayView[Int] = [1, 2, 3][0:0]
+  let out = []
+  v.rev_each(x => out.push(x))
+  inspect(out, content="[]")
+}
+
+///|
+test "ArrayView::rev_each matches rev_iter order" {
+  let v = [1, 2, 3, 4, 5][1:4]
+  let a = []
+  v.rev_each(x => a.push(x))
+  let b = v.rev_iter().to_array()
+  assert_eq(a, b)
+}
+
+///|
+test "ArrayView::rev_eachi basic" {
+  let v = [10, 20, 30][:]
+  let out = []
+  v.rev_eachi((i, x) => out.push((i, x)))
+  inspect(out, content="[(0, 30), (1, 20), (2, 10)]")
+}
+
+///|
+test "ArrayView::rev_eachi sliced view index starts at 0" {
+  let v = [0, 10, 20, 30, 40][1:4]
+  let out = []
+  v.rev_eachi((i, x) => out.push((i, x)))
+  inspect(out, content="[(0, 30), (1, 20), (2, 10)]")
+}
+
+///|
+test "ArrayView::rev_eachi empty" {
+  let v : ArrayView[Int] = [1, 2, 3][0:0]
+  let out = []
+  v.rev_eachi((i, x) => out.push((i, x)))
+  inspect(out, content="[]")
+}
