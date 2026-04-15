@@ -179,3 +179,43 @@ test "panic StringView::sub invalid start index" {
   let view = "\u{1F600}A"[:]
   ignore(view[1:])
 }
+
+///|
+test "StringView::to_string basic" {
+  let s = "hello world"
+  inspect(s[6:].to_string(), content="world")
+  inspect(s[:5].to_string(), content="hello")
+  inspect(s[6:11].to_string(), content="world")
+}
+
+///|
+test "StringView::to_string full view returns backing string unchanged" {
+  let s = "hello"
+  let v = s[:]
+  // When the view covers the whole backing string, no copy is made.
+  assert_eq(v.to_string(), s)
+}
+
+///|
+test "StringView::to_string empty view" {
+  let v = "abc"[1:1]
+  inspect(v.to_string(), content="")
+  assert_eq(v.to_string().length(), 0)
+}
+
+///|
+test "StringView::to_string multibyte" {
+  // BMP-out chars are 2 UTF-16 code units; slice by code units.
+  let s = "hi \u{1F600}!"
+  inspect(s[3:5].to_string(), content="\u{1F600}")
+}
+
+///|
+test "StringView::to_string is independent of data()" {
+  // `data` returns the whole backing string; `to_string` returns just the
+  // slice.
+  let s = "hello world"
+  let v = s[6:]
+  assert_eq(v.data(), "hello world")
+  assert_eq(v.to_string(), "world")
+}

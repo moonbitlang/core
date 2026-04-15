@@ -760,7 +760,6 @@ pub fn String::to_array(String) -> Array[Char]
 #deprecated
 pub fn String::to_bytes(String) -> Bytes
 pub fn String::to_lower(String) -> String
-pub fn String::to_string(String) -> String
 pub fn String::to_upper(String) -> String
 #label_migration(chars, alias=char_set)
 pub fn String::trim(String, chars? : StringView) -> StringView
