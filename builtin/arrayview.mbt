@@ -1024,6 +1024,56 @@ pub fn[T : Eq] ArrayView::ends_with(
 }
 
 ///|
+/// Returns a sub-view with `prefix` removed from the start, or `None` if the
+/// view does not start with `prefix`. The returned view shares the original
+/// backing array — no allocation.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let v = [1, 2, 3, 4, 5][:]
+///   inspect(v.strip_prefix([1, 2][:]), content="Some([3, 4, 5])")
+///   inspect(v.strip_prefix([2, 3][:]), content="None")
+/// }
+/// ```
+pub fn[T : Eq] ArrayView::strip_prefix(
+  self : ArrayView[T],
+  prefix : ArrayView[T],
+) -> ArrayView[T]? {
+  if self.starts_with(prefix) {
+    Some(self[prefix.length():])
+  } else {
+    None
+  }
+}
+
+///|
+/// Returns a sub-view with `suffix` removed from the end, or `None` if the
+/// view does not end with `suffix`. The returned view shares the original
+/// backing array — no allocation.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let v = [1, 2, 3, 4, 5][:]
+///   inspect(v.strip_suffix([4, 5][:]), content="Some([1, 2, 3])")
+///   inspect(v.strip_suffix([3, 4][:]), content="None")
+/// }
+/// ```
+pub fn[T : Eq] ArrayView::strip_suffix(
+  self : ArrayView[T],
+  suffix : ArrayView[T],
+) -> ArrayView[T]? {
+  if self.ends_with(suffix) {
+    Some(self[:self.length() - suffix.length()])
+  } else {
+    None
+  }
+}
+
+///|
 /// Performs a binary search on a sorted array view.
 ///
 /// # Example

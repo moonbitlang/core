@@ -228,6 +228,8 @@ pub fn[T : Eq] ArrayView::search(Self[T], T) -> Int?
 pub fn[T] ArrayView::search_by(Self[T], (T) -> Bool raise?) -> Int? raise?
 pub fn[T] ArrayView::start_offset(Self[T]) -> Int
 pub fn[T : Eq] ArrayView::starts_with(Self[T], Self[T]) -> Bool
+pub fn[T : Eq] ArrayView::strip_prefix(Self[T], Self[T]) -> Self[T]?
+pub fn[T : Eq] ArrayView::strip_suffix(Self[T], Self[T]) -> Self[T]?
 pub fn[T] ArrayView::suffixes(Self[T], include_empty? : Bool) -> Iter[Self[T]]
 #alias(to_array, deprecated)
 pub fn[T] ArrayView::to_owned(Self[T]) -> Array[T]
