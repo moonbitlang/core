@@ -693,3 +693,61 @@ test "ArrayView::search_by matches first element" {
   let v = [1, 2, 3][:]
   inspect(v.search_by(_ => true), content="Some(0)")
 }
+
+///|
+test "ArrayView::rev basic" {
+  inspect([1, 2, 3, 4, 5][:].rev(), content="[5, 4, 3, 2, 1]")
+}
+
+///|
+test "ArrayView::rev sliced view" {
+  let v = [1, 2, 3, 4, 5][1:4]
+  inspect(v.rev(), content="[4, 3, 2]")
+}
+
+///|
+test "ArrayView::rev empty" {
+  let v : ArrayView[Int] = [1, 2, 3][0:0]
+  inspect(v.rev(), content="[]")
+  assert_true(v.rev().is_empty())
+}
+
+///|
+test "ArrayView::rev singleton" {
+  inspect([42][:].rev(), content="[42]")
+}
+
+///|
+test "ArrayView::rev does not mutate source" {
+  let arr = [1, 2, 3, 4]
+  let v = arr[1:3]
+  let _ = v.rev()
+  inspect(arr, content="[1, 2, 3, 4]")
+  inspect(v, content="[2, 3]")
+}
+
+///|
+test "ArrayView::rev result is independent" {
+  let arr = [1, 2, 3, 4]
+  let v = arr[:]
+  let r = v.rev()
+  arr[0] = 99
+  inspect(r, content="[4, 3, 2, 1]")
+}
+
+///|
+test "ArrayView::rev twice is identity" {
+  let v = [1, 2, 3, 4, 5][1:4]
+  inspect(v.rev()[:].rev(), content="[2, 3, 4]")
+}
+
+///|
+test "ArrayView::rev matches Array::rev" {
+  let arr = [1, 2, 3, 4, 5]
+  let view_rev = arr[:].rev()
+  let array_rev = arr.rev()
+  assert_eq(view_rev.length(), array_rev.length())
+  for i in 0..<view_rev.length() {
+    assert_eq(view_rev[i], array_rev[i])
+  }
+}
