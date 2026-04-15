@@ -220,6 +220,7 @@ pub fn[A, B] ArrayView::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -
 #alias(rev_iterator, deprecated)
 pub fn[X] ArrayView::rev_iter(Self[X]) -> Iter[X]
 pub fn[T : Eq] ArrayView::search(Self[T], T) -> Int?
+pub fn[T] ArrayView::search_by(Self[T], (T) -> Bool raise?) -> Int? raise?
 pub fn[T] ArrayView::start_offset(Self[T]) -> Int
 pub fn[T : Eq] ArrayView::starts_with(Self[T], Self[T]) -> Bool
 pub fn[T] ArrayView::suffixes(Self[T], include_empty? : Bool) -> Iter[Self[T]]
