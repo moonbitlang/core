@@ -1827,26 +1827,6 @@ pub impl Add for String with add(self, other) = "%string_add"
 /// ```
 pub impl Eq for String with equal(self : String, other : String) -> Bool = "%string_eq"
 
-///|
-/// Returns the string itself without any modifications. This method is primarily
-/// used to implement the `Show` trait, which requires a `to_string` function.
-///
-/// Parameters:
-///
-/// * `string` : The string value to be returned.
-///
-/// Returns the same string that was passed in.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let s = "hello"
-///   inspect(s.to_string(), content="hello")
-/// }
-/// ```
-pub fn String::to_string(self : String) -> String = "%string_to_string"
-
 // For internal use only
 
 ///|
