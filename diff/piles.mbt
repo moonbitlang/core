@@ -28,7 +28,7 @@ fn[T] Piles::is_empty(self : Piles[T]) -> Bool {
 ///|
 /// Start a new pile with a single visible card.
 fn[T] Piles::put_back(self : Piles[T], singleton : T) -> Unit {
-  self.0.push(Stack::{ top: singleton, stack: @list.empty() })
+  self.0.push(Pile::new(singleton))
 }
 
 ///|
@@ -57,14 +57,14 @@ fn Piles::put_by_binary_search(
   while lo + 1 < hi {
     let mid = (lo + hi) / 2
     // Find the rightmost pile whose top still ends before `new_idx`.
-    if self[mid].top.value.0 < new_idx {
+    if self[mid].top().value.0 < new_idx {
       lo = mid
     } else {
       hi = mid
     }
   }
   if lo >= 0 {
-    let prev = Some(self[lo].top)
+    let prev = Some(self[lo].top())
     // Place the candidate on the next pile; appending a new pile means the
     // candidate extends the longest chain seen so far.
     if lo + 1 < self.0.length() {

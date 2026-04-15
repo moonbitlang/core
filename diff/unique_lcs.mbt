@@ -46,7 +46,7 @@ fn[T : Eq + Hash] unique_lcs(
   // The top of the last pile ends one longest chain; following the
   // backpointers yields the full chain in order.
   let seq = []
-  for pair in head.top.to_array().iter() {
+  for pair in head.top().to_array().iter() {
     let (_, place) = pair
     seq.push(matches[place])
   }

@@ -17,15 +17,20 @@
 ///
 /// `top` is the visible card consulted by binary search. `stack` retains older
 /// cards underneath it so the pile still behaves like a stack.
-#alias(Pile)
-priv struct Stack[T] {
-  mut top : T
-  mut stack : @list.List[T]
+priv struct Pile[T](Array[T])
+
+///|
+fn[T] Pile::new(top : T) -> Pile[T] {
+  Pile([top])
 }
 
 ///|
 /// Push a new card onto the pile, demoting the old top underneath it.
-fn[T] Stack::push(self : Stack[T], t : T) -> Unit {
-  self.stack = self.stack.add(self.top)
-  self.top = t
+fn[T] Pile::push(self : Pile[T], t : T) -> Unit {
+  self.0.push(t)
+}
+
+///|
+fn[T] Pile::top(self : Pile[T]) -> T {
+  self.0[self.0.length() - 1]
 }
