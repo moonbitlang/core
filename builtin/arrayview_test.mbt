@@ -807,3 +807,110 @@ test "ArrayView::filter_map does not mutate source" {
   let _ = v.filter_map(x => Some(x + 100))
   inspect(arr, content="[1, 2, 3, 4]")
 }
+
+///|
+test "ArrayView::chunks even" {
+  let v = [1, 2, 3, 4, 5, 6][:]
+  inspect(v.chunks(2), content="[[1, 2], [3, 4], [5, 6]]")
+}
+
+///|
+test "ArrayView::chunks uneven last" {
+  let v = [1, 2, 3, 4, 5, 6, 7][:]
+  inspect(v.chunks(3), content="[[1, 2, 3], [4, 5, 6], [7]]")
+}
+
+///|
+test "ArrayView::chunks size larger than view" {
+  let v = [1, 2][:]
+  inspect(v.chunks(5), content="[[1, 2]]")
+}
+
+///|
+test "ArrayView::chunks empty view" {
+  let v : ArrayView[Int] = [1, 2, 3][0:0]
+  inspect(v.chunks(3), content="[]")
+}
+
+///|
+test "ArrayView::chunks on sliced view" {
+  let v = [0, 1, 2, 3, 4, 5, 6][1:6]
+  inspect(v.chunks(2), content="[[1, 2], [3, 4], [5]]")
+}
+
+///|
+test "ArrayView::chunks shares backing" {
+  let arr = [1, 2, 3, 4]
+  let parts = arr[:].chunks(2)
+  arr[0] = 99
+  arr[3] = 88
+  inspect(parts, content="[[99, 2], [3, 88]]")
+}
+
+///|
+test "ArrayView::chunk_by basic" {
+  let v = [1, 1, 2, 2, 2, 3, 1][:]
+  inspect(v.chunk_by((a, b) => a == b), content="[[1, 1], [2, 2, 2], [3], [1]]")
+}
+
+///|
+test "ArrayView::chunk_by empty" {
+  let v : ArrayView[Int] = [1, 2, 3][0:0]
+  inspect(v.chunk_by((a, b) => a == b), content="[]")
+}
+
+///|
+test "ArrayView::chunk_by singleton" {
+  let v = [42][:]
+  inspect(v.chunk_by((a, b) => a == b), content="[[42]]")
+}
+
+///|
+test "ArrayView::chunk_by monotonic increasing" {
+  let v = [1, 2, 3, 1, 2, 4, 3][:]
+  inspect(v.chunk_by((a, b) => a <= b), content="[[1, 2, 3], [1, 2, 4], [3]]")
+}
+
+///|
+test "ArrayView::chunk_by on sliced view" {
+  let v = [9, 1, 1, 2, 2, 9][1:5]
+  inspect(v.chunk_by((a, b) => a == b), content="[[1, 1], [2, 2]]")
+}
+
+///|
+test "ArrayView::windows basic" {
+  let v = [1, 2, 3, 4, 5][:]
+  inspect(v.windows(3), content="[[1, 2, 3], [2, 3, 4], [3, 4, 5]]")
+}
+
+///|
+test "ArrayView::windows size equals length" {
+  let v = [1, 2, 3][:]
+  inspect(v.windows(3), content="[[1, 2, 3]]")
+}
+
+///|
+test "ArrayView::windows size larger than view" {
+  let v = [1, 2][:]
+  inspect(v.windows(5), content="[]")
+}
+
+///|
+test "ArrayView::windows empty view" {
+  let v : ArrayView[Int] = [1, 2, 3][0:0]
+  inspect(v.windows(1), content="[]")
+}
+
+///|
+test "ArrayView::windows on sliced view" {
+  let v = [0, 1, 2, 3, 4, 5][1:5]
+  inspect(v.windows(2), content="[[1, 2], [2, 3], [3, 4]]")
+}
+
+///|
+test "ArrayView::windows shares backing" {
+  let arr = [1, 2, 3, 4]
+  let ws = arr[:].windows(2)
+  arr[1] = 99
+  inspect(ws, content="[[1, 99], [99, 3], [3, 4]]")
+}
