@@ -197,6 +197,7 @@ pub fn[T] ArrayView::each(Self[T], (T) -> Unit raise?) -> Unit raise?
 pub fn[T] ArrayView::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
 pub fn[T : Eq] ArrayView::ends_with(Self[T], Self[T]) -> Bool
 pub fn[T] ArrayView::filter(Self[T], (T) -> Bool raise?) -> Array[T] raise?
+pub fn[A, B] ArrayView::filter_map(Self[A], (A) -> B? raise?) -> Array[B] raise?
 pub fn[A, B] ArrayView::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 pub fn[A, B] ArrayView::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
 pub fn[T] ArrayView::get(Self[T], Int) -> T?
