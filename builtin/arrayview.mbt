@@ -1257,6 +1257,30 @@ pub fn[T : Compare] ArrayView::lexical_compare(
   self_len.compare(other_len)
 }
 
+///|
+/// Reverses the elements of the array view, returning a freshly allocated
+/// array containing the elements in reverse order. The original view is not
+/// modified.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let v = [1, 2, 3, 4, 5][1:4]
+///   inspect(v.rev(), content="[4, 3, 2]")
+///   // The view itself is unchanged.
+///   inspect(v, content="[2, 3, 4]")
+/// }
+/// ```
+pub fn[T] ArrayView::rev(self : ArrayView[T]) -> Array[T] {
+  let len = self.length()
+  let arr = Array::make_uninit(len)
+  for i in 0..<len {
+    arr.unsafe_set(i, self.unsafe_get(len - i - 1))
+  }
+  arr
+}
+
 // #endregion
 
 // #region trait impls
