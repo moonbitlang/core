@@ -547,6 +547,100 @@ pub fn[T] ArrayView::suffixes(
 }
 
 ///|
+/// Split the array view into contiguous sub-views of length `size`. The last
+/// sub-view may be shorter if the view length is not a multiple of `size`. The
+/// returned sub-views share the original backing array — no elements are
+/// copied.
+///
+/// Panics if `size <= 0`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let v = [1, 2, 3, 4, 5, 6, 7][:]
+///   inspect(v.chunks(3), content="[[1, 2, 3], [4, 5, 6], [7]]")
+/// }
+/// ```
+pub fn[T] ArrayView::chunks(
+  self : ArrayView[T],
+  size : Int,
+) -> Array[ArrayView[T]] {
+  guard size > 0
+  let len = self.length()
+  if len == 0 {
+    return []
+  }
+  let num_chunks = (len + size - 1) / size
+  Array::makei(num_chunks, i => {
+    let start = i * size
+    let end = Int::min(start + size, len)
+    self[start:end]
+  })
+}
+
+///|
+/// Groups consecutive elements of the view into chunks where adjacent
+/// elements satisfy the given predicate. Each returned sub-view shares the
+/// original backing array.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let v = [1, 1, 2, 2, 2, 3, 1][:]
+///   inspect(v.chunk_by((a, b) => a == b), content="[[1, 1], [2, 2, 2], [3], [1]]")
+/// }
+/// ```
+pub fn[T] ArrayView::chunk_by(
+  self : ArrayView[T],
+  pred : (T, T) -> Bool raise?,
+) -> Array[ArrayView[T]] raise? {
+  let chunks = []
+  if self.is_empty() {
+    return chunks
+  }
+  let start = for i in 1..<self.length(); start = 0 {
+    if !pred(self.unsafe_get(i - 1), self.unsafe_get(i)) {
+      chunks.push(self[start:i])
+      continue i
+    }
+    continue start
+  } nobreak {
+    start
+  }
+  chunks.push(self[start:self.length()])
+  chunks
+}
+
+///|
+/// Return all contiguous sub-views of the given `size`, stepping by one
+/// element. Returns an empty array if `size` exceeds the view length. Each
+/// returned sub-view shares the original backing array.
+///
+/// Panics if `size <= 0`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let v = [1, 2, 3, 4, 5][:]
+///   inspect(v.windows(3), content="[[1, 2, 3], [2, 3, 4], [3, 4, 5]]")
+/// }
+/// ```
+pub fn[T] ArrayView::windows(
+  self : ArrayView[T],
+  size : Int,
+) -> Array[ArrayView[T]] {
+  guard size > 0
+  let len = self.length() - size + 1
+  if len < 1 {
+    return []
+  }
+  Array::makei(len, i => self[i:i + size])
+}
+
+///|
 /// Returns an iterator that yields each element of the array view in sequence
 /// from start to end.
 ///
