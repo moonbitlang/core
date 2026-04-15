@@ -656,3 +656,40 @@ test "ArrayView::rev_eachi empty" {
   v.rev_eachi((i, x) => out.push((i, x)))
   inspect(out, content="[]")
 }
+
+///|
+test "ArrayView::search_by basic" {
+  let v = [1, 2, 3, 4, 5][:]
+  inspect(v.search_by(x => x > 3), content="Some(3)")
+}
+
+///|
+test "ArrayView::search_by no match" {
+  let v = [1, 2, 3][:]
+  inspect(v.search_by(x => x > 99), content="None")
+}
+
+///|
+test "ArrayView::search_by empty" {
+  let v : ArrayView[Int] = [1, 2, 3][0:0]
+  inspect(v.search_by(_ => true), content="None")
+}
+
+///|
+test "ArrayView::search_by returns first match" {
+  let v = [1, 2, 3, 2, 4][:]
+  inspect(v.search_by(x => x == 2), content="Some(1)")
+}
+
+///|
+test "ArrayView::search_by index is view-relative" {
+  let v = [10, 20, 30, 40, 50][2:5]
+  // Looking for 40, which is at view-index 1 (absolute index 3).
+  inspect(v.search_by(x => x == 40), content="Some(1)")
+}
+
+///|
+test "ArrayView::search_by matches first element" {
+  let v = [1, 2, 3][:]
+  inspect(v.search_by(_ => true), content="Some(0)")
+}

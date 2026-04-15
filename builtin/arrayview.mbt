@@ -842,6 +842,32 @@ pub fn[T : Eq] ArrayView::search(self : ArrayView[T], value : T) -> Int? {
 }
 
 ///|
+/// Searches for the first element in the view that satisfies the predicate
+/// `f` and returns its (view-relative) index, or `None` if no element matches.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let view = [1, 2, 3, 4, 5][1:]
+///   inspect(view.search_by(x => x > 3), content="Some(2)")
+///   inspect(view.search_by(x => x > 99), content="None")
+/// }
+/// ```
+pub fn[T] ArrayView::search_by(
+  self : ArrayView[T],
+  f : (T) -> Bool raise?,
+) -> Int? raise? {
+  for i, v in self {
+    if f(v) {
+      break Some(i)
+    }
+  } nobreak {
+    None
+  }
+}
+
+///|
 /// Checks if the array view starts with the given prefix.
 ///
 /// # Example
