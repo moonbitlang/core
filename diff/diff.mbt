@@ -129,13 +129,14 @@ fn[T : Eq] diag(
 
       // Search for matching sequence along diagonal (Snake)
       // This is key optimization of Myers algorithm: freely extend matching elements
-      let mut x_cur = x
-      let mut y_cur = x_cur - d // from diagonal relation k = x - y, we get y = x - k
-      while x_cur < lhs_limit &&
-            y_cur < rhs_limit &&
-            lhs_get(x_cur) == rhs_get(y_cur) {
-        x_cur += 1
-        y_cur += 1
+      let (x_cur, y_cur) = for x_cur = x, y_cur = x - d {
+        if x_cur < lhs_limit &&
+          y_cur < rhs_limit &&
+          lhs_get(x_cur) == rhs_get(y_cur) {
+          continue x_cur + 1, y_cur + 1
+        } else {
+          break (x_cur, y_cur)
+        }
       }
 
       // Update farthest reachable point on current diagonal
@@ -191,13 +192,14 @@ fn[T : Eq] diag(
       let x = if tlo < thi { tlo } else { thi - 1 }
 
       // Search backward for matching sequence (reverse Snake)
-      let mut x_cur = x
-      let mut y_cur = x_cur - d
-      while x_cur > lhs_offset &&
-            y_cur > rhs_offset &&
-            lhs_get(x_cur - 1) == rhs_get(y_cur - 1) {
-        x_cur -= 1
-        y_cur -= 1
+      let (x_cur, y_cur) = for x_cur = x, y_cur = x - d {
+        if x_cur > lhs_offset &&
+          y_cur > rhs_offset &&
+          lhs_get(x_cur - 1) == rhs_get(y_cur - 1) {
+          continue x_cur - 1, y_cur - 1
+        } else {
+          break (x_cur, y_cur)
+        }
       }
 
       // Update nearest reachable point on current diagonal
@@ -322,13 +324,13 @@ fn[T : Eq] diff_loop(
       // Default strategy: calculate reasonable threshold based on problem size
       // Use bit operations to quickly compute approximate square root
       let diags = lhs_indices.length() + rhs_indices.length() + 3
-      let mut result = 1
-      let mut diags_cur = diags
-      while diags_cur != 0 {
-        diags_cur = diags_cur >> 2
-        result = result << 1
+      for acc = 1, diags_cur = diags {
+        if diags_cur != 0 {
+          continue acc << 1, diags_cur >> 2
+        } else {
+          break acc.max(4096) // at least 4096, ensuring reasonable performance
+        }
       }
-      result.max(4096) // at least 4096, ensuring reasonable performance
     }
   }
 
@@ -343,10 +345,10 @@ fn[T : Eq] diff_loop(
   let rhs_change_markers = FixedArray::make(rhs.length(), true)
 
   // Preset common elements as unchanged
-  for i = 0; i < lhs_indices.length(); i = i + 1 {
+  for i in 0..<lhs_indices.length() {
     lhs_change_markers[lhs_indices[i]] = false // lhs elements that also exist in rhs marked as unchanged
   }
-  for j = 0; j < rhs_indices.length(); j = j + 1 {
+  for j in 0..<rhs_indices.length() {
     rhs_change_markers[rhs_indices[j]] = false // rhs elements that also exist in lhs marked as unchanged  
   }
 
@@ -361,34 +363,36 @@ fn[T : Eq] diff_loop(
   ) -> Unit {
     // Optimization: skip matching prefix
     // This is important optimization of Myers algorithm, reducing data to process
-    let mut lhs_offset = lhs_offset
-    let mut rhs_offset = rhs_offset
-    while lhs_offset < lhs_limit &&
-          rhs_offset < rhs_limit &&
-          lhs_get(lhs_offset) == rhs_get(rhs_offset) {
-      lhs_offset += 1
-      rhs_offset += 1
+    let (lhs_offset, rhs_offset) = for lhs_offset = lhs_offset, rhs_offset = rhs_offset {
+      if lhs_offset < lhs_limit &&
+        rhs_offset < rhs_limit &&
+        lhs_get(lhs_offset) == rhs_get(rhs_offset) {
+        continue lhs_offset + 1, rhs_offset + 1
+      } else {
+        break (lhs_offset, rhs_offset)
+      }
     }
 
-    // Optimization: skip matching suffix  
-    let mut lhs_limit = lhs_limit
-    let mut rhs_limit = rhs_limit
-    while lhs_limit > lhs_offset &&
-          rhs_limit > rhs_offset &&
-          lhs_get(lhs_limit - 1) == rhs_get(rhs_limit - 1) {
-      lhs_limit -= 1
-      rhs_limit -= 1
+    // Optimization: skip matching suffix
+    let (lhs_limit, rhs_limit) = for lhs_limit = lhs_limit, rhs_limit = rhs_limit {
+      if lhs_limit > lhs_offset &&
+        rhs_limit > rhs_offset &&
+        lhs_get(lhs_limit - 1) == rhs_get(rhs_limit - 1) {
+        continue lhs_limit - 1, rhs_limit - 1
+      } else {
+        break (lhs_limit, rhs_limit)
+      }
     }
 
     // Handle boundary cases
     if lhs_offset == lhs_limit {
       // Only insertions: A part exhausted, remaining B part all insertions
-      for y = rhs_offset; y < rhs_limit; y = y + 1 {
+      for y in rhs_offset..<rhs_limit {
         rhs_change_markers[rhs_indices[y]] = true
       }
     } else if rhs_offset == rhs_limit {
       // Only deletions: B part exhausted, remaining A part all deletions
-      for x = lhs_offset; x < lhs_limit; x = x + 1 {
+      for x in lhs_offset..<lhs_limit {
         lhs_change_markers[lhs_indices[x]] = true
       }
     } else {
@@ -443,13 +447,13 @@ fn[T : Eq + Hash] make_indexer(
   let n = a.length()
   let present : Map[T, Bool] = Map::new(capacity=b.length())
 
-  for i = 0; i < b.length(); i = i + 1 {
+  for i in 0..<b.length() {
     present[b[i]] = true
   }
   let ai = FixedArray::make(n, 0) // temporary storage for valid indices
   let mut k = 0 // valid element count
 
-  for i = 0; i < n; i = i + 1 {
+  for i in 0..<n {
     match present.get(a[i]) {
       Some(_) => {
         ai[k] = i // record original index of this element
@@ -459,7 +463,7 @@ fn[T : Eq + Hash] make_indexer(
     }
   }
   let result = FixedArray::make(k, 0)
-  for i = 0; i < k; i = i + 1 {
+  for i in 0..<k {
     result[i] = ai[i]
   }
   result
@@ -563,7 +567,7 @@ fn[T : Eq + Hash] append_patience_matches(
   // so unmatched gaps fall back to Myers instead of recursing.
   let mut prev_old_idx = 0
   let mut prev_new_idx = 0
-  for i = 0; i < anchors.length(); i = i + 1 {
+  for i in 0..<anchors.length() {
     let (old_idx, new_idx) = anchors[i]
     append_myers_matches(
       matches,
