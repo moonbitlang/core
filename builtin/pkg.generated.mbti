@@ -4,12 +4,14 @@ package "moonbitlang/core/builtin"
 // Values
 pub fn[T] abort(String) -> T
 
+#deprecated
 #callsite(autofill(loc))
 pub fn[T : Eq + Show] assert_eq(T, T, msg? : String, loc~ : SourceLoc) -> Unit raise
 
 #callsite(autofill(loc))
 pub fn assert_false(Bool, msg? : String, loc~ : SourceLoc) -> Unit raise
 
+#deprecated
 #callsite(autofill(loc))
 pub fn[T : Eq + Show] assert_not_eq(T, T, msg? : String, loc~ : SourceLoc) -> Unit raise
 
@@ -192,6 +194,8 @@ pub fn[T] ArrayView::at(Self[T], Int) -> T
 pub fn[T : Compare] ArrayView::binary_search(Self[T], T) -> Result[Int, Int]
 pub fn[T] ArrayView::binary_search_by(Self[T], (T) -> Int raise?) -> Result[Int, Int] raise?
 pub fn[A] ArrayView::blit_to(Self[A], Array[A], dst_offset? : Int) -> Unit
+pub fn[T] ArrayView::chunk_by(Self[T], (T, T) -> Bool raise?) -> Array[Self[T]] raise?
+pub fn[T] ArrayView::chunks(Self[T], Int) -> Array[Self[T]]
 pub fn[T : Eq] ArrayView::contains(Self[T], T) -> Bool
 pub fn[T] ArrayView::each(Self[T], (T) -> Unit raise?) -> Unit raise?
 pub fn[T] ArrayView::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
@@ -230,6 +234,7 @@ pub fn[T] ArrayView::to_array(Self[T]) -> Array[T]
 #alias("_[_:_]")
 #alias(sub, deprecated)
 pub fn[T] ArrayView::view(Self[T], start? : Int, end? : Int) -> Self[T]
+pub fn[T] ArrayView::windows(Self[T], Int) -> Array[Self[T]]
 pub impl[T] Add for ArrayView[T]
 pub impl[T : Compare] Compare for ArrayView[T]
 pub impl[T : Eq] Eq for ArrayView[T]

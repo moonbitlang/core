@@ -688,7 +688,7 @@ pub fn[K : Eq, V] HashMap::merge_in_place(
 }
 
 ///|
-priv struct MyString(String) derive(Eq)
+priv struct MyString(String) derive(Eq, Debug)
 
 ///|
 #coverage.skip
@@ -704,12 +704,6 @@ impl Hash for MyString with hash_combine(self, hasher) {
 }
 
 ///|
-#coverage.skip
-impl Show for MyString with output(self, logger) {
-  logger.write_string(self.0)
-}
-
-///|
 fn[K : Hash + Eq, V : Eq] verify_content(
   map : HashMap[K, V],
   expected : Array[(K, V)],
@@ -718,7 +712,7 @@ fn[K : Hash + Eq, V : Eq] verify_content(
     let (k, v) = entry
     assert_true(map.contains_kv(k, v))
   }
-  assert_eq(map.length(), expected.length())
+  assert_true(map.length() == expected.length())
 }
 
 ///|
@@ -830,7 +824,7 @@ test "clear" {
   inspect(m.length(), content="0")
   inspect(m.capacity(), content="8")
   for entry in m.entries {
-    @test.same_object(entry, None)
+    @test.assert_same_object(entry, None)
   }
 }
 

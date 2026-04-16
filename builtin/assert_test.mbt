@@ -13,6 +13,16 @@
 // limitations under the License.
 
 ///|
+struct ShowOnly(Int) derive(Eq)
+
+///|
+impl Show for ShowOnly with output(self, logger) {
+  let ShowOnly(value) = self
+  logger.write_object(value)
+}
+
+///|
+#warnings("-deprecated")
 test "panic assert_not_eq with equal values" {
   let str = "test"
   ignore(assert_not_eq(str, str))
@@ -24,6 +34,7 @@ test "panic assert_false with true" {
 }
 
 ///|
+#warnings("-deprecated")
 test "panic assert_eq with unequal values" {
   ignore(assert_eq(1, 2))
 }
@@ -31,4 +42,11 @@ test "panic assert_eq with unequal values" {
 ///|
 test "panic assert_true with false" {
   ignore(assert_true(false))
+}
+
+///|
+#warnings("-deprecated")
+test "legacy assert_eq still works for Show-only types" {
+  @builtin.assert_eq(ShowOnly(1), ShowOnly(1))
+  @builtin.assert_not_eq(ShowOnly(1), ShowOnly(2))
 }

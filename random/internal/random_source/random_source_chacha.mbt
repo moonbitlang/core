@@ -276,7 +276,7 @@ fn setup(
 
 ///|
 test "BUFFER_CHUNK_NUM is power of 2" {
-  assert_eq(BUFFER_CHUNK_NUM.clz() + BUFFER_CHUNK_NUM.ctz(), 31)
+  @test.assert_eq(BUFFER_CHUNK_NUM.clz() + BUFFER_CHUNK_NUM.ctz(), 31)
 }
 
 ///|
@@ -391,5 +391,5 @@ test "output" {
     1231466417883291608UL, 4918841702239877720UL, 13883670878602349637UL, 11470126477371023265UL,
     17128636052794644986UL, 205335811880395712UL, 12443170494233065292UL, 15986026963143729439UL,
   ]
-  assert_eq(res, expected)
+  @test.assert_eq(res, expected)
 }

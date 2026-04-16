@@ -42,6 +42,7 @@ fn[T : Show] debug_string(t : T) -> String {
 ///   assert_eq("hello", "hello")
 /// }
 /// ```
+#deprecated("use `using @test {assert_eq}` instead", skip_current_package=true)
 #callsite(autofill(loc))
 #coverage.skip
 pub fn[T : Eq + Show] assert_eq(
@@ -81,6 +82,7 @@ pub fn[T : Eq + Show] assert_eq(
 ///   assert_not_eq(1, 2) // Passes
 /// }
 /// ```
+#deprecated("use `using @test {assert_not_eq}` instead", skip_current_package=true)
 #callsite(autofill(loc))
 #coverage.skip
 pub fn[T : Eq + Show] assert_not_eq(

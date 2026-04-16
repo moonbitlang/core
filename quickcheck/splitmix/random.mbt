@@ -156,6 +156,6 @@ pub impl Default for RandomState with default() {
 ///|
 test "non-zero default" {
   let rs = RandomState::default()
-  assert_not_eq(rs.seed, 0)
-  assert_not_eq(rs.gamma, 0)
+  @test.assert_not_eq(rs.seed, 0)
+  @test.assert_not_eq(rs.gamma, 0)
 }

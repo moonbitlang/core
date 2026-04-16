@@ -18,6 +18,21 @@ test "basic test example" {
 
 ## Assertion Functions
 
+### Equality Assertions
+
+Use `@test.assert_eq` and `@test.assert_not_eq` to compare values in tests:
+
+```mbt check
+///|
+struct User(Int) derive(Eq, Debug)
+
+///|
+test "equality assertions" {
+  @test.assert_eq(User(1), User(1))
+  @test.assert_not_eq(User(1), User(2))
+}
+```
+
 ### Object Identity Testing
 
 Test whether two values refer to the same object in memory:
@@ -30,11 +45,11 @@ test "object identity" {
   let str3 = str1
 
   // Same object reference
-  @test.same_object(str1, str3) // Passes - same reference
+  @test.assert_same_object(str1, str3) // Passes - same reference
 
   // Different objects (even if equal values)
 
-  // @test.is_not(str1, str2)
+  // @test.assert_not_same_object(str1, str2)
   // May or may not pass - different string objects
   // depend on how compiler optimization works
   // here we interned
@@ -43,9 +58,13 @@ test "object identity" {
   let arr1 = [1, 2, 3]
   let _arr2 = [1, 2, 3]
   let arr3 = arr1
-  @test.same_object(arr1, arr3) // Passes - same array reference @test.is_not(arr1, arr2) // Passes - different array objects
+  @test.assert_same_object(arr1, arr3) // Passes - same array reference
+  // @test.assert_not_same_object(arr1, arr2) // Passes - different array objects
 }
 ```
+
+Use `@test.assert_same_object` and `@test.assert_not_same_object` for the
+identity-checking versions.
 
 ### Failure Testing
 

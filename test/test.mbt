@@ -13,10 +13,52 @@
 // limitations under the License.
 
 ///|
+using @debug {trait Debug}
+
+///|
 fn[T : Show] debug_string(t : T) -> String {
   let buf = StringBuilder::new(size_hint=50)
   t.output(buf)
   buf.to_string()
+}
+
+///|
+/// Assert two values are equal using `Debug` output for diagnostics.
+///
+/// This is the preferred test assertion for new code, especially for types
+/// that implement `Debug` but not `Show`.
+#callsite(autofill(loc))
+pub fn[T : Eq + Debug] assert_eq(
+  a : T,
+  b : T,
+  msg? : String,
+  loc~ : SourceLoc,
+) -> Unit raise {
+  if a != b {
+    let fail_msg = match msg {
+      Some(msg) => msg
+      None => "`\{@debug.to_string(a)} != \{@debug.to_string(b)}`"
+    }
+    fail(fail_msg, loc~)
+  }
+}
+
+///|
+/// Assert two values are not equal using `Debug` output for diagnostics.
+#callsite(autofill(loc))
+pub fn[T : Eq + Debug] assert_not_eq(
+  a : T,
+  b : T,
+  msg? : String,
+  loc~ : SourceLoc,
+) -> Unit raise {
+  if !(a != b) {
+    let fail_msg = match msg {
+      Some(msg) => msg
+      None => "`\{@debug.to_string(a)} == \{@debug.to_string(b)}`"
+    }
+    fail(fail_msg, loc~)
+  }
 }
 
 ///|
@@ -35,11 +77,31 @@ fn[T : Show] debug_string(t : T) -> String {
 /// @test.same_object(a, a)
 /// @test.is_not(a, b)
 /// ```
+#deprecated("use `@test.assert_same_object` instead", skip_current_package=true)
 #callsite(autofill(loc))
 pub fn[T : Show] same_object(a : T, b : T, loc~ : SourceLoc) -> Unit raise {
   if !physical_equal(a, b) {
     let a = debug_string(a)
     let b = debug_string(b)
+    fail("`\{a} is \{b}`", loc~)
+  }
+}
+
+///|
+/// Assert referential equality of two values using `Debug` output for
+/// diagnostics.
+///
+/// This is the preferred identity assertion for new code that only implements
+/// `Debug`.
+#callsite(autofill(loc))
+pub fn[T : Debug] assert_same_object(
+  a : T,
+  b : T,
+  loc~ : SourceLoc,
+) -> Unit raise {
+  if !physical_equal(a, b) {
+    let a = @debug.to_string(a)
+    let b = @debug.to_string(b)
     fail("`\{a} is \{b}`", loc~)
   }
 }
@@ -60,12 +122,29 @@ pub fn[T : Show] same_object(a : T, b : T, loc~ : SourceLoc) -> Unit raise {
 /// @test.is_not(a, b)
 /// @test.same_object(a, a)
 /// ```
+#deprecated("use `@test.assert_not_same_object` instead", skip_current_package=true)
 #callsite(autofill(loc))
 #alias(is_not, deprecated)
 pub fn[T : Show] not_same_object(a : T, b : T, loc~ : SourceLoc) -> Unit raise {
   if physical_equal(a, b) {
     let a = debug_string(a)
     let b = debug_string(b)
+    fail("`!(\{a} is \{b})`", loc~)
+  }
+}
+
+///|
+/// Assert referential inequality of two values using `Debug` output for
+/// diagnostics.
+#callsite(autofill(loc))
+pub fn[T : Debug] assert_not_same_object(
+  a : T,
+  b : T,
+  loc~ : SourceLoc,
+) -> Unit raise {
+  if physical_equal(a, b) {
+    let a = @debug.to_string(a)
+    let b = @debug.to_string(b)
     fail("`!(\{a} is \{b})`", loc~)
   }
 }
