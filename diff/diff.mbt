@@ -301,22 +301,27 @@ fn[T : Eq] diff_loop(
   lhs_indices : FixedArray[Int], // indices of lhs elements that exist in rhs
   rhs : ArrayView[T], // original array rhs
   rhs_indices : FixedArray[Int], // indices of rhs elements that exist in lhs
-  n : Int, // number of valid indices (lhs)
-  m : Int, // number of valid indices (rhs)
 ) -> (FixedArray[Bool], FixedArray[Bool]) {
   // Allocate working arrays for Myers algorithm
   // Array size is n+m+3, sufficient to contain all possible diagonals
-  let forward_search_diagonal = FixedArray::make(n + m + 3, 0) // forward search array
-  let backward_search_diagonal = FixedArray::make(n + m + 3, 0) // backward search array
-  let diagonal_shift = m + 1 // m=rhs_indices.length(); shift k by m+1 so [-(m+1), n+1] -> [0, n+m+2] in arrays of size n+m+3
-
+  let forward_search_diagonal = FixedArray::make(
+    lhs_indices.length() + rhs_indices.length() + 3,
+    0,
+  ) // forward search array
+  let backward_search_diagonal = FixedArray::make(
+    lhs_indices.length() + rhs_indices.length() + 3,
+    0,
+  ) // backward search array
+  // shift k by rhs_indices.length()+1 so 
+  // [-(rhs_indices.length()+1), lhs_indices.length()+1] -> [0, lhs_indices.length()+rhs_indices.length()+2]
+  let diagonal_shift = rhs_indices.length() + 1
   // Determine computation cost threshold
   let too_expensive = match cutoff {
     Some(c) => c
     None => {
       // Default strategy: calculate reasonable threshold based on problem size
       // Use bit operations to quickly compute approximate square root
-      let diags = n + m + 3
+      let diags = lhs_indices.length() + rhs_indices.length() + 3
       let mut result = 1
       let mut diags_cur = diags
       while diags_cur != 0 {
@@ -338,10 +343,10 @@ fn[T : Eq] diff_loop(
   let rhs_change_markers = FixedArray::make(rhs.length(), true)
 
   // Preset common elements as unchanged
-  for i = 0; i < n; i = i + 1 {
+  for i = 0; i < lhs_indices.length(); i = i + 1 {
     lhs_change_markers[lhs_indices[i]] = false // lhs elements that also exist in rhs marked as unchanged
   }
-  for j = 0; j < m; j = j + 1 {
+  for j = 0; j < rhs_indices.length(); j = j + 1 {
     rhs_change_markers[rhs_indices[j]] = false // rhs elements that also exist in lhs marked as unchanged  
   }
 
@@ -423,7 +428,7 @@ fn[T : Eq] diff_loop(
   }
 
   // Start recursively processing entire region
-  loop_recursive(0, n, 0, m, false)
+  loop_recursive(0, lhs_indices.length(), 0, rhs_indices.length(), false)
   (lhs_change_markers, rhs_change_markers)
 }
 
@@ -470,11 +475,9 @@ fn[T : Eq + Hash] diff_(
   // Generate indexers: find elements that also exist in other array
   let lhs_indices = make_indexer(lhs, rhs) // indices of lhs elements that exist in rhs
   let rhs_indices = make_indexer(rhs, lhs) // indices of rhs elements that exist in lhs
-  let n = lhs_indices.length() // number of valid elements (a)
-  let m = rhs_indices.length() // number of valid elements (b)
 
   // Call main loop for difference computation
-  diff_loop(cutoff, lhs, lhs_indices, rhs, rhs_indices, n, m)
+  diff_loop(cutoff, lhs, lhs_indices, rhs, rhs_indices)
 }
 
 ///|
