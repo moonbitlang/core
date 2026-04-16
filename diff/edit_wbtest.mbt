@@ -31,7 +31,7 @@ test "group_edit splits long equal blocks into multiple hunks" {
     old=([] : ArrayView[Int]),
     new=([] : ArrayView[Int]),
   )
-  assert_eq(groups.length(), 2)
+  @test.assert_eq(groups.length(), 2)
   assert_true(
     groups[0].edits
     is [

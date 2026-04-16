@@ -8,4 +8,5 @@ import {
 import {
   "moonbitlang/core/json",
   "moonbitlang/core/ref",
+  "moonbitlang/core/test",
 } for "wbtest"

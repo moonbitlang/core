@@ -538,7 +538,7 @@ test "diff symmetry test" {
   }
 
   // Both directions should have the same number of matches
-  assert_eq(matches1.length(), matches2.length())
+  @test.assert_eq(matches1.length(), matches2.length())
 }
 
 ///|
@@ -551,7 +551,7 @@ test "diff sub array" {
     "Apple", "Banana", "Orange", "Grape", "Strawberry", "Watermelon", "Peach", "Pear",
     "Pineapple", "Cherry",
   ]
-  assert_eq(old, new)
+  @test.assert_eq(old, new)
   inspect(
     print_edits(old[:4], new[:5]),
     content=(
