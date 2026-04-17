@@ -18,7 +18,7 @@
 let max_shift = 59
 
 ///|
-using @debug {trait Debug, type Repr, debug_inspect}
+using @debug {trait Debug, debug_inspect}
 
 ///|
 priv struct Decimal {
@@ -27,7 +27,7 @@ priv struct Decimal {
   mut decimal_point : Int
   mut negative : Bool
   mut truncated : Bool
-} derive(Debug)
+}
 
 ///|
 /// Decimal power of ten to binary power of two.
@@ -572,6 +572,11 @@ impl Show for Decimal with output(self, logger) {
 ///|
 fn Decimal::to_string(self : Decimal) -> String {
   Show::to_string(self)
+}
+
+///|
+impl Debug for Decimal with to_repr(self) {
+  @debug.Repr::literal(Show::to_string(self))
 }
 
 ///|
