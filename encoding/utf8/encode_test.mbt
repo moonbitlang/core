@@ -30,3 +30,36 @@ test "encode" {
     ),
   )
 }
+
+///|
+fn encode_via_buffer(str : StringView, bom : Bool) -> Bytes {
+  let buffer = @buffer.new(size_hint=str.length() * 4)
+  if bom {
+    buffer.write_char_utf8('\u{FEFF}')
+  }
+  buffer.write_string_utf8(str)
+  buffer.to_bytes()
+}
+
+///|
+test "encode matches previous buffer implementation" {
+  let sample = "abc你好👀"
+  assert_eq(@utf8.encode(sample), encode_via_buffer(sample, false))
+  assert_eq(@utf8.encode(sample, bom=true), encode_via_buffer(sample, true))
+
+  let view = "zabc你好👀w"[1:8]
+  assert_eq(@utf8.encode(view), encode_via_buffer(view, false))
+  assert_eq(@utf8.encode(view, bom=true), encode_via_buffer(view, true))
+}
+
+///|
+test "panic encode with invalid leading surrogate" {
+  let invalid = String::from_array([(0xD800).unsafe_to_char(), 'A'])
+  ignore(@utf8.encode(invalid))
+}
+
+///|
+test "panic encode with dangling trailing surrogate" {
+  let invalid = String::from_array(['A', (0xDC00).unsafe_to_char()])
+  ignore(@utf8.encode(invalid))
+}
