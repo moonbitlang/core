@@ -70,9 +70,9 @@ test "tail fold rev_fold and map stay consistent" {
 ///|
 test "peek reads the tail tip" {
   let values = @vector.from_iter((0).until(40))
-  assert_eq(values.peek(), Some(39))
+  debug_inspect(values.peek(), content="Some(39)")
   let empty : @vector.Vector[Int] = @vector.new()
-  assert_eq(empty.peek(), None)
+  debug_inspect(empty.peek(), content="None")
 }
 
 ///|

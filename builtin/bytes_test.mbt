@@ -246,7 +246,7 @@ test "Bytes::add and repeat" {
 
 ///|
 test "Bytes::rev_find none" {
-  inspect(b"abc".rev_find(b"x"), content="None")
+  debug_inspect(b"abc".rev_find(b"x"), content="None")
 }
 
 ///|

@@ -41,8 +41,8 @@ test "T::retain - keep even values" {
   inspect(map.get("a"), content="None")
   inspect(map.get("b"), content="Some(2)")
   inspect(map.get("c"), content="None")
-  inspect(map.get("d"), content="Some(4)")
-  inspect(map.get("e"), content="None")
+  debug_inspect(map.get("d"), content="Some(4)")
+  debug_inspect(map.get("e"), content="None")
 }
 
 ///|
@@ -51,8 +51,8 @@ test "T::retain - keep all" {
   map.retain((_k, _v) => true)
   inspect(map.length(), content="3")
   inspect(map.get("a"), content="Some(1)")
-  inspect(map.get("b"), content="Some(2)")
-  inspect(map.get("c"), content="Some(3)")
+  debug_inspect(map.get("b"), content="Some(2)")
+  debug_inspect(map.get("c"), content="Some(3)")
 }
 
 ///|
@@ -62,8 +62,8 @@ test "T::retain - remove all" {
   inspect(map.length(), content="0")
   inspect(map.is_empty(), content="true")
   inspect(map.get("a"), content="None")
-  inspect(map.get("b"), content="None")
-  inspect(map.get("c"), content="None")
+  debug_inspect(map.get("b"), content="None")
+  debug_inspect(map.get("c"), content="None")
 }
 
 ///|
@@ -86,8 +86,8 @@ test "T::retain - key-based filtering" {
   inspect(map.length(), content="2")
   inspect(map.get("apple"), content="None") // 5 chars
   inspect(map.get("banana"), content="Some(6)") // 6 chars
-  inspect(map.get("cherry"), content="Some(5)") // 6 chars
-  inspect(map.get("date"), content="None") // 4 chars
+  debug_inspect(map.get("cherry"), content="Some(5)") // 6 chars
+  debug_inspect(map.get("date"), content="None") // 4 chars
 }
 
 ///|
@@ -104,8 +104,8 @@ test "T::retain - filter by both key and value" {
   inspect(map.get("a1"), content="None")
   inspect(map.get("b2"), content="Some(2)") // key contains "2"
   inspect(map.get("c3"), content="None")
-  inspect(map.get("d4"), content="Some(4)") // value > 3
-  inspect(map.get("e5"), content="Some(5)") // value > 3
+  debug_inspect(map.get("d4"), content="Some(4)") // value > 3
+  debug_inspect(map.get("e5"), content="Some(5)") // value > 3
 }
 
 ///|
@@ -115,7 +115,7 @@ test "T::retain - single element map" {
   // Test keeping the element
   map.retain((_k, v) => v > 30)
   inspect(map.length(), content="1")
-  inspect(map.get("only"), content="Some(42)")
+  debug_inspect(map.get("only"), content="Some(42)")
 
   // Test removing the element
   map.retain((_k, v) => v < 30)
@@ -137,8 +137,8 @@ test "T::retain - large map with complex predicate" {
   inspect(map.get("key6"), content="Some(6)")
   inspect(map.get("key12"), content="Some(12)")
   inspect(map.get("key1"), content="None")
-  inspect(map.get("key2"), content="None")
-  inspect(map.get("key3"), content="None")
+  debug_inspect(map.get("key2"), content="None")
+  debug_inspect(map.get("key3"), content="None")
 }
 
 ///|
@@ -156,8 +156,8 @@ test "T::retain - with collisions" {
   inspect(map.get("a"), content="Some(0)") // length 1 (odd)
   inspect(map.get("aa"), content="None") // length 2 (even)
   inspect(map.get("aaa"), content="Some(2)") // length 3 (odd)
-  inspect(map.get("aaaa"), content="None") // length 4 (even)
-  inspect(map.get("aaaaa"), content="Some(4)") // length 5 (odd)
+  debug_inspect(map.get("aaaa"), content="None") // length 4 (even)
+  debug_inspect(map.get("aaaaa"), content="Some(4)") // length 5 (odd)
 }
 
 ///|
@@ -167,10 +167,10 @@ test "T::retain - preserve map integrity after retain" {
 
   // Test that map operations still work correctly
   map.set("w", 4)
-  inspect(map.get("w"), content="Some(4)")
+  debug_inspect(map.get("w"), content="Some(4)")
   inspect(map.length(), content="3")
   map.remove("x")
-  inspect(map.get("x"), content="None")
+  debug_inspect(map.get("x"), content="None")
   inspect(map.length(), content="2")
   map.clear()
   inspect(map.length(), content="0")

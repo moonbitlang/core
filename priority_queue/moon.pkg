@@ -10,6 +10,7 @@ import {
 import {
   "moonbitlang/core/random",
   "moonbitlang/core/cmp",
+  "moonbitlang/core/test",
 } for "test"
 
 options(

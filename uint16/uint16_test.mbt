@@ -415,6 +415,6 @@ test "UInt16::to_char" {
   inspect((0xDC00 : UInt16).to_char(), content="None")
   inspect((0xDFFF : UInt16).to_char(), content="None")
   // Valid characters after surrogate range
-  inspect((0xE000 : UInt16).to_char(), content="Some('\\u{e000}')")
-  inspect((0xFFFF : UInt16).to_char(), content="Some('\\u{ffff}')")
+  debug_inspect((0xE000 : UInt16).to_char(), content="Some('\\u{e000}')")
+  debug_inspect((0xFFFF : UInt16).to_char(), content="Some('\\u{ffff}')")
 }

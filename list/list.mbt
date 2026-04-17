@@ -491,7 +491,7 @@ pub fn[A] List::unsafe_tail(self : List[A]) -> List[A] {
 ///
 /// ```mbt check
 /// test {
-///   assert_eq(@list.from_array([1, 2, 3, 4, 5]).head(), Some(1))
+///   debug_inspect(@list.from_array([1, 2, 3, 4, 5]).head(), content="Some(1)")
 /// }
 /// ```
 pub fn[A] List::head(self : List[A]) -> A? {
@@ -538,7 +538,7 @@ pub fn[A] List::unsafe_last(self : List[A]) -> A {
 ///
 /// ```mbt check
 /// test {
-///   assert_eq(@list.from_array([1, 2, 3, 4, 5]).last(), Some(5))
+///   debug_inspect(@list.from_array([1, 2, 3, 4, 5]).last(), content="Some(5)")
 /// }
 /// ```
 pub fn[A] List::last(self : List[A]) -> A? {
@@ -867,8 +867,8 @@ pub fn[A] List::unsafe_nth(self : List[A], n : Int) -> A {
 /// ```mbt check
 /// test {
 ///   let ls = @list.from_array([1, 2, 3, 4, 5])
-///   assert_eq(ls.nth(2), Some(3))
-///   assert_eq(ls.nth(10), None)
+///   debug_inspect(ls.nth(2), content="Some(3)")
+///   debug_inspect(ls.nth(10), content="None")
 /// }
 /// ```
 pub fn[A] List::nth(self : List[A], n : Int) -> A? {
@@ -1101,9 +1101,9 @@ pub fn[A : Compare] List::unsafe_maximum(self : List[A]) -> A {
 /// ```mbt check
 /// test {
 ///   let ls = @list.from_array([1, 3, 2, 5, 4])
-///   assert_eq(ls.maximum(), Some(5))
+///   debug_inspect(ls.maximum(), content="Some(5)")
 ///   let empty : @list.List[Int] = @list.empty()
-///   assert_eq(empty.maximum(), None)
+///   debug_inspect(empty.maximum(), content="None")
 /// }
 /// ```
 pub fn[A : Compare] List::maximum(self : List[A]) -> A? {
@@ -1165,9 +1165,9 @@ pub fn[A : Compare] List::unsafe_minimum(self : List[A]) -> A {
 /// ```mbt check
 /// test {
 ///   let ls = @list.from_array([1, 3, 2, 5, 4])
-///   assert_eq(ls.minimum(), Some(1))
+///   debug_inspect(ls.minimum(), content="Some(1)")
 ///   let empty : @list.List[Int] = @list.empty()
-///   assert_eq(empty.minimum(), None)
+///   debug_inspect(empty.minimum(), content="None")
 /// }
 /// ```
 pub fn[A : Compare] List::minimum(self : List[A]) -> A? {
@@ -1505,7 +1505,7 @@ pub fn[A, B] List::scan_right(
 /// ```mbt check
 /// test {
 ///   let ls = @list.from_array([(1, "a"), (2, "b"), (3, "c")])
-///   assert_eq(ls.lookup(3), Some("c"))
+///   debug_inspect(ls.lookup(3), content="Some(\"c\")")
 /// }
 /// ```
 pub fn[A : Eq, B] List::lookup(self : List[(A, B)], v : A) -> B? {
@@ -1524,11 +1524,11 @@ pub fn[A : Eq, B] List::lookup(self : List[(A, B)], v : A) -> B? {
 ///
 /// ```mbt check
 /// test {
-///   assert_eq(
+///   debug_inspect(
 ///     @list.from_array([1, 3, 5, 8]).find(element => element % 2 == 0),
-///     Some(8),
+///     content="Some(8)",
 ///   )
-///   assert_eq(@list.from_array([1, 3, 5]).find(element => element % 2 == 0), None)
+///   debug_inspect(@list.from_array([1, 3, 5]).find(element => element % 2 == 0), content="None")
 /// }
 /// ```
 pub fn[A] List::find(self : List[A], f : (A) -> Bool raise?) -> A? raise? {
@@ -1563,8 +1563,8 @@ pub fn[A] List::find(self : List[A], f : (A) -> Bool raise?) -> A? raise? {
 /// ```mbt check
 /// test {
 ///   let ls = @list.from_array([1, 2, 3, 4, 5])
-///   inspect(ls.find_index(x => x % 2 == 0), content="Some(1)")
-///   inspect(ls.find_index(x => x > 10), content="None")
+///   debug_inspect(ls.find_index(x => x % 2 == 0), content="Some(1)")
+///   debug_inspect(ls.find_index(x => x > 10), content="None")
 /// }
 /// ```
 ///
@@ -1592,17 +1592,17 @@ pub fn[A] List::find_index(
 ///
 /// ```mbt check
 /// test {
-///   assert_eq(
+///   debug_inspect(
 ///     @list.from_array([1, 3, 5, 8]).findi((element, index) => {
 ///       element % 2 == 0 && index == 3
 ///     }),
-///     Some(8),
+///     content="Some(8)",
 ///   )
-///   assert_eq(
+///   debug_inspect(
 ///     @list.from_array([1, 3, 8, 5]).findi((element, index) => {
 ///       element % 2 == 0 && index == 3
 ///     }),
-///     None,
+///     content="None",
 ///   )
 /// }
 /// ```

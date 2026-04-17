@@ -21,19 +21,19 @@ test "unwrap should return value on Some" {
 ///|
 test "Option::default should return None" {
   let x : Int? = Option::default()
-  assert_eq(x, None)
+  debug_inspect(x, content="None")
 }
 
 ///|
 test "Option::default should return None for String" {
   let x : String? = Option::default()
-  assert_eq(x, None)
+  debug_inspect(x, content="None")
 }
 
 ///|
 test "Option::default should return None for Bool" {
   let x : Bool? = Option::default()
-  assert_eq(x, None)
+  debug_inspect(x, content="None")
 }
 
 ///|
@@ -56,9 +56,9 @@ test "filter with predicate" {
   let some_even = Some(4)
   let some_odd = Some(3)
   let none : Int? = None
-  assert_eq(some_even.filter(x => x % 2 == 0), Some(4))
-  assert_eq(some_odd.filter(x => x % 2 == 0), None)
-  assert_eq(none.filter(x => x % 2 == 0), None)
+  debug_inspect(some_even.filter(x => x % 2 == 0), content="Some(4)")
+  debug_inspect(some_odd.filter(x => x % 2 == 0), content="None")
+  debug_inspect(none.filter(x => x % 2 == 0), content="None")
 }
 
 ///|
@@ -66,13 +66,13 @@ test "bind chaining" {
   let safe_divide = (x : Int) => if x == 0 { None } else { Some(100 / x) }
   let some_value = Some(4)
   let result = some_value.bind(x => safe_divide(x))
-  assert_eq(result, Some(25))
+  debug_inspect(result, content="Some(25)")
   let zero_value = Some(0)
   let result2 = zero_value.bind(x => safe_divide(x))
-  assert_eq(result2, None)
+  debug_inspect(result2, content="None")
   let none_value : Int? = None
   let result3 = none_value.bind(x => safe_divide(x))
-  assert_eq(result3, None)
+  debug_inspect(result3, content="None")
 }
 
 ///|
@@ -89,15 +89,16 @@ test "unwrap_or with default value" {
 test "some equals to Some" {
   let x : Int? = Some(5)
   let y : Int? = Some(5)
-  assert_eq(x, y)
+  debug_inspect(x, content="Some(5)")
+  debug_inspect(y, content="Some(5)")
 }
 
 ///|
 test "map" {
   let a = Some(5)
   let b : Int? = None
-  assert_eq(a.map(x => x * 2), Some(10))
-  assert_eq(b.map(x => x * 2), None)
+  debug_inspect(a.map(x => x * 2), content="Some(10)")
+  debug_inspect(b.map(x => x * 2), content="None")
 }
 
 ///|
@@ -121,16 +122,16 @@ test "map_or_else" {
 test "bind" {
   let a = Option::Some(5)
   let b : Int? = None
-  assert_eq(a.bind(x => Some(x * 2)), Some(10))
-  assert_eq(b.bind(x => Some(x * 2)), None)
+  debug_inspect(a.bind(x => Some(x * 2)), content="Some(10)")
+  debug_inspect(b.bind(x => Some(x * 2)), content="None")
 }
 
 ///|
 test "flatten" {
   let a : Int?? = Some(Some(42))
-  assert_eq(a.bind(x => x), Some(42))
+  debug_inspect(a.bind(x => x), content="Some(42)")
   let b : Int?? = Some(None)
-  assert_eq(b.bind(x => x), None)
+  debug_inspect(b.bind(x => x), content="None")
 }
 
 ///|
@@ -144,8 +145,8 @@ test "is_empty" {
 ///|
 test "filter" {
   let x = Option::Some(3)
-  assert_eq(x.filter(x => x > 5), None)
-  assert_eq(x.filter(x => x < 5), Some(3))
+  debug_inspect(x.filter(x => x > 5), content="None")
+  debug_inspect(x.filter(x => x < 5), content="Some(3)")
 }
 
 ///|
@@ -229,9 +230,22 @@ test "or error" {
 ///|
 test "arbitrary" {
   let samples : Array[Int?] = @quickcheck.samples(10)
-  inspect(
+  debug_inspect(
     samples,
-    content="[None, None, Some(-1), Some(0), None, Some(0), Some(-5), Some(2), None, Some(4)]",
+    content=(
+      #|[
+      #|  None,
+      #|  None,
+      #|  Some(-1),
+      #|  Some(0),
+      #|  None,
+      #|  Some(0),
+      #|  Some(-5),
+      #|  Some(2),
+      #|  None,
+      #|  Some(4),
+      #|]
+    ),
   )
 }
 

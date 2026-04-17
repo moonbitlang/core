@@ -51,13 +51,13 @@ test "get" {
       #|Some("b")
     ),
   )
-  inspect(
+  debug_inspect(
     map.get(3),
     content=(
       #|Some("c")
     ),
   )
-  inspect(map.get(4), content="None")
+  debug_inspect(map.get(4), content="None")
 
   // pattern
   guard map is { 1: "a", 2: "b", 3: "c", 4? : None, .. }
@@ -306,12 +306,12 @@ test "@sorted_map.merge" {
   let map1 = @sorted_map.from_array([(1, "a"), (2, "b")])
   let map2 = @sorted_map.from_array([(2, "c"), (3, "d")])
   let merged = map1.merge(map2)
-  inspect(merged.get(1), content="Some(\"a\")")
-  inspect(merged.get(2), content="Some(\"c\")")
-  inspect(merged.get(3), content="Some(\"d\")")
+  debug_inspect(merged.get(1), content="Some(\"a\")")
+  debug_inspect(merged.get(2), content="Some(\"c\")")
+  debug_inspect(merged.get(3), content="Some(\"d\")")
   inspect(merged.length(), content="3")
   // Verify original maps are unchanged
-  inspect(map1.get(2), content="Some(\"b\")")
+  debug_inspect(map1.get(2), content="Some(\"b\")")
   inspect(map1.length(), content="2")
 }
 
@@ -332,9 +332,9 @@ test "@sorted_map.merge_in_place" {
   let map1 = @sorted_map.from_array([(1, "a"), (2, "b")])
   let map2 = @sorted_map.from_array([(2, "c"), (3, "d")])
   map1.merge_in_place(map2)
-  inspect(map1.get(1), content="Some(\"a\")")
-  inspect(map1.get(2), content="Some(\"c\")")
-  inspect(map1.get(3), content="Some(\"d\")")
+  debug_inspect(map1.get(1), content="Some(\"a\")")
+  debug_inspect(map1.get(2), content="Some(\"c\")")
+  debug_inspect(map1.get(3), content="Some(\"d\")")
   inspect(map1.length(), content="3")
   // Verify second map is unchanged
   inspect(map2.length(), content="2")
@@ -355,7 +355,7 @@ test "get_or_init inserts when absent" {
   let map = @sorted_map.from_array([(1, "a"), (3, "c")])
   let v = map.get_or_init(2, fn() { "b" })
   inspect(v, content="b")
-  inspect(map.get(2), content="Some(\"b\")")
+  debug_inspect(map.get(2), content="Some(\"b\")")
   inspect(map.length(), content="3")
 }
 
@@ -370,7 +370,7 @@ test "get_or_init returns existing value" {
   inspect(v, content="b")
   // init function should not be called when key exists
   inspect(called, content="false")
-  inspect(map.get(2), content="Some(\"b\")")
+  debug_inspect(map.get(2), content="Some(\"b\")")
 }
 
 ///|
@@ -434,11 +434,11 @@ test "copy independence" {
   // Original should be unchanged
   inspect(map1.length(), content="3")
   inspect(map1.get(1), content="Some(\"a\")")
-  inspect(map1.get(2), content="Some(\"b\")")
+  debug_inspect(map1.get(2), content="Some(\"b\")")
   inspect(map1.contains(4), content="false")
   // Copy should reflect modifications
   inspect(map2.length(), content="3")
   inspect(map2.contains(1), content="false")
-  inspect(map2.get(2), content="Some(\"x\")")
-  inspect(map2.get(4), content="Some(\"d\")")
+  debug_inspect(map2.get(2), content="Some(\"x\")")
+  debug_inspect(map2.get(4), content="Some(\"d\")")
 }

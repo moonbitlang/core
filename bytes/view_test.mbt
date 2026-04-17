@@ -322,7 +322,7 @@ test "View::get" {
   let bytes = b"\x01\x02\x03\x04\x05"
   let view = bytes[1:4]
   let result = view.get(1) // gets byte at index 1 (the second byte) of the view
-  inspect(result, content="Some(b'\\x03')")
+  debug_inspect(result, content="Some(0x03)")
 }
 
 ///|
@@ -330,7 +330,7 @@ test "View::get out_of_bounds" {
   let bytes = b"\x01\x02\x03\x04\x05"
   let view = bytes[1:4]
   let result = view.get(5) // out of bounds
-  inspect(result, content="None")
+  debug_inspect(result, content="None")
 }
 
 ///|

@@ -53,7 +53,7 @@ test "json object navigation" {
   } else {
     None
   }
-  inspect(
+  debug_inspect(
     string_opt,
     content=(
       #|Some("hello")
@@ -66,7 +66,7 @@ test "json object navigation" {
   } else {
     None
   }
-  inspect(number_opt, content="Some(42)")
+  debug_inspect(number_opt, content="Some(42)")
 
   // Access array
   let array_opt = if json is { "array": Array(arr), .. } {
@@ -74,11 +74,11 @@ test "json object navigation" {
   } else {
     None
   }
-  inspect(array_opt, content="Some([Number(1), Number(2), Number(3)])")
+  debug_inspect(array_opt, content="Some([Number(1), Number(2), Number(3)])")
 
   // Handle missing keys gracefully
   guard json is { "value"? : value, .. }
-  inspect(value, content="None")
+  debug_inspect(value, content="None")
 }
 ```
 
@@ -91,11 +91,11 @@ test "json array navigation" {
 
   // Access by index
   let first = if array is Array([f, ..]) { Some(f) } else { None }
-  inspect(first, content="Some(Number(1))")
+  debug_inspect(first, content="Some(Number(1))")
 
   // Access out of bounds
   let missing = if array is Array(arr) { arr.get(10) } else { None }
-  inspect(missing, content="None")
+  debug_inspect(missing, content="None")
 
   // Iterate through array
   guard array is Array(values)
@@ -258,7 +258,7 @@ test "from_json" {
   inspect(tuple, content="(1, \"hello\")")
   // decode an optional
   let opt : Int? = @json.from_json(null)
-  inspect(opt, content="None")
+  debug_inspect(opt, content="None")
   // decode a Result
   let json3 : Json = { "Ok": 42 }
   let result : Result[Int, String] = @json.from_json(json3)

@@ -15,13 +15,13 @@
 ///|
 test "from_fixed_array" {
   let queue = @priority_queue.from_array([1, 6, 3, 4, 5])
-  inspect(queue.peek(), content="Some(6)")
+  debug_inspect(queue.peek(), content="Some(6)")
 }
 
 ///|
 test "from_array" {
   let queue = @priority_queue.from_array([1, 6, 3, 4, 5])
-  inspect(queue.peek(), content="Some(6)")
+  debug_inspect(queue.peek(), content="Some(6)")
 }
 
 ///|
@@ -61,7 +61,7 @@ test "iter" {
 test "pop" {
   let queue = @priority_queue.from_array([1, 2, 3, 4])
   let first = queue.pop()
-  inspect(
+  debug_inspect(
     match first {
       Some(q) => q.peek()
       None => None
@@ -69,7 +69,7 @@ test "pop" {
     content="Some(3)",
   )
   let empty : @priority_queue.PriorityQueue[Int] = @priority_queue.from_array([])
-  inspect(
+  debug_inspect(
     match empty.pop() {
       Some(q) => q.peek()
       None => None
@@ -82,8 +82,8 @@ test "pop" {
 test "pop_exn" {
   let queue = @priority_queue.from_array([1, 2, 3, 4])
   let first = queue.unsafe_pop()
-  inspect(first.peek(), content="Some(3)")
-  inspect(
+  debug_inspect(first.peek(), content="Some(3)")
+  debug_inspect(
     queue
     .unsafe_pop()
     .push(-1)
@@ -100,14 +100,14 @@ test "pop_exn" {
 ///|
 test "push" {
   let queue = @priority_queue.from_array([1, 2, 3])
-  inspect(queue.push(4).peek(), content="Some(4)")
+  debug_inspect(queue.push(4).peek(), content="Some(4)")
 }
 
 ///|
 test "peek" {
   let queue = @priority_queue.new()
-  inspect(queue.peek(), content="None")
-  inspect(queue.push(1).peek(), content="Some(1)")
+  debug_inspect(queue.peek(), content="None")
+  debug_inspect(queue.push(1).peek(), content="Some(1)")
 }
 
 ///|
@@ -195,7 +195,7 @@ test "complex" {
   }
   inspect(pq.length(), content="1001")
   let pq = for i in 0..<=1000; pq = pq {
-    assert_eq(pq.peek(), Some(1000 - i))
+    @test.assert_eq(pq.peek(), Some(1000 - i))
     continue pq.pop().unwrap()
   } nobreak {
     pq

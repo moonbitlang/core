@@ -204,9 +204,9 @@ pub fn[T] Array::at(self : Array[T], index : Int) -> T {
 /// ```mbt check
 /// test {
 ///   let arr = [1, 2, 3]
-///   inspect(arr.get(-1), content="None")
-///   inspect(arr.get(0), content="Some(1)")
-///   inspect(arr.get(3), content="None")
+///   debug_inspect(arr.get(-1), content="None")
+///   debug_inspect(arr.get(0), content="Some(1)")
+///   debug_inspect(arr.get(3), content="None")
 /// }
 /// ```
 pub fn[T] Array::get(self : Array[T], index : Int) -> T? {
@@ -922,8 +922,8 @@ pub fn[T : Eq] Array::ends_with(self : Array[T], suffix : Array[T]) -> Bool {
 /// ```mbt check
 /// test {
 ///   let arr = [1, 2, 3, 4, 5]
-///   inspect(arr.strip_prefix([1, 2]), content="Some([3, 4, 5])")
-///   inspect(arr.strip_prefix([2, 3]), content="None")
+///   debug_inspect(arr.strip_prefix([1, 2]), content="Some([3, 4, 5])")
+///   debug_inspect(arr.strip_prefix([2, 3]), content="None")
 /// }
 /// ```
 pub fn[T : Eq] Array::strip_prefix(
@@ -989,8 +989,8 @@ pub fn[T : Eq] Array::strip_suffix(
 /// ```mbt check
 /// test {
 ///   let arr = [1, 2, 3, 2, 4]
-///   inspect(arr.search(2), content="Some(1)") // first occurrence
-///   inspect(arr.search(5), content="None") // not found
+///   debug_inspect(arr.search(2), content="Some(1)") // first occurrence
+///   debug_inspect(arr.search(5), content="None") // not found
 /// }
 /// ```
 pub fn[T : Eq] Array::search(self : Array[T], value : T) -> Int? {
@@ -1968,9 +1968,9 @@ pub fn[A, B] Array::filter_map(
 /// ```mbt check
 /// test {
 ///   let arr = [1, 2, 3]
-///   inspect(arr.last(), content="Some(3)")
+///   debug_inspect(arr.last(), content="Some(3)")
 ///   let empty : Array[Int] = []
-///   inspect(empty.last(), content="None")
+///   debug_inspect(empty.last(), content="None")
 /// }
 /// ```
 pub fn[A] Array::last(self : Array[A]) -> A? {

@@ -71,19 +71,19 @@ fn labeld_break(xss : Array[Array[Double]]) -> Double? {
 ///|
 test "labeld_break/empty" {
   let xss : Array[Array[Double]] = []
-  inspect(labeld_break(xss), content="None")
+  debug_inspect(labeld_break(xss), content="None")
 }
 
 ///|
 test "labeld_break/sum_under_threshold" {
   let xss = [[1.0, 2.0], [3.0, 4.0]]
-  inspect(labeld_break(xss), content="None")
+  debug_inspect(labeld_break(xss), content="None")
 }
 
 ///|
 test "labeld_break/cross_threshold" {
   let xss = [[3.0, 4.0], [5.0, 6.0]]
-  inspect(labeld_break(xss), content="Some(12)")
+  debug_inspect(labeld_break(xss), content="Some(12)")
 }
 
 ///|

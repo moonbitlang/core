@@ -223,8 +223,9 @@ test "to_option" {
   let y : Result[Int, String] = Err("error")
   let z = x.to_option()
   let w = y.to_option()
-  assert_eq(z, Some(6))
-  assert_eq(w, None)
+  guard z is Some(v)
+  assert_eq(v, 6)
+  guard w is None
 }
 
 ///|

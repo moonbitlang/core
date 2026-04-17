@@ -90,11 +90,12 @@ test "option type" {
 
   // Found case
   let result1 = find_first_even([1, 3, 4, 5])
-  inspect(result1, content="Some(4)")
+  guard result1 is Some(v)
+  assert_eq(v, 4)
 
   // Not found case
   let result2 = find_first_even([1, 3, 5])
-  inspect(result2, content="None")
+  debug_inspect(result2, content="None")
 
   // Pattern matching on Option
   match result1 {

@@ -109,11 +109,11 @@ pub fn BytesView::at(self : BytesView, index : Int) -> Byte {
 ///   let bytes = b"\x01\x02\x03\x04\x05"
 ///   let view = bytes[1:4]
 ///   let result = view.get(1)
-///   inspect(result, content="Some(b'\\x03')")
+///   debug_inspect(result, content="Some(0x03)")
 ///   let bytes = b"\x01\x02\x03\x04\x05"
 ///   let view = bytes[1:4]
 ///   let result = view.get(5)
-///   inspect(result, content="None")
+///   debug_inspect(result, content="None")
 /// }
 /// ```
 pub fn BytesView::get(self : BytesView, index : Int) -> Byte? {

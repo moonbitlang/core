@@ -459,16 +459,16 @@ test "index_of" {
   inspect("😍😭😡".find("😭"), content="Some(2)")
   inspect("😍😭😡".find("😡"), content="Some(4)")
   inspect("😍😭😡".find("😎"), content="None")
-  inspect("".find("a"), content="None")
-  inspect("".find(""), content="Some(0)")
+  debug_inspect("".find("a"), content="None")
+  debug_inspect("".find(""), content="Some(0)")
 }
 
 ///|
 test "String::index_of empty strings" {
   // Empty string cases
   inspect("".find(""), content="Some(0)")
-  inspect("abc".find(""), content="Some(0)")
-  inspect("".find("a"), content="None")
+  debug_inspect("abc".find(""), content="Some(0)")
+  debug_inspect("".find("a"), content="None")
 }
 
 ///|
@@ -480,15 +480,15 @@ test "String::index_of basic matching" {
   inspect("abc".find("ab"), content="Some(0)")
   inspect("abc".find("bc"), content="Some(1)")
   inspect("abc".find("abc"), content="Some(0)")
-  inspect("abc".find("d"), content="None")
-  inspect("abc".find("abcd"), content="None")
+  debug_inspect("abc".find("d"), content="None")
+  debug_inspect("abc".find("abcd"), content="None")
 }
 
 ///|
 test "String::index_of overlapping patterns" {
   // Testing overlapping patterns
-  inspect("aaa".find("aa"), content="Some(0)")
-  inspect("aaa"[1:].find("aa"), content="Some(0)")
+  debug_inspect("aaa".find("aa"), content="Some(0)")
+  debug_inspect("aaa"[1:].find("aa"), content="Some(0)")
 }
 
 ///|
@@ -512,8 +512,8 @@ test "last_index_of" {
   inspect("😍😭😡😍😭😡".rev_find("😭"), content="Some(8)")
   inspect("😍😭😡😍😭😡".rev_find("😡"), content="Some(10)")
   inspect("😍😭😡😍😭😡".rev_find("😎"), content="None")
-  inspect("".rev_find("a"), content="None")
-  inspect("".rev_find(""), content="Some(0)")
+  debug_inspect("".rev_find("a"), content="None")
+  debug_inspect("".rev_find(""), content="Some(0)")
 }
 
 ///|
@@ -801,8 +801,8 @@ test "offset_of_nth_char" {
   inspect(s.offset_of_nth_char(-2), content="Some(4)")
   inspect(s.offset_of_nth_char(-3), content="Some(3)")
   inspect(s.offset_of_nth_char(-4), content="Some(1)")
-  inspect(s.offset_of_nth_char(-5), content="Some(0)")
-  inspect(s.offset_of_nth_char(-6), content="None")
+  debug_inspect(s.offset_of_nth_char(-5), content="Some(0)")
+  debug_inspect(s.offset_of_nth_char(-6), content="None")
 }
 
 ///|
@@ -834,11 +834,11 @@ test "offset_of_nth_char range" {
     s.offset_of_nth_char(-3, start_offset=1, end_offset=6),
     content="Some(1)",
   )
-  inspect(
+  debug_inspect(
     s.offset_of_nth_char(-4, start_offset=1, end_offset=6),
     content="None",
   )
-  inspect(
+  debug_inspect(
     s.offset_of_nth_char(-5, start_offset=1, end_offset=6),
     content="None",
   )

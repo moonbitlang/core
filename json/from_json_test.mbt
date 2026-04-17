@@ -316,16 +316,16 @@ test "fixedarray" {
 test "Option" {
   let u : Json = (None : Int?).to_json()
   let v : Int? = @json.from_json(u)
-  inspect(v, content="None")
+  debug_inspect(v, content="None")
   let u = Some(1).to_json()
   let v : Int? = @json.from_json(u)
-  inspect(v, content="Some(1)")
+  debug_inspect(v, content="Some(1)")
   let nested : Json = (Some(None) : Unit??).to_json()
   let v : Unit?? = @json.from_json(nested)
-  inspect(v, content="Some(None)")
+  debug_inspect(v, content="Some(None)")
   let nested : Json = (Some(Some(None)) : Unit???).to_json()
   let v : Unit??? = @json.from_json(nested)
-  inspect(v, content="Some(Some(None))")
+  debug_inspect(v, content="Some(Some(None))")
 }
 
 ///|
@@ -745,10 +745,10 @@ test "Map from_json error handling" {
 test "Option from_json error handling" {
   let json_string = Json::string("not an option")
   let result : Result[Int?, _] = try? @json.from_json(json_string)
-  inspect(
+  debug_inspect(
     result,
     content=(
-      #|Err(JsonDecodeError((, "Option::from_json: expected array or null")))
+      #|Err(JsonDecodeError(("", "Option::from_json: expected array or null")))
     ),
   )
 }

@@ -422,8 +422,8 @@ test "index_of_nth_char" {
   inspect(view.offset_of_nth_char(-2), content="Some(4)")
   inspect(view.offset_of_nth_char(-3), content="Some(3)")
   inspect(view.offset_of_nth_char(-4), content="Some(1)")
-  inspect(view.offset_of_nth_char(-5), content="Some(0)")
-  inspect(view.offset_of_nth_char(-6), content="None")
+  debug_inspect(view.offset_of_nth_char(-5), content="Some(0)")
+  debug_inspect(view.offset_of_nth_char(-6), content="None")
 }
 
 ///|

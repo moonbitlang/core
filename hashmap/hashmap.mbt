@@ -63,8 +63,8 @@ pub fn[K, V] HashMap::new(capacity? : Int = 8) -> HashMap[K, V] {
 /// test {
 ///   let arr = [(1, "one"), (2, "two"), (1, "ONE")]
 ///   let map = @hashmap.from_array(arr)
-///   inspect(map.get(1), content="Some(\"ONE\")")
-///   inspect(map.get(2), content="Some(\"two\")")
+///   debug_inspect(map.get(1), content="Some(\"ONE\")")
+///   debug_inspect(map.get(2), content="Some(\"two\")")
 /// }
 /// ```
 #as_free_fn
@@ -95,9 +95,9 @@ pub fn[K : Hash + Eq, V] HashMap::from_array(
 /// test {
 ///   let map : @hashmap.HashMap[String, Int] = @hashmap.new()
 ///   map.set("key", 42)
-///   inspect(map.get("key"), content="Some(42)")
+///   debug_inspect(map.get("key"), content="Some(42)")
 ///   map.set("key", 24) // update existing key
-///   inspect(map.get("key"), content="Some(24)")
+///   debug_inspect(map.get("key"), content="Some(24)")
 /// }
 /// ```
 #alias("_[_]=_")
@@ -198,8 +198,8 @@ fn[K, V] HashMap::push_away(
 /// ```mbt check
 /// test {
 ///   let map = @hashmap.from_array([("key", 42)])
-///   inspect(map.get("key"), content="Some(42)")
-///   inspect(map.get("nonexistent"), content="None")
+///   debug_inspect(map.get("key"), content="Some(42)")
+///   debug_inspect(map.get("nonexistent"), content="None")
 /// }
 /// ```
 pub fn[K : Hash + Eq, V] HashMap::get(self : HashMap[K, V], key : K) -> V? {
@@ -270,7 +270,7 @@ pub fn[K : Hash + Eq, V] HashMap::at(self : HashMap[K, V], key : K) -> V {
 ///   let map : @hashmap.HashMap[String, Int] = @hashmap.new()
 ///   let value = map.get_or_init("key", () => 42)
 ///   inspect(value, content="42")
-///   inspect(map.get("key"), content="Some(42)")
+///   debug_inspect(map.get("key"), content="Some(42)")
 /// }
 /// ```
 pub fn[K : Hash + Eq, V] HashMap::get_or_init(
@@ -448,7 +448,7 @@ pub fn[K : Hash + Eq, V : Eq] HashMap::contains_kv(
 /// test {
 ///   let map = @hashmap.from_array([("a", 1), ("b", 2)])
 ///   map.remove("a")
-///   inspect(map.get("a"), content="None")
+///   debug_inspect(map.get("a"), content="None")
 ///   inspect(map.length(), content="1")
 /// }
 /// ```
@@ -529,8 +529,8 @@ fn[K : Eq, V] HashMap::grow(self : HashMap[K, V]) -> Unit {
 ///|
 test "of" {
   let m = from_array([(1, 2), (3, 4)])
-  inspect(m.get(1), content="Some(2)")
-  inspect(m.get(3), content="Some(4)")
+  @debug.debug_inspect(m.get(1), content="Some(2)")
+  @debug.debug_inspect(m.get(3), content="Some(4)")
 }
 
 ///|
@@ -847,16 +847,16 @@ test "grow" {
   m.set("Rescript", 8)
   inspect(m.length(), content="10")
   inspect(m.capacity(), content="32")
-  inspect(m.get("C"), content="Some(1)")
-  inspect(m.get("Go"), content="Some(2)")
-  inspect(m.get("C++"), content="Some(3)")
-  inspect(m.get("Java"), content="Some(4)")
-  inspect(m.get("Scala"), content="Some(5)")
-  inspect(m.get("Julia"), content="Some(5)")
-  inspect(m.get("Cobol"), content="Some(5)")
-  inspect(m.get("Python"), content="Some(6)")
-  inspect(m.get("Haskell"), content="Some(7)")
-  inspect(m.get("Rescript"), content="Some(8)")
+  @debug.debug_inspect(m.get("C"), content="Some(1)")
+  @debug.debug_inspect(m.get("Go"), content="Some(2)")
+  @debug.debug_inspect(m.get("C++"), content="Some(3)")
+  @debug.debug_inspect(m.get("Java"), content="Some(4)")
+  @debug.debug_inspect(m.get("Scala"), content="Some(5)")
+  @debug.debug_inspect(m.get("Julia"), content="Some(5)")
+  @debug.debug_inspect(m.get("Cobol"), content="Some(5)")
+  @debug.debug_inspect(m.get("Python"), content="Some(6)")
+  @debug.debug_inspect(m.get("Haskell"), content="Some(7)")
+  @debug.debug_inspect(m.get("Rescript"), content="Some(8)")
   // Only for debugging
   // inspect(
   //   m._debug_entries(),
@@ -880,7 +880,7 @@ test "_[_]" {
 test "get_or_init" {
   let m : HashMap[MyString, Int] = new()
   inspect(m.get_or_init("a", () => 1), content="1")
-  inspect(m.get("a"), content="Some(1)")
+  @debug.debug_inspect(m.get("a"), content="Some(1)")
   inspect(m.get_or_init("a", () => 2), content="1")
-  inspect(m.get("a"), content="Some(1)")
+  @debug.debug_inspect(m.get("a"), content="Some(1)")
 }

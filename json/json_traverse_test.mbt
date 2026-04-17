@@ -96,14 +96,14 @@ test "prune_loc - primitive values" {
   inspect(null.prune_loc(), content="Some(Null)")
   inspect(Json::boolean(true).prune_loc(), content="Some(True)")
   inspect(Json::boolean(false).prune_loc(), content="Some(False)")
-  inspect(Json::number(42.0).prune_loc(), content="Some(Number(42))")
-  inspect(Json::string("hello").prune_loc(), content="Some(String(\"hello\"))")
+  debug_inspect(Json::number(42.0).prune_loc(), content="Some(Number(42))")
+  debug_inspect(Json::string("hello").prune_loc(), content="Some(String(\"hello\"))")
 }
 
 ///|
 test "prune_loc - arrays" {
   // Empty array
-  inspect(Json::array([]).prune_loc(), content="Some(Array([]))")
+  debug_inspect(Json::array([]).prune_loc(), content="Some(Array([]))")
 
   // Array with primitives
   let arr1 = Json::array([
@@ -125,7 +125,7 @@ test "prune_loc - arrays" {
 ///|
 test "prune_loc - objects without loc" {
   // Empty object
-  inspect(Json::object(Map::new()).prune_loc(), content="None")
+  debug_inspect(Json::object(Map::new()).prune_loc(), content="None")
 
   // Object with no "loc" key
   let obj1 : Json = { "name": Json::string("John"), "age": Json::number(30.0) }

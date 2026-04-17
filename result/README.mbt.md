@@ -110,10 +110,10 @@ You can turn a `Result[T, E]` into a `Option[T]` by using the method `to_option`
 test {
   let result : Result[Int, String] = Ok(42)
   let option = result.to_option()
-  assert_eq(option, Some(42))
+  debug_inspect(option, content="Some(42)")
   let result1 : Result[Int, String] = Err("error")
   let option1 = result1.to_option()
-  assert_eq(option1, None)
+  debug_inspect(option1, content="None")
 }
 ```
 

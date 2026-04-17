@@ -745,10 +745,10 @@ pub fn Bytes::is_empty(self : Bytes) -> Bool {
 /// test {
 ///   let bytes = b"\x01\x02\x03"
 ///   let byte = bytes.get(1)
-///   inspect(byte, content="Some(b'\\x02')")
+///   debug_inspect(byte, content="Some(0x02)")
 ///   let bytes = b"\x01\x02\x03"
 ///   let byte = bytes.get(3)
-///   inspect(byte, content="None")
+///   debug_inspect(byte, content="None")
 /// }
 /// ```
 pub fn Bytes::get(self : Bytes, index : Int) -> Byte? {

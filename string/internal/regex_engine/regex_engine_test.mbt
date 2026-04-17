@@ -147,8 +147,8 @@ test "nested sequence vs flattened sequence preserve effective-tail preference" 
   guard flat_re.execute("abc. ", 0) is Some(flat_match) else {
     fail("Expected flattened match")
   }
-  assert_eq(nested_match.group(0), Some((0, 5)))
-  assert_eq(flat_match.group(0), Some((0, 5)))
+  @test.assert_eq(nested_match.group(0), Some((0, 5)))
+  debug_inspect(flat_match.group(0), content="Some((0, 5))")
 }
 
 ///|
@@ -246,6 +246,6 @@ test "Regex::group_names includes capture name" {
   let re = @regex_engine.compile(profile~, pat)
   let names = re.group_names()
   assert_eq(names.length(), 2)
-  assert_eq(names[0], None)
-  assert_eq(names[1], Some("x"))
+  @test.assert_eq(names[0], None)
+  debug_inspect(names[1], content="Some(\"x\")")
 }

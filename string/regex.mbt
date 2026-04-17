@@ -373,10 +373,10 @@ pub fn Regex::execute(
 ///   let digit = @string.Regex("[[:digit:]]+").capture("number")
 ///   let regex = @string.Regex::string("ID: ") + digit
 ///   guard regex.execute("ID: 12345") is Some(m) else { fail("Expected match") }
-///   inspect(
+///   debug_inspect(
 ///     m.named_group("number"),
 ///     content=(
-///       #|Some("12345")
+///       #|Some(<StringView: "12345">)
 ///     ),
 ///   )
 /// }
@@ -395,22 +395,22 @@ pub fn Regex::execute(
 ///   guard email.execute("john@example.com") is Some(m) else {
 ///     fail("Expected match")
 ///   }
-///   inspect(
+///   debug_inspect(
 ///     m.named_group("user"),
 ///     content=(
-///       #|Some("john")
+///       #|Some(<StringView: "john">)
 ///     ),
 ///   )
-///   inspect(
+///   debug_inspect(
 ///     m.named_group("domain"),
 ///     content=(
-///       #|Some("example")
+///       #|Some(<StringView: "example">)
 ///     ),
 ///   )
-///   inspect(
+///   debug_inspect(
 ///     m.named_group("tld"),
 ///     content=(
-///       #|Some("com")
+///       #|Some(<StringView: "com">)
 ///     ),
 ///   )
 /// }

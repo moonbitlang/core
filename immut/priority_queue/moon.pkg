@@ -8,6 +8,7 @@ import {
 import {
   "moonbitlang/core/random",
   "moonbitlang/core/json",
+  "moonbitlang/core/test",
 } for "test"
 
 options(
