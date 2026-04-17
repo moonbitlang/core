@@ -13,6 +13,15 @@
 // limitations under the License.
 
 ///|
+fn[T] identity_compacted(source : Array[T]) -> CompactedElements[T] {
+  let indices = FixedArray::make(source.length(), 0)
+  for i = 0; i < source.length(); i = i + 1 {
+    indices[i] = i
+  }
+  CompactedElements((source[:], indices))
+}
+
+///|
 fn run_diag_range(
   old : Array[Int],
   new : Array[Int],
@@ -31,13 +40,15 @@ fn run_diag_range(
     old.length() + new.length() + 3,
     0,
   )
+  let lhs = identity_compacted(old)
+  let rhs = identity_compacted(new)
   let diagonal_shift = new.length() + 1
   diag(
     forward_search_diagonal~,
     backward_search_diagonal~,
     diagonal_shift~,
-    lhs_get=fn(i) { old[i] },
-    rhs_get=fn(i) { new[i] },
+    lhs~,
+    rhs~,
     lhs_offset~,
     lhs_limit~,
     rhs_offset~,

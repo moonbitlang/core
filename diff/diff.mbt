@@ -57,8 +57,6 @@ priv struct Partition {
 /// - `diagonal_shift~`: diagonal-to-array index shift. Diagonal `k` is stored at `sh + k`,
 ///   so negative diagonals are representable; with `sh = rhs_len + 1`, the algorithm can
 ///   safely access neighbor/sentinel diagonals `k±1` and `k±2`
-/// - `lhs_get~`, `rhs_get~`: functions to access elements of sequences lhs and rhs,
-///   supporting indirect access
 /// - `lhs_offset~`, `lhs_limit~`: search range for sequence lhs `[lhs_offset, lhs_limit)`
 /// - `rhs_offset~`, `rhs_limit~`: search range for sequence rhs `[rhs_offset, rhs_limit)`
 /// - `too_expensive~`: computation cost upper limit, preventing algorithm from running too long in difficult cases
@@ -68,8 +66,8 @@ fn[T : Eq] diag(
   forward_search_diagonal~ : FixedArray[Int], // forward search diagonal array - stores farthest reachable point on each diagonal
   backward_search_diagonal~ : FixedArray[Int], // backward search diagonal array - stores nearest reachable point on each diagonal
   diagonal_shift~ : Int, // diagonal index shift: store diagonal k at [sh + k], including negative k and k±1/k±2 neighbors
-  lhs_get~ : (Int) -> T, // access function for sequence lhs - supports indirect access and index remapping
-  rhs_get~ : (Int) -> T, // access function for sequence rhs - supports indirect access and index remapping
+  lhs~ : CompactedElements[T], // compacted elements for sequence lhs
+  rhs~ : CompactedElements[T], // compacted elements for sequence rhs
   lhs_offset~ : Int, // starting position of sequence lhs - defines left boundary of search window
   lhs_limit~ : Int, // ending position of sequence lhs - defines right boundary of search window
   rhs_offset~ : Int, // starting position of sequence rhs - defines upper boundary of search window  
@@ -130,9 +128,7 @@ fn[T : Eq] diag(
       // Search for matching sequence along diagonal (Snake)
       // This is key optimization of Myers algorithm: freely extend matching elements
       let (x_cur, y_cur) = for x_cur = x, y_cur = x - d {
-        if x_cur < lhs_limit &&
-          y_cur < rhs_limit &&
-          lhs_get(x_cur) == rhs_get(y_cur) {
+        if x_cur < lhs_limit && y_cur < rhs_limit && lhs[x_cur] == rhs[y_cur] {
           continue x_cur + 1, y_cur + 1
         } else {
           break (x_cur, y_cur)
@@ -195,7 +191,7 @@ fn[T : Eq] diag(
       let (x_cur, y_cur) = for x_cur = x, y_cur = x - d {
         if x_cur > lhs_offset &&
           y_cur > rhs_offset &&
-          lhs_get(x_cur - 1) == rhs_get(y_cur - 1) {
+          lhs[x_cur - 1] == rhs[y_cur - 1] {
           continue x_cur - 1, y_cur - 1
         } else {
           break (x_cur, y_cur)
@@ -299,31 +295,29 @@ fn[T : Eq] diag(
 /// Main diff loop that computes the differences between two arrays
 fn[T : Eq] diff_loop(
   cutoff : Int?, // computation cost threshold
-  lhs : ArrayView[T], // original array lhs
-  lhs_indices : FixedArray[Int], // indices of lhs elements that exist in rhs
-  rhs : ArrayView[T], // original array rhs
-  rhs_indices : FixedArray[Int], // indices of rhs elements that exist in lhs
+  lhs : CompactedElements[T],
+  rhs : CompactedElements[T],
 ) -> (FixedArray[Bool], FixedArray[Bool]) {
   // Allocate working arrays for Myers algorithm
   // Array size is n+m+3, sufficient to contain all possible diagonals
   let forward_search_diagonal = FixedArray::make(
-    lhs_indices.length() + rhs_indices.length() + 3,
+    lhs.indices_length() + rhs.indices_length() + 3,
     0,
   ) // forward search array
   let backward_search_diagonal = FixedArray::make(
-    lhs_indices.length() + rhs_indices.length() + 3,
+    lhs.indices_length() + rhs.indices_length() + 3,
     0,
   ) // backward search array
   // shift k by rhs_indices.length()+1 so 
   // [-(rhs_indices.length()+1), lhs_indices.length()+1] -> [0, lhs_indices.length()+rhs_indices.length()+2]
-  let diagonal_shift = rhs_indices.length() + 1
+  let diagonal_shift = rhs.indices_length() + 1
   // Determine computation cost threshold
   let too_expensive = match cutoff {
     Some(c) => c
     None => {
       // Default strategy: calculate reasonable threshold based on problem size
       // Use bit operations to quickly compute approximate square root
-      let diags = lhs_indices.length() + rhs_indices.length() + 3
+      let diags = lhs.indices_length() + rhs.indices_length() + 3
       for acc = 1, diags_cur = diags {
         if diags_cur != 0 {
           continue acc << 1, diags_cur >> 2
@@ -334,22 +328,17 @@ fn[T : Eq] diff_loop(
     }
   }
 
-  // Create element access functions - supporting indirect access
-  // This allows algorithm to process only elements that exist in both arrays
-  let lhs_get = fn(i) { lhs[lhs_indices[i]] } // access lhs elements through index array
-  let rhs_get = fn(j) { rhs[rhs_indices[j]] } // access rhs elements through index array
-
   // Initialize change marker arrays
   // true indicates element is deleted/inserted, false indicates element unchanged
-  let lhs_change_markers = FixedArray::make(lhs.length(), true)
-  let rhs_change_markers = FixedArray::make(rhs.length(), true)
+  let lhs_change_markers = FixedArray::make(lhs.source_length(), true)
+  let rhs_change_markers = FixedArray::make(rhs.source_length(), true)
 
   // Preset common elements as unchanged
-  for i in 0..<lhs_indices.length() {
-    lhs_change_markers[lhs_indices[i]] = false // lhs elements that also exist in rhs marked as unchanged
+  for i in 0..<lhs.indices_length() {
+    lhs_change_markers[lhs.get_index(i)] = false // lhs elements that also exist in rhs marked as unchanged
   }
-  for j in 0..<rhs_indices.length() {
-    rhs_change_markers[rhs_indices[j]] = false // rhs elements that also exist in lhs marked as unchanged  
+  for j in 0..<rhs.indices_length() {
+    rhs_change_markers[rhs.get_index(j)] = false // rhs elements that also exist in lhs marked as unchanged  
   }
 
   // Recursive function: implement divide-and-conquer strategy
@@ -366,7 +355,7 @@ fn[T : Eq] diff_loop(
     let (lhs_offset, rhs_offset) = for lhs_offset = lhs_offset, rhs_offset = rhs_offset {
       if lhs_offset < lhs_limit &&
         rhs_offset < rhs_limit &&
-        lhs_get(lhs_offset) == rhs_get(rhs_offset) {
+        lhs[lhs_offset] == rhs[rhs_offset] {
         continue lhs_offset + 1, rhs_offset + 1
       } else {
         break (lhs_offset, rhs_offset)
@@ -377,7 +366,7 @@ fn[T : Eq] diff_loop(
     let (lhs_limit, rhs_limit) = for lhs_limit = lhs_limit, rhs_limit = rhs_limit {
       if lhs_limit > lhs_offset &&
         rhs_limit > rhs_offset &&
-        lhs_get(lhs_limit - 1) == rhs_get(rhs_limit - 1) {
+        lhs[lhs_limit - 1] == rhs[rhs_limit - 1] {
         continue lhs_limit - 1, rhs_limit - 1
       } else {
         break (lhs_limit, rhs_limit)
@@ -388,12 +377,12 @@ fn[T : Eq] diff_loop(
     if lhs_offset == lhs_limit {
       // Only insertions: A part exhausted, remaining B part all insertions
       for y in rhs_offset..<rhs_limit {
-        rhs_change_markers[rhs_indices[y]] = true
+        rhs_change_markers[rhs.get_index(y)] = true
       }
     } else if rhs_offset == rhs_limit {
       // Only deletions: B part exhausted, remaining A part all deletions
       for x in lhs_offset..<lhs_limit {
-        lhs_change_markers[lhs_indices[x]] = true
+        lhs_change_markers[lhs.get_index(x)] = true
       }
     } else {
       // General case: need to find partition point and recursively process
@@ -401,8 +390,8 @@ fn[T : Eq] diff_loop(
         forward_search_diagonal~,
         backward_search_diagonal~,
         diagonal_shift~,
-        lhs_get~,
-        rhs_get~,
+        lhs~,
+        rhs~,
         lhs_offset~,
         lhs_limit~,
         rhs_offset~,
@@ -432,7 +421,7 @@ fn[T : Eq] diff_loop(
   }
 
   // Start recursively processing entire region
-  loop_recursive(0, lhs_indices.length(), 0, rhs_indices.length(), false)
+  loop_recursive(0, lhs.indices_length(), 0, rhs.indices_length(), false)
   (lhs_change_markers, rhs_change_markers)
 }
 
@@ -480,8 +469,10 @@ fn[T : Eq + Hash] diff_(
   let lhs_indices = make_indexer(lhs, rhs) // indices of lhs elements that exist in rhs
   let rhs_indices = make_indexer(rhs, lhs) // indices of rhs elements that exist in lhs
 
+  let lhs = CompactedElements((lhs, lhs_indices))
+  let rhs = CompactedElements((rhs, rhs_indices))
   // Call main loop for difference computation
-  diff_loop(cutoff, lhs, lhs_indices, rhs, rhs_indices)
+  diff_loop(cutoff, lhs, rhs)
 }
 
 ///|
