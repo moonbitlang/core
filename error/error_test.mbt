@@ -30,7 +30,9 @@ test "show error" {
   inspect(try! f(true), content="ok")
   debug_inspect(
     try? f(false),
-    content="Err(moonbitlang/core/error_blackbox_test.IntError.IntError)",
+    content=(
+      #|Err(<moonbitlang/core/error_blackbox_test.IntError.IntError: ...>)
+    ),
   )
 }
 

@@ -111,7 +111,11 @@ pub impl FromJson for UInt64 with from_json(json, path) {
   @internal/strconv.parse_uint64(str) catch {
     Failure::Failure(error) =>
       decode_error(path, "UInt64::from_json: parsing failure \{error}")
-    error => decode_error(path, "UInt64::from_json: parsing failure \{@debug.to_string(error)}")
+    error =>
+      decode_error(
+        path,
+        "UInt64::from_json: parsing failure \{@debug.to_string(error)}",
+      )
   }
 }
 
