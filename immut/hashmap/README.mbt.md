@@ -24,7 +24,7 @@ test "create" {
 ///|
 test "add_get_remove" {
   let map = @hashmap.new().add("a", 1).add("b", 2)
-  inspect(map.get("a"), content="Some(1)")
+  debug_inspect(map.get("a"), content="Some(1)")
   inspect(map.contains("b"), content="true")
   inspect(map["a"], content="1")
   let map2 = map.remove("a")
@@ -110,11 +110,11 @@ test "set_operations" {
   let m2 = @hashmap.from_array([("b", 20), ("c", 3)])
   // Union prefers right map on conflicts
   let u = m1.union(m2)
-  inspect(u.get("b"), content="Some(20)")
-  inspect(u.get("c"), content="Some(3)")
+  debug_inspect(u.get("b"), content="Some(20)")
+  debug_inspect(u.get("c"), content="Some(3)")
   // union_with: custom merge function
   let u2 = m1.union_with(m2, fn(_k, v1, v2) { v1 + v2 })
-  inspect(u2.get("b"), content="Some(22)") // 2 + 20
+  debug_inspect(u2.get("b"), content="Some(22)") // 2 + 20
   // intersection_with: custom merge
   let i = m1.intersection_with(m2, fn(_k, v1, v2) { v1 * v2 })
   debug_inspect(i.get("b"), content="Some(40)") // 2 * 20

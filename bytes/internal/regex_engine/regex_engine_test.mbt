@@ -208,7 +208,7 @@ test "word boundary assertions" {
   let pat1 = @regex_engine.seq([@regex_engine.start_of_word, a])
   let re1 = @regex_engine.compile(profile~, pat1)
   guard re1.execute("a"[:], 0) is Some(mr1) else { fail("Expected match") }
-  assert_eq(mr1.group(0), Some((0, 1)))
+  @test.assert_eq(mr1.group(0), Some((0, 1)))
   let pat2 = @regex_engine.seq([a, @regex_engine.end_of_word])
   let re2 = @regex_engine.compile(profile~, pat2)
   guard re2.execute("a!"[:], 0) is Some(mr2) else { fail("Expected match") }

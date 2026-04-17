@@ -34,7 +34,7 @@ test "ReadOnlyArray access methods" {
   let arr : ReadOnlyArray[Int] = [10, 20, 30]
 
   // Test get
-  inspect(arr.get(1), content="Some(20)")
+  debug_inspect(arr.get(1), content="Some(20)")
   guard arr.get(5) is None
 
   // Test length

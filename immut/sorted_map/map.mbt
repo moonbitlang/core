@@ -151,7 +151,7 @@ pub fn[K, V] SortedMap::to_array(self : SortedMap[K, V]) -> Array[(K, V)] {
 ///   let map1 = @sorted_map.from_array([(1, "a"), (2, "b")])
 ///   let map2 = @sorted_map.from_array([(2, "c"), (3, "d")])
 ///   let merged = map1.merge(map2)
-///   inspect(merged.get(1), content="Some(\"a\")")
+///   debug_inspect(merged.get(1), content="Some(\"a\")")
 ///   debug_inspect(merged.get(2), content="Some(\"c\")")
 ///   debug_inspect(merged.get(3), content="Some(\"d\")")
 /// }

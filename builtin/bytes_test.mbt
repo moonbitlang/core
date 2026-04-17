@@ -383,9 +383,9 @@ test "BytesView::lexical_compare/basic" {
 test "Bytes find and rev_find" {
   let target = b"abcabc"
   let pattern = b"abc"
-  inspect(target.find(pattern[:]), content="Some(0)")
-  inspect(target.rev_find(pattern[:]), content="Some(3)")
-  inspect(target.find(b"zzz"[:]), content="None")
+  debug_inspect(target.find(pattern[:]), content="Some(0)")
+  debug_inspect(target.rev_find(pattern[:]), content="Some(3)")
+  debug_inspect(target.find(b"zzz"[:]), content="None")
   guard target[:].find(b"bca"[:]) is Some(v)
   assert_eq(v, 1)
   debug_inspect(target[:].rev_find(b"bca"[:]), content="Some(1)")
@@ -410,12 +410,12 @@ test "Bytes has_prefix/has_suffix/chop" {
   inspect(view.has_prefix(b"el"[:]), content="true")
   inspect(view.has_suffix(b"ll"[:]), content="true")
   inspect(view.has_prefix(b"ll"[:]), content="false")
-  inspect(view.chop_prefix(b"el"[:]), content="Some(b\"l\")")
-  inspect(view.chop_suffix(b"ll"[:]), content="Some(b\"e\")")
-  inspect(view.chop_prefix(b""[:]), content="Some(b\"ell\")")
-  inspect(view.chop_suffix(b""[:]), content="Some(b\"ell\")")
-  inspect(bytes.chop_prefix(b"he"[:]), content="Some(b\"llo\")")
-  inspect(bytes.chop_suffix(b"lo"[:]), content="Some(b\"hel\")")
+  debug_inspect(view.chop_prefix(b"el"[:]), content="Some(<BytesView: [0x6c]>)")
+  debug_inspect(view.chop_suffix(b"ll"[:]), content="Some(<BytesView: [0x65]>)")
+  debug_inspect(view.chop_prefix(b""[:]), content="Some(<BytesView: [0x65, 0x6c, 0x6c]>)")
+  debug_inspect(view.chop_suffix(b""[:]), content="Some(<BytesView: [0x65, 0x6c, 0x6c]>)")
+  debug_inspect(bytes.chop_prefix(b"he"[:]), content="Some(<BytesView: [0x6c, 0x6c, 0x6f]>)")
+  debug_inspect(bytes.chop_suffix(b"lo"[:]), content="Some(<BytesView: [0x68, 0x65, 0x6c]>)")
   guard bytes.chop_prefix(b"zz"[:]) is None
   debug_inspect(bytes.chop_suffix(b"zz"[:]), content="None")
 }

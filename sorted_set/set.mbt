@@ -769,6 +769,7 @@ test "union" {
 }
 
 ///|
+#warnings("-deprecated")
 test "split" {
   let (l, r) = split(from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).root, 5)
   inspect(l, content="Some([1, 2, 3, 4])")

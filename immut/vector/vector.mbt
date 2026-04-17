@@ -227,7 +227,7 @@ pub fn[A] Vector::at(self : Vector[A], index : Int) -> A {
 /// ```mbt check
 /// test {
 ///   let v = @vector.from_array([1, 2, 3])
-///   inspect(v.get(1), content="Some(2)")
+///   debug_inspect(v.get(1), content="Some(2)")
 ///   debug_inspect(v.get(-1), content="None")
 ///   debug_inspect(v.get(3), content="None")
 /// }

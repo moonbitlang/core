@@ -74,13 +74,13 @@ test "AsciiCaseInsensitiveString basic insert and lookup" {
 
   // All three keys present, regardless of lookup casing
   inspect(m.length(), content="3")
-  inspect(m.get(key("Content-Type")), content="Some(1)")
-  inspect(m.get(key("content-type")), content="Some(1)")
-  inspect(m.get(key("CONTENT-TYPE")), content="Some(1)")
-  inspect(m.get(key("cOnTeNt-TyPe")), content="Some(1)")
-  inspect(m.get(key("Content-Length")), content="Some(2)")
-  inspect(m.get(key("CONTENT-LENGTH")), content="Some(2)")
-  inspect(m.get(key("HOST")), content="Some(3)")
+  debug_inspect(m.get(key("Content-Type")), content="Some(1)")
+  debug_inspect(m.get(key("content-type")), content="Some(1)")
+  debug_inspect(m.get(key("CONTENT-TYPE")), content="Some(1)")
+  debug_inspect(m.get(key("cOnTeNt-TyPe")), content="Some(1)")
+  debug_inspect(m.get(key("Content-Length")), content="Some(2)")
+  debug_inspect(m.get(key("CONTENT-LENGTH")), content="Some(2)")
+  debug_inspect(m.get(key("HOST")), content="Some(3)")
 
   // Misses
   debug_inspect(m.get(key("Accept")), content="None")
@@ -99,7 +99,7 @@ test "AsciiCaseInsensitiveString update overrides under any casing" {
 
   // All three inserts collapse to one entry
   inspect(m.length(), content="1")
-  inspect(m.get(key("Accept")), content="Some(\"third\")")
+  debug_inspect(m.get(key("Accept")), content="Some(\"third\")")
   debug_inspect(m.get(key("accept")), content="Some(\"third\")")
   debug_inspect(m.get(key("ACCEPT")), content="Some(\"third\")")
 }
@@ -125,8 +125,8 @@ test "AsciiCaseInsensitiveString respects ASCII-only fold semantics" {
   m[key("ä")] = 2
   // Two distinct entries
   inspect(m.length(), content="2")
-  inspect(m.get(key("Ä")), content="Some(1)")
-  inspect(m.get(key("ä")), content="Some(2)")
+  debug_inspect(m.get(key("Ä")), content="Some(1)")
+  debug_inspect(m.get(key("ä")), content="Some(2)")
 
   // Mixed ASCII + non-ASCII: ASCII parts fold, non-ASCII parts don't
   let m2 : Map[AsciiCaseInsensitiveString, Int] = {}

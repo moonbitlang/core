@@ -30,11 +30,11 @@ test "HAMT" {
     }
   }
   for i in 0..<100 {
-    assert_eq((i, map.get(i)), (i, Some(i)))
+    @test.assert_eq((i, map.get(i)), (i, Some(i)))
   }
-  inspect((100, map.get(100)), content="(100, None)")
+  debug_inspect((100, map.get(100)), content="(100, None)")
   let map = map.add(100, 100)
-  inspect((100, map.get(100)), content="(100, Some(100))")
+  debug_inspect((100, map.get(100)), content="(100, Some(100))")
   // test for replacement
   let map = for i = 0, map = map {
     match (i, map) {
@@ -76,7 +76,7 @@ test "HAMT::remove" {
     }
   }
   for i in 0..<100 {
-    assert_eq((i, map.get(i)), (i, Some(i)))
+    @test.assert_eq((i, map.get(i)), (i, Some(i)))
   }
   let map = for i = 0, map = map {
     match (i, map) {
@@ -190,23 +190,17 @@ test "HAMT::to_string" {
 ///|
 test "HAMT::from_array" {
   let map = @hashmap.from_array([(1, "1"), (2, "2"), (42, "42")])
-  inspect(
+  debug_inspect(
     (1, map.get(1)),
-    content=(
-      #|(1, Some("1"))
-    ),
+    content="(1, Some(\"1\"))",
   )
-  inspect(
+  debug_inspect(
     (2, map.get(2)),
-    content=(
-      #|(2, Some("2"))
-    ),
+    content="(2, Some(\"2\"))",
   )
-  inspect(
+  debug_inspect(
     (42, map.get(42)),
-    content=(
-      #|(42, Some("42"))
-    ),
+    content="(42, Some(\"42\"))",
   )
   debug_inspect((43, map.get(43)), content="(43, None)")
 }
@@ -583,7 +577,7 @@ test "HAMT join_2 last segment split" {
   let k1 = SegKey(1, 0)
   let k2 = SegKey(2, 1 << 25)
   let map = @hashmap.new().add(k1, "a").add(k2, "b")
-  inspect(map.get(k1), content="Some(\"a\")")
+  debug_inspect(map.get(k1), content="Some(\"a\")")
   debug_inspect(map.get(k2), content="Some(\"b\")")
 }
 
@@ -594,7 +588,7 @@ test "HAMT leaf bucket updates" {
     .add(MyString("b"), 2)
     .add(MyString("c"), 3)
   let map = map.add(MyString("c"), 30)
-  inspect(map.get(MyString("c")), content="Some(30)")
+  debug_inspect(map.get(MyString("c")), content="Some(30)")
   let map = map.add(MyString("a"), 10)
   debug_inspect(map.get(MyString("a")), content="Some(10)")
 }
@@ -1136,7 +1130,7 @@ test "HAMT::merge is alias for union" {
   let map1 = @hashmap.from_array([("a", 1), ("b", 2)])
   let map2 = @hashmap.from_array([("b", 3), ("c", 4)])
   let merged = map1.merge(map2)
-  inspect(merged.get("a"), content="Some(1)")
-  inspect(merged.get("b"), content="Some(3)")
+  debug_inspect(merged.get("a"), content="Some(1)")
+  debug_inspect(merged.get("b"), content="Some(3)")
   debug_inspect(merged.get("c"), content="Some(4)")
 }

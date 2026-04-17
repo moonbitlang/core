@@ -468,8 +468,8 @@ test "convert byte to int64" {
 
 ///|
 test "Int::to_char" {
-  inspect(Int::to_char(97), content="Some('a')")
-  inspect(Int::to_char(65), content="Some('A')")
+  debug_inspect(Int::to_char(97), content="Some('a')")
+  debug_inspect(Int::to_char(65), content="Some('A')")
   guard Int::to_char(49) is Some(v)
   assert_eq(v, '1')
   debug_inspect(Int::to_char(33), content="Some('!')")
@@ -477,27 +477,27 @@ test "Int::to_char" {
 
 ///|
 test "Int::to_char - Invalid values" {
-  inspect(Int::to_char(-1), content="None")
-  inspect(Int::to_char(1114112), content="None")
-  inspect(Int::to_char(1114113), content="None")
-  inspect(Int::to_char(-1), content="None")
-  inspect(Int::to_char(0x10FFFF + 1), content="None")
-  inspect(Int::to_char(0xD800), content="None")
-  inspect(Int::to_char(0xDFFF), content="None")
+  debug_inspect(Int::to_char(-1), content="None")
+  debug_inspect(Int::to_char(1114112), content="None")
+  debug_inspect(Int::to_char(1114113), content="None")
+  debug_inspect(Int::to_char(-1), content="None")
+  debug_inspect(Int::to_char(0x10FFFF + 1), content="None")
+  debug_inspect(Int::to_char(0xD800), content="None")
+  debug_inspect(Int::to_char(0xDFFF), content="None")
   guard Int::to_char(0xD900) is None
   debug_inspect(Int::to_char(0xDF00), content="None")
 }
 
 ///|
 test "Int::to_char - Valid values" {
-  inspect(Int::to_char(0), content="Some('\\u{00}')")
-  inspect(Int::to_char(127), content="Some('\\u{7f}')")
-  inspect(Int::to_char(128), content="Some('\\u{80}')")
-  inspect(Int::to_char(0x7F), content="Some('\\u{7f}')")
-  inspect(Int::to_char(0x80), content="Some('\\u{80}')")
-  inspect(Int::to_char(0xFF), content="Some('ÿ')")
-  inspect(Int::to_char(0x100), content="Some('Ā')")
-  inspect(Int::to_char(0xFFFF), content="Some('\\u{ffff}')")
+  debug_inspect(Int::to_char(0), content="Some('\\u{00}')")
+  debug_inspect(Int::to_char(127), content="Some('\\u{7f}')")
+  debug_inspect(Int::to_char(128), content="Some('\\u{80}')")
+  debug_inspect(Int::to_char(0x7F), content="Some('\\u{7f}')")
+  debug_inspect(Int::to_char(0x80), content="Some('\\u{80}')")
+  debug_inspect(Int::to_char(0xFF), content="Some('ÿ')")
+  debug_inspect(Int::to_char(0x100), content="Some('Ā')")
+  debug_inspect(Int::to_char(0xFFFF), content="Some('\\u{ffff}')")
   guard Int::to_char(0x10000) is Some(v)
   assert_eq(v, '𐀀')
   debug_inspect(Int::to_char(0x10FFFF), content="Some('\\u{10ffff}')")
@@ -505,8 +505,8 @@ test "Int::to_char - Valid values" {
 
 ///|
 test "Int::to_char - Boundary cases" {
-  inspect(Int::to_char(0xD7FF), content="Some('퟿')")
-  inspect(Int::to_char(0xE000), content="Some('\\u{e000}')")
+  debug_inspect(Int::to_char(0xD7FF), content="Some('퟿')")
+  debug_inspect(Int::to_char(0xE000), content="Some('\\u{e000}')")
   guard Int::to_char(0x10FFFF) is Some(v)
   assert_eq(v, '\u{10ffff}')
   guard Int::to_char(0x10FFFF + 1) is None

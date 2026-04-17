@@ -38,9 +38,9 @@ test "T::retain - keep even values" {
   ])
   map.retain((_k, v) => v % 2 == 0)
   inspect(map.length(), content="2")
-  inspect(map.get("a"), content="None")
-  inspect(map.get("b"), content="Some(2)")
-  inspect(map.get("c"), content="None")
+  debug_inspect(map.get("a"), content="None")
+  debug_inspect(map.get("b"), content="Some(2)")
+  debug_inspect(map.get("c"), content="None")
   debug_inspect(map.get("d"), content="Some(4)")
   debug_inspect(map.get("e"), content="None")
 }
@@ -50,7 +50,7 @@ test "T::retain - keep all" {
   let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
   map.retain((_k, _v) => true)
   inspect(map.length(), content="3")
-  inspect(map.get("a"), content="Some(1)")
+  debug_inspect(map.get("a"), content="Some(1)")
   debug_inspect(map.get("b"), content="Some(2)")
   debug_inspect(map.get("c"), content="Some(3)")
 }
@@ -61,7 +61,7 @@ test "T::retain - remove all" {
   map.retain((_k, _v) => false)
   inspect(map.length(), content="0")
   inspect(map.is_empty(), content="true")
-  inspect(map.get("a"), content="None")
+  debug_inspect(map.get("a"), content="None")
   debug_inspect(map.get("b"), content="None")
   debug_inspect(map.get("c"), content="None")
 }
@@ -84,8 +84,8 @@ test "T::retain - key-based filtering" {
   ])
   map.retain((k, _v) => k.length() >= 6) // Keep keys with 6+ characters
   inspect(map.length(), content="2")
-  inspect(map.get("apple"), content="None") // 5 chars
-  inspect(map.get("banana"), content="Some(6)") // 6 chars
+  debug_inspect(map.get("apple"), content="None") // 5 chars
+  debug_inspect(map.get("banana"), content="Some(6)") // 6 chars
   debug_inspect(map.get("cherry"), content="Some(5)") // 6 chars
   debug_inspect(map.get("date"), content="None") // 4 chars
 }
@@ -101,9 +101,9 @@ test "T::retain - filter by both key and value" {
   ])
   map.retain((k, v) => k.contains("2") || v > 3) // Keep keys containing "2" or values > 3
   inspect(map.length(), content="3")
-  inspect(map.get("a1"), content="None")
-  inspect(map.get("b2"), content="Some(2)") // key contains "2"
-  inspect(map.get("c3"), content="None")
+  debug_inspect(map.get("a1"), content="None")
+  debug_inspect(map.get("b2"), content="Some(2)") // key contains "2"
+  debug_inspect(map.get("c3"), content="None")
   debug_inspect(map.get("d4"), content="Some(4)") // value > 3
   debug_inspect(map.get("e5"), content="Some(5)") // value > 3
 }
@@ -133,10 +133,10 @@ test "T::retain - large map with complex predicate" {
   // Keep only elements where value is divisible by 6 (both divisible by 2 and 3)
   map.retain((_k, v) => v % 6 == 0)
   inspect(map.length(), content="17") // 0, 6, 12, 18, ..., 96 (17 numbers)
-  inspect(map.get("key0"), content="Some(0)")
-  inspect(map.get("key6"), content="Some(6)")
-  inspect(map.get("key12"), content="Some(12)")
-  inspect(map.get("key1"), content="None")
+  debug_inspect(map.get("key0"), content="Some(0)")
+  debug_inspect(map.get("key6"), content="Some(6)")
+  debug_inspect(map.get("key12"), content="Some(12)")
+  debug_inspect(map.get("key1"), content="None")
   debug_inspect(map.get("key2"), content="None")
   debug_inspect(map.get("key3"), content="None")
 }
@@ -153,9 +153,9 @@ test "T::retain - with collisions" {
   // Keep only keys with odd length
   map.retain((k, _v) => k.length() % 2 == 1)
   inspect(map.length(), content="3")
-  inspect(map.get("a"), content="Some(0)") // length 1 (odd)
-  inspect(map.get("aa"), content="None") // length 2 (even)
-  inspect(map.get("aaa"), content="Some(2)") // length 3 (odd)
+  debug_inspect(map.get("a"), content="Some(0)") // length 1 (odd)
+  debug_inspect(map.get("aa"), content="None") // length 2 (even)
+  debug_inspect(map.get("aaa"), content="Some(2)") // length 3 (odd)
   debug_inspect(map.get("aaaa"), content="None") // length 4 (even)
   debug_inspect(map.get("aaaaa"), content="Some(4)") // length 5 (odd)
 }

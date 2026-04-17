@@ -15,7 +15,6 @@
 // Types
 
 ///|
-#warnings("-deprecated_syntax")
 priv struct Entry[K, V] {
   mut prev : Int
   mut next : Entry[K, V]?
@@ -23,7 +22,25 @@ priv struct Entry[K, V] {
   hash : Int
   key : K
   mut value : V
-} derive(Show)
+}
+
+///|
+#warnings("-deprecated")
+impl[K : Show, V : Show] Show for Entry[K, V] with output(self, logger) {
+  logger.write_string("{prev: ")
+  self.prev.output(logger)
+  logger.write_string(", next: ")
+  self.next.output(logger)
+  logger.write_string(", psl: ")
+  self.psl.output(logger)
+  logger.write_string(", hash: ")
+  self.hash.output(logger)
+  logger.write_string(", key: ")
+  self.key.output(logger)
+  logger.write_string(", value: ")
+  self.value.output(logger)
+  logger.write_string("}")
+}
 
 ///|
 /// Mutable linked hash map that maintains the order of insertion, not thread safe.
