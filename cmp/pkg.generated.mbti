@@ -1,6 +1,10 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/cmp"
 
+import {
+  "moonbitlang/core/debug",
+}
+
 // Values
 pub fn[T : Compare] maximum(T, T) -> T
 
@@ -19,6 +23,7 @@ pub fn[T, K : Compare] minmax_by_key(T, T, (T) -> K) -> (T, T)
 // Types and methods
 pub(all) struct Reverse[T](T) derive(Eq, Hash, Show)
 pub impl[T : Compare] Compare for Reverse[T]
+pub impl[T : @debug.Debug] @debug.Debug for Reverse[T]
 
 // Type aliases
 
