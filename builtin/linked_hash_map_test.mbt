@@ -39,8 +39,8 @@ test "Map::of" {
   let map = Map::of(arr)
   inspect(map, content="{\"a\": 1, \"b\": 2, \"c\": 3}")
   inspect(map.length(), content="3")
-  inspect(map.get("a"), content="Some(1)")
-  inspect(map.get("b"), content="Some(2)")
+  debug_inspect(map.get("a"), content="Some(1)")
+  debug_inspect(map.get("b"), content="Some(2)")
   guard map.get("c") is Some(v)
   assert_eq(v, 3)
   let large_arr : FixedArray[(String, Int)] = [
@@ -179,7 +179,7 @@ test "Map::update" {
       None => Some(0)
     }
   })
-  inspect(map.get("a"), content="Some(11)")
+  debug_inspect(map.get("a"), content="Some(11)")
   inspect(map.length(), content="3")
 
   // Test inserting new value when key doesn't exist
@@ -189,7 +189,7 @@ test "Map::update" {
       None => Some(4)
     }
   })
-  inspect(map.get("d"), content="Some(4)")
+  debug_inspect(map.get("d"), content="Some(4)")
   inspect(map.length(), content="4")
   inspect(
     map,
@@ -200,7 +200,7 @@ test "Map::update" {
 
   // Test removing existing value by returning None
   map.update("b", fn(_) { None })
-  inspect(map.get("b"), content="None")
+  debug_inspect(map.get("b"), content="None")
   inspect(map.length(), content="3")
   inspect(
     map,
@@ -211,7 +211,7 @@ test "Map::update" {
 
   // Test no-op when key doesn't exist and function returns None
   map.update("e", fn(_) { None })
-  inspect(map.get("e"), content="None")
+  debug_inspect(map.get("e"), content="None")
   inspect(map.length(), content="3")
 
   // Test incrementing a counter (common use case)
@@ -222,7 +222,7 @@ test "Map::update" {
       None => Some(1)
     }
   })
-  inspect(counter_map.get("clicks"), content="Some(1)")
+  debug_inspect(counter_map.get("clicks"), content="Some(1)")
   counter_map.update("clicks", fn(v) {
     match v {
       Some(count) => Some(count + 1)
@@ -425,7 +425,7 @@ test "Map::retain - edge case with all elements removed then re-added" {
   map.set("x", 10)
   map.set("y", 20)
   inspect(map.length(), content="2")
-  inspect(map.get("x"), content="Some(10)")
+  debug_inspect(map.get("x"), content="Some(10)")
   guard map.get("y") is Some(v)
   assert_eq(v, 20)
 
@@ -461,24 +461,24 @@ test "Map::get_from_string" {
 
   // Test basic string view access
   let view1 = "hello"[:]
-  inspect(map.get_from_string(view1), content="Some(1)")
+  debug_inspect(map.get_from_string(view1), content="Some(1)")
 
   // Test string view from substring
   let full_str = "prefix_world_suffix"
   let view2 = full_str.view(start_offset=7, end_offset=12)
-  inspect(map.get_from_string(view2), content="Some(2)")
+  debug_inspect(map.get_from_string(view2), content="Some(2)")
 
   // Test non-existent key
   let view3 = "notfound"[:]
-  inspect(map.get_from_string(view3), content="None")
+  debug_inspect(map.get_from_string(view3), content="None")
 
   // Test length mismatch
   let short_view = "hell"[:]
-  inspect(map.get_from_string(short_view), content="None")
+  debug_inspect(map.get_from_string(short_view), content="None")
 
   // Test content mismatch with same length
   let mismatch_view = "hella"[:]
-  inspect(map.get_from_string(mismatch_view), content="None")
+  debug_inspect(map.get_from_string(mismatch_view), content="None")
 
   // Test empty string
   let empty_map = { "": 42 }
@@ -498,24 +498,24 @@ test "Map::get_from_bytes" {
 
   // Test basic bytes view access
   let view1 = b"hello"[:]
-  inspect(map.get_from_bytes(view1), content="Some(1)")
+  debug_inspect(map.get_from_bytes(view1), content="Some(1)")
 
   // Test bytes view from sub-array
   let full_bytes = b"prefix_world_suffix"
   let view2 = full_bytes[7:12]
-  inspect(map.get_from_bytes(view2), content="Some(2)")
+  debug_inspect(map.get_from_bytes(view2), content="Some(2)")
 
   // Test non-existent key
   let view3 = b"notfound"[:]
-  inspect(map.get_from_bytes(view3), content="None")
+  debug_inspect(map.get_from_bytes(view3), content="None")
 
   // Test length mismatch
   let short_view = b"hell"[:]
-  inspect(map.get_from_bytes(short_view), content="None")
+  debug_inspect(map.get_from_bytes(short_view), content="None")
 
   // Test content mismatch with same length
   let mismatch_view = b"hellx"[:]
-  inspect(map.get_from_bytes(mismatch_view), content="None")
+  debug_inspect(map.get_from_bytes(mismatch_view), content="None")
 
   // Test empty bytes
   let empty_map = { b"": 42 }

@@ -19,7 +19,7 @@ priv struct Entry[K, V] {
   hash : Int
   key : K
   mut value : V
-} derive(Show, Debug)
+} derive(Debug)
 
 /// A mutable hash map implements with Robin Hood hashing.
 ///

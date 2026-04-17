@@ -287,9 +287,9 @@ test "filter_map" {
   let it1 = [1, 2, 3, 4, 5]
     .iter()
     .filter_map(x => if x % 2 == 0 { Some(x * 10) } else { None })
-  inspect(it1.next(), content="Some(20)")
-  inspect(it1.next(), content="Some(40)")
-  inspect(it1.next(), content="None")
+  debug_inspect(it1.next(), content="Some(20)")
+  debug_inspect(it1.next(), content="Some(40)")
+  debug_inspect(it1.next(), content="None")
   // Test None branch inside while loop
   let it2 = [1, 2, 3]
     .iter()
@@ -611,7 +611,7 @@ test "Iter::intersperse" {
 
 ///|
 test "Iter::last" {
-  inspect([1, 2, 3].iter().last(), content="Some(3)")
+  debug_inspect([1, 2, 3].iter().last(), content="Some(3)")
   guard [1].iter().last() is Some(v)
   assert_eq(v, 1)
   guard ([] : Array[Int]).iter().last() is None
@@ -661,7 +661,7 @@ test "next function - multiple elements" {
 ///|
 test "next function - random cases" {
   let iter1 = [10, 20, 30].iter()
-  inspect(iter1.next(), content="Some(10)")
+  debug_inspect(iter1.next(), content="Some(10)")
   let iter2 = [-5, 0, 5].iter()
   guard iter2.next() is Some(v)
   assert_eq(v, -5)
@@ -700,14 +700,14 @@ test "@builtin.join/multiple_elements_without_separator" {
 ///|
 test "Iter::nth" {
   let it = () => [1, 2, 3, 4, 5].iter()
-  inspect(it().nth(2), content="Some(3)")
-  inspect(it().nth(4), content="Some(5)")
-  inspect(it().nth(5), content="None")
-  inspect(it().nth(-1), content="None")
-  inspect(it().concat(it()).nth(5), content="Some(1)")
+  debug_inspect(it().nth(2), content="Some(3)")
+  debug_inspect(it().nth(4), content="Some(5)")
+  debug_inspect(it().nth(5), content="None")
+  debug_inspect(it().nth(-1), content="None")
+  debug_inspect(it().concat(it()).nth(5), content="Some(1)")
   debug_inspect(it().concat(it()).nth(10), content="None")
-  inspect(it().drop(1).nth(3), content="Some(5)")
-  inspect(it().drop(1).nth(4), content="None")
+  debug_inspect(it().drop(1).nth(3), content="Some(5)")
+  debug_inspect(it().drop(1).nth(4), content="None")
   guard it().take(1).nth(1) is None
   debug_inspect(it().take(2).nth(1), content="Some(2)")
 }
@@ -715,9 +715,9 @@ test "Iter::nth" {
 ///|
 test "@builtin.Iter::maximum" {
   // Basic functionality with integers
-  inspect([1, 2, 3, 4, 5].iter().maximum(), content="Some(5)")
+  debug_inspect([1, 2, 3, 4, 5].iter().maximum(), content="Some(5)")
   // With negative numbers
-  inspect([-5, -3, -1, -10].iter().maximum(), content="Some(-1)")
+  debug_inspect([-5, -3, -1, -10].iter().maximum(), content="Some(-1)")
   // Single element
   guard [42].iter().maximum() is Some(v)
   assert_eq(v, 42)

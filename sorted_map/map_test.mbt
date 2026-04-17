@@ -39,17 +39,13 @@ test "remove on empty map" {
 ///|
 test "get" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
-  inspect(
+  debug_inspect(
     map.get(1),
-    content=(
-      #|Some("a")
-    ),
+    content="Some(\"a\")",
   )
-  inspect(
+  debug_inspect(
     map.get(2),
-    content=(
-      #|Some("b")
-    ),
+    content="Some(\"b\")",
   )
   debug_inspect(
     map.get(3),
@@ -433,7 +429,7 @@ test "copy independence" {
   map2.set(2, "x")
   // Original should be unchanged
   inspect(map1.length(), content="3")
-  inspect(map1.get(1), content="Some(\"a\")")
+  debug_inspect(map1.get(1), content="Some(\"a\")")
   debug_inspect(map1.get(2), content="Some(\"b\")")
   inspect(map1.contains(4), content="false")
   // Copy should reflect modifications

@@ -818,7 +818,7 @@ test "copy" {
   map2.set(7, "g")
   inspect(map1.length(), content="6")
   inspect(map2.length(), content="7")
-  inspect(map1.get(7), content="None")
+  @debug.debug_inspect(map1.get(7), content="None")
   @debug.debug_inspect(map2.get(7), content="Some(\"g\")")
 
   // Verify independence - modifying original doesn't affect copy

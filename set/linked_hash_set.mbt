@@ -15,14 +15,29 @@
 // Types
 
 ///|
-#warnings("-deprecated_syntax")
 priv struct Entry[K] {
   mut prev : Int
   mut next : Entry[K]?
   mut psl : Int
   hash : Int
   key : K
-} derive(Show)
+}
+
+///|
+#warnings("-deprecated")
+impl[K : Show] Show for Entry[K] with output(self, logger) {
+  logger.write_string("{prev: ")
+  self.prev.output(logger)
+  logger.write_string(", next: ")
+  self.next.output(logger)
+  logger.write_string(", psl: ")
+  self.psl.output(logger)
+  logger.write_string(", hash: ")
+  self.hash.output(logger)
+  logger.write_string(", key: ")
+  self.key.output(logger)
+  logger.write_string("}")
+}
 
 ///|
 /// Mutable linked hash set that maintains the order of insertion, not thread safe.

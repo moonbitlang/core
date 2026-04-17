@@ -15,12 +15,12 @@
 ///|
 test "SparseArray" {
   let arr0 = @sparse_array.singleton(1, 1)
-  inspect(
+  debug_inspect(
     [arr0.get(0), arr0.get(1), arr0.get(2)],
     content="[None, Some(1), None]",
   )
   let arr1 = arr0.add(2, 2)
-  inspect(
+  debug_inspect(
     [arr1.get(0), arr1.get(1), arr1.get(2)],
     content="[None, Some(1), Some(2)]",
   )

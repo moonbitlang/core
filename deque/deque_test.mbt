@@ -15,10 +15,10 @@
 ///|
 test "get option" {
   let dv = @deque.from_array([1, 2, 3, 4, 5])
-  inspect(dv.get(0), content="Some(1)")
-  inspect(dv.get(2), content="Some(3)")
-  inspect(dv.get(4), content="Some(5)")
-  inspect(dv.get(-1), content="None")
+  debug_inspect(dv.get(0), content="Some(1)")
+  debug_inspect(dv.get(2), content="Some(3)")
+  debug_inspect(dv.get(4), content="Some(5)")
+  debug_inspect(dv.get(-1), content="None")
   debug_inspect(dv.get(5), content="None")
   debug_inspect(dv.get(100), content="None")
 }
@@ -120,18 +120,18 @@ test "reserve and push" {
   // capacity > 0, len = 0
   let a = @deque.new(capacity=2)
   a.push_back(Option::Some(1))
-  inspect(a.front(), content="Some(Some(1))")
-  inspect(a.back(), content="Some(Some(1))")
+  debug_inspect(a.front(), content="Some(Some(1))")
+  debug_inspect(a.back(), content="Some(Some(1))")
   // capacity = 0, len = 0
   let b = @deque.new(capacity=0)
   b.push_back(Option::Some(1))
-  inspect(b.front(), content="Some(Some(1))")
-  inspect(b.back(), content="Some(Some(1))")
+  debug_inspect(b.front(), content="Some(Some(1))")
+  debug_inspect(b.back(), content="Some(Some(1))")
   // capacity > 0, len = 0
   let c = @deque.new(capacity=2)
   c.push_front(Option::Some(1))
-  inspect(c.front(), content="Some(Some(1))")
-  inspect(c.back(), content="Some(Some(1))")
+  debug_inspect(c.front(), content="Some(Some(1))")
+  debug_inspect(c.back(), content="Some(Some(1))")
   // capacity = 0, len = 0
   let d = @deque.new(capacity=0)
   d.push_front(Option::Some(1))
@@ -429,18 +429,18 @@ test "reserve_and_push" {
   // capacity > 0, len = 0
   let a = @deque.new(capacity=2)
   a.push_back(Some(1))
-  inspect(a.front(), content="Some(Some(1))")
-  inspect(a.back(), content="Some(Some(1))")
+  debug_inspect(a.front(), content="Some(Some(1))")
+  debug_inspect(a.back(), content="Some(Some(1))")
   // capacity = 0, len = 0
   let b = @deque.new(capacity=0)
   b.push_back(Some(1))
-  inspect(b.front(), content="Some(Some(1))")
-  inspect(b.back(), content="Some(Some(1))")
+  debug_inspect(b.front(), content="Some(Some(1))")
+  debug_inspect(b.back(), content="Some(Some(1))")
   // capacity > 0, len = 0
   let c = @deque.new(capacity=2)
   c.push_front(Some(1))
-  inspect(c.front(), content="Some(Some(1))")
-  inspect(c.back(), content="Some(Some(1))")
+  debug_inspect(c.front(), content="Some(Some(1))")
+  debug_inspect(c.back(), content="Some(Some(1))")
   // capacity = 0, len = 0
   let d = @deque.new(capacity=0)
   d.push_front(Some(1))

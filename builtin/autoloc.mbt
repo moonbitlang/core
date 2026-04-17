@@ -101,8 +101,14 @@ pub fn SourceLoc::to_json_string(self : SourceLoc) -> String {
 /// array of optional source locations, where each element corresponds to an
 /// argument's location in the source code. Used internally by the compiler for
 /// error reporting and debugging purposes.
-#warnings("-deprecated_syntax")
-pub(all) struct ArgsLoc(Array[SourceLoc?]) derive(Show)
+pub(all) struct ArgsLoc(Array[SourceLoc?])
+
+///|
+#warnings("-deprecated")
+pub impl Show for ArgsLoc with output(self, logger) {
+  let ArgsLoc(arr) = self
+  arr.output(logger)
+}
 
 ///|
 /// Converts an array of optional source locations to its JSON string

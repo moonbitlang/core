@@ -1128,7 +1128,7 @@ test "from_iter" {
 ///|
 test "Array::last" {
   // Test with a random array of integers
-  inspect([1, 2, 3, 4, 5].last(), content="Some(5)")
+  debug_inspect([1, 2, 3, 4, 5].last(), content="Some(5)")
 
   // Test with a random array of strings
   debug_inspect(["a", "b", "c"].last(), content="Some(\"c\")")

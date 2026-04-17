@@ -86,14 +86,16 @@ fn boyer_moore_horspool_find(
 
 ///|
 test "boyer_moore_horspool_find edge cases" {
-  inspect(boyer_moore_horspool_find("abc", ""), content="Some(0)")
-  inspect(boyer_moore_horspool_find("ab", "abcd"), content="None")
+  guard boyer_moore_horspool_find("abc", "") is Some(v)
+  assert_eq(v, 0)
+  guard boyer_moore_horspool_find("ab", "abcd") is None
 }
 
 ///|
 test "boyer_moore_horspool_rev_find edge cases" {
-  inspect(boyer_moore_horspool_rev_find("abc", ""), content="Some(3)")
-  inspect(boyer_moore_horspool_rev_find("ab", "abcd"), content="None")
+  guard boyer_moore_horspool_rev_find("abc", "") is Some(v)
+  assert_eq(v, 3)
+  guard boyer_moore_horspool_rev_find("ab", "abcd") is None
 }
 
 ///|

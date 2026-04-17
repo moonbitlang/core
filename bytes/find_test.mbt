@@ -14,32 +14,32 @@
 
 ///|
 test "find" {
-  inspect(b"hello".find(b"o"), content="Some(4)")
-  inspect(b"hello".find(b"l"), content="Some(2)")
-  inspect(b"hello".find(b"hello"), content="Some(0)")
-  inspect(b"hello".find(b"h"), content="Some(0)")
-  inspect(b"hello".find(b""), content="Some(0)")
-  inspect(b"hello".find(b"world"), content="None")
-  inspect(b"".find(b""), content="Some(0)")
-  inspect(b"".find(b"a"), content="None")
-  inspect(b"hello hello".find(b"hello"), content="Some(0)")
-  inspect(b"aaa".find(b"aa"), content="Some(0)")
-  inspect(b"aabaabaaa".find(b"aaa"), content="Some(6)")
+  debug_inspect(b"hello".find("o"), content="Some(4)")
+  debug_inspect(b"hello".find("l"), content="Some(2)")
+  debug_inspect(b"hello".find("hello"), content="Some(0)")
+  debug_inspect(b"hello".find("h"), content="Some(0)")
+  debug_inspect(b"hello".find(""), content="Some(0)")
+  debug_inspect(b"hello".find("world"), content="None")
+  debug_inspect(b"".find(""), content="Some(0)")
+  debug_inspect(b"".find("a"), content="None")
+  debug_inspect(b"hello hello".find("hello"), content="Some(0)")
+  debug_inspect(b"aaa".find("aa"), content="Some(0)")
+  debug_inspect(b"aabaabaaa".find("aaa"), content="Some(6)")
 }
 
 ///|
 test "rev_find" {
-  inspect(b"hello".rev_find(b"o"), content="Some(4)")
-  inspect(b"hello".rev_find(b"l"), content="Some(3)")
-  inspect(b"hello".rev_find(b"hello"), content="Some(0)")
-  inspect(b"hello".rev_find(b"h"), content="Some(0)")
-  inspect(b"hello".rev_find(b""), content="Some(5)")
-  inspect(b"hello".rev_find(b"world"), content="None")
-  inspect(b"".rev_find(b""), content="Some(0)")
-  inspect(b"".rev_find(b"a"), content="None")
-  inspect(b"hello hello".rev_find(b"hello"), content="Some(6)")
-  inspect(b"aaa".rev_find(b"aa"), content="Some(1)")
-  inspect(b"aabaaabaa".find(b"aaa"), content="Some(3)")
+  debug_inspect(b"hello".rev_find("o"), content="Some(4)")
+  debug_inspect(b"hello".rev_find("l"), content="Some(3)")
+  debug_inspect(b"hello".rev_find("hello"), content="Some(0)")
+  debug_inspect(b"hello".rev_find("h"), content="Some(0)")
+  debug_inspect(b"hello".rev_find(""), content="Some(5)")
+  debug_inspect(b"hello".rev_find("world"), content="None")
+  debug_inspect(b"".rev_find(""), content="Some(0)")
+  debug_inspect(b"".rev_find("a"), content="None")
+  debug_inspect(b"hello hello".rev_find("hello"), content="Some(6)")
+  debug_inspect(b"aaa".rev_find("aa"), content="Some(1)")
+  debug_inspect(b"aabaaabaa".find("aaa"), content="Some(3)")
 }
 
 ///|

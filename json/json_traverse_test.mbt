@@ -93,9 +93,9 @@ fn Json::prune_loc_test(self : Json) -> Json {
 ///|
 test "prune_loc - primitive values" {
   // Null, True, False, Number, String should be preserved as-is
-  inspect(null.prune_loc(), content="Some(Null)")
-  inspect(Json::boolean(true).prune_loc(), content="Some(True)")
-  inspect(Json::boolean(false).prune_loc(), content="Some(False)")
+  debug_inspect(null.prune_loc(), content="Some(Null)")
+  debug_inspect(Json::boolean(true).prune_loc(), content="Some(True)")
+  debug_inspect(Json::boolean(false).prune_loc(), content="Some(False)")
   debug_inspect(Json::number(42.0).prune_loc(), content="Some(Number(42))")
   debug_inspect(Json::string("hello").prune_loc(), content="Some(String(\"hello\"))")
 }

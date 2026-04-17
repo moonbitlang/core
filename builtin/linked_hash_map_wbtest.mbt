@@ -608,7 +608,3 @@ fn[K : Show, V : Show] Map::_debug_entries(self : Map[K, V]) -> String {
   buf.to_string()
 }
 
-///|
-impl[K : Eq, V] Eq for Entry[K, V] with equal(self, other) {
-  self.hash == other.hash && self.key == other.key
-}
