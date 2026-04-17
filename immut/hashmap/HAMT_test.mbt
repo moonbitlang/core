@@ -190,18 +190,9 @@ test "HAMT::to_string" {
 ///|
 test "HAMT::from_array" {
   let map = @hashmap.from_array([(1, "1"), (2, "2"), (42, "42")])
-  debug_inspect(
-    (1, map.get(1)),
-    content="(1, Some(\"1\"))",
-  )
-  debug_inspect(
-    (2, map.get(2)),
-    content="(2, Some(\"2\"))",
-  )
-  debug_inspect(
-    (42, map.get(42)),
-    content="(42, Some(\"42\"))",
-  )
+  debug_inspect((1, map.get(1)), content="(1, Some(\"1\"))")
+  debug_inspect((2, map.get(2)), content="(2, Some(\"2\"))")
+  debug_inspect((42, map.get(42)), content="(42, Some(\"42\"))")
   debug_inspect((43, map.get(43)), content="(43, None)")
 }
 
@@ -842,9 +833,18 @@ test "HAMT::intersection_with with leaf" {
   let m1 = @hashmap.from_array([(1, 1), (2, 2)])
   let m2 = @hashmap.singleton(2, 20)
   let m3 = @hashmap.singleton(3, 30)
-  @test.assert_eq(m1.intersection_with(m2, (_k, v1, v2) => v1 + v2).get(2), Some(22))
-  @test.assert_eq(m1.intersection_with(m3, (_k, v1, v2) => v1 + v2).get(3), None)
-  debug_inspect(m2.intersection_with(m1, (_k, v1, v2) => v1 + v2).get(2), content="Some(22)")
+  @test.assert_eq(
+    m1.intersection_with(m2, (_k, v1, v2) => v1 + v2).get(2),
+    Some(22),
+  )
+  @test.assert_eq(
+    m1.intersection_with(m3, (_k, v1, v2) => v1 + v2).get(3),
+    None,
+  )
+  debug_inspect(
+    m2.intersection_with(m1, (_k, v1, v2) => v1 + v2).get(2),
+    content="Some(22)",
+  )
 }
 
 ///|

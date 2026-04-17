@@ -22,10 +22,9 @@ pub(all) suberror JsonDecodeError {
 ///|
 pub impl @debug.Debug for JsonDecodeError with to_repr(self) {
   let JsonDecodeError((path, msg)) = self
-  @debug.Repr::ctor(
-    "JsonDecodeError",
-    [(None, @debug.Repr::tuple([@debug.to_repr(path), @debug.Repr::string(msg)]))],
-  )
+  @debug.Repr::ctor("JsonDecodeError", [
+    (None, @debug.Repr::tuple([@debug.to_repr(path), @debug.Repr::string(msg)])),
+  ])
 }
 
 ///|

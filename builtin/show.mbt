@@ -263,8 +263,10 @@ pub impl Show for String with to_string(self) {
   self
 }
 
+///|
 #deprecated("Use Debug instead of Show for debugging purposes.")
-pub impl[X:Show] Show for X?
+pub impl[X : Show] Show for X?
+
 ///|
 pub impl[X : Show] Show for X? with output(self, logger) {
   match self {

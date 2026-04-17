@@ -289,7 +289,10 @@ pub fn[T] Array::view(
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let start = 1
 ///   let end = 4
-///   debug_inspect(arr.get_view(start~, end~), content="Some(<ArrayView: [2, 3, 4]>)")
+///   debug_inspect(
+///     arr.get_view(start~, end~),
+///     content="Some(<ArrayView: [2, 3, 4]>)",
+///   )
 ///   let start = 3
 ///   let end = 10
 ///   debug_inspect(arr.get_view(start~, end~), content="None")
@@ -481,7 +484,10 @@ pub fn[T] FixedArray::view(
 ///   let arr : FixedArray[Int] = [1, 2, 3, 4, 5]
 ///   let start = 1
 ///   let end = 4
-///   debug_inspect(arr.get_view(start~, end~), content="Some(<ArrayView: [2, 3, 4]>)")
+///   debug_inspect(
+///     arr.get_view(start~, end~),
+///     content="Some(<ArrayView: [2, 3, 4]>)",
+///   )
 ///   let start = 2
 ///   let end = 10
 ///   debug_inspect(arr.get_view(start~, end~), content="None")

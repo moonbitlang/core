@@ -412,10 +412,22 @@ test "Bytes has_prefix/has_suffix/chop" {
   inspect(view.has_prefix(b"ll"[:]), content="false")
   debug_inspect(view.chop_prefix(b"el"[:]), content="Some(<BytesView: [0x6c]>)")
   debug_inspect(view.chop_suffix(b"ll"[:]), content="Some(<BytesView: [0x65]>)")
-  debug_inspect(view.chop_prefix(b""[:]), content="Some(<BytesView: [0x65, 0x6c, 0x6c]>)")
-  debug_inspect(view.chop_suffix(b""[:]), content="Some(<BytesView: [0x65, 0x6c, 0x6c]>)")
-  debug_inspect(bytes.chop_prefix(b"he"[:]), content="Some(<BytesView: [0x6c, 0x6c, 0x6f]>)")
-  debug_inspect(bytes.chop_suffix(b"lo"[:]), content="Some(<BytesView: [0x68, 0x65, 0x6c]>)")
+  debug_inspect(
+    view.chop_prefix(b""[:]),
+    content="Some(<BytesView: [0x65, 0x6c, 0x6c]>)",
+  )
+  debug_inspect(
+    view.chop_suffix(b""[:]),
+    content="Some(<BytesView: [0x65, 0x6c, 0x6c]>)",
+  )
+  debug_inspect(
+    bytes.chop_prefix(b"he"[:]),
+    content="Some(<BytesView: [0x6c, 0x6c, 0x6f]>)",
+  )
+  debug_inspect(
+    bytes.chop_suffix(b"lo"[:]),
+    content="Some(<BytesView: [0x68, 0x65, 0x6c]>)",
+  )
   guard bytes.chop_prefix(b"zz"[:]) is None
   debug_inspect(bytes.chop_suffix(b"zz"[:]), content="None")
 }

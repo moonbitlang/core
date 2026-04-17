@@ -705,10 +705,7 @@ test "capture/email_with_named_groups" {
     fail("Expected match")
   }
   inspect(m.content(), content="john@example.com")
-  debug_inspect(
-    m.named_group("user"),
-    content="Some(<StringView: \"john\">)",
-  )
+  debug_inspect(m.named_group("user"), content="Some(<StringView: \"john\">)")
   debug_inspect(
     m.named_group("domain"),
     content=(

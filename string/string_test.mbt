@@ -820,8 +820,14 @@ test "offset_of_nth_char range" {
     s.offset_of_nth_char(2, start_offset=1, end_offset=6),
     content="Some(4)",
   )
-  debug_inspect(s.offset_of_nth_char(3, start_offset=1, end_offset=6), content="None")
-  debug_inspect(s.offset_of_nth_char(4, start_offset=1, end_offset=6), content="None")
+  debug_inspect(
+    s.offset_of_nth_char(3, start_offset=1, end_offset=6),
+    content="None",
+  )
+  debug_inspect(
+    s.offset_of_nth_char(4, start_offset=1, end_offset=6),
+    content="None",
+  )
   debug_inspect(
     s.offset_of_nth_char(-1, start_offset=1, end_offset=6),
     content="Some(4)",

@@ -596,7 +596,10 @@ pub fn[T] ReadOnlyArray::view(
 ///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
 ///   let start = 1
 ///   let end = 4
-///   debug_inspect(arr.get_view(start~, end~), content="Some(<ArrayView: [2, 3, 4]>)")
+///   debug_inspect(
+///     arr.get_view(start~, end~),
+///     content="Some(<ArrayView: [2, 3, 4]>)",
+///   )
 ///   let start = 4
 ///   let end = 10
 ///   debug_inspect(arr.get_view(start~, end~), content="None")
