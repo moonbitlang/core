@@ -1,6 +1,8 @@
 # Error Package Documentation
 
-This package provides utilities for working with MoonBit's error handling system, including implementations of `Show` and `ToJson` traits for the built-in `Error` type.
+This package provides utilities for working with MoonBit's error handling
+system, including implementations of `Show` and `ToJson` traits for the built-in
+`Error` type.
 
 ## Basic Error Usage
 
@@ -23,7 +25,7 @@ test "basic error handling" {
 
   // Handle error with try?
   let result2 = try? divide(10, 0)
-  inspect(result2, content="Err(Failure(\"Division by zero\"))")
+  debug_inspect(result2, content="Err(Failure(\"Division by zero\"))")
 }
 ```
 
@@ -91,7 +93,7 @@ test "error display and json" {
   let error : Error = MyError(42)
 
   // Error can be displayed as string
-  let error_string = error.to_string()
+  let error_string = @debug.to_string(error)
   inspect(error_string.length() > 0, content="true")
 
   // Error can be converted to JSON
@@ -228,15 +230,23 @@ test "error composition" {
 
 ## Best Practices
 
-1. **Use specific error types**: Create custom `suberror` types for different error categories
-2. **Provide meaningful messages**: Include context and actionable information in error messages
-3. **Handle errors at appropriate levels**: Don't catch errors too early; let them propagate to where they can be properly handled
-4. **Use `try!` for operations that should not fail**: This will panic if an error occurs, making failures visible during development
-5. **Use `try?` for recoverable errors**: This returns a `Result` type that can be pattern matched
-6. **Implement proper cleanup**: Use the `protect` pattern or similar constructs for resource management
+1. **Use specific error types**: Create custom `suberror` types for different
+   error categories
+2. **Provide meaningful messages**: Include context and actionable information
+   in error messages
+3. **Handle errors at appropriate levels**: Don't catch errors too early; let
+   them propagate to where they can be properly handled
+4. **Use `try!` for operations that should not fail**: This will panic if an
+   error occurs, making failures visible during development
+5. **Use `try?` for recoverable errors**: This returns a `Result` type that can
+   be pattern matched
+6. **Implement proper cleanup**: Use the `protect` pattern or similar constructs
+   for resource management
 
 ## Performance Notes
 
 - Error handling in MoonBit is zero-cost when no errors occur
-- Error propagation is efficient and doesn't require heap allocation for the error path
-- Custom error types with `derive(ToJson)` automatically generate efficient JSON serialization
+- Error propagation is efficient and doesn't require heap allocation for the
+  error path
+- Custom error types with `derive(ToJson)` automatically generate efficient JSON
+  serialization

@@ -29,7 +29,7 @@ fn Error::to_string(self : Error) -> String = "%error.to_string"
 /// ```mbt check
 /// test {
 ///   let error : Error = Failure::Failure("test error")
-///   inspect(
+///   debug_inspect(
 ///     error,
 ///     content=(
 ///       #|Failure("test error")
@@ -40,6 +40,10 @@ fn Error::to_string(self : Error) -> String = "%error.to_string"
 pub impl Show for Error with output(self, logger) {
   logger.write_string(self.to_string())
 }
+
+///|
+#deprecated("Use debug instead")
+pub impl Show for Error
 
 ///|
 fn Error::to_json(self : Error) -> Json = "%error.to_json"

@@ -6,4 +6,5 @@ import {
   "moonbitlang/core/char",
   "moonbitlang/core/array",
   "moonbitlang/core/test",
+  "moonbitlang/core/debug",
 }
