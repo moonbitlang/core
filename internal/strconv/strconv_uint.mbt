@@ -122,7 +122,7 @@ test "parse_uint64" {
     @test.assert_eq(
       Result::Ok(parse_uint64(t.0)) catch {
         Failure::Failure(err) => Err(err)
-        err => Err(err.to_string())
+        err => Err(@debug.to_string(err))
       },
       t.1,
     )
@@ -220,7 +220,7 @@ test "parse_uint64_base" {
     @test.assert_eq(
       Result::Ok(parse_uint64(t.0, base=t.1)) catch {
         Failure::Failure(err) => Err(err)
-        err => Err(err.to_string())
+        err => Err(@debug.to_string(err))
       },
       t.2,
     )
@@ -255,7 +255,7 @@ test "parse_uint" {
     @test.assert_eq(
       Result::Ok(parse_uint(t.0)) catch {
         Failure::Failure(err) => Err(err)
-        err => Err(err.to_string())
+        err => Err(@debug.to_string(err))
       },
       t.1,
     )
@@ -264,8 +264,8 @@ test "parse_uint" {
 
 ///|
 test "parse_uint64 uppercase hex and invalid base" {
-  inspect(try? parse_uint64("ABCD", base=16), content="Ok(43981)")
-  inspect(
+  @debug.debug_inspect(try? parse_uint64("ABCD", base=16), content="Ok(43981)")
+  @debug.debug_inspect(
     try? parse_uint64("1234", base=37),
     content=(
       #|Err(Failure("invalid base"))

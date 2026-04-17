@@ -25,7 +25,7 @@ test "basic option + positional success snapshot" {
     argv=["--name", "alice", "file.txt"],
     env={},
   )
-  @debug.debug_inspect(
+  debug_inspect(
     matches.values,
     content=(
       #|{ "name": ["alice"], "target": ["file.txt"] }
@@ -40,7 +40,7 @@ test "basic option + positional failure snapshot" {
   ])
   try cmd.parse(argv=["--bad"], env={}) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: unexpected argument '--bad' found
@@ -146,7 +146,7 @@ test "subcommand context failure snapshot" {
   )
   try cmd.parse(argv=["run", "--oops"], env={}) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: unexpected argument '--oops' found
@@ -322,7 +322,7 @@ test "requires relationship success and failure snapshots" {
 
   try cmd.parse(argv=["--mode", "fast"], env={}) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: the following required argument was not provided: 'config' (required by 'mode')
@@ -353,7 +353,7 @@ test "arg group required and exclusive failure snapshot" {
 
   try cmd.parse(argv=[], env={}) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: the following required arguments were not provided:
@@ -384,7 +384,7 @@ test "subcommand required policy failure snapshot" {
 
   try cmd.parse(argv=[], env={}) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: the following required argument was not provided: 'subcommand'
@@ -415,7 +415,7 @@ test "conflicts_with success and failure snapshots" {
   ])
 
   let ok = try! cmd.parse(argv=["--verbose"], env={})
-  @debug.debug_inspect(
+  debug_inspect(
     ok.flags,
     content=(
       #|{ "verbose": true }
@@ -424,7 +424,7 @@ test "conflicts_with success and failure snapshots" {
 
   try cmd.parse(argv=["--verbose", "--quiet"], env={}) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: conflicting arguments: verbose and quiet
@@ -457,7 +457,7 @@ test "bounded non-last positional success snapshot" {
   ])
 
   let parsed = try! cmd.parse(argv=["a", "b", "c"], env={})
-  @debug.debug_inspect(
+  debug_inspect(
     parsed.values,
     content=(
       #|{ "first": ["a", "b"], "second": ["c"] }
@@ -473,7 +473,7 @@ test "bounded non-last positional failure snapshot" {
   ])
   try cmd.parse(argv=["a", "b", "c", "d"], env={}) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: unexpected value 'd' for '<second>' found; no more were expected

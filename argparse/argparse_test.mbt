@@ -63,7 +63,7 @@ test "long empty string disables long alias" {
 
   try cmd.parse(argv=["--verbose"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: unexpected argument '--verbose' found
@@ -83,7 +83,7 @@ test "long empty string disables long alias" {
 
   try cmd.parse(argv=["--count", "3"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: unexpected argument '--count' found
@@ -152,7 +152,7 @@ test "parse failure message contains error and contextual help" {
 
   try cmd.parse(argv=["--bad"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: unexpected argument '--bad' found
@@ -178,7 +178,7 @@ test "subcommand parse errors include subcommand help" {
 
   try cmd.parse(argv=["echo", "--bad"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: unexpected argument '--bad' found
@@ -204,7 +204,7 @@ test "build errors are surfaced as validation failure message" {
 
   try cmd.parse(argv=[], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: command definition validation failed: unknown requires target: fast -> missing
@@ -221,7 +221,7 @@ test "unknown argument keeps suggestion in final message" {
 
   try cmd.parse(argv=["--verbse"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: unexpected argument '--verbse' found
@@ -278,7 +278,7 @@ test "display help and version" {
 
   try cmd.parse(argv=["--oops"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: unexpected argument '--oops' found
@@ -308,7 +308,7 @@ test "parse error show is readable" {
 
   try cmd.parse(argv=["--verbse"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: unexpected argument '--verbse' found
@@ -332,7 +332,7 @@ test "parse error show is readable" {
 
   try cmd.parse(argv=["alice", "bob"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: unexpected value 'bob' for '<name>' found; no more were expected
@@ -362,7 +362,7 @@ test "relationships and num args" {
 
   try requires_cmd.parse(argv=["--mode", "fast"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: the following required argument was not provided: 'config' (required by 'mode')
@@ -400,7 +400,7 @@ test "arg groups required and multiple" {
 
   try cmd.parse(argv=[], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: the following required arguments were not provided:
@@ -424,7 +424,7 @@ test "arg groups required and multiple" {
 
   try cmd.parse(argv=["--fast", "--slow"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: group conflict mode
@@ -459,7 +459,7 @@ test "arg groups requires and conflicts" {
 
   try requires_cmd.parse(argv=["--fast"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: the following required arguments were not provided:
@@ -493,7 +493,7 @@ test "arg groups requires and conflicts" {
 
   try conflict_cmd.parse(argv=["--fast", "--json"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: group conflict mode conflicts with output
@@ -655,7 +655,7 @@ test "negatable and conflicts" {
 
   try cmd.parse(argv=["--verbose", "--quiet"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: conflicting arguments: verbose and quiet
@@ -681,7 +681,7 @@ test "flag does not accept inline value" {
   let cmd = @argparse.Command("demo", flags=[FlagArg("verbose", long="verbose")])
   try cmd.parse(argv=["--verbose=true"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: unexpected argument '--verbose=true' found
@@ -705,7 +705,7 @@ test "built-in long flags do not accept inline value" {
 
   try cmd.parse(argv=["--help=1"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: unexpected argument '--help=1' found
@@ -724,7 +724,7 @@ test "built-in long flags do not accept inline value" {
 
   try cmd.parse(argv=["--version=1"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: unexpected argument '--version=1' found
@@ -775,7 +775,7 @@ test "command policies" {
   )
   try sub_cmd.parse(argv=[], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: the following required argument was not provided: 'subcommand'

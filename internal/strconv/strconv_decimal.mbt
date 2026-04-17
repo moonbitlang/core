@@ -18,13 +18,16 @@
 let max_shift = 59
 
 ///|
+using @debug {trait Debug, type Repr, debug_inspect}
+
+///|
 priv struct Decimal {
   digits : FixedArray[Byte]
   mut digits_num : Int
   mut decimal_point : Int
   mut negative : Bool
   mut truncated : Bool
-}
+} derive(Debug)
 
 ///|
 /// Decimal power of ten to binary power of two.
@@ -637,31 +640,31 @@ test "parse decimal with underscore" {
 
 ///|
 test "parse decimal error" {
-  inspect(
+  debug_inspect(
     try? parse_decimal_priv("1e"),
     content=(
       #|Err(Failure("invalid syntax"))
     ),
   )
-  inspect(
+  debug_inspect(
     try? parse_decimal_priv("1e+"),
     content=(
       #|Err(Failure("invalid syntax"))
     ),
   )
-  inspect(
+  debug_inspect(
     try? parse_decimal_priv("1e_"),
     content=(
       #|Err(Failure("invalid syntax"))
     ),
   )
-  inspect(
+  debug_inspect(
     try? parse_decimal_priv("1-23"),
     content=(
       #|Err(Failure("invalid syntax"))
     ),
   )
-  inspect(
+  debug_inspect(
     try? parse_decimal_priv("1.2.3"),
     content=(
       #|Err(Failure("invalid syntax"))
@@ -711,14 +714,14 @@ test "rounded_integer overflow when decimal_point > 20" {
 
 ///|
 test "corner cases" {
-  inspect(try? parse_decimal_priv(".123"), content="Ok(0.123)")
-  inspect(
+  debug_inspect(try? parse_decimal_priv(".123"), content="Ok(0.123)")
+  debug_inspect(
     try? parse_decimal_priv("."),
     content=(
       #|Err(Failure("invalid syntax"))
     ),
   )
-  inspect(
+  debug_inspect(
     try? parse_decimal_priv("-"),
     content=(
       #|Err(Failure("invalid syntax"))

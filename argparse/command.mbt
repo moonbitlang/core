@@ -132,7 +132,7 @@ pub fn Command::parse(
     DisplayVersion::Message(text) => print_and_exit_success(text)
     ArgError::Message(_) as err => raise err
     err => {
-      println(err.to_string())
+      println(@debug.to_string(err))
       panic()
     }
   }

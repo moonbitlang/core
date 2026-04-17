@@ -259,7 +259,7 @@ test "parse_double" {
     @test.assert_eq(
       Result::Ok(parse_double(t.0)) catch {
         Failure::Failure(err) => Err(err)
-        err => Err(err.to_string())
+        err => Err(@debug.to_string(err))
       },
       t.1,
     )

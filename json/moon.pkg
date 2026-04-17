@@ -7,6 +7,7 @@ import {
   "moonbitlang/core/internal/strconv" @internal/strconv,
   "moonbitlang/core/option",
   "moonbitlang/core/buffer",
+  "moonbitlang/core/debug"
 }
 
 import {
