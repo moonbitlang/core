@@ -169,7 +169,7 @@ test "char_length_eq and char_length_ge" {
 
 ///|
 test "offset_of_nth_char out of range" {
-  inspect("abc".offset_of_nth_char(5), content="None")
+  debug_inspect("abc".offset_of_nth_char(5), content="None")
 }
 
 ///|
@@ -198,7 +198,7 @@ test "StringView pad_start and pad_end no padding" {
 
 ///|
 test "String::rev_find partial mismatch" {
-  inspect("ababa".rev_find("abac"), content="None")
+  debug_inspect("ababa".rev_find("abac"), content="None")
 }
 
 ///|
@@ -248,7 +248,7 @@ test "panic offset_of_nth_char invalid range" {
 
 ///|
 test "offset_of_nth_char backward out of range" {
-  inspect(
+  debug_inspect(
     "abc".offset_of_nth_char(-2, start_offset=0, end_offset=1),
     content="None",
   )
@@ -257,8 +257,8 @@ test "offset_of_nth_char backward out of range" {
 ///|
 test "String get_char invalid surrogate pair" {
   let invalid = String::from_array([(0xD800).unsafe_to_char(), 'a'])
-  inspect(invalid.get_char(0), content="None")
-  inspect(invalid[:].get_char(0), content="None")
+  debug_inspect(invalid.get_char(0), content="None")
+  debug_inspect(invalid[:].get_char(0), content="None")
 }
 
 ///|

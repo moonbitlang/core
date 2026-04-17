@@ -63,10 +63,9 @@ pub(all) suberror SnapshotError {
 }
 
 // Types and methods
-pub(all) struct ArgsLoc(Array[SourceLoc?]) derive(Show)
-#deprecated
-pub fn ArgsLoc::inner(Self) -> Array[SourceLoc?]
+pub(all) struct ArgsLoc(Array[SourceLoc?])
 pub fn ArgsLoc::to_json(Self) -> String
+pub impl Show for ArgsLoc
 
 type Array[T]
 #alias(every)
@@ -319,8 +318,6 @@ pub impl[X : ToJson] ToJson for Iter[X]
 pub(all) struct Iter2[X, Y](Iter[(X, Y)])
 pub fn[X, Y] Iter2::concat(Self[X, Y], Self[X, Y]) -> Self[X, Y]
 pub fn[X, Y] Iter2::each(Self[X, Y], (X, Y) -> Unit) -> Unit
-#deprecated
-pub fn[X, Y] Iter2::inner(Self[X, Y]) -> Iter[(X, Y)]
 #alias(iterator)
 pub fn[X, Y] Iter2::iter(Self[X, Y]) -> Iter[(X, Y)]
 #alias(iterator2)
@@ -789,6 +786,7 @@ pub fn[T] Option::iter(T?) -> Iter[T]
 pub fn[T, U] Option::map(T?, (T) -> U raise?) -> U? raise?
 pub fn[T, U] Option::map_or(T?, U, (T) -> U raise?) -> U raise?
 pub fn[T, U] Option::map_or_else(T?, () -> U raise?, (T) -> U raise?) -> U raise?
+#deprecated
 pub fn[X : Show] Option::to_string(X?) -> String
 pub fn[X] Option::unwrap(X?) -> X
 #alias(or, deprecated)
@@ -1319,6 +1317,7 @@ pub impl Show for UInt16
 pub impl Show for UInt64
 pub impl Show for Double
 pub impl Show for String
+#deprecated
 pub impl[X : Show] Show for X?
 pub impl[T : Show, E : Show] Show for Result[T, E]
 pub impl[X : Show] Show for FixedArray[X]

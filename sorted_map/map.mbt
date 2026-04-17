@@ -54,8 +54,8 @@ pub fn[K : Compare, V] SortedMap::from_array(
 ///   map.set(1, "a")
 ///   map.set(2, "b")
 ///   map.set(2, "c") // updates value for key 2
-///   inspect(map.get(1), content="Some(\"a\")")
-///   inspect(map.get(2), content="Some(\"c\")")
+///   debug_inspect(map.get(1), content="Some(\"a\")")
+///   debug_inspect(map.get(2), content="Some(\"c\")")
 /// }
 /// ```
 #alias("_[_]=_")
@@ -439,9 +439,9 @@ pub fn[K, V] SortedMap::copy(self : SortedMap[K, V]) -> SortedMap[K, V] {
 ///   let map1 = @sorted_map.from_array([(1, "a"), (2, "b")])
 ///   let map2 = @sorted_map.from_array([(2, "c"), (3, "d")])
 ///   let merged = map1.merge(map2)
-///   inspect(merged.get(1), content="Some(\"a\")")
-///   inspect(merged.get(2), content="Some(\"c\")")
-///   inspect(merged.get(3), content="Some(\"d\")")
+///   debug_inspect(merged.get(1), content="Some(\"a\")")
+///   debug_inspect(merged.get(2), content="Some(\"c\")")
+///   debug_inspect(merged.get(3), content="Some(\"d\")")
 /// }
 /// ```
 pub fn[K : Compare, V] SortedMap::merge(
@@ -472,9 +472,9 @@ pub fn[K : Compare, V] SortedMap::merge(
 ///   let map1 = @sorted_map.from_array([(1, "a"), (2, "b")])
 ///   let map2 = @sorted_map.from_array([(2, "c"), (3, "d")])
 ///   map1.merge_in_place(map2)
-///   inspect(map1.get(1), content="Some(\"a\")")
-///   inspect(map1.get(2), content="Some(\"c\")")
-///   inspect(map1.get(3), content="Some(\"d\")")
+///   debug_inspect(map1.get(1), content="Some(\"a\")")
+///   debug_inspect(map1.get(2), content="Some(\"c\")")
+///   debug_inspect(map1.get(3), content="Some(\"d\")")
 /// }
 /// ```
 pub fn[K : Compare, V] SortedMap::merge_in_place(
@@ -818,15 +818,15 @@ test "copy" {
   map2.set(7, "g")
   inspect(map1.length(), content="6")
   inspect(map2.length(), content="7")
-  inspect(map1.get(7), content="None")
-  inspect(map2.get(7), content="Some(\"g\")")
+  @debug.debug_inspect(map1.get(7), content="None")
+  @debug.debug_inspect(map2.get(7), content="Some(\"g\")")
 
   // Verify independence - modifying original doesn't affect copy
   map1.remove(1)
   inspect(map1.length(), content="5")
   inspect(map2.length(), content="7")
-  inspect(map1.get(1), content="None")
-  inspect(map2.get(1), content="Some(\"a\")")
+  @debug.debug_inspect(map1.get(1), content="None")
+  @debug.debug_inspect(map2.get(1), content="Some(\"a\")")
 }
 
 ///|

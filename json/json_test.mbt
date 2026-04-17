@@ -22,7 +22,7 @@ test "deep access" {
     "bool": false,
     "obj": {},
   }
-  inspect(
+  debug_inspect(
     if json is Object({ "null": Null, .. }) {
       Some(())
     } else {
@@ -30,7 +30,7 @@ test "deep access" {
     },
     content="Some(())",
   )
-  inspect(
+  debug_inspect(
     if json is Object({ "key": Array(arr), .. }) && arr.get(2) is Some(Null) {
       Some(())
     } else {
@@ -38,7 +38,7 @@ test "deep access" {
     },
     content="Some(())",
   )
-  inspect(
+  debug_inspect(
     if json is Object({ "bool": True | False as t, .. }) {
       Some(t is True)
     } else {
@@ -46,7 +46,7 @@ test "deep access" {
     },
     content="Some(false)",
   )
-  inspect(
+  debug_inspect(
     if json is Object({ "key": Array(arr), .. }) &&
       arr.get(1) is Some(True | False as b) {
       Some(b is True)
@@ -55,17 +55,25 @@ test "deep access" {
     },
     content="Some(true)",
   )
-  inspect(
+  debug_inspect(
     if json is Object({ "key": Array(arr), .. }) {
       Some(arr)
     } else {
       None
     },
     content=(
-      #|Some([Number(1), True, Null, Array([]), Object({"key": String("value"), "value": Number(100)})])
+      #|Some(
+      #|  [
+      #|    Number(1),
+      #|    True,
+      #|    Null,
+      #|    Array([]),
+      #|    Object({ "key": String("value"), "value": Number(100) }),
+      #|  ],
+      #|)
     ),
   )
-  inspect(
+  debug_inspect(
     if json is Object({ "key": Array(arr), .. }) &&
       arr.get(3) is Some(Array(arr)) {
       Some(arr)
@@ -74,7 +82,7 @@ test "deep access" {
     },
     content="Some([])",
   )
-  inspect(
+  debug_inspect(
     if json is Object({ "key": Array(arr), .. }) &&
       arr.get(4) is Some(Object(obj)) {
       Some(obj.to_array())
@@ -85,7 +93,7 @@ test "deep access" {
       #|Some([("key", String("value")), ("value", Number(100))])
     ),
   )
-  inspect(
+  debug_inspect(
     if json is Object({ "obj": Object(obj), .. }) {
       Some(obj)
     } else {

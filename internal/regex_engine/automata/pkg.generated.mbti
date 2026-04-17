@@ -40,8 +40,6 @@ pub fn Context::new() -> Self
 type Expr
 
 pub(all) struct Mark(Int) derive(Compare, Eq, Hash)
-#deprecated
-pub fn Mark::inner(Self) -> Int
 
 type MarkSlotMap derive(Eq, Hash)
 pub fn MarkSlotMap::get_slot(Self, Mark) -> Slot

@@ -85,8 +85,8 @@ test "StringView core operations" {
   inspect(make_view.to_string(), content="aaa")
   inspect(StringView::default(), content="")
   inspect(("hi"[:] + "!"[:]).to_string(), content="hi!")
-  inspect(view.offset_of_nth_char(1), content="Some(1)")
-  inspect(view.offset_of_nth_char(3), content="None")
+  debug_inspect(view.offset_of_nth_char(1), content="Some(1)")
+  debug_inspect(view.offset_of_nth_char(3), content="None")
 }
 
 ///|

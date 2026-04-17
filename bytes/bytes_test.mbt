@@ -256,14 +256,14 @@ test "bytes pattern match" {
 test "Bytes::get" {
   let bytes = b"\x01\x02\x03"
   let byte = bytes.get(1)
-  inspect(byte, content="Some(b'\\x02')")
+  debug_inspect(byte, content="Some(0x02)")
 }
 
 ///|
 test "Bytes::get out of bounds" {
   let bytes = b"\x01\x02\x03"
   let byte = bytes.get(3)
-  inspect(byte, content="None")
+  debug_inspect(byte, content="None")
 }
 
 ///|

@@ -404,17 +404,17 @@ test "UInt16::unsafe_to_char" {
 ///|
 test "UInt16::to_char" {
   // Valid characters in BMP (Basic Multilingual Plane)
-  inspect((0x41 : UInt16).to_char(), content="Some('A')")
-  inspect((0x61 : UInt16).to_char(), content="Some('a')")
-  inspect((0x30 : UInt16).to_char(), content="Some('0')")
-  inspect((0 : UInt16).to_char(), content="Some('\\u{00}')")
-  inspect((0xD7FF : UInt16).to_char(), content="Some('퟿')")
+  debug_inspect((0x41 : UInt16).to_char(), content="Some('A')")
+  debug_inspect((0x61 : UInt16).to_char(), content="Some('a')")
+  debug_inspect((0x30 : UInt16).to_char(), content="Some('0')")
+  debug_inspect((0 : UInt16).to_char(), content="Some('\\u{00}')")
+  debug_inspect((0xD7FF : UInt16).to_char(), content="Some('퟿')")
   // Surrogate range - should return None
-  inspect((0xD800 : UInt16).to_char(), content="None")
-  inspect((0xDBFF : UInt16).to_char(), content="None")
-  inspect((0xDC00 : UInt16).to_char(), content="None")
-  inspect((0xDFFF : UInt16).to_char(), content="None")
+  debug_inspect((0xD800 : UInt16).to_char(), content="None")
+  debug_inspect((0xDBFF : UInt16).to_char(), content="None")
+  debug_inspect((0xDC00 : UInt16).to_char(), content="None")
+  debug_inspect((0xDFFF : UInt16).to_char(), content="None")
   // Valid characters after surrogate range
-  inspect((0xE000 : UInt16).to_char(), content="Some('\\u{e000}')")
-  inspect((0xFFFF : UInt16).to_char(), content="Some('\\u{ffff}')")
+  debug_inspect((0xE000 : UInt16).to_char(), content="Some('\\u{e000}')")
+  debug_inspect((0xFFFF : UInt16).to_char(), content="Some('\\u{ffff}')")
 }

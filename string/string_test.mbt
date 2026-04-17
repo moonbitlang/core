@@ -442,78 +442,78 @@ test "is_blank" {
 
 ///|
 test "index_of" {
-  inspect("abc".find("a"), content="Some(0)")
-  inspect("abc".find("b"), content="Some(1)")
-  inspect("abc".find("c"), content="Some(2)")
-  inspect("abc".find("ab"), content="Some(0)")
-  inspect("abc".find("bc"), content="Some(1)")
-  inspect("abc".find(""), content="Some(0)")
-  inspect("abc".find("d"), content="None")
-  inspect("abc".find("abcd"), content="None")
-  inspect("你好月兔".find("你"), content="Some(0)")
-  inspect("你好月兔".find("好"), content="Some(1)")
-  inspect("你好月兔".find("月"), content="Some(2)")
-  inspect("你好月兔".find("兔"), content="Some(3)")
-  inspect("你好月兔".find("日"), content="None")
-  inspect("😍😭😡".find("😍"), content="Some(0)")
-  inspect("😍😭😡".find("😭"), content="Some(2)")
-  inspect("😍😭😡".find("😡"), content="Some(4)")
-  inspect("😍😭😡".find("😎"), content="None")
-  inspect("".find("a"), content="None")
-  inspect("".find(""), content="Some(0)")
+  debug_inspect("abc".find("a"), content="Some(0)")
+  debug_inspect("abc".find("b"), content="Some(1)")
+  debug_inspect("abc".find("c"), content="Some(2)")
+  debug_inspect("abc".find("ab"), content="Some(0)")
+  debug_inspect("abc".find("bc"), content="Some(1)")
+  debug_inspect("abc".find(""), content="Some(0)")
+  debug_inspect("abc".find("d"), content="None")
+  debug_inspect("abc".find("abcd"), content="None")
+  debug_inspect("你好月兔".find("你"), content="Some(0)")
+  debug_inspect("你好月兔".find("好"), content="Some(1)")
+  debug_inspect("你好月兔".find("月"), content="Some(2)")
+  debug_inspect("你好月兔".find("兔"), content="Some(3)")
+  debug_inspect("你好月兔".find("日"), content="None")
+  debug_inspect("😍😭😡".find("😍"), content="Some(0)")
+  debug_inspect("😍😭😡".find("😭"), content="Some(2)")
+  debug_inspect("😍😭😡".find("😡"), content="Some(4)")
+  debug_inspect("😍😭😡".find("😎"), content="None")
+  debug_inspect("".find("a"), content="None")
+  debug_inspect("".find(""), content="Some(0)")
 }
 
 ///|
 test "String::index_of empty strings" {
   // Empty string cases
-  inspect("".find(""), content="Some(0)")
-  inspect("abc".find(""), content="Some(0)")
-  inspect("".find("a"), content="None")
+  debug_inspect("".find(""), content="Some(0)")
+  debug_inspect("abc".find(""), content="Some(0)")
+  debug_inspect("".find("a"), content="None")
 }
 
 ///|
 test "String::index_of basic matching" {
   // Basic substring matching
-  inspect("abc".find("a"), content="Some(0)")
-  inspect("abc".find("b"), content="Some(1)")
-  inspect("abc".find("c"), content="Some(2)")
-  inspect("abc".find("ab"), content="Some(0)")
-  inspect("abc".find("bc"), content="Some(1)")
-  inspect("abc".find("abc"), content="Some(0)")
-  inspect("abc".find("d"), content="None")
-  inspect("abc".find("abcd"), content="None")
+  debug_inspect("abc".find("a"), content="Some(0)")
+  debug_inspect("abc".find("b"), content="Some(1)")
+  debug_inspect("abc".find("c"), content="Some(2)")
+  debug_inspect("abc".find("ab"), content="Some(0)")
+  debug_inspect("abc".find("bc"), content="Some(1)")
+  debug_inspect("abc".find("abc"), content="Some(0)")
+  debug_inspect("abc".find("d"), content="None")
+  debug_inspect("abc".find("abcd"), content="None")
 }
 
 ///|
 test "String::index_of overlapping patterns" {
   // Testing overlapping patterns
-  inspect("aaa".find("aa"), content="Some(0)")
-  inspect("aaa"[1:].find("aa"), content="Some(0)")
+  debug_inspect("aaa".find("aa"), content="Some(0)")
+  debug_inspect("aaa"[1:].find("aa"), content="Some(0)")
 }
 
 ///|
 test "last_index_of" {
-  inspect("abc".rev_find("a"), content="Some(0)")
-  inspect("abc".rev_find("b"), content="Some(1)")
-  inspect("abc".rev_find("c"), content="Some(2)")
-  inspect("abc".rev_find("d"), content="None")
-  inspect("abc".rev_find(""), content="Some(3)")
-  inspect("abcabc".rev_find("ab"), content="Some(3)")
-  inspect("abcabc".rev_find("ca"), content="Some(2)")
-  inspect("abcabc".rev_find("cb"), content="None")
-  inspect("abcabc".rev_find("d"), content="None")
-  inspect("abcabc".rev_find(""), content="Some(6)")
-  inspect("你好月兔你好月兔".rev_find("你"), content="Some(4)")
-  inspect("你好月兔你好月兔".rev_find("好"), content="Some(5)")
-  inspect("你好月兔你好月兔".rev_find("月"), content="Some(6)")
-  inspect("你好月兔你好月兔".rev_find("兔"), content="Some(7)")
-  inspect("你好月兔你好月兔".rev_find("日"), content="None")
-  inspect("😍😭😡😍😭😡".rev_find("😍"), content="Some(6)")
-  inspect("😍😭😡😍😭😡".rev_find("😭"), content="Some(8)")
-  inspect("😍😭😡😍😭😡".rev_find("😡"), content="Some(10)")
-  inspect("😍😭😡😍😭😡".rev_find("😎"), content="None")
-  inspect("".rev_find("a"), content="None")
-  inspect("".rev_find(""), content="Some(0)")
+  debug_inspect("abc".rev_find("a"), content="Some(0)")
+  debug_inspect("abc".rev_find("b"), content="Some(1)")
+  debug_inspect("abc".rev_find("c"), content="Some(2)")
+  debug_inspect("abc".rev_find("d"), content="None")
+  debug_inspect("abc".rev_find(""), content="Some(3)")
+  debug_inspect("abcabc".rev_find("ab"), content="Some(3)")
+  debug_inspect("abcabc".rev_find("ca"), content="Some(2)")
+  debug_inspect("abcabc".rev_find("cb"), content="None")
+  debug_inspect("abcabc".rev_find("d"), content="None")
+  debug_inspect("abcabc".rev_find(""), content="Some(6)")
+  debug_inspect("你好月兔你好月兔".rev_find("你"), content="Some(4)")
+  debug_inspect("你好月兔你好月兔".rev_find("好"), content="Some(5)")
+  debug_inspect("你好月兔你好月兔".rev_find("月"), content="Some(6)")
+  debug_inspect("你好月兔你好月兔".rev_find("兔"), content="Some(7)")
+  debug_inspect("你好月兔你好月兔".rev_find("日"), content="None")
+  debug_inspect("😍😭😡😍😭😡".rev_find("😍"), content="Some(6)")
+  debug_inspect("😍😭😡😍😭😡".rev_find("😭"), content="Some(8)")
+  debug_inspect("😍😭😡😍😭😡".rev_find("😡"), content="Some(10)")
+  debug_inspect("😍😭😡😍😭😡".rev_find("😎"), content="None")
+  debug_inspect("".rev_find("a"), content="None")
+  debug_inspect("".rev_find(""), content="Some(0)")
 }
 
 ///|
@@ -791,54 +791,60 @@ test "string pattern matching" {
 ///|
 test "offset_of_nth_char" {
   let s = "a😭b😂c"
-  inspect(s.offset_of_nth_char(0), content="Some(0)")
-  inspect(s.offset_of_nth_char(1), content="Some(1)")
-  inspect(s.offset_of_nth_char(2), content="Some(3)")
-  inspect(s.offset_of_nth_char(3), content="Some(4)")
-  inspect(s.offset_of_nth_char(4), content="Some(6)")
-  inspect(s.offset_of_nth_char(5), content="None")
-  inspect(s.offset_of_nth_char(-1), content="Some(6)")
-  inspect(s.offset_of_nth_char(-2), content="Some(4)")
-  inspect(s.offset_of_nth_char(-3), content="Some(3)")
-  inspect(s.offset_of_nth_char(-4), content="Some(1)")
-  inspect(s.offset_of_nth_char(-5), content="Some(0)")
-  inspect(s.offset_of_nth_char(-6), content="None")
+  debug_inspect(s.offset_of_nth_char(0), content="Some(0)")
+  debug_inspect(s.offset_of_nth_char(1), content="Some(1)")
+  debug_inspect(s.offset_of_nth_char(2), content="Some(3)")
+  debug_inspect(s.offset_of_nth_char(3), content="Some(4)")
+  debug_inspect(s.offset_of_nth_char(4), content="Some(6)")
+  debug_inspect(s.offset_of_nth_char(5), content="None")
+  debug_inspect(s.offset_of_nth_char(-1), content="Some(6)")
+  debug_inspect(s.offset_of_nth_char(-2), content="Some(4)")
+  debug_inspect(s.offset_of_nth_char(-3), content="Some(3)")
+  debug_inspect(s.offset_of_nth_char(-4), content="Some(1)")
+  debug_inspect(s.offset_of_nth_char(-5), content="Some(0)")
+  debug_inspect(s.offset_of_nth_char(-6), content="None")
 }
 
 ///|
 test "offset_of_nth_char range" {
   let s = "a😭b😂c"
-  inspect(
+  debug_inspect(
     s.offset_of_nth_char(0, start_offset=1, end_offset=6),
     content="Some(1)",
   )
-  inspect(
+  debug_inspect(
     s.offset_of_nth_char(1, start_offset=1, end_offset=6),
     content="Some(3)",
   )
-  inspect(
+  debug_inspect(
     s.offset_of_nth_char(2, start_offset=1, end_offset=6),
     content="Some(4)",
   )
-  inspect(s.offset_of_nth_char(3, start_offset=1, end_offset=6), content="None")
-  inspect(s.offset_of_nth_char(4, start_offset=1, end_offset=6), content="None")
-  inspect(
+  debug_inspect(
+    s.offset_of_nth_char(3, start_offset=1, end_offset=6),
+    content="None",
+  )
+  debug_inspect(
+    s.offset_of_nth_char(4, start_offset=1, end_offset=6),
+    content="None",
+  )
+  debug_inspect(
     s.offset_of_nth_char(-1, start_offset=1, end_offset=6),
     content="Some(4)",
   )
-  inspect(
+  debug_inspect(
     s.offset_of_nth_char(-2, start_offset=1, end_offset=6),
     content="Some(3)",
   )
-  inspect(
+  debug_inspect(
     s.offset_of_nth_char(-3, start_offset=1, end_offset=6),
     content="Some(1)",
   )
-  inspect(
+  debug_inspect(
     s.offset_of_nth_char(-4, start_offset=1, end_offset=6),
     content="None",
   )
-  inspect(
+  debug_inspect(
     s.offset_of_nth_char(-5, start_offset=1, end_offset=6),
     content="None",
   )

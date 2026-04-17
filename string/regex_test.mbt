@@ -683,10 +683,10 @@ test "capture/simple_named_group" {
   let regex = @string.Regex::string("ID: ") + digit
   guard regex.execute("ID: 12345") is Some(m) else { fail("Expected match") }
   inspect(m.content(), content="ID: 12345")
-  inspect(
+  debug_inspect(
     m.named_group("number"),
     content=(
-      #|Some("12345")
+      #|Some(<StringView: "12345">)
     ),
   )
 }
@@ -705,22 +705,17 @@ test "capture/email_with_named_groups" {
     fail("Expected match")
   }
   inspect(m.content(), content="john@example.com")
-  inspect(
-    m.named_group("user"),
-    content=(
-      #|Some("john")
-    ),
-  )
-  inspect(
+  debug_inspect(m.named_group("user"), content="Some(<StringView: \"john\">)")
+  debug_inspect(
     m.named_group("domain"),
     content=(
-      #|Some("example")
+      #|Some(<StringView: "example">)
     ),
   )
-  inspect(
+  debug_inspect(
     m.named_group("tld"),
     content=(
-      #|Some("com")
+      #|Some(<StringView: "com">)
     ),
   )
 }
@@ -732,16 +727,16 @@ test "capture/multiple_captures_same_pattern" {
   let second = word.capture("second")
   let regex = first + @string.Regex::string(" ") + second
   guard regex.execute("hello world") is Some(m) else { fail("Expected match") }
-  inspect(
+  debug_inspect(
     m.named_group("first"),
     content=(
-      #|Some("hello")
+      #|Some(<StringView: "hello">)
     ),
   )
-  inspect(
+  debug_inspect(
     m.named_group("second"),
     content=(
-      #|Some("world")
+      #|Some(<StringView: "world">)
     ),
   )
 }

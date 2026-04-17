@@ -24,13 +24,13 @@ test {
 ///|
 test "to_string for Option None" {
   let x : Int? = None
-  inspect(x.to_string(), content="None")
+  debug_inspect(x, content="None")
 }
 
 ///|
 test "to_string for Option Some" {
   let x : Int? = Some(42)
-  inspect(x.to_string(), content="Some(42)")
+  debug_inspect(x, content="Some(42)")
 }
 
 ///|
@@ -51,7 +51,7 @@ test "compare default iter" {
   inspect((None : Int?).compare(Some(1)), content="-1")
   inspect((None : Int?).compare(None), content="0")
   let default_opt : Int? = Default::default()
-  inspect(default_opt, content="None")
+  debug_inspect(default_opt, content="None")
   let iter_values = []
   (Some(3) : Int?).iter().each(x => iter_values.push(x))
   inspect(iter_values, content="[3]")
@@ -68,7 +68,7 @@ test "map_or and filter" {
   inspect(none.map_or(10, x => x * 2), content="10")
   inspect(some.map_or_else(() => 7, x => x * 2), content="6")
   inspect(none.map_or_else(() => 7, x => x * 2), content="7")
-  inspect(none.filter(_ => true), content="None")
+  debug_inspect(none.filter(_ => true), content="None")
 }
 
 ///|

@@ -2,6 +2,10 @@ import {
   "moonbitlang/core/builtin",
 }
 
+import {
+  "moonbitlang/core/test",
+} for "test"
+
 options(
   targets: {
     "env_js.mbt": [ "js" ],

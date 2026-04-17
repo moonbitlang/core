@@ -15,7 +15,6 @@
 // Types
 
 ///|
-#warnings("-deprecated_syntax")
 priv struct Entry[K, V] {
   mut prev : Int
   mut next : Entry[K, V]?
@@ -23,7 +22,25 @@ priv struct Entry[K, V] {
   hash : Int
   key : K
   mut value : V
-} derive(Show)
+}
+
+///|
+#warnings("-deprecated")
+impl[K : Show, V : Show] Show for Entry[K, V] with output(self, logger) {
+  logger.write_string("{prev: ")
+  self.prev.output(logger)
+  logger.write_string(", next: ")
+  self.next.output(logger)
+  logger.write_string(", psl: ")
+  self.psl.output(logger)
+  logger.write_string(", hash: ")
+  self.hash.output(logger)
+  logger.write_string(", key: ")
+  self.key.output(logger)
+  logger.write_string(", value: ")
+  self.value.output(logger)
+  logger.write_string("}")
+}
 
 ///|
 /// Mutable linked hash map that maintains the order of insertion, not thread safe.
@@ -100,9 +117,9 @@ pub fn[K : Hash + Eq, V] Map::from_array(arr : ArrayView[(K, V)]) -> Map[K, V] {
 /// test {
 ///   let map : Map[String, Int] = Map::new()
 ///   map.set("key", 42)
-///   inspect(map.get("key"), content="Some(42)")
+///   debug_inspect(map.get("key"), content="Some(42)")
 ///   map.set("key", 24) // update existing key
-///   inspect(map.get("key"), content="Some(24)")
+///   debug_inspect(map.get("key"), content="Some(24)")
 /// }
 /// ```
 #alias("_[_]=_")
@@ -210,8 +227,8 @@ fn[K, V] Map::set_entry(
 /// ```mbt check
 /// test {
 ///   let map = { "key": 42 }
-///   inspect(map.get("key"), content="Some(42)")
-///   inspect(map.get("nonexistent"), content="None")
+///   debug_inspect(map.get("key"), content="Some(42)")
+///   debug_inspect(map.get("nonexistent"), content="None")
 /// }
 /// ```
 pub fn[K : Hash + Eq, V] Map::get(self : Map[K, V], key : K) -> V? {
@@ -411,7 +428,7 @@ pub fn[K : Hash + Eq, V : Eq] Map::contains_kv(
 /// test {
 ///   let map = { "a": 1, "b": 2 }
 ///   map.remove("a")
-///   inspect(map.get("a"), content="None")
+///   debug_inspect(map.get("a"), content="None")
 ///   inspect(map.length(), content="1")
 /// }
 /// ```
@@ -870,10 +887,10 @@ pub fn[K : Eq, V] Map::merge_in_place(
 ///   let map = { "a": 1, "b": 2, "c": 3, "d": 4 }
 ///   map.retain((_k, v) => v % 2 == 0) // Keep only even values
 ///   inspect(map.length(), content="2")
-///   inspect(map.get("a"), content="None")
-///   inspect(map.get("b"), content="Some(2)")
-///   inspect(map.get("c"), content="None")
-///   inspect(map.get("d"), content="Some(4)")
+///   debug_inspect(map.get("a"), content="None")
+///   debug_inspect(map.get("b"), content="Some(2)")
+///   debug_inspect(map.get("c"), content="None")
+///   debug_inspect(map.get("d"), content="Some(4)")
 /// }
 /// ```
 #locals(f)
@@ -1076,7 +1093,7 @@ fn BytesView::equal_to_bytes(self : Self, other : Bytes) -> Bool {
 ///   let map = { b"hello": 1, b"world": 2 }
 ///   let bytes = b"prefix_hello_suffix"
 ///   let view = bytes[7:12] // view of "hello"
-///   inspect(map.get_from_bytes(view), content="Some(1)")
+///   debug_inspect(map.get_from_bytes(view), content="Some(1)")
 /// }
 /// ```
 pub fn[V] Map::get_from_bytes(map : Self[Bytes, V], key : BytesView) -> V? {
@@ -1113,7 +1130,7 @@ pub fn[V] Map::get_from_bytes(map : Self[Bytes, V], key : BytesView) -> V? {
 ///   let map = { "hello": 1, "world": 2 }
 ///   let str = "say hello to everyone"
 ///   let view = str.view(start_offset=4, end_offset=9) // view of "hello"
-///   inspect(map.get_from_string(view), content="Some(1)")
+///   debug_inspect(map.get_from_string(view), content="Some(1)")
 /// }
 /// ```
 pub fn[V] Map::get_from_string(map : Self[String, V], key : StringView) -> V? {

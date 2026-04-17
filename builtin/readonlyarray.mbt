@@ -96,8 +96,8 @@ pub fn[T] ReadOnlyArray::makei(
 /// ```mbt check
 /// test {
 ///   let arr : ReadOnlyArray[Int] = [1, 2, 3]
-///   inspect(arr.get(1), content="Some(2)")
-///   inspect(arr.get(5), content="None")
+///   debug_inspect(arr.get(1), content="Some(2)")
+///   debug_inspect(arr.get(5), content="None")
 /// }
 /// ```
 pub fn[T] ReadOnlyArray::get(self : ReadOnlyArray[T], index : Int) -> T? {
@@ -141,9 +141,9 @@ pub fn[T] ReadOnlyArray::is_empty(self : ReadOnlyArray[T]) -> Bool {
 /// ```mbt check
 /// test {
 ///   let arr : ReadOnlyArray[Int] = [1, 2, 3]
-///   inspect(arr.last(), content="Some(3)")
+///   debug_inspect(arr.last(), content="Some(3)")
 ///   let empty_arr : ReadOnlyArray[Int] = []
-///   inspect(empty_arr.last(), content="None")
+///   debug_inspect(empty_arr.last(), content="None")
 /// }
 /// ```
 pub fn[T] ReadOnlyArray::last(self : ReadOnlyArray[T]) -> T? {
@@ -401,8 +401,8 @@ pub fn[T] ReadOnlyArray::rev(self : ReadOnlyArray[T]) -> ReadOnlyArray[T] {
 /// ```mbt check
 /// test {
 ///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 2, 4]
-///   inspect(arr.search(2), content="Some(1)") // Returns first occurrence
-///   inspect(arr.search(5), content="None")
+///   debug_inspect(arr.search(2), content="Some(1)") // Returns first occurrence
+///   debug_inspect(arr.search(5), content="None")
 /// }
 /// ```
 pub fn[T : Eq] ReadOnlyArray::search(
@@ -596,10 +596,13 @@ pub fn[T] ReadOnlyArray::view(
 ///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
 ///   let start = 1
 ///   let end = 4
-///   inspect(arr.get_view(start~, end~), content="Some([2, 3, 4])")
+///   debug_inspect(
+///     arr.get_view(start~, end~),
+///     content="Some(<ArrayView: [2, 3, 4]>)",
+///   )
 ///   let start = 4
 ///   let end = 10
-///   inspect(arr.get_view(start~, end~), content="None")
+///   debug_inspect(arr.get_view(start~, end~), content="None")
 /// }
 /// ```
 pub fn[T] ReadOnlyArray::get_view(

@@ -86,14 +86,16 @@ fn boyer_moore_horspool_find(
 
 ///|
 test "boyer_moore_horspool_find edge cases" {
-  inspect(boyer_moore_horspool_find("abc"[:], ""[:]), content="Some(0)")
-  inspect(boyer_moore_horspool_find("ab"[:], "abcd"[:]), content="None")
+  guard boyer_moore_horspool_find("abc"[:], ""[:]) is Some(v)
+  assert_eq(v, 0)
+  guard boyer_moore_horspool_find("ab"[:], "abcd"[:]) is None
 }
 
 ///|
 test "boyer_moore_horspool_rev_find edge cases" {
-  inspect(boyer_moore_horspool_rev_find("abc"[:], ""[:]), content="Some(3)")
-  inspect(boyer_moore_horspool_rev_find("ab"[:], "abcd"[:]), content="None")
+  guard boyer_moore_horspool_rev_find("abc"[:], ""[:]) is Some(v)
+  assert_eq(v, 3)
+  guard boyer_moore_horspool_rev_find("ab"[:], "abcd"[:]) is None
 }
 
 ///|
@@ -105,25 +107,32 @@ pub fn String::find(self : String, str : StringView) -> Int? {
 
 ///|
 test "find" {
-  inspect("hello".find("o"), content="Some(4)")
-  inspect("hello".find("l"), content="Some(2)")
-  inspect("hello".find("hello"), content="Some(0)")
-  inspect("hello".find("h"), content="Some(0)")
-  inspect("hello".find(""), content="Some(0)")
-  inspect("hello".find("world"), content="None")
-  inspect("".find(""), content="Some(0)")
-  inspect("".find("a"), content="None")
-  inspect("hello hello".find("hello"), content="Some(0)")
-  inspect("aaa".find("aa"), content="Some(0)")
-  inspect("😀😀".find("😀"), content="Some(0)")
-  inspect(
-    ("😀😀aa".repeat(20) + "😀😀😀😀").find("😀😀😀😀"),
-    content="Some(120)",
-  )
-  inspect(
-    ("😀😀😀😀" + "😀😀aa".repeat(20)).find("😀😀😀😀"),
-    content="Some(0)",
-  )
+  guard "hello".find("o") is Some(v)
+  assert_eq(v, 4)
+  guard "hello".find("l") is Some(v)
+  assert_eq(v, 2)
+  guard "hello".find("hello") is Some(v)
+  assert_eq(v, 0)
+  guard "hello".find("h") is Some(v)
+  assert_eq(v, 0)
+  guard "hello".find("") is Some(v)
+  assert_eq(v, 0)
+  guard "hello".find("world") is None
+  guard "".find("") is Some(v)
+  assert_eq(v, 0)
+  guard "".find("a") is None
+  guard "hello hello".find("hello") is Some(v)
+  assert_eq(v, 0)
+  guard "aaa".find("aa") is Some(v)
+  assert_eq(v, 0)
+  guard "😀😀".find("😀") is Some(v)
+  assert_eq(v, 0)
+  guard ("😀😀aa".repeat(20) + "😀😀😀😀").find("😀😀😀😀")
+    is Some(v)
+  assert_eq(v, 120)
+  guard ("😀😀😀😀" + "😀😀aa".repeat(20)).find("😀😀😀😀")
+    is Some(v)
+  assert_eq(v, 0)
 }
 
 ///|
@@ -147,16 +156,22 @@ pub fn String::find_by(self : String, pred : (Char) -> Bool) -> Int? {
 
 ///|
 test "find_by" {
-  inspect("hello".find_by(c => c == 'o'), content="Some(4)")
-  inspect("hello".find_by(c => c == 'l'), content="Some(2)")
-  inspect("hello".find_by(c => c == 'z'), content="None")
-  inspect("".find_by(c => c == 'a'), content="None")
-  inspect("hello".find_by(c => c is ('0'..='9')), content="None")
-  inspect("hello123".find_by(c => c is ('0'..='9')), content="Some(5)")
-  inspect("hello".find_by(c => c is ('A'..='Z')), content="None")
-  inspect("Hello".find_by(c => c is ('A'..='Z')), content="Some(0)")
-  inspect("αβγ".find_by(c => c == 'β'), content="Some(1)")
-  inspect("😀😁😂".find_by(c => c == '😂'), content="Some(2)")
+  guard "hello".find_by(c => c == 'o') is Some(v)
+  assert_eq(v, 4)
+  guard "hello".find_by(c => c == 'l') is Some(v)
+  assert_eq(v, 2)
+  guard "hello".find_by(c => c == 'z') is None
+  guard "".find_by(c => c == 'a') is None
+  guard "hello".find_by(c => c is ('0'..='9')) is None
+  guard "hello123".find_by(c => c is ('0'..='9')) is Some(v)
+  assert_eq(v, 5)
+  guard "hello".find_by(c => c is ('A'..='Z')) is None
+  guard "Hello".find_by(c => c is ('A'..='Z')) is Some(v)
+  assert_eq(v, 0)
+  guard "αβγ".find_by(c => c == 'β') is Some(v)
+  assert_eq(v, 1)
+  guard "😀😁😂".find_by(c => c == '😂') is Some(v)
+  assert_eq(v, 2)
 }
 
 ///|
@@ -237,25 +252,36 @@ pub fn String::rev_find(self : String, str : StringView) -> Int? {
 
 ///|
 test "rev_find" {
-  inspect("hello".rev_find("o"), content="Some(4)")
-  inspect("hello".rev_find("l"), content="Some(3)")
-  inspect("hello".rev_find("hello"), content="Some(0)")
-  inspect("hello".rev_find("h"), content="Some(0)")
-  inspect("hello".rev_find(""), content="Some(5)")
-  inspect("hello".rev_find("world"), content="None")
-  inspect("".rev_find(""), content="Some(0)")
-  inspect("".rev_find("a"), content="None")
-  inspect("hello hello".rev_find("hello"), content="Some(6)")
-  inspect("aaa".rev_find("aa"), content="Some(1)")
-  inspect("😀😀".rev_find("😀"), content="Some(2)")
-  inspect(
-    ("😀😀aa".repeat(20) + "😀😀😀😀").rev_find("😀😀😀😀"),
-    content="Some(120)",
-  )
-  inspect(
-    ("😀😀😀😀" + "😀😀aa".repeat(20)).rev_find("😀😀😀😀"),
-    content="Some(4)",
-  )
+  guard "hello".rev_find("o") is Some(v)
+  assert_eq(v, 4)
+  guard "hello".rev_find("l") is Some(v)
+  assert_eq(v, 3)
+  guard "hello".rev_find("hello") is Some(v)
+  assert_eq(v, 0)
+  guard "hello".rev_find("h") is Some(v)
+  assert_eq(v, 0)
+  guard "hello".rev_find("") is Some(v)
+  assert_eq(v, 5)
+  guard "hello".rev_find("world") is None
+  guard "".rev_find("") is Some(v)
+  assert_eq(v, 0)
+  guard "".rev_find("a") is None
+  guard "hello hello".rev_find("hello") is Some(v)
+  assert_eq(v, 6)
+  guard "aaa".rev_find("aa") is Some(v)
+  assert_eq(v, 1)
+  guard "😀😀".rev_find("😀") is Some(v)
+  assert_eq(v, 2)
+  guard ("😀😀aa".repeat(20) + "😀😀😀😀").rev_find(
+      "😀😀😀😀",
+    )
+    is Some(v)
+  assert_eq(v, 120)
+  guard ("😀😀😀😀" + "😀😀aa".repeat(20)).rev_find(
+      "😀😀😀😀",
+    )
+    is Some(v)
+  assert_eq(v, 4)
 }
 
 ///|
@@ -326,9 +352,15 @@ test "has_prefix" {
 ///
 /// ```mbt check
 /// test {
-///   inspect("hello world".strip_suffix(" world"), content="Some(\"hello\")")
-///   inspect("hello world".strip_suffix(" moon"), content="None")
-///   inspect("hello".strip_suffix("hello"), content="Some(\"\")")
+///   debug_inspect(
+///     "hello world".strip_suffix(" world"),
+///     content="Some(<StringView: \"hello\">)",
+///   )
+///   debug_inspect("hello world".strip_suffix(" moon"), content="None")
+///   debug_inspect(
+///     "hello".strip_suffix("hello"),
+///     content="Some(<StringView: \"\">)",
+///   )
 /// }
 /// ```
 #alias(chop_suffix)
@@ -338,26 +370,38 @@ pub fn String::strip_suffix(self : String, suffix : StringView) -> StringView? {
 
 ///|
 test "strip_prefix" {
-  inspect("hello world".strip_prefix("hello "), content="Some(\"world\")")
-  inspect("hello world".strip_prefix("hi "), content="None")
-  inspect("hello".strip_prefix("hello"), content="Some(\"\")")
-  inspect("".strip_prefix(""), content="Some(\"\")")
-  inspect("".strip_prefix("a"), content="None")
-  inspect("abc".strip_prefix(""), content="Some(\"abc\")")
-  inspect("😀hello".strip_prefix("😀"), content="Some(\"hello\")")
-  inspect("😀😃hello".strip_prefix("😀😃"), content="Some(\"hello\")")
+  guard "hello world".strip_prefix("hello ") is Some(v)
+  inspect(v, content="world")
+  guard "hello world".strip_prefix("hi ") is None
+  guard "hello".strip_prefix("hello") is Some(v)
+  inspect(v, content="")
+  guard "".strip_prefix("") is Some(v)
+  inspect(v, content="")
+  guard "".strip_prefix("a") is None
+  guard "abc".strip_prefix("") is Some(v)
+  inspect(v, content="abc")
+  guard "😀hello".strip_prefix("😀") is Some(v)
+  inspect(v, content="hello")
+  guard "😀😃hello".strip_prefix("😀😃") is Some(v)
+  inspect(v, content="hello")
 }
 
 ///|
 test "strip_suffix" {
-  inspect("hello world".strip_suffix(" world"), content="Some(\"hello\")")
-  inspect("hello world".strip_suffix(" moon"), content="None")
-  inspect("hello".strip_suffix("hello"), content="Some(\"\")")
-  inspect("".strip_suffix(""), content="Some(\"\")")
-  inspect("".strip_suffix("a"), content="None")
-  inspect("abc".strip_suffix(""), content="Some(\"abc\")")
-  inspect("hello😀".strip_suffix("😀"), content="Some(\"hello\")")
-  inspect("hello😀😃".strip_suffix("😀😃"), content="Some(\"hello\")")
+  guard "hello world".strip_suffix(" world") is Some(v)
+  inspect(v, content="hello")
+  guard "hello world".strip_suffix(" moon") is None
+  guard "hello".strip_suffix("hello") is Some(v)
+  inspect(v, content="")
+  guard "".strip_suffix("") is Some(v)
+  inspect(v, content="")
+  guard "".strip_suffix("a") is None
+  guard "abc".strip_suffix("") is Some(v)
+  inspect(v, content="abc")
+  guard "hello😀".strip_suffix("😀") is Some(v)
+  inspect(v, content="hello")
+  guard "hello😀😃".strip_suffix("😀😃") is Some(v)
+  inspect(v, content="hello")
 }
 
 ///|
@@ -371,9 +415,15 @@ test "strip_suffix" {
 ///
 /// ```mbt check
 /// test {
-///   inspect("hello world".strip_prefix("hello "), content="Some(\"world\")")
-///   inspect("hello world".strip_prefix("hi "), content="None")
-///   inspect("hello".strip_prefix("hello"), content="Some(\"\")")
+///   debug_inspect(
+///     "hello world".strip_prefix("hello "),
+///     content="Some(<StringView: \"world\">)",
+///   )
+///   debug_inspect("hello world".strip_prefix("hi "), content="None")
+///   debug_inspect(
+///     "hello".strip_prefix("hello"),
+///     content="Some(<StringView: \"\">)",
+///   )
 /// }
 /// ```
 #alias(chop_prefix)
@@ -393,9 +443,15 @@ pub fn String::strip_prefix(self : String, prefix : StringView) -> StringView? {
 /// ```mbt check
 /// test {
 ///   let view = "hello world"[:]
-///   inspect(view.strip_prefix("hello "), content="Some(\"world\")")
-///   inspect(view.strip_prefix("hi "), content="None")
-///   inspect(view.strip_prefix("hello world"), content="Some(\"\")")
+///   debug_inspect(
+///     view.strip_prefix("hello "),
+///     content="Some(<StringView: \"world\">)",
+///   )
+///   debug_inspect(view.strip_prefix("hi "), content="None")
+///   debug_inspect(
+///     view.strip_prefix("hello world"),
+///     content="Some(<StringView: \"\">)",
+///   )
 /// }
 /// ```
 #alias(chop_prefix)
@@ -423,9 +479,15 @@ pub fn StringView::strip_prefix(
 /// ```mbt check
 /// test {
 ///   let view = "hello world"[:]
-///   inspect(view.strip_suffix(" world"), content="Some(\"hello\")")
-///   inspect(view.strip_suffix(" moon"), content="None")
-///   inspect(view.strip_suffix("hello world"), content="Some(\"\")")
+///   debug_inspect(
+///     view.strip_suffix(" world"),
+///     content="Some(<StringView: \"hello\">)",
+///   )
+///   debug_inspect(view.strip_suffix(" moon"), content="None")
+///   debug_inspect(
+///     view.strip_suffix("hello world"),
+///     content="Some(<StringView: \"\">)",
+///   )
 /// }
 /// ```
 #alias(chop_suffix)
@@ -477,31 +539,41 @@ pub fn StringView::to_bytes(self : StringView) -> Bytes {
 ///|
 test "View::strip_prefix" {
   let view = "hello world"[:]
-  inspect(view.strip_prefix("hello "), content="Some(\"world\")")
-  inspect(view.strip_prefix("hi "), content="None")
-  inspect(view.strip_prefix("hello world"), content="Some(\"\")")
-  inspect(view.strip_prefix(""), content="Some(\"hello world\")")
+  guard view.strip_prefix("hello ") is Some(v)
+  inspect(v, content="world")
+  guard view.strip_prefix("hi ") is None
+  guard view.strip_prefix("hello world") is Some(v)
+  inspect(v, content="")
+  guard view.strip_prefix("") is Some(v)
+  inspect(v, content="hello world")
   let empty_view = ""[:]
-  inspect(empty_view.strip_prefix(""), content="Some(\"\")")
-  inspect(empty_view.strip_prefix("a"), content="None")
+  guard empty_view.strip_prefix("") is Some(v)
+  inspect(v, content="")
+  guard empty_view.strip_prefix("a") is None
   let unicode_view = "😀hello😃"[:]
-  inspect(unicode_view.strip_prefix("😀"), content="Some(\"hello😃\")")
-  inspect(unicode_view.strip_prefix("😃"), content="None")
+  guard unicode_view.strip_prefix("😀") is Some(v)
+  inspect(v, content="hello😃")
+  guard unicode_view.strip_prefix("😃") is None
 }
 
 ///|
 test "View::strip_suffix" {
   let view = "hello world"[:]
-  inspect(view.strip_suffix(" world"), content="Some(\"hello\")")
-  inspect(view.strip_suffix(" moon"), content="None")
-  inspect(view.strip_suffix("hello world"), content="Some(\"\")")
-  inspect(view.strip_suffix(""), content="Some(\"hello world\")")
+  guard view.strip_suffix(" world") is Some(v)
+  inspect(v, content="hello")
+  guard view.strip_suffix(" moon") is None
+  guard view.strip_suffix("hello world") is Some(v)
+  inspect(v, content="")
+  guard view.strip_suffix("") is Some(v)
+  inspect(v, content="hello world")
   let empty_view = ""[:]
-  inspect(empty_view.strip_suffix(""), content="Some(\"\")")
-  inspect(empty_view.strip_suffix("a"), content="None")
+  guard empty_view.strip_suffix("") is Some(v)
+  inspect(v, content="")
+  guard empty_view.strip_suffix("a") is None
   let unicode_view = "😀hello😃"[:]
-  inspect(unicode_view.strip_suffix("😃"), content="Some(\"😀hello\")")
-  inspect(unicode_view.strip_suffix("😀"), content="None")
+  guard unicode_view.strip_suffix("😃") is Some(v)
+  inspect(v, content="😀hello")
+  guard unicode_view.strip_suffix("😀") is None
 }
 
 ///|
@@ -1194,8 +1266,11 @@ pub fn String::after(self : String, needle : StringView) -> StringView? {
 ///
 /// ```mbt check
 /// test {
-///   inspect("a::b::c".rev_split_once("::"), content="Some((\"a::b\", \"c\"))")
-///   inspect("nope".rev_split_once("::"), content="None")
+///   debug_inspect(
+///     "a::b::c".rev_split_once("::"),
+///     content="Some((<StringView: \"a::b\">, <StringView: \"c\">))",
+///   )
+///   debug_inspect("nope".rev_split_once("::"), content="None")
 /// }
 /// ```
 pub fn StringView::rev_split_once(
@@ -1223,7 +1298,10 @@ pub fn StringView::rev_split_once(
 ///
 /// ```mbt check
 /// test {
-///   inspect("a::b::c".rev_split_once("::"), content="Some((\"a::b\", \"c\"))")
+///   debug_inspect(
+///     "a::b::c".rev_split_once("::"),
+///     content="Some((<StringView: \"a::b\">, <StringView: \"c\">))",
+///   )
 /// }
 /// ```
 pub fn String::rev_split_once(
@@ -1242,7 +1320,10 @@ pub fn String::rev_split_once(
 ///
 /// ```mbt check
 /// test {
-///   inspect("a/b/c.txt".rev_before("/"), content="Some(\"a/b\")")
+///   debug_inspect(
+///     "a/b/c.txt".rev_before("/"),
+///     content="Some(<StringView: \"a/b\">)",
+///   )
 /// }
 /// ```
 pub fn StringView::rev_before(
@@ -1264,7 +1345,10 @@ pub fn StringView::rev_before(
 ///
 /// ```mbt check
 /// test {
-///   inspect("a/b/c.txt".rev_before("/"), content="Some(\"a/b\")")
+///   debug_inspect(
+///     "a/b/c.txt".rev_before("/"),
+///     content="Some(<StringView: \"a/b\">)",
+///   )
 /// }
 /// ```
 pub fn String::rev_before(self : String, needle : StringView) -> StringView? {
@@ -1280,7 +1364,10 @@ pub fn String::rev_before(self : String, needle : StringView) -> StringView? {
 ///
 /// ```mbt check
 /// test {
-///   inspect("a/b/c.txt".rev_after("/"), content="Some(\"c.txt\")")
+///   debug_inspect(
+///     "a/b/c.txt".rev_after("/"),
+///     content="Some(<StringView: \"c.txt\">)",
+///   )
 /// }
 /// ```
 pub fn StringView::rev_after(
@@ -1302,7 +1389,10 @@ pub fn StringView::rev_after(
 ///
 /// ```mbt check
 /// test {
-///   inspect("a/b/c.txt".rev_after("/"), content="Some(\"c.txt\")")
+///   debug_inspect(
+///     "a/b/c.txt".rev_after("/"),
+///     content="Some(<StringView: \"c.txt\">)",
+///   )
 /// }
 /// ```
 pub fn String::rev_after(self : String, needle : StringView) -> StringView? {
@@ -1344,36 +1434,57 @@ test "split" {
 
 ///|
 test "split_once before after" {
-  inspect("a=b=c".split_once("="), content="Some((\"a\", \"b=c\"))")
-  inspect("a=b=c".before("="), content="Some(\"a\")")
-  inspect("a=b=c".after("="), content="Some(\"b=c\")")
-  inspect("nope".split_once("="), content="None")
-  inspect("nope".before("="), content="None")
-  inspect("nope".after("="), content="None")
-  inspect("".split_once(""), content="Some((\"\", \"\"))")
-  inspect("".before(""), content="Some(\"\")")
-  inspect("".after(""), content="Some(\"\")")
-  inspect("hello".split_once(""), content="Some((\"\", \"hello\"))")
-  inspect("hello".before(""), content="Some(\"\")")
-  inspect("hello".after(""), content="Some(\"hello\")")
-  inspect("😊::🚀".split_once("::"), content="Some((\"😊\", \"🚀\"))")
+  guard "a=b=c".split_once("=") is Some((a, b))
+  inspect(a, content="a")
+  inspect(b, content="b=c")
+  guard "a=b=c".before("=") is Some(v)
+  inspect(v, content="a")
+  guard "a=b=c".after("=") is Some(v)
+  inspect(v, content="b=c")
+  guard "nope".split_once("=") is None
+  guard "nope".before("=") is None
+  guard "nope".after("=") is None
+  guard "".split_once("") is Some((a, b))
+  inspect(a, content="")
+  inspect(b, content="")
+  guard "".before("") is Some(v)
+  inspect(v, content="")
+  guard "".after("") is Some(v)
+  inspect(v, content="")
+  guard "hello".split_once("") is Some((a, b))
+  inspect(a, content="")
+  inspect(b, content="hello")
+  guard "hello".before("") is Some(v)
+  inspect(v, content="")
+  guard "hello".after("") is Some(v)
+  inspect(v, content="hello")
+  guard "😊::🚀".split_once("::") is Some((a, b))
+  inspect(a, content="😊")
+  inspect(b, content="🚀")
 }
 
 ///|
 test "rev_split_once rev_before rev_after" {
-  inspect("a=b=c".rev_split_once("="), content="Some((\"a=b\", \"c\"))")
-  inspect("a=b=c".rev_before("="), content="Some(\"a=b\")")
-  inspect("a=b=c".rev_after("="), content="Some(\"c\")")
-  inspect("nope".rev_split_once("="), content="None")
-  inspect("nope".rev_before("="), content="None")
-  inspect("nope".rev_after("="), content="None")
-  inspect("a/b/c.txt".rev_before("/"), content="Some(\"a/b\")")
-  inspect("a/b/c.txt".rev_after("/"), content="Some(\"c.txt\")")
-  inspect("one=two".rev_split_once("="), content="Some((\"one\", \"two\"))")
-  inspect(
-    "😊::🚀::⭐".rev_split_once("::"),
-    content="Some((\"😊::🚀\", \"⭐\"))",
-  )
+  guard "a=b=c".rev_split_once("=") is Some((a, b))
+  inspect(a, content="a=b")
+  inspect(b, content="c")
+  guard "a=b=c".rev_before("=") is Some(v)
+  inspect(v, content="a=b")
+  guard "a=b=c".rev_after("=") is Some(v)
+  inspect(v, content="c")
+  guard "nope".rev_split_once("=") is None
+  guard "nope".rev_before("=") is None
+  guard "nope".rev_after("=") is None
+  guard "a/b/c.txt".rev_before("/") is Some(v)
+  inspect(v, content="a/b")
+  guard "a/b/c.txt".rev_after("/") is Some(v)
+  inspect(v, content="c.txt")
+  guard "one=two".rev_split_once("=") is Some((a, b))
+  inspect(a, content="one")
+  inspect(b, content="two")
+  guard "😊::🚀::⭐".rev_split_once("::") is Some((a, b))
+  inspect(a, content="😊::🚀")
+  inspect(b, content="⭐")
 }
 
 ///|
@@ -1864,29 +1975,40 @@ pub fn StringView::get(self : StringView, idx : Int) -> Int? {
 ///|
 test "String::get supports emoji (surrogate pair)" {
   let s = "hello"
-  inspect(s.get(0), content="Some(104)")
-  inspect(s.get(4), content="Some(111)")
-  inspect(s.get(5), content="None")
-  inspect(s.get(-1), content="None")
+  guard s.get(0) is Some(v)
+  assert_eq(v, 104)
+  guard s.get(4) is Some(v)
+  assert_eq(v, 111)
+  guard s.get(5) is None
+  guard s.get(-1) is None
   let s = "a🤣b"
-  inspect(s.get(0), content="Some(97)")
-  inspect(s.get(1), content="Some(55358)")
-  inspect(s.get(2), content="Some(56611)")
-  inspect(s.get(3), content="Some(98)")
-  inspect(s.get(4), content="None")
+  guard s.get(0) is Some(v)
+  assert_eq(v, 97)
+  guard s.get(1) is Some(v)
+  assert_eq(v, 55358)
+  guard s.get(2) is Some(v)
+  assert_eq(v, 56611)
+  guard s.get(3) is Some(v)
+  assert_eq(v, 98)
+  guard s.get(4) is None
 }
 
 ///|
 test "View::get basic cases" {
   let v = "hello"[1:-1]
-  inspect(v.get(0), content="Some(101)")
-  inspect(v.get(2), content="Some(108)")
-  inspect(v.get(3), content="None")
-  inspect(v.get(-1), content="None")
+  guard v.get(0) is Some(v1)
+  assert_eq(v1, 101)
+  guard v.get(2) is Some(v1)
+  assert_eq(v1, 108)
+  guard v.get(3) is None
+  guard v.get(-1) is None
   let v = "ab🤣cd"[1:-1]
-  inspect(v.get(0), content="Some(98)")
-  inspect(v.get(1), content="Some(55358)")
-  inspect(v.get(2), content="Some(56611)")
+  guard v.get(0) is Some(v1)
+  assert_eq(v1, 98)
+  guard v.get(1) is Some(v1)
+  assert_eq(v1, 55358)
+  guard v.get(2) is Some(v1)
+  assert_eq(v1, 56611)
 }
 
 ///|
@@ -1935,34 +2057,43 @@ pub fn StringView::get_char(self : StringView, idx : Int) -> Char? {
 test "String::get_char basic cases" {
   // Basic ASCII characters
   let s = "hello"
-  inspect(s.get_char(0), content="Some('h')")
-  inspect(s.get_char(1), content="Some('e')")
-  inspect(s.get_char(4), content="Some('o')")
-  inspect(s.get_char(5), content="None")
-  inspect(s.get_char(-1), content="None")
+  guard s.get_char(0) is Some(c)
+  assert_eq(c, 'h')
+  guard s.get_char(1) is Some(c)
+  assert_eq(c, 'e')
+  guard s.get_char(4) is Some(c)
+  assert_eq(c, 'o')
+  guard s.get_char(5) is None
+  guard s.get_char(-1) is None
 
   // Contains emoji (surrogate pair)
   let s = "a🤣b"
-  inspect(s.get_char(0), content="Some('a')")
-  inspect(s.get_char(1), content="Some('🤣')")
-  inspect(s.get_char(2), content="None") // Second half of surrogate pair is not a valid char
-  inspect(s.get_char(3), content="Some('b')")
-  inspect(s.get_char(4), content="None")
+  guard s.get_char(0) is Some(v)
+  assert_eq(v, 'a')
+  guard s.get_char(1) is Some(v)
+  assert_eq(v, '🤣')
+  guard s.get_char(2) is None  // Second half of surrogate pair is not a valid char
+  guard s.get_char(3) is Some(v)
+  assert_eq(v, 'b')
+  guard s.get_char(4) is None
 }
 
 ///|
 test "View::get_char basic cases" {
   let s = "a🤣b"
   let v = s[0:-1]
-  inspect(v.get_char(0), content="Some('a')")
-  inspect(v.get_char(1), content="Some('🤣')")
-  inspect(v.get_char(2), content="None")
-  inspect(v.get_char(3), content="None")
-  inspect(v.get_char(4), content="None")
+  guard v.get_char(0) is Some(c)
+  assert_eq(c, 'a')
+  guard v.get_char(1) is Some(c)
+  assert_eq(c, '🤣')
+  guard v.get_char(2) is None
+  guard v.get_char(3) is None
+  guard v.get_char(4) is None
 
   // Test substring view
   let v2 = s[1:3] // Only contains the emoji surrogate pair
-  inspect(v2.get_char(0), content="Some('🤣')")
-  inspect(v2.get_char(1), content="None")
-  inspect(v2.get_char(2), content="None")
+  guard v2.get_char(0) is Some(c)
+  assert_eq(c, '🤣')
+  guard v2.get_char(1) is None
+  guard v2.get_char(2) is None
 }

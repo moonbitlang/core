@@ -99,7 +99,7 @@ test "unicode handling" {
 
   // Find character offset
   let offset = emoji_text.offset_of_nth_char(5) // Position of emoji
-  inspect(offset, content="Some(5)")
+  debug_inspect(offset, content="Some(5)")
 
   // Test character length
   let has_11_chars = emoji_text.char_length_eq(11)
@@ -254,8 +254,8 @@ test "match result" {
   inspect(m.content(), content="key=42")
   inspect(m.before(), content="")
   inspect(m.after(), content="")
-  inspect(m.group(1), content="Some(\"key\")")
-  inspect(m.group(2), content="Some(\"42\")")
+  debug_inspect(m.group(1), content="Some(<StringView: \"key\">)")
+  debug_inspect(m.group(2), content="Some(<StringView: \"42\">)")
 }
 ```
 
@@ -266,8 +266,8 @@ Named capture groups via `(?<name>...)`:
 test "named groups" {
   let re = @string.Regex("(?<name>[[:alpha:]]+):(?<val>[[:digit:]]+)")
   guard re.execute("age:30") is Some(m) else { fail("no match") }
-  inspect(m.named_group("name"), content="Some(\"age\")")
-  inspect(m.named_group("val"), content="Some(\"30\")")
+  debug_inspect(m.named_group("name"), content="Some(<StringView: \"age\">)")
+  debug_inspect(m.named_group("val"), content="Some(<StringView: \"30\">)")
 }
 ```
 

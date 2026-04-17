@@ -34,8 +34,8 @@ test "ReadOnlyArray access methods" {
   let arr : ReadOnlyArray[Int] = [10, 20, 30]
 
   // Test get
-  inspect(arr.get(1), content="Some(20)")
-  inspect(arr.get(5), content="None")
+  debug_inspect(arr.get(1), content="Some(20)")
+  guard arr.get(5) is None
 
   // Test length
   inspect(arr.length(), content="3")
@@ -46,8 +46,8 @@ test "ReadOnlyArray access methods" {
   inspect(empty.is_empty(), content="true")
 
   // Test last
-  inspect(arr.last(), content="Some(30)")
-  inspect(empty.last(), content="None")
+  debug_inspect(arr.last(), content="Some(30)")
+  debug_inspect(empty.last(), content="None")
 }
 
 ///|
@@ -74,8 +74,8 @@ test "ReadOnlyArray search methods" {
   let arr : ReadOnlyArray[Int] = [1, 2, 3, 2, 4]
 
   // Test search
-  inspect(arr.search(2), content="Some(1)")
-  inspect(arr.search(5), content="None")
+  debug_inspect(arr.search(2), content="Some(1)")
+  debug_inspect(arr.search(5), content="None")
 
   // Test contains
   inspect(arr.contains(3), content="true")

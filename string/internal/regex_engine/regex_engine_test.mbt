@@ -37,8 +37,8 @@ test "abc" {
   ])
   let re = @regex_engine.compile(profile~, pat)
   guard re.execute("abc"[:], 0) is Some(result) else { fail("Expected match") }
-  assert_eq(result.group(0), Some((0, 3)))
-  assert_eq(result.group(1), None)
+  @test.assert_eq(result.group(0), Some((0, 3)))
+  debug_inspect(result.group(1), content="None")
 }
 
 ///|
@@ -56,10 +56,10 @@ test "execute with last_index and cached transitions/start-state" {
   let pat = @regex_engine.char(@regex_engine.RecharSet::char('a'))
   let re = @regex_engine.compile(profile~, pat)
   guard re.execute("ba"[:], 1) is Some(mr) else { fail("Expected match") }
-  assert_eq(mr.group(0), Some((1, 2)))
+  @test.assert_eq(mr.group(0), Some((1, 2)))
   // second run hits cached start state + transition
   guard re.execute("ba"[:], 1) is Some(mr2) else { fail("Expected match") }
-  assert_eq(mr2.group(0), Some((1, 2)))
+  debug_inspect(mr2.group(0), content="Some((1, 2))")
 }
 
 ///|
@@ -85,10 +85,10 @@ test "nested stars execute repeatedly" {
   ])
   let re = @regex_engine.compile(profile~, pat)
   guard re.execute("aaa"[:], 0) is Some(mr1) else { fail("Expected match") }
-  assert_eq(mr1.group(0), Some((0, 3)))
+  @test.assert_eq(mr1.group(0), Some((0, 3)))
   // Repeat the same execution path to exercise cached transitions.
   guard re.execute("aaa"[:], 0) is Some(mr2) else { fail("Expected match") }
-  assert_eq(mr2.group(0), Some((0, 3)))
+  debug_inspect(mr2.group(0), content="Some((0, 3))")
 }
 
 ///|
@@ -99,7 +99,7 @@ test "alternation compiles and matches" {
   ])
   let re = @regex_engine.compile(profile~, pat)
   guard re.execute("b"[:], 0) is Some(mr) else { fail("Expected match") }
-  assert_eq(mr.group(0), Some((0, 1)))
+  debug_inspect(mr.group(0), content="Some((0, 1))")
 }
 
 ///|
@@ -147,8 +147,8 @@ test "nested sequence vs flattened sequence preserve effective-tail preference" 
   guard flat_re.execute("abc. "[:], 0) is Some(flat_match) else {
     fail("Expected flattened match")
   }
-  assert_eq(nested_match.group(0), Some((0, 5)))
-  assert_eq(flat_match.group(0), Some((0, 5)))
+  @test.assert_eq(nested_match.group(0), Some((0, 5)))
+  debug_inspect(flat_match.group(0), content="Some((0, 5))")
 }
 
 ///|
@@ -159,13 +159,13 @@ test "epsilon in sequences (translate eps optimizations)" {
   ])
   let re1 = @regex_engine.compile(profile~, pat1)
   guard re1.execute("a"[:], 0) is Some(mr1) else { fail("Expected match") }
-  assert_eq(mr1.group(0), Some((0, 1)))
+  @test.assert_eq(mr1.group(0), Some((0, 1)))
   let pat2 = @regex_engine.seq([
     @regex_engine.start_of_input, @regex_engine.epsilon, a, @regex_engine.end_of_input,
   ])
   let re2 = @regex_engine.compile(profile~, pat2)
   guard re2.execute("a"[:], 0) is Some(mr2) else { fail("Expected match") }
-  assert_eq(mr2.group(0), Some((0, 1)))
+  debug_inspect(mr2.group(0), content="Some((0, 1))")
 }
 
 ///|
@@ -176,13 +176,13 @@ test "line assertions" {
   let pat1 = @regex_engine.seq([@regex_engine.start_of_line, a])
   let re1 = @regex_engine.compile(profile~, pat1)
   guard re1.execute("\na"[:], 0) is Some(mr1) else { fail("Expected match") }
-  assert_eq(mr1.group(0), Some((1, 2)))
+  @test.assert_eq(mr1.group(0), Some((1, 2)))
 
   // EndOfLine is a lookahead (needs next-cat check).
   let pat2 = @regex_engine.seq([a, @regex_engine.end_of_line])
   let re2 = @regex_engine.compile(profile~, pat2)
   guard re2.execute("a\n"[:], 0) is Some(mr2) else { fail("Expected match") }
-  assert_eq(mr2.group(0), Some((0, 1)))
+  debug_inspect(mr2.group(0), content="Some((0, 1))")
 }
 
 ///|
@@ -192,16 +192,16 @@ test "word boundary assertions" {
   let pat1 = @regex_engine.seq([@regex_engine.start_of_word, a])
   let re1 = @regex_engine.compile(profile~, pat1)
   guard re1.execute("a"[:], 0) is Some(mr1) else { fail("Expected match") }
-  assert_eq(mr1.group(0), Some((0, 1)))
+  @test.assert_eq(mr1.group(0), Some((0, 1)))
   let pat2 = @regex_engine.seq([a, @regex_engine.end_of_word])
   let re2 = @regex_engine.compile(profile~, pat2)
   guard re2.execute("a!"[:], 0) is Some(mr2) else { fail("Expected match") }
-  assert_eq(mr2.group(0), Some((0, 1)))
+  @test.assert_eq(mr2.group(0), Some((0, 1)))
   assert_true(re2.execute("ab"[:], 0) is None)
   let pat3 = @regex_engine.seq([a, @regex_engine.not_word_boundary, b])
   let re3 = @regex_engine.compile(profile~, pat3)
   guard re3.execute("ab"[:], 0) is Some(mr3) else { fail("Expected match") }
-  assert_eq(mr3.group(0), Some((0, 2)))
+  debug_inspect(mr3.group(0), content="Some((0, 2))")
 }
 
 ///|
@@ -214,7 +214,7 @@ test "quantifier min > 0 uses iter step" {
   ])
   let re = @regex_engine.compile(profile~, pat)
   guard re.execute("aa"[:], 0) is Some(mr) else { fail("Expected match") }
-  assert_eq(mr.group(0), Some((0, 2)))
+  debug_inspect(mr.group(0), content="Some((0, 2))")
 }
 
 ///|
@@ -232,7 +232,7 @@ test "preference node triggers enforce_pref(First, k)" {
   ])
   let re = @regex_engine.compile(profile~, pat)
   guard re.execute("ab"[:], 0) is Some(mr) else { fail("Expected match") }
-  assert_eq(mr.group(0), Some((0, 2)))
+  debug_inspect(mr.group(0), content="Some((0, 2))")
 }
 
 ///|
@@ -246,6 +246,6 @@ test "Regex::group_names includes capture name" {
   let re = @regex_engine.compile(profile~, pat)
   let names = re.group_names()
   assert_eq(names.length(), 2)
-  assert_eq(names[0], None)
-  assert_eq(names[1], Some("x"))
+  @test.assert_eq(names[0], None)
+  debug_inspect(names[1], content="Some(\"x\")")
 }

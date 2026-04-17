@@ -28,9 +28,9 @@
 /// ```mbt check
 /// test {
 ///   let arr : FixedArray[Int] = [1, 2, 3]
-///   inspect(arr.get(1), content="Some(2)")
+///   debug_inspect(arr.get(1), content="Some(2)")
 ///   let arr : FixedArray[Int] = [1, 2, 3]
-///   inspect(arr.get(3), content="None")
+///   debug_inspect(arr.get(3), content="None")
 /// }
 /// ```
 pub fn[T] FixedArray::get(self : FixedArray[T], idx : Int) -> T? {
@@ -1023,19 +1023,23 @@ pub fn[T : Eq] FixedArray::search(self : FixedArray[T], value : T) -> Int? {
 test "search" {
   {
     let arr : FixedArray[Int] = []
-    assert_eq(arr.search(3), None)
-    assert_eq(arr.search(-1), None)
+    guard arr.search(3) is None
+    guard arr.search(-1) is None
   }
   {
     let arr : FixedArray[_] = [3]
-    assert_eq(arr.search(3), Some(0))
-    assert_eq(arr.search(-1), None)
+    guard arr.search(3) is Some(v)
+    assert_eq(v, 0)
+    guard arr.search(-1) is None
   }
   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
-  assert_eq(arr.search(1), Some(0))
-  assert_eq(arr.search(5), Some(4))
-  assert_eq(arr.search(3), Some(2))
-  assert_eq(arr.search(-1), None)
+  guard arr.search(1) is Some(v)
+  assert_eq(v, 0)
+  guard arr.search(5) is Some(v)
+  assert_eq(v, 4)
+  guard arr.search(3) is Some(v)
+  assert_eq(v, 2)
+  guard arr.search(-1) is None
 }
 
 ///|
@@ -1396,9 +1400,9 @@ pub fn[T] FixedArray::from_iter(iter : Iter[T]) -> FixedArray[T] {
 /// ```mbt check
 /// test {
 ///   let array : FixedArray[Int] = [1, 2, 3]
-///   inspect(array.last(), content="Some(3)")
+///   debug_inspect(array.last(), content="Some(3)")
 ///   let empty : FixedArray[Int] = []
-///   inspect(empty.last(), content="None")
+///   debug_inspect(empty.last(), content="None")
 /// }
 /// ```
 pub fn[A] FixedArray::last(self : FixedArray[A]) -> A? {
@@ -1455,33 +1459,37 @@ pub fn FixedArray::join(
 ///|
 test "FixedArray::last/empty" {
   let empty : FixedArray[Int] = []
-  inspect(empty.last(), content="None")
+  guard empty.last() is None
 }
 
 ///|
 test "FixedArray::last/non_empty" {
   let array : FixedArray[_] = [1, 2, 3]
-  inspect(array.last(), content="Some(3)")
+  guard array.last() is Some(v)
+  assert_eq(v, 3)
   let single : FixedArray[_] = [42]
-  inspect(single.last(), content="Some(42)")
+  guard single.last() is Some(v)
+  assert_eq(v, 42)
 }
 
 ///|
 test "FixedArray::last/empty_array" {
   let empty_array : FixedArray[Int] = []
-  inspect(FixedArray::last(empty_array), content="None")
+  guard FixedArray::last(empty_array) is None
 }
 
 ///|
 test "FixedArray::last/single_element" {
   let single_element_array : FixedArray[Int] = [42]
-  inspect(FixedArray::last(single_element_array), content="Some(42)")
+  guard FixedArray::last(single_element_array) is Some(v)
+  assert_eq(v, 42)
 }
 
 ///|
 test "FixedArray::last/multiple_elements" {
   let multiple_elements_array : FixedArray[Int] = [1, 2, 3, 4, 5]
-  inspect(FixedArray::last(multiple_elements_array), content="Some(5)")
+  guard FixedArray::last(multiple_elements_array) is Some(v)
+  assert_eq(v, 5)
 }
 
 ///|

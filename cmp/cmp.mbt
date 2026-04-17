@@ -35,6 +35,12 @@
 pub(all) struct Reverse[T](T) derive(Eq, Show, Hash)
 
 ///|
+pub impl[T : @debug.Debug] @debug.Debug for Reverse[T] with to_repr(self) {
+  let Reverse(inner) = self
+  @debug.Repr::ctor("Reverse", [(None, @debug.to_repr(inner))])
+}
+
+///|
 pub impl[T : Compare] Compare for Reverse[T] with compare(a, b) {
   -a.0.compare(b.0)
 }

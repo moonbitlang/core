@@ -35,19 +35,19 @@ test "current_dir returns reasonable directory" {
 test "env var round trip" {
   let key = "__MOONBIT_CORE_ENV_TEST_" + @env.now().to_string()
 
-  assert_eq(@env.get_env_var(key), None)
-  assert_eq(@env.get_env_vars().get(key), None)
+  @test.assert_eq(@env.get_env_var(key), None)
+  @test.assert_eq(@env.get_env_vars().get(key), None)
 
   @env.set_env_var(key, "")
-  assert_eq(@env.get_env_var(key), Some(""))
-  assert_eq(@env.get_env_vars().get(key), Some(""))
+  @test.assert_eq(@env.get_env_var(key), Some(""))
+  @test.assert_eq(@env.get_env_vars().get(key), Some(""))
 
   let value = "value_" + @env.now().to_string()
   @env.set_env_var(key, value)
-  assert_eq(@env.get_env_var(key), Some(value))
-  assert_eq(@env.get_env_vars().get(key), Some(value))
+  @test.assert_eq(@env.get_env_var(key), Some(value))
+  @test.assert_eq(@env.get_env_vars().get(key), Some(value))
 
   @env.unset_env_var(key)
-  assert_eq(@env.get_env_var(key), None)
-  assert_eq(@env.get_env_vars().get(key), None)
+  debug_inspect(@env.get_env_var(key), content="None")
+  debug_inspect(@env.get_env_vars().get(key), content="None")
 }

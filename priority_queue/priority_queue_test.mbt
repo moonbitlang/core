@@ -27,26 +27,26 @@ test "default" {
 ///|
 test "from_array" {
   let pq = @priority_queue.from_array([1, 3, 6, 4, 5])
-  inspect(pq.peek(), content="Some(6)")
+  debug_inspect(pq.peek(), content="Some(6)")
   let pq_ : @priority_queue.PriorityQueue[Int] = @priority_queue.from_array([])
-  inspect(pq_.peek(), content="None")
+  debug_inspect(pq_.peek(), content="None")
 }
 
 ///|
 test "from_fixed_array" {
   let pq = @priority_queue.from_array([1, 2, 3, 4, 5])
-  assert_eq(pq.peek(), Some(5))
+  debug_inspect(pq.peek(), content="Some(5)")
 }
 
 ///|
 test "copy" {
   let v = @priority_queue.from_array([1, 2, 3, 4])
   let ve = v.copy()
-  inspect(v.peek(), content="Some(4)")
-  inspect(ve.peek(), content="Some(4)")
+  debug_inspect(v.peek(), content="Some(4)")
+  debug_inspect(ve.peek(), content="Some(4)")
   v.pop() |> ignore
-  inspect(v.peek(), content="Some(3)")
-  inspect(ve.peek(), content="Some(4)")
+  debug_inspect(v.peek(), content="Some(3)")
+  debug_inspect(ve.peek(), content="Some(4)")
 }
 
 ///|
@@ -86,11 +86,11 @@ test "length" {
 test "unsafe_pop" {
   let pq = @priority_queue.from_array([5, 5, 4, 3, 2, 1])
   inspect(pq.length(), content="6")
-  assert_eq(pq.peek(), Some(5))
+  @test.assert_eq(pq.peek(), Some(5))
   pq.unsafe_pop()
-  assert_eq(pq.peek(), Some(5))
+  debug_inspect(pq.peek(), content="Some(5)")
   pq.unsafe_pop()
-  assert_eq(pq.peek(), Some(4))
+  debug_inspect(pq.peek(), content="Some(4)")
   let pq_ = @priority_queue.from_array([1])
   pq_.unsafe_pop()
   inspect(pq_.length(), content="0")
@@ -99,9 +99,9 @@ test "unsafe_pop" {
 ///|
 test "pop" {
   let pq = @priority_queue.from_array([1, 2, 3, 4, 5, 5])
-  assert_eq(pq.pop(), Some(5))
-  assert_eq(pq.pop(), Some(5))
-  assert_eq(pq.pop(), Some(4))
+  debug_inspect(pq.pop(), content="Some(5)")
+  debug_inspect(pq.pop(), content="Some(5)")
+  debug_inspect(pq.pop(), content="Some(4)")
   let pq_ = @priority_queue.from_array([1])
   pq_.pop() |> ignore
   inspect(pq_.length(), content="0")
@@ -116,7 +116,7 @@ test "pop" {
 ///|
 test "pop empty" {
   let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.new()
-  inspect(pq.pop(), content="None")
+  debug_inspect(pq.pop(), content="None")
 }
 
 ///|
@@ -125,15 +125,15 @@ test "push" {
   pq.push(-1)
   pq.push(6)
   assert_eq(pq.length(), 7)
-  assert_eq(pq.peek(), Some(6))
+  debug_inspect(pq.peek(), content="Some(6)")
 }
 
 ///|
 test "peek" {
   let pq = @priority_queue.from_array([1, 2, 3, 4, 5])
-  assert_eq(pq.peek(), Some(5))
+  debug_inspect(pq.peek(), content="Some(5)")
   pq.clear()
-  assert_eq(pq.peek(), None)
+  debug_inspect(pq.peek(), content="None")
 }
 
 ///|
@@ -189,7 +189,8 @@ test "complex" {
   }
   assert_eq(pq.length(), 1001)
   for i in 0..<=1000 {
-    assert_eq(pq.pop(), Some(1000 - i))
+    guard pq.pop() is Some(v) else { fail("Expected Some") }
+    assert_eq(v, 1000 - i)
   }
   inspect(pq.iter(), content="[]")
   assert_eq(pq.length(), 0)
@@ -203,7 +204,8 @@ test "priority queue large data" {
   }
   assert_eq(pq.length(), 10000001)
   for i in 0..<=10000000 {
-    assert_eq(pq.pop(), Some(-i))
+    guard pq.pop() is Some(v) else { fail("Expected Some") }
+    assert_eq(v, -i)
   }
   inspect(pq.iter(), content="[]")
   assert_eq(pq.length(), 0)
@@ -219,9 +221,9 @@ test "copy large monotonic queue" {
   }
   let pq2 = pq.copy()
   assert_eq(pq2.length(), 10000)
-  assert_eq(pq2.peek(), Some(9999))
+  debug_inspect(pq2.peek(), content="Some(9999)")
   // Verify independence: mutate original, copy should be unaffected
   pq.pop() |> ignore
-  assert_eq(pq.peek(), Some(9998))
-  assert_eq(pq2.peek(), Some(9999))
+  debug_inspect(pq.peek(), content="Some(9998)")
+  debug_inspect(pq2.peek(), content="Some(9999)")
 }

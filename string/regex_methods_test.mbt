@@ -311,7 +311,7 @@ test "find/capture_groups_and_named_groups" {
   inspect(words, content="[\"ab\", \"cd\"]")
   inspect(nums, content="[\"12\", \"345\"]")
   inspect(spans, content="[(0, 5, 7), (6, 6, 0)]")
-  inspect(missing, content="[None, None]")
+  debug_inspect(missing, content="[None, None]")
 }
 
 ///|

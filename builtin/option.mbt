@@ -23,6 +23,7 @@ pub impl[X : Eq] Eq for X? with equal(self, other) {
 
 ///|
 /// Convert to `string`.
+#deprecated("Option does not have a meaningful string representation")
 pub fn[X : Show] Option::to_string(self : X?) -> String {
   match self {
     None => "None"

@@ -15,12 +15,12 @@
 ///|
 test "get option" {
   let dv = @deque.from_array([1, 2, 3, 4, 5])
-  inspect(dv.get(0), content="Some(1)")
-  inspect(dv.get(2), content="Some(3)")
-  inspect(dv.get(4), content="Some(5)")
-  inspect(dv.get(-1), content="None")
-  inspect(dv.get(5), content="None")
-  inspect(dv.get(100), content="None")
+  debug_inspect(dv.get(0), content="Some(1)")
+  debug_inspect(dv.get(2), content="Some(3)")
+  debug_inspect(dv.get(4), content="Some(5)")
+  debug_inspect(dv.get(-1), content="None")
+  debug_inspect(dv.get(5), content="None")
+  debug_inspect(dv.get(100), content="None")
 }
 
 ///|
@@ -120,23 +120,23 @@ test "reserve and push" {
   // capacity > 0, len = 0
   let a = @deque.new(capacity=2)
   a.push_back(Option::Some(1))
-  inspect(a.front(), content="Some(Some(1))")
-  inspect(a.back(), content="Some(Some(1))")
+  debug_inspect(a.front(), content="Some(Some(1))")
+  debug_inspect(a.back(), content="Some(Some(1))")
   // capacity = 0, len = 0
   let b = @deque.new(capacity=0)
   b.push_back(Option::Some(1))
-  inspect(b.front(), content="Some(Some(1))")
-  inspect(b.back(), content="Some(Some(1))")
+  debug_inspect(b.front(), content="Some(Some(1))")
+  debug_inspect(b.back(), content="Some(Some(1))")
   // capacity > 0, len = 0
   let c = @deque.new(capacity=2)
   c.push_front(Option::Some(1))
-  inspect(c.front(), content="Some(Some(1))")
-  inspect(c.back(), content="Some(Some(1))")
+  debug_inspect(c.front(), content="Some(Some(1))")
+  debug_inspect(c.back(), content="Some(Some(1))")
   // capacity = 0, len = 0
   let d = @deque.new(capacity=0)
   d.push_front(Option::Some(1))
-  inspect(d.front(), content="Some(Some(1))")
-  inspect(d.back(), content="Some(Some(1))")
+  debug_inspect(d.front(), content="Some(Some(1))")
+  debug_inspect(d.back(), content="Some(Some(1))")
 }
 
 ///|
@@ -429,23 +429,23 @@ test "reserve_and_push" {
   // capacity > 0, len = 0
   let a = @deque.new(capacity=2)
   a.push_back(Some(1))
-  inspect(a.front(), content="Some(Some(1))")
-  inspect(a.back(), content="Some(Some(1))")
+  debug_inspect(a.front(), content="Some(Some(1))")
+  debug_inspect(a.back(), content="Some(Some(1))")
   // capacity = 0, len = 0
   let b = @deque.new(capacity=0)
   b.push_back(Some(1))
-  inspect(b.front(), content="Some(Some(1))")
-  inspect(b.back(), content="Some(Some(1))")
+  debug_inspect(b.front(), content="Some(Some(1))")
+  debug_inspect(b.back(), content="Some(Some(1))")
   // capacity > 0, len = 0
   let c = @deque.new(capacity=2)
   c.push_front(Some(1))
-  inspect(c.front(), content="Some(Some(1))")
-  inspect(c.back(), content="Some(Some(1))")
+  debug_inspect(c.front(), content="Some(Some(1))")
+  debug_inspect(c.back(), content="Some(Some(1))")
   // capacity = 0, len = 0
   let d = @deque.new(capacity=0)
   d.push_front(Some(1))
-  inspect(d.front(), content="Some(Some(1))")
-  inspect(d.back(), content="Some(Some(1))")
+  debug_inspect(d.front(), content="Some(Some(1))")
+  debug_inspect(d.back(), content="Some(Some(1))")
 }
 
 ///|
@@ -489,7 +489,7 @@ test "unsafe_pop_front after many push_front" {
   }
   // Now head should be at the end of buffer
   // When we pop again, head should wrap around to 0
-  inspect(dq.front(), content="Some(0)")
+  debug_inspect(dq.front(), content="Some(0)")
   dq.unsafe_pop_front()
   inspect(dq.is_empty(), content="true")
 }
@@ -502,7 +502,7 @@ test "unsafe_pop_back when tail needs to wrap around" {
   dq.unsafe_pop_front() // head = 1
   dq.push_back(3) // tail = 0 (wraps around)
   dq.unsafe_pop_back()
-  inspect(dq.back(), content="Some(2)")
+  debug_inspect(dq.back(), content="Some(2)")
 }
 
 ///|
@@ -579,13 +579,13 @@ test "deque push_front when empty" {
   d.push_front(f)
   inspect(d, content="@deque.from_array([0])")
   let d = @deque.from_array(["a", "b"])
-  inspect(
+  debug_inspect(
     d.pop_back(),
     content=(
       #|Some("b")
     ),
   )
-  inspect(
+  debug_inspect(
     d.pop_back(),
     content=(
       #|Some("a")
@@ -1593,7 +1593,7 @@ test "deque map/mapi/search wrapped unfull buffer" {
   dq.push_back(1)
   dq.push_front(-1)
   inspect(dq.as_views(), content="([-1], [0, 1])")
-  inspect(dq.search(-1), content="Some(0)")
+  debug_inspect(dq.search(-1), content="Some(0)")
 }
 
 ///|

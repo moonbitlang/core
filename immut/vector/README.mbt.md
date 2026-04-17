@@ -56,9 +56,9 @@ Use index syntax `v[i]` or `at()` for direct access. Use `get()` for a safe look
 test {
   let v = @vector.from_array([10, 20, 30, 40, 50])
   assert_eq(v[2], 30)
-  assert_eq(v.get(2), Some(30))
-  assert_eq(v.get(99), None)
-  assert_eq(v.peek(), Some(50)) // last element
+  debug_inspect(v.get(2), content="Some(30)")
+  debug_inspect(v.get(99), content="None")
+  debug_inspect(v.peek(), content="Some(50)") // last element
 }
 ```
 
@@ -88,7 +88,7 @@ test {
   assert_eq(v3.to_array(), [1, 2, 3])
   // pop on empty vector returns None
   let empty : @vector.Vector[Int] = @vector.new()
-  assert_eq(empty.pop(), None)
+  debug_inspect(empty.pop(), content="None")
 }
 ```
 

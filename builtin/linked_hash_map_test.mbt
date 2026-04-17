@@ -39,9 +39,10 @@ test "Map::of" {
   let map = Map::of(arr)
   inspect(map, content="{\"a\": 1, \"b\": 2, \"c\": 3}")
   inspect(map.length(), content="3")
-  inspect(map.get("a"), content="Some(1)")
-  inspect(map.get("b"), content="Some(2)")
-  inspect(map.get("c"), content="Some(3)")
+  debug_inspect(map.get("a"), content="Some(1)")
+  debug_inspect(map.get("b"), content="Some(2)")
+  guard map.get("c") is Some(v)
+  assert_eq(v, 3)
   let large_arr : FixedArray[(String, Int)] = [
     ("k1", 1),
     ("k2", 2),
@@ -60,8 +61,8 @@ test "Map::of" {
   ]
   let large_map = Map::of(large_arr)
   inspect(large_map.length(), content="14")
-  inspect(large_map.get("k1"), content="Some(1)")
-  inspect(large_map.get("k14"), content="Some(14)")
+  debug_inspect(large_map.get("k1"), content="Some(1)")
+  debug_inspect(large_map.get("k14"), content="Some(14)")
 }
 
 ///|
@@ -79,13 +80,13 @@ test "Map::from_iter" {
 ///|
 test "Map::get_from_view" {
   let string_map : Map[String, Int] = { "alpha": 1, "beta": 2 }
-  inspect(Map::get_from_string(string_map, "alp"[:]), content="None")
-  inspect(Map::get_from_string(string_map, "alphx"[:]), content="None")
-  inspect(Map::get_from_string(string_map, "alpha"[:]), content="Some(1)")
+  debug_inspect(Map::get_from_string(string_map, "alp"[:]), content="None")
+  debug_inspect(Map::get_from_string(string_map, "alphx"[:]), content="None")
+  debug_inspect(Map::get_from_string(string_map, "alpha"[:]), content="Some(1)")
   let bytes_map : Map[Bytes, Int] = { b"abc": 10, b"xyz": 20 }
-  inspect(Map::get_from_bytes(bytes_map, b"ab"[:]), content="None")
-  inspect(Map::get_from_bytes(bytes_map, b"abd"[:]), content="None")
-  inspect(Map::get_from_bytes(bytes_map, b"abc"[:]), content="Some(10)")
+  debug_inspect(Map::get_from_bytes(bytes_map, b"ab"[:]), content="None")
+  debug_inspect(Map::get_from_bytes(bytes_map, b"abd"[:]), content="None")
+  debug_inspect(Map::get_from_bytes(bytes_map, b"abc"[:]), content="Some(10)")
 }
 
 ///|
@@ -178,7 +179,7 @@ test "Map::update" {
       None => Some(0)
     }
   })
-  inspect(map.get("a"), content="Some(11)")
+  debug_inspect(map.get("a"), content="Some(11)")
   inspect(map.length(), content="3")
 
   // Test inserting new value when key doesn't exist
@@ -188,7 +189,7 @@ test "Map::update" {
       None => Some(4)
     }
   })
-  inspect(map.get("d"), content="Some(4)")
+  debug_inspect(map.get("d"), content="Some(4)")
   inspect(map.length(), content="4")
   inspect(
     map,
@@ -199,7 +200,7 @@ test "Map::update" {
 
   // Test removing existing value by returning None
   map.update("b", fn(_) { None })
-  inspect(map.get("b"), content="None")
+  debug_inspect(map.get("b"), content="None")
   inspect(map.length(), content="3")
   inspect(
     map,
@@ -210,7 +211,7 @@ test "Map::update" {
 
   // Test no-op when key doesn't exist and function returns None
   map.update("e", fn(_) { None })
-  inspect(map.get("e"), content="None")
+  debug_inspect(map.get("e"), content="None")
   inspect(map.length(), content="3")
 
   // Test incrementing a counter (common use case)
@@ -221,14 +222,15 @@ test "Map::update" {
       None => Some(1)
     }
   })
-  inspect(counter_map.get("clicks"), content="Some(1)")
+  debug_inspect(counter_map.get("clicks"), content="Some(1)")
   counter_map.update("clicks", fn(v) {
     match v {
       Some(count) => Some(count + 1)
       None => Some(1)
     }
   })
-  inspect(counter_map.get("clicks"), content="Some(2)")
+  guard counter_map.get("clicks") is Some(v)
+  assert_eq(v, 2)
 
   // Test on empty map
   let empty_map : Map[String, Int] = {}
@@ -243,7 +245,7 @@ test "Map::update" {
       None => Some(42)
     }
   })
-  inspect(empty_map.get("new"), content="Some(42)")
+  debug_inspect(empty_map.get("new"), content="Some(42)")
   inspect(empty_map.length(), content="1")
 
   // Test adding to empty map
@@ -258,11 +260,11 @@ test "Map::retain - keep even values" {
   let map = { "a": 1, "b": 2, "c": 3, "d": 4, "e": 5 }
   map.retain((_k, v) => v % 2 == 0)
   inspect(map.length(), content="2")
-  inspect(map.get("a"), content="None")
-  inspect(map.get("b"), content="Some(2)")
-  inspect(map.get("c"), content="None")
-  inspect(map.get("d"), content="Some(4)")
-  inspect(map.get("e"), content="None")
+  debug_inspect(map.get("a"), content="None")
+  debug_inspect(map.get("b"), content="Some(2)")
+  debug_inspect(map.get("c"), content="None")
+  debug_inspect(map.get("d"), content="Some(4)")
+  debug_inspect(map.get("e"), content="None")
 }
 
 ///|
@@ -270,9 +272,9 @@ test "Map::retain - keep all" {
   let map = { "a": 1, "b": 2, "c": 3 }
   map.retain((_k, _v) => true)
   inspect(map.length(), content="3")
-  inspect(map.get("a"), content="Some(1)")
-  inspect(map.get("b"), content="Some(2)")
-  inspect(map.get("c"), content="Some(3)")
+  debug_inspect(map.get("a"), content="Some(1)")
+  debug_inspect(map.get("b"), content="Some(2)")
+  debug_inspect(map.get("c"), content="Some(3)")
 }
 
 ///|
@@ -281,9 +283,9 @@ test "Map::retain - remove all" {
   map.retain((_k, _v) => false)
   inspect(map.length(), content="0")
   inspect(map.is_empty(), content="true")
-  inspect(map.get("a"), content="None")
-  inspect(map.get("b"), content="None")
-  inspect(map.get("c"), content="None")
+  debug_inspect(map.get("a"), content="None")
+  debug_inspect(map.get("b"), content="None")
+  debug_inspect(map.get("c"), content="None")
 }
 
 ///|
@@ -299,10 +301,10 @@ test "Map::retain - key-based filtering" {
   let map = { "apple": 5, "banana": 6, "cherry": 5, "date": 4 }
   map.retain((k, _v) => k.length() >= 6) // Keep keys with 6+ characters
   inspect(map.length(), content="2")
-  inspect(map.get("apple"), content="None") // 5 chars
-  inspect(map.get("banana"), content="Some(6)") // 6 chars
-  inspect(map.get("cherry"), content="Some(5)") // 6 chars
-  inspect(map.get("date"), content="None") // 4 chars
+  debug_inspect(map.get("apple"), content="None") // 5 chars
+  debug_inspect(map.get("banana"), content="Some(6)") // 6 chars
+  debug_inspect(map.get("cherry"), content="Some(5)") // 6 chars
+  debug_inspect(map.get("date"), content="None") // 4 chars
 }
 
 ///|
@@ -323,7 +325,7 @@ test "Map::retain - single element map" {
   // Test keeping the element
   map.retain((_k, v) => v > 30)
   inspect(map.length(), content="1")
-  inspect(map.get("only"), content="Some(42)")
+  debug_inspect(map.get("only"), content="Some(42)")
 
   // Test removing the element
   map.retain((_k, v) => v < 30)
@@ -336,11 +338,11 @@ test "Map::retain - filter by both key and value" {
   let map = { "a1": 1, "b2": 2, "c3": 3, "d4": 4, "e5": 5 }
   map.retain((k, v) => k.contains("2") || v > 3) // Keep keys containing "2" or values > 3
   inspect(map.length(), content="3")
-  inspect(map.get("a1"), content="None")
-  inspect(map.get("b2"), content="Some(2)") // key contains "2"
-  inspect(map.get("c3"), content="None")
-  inspect(map.get("d4"), content="Some(4)") // value > 3
-  inspect(map.get("e5"), content="Some(5)") // value > 3
+  debug_inspect(map.get("a1"), content="None")
+  debug_inspect(map.get("b2"), content="Some(2)") // key contains "2"
+  debug_inspect(map.get("c3"), content="None")
+  debug_inspect(map.get("d4"), content="Some(4)") // value > 3
+  debug_inspect(map.get("e5"), content="Some(5)") // value > 3
 }
 
 ///|
@@ -355,10 +357,10 @@ test "Map::retain - large map performance" {
   inspect(map.length(), content="500")
 
   // Verify some specific entries
-  inspect(map.get("key0"), content="Some(0)")
-  inspect(map.get("key2"), content="Some(2)")
-  inspect(map.get("key1"), content="None")
-  inspect(map.get("key3"), content="None")
+  debug_inspect(map.get("key0"), content="Some(0)")
+  debug_inspect(map.get("key2"), content="Some(2)")
+  debug_inspect(map.get("key1"), content="None")
+  debug_inspect(map.get("key3"), content="None")
 }
 
 ///|
@@ -368,10 +370,10 @@ test "Map::retain - preserve map integrity after retain" {
 
   // Test that map operations still work correctly
   map.set("w", 4)
-  inspect(map.get("w"), content="Some(4)")
+  debug_inspect(map.get("w"), content="Some(4)")
   inspect(map.length(), content="3")
   map.remove("x")
-  inspect(map.get("x"), content="None")
+  debug_inspect(map.get("x"), content="None")
   inspect(map.length(), content="2")
   map.clear()
   inspect(map.length(), content="0")
@@ -391,11 +393,11 @@ test "Map::retain - complex predicate with string operations" {
     k.strip_prefix("a") is Some(_) || k.strip_suffix("y") is Some(_) || v >= 10
   })
   inspect(map.length(), content="3")
-  inspect(map.get("apple"), content="Some(5)") // starts with "a"
-  inspect(map.get("banana"), content="None") // no match
-  inspect(map.get("cherry"), content="Some(6)") // ends with "y"
-  inspect(map.get("date"), content="None") // no match
-  inspect(map.get("elderberry"), content="Some(10)") // value >= 10
+  debug_inspect(map.get("apple"), content="Some(5)") // starts with "a"
+  debug_inspect(map.get("banana"), content="None") // no match
+  debug_inspect(map.get("cherry"), content="Some(6)") // ends with "y"
+  debug_inspect(map.get("date"), content="None") // no match
+  debug_inspect(map.get("elderberry"), content="Some(10)") // value >= 10
 }
 
 ///|
@@ -423,13 +425,14 @@ test "Map::retain - edge case with all elements removed then re-added" {
   map.set("x", 10)
   map.set("y", 20)
   inspect(map.length(), content="2")
-  inspect(map.get("x"), content="Some(10)")
-  inspect(map.get("y"), content="Some(20)")
+  debug_inspect(map.get("x"), content="Some(10)")
+  guard map.get("y") is Some(v)
+  assert_eq(v, 20)
 
   // Original keys should still be gone
-  inspect(map.get("a"), content="None")
-  inspect(map.get("b"), content="None")
-  inspect(map.get("c"), content="None")
+  debug_inspect(map.get("a"), content="None")
+  debug_inspect(map.get("b"), content="None")
+  debug_inspect(map.get("c"), content="None")
 }
 
 ///|
@@ -444,12 +447,12 @@ test "Map::retain - with hash collisions simulation" {
   // Keep only keys with odd length
   map.retain((k, _v) => k.length() % 2 == 1)
   inspect(map.length(), content="3")
-  inspect(map.get("a"), content="Some(1)") // length 1 (odd)
-  inspect(map.get("aa"), content="None") // length 2 (even)
-  inspect(map.get("aaa"), content="Some(3)") // length 3 (odd)
-  inspect(map.get("aaaa"), content="None") // length 4 (even)
-  inspect(map.get("aaaaa"), content="Some(5)") // length 5 (odd)
-  inspect(map.get("aaaaaa"), content="None") // length 6 (even)
+  debug_inspect(map.get("a"), content="Some(1)") // length 1 (odd)
+  debug_inspect(map.get("aa"), content="None") // length 2 (even)
+  debug_inspect(map.get("aaa"), content="Some(3)") // length 3 (odd)
+  debug_inspect(map.get("aaaa"), content="None") // length 4 (even)
+  debug_inspect(map.get("aaaaa"), content="Some(5)") // length 5 (odd)
+  debug_inspect(map.get("aaaaaa"), content="None") // length 6 (even)
 }
 
 ///|
@@ -458,34 +461,35 @@ test "Map::get_from_string" {
 
   // Test basic string view access
   let view1 = "hello"[:]
-  inspect(map.get_from_string(view1), content="Some(1)")
+  debug_inspect(map.get_from_string(view1), content="Some(1)")
 
   // Test string view from substring
   let full_str = "prefix_world_suffix"
   let view2 = full_str.view(start_offset=7, end_offset=12)
-  inspect(map.get_from_string(view2), content="Some(2)")
+  debug_inspect(map.get_from_string(view2), content="Some(2)")
 
   // Test non-existent key
   let view3 = "notfound"[:]
-  inspect(map.get_from_string(view3), content="None")
+  debug_inspect(map.get_from_string(view3), content="None")
 
   // Test length mismatch
   let short_view = "hell"[:]
-  inspect(map.get_from_string(short_view), content="None")
+  debug_inspect(map.get_from_string(short_view), content="None")
 
   // Test content mismatch with same length
   let mismatch_view = "hella"[:]
-  inspect(map.get_from_string(mismatch_view), content="None")
+  debug_inspect(map.get_from_string(mismatch_view), content="None")
 
   // Test empty string
   let empty_map = { "": 42 }
   let empty_view = ""[:]
-  inspect(empty_map.get_from_string(empty_view), content="Some(42)")
+  guard empty_map.get_from_string(empty_view) is Some(v)
+  assert_eq(v, 42)
 
   // Test with longer string containing the key as substring
   let longer = "this is a test string"
   let test_view = longer.view(start_offset=10, end_offset=14)
-  inspect(map.get_from_string(test_view), content="Some(3)")
+  debug_inspect(map.get_from_string(test_view), content="Some(3)")
 }
 
 ///|
@@ -494,34 +498,35 @@ test "Map::get_from_bytes" {
 
   // Test basic bytes view access
   let view1 = b"hello"[:]
-  inspect(map.get_from_bytes(view1), content="Some(1)")
+  debug_inspect(map.get_from_bytes(view1), content="Some(1)")
 
   // Test bytes view from sub-array
   let full_bytes = b"prefix_world_suffix"
   let view2 = full_bytes[7:12]
-  inspect(map.get_from_bytes(view2), content="Some(2)")
+  debug_inspect(map.get_from_bytes(view2), content="Some(2)")
 
   // Test non-existent key
   let view3 = b"notfound"[:]
-  inspect(map.get_from_bytes(view3), content="None")
+  debug_inspect(map.get_from_bytes(view3), content="None")
 
   // Test length mismatch
   let short_view = b"hell"[:]
-  inspect(map.get_from_bytes(short_view), content="None")
+  debug_inspect(map.get_from_bytes(short_view), content="None")
 
   // Test content mismatch with same length
   let mismatch_view = b"hellx"[:]
-  inspect(map.get_from_bytes(mismatch_view), content="None")
+  debug_inspect(map.get_from_bytes(mismatch_view), content="None")
 
   // Test empty bytes
   let empty_map = { b"": 42 }
   let empty_view = b""[:]
-  inspect(empty_map.get_from_bytes(empty_view), content="Some(42)")
+  guard empty_map.get_from_bytes(empty_view) is Some(v)
+  assert_eq(v, 42)
 
   // Test with longer bytes containing the key as subbytes
   let longer = b"this is a test string"
   let test_view = longer[10:14]
-  inspect(map.get_from_bytes(test_view), content="Some(3)")
+  debug_inspect(map.get_from_bytes(test_view), content="Some(3)")
 }
 
 ///|
@@ -529,12 +534,12 @@ test "Map::merge" {
   let map1 : Map[String, Int] = { "a": 1, "b": 2 }
   let map2 : Map[String, Int] = { "b": 3, "c": 4 }
   let merged = map1.merge(map2)
-  inspect(merged.get("a"), content="Some(1)")
-  inspect(merged.get("b"), content="Some(3)")
-  inspect(merged.get("c"), content="Some(4)")
+  debug_inspect(merged.get("a"), content="Some(1)")
+  debug_inspect(merged.get("b"), content="Some(3)")
+  debug_inspect(merged.get("c"), content="Some(4)")
   inspect(merged.length(), content="3")
   // Verify original maps are unchanged
-  inspect(map1.get("b"), content="Some(2)")
+  debug_inspect(map1.get("b"), content="Some(2)")
   inspect(map1.length(), content="2")
 }
 
@@ -544,10 +549,10 @@ test "Map::merge empty maps" {
   let map2 : Map[String, Int] = { "a": 1, "b": 2 }
   let merged1 = map1.merge(map2)
   inspect(merged1.length(), content="2")
-  inspect(merged1.get("a"), content="Some(1)")
+  debug_inspect(merged1.get("a"), content="Some(1)")
   let merged2 = map2.merge(map1)
   inspect(merged2.length(), content="2")
-  inspect(merged2.get("b"), content="Some(2)")
+  debug_inspect(merged2.get("b"), content="Some(2)")
   let merged3 = map1.merge(map1)
   inspect(merged3.length(), content="0")
 }
@@ -557,9 +562,9 @@ test "Map::merge_in_place" {
   let map1 : Map[String, Int] = { "a": 1, "b": 2 }
   let map2 : Map[String, Int] = { "b": 3, "c": 4 }
   map1.merge_in_place(map2)
-  inspect(map1.get("a"), content="Some(1)")
-  inspect(map1.get("b"), content="Some(3)")
-  inspect(map1.get("c"), content="Some(4)")
+  debug_inspect(map1.get("a"), content="Some(1)")
+  debug_inspect(map1.get("b"), content="Some(3)")
+  debug_inspect(map1.get("c"), content="Some(4)")
   inspect(map1.length(), content="3")
   // Verify second map is unchanged
   inspect(map2.length(), content="2")
@@ -571,7 +576,7 @@ test "Map::merge_in_place empty maps" {
   let map2 : Map[String, Int] = { "a": 1, "b": 2 }
   map1.merge_in_place(map2)
   inspect(map1.length(), content="2")
-  inspect(map1.get("a"), content="Some(1)")
+  debug_inspect(map1.get("a"), content="Some(1)")
   map1.merge_in_place(map1)
   inspect(map1.length(), content="2")
 }
@@ -605,7 +610,7 @@ test "Map collision probe paths" {
       None => Some(30)
     }
   })
-  inspect(map.get(k1b), content="Some(30)")
+  debug_inspect(map.get(k1b), content="Some(30)")
   inspect(map[k1b], content="30")
   inspect(map.get_or_default(LKey::LKey(4, 0), 99), content="99")
   inspect(map.contains(LKey::LKey(5, 0)), content="false")

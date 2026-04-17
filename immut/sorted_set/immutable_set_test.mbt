@@ -387,8 +387,8 @@ test "min" {
 ///|
 test "min_option" {
   let empty : @sorted_set.SortedSet[Int] = @sorted_set.new()
-  inspect(empty.min_option(), content="None")
-  inspect(
+  debug_inspect(empty.min_option(), content="None")
+  debug_inspect(
     @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).min_option(),
     content="Some(1)",
   )
@@ -405,8 +405,8 @@ test "max" {
 ///|
 test "max_option" {
   let empty : @sorted_set.SortedSet[Int] = @sorted_set.new()
-  inspect(empty.max_option(), content="None")
-  inspect(
+  debug_inspect(empty.max_option(), content="None")
+  debug_inspect(
     @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).max_option(),
     content="Some(9)",
   )

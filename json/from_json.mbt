@@ -20,6 +20,14 @@ pub(all) suberror JsonDecodeError {
 } derive(Eq, Show, ToJson)
 
 ///|
+pub impl @debug.Debug for JsonDecodeError with to_repr(self) {
+  let JsonDecodeError((path, msg)) = self
+  @debug.Repr::ctor("JsonDecodeError", [
+    (None, @debug.Repr::tuple([@debug.to_repr(path), @debug.Repr::string(msg)])),
+  ])
+}
+
+///|
 /// Trait for types that can be converted from `Json`
 pub(open) trait FromJson {
   from_json(Json, JsonPath) -> Self raise JsonDecodeError

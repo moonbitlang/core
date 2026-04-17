@@ -42,7 +42,7 @@ fn[K : Show, V : Show] HashMap::_debug_entries(self : HashMap[K, V]) -> String {
 ///   let map = @hashmap.from_array([("a", 1), ("b", 2)])
 ///   map.clear()
 ///   inspect(map.length(), content="0")
-///   inspect(map.get("a"), content="None")
+///   debug_inspect(map.get("a"), content="None")
 /// }
 /// ```
 pub fn[K, V] HashMap::clear(self : HashMap[K, V]) -> Unit {
@@ -121,8 +121,8 @@ pub fn[K, V] HashMap::iter2(self : HashMap[K, V]) -> Iter2[K, V] {
 /// test {
 ///   let iter = Iter::singleton((1, "one")) + Iter::singleton((2, "two"))
 ///   let map = @hashmap.from_iter(iter)
-///   inspect(map.get(1), content="Some(\"one\")")
-///   inspect(map.get(2), content="Some(\"two\")")
+///   debug_inspect(map.get(1), content="Some(\"one\")")
+///   debug_inspect(map.get(2), content="Some(\"two\")")
 /// }
 /// ```
 #as_free_fn
@@ -454,10 +454,10 @@ pub fn[K, V] HashMap::values(self : HashMap[K, V]) -> Iter[V] {
 ///   let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3), ("d", 4)])
 ///   map.retain((_k, v) => v % 2 == 0) // Keep only even values
 ///   inspect(map.length(), content="2")
-///   inspect(map.get("a"), content="None")
-///   inspect(map.get("b"), content="Some(2)")
-///   inspect(map.get("c"), content="None")
-///   inspect(map.get("d"), content="Some(4)")
+///   debug_inspect(map.get("a"), content="None")
+///   debug_inspect(map.get("b"), content="Some(2)")
+///   debug_inspect(map.get("c"), content="None")
+///   debug_inspect(map.get("d"), content="Some(4)")
 /// }
 /// ```
 #locals(f)
@@ -496,10 +496,20 @@ test "retain" {
     ],
   }
   hashmap.retain((_k, v) => v % 2 == 0)
-  inspect(
+  @debug.debug_inspect(
     hashmap.entries,
     content=(
-      #|[None, None, None, None, None, None, Some({psl: 0, hash: -765931946, key: "b", value: 2}), Some({psl: 0, hash: -136509641, key: "d", value: 4})]
+      #|<FixedArray:
+      #|  [
+      #|    None,
+      #|    None,
+      #|    None,
+      #|    None,
+      #|    None,
+      #|    None,
+      #|    Some({ psl: 0, hash: -765931946, key: "b", value: 2 }),
+      #|    Some({ psl: 0, hash: -136509641, key: "d", value: 4 }),
+      #|  ]>
     ),
   )
 }

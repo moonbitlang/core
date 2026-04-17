@@ -20,6 +20,21 @@ enum JsonPath {
 } derive(Eq)
 
 ///|
+pub impl @debug.Debug for JsonPath with to_repr(self) {
+  match self {
+    Root => @debug.Repr::string("")
+    Key(path, key~) => {
+      let prefix = @debug.to_repr(path)
+      @debug.Repr::ctor("/\{key}", [(None, prefix)])
+    }
+    Index(path, index~) => {
+      let prefix = @debug.to_repr(path)
+      @debug.Repr::ctor("/\{index}", [(None, prefix)])
+    }
+  }
+}
+
+///|
 /// Appends an array index to the JSON path.
 pub fn JsonPath::add_index(self : JsonPath, index : Int) -> JsonPath {
   Index(self, index~)
