@@ -114,7 +114,7 @@ fn pcap_ipv4_test(ipv4 : BytesView) -> Unit raise {
 
 ///|
 test "pcap_test" {
-  inspect(try? pcap_test(data[:]), content="Ok(())")
+  debug_inspect(try? pcap_test(data[:]), content="Ok(())")
 }
 
 ///|

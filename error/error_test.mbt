@@ -28,9 +28,11 @@ test "show error" {
   }
 
   inspect(try! f(true), content="ok")
-  inspect(
+  debug_inspect(
     try? f(false),
-    content="Err(moonbitlang/core/error_blackbox_test.IntError.IntError)",
+    content=(
+      #|Err(<moonbitlang/core/error_blackbox_test.IntError.IntError: ...>)
+    ),
   )
 }
 
@@ -133,7 +135,7 @@ test "protect2" {
       1
     }
   })
-  inspect(
+  debug_inspect(
     x,
     content=(
       #|Err(Failure("error"))
@@ -147,7 +149,7 @@ test "protect2 & finally raise error" {
     finalize=() => raise Failure::Failure("finally error"),
     () => if true { raise Failure::Failure("error") } else { 1 },
   )
-  inspect(
+  debug_inspect(
     x,
     content=(
       #|Err(Failure("finally error"))

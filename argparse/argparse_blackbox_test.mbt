@@ -337,7 +337,7 @@ test "subcommand cannot follow positional arguments" {
   ])
   try cmd.parse(argv=["raw", "run"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: subcommand 'run' cannot be used with positional arguments
@@ -426,7 +426,7 @@ test "help subcommand styles and errors" {
 
   try cmd.parse(argv=["help", "--bad"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: unexpected help argument: --bad
@@ -448,7 +448,7 @@ test "help subcommand styles and errors" {
 
   try cmd.parse(argv=["help", "missing"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: unknown subcommand: missing
@@ -488,7 +488,7 @@ test "subcommand help includes inherited global options" {
 
   try cmd.parse(argv=["echo", "--bad"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: unexpected argument '--bad' found
@@ -516,7 +516,7 @@ test "unknown argument suggestions are exposed" {
 
   try cmd.parse(argv=["--verbse"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: unexpected argument '--verbse' found
@@ -537,7 +537,7 @@ test "unknown argument suggestions are exposed" {
 
   try cmd.parse(argv=["-x"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: unexpected argument '-x' found
@@ -558,7 +558,7 @@ test "unknown argument suggestions are exposed" {
 
   try cmd.parse(argv=["--zzzzzzzzzz"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: unexpected argument '--zzzzzzzzzz' found
@@ -599,7 +599,7 @@ test "long and short value parsing branches" {
 
   try cmd.parse(argv=["--count"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: a value is required for '--count' but none was supplied
@@ -618,7 +618,7 @@ test "long and short value parsing branches" {
 
   try cmd.parse(argv=["-c"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: a value is required for '-c' but none was supplied
@@ -664,7 +664,7 @@ test "negation parsing and invalid negation forms" {
 
   try cmd.parse(argv=["--no-path"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: unexpected argument '--no-path' found
@@ -684,7 +684,7 @@ test "negation parsing and invalid negation forms" {
 
   try cmd.parse(argv=["--no-missing"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: unexpected argument '--no-missing' found
@@ -704,7 +704,7 @@ test "negation parsing and invalid negation forms" {
 
   try cmd.parse(argv=["--no-cache=1"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: unexpected argument '--no-cache=1' found
@@ -759,7 +759,7 @@ test "positionals dash handling and separator" {
 
   try negative_cmd.parse(argv=["x", "y"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: unexpected value 'y' for '<n>' found; no more were expected
@@ -828,7 +828,7 @@ test "empty positional value range is rejected at build time" {
     ]).parse(argv=["alice"], env=empty_env())
   catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: command definition validation failed: empty value range (0..0) is unsupported
@@ -856,7 +856,7 @@ test "env parsing for settrue setfalse count and invalid values" {
 
   try cmd.parse(argv=[], env={ "ON": "bad" }) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: invalid value 'bad' for boolean flag; expected one of: 1, 0, true, false, yes, no, on, off
@@ -877,7 +877,7 @@ test "env parsing for settrue setfalse count and invalid values" {
 
   try cmd.parse(argv=[], env={ "OFF": "bad" }) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: invalid value 'bad' for boolean flag; expected one of: 1, 0, true, false, yes, no, on, off
@@ -898,7 +898,7 @@ test "env parsing for settrue setfalse count and invalid values" {
 
   try cmd.parse(argv=[], env={ "V": "bad" }) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: invalid value 'bad' for count; expected a non-negative integer
@@ -919,7 +919,7 @@ test "env parsing for settrue setfalse count and invalid values" {
 
   try cmd.parse(argv=[], env={ "V": "-1" }) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: invalid value '-1' for count; expected a non-negative integer
@@ -972,7 +972,7 @@ test "defaults and value range helpers through public API" {
 
   try lower_only.parse(argv=["--tag"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: a value is required for '--tag' but none was supplied
@@ -1009,7 +1009,7 @@ test "options consume exactly one value per occurrence" {
 
   try cmd.parse(argv=["--tag", "a", "b"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: unexpected value 'b' found; no more were expected
@@ -1032,7 +1032,7 @@ test "set options reject duplicate occurrences" {
   let cmd = @argparse.Command("demo", options=[OptionArg("mode", long="mode")])
   try cmd.parse(argv=["--mode", "a", "--mode", "b"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: argument '--mode' cannot be used multiple times
@@ -1059,7 +1059,7 @@ test "flag and option args require short or long names" {
     )
   catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: command definition validation failed: flag/option args require short/long/env
@@ -1076,7 +1076,7 @@ test "flag and option args require short or long names" {
     )
   catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: command definition validation failed: flag/option args require short/long/env
@@ -1115,7 +1115,7 @@ test "option parsing stops at the next option token" {
 
   try cmd.parse(argv=["--arg=x", "y", "--verbose"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: unexpected value 'y' found; no more were expected
@@ -1135,7 +1135,7 @@ test "option parsing stops at the next option token" {
 
   try cmd.parse(argv=["-ax", "y", "--verbose"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: unexpected value 'y' found; no more were expected
@@ -1163,7 +1163,7 @@ test "options always require a value" {
   )
   try cmd.parse(argv=["--opt", "--verbose"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: a value is required for '--opt' but none was supplied
@@ -1197,7 +1197,7 @@ test "option values reject hyphen tokens unless allow_hyphen_values is enabled" 
   let mut rejected = false
   try strict.parse(argv=["--pattern", "-file"], env=empty_env()) catch {
     err => {
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: a value is required for '--pattern' but none was supplied
@@ -1246,7 +1246,7 @@ test "validation branches exposed through parse" {
     )
   catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: command definition validation failed: flag/option args require short/long/env
@@ -1262,7 +1262,7 @@ test "validation branches exposed through parse" {
     ]).parse(argv=[], env=empty_env())
   catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: command definition validation failed: help/version actions do not support negatable
@@ -1278,7 +1278,7 @@ test "validation branches exposed through parse" {
     ]).parse(argv=[], env=empty_env())
   catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: command definition validation failed: help/version actions do not support env/defaults
@@ -1295,7 +1295,7 @@ test "validation branches exposed through parse" {
     )
   catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: unexpected value 'b' found; no more were expected
@@ -1318,7 +1318,7 @@ test "validation branches exposed through parse" {
     ]).parse(argv=[], env=empty_env())
   catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: command definition validation failed: default_values with multiple entries require action=Append
@@ -1334,7 +1334,7 @@ test "validation branches exposed through parse" {
     ]).parse(argv=[], env=empty_env())
   catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: command definition validation failed: max values must be >= min values
@@ -1350,7 +1350,7 @@ test "validation branches exposed through parse" {
     ]).parse(argv=[], env=empty_env())
   catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: command definition validation failed: min values must be >= 0
@@ -1366,7 +1366,7 @@ test "validation branches exposed through parse" {
     ]).parse(argv=[], env=empty_env())
   catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: command definition validation failed: max values must be >= 0
@@ -1391,7 +1391,7 @@ test "validation branches exposed through parse" {
     )
   catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: command definition validation failed: duplicate group: g
@@ -1408,7 +1408,7 @@ test "validation branches exposed through parse" {
     )
   catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: command definition validation failed: group cannot require itself: g
@@ -1425,7 +1425,7 @@ test "validation branches exposed through parse" {
     )
   catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: command definition validation failed: group cannot conflict with itself: g
@@ -1442,7 +1442,7 @@ test "validation branches exposed through parse" {
     )
   catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: command definition validation failed: unknown group arg: g -> missing
@@ -1459,7 +1459,7 @@ test "validation branches exposed through parse" {
     ]).parse(argv=[], env=empty_env())
   catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: command definition validation failed: duplicate arg name: x
@@ -1476,7 +1476,7 @@ test "validation branches exposed through parse" {
     ]).parse(argv=[], env=empty_env())
   catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: command definition validation failed: duplicate long option: --same
@@ -1493,7 +1493,7 @@ test "validation branches exposed through parse" {
     ]).parse(argv=[], env=empty_env())
   catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: command definition validation failed: duplicate long option: --no-hello
@@ -1510,7 +1510,7 @@ test "validation branches exposed through parse" {
     ]).parse(argv=[], env=empty_env())
   catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: command definition validation failed: duplicate short option: -s
@@ -1527,7 +1527,7 @@ test "validation branches exposed through parse" {
     )
   catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: command definition validation failed: arg cannot require itself: x
@@ -1543,7 +1543,7 @@ test "validation branches exposed through parse" {
     ]).parse(argv=[], env=empty_env())
   catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: command definition validation failed: arg cannot conflict with itself: x
@@ -1560,7 +1560,7 @@ test "validation branches exposed through parse" {
     )
   catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: command definition validation failed: duplicate subcommand: x
@@ -1577,7 +1577,7 @@ test "validation branches exposed through parse" {
     )
   catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: command definition validation failed: subcommand_required requires at least one subcommand
@@ -1594,7 +1594,7 @@ test "validation branches exposed through parse" {
     )
   catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: command definition validation failed: subcommand name reserved for built-in help: help (disable with disable_help_subcommand)
@@ -1656,7 +1656,7 @@ test "validation branches exposed through parse" {
     )
   catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: command definition validation failed: version action requires command version text
@@ -1684,7 +1684,7 @@ test "builtin and custom help/version dispatch edge paths" {
 
   try versioned.parse(argv=["--oops"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: unexpected argument '--oops' found
@@ -1751,7 +1751,7 @@ test "group validation catches unknown requires target" {
     )
   catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: command definition validation failed: unknown group requires target: g -> missing
@@ -1771,7 +1771,7 @@ test "group validation catches unknown conflicts_with target" {
     )
   catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: command definition validation failed: unknown group conflicts_with target: g -> missing
@@ -1802,7 +1802,7 @@ test "group requires/conflicts can target argument names" {
 
   try requires_cmd.parse(argv=["--fast"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: the following required argument was not provided: 'config'
@@ -1837,7 +1837,7 @@ test "group requires/conflicts can target argument names" {
     )
   catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: group conflict mode conflicts with config
@@ -1878,7 +1878,7 @@ test "arg validation catches unknown requires target" {
     ]).parse(argv=["--mode", "fast"], env=empty_env())
   catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: command definition validation failed: unknown requires target: mode -> missing
@@ -1897,7 +1897,7 @@ test "arg validation catches unknown conflicts_with target" {
     ]).parse(argv=["--mode", "fast"], env=empty_env())
   catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: command definition validation failed: unknown conflicts_with target: mode -> missing
@@ -1936,7 +1936,7 @@ test "help rendering edge paths stay stable" {
   assert_true(short_only_text.has_prefix("Usage: demo"))
   try short_only_builtin.parse(argv=["--help"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: a value is required for '--help' but none was supplied
@@ -1990,7 +1990,7 @@ test "unified error message formatting remains stable" {
 
   try cmd.parse(argv=["--oops"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: unexpected argument '--oops' found
@@ -2009,7 +2009,7 @@ test "unified error message formatting remains stable" {
 
   try cmd.parse(argv=["--tag"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: a value is required for '--tag' but none was supplied
@@ -2043,7 +2043,7 @@ test "options require one value per occurrence" {
     )
   catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: a value is required for '--tag' but none was supplied
@@ -2074,7 +2074,7 @@ test "short options require one value before next option token" {
 
   try cmd.parse(argv=["-x", "-v"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: a value is required for '-x' but none was supplied
@@ -2116,7 +2116,7 @@ test "version action dispatches on custom long and short flags" {
 
   try cmd.parse(argv=["--oops"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: unexpected argument '--oops' found
@@ -2155,7 +2155,7 @@ test "global version action keeps parent version text in subcommand context" {
 
   try cmd.parse(argv=["--oops"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: unexpected argument '--oops' found
@@ -2179,7 +2179,7 @@ test "global version action keeps parent version text in subcommand context" {
 
   try cmd.parse(argv=["run", "--oops"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: unexpected argument '--oops' found
@@ -2210,7 +2210,7 @@ test "subcommand help puts required options in usage" {
 
   try cmd.parse(argv=["run", "--oops"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: unexpected argument '--oops' found
@@ -2240,7 +2240,7 @@ test "required and env-fed ranged values validate after parsing" {
   ])
   try required_cmd.parse(argv=[], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: the following required argument was not provided: 'input'
@@ -2315,7 +2315,7 @@ test "positional num_args lower bound rejects missing argv values" {
 
   try cmd.parse(argv=[], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: 'first' requires at least 2 values but only 0 were provided
@@ -2437,7 +2437,7 @@ test "missing option values are reported when next token is another option" {
 
   try cmd.parse(argv=["--arg", "--verbose"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: a value is required for '--arg' but none was supplied
@@ -2461,7 +2461,7 @@ test "short-only set options use short label in duplicate errors" {
   let cmd = @argparse.Command("demo", options=[OptionArg("mode", short='m')])
   try cmd.parse(argv=["-m", "a", "-m", "b"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: argument '--mode' cannot be used multiple times
@@ -2487,7 +2487,7 @@ test "unknown short suggestion can be absent" {
 
   try cmd.parse(argv=["-x"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: unexpected argument '-x' found
@@ -2687,7 +2687,7 @@ test "child local arg shadowing inherited global is rejected at build time" {
     ).parse(argv=["run"], env=empty_env())
   catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: command definition validation failed: arg 'mode' shadows an inherited global; rename the arg or mark it global
@@ -2784,7 +2784,7 @@ test "global set option rejects duplicate occurrences across subcommands" {
     cmd.parse(argv=["--mode", "a", "run", "--mode", "b"], env=empty_env())
   catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: argument '--mode' cannot be used multiple times
@@ -2818,7 +2818,7 @@ test "global override with incompatible inherited type is rejected" {
     ).parse(argv=["run", "--mode"], env=empty_env())
   catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: command definition validation failed: global arg 'mode' is incompatible with inherited global definition
@@ -2839,7 +2839,7 @@ test "child local long alias collision with inherited global is rejected" {
     ).parse(argv=["run", "--verbose"], env=empty_env())
   catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: command definition validation failed: arg 'local' long option --verbose conflicts with inherited global 'verbose'
@@ -2860,7 +2860,7 @@ test "child local short alias collision with inherited global is rejected" {
     ).parse(argv=["run", "-v"], env=empty_env())
   catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: command definition validation failed: arg 'local' short option -v conflicts with inherited global 'verbose'
@@ -2906,7 +2906,7 @@ test "non-bmp hyphen token reports unknown argument without panic" {
   let cmd = @argparse.Command("demo", positionals=[PositionArg("value")])
   try cmd.parse(argv=["-🎉"], env=empty_env()) catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: unexpected argument '-🎉' found
@@ -3006,7 +3006,7 @@ test "global override with different negatable setting is rejected" {
     ).parse(argv=["run"], env=empty_env())
   catch {
     err =>
-      inspect(
+      debug_inspect(
         err,
         content=(
           #|error: command definition validation failed: global arg 'verbose' is incompatible with inherited global definition

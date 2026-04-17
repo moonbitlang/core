@@ -57,10 +57,10 @@ fn output(x : Result[Unit, Error]) -> StringView {
       }
     Ok(_) => "ok"
     Err(e) =>
-      if "\{e}" =~ (re"FAILED:", after=next) {
+      if "\{@debug.to_string(e)}" =~ (re"FAILED:", after=next) {
         "FAILED:\{next}"
       } else {
-        "\{e}"
+        "\{@debug.to_string(e)}"
       }
   }
 }

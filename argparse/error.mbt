@@ -30,6 +30,13 @@ impl Show for ArgError with output(self : ArgError, logger) {
 }
 
 ///|
+impl Debug for ArgError with to_repr(self) {
+  match self {
+    Message(msg) => Repr::literal(msg)
+  }
+}
+
+///|
 /// Internal parse error variants used while parsing.
 priv suberror ArgParseError {
   UnknownArgument(String, String?)
