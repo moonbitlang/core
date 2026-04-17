@@ -649,8 +649,8 @@ test "array_unsafe_pop_back" {
 
 ///|
 test "array_search_by" {
-  inspect([1, 2, 3, 4, 5].search_by(x => x % 2 == 0), content="Some(1)")
-  inspect([1, 2, 3, 4, 5].search_by(x => x > 5), content="None")
+  debug_inspect([1, 2, 3, 4, 5].search_by(x => x % 2 == 0), content="Some(1)")
+  debug_inspect([1, 2, 3, 4, 5].search_by(x => x > 5), content="None")
 }
 
 ///|
@@ -1131,17 +1131,18 @@ test "Array::last" {
   inspect([1, 2, 3, 4, 5].last(), content="Some(5)")
 
   // Test with a random array of strings
-  inspect(["a", "b", "c"].last(), content="Some(\"c\")")
+  debug_inspect(["a", "b", "c"].last(), content="Some(\"c\")")
 
   // Test with a large array
   let large_array = Array::make(10, 0)
-  inspect(large_array.last(), content="Some(0)")
+  guard large_array.last() is Some(v)
+  assert_eq(v, 0)
 
   // Test with an empty array
-  inspect(([] : Array[Unit]).last(), content="None")
+  debug_inspect(([] : Array[Unit]).last(), content="None")
 
   // Test with a single-element array
-  inspect([1].last(), content="Some(1)")
+  debug_inspect([1].last(), content="Some(1)")
 }
 
 ///|

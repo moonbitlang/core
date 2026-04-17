@@ -42,7 +42,7 @@ test "array operations" {
 
   // Finding last element
   let last = nums.last()
-  inspect(last, content="Some(5)")
+  debug_inspect(last, content="Some(5)")
 }
 ```
 

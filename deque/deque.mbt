@@ -1083,8 +1083,8 @@ pub fn[A] Deque::is_empty(self : Deque[A]) -> Bool {
 /// ```mbt check
 /// test {
 ///   let dq = @deque.from_array([1, 2, 3, 2, 1])
-///   inspect(dq.search(2), content="Some(1)")
-///   inspect(dq.search(4), content="None")
+///   debug_inspect(dq.search(2), content="Some(1)")
+///   debug_inspect(dq.search(4), content="None")
 /// }
 /// ```
 pub fn[A : Eq] Deque::search(self : Deque[A], value : A) -> Int? {

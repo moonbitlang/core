@@ -14,7 +14,7 @@
 
 ///|
 test "last None" {
-  assert_eq(@list.empty().last(), (None : Unit?))
+  debug_inspect(@list.empty().last(), content="None")
 }
 
 ///|

@@ -8,3 +8,7 @@ import {
   "moonbitlang/core/string/internal/regex_engine/ast",
   "moonbitlang/core/string/internal/regex_engine/symbol_map",
 }
+
+import {
+  "moonbitlang/core/test",
+} for "test"

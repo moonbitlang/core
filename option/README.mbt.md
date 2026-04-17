@@ -17,8 +17,8 @@ You can create an `Option` value using the `Some` and `None` constructors, remem
 test {
   let some : Int? = Some(42)
   let none : String? = None
-  inspect(some, content="Some(42)")
-  inspect(none, content="None")
+  debug_inspect(some, content="Some(42)")
+  debug_inspect(none, content="None")
 }
 ```
 
@@ -80,7 +80,7 @@ You can transform the value of an `Option` using the `map` method. It applies th
 test {
   let some : Int? = Some(42)
   let new_some = some.map((value : Int) => value + 1) // Some(43)
-  assert_eq(new_some, Some(43))
+  debug_inspect(new_some, content="Some(43)")
 }
 ```
 
@@ -92,8 +92,8 @@ test {
   let some : Int? = Some(42)
   let new_some = some.filter((value : Int) => value > 40) // Some(42)
   let none = some.filter((value : Int) => value > 50) // None
-  assert_eq(new_some, Some(42))
-  assert_eq(none, None)
+  debug_inspect(new_some, content="Some(42)")
+  debug_inspect(none, content="None")
 }
 ```
 
@@ -106,7 +106,7 @@ You can chain multiple operations that return `Option` using the `bind` method, 
 test {
   let some : Int? = Some(42)
   let new_some = some.bind((value : Int) => Some(value + 1)) // Some(43)
-  assert_eq(new_some, Some(43))
+  debug_inspect(new_some, content="Some(43)")
 }
 ```
 
@@ -117,9 +117,9 @@ Sometimes we want to reduce the nested `Option` values into a single `Option`, y
 test {
   let some : Int?? = Some(Some(42))
   let new_some = some.bind(fn(x) { x }) // Some(42)
-  assert_eq(new_some, Some(42))
+  debug_inspect(new_some, content="Some(42)")
   let none : Int?? = Some(None)
   let new_none = none.bind(fn(x) { x }) // None
-  assert_eq(new_none, None)
+  debug_inspect(new_none, content="None")
 }
 ```

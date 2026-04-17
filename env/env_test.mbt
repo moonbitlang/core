@@ -45,9 +45,9 @@ test "env var round trip" {
   let value = "value_" + @env.now().to_string()
   @env.set_env_var(key, value)
   assert_eq(@env.get_env_var(key), Some(value))
-  assert_eq(@env.get_env_vars().get(key), Some(value))
+  @test.assert_eq(@env.get_env_vars().get(key), Some(value))
 
   @env.unset_env_var(key)
-  assert_eq(@env.get_env_var(key), None)
-  assert_eq(@env.get_env_vars().get(key), None)
+  debug_inspect(@env.get_env_var(key), content="None")
+  debug_inspect(@env.get_env_vars().get(key), content="None")
 }

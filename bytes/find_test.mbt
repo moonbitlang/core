@@ -23,8 +23,8 @@ test "find" {
   inspect(b"".find(""), content="Some(0)")
   inspect(b"".find("a"), content="None")
   inspect(b"hello hello".find("hello"), content="Some(0)")
-  inspect(b"aaa".find("aa"), content="Some(0)")
-  inspect(b"aabaabaaa".find("aaa"), content="Some(6)")
+  debug_inspect(b"aaa".find("aa"), content="Some(0)")
+  debug_inspect(b"aabaabaaa".find("aaa"), content="Some(6)")
 }
 
 ///|
@@ -38,8 +38,8 @@ test "rev_find" {
   inspect(b"".rev_find(""), content="Some(0)")
   inspect(b"".rev_find("a"), content="None")
   inspect(b"hello hello".rev_find("hello"), content="Some(6)")
-  inspect(b"aaa".rev_find("aa"), content="Some(1)")
-  inspect(b"aabaaabaa".find("aaa"), content="Some(3)")
+  debug_inspect(b"aaa".rev_find("aa"), content="Some(1)")
+  debug_inspect(b"aabaaabaa".find("aaa"), content="Some(3)")
 }
 
 ///|

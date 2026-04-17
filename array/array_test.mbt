@@ -28,5 +28,5 @@ test "get_view" {
   let start = 20
   inspect(arr.get_view(start~), content="None")
   let start = 16
-  inspect(arr.get_view(start~, end~), content="Some([16, 17])")
+  debug_inspect(arr.get_view(start~, end~), content="Some(<ArrayView: [16, 17]>)")
 }

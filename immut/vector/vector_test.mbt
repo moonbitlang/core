@@ -370,18 +370,18 @@ test "compare" {
 ///|
 test "@vector.get/normal" {
   let arr = @vector.from_array([1, 2, 3, 4, 5])
-  inspect(arr.get(2), content="Some(3)")
+  debug_inspect(arr.get(2), content="Some(3)")
 }
 
 ///|
 test "@vector.get/first" {
   let arr = @vector.from_array([42])
-  inspect(arr.get(0), content="Some(42)")
+  debug_inspect(arr.get(0), content="Some(42)")
 }
 
 ///|
 test "@vector.get/out_of_bounds" {
   let arr = @vector.from_array([1, 2, 3])
-  inspect(arr.get(-1), content="None")
-  inspect(arr.get(3), content="None")
+  debug_inspect(arr.get(-1), content="None")
+  debug_inspect(arr.get(3), content="None")
 }

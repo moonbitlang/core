@@ -160,10 +160,10 @@ pub fn[T] ArrayView::at(self : ArrayView[T], index : Int) -> T {
 /// test {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let view = arr[1:4]
-///   inspect(view.get(0), content="Some(2)")
-///   inspect(view.get(1), content="Some(3)")
-///   inspect(view.get(2), content="Some(4)")
-///   inspect(view.get(5), content="None")
+///   debug_inspect(view.get(0), content="Some(2)")
+///   debug_inspect(view.get(1), content="Some(3)")
+///   debug_inspect(view.get(2), content="Some(4)")
+///   debug_inspect(view.get(5), content="None")
 /// }
 /// ```
 pub fn[T] ArrayView::get(self : ArrayView[T], index : Int) -> T? {
@@ -180,9 +180,9 @@ pub fn[T] ArrayView::get(self : ArrayView[T], index : Int) -> T? {
 /// ```mbt check
 /// test {
 ///   let view = [1, 2, 3][:]
-///   inspect(view.last(), content="Some(3)")
+///   debug_inspect(view.last(), content="Some(3)")
 ///   let empty = [1, 2][0:0]
-///   inspect(empty.last(), content="None")
+///   debug_inspect(empty.last(), content="None")
 /// }
 /// ```
 pub fn[T] ArrayView::last(self : ArrayView[T]) -> T? {
@@ -289,10 +289,10 @@ pub fn[T] Array::view(
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let start = 1
 ///   let end = 4
-///   inspect(arr.get_view(start~, end~), content="Some([2, 3, 4])")
+///   debug_inspect(arr.get_view(start~, end~), content="Some(<ArrayView: [2, 3, 4]>)")
 ///   let start = 3
 ///   let end = 10
-///   inspect(arr.get_view(start~, end~), content="None")
+///   debug_inspect(arr.get_view(start~, end~), content="None")
 /// }
 /// ```
 pub fn[T] Array::get_view(
@@ -383,10 +383,10 @@ pub fn[T] ArrayView::view(
 ///   let view = arr[1:4] // view = [2, 3, 4]
 ///   let start = 1
 ///   let end = 2
-///   inspect(view.get_view(start~, end~), content="Some([3])")
+///   debug_inspect(view.get_view(start~, end~), content="Some(<ArrayView: [3]>)")
 ///   let start = 4
 ///   let end = 5
-///   inspect(view.get_view(start~, end~), content="None")
+///   debug_inspect(view.get_view(start~, end~), content="None")
 /// }
 /// ```
 pub fn[T] ArrayView::get_view(
@@ -481,10 +481,10 @@ pub fn[T] FixedArray::view(
 ///   let arr : FixedArray[Int] = [1, 2, 3, 4, 5]
 ///   let start = 1
 ///   let end = 4
-///   inspect(arr.get_view(start~, end~), content="Some([2, 3, 4])")
+///   debug_inspect(arr.get_view(start~, end~), content="Some(<ArrayView: [2, 3, 4]>)")
 ///   let start = 2
 ///   let end = 10
-///   inspect(arr.get_view(start~, end~), content="None")
+///   debug_inspect(arr.get_view(start~, end~), content="None")
 /// }
 /// ```
 pub fn[T] FixedArray::get_view(
@@ -921,8 +921,8 @@ pub fn[T : Eq] ArrayView::contains(self : ArrayView[T], value : T) -> Bool {
 /// ```mbt check
 /// test {
 ///   let view = [1, 2, 3, 2, 4][:]
-///   inspect(view.search(2), content="Some(1)")
-///   inspect(view.search(5), content="None")
+///   debug_inspect(view.search(2), content="Some(1)")
+///   debug_inspect(view.search(5), content="None")
 /// }
 /// ```
 pub fn[T : Eq] ArrayView::search(self : ArrayView[T], value : T) -> Int? {
@@ -944,8 +944,8 @@ pub fn[T : Eq] ArrayView::search(self : ArrayView[T], value : T) -> Int? {
 /// ```mbt check
 /// test {
 ///   let view = [1, 2, 3, 4, 5][1:]
-///   inspect(view.search_by(x => x > 3), content="Some(2)")
-///   inspect(view.search_by(x => x > 99), content="None")
+///   debug_inspect(view.search_by(x => x > 3), content="Some(2)")
+///   debug_inspect(view.search_by(x => x > 99), content="None")
 /// }
 /// ```
 pub fn[T] ArrayView::search_by(

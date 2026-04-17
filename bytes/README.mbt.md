@@ -168,7 +168,7 @@ test "bytes prefix/suffix" {
   inspect(bytes.has_prefix(b"he"[:]), content="true")
   inspect(bytes.has_suffix(b"lo"[:]), content="true")
   inspect(bytes.chop_prefix(b"he"[:]), content="Some(b\"llo\")")
-  inspect(bytes.chop_suffix(b"lo"[:]), content="Some(b\"hel\")")
-  inspect(bytes.chop_prefix(b"zz"[:]), content="None")
+  debug_inspect(bytes.chop_suffix(b"lo"[:]), content="Some(<BytesView: [0x68, 0x65, 0x6c]>)")
+  debug_inspect(bytes.chop_prefix(b"zz"[:]), content="None")
 }
 ```

@@ -27,7 +27,7 @@ You can use `set()` to add a key-value pair to the map, and use `get()` to get a
 test {
   let map : Map[String, Int] = {}
   map.set("a", 1)
-  inspect(map.get("a"), content="Some(1)")
+  debug_inspect(map.get("a"), content="Some(1)")
   inspect(map.get_or_default("a", 0), content="1")
   inspect(map.get_or_default("b", 0), content="0")
   @json.json_inspect(map, content={ "a": 1 })
@@ -47,13 +47,14 @@ test {
   let string_map = { "hello": 1, "world": 2 }
   let full_string = "say hello to everyone"
   let hello_view = full_string.view(start_offset=4, end_offset=9)
-  inspect(string_map.get_from_string(hello_view), content="Some(1)")
+  guard string_map.get_from_string(hello_view) is Some(v)
+  assert_eq(v, 1)
 
   // Using get_from_bytes with BytesView
   let bytes_map = { b"key": 42, b"value": 100 }
   let full_bytes = b"mykey_data"
   let key_view = full_bytes[2:5]
-  inspect(bytes_map.get_from_bytes(key_view), content="Some(42)")
+  debug_inspect(bytes_map.get_from_bytes(key_view), content="Some(42)")
 }
 ```
 

@@ -163,11 +163,11 @@ test "error handling" {
 
   // Test normal case
   let result = safe_divide(10, 2)
-  inspect(result, content="Some(5)")
+  debug_inspect(result, content="Some(5)")
 
   // Test error case
   let error_result = safe_divide(10, 0)
-  inspect(error_result, content="None")
+  debug_inspect(error_result, content="None")
 }
 ```
 

@@ -71,9 +71,11 @@ pub impl Show for Json with output(self, logger) {
     Number(n, repr~) => {
       logger.write_string("Number(")
       Show::output(n, logger)
-      if repr is Some(_) {
+      if repr is Some(repr) {
         logger.write_string(", repr=")
+        logger.write_string("Some(")
         Show::output(repr, logger)
+        logger.write_string(")")
       }
       logger.write_string(")")
     }

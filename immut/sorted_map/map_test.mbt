@@ -273,10 +273,10 @@ test "@immut/sorted_map.merge" {
   let merged = map1.merge(map2)
   inspect(merged.get(1), content="Some(\"a\")")
   inspect(merged.get(2), content="Some(\"c\")")
-  inspect(merged.get(3), content="Some(\"d\")")
+  debug_inspect(merged.get(3), content="Some(\"d\")")
   inspect(merged.length(), content="3")
   // Verify original maps are unchanged (immutable)
-  inspect(map1.get(2), content="Some(\"b\")")
+  debug_inspect(map1.get(2), content="Some(\"b\")")
   inspect(map1.length(), content="2")
 }
 
@@ -299,7 +299,7 @@ test "@immut/sorted_map.merge with overlapping keys" {
   let merged = map1.merge(map2)
   inspect(merged.get(1), content="Some(\"one\")")
   inspect(merged.get(2), content="Some(\"TWO\")")
-  inspect(merged.get(3), content="Some(\"THREE\")")
-  inspect(merged.get(4), content="Some(\"FOUR\")")
+  debug_inspect(merged.get(3), content="Some(\"THREE\")")
+  debug_inspect(merged.get(4), content="Some(\"FOUR\")")
   inspect(merged.length(), content="4")
 }

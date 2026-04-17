@@ -46,9 +46,9 @@ test "String iter2 with surrogate pairs" {
 test "String::offset_of_nth_char_forward with special case" {
   let s = "Hello"
   let result = s.offset_of_nth_char(4) // Last character
-  inspect(result, content="Some(4)")
+  debug_inspect(result, content="Some(4)")
   let result2 = s.offset_of_nth_char(5) // Beyond last character
-  inspect(result2, content="None")
+  debug_inspect(result2, content="None")
 }
 
 ///|
@@ -77,7 +77,7 @@ test "View::default and hash" {
 ///|
 test "get_char invalid surrogate pair" {
   let s = String::from_array([(0xD800).unsafe_to_char(), 'A'])
-  inspect(s.get_char(0), content="None")
+  debug_inspect(s.get_char(0), content="None")
   let v = s[:]
-  inspect(v.get_char(0), content="None")
+  debug_inspect(v.get_char(0), content="None")
 }

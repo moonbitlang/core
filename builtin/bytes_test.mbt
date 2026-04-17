@@ -246,7 +246,7 @@ test "Bytes::add and repeat" {
 
 ///|
 test "Bytes::rev_find none" {
-  inspect(b"abc".rev_find(b"x"), content="None")
+  debug_inspect(b"abc".rev_find(b"x"), content="None")
 }
 
 ///|
@@ -386,8 +386,9 @@ test "Bytes find and rev_find" {
   inspect(target.find(pattern[:]), content="Some(0)")
   inspect(target.rev_find(pattern[:]), content="Some(3)")
   inspect(target.find(b"zzz"[:]), content="None")
-  inspect(target[:].find(b"bca"[:]), content="Some(1)")
-  inspect(target[:].rev_find(b"bca"[:]), content="Some(1)")
+  guard target[:].find(b"bca"[:]) is Some(v)
+  assert_eq(v, 1)
+  debug_inspect(target[:].rev_find(b"bca"[:]), content="Some(1)")
 }
 
 ///|
@@ -415,8 +416,8 @@ test "Bytes has_prefix/has_suffix/chop" {
   inspect(view.chop_suffix(b""[:]), content="Some(b\"ell\")")
   inspect(bytes.chop_prefix(b"he"[:]), content="Some(b\"llo\")")
   inspect(bytes.chop_suffix(b"lo"[:]), content="Some(b\"hel\")")
-  inspect(bytes.chop_prefix(b"zz"[:]), content="None")
-  inspect(bytes.chop_suffix(b"zz"[:]), content="None")
+  guard bytes.chop_prefix(b"zz"[:]) is None
+  debug_inspect(bytes.chop_suffix(b"zz"[:]), content="None")
 }
 
 ///|

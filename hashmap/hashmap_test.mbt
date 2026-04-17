@@ -27,8 +27,8 @@ test "get" {
   m.set("c", 3)
   inspect(m.get("a"), content="Some(1)")
   inspect(m.get("b"), content="Some(2)")
-  inspect(m.get("c"), content="Some(3)")
-  inspect(m.get("d"), content="None")
+  debug_inspect(m.get("c"), content="Some(3)")
+  debug_inspect(m.get("d"), content="None")
 
   // pattern
   guard m is { "a": 1, "b": 2, "c": 3, "d"? : None, .. }
@@ -220,7 +220,7 @@ test "get_nonexistent_key" {
   let m = @hashmap.new()
   m.set("a", 1)
   m.set("b", 2)
-  inspect(m.get("c"), content="None")
+  debug_inspect(m.get("c"), content="None")
 }
 
 ///|
@@ -285,8 +285,8 @@ test "get_nonexistent_key_with_psl" {
   inspect(m.get("V"), content="None")
   inspect(m.get("W"), content="None")
   inspect(m.get("X"), content="None")
-  inspect(m.get("Y"), content="None")
-  inspect(m.get("Z"), content="None")
+  debug_inspect(m.get("Y"), content="None")
+  debug_inspect(m.get("Z"), content="None")
 }
 
 ///|
@@ -428,10 +428,10 @@ test "@hashmap.merge" {
   let merged = map1.merge(map2)
   inspect(merged.get("a"), content="Some(1)")
   inspect(merged.get("b"), content="Some(3)")
-  inspect(merged.get("c"), content="Some(4)")
+  debug_inspect(merged.get("c"), content="Some(4)")
   inspect(merged.length(), content="3")
   // Verify original maps are unchanged
-  inspect(map1.get("b"), content="Some(2)")
+  debug_inspect(map1.get("b"), content="Some(2)")
   inspect(map1.length(), content="2")
 }
 
@@ -453,8 +453,8 @@ test "@hashmap.merge_in_place" {
   let map2 = @hashmap.from_array([("b", 3), ("c", 4)])
   map1.merge_in_place(map2)
   inspect(map1.get("a"), content="Some(1)")
-  inspect(map1.get("b"), content="Some(3)")
-  inspect(map1.get("c"), content="Some(4)")
+  debug_inspect(map1.get("b"), content="Some(3)")
+  debug_inspect(map1.get("c"), content="Some(4)")
   inspect(map1.length(), content="3")
   // Verify second map is unchanged
   inspect(map2.length(), content="2")
@@ -545,7 +545,7 @@ test "hashmap get_or_init push_away" {
   map.set(Key::Key(1, 1), 10)
   map.set(Key::Key(2, 2), 20)
   inspect(map.get_or_init(Key::Key(3, 1), () => 30), content="30")
-  inspect(map.get(Key::Key(3, 1)), content="Some(30)")
+  debug_inspect(map.get(Key::Key(3, 1)), content="Some(30)")
 }
 
 ///|
