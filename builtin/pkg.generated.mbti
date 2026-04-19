@@ -717,6 +717,7 @@ pub fn String::from_iter(Iter[Char]) -> String
 #deprecated
 pub fn String::get(String, Int) -> Int?
 pub fn String::get_char(String, Int) -> Char?
+pub fn String::get_view(String, start? : Int, end? : Int) -> StringView?
 #alias(starts_with, deprecated)
 pub fn String::has_prefix(String, StringView) -> Bool
 #alias(ends_with, deprecated)
@@ -941,6 +942,7 @@ pub fn Bytes::from_fixedarray(FixedArray[Byte], len? : Int) -> Bytes
 #alias(from_iterator, deprecated)
 pub fn Bytes::from_iter(Iter[Byte]) -> Bytes
 pub fn Bytes::get(Bytes, Int) -> Byte?
+pub fn Bytes::get_view(Bytes, start? : Int, end? : Int) -> BytesView?
 pub fn Bytes::has_prefix(Bytes, BytesView) -> Bool
 pub fn Bytes::has_suffix(Bytes, BytesView) -> Bool
 pub fn Bytes::is_empty(Bytes) -> Bool
@@ -972,6 +974,7 @@ pub fn BytesView::chop_suffix(Self, Self) -> Self?
 pub fn BytesView::data(Self) -> Bytes
 pub fn BytesView::find(Self, Self) -> Int?
 pub fn BytesView::get(Self, Int) -> Byte?
+pub fn BytesView::get_view(Self, start? : Int, end? : Int) -> Self?
 pub fn BytesView::has_prefix(Self, Self) -> Bool
 pub fn BytesView::has_suffix(Self, Self) -> Bool
 pub fn BytesView::is_empty(Self) -> Bool
@@ -1014,6 +1017,7 @@ pub fn StringView::from_iter(Iter[Char]) -> Self
 #deprecated
 pub fn StringView::get(Self, Int) -> Int?
 pub fn StringView::get_char(Self, Int) -> Char?
+pub fn StringView::get_view(Self, start? : Int, end? : Int) -> Self?
 #alias(starts_with, deprecated)
 pub fn StringView::has_prefix(Self, Self) -> Bool
 #alias(ends_with, deprecated)
