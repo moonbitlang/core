@@ -55,7 +55,7 @@ pub fn[A] Vector::make(len : Int, value : A) -> Vector[A] {
       FixedArray::make(branching_factor, value),
     )
     let (shift, cap) = shift_cap_of_size(tree_len)
-    (from_leaves(leaves[:], cap), shift)
+    (from_leaves(leaves, cap), shift)
   }
   make_t(tree, tail, len, shift)
 }
@@ -79,7 +79,7 @@ pub fn[A] Vector::makei(len : Int, f : (Int) -> A raise?) -> Vector[A] raise? {
       })
     }
     let (shift, cap) = shift_cap_of_size(tree_len)
-    (from_leaves(leaves[:], cap), shift)
+    (from_leaves(leaves, cap), shift)
   }
   make_t(tree, tail, len, shift)
 }
@@ -143,7 +143,7 @@ pub fn[A] Vector::from_iter(iter : Iter[A]) -> Vector[A] {
     (Tree::empty(), 0)
   } else {
     let (shift, cap) = shift_cap_of_size(tree_len)
-    (from_leaves(leaves[:], cap), shift)
+    (from_leaves(leaves, cap), shift)
   }
   make_t(tree, tail, tree_len + tail.length(), shift)
 }

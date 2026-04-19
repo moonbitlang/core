@@ -851,12 +851,12 @@ pub fn[A] Deque::set(self : Deque[A], index : Int, value : A) -> Unit {
 /// }
 /// ```
 pub fn[A] Deque::as_views(self : Deque[A]) -> (ArrayView[A], ArrayView[A]) {
-  guard self.len != 0 else { ([][:], [][:]) }
+  guard self.len != 0 else { ([], []) }
   let { buf, head, len } = self
   let cap = buf.length()
   let head_len = cap - head
   if head_len >= len {
-    (buf[head:head + len], [][:])
+    (buf[head:head + len], [])
   } else {
     (buf[head:cap], buf[:len - head_len])
   }

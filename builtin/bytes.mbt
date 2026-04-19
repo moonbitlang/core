@@ -861,5 +861,5 @@ pub fn Bytes::repeat(self : Self, count : Int) -> Bytes {
 /// }
 /// ```
 pub fn Bytes::lexical_compare(self : Bytes, other : Bytes) -> Int {
-  self[:].lexical_compare(other[:])
+  BytesView::lexical_compare(self, other)
 }

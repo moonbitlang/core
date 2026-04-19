@@ -87,7 +87,7 @@ pub fn Regex::replace_by(
     None => str
     Some(b) => {
       b.write_stringview(str[copy_index:])
-      b.to_string()[:]
+      b.to_string()
     }
   }
 }

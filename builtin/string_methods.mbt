@@ -86,14 +86,14 @@ fn boyer_moore_horspool_find(
 
 ///|
 test "boyer_moore_horspool_find edge cases" {
-  inspect(boyer_moore_horspool_find("abc"[:], ""[:]), content="Some(0)")
-  inspect(boyer_moore_horspool_find("ab"[:], "abcd"[:]), content="None")
+  inspect(boyer_moore_horspool_find("abc", ""), content="Some(0)")
+  inspect(boyer_moore_horspool_find("ab", "abcd"), content="None")
 }
 
 ///|
 test "boyer_moore_horspool_rev_find edge cases" {
-  inspect(boyer_moore_horspool_rev_find("abc"[:], ""[:]), content="Some(3)")
-  inspect(boyer_moore_horspool_rev_find("ab"[:], "abcd"[:]), content="None")
+  inspect(boyer_moore_horspool_rev_find("abc", ""), content="Some(3)")
+  inspect(boyer_moore_horspool_rev_find("ab", "abcd"), content="None")
 }
 
 ///|

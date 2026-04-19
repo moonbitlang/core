@@ -306,7 +306,7 @@ test {
   ])
   inspect(nested.flatten(), content="@deque.from_array([1, 2, 3, 4])")
   let words = @deque.from_array(["hello", "world"])
-  inspect(words.join(", "[:]), content="hello, world")
+  inspect(words.join(", "), content="hello, world")
 }
 ```
 

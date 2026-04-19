@@ -22,7 +22,7 @@ pub trait ToStringView {
 
 ///|
 pub impl ToStringView for String with to_string_view(self) -> StringView {
-  self[:]
+  self
 }
 
 ///|

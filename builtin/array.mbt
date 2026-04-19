@@ -875,7 +875,7 @@ pub fn[T : Eq] Array::contains(self : Array[T], value : T) -> Bool {
 /// }
 /// ```
 pub fn[T : Eq] Array::starts_with(self : Array[T], prefix : Array[T]) -> Bool {
-  self[:].starts_with(prefix[:])
+  ArrayView::starts_with(self, prefix)
 }
 
 ///|
@@ -902,7 +902,7 @@ pub fn[T : Eq] Array::starts_with(self : Array[T], prefix : Array[T]) -> Bool {
 /// }
 /// ```
 pub fn[T : Eq] Array::ends_with(self : Array[T], suffix : Array[T]) -> Bool {
-  self[:].ends_with(suffix[:])
+  ArrayView::ends_with(self, suffix)
 }
 
 ///|
@@ -2122,5 +2122,5 @@ pub fn[T : Compare] Array::lexical_compare(
   self : Array[T],
   other : Array[T],
 ) -> Int {
-  self[:].lexical_compare(other[:])
+  ArrayView::lexical_compare(self, other)
 }

@@ -628,7 +628,7 @@ test "to_string radix 16" {
 test "pow" {
   let x = 2N.pow(5664N).to_string(radix=16)
   assert_eq(x.get_char(0).unwrap(), '1')
-  assert_eq(x[1:], String::make(5664 / 4, '0')[:])
+  assert_eq(x[1:], String::make(5664 / 4, '0'))
 }
 
 ///|

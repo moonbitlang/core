@@ -23,7 +23,7 @@ Create from existing data:
 test {
   let buf = @buffer.from_bytes(b"hello")
   assert_eq(buf.length(), 5)
-  let buf2 = @buffer.from_array([b'a', b'b', b'c'][:])
+  let buf2 = @buffer.from_array([b'a', b'b', b'c'])
   assert_eq(buf2.length(), 3)
   let buf3 = @buffer.from_iter(b"hi".iter())
   assert_eq(buf3.length(), 2)
@@ -129,7 +129,7 @@ test {
   // UTF-8
   let buf = @buffer.new()
   buf.write_char_utf8('A')
-  buf.write_string_utf8("BC"[:])
+  buf.write_string_utf8("BC")
   inspect(buf.to_bytes(), content="b\"ABC\"")
   // UTF-16 little-endian
   let buf2 = @buffer.new()
@@ -137,7 +137,7 @@ test {
   inspect(buf2.to_bytes(), content="b\"A\\x00\"")
   // UTF-16 big-endian
   let buf3 = @buffer.new()
-  buf3.write_string_utf16be("AB"[:])
+  buf3.write_string_utf16be("AB")
   inspect(buf3.to_bytes(), content="b\"\\x00A\\x00B\"")
 }
 ```

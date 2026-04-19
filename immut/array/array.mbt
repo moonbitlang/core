@@ -43,7 +43,7 @@ pub fn[A] T::make(len : Int, value : A) -> T[A] {
   }
   let size = len
   let (shift, cap) = shift_cap_of_size(size)
-  let tree = if size == 0 { Empty } else { from_leaves(leaves[:], cap) }
+  let tree = if size == 0 { Empty } else { from_leaves(leaves, cap) }
   { shift, tree, size }
 }
 
@@ -70,7 +70,7 @@ pub fn[A] T::makei(len : Int, f : (Int) -> A raise?) -> T[A] raise? {
   }
   let size = len
   let (shift, cap) = shift_cap_of_size(size)
-  let tree = if size == 0 { Empty } else { from_leaves(leaves[:], cap) }
+  let tree = if size == 0 { Empty } else { from_leaves(leaves, cap) }
   { shift, tree, size }
 }
 
@@ -124,7 +124,7 @@ pub fn[A] T::from_iter(iter : Iter[A]) -> T[A] {
   }
   let size = leaves.fold(init=0, (acc, xs) => acc + xs.length())
   let (shift, cap) = shift_cap_of_size(size)
-  let tree = if size == 0 { Empty } else { from_leaves(leaves[:], cap) }
+  let tree = if size == 0 { Empty } else { from_leaves(leaves, cap) }
   { shift, tree, size }
 }
 
