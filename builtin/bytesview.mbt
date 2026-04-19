@@ -183,10 +183,61 @@ pub fn Bytes::view(self : Bytes, start? : Int = 0, end? : Int) -> BytesView {
 }
 
 ///|
+/// Returns a view of the bytes between `start` and `end`, or `None` if the range
+/// is invalid. Unlike `Bytes::view` (a.k.a. `b[start:end]`), this variant does
+/// not abort on out-of-bounds indices, making it suitable for composition with
+/// pattern matching:
+///
+/// ```mbt check
+/// test {
+///   let bs = b"\x00\x01\x02\x03\x04\x05"
+///   if bs.get_view(start=1) is Some([b'\x01', b'\x02', ..]) {
+///     ()
+///   } else {
+///     abort("unreachable")
+///   }
+///   inspect(bs.get_view(start=10), content="None")
+/// }
+/// ```
+pub fn Bytes::get_view(
+  self : Bytes,
+  start? : Int = 0,
+  end? : Int,
+) -> BytesView? {
+  let len = self.length()
+  let end = match end {
+    None => len
+    Some(end) => if end < 0 { len + end } else { end }
+  }
+  let start = if start < 0 { len + start } else { start }
+  guard start >= 0 && start <= end && end <= len else { None }
+  Some(BytesView::make(self, start, end - start))
+}
+
+///|
+/// Returns a sub-view of the view between `start` and `end`, or `None` if the
+/// range is invalid. The optional variant of `BytesView::view` (a.k.a.
+/// `bv[start:end]`).
+pub fn BytesView::get_view(
+  self : BytesView,
+  start? : Int = 0,
+  end? : Int,
+) -> BytesView? {
+  let len = self.length()
+  let end = match end {
+    None => len
+    Some(end) => if end < 0 { len + end } else { end }
+  }
+  let start = if start < 0 { len + start } else { start }
+  guard start >= 0 && start <= end && end <= len else { None }
+  Some(BytesView::make(self.bytes(), self.start() + start, end - start))
+}
+
+///|
 /// Creates a new `View` from the given `View`.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```mbt check
 /// test {
 ///   let bv = b"\x00\x01\x02\x03\x04\x05"[:]

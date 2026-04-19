@@ -219,3 +219,42 @@ test "StringView::to_string is independent of data()" {
   assert_eq(v.data(), "hello world")
   assert_eq(v.to_string(), "world")
 }
+
+///|
+test "String::get_view" {
+  let s = "Hello🤣World"
+  inspect(s.get_view(), content=#|Some("Hello🤣World")
+)
+  inspect(s.get_view(end=5), content=#|Some("Hello")
+)
+  inspect(s.get_view(start=-5), content=#|Some("World")
+)
+  inspect(s.get_view(start=0, end=0), content=#|Some("")
+)
+  // Out of bounds.
+  inspect(s.get_view(start=100), content="None")
+  inspect(s.get_view(end=100), content="None")
+  inspect(s.get_view(start=3, end=2), content="None")
+  // Splitting a surrogate pair.
+  inspect(s.get_view(end=6), content="None")
+  inspect(s.get_view(start=6), content="None")
+}
+
+///|
+test "StringView::get_view" {
+  let s = "Hello🤣World"
+  let view = s[1:-1] // "ello🤣Worl"
+  inspect(view.get_view(), content=#|Some("ello🤣Worl")
+)
+  inspect(view.get_view(end=4), content=#|Some("ello")
+)
+  inspect(view.get_view(start=-2), content=#|Some("rl")
+)
+  // Out of bounds relative to the sub-view.
+  inspect(view.get_view(start=100), content="None")
+  inspect(view.get_view(end=100), content="None")
+  // Splitting a surrogate pair.
+  inspect(view.get_view(end=5), content="None")
+  // Pattern-match composition: the optional form is matchable.
+  guard s.get_view(end=5) is Some("Hello")
+}

@@ -526,6 +526,76 @@ pub fn StringView::from_iter(iter : Iter[Char]) -> StringView {
 }
 
 ///|
+/// Returns a view of the string between `start` and `end`, or `None` if the
+/// range is invalid — either out of bounds or splitting a UTF-16 surrogate
+/// pair. Unlike `String::sub` (a.k.a. `s[start:end]`), this variant does not
+/// abort, making it suitable for composition with pattern matching:
+///
+/// ```mbt check
+/// test {
+///   let s = "Hello🤣World"
+///   inspect(s.get_view(end=5), content="Some(\"Hello\")")
+///   // Splitting a surrogate pair is rejected rather than panicking.
+///   inspect(s.get_view(end=6), content="None")
+///   inspect(s.get_view(start=100), content="None")
+/// }
+/// ```
+pub fn String::get_view(
+  self : String,
+  start? : Int = 0,
+  end? : Int,
+) -> StringView? {
+  let len = self.length()
+  let end = match end {
+    None => len
+    Some(end) => if end < 0 { len + end } else { end }
+  }
+  let start = if start < 0 { len + start } else { start }
+  guard start >= 0 && start <= end && end <= len else { None }
+  if start < len && self.unsafe_get(start).is_trailing_surrogate() {
+    return None
+  }
+  if end < len && self.unsafe_get(end).is_trailing_surrogate() {
+    return None
+  }
+  Some(StringView::make_view(self, start, end))
+}
+
+///|
+/// Returns a sub-view of the view between `start` and `end`, or `None` if the
+/// range is invalid — either out of bounds or splitting a UTF-16 surrogate
+/// pair. The optional variant of `StringView::sub` (a.k.a. `sv[start:end]`).
+pub fn StringView::get_view(
+  self : StringView,
+  start? : Int = 0,
+  end? : Int,
+) -> StringView? {
+  let str_len = self.str().length()
+  let abs_end = match end {
+    None => self.end()
+    Some(end) => if end < 0 { self.end() + end } else { self.start() + end }
+  }
+  let abs_start = if start < 0 {
+    self.end() + start
+  } else {
+    self.start() + start
+  }
+  guard abs_start >= self.start() &&
+    abs_start <= abs_end &&
+    abs_end <= self.end() else {
+    None
+  }
+  if abs_start < str_len &&
+    self.str().unsafe_get(abs_start).is_trailing_surrogate() {
+    return None
+  }
+  if abs_end < str_len && self.str().unsafe_get(abs_end).is_trailing_surrogate() {
+    return None
+  }
+  Some(StringView::make_view(self.str(), abs_start, abs_end))
+}
+
+///|
 /// Creates a view of a string with proper UTF-16 boundary validation.
 ///
 /// # Parameters
