@@ -223,14 +223,30 @@ test "StringView::to_string is independent of data()" {
 ///|
 test "String::get_view" {
   let s = "Hello🤣World"
-  inspect(s.get_view(), content=#|Some("Hello🤣World")
-)
-  inspect(s.get_view(end=5), content=#|Some("Hello")
-)
-  inspect(s.get_view(start=-5), content=#|Some("World")
-)
-  inspect(s.get_view(start=0, end=0), content=#|Some("")
-)
+  inspect(
+    s.get_view(),
+    content=(
+      #|Some("Hello🤣World")
+    ),
+  )
+  inspect(
+    s.get_view(end=5),
+    content=(
+      #|Some("Hello")
+    ),
+  )
+  inspect(
+    s.get_view(start=-5),
+    content=(
+      #|Some("World")
+    ),
+  )
+  inspect(
+    s.get_view(start=0, end=0),
+    content=(
+      #|Some("")
+    ),
+  )
   // Out of bounds.
   inspect(s.get_view(start=100), content="None")
   inspect(s.get_view(end=100), content="None")
@@ -244,12 +260,24 @@ test "String::get_view" {
 test "StringView::get_view" {
   let s = "Hello🤣World"
   let view = s[1:-1] // "ello🤣Worl"
-  inspect(view.get_view(), content=#|Some("ello🤣Worl")
-)
-  inspect(view.get_view(end=4), content=#|Some("ello")
-)
-  inspect(view.get_view(start=-2), content=#|Some("rl")
-)
+  inspect(
+    view.get_view(),
+    content=(
+      #|Some("ello🤣Worl")
+    ),
+  )
+  inspect(
+    view.get_view(end=4),
+    content=(
+      #|Some("ello")
+    ),
+  )
+  inspect(
+    view.get_view(start=-2),
+    content=(
+      #|Some("rl")
+    ),
+  )
   // Out of bounds relative to the sub-view.
   inspect(view.get_view(start=100), content="None")
   inspect(view.get_view(end=100), content="None")
