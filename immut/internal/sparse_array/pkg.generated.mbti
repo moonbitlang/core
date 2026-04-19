@@ -13,6 +13,8 @@ pub fn[X] singleton(Int, X) -> SparseArray[X]
 // Types and methods
 pub struct Bitset(UInt) derive(Eq)
 pub fn Bitset::first_idx(Self) -> Int
+#deprecated
+pub fn Bitset::inner(Self) -> UInt
 
 pub struct SparseArray[X] {
   elem_info : Bitset
