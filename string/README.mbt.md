@@ -220,23 +220,23 @@ Parse primitive types from strings. All parsing functions raise on invalid input
 ///|
 test "parse numbers" {
   // integers (decimal by default)
-  inspect(@string.parse_int("42"[:]), content="42")
-  inspect(@string.parse_int("-17"[:]), content="-17")
+  inspect(@string.parse_int("42"), content="42")
+  inspect(@string.parse_int("-17"), content="-17")
   // explicit base
-  inspect(@string.parse_int("ff"[:], base=16), content="255")
-  inspect(@string.parse_int("101"[:], base=2), content="5")
+  inspect(@string.parse_int("ff", base=16), content="255")
+  inspect(@string.parse_int("101", base=2), content="5")
   // unsigned
-  inspect(@string.parse_uint("42"[:]), content="42")
+  inspect(@string.parse_uint("42"), content="42")
   // 64-bit
-  inspect(@string.parse_int64("9999999999"[:]), content="9999999999")
+  inspect(@string.parse_int64("9999999999"), content="9999999999")
   inspect(
-    @string.parse_uint64("18446744073709551615"[:]),
+    @string.parse_uint64("18446744073709551615"),
     content="18446744073709551615",
   )
   // double
-  inspect(@string.parse_double("3.14"[:]), content="3.14")
+  inspect(@string.parse_double("3.14"), content="3.14")
   // bool
-  inspect(@string.parse_bool("true"[:]), content="true")
+  inspect(@string.parse_bool("true"), content="true")
 }
 ```
 
@@ -297,14 +297,14 @@ Build complex patterns programmatically with `Regex::string()`, `Regex::repeat()
 ///|
 test "regex combinators" {
   // match "abc" literally
-  let abc = @string.Regex::string("abc"[:])
+  let abc = @string.Regex::string("abc")
   inspect(abc.execute("xabcy") is Some(_), content="true")
   // repeat: match 2 to 4 digits
   let digits = @string.Regex("[[:digit:]]").repeat(min=2, max=4)
   guard digits.execute("a12345") is Some(m) else { fail("no match") }
   inspect(m.content(), content="1234") // greedy: takes max
   // alternation with |
-  let either = @string.Regex::string("cat"[:]) | @string.Regex::string("dog"[:])
+  let either = @string.Regex::string("cat") | @string.Regex::string("dog")
   inspect(either.execute("I have a dog") is Some(_), content="true")
 }
 ```

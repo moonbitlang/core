@@ -166,7 +166,7 @@ pub impl[X : Arbitrary] Arbitrary for FixedArray[X] with arbitrary(size, rs) {
 pub impl[A : Arbitrary] Arbitrary for ArrayView[A] with arbitrary(size, rs) {
   let arr : Array[A] = Arbitrary::arbitrary(size, rs)
   // Note can not use Array::arbitrary
-  arr[:]
+  arr
 }
 
 ///|

@@ -105,7 +105,7 @@ impl Logger with write_substring(self, value, start, len) {
 
 ///|
 impl Logger with write_string(self, value) {
-  self.write_view(value[:])
+  self.write_view(value)
 }
 
 ///|

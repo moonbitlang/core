@@ -113,14 +113,14 @@ pub impl[T : Debug] Debug for ArrayView[T] with to_repr(self) {
 ///|
 pub impl[T : Debug] Debug for FixedArray[T] with to_repr(self) {
   // `FixedArray` can be viewed as `ArrayView` via slicing.
-  let view : ArrayView[T] = self[:]
+  let view : ArrayView[T] = self
   Repr::opaque_("FixedArray", Repr::array(view.map(x => to_repr(x))))
 }
 
 ///|
 pub impl[T : Debug] Debug for ReadOnlyArray[T] with to_repr(self) {
   // `ReadOnlyArray` can be viewed as `ArrayView` via slicing.
-  let view : ArrayView[T] = self[:]
+  let view : ArrayView[T] = self
   Repr::opaque_("ReadOnlyArray", Repr::array(view.map(x => to_repr(x))))
 }
 
@@ -284,9 +284,9 @@ test "core builtin Debug implementations" {
   debug_inspect((1.0 : Float), content="1")
   let b : Bytes = b"ab"
   debug_inspect(b, content="<Bytes: [0x61, 0x62]>")
-  let bv : BytesView = b[:]
+  let bv : BytesView = b
   debug_inspect(bv, content="<BytesView: [0x61, 0x62]>")
-  let sv : StringView = "abc"[:]
+  let sv : StringView = "abc"
   debug_inspect(
     sv,
     content=(
