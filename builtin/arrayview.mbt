@@ -968,8 +968,8 @@ pub fn[T] ArrayView::search_by(
 /// ```mbt check
 /// test {
 ///   let view = [1, 2, 3, 4, 5][:]
-///   inspect(view.starts_with([1, 2][:]), content="true")
-///   inspect(view.starts_with([2, 3][:]), content="false")
+///   inspect(view.starts_with([1, 2]), content="true")
+///   inspect(view.starts_with([2, 3]), content="false")
 /// }
 /// ```
 pub fn[T : Eq] ArrayView::starts_with(
@@ -995,8 +995,8 @@ pub fn[T : Eq] ArrayView::starts_with(
 /// ```mbt check
 /// test {
 ///   let view = [1, 2, 3, 4, 5][:]
-///   inspect(view.ends_with([4, 5][:]), content="true")
-///   inspect(view.ends_with([3, 4][:]), content="false")
+///   inspect(view.ends_with([4, 5]), content="true")
+///   inspect(view.ends_with([3, 4]), content="false")
 /// }
 /// ```
 pub fn[T : Eq] ArrayView::ends_with(
@@ -1357,10 +1357,10 @@ pub fn[A : ToStringView] ArrayView::join(
 ///
 /// ```mbt check
 /// test {
-///   inspect([1, 2][:].lexical_compare([1, 2, 3][:]), content="-1")
-///   inspect([1, 2, 3][:].lexical_compare([1, 2][:]), content="1")
-///   inspect([1, 2, 3][:].lexical_compare([1, 2, 3][:]), content="0")
-///   inspect([1, 2, 3][:].lexical_compare([1, 2, 4][:]), content="-1")
+///   inspect([1, 2][:].lexical_compare([1, 2, 3]), content="-1")
+///   inspect([1, 2, 3][:].lexical_compare([1, 2]), content="1")
+///   inspect([1, 2, 3][:].lexical_compare([1, 2, 3]), content="0")
+///   inspect([1, 2, 3][:].lexical_compare([1, 2, 4]), content="-1")
 /// }
 /// ```
 pub fn[T : Compare] ArrayView::lexical_compare(
@@ -1483,7 +1483,7 @@ pub impl[T] Add for ArrayView[T] with add(self, other) {
     other.start(),
     len_other,
   )
-  result[:]
+  result
 }
 
 // #endregion

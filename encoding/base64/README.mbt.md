@@ -10,7 +10,7 @@ Use `encode` to convert bytes to a Base64 string. Padding with `=` is enabled by
 ///|
 test "encode" {
   let bytes : Bytes = b"Hello"
-  inspect(@base64.encode(bytes[:]), content="SGVsbG8=")
+  inspect(@base64.encode(bytes), content="SGVsbG8=")
 }
 ```
 
@@ -20,7 +20,7 @@ Disable padding by setting `padding=false`:
 ///|
 test "encode_no_padding" {
   let bytes : Bytes = b"Hello"
-  inspect(@base64.encode(bytes[:], padding=false), content="SGVsbG8")
+  inspect(@base64.encode(bytes, padding=false), content="SGVsbG8")
 }
 ```
 
@@ -31,7 +31,7 @@ Use `decode` to convert a Base64 string back to bytes. Both padded and unpadded 
 ```mbt check
 ///|
 test "decode" {
-  let bytes = @base64.decode("SGVsbG8="[:])
+  let bytes = @base64.decode("SGVsbG8=")
   inspect(bytes, content="b\"Hello\"")
 }
 ```
@@ -41,7 +41,7 @@ Set `ignore_whitespace=true` to skip ASCII whitespace in the input:
 ```mbt check
 ///|
 test "decode_ignore_whitespace" {
-  let bytes = @base64.decode("SGVs bG8="[:], ignore_whitespace=true)
+  let bytes = @base64.decode("SGVs bG8=", ignore_whitespace=true)
   inspect(bytes, content="b\"Hello\"")
 }
 ```
@@ -53,7 +53,7 @@ Use `decode_lossy` to decode Base64 while skipping invalid characters instead of
 ```mbt check
 ///|
 test "decode_lossy" {
-  let bytes = @base64.decode_lossy("SGVsbG8="[:])
+  let bytes = @base64.decode_lossy("SGVsbG8=")
   inspect(bytes, content="b\"Hello\"")
 }
 ```

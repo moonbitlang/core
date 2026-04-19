@@ -1361,7 +1361,7 @@ test "Array::append/self_alias" {
   arr.push(1)
   arr.push(2)
   arr.push(3)
-  arr.append(arr[:])
+  arr.append(arr)
   inspect(arr, content="[1, 2, 3, 1, 2, 3]")
 }
 

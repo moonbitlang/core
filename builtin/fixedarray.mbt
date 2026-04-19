@@ -1090,7 +1090,7 @@ pub fn[T : Eq] FixedArray::starts_with(
   self : FixedArray[T],
   prefix : FixedArray[T],
 ) -> Bool {
-  self[:].starts_with(prefix[:])
+  self[:].starts_with(prefix)
 }
 
 ///|
@@ -1132,7 +1132,7 @@ pub fn[T : Eq] FixedArray::ends_with(
   self : FixedArray[T],
   suffix : FixedArray[T],
 ) -> Bool {
-  self[:].ends_with(suffix[:])
+  self[:].ends_with(suffix)
 }
 
 ///|
@@ -1621,5 +1621,5 @@ pub fn[T : Compare] FixedArray::lexical_compare(
   self : FixedArray[T],
   other : FixedArray[T],
 ) -> Int {
-  self[:].lexical_compare(other[:])
+  self[:].lexical_compare(other)
 }

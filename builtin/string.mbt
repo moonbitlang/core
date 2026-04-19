@@ -493,7 +493,7 @@ pub fn String::char_length_ge(
 /// UTF-16 code units, not Unicode code points. Surrogate pairs (used for characters
 /// outside the Basic Multilingual Plane) are compared as individual code units.
 pub fn String::lexical_compare(self : String, other : String) -> Int {
-  self[:].lexical_compare(other[:])
+  self[:].lexical_compare(other)
 }
 
 ///|
@@ -530,7 +530,7 @@ pub fn String::lexical_compare(self : String, other : String) -> Int {
 /// }
 /// ```
 pub fn String::compare_ignore_ascii_case(self : String, other : String) -> Int {
-  self[:].compare_ignore_ascii_case(other[:])
+  self[:].compare_ignore_ascii_case(other)
 }
 
 ///|
@@ -558,7 +558,7 @@ pub fn String::compare_ignore_ascii_case(self : String, other : String) -> Int {
 /// }
 /// ```
 pub fn String::equal_ignore_ascii_case(self : String, other : String) -> Bool {
-  self[:].equal_ignore_ascii_case(other[:])
+  self[:].equal_ignore_ascii_case(other)
 }
 
 ///|

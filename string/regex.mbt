@@ -91,7 +91,7 @@ pub fn Regex::internal_compile_pattern(pat : Pattern) -> Regex {
 #internal(internal, "not intended for public use")
 #doc(hidden)
 pub fn Regex::internal_from_string(pat : String) -> Regex {
-  try! Regex::new(pat[:])
+  try! Regex::new(pat)
 }
 
 ///|

@@ -486,7 +486,7 @@ test "range with early termination" {
 ///|
 test "range on large dataset" {
   let arr = Array::makei(100, fn(i) { (i, "val\{i}") })
-  let map = @sorted_map.from_array(arr[:])
+  let map = @sorted_map.from_array(arr)
   let count = for _, _ in map.range(low=25, high=75); count = 0 {
     continue count + 1
   } nobreak {

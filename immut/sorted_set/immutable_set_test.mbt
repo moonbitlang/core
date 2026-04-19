@@ -806,7 +806,7 @@ test "range with early termination" {
 ///|
 test "range on large dataset" {
   let arr = Array::makei(100, fn(i) { i })
-  let set = @sorted_set.from_array(arr[:])
+  let set = @sorted_set.from_array(arr)
   let count = for _ in set.range(low=25, high=75); count = 0 {
     continue count + 1
   } nobreak {

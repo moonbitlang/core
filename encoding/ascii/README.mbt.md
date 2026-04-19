@@ -9,7 +9,7 @@ Use `encode` to convert a string to ASCII bytes. Panics if the string contains n
 ```mbt check
 ///|
 test "encode" {
-  let bytes = @ascii.encode("hello"[:])
+  let bytes = @ascii.encode("hello")
   inspect(bytes, content="b\"hello\"")
 }
 ```
@@ -22,7 +22,7 @@ Use `decode` to convert ASCII bytes back to a string. Raises `Malformed` if any 
 ///|
 test "decode" {
   let bytes : Bytes = b"\x68\x65\x6C\x6C\x6F"
-  let s = @ascii.decode(bytes[:])
+  let s = @ascii.decode(bytes)
   inspect(s, content="hello")
 }
 ```
@@ -35,7 +35,7 @@ Use `decode_lossy` to decode bytes that may contain invalid ASCII, replacing inv
 ///|
 test "decode_lossy" {
   let bytes : Bytes = b"\x68\x80\x6F"
-  let s = @ascii.decode_lossy(bytes[:])
+  let s = @ascii.decode_lossy(bytes)
   inspect(s, content="h\u{FFFD}o")
 }
 ```

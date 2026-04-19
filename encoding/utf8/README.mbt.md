@@ -9,7 +9,7 @@ Use `encode` to convert a string to UTF-8 bytes. Set `bom=true` to prepend the U
 ```mbt check
 ///|
 test "encode" {
-  let bytes = @utf8.encode("hi"[:])
+  let bytes = @utf8.encode("hi")
   inspect(bytes, content="b\"hi\"")
 }
 ```
@@ -17,7 +17,7 @@ test "encode" {
 ```mbt check
 ///|
 test "encode_with_bom" {
-  let bytes = @utf8.encode("hi"[:], bom=true)
+  let bytes = @utf8.encode("hi", bom=true)
   inspect(bytes, content="b\"\\xef\\xbb\\xbfhi\"")
 }
 ```
@@ -30,7 +30,7 @@ Use `decode` to convert UTF-8 bytes back to a string. Raises `Malformed` on inva
 ///|
 test "decode" {
   let bytes : Bytes = b"\x68\x69"
-  let s = @utf8.decode(bytes[:])
+  let s = @utf8.decode(bytes)
   inspect(s, content="hi")
 }
 ```
@@ -43,7 +43,7 @@ Use `decode_lossy` to decode bytes that may contain invalid UTF-8, replacing inv
 ///|
 test "decode_lossy" {
   let bytes : Bytes = b"\x68\x80\x69"
-  let s = @utf8.decode_lossy(bytes[:])
+  let s = @utf8.decode_lossy(bytes)
   inspect(s, content="h\u{FFFD}i")
 }
 ```

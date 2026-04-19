@@ -451,12 +451,12 @@ pub impl[X : Show] Show for MutArrayView[X] with output(self, logger) {
 
 ///|
 pub impl[T : Eq] Eq for MutArrayView[T] with equal(self, other) -> Bool {
-  self[:] == other[:]
+  self[:] == other
 }
 
 ///|
 pub impl[T : Compare] Compare for MutArrayView[T] with compare(self, other) -> Int {
-  self[:].compare(other[:])
+  self[:].compare(other)
 }
 
 ///|

@@ -619,7 +619,7 @@ pub impl Show for BytesView with output(self, logger) {
 
 ///|
 pub impl Show for Bytes with output(self, logger) {
-  BytesView::output(self[:], logger)
+  BytesView::output(self, logger)
 }
 
 ///|
@@ -710,10 +710,10 @@ pub impl Compare for BytesView with compare(self, other) -> Int {
 ///
 /// ```mbt check
 /// test {
-///   inspect(b"\x01\x02"[:].lexical_compare(b"\x01\x02\x03"[:]), content="-1")
-///   inspect(b"\x01\x02\x03"[:].lexical_compare(b"\x01\x02"[:]), content="1")
-///   inspect(b"\x01\x02\x03"[:].lexical_compare(b"\x01\x02\x03"[:]), content="0")
-///   inspect(b"\x01\x02\x03"[:].lexical_compare(b"\x01\x02\x04"[:]), content="-1")
+///   inspect(b"\x01\x02"[:].lexical_compare(b"\x01\x02\x03"), content="-1")
+///   inspect(b"\x01\x02\x03"[:].lexical_compare(b"\x01\x02"), content="1")
+///   inspect(b"\x01\x02\x03"[:].lexical_compare(b"\x01\x02\x03"), content="0")
+///   inspect(b"\x01\x02\x03"[:].lexical_compare(b"\x01\x02\x04"), content="-1")
 /// }
 /// ```
 pub fn BytesView::lexical_compare(self : BytesView, other : BytesView) -> Int {
@@ -785,5 +785,5 @@ pub impl ToJson for BytesView with to_json(self) -> Json {
 /// Printable ASCII characters (from space to tilde, excluding '"' and '\') are output as-is.
 /// All other bytes are represented as \xHH, where HH is the two-digit hexadecimal value of the byte.
 pub impl ToJson for Bytes with to_json(self : Bytes) -> Json {
-  BytesView::to_json(self[:])
+  BytesView::to_json(self)
 }
