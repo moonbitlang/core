@@ -31,9 +31,9 @@ pub fn decode(
   endianness? : Endian = Little,
 ) -> String raise Malformed {
   let bytes = if ignore_bom {
-    if endianness is Little && bytes is [.. "\xff\xfe", .. rest] {
+    if endianness is Little && bytes is [.. b"\xff\xfe", .. rest] {
       rest
-    } else if endianness is Big && bytes is [.. "\xfe\xff", .. rest] {
+    } else if endianness is Big && bytes is [.. b"\xfe\xff", .. rest] {
       rest
     } else {
       bytes
@@ -115,9 +115,9 @@ pub fn decode_lossy(
   endianness? : Endian = Little,
 ) -> String {
   let bytes = if ignore_bom {
-    if endianness is Little && bytes is [.. "\xff\xfe", .. rest] {
+    if endianness is Little && bytes is [.. b"\xff\xfe", .. rest] {
       rest
-    } else if endianness is Big && bytes is [.. "\xfe\xff", .. rest] {
+    } else if endianness is Big && bytes is [.. b"\xfe\xff", .. rest] {
       rest
     } else {
       bytes

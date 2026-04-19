@@ -13,14 +13,14 @@
 // limitations under the License.
 
 ///|
-const HELLO : Bytes = "你好"
+const HELLO : Bytes = b"你好"
 
 ///|
 test "bytes literal" {
   inspect("ABC", content="ABC")
-  let b : Bytes = "你好"
+  let b : Bytes = b"你好"
   inspect(
-    b + "utf8" + HELLO,
+    b + b"utf8" + HELLO,
     content=(
       #|b"\xe4\xbd\xa0\xe5\xa5\xbdutf8\xe4\xbd\xa0\xe5\xa5\xbd"
     ),
@@ -242,12 +242,12 @@ test "panic Fixed::blit_from_bytesview 2" {
 
 ///|
 test "bytes pattern match" {
-  let bytes : Bytes = "Hello, world!你好"
+  let bytes : Bytes = b"Hello, world!你好"
   guard bytes is [.. b"Hello", ..] else { fail("") }
-  guard bytes is [.. _x, .. "你好"] && _x is [.. "Hello, world!", ..] else {
+  guard bytes is [.. _x, .. b"你好"] && _x is [.. b"Hello, world!", ..] else {
     fail("")
   }
-  guard bytes is [.., .. "你好"] else { fail("") }
+  guard bytes is [.., .. b"你好"] else { fail("") }
   // CR: ZYU: it's weird this works but below does not work
   // guard bytes is [.. _ , .. "你好"] else { fail("") }
 }

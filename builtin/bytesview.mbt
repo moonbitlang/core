@@ -556,7 +556,7 @@ pub fn BytesView::to_double_le(self : BytesView) -> Double {
 pub impl Show for BytesView with output(self, logger) {
   logger.write_string("b\"")
   for byte in self {
-    if byte is (' '..='~') && byte != '"' && byte != '\\' {
+    if byte is (b' '..=b'~') && byte != b'"' && byte != b'\\' {
       logger.write_char(byte.to_char())
     } else {
       logger.write_string("\\x")
@@ -718,7 +718,7 @@ pub fn BytesView::to_bytes(self : BytesView) -> Bytes {
 pub impl ToJson for BytesView with to_json(self) -> Json {
   let sb = StringBuilder::new()
   for byte in self {
-    if byte is (' '..='~') && byte != '"' && byte != '\\' {
+    if byte is (b' '..=b'~') && byte != b'"' && byte != b'\\' {
       sb.write_char(byte.to_char())
     } else {
       sb.write_string("\\x")
