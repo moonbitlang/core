@@ -109,9 +109,9 @@ pub impl Show for UInt16 with to_string(self) {
 pub fn Byte::to_hex(b : Byte) -> String {
   fn to_hex_digit(i : Byte) -> Char {
     if i < 10 {
-      (i + '0').to_char()
+      (i + b'0').to_char()
     } else {
-      (i + 'a' - 10).to_char()
+      (i + b'a' - 10).to_char()
     }
   }
 

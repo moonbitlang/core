@@ -24,7 +24,7 @@ pub fn decode(
   bytes : BytesView,
   ignore_bom? : Bool = false,
 ) -> String raise Malformed {
-  let bytes = if ignore_bom && bytes is [.. "\xef\xbb\xbf", .. rest] {
+  let bytes = if ignore_bom && bytes is [.. b"\xef\xbb\xbf", .. rest] {
     rest
   } else {
     bytes
@@ -130,7 +130,7 @@ pub fn decode(
 /// - https://www.unicode.org/versions/Unicode16.0.0/core-spec/chapter-3/#G66453
 /// - https://www.unicode.org/versions/Unicode16.0.0/core-spec/chapter-5/#G40630
 pub fn decode_lossy(bytes : BytesView, ignore_bom? : Bool = false) -> String {
-  let bytes = if ignore_bom && bytes is [.. "\xef\xbb\xbf", .. rest] {
+  let bytes = if ignore_bom && bytes is [.. b"\xef\xbb\xbf", .. rest] {
     rest
   } else {
     bytes
