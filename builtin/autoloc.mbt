@@ -60,9 +60,9 @@ priv struct SourceLocRepr {
 
 ///|
 fn SourceLocRepr::parse(repr : String) -> SourceLocRepr {
-  lexmatch repr[:] {
+  lexmatch repr[:] with longest {
     (
-      (".+?" as filename)
+      (".+" as filename)
       ":"
       ("[[:digit:]]+" as start_line)
       ":"

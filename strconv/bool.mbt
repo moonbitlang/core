@@ -16,7 +16,7 @@
 /// Parse a string and return the represented boolean value or an error.
 #deprecated("use `@string.parse_bool` instead", skip_current_package=true)
 pub fn parse_bool(str : StringView) -> Bool raise StrConvError {
-  lexmatch str {
+  lexmatch str with longest {
     "(true|TRUE|True|t|T|1)" => true
     "(false|FALSE|False|f|F|0)" => false
     _ => syntax_err()

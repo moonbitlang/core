@@ -171,7 +171,7 @@ fn parse_inf_nan(rest : StringView) -> Double raise StrConvError {
     ['-', .. rest] => (false, rest)
     ['+', .. rest] | rest => (true, rest)
   }
-  lexmatch rest {
+  lexmatch rest with longest {
     "(?i:nan)" => @double.not_a_number
     "(?i:inf(inity)?)" =>
       if pos {
