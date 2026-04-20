@@ -98,19 +98,12 @@ fn has_options(cmd : Command) -> Bool {
 
 ///|
 fn required_option_usage(cmd : Command) -> String {
-  let parts = Array::new(capacity=cmd.args.length())
-  for arg in cmd.args {
-    if arg.hidden || !is_required_arg(arg) {
-      continue
-    }
-    if arg.info is PositionalInfo(_) {
-      continue
-    }
-    if required_option_token(arg) is Some(token) {
-      parts.push(token)
-    }
-  }
-  parts.join(" ")
+  [
+    for arg in cmd.args if !(arg.hidden ||
+    !is_required_arg(arg) ||
+    arg.info is PositionalInfo(_)) &&
+    required_option_token(arg) is Some(token) => token
+  ].join(" ")
 }
 
 ///|

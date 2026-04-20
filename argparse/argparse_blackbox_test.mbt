@@ -2234,6 +2234,42 @@ test "subcommand help puts required options in usage" {
 }
 
 ///|
+test "required_option_usage covers option/flag/hidden/short-only" {
+  let cmd = @argparse.Command(
+    "demo",
+    flags=[
+      FlagArg("verbose", short='v', long="verbose", required=true),
+      FlagArg("secret", short='s', long="secret", required=true, hidden=true),
+    ],
+    options=[
+      OptionArg("mode", long="mode", required=true),
+      OptionArg("tag", short='t', long="", required=true),
+      OptionArg("optional", long="optional"),
+    ],
+    positionals=[
+      PositionArg("required_pos", num_args=@argparse.ValueRange::single()),
+    ],
+  )
+  let help = cmd.render_help()
+  assert_true(
+    help.has_prefix(
+      "Usage: demo --verbose --mode <mode> -t <tag> [options] <required_pos>",
+    ),
+  )
+}
+
+///|
+test "required_option_usage returns empty when nothing required" {
+  let cmd = @argparse.Command(
+    "demo",
+    flags=[FlagArg("verbose", short='v', long="verbose")],
+    options=[OptionArg("mode", long="mode")],
+  )
+  let help = cmd.render_help()
+  assert_true(help.has_prefix("Usage: demo [options]"))
+}
+
+///|
 test "required and env-fed ranged values validate after parsing" {
   let required_cmd = @argparse.Command("demo", options=[
     OptionArg("input", long="input", required=true),
