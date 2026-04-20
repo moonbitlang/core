@@ -39,11 +39,11 @@ fn translate(
     Sequence(exprs) => (transl_seq(tc, exprs), pref)
     Alternation(exprs) => {
       // TODO: merge sequences
-      let alts = []
-      for expr in exprs {
-        let (cr, pref2) = translate(tc, expr)
-        alts.push(enforce_pref(ctx, pref, pref2, cr))
-      }
+      let alts = [
+        for expr in exprs if translate(tc, expr) is (cr, pref2) => {
+          enforce_pref(ctx, pref, pref2, cr)
+        }
+      ]
       (@automata.e_alt(ctx~, alts), pref)
     }
     Quantifier(q, expr) => {
