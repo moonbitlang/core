@@ -116,7 +116,7 @@ test "expect_char with surrogate pair" {
 ///|
 fn ParseContext::lex_skip_whitespace(ctx : ParseContext) -> Unit {
   let rest = ctx.input.view(start_offset=ctx.offset, end_offset=ctx.end_offset)
-  lexmatch rest {
+  lexmatch rest with longest {
     ("[ \t\r\n]+", next) => ctx.offset = ctx.end_offset - next.length()
     _ => ()
   }
