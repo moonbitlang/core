@@ -77,6 +77,40 @@ test "to_array empty" {
 }
 
 ///|
+test "to_json" {
+  let v = @vector.from_iter((0).until(40))
+  let expected = Json::array(Array::makei(40, i => i.to_json()))
+  @json.json_inspect(v, content=expected)
+  let empty : @vector.Vector[Int] = @vector.new()
+  @json.json_inspect(empty, content=[])
+}
+
+///|
+test "from_json" {
+  for xs in (@quickcheck.samples(20) : Array[@vector.Vector[Int]]) {
+    assert_eq(xs, @json.from_json(xs.to_json()))
+  }
+}
+
+///|
+test "from_json rejects invalid input" {
+  let not_array : Result[@vector.Vector[Int], @json.JsonDecodeError] = try? @json.from_json({
+      "a": 1,
+    },
+  )
+  @json.json_inspect(not_array, content={
+    "Err": ["JsonDecodeError", ["", "@immut/vector.from_json: expected array"]],
+  })
+  let bad_item : Result[@vector.Vector[Int], @json.JsonDecodeError] = try? @json.from_json([
+      1, "x", 3,
+    ],
+  )
+  @json.json_inspect(bad_item, content={
+    "Err": ["JsonDecodeError", ["/1", "Int::from_json: expected number"]],
+  })
+}
+
+///|
 test "iter" {
   let buf = StringBuilder::new(size_hint=20)
   let v = @vector.from_array([1, 2, 3])
