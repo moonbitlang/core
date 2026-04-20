@@ -665,6 +665,34 @@ pub impl[A : Show] Show for Vector[A] with output(self, logger) {
 }
 
 ///|
+pub impl[A : ToJson] ToJson for Vector[A] with to_json(self) {
+  let len = self.length()
+  guard len != 0 else { return [] }
+  let res : Array[Json] = Array::make(len, null)
+  self.eachi((i, value) => res[i] = value.to_json())
+  Json::array(res)
+}
+
+///|
+pub impl[A : @json.FromJson] @json.FromJson for Vector[A] with from_json(
+  json,
+  path,
+) {
+  guard json is Json::Array(arr) else {
+    raise @json.JsonDecodeError(
+      (path, "@immut/vector.from_json: expected array"),
+    )
+  }
+  let len = arr.length()
+  guard len != 0 else { return new() }
+  let values : Array[A] = Array::new(capacity=len)
+  for i, value in arr {
+    values.push(A::from_json(value, path.add_index(i)))
+  }
+  Vector::from_array(values)
+}
+
+///|
 /// Compares two vectors based on shortlex order.
 ///
 /// First compares the lengths of the vectors. If they differ, returns -1 if the

@@ -3,6 +3,7 @@ package "moonbitlang/core/immut/vector"
 
 import {
   "moonbitlang/core/debug",
+  "moonbitlang/core/json",
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/quickcheck/splitmix",
 }
@@ -66,7 +67,9 @@ pub impl[A : Compare] Compare for Vector[A]
 pub impl[A : Eq] Eq for Vector[A]
 pub impl[A : Hash] Hash for Vector[A]
 pub impl[A : Show] Show for Vector[A]
+pub impl[A : ToJson] ToJson for Vector[A]
 pub impl[A : @debug.Debug] @debug.Debug for Vector[A]
+pub impl[A : @json.FromJson] @json.FromJson for Vector[A]
 pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Vector[X]
 
 // Type aliases
