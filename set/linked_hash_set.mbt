@@ -594,11 +594,7 @@ pub fn[K : Hash + Eq] Set::intersection(
 
 ///|
 pub impl[X : ToJson] ToJson for Set[X] with to_json(self) {
-  let res = Array::new(capacity=self.size)
-  for v in self {
-    res.push(v.to_json())
-  }
-  Json::array(res)
+  Json::array([ for v in self => v.to_json() ])
 }
 
 ///|
