@@ -17,8 +17,6 @@ pub fn Category::inexistant() -> Self
 pub fn Category::inexistant_or_newline() -> Self
 pub fn Category::inexistant_or_non_word_end() -> Self
 pub fn Category::inexistant_or_non_word_start() -> Self
-#deprecated
-pub fn Category::inner(Self) -> Int
 pub fn Category::intersects(Self, Self) -> Bool
 pub fn Category::newline() -> Self
 pub fn Category::not_word() -> Self

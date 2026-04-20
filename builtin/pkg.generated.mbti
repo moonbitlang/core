@@ -64,8 +64,6 @@ pub(all) suberror SnapshotError {
 
 // Types and methods
 pub(all) struct ArgsLoc(Array[SourceLoc?]) derive(Show)
-#deprecated
-pub fn ArgsLoc::inner(Self) -> Array[SourceLoc?]
 pub fn ArgsLoc::to_json(Self) -> String
 
 type Array[T]
@@ -319,8 +317,6 @@ pub impl[X : ToJson] ToJson for Iter[X]
 pub(all) struct Iter2[X, Y](Iter[(X, Y)])
 pub fn[X, Y] Iter2::concat(Self[X, Y], Self[X, Y]) -> Self[X, Y]
 pub fn[X, Y] Iter2::each(Self[X, Y], (X, Y) -> Unit) -> Unit
-#deprecated
-pub fn[X, Y] Iter2::inner(Self[X, Y]) -> Iter[(X, Y)]
 #alias(iterator)
 pub fn[X, Y] Iter2::iter(Self[X, Y]) -> Iter[(X, Y)]
 #alias(iterator2)
