@@ -14,13 +14,9 @@
 
 ///|
 fn positional_args(args : Array[Arg]) -> Array[Arg] {
-  let ordered = []
-  for arg in args {
-    if arg.info is PositionalInfo(_) {
-      ordered.push(arg)
-    }
-  }
-  ordered
+  [
+    for arg in args if arg.info is PositionalInfo(_) => arg
+  ]
 }
 
 ///|
