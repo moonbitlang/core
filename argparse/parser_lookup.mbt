@@ -97,20 +97,17 @@ fn resolve_help_target(
 }
 
 ///|
-fn split_long(arg : String) -> (String, String?) {
-  let parts = []
-  for part in arg.split("=") {
-    parts.push(part.to_string())
-  }
+fn split_long(arg : String) -> (StringView, String?) {
+  let parts = [ for part in arg.split("=") => part ]
   if parts.length() <= 1 {
     let name = match parts[0].strip_prefix("--") {
-      Some(view) => view.to_string()
+      Some(view) => view
       None => parts[0]
     }
     (name, None)
   } else {
     let name = match parts[0].strip_prefix("--") {
-      Some(view) => view.to_string()
+      Some(view) => view
       None => parts[0]
     }
     let value = parts[1:].to_array().join("=")

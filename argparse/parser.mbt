@@ -423,11 +423,11 @@ fn parse_command_impl(
         }
         raise_version(command_version(cmd))
       }
-      match long_index.get(name) {
+      match long_index.get_from_string(name) {
         None =>
           // Support `--no-<flag>` when the underlying flag is marked `negatable`.
           if name is [.. "no-", .. target] &&
-            long_index.get(target.to_string())
+            long_index.get_from_string(target)
             is Some({ info: FlagInfo(negatable=true, action~, ..), .. } as spec) {
             if inline is Some(_) {
               raise ArgParseError::InvalidArgument(arg)
@@ -660,11 +660,11 @@ fn version_text_for_long_action(
   inherited_version_long : Map[String, String],
 ) -> String {
   for arg in cmd.args {
-    if arg.info is FlagInfo(long=Some(name), action=Version, ..) && name == long {
+    if arg.info is FlagInfo(long=Some(name), action=Version, ..) && name[:] == long {
       return command_version(cmd)
     }
   }
-  inherited_version_long.get(long).unwrap_or(command_version(cmd))
+  inherited_version_long.get_from_string(long).unwrap_or(command_version(cmd))
 }
 
 ///|
