@@ -30,12 +30,5 @@ priv enum Node[A] {
 pub impl[A : ToJson + Compare] ToJson for PriorityQueue[A] with to_json(
   self : PriorityQueue[A],
 ) {
-  // note here iter requires Compare 
-  // This requires some investigation 
-  // CR: this syntax feels less intuitive
-  let output : Array[Json] = []
-  for item in self {
-    output.push(item.to_json())
-  }
-  Json::array(output)
+  Json::array([ for item in self => item.to_json() ])
 }

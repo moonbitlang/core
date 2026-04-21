@@ -666,11 +666,7 @@ pub impl[A : Show] Show for Vector[A] with output(self, logger) {
 
 ///|
 pub impl[A : ToJson] ToJson for Vector[A] with to_json(self) {
-  let len = self.length()
-  guard len != 0 else { return [] }
-  let res : Array[Json] = Array::make(len, null)
-  self.eachi((i, value) => res[i] = value.to_json())
-  Json::array(res)
+  Json::array([ for value in self => value.to_json() ])
 }
 
 ///|
