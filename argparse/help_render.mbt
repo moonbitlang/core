@@ -240,25 +240,22 @@ fn builtin_option_label(
 
 ///|
 fn positional_entries(cmd : Command) -> Array[String] {
-  let display = Array::new(capacity=cmd.args.length())
-  for arg in positional_args(cmd.args) {
-    if arg.hidden {
-      continue
-    }
-    display.push((positional_display(arg), arg_doc(arg)))
-  }
-  format_entries(display)
+  format_entries(
+    [
+      for arg in positional_args(cmd.args) if !arg.hidden => {
+        (positional_display(arg), arg_doc(arg))
+      }
+    ],
+  )
 }
 
 ///|
 fn subcommand_entries(cmd : Command) -> Array[String] {
-  let display = Array::new(capacity=cmd.subcommands.length() + 1)
-  for sub in cmd.subcommands {
-    if sub.hidden {
-      continue
+  let display = [
+    for sub in cmd.subcommands if !sub.hidden => {
+      (sub.name, sub.about.unwrap_or(""))
     }
-    display.push((sub.name, sub.about.unwrap_or("")))
-  }
+  ]
   if help_subcommand_enabled(cmd) {
     display.push(("help", "Print help for the subcommand(s)."))
   }
@@ -428,16 +425,11 @@ fn group_label(group : ArgGroup) -> String {
 
 ///|
 fn group_members(cmd : Command, group : ArgGroup) -> String {
-  let members = []
-  for arg in cmd.args {
-    if arg.hidden {
-      continue
+  [
+    for arg in cmd.args if !arg.hidden && arg_in_group(arg, group) => {
+      group_member_display(arg)
     }
-    if arg_in_group(arg, group) {
-      members.push(group_member_display(arg))
-    }
-  }
-  members.join(", ")
+  ].join(", ")
 }
 
 ///|

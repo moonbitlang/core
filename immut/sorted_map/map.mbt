@@ -123,9 +123,9 @@ pub fn[K, V] SortedMap::filter_with_key(
 ///|
 /// Returns an array of all key-value pairs in ascending key order.
 pub fn[K, V] SortedMap::to_array(self : SortedMap[K, V]) -> Array[(K, V)] {
-  let arr = []
-  self.each((k, v) => arr.push((k, v)))
-  arr
+  [
+    for k, v in self => (k, v)
+  ]
 }
 
 ///|

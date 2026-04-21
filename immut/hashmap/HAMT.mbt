@@ -726,9 +726,9 @@ pub fn[K : Eq + Hash, V] HashMap::from_array(
 ///|
 /// Returns an array of all key-value pairs.
 pub fn[K, V] HashMap::to_array(self : HashMap[K, V]) -> Array[(K, V)] {
-  let arr = Array::new(capacity=self.length())
-  self.each((k, v) => arr.push((k, v)))
-  arr
+  [
+    for k, v in self => (k, v)
+  ]
 }
 
 ///|

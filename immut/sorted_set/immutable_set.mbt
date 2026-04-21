@@ -791,11 +791,7 @@ pub impl[A : Show] Show for SortedSet[A] with output(self, logger) {
 
 ///|
 pub impl[A : ToJson] ToJson for SortedSet[A] with to_json(self) {
-  let capacity = self.iter().count()
-  guard capacity != 0 else { return Json::array([]) }
-  let jsons = Array::new(capacity~)
-  self.each(a => jsons.push(a.to_json()))
-  Json::array(jsons)
+  Json::array([ for a in self => a.to_json() ])
 }
 
 ///|

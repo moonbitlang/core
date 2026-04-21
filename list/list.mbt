@@ -346,22 +346,9 @@ pub fn[A, B] List::rev_map(
 /// }
 /// ```
 pub fn[A] List::to_array(self : List[A]) -> Array[A] {
-  match self {
-    Empty => []
-    More(x, tail=xs) => {
-      let arr = [x]
-      for cur = xs {
-        match cur {
-          Empty => break
-          More(x, tail=xs) => {
-            arr.push(x)
-            continue xs
-          }
-        }
-      }
-      arr
-    }
-  }
+  [
+    for x in self => x
+  ]
 }
 
 ///|
