@@ -660,7 +660,8 @@ fn version_text_for_long_action(
   inherited_version_long : Map[String, String],
 ) -> String {
   for arg in cmd.args {
-    if arg.info is FlagInfo(long=Some(name), action=Version, ..) && name[:] == long {
+    if arg.info is FlagInfo(long=Some(name), action=Version, ..) &&
+      name[:] == long {
       return command_version(cmd)
     }
   }
