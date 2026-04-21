@@ -161,16 +161,13 @@ fn group_usage_expr(
     if group.name != name {
       continue
     }
-    let members = []
-    for member_name in group.args {
-      if args.search_by(arg => arg.name == member_name) is Some(idx) {
-        let item = args[idx]
-        if item.hidden {
-          continue
-        }
-        members.push(arg_usage_token_for_group(item))
-      }
-    }
+    let members = [
+      for member_name in group.args if args.search_by(arg => {
+        arg.name == member_name
+      })
+      is Some(idx) &&
+      !args[idx].hidden => arg_usage_token_for_group(args[idx])
+    ]
     if members.length() == 0 {
       return None
     }
