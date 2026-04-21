@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn suggest_long(name : String, long_index : Map[String, Arg]) -> String? {
+fn suggest_long(name : StringView, long_index : Map[String, Arg]) -> String? {
   let candidates = long_index.keys().collect()
   if suggest_name(name, candidates) is Some(best) {
     Some("--\{best}")
@@ -34,7 +34,7 @@ fn suggest_short(short : Char, short_index : Map[Char, Arg]) -> String? {
 }
 
 ///|
-fn suggest_name(input : String, candidates : Array[String]) -> String? {
+fn suggest_name(input : StringView, candidates : Array[String]) -> String? {
   let max_dist = suggestion_threshold(input.length())
   for cand in candidates; best = (None : String?), best_dist = 0 {
     let dist = levenshtein(input, cand)
@@ -63,7 +63,7 @@ fn suggestion_threshold(len : Int) -> Int {
 }
 
 ///|
-fn levenshtein(a : String, b : String) -> Int {
+fn levenshtein(a : StringView, b : StringView) -> Int {
   let aa = a.to_array()
   let bb = b.to_array()
   let m = aa.length()

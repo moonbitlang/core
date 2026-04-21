@@ -24,7 +24,7 @@ fn raise_version(text : String) -> Unit raise DisplayVersion {
 
 ///|
 fn[T] raise_unknown_long(
-  name : String,
+  name : StringView,
   long_index : Map[String, Arg],
 ) -> T raise ArgParseError {
   let hint = suggest_long(name, long_index)
@@ -659,7 +659,7 @@ fn command_version(cmd : Command) -> String {
 ///|
 fn version_text_for_long_action(
   cmd : Command,
-  long : String,
+  long : StringView,
   inherited_version_long : Map[String, String],
 ) -> String {
   for arg in cmd.args {
