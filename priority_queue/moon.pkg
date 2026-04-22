@@ -4,7 +4,6 @@ import {
   "moonbitlang/core/debug",
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/quickcheck/splitmix",
-  "moonbitlang/core/json",
 }
 
 import {
