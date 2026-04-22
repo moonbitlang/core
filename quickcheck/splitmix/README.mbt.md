@@ -11,15 +11,14 @@ Create and initialize random number generators:
 test "random state creation" {
   // Create with default seed
   let rng1 = @splitmix.new()
-  inspect(rng1.to_string().length() > 0, content="true")
+  inspect(rng1.next_uint().to_string().length() > 0, content="true")
 
   // Create with specific seed
   let rng2 = @splitmix.new(seed=12345UL)
-  inspect(rng2.to_string().length() > 0, content="true")
 
   // Clone existing state
   let rng3 = rng2.clone()
-  inspect(rng3.to_string().length() > 0, content="true")
+  inspect(rng2.next_uint() == rng3.next_uint(), content="true")
 }
 ```
 

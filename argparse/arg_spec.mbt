@@ -27,6 +27,10 @@ pub(all) enum FlagAction {
 } derive(Eq)
 
 ///|
+#deprecated("FlagAction is parser configuration metadata; pattern match on the value instead of stringifying it.", skip_current_package=true)
+pub impl Show for FlagAction
+
+///|
 pub impl Show for FlagAction with output(self, logger) {
   match self {
     SetTrue => logger.write_string("SetTrue")
@@ -46,6 +50,10 @@ pub(all) enum OptionAction {
   Set
   Append
 } derive(Eq)
+
+///|
+#deprecated("OptionAction is parser configuration metadata; pattern match on the value instead of stringifying it.", skip_current_package=true)
+pub impl Show for OptionAction
 
 ///|
 pub impl Show for OptionAction with output(self, logger) {

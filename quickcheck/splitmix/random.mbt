@@ -19,6 +19,10 @@ struct RandomState {
 }
 
 ///|
+#deprecated("RandomState is generator state; use generated values instead of formatting the state.", skip_current_package=true)
+pub impl Show for RandomState
+
+///|
 pub impl Show for RandomState with output(self, logger) {
   logger.write_string("{seed: ")
   logger.write_object(self.seed)
