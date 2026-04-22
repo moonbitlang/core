@@ -294,8 +294,7 @@ test "filter_map" {
   let it2 = [1, 2, 3]
     .iter()
     .filter_map(x => if x == 2 { None } else { Some(x) })
-  guard it2.next() is Some(v)
-  assert_eq(v, 1)
+  debug_inspect(it2.next(), content="Some(1)")
   debug_inspect(it2.next(), content="Some(3)")
   debug_inspect(it2.next(), content="None")
   // Test iter exhaustion (else branch)
@@ -612,17 +611,14 @@ test "Iter::intersperse" {
 ///|
 test "Iter::last" {
   debug_inspect([1, 2, 3].iter().last(), content="Some(3)")
-  guard [1].iter().last() is Some(v)
-  assert_eq(v, 1)
-  guard ([] : Array[Int]).iter().last() is None
+  debug_inspect([1].iter().last(), content="Some(1)")
+  debug_inspect(([] : Array[Int]).iter().last(), content="None")
 }
 
 ///|
 test "Iter::head" {
-  guard [1, 2, 3].iter().head() is Some(v)
-  assert_eq(v, 1)
-  guard [1].iter().head() is Some(v)
-  assert_eq(v, 1)
+  debug_inspect([1, 2, 3].iter().head(), content="Some(1)")
+  debug_inspect([1].iter().head(), content="Some(1)")
   debug_inspect(([] : Array[Int]).iter().head(), content="None")
 }
 
@@ -663,8 +659,7 @@ test "next function - random cases" {
   let iter1 = [10, 20, 30].iter()
   debug_inspect(iter1.next(), content="Some(10)")
   let iter2 = [-5, 0, 5].iter()
-  guard iter2.next() is Some(v)
-  assert_eq(v, -5)
+  debug_inspect(iter2.next(), content="Some(-5)")
   let iter3 = [100, 200, 300, 400].iter()
   debug_inspect(iter3.next(), content="Some(100)")
   let iter4 = [-10, -20, -30].iter()
@@ -708,7 +703,7 @@ test "Iter::nth" {
   debug_inspect(it().concat(it()).nth(10), content="None")
   debug_inspect(it().drop(1).nth(3), content="Some(5)")
   debug_inspect(it().drop(1).nth(4), content="None")
-  guard it().take(1).nth(1) is None
+  debug_inspect(it().take(1).nth(1), content="None")
   debug_inspect(it().take(2).nth(1), content="Some(2)")
 }
 
@@ -719,8 +714,7 @@ test "@builtin.Iter::maximum" {
   // With negative numbers
   debug_inspect([-5, -3, -1, -10].iter().maximum(), content="Some(-1)")
   // Single element
-  guard [42].iter().maximum() is Some(v)
-  assert_eq(v, 42)
+  debug_inspect([42].iter().maximum(), content="Some(42)")
   // Empty iter should return None
   let empty_iter : Iter[Int] = Iter::empty()
   debug_inspect(empty_iter.maximum(), content="None")
@@ -730,8 +724,7 @@ test "@builtin.Iter::maximum" {
 test "@builtin.Iter::minimum" {
   // Test with normal sequence
   let arr = [3, 1, 4, 1, 5].iter()
-  guard arr.minimum() is Some(v)
-  assert_eq(v, 1)
+  debug_inspect(arr.minimum(), content="Some(1)")
 
   // Test with single element
   let single = [42].iter()
@@ -933,10 +926,9 @@ test "Iter::to_json and any on empty" {
 test "Iter::map_while empty and last" {
   let empty : Iter[Int] = Iter::empty()
   inspect(empty.map_while(_ => Some(1)).collect(), content="[]")
-  guard [1, 2, 3].iter().last() is Some(v)
-  assert_eq(v, 3)
+  debug_inspect([1, 2, 3].iter().last(), content="Some(3)")
   let empty_last : Iter[Int] = Iter::empty()
-  guard empty_last.last() is None
+  debug_inspect(empty_last.last(), content="None")
 }
 
 ///|

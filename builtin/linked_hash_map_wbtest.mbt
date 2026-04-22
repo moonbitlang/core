@@ -481,7 +481,7 @@ test "hash collision" {
   m.set("a", 1)
   m.set("ab", 2)
   m.set("abc", 3)
-  guard m.get("d") is None
+  assert_true(m.get("d") == None)
 }
 
 ///|

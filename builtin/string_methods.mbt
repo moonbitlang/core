@@ -86,16 +86,14 @@ fn boyer_moore_horspool_find(
 
 ///|
 test "boyer_moore_horspool_find edge cases" {
-  guard boyer_moore_horspool_find("abc", "") is Some(v)
-  assert_eq(v, 0)
-  guard boyer_moore_horspool_find("ab", "abcd") is None
+  assert_true(boyer_moore_horspool_find("abc", "") == Some(0))
+  assert_true(boyer_moore_horspool_find("ab", "abcd") == None)
 }
 
 ///|
 test "boyer_moore_horspool_rev_find edge cases" {
-  guard boyer_moore_horspool_rev_find("abc", "") is Some(v)
-  assert_eq(v, 3)
-  guard boyer_moore_horspool_rev_find("ab", "abcd") is None
+  assert_true(boyer_moore_horspool_rev_find("abc", "") == Some(3))
+  assert_true(boyer_moore_horspool_rev_find("ab", "abcd") == None)
 }
 
 ///|
@@ -107,32 +105,25 @@ pub fn String::find(self : String, str : StringView) -> Int? {
 
 ///|
 test "find" {
-  guard "hello".find("o") is Some(v)
-  assert_eq(v, 4)
-  guard "hello".find("l") is Some(v)
-  assert_eq(v, 2)
-  guard "hello".find("hello") is Some(v)
-  assert_eq(v, 0)
-  guard "hello".find("h") is Some(v)
-  assert_eq(v, 0)
-  guard "hello".find("") is Some(v)
-  assert_eq(v, 0)
-  guard "hello".find("world") is None
-  guard "".find("") is Some(v)
-  assert_eq(v, 0)
-  guard "".find("a") is None
-  guard "hello hello".find("hello") is Some(v)
-  assert_eq(v, 0)
-  guard "aaa".find("aa") is Some(v)
-  assert_eq(v, 0)
-  guard "😀😀".find("😀") is Some(v)
-  assert_eq(v, 0)
-  guard ("😀😀aa".repeat(20) + "😀😀😀😀").find("😀😀😀😀")
-    is Some(v)
-  assert_eq(v, 120)
-  guard ("😀😀😀😀" + "😀😀aa".repeat(20)).find("😀😀😀😀")
-    is Some(v)
-  assert_eq(v, 0)
+  assert_true("hello".find("o") == Some(4))
+  assert_true("hello".find("l") == Some(2))
+  assert_true("hello".find("hello") == Some(0))
+  assert_true("hello".find("h") == Some(0))
+  assert_true("hello".find("") == Some(0))
+  assert_true("hello".find("world") == None)
+  assert_true("".find("") == Some(0))
+  assert_true("".find("a") == None)
+  assert_true("hello hello".find("hello") == Some(0))
+  assert_true("aaa".find("aa") == Some(0))
+  assert_true("😀😀".find("😀") == Some(0))
+  assert_true(
+    ("😀😀aa".repeat(20) + "😀😀😀😀").find("😀😀😀😀") ==
+    Some(120),
+  )
+  assert_true(
+    ("😀😀😀😀" + "😀😀aa".repeat(20)).find("😀😀😀😀") ==
+    Some(0),
+  )
 }
 
 ///|
@@ -156,22 +147,16 @@ pub fn String::find_by(self : String, pred : (Char) -> Bool) -> Int? {
 
 ///|
 test "find_by" {
-  guard "hello".find_by(c => c == 'o') is Some(v)
-  assert_eq(v, 4)
-  guard "hello".find_by(c => c == 'l') is Some(v)
-  assert_eq(v, 2)
-  guard "hello".find_by(c => c == 'z') is None
-  guard "".find_by(c => c == 'a') is None
-  guard "hello".find_by(c => c is ('0'..='9')) is None
-  guard "hello123".find_by(c => c is ('0'..='9')) is Some(v)
-  assert_eq(v, 5)
-  guard "hello".find_by(c => c is ('A'..='Z')) is None
-  guard "Hello".find_by(c => c is ('A'..='Z')) is Some(v)
-  assert_eq(v, 0)
-  guard "αβγ".find_by(c => c == 'β') is Some(v)
-  assert_eq(v, 1)
-  guard "😀😁😂".find_by(c => c == '😂') is Some(v)
-  assert_eq(v, 2)
+  assert_true("hello".find_by(c => c == 'o') == Some(4))
+  assert_true("hello".find_by(c => c == 'l') == Some(2))
+  assert_true("hello".find_by(c => c == 'z') == None)
+  assert_true("".find_by(c => c == 'a') == None)
+  assert_true("hello".find_by(c => c is ('0'..='9')) == None)
+  assert_true("hello123".find_by(c => c is ('0'..='9')) == Some(5))
+  assert_true("hello".find_by(c => c is ('A'..='Z')) == None)
+  assert_true("Hello".find_by(c => c is ('A'..='Z')) == Some(0))
+  assert_true("αβγ".find_by(c => c == 'β') == Some(1))
+  assert_true("😀😁😂".find_by(c => c == '😂') == Some(2))
 }
 
 ///|
@@ -252,36 +237,25 @@ pub fn String::rev_find(self : String, str : StringView) -> Int? {
 
 ///|
 test "rev_find" {
-  guard "hello".rev_find("o") is Some(v)
-  assert_eq(v, 4)
-  guard "hello".rev_find("l") is Some(v)
-  assert_eq(v, 3)
-  guard "hello".rev_find("hello") is Some(v)
-  assert_eq(v, 0)
-  guard "hello".rev_find("h") is Some(v)
-  assert_eq(v, 0)
-  guard "hello".rev_find("") is Some(v)
-  assert_eq(v, 5)
-  guard "hello".rev_find("world") is None
-  guard "".rev_find("") is Some(v)
-  assert_eq(v, 0)
-  guard "".rev_find("a") is None
-  guard "hello hello".rev_find("hello") is Some(v)
-  assert_eq(v, 6)
-  guard "aaa".rev_find("aa") is Some(v)
-  assert_eq(v, 1)
-  guard "😀😀".rev_find("😀") is Some(v)
-  assert_eq(v, 2)
-  guard ("😀😀aa".repeat(20) + "😀😀😀😀").rev_find(
-      "😀😀😀😀",
-    )
-    is Some(v)
-  assert_eq(v, 120)
-  guard ("😀😀😀😀" + "😀😀aa".repeat(20)).rev_find(
-      "😀😀😀😀",
-    )
-    is Some(v)
-  assert_eq(v, 4)
+  assert_true("hello".rev_find("o") == Some(4))
+  assert_true("hello".rev_find("l") == Some(3))
+  assert_true("hello".rev_find("hello") == Some(0))
+  assert_true("hello".rev_find("h") == Some(0))
+  assert_true("hello".rev_find("") == Some(5))
+  assert_true("hello".rev_find("world") == None)
+  assert_true("".rev_find("") == Some(0))
+  assert_true("".rev_find("a") == None)
+  assert_true("hello hello".rev_find("hello") == Some(6))
+  assert_true("aaa".rev_find("aa") == Some(1))
+  assert_true("😀😀".rev_find("😀") == Some(2))
+  assert_true(
+    ("😀😀aa".repeat(20) + "😀😀😀😀").rev_find("😀😀😀😀") ==
+    Some(120),
+  )
+  assert_true(
+    ("😀😀😀😀" + "😀😀aa".repeat(20)).rev_find("😀😀😀😀") ==
+    Some(4),
+  )
 }
 
 ///|
@@ -352,15 +326,9 @@ test "has_prefix" {
 ///
 /// ```mbt check
 /// test {
-///   debug_inspect(
-///     "hello world".strip_suffix(" world"),
-///     content="Some(<StringView: \"hello\">)",
-///   )
-///   debug_inspect("hello world".strip_suffix(" moon"), content="None")
-///   debug_inspect(
-///     "hello".strip_suffix("hello"),
-///     content="Some(<StringView: \"\">)",
-///   )
+///   assert_true("hello world".strip_suffix(" world") == Some("hello"[:]))
+///   assert_true("hello world".strip_suffix(" moon") == None)
+///   assert_true("hello".strip_suffix("hello") == Some(""[:]))
 /// }
 /// ```
 #alias(chop_suffix)
@@ -370,38 +338,26 @@ pub fn String::strip_suffix(self : String, suffix : StringView) -> StringView? {
 
 ///|
 test "strip_prefix" {
-  guard "hello world".strip_prefix("hello ") is Some(v)
-  inspect(v, content="world")
-  guard "hello world".strip_prefix("hi ") is None
-  guard "hello".strip_prefix("hello") is Some(v)
-  inspect(v, content="")
-  guard "".strip_prefix("") is Some(v)
-  inspect(v, content="")
-  guard "".strip_prefix("a") is None
-  guard "abc".strip_prefix("") is Some(v)
-  inspect(v, content="abc")
-  guard "😀hello".strip_prefix("😀") is Some(v)
-  inspect(v, content="hello")
-  guard "😀😃hello".strip_prefix("😀😃") is Some(v)
-  inspect(v, content="hello")
+  assert_true("hello world".strip_prefix("hello ") == Some("world"[:]))
+  assert_true("hello world".strip_prefix("hi ") == None)
+  assert_true("hello".strip_prefix("hello") == Some(""[:]))
+  assert_true("".strip_prefix("") == Some(""[:]))
+  assert_true("".strip_prefix("a") == None)
+  assert_true("abc".strip_prefix("") == Some("abc"[:]))
+  assert_true("😀hello".strip_prefix("😀") == Some("hello"[:]))
+  assert_true("😀😃hello".strip_prefix("😀😃") == Some("hello"[:]))
 }
 
 ///|
 test "strip_suffix" {
-  guard "hello world".strip_suffix(" world") is Some(v)
-  inspect(v, content="hello")
-  guard "hello world".strip_suffix(" moon") is None
-  guard "hello".strip_suffix("hello") is Some(v)
-  inspect(v, content="")
-  guard "".strip_suffix("") is Some(v)
-  inspect(v, content="")
-  guard "".strip_suffix("a") is None
-  guard "abc".strip_suffix("") is Some(v)
-  inspect(v, content="abc")
-  guard "hello😀".strip_suffix("😀") is Some(v)
-  inspect(v, content="hello")
-  guard "hello😀😃".strip_suffix("😀😃") is Some(v)
-  inspect(v, content="hello")
+  assert_true("hello world".strip_suffix(" world") == Some("hello"[:]))
+  assert_true("hello world".strip_suffix(" moon") == None)
+  assert_true("hello".strip_suffix("hello") == Some(""[:]))
+  assert_true("".strip_suffix("") == Some(""[:]))
+  assert_true("".strip_suffix("a") == None)
+  assert_true("abc".strip_suffix("") == Some("abc"[:]))
+  assert_true("hello😀".strip_suffix("😀") == Some("hello"[:]))
+  assert_true("hello😀😃".strip_suffix("😀😃") == Some("hello"[:]))
 }
 
 ///|
@@ -415,15 +371,9 @@ test "strip_suffix" {
 ///
 /// ```mbt check
 /// test {
-///   debug_inspect(
-///     "hello world".strip_prefix("hello "),
-///     content="Some(<StringView: \"world\">)",
-///   )
-///   debug_inspect("hello world".strip_prefix("hi "), content="None")
-///   debug_inspect(
-///     "hello".strip_prefix("hello"),
-///     content="Some(<StringView: \"\">)",
-///   )
+///   assert_true("hello world".strip_prefix("hello ") == Some("world"[:]))
+///   assert_true("hello world".strip_prefix("hi ") == None)
+///   assert_true("hello".strip_prefix("hello") == Some(""[:]))
 /// }
 /// ```
 #alias(chop_prefix)
@@ -443,15 +393,9 @@ pub fn String::strip_prefix(self : String, prefix : StringView) -> StringView? {
 /// ```mbt check
 /// test {
 ///   let view = "hello world"[:]
-///   debug_inspect(
-///     view.strip_prefix("hello "),
-///     content="Some(<StringView: \"world\">)",
-///   )
-///   debug_inspect(view.strip_prefix("hi "), content="None")
-///   debug_inspect(
-///     view.strip_prefix("hello world"),
-///     content="Some(<StringView: \"\">)",
-///   )
+///   assert_true(view.strip_prefix("hello ") == Some("world"[:]))
+///   assert_true(view.strip_prefix("hi ") == None)
+///   assert_true(view.strip_prefix("hello world") == Some(""[:]))
 /// }
 /// ```
 #alias(chop_prefix)
@@ -479,15 +423,9 @@ pub fn StringView::strip_prefix(
 /// ```mbt check
 /// test {
 ///   let view = "hello world"[:]
-///   debug_inspect(
-///     view.strip_suffix(" world"),
-///     content="Some(<StringView: \"hello\">)",
-///   )
-///   debug_inspect(view.strip_suffix(" moon"), content="None")
-///   debug_inspect(
-///     view.strip_suffix("hello world"),
-///     content="Some(<StringView: \"\">)",
-///   )
+///   assert_true(view.strip_suffix(" world") == Some("hello"[:]))
+///   assert_true(view.strip_suffix(" moon") == None)
+///   assert_true(view.strip_suffix("hello world") == Some(""[:]))
 /// }
 /// ```
 #alias(chop_suffix)
@@ -539,41 +477,31 @@ pub fn StringView::to_bytes(self : StringView) -> Bytes {
 ///|
 test "View::strip_prefix" {
   let view = "hello world"[:]
-  guard view.strip_prefix("hello ") is Some(v)
-  inspect(v, content="world")
-  guard view.strip_prefix("hi ") is None
-  guard view.strip_prefix("hello world") is Some(v)
-  inspect(v, content="")
-  guard view.strip_prefix("") is Some(v)
-  inspect(v, content="hello world")
+  assert_true(view.strip_prefix("hello ") == Some("world"[:]))
+  assert_true(view.strip_prefix("hi ") == None)
+  assert_true(view.strip_prefix("hello world") == Some(""[:]))
+  assert_true(view.strip_prefix("") == Some("hello world"[:]))
   let empty_view = ""[:]
-  guard empty_view.strip_prefix("") is Some(v)
-  inspect(v, content="")
-  guard empty_view.strip_prefix("a") is None
+  assert_true(empty_view.strip_prefix("") == Some(""[:]))
+  assert_true(empty_view.strip_prefix("a") == None)
   let unicode_view = "😀hello😃"[:]
-  guard unicode_view.strip_prefix("😀") is Some(v)
-  inspect(v, content="hello😃")
-  guard unicode_view.strip_prefix("😃") is None
+  assert_true(unicode_view.strip_prefix("😀") == Some("hello😃"[:]))
+  assert_true(unicode_view.strip_prefix("😃") == None)
 }
 
 ///|
 test "View::strip_suffix" {
   let view = "hello world"[:]
-  guard view.strip_suffix(" world") is Some(v)
-  inspect(v, content="hello")
-  guard view.strip_suffix(" moon") is None
-  guard view.strip_suffix("hello world") is Some(v)
-  inspect(v, content="")
-  guard view.strip_suffix("") is Some(v)
-  inspect(v, content="hello world")
+  assert_true(view.strip_suffix(" world") == Some("hello"[:]))
+  assert_true(view.strip_suffix(" moon") == None)
+  assert_true(view.strip_suffix("hello world") == Some(""[:]))
+  assert_true(view.strip_suffix("") == Some("hello world"[:]))
   let empty_view = ""[:]
-  guard empty_view.strip_suffix("") is Some(v)
-  inspect(v, content="")
-  guard empty_view.strip_suffix("a") is None
+  assert_true(empty_view.strip_suffix("") == Some(""[:]))
+  assert_true(empty_view.strip_suffix("a") == None)
   let unicode_view = "😀hello😃"[:]
-  guard unicode_view.strip_suffix("😃") is Some(v)
-  inspect(v, content="😀hello")
-  guard unicode_view.strip_suffix("😀") is None
+  assert_true(unicode_view.strip_suffix("😃") == Some("😀hello"[:]))
+  assert_true(unicode_view.strip_suffix("😀") == None)
 }
 
 ///|
@@ -1266,11 +1194,8 @@ pub fn String::after(self : String, needle : StringView) -> StringView? {
 ///
 /// ```mbt check
 /// test {
-///   debug_inspect(
-///     "a::b::c".rev_split_once("::"),
-///     content="Some((<StringView: \"a::b\">, <StringView: \"c\">))",
-///   )
-///   debug_inspect("nope".rev_split_once("::"), content="None")
+///   assert_true("a::b::c".rev_split_once("::") == Some(("a::b"[:], "c"[:])))
+///   assert_true("nope".rev_split_once("::") == None)
 /// }
 /// ```
 pub fn StringView::rev_split_once(
@@ -1298,10 +1223,7 @@ pub fn StringView::rev_split_once(
 ///
 /// ```mbt check
 /// test {
-///   debug_inspect(
-///     "a::b::c".rev_split_once("::"),
-///     content="Some((<StringView: \"a::b\">, <StringView: \"c\">))",
-///   )
+///   assert_true("a::b::c".rev_split_once("::") == Some(("a::b"[:], "c"[:])))
 /// }
 /// ```
 pub fn String::rev_split_once(
@@ -1320,10 +1242,7 @@ pub fn String::rev_split_once(
 ///
 /// ```mbt check
 /// test {
-///   debug_inspect(
-///     "a/b/c.txt".rev_before("/"),
-///     content="Some(<StringView: \"a/b\">)",
-///   )
+///   assert_true("a/b/c.txt".rev_before("/") == Some("a/b"[:]))
 /// }
 /// ```
 pub fn StringView::rev_before(
@@ -1345,10 +1264,7 @@ pub fn StringView::rev_before(
 ///
 /// ```mbt check
 /// test {
-///   debug_inspect(
-///     "a/b/c.txt".rev_before("/"),
-///     content="Some(<StringView: \"a/b\">)",
-///   )
+///   assert_true("a/b/c.txt".rev_before("/") == Some("a/b"[:]))
 /// }
 /// ```
 pub fn String::rev_before(self : String, needle : StringView) -> StringView? {
@@ -1364,10 +1280,7 @@ pub fn String::rev_before(self : String, needle : StringView) -> StringView? {
 ///
 /// ```mbt check
 /// test {
-///   debug_inspect(
-///     "a/b/c.txt".rev_after("/"),
-///     content="Some(<StringView: \"c.txt\">)",
-///   )
+///   assert_true("a/b/c.txt".rev_after("/") == Some("c.txt"[:]))
 /// }
 /// ```
 pub fn StringView::rev_after(
@@ -1389,10 +1302,7 @@ pub fn StringView::rev_after(
 ///
 /// ```mbt check
 /// test {
-///   debug_inspect(
-///     "a/b/c.txt".rev_after("/"),
-///     content="Some(<StringView: \"c.txt\">)",
-///   )
+///   assert_true("a/b/c.txt".rev_after("/") == Some("c.txt"[:]))
 /// }
 /// ```
 pub fn String::rev_after(self : String, needle : StringView) -> StringView? {
@@ -1434,57 +1344,35 @@ test "split" {
 
 ///|
 test "split_once before after" {
-  guard "a=b=c".split_once("=") is Some((a, b))
-  inspect(a, content="a")
-  inspect(b, content="b=c")
-  guard "a=b=c".before("=") is Some(v)
-  inspect(v, content="a")
-  guard "a=b=c".after("=") is Some(v)
-  inspect(v, content="b=c")
-  guard "nope".split_once("=") is None
-  guard "nope".before("=") is None
-  guard "nope".after("=") is None
-  guard "".split_once("") is Some((a, b))
-  inspect(a, content="")
-  inspect(b, content="")
-  guard "".before("") is Some(v)
-  inspect(v, content="")
-  guard "".after("") is Some(v)
-  inspect(v, content="")
-  guard "hello".split_once("") is Some((a, b))
-  inspect(a, content="")
-  inspect(b, content="hello")
-  guard "hello".before("") is Some(v)
-  inspect(v, content="")
-  guard "hello".after("") is Some(v)
-  inspect(v, content="hello")
-  guard "😊::🚀".split_once("::") is Some((a, b))
-  inspect(a, content="😊")
-  inspect(b, content="🚀")
+  assert_true("a=b=c".split_once("=") == Some(("a"[:], "b=c"[:])))
+  assert_true("a=b=c".before("=") == Some("a"[:]))
+  assert_true("a=b=c".after("=") == Some("b=c"[:]))
+  assert_true("nope".split_once("=") == None)
+  assert_true("nope".before("=") == None)
+  assert_true("nope".after("=") == None)
+  assert_true("".split_once("") == Some((""[:], ""[:])))
+  assert_true("".before("") == Some(""[:]))
+  assert_true("".after("") == Some(""[:]))
+  assert_true("hello".split_once("") == Some((""[:], "hello"[:])))
+  assert_true("hello".before("") == Some(""[:]))
+  assert_true("hello".after("") == Some("hello"[:]))
+  assert_true("😊::🚀".split_once("::") == Some(("😊"[:], "🚀"[:])))
 }
 
 ///|
 test "rev_split_once rev_before rev_after" {
-  guard "a=b=c".rev_split_once("=") is Some((a, b))
-  inspect(a, content="a=b")
-  inspect(b, content="c")
-  guard "a=b=c".rev_before("=") is Some(v)
-  inspect(v, content="a=b")
-  guard "a=b=c".rev_after("=") is Some(v)
-  inspect(v, content="c")
-  guard "nope".rev_split_once("=") is None
-  guard "nope".rev_before("=") is None
-  guard "nope".rev_after("=") is None
-  guard "a/b/c.txt".rev_before("/") is Some(v)
-  inspect(v, content="a/b")
-  guard "a/b/c.txt".rev_after("/") is Some(v)
-  inspect(v, content="c.txt")
-  guard "one=two".rev_split_once("=") is Some((a, b))
-  inspect(a, content="one")
-  inspect(b, content="two")
-  guard "😊::🚀::⭐".rev_split_once("::") is Some((a, b))
-  inspect(a, content="😊::🚀")
-  inspect(b, content="⭐")
+  assert_true("a=b=c".rev_split_once("=") == Some(("a=b"[:], "c"[:])))
+  assert_true("a=b=c".rev_before("=") == Some("a=b"[:]))
+  assert_true("a=b=c".rev_after("=") == Some("c"[:]))
+  assert_true("nope".rev_split_once("=") == None)
+  assert_true("nope".rev_before("=") == None)
+  assert_true("nope".rev_after("=") == None)
+  assert_true("a/b/c.txt".rev_before("/") == Some("a/b"[:]))
+  assert_true("a/b/c.txt".rev_after("/") == Some("c.txt"[:]))
+  assert_true("one=two".rev_split_once("=") == Some(("one"[:], "two"[:])))
+  assert_true(
+    "😊::🚀::⭐".rev_split_once("::") == Some(("😊::🚀"[:], "⭐"[:])),
+  )
 }
 
 ///|
@@ -1975,40 +1863,29 @@ pub fn StringView::get(self : StringView, idx : Int) -> Int? {
 ///|
 test "String::get supports emoji (surrogate pair)" {
   let s = "hello"
-  guard s.get(0) is Some(v)
-  assert_eq(v, 104)
-  guard s.get(4) is Some(v)
-  assert_eq(v, 111)
-  guard s.get(5) is None
-  guard s.get(-1) is None
+  assert_true(s.get(0) == Some(104))
+  assert_true(s.get(4) == Some(111))
+  assert_true(s.get(5) == None)
+  assert_true(s.get(-1) == None)
   let s = "a🤣b"
-  guard s.get(0) is Some(v)
-  assert_eq(v, 97)
-  guard s.get(1) is Some(v)
-  assert_eq(v, 55358)
-  guard s.get(2) is Some(v)
-  assert_eq(v, 56611)
-  guard s.get(3) is Some(v)
-  assert_eq(v, 98)
-  guard s.get(4) is None
+  assert_true(s.get(0) == Some(97))
+  assert_true(s.get(1) == Some(55358))
+  assert_true(s.get(2) == Some(56611))
+  assert_true(s.get(3) == Some(98))
+  assert_true(s.get(4) == None)
 }
 
 ///|
 test "View::get basic cases" {
   let v = "hello"[1:-1]
-  guard v.get(0) is Some(v1)
-  assert_eq(v1, 101)
-  guard v.get(2) is Some(v1)
-  assert_eq(v1, 108)
-  guard v.get(3) is None
-  guard v.get(-1) is None
+  assert_true(v.get(0) == Some(101))
+  assert_true(v.get(2) == Some(108))
+  assert_true(v.get(3) == None)
+  assert_true(v.get(-1) == None)
   let v = "ab🤣cd"[1:-1]
-  guard v.get(0) is Some(v1)
-  assert_eq(v1, 98)
-  guard v.get(1) is Some(v1)
-  assert_eq(v1, 55358)
-  guard v.get(2) is Some(v1)
-  assert_eq(v1, 56611)
+  assert_true(v.get(0) == Some(98))
+  assert_true(v.get(1) == Some(55358))
+  assert_true(v.get(2) == Some(56611))
 }
 
 ///|
@@ -2057,43 +1934,34 @@ pub fn StringView::get_char(self : StringView, idx : Int) -> Char? {
 test "String::get_char basic cases" {
   // Basic ASCII characters
   let s = "hello"
-  guard s.get_char(0) is Some(c)
-  assert_eq(c, 'h')
-  guard s.get_char(1) is Some(c)
-  assert_eq(c, 'e')
-  guard s.get_char(4) is Some(c)
-  assert_eq(c, 'o')
-  guard s.get_char(5) is None
-  guard s.get_char(-1) is None
+  assert_true(s.get_char(0) == Some('h'))
+  assert_true(s.get_char(1) == Some('e'))
+  assert_true(s.get_char(4) == Some('o'))
+  assert_true(s.get_char(5) == None)
+  assert_true(s.get_char(-1) == None)
 
   // Contains emoji (surrogate pair)
   let s = "a🤣b"
-  guard s.get_char(0) is Some(v)
-  assert_eq(v, 'a')
-  guard s.get_char(1) is Some(v)
-  assert_eq(v, '🤣')
-  guard s.get_char(2) is None  // Second half of surrogate pair is not a valid char
-  guard s.get_char(3) is Some(v)
-  assert_eq(v, 'b')
-  guard s.get_char(4) is None
+  assert_true(s.get_char(0) == Some('a'))
+  assert_true(s.get_char(1) == Some('🤣'))
+  assert_true(s.get_char(2) == None) // Second half of surrogate pair is not a valid char
+  assert_true(s.get_char(3) == Some('b'))
+  assert_true(s.get_char(4) == None)
 }
 
 ///|
 test "View::get_char basic cases" {
   let s = "a🤣b"
   let v = s[0:-1]
-  guard v.get_char(0) is Some(c)
-  assert_eq(c, 'a')
-  guard v.get_char(1) is Some(c)
-  assert_eq(c, '🤣')
-  guard v.get_char(2) is None
-  guard v.get_char(3) is None
-  guard v.get_char(4) is None
+  assert_true(v.get_char(0) == Some('a'))
+  assert_true(v.get_char(1) == Some('🤣'))
+  assert_true(v.get_char(2) == None)
+  assert_true(v.get_char(3) == None)
+  assert_true(v.get_char(4) == None)
 
   // Test substring view
   let v2 = s[1:3] // Only contains the emoji surrogate pair
-  guard v2.get_char(0) is Some(c)
-  assert_eq(c, '🤣')
-  guard v2.get_char(1) is None
-  guard v2.get_char(2) is None
+  assert_true(v2.get_char(0) == Some('🤣'))
+  assert_true(v2.get_char(1) == None)
+  assert_true(v2.get_char(2) == None)
 }

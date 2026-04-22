@@ -90,8 +90,7 @@ test "option type" {
 
   // Found case
   let result1 = find_first_even([1, 3, 4, 5])
-  guard result1 is Some(v)
-  assert_eq(v, 4)
+  debug_inspect(result1, content="Some(4)")
 
   // Not found case
   let result2 = find_first_even([1, 3, 5])

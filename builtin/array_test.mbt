@@ -1135,8 +1135,7 @@ test "Array::last" {
 
   // Test with a large array
   let large_array = Array::make(10, 0)
-  guard large_array.last() is Some(v)
-  assert_eq(v, 0)
+  debug_inspect(large_array.last(), content="Some(0)")
 
   // Test with an empty array
   debug_inspect(([] : Array[Unit]).last(), content="None")

@@ -35,7 +35,7 @@ test "ReadOnlyArray access methods" {
 
   // Test get
   debug_inspect(arr.get(1), content="Some(20)")
-  guard arr.get(5) is None
+  debug_inspect(arr.get(5), content="None")
 
   // Test length
   inspect(arr.length(), content="3")

@@ -367,10 +367,13 @@ test "FixedArray::from_iter with empty iterator" {
 
 ///|
 test "FixedArray::last" {
-  guard FixedArray::last([1, 2, 3]) is Some(v)
-  assert_eq(v, 3)
-  guard FixedArray::last(["a", "b", "c"]) is Some(v)
-  assert_eq(v, "c")
+  debug_inspect(FixedArray::last([1, 2, 3]), content="Some(3)")
+  debug_inspect(
+    FixedArray::last(["a", "b", "c"]),
+    content=(
+      #|Some("c")
+    ),
+  )
   debug_inspect(FixedArray::last([1]), content="Some(1)")
   debug_inspect(
     FixedArray::last(["single"]),

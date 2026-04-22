@@ -41,8 +41,7 @@ test "Map::of" {
   inspect(map.length(), content="3")
   debug_inspect(map.get("a"), content="Some(1)")
   debug_inspect(map.get("b"), content="Some(2)")
-  guard map.get("c") is Some(v)
-  assert_eq(v, 3)
+  debug_inspect(map.get("c"), content="Some(3)")
   let large_arr : FixedArray[(String, Int)] = [
     ("k1", 1),
     ("k2", 2),
@@ -229,8 +228,7 @@ test "Map::update" {
       None => Some(1)
     }
   })
-  guard counter_map.get("clicks") is Some(v)
-  assert_eq(v, 2)
+  debug_inspect(counter_map.get("clicks"), content="Some(2)")
 
   // Test on empty map
   let empty_map : Map[String, Int] = {}
@@ -426,8 +424,7 @@ test "Map::retain - edge case with all elements removed then re-added" {
   map.set("y", 20)
   inspect(map.length(), content="2")
   debug_inspect(map.get("x"), content="Some(10)")
-  guard map.get("y") is Some(v)
-  assert_eq(v, 20)
+  debug_inspect(map.get("y"), content="Some(20)")
 
   // Original keys should still be gone
   debug_inspect(map.get("a"), content="None")
@@ -483,8 +480,7 @@ test "Map::get_from_string" {
   // Test empty string
   let empty_map = { "": 42 }
   let empty_view = ""[:]
-  guard empty_map.get_from_string(empty_view) is Some(v)
-  assert_eq(v, 42)
+  debug_inspect(empty_map.get_from_string(empty_view), content="Some(42)")
 
   // Test with longer string containing the key as substring
   let longer = "this is a test string"
@@ -520,8 +516,7 @@ test "Map::get_from_bytes" {
   // Test empty bytes
   let empty_map = { b"": 42 }
   let empty_view = b""[:]
-  guard empty_map.get_from_bytes(empty_view) is Some(v)
-  assert_eq(v, 42)
+  debug_inspect(empty_map.get_from_bytes(empty_view), content="Some(42)")
 
   // Test with longer bytes containing the key as subbytes
   let longer = b"this is a test string"

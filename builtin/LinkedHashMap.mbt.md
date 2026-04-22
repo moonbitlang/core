@@ -47,8 +47,7 @@ test {
   let string_map = { "hello": 1, "world": 2 }
   let full_string = "say hello to everyone"
   let hello_view = full_string.view(start_offset=4, end_offset=9)
-  guard string_map.get_from_string(hello_view) is Some(v)
-  assert_eq(v, 1)
+  debug_inspect(string_map.get_from_string(hello_view), content="Some(1)")
 
   // Using get_from_bytes with BytesView
   let bytes_map = { b"key": 42, b"value": 100 }
