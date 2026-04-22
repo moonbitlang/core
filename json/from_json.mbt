@@ -13,19 +13,14 @@
 // limitations under the License.
 
 ///|
+using @debug {trait Debug, type Repr}
+
+///|
 /// Error type `JsonDecodeError`.
 #warnings("-deprecated_syntax")
 pub(all) suberror JsonDecodeError {
   JsonDecodeError((JsonPath, String))
-} derive(Eq, Show, ToJson)
-
-///|
-pub impl @debug.Debug for JsonDecodeError with to_repr(self) {
-  let JsonDecodeError((path, msg)) = self
-  @debug.Repr::ctor("JsonDecodeError", [
-    (None, @debug.Repr::tuple([@debug.to_repr(path), @debug.Repr::string(msg)])),
-  ])
-}
+} derive(Eq, Show, ToJson, @debug.Debug)
 
 ///|
 /// Trait for types that can be converted from `Json`

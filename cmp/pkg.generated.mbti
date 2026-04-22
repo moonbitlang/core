@@ -21,9 +21,8 @@ pub fn[T, K : Compare] minmax_by_key(T, T, (T) -> K) -> (T, T)
 // Errors
 
 // Types and methods
-pub(all) struct Reverse[T](T) derive(Eq, Hash, Show)
+pub(all) struct Reverse[T](T) derive(Eq, Hash, Show, @debug.Debug)
 pub impl[T : Compare] Compare for Reverse[T]
-pub impl[T : @debug.Debug] @debug.Debug for Reverse[T]
 
 // Type aliases
 

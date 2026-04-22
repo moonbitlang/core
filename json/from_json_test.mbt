@@ -748,7 +748,7 @@ test "Option from_json error handling" {
   debug_inspect(
     result,
     content=(
-      #|Err(JsonDecodeError(("", "Option::from_json: expected array or null")))
+      #|Err(JsonDecodeError((Root, "Option::from_json: expected array or null")))
     ),
   )
 }

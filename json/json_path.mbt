@@ -17,22 +17,7 @@ enum JsonPath {
   Root
   Key(JsonPath, mut key~ : String)
   Index(JsonPath, mut index~ : Int)
-} derive(Eq)
-
-///|
-pub impl @debug.Debug for JsonPath with to_repr(self) {
-  match self {
-    Root => @debug.Repr::string("")
-    Key(path, key~) => {
-      let prefix = @debug.to_repr(path)
-      @debug.Repr::ctor("/\{key}", [(None, prefix)])
-    }
-    Index(path, index~) => {
-      let prefix = @debug.to_repr(path)
-      @debug.Repr::ctor("/\{index}", [(None, prefix)])
-    }
-  }
-}
+} derive(Eq, @debug.Debug)
 
 ///|
 /// Appends an array index to the JSON path.

@@ -20,8 +20,7 @@ pub fn valid(StringView) -> Bool
 // Errors
 pub(all) suberror JsonDecodeError {
   JsonDecodeError((JsonPath, String))
-} derive(Eq, Show, ToJson)
-pub impl @debug.Debug for JsonDecodeError
+} derive(Eq, Show, ToJson, @debug.Debug)
 
 pub(all) suberror ParseError {
   InvalidChar(Position, Char)
@@ -33,12 +32,11 @@ pub(all) suberror ParseError {
 pub impl Show for ParseError
 
 // Types and methods
-type JsonPath derive(Eq)
+type JsonPath derive(Eq, @debug.Debug)
 pub fn JsonPath::add_index(Self, Int) -> Self
 pub fn JsonPath::add_key(Self, String) -> Self
 pub impl Show for JsonPath
 pub impl ToJson for JsonPath
-pub impl @debug.Debug for JsonPath
 
 pub(all) struct Position {
   line : Int

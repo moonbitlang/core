@@ -13,6 +13,9 @@
 // limitations under the License.
 
 ///|
+using @debug {trait Debug, type Repr}
+
+///|
 /// A newtype wrapper that reverses the comparison order of the wrapped value.
 ///
 /// `Reverse[T]` is useful when you need to reverse the natural ordering of a type.
@@ -32,13 +35,7 @@
 /// }
 /// ```
 #warnings("-deprecated_syntax")
-pub(all) struct Reverse[T](T) derive(Eq, Show, Hash)
-
-///|
-pub impl[T : @debug.Debug] @debug.Debug for Reverse[T] with to_repr(self) {
-  let Reverse(inner) = self
-  @debug.Repr::ctor("Reverse", [(None, @debug.to_repr(inner))])
-}
+pub(all) struct Reverse[T](T) derive(Eq, Show, Hash, @debug.Debug)
 
 ///|
 pub impl[T : Compare] Compare for Reverse[T] with compare(a, b) {
