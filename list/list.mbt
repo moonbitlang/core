@@ -94,7 +94,9 @@ pub impl[A : Show] Show for List[A] with output(xs, logger) {
 /// ToJson implementation for List.
 /// Converts a list to a JSON array.
 pub impl[A : ToJson] ToJson for List[A] with to_json(self) {
-  [ for a in self => a ]
+  [
+    for a in self => a
+  ]
 }
 
 ///|

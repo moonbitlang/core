@@ -672,7 +672,9 @@ pub fn[K] HashSet::copy(self : HashSet[K]) -> HashSet[K] {
 ///|
 /// ToJson implementation for hashset
 pub impl[X : ToJson] ToJson for HashSet[X] with to_json(self) {
-  [ for key in self => key ]
+  [
+    for key in self => key
+  ]
 }
 
 ///|

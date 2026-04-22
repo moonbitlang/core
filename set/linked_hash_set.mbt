@@ -594,7 +594,9 @@ pub fn[K : Hash + Eq] Set::intersection(
 
 ///|
 pub impl[X : ToJson] ToJson for Set[X] with to_json(self) {
-  [ for v in self => v ]
+  [
+    for v in self => v
+  ]
 }
 
 ///|
