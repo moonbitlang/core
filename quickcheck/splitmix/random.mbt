@@ -13,11 +13,19 @@
 // limitations under the License.
 
 ///|
-#warnings("-deprecated_syntax")
 struct RandomState {
   mut seed : UInt64
   gamma : UInt64
-} derive(Show)
+}
+
+///|
+pub impl Show for RandomState with output(self, logger) {
+  logger.write_string("{seed: ")
+  logger.write_object(self.seed)
+  logger.write_string(", gamma: ")
+  logger.write_object(self.gamma)
+  logger.write_string("}")
+}
 
 ///|
 let golden_gamma : UInt64 = 0x9e3779b97f4a7c15

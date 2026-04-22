@@ -14,14 +14,29 @@
 
 ///|
 /// Number-of-values constraint for an argument.
-#warnings("-deprecated_syntax-deprecated")
 pub struct ValueRange {
   priv lower : Int
   priv upper : Int?
 
   /// Create a value-count range.
   fn new(lower? : Int, upper? : Int) -> ValueRange
-} derive(Eq, Show)
+} derive(Eq)
+
+///|
+pub impl Show for ValueRange with output(self, logger) {
+  logger.write_string("{lower: ")
+  logger.write_object(self.lower)
+  logger.write_string(", upper: ")
+  match self.upper {
+    None => logger.write_string("None")
+    Some(upper) => {
+      logger.write_string("Some(")
+      logger.write_object(upper)
+      logger.write_string(")")
+    }
+  }
+  logger.write_string("}")
+}
 
 ///|
 /// Exact single-value range (`1..1`).

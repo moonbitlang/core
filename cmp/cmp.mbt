@@ -34,8 +34,14 @@ using @debug {trait Debug, type Repr}
 ///   inspect(a.to_string(), content="Reverse(1)") // Shows wrapped value
 /// }
 /// ```
-#warnings("-deprecated_syntax")
-pub(all) struct Reverse[T](T) derive(Eq, Show, Hash, @debug.Debug)
+pub(all) struct Reverse[T](T) derive(Eq, Hash, @debug.Debug)
+
+///|
+pub impl[T : Show] Show for Reverse[T] with output(self, logger) {
+  logger.write_string("Reverse(")
+  logger.write_object(self.0)
+  logger.write_string(")")
+}
 
 ///|
 pub impl[T : Compare] Compare for Reverse[T] with compare(a, b) {

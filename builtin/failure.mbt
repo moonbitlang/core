@@ -34,10 +34,20 @@
 ///   @json.json_inspect(err, content=["Failure", "Test assertion failed"])
 /// }
 /// ```
-#warnings("-deprecated_syntax")
 pub(all) suberror Failure {
   Failure(String)
-} derive(ToJson, Show)
+} derive(ToJson)
+
+///|
+pub impl Show for Failure with output(self, logger) {
+  match self {
+    Failure(message) => {
+      logger.write_string("Failure(")
+      logger.write_object(message)
+      logger.write_string(")")
+    }
+  }
+}
 
 ///|
 /// Raises a `Failure` error with a given message and source location.

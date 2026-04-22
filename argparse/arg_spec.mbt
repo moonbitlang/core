@@ -18,25 +18,42 @@
 /// - `SetTrue` / `SetFalse` set a boolean value.
 /// - `Count` increments `Matches.flag_counts`.
 /// - `Help` / `Version` display output and exit successfully when triggered.
-#warnings("-deprecated_syntax")
 pub(all) enum FlagAction {
   SetTrue
   SetFalse
   Count
   Help
   Version
-} derive(Eq, Show)
+} derive(Eq)
+
+///|
+pub impl Show for FlagAction with output(self, logger) {
+  match self {
+    SetTrue => logger.write_string("SetTrue")
+    SetFalse => logger.write_string("SetFalse")
+    Count => logger.write_string("Count")
+    Help => logger.write_string("Help")
+    Version => logger.write_string("Version")
+  }
+}
 
 ///|
 /// Behavior for option args.
 ///
 /// - `Set` keeps the last provided value.
 /// - `Append` keeps all provided values in order.
-#warnings("-deprecated_syntax")
 pub(all) enum OptionAction {
   Set
   Append
-} derive(Eq, Show)
+} derive(Eq)
+
+///|
+pub impl Show for OptionAction with output(self, logger) {
+  match self {
+    Set => logger.write_string("Set")
+    Append => logger.write_string("Append")
+  }
+}
 
 ///|
 /// Unified argument model used by the parser internals.

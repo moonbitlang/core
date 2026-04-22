@@ -52,7 +52,8 @@ pub(all) suberror BenchError {
 
 pub(all) suberror Failure {
   Failure(String)
-} derive(Show, ToJson)
+} derive(ToJson)
+pub impl Show for Failure
 
 pub(all) suberror InspectError {
   InspectError(String)
