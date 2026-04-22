@@ -56,9 +56,9 @@ test "Bytes::get_view" {
   inspect(bs.get_view() is Some(_), content="true")
   inspect(bs.get_view(start=1, end=4) is Some(_), content="true")
   inspect(bs.get_view(start=-2) is Some(_), content="true")
-  inspect(bs.get_view(start=10), content="None")
-  inspect(bs.get_view(end=10), content="None")
-  inspect(bs.get_view(start=3, end=2), content="None")
+  debug_inspect(bs.get_view(start=10), content="None")
+  debug_inspect(bs.get_view(end=10), content="None")
+  debug_inspect(bs.get_view(start=3, end=2), content="None")
   // Pattern-match composition.
   guard bs.get_view(start=1) is Some([b'\x01', b'\x02', ..])
 }
@@ -69,8 +69,8 @@ test "BytesView::get_view" {
   inspect(view.get_view() is Some(_), content="true")
   inspect(view.get_view(start=1, end=3) is Some(_), content="true")
   inspect(view.get_view(start=-1) is Some(_), content="true")
-  inspect(view.get_view(start=10), content="None")
-  inspect(view.get_view(end=10), content="None")
-  inspect(view.get_view(start=3, end=2), content="None")
+  debug_inspect(view.get_view(start=10), content="None")
+  debug_inspect(view.get_view(end=10), content="None")
+  debug_inspect(view.get_view(start=3, end=2), content="None")
   guard view.get_view(start=1) is Some([b'\x02', b'\x03', ..])
 }

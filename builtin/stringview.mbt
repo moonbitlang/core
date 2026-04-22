@@ -534,10 +534,13 @@ pub fn StringView::from_iter(iter : Iter[Char]) -> StringView {
 /// ```mbt check
 /// test {
 ///   let s = "Hello🤣World"
-///   inspect(s.get_view(end=5), content="Some(\"Hello\")")
+///   debug_inspect(
+///     s.get_view(end=5).map(v => v.to_string()),
+///     content="Some(\"Hello\")",
+///   )
 ///   // Splitting a surrogate pair is rejected rather than panicking.
-///   inspect(s.get_view(end=6), content="None")
-///   inspect(s.get_view(start=100), content="None")
+///   debug_inspect(s.get_view(end=6), content="None")
+///   debug_inspect(s.get_view(start=100), content="None")
 /// }
 /// ```
 pub fn String::get_view(

@@ -196,7 +196,7 @@ pub fn Bytes::view(self : Bytes, start? : Int = 0, end? : Int) -> BytesView {
 ///   } else {
 ///     abort("unreachable")
 ///   }
-///   inspect(bs.get_view(start=10), content="None")
+///   debug_inspect(bs.get_view(start=10), content="None")
 /// }
 /// ```
 pub fn Bytes::get_view(

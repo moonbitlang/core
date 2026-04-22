@@ -85,8 +85,8 @@ test "StringView core operations" {
   inspect(make_view.to_string(), content="aaa")
   inspect(StringView::default(), content="")
   inspect(("hi"[:] + "!").to_string(), content="hi!")
-  inspect(view.offset_of_nth_char(1), content="Some(1)")
-  inspect(view.offset_of_nth_char(3), content="None")
+  debug_inspect(view.offset_of_nth_char(1), content="Some(1)")
+  debug_inspect(view.offset_of_nth_char(3), content="None")
 }
 
 ///|
@@ -223,66 +223,66 @@ test "StringView::to_string is independent of data()" {
 ///|
 test "String::get_view" {
   let s = "Hello🤣World"
-  inspect(
-    s.get_view(),
+  debug_inspect(
+    s.get_view().map(v => v.to_string()),
     content=(
       #|Some("Hello🤣World")
     ),
   )
-  inspect(
-    s.get_view(end=5),
+  debug_inspect(
+    s.get_view(end=5).map(v => v.to_string()),
     content=(
       #|Some("Hello")
     ),
   )
-  inspect(
-    s.get_view(start=-5),
+  debug_inspect(
+    s.get_view(start=-5).map(v => v.to_string()),
     content=(
       #|Some("World")
     ),
   )
-  inspect(
-    s.get_view(start=0, end=0),
+  debug_inspect(
+    s.get_view(start=0, end=0).map(v => v.to_string()),
     content=(
       #|Some("")
     ),
   )
   // Out of bounds.
-  inspect(s.get_view(start=100), content="None")
-  inspect(s.get_view(end=100), content="None")
-  inspect(s.get_view(start=3, end=2), content="None")
+  debug_inspect(s.get_view(start=100), content="None")
+  debug_inspect(s.get_view(end=100), content="None")
+  debug_inspect(s.get_view(start=3, end=2), content="None")
   // Splitting a surrogate pair.
-  inspect(s.get_view(end=6), content="None")
-  inspect(s.get_view(start=6), content="None")
+  debug_inspect(s.get_view(end=6), content="None")
+  debug_inspect(s.get_view(start=6), content="None")
 }
 
 ///|
 test "StringView::get_view" {
   let s = "Hello🤣World"
   let view = s[1:-1] // "ello🤣Worl"
-  inspect(
-    view.get_view(),
+  debug_inspect(
+    view.get_view().map(v => v.to_string()),
     content=(
       #|Some("ello🤣Worl")
     ),
   )
-  inspect(
-    view.get_view(end=4),
+  debug_inspect(
+    view.get_view(end=4).map(v => v.to_string()),
     content=(
       #|Some("ello")
     ),
   )
-  inspect(
-    view.get_view(start=-2),
+  debug_inspect(
+    view.get_view(start=-2).map(v => v.to_string()),
     content=(
       #|Some("rl")
     ),
   )
   // Out of bounds relative to the sub-view.
-  inspect(view.get_view(start=100), content="None")
-  inspect(view.get_view(end=100), content="None")
+  debug_inspect(view.get_view(start=100), content="None")
+  debug_inspect(view.get_view(end=100), content="None")
   // Splitting a surrogate pair.
-  inspect(view.get_view(end=5), content="None")
+  debug_inspect(view.get_view(end=5), content="None")
   // Pattern-match composition: the optional form is matchable.
   guard s.get_view(end=5) is Some("Hello")
 }
