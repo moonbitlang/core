@@ -94,13 +94,7 @@ pub impl[A : Show] Show for List[A] with output(xs, logger) {
 /// ToJson implementation for List.
 /// Converts a list to a JSON array.
 pub impl[A : ToJson] ToJson for List[A] with to_json(self) {
-  let capacity = self.length()
-  guard capacity != 0 else { return [] }
-  let jsons = Array::new(capacity~)
-  for a in self {
-    jsons.push(a.to_json())
-  }
-  Json::array(jsons)
+  [ for a in self => a ]
 }
 
 ///|

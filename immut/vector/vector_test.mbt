@@ -79,7 +79,7 @@ test "to_array empty" {
 ///|
 test "to_json" {
   let v = @vector.from_iter((0).until(40))
-  let expected = Json::array(Array::makei(40, i => i.to_json()))
+  let expected : Json = [ for i in 0..<40 => i ]
   @json.json_inspect(v, content=expected)
   let empty : @vector.Vector[Int] = @vector.new()
   @json.json_inspect(empty, content=[])
