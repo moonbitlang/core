@@ -97,7 +97,10 @@ test "prune_loc - primitive values" {
   debug_inspect(Json::boolean(true).prune_loc(), content="Some(True)")
   debug_inspect(Json::boolean(false).prune_loc(), content="Some(False)")
   debug_inspect(Json::number(42.0).prune_loc(), content="Some(Number(42))")
-  debug_inspect(Json::string("hello").prune_loc(), content="Some(String(\"hello\"))")
+  debug_inspect(
+    Json::string("hello").prune_loc(),
+    content="Some(String(\"hello\"))",
+  )
 }
 
 ///|

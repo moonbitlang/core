@@ -607,4 +607,3 @@ fn[K : Show, V : Show] Map::_debug_entries(self : Map[K, V]) -> String {
   }
   buf.to_string()
 }
-

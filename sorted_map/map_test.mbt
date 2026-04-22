@@ -39,14 +39,8 @@ test "remove on empty map" {
 ///|
 test "get" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
-  debug_inspect(
-    map.get(1),
-    content="Some(\"a\")",
-  )
-  debug_inspect(
-    map.get(2),
-    content="Some(\"b\")",
-  )
+  debug_inspect(map.get(1), content="Some(\"a\")")
+  debug_inspect(map.get(2), content="Some(\"b\")")
   debug_inspect(
     map.get(3),
     content=(

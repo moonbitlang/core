@@ -167,8 +167,14 @@ test "bytes prefix/suffix" {
   let bytes = b"hello"
   inspect(bytes.has_prefix(b"he"[:]), content="true")
   inspect(bytes.has_suffix(b"lo"[:]), content="true")
-  debug_inspect(bytes.chop_prefix(b"he"[:]), content="Some(<BytesView: [0x6c, 0x6c, 0x6f]>)")
-  debug_inspect(bytes.chop_suffix(b"lo"[:]), content="Some(<BytesView: [0x68, 0x65, 0x6c]>)")
+  debug_inspect(
+    bytes.chop_prefix(b"he"[:]),
+    content="Some(<BytesView: [0x6c, 0x6c, 0x6f]>)",
+  )
+  debug_inspect(
+    bytes.chop_suffix(b"lo"[:]),
+    content="Some(<BytesView: [0x68, 0x65, 0x6c]>)",
+  )
   debug_inspect(bytes.chop_prefix(b"zz"[:]), content="None")
 }
 ```

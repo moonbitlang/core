@@ -1528,7 +1528,10 @@ pub fn[A : Eq, B] List::lookup(self : List[(A, B)], v : A) -> B? {
 ///     @list.from_array([1, 3, 5, 8]).find(element => element % 2 == 0),
 ///     content="Some(8)",
 ///   )
-///   debug_inspect(@list.from_array([1, 3, 5]).find(element => element % 2 == 0), content="None")
+///   debug_inspect(
+///     @list.from_array([1, 3, 5]).find(element => element % 2 == 0),
+///     content="None",
+///   )
 /// }
 /// ```
 pub fn[A] List::find(self : List[A], f : (A) -> Bool raise?) -> A? raise? {
