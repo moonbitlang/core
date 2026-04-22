@@ -666,7 +666,9 @@ pub impl[A : Show] Show for Vector[A] with output(self, logger) {
 
 ///|
 pub impl[A : ToJson] ToJson for Vector[A] with to_json(self) {
-  Json::array([ for value in self => value.to_json() ])
+  [
+    for value in self => value
+  ]
 }
 
 ///|

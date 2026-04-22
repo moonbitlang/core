@@ -75,7 +75,9 @@ pub impl[X : Show] Show for Iter[X] with output(self, logger) {
 
 ///|
 pub impl[X : ToJson] ToJson for Iter[X] with to_json(self) {
-  Json::array(self.map(x => x.to_json()).collect())
+  [
+    for x in self => x
+  ]
 }
 
 ///|
