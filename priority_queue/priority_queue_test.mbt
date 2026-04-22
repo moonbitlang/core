@@ -15,7 +15,7 @@
 ///|
 test "new" {
   let queue : @priority_queue.PriorityQueue[Int] = @priority_queue.new()
-  assert_eq(queue.length(), 0)
+  @test.assert_eq(queue.length(), 0)
 }
 
 ///|
@@ -35,18 +35,18 @@ test "from_array" {
 ///|
 test "from_fixed_array" {
   let pq = @priority_queue.from_array([1, 2, 3, 4, 5])
-  debug_inspect(pq.peek(), content="Some(5)")
+  @test.assert_eq(pq.peek(), Some(5))
 }
 
 ///|
 test "copy" {
   let v = @priority_queue.from_array([1, 2, 3, 4])
   let ve = v.copy()
-  debug_inspect(v.peek(), content="Some(4)")
-  debug_inspect(ve.peek(), content="Some(4)")
+  @test.assert_eq(v.peek(), Some(4))
+  @test.assert_eq(ve.peek(), Some(4))
   v.pop() |> ignore
-  debug_inspect(v.peek(), content="Some(3)")
-  debug_inspect(ve.peek(), content="Some(4)")
+  @test.assert_eq(v.peek(), Some(3))
+  @test.assert_eq(ve.peek(), Some(4))
 }
 
 ///|
@@ -73,13 +73,13 @@ test "iter" {
 ///|
 test "length" {
   let pq = @priority_queue.new()
-  assert_eq(pq.length(), 0)
+  @test.assert_eq(pq.length(), 0)
   pq.push(1)
-  assert_eq(pq.length(), 1)
+  @test.assert_eq(pq.length(), 1)
   pq.push(2)
-  assert_eq(pq.length(), 2)
+  @test.assert_eq(pq.length(), 2)
   pq.unsafe_pop()
-  assert_eq(pq.length(), 1)
+  @test.assert_eq(pq.length(), 1)
 }
 
 ///|
@@ -88,9 +88,9 @@ test "unsafe_pop" {
   inspect(pq.length(), content="6")
   @test.assert_eq(pq.peek(), Some(5))
   pq.unsafe_pop()
-  debug_inspect(pq.peek(), content="Some(5)")
+  @test.assert_eq(pq.peek(), Some(5))
   pq.unsafe_pop()
-  debug_inspect(pq.peek(), content="Some(4)")
+  @test.assert_eq(pq.peek(), Some(4))
   let pq_ = @priority_queue.from_array([1])
   pq_.unsafe_pop()
   inspect(pq_.length(), content="0")
@@ -99,9 +99,9 @@ test "unsafe_pop" {
 ///|
 test "pop" {
   let pq = @priority_queue.from_array([1, 2, 3, 4, 5, 5])
-  debug_inspect(pq.pop(), content="Some(5)")
-  debug_inspect(pq.pop(), content="Some(5)")
-  debug_inspect(pq.pop(), content="Some(4)")
+  @test.assert_eq(pq.pop(), Some(5))
+  @test.assert_eq(pq.pop(), Some(5))
+  @test.assert_eq(pq.pop(), Some(4))
   let pq_ = @priority_queue.from_array([1])
   pq_.pop() |> ignore
   inspect(pq_.length(), content="0")
@@ -124,31 +124,31 @@ test "push" {
   let pq = @priority_queue.from_array([5, 4, 3, 2, 1])
   pq.push(-1)
   pq.push(6)
-  assert_eq(pq.length(), 7)
-  debug_inspect(pq.peek(), content="Some(6)")
+  @test.assert_eq(pq.length(), 7)
+  @test.assert_eq(pq.peek(), Some(6))
 }
 
 ///|
 test "peek" {
   let pq = @priority_queue.from_array([1, 2, 3, 4, 5])
-  debug_inspect(pq.peek(), content="Some(5)")
+  @test.assert_eq(pq.peek(), Some(5))
   pq.clear()
-  debug_inspect(pq.peek(), content="None")
+  @test.assert_eq(pq.peek(), None)
 }
 
 ///|
 test "clear" {
   let pq = @priority_queue.from_array([5, 4, 3, 2, 1])
   pq.clear()
-  assert_eq(pq.length(), 0)
+  @test.assert_eq(pq.length(), 0)
 }
 
 ///|
 test "is_empty" {
   let pq = @priority_queue.from_array([5, 4, 3, 2, 1])
-  assert_eq(pq.is_empty(), false)
+  @test.assert_eq(pq.is_empty(), false)
   pq.clear()
-  assert_eq(pq.is_empty(), true)
+  @test.assert_eq(pq.is_empty(), true)
 }
 
 ///|
@@ -187,13 +187,12 @@ test "complex" {
   for i in 0..<=1000 {
     pq.push(arr[i])
   }
-  assert_eq(pq.length(), 1001)
+  @test.assert_eq(pq.length(), 1001)
   for i in 0..<=1000 {
-    guard pq.pop() is Some(v) else { fail("Expected Some") }
-    assert_eq(v, 1000 - i)
+    @test.assert_eq(pq.pop(), Some(1000 - i))
   }
   inspect(pq.iter(), content="[]")
-  assert_eq(pq.length(), 0)
+  @test.assert_eq(pq.length(), 0)
 }
 
 ///|
@@ -202,13 +201,12 @@ test "priority queue large data" {
   for i in 0..<=10000000 {
     pq.push(-i)
   }
-  assert_eq(pq.length(), 10000001)
+  @test.assert_eq(pq.length(), 10000001)
   for i in 0..<=10000000 {
-    guard pq.pop() is Some(v) else { fail("Expected Some") }
-    assert_eq(v, -i)
+    @test.assert_eq(pq.pop(), Some(-i))
   }
   inspect(pq.iter(), content="[]")
-  assert_eq(pq.length(), 0)
+  @test.assert_eq(pq.length(), 0)
 }
 
 ///|
@@ -220,10 +218,10 @@ test "copy large monotonic queue" {
     pq.push(i)
   }
   let pq2 = pq.copy()
-  assert_eq(pq2.length(), 10000)
-  debug_inspect(pq2.peek(), content="Some(9999)")
+  @test.assert_eq(pq2.length(), 10000)
+  @test.assert_eq(pq2.peek(), Some(9999))
   // Verify independence: mutate original, copy should be unaffected
   pq.pop() |> ignore
-  debug_inspect(pq.peek(), content="Some(9998)")
-  debug_inspect(pq2.peek(), content="Some(9999)")
+  @test.assert_eq(pq.peek(), Some(9998))
+  @test.assert_eq(pq2.peek(), Some(9999))
 }

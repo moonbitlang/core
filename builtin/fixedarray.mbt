@@ -1023,23 +1023,19 @@ pub fn[T : Eq] FixedArray::search(self : FixedArray[T], value : T) -> Int? {
 test "search" {
   {
     let arr : FixedArray[Int] = []
-    guard arr.search(3) is None
-    guard arr.search(-1) is None
+    assert_true(arr.search(3) == None)
+    assert_true(arr.search(-1) == None)
   }
   {
     let arr : FixedArray[_] = [3]
-    guard arr.search(3) is Some(v)
-    assert_eq(v, 0)
-    guard arr.search(-1) is None
+    assert_true(arr.search(3) == Some(0))
+    assert_true(arr.search(-1) == None)
   }
   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
-  guard arr.search(1) is Some(v)
-  assert_eq(v, 0)
-  guard arr.search(5) is Some(v)
-  assert_eq(v, 4)
-  guard arr.search(3) is Some(v)
-  assert_eq(v, 2)
-  guard arr.search(-1) is None
+  assert_true(arr.search(1) == Some(0))
+  assert_true(arr.search(5) == Some(4))
+  assert_true(arr.search(3) == Some(2))
+  assert_true(arr.search(-1) == None)
 }
 
 ///|
@@ -1459,37 +1455,33 @@ pub fn FixedArray::join(
 ///|
 test "FixedArray::last/empty" {
   let empty : FixedArray[Int] = []
-  guard empty.last() is None
+  assert_true(empty.last() == None)
 }
 
 ///|
 test "FixedArray::last/non_empty" {
   let array : FixedArray[_] = [1, 2, 3]
-  guard array.last() is Some(v)
-  assert_eq(v, 3)
+  assert_true(array.last() == Some(3))
   let single : FixedArray[_] = [42]
-  guard single.last() is Some(v)
-  assert_eq(v, 42)
+  assert_true(single.last() == Some(42))
 }
 
 ///|
 test "FixedArray::last/empty_array" {
   let empty_array : FixedArray[Int] = []
-  guard FixedArray::last(empty_array) is None
+  assert_true(FixedArray::last(empty_array) == None)
 }
 
 ///|
 test "FixedArray::last/single_element" {
   let single_element_array : FixedArray[Int] = [42]
-  guard FixedArray::last(single_element_array) is Some(v)
-  assert_eq(v, 42)
+  assert_true(FixedArray::last(single_element_array) == Some(42))
 }
 
 ///|
 test "FixedArray::last/multiple_elements" {
   let multiple_elements_array : FixedArray[Int] = [1, 2, 3, 4, 5]
-  guard FixedArray::last(multiple_elements_array) is Some(v)
-  assert_eq(v, 5)
+  assert_true(FixedArray::last(multiple_elements_array) == Some(5))
 }
 
 ///|

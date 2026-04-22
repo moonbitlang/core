@@ -70,7 +70,7 @@ You can use `peek()` to look at the head element of a queue, which must be eithe
 ///|
 test {
   let pq = @priority_queue.from_array([1, 2, 3, 4, 5])
-  debug_inspect(pq.peek(), content="Some(5)")
+  @test.assert_eq(pq.peek(), Some(5))
 }
 ```
 
@@ -84,7 +84,7 @@ test {
   let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.new()
   pq.push(1)
   pq.push(2)
-  debug_inspect(pq.peek(), content="Some(2)")
+  @test.assert_eq(pq.peek(), Some(2))
 }
 ```
 
@@ -96,7 +96,7 @@ You can use `pop()` to pop the element at the front of the priority queue, respe
 ///|
 test {
   let pq = @priority_queue.from_array([5, 4, 3, 2, 1])
-  debug_inspect(pq.pop(), content="Some(5)")
+  @test.assert_eq(pq.pop(), Some(5))
 }
 ```
 
@@ -127,7 +127,7 @@ test {
 ///|
 test {
   let pq = @priority_queue.from_iter([3, 1, 2].iter())
-  debug_inspect(pq.peek(), content="Some(3)")
+  @test.assert_eq(pq.peek(), Some(3))
 }
 ```
 
@@ -154,7 +154,7 @@ test {
 test {
   let pq = @priority_queue.from_array([1, 2, 3])
   let pq2 = pq.copy()
-  debug_inspect(pq2.pop(), content="Some(3)")
+  @test.assert_eq(pq2.pop(), Some(3))
   assert_eq(pq.length(), 3) // original unchanged
 }
 ```

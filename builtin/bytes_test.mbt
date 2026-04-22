@@ -369,67 +369,66 @@ test "BytesView::lexical_compare/basic" {
   // Test element-wise comparison
   let a = b"\x01\x02\x03"
   let b = b"\x01\x02\x04"
-  inspect(a[:].lexical_compare(b[:]), content="-1")
-  inspect(b[:].lexical_compare(a[:]), content="1")
+  inspect(a[:].lexical_compare(b), content="-1")
+  inspect(b[:].lexical_compare(a), content="1")
 
   // Elements are compared before considering length
   let short_higher = b"\x01\x03"
   let long_lower = b"\x01\x02\x09"
-  inspect(short_higher[:].lexical_compare(long_lower[:]), content="1")
-  inspect(long_lower[:].lexical_compare(short_higher[:]), content="-1")
+  inspect(short_higher[:].lexical_compare(long_lower), content="1")
+  inspect(long_lower[:].lexical_compare(short_higher), content="-1")
 }
 
 ///|
 test "Bytes find and rev_find" {
   let target = b"abcabc"
   let pattern = b"abc"
-  debug_inspect(target.find(pattern[:]), content="Some(0)")
-  debug_inspect(target.rev_find(pattern[:]), content="Some(3)")
-  debug_inspect(target.find(b"zzz"[:]), content="None")
-  guard target[:].find(b"bca"[:]) is Some(v)
-  assert_eq(v, 1)
-  debug_inspect(target[:].rev_find(b"bca"[:]), content="Some(1)")
+  debug_inspect(target.find(pattern), content="Some(0)")
+  debug_inspect(target.rev_find(pattern), content="Some(3)")
+  debug_inspect(target.find(b"zzz"), content="None")
+  debug_inspect(target[:].find(b"bca"), content="Some(1)")
+  debug_inspect(target[:].rev_find(b"bca"), content="Some(1)")
 }
 
 ///|
 test "Bytes has_prefix/has_suffix/chop" {
   let bytes = b"hello"
-  inspect(bytes.has_prefix(b"h"[:]), content="true")
-  inspect(bytes.has_prefix(b"he"[:]), content="true")
-  inspect(bytes.has_prefix(b""[:]), content="true")
-  inspect(bytes.has_prefix(b"hello"[:]), content="true")
-  inspect(bytes.has_prefix(b"world"[:]), content="false")
-  inspect(bytes.has_suffix(b"o"[:]), content="true")
-  inspect(bytes.has_suffix(b"lo"[:]), content="true")
-  inspect(bytes.has_suffix(b""[:]), content="true")
-  inspect(bytes.has_suffix(b"hello"[:]), content="true")
-  inspect(bytes.has_suffix(b"hel"[:]), content="false")
+  inspect(bytes.has_prefix(b"h"), content="true")
+  inspect(bytes.has_prefix(b"he"), content="true")
+  inspect(bytes.has_prefix(b""), content="true")
+  inspect(bytes.has_prefix(b"hello"), content="true")
+  inspect(bytes.has_prefix(b"world"), content="false")
+  inspect(bytes.has_suffix(b"o"), content="true")
+  inspect(bytes.has_suffix(b"lo"), content="true")
+  inspect(bytes.has_suffix(b""), content="true")
+  inspect(bytes.has_suffix(b"hello"), content="true")
+  inspect(bytes.has_suffix(b"hel"), content="false")
   let view = bytes[1:4]
-  inspect(view.has_prefix(b"ell"[:]), content="true")
-  inspect(view.has_suffix(b"ell"[:]), content="true")
-  inspect(view.has_prefix(b"el"[:]), content="true")
-  inspect(view.has_suffix(b"ll"[:]), content="true")
-  inspect(view.has_prefix(b"ll"[:]), content="false")
-  debug_inspect(view.chop_prefix(b"el"[:]), content="Some(<BytesView: [0x6c]>)")
-  debug_inspect(view.chop_suffix(b"ll"[:]), content="Some(<BytesView: [0x65]>)")
+  inspect(view.has_prefix(b"ell"), content="true")
+  inspect(view.has_suffix(b"ell"), content="true")
+  inspect(view.has_prefix(b"el"), content="true")
+  inspect(view.has_suffix(b"ll"), content="true")
+  inspect(view.has_prefix(b"ll"), content="false")
+  debug_inspect(view.chop_prefix(b"el"), content="Some(<BytesView: [0x6c]>)")
+  debug_inspect(view.chop_suffix(b"ll"), content="Some(<BytesView: [0x65]>)")
   debug_inspect(
-    view.chop_prefix(b""[:]),
+    view.chop_prefix(b""),
     content="Some(<BytesView: [0x65, 0x6c, 0x6c]>)",
   )
   debug_inspect(
-    view.chop_suffix(b""[:]),
+    view.chop_suffix(b""),
     content="Some(<BytesView: [0x65, 0x6c, 0x6c]>)",
   )
   debug_inspect(
-    bytes.chop_prefix(b"he"[:]),
+    bytes.chop_prefix(b"he"),
     content="Some(<BytesView: [0x6c, 0x6c, 0x6f]>)",
   )
   debug_inspect(
-    bytes.chop_suffix(b"lo"[:]),
+    bytes.chop_suffix(b"lo"),
     content="Some(<BytesView: [0x68, 0x65, 0x6c]>)",
   )
-  guard bytes.chop_prefix(b"zz"[:]) is None
-  debug_inspect(bytes.chop_suffix(b"zz"[:]), content="None")
+  debug_inspect(bytes.chop_prefix(b"zz"), content="None")
+  debug_inspect(bytes.chop_suffix(b"zz"), content="None")
 }
 
 ///|

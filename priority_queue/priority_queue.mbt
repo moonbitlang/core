@@ -278,7 +278,7 @@ pub fn[A : Compare] PriorityQueue::push(
 /// test {
 ///   let queue = @priority_queue.from_array([1, 2, 3, 4])
 ///   let first = queue.peek() // Some(4)
-///   debug_inspect(first, content="Some(4)")
+///   @test.assert_eq(first, Some(4))
 /// }
 /// ```
 pub fn[A] PriorityQueue::peek(self : PriorityQueue[A]) -> A? {

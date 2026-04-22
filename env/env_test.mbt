@@ -48,6 +48,6 @@ test "env var round trip" {
   @test.assert_eq(@env.get_env_vars().get(key), Some(value))
 
   @env.unset_env_var(key)
-  debug_inspect(@env.get_env_var(key), content="None")
-  debug_inspect(@env.get_env_vars().get(key), content="None")
+  @test.assert_eq(@env.get_env_var(key), None)
+  @test.assert_eq(@env.get_env_vars().get(key), None)
 }

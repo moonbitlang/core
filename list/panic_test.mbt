@@ -14,7 +14,7 @@
 
 ///|
 test "last None" {
-  debug_inspect((@list.empty() : @list.List[Int]).last(), content="None")
+  assert_true((@list.empty() : @list.List[Int]).last() == None)
 }
 
 ///|

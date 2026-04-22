@@ -49,7 +49,7 @@ You can use `peek()` to look at the head element of a queue, which must be eithe
 ///|
 test {
   let pq = @priority_queue.from_array([1, 2, 3, 4, 5])
-  debug_inspect(pq.peek(), content="Some(5)")
+  @test.assert_eq(pq.peek(), Some(5))
   // @json.json_inspect(pq)
   // we have to add `@json` package in test-import
   // it's reported unused package currently
@@ -62,7 +62,7 @@ You can use `push()` to add elements to the immutable priority queue and get a n
 ///|
 test {
   let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.new()
-  debug_inspect(pq.push(1).peek(), content="Some(1)")
+  @test.assert_eq(pq.push(1).peek(), Some(1))
 }
 ```
 
@@ -76,6 +76,6 @@ test {
     Some(q) => q.peek()
     None => None
   }
-  debug_inspect(val, content="Some(4)")
+  @test.assert_eq(val, Some(4))
 }
 ```

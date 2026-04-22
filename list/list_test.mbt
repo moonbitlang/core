@@ -747,14 +747,14 @@ test "eachi" {
 test "List::head_exn with non-empty list" {
   let list = @list.from_array([1, 2, 3, 4, 5])
   let head = list.head()
-  debug_inspect(head, content="Some(1)")
+  assert_true(head == Some(1))
 }
 
 ///|
 test "List::last with non-empty list" {
   let list = @list.from_array([1, 2, 3, 4, 5])
   let last = list.last()
-  debug_inspect(last, content="Some(5)")
+  assert_true(last == Some(5))
 }
 
 ///|
@@ -778,14 +778,14 @@ test "@list.zip with empty list" {
 test "List::nth_exn with valid index" {
   let list = @list.from_array([1, 2, 3, 4, 5])
   let nth = list.nth(2)
-  debug_inspect(nth, content="Some(3)")
+  assert_true(nth == Some(3))
 }
 
 ///|
 test "List::maximum with non-empty list" {
   let list = @list.from_array([1, 3, 5, 2, 4])
   let max = list.maximum()
-  debug_inspect(max, content="Some(5)")
+  assert_true(max == Some(5))
 }
 
 ///|
@@ -797,7 +797,7 @@ test "@list.maximum with empty list" {
 test "List::minimum with non-empty list" {
   let list = @list.from_array([1, 3, 5, 2, 4])
   let min = list.minimum()
-  debug_inspect(min, content="Some(1)")
+  assert_true(min == Some(1))
 }
 
 ///|
@@ -1125,8 +1125,8 @@ test "complex list recursion safety" {
 
   // Verify operations on large list work correctly without stack overflow
   debug_inspect(large.length(), content="10000")
-  debug_inspect(large.nth(9999), content="Some(9999)")
-  debug_inspect(large.last(), content="Some(9999)")
+  assert_true(large.nth(9999) == Some(9999))
+  assert_true(large.last() == Some(9999))
 
   // Test operations that traverse the entire list
   let sum = large.fold((acc, x) => acc + x, init=0)

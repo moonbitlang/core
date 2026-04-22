@@ -108,7 +108,7 @@ Get the first element of the list as an `Option`.
 ///|
 test {
   let list = @list.from_array([1, 2, 3, 4, 5])
-  debug_inspect(list.head(), content="Some(1)")
+  assert_true(list.head() == Some(1))
 }
 ```
 
@@ -132,7 +132,7 @@ Get the nth element of the list as an `Option`.
 ///|
 test {
   let list = @list.from_array([1, 2, 3, 4, 5])
-  debug_inspect(list.nth(2), content="Some(3)")
+  assert_true(list.nth(2) == Some(3))
 }
 ```
 
@@ -201,8 +201,8 @@ test {
 ///|
 test {
   let list = @list.from_array([1, 2, 3, 4, 5])
-  debug_inspect(list.find(fn(x) { x > 3 }), content="Some(4)")
-  debug_inspect(list.find_index(fn(x) { x == 3 }), content="Some(2)")
+  assert_true(list.find(fn(x) { x > 3 }) == Some(4))
+  assert_true(list.find_index(fn(x) { x == 3 }) == Some(2))
   assert_eq(list.any(fn(x) { x > 4 }), true)
   assert_eq(list.all(fn(x) { x > 0 }), true)
   assert_eq(list.contains(3), true)
@@ -259,9 +259,9 @@ test {
 ///|
 test {
   let list = @list.from_array([3, 1, 4, 1, 5])
-  debug_inspect(list.last(), content="Some(5)")
-  debug_inspect(list.minimum(), content="Some(1)")
-  debug_inspect(list.maximum(), content="Some(5)")
+  assert_true(list.last() == Some(5))
+  assert_true(list.minimum() == Some(1))
+  assert_true(list.maximum() == Some(5))
 }
 ```
 
@@ -384,8 +384,8 @@ Look up a value in an association list (list of key-value pairs):
 ///|
 test {
   let assoc = @list.from_array([("a", 1), ("b", 2), ("c", 3)])
-  debug_inspect(assoc.lookup("b"), content="Some(2)")
-  debug_inspect(assoc.lookup("z"), content="None")
+  assert_true(assoc.lookup("b") == Some(2))
+  assert_true(assoc.lookup("z") == None)
 }
 ```
 

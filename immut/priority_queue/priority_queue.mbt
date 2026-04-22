@@ -123,7 +123,7 @@ fn Path::next(self : Path) -> Path {
 /// test {
 ///   let queue = @priority_queue.from_array([1, 2, 3, 4])
 ///   let first = queue.pop()
-///   debug_inspect(first, content="Some(<PriorityQueue: [3, 2, 1]>)")
+///   @test.assert_eq(first, Some(@priority_queue.from_array([1, 2, 3])))
 /// }
 /// ```
 pub fn[A : Compare] PriorityQueue::pop(
@@ -259,7 +259,7 @@ fn[A : Compare] Node::push(self : Node[A], value : A, path : Path) -> Node[A] {
 /// ```mbt check
 /// test {
 ///   let queue = @priority_queue.from_array([1, 2, 3, 4])
-///   debug_inspect(queue.peek(), content="Some(4)")
+///   @test.assert_eq(queue.peek(), Some(4))
 /// }
 /// ```
 pub fn[A] PriorityQueue::peek(self : PriorityQueue[A]) -> A? {

@@ -72,8 +72,8 @@ Get a value by its key. The return type is `Option[V]`.
 ///|
 test {
   let map = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
-  debug_inspect(map.get(2), content="Some(\"two\")")
-  debug_inspect(map.get(4), content="None")
+  assert_true(map.get(2) == Some("two"))
+  assert_true(map.get(4) == None)
 }
 ```
 
@@ -327,8 +327,8 @@ test {
   let m1 = @sorted_map.from_array([(1, "a"), (2, "b")])
   let m2 = @sorted_map.from_array([(2, "B"), (3, "c")])
   let merged = m1.merge(m2)
-  debug_inspect(merged.get(2), content="Some(\"B\")") // right wins
-  debug_inspect(merged.get(3), content="Some(\"c\")")
+  assert_true(merged.get(2) == Some("B")) // right wins
+  assert_true(merged.get(3) == Some("c"))
   // merge_in_place
   let m3 = @sorted_map.from_array([(1, "x")])
   let m4 = @sorted_map.from_array([(2, "y")])

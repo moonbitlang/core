@@ -32,10 +32,10 @@ test "new" {
   let m : Map[String, Int] = Map::new()
   assert_eq(m.size, 0)
   assert_eq(m.capacity, 8)
-  guard m.head is None
+  assert_true(m.head is None)
   assert_eq(m.tail, -1)
   for i in 0..<m.capacity {
-    guard m.entries[i] is None
+    assert_true(m.entries[i] is None)
   }
 }
 
@@ -62,10 +62,10 @@ test "get" {
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
-  guard m.get("a") is Some(1)
-  guard m.get("b") is Some(2)
-  guard m.get("c") is Some(3)
-  guard m.get("d") is None
+  assert_true(m.get("a") == Some(1))
+  assert_true(m.get("b") == Some(2))
+  assert_true(m.get("c") == Some(3))
+  assert_true(m.get("d") == None)
 
   // pattern
   guard m is { "a": 1, "b": 2, "c": 3, "d"? : None, .. }
@@ -98,8 +98,8 @@ test "get_or_init" {
   m.get_or_init("a", () => Array::new()).push(1)
   m.get_or_init("b", () => Array::new()).push(2)
   m.get_or_init("a", () => Array::new()).push(3)
-  guard m.get("a") is Some([1, 3])
-  guard m.get("b") is Some([2])
+  assert_true(m.get("a") == Some([1, 3]))
+  assert_true(m.get("b") == Some([2]))
   assert_eq(m.length(), 2)
 }
 
@@ -128,8 +128,8 @@ test "Map::set" {
   let m : Map[String, Int] = Map::new()
   m["a"] = 1
   m["b"] = 2
-  guard m.get("a") is Some(1)
-  guard m.get("b") is Some(2)
+  assert_true(m.get("a") == Some(1))
+  assert_true(m.get("b") == Some(2))
 }
 
 ///|
@@ -145,9 +145,9 @@ test "set_update" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
-  guard m.get("a") is Some(1)
+  assert_true(m.get("a") == Some(1))
   m.set("a", 2)
-  guard m.get("a") is Some(2)
+  assert_true(m.get("a") == Some(2))
 }
 
 ///|
@@ -161,9 +161,9 @@ test "contains" {
 ///|
 test "from_array" {
   let m = { "a": 1, "b": 2, "c": 3 }
-  guard m.get("a") is Some(1)
-  guard m.get("b") is Some(2)
-  guard m.get("c") is Some(3)
+  assert_true(m.get("a") == Some(1))
+  assert_true(m.get("b") == Some(2))
+  assert_true(m.get("c") == Some(3))
 }
 
 ///|
@@ -221,10 +221,10 @@ test "clear" {
   m.clear()
   assert_eq(m.size, 0)
   inspect(m.capacity, content="4")
-  guard m.head is None
+  assert_true(m.head is None)
   assert_eq(m.tail, -1)
   for i in 0..<m.capacity {
-    guard m.entries[i] is None
+    assert_true(m.entries[i] is None)
   }
 }
 
@@ -363,7 +363,7 @@ test "set_existing_key" {
   m.set("c", 3)
   m.set("a", 4)
   assert_eq(m.size, 3)
-  guard m.get("a") is Some(4)
+  assert_true(m.get("a") == Some(4))
 }
 
 ///|
@@ -372,7 +372,7 @@ test "get_nonexistent_key" {
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
-  guard m.get("d") is None
+  assert_true(m.get("d") == None)
 }
 
 ///|
@@ -401,7 +401,7 @@ test "remove_existing_key" {
   m.set("c", 3)
   m.remove("b")
   assert_eq(m.length(), 2)
-  guard m.get("b") is None
+  assert_true(m.get("b") == None)
 }
 
 ///|
@@ -531,7 +531,7 @@ test "get_entry_none" {
   map.set(1, 1)
   // This should return None as the key 2 is not in the map
   let result = map.get(2)
-  guard result is None
+  assert_true(result == None)
 }
 
 ///|
