@@ -17,10 +17,20 @@ using @debug {trait Debug, type Repr}
 
 ///|
 /// Error type `JsonDecodeError`.
-#warnings("-deprecated_syntax")
 pub(all) suberror JsonDecodeError {
   JsonDecodeError((JsonPath, String))
-} derive(Eq, Show, ToJson, @debug.Debug)
+} derive(Eq, ToJson, @debug.Debug)
+
+///|
+pub impl Show for JsonDecodeError with output(self, logger) {
+  match self {
+    JsonDecodeError(details) => {
+      logger.write_string("JsonDecodeError(")
+      logger.write_object(details)
+      logger.write_string(")")
+    }
+  }
+}
 
 ///|
 /// Trait for types that can be converted from `Json`

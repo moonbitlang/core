@@ -33,7 +33,9 @@ pub(all) enum FlagAction {
   Count
   Help
   Version
-} derive(Eq, Show)
+} derive(Eq)
+#deprecated
+pub impl Show for FlagAction
 
 pub struct FlagArg {
   // private fields
@@ -54,7 +56,9 @@ pub struct Matches {
 pub(all) enum OptionAction {
   Set
   Append
-} derive(Eq, Show)
+} derive(Eq)
+#deprecated
+pub impl Show for OptionAction
 
 pub struct OptionArg {
   // private fields
@@ -74,15 +78,17 @@ pub struct ValueRange {
   // private fields
 
   fn new(lower? : Int, upper? : Int) -> ValueRange
-} derive(Eq, Show)
+} derive(Eq)
 pub fn ValueRange::new(lower? : Int, upper? : Int) -> Self
 pub fn ValueRange::single() -> Self
+pub impl Show for ValueRange
 
 pub enum ValueSource {
   Argv
   Env
   Default
-} derive(Eq, Show, @debug.Debug)
+} derive(Eq, @debug.Debug)
+pub impl Show for ValueSource
 
 // Type aliases
 

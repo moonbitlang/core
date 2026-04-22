@@ -17,12 +17,20 @@ using @debug {trait Debug, type Repr}
 
 ///|
 /// Where a value/flag came from.
-#warnings("-deprecated_syntax")
 pub enum ValueSource {
   Argv
   Env
   Default
-} derive(Eq, Show, Debug)
+} derive(Eq, Debug)
+
+///|
+pub impl Show for ValueSource with output(self, logger) {
+  match self {
+    Argv => logger.write_string("Argv")
+    Env => logger.write_string("Env")
+    Default => logger.write_string("Default")
+  }
+}
 
 ///|
 /// Parse results for declarative commands.

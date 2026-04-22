@@ -20,7 +20,8 @@ pub fn valid(StringView) -> Bool
 // Errors
 pub(all) suberror JsonDecodeError {
   JsonDecodeError((JsonPath, String))
-} derive(Eq, Show, ToJson, @debug.Debug)
+} derive(Eq, ToJson, @debug.Debug)
+pub impl Show for JsonDecodeError
 
 pub(all) suberror ParseError {
   InvalidChar(Position, Char)
