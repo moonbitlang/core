@@ -79,12 +79,12 @@ pub fn Command::new(
   let (parsed_args, arg_error) = collect_args(flags, options, positionals)
   let groups = groups.to_owned()
   let cmd = Command::{
-    name: name.to_string(),
+    name: name.to_owned(),
     args: parsed_args,
     groups,
     subcommands: subcommands.to_owned(),
-    about: about.map(v => v.to_string()),
-    version: version.map(v => v.to_string()),
+    about: about.map(v => v.to_owned()),
+    version: version.map(v => v.to_owned()),
     disable_help_flag,
     disable_version_flag,
     disable_help_subcommand,

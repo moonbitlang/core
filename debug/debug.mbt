@@ -82,7 +82,7 @@ pub impl Debug for String with to_repr(self) {
 
 ///|
 pub impl Debug for StringView with to_repr(self) {
-  Repr::opaque_("StringView", Repr::string(self.to_string()))
+  Repr::opaque_("StringView", Repr::string(self.to_owned()))
 }
 
 ///|

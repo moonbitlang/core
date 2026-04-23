@@ -23,14 +23,14 @@ test "BytesView sub with end None" {
 test "BytesView::to_bytes full view" {
   let bytes = b"abc"
   let view = bytes[:]
-  inspect(view.to_bytes(), content="b\"abc\"")
+  inspect(view.to_owned(), content="b\"abc\"")
 }
 
 ///|
 test "BytesView::to_bytes partial view" {
   let bytes = b"abcd"
   let view = bytes[1:3]
-  inspect(view.to_bytes(), content="b\"bc\"")
+  inspect(view.to_owned(), content="b\"bc\"")
 }
 
 ///|

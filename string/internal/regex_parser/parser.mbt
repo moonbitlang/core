@@ -293,7 +293,7 @@ fn Parser::term(
       raise ctx.error_at(rest, HINT_UNSUPPORTED_NEGATIVE_LOOKBEHIND)
     ("\(\?<" ("[A-Za-z_][A-Za-z0-9_]*" as name) ">", rest) => {
       let (rest, pat) = Parser::parse_group_continue(rest, ctx~)
-      (rest, @re.capture(name=name.to_string(), pat), false)
+      (rest, @re.capture(name=name.to_owned(), pat), false)
     }
     ("\(\?:", rest) => {
       let (rest, pat) = Parser::parse_group_continue(rest, ctx~)

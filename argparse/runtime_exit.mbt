@@ -15,7 +15,7 @@
 ///|
 fn trim_single_trailing_newline(text : String) -> String {
   match text.strip_suffix("\n") {
-    Some(view) => view.to_string()
+    Some(view) => view.to_owned()
     None => text
   }
 }

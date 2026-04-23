@@ -138,7 +138,7 @@ test "string views" {
   inspect(chars, content="['W', 'o', 'r', 'l', 'd']")
 
   // Convert view back to string
-  let substring = view.to_string()
+  let substring = view.to_owned()
   inspect(substring, content="World")
 }
 ```
@@ -155,11 +155,11 @@ test "practical examples" {
   // Split into words (using whitespace) - returns Iter[View]
   let words = text.split(" ").collect()
   inspect(words.length(), content="4")
-  inspect(words[0].to_string(), content="The")
-  inspect(words[3].to_string(), content="fox")
+  inspect(words[0].to_owned(), content="The")
+  inspect(words[3].to_owned(), content="fox")
 
   // Join words back together - convert views to strings first
-  let word_strings = words.map(fn(v) { v.to_string() })
+  let word_strings = words.map(fn(v) { v.to_owned() })
   let mut result = ""
   for i, word in word_strings.iter2() {
     if i > 0 {
@@ -170,9 +170,9 @@ test "practical examples" {
   inspect(result, content="The-quick-brown-fox")
 
   // Case conversion (works on views)
-  let upper = text[:].to_upper().to_string()
+  let upper = text[:].to_upper().to_owned()
   inspect(upper, content="THE QUICK BROWN FOX")
-  let lower = text[:].to_lower().to_string()
+  let lower = text[:].to_lower().to_owned()
   inspect(lower, content="the quick brown fox")
 }
 ```
@@ -281,10 +281,10 @@ test "find and split" {
   let digits = @string.Regex("[[:digit:]]+")
   let matches = digits
     .find("a1b22c333")
-    .map(fn(m) { m.content().to_string() })
+    .map(fn(m) { m.content().to_owned() })
     .collect()
   inspect(matches, content="[\"1\", \"22\", \"333\"]")
-  let parts = digits.split("a1b22c333").map(fn(v) { v.to_string() }).collect()
+  let parts = digits.split("a1b22c333").map(fn(v) { v.to_owned() }).collect()
   inspect(parts, content="[\"a\", \"b\", \"c\", \"\"]")
 }
 ```

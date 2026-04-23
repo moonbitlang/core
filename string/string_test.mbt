@@ -873,17 +873,17 @@ test "offset_of_nth_char property negative" {
 ///|
 test "split and then join should be identity" {
   let string = ""
-  assert_eq(string, string.split("").map(x => x.to_string()).join(""))
-  assert_eq(string, string.split("a").map(x => x.to_string()).join("a"))
+  assert_eq(string, string.split("").map(x => x.to_owned()).join(""))
+  assert_eq(string, string.split("a").map(x => x.to_owned()).join("a"))
   let string = "a,b,c,"
-  assert_eq(string, string.split("").map(x => x.to_string()).join(""))
-  assert_eq(string, string.split(",").map(x => x.to_string()).join(","))
+  assert_eq(string, string.split("").map(x => x.to_owned()).join(""))
+  assert_eq(string, string.split(",").map(x => x.to_owned()).join(","))
   let string = "a b c"
-  assert_eq(string, string.split("").map(x => x.to_string()).join(""))
-  assert_eq(string, string.split(" ").map(x => x.to_string()).join(" "))
+  assert_eq(string, string.split("").map(x => x.to_owned()).join(""))
+  assert_eq(string, string.split(" ").map(x => x.to_owned()).join(" "))
   let string = "aaaaa"
-  assert_eq(string, string.split("").map(x => x.to_string()).join(""))
-  assert_eq(string, string.split("a").map(x => x.to_string()).join("a"))
+  assert_eq(string, string.split("").map(x => x.to_owned()).join(""))
+  assert_eq(string, string.split("a").map(x => x.to_owned()).join("a"))
 }
 
 ///|

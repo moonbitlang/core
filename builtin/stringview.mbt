@@ -168,10 +168,15 @@ pub impl Show for StringView with output(self, logger) {
 }
 
 ///|
-/// Returns a new String containing a copy of the characters in this view.
-/// 
+/// Materialize this view into an owned `String`.
+///
+/// This crosses an ownership boundary and generally allocates. Use format
+/// strings (`"\{view}"`) or `Show::to_string(view)` when you only need a
+/// display representation — those paths go through the `Show` trait and are
+/// not flagged.
+///
 /// # Examples
-/// 
+///
 /// ```mbt check
 /// test {
 ///   let str = "Hello World"
@@ -179,12 +184,18 @@ pub impl Show for StringView with output(self, logger) {
 ///     start_offset=str.offset_of_nth_char(0).unwrap(),
 ///     end_offset=str.offset_of_nth_char(5).unwrap(),
 ///   ) // "Hello"
-///   inspect(view.to_string(), content="Hello")
+///   inspect(view.to_owned(), content="Hello")
 /// }
 /// ```
-pub impl Show for StringView with to_string(self) {
+#alias(to_string, deprecated="Use `to_owned` to allocate an owned String from a StringView; use `Show::to_string` or format strings for display")
+pub fn StringView::to_owned(self : StringView) -> String {
   // when `self == self.str()`, `String::unsafe_substring` would return original string, which doesn't create a new copy.
   self.str().unsafe_substring(start=self.start(), end=self.end())
+}
+
+///|
+pub impl Show for StringView with to_string(self) {
+  self.to_owned()
 }
 
 ///|
@@ -535,7 +546,7 @@ pub fn StringView::from_iter(iter : Iter[Char]) -> StringView {
 /// test {
 ///   let s = "Hello🤣World"
 ///   debug_inspect(
-///     s.get_view(end=5).map(v => v.to_string()),
+///     s.get_view(end=5).map(v => v.to_owned()),
 ///     content="Some(\"Hello\")",
 ///   )
 ///   // Splitting a surrogate pair is rejected rather than panicking.
@@ -781,7 +792,7 @@ pub fn StringView::make(length : Int, value : Char) -> StringView {
 
 ///|
 pub impl ToJson for StringView with to_json(self) {
-  String::to_json(self.to_string())
+  String::to_json(self.to_owned())
 }
 
 ///|

@@ -504,7 +504,7 @@ test "View::to_bytes" {
   let bytes = b"abcabc"
   let view = bytes[1:4]
   inspect(
-    view.to_bytes(),
+    view.to_owned(),
     content=(
       #|b"bca"
     ),
@@ -512,7 +512,7 @@ test "View::to_bytes" {
   let bytes = b"abcabc"
   let view = bytes[:]
   inspect(
-    view.to_bytes(),
+    view.to_owned(),
     content=(
       #|b"abcabc"
     ),
@@ -520,7 +520,7 @@ test "View::to_bytes" {
   let bytes = b"abcabc"
   let view = bytes[0:0]
   inspect(
-    view.to_bytes(),
+    view.to_owned(),
     content=(
       #|b""
     ),

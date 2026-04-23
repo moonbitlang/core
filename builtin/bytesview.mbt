@@ -752,10 +752,11 @@ pub fn BytesView::start_offset(self : BytesView) -> Int {
 /// ```mbt check
 /// test {
 ///   let b = b"hello"
-///   inspect(b[1:4].to_bytes().length(), content="3")
+///   inspect(b[1:4].to_owned().length(), content="3")
 /// }
 /// ```
-pub fn BytesView::to_bytes(self : BytesView) -> Bytes {
+#alias(to_bytes, deprecated="Use `to_owned` to allocate an owned `Bytes` from a `BytesView`")
+pub fn BytesView::to_owned(self : BytesView) -> Bytes {
   if self.length() == self.bytes().length() {
     // If the view covers the entire bytes, return the original bytes to avoid copying
     return self.bytes()

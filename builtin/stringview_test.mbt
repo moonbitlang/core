@@ -17,16 +17,16 @@ test "StringView::suffixes" {
   let str = "za🤣b"
   let start = str.offset_of_nth_char(1).unwrap()
   let view = str.view(start_offset=start)
-  let suffixes = view.suffixes().map(v => v.to_string()).collect()
+  let suffixes = view.suffixes().map(v => v.to_owned()).collect()
   @json.json_inspect(suffixes, content=["a🤣b", "🤣b", "b"])
   let suffixes_with_empty = view
     .suffixes(include_empty=true)
-    .map(v => v.to_string())
+    .map(v => v.to_owned())
     .collect()
   @json.json_inspect(suffixes_with_empty, content=["a🤣b", "🤣b", "b", ""])
   let suffixes_no_empty = view
     .suffixes(include_empty=false)
-    .map(v => v.to_string())
+    .map(v => v.to_owned())
     .collect()
   @json.json_inspect(suffixes_no_empty, content=["a🤣b", "🤣b", "b"])
 }
@@ -78,13 +78,13 @@ test "StringView core operations" {
   }
   inspect(buf.to_string(), content="0:b;1:😀;2:c;")
   let from_arr = StringView::from_array(['x', 'y'])
-  inspect(from_arr.to_string(), content="xy")
+  inspect(from_arr.to_owned(), content="xy")
   let from_iter = StringView::from_iter(['m', 'n'].iter())
-  inspect(from_iter.to_string(), content="mn")
+  inspect(from_iter.to_owned(), content="mn")
   let make_view = StringView::make(3, 'a')
-  inspect(make_view.to_string(), content="aaa")
+  inspect(make_view.to_owned(), content="aaa")
   inspect(StringView::default(), content="")
-  inspect(("hi"[:] + "!").to_string(), content="hi!")
+  inspect(("hi"[:] + "!").to_owned(), content="hi!")
   debug_inspect(view.offset_of_nth_char(1), content="Some(1)")
   debug_inspect(view.offset_of_nth_char(3), content="None")
 }
@@ -107,11 +107,11 @@ test "StringView comparisons" {
 ///|
 test "StringView sub valid cases" {
   let slice = "abcd"[:][1:-1]
-  inspect(slice.to_string(), content="bc")
+  inspect(slice.to_owned(), content="bc")
   let tail = "abcd"[-2:]
-  inspect(tail.to_string(), content="cd")
+  inspect(tail.to_owned(), content="cd")
   let tail_view = "abcd"[:][-2:]
-  inspect(tail_view.to_string(), content="cd")
+  inspect(tail_view.to_owned(), content="cd")
 }
 
 ///|
@@ -183,9 +183,9 @@ test "panic StringView::sub invalid start index" {
 ///|
 test "StringView::to_string basic" {
   let s = "hello world"
-  inspect(s[6:].to_string(), content="world")
-  inspect(s[:5].to_string(), content="hello")
-  inspect(s[6:11].to_string(), content="world")
+  inspect(s[6:].to_owned(), content="world")
+  inspect(s[:5].to_owned(), content="hello")
+  inspect(s[6:11].to_owned(), content="world")
 }
 
 ///|
@@ -193,21 +193,21 @@ test "StringView::to_string full view returns backing string unchanged" {
   let s = "hello"
   let v = s[:]
   // When the view covers the whole backing string, no copy is made.
-  assert_eq(v.to_string(), s)
+  assert_eq(v.to_owned(), s)
 }
 
 ///|
 test "StringView::to_string empty view" {
   let v = "abc"[1:1]
-  inspect(v.to_string(), content="")
-  assert_eq(v.to_string().length(), 0)
+  inspect(v.to_owned(), content="")
+  assert_eq(v.to_owned().length(), 0)
 }
 
 ///|
 test "StringView::to_string multibyte" {
   // BMP-out chars are 2 UTF-16 code units; slice by code units.
   let s = "hi \u{1F600}!"
-  inspect(s[3:5].to_string(), content="\u{1F600}")
+  inspect(s[3:5].to_owned(), content="\u{1F600}")
 }
 
 ///|
@@ -217,32 +217,32 @@ test "StringView::to_string is independent of data()" {
   let s = "hello world"
   let v = s[6:]
   assert_eq(v.data(), "hello world")
-  assert_eq(v.to_string(), "world")
+  assert_eq(v.to_owned(), "world")
 }
 
 ///|
 test "String::get_view" {
   let s = "Hello🤣World"
   debug_inspect(
-    s.get_view().map(v => v.to_string()),
+    s.get_view().map(v => v.to_owned()),
     content=(
       #|Some("Hello🤣World")
     ),
   )
   debug_inspect(
-    s.get_view(end=5).map(v => v.to_string()),
+    s.get_view(end=5).map(v => v.to_owned()),
     content=(
       #|Some("Hello")
     ),
   )
   debug_inspect(
-    s.get_view(start=-5).map(v => v.to_string()),
+    s.get_view(start=-5).map(v => v.to_owned()),
     content=(
       #|Some("World")
     ),
   )
   debug_inspect(
-    s.get_view(start=0, end=0).map(v => v.to_string()),
+    s.get_view(start=0, end=0).map(v => v.to_owned()),
     content=(
       #|Some("")
     ),
@@ -261,19 +261,19 @@ test "StringView::get_view" {
   let s = "Hello🤣World"
   let view = s[1:-1] // "ello🤣Worl"
   debug_inspect(
-    view.get_view().map(v => v.to_string()),
+    view.get_view().map(v => v.to_owned()),
     content=(
       #|Some("ello🤣Worl")
     ),
   )
   debug_inspect(
-    view.get_view(end=4).map(v => v.to_string()),
+    view.get_view(end=4).map(v => v.to_owned()),
     content=(
       #|Some("ello")
     ),
   )
   debug_inspect(
-    view.get_view(start=-2).map(v => v.to_string()),
+    view.get_view(start=-2).map(v => v.to_owned()),
     content=(
       #|Some("rl")
     ),

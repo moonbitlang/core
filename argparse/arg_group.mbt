@@ -50,7 +50,7 @@ pub fn ArgGroup::new(
   conflicts_with? : ArrayView[String] = [],
 ) -> ArgGroup {
   {
-    name: name.to_string(),
+    name: name.to_owned(),
     required,
     multiple,
     args: args.to_owned(),

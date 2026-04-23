@@ -505,7 +505,7 @@ fn parse_command_impl(
           let rest = String::from_iter(chars)
           if rest != "" {
             let inline = match rest.strip_prefix("=") {
-              Some(view) => view.to_string()
+              Some(view) => view.to_owned()
               None => rest
             }
             assign_value(matches, spec, inline, Argv)

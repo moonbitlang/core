@@ -123,10 +123,10 @@ pub fn FlagArg::new(
   negatable? : Bool = false,
   hidden? : Bool = false,
 ) -> FlagArg {
-  let name = name.to_string()
-  let long = if long == "" { None } else { Some(long.to_string()) }
-  let about = about.map(v => v.to_string())
-  let env = env.map(v => v.to_string())
+  let name = name.to_owned()
+  let long = if long == "" { None } else { Some(long.to_owned()) }
+  let about = about.map(v => v.to_owned())
+  let env = env.map(v => v.to_owned())
   {
     arg: {
       name,
@@ -194,10 +194,10 @@ pub fn OptionArg::new(
   global? : Bool = false,
   hidden? : Bool = false,
 ) -> OptionArg {
-  let name = name.to_string()
-  let long = if long == "" { None } else { Some(long.to_string()) }
-  let about = about.map(v => v.to_string())
-  let env = env.map(v => v.to_string())
+  let name = name.to_owned()
+  let long = if long == "" { None } else { Some(long.to_owned()) }
+  let about = about.map(v => v.to_owned())
+  let env = env.map(v => v.to_owned())
   {
     arg: {
       name,
@@ -264,9 +264,9 @@ pub fn PositionArg::new(
   global? : Bool = false,
   hidden? : Bool = false,
 ) -> PositionArg {
-  let name = name.to_string()
-  let about = about.map(v => v.to_string())
-  let env = env.map(v => v.to_string())
+  let name = name.to_owned()
+  let about = about.map(v => v.to_owned())
+  let env = env.map(v => v.to_owned())
   {
     arg: {
       name,

@@ -870,7 +870,7 @@ pub fn StringView::pad_start(
   padding_char : Char,
 ) -> String {
   let len = self.length()
-  guard len < total_width else { return self.to_string() }
+  guard len < total_width else { return self.to_owned() }
   let padding = String::make(total_width - len, padding_char)
   [..padding, ..self]
 }
@@ -925,7 +925,7 @@ pub fn StringView::pad_end(
   padding_char : Char,
 ) -> String {
   let len = self.length()
-  guard len < total_width else { return self.to_string() }
+  guard len < total_width else { return self.to_owned() }
   let padding = String::make(total_width - len, padding_char)
   [..self, ..padding]
 }
@@ -979,7 +979,7 @@ pub fn StringView::repeat(self : StringView, n : Int) -> StringView {
     _ => {
       let len = self.length()
       let buf = StringBuilder::new(size_hint=len * n)
-      let str = self.to_string()
+      let str = self.to_owned()
       for _ in 0..<n {
         buf.write_string(str)
       }
@@ -1311,33 +1311,31 @@ pub fn String::rev_after(self : String, needle : StringView) -> StringView? {
 
 ///|
 test "split" {
-  assert_eq("a,b,c".split(",").map(x => x.to_string()).collect(), [
-    "a", "b", "c",
-  ])
-  assert_eq("a,b,c".split("").map(x => x.to_string()).collect(), [
+  assert_eq("a,b,c".split(",").map(x => x.to_owned()).collect(), ["a", "b", "c"])
+  assert_eq("a,b,c".split("").map(x => x.to_owned()).collect(), [
     "a", ",", "b", ",", "c",
   ])
   assert_eq(
-    "apple::orange::banana".split("::").map(x => x.to_string()).collect(),
+    "apple::orange::banana".split("::").map(x => x.to_owned()).collect(),
     ["apple", "orange", "banana"],
   )
-  assert_eq("abc".split("").map(x => x.to_string()).collect(), ["a", "b", "c"])
-  assert_eq("hello".split(",").map(x => x.to_string()).collect(), ["hello"])
-  assert_eq(",a,b,c".split(",").map(x => x.to_string()).collect(), [
+  assert_eq("abc".split("").map(x => x.to_owned()).collect(), ["a", "b", "c"])
+  assert_eq("hello".split(",").map(x => x.to_owned()).collect(), ["hello"])
+  assert_eq(",a,b,c".split(",").map(x => x.to_owned()).collect(), [
     "", "a", "b", "c",
   ])
-  assert_eq("a,b,c,".split(",").map(x => x.to_string()).collect(), [
+  assert_eq("a,b,c,".split(",").map(x => x.to_owned()).collect(), [
     "a", "b", "c", "",
   ])
-  assert_eq("a,b,c".split("").map(x => x.to_string()).collect(), [
+  assert_eq("a,b,c".split("").map(x => x.to_owned()).collect(), [
     "a", ",", "b", ",", "c",
   ])
-  assert_eq("".split("").map(x => x.to_string()).collect(), [])
-  assert_eq("".split(",").map(x => x.to_string()).collect(), [""])
-  assert_eq("😀,😃,😄".split(",").map(x => x.to_string()).collect(), [
+  assert_eq("".split("").map(x => x.to_owned()).collect(), [])
+  assert_eq("".split(",").map(x => x.to_owned()).collect(), [""])
+  assert_eq("😀,😃,😄".split(",").map(x => x.to_owned()).collect(), [
     "😀", "😃", "😄",
   ])
-  assert_eq("a😀b😀c".split("😀").map(x => x.to_string()).collect(), [
+  assert_eq("a😀b😀c".split("😀").map(x => x.to_owned()).collect(), [
     "a", "b", "c",
   ])
 }
@@ -1442,7 +1440,7 @@ pub fn StringView::replace_all(
   let len = self.length()
   let buf = StringBuilder::new(size_hint=len)
   let old_len = old.length()
-  let new = new.to_string()
+  let new = new.to_owned()
   // use write_substring to avoid intermediate allocations
   if old_len == 0 {
     buf.write_string(new)
@@ -1492,7 +1490,7 @@ pub fn String::replace_all(
   let len = self.length()
   let buf = StringBuilder::new(size_hint=len)
   let old_len = old.length()
-  let new = new.to_string()
+  let new = new.to_owned()
   // use write_substring to avoid intermediate allocations
   if old_len == 0 {
     buf.write_string(new)

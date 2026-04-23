@@ -154,14 +154,14 @@ fn compact_lines(lines : Array[String]) -> Array[String] {
       if (first == "[" && last == "]") || (first == "{" && last == "}") {
         let parts : Array[String] = []
         for m in middle {
-          let t = m.trim().to_string()
+          let t = m.trim().to_owned()
           if t != "" {
             parts.push(t)
           }
         }
         let joined0 = parts.join(" ")
         let joined = match joined0.strip_suffix(",") {
-          Some(sv) => sv.to_string()
+          Some(sv) => sv.to_owned()
           None => joined0
         }
 
@@ -171,11 +171,11 @@ fn compact_lines(lines : Array[String]) -> Array[String] {
         if first == "{" {
           let inner0 = joined
           let inner1 = match inner0.strip_prefix(" ") {
-            Some(sv) => sv.to_string()
+            Some(sv) => sv.to_owned()
             None => inner0
           }
           let inner = match inner1.strip_suffix(" ") {
-            Some(sv) => sv.to_string()
+            Some(sv) => sv.to_owned()
             None => inner1
           }
           if inner == "" {
@@ -205,12 +205,12 @@ fn compact_lines(lines : Array[String]) -> Array[String] {
         for m in middle {
           let t = m.trim()
           if t != "" {
-            parts.push(t.to_string())
+            parts.push(t.to_owned())
           }
         }
         let joined0 = parts.join(" ")
         let joined = match joined0.strip_suffix(",") {
-          Some(sv) => sv.to_string()
+          Some(sv) => sv.to_owned()
           None => joined0
         }
         [first + joined + last]
@@ -286,7 +286,7 @@ fn bracket_seq_lines(
           [] => [open + close]
           [x] =>
             if open == "{" && close == "}" {
-              let inner = x.trim().to_string()
+              let inner = x.trim().to_owned()
               if inner == "" {
                 ["{}"]
               } else {
