@@ -671,9 +671,7 @@ pub fn BytesView::unsafe_read_uint16_be(
 // a zero-cost reinterpretation of the underlying buffer.
 
 ///|
-fn buffer_to_fixedarray(
-  buf : UninitializedArray[Byte],
-) -> FixedArray[Byte] = "%identity"
+fn buffer_to_fixedarray(buf : UninitializedArray[Byte]) -> FixedArray[Byte] = "%identity"
 
 ///|
 /// **UNSAFE**: Reads a UInt64 from the ArrayView[Byte] in little-endian byte order.
