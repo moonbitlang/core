@@ -432,7 +432,7 @@ test "Bytes has_prefix/has_suffix/chop" {
 }
 
 ///|
-test "BytesView::to_owned" {
+test "BytesView::to_array" {
   let view = b"hi"[:]
-  inspect(view.to_owned(), content="[b'\\x68', b'\\x69']")
+  inspect(view.to_array(), content="[b'\\x68', b'\\x69']")
 }

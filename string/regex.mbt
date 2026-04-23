@@ -201,7 +201,7 @@ pub fn Regex::unsafe_from_string(pattern : StringView) -> Regex {
 pub fn Regex::string(str : StringView) -> Regex {
   let pat = @re.seq(
     ReadOnlyArray::from_array(
-      str.to_owned().map(b => @re.char(@re.RecharSet::char(b.to_int()))),
+      str.to_array().map(b => @re.char(@re.RecharSet::char(b.to_int()))),
     ),
   )
   { pat, re: None }

@@ -444,19 +444,18 @@ pub fn StringView::strip_suffix(
 }
 
 ///|
-/// Copy the view into a newly allocated `Array[Char]`.
+/// Converts the View into an array of Chars.
 ///
 /// # Example
 ///
 /// ```mbt check
 /// test {
 ///   let view = "Hello🤣xa"[1:-1]
-///   let chars = view.to_owned()
+///   let chars = view.to_array()
 ///   inspect(chars, content="['e', 'l', 'l', 'o', '🤣', 'x']")
 /// }
 /// ```
-#alias(to_array, deprecated)
-pub fn StringView::to_owned(self : StringView) -> Array[Char] {
+pub fn StringView::to_array(self : StringView) -> Array[Char] {
   self
   .iter()
   .fold(init=Array::new(capacity=self.length()), (rv, c) => {
@@ -506,15 +505,15 @@ test "View::strip_suffix" {
 }
 
 ///|
-test "View::to_owned" {
+test "View::to_array" {
   let view = "Hello🤣"[:]
-  let chars = view.to_owned()
+  let chars = view.to_array()
   assert_eq(chars, ['H', 'e', 'l', 'l', 'o', '🤣'])
   let empty_view = ""[:]
-  let empty_chars = empty_view.to_owned()
+  let empty_chars = empty_view.to_array()
   assert_eq(empty_chars, [])
   let sub_view = "Hello World"[6:11] // "World"
-  let sub_chars = sub_view.to_owned()
+  let sub_chars = sub_view.to_array()
   assert_eq(sub_chars, ['W', 'o', 'r', 'l', 'd'])
 }
 

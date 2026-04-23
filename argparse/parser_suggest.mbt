@@ -64,8 +64,8 @@ fn suggestion_threshold(len : Int) -> Int {
 
 ///|
 fn levenshtein(a : StringView, b : StringView) -> Int {
-  let aa = a.to_owned()
-  let bb = b.to_owned()
+  let aa = a.to_array()
+  let bb = b.to_array()
   let m = aa.length()
   let n = bb.length()
   if m == 0 {
