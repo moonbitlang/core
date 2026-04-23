@@ -208,6 +208,138 @@ pub fn FixedArray::unsafe_write_uint16_be(
   }
 }
 
+///|
+/// **UNSAFE**: Reads a UInt64 from the FixedArray[Byte] in little-endian byte order.
+///
+/// ⚠️ **Warning: This function is unsafe and can cause undefined behavior!**
+///
+/// # Safety
+/// - **No bounds checking**: This function does not verify that `index + 7 < bytes.length()`
+/// - **Buffer overrun risk**: Reading beyond the array boundary may access invalid memory
+/// - **Responsibility**: Caller must ensure sufficient bytes are available
+#intrinsic("%bytes.unsafe_read_uint64_le")
+#doc(hidden)
+pub fn FixedArray::unsafe_read_uint64_le(
+  bytes : FixedArray[Byte],
+  index : Int,
+) -> UInt64 {
+  for i in 0..<=7; result = (0 : UInt64) {
+    continue result | (bytes.unsafe_get(i + index).to_uint64() << (8 * i))
+  } nobreak {
+    result
+  }
+}
+
+///|
+/// **UNSAFE**: Reads a UInt64 from the FixedArray[Byte] in big-endian byte order.
+///
+/// ⚠️ **Warning: This function is unsafe and can cause undefined behavior!**
+///
+/// # Safety
+/// - **No bounds checking**: This function does not verify that `index + 7 < bytes.length()`
+/// - **Buffer overrun risk**: Reading beyond the array boundary may access invalid memory
+/// - **Responsibility**: Caller must ensure sufficient bytes are available
+#intrinsic("%bytes.unsafe_read_uint64_be")
+#doc(hidden)
+pub fn FixedArray::unsafe_read_uint64_be(
+  bytes : FixedArray[Byte],
+  index : Int,
+) -> UInt64 {
+  for i in 0..<=7; result = (0 : UInt64) {
+    continue result | (bytes.unsafe_get(i + index).to_uint64() << (8 * (7 - i)))
+  } nobreak {
+    result
+  }
+}
+
+///|
+/// **UNSAFE**: Reads a UInt32 from the FixedArray[Byte] in little-endian byte order.
+///
+/// ⚠️ **Warning: This function is unsafe and can cause undefined behavior!**
+///
+/// # Safety
+/// - **No bounds checking**: This function does not verify that `index + 3 < bytes.length()`
+/// - **Buffer overrun risk**: Reading beyond the array boundary may access invalid memory
+/// - **Responsibility**: Caller must ensure sufficient bytes are available
+#intrinsic("%bytes.unsafe_read_uint32_le")
+#doc(hidden)
+pub fn FixedArray::unsafe_read_uint32_le(
+  bytes : FixedArray[Byte],
+  index : Int,
+) -> UInt {
+  for i in 0..<=3; result = (0 : UInt) {
+    continue result | (bytes.unsafe_get(i + index).to_uint() << (8 * i))
+  } nobreak {
+    result
+  }
+}
+
+///|
+/// **UNSAFE**: Reads a UInt32 from the FixedArray[Byte] in big-endian byte order.
+///
+/// ⚠️ **Warning: This function is unsafe and can cause undefined behavior!**
+///
+/// # Safety
+/// - **No bounds checking**: This function does not verify that `index + 3 < bytes.length()`
+/// - **Buffer overrun risk**: Reading beyond the array boundary may access invalid memory
+/// - **Responsibility**: Caller must ensure sufficient bytes are available
+#intrinsic("%bytes.unsafe_read_uint32_be")
+#doc(hidden)
+pub fn FixedArray::unsafe_read_uint32_be(
+  bytes : FixedArray[Byte],
+  index : Int,
+) -> UInt {
+  for i in 0..<=3; result = (0 : UInt) {
+    continue result | (bytes.unsafe_get(i + index).to_uint() << (8 * (3 - i)))
+  } nobreak {
+    result
+  }
+}
+
+///|
+/// **UNSAFE**: Reads a UInt16 from the FixedArray[Byte] in little-endian byte order.
+///
+/// ⚠️ **Warning: This function is unsafe and can cause undefined behavior!**
+///
+/// # Safety
+/// - **No bounds checking**: This function does not verify that `index + 1 < bytes.length()`
+/// - **Buffer overrun risk**: Reading beyond the array boundary may access invalid memory
+/// - **Responsibility**: Caller must ensure sufficient bytes are available
+#intrinsic("%bytes.unsafe_read_uint16_le")
+#doc(hidden)
+pub fn FixedArray::unsafe_read_uint16_le(
+  bytes : FixedArray[Byte],
+  index : Int,
+) -> UInt16 {
+  for i in 0..<=1; result = (0 : UInt16) {
+    continue result | (bytes.unsafe_get(i + index).to_uint16() << (8 * i))
+  } nobreak {
+    result
+  }
+}
+
+///|
+/// **UNSAFE**: Reads a UInt16 from the FixedArray[Byte] in big-endian byte order.
+///
+/// ⚠️ **Warning: This function is unsafe and can cause undefined behavior!**
+///
+/// # Safety
+/// - **No bounds checking**: This function does not verify that `index + 1 < bytes.length()`
+/// - **Buffer overrun risk**: Reading beyond the array boundary may access invalid memory
+/// - **Responsibility**: Caller must ensure sufficient bytes are available
+#intrinsic("%bytes.unsafe_read_uint16_be")
+#doc(hidden)
+pub fn FixedArray::unsafe_read_uint16_be(
+  bytes : FixedArray[Byte],
+  index : Int,
+) -> UInt16 {
+  for i in 0..<=1; result = (0 : UInt16) {
+    continue result | (bytes.unsafe_get(i + index).to_uint16() << (8 * (1 - i)))
+  } nobreak {
+    result
+  }
+}
+
 // #endregion
 // #region Bytes
 
@@ -529,6 +661,78 @@ pub fn BytesView::unsafe_read_uint16_be(
   index : Int,
 ) -> UInt16 {
   bytes.bytes().unsafe_read_uint16_be(bytes.start() + index)
+}
+
+// #endregion
+// #region ArrayView
+// Note: ArrayView[Byte] is treated as immutable here — only read methods are
+// provided (no write counterparts). Each method forwards to the corresponding
+// FixedArray[Byte] read, re-using the `%bytes.unsafe_read_*` intrinsic via
+// a zero-cost reinterpretation of the underlying buffer.
+
+///|
+fn buffer_to_fixedarray(
+  buf : UninitializedArray[Byte],
+) -> FixedArray[Byte] = "%identity"
+
+///|
+/// **UNSAFE**: Reads a UInt64 from the ArrayView[Byte] in little-endian byte order.
+#doc(hidden)
+pub fn ArrayView::unsafe_read_uint64_le(
+  bytes : ArrayView[Byte],
+  index : Int,
+) -> UInt64 {
+  buffer_to_fixedarray(bytes.buf()).unsafe_read_uint64_le(bytes.start() + index)
+}
+
+///|
+/// **UNSAFE**: Reads a UInt64 from the ArrayView[Byte] in big-endian byte order.
+#doc(hidden)
+pub fn ArrayView::unsafe_read_uint64_be(
+  bytes : ArrayView[Byte],
+  index : Int,
+) -> UInt64 {
+  buffer_to_fixedarray(bytes.buf()).unsafe_read_uint64_be(bytes.start() + index)
+}
+
+///|
+/// **UNSAFE**: Reads a UInt32 from the ArrayView[Byte] in little-endian byte order.
+#doc(hidden)
+pub fn ArrayView::unsafe_read_uint32_le(
+  bytes : ArrayView[Byte],
+  index : Int,
+) -> UInt {
+  buffer_to_fixedarray(bytes.buf()).unsafe_read_uint32_le(bytes.start() + index)
+}
+
+///|
+/// **UNSAFE**: Reads a UInt32 from the ArrayView[Byte] in big-endian byte order.
+#doc(hidden)
+pub fn ArrayView::unsafe_read_uint32_be(
+  bytes : ArrayView[Byte],
+  index : Int,
+) -> UInt {
+  buffer_to_fixedarray(bytes.buf()).unsafe_read_uint32_be(bytes.start() + index)
+}
+
+///|
+/// **UNSAFE**: Reads a UInt16 from the ArrayView[Byte] in little-endian byte order.
+#doc(hidden)
+pub fn ArrayView::unsafe_read_uint16_le(
+  bytes : ArrayView[Byte],
+  index : Int,
+) -> UInt16 {
+  buffer_to_fixedarray(bytes.buf()).unsafe_read_uint16_le(bytes.start() + index)
+}
+
+///|
+/// **UNSAFE**: Reads a UInt16 from the ArrayView[Byte] in big-endian byte order.
+#doc(hidden)
+pub fn ArrayView::unsafe_read_uint16_be(
+  bytes : ArrayView[Byte],
+  index : Int,
+) -> UInt16 {
+  buffer_to_fixedarray(bytes.buf()).unsafe_read_uint16_be(bytes.start() + index)
 }
 
 // #endregion

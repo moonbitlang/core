@@ -323,3 +323,100 @@ test "unsafe_read_uint16 and view reads" {
   inspect(view.unsafe_read_uint16_le(6).to_int(), content="2055")
   inspect(view.unsafe_read_uint16_be(6).to_int(), content="1800")
 }
+
+///|
+test "FixedArray[Byte]::unsafe_read_uint64" {
+  let arr : FixedArray[Byte] = [
+    0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
+  ]
+  inspect(arr.unsafe_read_uint64_le(0) == 0x0807060504030201UL, content="true")
+  inspect(arr.unsafe_read_uint64_be(0) == 0x0102030405060708UL, content="true")
+}
+
+///|
+test "FixedArray[Byte]::unsafe_read_uint32" {
+  let arr : FixedArray[Byte] = [0x01, 0x02, 0x03, 0x04, 0x05, 0x06]
+  inspect(arr.unsafe_read_uint32_le(0) == 0x04030201U, content="true")
+  inspect(arr.unsafe_read_uint32_be(0) == 0x01020304U, content="true")
+  inspect(arr.unsafe_read_uint32_le(2) == 0x06050403U, content="true")
+}
+
+///|
+test "FixedArray[Byte]::unsafe_read_uint16" {
+  let arr : FixedArray[Byte] = [0x01, 0x02, 0x03, 0x04]
+  inspect(arr.unsafe_read_uint16_le(0).to_int(), content="513") // 0x0201
+  inspect(arr.unsafe_read_uint16_be(0).to_int(), content="258") // 0x0102
+  inspect(arr.unsafe_read_uint16_le(2).to_int(), content="1027") // 0x0403
+}
+
+///|
+test "ArrayView[Byte]::unsafe_read_uint64 basic functionality" {
+  let arr : Array[Byte] = [
+    0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A,
+  ]
+  let view = arr[0:8]
+  inspect(
+    view.unsafe_read_uint64_le(0) == 0x0807060504030201UL,
+    content="true",
+  )
+  inspect(
+    view.unsafe_read_uint64_be(0) == 0x0102030405060708UL,
+    content="true",
+  )
+}
+
+///|
+test "ArrayView[Byte]::unsafe_read_uint32 basic functionality" {
+  let arr : Array[Byte] = [0x01, 0x02, 0x03, 0x04, 0x05, 0x06]
+  let view = arr[0:6]
+  inspect(view.unsafe_read_uint32_le(0) == 0x04030201U, content="true")
+  inspect(view.unsafe_read_uint32_be(0) == 0x01020304U, content="true")
+  // offset within view
+  inspect(view.unsafe_read_uint32_le(2) == 0x06050403U, content="true")
+  inspect(view.unsafe_read_uint32_be(2) == 0x03040506U, content="true")
+}
+
+///|
+test "ArrayView[Byte]::unsafe_read_uint16 basic functionality" {
+  let arr : Array[Byte] = [0x01, 0x02, 0x03, 0x04]
+  let view = arr[0:4]
+  inspect(view.unsafe_read_uint16_le(0).to_int(), content="513") // 0x0201
+  inspect(view.unsafe_read_uint16_be(0).to_int(), content="258") // 0x0102
+  inspect(view.unsafe_read_uint16_le(2).to_int(), content="1027") // 0x0403
+  inspect(view.unsafe_read_uint16_be(2).to_int(), content="772") // 0x0304
+}
+
+///|
+test "ArrayView[Byte]::unsafe_read with non-zero view start" {
+  // view that starts partway into the underlying array
+  let arr : Array[Byte] = [
+    0x00, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
+  ]
+  let view = arr[2:10]
+  inspect(
+    view.unsafe_read_uint64_le(0) == 0x0807060504030201UL,
+    content="true",
+  )
+  inspect(view.unsafe_read_uint32_be(0) == 0x01020304U, content="true")
+  inspect(view.unsafe_read_uint16_le(6).to_int(), content="2055") // 0x0807
+}
+
+///|
+test "ArrayView[Byte]::unsafe_read edge values" {
+  let zeros : Array[Byte] = [0, 0, 0, 0, 0, 0, 0, 0]
+  let zview = zeros[0:8]
+  inspect(zview.unsafe_read_uint64_le(0) == 0UL, content="true")
+  inspect(zview.unsafe_read_uint64_be(0) == 0UL, content="true")
+  let ones : Array[Byte] = [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]
+  let oview = ones[0:8]
+  inspect(
+    oview.unsafe_read_uint64_le(0) == 0xFFFFFFFFFFFFFFFFUL,
+    content="true",
+  )
+  inspect(
+    oview.unsafe_read_uint64_be(0) == 0xFFFFFFFFFFFFFFFFUL,
+    content="true",
+  )
+  inspect(oview.unsafe_read_uint32_le(0) == 0xFFFFFFFFU, content="true")
+  inspect(oview.unsafe_read_uint16_le(0).to_int(), content="65535")
+}
