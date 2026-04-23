@@ -532,3 +532,76 @@ pub fn BytesView::unsafe_read_uint16_be(
 }
 
 // #endregion
+// #region FixedArray fastpath helpers
+//
+// Private intrinsic-backed reads on FixedArray[Byte], used from
+// `bitstring.mbt` to power the byte-aligned fastpath methods on
+// ArrayView[Byte]. Not exported.
+
+///|
+/// Zero-cost reinterpretation of the backing buffer as `FixedArray[Byte]`, so
+/// the intrinsic-backed `fixedarray_read_*` helpers below can run against the
+/// underlying storage of an `ArrayView[Byte]`.
+fn buffer_to_fixedarray(buf : UninitializedArray[Byte]) -> FixedArray[Byte] = "%identity"
+
+///|
+#intrinsic("%bytes.unsafe_read_uint16_le")
+fn fixedarray_read_uint16_le(bytes : FixedArray[Byte], index : Int) -> UInt16 {
+  for i in 0..<=1; result = (0 : UInt16) {
+    continue result | (bytes.unsafe_get(i + index).to_uint16() << (8 * i))
+  } nobreak {
+    result
+  }
+}
+
+///|
+#intrinsic("%bytes.unsafe_read_uint16_be")
+fn fixedarray_read_uint16_be(bytes : FixedArray[Byte], index : Int) -> UInt16 {
+  for i in 0..<=1; result = (0 : UInt16) {
+    continue result | (bytes.unsafe_get(i + index).to_uint16() << (8 * (1 - i)))
+  } nobreak {
+    result
+  }
+}
+
+///|
+#intrinsic("%bytes.unsafe_read_uint32_le")
+fn fixedarray_read_uint32_le(bytes : FixedArray[Byte], index : Int) -> UInt {
+  for i in 0..<=3; result = (0 : UInt) {
+    continue result | (bytes.unsafe_get(i + index).to_uint() << (8 * i))
+  } nobreak {
+    result
+  }
+}
+
+///|
+#intrinsic("%bytes.unsafe_read_uint32_be")
+fn fixedarray_read_uint32_be(bytes : FixedArray[Byte], index : Int) -> UInt {
+  for i in 0..<=3; result = (0 : UInt) {
+    continue result | (bytes.unsafe_get(i + index).to_uint() << (8 * (3 - i)))
+  } nobreak {
+    result
+  }
+}
+
+///|
+#intrinsic("%bytes.unsafe_read_uint64_le")
+fn fixedarray_read_uint64_le(bytes : FixedArray[Byte], index : Int) -> UInt64 {
+  for i in 0..<=7; result = (0 : UInt64) {
+    continue result | (bytes.unsafe_get(i + index).to_uint64() << (8 * i))
+  } nobreak {
+    result
+  }
+}
+
+///|
+#intrinsic("%bytes.unsafe_read_uint64_be")
+fn fixedarray_read_uint64_be(bytes : FixedArray[Byte], index : Int) -> UInt64 {
+  for i in 0..<=7; result = (0 : UInt64) {
+    continue result | (bytes.unsafe_get(i + index).to_uint64() << (8 * (7 - i)))
+  } nobreak {
+    result
+  }
+}
+
+// #endregion
