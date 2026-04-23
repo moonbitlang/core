@@ -77,12 +77,12 @@ pub fn Command::new(
   groups? : ArrayView[ArgGroup] = [],
 ) -> Command {
   let (parsed_args, arg_error) = collect_args(flags, options, positionals)
-  let groups = groups.to_array()
+  let groups = groups.to_owned()
   let cmd = Command::{
     name: name.to_string(),
     args: parsed_args,
     groups,
-    subcommands: subcommands.to_array(),
+    subcommands: subcommands.to_owned(),
     about: about.map(v => v.to_string()),
     version: version.map(v => v.to_string()),
     disable_help_flag,

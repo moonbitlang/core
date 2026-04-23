@@ -407,14 +407,14 @@ test "arrayview_filter" {
 }
 
 ///|
-test "arrayview_to_array" {
+test "arrayview_to_owned" {
   let view = [1, 2, 3, 4, 5, 6][2:4]
-  let arr = view.to_array()
+  let arr = view.to_owned()
   assert_eq(arr, [3, 4])
   let empty_view = [1, 2, 3][0:0]
-  assert_eq(empty_view.to_array(), [])
+  assert_eq(empty_view.to_owned(), [])
   let single_view = [1, 2, 3][1:2]
-  assert_eq(single_view.to_array(), [2])
+  assert_eq(single_view.to_owned(), [2])
 }
 
 ///|

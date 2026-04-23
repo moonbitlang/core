@@ -343,32 +343,32 @@ test "BytesView::to_fixedarray with different ranges" {
 }
 
 ///|
-test "BytesView::to_array" {
+test "BytesView::to_owned" {
   let bytes = b"hello"
   let view = bytes[1:4]
-  let arr = view.to_array()
+  let arr = view.to_owned()
   inspect(arr, content="[b'\\x65', b'\\x6C', b'\\x6C']")
   inspect(arr.length(), content="3")
 }
 
 ///|
-test "BytesView::to_array with edge cases" {
+test "BytesView::to_owned with edge cases" {
   let bytes = b"testing"
 
   // Full range
   let view1 = bytes[:]
-  let arr1 = view1.to_array()
+  let arr1 = view1.to_owned()
   inspect(arr1.length(), content="7")
   inspect(arr1[0], content="b'\\x74'")
   inspect(arr1[6], content="b'\\x67'")
 
   // Empty view
   let view2 = bytes[3:3]
-  let arr2 = view2.to_array()
+  let arr2 = view2.to_owned()
   inspect(arr2, content="[]")
 
   // Single byte
   let view3 = bytes[2:3]
-  let arr3 = view3.to_array()
+  let arr3 = view3.to_owned()
   inspect(arr3, content="[b'\\x73']")
 }

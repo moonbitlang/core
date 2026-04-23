@@ -1274,17 +1274,18 @@ pub fn[A, B] ArrayView::filter_map(
 }
 
 ///|
-/// Copy the view elements to a new array
+/// Copy the view elements into a newly allocated `Array`.
 ///
 /// # Example
 /// ```mbt check
 /// test {
 ///   let view = [1, 2, 3, 4, 5, 6][2:4]
-///   let arr = view.to_array()
+///   let arr = view.to_owned()
 ///   assert_eq(arr, [3, 4])
 /// }
 /// ```
-pub fn[T] ArrayView::to_array(self : ArrayView[T]) -> Array[T] {
+#alias(to_array, deprecated)
+pub fn[T] ArrayView::to_owned(self : ArrayView[T]) -> Array[T] {
   let len = self.length()
   if len == 0 {
     []

@@ -92,7 +92,7 @@ pub impl Debug for Bytes with to_repr(self) {
 
 ///|
 pub impl Debug for BytesView with to_repr(self) {
-  Repr::opaque_("BytesView", Repr::array(self.to_array().map(x => to_repr(x))))
+  Repr::opaque_("BytesView", Repr::array(self.to_owned().map(x => to_repr(x))))
 }
 
 ///|

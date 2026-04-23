@@ -53,8 +53,8 @@ pub fn ArgGroup::new(
     name: name.to_string(),
     required,
     multiple,
-    args: args.to_array(),
-    requires: requires.to_array(),
-    conflicts_with: conflicts_with.to_array(),
+    args: args.to_owned(),
+    requires: requires.to_owned(),
+    conflicts_with: conflicts_with.to_owned(),
   }
 }

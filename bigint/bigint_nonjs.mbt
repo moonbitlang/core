@@ -2019,5 +2019,5 @@ test "limb length" {
 
 ///|
 fn BigInt::limbs(self : Self) -> Array[UInt] {
-  self.limbs[:self.len].to_array()
+  self.limbs[:self.len].to_owned()
 }

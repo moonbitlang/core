@@ -387,9 +387,10 @@ pub fn[T] MutArrayView::view(
 }
 
 ///|
-/// Copies the elements of the mutable array view into a new array.
-pub fn[T] MutArrayView::to_array(self : MutArrayView[T]) -> Array[T] {
-  self[:].to_array()
+/// Copies the elements of the mutable array view into a newly allocated `Array`.
+#alias(to_array, deprecated)
+pub fn[T] MutArrayView::to_owned(self : MutArrayView[T]) -> Array[T] {
+  self[:].to_owned()
 }
 
 // Copyright 2026 International Digital Economy Academy

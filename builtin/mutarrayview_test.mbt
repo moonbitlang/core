@@ -63,7 +63,7 @@ test "mutarrayview_helpers" {
   let view = arr.mut_view(start=1, end=4)
   inspect(view.is_empty(), content="false")
   inspect(view.start_offset(), content="1")
-  inspect(view.to_array(), content="[2, 3, 4]")
+  inspect(view.to_owned(), content="[2, 3, 4]")
   let values = []
   view.iter().each(v => values.push(v))
   inspect(values, content="[2, 3, 4]")

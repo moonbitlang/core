@@ -110,7 +110,7 @@ fn split_long(arg : String) -> (StringView, String?) {
       Some(view) => view
       None => parts[0]
     }
-    let value = parts[1:].to_array().join("=")
+    let value = parts[1:].to_owned().join("=")
     (name, Some(value))
   }
 }

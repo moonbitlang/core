@@ -614,18 +614,19 @@ pub fn Bytes::to_array(self : Bytes) -> Array[Byte] {
 }
 
 ///|
-/// Copy this bytes view into a new mutable array.
+/// Copy this bytes view into a newly allocated `Array[Byte]`.
 ///
 /// Example:
 ///
 /// ```mbt check
 /// test {
-///   let arr = b"ab"[:].to_array()
+///   let arr = b"ab"[:].to_owned()
 ///   inspect(arr.length(), content="2")
 ///   inspect(arr[0], content="b'\\x61'")
 /// }
 /// ```
-pub fn BytesView::to_array(self : BytesView) -> Array[Byte] {
+#alias(to_array, deprecated)
+pub fn BytesView::to_owned(self : BytesView) -> Array[Byte] {
   let len = self.length()
   let rv = Array::make(len, b'0')
   for i in 0..<len {
