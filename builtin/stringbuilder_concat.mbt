@@ -74,7 +74,7 @@ pub impl Logger for StringBuilder with write_view(
   self : StringBuilder,
   str : StringView,
 ) -> Unit {
-  self.val += str.to_string()
+  self.val += str.to_owned()
 }
 
 ///|
