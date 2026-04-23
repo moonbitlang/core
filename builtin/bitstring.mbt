@@ -1034,3 +1034,384 @@ pub fn Bytes::unsafe_extract_bytesview(
 ) -> BytesView {
   bs[:].unsafe_extract_bytesview(offset, len)
 }
+
+//--------------------------------
+// Byte-aligned fastpaths
+//
+// Fixed-size reads at a byte offset, used when the bit offset is statically
+// known to be a multiple of 8. These take `byte_offset` (in bytes), not bits.
+//
+// Provided for `ArrayView[Byte]` and `BytesView`.
+//--------------------------------
+
+///|
+/// Zero-cost reinterpretation of the backing buffer as `FixedArray[Byte]`, so
+/// the intrinsic-backed `fixedarray_read_*` helpers below can run against the
+/// underlying storage of an `ArrayView[Byte]`.
+fn buffer_to_fixedarray(buf : UninitializedArray[Byte]) -> FixedArray[Byte] = "%identity"
+
+///|
+#intrinsic("%bytes.unsafe_read_uint16_le")
+fn fixedarray_read_uint16_le(bytes : FixedArray[Byte], index : Int) -> UInt16 {
+  for i in 0..<=1; result = (0 : UInt16) {
+    continue result | (bytes.unsafe_get(i + index).to_uint16() << (8 * i))
+  } nobreak {
+    result
+  }
+}
+
+///|
+#intrinsic("%bytes.unsafe_read_uint16_be")
+fn fixedarray_read_uint16_be(bytes : FixedArray[Byte], index : Int) -> UInt16 {
+  for i in 0..<=1; result = (0 : UInt16) {
+    continue result | (bytes.unsafe_get(i + index).to_uint16() << (8 * (1 - i)))
+  } nobreak {
+    result
+  }
+}
+
+///|
+#intrinsic("%bytes.unsafe_read_uint32_le")
+fn fixedarray_read_uint32_le(bytes : FixedArray[Byte], index : Int) -> UInt {
+  for i in 0..<=3; result = (0 : UInt) {
+    continue result | (bytes.unsafe_get(i + index).to_uint() << (8 * i))
+  } nobreak {
+    result
+  }
+}
+
+///|
+#intrinsic("%bytes.unsafe_read_uint32_be")
+fn fixedarray_read_uint32_be(bytes : FixedArray[Byte], index : Int) -> UInt {
+  for i in 0..<=3; result = (0 : UInt) {
+    continue result | (bytes.unsafe_get(i + index).to_uint() << (8 * (3 - i)))
+  } nobreak {
+    result
+  }
+}
+
+///|
+#intrinsic("%bytes.unsafe_read_uint64_le")
+fn fixedarray_read_uint64_le(bytes : FixedArray[Byte], index : Int) -> UInt64 {
+  for i in 0..<=7; result = (0 : UInt64) {
+    continue result | (bytes.unsafe_get(i + index).to_uint64() << (8 * i))
+  } nobreak {
+    result
+  }
+}
+
+///|
+#intrinsic("%bytes.unsafe_read_uint64_be")
+fn fixedarray_read_uint64_be(bytes : FixedArray[Byte], index : Int) -> UInt64 {
+  for i in 0..<=7; result = (0 : UInt64) {
+    continue result | (bytes.unsafe_get(i + index).to_uint64() << (8 * (7 - i)))
+  } nobreak {
+    result
+  }
+}
+
+//--------------------------------
+// ArrayView[Byte] fastpaths
+//--------------------------------
+
+///|
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+pub fn ArrayView::unsafe_extract_byte_aligned(
+  bs : ArrayView[Byte],
+  byte_offset : Int,
+) -> UInt {
+  bs.unsafe_get(byte_offset).to_uint()
+}
+
+///|
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+pub fn ArrayView::unsafe_extract_byte_signed_aligned(
+  bs : ArrayView[Byte],
+  byte_offset : Int,
+) -> Int {
+  bs.unsafe_get(byte_offset).to_uint().extend_sign(8)
+}
+
+///|
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+pub fn ArrayView::unsafe_extract_uint16_le_aligned(
+  bs : ArrayView[Byte],
+  byte_offset : Int,
+) -> UInt16 {
+  fixedarray_read_uint16_le(
+    buffer_to_fixedarray(bs.buf()),
+    bs.start() + byte_offset,
+  )
+}
+
+///|
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+pub fn ArrayView::unsafe_extract_uint16_be_aligned(
+  bs : ArrayView[Byte],
+  byte_offset : Int,
+) -> UInt16 {
+  fixedarray_read_uint16_be(
+    buffer_to_fixedarray(bs.buf()),
+    bs.start() + byte_offset,
+  )
+}
+
+///|
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+pub fn ArrayView::unsafe_extract_int16_le_aligned(
+  bs : ArrayView[Byte],
+  byte_offset : Int,
+) -> Int {
+  bs.unsafe_extract_uint16_le_aligned(byte_offset).to_uint().extend_sign(16)
+}
+
+///|
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+pub fn ArrayView::unsafe_extract_int16_be_aligned(
+  bs : ArrayView[Byte],
+  byte_offset : Int,
+) -> Int {
+  bs.unsafe_extract_uint16_be_aligned(byte_offset).to_uint().extend_sign(16)
+}
+
+///|
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+pub fn ArrayView::unsafe_extract_uint_le_aligned(
+  bs : ArrayView[Byte],
+  byte_offset : Int,
+) -> UInt {
+  fixedarray_read_uint32_le(
+    buffer_to_fixedarray(bs.buf()),
+    bs.start() + byte_offset,
+  )
+}
+
+///|
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+pub fn ArrayView::unsafe_extract_uint_be_aligned(
+  bs : ArrayView[Byte],
+  byte_offset : Int,
+) -> UInt {
+  fixedarray_read_uint32_be(
+    buffer_to_fixedarray(bs.buf()),
+    bs.start() + byte_offset,
+  )
+}
+
+///|
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+pub fn ArrayView::unsafe_extract_int_le_aligned(
+  bs : ArrayView[Byte],
+  byte_offset : Int,
+) -> Int {
+  bs.unsafe_extract_uint_le_aligned(byte_offset).reinterpret_as_int()
+}
+
+///|
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+pub fn ArrayView::unsafe_extract_int_be_aligned(
+  bs : ArrayView[Byte],
+  byte_offset : Int,
+) -> Int {
+  bs.unsafe_extract_uint_be_aligned(byte_offset).reinterpret_as_int()
+}
+
+///|
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+pub fn ArrayView::unsafe_extract_uint64_le_aligned(
+  bs : ArrayView[Byte],
+  byte_offset : Int,
+) -> UInt64 {
+  fixedarray_read_uint64_le(
+    buffer_to_fixedarray(bs.buf()),
+    bs.start() + byte_offset,
+  )
+}
+
+///|
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+pub fn ArrayView::unsafe_extract_uint64_be_aligned(
+  bs : ArrayView[Byte],
+  byte_offset : Int,
+) -> UInt64 {
+  fixedarray_read_uint64_be(
+    buffer_to_fixedarray(bs.buf()),
+    bs.start() + byte_offset,
+  )
+}
+
+///|
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+pub fn ArrayView::unsafe_extract_int64_le_aligned(
+  bs : ArrayView[Byte],
+  byte_offset : Int,
+) -> Int64 {
+  bs.unsafe_extract_uint64_le_aligned(byte_offset).reinterpret_as_int64()
+}
+
+///|
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+pub fn ArrayView::unsafe_extract_int64_be_aligned(
+  bs : ArrayView[Byte],
+  byte_offset : Int,
+) -> Int64 {
+  bs.unsafe_extract_uint64_be_aligned(byte_offset).reinterpret_as_int64()
+}
+
+//--------------------------------
+// BytesView fastpaths
+//--------------------------------
+
+///|
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+pub fn BytesView::unsafe_extract_byte_aligned(
+  bs : BytesView,
+  byte_offset : Int,
+) -> UInt {
+  bs.unsafe_get(byte_offset).to_uint()
+}
+
+///|
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+pub fn BytesView::unsafe_extract_byte_signed_aligned(
+  bs : BytesView,
+  byte_offset : Int,
+) -> Int {
+  bs.unsafe_get(byte_offset).to_uint().extend_sign(8)
+}
+
+///|
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+pub fn BytesView::unsafe_extract_uint16_le_aligned(
+  bs : BytesView,
+  byte_offset : Int,
+) -> UInt16 {
+  bs.unsafe_read_uint16_le(byte_offset)
+}
+
+///|
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+pub fn BytesView::unsafe_extract_uint16_be_aligned(
+  bs : BytesView,
+  byte_offset : Int,
+) -> UInt16 {
+  bs.unsafe_read_uint16_be(byte_offset)
+}
+
+///|
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+pub fn BytesView::unsafe_extract_int16_le_aligned(
+  bs : BytesView,
+  byte_offset : Int,
+) -> Int {
+  bs.unsafe_read_uint16_le(byte_offset).to_uint().extend_sign(16)
+}
+
+///|
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+pub fn BytesView::unsafe_extract_int16_be_aligned(
+  bs : BytesView,
+  byte_offset : Int,
+) -> Int {
+  bs.unsafe_read_uint16_be(byte_offset).to_uint().extend_sign(16)
+}
+
+///|
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+pub fn BytesView::unsafe_extract_uint_le_aligned(
+  bs : BytesView,
+  byte_offset : Int,
+) -> UInt {
+  bs.unsafe_read_uint32_le(byte_offset)
+}
+
+///|
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+pub fn BytesView::unsafe_extract_uint_be_aligned(
+  bs : BytesView,
+  byte_offset : Int,
+) -> UInt {
+  bs.unsafe_read_uint32_be(byte_offset)
+}
+
+///|
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+pub fn BytesView::unsafe_extract_int_le_aligned(
+  bs : BytesView,
+  byte_offset : Int,
+) -> Int {
+  bs.unsafe_read_uint32_le(byte_offset).reinterpret_as_int()
+}
+
+///|
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+pub fn BytesView::unsafe_extract_int_be_aligned(
+  bs : BytesView,
+  byte_offset : Int,
+) -> Int {
+  bs.unsafe_read_uint32_be(byte_offset).reinterpret_as_int()
+}
+
+///|
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+pub fn BytesView::unsafe_extract_uint64_le_aligned(
+  bs : BytesView,
+  byte_offset : Int,
+) -> UInt64 {
+  bs.unsafe_read_uint64_le(byte_offset)
+}
+
+///|
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+pub fn BytesView::unsafe_extract_uint64_be_aligned(
+  bs : BytesView,
+  byte_offset : Int,
+) -> UInt64 {
+  bs.unsafe_read_uint64_be(byte_offset)
+}
+
+///|
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+pub fn BytesView::unsafe_extract_int64_le_aligned(
+  bs : BytesView,
+  byte_offset : Int,
+) -> Int64 {
+  bs.unsafe_read_uint64_le(byte_offset).reinterpret_as_int64()
+}
+
+///|
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+pub fn BytesView::unsafe_extract_int64_be_aligned(
+  bs : BytesView,
+  byte_offset : Int,
+) -> Int64 {
+  bs.unsafe_read_uint64_be(byte_offset).reinterpret_as_int64()
+}

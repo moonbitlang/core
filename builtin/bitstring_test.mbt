@@ -672,3 +672,168 @@ test "extract int64 signed" {
     )
   }
 }
+
+///|
+/// Aligned fastpath cross-checks: call each fastpath at byte offset b and
+/// compare against the generic extract_* invoked at bit offset b*8. Run for
+/// ArrayView[Byte] and BytesView using the same underlying data.
+test "aligned fastpath cross-check" {
+  let bytes = b"\x01\x23\x45\x67\x89\xab\xcd\xef\x12\x34\x56\x78\x9a\xbc\xde\xf0"
+  let arr : Array[Byte] = bytes.to_array()
+  let bview = bytes[:]
+  let aview = arr[:]
+  // byte (8 bits)
+  for b in 0..<bytes.length() {
+    assert_eq(
+      aview.unsafe_extract_byte_aligned(b),
+      aview.unsafe_extract_byte(b * 8, 8),
+    )
+    assert_eq(
+      bview.unsafe_extract_byte_aligned(b),
+      bview.unsafe_extract_byte(b * 8, 8),
+    )
+    assert_eq(
+      aview.unsafe_extract_byte_signed_aligned(b),
+      aview.unsafe_extract_byte_signed(b * 8, 8),
+    )
+    assert_eq(
+      bview.unsafe_extract_byte_signed_aligned(b),
+      bview.unsafe_extract_byte_signed(b * 8, 8),
+    )
+  }
+  // uint16 (2 bytes)
+  for b in 0..<=(bytes.length() - 2) {
+    assert_eq(
+      aview.unsafe_extract_uint16_le_aligned(b).to_uint(),
+      aview.unsafe_extract_uint_le(b * 8, 16),
+    )
+    assert_eq(
+      aview.unsafe_extract_uint16_be_aligned(b).to_uint(),
+      aview.unsafe_extract_uint_be(b * 8, 16),
+    )
+    assert_eq(
+      bview.unsafe_extract_uint16_le_aligned(b).to_uint(),
+      bview.unsafe_extract_uint_le(b * 8, 16),
+    )
+    assert_eq(
+      bview.unsafe_extract_uint16_be_aligned(b).to_uint(),
+      bview.unsafe_extract_uint_be(b * 8, 16),
+    )
+    assert_eq(
+      aview.unsafe_extract_int16_le_aligned(b),
+      aview.unsafe_extract_int_le(b * 8, 16),
+    )
+    assert_eq(
+      aview.unsafe_extract_int16_be_aligned(b),
+      aview.unsafe_extract_int_be(b * 8, 16),
+    )
+    assert_eq(
+      bview.unsafe_extract_int16_le_aligned(b),
+      bview.unsafe_extract_int_le(b * 8, 16),
+    )
+    assert_eq(
+      bview.unsafe_extract_int16_be_aligned(b),
+      bview.unsafe_extract_int_be(b * 8, 16),
+    )
+  }
+  // uint32 (4 bytes)
+  for b in 0..<=(bytes.length() - 4) {
+    assert_eq(
+      aview.unsafe_extract_uint_le_aligned(b),
+      aview.unsafe_extract_uint_le(b * 8, 32),
+    )
+    assert_eq(
+      aview.unsafe_extract_uint_be_aligned(b),
+      aview.unsafe_extract_uint_be(b * 8, 32),
+    )
+    assert_eq(
+      bview.unsafe_extract_uint_le_aligned(b),
+      bview.unsafe_extract_uint_le(b * 8, 32),
+    )
+    assert_eq(
+      bview.unsafe_extract_uint_be_aligned(b),
+      bview.unsafe_extract_uint_be(b * 8, 32),
+    )
+    assert_eq(
+      aview.unsafe_extract_int_le_aligned(b),
+      aview.unsafe_extract_int_le(b * 8, 32),
+    )
+    assert_eq(
+      aview.unsafe_extract_int_be_aligned(b),
+      aview.unsafe_extract_int_be(b * 8, 32),
+    )
+    assert_eq(
+      bview.unsafe_extract_int_le_aligned(b),
+      bview.unsafe_extract_int_le(b * 8, 32),
+    )
+    assert_eq(
+      bview.unsafe_extract_int_be_aligned(b),
+      bview.unsafe_extract_int_be(b * 8, 32),
+    )
+  }
+  // uint64 (8 bytes)
+  for b in 0..<=(bytes.length() - 8) {
+    assert_eq(
+      aview.unsafe_extract_uint64_le_aligned(b),
+      aview.unsafe_extract_uint64_le(b * 8, 64),
+    )
+    assert_eq(
+      aview.unsafe_extract_uint64_be_aligned(b),
+      aview.unsafe_extract_uint64_be(b * 8, 64),
+    )
+    assert_eq(
+      bview.unsafe_extract_uint64_le_aligned(b),
+      bview.unsafe_extract_uint64_le(b * 8, 64),
+    )
+    assert_eq(
+      bview.unsafe_extract_uint64_be_aligned(b),
+      bview.unsafe_extract_uint64_be(b * 8, 64),
+    )
+    assert_eq(
+      aview.unsafe_extract_int64_le_aligned(b),
+      aview.unsafe_extract_int64_le(b * 8, 64),
+    )
+    assert_eq(
+      aview.unsafe_extract_int64_be_aligned(b),
+      aview.unsafe_extract_int64_be(b * 8, 64),
+    )
+    assert_eq(
+      bview.unsafe_extract_int64_le_aligned(b),
+      bview.unsafe_extract_int64_le(b * 8, 64),
+    )
+    assert_eq(
+      bview.unsafe_extract_int64_be_aligned(b),
+      bview.unsafe_extract_int64_be(b * 8, 64),
+    )
+  }
+}
+
+///|
+/// Spot-check a handful of fastpaths against hand-computed values so we catch
+/// accidental endianness flips that a cross-check between two equivalent
+/// implementations would miss.
+test "aligned fastpath known values" {
+  let bview = b"\x01\x02\x03\x04\x05\x06\x07\x08"[:]
+  let aview = b"\x01\x02\x03\x04\x05\x06\x07\x08".to_array()[:]
+  inspect(bview.unsafe_extract_uint_le_aligned(0), content="67305985") // 0x04030201
+  inspect(bview.unsafe_extract_uint_be_aligned(0), content="16909060") // 0x01020304
+  inspect(aview.unsafe_extract_uint_le_aligned(0), content="67305985")
+  inspect(aview.unsafe_extract_uint_be_aligned(0), content="16909060")
+  inspect(bview.unsafe_extract_uint16_le_aligned(0).to_int(), content="513") // 0x0201
+  inspect(bview.unsafe_extract_uint16_be_aligned(0).to_int(), content="258") // 0x0102
+  inspect(aview.unsafe_extract_uint16_le_aligned(0).to_int(), content="513")
+  inspect(aview.unsafe_extract_uint16_be_aligned(0).to_int(), content="258")
+  inspect(
+    bview.unsafe_extract_uint64_le_aligned(0) == 0x0807060504030201UL,
+    content="true",
+  )
+  inspect(
+    aview.unsafe_extract_uint64_be_aligned(0) == 0x0102030405060708UL,
+    content="true",
+  )
+  // signed: 0xFF → -1 (sign-extended)
+  let sview = b"\xFF\xFF\xFF\xFF"[:]
+  inspect(sview.unsafe_extract_byte_signed_aligned(0), content="-1")
+  inspect(sview.unsafe_extract_int16_le_aligned(0), content="-1")
+  inspect(sview.unsafe_extract_int_le_aligned(0), content="-1")
+}
