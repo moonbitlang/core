@@ -819,10 +819,10 @@ test "aligned fastpath known values" {
   inspect(bview.unsafe_extract_uint_be_aligned(0), content="16909060") // 0x01020304
   inspect(aview.unsafe_extract_uint_le_aligned(0), content="67305985")
   inspect(aview.unsafe_extract_uint_be_aligned(0), content="16909060")
-  inspect(bview.unsafe_extract_uint16_le_aligned(0).to_int(), content="513") // 0x0201
-  inspect(bview.unsafe_extract_uint16_be_aligned(0).to_int(), content="258") // 0x0102
-  inspect(aview.unsafe_extract_uint16_le_aligned(0).to_int(), content="513")
-  inspect(aview.unsafe_extract_uint16_be_aligned(0).to_int(), content="258")
+  inspect(bview.unsafe_extract_uint16_le_aligned(0).reinterpret_as_int(), content="513") // 0x0201
+  inspect(bview.unsafe_extract_uint16_be_aligned(0).reinterpret_as_int(), content="258") // 0x0102
+  inspect(aview.unsafe_extract_uint16_le_aligned(0).reinterpret_as_int(), content="513")
+  inspect(aview.unsafe_extract_uint16_be_aligned(0).reinterpret_as_int(), content="258")
   inspect(
     bview.unsafe_extract_uint64_le_aligned(0) == 0x0807060504030201UL,
     content="true",
