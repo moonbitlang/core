@@ -283,7 +283,7 @@ pub fn[X] Iter::intersperse(Self[X], X) -> Self[X]
 pub fn[X] Iter::iter(Self[X]) -> Self[X]
 #alias(iterator2)
 pub fn[X] Iter::iter2(Self[X]) -> Iter2[Int, X]
-pub fn Iter::join(Self[String], String) -> String
+pub fn Iter::join(Self[String], StringView) -> String
 #deprecated
 pub fn[X] Iter::just_run(Self[X], (X) -> IterResult) -> Unit
 pub fn[X] Iter::last(Self[X]) -> X?
