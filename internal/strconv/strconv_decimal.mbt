@@ -115,12 +115,30 @@ fn parse_decimal_from_view(str : StringView) -> Decimal raise {
         rest => rest
       }
       guard rest is ['0'..='9', ..] else { syntax_err() }
+      // Once the exponent forces overflow or underflow, exact digits no longer
+      // matter. Clamping here keeps huge exponents from overflowing Int.
+      let exp_limit = if exp_sign > 0 {
+        if d.decimal_point < 311 {
+          311 - d.decimal_point
+        } else {
+          0
+        }
+      } else if d.decimal_point > -331 {
+        d.decimal_point + 331
+      } else {
+        0
+      }
       let mut exp = 0
       let rest = for rest = rest {
         match rest {
           ['_', .. rest] => continue rest
           ['0'..='9' as digit, .. rest] => {
-            exp = exp * 10 + (digit.to_int() - '0')
+            if exp < exp_limit {
+              exp = exp * 10 + (digit.to_int() - '0')
+              if exp > exp_limit {
+                exp = exp_limit
+              }
+            }
             continue rest
           }
           rest => break rest
