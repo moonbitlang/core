@@ -152,39 +152,38 @@ fn compact_lines(lines : Array[String]) -> Array[String] {
       // Special-case bracket/brace blocks: "[ ... ]" and "{ ... }"
       // produced by `bracket_seq_lines`.
       if (first == "[" && last == "]") || (first == "{" && last == "}") {
-        let parts : Array[String] = []
+        let parts : Array[StringView] = []
         for m in middle {
-          let t = m.trim().to_owned()
+          let t = m.trim()
           if t != "" {
             parts.push(t)
           }
         }
         let joined0 = parts.join(" ")
-        let joined = match joined0.strip_suffix(",") {
-          Some(sv) => sv.to_owned()
-          None => joined0
+        let joined : StringView = match joined0.strip_suffix(",") {
+          Some(sv) => sv
+          None => joined0[:]
         }
 
         // Match expected style:
         // - arrays: [a, b]
         // - records/maps: { field: value, field: value }
         if first == "{" {
-          let inner0 = joined
-          let inner1 = match inner0.strip_prefix(" ") {
-            Some(sv) => sv.to_owned()
-            None => inner0
+          let s1 = match joined.strip_prefix(" ") {
+            Some(sv) => sv
+            None => joined
           }
-          let inner = match inner1.strip_suffix(" ") {
-            Some(sv) => sv.to_owned()
-            None => inner1
+          let inner = match s1.strip_suffix(" ") {
+            Some(sv) => sv
+            None => s1
           }
           if inner == "" {
             ["{}"]
           } else {
-            ["{ " + inner + " }"]
+            ["{ \{inner} }"]
           }
         } else {
-          ["[" + joined + "]"]
+          ["[\{joined}]"]
         }
         // Special-case parenthesized call-like blocks produced by `comma_seq_lines`:
         //
@@ -201,19 +200,19 @@ fn compact_lines(lines : Array[String]) -> Array[String] {
         // Enum(a, b)
         // ```
       } else if first.has_suffix("(") && last == ")" {
-        let parts : Array[String] = []
+        let parts : Array[StringView] = []
         for m in middle {
           let t = m.trim()
           if t != "" {
-            parts.push(t.to_owned())
+            parts.push(t)
           }
         }
         let joined0 = parts.join(" ")
-        let joined = match joined0.strip_suffix(",") {
-          Some(sv) => sv.to_owned()
-          None => joined0
+        let joined : StringView = match joined0.strip_suffix(",") {
+          Some(sv) => sv
+          None => joined0[:]
         }
-        [first + joined + last]
+        ["\{first}\{joined}\{last}"]
       } else {
         let parts : Array[StringView] = [first]
         for m in middle {
@@ -286,11 +285,11 @@ fn bracket_seq_lines(
           [] => [open + close]
           [x] =>
             if open == "{" && close == "}" {
-              let inner = x.trim().to_owned()
+              let inner = x.trim()
               if inner == "" {
                 ["{}"]
               } else {
-                ["{ " + inner + " }"]
+                ["{ \{inner} }"]
               }
             } else {
               [open + x + close]
