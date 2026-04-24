@@ -169,7 +169,7 @@ extern "js" fn hex2(b : Byte) -> String =
   #|(x) => x.toString(16).padStart(2, '0')
 
 ///|
-pub fn BigInt::from_octets(octets : Bytes, signum? : Int = 1) -> BigInt {
+pub fn BigInt::from_octets(octets : BytesView, signum? : Int = 1) -> BigInt {
   if signum < 0 {
     return -1N * BigInt::from_octets(octets, signum=1)
   }

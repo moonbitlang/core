@@ -1433,7 +1433,7 @@ pub fn BigInt::pow(self : BigInt, exp : BigInt, modulus? : BigInt) -> BigInt {
 ///   inspect(negative, content="-66051")
 /// }
 /// ```
-pub fn BigInt::from_octets(input : Bytes, signum? : Int = 1) -> BigInt {
+pub fn BigInt::from_octets(input : BytesView, signum? : Int = 1) -> BigInt {
   let len = input.length() // number of bytes
   if signum == 0 {
     return zero
