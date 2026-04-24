@@ -77,10 +77,10 @@ fn raise_context_help(
 }
 
 ///|
-fn default_argv() -> Array[String] {
+fn default_argv() -> ArrayView[String] {
   let args = @env.args()
   if args.length() > 1 {
-    args[1:].to_owned()
+    args[1:]
   } else {
     []
   }
@@ -546,7 +546,7 @@ fn parse_command_impl(
       if positional_arg_found {
         raise_subcommand_conflict("help")
       }
-      let rest = argv[i + 1:].to_owned()
+      let rest = argv[i + 1:]
       let (target, target_globals, target_path) = resolve_help_target(
         cmd, rest, builtin_help_short, builtin_help_long, inherited_globals, command_path,
       )
@@ -557,7 +557,7 @@ fn parse_command_impl(
       if positional_arg_found {
         raise_subcommand_conflict(sub.name)
       }
-      let rest = argv[i + 1:].to_owned()
+      let rest = argv[i + 1:]
       let sub_path = if command_path == "" {
         sub.name
       } else {
