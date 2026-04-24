@@ -704,19 +704,19 @@ test "aligned fastpath cross-check" {
   // uint16 (2 bytes)
   for b in 0..<=(bytes.length() - 2) {
     assert_eq(
-      aview.unsafe_extract_uint16_le_aligned(b).to_uint(),
+      aview.unsafe_extract_uint16_le_aligned(b),
       aview.unsafe_extract_uint_le(b * 8, 16),
     )
     assert_eq(
-      aview.unsafe_extract_uint16_be_aligned(b).to_uint(),
+      aview.unsafe_extract_uint16_be_aligned(b),
       aview.unsafe_extract_uint_be(b * 8, 16),
     )
     assert_eq(
-      bview.unsafe_extract_uint16_le_aligned(b).to_uint(),
+      bview.unsafe_extract_uint16_le_aligned(b),
       bview.unsafe_extract_uint_le(b * 8, 16),
     )
     assert_eq(
-      bview.unsafe_extract_uint16_be_aligned(b).to_uint(),
+      bview.unsafe_extract_uint16_be_aligned(b),
       bview.unsafe_extract_uint_be(b * 8, 16),
     )
     assert_eq(

@@ -1077,11 +1077,11 @@ pub fn ArrayView::unsafe_extract_byte_signed_aligned(
 pub fn ArrayView::unsafe_extract_uint16_le_aligned(
   bs : ArrayView[Byte],
   byte_offset : Int,
-) -> UInt16 {
+) -> UInt {
   fixedarray_read_uint16_le(
     buffer_to_fixedarray(bs.buf()),
     bs.start() + byte_offset,
-  )
+  ).to_uint()
 }
 
 ///|
@@ -1090,11 +1090,11 @@ pub fn ArrayView::unsafe_extract_uint16_le_aligned(
 pub fn ArrayView::unsafe_extract_uint16_be_aligned(
   bs : ArrayView[Byte],
   byte_offset : Int,
-) -> UInt16 {
+) -> UInt {
   fixedarray_read_uint16_be(
     buffer_to_fixedarray(bs.buf()),
     bs.start() + byte_offset,
-  )
+  ).to_uint()
 }
 
 ///|
@@ -1104,7 +1104,7 @@ pub fn ArrayView::unsafe_extract_int16_le_aligned(
   bs : ArrayView[Byte],
   byte_offset : Int,
 ) -> Int {
-  bs.unsafe_extract_uint16_le_aligned(byte_offset).to_uint().extend_sign(16)
+  bs.unsafe_extract_uint16_le_aligned(byte_offset).extend_sign(16)
 }
 
 ///|
@@ -1114,7 +1114,7 @@ pub fn ArrayView::unsafe_extract_int16_be_aligned(
   bs : ArrayView[Byte],
   byte_offset : Int,
 ) -> Int {
-  bs.unsafe_extract_uint16_be_aligned(byte_offset).to_uint().extend_sign(16)
+  bs.unsafe_extract_uint16_be_aligned(byte_offset).extend_sign(16)
 }
 
 ///|
@@ -1239,8 +1239,8 @@ pub fn BytesView::unsafe_extract_byte_signed_aligned(
 pub fn BytesView::unsafe_extract_uint16_le_aligned(
   bs : BytesView,
   byte_offset : Int,
-) -> UInt16 {
-  bs.unsafe_read_uint16_le(byte_offset)
+) -> UInt {
+  bs.unsafe_read_uint16_le(byte_offset).to_uint()
 }
 
 ///|
@@ -1249,8 +1249,8 @@ pub fn BytesView::unsafe_extract_uint16_le_aligned(
 pub fn BytesView::unsafe_extract_uint16_be_aligned(
   bs : BytesView,
   byte_offset : Int,
-) -> UInt16 {
-  bs.unsafe_read_uint16_be(byte_offset)
+) -> UInt {
+  bs.unsafe_read_uint16_be(byte_offset).to_uint()
 }
 
 ///|
@@ -1260,7 +1260,7 @@ pub fn BytesView::unsafe_extract_int16_le_aligned(
   bs : BytesView,
   byte_offset : Int,
 ) -> Int {
-  bs.unsafe_read_uint16_le(byte_offset).to_uint().extend_sign(16)
+  bs.unsafe_extract_uint16_le_aligned(byte_offset).extend_sign(16)
 }
 
 ///|
@@ -1270,7 +1270,7 @@ pub fn BytesView::unsafe_extract_int16_be_aligned(
   bs : BytesView,
   byte_offset : Int,
 ) -> Int {
-  bs.unsafe_read_uint16_be(byte_offset).to_uint().extend_sign(16)
+  bs.unsafe_extract_uint16_be_aligned(byte_offset).extend_sign(16)
 }
 
 ///|
