@@ -353,7 +353,7 @@ pub fn Hasher::combine_byte(self : Hasher, value : Byte) -> Unit {
 ///   inspect(hasher.finalize(), content="-686861102")
 /// }
 /// ```
-pub fn Hasher::combine_bytes(self : Hasher, value : Bytes) -> Unit {
+pub fn Hasher::combine_bytes(self : Hasher, value : BytesView) -> Unit {
   let (cur, remain) = for cur = 0, remain = value.length(); remain >= 4; {
     self.consume4(endian32(value, cur))
     continue cur + 4, remain - 4
@@ -384,7 +384,7 @@ pub fn Hasher::combine_bytes(self : Hasher, value : Bytes) -> Unit {
 ///   inspect(hasher.finalize(), content="-655549713")
 /// }
 /// ```
-pub fn Hasher::combine_string(self : Hasher, value : String) -> Unit {
+pub fn Hasher::combine_string(self : Hasher, value : StringView) -> Unit {
   for i in 0..<value.length() {
     self.combine_uint(value.unsafe_get(i).to_int().reinterpret_as_uint())
   }
@@ -463,7 +463,7 @@ fn rotl(x : UInt, r : Int) -> UInt {
 }
 
 ///|
-fn endian32(input : Bytes, cur : Int) -> UInt {
+fn endian32(input : BytesView, cur : Int) -> UInt {
   input[cur + 0].to_uint() |
   (
     (input[cur + 1].to_uint() << 8) |
@@ -502,10 +502,7 @@ pub impl Hash for StringView with hash_combine(
   self : StringView,
   hasher : Hasher,
 ) -> Unit {
-  let str = self.str()
-  for i in self.start()..<self.end() {
-    hasher.combine_uint(str.unsafe_get(i).to_int().reinterpret_as_uint())
-  }
+  hasher.combine_string(self)
 }
 
 ///|
