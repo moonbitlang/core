@@ -8,7 +8,7 @@ import {
 // Values
 pub fn from_array(ArrayView[Byte]) -> Buffer
 
-pub fn from_bytes(Bytes) -> Buffer
+pub fn from_bytes(BytesView) -> Buffer
 
 pub fn from_iter(Iter[Byte]) -> Buffer
 
@@ -28,7 +28,7 @@ pub fn Buffer::to_bytes(Self) -> Bytes
 pub fn Buffer::to_repr(Self) -> @debug.Repr
 pub fn Buffer::view(Self) -> ArrayView[Byte]
 pub fn Buffer::write_byte(Self, Byte) -> Unit
-pub fn Buffer::write_bytes(Self, Bytes) -> Unit
+pub fn Buffer::write_bytes(Self, BytesView) -> Unit
 pub fn Buffer::write_bytesview(Self, BytesView) -> Unit
 pub fn Buffer::write_char_utf16be(Self, Char) -> Unit
 pub fn Buffer::write_char_utf16le(Self, Char) -> Unit

@@ -133,12 +133,12 @@ pub fn new(size_hint? : Int = 0) -> Buffer {
 
 ///|
 /// Create a buffer from a bytes.
-pub fn from_bytes(bytes : Bytes) -> Buffer {
+pub fn from_bytes(bytes : BytesView) -> Buffer {
   let val_len = bytes.length()
   let buf = new(size_hint=val_len)
   // inline write_bytes, skip grow_if_necessary check
   // SAFETY: known bytes size
-  buf.data.blit_from_bytes(0, bytes, 0, val_len)
+  buf.data.blit_from_bytes(0, bytes.data(), bytes.start_offset(), val_len)
   buf.len = val_len
   buf
 }
@@ -737,11 +737,8 @@ pub fn Buffer::write_object(self : Buffer, value : &Show) -> Unit {
 ///   )
 /// }
 /// ```
-pub fn Buffer::write_bytes(self : Buffer, value : Bytes) -> Unit {
-  let val_len = value.length()
-  self.grow_if_necessary(self.len + val_len)
-  self.data.blit_from_bytes(self.len, value, 0, val_len)
-  self.len += val_len
+pub fn Buffer::write_bytes(self : Buffer, value : BytesView) -> Unit {
+  self.write_bytesview(value)
 }
 
 ///|
