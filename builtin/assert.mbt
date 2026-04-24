@@ -122,9 +122,9 @@ pub fn[T : Eq + Show] assert_not_eq(
 /// ```
 #callsite(autofill(loc))
 #coverage.skip
-pub fn assert_true(x : Bool, msg? : String, loc~ : SourceLoc) -> Unit raise {
+pub fn assert_true(x : Bool, msg? : StringView, loc~ : SourceLoc) -> Unit raise {
   if !x {
-    let fail_msg = match msg {
+    let fail_msg : StringView = match msg {
       Some(msg) => msg
       None => "`\{x}` is not true"
     }
@@ -155,9 +155,13 @@ pub fn assert_true(x : Bool, msg? : String, loc~ : SourceLoc) -> Unit raise {
 /// ```
 #callsite(autofill(loc))
 #coverage.skip
-pub fn assert_false(x : Bool, msg? : String, loc~ : SourceLoc) -> Unit raise {
+pub fn assert_false(
+  x : Bool,
+  msg? : StringView,
+  loc~ : SourceLoc,
+) -> Unit raise {
   if x {
-    let fail_msg = match msg {
+    let fail_msg : StringView = match msg {
       Some(msg) => msg
       None => "`\{x}` is not false"
     }

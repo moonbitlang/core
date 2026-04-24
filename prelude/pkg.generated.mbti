@@ -18,13 +18,13 @@ pub fn[T] abort(String) -> T
 pub fn[T : @builtin.Eq + @builtin.Show] assert_eq(T, T, msg? : String, loc~ : @builtin.SourceLoc) -> Unit raise
 
 #callsite(autofill(loc))
-pub fn assert_false(Bool, msg? : String, loc~ : @builtin.SourceLoc) -> Unit raise
+pub fn assert_false(Bool, msg? : StringView, loc~ : @builtin.SourceLoc) -> Unit raise
 
 #callsite(autofill(loc))
 pub fn[T : @builtin.Eq + @builtin.Show] assert_not_eq(T, T, msg? : String, loc~ : @builtin.SourceLoc) -> Unit raise
 
 #callsite(autofill(loc))
-pub fn assert_true(Bool, msg? : String, loc~ : @builtin.SourceLoc) -> Unit raise
+pub fn assert_true(Bool, msg? : StringView, loc~ : @builtin.SourceLoc) -> Unit raise
 
 pub fn[T : @debug.Debug] debug(T) -> Unit
 
@@ -38,7 +38,7 @@ pub fn debug_inspect(&@debug.Debug, content? : String, loc~ : @builtin.SourceLoc
 pub fn[T : @debug.Debug] dump(T, name? : String, loc~ : @builtin.SourceLoc) -> T
 
 #callsite(autofill(loc))
-pub fn[T] fail(String, loc~ : @builtin.SourceLoc) -> T raise @builtin.Failure
+pub fn[T] fail(StringView, loc~ : @builtin.SourceLoc) -> T raise @builtin.Failure
 
 pub fn[T] ignore(T) -> Unit
 

@@ -54,6 +54,6 @@ pub(all) suberror Failure {
 /// Throws an error of type `Failure` with a message that includes both the
 /// source location and the provided error message.
 #callsite(autofill(loc))
-pub fn[T] fail(msg : String, loc~ : SourceLoc) -> T raise Failure {
+pub fn[T] fail(msg : StringView, loc~ : SourceLoc) -> T raise Failure {
   raise Failure("\{loc} FAILED: \{msg}")
 }

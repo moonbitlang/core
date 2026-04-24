@@ -154,7 +154,7 @@ pub fn[T : Debug] assert_not_same_object(
 ///  
 /// Produces an error message similar to @builtin.fail.
 #callsite(autofill(loc))
-pub fn[T] fail(msg : String, loc~ : SourceLoc) -> T raise {
+pub fn[T] fail(msg : StringView, loc~ : SourceLoc) -> T raise {
   @builtin.fail(msg, loc~)
 }
 

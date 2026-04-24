@@ -19,7 +19,7 @@ pub fn[T : @debug.Debug] assert_not_same_object(T, T, loc~ : SourceLoc) -> Unit 
 pub fn[T : @debug.Debug] assert_same_object(T, T, loc~ : SourceLoc) -> Unit raise
 
 #callsite(autofill(loc))
-pub fn[T] fail(String, loc~ : SourceLoc) -> T raise
+pub fn[T] fail(StringView, loc~ : SourceLoc) -> T raise
 
 #alias(is_not, deprecated)
 #deprecated
