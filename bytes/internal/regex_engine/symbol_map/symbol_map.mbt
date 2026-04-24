@@ -64,10 +64,10 @@ fn SymbolMap::finalize_dense(
     let symbol = repr.length()
     repr.push(lo)
     for c in lo..<=hi {
-      table[c] = symbol
+      table[c - lb] = symbol
     }
   })
-  (DenseTable(table), ReadOnlyArray::from_array(repr))
+  (DenseTable(lb, table), ReadOnlyArray::from_array(repr))
 }
 
 ///|
