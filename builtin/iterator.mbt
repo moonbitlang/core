@@ -422,12 +422,12 @@ pub fn[X] Iter::flatten(self : Iter[Iter[X]]) -> Iter[X] {
 ///|
 /// Collects the elements of the iterator into a string.
 /// The old iterator `self` must not be used again after calling `join`.
-pub fn Iter::join(self : Iter[String], sep : String) -> String {
+pub fn Iter::join(self : Iter[String], sep : StringView) -> String {
   let result = StringBuilder::new()
   if self.next() is Some(x) {
     result.write_string(x)
     while self.next() is Some(x) {
-      result.write_string(sep)
+      result.write_view(sep)
       result.write_string(x)
     }
   }
