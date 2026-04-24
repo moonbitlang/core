@@ -85,6 +85,18 @@ test "panic negative limit in shuffle" {
 }
 
 ///|
+test "panic negative limit in int" {
+  let r = @random.Rand::new()
+  ignore(r.int(limit=-1))
+}
+
+///|
+test "panic negative limit in int64" {
+  let r = @random.Rand::new()
+  ignore(r.int64(limit=-1L))
+}
+
+///|
 test "uint64 modulo bias handling with large limit" {
   let r = @random.Rand::new()
   let limit = 12345678901234567890UL // Large non-power-of-2 number

@@ -76,6 +76,9 @@ test "next" {
 /// * `limit` - The upper bound (exclusive) of the random number to be generated (Optional).
 ///             When limit is 0, the range is [0, 2^31).
 pub fn Rand::int(self : Rand, limit? : Int = 0) -> Int {
+  if limit < 0 {
+    abort("Rand::int: invalid argument limit")
+  }
   if limit == 0 {
     // Range [0, 2^31)
     (self.next() >> 33).to_int()
@@ -92,6 +95,9 @@ pub fn Rand::int(self : Rand, limit? : Int = 0) -> Int {
 /// * `limit` - The upper bound (exclusive) of the random number to be generated (Optional).
 ///            When limit is 0, the range is [0, 2^63).
 pub fn Rand::int64(self : Rand, limit? : Int64 = 0) -> Int64 {
+  if limit < 0 {
+    abort("Rand::int64: invalid argument limit")
+  }
   if limit == 0 {
     // range [0, 2^63)
     // Create a mask that keeps the lower 63 bits
