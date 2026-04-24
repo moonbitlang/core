@@ -1,0 +1,23 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/range"
+
+// Values
+pub fn[T : Step] range(T, T, step? : T, inclusive? : Bool) -> Iter[T]
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+pub(open) trait Step : Add + Compare + Default {
+  one() -> Self
+}
+pub impl Step for Int
+pub impl Step for Int64
+pub impl Step for UInt
+pub impl Step for UInt64
+pub impl Step for Float
+pub impl Step for Double
+
