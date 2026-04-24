@@ -1655,8 +1655,17 @@ pub fn[A] Deque::to_array(self : Deque[A]) -> Array[A] {
 /// }
 /// ```
 pub fn Deque::join(self : Deque[String], separator : StringView) -> String {
-  let str = separator.to_owned()
-  self.iter().join(str)
+  let buf = StringBuilder::new()
+  let mut first = true
+  for s in self {
+    if first {
+      first = false
+    } else {
+      buf.write_view(separator)
+    }
+    buf.write_string(s)
+  }
+  buf.to_string()
 }
 
 ///|
