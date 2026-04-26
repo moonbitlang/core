@@ -1,6 +1,10 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/set"
 
+import {
+  "moonbitlang/core/debug",
+}
+
 // Values
 
 // Errors
@@ -50,6 +54,7 @@ pub impl[K : Hash + Eq] Eq for Set[K]
 pub impl[K : Show] Show for Set[K]
 pub impl[K : Hash + Eq] Sub for Set[K]
 pub impl[X : ToJson] ToJson for Set[X]
+pub impl[K : @debug.Debug] @debug.Debug for Set[K]
 
 // Type aliases
 
