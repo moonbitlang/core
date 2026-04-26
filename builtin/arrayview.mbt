@@ -1033,8 +1033,11 @@ pub fn[T : Eq] ArrayView::ends_with(
 /// ```mbt check
 /// test {
 ///   let v = [1, 2, 3, 4, 5][:]
-///   inspect(v.strip_prefix([1, 2][:]), content="Some([3, 4, 5])")
-///   inspect(v.strip_prefix([2, 3][:]), content="None")
+///   debug_inspect(
+///     v.strip_prefix([1, 2][:]),
+///     content="Some(<ArrayView: [3, 4, 5]>)",
+///   )
+///   debug_inspect(v.strip_prefix([2, 3][:]), content="None")
 /// }
 /// ```
 pub fn[T : Eq] ArrayView::strip_prefix(
@@ -1058,8 +1061,11 @@ pub fn[T : Eq] ArrayView::strip_prefix(
 /// ```mbt check
 /// test {
 ///   let v = [1, 2, 3, 4, 5][:]
-///   inspect(v.strip_suffix([4, 5][:]), content="Some([1, 2, 3])")
-///   inspect(v.strip_suffix([3, 4][:]), content="None")
+///   debug_inspect(
+///     v.strip_suffix([4, 5][:]),
+///     content="Some(<ArrayView: [1, 2, 3]>)",
+///   )
+///   debug_inspect(v.strip_suffix([3, 4][:]), content="None")
 /// }
 /// ```
 pub fn[T : Eq] ArrayView::strip_suffix(

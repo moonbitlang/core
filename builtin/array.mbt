@@ -906,43 +906,25 @@ pub fn[T : Eq] Array::ends_with(self : Array[T], suffix : Array[T]) -> Bool {
 }
 
 ///|
-/// Removes a prefix from an array if it exists.
+/// Strip a prefix from the array.
 ///
-/// Parameters:
+/// If the array starts with the prefix, return a view of the array after the
+/// prefix, otherwise return None. The returned view shares the original
+/// backing array — no allocation.
 ///
-/// * `array` : The array to remove the prefix from.
-/// * `prefix` : The array to be removed from the beginning of `array`.
-///
-/// Returns `Some(array)` containing the remaining elements after removing the
-/// prefix if the array starts with the prefix, or `None` if the array doesn't
-/// start with the prefix.
-///
-/// Example:
-///
+/// # Example
 /// ```mbt check
 /// test {
-///   let arr = [1, 2, 3, 4, 5]
-///   debug_inspect(arr.strip_prefix([1, 2]), content="Some([3, 4, 5])")
-///   debug_inspect(arr.strip_prefix([2, 3]), content="None")
+///   let v = [1, 2, 3, 4, 5]
+///   let v2 = v.strip_prefix([1, 2][:])
+///   debug_inspect(v2, content="Some(<ArrayView: [3, 4, 5]>)")
 /// }
 /// ```
 pub fn[T : Eq] Array::strip_prefix(
   self : Array[T],
-  prefix : Array[T],
-) -> Array[T]? {
-  if self.starts_with(prefix) {
-    let v = Array::make_uninit(self.length() - prefix.length())
-    UninitializedArray::unsafe_blit(
-      v.buffer(),
-      0,
-      self.buffer(),
-      prefix.length(),
-      self.length() - prefix.length(),
-    )
-    Some(v)
-  } else {
-    None
-  }
+  prefix : ArrayView[T],
+) -> ArrayView[T]? {
+  self[:].strip_prefix(prefix)
 }
 
 ///|
@@ -957,7 +939,7 @@ pub fn[T : Eq] Array::strip_prefix(
 /// test {
 ///   let v = [3, 4, 5]
 ///   let v2 = v.strip_suffix([5][:])
-///   inspect(v2, content="Some([3, 4])")
+///   debug_inspect(v2, content="Some(<ArrayView: [3, 4]>)")
 /// }
 /// ```
 pub fn[T : Eq] Array::strip_suffix(

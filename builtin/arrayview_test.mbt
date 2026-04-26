@@ -918,39 +918,41 @@ test "ArrayView::windows shares backing" {
 ///|
 test "ArrayView::strip_prefix basic" {
   let v = [1, 2, 3, 4, 5][:]
-  inspect(v.strip_prefix([1, 2][:]), content="Some([3, 4, 5])")
-  inspect(v.strip_prefix([2, 3][:]), content="None")
+  debug_inspect(
+    v.strip_prefix([1, 2][:]),
+    content="Some(<ArrayView: [3, 4, 5]>)",
+  )
+  debug_inspect(v.strip_prefix([2, 3][:]), content="None")
 }
 
 ///|
 test "ArrayView::strip_prefix empty prefix" {
   let v = [1, 2, 3][:]
-  inspect(v.strip_prefix([][:]), content="Some([1, 2, 3])")
+  debug_inspect(v.strip_prefix([][:]), content="Some(<ArrayView: [1, 2, 3]>)")
 }
 
 ///|
 test "ArrayView::strip_prefix full match" {
   let v = [1, 2, 3][:]
-  inspect(v.strip_prefix([1, 2, 3][:]), content="Some([])")
+  debug_inspect(v.strip_prefix([1, 2, 3][:]), content="Some(<ArrayView: []>)")
 }
 
 ///|
 test "ArrayView::strip_prefix too long" {
   let v = [1, 2][:]
-  inspect(v.strip_prefix([1, 2, 3][:]), content="None")
+  debug_inspect(v.strip_prefix([1, 2, 3][:]), content="None")
 }
 
 ///|
 test "ArrayView::strip_prefix on sliced view" {
   let v = [0, 1, 2, 3, 4][1:]
-  inspect(v.strip_prefix([1, 2][:]), content="Some([3, 4])")
+  debug_inspect(v.strip_prefix([1, 2][:]), content="Some(<ArrayView: [3, 4]>)")
 }
 
 ///|
 test "ArrayView::strip_prefix shares backing" {
   let arr = [1, 2, 3, 4, 5]
   guard arr[:].strip_prefix([1, 2][:]) is Some(rest)
-  // Mutating the source propagates to the stripped view.
   arr[2] = 99
   inspect(rest, content="[99, 4, 5]")
 }
@@ -958,30 +960,33 @@ test "ArrayView::strip_prefix shares backing" {
 ///|
 test "ArrayView::strip_suffix basic" {
   let v = [1, 2, 3, 4, 5][:]
-  inspect(v.strip_suffix([4, 5][:]), content="Some([1, 2, 3])")
-  inspect(v.strip_suffix([3, 4][:]), content="None")
+  debug_inspect(
+    v.strip_suffix([4, 5][:]),
+    content="Some(<ArrayView: [1, 2, 3]>)",
+  )
+  debug_inspect(v.strip_suffix([3, 4][:]), content="None")
 }
 
 ///|
 test "ArrayView::strip_suffix empty suffix" {
   let v = [1, 2, 3][:]
-  inspect(v.strip_suffix([][:]), content="Some([1, 2, 3])")
+  debug_inspect(v.strip_suffix([][:]), content="Some(<ArrayView: [1, 2, 3]>)")
 }
 
 ///|
 test "ArrayView::strip_suffix full match" {
   let v = [1, 2, 3][:]
-  inspect(v.strip_suffix([1, 2, 3][:]), content="Some([])")
+  debug_inspect(v.strip_suffix([1, 2, 3][:]), content="Some(<ArrayView: []>)")
 }
 
 ///|
 test "ArrayView::strip_suffix too long" {
   let v = [1, 2][:]
-  inspect(v.strip_suffix([0, 1, 2][:]), content="None")
+  debug_inspect(v.strip_suffix([0, 1, 2][:]), content="None")
 }
 
 ///|
 test "ArrayView::strip_suffix on sliced view" {
   let v = [0, 1, 2, 3, 4][:4]
-  inspect(v.strip_suffix([2, 3][:]), content="Some([0, 1])")
+  debug_inspect(v.strip_suffix([2, 3][:]), content="Some(<ArrayView: [0, 1]>)")
 }
