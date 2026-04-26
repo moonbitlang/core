@@ -453,17 +453,14 @@ pub fn[T : Compare] ReadOnlyArray::is_sorted(self : ReadOnlyArray[T]) -> Bool {
 /// ```mbt check
 /// test {
 ///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
-///   let prefix : ReadOnlyArray[Int] = [1, 2]
-///   inspect(arr.starts_with(prefix), content="true")
+///   inspect(arr.starts_with([1, 2][:]), content="true")
 /// }
 /// ```
 pub fn[T : Eq] ReadOnlyArray::starts_with(
   self : ReadOnlyArray[T],
-  prefix : ReadOnlyArray[T],
+  prefix : ArrayView[T],
 ) -> Bool {
-  self
-  .unsafe_reinterpret_to_fixed_array()
-  .starts_with(prefix.unsafe_reinterpret_to_fixed_array())
+  self[:].starts_with(prefix)
 }
 
 ///|
@@ -473,17 +470,14 @@ pub fn[T : Eq] ReadOnlyArray::starts_with(
 /// ```mbt check
 /// test {
 ///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
-///   let suffix : ReadOnlyArray[Int] = [4, 5]
-///   inspect(arr.ends_with(suffix), content="true")
+///   inspect(arr.ends_with([4, 5][:]), content="true")
 /// }
 /// ```
 pub fn[T : Eq] ReadOnlyArray::ends_with(
   self : ReadOnlyArray[T],
-  suffix : ReadOnlyArray[T],
+  suffix : ArrayView[T],
 ) -> Bool {
-  self
-  .unsafe_reinterpret_to_fixed_array()
-  .ends_with(suffix.unsafe_reinterpret_to_fixed_array())
+  self[:].ends_with(suffix)
 }
 
 ///|

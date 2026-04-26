@@ -834,7 +834,7 @@ pub fn[T : Eq] FixedArray::contains(Self[T], T) -> Bool
 pub fn[T] FixedArray::copy(Self[T]) -> Self[T]
 pub fn[T] FixedArray::each(Self[T], (T) -> Unit raise?) -> Unit raise?
 pub fn[T] FixedArray::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
-pub fn[T : Eq] FixedArray::ends_with(Self[T], Self[T]) -> Bool
+pub fn[T : Eq] FixedArray::ends_with(Self[T], ArrayView[T]) -> Bool
 pub fn[T] FixedArray::fill(Self[T], T, start? : Int, end? : Int) -> Unit
 pub fn[A, B] FixedArray::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 pub fn[A, B] FixedArray::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
@@ -875,7 +875,7 @@ pub fn[T : Compare] FixedArray::sort(Self[T]) -> Unit
 pub fn[T] FixedArray::sort_by(Self[T], (T, T) -> Int) -> Unit
 pub fn[T, K : Compare] FixedArray::sort_by_key(Self[T], (T) -> K) -> Unit
 pub fn[T : Compare] FixedArray::stable_sort(Self[T]) -> Unit
-pub fn[T : Eq] FixedArray::starts_with(Self[T], Self[T]) -> Bool
+pub fn[T : Eq] FixedArray::starts_with(Self[T], ArrayView[T]) -> Bool
 pub fn[T] FixedArray::swap(Self[T], Int, Int) -> Unit
 pub fn[A] FixedArray::unsafe_blit(Self[A], Int, Self[A], Int, Int) -> Unit
 pub fn FixedArray::unsafe_write_uint16_be(Self[Byte], Int, UInt16) -> Unit
@@ -899,7 +899,7 @@ pub fn[T] ReadOnlyArray::binary_search_by(Self[T], (T) -> Int raise?) -> Result[
 pub fn[T : Eq] ReadOnlyArray::contains(Self[T], T) -> Bool
 pub fn[T] ReadOnlyArray::each(Self[T], (T) -> Unit raise?) -> Unit raise?
 pub fn[T] ReadOnlyArray::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
-pub fn[T : Eq] ReadOnlyArray::ends_with(Self[T], Self[T]) -> Bool
+pub fn[T : Eq] ReadOnlyArray::ends_with(Self[T], ArrayView[T]) -> Bool
 pub fn[A, B] ReadOnlyArray::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 pub fn[A, B] ReadOnlyArray::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
 pub fn[T] ReadOnlyArray::from_array(ArrayView[T]) -> Self[T]
@@ -924,7 +924,7 @@ pub fn[T] ReadOnlyArray::rev_eachi(Self[T], (Int, T) -> Unit raise?) -> Unit rai
 pub fn[A, B] ReadOnlyArray::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 pub fn[A, B] ReadOnlyArray::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
 pub fn[T : Eq] ReadOnlyArray::search(Self[T], T) -> Int?
-pub fn[T : Eq] ReadOnlyArray::starts_with(Self[T], Self[T]) -> Bool
+pub fn[T : Eq] ReadOnlyArray::starts_with(Self[T], ArrayView[T]) -> Bool
 #alias("_[_:_]")
 #alias(sub, deprecated)
 pub fn[T] ReadOnlyArray::view(Self[T], start? : Int, end? : Int) -> ArrayView[T]

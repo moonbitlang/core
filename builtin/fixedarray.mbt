@@ -1088,7 +1088,7 @@ test "contains" {
 /// ```
 pub fn[T : Eq] FixedArray::starts_with(
   self : FixedArray[T],
-  prefix : FixedArray[T],
+  prefix : ArrayView[T],
 ) -> Bool {
   self[:].starts_with(prefix)
 }
@@ -1130,7 +1130,7 @@ test "starts_with" {
 /// ```
 pub fn[T : Eq] FixedArray::ends_with(
   self : FixedArray[T],
-  suffix : FixedArray[T],
+  suffix : ArrayView[T],
 ) -> Bool {
   self[:].ends_with(suffix)
 }
