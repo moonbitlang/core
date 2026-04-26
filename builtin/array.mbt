@@ -874,7 +874,10 @@ pub fn[T : Eq] Array::contains(self : Array[T], value : T) -> Bool {
 ///   inspect(arr.starts_with([1, 2, 3, 4, 5, 6]), content="false")
 /// }
 /// ```
-pub fn[T : Eq] Array::starts_with(self : Array[T], prefix : Array[T]) -> Bool {
+pub fn[T : Eq] Array::starts_with(
+  self : Array[T],
+  prefix : ArrayView[T],
+) -> Bool {
   self[:].starts_with(prefix)
 }
 
@@ -901,7 +904,7 @@ pub fn[T : Eq] Array::starts_with(self : Array[T], prefix : Array[T]) -> Bool {
 ///   inspect(arr.ends_with([1]), content="false")
 /// }
 /// ```
-pub fn[T : Eq] Array::ends_with(self : Array[T], suffix : Array[T]) -> Bool {
+pub fn[T : Eq] Array::ends_with(self : Array[T], suffix : ArrayView[T]) -> Bool {
   self[:].ends_with(suffix)
 }
 

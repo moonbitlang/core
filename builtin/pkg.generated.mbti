@@ -91,7 +91,7 @@ pub fn[T : Eq] Array::dedup(Self[T]) -> Unit
 pub fn[T] Array::drain(Self[T], Int, Int) -> Self[T]
 pub fn[T] Array::each(Self[T], (T) -> Unit raise?) -> Unit raise?
 pub fn[T] Array::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
-pub fn[T : Eq] Array::ends_with(Self[T], Self[T]) -> Bool
+pub fn[T : Eq] Array::ends_with(Self[T], ArrayView[T]) -> Bool
 pub fn[T] Array::extract_if(Self[T], (T) -> Bool) -> Self[T]
 pub fn[A] Array::fill(Self[A], A, start? : Int, end? : Int) -> Unit
 pub fn[T] Array::filter(Self[T], (T) -> Bool raise?) -> Self[T] raise?
@@ -159,7 +159,7 @@ pub fn[T : Compare] Array::sort(Self[T]) -> Unit
 pub fn[T] Array::sort_by(Self[T], (T, T) -> Int) -> Unit
 pub fn[T, K : Compare] Array::sort_by_key(Self[T], (T) -> K) -> Unit
 pub fn[T] Array::split(Self[T], (T) -> Bool raise?) -> Self[Self[T]] raise?
-pub fn[T : Eq] Array::starts_with(Self[T], Self[T]) -> Bool
+pub fn[T : Eq] Array::starts_with(Self[T], ArrayView[T]) -> Bool
 pub fn[T : Eq] Array::strip_prefix(Self[T], ArrayView[T]) -> ArrayView[T]?
 pub fn[T : Eq] Array::strip_suffix(Self[T], ArrayView[T]) -> ArrayView[T]?
 pub fn[T] Array::suffixes(Self[T], include_empty? : Bool) -> Iter[ArrayView[T]]
