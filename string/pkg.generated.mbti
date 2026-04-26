@@ -31,8 +31,9 @@ pub fn MatchResult::named_group(Self, String) -> StringView?
 
 pub struct Regex {
   // private fields
+
+  fn new(StringView) -> Regex raise
 }
-pub fn Regex::Regex(StringView) -> Self raise
 pub fn Regex::capture(Self, String) -> Self
 pub fn Regex::execute(Self, StringView, last_index? : Int) -> MatchResult?
 pub fn Regex::find(Self, StringView) -> Iter[MatchResult]
