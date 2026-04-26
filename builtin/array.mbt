@@ -948,28 +948,23 @@ pub fn[T : Eq] Array::strip_prefix(
 ///|
 /// Strip a suffix from the array.
 ///
-/// If the array ends with the suffix, return the array before the suffix, otherwise return None.
+/// If the array ends with the suffix, return a view of the array before the
+/// suffix, otherwise return None. The returned view shares the original
+/// backing array — no allocation.
 ///
 /// # Example
 /// ```mbt check
 /// test {
 ///   let v = [3, 4, 5]
-///   let v2 = v.strip_suffix([5])
-///   assert_eq(v2, Some([3, 4]))
+///   let v2 = v.strip_suffix([5][:])
+///   inspect(v2, content="Some([3, 4])")
 /// }
 /// ```
 pub fn[T : Eq] Array::strip_suffix(
   self : Array[T],
-  suffix : Array[T],
-) -> Array[T]? {
-  if self.ends_with(suffix) {
-    let v = Array::make_uninit(self.length() - suffix.length())
-    let len = self.length() - suffix.length()
-    UninitializedArray::unsafe_blit(v.buffer(), 0, self.buffer(), 0, len)
-    Some(v)
-  } else {
-    None
-  }
+  suffix : ArrayView[T],
+) -> ArrayView[T]? {
+  self[:].strip_suffix(suffix)
 }
 
 ///|

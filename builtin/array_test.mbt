@@ -399,9 +399,9 @@ test "array_strip_prefix" {
 ///|
 test "array_strip_suffix" {
   let arr = [1, 2, 3]
-  assert_eq(arr.strip_suffix([2, 3]), Some([1]))
-  assert_eq(arr.strip_suffix([1, 2, 3]), Some([]))
-  assert_eq(arr.strip_suffix([1, 2]), None)
+  inspect(arr.strip_suffix([2, 3][:]), content="Some([1])")
+  inspect(arr.strip_suffix([1, 2, 3][:]), content="Some([])")
+  inspect(arr.strip_suffix([1, 2][:]), content="None")
 }
 
 ///|

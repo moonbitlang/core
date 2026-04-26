@@ -161,7 +161,7 @@ pub fn[T, K : Compare] Array::sort_by_key(Self[T], (T) -> K) -> Unit
 pub fn[T] Array::split(Self[T], (T) -> Bool raise?) -> Self[Self[T]] raise?
 pub fn[T : Eq] Array::starts_with(Self[T], Self[T]) -> Bool
 pub fn[T : Eq] Array::strip_prefix(Self[T], Self[T]) -> Self[T]?
-pub fn[T : Eq] Array::strip_suffix(Self[T], Self[T]) -> Self[T]?
+pub fn[T : Eq] Array::strip_suffix(Self[T], ArrayView[T]) -> ArrayView[T]?
 pub fn[T] Array::suffixes(Self[T], include_empty? : Bool) -> Iter[ArrayView[T]]
 pub fn[T] Array::swap(Self[T], Int, Int) -> Unit
 pub fn[A] Array::truncate(Self[A], Int) -> Unit
