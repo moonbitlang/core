@@ -34,7 +34,6 @@ pub struct Regex {
 
   fn new(StringView) -> Regex raise
 }
-pub impl @debug.Debug for Regex
 pub fn Regex::capture(Self, String) -> Self
 pub fn Regex::execute(Self, StringView, last_index? : Int) -> MatchResult?
 pub fn Regex::find(Self, StringView) -> Iter[MatchResult]
@@ -46,6 +45,7 @@ pub fn Regex::string(StringView) -> Self
 pub fn Regex::unsafe_from_string(StringView) -> Self
 pub impl Add for Regex
 pub impl BitOr for Regex
+pub impl @debug.Debug for Regex
 
 // Type aliases
 #deprecated
