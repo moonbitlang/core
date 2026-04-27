@@ -25,7 +25,7 @@ pub(all) enum FlagAction {
   Count
   Help
   Version
-} derive(Eq, Show)
+} derive(Eq, Show, @debug.Debug)
 
 ///|
 /// Behavior for option args.
@@ -36,7 +36,7 @@ pub(all) enum FlagAction {
 pub(all) enum OptionAction {
   Set
   Append
-} derive(Eq, Show)
+} derive(Eq, Show, @debug.Debug)
 
 ///|
 /// Unified argument model used by the parser internals.
@@ -52,7 +52,7 @@ priv struct Arg {
   hidden : Bool
   info : ArgInfo
   multiple : Bool
-}
+} derive(@debug.Debug)
 
 ///|
 priv enum ArgInfo {
@@ -74,7 +74,7 @@ priv enum ArgInfo {
     default_values~ : Array[String]?,
     allow_hyphen_values~ : Bool
   )
-}
+} derive(@debug.Debug)
 
 ///|
 /// Declarative flag constructor wrapper.
@@ -96,7 +96,7 @@ pub struct FlagArg {
     negatable? : Bool,
     hidden? : Bool,
   ) -> FlagArg
-}
+} derive(@debug.Debug)
 
 ///|
 /// Create a flag argument.
@@ -166,7 +166,7 @@ pub struct OptionArg {
     global? : Bool,
     hidden? : Bool,
   ) -> OptionArg
-}
+} derive(@debug.Debug)
 
 ///|
 /// Create an option argument.
@@ -238,7 +238,7 @@ pub struct PositionArg {
     global? : Bool,
     hidden? : Bool,
   ) -> PositionArg
-}
+} derive(@debug.Debug)
 
 ///|
 /// Create a positional argument.

@@ -46,7 +46,7 @@ pub struct Command {
     hidden? : Bool,
     groups? : ArrayView[ArgGroup],
   ) -> Command
-}
+} derive(@debug.Debug)
 
 ///|
 /// Create a declarative command specification.

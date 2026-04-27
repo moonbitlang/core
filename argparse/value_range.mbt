@@ -21,7 +21,7 @@ pub struct ValueRange {
 
   /// Create a value-count range.
   fn new(lower? : Int, upper? : Int) -> ValueRange
-} derive(Eq, Show)
+} derive(Eq, Show, @debug.Debug)
 
 ///|
 /// Exact single-value range (`1..1`).

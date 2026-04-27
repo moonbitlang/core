@@ -3072,3 +3072,11 @@ test "positional range 0..1 renders as single optional value" {
     ),
   )
 }
+
+///|
+test "Debug for argparse enums" {
+  @debug.debug_inspect(@argparse.FlagAction::SetTrue, content="SetTrue")
+  @debug.debug_inspect(@argparse.FlagAction::Count, content="Count")
+  @debug.debug_inspect(@argparse.OptionAction::Set, content="Set")
+  @debug.debug_inspect(@argparse.OptionAction::Append, content="Append")
+}

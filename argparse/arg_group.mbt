@@ -31,7 +31,7 @@ pub struct ArgGroup {
     requires? : ArrayView[String],
     conflicts_with? : ArrayView[String],
   ) -> ArgGroup
-}
+} derive(@debug.Debug)
 
 ///|
 /// Create an argument group.
