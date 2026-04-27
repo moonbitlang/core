@@ -411,36 +411,6 @@ pub impl Mod for Float with mod(self : Float, other : Float) -> Float {
 
 ///|
 /// Creates an iterator that iterates over a range of Float with default step 1.0 .
-///
-/// # Arguments
-///
-/// * `start` - The starting value of the range (inclusive).
-/// * `end` - The ending value of the range (exclusive).
-/// * `inclusive` - Whether the ending value is inclusive (default false).
-///
-/// # Returns
-///
-/// Returns an iterator that iterates over the range of Float from `start` to `end - 1`.
-#deprecated("Use `..<` in for loop or `until` method instead")
-#coverage.skip
-pub fn Float::upto(
-  self : Float,
-  end : Float,
-  inclusive? : Bool = false,
-) -> Iter[Float] {
-  let mut i = self
-  Iter::new(() => {
-    guard i < end || (inclusive && i == end) else { None }
-    let result = i
-    if i != end {
-      i += 1
-    }
-    Some(result)
-  })
-}
-
-///|
-/// Creates an iterator that iterates over a range of Float with default step 1.0 .
 /// To grow the range downward, set the `step` parameter to a negative value.
 ///
 /// # Arguments
