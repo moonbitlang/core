@@ -80,23 +80,43 @@ priv enum ArgInfo {
 /// Declarative flag constructor wrapper.
 pub struct FlagArg {
   priv arg : Arg
-
-  /// Create a flag argument.
-  fn new(
-    name : StringView,
-    short? : Char,
-    long? : StringView,
-    about? : StringView,
-    action? : FlagAction,
-    env? : StringView,
-    requires? : ArrayView[String],
-    conflicts_with? : ArrayView[String],
-    required? : Bool,
-    global? : Bool,
-    negatable? : Bool,
-    hidden? : Bool,
-  ) -> FlagArg
 } derive(@debug.Debug)
+
+///|
+/// Create a flag argument.
+pub fn FlagArg::FlagArg(
+  name : StringView,
+  short? : Char,
+  long? : StringView = name,
+  about? : StringView,
+  action? : FlagAction = SetTrue,
+  env? : StringView,
+  requires? : ArrayView[String] = [],
+  conflicts_with? : ArrayView[String] = [],
+  required? : Bool = false,
+  global? : Bool = false,
+  negatable? : Bool = false,
+  hidden? : Bool = false,
+) -> FlagArg {
+  let name = name.to_owned()
+  let long = if long == "" { None } else { Some(long.to_owned()) }
+  let about = about.map(v => v.to_owned())
+  let env = env.map(v => v.to_owned())
+  {
+    arg: {
+      name,
+      about,
+      env,
+      global,
+      hidden,
+      requires: requires.to_owned(),
+      conflicts_with: conflicts_with.to_owned(),
+      required,
+      info: FlagInfo(short~, long~, action~, negatable~),
+      multiple: false,
+    },
+  }
+}
 
 ///|
 /// Create a flag argument.
@@ -148,25 +168,51 @@ pub fn FlagArg::new(
 /// Named `OptionArg` to avoid shadowing the built-in `Option` type.
 pub struct OptionArg {
   priv arg : Arg
-
-  /// Create an option argument.
-  // FIXME(upstram) rename does not work here
-  fn new(
-    name : StringView,
-    short? : Char,
-    long? : StringView,
-    about? : StringView,
-    action? : OptionAction,
-    env? : StringView,
-    default_values? : ArrayView[String],
-    allow_hyphen_values? : Bool,
-    requires? : ArrayView[String],
-    conflicts_with? : ArrayView[String],
-    required? : Bool,
-    global? : Bool,
-    hidden? : Bool,
-  ) -> OptionArg
 } derive(@debug.Debug)
+
+///|
+/// Create an option argument.
+// FIXME(upstram) rename does not work here
+pub fn OptionArg::OptionArg(
+  name : StringView,
+  short? : Char,
+  long? : StringView = name,
+  about? : StringView,
+  action? : OptionAction = Set,
+  env? : StringView,
+  default_values? : ArrayView[String],
+  allow_hyphen_values? : Bool = false,
+  requires? : ArrayView[String] = [],
+  conflicts_with? : ArrayView[String] = [],
+  required? : Bool = false,
+  global? : Bool = false,
+  hidden? : Bool = false,
+) -> OptionArg {
+  let name = name.to_owned()
+  let long = if long == "" { None } else { Some(long.to_owned()) }
+  let about = about.map(v => v.to_owned())
+  let env = env.map(v => v.to_owned())
+  {
+    arg: {
+      name,
+      about,
+      env,
+      requires: requires.to_owned(),
+      conflicts_with: conflicts_with.to_owned(),
+      required,
+      global,
+      hidden,
+      info: OptionInfo(
+        short~,
+        long~,
+        action~,
+        default_values=default_values.map(values => values.to_owned()),
+        allow_hyphen_values~,
+      ),
+      multiple: action is Append,
+    },
+  }
+}
 
 ///|
 /// Create an option argument.
@@ -224,21 +270,44 @@ pub fn OptionArg::new(
 /// Declarative positional constructor wrapper.
 pub struct PositionArg {
   priv arg : Arg
-
-  /// Create a positional argument.
-  fn new(
-    name : StringView,
-    about? : StringView,
-    env? : StringView,
-    default_values? : ArrayView[String],
-    num_args? : ValueRange,
-    allow_hyphen_values? : Bool,
-    requires? : ArrayView[String],
-    conflicts_with? : ArrayView[String],
-    global? : Bool,
-    hidden? : Bool,
-  ) -> PositionArg
 } derive(@debug.Debug)
+
+///|
+/// Create a positional argument.
+pub fn PositionArg::PositionArg(
+  name : StringView,
+  about? : StringView,
+  env? : StringView,
+  default_values? : ArrayView[String],
+  num_args? : ValueRange,
+  allow_hyphen_values? : Bool = false,
+  requires? : ArrayView[String] = [],
+  conflicts_with? : ArrayView[String] = [],
+  global? : Bool = false,
+  hidden? : Bool = false,
+) -> PositionArg {
+  let name = name.to_owned()
+  let about = about.map(v => v.to_owned())
+  let env = env.map(v => v.to_owned())
+  {
+    arg: {
+      name,
+      about,
+      env,
+      requires: requires.to_owned(),
+      conflicts_with: conflicts_with.to_owned(),
+      required: false,
+      global,
+      hidden,
+      info: PositionalInfo(
+        num_args~,
+        default_values=default_values.map(values => values.to_owned()),
+        allow_hyphen_values~,
+      ),
+      multiple: range_allows_multiple(num_args),
+    },
+  }
+}
 
 ///|
 /// Create a positional argument.

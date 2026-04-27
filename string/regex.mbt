@@ -17,8 +17,16 @@
 pub struct Regex {
   priv pat : @re.Pattern
   priv mut re : @re.Regex?
+}
 
-  fn new(pattern : StringView) -> Regex raise
+///|
+pub fn Regex::Regex(pattern : StringView) -> Regex raise {
+  let pat = @regex_parser.parse(
+    profile=re_profile_unicode,
+    pattern,
+    mode=String,
+  )
+  { pat, re: None }
 }
 
 ///|

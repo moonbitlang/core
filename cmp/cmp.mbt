@@ -13,9 +13,6 @@
 // limitations under the License.
 
 ///|
-using @debug {trait Debug, type Repr}
-
-///|
 /// A newtype wrapper that reverses the comparison order of the wrapped value.
 ///
 /// `Reverse[T]` is useful when you need to reverse the natural ordering of a type.

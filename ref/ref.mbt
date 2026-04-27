@@ -25,8 +25,11 @@
 /// ```
 pub(all) struct Ref[T] {
   mut val : T
+}
 
-  fn[T] new(value : T) -> Ref[T]
+///|
+pub fn[T] Ref::Ref(value : T) -> Ref[T] {
+  { val: value }
 }
 
 ///|

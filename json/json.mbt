@@ -123,9 +123,12 @@ priv enum WriteFrame {
 /// Only applies to object properties, not array elements.
 pub struct Replacer {
   priv f : (String, Json) -> Json?
-
-  fn new(f : (String, Json) -> Json?) -> Replacer
 } derive(@debug.Debug)
+
+///|
+pub fn Replacer::Replacer(f : (String, Json) -> Json?) -> Replacer {
+  { f, }
+}
 
 ///|
 /// Create a new Replacer with a custom function.

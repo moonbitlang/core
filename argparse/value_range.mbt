@@ -18,10 +18,13 @@
 pub struct ValueRange {
   priv lower : Int
   priv upper : Int?
-
-  /// Create a value-count range.
-  fn new(lower? : Int, upper? : Int) -> ValueRange
 } derive(Eq, Show, @debug.Debug)
+
+///|
+/// Create a value-count range.
+pub fn ValueRange::ValueRange(lower? : Int = 0, upper? : Int) -> ValueRange {
+  { lower, upper }
+}
 
 ///|
 /// Exact single-value range (`1..1`).

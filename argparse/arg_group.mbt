@@ -21,17 +21,27 @@ pub struct ArgGroup {
   priv args : Array[String]
   priv requires : Array[String]
   priv conflicts_with : Array[String]
-
-  /// Create an argument group.
-  fn new(
-    name : StringView,
-    required? : Bool,
-    multiple? : Bool,
-    args? : ArrayView[String],
-    requires? : ArrayView[String],
-    conflicts_with? : ArrayView[String],
-  ) -> ArgGroup
 } derive(@debug.Debug)
+
+///|
+/// Create an argument group.
+pub fn ArgGroup::ArgGroup(
+  name : StringView,
+  required? : Bool = false,
+  multiple? : Bool = true,
+  args? : ArrayView[String] = [],
+  requires? : ArrayView[String] = [],
+  conflicts_with? : ArrayView[String] = [],
+) -> ArgGroup {
+  {
+    name: name.to_owned(),
+    required,
+    multiple,
+    args: args.to_owned(),
+    requires: requires.to_owned(),
+    conflicts_with: conflicts_with.to_owned(),
+  }
+}
 
 ///|
 /// Create an argument group.
