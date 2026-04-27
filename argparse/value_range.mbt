@@ -13,9 +13,6 @@
 // limitations under the License.
 
 ///|
-using @debug {trait Debug, type Repr}
-
-///|
 /// Number-of-values constraint for an argument.
 #warnings("-deprecated_syntax-deprecated")
 pub struct ValueRange {

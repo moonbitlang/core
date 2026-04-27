@@ -13,9 +13,6 @@
 // limitations under the License.
 
 ///|
-using @debug {trait Debug, type Repr}
-
-///|
 /// Declarative command specification.
 pub struct Command {
   priv name : String

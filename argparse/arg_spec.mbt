@@ -13,9 +13,6 @@
 // limitations under the License.
 
 ///|
-using @debug {trait Debug, type Repr}
-
-///|
 /// Behavior for flag args.
 ///
 /// - `SetTrue` / `SetFalse` set a boolean value.
