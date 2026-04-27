@@ -34,7 +34,7 @@ pub fn[T : Show] same_object(T, T, loc~ : SourceLoc) -> Unit raise
 
 // Types and methods
 #alias(T, deprecated)
-type Test
+type Test derive(@debug.Debug)
 pub fn Test::name(Self) -> String
 #as_free_fn
 pub fn Test::new(String) -> Self
