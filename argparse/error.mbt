@@ -13,6 +13,9 @@
 // limitations under the License.
 
 ///|
+using @debug {trait Debug, type Repr}
+
+///|
 /// Internal error surface used by argparse.
 ///
 /// `Message` is display-ready text intended for end users.

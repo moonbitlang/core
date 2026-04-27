@@ -13,6 +13,9 @@
 // limitations under the License.
 
 ///|
+using @debug {trait Debug, type Repr}
+
+///|
 /// Declarative argument group constructor.
 pub struct ArgGroup {
   priv name : String
