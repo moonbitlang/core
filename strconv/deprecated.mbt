@@ -13,6 +13,9 @@
 // limitations under the License.
 
 ///|
+using @debug {trait Debug, type Repr}
+
+///|
 /// High Precision Decimal structure for "Simple Decimal Conversion" algorithm.
 /// Developed by Ken. Thompson, Russ Cox, Robert Griesemer, Nigel Tao.
 ///
