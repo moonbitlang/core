@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-using @debug {trait Debug}
+using @debug {trait Debug, type Repr}
 
 ///|
 fn[T : Show] debug_string(t : T) -> String {
