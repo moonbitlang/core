@@ -17,7 +17,7 @@
 pub(all) struct Position {
   line : Int // 1-based
   column : Int // 0-based
-} derive(Eq, ToJson)
+} derive(Eq, ToJson, @debug.Debug)
 
 ///|
 /// Error type `ParseError`.
@@ -27,7 +27,7 @@ pub(all) suberror ParseError {
   InvalidNumber(Position, String)
   InvalidIdentEscape(Position)
   DepthLimitExceeded
-} derive(Eq, ToJson)
+} derive(Eq, ToJson, @debug.Debug)
 
 ///|
 pub impl Show for ParseError with output(self, logger) {

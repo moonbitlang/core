@@ -125,7 +125,7 @@ pub struct Replacer {
   priv f : (String, Json) -> Json?
 
   fn new(f : (String, Json) -> Json?) -> Replacer
-}
+} derive(@debug.Debug)
 
 ///|
 /// Create a new Replacer with a custom function.

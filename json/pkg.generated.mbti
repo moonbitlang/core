@@ -28,7 +28,7 @@ pub(all) suberror ParseError {
   InvalidNumber(Position, String)
   InvalidIdentEscape(Position)
   DepthLimitExceeded
-} derive(Eq, ToJson)
+} derive(Eq, ToJson, @debug.Debug)
 pub impl Show for ParseError
 
 // Types and methods
@@ -41,13 +41,13 @@ pub impl ToJson for JsonPath
 pub(all) struct Position {
   line : Int
   column : Int
-} derive(Eq, ToJson)
+} derive(Eq, ToJson, @debug.Debug)
 
 pub struct Replacer {
   // private fields
 
   fn new((String, Json) -> Json?) -> Replacer
-}
+} derive(@debug.Debug)
 pub fn Replacer::exclude(ArrayView[StringView]) -> Self
 pub fn Replacer::keep(ArrayView[StringView]) -> Self
 pub fn Replacer::new((String, Json) -> Json?) -> Self

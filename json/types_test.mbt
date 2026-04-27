@@ -41,3 +41,33 @@ test "ParseError::to_string coverage" {
     "Invalid escape sequence in identifier at line 1, column 0",
   )
 }
+
+///|
+test "Debug for Position" {
+  let pos : @json.Position = { line: 3, column: 7 }
+  @debug.debug_inspect(
+    pos,
+    content=(
+      #|{ line: 3, column: 7 }
+    ),
+  )
+}
+
+///|
+test "Debug for ParseError" {
+  @debug.debug_inspect(
+    (@json.ParseError::InvalidEof : @json.ParseError),
+    content="InvalidEof",
+  )
+}
+
+///|
+test "Debug for Replacer" {
+  let r = @json.Replacer::new(fn(_, v) { Some(v) })
+  @debug.debug_inspect(
+    r,
+    content=(
+      #|{ f: <function: ...> }
+    ),
+  )
+}
