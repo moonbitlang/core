@@ -73,6 +73,22 @@ test "decode malformed" {
 }
 
 ///|
+test "Debug for Malformed" {
+  try {
+    let _ = @base64.decode("Zh==")
+    panic()
+  } catch {
+    err =>
+      @debug.debug_inspect(
+        err,
+        content=(
+          #|Malformed(<StringView: "Zh==">)
+        ),
+      )
+  }
+}
+
+///|
 test "decode lossy" {
   inspect(
     @base64.decode_lossy("Zm9v$$$"),

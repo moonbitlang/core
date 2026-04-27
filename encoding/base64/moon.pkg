@@ -1,4 +1,5 @@
 import {
   "moonbitlang/core/buffer",
   "moonbitlang/core/builtin",
+  "moonbitlang/core/debug",
 }
