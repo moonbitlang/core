@@ -353,6 +353,37 @@ pub impl Debug for SnapshotError with to_repr(self) {
 }
 
 ///|
+pub impl Debug for BenchError with to_repr(self) {
+  match self {
+    BenchError(msg) => Repr::ctor("BenchError", [(None, Repr::string(msg))])
+  }
+}
+
+///|
+pub impl Debug for ArgsLoc with to_repr(self) {
+  let ArgsLoc(arr) = self
+  Repr::opaque_("ArgsLoc", to_repr(arr))
+}
+
+///|
+pub impl Debug for Hasher with to_repr(_) {
+  Repr::opaque_("Hasher", Repr::omitted())
+}
+
+///|
+pub impl Debug for IterResult with to_repr(self) {
+  match self {
+    IterEnd => Repr::ctor("IterEnd", [])
+    IterContinue => Repr::ctor("IterContinue", [])
+  }
+}
+
+///|
+pub impl[T] Debug for UninitializedArray[T] with to_repr(_) {
+  Repr::opaque_("UninitializedArray", Repr::omitted())
+}
+
+///|
 test "Debug for builtin errors" {
   debug_inspect(
     InspectError::InspectError("inspect msg"),

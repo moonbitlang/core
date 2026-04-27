@@ -62,6 +62,11 @@ pub impl[T : Debug] Debug for MutArrayView[T]
 pub impl Debug for SnapshotError
 pub impl Debug for SourceLoc
 pub impl Debug for StringBuilder
+pub impl Debug for BenchError
+pub impl Debug for ArgsLoc
+pub impl Debug for Hasher
+pub impl Debug for IterResult
+pub impl[T] Debug for UninitializedArray[T]
 pub impl[A : Debug, B : Debug] Debug for (A, B)
 pub impl[A : Debug, B : Debug, C : Debug] Debug for (A, B, C)
 pub impl[A : Debug, B : Debug, C : Debug, D : Debug] Debug for (A, B, C, D)
