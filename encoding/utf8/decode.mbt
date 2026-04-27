@@ -16,7 +16,7 @@
 /// Error type `Malformed`.
 pub suberror Malformed {
   Malformed(BytesView)
-}
+} derive(@debug.Debug)
 
 ///|
 /// Decode input bytes/text into structured output.

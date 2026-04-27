@@ -106,3 +106,13 @@ test "decode_lossy with bom" {
   inspect(@utf8.decode_lossy(text), content="﻿abc")
   inspect(@utf8.decode_lossy(text, ignore_bom=true), content="abc")
 }
+
+///|
+test "Debug for Malformed" {
+  try {
+    let _ = @utf8.decode(b"\xff")
+    panic()
+  } catch {
+    err => @debug.debug_inspect(err, content="Malformed(<BytesView: [0xff]>)")
+  }
+}
