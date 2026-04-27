@@ -260,9 +260,9 @@ pub impl Show for Repr with output(self, logger) {
 }
 
 ///|
-/// Debug for Repr renders the same as Show.
+/// `Repr` is its own debug representation: `to_repr` is the identity.
 pub impl Debug for Repr with to_repr(self) {
-  Repr::opaque_("Repr", Repr::literal(render(self)))
+  self
 }
 
 ///|
