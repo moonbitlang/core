@@ -28,6 +28,11 @@ const MAX_REPEAT_QUANTIFIER = 256
 using @debug {trait Debug, type Repr}
 
 ///|
+pub impl Debug for Regex with to_repr(self) {
+  Repr::opaque_("Regex", @debug.to_repr(self.pat))
+}
+
+///|
 /// Result of one successful match produced by `Regex::execute`.
 struct MatchResult {
   input : StringView
