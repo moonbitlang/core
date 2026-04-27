@@ -260,6 +260,12 @@ pub impl Show for Repr with output(self, logger) {
 }
 
 ///|
+/// Debug for Repr renders the same as Show.
+pub impl Debug for Repr with to_repr(self) {
+  Repr::opaque_("Repr", Repr::literal(render(self)))
+}
+
+///|
 /// Print a value in human-readable format to standard output.
 pub fn[T : Debug] debug(x : T) -> Unit {
   println(render(x.to_repr()))

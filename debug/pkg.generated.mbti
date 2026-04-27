@@ -24,6 +24,7 @@ pub fn[T : Debug] to_string(T) -> String
 // Types and methods
 type Repr
 pub impl Show for Repr
+pub impl Debug for Repr
 
 // Type aliases
 
