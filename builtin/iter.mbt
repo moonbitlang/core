@@ -43,27 +43,7 @@ pub fn Int::until(
   step? : Int = 1,
   inclusive? : Bool = false,
 ) -> Iter[Int] {
-  if step == 0 {
-    return Iter::empty()
-  }
-  let mut i = self
-  let mut done = false
-  () => {
-    guard !done else { None }
-    guard (step > 0 && i < end) ||
-      (step < 0 && i > end) ||
-      (inclusive && i == end) else {
-      None
-    }
-    let value = i
-    let next = i + step
-    if (step > 0 && next >= i) || (step < 0 && next <= i) {
-      i = next
-    } else {
-      done = true
-    }
-    Some(value)
-  }
+  until_impl(self, end, step, inclusive)
 }
 
 ///|
@@ -86,27 +66,7 @@ pub fn Int64::until(
   step? : Int64 = 1L,
   inclusive? : Bool = false,
 ) -> Iter[Int64] {
-  if step == 0 {
-    return Iter::empty()
-  }
-  let mut i = self
-  let mut done = false
-  () => {
-    guard !done else { None }
-    guard (step > 0 && i < end) ||
-      (step < 0 && i > end) ||
-      (inclusive && i == end) else {
-      None
-    }
-    let value = i
-    let next = i + step
-    if (step > 0 && next >= i) || (step < 0 && next <= i) {
-      i = next
-    } else {
-      done = true
-    }
-    Some(value)
-  }
+  until_impl(self, end, step, inclusive)
 }
 
 ///|
@@ -129,25 +89,5 @@ pub fn Double::until(
   step? : Double = 1.0,
   inclusive? : Bool = false,
 ) -> Iter[Double] {
-  if step == 0.0 {
-    return Iter::empty()
-  }
-  let mut i = self
-  let mut done = false
-  () => {
-    guard !done else { None }
-    guard (step > 0.0 && i < end) ||
-      (step < 0.0 && i > end) ||
-      (inclusive && i == end) else {
-      None
-    }
-    let value = i
-    let next = i + step
-    if (step > 0.0 && next >= i) || (step < 0.0 && next <= i) {
-      i = next
-    } else {
-      done = true
-    }
-    Some(value)
-  }
+  until_impl(self, end, step, inclusive)
 }
