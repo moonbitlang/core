@@ -13,6 +13,9 @@
 // limitations under the License.
 
 ///|
+using @debug {trait Debug, type Repr}
+
+///|
 /// Try to get this element as a Null
 #deprecated("Suggestion: `if json is Null { Some(()) } else { None }`")
 pub fn Json::as_null(self : Json) -> Unit? {

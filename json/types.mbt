@@ -13,6 +13,9 @@
 // limitations under the License.
 
 ///|
+using @debug {trait Debug, type Repr}
+
+///|
 /// Type `Position` used by this package APIs.
 pub(all) struct Position {
   line : Int // 1-based
