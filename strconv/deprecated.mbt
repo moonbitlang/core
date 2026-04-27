@@ -26,7 +26,7 @@ struct Decimal {
   mut decimal_point : Int
   mut negative : Bool
   mut truncated : Bool
-}
+} derive(@debug.Debug)
 
 ///|
 /// Create a zero decimal.

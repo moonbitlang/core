@@ -1,6 +1,10 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/strconv"
 
+import {
+  "moonbitlang/core/debug",
+}
+
 // Values
 #deprecated
 pub fn[A : FromStr] parse(StringView) -> A raise StrConvError
@@ -30,12 +34,12 @@ pub fn parse_uint64(StringView, base? : Int) -> UInt64 raise StrConvError
 #deprecated
 pub(all) suberror StrConvError {
   StrConvError(String)
-}
+} derive(@debug.Debug)
 pub impl Show for StrConvError
 
 // Types and methods
 #deprecated
-type Decimal
+type Decimal derive(@debug.Debug)
 #deprecated
 pub fn Decimal::from_int64(Int64) -> Self
 #deprecated

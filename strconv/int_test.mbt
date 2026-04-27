@@ -269,3 +269,14 @@ test "parse_int" {
     assert_eq(parse_int_as_result(t.0), t.1)
   }
 }
+
+///|
+test "Debug for StrConvError" {
+  let err : @strconv.StrConvError = StrConvError("invalid syntax")
+  @debug.debug_inspect(
+    err,
+    content=(
+      #|StrConvError("invalid syntax")
+    ),
+  )
+}

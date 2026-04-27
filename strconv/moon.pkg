@@ -4,6 +4,7 @@ import {
   "moonbitlang/core/uint64",
   "moonbitlang/core/char",
   "moonbitlang/core/array",
+  "moonbitlang/core/debug",
 }
 
 warnings = "-deprecated"
