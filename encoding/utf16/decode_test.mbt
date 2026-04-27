@@ -181,3 +181,21 @@ test "decode_lossy with surrogate pairs" {
   let result = @utf16.decode_lossy(invalid_surr)
   assert_true(result.length() > 0)
 }
+
+///|
+test "Debug for Endian" {
+  @debug.debug_inspect(@utf16.Endian::Little, content="Little")
+  @debug.debug_inspect(@utf16.Endian::Big, content="Big")
+}
+
+///|
+test "Debug for Malformed" {
+  let unpaired = b"\x00\xd8"
+  try {
+    let _ = @utf16.decode(unpaired)
+    panic()
+  } catch {
+    err =>
+      @debug.debug_inspect(err, content="Malformed(<BytesView: [0x00, 0xd8]>)")
+  }
+}

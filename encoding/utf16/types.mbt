@@ -17,4 +17,4 @@
 pub(all) enum Endian {
   Little
   Big
-}
+} derive(@debug.Debug)

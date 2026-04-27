@@ -16,7 +16,7 @@
 /// Error type `Malformed`.
 pub suberror Malformed {
   Malformed(BytesView)
-}
+} derive(@debug.Debug)
 
 ///|
 /// The Unicode Replacement Character, which is used to replace invalid or unrecognized sequences during lossy decoding.
