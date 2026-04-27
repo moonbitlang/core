@@ -50,22 +50,22 @@ pub impl[T : Debug, E : Debug] Debug for Result[T, E]
 pub impl[T : Debug] Debug for FixedArray[T]
 pub impl[T : Debug] Debug for ReadOnlyArray[T]
 pub impl Debug for Bytes
+pub impl Debug for ArgsLoc
 pub impl[T : Debug] Debug for Array[T]
 pub impl[T : Debug] Debug for ArrayView[T]
+pub impl Debug for BenchError
 pub impl Debug for Failure
+pub impl Debug for Hasher
 pub impl Debug for InspectError
 pub impl[A] Debug for Iter[A]
 pub impl[A, B] Debug for Iter2[A, B]
+pub impl Debug for IterResult
 pub impl Debug for Json
 pub impl[K : Debug, V : Debug] Debug for Map[K, V]
 pub impl[T : Debug] Debug for MutArrayView[T]
 pub impl Debug for SnapshotError
 pub impl Debug for SourceLoc
 pub impl Debug for StringBuilder
-pub impl Debug for BenchError
-pub impl Debug for ArgsLoc
-pub impl Debug for Hasher
-pub impl Debug for IterResult
 pub impl[T] Debug for UninitializedArray[T]
 pub impl[A : Debug, B : Debug] Debug for (A, B)
 pub impl[A : Debug, B : Debug, C : Debug] Debug for (A, B, C)
