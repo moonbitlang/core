@@ -40,3 +40,14 @@ test "decode_lossy replaces invalid bytes" {
   let bytes = b"ok\xffmore"
   inspect(@ascii.decode_lossy(bytes), content="ok�more")
 }
+
+///|
+test "Debug for Malformed" {
+  let bytes = b"\xff"
+  try {
+    let _ = @ascii.decode(bytes)
+    panic()
+  } catch {
+    err => @debug.debug_inspect(err, content="Malformed(<BytesView: [0xff]>)")
+  }
+}

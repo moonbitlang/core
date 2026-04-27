@@ -1,6 +1,10 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/encoding/ascii"
 
+import {
+  "moonbitlang/core/debug",
+}
+
 // Values
 pub fn decode(BytesView) -> String raise Malformed
 
@@ -11,7 +15,7 @@ pub fn encode(StringView) -> Bytes
 // Errors
 pub suberror Malformed {
   Malformed(BytesView)
-}
+} derive(@debug.Debug)
 
 // Types and methods
 
