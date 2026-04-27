@@ -353,6 +353,7 @@ pub impl Debug for SnapshotError with to_repr(self) {
 }
 
 ///|
+#warnings("-deprecated")
 pub impl Debug for BenchError with to_repr(self) {
   match self {
     BenchError(msg) => Repr::ctor("BenchError", [(None, Repr::string(msg))])
@@ -371,6 +372,7 @@ pub impl Debug for Hasher with to_repr(_) {
 }
 
 ///|
+#warnings("-deprecated")
 pub impl Debug for IterResult with to_repr(self) {
   match self {
     IterEnd => Repr::ctor("IterEnd", [])
