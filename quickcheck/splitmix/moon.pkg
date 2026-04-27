@@ -2,4 +2,5 @@ import {
   "moonbitlang/core/builtin",
   "moonbitlang/core/float",
   "moonbitlang/core/test",
+  "moonbitlang/core/debug",
 }

@@ -1,13 +1,17 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/quickcheck/splitmix"
 
+import {
+  "moonbitlang/core/debug",
+}
+
 // Values
 pub fn new(seed? : UInt64) -> RandomState
 
 // Errors
 
 // Types and methods
-type RandomState derive(Show)
+type RandomState derive(Show, @debug.Debug)
 pub fn RandomState::clone(Self) -> Self
 #deprecated
 pub fn RandomState::new(seed? : UInt64) -> Self
