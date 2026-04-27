@@ -3,6 +3,7 @@ package "moonbitlang/core/random"
 
 import {
   "moonbitlang/core/bigint",
+  "moonbitlang/core/debug",
 }
 
 // Values
@@ -27,6 +28,7 @@ pub fn Rand::new(generator? : &Source) -> Self
 pub fn Rand::shuffle(Self, Int, (Int, Int) -> Unit) -> Unit
 pub fn Rand::uint(Self, limit? : UInt) -> UInt
 pub fn Rand::uint64(Self, limit? : UInt64) -> UInt64
+pub impl @debug.Debug for Rand
 
 // Type aliases
 

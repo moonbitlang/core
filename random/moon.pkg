@@ -5,6 +5,7 @@ import {
   "moonbitlang/core/random/internal/random_source",
   "moonbitlang/core/bigint",
   "moonbitlang/core/test",
+  "moonbitlang/core/debug",
 }
 
 import {
