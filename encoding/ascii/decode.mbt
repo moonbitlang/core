@@ -13,6 +13,9 @@
 // limitations under the License.
 
 ///|
+using @debug {trait Debug, type Repr}
+
+///|
 /// Error type `Malformed`.
 pub suberror Malformed {
   Malformed(BytesView)
