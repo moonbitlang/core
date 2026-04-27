@@ -32,7 +32,7 @@ struct Summary {
   iqr : Double
   batch_size : Int
   runs : Int
-} derive(ToJson)
+} derive(ToJson, @debug.Debug)
 
 ///|
 fn Summary::new(

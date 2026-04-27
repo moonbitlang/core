@@ -34,3 +34,11 @@ test "bench buffer writes with multiple samples" {
   bench.bench(() => ignore(2 + 2), name="second", count=1)
   inspect(bench.dump_summaries().contains(","), content="true")
 }
+
+///|
+test "Debug for Bench and Timestamp" {
+  let bench = @bench.Bench::new()
+  @debug.debug_inspect(bench, content="<Bench: []>")
+  let ts = @bench.monotonic_clock_start()
+  @debug.debug_inspect(ts, content="<Timestamp: ...>")
+}

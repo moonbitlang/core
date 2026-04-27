@@ -1,6 +1,10 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/bench"
 
+import {
+  "moonbitlang/core/debug",
+}
+
 // Values
 pub fn monotonic_clock_end(Timestamp) -> Double
 
@@ -18,10 +22,12 @@ pub fn Bench::dump_summaries(Self) -> String
 pub fn[Any] Bench::keep(Self, Any) -> Unit
 #as_free_fn
 pub fn Bench::new() -> Self
+pub impl @debug.Debug for Bench
 
-type Summary derive(ToJson)
+type Summary derive(ToJson, @debug.Debug)
 
 type Timestamp
+pub impl @debug.Debug for Timestamp
 
 // Type aliases
 

@@ -5,6 +5,7 @@ import {
   "moonbitlang/core/json",
   "moonbitlang/core/ref",
   "moonbitlang/core/test",
+  "moonbitlang/core/debug",
 }
 
 options(
