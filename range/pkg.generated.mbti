@@ -15,10 +15,7 @@ pub fn[T : Step] iter(from~ : T, to~ : T, step? : T, inclusive? : Bool) -> Iter[
 // Type aliases
 
 // Traits
-pub trait Step : Add + Compare {
-  direction(Self) -> Int
-  step_one() -> Self
-}
+trait Step : Add + Compare
 pub impl Step for Byte
 pub impl Step for Int
 pub impl Step for Int16

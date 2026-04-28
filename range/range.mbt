@@ -20,7 +20,7 @@ priv enum Direction {
   Backward
   Still
   Forward
-} derive(Eq)
+}
 
 ///|
 /// Trait for additive ordered types with a canonical unit step,
@@ -34,7 +34,7 @@ priv enum Direction {
 /// descending, and `0` for "no progress" (zero or, for floats, NaN).
 /// `step_one()` is the natural unit step for the type (`1` for ints,
 /// `1.0` for floats, `1N` for `BigInt`, etc.).
-pub trait Step: Add + Compare {
+trait Step: Add + Compare {
   direction(Self) -> Int
   step_one() -> Self
 }
