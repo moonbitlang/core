@@ -243,16 +243,25 @@ test "iter UInt wrap-around at MAX_VALUE" {
 }
 
 ///|
-test "Direction constructors are externally accessible" {
-  // External callers must be able to construct and pattern-match on
-  // Direction so they can implement Step for their own types.
-  let d : @range.Direction = @range.Forward
-  let label = match d {
-    @range.Forward => "forward"
-    @range.Backward => "backward"
-    @range.Still => "still"
-  }
-  inspect(label, content="forward")
+test "iter via for-comprehension into array" {
+  debug_inspect(
+    [
+      for i in @range.iter(from=1, to=10, step=3) => i
+    ],
+    content="[1, 4, 7]",
+  )
+  debug_inspect(
+    [
+      for i in @range.iter(from=0, to=5) => i * i
+    ],
+    content="[0, 1, 4, 9, 16]",
+  )
+  debug_inspect(
+    [
+      for c in @range.iter(from=(0 : Byte), to=(4 : Byte)) => c
+    ],
+    content="[0x00, 0x01, 0x02, 0x03]",
+  )
 }
 
 ///|

@@ -13,11 +13,10 @@
 // limitations under the License.
 
 ///|
-/// Direction implied by a step value: ascending, stationary, or
-/// descending. Returned by `Step::direction`. `Still` covers both an
-/// arithmetic zero and floating-point `NaN` (since neither makes
-/// progress).
-pub(all) enum Direction {
+/// Internal three-way classification of a step value's progress.
+/// Kept private so it doesn't leak into the public API; `iter` uses
+/// it to read more clearly than chaining `if dir > 0 ...` predicates.
+priv enum Direction {
   Backward
   Still
   Forward
@@ -25,28 +24,29 @@ pub(all) enum Direction {
 
 ///|
 /// Trait for additive ordered types with a canonical unit step,
-/// suitable as the element type of `range`.
+/// suitable as the element type of `iter`.
 ///
-/// `Add` advances the iterator (`current + step`); `Compare` decides
-/// when the iterator has reached `to`. `direction(step)` reports
-/// whether the step moves forward, stays put, or moves backward — so
-/// `range` knows which inequality to check against `to`. `step_one()`
-/// supplies the default `step` when the caller omits it; implementers
-/// should return the ordinary positive unit for the type (`1` for
-/// integers, `1.0` for floats, `1N` for `BigInt`).
-pub(open) trait Step: Add + Compare {
-  direction(Self) -> Direction
+/// Sealed for now: only this package may add impls. The set of
+/// supported types may expand in future releases. The trait can be
+/// reopened later without breaking existing users.
+///
+/// `direction(step)` reports `1` for ascending steps, `-1` for
+/// descending, and `0` for "no progress" (zero or, for floats, NaN).
+/// `step_one()` is the natural unit step for the type (`1` for ints,
+/// `1.0` for floats, `1N` for `BigInt`, etc.).
+pub trait Step: Add + Compare {
+  direction(Self) -> Int
   step_one() -> Self
 }
 
 ///|
 pub impl Step for Int with direction(self) {
   if self > 0 {
-    Forward
+    1
   } else if self < 0 {
-    Backward
+    -1
   } else {
-    Still
+    0
   }
 }
 
@@ -58,11 +58,11 @@ pub impl Step for Int with step_one() {
 ///|
 pub impl Step for Int64 with direction(self) {
   if self > 0L {
-    Forward
+    1
   } else if self < 0L {
-    Backward
+    -1
   } else {
-    Still
+    0
   }
 }
 
@@ -74,9 +74,9 @@ pub impl Step for Int64 with step_one() {
 ///|
 pub impl Step for UInt with direction(self) {
   if self > 0U {
-    Forward
+    1
   } else {
-    Still
+    0
   }
 }
 
@@ -88,9 +88,9 @@ pub impl Step for UInt with step_one() {
 ///|
 pub impl Step for UInt64 with direction(self) {
   if self > 0UL {
-    Forward
+    1
   } else {
-    Still
+    0
   }
 }
 
@@ -102,11 +102,11 @@ pub impl Step for UInt64 with step_one() {
 ///|
 pub impl Step for Float with direction(self) {
   if self > (0.0 : Float) {
-    Forward
+    1
   } else if self < (0.0 : Float) {
-    Backward
+    -1
   } else {
-    Still
+    0
   }
 }
 
@@ -118,11 +118,11 @@ pub impl Step for Float with step_one() {
 ///|
 pub impl Step for Double with direction(self) {
   if self > 0.0 {
-    Forward
+    1
   } else if self < 0.0 {
-    Backward
+    -1
   } else {
-    Still
+    0
   }
 }
 
@@ -134,11 +134,11 @@ pub impl Step for Double with step_one() {
 ///|
 pub impl Step for Int16 with direction(self) {
   if self > (0 : Int16) {
-    Forward
+    1
   } else if self < (0 : Int16) {
-    Backward
+    -1
   } else {
-    Still
+    0
   }
 }
 
@@ -150,9 +150,9 @@ pub impl Step for Int16 with step_one() {
 ///|
 pub impl Step for UInt16 with direction(self) {
   if self > (0 : UInt16) {
-    Forward
+    1
   } else {
-    Still
+    0
   }
 }
 
@@ -164,9 +164,9 @@ pub impl Step for UInt16 with step_one() {
 ///|
 pub impl Step for Byte with direction(self) {
   if self > (0 : Byte) {
-    Forward
+    1
   } else {
-    Still
+    0
   }
 }
 
@@ -178,11 +178,11 @@ pub impl Step for Byte with step_one() {
 ///|
 pub impl Step for @bigint.BigInt with direction(self) {
   if self > 0N {
-    Forward
+    1
   } else if self < 0N {
-    Backward
+    -1
   } else {
-    Still
+    0
   }
 }
 
@@ -238,7 +238,14 @@ pub fn[T : Step] iter(
   step? : T = T::step_one(),
   inclusive? : Bool = false,
 ) -> Iter[T] {
-  let dir = T::direction(step)
+  let n = T::direction(step)
+  let dir : Direction = if n > 0 {
+    Forward
+  } else if n < 0 {
+    Backward
+  } else {
+    Still
+  }
   let mut i = from
   let mut done = false
   Iter::new(() => {

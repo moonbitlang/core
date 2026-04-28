@@ -11,17 +11,12 @@ pub fn[T : Step] iter(from~ : T, to~ : T, step? : T, inclusive? : Bool) -> Iter[
 // Errors
 
 // Types and methods
-pub(all) enum Direction {
-  Backward
-  Still
-  Forward
-} derive(Eq)
 
 // Type aliases
 
 // Traits
-pub(open) trait Step : Add + Compare {
-  direction(Self) -> Direction
+pub trait Step : Add + Compare {
+  direction(Self) -> Int
   step_one() -> Self
 }
 pub impl Step for Byte
