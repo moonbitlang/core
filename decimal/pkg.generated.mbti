@@ -1,0 +1,64 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/decimal"
+
+import {
+  "moonbitlang/core/bigint",
+  "moonbitlang/core/debug",
+  "moonbitlang/core/json",
+}
+
+// Values
+
+// Errors
+pub(all) suberror DecimalError {
+  InvalidSyntax(String)
+  DivisionByZero
+  NonTerminatingDivision
+  InexactConversion
+} derive(Eq, ToJson, @debug.Debug)
+pub impl Show for DecimalError
+
+// Types and methods
+type Decimal derive(@debug.Debug)
+pub fn Decimal::abs(Self) -> Self
+pub fn Decimal::coefficient(Self) -> @bigint.BigInt
+pub fn Decimal::div_exact(Self, Self) -> Self raise DecimalError
+pub fn Decimal::div_round(Self, Self, scale~ : Int, mode? : RoundingMode) -> Self raise DecimalError
+pub fn Decimal::exponent(Self) -> Int
+pub fn Decimal::from_bigint(@bigint.BigInt, exponent? : Int) -> Self
+pub fn Decimal::from_int(Int) -> Self
+pub fn Decimal::from_int64(Int64) -> Self
+pub fn Decimal::from_string(StringView) -> Self raise DecimalError
+pub fn Decimal::from_uint(UInt) -> Self
+pub fn Decimal::from_uint64(UInt64) -> Self
+pub fn Decimal::is_zero(Self) -> Bool
+pub fn Decimal::round(Self, scale~ : Int, mode? : RoundingMode) -> Self
+pub fn Decimal::to_bigint_exact(Self) -> @bigint.BigInt raise DecimalError
+pub fn Decimal::to_string(Self) -> String
+pub impl Add for Decimal
+pub impl Compare for Decimal
+pub impl Default for Decimal
+pub impl Eq for Decimal
+pub impl Hash for Decimal
+pub impl Mul for Decimal
+pub impl Neg for Decimal
+pub impl Show for Decimal
+pub impl Sub for Decimal
+pub impl ToJson for Decimal
+pub impl @json.FromJson for Decimal
+
+pub(all) enum RoundingMode {
+  TowardZero
+  AwayFromZero
+  TowardNegativeInfinity
+  TowardPositiveInfinity
+  HalfTowardZero
+  HalfAwayFromZero
+  HalfEven
+} derive(Eq, @debug.Debug)
+pub impl Show for RoundingMode
+
+// Type aliases
+
+// Traits
+
