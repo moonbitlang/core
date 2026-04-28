@@ -13,6 +13,9 @@
 // limitations under the License.
 
 ///|
+/// Rounds `quotient` (the integer-divided result) up or down by one
+/// according to the relation between the absolute remainder and half of
+/// the divisor. Used by both `Decimal::round` and `Decimal::div_round`.
 fn round_quotient(
   quotient : @bigint.BigInt,
   remainder : @bigint.BigInt,
@@ -48,6 +51,7 @@ fn round_quotient(
 }
 
 ///|
+/// Computes `numerator / denominator` rounded to an integer per `mode`.
 fn rounded_ratio(
   numerator : @bigint.BigInt,
   denominator : @bigint.BigInt,
@@ -71,6 +75,10 @@ fn rounded_ratio(
 }
 
 ///|
+/// Round-to-integer for the specific case where the exact value is known
+/// to lie strictly below half of a unit (i.e. `|num/den| < 0.5`). Used by
+/// `div_round` for the pathological `shift == Int::min_value` path where
+/// constructing the full divisor is not feasible.
 fn rounded_ratio_below_half(
   numerator : @bigint.BigInt,
   denominator : @bigint.BigInt,
@@ -89,6 +97,7 @@ fn rounded_ratio_below_half(
     AwayFromZero => true
     TowardPositiveInfinity => !negative
     TowardNegativeInfinity => negative
+    // All half-modes round exact values below half toward zero.
     HalfTowardZero | HalfAwayFromZero | HalfEven => false
   }
   if increment {
@@ -103,11 +112,40 @@ fn rounded_ratio_below_half(
 }
 
 ///|
-/// Rounds to the requested number of digits after the decimal point.
+/// Rounds the decimal to the requested scale.
 ///
-/// Negative scales round to positions left of the decimal point. Results remain
-/// canonical, so trailing zeros introduced by rounding are not preserved in
-/// `to_string`.
+/// `scale` is the number of digits *after* the decimal point. Positive
+/// `scale` rounds to a fractional position; `scale=0` rounds to the
+/// nearest integer; negative `scale` rounds to a position to the left of
+/// the decimal point (`scale=-1` rounds to the nearest ten, `scale=-2`
+/// to the nearest hundred, etc.).
+///
+/// `mode` defaults to `HalfEven` (banker's rounding). See `RoundingMode`
+/// for the full list of modes and their tie-breaking semantics.
+///
+/// **Aborts** when `scale` is `Int::min_value` (the would-be exponent
+/// `-scale` overflows `Int`).
+///
+/// The result is canonicalized: trailing zeros introduced by rounding
+/// are not preserved by `to_string`. To get a fixed-scale string, format
+/// from the canonical representation.
+///
+/// # Examples
+///
+/// ```mbt nocheck
+/// test {
+///   let dec = @decimal.Decimal::from_string
+///   // HalfEven (banker's rounding) breaks ties toward the even digit.
+///   inspect(dec("2.5").round(scale=0), content="2")
+///   inspect(dec("3.5").round(scale=0), content="4")
+///   inspect(dec("-2.5").round(scale=0), content="-2")
+///   // Negative scales round above the decimal point.
+///   inspect(dec("149").round(scale=-1), content="150")
+///   inspect(dec("145").round(scale=-1), content="140")
+///   // Toward-zero is plain truncation (no ties).
+///   inspect(dec("-2.9").round(scale=0, mode=@decimal.TowardZero), content="-2")
+/// }
+/// ```
 pub fn Decimal::round(
   self : Decimal,
   scale~ : Int,

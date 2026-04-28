@@ -13,10 +13,48 @@
 // limitations under the License.
 
 ///|
-/// Parses a decimal string.
+/// Parses a decimal literal.
 ///
-/// Accepted forms include an optional sign, decimal point, scientific exponent,
-/// and underscores between digits.
+/// Accepts the standard textual form of a decimal number with these
+/// extensions:
+///
+/// - **Optional sign**: `+` or `-` at the front.
+/// - **Decimal point**: `.` may appear zero or one time. Either side may be
+///   empty (`".5"` and `"5."` both parse), but at least one digit must
+///   appear in total.
+/// - **Scientific exponent**: `e` or `E` followed by an optional sign and a
+///   digit sequence. The exponent must fit in the canonical exponent range
+///   (roughly ±2³¹ after combining with the position of the decimal point).
+/// - **Underscores**: between digits, as visual separators (`"1_000_000"`).
+///   Not allowed at the start or end of a digit run, adjacent to the
+///   decimal point, between the sign and the first digit, or doubled
+///   (`"1__2"`).
+///
+/// Whitespace is **not** accepted; trim it before parsing if needed.
+///
+/// The result is canonicalized (`"1.500"` and `"1.5"` parse to the same
+/// value).
+///
+/// # Errors
+///
+/// Raises `InvalidSyntax(input)` for any unparseable input, including
+/// empty strings, lone signs or dots, malformed exponents, and exponents
+/// that would push the canonical representation beyond the supported
+/// range.
+///
+/// # Examples
+///
+/// ```mbt nocheck
+/// test {
+///   inspect(@decimal.Decimal::from_string("123.45"), content="123.45")
+///   inspect(@decimal.Decimal::from_string("-0.000"), content="0")
+///   inspect(@decimal.Decimal::from_string("1e-3"), content="0.001")
+///   inspect(
+///     @decimal.Decimal::from_string("1_23.45_00e+1_2"),
+///     content="123450000000000",
+///   )
+/// }
+/// ```
 pub fn Decimal::from_string(input : StringView) -> Decimal raise DecimalError {
   guard !input.is_empty() else { invalid_syntax(input) }
   let mut rest = input
@@ -29,7 +67,6 @@ pub fn Decimal::from_string(input : StringView) -> Decimal raise DecimalError {
     ['+', .. tail] => rest = tail
     _ => ()
   }
-
   let digits = StringBuilder::new()
   let mut has_digit = false
   let mut dot_seen = false
@@ -69,7 +106,6 @@ pub fn Decimal::from_string(input : StringView) -> Decimal raise DecimalError {
     }
   }
   guard has_digit && !after_underscore else { invalid_syntax(input) }
-
   let mut scientific_exponent = 0L
   if has_exponent {
     let mut exponent_negative = false
@@ -113,7 +149,6 @@ pub fn Decimal::from_string(input : StringView) -> Decimal raise DecimalError {
     }
   }
   guard rest is [] else { invalid_syntax(input) }
-
   let total_exponent = scientific_exponent - frac_digits.to_int64()
   guard total_exponent >= min_exponent64 && total_exponent <= max_exponent64 else {
     invalid_syntax(input)
