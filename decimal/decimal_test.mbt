@@ -164,6 +164,19 @@ test "division" {
     content="-1",
   )
   inspect(dec("1").div_round(dec("4"), scale=4), content="0.25")
+  inspect(dec("1e-2147483648").div_round(dec("1"), scale=0), content="0")
+  inspect(
+    dec("1e-2147483648").div_round(dec("1"), scale=0, mode=AwayFromZero),
+    content="1",
+  )
+  inspect(
+    dec("-1e-2147483648").div_round(
+      dec("1"),
+      scale=0,
+      mode=TowardNegativeInfinity,
+    ),
+    content="-1",
+  )
   inspect(
     try? dec("1").div_round(dec("0"), scale=2),
     content="Err(DivisionByZero)",
@@ -175,6 +188,10 @@ test "exact bigint conversion" {
   inspect(dec("1200").to_bigint_exact(), content="1200")
   inspect(dec("12.00").to_bigint_exact(), content="12")
   inspect(try? dec("12.01").to_bigint_exact(), content="Err(InexactConversion)")
+  inspect(
+    try? dec("1e-2147483648").to_bigint_exact(),
+    content="Err(InexactConversion)",
+  )
 }
 
 ///|

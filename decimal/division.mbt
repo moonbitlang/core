@@ -73,10 +73,16 @@ pub fn Decimal::div_round(
   let (numerator, denominator) = if shift >= 0 {
     (self.coefficient * pow10(shift), other.coefficient)
   } else {
-    (
-      self.coefficient,
-      other.coefficient * pow10(exponent_from_int64(-shift.to_int64())),
-    )
+    let negative_shift = -shift.to_int64()
+    if negative_shift > max_exponent64 {
+      // This only happens for `shift == Int::min_value`; the scaled value is
+      // below half of one target unit, so rounding depends only on direction.
+      return make_decimal(
+        rounded_ratio_below_half(self.coefficient, other.coefficient, mode),
+        target_exponent,
+      )
+    }
+    (self.coefficient, other.coefficient * pow10(negative_shift.to_int()))
   }
   let quotient = rounded_ratio(numerator, denominator, mode)
   make_decimal(quotient, target_exponent)

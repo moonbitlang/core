@@ -61,7 +61,9 @@ pub fn Decimal::to_bigint_exact(
   if self.exponent >= 0 {
     self.coefficient * pow10(self.exponent)
   } else {
-    let divisor = pow10(exponent_from_int64(-self.exponent.to_int64()))
+    let negative_exponent = -self.exponent.to_int64()
+    guard negative_exponent <= max_exponent64 else { raise InexactConversion }
+    let divisor = pow10(negative_exponent.to_int())
     guard self.coefficient % divisor == zero_bigint else {
       raise InexactConversion
     }

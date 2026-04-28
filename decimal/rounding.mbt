@@ -71,6 +71,38 @@ fn rounded_ratio(
 }
 
 ///|
+fn rounded_ratio_below_half(
+  numerator : @bigint.BigInt,
+  denominator : @bigint.BigInt,
+  mode : RoundingMode,
+) -> @bigint.BigInt {
+  if numerator.is_zero() {
+    return zero_bigint
+  }
+  let negative = if numerator < zero_bigint {
+    denominator > zero_bigint
+  } else {
+    denominator < zero_bigint
+  }
+  let increment = match mode {
+    TowardZero => false
+    AwayFromZero => true
+    TowardPositiveInfinity => !negative
+    TowardNegativeInfinity => negative
+    HalfTowardZero | HalfAwayFromZero | HalfEven => false
+  }
+  if increment {
+    if negative {
+      -one_bigint
+    } else {
+      one_bigint
+    }
+  } else {
+    zero_bigint
+  }
+}
+
+///|
 /// Rounds to the requested number of digits after the decimal point.
 ///
 /// Negative scales round to positions left of the decimal point. Results remain
