@@ -1,0 +1,10 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/uint",
+  "moonbitlang/core/float",
+  "moonbitlang/core/bigint",
+}
+
+import {
+  "moonbitlang/core/int",
+} for "test"

@@ -1,0 +1,33 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/range"
+
+import {
+  "moonbitlang/core/bigint",
+}
+
+// Values
+pub fn[T : Step] range(T, T, T, inclusive? : Bool) -> Iter[T]
+
+// Errors
+
+// Types and methods
+pub(all) enum Direction {
+  Backward
+  Still
+  Forward
+} derive(Eq)
+
+// Type aliases
+
+// Traits
+pub(open) trait Step : Add + Compare {
+  direction(Self) -> Direction
+}
+pub impl Step for Int
+pub impl Step for Int64
+pub impl Step for UInt
+pub impl Step for UInt64
+pub impl Step for Float
+pub impl Step for Double
+pub impl Step for @bigint.BigInt
+
