@@ -14,7 +14,9 @@
 
 ///|
 /// Direction implied by a step value: ascending, stationary, or
-/// descending. Returned by `Step::direction`.
+/// descending. Returned by `Step::direction`. `Still` covers both an
+/// arithmetic zero and floating-point `NaN` (since neither makes
+/// progress).
 pub(all) enum Direction {
   Backward
   Still
@@ -113,18 +115,22 @@ pub impl Step for @bigint.BigInt with direction(self) {
 /// Creates an iterator over `start, start+step, start+2*step, ...`
 /// while the value is on the correct side of `end`.
 ///
-/// `step` is required and must not be zero — a zero step is a
-/// programmer error and aborts. A negative step descends; a positive
-/// step ascends. By default `end` is exclusive; pass `inclusive=true`
-/// to include it.
+/// `step` is required. A negative step descends; a positive step
+/// ascends; a zero (or `NaN`) step yields the empty iterator (or just
+/// `[start]` when `inclusive=true && start == end`). By default `end`
+/// is exclusive; pass `inclusive=true` to include it.
 ///
 /// The loop terminates as soon as `current + step` fails to make
 /// progress past `current`. For integral types this only happens at
-/// numeric overflow (e.g. `(MAX_VALUE - 1).range(MAX_VALUE, 1,
+/// numeric overflow (e.g. `range(MAX_VALUE - 1, MAX_VALUE, 1,
 /// inclusive=true)` yields `[MAX_VALUE - 1, MAX_VALUE]` and stops).
 /// For `Float`/`Double` it also terminates when the step is too small
 /// relative to the current accumulator to advance it (sub-precision
 /// step), which prevents an otherwise silent infinite loop.
+///
+/// The inclusive end check uses `==` (so a `NaN` end never matches),
+/// which keeps the iterator from looping when the comparison ordering
+/// is unordered.
 ///
 /// # Examples
 ///
@@ -142,18 +148,16 @@ pub fn[T : Step] range(
   inclusive? : Bool = false,
 ) -> Iter[T] {
   let dir = T::direction(step)
-  guard dir != Still else { abort("@range.range: step must not be zero") }
   let mut i = start
   let mut done = false
   Iter::new(() => {
     guard !done else { None }
-    let cmp = i.compare(end)
     let in_range = match dir {
-      Forward => cmp < 0
-      Backward => cmp > 0
-      Still => false // unreachable, guarded above
+      Forward => i.compare(end) < 0
+      Backward => i.compare(end) > 0
+      Still => false
     }
-    guard in_range || (inclusive && cmp == 0) else { None }
+    guard in_range || (inclusive && i == end) else { None }
     let value = i
     let next = i + step
     let progress = match dir {

@@ -116,11 +116,63 @@ test "range BigInt" {
 }
 
 ///|
-test "range zero step aborts" {
-  // We can't easily catch `abort` in tests, so we just document the
-  // contract via the public docstring. A zero-step call would abort
-  // the process here.
-  inspect(@range.Direction::Still == @range.Still, content="true")
+test "range zero step yields empty (or [start] when inclusive at the boundary)" {
+  inspect(@range.range(0, 10, 0), content="[]")
+  inspect(@range.range(5, 5, 0, inclusive=true), content="[5]")
+  inspect(@range.range(0.0, 1.0, 0.0), content="[]")
+}
+
+///|
+test "range Double NaN step matches Double::until: yields [start] only when inclusive at equal bounds" {
+  let nan = 0.0 / 0.0
+  inspect(@range.range(1.0, 1.0, nan, inclusive=true), content="[1]")
+  inspect(@range.range(1.0, 2.0, nan, inclusive=true), content="[]")
+  inspect(@range.range(1.0, 1.0, nan), content="[]")
+}
+
+///|
+test "range Double NaN end never matches inclusive" {
+  let nan = 0.0 / 0.0
+  // NaN as end with a finite forward step must not infinite-loop;
+  // it terminates because `i == NaN` is always false.
+  inspect(@range.range(0.0, nan, 1.0, inclusive=true), content="[]")
+}
+
+///|
+test "range Int MIN_VALUE descending and step" {
+  // step = MIN_VALUE: 0 + MIN_VALUE = MIN_VALUE (one valid advance);
+  // MIN_VALUE + MIN_VALUE wraps to 0, no progress, stops.
+  let min = -2147483648
+  inspect(@range.range(0, min, min), content="[0]")
+  inspect(@range.range(0, min, min, inclusive=true), content="[0, -2147483648]")
+  // Plain descending into MIN_VALUE
+  inspect(
+    @range.range(min + 2, min, -1, inclusive=true),
+    content="[-2147483646, -2147483647, -2147483648]",
+  )
+}
+
+///|
+test "range UInt wrap-around at MAX_VALUE" {
+  let max = 4294967295U
+  inspect(@range.range(max - 1U, max, 2U), content="[4294967294]")
+  inspect(
+    @range.range(max - 1U, max, 1U, inclusive=true),
+    content="[4294967294, 4294967295]",
+  )
+}
+
+///|
+test "Direction constructors are externally accessible" {
+  // External callers must be able to construct and pattern-match on
+  // Direction so they can implement Step for their own types.
+  let d : @range.Direction = @range.Forward
+  let label = match d {
+    @range.Forward => "forward"
+    @range.Backward => "backward"
+    @range.Still => "still"
+  }
+  inspect(label, content="forward")
 }
 
 ///|
