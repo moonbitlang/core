@@ -132,6 +132,50 @@ pub impl Step for Double with step_one() {
 }
 
 ///|
+pub impl Step for Int16 with direction(self) {
+  if self > (0 : Int16) {
+    Forward
+  } else if self < (0 : Int16) {
+    Backward
+  } else {
+    Still
+  }
+}
+
+///|
+pub impl Step for Int16 with step_one() {
+  (1 : Int16)
+}
+
+///|
+pub impl Step for UInt16 with direction(self) {
+  if self > (0 : UInt16) {
+    Forward
+  } else {
+    Still
+  }
+}
+
+///|
+pub impl Step for UInt16 with step_one() {
+  (1 : UInt16)
+}
+
+///|
+pub impl Step for Byte with direction(self) {
+  if self > (0 : Byte) {
+    Forward
+  } else {
+    Still
+  }
+}
+
+///|
+pub impl Step for Byte with step_one() {
+  (1 : Byte)
+}
+
+///|
 pub impl Step for @bigint.BigInt with direction(self) {
   if self > 0N {
     Forward

@@ -136,6 +136,46 @@ test "iter Float" {
 }
 
 ///|
+test "iter Int16" {
+  inspect(
+    @range.iter(from=(0 : Int16), to=(5 : Int16)),
+    content="[0, 1, 2, 3, 4]",
+  )
+  inspect(
+    @range.iter(from=(0 : Int16), to=(10 : Int16), step=(3 : Int16)),
+    content="[0, 3, 6, 9]",
+  )
+  inspect(
+    @range.iter(from=(10 : Int16), to=(0 : Int16), step=(-1 : Int16)),
+    content="[10, 9, 8, 7, 6, 5, 4, 3, 2, 1]",
+  )
+}
+
+///|
+test "iter UInt16" {
+  inspect(
+    @range.iter(from=(0 : UInt16), to=(5 : UInt16)),
+    content="[0, 1, 2, 3, 4]",
+  )
+  inspect(
+    @range.iter(from=(0 : UInt16), to=(10 : UInt16), step=(3 : UInt16)),
+    content="[0, 3, 6, 9]",
+  )
+}
+
+///|
+test "iter Byte" {
+  inspect(
+    @range.iter(from=(0 : Byte), to=(5 : Byte)),
+    content="[b'\\x00', b'\\x01', b'\\x02', b'\\x03', b'\\x04']",
+  )
+  inspect(
+    @range.iter(from=(250 : Byte), to=(255 : Byte), inclusive=true),
+    content="[b'\\xFA', b'\\xFB', b'\\xFC', b'\\xFD', b'\\xFE', b'\\xFF']",
+  )
+}
+
+///|
 test "iter BigInt" {
   inspect(@range.iter(from=0N, to=5N), content="[0, 1, 2, 3, 4]")
   inspect(@range.iter(from=10N, to=0N, step=-3N), content="[10, 7, 4, 1]")

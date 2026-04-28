@@ -24,9 +24,12 @@ pub(open) trait Step : Add + Compare {
   direction(Self) -> Direction
   step_one() -> Self
 }
+pub impl Step for Byte
 pub impl Step for Int
+pub impl Step for Int16
 pub impl Step for Int64
 pub impl Step for UInt
+pub impl Step for UInt16
 pub impl Step for UInt64
 pub impl Step for Float
 pub impl Step for Double
