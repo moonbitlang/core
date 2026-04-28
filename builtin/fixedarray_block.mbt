@@ -35,6 +35,7 @@
 /// - `dst_offset + len > dst.length()`
 /// - `src_offset + len > src.length()`
 ///
+#owned(dst, src)
 #intrinsic("%fixedarray.copy")
 #coverage.skip
 pub fn[A] FixedArray::unsafe_blit(
@@ -58,6 +59,7 @@ pub fn[A] FixedArray::unsafe_blit(
 ///|
 /// This is the same as `unsafe_blit`, but it is used when the source array is
 /// FixedArray[T] instead of UninitializedArray[T].
+#owned(dst, src)
 #intrinsic("%fixedarray.copy")
 #coverage.skip
 fn[T] UninitializedArray::unsafe_blit_fixed(

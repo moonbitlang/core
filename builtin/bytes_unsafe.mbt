@@ -36,6 +36,7 @@
 /// - `bytes[index+1]` ← bits 8-15
 /// - ...
 /// - `bytes[index+7]` ← bits 56-63 (most significant)
+#borrow(bytes)
 #intrinsic("%bytes.unsafe_write_uint64_le")
 pub fn FixedArray::unsafe_write_uint64_le(
   bytes : FixedArray[Byte],
@@ -69,6 +70,7 @@ pub fn FixedArray::unsafe_write_uint64_le(
 /// - `bytes[index+1]` ← bits 48-55
 /// - ...
 /// - `bytes[index+7]` ← bits 0-7 (least significant)
+#borrow(bytes)
 #intrinsic("%bytes.unsafe_write_uint64_be")
 pub fn FixedArray::unsafe_write_uint64_be(
   bytes : FixedArray[Byte],
@@ -102,6 +104,7 @@ pub fn FixedArray::unsafe_write_uint64_be(
 /// - `bytes[index+1]` ← bits 8-15
 /// - `bytes[index+2]` ← bits 16-23
 /// - `bytes[index+3]` ← bits 24-31 (most significant)
+#borrow(bytes)
 #intrinsic("%bytes.unsafe_write_uint32_le")
 pub fn FixedArray::unsafe_write_uint32_le(
   bytes : FixedArray[Byte],
@@ -135,6 +138,7 @@ pub fn FixedArray::unsafe_write_uint32_le(
 /// - `bytes[index+1]` ← bits 16-23
 /// - `bytes[index+2]` ← bits 8-15
 /// - `bytes[index+3]` ← bits 0-7 (least significant)
+#borrow(bytes)
 #intrinsic("%bytes.unsafe_write_uint32_be")
 pub fn FixedArray::unsafe_write_uint32_be(
   bytes : FixedArray[Byte],
@@ -166,6 +170,7 @@ pub fn FixedArray::unsafe_write_uint32_be(
 /// Writes 2 bytes starting at `index` in little-endian order:
 /// - `bytes[index]` ← bits 0-7 (least significant)
 /// - `bytes[index+1]` ← bits 8-15 (most significant)
+#borrow(bytes)
 #intrinsic("%bytes.unsafe_write_uint16_le")
 pub fn FixedArray::unsafe_write_uint16_le(
   bytes : FixedArray[Byte],
@@ -197,6 +202,7 @@ pub fn FixedArray::unsafe_write_uint16_le(
 /// Writes 2 bytes starting at `index` in big-endian order:
 /// - `bytes[index]` ← bits 8-15 (most significant)
 /// - `bytes[index+1]` ← bits 0-7 (least significant)
+#borrow(bytes)
 #intrinsic("%bytes.unsafe_write_uint16_be")
 pub fn FixedArray::unsafe_write_uint16_be(
   bytes : FixedArray[Byte],
@@ -232,6 +238,7 @@ pub fn FixedArray::unsafe_write_uint16_be(
 /// - `bytes[index+1]` → bits 8-15
 /// - ...
 /// - `bytes[index+7]` → bits 56-63 (most significant)
+#borrow(bytes)
 #intrinsic("%bytes.unsafe_read_uint64_le")
 #doc(hidden)
 pub fn Bytes::unsafe_read_uint64_le(bytes : Bytes, index : Int) -> UInt64 {
@@ -263,6 +270,7 @@ pub fn Bytes::unsafe_read_uint64_le(bytes : Bytes, index : Int) -> UInt64 {
 /// - `bytes[index+1]` → bits 48-55
 /// - ...
 /// - `bytes[index+7]` → bits 0-7 (least significant)
+#borrow(bytes)
 #intrinsic("%bytes.unsafe_read_uint64_be")
 #doc(hidden)
 pub fn Bytes::unsafe_read_uint64_be(bytes : Bytes, index : Int) -> UInt64 {
@@ -294,6 +302,7 @@ pub fn Bytes::unsafe_read_uint64_be(bytes : Bytes, index : Int) -> UInt64 {
 /// - `bytes[index+1]` → bits 8-15
 /// - `bytes[index+2]` → bits 16-23
 /// - `bytes[index+3]` → bits 24-31 (most significant)
+#borrow(bytes)
 #intrinsic("%bytes.unsafe_read_uint32_le")
 #doc(hidden)
 pub fn Bytes::unsafe_read_uint32_le(bytes : Bytes, index : Int) -> UInt {
@@ -325,6 +334,7 @@ pub fn Bytes::unsafe_read_uint32_le(bytes : Bytes, index : Int) -> UInt {
 /// - `bytes[index+1]` → bits 16-23
 /// - `bytes[index+2]` → bits 8-15
 /// - `bytes[index+3]` → bits 0-7 (least significant)
+#borrow(bytes)
 #intrinsic("%bytes.unsafe_read_uint32_be")
 #doc(hidden)
 pub fn Bytes::unsafe_read_uint32_be(bytes : Bytes, index : Int) -> UInt {
@@ -354,6 +364,7 @@ pub fn Bytes::unsafe_read_uint32_be(bytes : Bytes, index : Int) -> UInt {
 /// Reads 2 bytes starting at `index` and interprets them as a UInt16 in little-endian order:
 /// - `bytes[index]` → bits 0-7 (least significant)
 /// - `bytes[index+1]` → bits 8-15 (most significant)
+#borrow(bytes)
 #intrinsic("%bytes.unsafe_read_uint16_le")
 #doc(hidden)
 pub fn Bytes::unsafe_read_uint16_le(bytes : Bytes, index : Int) -> UInt16 {
@@ -383,6 +394,7 @@ pub fn Bytes::unsafe_read_uint16_le(bytes : Bytes, index : Int) -> UInt16 {
 /// Reads 2 bytes starting at `index` and interprets them as a UInt16 in big-endian order:
 /// - `bytes[index]` → bits 8-15 (most significant)
 /// - `bytes[index+1]` → bits 0-7 (least significant)
+#borrow(bytes)
 #intrinsic("%bytes.unsafe_read_uint16_be")
 #doc(hidden)
 pub fn Bytes::unsafe_read_uint16_be(bytes : Bytes, index : Int) -> UInt16 {
@@ -545,6 +557,7 @@ pub fn BytesView::unsafe_read_uint16_be(
 fn buffer_to_fixedarray(buf : UninitializedArray[Byte]) -> FixedArray[Byte] = "%identity"
 
 ///|
+#borrow(bytes)
 #intrinsic("%bytes.unsafe_read_uint16_le")
 fn fixedarray_read_uint16_le(bytes : FixedArray[Byte], index : Int) -> UInt16 {
   for i in 0..<=1; result = (0 : UInt16) {
@@ -555,6 +568,7 @@ fn fixedarray_read_uint16_le(bytes : FixedArray[Byte], index : Int) -> UInt16 {
 }
 
 ///|
+#borrow(bytes)
 #intrinsic("%bytes.unsafe_read_uint16_be")
 fn fixedarray_read_uint16_be(bytes : FixedArray[Byte], index : Int) -> UInt16 {
   for i in 0..<=1; result = (0 : UInt16) {
@@ -565,6 +579,7 @@ fn fixedarray_read_uint16_be(bytes : FixedArray[Byte], index : Int) -> UInt16 {
 }
 
 ///|
+#borrow(bytes)
 #intrinsic("%bytes.unsafe_read_uint32_le")
 fn fixedarray_read_uint32_le(bytes : FixedArray[Byte], index : Int) -> UInt {
   for i in 0..<=3; result = (0 : UInt) {
@@ -575,6 +590,7 @@ fn fixedarray_read_uint32_le(bytes : FixedArray[Byte], index : Int) -> UInt {
 }
 
 ///|
+#borrow(bytes)
 #intrinsic("%bytes.unsafe_read_uint32_be")
 fn fixedarray_read_uint32_be(bytes : FixedArray[Byte], index : Int) -> UInt {
   for i in 0..<=3; result = (0 : UInt) {
@@ -585,6 +601,7 @@ fn fixedarray_read_uint32_be(bytes : FixedArray[Byte], index : Int) -> UInt {
 }
 
 ///|
+#borrow(bytes)
 #intrinsic("%bytes.unsafe_read_uint64_le")
 fn fixedarray_read_uint64_le(bytes : FixedArray[Byte], index : Int) -> UInt64 {
   for i in 0..<=7; result = (0 : UInt64) {
@@ -595,6 +612,7 @@ fn fixedarray_read_uint64_le(bytes : FixedArray[Byte], index : Int) -> UInt64 {
 }
 
 ///|
+#borrow(bytes)
 #intrinsic("%bytes.unsafe_read_uint64_be")
 fn fixedarray_read_uint64_be(bytes : FixedArray[Byte], index : Int) -> UInt64 {
   for i in 0..<=7; result = (0 : UInt64) {
