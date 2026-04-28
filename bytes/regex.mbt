@@ -13,10 +13,12 @@
 // limitations under the License.
 
 ///|
+#deprecated("Bytes regex APIs are deprecated and will be removed.", skip_current_package=true)
 #internal(experimental, "subject to breaking change without notice")
 struct BytesRegex(@re.Regex)
 
 ///|
+#deprecated("Bytes regex APIs are deprecated and will be removed.", skip_current_package=true)
 #internal(experimental, "subject to breaking change without notice")
 struct MatchResult {
   input : BytesView
@@ -26,6 +28,7 @@ struct MatchResult {
 
 ///|
 /// Return match `before` view.
+#deprecated("Bytes regex APIs are deprecated and will be removed.", skip_current_package=true)
 #internal(experimental, "subject to breaking change without notice")
 pub fn MatchResult::before(self : MatchResult) -> BytesView {
   guard self.result.group(0) is Some((start, _end)) else { panic() }
@@ -34,6 +37,7 @@ pub fn MatchResult::before(self : MatchResult) -> BytesView {
 
 ///|
 /// Return match `after` view.
+#deprecated("Bytes regex APIs are deprecated and will be removed.", skip_current_package=true)
 #internal(experimental, "subject to breaking change without notice")
 pub fn MatchResult::after(self : MatchResult) -> BytesView {
   guard self.result.group(0) is Some((_start, end)) else { panic() }
@@ -42,6 +46,7 @@ pub fn MatchResult::after(self : MatchResult) -> BytesView {
 
 ///|
 /// Return match `content` view.
+#deprecated("Bytes regex APIs are deprecated and will be removed.", skip_current_package=true)
 #internal(experimental, "subject to breaking change without notice")
 pub fn MatchResult::content(self : MatchResult) -> BytesView {
   guard self.result.group(0) is Some((start, end)) else { panic() }
@@ -50,6 +55,7 @@ pub fn MatchResult::content(self : MatchResult) -> BytesView {
 
 ///|
 /// Access capture `group` information.
+#deprecated("Bytes regex APIs are deprecated and will be removed.", skip_current_package=true)
 #internal(experimental, "subject to breaking change without notice")
 pub fn MatchResult::group(self : MatchResult, group_index : Int) -> BytesView? {
   match self.result.group(group_index) {
@@ -60,6 +66,7 @@ pub fn MatchResult::group(self : MatchResult, group_index : Int) -> BytesView? {
 
 ///|
 /// Access capture `named_group` information.
+#deprecated("Bytes regex APIs are deprecated and will be removed.", skip_current_package=true)
 #internal(experimental, "subject to breaking change without notice")
 pub fn MatchResult::named_group(
   self : MatchResult,
@@ -81,6 +88,7 @@ pub fn BytesRegex::internal_compile_pattern(pat : @re.Pattern) -> BytesRegex {
 
 ///|
 /// Execute using this compiled object.
+#deprecated("Bytes regex APIs are deprecated and will be removed.", skip_current_package=true)
 #internal(experimental, "subject to breaking change without notice")
 pub fn BytesRegex::execute(
   self : BytesRegex,

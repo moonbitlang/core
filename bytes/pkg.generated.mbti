@@ -10,14 +10,22 @@ import {
 // Errors
 
 // Types and methods
+#deprecated
 type BytesRegex
+#deprecated
 pub fn BytesRegex::execute(Self, BytesView, last_index? : Int) -> MatchResult?
 
+#deprecated
 type MatchResult
+#deprecated
 pub fn MatchResult::after(Self) -> BytesView
+#deprecated
 pub fn MatchResult::before(Self) -> BytesView
+#deprecated
 pub fn MatchResult::content(Self) -> BytesView
+#deprecated
 pub fn MatchResult::group(Self, Int) -> BytesView?
+#deprecated
 pub fn MatchResult::named_group(Self, String) -> BytesView?
 
 // Type aliases
