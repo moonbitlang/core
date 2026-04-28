@@ -215,8 +215,11 @@ test "json conversion" {
 }
 
 ///|
-test "panic decimal round scale out of range" {
-  dec("1").round(scale=-2147483648) |> ignore
+test "round scale out of range raises" {
+  inspect(
+    try? dec("1").round(scale=-2147483648),
+    content="Err(ExponentOutOfRange)",
+  )
 }
 
 ///|
@@ -226,4 +229,59 @@ test "panic decimal exponent overflow in constructor" {
     exponent=2147483647,
   )
   |> ignore
+}
+
+///|
+test "compare extreme exponents does not abort" {
+  let huge = dec("1e2147483647")
+  let tiny = dec("1e-2147483648")
+  inspect(huge.compare(tiny), content="1")
+  inspect(tiny.compare(huge), content="-1")
+  inspect(huge.compare(huge), content="0")
+  // Same sign, magnitudes that decide via the fast path.
+  inspect(dec("9e10").compare(dec("1e1")), content="1")
+  inspect(dec("1e1").compare(dec("9e10")), content="-1")
+  // Magnitudes overlap → precise scaled comparison.
+  inspect(dec("0.5").compare(dec("0.50000001")), content="-1")
+  // Negative vs positive across extremes.
+  inspect(dec("-1e2147483647").compare(dec("1e-2147483648")), content="-1")
+}
+
+///|
+test "div_round survives extreme shifts" {
+  let huge = dec("1e2147483647")
+  let tiny = dec("1e-2147483648")
+  // tiny / huge is far below half a unit → rounds toward zero by default.
+  inspect(tiny.div_round(huge, scale=0), content="0")
+  inspect(tiny.div_round(huge, scale=0, mode=AwayFromZero), content="1")
+  inspect(
+    tiny.div_round(huge, scale=0, mode=TowardNegativeInfinity),
+    content="0",
+  )
+  inspect(
+    (-tiny).div_round(huge, scale=0, mode=TowardNegativeInfinity),
+    content="-1",
+  )
+  // Extreme scale is reported as a typed error rather than aborting.
+  inspect(
+    try? dec("1").div_round(dec("1"), scale=-2147483648),
+    content="Err(ExponentOutOfRange)",
+  )
+}
+
+///|
+test "parse rejects underscore adjacent to dot" {
+  inspect(
+    try? @decimal.Decimal::from_string("1._2"),
+    content="Err(InvalidSyntax(\"1._2\"))",
+  )
+  inspect(
+    try? @decimal.Decimal::from_string("._5"),
+    content="Err(InvalidSyntax(\"._5\"))",
+  )
+  // Already covered: underscore right before the dot.
+  inspect(
+    try? @decimal.Decimal::from_string("1_.2"),
+    content="Err(InvalidSyntax(\"1_.2\"))",
+  )
 }

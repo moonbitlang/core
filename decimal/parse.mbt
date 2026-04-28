@@ -71,6 +71,7 @@ pub fn Decimal::from_string(input : StringView) -> Decimal raise DecimalError {
   let mut has_digit = false
   let mut dot_seen = false
   let mut after_underscore = false
+  let mut after_dot = false
   let mut frac_digits = 0
   let mut has_exponent = false
   let mut scanning = true
@@ -81,24 +82,30 @@ pub fn Decimal::from_string(input : StringView) -> Decimal raise DecimalError {
         digits.write_char(ch)
         has_digit = true
         after_underscore = false
+        after_dot = false
         if dot_seen {
           frac_digits += 1
         }
         rest = tail
       }
       ['_', .. tail] => {
-        guard has_digit && !after_underscore else { invalid_syntax(input) }
+        guard has_digit && !after_underscore && !after_dot else {
+          invalid_syntax(input)
+        }
         after_underscore = true
+        after_dot = false
         rest = tail
       }
       ['.', .. tail] => {
         guard !dot_seen && !after_underscore else { invalid_syntax(input) }
         dot_seen = true
+        after_dot = true
         rest = tail
       }
       ['e' | 'E', .. tail] => {
         guard has_digit && !after_underscore else { invalid_syntax(input) }
         has_exponent = true
+        after_dot = false
         rest = tail
         scanning = false
       }

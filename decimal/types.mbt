@@ -13,7 +13,8 @@
 // limitations under the License.
 
 ///|
-/// Errors raised by `Decimal` parsing, exact conversion, and division.
+/// Errors raised by `Decimal` parsing, exact conversion, division, and
+/// scale-bound operations.
 ///
 /// - `InvalidSyntax(input)` — `Decimal::from_string` could not interpret the
 ///   string. The captured `input` is the original text that failed to parse.
@@ -26,11 +27,18 @@
 /// - `InexactConversion` — `Decimal::to_bigint_exact` was called on a value
 ///   with a fractional part, or with an exponent so far below zero that even
 ///   the divisor cannot be constructed.
+/// - `ExponentOutOfRange` — an operation would produce a canonical exponent
+///   outside the supported range (`Int::min_value..=Int::max_value`).
+///   Triggered by extreme inputs to `div_round` (e.g. `scale=Int::min_value`)
+///   or by `round` with a `scale` whose corresponding exponent does not fit
+///   in `Int`. Internal helpers used by the trait operators still abort on
+///   the same condition because trait method signatures cannot raise.
 pub(all) suberror DecimalError {
   InvalidSyntax(String)
   DivisionByZero
   NonTerminatingDivision
   InexactConversion
+  ExponentOutOfRange
 } derive(Eq, ToJson, @debug.Debug)
 
 ///|
@@ -44,6 +52,7 @@ pub impl Show for DecimalError with output(self, logger) {
     DivisionByZero => logger.write_string("DivisionByZero")
     NonTerminatingDivision => logger.write_string("NonTerminatingDivision")
     InexactConversion => logger.write_string("InexactConversion")
+    ExponentOutOfRange => logger.write_string("ExponentOutOfRange")
   }
 }
 
@@ -158,11 +167,6 @@ fn add_exponents(a : Int, b : Int) -> Int {
 ///|
 fn sub_exponents(a : Int, b : Int) -> Int {
   exponent_from_int64(a.to_int64() - b.to_int64())
-}
-
-///|
-fn scale_to_exponent(scale : Int) -> Int {
-  exponent_from_int64(-scale.to_int64())
 }
 
 ///|

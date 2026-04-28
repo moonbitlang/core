@@ -23,11 +23,73 @@ pub impl Eq for Decimal with equal(self, other) {
 
 ///|
 /// Total ordering by numeric value. Sign, magnitude, and fractional part
-/// are all respected. Compares by aligning to a common exponent and
-/// comparing coefficients.
+/// are all respected.
+///
+/// Two values with the same exponent are compared by coefficient. When
+/// exponents differ, a fast magnitude check decides the order without
+/// scaling whenever the values' decimal magnitudes are clearly apart;
+/// otherwise the smaller-exponent operand's coefficient is multiplied
+/// by `10^(exponent_diff)` and the coefficients are compared directly.
+///
+/// The fast path is what keeps `compare` from aborting on inputs like
+/// `dec("1e2147483647").compare(dec("1e-2147483648"))`: the exponent
+/// difference there overflows `Int` and would blow up if the function
+/// tried to scale before checking magnitudes.
 pub impl Compare for Decimal with compare(self, other) {
-  let (a, b, _) = align_coefficients(self, other)
-  a.compare(b)
+  // Identical canonical → equal.
+  if self.exponent == other.exponent {
+    return self.coefficient.compare(other.coefficient)
+  }
+  // Zero vs zero / zero vs non-zero.
+  let self_zero = self.coefficient.is_zero()
+  let other_zero = other.coefficient.is_zero()
+  if self_zero && other_zero {
+    return 0
+  }
+  if self_zero {
+    return -other.coefficient.compare(zero_bigint)
+  }
+  if other_zero {
+    return self.coefficient.compare(zero_bigint)
+  }
+  // Sign decides when signs differ.
+  let self_sign = if self.coefficient < zero_bigint { -1 } else { 1 }
+  let other_sign = if other.coefficient < zero_bigint { -1 } else { 1 }
+  if self_sign != other_sign {
+    return self_sign
+  }
+  // Both non-zero, same sign. Bracket each value's decimal magnitude
+  // (position of the most-significant digit relative to the decimal
+  // point) using the BigInt bit length. log10(2) ≈ 0.301, so:
+  //   digits_lower(bits) = floor(bits / 4) + 1   (slight underestimate)
+  //   digits_upper(bits) = floor(bits / 3) + 1   (slight overestimate)
+  // magnitude = digits + exponent.  All math in Int64 to dodge the Int
+  // range that triggered the original bug.
+  let self_bits = bigint_abs(self.coefficient).bit_length().to_int64()
+  let other_bits = bigint_abs(other.coefficient).bit_length().to_int64()
+  let self_e = self.exponent.to_int64()
+  let other_e = other.exponent.to_int64()
+  let self_mag_low = self_bits / 4L + 1L + self_e
+  let self_mag_high = self_bits / 3L + 1L + self_e
+  let other_mag_low = other_bits / 4L + 1L + other_e
+  let other_mag_high = other_bits / 3L + 1L + other_e
+  if self_mag_low > other_mag_high {
+    return self_sign
+  }
+  if other_mag_low > self_mag_high {
+    return -self_sign
+  }
+  // Magnitudes overlap: the exponent difference is bounded by the
+  // narrower of the two bit-length brackets, so it fits in Int and
+  // pow10 is feasible.
+  let diff = self_e - other_e
+  if diff > 0L {
+    let scaled = self.coefficient * pow10(diff.to_int())
+    scaled.compare(other.coefficient)
+  } else {
+    let scaled = other.coefficient * pow10((-diff).to_int())
+    self.coefficient.compare(scaled)
+  }
 }
 
 ///|

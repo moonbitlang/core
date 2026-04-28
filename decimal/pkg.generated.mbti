@@ -15,6 +15,7 @@ pub(all) suberror DecimalError {
   DivisionByZero
   NonTerminatingDivision
   InexactConversion
+  ExponentOutOfRange
 } derive(Eq, ToJson, @debug.Debug)
 pub impl Show for DecimalError
 
@@ -32,7 +33,7 @@ pub fn Decimal::from_string(StringView) -> Self raise DecimalError
 pub fn Decimal::from_uint(UInt) -> Self
 pub fn Decimal::from_uint64(UInt64) -> Self
 pub fn Decimal::is_zero(Self) -> Bool
-pub fn Decimal::round(Self, scale~ : Int, mode? : RoundingMode) -> Self
+pub fn Decimal::round(Self, scale~ : Int, mode? : RoundingMode) -> Self raise DecimalError
 pub fn Decimal::to_bigint_exact(Self) -> @bigint.BigInt raise DecimalError
 pub fn Decimal::to_string(Self) -> String
 pub impl Add for Decimal

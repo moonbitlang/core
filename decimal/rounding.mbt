@@ -123,8 +123,10 @@ fn rounded_ratio_below_half(
 /// `mode` defaults to `HalfEven` (banker's rounding). See `RoundingMode`
 /// for the full list of modes and their tie-breaking semantics.
 ///
-/// **Aborts** when `scale` is `Int::min_value` (the would-be exponent
-/// `-scale` overflows `Int`).
+/// Raises `ExponentOutOfRange` when `scale` is `Int::min_value` (the
+/// would-be exponent `-scale` overflows `Int`) or when the gap between
+/// `self`'s exponent and the target scale is too wide to materialize a
+/// `pow10` divisor.
 ///
 /// The result is canonicalized: trailing zeros introduced by rounding
 /// are not preserved by `to_string`. To get a fixed-scale string, format
@@ -150,12 +152,19 @@ pub fn Decimal::round(
   self : Decimal,
   scale~ : Int,
   mode? : RoundingMode = HalfEven,
-) -> Decimal {
-  let target_exponent = scale_to_exponent(scale)
+) -> Decimal raise DecimalError {
+  let target_exponent_i64 = -scale.to_int64()
+  guard target_exponent_i64 >= min_exponent64 &&
+    target_exponent_i64 <= max_exponent64 else {
+    raise ExponentOutOfRange
+  }
+  let target_exponent = target_exponent_i64.to_int()
   if self.exponent >= target_exponent {
     return self
   }
-  let divisor = pow10(sub_exponents(target_exponent, self.exponent))
+  let diff_i64 = target_exponent_i64 - self.exponent.to_int64()
+  guard diff_i64 <= max_exponent64 else { raise ExponentOutOfRange }
+  let divisor = pow10(diff_i64.to_int())
   let quotient = rounded_ratio(self.coefficient, divisor, mode)
   make_decimal(quotient, target_exponent)
 }

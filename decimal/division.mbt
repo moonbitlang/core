@@ -128,27 +128,40 @@ pub fn Decimal::div_round(
   mode? : RoundingMode = HalfEven,
 ) -> Decimal raise DecimalError {
   guard !other.coefficient.is_zero() else { raise DivisionByZero }
-  let target_exponent = scale_to_exponent(scale)
-  let shift = sub_exponents(
-    sub_exponents(self.exponent, other.exponent),
-    target_exponent,
-  )
-  let (numerator, denominator) = if shift >= 0 {
-    (self.coefficient * pow10(shift), other.coefficient)
+  // Compute the result exponent and scaling shift in Int64 so we never
+  // round-trip through `Int` until we actually need to materialize a
+  // canonical exponent or call `pow10`.
+  let target_exponent_i64 = -scale.to_int64()
+  guard target_exponent_i64 >= min_exponent64 &&
+    target_exponent_i64 <= max_exponent64 else {
+    raise ExponentOutOfRange
+  }
+  let target_exponent = target_exponent_i64.to_int()
+  let shift_i64 = self.exponent.to_int64() -
+    other.exponent.to_int64() -
+    target_exponent_i64
+  if shift_i64 >= 0L {
+    // Multiply numerator by 10^shift. If the shift exceeds Int range we
+    // would need to construct an infeasibly large `BigInt`; bail.
+    guard shift_i64 <= max_exponent64 else { raise ExponentOutOfRange }
+    let numerator = self.coefficient * pow10(shift_i64.to_int())
+    let denominator = other.coefficient
+    make_decimal(rounded_ratio(numerator, denominator, mode), target_exponent)
   } else {
-    let negative_shift = -shift.to_int64()
-    if negative_shift > max_exponent64 {
-      // Pathological case: `shift == Int::min_value` and the exact value
-      // is below half of one target unit. Rounding therefore depends only
-      // on direction; we can settle the result without materializing the
-      // (infeasibly large) divisor.
+    let neg_shift = -shift_i64
+    if neg_shift > max_exponent64 {
+      // The exact value is more than `max_exponent64` decimal places
+      // below the target scale, so the magnitude is strictly below
+      // half of one unit. Rounding therefore depends only on the
+      // sign of the ratio and the rounding mode; we settle the result
+      // without materializing the (infeasibly large) divisor.
       return make_decimal(
         rounded_ratio_below_half(self.coefficient, other.coefficient, mode),
         target_exponent,
       )
     }
-    (self.coefficient, other.coefficient * pow10(negative_shift.to_int()))
+    let numerator = self.coefficient
+    let denominator = other.coefficient * pow10(neg_shift.to_int())
+    make_decimal(rounded_ratio(numerator, denominator, mode), target_exponent)
   }
-  let quotient = rounded_ratio(numerator, denominator, mode)
-  make_decimal(quotient, target_exponent)
 }
