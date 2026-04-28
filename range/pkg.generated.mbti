@@ -6,7 +6,7 @@ import {
 }
 
 // Values
-pub fn[T : Step] range(T, T, T, inclusive? : Bool) -> Iter[T]
+pub fn[T : Step] iter(from~ : T, to~ : T, step? : T, inclusive? : Bool) -> Iter[T]
 
 // Errors
 
@@ -22,6 +22,7 @@ pub(all) enum Direction {
 // Traits
 pub(open) trait Step : Add + Compare {
   direction(Self) -> Direction
+  step_one() -> Self
 }
 pub impl Step for Int
 pub impl Step for Int64

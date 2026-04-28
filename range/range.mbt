@@ -24,18 +24,19 @@ pub(all) enum Direction {
 } derive(Eq)
 
 ///|
-/// Trait for types that can be enumerated by an explicit step.
+/// Trait for additive ordered types with a canonical unit step,
+/// suitable as the element type of `range`.
 ///
 /// `Add` advances the iterator (`current + step`); `Compare` decides
-/// when the iterator has reached `end`. `direction(step)` reports
-/// whether the step moves forward, stays put, or moves backward —
-/// so `range` knows which inequality to check against `end`.
-///
-/// There is intentionally no implicit "one"/default step value:
-/// callers must pass `step` explicitly, which keeps the trait usable
-/// for non-numeric or non-unit-having types.
+/// when the iterator has reached `to`. `direction(step)` reports
+/// whether the step moves forward, stays put, or moves backward — so
+/// `range` knows which inequality to check against `to`. `step_one()`
+/// supplies the default `step` when the caller omits it; implementers
+/// should return the ordinary positive unit for the type (`1` for
+/// integers, `1.0` for floats, `1N` for `BigInt`).
 pub(open) trait Step: Add + Compare {
   direction(Self) -> Direction
+  step_one() -> Self
 }
 
 ///|
@@ -50,6 +51,11 @@ pub impl Step for Int with direction(self) {
 }
 
 ///|
+pub impl Step for Int with step_one() {
+  1
+}
+
+///|
 pub impl Step for Int64 with direction(self) {
   if self > 0L {
     Forward
@@ -58,6 +64,11 @@ pub impl Step for Int64 with direction(self) {
   } else {
     Still
   }
+}
+
+///|
+pub impl Step for Int64 with step_one() {
+  1L
 }
 
 ///|
@@ -70,12 +81,22 @@ pub impl Step for UInt with direction(self) {
 }
 
 ///|
+pub impl Step for UInt with step_one() {
+  1U
+}
+
+///|
 pub impl Step for UInt64 with direction(self) {
   if self > 0UL {
     Forward
   } else {
     Still
   }
+}
+
+///|
+pub impl Step for UInt64 with step_one() {
+  1UL
 }
 
 ///|
@@ -90,6 +111,11 @@ pub impl Step for Float with direction(self) {
 }
 
 ///|
+pub impl Step for Float with step_one() {
+  (1.0 : Float)
+}
+
+///|
 pub impl Step for Double with direction(self) {
   if self > 0.0 {
     Forward
@@ -98,6 +124,11 @@ pub impl Step for Double with direction(self) {
   } else {
     Still
   }
+}
+
+///|
+pub impl Step for Double with step_one() {
+  1.0
 }
 
 ///|
@@ -112,52 +143,68 @@ pub impl Step for @bigint.BigInt with direction(self) {
 }
 
 ///|
-/// Creates an iterator over `start, start+step, start+2*step, ...`
-/// while the value is on the correct side of `end`.
+pub impl Step for @bigint.BigInt with step_one() {
+  1N
+}
+
+///|
+/// Creates an iterator over `from, from + step, from + 2*step, ...`
+/// while the value is on the correct side of `to`.
 ///
-/// `step` is required. A negative step descends; a positive step
-/// ascends; a zero (or `NaN`) step yields the empty iterator (or just
-/// `[start]` when `inclusive=true && start == end`). By default `end`
-/// is exclusive; pass `inclusive=true` to include it.
+/// All three positional concepts are passed by label. `step` defaults
+/// to `T::step_one()` (the type's natural unit step), so a simple
+/// ascending range is just `iter(from=0, to=10)`. A negative step
+/// descends; a positive step ascends; a zero (or `NaN`) step yields
+/// the empty iterator — or just `[from]` when `inclusive=true` and
+/// `from == to`. By default `to` is exclusive; pass `inclusive=true`
+/// to include it.
 ///
 /// The loop terminates as soon as `current + step` fails to make
 /// progress past `current`. For integral types this only happens at
-/// numeric overflow (e.g. `range(MAX_VALUE - 1, MAX_VALUE, 1,
+/// numeric overflow (e.g. `iter(from=MAX_VALUE - 1, to=MAX_VALUE,
 /// inclusive=true)` yields `[MAX_VALUE - 1, MAX_VALUE]` and stops).
 /// For `Float`/`Double` it also terminates when the step is too small
 /// relative to the current accumulator to advance it (sub-precision
 /// step), which prevents an otherwise silent infinite loop.
 ///
-/// The inclusive end check uses `==` (so a `NaN` end never matches),
+/// The inclusive end check uses `==` (so a `NaN` `to` never matches),
 /// which keeps the iterator from looping when the comparison ordering
 /// is unordered.
+///
+/// The function is named `iter` rather than `range` so that a future
+/// first-class `Range[T]` struct can take the `Range`/`range` names
+/// without breaking this entry point.
 ///
 /// # Examples
 ///
 /// ```mbt nocheck
 /// test {
-///   inspect(@range.range(0, 10, 3), content="[0, 3, 6, 9]")
-///   inspect(@range.range(0, 5, 1, inclusive=true), content="[0, 1, 2, 3, 4, 5]")
-///   inspect(@range.range(10, 0, -3), content="[10, 7, 4, 1]")
+///   inspect(@range.iter(from=0, to=10), content="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]")
+///   inspect(@range.iter(from=0, to=10, step=3), content="[0, 3, 6, 9]")
+///   inspect(@range.iter(from=10, to=0, step=-3), content="[10, 7, 4, 1]")
+///   inspect(
+///     @range.iter(from=0, to=5, inclusive=true),
+///     content="[0, 1, 2, 3, 4, 5]",
+///   )
 /// }
 /// ```
-pub fn[T : Step] range(
-  start : T,
-  end : T,
-  step : T,
+pub fn[T : Step] iter(
+  from~ : T,
+  to~ : T,
+  step? : T = T::step_one(),
   inclusive? : Bool = false,
 ) -> Iter[T] {
   let dir = T::direction(step)
-  let mut i = start
+  let mut i = from
   let mut done = false
   Iter::new(() => {
     guard !done else { None }
     let in_range = match dir {
-      Forward => i.compare(end) < 0
-      Backward => i.compare(end) > 0
+      Forward => i.compare(to) < 0
+      Backward => i.compare(to) > 0
       Still => false
     }
-    guard in_range || (inclusive && i == end) else { None }
+    guard in_range || (inclusive && i == to) else { None }
     let value = i
     let next = i + step
     let progress = match dir {

@@ -13,151 +13,191 @@
 // limitations under the License.
 
 ///|
-test "range Int basic" {
-  inspect(@range.range(0, 5, 1), content="[0, 1, 2, 3, 4]")
-  inspect(@range.range(0, 10, 3), content="[0, 3, 6, 9]")
-  inspect(@range.range(0, 0, 1), content="[]")
-  inspect(@range.range(5, 0, 1), content="[]")
+test "iter Int default step" {
+  inspect(@range.iter(from=0, to=5), content="[0, 1, 2, 3, 4]")
+  inspect(@range.iter(from=0, to=0), content="[]")
+  inspect(@range.iter(from=5, to=0), content="[]")
 }
 
 ///|
-test "range Int inclusive" {
-  inspect(@range.range(0, 5, 1, inclusive=true), content="[0, 1, 2, 3, 4, 5]")
-  inspect(@range.range(0, 0, 1, inclusive=true), content="[0]")
-  inspect(@range.range(0, 10, 3, inclusive=true), content="[0, 3, 6, 9]")
+test "iter Int with step" {
+  inspect(@range.iter(from=0, to=10, step=3), content="[0, 3, 6, 9]")
+  inspect(@range.iter(from=100, to=101, step=4), content="[100]")
 }
 
 ///|
-test "range Int descending" {
-  inspect(@range.range(10, 0, -1), content="[10, 9, 8, 7, 6, 5, 4, 3, 2, 1]")
-  inspect(@range.range(10, 0, -3), content="[10, 7, 4, 1]")
-  inspect(@range.range(10, 0, -3, inclusive=true), content="[10, 7, 4, 1]")
-  inspect(@range.range(0, 10, -1), content="[]")
-}
-
-///|
-test "range Int overflow at MAX_VALUE" {
+test "iter Int inclusive" {
   inspect(
-    @range.range(@int.MAX_VALUE - 2, @int.MAX_VALUE - 1, 1),
+    @range.iter(from=0, to=5, inclusive=true),
+    content="[0, 1, 2, 3, 4, 5]",
+  )
+  inspect(@range.iter(from=0, to=0, inclusive=true), content="[0]")
+  inspect(
+    @range.iter(from=0, to=10, step=3, inclusive=true),
+    content="[0, 3, 6, 9]",
+  )
+}
+
+///|
+test "iter Int descending" {
+  inspect(
+    @range.iter(from=10, to=0, step=-1),
+    content="[10, 9, 8, 7, 6, 5, 4, 3, 2, 1]",
+  )
+  inspect(@range.iter(from=10, to=0, step=-3), content="[10, 7, 4, 1]")
+  inspect(
+    @range.iter(from=10, to=0, step=-3, inclusive=true),
+    content="[10, 7, 4, 1]",
+  )
+  inspect(@range.iter(from=0, to=10, step=-1), content="[]")
+}
+
+///|
+test "iter Int overflow at MAX_VALUE" {
+  inspect(
+    @range.iter(from=@int.MAX_VALUE - 2, to=@int.MAX_VALUE - 1),
     content="[2147483645]",
   )
   inspect(
-    @range.range(@int.MAX_VALUE - 1, @int.MAX_VALUE, 1, inclusive=true),
+    @range.iter(from=@int.MAX_VALUE - 1, to=@int.MAX_VALUE, inclusive=true),
     content="[2147483646, 2147483647]",
   )
   inspect(
-    @range.range(@int.MAX_VALUE, @int.MAX_VALUE, 1, inclusive=true),
+    @range.iter(from=@int.MAX_VALUE, to=@int.MAX_VALUE, inclusive=true),
     content="[2147483647]",
   )
 }
 
 ///|
-test "range Int64" {
-  inspect(@range.range(0L, 10L, 3L), content="[0, 3, 6, 9]")
-  inspect(@range.range(10L, 0L, -3L), content="[10, 7, 4, 1]")
+test "iter Int64" {
+  inspect(@range.iter(from=0L, to=10L, step=3L), content="[0, 3, 6, 9]")
+  inspect(@range.iter(from=10L, to=0L, step=-3L), content="[10, 7, 4, 1]")
   inspect(
-    @range.range(0x80000000L, 0x80000000L + 10L, 2L),
+    @range.iter(from=0x80000000L, to=0x80000000L + 10L, step=2L),
     content="[2147483648, 2147483650, 2147483652, 2147483654, 2147483656]",
   )
 }
 
 ///|
-test "range UInt" {
-  inspect(@range.range(0U, 5U, 1U), content="[0, 1, 2, 3, 4]")
-  inspect(@range.range(0U, 10U, 3U), content="[0, 3, 6, 9]")
-  inspect(@range.range(5U, 0U, 1U), content="[]")
+test "iter UInt" {
+  inspect(@range.iter(from=0U, to=5U), content="[0, 1, 2, 3, 4]")
+  inspect(@range.iter(from=0U, to=10U, step=3U), content="[0, 3, 6, 9]")
+  inspect(@range.iter(from=5U, to=0U), content="[]")
 }
 
 ///|
-test "range UInt64" {
-  inspect(@range.range(0UL, 5UL, 1UL), content="[0, 1, 2, 3, 4]")
+test "iter UInt64" {
+  inspect(@range.iter(from=0UL, to=5UL), content="[0, 1, 2, 3, 4]")
 }
 
 ///|
-test "range Double" {
-  inspect(@range.range(0.0, 1.0, 0.25), content="[0, 0.25, 0.5, 0.75]")
+test "iter Double" {
   inspect(
-    @range.range(0.0, 1.0, 0.25, inclusive=true),
+    @range.iter(from=0.0, to=1.0, step=0.25),
+    content="[0, 0.25, 0.5, 0.75]",
+  )
+  inspect(
+    @range.iter(from=0.0, to=1.0, step=0.25, inclusive=true),
     content="[0, 0.25, 0.5, 0.75, 1]",
   )
-  inspect(@range.range(0.0, -1.0, -0.25), content="[0, -0.25, -0.5, -0.75]")
+  inspect(
+    @range.iter(from=0.0, to=-1.0, step=-0.25),
+    content="[0, -0.25, -0.5, -0.75]",
+  )
 }
 
 ///|
-test "range Double terminates on sub-precision step" {
+test "iter Double default step is 1.0" {
+  inspect(@range.iter(from=0.0, to=4.5), content="[0, 1, 2, 3, 4]")
+}
+
+///|
+test "iter Double terminates on sub-precision step" {
   // 1e16 + 1.0 == 1e16 in IEEE 754 (double precision around 2^53),
   // so the loop must bail rather than infinite-loop.
-  let r = @range.range(1.0e16, 1.0e16 + 100.0, 1.0).take(5).to_array()
+  let r = @range.iter(from=1.0e16, to=1.0e16 + 100.0, step=1.0)
+    .take(5)
+    .to_array()
   inspect(r.length() <= 1, content="true")
 }
 
 ///|
-test "range Double Inf step yields one and stops" {
+test "iter Double Inf step yields one and stops" {
   let inf = 1.0 / 0.0
-  inspect(@range.range(0.0, 100.0, inf), content="[0]")
+  inspect(@range.iter(from=0.0, to=100.0, step=inf), content="[0]")
 }
 
 ///|
-test "range Float" {
+test "iter Float" {
   inspect(
-    @range.range((0.0 : Float), 1.0, 0.25),
+    @range.iter(from=(0.0 : Float), to=1.0, step=0.25),
     content="[0, 0.25, 0.5, 0.75]",
   )
 }
 
 ///|
-test "range BigInt" {
-  inspect(@range.range(0N, 5N, 1N), content="[0, 1, 2, 3, 4]")
-  inspect(@range.range(10N, 0N, -3N), content="[10, 7, 4, 1]")
+test "iter BigInt" {
+  inspect(@range.iter(from=0N, to=5N), content="[0, 1, 2, 3, 4]")
+  inspect(@range.iter(from=10N, to=0N, step=-3N), content="[10, 7, 4, 1]")
   inspect(
-    @range.range(0N, 1000000000000000000000N, 200000000000000000000N),
+    @range.iter(
+      from=0N,
+      to=1000000000000000000000N,
+      step=200000000000000000000N,
+    ),
     content="[0, 200000000000000000000, 400000000000000000000, 600000000000000000000, 800000000000000000000]",
   )
 }
 
 ///|
-test "range zero step yields empty (or [start] when inclusive at the boundary)" {
-  inspect(@range.range(0, 10, 0), content="[]")
-  inspect(@range.range(5, 5, 0, inclusive=true), content="[5]")
-  inspect(@range.range(0.0, 1.0, 0.0), content="[]")
+test "iter zero step yields empty (or [from] when inclusive at the boundary)" {
+  inspect(@range.iter(from=0, to=10, step=0), content="[]")
+  inspect(@range.iter(from=5, to=5, step=0, inclusive=true), content="[5]")
+  inspect(@range.iter(from=0.0, to=1.0, step=0.0), content="[]")
 }
 
 ///|
-test "range Double NaN step matches Double::until: yields [start] only when inclusive at equal bounds" {
+test "iter Double NaN step matches Double::until: yields [from] only when inclusive at equal bounds" {
   let nan = 0.0 / 0.0
-  inspect(@range.range(1.0, 1.0, nan, inclusive=true), content="[1]")
-  inspect(@range.range(1.0, 2.0, nan, inclusive=true), content="[]")
-  inspect(@range.range(1.0, 1.0, nan), content="[]")
+  inspect(
+    @range.iter(from=1.0, to=1.0, step=nan, inclusive=true),
+    content="[1]",
+  )
+  inspect(@range.iter(from=1.0, to=2.0, step=nan, inclusive=true), content="[]")
+  inspect(@range.iter(from=1.0, to=1.0, step=nan), content="[]")
 }
 
 ///|
-test "range Double NaN end never matches inclusive" {
+test "iter Double NaN end never matches inclusive" {
   let nan = 0.0 / 0.0
-  // NaN as end with a finite forward step must not infinite-loop;
+  // NaN as `to` with a finite forward step must not infinite-loop;
   // it terminates because `i == NaN` is always false.
-  inspect(@range.range(0.0, nan, 1.0, inclusive=true), content="[]")
+  inspect(@range.iter(from=0.0, to=nan, step=1.0, inclusive=true), content="[]")
 }
 
 ///|
-test "range Int MIN_VALUE descending and step" {
+test "iter Int MIN_VALUE descending and step" {
   // step = MIN_VALUE: 0 + MIN_VALUE = MIN_VALUE (one valid advance);
   // MIN_VALUE + MIN_VALUE wraps to 0, no progress, stops.
   let min = -2147483648
-  inspect(@range.range(0, min, min), content="[0]")
-  inspect(@range.range(0, min, min, inclusive=true), content="[0, -2147483648]")
+  inspect(@range.iter(from=0, to=min, step=min), content="[0]")
+  inspect(
+    @range.iter(from=0, to=min, step=min, inclusive=true),
+    content="[0, -2147483648]",
+  )
   // Plain descending into MIN_VALUE
   inspect(
-    @range.range(min + 2, min, -1, inclusive=true),
+    @range.iter(from=min + 2, to=min, step=-1, inclusive=true),
     content="[-2147483646, -2147483647, -2147483648]",
   )
 }
 
 ///|
-test "range UInt wrap-around at MAX_VALUE" {
+test "iter UInt wrap-around at MAX_VALUE" {
   let max = 4294967295U
-  inspect(@range.range(max - 1U, max, 2U), content="[4294967294]")
+  inspect(@range.iter(from=max - 1U, to=max, step=2U), content="[4294967294]")
   inspect(
-    @range.range(max - 1U, max, 1U, inclusive=true),
+    @range.iter(from=max - 1U, to=max, inclusive=true),
     content="[4294967294, 4294967295]",
   )
 }
@@ -176,9 +216,9 @@ test "Direction constructors are externally accessible" {
 }
 
 ///|
-test "range is lazy" {
+test "iter is lazy" {
   let mut count = 0
-  for i in @range.range(0, 100, 1) {
+  for i in @range.iter(from=0, to=100) {
     count = count + 1
     if i == 4 {
       break
