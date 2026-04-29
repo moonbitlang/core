@@ -13,9 +13,6 @@
 // limitations under the License.
 
 ///|
-using @debug {trait Debug, type Repr}
-
-///|
 #warnings("-deprecated_syntax")
 struct RandomState {
   mut seed : UInt64
