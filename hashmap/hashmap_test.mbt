@@ -357,6 +357,14 @@ test "@hashmap.from_array with int key" {
 }
 
 ///|
+test "@hashmap.HashMap constructor" {
+  let map = @hashmap.HashMap([("a", 1), ("b", 2), ("a", 3)])
+  assert_eq(map.length(), 2)
+  assert_eq(map.get("a"), Some(3))
+  assert_eq(map.get("b"), Some(2))
+}
+
+///|
 test "@hashmap.contains_kv" {
   let map = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
   inspect(map.contains_kv(1, "one"), content="true")

@@ -62,15 +62,16 @@ pub fn[K, V] HashMap::new(capacity? : Int = 8) -> HashMap[K, V] {
 /// ```mbt check
 /// test {
 ///   let arr = [(1, "one"), (2, "two"), (1, "ONE")]
-///   let map = @hashmap.from_array(arr)
+///   let map = @hashmap.HashMap(arr)
 ///   debug_inspect(map.get(1), content="Some(\"ONE\")")
 ///   debug_inspect(map.get(2), content="Some(\"two\")")
 /// }
 /// ```
-#as_free_fn
+#alias(from_array)
+#as_free_fn(from_array)
 #alias(of, deprecated="Use from_array instead")
 #as_free_fn(of, deprecated="Use from_array instead")
-pub fn[K : Hash + Eq, V] HashMap::from_array(
+pub fn[K : Hash + Eq, V] HashMap::HashMap(
   arr : ArrayView[(K, V)],
 ) -> HashMap[K, V] {
   let m = new(capacity=arr.length() * 2)

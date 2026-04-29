@@ -6,11 +6,12 @@ A mutable hash map based on a Robin Hood hash table.
 
 ## Create
 
-You can create an empty map using `new()` or construct it using `from_array()`.
+You can create an empty map using `new()` or construct it from entries using `HashMap([...])`.
 
 ```mbt check
 ///|
 test {
+  let _map1 = @hashmap.HashMap([("a", 1), ("b", 2)])
   let _map2 : @hashmap.HashMap[String, Int] = @hashmap.new()
 }
 ```
