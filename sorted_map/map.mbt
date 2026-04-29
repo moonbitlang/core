@@ -33,10 +33,19 @@ pub fn[K, V] SortedMap::new() -> SortedMap[K, V] {
 
 ///|
 /// Creates a sorted map from an array of key-value pairs.
-#as_free_fn
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let map = @sorted_map.SortedMap([(1, "one"), (2, "two")])
+///   assert_true(map.get(1) == Some("one"))
+/// }
+/// ```
+#alias(from_array)
+#as_free_fn(from_array)
 #alias(of, deprecated="Use from_array instead")
 #as_free_fn(of, deprecated="Use from_array instead")
-pub fn[K : Compare, V] SortedMap::from_array(
+pub fn[K : Compare, V] SortedMap::SortedMap(
   entries : ArrayView[(K, V)],
 ) -> SortedMap[K, V] {
   let map = { root: None, size: 0 }

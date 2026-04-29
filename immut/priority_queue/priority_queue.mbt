@@ -33,14 +33,15 @@ pub fn[A] PriorityQueue::new() -> PriorityQueue[A] {
 /// # Example
 /// ```mbt check
 /// test {
-///   let queue = @priority_queue.from_array([1, 2, 3, 4, 5])
+///   let queue = @priority_queue.PriorityQueue([1, 2, 3, 4, 5])
 ///   inspect(queue.length(), content="5")
 /// }
 /// ```
-#as_free_fn
+#alias(from_array)
+#as_free_fn(from_array)
 #alias(of, deprecated="Use from_array instead")
 #as_free_fn(of, deprecated="Use from_array instead")
-pub fn[A : Compare] PriorityQueue::from_array(
+pub fn[A : Compare] PriorityQueue::PriorityQueue(
   array : ArrayView[A],
 ) -> PriorityQueue[A] {
   for x in array; pq = (new() : PriorityQueue[A]) {

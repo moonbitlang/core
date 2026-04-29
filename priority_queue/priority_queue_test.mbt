@@ -33,6 +33,13 @@ test "from_array" {
 }
 
 ///|
+test "PriorityQueue constructor" {
+  let pq = @priority_queue.PriorityQueue([1, 3, 6, 4, 5])
+  debug_inspect(pq.peek(), content="Some(6)")
+  assert_eq(pq.length(), 5)
+}
+
+///|
 test "from_fixed_array" {
   let pq = @priority_queue.from_array([1, 2, 3, 4, 5])
   @test.assert_eq(pq.peek(), Some(5))

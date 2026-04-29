@@ -42,6 +42,14 @@ test "contains" {
 }
 
 ///|
+test "Deque constructor" {
+  let dv = @deque.Deque([3, 4, 5])
+  assert_eq(dv.length(), 3)
+  assert_eq(dv[0], 3)
+  assert_eq(dv[2], 5)
+}
+
+///|
 test "reserve_capacity" {
   let dv = @deque.from_array([1, 2, 3, 4, 5])
   dv.pop_front() |> ignore() // 2, 3, 4, 5

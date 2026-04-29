@@ -13,7 +13,14 @@ import {
 
 // Types and methods
 #alias(T, deprecated)
-type SortedSet[V]
+pub struct SortedSet[V] {
+  // private fields
+}
+#alias(from_array)
+#alias(of, deprecated)
+#as_free_fn(of, deprecated)
+#as_free_fn(from_array)
+pub fn[V : Compare] SortedSet::SortedSet(ArrayView[V]) -> Self[V]
 pub fn[V : Compare] SortedSet::add(Self[V], V) -> Unit
 pub fn[V : Compare] SortedSet::contains(Self[V], V) -> Bool
 #alias(clone, deprecated)
@@ -24,10 +31,6 @@ pub fn[V : Compare] SortedSet::difference(Self[V], Self[V]) -> Self[V]
 pub fn[V : Compare] SortedSet::disjoint(Self[V], Self[V]) -> Bool
 pub fn[V] SortedSet::each(Self[V], (V) -> Unit raise?) -> Unit raise?
 pub fn[V] SortedSet::eachi(Self[V], (Int, V) -> Unit raise?) -> Unit raise?
-#alias(of, deprecated)
-#as_free_fn(of, deprecated)
-#as_free_fn
-pub fn[V : Compare] SortedSet::from_array(ArrayView[V]) -> Self[V]
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
 #as_free_fn

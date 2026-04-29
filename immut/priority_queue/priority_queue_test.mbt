@@ -25,6 +25,13 @@ test "from_array" {
 }
 
 ///|
+test "PriorityQueue constructor" {
+  let queue = @priority_queue.PriorityQueue([1, 6, 3, 4, 5])
+  debug_inspect(queue.peek(), content="Some(6)")
+  inspect(queue.length(), content="5")
+}
+
+///|
 test "to_array" {
   let v = @priority_queue.from_array([1, 2, 3, 4])
   inspect(v.to_array(), content="[4, 3, 2, 1]")

@@ -12,7 +12,14 @@ import {
 
 // Types and methods
 #alias(T, deprecated)
-type Deque[A]
+pub struct Deque[A] {
+  // private fields
+}
+#alias(from_array)
+#alias(of, deprecated)
+#as_free_fn(of, deprecated)
+#as_free_fn(from_array)
+pub fn[A] Deque::Deque(ArrayView[A]) -> Self[A]
 pub fn[A] Deque::append(Self[A], Self[A]) -> Unit
 pub fn[A] Deque::as_views(Self[A]) -> (ArrayView[A], ArrayView[A])
 #alias("_[_]")
@@ -34,10 +41,6 @@ pub fn[A] Deque::eachi(Self[A], (Int, A) -> Unit) -> Unit
 pub fn[A] Deque::extract_if(Self[A], (A) -> Bool) -> Self[A]
 pub fn[A] Deque::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 pub fn[A] Deque::flatten(Self[Self[A]]) -> Self[A]
-#alias(of, deprecated)
-#as_free_fn(of, deprecated)
-#as_free_fn
-pub fn[A] Deque::from_array(ArrayView[A]) -> Self[A]
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
 #as_free_fn

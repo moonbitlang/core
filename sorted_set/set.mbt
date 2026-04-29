@@ -30,10 +30,19 @@ pub fn[V] SortedSet::singleton(value : V) -> SortedSet[V] {
 
 ///|
 /// Initialize a set from an array.
-#as_free_fn
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let set = @sorted_set.SortedSet([3, 1, 2])
+///   assert_eq(set.length(), 3)
+/// }
+/// ```
+#alias(from_array)
+#as_free_fn(from_array)
 #alias(of, deprecated="Use from_array instead")
 #as_free_fn(of, deprecated="Use from_array instead")
-pub fn[V : Compare] SortedSet::from_array(array : ArrayView[V]) -> SortedSet[V] {
+pub fn[V : Compare] SortedSet::SortedSet(array : ArrayView[V]) -> SortedSet[V] {
   let set = new()
   for x in array {
     set.add(x)

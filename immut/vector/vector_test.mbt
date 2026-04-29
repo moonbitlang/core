@@ -169,6 +169,12 @@ test "from_array" {
 }
 
 ///|
+test "Vector constructor" {
+  let v = @vector.Vector([1, 1, 4, 5, 1, 4])
+  inspect(v, content="@immut/vector.from_array([1, 1, 4, 5, 1, 4])")
+}
+
+///|
 test "iteri" {
   let v : @vector.Vector[Int] = @vector.new()
   v.eachi((_i, _e) => abort("never reach"))

@@ -168,14 +168,15 @@ test "add_empty" {
 /// ```mbt check
 /// test {
 ///   let arr = [1, 2, 3, 4, 5]
-///   let dq = @deque.from_array(arr)
+///   let dq = @deque.Deque(arr)
 ///   inspect(dq, content="@deque.from_array([1, 2, 3, 4, 5])")
 /// }
 /// ```
-#as_free_fn
+#alias(from_array)
+#as_free_fn(from_array)
 #alias(of, deprecated="Use from_array instead")
 #as_free_fn(of, deprecated="Use from_array instead")
-pub fn[A] Deque::from_array(arr : ArrayView[A]) -> Deque[A] {
+pub fn[A] Deque::Deque(arr : ArrayView[A]) -> Deque[A] {
   let len = arr.length()
   let buf = UninitializedArray::make(len)
   for i, x in arr {

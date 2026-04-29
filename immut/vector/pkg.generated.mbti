@@ -13,7 +13,14 @@ import {
 // Errors
 
 // Types and methods
-type Vector[A]
+pub struct Vector[A] {
+  // private fields
+}
+#alias(from_array)
+#alias(of, deprecated)
+#as_free_fn(of, deprecated)
+#as_free_fn(from_array)
+pub fn[A] Vector::Vector(ArrayView[A]) -> Self[A]
 #alias("_[_]")
 pub fn[A] Vector::at(Self[A], Int) -> A
 pub fn[A] Vector::concat(Self[A], Self[A]) -> Self[A]
@@ -27,10 +34,6 @@ pub fn[A] Vector::eachi(Self[A], (Int, A) -> Unit raise?) -> Unit raise?
 pub fn[A] Vector::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 #alias(fold_left, deprecated)
 pub fn[A, B] Vector::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
-#alias(of, deprecated)
-#as_free_fn(of, deprecated)
-#as_free_fn
-pub fn[A] Vector::from_array(ArrayView[A]) -> Self[A]
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
 #as_free_fn

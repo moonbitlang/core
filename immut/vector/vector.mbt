@@ -90,14 +90,15 @@ pub fn[A] Vector::makei(len : Int, f : (Int) -> A raise?) -> Vector[A] raise? {
 /// # Example
 /// ```mbt check
 /// test {
-///   let v = @vector.from_array([1, 2, 3])
+///   let v = @vector.Vector([1, 2, 3])
 ///   assert_eq(v, @vector.from_array([1, 2, 3]))
 /// }
 /// ```
-#as_free_fn
+#alias(from_array)
+#as_free_fn(from_array)
 #alias(of, deprecated="Use from_array instead")
 #as_free_fn(of, deprecated="Use from_array instead")
-pub fn[A] Vector::from_array(arr : ArrayView[A]) -> Vector[A] {
+pub fn[A] Vector::Vector(arr : ArrayView[A]) -> Vector[A] {
   Vector::makei(arr.length(), i => arr[i])
 }
 

@@ -37,6 +37,13 @@ test "remove on empty map" {
 }
 
 ///|
+test "SortedMap constructor" {
+  let map = @sorted_map.SortedMap([(3, "c"), (2, "b"), (1, "a")])
+  assert_eq(map.length(), 3)
+  debug_inspect(map.get(1), content="Some(\"a\")")
+}
+
+///|
 test "get" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
   debug_inspect(map.get(1), content="Some(\"a\")")

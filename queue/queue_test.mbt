@@ -58,6 +58,15 @@ test "from_array_1" {
 }
 
 ///|
+test "Queue constructor" {
+  let queue = @queue.Queue([1, 2, 3])
+  assert_eq(queue.length(), 3)
+  assert_eq(queue.unsafe_pop(), 1)
+  assert_eq(queue.unsafe_pop(), 2)
+  assert_eq(queue.unsafe_pop(), 3)
+}
+
+///|
 test "from_array_2" {
   let q : @queue.Queue[Int] = @queue.from_array([])
   inspect(q, content="@queue.from_array([])")

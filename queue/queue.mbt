@@ -34,14 +34,15 @@ pub fn[A] Queue::new() -> Queue[A] {
 /// ```mbt check
 /// test {
 ///   let array = Array::makei(3, idx => idx + 1)
-///   let queue : @queue.Queue[Int] = @queue.from_array(array)
+///   let queue : @queue.Queue[Int] = @queue.Queue(array)
 ///   @test.assert_eq(queue.length(), 3)
 /// }
 /// ```
-#as_free_fn
+#alias(from_array)
+#as_free_fn(from_array)
 #alias(of, deprecated="Use from_array instead")
 #as_free_fn(of, deprecated="Use from_array instead")
-pub fn[A] Queue::from_array(arr : ArrayView[A]) -> Queue[A] {
+pub fn[A] Queue::Queue(arr : ArrayView[A]) -> Queue[A] {
   guard arr.length() > 0 else { return new() }
   let length = arr.length()
   let last = { content: arr[length - 1], next: None }

@@ -13,17 +13,20 @@ import {
 
 // Types and methods
 #alias(T, deprecated)
-type Queue[A]
+pub struct Queue[A] {
+  // private fields
+}
+#alias(from_array)
+#alias(of, deprecated)
+#as_free_fn(of, deprecated)
+#as_free_fn(from_array)
+pub fn[A] Queue::Queue(ArrayView[A]) -> Self[A]
 pub fn[A] Queue::clear(Self[A]) -> Unit
 #alias(clone, deprecated)
 pub fn[A] Queue::copy(Self[A]) -> Self[A]
 pub fn[A] Queue::each(Self[A], (A) -> Unit) -> Unit
 pub fn[A] Queue::eachi(Self[A], (Int, A) -> Unit) -> Unit
 pub fn[A, B] Queue::fold(Self[A], init~ : B, (B, A) -> B) -> B
-#alias(of, deprecated)
-#as_free_fn(of, deprecated)
-#as_free_fn
-pub fn[A] Queue::from_array(ArrayView[A]) -> Self[A]
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
 #as_free_fn

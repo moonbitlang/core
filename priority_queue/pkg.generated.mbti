@@ -13,14 +13,17 @@ import {
 
 // Types and methods
 #alias(T, deprecated)
-type PriorityQueue[A]
+pub struct PriorityQueue[A] {
+  // private fields
+}
+#alias(from_array)
+#alias(of, deprecated)
+#as_free_fn(of, deprecated)
+#as_free_fn(from_array)
+pub fn[A : Compare] PriorityQueue::PriorityQueue(ArrayView[A]) -> Self[A]
 pub fn[A] PriorityQueue::clear(Self[A]) -> Unit
 #alias(clone, deprecated)
 pub fn[A] PriorityQueue::copy(Self[A]) -> Self[A]
-#alias(of, deprecated)
-#as_free_fn(of, deprecated)
-#as_free_fn
-pub fn[A : Compare] PriorityQueue::from_array(ArrayView[A]) -> Self[A]
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
 #as_free_fn

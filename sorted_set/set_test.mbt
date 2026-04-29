@@ -26,6 +26,12 @@ test "default" {
 }
 
 ///|
+test "SortedSet constructor" {
+  let set = @sorted_set.SortedSet([3, 1, 2])
+  assert_eq(set.to_array(), [1, 2, 3])
+}
+
+///|
 test "arbitrary samples" {
   let samples = (@quickcheck.samples(3) : Array[@sorted_set.SortedSet[Int]])
   inspect(samples.length(), content="3")
