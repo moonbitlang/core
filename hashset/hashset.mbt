@@ -33,10 +33,11 @@ pub fn[K] HashSet::new(capacity? : Int = default_init_capacity) -> HashSet[K] {
 
 ///|
 /// Creates a hash set containing all elements from the given array.
-#as_free_fn
+#alias(from_array)
+#as_free_fn(from_array)
 #alias(of, deprecated="Use from_array instead")
 #as_free_fn(of, deprecated="Use from_array instead")
-pub fn[K : Hash + Eq] HashSet::from_array(arr : ArrayView[K]) -> HashSet[K] {
+pub fn[K : Hash + Eq] HashSet::HashSet(arr : ArrayView[K]) -> HashSet[K] {
   let m = new()
   arr.each(e => m.add(e))
   m

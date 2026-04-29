@@ -6,12 +6,12 @@ A mutable hash set based on a Robin Hood hash table.
 
 ## Create
 
-You can create an empty set using `new()` or construct it using `from_array()`.
+You can create an empty set using `new()` or construct it from entries using `HashSet([...])`.
 
 ```mbt check
 ///|
 test {
-  let _set1 = @hashset.from_array([1, 2, 3, 4, 5])
+  let _set1 = @hashset.HashSet([1, 2, 3, 4, 5])
   let _set2 : @hashset.HashSet[String] = @hashset.new()
 }
 ```
@@ -197,4 +197,3 @@ test {
   assert_eq(small.is_disjoint(big), false)
 }
 ```
-

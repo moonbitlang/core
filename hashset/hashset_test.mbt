@@ -130,6 +130,15 @@ test "from_array" {
 }
 
 ///|
+test "HashSet constructor" {
+  let m = @hashset.HashSet(["a", "b", "c"])
+  assert_true(m.contains("a"))
+  assert_true(m.contains("b"))
+  assert_true(m.contains("c"))
+  assert_false(m.contains("d"))
+}
+
+///|
 test "size" {
   let m = @hashset.new()
   inspect(m.length(), content="0")
