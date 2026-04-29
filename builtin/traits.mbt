@@ -89,32 +89,43 @@ pub(open) trait Default {
 }
 
 ///|
-/// Trait for a logger, where debug logs can be written into
+/// Trait for append-only text sinks used by `Show` implementations.
+///
+/// A logger receives formatted output without requiring callers to allocate a
+/// complete `String` first.
 pub(open) trait Logger {
+  /// Writes a string to the logger.
   write_string(Self, String) -> Unit = _
+  /// Writes a substring of the given string to the logger.
   #deprecated("use `write_view` instead", skip_current_package=true)
   write_substring(Self, String, Int, Int) -> Unit = _
+  /// Writes a string view to the logger.
   write_view(Self, StringView) -> Unit = _
+  /// Writes a character to the logger.
   write_char(Self, Char) -> Unit = _
 }
 
 ///|
+/// Writes a substring of the given string to the logger.
 impl Logger with write_substring(self, value, start, len) {
   self.write_view(value[start:start + len])
 }
 
 ///|
+/// Writes a string to the logger.
 impl Logger with write_string(self, value) {
   self.write_view(value)
 }
 
 ///|
+/// Writes a string view to the logger.
 #deprecated("replace `impl write_substring` with `impl write_view`")
 impl Logger with write_view(self, value) {
   self.write_substring(value.data(), value.start_offset(), value.length())
 }
 
 ///|
+/// Writes a character to the logger.
 impl Logger with write_char(self, value) {
   self.write_string([value])
 }
@@ -151,13 +162,17 @@ impl Show with to_string(self) {
 }
 
 ///|
-/// Function `write_object`.
+/// Writes the `Show` representation of an object to the logger.
 pub fn[Obj : Show] &Logger::write_object(self : &Logger, obj : Obj) -> Unit {
   obj.output(self)
 }
 
 ///|
-/// Function `write_iter`.
+/// Writes an iterator of `Show` values to the logger.
+///
+/// By default, values are written in list form, such as `[1, 2]`. The
+/// `prefix`, `suffix`, and `sep` arguments customize the surrounding text and
+/// separator. If `trailing` is true, `sep` is also written after the last value.
 pub fn[T : Show] &Logger::write_iter(
   self : &Logger,
   iter : Iter[T],
