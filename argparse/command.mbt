@@ -28,25 +28,43 @@ pub struct Command {
   priv subcommand_required : Bool
   priv hidden : Bool
   priv mut build_error : ArgBuildError?
-
-  /// Create a declarative command specification.
-  fn new(
-    name : StringView,
-    flags? : ArrayView[FlagArg],
-    options? : ArrayView[OptionArg],
-    positionals? : ArrayView[PositionArg],
-    subcommands? : ArrayView[Command],
-    about? : StringView,
-    version? : StringView,
-    disable_help_flag? : Bool,
-    disable_version_flag? : Bool,
-    disable_help_subcommand? : Bool,
-    arg_required_else_help? : Bool,
-    subcommand_required? : Bool,
-    hidden? : Bool,
-    groups? : ArrayView[ArgGroup],
-  ) -> Command
 } derive(@debug.Debug)
+
+///|
+/// Create a declarative command specification.
+pub fn Command::Command(
+  name : StringView,
+  flags? : ArrayView[FlagArg] = [],
+  options? : ArrayView[OptionArg] = [],
+  positionals? : ArrayView[PositionArg] = [],
+  subcommands? : ArrayView[Command] = [],
+  about? : StringView,
+  version? : StringView,
+  disable_help_flag? : Bool = false,
+  disable_version_flag? : Bool = false,
+  disable_help_subcommand? : Bool = false,
+  arg_required_else_help? : Bool = false,
+  subcommand_required? : Bool = false,
+  hidden? : Bool = false,
+  groups? : ArrayView[ArgGroup] = [],
+) -> Command {
+  Command::new(
+    name,
+    flags~,
+    options~,
+    positionals~,
+    subcommands~,
+    about?,
+    version?,
+    disable_help_flag~,
+    disable_version_flag~,
+    disable_help_subcommand~,
+    arg_required_else_help~,
+    subcommand_required~,
+    hidden~,
+    groups~,
+  )
+}
 
 ///|
 /// Create a declarative command specification.

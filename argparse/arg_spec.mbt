@@ -80,23 +80,39 @@ priv enum ArgInfo {
 /// Declarative flag constructor wrapper.
 pub struct FlagArg {
   priv arg : Arg
-
-  /// Create a flag argument.
-  fn new(
-    name : StringView,
-    short? : Char,
-    long? : StringView,
-    about? : StringView,
-    action? : FlagAction,
-    env? : StringView,
-    requires? : ArrayView[String],
-    conflicts_with? : ArrayView[String],
-    required? : Bool,
-    global? : Bool,
-    negatable? : Bool,
-    hidden? : Bool,
-  ) -> FlagArg
 } derive(@debug.Debug)
+
+///|
+/// Create a flag argument.
+pub fn FlagArg::FlagArg(
+  name : StringView,
+  short? : Char,
+  long? : StringView = name,
+  about? : StringView,
+  action? : FlagAction = SetTrue,
+  env? : StringView,
+  requires? : ArrayView[String] = [],
+  conflicts_with? : ArrayView[String] = [],
+  required? : Bool = false,
+  global? : Bool = false,
+  negatable? : Bool = false,
+  hidden? : Bool = false,
+) -> FlagArg {
+  FlagArg::new(
+    name,
+    short?,
+    long~,
+    about?,
+    action~,
+    env?,
+    requires~,
+    conflicts_with~,
+    required~,
+    global~,
+    negatable~,
+    hidden~,
+  )
+}
 
 ///|
 /// Create a flag argument.
@@ -148,25 +164,41 @@ pub fn FlagArg::new(
 /// Named `OptionArg` to avoid shadowing the built-in `Option` type.
 pub struct OptionArg {
   priv arg : Arg
-
-  /// Create an option argument.
-  // FIXME(upstram) rename does not work here
-  fn new(
-    name : StringView,
-    short? : Char,
-    long? : StringView,
-    about? : StringView,
-    action? : OptionAction,
-    env? : StringView,
-    default_values? : ArrayView[String],
-    allow_hyphen_values? : Bool,
-    requires? : ArrayView[String],
-    conflicts_with? : ArrayView[String],
-    required? : Bool,
-    global? : Bool,
-    hidden? : Bool,
-  ) -> OptionArg
 } derive(@debug.Debug)
+
+///|
+/// Create an option argument.
+pub fn OptionArg::OptionArg(
+  name : StringView,
+  short? : Char,
+  long? : StringView = name,
+  about? : StringView,
+  action? : OptionAction = Set,
+  env? : StringView,
+  default_values? : ArrayView[String],
+  allow_hyphen_values? : Bool = false,
+  requires? : ArrayView[String] = [],
+  conflicts_with? : ArrayView[String] = [],
+  required? : Bool = false,
+  global? : Bool = false,
+  hidden? : Bool = false,
+) -> OptionArg {
+  OptionArg::new(
+    name,
+    short?,
+    long~,
+    about?,
+    action~,
+    env?,
+    default_values?,
+    allow_hyphen_values~,
+    requires~,
+    conflicts_with~,
+    required~,
+    global~,
+    hidden~,
+  )
+}
 
 ///|
 /// Create an option argument.
@@ -224,21 +256,35 @@ pub fn OptionArg::new(
 /// Declarative positional constructor wrapper.
 pub struct PositionArg {
   priv arg : Arg
-
-  /// Create a positional argument.
-  fn new(
-    name : StringView,
-    about? : StringView,
-    env? : StringView,
-    default_values? : ArrayView[String],
-    num_args? : ValueRange,
-    allow_hyphen_values? : Bool,
-    requires? : ArrayView[String],
-    conflicts_with? : ArrayView[String],
-    global? : Bool,
-    hidden? : Bool,
-  ) -> PositionArg
 } derive(@debug.Debug)
+
+///|
+/// Create a positional argument.
+pub fn PositionArg::PositionArg(
+  name : StringView,
+  about? : StringView,
+  env? : StringView,
+  default_values? : ArrayView[String],
+  num_args? : ValueRange,
+  allow_hyphen_values? : Bool = false,
+  requires? : ArrayView[String] = [],
+  conflicts_with? : ArrayView[String] = [],
+  global? : Bool = false,
+  hidden? : Bool = false,
+) -> PositionArg {
+  PositionArg::new(
+    name,
+    about?,
+    env?,
+    default_values?,
+    num_args?,
+    allow_hyphen_values~,
+    requires~,
+    conflicts_with~,
+    global~,
+    hidden~,
+  )
+}
 
 ///|
 /// Create a positional argument.

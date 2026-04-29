@@ -13,9 +13,6 @@
 // limitations under the License.
 
 ///|
-using @debug {trait Debug, type Repr}
-
-///|
 /// Type `Endian` used by this package APIs.
 pub(all) enum Endian {
   Little

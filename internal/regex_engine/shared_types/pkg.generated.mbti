@@ -38,9 +38,8 @@ pub struct Profile {
   word : @rechar_set.RecharSet
   word_symbolize_splits : ReadOnlyArray[@rechar_set.RecharSet]
   category : (Int) -> Category
-
-  fn new(valid~ : @rechar_set.RecharSet, word~ : @rechar_set.RecharSet, word_symbolize_splits? : ReadOnlyArray[@rechar_set.RecharSet], category~ : (Int) -> Category) -> Profile
 }
+pub fn Profile::Profile(valid~ : @rechar_set.RecharSet, word~ : @rechar_set.RecharSet, word_symbolize_splits? : ReadOnlyArray[@rechar_set.RecharSet], category~ : (Int) -> Category) -> Self
 pub fn Profile::new(valid~ : @rechar_set.RecharSet, word~ : @rechar_set.RecharSet, word_symbolize_splits? : ReadOnlyArray[@rechar_set.RecharSet], category~ : (Int) -> Category) -> Self
 
 pub(all) enum QuantifierMode {

@@ -21,13 +21,17 @@ pub struct Profile {
   word : RecharSet
   word_symbolize_splits : ReadOnlyArray[RecharSet]
   category : (Rechar) -> Category
+}
 
-  fn new(
-    valid~ : RecharSet,
-    word~ : RecharSet,
-    word_symbolize_splits? : ReadOnlyArray[RecharSet],
-    category~ : (Rechar) -> Category,
-  ) -> Profile
+///|
+/// Create a new instance.
+pub fn Profile::Profile(
+  valid~ : RecharSet,
+  word~ : RecharSet,
+  word_symbolize_splits? : ReadOnlyArray[RecharSet] = [word],
+  category~ : (Rechar) -> Category,
+) -> Profile {
+  Profile::new(valid~, word~, word_symbolize_splits~, category~)
 }
 
 ///|

@@ -13,9 +13,6 @@
 // limitations under the License.
 
 ///|
-using @debug {trait Debug, type Repr}
-
-///|
 /// Error type `JsonDecodeError`.
 #warnings("-deprecated_syntax")
 pub(all) suberror JsonDecodeError {
