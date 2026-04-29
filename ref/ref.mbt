@@ -28,11 +28,6 @@ pub(all) struct Ref[T] {
 }
 
 ///|
-pub fn[T] Ref::Ref(value : T) -> Ref[T] {
-  { val: value }
-}
-
-///|
 pub impl[X : Show] Show for Ref[X] with output(self, logger) {
   logger.write_string("{val: ")
   logger.write_object(self.val)
@@ -41,7 +36,8 @@ pub impl[X : Show] Show for Ref[X] with output(self, logger) {
 
 ///|
 /// create a reference from value
-pub fn[T] Ref::new(x : T) -> Ref[T] {
+#alias(new, deprecated)
+pub fn[T] Ref::Ref(x : T) -> Ref[T] {
   { val: x }
 }
 
@@ -51,7 +47,7 @@ test "to_string" {
 }
 
 ///|
-/// same as `Ref::new`
+/// Same as the `Ref` constructor.
 pub fn[T] new(x : T) -> Ref[T] {
   { val: x }
 }
