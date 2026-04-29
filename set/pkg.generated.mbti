@@ -10,7 +10,14 @@ import {
 // Errors
 
 // Types and methods
-type Set[K]
+pub struct Set[K] {
+  // private fields
+}
+#alias(from_array)
+#alias(of, deprecated)
+#as_free_fn(of, deprecated)
+#as_free_fn(from_array)
+pub fn[K : Hash + Eq] Set::Set(ArrayView[K]) -> Self[K]
 #alias(insert, deprecated)
 pub fn[K : Hash + Eq] Set::add(Self[K], K) -> Unit
 pub fn[K : Hash + Eq] Set::add_and_check(Self[K], K) -> Bool
@@ -22,10 +29,6 @@ pub fn[K] Set::copy(Self[K]) -> Self[K]
 pub fn[K : Hash + Eq] Set::difference(Self[K], Self[K]) -> Self[K]
 pub fn[K] Set::each(Self[K], (K) -> Unit raise?) -> Unit raise?
 pub fn[K] Set::eachi(Self[K], (Int, K) -> Unit raise?) -> Unit raise?
-#alias(of, deprecated)
-#as_free_fn(of, deprecated)
-#as_free_fn
-pub fn[K : Hash + Eq] Set::from_array(ArrayView[K]) -> Self[K]
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
 #as_free_fn

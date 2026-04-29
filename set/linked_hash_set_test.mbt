@@ -82,7 +82,7 @@ test "add remove" {
 
 ///|
 test "of" {
-  let m = @set.Set::from_array(["a", "b", "c"])
+  let m = @set.Set(["a", "b", "c"])
   assert_true(m.contains("a"))
   assert_true(m.contains("b"))
   assert_true(m.contains("c"))
@@ -92,7 +92,7 @@ test "of" {
 ///|
 test "from_array" {
   let arr = ["a", "b", "c"]
-  let m = @set.Set::from_array(arr)
+  let m = @set.Set(arr)
   assert_true(m.contains("a"))
   assert_true(m.contains("b"))
   assert_true(m.contains("c"))
@@ -119,15 +119,15 @@ test "is_empty" {
 
 ///|
 test "is_disjoint prefers shorter iteration" {
-  let m1 = @set.Set::from_array([1, 2, 3, 4])
-  let m2 = @set.Set::from_array([5])
+  let m1 = @set.Set([1, 2, 3, 4])
+  let m2 = @set.Set([5])
   inspect(m1.is_disjoint(m2), content="true")
 }
 
 ///|
 test "is_disjoint detects overlap in else branch" {
-  let m1 = @set.Set::from_array([1, 2, 3, 4])
-  let m2 = @set.Set::from_array([4])
+  let m1 = @set.Set([1, 2, 3, 4])
+  let m2 = @set.Set([4])
   inspect(m1.is_disjoint(m2), content="false")
 }
 
@@ -142,7 +142,7 @@ test "remove stops on shorter probe" {
 
 ///|
 test "each" {
-  let m = @set.Set::from_array(["a", "b", "c"])
+  let m = @set.Set(["a", "b", "c"])
   let mut sum = ""
   m.each(k => sum += k)
   inspect(sum, content="abc")
@@ -151,7 +151,7 @@ test "each" {
 ///|
 test "iter" {
   let buf = StringBuilder::new(size_hint=20)
-  let map = @set.Set::from_array(["a", "b", "c"])
+  let map = @set.Set(["a", "b", "c"])
   map.iter().each(e => buf.write_string("[\{e}]"))
   inspect(buf, content="[a][b][c]")
   buf.reset()
@@ -161,7 +161,7 @@ test "iter" {
 
 ///|
 test "iteri" {
-  let m = @set.Set::from_array(["1", "2", "3"])
+  let m = @set.Set(["1", "2", "3"])
   let mut s = ""
   let mut sum = 0
   m.eachi((i, k) => {
@@ -174,8 +174,8 @@ test "iteri" {
 
 ///|
 test "union" {
-  let m1 = @set.Set::from_array(["a", "b", "c"])
-  let m2 = @set.Set::from_array(["b", "c", "d"])
+  let m1 = @set.Set(["a", "b", "c"])
+  let m2 = @set.Set(["b", "c", "d"])
   let m = m1.union(m2)
   assert_eq(m.length(), 4)
   assert_true(m.contains("a"))
@@ -186,8 +186,8 @@ test "union" {
 
 ///|
 test "intersection" {
-  let m1 = @set.Set::from_array(["a", "b", "c"])
-  let m2 = @set.Set::from_array(["b", "c", "d"])
+  let m1 = @set.Set(["a", "b", "c"])
+  let m2 = @set.Set(["b", "c", "d"])
   let m = m1.intersection(m2)
   assert_eq(m.length(), 2)
   assert_false(m.contains("a"))
@@ -198,8 +198,8 @@ test "intersection" {
 
 ///|
 test "difference" {
-  let m1 = @set.Set::from_array(["a", "b", "c"])
-  let m2 = @set.Set::from_array(["b", "c", "d"])
+  let m1 = @set.Set(["a", "b", "c"])
+  let m2 = @set.Set(["b", "c", "d"])
   let m = m1.difference(m2)
   assert_eq(m.length(), 1)
   assert_true(m.contains("a"))
@@ -210,8 +210,8 @@ test "difference" {
 
 ///|
 test "symmetric_difference" {
-  let m1 = @set.Set::from_array(["a", "b", "c"])
-  let m2 = @set.Set::from_array(["b", "c", "d"])
+  let m1 = @set.Set(["a", "b", "c"])
+  let m2 = @set.Set(["b", "c", "d"])
   let m = m1.symmetric_difference(m2)
   assert_eq(m.length(), 2)
   assert_true(m.contains("a"))
@@ -470,18 +470,18 @@ test "trigger grow" {
 
 ///|
 test "is_disjoint" {
-  let set1 = @set.Set::from_array(["a", "b"])
-  let set2 = @set.Set::from_array(["c", "d"])
-  let set3 = @set.Set::from_array(["b", "c"])
+  let set1 = @set.Set(["a", "b"])
+  let set2 = @set.Set(["c", "d"])
+  let set3 = @set.Set(["b", "c"])
   inspect(set1.is_disjoint(set2), content="true")
   inspect(set1.is_disjoint(set3), content="false")
 }
 
 ///|
 test "is_subset" {
-  let set1 = @set.Set::from_array(["a", "b"])
-  let set2 = @set.Set::from_array(["a", "b", "c"])
-  let set3 = @set.Set::from_array(["a", "d"])
+  let set1 = @set.Set(["a", "b"])
+  let set2 = @set.Set(["a", "b", "c"])
+  let set3 = @set.Set(["a", "d"])
   inspect(set1.is_subset(set2), content="true")
   inspect(set1.is_subset(set3), content="false")
   inspect(set2.is_subset(set1), content="false")
@@ -489,9 +489,9 @@ test "is_subset" {
 
 ///|
 test "is_superset" {
-  let set1 = @set.Set::from_array(["a", "b", "c"])
-  let set2 = @set.Set::from_array(["a", "b"])
-  let set3 = @set.Set::from_array(["a", "d"])
+  let set1 = @set.Set(["a", "b", "c"])
+  let set2 = @set.Set(["a", "b"])
+  let set3 = @set.Set(["a", "d"])
   inspect(set1.is_superset(set2), content="true")
   inspect(set1.is_superset(set3), content="false")
   inspect(set2.is_superset(set1), content="false")
@@ -499,8 +499,8 @@ test "is_superset" {
 
 ///|
 test "bitwise_operations" {
-  let set1 = @set.Set::from_array(["a", "b", "c"])
-  let set2 = @set.Set::from_array(["b", "c", "d"])
+  let set1 = @set.Set(["a", "b", "c"])
+  let set2 = @set.Set(["b", "c", "d"])
 
   // Intersection (&)
   let intersection = set1 & set2

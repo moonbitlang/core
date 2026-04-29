@@ -19,11 +19,11 @@ test "creating sets" {
   inspect(set_with_capacity.capacity(), content="16")
 
   // From array
-  let from_array = @set.Set::from_array([1, 2, 3, 2, 1]) // Duplicates are removed
+  let from_array = @set.Set([1, 2, 3, 2, 1]) // Duplicates are removed
   inspect(from_array.length(), content="3")
 
   // From fixed array
-  let from_fixed = @set.Set::from_array([10, 20, 30])
+  let from_fixed = @set.Set([10, 20, 30])
   inspect(from_fixed.length(), content="3")
 
   // From iterator
@@ -79,8 +79,8 @@ Perform mathematical set operations:
 ```mbt check
 ///|
 test "set operations" {
-  let set1 = @set.Set::from_array([1, 2, 3, 4])
-  let set2 = @set.Set::from_array([3, 4, 5, 6])
+  let set1 = @set.Set([1, 2, 3, 4])
+  let set2 = @set.Set([3, 4, 5, 6])
 
   // Union (all elements from both sets)
   let union_set = set1.union(set2)
@@ -127,9 +127,9 @@ Test relationships between sets:
 ```mbt check
 ///|
 test "set relationships" {
-  let small_set = @set.Set::from_array([1, 2])
-  let large_set = @set.Set::from_array([1, 2, 3, 4])
-  let disjoint_set = @set.Set::from_array([5, 6, 7])
+  let small_set = @set.Set([1, 2])
+  let large_set = @set.Set([1, 2, 3, 4])
+  let disjoint_set = @set.Set([5, 6, 7])
 
   // Subset testing
   inspect(small_set.is_subset(large_set), content="true")
@@ -144,8 +144,8 @@ test "set relationships" {
   inspect(small_set.is_disjoint(large_set), content="false")
 
   // Equal sets
-  let set1 = @set.Set::from_array([1, 2, 3])
-  let set2 = @set.Set::from_array([3, 2, 1]) // Order doesn't matter
+  let set1 = @set.Set([1, 2, 3])
+  let set2 = @set.Set([3, 2, 1]) // Order doesn't matter
   inspect(set1 == set2, content="true")
 }
 ```
@@ -157,7 +157,7 @@ Iterate over sets and convert to other types:
 ```mbt check
 ///|
 test "iteration and conversion" {
-  let set = @set.Set::from_array(["first", "second", "third"])
+  let set = @set.Set(["first", "second", "third"])
 
   // Convert to array (maintains insertion order)
   let array = set.to_array()
@@ -191,7 +191,7 @@ Clear and modify existing sets:
 ```mbt check
 ///|
 test "modifying sets" {
-  let set = @set.Set::from_array([10, 20, 30, 40, 50])
+  let set = @set.Set([10, 20, 30, 40, 50])
   inspect(set.length(), content="5")
 
   // Clear all elements
@@ -214,14 +214,14 @@ Sets can be serialized to JSON as arrays:
 ```mbt check
 ///|
 test "json serialization" {
-  let set = @set.Set::from_array([1, 2, 3])
+  let set = @set.Set([1, 2, 3])
   let json = set.to_json()
 
   // JSON representation is an array
   inspect(json, content="Array([Number(1), Number(2), Number(3)])")
 
   // String set
-  let string_set = @set.Set::from_array(["a", "b", "c"])
+  let string_set = @set.Set(["a", "b", "c"])
   let string_json = string_set.to_json()
   inspect(
     string_json,
@@ -238,20 +238,20 @@ Sets work with any type that implements `Hash` and `Eq`:
 ///|
 test "different types" {
   // Integer set
-  let int_set = @set.Set::from_array([1, 2, 3, 4, 5])
+  let int_set = @set.Set([1, 2, 3, 4, 5])
   inspect(int_set.contains(3), content="true")
 
   // String set
-  let string_set = @set.Set::from_array(["hello", "world", "moonbit"])
+  let string_set = @set.Set(["hello", "world", "moonbit"])
   inspect(string_set.contains("world"), content="true")
 
   // Note: Char and Bool types don't implement Hash in this version
   // So we use Int codes for demonstration
-  let char_codes = @set.Set::from_array([97, 98, 99]) // ASCII codes for 'a', 'b', 'c'
+  let char_codes = @set.Set([97, 98, 99]) // ASCII codes for 'a', 'b', 'c'
   inspect(char_codes.contains(98), content="true") // 'b' = 98
 
   // Integer set representing boolean values
-  let bool_codes = @set.Set::from_array([1, 0, 1]) // 1=true, 0=false
+  let bool_codes = @set.Set([1, 0, 1]) // 1=true, 0=false
   inspect(bool_codes.length(), content="2") // Only 1 and 0
 }
 ```

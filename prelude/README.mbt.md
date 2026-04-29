@@ -20,6 +20,15 @@ Core types available in every MoonBit program:
 - `Failure`, `InspectError`, `SnapshotError` — error types
 - `SourceLoc`, `ArgsLoc` — source location info
 
+```mbt check
+///|
+test "Set constructor from prelude" {
+  let set = Set([1, 2, 3, 4])
+  inspect(set.length(), content="4")
+  inspect(set.contains(3), content="true")
+}
+```
+
 ## Re-exported Traits
 
 - `Eq`, `Compare`, `Hash` — equality, ordering, hashing

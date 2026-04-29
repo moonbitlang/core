@@ -8,13 +8,14 @@ A mutable linked hash map based on a Robin Hood hash table, links all entry node
 
 ### Create
 
-You can create an empty map using `new()` or construct it using `from_array()`.
+You can create an empty map using `new()` or construct it from entries using `Map([...])`.
 
 ```mbt check 
 ///|
 test {
   let _map1 : Map[String, Int] = {}
   let _map2 = { "one": 1, "two": 2, "three": 3, "four": 4, "five": 5 }
+  let _map3 = Map([("one", 1), ("two", 2), ("three", 3)])
 }
 ```
 

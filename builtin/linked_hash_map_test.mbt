@@ -65,6 +65,16 @@ test "Map::of" {
 }
 
 ///|
+test "Map constructor" {
+  let map = Map([("a", 1), ("b", 2), ("c", 3)])
+  inspect(map, content="{\"a\": 1, \"b\": 2, \"c\": 3}")
+  inspect(map.length(), content="3")
+  debug_inspect(map.get("a"), content="Some(1)")
+  debug_inspect(map.get("b"), content="Some(2)")
+  debug_inspect(map.get("c"), content="Some(3)")
+}
+
+///|
 test "Map::from_iter" {
   let iter = [("a", 1), ("b", 2), ("c", 3)].iter()
   let map = Map::from_iter(iter)

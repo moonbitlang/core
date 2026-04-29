@@ -30,7 +30,7 @@ priv struct Entry[K] {
 ///
 /// ```mbt check
 /// test {
-///   let set = @set.Set::from_array(["three", "eight", "one"])
+///   let set = @set.Set(["three", "eight", "one"])
 ///   assert_eq(set.contains("two"), false)
 ///   assert_eq(set.contains("three"), true)
 ///   set.add("three") // no effect since it already exists
@@ -70,10 +70,11 @@ pub fn[K] Set::new(capacity? : Int = 8) -> Set[K] {
 
 ///|
 /// Creates a hash set containing all elements from the given array, preserving insertion order.
-#as_free_fn
+#alias(from_array)
+#as_free_fn(from_array)
 #alias(of, deprecated="Use from_array instead")
 #as_free_fn(of, deprecated="Use from_array instead")
-pub fn[K : Hash + Eq] Set::from_array(arr : ArrayView[K]) -> Set[K] {
+pub fn[K : Hash + Eq] Set::Set(arr : ArrayView[K]) -> Set[K] {
   let length = arr.length()
   let mut capacity = length.next_power_of_two()
   if length > calc_grow_threshold(capacity) {
@@ -251,7 +252,7 @@ pub fn[K : Hash + Eq] Set::contains(self : Set[K], key : K) -> Bool {
 ///
 /// ```mbt check
 /// test {
-///   let set = @set.Set::from_array(["a", "b"])
+///   let set = @set.Set(["a", "b"])
 ///   set.remove("a")
 ///   inspect(set.contains("a"), content="false")
 ///   inspect(set.length(), content="1")
@@ -289,7 +290,7 @@ pub fn[K : Hash + Eq] Set::remove(self : Set[K], key : K) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let set = @set.Set::from_array(["a", "b"])
+///   let set = @set.Set(["a", "b"])
 ///   inspect(set.remove_and_check("a"), content="true") // Successfully removed
 ///   inspect(set.remove_and_check("a"), content="false") // Already removed
 ///   inspect(set.length(), content="1")
