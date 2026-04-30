@@ -882,7 +882,9 @@ pub fn[A] List::nth(self : List[A], n : Int) -> A? {
 }
 
 ///|
-/// Create a list of length n with the given value
+/// Create a list of length n with the given value.
+///
+/// Aborts if `n` is negative. When `n` is `0`, returns the empty list.
 ///
 /// # Example
 ///
@@ -893,6 +895,9 @@ pub fn[A] List::nth(self : List[A], n : Int) -> A? {
 /// ```
 #as_free_fn
 pub fn[A] List::repeat(n : Int, x : A) -> List[A] {
+  if n < 0 {
+    abort("negative repeat count")
+  }
   for acc = Empty, i = n {
     match (acc, i) {
       (acc, n) =>

@@ -307,6 +307,11 @@ test "repeat" {
 }
 
 ///|
+test "panic List::repeat negative" {
+  let _ = @list.repeat(-1, 0)
+}
+
+///|
 test "intersperse" {
   let ls = @list.from_array(["1", "2", "3", "4", "5"])
   let el : @list.List[String] = @list.empty()
