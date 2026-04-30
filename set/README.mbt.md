@@ -10,12 +10,12 @@ There are several ways to create sets:
 ///|
 test "creating sets" {
   // Empty set
-  let empty_set : @set.Set[Int] = @set.Set::new()
+  let empty_set : @set.Set[Int] = @set.Set([])
   inspect(empty_set.length(), content="0")
   inspect(empty_set.is_empty(), content="true")
 
   // Set with initial capacity
-  let set_with_capacity : @set.Set[Int] = @set.Set::new(capacity=16)
+  let set_with_capacity : @set.Set[Int] = @set.Set([], capacity=16)
   inspect(set_with_capacity.capacity(), content="16")
 
   // From array
@@ -39,7 +39,7 @@ Add, remove, and check membership:
 ```mbt check
 ///|
 test "basic operations" {
-  let set = @set.Set::new()
+  let set = @set.Set([])
 
   // Adding elements
   set.add("apple")
@@ -264,7 +264,7 @@ Demonstrate efficient operations:
 ///|
 test "performance examples" {
   // Large set operations
-  let large_set = @set.Set::new(capacity=1000)
+  let large_set = @set.Set([], capacity=1000)
 
   // Add many elements
   for i in 0..<100 {
@@ -277,7 +277,7 @@ test "performance examples" {
   inspect(large_set.contains(150), content="false")
 
   // Efficient set operations on large sets
-  let another_set = @set.Set::new()
+  let another_set = @set.Set([])
   for i in 50..<150 {
     another_set.add(i)
   }
@@ -306,7 +306,7 @@ Sets are particularly useful for:
 
 ## Best Practices
 
-1. **Pre-size when possible**: Use `@set.Set::new(capacity=n)` if you know the approximate size
+1. **Pre-size when possible**: Use `@set.Set([], capacity=n)` if you know the approximate size
 2. **Use appropriate types**: Ensure your key type has good `Hash` and `Eq` implementations
 3. **Prefer set operations**: Use built-in union, intersection, etc. instead of manual loops
 4. **Check return values**: Use `add_and_check` and `remove_and_check` when you need to know if the operation succeeded

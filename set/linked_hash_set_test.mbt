@@ -32,10 +32,23 @@ impl Hash for Key with hash(self) {
 }
 
 ///|
-test "new" {
-  let m : @set.Set[Int] = @set.Set::new()
+test "empty constructor" {
+  let m : @set.Set[Int] = @set.Set([])
   assert_eq(m.capacity(), default_init_capacity)
   assert_eq(m.length(), 0)
+}
+
+///|
+test "constructor capacity" {
+  let empty : @set.Set[Int] = @set.Set([], capacity=16)
+  assert_eq(empty.capacity(), 16)
+  assert_eq(empty.length(), 0)
+  let below_length = @set.Set([1, 2, 3], capacity=2)
+  assert_eq(below_length.capacity(), 4)
+  assert_eq(below_length.length(), 3)
+  let above_length = @set.Set([1, 2, 3], capacity=16)
+  assert_eq(above_length.capacity(), 16)
+  inspect(above_length.to_array(), content="[1, 2, 3]")
 }
 
 ///|
@@ -46,14 +59,14 @@ test "default" {
 
 ///|
 test "copy empty" {
-  let m : @set.Set[Int] = @set.Set::new()
+  let m : @set.Set[Int] = @set.Set([])
   let copied = m.copy()
   inspect(copied.length(), content="0")
 }
 
 ///|
 test "insert" {
-  let m = @set.Set::new()
+  let m = @set.Set([])
   m.add("a")
   m.add("b")
   m.add("c")
@@ -65,7 +78,7 @@ test "insert" {
 
 ///|
 test "add remove" {
-  let m = @set.Set::new()
+  let m = @set.Set([])
   m.add("a")
   m.add("b")
   m.add("c")
@@ -101,7 +114,7 @@ test "from_array" {
 
 ///|
 test "size" {
-  let m = @set.Set::new()
+  let m = @set.Set([])
   assert_eq(m.length(), 0)
   m.add("a")
   assert_eq(m.length(), 1)
@@ -109,7 +122,7 @@ test "size" {
 
 ///|
 test "is_empty" {
-  let m = @set.Set::new()
+  let m = @set.Set([])
   assert_eq(m.is_empty(), true)
   m.add("a")
   assert_eq(m.is_empty(), false)
@@ -133,7 +146,7 @@ test "is_disjoint detects overlap in else branch" {
 
 ///|
 test "remove stops on shorter probe" {
-  let set : @set.Set[Key] = @set.Set::new()
+  let set : @set.Set[Key] = @set.Set([])
   set.add({ id: 1, hash_value: 0 })
   set.add({ id: 2, hash_value: 1 })
   set.remove({ id: 3, hash_value: 0 })
@@ -222,7 +235,7 @@ test "symmetric_difference" {
 
 ///|
 test "insert_and_grow" {
-  let m = @set.Set::new()
+  let m = @set.Set([])
   for i in 0..<10 {
     m.add(i.to_string())
   }
@@ -244,7 +257,7 @@ test "array unique via Set" {
 
 ///|
 test "remove_and_shift_back" {
-  let m = @set.Set::new()
+  let m = @set.Set([])
   m.add("a")
   m.add("b")
   m.add("c")
@@ -258,7 +271,7 @@ test "remove_and_shift_back" {
 
 ///|
 test "capacity_and_size" {
-  let m = @set.Set::new()
+  let m = @set.Set([])
   assert_eq(m.capacity(), default_init_capacity)
   assert_eq(m.length(), 0)
   m.add("a")
@@ -267,7 +280,7 @@ test "capacity_and_size" {
 
 ///|
 test "clear_and_reinsert" {
-  let m = @set.Set::new()
+  let m = @set.Set([])
   m.add("a")
   m.add("b")
   m.clear()
@@ -295,7 +308,7 @@ test "from_iter empty iter" {
 
 ///|
 test "remove item causes break when psl < i" {
-  let set = @set.Set::new()
+  let set = @set.Set([])
   set.add(1)
   set.add(11) // This goes to a different bucket due to hash collision
   set.remove(21) // Key doesn't exist, will cause psl < i and break
@@ -304,12 +317,12 @@ test "remove item causes break when psl < i" {
 
 ///|
 test "to_array_empty" {
-  inspect((@set.Set::new() : @set.Set[Int]).to_array(), content="[]")
+  inspect((@set.Set([]) : @set.Set[Int]).to_array(), content="[]")
 }
 
 ///|
 test "to_array_non_empty" {
-  let set = @set.Set::new()
+  let set = @set.Set([])
   set.add(1)
   set.add(2)
   set.add(3)
@@ -318,44 +331,44 @@ test "to_array_non_empty" {
 
 ///|
 test "equal: different size" {
-  let set1 = @set.Set::new()
+  let set1 = @set.Set([])
   set1.add(1)
-  let set2 = @set.Set::new()
+  let set2 = @set.Set([])
   inspect(set1 == set2, content="false")
 }
 
 ///|
 test "equal: different keys" {
-  let set1 = @set.Set::new()
+  let set1 = @set.Set([])
   set1.add(1)
-  let set2 = @set.Set::new()
+  let set2 = @set.Set([])
   set2.add(2)
   inspect(set1 == set2, content="false")
 }
 
 ///|
 test "equal: same sets" {
-  let set1 = @set.Set::new()
+  let set1 = @set.Set([])
   set1.add(1)
-  let set2 = @set.Set::new()
+  let set2 = @set.Set([])
   set2.add(1)
   inspect(set1 == set2, content="true")
 }
 
 ///|
 test "equal: empty sets" {
-  let set1 : @set.Set[Int] = @set.Set::new()
-  let set2 : @set.Set[Int] = @set.Set::new()
+  let set1 : @set.Set[Int] = @set.Set([])
+  let set2 : @set.Set[Int] = @set.Set([])
   inspect(set1 == set2, content="true")
 }
 
 ///|
 test "equal: same elements different order" {
-  let set1 = @set.Set::new()
+  let set1 = @set.Set([])
   set1.add(1)
   set1.add(2)
   set1.add(3)
-  let set2 = @set.Set::new()
+  let set2 = @set.Set([])
   set2.add(3)
   set2.add(2)
   set2.add(1)
@@ -364,11 +377,11 @@ test "equal: same elements different order" {
 
 ///|
 test "equal: subset" {
-  let set1 = @set.Set::new()
+  let set1 = @set.Set([])
   set1.add(1)
   set1.add(2)
   set1.add(3)
-  let set2 = @set.Set::new()
+  let set2 = @set.Set([])
   set2.add(1)
   set2.add(2)
   inspect(set1 == set2, content="false")
@@ -377,8 +390,8 @@ test "equal: subset" {
 
 ///|
 test "equal: large sets" {
-  let set1 = @set.Set::new()
-  let set2 = @set.Set::new()
+  let set1 = @set.Set([])
+  let set2 = @set.Set([])
   for i in 0..<100 {
     set1.add(i)
     set2.add(i)
@@ -388,8 +401,8 @@ test "equal: large sets" {
 
 ///|
 test "equal: large sets with one difference" {
-  let set1 = @set.Set::new()
-  let set2 = @set.Set::new()
+  let set1 = @set.Set([])
+  let set2 = @set.Set([])
   for i in 0..<100 {
     set1.add(i)
     if i != 50 {
@@ -403,11 +416,11 @@ test "equal: large sets with one difference" {
 
 ///|
 test "equal: after removal" {
-  let set1 = @set.Set::new()
+  let set1 = @set.Set([])
   set1.add(1)
   set1.add(2)
   set1.add(3)
-  let set2 = @set.Set::new()
+  let set2 = @set.Set([])
   set2.add(1)
   set2.add(2)
   set2.add(3)
@@ -419,11 +432,11 @@ test "equal: after removal" {
 
 ///|
 test "equal: after clear" {
-  let set1 = @set.Set::new()
+  let set1 = @set.Set([])
   set1.add(1)
   set1.add(2)
   set1.add(3)
-  let set2 = @set.Set::new()
+  let set2 = @set.Set([])
   inspect(set1 == set2, content="false")
   set1.clear()
   inspect(set1 == set2, content="true")
@@ -431,11 +444,11 @@ test "equal: after clear" {
 
 ///|
 test "equal: with string elements" {
-  let set1 = @set.Set::new()
+  let set1 = @set.Set([])
   set1.add("apple")
   set1.add("banana")
   set1.add("cherry")
-  let set2 = @set.Set::new()
+  let set2 = @set.Set([])
   set2.add("apple")
   set2.add("banana")
   set2.add("cherry")
@@ -446,7 +459,7 @@ test "equal: with string elements" {
 
 ///|
 test "equal: reflexivity" {
-  let set = @set.Set::new()
+  let set = @set.Set([])
   set.add(1)
   set.add(2)
   set.add(3)
@@ -456,12 +469,12 @@ test "equal: reflexivity" {
 ///|
 test "remove_and_check when key not found in empty slot" {
   // Try to remove from empty set
-  inspect(@set.Set::new().remove_and_check(1), content="false")
+  inspect(@set.Set([]).remove_and_check(1), content="false")
 }
 
 ///|
 test "trigger grow" {
-  let set = @set.Set::new(capacity=2)
+  let set = @set.Set([], capacity=2)
   for i in 0..<10 {
     assert_true(set.add_and_check(i))
   }

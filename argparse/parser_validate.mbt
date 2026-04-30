@@ -23,13 +23,13 @@ priv struct ValidationCtx {
 
 ///|
 fn ValidationCtx::new(
-  inherited_global_names? : @set.Set[String] = @set.new(),
+  inherited_global_names? : @set.Set[String] = Set([]),
 ) -> ValidationCtx {
   {
     inherited_global_names: inherited_global_names.copy(),
-    seen_names: @set.new(),
-    seen_long: @set.new(),
-    seen_short: @set.new(),
+    seen_names: Set([]),
+    seen_long: Set([]),
+    seen_short: Set([]),
     args: [],
   }
 }
@@ -349,8 +349,8 @@ fn validate_group_defs(
   args : Array[Arg],
   groups : Array[ArgGroup],
 ) -> Unit raise ArgBuildError {
-  let seen : @set.Set[String] = @set.new()
-  let arg_seen : @set.Set[String] = @set.new()
+  let seen : @set.Set[String] = Set([])
+  let arg_seen : @set.Set[String] = Set([])
   for arg in args {
     arg_seen.add(arg.name)
   }
@@ -391,7 +391,7 @@ fn validate_group_refs(
   if groups.length() == 0 {
     return
   }
-  let arg_index : @set.Set[String] = @set.new()
+  let arg_index : @set.Set[String] = Set([])
   for arg in args {
     arg_index.add(arg.name)
   }
@@ -436,7 +436,7 @@ fn validate_subcommand_defs(subs : Array[Command]) -> Unit raise ArgBuildError {
   if subs.length() == 0 {
     return
   }
-  let seen : @set.Set[String] = @set.new()
+  let seen : @set.Set[String] = Set([])
   for sub in subs {
     if !seen.add_and_check(sub.name) {
       raise Unsupported("duplicate subcommand: \{sub.name}")
@@ -493,8 +493,8 @@ fn validate_groups(
     return
   }
   let group_presence : Map[String, Int] = {}
-  let group_seen : @set.Set[String] = @set.new()
-  let arg_seen : @set.Set[String] = @set.new()
+  let group_seen : @set.Set[String] = Set([])
+  let arg_seen : @set.Set[String] = Set([])
   for group in groups {
     group_seen.add(group.name)
   }

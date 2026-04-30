@@ -51,11 +51,10 @@ struct Set[K] {
 // Implementations
 
 ///|
-/// Creates an empty insertion-ordered hash set with an optional initial capacity.
-/// The capacity will be rounded up to the smallest power of 2 that is
-/// greater than or equal to the provided `capacity`.
-#as_free_fn
-pub fn[K] Set::new(capacity? : Int = 8) -> Set[K] {
+let default_init_capacity = 8
+
+///|
+fn[K] new_set(capacity : Int) -> Set[K] {
   let capacity = capacity.next_power_of_two()
   {
     size: 0,
@@ -69,18 +68,34 @@ pub fn[K] Set::new(capacity? : Int = 8) -> Set[K] {
 }
 
 ///|
-/// Creates a hash set containing all elements from the given array, preserving insertion order.
-#alias(from_array)
-#as_free_fn(from_array)
-#alias(of, deprecated="Use from_array instead")
-#as_free_fn(of, deprecated="Use from_array instead")
-pub fn[K : Hash + Eq] Set::Set(arr : ArrayView[K]) -> Set[K] {
-  let length = arr.length()
+fn capacity_for_length(length : Int) -> Int {
   let mut capacity = length.next_power_of_two()
   if length > calc_grow_threshold(capacity) {
     capacity *= 2
   }
-  let m = Set::new(capacity~)
+  capacity
+}
+
+///|
+/// Creates a hash set containing all elements from the given array, preserving insertion order.
+/// The optional `capacity` is treated as a minimum initial capacity and will be
+/// rounded up to the smallest power of 2 that can hold the requested capacity.
+#alias(from_array)
+#as_free_fn(from_array)
+#alias(of, deprecated="Use from_array instead")
+#as_free_fn(of, deprecated="Use from_array instead")
+pub fn[K : Hash + Eq] Set::Set(arr : ArrayView[K], capacity? : Int) -> Set[K] {
+  let length = arr.length()
+  let capacity = match capacity {
+    Some(capacity) => capacity.max(capacity_for_length(length))
+    None =>
+      if length == 0 {
+        default_init_capacity
+      } else {
+        capacity_for_length(length)
+      }
+  }
+  let m = new_set(capacity)
   // arr.each(e => m.add(e))
   // FIXME:(upstream)
   // ArrayView::each depends on array package
@@ -104,7 +119,7 @@ pub fn[K : Hash + Eq] Set::Set(arr : ArrayView[K]) -> Set[K] {
 ///
 /// ```mbt check
 /// test {
-///   let set : @set.Set[String] = @set.Set::new()
+///   let set : @set.Set[String] = @set.Set([])
 ///   set.add("key")
 ///   inspect(set.contains("key"), content="true")
 ///   set.add("key") // no effect since it already exists
@@ -187,7 +202,7 @@ fn[K] Set::set_entry(self : Set[K], entry : Entry[K], new_idx : Int) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let set : @set.Set[String] = @set.Set::new()
+///   let set : @set.Set[String] = @set.Set([])
 ///   inspect(set.add_and_check("key"), content="true") // First insertion
 ///   inspect(set.add_and_check("key"), content="false") // Already exists
 ///   inspect(set.length(), content="1")
@@ -505,7 +520,7 @@ pub impl[K : Hash + Eq] Eq for Set[K] with equal(self, other) {
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
 pub fn[K : Hash + Eq] Set::from_iter(iter : Iter[K]) -> Set[K] {
-  let m = Set::new()
+  let m = new_set(default_init_capacity)
   while iter.next() is Some(e) {
     m.add(e)
   }
@@ -514,7 +529,7 @@ pub fn[K : Hash + Eq] Set::from_iter(iter : Iter[K]) -> Set[K] {
 
 ///|
 pub impl[K] Default for Set[K] with default() {
-  Set::new()
+  new_set(default_init_capacity)
 }
 
 ///|
@@ -555,7 +570,7 @@ pub fn[K] Set::copy(self : Set[K]) -> Set[K] {
 ///|
 /// Returns a new set containing elements in `self` that are not in `other`.
 pub fn[K : Hash + Eq] Set::difference(self : Set[K], other : Set[K]) -> Set[K] {
-  let m = Set::new()
+  let m = new_set(default_init_capacity)
   self.each(k => if !other.contains(k) { m.add(k) })
   m
 }
@@ -566,7 +581,7 @@ pub fn[K : Hash + Eq] Set::symmetric_difference(
   self : Set[K],
   other : Set[K],
 ) -> Set[K] {
-  let m = Set::new()
+  let m = new_set(default_init_capacity)
   self.each(k => if !other.contains(k) { m.add(k) })
   other.each(k => if !self.contains(k) { m.add(k) })
   m
@@ -575,7 +590,7 @@ pub fn[K : Hash + Eq] Set::symmetric_difference(
 ///|
 /// Returns a new set containing all elements from both sets.
 pub fn[K : Hash + Eq] Set::union(self : Set[K], other : Set[K]) -> Set[K] {
-  let m = Set::new()
+  let m = new_set(default_init_capacity)
   self.each(k => m.add(k))
   other.each(k => m.add(k))
   m
@@ -587,7 +602,7 @@ pub fn[K : Hash + Eq] Set::intersection(
   self : Set[K],
   other : Set[K],
 ) -> Set[K] {
-  let m = Set::new()
+  let m = new_set(default_init_capacity)
   self.each(k => if other.contains(k) { m.add(k) })
   m
 }

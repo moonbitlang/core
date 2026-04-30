@@ -205,7 +205,7 @@ fn seed_child_globals_from_parent(
   child_local_non_globals : @set.Set[String],
 ) -> Matches {
   let seed = new_matches_parse_state()
-  let seen : @set.Set[String] = @set.new()
+  let seen : @set.Set[String] = Set([])
   for arg in globals {
     let name = arg.name
     if child_local_non_globals.contains(name) || !seen.add_and_check(name) {
@@ -313,7 +313,7 @@ fn propagate_globals_to_child(
   }
   match child.parsed_subcommand {
     Some((sub_name, sub_m)) => {
-      propagate_globals_to_child(parent, sub_m, globals, @set.new())
+      propagate_globals_to_child(parent, sub_m, globals, Set([]))
       child.parsed_subcommand = Some((sub_name, sub_m))
     }
     None => ()

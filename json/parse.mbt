@@ -69,7 +69,7 @@ fn ParseContext::parse_object(ctx : ParseContext) -> Json raise ParseError {
     raise DepthLimitExceeded
   }
   ctx.remaining_available_depth -= 1
-  let map = Map::new()
+  let map = Map([])
   for x = ctx.lex_property_name() {
     match x {
       RBrace => {

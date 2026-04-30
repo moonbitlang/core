@@ -257,7 +257,7 @@ test "Map::update" {
   inspect(empty_map.length(), content="1")
 
   // Test adding to empty map
-  let empty_map : Map[String, Int] = Map::new(capacity=1)
+  let empty_map : Map[String, Int] = Map([], capacity=1)
   empty_map.update("a", _ => Some(1))
   empty_map.update("b", _ => Some(2))
   empty_map.update("c", _ => Some(3))
@@ -355,7 +355,7 @@ test "Map::retain - filter by both key and value" {
 
 ///|
 test "Map::retain - large map performance" {
-  let map : Map[String, Int] = Map::new()
+  let map : Map[String, Int] = Map([])
   for i in 0..<1000 {
     map.set("key" + i.to_string(), i)
   }
@@ -444,7 +444,7 @@ test "Map::retain - edge case with all elements removed then re-added" {
 
 ///|
 test "Map::retain - with hash collisions simulation" {
-  let map : Map[String, Int] = Map::new()
+  let map : Map[String, Int] = Map([])
   // Create keys that might have similar hash values
   let keys = ["a", "aa", "aaa", "aaaa", "aaaaa", "aaaaaa"]
   for i, k in keys {
@@ -550,7 +550,7 @@ test "Map::merge" {
 
 ///|
 test "Map::merge empty maps" {
-  let map1 : Map[String, Int] = Map::new()
+  let map1 : Map[String, Int] = Map([])
   let map2 : Map[String, Int] = { "a": 1, "b": 2 }
   let merged1 = map1.merge(map2)
   inspect(merged1.length(), content="2")
@@ -577,7 +577,7 @@ test "Map::merge_in_place" {
 
 ///|
 test "Map::merge_in_place empty maps" {
-  let map1 : Map[String, Int] = Map::new()
+  let map1 : Map[String, Int] = Map([])
   let map2 : Map[String, Int] = { "a": 1, "b": 2 }
   map1.merge_in_place(map2)
   inspect(map1.length(), content="2")

@@ -81,8 +81,8 @@ pub impl[K : Show, V : Show] Show for SortedMap[K, V] with output(self, logger) 
 ///|
 pub impl[K : Show, V : ToJson] ToJson for SortedMap[K, V] with to_json(self) {
   let capacity = self.length()
-  guard capacity != 0 else { return Json::object(Map::new()) }
-  let jsons = Map::new(capacity~)
+  guard capacity != 0 else { return Json::object(Map([])) }
+  let jsons = Map([], capacity~)
   self.each((k, v) => jsons[k.to_string()] = v.to_json())
   Json::object(jsons)
 }

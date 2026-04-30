@@ -28,8 +28,8 @@ impl Hash for MyString with hash_combine(self, hasher) {
 }
 
 ///|
-test "new" {
-  let m : Map[String, Int] = Map::new()
+test "empty constructor" {
+  let m : Map[String, Int] = Map([])
   assert_eq(m.size, 0)
   assert_eq(m.capacity, 8)
   assert_true(m.head is None)
@@ -40,8 +40,24 @@ test "new" {
 }
 
 ///|
+test "constructor capacity" {
+  let empty : Map[String, Int] = Map([], capacity=16)
+  assert_eq(empty.capacity, 16)
+  assert_eq(empty.length(), 0)
+  let below_length = Map([("a", 1), ("b", 2), ("c", 3)], capacity=2)
+  assert_eq(below_length.capacity, 4)
+  assert_eq(below_length.length(), 3)
+  let above_length = Map([("a", 1), ("b", 2), ("c", 3)], capacity=16)
+  assert_eq(above_length.capacity, 16)
+  inspect(
+    above_length.to_array(),
+    content="[(\"a\", 1), (\"b\", 2), (\"c\", 3)]",
+  )
+}
+
+///|
 test "set" {
-  let m : Map[MyString, Int] = Map::new()
+  let m : Map[MyString, Int] = Map([])
   m.set("a", 1)
   m.set("b", 1)
   m.set("bc", 2)
@@ -58,7 +74,7 @@ test "set" {
 
 ///|
 test "get" {
-  let m : Map[String, Int] = Map::new()
+  let m : Map[String, Int] = Map([])
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -73,7 +89,7 @@ test "get" {
 
 ///|
 test "at" {
-  let m : Map[String, Int] = Map::new()
+  let m : Map[String, Int] = Map([])
   m.set("a", 1)
   m.set("b", 2)
   assert_eq(m["a"], 1)
@@ -82,7 +98,7 @@ test "at" {
 
 ///|
 test "get_or_default" {
-  let m : Map[String, Int] = Map::new()
+  let m : Map[String, Int] = Map([])
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -94,7 +110,7 @@ test "get_or_default" {
 
 ///|
 test "get_or_init" {
-  let m : Map[String, Array[Int]] = Map::new()
+  let m : Map[String, Array[Int]] = Map([])
   m.get_or_init("a", () => Array::new()).push(1)
   m.get_or_init("b", () => Array::new()).push(2)
   m.get_or_init("a", () => Array::new()).push(3)
@@ -105,7 +121,7 @@ test "get_or_init" {
 
 ///|
 test "get_or_init on push_back" {
-  let m : Map[MyString, Array[Int]] = Map::new(capacity=4)
+  let m : Map[MyString, Array[Int]] = Map([], capacity=4)
   inspect(m.grow_at, content="3")
   m.set("x", Array::new())
   m.set("xx", Array::new())
@@ -116,7 +132,7 @@ test "get_or_init on push_back" {
 
 ///|
 test "get_or_init full" {
-  let m = Map::new(capacity=2)
+  let m = Map([], capacity=2)
   m.get_or_init("a", () => 0) |> ignore
   m.get_or_init("b", () => 0) |> ignore
   m.get_or_init("c", () => 0) |> ignore
@@ -125,7 +141,7 @@ test "get_or_init full" {
 
 ///|
 test "Map::set" {
-  let m : Map[String, Int] = Map::new()
+  let m : Map[String, Int] = Map([])
   m["a"] = 1
   m["b"] = 2
   assert_true(m.get("a") == Some(1))
@@ -134,7 +150,7 @@ test "Map::set" {
 
 ///|
 test "panic get" {
-  let m : Map[String, Int] = Map::new()
+  let m : Map[String, Int] = Map([])
   m.set("a", 1)
   m.set("b", 2)
   m["c"] |> ignore
@@ -142,7 +158,7 @@ test "panic get" {
 
 ///|
 test "set_update" {
-  let m : Map[String, Int] = Map::new()
+  let m : Map[String, Int] = Map([])
   m.set("a", 1)
   m.set("b", 2)
   assert_true(m.get("a") == Some(1))
@@ -152,7 +168,7 @@ test "set_update" {
 
 ///|
 test "contains" {
-  let m : Map[String, Int] = Map::new()
+  let m : Map[String, Int] = Map([])
   m.set("a", 1)
   assert_eq(m.contains("a"), true)
   assert_eq(m.contains("b"), false)
@@ -168,7 +184,7 @@ test "from_array" {
 
 ///|
 test "length" {
-  let m : Map[String, Int] = Map::new()
+  let m : Map[String, Int] = Map([])
   assert_eq(m.length(), 0)
   m.set("a", 1)
   assert_eq(m.length(), 1)
@@ -176,7 +192,7 @@ test "length" {
 
 ///|
 test "size" {
-  let m : Map[String, Int] = Map::new()
+  let m : Map[String, Int] = Map([])
   assert_eq(m.size, 0)
   m.set("a", 1)
   assert_eq(m.size, 1)
@@ -184,7 +200,7 @@ test "size" {
 
 ///|
 test "is_empty" {
-  let m : Map[String, Int] = Map::new()
+  let m : Map[String, Int] = Map([])
   assert_eq(m.is_empty(), true)
   m.set("a", 1)
   assert_eq(m.is_empty(), false)
@@ -230,7 +246,7 @@ test "clear" {
 
 ///|
 test "grow" {
-  let m : Map[MyString, Int] = Map::new()
+  let m : Map[MyString, Int] = Map([])
   m.set("C", 1)
   m.set("Go", 2)
   m.set("C++", 3)
@@ -348,7 +364,7 @@ test "to_array" {
       #|[(1, "one"), (2, "two"), (3, "three")]
     ),
   )
-  let m : Map[String, Int] = Map::new()
+  let m : Map[String, Int] = Map([])
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -368,7 +384,7 @@ test "set_existing_key" {
 
 ///|
 test "get_nonexistent_key" {
-  let m : Map[String, Int] = Map::new()
+  let m : Map[String, Int] = Map([])
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -377,7 +393,7 @@ test "get_nonexistent_key" {
 
 ///|
 test "get_or_default_existing_key" {
-  let m : Map[String, Int] = Map::new()
+  let m : Map[String, Int] = Map([])
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -386,7 +402,7 @@ test "get_or_default_existing_key" {
 
 ///|
 test "get_or_default_nonexistent_key" {
-  let m : Map[String, Int] = Map::new()
+  let m : Map[String, Int] = Map([])
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -395,7 +411,7 @@ test "get_or_default_nonexistent_key" {
 
 ///|
 test "remove_existing_key" {
-  let m : Map[String, Int] = Map::new()
+  let m : Map[String, Int] = Map([])
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -406,7 +422,7 @@ test "remove_existing_key" {
 
 ///|
 test "remove_nonexistent_key" {
-  let m : Map[String, Int] = Map::new()
+  let m : Map[String, Int] = Map([])
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -416,7 +432,7 @@ test "remove_nonexistent_key" {
 
 ///|
 test "contains_existing_key" {
-  let m : Map[String, Int] = Map::new()
+  let m : Map[String, Int] = Map([])
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -425,7 +441,7 @@ test "contains_existing_key" {
 
 ///|
 test "contains_nonexistent_key" {
-  let m : Map[String, Int] = Map::new()
+  let m : Map[String, Int] = Map([])
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -434,7 +450,7 @@ test "contains_nonexistent_key" {
 
 ///|
 test "equal_1" {
-  let m1 : Map[String, Int] = Map::new()
+  let m1 : Map[String, Int] = Map([])
   m1.set("a", 1)
   m1.set("b", 2)
   m1.set("c", 3)
@@ -477,7 +493,7 @@ test "to_string" {
 
 ///|
 test "hash collision" {
-  let m : Map[MyString, Int] = Map::new()
+  let m : Map[MyString, Int] = Map([])
   m.set("a", 1)
   m.set("ab", 2)
   m.set("abc", 3)
@@ -486,7 +502,7 @@ test "hash collision" {
 
 ///|
 test "remove" {
-  let m : Map[MyString, Int] = Map::new()
+  let m : Map[MyString, Int] = Map([])
   m.set("a", 1)
   m.set("ab", 2)
   m.set("bc", 2)
@@ -508,7 +524,7 @@ test "remove" {
 
 ///|
 test "remove_unexist_key" {
-  let m : Map[MyString, Int] = Map::new()
+  let m : Map[MyString, Int] = Map([])
   m.set("a", 1)
   m.set("ab", 2)
   m.set("abc", 3)
@@ -519,7 +535,7 @@ test "remove_unexist_key" {
 
 ///|
 test "insert_entry_panic" {
-  let map = Map::new(capacity=1)
+  let map = Map([], capacity=1)
   map.set(1, 1)
   // This should trigger the panic in insert_entry
   map.set(2, 2)
@@ -527,7 +543,7 @@ test "insert_entry_panic" {
 
 ///|
 test "get_entry_none" {
-  let map = Map::new(capacity=1)
+  let map = Map([], capacity=1)
   map.set(1, 1)
   // This should return None as the key 2 is not in the map
   let result = map.get(2)
@@ -536,7 +552,7 @@ test "get_entry_none" {
 
 ///|
 test "remove_entry_head" {
-  let map = Map::new(capacity=2)
+  let map = Map([], capacity=2)
   map.set(1, 1)
   map.set(2, 2)
   map.remove(1)
@@ -553,7 +569,7 @@ test "remove_entry_head" {
 
 ///|
 test "remove_entry_tail" {
-  let map = Map::new(capacity=2)
+  let map = Map([], capacity=2)
   map.set(1, 1)
   map.set(2, 2)
   map.remove(2)
@@ -571,8 +587,8 @@ test "remove_entry_tail" {
 
 ///|
 test "equal_size_mismatch" {
-  let map1 = Map::new(capacity=1)
-  let map2 = Map::new(capacity=2)
+  let map1 = Map([], capacity=1)
+  let map2 = Map([], capacity=2)
   map1.set(1, 1)
   map2.set(1, 1)
   map2.set(2, 2)
@@ -582,8 +598,8 @@ test "equal_size_mismatch" {
 
 ///|
 test "equal_key_value_mismatch" {
-  let map1 = Map::new(capacity=2)
-  let map2 = Map::new(capacity=2)
+  let map1 = Map([], capacity=2)
+  let map2 = Map([], capacity=2)
   map1.set(1, 1)
   map1.set(2, 2)
   map2.set(1, 1)

@@ -51,10 +51,10 @@ struct Map[K, V] {
 // Implementations
 
 ///|
-/// Create a hash map.
-/// The capacity of the map will be the smallest power of 2 that is
-/// greater than or equal to the provided [capacity].
-pub fn[K, V] Map::new(capacity? : Int = 8) -> Map[K, V] {
+let default_init_capacity = 8
+
+///|
+fn[K, V] new_map(capacity : Int) -> Map[K, V] {
   let capacity = capacity.next_power_of_two()
   {
     size: 0,
@@ -68,15 +68,34 @@ pub fn[K, V] Map::new(capacity? : Int = 8) -> Map[K, V] {
 }
 
 ///|
-/// Create a hash map from an array.
-#alias(from_array)
-pub fn[K : Hash + Eq, V] Map::Map(arr : ArrayView[(K, V)]) -> Map[K, V] {
-  let length = arr.length()
+fn capacity_for_length(length : Int) -> Int {
   let mut capacity = length.next_power_of_two()
   if length > calc_grow_threshold(capacity) {
     capacity *= 2
   }
-  let m = Map::new(capacity~)
+  capacity
+}
+
+///|
+/// Create a hash map from an array.
+/// The optional `capacity` is treated as a minimum initial capacity and will be
+/// rounded up to the smallest power of 2 that can hold the requested capacity.
+#alias(from_array)
+pub fn[K : Hash + Eq, V] Map::Map(
+  arr : ArrayView[(K, V)],
+  capacity? : Int,
+) -> Map[K, V] {
+  let length = arr.length()
+  let capacity = match capacity {
+    Some(capacity) => capacity.max(capacity_for_length(length))
+    None =>
+      if length == 0 {
+        default_init_capacity
+      } else {
+        capacity_for_length(length)
+      }
+  }
+  let m = new_map(capacity)
   for e in arr {
     m.set(e.0, e.1)
   }
@@ -98,7 +117,7 @@ pub fn[K : Hash + Eq, V] Map::Map(arr : ArrayView[(K, V)]) -> Map[K, V] {
 ///
 /// ```mbt check
 /// test {
-///   let map : Map[String, Int] = Map::new()
+///   let map : Map[String, Int] = Map([])
 ///   map.set("key", 42)
 ///   debug_inspect(map.get("key"), content="Some(42)")
 ///   map.set("key", 24) // update existing key
@@ -685,11 +704,7 @@ pub impl[K : Hash + Eq, V : Eq] Eq for Map[K, V] with equal(
 /// Function `of`.
 pub fn[K : Hash + Eq, V] Map::of(arr : FixedArray[(K, V)]) -> Map[K, V] {
   let length = arr.length()
-  let mut capacity = length.next_power_of_two()
-  if length > calc_grow_threshold(capacity) {
-    capacity *= 2
-  }
-  let m = Map::new(capacity~)
+  let m = new_map(capacity_for_length(length))
   // arr.iter((e) => { m.set(e.0, e.1) })
   for i in 0..<length {
     let e = arr[i]
@@ -711,7 +726,7 @@ pub fn[K : Hash + Eq, V] Map::from_iter(iter : Iter[(K, V)]) -> Map[K, V] {
 
 ///|
 pub impl[K, V] Default for Map[K, V] with default() {
-  Map::new()
+  new_map(default_init_capacity)
 }
 
 ///|

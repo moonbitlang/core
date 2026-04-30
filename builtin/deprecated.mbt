@@ -54,6 +54,17 @@ pub fn Bytes::copy(self : Bytes) -> Bytes {
 }
 
 ///|
+/// Create a hash map.
+/// The capacity of the map will be the smallest power of 2 that is
+/// greater than or equal to the provided [capacity].
+///
+/// Deprecated: use `Map([], capacity=...)` instead.
+#deprecated("Use `Map([], capacity=...)` instead")
+pub fn[K, V] Map::new(capacity? : Int = default_init_capacity) -> Map[K, V] {
+  new_map(capacity)
+}
+
+///|
 /// positions.
 ///
 /// Parameters:

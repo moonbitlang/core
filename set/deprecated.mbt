@@ -11,3 +11,13 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+///|
+/// Creates an empty insertion-ordered hash set with an optional initial capacity.
+///
+/// Deprecated: use `Set([], capacity=...)` instead.
+#deprecated("Use `Set([], capacity=...)` instead")
+#as_free_fn(deprecated="Use `Set([], capacity=...)` instead")
+pub fn[K] Set::new(capacity? : Int = default_init_capacity) -> Set[K] {
+  new_set(capacity)
+}

@@ -8,7 +8,7 @@ A mutable linked hash map based on a Robin Hood hash table, links all entry node
 
 ### Create
 
-You can create an empty map using `new()` or construct it from entries using `Map([...])`.
+You can create an empty map using `Map([])` or construct it from entries using `Map([...])`.
 
 ```mbt check 
 ///|

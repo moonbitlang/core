@@ -32,7 +32,7 @@
 //       let m1 = m.remove_key("loc");
 
 //       // 2) prune children, dropping empties
-//       let m2 = Map::new();
+//       let m2 = Map([]);
 //       for (k, child) in m1 {
 //         match prune_loc(child) {
 //           Some(c2) => m2.insert(k, c2),
@@ -60,7 +60,7 @@ fn Json::prune_loc(self : Json) -> Json? {
     }
     Object(obj) => {
       // 1) create a new map without "loc" key
-      let new_obj = Map::new()
+      let new_obj = Map([])
 
       // 2) iterate through all keys except "loc"
       for key, value in obj {
@@ -128,7 +128,7 @@ test "prune_loc - arrays" {
 ///|
 test "prune_loc - objects without loc" {
   // Empty object
-  debug_inspect(Json::object(Map::new()).prune_loc(), content="None")
+  debug_inspect(Json::object(Map([])).prune_loc(), content="None")
 
   // Object with no "loc" key
   let obj1 : Json = { "name": Json::string("John"), "age": Json::number(30.0) }
