@@ -972,9 +972,12 @@ test "pad_end" {
 
 ///|
 /// Returns a new string with `self` repeated `n` times.
+///
+/// Aborts if `n` is negative. When `n` is `0`, returns the empty string.
 pub fn StringView::repeat(self : StringView, n : Int) -> StringView {
   match n {
-    _..=0 => ""
+    _..<0 => abort("negative repeat count")
+    0 => ""
     1 => self
     _ => {
       let len = self.length()
@@ -1036,6 +1039,11 @@ test "repeat" {
 ///|
 test "panic string repeat negative" {
   let _ = "abc".repeat(-5)
+}
+
+///|
+test "panic string view repeat negative" {
+  let _ = "hello"[1:].repeat(-1)
 }
 
 ///|

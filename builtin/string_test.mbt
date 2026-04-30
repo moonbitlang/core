@@ -202,11 +202,11 @@ test "String::rev_find partial mismatch" {
 }
 
 ///|
-test "StringView repeat non-positive" {
+test "panic StringView repeat negative" {
   let view = "hi"[:]
   let mut n = 1
   n -= view.length()
-  inspect(view.repeat(n), content="")
+  let _ = view.repeat(n)
 }
 
 ///|
