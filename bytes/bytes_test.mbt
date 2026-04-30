@@ -300,6 +300,12 @@ test "panic Bytes::repeat negative" {
 }
 
 ///|
+test "panic Bytes::repeat overflow" {
+  // 4 * 1_000_000_000 = 4_000_000_000 wraps past Int.MAX (2_147_483_647)
+  let _ = b"abcd".repeat(1_000_000_000)
+}
+
+///|
 test "Bytes::repeat large doubling" {
   // Ensure exponential copy fills correctly
   let base = b"abc"

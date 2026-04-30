@@ -826,8 +826,7 @@ pub fn Bytes::repeat(self : Self, count : Int) -> Bytes {
   }
   let len = self.length()
   let total = len * count
-  // (Optional) detect overflow: if multiplication wrapped (best-effort)
-  guard total / count == len
+  guard total / count == len else { abort("repeat result too large") }
   let arr = FixedArray::make(total, (0 : Byte))
   arr.blit_from_bytes(0, self, 0, len)
   for filled = len; filled < total; {
