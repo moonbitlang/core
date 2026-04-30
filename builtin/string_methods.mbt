@@ -972,13 +972,20 @@ test "pad_end" {
 
 ///|
 /// Returns a new string with `self` repeated `n` times.
+///
+/// Aborts if `n` is negative. When `n` is `0`, returns the empty string.
 pub fn StringView::repeat(self : StringView, n : Int) -> StringView {
   match n {
-    _..=0 => ""
+    _..<0 => abort("negative repeat count")
+    0 => ""
     1 => self
     _ => {
       let len = self.length()
-      let buf = StringBuilder::new(size_hint=len * n)
+      let total = len * n
+      guard len == 0 || total / n == len else {
+        abort("repeat result too large")
+      }
+      let buf = StringBuilder::new(size_hint=total)
       let str = self.to_owned()
       for _ in 0..<n {
         buf.write_string(str)
@@ -990,13 +997,20 @@ pub fn StringView::repeat(self : StringView, n : Int) -> StringView {
 
 ///|
 /// Returns a new string with `self` repeated `n` times.
+///
+/// Aborts if `n` is negative. When `n` is `0`, returns the empty string.
 pub fn String::repeat(self : String, n : Int) -> String {
   match n {
-    _..=0 => ""
+    _..<0 => abort("negative repeat count")
+    0 => ""
     1 => self
     _ => {
       let len = self.length()
-      let buf = StringBuilder::new(size_hint=len * n)
+      let total = len * n
+      guard len == 0 || total / n == len else {
+        abort("repeat result too large")
+      }
+      let buf = StringBuilder::new(size_hint=total)
       let str = self.to_string()
       for _ in 0..<n {
         buf.write_string(str)
@@ -1027,8 +1041,17 @@ test "repeat" {
 
   // Edge cases
   inspect("abc".repeat(0), content="")
-  inspect("abc".repeat(-5), content="")
   inspect("abc".repeat(1), content="abc")
+}
+
+///|
+test "panic string repeat negative" {
+  let _ = "abc".repeat(-5)
+}
+
+///|
+test "panic string view repeat negative" {
+  let _ = "hello"[1:].repeat(-1)
 }
 
 ///|

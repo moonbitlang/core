@@ -679,7 +679,11 @@ test "StringView::replace" {
 test "StringView::repeat" {
   inspect("ab"[:].repeat(1), content="ab")
   inspect("ab"[:].repeat(0), content="")
-  inspect("ab"[:].repeat(-2), content="")
+}
+
+///|
+test "panic StringView::repeat negative" {
+  let _ = "ab"[:].repeat(-2)
 }
 
 ///|
