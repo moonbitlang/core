@@ -788,8 +788,9 @@ pub impl Hash for Bytes with hash_combine(self, hasher) {
 ///|
 /// Returns a new `Bytes` consisting of `self` repeated `count` times.
 ///
-/// If `count <= 0` or `self` is empty, an empty `Bytes` is returned. When
-/// `count == 1`, `self` is returned directly without allocation.
+/// Aborts if `count` is negative. If `count == 0` or `self` is empty, an empty
+/// `Bytes` is returned. When `count == 1`, `self` is returned directly without
+/// allocation.
 ///
 /// This implementation performs a single allocation sized exactly to the
 /// result and fills it using an exponential copy (doubling) strategy so the
@@ -814,7 +815,10 @@ pub impl Hash for Bytes with hash_combine(self, hasher) {
 /// }
 /// ```
 pub fn Bytes::repeat(self : Self, count : Int) -> Bytes {
-  if count <= 0 || self.length() == 0 {
+  if count < 0 {
+    abort("negative repeat count")
+  }
+  if count == 0 || self.length() == 0 {
     return []
   }
   if count == 1 {

@@ -1224,7 +1224,9 @@ pub fn[T] Array::flatten(self : Array[Array[T]]) -> Array[T] {
 }
 
 ///|
-/// Create an array by repeat a given array for a given times.
+/// Create an array by repeating `self` `times` times.
+///
+/// Aborts if `times` is negative. When `times` is `0`, returns an empty array.
 ///
 /// Example:
 ///
@@ -1235,6 +1237,9 @@ pub fn[T] Array::flatten(self : Array[Array[T]]) -> Array[T] {
 /// }
 /// ```
 pub fn[T] Array::repeat(self : Array[T], times : Int) -> Array[T] {
+  if times < 0 {
+    abort("negative repeat count")
+  }
   let v = Array::new(capacity=self.length() * times)
   for _ in 0..<times {
     v.append(self)

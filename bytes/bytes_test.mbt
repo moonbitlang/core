@@ -292,12 +292,11 @@ test "Bytes::repeat basic" {
       #|b""
     ),
   )
-  inspect(
-    b"xyz".repeat(-2),
-    content=(
-      #|b""
-    ),
-  )
+}
+
+///|
+test "panic Bytes::repeat negative" {
+  let _ = b"xyz".repeat(-2)
 }
 
 ///|

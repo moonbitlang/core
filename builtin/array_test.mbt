@@ -461,6 +461,12 @@ test "array_repeat" {
   let arr = [1, 2]
   let repeated = arr.repeat(3)
   inspect(repeated, content="[1, 2, 1, 2, 1, 2]")
+  inspect(arr.repeat(0), content="[]")
+}
+
+///|
+test "panic array_repeat negative" {
+  let _ = [1, 2].repeat(-1)
 }
 
 ///|

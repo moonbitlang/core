@@ -242,6 +242,17 @@ test "Bytes::add and repeat" {
       #|b"xy"
     ),
   )
+  inspect(
+    b"xy".repeat(0),
+    content=(
+      #|b""
+    ),
+  )
+}
+
+///|
+test "panic Bytes::repeat negative" {
+  let _ = b"ab".repeat(-1)
 }
 
 ///|
