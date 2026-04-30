@@ -1240,7 +1240,13 @@ pub fn[T] Array::repeat(self : Array[T], times : Int) -> Array[T] {
   if times < 0 {
     abort("negative repeat count")
   }
-  let v = Array::new(capacity=self.length() * times)
+  let len = self.length()
+  if times == 0 || len == 0 {
+    return []
+  }
+  let total = len * times
+  guard total / times == len else { abort("repeat result too large") }
+  let v = Array::new(capacity=total)
   for _ in 0..<times {
     v.append(self)
   }

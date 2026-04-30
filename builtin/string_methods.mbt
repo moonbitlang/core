@@ -981,7 +981,11 @@ pub fn StringView::repeat(self : StringView, n : Int) -> StringView {
     1 => self
     _ => {
       let len = self.length()
-      let buf = StringBuilder::new(size_hint=len * n)
+      let total = len * n
+      guard len == 0 || total / n == len else {
+        abort("repeat result too large")
+      }
+      let buf = StringBuilder::new(size_hint=total)
       let str = self.to_owned()
       for _ in 0..<n {
         buf.write_string(str)
@@ -1002,7 +1006,11 @@ pub fn String::repeat(self : String, n : Int) -> String {
     1 => self
     _ => {
       let len = self.length()
-      let buf = StringBuilder::new(size_hint=len * n)
+      let total = len * n
+      guard len == 0 || total / n == len else {
+        abort("repeat result too large")
+      }
+      let buf = StringBuilder::new(size_hint=total)
       let str = self.to_string()
       for _ in 0..<n {
         buf.write_string(str)
