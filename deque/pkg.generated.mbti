@@ -19,7 +19,7 @@ pub struct Deque[A] {
 #alias(of, deprecated)
 #as_free_fn(of, deprecated)
 #as_free_fn(from_array)
-pub fn[A] Deque::Deque(ArrayView[A]) -> Self[A]
+pub fn[A] Deque::Deque(ArrayView[A], capacity? : Int) -> Self[A]
 pub fn[A] Deque::append(Self[A], Self[A]) -> Unit
 pub fn[A] Deque::as_views(Self[A]) -> (ArrayView[A], ArrayView[A])
 #alias("_[_]")
@@ -57,7 +57,8 @@ pub fn Deque::join(Self[String], StringView) -> String
 pub fn[A] Deque::length(Self[A]) -> Int
 pub fn[A, U] Deque::map(Self[A], (A) -> U) -> Self[U]
 pub fn[A, U] Deque::mapi(Self[A], (Int, A) -> U) -> Self[U]
-#as_free_fn
+#as_free_fn(deprecated)
+#deprecated
 pub fn[A] Deque::new(capacity? : Int) -> Self[A]
 pub fn[A] Deque::pop_back(Self[A]) -> A?
 pub fn[A] Deque::pop_front(Self[A]) -> A?

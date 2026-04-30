@@ -13,6 +13,16 @@
 // limitations under the License.
 
 ///|
+/// Creates an empty sorted map.
+///
+/// Deprecated: use `SortedMap([])` instead.
+#deprecated("Use `SortedMap([])` instead")
+#as_free_fn(deprecated="Use `SortedMap([])` instead")
+pub fn[K, V] SortedMap::new() -> SortedMap[K, V] {
+  new_sorted_map()
+}
+
+///|
 /// Return an iterator of keys.
 #deprecated("Use `keys_as_iter` instead. `keys` will return `Iter[K]` instead of `Array[K]` in the future.")
 #coverage.skip

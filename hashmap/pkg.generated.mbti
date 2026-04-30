@@ -20,7 +20,7 @@ pub struct HashMap[K, V] {
 #alias(of, deprecated)
 #as_free_fn(of, deprecated)
 #as_free_fn(from_array)
-pub fn[K : Hash + Eq, V] HashMap::HashMap(ArrayView[(K, V)]) -> Self[K, V]
+pub fn[K : Hash + Eq, V] HashMap::HashMap(ArrayView[(K, V)], capacity? : Int) -> Self[K, V]
 #alias("_[_]")
 pub fn[K : Hash + Eq, V] HashMap::at(Self[K, V], K) -> V
 pub fn[K, V] HashMap::capacity(Self[K, V]) -> Int
@@ -49,7 +49,8 @@ pub fn[K, V] HashMap::length(Self[K, V]) -> Int
 pub fn[K, V, V2] HashMap::map(Self[K, V], (K, V) -> V2) -> Self[K, V2]
 pub fn[K : Eq, V] HashMap::merge(Self[K, V], Self[K, V]) -> Self[K, V]
 pub fn[K : Eq, V] HashMap::merge_in_place(Self[K, V], Self[K, V]) -> Unit
-#as_free_fn
+#as_free_fn(deprecated)
+#deprecated
 pub fn[K, V] HashMap::new(capacity? : Int) -> Self[K, V]
 pub fn[K : Hash + Eq, V] HashMap::remove(Self[K, V], K) -> Unit
 pub fn[K, V] HashMap::retain(Self[K, V], (K, V) -> Bool) -> Unit

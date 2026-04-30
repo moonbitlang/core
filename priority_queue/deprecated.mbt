@@ -13,11 +13,11 @@
 // limitations under the License.
 
 ///|
-/// Creates a new empty deque with an optional initial capacity.
+/// Creates a new empty priority queue.
 ///
-/// Deprecated: use `Deque([], capacity=...)` instead.
-#deprecated("Use `Deque([], capacity=...)` instead")
-#as_free_fn(deprecated="Use `Deque([], capacity=...)` instead")
-pub fn[A] Deque::new(capacity? : Int = 0) -> Deque[A] {
-  new_deque(capacity)
+/// Deprecated: use `PriorityQueue([])` instead.
+#deprecated("Use `PriorityQueue([])` instead")
+#as_free_fn(deprecated="Use `PriorityQueue([])` instead")
+pub fn[A] PriorityQueue::new() -> PriorityQueue[A] {
+  new_priority_queue()
 }

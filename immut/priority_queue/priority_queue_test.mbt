@@ -37,7 +37,7 @@ test "to_array" {
   inspect(v.to_array(), content="[4, 3, 2, 1]")
   inspect(v.push(0).to_array(), content="[4, 3, 2, 1, 0]")
   inspect(
-    (@priority_queue.new() : @priority_queue.PriorityQueue[Int]).to_array(),
+    (@priority_queue.PriorityQueue([]) : @priority_queue.PriorityQueue[Int]).to_array(),
     content="[]",
   )
 }
@@ -112,14 +112,14 @@ test "push" {
 
 ///|
 test "peek" {
-  let queue = @priority_queue.new()
+  let queue = @priority_queue.PriorityQueue([])
   debug_inspect(queue.peek(), content="None")
   debug_inspect(queue.push(1).peek(), content="Some(1)")
 }
 
 ///|
 test "is_empty" {
-  let queue = @priority_queue.new()
+  let queue = @priority_queue.PriorityQueue([])
   inspect(queue.is_empty(), content="true")
   inspect(queue.push(1).is_empty(), content="false")
 }
@@ -163,7 +163,7 @@ test "hash" {
   inspect(pq1.hash() == pq2.hash(), content="true")
   let pq3 = @priority_queue.from_array([5, 4, 3, 2, 1])
   inspect(pq1.hash() == pq3.hash(), content="true")
-  let pq4 : @priority_queue.PriorityQueue[Int] = @priority_queue.new()
+  let pq4 : @priority_queue.PriorityQueue[Int] = @priority_queue.PriorityQueue([])
   inspect(pq1.hash() == pq4.hash(), content="false")
   inspect(pq4.hash() == pq4.hash(), content="true")
   let pq5 = @priority_queue.from_array([1, 2, 3, 4, 6])
@@ -178,7 +178,7 @@ test "equal" {
   inspect(pq1 == pq2, content="true")
   let pq3 = @priority_queue.from_array([5, 4, 3, 2, 1])
   inspect(pq1 == pq3, content="true")
-  let pq4 : @priority_queue.PriorityQueue[Int] = @priority_queue.new()
+  let pq4 : @priority_queue.PriorityQueue[Int] = @priority_queue.PriorityQueue([])
   inspect(pq1 == pq4, content="false")
   let pq5 = @priority_queue.from_array([1, 2, 3])
   inspect(pq1 == pq5, content="false")
@@ -195,7 +195,7 @@ test "complex" {
   arr.shuffle_in_place(rand~)
   let pq = for
     i in 0..<=1000
-    pq = (@priority_queue.new() : @priority_queue.PriorityQueue[Int]) {
+    pq = (@priority_queue.PriorityQueue([]) : @priority_queue.PriorityQueue[Int]) {
     continue pq.push(arr[i])
   } nobreak {
     pq
@@ -216,7 +216,8 @@ test "compare" {
   let pq1 = @priority_queue.from_array([1, 2, 3])
   let pq2 = @priority_queue.from_array([1, 2, 4])
   let pq3 = @priority_queue.from_array([1, 2])
-  let empty : @priority_queue.PriorityQueue[Int] = @priority_queue.new()
+  let empty : @priority_queue.PriorityQueue[Int] = @priority_queue.PriorityQueue([],
+  )
   inspect(pq1.compare(pq2), content="-1")
   inspect(pq1.compare(pq3), content="1")
   inspect(pq3.compare(pq1), content="-1")

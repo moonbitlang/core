@@ -31,7 +31,7 @@ test "remove3" {
 
 ///|
 test "remove on empty map" {
-  let map : @sorted_map.SortedMap[Int, String] = @sorted_map.new()
+  let map : @sorted_map.SortedMap[Int, String] = @sorted_map.SortedMap([])
   map.remove(1)
   inspect(map.length(), content="0")
 }
@@ -95,7 +95,7 @@ test "equal" {
 
 ///|
 test "is_empty" {
-  let map : @sorted_map.SortedMap[Int, String] = @sorted_map.new()
+  let map : @sorted_map.SortedMap[Int, String] = @sorted_map.SortedMap([])
   inspect(map.is_empty(), content="true")
   map[1] = "a"
   inspect(map.is_empty(), content="false")
@@ -264,7 +264,7 @@ test "to_json with non-empty map" {
 
 ///|
 test "to_json with empty map" {
-  let map : @sorted_map.SortedMap[Int, String] = @sorted_map.new()
+  let map : @sorted_map.SortedMap[Int, String] = @sorted_map.SortedMap([])
   @json.json_inspect(map.to_json(), content={})
 }
 
@@ -314,7 +314,7 @@ test "@sorted_map.merge" {
 
 ///|
 test "@sorted_map.merge empty maps" {
-  let map1 : @sorted_map.SortedMap[Int, String] = @sorted_map.new()
+  let map1 : @sorted_map.SortedMap[Int, String] = @sorted_map.SortedMap([])
   let map2 = @sorted_map.from_array([(1, "a"), (2, "b")])
   let merged1 = map1.merge(map2)
   inspect(merged1.to_array(), content="[(1, \"a\"), (2, \"b\")]")
@@ -339,7 +339,7 @@ test "@sorted_map.merge_in_place" {
 
 ///|
 test "@sorted_map.merge_in_place empty maps" {
-  let map1 : @sorted_map.SortedMap[Int, String] = @sorted_map.new()
+  let map1 : @sorted_map.SortedMap[Int, String] = @sorted_map.SortedMap([])
   let map2 = @sorted_map.from_array([(1, "a"), (2, "b")])
   map1.merge_in_place(map2)
   inspect(map1.to_array(), content="[(1, \"a\"), (2, \"b\")]")
@@ -416,7 +416,7 @@ test "range with out-of-bounds keys" {
 
 ///|
 test "range on empty map" {
-  let map : @sorted_map.SortedMap[Int, String] = @sorted_map.new()
+  let map : @sorted_map.SortedMap[Int, String] = @sorted_map.SortedMap([])
   inspect(map.range(1, 5), content="[]")
 }
 

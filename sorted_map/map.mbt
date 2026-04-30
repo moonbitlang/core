@@ -25,9 +25,7 @@ pub impl[K : Eq, V : Eq] Eq for SortedMap[K, V] with equal(self, other) {
 }
 
 ///|
-/// Creates an empty sorted map.
-#as_free_fn
-pub fn[K, V] SortedMap::new() -> SortedMap[K, V] {
+fn[K, V] new_sorted_map() -> SortedMap[K, V] {
   { root: None, size: 0 }
 }
 
@@ -48,7 +46,7 @@ pub fn[K, V] SortedMap::new() -> SortedMap[K, V] {
 pub fn[K : Compare, V] SortedMap::SortedMap(
   entries : ArrayView[(K, V)],
 ) -> SortedMap[K, V] {
-  let map = { root: None, size: 0 }
+  let map = new_sorted_map()
   for e in entries {
     map.set(e.0, e.1)
   }
@@ -59,7 +57,7 @@ pub fn[K : Compare, V] SortedMap::SortedMap(
 /// FIXME: (remove this line will break formatter)
 /// ```mbt check
 /// test {
-///   let map = @sorted_map.new()
+///   let map = @sorted_map.SortedMap([])
 ///   map.set(1, "a")
 ///   map.set(2, "b")
 ///   map.set(2, "c") // updates value for key 2
@@ -321,7 +319,7 @@ pub fn[K, V] SortedMap::iter2(self : SortedMap[K, V]) -> Iter2[K, V] {
 pub fn[K : Compare, V] SortedMap::from_iter(
   iter : Iter[(K, V)],
 ) -> SortedMap[K, V] {
-  let m = new()
+  let m = new_sorted_map()
   while iter.next() is Some((k, v)) {
     m[k] = v
   }
@@ -658,7 +656,7 @@ fn[K : Compare, V] delete_node(
 
 ///|
 test "new" {
-  let map : SortedMap[Int, String] = new()
+  let map : SortedMap[Int, String] = new_sorted_map()
   inspect(map.debug_tree(), content="_")
   inspect(map.length(), content="0")
 }
@@ -672,7 +670,7 @@ test "of" {
 
 ///|
 test "add1" {
-  let map = new()
+  let map = new_sorted_map()
   map.set(6, "a")
   map.set(5, "b")
   map.set(4, "c")
@@ -688,7 +686,7 @@ test "add1" {
 
 ///|
 test "add2" {
-  let map = new()
+  let map = new_sorted_map()
   map.set(1, "a")
   map.set(2, "b")
   map.set(3, "c")
@@ -704,7 +702,7 @@ test "add2" {
 
 ///|
 test "add3" {
-  let map = new()
+  let map = new_sorted_map()
   map.set(4, "a")
   map.set(1, "b")
   map.set(3, "c")
@@ -717,7 +715,7 @@ test "add3" {
 
 ///|
 test "add4" {
-  let map = new()
+  let map = new_sorted_map()
   map.set(1, "a")
   map.set(4, "b")
   map.set(2, "c")
@@ -793,7 +791,7 @@ test "remove" {
 
 ///|
 test "_[_]=_" {
-  let map = new()
+  let map = new_sorted_map()
   map[1] = "a"
   map[2] = "b"
   map[3] = "c"
@@ -840,5 +838,5 @@ test "copy" {
 
 ///|
 pub impl[K, V] Default for SortedMap[K, V] with default() {
-  new()
+  new_sorted_map()
 }

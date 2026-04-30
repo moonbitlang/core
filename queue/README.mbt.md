@@ -9,7 +9,7 @@ You can create a queue manually by using the `new` or construct it using the `fr
 ```mbt check
 ///|
 test {
-  let _queue : @queue.Queue[Int] = @queue.new()
+  let _queue : @queue.Queue[Int] = @queue.Queue([])
   let _queue1 = @queue.from_array([1, 2, 3])
 }
 ```
@@ -39,7 +39,7 @@ You can add elements to the queue using the `push` method and remove them using 
 ```mbt check
 ///|
 test {
-  let queue = @queue.new()
+  let queue = @queue.Queue([])
   queue.push(1)
   queue.push(2)
   assert_eq(queue.pop(), Some(1))

@@ -11,3 +11,13 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+///|
+/// Creates a new empty queue.
+///
+/// Deprecated: use `Queue([])` instead.
+#deprecated("Use `Queue([])` instead")
+#as_free_fn(deprecated="Use `Queue([])` instead")
+pub fn[A] Queue::new() -> Queue[A] {
+  new_queue()
+}

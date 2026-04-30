@@ -126,22 +126,22 @@ test "iter" {
 ///|
 test "reserve and push" {
   // capacity > 0, len = 0
-  let a = @deque.new(capacity=2)
+  let a = @deque.Deque([], capacity=2)
   a.push_back(Option::Some(1))
   debug_inspect(a.front(), content="Some(Some(1))")
   debug_inspect(a.back(), content="Some(Some(1))")
   // capacity = 0, len = 0
-  let b = @deque.new(capacity=0)
+  let b = @deque.Deque([], capacity=0)
   b.push_back(Option::Some(1))
   debug_inspect(b.front(), content="Some(Some(1))")
   debug_inspect(b.back(), content="Some(Some(1))")
   // capacity > 0, len = 0
-  let c = @deque.new(capacity=2)
+  let c = @deque.Deque([], capacity=2)
   c.push_front(Option::Some(1))
   debug_inspect(c.front(), content="Some(Some(1))")
   debug_inspect(c.back(), content="Some(Some(1))")
   // capacity = 0, len = 0
-  let d = @deque.new(capacity=0)
+  let d = @deque.Deque([], capacity=0)
   d.push_front(Option::Some(1))
   debug_inspect(d.front(), content="Some(Some(1))")
   debug_inspect(d.back(), content="Some(Some(1))")
@@ -272,7 +272,7 @@ test "from_json rejects non-array" {
 ///|
 test "copy" {
   inspect(
-    (@deque.new() : @deque.Deque[Int]).copy(),
+    (@deque.Deque([]) : @deque.Deque[Int]).copy(),
     content="@deque.from_array([])",
   )
   let deq = @deque.from_array([1, 2, 3])
@@ -364,7 +364,7 @@ test "push_and_pop" {
 
 ///|
 test "is_empty" {
-  let dv = @deque.new()
+  let dv = @deque.Deque([])
   assert_true(dv.is_empty())
   dv.push_back(3)
   assert_false(dv.is_empty())
@@ -383,20 +383,20 @@ test "front_and_back" {
   let dv = @deque.from_array([1, 2, 3, 4, 5])
   assert_eq(dv.back(), Some(5))
   assert_eq(dv.front(), Some(1))
-  let dv : @deque.Deque[Int] = @deque.new()
+  let dv : @deque.Deque[Int] = @deque.Deque([])
   assert_eq(dv.back(), None)
   assert_eq(dv.front(), None)
 }
 
 ///|
 test "new_with_capacity" {
-  let d : @deque.Deque[Int] = @deque.new(capacity=0)
+  let d : @deque.Deque[Int] = @deque.Deque([], capacity=0)
   inspect(d.capacity(), content="0")
 }
 
 ///|
 test "new_with_capacity_non_zero" {
-  let d : @deque.Deque[Int] = @deque.new(capacity=10)
+  let d : @deque.Deque[Int] = @deque.Deque([], capacity=10)
   inspect(d.capacity(), content="10")
 }
 
@@ -422,11 +422,11 @@ test "realloc" {
 
 ///|
 test "push_realloc" {
-  let dv = @deque.new()
+  let dv = @deque.Deque([])
   dv.push_front(1)
   assert_eq(dv.pop_front(), Some(1))
   assert_true(dv.capacity() > 0)
-  let dv = @deque.new()
+  let dv = @deque.Deque([])
   dv.push_back(1)
   assert_eq(dv.pop_back(), Some(1))
   assert_true(dv.capacity() > 0)
@@ -435,22 +435,22 @@ test "push_realloc" {
 ///|
 test "reserve_and_push" {
   // capacity > 0, len = 0
-  let a = @deque.new(capacity=2)
+  let a = @deque.Deque([], capacity=2)
   a.push_back(Some(1))
   debug_inspect(a.front(), content="Some(Some(1))")
   debug_inspect(a.back(), content="Some(Some(1))")
   // capacity = 0, len = 0
-  let b = @deque.new(capacity=0)
+  let b = @deque.Deque([], capacity=0)
   b.push_back(Some(1))
   debug_inspect(b.front(), content="Some(Some(1))")
   debug_inspect(b.back(), content="Some(Some(1))")
   // capacity > 0, len = 0
-  let c = @deque.new(capacity=2)
+  let c = @deque.Deque([], capacity=2)
   c.push_front(Some(1))
   debug_inspect(c.front(), content="Some(Some(1))")
   debug_inspect(c.back(), content="Some(Some(1))")
   // capacity = 0, len = 0
-  let d = @deque.new(capacity=0)
+  let d = @deque.Deque([], capacity=0)
   d.push_front(Some(1))
   debug_inspect(d.front(), content="Some(Some(1))")
   debug_inspect(d.back(), content="Some(Some(1))")
@@ -486,7 +486,7 @@ test "from_array with single element" {
 
 ///|
 test "unsafe_pop_front after many push_front" {
-  let dq = @deque.new()
+  let dq = @deque.Deque([])
   // First fill some elements to create a buffer with some capacity
   for i in 0..<10 {
     dq.push_front(i)
@@ -504,7 +504,7 @@ test "unsafe_pop_front after many push_front" {
 
 ///|
 test "unsafe_pop_back when tail needs to wrap around" {
-  let dq = @deque.new(capacity=2)
+  let dq = @deque.Deque([], capacity=2)
   dq.push_back(1) // tail = 0
   dq.push_back(2) // tail = 1
   dq.unsafe_pop_front() // head = 1
@@ -515,7 +515,7 @@ test "unsafe_pop_back when tail needs to wrap around" {
 
 ///|
 test "deque Deque::set wrapping case" {
-  let dq = @deque.new(capacity=4)
+  let dq = @deque.Deque([], capacity=4)
   // Add elements until the deque wraps around
   dq.push_back(1) // head=0, tail=0
   dq.push_back(2) // head=0, tail=1
@@ -533,7 +533,7 @@ test "deque Deque::set wrapping case" {
 
 ///|
 test "iter when tail needs to wrap around" {
-  let dq = @deque.new(capacity=2)
+  let dq = @deque.Deque([], capacity=2)
   dq.push_back(1) // tail = 0
   dq.push_back(2) // tail = 1
   dq.unsafe_pop_front() // head = 1
@@ -545,7 +545,7 @@ test "iter when tail needs to wrap around" {
 
 ///|
 test "iter2 when tail needs to wrap around" {
-  let dq = @deque.new(capacity=2)
+  let dq = @deque.Deque([], capacity=2)
   dq.push_back(1) // tail = 0
   dq.push_back(2) // tail = 1
   dq.unsafe_pop_front() // head = 1
@@ -555,7 +555,7 @@ test "iter2 when tail needs to wrap around" {
 
 ///|
 test "rev_iter when head needs to wrap around" {
-  let dq = @deque.new(capacity=4)
+  let dq = @deque.Deque([], capacity=4)
   dq.push_back(1)
   dq.unsafe_pop_front()
   dq.push_back(2)
@@ -568,7 +568,7 @@ test "rev_iter when head needs to wrap around" {
 
 ///|
 test "rev_iter2 when head needs to wrap around" {
-  let dq = @deque.new(capacity=4)
+  let dq = @deque.Deque([], capacity=4)
   dq.push_back(1)
   dq.unsafe_pop_front()
   dq.push_back(2)
@@ -620,7 +620,7 @@ test "deque push_back when empty" {
 ///|
 test "deque as_views" {
   // Test empty deque
-  let dq1 : @deque.Deque[Int] = @deque.new()
+  let dq1 : @deque.Deque[Int] = @deque.Deque([])
   @json.json_inspect(dq1.as_views(), content=[[], []])
 
   // Test contiguous case (head_len >= len)
@@ -640,7 +640,7 @@ test "deque as_views" {
 
 ///|
 test "test_get" {
-  let tester = @deque.new()
+  let tester = @deque.Deque([])
   tester.push_back(1)
   tester.push_back(2)
   tester.push_back(35)
@@ -656,7 +656,7 @@ test "test_get" {
 
 ///|
 test "test_reserve_capacity" {
-  let tester : @deque.Deque[Int] = @deque.new(capacity=1)
+  let tester : @deque.Deque[Int] = @deque.Deque([], capacity=1)
   inspect(tester.capacity(), content="1")
   tester.reserve_capacity(2)
   inspect(tester.capacity(), content="2")
@@ -680,7 +680,7 @@ test "test_reserve_capacity" {
 
 ///|
 test "test_contains" {
-  let tester = @deque.new()
+  let tester = @deque.Deque([])
   tester.push_back(1)
   tester.push_back(2)
   tester.push_back(3)
@@ -697,7 +697,7 @@ test "test_contains" {
 
 ///|
 test "test_shrink_to_fit" {
-  let tester = @deque.new(capacity=15)
+  let tester = @deque.Deque([], capacity=15)
   let cap = tester.capacity()
   tester.reserve_capacity(63)
   let max_cap = tester.capacity()
@@ -782,7 +782,7 @@ test "test_clone_from" {
 
 ///|
 test "deque guard iter coverage improvement" {
-  let dq = @deque.new(capacity=15)
+  let dq = @deque.Deque([], capacity=15)
   // Use push_front only
   fn test_n_via_push_front(n : Int) -> Unit raise {
     for i in 0..<=n {
@@ -816,7 +816,7 @@ test "deque guard iter coverage improvement" {
 
 ///|
 test "deque guard iter after push_front and push_back" {
-  let dq = @deque.new(capacity=15)
+  let dq = @deque.Deque([], capacity=15)
   for i in 0..<15 {
     dq.push_back(i)
   }
@@ -840,7 +840,7 @@ test "deque guard iter after push_front and push_back" {
 
 ///|
 test "deque guard iter2 coverage improvement" {
-  let dq = @deque.new(capacity=15)
+  let dq = @deque.Deque([], capacity=15)
   // Use push_front only
   fn test_n_via_push_front(n : Int) -> Unit raise {
     for i in 0..<=n {
@@ -875,7 +875,7 @@ test "deque guard iter2 coverage improvement" {
 ///|
 test "deque truncate" {
   // Empty deque
-  let dq : @deque.Deque[Int] = @deque.new()
+  let dq : @deque.Deque[Int] = @deque.Deque([])
   dq.truncate(3)
   @json.json_inspect(dq, content=[])
 
@@ -920,7 +920,7 @@ test "deque retain" {
   let is_even = x => x % 2 == 0
 
   // Empty deque
-  let dq : @deque.Deque[Int] = @deque.new()
+  let dq : @deque.Deque[Int] = @deque.Deque([])
   dq.retain(is_even)
   @json.json_inspect(dq, content=[])
 
@@ -987,7 +987,7 @@ test "deque retain" {
 
 ///|
 test "deque retain clears full wrapped deque" {
-  let dq = @deque.new(capacity=4)
+  let dq = @deque.Deque([], capacity=4)
   dq.push_back(1)
   dq.push_back(2)
   dq.push_back(3)
@@ -1007,7 +1007,7 @@ test "deque retain_map" {
   let inc_if_even = inc_if(is_even)
 
   // Empty deque
-  let dq : @deque.Deque[Int] = @deque.new()
+  let dq : @deque.Deque[Int] = @deque.Deque([])
   dq.retain_map(inc_if_even)
   @json.json_inspect(dq, content=[])
 
@@ -1066,7 +1066,7 @@ test "deque retain_map" {
 
 ///|
 test "deque retain_map clears full wrapped deque" {
-  let dq = @deque.new(capacity=4)
+  let dq = @deque.Deque([], capacity=4)
   dq.push_back(1)
   dq.push_back(2)
   dq.push_back(3)
@@ -1081,7 +1081,7 @@ test "deque retain_map clears full wrapped deque" {
 
 ///|
 test "@deque.to_array/empty" {
-  let dq : @deque.Deque[Int] = @deque.new()
+  let dq : @deque.Deque[Int] = @deque.Deque([])
   let arr = dq.to_array()
   @json.json_inspect(arr, content=[])
 }
@@ -1096,7 +1096,7 @@ test "@deque.to_array/basic" {
 ///|
 test "@deque.to_array/wrapped_around" {
   // Create a deque that will wrap around its internal buffer
-  let dq = @deque.new(capacity=3)
+  let dq = @deque.Deque([], capacity=3)
   dq.push_back(1)
   dq.push_back(2)
   dq.push_back(3)
@@ -1326,7 +1326,7 @@ test "binary_search when wrapped around" {
 
 ///|
 test "binary_search on wrapped deque with first/mid/last checks" {
-  let dq = @deque.new(capacity=10)
+  let dq = @deque.Deque([], capacity=10)
   for i in 1..<=9 {
     dq.push_back(i)
   }
@@ -1347,7 +1347,7 @@ test "binary_search on wrapped deque with first/mid/last checks" {
 
 ///|
 test "binary_search with minimal wrap around" {
-  let dq = @deque.new(capacity=2)
+  let dq = @deque.Deque([], capacity=2)
   dq.push_back(1)
   dq.push_back(2)
   dq.unsafe_pop_front()
@@ -1360,7 +1360,7 @@ test "binary_search with minimal wrap around" {
 
 ///|
 test "binary_search with edge wrap around" {
-  let dq = @deque.new(capacity=4)
+  let dq = @deque.Deque([], capacity=4)
   dq.push_back(1)
   dq.push_back(3)
   dq.push_back(5)
@@ -1379,7 +1379,7 @@ test "binary_search with edge wrap around" {
 ///|
 /// Test binary search with wrap-around buffer
 test "deque_binary_search_wrap_around" {
-  let dq = @deque.new(capacity=4)
+  let dq = @deque.Deque([], capacity=4)
   dq.push_back(1)
   dq.push_back(3)
   dq.push_back(5)
@@ -1447,7 +1447,7 @@ test "rev_inplace" {
   assert_eq(dq, @deque.from_array([3, 4]))
 
   // Test with empty deque
-  let empty : @deque.Deque[Int] = @deque.new()
+  let empty : @deque.Deque[Int] = @deque.Deque([])
   empty.rev_in_place()
   assert_eq(empty, @deque.from_array([]))
 
@@ -1484,7 +1484,7 @@ test "rev" {
   assert_eq(reversed_back, @deque.from_array([3, 4, 5]))
 
   // Test with empty deque
-  let empty : @deque.Deque[Int] = @deque.new()
+  let empty : @deque.Deque[Int] = @deque.Deque([])
   let empty_reversed = empty.rev()
   assert_eq(empty, @deque.from_array([]))
   assert_eq(empty_reversed, @deque.from_array([]))
@@ -1552,7 +1552,7 @@ test "shuffle maintains elements with deterministic rand" {
 
 ///|
 test "deque map/mapi/search with wrapped head should keep logical order" {
-  let dq = @deque.new(capacity=4)
+  let dq = @deque.Deque([], capacity=4)
   dq.push_back(1)
   dq.push_back(2)
   dq.push_back(3)
@@ -1578,7 +1578,7 @@ test "deque map/mapi/search with wrapped head should keep logical order" {
 ///|
 test "deque map/mapi/search wrapped unfull buffer" {
   // map
-  let dq = @deque.new(capacity=4)
+  let dq = @deque.Deque([], capacity=4)
   dq.push_back(0)
   dq.push_back(1)
   dq.push_front(-1)
@@ -1587,7 +1587,7 @@ test "deque map/mapi/search wrapped unfull buffer" {
   inspect(mapped, content="@deque.from_array([-10, 0, 10])")
 
   // mapi
-  let dq = @deque.new(capacity=4)
+  let dq = @deque.Deque([], capacity=4)
   dq.push_back(0)
   dq.push_back(1)
   dq.push_front(-1)
@@ -1596,7 +1596,7 @@ test "deque map/mapi/search wrapped unfull buffer" {
   inspect(mapped, content="@deque.from_array([-1, 10, 21])")
 
   // search
-  let dq = @deque.new(capacity=4)
+  let dq = @deque.Deque([], capacity=4)
   dq.push_back(0)
   dq.push_back(1)
   dq.push_front(-1)
@@ -2183,7 +2183,7 @@ test "extract_if_folded" {
 
 ///|
 test "flatten reads uninitialized memory" {
-  let inner_deque_with_slack = @deque.new(capacity=10)
+  let inner_deque_with_slack = @deque.Deque([], capacity=10)
   inner_deque_with_slack.push_back(1)
   inner_deque_with_slack.push_back(2)
   let outer_deque = @deque.from_array([inner_deque_with_slack])
@@ -2196,7 +2196,7 @@ test "flatten reads uninitialized memory" {
 test "Deque::append/self_alias" {
   // Test appending deque to itself - this should double the deque
   // Using small capacity to force reallocation during append
-  let dq = @deque.new(capacity=3)
+  let dq = @deque.Deque([], capacity=3)
   dq.push_back(1)
   dq.push_back(2)
   dq.push_back(3)

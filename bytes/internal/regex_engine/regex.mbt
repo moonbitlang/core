@@ -48,7 +48,7 @@ fn Regex::new(
     symbol_table,
     symbol_repr,
     start_states: [],
-    state_table: @hashmap.HashMap::new(),
+    state_table: @hashmap.HashMap([]),
     states: [],
   }
 }

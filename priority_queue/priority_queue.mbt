@@ -13,17 +13,7 @@
 // limitations under the License.
 
 ///|
-/// Creates a new empty priority queue.
-///
-/// # Example
-/// ```mbt check
-/// test {
-///   let queue : @priority_queue.PriorityQueue[Int] = @priority_queue.new()
-///   assert_eq(queue.length(), 0)
-/// }
-/// ```
-#as_free_fn
-pub fn[A] PriorityQueue::new() -> PriorityQueue[A] {
+fn[A] new_priority_queue() -> PriorityQueue[A] {
   { len: 0, top: None }
 }
 
@@ -44,7 +34,7 @@ pub fn[A] PriorityQueue::new() -> PriorityQueue[A] {
 pub fn[A : Compare] PriorityQueue::PriorityQueue(
   arr : ArrayView[A],
 ) -> PriorityQueue[A] {
-  guard arr is [a0, ..] else { return new() }
+  guard arr is [a0, ..] else { return new_priority_queue() }
   let len = arr.length()
   for i = 1, acc = { content: a0, sibling: None, child: None } {
     if i < len {
@@ -154,7 +144,7 @@ pub impl[A : ToJson + Compare] ToJson for PriorityQueue[A] with to_json(self) {
 pub fn[K : Compare] PriorityQueue::from_iter(
   iter : Iter[K],
 ) -> PriorityQueue[K] {
-  let s = new()
+  let s = new_priority_queue()
   while iter.next() is Some(e) {
     s.push(e)
   }
@@ -254,7 +244,7 @@ pub fn[A : Compare] PriorityQueue::pop(self : PriorityQueue[A]) -> A? {
 /// # Example
 /// ```mbt check
 /// test {
-///   let queue = @priority_queue.new()
+///   let queue = @priority_queue.PriorityQueue([])
 ///   queue.push(1)
 ///   assert_eq(queue.length(), 1)
 /// }
@@ -311,7 +301,8 @@ pub fn[A] PriorityQueue::clear(self : PriorityQueue[A]) -> Unit {
 /// # Example
 /// ```mbt check
 /// test {
-///   let queue : @priority_queue.PriorityQueue[Int] = @priority_queue.new()
+///   let queue : @priority_queue.PriorityQueue[Int] = @priority_queue.PriorityQueue([],
+///   )
 ///   assert_eq(queue.is_empty(), true)
 /// }
 /// ```
@@ -333,7 +324,7 @@ pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for Priority
   X,
 ] with arbitrary(size, rs) {
   let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
-  guard len > 0 else { return new() }
+  guard len > 0 else { return new_priority_queue() }
   for i = 1, acc = { content: X::arbitrary(0, rs), sibling: None, child: None } {
     if i < len {
       continue i + 1,
@@ -359,5 +350,5 @@ test "priority queue arbitrary" {
 
 ///|
 pub impl[K] Default for PriorityQueue[K] with default() {
-  new()
+  new_priority_queue()
 }

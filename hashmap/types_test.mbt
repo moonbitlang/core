@@ -30,8 +30,8 @@ test "HashMap equality - same content different order" {
 
 ///|
 test "HashMap equality - empty maps" {
-  let map1 : @hashmap.HashMap[Int, String] = @hashmap.new()
-  let map2 : @hashmap.HashMap[Int, String] = @hashmap.new()
+  let map1 : @hashmap.HashMap[Int, String] = @hashmap.HashMap([])
+  let map2 : @hashmap.HashMap[Int, String] = @hashmap.HashMap([])
   assert_eq(map1, map2)
   assert_true(map1 == map2)
 }
@@ -62,7 +62,7 @@ test "HashMap equality - same size different values" {
 
 ///|
 test "HashMap equality - one empty one non-empty" {
-  let empty_map : @hashmap.HashMap[Int, String] = @hashmap.new()
+  let empty_map : @hashmap.HashMap[Int, String] = @hashmap.HashMap([])
   let non_empty_map = @hashmap.from_array([(1, "one")])
   assert_false(empty_map == non_empty_map)
   assert_false(non_empty_map == empty_map)

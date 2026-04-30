@@ -18,9 +18,7 @@
 let default_init_capacity = 8
 
 ///|
-/// Creates an empty hash set with an optional initial capacity.
-#as_free_fn
-pub fn[K] HashSet::new(capacity? : Int = default_init_capacity) -> HashSet[K] {
+fn[K] new_hashset(capacity : Int) -> HashSet[K] {
   let capacity = capacity.next_power_of_two()
   {
     size: 0,
@@ -32,13 +30,32 @@ pub fn[K] HashSet::new(capacity? : Int = default_init_capacity) -> HashSet[K] {
 }
 
 ///|
+fn capacity_for_length(length : Int) -> Int {
+  let mut capacity = length.next_power_of_two()
+  if length > calc_grow_threshold(capacity) {
+    capacity *= 2
+  }
+  capacity
+}
+
+///|
 /// Creates a hash set containing all elements from the given array.
+/// The optional `capacity` is treated as a minimum initial capacity and will be
+/// rounded up to the smallest power of 2 that can hold the requested capacity.
 #alias(from_array)
 #as_free_fn(from_array)
 #alias(of, deprecated="Use from_array instead")
 #as_free_fn(of, deprecated="Use from_array instead")
-pub fn[K : Hash + Eq] HashSet::HashSet(arr : ArrayView[K]) -> HashSet[K] {
-  let m = new()
+pub fn[K : Hash + Eq] HashSet::HashSet(
+  arr : ArrayView[K],
+  capacity? : Int,
+) -> HashSet[K] {
+  let length = arr.length()
+  let capacity = match capacity {
+    Some(capacity) => capacity.max(capacity_for_length(length))
+    None => default_init_capacity.max(capacity_for_length(length))
+  }
+  let m = new_hashset(capacity)
   arr.each(e => m.add(e))
   m
 }
@@ -55,7 +72,7 @@ pub fn[K : Hash + Eq] HashSet::HashSet(arr : ArrayView[K]) -> HashSet[K] {
 ///
 /// ```mbt check
 /// test {
-///   let set : @hashset.HashSet[String] = @hashset.new()
+///   let set : @hashset.HashSet[String] = @hashset.HashSet([])
 ///   set.add("key")
 ///   inspect(set.contains("key"), content="true")
 ///   set.add("key") // no effect since it already exists
@@ -330,7 +347,7 @@ pub fn[K] HashSet::to_array(self : HashSet[K]) -> Array[K] {
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
 pub fn[K : Hash + Eq] HashSet::from_iter(iter : Iter[K]) -> HashSet[K] {
-  let s = new()
+  let s = new_hashset(default_init_capacity)
   while iter.next() is Some(e) {
     s.add(e)
   }
@@ -343,7 +360,7 @@ pub fn[K : Hash + Eq] HashSet::union(
   self : HashSet[K],
   other : HashSet[K],
 ) -> HashSet[K] {
-  let m = new()
+  let m = new_hashset(default_init_capacity)
   self.each(k => m.add(k))
   other.each(k => m.add(k))
   m
@@ -355,7 +372,7 @@ pub fn[K : Hash + Eq] HashSet::intersection(
   self : HashSet[K],
   other : HashSet[K],
 ) -> HashSet[K] {
-  let m = new()
+  let m = new_hashset(default_init_capacity)
   self.each(k => if other.contains(k) { m.add(k) })
   m
 }
@@ -366,7 +383,7 @@ pub fn[K : Hash + Eq] HashSet::difference(
   self : HashSet[K],
   other : HashSet[K],
 ) -> HashSet[K] {
-  let m = new()
+  let m = new_hashset(default_init_capacity)
   self.each(k => if !other.contains(k) { m.add(k) })
   m
 }
@@ -377,7 +394,7 @@ pub fn[K : Hash + Eq] HashSet::symmetric_difference(
   self : HashSet[K],
   other : HashSet[K],
 ) -> HashSet[K] {
-  let m = new()
+  let m = new_hashset(default_init_capacity)
   self.each(k => if !other.contains(k) { m.add(k) })
   other.each(k => if !self.contains(k) { m.add(k) })
   m
@@ -502,7 +519,7 @@ impl Hash for MyString with hash_combine(self, hasher) {
 
 ///|
 test "set" {
-  let m : HashSet[MyString] = new()
+  let m : HashSet[MyString] = new_hashset(default_init_capacity)
   m.add("a")
   m.add("b")
   m.add("bc")
@@ -519,7 +536,7 @@ test "set" {
 
 ///|
 test "remove" {
-  let m : HashSet[MyString] = new()
+  let m : HashSet[MyString] = new_hashset(default_init_capacity)
   fn i(s) {
     MyString::MyString(s)
   }
@@ -540,7 +557,7 @@ test "remove" {
 
 ///|
 test "remove_unexist_key" {
-  let m : HashSet[MyString] = new()
+  let m : HashSet[MyString] = new_hashset(default_init_capacity)
   fn i(s) {
     MyString::MyString(s)
   }
@@ -555,7 +572,7 @@ test "remove_unexist_key" {
 
 ///|
 test "grow" {
-  let m : HashSet[MyString] = new()
+  let m : HashSet[MyString] = new_hashset(default_init_capacity)
   fn i(s) {
     MyString::MyString(s)
   }
@@ -584,7 +601,7 @@ test "grow" {
 
 ///|
 test "clear" {
-  let m : HashSet[MyString] = new()
+  let m : HashSet[MyString] = new_hashset(default_init_capacity)
   m.clear()
   inspect(m.length(), content="0")
   inspect(m.capacity(), content="8")
@@ -608,7 +625,7 @@ test "clear" {
 ///
 /// ```mbt check
 /// test {
-///   let set : @hashset.HashSet[String] = @hashset.new()
+///   let set : @hashset.HashSet[String] = @hashset.HashSet([])
 ///   inspect(set.add_and_check("key"), content="true") // First insertion
 ///   inspect(set.add_and_check("key"), content="false") // Already exists
 ///   inspect(set.length(), content="1")
@@ -685,7 +702,7 @@ pub impl[X : ToJson] ToJson for HashSet[X] with to_json(self) {
 ///|
 /// Default implementation for hashset
 pub impl[K] Default for HashSet[K] with default() {
-  new()
+  new_hashset(default_init_capacity)
 }
 
 ///|

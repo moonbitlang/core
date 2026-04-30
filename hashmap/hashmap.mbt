@@ -13,29 +13,10 @@
 // limitations under the License.
 
 ///|
-/// Creates a new empty hash map with the specified initial capacity. The actual
-/// capacity will be rounded up to the next power of 2 that is greater than or
-/// equal to the requested capacity, with a minimum of 8.
-///
-/// Parameters:
-///
-/// * `capacity` : The desired minimum capacity of the hash map. Must be a
-/// non-negative integer. Defaults to 8 if not specified.
-///
-/// Returns a new empty hash map of type `T[K, V]`, where `K` is the key type and
-/// `V` is the value type.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let map : @hashmap.HashMap[String, Int] = @hashmap.new(capacity=16)
-///   inspect(map.capacity(), content="16")
-///   inspect(map.is_empty(), content="true")
-/// }
-/// ```
-#as_free_fn
-pub fn[K, V] HashMap::new(capacity? : Int = 8) -> HashMap[K, V] {
+let default_init_capacity = 8
+
+///|
+fn[K, V] new_hashmap(capacity : Int) -> HashMap[K, V] {
   let capacity = capacity.next_power_of_two()
   {
     size: 0,
@@ -46,8 +27,15 @@ pub fn[K, V] HashMap::new(capacity? : Int = 8) -> HashMap[K, V] {
 }
 
 ///|
+fn capacity_for_length(length : Int) -> Int {
+  (length * 2).next_power_of_two()
+}
+
+///|
 /// Creates a new hash map from an array of key-value pairs. Pairs with duplicate
 /// keys will keep the latest value, overwriting the previous ones.
+/// The optional `capacity` is treated as a minimum initial capacity and will be
+/// rounded up to the smallest power of 2 that can hold the requested capacity.
 ///
 /// Parameters:
 ///
@@ -73,8 +61,19 @@ pub fn[K, V] HashMap::new(capacity? : Int = 8) -> HashMap[K, V] {
 #as_free_fn(of, deprecated="Use from_array instead")
 pub fn[K : Hash + Eq, V] HashMap::HashMap(
   arr : ArrayView[(K, V)],
+  capacity? : Int,
 ) -> HashMap[K, V] {
-  let m = new(capacity=arr.length() * 2)
+  let length = arr.length()
+  let capacity = match capacity {
+    Some(capacity) => capacity.max(capacity_for_length(length))
+    None =>
+      if length == 0 {
+        default_init_capacity
+      } else {
+        capacity_for_length(length)
+      }
+  }
+  let m = new_hashmap(capacity)
   arr.each(e => m.set(e.0, e.1))
   m
 }
@@ -94,7 +93,7 @@ pub fn[K : Hash + Eq, V] HashMap::HashMap(
 ///
 /// ```mbt check
 /// test {
-///   let map : @hashmap.HashMap[String, Int] = @hashmap.new()
+///   let map : @hashmap.HashMap[String, Int] = @hashmap.HashMap([])
 ///   map.set("key", 42)
 ///   debug_inspect(map.get("key"), content="Some(42)")
 ///   map.set("key", 24) // update existing key
@@ -268,7 +267,7 @@ pub fn[K : Hash + Eq, V] HashMap::at(self : HashMap[K, V], key : K) -> V {
 ///
 /// ```mbt check
 /// test {
-///   let map : @hashmap.HashMap[String, Int] = @hashmap.new()
+///   let map : @hashmap.HashMap[String, Int] = @hashmap.HashMap([])
 ///   let value = map.get_or_init("key", () => 42)
 ///   inspect(value, content="42")
 ///   debug_inspect(map.get("key"), content="Some(42)")
@@ -406,7 +405,7 @@ pub fn[K : Hash + Eq, V] HashMap::contains(
 ///
 /// ```mbt check
 /// test {
-///   let map = @hashmap.new()
+///   let map = @hashmap.HashMap([])
 ///   map.set("a", 1)
 ///   map.set("b", 2)
 ///   inspect(map.contains_kv("a", 1), content="true")
@@ -558,7 +557,7 @@ pub impl[K : @quickcheck.Arbitrary + Hash + Eq, V : @quickcheck.Arbitrary] @quic
   K,
   V,
 ] with arbitrary(size, rs) {
-  let m = new()
+  let m = new_hashmap(default_init_capacity)
   (@quickcheck.Arbitrary::arbitrary(size, rs) : Iter[(K, V)]).each(kv => {
     m.set(kv.0, kv.1)
   })
@@ -567,7 +566,7 @@ pub impl[K : @quickcheck.Arbitrary + Hash + Eq, V : @quickcheck.Arbitrary] @quic
 
 ///|
 pub impl[K, V] Default for HashMap[K, V] with default() {
-  new()
+  new_hashmap(default_init_capacity)
 }
 
 ///|
@@ -775,7 +774,7 @@ test "arbitrary" {
 
 ///|
 test "set" {
-  let m : HashMap[MyString, Int] = new()
+  let m : HashMap[MyString, Int] = new_hashmap(default_init_capacity)
   m.set("a", 1)
   m.set("b", 1)
   m.set("bc", 2)
@@ -792,7 +791,7 @@ test "set" {
 
 ///|
 test "remove" {
-  let m : HashMap[MyString, Int] = new()
+  let m : HashMap[MyString, Int] = new_hashmap(default_init_capacity)
   m.set("a", 1)
   m.set("ab", 2)
   m.set("bc", 2)
@@ -809,7 +808,7 @@ test "remove" {
 
 ///|
 test "remove_unexist_key" {
-  let m : HashMap[MyString, Int] = new()
+  let m : HashMap[MyString, Int] = new_hashmap(default_init_capacity)
   m.set("a", 1)
   m.set("ab", 2)
   m.set("abc", 3)
@@ -831,7 +830,7 @@ test "clear" {
 
 ///|
 test "grow" {
-  let m : HashMap[MyString, Int] = new()
+  let m : HashMap[MyString, Int] = new_hashmap(default_init_capacity)
   m.set("C", 1)
   m.set("Go", 2)
   m.set("C++", 3)
@@ -867,7 +866,7 @@ test "grow" {
 
 ///|
 test "_[_]" {
-  let m : HashMap[MyString, Int] = new()
+  let m : HashMap[MyString, Int] = new_hashmap(default_init_capacity)
   m.set("a", 1)
   m.set("b", 1)
   m.set("cc", 2)
@@ -879,7 +878,7 @@ test "_[_]" {
 
 ///|
 test "get_or_init" {
-  let m : HashMap[MyString, Int] = new()
+  let m : HashMap[MyString, Int] = new_hashmap(default_init_capacity)
   inspect(m.get_or_init("a", () => 1), content="1")
   @debug.debug_inspect(m.get("a"), content="Some(1)")
   inspect(m.get_or_init("a", () => 2), content="1")

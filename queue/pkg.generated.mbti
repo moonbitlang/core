@@ -35,7 +35,8 @@ pub fn[A] Queue::is_empty(Self[A]) -> Bool
 #alias(iterator, deprecated)
 pub fn[A] Queue::iter(Self[A]) -> Iter[A]
 pub fn[A] Queue::length(Self[A]) -> Int
-#as_free_fn
+#as_free_fn(deprecated)
+#deprecated
 pub fn[A] Queue::new() -> Self[A]
 pub fn[A] Queue::peek(Self[A]) -> A?
 pub fn[A] Queue::pop(Self[A]) -> A?

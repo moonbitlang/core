@@ -20,7 +20,7 @@ pub struct HashSet[K] {
 #alias(of, deprecated)
 #as_free_fn(of, deprecated)
 #as_free_fn(from_array)
-pub fn[K : Hash + Eq] HashSet::HashSet(ArrayView[K]) -> Self[K]
+pub fn[K : Hash + Eq] HashSet::HashSet(ArrayView[K], capacity? : Int) -> Self[K]
 #alias(insert, deprecated)
 pub fn[K : Hash + Eq] HashSet::add(Self[K], K) -> Unit
 pub fn[K : Hash + Eq] HashSet::add_and_check(Self[K], K) -> Bool
@@ -45,7 +45,8 @@ pub fn[K : Hash + Eq] HashSet::is_superset(Self[K], Self[K]) -> Bool
 pub fn[K] HashSet::iter(Self[K]) -> Iter[K]
 #alias(size, deprecated)
 pub fn[K] HashSet::length(Self[K]) -> Int
-#as_free_fn
+#as_free_fn(deprecated)
+#deprecated
 pub fn[K] HashSet::new(capacity? : Int) -> Self[K]
 pub fn[K : Hash + Eq] HashSet::remove(Self[K], K) -> Unit
 pub fn[K : Hash + Eq] HashSet::remove_and_check(Self[K], K) -> Bool

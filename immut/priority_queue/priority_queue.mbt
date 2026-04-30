@@ -13,17 +13,7 @@
 // limitations under the License.
 
 ///|
-/// Creates a new empty immutable priority queue.
-///
-/// # Example
-/// ```mbt check
-/// test {
-///   let queue = @priority_queue.new()
-///   assert_eq(queue.push(1).length(), 1)
-/// }
-/// ```
-#as_free_fn
-pub fn[A] PriorityQueue::new() -> PriorityQueue[A] {
+fn[A] new_priority_queue() -> PriorityQueue[A] {
   { node: Empty, size: 0 }
 }
 
@@ -44,7 +34,7 @@ pub fn[A] PriorityQueue::new() -> PriorityQueue[A] {
 pub fn[A : Compare] PriorityQueue::PriorityQueue(
   array : ArrayView[A],
 ) -> PriorityQueue[A] {
-  for x in array; pq = (new() : PriorityQueue[A]) {
+  for x in array; pq = (new_priority_queue() : PriorityQueue[A]) {
     continue pq.push(x)
   } nobreak {
     pq
@@ -89,7 +79,7 @@ pub fn[A : Compare] PriorityQueue::iter(self : PriorityQueue[A]) -> Iter[A] {
 pub fn[A : Compare] PriorityQueue::from_iter(
   iter : Iter[A],
 ) -> PriorityQueue[A] {
-  iter.fold(init=new(), (s, e) => s.push(e))
+  iter.fold(init=new_priority_queue(), (s, e) => s.push(e))
 }
 
 ///|
@@ -217,7 +207,7 @@ pub fn[A : Compare] PriorityQueue::unsafe_pop(
 /// # Example
 /// ```mbt check
 /// test {
-///   let queue = @priority_queue.new()
+///   let queue = @priority_queue.PriorityQueue([])
 ///   assert_eq(queue.push(1).length(), 1)
 /// }
 /// ```
@@ -277,7 +267,7 @@ pub fn[A] PriorityQueue::peek(self : PriorityQueue[A]) -> A? {
 /// # Example
 /// ```mbt check
 /// test {
-///   let queue = @priority_queue.new()
+///   let queue = @priority_queue.PriorityQueue([])
 ///   inspect(queue.is_empty(), content="true")
 ///   assert_eq(queue.push(1).is_empty(), false)
 /// }
@@ -292,7 +282,7 @@ pub fn[A] PriorityQueue::is_empty(self : PriorityQueue[A]) -> Bool {
 /// # Example
 /// ```mbt check
 /// test {
-///   let queue = @priority_queue.new()
+///   let queue = @priority_queue.PriorityQueue([])
 ///   inspect(queue.length(), content="0")
 ///   assert_eq(queue.push(1).length(), 1)
 /// }

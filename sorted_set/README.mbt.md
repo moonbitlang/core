@@ -11,7 +11,7 @@ You can create an empty SortedSet or a SortedSet from other containers.
 ```mbt check
 ///|
 test {
-  let _set1 : @sorted_set.SortedSet[Int] = @sorted_set.new()
+  let _set1 : @sorted_set.SortedSet[Int] = @sorted_set.SortedSet([])
   let _set2 = @sorted_set.singleton(1)
   let _set3 = @sorted_set.from_array([1])
 }
@@ -79,7 +79,7 @@ Whether the set is empty.
 ```mbt check
 ///|
 test {
-  let set : @sorted_set.SortedSet[Int] = @sorted_set.new()
+  let set : @sorted_set.SortedSet[Int] = @sorted_set.SortedSet([])
   assert_eq(set.is_empty(), true)
 }
 ```

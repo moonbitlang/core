@@ -16,30 +16,7 @@
 fn[T] set_null(buffer : UninitializedArray[T], index : Int) = "%fixedarray.set_null"
 
 ///|
-/// Creates a new empty deque with an optional initial capacity.
-///
-/// Parameters:
-///
-/// * `capacity` : The initial capacity of the deque. If not specified, defaults
-/// to 0 and will be automatically adjusted as elements are added.
-///
-/// Returns a new empty deque of type `T[A]` where `A` is the type of elements
-/// the deque will hold.
-///
-///# Example
-///
-/// ```mbt check
-/// test {
-///   let dq : @deque.Deque[Int] = @deque.new()
-///   inspect(dq.length(), content="0")
-///   inspect(dq.capacity(), content="0")
-///   let dq : @deque.Deque[Int] = @deque.new(capacity=10)
-///   inspect(dq.length(), content="0")
-///   inspect(dq.capacity(), content="10")
-/// }
-/// ```
-#as_free_fn
-pub fn[A] Deque::new(capacity? : Int = 0) -> Deque[A] {
+fn[A] new_deque(capacity : Int) -> Deque[A] {
   Deque::{ buf: UninitializedArray::make(capacity), len: 0, head: 0 }
 }
 
@@ -146,8 +123,8 @@ pub impl[A] Add for Deque[A] with add(self, other) {
 ///|
 /// Test add (operator +) with empty deques creates valid empty deque.
 test "add_empty" {
-  let empty1 : Deque[Int] = new()
-  let empty2 : Deque[Int] = new()
+  let empty1 : Deque[Int] = new_deque(0)
+  let empty2 : Deque[Int] = new_deque(0)
   let result = empty1 + empty2
   inspect(result.len, content="0")
   inspect(result.is_empty(), content="true")
@@ -155,6 +132,7 @@ test "add_empty" {
 
 ///|
 /// Creates a new deque with elements copied from an array.
+/// The optional `capacity` is treated as a minimum initial capacity.
 ///
 /// Parameters:
 ///
@@ -176,9 +154,13 @@ test "add_empty" {
 #as_free_fn(from_array)
 #alias(of, deprecated="Use from_array instead")
 #as_free_fn(of, deprecated="Use from_array instead")
-pub fn[A] Deque::Deque(arr : ArrayView[A]) -> Deque[A] {
+pub fn[A] Deque::Deque(arr : ArrayView[A], capacity? : Int) -> Deque[A] {
   let len = arr.length()
-  let buf = UninitializedArray::make(len)
+  let capacity = match capacity {
+    Some(capacity) => capacity.max(len)
+    None => len
+  }
+  let buf = UninitializedArray::make(capacity)
   for i, x in arr {
     buf[i] = x
   }
@@ -529,7 +511,7 @@ pub fn[A] Deque::length(self : Deque[A]) -> Int {
 ///
 /// ```mbt check
 /// test {
-///   let dq = @deque.new(capacity=10)
+///   let dq = @deque.Deque([], capacity=10)
 ///   dq.push_back(1)
 ///   dq.push_back(2)
 ///   inspect(dq.capacity(), content="10")
@@ -660,7 +642,7 @@ pub fn[A] Deque::unsafe_pop_front(self : Deque[A]) -> Unit {
 
 ///|
 test "unsafe_pop_front after many push_front" {
-  let dq = new()
+  let dq = new_deque(0)
   for i in 0..<10 {
     dq.push_front(i)
   }
@@ -1016,7 +998,7 @@ pub fn[A] Deque::clear(self : Deque[A]) -> Unit {
 pub fn[A, U] Deque::map(self : Deque[A], f : (A) -> U) -> Deque[U] {
   let cap = self.buf.length()
   if self.len == 0 {
-    new()
+    new_deque(0)
   } else {
     let buf : UninitializedArray[U] = UninitializedArray::make(self.len)
     for i in 0..<self.len {
@@ -1041,7 +1023,7 @@ pub fn[A, U] Deque::map(self : Deque[A], f : (A) -> U) -> Deque[U] {
 pub fn[A, U] Deque::mapi(self : Deque[A], f : (Int, A) -> U) -> Deque[U] {
   let cap = self.buf.length()
   if self.len == 0 {
-    new()
+    new_deque(0)
   } else {
     let buf : UninitializedArray[U] = UninitializedArray::make(self.len)
     for i in 0..<self.len {
@@ -1058,7 +1040,7 @@ pub fn[A, U] Deque::mapi(self : Deque[A], f : (Int, A) -> U) -> Deque[U] {
 /// # Example
 /// ```mbt check
 /// test {
-///   let dv = @deque.new()
+///   let dv = @deque.Deque([])
 ///   inspect(dv.is_empty(), content="true")
 ///   dv.push_back(1)
 ///   inspect(dv.is_empty(), content="false")
@@ -1244,7 +1226,7 @@ pub fn[A] Deque::reserve_capacity(self : Deque[A], capacity : Int) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let dv = @deque.new(capacity=10)
+///   let dv = @deque.Deque([], capacity=10)
 ///   dv.push_back(1)
 ///   dv.push_back(2)
 ///   dv.push_back(3)
@@ -1590,7 +1572,7 @@ pub fn[A] Deque::rev_iter2(self : Deque[A]) -> Iter2[Int, A] {
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
 pub fn[A] Deque::from_iter(iter : Iter[A]) -> Deque[A] {
-  let dq = new()
+  let dq = new_deque(0)
   while iter.next() is Some(e) {
     dq.push_back(e)
   }
@@ -1754,7 +1736,7 @@ pub fn[A] Deque::chunks(self : Deque[A], size : Int) -> Deque[Deque[A]] {
   guard size > 0
   let chunks = from_array([])
   for i = 0; i < self.length(); {
-    let chunk = Deque::new(capacity=size)
+    let chunk = Deque([], capacity=size)
     let i = for _ in 0..<size; i = i {
       if i >= self.length() {
         break i
@@ -1918,7 +1900,7 @@ pub fn[A] Deque::drain(self : Deque[A], start~ : Int, len? : Int) -> Deque[A] {
     None => self.len - start
   }
   if len == 0 {
-    return new()
+    return new_deque(0)
   }
   // Prepare deque to return
   let deque = Deque::{ buf: UninitializedArray::make(len), len, head: 0 }
@@ -2021,7 +2003,7 @@ pub fn[A] Deque::drain(self : Deque[A], start~ : Int, len? : Int) -> Deque[A] {
 
 ///|
 test "weird behavior after drain" {
-  let deque = new(capacity=16)
+  let deque = new_deque(16)
   deque.push_back(1)
   deque.push_back(2)
   deque.push_back(3)
@@ -2268,7 +2250,7 @@ pub impl[A : Compare] Compare for Deque[A] with compare(self, other) {
 ///   let dq = @deque.from_array([1, 2, 3, 4, 5])
 ///   dq.rev_in_place()
 ///   inspect(dq, content="@deque.from_array([5, 4, 3, 2, 1])")
-///   let dq : @deque.Deque[Int] = @deque.new()
+///   let dq : @deque.Deque[Int] = @deque.Deque([])
 ///   dq.rev_in_place()
 ///   inspect(dq, content="@deque.from_array([])")
 /// }

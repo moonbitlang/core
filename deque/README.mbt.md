@@ -6,12 +6,12 @@ A double-ended queue backed by a growable ring buffer. Supports O(1) amortized p
 
 ## Create
 
-Create an empty deque with `new()`, or construct one from an array or iterator.
+Create an empty deque with `Deque([])`, or construct one from an array or iterator.
 
 ```mbt check
 ///|
 test {
-  let dv : @deque.Deque[Int] = @deque.new()
+  let dv : @deque.Deque[Int] = @deque.Deque([])
   assert_eq(dv.is_empty(), true)
   let dv2 = @deque.from_array([1, 2, 3, 4, 5])
   assert_eq(dv2.length(), 5)
@@ -25,7 +25,7 @@ Pre-allocate capacity to avoid resizing:
 ```mbt check
 ///|
 test {
-  let dv : @deque.Deque[Int] = @deque.new(capacity=1024)
+  let dv : @deque.Deque[Int] = @deque.Deque([], capacity=1024)
   assert_eq(dv.capacity(), 1024)
 }
 ```

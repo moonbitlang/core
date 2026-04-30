@@ -15,9 +15,7 @@
 /// Constructions
 
 ///|
-/// Construct an empty set.
-#as_free_fn
-pub fn[V] SortedSet::new() -> SortedSet[V] {
+fn[V] new_sorted_set() -> SortedSet[V] {
   { root: None, size: 0 }
 }
 
@@ -43,7 +41,7 @@ pub fn[V] SortedSet::singleton(value : V) -> SortedSet[V] {
 #alias(of, deprecated="Use from_array instead")
 #as_free_fn(of, deprecated="Use from_array instead")
 pub fn[V : Compare] SortedSet::SortedSet(array : ArrayView[V]) -> SortedSet[V] {
-  let set = new()
+  let set = new_sorted_set()
   for x in array {
     set.add(x)
   }
@@ -59,7 +57,7 @@ pub fn[V : Compare] SortedSet::SortedSet(array : ArrayView[V]) -> SortedSet[V] {
 #alias(clone, deprecated)
 pub fn[V] SortedSet::copy(self : SortedSet[V]) -> SortedSet[V] {
   match self.root {
-    None => new()
+    None => new_sorted_set()
     Some(_) => { root: copy_tree(self.root), size: self.size }
   }
 }
@@ -181,7 +179,7 @@ pub fn[V : Compare] SortedSet::union(
     }
     (Some(_), None) => { root: copy_tree(self.root), size: self.size }
     (None, Some(_)) => { root: copy_tree(src.root), size: src.size }
-    (None, None) => new()
+    (None, None) => new_sorted_set()
   }
 }
 
@@ -273,7 +271,7 @@ pub fn[V : Compare] SortedSet::difference(
   self : SortedSet[V],
   src : SortedSet[V],
 ) -> SortedSet[V] {
-  let ret = new()
+  let ret = new_sorted_set()
   self.each(x => if !src.contains(x) { ret.add(x) })
   ret
 }
@@ -318,7 +316,7 @@ pub fn[V : Compare] SortedSet::intersection(
   self : SortedSet[V],
   src : SortedSet[V],
 ) -> SortedSet[V] {
-  let ret = new()
+  let ret = new_sorted_set()
   self.each(x => if src.contains(x) { ret.add(x) })
   ret
 }
@@ -454,7 +452,7 @@ pub fn[V] SortedSet::iter(self : SortedSet[V]) -> Iter[V] {
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
 pub fn[V : Compare] SortedSet::from_iter(iter : Iter[V]) -> SortedSet[V] {
-  let s = new()
+  let s = new_sorted_set()
   while iter.next() is Some(e) {
     s.add(e)
   }
@@ -719,8 +717,8 @@ test "union" {
   inspect(set3.debug_tree(), content="([2]2,([1]1,_,_),([1]3,_,_))")
 
   // Test 4: Union of two empty sets
-  let set1 : SortedSet[Int] = new()
-  let set2 = new()
+  let set1 : SortedSet[Int] = new_sorted_set()
+  let set2 = new_sorted_set()
   let set3 = set1.union(set2)
   inspect(set3, content="@sorted_set.from_array([])")
   inspect(set3.debug_tree(), content="_")
@@ -840,7 +838,7 @@ test "join" {
 
 ///|
 test "add to empty set" {
-  let set = new()
+  let set = new_sorted_set()
   set.add(1)
   @test.assert_eq(set.contains(1), true)
   inspect(set.debug_tree(), content="([1]1,_,_)")
@@ -848,7 +846,7 @@ test "add to empty set" {
 
 ///|
 test "add to non-empty set" {
-  let set = new()
+  let set = new_sorted_set()
   set.add(1)
   set.add(2)
   @test.assert_eq(set.contains(1), true)
@@ -858,7 +856,7 @@ test "add to non-empty set" {
 
 ///|
 test "add duplicate value" {
-  let set = new()
+  let set = new_sorted_set()
   set.add(1)
   set.add(1)
   @test.assert_eq(set.contains(1), true)
@@ -868,7 +866,7 @@ test "add duplicate value" {
 
 ///|
 test "add multiple values" {
-  let set = new()
+  let set = new_sorted_set()
   set.add(1)
   set.add(2)
   set.add(3)
@@ -1063,5 +1061,5 @@ test "add_and_remove" {
 
 ///|
 pub impl[K] Default for SortedSet[K] with default() {
-  new()
+  new_sorted_set()
 }

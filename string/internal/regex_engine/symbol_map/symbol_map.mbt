@@ -18,7 +18,7 @@ struct SymbolMap(@sorted_set.SortedSet[Rechar])
 ///|
 /// Create a new instance.
 pub fn new() -> SymbolMap {
-  SymbolMap(@sorted_set.new())
+  SymbolMap(@sorted_set.SortedSet([]))
 }
 
 ///|

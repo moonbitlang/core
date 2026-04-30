@@ -14,7 +14,7 @@
 
 ///|
 test "remove on empty set" {
-  let set : @sorted_set.SortedSet[Int] = @sorted_set.new()
+  let set : @sorted_set.SortedSet[Int] = @sorted_set.SortedSet([])
   set.remove(0)
   inspect(set.length(), content="0")
 }
@@ -93,7 +93,7 @@ test "each" {
   let result = StringBuilder::new(size_hint=10)
   set.each(x => result.write_string(x.to_string()))
   inspect(result.to_string(), content="123456789")
-  let set : @sorted_set.SortedSet[Int] = @sorted_set.new()
+  let set : @sorted_set.SortedSet[Int] = @sorted_set.SortedSet([])
   set.each(_x => abort("Impossible to reach"))
 }
 
@@ -328,8 +328,8 @@ test "@sorted_set.symmetric_difference/basic" {
 ///|
 test "@sorted_set.symmetric_difference/empty" {
   // Test with empty sets
-  let empty1 = @sorted_set.new()
-  let empty2 = @sorted_set.new()
+  let empty1 = @sorted_set.SortedSet([])
+  let empty2 = @sorted_set.SortedSet([])
   let result1 = empty1.symmetric_difference(empty2)
   inspect(result1, content="@sorted_set.from_array([])")
 

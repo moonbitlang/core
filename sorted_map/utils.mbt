@@ -84,7 +84,7 @@ pub impl[V : @json.FromJson] @json.FromJson for SortedMap[String, V] with from_j
       (path, "@sorted_map.from_json: expected object"),
     )
   }
-  let map = new()
+  let map = new_sorted_map()
   for k, v in obj {
     map.set(k, V::from_json(v, path.add_key(k)))
   }

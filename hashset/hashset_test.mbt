@@ -17,7 +17,10 @@ let default_init_capacity = 8
 
 ///|
 test "new_with_capacity_then_add " {
-  let set : @hashset.HashSet[(String, String)] = @hashset.new(capacity=20)
+  let set : @hashset.HashSet[(String, String)] = @hashset.HashSet(
+    [],
+    capacity=20,
+  )
   set.add(("None", "Hash"))
   inspect(
     set,
@@ -37,7 +40,7 @@ test "to_array" {
 
 ///|
 test "add_and_check" {
-  let set : @hashset.HashSet[String] = @hashset.new()
+  let set : @hashset.HashSet[String] = @hashset.HashSet([])
   inspect(set.add_and_check("key"), content="true") // First insertion
   inspect(set.add_and_check("key"), content="false") // Already exists
   inspect(set.length(), content="1")
@@ -79,14 +82,14 @@ test "to_json" {
 
 ///|
 test "new" {
-  let m : @hashset.HashSet[Int] = @hashset.new()
+  let m : @hashset.HashSet[Int] = @hashset.HashSet([])
   assert_eq(m.capacity(), default_init_capacity)
   inspect(m.length(), content="0")
 }
 
 ///|
 test "new with zero capacity grows on insert" {
-  let m : @hashset.HashSet[Int] = @hashset.new(capacity=0)
+  let m : @hashset.HashSet[Int] = @hashset.HashSet([], capacity=0)
   m.add(1)
   assert_true(m.contains(1))
   assert_true(m.capacity() > 0)
@@ -100,7 +103,7 @@ test "default" {
 
 ///|
 test "insert" {
-  let m = @hashset.new()
+  let m = @hashset.HashSet([])
   m.add("a")
   m.add("b")
   m.add("c")
@@ -140,7 +143,7 @@ test "HashSet constructor" {
 
 ///|
 test "size" {
-  let m = @hashset.new()
+  let m = @hashset.HashSet([])
   inspect(m.length(), content="0")
   m.add("a")
   inspect(m.length(), content="1")
@@ -148,7 +151,7 @@ test "size" {
 
 ///|
 test "is_empty" {
-  let m = @hashset.new()
+  let m = @hashset.HashSet([])
   inspect(m.is_empty(), content="true")
   m.add("a")
   inspect(m.is_empty(), content="false")
@@ -315,7 +318,7 @@ test "sub" {
 
 ///|
 test "insert_and_grow" {
-  let m = @hashset.new()
+  let m = @hashset.HashSet([])
   for i in 0..<10 {
     m.add(i.to_string())
   }
@@ -325,7 +328,7 @@ test "insert_and_grow" {
 
 ///|
 test "remove_and_shift_back" {
-  let m = @hashset.new()
+  let m = @hashset.HashSet([])
   m.add("a")
   m.add("b")
   m.add("c")
@@ -339,7 +342,7 @@ test "remove_and_shift_back" {
 
 ///|
 test "capacity_and_size" {
-  let m = @hashset.new()
+  let m = @hashset.HashSet([])
   assert_eq(m.capacity(), default_init_capacity)
   inspect(m.length(), content="0")
   m.add("a")
@@ -348,7 +351,7 @@ test "capacity_and_size" {
 
 ///|
 test "clear_and_reinsert" {
-  let m = @hashset.new()
+  let m = @hashset.HashSet([])
   m.add("a")
   m.add("b")
   m.clear()
@@ -408,20 +411,20 @@ test "hashset arbitrary" {
 
 ///|
 test "@hashset.to_array/empty" {
-  let set : @hashset.HashSet[Int] = @hashset.new()
+  let set : @hashset.HashSet[Int] = @hashset.HashSet([])
   inspect(set.to_array(), content="[]")
 }
 
 ///|
 test "@hashset.to_array/single" {
-  let set = @hashset.new()
+  let set = @hashset.HashSet([])
   set.add(42)
   inspect(set.to_array(), content="[42]")
 }
 
 ///|
 test "@hashset.to_array/multiple" {
-  let set = @hashset.new()
+  let set = @hashset.HashSet([])
   set.add(1)
   set.add(2)
   set.add(3)
@@ -461,7 +464,7 @@ test "retain/none_removed" {
 
 ///|
 test "retain/empty_set" {
-  let set : @hashset.HashSet[Int] = @hashset.new()
+  let set : @hashset.HashSet[Int] = @hashset.HashSet([])
   set.retain(_x => true)
   assert_eq(set.length(), 0)
 }

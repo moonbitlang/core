@@ -13,17 +13,7 @@
 // limitations under the License.
 
 ///|
-/// Creates a new empty queue.
-///
-/// # Example
-/// ```mbt check
-/// test {
-///   let queue : @queue.Queue[Int] = @queue.new()
-///   @test.assert_eq(queue.length(), 0)
-/// }
-/// ```
-#as_free_fn
-pub fn[A] Queue::new() -> Queue[A] {
+fn[A] new_queue() -> Queue[A] {
   { length: 0, first: None, last: None }
 }
 
@@ -43,7 +33,7 @@ pub fn[A] Queue::new() -> Queue[A] {
 #alias(of, deprecated="Use from_array instead")
 #as_free_fn(of, deprecated="Use from_array instead")
 pub fn[A] Queue::Queue(arr : ArrayView[A]) -> Queue[A] {
-  guard arr.length() > 0 else { return new() }
+  guard arr.length() > 0 else { return new_queue() }
   let length = arr.length()
   let last = { content: arr[length - 1], next: None }
   let first = for i = length - 2, x = last; i >= 0; {
@@ -87,7 +77,7 @@ pub fn[A] Queue::clear(self : Queue[A]) -> Unit {
 /// # Example
 /// ```mbt check
 /// test {
-///   let queue : @queue.Queue[Int] = @queue.new()
+///   let queue : @queue.Queue[Int] = @queue.Queue([])
 ///   @test.assert_eq(queue.length(), 0)
 /// }
 /// ```
@@ -101,7 +91,7 @@ pub fn[A] Queue::length(self : Queue[A]) -> Int {
 /// # Example
 /// ```mbt check
 /// test {
-///   let queue : @queue.Queue[Int] = @queue.new()
+///   let queue : @queue.Queue[Int] = @queue.Queue([])
 ///   assert_true(queue.is_empty())
 /// }
 /// ```
@@ -115,7 +105,7 @@ pub fn[A] Queue::is_empty(self : Queue[A]) -> Bool {
 /// # Example
 /// ```mbt check
 /// test {
-///   let queue : @queue.Queue[Int] = @queue.new()
+///   let queue : @queue.Queue[Int] = @queue.Queue([])
 ///   queue.push(1)
 /// }
 /// ```
@@ -274,7 +264,7 @@ pub fn[A] Queue::eachi(self : Queue[A], f : (Int, A) -> Unit) -> Unit {
 /// # Example
 /// ```mbt check
 /// test {
-///   let queue : @queue.Queue[Int] = @queue.new()
+///   let queue : @queue.Queue[Int] = @queue.Queue([])
 ///   let sum = queue.fold(init=0, (acc, x) => acc + x)
 ///   @test.assert_eq(sum, 0)
 /// }
@@ -301,7 +291,7 @@ pub fn[A, B] Queue::fold(self : Queue[A], init~ : B, f : (B, A) -> B) -> B {
 /// ```
 #alias(clone, deprecated)
 pub fn[A] Queue::copy(self : Queue[A]) -> Queue[A] {
-  guard self.first is Some({ content, next }) else { return new() }
+  guard self.first is Some({ content, next }) else { return new_queue() }
   let first = { content, next: None }
   let last = for pre = first, n = next {
     match (pre, n) {
@@ -325,7 +315,7 @@ pub fn[A] Queue::copy(self : Queue[A]) -> Queue[A] {
 /// # Example
 /// ```mbt check
 /// test {
-///   let dst : @queue.Queue[Int] = @queue.new()
+///   let dst : @queue.Queue[Int] = @queue.Queue([])
 ///   let src : @queue.Queue[Int] = @queue.from_array([5, 6, 7, 8])
 ///   src.transfer(dst)
 /// }
@@ -391,7 +381,7 @@ pub fn[A] Queue::iter(self : Queue[A]) -> Iter[A] {
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
 pub fn[A] Queue::from_iter(iter : Iter[A]) -> Queue[A] {
-  let q = new()
+  let q = new_queue()
   while iter.next() is Some(e) {
     q.push(e)
   }
@@ -430,7 +420,7 @@ test "equal" {
 
 ///|
 test "push" {
-  let queue : Queue[Int] = new()
+  let queue : Queue[Int] = new_queue()
   queue.push(1)
   queue.push(2)
   queue.push(3)

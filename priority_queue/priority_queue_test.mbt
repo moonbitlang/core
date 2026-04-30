@@ -14,7 +14,8 @@
 
 ///|
 test "new" {
-  let queue : @priority_queue.PriorityQueue[Int] = @priority_queue.new()
+  let queue : @priority_queue.PriorityQueue[Int] = @priority_queue.PriorityQueue([],
+  )
   @test.assert_eq(queue.length(), 0)
 }
 
@@ -79,7 +80,7 @@ test "iter" {
 
 ///|
 test "length" {
-  let pq = @priority_queue.new()
+  let pq = @priority_queue.PriorityQueue([])
   @test.assert_eq(pq.length(), 0)
   pq.push(1)
   @test.assert_eq(pq.length(), 1)
@@ -122,7 +123,7 @@ test "pop" {
 
 ///|
 test "pop empty" {
-  let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.new()
+  let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.PriorityQueue([])
   debug_inspect(pq.pop(), content="None")
 }
 
@@ -190,7 +191,7 @@ test "complex" {
   }
   let arr = (0).until(1000, inclusive=true).collect()
   arr.shuffle_in_place(rand~)
-  let pq = @priority_queue.new()
+  let pq = @priority_queue.PriorityQueue([])
   for i in 0..<=1000 {
     pq.push(arr[i])
   }
@@ -204,7 +205,7 @@ test "complex" {
 
 ///|
 test "priority queue large data" {
-  let pq = @priority_queue.new()
+  let pq = @priority_queue.PriorityQueue([])
   for i in 0..<=10000000 {
     pq.push(-i)
   }
@@ -220,7 +221,7 @@ test "priority queue large data" {
 test "copy large monotonic queue" {
   // Monotonic inserts create deep sibling chains in pairing heaps.
   // This verifies copy() doesn't overflow the stack on large inputs.
-  let pq = @priority_queue.new()
+  let pq = @priority_queue.PriorityQueue([])
   for i in 0..<10000 {
     pq.push(i)
   }

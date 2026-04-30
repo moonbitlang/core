@@ -14,7 +14,7 @@
 
 ///|
 test "capacity" {
-  let m = @hashmap.new()
+  let m = @hashmap.HashMap([])
   inspect(m.capacity(), content="8")
   m.set("a", 1)
   m.set("b", 2)
@@ -68,7 +68,7 @@ test "T::retain - remove all" {
 
 ///|
 test "T::retain - empty map" {
-  let map : @hashmap.HashMap[String, Int] = @hashmap.new()
+  let map : @hashmap.HashMap[String, Int] = @hashmap.HashMap([])
   map.retain((_k, _v) => true)
   inspect(map.length(), content="0")
   inspect(map.is_empty(), content="true")
@@ -125,7 +125,7 @@ test "T::retain - single element map" {
 
 ///|
 test "T::retain - large map with complex predicate" {
-  let map = @hashmap.new()
+  let map = @hashmap.HashMap([])
   for i = 0; i < 100; i = i + 1 {
     map.set("key" + i.to_string(), i)
   }
@@ -144,7 +144,7 @@ test "T::retain - large map with complex predicate" {
 ///|
 test "T::retain - with collisions" {
   // Create keys that likely hash to same buckets
-  let map = @hashmap.new()
+  let map = @hashmap.HashMap([])
   let keys = ["a", "aa", "aaa", "aaaa", "aaaaa"]
   for i = 0; i < keys.length(); i = i + 1 {
     map.set(keys[i], i)

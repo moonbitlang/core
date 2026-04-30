@@ -14,14 +14,14 @@
 
 ///|
 test "new" {
-  let m : @hashmap.HashMap[Int, Int] = @hashmap.new()
+  let m : @hashmap.HashMap[Int, Int] = @hashmap.HashMap([])
   inspect(m.capacity(), content="8")
   inspect(m.length(), content="0")
 }
 
 ///|
 test "get" {
-  let m = @hashmap.new()
+  let m = @hashmap.HashMap([])
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -36,7 +36,7 @@ test "get" {
 
 ///|
 test "_[_]" {
-  let m = @hashmap.new()
+  let m = @hashmap.HashMap([])
   m.set("a", 1)
   m.set("b", 2)
   assert_eq(m["a"], 1)
@@ -45,7 +45,7 @@ test "_[_]" {
 
 ///|
 test "get_or_default" {
-  let m = @hashmap.new()
+  let m = @hashmap.HashMap([])
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -57,7 +57,7 @@ test "get_or_default" {
 
 ///|
 test "get_or_init" {
-  let m : @hashmap.HashMap[String, Array[Int]] = @hashmap.new()
+  let m : @hashmap.HashMap[String, Array[Int]] = @hashmap.HashMap([])
   m.get_or_init("a", () => Array::new()).push(1)
   m.get_or_init("b", () => Array::new()).push(2)
   m.get_or_init("a", () => Array::new()).push(3)
@@ -68,7 +68,7 @@ test "get_or_init" {
 
 ///|
 test "get_or_init full" {
-  let m = @hashmap.new(capacity=2)
+  let m = @hashmap.HashMap([], capacity=2)
   m.get_or_init("a", () => 0) |> ignore
   m.get_or_init("b", () => 0) |> ignore
   m.get_or_init("c", () => 0) |> ignore
@@ -77,7 +77,7 @@ test "get_or_init full" {
 
 ///|
 test "_[_]=_" {
-  let m = @hashmap.new()
+  let m = @hashmap.HashMap([])
   m["a"] = 1
   m["b"] = 2
   assert_eq(m.get("a"), Some(1))
@@ -86,7 +86,7 @@ test "_[_]=_" {
 
 ///|
 test "panic get" {
-  let m = @hashmap.new()
+  let m = @hashmap.HashMap([])
   m.set("a", 1)
   m.set("b", 2)
   m["c"] |> ignore
@@ -94,7 +94,7 @@ test "panic get" {
 
 ///|
 test "set_update" {
-  let m = @hashmap.new()
+  let m = @hashmap.HashMap([])
   m.set("a", 1)
   m.set("b", 2)
   assert_eq(m.get("a"), Some(1))
@@ -104,7 +104,7 @@ test "set_update" {
 
 ///|
 test "contains" {
-  let m = @hashmap.new()
+  let m = @hashmap.HashMap([])
   m.set("a", 1)
   inspect(m.contains("a"), content="true")
   inspect(m.contains("b"), content="false")
@@ -120,7 +120,7 @@ test "from_array" {
 
 ///|
 test "size" {
-  let m = @hashmap.new()
+  let m = @hashmap.HashMap([])
   inspect(m.length(), content="0")
   m.set("a", 1)
   inspect(m.length(), content="1")
@@ -128,7 +128,7 @@ test "size" {
 
 ///|
 test "is_empty" {
-  let m = @hashmap.new()
+  let m = @hashmap.HashMap([])
   inspect(m.is_empty(), content="true")
   m.set("a", 1)
   inspect(m.is_empty(), content="false")
@@ -211,13 +211,13 @@ test "to_array" {
 
 ///|
 test "to_array empty" {
-  let map : @hashmap.HashMap[Int, String] = @hashmap.new()
+  let map : @hashmap.HashMap[Int, String] = @hashmap.HashMap([])
   inspect(map.to_array(), content="[]")
 }
 
 ///|
 test "get_nonexistent_key" {
-  let m = @hashmap.new()
+  let m = @hashmap.HashMap([])
   m.set("a", 1)
   m.set("b", 2)
   debug_inspect(m.get("c"), content="None")
@@ -225,7 +225,7 @@ test "get_nonexistent_key" {
 
 ///|
 test "remove_nonexistent_key" {
-  let m = @hashmap.new()
+  let m = @hashmap.HashMap([])
   m.set("a", 1)
   m.set("b", 2)
   m.remove("c")
@@ -234,7 +234,7 @@ test "remove_nonexistent_key" {
 
 ///|
 test "get_nonexistent_key_with_psl" {
-  let m = @hashmap.new()
+  let m = @hashmap.HashMap([])
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -314,7 +314,7 @@ test "from_iter empty iter" {
 
 ///|
 test "@hashmap.contains/empty" {
-  let map : @hashmap.HashMap[Int, String] = @hashmap.new()
+  let map : @hashmap.HashMap[Int, String] = @hashmap.HashMap([])
   inspect(map.contains(42), content="false")
 }
 
@@ -389,7 +389,9 @@ test "@hashmap.map" {
   map.remove("c")
   let v = map.map((k, v) => k + v.to_string())
   verify_content(v, [("a", "a1"), ("b", "b2"), ("d", "d10"), ("e", "e20")])
-  let v : @hashmap.HashMap[String, String] = @hashmap.new().map((k, v) => k + v)
+  let v : @hashmap.HashMap[String, String] = @hashmap.HashMap([]).map((k, v) => {
+    k + v
+  })
   inspect(v, content="HashMap::from_array([])")
 }
 
@@ -403,7 +405,7 @@ test "@hashmap.copy" {
   map.remove("c")
   let copy = map.copy()
   verify_content(copy, [("e", 20), ("a", 1), ("b", 2), ("d", 10)])
-  let copy : @hashmap.HashMap[String, String] = @hashmap.new().copy()
+  let copy : @hashmap.HashMap[String, String] = @hashmap.HashMap([]).copy()
   inspect(copy, content="HashMap::from_array([])")
 }
 
@@ -445,7 +447,7 @@ test "@hashmap.merge" {
 
 ///|
 test "@hashmap.merge empty maps" {
-  let map1 : @hashmap.HashMap[String, Int] = @hashmap.new()
+  let map1 : @hashmap.HashMap[String, Int] = @hashmap.HashMap([])
   let map2 = @hashmap.from_array([("a", 1), ("b", 2)])
   let merged1 = map1.merge(map2)
   verify_content(merged1, [("a", 1), ("b", 2)])
@@ -470,7 +472,7 @@ test "@hashmap.merge_in_place" {
 
 ///|
 test "@hashmap.merge_in_place empty maps" {
-  let map1 : @hashmap.HashMap[String, Int] = @hashmap.new()
+  let map1 : @hashmap.HashMap[String, Int] = @hashmap.HashMap([])
   let map2 = @hashmap.from_array([("a", 1), ("b", 2)])
   map1.merge_in_place(map2)
   verify_content(map1, [("a", 1), ("b", 2)])
@@ -480,7 +482,7 @@ test "@hashmap.merge_in_place empty maps" {
 
 ///|
 test "@hashmap.merge_in_place self-aliasing should be no-op" {
-  let map : @hashmap.HashMap[String, Int] = @hashmap.new()
+  let map : @hashmap.HashMap[String, Int] = @hashmap.HashMap([])
   // With 4 elements: capacity=8, size=4
   // The grow condition is size >= capacity/2, i.e., 4 >= 4
   // Without fix, merge_in_place(map) calls set_with_hash which triggers grow()
@@ -502,7 +504,7 @@ test "@hashmap.merge_in_place self-aliasing should be no-op" {
 
 ///|
 test "@hashmap.set updating existing key should not grow" {
-  let map : @hashmap.HashMap[String, Int] = @hashmap.new()
+  let map : @hashmap.HashMap[String, Int] = @hashmap.HashMap([])
   // Fill to exactly at grow threshold: capacity=8, size=4
   for i in 0..<4 {
     map.set(i.to_string(), i)
@@ -538,7 +540,7 @@ impl Hash for Key with hash_combine(self, hasher) {
 
 ///|
 test "hashmap collision probe paths" {
-  let map : @hashmap.HashMap[Key, Int] = @hashmap.new()
+  let map : @hashmap.HashMap[Key, Int] = @hashmap.HashMap([])
   let k0 = Key::Key(0, 0)
   let k1 = Key::Key(1, 1)
   map.set(k0, 10)
@@ -549,7 +551,7 @@ test "hashmap collision probe paths" {
 
 ///|
 test "hashmap get_or_init push_away" {
-  let map : @hashmap.HashMap[Key, Int] = @hashmap.new()
+  let map : @hashmap.HashMap[Key, Int] = @hashmap.HashMap([])
   map.set(Key::Key(1, 1), 10)
   map.set(Key::Key(2, 2), 20)
   inspect(map.get_or_init(Key::Key(3, 1), () => 30), content="30")

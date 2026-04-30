@@ -42,7 +42,8 @@ pub fn[V] SortedSet::is_empty(Self[V]) -> Bool
 pub fn[V] SortedSet::iter(Self[V]) -> Iter[V]
 #alias(size, deprecated)
 pub fn[V] SortedSet::length(Self[V]) -> Int
-#as_free_fn
+#as_free_fn(deprecated)
+#deprecated
 pub fn[V] SortedSet::new() -> Self[V]
 pub fn[V : Compare] SortedSet::range(Self[V], V, V) -> Iter[V]
 pub fn[V : Compare] SortedSet::remove(Self[V], V) -> Unit

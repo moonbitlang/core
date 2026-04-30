@@ -14,13 +14,13 @@
 
 ///|
 test "new" {
-  let queue : @queue.Queue[Int] = @queue.new()
+  let queue : @queue.Queue[Int] = @queue.Queue([])
   assert_eq(queue.length(), 0)
 }
 
 ///|
 test "copy empty" {
-  let queue : @queue.Queue[Int] = @queue.new()
+  let queue : @queue.Queue[Int] = @queue.Queue([])
   let copied = queue.copy()
   inspect(copied.length(), content="0")
 }
@@ -101,7 +101,7 @@ test "clear" {
 
 ///|
 test "is_empty" {
-  let queue : @queue.Queue[Int] = @queue.new()
+  let queue : @queue.Queue[Int] = @queue.Queue([])
   assert_true(queue.is_empty())
   queue.push(1)
   queue.push(2)
@@ -150,7 +150,7 @@ test "pop" {
 
 ///|
 test "each" {
-  let queue : @queue.Queue[Int] = @queue.new()
+  let queue : @queue.Queue[Int] = @queue.Queue([])
   let mut sum = 0
   queue.each(x => sum = sum + x)
   assert_eq(sum, 0)
@@ -168,7 +168,7 @@ test "iter_fold" {
 
 ///|
 test "iteri" {
-  let queue : @queue.Queue[Int] = @queue.new()
+  let queue : @queue.Queue[Int] = @queue.Queue([])
   let mut sum = 0
   queue.eachi((i, x) => sum = sum + i * x)
   assert_eq(sum, 0)
@@ -180,7 +180,7 @@ test "iteri" {
 
 ///|
 test "fold" {
-  let queue : @queue.Queue[Int] = @queue.new()
+  let queue : @queue.Queue[Int] = @queue.Queue([])
   let sum = queue.fold(init=0, (acc, x) => acc + x)
   assert_eq(sum, 0)
   @queue.from_array([1, 2, 3, 4]).transfer(queue)
@@ -248,7 +248,7 @@ test "transfer_self" {
 ///|
 test "transfer_self_empty" {
   // Test self-transfer on empty queue
-  let q : @queue.Queue[Int] = @queue.new()
+  let q : @queue.Queue[Int] = @queue.Queue([])
   q.transfer(q)
   inspect(q, content="@queue.from_array([])")
 }

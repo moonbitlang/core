@@ -11,3 +11,13 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+///|
+/// Construct an empty set.
+///
+/// Deprecated: use `SortedSet([])` instead.
+#deprecated("Use `SortedSet([])` instead")
+#as_free_fn(deprecated="Use `SortedSet([])` instead")
+pub fn[V] SortedSet::new() -> SortedSet[V] {
+  new_sorted_set()
+}

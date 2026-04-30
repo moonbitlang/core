@@ -49,7 +49,8 @@ pub fn[K, V] SortedMap::keys_as_iter(Self[K, V]) -> Iter[K]
 pub fn[K, V] SortedMap::length(Self[K, V]) -> Int
 pub fn[K : Compare, V] SortedMap::merge(Self[K, V], Self[K, V]) -> Self[K, V]
 pub fn[K : Compare, V] SortedMap::merge_in_place(Self[K, V], Self[K, V]) -> Unit
-#as_free_fn
+#as_free_fn(deprecated)
+#deprecated
 pub fn[K, V] SortedMap::new() -> Self[K, V]
 pub fn[K : Compare, V] SortedMap::range(Self[K, V], K, K) -> Iter2[K, V]
 pub fn[K : Compare, V] SortedMap::remove(Self[K, V], K) -> Unit

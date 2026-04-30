@@ -6,13 +6,13 @@ A mutable hash set based on a Robin Hood hash table.
 
 ## Create
 
-You can create an empty set using `new()` or construct it from entries using `HashSet([...])`.
+You can create an empty set using `HashSet([])` or construct it from entries using `HashSet([...])`.
 
 ```mbt check
 ///|
 test {
   let _set1 = @hashset.HashSet([1, 2, 3, 4, 5])
-  let _set2 : @hashset.HashSet[String] = @hashset.new()
+  let _set2 : @hashset.HashSet[String] = @hashset.HashSet([])
 }
 ```
 
@@ -23,7 +23,7 @@ You can use `insert()` to add a key to the set, and `contains()` to check whethe
 ```mbt check
 ///|
 test {
-  let set : @hashset.HashSet[String] = @hashset.new()
+  let set : @hashset.HashSet[String] = @hashset.HashSet([])
   set.add("a")
   assert_eq(set.contains("a"), true)
 }
@@ -60,7 +60,7 @@ Similarly, you can use `is_empty()` to check whether the set is empty.
 ```mbt check
 ///|
 test {
-  let set : @hashset.HashSet[Int] = @hashset.new()
+  let set : @hashset.HashSet[Int] = @hashset.HashSet([])
   assert_eq(set.is_empty(), true)
 }
 ```

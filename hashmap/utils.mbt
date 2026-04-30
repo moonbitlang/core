@@ -131,7 +131,7 @@ pub fn[K, V] HashMap::iter2(self : HashMap[K, V]) -> Iter2[K, V] {
 pub fn[K : Hash + Eq, V] HashMap::from_iter(
   iter : Iter[(K, V)],
 ) -> HashMap[K, V] {
-  let m = new()
+  let m = new_hashmap(default_init_capacity)
   while iter.next() is Some((k, v)) {
     m[k] = v
   }
@@ -225,7 +225,7 @@ pub fn[K, V] HashMap::length(self : HashMap[K, V]) -> Int {
 ///
 /// ```mbt check
 /// test {
-///   let map : @hashmap.HashMap[Int, String] = @hashmap.new(capacity=16)
+///   let map : @hashmap.HashMap[Int, String] = @hashmap.HashMap([], capacity=16)
 ///   inspect(map.capacity(), content="16")
 /// }
 /// ```
@@ -247,7 +247,7 @@ pub fn[K, V] HashMap::capacity(self : HashMap[K, V]) -> Int {
 ///
 /// ```mbt check
 /// test {
-///   let map : @hashmap.HashMap[String, Int] = @hashmap.new()
+///   let map : @hashmap.HashMap[String, Int] = @hashmap.HashMap([])
 ///   inspect(map.is_empty(), content="true")
 ///   map.set("key", 42)
 ///   inspect(map.is_empty(), content="false")
