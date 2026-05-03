@@ -398,6 +398,7 @@ pub fn[K, V] Map::retain(Self[K, V], (K, V) -> Bool) -> Unit
 pub fn[K : Hash + Eq, V] Map::set(Self[K, V], K, V) -> Unit
 pub fn[K, V] Map::to_array(Self[K, V]) -> Array[(K, V)]
 pub fn[K : Hash + Eq, V] Map::update(Self[K, V], K, (V?) -> V?) -> Unit
+pub fn[K : Hash + Eq, V] Map::update_or_init(Self[K, V], K, init~ : () -> V, (V) -> V) -> Unit
 pub fn[K, V] Map::values(Self[K, V]) -> Iter[V]
 pub impl[K, V] Default for Map[K, V]
 pub impl[K : Hash + Eq, V : Eq] Eq for Map[K, V]

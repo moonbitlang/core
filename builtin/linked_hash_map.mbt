@@ -356,6 +356,72 @@ pub fn[K : Hash + Eq, V] Map::get_or_init(
 }
 
 ///|
+/// Updates the value for `key` by applying `f` to it, using `init()` as the
+/// starting value when the key is absent.
+///
+/// This is the symmetric mutating counterpart to `get_or_init`: it is the
+/// idiomatic way to express "increment a counter, defaulting to zero" and
+/// similar tally/histogram patterns in a single probe.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let counts : Map[String, Int] = {}
+///   counts.update_or_init("a", init=() => 0, x => x + 1)
+///   counts.update_or_init("a", init=() => 0, x => x + 1)
+///   counts.update_or_init("b", init=() => 0, x => x + 1)
+///   debug_inspect(counts.get("a"), content="Some(2)")
+///   debug_inspect(counts.get("b"), content="Some(1)")
+/// }
+/// ```
+pub fn[K : Hash + Eq, V] Map::update_or_init(
+  self : Map[K, V],
+  key : K,
+  init~ : () -> V,
+  f : (V) -> V,
+) -> Unit {
+  let hash = key.hash()
+  let (idx, psl, new_value, push_away) = for psl = 0, idx = hash &
+                                               self.capacity_mask {
+    match self.entries[idx] {
+      Some(entry) => {
+        if entry.hash == hash && entry.key == key {
+          entry.value = f(entry.value)
+          return
+        }
+        if psl > entry.psl {
+          let new_value = f(init())
+          break (idx, psl, new_value, Some(entry))
+        }
+        continue psl + 1, (idx + 1) & self.capacity_mask
+      }
+      None => {
+        let new_value = f(init())
+        break (idx, psl, new_value, None)
+      }
+    }
+  }
+  if self.size >= self.grow_at {
+    self.grow()
+    self.set_with_hash(key, new_value, hash)
+  } else {
+    if push_away is Some(entry) {
+      self.push_away(idx, entry)
+    }
+    let entry = {
+      prev: self.tail,
+      next: None,
+      psl,
+      hash,
+      key,
+      value: new_value,
+    }
+    self.add_entry_to_tail(idx, entry)
+  }
+}
+
+///|
 /// Check if the hash map contains a key.
 pub fn[K : Hash + Eq, V] Map::contains(self : Map[K, V], key : K) -> Bool {
   // inline Map::get to avoid boxing
