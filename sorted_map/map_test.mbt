@@ -417,6 +417,20 @@ test "update_or_init counter pattern" {
 }
 
 ///|
+test "update_or_default counter pattern" {
+  let counts : @sorted_map.SortedMap[String, Int] = @sorted_map.SortedMap([])
+  for label in ["a", "b", "a", "c", "a", "b"] {
+    counts.update_or_default(label, x => x + 1)
+  }
+  inspect(
+    counts.to_array(),
+    content=(
+      #|[("a", 3), ("b", 2), ("c", 1)]
+    ),
+  )
+}
+
+///|
 test "range with inverted bounds returns empty" {
   let map = @sorted_map.from_array([
     (1, "a"),
