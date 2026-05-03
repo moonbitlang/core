@@ -142,7 +142,7 @@ test "get_or_init full" {
 ///|
 test "update_or_init applies f to init when absent" {
   let m : Map[String, String] = Map([])
-  m.update_or_init("k", init=() => "v", x => x + "!")
+  m.update_or_init("k", "v", x => x + "!")
   assert_true(m.get("k") == Some("v!"))
   assert_eq(m.length(), 1)
 }
@@ -151,16 +151,8 @@ test "update_or_init applies f to init when absent" {
 test "update_or_init updates when present" {
   let m : Map[String, String] = Map([])
   m.set("k", "v")
-  let mut initialized = false
-  m.update_or_init(
-    "k",
-    init=() => {
-      initialized = true
-      "z"
-    },
-    x => x + "!",
-  )
-  assert_false(initialized)
+  // init is ignored when key is present; only f is applied to the existing value
+  m.update_or_init("k", "z", x => x + "!")
   assert_true(m.get("k") == Some("v!"))
   assert_eq(m.length(), 1)
 }
@@ -169,7 +161,7 @@ test "update_or_init updates when present" {
 test "update_or_init counter pattern" {
   let counts : Map[String, Int] = Map([])
   for label in ["a", "b", "a", "c", "a", "b"] {
-    counts.update_or_init(label, init=() => 0, x => x + 1)
+    counts.update_or_init(label, 0, x => x + 1)
   }
   assert_true(counts.get("a") == Some(3))
   assert_true(counts.get("b") == Some(2))
@@ -179,10 +171,10 @@ test "update_or_init counter pattern" {
 ///|
 test "update_or_init preserves insertion order" {
   let m : Map[String, Int] = Map([])
-  m.update_or_init("b", init=() => 0, x => x + 1)
-  m.update_or_init("a", init=() => 0, x => x + 1)
-  m.update_or_init("c", init=() => 0, x => x + 1)
-  m.update_or_init("a", init=() => 0, x => x + 1)
+  m.update_or_init("b", 0, x => x + 1)
+  m.update_or_init("a", 0, x => x + 1)
+  m.update_or_init("c", 0, x => x + 1)
+  m.update_or_init("a", 0, x => x + 1)
   let keys = []
   m.each((k, _v) => keys.push(k))
   assert_eq(keys, ["b", "a", "c"])
@@ -192,7 +184,7 @@ test "update_or_init preserves insertion order" {
 test "update_or_init triggers grow" {
   let m : Map[Int, Int] = Map([], capacity=2)
   for i in 0..<5 {
-    m.update_or_init(i, init=() => 0, x => x + 1)
+    m.update_or_init(i, 0, x => x + 1)
   }
   assert_eq(m.length(), 5)
   for i in 0..<5 {
