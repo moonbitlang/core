@@ -169,9 +169,9 @@ pub fn[K : Compare, V] SortedMap::get_or_init(
 /// ```mbt check
 /// test {
 ///   let counts : @sorted_map.SortedMap[String, Int] = @sorted_map.SortedMap([])
-///   counts.update_or_init("a", init=0, x => x + 1)
-///   counts.update_or_init("a", init=0, x => x + 1)
-///   counts.update_or_init("b", init=0, x => x + 1)
+///   counts.update_or_init("a", 0, x => x + 1)
+///   counts.update_or_init("a", 0, x => x + 1)
+///   counts.update_or_init("b", 0, x => x + 1)
 ///   debug_inspect(counts.get("a"), content="Some(2)")
 ///   debug_inspect(counts.get("b"), content="Some(1)")
 /// }
@@ -179,7 +179,7 @@ pub fn[K : Compare, V] SortedMap::get_or_init(
 pub fn[K : Compare, V] SortedMap::update_or_init(
   self : SortedMap[K, V],
   key : K,
-  init~ : V,
+  init : V,
   f : (V) -> V,
 ) -> Unit {
   let v = match self.get(key) {
