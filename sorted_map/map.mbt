@@ -158,6 +158,38 @@ pub fn[K : Compare, V] SortedMap::get_or_init(
 }
 
 ///|
+/// Updates the value for `key` by applying `f` to it, using `init()` as the
+/// starting value when the key is absent.
+///
+/// This is the symmetric mutating counterpart to `get_or_init`: it is the
+/// idiomatic way to express "increment a counter, defaulting to zero" and
+/// similar tally/histogram patterns without two lookups.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let counts : @sorted_map.SortedMap[String, Int] = @sorted_map.SortedMap([])
+///   counts.update_or_init("a", init=() => 0, x => x + 1)
+///   counts.update_or_init("a", init=() => 0, x => x + 1)
+///   counts.update_or_init("b", init=() => 0, x => x + 1)
+///   debug_inspect(counts.get("a"), content="Some(2)")
+///   debug_inspect(counts.get("b"), content="Some(1)")
+/// }
+/// ```
+pub fn[K : Compare, V] SortedMap::update_or_init(
+  self : SortedMap[K, V],
+  key : K,
+  init~ : () -> V,
+  f : (V) -> V,
+) -> Unit {
+  let v = match self.get(key) {
+    Some(v) => v
+    None => init()
+  }
+  self.set(key, f(v))
+}
+
+///|
 /// Returns the value for the key if present, otherwise returns `default`.
 pub fn[K : Compare, V] SortedMap::get_or_default(
   self : SortedMap[K, V],
