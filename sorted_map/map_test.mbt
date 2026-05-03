@@ -388,7 +388,7 @@ test "get_or_default returns existing value" {
 ///|
 test "update_or_init applies f to init when absent" {
   let map = @sorted_map.from_array([(1, "a"), (3, "c")])
-  map.update_or_init(2, init=() => "b", x => x + "!")
+  map.update_or_init(2, init="b", x => x + "!")
   debug_inspect(map.get(2), content="Some(\"b!\")")
   inspect(map.length(), content="3")
 }
@@ -396,17 +396,8 @@ test "update_or_init applies f to init when absent" {
 ///|
 test "update_or_init updates when present" {
   let map = @sorted_map.from_array([(1, "a"), (2, "b")])
-  let mut initialized = false
-  map.update_or_init(
-    2,
-    init=() => {
-      initialized = true
-      "z"
-    },
-    x => x + "!",
-  )
-  // init should not run when key was present
-  inspect(initialized, content="false")
+  // init is ignored when key is present; only f is applied to the existing value
+  map.update_or_init(2, init="z", x => x + "!")
   debug_inspect(map.get(2), content="Some(\"b!\")")
   inspect(map.length(), content="2")
 }
@@ -415,7 +406,7 @@ test "update_or_init updates when present" {
 test "update_or_init counter pattern" {
   let counts : @sorted_map.SortedMap[String, Int] = @sorted_map.SortedMap([])
   for label in ["a", "b", "a", "c", "a", "b"] {
-    counts.update_or_init(label, init=() => 0, x => x + 1)
+    counts.update_or_init(label, init=0, x => x + 1)
   }
   inspect(
     counts.to_array(),
