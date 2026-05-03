@@ -158,35 +158,35 @@ pub fn[K : Compare, V] SortedMap::get_or_init(
 }
 
 ///|
-/// Updates the value for `key` by applying `f` to it, using `init` as the
-/// starting value when the key is absent.
-///
-/// This is the symmetric mutating counterpart to `get_or_init`: it is the
-/// idiomatic way to express "increment a counter, defaulting to zero" and
-/// similar tally/histogram patterns without two lookups.
+/// Inserts `default` for `key` if it is absent, otherwise replaces the existing
+/// value with `f(existing)`. The pairing of an eager `default` value with a
+/// modifier function lets the canonical counter pattern read literally:
 ///
 /// # Example
 /// ```mbt check
 /// test {
 ///   let counts : @sorted_map.SortedMap[String, Int] = @sorted_map.SortedMap([])
-///   counts.update_or_init("a", 0, x => x + 1)
-///   counts.update_or_init("a", 0, x => x + 1)
-///   counts.update_or_init("b", 0, x => x + 1)
+///   counts.update_or_default("a", 1, x => x + 1)
+///   counts.update_or_default("a", 1, x => x + 1)
+///   counts.update_or_default("b", 1, x => x + 1)
 ///   debug_inspect(counts.get("a"), content="Some(2)")
 ///   debug_inspect(counts.get("b"), content="Some(1)")
 /// }
 /// ```
-pub fn[K : Compare, V] SortedMap::update_or_init(
+///
+/// Note: `f` is *not* applied to `default` on first insertion — `default` is
+/// the value stored when the key is absent. This mirrors Java's `Map.merge`
+/// and Rust's `Entry::and_modify(f).or_insert(default)`.
+pub fn[K : Compare, V] SortedMap::update_or_default(
   self : SortedMap[K, V],
   key : K,
-  init : V,
+  default : V,
   f : (V) -> V,
 ) -> Unit {
-  let v = match self.get(key) {
-    Some(v) => v
-    None => init
+  match self.get(key) {
+    Some(v) => self.set(key, f(v))
+    None => self.set(key, default)
   }
-  self.set(key, f(v))
 }
 
 ///|
