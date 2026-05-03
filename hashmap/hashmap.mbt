@@ -374,31 +374,6 @@ pub fn[K : Hash + Eq, V] HashMap::update_or_init(
 }
 
 ///|
-/// Updates the value for `key` by applying `f` to it, using `V::default()` as
-/// the starting value when the key is absent.
-///
-/// Convenience over `update_or_init` for value types with a `Default`
-/// implementation (mirrors Rust's `Entry::or_default`):
-///
-/// ```mbt check
-/// test {
-///   let counts : @hashmap.HashMap[String, Int] = @hashmap.HashMap([])
-///   counts.update_or_default("a", x => x + 1)
-///   counts.update_or_default("a", x => x + 1)
-///   counts.update_or_default("b", x => x + 1)
-///   debug_inspect(counts.get("a"), content="Some(2)")
-///   debug_inspect(counts.get("b"), content="Some(1)")
-/// }
-/// ```
-pub fn[K : Hash + Eq, V : Default] HashMap::update_or_default(
-  self : HashMap[K, V],
-  key : K,
-  f : (V) -> V,
-) -> Unit {
-  self.update_or_init(key, Default::default(), f)
-}
-
-///|
 /// Gets the value associated with a given key from the hash map. If the key
 /// doesn't exist, returns the provided default value instead.
 ///

@@ -59,7 +59,6 @@ pub fn[K : Hash + Eq, V] HashMap::set(Self[K, V], K, V) -> Unit
 pub fn[K, V] HashMap::to_array(Self[K, V]) -> Array[(K, V)]
 #deprecated
 pub fn[K : @debug.Debug, V : @debug.Debug] HashMap::to_repr(Self[K, V]) -> @debug.Repr
-pub fn[K : Hash + Eq, V : Default] HashMap::update_or_default(Self[K, V], K, (V) -> V) -> Unit
 pub fn[K : Hash + Eq, V] HashMap::update_or_init(Self[K, V], K, V, (V) -> V) -> Unit
 pub fn[K, V] HashMap::values(Self[K, V]) -> Iter[V]
 pub impl[K, V] Default for HashMap[K, V]

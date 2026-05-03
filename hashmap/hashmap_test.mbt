@@ -105,17 +105,6 @@ test "update_or_init counter pattern" {
 }
 
 ///|
-test "update_or_default counter pattern" {
-  let counts : @hashmap.HashMap[String, Int] = @hashmap.HashMap([])
-  for label in ["a", "b", "a", "c", "a", "b"] {
-    counts.update_or_default(label, x => x + 1)
-  }
-  assert_eq(counts.get("a"), Some(3))
-  assert_eq(counts.get("b"), Some(2))
-  assert_eq(counts.get("c"), Some(1))
-}
-
-///|
 test "update_or_init triggers grow" {
   let m : @hashmap.HashMap[Int, Int] = @hashmap.HashMap([], capacity=2)
   for i in 0..<5 {
