@@ -76,6 +76,55 @@ test "get_or_init full" {
 }
 
 ///|
+test "update_or_init applies f to init when absent" {
+  let m : @hashmap.HashMap[String, String] = @hashmap.HashMap([])
+  m.update_or_init("k", init=() => "v", x => x + "!")
+  assert_eq(m.get("k"), Some("v!"))
+  assert_eq(m.length(), 1)
+}
+
+///|
+test "update_or_init updates when present" {
+  let m : @hashmap.HashMap[String, String] = @hashmap.HashMap([])
+  m.set("k", "v")
+  let mut initialized = false
+  m.update_or_init(
+    "k",
+    init=() => {
+      initialized = true
+      "z"
+    },
+    x => x + "!",
+  )
+  inspect(initialized, content="false")
+  assert_eq(m.get("k"), Some("v!"))
+  assert_eq(m.length(), 1)
+}
+
+///|
+test "update_or_init counter pattern" {
+  let counts : @hashmap.HashMap[String, Int] = @hashmap.HashMap([])
+  for label in ["a", "b", "a", "c", "a", "b"] {
+    counts.update_or_init(label, init=() => 0, x => x + 1)
+  }
+  assert_eq(counts.get("a"), Some(3))
+  assert_eq(counts.get("b"), Some(2))
+  assert_eq(counts.get("c"), Some(1))
+}
+
+///|
+test "update_or_init triggers grow" {
+  let m : @hashmap.HashMap[Int, Int] = @hashmap.HashMap([], capacity=2)
+  for i in 0..<5 {
+    m.update_or_init(i, init=() => 0, x => x + 1)
+  }
+  assert_eq(m.length(), 5)
+  for i in 0..<5 {
+    assert_eq(m.get(i), Some(1))
+  }
+}
+
+///|
 test "_[_]=_" {
   let m = @hashmap.HashMap([])
   m["a"] = 1
