@@ -193,6 +193,17 @@ test "update_or_init triggers grow" {
 }
 
 ///|
+test "update_or_default counter pattern" {
+  let counts : Map[String, Int] = Map([])
+  for label in ["a", "b", "a", "c", "a", "b"] {
+    counts.update_or_default(label, x => x + 1)
+  }
+  assert_true(counts.get("a") == Some(3))
+  assert_true(counts.get("b") == Some(2))
+  assert_true(counts.get("c") == Some(1))
+}
+
+///|
 test "Map::set" {
   let m : Map[String, Int] = Map([])
   m["a"] = 1
