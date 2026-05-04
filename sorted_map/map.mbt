@@ -183,9 +183,12 @@ pub fn[K : Compare, V] SortedMap::update_or_default(
   default : V,
   f : (V) -> V,
 ) -> Unit {
-  match self.get(key) {
-    Some(v) => self.set(key, f(v))
-    None => self.set(key, default)
+  let (new_root, inserted) = update_or_default_node(self.root, key, default, f)
+  if self.root != new_root {
+    self.root = new_root
+  }
+  if inserted {
+    self.size += 1
   }
 }
 
@@ -642,6 +645,34 @@ fn[K : Compare, V] add_node(
           (Some(balance(n)), inserted)
         } else {
           let (nr, inserted) = add_node(r, key, value)
+          n.right = nr
+          (Some(balance(n)), inserted)
+        }
+      }
+  }
+}
+
+///|
+fn[K : Compare, V] update_or_default_node(
+  root : Node[K, V]?,
+  key : K,
+  default : V,
+  f : (V) -> V,
+) -> (Node[K, V]?, Bool) {
+  match root {
+    None => (Some(new_node(key, default)), true)
+    Some(n) =>
+      if key == n.key {
+        n.value = f(n.value)
+        (Some(n), false)
+      } else {
+        let (l, r) = (n.left, n.right)
+        if key < n.key {
+          let (nl, inserted) = update_or_default_node(l, key, default, f)
+          n.left = nl
+          (Some(balance(n)), inserted)
+        } else {
+          let (nr, inserted) = update_or_default_node(r, key, default, f)
           n.right = nr
           (Some(balance(n)), inserted)
         }
