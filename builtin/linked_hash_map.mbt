@@ -356,34 +356,32 @@ pub fn[K : Hash + Eq, V] Map::get_or_init(
 }
 
 ///|
-/// Updates the value for `key` by applying `f` to it, using `init` as the
-/// starting value when the key is absent.
-///
-/// This is the symmetric mutating counterpart to `get_or_init`: it is the
-/// idiomatic way to express "increment a counter, defaulting to zero" and
-/// similar tally/histogram patterns in a single probe.
-///
-/// Example:
+/// Inserts `default` for `key` if it is absent, otherwise replaces the existing
+/// value with `f(existing)`. The pairing of an eager `default` value with a
+/// modifier function lets the canonical counter pattern read literally:
 ///
 /// ```mbt check
 /// test {
 ///   let counts : Map[String, Int] = {}
-///   counts.update_or_init("a", 0, x => x + 1)
-///   counts.update_or_init("a", 0, x => x + 1)
-///   counts.update_or_init("b", 0, x => x + 1)
+///   counts.update_or_default("a", 1, x => x + 1)
+///   counts.update_or_default("a", 1, x => x + 1)
+///   counts.update_or_default("b", 1, x => x + 1)
 ///   debug_inspect(counts.get("a"), content="Some(2)")
 ///   debug_inspect(counts.get("b"), content="Some(1)")
 /// }
 /// ```
-pub fn[K : Hash + Eq, V] Map::update_or_init(
+///
+/// Note: `f` is *not* applied to `default` on first insertion — `default` is
+/// the value stored when the key is absent. This mirrors Java's `Map.merge`
+/// and Rust's `Entry::and_modify(f).or_insert(default)`.
+pub fn[K : Hash + Eq, V] Map::update_or_default(
   self : Map[K, V],
   key : K,
-  init : V,
+  default : V,
   f : (V) -> V,
 ) -> Unit {
   let hash = key.hash()
-  let (idx, psl, new_value, push_away) = for psl = 0, idx = hash &
-                                               self.capacity_mask {
+  let (idx, psl, push_away) = for psl = 0, idx = hash & self.capacity_mask {
     match self.entries[idx] {
       Some(entry) => {
         if entry.hash == hash && entry.key == key {
@@ -391,32 +389,21 @@ pub fn[K : Hash + Eq, V] Map::update_or_init(
           return
         }
         if psl > entry.psl {
-          let new_value = f(init)
-          break (idx, psl, new_value, Some(entry))
+          break (idx, psl, Some(entry))
         }
         continue psl + 1, (idx + 1) & self.capacity_mask
       }
-      None => {
-        let new_value = f(init)
-        break (idx, psl, new_value, None)
-      }
+      None => break (idx, psl, None)
     }
   }
   if self.size >= self.grow_at {
     self.grow()
-    self.set_with_hash(key, new_value, hash)
+    self.set_with_hash(key, default, hash)
   } else {
     if push_away is Some(entry) {
       self.push_away(idx, entry)
     }
-    let entry = {
-      prev: self.tail,
-      next: None,
-      psl,
-      hash,
-      key,
-      value: new_value,
-    }
+    let entry = { prev: self.tail, next: None, psl, hash, key, value: default }
     self.add_entry_to_tail(idx, entry)
   }
 }
