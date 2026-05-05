@@ -741,8 +741,8 @@ pub fn[A, B] FixedArray::rev_foldi(
   f : (Int, B, A) -> B raise?,
 ) -> B raise? {
   let len = self.length()
-  for i = len - 1, acc = init; i >= 0; {
-    continue i - 1, f(len - i - 1, acc, self[i])
+  for i in len>..0; acc = init {
+    continue f(len - i - 1, acc, self[i])
   } nobreak {
     acc
   }
