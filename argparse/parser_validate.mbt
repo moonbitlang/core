@@ -172,9 +172,10 @@ fn merge_inherited_globals(
 ) -> Array[Arg] {
   let merged = inherited_globals.copy()
   for global in globals_here {
-    match merged.search_by(arg => arg.name == global.name) {
-      Some(idx) => merged[idx] = global
-      None => merged.push(global)
+    if merged.search_by(arg => arg.name == global.name) is Some(idx) {
+      merged[idx] = global
+    } else {
+      merged.push(global)
     }
   }
   merged
