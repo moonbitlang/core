@@ -373,15 +373,7 @@ fn arg_doc(arg : Arg) -> String {
 
 ///|
 fn has_subcommands_for_help(cmd : Command) -> Bool {
-  if help_subcommand_enabled(cmd) {
-    return true
-  }
-  for sub in cmd.subcommands {
-    if !sub.hidden {
-      return true
-    }
-  }
-  false
+  help_subcommand_enabled(cmd) || cmd.subcommands.any(sub => !sub.hidden)
 }
 
 ///|
