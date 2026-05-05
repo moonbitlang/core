@@ -114,15 +114,13 @@ fn required_option_token(arg : Arg) -> String? {
       }
     PositionalInfo(_) => None
   }
-  match prefix {
-    Some(prefix) =>
-      if arg.info is OptionInfo(_) {
-        Some("\{prefix} <\{arg.name}>")
-      } else {
-        Some(prefix)
-      }
-    None => None
-  }
+  prefix.map(prefix => {
+    if arg.info is OptionInfo(_) {
+      "\{prefix} <\{arg.name}>"
+    } else {
+      prefix
+    }
+  })
 }
 
 ///|
