@@ -45,11 +45,10 @@ fn strongest_source(
 ) -> ValueSource? {
   if prefer_child_source(parent_source, child_source) {
     child_source
+  } else if parent_source is Some(_) {
+    parent_source
   } else {
-    match parent_source {
-      Some(source) => Some(source)
-      None => child_source
-    }
+    child_source
   }
 }
 
@@ -94,15 +93,13 @@ fn merge_global_value_from_child(
         if child_vals is Some(cv) && cv.length() > 0 {
           parent.values[name] = cv.copy()
         }
-        match child_source {
-          Some(src) => parent.value_sources[name] = src
-          None => ()
+        if child_source is Some(src) {
+          parent.value_sources[name] = src
         }
       } else if parent_vals is Some(pv) && pv.length() > 0 {
         parent.values[name] = pv.copy()
-        match parent_source {
-          Some(src) => parent.value_sources[name] = src
-          None => ()
+        if parent_source is Some(src) {
+          parent.value_sources[name] = src
         }
       }
     }
@@ -122,15 +119,13 @@ fn merge_global_value_from_child(
       if child_vals is Some(cv) && cv.length() > 0 {
         parent.values[name] = cv.copy()
       }
-      match child_source {
-        Some(src) => parent.value_sources[name] = src
-        None => ()
+      if child_source is Some(src) {
+        parent.value_sources[name] = src
       }
     } else if parent_vals is Some(pv) && pv.length() > 0 {
       parent.values[name] = pv.copy()
-      match parent_source {
-        Some(src) => parent.value_sources[name] = src
-        None => ()
+      if parent_source is Some(src) {
+        parent.value_sources[name] = src
       }
     }
   }
@@ -143,58 +138,51 @@ fn merge_global_flag_from_child(
   arg : Arg,
   name : String,
 ) -> Unit {
-  match child.flags.get(name) {
-    Some(v) =>
-      if arg.info is FlagInfo(action=Count, ..) {
-        let has_parent = parent.flags.get(name) is Some(_)
-        let parent_source = parent.flag_sources.get(name)
-        let child_source = child.flag_sources.get(name)
-        let both_argv = parent_source is Some(Argv) &&
-          child_source is Some(Argv)
-        if both_argv {
-          let parent_count = parent.counts.get(name).unwrap_or(0)
-          let child_count = child.counts.get(name).unwrap_or(0)
-          if child_count == 0 && !v {
-            // `--no-<flag>` after a subcommand should reset an earlier argv count.
-            parent.counts[name] = 0
-            parent.flags[name] = false
-          } else {
-            let total = parent_count + child_count
-            parent.counts[name] = total
-            parent.flags[name] = total > 0
-          }
-          match strongest_source(parent_source, child_source) {
-            Some(src) => parent.flag_sources[name] = src
-            None => ()
-          }
-        } else {
-          let choose_child = !has_parent ||
-            prefer_child_source(parent_source, child_source)
-          if choose_child {
-            let child_count = child.counts.get(name).unwrap_or(0)
-            parent.counts[name] = child_count
-            parent.flags[name] = child_count > 0
-            match child_source {
-              Some(src) => parent.flag_sources[name] = src
-              None => ()
-            }
-          }
-        }
+  guard child.flags.get(name) is Some(v) else { return }
+  if arg.info is FlagInfo(action=Count, ..) {
+    let has_parent = parent.flags.get(name) is Some(_)
+    let parent_source = parent.flag_sources.get(name)
+    let child_source = child.flag_sources.get(name)
+    let both_argv = parent_source is Some(Argv) && child_source is Some(Argv)
+    if both_argv {
+      let parent_count = parent.counts.get(name).unwrap_or(0)
+      let child_count = child.counts.get(name).unwrap_or(0)
+      if child_count == 0 && !v {
+        // `--no-<flag>` after a subcommand should reset an earlier argv count.
+        parent.counts[name] = 0
+        parent.flags[name] = false
       } else {
-        let has_parent = parent.flags.get(name) is Some(_)
-        let parent_source = parent.flag_sources.get(name)
-        let child_source = child.flag_sources.get(name)
-        let choose_child = !has_parent ||
-          prefer_child_source(parent_source, child_source)
-        if choose_child {
-          parent.flags[name] = v
-          match child_source {
-            Some(src) => parent.flag_sources[name] = src
-            None => ()
-          }
+        let total = parent_count + child_count
+        parent.counts[name] = total
+        parent.flags[name] = total > 0
+      }
+      if strongest_source(parent_source, child_source) is Some(src) {
+        parent.flag_sources[name] = src
+      }
+    } else {
+      let choose_child = !has_parent ||
+        prefer_child_source(parent_source, child_source)
+      if choose_child {
+        let child_count = child.counts.get(name).unwrap_or(0)
+        parent.counts[name] = child_count
+        parent.flags[name] = child_count > 0
+        if child_source is Some(src) {
+          parent.flag_sources[name] = src
         }
       }
-    None => ()
+    }
+  } else {
+    let has_parent = parent.flags.get(name) is Some(_)
+    let parent_source = parent.flag_sources.get(name)
+    let child_source = child.flag_sources.get(name)
+    let choose_child = !has_parent ||
+      prefer_child_source(parent_source, child_source)
+    if choose_child {
+      parent.flags[name] = v
+      if child_source is Some(src) {
+        parent.flag_sources[name] = src
+      }
+    }
   }
 }
 
@@ -282,40 +270,25 @@ fn propagate_globals_to_child(
       continue
     }
     if arg.info is (OptionInfo(_) | PositionalInfo(_)) {
-      match parent.values.get(name) {
-        Some(values) => {
-          child.values[name] = values.copy()
-          match parent.value_sources.get(name) {
-            Some(src) => child.value_sources[name] = src
-            None => ()
-          }
+      if parent.values.get(name) is Some(values) {
+        child.values[name] = values.copy()
+        if parent.value_sources.get(name) is Some(src) {
+          child.value_sources[name] = src
         }
-        None => ()
       }
-    } else {
-      match parent.flags.get(name) {
-        Some(v) => {
-          child.flags[name] = v
-          match parent.flag_sources.get(name) {
-            Some(src) => child.flag_sources[name] = src
-            None => ()
-          }
-          if arg.info is FlagInfo(action=Count, ..) {
-            match parent.counts.get(name) {
-              Some(c) => child.counts[name] = c
-              None => ()
-            }
-          }
-        }
-        None => ()
+    } else if parent.flags.get(name) is Some(v) {
+      child.flags[name] = v
+      if parent.flag_sources.get(name) is Some(src) {
+        child.flag_sources[name] = src
+      }
+      if arg.info is FlagInfo(action=Count, ..) &&
+        parent.counts.get(name) is Some(c) {
+        child.counts[name] = c
       }
     }
   }
-  match child.parsed_subcommand {
-    Some((sub_name, sub_m)) => {
-      propagate_globals_to_child(parent, sub_m, globals, Set([]))
-      child.parsed_subcommand = Some((sub_name, sub_m))
-    }
-    None => ()
+  if child.parsed_subcommand is Some((sub_name, sub_m)) {
+    propagate_globals_to_child(parent, sub_m, globals, Set([]))
+    child.parsed_subcommand = Some((sub_name, sub_m))
   }
 }
