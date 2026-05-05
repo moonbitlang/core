@@ -106,12 +106,38 @@ fn parse_decimal_from_view(str : StringView) -> Decimal raise StrConvError {
         rest => rest
       }
       guard rest is ['0'..='9', ..] else { syntax_err() }
+      // Clamp the exponent accumulator so huge exponents cannot overflow `Int`.
+      // The clamp lands `decimal_point` exactly at the boundary that
+      // `to_double_priv` already treats as overflow / underflow:
+      //   - `decimal_point > 310`  -> range_err (Double max ~1.8e+308, so
+      //     anything past 1e+310 is unreachable). Hence the `+311` ceiling.
+      //   - `decimal_point < -330` -> underflow to 0 (Double min subnormal
+      //     ~5e-324, so anything past 1e-331 underflows). Hence the `-331`
+      //     floor, expressed as `decimal_point + 331` for the negative-exp arm.
+      // Once `exp` reaches `exp_limit`, additional digits cannot change the
+      // result, so we stop accumulating before `Int` can wrap.
+      let exp_limit = if exp_sign > 0 {
+        if d.decimal_point < 311 {
+          311 - d.decimal_point
+        } else {
+          0
+        }
+      } else if d.decimal_point > -331 {
+        d.decimal_point + 331
+      } else {
+        0
+      }
       let mut exp = 0
       let rest = for s = rest {
         match s {
           ['_', .. rest] => continue rest
           ['0'..='9' as digit, .. rest] => {
-            exp = exp * 10 + (digit.to_int() - '0')
+            if exp < exp_limit {
+              exp = exp * 10 + (digit.to_int() - '0')
+              if exp > exp_limit {
+                exp = exp_limit
+              }
+            }
             continue rest
           }
           rest => break rest
