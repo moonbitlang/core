@@ -131,10 +131,7 @@ pub fn[A : Eq + Hash] HashSet::add(self : HashSet[A], key : A) -> HashSet[A] {
 ///|
 /// Remove an element from a set
 pub fn[A : Eq + Hash] HashSet::remove(self : HashSet[A], key : A) -> HashSet[A] {
-  match self.0 {
-    None => None
-    Some(node) => node.remove_with_path(key, @path.of(key))
-  }
+  self.0.bind(node => node.remove_with_path(key, @path.of(key)))
 }
 
 ///|
@@ -202,10 +199,7 @@ pub fn[A] HashSet::length(self : HashSet[A]) -> Int {
     }
   }
 
-  match self.0 {
-    None => 0
-    Some(node) => node_size(node)
-  }
+  self.0.map_or(0, node_size)
 }
 
 ///|
