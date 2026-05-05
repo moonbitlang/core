@@ -101,13 +101,14 @@ fn is_negative_number(arg : String) -> Bool {
   if arg.length() < 2 {
     return false
   }
-  guard arg.get_char(0) is Some('-') else { return false }
-  for i = 1; i < arg.length(); {
-    let ch = arg.get_char(i).unwrap()
-    if ch < '0' || ch > '9' {
-      return false
+  guard arg is ['-', .. rest] else { return false }
+  for ch in rest {
+    if ch is ('0'..='9') {
+      continue
+    } else {
+      break false
     }
-    continue i + ch.utf16_len()
+  } nobreak {
+    true
   }
-  true
 }
