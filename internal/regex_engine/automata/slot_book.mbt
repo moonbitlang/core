@@ -49,9 +49,9 @@ fn SlotBook::mark_used(self : SlotBook, slot : Slot) -> Unit {
 
 ///|
 fn SlotBook::find_unused(self : SlotBook) -> Slot {
-  for i = 0; i < self.0.length(); i = i + 1 {
-    if self.0[i] != -1 {
-      let bit = self.0[i].lnot().ctz()
+  for i, word in self.0 {
+    if word != -1 {
+      let bit = word.lnot().ctz()
       return Slot::from_index(i * 32 + bit)
     }
   }
