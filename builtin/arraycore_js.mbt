@@ -209,7 +209,7 @@ pub fn[T] Array::push(self : Array[T], value : T) -> Unit {
 /// }
 /// ```
 pub fn[T] Array::pop(self : Array[T]) -> T? {
-  if self.length() == 0 {
+  if self.is_empty() {
     None
   } else {
     let v = self.unsafe_pop()

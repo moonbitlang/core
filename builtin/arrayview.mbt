@@ -1250,7 +1250,7 @@ pub fn[T, U] ArrayView::map(
   self : ArrayView[T],
   f : (T) -> U raise?,
 ) -> Array[U] raise? {
-  if self.length() == 0 {
+  if self.is_empty() {
     return []
   }
   Array::makei(self.length(), i => f(self[i]))
@@ -1271,7 +1271,7 @@ pub fn[T, U] ArrayView::mapi(
   self : ArrayView[T],
   f : (Int, T) -> U raise?,
 ) -> Array[U] raise? {
-  if self.length() == 0 {
+  if self.is_empty() {
     return []
   }
   Array::makei(self.length(), i => f(i, self[i]))

@@ -818,7 +818,7 @@ pub fn Bytes::repeat(self : Self, count : Int) -> Bytes {
   if count < 0 {
     abort("negative repeat count")
   }
-  if count == 0 || self.length() == 0 {
+  if count == 0 || self.is_empty() {
     return []
   }
   if count == 1 {

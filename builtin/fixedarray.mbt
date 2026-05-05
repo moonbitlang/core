@@ -480,7 +480,7 @@ pub fn[T, U] FixedArray::map(
   self : FixedArray[T],
   f : (T) -> U raise?,
 ) -> FixedArray[U] raise? {
-  if self.length() == 0 {
+  if self.is_empty() {
     return []
   }
   let res = FixedArray::make(self.length(), f(self[0]))
@@ -517,7 +517,7 @@ pub fn[T, U] FixedArray::mapi(
   self : FixedArray[T],
   f : (Int, T) -> U raise?,
 ) -> FixedArray[U] raise? {
-  if self.length() == 0 {
+  if self.is_empty() {
     return []
   }
   let res = FixedArray::make(self.length(), f(0, self[0]))
@@ -1434,7 +1434,7 @@ pub fn FixedArray::join(
     size_hint
   }
   let string = StringBuilder::new(size_hint~)
-  if separator.length() == 0 {
+  if separator.is_empty() {
     for i in 0..<len {
       string.write_string(self[i])
     }

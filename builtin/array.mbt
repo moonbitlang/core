@@ -631,7 +631,7 @@ pub fn[T, U] Array::mapi(
   self : Array[T],
   f : (Int, T) -> U raise?,
 ) -> Array[U] raise? {
-  if self.length() == 0 {
+  if self.is_empty() {
     return []
   }
   let arr = Array::make_uninit(self.length())
