@@ -45,7 +45,7 @@ fn collect_globals(args : Array[Arg]) -> Array[Arg] {
 
 ///|
 fn collect_non_global_names(args : Array[Arg]) -> @set.Set[String] {
-  @set.from_iter(args.iter().filter(arg => !arg.global).map(arg => arg.name))
+  Set([ for arg in args if !arg.global => arg.name ])
 }
 
 ///|
