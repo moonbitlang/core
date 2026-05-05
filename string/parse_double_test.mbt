@@ -20,25 +20,25 @@ test "parse_double huge exponent" {
   inspect(
     try? @string.parse_double("1e999999999999999999999999999999999999"),
     content=(
-      #|Ok(0.1)
+      #|Err(Failure("value out of range"))
     ),
   )
   inspect(
     try? @string.parse_double("-1e999999999999999999999999999999999999"),
     content=(
-      #|Ok(-0.1)
+      #|Err(Failure("value out of range"))
     ),
   )
   inspect(
     try? @string.parse_double("1e-999999999999999999999999999999999999"),
     content=(
-      #|Ok(10)
+      #|Ok(0)
     ),
   )
   inspect(
     try? @string.parse_double("-1e-999999999999999999999999999999999999"),
     content=(
-      #|Ok(-10)
+      #|Ok(0)
     ),
   )
 }

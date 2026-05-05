@@ -126,19 +126,31 @@ test "parse number with huge exponent" {
   // lexer as a parse failure, so the value is preserved as `Infinity` with the
   // original textual representation rather than being silently rounded.
   let huge_pos = "1e999999999999999999999999999999999999"
-  @builtin.inspect(@json.parse(huge_pos), content=(
-    #|Number(0.1)
-  ))
+  @builtin.inspect(
+    @json.parse(huge_pos),
+    content=(
+      #|Number(Infinity, repr=Some("1e999999999999999999999999999999999999"))
+    ),
+  )
   let huge_neg = "-1e999999999999999999999999999999999999"
-  @builtin.inspect(@json.parse(huge_neg), content=(
-    #|Number(-0.1)
-  ))
+  @builtin.inspect(
+    @json.parse(huge_neg),
+    content=(
+      #|Number(-Infinity, repr=Some("-1e999999999999999999999999999999999999"))
+    ),
+  )
   let tiny_pos = "1e-999999999999999999999999999999999999"
-  @builtin.inspect(@json.parse(tiny_pos), content=(
-    #|Number(10)
-  ))
+  @builtin.inspect(
+    @json.parse(tiny_pos),
+    content=(
+      #|Number(0)
+    ),
+  )
   let tiny_neg = "-1e-999999999999999999999999999999999999"
-  @builtin.inspect(@json.parse(tiny_neg), content=(
-    #|Number(-10)
-  ))
+  @builtin.inspect(
+    @json.parse(tiny_neg),
+    content=(
+      #|Number(0)
+    ),
+  )
 }
