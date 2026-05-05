@@ -88,7 +88,7 @@ fn finish_read_string_array(handle : XStringArrayReadHandle) = "__moonbit_fs_uns
 
 ///|
 fn string_array_from_extern(e : XExternStringArray) -> Array[String] {
-  let buf = Array::new()
+  let buf = []
   let handle = begin_read_string_array(e)
   while true {
     let extern_str = string_array_read_string(handle)

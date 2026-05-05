@@ -44,6 +44,6 @@ struct Bench {
 #as_free_fn
 pub fn Bench::new() -> Bench {
   let buffer = StringBuilder::new()
-  let summaries = Array::new()
+  let summaries = []
   { buffer, summaries, _storage: @ref.new(()) }
 }
