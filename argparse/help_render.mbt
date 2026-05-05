@@ -83,17 +83,12 @@ fn subcommand_usage(cmd : Command) -> String {
 
 ///|
 fn has_options(cmd : Command) -> Bool {
-  for arg in cmd.args {
-    if arg.hidden {
-      continue
-    }
-    if arg.info is (OptionInfo(long~, short~, ..) | FlagInfo(long~, short~, ..)) &&
-      (long is Some(_) || short is Some(_)) &&
-      !is_required_arg(arg) {
-      return true
-    }
-  }
-  false
+  cmd.args.any(arg => {
+    !arg.hidden &&
+    arg.info is (OptionInfo(long~, short~, ..) | FlagInfo(long~, short~, ..)) &&
+    (long is Some(_) || short is Some(_)) &&
+    !is_required_arg(arg)
+  })
 }
 
 ///|
@@ -198,26 +193,20 @@ fn option_entries(cmd : Command) -> Array[String] {
 
 ///|
 fn has_long_option(args : Array[Arg], name : String) -> Bool {
-  for arg in args {
-    if arg.info is (OptionInfo(long~, ..) | FlagInfo(long~, ..)) &&
-      long is Some(long) &&
-      long == name {
-      return true
-    }
-  }
-  false
+  args.any(arg => {
+    arg.info is (OptionInfo(long~, ..) | FlagInfo(long~, ..)) &&
+    long is Some(long) &&
+    long == name
+  })
 }
 
 ///|
 fn has_short_option(args : Array[Arg], value : Char) -> Bool {
-  for arg in args {
-    if arg.info is (OptionInfo(short~, ..) | FlagInfo(short~, ..)) &&
-      short is Some(short) &&
-      short == value {
-      return true
-    }
-  }
-  false
+  args.any(arg => {
+    arg.info is (OptionInfo(short~, ..) | FlagInfo(short~, ..)) &&
+    short is Some(short) &&
+    short == value
+  })
 }
 
 ///|
