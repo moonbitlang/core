@@ -22,7 +22,7 @@ fn ParseContext::lex_decimal_integer(
       Some('.') => return ctx.lex_decimal_point(start~)
       Some('e' | 'E') => return ctx.lex_decimal_exponent(start~)
       Some(c) => {
-        if c >= '0' && c <= '9' {
+        if c is ('0'..='9') {
           continue
         }
         ctx.offset -= 1
@@ -40,7 +40,7 @@ fn ParseContext::lex_decimal_point(
 ) -> (Double, StringView?) raise ParseError {
   match ctx.read_char() {
     Some(c) =>
-      if c >= '0' && c <= '9' {
+      if c is ('0'..='9') {
         ctx.lex_decimal_fraction(start~)
       } else {
         ctx.invalid_char(shift=-1)
@@ -58,7 +58,7 @@ fn ParseContext::lex_decimal_fraction(
     match ctx.read_char() {
       Some('e' | 'E') => return ctx.lex_decimal_exponent(start~)
       Some(c) => {
-        if c >= '0' && c <= '9' {
+        if c is ('0'..='9') {
           continue
         }
         ctx.offset -= 1
@@ -77,7 +77,7 @@ fn ParseContext::lex_decimal_exponent(
   match ctx.read_char() {
     Some('+') | Some('-') => return ctx.lex_decimal_exponent_sign(start~)
     Some(c) => {
-      if c >= '0' && c <= '9' {
+      if c is ('0'..='9') {
         return ctx.lex_decimal_exponent_integer(start~)
       }
       ctx.offset -= 1
@@ -94,7 +94,7 @@ fn ParseContext::lex_decimal_exponent_sign(
 ) -> (Double, StringView?) raise ParseError {
   match ctx.read_char() {
     Some(c) => {
-      if c >= '0' && c <= '9' {
+      if c is ('0'..='9') {
         return ctx.lex_decimal_exponent_integer(start~)
       }
       ctx.offset -= 1
@@ -112,7 +112,7 @@ fn ParseContext::lex_decimal_exponent_integer(
   for ;; {
     match ctx.read_char() {
       Some(c) => {
-        if c >= '0' && c <= '9' {
+        if c is ('0'..='9') {
           continue
         }
         ctx.offset -= 1
@@ -132,7 +132,7 @@ fn ParseContext::lex_zero(
     Some('.') => ctx.lex_decimal_point(start~)
     Some('e' | 'E') => ctx.lex_decimal_exponent(start~)
     Some(c) => {
-      if c >= '0' && c <= '9' {
+      if c is ('0'..='9') {
         ctx.offset -= 1
         ctx.invalid_char()
       }
