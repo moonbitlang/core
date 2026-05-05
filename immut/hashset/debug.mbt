@@ -17,8 +17,7 @@ using @debug {trait Debug, type Repr}
 
 ///|
 pub impl[K : Debug] Debug for HashSet[K] with to_repr(self) {
-  let xs : Array[Repr] = self.iter().to_array().map(x => @debug.to_repr(x))
-  Repr::opaque_("HashSet", Repr::array(xs))
+  Repr::opaque_("HashSet", Repr::array([ for x in self => @debug.to_repr(x) ]))
 }
 
 ///|

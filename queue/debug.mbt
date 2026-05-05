@@ -17,10 +17,7 @@ using @debug {trait Debug, type Repr}
 
 ///|
 pub impl[A : Debug] Debug for Queue[A] with to_repr(self) {
-  Repr::opaque_(
-    "Queue",
-    Repr::array(self.iter().to_array().map(x => @debug.to_repr(x))),
-  )
+  Repr::opaque_("Queue", Repr::array([ for x in self => @debug.to_repr(x) ]))
 }
 
 ///|
