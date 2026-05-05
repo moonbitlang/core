@@ -147,10 +147,10 @@ pub fn Command::render_help(self : Command) -> String {
 pub fn Command::parse(
   self : Command,
   argv? : ArrayView[String] = default_argv(),
-  env? : Map[String, String] = {},
+  env? : Map[String, String] = Map([]),
 ) -> Matches raise {
   try {
-    let raw = parse_command(self, argv, env, [], {}, {}, self.name)
+    let raw = parse_command(self, argv, env, [], Map([]), Map([]), self.name)
     build_matches(self, raw, [])
   } catch {
     DisplayHelp::Message(text) => print_and_exit_success(text)
@@ -169,10 +169,10 @@ fn build_matches(
   raw : Matches,
   inherited_globals : Array[Arg],
 ) -> Matches {
-  let flags : Map[String, Bool] = {}
-  let values : Map[String, Array[String]] = {}
-  let flag_counts : Map[String, Int] = {}
-  let sources : Map[String, ValueSource] = {}
+  let flags = Map([])
+  let values = Map([])
+  let flag_counts = Map([])
+  let sources = Map([])
   let specs = inherited_globals + cmd.args
 
   for spec in specs {

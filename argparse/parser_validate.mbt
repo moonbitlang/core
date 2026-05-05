@@ -492,7 +492,7 @@ fn validate_groups(
   if groups.length() == 0 {
     return
   }
-  let group_presence : Map[String, Int] = {}
+  let group_presence = Map([])
   let group_seen : @set.Set[String] = Set([])
   let arg_seen : @set.Set[String] = Set([])
   for group in groups {
