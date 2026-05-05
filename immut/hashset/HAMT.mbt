@@ -341,9 +341,8 @@ pub fn[A] HashSet::each(
     }
   }
 
-  match self.0 {
-    None => ()
-    Some(node) => go(node)
+  if self.0 is Some(node) {
+    go(node)
   }
 }
 
