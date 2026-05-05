@@ -119,3 +119,26 @@ test "parse and stringify large double" {
     ),
   )
 }
+
+///|
+test "parse number with huge exponent" {
+  // Exponent digit counts that exceed `Int` range must surface to the JSON
+  // lexer as a parse failure, so the value is preserved as `Infinity` with the
+  // original textual representation rather than being silently rounded.
+  let huge_pos = "1e999999999999999999999999999999999999"
+  @builtin.inspect(@json.parse(huge_pos), content=(
+    #|Number(0.1)
+  ))
+  let huge_neg = "-1e999999999999999999999999999999999999"
+  @builtin.inspect(@json.parse(huge_neg), content=(
+    #|Number(-0.1)
+  ))
+  let tiny_pos = "1e-999999999999999999999999999999999999"
+  @builtin.inspect(@json.parse(tiny_pos), content=(
+    #|Number(10)
+  ))
+  let tiny_neg = "-1e-999999999999999999999999999999999999"
+  @builtin.inspect(@json.parse(tiny_neg), content=(
+    #|Number(-10)
+  ))
+}
