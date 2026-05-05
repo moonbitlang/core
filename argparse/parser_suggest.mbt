@@ -74,16 +74,11 @@ fn levenshtein(a : StringView, b : StringView) -> Int {
   if n == 0 {
     return m
   }
-  let mut prev = Array::new(capacity=n + 1)
-  let mut curr = Array::new(capacity=n + 1)
-  for j = 0; j <= n; {
-    prev.push(j)
-    curr.push(0)
-    continue j + 1
-  }
-  for i = 1; i <= m; {
+  let mut prev = Array::makei(n + 1, j => j)
+  let mut curr = Array::make(n + 1, 0)
+  for i in 1..<(m + 1) {
     curr[0] = i
-    for j2 = 1; j2 <= n; {
+    for j2 in 1..<(n + 1) {
       let cost = if aa[i - 1] == bb[j2 - 1] { 0 } else { 1 }
       let del = prev[j2] + 1
       let ins = curr[j2 - 1] + 1
@@ -99,12 +94,10 @@ fn levenshtein(a : StringView, b : StringView) -> Int {
       } else {
         sub
       }
-      continue j2 + 1
     }
     let temp = prev
     prev = curr
     curr = temp
-    continue i + 1
   }
   prev[n]
 }
