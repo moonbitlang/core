@@ -54,10 +54,7 @@ pub fn[K : Eq + Hash, V] HashMap::contains(
 /// Lookup a key from a hash map
 #alias(find, deprecated)
 pub fn[K : Eq + Hash, V] HashMap::get(self : HashMap[K, V], key : K) -> V? {
-  match self.0 {
-    None => None
-    Some(node) => node.get_with_path(key, @path.of(key))
-  }
+  self.0.bind(node => node.get_with_path(key, @path.of(key)))
 }
 
 ///|
@@ -194,10 +191,7 @@ pub fn[K, V] HashMap::filter(
     }
   }
 
-  match self.0 {
-    None => None
-    Some(node) => go(node)
-  }
+  self.0.bind(go)
 }
 
 ///|
@@ -220,10 +214,7 @@ pub fn[K, V, A] HashMap::fold(
     }
   }
 
-  match self.0 {
-    None => init
-    Some(node) => go(init, node)
-  }
+  self.0.map_or(init, node => go(init, node))
 }
 
 ///|
@@ -242,10 +233,7 @@ pub fn[K, V, A] HashMap::map(
     }
   }
 
-  match self.0 {
-    None => None
-    Some(node) => Some(go(node))
-  }
+  self.0.map(go)
 }
 
 ///|
