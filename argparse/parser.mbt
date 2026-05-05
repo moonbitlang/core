@@ -168,7 +168,7 @@ fn group_usage_expr(
       is Some(idx) &&
       !args[idx].hidden => arg_usage_token_for_group(args[idx])
     ]
-    if members.length() == 0 {
+    if members.is_empty() {
       return None
     }
     let joined = members.join("|")
@@ -345,7 +345,7 @@ fn parse_command_impl(
   let args = cmd.args
   let groups = cmd.groups
   let subcommands = cmd.subcommands
-  if cmd.arg_required_else_help && argv.length() == 0 {
+  if cmd.arg_required_else_help && argv.is_empty() {
     raise_context_help(cmd, inherited_globals, command_path)
   }
   let matches = seed_matches

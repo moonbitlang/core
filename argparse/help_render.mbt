@@ -270,7 +270,7 @@ fn render_section(
   lines : Array[String],
   keep_empty? : Bool = false,
 ) -> String {
-  if lines.length() == 0 {
+  if lines.is_empty() {
     if keep_empty {
       (
         $|
@@ -330,7 +330,7 @@ fn arg_display(arg : Arg) -> String {
       parts.push("--\{long}")
     }
   }
-  if parts.length() == 0 {
+  if parts.is_empty() {
     arg.name
   } else {
     parts.join(", ")
@@ -403,7 +403,7 @@ fn group_label(group : ArgGroup) -> String {
   if !group.multiple {
     tags.push("[exclusive]")
   }
-  if tags.length() == 0 {
+  if tags.is_empty() {
     group.name
   } else {
     let tags_text = tags.join(" ")

@@ -387,7 +387,7 @@ fn validate_group_refs(
   args : Array[Arg],
   groups : Array[ArgGroup],
 ) -> Unit raise ArgBuildError {
-  if groups.length() == 0 {
+  if groups.is_empty() {
     return
   }
   let arg_index : @set.Set[String] = Set([])
@@ -432,7 +432,7 @@ fn validate_requires_conflicts_targets(
 
 ///|
 fn validate_subcommand_defs(subs : Array[Command]) -> Unit raise ArgBuildError {
-  if subs.length() == 0 {
+  if subs.is_empty() {
     return
   }
   let seen : @set.Set[String] = Set([])
@@ -447,7 +447,7 @@ fn validate_subcommand_defs(subs : Array[Command]) -> Unit raise ArgBuildError {
 fn validate_subcommand_required_policy(
   cmd : Command,
 ) -> Unit raise ArgBuildError {
-  if cmd.subcommand_required && cmd.subcommands.length() == 0 {
+  if cmd.subcommand_required && cmd.subcommands.is_empty() {
     raise Unsupported("subcommand_required requires at least one subcommand")
   }
 }
@@ -488,7 +488,7 @@ fn validate_groups(
   groups : Array[ArgGroup],
   matches : Matches,
 ) -> Unit raise ArgParseError {
-  if groups.length() == 0 {
+  if groups.is_empty() {
     return
   }
   let group_presence = Map([])
