@@ -362,7 +362,7 @@ pub fn[K : Hash + Eq, V] Map::get_or_init(
 ///
 /// ```mbt check
 /// test {
-///   let counts : Map[String, Int] = {}
+///   let counts : Map[String, Int] = Map([])
 ///   counts.update_or_default("a", 1, x => x + 1)
 ///   counts.update_or_default("a", 1, x => x + 1)
 ///   counts.update_or_default("b", 1, x => x + 1)
