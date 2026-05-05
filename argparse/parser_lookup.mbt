@@ -17,8 +17,8 @@ fn build_long_index(
   globals : Array[Arg],
   args : Array[Arg],
 ) -> Map[String, Arg] {
-  let index : Map[String, Arg] = {}
-  for arg in globals.iter() + args.iter() {
+  let index = Map([])
+  for arg in [..globals, ..args] {
     if arg.info is (FlagInfo(long~, ..) | OptionInfo(long~, ..)) &&
       long is Some(name) {
       index[name] = arg
@@ -29,20 +29,13 @@ fn build_long_index(
 
 ///|
 fn build_short_index(globals : Array[Arg], args : Array[Arg]) -> Map[Char, Arg] {
-  let index : Map[Char, Arg] = {}
-  for arg in globals {
-    if arg.info is (FlagInfo(short~, ..) | OptionInfo(short~, ..)) &&
-      short is Some(value) {
-      index[value] = arg
-    }
-  }
-  for arg in args {
-    if arg.info is (FlagInfo(short~, ..) | OptionInfo(short~, ..)) &&
-      short is Some(value) {
-      index[value] = arg
-    }
-  }
-  index
+  Map(
+    [
+      for arg in [..globals, ..args] if arg.info
+      is (FlagInfo(short~, ..) | OptionInfo(short~, ..)) &&
+      short is Some(value) => (value, arg)
+    ],
+  )
 }
 
 ///|
