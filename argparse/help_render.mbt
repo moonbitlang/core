@@ -349,9 +349,8 @@ fn positional_display(arg : Arg) -> String {
 ///|
 fn arg_doc(arg : Arg) -> String {
   let notes = []
-  match arg.env {
-    Some(env_name) => notes.push("[env: \{env_name}]")
-    None => ()
+  if arg.env is Some(env_name) {
+    notes.push("[env: \{env_name}]")
   }
   if arg.info
     is (OptionInfo(default_values~, ..) | PositionalInfo(default_values~, ..)) &&

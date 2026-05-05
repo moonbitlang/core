@@ -339,9 +339,8 @@ fn parse_command_impl(
   command_path : String,
   seed_matches : Matches,
 ) -> Matches raise {
-  match cmd.build_error {
-    Some(err) => raise err
-    None => ()
+  if cmd.build_error is Some(err) {
+    raise err
   }
   let args = cmd.args
   let groups = cmd.groups
@@ -588,15 +587,12 @@ fn parse_command_impl(
         cmd, args, groups, matches, positionals, positional_values, env_args, env,
       )
       validate_relationships(parent_matches, args)
-      match parent_matches.parsed_subcommand {
-        Some((sub_name, sub_m)) => {
-          // After parent parsing, copy the final globals into the subcommand.
-          propagate_globals_to_child(
-            parent_matches, sub_m, child_globals, child_local_non_globals,
-          )
-          parent_matches.parsed_subcommand = Some((sub_name, sub_m))
-        }
-        None => ()
+      if parent_matches.parsed_subcommand is Some((sub_name, sub_m)) {
+        // After parent parsing, copy the final globals into the subcommand.
+        propagate_globals_to_child(
+          parent_matches, sub_m, child_globals, child_local_non_globals,
+        )
+        parent_matches.parsed_subcommand = Some((sub_name, sub_m))
       }
       return parent_matches
     }

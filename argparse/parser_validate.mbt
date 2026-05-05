@@ -94,9 +94,8 @@ fn validate_command(
   groups : Array[ArgGroup],
   inherited_globals : Array[Arg],
 ) -> Unit raise ArgBuildError {
-  match cmd.build_error {
-    Some(err) => raise err
-    None => ()
+  if cmd.build_error is Some(err) {
+    raise err
   }
   validate_inherited_global_shadowing(args, inherited_globals)
   validate_group_defs(args, groups)
