@@ -317,9 +317,9 @@ pub fn[K, V] SortedMap::values_as_iter(self : SortedMap[K, V]) -> Iter[V] {
 ///|
 /// Returns an array of all key-value pairs in ascending key order.
 pub fn[K, V] SortedMap::to_array(self : SortedMap[K, V]) -> Array[(K, V)] {
-  let arr = Array::new(capacity=self.size)
-  self.each((k, v) => arr.push((k, v)))
-  arr
+  [
+    for k, v in self => (k, v)
+  ]
 }
 
 ///|
