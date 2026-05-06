@@ -19,9 +19,7 @@ using @debug {trait Debug, type Repr}
 pub impl[K : Debug, V : Debug] Debug for SortedMap[K, V] with to_repr(self) {
   Repr::opaque_(
     "SortedMap",
-    Repr::map(
-      self.to_array().map(kv => (@debug.to_repr(kv.0), @debug.to_repr(kv.1))),
-    ),
+    Repr::map([ for k, v in self => (@debug.to_repr(k), @debug.to_repr(v)) ]),
   )
 }
 
