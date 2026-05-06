@@ -4,13 +4,13 @@ import {
   "moonbitlang/core/debug",
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/quickcheck/splitmix",
-  "moonbitlang/core/json",
 }
 
 import {
   "moonbitlang/core/random",
   "moonbitlang/core/cmp",
   "moonbitlang/core/test",
+  "moonbitlang/core/json",
 } for "test"
 
 options(

@@ -30,5 +30,7 @@ priv enum Node[A] {
 pub impl[A : ToJson + Compare] ToJson for PriorityQueue[A] with to_json(
   self : PriorityQueue[A],
 ) {
-  Json::array([ for item in self => item.to_json() ])
+  [
+    for item in self => item
+  ]
 }

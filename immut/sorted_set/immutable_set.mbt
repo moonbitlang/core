@@ -791,7 +791,9 @@ pub impl[A : Show] Show for SortedSet[A] with output(self, logger) {
 
 ///|
 pub impl[A : ToJson] ToJson for SortedSet[A] with to_json(self) {
-  Json::array([ for a in self => a.to_json() ])
+  [
+    for a in self => a
+  ]
 }
 
 ///|

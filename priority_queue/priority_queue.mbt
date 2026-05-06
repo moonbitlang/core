@@ -133,7 +133,9 @@ pub fn[A : Compare] PriorityQueue::iter(self : PriorityQueue[A]) -> Iter[A] {
 
 ///|
 pub impl[A : ToJson + Compare] ToJson for PriorityQueue[A] with to_json(self) {
-  Json::array([ for x in self => x.to_json() ])
+  [
+    for x in self => x
+  ]
 }
 
 ///|

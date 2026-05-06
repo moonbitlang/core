@@ -690,13 +690,9 @@ pub fn[K] HashSet::copy(self : HashSet[K]) -> HashSet[K] {
 ///|
 /// ToJson implementation for hashset
 pub impl[X : ToJson] ToJson for HashSet[X] with to_json(self) {
-  let res = Array::new(capacity=self.size)
-  for entry in self.entries {
-    if entry is Some({ key, .. }) {
-      res.push(key.to_json())
-    }
-  }
-  Json::array(res)
+  [
+    for entry in self.entries if entry is Some({ key, .. }) => key
+  ]
 }
 
 ///|
