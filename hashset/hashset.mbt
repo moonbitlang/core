@@ -335,13 +335,9 @@ pub fn[K] HashSet::iter(self : HashSet[K]) -> Iter[K] {
 ///|
 /// Converts the hash set to an array.
 pub fn[K] HashSet::to_array(self : HashSet[K]) -> Array[K] {
-  let arr = Array::new(capacity=self.size)
-  for entry in self.entries {
-    if entry is Some({ key, .. }) {
-      arr.push(key)
-    }
-  }
-  arr
+  [
+    for entry in self.entries if entry is Some({ key, .. }) => key
+  ]
 }
 
 ///|
