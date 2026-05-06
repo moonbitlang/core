@@ -13,9 +13,9 @@
 // limitations under the License.
 
 ///|
-priv struct DenseTable(@shared_types.Rechar, FixedArray[@shared_types.Rechar])
+priv struct DenseTable(FixedArray[@shared_types.Rechar])
 
 ///|
 impl Table for DenseTable with map(self, c) {
-  self.1.unsafe_get(c - self.0)
+  self.0.unsafe_get(c)
 }

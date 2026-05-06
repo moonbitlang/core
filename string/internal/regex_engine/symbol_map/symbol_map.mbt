@@ -40,17 +40,14 @@ pub fn SymbolMap::split(
 /// Function `finalize`.
 pub fn SymbolMap::finalize(
   self : SymbolMap,
-  lb : @shared_types.Rechar,
   ub : @shared_types.Rechar,
 ) -> (Table, ReadOnlyArray[@shared_types.Rechar]) {
-  // Most cases lb is 0
-  guard lb >= 0 else { panic() }
   let repr = []
   let table = Array::make(128, -1)
   if ub < 128 {
     self.each_intervals(0, ub, (lo, hi) => {
       let symbol = repr.length()
-      repr.push(Int::max(lo, lb))
+      repr.push(lo)
       for c in lo..<=hi {
         table[c] = symbol
       }
@@ -58,14 +55,14 @@ pub fn SymbolMap::finalize(
   } else {
     self.each_intervals(0, 127, (lo, hi) => {
       let symbol = repr.length()
-      repr.push(Int::max(lo, lb))
+      repr.push(lo)
       for c in lo..<=hi {
         table[c] = symbol
       }
     })
     self.each_intervals(128, ub, (lo, hi) => {
       let symbol = repr.length()
-      repr.push(Int::max(lo, lb))
+      repr.push(lo)
       // (lo, hi, symbol)
       table.push(lo)
       table.push(hi)

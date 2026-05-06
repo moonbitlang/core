@@ -40,14 +40,13 @@ pub fn SymbolMap::split(
 /// Function `finalize`.
 pub fn SymbolMap::finalize(
   self : SymbolMap,
-  lb : @shared_types.Rechar,
   ub : @shared_types.Rechar,
 ) -> (&Table, ReadOnlyArray[@shared_types.Rechar]) {
-  if ub - lb < 1024 {
-    let (table, repr) = self.finalize_dense(lb, ub)
+  if ub < 1024 {
+    let (table, repr) = self.finalize_dense(ub)
     (table as &Table, repr)
   } else {
-    let (table, repr) = self.finalize_sparse(lb, ub)
+    let (table, repr) = self.finalize_sparse(ub)
     (table as &Table, repr)
   }
 }
@@ -55,30 +54,28 @@ pub fn SymbolMap::finalize(
 ///|
 fn SymbolMap::finalize_dense(
   self : SymbolMap,
-  lb : @shared_types.Rechar,
   ub : @shared_types.Rechar,
 ) -> (DenseTable, ReadOnlyArray[@shared_types.Rechar]) {
   let repr = []
-  let table = FixedArray::make(ub - lb + 1, 0)
-  self.each_intervals(lb, ub, (lo, hi) => {
+  let table = FixedArray::make(ub + 1, 0)
+  self.each_intervals(0, ub, (lo, hi) => {
     let symbol = repr.length()
     repr.push(lo)
     for c in lo..<=hi {
-      table[c - lb] = symbol
+      table[c] = symbol
     }
   })
-  (DenseTable(lb, table), ReadOnlyArray::from_array(repr))
+  (DenseTable(table), ReadOnlyArray::from_array(repr))
 }
 
 ///|
 fn SymbolMap::finalize_sparse(
   self : SymbolMap,
-  lb : @shared_types.Rechar,
   ub : @shared_types.Rechar,
 ) -> (SparseTable, ReadOnlyArray[@shared_types.Rechar]) {
   let repr = []
   let entries = []
-  self.each_intervals(lb, ub, (lo, hi) => {
+  self.each_intervals(0, ub, (lo, hi) => {
     let symbol = repr.length()
     repr.push(lo)
     entries.push({ lo, hi, symbol })

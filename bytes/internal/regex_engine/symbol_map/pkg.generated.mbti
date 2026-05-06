@@ -12,7 +12,7 @@ pub fn new() -> SymbolMap
 
 // Types and methods
 type SymbolMap
-pub fn SymbolMap::finalize(Self, Int, Int) -> (&Table, ReadOnlyArray[Int])
+pub fn SymbolMap::finalize(Self, Int) -> (&Table, ReadOnlyArray[Int])
 pub fn SymbolMap::split(Self, @rechar_set.RecharSet) -> Unit
 
 // Type aliases

@@ -27,7 +27,7 @@ pub fn compile(profile~ : Profile, ast : Pattern) -> Regex {
   }
   let symbol_map = @symbol_map.new()
   symbolize(profile~, symbol_map~, ast)
-  let (symbol_table, symbol_repr) = symbol_map.finalize(profile.lb, profile.ub)
+  let (symbol_table, symbol_repr) = symbol_map.finalize(profile.ub)
   let ctx = @automata.Context::new()
   let tc = TranslateContext::new(ctx, symbol_table)
   let (expr, pref) = translate(tc, ast)
