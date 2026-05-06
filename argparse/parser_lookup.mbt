@@ -17,14 +17,13 @@ fn build_long_index(
   globals : Array[Arg],
   args : Array[Arg],
 ) -> Map[String, Arg] {
-  let index = Map([])
-  for arg in [..globals, ..args] {
-    if arg.info is (FlagInfo(long~, ..) | OptionInfo(long~, ..)) &&
-      long is Some(name) {
-      index[name] = arg
-    }
-  }
-  index
+  Map(
+    [
+      for arg in [..globals, ..args] if arg.info
+      is (FlagInfo(long~, ..) | OptionInfo(long~, ..)) &&
+      long is Some(name) => (name, arg)
+    ],
+  )
 }
 
 ///|
