@@ -291,23 +291,16 @@ fn render_section(
 
 ///|
 fn format_entries(display : Array[(String, String)]) -> Array[String] {
-  let entries = Array::new(capacity=display.length())
-  let max_len = for item in display; max_len = 0 {
-    let (name, _) = item
-    if name.length() > max_len {
-      continue name.length()
-    } else {
-      continue max_len
-    }
-  } nobreak {
-    max_len
-  }
-  for item in display {
-    let (name, doc) = item
+  let max_len = display
+    .iter()
+    .fold(init=0, (acc, item) => acc.max(item.0.length()))
+  fn fmt(name : String, doc : String) -> String {
     let padding = " ".repeat(max_len - name.length() + 2)
-    entries.push("  \{name}\{padding}\{doc}")
+    "  \{name}\{padding}\{doc}"
   }
-  entries
+  [
+    for item in display => fmt(item.0, item.1)
+  ]
 }
 
 ///|
