@@ -13,17 +13,15 @@
 // limitations under the License.
 
 ///|
-priv struct DenseTableWithZeroLb(FixedArray[@shared_types.Rechar])
-
-///|
-impl Table for DenseTableWithZeroLb with map(self, c) {
-  self.0.unsafe_get(c)
-}
-
-///|
-priv struct DenseTable(FixedArray[@shared_types.Rechar], @shared_types.Rechar)
-
-///|
-impl Table for DenseTable with map(self, c) {
-  self.0.unsafe_get(c - self.1)
+test "dense table respects non-zero lower bound" {
+  let symbol_map = @symbol_map.new()
+  symbol_map.split(@shared_types.RecharSet::char(11))
+  let (table, repr) = symbol_map.finalize(10, 12)
+  assert_eq(repr.length(), 3)
+  assert_eq(repr[0], 10)
+  assert_eq(repr[1], 11)
+  assert_eq(repr[2], 12)
+  assert_eq(table.map(10), 0)
+  assert_eq(table.map(11), 1)
+  assert_eq(table.map(12), 2)
 }
