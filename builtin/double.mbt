@@ -279,15 +279,10 @@ pub impl Hash for Double with hash_combine(self, hasher) {
 /// }
 /// ```
 ///
+#intrinsic("%f64.to_string")
 pub fn Double::to_string(self : Double) -> String {
   ryu_to_string(self)
 }
-
-// TODO:
-// #intrinsic("%f64.to_string")
-// impl Show for Double with to_string(self) -> String{
-//   @ryu.ryu_to_string(self)
-// }
 
 ///|
 pub impl Show for Double with output(self, logger) {
