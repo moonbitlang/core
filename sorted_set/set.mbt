@@ -425,25 +425,28 @@ pub fn[V] SortedSet::to_array(self : SortedSet[V]) -> Array[V] {
 pub fn[V] SortedSet::iter(self : SortedSet[V]) -> Iter[V] {
   let mut curr_node = self.root
   let parents = []
-  Iter::new(fn() {
-    for x = curr_node {
-      match x {
-        Some({ left: None, value, right, height: _ }) => {
-          curr_node = right
-          break Some(value)
+  Iter::new(
+    fn() {
+      for x = curr_node {
+        match x {
+          Some({ left: None, value, right, height: _ }) => {
+            curr_node = right
+            break Some(value)
+          }
+          Some({ left, value, right, height: _ }) => {
+            parents.push((value, right))
+            continue left
+          }
+          None if parents.pop() is Some((value, right)) => {
+            curr_node = right
+            break Some(value)
+          }
+          None => break None
         }
-        Some({ left, value, right, height: _ }) => {
-          parents.push((value, right))
-          continue left
-        }
-        None if parents.pop() is Some((value, right)) => {
-          curr_node = right
-          break Some(value)
-        }
-        None => break None
       }
-    }
-  })
+    },
+    length=self.size,
+  )
 }
 
 ///|
@@ -474,7 +477,14 @@ pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for SortedSe
 
 ///|
 impl[T : Show] Show for Node[T] with output(self, logger) {
-  let x = { root: Some(self), size: 0 } // Hack for test
+  fn count(root : Node[T]?) -> Int {
+    match root {
+      None => 0
+      Some(root) => count(root.left) + count(root.right) + 1
+    }
+  }
+
+  let x = { root: Some(self), size: count(Some(self)) }
   logger.write_iter(x.iter())
 }
 

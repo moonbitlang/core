@@ -359,15 +359,18 @@ pub fn[A] Queue::transfer(self : Queue[A], dst : Queue[A]) -> Unit {
 #alias(iterator, deprecated)
 pub fn[A] Queue::iter(self : Queue[A]) -> Iter[A] {
   let mut next_node = self.first
-  Iter::new(fn() {
-    match next_node {
-      None => None
-      Some({ content, next }) => {
-        next_node = next
-        Some(content)
+  Iter::new(
+    fn() {
+      match next_node {
+        None => None
+        Some({ content, next }) => {
+          next_node = next
+          Some(content)
+        }
       }
-    }
-  })
+    },
+    length=self.length,
+  )
 }
 
 ///|

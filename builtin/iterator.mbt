@@ -19,7 +19,10 @@
 /// All read operations on `Iterator` will advance the iterator,
 /// and would give different result when called multiple times.
 #alias(Iterator, deprecated="The name `Iterator` is deprecated, use `Iter` instead. Note that if you have defined `iterator()` method to support `for .. in` loop, you should also rename `iterator()` to `iter()`. See https://github.com/moonbitlang/core/pull/3127 for more details.")
-struct Iter[X](() -> X?)
+struct Iter[X] {
+  f : () -> X?
+  mut length : Int?
+}
 
 ///|
 /// Get the next element from an iterator, or return `None` if no more element exists.
@@ -28,7 +31,25 @@ struct Iter[X](() -> X?)
 #alias(peek, deprecated)
 #alias(head)
 pub fn[X] Iter::next(self : Iter[X]) -> X? {
-  (self.0)()
+  let result = (self.f)()
+  debug_assert(() => {
+    match (result, self.length) {
+      (None, Some(n)) => n == 0
+      _ => true
+    }
+  })
+  match (result, self.length) {
+    (Some(_), Some(n)) => self.length = Some(n - 1)
+    (None, _) => self.length = Some(0)
+    _ => ()
+  }
+  result
+}
+
+///|
+/// Returns the exact number of remaining elements if it is known.
+pub fn[X] Iter::length(self : Iter[X]) -> Int? {
+  self.length
 }
 
 ///|
@@ -201,11 +222,12 @@ pub fn[X] Iter::count(self : Iter[X]) -> Int {
 /// Create a new iterator by supplying a `next` function directly.
 /// The supplied function should output the next element being iterated
 /// everytime it is called.
+/// If the exact number of remaining elements is known, pass it as `length`.
 ///
 /// This function is intended for use by data structure authors,
 /// and should not be called by end users in general.
-pub fn[X] Iter::new(f : () -> X?) -> Iter[X] {
-  Iter(f)
+pub fn[X] Iter::new(f : () -> X?, length? : Int) -> Iter[X] {
+  { f, length }
 }
 
 ///|
@@ -219,7 +241,7 @@ pub fn[X] Iter::new(f : () -> X?) -> Iter[X] {
 ///
 /// Returns an empty iterator of type `Iter[X]`.
 pub fn[X] Iter::empty() -> Iter[X] {
-  () => None
+  Iter::new(() => None, length=0)
 }
 
 ///|
@@ -238,14 +260,17 @@ pub fn[X] Iter::empty() -> Iter[X] {
 /// Returns an iterator of type `Iter[X]` that contains the single element `a`.
 pub fn[X] Iter::singleton(elem : X) -> Iter[X] {
   let mut consumed = false
-  fn() {
-    if consumed {
-      None
-    } else {
-      consumed = true
-      Some(elem)
-    }
-  }
+  Iter::new(
+    fn() {
+      if consumed {
+        None
+      } else {
+        consumed = true
+        Some(elem)
+      }
+    },
+    length=1,
+  )
 }
 
 ///|
@@ -263,7 +288,7 @@ pub fn[X] Iter::singleton(elem : X) -> Iter[X] {
 ///
 /// Returns an iterator of type `Iter[X]` that repeats the element `x` indefinitely.
 pub fn[X] Iter::repeat(x : X) -> Iter[X] {
-  () => Some(x)
+  Iter::new(() => Some(x))
 }
 
 ///|
@@ -285,7 +310,7 @@ pub fn[X] Iter::repeat(x : X) -> Iter[X] {
 /// # Note
 /// The old iterator `self` must not be used again after calling `filter`.
 pub fn[X] Iter::filter(self : Iter[X], f : (X) -> Bool) -> Iter[X] {
-  fn() {
+  Iter::new(fn() {
     while self.next() is Some(x) {
       if f(x) {
         break Some(x)
@@ -293,7 +318,7 @@ pub fn[X] Iter::filter(self : Iter[X], f : (X) -> Bool) -> Iter[X] {
     } nobreak {
       None
     }
-  }
+  })
 }
 
 ///|
@@ -316,11 +341,14 @@ pub fn[X] Iter::filter(self : Iter[X], f : (X) -> Bool) -> Iter[X] {
 /// # Note
 /// The old iterator `self` must not be used again after calling `map`.
 pub fn[X, Y] Iter::map(self : Iter[X], f : (X) -> Y) -> Iter[Y] {
-  fn() {
-    match self.next() {
-      Some(x) => Some(f(x))
-      None => None
-    }
+  {
+    f: fn() {
+      match self.next() {
+        Some(x) => Some(f(x))
+        None => None
+      }
+    },
+    length: self.length,
   }
 }
 
@@ -345,15 +373,18 @@ pub fn[X, Y] Iter::map(self : Iter[X], f : (X) -> Y) -> Iter[Y] {
 /// The old iterator `self` must not be used again after calling `mapi`.
 pub fn[X, Y] Iter::mapi(self : Iter[X], f : (Int, X) -> Y) -> Iter[Y] {
   let mut i = 0
-  fn() {
-    match self.next() {
-      Some(x) => {
-        let result = f(i, x)
-        i += 1
-        Some(result)
+  {
+    f: fn() {
+      match self.next() {
+        Some(x) => {
+          let result = f(i, x)
+          i += 1
+          Some(result)
+        }
+        None => None
       }
-      None => None
-    }
+    },
+    length: self.length,
   }
 }
 
@@ -363,7 +394,7 @@ pub fn[X, Y] Iter::mapi(self : Iter[X], f : (Int, X) -> Y) -> Iter[Y] {
 ///
 /// The old iterator `self` must not be used again after calling `filter_map`.
 pub fn[X, Y] Iter::filter_map(self : Iter[X], f : (X) -> Y?) -> Iter[Y] {
-  fn() {
+  Iter::new(fn() {
     while self.next() is Some(x) {
       match f(x) {
         Some(_) as y => break y
@@ -372,7 +403,7 @@ pub fn[X, Y] Iter::filter_map(self : Iter[X], f : (X) -> Y?) -> Iter[Y] {
     } nobreak {
       None
     }
-  }
+  })
 }
 
 ///|
@@ -397,7 +428,7 @@ pub fn[X, Y] Iter::filter_map(self : Iter[X], f : (X) -> Y?) -> Iter[Y] {
 /// must not be used again after calling `flat_map`.
 pub fn[X, Y] Iter::flat_map(self : Iter[X], f : (X) -> Iter[Y]) -> Iter[Y] {
   let mut current_iter = Some(Iter::empty())
-  fn() {
+  Iter::new(fn() {
     guard current_iter is Some(iter) else { None }
     for x = iter.next() {
       match x {
@@ -410,7 +441,7 @@ pub fn[X, Y] Iter::flat_map(self : Iter[X], f : (X) -> Iter[Y]) -> Iter[Y] {
         }
       }
     }
-  }
+  })
 }
 
 ///|
@@ -453,12 +484,15 @@ pub fn Iter::join(self : Iter[String], sep : StringView) -> String {
 /// # Note
 /// The old iterator `self` must not be used again after calling `tap`.
 pub fn[X] Iter::tap(self : Iter[X], f : (X) -> Unit) -> Iter[X] {
-  fn() {
-    let result = self.next()
-    if result is Some(x) {
-      f(x)
-    }
-    result
+  {
+    f: fn() {
+      let result = self.next()
+      if result is Some(x) {
+        f(x)
+      }
+      result
+    },
+    length: self.length,
   }
 }
 
@@ -482,13 +516,23 @@ pub fn[X] Iter::tap(self : Iter[X], f : (X) -> Unit) -> Iter[X] {
 /// The old iterator `self` must not be used again after calling `take`.
 pub fn[X] Iter::take(self : Iter[X], n : Int) -> Iter[X] {
   let mut remaining = n
-  fn() {
-    guard remaining > 0 else { None }
-    let result = self.next()
-    if result is Some(_) {
-      remaining -= 1
-    }
-    result
+  let length = match self.length {
+    Some(_) if n <= 0 => Some(0)
+    Some(len) if n < len => Some(n)
+    Some(len) => Some(len)
+    None if n <= 0 => Some(0)
+    None => None
+  }
+  {
+    f: fn() {
+      guard remaining > 0 else { None }
+      let result = self.next()
+      if result is Some(_) {
+        remaining -= 1
+      }
+      result
+    },
+    length,
   }
 }
 
@@ -512,7 +556,7 @@ pub fn[X] Iter::take(self : Iter[X], n : Int) -> Iter[X] {
 /// The old iterator `self` must not be used again after calling `take_while`.
 pub fn[X] Iter::take_while(self : Iter[X], f : (X) -> Bool) -> Iter[X] {
   let mut still_running = true
-  fn() {
+  Iter::new(fn() {
     guard still_running else { None }
     let result = self.next()
     if result is Some(x) && !f(x) {
@@ -521,7 +565,7 @@ pub fn[X] Iter::take_while(self : Iter[X], f : (X) -> Bool) -> Iter[X] {
     } else {
       result
     }
-  }
+  })
 }
 
 ///|
@@ -529,7 +573,7 @@ pub fn[X] Iter::take_while(self : Iter[X], f : (X) -> Bool) -> Iter[X] {
 /// The old iterator `self` must not be used again after calling `map_while`.
 pub fn[X, Y] Iter::map_while(self : Iter[X], f : (X) -> Y?) -> Iter[Y] {
   let mut still_running = true
-  fn() {
+  Iter::new(fn() {
     guard still_running else { None }
     let src = self.next()
     guard src is Some(x) else { None }
@@ -538,7 +582,7 @@ pub fn[X, Y] Iter::map_while(self : Iter[X], f : (X) -> Y?) -> Iter[Y] {
       still_running = false
     }
     result
-  }
+  })
 }
 
 ///|
@@ -561,13 +605,22 @@ pub fn[X, Y] Iter::map_while(self : Iter[X], f : (X) -> Y?) -> Iter[Y] {
 /// The old iterator `self` must not be used again after calling `drop`.
 pub fn[X] Iter::drop(self : Iter[X], n : Int) -> Iter[X] {
   let mut remaining = n
-  fn() {
-    while remaining > 0 {
-      guard self.next() is Some(_) else { break None }
-      remaining -= 1
-    } nobreak {
-      self.next()
-    }
+  let length = match self.length {
+    Some(len) if n <= 0 => Some(len)
+    Some(len) if n < len => Some(len - n)
+    Some(_) => Some(0)
+    None => None
+  }
+  {
+    f: fn() {
+      while remaining > 0 {
+        guard self.next() is Some(_) else { break None }
+        remaining -= 1
+      } nobreak {
+        self.next()
+      }
+    },
+    length,
   }
 }
 
@@ -591,7 +644,7 @@ pub fn[X] Iter::drop(self : Iter[X], n : Int) -> Iter[X] {
 /// The old iterator `self` must not be used again after calling `drop_while`.
 pub fn[X] Iter::drop_while(self : Iter[X], f : (X) -> Bool) -> Iter[X] {
   let mut dropped = false
-  fn() {
+  Iter::new(fn() {
     if !dropped {
       dropped = true
       for x = self.next() {
@@ -603,7 +656,7 @@ pub fn[X] Iter::drop_while(self : Iter[X], f : (X) -> Bool) -> Iter[X] {
     } else {
       self.next()
     }
-  }
+  })
 }
 
 ///|
@@ -654,18 +707,25 @@ pub fn[X] Iter::find_first(self : Iter[X], f : (X) -> Bool) -> X? {
 /// The old iterator `self` and `other` must not be used again after calling `tap`.
 pub fn[X] Iter::concat(self : Iter[X], other : Iter[X]) -> Iter[X] {
   let mut in_first = true
-  fn() {
-    if in_first {
-      let result = self.next()
-      if result is None {
-        in_first = false
-        other.next()
+  let length = match (self.length, other.length) {
+    (Some(n), Some(m)) => Some(n + m)
+    _ => None
+  }
+  {
+    f: fn() {
+      if in_first {
+        let result = self.next()
+        if result is None {
+          in_first = false
+          other.next()
+        } else {
+          result
+        }
       } else {
-        result
+        other.next()
       }
-    } else {
-      other.next()
-    }
+    },
+    length,
   }
 }
 
@@ -706,10 +766,20 @@ pub fn[X] Iter::concat(self : Iter[X], other : Iter[X]) -> Iter[X] {
 /// The old iterators `self` and `other` must not be used again after calling `zip`.
 #alias(combine)
 pub fn[X, Y] Iter::zip(self : Iter[X], other : Iter[Y]) -> Iter[(X, Y)] {
-  fn() {
-    guard self.next() is Some(x) else { None }
-    guard other.next() is Some(y) else { None }
-    Some((x, y))
+  let length = match (self.length, other.length) {
+    (Some(n), Some(m)) if n < m => Some(n)
+    (Some(_), Some(m)) => Some(m)
+    (Some(0), _) => Some(0)
+    (_, Some(0)) => Some(0)
+    _ => None
+  }
+  {
+    f: fn() {
+      guard self.next() is Some(x) else { None }
+      guard other.next() is Some(y) else { None }
+      Some((x, y))
+    },
+    length,
   }
 }
 
@@ -723,7 +793,10 @@ pub impl[T] Add for Iter[T] with add(self, other) {
 /// The old iterator `self` must not be used again.
 #alias(collect)
 pub fn[X] Iter::to_array(self : Iter[X]) -> Array[X] {
-  let result = []
+  let result = match self.length {
+    Some(n) => Array::new(capacity=n)
+    None => []
+  }
   while self.next() is Some(x) {
     result.push(x)
   }
@@ -744,11 +817,14 @@ pub fn[X] Iter::iter(self : Iter[X]) -> Iter[X] {
 #alias(iterator2)
 pub fn[X] Iter::iter2(self : Iter[X]) -> Iter2[Int, X] {
   let mut i = 0
-  Iter(() => {
-    guard self.next() is Some(elem) else { None }
-    let result = Some((i, elem))
-    i += 1
-    result
+  Iter2({
+    f: () => {
+      guard self.next() is Some(elem) else { None }
+      let result = Some((i, elem))
+      i += 1
+      result
+    },
+    length: self.length,
   })
 }
 
@@ -791,27 +867,35 @@ pub fn[X] Iter::intersperse(self : Iter[X], sep : X) -> Iter[X] {
     Output_Sep
   }
   let mut state = Init
-  fn() {
-    match state {
-      Init => {
-        let result = self.next()
-        state = Output_Sep
-        result
-      }
-      Output_Elem(x) => {
-        state = Output_Sep
-        Some(x)
-      }
-      Output_Sep =>
-        // make sure we only output the separator when there is remaining element
-        match self.next() {
-          Some(x) => {
-            state = Output_Elem(x)
-            Some(sep)
-          }
-          None => None
+  let length = match self.length {
+    Some(0) => Some(0)
+    Some(n) => Some(n * 2 - 1)
+    None => None
+  }
+  {
+    f: fn() {
+      match state {
+        Init => {
+          let result = self.next()
+          state = Output_Sep
+          result
         }
-    }
+        Output_Elem(x) => {
+          state = Output_Sep
+          Some(x)
+        }
+        Output_Sep =>
+          // make sure we only output the separator when there is remaining element
+          match self.next() {
+            Some(x) => {
+              state = Output_Elem(x)
+              Some(sep)
+            }
+            None => None
+          }
+      }
+    },
+    length,
   }
 }
 
@@ -827,22 +911,33 @@ pub fn[X] Iter::view(self : Iter[X], start? : Int = 0, end? : Int) -> Iter[X] {
     (start, None) => self.drop(start)
     (start, Some(end)) => {
       let mut index = 0
-      fn() {
-        if index >= end {
-          return None
-        }
-        while index < start {
-          guard self.next() is Some(_) else { return None }
-          index += 1
-        }
-        if index >= end {
-          return None
-        }
-        let result = self.next()
-        if result is Some(_) {
-          index += 1
-        }
-        result
+      let length = match self.length {
+        Some(_) if end <= start => Some(0)
+        Some(len) if start >= len => Some(0)
+        Some(len) if end < len => Some(end - start)
+        Some(len) => Some(len - start)
+        None if end <= start => Some(0)
+        None => None
+      }
+      {
+        f: fn() {
+          if index >= end {
+            return None
+          }
+          while index < start {
+            guard self.next() is Some(_) else { return None }
+            index += 1
+          }
+          if index >= end {
+            return None
+          }
+          let result = self.next()
+          if result is Some(_) {
+            index += 1
+          }
+          result
+        },
+        length,
       }
     }
   }
@@ -931,8 +1026,9 @@ pub(all) struct Iter2[X, Y](Iter[(X, Y)])
 
 ///|
 /// Construct an `Iter2` from a pair-producing function.
-pub fn[X, Y] Iter2::new(f : () -> (X, Y)?) -> Iter2[X, Y] {
-  Iter2(Iter::new(f))
+/// If the exact number of remaining pairs is known, pass it as `length`.
+pub fn[X, Y] Iter2::new(f : () -> (X, Y)?, length? : Int) -> Iter2[X, Y] {
+  Iter2({ f, length })
 }
 
 ///|

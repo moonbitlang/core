@@ -75,17 +75,20 @@ pub fn[K, V] HashMap::clear(self : HashMap[K, V]) -> Unit {
 pub fn[K, V] HashMap::iter(self : HashMap[K, V]) -> Iter[(K, V)] {
   let mut i = 0
   let len = self.entries.length()
-  Iter::new(fn() {
-    while i < len {
-      let entry = self.entries.unsafe_get(i)
-      i += 1
-      if entry is Some({ key, value, .. }) {
-        return Some((key, value))
+  Iter::new(
+    fn() {
+      while i < len {
+        let entry = self.entries.unsafe_get(i)
+        i += 1
+        if entry is Some({ key, value, .. }) {
+          return Some((key, value))
+        }
+      } nobreak {
+        None
       }
-    } nobreak {
-      None
-    }
-  })
+    },
+    length=self.size,
+  )
 }
 
 ///|
@@ -384,17 +387,20 @@ pub impl[K : Show, V : Show] Show for HashMap[K, V] with output(self, logger) {
 /// ```
 pub fn[K, V] HashMap::keys(self : HashMap[K, V]) -> Iter[K] {
   let mut i = 0
-  let iter = Iter::new(() => {
-    while i < self.entries.length() {
-      let entry = self.entries[i]
-      i += 1
-      if entry is Some({ key, .. }) {
-        break Some(key)
+  let iter = Iter::new(
+    () => {
+      while i < self.entries.length() {
+        let entry = self.entries[i]
+        i += 1
+        if entry is Some({ key, .. }) {
+          break Some(key)
+        }
+      } nobreak {
+        None
       }
-    } nobreak {
-      None
-    }
-  })
+    },
+    length=self.size,
+  )
   iter.iter()
 }
 
@@ -422,17 +428,20 @@ pub fn[K, V] HashMap::keys(self : HashMap[K, V]) -> Iter[K] {
 /// ```
 pub fn[K, V] HashMap::values(self : HashMap[K, V]) -> Iter[V] {
   let mut i = 0
-  let iter = Iter::new(() => {
-    while i < self.entries.length() {
-      let entry = self.entries[i]
-      i += 1
-      if entry is Some({ value, .. }) {
-        break Some(value)
+  let iter = Iter::new(
+    () => {
+      while i < self.entries.length() {
+        let entry = self.entries[i]
+        i += 1
+        if entry is Some({ value, .. }) {
+          break Some(value)
+        }
+      } nobreak {
+        None
       }
-    } nobreak {
-      None
-    }
-  })
+    },
+    length=self.size,
+  )
   iter.iter()
 }
 

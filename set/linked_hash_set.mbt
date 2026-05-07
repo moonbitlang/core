@@ -477,15 +477,18 @@ pub fn[K] Set::clear(self : Set[K]) -> Unit {
 #alias(iterator, deprecated)
 pub fn[K] Set::iter(self : Set[K]) -> Iter[K] {
   let mut curr_entry = self.head
-  Iter::new(fn() {
-    match curr_entry {
-      Some({ key, next, .. }) => {
-        curr_entry = next
-        Some(key)
+  Iter::new(
+    fn() {
+      match curr_entry {
+        Some({ key, next, .. }) => {
+          curr_entry = next
+          Some(key)
+        }
+        None => None
       }
-      None => None
-    }
-  })
+    },
+    length=self.size,
+  )
 }
 
 ///|
