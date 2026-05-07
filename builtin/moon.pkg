@@ -18,6 +18,7 @@ import {
   "moonbitlang/core/random",
   "moonbitlang/core/math", // FIXME: IDE false alarm unused package
   "moonbitlang/core/buffer",
+  "moonbitlang/core/bench",
 } for "test"
 
 warnings = "-test_unqualified_package"
