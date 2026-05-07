@@ -674,17 +674,18 @@ pub fn[K, V] Map::clear(self : Map[K, V]) -> Unit {
 #alias(iterator, deprecated)
 pub fn[K, V] Map::iter(self : Map[K, V]) -> Iter[(K, V)] {
   let mut curr_entry = self.head
+  let len = self.size
+  let mut remaining = len
   Iter::new(
     fn() {
-      match curr_entry {
-        Some({ key, value, next, .. }) => {
-          curr_entry = next
-          Some((key, value))
-        }
-        None => None
+      guard remaining > 0 && curr_entry is Some({ key, value, next, .. }) else {
+        None
       }
+      curr_entry = next
+      remaining -= 1
+      Some((key, value))
     },
-    length=self.size,
+    length=len,
   )
 }
 
@@ -699,17 +700,16 @@ pub fn[K, V] Map::iter2(self : Map[K, V]) -> Iter2[K, V] {
 /// Return an iterator of keys.
 pub fn[K, V] Map::keys(self : Map[K, V]) -> Iter[K] {
   let mut curr_entry = self.head
+  let len = self.size
+  let mut remaining = len
   Iter::new(
     fn() {
-      match curr_entry {
-        Some({ key, next, .. }) => {
-          curr_entry = next
-          Some(key)
-        }
-        None => None
-      }
+      guard remaining > 0 && curr_entry is Some({ key, next, .. }) else { None }
+      curr_entry = next
+      remaining -= 1
+      Some(key)
     },
-    length=self.size,
+    length=len,
   )
 }
 
@@ -717,17 +717,18 @@ pub fn[K, V] Map::keys(self : Map[K, V]) -> Iter[K] {
 /// Return an iterator of values.
 pub fn[K, V] Map::values(self : Map[K, V]) -> Iter[V] {
   let mut curr_entry = self.head
+  let len = self.size
+  let mut remaining = len
   Iter::new(
     fn() {
-      match curr_entry {
-        Some({ value, next, .. }) => {
-          curr_entry = next
-          Some(value)
-        }
-        None => None
+      guard remaining > 0 && curr_entry is Some({ value, next, .. }) else {
+        None
       }
+      curr_entry = next
+      remaining -= 1
+      Some(value)
     },
-    length=self.size,
+    length=len,
   )
 }
 
