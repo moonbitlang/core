@@ -1794,6 +1794,7 @@ pub fn[A] Array::truncate(self : Array[A], len : Int) -> Unit {
 ///   inspect(arr, content="[4, 8]")
 /// }
 /// ```
+#locals(f)
 pub fn[A] Array::retain_map(self : Array[A], f : (A) -> A?) -> Unit {
   if self.is_empty() {
     return
@@ -1880,6 +1881,7 @@ pub fn[T] Array::push_iter(self : Self[T], iter : Iter[T]) -> Unit {
 /// Array::shuffle_in_place(arr, rand~)
 /// }
 /// ```
+#locals(rand)
 pub fn[T] Array::shuffle_in_place(
   self : Array[T],
   rand~ : (Int) -> Int,
@@ -1927,6 +1929,7 @@ pub fn[T] Array::shuffle(self : Array[T], rand~ : (Int) -> Int) -> Array[T] {
 ///
 /// # Returns
 ///
+#locals(f)
 pub fn[A, B] Array::filter_map(
   self : Array[A],
   f : (A) -> B? raise?,
