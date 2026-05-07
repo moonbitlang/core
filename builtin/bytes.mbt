@@ -657,12 +657,15 @@ pub fn BytesView::to_array(self : BytesView) -> Array[Byte] {
 pub fn Bytes::iter(self : Bytes) -> Iter[Byte] {
   let mut i = 0
   let len = self.length()
-  Iter::new(fn() {
-    guard i < len else { None }
-    let c = self.unsafe_get(i)
-    i += 1
-    Some(c)
-  })
+  Iter::new(
+    fn() {
+      guard i < len else { None }
+      let c = self.unsafe_get(i)
+      i += 1
+      Some(c)
+    },
+    length=len,
+  )
 }
 
 ///|
@@ -688,12 +691,15 @@ pub fn Bytes::iter(self : Bytes) -> Iter[Byte] {
 pub fn Bytes::iter2(self : Bytes) -> Iter2[Int, Byte] {
   let mut i = 0
   let len = self.length()
-  Iter::new(fn() {
-    guard i < len else { None }
-    let result = (i, self.unsafe_get(i))
-    i += 1
-    Some(result)
-  })
+  Iter::new(
+    fn() {
+      guard i < len else { None }
+      let result = (i, self.unsafe_get(i))
+      i += 1
+      Some(result)
+    },
+    length=len,
+  )
 }
 
 ///|

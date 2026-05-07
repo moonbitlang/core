@@ -293,7 +293,8 @@ pub impl[A] Add for T[A] with add(self, other) {
 #deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
 #alias(iterator, deprecated="Use the corresponding function in `immut/vector` instead")
 pub fn[A] T::iter(self : T[A]) -> Iter[A] {
-  self.tree.iter()
+  let iter = self.tree.iter()
+  Iter::new(() => iter.next(), length=self.size)
 }
 
 ///|

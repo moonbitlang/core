@@ -289,12 +289,13 @@ pub fn Iter::join(Self[String], StringView) -> String
 #deprecated
 pub fn[X] Iter::just_run(Self[X], (X) -> IterResult) -> Unit
 pub fn[X] Iter::last(Self[X]) -> X?
+pub fn[X] Iter::length(Self[X]) -> Int?
 pub fn[X, Y] Iter::map(Self[X], (X) -> Y) -> Self[Y]
 pub fn[X, Y] Iter::map_while(Self[X], (X) -> Y?) -> Self[Y]
 pub fn[X, Y] Iter::mapi(Self[X], (Int, X) -> Y) -> Self[Y]
 pub fn[X : Compare] Iter::maximum(Self[X]) -> X?
 pub fn[X : Compare] Iter::minimum(Self[X]) -> X?
-pub fn[X] Iter::new(() -> X?) -> Self[X]
+pub fn[X] Iter::new(() -> X?, length? : Int) -> Self[X]
 #alias(head)
 #alias(peek, deprecated)
 pub fn[X] Iter::next(Self[X]) -> X?
@@ -325,7 +326,7 @@ pub fn[X, Y] Iter2::each(Self[X, Y], (X, Y) -> Unit) -> Unit
 pub fn[X, Y] Iter2::iter(Self[X, Y]) -> Iter[(X, Y)]
 #alias(iterator2)
 pub fn[X, Y] Iter2::iter2(Self[X, Y]) -> Self[X, Y]
-pub fn[X, Y] Iter2::new(() -> (X, Y)?) -> Self[X, Y]
+pub fn[X, Y] Iter2::new(() -> (X, Y)?, length? : Int) -> Self[X, Y]
 pub fn[X, Y] Iter2::next(Self[X, Y]) -> (X, Y)?
 #deprecated
 pub fn[X, Y] Iter2::run(Self[X, Y], (X, Y) -> IterResult) -> IterResult

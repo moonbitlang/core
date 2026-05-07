@@ -282,12 +282,15 @@ pub fn BytesView::view(
 pub fn BytesView::iter(self : BytesView) -> Iter[Byte] {
   let mut i = 0
   let len = self.length()
-  Iter::new(fn() {
-    guard i < len else { None }
-    let result = self.unsafe_get(i)
-    i += 1
-    Some(result)
-  })
+  Iter::new(
+    fn() {
+      guard i < len else { None }
+      let result = self.unsafe_get(i)
+      i += 1
+      Some(result)
+    },
+    length=len,
+  )
 }
 
 ///|
@@ -312,12 +315,15 @@ pub fn BytesView::iter(self : BytesView) -> Iter[Byte] {
 pub fn BytesView::iter2(self : BytesView) -> Iter2[Int, Byte] {
   let mut i = 0
   let len = self.length()
-  Iter2::new(fn() {
-    guard i < len else { None }
-    let result = (i, self.unsafe_get(i))
-    i += 1
-    Some(result)
-  })
+  Iter2::new(
+    fn() {
+      guard i < len else { None }
+      let result = (i, self.unsafe_get(i))
+      i += 1
+      Some(result)
+    },
+    length=len,
+  )
 }
 
 ///|

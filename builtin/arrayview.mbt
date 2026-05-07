@@ -534,22 +534,25 @@ pub fn[T] ArrayView::suffixes(
 ) -> Iter[ArrayView[T]] {
   let len = self.length()
   let mut i = 0
-  Iter::new(fn() -> ArrayView[T]? {
-    if i < len {
-      let suffix = self[i:]
-      i += 1
-      Some(suffix)
-    } else if i == len {
-      i += 1
-      if include_empty {
-        Some(self[len:])
+  Iter::new(
+    fn() -> ArrayView[T]? {
+      if i < len {
+        let suffix = self[i:]
+        i += 1
+        Some(suffix)
+      } else if i == len {
+        i += 1
+        if include_empty {
+          Some(self[len:])
+        } else {
+          None
+        }
       } else {
         None
       }
-    } else {
-      None
-    }
-  })
+    },
+    length=if include_empty { len + 1 } else { len },
+  )
 }
 
 ///|
@@ -677,12 +680,16 @@ pub fn[T] ArrayView::windows(
 #alias(iterator, deprecated)
 pub fn[X] ArrayView::iter(self : ArrayView[X]) -> Iter[X] {
   let mut i = 0
-  Iter::new(fn() {
-    guard i < self.length() else { None }
-    let elem = self.unsafe_get(i)
-    i += 1
-    Some(elem)
-  })
+  let len = self.length()
+  Iter::new(
+    fn() {
+      guard i < len else { None }
+      let elem = self.unsafe_get(i)
+      i += 1
+      Some(elem)
+    },
+    length=len,
+  )
 }
 
 ///|
@@ -700,12 +707,16 @@ pub fn[X] ArrayView::iter(self : ArrayView[X]) -> Iter[X] {
 /// ```
 #alias(rev_iterator, deprecated)
 pub fn[X] ArrayView::rev_iter(self : ArrayView[X]) -> Iter[X] {
-  let mut i = self.length()
-  Iter::new(fn() {
-    guard i > 0 else { None }
-    i -= 1
-    Some(self.unsafe_get(i))
-  })
+  let len = self.length()
+  let mut i = len
+  Iter::new(
+    fn() {
+      guard i > 0 else { None }
+      i -= 1
+      Some(self.unsafe_get(i))
+    },
+    length=len,
+  )
 }
 
 ///|
@@ -732,12 +743,16 @@ pub fn[X] ArrayView::rev_iter(self : ArrayView[X]) -> Iter[X] {
 #alias(iterator2, deprecated)
 pub fn[X] ArrayView::iter2(self : ArrayView[X]) -> Iter2[Int, X] {
   let mut i = 0
-  Iter2::new(fn() {
-    guard i < self.length() else { None }
-    let result = Some((i, self.unsafe_get(i)))
-    i += 1
-    result
-  })
+  let len = self.length()
+  Iter2::new(
+    fn() {
+      guard i < len else { None }
+      let result = Some((i, self.unsafe_get(i)))
+      i += 1
+      result
+    },
+    length=len,
+  )
 }
 
 ///|

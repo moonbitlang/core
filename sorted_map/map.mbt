@@ -269,21 +269,24 @@ pub fn[K, V] SortedMap::eachi(
 pub fn[K, V] SortedMap::keys_as_iter(self : SortedMap[K, V]) -> Iter[K] {
   let todo_list = []
   let mut next_node = self.root
-  Iter::new(fn() {
-    for x = next_node {
-      match x {
-        Some({ left, key, value: _, right, height: _ }) => {
-          todo_list.push((key, right))
-          continue left
+  Iter::new(
+    fn() {
+      for x = next_node {
+        match x {
+          Some({ left, key, value: _, right, height: _ }) => {
+            todo_list.push((key, right))
+            continue left
+          }
+          None if todo_list.pop() is Some((key, right)) => {
+            next_node = right
+            break Some(key)
+          }
+          None => break None
         }
-        None if todo_list.pop() is Some((key, right)) => {
-          next_node = right
-          break Some(key)
-        }
-        None => break None
       }
-    }
-  })
+    },
+    length=self.size,
+  )
 }
 
 ///|
@@ -291,21 +294,24 @@ pub fn[K, V] SortedMap::keys_as_iter(self : SortedMap[K, V]) -> Iter[K] {
 pub fn[K, V] SortedMap::values_as_iter(self : SortedMap[K, V]) -> Iter[V] {
   let todo_list = []
   let mut next_node = self.root
-  Iter::new(fn() {
-    for x = next_node {
-      match x {
-        Some({ left, key: _, value, right, height: _ }) => {
-          todo_list.push((value, right))
-          continue left
+  Iter::new(
+    fn() {
+      for x = next_node {
+        match x {
+          Some({ left, key: _, value, right, height: _ }) => {
+            todo_list.push((value, right))
+            continue left
+          }
+          None if todo_list.pop() is Some((value, right)) => {
+            next_node = right
+            break Some(value)
+          }
+          None => break None
         }
-        None if todo_list.pop() is Some((value, right)) => {
-          next_node = right
-          break Some(value)
-        }
-        None => break None
       }
-    }
-  })
+    },
+    length=self.size,
+  )
 }
 
 ///|
@@ -322,21 +328,24 @@ pub fn[K, V] SortedMap::to_array(self : SortedMap[K, V]) -> Array[(K, V)] {
 pub fn[K, V] SortedMap::iter(self : SortedMap[K, V]) -> Iter[(K, V)] {
   let todo_list = []
   let mut next_node = self.root
-  Iter::new(fn() {
-    for x = next_node {
-      match x {
-        Some({ left, key, value, right, height: _ }) => {
-          todo_list.push((key, value, right))
-          continue left
+  Iter::new(
+    fn() {
+      for x = next_node {
+        match x {
+          Some({ left, key, value, right, height: _ }) => {
+            todo_list.push((key, value, right))
+            continue left
+          }
+          None if todo_list.pop() is Some((key, value, right)) => {
+            next_node = right
+            break Some((key, value))
+          }
+          None => break None
         }
-        None if todo_list.pop() is Some((key, value, right)) => {
-          next_node = right
-          break Some((key, value))
-        }
-        None => break None
       }
-    }
-  })
+    },
+    length=self.size,
+  )
 }
 
 ///|

@@ -243,25 +243,28 @@ pub fn[K : Compare, V] SortedMap::from_array(
 pub fn[K, V] SortedMap::iter(self : SortedMap[K, V]) -> Iter[(K, V)] {
   let mut curr_node = self
   let parents = []
-  Iter::new(fn() {
-    for x = curr_node {
-      match x {
-        Tree(k, value~, Empty, r, ..) => {
-          curr_node = r
-          break Some((k, value))
+  Iter::new(
+    fn() {
+      for x = curr_node {
+        match x {
+          Tree(k, value~, Empty, r, ..) => {
+            curr_node = r
+            break Some((k, value))
+          }
+          Tree(k, value~, l, r, ..) => {
+            parents.push((k, value, r))
+            continue l
+          }
+          Empty if parents.pop() is Some((k, v, r)) => {
+            curr_node = r
+            break Some((k, v))
+          }
+          Empty => break None
         }
-        Tree(k, value~, l, r, ..) => {
-          parents.push((k, value, r))
-          continue l
-        }
-        Empty if parents.pop() is Some((k, v, r)) => {
-          curr_node = r
-          break Some((k, v))
-        }
-        Empty => break None
       }
-    }
-  })
+    },
+    length=self.length(),
+  )
 }
 
 ///|
@@ -393,25 +396,28 @@ pub fn[K, V] SortedMap::values(self : SortedMap[K, V]) -> Iter[V] {
 pub fn[K, V] SortedMap::rev_keys(self : SortedMap[K, V]) -> Iter[K] {
   let mut curr_node = self
   let parents = []
-  Iter::new(fn() {
-    for x = curr_node {
-      match x {
-        Tree(k, l, Empty, ..) => {
-          curr_node = l
-          break Some(k)
+  Iter::new(
+    fn() {
+      for x = curr_node {
+        match x {
+          Tree(k, l, Empty, ..) => {
+            curr_node = l
+            break Some(k)
+          }
+          Tree(k, l, r, ..) => {
+            parents.push((k, l))
+            continue r
+          }
+          Empty if parents.pop() is Some((k, l)) => {
+            curr_node = l
+            break Some(k)
+          }
+          Empty => break None
         }
-        Tree(k, l, r, ..) => {
-          parents.push((k, l))
-          continue r
-        }
-        Empty if parents.pop() is Some((k, l)) => {
-          curr_node = l
-          break Some(k)
-        }
-        Empty => break None
       }
-    }
-  })
+    },
+    length=self.length(),
+  )
 }
 
 ///|
@@ -427,25 +433,28 @@ pub fn[K, V] SortedMap::rev_keys(self : SortedMap[K, V]) -> Iter[K] {
 pub fn[K, V] SortedMap::rev_values(self : SortedMap[K, V]) -> Iter[V] {
   let mut curr_node = self
   let parents = []
-  Iter::new(fn() {
-    for x = curr_node {
-      match x {
-        Tree(_k, value~, l, Empty, ..) => {
-          curr_node = l
-          break Some(value)
+  Iter::new(
+    fn() {
+      for x = curr_node {
+        match x {
+          Tree(_k, value~, l, Empty, ..) => {
+            curr_node = l
+            break Some(value)
+          }
+          Tree(_k, value~, l, r, ..) => {
+            parents.push((value, l))
+            continue r
+          }
+          Empty if parents.pop() is Some((v, l)) => {
+            curr_node = l
+            break Some(v)
+          }
+          Empty => break None
         }
-        Tree(_k, value~, l, r, ..) => {
-          parents.push((value, l))
-          continue r
-        }
-        Empty if parents.pop() is Some((v, l)) => {
-          curr_node = l
-          break Some(v)
-        }
-        Empty => break None
       }
-    }
-  })
+    },
+    length=self.length(),
+  )
 }
 
 ///|

@@ -412,24 +412,32 @@ pub fn[T] MutArrayView::to_owned(self : MutArrayView[T]) -> Array[T] {
 #alias(iterator, deprecated)
 pub fn[X] MutArrayView::iter(self : MutArrayView[X]) -> Iter[X] {
   let mut i = 0
-  Iter::new(fn() {
-    guard i < self.length() else { None }
-    let elem = self.unsafe_get(i)
-    i += 1
-    Some(elem)
-  })
+  let len = self.length()
+  Iter::new(
+    fn() {
+      guard i < len else { None }
+      let elem = self.unsafe_get(i)
+      i += 1
+      Some(elem)
+    },
+    length=len,
+  )
 }
 
 ///|
 /// Function `rev_iter`.
 #alias(rev_iterator, deprecated)
 pub fn[X] MutArrayView::rev_iter(self : MutArrayView[X]) -> Iter[X] {
-  let mut i = self.length()
-  Iter::new(fn() {
-    guard i > 0 else { None }
-    i -= 1
-    Some(self.unsafe_get(i))
-  })
+  let len = self.length()
+  let mut i = len
+  Iter::new(
+    fn() {
+      guard i > 0 else { None }
+      i -= 1
+      Some(self.unsafe_get(i))
+    },
+    length=len,
+  )
 }
 
 ///|
@@ -437,12 +445,16 @@ pub fn[X] MutArrayView::rev_iter(self : MutArrayView[X]) -> Iter[X] {
 #alias(iterator2, deprecated)
 pub fn[X] MutArrayView::iter2(self : MutArrayView[X]) -> Iter2[Int, X] {
   let mut i = 0
-  Iter2::new(fn() {
-    guard i < self.length() else { None }
-    let result = Some((i, self.unsafe_get(i)))
-    i += 1
-    result
-  })
+  let len = self.length()
+  Iter2::new(
+    fn() {
+      guard i < len else { None }
+      let result = Some((i, self.unsafe_get(i)))
+      i += 1
+      result
+    },
+    length=len,
+  )
 }
 
 ///|

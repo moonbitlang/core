@@ -30,25 +30,28 @@
 pub fn[A] SortedSet::rev_iter(self : SortedSet[A]) -> Iter[A] {
   let mut curr_node = self
   let parents = []
-  Iter::new(fn() {
-    for x = curr_node {
-      match x {
-        Node(left~, right=Empty, value~, ..) => {
-          curr_node = left
-          break Some(value)
+  Iter::new(
+    fn() {
+      for x = curr_node {
+        match x {
+          Node(left~, right=Empty, value~, ..) => {
+            curr_node = left
+            break Some(value)
+          }
+          Node(left~, right~, value~, ..) => {
+            parents.push((value, left))
+            continue right
+          }
+          Empty if parents.pop() is Some((value, left)) => {
+            curr_node = left
+            break Some(value)
+          }
+          Empty => break None
         }
-        Node(left~, right~, value~, ..) => {
-          parents.push((value, left))
-          continue right
-        }
-        Empty if parents.pop() is Some((value, left)) => {
-          curr_node = left
-          break Some(value)
-        }
-        Empty => break None
       }
-    }
-  })
+    },
+    length=self.length(),
+  )
 }
 
 ///|
@@ -57,25 +60,28 @@ pub fn[A] SortedSet::rev_iter(self : SortedSet[A]) -> Iter[A] {
 pub fn[A] SortedSet::iter(self : SortedSet[A]) -> Iter[A] {
   let mut curr_node = self
   let parents = []
-  Iter::new(fn() {
-    for x = curr_node {
-      match x {
-        Node(left=Empty, right~, value~, size=_) => {
-          curr_node = right
-          break Some(value)
+  Iter::new(
+    fn() {
+      for x = curr_node {
+        match x {
+          Node(left=Empty, right~, value~, size=_) => {
+            curr_node = right
+            break Some(value)
+          }
+          Node(left~, right~, value~, size=_) => {
+            parents.push((value, right))
+            continue left
+          }
+          Empty if parents.pop() is Some((value, right)) => {
+            curr_node = right
+            break Some(value)
+          }
+          Empty => break None
         }
-        Node(left~, right~, value~, size=_) => {
-          parents.push((value, right))
-          continue left
-        }
-        Empty if parents.pop() is Some((value, right)) => {
-          curr_node = right
-          break Some(value)
-        }
-        Empty => break None
       }
-    }
-  })
+    },
+    length=self.length(),
+  )
 }
 
 ///|
