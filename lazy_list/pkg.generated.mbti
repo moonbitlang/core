@@ -1,0 +1,67 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/lazy_list"
+
+import {
+  "moonbitlang/core/debug",
+  "moonbitlang/core/lazy",
+  "moonbitlang/core/list",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub enum LazyList[A] {
+  Empty
+  Cons(A, tail~ : @lazy.Lazy[LazyList[A]])
+}
+pub fn[A] LazyList::concat(Self[A], Self[A]) -> Self[A]
+#as_free_fn
+pub fn[A] LazyList::cons(A, Self[A]) -> Self[A]
+pub fn[A] LazyList::drop(Self[A], Int) -> Self[A]
+pub fn[A] LazyList::drop_while(Self[A], (A) -> Bool) -> Self[A]
+pub fn[A] LazyList::each(Self[A], (A) -> Unit raise?) -> Unit raise?
+#as_free_fn
+pub fn[A] LazyList::empty() -> Self[A]
+pub fn[A] LazyList::filter(Self[A], (A) -> Bool) -> Self[A]
+pub fn[A, B] LazyList::flat_map(Self[A], (A) -> Self[B]) -> Self[B]
+pub fn[A, B] LazyList::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
+#as_free_fn
+pub fn[A] LazyList::from_array(ArrayView[A]) -> Self[A]
+#as_free_fn
+pub fn[A] LazyList::from_iter(Iter[A]) -> Self[A]
+#as_free_fn
+pub fn[A] LazyList::from_list(@list.List[A]) -> Self[A]
+pub fn[A] LazyList::head(Self[A]) -> A?
+pub fn[A] LazyList::is_empty(Self[A]) -> Bool
+pub fn[A] LazyList::iter(Self[A]) -> Iter[A]
+#as_free_fn
+pub fn[A] LazyList::iterate(A, (A) -> A) -> Self[A]
+#as_free_fn
+pub fn[A] LazyList::lazy_cons(A, () -> Self[A]) -> Self[A]
+pub fn[A] LazyList::length(Self[A]) -> Int
+pub fn[A, B] LazyList::map(Self[A], (A) -> B) -> Self[B]
+pub fn[A] LazyList::nth(Self[A], Int) -> A?
+#as_free_fn
+pub fn[A] LazyList::repeat(A) -> Self[A]
+#as_free_fn
+pub fn[A] LazyList::singleton(A) -> Self[A]
+pub fn[A] LazyList::tail(Self[A]) -> Self[A]?
+pub fn[A] LazyList::take(Self[A], Int) -> Self[A]
+pub fn[A] LazyList::take_while(Self[A], (A) -> Bool) -> Self[A]
+pub fn[A] LazyList::to_array(Self[A]) -> Array[A]
+pub fn[A : ToJson] LazyList::to_json(Self[A]) -> Json
+pub fn[A] LazyList::to_list(Self[A]) -> @list.List[A]
+#as_free_fn
+pub fn[A, S] LazyList::unfold((S) -> (A, S)?, init~ : S) -> Self[A]
+pub fn[A, B] LazyList::zip(Self[A], Self[B]) -> Self[(A, B)]
+pub impl[A : Eq] Eq for LazyList[A]
+pub impl[A : Show] Show for LazyList[A]
+pub impl[A : ToJson] ToJson for LazyList[A]
+pub impl[A : @debug.Debug] @debug.Debug for LazyList[A]
+
+// Type aliases
+
+// Traits
+
