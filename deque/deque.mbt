@@ -1439,14 +1439,15 @@ pub fn[A] Deque::retain(self : Deque[A], f : (A) -> Bool) -> Unit {
 #alias(iterator, deprecated)
 pub fn[A] Deque::iter(self : Deque[A]) -> Iter[A] {
   let mut index = 0
+  let len = self.len
   Iter::new(
     fn() {
-      guard index < self.len else { None }
+      guard index < len else { None }
       let elem = self.buf[(self.head + index) % self.buf.length()]
       index += 1
       Some(elem)
     },
-    length=self.len,
+    length=len,
   )
 }
 
@@ -1478,14 +1479,15 @@ pub fn[A] Deque::iter(self : Deque[A]) -> Iter[A] {
 #alias(iterator2, deprecated)
 pub fn[A] Deque::iter2(self : Deque[A]) -> Iter2[Int, A] {
   let mut index = 0
+  let len = self.len
   Iter2::new(
     fn() {
-      guard index < self.len else { None }
+      guard index < len else { None }
       let result = (index, self.buf[(self.head + index) % self.buf.length()])
       index += 1
       Some(result)
     },
-    length=self.len,
+    length=len,
   )
 }
 
@@ -1511,14 +1513,15 @@ pub fn[A] Deque::iter2(self : Deque[A]) -> Iter2[Int, A] {
 /// ```
 #alias(rev_iterator, deprecated)
 pub fn[A] Deque::rev_iter(self : Deque[A]) -> Iter[A] {
-  let mut index = self.len
+  let len = self.len
+  let mut index = len
   Iter::new(
     fn() {
       guard index > 0 else { None }
       index -= 1
       Some(self.buf[(self.head + index) % self.buf.length()])
     },
-    length=self.len,
+    length=len,
   )
 }
 
@@ -1549,15 +1552,16 @@ pub fn[A] Deque::rev_iter(self : Deque[A]) -> Iter[A] {
 /// ```
 #alias(rev_iterator2, deprecated)
 pub fn[A] Deque::rev_iter2(self : Deque[A]) -> Iter2[Int, A] {
-  let mut rev_index = self.len
+  let len = self.len
+  let mut rev_index = len
   Iter2::new(
     fn() {
       guard rev_index > 0 else { None }
-      let index = self.len - rev_index
+      let index = len - rev_index
       rev_index -= 1
       Some((index, self.buf[(self.head + rev_index) % self.buf.length()]))
     },
-    length=self.len,
+    length=len,
   )
 }
 
