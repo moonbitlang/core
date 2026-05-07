@@ -359,17 +359,16 @@ pub fn[A] Queue::transfer(self : Queue[A], dst : Queue[A]) -> Unit {
 #alias(iterator, deprecated)
 pub fn[A] Queue::iter(self : Queue[A]) -> Iter[A] {
   let mut next_node = self.first
+  let len = self.length
+  let mut remaining = len
   Iter::new(
     fn() {
-      match next_node {
-        None => None
-        Some({ content, next }) => {
-          next_node = next
-          Some(content)
-        }
-      }
+      guard remaining > 0 && next_node is Some({ content, next }) else { None }
+      next_node = next
+      remaining -= 1
+      Some(content)
     },
-    length=self.length,
+    length=len,
   )
 }
 
