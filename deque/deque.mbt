@@ -111,12 +111,8 @@ pub impl[A : Hash] Hash for Deque[A] with hash_combine(self, hasher) {
 pub impl[A] Add for Deque[A] with add(self, other) {
   let len = self.len + other.len
   let buf = UninitializedArray::make(len)
-  for i, x in self {
-    buf[i] = x
-  }
-  for i, x in other {
-    buf[i + self.len] = x
-  }
+  self.unsafe_blit_to(buf, 0)
+  other.unsafe_blit_to(buf, self.len)
   Deque::{ buf, len, head: 0 }
 }
 
@@ -200,9 +196,7 @@ test "from_array_empty" {
 pub fn[A] Deque::copy(self : Deque[A]) -> Deque[A] {
   let len = self.len
   let buf = UninitializedArray::make(len)
-  for i, x in self {
-    buf[i] = x
-  }
+  self.unsafe_blit_to(buf, 0)
   Deque::{ buf, len, head: 0 }
 }
 
@@ -527,11 +521,7 @@ fn[A] Deque::realloc(self : Deque[A]) -> Unit {
   let old_cap = self.buf.length()
   let new_cap = if old_cap == 0 { 8 } else { old_cap * 2 }
   let new_buf = UninitializedArray::make(new_cap)
-  // Copy elements linearly to new buffer
-  for i in 0..<self.len {
-    let src_idx = (self.head + i) % old_cap
-    new_buf[i] = self.buf[src_idx]
-  }
+  self.unsafe_blit_to(new_buf, 0)
   self.head = 0
   self.buf = new_buf
 }
@@ -843,6 +833,23 @@ pub fn[A] Deque::as_views(self : Deque[A]) -> (ArrayView[A], ArrayView[A]) {
   } else {
     (buf[head:cap], buf[:len - head_len])
   }
+}
+
+///|
+fn[A] Deque::unsafe_blit_to(
+  self : Deque[A],
+  dst : UninitializedArray[A],
+  dst_offset : Int,
+) -> Unit {
+  guard self.len != 0 else { return }
+  let (front, back) = self.as_views()
+  dst.unsafe_blit(dst_offset, self.buf, front.start_offset(), front.length())
+  dst.unsafe_blit(
+    dst_offset + front.length(),
+    self.buf,
+    back.start_offset(),
+    back.length(),
+  )
 }
 
 ///|
