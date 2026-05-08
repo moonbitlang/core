@@ -223,6 +223,7 @@ pub fn[A] Queue::pop(self : Queue[A]) -> A? {
 ///   queue.each(x => sum = sum + x)
 /// }
 /// ```
+#locals(f)
 pub fn[A] Queue::each(self : Queue[A], f : (A) -> Unit) -> Unit {
   for x = self.first {
     match x {
@@ -246,6 +247,7 @@ pub fn[A] Queue::each(self : Queue[A], f : (A) -> Unit) -> Unit {
 ///   queue.eachi((i, x) => sum = sum + i * x)
 /// }
 /// ```
+#locals(f)
 pub fn[A] Queue::eachi(self : Queue[A], f : (Int, A) -> Unit) -> Unit {
   for x = self.first, index = 0 {
     match (x, index) {
@@ -269,6 +271,7 @@ pub fn[A] Queue::eachi(self : Queue[A], f : (Int, A) -> Unit) -> Unit {
 ///   @test.assert_eq(sum, 0)
 /// }
 /// ```
+#locals(f)
 pub fn[A, B] Queue::fold(self : Queue[A], init~ : B, f : (B, A) -> B) -> B {
   for x = self.first, acc = init {
     match (x, acc) {
