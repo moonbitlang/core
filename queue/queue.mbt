@@ -365,7 +365,7 @@ pub fn[A] Queue::iter(self : Queue[A]) -> Iter[A] {
       remaining -= 1
       Some(content)
     },
-    length=len,
+    size_hint=len,
   )
 }
 

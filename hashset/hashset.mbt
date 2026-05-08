@@ -328,7 +328,7 @@ pub fn[K] HashSet::iter(self : HashSet[K]) -> Iter[K] {
         None
       }
     },
-    length=self.size,
+    size_hint=self.size,
   )
 }
 

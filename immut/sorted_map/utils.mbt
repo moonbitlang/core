@@ -263,7 +263,7 @@ pub fn[K, V] SortedMap::iter(self : SortedMap[K, V]) -> Iter[(K, V)] {
         }
       }
     },
-    length=self.length(),
+    size_hint=self.length(),
   )
 }
 
@@ -416,7 +416,7 @@ pub fn[K, V] SortedMap::rev_keys(self : SortedMap[K, V]) -> Iter[K] {
         }
       }
     },
-    length=self.length(),
+    size_hint=self.length(),
   )
 }
 
@@ -453,7 +453,7 @@ pub fn[K, V] SortedMap::rev_values(self : SortedMap[K, V]) -> Iter[V] {
         }
       }
     },
-    length=self.length(),
+    size_hint=self.length(),
   )
 }
 

@@ -21,7 +21,7 @@
 #alias(Iterator, deprecated="The name `Iterator` is deprecated, use `Iter` instead. Note that if you have defined `iterator()` method to support `for .. in` loop, you should also rename `iterator()` to `iter()`. See https://github.com/moonbitlang/core/pull/3127 for more details.")
 struct Iter[X] {
   f : () -> X?
-  mut length : Int?
+  mut size_hint : Int?
 }
 
 ///|
@@ -32,24 +32,22 @@ struct Iter[X] {
 #alias(head)
 pub fn[X] Iter::next(self : Iter[X]) -> X? {
   let result = (self.f)()
-  debug_assert(() => {
-    match (result, self.length) {
-      (None, Some(n)) => n == 0
-      _ => true
-    }
-  })
-  match (result, self.length) {
-    (Some(_), Some(n)) => self.length = Some(n - 1)
-    (None, _) => self.length = Some(0)
+  match (result, self.size_hint) {
+    (Some(_), Some(n)) =>
+      self.size_hint = if n > 0 { Some(n - 1) } else { Some(0) }
+    (None, _) => self.size_hint = Some(0)
     _ => ()
   }
   result
 }
 
 ///|
-/// Returns the exact number of remaining elements if it is known.
-pub fn[X] Iter::length(self : Iter[X]) -> Int? {
-  self.length
+/// Returns the hinted number of remaining elements if it is known.
+///
+/// The hint is intended to be exact for iterators produced by trusted
+/// collection APIs and adapters, but it must not be used for correctness.
+pub fn[X] Iter::size_hint(self : Iter[X]) -> Int? {
+  self.size_hint
 }
 
 ///|
@@ -222,12 +220,17 @@ pub fn[X] Iter::count(self : Iter[X]) -> Int {
 /// Create a new iterator by supplying a `next` function directly.
 /// The supplied function should output the next element being iterated
 /// everytime it is called.
-/// If the exact number of remaining elements is known, pass it as `length`.
+/// If the number of remaining elements is known, pass it as `size_hint`.
 ///
 /// This function is intended for use by data structure authors,
 /// and should not be called by end users in general.
-pub fn[X] Iter::new(f : () -> X?, length? : Int) -> Iter[X] {
-  { f, length }
+pub fn[X] Iter::new(f : () -> X?, size_hint? : Int) -> Iter[X] {
+  let size_hint = match size_hint {
+    Some(n) if n > 0 => Some(n)
+    Some(_) => Some(0)
+    None => None
+  }
+  { f, size_hint }
 }
 
 ///|
@@ -241,7 +244,7 @@ pub fn[X] Iter::new(f : () -> X?, length? : Int) -> Iter[X] {
 ///
 /// Returns an empty iterator of type `Iter[X]`.
 pub fn[X] Iter::empty() -> Iter[X] {
-  Iter::new(() => None, length=0)
+  Iter::new(() => None, size_hint=0)
 }
 
 ///|
@@ -269,7 +272,7 @@ pub fn[X] Iter::singleton(elem : X) -> Iter[X] {
         Some(elem)
       }
     },
-    length=1,
+    size_hint=1,
   )
 }
 
@@ -348,7 +351,7 @@ pub fn[X, Y] Iter::map(self : Iter[X], f : (X) -> Y) -> Iter[Y] {
         None => None
       }
     },
-    length: self.length,
+    size_hint: self.size_hint,
   }
 }
 
@@ -384,7 +387,7 @@ pub fn[X, Y] Iter::mapi(self : Iter[X], f : (Int, X) -> Y) -> Iter[Y] {
         None => None
       }
     },
-    length: self.length,
+    size_hint: self.size_hint,
   }
 }
 
@@ -492,7 +495,7 @@ pub fn[X] Iter::tap(self : Iter[X], f : (X) -> Unit) -> Iter[X] {
       }
       result
     },
-    length: self.length,
+    size_hint: self.size_hint,
   }
 }
 
@@ -516,7 +519,7 @@ pub fn[X] Iter::tap(self : Iter[X], f : (X) -> Unit) -> Iter[X] {
 /// The old iterator `self` must not be used again after calling `take`.
 pub fn[X] Iter::take(self : Iter[X], n : Int) -> Iter[X] {
   let mut remaining = n
-  let length = match self.length {
+  let size_hint = match self.size_hint {
     Some(_) if n <= 0 => Some(0)
     Some(len) if n < len => Some(n)
     Some(len) => Some(len)
@@ -532,7 +535,7 @@ pub fn[X] Iter::take(self : Iter[X], n : Int) -> Iter[X] {
       }
       result
     },
-    length,
+    size_hint,
   }
 }
 
@@ -605,7 +608,7 @@ pub fn[X, Y] Iter::map_while(self : Iter[X], f : (X) -> Y?) -> Iter[Y] {
 /// The old iterator `self` must not be used again after calling `drop`.
 pub fn[X] Iter::drop(self : Iter[X], n : Int) -> Iter[X] {
   let mut remaining = n
-  let length = match self.length {
+  let size_hint = match self.size_hint {
     Some(len) if n <= 0 => Some(len)
     Some(len) if n < len => Some(len - n)
     Some(_) => Some(0)
@@ -620,7 +623,7 @@ pub fn[X] Iter::drop(self : Iter[X], n : Int) -> Iter[X] {
         self.next()
       }
     },
-    length,
+    size_hint,
   }
 }
 
@@ -707,7 +710,7 @@ pub fn[X] Iter::find_first(self : Iter[X], f : (X) -> Bool) -> X? {
 /// The old iterator `self` and `other` must not be used again after calling `tap`.
 pub fn[X] Iter::concat(self : Iter[X], other : Iter[X]) -> Iter[X] {
   let mut in_first = true
-  let length = match (self.length, other.length) {
+  let size_hint = match (self.size_hint, other.size_hint) {
     (Some(n), Some(m)) => Some(n + m)
     _ => None
   }
@@ -725,7 +728,7 @@ pub fn[X] Iter::concat(self : Iter[X], other : Iter[X]) -> Iter[X] {
         other.next()
       }
     },
-    length,
+    size_hint,
   }
 }
 
@@ -766,7 +769,7 @@ pub fn[X] Iter::concat(self : Iter[X], other : Iter[X]) -> Iter[X] {
 /// The old iterators `self` and `other` must not be used again after calling `zip`.
 #alias(combine)
 pub fn[X, Y] Iter::zip(self : Iter[X], other : Iter[Y]) -> Iter[(X, Y)] {
-  let length = match (self.length, other.length) {
+  let size_hint = match (self.size_hint, other.size_hint) {
     (Some(n), Some(m)) if n < m => Some(n)
     (Some(_), Some(m)) => Some(m)
     (Some(0), _) => Some(0)
@@ -779,7 +782,7 @@ pub fn[X, Y] Iter::zip(self : Iter[X], other : Iter[Y]) -> Iter[(X, Y)] {
       guard other.next() is Some(y) else { None }
       Some((x, y))
     },
-    length,
+    size_hint,
   }
 }
 
@@ -793,7 +796,7 @@ pub impl[T] Add for Iter[T] with add(self, other) {
 /// The old iterator `self` must not be used again.
 #alias(collect)
 pub fn[X] Iter::to_array(self : Iter[X]) -> Array[X] {
-  let result = match self.length {
+  let result = match self.size_hint {
     Some(n) => Array::new(capacity=n)
     None => []
   }
@@ -824,7 +827,7 @@ pub fn[X] Iter::iter2(self : Iter[X]) -> Iter2[Int, X] {
       i += 1
       result
     },
-    length: self.length,
+    size_hint: self.size_hint,
   })
 }
 
@@ -867,7 +870,7 @@ pub fn[X] Iter::intersperse(self : Iter[X], sep : X) -> Iter[X] {
     Output_Sep
   }
   let mut state = Init
-  let length = match self.length {
+  let size_hint = match self.size_hint {
     Some(0) => Some(0)
     Some(n) => Some(n * 2 - 1)
     None => None
@@ -895,7 +898,7 @@ pub fn[X] Iter::intersperse(self : Iter[X], sep : X) -> Iter[X] {
           }
       }
     },
-    length,
+    size_hint,
   }
 }
 
@@ -911,7 +914,7 @@ pub fn[X] Iter::view(self : Iter[X], start? : Int = 0, end? : Int) -> Iter[X] {
     (start, None) => self.drop(start)
     (start, Some(end)) => {
       let mut index = 0
-      let length = match self.length {
+      let size_hint = match self.size_hint {
         Some(_) if end <= start => Some(0)
         Some(len) if start >= len => Some(0)
         Some(len) if end < len => Some(end - start)
@@ -937,7 +940,7 @@ pub fn[X] Iter::view(self : Iter[X], start? : Int = 0, end? : Int) -> Iter[X] {
           }
           result
         },
-        length,
+        size_hint,
       }
     }
   }
@@ -1026,9 +1029,14 @@ pub(all) struct Iter2[X, Y](Iter[(X, Y)])
 
 ///|
 /// Construct an `Iter2` from a pair-producing function.
-/// If the exact number of remaining pairs is known, pass it as `length`.
-pub fn[X, Y] Iter2::new(f : () -> (X, Y)?, length? : Int) -> Iter2[X, Y] {
-  Iter2({ f, length })
+/// If the number of remaining pairs is known, pass it as `size_hint`.
+pub fn[X, Y] Iter2::new(f : () -> (X, Y)?, size_hint? : Int) -> Iter2[X, Y] {
+  let size_hint = match size_hint {
+    Some(n) if n > 0 => Some(n)
+    Some(_) => Some(0)
+    None => None
+  }
+  Iter2({ f, size_hint })
 }
 
 ///|

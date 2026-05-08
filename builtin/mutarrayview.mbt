@@ -420,7 +420,7 @@ pub fn[X] MutArrayView::iter(self : MutArrayView[X]) -> Iter[X] {
       i += 1
       Some(elem)
     },
-    length=len,
+    size_hint=len,
   )
 }
 
@@ -436,7 +436,7 @@ pub fn[X] MutArrayView::rev_iter(self : MutArrayView[X]) -> Iter[X] {
       i -= 1
       Some(self.unsafe_get(i))
     },
-    length=len,
+    size_hint=len,
   )
 }
 
@@ -453,7 +453,7 @@ pub fn[X] MutArrayView::iter2(self : MutArrayView[X]) -> Iter2[Int, X] {
       i += 1
       result
     },
-    length=len,
+    size_hint=len,
   )
 }
 

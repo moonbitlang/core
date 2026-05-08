@@ -1447,7 +1447,7 @@ pub fn[A] Deque::iter(self : Deque[A]) -> Iter[A] {
       index += 1
       Some(elem)
     },
-    length=len,
+    size_hint=len,
   )
 }
 
@@ -1487,7 +1487,7 @@ pub fn[A] Deque::iter2(self : Deque[A]) -> Iter2[Int, A] {
       index += 1
       Some(result)
     },
-    length=len,
+    size_hint=len,
   )
 }
 
@@ -1521,7 +1521,7 @@ pub fn[A] Deque::rev_iter(self : Deque[A]) -> Iter[A] {
       index -= 1
       Some(self.buf[(self.head + index) % self.buf.length()])
     },
-    length=len,
+    size_hint=len,
   )
 }
 
@@ -1561,7 +1561,7 @@ pub fn[A] Deque::rev_iter2(self : Deque[A]) -> Iter2[Int, A] {
       rev_index -= 1
       Some((index, self.buf[(self.head + rev_index) % self.buf.length()]))
     },
-    length=len,
+    size_hint=len,
   )
 }
 

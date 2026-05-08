@@ -664,7 +664,7 @@ pub fn Bytes::iter(self : Bytes) -> Iter[Byte] {
       i += 1
       Some(c)
     },
-    length=len,
+    size_hint=len,
   )
 }
 
@@ -698,7 +698,7 @@ pub fn Bytes::iter2(self : Bytes) -> Iter2[Int, Byte] {
       i += 1
       Some(result)
     },
-    length=len,
+    size_hint=len,
   )
 }
 

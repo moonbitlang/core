@@ -1856,7 +1856,7 @@ pub fn[T] Array::from_iter(iter : Iter[T]) -> Array[T] {
 pub fn[T] Array::push_iter(self : Self[T], iter : Iter[T]) -> Unit {
   // This function used by [Array spread operator](https://docs.moonbitlang.com/en/latest/language/fundamentals.html#spread-operator)
   // it can't be removed and deprecated
-  if iter.length() is Some(n) {
+  if iter.size_hint() is Some(n) {
     self.reserve_capacity(self.length() + n)
   }
   for x in iter {
@@ -2063,7 +2063,7 @@ pub fn[A, B] Array::zip_to_iter2(
       i += 1
       Some(elem)
     },
-    length~,
+    size_hint=length,
   ).iter2()
 }
 

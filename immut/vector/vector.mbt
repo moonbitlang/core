@@ -480,7 +480,7 @@ pub fn[A] Vector::iter(self : Vector[A]) -> Iter[A] {
   let tree_iter = self.tree.iter()
   let tail_iter = self.tail.iter()
   let iter = tree_iter.concat(tail_iter)
-  Iter::new(() => iter.next(), length=self.size)
+  Iter::new(() => iter.next(), size_hint=self.size)
 }
 
 ///|

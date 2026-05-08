@@ -289,7 +289,7 @@ pub fn BytesView::iter(self : BytesView) -> Iter[Byte] {
       i += 1
       Some(result)
     },
-    length=len,
+    size_hint=len,
   )
 }
 
@@ -322,7 +322,7 @@ pub fn BytesView::iter2(self : BytesView) -> Iter2[Int, Byte] {
       i += 1
       Some(result)
     },
-    length=len,
+    size_hint=len,
   )
 }
 
