@@ -607,10 +607,14 @@ pub fn Bytes::from_iter(iter : Iter[Byte]) -> Bytes {
 /// ```
 pub fn Bytes::to_array(self : Bytes) -> Array[Byte] {
   let len = self.length()
-  let rv = Array::make(len, b'0')
-  for i in 0..<len {
-    rv[i] = self[i]
-  }
+  let rv = Array::make_uninit(len)
+  UninitializedArray::unsafe_blit_fixed(
+    rv.buffer(),
+    0,
+    unsafe_from_bytes(self),
+    0,
+    len,
+  )
   rv
 }
 
@@ -628,10 +632,14 @@ pub fn Bytes::to_array(self : Bytes) -> Array[Byte] {
 /// ```
 pub fn BytesView::to_array(self : BytesView) -> Array[Byte] {
   let len = self.length()
-  let rv = Array::make(len, b'0')
-  for i in 0..<len {
-    rv[i] = self[i]
-  }
+  let rv = Array::make_uninit(len)
+  UninitializedArray::unsafe_blit_fixed(
+    rv.buffer(),
+    0,
+    unsafe_from_bytes(self.data()),
+    self.start_offset(),
+    len,
+  )
   rv
 }
 
@@ -778,12 +786,8 @@ pub impl Add for Bytes with add(self : Bytes, other : Bytes) -> Bytes {
   let len_self = self.length()
   let len_other = other.length()
   let rv : FixedArray[Byte] = FixedArray::make(len_self + len_other, 0)
-  for i in 0..<len_self {
-    rv[i] = self[i]
-  }
-  for i in 0..<len_other {
-    rv[len_self + i] = other[i]
-  }
+  rv.blit_from_bytes(0, self, 0, len_self)
+  rv.blit_from_bytes(len_self, other, 0, len_other)
   unsafe_to_bytes(rv)
 }
 

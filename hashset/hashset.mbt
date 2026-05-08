@@ -681,9 +681,7 @@ pub fn[K] HashSet::copy(self : HashSet[K]) -> HashSet[K] {
     capacity_mask: self.capacity_mask,
     grow_at: self.grow_at,
   }
-  for i in 0..<self.capacity {
-    other.entries[i] = self.entries[i]
-  }
+  self.entries.blit_to(other.entries, len=self.capacity)
   other
 }
 
