@@ -23,11 +23,10 @@ fn positional_args(args : Array[Arg]) -> Array[Arg] {
 fn next_positional(positionals : Array[Arg], collected : Array[String]) -> Arg? {
   let target = collected.length()
   let total = target + 1
-  for idx in 0..<positionals.length(); cursor = 0 {
+  for idx, arg in positionals; cursor = 0 {
     if cursor >= total {
       break None
     }
-    let arg = positionals[idx]
     let remaining = total - cursor
     let take = if arg.multiple {
       let (min, max) = arg_min_max(arg)

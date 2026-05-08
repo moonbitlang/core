@@ -642,8 +642,8 @@ pub fn[A, B] FixedArray::fold(
   init~ : B,
   f : (B, A) -> B raise?,
 ) -> B raise? {
-  for i = 0, acc = init; i < self.length(); {
-    continue i + 1, f(acc, self[i])
+  for x in self; acc = init {
+    continue f(acc, x)
   } nobreak {
     acc
   }
@@ -712,8 +712,8 @@ pub fn[A, B] FixedArray::foldi(
   init~ : B,
   f : (Int, B, A) -> B raise?,
 ) -> B raise? {
-  for i = 0, acc = init; i < self.length(); {
-    continue i + 1, f(i, acc, self[i])
+  for i, x in self; acc = init {
+    continue f(i, acc, x)
   } nobreak {
     acc
   }
@@ -1059,8 +1059,8 @@ test "search" {
 /// }
 /// ```
 pub fn[T : Eq] FixedArray::contains(self : FixedArray[T], value : T) -> Bool {
-  for i in 0..<self.length() {
-    if self[i] == value {
+  for x in self {
+    if x == value {
       return true
     }
   }
@@ -1206,8 +1206,8 @@ pub impl[T : Eq] Eq for FixedArray[T] with equal(
   if self.length() != that.length() {
     return false
   }
-  for i in 0..<self.length() {
-    if self[i] != that[i] {
+  for i, x in self {
+    if x != that[i] {
       return false
     }
   }

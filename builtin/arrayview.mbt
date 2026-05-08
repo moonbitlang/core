@@ -954,8 +954,8 @@ pub fn[T : Eq] ArrayView::contains(self : ArrayView[T], value : T) -> Bool {
 /// }
 /// ```
 pub fn[T : Eq] ArrayView::search(self : ArrayView[T], value : T) -> Int? {
-  for i in 0..<self.length() {
-    if self.unsafe_get(i) == value {
+  for i, x in self {
+    if x == value {
       break Some(i)
     }
   } nobreak {
@@ -1183,8 +1183,8 @@ pub fn[A, B] ArrayView::fold(
   init~ : B,
   f : (B, A) -> B raise?,
 ) -> B raise? {
-  for i = 0, acc = init; i < self.length(); {
-    continue i + 1, f(acc, self[i])
+  for x in self; acc = init {
+    continue f(acc, x)
   } nobreak {
     acc
   }
@@ -1229,8 +1229,8 @@ pub fn[A, B] ArrayView::foldi(
   init~ : B,
   f : (Int, B, A) -> B raise?,
 ) -> B raise? {
-  for i = 0, acc = init; i < self.length(); {
-    continue i + 1, f(i, acc, self[i])
+  for i, x in self; acc = init {
+    continue f(i, acc, x)
   } nobreak {
     acc
   }
@@ -1279,8 +1279,8 @@ pub fn[T, U] ArrayView::map(
   f : (T) -> U raise?,
 ) -> Array[U] raise? {
   let arr = Array::make_uninit(self.length())
-  for i in 0..<self.length() {
-    arr.unsafe_set(i, f(self.unsafe_get(i)))
+  for i, x in self {
+    arr.unsafe_set(i, f(x))
   }
   arr
 }
@@ -1302,8 +1302,8 @@ pub fn[T, U] ArrayView::mapi(
   f : (Int, T) -> U raise?,
 ) -> Array[U] raise? {
   let arr = Array::make_uninit(self.length())
-  for i in 0..<self.length() {
-    arr.unsafe_set(i, f(i, self.unsafe_get(i)))
+  for i, x in self {
+    arr.unsafe_set(i, f(i, x))
   }
   arr
 }
@@ -1513,8 +1513,8 @@ pub impl[T : Eq] Eq for ArrayView[T] with equal(self, other) -> Bool {
   if self.length() != other.length() {
     return false
   }
-  for i in 0..<self.length() {
-    if !(self[i] == other[i]) {
+  for i, x in self {
+    if !(x == other[i]) {
       return false
     }
   } nobreak {
@@ -1528,8 +1528,8 @@ pub impl[T : Compare] Compare for ArrayView[T] with compare(self, other) -> Int 
   let len_other = other.length()
   let cmp = len_self.compare(len_other)
   guard cmp == 0 else { return cmp }
-  for i in 0..<len_self {
-    let cmp = self[i].compare(other[i])
+  for i, x in self {
+    let cmp = x.compare(other[i])
     guard cmp == 0 else { break cmp }
   } nobreak {
     0

@@ -650,8 +650,8 @@ pub impl Show for Bytes with output(self, logger) {
 /// ```
 pub impl Eq for BytesView with equal(self, other) -> Bool {
   guard self.length() == other.length() else { return false }
-  for i in 0..<self.length() {
-    guard self.unsafe_get(i) == other.unsafe_get(i) else { return false }
+  for i, byte in self {
+    guard byte == other.unsafe_get(i) else { return false }
   }
   true
 }
@@ -689,8 +689,7 @@ pub impl Compare for BytesView with compare(self, other) -> Int {
   let other_len = other.length()
   let cmp = self_len.compare(other_len)
   guard cmp == 0 else { return cmp }
-  for i in 0..<self_len {
-    let b1 = self.unsafe_get(i)
+  for i, b1 in self {
     let b2 = other.unsafe_get(i)
     let cmp = b1.compare(b2)
     guard cmp == 0 else { return cmp }
