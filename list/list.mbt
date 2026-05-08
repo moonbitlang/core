@@ -217,6 +217,7 @@ pub fn[A] List::each(self : List[A], f : (A) -> Unit raise?) -> Unit raise? {
 ///   assert_eq(arr, ["(0,1)", "(1,2)", "(2,3)", "(3,4)", "(4,5)"])
 /// }
 /// ```
+#locals(f)
 pub fn[A] List::eachi(
   self : List[A],
   f : (Int, A) -> Unit raise?,
@@ -245,6 +246,7 @@ pub fn[A] List::eachi(
 ///   )
 /// }
 /// ```
+#locals(f)
 pub fn[A, B] List::map(self : List[A], f : (A) -> B raise?) -> List[B] raise? {
   match self {
     Empty => Empty
@@ -281,6 +283,7 @@ pub fn[A, B] List::map(self : List[A], f : (A) -> B raise?) -> List[B] raise? {
 ///   assert_eq(result, @list.from_array([10, 21, 32]))
 /// }
 /// ```
+#locals(f)
 pub fn[A, B] List::mapi(
   self : List[A],
   f : (Int, A) -> B raise?,
@@ -319,6 +322,7 @@ pub fn[A, B] List::mapi(
 ///   )
 /// }
 /// ```
+#locals(f)
 pub fn[A, B] List::rev_map(
   self : List[A],
   f : (A) -> B raise?,
@@ -364,6 +368,7 @@ pub fn[A] List::to_array(self : List[A]) -> Array[A] {
 ///   )
 /// }
 /// ```
+#locals(f)
 pub fn[A] List::filter(
   self : List[A],
   f : (A) -> Bool raise?,
@@ -413,6 +418,7 @@ pub fn[A] List::filter(
 ///   assert_eq(ls2.all(x => x % 2 == 0), false)
 /// }
 /// ```
+#locals(f)
 pub fn[A] List::all(self : List[A], f : (A) -> Bool raise?) -> Bool raise? {
   for x = self {
     match x {
@@ -438,6 +444,7 @@ pub fn[A] List::all(self : List[A], f : (A) -> Bool raise?) -> Bool raise? {
 ///   assert_eq(ls2.any(x => x % 2 == 0), false)
 /// }
 /// ```
+#locals(f)
 pub fn[A] List::any(self : List[A], f : (A) -> Bool raise?) -> Bool raise? {
   for x = self {
     match x {
@@ -639,6 +646,7 @@ pub fn[A] List::rev(self : List[A]) -> List[A] {
 ///   inspect(r, content="15")
 /// }
 /// ```
+#locals(f)
 pub fn[A, B] List::fold(
   self : List[A],
   init~ : B,
@@ -667,6 +675,7 @@ pub fn[A, B] List::fold(
 ///   inspect(result, content="80") // 0*10 + 1*20 + 2*30 = 80
 /// }
 /// ```
+#locals(f)
 pub fn[A, B] List::foldi(
   self : List[A],
   init~ : B,
@@ -729,6 +738,7 @@ pub fn[A, B] List::zip(self : List[A], other : List[B]) -> List[(A, B)] {
 ///   assert_eq(r, @list.from_array([1, 2, 2, 4, 3, 6]))
 /// }
 /// ```
+#locals(f)
 pub fn[A, B] List::flat_map(
   self : List[A],
   f : (A) -> List[B] raise?,
@@ -793,6 +803,7 @@ pub fn[A, B] List::flat_map(
 ///   assert_eq(r, @list.from_array([4, 6, 3]))
 /// }
 /// ```
+#locals(f)
 pub fn[A, B] List::filter_map(
   self : List[A],
   f : (A) -> B? raise?,
@@ -1262,6 +1273,7 @@ pub fn[A : Eq] List::contains(self : List[A], value : A) -> Bool {
 /// }
 /// ```
 #as_free_fn
+#locals(f)
 pub fn[A, S] List::unfold(
   f : (S) -> (A, S)? raise?,
   init~ : S,
@@ -1304,6 +1316,7 @@ pub fn[A, S] List::unfold(
 /// }
 /// ```
 #as_free_fn
+#locals(f)
 pub fn[A, S] List::rev_unfold(
   f : (S) -> (A, S)? raise?,
   init~ : S,
@@ -1393,6 +1406,7 @@ pub fn[A] List::drop(self : List[A], n : Int) -> List[A] {
 ///   assert_eq(r, @list.from_array([1, 2]))
 /// }
 /// ```
+#locals(p)
 pub fn[A] List::take_while(
   self : List[A],
   p : (A) -> Bool raise?,
@@ -1432,6 +1446,7 @@ pub fn[A] List::take_while(
 ///   assert_eq(r, @list.from_array([3, 4]))
 /// }
 /// ```
+#locals(p)
 pub fn[A] List::drop_while(
   self : List[A],
   p : (A) -> Bool raise?,
@@ -1461,6 +1476,7 @@ pub fn[A] List::drop_while(
 ///   assert_eq(r, @list.from_array([0, 1, 3, 6, 10, 15]))
 /// }
 /// ```
+#locals(f)
 pub fn[A, E] List::scan_left(
   self : List[A],
   f : (E, A) -> E raise?,
@@ -1537,6 +1553,7 @@ pub fn[A : Eq, B] List::lookup(self : List[(A, B)], v : A) -> B? {
 ///   )
 /// }
 /// ```
+#locals(f)
 pub fn[A] List::find(self : List[A], f : (A) -> Bool raise?) -> A? raise? {
   for cur = self {
     match cur {
@@ -1574,6 +1591,7 @@ pub fn[A] List::find(self : List[A], f : (A) -> Bool raise?) -> A? raise? {
 /// }
 /// ```
 ///
+#locals(f)
 pub fn[A] List::find_index(
   self : Self[A],
   f : (A) -> Bool raise?,
@@ -1612,6 +1630,7 @@ pub fn[A] List::find_index(
 ///   )
 /// }
 /// ```
+#locals(f)
 pub fn[A] List::findi(self : List[A], f : (A, Int) -> Bool raise?) -> A? raise? {
   for list = self, index = 0 {
     match list {

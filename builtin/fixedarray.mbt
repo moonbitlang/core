@@ -256,6 +256,7 @@ pub fn[T] FixedArray::binary_search_by(
 ///   assert_eq(arr, [1, 2, 3, 4, 5])
 /// }
 /// ```
+#locals(f)
 pub fn[T] FixedArray::each(
   self : FixedArray[T],
   f : (T) -> Unit raise?,
@@ -310,6 +311,7 @@ test "each" {
 ///   assert_eq(arr, [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5)])
 /// }
 /// ```
+#locals(f)
 pub fn[T] FixedArray::eachi(
   self : FixedArray[T],
   f : (Int, T) -> Unit raise?,
@@ -364,6 +366,7 @@ test "eachi" {
 ///   assert_eq(arr, [5, 4, 3, 2, 1])
 /// }
 /// ```
+#locals(f)
 pub fn[T] FixedArray::rev_each(
   self : FixedArray[T],
   f : (T) -> Unit raise?,
@@ -418,6 +421,7 @@ test "rev_each" {
 ///   assert_eq(arr, [(0, 5), (1, 4), (2, 3), (3, 2), (4, 1)])
 /// }
 /// ```
+#locals(f)
 pub fn[T] FixedArray::rev_eachi(
   self : FixedArray[T],
   f : (Int, T) -> Unit raise?,
@@ -476,6 +480,7 @@ test "rev_eachi" {
 ///   assert_eq(doubled, [2, 4, 6, 8, 10])
 /// }
 /// ```
+#locals(f)
 pub fn[T, U] FixedArray::map(
   self : FixedArray[T],
   f : (T) -> U raise?,
@@ -513,6 +518,7 @@ test "map" {
 ///   assert_eq(added, [3, 5, 7])
 /// }
 /// ```
+#locals(f)
 pub fn[T, U] FixedArray::mapi(
   self : FixedArray[T],
   f : (Int, T) -> U raise?,
@@ -630,6 +636,7 @@ test "from_array" {
 ///   inspect(sum, content="15")
 /// }
 /// ```
+#locals(f)
 pub fn[A, B] FixedArray::fold(
   self : FixedArray[A],
   init~ : B,
@@ -664,6 +671,7 @@ test "fold" {
 ///   inspect(sum, content="15")
 /// }
 /// ```
+#locals(f)
 pub fn[A, B] FixedArray::rev_fold(
   self : FixedArray[A],
   init~ : B,
@@ -698,6 +706,7 @@ test "rev_fold" {
 ///   inspect(sum, content="10")
 /// }
 /// ```
+#locals(f)
 pub fn[A, B] FixedArray::foldi(
   self : FixedArray[A],
   init~ : B,
@@ -735,6 +744,7 @@ test "fold_lefti" {
 ///   inspect(sum, content="10")
 /// }
 /// ```
+#locals(f)
 pub fn[A, B] FixedArray::rev_foldi(
   self : FixedArray[A],
   init~ : B,

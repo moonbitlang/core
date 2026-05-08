@@ -46,6 +46,7 @@ pub fn FixedArray::unsafe_reinterpret_as_bytes(
 ///   assert_eq(bytes, b"ABC")
 /// }
 /// ```
+#locals(value)
 pub fn Bytes::makei(length : Int, value : (Int) -> Byte raise?) -> Bytes raise? {
   if length <= 0 {
     return []

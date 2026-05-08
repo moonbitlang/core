@@ -601,6 +601,7 @@ pub fn[T] ArrayView::chunks(
 ///   inspect(v.chunk_by((a, b) => a == b), content="[[1, 1], [2, 2, 2], [3], [1]]")
 /// }
 /// ```
+#locals(pred)
 pub fn[T] ArrayView::chunk_by(
   self : ArrayView[T],
   pred : (T, T) -> Bool raise?,
@@ -774,6 +775,7 @@ pub fn[X] ArrayView::iter2(self : ArrayView[X]) -> Iter2[Int, X] {
 ///   inspect(sum, content="6")
 /// }
 /// ```
+#locals(f)
 pub fn[T] ArrayView::each(
   self : ArrayView[T],
   f : (T) -> Unit raise?,
@@ -796,6 +798,7 @@ pub fn[T] ArrayView::each(
 ///   inspect(sum, content="15")
 /// }
 /// ```
+#locals(f)
 pub fn[T] ArrayView::eachi(
   self : ArrayView[T],
   f : (Int, T) -> Unit raise?,
@@ -819,6 +822,7 @@ pub fn[T] ArrayView::eachi(
 ///   inspect(out, content="[4, 3, 2]")
 /// }
 /// ```
+#locals(f)
 pub fn[T] ArrayView::rev_each(
   self : ArrayView[T],
   f : (T) -> Unit raise?,
@@ -844,6 +848,7 @@ pub fn[T] ArrayView::rev_each(
 ///   inspect(out, content="[(0, 30), (1, 20), (2, 10)]")
 /// }
 /// ```
+#locals(f)
 pub fn[T] ArrayView::rev_eachi(
   self : ArrayView[T],
   f : (Int, T) -> Unit raise?,
@@ -866,6 +871,7 @@ pub fn[T] ArrayView::rev_eachi(
 ///   assert_true(v[1:4].all(elem => elem % 2 == 0))
 /// }
 /// ```
+#locals(f)
 #alias(every)
 pub fn[T] ArrayView::all(
   self : ArrayView[T],
@@ -891,6 +897,7 @@ pub fn[T] ArrayView::all(
 ///   assert_false(v.any(ele => ele < 1))
 /// }
 /// ```
+#locals(f)
 #alias(exists)
 pub fn[T] ArrayView::any(
   self : ArrayView[T],
@@ -969,6 +976,7 @@ pub fn[T : Eq] ArrayView::search(self : ArrayView[T], value : T) -> Int? {
 ///   debug_inspect(view.search_by(x => x > 99), content="None")
 /// }
 /// ```
+#locals(f)
 pub fn[T] ArrayView::search_by(
   self : ArrayView[T],
   f : (T) -> Bool raise?,
@@ -1169,6 +1177,7 @@ pub fn[T] ArrayView::binary_search_by(
 ///   inspect(sum, content="15")
 /// }
 /// ```
+#locals(f)
 pub fn[A, B] ArrayView::fold(
   self : ArrayView[A],
   init~ : B,
@@ -1191,6 +1200,7 @@ pub fn[A, B] ArrayView::fold(
 ///   inspect(sum, content="15")
 /// }
 /// ```
+#locals(f)
 pub fn[A, B] ArrayView::rev_fold(
   self : ArrayView[A],
   init~ : B,
@@ -1213,6 +1223,7 @@ pub fn[A, B] ArrayView::rev_fold(
 ///   inspect(sum, content="10")
 /// }
 /// ```
+#locals(f)
 pub fn[A, B] ArrayView::foldi(
   self : ArrayView[A],
   init~ : B,
@@ -1237,6 +1248,7 @@ pub fn[A, B] ArrayView::foldi(
 ///   inspect(sum, content="10")
 /// }
 /// ```
+#locals(f)
 pub fn[A, B] ArrayView::rev_foldi(
   self : ArrayView[A],
   init~ : B,
@@ -1261,14 +1273,16 @@ pub fn[A, B] ArrayView::rev_foldi(
 ///   assert_eq(v2, [5, 6])
 /// }
 /// ```
+#locals(f)
 pub fn[T, U] ArrayView::map(
   self : ArrayView[T],
   f : (T) -> U raise?,
 ) -> Array[U] raise? {
-  if self.is_empty() {
-    return []
+  let arr = Array::make_uninit(self.length())
+  for i in 0..<self.length() {
+    arr.unsafe_set(i, f(self.unsafe_get(i)))
   }
-  Array::makei(self.length(), i => f(self[i]))
+  arr
 }
 
 ///|
@@ -1282,14 +1296,16 @@ pub fn[T, U] ArrayView::map(
 ///   assert_eq(v2, [4, 6])
 /// }
 /// ```
+#locals(f)
 pub fn[T, U] ArrayView::mapi(
   self : ArrayView[T],
   f : (Int, T) -> U raise?,
 ) -> Array[U] raise? {
-  if self.is_empty() {
-    return []
+  let arr = Array::make_uninit(self.length())
+  for i in 0..<self.length() {
+    arr.unsafe_set(i, f(i, self.unsafe_get(i)))
   }
-  Array::makei(self.length(), i => f(i, self[i]))
+  arr
 }
 
 ///|
@@ -1303,6 +1319,7 @@ pub fn[T, U] ArrayView::mapi(
 ///   assert_eq(v, [4, 6])
 /// }
 /// ```
+#locals(f)
 pub fn[T] ArrayView::filter(
   self : ArrayView[T],
   f : (T) -> Bool raise?,
@@ -1331,6 +1348,7 @@ pub fn[T] ArrayView::filter(
 ///   )
 /// }
 /// ```
+#locals(f)
 pub fn[A, B] ArrayView::filter_map(
   self : ArrayView[A],
   f : (A) -> B? raise?,
