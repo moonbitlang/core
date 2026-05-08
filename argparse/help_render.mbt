@@ -50,23 +50,21 @@ fn render_help_with_usage_override(
 
 ///|
 fn usage_tail(cmd : Command) -> String {
-  let mut tail = ""
-  let required_options = required_option_usage(cmd)
-  if required_options != "" {
-    tail = "\{tail} \{required_options}"
+  let parts = [
+    required_option_usage(cmd),
+    if has_options(cmd) {
+      "[options]"
+    } else {
+      ""
+    },
+    positional_usage(cmd),
+    subcommand_usage(cmd),
+  ].filter(p => p != "")
+  if parts.is_empty() {
+    ""
+  } else {
+    " " + parts.join(" ")
   }
-  if has_options(cmd) {
-    tail = "\{tail} [options]"
-  }
-  let pos = positional_usage(cmd)
-  if pos != "" {
-    tail = "\{tail} \{pos}"
-  }
-  let sub = subcommand_usage(cmd)
-  if sub != "" {
-    tail = "\{tail} \{sub}"
-  }
-  tail
 }
 
 ///|
