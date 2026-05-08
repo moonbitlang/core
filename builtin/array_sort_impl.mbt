@@ -75,11 +75,9 @@ fn[T : Compare] MutArrayView::insertion_sort(arr : MutArrayView[T]) -> Unit {
 /// `buf` and `arr[:mid]` to `arr[:]`
 fn[T : Compare] merge(arr : MutArrayView[T], mid : Int) -> Unit {
   let buf_len = arr.length() - mid
-  let buf : FixedArray[T] = FixedArray::make(buf_len, arr[mid])
-  for i, x in arr[mid:] {
-    buf[i] = x
-  }
-  let buf : MutArrayView[T] = buf.mut_view()
+  let buf : UninitializedArray[T] = UninitializedArray::make(buf_len)
+  UninitializedArray::unsafe_blit(buf, 0, arr.buf(), arr.start() + mid, buf_len)
+  let buf : MutArrayView[T] = MutArrayView::make(buf, 0, buf_len)
   let buf_remaining = for p1 = mid - 1, p2 = buf_len - 1, p = mid + buf_len - 1; p1 >=
                          0 &&
                          p2 >= 0; {
