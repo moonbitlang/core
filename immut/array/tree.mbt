@@ -328,20 +328,20 @@ fn[A] Tree::eachi(
   match self {
     Empty => ()
     Leaf(l) =>
-      for i in 0..<l.length() {
-        f(start + i, l[i])
+      for i, x in l {
+        f(start + i, x)
       }
     Node(ns, None) => {
       let child_shift = shift - num_bits
-      for i in 0..<ns.length(); start = start {
-        ns[i].eachi(f, child_shift, start)
+      for child in ns; start = start {
+        child.eachi(f, child_shift, start)
         continue start + (1 << shift)
       }
     }
     Node(ns, Some(sizes)) => {
       let child_shift = shift - num_bits
-      for i in 0..<ns.length(); start = start {
-        ns[i].eachi(f, child_shift, start)
+      for i, child in ns; start = start {
+        child.eachi(f, child_shift, start)
         continue start + sizes[i]
       }
     }

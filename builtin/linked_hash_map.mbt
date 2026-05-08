@@ -769,8 +769,7 @@ pub fn[K : Hash + Eq, V] Map::of(arr : FixedArray[(K, V)]) -> Map[K, V] {
   let length = arr.length()
   let m = new_map(capacity_for_length(length))
   // arr.iter((e) => { m.set(e.0, e.1) })
-  for i in 0..<length {
-    let e = arr[i]
+  for e in arr {
     m.set(e.0, e.1)
   }
   m

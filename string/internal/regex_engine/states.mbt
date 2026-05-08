@@ -19,8 +19,8 @@ fn Regex::get_state(self : Regex, state_id : StateId) -> @automata.State {
 
 ///|
 fn Regex::stablize_start_state(self : Regex, prev_cat : Category) -> StateId {
-  for i in 0..<self.start_states.length() {
-    let (cat, state_id) = self.start_states[i]
+  for start_state in self.start_states {
+    let (cat, state_id) = start_state
     if cat == prev_cat {
       return state_id
     }

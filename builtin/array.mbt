@@ -1325,8 +1325,8 @@ pub fn[A, B] Array::foldi(
   init~ : B,
   f : (Int, B, A) -> B raise?,
 ) -> B raise? {
-  for i = 0, acc = init; i < self.length(); {
-    continue i + 1, f(i, acc, self[i])
+  for i, x in self; acc = init {
+    continue f(i, acc, x)
   } nobreak {
     acc
   }

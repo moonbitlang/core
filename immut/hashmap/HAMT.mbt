@@ -338,8 +338,8 @@ pub fn[K, V] HashMap::length(self : HashMap[K, V]) -> Int {
       Leaf(_, _, bucket) => 1 + bucket.length()
       Flat(_) => 1
       Branch(children) =>
-        for i = 0, total_size = 0; i < children.data.length(); {
-          continue i + 1, total_size + node_size(children.data[i])
+        for child in children.data; total_size = 0 {
+          continue total_size + node_size(child)
         } nobreak {
           total_size
         }

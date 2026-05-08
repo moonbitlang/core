@@ -47,8 +47,8 @@ pub fn MatchResult::group(self : MatchResult, index : Int) -> (Int, Int)? {
 
 ///|
 fn Regex::find_start_state(self : Regex, cat : Category) -> StateId {
-  for i in 0..<self.start_states.length() {
-    let (cat2, state_id) = self.start_states[i]
+  for start_state in self.start_states {
+    let (cat2, state_id) = start_state
     if cat2 == cat {
       return state_id
     }

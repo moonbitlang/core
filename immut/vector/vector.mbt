@@ -518,8 +518,8 @@ pub fn[A] Vector::eachi(
 ) -> Unit raise? {
   self.tree.eachi(f, self.shift, 0)
   let tail_offset = self.tail_offset()
-  for i in 0..<self.tail.length() {
-    f(tail_offset + i, self.tail[i])
+  for i, x in self.tail {
+    f(tail_offset + i, x)
   }
 }
 
@@ -757,8 +757,8 @@ fn[A] from_leaves(leaves : ArrayView[FixedArray[A]], cap : Int) -> Tree[A] {
     Leaf(leaves[0])
   } else if leaves.length() <= branching_factor {
     let arr = FixedArray::make(leaves.length(), Empty)
-    for i in 0..<leaves.length() {
-      arr[i] = Leaf(leaves[i])
+    for i, leaf in leaves {
+      arr[i] = Leaf(leaf)
     }
     Node(arr, None)
   } else {
