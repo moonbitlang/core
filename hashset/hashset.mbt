@@ -461,6 +461,7 @@ pub impl[K : Hash + Eq] Sub for HashSet[K] with sub(self, other) {
 
 ///|
 /// Removes all elements for which the predicate returns `false`.
+#locals(f)
 pub fn[K] HashSet::retain(self : HashSet[K], f : (K) -> Bool) -> Unit {
   let size = self.size
   let mut j = 0

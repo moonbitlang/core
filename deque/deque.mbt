@@ -891,6 +891,7 @@ pub impl[A : Eq] Eq for Deque[A] with equal(self, other) {
 ///   inspect(sum, content="15")
 /// }
 /// ```
+#locals(f)
 pub fn[A] Deque::each(self : Deque[A], f : (A) -> Unit) -> Unit {
   for v in self {
     f(v)
@@ -909,6 +910,7 @@ pub fn[A] Deque::each(self : Deque[A], f : (A) -> Unit) -> Unit {
 ///   inspect(idx_sum, content="10")
 /// }
 /// ```
+#locals(f)
 pub fn[A] Deque::eachi(self : Deque[A], f : (Int, A) -> Unit) -> Unit {
   for i, v in self {
     f(i, v)
@@ -927,6 +929,7 @@ pub fn[A] Deque::eachi(self : Deque[A], f : (Int, A) -> Unit) -> Unit {
 ///   inspect(sum, content="15")
 /// }
 /// ```
+#locals(f)
 pub fn[A] Deque::rev_each(self : Deque[A], f : (A) -> Unit) -> Unit {
   for v in self.rev_iter() {
     f(v)
@@ -945,6 +948,7 @@ pub fn[A] Deque::rev_each(self : Deque[A], f : (A) -> Unit) -> Unit {
 ///   inspect(idx_sum, content="10")
 /// }
 /// ```
+#locals(f)
 pub fn[A] Deque::rev_eachi(self : Deque[A], f : (Int, A) -> Unit) -> Unit {
   for i, v in self.rev_iter2() {
     f(i, v)
@@ -995,6 +999,7 @@ pub fn[A] Deque::clear(self : Deque[A]) -> Unit {
 ///   @test.assert_eq(dv2, @deque.from_array([4, 5, 6]))
 /// }
 /// ```
+#locals(f)
 pub fn[A, U] Deque::map(self : Deque[A], f : (A) -> U) -> Deque[U] {
   let cap = self.buf.length()
   if self.len == 0 {
@@ -1020,6 +1025,7 @@ pub fn[A, U] Deque::map(self : Deque[A], f : (A) -> U) -> Deque[U] {
 ///   @test.assert_eq(dv2, @deque.from_array([3, 5, 7]))
 /// }
 /// ```
+#locals(f)
 pub fn[A, U] Deque::mapi(self : Deque[A], f : (Int, A) -> U) -> Deque[U] {
   let cap = self.buf.length()
   if self.len == 0 {
@@ -1327,6 +1333,7 @@ test "truncate zero" {
 ///   inspect(dq, content="@deque.from_array([4, 8])")
 /// }
 /// ```
+#locals(f)
 #alias(filter_map_inplace, deprecated)
 pub fn[A] Deque::retain_map(self : Deque[A], f : (A) -> A?) -> Unit {
   guard !self.is_empty() else { return }
@@ -1385,6 +1392,7 @@ pub fn[A] Deque::retain_map(self : Deque[A], f : (A) -> A?) -> Unit {
 ///   inspect(dq, content="@deque.from_array([2, 4])")
 /// }
 /// ```
+#locals(f)
 pub fn[A] Deque::retain(self : Deque[A], f : (A) -> Bool) -> Unit {
   guard !self.is_empty() else { return }
   let { head, buf, .. } = self
@@ -2309,6 +2317,7 @@ pub fn[A] Deque::rev(self : Deque[A]) -> Deque[A] {
 ///
 /// # Note
 /// This function handles the circular buffer nature of the deque internally.
+#locals(rand)
 pub fn[A] Deque::shuffle_in_place(
   self : Deque[A],
   rand~ : (Int) -> Int,

@@ -129,6 +129,7 @@ test "find" {
 ///|
 /// Returns the offset of the first character that satisfies the given predicate.
 /// If no such character is found, it returns None.
+#locals(pred)
 pub fn StringView::find_by(self : StringView, pred : (Char) -> Bool) -> Int? {
   for i, c in self {
     if pred(c) {
@@ -1765,6 +1766,7 @@ test "View::to_upper" {
 
 ///|
 /// Folds the characters of the string into a single value.
+#locals(f)
 pub fn[A] StringView::fold(
   self : StringView,
   init~ : A,
@@ -1815,6 +1817,7 @@ test "fold with raise" {
 
 ///|
 /// Function `rev_fold`.
+#locals(f)
 pub fn[A] StringView::rev_fold(
   self : StringView,
   init~ : A,
