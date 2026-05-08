@@ -67,6 +67,35 @@ test "to_octets pads larger length" {
 }
 
 ///|
+test "from_json invalid decimal string returns decode error" {
+  let empty : Result[@bigint.BigInt, _] = try? @json.from_json(Json::string(""))
+  inspect(
+    empty,
+    content=(
+      #|Err(JsonDecodeError((, "BigInt::from_json: parsing failure invalid syntax")))
+    ),
+  )
+  let sign_only : Result[@bigint.BigInt, _] = try? @json.from_json(
+    Json::string("-"),
+  )
+  inspect(
+    sign_only,
+    content=(
+      #|Err(JsonDecodeError((, "BigInt::from_json: parsing failure invalid syntax")))
+    ),
+  )
+  let invalid_digit : Result[@bigint.BigInt, _] = try? @json.from_json(
+    Json::string("12a"),
+  )
+  inspect(
+    invalid_digit,
+    content=(
+      #|Err(JsonDecodeError((, "BigInt::from_json: parsing failure invalid syntax")))
+    ),
+  )
+}
+
+///|
 test "add" {
   let a = @bigint.BigInt::from_int64(123456789012345678L)
   let b = @bigint.BigInt::from_int64(987654321098765432L)

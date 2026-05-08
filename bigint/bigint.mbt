@@ -52,8 +52,36 @@ pub impl @json.FromJson for BigInt with from_json(json, path) {
       (path, "BigInt::from_json: expected number in string representation"),
     )
   }
-  // TODO: Capture parse failure
+  BigInt::validate_json_decimal(s, path)
   BigInt::from_string(s)
+}
+
+///|
+fn BigInt::validate_json_decimal(
+  s : String,
+  path : @json.JsonPath,
+) -> Unit raise @json.JsonDecodeError {
+  let len = s.length()
+  let parse_error = @json.JsonDecodeError(
+    (path, "BigInt::from_json: parsing failure invalid syntax"),
+  )
+  if len == 0 {
+    raise parse_error
+  }
+  let start = if s.unsafe_get(0) == '-' {
+    if len == 1 {
+      raise parse_error
+    }
+    1
+  } else {
+    0
+  }
+  for i in start..<len {
+    let digit = s.unsafe_get(i).to_int() - '0'.to_int()
+    if digit < 0 || digit > 9 {
+      raise parse_error
+    }
+  }
 }
 
 ///|
