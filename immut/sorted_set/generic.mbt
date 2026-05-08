@@ -50,7 +50,7 @@ pub fn[A] SortedSet::rev_iter(self : SortedSet[A]) -> Iter[A] {
         }
       }
     },
-    length=self.length(),
+    size_hint=self.length(),
   )
 }
 
@@ -80,7 +80,7 @@ pub fn[A] SortedSet::iter(self : SortedSet[A]) -> Iter[A] {
         }
       }
     },
-    length=self.length(),
+    size_hint=self.length(),
   )
 }
 

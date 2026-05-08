@@ -445,7 +445,7 @@ pub fn[V] SortedSet::iter(self : SortedSet[V]) -> Iter[V] {
         }
       }
     },
-    length=self.size,
+    size_hint=self.size,
   )
 }
 

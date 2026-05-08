@@ -294,7 +294,7 @@ pub impl[A] Add for T[A] with add(self, other) {
 #alias(iterator, deprecated="Use the corresponding function in `immut/vector` instead")
 pub fn[A] T::iter(self : T[A]) -> Iter[A] {
   let iter = self.tree.iter()
-  Iter::new(() => iter.next(), length=self.size)
+  Iter::new(() => iter.next(), size_hint=self.size)
 }
 
 ///|

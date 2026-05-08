@@ -551,7 +551,7 @@ pub fn[T] ArrayView::suffixes(
         None
       }
     },
-    length=if include_empty { len + 1 } else { len },
+    size_hint=if include_empty { len + 1 } else { len },
   )
 }
 
@@ -689,7 +689,7 @@ pub fn[X] ArrayView::iter(self : ArrayView[X]) -> Iter[X] {
       i += 1
       Some(elem)
     },
-    length=len,
+    size_hint=len,
   )
 }
 
@@ -716,7 +716,7 @@ pub fn[X] ArrayView::rev_iter(self : ArrayView[X]) -> Iter[X] {
       i -= 1
       Some(self.unsafe_get(i))
     },
-    length=len,
+    size_hint=len,
   )
 }
 
@@ -752,7 +752,7 @@ pub fn[X] ArrayView::iter2(self : ArrayView[X]) -> Iter2[Int, X] {
       i += 1
       result
     },
-    length=len,
+    size_hint=len,
   )
 }
 

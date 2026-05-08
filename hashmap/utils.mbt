@@ -87,7 +87,7 @@ pub fn[K, V] HashMap::iter(self : HashMap[K, V]) -> Iter[(K, V)] {
         None
       }
     },
-    length=self.size,
+    size_hint=self.size,
   )
 }
 
@@ -399,7 +399,7 @@ pub fn[K, V] HashMap::keys(self : HashMap[K, V]) -> Iter[K] {
         None
       }
     },
-    length=self.size,
+    size_hint=self.size,
   )
   iter.iter()
 }
@@ -440,7 +440,7 @@ pub fn[K, V] HashMap::values(self : HashMap[K, V]) -> Iter[V] {
         None
       }
     },
-    length=self.size,
+    size_hint=self.size,
   )
   iter.iter()
 }

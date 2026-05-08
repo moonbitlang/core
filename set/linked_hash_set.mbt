@@ -486,7 +486,7 @@ pub fn[K] Set::iter(self : Set[K]) -> Iter[K] {
       remaining -= 1
       Some(key)
     },
-    length=len,
+    size_hint=len,
   )
 }
 

@@ -685,7 +685,7 @@ pub fn[K, V] Map::iter(self : Map[K, V]) -> Iter[(K, V)] {
       remaining -= 1
       Some((key, value))
     },
-    length=len,
+    size_hint=len,
   )
 }
 
@@ -709,7 +709,7 @@ pub fn[K, V] Map::keys(self : Map[K, V]) -> Iter[K] {
       remaining -= 1
       Some(key)
     },
-    length=len,
+    size_hint=len,
   )
 }
 
@@ -728,7 +728,7 @@ pub fn[K, V] Map::values(self : Map[K, V]) -> Iter[V] {
       remaining -= 1
       Some(value)
     },
-    length=len,
+    size_hint=len,
   )
 }
 

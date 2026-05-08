@@ -262,76 +262,101 @@ test "map" {
 }
 
 ///|
-test "length" {
+test "size_hint" {
   let iter = [1, 2, 3].iter()
-  debug_inspect(iter.length(), content="Some(3)")
+  debug_inspect(iter.size_hint(), content="Some(3)")
   debug_inspect(iter.next(), content="Some(1)")
-  debug_inspect(iter.length(), content="Some(2)")
+  debug_inspect(iter.size_hint(), content="Some(2)")
   debug_inspect(iter.collect(), content="[2, 3]")
-  debug_inspect(iter.length(), content="Some(0)")
-  debug_inspect([1, 2, 3].iter().map(x => x + 1).length(), content="Some(3)")
+  debug_inspect(iter.size_hint(), content="Some(0)")
+  debug_inspect([1, 2, 3].iter().map(x => x + 1).size_hint(), content="Some(3)")
   debug_inspect(
-    [1, 2, 3].iter().mapi((i, x) => i + x).length(),
+    [1, 2, 3].iter().mapi((i, x) => i + x).size_hint(),
     content="Some(3)",
   )
-  debug_inspect([1, 2, 3].iter().tap(_ => ()).length(), content="Some(3)")
-  debug_inspect([1, 2, 3].iter().take(2).length(), content="Some(2)")
-  debug_inspect([1, 2, 3].iter().take(5).length(), content="Some(3)")
-  debug_inspect([1, 2, 3].iter().take(0).length(), content="Some(0)")
-  debug_inspect([1, 2, 3].iter().drop(0).length(), content="Some(3)")
-  debug_inspect([1, 2, 3].iter().drop(1).length(), content="Some(2)")
-  debug_inspect([1, 2, 3].iter().drop(5).length(), content="Some(0)")
+  debug_inspect([1, 2, 3].iter().tap(_ => ()).size_hint(), content="Some(3)")
+  debug_inspect([1, 2, 3].iter().take(2).size_hint(), content="Some(2)")
+  debug_inspect([1, 2, 3].iter().take(5).size_hint(), content="Some(3)")
+  debug_inspect([1, 2, 3].iter().take(0).size_hint(), content="Some(0)")
+  debug_inspect([1, 2, 3].iter().drop(0).size_hint(), content="Some(3)")
+  debug_inspect([1, 2, 3].iter().drop(1).size_hint(), content="Some(2)")
+  debug_inspect([1, 2, 3].iter().drop(5).size_hint(), content="Some(0)")
   debug_inspect(
-    [1, 2, 3].iter().concat([4, 5].iter()).length(),
+    [1, 2, 3].iter().concat([4, 5].iter()).size_hint(),
     content="Some(5)",
   )
-  debug_inspect([1, 2].iter().zip([3, 4, 5].iter()).length(), content="Some(2)")
-  debug_inspect([1, 2, 3].iter().zip([4, 5].iter()).length(), content="Some(2)")
+  debug_inspect(
+    [1, 2].iter().zip([3, 4, 5].iter()).size_hint(),
+    content="Some(2)",
+  )
+  debug_inspect(
+    [1, 2, 3].iter().zip([4, 5].iter()).size_hint(),
+    content="Some(2)",
+  )
   let empty_left : Iter[Int] = Iter::empty()
   debug_inspect(
-    empty_left.zip(Iter::new(() => Some(1))).length(),
+    empty_left.zip(Iter::new(() => Some(1))).size_hint(),
     content="Some(0)",
   )
   let empty_right : Iter[Int] = Iter::empty()
   debug_inspect(
-    Iter::new(() => Some(1)).zip(empty_right).length(),
+    Iter::new(() => Some(1)).zip(empty_right).size_hint(),
     content="Some(0)",
   )
   debug_inspect(
-    Iter::new(() => Some(1)).zip([1].iter()).length(),
+    Iter::new(() => Some(1)).zip([1].iter()).size_hint(),
     content="None",
   )
-  debug_inspect([1, 2, 3].iter().intersperse(0).length(), content="Some(5)")
+  debug_inspect([1, 2, 3].iter().intersperse(0).size_hint(), content="Some(5)")
   debug_inspect(
-    Iter::new(() => Some(1)).intersperse(0).length(),
+    Iter::new(() => Some(1)).intersperse(0).size_hint(),
     content="None",
   )
-  debug_inspect([1, 2, 3].iter()[1:3].length(), content="Some(2)")
-  debug_inspect([1, 2, 3].iter()[3:5].length(), content="Some(0)")
+  debug_inspect([1, 2, 3].iter()[1:3].size_hint(), content="Some(2)")
+  debug_inspect([1, 2, 3].iter()[3:5].size_hint(), content="Some(0)")
   debug_inspect(
-    Iter::new(() => Some(1)).view(start=2, end=1).length(),
+    Iter::new(() => Some(1)).view(start=2, end=1).size_hint(),
     content="Some(0)",
   )
   debug_inspect(
-    Iter::new(() => Some(1)).view(start=1, end=3).length(),
+    Iter::new(() => Some(1)).view(start=1, end=3).size_hint(),
     content="None",
   )
-  debug_inspect([1, 2, 3].iter().filter(x => x > 1).length(), content="None")
+  debug_inspect([1, 2, 3].iter().filter(x => x > 1).size_hint(), content="None")
   debug_inspect(
     [1, 2, 3]
     .iter()
     .filter_map(x => if x > 1 { Some(x) } else { None })
-    .length(),
+    .size_hint(),
     content="None",
   )
   debug_inspect(
-    [1, 2, 3].iter().take_while(x => x < 3).length(),
+    [1, 2, 3].iter().take_while(x => x < 3).size_hint(),
     content="None",
   )
   let unknown : Iter[Int] = Iter::new(() => None)
-  let known_empty : Iter[Int] = Iter::new(() => None, length=0)
-  debug_inspect(unknown.length(), content="None")
-  debug_inspect(known_empty.length(), content="Some(0)")
+  let known_empty : Iter[Int] = Iter::new(() => None, size_hint=0)
+  debug_inspect(unknown.size_hint(), content="None")
+  debug_inspect(known_empty.size_hint(), content="Some(0)")
+  let mut i = 0
+  let too_small = Iter::new(
+    fn() {
+      if i < 3 {
+        i += 1
+        Some(i)
+      } else {
+        None
+      }
+    },
+    size_hint=1,
+  )
+  debug_inspect(too_small.collect(), content="[1, 2, 3]")
+  debug_inspect(too_small.size_hint(), content="Some(0)")
+  let too_large : Iter[Int] = Iter::new(() => None, size_hint=3)
+  debug_inspect(too_large.next(), content="None")
+  debug_inspect(too_large.size_hint(), content="Some(0)")
+  let negative_hint : Iter[Int] = Iter::new(() => None, size_hint=-1)
+  debug_inspect(negative_hint.size_hint(), content="Some(0)")
 }
 
 ///|
