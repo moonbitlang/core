@@ -7,6 +7,9 @@ on:
       - "pre-release*"
   pull_request:
 
+env:
+  MOONC_RC_CONVENTION: borrow
+
 jobs:
   version-check:
     runs-on: ubuntu-latest
