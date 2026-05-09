@@ -124,11 +124,6 @@ fn BigInt::from_string_radix(str : String, radix : Int) -> BigInt {
 }
 
 ///|
-pub impl Show for BigInt with output(self, logger) {
-  logger.write_string(self.to_string())
-}
-
-///|
 /// Converts a `BigInt` value to a string representation in the specified radix.
 ///
 /// Parameters:

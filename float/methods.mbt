@@ -13,27 +13,6 @@
 // limitations under the License.
 
 ///|
-/// Converts a floating-point number to its string representation.
-///
-/// Parameters:
-///
-/// * `self` : The floating-point number to be converted.
-/// * `logger` : The logger to write the string representation to.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let f : Float = 3.14
-///   let s = f.to_double().to_string()
-///   inspect(s, content="3.140000104904175")
-/// }
-/// ```
-pub impl Show for Float with output(self, logger) {
-  logger.write_string(self.to_string())
-}
-
-///|
 pub impl Show for Float with to_string(self) {
   self.to_double().to_string()
 }

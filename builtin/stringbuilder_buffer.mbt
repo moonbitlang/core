@@ -151,9 +151,8 @@ pub fn StringBuilder::to_string(self : StringBuilder) -> String {
 }
 
 ///|
-/// TODO: improve perf
-pub impl Show for StringBuilder with output(self, logger) {
-  logger.write_string(self.to_string())
+pub impl Show for StringBuilder with to_string(self) {
+  StringBuilder::to_string(self)
 }
 
 ///|
