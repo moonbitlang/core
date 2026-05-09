@@ -126,6 +126,7 @@ fn[T] Array::buffer(self : Array[T]) -> UninitializedArray[T] {
 }
 
 ///|
+#borrow(self)
 fn[T] Array::resize_buffer(self : Array[T], new_capacity : Int) -> Unit {
   let new_buf = UninitializedArray::make(new_capacity)
   let old_buf = self.buf
@@ -179,8 +180,9 @@ test "Array::resize_buffer" {
 
 ///|
 /// Reallocate the array with a new capacity.
+#borrow(self)
 fn[T] Array::realloc(self : Array[T]) -> Unit {
-  let old_cap = self.length()
+  let old_cap = self.len
   let new_cap = if old_cap == 0 { 8 } else { old_cap * 2 }
   self.resize_buffer(new_cap)
 }
@@ -239,12 +241,14 @@ pub fn[T] Array::shrink_to_fit(self : Array[T]) -> Unit {
 ///   v.push(3)
 /// }
 /// ```
+#borrow(self)
+#owned(value)
 pub fn[T] Array::push(self : Array[T], value : T) -> Unit {
-  if self.length() == self.buffer().0.length() {
+  if self.len == self.buf.0.length() {
     self.realloc()
   }
-  let length = self.length()
-  self.unsafe_set(length, value)
+  let length = self.len
+  self.buf.0.unsafe_set(length, unsafe_maybe_uninit(value))
   self.len = length + 1
 }
 
