@@ -447,6 +447,7 @@ pub fn StringBuilder::new(size_hint? : Int) -> Self
 pub fn StringBuilder::reset(Self) -> Unit
 pub fn StringBuilder::to_string(Self) -> String
 pub fn StringBuilder::write_iter(Self, Iter[Char]) -> Unit
+#alias(write)
 pub fn[T : Show] StringBuilder::write_object(Self, T) -> Unit
 pub fn StringBuilder::write_stringview(Self, StringView) -> Unit
 pub impl Logger for StringBuilder
@@ -1276,6 +1277,7 @@ pub(open) trait Logger {
   write_substring(Self, String, Int, Int) -> Unit = _
   write_view(Self, StringView) -> Unit = _
   write_char(Self, Char) -> Unit = _
+  write(Self, &Show) -> Unit = _
 }
 pub fn[T : Show] &Logger::write_iter(Self, Iter[T], prefix? : String, suffix? : String, sep? : String, trailing? : Bool) -> Unit
 pub fn[Obj : Show] &Logger::write_object(Self, Obj) -> Unit

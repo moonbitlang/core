@@ -103,6 +103,12 @@ pub(open) trait Logger {
   write_view(Self, StringView) -> Unit = _
   /// Writes a character to the logger.
   write_char(Self, Char) -> Unit = _
+  write(Self, &Show) -> Unit = _
+}
+
+///|
+impl Logger with write(self, show) {
+  show.output(self)
 }
 
 ///|
