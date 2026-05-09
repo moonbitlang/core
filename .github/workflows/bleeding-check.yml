@@ -6,6 +6,9 @@ on:
       - main
   pull_request:
 
+env:
+  MOONC_RC_CONVENTION: borrow
+
 jobs:
   nightly-check:
     continue-on-error: true
