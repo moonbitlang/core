@@ -1019,33 +1019,6 @@ pub fn BigInt::to_string(self : BigInt, radix? : Int = 10) -> String {
 }
 
 ///|
-/// Formats and writes a `BigInt` value to a logger by converting it to a string
-/// representation.
-///
-/// Implements the `Show` trait for `BigInt` type, allowing `BigInt` values to be
-/// converted to strings and used in string interpolation.
-///
-/// Parameters:
-///
-/// * `self` : The `BigInt` value to be formatted.
-/// * `logger` : A logger that implements the `Logger` trait, which will receive
-/// the formatted string output.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let n = 12345678901234567890N
-///   inspect(n, content="12345678901234567890")
-///   let neg = -42N
-///   inspect(neg, content="-42")
-/// }
-/// ```
-pub impl Show for BigInt with output(self, logger) {
-  logger.write_string(self.to_string())
-}
-
-///|
 fn digit_from_char(x : Int) -> Int {
   match x {
     '0'..='9' => x - '0'

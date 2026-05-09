@@ -23,11 +23,6 @@ pub impl Show for Unit with to_string(_self) {
 }
 
 ///|
-pub impl Show for Bool with output(self, logger) {
-  logger.write_string(self.to_string())
-}
-
-///|
 pub impl Show for Bool with to_string(self) {
   if self {
     "true"
@@ -37,18 +32,8 @@ pub impl Show for Bool with to_string(self) {
 }
 
 ///|
-pub impl Show for Int with output(self, logger) {
-  logger.write_string(self.to_string())
-}
-
-///|
 pub impl Show for Int with to_string(self) {
   Int::to_string(self)
-}
-
-///|
-pub impl Show for Int64 with output(self, logger) {
-  logger.write_string(self.to_string())
 }
 
 ///|
@@ -57,18 +42,8 @@ pub impl Show for Int64 with to_string(self) {
 }
 
 ///|
-pub impl Show for UInt with output(self, logger) {
-  logger.write_string(self.to_string())
-}
-
-///|
 pub impl Show for UInt with to_string(self) {
   UInt::to_string(self)
-}
-
-///|
-pub impl Show for UInt64 with output(self, logger) {
-  logger.write_string(self.to_string())
 }
 
 ///|
@@ -77,18 +52,8 @@ pub impl Show for UInt64 with to_string(self) {
 }
 
 ///|
-pub impl Show for Byte with output(self, logger) {
-  logger.write_string(self.to_string())
-}
-
-///|
 pub impl Show for Byte with to_string(self) {
   Byte::to_string(self)
-}
-
-///|
-pub impl Show for UInt16 with output(self, logger) {
-  logger.write_string(self.to_string())
 }
 
 ///|

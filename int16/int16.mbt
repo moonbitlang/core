@@ -126,11 +126,6 @@ pub impl ToJson for Int16 with to_json(self : Int16) -> Json {
 }
 
 ///|
-pub impl Show for Int16 with output(self, logger) {
-  logger.write_string(self.to_string())
-}
-
-///|
 pub impl Show for Int16 with to_string(self) {
   Int16::to_string(self)
 }

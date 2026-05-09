@@ -46,6 +46,11 @@ pub impl ToJson for BigInt with to_json(self : BigInt) -> Json {
 }
 
 ///|
+pub impl Show for BigInt with to_string(self) {
+  BigInt::to_string(self)
+}
+
+///|
 pub impl @json.FromJson for BigInt with from_json(json, path) {
   guard json is String(s) else {
     raise @json.JsonDecodeError(
