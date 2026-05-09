@@ -14,6 +14,7 @@
 
 ///|
 /// Writes the string representation of an object to the StringBuilder.
+#alias(write)
 pub fn[T : Show] StringBuilder::write_object(
   self : StringBuilder,
   obj : T,

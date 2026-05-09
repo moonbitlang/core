@@ -107,3 +107,10 @@ test "panic StringBuilder::write_char with invalid code point" {
   let sb = StringBuilder::new()
   sb.write_char((0x110000).unsafe_to_char()) |> ignore
 }
+
+///|
+test "StringBuilder::write" {
+  let sb = StringBuilder::new()
+  sb.write("abc\n")
+  assert_eq(sb.to_string(), "\"abc\\n\"")
+}
