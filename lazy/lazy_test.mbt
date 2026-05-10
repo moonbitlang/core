@@ -13,9 +13,9 @@
 // limitations under the License.
 
 ///|
-test "make defers evaluation" {
+test "Lazy defers evaluation" {
   let mut runs = 0
-  let cell = @lazy.make(() => {
+  let cell = @lazy.Lazy(() => {
     runs += 1
     "hello"
   })
@@ -29,7 +29,7 @@ test "make defers evaluation" {
 ///|
 test "force memoizes the result" {
   let mut runs = 0
-  let cell = @lazy.make(() => {
+  let cell = @lazy.Lazy(() => {
     runs += 1
     runs * 10
   })
@@ -49,7 +49,7 @@ test "pure starts already forced" {
 
 ///|
 test "force returns each captured value" {
-  let cells = [@lazy.make(() => 1), @lazy.make(() => 2), @lazy.make(() => 3)]
+  let cells = [@lazy.Lazy(() => 1), @lazy.Lazy(() => 2), @lazy.Lazy(() => 3)]
   let mut sum = 0
   for c in cells {
     sum += c.force()
@@ -58,33 +58,18 @@ test "force returns each captured value" {
 }
 
 ///|
-test "try_make on success memoizes Ok" {
+test "Result-as-data bridge for fallible thunks" {
   let mut runs = 0
-  let cell : @lazy.Lazy[Result[Int, Error]] = @lazy.try_make(() => {
+  let cell : @lazy.Lazy[Result[Int, Error]] = @lazy.Lazy(() => {
     runs += 1
-    runs
+    try? ({
+      if runs > 1 {
+        fail("should not re-run")
+      }
+      runs
+    })
   })
   assert_true(cell.force() is Ok(1))
   assert_true(cell.force() is Ok(1))
   assert_eq(runs, 1)
-}
-
-///|
-test "try_make on failure memoizes Err" {
-  let mut runs = 0
-  let cell : @lazy.Lazy[Result[Int, Error]] = @lazy.try_make(() => {
-    runs += 1
-    fail("boom")
-  })
-  assert_true(cell.force() is Err(_))
-  assert_true(cell.force() is Err(_))
-  assert_eq(runs, 1)
-}
-
-///|
-test "try_make does not raise at construction" {
-  let cell : @lazy.Lazy[Result[Int, Error]] = @lazy.try_make(() => {
-    fail("never observed unless forced")
-  })
-  assert_false(cell.is_forced())
 }

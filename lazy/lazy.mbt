@@ -31,9 +31,10 @@ priv enum LazyState[A] {
 /// A memoized thunk: the first call to `force` runs the thunk and caches
 /// the result; later calls return the cached value without re-running it.
 ///
-/// Construct one with `make` (deferred) or `pure` (already evaluated). For
-/// fallible work, see `try_make`, which bridges a raising thunk into a
-/// `Lazy[Result[A, Error]]` so the failure becomes data on `force`.
+/// Construct one with `Lazy(thunk)` (deferred) or `pure(value)` (already
+/// evaluated). For fallible work, wrap the result in a `Result` value
+/// inside the thunk — failure as data is the recommended shape; see the
+/// rationale below.
 ///
 /// ## Why force is non-raising / non-async
 ///
@@ -47,11 +48,10 @@ priv enum LazyState[A] {
 ///   Memoizing the failure also forces a choice between "cache the
 ///   exception and re-raise on every retry" (OCaml-style) and "retry on
 ///   each force" (Rust-style); both are defensible but neither is
-///   obviously right. The escape hatch is `try_make`: lift the failure
-///   into a `Result` value at construction, then handle it at the call
-///   site you control. MoonBit's effect-on-signature design makes that
-///   bridge a one-liner — something OCaml/F# `Lazy.t` cannot express
-///   cleanly because their function arrows do not carry the effect.
+///   obviously right. The recommended pattern for a fallible deferred
+///   computation is to make the failure data: `Lazy(() => try? f())`
+///   produces a `Lazy[Result[A, Error]]`, and the consumer handles the
+///   result at the call site it controls.
 ///
 /// - **No async.** Async memoization additionally needs an in-flight
 ///   state to handle two coroutines racing to force the same cell, which
@@ -75,7 +75,7 @@ struct Lazy[A] {
 /// ```mbt check
 /// test {
 ///   let mut runs = 0
-///   let cell = @lazy.make(() => {
+///   let cell = @lazy.Lazy(() => {
 ///     runs += 1
 ///     42
 ///   })
@@ -85,7 +85,7 @@ struct Lazy[A] {
 /// }
 /// ```
 #as_free_fn
-pub fn[A] Lazy::make(thunk : () -> A) -> Lazy[A] {
+pub fn[A] Lazy::Lazy(thunk : () -> A) -> Lazy[A] {
   { state: Unforced(thunk) }
 }
 
@@ -133,7 +133,7 @@ pub fn[A] Lazy::force(self : Lazy[A]) -> A {
 ///
 /// ```mbt check
 /// test {
-///   let cell = @lazy.make(() => 1 + 1)
+///   let cell = @lazy.Lazy(() => 1 + 1)
 ///   assert_false(cell.is_forced())
 ///   ignore(cell.force())
 ///   assert_true(cell.is_forced())
@@ -141,30 +141,4 @@ pub fn[A] Lazy::force(self : Lazy[A]) -> A {
 /// ```
 pub fn[A] Lazy::is_forced(self : Lazy[A]) -> Bool {
   self.state is Forced(_)
-}
-
-///|
-/// Wraps a thunk that may raise. Forcing the resulting cell never raises;
-/// instead the success or failure is observed as a `Result`. The thunk
-/// runs at most once, regardless of outcome — both `Ok` and `Err` are
-/// memoized.
-///
-/// This is the recommended way to defer a fallible computation: the
-/// failure mode becomes part of the value, visible in the type, and
-/// handled at the call site that consumes the cell.
-///
-/// ```mbt check
-/// test {
-///   let cell : @lazy.Lazy[Result[Int, Error]] = @lazy.try_make(() => {
-///     if false {
-///       fail("unreachable")
-///     }
-///     42
-///   })
-///   assert_true(cell.force() is Ok(42))
-/// }
-/// ```
-#as_free_fn
-pub fn[A] Lazy::try_make(thunk : () -> A raise?) -> Lazy[Result[A, Error]] {
-  Lazy::make(() => try? thunk())
 }
