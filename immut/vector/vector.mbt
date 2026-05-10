@@ -479,10 +479,56 @@ pub impl[A] Add for Vector[A] with add(self, other) {
 /// Returns an iterator over the elements of the vector.
 #alias(iterator, deprecated)
 pub fn[A] Vector::iter(self : Vector[A]) -> Iter[A] {
-  let tree_iter = self.tree.iter()
-  let tail_iter = self.tail.iter()
-  let iter = tree_iter.concat(tail_iter)
-  Iter::new(() => iter.next(), size_hint=self.size)
+  let mut in_tree = true
+  let mut curr_tree = self.tree
+  let mut curr_index = 0
+  let parents = []
+  let mut tail_index = 0
+  Iter::new(
+    fn() {
+      let tree_result = if in_tree {
+        for tree = curr_tree {
+          match tree {
+            Node(children, _) as t if curr_index < children.length() => {
+              let child = children.unsafe_get(curr_index)
+              parents.push((t, curr_index + 1))
+              curr_tree = child
+              curr_index = 0
+              continue child
+            }
+            Leaf(elems) if curr_index < elems.length() => {
+              let elem = elems.unsafe_get(curr_index)
+              curr_index += 1
+              break Some(elem)
+            }
+            _ if parents.pop() is Some((parent_tree, parent_index)) => {
+              curr_tree = parent_tree
+              curr_index = parent_index
+              continue parent_tree
+            }
+            _ => {
+              in_tree = false
+              break None
+            }
+          }
+        }
+      } else {
+        None
+      }
+      match tree_result {
+        Some(_) => tree_result
+        None =>
+          if tail_index < self.tail.length() {
+            let elem = self.tail.unsafe_get(tail_index)
+            tail_index += 1
+            Some(elem)
+          } else {
+            None
+          }
+      }
+    },
+    size_hint=self.size,
+  )
 }
 
 ///|

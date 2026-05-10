@@ -147,6 +147,30 @@ test "iter" {
 }
 
 ///|
+test "iter tree and tail" {
+  let values = @vector.from_iter((0).until(70))
+  @debug.assert_eq(values.iter().to_array(), Array::makei(70, i => i))
+  inspect(values.iter().count(), content="70")
+}
+
+///|
+test "iter sliced tree and tail" {
+  let values = @vector.from_iter((0).until(96))
+  let sliced = values.slice(17, 83)
+  @debug.assert_eq(sliced.iter().to_array(), Array::makei(66, i => i + 17))
+  inspect(sliced.iter().count(), content="66")
+}
+
+///|
+test "iter concatenated vectors" {
+  let left = @vector.from_iter((0).until(45))
+  let right = @vector.from_iter((45).until(90))
+  let combined = left.concat(right)
+  @debug.assert_eq(combined.iter().to_array(), Array::makei(90, i => i))
+  inspect(combined.iter().count(), content="90")
+}
+
+///|
 test "length" {
   let v = @vector.from_array([1, 2, 3, 4, 5])
   let ve : @vector.Vector[Int] = @vector.new()
