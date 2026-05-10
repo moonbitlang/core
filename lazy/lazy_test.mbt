@@ -39,7 +39,7 @@ test "force memoizes the result" {
 
 ///|
 test "ready returns the value without running anything" {
-  let cell = @lazy.ready(99)
+  let cell = @lazy.Lazy::ready(99)
   assert_eq(cell.force(), 99)
   assert_eq(cell.force(), 99)
 }

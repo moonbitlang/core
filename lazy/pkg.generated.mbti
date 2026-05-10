@@ -11,7 +11,6 @@ pub struct Lazy[A] {
 }
 pub fn[A] Lazy::Lazy(() -> A) -> Self[A]
 pub fn[A] Lazy::force(Self[A]) -> A
-#as_free_fn
 pub fn[A] Lazy::ready(A) -> Self[A]
 
 // Type aliases
