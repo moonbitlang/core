@@ -20,9 +20,7 @@ test "Lazy defers evaluation" {
     "hello"
   })
   assert_eq(runs, 0)
-  assert_false(cell.is_forced())
   assert_eq(cell.force(), "hello")
-  assert_true(cell.is_forced())
   assert_eq(runs, 1)
 }
 
@@ -40,9 +38,8 @@ test "force memoizes the result" {
 }
 
 ///|
-test "pure starts already forced" {
-  let cell = @lazy.pure(99)
-  assert_true(cell.is_forced())
+test "ready returns the value without running anything" {
+  let cell = @lazy.ready(99)
   assert_eq(cell.force(), 99)
   assert_eq(cell.force(), 99)
 }

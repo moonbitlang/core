@@ -9,12 +9,10 @@ package "moonbitlang/core/lazy"
 pub struct Lazy[A] {
   // private fields
 }
-#as_free_fn
 pub fn[A] Lazy::Lazy(() -> A) -> Self[A]
 pub fn[A] Lazy::force(Self[A]) -> A
-pub fn[A] Lazy::is_forced(Self[A]) -> Bool
 #as_free_fn
-pub fn[A] Lazy::pure(A) -> Self[A]
+pub fn[A] Lazy::ready(A) -> Self[A]
 
 // Type aliases
 

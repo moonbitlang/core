@@ -31,7 +31,7 @@ priv enum LazyState[A] {
 /// A memoized thunk: the first call to `force` runs the thunk and caches
 /// the result; later calls return the cached value without re-running it.
 ///
-/// Construct one with `Lazy(thunk)` (deferred) or `pure(value)` (already
+/// Construct one with `Lazy(thunk)` (deferred) or `ready(value)` (already
 /// evaluated). For fallible work, wrap the result in a `Result` value
 /// inside the thunk — failure as data is the recommended shape; see the
 /// rationale below.
@@ -84,7 +84,6 @@ struct Lazy[A] {
 ///   assert_eq(runs, 1)
 /// }
 /// ```
-#as_free_fn
 pub fn[A] Lazy::Lazy(thunk : () -> A) -> Lazy[A] {
   { state: Unforced(thunk) }
 }
@@ -95,13 +94,12 @@ pub fn[A] Lazy::Lazy(thunk : () -> A) -> Lazy[A] {
 ///
 /// ```mbt check
 /// test {
-///   let cell = @lazy.pure(7)
+///   let cell = @lazy.ready(7)
 ///   assert_eq(cell.force(), 7)
-///   assert_true(cell.is_forced())
 /// }
 /// ```
 #as_free_fn
-pub fn[A] Lazy::pure(value : A) -> Lazy[A] {
+pub fn[A] Lazy::ready(value : A) -> Lazy[A] {
   { state: Forced(value) }
 }
 
@@ -124,21 +122,4 @@ pub fn[A] Lazy::force(self : Lazy[A]) -> A {
       v
     }
   }
-}
-
-///|
-/// Reports whether the cell has already been forced. Useful when forcing
-/// the value would itself be expensive or have observable cost (e.g., to
-/// decide whether a debug-only path is cheap to log).
-///
-/// ```mbt check
-/// test {
-///   let cell = @lazy.Lazy(() => 1 + 1)
-///   assert_false(cell.is_forced())
-///   ignore(cell.force())
-///   assert_true(cell.is_forced())
-/// }
-/// ```
-pub fn[A] Lazy::is_forced(self : Lazy[A]) -> Bool {
-  self.state is Forced(_)
 }
