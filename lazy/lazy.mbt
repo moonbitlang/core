@@ -13,11 +13,17 @@
 // limitations under the License.
 
 ///|
-/// Internal cell state. Either a thunk that has not yet run, or the value
-/// it produced. Once forced, the thunk is dropped so its captures can be
-/// reclaimed.
+/// Internal cell state.
+///
+/// - `Unforced(thunk)`: the thunk has not yet run.
+/// - `Forcing`: the thunk is currently running. Used to detect reentrant
+///   `force` calls on the same cell, which would otherwise re-evaluate
+///   the thunk and silently break the at-most-once guarantee.
+/// - `Forced(v)`: the thunk has produced `v`; the thunk reference is
+///   dropped so its captures can be reclaimed.
 priv enum LazyState[A] {
   Unforced(() -> A)
+  Forcing
   Forced(A)
 }
 
@@ -102,10 +108,17 @@ pub fn[A] Lazy::pure(value : A) -> Lazy[A] {
 ///|
 /// Returns the cell's value, running the thunk on the first call and
 /// caching the result. Later calls return the cached value in O(1).
+///
+/// Reentrant forces (a thunk that, while running, forces the same cell
+/// again — e.g., through a captured `Ref`) are detected and aborted.
+/// Without that check, the inner force would silently re-run the thunk
+/// and break the at-most-once memoization guarantee.
 pub fn[A] Lazy::force(self : Lazy[A]) -> A {
   match self.state {
     Forced(v) => v
+    Forcing => abort("Lazy::force: reentrant force on the same cell")
     Unforced(thunk) => {
+      self.state = Forcing
       let v = thunk()
       self.state = Forced(v)
       v
