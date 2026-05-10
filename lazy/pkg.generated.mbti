@@ -1,0 +1,19 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/lazy"
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct Lazy[A] {
+  // private fields
+}
+pub fn[A] Lazy::Lazy(() -> A) -> Self[A]
+pub fn[A] Lazy::force(Self[A]) -> A
+pub fn[A] Lazy::ready(A) -> Self[A]
+
+// Type aliases
+
+// Traits
+

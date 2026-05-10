@@ -6,6 +6,7 @@ import {
   "moonbitlang/core/builtin",
   "moonbitlang/core/debug",
   "moonbitlang/core/json",
+  "moonbitlang/core/lazy",
   "moonbitlang/core/ref",
   "moonbitlang/core/set",
   "moonbitlang/core/string",
@@ -103,6 +104,8 @@ pub using @builtin {type Iter as Iterator}
 pub using @builtin {type Iter2 as Iterator2}
 
 pub using @builtin {type Json}
+
+pub using @lazy {type Lazy}
 
 pub using @builtin {type Map}
 

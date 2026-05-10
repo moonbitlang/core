@@ -162,3 +162,6 @@ pub type Iterator2[X, Y] = Iter2[X, Y]
 
 ///|
 pub using @ref {type Ref}
+
+///|
+pub using @lazy {type Lazy}

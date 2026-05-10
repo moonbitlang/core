@@ -6,6 +6,7 @@ import {
   "moonbitlang/core/debug",
   "moonbitlang/core/string",
   "moonbitlang/core/ref",
+  "moonbitlang/core/lazy",
 }
 
 warnings = "-test_unqualified_package"
