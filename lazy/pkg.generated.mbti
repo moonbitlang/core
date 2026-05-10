@@ -1,0 +1,22 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/lazy"
+
+// Values
+
+// Errors
+
+// Types and methods
+type Lazy[A]
+pub fn[A] Lazy::force(Self[A]) -> A
+pub fn[A] Lazy::is_forced(Self[A]) -> Bool
+#as_free_fn
+pub fn[A] Lazy::make(() -> A) -> Self[A]
+#as_free_fn
+pub fn[A] Lazy::pure(A) -> Self[A]
+#as_free_fn
+pub fn[A] Lazy::try_make(() -> A raise?) -> Self[Result[A, Error]]
+
+// Type aliases
+
+// Traits
+

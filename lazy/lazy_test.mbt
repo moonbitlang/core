@@ -1,0 +1,90 @@
+// Copyright 2026 International Digital Economy Academy
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+///|
+test "make defers evaluation" {
+  let mut runs = 0
+  let cell = @lazy.make(() => {
+    runs += 1
+    "hello"
+  })
+  assert_eq(runs, 0)
+  assert_false(cell.is_forced())
+  assert_eq(cell.force(), "hello")
+  assert_true(cell.is_forced())
+  assert_eq(runs, 1)
+}
+
+///|
+test "force memoizes the result" {
+  let mut runs = 0
+  let cell = @lazy.make(() => {
+    runs += 1
+    runs * 10
+  })
+  assert_eq(cell.force(), 10)
+  assert_eq(cell.force(), 10)
+  assert_eq(cell.force(), 10)
+  assert_eq(runs, 1)
+}
+
+///|
+test "pure starts already forced" {
+  let cell = @lazy.pure(99)
+  assert_true(cell.is_forced())
+  assert_eq(cell.force(), 99)
+  assert_eq(cell.force(), 99)
+}
+
+///|
+test "force returns each captured value" {
+  let cells = [@lazy.make(() => 1), @lazy.make(() => 2), @lazy.make(() => 3)]
+  let mut sum = 0
+  for c in cells {
+    sum += c.force()
+  }
+  assert_eq(sum, 6)
+}
+
+///|
+test "try_make on success memoizes Ok" {
+  let mut runs = 0
+  let cell : @lazy.Lazy[Result[Int, Error]] = @lazy.try_make(() => {
+    runs += 1
+    runs
+  })
+  assert_true(cell.force() is Ok(1))
+  assert_true(cell.force() is Ok(1))
+  assert_eq(runs, 1)
+}
+
+///|
+test "try_make on failure memoizes Err" {
+  let mut runs = 0
+  let cell : @lazy.Lazy[Result[Int, Error]] = @lazy.try_make(() => {
+    runs += 1
+    fail("boom")
+  })
+  assert_true(cell.force() is Err(_))
+  assert_true(cell.force() is Err(_))
+  assert_eq(runs, 1)
+}
+
+///|
+test "try_make does not raise at construction" {
+  let cell : @lazy.Lazy[Result[Int, Error]] = @lazy.try_make(() => {
+    fail("never observed unless forced")
+  })
+  assert_false(cell.is_forced())
+}
