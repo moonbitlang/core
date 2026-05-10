@@ -263,6 +263,25 @@ fn[A] Tree::each(self : Tree[A], f : (A) -> Unit raise?) -> Unit raise? {
 }
 
 ///|
+fn[A : Eq] Tree::contains(self : Tree[A], value : A) -> Bool {
+  match self {
+    Empty => false
+    Leaf(elems) =>
+      for elem in elems {
+        guard elem != value else { break true }
+      } nobreak {
+        false
+      }
+    Node(children, _) =>
+      for child in children {
+        guard !child.contains(value) else { break true }
+      } nobreak {
+        false
+      }
+  }
+}
+
+///|
 fn[A] Tree::iter(self : Tree[A]) -> Iter[A] {
   let mut curr_tree = self
   let mut curr_index = 0

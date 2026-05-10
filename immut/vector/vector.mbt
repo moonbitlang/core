@@ -260,8 +260,10 @@ pub fn[A] Vector::peek(self : Vector[A]) -> A? {
 /// }
 /// ```
 pub fn[A : Eq] Vector::contains(self : Vector[A], value : A) -> Bool {
-  // TODO: optimize this to scan the tree and tail directly instead of going through `iter`.
-  self.iter().contains(value)
+  if self.tree.contains(value) {
+    return true
+  }
+  self.tail.contains(value)
 }
 
 //-----------------------------------------------------------------------------
