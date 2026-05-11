@@ -20,7 +20,7 @@ test "to_string" {
 ///|
 test "show output" {
   fn repr(chr) {
-    let buf = StringBuilder::new(size_hint=0)
+    let buf = StringBuilder::StringBuilder(size_hint=0)
     Show::output(chr, buf)
     buf.to_string()
   }

@@ -679,7 +679,7 @@ test "iter_map_fold" {
 
 ///|
 test "List::output with non-empty list" {
-  let buf = StringBuilder::new(size_hint=100)
+  let buf = StringBuilder::StringBuilder(size_hint=100)
   let list = @list.from_array([1, 2, 3, 4, 5])
   Show::output(list, buf)
   debug_inspect(
@@ -692,7 +692,7 @@ test "List::output with non-empty list" {
 
 ///|
 test "List::output with empty list" {
-  let buf = StringBuilder::new(size_hint=100)
+  let buf = StringBuilder::StringBuilder(size_hint=100)
   let list : @list.List[Int] = @list.empty()
   Show::output(list, buf)
   debug_inspect(

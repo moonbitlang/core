@@ -23,5 +23,5 @@ struct Test {
 /// Create a new instance.
 #as_free_fn
 pub fn Test::new(name : String) -> Test {
-  { name, buffer: StringBuilder::new() }
+  { name, buffer: StringBuilder::StringBuilder() }
 }

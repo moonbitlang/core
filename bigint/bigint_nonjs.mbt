@@ -1067,7 +1067,7 @@ fn BigInt::to_string_radix(self : BigInt, radix : Int) -> String {
           break
         }
       }
-      let builder = StringBuilder::new(
+      let builder = StringBuilder::StringBuilder(
         size_hint=digits.length() + (if is_negative { 1 } else { 0 }),
       )
       if is_negative {
@@ -1087,7 +1087,7 @@ fn BigInt::to_string_radix_pow2(self : BigInt, shift : Int) -> String {
   let value = if is_negative { -self } else { self }
   let bit_len = value.bit_length()
   let digit_len = (bit_len + shift - 1) / shift
-  let builder = StringBuilder::new(
+  let builder = StringBuilder::StringBuilder(
     size_hint=digit_len + (if is_negative { 1 } else { 0 }),
   )
   if is_negative {

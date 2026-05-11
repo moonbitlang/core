@@ -171,7 +171,7 @@ pub fn BigInt::from_octets(octets : BytesView, signum? : Int = 1) -> BigInt {
   if signum == 0 {
     return 0N
   }
-  let str = StringBuilder::new()
+  let str = StringBuilder::StringBuilder()
   str.write_string("0x")
   for octet in octets {
     str.write_string(hex2(octet))

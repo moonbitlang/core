@@ -71,7 +71,7 @@ test "StringView core operations" {
   inspect(view.char_length(), content="3")
   inspect(view.char_length_eq(3), content="true")
   inspect(view.char_length_ge(4), content="false")
-  let buf = StringBuilder::new()
+  let buf = StringBuilder::StringBuilder()
   let it = view.iter2()
   while it.next() is Some((i, ch)) {
     buf.write_string("\{i}:\{ch};")

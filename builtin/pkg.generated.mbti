@@ -442,8 +442,9 @@ pub fn SourceLoc::to_json_string(Self) -> String
 pub impl Show for SourceLoc
 
 type StringBuilder
+#alias(new)
+pub fn StringBuilder::StringBuilder(size_hint? : Int) -> Self
 pub fn StringBuilder::is_empty(Self) -> Bool
-pub fn StringBuilder::new(size_hint? : Int) -> Self
 pub fn StringBuilder::reset(Self) -> Unit
 pub fn StringBuilder::to_string(Self) -> String
 pub fn StringBuilder::write_iter(Self, Iter[Char]) -> Unit

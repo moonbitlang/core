@@ -125,7 +125,7 @@ pub fn decode_lossy(
   } else {
     bytes
   }
-  let builder = StringBuilder::new(size_hint=bytes.length())
+  let builder = StringBuilder::StringBuilder(size_hint=bytes.length())
   if endianness is Little {
     for x = bytes {
       match x {

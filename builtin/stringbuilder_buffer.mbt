@@ -29,7 +29,8 @@ struct StringBuilder {
 ///
 /// Returns a new `StringBuilder` instance with the specified initial capacity.
 ///
-pub fn StringBuilder::new(size_hint? : Int = 0) -> StringBuilder {
+#alias(new)
+pub fn StringBuilder::StringBuilder(size_hint? : Int = 0) -> StringBuilder {
   let initial = if size_hint < 1 { 1 } else { (size_hint + 1) / 2 }
   let data : FixedArray[UInt16] = FixedArray::make(initial, 0)
   { data, len: 0 }
@@ -118,7 +119,7 @@ pub impl Logger for StringBuilder with write_char(self, ch) {
 ///
 /// ```mbt check
 /// test {
-///   let sb = StringBuilder::new()
+///   let sb = StringBuilder::StringBuilder()
 ///   sb.write_view("Hello, world!"[:5])
 ///   assert_eq(sb.to_string(), "Hello")
 /// }

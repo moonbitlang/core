@@ -71,7 +71,7 @@ test "to_array empty" {
 
 ///|
 test "iter" {
-  let buf = StringBuilder::new(size_hint=20)
+  let buf = StringBuilder::StringBuilder(size_hint=20)
   let v = @array.from_array([1, 2, 3])
   v.iter().each(e => buf.write_string("[\{e}]"))
   inspect(buf, content="[1][2][3]")

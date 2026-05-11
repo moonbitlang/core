@@ -283,7 +283,7 @@ pub fn Json::stringify(
   indent? : Int = 0,
   replacer? : Replacer,
 ) -> String {
-  let buf = StringBuilder::new(size_hint=0)
+  let buf = StringBuilder::StringBuilder(size_hint=0)
 
   // Explicit stack to replace recursive calls
   let stack : Array[WriteFrame] = []
@@ -388,7 +388,7 @@ pub fn Json::stringify(
 
 ///|
 fn escape(str : String, escape_slash~ : Bool) -> String {
-  let buf = StringBuilder::new(size_hint=str.length())
+  let buf = StringBuilder::StringBuilder(size_hint=str.length())
   for c in str {
     match c {
       '"' => buf.write_string("\\\"")
