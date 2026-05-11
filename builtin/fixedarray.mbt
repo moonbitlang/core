@@ -1346,7 +1346,7 @@ test "add" {
 test "iter" {
   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
   let iter = arr.iter()
-  let exb = StringBuilder::StringBuilder()
+  let exb = StringBuilder()
   let mut i = 0
   iter.each(x => {
     exb.write_string(x.to_string())
@@ -1443,7 +1443,7 @@ pub fn FixedArray::join(
   } nobreak {
     size_hint
   }
-  let string = StringBuilder::StringBuilder(size_hint~)
+  let string = StringBuilder(size_hint~)
   if separator.is_empty() {
     for i in 0..<len {
       string.write_string(self[i])

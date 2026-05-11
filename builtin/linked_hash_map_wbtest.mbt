@@ -325,7 +325,7 @@ test "grow" {
 
 ///|
 test "iter" {
-  let buf = StringBuilder::StringBuilder(size_hint=20)
+  let buf = StringBuilder(size_hint=20)
   let map = { 1: "one", 2: "two", 3: "three" }
   map
   .iter()
@@ -350,7 +350,7 @@ test "iter order" {
   let m = { "one": 1 }
   m["three"] = 3
   m["two"] = 2
-  let buf = StringBuilder::StringBuilder(size_hint=0)
+  let buf = StringBuilder(size_hint=0)
   m.each((k, v) => buf.write_string("[\{k}-\{v}]"))
   inspect(buf.to_string(), content="[one-1][three-3][two-2]")
 }
@@ -664,7 +664,7 @@ test "equal_key_value_mismatch" {
 
 ///|
 fn[K : Show, V : Show] Map::_debug_entries(self : Map[K, V]) -> String {
-  let buf = StringBuilder::StringBuilder()
+  let buf = StringBuilder()
   for i, entry in self.entries {
     if i > 0 {
       buf.write_char(',')

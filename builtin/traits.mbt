@@ -162,7 +162,7 @@ impl Show with output(self, logger) {
 ///|
 /// Default implementation for `Show::to_string`, uses a `StringBuilder`
 impl Show with to_string(self) {
-  let logger = StringBuilder::StringBuilder()
+  let logger = StringBuilder()
   self.output(logger)
   logger.to_string()
 }
@@ -208,7 +208,7 @@ pub fn[T : Show] &Logger::write_iter(
 /// Function `repr`.
 #deprecated("use `to_repr` for debugging representation")
 pub fn[T : Show] repr(t : T) -> String {
-  let logger = StringBuilder::StringBuilder()
+  let logger = StringBuilder()
   t.output(logger)
   logger.to_string()
 }

@@ -25,7 +25,7 @@ suberror IntError {
 ///|
 test {
   let v : Array[Error] = [StringError("x"), IntError(1)]
-  let buf = StringBuilder::StringBuilder()
+  let buf = StringBuilder()
   for i in v {
     match i {
       StringError(s) => buf.write_string(s)

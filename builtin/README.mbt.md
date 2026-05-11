@@ -206,7 +206,7 @@ Efficient string building:
 ```mbt check
 ///|
 test "string builder" {
-  let builder = StringBuilder::StringBuilder()
+  let builder = StringBuilder()
   builder.write_string("Hello")
   builder.write_string(", ")
   builder.write_string("World!")

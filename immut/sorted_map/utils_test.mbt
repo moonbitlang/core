@@ -129,7 +129,7 @@ test "panic get after removal" {
 test "iter" {
   let map = [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
     |> @sorted_map.from_array
-  let buf = StringBuilder::StringBuilder()
+  let buf = StringBuilder()
   for k, v in map {
     buf.write_object(k)
     buf.write_string(": ")
@@ -358,7 +358,7 @@ test "range with no matches" {
 ///|
 test "range matching all elements" {
   let map = @sorted_map.from_array([(1, "a"), (2, "b"), (3, "c")])
-  let buf = StringBuilder::StringBuilder()
+  let buf = StringBuilder()
   for k, v in map.range(low=0, high=10) {
     buf.write_string("[\{k},\{v}]")
   }
@@ -374,7 +374,7 @@ test "range partial match" {
     (4, "d"),
     (5, "e"),
   ])
-  let buf = StringBuilder::StringBuilder()
+  let buf = StringBuilder()
   for k, v in map.range(low=2, high=4) {
     buf.write_string("[\{k},\{v}]")
   }
@@ -390,7 +390,7 @@ test "range with single element" {
     (4, "d"),
     (5, "e"),
   ])
-  let buf = StringBuilder::StringBuilder()
+  let buf = StringBuilder()
   for k, v in map.range(low=3, high=3) {
     buf.write_string("[\{k},\{v}]")
   }
@@ -406,7 +406,7 @@ test "range at left boundary" {
     (4, "d"),
     (5, "e"),
   ])
-  let buf = StringBuilder::StringBuilder()
+  let buf = StringBuilder()
   for k, v in map.range(low=1, high=2) {
     buf.write_string("[\{k},\{v}]")
   }
@@ -422,7 +422,7 @@ test "range at right boundary" {
     (4, "d"),
     (5, "e"),
   ])
-  let buf = StringBuilder::StringBuilder()
+  let buf = StringBuilder()
   for k, v in map.range(low=4, high=5) {
     buf.write_string("[\{k},\{v}]")
   }
@@ -438,7 +438,7 @@ test "range with gaps in data" {
     (7, "g"),
     (9, "i"),
   ])
-  let buf = StringBuilder::StringBuilder()
+  let buf = StringBuilder()
   for k, v in map.range(low=2, high=8) {
     buf.write_string("[\{k},\{v}]")
   }
@@ -498,7 +498,7 @@ test "range on large dataset" {
 ///|
 test "range with non-existent boundaries" {
   let map = @sorted_map.from_array([(2, "b"), (4, "d"), (6, "f"), (8, "h")])
-  let buf = StringBuilder::StringBuilder()
+  let buf = StringBuilder()
   for k, v in map.range(low=3, high=7) {
     buf.write_string("[\{k},\{v}]")
   }

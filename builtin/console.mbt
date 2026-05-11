@@ -60,7 +60,7 @@ pub(all) suberror InspectError {
 ///|
 fn base64_encode(data : FixedArray[Byte]) -> String {
   let base64 = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
-  let buf = StringBuilder::StringBuilder()
+  let buf = StringBuilder()
   let len = data.length()
   let rem = len % 3
   for i = 0; i < len - rem; i = i + 3 {

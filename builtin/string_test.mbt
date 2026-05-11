@@ -153,7 +153,7 @@ test "String from_iter" {
 
 ///|
 test "String rev_iter with surrogate" {
-  let buf = StringBuilder::StringBuilder()
+  let buf = StringBuilder()
   "A😀B".rev_iter().each(c => buf.write_char(c))
   inspect(buf.to_string(), content="B😀A")
 }

@@ -465,7 +465,7 @@ fn char_to_string(char : Char) -> String {
 /// }
 /// ```
 pub fn Char::escape(self : Char, quote? : Bool = true) -> String {
-  let buf = StringBuilder::StringBuilder()
+  let buf = StringBuilder()
   self.escape_to(buf, quote~)
   buf.to_string()
 }

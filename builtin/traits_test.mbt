@@ -14,7 +14,7 @@
 
 ///|
 test "write_iter with trailing" {
-  let builder = StringBuilder::StringBuilder()
+  let builder = StringBuilder()
   let logger : &Logger = builder
   let arr : Array[Int] = [1, 2]
   logger.write_iter(arr.iter(), prefix="[", suffix="]", sep=",", trailing=true)

@@ -44,7 +44,7 @@ test "to_array" {
 
 ///|
 test "as_iter" {
-  let buf = StringBuilder::StringBuilder(size_hint=20)
+  let buf = StringBuilder(size_hint=20)
   let v = @priority_queue.from_array([1, 2, 3])
   v.iter().each(e => buf.write_string("[\{e}]"))
   inspect(buf, content="[3][2][1]")
@@ -55,7 +55,7 @@ test "as_iter" {
 
 ///|
 test "iter" {
-  let buf = StringBuilder::StringBuilder(size_hint=20)
+  let buf = StringBuilder(size_hint=20)
   let v = @priority_queue.from_array([1, 2, 3])
   v.iter().each(e => buf.write_string("[\{e}]"))
   inspect(buf, content="[3][2][1]")

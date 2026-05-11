@@ -96,7 +96,7 @@ test "shrink_to_fit_2" {
 ///|
 test "iter" {
   let dv = @deque.from_array([1, 2, 3, 4, 5])
-  let buf = StringBuilder::StringBuilder(size_hint=0)
+  let buf = StringBuilder(size_hint=0)
   let mut i = 0
   dv
   .iter()

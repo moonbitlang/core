@@ -1413,7 +1413,7 @@ pub fn[A : ToStringView] ArrayView::join(
         size_hint
       }
       let size_hint = size_hint << 1
-      let buf = StringBuilder::StringBuilder(size_hint~)
+      let buf = StringBuilder(size_hint~)
       // buf.write_string(hd)
       buf.write_view(hd)
       if separator is "" {

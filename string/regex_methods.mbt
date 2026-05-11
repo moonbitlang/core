@@ -65,7 +65,7 @@ pub fn Regex::replace_by(
         let b = match buf {
           Some(b) => b
           None => {
-            let b = StringBuilder::StringBuilder()
+            let b = StringBuilder()
             buf = Some(b)
             b
           }

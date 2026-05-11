@@ -487,7 +487,7 @@ test "nested json" {
 ///|
 test "call stack overflow" {
   let depth = 50000
-  let json_string = StringBuilder::StringBuilder()
+  let json_string = StringBuilder()
   for _ in 0..<=depth {
     json_string.write_char('[')
   }
@@ -496,7 +496,7 @@ test "call stack overflow" {
   }
   let _ = @json.parse(json_string.to_string()) catch { _ => null }
   let depth = 1500
-  let json_string = StringBuilder::StringBuilder()
+  let json_string = StringBuilder()
   for _ in 0..<=depth {
     json_string.write_char('[')
   }
