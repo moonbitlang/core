@@ -292,6 +292,10 @@ pub fn[A] PriorityQueue::length(self : PriorityQueue[A]) -> Int {
 }
 
 ///|
+#deprecated("Use Debug instead of Show for debugging purposes.")
+pub impl[A : Show + Compare] Show for PriorityQueue[A]
+
+///|
 pub impl[A : Show + Compare] Show for PriorityQueue[A] with output(self, logger) {
   logger.write_iter(
     self.iter(),

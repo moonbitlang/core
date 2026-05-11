@@ -13,6 +13,10 @@
 // limitations under the License.
 
 ///|
+#deprecated("Use Debug instead of Show for debugging purposes.")
+pub impl[A : Show, B : Show] Show for (A, B)
+
+///|
 pub impl[A : Show, B : Show] Show for (A, B) with output(self, logger) {
   let (a, b) = self
   logger.write_string("(")
@@ -21,6 +25,10 @@ pub impl[A : Show, B : Show] Show for (A, B) with output(self, logger) {
   logger.write_object(b)
   logger.write_string(")")
 }
+
+///|
+#deprecated("Use Debug instead of Show for debugging purposes.")
+pub impl[A : Show, B : Show, C : Show] Show for (A, B, C)
 
 ///|
 pub impl[A : Show, B : Show, C : Show] Show for (A, B, C) with output(
@@ -38,6 +46,10 @@ pub impl[A : Show, B : Show, C : Show] Show for (A, B, C) with output(
 }
 
 ///|
+#deprecated("Use Debug instead of Show for debugging purposes.")
+pub impl[A : Show, B : Show, C : Show, D : Show] Show for (A, B, C, D)
+
+///|
 pub impl[A : Show, B : Show, C : Show, D : Show] Show for (A, B, C, D) with output(
   self,
   logger,
@@ -53,6 +65,16 @@ pub impl[A : Show, B : Show, C : Show, D : Show] Show for (A, B, C, D) with outp
   logger.write_object(d)
   logger.write_string(")")
 }
+
+///|
+#deprecated("Use Debug instead of Show for debugging purposes.")
+pub impl[A : Show, B : Show, C : Show, D : Show, E : Show] Show for (
+  A,
+  B,
+  C,
+  D,
+  E,
+)
 
 ///|
 pub impl[A : Show, B : Show, C : Show, D : Show, E : Show] Show for (
@@ -75,6 +97,17 @@ pub impl[A : Show, B : Show, C : Show, D : Show, E : Show] Show for (
   logger.write_object(e)
   logger.write_string(")")
 }
+
+///|
+#deprecated("Use Debug instead of Show for debugging purposes.")
+pub impl[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show] Show for (
+  A,
+  B,
+  C,
+  D,
+  E,
+  F,
+)
 
 ///|
 pub impl[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show] Show for (
@@ -100,6 +133,18 @@ pub impl[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show] Show for (
   logger.write_object(f)
   logger.write_string(")")
 }
+
+///|
+#deprecated("Use Debug instead of Show for debugging purposes.")
+pub impl[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show, G : Show] Show for (
+  A,
+  B,
+  C,
+  D,
+  E,
+  F,
+  G,
+)
 
 ///|
 pub impl[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show, G : Show] Show for (
@@ -128,6 +173,19 @@ pub impl[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show, G : Show] S
   logger.write_object(g)
   logger.write_string(")")
 }
+
+///|
+#deprecated("Use Debug instead of Show for debugging purposes.")
+pub impl[
+  T0 : Show,
+  T1 : Show,
+  T2 : Show,
+  T3 : Show,
+  T4 : Show,
+  T5 : Show,
+  T6 : Show,
+  T7 : Show,
+] Show for (T0, T1, T2, T3, T4, T5, T6, T7)
 
 ///|
 pub impl[
@@ -159,6 +217,20 @@ pub impl[
   logger.write_object(x7)
   logger.write_string(")")
 }
+
+///|
+#deprecated("Use Debug instead of Show for debugging purposes.")
+pub impl[
+  T0 : Show,
+  T1 : Show,
+  T2 : Show,
+  T3 : Show,
+  T4 : Show,
+  T5 : Show,
+  T6 : Show,
+  T7 : Show,
+  T8 : Show,
+] Show for (T0, T1, T2, T3, T4, T5, T6, T7, T8)
 
 ///|
 pub impl[
@@ -193,6 +265,21 @@ pub impl[
   logger.write_object(x8)
   logger.write_string(")")
 }
+
+///|
+#deprecated("Use Debug instead of Show for debugging purposes.")
+pub impl[
+  T0 : Show,
+  T1 : Show,
+  T2 : Show,
+  T3 : Show,
+  T4 : Show,
+  T5 : Show,
+  T6 : Show,
+  T7 : Show,
+  T8 : Show,
+  T9 : Show,
+] Show for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)
 
 ///|
 pub impl[
@@ -230,6 +317,22 @@ pub impl[
   logger.write_object(x9)
   logger.write_string(")")
 }
+
+///|
+#deprecated("Use Debug instead of Show for debugging purposes.")
+pub impl[
+  T0 : Show,
+  T1 : Show,
+  T2 : Show,
+  T3 : Show,
+  T4 : Show,
+  T5 : Show,
+  T6 : Show,
+  T7 : Show,
+  T8 : Show,
+  T9 : Show,
+  T10 : Show,
+] Show for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)
 
 ///|
 pub impl[
@@ -273,6 +376,23 @@ pub impl[
   logger.write_object(x10)
   logger.write_string(")")
 }
+
+///|
+#deprecated("Use Debug instead of Show for debugging purposes.")
+pub impl[
+  T0 : Show,
+  T1 : Show,
+  T2 : Show,
+  T3 : Show,
+  T4 : Show,
+  T5 : Show,
+  T6 : Show,
+  T7 : Show,
+  T8 : Show,
+  T9 : Show,
+  T10 : Show,
+  T11 : Show,
+] Show for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)
 
 ///|
 pub impl[
@@ -319,6 +439,24 @@ pub impl[
   logger.write_object(x11)
   logger.write_string(")")
 }
+
+///|
+#deprecated("Use Debug instead of Show for debugging purposes.")
+pub impl[
+  T0 : Show,
+  T1 : Show,
+  T2 : Show,
+  T3 : Show,
+  T4 : Show,
+  T5 : Show,
+  T6 : Show,
+  T7 : Show,
+  T8 : Show,
+  T9 : Show,
+  T10 : Show,
+  T11 : Show,
+  T12 : Show,
+] Show for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)
 
 ///|
 pub impl[
@@ -368,6 +506,25 @@ pub impl[
   logger.write_object(x12)
   logger.write_string(")")
 }
+
+///|
+#deprecated("Use Debug instead of Show for debugging purposes.")
+pub impl[
+  T0 : Show,
+  T1 : Show,
+  T2 : Show,
+  T3 : Show,
+  T4 : Show,
+  T5 : Show,
+  T6 : Show,
+  T7 : Show,
+  T8 : Show,
+  T9 : Show,
+  T10 : Show,
+  T11 : Show,
+  T12 : Show,
+  T13 : Show,
+] Show for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)
 
 ///|
 pub impl[
@@ -420,6 +577,26 @@ pub impl[
   logger.write_object(x13)
   logger.write_string(")")
 }
+
+///|
+#deprecated("Use Debug instead of Show for debugging purposes.")
+pub impl[
+  T0 : Show,
+  T1 : Show,
+  T2 : Show,
+  T3 : Show,
+  T4 : Show,
+  T5 : Show,
+  T6 : Show,
+  T7 : Show,
+  T8 : Show,
+  T9 : Show,
+  T10 : Show,
+  T11 : Show,
+  T12 : Show,
+  T13 : Show,
+  T14 : Show,
+] Show for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)
 
 ///|
 pub impl[
@@ -475,6 +652,44 @@ pub impl[
   logger.write_object(x14)
   logger.write_string(")")
 }
+
+///|
+#deprecated("Use Debug instead of Show for debugging purposes.")
+pub impl[
+  T0 : Show,
+  T1 : Show,
+  T2 : Show,
+  T3 : Show,
+  T4 : Show,
+  T5 : Show,
+  T6 : Show,
+  T7 : Show,
+  T8 : Show,
+  T9 : Show,
+  T10 : Show,
+  T11 : Show,
+  T12 : Show,
+  T13 : Show,
+  T14 : Show,
+  T15 : Show,
+] Show for (
+  T0,
+  T1,
+  T2,
+  T3,
+  T4,
+  T5,
+  T6,
+  T7,
+  T8,
+  T9,
+  T10,
+  T11,
+  T12,
+  T13,
+  T14,
+  T15,
+)
 
 ///|
 pub impl[

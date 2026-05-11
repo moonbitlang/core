@@ -1504,6 +1504,10 @@ pub fn[T] ArrayView::rev(self : ArrayView[T]) -> Array[T] {
 // #region trait impls
 
 ///|
+#deprecated("Use Debug instead of Show for debugging purposes.")
+pub impl[X : Show] Show for ArrayView[X]
+
+///|
 pub impl[X : Show] Show for ArrayView[X] with output(self, logger) {
   logger.write_iter(self.iter())
 }

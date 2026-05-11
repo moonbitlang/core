@@ -180,6 +180,7 @@ pub impl[T : Compare] Compare for Array[T]
 pub impl[T] Default for Array[T]
 pub impl[T : Eq] Eq for Array[T]
 pub impl[T : Hash] Hash for Array[T]
+#deprecated
 pub impl[X : Show] Show for Array[X]
 pub impl[X : ToJson] ToJson for Array[X]
 
@@ -241,6 +242,7 @@ pub impl[T] Add for ArrayView[T]
 pub impl[T : Compare] Compare for ArrayView[T]
 pub impl[T : Eq] Eq for ArrayView[T]
 pub impl[A : Hash] Hash for ArrayView[A]
+#deprecated
 pub impl[X : Show] Show for ArrayView[X]
 pub impl[X : ToJson] ToJson for ArrayView[X]
 
@@ -315,6 +317,7 @@ pub fn[X] Iter::view(Self[X], start? : Int, end? : Int) -> Self[X]
 #alias(combine)
 pub fn[X, Y] Iter::zip(Self[X], Self[Y]) -> Self[(X, Y)]
 pub impl[T] Add for Iter[T]
+#deprecated
 pub impl[X : Show] Show for Iter[X]
 pub impl[X : ToJson] ToJson for Iter[X]
 
@@ -331,6 +334,7 @@ pub fn[X, Y] Iter2::next(Self[X, Y]) -> (X, Y)?
 #deprecated
 pub fn[X, Y] Iter2::run(Self[X, Y], (X, Y) -> IterResult) -> IterResult
 pub fn[X, Y] Iter2::to_array(Self[X, Y]) -> Array[(X, Y)]
+#deprecated
 pub impl[X : Show, Y : Show] Show for Iter2[X, Y]
 
 #deprecated
@@ -403,6 +407,7 @@ pub fn[K : Hash + Eq, V] Map::update_or_default(Self[K, V], K, V, (V) -> V) -> U
 pub fn[K, V] Map::values(Self[K, V]) -> Iter[V]
 pub impl[K, V] Default for Map[K, V]
 pub impl[K : Hash + Eq, V : Eq] Eq for Map[K, V]
+#deprecated
 pub impl[K : Show, V : Show] Show for Map[K, V]
 pub impl[K : Show, V : ToJson] ToJson for Map[K, V]
 
@@ -435,6 +440,7 @@ pub fn[T] MutArrayView::view(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 pub impl[T : Compare] Compare for MutArrayView[T]
 pub impl[T : Eq] Eq for MutArrayView[T]
 pub impl[A : Hash] Hash for MutArrayView[A]
+#deprecated
 pub impl[X : Show] Show for MutArrayView[X]
 
 pub(all) type SourceLoc
@@ -1342,24 +1348,42 @@ pub impl Show for Double
 pub impl Show for String
 #deprecated
 pub impl[X : Show] Show for X?
+#deprecated
 pub impl[T : Show, E : Show] Show for Result[T, E]
+#deprecated
 pub impl[X : Show] Show for FixedArray[X]
+#deprecated
 pub impl[T : Show] Show for ReadOnlyArray[T]
 pub impl Show for Bytes
+#deprecated
 pub impl[A : Show, B : Show] Show for (A, B)
+#deprecated
 pub impl[A : Show, B : Show, C : Show] Show for (A, B, C)
+#deprecated
 pub impl[A : Show, B : Show, C : Show, D : Show] Show for (A, B, C, D)
+#deprecated
 pub impl[A : Show, B : Show, C : Show, D : Show, E : Show] Show for (A, B, C, D, E)
+#deprecated
 pub impl[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show] Show for (A, B, C, D, E, F)
+#deprecated
 pub impl[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show, G : Show] Show for (A, B, C, D, E, F, G)
+#deprecated
 pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show] Show for (T0, T1, T2, T3, T4, T5, T6, T7)
+#deprecated
 pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show] Show for (T0, T1, T2, T3, T4, T5, T6, T7, T8)
+#deprecated
 pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show] Show for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)
+#deprecated
 pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show] Show for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)
+#deprecated
 pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show] Show for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)
+#deprecated
 pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show] Show for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)
+#deprecated
 pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show] Show for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)
+#deprecated
 pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show, T14 : Show] Show for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)
+#deprecated
 pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show, T14 : Show, T15 : Show] Show for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)
 pub impl Show for BytesView
 pub impl Show for StringView

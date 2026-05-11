@@ -80,6 +80,10 @@ pub fn[X] Iter::just_run(self : Iter[X], f : (X) -> IterResult) -> Unit {
 }
 
 ///|
+#deprecated("Use Debug instead of Show for debugging purposes.")
+pub impl[X : Show] Show for Iter[X]
+
+///|
 pub impl[X : Show] Show for Iter[X] with output(self, logger) {
   logger.write_string("[")
   if self.next() is Some(x) {
@@ -1060,6 +1064,10 @@ pub fn[X, Y] Iter2::iter2(self : Iter2[X, Y]) -> Iter2[X, Y] {
 pub fn[X, Y] Iter2::next(self : Iter2[X, Y]) -> (X, Y)? {
   self.0.next()
 }
+
+///|
+#deprecated("Use Debug instead of Show for debugging purposes.")
+pub impl[X : Show, Y : Show] Show for Iter2[X, Y]
 
 ///|
 pub impl[X : Show, Y : Show] Show for Iter2[X, Y] with output(self, logger) {

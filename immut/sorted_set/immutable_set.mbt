@@ -781,6 +781,10 @@ pub fn[A] SortedSet::filter(
 }
 
 ///|
+#deprecated("Use Debug instead of Show for debugging purposes.")
+pub impl[A : Show] Show for SortedSet[A]
+
+///|
 pub impl[A : Show] Show for SortedSet[A] with output(self, logger) {
   logger.write_iter(
     self.iter(),

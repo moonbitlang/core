@@ -69,6 +69,7 @@ pub impl[A] Add for Vector[A]
 pub impl[A : Compare] Compare for Vector[A]
 pub impl[A : Eq] Eq for Vector[A]
 pub impl[A : Hash] Hash for Vector[A]
+#deprecated
 pub impl[A : Show] Show for Vector[A]
 pub impl[A : ToJson] ToJson for Vector[A]
 pub impl[A : @debug.Debug] @debug.Debug for Vector[A]

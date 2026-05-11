@@ -70,6 +70,10 @@ pub impl[K : Hash, V : Hash] Hash for SortedMap[K, V] with hash_combine(
 }
 
 ///|
+#deprecated("Use Debug instead of Show for debugging purposes.")
+pub impl[K : Show, V : Show] Show for SortedMap[K, V]
+
+///|
 pub impl[K : Show, V : Show] Show for SortedMap[K, V] with output(self, logger) {
   logger.write_iter(
     self.iter(),

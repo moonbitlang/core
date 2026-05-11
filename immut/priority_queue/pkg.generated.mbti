@@ -41,6 +41,7 @@ pub fn[A : @debug.Debug + Compare] PriorityQueue::to_repr(Self[A]) -> @debug.Rep
 pub impl[A : Compare] Compare for PriorityQueue[A]
 pub impl[A : Compare] Eq for PriorityQueue[A]
 pub impl[A : Hash + Compare] Hash for PriorityQueue[A]
+#deprecated
 pub impl[A : Show + Compare] Show for PriorityQueue[A]
 pub impl[A : ToJson + Compare] ToJson for PriorityQueue[A]
 pub impl[A : @debug.Debug + Compare] @debug.Debug for PriorityQueue[A]

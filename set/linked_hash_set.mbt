@@ -398,6 +398,10 @@ fn[K : Eq] Set::grow(self : Set[K]) -> Unit {
 // Utils
 
 ///|
+#deprecated("Use Debug instead of Show for debugging purposes.")
+pub impl[K : Show] Show for Set[K]
+
+///|
 pub impl[K : Show] Show for Set[K] with output(self, logger) {
   logger.write_string("{")
   for i = 0, curr = self.head {

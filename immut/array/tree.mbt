@@ -735,6 +735,11 @@ fn[A] compute_sizes(
 
 ///|
 /// Print the tree structure. For debug use only.
+#deprecated("Use Debug instead of Show for debugging purposes.")
+impl[A : Show] Show for Tree[A]
+
+///|
+/// Print the tree structure. For debug use only.
 impl[A : Show] Show for Tree[A] with output(self, logger : &Logger) {
   fn indent_str(s : String, indent : Int) -> String {
     String::make(indent, ' ') + s

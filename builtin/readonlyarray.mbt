@@ -636,6 +636,10 @@ pub impl[T] Default for ReadOnlyArray[T] with default() {
 }
 
 ///|
+#deprecated("Use Debug instead of Show for debugging purposes.")
+pub impl[T : Show] Show for ReadOnlyArray[T]
+
+///|
 /// Show implementation for ReadOnlyArray.
 pub impl[T : Show] Show for ReadOnlyArray[T] with output(self, logger) {
   self.unsafe_reinterpret_to_fixed_array().output(logger)

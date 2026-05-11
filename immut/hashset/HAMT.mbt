@@ -404,6 +404,10 @@ pub fn[A : Eq + Hash] HashSet::from_iter(iter : Iter[A]) -> HashSet[A] {
 }
 
 ///|
+#deprecated("Use Debug instead of Show for debugging purposes.")
+pub impl[A : Show] Show for HashSet[A]
+
+///|
 pub impl[A : Show] Show for HashSet[A] with output(self, logger) {
   logger.write_iter(
     self.iter(),

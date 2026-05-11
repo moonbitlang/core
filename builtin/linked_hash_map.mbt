@@ -587,6 +587,10 @@ fn calc_grow_threshold(capacity : Int) -> Int {
 // Utils
 
 ///|
+#deprecated("Use Debug instead of Show for debugging purposes.")
+pub impl[K : Show, V : Show] Show for Map[K, V]
+
+///|
 pub impl[K : Show, V : Show] Show for Map[K, V] with output(self, logger) {
   logger.write_string("{")
   for x = 0, y = self.head {

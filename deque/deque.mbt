@@ -46,6 +46,10 @@ fn[A] Deque::tail_index(self : Deque[A]) -> Int {
 /// }
 /// ```
 ///
+#deprecated("Use Debug instead of Show for debugging purposes.")
+pub impl[A : Show] Show for Deque[A]
+
+///|
 pub impl[A : Show] Show for Deque[A] with output(self, logger) {
   logger.write_iter(self.iter(), prefix="@deque.from_array([", suffix="])")
 }

@@ -245,6 +245,10 @@ pub impl[X : Show] Show for X? with output(self, logger) {
 }
 
 ///|
+#deprecated("Use Debug instead of Show for debugging purposes.")
+pub impl[T : Show, E : Show] Show for Result[T, E]
+
+///|
 pub impl[T : Show, E : Show] Show for Result[T, E] with output(self, logger) {
   match self {
     Ok(x) => {
@@ -261,9 +265,17 @@ pub impl[T : Show, E : Show] Show for Result[T, E] with output(self, logger) {
 }
 
 ///|
+#deprecated("Use Debug instead of Show for debugging purposes.")
+pub impl[X : Show] Show for FixedArray[X]
+
+///|
 pub impl[X : Show] Show for FixedArray[X] with output(self, logger) {
   logger.write_iter(self.iter())
 }
+
+///|
+#deprecated("Use Debug instead of Show for debugging purposes.")
+pub impl[X : Show] Show for Array[X]
 
 ///|
 pub impl[X : Show] Show for Array[X] with output(self, logger) {
