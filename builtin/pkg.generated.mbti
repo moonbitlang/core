@@ -441,7 +441,9 @@ pub(all) type SourceLoc
 pub fn SourceLoc::to_json_string(Self) -> String
 pub impl Show for SourceLoc
 
-type StringBuilder
+pub struct StringBuilder {
+  // private fields
+}
 #alias(new)
 pub fn StringBuilder::StringBuilder(size_hint? : Int) -> Self
 pub fn StringBuilder::is_empty(Self) -> Bool

@@ -76,7 +76,9 @@ pub fn BigInt::to_hex(self : BigInt, uppercase? : Bool = true) -> String {
   // WARN: this implementation assumes that `radix_bit_len` is a multiple of 4.
   let digits_per_limb = radix_bit_len / 4
   let buf = if self.sign is Negative {
-    let builder = StringBuilder::StringBuilder(size_hint=self.len * digits_per_limb + 2)
+    let builder = StringBuilder::StringBuilder(
+      size_hint=self.len * digits_per_limb + 2,
+    )
     builder.write_char('-')
     builder
   } else {
