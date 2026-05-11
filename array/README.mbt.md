@@ -11,15 +11,15 @@ There are several ways to create arrays in MoonBit:
 test "array creation" {
   // Using array literal
   let arr1 = [1, 2, 3]
-  inspect(arr1, content="[1, 2, 3]")
+  debug_inspect(arr1, content="[1, 2, 3]")
 
   // Creating with indices
   let arr2 = Array::makei(3, i => i * 2)
-  inspect(arr2, content="[0, 2, 4]")
+  debug_inspect(arr2, content="[0, 2, 4]")
 
   // Creating from iterator
   let arr3 = Array::from_iter("hello".iter())
-  inspect(arr3, content="['h', 'e', 'l', 'l', 'o']")
+  debug_inspect(arr3, content="['h', 'e', 'l', 'l', 'o']")
 }
 ```
 
@@ -34,7 +34,7 @@ test "array operations" {
 
   // Filtering out odd numbers and negating the remaining
   let neg_evens = nums.filter_map(x => if x % 2 == 0 { Some(-x) } else { None })
-  inspect(neg_evens, content="[-2, -4]")
+  debug_inspect(neg_evens, content="[-2, -4]")
 
   // Summing array
   let sum = nums.fold(init=0, (acc, x) => acc + x)
@@ -58,13 +58,13 @@ test "sorting" {
   // Basic sorting - creates new sorted array
   let sorted1 = arr.copy()
   sorted1.sort()
-  inspect(sorted1, content="[1, 1, 2, 3, 4, 5, 6, 9]")
+  debug_inspect(sorted1, content="[1, 1, 2, 3, 4, 5, 6, 9]")
 
   // Custom comparison
   let strs = ["aa", "b", "ccc"]
   let sorted2 = strs.copy()
   sorted2.sort_by((a, b) => a.length().compare(b.length()))
-  inspect(
+  debug_inspect(
     sorted2,
     content=(
       #|["b", "aa", "ccc"]
@@ -75,7 +75,7 @@ test "sorting" {
   let pairs = [(2, "b"), (1, "a"), (3, "c")]
   let sorted3 = pairs.copy()
   sorted3.sort_by_key(p => p.0)
-  inspect(
+  debug_inspect(
     sorted3,
     content=(
       #|[(1, "a"), (2, "b"), (3, "c")]
@@ -93,11 +93,16 @@ Array views provide a lightweight way to work with array slices:
 test "array views" {
   let arr = [1, 2, 3, 4, 5]
   let view = arr[1:4]
-  inspect(view, content="[2, 3, 4]")
+  debug_inspect(
+    view,
+    content=(
+      #|<ArrayView: [2, 3, 4]>
+    ),
+  )
 
   // Map view to new array
   let doubled = view.map(x => x * 2)
-  inspect(doubled, content="[4, 6, 8]")
+  debug_inspect(doubled, content="[4, 6, 8]")
 }
 ```
 
@@ -112,7 +117,12 @@ test "fixed arrays" {
 
   // Concatenation creates new array
   let combined = fixed + [4, 5]
-  inspect(combined, content="[1, 2, 3, 4, 5]")
+  debug_inspect(
+    combined,
+    content=(
+      #|<FixedArray: [1, 2, 3, 4, 5]>
+    ),
+  )
 
   // Check for containment
   let has_two = fixed.contains(2)
@@ -143,6 +153,6 @@ test "utilities" {
   // Using deterministic `rand` function below for demonstration
   // NOTE: When using a normal `rand` function, the actual result may vary
   let shuffled = nums.shuffle(rand=_ => 1)
-  inspect(shuffled, content="[1, 3, 4, 5, 2]")
+  debug_inspect(shuffled, content="[1, 3, 4, 5, 2]")
 }
 ```

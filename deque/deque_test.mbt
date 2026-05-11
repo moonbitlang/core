@@ -155,7 +155,12 @@ test "mapi" {
   inspect(dvp[1], content="5")
   inspect(dvp[2], content="7")
   let dve = @deque.from_array(([] : FixedArray[Int]))
-  inspect(dve.mapi((_idx, x) => x), content="@deque.from_array([])")
+  debug_inspect(
+    dve.mapi((_idx, x) => x),
+    content=(
+      #|<Deque: []>
+    ),
+  )
 }
 
 ///|
@@ -225,7 +230,12 @@ test "iter2" {
 ///|
 test "get" {
   let dv = @deque.from_array([1, 2, 3, 4, 5])
-  inspect(dv, content="@deque.from_array([1, 2, 3, 4, 5])")
+  debug_inspect(
+    dv,
+    content=(
+      #|<Deque: [1, 2, 3, 4, 5]>
+    ),
+  )
   dv.pop_front() |> ignore
   dv.push_back(1)
   inspect(dv[4], content="1")
@@ -235,8 +245,18 @@ test "get" {
 
 ///|
 test "from_array" {
-  inspect(@deque.from_array(([] : Array[Int])), content="@deque.from_array([])")
-  inspect(@deque.from_array([1, 2, 3]), content="@deque.from_array([1, 2, 3])")
+  debug_inspect(
+    @deque.from_array(([] : Array[Int])),
+    content=(
+      #|<Deque: []>
+    ),
+  )
+  debug_inspect(
+    @deque.from_array([1, 2, 3]),
+    content=(
+      #|<Deque: [1, 2, 3]>
+    ),
+  )
 }
 
 ///|
@@ -271,29 +291,51 @@ test "from_json rejects non-array" {
 
 ///|
 test "copy" {
-  inspect(
+  debug_inspect(
     (@deque.Deque([]) : @deque.Deque[Int]).copy(),
-    content="@deque.from_array([])",
+    content=(
+      #|<Deque: []>
+    ),
   )
   let deq = @deque.from_array([1, 2, 3])
   let deq1 = deq.copy()
   deq1[0] = 111
-  inspect(deq, content="@deque.from_array([1, 2, 3])")
-  inspect(deq1, content="@deque.from_array([111, 2, 3])")
+  debug_inspect(
+    deq,
+    content=(
+      #|<Deque: [1, 2, 3]>
+    ),
+  )
+  debug_inspect(
+    deq1,
+    content=(
+      #|<Deque: [111, 2, 3]>
+    ),
+  )
 }
 
 ///|
 test "append self keeps order" {
   let dq = @deque.from_array([1, 2, 3])
   dq.append(dq)
-  inspect(dq, content="@deque.from_array([1, 2, 3, 1, 2, 3])")
+  debug_inspect(
+    dq,
+    content=(
+      #|<Deque: [1, 2, 3, 1, 2, 3]>
+    ),
+  )
 }
 
 ///|
 test "blit_to self overlap copies as memmove" {
   let dq = @deque.from_array([1, 2, 3, 4, 5])
   dq.blit_to(dq, src_offset=0, dst_offset=1, len=4)
-  inspect(dq, content="@deque.from_array([1, 1, 2, 3, 4])")
+  debug_inspect(
+    dq,
+    content=(
+      #|<Deque: [1, 1, 2, 3, 4]>
+    ),
+  )
 }
 
 ///|
@@ -334,7 +376,12 @@ test "map" {
   inspect(dvp[1], content="5")
   inspect(dvp[2], content="6")
   let dve = @deque.from_array(([] : FixedArray[Int]))
-  inspect(dve.map(x => x), content="@deque.from_array([])")
+  debug_inspect(
+    dve.map(x => x),
+    content=(
+      #|<Deque: []>
+    ),
+  )
 }
 
 ///|
@@ -458,21 +505,33 @@ test "reserve_and_push" {
 
 ///|
 test "from_iter multiple elements iter" {
-  inspect(
+  debug_inspect(
     @deque.from_iter([1, 2, 3].iter()),
-    content="@deque.from_array([1, 2, 3])",
+    content=(
+      #|<Deque: [1, 2, 3]>
+    ),
   )
 }
 
 ///|
 test "from_iter single element iter" {
-  inspect(@deque.from_iter([1].iter()), content="@deque.from_array([1])")
+  debug_inspect(
+    @deque.from_iter([1].iter()),
+    content=(
+      #|<Deque: [1]>
+    ),
+  )
 }
 
 ///|
 test "from_iter empty iter" {
   let dq : @deque.Deque[Int] = @deque.from_iter(Iter::empty())
-  inspect(dq, content="@deque.from_array([])")
+  debug_inspect(
+    dq,
+    content=(
+      #|<Deque: []>
+    ),
+  )
 }
 
 ///|
@@ -528,7 +587,12 @@ test "deque Deque::set wrapping case" {
   dq[2] = 10
 
   // Verify the change
-  inspect(dq, content="@deque.from_array([0, 1, 10, 3, 4])")
+  debug_inspect(
+    dq,
+    content=(
+      #|<Deque: [0, 1, 10, 3, 4]>
+    ),
+  )
 }
 
 ///|
@@ -538,9 +602,9 @@ test "iter when tail needs to wrap around" {
   dq.push_back(2) // tail = 1
   dq.unsafe_pop_front() // head = 1
   dq.push_back(3) // tail = 0 (wraps around)
-  inspect(dq.iter().to_array(), content="[2, 3]")
-  inspect(dq.iter().filter(x => x % 2 == 0).to_array(), content="[2]")
-  inspect(dq.iter().filter(x => x % 2 != 0).to_array(), content="[3]")
+  debug_inspect(dq.iter().to_array(), content="[2, 3]")
+  debug_inspect(dq.iter().filter(x => x % 2 == 0).to_array(), content="[2]")
+  debug_inspect(dq.iter().filter(x => x % 2 != 0).to_array(), content="[3]")
 }
 
 ///|
@@ -550,7 +614,12 @@ test "iter2 when tail needs to wrap around" {
   dq.push_back(2) // tail = 1
   dq.unsafe_pop_front() // head = 1
   dq.push_back(3) // tail = 0 (wraps around)
-  inspect(dq.iter2(), content="[(0, 2), (1, 3)]")
+  debug_inspect(
+    dq.iter2().to_array(),
+    content=(
+      #|[(0, 2), (1, 3)]
+    ),
+  )
 }
 
 ///|
@@ -563,7 +632,7 @@ test "rev_iter when head needs to wrap around" {
   for i in 3..<=6 {
     dq.push_back(i)
   }
-  inspect(dq.rev_iter().to_array(), content="[6, 5, 4, 3]")
+  debug_inspect(dq.rev_iter().to_array(), content="[6, 5, 4, 3]")
 }
 
 ///|
@@ -576,7 +645,12 @@ test "rev_iter2 when head needs to wrap around" {
   for i in 3..<=6 {
     dq.push_back(i)
   }
-  inspect(dq.rev_iter2(), content="[(0, 6), (1, 5), (2, 4), (3, 3)]")
+  debug_inspect(
+    dq.rev_iter2().to_array(),
+    content=(
+      #|[(0, 6), (1, 5), (2, 4), (3, 3)]
+    ),
+  )
 }
 
 ///|
@@ -585,7 +659,12 @@ test "deque push_front when empty" {
   ignore(d.pop_back())
   let f = d.pop_back().unwrap()
   d.push_front(f)
-  inspect(d, content="@deque.from_array([0])")
+  debug_inspect(
+    d,
+    content=(
+      #|<Deque: [0]>
+    ),
+  )
   let d = @deque.from_array(["a", "b"])
   debug_inspect(
     d.pop_back(),
@@ -600,7 +679,12 @@ test "deque push_front when empty" {
     ),
   )
   d.push_front("a")
-  inspect(d, content="@deque.from_array([\"a\"])")
+  debug_inspect(
+    d,
+    content=(
+      #|<Deque: ["a"]>
+    ),
+  )
 }
 
 ///|
@@ -609,7 +693,12 @@ test "deque push_back when empty" {
   ignore(d.pop_front())
   let f = d.pop_front().unwrap()
   d.push_back(f)
-  inspect(d, content="@deque.from_array([1])")
+  debug_inspect(
+    d,
+    content=(
+      #|<Deque: [1]>
+    ),
+  )
   let d = @deque.from_array(["a", "b"])
   @json.json_inspect(d.pop_front(), content=["a"])
   @json.json_inspect(d.pop_front(), content=["b"])
@@ -625,7 +714,12 @@ test "deque as_views" {
 
   // Test contiguous case (head_len >= len)
   let dq2 = @deque.from_array([1, 2, 3])
-  inspect(dq2.as_views(), content="([1, 2, 3], [])")
+  debug_inspect(
+    dq2.as_views(),
+    content=(
+      #|(<ArrayView: [1, 2, 3]>, <ArrayView: []>)
+    ),
+  )
 
   // Test split case (head_len < len)
   let dq3 = @deque.from_array([1, 2, 3, 4])
@@ -994,9 +1088,19 @@ test "deque retain clears full wrapped deque" {
   dq.push_back(4)
   ignore(dq.pop_front())
   dq.push_back(5)
-  inspect(dq.as_views(), content="([2, 3, 4], [5])")
+  debug_inspect(
+    dq.as_views(),
+    content=(
+      #|(<ArrayView: [2, 3, 4]>, <ArrayView: [5]>)
+    ),
+  )
   dq.retain(_ => false)
-  inspect(dq.as_views(), content="([], [])")
+  debug_inspect(
+    dq.as_views(),
+    content=(
+      #|(<ArrayView: []>, <ArrayView: []>)
+    ),
+  )
   assert_true(dq.is_empty())
 }
 
@@ -1073,9 +1177,19 @@ test "deque retain_map clears full wrapped deque" {
   dq.push_back(4)
   ignore(dq.pop_front())
   dq.push_back(5)
-  inspect(dq.as_views(), content="([2, 3, 4], [5])")
+  debug_inspect(
+    dq.as_views(),
+    content=(
+      #|(<ArrayView: [2, 3, 4]>, <ArrayView: [5]>)
+    ),
+  )
   dq.retain_map(_ => None)
-  inspect(dq.as_views(), content="([], [])")
+  debug_inspect(
+    dq.as_views(),
+    content=(
+      #|(<ArrayView: []>, <ArrayView: []>)
+    ),
+  )
   assert_true(dq.is_empty())
 }
 
@@ -1110,78 +1224,137 @@ test "@deque.to_array/wrapped_around" {
 test "pop_front when wrapped around" {
   let dq = @deque.from_array([1, 2, 3, 4, 5])
   dq.push_front(6)
-  inspect(dq.as_views(), content="([6], [1, 2, 3, 4, 5])")
+  debug_inspect(
+    dq.as_views(),
+    content=(
+      #|(<ArrayView: [6]>, <ArrayView: [1, 2, 3, 4, 5]>)
+    ),
+  )
   for _ in 0..<dq.length() {
     ignore(dq.pop_front())
   }
-  inspect(dq.as_views(), content="([], [])")
+  debug_inspect(
+    dq.as_views(),
+    content=(
+      #|(<ArrayView: []>, <ArrayView: []>)
+    ),
+  )
 }
 
 ///|
 test "unsafe_pop_back when wrapped around" {
   let dq = @deque.from_array([1, 2, 3, 4, 5])
   dq.push_front(6)
-  inspect(dq.as_views(), content="([6], [1, 2, 3, 4, 5])")
+  debug_inspect(
+    dq.as_views(),
+    content=(
+      #|(<ArrayView: [6]>, <ArrayView: [1, 2, 3, 4, 5]>)
+    ),
+  )
   for _ in 0..<dq.length() {
     dq.unsafe_pop_back()
   }
-  inspect(dq.as_views(), content="([], [])")
+  debug_inspect(
+    dq.as_views(),
+    content=(
+      #|(<ArrayView: []>, <ArrayView: []>)
+    ),
+  )
 }
 
 ///|
 test "pop_back when wrapped around" {
   let dq = @deque.from_array([1, 2, 3, 4, 5])
   dq.push_front(6)
-  inspect(dq.as_views(), content="([6], [1, 2, 3, 4, 5])")
+  debug_inspect(
+    dq.as_views(),
+    content=(
+      #|(<ArrayView: [6]>, <ArrayView: [1, 2, 3, 4, 5]>)
+    ),
+  )
   for _ in 0..<dq.length() {
     ignore(dq.pop_back())
   }
-  inspect(dq.as_views(), content="([], [])")
+  debug_inspect(
+    dq.as_views(),
+    content=(
+      #|(<ArrayView: []>, <ArrayView: []>)
+    ),
+  )
 }
 
 ///|
 test "rev_iter when wrapped around" {
   let dq = @deque.from_array([1, 2, 3, 4, 5])
   dq.push_front(6)
-  inspect(dq.rev_iter(), content="[5, 4, 3, 2, 1, 6]")
+  debug_inspect(
+    dq.rev_iter().to_array(),
+    content=(
+      #|[5, 4, 3, 2, 1, 6]
+    ),
+  )
 }
 
 ///|
 test "rev_iter2 when wrapped around" {
   let dq = @deque.from_array([1, 2, 3, 4, 5])
   dq.push_front(6)
-  inspect(
-    dq.rev_iter2(),
-    content="[(0, 5), (1, 4), (2, 3), (3, 2), (4, 1), (5, 6)]",
+  debug_inspect(
+    dq.rev_iter2().to_array(),
+    content=(
+      #|[(0, 5), (1, 4), (2, 3), (3, 2), (4, 1), (5, 6)]
+    ),
   )
 }
 
 ///|
 test "flatten with empty deque" {
   let dq : @deque.Deque[@deque.Deque[Int]] = @deque.from_array([])
-  inspect(dq.flatten(), content="@deque.from_array([])")
+  debug_inspect(
+    dq.flatten(),
+    content=(
+      #|<Deque: []>
+    ),
+  )
   let dq : @deque.Deque[@deque.Deque[Int]] = @deque.from_array([
     @deque.from_array([]),
     @deque.from_array([]),
   ])
-  inspect(dq.flatten(), content="@deque.from_array([])")
+  debug_inspect(
+    dq.flatten(),
+    content=(
+      #|<Deque: []>
+    ),
+  )
   let dq : @deque.Deque[@deque.Deque[Int]] = @deque.from_array([
     @deque.from_array([1, 2, 3]),
     @deque.from_array([]),
     @deque.from_array([4, 5, 6]),
   ])
-  inspect(dq.flatten(), content="@deque.from_array([1, 2, 3, 4, 5, 6])")
+  debug_inspect(
+    dq.flatten(),
+    content=(
+      #|<Deque: [1, 2, 3, 4, 5, 6]>
+    ),
+  )
 }
 
 ///|
 test "flatten when wrapped around" {
   let dq = @deque.from_array([1, 2, 3, 4, 5])
   dq.push_front(6)
-  inspect(dq.as_views(), content="([6], [1, 2, 3, 4, 5])")
+  debug_inspect(
+    dq.as_views(),
+    content=(
+      #|(<ArrayView: [6]>, <ArrayView: [1, 2, 3, 4, 5]>)
+    ),
+  )
   let dqdq = @deque.from_array([dq, dq])
-  inspect(
+  debug_inspect(
     dqdq.flatten(),
-    content="@deque.from_array([6, 1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5])",
+    content=(
+      #|<Deque: [6, 1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5]>
+    ),
   )
 }
 
@@ -1192,20 +1365,50 @@ test "drain when wrapped around" {
   dq.push_front(3)
   dq.push_front(2)
   dq.push_front(1)
-  inspect(dq.as_views(), content="([1, 2, 3], [4, 5, 6])")
+  debug_inspect(
+    dq.as_views(),
+    content=(
+      #|(<ArrayView: [1, 2, 3]>, <ArrayView: [4, 5, 6]>)
+    ),
+  )
   let dq2 = dq.drain(start=2, len=2)
-  inspect(dq.as_views(), content="([1, 2], [5, 6])")
-  inspect(dq2, content="@deque.from_array([3, 4])")
+  debug_inspect(
+    dq.as_views(),
+    content=(
+      #|(<ArrayView: [1, 2]>, <ArrayView: [5, 6]>)
+    ),
+  )
+  debug_inspect(
+    dq2,
+    content=(
+      #|<Deque: [3, 4]>
+    ),
+  )
 
   // when the area to be drained is not wrapped around
   let dq = @deque.from_array([4, 5, 6])
   dq.push_front(3)
   dq.push_front(2)
   dq.push_front(1)
-  inspect(dq.as_views(), content="([1, 2, 3], [4, 5, 6])")
+  debug_inspect(
+    dq.as_views(),
+    content=(
+      #|(<ArrayView: [1, 2, 3]>, <ArrayView: [4, 5, 6]>)
+    ),
+  )
   let dq2 = dq.drain(start=1, len=2)
-  inspect(dq.as_views(), content="([1], [4, 5, 6])")
-  inspect(dq2, content="@deque.from_array([2, 3])")
+  debug_inspect(
+    dq.as_views(),
+    content=(
+      #|(<ArrayView: [1]>, <ArrayView: [4, 5, 6]>)
+    ),
+  )
+  debug_inspect(
+    dq2,
+    content=(
+      #|<Deque: [2, 3]>
+    ),
+  )
 
   // when the start is larger than len
   let dq = @deque.from_array([5, 6])
@@ -1213,10 +1416,25 @@ test "drain when wrapped around" {
   dq.push_front(3)
   dq.push_front(2)
   dq.push_front(1)
-  inspect(dq.as_views(), content="([1, 2], [3, 4, 5, 6])")
+  debug_inspect(
+    dq.as_views(),
+    content=(
+      #|(<ArrayView: [1, 2]>, <ArrayView: [3, 4, 5, 6]>)
+    ),
+  )
   let dq2 = dq.drain(start=3, len=2)
-  inspect(dq.as_views(), content="([1, 2], [3, 6])")
-  inspect(dq2, content="@deque.from_array([4, 5])")
+  debug_inspect(
+    dq.as_views(),
+    content=(
+      #|(<ArrayView: [1, 2]>, <ArrayView: [3, 6]>)
+    ),
+  )
+  debug_inspect(
+    dq2,
+    content=(
+      #|<Deque: [4, 5]>
+    ),
+  )
 }
 
 ///|
@@ -1224,26 +1442,66 @@ test "drain edge cases" {
   // drain with len=0 should return empty and not modify original
   let dq = @deque.from_array([5, 6])
   let dq2 = dq.drain(start=1, len=0)
-  inspect(dq.as_views(), content="([5, 6], [])")
-  inspect(dq2, content="@deque.from_array([])")
+  debug_inspect(
+    dq.as_views(),
+    content=(
+      #|(<ArrayView: [5, 6]>, <ArrayView: []>)
+    ),
+  )
+  debug_inspect(
+    dq2,
+    content=(
+      #|<Deque: []>
+    ),
+  )
 
   // drain from start=length() should return empty (no elements to drain)
   let dq = @deque.from_array([5, 6])
   let dq2 = dq.drain(start=2)
-  inspect(dq.as_views(), content="([5, 6], [])")
-  inspect(dq2, content="@deque.from_array([])")
+  debug_inspect(
+    dq.as_views(),
+    content=(
+      #|(<ArrayView: [5, 6]>, <ArrayView: []>)
+    ),
+  )
+  debug_inspect(
+    dq2,
+    content=(
+      #|<Deque: []>
+    ),
+  )
 
   // drain entire deque
   let dq = @deque.from_array([5, 6])
   let dq2 = dq.drain(start=0)
-  inspect(dq.as_views(), content="([], [])")
-  inspect(dq2, content="@deque.from_array([5, 6])")
+  debug_inspect(
+    dq.as_views(),
+    content=(
+      #|(<ArrayView: []>, <ArrayView: []>)
+    ),
+  )
+  debug_inspect(
+    dq2,
+    content=(
+      #|<Deque: [5, 6]>
+    ),
+  )
 
   // drain with exact len
   let dq = @deque.from_array([5, 6, 7])
   let dq2 = dq.drain(start=1, len=2)
-  inspect(dq.as_views(), content="([5], [])")
-  inspect(dq2, content="@deque.from_array([6, 7])")
+  debug_inspect(
+    dq.as_views(),
+    content=(
+      #|(<ArrayView: [5]>, <ArrayView: []>)
+    ),
+  )
+  debug_inspect(
+    dq2,
+    content=(
+      #|<Deque: [6, 7]>
+    ),
+  )
 }
 
 ///|
@@ -1254,10 +1512,25 @@ test "drain complementary tests" {
   dq.push_front(3)
   dq.push_front(2)
   dq.push_front(1)
-  inspect(dq.as_views(), content="([1, 2], [3, 4, 5, 6])")
+  debug_inspect(
+    dq.as_views(),
+    content=(
+      #|(<ArrayView: [1, 2]>, <ArrayView: [3, 4, 5, 6]>)
+    ),
+  )
   let dq2 = dq.drain(start=1, len=5)
-  inspect(dq.as_views(), content="([1], [])")
-  inspect(dq2, content="@deque.from_array([2, 3, 4, 5, 6])")
+  debug_inspect(
+    dq.as_views(),
+    content=(
+      #|(<ArrayView: [1]>, <ArrayView: []>)
+    ),
+  )
+  debug_inspect(
+    dq2,
+    content=(
+      #|<Deque: [2, 3, 4, 5, 6]>
+    ),
+  )
 
   // when front is drained completely
   let dq = @deque.from_array([5, 6])
@@ -1265,10 +1538,25 @@ test "drain complementary tests" {
   dq.push_front(3)
   dq.push_front(2)
   dq.push_front(1)
-  inspect(dq.as_views(), content="([1, 2], [3, 4, 5, 6])")
+  debug_inspect(
+    dq.as_views(),
+    content=(
+      #|(<ArrayView: [1, 2]>, <ArrayView: [3, 4, 5, 6]>)
+    ),
+  )
   let dq2 = dq.drain(start=0, len=5)
-  inspect(dq.as_views(), content="([6], [])")
-  inspect(dq2, content="@deque.from_array([1, 2, 3, 4, 5])")
+  debug_inspect(
+    dq.as_views(),
+    content=(
+      #|(<ArrayView: [6]>, <ArrayView: []>)
+    ),
+  )
+  debug_inspect(
+    dq2,
+    content=(
+      #|<Deque: [1, 2, 3, 4, 5]>
+    ),
+  )
 
   // when only back is drained
   let dq = @deque.from_array([5, 6])
@@ -1276,10 +1564,25 @@ test "drain complementary tests" {
   dq.push_front(3)
   dq.push_front(2)
   dq.push_front(1)
-  inspect(dq.as_views(), content="([1, 2], [3, 4, 5, 6])")
+  debug_inspect(
+    dq.as_views(),
+    content=(
+      #|(<ArrayView: [1, 2]>, <ArrayView: [3, 4, 5, 6]>)
+    ),
+  )
   let dq2 = dq.drain(start=2, len=4)
-  inspect(dq.as_views(), content="([1, 2], [])")
-  inspect(dq2, content="@deque.from_array([3, 4, 5, 6])")
+  debug_inspect(
+    dq.as_views(),
+    content=(
+      #|(<ArrayView: [1, 2]>, <ArrayView: []>)
+    ),
+  )
+  debug_inspect(
+    dq2,
+    content=(
+      #|<Deque: [3, 4, 5, 6]>
+    ),
+  )
 }
 
 ///|
@@ -1288,27 +1591,27 @@ test "binary_search_by on multiple elements deque" {
 
   // Find the element that exists (the first one)
   let found_first = dq.binary_search_by(x => x.compare(1))
-  inspect(found_first, content="Ok(0)")
+  debug_inspect(found_first, content="Ok(0)")
 
   // Find the element that exists (middle)
   let found_middle = dq.binary_search_by(x => x.compare(5))
-  inspect(found_middle, content="Ok(2)")
+  debug_inspect(found_middle, content="Ok(2)")
 
   // Find the last element that exists
   let found_last = dq.binary_search_by(x => x.compare(9))
-  inspect(found_last, content="Ok(4)")
+  debug_inspect(found_last, content="Ok(4)")
 
   // Find non-existent elements (less than all)
   let not_found_less = dq.binary_search_by(x => x.compare(0))
-  inspect(not_found_less, content="Err(0)")
+  debug_inspect(not_found_less, content="Err(0)")
 
   //Find the non-existent element (middle position)
   let not_found_middle = dq.binary_search_by(x => x.compare(4))
-  inspect(not_found_middle, content="Err(2)")
+  debug_inspect(not_found_middle, content="Err(2)")
 
   // Find non-existent elements (greater than all)
   let not_found_greater = dq.binary_search_by(x => x.compare(10))
-  inspect(not_found_greater, content="Err(5)")
+  debug_inspect(not_found_greater, content="Err(5)")
 }
 
 ///|
@@ -1317,11 +1620,11 @@ test "binary_search when wrapped around" {
   dq.push_front(3)
   dq.push_front(1)
   let found_first = dq.binary_search(1)
-  inspect(found_first, content="Ok(0)")
+  debug_inspect(found_first, content="Ok(0)")
   let found_middle = dq.binary_search(5)
-  inspect(found_middle, content="Ok(2)")
+  debug_inspect(found_middle, content="Ok(2)")
   let found_last = dq.binary_search(9)
-  inspect(found_last, content="Ok(4)")
+  debug_inspect(found_last, content="Ok(4)")
 }
 
 ///|
@@ -1336,13 +1639,18 @@ test "binary_search on wrapped deque with first/mid/last checks" {
   for i in 10..<=12 {
     dq.push_back(i)
   }
-  inspect(dq.as_views(), content="([6, 7, 8, 9, 10], [11, 12])")
+  debug_inspect(
+    dq.as_views(),
+    content=(
+      #|(<ArrayView: [6, 7, 8, 9, 10]>, <ArrayView: [11, 12]>)
+    ),
+  )
   let found = dq.binary_search(9)
-  inspect(found, content="Ok(3)")
+  debug_inspect(found, content="Ok(3)")
   let edge_case = dq.binary_search(6)
-  inspect(edge_case, content="Ok(0)")
+  debug_inspect(edge_case, content="Ok(0)")
   let edge_case2 = dq.binary_search(12)
-  inspect(edge_case2, content="Ok(6)")
+  debug_inspect(edge_case2, content="Ok(6)")
 }
 
 ///|
@@ -1353,9 +1661,9 @@ test "binary_search with minimal wrap around" {
   dq.unsafe_pop_front()
   dq.push_back(3)
   let found = dq.binary_search(2)
-  inspect(found, content="Ok(0)")
+  debug_inspect(found, content="Ok(0)")
   let not_found = dq.binary_search(1)
-  inspect(not_found, content="Err(0)")
+  debug_inspect(not_found, content="Err(0)")
 }
 
 ///|
@@ -1369,11 +1677,16 @@ test "binary_search with edge wrap around" {
   dq.unsafe_pop_front()
   dq.push_back(9)
   dq.push_back(11)
-  inspect(dq.as_views(), content="([5, 7], [9, 11])") // Verify wrapped state
+  debug_inspect(
+    dq.as_views(),
+    content=(
+      #|(<ArrayView: [5, 7]>, <ArrayView: [9, 11]>)
+    ),
+  ) // Verify wrapped state
   let found = dq.binary_search(7) // Find existing element
-  inspect(found, content="Ok(1)")
+  debug_inspect(found, content="Ok(1)")
   let not_found = dq.binary_search(8) // Find insertion point
-  inspect(not_found, content="Err(2)")
+  debug_inspect(not_found, content="Err(2)")
 }
 
 ///|
@@ -1388,10 +1701,15 @@ test "deque_binary_search_wrap_around" {
   dq.unsafe_pop_front()
   dq.push_back(9)
   dq.push_back(11)
-  inspect(dq.as_views(), content="([5, 7], [9, 11])")
+  debug_inspect(
+    dq.as_views(),
+    content=(
+      #|(<ArrayView: [5, 7]>, <ArrayView: [9, 11]>)
+    ),
+  )
   // 4. Verify binary search functionality
-  inspect(dq.binary_search(7), content="Ok(1)")
-  inspect(dq.binary_search(8), content="Err(2)")
+  debug_inspect(dq.binary_search(7), content="Ok(1)")
+  debug_inspect(dq.binary_search(8), content="Err(2)")
 
   // 5. Verify logical order
   inspect(dq[0], content="5")
@@ -1404,19 +1722,19 @@ test "deque_binary_search_wrap_around" {
 test "deque_binary_search finds leftmost duplicate" {
   let dq1 = @deque.from_array([1, 2, 3, 3, 3, 4, 5])
   let result1 = dq1.binary_search(3)
-  inspect(result1, content="Ok(2)")
+  debug_inspect(result1, content="Ok(2)")
   let dq2 = @deque.from_array([1, 1, 1, 2, 3])
   let result2 = dq2.binary_search(1)
-  inspect(result2, content="Ok(0)")
+  debug_inspect(result2, content="Ok(0)")
   let dq3 = @deque.from_array([1, 2, 3, 5, 5, 5])
   let result3 = dq3.binary_search(5)
-  inspect(result3, content="Ok(3)")
+  debug_inspect(result3, content="Ok(3)")
   let dq4 = @deque.from_array([2, 2, 2, 2, 2])
   let result4 = dq4.binary_search(2)
-  inspect(result4, content="Ok(0)")
+  debug_inspect(result4, content="Ok(0)")
   let dq5 = @deque.from_array([1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4])
   let result5 = dq5.binary_search(3)
-  inspect(result5, content="Ok(7)")
+  debug_inspect(result5, content="Ok(7)")
 }
 
 ///|
@@ -1582,25 +1900,50 @@ test "deque map/mapi/search wrapped unfull buffer" {
   dq.push_back(0)
   dq.push_back(1)
   dq.push_front(-1)
-  inspect(dq.as_views(), content="([-1], [0, 1])")
+  debug_inspect(
+    dq.as_views(),
+    content=(
+      #|(<ArrayView: [-1]>, <ArrayView: [0, 1]>)
+    ),
+  )
   let mapped = dq.map(x => x * 10)
-  inspect(mapped, content="@deque.from_array([-10, 0, 10])")
+  debug_inspect(
+    mapped,
+    content=(
+      #|<Deque: [-10, 0, 10]>
+    ),
+  )
 
   // mapi
   let dq = @deque.Deque([], capacity=4)
   dq.push_back(0)
   dq.push_back(1)
   dq.push_front(-1)
-  inspect(dq.as_views(), content="([-1], [0, 1])")
+  debug_inspect(
+    dq.as_views(),
+    content=(
+      #|(<ArrayView: [-1]>, <ArrayView: [0, 1]>)
+    ),
+  )
   let mapped = dq.mapi((x, i) => x * 10 + i)
-  inspect(mapped, content="@deque.from_array([-1, 10, 21])")
+  debug_inspect(
+    mapped,
+    content=(
+      #|<Deque: [-1, 10, 21]>
+    ),
+  )
 
   // search
   let dq = @deque.Deque([], capacity=4)
   dq.push_back(0)
   dq.push_back(1)
   dq.push_front(-1)
-  inspect(dq.as_views(), content="([-1], [0, 1])")
+  debug_inspect(
+    dq.as_views(),
+    content=(
+      #|(<ArrayView: [-1]>, <ArrayView: [0, 1]>)
+    ),
+  )
   debug_inspect(dq.search(-1), content="Some(0)")
 }
 
@@ -1611,10 +1954,20 @@ test "append_simple" {
   let d2 = @deque.from_array([4, 5, 6])
   d1.append(d2)
   assert_eq(d1.to_array(), [1, 2, 3, 4, 5, 6])
-  inspect(d1.as_views(), content="([1, 2, 3, 4, 5, 6], [])")
+  debug_inspect(
+    d1.as_views(),
+    content=(
+      #|(<ArrayView: [1, 2, 3, 4, 5, 6]>, <ArrayView: []>)
+    ),
+  )
   assert_eq(d1.length(), 6)
   assert_eq(d2.to_array(), [4, 5, 6])
-  inspect(d2.as_views(), content="([4, 5, 6], [])")
+  debug_inspect(
+    d2.as_views(),
+    content=(
+      #|(<ArrayView: [4, 5, 6]>, <ArrayView: []>)
+    ),
+  )
   assert_eq(d2.length(), 3)
 }
 
@@ -1630,7 +1983,12 @@ test "append_wrap_around" {
   let d2 = @deque.from_array([6, 7, 8])
   d1.append(d2)
   assert_eq(d1.to_array(), [1, 2, 3, 4, 5, 6, 7, 8])
-  inspect(d1.as_views(), content="([1, 2], [3, 4, 5, 6, 7, 8])")
+  debug_inspect(
+    d1.as_views(),
+    content=(
+      #|(<ArrayView: [1, 2]>, <ArrayView: [3, 4, 5, 6, 7, 8]>)
+    ),
+  )
   assert_eq(d1.length(), 8)
 }
 
@@ -1641,7 +1999,12 @@ test "append_empty" {
   let d2 = @deque.from_array([])
   d1.append(d2)
   assert_eq(d1.to_array(), [1, 2, 3])
-  inspect(d1.as_views(), content="([1, 2, 3], [])")
+  debug_inspect(
+    d1.as_views(),
+    content=(
+      #|(<ArrayView: [1, 2, 3]>, <ArrayView: []>)
+    ),
+  )
   assert_eq(d1.length(), 3)
 }
 
@@ -1652,7 +2015,12 @@ test "append_into_empty" {
   let d2 = @deque.from_array([1, 2, 3])
   d1.append(d2)
   assert_eq(d1.to_array(), [1, 2, 3])
-  inspect(d1.as_views(), content="([1, 2, 3], [])")
+  debug_inspect(
+    d1.as_views(),
+    content=(
+      #|(<ArrayView: [1, 2, 3]>, <ArrayView: []>)
+    ),
+  )
   assert_eq(d1.length(), 3)
 }
 
@@ -1667,7 +2035,12 @@ test "append_multiple_times" {
   d1.append(d3)
   d1.append(d4)
   assert_eq(d1.to_array(), [1, 2, 3, 4, 5, 6, 7])
-  inspect(d1.as_views(), content="([1, 2, 3, 4, 5, 6, 7], [])")
+  debug_inspect(
+    d1.as_views(),
+    content=(
+      #|(<ArrayView: [1, 2, 3, 4, 5, 6, 7]>, <ArrayView: []>)
+    ),
+  )
   assert_eq(d1.length(), 7)
 }
 
@@ -1678,7 +2051,12 @@ test "append_self" {
   let old_len = d1.length()
   d1.append(d1.copy())
   assert_eq(d1.to_array(), [1, 2, 3, 1, 2, 3])
-  inspect(d1.as_views(), content="([1, 2, 3, 1, 2, 3], [])")
+  debug_inspect(
+    d1.as_views(),
+    content=(
+      #|(<ArrayView: [1, 2, 3, 1, 2, 3]>, <ArrayView: []>)
+    ),
+  )
   assert_eq(d1.length(), old_len * 2)
 }
 
@@ -1690,7 +2068,12 @@ test "append_tail_position" {
   d1.append(d2)
   d1.push_back(5)
   assert_eq(d1.to_array(), [1, 2, 3, 4, 5])
-  inspect(d1.as_views(), content="([1, 2, 3, 4, 5], [])")
+  debug_inspect(
+    d1.as_views(),
+    content=(
+      #|(<ArrayView: [1, 2, 3, 4, 5]>, <ArrayView: []>)
+    ),
+  )
 }
 
 ///|
@@ -1732,20 +2115,40 @@ test "append_empty_after_pushes" {
   d1.append(d2)
   assert_eq(d1.length(), 10)
   assert_eq(d1.to_array(), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-  inspect(d1.as_views(), content="([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], [])")
+  debug_inspect(
+    d1.as_views(),
+    content=(
+      #|(<ArrayView: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]>, <ArrayView: []>)
+    ),
+  )
 }
 
 ///|
 test "append_folded_but_has_space" {
   let d1 = @deque.from_array([1, 2, 3, 4, 5, 6, 7, 8])
-  inspect(d1.as_views(), content="([1, 2, 3, 4, 5, 6, 7, 8], [])")
+  debug_inspect(
+    d1.as_views(),
+    content=(
+      #|(<ArrayView: [1, 2, 3, 4, 5, 6, 7, 8]>, <ArrayView: []>)
+    ),
+  )
   d1.unsafe_pop_front()
   d1.unsafe_pop_front()
   d1.unsafe_pop_front()
   d1.unsafe_pop_back()
-  inspect(d1.as_views(), content="([4, 5, 6, 7], [])")
+  debug_inspect(
+    d1.as_views(),
+    content=(
+      #|(<ArrayView: [4, 5, 6, 7]>, <ArrayView: []>)
+    ),
+  )
   d1.append(@deque.from_array([9, 10, 11]))
-  inspect(d1.as_views(), content="([4, 5, 6, 7, 9], [10, 11])")
+  debug_inspect(
+    d1.as_views(),
+    content=(
+      #|(<ArrayView: [4, 5, 6, 7, 9]>, <ArrayView: [10, 11]>)
+    ),
+  )
 }
 
 ///|
@@ -1755,7 +2158,12 @@ test "blit_to_simple" {
   let dst = @deque.from_array([0, 0, 0])
   @deque.Deque::blit_to(src, dst, len=3, src_offset=0, dst_offset=0)
   assert_eq(dst.to_array(), [1, 2, 3])
-  inspect(dst.as_views(), content="([1, 2, 3], [])")
+  debug_inspect(
+    dst.as_views(),
+    content=(
+      #|(<ArrayView: [1, 2, 3]>, <ArrayView: []>)
+    ),
+  )
 }
 
 ///|
@@ -1767,17 +2175,32 @@ test "blit_to_with_offsets" {
   // Copy last element of src to front of dst
   @deque.Deque::blit_to(src, dst, len=1, src_offset=4, dst_offset=0)
   assert_eq(dst.to_array(), [5, 0, 0, 0, 0])
-  inspect(dst.as_views(), content="([5, 0, 0, 0, 0], [])")
+  debug_inspect(
+    dst.as_views(),
+    content=(
+      #|(<ArrayView: [5, 0, 0, 0, 0]>, <ArrayView: []>)
+    ),
+  )
 
   // Copy first element of src to last of dst
   @deque.Deque::blit_to(src, dst, len=1, src_offset=0, dst_offset=4)
   assert_eq(dst.to_array(), [5, 0, 0, 0, 1])
-  inspect(dst.as_views(), content="([5, 0, 0, 0, 1], [])")
+  debug_inspect(
+    dst.as_views(),
+    content=(
+      #|(<ArrayView: [5, 0, 0, 0, 1]>, <ArrayView: []>)
+    ),
+  )
 
   // Copy multiple elements into tail of dst
   @deque.Deque::blit_to(src, dst, len=2, src_offset=3, dst_offset=3)
   assert_eq(dst.to_array(), [5, 0, 0, 4, 5])
-  inspect(dst.as_views(), content="([5, 0, 0, 4, 5], [])")
+  debug_inspect(
+    dst.as_views(),
+    content=(
+      #|(<ArrayView: [5, 0, 0, 4, 5]>, <ArrayView: []>)
+    ),
+  )
 }
 
 ///|
@@ -1787,7 +2210,12 @@ test "blit_to_into_empty" {
   let dst : @deque.Deque[Int] = @deque.from_array([])
   @deque.Deque::blit_to(src, dst, len=3, src_offset=0, dst_offset=0)
   assert_eq(dst.to_array(), [1, 2, 3])
-  inspect(dst.as_views(), content="([1, 2, 3], [])")
+  debug_inspect(
+    dst.as_views(),
+    content=(
+      #|(<ArrayView: [1, 2, 3]>, <ArrayView: []>)
+    ),
+  )
   assert_eq(dst.length(), 3)
 }
 
@@ -1798,11 +2226,21 @@ test "blit_to_wrap_around" {
   ignore(src.pop_front())
   src.push_back(6)
   assert_eq(src.to_array(), [2, 3, 4, 5, 6])
-  inspect(src.as_views(), content="([2, 3, 4, 5], [6])")
+  debug_inspect(
+    src.as_views(),
+    content=(
+      #|(<ArrayView: [2, 3, 4, 5]>, <ArrayView: [6]>)
+    ),
+  )
   let dst = @deque.from_array([0, 0, 0, 0, 0])
   @deque.Deque::blit_to(src, dst, len=5, src_offset=0, dst_offset=0)
   assert_eq(dst.to_array(), [2, 3, 4, 5, 6])
-  inspect(dst.as_views(), content="([2, 3, 4, 5, 6], [])")
+  debug_inspect(
+    dst.as_views(),
+    content=(
+      #|(<ArrayView: [2, 3, 4, 5, 6]>, <ArrayView: []>)
+    ),
+  )
 }
 
 ///|
@@ -1812,7 +2250,12 @@ test "blit_to_grow" {
   let dst = @deque.from_array([1, 2, 4])
   @deque.Deque::blit_to(src, dst, len=5, src_offset=0, dst_offset=1)
   assert_eq(dst.to_array(), [1, 1, 2, 3, 4, 5])
-  inspect(dst.as_views(), content="([1, 1, 2, 3, 4, 5], [])")
+  debug_inspect(
+    dst.as_views(),
+    content=(
+      #|(<ArrayView: [1, 1, 2, 3, 4, 5]>, <ArrayView: []>)
+    ),
+  )
   assert_eq(dst.length(), 6)
 }
 
@@ -1822,7 +2265,12 @@ test "blit_to_self" {
   let d = @deque.from_array([1, 2, 3, 4, 5])
   @deque.Deque::blit_to(d.copy(), d, len=3, src_offset=0, dst_offset=2)
   assert_eq(d.to_array(), [1, 2, 1, 2, 3])
-  inspect(d.as_views(), content="([1, 2, 1, 2, 3], [])")
+  debug_inspect(
+    d.as_views(),
+    content=(
+      #|(<ArrayView: [1, 2, 1, 2, 3]>, <ArrayView: []>)
+    ),
+  )
 }
 
 ///|
@@ -1835,24 +2283,24 @@ test "blit_to_self_overlap" {
   // Expected: [1, 2, 2, 3, 4]
   let d = @deque.from_array([1, 2, 3, 4, 5])
   d.blit_to(d, len=3, src_offset=1, dst_offset=2)
-  inspect(d.to_array(), content="[1, 2, 2, 3, 4]")
+  debug_inspect(d.to_array(), content="[1, 2, 2, 3, 4]")
 
   // Case 2: dst_offset < src_offset with overlap (forward copy is safe)
   // Copy [3,4,5] (indices 2,3,4) to positions 0,1,2
   // Expected: [3, 4, 5, 4, 5]
   let d2 = @deque.from_array([1, 2, 3, 4, 5])
   d2.blit_to(d2, len=3, src_offset=2, dst_offset=0)
-  inspect(d2.to_array(), content="[3, 4, 5, 4, 5]")
+  debug_inspect(d2.to_array(), content="[3, 4, 5, 4, 5]")
 
   // Case 3: No overlap (src and dst regions don't intersect)
   let d3 = @deque.from_array([1, 2, 3, 4, 5])
   d3.blit_to(d3, len=2, src_offset=0, dst_offset=3)
-  inspect(d3.to_array(), content="[1, 2, 3, 1, 2]")
+  debug_inspect(d3.to_array(), content="[1, 2, 3, 1, 2]")
 
   // Case 4: Overlap with growth past current length
   let d4 = @deque.from_array([1, 2, 3, 4, 5])
   d4.blit_to(d4, len=3, src_offset=1, dst_offset=3)
-  inspect(d4.to_array(), content="[1, 2, 3, 2, 3, 4]")
+  debug_inspect(d4.to_array(), content="[1, 2, 3, 2, 3, 4]")
 }
 
 ///|
@@ -1899,7 +2347,12 @@ test "chunks_wrap_around" {
   let d = @deque.from_array([1, 2, 3, 4, 5, 6])
   ignore(d.pop_front())
   d.push_back(7)
-  inspect(d.as_views(), content="([2, 3, 4, 5, 6], [7])")
+  debug_inspect(
+    d.as_views(),
+    content=(
+      #|(<ArrayView: [2, 3, 4, 5, 6]>, <ArrayView: [7]>)
+    ),
+  )
   let chunks = d.chunks(2)
   assert_eq(chunks.length(), 3)
   assert_eq(chunks.to_array()[0].to_array(), [2, 3])
@@ -1923,7 +2376,7 @@ test "chunks_size_one" {
 test "chunk_by_non_decreasing" {
   let d = @deque.from_array([1, 1, 2, 3, 2, 3, 2, 3, 4])
   let chunks = d.chunk_by((x, y) => x <= y)
-  inspect(
+  debug_inspect(
     chunks.to_array().map(c => c.to_array()),
     content="[[1, 1, 2, 3], [2, 3], [2, 3, 4]]",
   )
@@ -1934,7 +2387,7 @@ test "chunk_by_non_decreasing" {
 test "chunk_by_empty" {
   let d : @deque.Deque[Int] = @deque.from_array([])
   let chunks = d.chunk_by((x, y) => x <= y)
-  inspect(chunks.to_array(), content="[]")
+  debug_inspect(chunks.to_array(), content="[]")
 }
 
 ///|
@@ -1942,7 +2395,7 @@ test "chunk_by_empty" {
 test "chunk_by_single_element" {
   let d = @deque.from_array([42])
   let chunks = d.chunk_by((x, y) => x == y)
-  inspect(chunks.to_array().map(c => c.to_array()), content="[[42]]")
+  debug_inspect(chunks.to_array().map(c => c.to_array()), content="[[42]]")
 }
 
 ///|
@@ -1950,7 +2403,10 @@ test "chunk_by_single_element" {
 test "chunk_by_all_true" {
   let d = @deque.from_array([1, 2, 3, 4])
   let chunks = d.chunk_by((_, _) => true)
-  inspect(chunks.to_array().map(c => c.to_array()), content="[[1, 2, 3, 4]]")
+  debug_inspect(
+    chunks.to_array().map(c => c.to_array()),
+    content="[[1, 2, 3, 4]]",
+  )
 }
 
 ///|
@@ -1958,7 +2414,7 @@ test "chunk_by_all_true" {
 test "chunk_by_all_false" {
   let d = @deque.from_array([1, 2, 3, 4])
   let chunks = d.chunk_by((_, _) => false)
-  inspect(
+  debug_inspect(
     chunks.to_array().map(c => c.to_array()),
     content="[[1], [2], [3], [4]]",
   )
@@ -1970,7 +2426,12 @@ test "filter_evens" {
   let d = @deque.from_array([1, 2, 3, 4, 5, 6])
   let evens = d.filter(x => x % 2 == 0)
   assert_eq(evens.to_array(), [2, 4, 6])
-  inspect(evens.as_views(), content="([2, 4, 6], [])")
+  debug_inspect(
+    evens.as_views(),
+    content=(
+      #|(<ArrayView: [2, 4, 6]>, <ArrayView: []>)
+    ),
+  )
 }
 
 ///|
@@ -1979,7 +2440,12 @@ test "filter_all_false" {
   let d = @deque.from_array([1, 2, 3])
   let none = d.filter(_ => false)
   assert_eq(none.to_array(), [])
-  inspect(none.as_views(), content="([], [])")
+  debug_inspect(
+    none.as_views(),
+    content=(
+      #|(<ArrayView: []>, <ArrayView: []>)
+    ),
+  )
 }
 
 ///|
@@ -1988,7 +2454,12 @@ test "filter_all_true" {
   let d = @deque.from_array([1, 2, 3])
   let all = d.filter(_ => true)
   assert_eq(all.to_array(), [1, 2, 3])
-  inspect(all.as_views(), content="([1, 2, 3], [])")
+  debug_inspect(
+    all.as_views(),
+    content=(
+      #|(<ArrayView: [1, 2, 3]>, <ArrayView: []>)
+    ),
+  )
 }
 
 ///|
@@ -1997,7 +2468,12 @@ test "filter_empty" {
   let d : @deque.Deque[Int] = @deque.from_array([])
   let res = d.filter(x => x > 0)
   assert_eq(res.to_array(), [])
-  inspect(res.as_views(), content="([], [])")
+  debug_inspect(
+    res.as_views(),
+    content=(
+      #|(<ArrayView: []>, <ArrayView: []>)
+    ),
+  )
 }
 
 ///|
@@ -2008,7 +2484,12 @@ test "filter_wrap_around" {
   d.push_back(7) // d = [2, 3, 4, 5, 6, 7], head != 0
   let odds = d.filter(x => x % 2 == 1)
   assert_eq(odds.to_array(), [3, 5, 7])
-  inspect(odds.as_views(), content="([3, 5, 7], [])")
+  debug_inspect(
+    odds.as_views(),
+    content=(
+      #|(<ArrayView: [3, 5, 7]>, <ArrayView: []>)
+    ),
+  )
 }
 
 ///|
@@ -2017,7 +2498,12 @@ test "insert_front" {
   let d = @deque.from_array([1, 2, 3])
   d.insert(0, 99)
   assert_eq(d.to_array(), [99, 1, 2, 3])
-  inspect(d.as_views(), content="([99], [1, 2, 3])")
+  debug_inspect(
+    d.as_views(),
+    content=(
+      #|(<ArrayView: [99]>, <ArrayView: [1, 2, 3]>)
+    ),
+  )
 }
 
 ///|
@@ -2026,7 +2512,12 @@ test "insert_middle" {
   let d = @deque.from_array([1, 2, 3, 4])
   d.insert(2, 99)
   assert_eq(d.to_array(), [1, 2, 99, 3, 4])
-  inspect(d.as_views(), content="([1, 2, 99, 3, 4], [])")
+  debug_inspect(
+    d.as_views(),
+    content=(
+      #|(<ArrayView: [1, 2, 99, 3, 4]>, <ArrayView: []>)
+    ),
+  )
 }
 
 ///|
@@ -2035,7 +2526,12 @@ test "insert_back" {
   let d = @deque.from_array([1, 2, 3])
   d.insert(d.length(), 99)
   assert_eq(d.to_array(), [1, 2, 3, 99])
-  inspect(d.as_views(), content="([1, 2, 3, 99], [])")
+  debug_inspect(
+    d.as_views(),
+    content=(
+      #|(<ArrayView: [1, 2, 3, 99]>, <ArrayView: []>)
+    ),
+  )
 }
 
 ///|
@@ -2045,11 +2541,21 @@ test "insert_realloc" {
   for i in 0..<8 {
     d.push_back(i)
   }
-  inspect(d.as_views(), content="([0, 1, 2, 3, 4, 5, 6, 7], [])")
+  debug_inspect(
+    d.as_views(),
+    content=(
+      #|(<ArrayView: [0, 1, 2, 3, 4, 5, 6, 7]>, <ArrayView: []>)
+    ),
+  )
   d.insert(4, 99)
   assert_eq(d.to_array()[4], 99)
   assert_eq(d.length(), 9)
-  inspect(d.as_views(), content="([0, 1, 2, 3, 99, 4, 5, 6, 7], [])")
+  debug_inspect(
+    d.as_views(),
+    content=(
+      #|(<ArrayView: [0, 1, 2, 3, 99, 4, 5, 6, 7]>, <ArrayView: []>)
+    ),
+  )
 }
 
 ///|
@@ -2063,11 +2569,21 @@ test "insert_folded" {
   for i in 9..<13 {
     d.push_back(i)
   }
-  inspect(d.as_views(), content="([5, 6, 7, 8], [9, 10, 11, 12])")
+  debug_inspect(
+    d.as_views(),
+    content=(
+      #|(<ArrayView: [5, 6, 7, 8]>, <ArrayView: [9, 10, 11, 12]>)
+    ),
+  )
   d.insert(2, 99)
   assert_eq(d.to_array()[2], 99)
-  inspect(d.to_array(), content="[5, 6, 99, 7, 8, 9, 10, 11, 12]")
-  inspect(d.as_views(), content="([5], [6, 99, 7, 8, 9, 10, 11, 12])")
+  debug_inspect(d.to_array(), content="[5, 6, 99, 7, 8, 9, 10, 11, 12]")
+  debug_inspect(
+    d.as_views(),
+    content=(
+      #|(<ArrayView: [5]>, <ArrayView: [6, 99, 7, 8, 9, 10, 11, 12]>)
+    ),
+  )
 }
 
 ///|
@@ -2077,7 +2593,12 @@ test "remove_front" {
   let x = d.remove(0)
   assert_eq(x, 99)
   assert_eq(d.to_array(), [1, 2, 3])
-  inspect(d.as_views(), content="([1, 2, 3], [])")
+  debug_inspect(
+    d.as_views(),
+    content=(
+      #|(<ArrayView: [1, 2, 3]>, <ArrayView: []>)
+    ),
+  )
 }
 
 ///|
@@ -2087,7 +2608,12 @@ test "remove_middle" {
   let x = d.remove(2)
   assert_eq(x, 99)
   assert_eq(d.to_array(), [1, 2, 3, 4])
-  inspect(d.as_views(), content="([1, 2, 3, 4], [])")
+  debug_inspect(
+    d.as_views(),
+    content=(
+      #|(<ArrayView: [1, 2, 3, 4]>, <ArrayView: []>)
+    ),
+  )
 }
 
 ///|
@@ -2097,7 +2623,12 @@ test "remove_back" {
   let x = d.remove(d.length() - 1)
   assert_eq(x, 99)
   assert_eq(d.to_array(), [1, 2, 3])
-  inspect(d.as_views(), content="([1, 2, 3], [])")
+  debug_inspect(
+    d.as_views(),
+    content=(
+      #|(<ArrayView: [1, 2, 3]>, <ArrayView: []>)
+    ),
+  )
 }
 
 ///|
@@ -2108,7 +2639,12 @@ test "remove_shift" {
   assert_eq(x, 99)
   assert_eq(d.length(), 8)
   assert_eq(d.to_array(), [0, 1, 2, 3, 4, 5, 6, 7])
-  inspect(d.as_views(), content="([0, 1, 2, 3, 4, 5, 6, 7], [])")
+  debug_inspect(
+    d.as_views(),
+    content=(
+      #|(<ArrayView: [0, 1, 2, 3, 4, 5, 6, 7]>, <ArrayView: []>)
+    ),
+  )
 }
 
 ///|
@@ -2122,11 +2658,21 @@ test "remove_folded" {
   for i in 9..<13 {
     d.push_back(i)
   }
-  inspect(d.as_views(), content="([5, 6, 7, 8], [9, 10, 11, 12])")
+  debug_inspect(
+    d.as_views(),
+    content=(
+      #|(<ArrayView: [5, 6, 7, 8]>, <ArrayView: [9, 10, 11, 12]>)
+    ),
+  )
   let x = d.remove(2)
   assert_eq(x, 7)
   assert_eq(d.to_array(), [5, 6, 8, 9, 10, 11, 12])
-  inspect(d.as_views(), content="([5, 6, 8], [9, 10, 11, 12])")
+  debug_inspect(
+    d.as_views(),
+    content=(
+      #|(<ArrayView: [5, 6, 8]>, <ArrayView: [9, 10, 11, 12]>)
+    ),
+  )
 }
 
 ///|
@@ -2136,8 +2682,18 @@ test "extract_if_none" {
   let extracted = d.extract_if(x => x % 2 == 0)
   assert_eq(extracted.to_array(), [])
   assert_eq(d.to_array(), [1, 3, 5, 7])
-  inspect(extracted.as_views(), content="([], [])")
-  inspect(d.as_views(), content="([1, 3, 5, 7], [])")
+  debug_inspect(
+    extracted.as_views(),
+    content=(
+      #|(<ArrayView: []>, <ArrayView: []>)
+    ),
+  )
+  debug_inspect(
+    d.as_views(),
+    content=(
+      #|(<ArrayView: [1, 3, 5, 7]>, <ArrayView: []>)
+    ),
+  )
 }
 
 ///|
@@ -2147,8 +2703,18 @@ test "extract_if_all" {
   let extracted = d.extract_if(x => x % 2 == 0)
   assert_eq(extracted.to_array(), [2, 4, 6, 8])
   assert_eq(d.to_array(), [])
-  inspect(extracted.as_views(), content="([2, 4, 6, 8], [])")
-  inspect(d.as_views(), content="([], [])")
+  debug_inspect(
+    extracted.as_views(),
+    content=(
+      #|(<ArrayView: [2, 4, 6, 8]>, <ArrayView: []>)
+    ),
+  )
+  debug_inspect(
+    d.as_views(),
+    content=(
+      #|(<ArrayView: []>, <ArrayView: []>)
+    ),
+  )
 }
 
 ///|
@@ -2158,8 +2724,18 @@ test "extract_if_some" {
   let extracted = d.extract_if(x => x % 2 == 0)
   assert_eq(extracted.to_array(), [2, 4])
   assert_eq(d.to_array(), [1, 3, 5])
-  inspect(extracted.as_views(), content="([2, 4], [])")
-  inspect(d.as_views(), content="([1, 3, 5], [])")
+  debug_inspect(
+    extracted.as_views(),
+    content=(
+      #|(<ArrayView: [2, 4]>, <ArrayView: []>)
+    ),
+  )
+  debug_inspect(
+    d.as_views(),
+    content=(
+      #|(<ArrayView: [1, 3, 5]>, <ArrayView: []>)
+    ),
+  )
 }
 
 ///|
@@ -2173,12 +2749,27 @@ test "extract_if_folded" {
   for i in 9..<13 {
     d.push_back(i)
   }
-  inspect(d.as_views(), content="([5, 6, 7, 8], [9, 10, 11, 12])")
+  debug_inspect(
+    d.as_views(),
+    content=(
+      #|(<ArrayView: [5, 6, 7, 8]>, <ArrayView: [9, 10, 11, 12]>)
+    ),
+  )
   let extracted = d.extract_if(x => x > 9)
   assert_eq(extracted.to_array(), [10, 11, 12])
   assert_eq(d.to_array(), [5, 6, 7, 8, 9])
-  inspect(extracted.as_views(), content="([10, 11, 12], [])")
-  inspect(d.as_views(), content="([5, 6, 7, 8], [9])")
+  debug_inspect(
+    extracted.as_views(),
+    content=(
+      #|(<ArrayView: [10, 11, 12]>, <ArrayView: []>)
+    ),
+  )
+  debug_inspect(
+    d.as_views(),
+    content=(
+      #|(<ArrayView: [5, 6, 7, 8]>, <ArrayView: [9]>)
+    ),
+  )
 }
 
 ///|
@@ -2201,5 +2792,5 @@ test "Deque::append/self_alias" {
   dq.push_back(2)
   dq.push_back(3)
   dq.append(dq)
-  inspect(dq.to_array(), content="[1, 2, 3, 1, 2, 3]")
+  debug_inspect(dq.to_array(), content="[1, 2, 3, 1, 2, 3]")
 }

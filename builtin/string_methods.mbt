@@ -453,7 +453,7 @@ pub fn StringView::strip_suffix(
 /// test {
 ///   let view = "Hello🤣xa"[1:-1]
 ///   let chars = view.to_array()
-///   inspect(chars, content="['e', 'l', 'l', 'o', '🤣', 'x']")
+///   debug_inspect(chars, content="['e', 'l', 'l', 'o', '🤣', 'x']")
 /// }
 /// ```
 pub fn StringView::to_array(self : StringView) -> Array[Char] {

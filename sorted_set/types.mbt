@@ -29,4 +29,4 @@ priv struct Node[V] {
   mut left : Node[V]?
   mut right : Node[V]?
   mut height : Int
-}
+} derive(@debug.Debug)

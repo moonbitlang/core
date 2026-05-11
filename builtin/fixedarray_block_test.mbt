@@ -27,7 +27,12 @@ test "unsafe_blit with physical_equal and dst_offset < src_offset" {
 
   // Use the same array for src and dst with dst_offset < src_offset
   FixedArray::unsafe_blit(arr, 0, arr, 2, 3)
-  inspect(arr, content="[3, 4, 5, 4, 5]")
+  debug_inspect(
+    arr,
+    content=(
+      #|<FixedArray: [3, 4, 5, 4, 5]>
+    ),
+  )
 }
 
 ///|
@@ -35,7 +40,12 @@ test "unsafe_blit with different arrays" {
   let src = FixedArray::from_array([1, 2, 3, 4, 5])
   let dst = FixedArray::make(5, 0)
   FixedArray::unsafe_blit(dst, 0, src, 0, 5)
-  inspect(dst, content="[1, 2, 3, 4, 5]")
+  debug_inspect(
+    dst,
+    content=(
+      #|<FixedArray: [1, 2, 3, 4, 5]>
+    ),
+  )
 }
 
 ///|
@@ -44,5 +54,10 @@ test "unsafe_blit from back to front" {
 
   // This will trigger the else branch with backward copying
   FixedArray::unsafe_blit(arr, 1, arr, 0, 4)
-  inspect(arr, content="[1, 1, 2, 3, 4]")
+  debug_inspect(
+    arr,
+    content=(
+      #|<FixedArray: [1, 1, 2, 3, 4]>
+    ),
+  )
 }

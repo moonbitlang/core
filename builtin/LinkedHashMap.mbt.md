@@ -67,10 +67,10 @@ You can use `remove()` to remove a key-value pair.
 test {
   let map = { "a": 1, "b": 2, "c": 3 }
   map.remove("a")
-  inspect(
+  debug_inspect(
     map,
     content=(
-      #|{"b": 2, "c": 3}
+      #|{ "b": 2, "c": 3 }
     ),
   )
 }

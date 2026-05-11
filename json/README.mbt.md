@@ -99,9 +99,11 @@ test "json array navigation" {
 
   // Iterate through array
   guard array is Array(values)
-  inspect(
-    values.iter(),
-    content="[Number(1), Number(2), Number(3), Number(4), Number(5)]",
+  debug_inspect(
+    values.iter().to_array(),
+    content=(
+      #|[Number(1), Number(2), Number(3), Number(4), Number(5)]
+    ),
   )
 }
 ```
@@ -121,15 +123,15 @@ test "json decode" {
   // Decode arrays
   let json_array = ([1, 2, 3] : Json)
   let array : Array[Int] = @json.from_json(json_array)
-  inspect(array, content="[1, 2, 3]")
+  debug_inspect(array, content="[1, 2, 3]")
 
   // Decode maps
   let json_map = ({ "a": 1, "b": 2 } : Json)
   let map : Map[String, Int] = @json.from_json(json_map)
-  inspect(
+  debug_inspect(
     map,
     content=(
-      #|{"a": 1, "b": 2}
+      #|{ "a": 1, "b": 2 }
     ),
   )
 }
@@ -231,7 +233,7 @@ test "parse errors" {
     panic()
   } catch {
     @json.InvalidChar(pos, _ch) =>
-      inspect((pos.line, pos.column), content="(1, 1)")
+      debug_inspect((pos.line, pos.column), content="(1, 1)")
     _ => panic()
   }
   // InvalidEof
@@ -255,14 +257,14 @@ test "from_json" {
   // decode a tuple
   let json : Json = [1, "hello"]
   let tuple : (Int, String) = @json.from_json(json)
-  inspect(tuple, content="(1, \"hello\")")
+  debug_inspect(tuple, content="(1, \"hello\")")
   // decode an optional
   let opt : Int? = @json.from_json(null)
   debug_inspect(opt, content="None")
   // decode a Result
   let json3 : Json = { "Ok": 42 }
   let result : Result[Int, String] = @json.from_json(json3)
-  inspect(result, content="Ok(42)")
+  debug_inspect(result, content="Ok(42)")
 }
 ```
 

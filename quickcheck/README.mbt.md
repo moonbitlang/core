@@ -28,12 +28,12 @@ Generate multiple test cases using the `samples` function:
 ///|
 test "multiple samples" {
   let ints : Array[Int] = @quickcheck.samples(5)
-  inspect(ints, content="[0, 0, 0, -1, -1]")
+  debug_inspect(ints, content="[0, 0, 0, -1, -1]")
   let strings : Array[String] = @quickcheck.samples(12)
-  inspect(
+  debug_inspect(
     strings[5:10],
     content=(
-      #|["E\b\u{0f} ", "", "K\u{1f}[", "!@", "xvLxb"]
+      #|<ArrayView: ["E\b\u{0f} ", "", "K\u{1f}[", "!@", "xvLxb"]>
     ),
   )
 }
@@ -48,16 +48,25 @@ QuickCheck provides `Arbitrary` implementations for all basic MoonBit types:
 test "builtin types" {
   // Basic types
   let v : (Bool, Char, Byte) = @quickcheck.gen()
-  inspect(v, content="(false, '\\u{02}', b'\\x4D')")
-  // Numeric types
-  let v : (Int, Int64, UInt, UInt64, Float, Double, BigInt) = @quickcheck.gen()
-  inspect(v, content="(0, 0, 0, 0, 0.23986786603927612, 0.7917029935679342, 0)")
-  // Collections
-  let v : (String, Bytes, Iter[Int]) = @quickcheck.gen()
-  inspect(
+  debug_inspect(
     v,
     content=(
-      #|("", b"", [])
+      #|(false, '\u{02}', 0x4d)
+    ),
+  )
+  // Numeric types
+  let v : (Int, Int64, UInt, UInt64, Float, Double, BigInt) = @quickcheck.gen()
+  debug_inspect(
+    v,
+    content="(0, 0, 0, 0, 0.23986786603927612, 0.7917029935679342, 0)",
+  )
+  // Collections
+  let v : (String, Bytes, Iter[Int]) = @quickcheck.gen()
+  let (s, b, iter) = v
+  debug_inspect(
+    (s, b, iter.to_array()),
+    content=(
+      #|("", <Bytes: []>, [])
     ),
   )
 }

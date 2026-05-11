@@ -706,46 +706,61 @@ test "Show for Result" {
 
 ///|
 test "Show for Ref" {
-  inspect(
+  debug_inspect(
     Ref("abc").to_string(),
     content=(
-      #|{val: "abc"}
+      #|"{val: \"abc\"}"
     ),
   )
 }
 
 ///|
 test "Show for FixedArray" {
-  inspect(
+  debug_inspect(
     (["a", "b", "c"] : FixedArray[_]).to_string(),
     content=(
-      #|["a", "b", "c"]
+      #|"[\"a\", \"b\", \"c\"]"
     ),
   )
-  inspect(([] : FixedArray[String]).to_string(), content="[]")
+  debug_inspect(
+    ([] : FixedArray[String]).to_string(),
+    content=(
+      #|"[]"
+    ),
+  )
 }
 
 ///|
 test "Show for Array" {
-  inspect(
+  debug_inspect(
     ["a", "b", "c"].to_string(),
     content=(
-      #|["a", "b", "c"]
+      #|"[\"a\", \"b\", \"c\"]"
     ),
   )
-  inspect(([] : Array[String]).to_string(), content="[]")
+  debug_inspect(
+    ([] : Array[String]).to_string(),
+    content=(
+      #|"[]"
+    ),
+  )
 }
 
 ///|
 test "Show for ArrayView" {
   let arr = ["a", "b", "c", "d"]
-  inspect(
+  debug_inspect(
     arr[1:3].to_string(),
     content=(
-      #|["b", "c"]
+      #|"[\"b\", \"c\"]"
     ),
   )
-  inspect(arr[2:2].to_string(), content="[]")
+  debug_inspect(
+    arr[2:2].to_string(),
+    content=(
+      #|"[]"
+    ),
+  )
 }
 
 ///|

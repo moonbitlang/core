@@ -286,11 +286,11 @@ test "chars" {
       #|
     ),
   )
-  inspect(
+  debug_inspect(
     "A😊𠮷BA😊𠮷B".iter().take(2).collect(),
     content="['A', '😊']",
   )
-  inspect(
+  debug_inspect(
     "A😊𠮷BA😊𠮷B".iter().take(4).collect(),
     content="['A', '😊', '𠮷', 'B']",
   )
@@ -316,11 +316,11 @@ test "rev_iter" {
       #|
     ),
   )
-  inspect(
+  debug_inspect(
     "A😊𠮷BA😊𠮷B".rev_iter().take(2).collect(),
     content="['B', '𠮷']",
   )
-  inspect(
+  debug_inspect(
     "A😊𠮷BA😊𠮷B".rev_iter().take(4).collect(),
     content="['B', '𠮷', '😊', 'A']",
   )
@@ -609,91 +609,157 @@ test "to_upper" {
 
 ///|
 test "split" {
-  inspect(
-    "a b c d e".split(" "),
+  debug_inspect(
+    "a b c d e".split(" ").to_array(),
     content=(
-      #|["a", "b", "c", "d", "e"]
+      #|[
+      #|  <StringView: "a">,
+      #|  <StringView: "b">,
+      #|  <StringView: "c">,
+      #|  <StringView: "d">,
+      #|  <StringView: "e">,
+      #|]
     ),
   )
-  inspect(
-    "abcde".split("x"),
+  debug_inspect(
+    "abcde".split("x").to_array(),
     content=(
-      #|["abcde"]
+      #|[<StringView: "abcde">]
     ),
   )
-  inspect("".split(""), content="[]")
-  inspect(
-    "".split("x"),
+  debug_inspect(
+    "".split("").to_array(),
     content=(
-      #|[""]
+      #|[]
     ),
   )
-  inspect(
-    "你 wow 好 wow 月 wow 兔".split(" wow "),
+  debug_inspect(
+    "".split("x").to_array(),
     content=(
-      #|["你", "好", "月", "兔"]
+      #|[<StringView: "">]
     ),
   )
-  inspect(
-    "👍😍😭👍😍😭👍😍😭👍".split("😍😭"),
+  debug_inspect(
+    "你 wow 好 wow 月 wow 兔".split(" wow ").to_array(),
     content=(
-      #|["👍", "👍", "👍", "👍"]
+      #|[
+      #|  <StringView: "你">,
+      #|  <StringView: "好">,
+      #|  <StringView: "月">,
+      #|  <StringView: "兔">,
+      #|]
+    ),
+  )
+  debug_inspect(
+    "👍😍😭👍😍😭👍😍😭👍".split("😍😭").to_array(),
+    content=(
+      #|[
+      #|  <StringView: "👍">,
+      #|  <StringView: "👍">,
+      #|  <StringView: "👍">,
+      #|  <StringView: "👍">,
+      #|]
     ),
   )
   // Additional test cases
-  inspect(
-    "a,b,c,d,e".split(","),
+  debug_inspect(
+    "a,b,c,d,e".split(",").to_array(),
     content=(
-      #|["a", "b", "c", "d", "e"]
+      #|[
+      #|  <StringView: "a">,
+      #|  <StringView: "b">,
+      #|  <StringView: "c">,
+      #|  <StringView: "d">,
+      #|  <StringView: "e">,
+      #|]
     ),
   )
-  inspect(
-    "a,,b,,c".split(","),
+  debug_inspect(
+    "a,,b,,c".split(",").to_array(),
     content=(
-      #|["a", "", "b", "", "c"]
+      #|[
+      #|  <StringView: "a">,
+      #|  <StringView: "">,
+      #|  <StringView: "b">,
+      #|  <StringView: "">,
+      #|  <StringView: "c">,
+      #|]
     ),
   )
-  inspect(
-    "a,,b,,c".split(",,"),
+  debug_inspect(
+    "a,,b,,c".split(",,").to_array(),
     content=(
-      #|["a", "b", "c"]
+      #|[<StringView: "a">, <StringView: "b">, <StringView: "c">]
     ),
   )
-  inspect(
-    "a b c d e".split(""),
+  debug_inspect(
+    "a b c d e".split("").to_array(),
     content=(
-      #|["a", " ", "b", " ", "c", " ", "d", " ", "e"]
+      #|[
+      #|  <StringView: "a">,
+      #|  <StringView: " ">,
+      #|  <StringView: "b">,
+      #|  <StringView: " ">,
+      #|  <StringView: "c">,
+      #|  <StringView: " ">,
+      #|  <StringView: "d">,
+      #|  <StringView: " ">,
+      #|  <StringView: "e">,
+      #|]
     ),
   )
-  inspect(
-    "a,b,c,d,e".split(","),
+  debug_inspect(
+    "a,b,c,d,e".split(",").to_array(),
     content=(
-      #|["a", "b", "c", "d", "e"]
+      #|[
+      #|  <StringView: "a">,
+      #|  <StringView: "b">,
+      #|  <StringView: "c">,
+      #|  <StringView: "d">,
+      #|  <StringView: "e">,
+      #|]
     ),
   )
-  inspect(
-    "abcde".split(""),
+  debug_inspect(
+    "abcde".split("").to_array(),
     content=(
-      #|["a", "b", "c", "d", "e"]
+      #|[
+      #|  <StringView: "a">,
+      #|  <StringView: "b">,
+      #|  <StringView: "c">,
+      #|  <StringView: "d">,
+      #|  <StringView: "e">,
+      #|]
     ),
   )
-  inspect(
-    "a b c d e".split(" "),
+  debug_inspect(
+    "a b c d e".split(" ").to_array(),
     content=(
-      #|["a", "b", "c", "d", "e"]
+      #|[
+      #|  <StringView: "a">,
+      #|  <StringView: "b">,
+      #|  <StringView: "c">,
+      #|  <StringView: "d">,
+      #|  <StringView: "e">,
+      #|]
     ),
   )
-  inspect(
-    "abcde".split("x"),
+  debug_inspect(
+    "abcde".split("x").to_array(),
     content=(
-      #|["abcde"]
+      #|[<StringView: "abcde">]
     ),
   )
-  inspect("".split(""), content="[]")
-  inspect(
-    "".split("x"),
+  debug_inspect(
+    "".split("").to_array(),
     content=(
-      #|[""]
+      #|[]
+    ),
+  )
+  debug_inspect(
+    "".split("x").to_array(),
+    content=(
+      #|[<StringView: "">]
     ),
   )
 }
@@ -702,13 +768,63 @@ test "split" {
 test "String::fold" {
   let s = "this is a long string"
   inspect(s.fold(init=0, (acc, c) => acc + c.to_int()), content="1980")
-  inspect(
+  debug_inspect(
     s.fold(init=@list.empty(), (acc, x) => acc.prepend(x)).rev(),
-    content="@list.from_array(['t', 'h', 'i', 's', ' ', 'i', 's', ' ', 'a', ' ', 'l', 'o', 'n', 'g', ' ', 's', 't', 'r', 'i', 'n', 'g'])",
+    content=(
+      #|<List:
+      #|  [
+      #|    't',
+      #|    'h',
+      #|    'i',
+      #|    's',
+      #|    ' ',
+      #|    'i',
+      #|    's',
+      #|    ' ',
+      #|    'a',
+      #|    ' ',
+      #|    'l',
+      #|    'o',
+      #|    'n',
+      #|    'g',
+      #|    ' ',
+      #|    's',
+      #|    't',
+      #|    'r',
+      #|    'i',
+      #|    'n',
+      #|    'g',
+      #|  ]>
+    ),
   )
-  inspect(
+  debug_inspect(
     s.rev_fold(init=@list.empty(), (acc, x) => acc.prepend(x)),
-    content="@list.from_array(['t', 'h', 'i', 's', ' ', 'i', 's', ' ', 'a', ' ', 'l', 'o', 'n', 'g', ' ', 's', 't', 'r', 'i', 'n', 'g'])",
+    content=(
+      #|<List:
+      #|  [
+      #|    't',
+      #|    'h',
+      #|    'i',
+      #|    's',
+      #|    ' ',
+      #|    'i',
+      #|    's',
+      #|    ' ',
+      #|    'a',
+      #|    ' ',
+      #|    'l',
+      #|    'o',
+      #|    'n',
+      #|    'g',
+      #|    ' ',
+      #|    's',
+      #|    't',
+      #|    'r',
+      #|    'i',
+      #|    'n',
+      #|    'g',
+      #|  ]>
+    ),
   )
 }
 

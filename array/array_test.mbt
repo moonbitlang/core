@@ -16,7 +16,10 @@
 test "zip_with" {
   let left = [1, 2, 3]
   let right = [10, 20]
-  inspect(@array.zip_with(left, right, (a, b) => a + b), content="[11, 22]")
+  debug_inspect(
+    @array.zip_with(left, right, (a, b) => a + b),
+    content="[11, 22]",
+  )
 }
 
 ///|

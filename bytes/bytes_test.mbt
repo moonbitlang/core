@@ -120,25 +120,37 @@ test "hash" {
 ///|
 test "to_array" {
   let b = Bytes::from_array([b'A', b'B', b'C'])
-  inspect(b.to_array(), content="[b'\\x41', b'\\x42', b'\\x43']")
+  debug_inspect(
+    b.to_array(),
+    content=(
+      #|[0x41, 0x42, 0x43]
+    ),
+  )
 }
 
 ///|
 test "from_iter multiple elements" {
-  inspect(
+  debug_inspect(
     Bytes::from_iter([b'\x00', b'\x01', b'\x02'].iter()).to_array(),
-    content="[b'\\x00', b'\\x01', b'\\x02']",
+    content=(
+      #|[0x00, 0x01, 0x02]
+    ),
   )
 }
 
 ///|
 test "from_iter single element" {
-  inspect(Bytes::from_iter([b'\x00'].iter()).to_array(), content="[b'\\x00']")
+  debug_inspect(
+    Bytes::from_iter([b'\x00'].iter()).to_array(),
+    content=(
+      #|[0x00]
+    ),
+  )
 }
 
 ///|
 test "from_iter empty iterator" {
-  inspect(Bytes::from_iter(Iter::empty()).to_array(), content="[]")
+  debug_inspect(Bytes::from_iter(Iter::empty()).to_array(), content="[]")
 }
 
 ///|
@@ -162,14 +174,19 @@ test "iter2" {
     keys.push(i)
   })
   inspect(buf, content="b'\\x61'b'\\x62'b'\\x63'b'\\x64'b'\\x65'")
-  inspect(keys, content="[0, 1, 2, 3, 4]")
+  debug_inspect(keys, content="[0, 1, 2, 3, 4]")
 }
 
 ///|
 test "to_fixedarray with no length specified" {
   let bytes = b"hello"
   let arr = bytes.to_fixedarray()
-  inspect(arr, content="[b'\\x68', b'\\x65', b'\\x6C', b'\\x6C', b'\\x6F']")
+  debug_inspect(
+    arr,
+    content=(
+      #|<FixedArray: [0x68, 0x65, 0x6c, 0x6c, 0x6f]>
+    ),
+  )
   inspect(arr.length(), content="5")
 }
 
@@ -183,7 +200,12 @@ test "test empty bytes" {
 test "to_fixedarray with Some length" {
   let bytes = b"hello"
   let arr = bytes[:3].to_fixedarray()
-  inspect(arr, content="[b'\\x68', b'\\x65', b'\\x6C']")
+  debug_inspect(
+    arr,
+    content=(
+      #|<FixedArray: [0x68, 0x65, 0x6c]>
+    ),
+  )
   inspect(arr.length(), content="3")
 }
 
@@ -223,7 +245,12 @@ test "Fixed::blit_from_bytesview" {
   let arr = FixedArray::make(4, b'\x00')
   let view = b"\x01\x02\x03"[1:]
   arr.blit_from_bytesview(1, view)
-  inspect(arr, content="[b'\\x00', b'\\x02', b'\\x03', b'\\x00']")
+  debug_inspect(
+    arr,
+    content=(
+      #|<FixedArray: [0x00, 0x02, 0x03, 0x00]>
+    ),
+  )
 }
 
 ///|
@@ -324,7 +351,12 @@ test "BytesView::to_fixedarray" {
   let bytes = b"hello world"
   let view = bytes[0:5]
   let arr = view.to_fixedarray()
-  inspect(arr, content="[b'\\x68', b'\\x65', b'\\x6C', b'\\x6C', b'\\x6F']")
+  debug_inspect(
+    arr,
+    content=(
+      #|<FixedArray: [0x68, 0x65, 0x6c, 0x6c, 0x6f]>
+    ),
+  )
   inspect(arr.length(), content="5")
 }
 
@@ -333,18 +365,28 @@ test "BytesView::to_fixedarray with different ranges" {
   let bytes = b"abcdefgh"
   let view1 = bytes[2:6]
   let arr1 = view1.to_fixedarray()
-  inspect(
+  debug_inspect(
     arr1,
     content=(
-      #|[b'\x63', b'\x64', b'\x65', b'\x66']
+      #|<FixedArray: [0x63, 0x64, 0x65, 0x66]>
     ),
   )
   let view2 = bytes[0:0]
   let arr2 = view2.to_fixedarray()
-  inspect(arr2, content="[]")
+  debug_inspect(
+    arr2,
+    content=(
+      #|<FixedArray: []>
+    ),
+  )
   let view3 = bytes[7:]
   let arr3 = view3.to_fixedarray()
-  inspect(arr3, content="[b'\\x68']")
+  debug_inspect(
+    arr3,
+    content=(
+      #|<FixedArray: [0x68]>
+    ),
+  )
 }
 
 ///|
@@ -352,7 +394,12 @@ test "BytesView::to_array" {
   let bytes = b"hello"
   let view = bytes[1:4]
   let arr = view.to_array()
-  inspect(arr, content="[b'\\x65', b'\\x6C', b'\\x6C']")
+  debug_inspect(
+    arr,
+    content=(
+      #|[0x65, 0x6c, 0x6c]
+    ),
+  )
   inspect(arr.length(), content="3")
 }
 
@@ -370,10 +417,15 @@ test "BytesView::to_array with edge cases" {
   // Empty view
   let view2 = bytes[3:3]
   let arr2 = view2.to_array()
-  inspect(arr2, content="[]")
+  debug_inspect(arr2, content="[]")
 
   // Single byte
   let view3 = bytes[2:3]
   let arr3 = view3.to_array()
-  inspect(arr3, content="[b'\\x73']")
+  debug_inspect(
+    arr3,
+    content=(
+      #|[0x73]
+    ),
+  )
 }

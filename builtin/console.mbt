@@ -178,7 +178,7 @@ test {
 /// test {
 ///   inspect(42, content="42")
 ///   inspect("hello", content="hello")
-///   inspect([1, 2, 3], content="[1, 2, 3]")
+///   debug_inspect([1, 2, 3], content="[1, 2, 3]")
 /// }
 /// ```
 #callsite(autofill(args_loc, loc))

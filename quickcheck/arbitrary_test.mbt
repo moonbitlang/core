@@ -68,9 +68,12 @@ test "gen with default parameters" {
 test "iter arbitrary" {
   let samples : Array[Iter[Int]] = @quickcheck.samples(20)
   inspect("[0, 0, 0, 1, 2, -2]", content="[0, 0, 0, 1, 2, -2]")
-  inspect(samples[1:5], content="[[], [], [0], [0]]")
+  debug_inspect(
+    samples[1:5].map(iter => iter.to_array()),
+    content="[[], [], [0], [0]]",
+  )
   // inspect(samples[9], content="[0, 0, 0, 1, 2, -2]") (Cause infinite loop?)
-  inspect(samples[10], content="[0, 0]")
+  debug_inspect(samples[10].to_array(), content="[0, 0]")
 }
 
 ///|

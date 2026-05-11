@@ -298,7 +298,12 @@ test "stringview iter" {
   let str = "hello🤣🤣🤣"
   let view = str.view(start_offset=1, end_offset=7)
   inspect(view.iter().count(), content="5")
-  inspect(view.iter(), content="['e', 'l', 'l', 'o', '🤣']")
+  debug_inspect(
+    view.iter().to_array(),
+    content=(
+      #|['e', 'l', 'l', 'o', '🤣']
+    ),
+  )
 }
 
 ///|
@@ -306,7 +311,12 @@ test "stringview rev_iter" {
   let str = "hello🤣🤣🤣"
   let view = str.view(start_offset=1, end_offset=7)
   inspect(view.rev_iter().count(), content="5")
-  inspect(view.rev_iter(), content="['🤣', 'o', 'l', 'l', 'e']")
+  debug_inspect(
+    view.rev_iter().to_array(),
+    content=(
+      #|['🤣', 'o', 'l', 'l', 'e']
+    ),
+  )
 }
 
 ///|
@@ -611,7 +621,7 @@ test "view of view" {
 test "iter2" {
   let str = "aa😭b😂cc"
   let view = str.view(start_offset=1, end_offset=8)
-  inspect(
+  debug_inspect(
     view.iter2().iter().collect(),
     content="[(0, 'a'), (1, '😭'), (2, 'b'), (3, '😂'), (4, 'c')]",
   )
@@ -688,7 +698,7 @@ test "panic StringView::repeat negative" {
 
 ///|
 test "StringView::split take" {
-  inspect(
+  debug_inspect(
     "a,b,c,d"[:].split(",").take(2).map(x => x.to_owned()).collect(),
     content=(
       #|["a", "b"]

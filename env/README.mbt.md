@@ -96,7 +96,7 @@ test "command line tool pattern" {
   // Test with mock arguments
   let test_args = ["program", "help"]
   let result = parse_command(test_args)
-  inspect(result, content="Ok(\"Showing help information\")")
+  debug_inspect(result, content="Ok(\"Showing help information\")")
   let invalid_result = parse_command(["program", "invalid"])
   match invalid_result {
     Ok(_) => inspect(false, content="true")

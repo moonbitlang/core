@@ -162,7 +162,7 @@ test {
 test {
   let set = @sorted_set.from_array([3, 1, 2])
   // iter returns elements in sorted order
-  inspect(set.iter(), content="[1, 2, 3]")
+  debug_inspect(set.iter().to_array(), content="[1, 2, 3]")
   // to_array
   assert_eq(set.to_array(), [1, 2, 3])
   // from_iter

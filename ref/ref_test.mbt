@@ -27,7 +27,12 @@ test "protect" {
   x.protect(2, () => r = x.val)
   assert_eq(r, 2)
   assert_eq(x.val, 1)
-  inspect(x, content="{val: 1}")
+  debug_inspect(
+    x,
+    content=(
+      #|<Ref: 1>
+    ),
+  )
 }
 
 ///|
@@ -83,7 +88,12 @@ test "update with identity function" {
 ///|
 test "Ref::new with string" {
   let r = @ref.Ref("hello")
-  inspect(r, content="{val: \"hello\"}")
+  debug_inspect(
+    r,
+    content=(
+      #|<Ref: "hello">
+    ),
+  )
 }
 
 ///|

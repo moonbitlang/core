@@ -34,9 +34,9 @@ test "PriorityQueue constructor" {
 ///|
 test "to_array" {
   let v = @priority_queue.from_array([1, 2, 3, 4])
-  inspect(v.to_array(), content="[4, 3, 2, 1]")
-  inspect(v.push(0).to_array(), content="[4, 3, 2, 1, 0]")
-  inspect(
+  debug_inspect(v.to_array(), content="[4, 3, 2, 1]")
+  debug_inspect(v.push(0).to_array(), content="[4, 3, 2, 1, 0]")
+  debug_inspect(
     (@priority_queue.PriorityQueue([]) : @priority_queue.PriorityQueue[Int]).to_array(),
     content="[]",
   )
@@ -134,17 +134,21 @@ test "length" {
 
 ///|
 test "from_iter multiple elements iter" {
-  inspect(
+  debug_inspect(
     @priority_queue.PriorityQueue::from_iter([1, 2, 3].iter()),
-    content="@immut/priority_queue.from_array([3, 2, 1])",
+    content=(
+      #|<PriorityQueue: [3, 2, 1]>
+    ),
   )
 }
 
 ///|
 test "from_iter single element iter" {
-  inspect(
+  debug_inspect(
     @priority_queue.PriorityQueue::from_iter([1].iter()),
-    content="@immut/priority_queue.from_array([1])",
+    content=(
+      #|<PriorityQueue: [1]>
+    ),
   )
 }
 
@@ -153,7 +157,12 @@ test "from_iter empty iter" {
   let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.PriorityQueue::from_iter(
     Iter::empty(),
   )
-  inspect(pq, content="@immut/priority_queue.from_array([])")
+  debug_inspect(
+    pq,
+    content=(
+      #|<PriorityQueue: []>
+    ),
+  )
 }
 
 ///|
@@ -207,7 +216,12 @@ test "complex" {
   } nobreak {
     pq
   }
-  inspect(pq.iter(), content="[]")
+  debug_inspect(
+    pq.iter().to_array(),
+    content=(
+      #|[]
+    ),
+  )
   inspect(pq.length(), content="0")
 }
 

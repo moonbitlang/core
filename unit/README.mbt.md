@@ -113,7 +113,7 @@ test "generic unit usage" {
 
   // Unit is useful in Result types for operations that succeed but return nothing
   let operation_result : Result[Unit, String] = Ok(())
-  inspect(operation_result, content="Ok(())")
+  debug_inspect(operation_result, content="Ok(())")
 }
 ```
 

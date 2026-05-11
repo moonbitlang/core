@@ -47,7 +47,12 @@ pub fn[T] Ref::Ref(x : T) -> Ref[T] {
 
 ///|
 test "to_string" {
-  inspect(new(3), content="{val: 3}")
+  @debug.debug_inspect(
+    new(3),
+    content=(
+      #|<Ref: 3>
+    ),
+  )
 }
 
 ///|

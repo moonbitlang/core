@@ -54,10 +54,10 @@ test "compare default iter" {
   debug_inspect(default_opt, content="None")
   let iter_values = []
   (Some(3) : Int?).iter().each(x => iter_values.push(x))
-  inspect(iter_values, content="[3]")
+  debug_inspect(iter_values, content="[3]")
   let iter_empty = []
   (None : Int?).iter().each(x => iter_empty.push(x))
-  inspect(iter_empty, content="[]")
+  debug_inspect(iter_empty, content="[]")
 }
 
 ///|

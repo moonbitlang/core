@@ -11,8 +11,8 @@ Create tuples using literal syntax:
 test {
   let pair = (1, "hello")
   let triple = (1, 2.0, true)
-  inspect(pair, content="(1, \"hello\")")
-  inspect(triple, content="(1, 2, true)")
+  debug_inspect(pair, content="(1, \"hello\")")
+  debug_inspect(triple, content="(1, 2, true)")
 }
 ```
 
@@ -43,9 +43,9 @@ Tuples implement `Default` when all element types do (up to 16 elements):
 ///|
 test {
   let pair : (Int, String) = Default::default()
-  inspect(pair, content="(0, \"\")")
+  debug_inspect(pair, content="(0, \"\")")
   let triple : (Int, Bool, Double) = Default::default()
-  inspect(triple, content="(0, false, 0)")
+  debug_inspect(triple, content="(0, false, 0)")
 }
 ```
 
@@ -58,8 +58,8 @@ Transform tuples using the pipe operator and closures:
 test {
   let tuple = (1, 2)
   let swapped = tuple |> pair => { (pair.1, pair.0) }
-  inspect(swapped, content="(2, 1)")
+  debug_inspect(swapped, content="(2, 1)")
   let mapped = tuple |> pair => { (pair.0 * 2, pair.1 + 10) }
-  inspect(mapped, content="(2, 12)")
+  debug_inspect(mapped, content="(2, 12)")
 }
 ```

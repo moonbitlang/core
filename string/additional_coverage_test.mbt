@@ -34,7 +34,7 @@ test "String iter2 with surrogate pairs" {
     }
     i = i + 1
   })
-  inspect(result, content="[(0, 'H'), (1, 'e'), (2, 'l')]")
+  debug_inspect(result, content="[(0, 'H'), (1, 'e'), (2, 'l')]")
 
   // Count characters using iter2
   let mut count = 0

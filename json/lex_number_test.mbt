@@ -18,17 +18,21 @@
 
 ///|
 test "parse invalid decimal exponent sign" {
-  @builtin.inspect(
+  debug_inspect(
     try? @json.parse("1e"),
-    content="Err(Unexpected end of file)",
+    content=(
+      #|Err(InvalidEof)
+    ),
   )
 }
 
 ///|
 test "lex_zero invalid case" {
-  @builtin.inspect(
+  debug_inspect(
     try? @json.parse("01"),
-    content="Err(Invalid character '1' at line 1, column 1)",
+    content=(
+      #|Err(InvalidChar({ line: 1, column: 1 }, '1'))
+    ),
   )
 }
 
@@ -52,7 +56,7 @@ test "parse numbers" {
   @builtin.inspect(exp_upper_minus.stringify(), content="1.2345e-8")
 
   // Very large number
-  @builtin.inspect(
+  debug_inspect(
     try? @json.parse("1e999999999"),
     content=(
       #|Ok(Number(Infinity, repr=Some("1e999999999")))
@@ -62,7 +66,7 @@ test "parse numbers" {
 
 ///|
 test "parse negative huge exponent" {
-  @builtin.inspect(
+  debug_inspect(
     try? @json.parse("-1e999999999"),
     content=(
       #|Ok(Number(-Infinity, repr=Some("-1e999999999")))

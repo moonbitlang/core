@@ -774,23 +774,23 @@ impl[A : Show] Show for Tree[A] with output(self, logger : &Logger) {
 
 ///|
 test "Show for Tree" {
-  inspect((Empty : Tree[Int]), content="Empty")
-  inspect(
+  @debug.debug_inspect((Empty : Tree[Int]), content="Empty")
+  @debug.debug_inspect(
     Node([Leaf([4, 2])], Some([2])),
     content=(
       #|Node(
-      #|  Leaf(4, 2)
+      #|  <FixedArray: [Leaf(<FixedArray: [4, 2]>)]>,
+      #|  Some(<FixedArray: [2]>),
       #|)
-      #|
     ),
   )
-  inspect(
+  @debug.debug_inspect(
     Node([Empty, Leaf([42])], Some([0, 1])),
     content=(
       #|Node(
-      #|  Empty  Leaf(42)
+      #|  <FixedArray: [Empty, Leaf(<FixedArray: [42]>)]>,
+      #|  Some(<FixedArray: [0, 1]>),
       #|)
-      #|
     ),
   )
 }

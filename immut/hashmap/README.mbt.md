@@ -43,9 +43,9 @@ test "iteration" {
   let sum = map.fold(init=0, (acc, _k, v) => acc + v)
   inspect(sum, content="10")
   let keys = map.keys().to_array()
-  inspect(keys, content="[\"x\"]")
+  debug_inspect(keys, content="[\"x\"]")
   let vals = map.values().to_array()
-  inspect(vals, content="[10]")
+  debug_inspect(vals, content="[10]")
 }
 ```
 
@@ -87,15 +87,15 @@ test "iteration_full" {
   // each
   let buf = []
   map.each(fn(k, v) { buf.push((k, v)) })
-  inspect(buf, content="[(\"a\", 1)]")
+  debug_inspect(buf, content="[(\"a\", 1)]")
   // fold
   let sum = map.fold(init=0, fn(acc, _k, v) { acc + v })
   assert_eq(sum, 1)
   // keys / values
-  inspect(map.keys().to_array(), content="[\"a\"]")
-  inspect(map.values().to_array(), content="[1]")
+  debug_inspect(map.keys().to_array(), content="[\"a\"]")
+  debug_inspect(map.values().to_array(), content="[1]")
   // to_array
-  inspect(map.to_array(), content="[(\"a\", 1)]")
+  debug_inspect(map.to_array(), content="[(\"a\", 1)]")
 }
 ```
 

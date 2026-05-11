@@ -225,25 +225,31 @@ test "iterator" {
 ///|
 test "show" {
   let m = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
-  inspect(
+  debug_inspect(
     m,
-    content="@immut/sorted_map.from_array([(1, \"one\"), (2, \"two\"), (3, \"three\")])",
+    content=(
+      #|<SortedMap: { 1: "one", 2: "two", 3: "three" }>
+    ),
   )
 }
 
 ///|
 test "from_iter multiple elements iter" {
-  inspect(
+  debug_inspect(
     @sorted_map.from_iter([(1, 1), (2, 2), (3, 3)].iter()),
-    content="@immut/sorted_map.from_array([(1, 1), (2, 2), (3, 3)])",
+    content=(
+      #|<SortedMap: { 1: 1, 2: 2, 3: 3 }>
+    ),
   )
 }
 
 ///|
 test "from_iter single element iter" {
-  inspect(
+  debug_inspect(
     @sorted_map.from_iter([(1, 1)].iter()),
-    content="@immut/sorted_map.from_array([(1, 1)])",
+    content=(
+      #|<SortedMap: { 1: 1 }>
+    ),
   )
 }
 
@@ -252,7 +258,12 @@ test "from_iter empty iter" {
   let pq : @sorted_map.SortedMap[Int, Int] = @sorted_map.from_iter(
     Iter::empty(),
   )
-  inspect(pq, content="@immut/sorted_map.from_array([])")
+  debug_inspect(
+    pq,
+    content=(
+      #|<SortedMap: {}>
+    ),
+  )
 }
 
 ///|
@@ -285,9 +296,9 @@ test "@immut/sorted_map.merge empty maps" {
   let map1 : @sorted_map.SortedMap[Int, String] = @sorted_map.new()
   let map2 = @sorted_map.from_array([(1, "a"), (2, "b")])
   let merged1 = map1.merge(map2)
-  inspect(merged1.to_array(), content="[(1, \"a\"), (2, \"b\")]")
+  debug_inspect(merged1.to_array(), content="[(1, \"a\"), (2, \"b\")]")
   let merged2 = map2.merge(map1)
-  inspect(merged2.to_array(), content="[(1, \"a\"), (2, \"b\")]")
+  debug_inspect(merged2.to_array(), content="[(1, \"a\"), (2, \"b\")]")
   let merged3 = map1.merge(map1)
   inspect(merged3.length(), content="0")
 }

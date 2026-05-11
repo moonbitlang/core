@@ -225,7 +225,7 @@ pub fn[A : Compare] PriorityQueue::unsafe_pop(self : PriorityQueue[A]) -> Unit {
 /// test {
 ///   let queue = @priority_queue.from_array([1, 2, 3, 4])
 ///   let first = queue.pop() // Some(4)
-///   debug_inspect(first, content="Some(4)")
+///   @debug.debug_inspect(first, content="Some(4)")
 ///   inspect(queue.length(), content="3")
 /// }
 /// ```
@@ -344,13 +344,30 @@ pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for Priority
 ///|
 test "priority queue arbitrary" {
   let samples : Array[PriorityQueue[Int]] = @quickcheck.samples(20)
-  inspect(
+  @debug.debug_inspect(
     samples[5:10],
-    content="[@priority_queue.from_array([]), @priority_queue.from_array([]), @priority_queue.from_array([0]), @priority_queue.from_array([0, 0]), @priority_queue.from_array([3, 2, 1, 0, 0, 0, 0])]",
+    content=(
+      #|<ArrayView:
+      #|  [
+      #|    <PriorityQueue: []>,
+      #|    <PriorityQueue: []>,
+      #|    <PriorityQueue: [0]>,
+      #|    <PriorityQueue: [0, 0]>,
+      #|    <PriorityQueue: [3, 2, 1, 0, 0, 0, 0]>,
+      #|  ]>
+    ),
   )
-  inspect(
+  @debug.debug_inspect(
     samples[11:15],
-    content="[@priority_queue.from_array([0, 0, 0, -1, -2]), @priority_queue.from_array([8, 4, 0, 0, 0, 0, 0, 0, -2, -5]), @priority_queue.from_array([2, 0, 0, -1]), @priority_queue.from_array([0, 0])]",
+    content=(
+      #|<ArrayView:
+      #|  [
+      #|    <PriorityQueue: [0, 0, 0, -1, -2]>,
+      #|    <PriorityQueue: [8, 4, 0, 0, 0, 0, 0, 0, -2, -5]>,
+      #|    <PriorityQueue: [2, 0, 0, -1]>,
+      #|    <PriorityQueue: [0, 0]>,
+      #|  ]>
+    ),
   )
 }
 

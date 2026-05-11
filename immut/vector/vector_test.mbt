@@ -30,28 +30,53 @@ test "arbitrary samples" {
 test "set with valid index" {
   let v = @vector.from_array([1, 2, 3, 4, 5])
   let v1 = v.set(2, 10) // This should not trigger the panic
-  inspect(v1, content="@immut/vector.from_array([1, 2, 10, 4, 5])")
+  debug_inspect(
+    v1,
+    content=(
+      #|<Vector: [1, 2, 10, 4, 5]>
+    ),
+  )
 }
 
 ///|
 test "set with valid index at end" {
   let v = @vector.from_array([1, 2, 3, 4, 5])
   let v1 = v.set(4, 10) // This should not trigger the panic
-  inspect(v1, content="@immut/vector.from_array([1, 2, 3, 4, 10])")
+  debug_inspect(
+    v1,
+    content=(
+      #|<Vector: [1, 2, 3, 4, 10]>
+    ),
+  )
 }
 
 ///|
 test "to_string" {
   let v = @vector.from_array([1, 2, 3, 4, 5])
   let ve : @vector.Vector[Int] = @vector.new()
-  inspect(v, content="@immut/vector.from_array([1, 2, 3, 4, 5])")
-  inspect(ve, content="@immut/vector.from_array([])")
+  debug_inspect(
+    v,
+    content=(
+      #|<Vector: [1, 2, 3, 4, 5]>
+    ),
+  )
+  debug_inspect(
+    ve,
+    content=(
+      #|<Vector: []>
+    ),
+  )
 }
 
 ///|
 test "singleton" {
   let v = @vector.singleton(7)
-  inspect(v, content="@immut/vector.from_array([7])")
+  debug_inspect(
+    v,
+    content=(
+      #|<Vector: [7]>
+    ),
+  )
   inspect(v.length(), content="1")
 }
 
@@ -66,14 +91,29 @@ test "make with full leaf" {
 ///|
 test "to_array" {
   let v = @vector.from_array([1, 2, 3, 4])
-  inspect(v.to_array().to_string(), content="[1, 2, 3, 4]")
-  inspect(v.push(5).to_array().to_string(), content="[1, 2, 3, 4, 5]")
+  debug_inspect(
+    v.to_array().to_string(),
+    content=(
+      #|"[1, 2, 3, 4]"
+    ),
+  )
+  debug_inspect(
+    v.push(5).to_array().to_string(),
+    content=(
+      #|"[1, 2, 3, 4, 5]"
+    ),
+  )
 }
 
 ///|
 test "to_array empty" {
   let v : @vector.Vector[Int] = @vector.new()
-  inspect(v.to_array().to_string(), content="[]")
+  debug_inspect(
+    v.to_array().to_string(),
+    content=(
+      #|"[]"
+    ),
+  )
 }
 
 ///|
@@ -144,34 +184,108 @@ test "set" {
   let v = @vector.from_array([1, 2, 3, 4, 5])
   let v1 = v.set(1, 10)
   let v2 = v.set(2, 10)
-  inspect(v1, content="@immut/vector.from_array([1, 10, 3, 4, 5])")
-  inspect(v2, content="@immut/vector.from_array([1, 2, 10, 4, 5])")
+  debug_inspect(
+    v1,
+    content=(
+      #|<Vector: [1, 10, 3, 4, 5]>
+    ),
+  )
+  debug_inspect(
+    v2,
+    content=(
+      #|<Vector: [1, 2, 10, 4, 5]>
+    ),
+  )
 }
 
 ///|
 test "push" {
   let v = @vector.new().push(1).push(2).push(3)
-  inspect(v, content="@immut/vector.from_array([1, 2, 3])")
-  inspect(v.push(1), content="@immut/vector.from_array([1, 2, 3, 1])")
-  inspect(v.push(2), content="@immut/vector.from_array([1, 2, 3, 2])")
-  inspect(v.push(3), content="@immut/vector.from_array([1, 2, 3, 3])")
+  debug_inspect(
+    v,
+    content=(
+      #|<Vector: [1, 2, 3]>
+    ),
+  )
+  debug_inspect(
+    v.push(1),
+    content=(
+      #|<Vector: [1, 2, 3, 1]>
+    ),
+  )
+  debug_inspect(
+    v.push(2),
+    content=(
+      #|<Vector: [1, 2, 3, 2]>
+    ),
+  )
+  debug_inspect(
+    v.push(3),
+    content=(
+      #|<Vector: [1, 2, 3, 3]>
+    ),
+  )
 }
 
 ///|
 test "from_array" {
   let v = @vector.from_array([1, 1, 4, 5, 1, 4])
   let vv = @vector.from_array(Array::make(30, 1))
-  inspect(v, content="@immut/vector.from_array([1, 1, 4, 5, 1, 4])")
-  inspect(
+  debug_inspect(
+    v,
+    content=(
+      #|<Vector: [1, 1, 4, 5, 1, 4]>
+    ),
+  )
+  debug_inspect(
     vv,
-    content="@immut/vector.from_array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])",
+    content=(
+      #|<Vector:
+      #|  [
+      #|    1,
+      #|    1,
+      #|    1,
+      #|    1,
+      #|    1,
+      #|    1,
+      #|    1,
+      #|    1,
+      #|    1,
+      #|    1,
+      #|    1,
+      #|    1,
+      #|    1,
+      #|    1,
+      #|    1,
+      #|    1,
+      #|    1,
+      #|    1,
+      #|    1,
+      #|    1,
+      #|    1,
+      #|    1,
+      #|    1,
+      #|    1,
+      #|    1,
+      #|    1,
+      #|    1,
+      #|    1,
+      #|    1,
+      #|    1,
+      #|  ]>
+    ),
   )
 }
 
 ///|
 test "Vector constructor" {
   let v = @vector.Vector([1, 1, 4, 5, 1, 4])
-  inspect(v, content="@immut/vector.from_array([1, 1, 4, 5, 1, 4])")
+  debug_inspect(
+    v,
+    content=(
+      #|<Vector: [1, 1, 4, 5, 1, 4]>
+    ),
+  )
 }
 
 ///|
@@ -184,7 +298,7 @@ test "iteri" {
   inspect(s, content="40")
   let vec = []
   v.eachi((i, _e) => vec.push(i))
-  inspect(vec, content="[0, 1, 2, 3, 4]")
+  debug_inspect(vec, content="[0, 1, 2, 3, 4]")
 }
 
 ///|
@@ -207,7 +321,12 @@ test "equal" {
 test "add concat" {
   let left = @vector.from_array([1, 2])
   let right = @vector.from_array([3, 4])
-  inspect(left + right, content="@immut/vector.from_array([1, 2, 3, 4])")
+  debug_inspect(
+    left + right,
+    content=(
+      #|<Vector: [1, 2, 3, 4]>
+    ),
+  )
 }
 
 ///|
@@ -230,48 +349,105 @@ test "rev_fold" {
 ///|
 test "map" {
   let v = @vector.from_array([1, 2, 3, 4, 5])
-  inspect(
+  debug_inspect(
     v.map(e => e * 2),
-    content="@immut/vector.from_array([2, 4, 6, 8, 10])",
-  )
-  inspect(
-    v.map(e => e.to_string()),
     content=(
-      #|@immut/vector.from_array(["1", "2", "3", "4", "5"])
+      #|<Vector: [2, 4, 6, 8, 10]>
     ),
   )
-  inspect(
-    v.map(e => e % 2 == 0),
-    content="@immut/vector.from_array([false, true, false, true, false])",
+  debug_inspect(
+    v.map(e => e.to_string()),
+    content=(
+      #|<Vector: ["1", "2", "3", "4", "5"]>
+    ),
   )
-  inspect(
+  debug_inspect(
+    v.map(e => e % 2 == 0),
+    content=(
+      #|<Vector: [false, true, false, true, false]>
+    ),
+  )
+  debug_inspect(
     @vector.new().map((e : Int) => e),
-    content="@immut/vector.from_array([])",
+    content=(
+      #|<Vector: []>
+    ),
   )
 }
 
 ///|
 test "filter" {
   let values = @vector.from_iter((0).until(40))
-  inspect(
+  debug_inspect(
     values.filter(x => x % 7 == 0),
-    content="@immut/vector.from_array([0, 7, 14, 21, 28, 35])",
+    content=(
+      #|<Vector: [0, 7, 14, 21, 28, 35]>
+    ),
   )
-  inspect(values.filter(_ => false), content="@immut/vector.from_array([])")
+  debug_inspect(
+    values.filter(_ => false),
+    content=(
+      #|<Vector: []>
+    ),
+  )
 }
 
 ///|
 test "rev" {
   let values = @vector.from_iter((0).until(40))
-  inspect(
+  debug_inspect(
     values.rev(),
     content=(
-      #|@immut/vector.from_array([39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0])
+      #|<Vector:
+      #|  [
+      #|    39,
+      #|    38,
+      #|    37,
+      #|    36,
+      #|    35,
+      #|    34,
+      #|    33,
+      #|    32,
+      #|    31,
+      #|    30,
+      #|    29,
+      #|    28,
+      #|    27,
+      #|    26,
+      #|    25,
+      #|    24,
+      #|    23,
+      #|    22,
+      #|    21,
+      #|    20,
+      #|    19,
+      #|    18,
+      #|    17,
+      #|    16,
+      #|    15,
+      #|    14,
+      #|    13,
+      #|    12,
+      #|    11,
+      #|    10,
+      #|    9,
+      #|    8,
+      #|    7,
+      #|    6,
+      #|    5,
+      #|    4,
+      #|    3,
+      #|    2,
+      #|    1,
+      #|    0,
+      #|  ]>
     ),
   )
-  inspect(
+  debug_inspect(
     (@vector.new() : @vector.Vector[Int]).rev(),
-    content="@immut/vector.from_array([])",
+    content=(
+      #|<Vector: []>
+    ),
   )
 }
 
@@ -289,10 +465,52 @@ test "contains" {
 test "new" {
   let v = @vector.make(5, 1)
   let v2 = @vector.make(33, 10)
-  inspect(v, content="@immut/vector.from_array([1, 1, 1, 1, 1])")
-  inspect(
+  debug_inspect(
+    v,
+    content=(
+      #|<Vector: [1, 1, 1, 1, 1]>
+    ),
+  )
+  debug_inspect(
     v2,
-    content="@immut/vector.from_array([10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10])",
+    content=(
+      #|<Vector:
+      #|  [
+      #|    10,
+      #|    10,
+      #|    10,
+      #|    10,
+      #|    10,
+      #|    10,
+      #|    10,
+      #|    10,
+      #|    10,
+      #|    10,
+      #|    10,
+      #|    10,
+      #|    10,
+      #|    10,
+      #|    10,
+      #|    10,
+      #|    10,
+      #|    10,
+      #|    10,
+      #|    10,
+      #|    10,
+      #|    10,
+      #|    10,
+      #|    10,
+      #|    10,
+      #|    10,
+      #|    10,
+      #|    10,
+      #|    10,
+      #|    10,
+      #|    10,
+      #|    10,
+      #|    10,
+      #|  ]>
+    ),
   )
 }
 
@@ -300,41 +518,165 @@ test "new" {
 test "new_with" {
   let v = @vector.makei(5, i => i)
   let v2 = @vector.makei(33, i => i * 10)
-  inspect(v, content="@immut/vector.from_array([0, 1, 2, 3, 4])")
-  inspect(
+  debug_inspect(
+    v,
+    content=(
+      #|<Vector: [0, 1, 2, 3, 4]>
+    ),
+  )
+  debug_inspect(
     v2,
-    content="@immut/vector.from_array([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320])",
+    content=(
+      #|<Vector:
+      #|  [
+      #|    0,
+      #|    10,
+      #|    20,
+      #|    30,
+      #|    40,
+      #|    50,
+      #|    60,
+      #|    70,
+      #|    80,
+      #|    90,
+      #|    100,
+      #|    110,
+      #|    120,
+      #|    130,
+      #|    140,
+      #|    150,
+      #|    160,
+      #|    170,
+      #|    180,
+      #|    190,
+      #|    200,
+      #|    210,
+      #|    220,
+      #|    230,
+      #|    240,
+      #|    250,
+      #|    260,
+      #|    270,
+      #|    280,
+      #|    290,
+      #|    300,
+      #|    310,
+      #|    320,
+      #|  ]>
+    ),
   )
 }
 
 ///|
 test "from_iter multiple elements iter" {
-  inspect(
+  debug_inspect(
     @vector.from_iter([1, 2, 3].iter()),
-    content="@immut/vector.from_array([1, 2, 3])",
+    content=(
+      #|<Vector: [1, 2, 3]>
+    ),
   )
-  inspect(
+  debug_inspect(
     (0).until(32) |> @vector.from_iter(),
-    content="@immut/vector.from_array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31])",
+    content=(
+      #|<Vector:
+      #|  [
+      #|    0,
+      #|    1,
+      #|    2,
+      #|    3,
+      #|    4,
+      #|    5,
+      #|    6,
+      #|    7,
+      #|    8,
+      #|    9,
+      #|    10,
+      #|    11,
+      #|    12,
+      #|    13,
+      #|    14,
+      #|    15,
+      #|    16,
+      #|    17,
+      #|    18,
+      #|    19,
+      #|    20,
+      #|    21,
+      #|    22,
+      #|    23,
+      #|    24,
+      #|    25,
+      #|    26,
+      #|    27,
+      #|    28,
+      #|    29,
+      #|    30,
+      #|    31,
+      #|  ]>
+    ),
   )
-  inspect(
+  debug_inspect(
     (0).until(33) |> @vector.from_iter(),
-    content="@immut/vector.from_array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32])",
+    content=(
+      #|<Vector:
+      #|  [
+      #|    0,
+      #|    1,
+      #|    2,
+      #|    3,
+      #|    4,
+      #|    5,
+      #|    6,
+      #|    7,
+      #|    8,
+      #|    9,
+      #|    10,
+      #|    11,
+      #|    12,
+      #|    13,
+      #|    14,
+      #|    15,
+      #|    16,
+      #|    17,
+      #|    18,
+      #|    19,
+      #|    20,
+      #|    21,
+      #|    22,
+      #|    23,
+      #|    24,
+      #|    25,
+      #|    26,
+      #|    27,
+      #|    28,
+      #|    29,
+      #|    30,
+      #|    31,
+      #|    32,
+      #|  ]>
+    ),
   )
 }
 
 ///|
 test "from_iter single element iter" {
-  inspect(
+  debug_inspect(
     @vector.from_iter([1].iter()),
-    content="@immut/vector.from_array([1])",
+    content=(
+      #|<Vector: [1]>
+    ),
   )
 }
 
 ///|
 test "from_iter empty iter" {
   let pq : @vector.Vector[Int] = @vector.from_iter(Iter::empty())
-  inspect(pq, content="@immut/vector.from_array([])")
+  debug_inspect(
+    pq,
+    content=(
+      #|<Vector: []>
+    ),
+  )
 }
 
 ///|
@@ -354,11 +696,21 @@ test "concat_empty" {
   let a = @vector.from_array([1, 2, 3])
   let b : @vector.Vector[Int] = @vector.new()
   let c = a.concat(b)
-  inspect(c, content="@immut/vector.from_array([1, 2, 3])")
+  debug_inspect(
+    c,
+    content=(
+      #|<Vector: [1, 2, 3]>
+    ),
+  )
   let a : @vector.Vector[Int] = @vector.new()
   let b = @vector.from_array([1, 2, 3])
   let c = a.concat(b)
-  inspect(c, content="@immut/vector.from_array([1, 2, 3])")
+  debug_inspect(
+    c,
+    content=(
+      #|<Vector: [1, 2, 3]>
+    ),
+  )
 }
 
 ///|
@@ -386,10 +738,10 @@ test "take drop and slice" {
   assert_eq(values.drop(-1), values)
   assert_eq(values.slice(7, 12).to_array(), [7, 8, 9, 10, 11])
   assert_eq(values.slice(0, 40), values)
-  inspect(
+  debug_inspect(
     values.slice(10, 20),
     content=(
-      #|@immut/vector.from_array([10, 11, 12, 13, 14, 15, 16, 17, 18, 19])
+      #|<Vector: [10, 11, 12, 13, 14, 15, 16, 17, 18, 19]>
     ),
   )
 }

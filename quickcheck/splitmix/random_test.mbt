@@ -22,7 +22,7 @@ test "RandomState::next" {
 ///|
 test "next_two_uint should return two 32-bit unsigned integers" {
   let state = @splitmix.new()
-  inspect(state.next_two_uint(), content="(520772969, 1037978766)")
+  debug_inspect(state.next_two_uint(), content="(520772969, 1037978766)")
 }
 
 ///|

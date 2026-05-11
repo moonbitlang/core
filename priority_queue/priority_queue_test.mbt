@@ -60,7 +60,7 @@ test "copy" {
 ///|
 test "to_array" {
   let v = @priority_queue.from_array([1, 6, 3, 4, 9, 2, 1])
-  inspect(v.to_array(), content="[9, 6, 4, 3, 2, 1, 1]")
+  debug_inspect(v.to_array(), content="[9, 6, 4, 3, 2, 1, 1]")
 }
 
 ///|
@@ -117,7 +117,12 @@ test "pop" {
   p.pop() |> ignore
   p.pop() |> ignore
   p.pop() |> ignore
-  inspect(p.iter(), content="[3, 2, 1, 0]")
+  debug_inspect(
+    p.iter().to_array(),
+    content=(
+      #|[3, 2, 1, 0]
+    ),
+  )
   inspect(p.length(), content="4")
 }
 
@@ -161,17 +166,21 @@ test "is_empty" {
 
 ///|
 test "from_iter multiple elements iter" {
-  inspect(
+  debug_inspect(
     @priority_queue.from_iter([1, 2, 3].iter()),
-    content="@priority_queue.from_array([3, 2, 1])",
+    content=(
+      #|<PriorityQueue: [3, 2, 1]>
+    ),
   )
 }
 
 ///|
 test "from_iter single element iter" {
-  inspect(
+  debug_inspect(
     @priority_queue.from_iter([1].iter()),
-    content="@priority_queue.from_array([1])",
+    content=(
+      #|<PriorityQueue: [1]>
+    ),
   )
 }
 
@@ -180,7 +189,12 @@ test "from_iter empty iter" {
   let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.from_iter(
     Iter::empty(),
   )
-  inspect(pq, content="@priority_queue.from_array([])")
+  debug_inspect(
+    pq,
+    content=(
+      #|<PriorityQueue: []>
+    ),
+  )
 }
 
 ///|
@@ -199,7 +213,12 @@ test "complex" {
   for i in 0..<=1000 {
     @test.assert_eq(pq.pop(), Some(1000 - i))
   }
-  inspect(pq.iter(), content="[]")
+  debug_inspect(
+    pq.iter().to_array(),
+    content=(
+      #|[]
+    ),
+  )
   @test.assert_eq(pq.length(), 0)
 }
 
@@ -213,7 +232,12 @@ test "priority queue large data" {
   for i in 0..<=10000000 {
     @test.assert_eq(pq.pop(), Some(-i))
   }
-  inspect(pq.iter(), content="[]")
+  debug_inspect(
+    pq.iter().to_array(),
+    content=(
+      #|[]
+    ),
+  )
   @test.assert_eq(pq.length(), 0)
 }
 

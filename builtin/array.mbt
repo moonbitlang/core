@@ -29,7 +29,7 @@
 /// test {
 ///   let fixed = FixedArray::make(3, 42)
 ///   let dynamic = Array::from_fixed_array(fixed)
-///   inspect(dynamic, content="[42, 42, 42]")
+///   debug_inspect(dynamic, content="[42, 42, 42]")
 /// }
 /// ```
 pub fn[T] Array::from_fixed_array(arr : FixedArray[T]) -> Array[T] {
@@ -59,7 +59,7 @@ pub fn[T] Array::from_fixed_array(arr : FixedArray[T]) -> Array[T] {
 /// ```mbt check
 /// test {
 ///   let arr = Array::make(3, 42)
-///   inspect(arr, content="[42, 42, 42]")
+///   debug_inspect(arr, content="[42, 42, 42]")
 /// }
 /// ```
 ///
@@ -101,7 +101,7 @@ pub fn[T] Array::make(len : Int, elem : T) -> Array[T] {
 /// ```mbt check
 /// test {
 ///   let arr = Array::makei(3, i => i * 2)
-///   inspect(arr, content="[0, 2, 4]")
+///   debug_inspect(arr, content="[0, 2, 4]")
 /// }
 /// ```
 #locals(f)
@@ -226,7 +226,7 @@ pub fn[T] Array::get(self : Array[T], index : Int) -> T? {
 /// test {
 ///   let arr = [1, 2, 3]
 ///   arr.unsafe_set(1, 99)
-///   inspect(arr, content="[1, 99, 3]")
+///   debug_inspect(arr, content="[1, 99, 3]")
 /// }
 /// ```
 #intrinsic("%array.unsafe_set")
@@ -253,7 +253,7 @@ pub fn[T] Array::unsafe_set(self : Array[T], idx : Int, val : T) -> Unit {
 /// test {
 ///   let arr = [1, 2, 3]
 ///   arr[1] = 42
-///   inspect(arr, content="[1, 42, 3]")
+///   debug_inspect(arr, content="[1, 42, 3]")
 /// }
 /// ```
 ///
@@ -367,7 +367,7 @@ pub impl[T : Compare] Compare for Array[T] with compare(self, other) {
 /// test {
 ///   let a = [1, 2, 3]
 ///   let b = [4, 5]
-///   inspect(a + b, content="[1, 2, 3, 4, 5]")
+///   debug_inspect(a + b, content="[1, 2, 3, 4, 5]")
 /// }
 /// ```
 pub impl[T] Add for Array[T] with add(self, other) {
@@ -405,11 +405,11 @@ pub impl[T] Add for Array[T] with add(self, other) {
 ///   let v1 = [1, 2, 3]
 ///   let v2 = [4, 5, 6]
 ///   v1.append(v2)
-///   inspect(v1, content="[1, 2, 3, 4, 5, 6]")
+///   debug_inspect(v1, content="[1, 2, 3, 4, 5, 6]")
 ///   let v1 = [1, 2, 3]
 ///   let v2 : Array[Int] = []
 ///   v1.append(v2)
-///   inspect(v1, content="[1, 2, 3]")
+///   debug_inspect(v1, content="[1, 2, 3]")
 /// }
 /// ```
 pub fn[T] Array::append(self : Array[T], other : ArrayView[T]) -> Unit {
@@ -682,7 +682,7 @@ pub fn[T] Array::mapi_in_place(
 /// test {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let evens = arr.filter(x => x % 2 == 0)
-///   inspect(evens, content="[2, 4]")
+///   debug_inspect(evens, content="[2, 4]")
 /// }
 /// ```
 #locals(f)
@@ -736,10 +736,10 @@ pub fn[T] Array::is_empty(self : Array[T]) -> Bool {
 /// test {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   arr.rev_in_place()
-///   inspect(arr, content="[5, 4, 3, 2, 1]")
+///   debug_inspect(arr, content="[5, 4, 3, 2, 1]")
 ///   let arr : Array[Int] = []
 ///   arr.rev_in_place()
-///   inspect(arr, content="[]")
+///   debug_inspect(arr, content="[]")
 /// }
 /// ```
 #alias(rev_inplace, deprecated)
@@ -767,8 +767,8 @@ pub fn[T] Array::rev_in_place(self : Array[T]) -> Unit {
 /// ```mbt check
 /// test {
 ///   let arr = [1, 2, 3, 4, 5]
-///   inspect(arr.rev(), content="[5, 4, 3, 2, 1]")
-///   inspect(arr, content="[1, 2, 3, 4, 5]") // original array unchanged
+///   debug_inspect(arr.rev(), content="[5, 4, 3, 2, 1]")
+///   debug_inspect(arr, content="[1, 2, 3, 4, 5]") // original array unchanged
 /// }
 /// ```
 pub fn[T] Array::rev(self : Array[T]) -> Array[T] {
@@ -920,7 +920,12 @@ pub fn[T : Eq] Array::ends_with(self : Array[T], suffix : ArrayView[T]) -> Bool 
 /// test {
 ///   let v = [1, 2, 3, 4, 5]
 ///   let v2 = v.strip_prefix([1, 2][:])
-///   debug_inspect(v2, content="Some(<ArrayView: [3, 4, 5]>)")
+///   debug_inspect(
+///     v2,
+///     content=(
+///       #|Some(<ArrayView: [3, 4, 5]>)
+///     ),
+///   )
 /// }
 /// ```
 pub fn[T : Eq] Array::strip_prefix(
@@ -942,7 +947,12 @@ pub fn[T : Eq] Array::strip_prefix(
 /// test {
 ///   let v = [3, 4, 5]
 ///   let v2 = v.strip_suffix([5][:])
-///   debug_inspect(v2, content="Some(<ArrayView: [3, 4]>)")
+///   debug_inspect(
+///     v2,
+///     content=(
+///       #|Some(<ArrayView: [3, 4]>)
+///     ),
+///   )
 /// }
 /// ```
 pub fn[T : Eq] Array::strip_suffix(
@@ -1062,9 +1072,9 @@ pub fn[T : Compare] Array::binary_search(
 /// test {
 ///   let arr = [1, 3, 5, 7, 9]
 ///   let find_3 = arr.binary_search_by(x => x.compare(3))
-///   inspect(find_3, content="Ok(1)")
+///   debug_inspect(find_3, content="Ok(1)")
 ///   let find_4 = arr.binary_search_by(x => x.compare(4))
-///   inspect(find_4, content="Err(2)")
+///   debug_inspect(find_4, content="Err(2)")
 /// }
 /// ```
 ///
@@ -1100,7 +1110,7 @@ pub fn[T] Array::binary_search_by(
 /// test {
 ///   let arr = [1, 2, 3]
 ///   arr.swap(0, 2)
-///   inspect(arr, content="[3, 2, 1]")
+///   debug_inspect(arr, content="[3, 2, 1]")
 /// }
 /// ```
 pub fn[T] Array::swap(self : Array[T], i : Int, j : Int) -> Unit {
@@ -1132,13 +1142,13 @@ pub fn[T] Array::swap(self : Array[T], i : Int, j : Int) -> Unit {
 /// test {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   arr.retain(x => x % 2 == 0)
-///   inspect(arr, content="[2, 4]")
+///   debug_inspect(arr, content="[2, 4]")
 ///   let arr = [1, 2, 3]
 ///   arr.retain(x => x > 10)
-///   inspect(arr, content="[]")
+///   debug_inspect(arr, content="[]")
 ///   let arr = [1, 2, 3]
 ///   arr.retain(_ => true)
-///   inspect(arr, content="[1, 2, 3]")
+///   debug_inspect(arr, content="[1, 2, 3]")
 /// }
 /// ```
 /// TODO: perf could be improved
@@ -1174,10 +1184,10 @@ pub fn[T] Array::retain(self : Array[T], f : (T) -> Bool raise?) -> Unit raise? 
 /// test {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   arr.resize(3, 0)
-///   inspect(arr, content="[1, 2, 3]")
+///   debug_inspect(arr, content="[1, 2, 3]")
 ///   let arr = [1, 2, 3]
 ///   arr.resize(5, 0)
-///   inspect(arr, content="[1, 2, 3, 0, 0]")
+///   debug_inspect(arr, content="[1, 2, 3, 0, 0]")
 /// }
 /// ```
 ///
@@ -1374,13 +1384,13 @@ pub fn[A, B] Array::rev_foldi(
 /// test {
 ///   let arr = [1, 2, 2, 3, 3, 3, 2]
 ///   arr.dedup()
-///   inspect(arr, content="[1, 2, 3, 2]")
+///   debug_inspect(arr, content="[1, 2, 3, 2]")
 ///   let arr = [1, 2, 2, 2, 3, 3]
 ///   arr.dedup()
-///   inspect(arr, content="[1, 2, 3]")
+///   debug_inspect(arr, content="[1, 2, 3]")
 ///   let arr : Array[Int] = []
 ///   arr.dedup()
-///   inspect(arr, content="[]")
+///   debug_inspect(arr, content="[]")
 /// }
 /// ```
 ///
@@ -1423,8 +1433,8 @@ pub fn[T : Eq] Array::dedup(self : Array[T]) -> Unit {
 /// test {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let extracted = arr.extract_if(x => x % 2 == 0)
-///   inspect(extracted, content="[2, 4]")
-///   inspect(arr, content="[1, 3, 5]")
+///   debug_inspect(extracted, content="[2, 4]")
+///   debug_inspect(arr, content="[1, 3, 5]")
 /// }
 /// ```
 #locals(f)
@@ -1466,9 +1476,14 @@ pub fn[T] Array::extract_if(self : Array[T], f : (T) -> Bool) -> Array[T] {
 /// test {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let chunks = arr.chunks(2)
-///   inspect(chunks, content="[[1, 2], [3, 4], [5]]")
+///   debug_inspect(
+///     chunks,
+///     content=(
+///       #|[<ArrayView: [1, 2]>, <ArrayView: [3, 4]>, <ArrayView: [5]>]
+///     ),
+///   )
 ///   let arr : Array[Int] = []
-///   inspect(arr.chunks(3), content="[]")
+///   debug_inspect(arr.chunks(3), content="[]")
 /// }
 /// ```
 pub fn[T] Array::chunks(self : Array[T], size : Int) -> Array[ArrayView[T]] {
@@ -1504,9 +1519,18 @@ pub fn[T] Array::chunks(self : Array[T], size : Int) -> Array[ArrayView[T]] {
 /// test {
 ///   let v = [1, 1, 2, 3, 2, 3, 2, 3, 4]
 ///   let chunks = v.chunk_by((x, y) => x <= y)
-///   inspect(chunks, content="[[1, 1, 2, 3], [2, 3], [2, 3, 4]]")
+///   debug_inspect(
+///     chunks,
+///     content=(
+///       #|[
+///       #|  <ArrayView: [1, 1, 2, 3]>,
+///       #|  <ArrayView: [2, 3]>,
+///       #|  <ArrayView: [2, 3, 4]>,
+///       #|]
+///     ),
+///   )
 ///   let v : Array[Int] = []
-///   inspect(v.chunk_by((x, y) => x <= y), content="[]")
+///   debug_inspect(v.chunk_by((x, y) => x <= y), content="[]")
 /// }
 /// ```
 #locals(pred)
@@ -1550,9 +1574,19 @@ pub fn[T] Array::chunk_by(
 /// test {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let windows = arr.windows(2)
-///   inspect(windows, content="[[1, 2], [2, 3], [3, 4], [4, 5]]")
+///   debug_inspect(
+///     windows,
+///     content=(
+///       #|[
+///       #|  <ArrayView: [1, 2]>,
+///       #|  <ArrayView: [2, 3]>,
+///       #|  <ArrayView: [3, 4]>,
+///       #|  <ArrayView: [4, 5]>,
+///       #|]
+///     ),
+///   )
 ///   let arr = [1, 2]
-///   inspect(arr.windows(3), content="[]")
+///   debug_inspect(arr.windows(3), content="[]")
 /// }
 /// ```
 pub fn[T] Array::windows(self : Array[T], size : Int) -> Array[ArrayView[T]] {
@@ -1575,10 +1609,17 @@ pub fn[T] Array::windows(self : Array[T], size : Int) -> Array[ArrayView[T]] {
 /// ```mbt check
 /// test {
 ///   let xs = [1, 2]
-///   inspect(xs.suffixes().collect(), content="[[1, 2], [2]]")
-///   inspect(
+///   debug_inspect(
+///     xs.suffixes().collect(),
+///     content=(
+///       #|[<ArrayView: [1, 2]>, <ArrayView: [2]>]
+///     ),
+///   )
+///   debug_inspect(
 ///     xs.suffixes(include_empty=true).collect(),
-///     content="[[1, 2], [2], []]",
+///     content=(
+///       #|[<ArrayView: [1, 2]>, <ArrayView: [2]>, <ArrayView: []>]
+///     ),
 ///   )
 /// }
 /// ```
@@ -1609,9 +1650,9 @@ pub fn[T] Array::suffixes(
 /// ```mbt check
 /// test {
 ///   let arr = [1, 0, 2, 0, 3, 0, 4]
-///   inspect(arr.split(x => x == 0), content="[[1], [2], [3], [4]]")
+///   debug_inspect(arr.split(x => x == 0), content="[[1], [2], [3], [4]]")
 ///   let arr = [0, 1, 0, 0, 2, 0]
-///   inspect(arr.split(x => x == 0), content="[[], [1], [], [2]]")
+///   debug_inspect(arr.split(x => x == 0), content="[[], [1], [], [2]]")
 /// }
 /// ```
 #locals(pred)
@@ -1684,7 +1725,7 @@ pub fn[T] Array::iter(self : Array[T]) -> Iter[T] {
 ///   let arr = [1, 2, 3]
 ///   let result = []
 ///   arr.rev_iter().each(x => result.push(x))
-///   inspect(result, content="[3, 2, 1]")
+///   debug_inspect(result, content="[3, 2, 1]")
 /// }
 /// ```
 #alias(rev_iterator, deprecated)
@@ -1775,7 +1816,7 @@ pub fn[A] Array::unsafe_pop_back(self : Array[A]) -> Unit {
 /// test {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   arr.truncate(3)
-///   inspect(arr, content="[1, 2, 3]")
+///   debug_inspect(arr, content="[1, 2, 3]")
 /// }
 /// ```
 pub fn[A] Array::truncate(self : Array[A], len : Int) -> Unit {
@@ -1791,7 +1832,7 @@ pub fn[A] Array::truncate(self : Array[A], len : Int) -> Unit {
 /// test {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   arr.retain_map(fn(x) { if x % 2 == 0 { Some(x * 2) } else { None } })
-///   inspect(arr, content="[4, 8]")
+///   debug_inspect(arr, content="[4, 8]")
 /// }
 /// ```
 #locals(f)
@@ -1831,7 +1872,7 @@ pub fn[A] Array::retain_map(self : Array[A], f : (A) -> A?) -> Unit {
 /// test {
 ///   let iter = Iter::singleton(42)
 ///   let arr = Array::from_iter(iter)
-///   inspect(arr, content="[42]")
+///   debug_inspect(arr, content="[42]")
 /// }
 /// ```
 #alias(from_iterator, deprecated)
@@ -1991,7 +2032,7 @@ pub fn[A] Array::last(self : Array[A]) -> A? {
 /// test {
 ///   let arr1 = [1, 2, 3]
 ///   let arr2 = ['a', 'b', 'c']
-///   inspect(arr1.zip(arr2), content="[(1, 'a'), (2, 'b'), (3, 'c')]")
+///   debug_inspect(arr1.zip(arr2), content="[(1, 'a'), (2, 'b'), (3, 'c')]")
 /// }
 /// ```
 pub fn[A, B] Array::zip(self : Array[A], other : Array[B]) -> Array[(A, B)] {
@@ -2011,8 +2052,8 @@ pub fn[A, B] Array::zip(self : Array[A], other : Array[B]) -> Array[(A, B)] {
 /// test {
 ///   let arr = [(1, "a"), (2, "b"), (3, "c")]
 ///   let (nums, strs) = arr.unzip()
-///   inspect(nums, content="[1, 2, 3]")
-///   inspect(strs, content="[\"a\", \"b\", \"c\"]")
+///   debug_inspect(nums, content="[1, 2, 3]")
+///   debug_inspect(strs, content="[\"a\", \"b\", \"c\"]")
 /// }
 /// ```
 pub fn[T1, T2] Array::unzip(self : Array[(T1, T2)]) -> (Array[T1], Array[T2]) {
@@ -2043,7 +2084,7 @@ pub fn[T1, T2] Array::unzip(self : Array[(T1, T2)]) -> (Array[T1], Array[T2]) {
 /// test {
 ///   let arr1 = [1, 2, 3]
 ///   let arr2 = ['a', 'b', 'c']
-///   inspect(
+///   debug_inspect(
 ///     arr1.zip_to_iter2(arr2).to_array(),
 ///     content="[(1, 'a'), (2, 'b'), (3, 'c')]",
 ///   )

@@ -97,7 +97,7 @@ test {
 ///|
 test {
   let queue = @queue.from_array([1, 2, 3])
-  inspect(queue.iter(), content="[1, 2, 3]")
+  debug_inspect(queue.iter().to_array(), content="[1, 2, 3]")
 }
 ```
 

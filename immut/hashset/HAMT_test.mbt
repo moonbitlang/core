@@ -34,9 +34,9 @@ test "Set" {
   for i in 0..<100 {
     assert_eq((i, map.contains(i)), (i, true))
   }
-  inspect((100, map.contains(100)), content="(100, false)")
+  debug_inspect((100, map.contains(100)), content="(100, false)")
   let map = map.add(100)
-  inspect((100, map.contains(100)), content="(100, true)")
+  debug_inspect((100, map.contains(100)), content="(100, true)")
 }
 
 ///|
@@ -82,7 +82,12 @@ test "@hashset.remove" {
 ///|
 test "remove on empty set" {
   let empty : @hashset.HashSet[Int] = @hashset.new()
-  inspect(empty.remove(1), content="@immut/hashset.from_array([])")
+  debug_inspect(
+    empty.remove(1),
+    content=(
+      #|<HashSet: []>
+    ),
+  )
 }
 
 ///|
@@ -90,7 +95,7 @@ test "@hashset.iter" {
   let data = @hashset.from_array(["a", "b", "d", "e", "f"])
   let array = data.iter().collect()
   array.sort()
-  inspect(
+  debug_inspect(
     array,
     content=(
       #|["a", "b", "d", "e", "f"]
@@ -133,16 +138,23 @@ test "from_iter multiple elements iter" {
 
 ///|
 test "from_iter single element iter" {
-  inspect(
+  debug_inspect(
     @hashset.from_iter([1].iter()),
-    content="@immut/hashset.from_array([1])",
+    content=(
+      #|<HashSet: [1]>
+    ),
   )
 }
 
 ///|
 test "from_iter empty iter" {
   let pq : @hashset.HashSet[Int] = @hashset.from_iter(Iter::empty())
-  inspect(pq, content="@immut/hashset.from_array([])")
+  debug_inspect(
+    pq,
+    content=(
+      #|<HashSet: []>
+    ),
+  )
 }
 
 ///|
@@ -174,7 +186,12 @@ test "from_array with non-empty array" {
 test "remove non-existent key from leaf" {
   let set = @hashset.from_array([1])
   let result = set.remove(2)
-  inspect(result, content="@immut/hashset.from_array([1])")
+  debug_inspect(
+    result,
+    content=(
+      #|<HashSet: [1]>
+    ),
+  )
 }
 
 ///|
@@ -249,7 +266,7 @@ test "HAMT::union with branch" {
 }
 
 ///|
-struct MyString(String)
+struct MyString(String) derive(@debug.Debug)
 
 ///|
 impl Hash for MyString with hash_combine(_self, hasher) {
@@ -398,7 +415,12 @@ test "intersection single common key" {
   let set1 = @hashset.from_array([1, 2, 3])
   let set2 = @hashset.from_array([3, 4, 5])
   let inter = set1.intersection(set2)
-  inspect(inter, content="@immut/hashset.from_array([3])")
+  debug_inspect(
+    inter,
+    content=(
+      #|<HashSet: [3]>
+    ),
+  )
 }
 
 ///|
@@ -424,7 +446,12 @@ test "@hashset collision" {
   let b = MyString("b")
   let c = MyString("c")
   let set = @hashset.new().add(a).add(b).add(c)
-  inspect(set.iter().to_array(), content="[c, b, a]")
+  debug_inspect(
+    set.iter().to_array(),
+    content=(
+      #|[MyString("c"), MyString("b"), MyString("a")]
+    ),
+  )
   set.each((x : MyString) => x |> ignore)
   inspect(set.length(), content="3")
 }

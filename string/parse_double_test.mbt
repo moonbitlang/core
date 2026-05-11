@@ -17,25 +17,25 @@ test "parse_double huge exponent" {
   // Exponents whose digit count exceeds what fits in `Int` must clamp before
   // they overflow the slow-path accumulator. Positive side overflows to a
   // range error; negative side underflows to zero.
-  inspect(
+  debug_inspect(
     try? @string.parse_double("1e999999999999999999999999999999999999"),
     content=(
       #|Err(Failure("value out of range"))
     ),
   )
-  inspect(
+  debug_inspect(
     try? @string.parse_double("-1e999999999999999999999999999999999999"),
     content=(
       #|Err(Failure("value out of range"))
     ),
   )
-  inspect(
+  debug_inspect(
     try? @string.parse_double("1e-999999999999999999999999999999999999"),
     content=(
       #|Ok(0)
     ),
   )
-  inspect(
+  debug_inspect(
     try? @string.parse_double("-1e-999999999999999999999999999999999999"),
     content=(
       #|Ok(0)

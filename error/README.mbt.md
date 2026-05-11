@@ -23,7 +23,7 @@ test "basic error handling" {
 
   // Handle error with try?
   let result2 = try? divide(10, 0)
-  inspect(result2, content="Err(Failure(\"Division by zero\"))")
+  debug_inspect(result2, content="Err(Failure(\"Division by zero\"))")
 }
 ```
 

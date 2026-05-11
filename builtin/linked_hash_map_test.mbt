@@ -16,15 +16,30 @@
 test "Map keys iter" {
   let map = { "a": 1, "b": 2, "c": 3 }
   let v = map.keys()
-  inspect(
-    v,
+  debug_inspect(
+    v.to_array(),
     content=(
       #|["a", "b", "c"]
     ),
   )
-  inspect(map.values(), content="[1, 2, 3]")
-  inspect(({} : Map[String, Int]).keys(), content="[]")
-  inspect(({} : Map[String, Int]).values(), content="[]")
+  debug_inspect(
+    map.values().to_array(),
+    content=(
+      #|[1, 2, 3]
+    ),
+  )
+  debug_inspect(
+    ({} : Map[String, Int]).keys().to_array(),
+    content=(
+      #|[]
+    ),
+  )
+  debug_inspect(
+    ({} : Map[String, Int]).values().to_array(),
+    content=(
+      #|[]
+    ),
+  )
 }
 
 ///|
@@ -37,7 +52,12 @@ test "Map::default" {
 test "Map::of" {
   let arr : FixedArray[(String, Int)] = [("a", 1), ("b", 2), ("c", 3)]
   let map = Map::of(arr)
-  inspect(map, content="{\"a\": 1, \"b\": 2, \"c\": 3}")
+  debug_inspect(
+    map,
+    content=(
+      #|{ "a": 1, "b": 2, "c": 3 }
+    ),
+  )
   inspect(map.length(), content="3")
   debug_inspect(map.get("a"), content="Some(1)")
   debug_inspect(map.get("b"), content="Some(2)")
@@ -67,7 +87,12 @@ test "Map::of" {
 ///|
 test "Map constructor" {
   let map = Map([("a", 1), ("b", 2), ("c", 3)])
-  inspect(map, content="{\"a\": 1, \"b\": 2, \"c\": 3}")
+  debug_inspect(
+    map,
+    content=(
+      #|{ "a": 1, "b": 2, "c": 3 }
+    ),
+  )
   inspect(map.length(), content="3")
   debug_inspect(map.get("a"), content="Some(1)")
   debug_inspect(map.get("b"), content="Some(2)")
@@ -78,10 +103,10 @@ test "Map constructor" {
 test "Map::from_iter" {
   let iter = [("a", 1), ("b", 2), ("c", 3)].iter()
   let map = Map::from_iter(iter)
-  inspect(
+  debug_inspect(
     map,
     content=(
-      #|{"a": 1, "b": 2, "c": 3}
+      #|{ "a": 1, "b": 2, "c": 3 }
     ),
   )
 }
@@ -134,48 +159,48 @@ test "map::contains_kv" {
 test "Map::map" {
   let map = { "a": 1, "b": 2, "c": 3 }
   let v = map.map((k, v) => k + v.to_string())
-  inspect(
+  debug_inspect(
     v,
     content=(
-      #|{"a": "a1", "b": "b2", "c": "c3"}
+      #|{ "a": "a1", "b": "b2", "c": "c3" }
     ),
   )
   map["d"] = 10
   map["e"] = 20
   map.remove("c")
   let v = map.map((k, v) => k + v.to_string())
-  inspect(
+  debug_inspect(
     v,
     content=(
-      #|{"a": "a1", "b": "b2", "d": "d10", "e": "e20"}
+      #|{ "a": "a1", "b": "b2", "d": "d10", "e": "e20" }
     ),
   )
   let v : Map[String, String] = {}.map((k, v) => k + v)
-  inspect(v, content="{}")
+  debug_inspect(v, content="{}")
 }
 
 ///|
 test "Map::copy" {
   let map = { "a": 1, "b": 2, "c": 3 }
   let copy = map.copy()
-  inspect(
+  debug_inspect(
     copy,
     content=(
-      #|{"a": 1, "b": 2, "c": 3}
+      #|{ "a": 1, "b": 2, "c": 3 }
     ),
   )
   map["d"] = 10
   map["e"] = 20
   map.remove("c")
   let copy = map.copy()
-  inspect(
+  debug_inspect(
     copy,
     content=(
-      #|{"a": 1, "b": 2, "d": 10, "e": 20}
+      #|{ "a": 1, "b": 2, "d": 10, "e": 20 }
     ),
   )
   let copy : Map[String, String] = {}.copy()
-  inspect(copy, content="{}")
+  debug_inspect(copy, content="{}")
 }
 
 ///|
@@ -200,10 +225,10 @@ test "Map::update" {
   })
   debug_inspect(map.get("d"), content="Some(4)")
   inspect(map.length(), content="4")
-  inspect(
+  debug_inspect(
     map,
     content=(
-      #|{"a": 11, "b": 2, "c": 3, "d": 4}
+      #|{ "a": 11, "b": 2, "c": 3, "d": 4 }
     ),
   )
 
@@ -211,10 +236,10 @@ test "Map::update" {
   map.update("b", fn(_) { None })
   debug_inspect(map.get("b"), content="None")
   inspect(map.length(), content="3")
-  inspect(
+  debug_inspect(
     map,
     content=(
-      #|{"a": 11, "c": 3, "d": 4}
+      #|{ "a": 11, "c": 3, "d": 4 }
     ),
   )
 
@@ -323,7 +348,7 @@ test "Map::retain - preserves order" {
   // Check that the order is preserved
   let result = []
   map.each((k, v) => result.push((k, v)))
-  inspect(result, content="[(\"second\", 2), (\"fourth\", 4)]")
+  debug_inspect(result, content="[(\"second\", 2), (\"fourth\", 4)]")
 }
 
 ///|
@@ -416,10 +441,10 @@ test "Map::retain - iteration order after retain" {
   // Check that insertion order is maintained for remaining elements
   let keys = []
   map.each((k, _v) => keys.push(k))
-  inspect(keys, content="[\"first\", \"second\", \"fourth\", \"fifth\"]")
+  debug_inspect(keys, content="[\"first\", \"second\", \"fourth\", \"fifth\"]")
   let values = []
   map.each((_k, v) => values.push(v))
-  inspect(values, content="[1, 2, 4, 5]")
+  debug_inspect(values, content="[1, 2, 4, 5]")
 }
 
 ///|

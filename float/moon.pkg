@@ -6,6 +6,7 @@ import {
 
 import {
   "moonbitlang/core/math",
+  "moonbitlang/core/debug",
 } for "test"
 
 options(
