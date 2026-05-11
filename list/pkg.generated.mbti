@@ -114,6 +114,7 @@ pub impl[A : Compare] Compare for List[A]
 pub impl[X] Default for List[X]
 pub impl[A : Eq] Eq for List[A]
 pub impl[A : Hash] Hash for List[A]
+#deprecated
 pub impl[A : Show] Show for List[A]
 pub impl[A : ToJson] ToJson for List[A]
 pub impl[A : @debug.Debug] @debug.Debug for List[A]

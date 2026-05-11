@@ -464,6 +464,11 @@ pub fn[V : Compare] SortedSet::from_iter(iter : Iter[V]) -> SortedSet[V] {
 
 ///|
 /// Outputs the set's string representation to a logger.
+#deprecated("Use Debug instead of Show for debugging purposes.")
+pub impl[V : Show] Show for SortedSet[V]
+
+///|
+/// Outputs the set's string representation to a logger.
 pub impl[V : Show] Show for SortedSet[V] with output(self, logger) {
   logger.write_iter(self.iter(), prefix="@sorted_set.from_array([", suffix="])")
 }
@@ -474,6 +479,10 @@ pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for SortedSe
 ] with arbitrary(size, rs) {
   @quickcheck.Arbitrary::arbitrary(size, rs) |> from_iter
 }
+
+///|
+#deprecated("Use Debug instead of Show for debugging purposes.")
+impl[T : Show] Show for Node[T]
 
 ///|
 impl[T : Show] Show for Node[T] with output(self, logger) {

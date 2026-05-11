@@ -63,6 +63,7 @@ pub fn[K : Hash + Eq, V] HashMap::update_or_default(Self[K, V], K, V, (V) -> V) 
 pub fn[K, V] HashMap::values(Self[K, V]) -> Iter[V]
 pub impl[K, V] Default for HashMap[K, V]
 pub impl[K : Hash + Eq, V : Eq] Eq for HashMap[K, V]
+#deprecated
 pub impl[K : Show, V : Show] Show for HashMap[K, V]
 pub impl[K : Show, V : ToJson] ToJson for HashMap[K, V]
 pub impl[K : @debug.Debug, V : @debug.Debug] @debug.Debug for HashMap[K, V]

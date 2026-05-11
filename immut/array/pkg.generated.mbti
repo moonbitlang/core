@@ -73,6 +73,7 @@ pub impl[A] Add for T[A]
 pub impl[A : Compare] Compare for T[A]
 pub impl[A : Eq] Eq for T[A]
 pub impl[A : Hash] Hash for T[A]
+#deprecated
 pub impl[A : Show] Show for T[A]
 pub impl[A : @debug.Debug] @debug.Debug for T[A]
 pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X]

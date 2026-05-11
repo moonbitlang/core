@@ -45,6 +45,10 @@ pub fn[A] Queue::Queue(arr : ArrayView[A]) -> Queue[A] {
 }
 
 ///|
+#deprecated("Use Debug instead of Show for debugging purposes.")
+pub impl[A : Show] Show for Queue[A]
+
+///|
 pub impl[A : Show] Show for Queue[A] with output(self, logger) {
   logger.write_iter(self.iter(), prefix="@queue.from_array([", suffix="])")
 }

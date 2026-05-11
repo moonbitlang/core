@@ -59,6 +59,7 @@ pub fn[K : Eq, V] HashMap::union_with(Self[K, V], Self[K, V], (K, V, V) -> V rai
 #alias(elems, deprecated)
 pub fn[K, V] HashMap::values(Self[K, V]) -> Iter[V]
 pub impl[K : Hash, V : Hash] Hash for HashMap[K, V]
+#deprecated
 pub impl[K : Show, V : Show] Show for HashMap[K, V]
 pub impl[K : @debug.Debug, V : @debug.Debug] @debug.Debug for HashMap[K, V]
 pub impl[K : Eq + Hash + @quickcheck.Arbitrary, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for HashMap[K, V]

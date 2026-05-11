@@ -249,6 +249,10 @@ fn[K : Eq] HashSet::grow(self : HashSet[K]) -> Unit {
 // Utils
 
 ///|
+#deprecated("Use Debug instead of Show for debugging purposes.")
+pub impl[K : Show] Show for HashSet[K]
+
+///|
 pub impl[K : Show] Show for HashSet[K] with output(self, logger) {
   logger.write_iter(self.iter(), prefix="@hashset.from_array([", suffix="])")
 }

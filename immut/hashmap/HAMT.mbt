@@ -695,6 +695,10 @@ pub fn[K : Eq + Hash, V] HashMap::from_iter(
 }
 
 ///|
+#deprecated("Use Debug instead of Show for debugging purposes.")
+pub impl[K : Show, V : Show] Show for HashMap[K, V]
+
+///|
 pub impl[K : Show, V : Show] Show for HashMap[K, V] with output(self, logger) {
   logger.write_iter(
     self.iter(),

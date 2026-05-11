@@ -84,6 +84,10 @@ pub impl[A : Eq] Eq for List[A] with equal(self, other) -> Bool {
 }
 
 ///|
+#deprecated("Use Debug instead of Show for debugging purposes.")
+pub impl[A : Show] Show for List[A]
+
+///|
 /// Show implementation for List.
 /// Outputs the list in the format @list.from_array([element1, element2, ...]).
 pub impl[A : Show] Show for List[A] with output(xs, logger) {

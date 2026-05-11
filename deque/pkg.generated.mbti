@@ -92,6 +92,7 @@ pub impl[A] Add for Deque[A]
 pub impl[A : Compare] Compare for Deque[A]
 pub impl[A : Eq] Eq for Deque[A]
 pub impl[A : Hash] Hash for Deque[A]
+#deprecated
 pub impl[A : Show] Show for Deque[A]
 pub impl[A : ToJson] ToJson for Deque[A]
 pub impl[A : @debug.Debug] @debug.Debug for Deque[A]

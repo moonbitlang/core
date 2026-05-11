@@ -55,6 +55,7 @@ pub fn[V] SortedSet::to_array(Self[V]) -> Array[V]
 pub fn[V : Compare] SortedSet::union(Self[V], Self[V]) -> Self[V]
 pub impl[K] Default for SortedSet[K]
 pub impl[V : Eq] Eq for SortedSet[V]
+#deprecated
 pub impl[V : Show] Show for SortedSet[V]
 pub impl[V : @debug.Debug] @debug.Debug for SortedSet[V]
 pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for SortedSet[X]

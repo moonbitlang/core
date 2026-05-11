@@ -55,6 +55,7 @@ pub impl[K : Hash + Eq] BitOr for Set[K]
 pub impl[K : Hash + Eq] BitXOr for Set[K]
 pub impl[K] Default for Set[K]
 pub impl[K : Hash + Eq] Eq for Set[K]
+#deprecated
 pub impl[K : Show] Show for Set[K]
 pub impl[K : Hash + Eq] Sub for Set[K]
 pub impl[X : ToJson] ToJson for Set[X]

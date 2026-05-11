@@ -348,6 +348,10 @@ pub fn[K, V] HashMap::eachi(
 ///   assert_eq(map.to_string(), "HashMap::from_array(\{array})")
 /// }
 /// ```
+#deprecated("Use Debug instead of Show for debugging purposes.")
+pub impl[K : Show, V : Show] Show for HashMap[K, V]
+
+///|
 pub impl[K : Show, V : Show] Show for HashMap[K, V] with output(self, logger) {
   logger.write_string("HashMap::from_array([")
   self.eachi((i, k, v) => {

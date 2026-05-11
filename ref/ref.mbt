@@ -28,6 +28,10 @@ pub(all) struct Ref[T] {
 }
 
 ///|
+#deprecated("Use Debug instead of Show for debugging purposes.")
+pub impl[X : Show] Show for Ref[X]
+
+///|
 pub impl[X : Show] Show for Ref[X] with output(self, logger) {
   logger.write_string("{val: ")
   logger.write_object(self.val)

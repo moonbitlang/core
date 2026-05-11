@@ -660,6 +660,10 @@ pub impl[A : Eq] Eq for Vector[A] with equal(self, other) {
 }
 
 ///|
+#deprecated("Use Debug instead of Show for debugging purposes.")
+pub impl[A : Show] Show for Vector[A]
+
+///|
 pub impl[A : Show] Show for Vector[A] with output(self, logger) {
   logger.write_iter(
     self.iter(),

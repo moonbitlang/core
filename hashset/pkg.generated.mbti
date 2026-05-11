@@ -60,6 +60,7 @@ pub impl[K : Hash + Eq] BitAnd for HashSet[K]
 pub impl[K : Hash + Eq] BitOr for HashSet[K]
 pub impl[K : Hash + Eq] BitXOr for HashSet[K]
 pub impl[K] Default for HashSet[K]
+#deprecated
 pub impl[K : Show] Show for HashSet[K]
 pub impl[K : Hash + Eq] Sub for HashSet[K]
 pub impl[X : ToJson] ToJson for HashSet[X]
