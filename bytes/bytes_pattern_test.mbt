@@ -27,7 +27,7 @@
 /// @param bytes UTF-8 encoded byte sequence
 /// @return Decoded string
 pub fn decode_utf8(bytes : Bytes) -> String {
-  let buf = StringBuilder::StringBuilder()
+  let buf = StringBuilder()
   for x = bytes[:] {
     match x {
       // 1-byte sequence (ASCII): 0xxxxxxx

@@ -43,7 +43,7 @@ struct Bench {
 /// ```
 #as_free_fn
 pub fn Bench::new() -> Bench {
-  let buffer = StringBuilder::StringBuilder()
+  let buffer = StringBuilder()
   let summaries = []
   { buffer, summaries, _storage: @ref.new(()) }
 }

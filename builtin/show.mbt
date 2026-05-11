@@ -108,7 +108,7 @@ test "to_hex_digit" {
 /// }
 /// ```
 pub fn String::escape(self : String, quote? : Bool = true) -> String {
-  let buf = StringBuilder::StringBuilder()
+  let buf = StringBuilder()
   self[:].escape_to(buf, quote~)
   buf.to_string()
 }
@@ -135,7 +135,7 @@ pub fn StringView::escape(
   self : StringView,
   quote? : Bool = true,
 ) -> StringView {
-  let buf = StringBuilder::StringBuilder()
+  let buf = StringBuilder()
   self.escape_to(buf, quote~)
   buf.to_string()
 }

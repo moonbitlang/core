@@ -80,7 +80,7 @@ fn SourceLocRepr::parse(repr : String) -> SourceLocRepr {
 
 ///|
 fn SourceLocRepr::to_json_string(self : SourceLocRepr) -> String {
-  let sb = StringBuilder::StringBuilder()
+  let sb = StringBuilder()
   sb.write_string("{\"filename\":")
   sb.write_object(self.filename)
   sb.write_string(",\"start_line\":\{self.start_line}")
@@ -122,7 +122,7 @@ pub impl Show for ArgsLoc with output(self, logger) {
 /// Returns a JSON array string where each element is either a string
 /// representation of a source location or "null".
 pub fn ArgsLoc::to_json(self : ArgsLoc) -> String {
-  let buf = StringBuilder::StringBuilder(size_hint=10)
+  let buf = StringBuilder(size_hint=10)
   let ArgsLoc(self) = self
   buf.write_char('[')
   for i, item in self {

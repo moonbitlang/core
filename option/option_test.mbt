@@ -185,7 +185,7 @@ test "compare" {
 ///|
 test "iter" {
   let x = Option::Some(42)
-  let exb = StringBuilder::StringBuilder(size_hint=0)
+  let exb = StringBuilder(size_hint=0)
   x
   .iter()
   .each(x => {

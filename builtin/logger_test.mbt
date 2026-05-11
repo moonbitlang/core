@@ -14,7 +14,7 @@
 
 ///|
 test "logger trait object calls" {
-  let sb = StringBuilder::StringBuilder()
+  let sb = StringBuilder()
   let logger : &Logger = sb
   Logger::write_string(logger, "Hello, ")
   Logger::write_char(logger, 'w')

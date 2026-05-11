@@ -986,7 +986,7 @@ pub fn StringView::repeat(self : StringView, n : Int) -> StringView {
       guard len == 0 || total / n == len else {
         abort("repeat result too large")
       }
-      let buf = StringBuilder::StringBuilder(size_hint=total)
+      let buf = StringBuilder(size_hint=total)
       let str = self.to_owned()
       for _ in 0..<n {
         buf.write_string(str)
@@ -1011,7 +1011,7 @@ pub fn String::repeat(self : String, n : Int) -> String {
       guard len == 0 || total / n == len else {
         abort("repeat result too large")
       }
-      let buf = StringBuilder::StringBuilder(size_hint=total)
+      let buf = StringBuilder(size_hint=total)
       let str = self.to_string()
       for _ in 0..<n {
         buf.write_string(str)
@@ -1059,7 +1059,7 @@ test "panic string view repeat negative" {
 /// Returns a new string with the characters in reverse order. It respects
 /// Unicode characters and surrogate pairs but not grapheme clusters.
 pub fn StringView::rev(self : StringView) -> String {
-  let buf = StringBuilder::StringBuilder(size_hint=self.length())
+  let buf = StringBuilder(size_hint=self.length())
   for c in self.rev_iter() {
     buf.write_char(c)
   }
@@ -1462,7 +1462,7 @@ pub fn StringView::replace_all(
   new~ : StringView,
 ) -> StringView {
   let len = self.length()
-  let buf = StringBuilder::StringBuilder(size_hint=len)
+  let buf = StringBuilder(size_hint=len)
   let old_len = old.length()
   let new = new.to_owned()
   // use write_substring to avoid intermediate allocations
@@ -1512,7 +1512,7 @@ pub fn String::replace_all(
   new~ : StringView,
 ) -> String {
   let len = self.length()
-  let buf = StringBuilder::StringBuilder(size_hint=len)
+  let buf = StringBuilder(size_hint=len)
   let old_len = old.length()
   let new = new.to_owned()
   // use write_substring to avoid intermediate allocations
@@ -1661,7 +1661,7 @@ pub fn StringView::to_lower(self : StringView) -> StringView {
   guard self.find_by(x => x.is_ascii_uppercase()) is Some(idx) else {
     return self
   }
-  let buf = StringBuilder::StringBuilder(size_hint=self.length())
+  let buf = StringBuilder(size_hint=self.length())
   let head = self.view(end_offset=idx)
   buf.write_substring(head.data(), head.start_offset(), head.length())
   for c in self.view(start_offset=idx) {
@@ -1682,7 +1682,7 @@ pub fn String::to_lower(self : String) -> String {
   guard self.find_by(x => x.is_ascii_uppercase()) is Some(idx) else {
     return self
   }
-  let buf = StringBuilder::StringBuilder(size_hint=self.length())
+  let buf = StringBuilder(size_hint=self.length())
   let head = self.view(end_offset=idx)
   buf.write_substring(head.data(), head.start_offset(), head.length())
   for c in self.view(start_offset=idx) {
@@ -1717,7 +1717,7 @@ pub fn StringView::to_upper(self : StringView) -> StringView {
   guard self.find_by(c => c.is_ascii_lowercase()) is Some(idx) else {
     return self
   }
-  let buf = StringBuilder::StringBuilder(size_hint=self.length())
+  let buf = StringBuilder(size_hint=self.length())
   let head = self.view(end_offset=idx)
   buf.write_substring(head.data(), head.start_offset(), head.length())
   for c in self.view(start_offset=idx) {
@@ -1737,7 +1737,7 @@ pub fn String::to_upper(self : String) -> String {
   guard self.find_by(c => c.is_ascii_lowercase()) is Some(idx) else {
     return self
   }
-  let buf = StringBuilder::StringBuilder(size_hint=self.length())
+  let buf = StringBuilder(size_hint=self.length())
   let head = self.view(end_offset=idx)
   buf.write_substring(head.data(), head.start_offset(), head.length())
   for c in self.view(start_offset=idx) {

@@ -66,7 +66,7 @@ pub impl Logger for StringBuilder with write_char(self, ch) {
 ///
 /// ```mbt check
 /// test {
-///   let sb = StringBuilder::StringBuilder()
+///   let sb = StringBuilder()
 ///   sb.write_view("Hello, world!"[:5])
 ///   assert_eq(sb.to_string(), "Hello")
 /// }

@@ -226,7 +226,7 @@ test "equal_ignore_ascii_case" {
 ///|
 test "Show::output" {
   fn repr(s : String) {
-    let buf = StringBuilder::StringBuilder(size_hint=0)
+    let buf = StringBuilder(size_hint=0)
     s |> Show::output(buf)
     buf.to_string()
   }
@@ -352,7 +352,7 @@ test "iter2" {
 
 ///|
 test "Buffer::to_bytes" {
-  let buffer = StringBuilder::StringBuilder(size_hint=16)
+  let buffer = StringBuilder(size_hint=16)
   buffer.write_string("中文")
   assert_eq(buffer.to_string(), "中文")
 }

@@ -24,7 +24,7 @@ fn get_cli_args_internal() -> Array[String] {
 
 ///|
 fn utf8_bytes_to_mbt_string(bytes : Bytes) -> String {
-  let res = StringBuilder::StringBuilder()
+  let res = StringBuilder()
   let len = bytes.length()
   let mut i = 0
   while i < len {
