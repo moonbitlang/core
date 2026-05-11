@@ -126,14 +126,19 @@ test "eachi" {
 ///|
 test "keys" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
-  inspect(map.keys_as_iter(), content="[1, 2, 3]")
+  debug_inspect(
+    map.keys_as_iter().to_array(),
+    content=(
+      #|[1, 2, 3]
+    ),
+  )
 }
 
 ///|
 test "values" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
-  inspect(
-    map.values_as_iter(),
+  debug_inspect(
+    map.values_as_iter().to_array(),
     content=(
       #|["a", "b", "c"]
     ),
@@ -143,7 +148,7 @@ test "values" {
 ///|
 test "to_array" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
-  inspect(
+  debug_inspect(
     map.to_array(),
     content=(
       #|[(1, "a"), (2, "b"), (3, "c")]
@@ -154,13 +159,13 @@ test "to_array" {
 ///|
 test "iter_collect" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
-  inspect(
+  debug_inspect(
     map.iter().collect(),
     content=(
       #|[(1, "a"), (2, "b"), (3, "c")]
     ),
   )
-  inspect(
+  debug_inspect(
     map.iter().take(2).collect(),
     content=(
       #|[(1, "a"), (2, "b")]
@@ -170,17 +175,21 @@ test "iter_collect" {
 
 ///|
 test "from_iter multiple elements iter" {
-  inspect(
+  debug_inspect(
     @sorted_map.from_iter([(1, 1), (2, 2), (3, 3)].iter()),
-    content="@sorted_map.from_array([(1, 1), (2, 2), (3, 3)])",
+    content=(
+      #|<SortedMap: { 1: 1, 2: 2, 3: 3 }>
+    ),
   )
 }
 
 ///|
 test "from_iter single element iter" {
-  inspect(
+  debug_inspect(
     @sorted_map.from_iter([(1, 1)].iter()),
-    content="@sorted_map.from_array([(1, 1)])",
+    content=(
+      #|<SortedMap: { 1: 1 }>
+    ),
   )
 }
 
@@ -189,19 +198,41 @@ test "from_iter empty iter" {
   let pq : @sorted_map.SortedMap[Int, Int] = @sorted_map.from_iter(
     Iter::empty(),
   )
-  inspect(pq, content="@sorted_map.from_array([])")
+  debug_inspect(
+    pq,
+    content=(
+      #|<SortedMap: {}>
+    ),
+  )
 }
 
 ///|
 test "arbitrary" {
   let map : Array[@sorted_map.SortedMap[Int, UInt]] = @quickcheck.samples(20)
-  inspect(
+  debug_inspect(
     map[5:10],
-    content="[@sorted_map.from_array([]), @sorted_map.from_array([]), @sorted_map.from_array([(0, 0)]), @sorted_map.from_array([(0, 0)]), @sorted_map.from_array([(0, 0)])]",
+    content=(
+      #|<ArrayView:
+      #|  [
+      #|    <SortedMap: {}>,
+      #|    <SortedMap: {}>,
+      #|    <SortedMap: { 0: 0 }>,
+      #|    <SortedMap: { 0: 0 }>,
+      #|    <SortedMap: { 0: 0 }>,
+      #|  ]>
+    ),
   )
-  inspect(
+  debug_inspect(
     map[11:15],
-    content="[@sorted_map.from_array([(-3, 2), (-1, 1), (0, 0), (2, 1)]), @sorted_map.from_array([(0, 0)]), @sorted_map.from_array([(-8, 1), (-2, 5), (0, 3), (3, 6), (7, 6)]), @sorted_map.from_array([(0, 0)])]",
+    content=(
+      #|<ArrayView:
+      #|  [
+      #|    <SortedMap: { -3: 2, -1: 1, 0: 0, 2: 1 }>,
+      #|    <SortedMap: { 0: 0 }>,
+      #|    <SortedMap: { -8: 1, -2: 5, 0: 3, 3: 6, 7: 6 }>,
+      #|    <SortedMap: { 0: 0 }>,
+      #|  ]>
+    ),
   )
 }
 
@@ -224,20 +255,20 @@ test "range" {
     (4, "d"),
     (5, "e"),
   ])
-  inspect(
-    map.range(2, 4),
+  debug_inspect(
+    map.range(2, 4).to_array(),
     content=(
       #|[(2, "b"), (3, "c"), (4, "d")]
     ),
   )
-  inspect(
-    map.range(1, 1),
+  debug_inspect(
+    map.range(1, 1).to_array(),
     content=(
       #|[(1, "a")]
     ),
   )
-  inspect(
-    map.range(5, 5),
+  debug_inspect(
+    map.range(5, 5).to_array(),
     content=(
       #|[(5, "e")]
     ),
@@ -317,9 +348,9 @@ test "@sorted_map.merge empty maps" {
   let map1 : @sorted_map.SortedMap[Int, String] = @sorted_map.SortedMap([])
   let map2 = @sorted_map.from_array([(1, "a"), (2, "b")])
   let merged1 = map1.merge(map2)
-  inspect(merged1.to_array(), content="[(1, \"a\"), (2, \"b\")]")
+  debug_inspect(merged1.to_array(), content="[(1, \"a\"), (2, \"b\")]")
   let merged2 = map2.merge(map1)
-  inspect(merged2.to_array(), content="[(1, \"a\"), (2, \"b\")]")
+  debug_inspect(merged2.to_array(), content="[(1, \"a\"), (2, \"b\")]")
   let merged3 = map1.merge(map1)
   inspect(merged3.length(), content="0")
 }
@@ -342,9 +373,9 @@ test "@sorted_map.merge_in_place empty maps" {
   let map1 : @sorted_map.SortedMap[Int, String] = @sorted_map.SortedMap([])
   let map2 = @sorted_map.from_array([(1, "a"), (2, "b")])
   map1.merge_in_place(map2)
-  inspect(map1.to_array(), content="[(1, \"a\"), (2, \"b\")]")
+  debug_inspect(map1.to_array(), content="[(1, \"a\"), (2, \"b\")]")
   map1.merge_in_place(map1)
-  inspect(map1.to_array(), content="[(1, \"a\"), (2, \"b\")]")
+  debug_inspect(map1.to_array(), content="[(1, \"a\"), (2, \"b\")]")
 }
 
 ///|
@@ -409,7 +440,7 @@ test "update_or_default counter pattern" {
   for label in ["a", "b", "a", "c", "a", "b"] {
     counts.update_or_default(label, 1, x => x + 1)
   }
-  inspect(
+  debug_inspect(
     counts.to_array(),
     content=(
       #|[("a", 3), ("b", 2), ("c", 1)]
@@ -426,7 +457,12 @@ test "range with inverted bounds returns empty" {
     (4, "d"),
     (5, "e"),
   ])
-  inspect(map.range(5, 1), content="[]")
+  debug_inspect(
+    map.range(5, 1).to_array(),
+    content=(
+      #|[]
+    ),
+  )
 }
 
 ///|
@@ -438,8 +474,8 @@ test "range with out-of-bounds keys" {
     (4, "d"),
     (5, "e"),
   ])
-  inspect(
-    map.range(0, 10),
+  debug_inspect(
+    map.range(0, 10).to_array(),
     content=(
       #|[(1, "a"), (2, "b"), (3, "c"), (4, "d"), (5, "e")]
     ),
@@ -449,7 +485,12 @@ test "range with out-of-bounds keys" {
 ///|
 test "range on empty map" {
   let map : @sorted_map.SortedMap[Int, String] = @sorted_map.SortedMap([])
-  inspect(map.range(1, 5), content="[]")
+  debug_inspect(
+    map.range(1, 5).to_array(),
+    content=(
+      #|[]
+    ),
+  )
 }
 
 ///|

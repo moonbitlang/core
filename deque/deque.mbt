@@ -42,7 +42,12 @@ fn[A] Deque::tail_index(self : Deque[A]) -> Int {
 /// ```mbt check
 /// test {
 ///   let dq = @deque.from_array([1, 2, 3])
-///   inspect(dq, content="@deque.from_array([1, 2, 3])")
+///   @debug.debug_inspect(
+///     dq,
+///     content=(
+///       #|<Deque: [1, 2, 3]>
+///     ),
+///   )
 /// }
 /// ```
 ///
@@ -106,10 +111,10 @@ pub impl[A : Hash] Hash for Deque[A] with hash_combine(self, hasher) {
 /// test {
 ///   let dq1 = @deque.from_array([1, 2, 3])
 ///   let dq2 = @deque.from_array([4, 5, 6])
-///   inspect((dq1 + dq2).to_array(), content="[1, 2, 3, 4, 5, 6]")
+///   debug_inspect((dq1 + dq2).to_array(), content="[1, 2, 3, 4, 5, 6]")
 ///   let mut dq3 = dq2.copy()
 ///   dq3 += @deque.from_array([7])
-///   inspect(dq3.to_array(), content="[4, 5, 6, 7]")
+///   @debug.debug_inspect(dq3.to_array(), content="[4, 5, 6, 7]")
 /// }
 /// ```
 pub impl[A] Add for Deque[A] with add(self, other) {
@@ -147,7 +152,12 @@ test "add_empty" {
 /// test {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let dq = @deque.Deque(arr)
-///   inspect(dq, content="@deque.from_array([1, 2, 3, 4, 5])")
+///   @debug.debug_inspect(
+///     dq,
+///     content=(
+///       #|<Deque: [1, 2, 3, 4, 5]>
+///     ),
+///   )
 /// }
 /// ```
 #alias(from_array)
@@ -193,7 +203,12 @@ test "from_array_empty" {
 /// test {
 ///   let dq = @deque.from_array([1, 2, 3, 4, 5])
 ///   let copied = dq.copy()
-///   inspect(copied, content="@deque.from_array([1, 2, 3, 4, 5])")
+///   @debug.debug_inspect(
+///     copied,
+///     content=(
+///       #|<Deque: [1, 2, 3, 4, 5]>
+///     ),
+///   )
 /// }
 /// ```
 #alias(clone, deprecated)
@@ -227,7 +242,7 @@ pub fn[A] Deque::copy(self : Deque[A]) -> Deque[A] {
 ///   let d1 = @deque.from_array([1, 2, 3, 4, 5])
 ///   let d2 = @deque.from_array([0, 0])
 ///   d1.blit_to(d2, len=3, dst_offset=1)
-///   inspect(d2.to_array(), content="[0, 1, 2, 3]")
+///   @debug.debug_inspect(d2.to_array(), content="[0, 1, 2, 3]")
 /// }
 /// ```
 /// 
@@ -305,11 +320,21 @@ pub fn[A] Deque::blit_to(
 ///   let v1 = @deque.from_array([1, 2, 3])
 ///   let v2 = @deque.from_array([4, 5, 6])
 ///   v1.append(v2)
-///   inspect(v1, content="@deque.from_array([1, 2, 3, 4, 5, 6])")
+///   debug_inspect(
+///     v1,
+///     content=(
+///       #|<Deque: [1, 2, 3, 4, 5, 6]>
+///     ),
+///   )
 ///   let v1 = @deque.from_array([1, 2, 3])
 ///   let v2 = @deque.from_array([])
 ///   v1.append(v2)
-///   inspect(v1, content="@deque.from_array([1, 2, 3])")
+///   @debug.debug_inspect(
+///     v1,
+///     content=(
+///       #|<Deque: [1, 2, 3]>
+///     ),
+///   )
 /// }
 /// ```
 pub fn[A] Deque::append(self : Deque[A], other : Deque[A]) -> Unit {
@@ -363,13 +388,28 @@ pub fn[A] Deque::append(self : Deque[A], other : Deque[A]) -> Unit {
 /// test {
 ///   let v1 = @deque.from_array([1, 2, 3])
 ///   v1.insert(0, 0) // insert at the front
-///   inspect(v1, content="@deque.from_array([0, 1, 2, 3])")
+///   debug_inspect(
+///     v1,
+///     content=(
+///       #|<Deque: [0, 1, 2, 3]>
+///     ),
+///   )
 ///   let v2 = @deque.from_array([1, 2, 4])
 ///   v2.insert(2, 3) // insert in the middle
-///   inspect(v2, content="@deque.from_array([1, 2, 3, 4])")
+///   debug_inspect(
+///     v2,
+///     content=(
+///       #|<Deque: [1, 2, 3, 4]>
+///     ),
+///   )
 ///   let v3 = @deque.from_array([2, 3, 4])
 ///   v3.insert(3, 5) // insert at the end
-///   inspect(v3, content="@deque.from_array([2, 3, 4, 5])")
+///   @debug.debug_inspect(
+///     v3,
+///     content=(
+///       #|<Deque: [2, 3, 4, 5]>
+///     ),
+///   )
 /// }
 /// ```
 pub fn[A] Deque::insert(self : Deque[A], index : Int, value : A) -> Unit {
@@ -426,13 +466,28 @@ pub fn[A] Deque::insert(self : Deque[A], index : Int, value : A) -> Unit {
 /// test {
 ///   let v1 = @deque.from_array([0, 1, 2, 3])
 ///   let x = v1.remove(0) // remove from the front
-///   inspect((x, v1), content="(0, @deque.from_array([1, 2, 3]))")
+///   debug_inspect(
+///     (x, v1),
+///     content=(
+///       #|(0, <Deque: [1, 2, 3]>)
+///     ),
+///   )
 ///   let v2 = @deque.from_array([1, 2, 3, 4])
 ///   let y = v2.remove(2) // remove from the middle
-///   inspect((y, v2), content="(3, @deque.from_array([1, 2, 4]))")
+///   debug_inspect(
+///     (y, v2),
+///     content=(
+///       #|(3, <Deque: [1, 2, 4]>)
+///     ),
+///   )
 ///   let v3 = @deque.from_array([2, 3, 4, 5])
 ///   let z = v3.remove(3) // remove from the end
-///   inspect((z, v3), content="(5, @deque.from_array([2, 3, 4]))")
+///   @debug.debug_inspect(
+///     (z, v3),
+///     content=(
+///       #|(5, <Deque: [2, 3, 4]>)
+///     ),
+///   )
 /// }
 /// ```
 pub fn[A] Deque::remove(self : Deque[A], index : Int) -> A {
@@ -1083,8 +1138,8 @@ pub fn[A] Deque::is_empty(self : Deque[A]) -> Bool {
 /// ```mbt check
 /// test {
 ///   let dq = @deque.from_array([1, 2, 3, 2, 1])
-///   debug_inspect(dq.search(2), content="Some(1)")
-///   debug_inspect(dq.search(4), content="None")
+///   @debug.debug_inspect(dq.search(2), content="Some(1)")
+///   @debug.debug_inspect(dq.search(4), content="None")
 /// }
 /// ```
 pub fn[A : Eq] Deque::search(self : Deque[A], value : A) -> Int? {
@@ -1142,8 +1197,8 @@ pub fn[A : Eq] Deque::contains(self : Deque[A], value : A) -> Bool {
 /// test {
 ///   let d = @deque.from_array([1, 2, 3, 4, 5])
 ///   let extracted = d.extract_if(x => x % 2 == 0)
-///   inspect(extracted.to_array(), content="[2, 4]")
-///   inspect(d.to_array(), content="[1, 3, 5]")
+///   debug_inspect(extracted.to_array(), content="[2, 4]")
+///   @debug.debug_inspect(d.to_array(), content="[1, 3, 5]")
 /// }
 /// ```
 #locals(f)
@@ -1192,7 +1247,12 @@ pub fn[A] Deque::extract_if(self : Deque[A], f : (A) -> Bool) -> Deque[A] {
 /// test {
 ///   let dq = @deque.from_array([1, 2, 3, 4, 5])
 ///   let evens = dq.filter(x => x % 2 == 0)
-///   inspect(evens, content="@deque.from_array([2, 4])")
+///   @debug.debug_inspect(
+///     evens,
+///     content=(
+///       #|<Deque: [2, 4]>
+///     ),
+///   )
 /// }
 /// ```
 #locals(f)
@@ -1283,7 +1343,12 @@ pub fn[A] Deque::shrink_to_fit(self : Deque[A]) -> Unit {
 /// test {
 ///   let dq = @deque.from_array([1, 2, 3, 4, 5])
 ///   dq.truncate(3)
-///   inspect(dq, content="@deque.from_array([1, 2, 3])")
+///   @debug.debug_inspect(
+///     dq,
+///     content=(
+///       #|<Deque: [1, 2, 3]>
+///     ),
+///   )
 /// }
 /// ```
 pub fn[A] Deque::truncate(self : Deque[A], len : Int) -> Unit {
@@ -1341,7 +1406,12 @@ test "truncate zero" {
 /// test {
 ///   let dq = @deque.from_array([1, 2, 3, 4, 5])
 ///   dq.retain_map(x => if x % 2 == 0 { Some(x * 2) } else { None })
-///   inspect(dq, content="@deque.from_array([4, 8])")
+///   @debug.debug_inspect(
+///     dq,
+///     content=(
+///       #|<Deque: [4, 8]>
+///     ),
+///   )
 /// }
 /// ```
 #locals(f)
@@ -1400,7 +1470,12 @@ pub fn[A] Deque::retain_map(self : Deque[A], f : (A) -> A?) -> Unit {
 /// test {
 ///   let dq = @deque.from_array([1, 2, 3, 4, 5])
 ///   dq.retain(x => x % 2 == 0)
-///   inspect(dq, content="@deque.from_array([2, 4])")
+///   @debug.debug_inspect(
+///     dq,
+///     content=(
+///       #|<Deque: [2, 4]>
+///     ),
+///   )
 /// }
 /// ```
 #locals(f)
@@ -1600,7 +1675,12 @@ pub fn[A] Deque::rev_iter2(self : Deque[A]) -> Iter2[Int, A] {
 /// test {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let dq = @deque.from_iter(arr.iter())
-///   inspect(dq, content="@deque.from_array([1, 2, 3, 4, 5])")
+///   @debug.debug_inspect(
+///     dq,
+///     content=(
+///       #|<Deque: [1, 2, 3, 4, 5]>
+///     ),
+///   )
 /// }
 /// ```
 #as_free_fn
@@ -1630,7 +1710,7 @@ pub fn[A] Deque::from_iter(iter : Iter[A]) -> Deque[A] {
 /// test {
 ///   let dq = @deque.from_array([1, 2, 3, 4, 5])
 ///   let arr = dq.to_array()
-///   inspect(arr, content="[1, 2, 3, 4, 5]")
+///   @debug.debug_inspect(arr, content="[1, 2, 3, 4, 5]")
 /// }
 /// ```
 ///
@@ -1719,7 +1799,12 @@ pub impl[A : ToJson] ToJson for Deque[A] with to_json(self : Deque[A]) -> Json {
 /// test {
 ///   let json = @json.parse("[1, 2, 3]")
 ///   let dq : @deque.Deque[Int] = @json.from_json(json)
-///   inspect(dq, content="@deque.from_array([1, 2, 3])")
+///   @debug.debug_inspect(
+///     dq,
+///     content=(
+///       #|<Deque: [1, 2, 3]>
+///     ),
+///   )
 /// }
 /// ```
 ///
@@ -1757,7 +1842,7 @@ pub impl[A : @json.FromJson] @json.FromJson for Deque[A] with from_json(
 /// test {
 ///   let d = @deque.from_array([1, 2, 3, 4, 5])
 ///   let chunks = d.chunks(2)
-///   inspect(
+///   @debug.debug_inspect(
 ///     chunks.to_array().map(c => c.to_array()),
 ///     content="[[1, 2], [3, 4], [5]]",
 ///   )
@@ -1814,12 +1899,15 @@ pub fn[A] Deque::chunks(self : Deque[A], size : Int) -> Deque[Deque[A]] {
 /// test {
 ///   let d = @deque.from_array([1, 1, 2, 3, 2, 3, 2, 3, 4])
 ///   let chunks = d.chunk_by((x, y) => x <= y)
-///   inspect(
+///   @debug.debug_inspect(
 ///     chunks.to_array().map(c => c.to_array()),
 ///     content="[[1, 1, 2, 3], [2, 3], [2, 3, 4]]",
 ///   )
 ///   let empty : @deque.Deque[Int] = @deque.from_array([])
-///   inspect(empty.chunk_by((x, y) => x <= y).to_array(), content="[]")
+///   @debug.debug_inspect(
+///     empty.chunk_by((x, y) => x <= y).to_array(),
+///     content="[]",
+///   )
 /// }
 /// ```
 #locals(pred)
@@ -1868,7 +1956,12 @@ pub fn[A] Deque::chunk_by(
 ///     @deque.from_array([7, 8]),
 ///   ])
 ///   let deque_test = deque.flatten()
-///   inspect(deque_test, content="@deque.from_array([1, 2, 3, 4, 5, 6, 7, 8])")
+///   @debug.debug_inspect(
+///     deque_test,
+///     content=(
+///       #|<Deque: [1, 2, 3, 4, 5, 6, 7, 8]>
+///     ),
+///   )
 /// }
 /// ```
 pub fn[A] Deque::flatten(self : Deque[Deque[A]]) -> Deque[A] {
@@ -1913,8 +2006,18 @@ pub fn[A] Deque::flatten(self : Deque[Deque[A]]) -> Deque[A] {
 /// test {
 ///   let deque = @deque.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9])
 ///   let deque_test = deque.drain(start=2, len=4)
-///   inspect(deque_test, content="@deque.from_array([3, 4, 5, 6])")
-///   inspect(deque, content="@deque.from_array([1, 2, 7, 8, 9])")
+///   debug_inspect(
+///     deque_test,
+///     content=(
+///       #|<Deque: [3, 4, 5, 6]>
+///     ),
+///   )
+///   @debug.debug_inspect(
+///     deque,
+///     content=(
+///       #|<Deque: [1, 2, 7, 8, 9]>
+///     ),
+///   )
 /// }
 /// ```
 pub fn[A] Deque::drain(self : Deque[A], start~ : Int, len? : Int) -> Deque[A] {
@@ -2098,12 +2201,27 @@ test "weird behavior after drain" {
   deque.push_back(29)
   ignore(deque.pop_front())
   deque.push_back(30)
-  inspect(deque.as_views(), content="([29, 30], [])")
+  @debug.debug_inspect(
+    deque.as_views(),
+    content=(
+      #|(<ArrayView: [29, 30]>, <ArrayView: []>)
+    ),
+  )
   ignore(deque.drain(start=0, len=2))
-  inspect(deque.as_views(), content="([], [])")
+  @debug.debug_inspect(
+    deque.as_views(),
+    content=(
+      #|(<ArrayView: []>, <ArrayView: []>)
+    ),
+  )
   deque.push_back(31)
   deque.push_back(32)
-  inspect(deque.as_views(), content="([31, 32], [])")
+  @debug.debug_inspect(
+    deque.as_views(),
+    content=(
+      #|(<ArrayView: [31, 32]>, <ArrayView: []>)
+    ),
+  )
   ignore(deque.pop_front())
 }
 
@@ -2132,9 +2250,9 @@ test "weird behavior after drain" {
 /// test {
 ///   let dq = @deque.from_array([1, 3, 5, 7, 9])
 ///   let find_3 = dq.binary_search_by(x => x.compare(3))
-///   inspect(find_3, content="Ok(1)")
+///   debug_inspect(find_3, content="Ok(1)")
 ///   let find_4 = dq.binary_search_by(x => x.compare(4))
-///   inspect(find_4, content="Err(2)")
+///   @debug.debug_inspect(find_4, content="Err(2)")
 /// }
 /// ```
 ///
@@ -2212,7 +2330,7 @@ pub fn[A] Deque::get(self : Deque[A], index : Int) -> A? {
 /// test {
 ///   let dq = @deque.from_array([1, 3, 5, 7, 9])
 ///   let result = dq.binary_search(5)
-///   inspect(result, content="Ok(2)")
+///   @debug.debug_inspect(result, content="Ok(2)")
 /// }
 /// ```
 ///
@@ -2286,10 +2404,20 @@ pub impl[A : Compare] Compare for Deque[A] with compare(self, other) {
 /// test {
 ///   let dq = @deque.from_array([1, 2, 3, 4, 5])
 ///   dq.rev_in_place()
-///   inspect(dq, content="@deque.from_array([5, 4, 3, 2, 1])")
+///   debug_inspect(
+///     dq,
+///     content=(
+///       #|<Deque: [5, 4, 3, 2, 1]>
+///     ),
+///   )
 ///   let dq : @deque.Deque[Int] = @deque.Deque([])
 ///   dq.rev_in_place()
-///   inspect(dq, content="@deque.from_array([])")
+///   @debug.debug_inspect(
+///     dq,
+///     content=(
+///       #|<Deque: []>
+///     ),
+///   )
 /// }
 /// ```
 #alias(rev_inplace, deprecated)
@@ -2319,8 +2447,18 @@ pub fn[A] Deque::rev_in_place(self : Deque[A]) -> Unit {
 /// ```mbt check
 /// test {
 ///   let dq = @deque.from_array([1, 2, 3, 4, 5])
-///   inspect(dq.rev(), content="@deque.from_array([5, 4, 3, 2, 1])")
-///   inspect(dq, content="@deque.from_array([1, 2, 3, 4, 5])") // original deque unchanged
+///   debug_inspect(
+///     dq.rev(),
+///     content=(
+///       #|<Deque: [5, 4, 3, 2, 1]>
+///     ),
+///   )
+///   @debug.debug_inspect(
+///     dq,
+///     content=(
+///       #|<Deque: [1, 2, 3, 4, 5]>
+///     ),
+///   ) // original deque unchanged
 /// }
 /// ```
 pub fn[A] Deque::rev(self : Deque[A]) -> Deque[A] {

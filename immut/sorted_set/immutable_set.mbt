@@ -533,9 +533,11 @@ pub fn[A : Compare] SortedSet::difference(
 /// test {
 ///   let set1 = @sorted_set.from_array([1, 2, 3, 4])
 ///   let set2 = @sorted_set.from_array([3, 4, 5, 6])
-///   inspect(
+///   @debug.debug_inspect(
 ///     set1.symmetric_difference(set2),
-///     content="@immut/sorted_set.from_array([1, 2, 5, 6])",
+///     content=(
+///       #|<SortedSet: [1, 2, 5, 6]>
+///     ),
 ///   )
 /// }
 /// ```
@@ -1055,7 +1057,12 @@ test "balance with left height greater" {
   let value = 4
   let right = from_array([5])
   let balanced_set = balance(left, value, right)
-  inspect(balanced_set, content="@immut/sorted_set.from_array([1, 2, 3, 4, 5])")
+  @debug.debug_inspect(
+    balanced_set,
+    content=(
+      #|<SortedSet: [1, 2, 3, 4, 5]>
+    ),
+  )
 }
 
 ///|
@@ -1064,7 +1071,12 @@ test "balance with right height greater" {
   let value = 2
   let right = from_array([3, 4, 5])
   let balanced_set = balance(left, value, right)
-  inspect(balanced_set, content="@immut/sorted_set.from_array([1, 2, 3, 4, 5])")
+  @debug.debug_inspect(
+    balanced_set,
+    content=(
+      #|<SortedSet: [1, 2, 3, 4, 5]>
+    ),
+  )
 }
 
 ///|
@@ -1073,9 +1085,11 @@ test "join with different heights" {
   let value = 4
   let right = from_array([5, 6, 7])
   let joined_set = join(left, value, right)
-  inspect(
+  @debug.debug_inspect(
     joined_set,
-    content="@immut/sorted_set.from_array([1, 2, 3, 4, 5, 6, 7])",
+    content=(
+      #|<SortedSet: [1, 2, 3, 4, 5, 6, 7]>
+    ),
   )
 }
 

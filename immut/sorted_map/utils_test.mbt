@@ -206,61 +206,61 @@ test "default" {
 ///|
 test "iter2" {
   let map = @sorted_map.from_array([(2, "two"), (1, "one")])
-  inspect(map.iter2().to_array(), content="[(1, \"one\"), (2, \"two\")]")
+  debug_inspect(map.iter2().to_array(), content="[(1, \"one\"), (2, \"two\")]")
 }
 
 ///|
 test "rev_keys returns keys in descending order" {
   let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
   let keys = map.rev_keys().collect()
-  inspect(keys, content="[\"c\", \"b\", \"a\"]")
+  debug_inspect(keys, content="[\"c\", \"b\", \"a\"]")
 }
 
 ///|
 test "rev_values returns values in descending key order" {
   let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
   let values = map.rev_values().collect()
-  inspect(values, content="[3, 2, 1]")
+  debug_inspect(values, content="[3, 2, 1]")
 }
 
 ///|
 test "rev_keys on empty map" {
   let map : @sorted_map.SortedMap[String, Int] = @sorted_map.new()
-  inspect(map.rev_keys().collect(), content="[]")
+  debug_inspect(map.rev_keys().collect(), content="[]")
 }
 
 ///|
 test "rev_values on empty map" {
   let map : @sorted_map.SortedMap[String, Int] = @sorted_map.new()
-  inspect(map.rev_values().collect(), content="[]")
+  debug_inspect(map.rev_values().collect(), content="[]")
 }
 
 ///|
 test "rev_keys on single element map" {
   let map = @sorted_map.singleton("a", 1)
   let keys = map.rev_keys().collect()
-  inspect(keys, content="[\"a\"]")
+  debug_inspect(keys, content="[\"a\"]")
 }
 
 ///|
 test "rev_values on single element map" {
   let map = @sorted_map.singleton("a", 1)
   let values = map.rev_values().collect()
-  inspect(values, content="[1]")
+  debug_inspect(values, content="[1]")
 }
 
 ///|
 test "rev_keys early termination" {
   let map = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
   let result = map.rev_keys().take(2).collect()
-  inspect(result, content="[3, 2]")
+  debug_inspect(result, content="[3, 2]")
 }
 
 ///|
 test "rev_values early termination" {
   let map = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
   let result = map.rev_values().take(2).collect()
-  inspect(result, content="[\"three\", \"two\"]")
+  debug_inspect(result, content="[\"three\", \"two\"]")
 }
 
 ///|
@@ -312,7 +312,7 @@ test "rev_keys with complex tree" {
     (25, "25"),
   ])
   let keys = map.rev_keys().collect()
-  inspect(keys, content="[25, 20, 18, 15, 12, 10, 5]")
+  debug_inspect(keys, content="[25, 20, 18, 15, 12, 10, 5]")
 }
 
 ///|
@@ -327,7 +327,7 @@ test "rev_values with complex tree" {
     (25, "25"),
   ])
   let values = map.rev_values().collect()
-  inspect(
+  debug_inspect(
     values,
     content="[\"25\", \"20\", \"18\", \"15\", \"12\", \"10\", \"5\"]",
   )

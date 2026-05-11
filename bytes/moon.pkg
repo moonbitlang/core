@@ -13,4 +13,5 @@ import {
   "moonbitlang/core/error",
   "moonbitlang/core/json",
   "moonbitlang/core/float",
+  "moonbitlang/core/debug",
 } for "test"

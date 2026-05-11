@@ -417,7 +417,7 @@ test {
 ///|
 test {
   let list = @list.from_array([1, 2, 3])
-  inspect(list.iter(), content="[1, 2, 3]")
+  debug_inspect(list.iter().to_array(), content="[1, 2, 3]")
   let list2 = @list.from_iter([4, 5, 6].iter())
   assert_eq(list2, @list.from_array([4, 5, 6]))
 }

@@ -22,10 +22,10 @@ test "new_with_capacity_then_add " {
     capacity=20,
   )
   set.add(("None", "Hash"))
-  inspect(
+  debug_inspect(
     set,
     content=(
-      #|@hashset.from_array([("None", "Hash")])
+      #|<HashSet: [("None", "Hash")]>
     ),
   )
 }
@@ -35,7 +35,7 @@ test "to_array" {
   let v = @hashset.from_array([1, 2, 3, 4])
   let arr = v.to_array()
   arr.sort()
-  inspect(arr, content="[1, 2, 3, 4]")
+  debug_inspect(arr, content="[1, 2, 3, 4]")
 }
 
 ///|
@@ -163,7 +163,7 @@ test "is_empty" {
 test "iter" {
   let m = @hashset.from_array(["a", "b", "c"]).iter().collect()
   m.sort()
-  inspect(
+  debug_inspect(
     m,
     content=(
       #|["a", "b", "c"]
@@ -181,7 +181,7 @@ test "iteri" {
     s.push(k)
   })
   s.sort()
-  inspect(
+  debug_inspect(
     s,
     content=(
       #|["1", "2", "3"]
@@ -365,18 +365,28 @@ test "clear_and_reinsert" {
 test "from_iter multiple elements iter" {
   let array = @hashset.from_iter([1, 2, 3].iter()).to_array()
   array.sort()
-  inspect(array, content="[1, 2, 3]")
+  debug_inspect(array, content="[1, 2, 3]")
 }
 
 ///|
 test "from_iter single element iter" {
-  inspect(@hashset.from_iter([1].iter()), content="@hashset.from_array([1])")
+  debug_inspect(
+    @hashset.from_iter([1].iter()),
+    content=(
+      #|<HashSet: [1]>
+    ),
+  )
 }
 
 ///|
 test "from_iter empty iter" {
   let map : @hashset.HashSet[Int] = @hashset.from_iter(Iter::empty())
-  inspect(map, content="@hashset.from_array([])")
+  debug_inspect(
+    map,
+    content=(
+      #|<HashSet: []>
+    ),
+  )
 }
 
 ///|
@@ -412,14 +422,14 @@ test "hashset arbitrary" {
 ///|
 test "@hashset.to_array/empty" {
   let set : @hashset.HashSet[Int] = @hashset.HashSet([])
-  inspect(set.to_array(), content="[]")
+  debug_inspect(set.to_array(), content="[]")
 }
 
 ///|
 test "@hashset.to_array/single" {
   let set = @hashset.HashSet([])
   set.add(42)
-  inspect(set.to_array(), content="[42]")
+  debug_inspect(set.to_array(), content="[42]")
 }
 
 ///|
@@ -431,7 +441,12 @@ test "@hashset.to_array/multiple" {
   set.add(4)
   let arr = set.to_array()
   arr.sort()
-  inspect(arr.to_string(), content="[1, 2, 3, 4]")
+  debug_inspect(
+    arr.to_string(),
+    content=(
+      #|"[1, 2, 3, 4]"
+    ),
+  )
 }
 
 ///|

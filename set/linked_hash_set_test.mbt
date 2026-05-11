@@ -48,7 +48,7 @@ test "constructor capacity" {
   assert_eq(below_length.length(), 3)
   let above_length = @set.Set([1, 2, 3], capacity=16)
   assert_eq(above_length.capacity(), 16)
-  inspect(above_length.to_array(), content="[1, 2, 3]")
+  debug_inspect(above_length.to_array(), content="[1, 2, 3]")
 }
 
 ///|
@@ -292,18 +292,33 @@ test "clear_and_reinsert" {
 
 ///|
 test "from_iter multiple elements iter" {
-  inspect(@set.Set::from_iter([1, 2, 3].iter()), content="{1, 2, 3}")
+  debug_inspect(
+    @set.Set::from_iter([1, 2, 3].iter()),
+    content=(
+      #|<Set: [1, 2, 3]>
+    ),
+  )
 }
 
 ///|
 test "from_iter single element iter" {
-  inspect(@set.Set::from_iter([1].iter()), content="{1}")
+  debug_inspect(
+    @set.Set::from_iter([1].iter()),
+    content=(
+      #|<Set: [1]>
+    ),
+  )
 }
 
 ///|
 test "from_iter empty iter" {
   let map : @set.Set[Int] = @set.Set::from_iter(Iter::empty())
-  inspect(map, content="{}")
+  debug_inspect(
+    map,
+    content=(
+      #|<Set: []>
+    ),
+  )
 }
 
 ///|
@@ -317,7 +332,7 @@ test "remove item causes break when psl < i" {
 
 ///|
 test "to_array_empty" {
-  inspect((@set.Set([]) : @set.Set[Int]).to_array(), content="[]")
+  debug_inspect((@set.Set([]) : @set.Set[Int]).to_array(), content="[]")
 }
 
 ///|
@@ -326,7 +341,7 @@ test "to_array_non_empty" {
   set.add(1)
   set.add(2)
   set.add(3)
-  inspect(set.to_array(), content="[1, 2, 3]")
+  debug_inspect(set.to_array(), content="[1, 2, 3]")
 }
 
 ///|
@@ -478,7 +493,12 @@ test "trigger grow" {
   for i in 0..<10 {
     assert_true(set.add_and_check(i))
   }
-  inspect(set, content="{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}")
+  debug_inspect(
+    set,
+    content=(
+      #|<Set: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]>
+    ),
+  )
 }
 
 ///|

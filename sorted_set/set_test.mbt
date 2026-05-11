@@ -69,21 +69,25 @@ test "subset" {
 
 ///|
 test "diff" {
-  inspect(
+  debug_inspect(
     @sorted_set.from_array([1, 2, 3]).difference(
       @sorted_set.from_array([4, 5, 1]),
     ),
-    content="@sorted_set.from_array([2, 3])",
+    content=(
+      #|<SortedSet: [2, 3]>
+    ),
   )
 }
 
 ///|
 test "intersect" {
-  inspect(
+  debug_inspect(
     @sorted_set.from_array([3, 4, 5]).intersection(
       @sorted_set.from_array([4, 5, 6]),
     ),
-    content="@sorted_set.from_array([4, 5])",
+    content=(
+      #|<SortedSet: [4, 5]>
+    ),
   )
 }
 
@@ -111,8 +115,8 @@ test "eachi" {
 ///|
 test "iter" {
   let set = @sorted_set.from_array([3, 2, 1])
-  inspect(set.iter().collect(), content="[1, 2, 3]")
-  inspect(set.iter().take(2).collect(), content="[1, 2]")
+  debug_inspect(set.iter().collect(), content="[1, 2, 3]")
+  debug_inspect(set.iter().take(2).collect(), content="[1, 2]")
 }
 
 ///|
@@ -150,11 +154,11 @@ test "contains" {
 
 ///|
 test "to_array" {
-  inspect(
+  debug_inspect(
     @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).to_array(),
     content="[1, 2, 3, 4, 5, 6, 7, 8, 9]",
   )
-  inspect(
+  debug_inspect(
     (@sorted_set.from_array([]) : @sorted_set.SortedSet[Int]).to_array(),
     content="[]",
   )
@@ -162,21 +166,27 @@ test "to_array" {
 
 ///|
 test "to_string" {
-  inspect(
+  debug_inspect(
     @sorted_set.from_array([1, 2, 3, 4, 5]),
-    content="@sorted_set.from_array([1, 2, 3, 4, 5])",
+    content=(
+      #|<SortedSet: [1, 2, 3, 4, 5]>
+    ),
   )
-  inspect(
+  debug_inspect(
     (@sorted_set.from_array([]) : @sorted_set.SortedSet[Int]),
-    content="@sorted_set.from_array([])",
+    content=(
+      #|<SortedSet: []>
+    ),
   )
 }
 
 ///|
 test "from_array" {
-  inspect(
+  debug_inspect(
     @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]),
-    content="@sorted_set.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9])",
+    content=(
+      #|<SortedSet: [1, 2, 3, 4, 5, 6, 7, 8, 9]>
+    ),
   )
 }
 
@@ -209,9 +219,19 @@ test "singleton" {
 ///|
 test "show" {
   let set = @sorted_set.from_array([1, 2, 3, 4, 5])
-  inspect(set, content="@sorted_set.from_array([1, 2, 3, 4, 5])")
+  debug_inspect(
+    set,
+    content=(
+      #|<SortedSet: [1, 2, 3, 4, 5]>
+    ),
+  )
   let set : @sorted_set.SortedSet[Int] = @sorted_set.from_array([])
-  inspect(set, content="@sorted_set.from_array([])")
+  debug_inspect(
+    set,
+    content=(
+      #|<SortedSet: []>
+    ),
+  )
 }
 
 ///|
@@ -220,34 +240,76 @@ test "mix_everything" {
   let set1 = @sorted_set.from_array([1, 2, 3, 4, 5])
   let set2 = @sorted_set.from_array([4, 5, 6, 7, 8])
   set1.add(6)
-  inspect(set1, content="@sorted_set.from_array([1, 2, 3, 4, 5, 6])")
+  debug_inspect(
+    set1,
+    content=(
+      #|<SortedSet: [1, 2, 3, 4, 5, 6]>
+    ),
+  )
   set1.remove(6)
-  inspect(set1, content="@sorted_set.from_array([1, 2, 3, 4, 5])")
+  debug_inspect(
+    set1,
+    content=(
+      #|<SortedSet: [1, 2, 3, 4, 5]>
+    ),
+  )
   let set3 = set1.union(set2)
-  inspect(set3, content="@sorted_set.from_array([1, 2, 3, 4, 5, 6, 7, 8])")
+  debug_inspect(
+    set3,
+    content=(
+      #|<SortedSet: [1, 2, 3, 4, 5, 6, 7, 8]>
+    ),
+  )
   let set4 = set1.difference(set2)
-  inspect(set4, content="@sorted_set.from_array([1, 2, 3])")
+  debug_inspect(
+    set4,
+    content=(
+      #|<SortedSet: [1, 2, 3]>
+    ),
+  )
   let set5 = set1.intersection(set2)
-  inspect(set5, content="@sorted_set.from_array([4, 5])")
+  debug_inspect(
+    set5,
+    content=(
+      #|<SortedSet: [4, 5]>
+    ),
+  )
   inspect(set1.subset(set3), content="true")
   set3.remove(3)
-  inspect(set3, content="@sorted_set.from_array([1, 2, 4, 5, 6, 7, 8])")
+  debug_inspect(
+    set3,
+    content=(
+      #|<SortedSet: [1, 2, 4, 5, 6, 7, 8]>
+    ),
+  )
   inspect(set3.length(), content="7")
   inspect(set3.is_empty(), content="false")
   inspect(set3.contains(1), content="true")
   inspect(set3.contains(3), content="false")
   inspect(set3.disjoint(set1), content="false")
   let set6 = set3.union(@sorted_set.from_array([]))
-  inspect(set6, content="@sorted_set.from_array([1, 2, 4, 5, 6, 7, 8])")
+  debug_inspect(
+    set6,
+    content=(
+      #|<SortedSet: [1, 2, 4, 5, 6, 7, 8]>
+    ),
+  )
   let set7 = set3.union(@sorted_set.from_array([12, 13, 14, 33, 22]))
-  inspect(
+  debug_inspect(
     set7,
-    content="@sorted_set.from_array([1, 2, 4, 5, 6, 7, 8, 12, 13, 14, 22, 33])",
+    content=(
+      #|<SortedSet: [1, 2, 4, 5, 6, 7, 8, 12, 13, 14, 22, 33]>
+    ),
   )
   for i in 1..<=5 {
     set7.remove(i)
   }
-  inspect(set7, content="@sorted_set.from_array([6, 7, 8, 12, 13, 14, 22, 33])")
+  debug_inspect(
+    set7,
+    content=(
+      #|<SortedSet: [6, 7, 8, 12, 13, 14, 22, 33]>
+    ),
+  )
   for i in 6..<=33 {
     set7.remove(i)
   }
@@ -255,14 +317,59 @@ test "mix_everything" {
     90, 70, 13, 44, 11, 49, 39, 35, 52, 8, 80, 40, 58, 67, 84, 38, 93, 97, 54, 95,
   ])
   set.remove(70)
-  inspect(
+  debug_inspect(
     set,
-    content="@sorted_set.from_array([8, 11, 13, 35, 38, 39, 40, 44, 49, 52, 54, 58, 67, 80, 84, 90, 93, 95, 97])",
+    content=(
+      #|<SortedSet:
+      #|  [
+      #|    8,
+      #|    11,
+      #|    13,
+      #|    35,
+      #|    38,
+      #|    39,
+      #|    40,
+      #|    44,
+      #|    49,
+      #|    52,
+      #|    54,
+      #|    58,
+      #|    67,
+      #|    80,
+      #|    84,
+      #|    90,
+      #|    93,
+      #|    95,
+      #|    97,
+      #|  ]>
+    ),
   )
   set.remove(52)
-  inspect(
+  debug_inspect(
     set,
-    content="@sorted_set.from_array([8, 11, 13, 35, 38, 39, 40, 44, 49, 54, 58, 67, 80, 84, 90, 93, 95, 97])",
+    content=(
+      #|<SortedSet:
+      #|  [
+      #|    8,
+      #|    11,
+      #|    13,
+      #|    35,
+      #|    38,
+      #|    39,
+      #|    40,
+      #|    44,
+      #|    49,
+      #|    54,
+      #|    58,
+      #|    67,
+      #|    80,
+      #|    84,
+      #|    90,
+      #|    93,
+      #|    95,
+      #|    97,
+      #|  ]>
+    ),
   )
 }
 
@@ -278,36 +385,62 @@ test "equal" {
 
 ///|
 test "from_iter multiple elements iter" {
-  inspect(
+  debug_inspect(
     @sorted_set.from_iter([1, 2, 3].iter()),
-    content="@sorted_set.from_array([1, 2, 3])",
+    content=(
+      #|<SortedSet: [1, 2, 3]>
+    ),
   )
-  inspect(
+  debug_inspect(
     @sorted_set.from_iter([1, 1, 1].iter()),
-    content="@sorted_set.from_array([1])",
+    content=(
+      #|<SortedSet: [1]>
+    ),
   )
 }
 
 ///|
 test "from_iter single element iter" {
-  inspect(
+  debug_inspect(
     @sorted_set.from_iter([1].iter()),
-    content="@sorted_set.from_array([1])",
+    content=(
+      #|<SortedSet: [1]>
+    ),
   )
 }
 
 ///|
 test "from_iter empty iter" {
   let pq : @sorted_set.SortedSet[Int] = @sorted_set.from_iter(Iter::empty())
-  inspect(pq, content="@sorted_set.from_array([])")
+  debug_inspect(
+    pq,
+    content=(
+      #|<SortedSet: []>
+    ),
+  )
 }
 
 ///|
 test "range" {
   let set = @sorted_set.from_array([1, 2, 3, 4, 5])
-  inspect(set.range(2, 4), content="[2, 3, 4]")
-  inspect(set.range(1, 1), content="[1]")
-  inspect(set.range(5, 5), content="[5]")
+  debug_inspect(
+    set.range(2, 4).to_array(),
+    content=(
+      #|[2, 3, 4]
+    ),
+  )
+  debug_inspect(
+    set.range(1, 1).to_array(),
+    content=(
+      #|[1]
+    ),
+  )
+  debug_inspect(
+    set.range(5, 5).to_array(),
+    content=(
+      #|[5]
+    ),
+  )
 }
 
 ///|
@@ -316,13 +449,23 @@ test "@sorted_set.symmetric_difference/basic" {
   let set1 = @sorted_set.from_array([1, 2, 3])
   let set2 = @sorted_set.from_array([4, 5, 6])
   let result = set1.symmetric_difference(set2)
-  inspect(result, content="@sorted_set.from_array([1, 2, 3, 4, 5, 6])")
+  debug_inspect(
+    result,
+    content=(
+      #|<SortedSet: [1, 2, 3, 4, 5, 6]>
+    ),
+  )
 
   // Test with overlapping sets
   let set3 = @sorted_set.from_array([1, 2, 3, 4])
   let set4 = @sorted_set.from_array([3, 4, 5, 6])
   let result2 = set3.symmetric_difference(set4)
-  inspect(result2, content="@sorted_set.from_array([1, 2, 5, 6])")
+  debug_inspect(
+    result2,
+    content=(
+      #|<SortedSet: [1, 2, 5, 6]>
+    ),
+  )
 }
 
 ///|
@@ -331,14 +474,29 @@ test "@sorted_set.symmetric_difference/empty" {
   let empty1 = @sorted_set.SortedSet([])
   let empty2 = @sorted_set.SortedSet([])
   let result1 = empty1.symmetric_difference(empty2)
-  inspect(result1, content="@sorted_set.from_array([])")
+  debug_inspect(
+    result1,
+    content=(
+      #|<SortedSet: []>
+    ),
+  )
 
   // Test with one empty set
   let set1 = @sorted_set.from_array([1, 2, 3])
   let result2 = set1.symmetric_difference(empty1)
-  inspect(result2, content="@sorted_set.from_array([1, 2, 3])")
+  debug_inspect(
+    result2,
+    content=(
+      #|<SortedSet: [1, 2, 3]>
+    ),
+  )
   let result3 = empty1.symmetric_difference(set1)
-  inspect(result3, content="@sorted_set.from_array([1, 2, 3])")
+  debug_inspect(
+    result3,
+    content=(
+      #|<SortedSet: [1, 2, 3]>
+    ),
+  )
 }
 
 ///|
@@ -347,5 +505,10 @@ test "@sorted_set.symmetric_difference/identical" {
   let set1 = @sorted_set.from_array([1, 2, 3, 4, 5])
   let set2 = @sorted_set.from_array([1, 2, 3, 4, 5])
   let result = set1.symmetric_difference(set2)
-  inspect(result, content="@sorted_set.from_array([])")
+  debug_inspect(
+    result,
+    content=(
+      #|<SortedSet: []>
+    ),
+  )
 }

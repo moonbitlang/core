@@ -338,5 +338,5 @@ test "shuffle" {
     a[i] = a[j]
     a[j] = t
   })
-  inspect(a, content="[3, 5, 2, 1, 4]")
+  @debug.debug_inspect(a, content="[3, 5, 2, 1, 4]")
 }

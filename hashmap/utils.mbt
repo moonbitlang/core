@@ -158,7 +158,7 @@ pub fn[K : Hash + Eq, V] HashMap::from_iter(
 ///   let map = @hashmap.from_array([(1, "one"), (2, "two")])
 ///   let arr = map.to_array()
 ///   arr.sort()
-///   inspect(
+///   debug_inspect(
 ///     arr,
 ///     content=(
 ///       #|[(1, "one"), (2, "two")]
@@ -278,7 +278,7 @@ pub fn[K, V] HashMap::is_empty(self : HashMap[K, V]) -> Bool {
 ///   let array = []
 ///   map.each((k, v) => array.push((k, v)))
 ///   array.sort()
-///   inspect(
+///   debug_inspect(
 ///     array,
 ///     content=(
 ///       #|[(1, "one"), (2, "two")]

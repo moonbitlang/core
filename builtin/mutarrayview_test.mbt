@@ -16,16 +16,51 @@
 test "array_mut_sub" {
   let arr = [1, 2, 3, 4, 5]
   let view = arr.mut_view()
-  inspect(view, content="[1, 2, 3, 4, 5]")
+  debug_inspect(
+    view,
+    content=(
+      #|<MutArrayView: [1, 2, 3, 4, 5]>
+    ),
+  )
   inspect(view.length(), content="5")
   inspect(view[0], content="1")
   inspect(view[4], content="5")
-  inspect(view[:], content="[1, 2, 3, 4, 5]")
-  inspect(view[1:], content="[2, 3, 4, 5]")
-  inspect(view[:-1], content="[1, 2, 3, 4]")
-  inspect(view[1:-1], content="[2, 3, 4]")
-  inspect(view[-1:], content="[5]")
-  inspect(view[-1:-1], content="[]")
+  debug_inspect(
+    view[:],
+    content=(
+      #|<ArrayView: [1, 2, 3, 4, 5]>
+    ),
+  )
+  debug_inspect(
+    view[1:],
+    content=(
+      #|<ArrayView: [2, 3, 4, 5]>
+    ),
+  )
+  debug_inspect(
+    view[:-1],
+    content=(
+      #|<ArrayView: [1, 2, 3, 4]>
+    ),
+  )
+  debug_inspect(
+    view[1:-1],
+    content=(
+      #|<ArrayView: [2, 3, 4]>
+    ),
+  )
+  debug_inspect(
+    view[-1:],
+    content=(
+      #|<ArrayView: [5]>
+    ),
+  )
+  debug_inspect(
+    view[-1:-1],
+    content=(
+      #|<ArrayView: []>
+    ),
+  )
 }
 
 ///|
@@ -63,13 +98,13 @@ test "mutarrayview_helpers" {
   let view = arr.mut_view(start=1, end=4)
   inspect(view.is_empty(), content="false")
   inspect(view.start_offset(), content="1")
-  inspect(view.to_owned(), content="[2, 3, 4]")
+  debug_inspect(view.to_owned(), content="[2, 3, 4]")
   let values = []
   view.iter().each(v => values.push(v))
-  inspect(values, content="[2, 3, 4]")
+  debug_inspect(values, content="[2, 3, 4]")
   let pairs = []
   view.iter2().each((i, v) => pairs.push((i, v)))
-  inspect(pairs, content="[(0, 2), (1, 3), (2, 4)]")
+  debug_inspect(pairs, content="[(0, 2), (1, 3), (2, 4)]")
 }
 
 ///|
@@ -88,31 +123,96 @@ test "mutarrayview_as_mutarrayview" {
 test "negative index1" {
   let arr = [1, 2, 3]
   let view = arr.mut_view(start=-1)
-  inspect(view, content="[3]")
+  debug_inspect(
+    view,
+    content=(
+      #|<MutArrayView: [3]>
+    ),
+  )
   let view = arr.mut_view(start=-2)
-  inspect(view, content="[2, 3]")
+  debug_inspect(
+    view,
+    content=(
+      #|<MutArrayView: [2, 3]>
+    ),
+  )
   let view = arr.mut_view(start=-3)
-  inspect(view, content="[1, 2, 3]")
+  debug_inspect(
+    view,
+    content=(
+      #|<MutArrayView: [1, 2, 3]>
+    ),
+  )
   let view = arr.mut_view(end=-1)
-  inspect(view, content="[1, 2]")
+  debug_inspect(
+    view,
+    content=(
+      #|<MutArrayView: [1, 2]>
+    ),
+  )
   let view = arr.mut_view(end=-2)
-  inspect(view, content="[1]")
+  debug_inspect(
+    view,
+    content=(
+      #|<MutArrayView: [1]>
+    ),
+  )
   let view = arr.mut_view(end=-3)
-  inspect(view, content="[]")
+  debug_inspect(
+    view,
+    content=(
+      #|<MutArrayView: []>
+    ),
+  )
   let view = arr.mut_view(start=-3, end=-3)
-  inspect(view, content="[]")
+  debug_inspect(
+    view,
+    content=(
+      #|<MutArrayView: []>
+    ),
+  )
   let view = arr.mut_view(start=-3, end=-2)
-  inspect(view, content="[1]")
+  debug_inspect(
+    view,
+    content=(
+      #|<MutArrayView: [1]>
+    ),
+  )
   let view = arr.mut_view(start=-3, end=-1)
-  inspect(view, content="[1, 2]")
+  debug_inspect(
+    view,
+    content=(
+      #|<MutArrayView: [1, 2]>
+    ),
+  )
   let view = arr.mut_view(start=-3, end=0)
-  inspect(view, content="[]")
+  debug_inspect(
+    view,
+    content=(
+      #|<MutArrayView: []>
+    ),
+  )
   let view = arr.mut_view(start=-3, end=1)
-  inspect(view, content="[1]")
+  debug_inspect(
+    view,
+    content=(
+      #|<MutArrayView: [1]>
+    ),
+  )
   let view = arr.mut_view(start=-3, end=2)
-  inspect(view, content="[1, 2]")
+  debug_inspect(
+    view,
+    content=(
+      #|<MutArrayView: [1, 2]>
+    ),
+  )
   let view = arr.mut_view(start=-3, end=3)
-  inspect(view, content="[1, 2, 3]")
+  debug_inspect(
+    view,
+    content=(
+      #|<MutArrayView: [1, 2, 3]>
+    ),
+  )
 }
 
 ///|
@@ -120,31 +220,96 @@ test "negative index2" {
   let arr = [0, 1, 2, 3, 4]
   let view = arr.mut_view(start=1, end=4)
   let view2 = view.mut_view(start=-1)
-  inspect(view2, content="[3]")
+  debug_inspect(
+    view2,
+    content=(
+      #|<MutArrayView: [3]>
+    ),
+  )
   let view2 = view.mut_view(start=-2)
-  inspect(view2, content="[2, 3]")
+  debug_inspect(
+    view2,
+    content=(
+      #|<MutArrayView: [2, 3]>
+    ),
+  )
   let view2 = view.mut_view(start=-3)
-  inspect(view2, content="[1, 2, 3]")
+  debug_inspect(
+    view2,
+    content=(
+      #|<MutArrayView: [1, 2, 3]>
+    ),
+  )
   let view2 = view.mut_view(end=-1)
-  inspect(view2, content="[1, 2]")
+  debug_inspect(
+    view2,
+    content=(
+      #|<MutArrayView: [1, 2]>
+    ),
+  )
   let view2 = view.mut_view(end=-2)
-  inspect(view2, content="[1]")
+  debug_inspect(
+    view2,
+    content=(
+      #|<MutArrayView: [1]>
+    ),
+  )
   let view2 = view.mut_view(end=-3)
-  inspect(view2, content="[]")
+  debug_inspect(
+    view2,
+    content=(
+      #|<MutArrayView: []>
+    ),
+  )
   let view2 = view.mut_view(start=-3, end=-3)
-  inspect(view2, content="[]")
+  debug_inspect(
+    view2,
+    content=(
+      #|<MutArrayView: []>
+    ),
+  )
   let view2 = view.mut_view(start=-3, end=-2)
-  inspect(view2, content="[1]")
+  debug_inspect(
+    view2,
+    content=(
+      #|<MutArrayView: [1]>
+    ),
+  )
   let view2 = view.mut_view(start=-3, end=-1)
-  inspect(view2, content="[1, 2]")
+  debug_inspect(
+    view2,
+    content=(
+      #|<MutArrayView: [1, 2]>
+    ),
+  )
   let view2 = view.mut_view(start=-3, end=0)
-  inspect(view2, content="[]")
+  debug_inspect(
+    view2,
+    content=(
+      #|<MutArrayView: []>
+    ),
+  )
   let view2 = view.mut_view(start=-3, end=1)
-  inspect(view2, content="[1]")
+  debug_inspect(
+    view2,
+    content=(
+      #|<MutArrayView: [1]>
+    ),
+  )
   let view2 = view.mut_view(start=-3, end=2)
-  inspect(view2, content="[1, 2]")
+  debug_inspect(
+    view2,
+    content=(
+      #|<MutArrayView: [1, 2]>
+    ),
+  )
   let view2 = view.mut_view(start=-3, end=3)
-  inspect(view2, content="[1, 2, 3]")
+  debug_inspect(
+    view2,
+    content=(
+      #|<MutArrayView: [1, 2, 3]>
+    ),
+  )
 }
 
 ///|
@@ -204,61 +369,128 @@ test "fixedarray_mut_sub" {
   // scalar case
   let arr = FixedArray::makei(10, i => i)
   let view = arr.mut_view()
-  inspect(view, content="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]")
+  debug_inspect(
+    view,
+    content=(
+      #|<MutArrayView: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]>
+    ),
+  )
   let view = arr.mut_view(start=1)
-  inspect(view, content="[1, 2, 3, 4, 5, 6, 7, 8, 9]")
+  debug_inspect(
+    view,
+    content=(
+      #|<MutArrayView: [1, 2, 3, 4, 5, 6, 7, 8, 9]>
+    ),
+  )
   let view = arr.mut_view(end=-2)
-  inspect(view, content="[0, 1, 2, 3, 4, 5, 6, 7]")
+  debug_inspect(
+    view,
+    content=(
+      #|<MutArrayView: [0, 1, 2, 3, 4, 5, 6, 7]>
+    ),
+  )
   let view = arr.mut_view(start=3, end=-4)
-  inspect(view, content="[3, 4, 5]")
+  debug_inspect(
+    view,
+    content=(
+      #|<MutArrayView: [3, 4, 5]>
+    ),
+  )
   let view = arr.mut_view(start=-5)
-  inspect(view, content="[5, 6, 7, 8, 9]")
+  debug_inspect(
+    view,
+    content=(
+      #|<MutArrayView: [5, 6, 7, 8, 9]>
+    ),
+  )
 
   // Test mutation through view
   let view = arr.mut_view(start=3, end=-4)
   view[0] = 100
   inspect(arr[3], content="100")
-  inspect(view, content="[100, 4, 5]")
+  debug_inspect(
+    view,
+    content=(
+      #|<MutArrayView: [100, 4, 5]>
+    ),
+  )
 
   // reference case
   let arr = FixedArray::makei(10, i => (i, i))
   let view = arr.mut_view()
-  inspect(
+  debug_inspect(
     view,
-    content="[(0, 0), (1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (9, 9)]",
+    content=(
+      #|<MutArrayView:
+      #|  [
+      #|    (0, 0),
+      #|    (1, 1),
+      #|    (2, 2),
+      #|    (3, 3),
+      #|    (4, 4),
+      #|    (5, 5),
+      #|    (6, 6),
+      #|    (7, 7),
+      #|    (8, 8),
+      #|    (9, 9),
+      #|  ]>
+    ),
   )
   let view = arr.mut_view(start=1)
-  inspect(
+  debug_inspect(
     view,
-    content="[(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (9, 9)]",
+    content=(
+      #|<MutArrayView:
+      #|  [
+      #|    (1, 1),
+      #|    (2, 2),
+      #|    (3, 3),
+      #|    (4, 4),
+      #|    (5, 5),
+      #|    (6, 6),
+      #|    (7, 7),
+      #|    (8, 8),
+      #|    (9, 9),
+      #|  ]>
+    ),
   )
 
   // Test mutation
   let view = arr.mut_view(start=3, end=-4)
   view[0] = (100, 100)
-  inspect(arr[3], content="(100, 100)")
-  inspect(view, content="[(100, 100), (4, 4), (5, 5)]")
+  debug_inspect(arr[3], content="(100, 100)")
+  debug_inspect(
+    view,
+    content=(
+      #|<MutArrayView: [(100, 100), (4, 4), (5, 5)]>
+    ),
+  )
 }
 
 ///|
 test "iter" {
   let arr = [1, 2, 3, 4, 5]
   let iter = arr.iter().map(x => x * 2)
-  inspect(iter.to_array(), content="[2, 4, 6, 8, 10]")
+  debug_inspect(iter.to_array(), content="[2, 4, 6, 8, 10]")
 }
 
 ///|
 test "rev_iter" {
   let arr = [1, 2, 3, 4, 5]
   let iter = arr.rev_iter().map(x => x * 2)
-  inspect(iter.to_array(), content="[10, 8, 6, 4, 2]")
+  debug_inspect(iter.to_array(), content="[10, 8, 6, 4, 2]")
 }
 
 ///|
 test "iter2" {
   let arr = [1, 2, 3, 4, 5]
   let iter = arr.iter2()
-  inspect(iter.to_string(), content="[(0, 1), (1, 2), (2, 3), (3, 4), (4, 5)]")
+  debug_inspect(
+    iter.to_string(),
+    content=(
+      #|"[(0, 1), (1, 2), (2, 3), (3, 4), (4, 5)]"
+    ),
+  )
 }
 
 ///|
@@ -292,9 +524,14 @@ test "panic MutArrayView sub invalid range" {
 test "MutArrayView iterators" {
   let arr = [1, 2, 3]
   let view = arr.mut_view()
-  inspect(view.iter().to_array(), content="[1, 2, 3]")
-  inspect(view.rev_iter().to_array(), content="[3, 2, 1]")
-  inspect(view.iter2().to_string(), content="[(0, 1), (1, 2), (2, 3)]")
+  debug_inspect(view.iter().to_array(), content="[1, 2, 3]")
+  debug_inspect(view.rev_iter().to_array(), content="[3, 2, 1]")
+  debug_inspect(
+    view.iter2().to_string(),
+    content=(
+      #|"[(0, 1), (1, 2), (2, 3)]"
+    ),
+  )
 }
 
 ///|

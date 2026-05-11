@@ -36,11 +36,11 @@ test "string iteration" {
 
   // Forward iteration
   let chars = text.iter().collect()
-  inspect(chars, content="['H', 'e', 'l', 'l', 'o', '🌍']")
+  debug_inspect(chars, content="['H', 'e', 'l', 'l', 'o', '🌍']")
 
   // Reverse iteration
   let reversed = text.rev_iter().collect()
-  inspect(reversed, content="['🌍', 'o', 'l', 'l', 'e', 'H']")
+  debug_inspect(reversed, content="['🌍', 'o', 'l', 'l', 'e', 'H']")
 
   // Iteration with indices - demonstrate iter2 functionality
   let mut count = 0
@@ -69,12 +69,12 @@ test "string conversion" {
 
   // Convert to character array
   let chars = text.to_array()
-  inspect(chars, content="['H', 'e', 'l', 'l', 'o', ' ', '你', '好']")
+  debug_inspect(chars, content="['H', 'e', 'l', 'l', 'o', ' ', '你', '好']")
 
   // Convert to bytes (UTF-8 encoding)
   let bytes = @utf8.encode(text) // Use UTF-8 encoding
   inspect(bytes.length(), content="12")
-  inspect(chars, content="['H', 'e', 'l', 'l', 'o', ' ', '你', '好']")
+  debug_inspect(chars, content="['H', 'e', 'l', 'l', 'o', ' ', '你', '好']")
 
   // Convert to bytes (UTF-16 LE encoding)
   let bytes = @utf16.encode(text)
@@ -135,7 +135,7 @@ test "string views" {
 
   // Views support similar operations as strings
   let chars = view.iter().collect()
-  inspect(chars, content="['W', 'o', 'r', 'l', 'd']")
+  debug_inspect(chars, content="['W', 'o', 'r', 'l', 'd']")
 
   // Convert view back to string
   let substring = view.to_owned()
@@ -283,9 +283,9 @@ test "find and split" {
     .find("a1b22c333")
     .map(fn(m) { m.content().to_owned() })
     .collect()
-  inspect(matches, content="[\"1\", \"22\", \"333\"]")
+  debug_inspect(matches, content="[\"1\", \"22\", \"333\"]")
   let parts = digits.split("a1b22c333").map(fn(v) { v.to_owned() }).collect()
-  inspect(parts, content="[\"a\", \"b\", \"c\", \"\"]")
+  debug_inspect(parts, content="[\"a\", \"b\", \"c\", \"\"]")
 }
 ```
 

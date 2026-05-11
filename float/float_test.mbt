@@ -195,9 +195,12 @@ test "panic Float::is_close negative tolerance" {
 
 ///|
 test "Float::until basics" {
-  inspect((0.0 : Float).until(1.0, step=0.5).collect(), content="[0, 0.5]")
-  inspect((0.0 : Float).until(1.0, step=0.0).collect(), content="[]")
-  inspect(
+  debug_inspect(
+    (0.0 : Float).until(1.0, step=0.5).collect(),
+    content="[0, 0.5]",
+  )
+  debug_inspect((0.0 : Float).until(1.0, step=0.0).collect(), content="[]")
+  debug_inspect(
     (1.0 : Float).until(-1.0, step=-0.5).take(2).collect(),
     content="[1, 0.5]",
   )
@@ -209,7 +212,7 @@ test "Float::until with NaN step" {
   for x in (1.0 : Float).until(1.0, step=@float.not_a_number, inclusive=true) {
     values.push(x)
   }
-  inspect(values, content="[1]")
+  debug_inspect(values, content="[1]")
 }
 
 ///|

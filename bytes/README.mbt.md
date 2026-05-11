@@ -61,15 +61,30 @@ test "bytes conversion" {
 
   // Convert to array
   let array = bytes.to_array()
-  inspect(array, content="[b'\\x78', b'\\x79', b'\\x7A']")
+  debug_inspect(
+    array,
+    content=(
+      #|[0x78, 0x79, 0x7a]
+    ),
+  )
 
   // Convert to fixed array
   let fixed = bytes.to_fixedarray()
-  inspect(fixed, content="[b'\\x78', b'\\x79', b'\\x7A']")
+  debug_inspect(
+    fixed,
+    content=(
+      #|<FixedArray: [0x78, 0x79, 0x7a]>
+    ),
+  )
 
   // Convert to iterator and collect back
   let collected = bytes.iter().to_array()
-  inspect(collected, content="[b'\\x78', b'\\x79', b'\\x7A']")
+  debug_inspect(
+    collected,
+    content=(
+      #|[0x78, 0x79, 0x7a]
+    ),
+  )
 }
 ```
 

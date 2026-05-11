@@ -74,10 +74,20 @@ test {
   let dv = @deque.from_array([2, 3])
   dv.push_front(1)
   dv.push_back(4)
-  inspect(dv, content="@deque.from_array([1, 2, 3, 4])")
+  debug_inspect(
+    dv,
+    content=(
+      #|<Deque: [1, 2, 3, 4]>
+    ),
+  )
   assert_eq(dv.pop_front(), Some(1))
   assert_eq(dv.pop_back(), Some(4))
-  inspect(dv, content="@deque.from_array([2, 3])")
+  debug_inspect(
+    dv,
+    content=(
+      #|<Deque: [2, 3]>
+    ),
+  )
 }
 ```
 
@@ -105,10 +115,20 @@ Insert or remove elements at arbitrary positions (O(n)):
 test {
   let dv = @deque.from_array([1, 2, 4])
   dv.insert(2, 3) // insert 3 at index 2
-  inspect(dv, content="@deque.from_array([1, 2, 3, 4])")
+  debug_inspect(
+    dv,
+    content=(
+      #|<Deque: [1, 2, 3, 4]>
+    ),
+  )
   let removed = dv.remove(0)
   assert_eq(removed, 1)
-  inspect(dv, content="@deque.from_array([2, 3, 4])")
+  debug_inspect(
+    dv,
+    content=(
+      #|<Deque: [2, 3, 4]>
+    ),
+  )
 }
 ```
 
@@ -121,9 +141,19 @@ Use `+` or `append()` to combine deques. `append` mutates the receiver in place.
 test {
   let a = @deque.from_array([1, 2])
   let b = @deque.from_array([3, 4])
-  inspect(a + b, content="@deque.from_array([1, 2, 3, 4])")
+  debug_inspect(
+    a + b,
+    content=(
+      #|<Deque: [1, 2, 3, 4]>
+    ),
+  )
   a.append(b)
-  inspect(a, content="@deque.from_array([1, 2, 3, 4])")
+  debug_inspect(
+    a,
+    content=(
+      #|<Deque: [1, 2, 3, 4]>
+    ),
+  )
 }
 ```
 
@@ -165,8 +195,8 @@ test {
   dv.rev_each(fn(x) { rev.push(x) })
   assert_eq(rev, [3, 2, 1])
   // iterators
-  inspect(dv.iter(), content="[1, 2, 3]")
-  inspect(dv.rev_iter(), content="[3, 2, 1]")
+  debug_inspect(dv.iter().to_array(), content="[1, 2, 3]")
+  debug_inspect(dv.rev_iter().to_array(), content="[3, 2, 1]")
 }
 ```
 
@@ -178,23 +208,42 @@ test {
 ///|
 test {
   let dv = @deque.from_array([1, 2, 3, 4, 5])
-  inspect(
+  debug_inspect(
     dv.map(fn(x) { x * 2 }),
-    content="@deque.from_array([2, 4, 6, 8, 10])",
+    content=(
+      #|<Deque: [2, 4, 6, 8, 10]>
+    ),
   )
-  inspect(
+  debug_inspect(
     dv.mapi(fn(i, x) { i + x }),
-    content="@deque.from_array([1, 3, 5, 7, 9])",
+    content=(
+      #|<Deque: [1, 3, 5, 7, 9]>
+    ),
   )
-  inspect(dv.filter(fn(x) { x % 2 == 0 }), content="@deque.from_array([2, 4])")
+  debug_inspect(
+    dv.filter(fn(x) { x % 2 == 0 }),
+    content=(
+      #|<Deque: [2, 4]>
+    ),
+  )
   // retain modifies in place
   let dv2 = @deque.from_array([1, 2, 3, 4, 5])
   dv2.retain(fn(x) { x > 3 })
-  inspect(dv2, content="@deque.from_array([4, 5])")
+  debug_inspect(
+    dv2,
+    content=(
+      #|<Deque: [4, 5]>
+    ),
+  )
   // retain_map: keep Some values, drop None
   let dv3 = @deque.from_array([1, 2, 3, 4])
   dv3.retain_map(fn(x) { if x % 2 == 0 { Some(x * 10) } else { None } })
-  inspect(dv3, content="@deque.from_array([20, 40])")
+  debug_inspect(
+    dv3,
+    content=(
+      #|<Deque: [20, 40]>
+    ),
+  )
 }
 ```
 
@@ -207,12 +256,32 @@ test {
 test {
   let dv = @deque.from_array([1, 2, 3, 4, 5])
   let extracted = dv.extract_if(fn(x) { x % 2 == 0 })
-  inspect(extracted, content="@deque.from_array([2, 4])")
-  inspect(dv, content="@deque.from_array([1, 3, 5])")
+  debug_inspect(
+    extracted,
+    content=(
+      #|<Deque: [2, 4]>
+    ),
+  )
+  debug_inspect(
+    dv,
+    content=(
+      #|<Deque: [1, 3, 5]>
+    ),
+  )
   let dv2 = @deque.from_array([1, 2, 3, 4, 5])
   let drained = dv2.drain(start=1, len=2)
-  inspect(drained, content="@deque.from_array([2, 3])")
-  inspect(dv2, content="@deque.from_array([1, 4, 5])")
+  debug_inspect(
+    drained,
+    content=(
+      #|<Deque: [2, 3]>
+    ),
+  )
+  debug_inspect(
+    dv2,
+    content=(
+      #|<Deque: [1, 4, 5]>
+    ),
+  )
 }
 ```
 
@@ -225,16 +294,20 @@ test {
 test {
   let dv = @deque.from_array([1, 2, 3, 4, 5])
   let cs = dv.chunks(2)
-  inspect(
+  debug_inspect(
     cs,
-    content="@deque.from_array([@deque.from_array([1, 2]), @deque.from_array([3, 4]), @deque.from_array([5])])",
+    content=(
+      #|<Deque: [<Deque: [1, 2]>, <Deque: [3, 4]>, <Deque: [5]>]>
+    ),
   )
   // chunk_by groups consecutive elements that satisfy a predicate
   let dv2 = @deque.from_array([1, 1, 2, 2, 3])
   let grouped = dv2.chunk_by(fn(a, b) { a == b })
-  inspect(
+  debug_inspect(
     grouped,
-    content="@deque.from_array([@deque.from_array([1, 1]), @deque.from_array([2, 2]), @deque.from_array([3])])",
+    content=(
+      #|<Deque: [<Deque: [1, 1]>, <Deque: [2, 2]>, <Deque: [3]>]>
+    ),
   )
 }
 ```
@@ -246,10 +319,20 @@ test {
 test {
   let dv = @deque.from_array([1, 2, 3])
   // rev returns a new reversed deque
-  inspect(dv.rev(), content="@deque.from_array([3, 2, 1])")
+  debug_inspect(
+    dv.rev(),
+    content=(
+      #|<Deque: [3, 2, 1]>
+    ),
+  )
   // rev_in_place reverses in place
   dv.rev_in_place()
-  inspect(dv, content="@deque.from_array([3, 2, 1])")
+  debug_inspect(
+    dv,
+    content=(
+      #|<Deque: [3, 2, 1]>
+    ),
+  )
 }
 ```
 
@@ -273,7 +356,12 @@ test {
 test {
   let dv = @deque.from_array([1, 2, 3, 4, 5])
   dv.truncate(3)
-  inspect(dv, content="@deque.from_array([1, 2, 3])")
+  debug_inspect(
+    dv,
+    content=(
+      #|<Deque: [1, 2, 3]>
+    ),
+  )
   dv.clear()
   assert_eq(dv.is_empty(), true)
 }
@@ -289,7 +377,12 @@ test {
   let src = @deque.from_array([1, 2, 3, 4, 5])
   let dst = @deque.from_array([0, 0, 0, 0, 0])
   src.blit_to(dst, len=3, src_offset=1, dst_offset=2)
-  inspect(dst, content="@deque.from_array([0, 0, 2, 3, 4])")
+  debug_inspect(
+    dst,
+    content=(
+      #|<Deque: [0, 0, 2, 3, 4]>
+    ),
+  )
 }
 ```
 
@@ -304,7 +397,12 @@ test {
     @deque.from_array([1, 2]),
     @deque.from_array([3, 4]),
   ])
-  inspect(nested.flatten(), content="@deque.from_array([1, 2, 3, 4])")
+  debug_inspect(
+    nested.flatten(),
+    content=(
+      #|<Deque: [1, 2, 3, 4]>
+    ),
+  )
   let words = @deque.from_array(["hello", "world"])
   inspect(words.join(", "), content="hello, world")
 }

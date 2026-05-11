@@ -1858,7 +1858,7 @@ pub fn[A] List::iter(self : List[A]) -> Iter[A] {
 /// test {
 ///   let ls = @list.from_array([10, 20, 30])
 ///   let iter = ls.iter2()
-///   inspect(iter, content="[(0, 10), (1, 20), (2, 30)]")
+///   debug_inspect(iter.to_array(), content="[(0, 10), (1, 20), (2, 30)]")
 /// }
 /// ```
 #alias(iterator2, deprecated)

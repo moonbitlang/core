@@ -137,7 +137,7 @@ test "complex data testing" {
   // Test with arrays
   let numbers = [1, 2, 3, 4, 5]
   let doubled = numbers.map(fn(x) { x * 2 })
-  inspect(doubled, content="[2, 4, 6, 8, 10]")
+  debug_inspect(doubled, content="[2, 4, 6, 8, 10]")
 
   // Test with tuples (simpler than custom structs in test examples)
   let person_data = ("Alice", 30)

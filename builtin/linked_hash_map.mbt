@@ -1019,10 +1019,10 @@ pub fn[K, V] Map::retain(self : Map[K, V], f : (K, V) -> Bool) -> Unit {
 ///       None => Some(0)
 ///     }
 ///   })
-///   inspect(
+///   debug_inspect(
 ///     map,
 ///     content=(
-///       #|{"a": 11, "b": 2}
+///       #|{ "a": 11, "b": 2 }
 ///     ),
 ///   )
 ///
@@ -1033,19 +1033,19 @@ pub fn[K, V] Map::retain(self : Map[K, V], f : (K, V) -> Bool) -> Unit {
 ///       None => Some(3)
 ///     }
 ///   })
-///   inspect(
+///   debug_inspect(
 ///     map,
 ///     content=(
-///       #|{"a": 11, "b": 2, "c": 3}
+///       #|{ "a": 11, "b": 2, "c": 3 }
 ///     ),
 ///   )
 ///
 ///   // Remove existing value
 ///   map.update("b", fn(_) { None })
-///   inspect(
+///   debug_inspect(
 ///     map,
 ///     content=(
-///       #|{"a": 11, "c": 3}
+///       #|{ "a": 11, "c": 3 }
 ///     ),
 ///   )
 /// }

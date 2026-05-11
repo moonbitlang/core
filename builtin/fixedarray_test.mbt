@@ -76,7 +76,12 @@ test "is_empty" {
 test "fill with range" {
   let arr : FixedArray[Int] = [0, 0, 0, 0]
   arr.fill(5, start=1, end=3)
-  inspect(arr, content="[0, 5, 5, 0]")
+  debug_inspect(
+    arr,
+    content=(
+      #|<FixedArray: [0, 5, 5, 0]>
+    ),
+  )
 }
 
 ///|
@@ -116,7 +121,7 @@ test "FixedArray::iter2 with single element" {
   let arr = FixedArray::make(1, 42)
   let pairs : Array[(Int, Int)] = []
   arr.iter2().each((i, x) => pairs.push((i, x)))
-  inspect(pairs, content="[(0, 42)]")
+  debug_inspect(pairs, content="[(0, 42)]")
 }
 
 ///|
@@ -197,56 +202,96 @@ test "fixedarray_binary_search_by_test" {
 test "fixedarray_fill - basic functionality" {
   let fa : FixedArray[Int] = [1, 2, 3, 4, 5]
   fa.fill(42)
-  inspect(fa, content="[42, 42, 42, 42, 42]")
+  debug_inspect(
+    fa,
+    content=(
+      #|<FixedArray: [42, 42, 42, 42, 42]>
+    ),
+  )
 }
 
 ///|
 test "fixedarray_fill - with start parameter only" {
   let fa : FixedArray[Int] = [1, 2, 3, 4, 5]
   fa.fill(99, start=2)
-  inspect(fa, content="[1, 2, 99, 99, 99]")
+  debug_inspect(
+    fa,
+    content=(
+      #|<FixedArray: [1, 2, 99, 99, 99]>
+    ),
+  )
 }
 
 ///|
 test "fixedarray_fill - with start and end parameters" {
   let fa : FixedArray[Int] = [1, 2, 3, 4, 5]
   fa.fill(77, start=1, end=3)
-  inspect(fa, content="[1, 77, 77, 4, 5]")
+  debug_inspect(
+    fa,
+    content=(
+      #|<FixedArray: [1, 77, 77, 4, 5]>
+    ),
+  )
 }
 
 ///|
 test "fixedarray_fill - start equals end" {
   let fa : FixedArray[Int] = [1, 2, 3, 4, 5]
   fa.fill(88, start=2, end=2)
-  inspect(fa, content="[1, 2, 3, 4, 5]") // No change expected
+  debug_inspect(
+    fa,
+    content=(
+      #|<FixedArray: [1, 2, 3, 4, 5]>
+    ),
+  ) // No change expected
 }
 
 ///|
 test "fixedarray_fill - start at beginning" {
   let fa : FixedArray[Int] = [1, 2, 3, 4, 5]
   fa.fill(10, start=0, end=2)
-  inspect(fa, content="[10, 10, 3, 4, 5]")
+  debug_inspect(
+    fa,
+    content=(
+      #|<FixedArray: [10, 10, 3, 4, 5]>
+    ),
+  )
 }
 
 ///|
 test "fixedarray_fill - end at array length" {
   let fa : FixedArray[Int] = [1, 2, 3, 4, 5]
   fa.fill(20, start=3, end=5)
-  inspect(fa, content="[1, 2, 3, 20, 20]")
+  debug_inspect(
+    fa,
+    content=(
+      #|<FixedArray: [1, 2, 3, 20, 20]>
+    ),
+  )
 }
 
 ///|
 test "fixedarray_fill - single element" {
   let fa : FixedArray[Int] = [100]
   fa.fill(50)
-  inspect(fa, content="[50]")
+  debug_inspect(
+    fa,
+    content=(
+      #|<FixedArray: [50]>
+    ),
+  )
 }
 
 ///|
 test "fixedarray_fill - empty array" {
   let fa : FixedArray[Int] = []
   fa.fill(123)
-  inspect(fa, content="[]") // Should remain empty
+  debug_inspect(
+    fa,
+    content=(
+      #|<FixedArray: []>
+    ),
+  ) // Should remain empty
 }
 
 ///|
@@ -264,7 +309,12 @@ test "fixedarray_fill - boundary conditions start" {
   let fa : FixedArray[Int] = [1, 2, 3, 4, 5]
   // Test with start at last valid index
   fa.fill(555, start=4, end=5)
-  inspect(fa, content="[1, 2, 3, 4, 555]")
+  debug_inspect(
+    fa,
+    content=(
+      #|<FixedArray: [1, 2, 3, 4, 555]>
+    ),
+  )
 }
 
 ///|
@@ -272,35 +322,60 @@ test "fixedarray_fill - boundary conditions end" {
   let fa : FixedArray[Int] = [1, 2, 3, 4, 5]
   // Test with end at array length
   fa.fill(666, start=2, end=5)
-  inspect(fa, content="[1, 2, 666, 666, 666]")
+  debug_inspect(
+    fa,
+    content=(
+      #|<FixedArray: [1, 2, 666, 666, 666]>
+    ),
+  )
 }
 
 ///|
 test "fixedarray_fill - full range explicit" {
   let fa : FixedArray[Int] = [1, 2, 3, 4, 5]
   fa.fill(777, start=0, end=5)
-  inspect(fa, content="[777, 777, 777, 777, 777]")
+  debug_inspect(
+    fa,
+    content=(
+      #|<FixedArray: [777, 777, 777, 777, 777]>
+    ),
+  )
 }
 
 ///|
 test "fixedarray_fill - test with FixedArray::make" {
   let fa = FixedArray::make(4, 0)
   fa.fill(42, start=1, end=3)
-  inspect(fa, content="[0, 42, 42, 0]")
+  debug_inspect(
+    fa,
+    content=(
+      #|<FixedArray: [0, 42, 42, 0]>
+    ),
+  )
 }
 
 ///|
 test "fixedarray_fill - existing documentation example" {
   let fa : FixedArray[Int] = [0, 0, 0, 0, 0]
   fa.fill(3)
-  inspect(fa[:], content="[3, 3, 3, 3, 3]")
+  debug_inspect(
+    fa[:],
+    content=(
+      #|<ArrayView: [3, 3, 3, 3, 3]>
+    ),
+  )
 }
 
 ///|
 test "FixedArray::sub" {
   let arr = FixedArray::makei(10, i => i * i)
   let sub = arr[:]
-  inspect(sub, content="[0, 1, 4, 9, 16, 25, 36, 49, 64, 81]")
+  debug_inspect(
+    sub,
+    content=(
+      #|<ArrayView: [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]>
+    ),
+  )
   inspect(sum(sub), content="285")
 }
 
@@ -386,13 +461,36 @@ test "FixedArray::last" {
 ///|
 test "FixedArray::arbitrary" {
   let samples : Array[FixedArray[Int]] = @quickcheck.samples(15)
-  inspect(
+  debug_inspect(
     samples[0:10],
-    content="[[], [], [], [0], [0], [], [], [0], [0, 0], [0, 0, 0, 0, 2, 3, 1]]",
+    content=(
+      #|<ArrayView:
+      #|  [
+      #|    <FixedArray: []>,
+      #|    <FixedArray: []>,
+      #|    <FixedArray: []>,
+      #|    <FixedArray: [0]>,
+      #|    <FixedArray: [0]>,
+      #|    <FixedArray: []>,
+      #|    <FixedArray: []>,
+      #|    <FixedArray: [0]>,
+      #|    <FixedArray: [0, 0]>,
+      #|    <FixedArray: [0, 0, 0, 0, 2, 3, 1]>,
+      #|  ]>
+    ),
   )
-  inspect(
+  debug_inspect(
     samples[10:15],
-    content="[[0, 0, 1, 0, -2], [0, 0, 0, -1, -2], [0, 0, 0, 0, 0, -2, -5, 4, 0, 8], [0, 0, -1, 2], [0, 0]]",
+    content=(
+      #|<ArrayView:
+      #|  [
+      #|    <FixedArray: [0, 0, 1, 0, -2]>,
+      #|    <FixedArray: [0, 0, 0, -1, -2]>,
+      #|    <FixedArray: [0, 0, 0, 0, 0, -2, -5, 4, 0, 8]>,
+      #|    <FixedArray: [0, 0, -1, 2]>,
+      #|    <FixedArray: [0, 0]>,
+      #|  ]>
+    ),
   )
 }
 
@@ -439,12 +537,32 @@ test "panic FixedArray blit" {
 test "copy" {
   let a : FixedArray[_] = [1, 2, 3, 4]
   let b = a.copy()
-  inspect(b, content="[1, 2, 3, 4]")
+  debug_inspect(
+    b,
+    content=(
+      #|<FixedArray: [1, 2, 3, 4]>
+    ),
+  )
   inspect(physical_equal(b, a), content="false")
   let c = FixedArray::make(8, 0)
   a.blit_to(c, len=4, dst_offset=3)
-  inspect(c, content="[0, 0, 0, 1, 2, 3, 4, 0]")
-  inspect(([] : FixedArray[Int]).copy(), content="[]")
+  debug_inspect(
+    c,
+    content=(
+      #|<FixedArray: [0, 0, 0, 1, 2, 3, 4, 0]>
+    ),
+  )
+  debug_inspect(
+    ([] : FixedArray[Int]).copy(),
+    content=(
+      #|<FixedArray: []>
+    ),
+  )
   a.blit_to(a, len=2, src_offset=1)
-  inspect(a, content="[2, 3, 3, 4]")
+  debug_inspect(
+    a,
+    content=(
+      #|<FixedArray: [2, 3, 3, 4]>
+    ),
+  )
 }

@@ -8,4 +8,5 @@ import {
 
 import {
   "moonbitlang/core/int",
+  "moonbitlang/core/debug",
 } for "test"

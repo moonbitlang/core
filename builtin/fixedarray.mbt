@@ -85,20 +85,30 @@ pub impl[X] Default for FixedArray[X] with default() {
 ///   // Fill entire array
 ///   let fa : FixedArray[Int] = [0, 0, 0, 0, 0]
 ///   fa.fill(3)
-///   inspect(fa, content="[3, 3, 3, 3, 3]")
+///   debug_inspect(
+///     fa,
+///     content=(
+///       #|<FixedArray: [3, 3, 3, 3, 3]>
+///     ),
+///   )
 ///
 ///   // Fill from index 1 to 3 (exclusive)
 ///   let fa2 : FixedArray[Int] = [0, 0, 0, 0, 0]
 ///   fa2.fill(9, start=1, end=3)
-///   inspect(fa2, content="[0, 9, 9, 0, 0]")
+///   debug_inspect(
+///     fa2,
+///     content=(
+///       #|<FixedArray: [0, 9, 9, 0, 0]>
+///     ),
+///   )
 ///
 ///   // Fill from index 2 to end
 ///   let fa3 : FixedArray[String] = ["a", "b", "c", "d"]
 ///   fa3.fill("x", start=2)
-///   inspect(
+///   debug_inspect(
 ///     fa3,
 ///     content=(
-///       #|["a", "b", "x", "x"]
+///       #|<FixedArray: ["a", "b", "x", "x"]>
 ///     ),
 ///   )
 /// }
@@ -219,9 +229,9 @@ pub fn[T : Compare] FixedArray::binary_search(
 /// test {
 ///   let arr : FixedArray[Int] = [1, 3, 5, 7, 9]
 ///   let find_3 = arr.binary_search_by(x => x.compare(3))
-///   inspect(find_3, content="Ok(1)")
+///   debug_inspect(find_3, content="Ok(1)")
 ///   let find_4 = arr.binary_search_by(x => x.compare(4))
-///   inspect(find_4, content="Err(2)")
+///   debug_inspect(find_4, content="Err(2)")
 /// }
 /// ```
 ///
@@ -564,7 +574,12 @@ test "mapi" {
 /// ```mbt check
 /// test {
 ///   let arr = FixedArray::makei(3, i => i * 2)
-///   inspect(arr, content="[0, 2, 4]")
+///   debug_inspect(
+///     arr,
+///     content=(
+///       #|<FixedArray: [0, 2, 4]>
+///     ),
+///   )
 /// }
 /// ```
 #locals(value)
@@ -613,7 +628,12 @@ test "fixedarray_new_with_index" {
 /// test {
 ///   let dynamic_array = [1, 2, 3, 4, 5]
 ///   let fixed_array = FixedArray::from_array(dynamic_array)
-///   inspect(fixed_array, content="[1, 2, 3, 4, 5]")
+///   debug_inspect(
+///     fixed_array,
+///     content=(
+///       #|<FixedArray: [1, 2, 3, 4, 5]>
+///     ),
+///   )
 /// }
 /// ```
 pub fn[T] FixedArray::from_array(array : ArrayView[T]) -> FixedArray[T] {
@@ -787,7 +807,12 @@ test "rev_foldi" {
 /// test {
 ///   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
 ///   arr.rev_in_place()
-///   inspect(arr, content="[5, 4, 3, 2, 1]")
+///   debug_inspect(
+///     arr,
+///     content=(
+///       #|<FixedArray: [5, 4, 3, 2, 1]>
+///     ),
+///   )
 /// }
 /// ```
 #alias(rev_inplace, deprecated)
@@ -816,9 +841,19 @@ pub fn[T] FixedArray::rev_in_place(self : FixedArray[T]) -> Unit {
 /// ```mbt check
 /// test {
 ///   let arr : FixedArray[Int] = [1, 2, 3, 4, 5]
-///   inspect(arr.rev(), content="[5, 4, 3, 2, 1]")
+///   debug_inspect(
+///     arr.rev(),
+///     content=(
+///       #|<FixedArray: [5, 4, 3, 2, 1]>
+///     ),
+///   )
 ///   // Original array remains unchanged
-///   inspect(arr, content="[1, 2, 3, 4, 5]")
+///   debug_inspect(
+///     arr,
+///     content=(
+///       #|<FixedArray: [1, 2, 3, 4, 5]>
+///     ),
+///   )
 /// }
 /// ```
 pub fn[T] FixedArray::rev(self : FixedArray[T]) -> FixedArray[T] {
@@ -1303,7 +1338,12 @@ pub impl[T : Compare] Compare for FixedArray[T] with compare(self, other) {
 /// test {
 ///   let arr1 : FixedArray[Int] = [1, 2, 3]
 ///   let arr2 : FixedArray[Int] = [4, 5, 6]
-///   inspect(arr1 + arr2, content="[1, 2, 3, 4, 5, 6]")
+///   debug_inspect(
+///     arr1 + arr2,
+///     content=(
+///       #|<FixedArray: [1, 2, 3, 4, 5, 6]>
+///     ),
+///   )
 /// }
 /// ```
 pub impl[T] Add for FixedArray[T] with add(self, other) {
@@ -1383,7 +1423,12 @@ test "iter" {
 /// test {
 ///   let arr = [1, 2, 3]
 ///   let fixed_arr = FixedArray::from_iter(arr.iter())
-///   inspect(fixed_arr, content="[1, 2, 3]")
+///   debug_inspect(
+///     fixed_arr,
+///     content=(
+///       #|<FixedArray: [1, 2, 3]>
+///     ),
+///   )
 /// }
 /// ```
 #alias(from_iterator, deprecated)
@@ -1513,7 +1558,10 @@ test "FixedArray::join" {
 ///
 /// ```mbt check
 /// test {
-///   inspect(([1, 2, 3] : FixedArray[Int]).iter().collect(), content="[1, 2, 3]")
+///   debug_inspect(
+///     ([1, 2, 3] : FixedArray[Int]).iter().collect(),
+///     content="[1, 2, 3]",
+///   )
 /// }
 /// ```
 #alias(iterator, deprecated)
@@ -1530,7 +1578,10 @@ pub fn[X] FixedArray::iter(self : FixedArray[X]) -> Iter[X] {
 ///
 /// ```mbt check
 /// test {
-///   inspect(([10, 20] : FixedArray[Int]).iter2(), content="[(0, 10), (1, 20)]")
+///   debug_inspect(
+///     ([10, 20] : FixedArray[Int]).iter2().to_array(),
+///     content="[(0, 10), (1, 20)]",
+///   )
 /// }
 /// ```
 #alias(iterator2, deprecated)
@@ -1555,7 +1606,7 @@ pub fn[X] FixedArray::iter2(self : FixedArray[X]) -> Iter2[Int, X] {
 /// test {
 ///   let original = [1, 2, 3]
 ///   let copied = original.copy()
-///   inspect(copied, content="[1, 2, 3]")
+///   debug_inspect(copied, content="[1, 2, 3]")
 ///   inspect(physical_equal(original, copied), content="false")
 /// }
 /// ```

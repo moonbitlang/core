@@ -19,13 +19,23 @@
 ///|
 test "new" {
   let empty : @sorted_set.SortedSet[Int] = @sorted_set.new()
-  inspect(empty, content="@immut/sorted_set.from_array([])")
+  debug_inspect(
+    empty,
+    content=(
+      #|<SortedSet: []>
+    ),
+  )
 }
 
 ///|
 test "default" {
   let set : @sorted_set.SortedSet[Int] = Default::default()
-  inspect(set, content="@immut/sorted_set.from_array([])")
+  debug_inspect(
+    set,
+    content=(
+      #|<SortedSet: []>
+    ),
+  )
 }
 
 ///|
@@ -105,68 +115,92 @@ test "subset" {
 ///|
 test "diff" {
   let empty = @sorted_set.new()
-  inspect(
+  debug_inspect(
     empty.difference(@sorted_set.from_array([1, 2, 3])),
-    content="@immut/sorted_set.from_array([])",
+    content=(
+      #|<SortedSet: []>
+    ),
   )
-  inspect(
+  debug_inspect(
     @sorted_set.from_array([1, 2, 3]).difference(empty),
-    content="@immut/sorted_set.from_array([1, 2, 3])",
+    content=(
+      #|<SortedSet: [1, 2, 3]>
+    ),
   )
-  inspect(
+  debug_inspect(
     @sorted_set.from_array([1, 2, 3]).difference(
       @sorted_set.from_array([4, 5, 1]),
     ),
-    content="@immut/sorted_set.from_array([2, 3])",
+    content=(
+      #|<SortedSet: [2, 3]>
+    ),
   )
-  inspect(
+  debug_inspect(
     @sorted_set.from_array([1, 2, 3]).difference(
       @sorted_set.from_array([1, 2, 3]),
     ),
-    content="@immut/sorted_set.from_array([])",
+    content=(
+      #|<SortedSet: []>
+    ),
   )
 }
 
 ///|
 test "inter" {
-  inspect(
+  debug_inspect(
     @sorted_set.from_array([3, 4, 5]).intersection(
       @sorted_set.from_array([4, 5, 6]),
     ),
-    content="@immut/sorted_set.from_array([4, 5])",
+    content=(
+      #|<SortedSet: [4, 5]>
+    ),
   )
-  inspect(
+  debug_inspect(
     @sorted_set.from_array([3, 4]).intersection(@sorted_set.from_array([5, 6])),
-    content="@immut/sorted_set.from_array([])",
+    content=(
+      #|<SortedSet: []>
+    ),
   )
 }
 
 ///|
 test "union" {
   let empty = @sorted_set.new()
-  inspect(
+  debug_inspect(
     empty.union(@sorted_set.from_array([4, 5, 6])),
-    content="@immut/sorted_set.from_array([4, 5, 6])",
+    content=(
+      #|<SortedSet: [4, 5, 6]>
+    ),
   )
-  inspect(
+  debug_inspect(
     @sorted_set.from_array([4, 5, 6]).union(empty),
-    content="@immut/sorted_set.from_array([4, 5, 6])",
+    content=(
+      #|<SortedSet: [4, 5, 6]>
+    ),
   )
-  inspect(
+  debug_inspect(
     @sorted_set.from_array([3]).union(@sorted_set.from_array([4, 5, 6])),
-    content="@immut/sorted_set.from_array([3, 4, 5, 6])",
+    content=(
+      #|<SortedSet: [3, 4, 5, 6]>
+    ),
   )
-  inspect(
+  debug_inspect(
     @sorted_set.from_array([3, 4, 5]).union(@sorted_set.from_array([6])),
-    content="@immut/sorted_set.from_array([3, 4, 5, 6])",
+    content=(
+      #|<SortedSet: [3, 4, 5, 6]>
+    ),
   )
-  inspect(
+  debug_inspect(
     @sorted_set.from_array([3, 4, 5]).union(@sorted_set.from_array([4, 5, 6])),
-    content="@immut/sorted_set.from_array([3, 4, 5, 6])",
+    content=(
+      #|<SortedSet: [3, 4, 5, 6]>
+    ),
   )
-  inspect(
+  debug_inspect(
     @sorted_set.from_array([3, 4, 5]) + @sorted_set.from_array([4, 5, 6]),
-    content="@immut/sorted_set.from_array([3, 4, 5, 6])",
+    content=(
+      #|<SortedSet: [3, 4, 5, 6]>
+    ),
   )
 }
 
@@ -174,9 +208,11 @@ test "union" {
 test "union smaller left non-singleton" {
   let left = @sorted_set.from_array([1, 3])
   let right = @sorted_set.from_array([0, 2, 4, 5])
-  inspect(
+  debug_inspect(
     left.union(right),
-    content="@immut/sorted_set.from_array([0, 1, 2, 3, 4, 5])",
+    content=(
+      #|<SortedSet: [0, 1, 2, 3, 4, 5]>
+    ),
   )
 }
 
@@ -184,18 +220,22 @@ test "union smaller left non-singleton" {
 
 ///|
 test "map" {
-  inspect(
+  debug_inspect(
     @sorted_set.from_array([1, 2, 3, 4, 5]).map(x => x * 2),
-    content="@immut/sorted_set.from_array([2, 4, 6, 8, 10])",
+    content=(
+      #|<SortedSet: [2, 4, 6, 8, 10]>
+    ),
   )
 }
 
 ///|
 test "map non-monotonic" {
   let set = @sorted_set.from_array([1, 2, 3])
-  inspect(
+  debug_inspect(
     set.map(x => 4 - x),
-    content="@immut/sorted_set.from_array([1, 2, 3])",
+    content=(
+      #|<SortedSet: [1, 2, 3]>
+    ),
   )
 }
 
@@ -233,9 +273,11 @@ test "fold" {
 
 ///|
 test "filter" {
-  inspect(
+  debug_inspect(
     @sorted_set.from_array([1, 2, 3, 4, 5, 6]).filter(v => v % 2 == 0),
-    content="@immut/sorted_set.from_array([2, 4, 6])",
+    content=(
+      #|<SortedSet: [2, 4, 6]>
+    ),
   )
 }
 
@@ -245,16 +287,33 @@ test "split" {
     7, 2, 9, 4, 5, 6, 3, 8, 1,
   ]).split(5)
   inspect(present, content="true")
-  inspect(left, content="@immut/sorted_set.from_array([1, 2, 3, 4])")
-  inspect(right, content="@immut/sorted_set.from_array([6, 7, 8, 9])")
+  debug_inspect(
+    left,
+    content=(
+      #|<SortedSet: [1, 2, 3, 4]>
+    ),
+  )
+  debug_inspect(
+    right,
+    content=(
+      #|<SortedSet: [6, 7, 8, 9]>
+    ),
+  )
   let (left, present, right) = @sorted_set.from_array([
     7, 2, 9, 4, 5, 6, 3, 8, 1,
   ]).split(0)
   inspect(present, content="false")
-  inspect(left, content="@immut/sorted_set.from_array([])")
-  inspect(
+  debug_inspect(
+    left,
+    content=(
+      #|<SortedSet: []>
+    ),
+  )
+  debug_inspect(
     right,
-    content="@immut/sorted_set.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9])",
+    content=(
+      #|<SortedSet: [1, 2, 3, 4, 5, 6, 7, 8, 9]>
+    ),
   )
 }
 
@@ -272,7 +331,7 @@ test "contain" {
 
 ///|
 test "to_array" {
-  inspect(
+  debug_inspect(
     @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).to_array(),
     content="[1, 2, 3, 4, 5, 6, 7, 8, 9]",
   )
@@ -280,100 +339,149 @@ test "to_array" {
 
 ///|
 test "from_fixed_array" {
-  inspect(
+  debug_inspect(
     @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]),
-    content="@immut/sorted_set.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9])",
+    content=(
+      #|<SortedSet: [1, 2, 3, 4, 5, 6, 7, 8, 9]>
+    ),
   )
 }
 
 ///|
 test "from_array" {
-  inspect(
+  debug_inspect(
     @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]),
-    content="@immut/sorted_set.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9])",
+    content=(
+      #|<SortedSet: [1, 2, 3, 4, 5, 6, 7, 8, 9]>
+    ),
   )
 }
 
 ///|
 test "remove_min" {
-  inspect(
+  debug_inspect(
     @sorted_set.from_array([3, 4, 5]).remove_min(),
-    content="@immut/sorted_set.from_array([4, 5])",
+    content=(
+      #|<SortedSet: [4, 5]>
+    ),
   )
 }
 
 ///|
 test "add" {
-  inspect(
+  debug_inspect(
     @sorted_set.from_array([7, 2, 9, 4, 6, 3, 8, 1]).add(5),
-    content="@immut/sorted_set.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9])",
+    content=(
+      #|<SortedSet: [1, 2, 3, 4, 5, 6, 7, 8, 9]>
+    ),
   )
-  inspect(
+  debug_inspect(
     @sorted_set.from_array([2]).add(1),
-    content="@immut/sorted_set.from_array([1, 2])",
+    content=(
+      #|<SortedSet: [1, 2]>
+    ),
   )
-  inspect(
+  debug_inspect(
     @sorted_set.from_array([2]).add(3),
-    content="@immut/sorted_set.from_array([2, 3])",
+    content=(
+      #|<SortedSet: [2, 3]>
+    ),
   )
-  inspect(
+  debug_inspect(
     @sorted_set.from_array([2]).add(1).add(3),
-    content="@immut/sorted_set.from_array([1, 2, 3])",
+    content=(
+      #|<SortedSet: [1, 2, 3]>
+    ),
   )
-  inspect(
+  debug_inspect(
     @sorted_set.from_array([1, 2]).add(1),
-    content="@immut/sorted_set.from_array([1, 2])",
+    content=(
+      #|<SortedSet: [1, 2]>
+    ),
   )
-  inspect(
+  debug_inspect(
     @sorted_set.from_array([2, 3]).add(3),
-    content="@immut/sorted_set.from_array([2, 3])",
+    content=(
+      #|<SortedSet: [2, 3]>
+    ),
   )
-  inspect(
+  debug_inspect(
     @sorted_set.from_array([1, 2, 3]).add(1),
-    content="@immut/sorted_set.from_array([1, 2, 3])",
+    content=(
+      #|<SortedSet: [1, 2, 3]>
+    ),
   )
-  inspect(
+  debug_inspect(
     @sorted_set.from_array([1, 2, 3]).add(3),
-    content="@immut/sorted_set.from_array([1, 2, 3])",
+    content=(
+      #|<SortedSet: [1, 2, 3]>
+    ),
   )
-  inspect(
+  debug_inspect(
     @sorted_set.from_array([1]).add(2).add(2),
-    content="@immut/sorted_set.from_array([1, 2])",
+    content=(
+      #|<SortedSet: [1, 2]>
+    ),
   )
 }
 
 ///|
 test "remove" {
   let empty = @sorted_set.new()
-  inspect(empty.remove(1), content="@immut/sorted_set.from_array([])")
-  inspect(
+  debug_inspect(
+    empty.remove(1),
+    content=(
+      #|<SortedSet: []>
+    ),
+  )
+  debug_inspect(
     @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(1),
-    content="@immut/sorted_set.from_array([2, 3, 4, 5, 6, 7, 8, 9])",
+    content=(
+      #|<SortedSet: [2, 3, 4, 5, 6, 7, 8, 9]>
+    ),
   )
-  inspect(
+  debug_inspect(
     @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(9),
-    content="@immut/sorted_set.from_array([1, 2, 3, 4, 5, 6, 7, 8])",
+    content=(
+      #|<SortedSet: [1, 2, 3, 4, 5, 6, 7, 8]>
+    ),
   )
-  inspect(
+  debug_inspect(
     @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(8),
-    content="@immut/sorted_set.from_array([1, 2, 3, 4, 5, 6, 7, 9])",
+    content=(
+      #|<SortedSet: [1, 2, 3, 4, 5, 6, 7, 9]>
+    ),
   )
-  inspect(
+  debug_inspect(
     @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(0),
-    content="@immut/sorted_set.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9])",
+    content=(
+      #|<SortedSet: [1, 2, 3, 4, 5, 6, 7, 8, 9]>
+    ),
   )
-  inspect(
+  debug_inspect(
     @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(10),
-    content="@immut/sorted_set.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9])",
+    content=(
+      #|<SortedSet: [1, 2, 3, 4, 5, 6, 7, 8, 9]>
+    ),
   )
 }
 
 ///|
 test "merge and concat with empty right" {
   let set = @sorted_set.new().add(2).add(1)
-  inspect(set.remove(2), content="@immut/sorted_set.from_array([1])")
+  debug_inspect(
+    set.remove(2),
+    content=(
+      #|<SortedSet: [1]>
+    ),
+  )
   let other = @sorted_set.new().add(1)
-  inspect(set.intersection(other), content="@immut/sorted_set.from_array([1])")
+  debug_inspect(
+    set.intersection(other),
+    content=(
+      #|<SortedSet: [1]>
+    ),
+  )
 }
 
 ///|
@@ -423,13 +531,17 @@ test "is_empty" {
 
 ///|
 test "to_string" {
-  inspect(
+  debug_inspect(
     @sorted_set.from_array([1, 2, 3, 4, 5]),
-    content="@immut/sorted_set.from_array([1, 2, 3, 4, 5])",
+    content=(
+      #|<SortedSet: [1, 2, 3, 4, 5]>
+    ),
   )
-  inspect(
+  debug_inspect(
     (@sorted_set.from_array([]) : @sorted_set.SortedSet[Int]),
-    content="@immut/sorted_set.from_array([])",
+    content=(
+      #|<SortedSet: []>
+    ),
   )
 }
 
@@ -479,7 +591,12 @@ test "from_json" {
 test "from_json free function" {
   let json : Json = [1, 2, 3]
   let set : @sorted_set.SortedSet[Int] = @sorted_set.from_json(json)
-  inspect(set, content="@immut/sorted_set.from_array([1, 2, 3])")
+  debug_inspect(
+    set,
+    content=(
+      #|<SortedSet: [1, 2, 3]>
+    ),
+  )
 }
 
 ///|
@@ -574,15 +691,30 @@ test "split with value not in set" {
   let set = @sorted_set.from_array([1, 2, 3, 4, 5])
   let (left, present, right) = set.split(6)
   inspect(present, content="false")
-  inspect(left, content="@immut/sorted_set.from_array([1, 2, 3, 4, 5])")
-  inspect(right, content="@immut/sorted_set.from_array([])")
+  debug_inspect(
+    left,
+    content=(
+      #|<SortedSet: [1, 2, 3, 4, 5]>
+    ),
+  )
+  debug_inspect(
+    right,
+    content=(
+      #|<SortedSet: []>
+    ),
+  )
 }
 
 ///|
 test "remove_min on non-empty set" {
   let set = @sorted_set.from_array([3, 4, 5])
   let new_set = set.remove_min()
-  inspect(new_set, content="@immut/sorted_set.from_array([4, 5])")
+  debug_inspect(
+    new_set,
+    content=(
+      #|<SortedSet: [4, 5]>
+    ),
+  )
 }
 
 ///|
@@ -604,7 +736,12 @@ test "union with different heights" {
   let set1 = @sorted_set.from_array([3, 4, 5])
   let set2 = @sorted_set.from_array([4, 5, 6])
   let union_set = set1.union(set2)
-  inspect(union_set, content="@immut/sorted_set.from_array([3, 4, 5, 6])")
+  debug_inspect(
+    union_set,
+    content=(
+      #|<SortedSet: [3, 4, 5, 6]>
+    ),
+  )
 }
 
 ///|
@@ -617,24 +754,33 @@ test "disjoint with different sets" {
 
 ///|
 test "from_iter multiple elements iter" {
-  inspect(
+  debug_inspect(
     @sorted_set.from_iter([1, 2, 3].iter()),
-    content="@immut/sorted_set.from_array([1, 2, 3])",
+    content=(
+      #|<SortedSet: [1, 2, 3]>
+    ),
   )
 }
 
 ///|
 test "from_iter single element iter" {
-  inspect(
+  debug_inspect(
     @sorted_set.from_iter([1].iter()),
-    content="@immut/sorted_set.from_array([1])",
+    content=(
+      #|<SortedSet: [1]>
+    ),
   )
 }
 
 ///|
 test "from_iter empty iter" {
   let pq : @sorted_set.SortedSet[Int] = @sorted_set.from_iter(Iter::empty())
-  inspect(pq, content="@immut/sorted_set.from_array([])")
+  debug_inspect(
+    pq,
+    content=(
+      #|<SortedSet: []>
+    ),
+  )
 }
 
 ///|
@@ -659,17 +805,23 @@ test "@sorted_set.symmetric_difference" {
   // Empty sets
   let empty = @sorted_set.new()
   let set1 = @sorted_set.from_array([1, 2, 3])
-  inspect(
+  debug_inspect(
     empty.symmetric_difference(empty),
-    content="@immut/sorted_set.from_array([])",
+    content=(
+      #|<SortedSet: []>
+    ),
   )
-  inspect(
+  debug_inspect(
     set1.symmetric_difference(empty),
-    content="@immut/sorted_set.from_array([1, 2, 3])",
+    content=(
+      #|<SortedSet: [1, 2, 3]>
+    ),
   )
-  inspect(
+  debug_inspect(
     empty.symmetric_difference(set1),
-    content="@immut/sorted_set.from_array([1, 2, 3])",
+    content=(
+      #|<SortedSet: [1, 2, 3]>
+    ),
   )
 }
 
@@ -678,9 +830,11 @@ test "@sorted_set.symmetric_difference/disjoint" {
   // Disjoint sets should union all elements
   let set1 = @sorted_set.from_array([1, 3, 5])
   let set2 = @sorted_set.from_array([2, 4, 6])
-  inspect(
+  debug_inspect(
     set1.symmetric_difference(set2),
-    content="@immut/sorted_set.from_array([1, 2, 3, 4, 5, 6])",
+    content=(
+      #|<SortedSet: [1, 2, 3, 4, 5, 6]>
+    ),
   )
 }
 
@@ -689,9 +843,11 @@ test "@sorted_set.symmetric_difference/overlapping" {
   // Sets with overlapping elements should only include non-common elements
   let set1 = @sorted_set.from_array([1, 2, 3, 4])
   let set2 = @sorted_set.from_array([3, 4, 5, 6])
-  inspect(
+  debug_inspect(
     set1.symmetric_difference(set2),
-    content="@immut/sorted_set.from_array([1, 2, 5, 6])",
+    content=(
+      #|<SortedSet: [1, 2, 5, 6]>
+    ),
   )
 }
 
@@ -724,7 +880,7 @@ test "range matching all elements" {
   for v in set.range(low=0, high=10) {
     arr.push(v)
   }
-  inspect(arr, content="[1, 2, 3]")
+  debug_inspect(arr, content="[1, 2, 3]")
 }
 
 ///|
@@ -734,7 +890,7 @@ test "range partial match" {
   for v in set.range(low=2, high=4) {
     arr.push(v)
   }
-  inspect(arr, content="[2, 3, 4]")
+  debug_inspect(arr, content="[2, 3, 4]")
 }
 
 ///|
@@ -744,7 +900,7 @@ test "range with single element" {
   for v in set.range(low=3, high=3) {
     arr.push(v)
   }
-  inspect(arr, content="[3]")
+  debug_inspect(arr, content="[3]")
 }
 
 ///|
@@ -754,7 +910,7 @@ test "range at left boundary" {
   for v in set.range(low=1, high=2) {
     arr.push(v)
   }
-  inspect(arr, content="[1, 2]")
+  debug_inspect(arr, content="[1, 2]")
 }
 
 ///|
@@ -764,7 +920,7 @@ test "range at right boundary" {
   for v in set.range(low=4, high=5) {
     arr.push(v)
   }
-  inspect(arr, content="[4, 5]")
+  debug_inspect(arr, content="[4, 5]")
 }
 
 ///|
@@ -774,7 +930,7 @@ test "range with gaps in data" {
   for v in set.range(low=2, high=8) {
     arr.push(v)
   }
-  inspect(arr, content="[3, 5, 7]")
+  debug_inspect(arr, content="[3, 5, 7]")
 }
 
 ///|
@@ -822,5 +978,5 @@ test "range with non-existent boundaries" {
   for v in set.range(low=3, high=7) {
     arr.push(v)
   }
-  inspect(arr, content="[4, 6]")
+  debug_inspect(arr, content="[4, 6]")
 }

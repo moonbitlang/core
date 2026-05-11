@@ -762,7 +762,7 @@ pub fn[X] Iter::concat(self : Iter[X], other : Iter[X]) -> Iter[X] {
 /// test {
 ///   let numbers = (1).until(5)
 ///   let letters = ["a", "b", "c"].iter()
-///   inspect(
+///   debug_inspect(
 ///     numbers.zip(letters).collect(),
 ///     content="[(1, \"a\"), (2, \"b\"), (3, \"c\")]",
 ///   )

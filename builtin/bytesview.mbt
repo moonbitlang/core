@@ -109,7 +109,12 @@ pub fn BytesView::at(self : BytesView, index : Int) -> Byte {
 ///   let bytes = b"\x01\x02\x03\x04\x05"
 ///   let view = bytes[1:4]
 ///   let result = view.get(1)
-///   debug_inspect(result, content="Some(0x03)")
+///   debug_inspect(
+///     result,
+///     content=(
+///       #|Some(0x03)
+///     ),
+///   )
 ///   let bytes = b"\x01\x02\x03\x04\x05"
 ///   let view = bytes[1:4]
 ///   let result = view.get(5)
@@ -308,7 +313,7 @@ pub fn BytesView::iter(self : BytesView) -> Iter[Byte] {
 ///     keys.push(i)
 ///   }
 ///   inspect(buf, content="b'\\x61'b'\\x62'b'\\x63'b'\\x64'b'\\x65'")
-///   inspect(keys, content="[0, 1, 2, 3, 4]")
+///   debug_inspect(keys, content="[0, 1, 2, 3, 4]")
 /// }
 /// ```
 #alias(iterator2, deprecated)

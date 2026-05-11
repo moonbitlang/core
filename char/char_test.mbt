@@ -59,7 +59,12 @@ test "Char hash" {
   let m = {}
   m['a'] = '3'
   m['b'] = '3'
-  inspect(m, content="{'a': '3', 'b': '3'}")
+  debug_inspect(
+    m,
+    content=(
+      #|{ 'a': '3', 'b': '3' }
+    ),
+  )
 }
 
 ///|
@@ -390,7 +395,7 @@ test "is_printable" {
   assert_false(musical_format.is_printable())
   assert_false(paragraph_separator.is_printable())
   assert_false(byte_order_mark.is_printable())
-  inspect(
+  debug_inspect(
     ['\t', '\n', '\r', '\b', '\\'].map(c => c.is_printable()),
     content="[false, false, false, false, true]",
   )

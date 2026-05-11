@@ -372,7 +372,7 @@ test "stringify number" {
       newjson => assert_eq(newjson, json)
     }
   }
-  inspect(err, content="[]")
+  debug_inspect(err, content="[]")
 }
 
 ///|

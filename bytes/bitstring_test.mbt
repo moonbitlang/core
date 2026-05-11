@@ -1769,14 +1769,16 @@ test "integration - complex bit manipulations" {
 
   // For int and int64 values, shift to make them more readable
   let shifted_int = int_val << (32 - 20)
-  inspect(
+  debug_inspect(
     [
       shifted_int.to_byte(),
       (shifted_int >> 8).to_byte(),
       (shifted_int >> 16).to_byte(),
       (shifted_int >> 24).to_byte(),
     ],
-    content="[b'\\x00', b'\\xE0', b'\\x1D', b'\\x2F']",
+    content=(
+      #|[0x00, 0xe0, 0x1d, 0x2f]
+    ),
   )
   inspect(
     (int64_val << (64 - 40)).to_le_bytes(),

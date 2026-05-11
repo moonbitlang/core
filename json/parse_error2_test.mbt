@@ -14,8 +14,10 @@
 
 ///|
 test "parse error" {
-  inspect(
+  debug_inspect(
     try? @json.parse("[1, 2, \u000c]"),
-    content="Err(Invalid character '\\u{0c}' at line 1, column 7)",
+    content=(
+      #|Err(InvalidChar({ line: 1, column: 7 }, '\u{0c}'))
+    ),
   )
 }

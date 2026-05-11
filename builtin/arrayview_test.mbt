@@ -32,62 +32,192 @@ test "get" {
 test "negative index1" {
   let arr = [1, 2, 3]
   let view = arr[-1:]
-  inspect(view, content="[3]")
+  debug_inspect(
+    view,
+    content=(
+      #|<ArrayView: [3]>
+    ),
+  )
   let view = arr[-2:]
-  inspect(view, content="[2, 3]")
+  debug_inspect(
+    view,
+    content=(
+      #|<ArrayView: [2, 3]>
+    ),
+  )
   let view = arr[-3:]
-  inspect(view, content="[1, 2, 3]")
+  debug_inspect(
+    view,
+    content=(
+      #|<ArrayView: [1, 2, 3]>
+    ),
+  )
   let view = arr[:-1]
-  inspect(view, content="[1, 2]")
+  debug_inspect(
+    view,
+    content=(
+      #|<ArrayView: [1, 2]>
+    ),
+  )
   let view = arr[:-2]
-  inspect(view, content="[1]")
+  debug_inspect(
+    view,
+    content=(
+      #|<ArrayView: [1]>
+    ),
+  )
   let view = arr[:-3]
-  inspect(view, content="[]")
+  debug_inspect(
+    view,
+    content=(
+      #|<ArrayView: []>
+    ),
+  )
   let view = arr[-3:-3]
-  inspect(view, content="[]")
+  debug_inspect(
+    view,
+    content=(
+      #|<ArrayView: []>
+    ),
+  )
   let view = arr[-3:-2]
-  inspect(view, content="[1]")
+  debug_inspect(
+    view,
+    content=(
+      #|<ArrayView: [1]>
+    ),
+  )
   let view = arr[-3:-1]
-  inspect(view, content="[1, 2]")
+  debug_inspect(
+    view,
+    content=(
+      #|<ArrayView: [1, 2]>
+    ),
+  )
   let view = arr[-3:0]
-  inspect(view, content="[]")
+  debug_inspect(
+    view,
+    content=(
+      #|<ArrayView: []>
+    ),
+  )
   let view = arr[-3:1]
-  inspect(view, content="[1]")
+  debug_inspect(
+    view,
+    content=(
+      #|<ArrayView: [1]>
+    ),
+  )
   let view = arr[-3:2]
-  inspect(view, content="[1, 2]")
+  debug_inspect(
+    view,
+    content=(
+      #|<ArrayView: [1, 2]>
+    ),
+  )
   let view = arr[-3:3]
-  inspect(view, content="[1, 2, 3]")
+  debug_inspect(
+    view,
+    content=(
+      #|<ArrayView: [1, 2, 3]>
+    ),
+  )
 }
 
 ///|
 test "negative index2" {
   let arr = [0, 1, 2, 3, 4][1:4]
   let view = arr[-1:]
-  inspect(view, content="[3]")
+  debug_inspect(
+    view,
+    content=(
+      #|<ArrayView: [3]>
+    ),
+  )
   let view = arr[-2:]
-  inspect(view, content="[2, 3]")
+  debug_inspect(
+    view,
+    content=(
+      #|<ArrayView: [2, 3]>
+    ),
+  )
   let view = arr[-3:]
-  inspect(view, content="[1, 2, 3]")
+  debug_inspect(
+    view,
+    content=(
+      #|<ArrayView: [1, 2, 3]>
+    ),
+  )
   let view = arr[:-1]
-  inspect(view, content="[1, 2]")
+  debug_inspect(
+    view,
+    content=(
+      #|<ArrayView: [1, 2]>
+    ),
+  )
   let view = arr[:-2]
-  inspect(view, content="[1]")
+  debug_inspect(
+    view,
+    content=(
+      #|<ArrayView: [1]>
+    ),
+  )
   let view = arr[:-3]
-  inspect(view, content="[]")
+  debug_inspect(
+    view,
+    content=(
+      #|<ArrayView: []>
+    ),
+  )
   let view = arr[-3:-3]
-  inspect(view, content="[]")
+  debug_inspect(
+    view,
+    content=(
+      #|<ArrayView: []>
+    ),
+  )
   let view = arr[-3:-2]
-  inspect(view, content="[1]")
+  debug_inspect(
+    view,
+    content=(
+      #|<ArrayView: [1]>
+    ),
+  )
   let view = arr[-3:-1]
-  inspect(view, content="[1, 2]")
+  debug_inspect(
+    view,
+    content=(
+      #|<ArrayView: [1, 2]>
+    ),
+  )
   let view = arr[-3:0]
-  inspect(view, content="[]")
+  debug_inspect(
+    view,
+    content=(
+      #|<ArrayView: []>
+    ),
+  )
   let view = arr[-3:1]
-  inspect(view, content="[1]")
+  debug_inspect(
+    view,
+    content=(
+      #|<ArrayView: [1]>
+    ),
+  )
   let view = arr[-3:2]
-  inspect(view, content="[1, 2]")
+  debug_inspect(
+    view,
+    content=(
+      #|<ArrayView: [1, 2]>
+    ),
+  )
   let view = arr[-3:3]
-  inspect(view, content="[1, 2, 3]")
+  debug_inspect(
+    view,
+    content=(
+      #|<ArrayView: [1, 2, 3]>
+    ),
+  )
 }
 
 ///|
@@ -162,48 +292,178 @@ test "panic negative index8" {
 test "fixedarray_sub" {
   // scalar case
   let arr = FixedArray::makei(10, i => i)
-  inspect(arr[:], content="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]")
-  inspect(arr[1:], content="[1, 2, 3, 4, 5, 6, 7, 8, 9]")
-  inspect(arr[:-2], content="[0, 1, 2, 3, 4, 5, 6, 7]")
-  inspect(arr[3:-4], content="[3, 4, 5]")
-  inspect(arr[-5:], content="[5, 6, 7, 8, 9]")
+  debug_inspect(
+    arr[:],
+    content=(
+      #|<ArrayView: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]>
+    ),
+  )
+  debug_inspect(
+    arr[1:],
+    content=(
+      #|<ArrayView: [1, 2, 3, 4, 5, 6, 7, 8, 9]>
+    ),
+  )
+  debug_inspect(
+    arr[:-2],
+    content=(
+      #|<ArrayView: [0, 1, 2, 3, 4, 5, 6, 7]>
+    ),
+  )
+  debug_inspect(
+    arr[3:-4],
+    content=(
+      #|<ArrayView: [3, 4, 5]>
+    ),
+  )
+  debug_inspect(
+    arr[-5:],
+    content=(
+      #|<ArrayView: [5, 6, 7, 8, 9]>
+    ),
+  )
   arr[5] = 100
-  inspect(arr[:], content="[0, 1, 2, 3, 4, 100, 6, 7, 8, 9]")
-  inspect(arr[1:], content="[1, 2, 3, 4, 100, 6, 7, 8, 9]")
-  inspect(arr[:-2], content="[0, 1, 2, 3, 4, 100, 6, 7]")
-  inspect(arr[3:-4], content="[3, 4, 100]")
-  inspect(arr[-5:], content="[100, 6, 7, 8, 9]")
+  debug_inspect(
+    arr[:],
+    content=(
+      #|<ArrayView: [0, 1, 2, 3, 4, 100, 6, 7, 8, 9]>
+    ),
+  )
+  debug_inspect(
+    arr[1:],
+    content=(
+      #|<ArrayView: [1, 2, 3, 4, 100, 6, 7, 8, 9]>
+    ),
+  )
+  debug_inspect(
+    arr[:-2],
+    content=(
+      #|<ArrayView: [0, 1, 2, 3, 4, 100, 6, 7]>
+    ),
+  )
+  debug_inspect(
+    arr[3:-4],
+    content=(
+      #|<ArrayView: [3, 4, 100]>
+    ),
+  )
+  debug_inspect(
+    arr[-5:],
+    content=(
+      #|<ArrayView: [100, 6, 7, 8, 9]>
+    ),
+  )
   // reference case
   let arr = FixedArray::makei(10, i => (i, i))
-  inspect(
+  debug_inspect(
     arr[:],
-    content="[(0, 0), (1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (9, 9)]",
+    content=(
+      #|<ArrayView:
+      #|  [
+      #|    (0, 0),
+      #|    (1, 1),
+      #|    (2, 2),
+      #|    (3, 3),
+      #|    (4, 4),
+      #|    (5, 5),
+      #|    (6, 6),
+      #|    (7, 7),
+      #|    (8, 8),
+      #|    (9, 9),
+      #|  ]>
+    ),
   )
-  inspect(
+  debug_inspect(
     arr[1:],
-    content="[(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (9, 9)]",
+    content=(
+      #|<ArrayView:
+      #|  [
+      #|    (1, 1),
+      #|    (2, 2),
+      #|    (3, 3),
+      #|    (4, 4),
+      #|    (5, 5),
+      #|    (6, 6),
+      #|    (7, 7),
+      #|    (8, 8),
+      #|    (9, 9),
+      #|  ]>
+    ),
   )
-  inspect(
+  debug_inspect(
     arr[:-2],
-    content="[(0, 0), (1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7)]",
+    content=(
+      #|<ArrayView:
+      #|  [(0, 0), (1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7)]>
+    ),
   )
-  inspect(arr[3:-4], content="[(3, 3), (4, 4), (5, 5)]")
-  inspect(arr[-5:], content="[(5, 5), (6, 6), (7, 7), (8, 8), (9, 9)]")
+  debug_inspect(
+    arr[3:-4],
+    content=(
+      #|<ArrayView: [(3, 3), (4, 4), (5, 5)]>
+    ),
+  )
+  debug_inspect(
+    arr[-5:],
+    content=(
+      #|<ArrayView: [(5, 5), (6, 6), (7, 7), (8, 8), (9, 9)]>
+    ),
+  )
   arr[5] = (100, 100)
-  inspect(
+  debug_inspect(
     arr[:],
-    content="[(0, 0), (1, 1), (2, 2), (3, 3), (4, 4), (100, 100), (6, 6), (7, 7), (8, 8), (9, 9)]",
+    content=(
+      #|<ArrayView:
+      #|  [
+      #|    (0, 0),
+      #|    (1, 1),
+      #|    (2, 2),
+      #|    (3, 3),
+      #|    (4, 4),
+      #|    (100, 100),
+      #|    (6, 6),
+      #|    (7, 7),
+      #|    (8, 8),
+      #|    (9, 9),
+      #|  ]>
+    ),
   )
-  inspect(
+  debug_inspect(
     arr[1:],
-    content="[(1, 1), (2, 2), (3, 3), (4, 4), (100, 100), (6, 6), (7, 7), (8, 8), (9, 9)]",
+    content=(
+      #|<ArrayView:
+      #|  [
+      #|    (1, 1),
+      #|    (2, 2),
+      #|    (3, 3),
+      #|    (4, 4),
+      #|    (100, 100),
+      #|    (6, 6),
+      #|    (7, 7),
+      #|    (8, 8),
+      #|    (9, 9),
+      #|  ]>
+    ),
   )
-  inspect(
+  debug_inspect(
     arr[:-2],
-    content="[(0, 0), (1, 1), (2, 2), (3, 3), (4, 4), (100, 100), (6, 6), (7, 7)]",
+    content=(
+      #|<ArrayView:
+      #|  [(0, 0), (1, 1), (2, 2), (3, 3), (4, 4), (100, 100), (6, 6), (7, 7)]>
+    ),
   )
-  inspect(arr[3:-4], content="[(3, 3), (4, 4), (100, 100)]")
-  inspect(arr[-5:], content="[(100, 100), (6, 6), (7, 7), (8, 8), (9, 9)]")
+  debug_inspect(
+    arr[3:-4],
+    content=(
+      #|<ArrayView: [(3, 3), (4, 4), (100, 100)]>
+    ),
+  )
+  debug_inspect(
+    arr[-5:],
+    content=(
+      #|<ArrayView: [(100, 100), (6, 6), (7, 7), (8, 8), (9, 9)]>
+    ),
+  )
 }
 
 ///|
@@ -395,7 +655,7 @@ test "arrayview_mapi" {
   inspect(mapped.length(), content="2")
   inspect(mapped[0], content="2")
   inspect(mapped[1], content="4")
-  inspect(([1] : Array[Int])[1:].mapi((_idx, x) => x), content="[]")
+  debug_inspect(([1] : Array[Int])[1:].mapi((_idx, x) => x), content="[]")
 }
 
 ///|
@@ -420,10 +680,30 @@ test "arrayview_to_owned" {
 ///|
 test "arrayview_arbitrary" {
   let arr : Array[ArrayView[Int]] = @quickcheck.samples(20)
-  inspect(arr[5:9], content="[[], [], [0], [0, 0]]")
-  inspect(
+  debug_inspect(
+    arr[5:9],
+    content=(
+      #|<ArrayView:
+      #|  [
+      #|    <ArrayView: []>,
+      #|    <ArrayView: []>,
+      #|    <ArrayView: [0]>,
+      #|    <ArrayView: [0, 0]>,
+      #|  ]>
+    ),
+  )
+  debug_inspect(
     arr[10:15],
-    content="[[0, 0, 1, 0, -2], [0, 0, 0, -1, -2], [0, 0, 0, 0, 0, -2, -5, 4, 0, 8], [0, 0, -1, 2], [0, 0]]",
+    content=(
+      #|<ArrayView:
+      #|  [
+      #|    <ArrayView: [0, 0, 1, 0, -2]>,
+      #|    <ArrayView: [0, 0, 0, -1, -2]>,
+      #|    <ArrayView: [0, 0, 0, 0, 0, -2, -5, 4, 0, 8]>,
+      #|    <ArrayView: [0, 0, -1, 2]>,
+      #|    <ArrayView: [0, 0]>,
+      #|  ]>
+    ),
   )
 }
 
@@ -452,7 +732,7 @@ test "ArrayView::rev_iter" {
   let v = [1, 2, 3, 4, 5]
   let view = v[1:4]
   let iter = view.rev_iter()
-  inspect(iter.to_array(), content="[4, 3, 2]")
+  debug_inspect(iter.to_array(), content="[4, 3, 2]")
 }
 
 ///|
@@ -472,7 +752,7 @@ test "ArrayView::iter2" {
   while iter.next() is Some((i, x)) {
     results.push((i, x))
   }
-  inspect(results, content="[(0, 20), (1, 30), (2, 40)]")
+  debug_inspect(results, content="[(0, 20), (1, 30), (2, 40)]")
 }
 
 ///|
@@ -487,14 +767,24 @@ test "ArrayView::iter2 empty" {
 test "ArrayView::op_add basic" {
   let a = [1, 2, 3][:]
   let b = [4, 5][:]
-  inspect(a + b, content="[1, 2, 3, 4, 5]")
+  debug_inspect(
+    a + b,
+    content=(
+      #|<ArrayView: [1, 2, 3, 4, 5]>
+    ),
+  )
 }
 
 ///|
 test "ArrayView::op_add sliced views" {
   let a = [0, 1, 2, 3, 4, 5][1:4]
   let b = [10, 20, 30, 40][1:3]
-  inspect(a + b, content="[1, 2, 3, 20, 30]")
+  debug_inspect(
+    a + b,
+    content=(
+      #|<ArrayView: [1, 2, 3, 20, 30]>
+    ),
+  )
 }
 
 ///|
@@ -502,7 +792,12 @@ test "ArrayView::op_add empty left" {
   let a = [1, 2, 3][0:0]
   let b = [4, 5, 6][:]
   let result = a + b
-  inspect(result, content="[4, 5, 6]")
+  debug_inspect(
+    result,
+    content=(
+      #|<ArrayView: [4, 5, 6]>
+    ),
+  )
   assert_eq(result.length(), 3)
 }
 
@@ -511,7 +806,12 @@ test "ArrayView::op_add empty right" {
   let a = [1, 2, 3][:]
   let b = [4, 5, 6][1:1]
   let result = a + b
-  inspect(result, content="[1, 2, 3]")
+  debug_inspect(
+    result,
+    content=(
+      #|<ArrayView: [1, 2, 3]>
+    ),
+  )
   assert_eq(result.length(), 3)
 }
 
@@ -520,7 +820,12 @@ test "ArrayView::op_add both empty" {
   let a : ArrayView[Int] = [1, 2, 3][0:0]
   let b : ArrayView[Int] = [4, 5][1:1]
   let result = a + b
-  inspect(result, content="[]")
+  debug_inspect(
+    result,
+    content=(
+      #|<ArrayView: []>
+    ),
+  )
   assert_eq(result.length(), 0)
   assert_true(result.is_empty())
 }
@@ -532,10 +837,20 @@ test "ArrayView::op_add does not mutate sources" {
   let a = arr_a[1:3]
   let b = arr_b[:2]
   let _ = a + b
-  inspect(arr_a, content="[1, 2, 3, 4]")
-  inspect(arr_b, content="[5, 6, 7]")
-  inspect(a, content="[2, 3]")
-  inspect(b, content="[5, 6]")
+  debug_inspect(arr_a, content="[1, 2, 3, 4]")
+  debug_inspect(arr_b, content="[5, 6, 7]")
+  debug_inspect(
+    a,
+    content=(
+      #|<ArrayView: [2, 3]>
+    ),
+  )
+  debug_inspect(
+    b,
+    content=(
+      #|<ArrayView: [5, 6]>
+    ),
+  )
 }
 
 ///|
@@ -547,7 +862,12 @@ test "ArrayView::op_add result is independent of source mutation" {
   let result = a + b
   arr_a[1] = 99
   arr_b[2] = 88
-  inspect(result, content="[2, 3, 6, 7]")
+  debug_inspect(
+    result,
+    content=(
+      #|<ArrayView: [2, 3, 6, 7]>
+    ),
+  )
 }
 
 ///|
@@ -568,7 +888,12 @@ test "ArrayView::op_add generic string elements" {
   let b = ["foo"][:]
   let expected =
     #|["hello", "world", "foo"]
-  inspect(a + b, content=expected)
+  debug_inspect(
+    a + b,
+    content=(
+      #|<ArrayView: ["hello", "world", "foo"]>
+    ),
+  )
 }
 
 ///|
@@ -576,7 +901,12 @@ test "ArrayView::op_add chained" {
   let a = [1, 2][:]
   let b = [3, 4][:]
   let c = [5, 6][:]
-  inspect(a + b + c, content="[1, 2, 3, 4, 5, 6]")
+  debug_inspect(
+    a + b + c,
+    content=(
+      #|<ArrayView: [1, 2, 3, 4, 5, 6]>
+    ),
+  )
 }
 
 ///|
@@ -584,8 +914,18 @@ test "ArrayView::op_add tail and head slices" {
   let v = [1, 2, 3, 4, 5, 6]
   let head = v[:3]
   let tail = v[3:]
-  inspect(head + tail, content="[1, 2, 3, 4, 5, 6]")
-  inspect(tail + head, content="[4, 5, 6, 1, 2, 3]")
+  debug_inspect(
+    head + tail,
+    content=(
+      #|<ArrayView: [1, 2, 3, 4, 5, 6]>
+    ),
+  )
+  debug_inspect(
+    tail + head,
+    content=(
+      #|<ArrayView: [4, 5, 6, 1, 2, 3]>
+    ),
+  )
 }
 
 ///|
@@ -605,7 +945,7 @@ test "ArrayView::rev_each basic" {
   let v = [1, 2, 3, 4, 5][:]
   let out = []
   v.rev_each(x => out.push(x))
-  inspect(out, content="[5, 4, 3, 2, 1]")
+  debug_inspect(out, content="[5, 4, 3, 2, 1]")
 }
 
 ///|
@@ -613,7 +953,7 @@ test "ArrayView::rev_each sliced view" {
   let v = [1, 2, 3, 4, 5][1:4]
   let out = []
   v.rev_each(x => out.push(x))
-  inspect(out, content="[4, 3, 2]")
+  debug_inspect(out, content="[4, 3, 2]")
 }
 
 ///|
@@ -621,7 +961,7 @@ test "ArrayView::rev_each empty" {
   let v : ArrayView[Int] = [1, 2, 3][0:0]
   let out = []
   v.rev_each(x => out.push(x))
-  inspect(out, content="[]")
+  debug_inspect(out, content="[]")
 }
 
 ///|
@@ -638,7 +978,7 @@ test "ArrayView::rev_eachi basic" {
   let v = [10, 20, 30][:]
   let out = []
   v.rev_eachi((i, x) => out.push((i, x)))
-  inspect(out, content="[(0, 30), (1, 20), (2, 10)]")
+  debug_inspect(out, content="[(0, 30), (1, 20), (2, 10)]")
 }
 
 ///|
@@ -646,7 +986,7 @@ test "ArrayView::rev_eachi sliced view index starts at 0" {
   let v = [0, 10, 20, 30, 40][1:4]
   let out = []
   v.rev_eachi((i, x) => out.push((i, x)))
-  inspect(out, content="[(0, 30), (1, 20), (2, 10)]")
+  debug_inspect(out, content="[(0, 30), (1, 20), (2, 10)]")
 }
 
 ///|
@@ -654,7 +994,7 @@ test "ArrayView::rev_eachi empty" {
   let v : ArrayView[Int] = [1, 2, 3][0:0]
   let out = []
   v.rev_eachi((i, x) => out.push((i, x)))
-  inspect(out, content="[]")
+  debug_inspect(out, content="[]")
 }
 
 ///|
@@ -696,25 +1036,25 @@ test "ArrayView::search_by matches first element" {
 
 ///|
 test "ArrayView::rev basic" {
-  inspect([1, 2, 3, 4, 5][:].rev(), content="[5, 4, 3, 2, 1]")
+  debug_inspect([1, 2, 3, 4, 5][:].rev(), content="[5, 4, 3, 2, 1]")
 }
 
 ///|
 test "ArrayView::rev sliced view" {
   let v = [1, 2, 3, 4, 5][1:4]
-  inspect(v.rev(), content="[4, 3, 2]")
+  debug_inspect(v.rev(), content="[4, 3, 2]")
 }
 
 ///|
 test "ArrayView::rev empty" {
   let v : ArrayView[Int] = [1, 2, 3][0:0]
-  inspect(v.rev(), content="[]")
+  debug_inspect(v.rev(), content="[]")
   assert_true(v.rev().is_empty())
 }
 
 ///|
 test "ArrayView::rev singleton" {
-  inspect([42][:].rev(), content="[42]")
+  debug_inspect([42][:].rev(), content="[42]")
 }
 
 ///|
@@ -722,8 +1062,13 @@ test "ArrayView::rev does not mutate source" {
   let arr = [1, 2, 3, 4]
   let v = arr[1:3]
   let _ = v.rev()
-  inspect(arr, content="[1, 2, 3, 4]")
-  inspect(v, content="[2, 3]")
+  debug_inspect(arr, content="[1, 2, 3, 4]")
+  debug_inspect(
+    v,
+    content=(
+      #|<ArrayView: [2, 3]>
+    ),
+  )
 }
 
 ///|
@@ -732,13 +1077,13 @@ test "ArrayView::rev result is independent" {
   let v = arr[:]
   let r = v.rev()
   arr[0] = 99
-  inspect(r, content="[4, 3, 2, 1]")
+  debug_inspect(r, content="[4, 3, 2, 1]")
 }
 
 ///|
 test "ArrayView::rev twice is identity" {
   let v = [1, 2, 3, 4, 5][1:4]
-  inspect(v.rev()[:].rev(), content="[2, 3, 4]")
+  debug_inspect(v.rev()[:].rev(), content="[2, 3, 4]")
 }
 
 ///|
@@ -756,21 +1101,21 @@ test "ArrayView::rev matches Array::rev" {
 test "ArrayView::filter_map basic" {
   let v = [1, 2, 3, 4, 5][:]
   let r = v.filter_map(x => if x % 2 == 0 { Some(x * 10) } else { None })
-  inspect(r, content="[20, 40]")
+  debug_inspect(r, content="[20, 40]")
 }
 
 ///|
 test "ArrayView::filter_map sliced view" {
   let v = [1, 2, 3, 4, 5, 6][1:5]
   let r = v.filter_map(x => if x > 2 { Some(x) } else { None })
-  inspect(r, content="[3, 4, 5]")
+  debug_inspect(r, content="[3, 4, 5]")
 }
 
 ///|
 test "ArrayView::filter_map empty view" {
   let v : ArrayView[Int] = [1, 2, 3][0:0]
   let r = v.filter_map(x => Some(x))
-  inspect(r, content="[]")
+  debug_inspect(r, content="[]")
   assert_true(r.is_empty())
 }
 
@@ -778,14 +1123,14 @@ test "ArrayView::filter_map empty view" {
 test "ArrayView::filter_map all none" {
   let v = [1, 2, 3][:]
   let r : Array[Int] = v.filter_map(_ => None)
-  inspect(r, content="[]")
+  debug_inspect(r, content="[]")
 }
 
 ///|
 test "ArrayView::filter_map all some (type change)" {
   let v = [1, 2, 3][:]
   let r = v.filter_map(x => Some(x.to_string()))
-  inspect(
+  debug_inspect(
     r,
     content=(
       #|["1", "2", "3"]
@@ -797,7 +1142,7 @@ test "ArrayView::filter_map all some (type change)" {
 test "ArrayView::filter_map preserves order" {
   let v = [5, 1, 4, 2, 3][:]
   let r = v.filter_map(x => if x >= 3 { Some(x * 2) } else { None })
-  inspect(r, content="[10, 8, 6]")
+  debug_inspect(r, content="[10, 8, 6]")
 }
 
 ///|
@@ -805,37 +1150,57 @@ test "ArrayView::filter_map does not mutate source" {
   let arr = [1, 2, 3, 4]
   let v = arr[:]
   let _ = v.filter_map(x => Some(x + 100))
-  inspect(arr, content="[1, 2, 3, 4]")
+  debug_inspect(arr, content="[1, 2, 3, 4]")
 }
 
 ///|
 test "ArrayView::chunks even" {
   let v = [1, 2, 3, 4, 5, 6][:]
-  inspect(v.chunks(2), content="[[1, 2], [3, 4], [5, 6]]")
+  debug_inspect(
+    v.chunks(2),
+    content=(
+      #|[<ArrayView: [1, 2]>, <ArrayView: [3, 4]>, <ArrayView: [5, 6]>]
+    ),
+  )
 }
 
 ///|
 test "ArrayView::chunks uneven last" {
   let v = [1, 2, 3, 4, 5, 6, 7][:]
-  inspect(v.chunks(3), content="[[1, 2, 3], [4, 5, 6], [7]]")
+  debug_inspect(
+    v.chunks(3),
+    content=(
+      #|[<ArrayView: [1, 2, 3]>, <ArrayView: [4, 5, 6]>, <ArrayView: [7]>]
+    ),
+  )
 }
 
 ///|
 test "ArrayView::chunks size larger than view" {
   let v = [1, 2][:]
-  inspect(v.chunks(5), content="[[1, 2]]")
+  debug_inspect(
+    v.chunks(5),
+    content=(
+      #|[<ArrayView: [1, 2]>]
+    ),
+  )
 }
 
 ///|
 test "ArrayView::chunks empty view" {
   let v : ArrayView[Int] = [1, 2, 3][0:0]
-  inspect(v.chunks(3), content="[]")
+  debug_inspect(v.chunks(3), content="[]")
 }
 
 ///|
 test "ArrayView::chunks on sliced view" {
   let v = [0, 1, 2, 3, 4, 5, 6][1:6]
-  inspect(v.chunks(2), content="[[1, 2], [3, 4], [5]]")
+  debug_inspect(
+    v.chunks(2),
+    content=(
+      #|[<ArrayView: [1, 2]>, <ArrayView: [3, 4]>, <ArrayView: [5]>]
+    ),
+  )
 }
 
 ///|
@@ -844,67 +1209,116 @@ test "ArrayView::chunks shares backing" {
   let parts = arr[:].chunks(2)
   arr[0] = 99
   arr[3] = 88
-  inspect(parts, content="[[99, 2], [3, 88]]")
+  debug_inspect(
+    parts,
+    content=(
+      #|[<ArrayView: [99, 2]>, <ArrayView: [3, 88]>]
+    ),
+  )
 }
 
 ///|
 test "ArrayView::chunk_by basic" {
   let v = [1, 1, 2, 2, 2, 3, 1][:]
-  inspect(v.chunk_by((a, b) => a == b), content="[[1, 1], [2, 2, 2], [3], [1]]")
+  debug_inspect(
+    v.chunk_by((a, b) => a == b),
+    content=(
+      #|[
+      #|  <ArrayView: [1, 1]>,
+      #|  <ArrayView: [2, 2, 2]>,
+      #|  <ArrayView: [3]>,
+      #|  <ArrayView: [1]>,
+      #|]
+    ),
+  )
 }
 
 ///|
 test "ArrayView::chunk_by empty" {
   let v : ArrayView[Int] = [1, 2, 3][0:0]
-  inspect(v.chunk_by((a, b) => a == b), content="[]")
+  debug_inspect(v.chunk_by((a, b) => a == b), content="[]")
 }
 
 ///|
 test "ArrayView::chunk_by singleton" {
   let v = [42][:]
-  inspect(v.chunk_by((a, b) => a == b), content="[[42]]")
+  debug_inspect(
+    v.chunk_by((a, b) => a == b),
+    content=(
+      #|[<ArrayView: [42]>]
+    ),
+  )
 }
 
 ///|
 test "ArrayView::chunk_by monotonic increasing" {
   let v = [1, 2, 3, 1, 2, 4, 3][:]
-  inspect(v.chunk_by((a, b) => a <= b), content="[[1, 2, 3], [1, 2, 4], [3]]")
+  debug_inspect(
+    v.chunk_by((a, b) => a <= b),
+    content=(
+      #|[<ArrayView: [1, 2, 3]>, <ArrayView: [1, 2, 4]>, <ArrayView: [3]>]
+    ),
+  )
 }
 
 ///|
 test "ArrayView::chunk_by on sliced view" {
   let v = [9, 1, 1, 2, 2, 9][1:5]
-  inspect(v.chunk_by((a, b) => a == b), content="[[1, 1], [2, 2]]")
+  debug_inspect(
+    v.chunk_by((a, b) => a == b),
+    content=(
+      #|[<ArrayView: [1, 1]>, <ArrayView: [2, 2]>]
+    ),
+  )
 }
 
 ///|
 test "ArrayView::windows basic" {
   let v = [1, 2, 3, 4, 5][:]
-  inspect(v.windows(3), content="[[1, 2, 3], [2, 3, 4], [3, 4, 5]]")
+  debug_inspect(
+    v.windows(3),
+    content=(
+      #|[
+      #|  <ArrayView: [1, 2, 3]>,
+      #|  <ArrayView: [2, 3, 4]>,
+      #|  <ArrayView: [3, 4, 5]>,
+      #|]
+    ),
+  )
 }
 
 ///|
 test "ArrayView::windows size equals length" {
   let v = [1, 2, 3][:]
-  inspect(v.windows(3), content="[[1, 2, 3]]")
+  debug_inspect(
+    v.windows(3),
+    content=(
+      #|[<ArrayView: [1, 2, 3]>]
+    ),
+  )
 }
 
 ///|
 test "ArrayView::windows size larger than view" {
   let v = [1, 2][:]
-  inspect(v.windows(5), content="[]")
+  debug_inspect(v.windows(5), content="[]")
 }
 
 ///|
 test "ArrayView::windows empty view" {
   let v : ArrayView[Int] = [1, 2, 3][0:0]
-  inspect(v.windows(1), content="[]")
+  debug_inspect(v.windows(1), content="[]")
 }
 
 ///|
 test "ArrayView::windows on sliced view" {
   let v = [0, 1, 2, 3, 4, 5][1:5]
-  inspect(v.windows(2), content="[[1, 2], [2, 3], [3, 4]]")
+  debug_inspect(
+    v.windows(2),
+    content=(
+      #|[<ArrayView: [1, 2]>, <ArrayView: [2, 3]>, <ArrayView: [3, 4]>]
+    ),
+  )
 }
 
 ///|
@@ -912,7 +1326,12 @@ test "ArrayView::windows shares backing" {
   let arr = [1, 2, 3, 4]
   let ws = arr[:].windows(2)
   arr[1] = 99
-  inspect(ws, content="[[1, 99], [99, 3], [3, 4]]")
+  debug_inspect(
+    ws,
+    content=(
+      #|[<ArrayView: [1, 99]>, <ArrayView: [99, 3]>, <ArrayView: [3, 4]>]
+    ),
+  )
 }
 
 ///|
@@ -954,7 +1373,12 @@ test "ArrayView::strip_prefix shares backing" {
   let arr = [1, 2, 3, 4, 5]
   guard arr[:].strip_prefix([1, 2][:]) is Some(rest)
   arr[2] = 99
-  inspect(rest, content="[99, 4, 5]")
+  debug_inspect(
+    rest,
+    content=(
+      #|<ArrayView: [99, 4, 5]>
+    ),
+  )
 }
 
 ///|

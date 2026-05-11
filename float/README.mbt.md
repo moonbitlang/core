@@ -168,8 +168,8 @@ test "reinterpret" {
 ///|
 test "range" {
   let values = Float::until(0.0, 1.0, step=0.5).to_array()
-  inspect(values, content="[0, 0.5]")
+  debug_inspect(values, content="[0, 0.5]")
   let inclusive = Float::until(0.0, 1.0, step=0.5, inclusive=true).to_array()
-  inspect(inclusive, content="[0, 0.5, 1]")
+  debug_inspect(inclusive, content="[0, 0.5, 1]")
 }
 ```

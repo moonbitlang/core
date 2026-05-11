@@ -287,7 +287,7 @@ pub fn[T] Array::pop(self : Array[T]) -> T? {
 /// test {
 ///   let arr = [1, 2, 3]
 ///   inspect(arr.unsafe_pop(), content="3")
-///   inspect(arr, content="[1, 2]")
+///   debug_inspect(arr, content="[1, 2]")
 /// }
 /// ```
 ///
@@ -377,13 +377,13 @@ pub fn[T] Array::drain(self : Array[T], begin : Int, end : Int) -> Array[T] {
 /// test {
 ///   let a = [1, 2, 3]
 ///   a.insert(1, 4)
-///   inspect(a, content="[1, 4, 2, 3]")
+///   debug_inspect(a, content="[1, 4, 2, 3]")
 ///   let b = [1, 2, 3]
 ///   b.insert(0, 5)
-///   inspect(b, content="[5, 1, 2, 3]")
+///   debug_inspect(b, content="[5, 1, 2, 3]")
 ///   let c = [1, 2, 3]
 ///   c.insert(3, 6)
-///   inspect(c, content="[1, 2, 3, 6]")
+///   debug_inspect(c, content="[1, 2, 3, 6]")
 /// }
 /// ```
 pub fn[T] Array::insert(self : Array[T], index : Int, value : T) -> Unit {
@@ -446,17 +446,17 @@ fn[T] Array::unsafe_grow_to_length(self : Array[T], new_len : Int) -> Unit {
 ///   // Fill entire array
 ///   let arr = [1, 2, 3, 4, 5]
 ///   arr.fill(0)
-///   inspect(arr, content="[0, 0, 0, 0, 0]")
+///   debug_inspect(arr, content="[0, 0, 0, 0, 0]")
 ///
 ///   // Fill from index 1 to 3 (exclusive)
 ///   let arr2 = [1, 2, 3, 4, 5]
 ///   arr2.fill(99, start=1, end=3)
-///   inspect(arr2, content="[1, 99, 99, 4, 5]")
+///   debug_inspect(arr2, content="[1, 99, 99, 4, 5]")
 ///
 ///   // Fill from index 2 to end
 ///   let arr3 = ["a", "b", "c", "d"]
 ///   arr3.fill("x", start=2)
-///   inspect(
+///   debug_inspect(
 ///     arr3,
 ///     content=(
 ///       #|["a", "b", "x", "x"]
@@ -499,7 +499,7 @@ pub fn[A] Array::fill(
 /// test {
 ///   let original = [1, 2, 3]
 ///   let copied = original.copy()
-///   inspect(copied, content="[1, 2, 3]")
+///   debug_inspect(copied, content="[1, 2, 3]")
 ///   inspect(physical_equal(original, copied), content="false")
 /// }
 /// ```

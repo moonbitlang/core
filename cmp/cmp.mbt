@@ -97,7 +97,7 @@ pub fn[T, K : Compare] minimum_by_key(x : T, y : T, f : (T) -> K) -> T {
 ///   let fst = []
 ///   let snd = []
 ///   @cmp.maximum(fst, snd).push(0)
-///   inspect(snd, content="[0]")
+///   debug_inspect(snd, content="[0]")
 /// }
 /// ```
 pub fn[T : Compare] maximum(x : T, y : T) -> T {
@@ -122,7 +122,7 @@ pub fn[T : Compare] maximum(x : T, y : T) -> T {
 ///   let fst = []
 ///   let snd = []
 ///   @cmp.minimum(fst, snd).push(0)
-///   inspect(fst, content="[0]")
+///   debug_inspect(fst, content="[0]")
 /// }
 /// ```
 pub fn[T : Compare] minimum(x : T, y : T) -> T {
@@ -149,8 +149,8 @@ pub fn[T : Compare] minimum(x : T, y : T) -> T {
 ///
 /// ```mbt check
 /// test {
-///   inspect(@cmp.minmax(1, 2), content="(1, 2)")
-///   inspect(@cmp.minmax(2, 1), content="(1, 2)")
+///   debug_inspect(@cmp.minmax(1, 2), content="(1, 2)")
+///   debug_inspect(@cmp.minmax(2, 1), content="(1, 2)")
 /// }
 /// ```
 pub fn[T : Compare] minmax(x : T, y : T) -> (T, T) {
@@ -179,9 +179,9 @@ pub fn[T : Compare] minmax(x : T, y : T) -> (T, T) {
 ///
 /// ```mbt check
 /// test {
-///   inspect(@cmp.minmax_by_key(1, -2, Int::abs), content="(1, -2)")
-///   inspect(@cmp.minmax_by_key(-2, 1, Int::abs), content="(1, -2)")
-///   inspect(@cmp.minmax_by_key(-2, 2, Int::abs), content="(-2, 2)")
+///   debug_inspect(@cmp.minmax_by_key(1, -2, Int::abs), content="(1, -2)")
+///   debug_inspect(@cmp.minmax_by_key(-2, 1, Int::abs), content="(1, -2)")
+///   debug_inspect(@cmp.minmax_by_key(-2, 2, Int::abs), content="(-2, 2)")
 /// }
 /// ```
 pub fn[T, K : Compare] minmax_by_key(x : T, y : T, f : (T) -> K) -> (T, T) {

@@ -128,5 +128,5 @@ test "Tree::eachi uses cumulative sizes relative to node start" {
   )
   let indices = []
   tree.eachi((i, _value) => indices.push(i), 5, 7)
-  inspect(indices, content="[7, 8, 9, 10, 11, 12]")
+  @debug.debug_inspect(indices, content="[7, 8, 9, 10, 11, 12]")
 }

@@ -30,7 +30,7 @@ test "bind with Err" {
 test "wrap0 with error" {
   let f : () -> Int raise Failure = () => raise Failure::Failure("error")
   let result = try? f()
-  inspect(
+  debug_inspect(
     result,
     content=(
       #|Err(Failure("error"))
@@ -44,7 +44,7 @@ test "wrap2 with error result" {
     raise Failure::Failure("error")
   }
   let r = try? f(1, 2)
-  inspect(
+  debug_inspect(
     r,
     content=(
       #|Err(Failure("error"))

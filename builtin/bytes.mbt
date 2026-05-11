@@ -194,7 +194,12 @@ pub fn FixedArray::blit_from_bytes(
 ///   let arr = FixedArray::make(4, b'\x00')
 ///   let view = b"\x01\x02\x03"[1:]
 ///   arr.blit_from_bytesview(1, view)
-///   inspect(arr, content="[b'\\x00', b'\\x02', b'\\x03', b'\\x00']")
+///   debug_inspect(
+///     arr,
+///     content=(
+///       #|<FixedArray: [0x00, 0x02, 0x03, 0x00]>
+///     ),
+///   )
 /// }
 /// ```
 pub fn FixedArray::blit_from_bytesview(
@@ -520,9 +525,19 @@ pub fn Bytes::from_fixedarray(arr : FixedArray[Byte], len? : Int) -> Bytes {
 /// test {
 ///   let bytes = b"hello"
 ///   let arr = bytes.to_fixedarray()
-///   inspect(arr, content="[b'\\x68', b'\\x65', b'\\x6C', b'\\x6C', b'\\x6F']")
+///   debug_inspect(
+///     arr,
+///     content=(
+///       #|<FixedArray: [0x68, 0x65, 0x6c, 0x6c, 0x6f]>
+///     ),
+///   )
 ///   let arr2 = bytes[:3].to_fixedarray()
-///   inspect(arr2, content="[b'\\x68', b'\\x65', b'\\x6C']")
+///   debug_inspect(
+///     arr2,
+///     content=(
+///       #|<FixedArray: [0x68, 0x65, 0x6c]>
+///     ),
+///   )
 /// }
 /// ```
 /// 
@@ -549,7 +564,12 @@ pub fn Bytes::to_fixedarray(self : Bytes, len? : Int) -> FixedArray[Byte] {
 /// ```mbt check
 /// test {
 ///   let arr = b"abcd"[1:3].to_fixedarray()
-///   inspect(arr, content="[b'\\x62', b'\\x63']")
+///   debug_inspect(
+///     arr,
+///     content=(
+///       #|<FixedArray: [0x62, 0x63]>
+///     ),
+///   )
 /// }
 /// ```
 pub fn BytesView::to_fixedarray(self : BytesView) -> FixedArray[Byte] {
@@ -602,7 +622,12 @@ pub fn Bytes::from_iter(iter : Iter[Byte]) -> Bytes {
 /// test {
 ///   let bytes = b"hello"
 ///   let arr = bytes.to_array()
-///   inspect(arr, content="[b'\\x68', b'\\x65', b'\\x6C', b'\\x6C', b'\\x6F']")
+///   debug_inspect(
+///     arr,
+///     content=(
+///       #|[0x68, 0x65, 0x6c, 0x6c, 0x6f]
+///     ),
+///   )
 /// }
 /// ```
 pub fn Bytes::to_array(self : Bytes) -> Array[Byte] {
@@ -693,7 +718,7 @@ pub fn Bytes::iter(self : Bytes) -> Iter[Byte] {
 ///     keys.push(i)
 ///   }
 ///   inspect(buf, content="b'\\x61'b'\\x62'b'\\x63'b'\\x64'b'\\x65'")
-///   inspect(keys, content="[0, 1, 2, 3, 4]")
+///   debug_inspect(keys, content="[0, 1, 2, 3, 4]")
 /// }
 /// ```
 #alias(iterator2, deprecated)
@@ -760,7 +785,12 @@ pub fn Bytes::is_empty(self : Bytes) -> Bool {
 /// test {
 ///   let bytes = b"\x01\x02\x03"
 ///   let byte = bytes.get(1)
-///   debug_inspect(byte, content="Some(0x02)")
+///   debug_inspect(
+///     byte,
+///     content=(
+///       #|Some(0x02)
+///     ),
+///   )
 ///   let bytes = b"\x01\x02\x03"
 ///   let byte = bytes.get(3)
 ///   debug_inspect(byte, content="None")

@@ -53,15 +53,15 @@ test "take" {
   // normal take
   let evaluated = []
   let collected = (1).until(20).tap(x => evaluated.push(x)).take(10).collect()
-  inspect(collected, content="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]")
-  inspect(evaluated, content="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]")
+  debug_inspect(collected, content="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]")
+  debug_inspect(evaluated, content="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]")
   // take with concat
   let evaluated2 = []
   let collected2a = (1).until(20).tap(i => evaluated2.push("a\{i}")).take(5)
   let collected2b = (1).until(20).tap(i => evaluated2.push("b\{i}")).take(5)
   let collected2 = collected2a.concat(collected2b).collect()
-  inspect(collected2, content="[1, 2, 3, 4, 5, 1, 2, 3, 4, 5]")
-  inspect(
+  debug_inspect(collected2, content="[1, 2, 3, 4, 5, 1, 2, 3, 4, 5]")
+  debug_inspect(
     evaluated2,
     content=(
       #|["a1", "a2", "a3", "a4", "a5", "b1", "b2", "b3", "b4", "b5"]
@@ -72,8 +72,8 @@ test "take" {
   let collected3a = (1).until(20).tap(i => evaluated3.push("a\{i}")).take(0)
   let collected3b = (1).until(20).tap(i => evaluated3.push("b\{i}")).take(5)
   let collected3 = collected3a.concat(collected3b).collect()
-  inspect(collected3, content="[1, 2, 3, 4, 5]")
-  inspect(
+  debug_inspect(collected3, content="[1, 2, 3, 4, 5]")
+  debug_inspect(
     evaluated3,
     content=(
       #|["b1", "b2", "b3", "b4", "b5"]
@@ -195,7 +195,7 @@ test "drop" {
 test "sub" {
   let iter = test_from_array([1, 2, 3, 4, 5])
   let res = iter[1:4].collect()
-  inspect(res, content="[2, 3, 4]")
+  debug_inspect(res, content="[2, 3, 4]")
 }
 
 ///|
@@ -376,11 +376,11 @@ test "filter_map" {
     .iter()
     .filter_map(x => if x < 3 { None } else { Some(x) })
     .collect()
-  inspect(r1, content="[3, 4, 5]")
+  debug_inspect(r1, content="[3, 4, 5]")
   let r2 : Array[Unit] = arr.iter().filter_map(_x => None).collect()
-  inspect(r2, content="[]")
+  debug_inspect(r2, content="[]")
   let r3 : Array[Unit] = [].iter().filter_map(x => Some(x)).collect()
-  inspect(r3, content="[]")
+  debug_inspect(r3, content="[]")
   // Test using next() directly to ensure the closure is executed
   let it1 = [1, 2, 3, 4, 5]
     .iter()
@@ -461,7 +461,7 @@ test "concat" {
 test "zip" {
   let numbers = (1).until(6)
   let letters = ["a", "b", "c"].iter()
-  inspect(
+  debug_inspect(
     numbers.zip(letters).collect(),
     content="[(1, \"a\"), (2, \"b\"), (3, \"c\")]",
   )
@@ -471,7 +471,7 @@ test "zip" {
 test "zip alias combine" {
   let numbers = (1).until(4)
   let letters = ["x", "y", "z", "w"].iter()
-  inspect(
+  debug_inspect(
     numbers.combine(letters).collect(),
     content="[(1, \"x\"), (2, \"y\"), (3, \"z\")]",
   )
@@ -483,9 +483,9 @@ test "zip short-circuits when either side ends" {
   let rhs_evaluated = []
   let lhs = (1).until(10).tap(x => lhs_evaluated.push(x))
   let rhs = [10, 20].iter().tap(x => rhs_evaluated.push(x))
-  inspect(lhs.zip(rhs).collect(), content="[(1, 10), (2, 20)]")
-  inspect(lhs_evaluated, content="[1, 2, 3]")
-  inspect(rhs_evaluated, content="[10, 20]")
+  debug_inspect(lhs.zip(rhs).collect(), content="[(1, 10), (2, 20)]")
+  debug_inspect(lhs_evaluated, content="[1, 2, 3]")
+  debug_inspect(rhs_evaluated, content="[10, 20]")
 }
 
 ///|
@@ -499,96 +499,224 @@ test "collect" {
 ///|
 test "until" {
   // edge cases
-  inspect((0).until(10).take(100), content="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]")
-  inspect((100).until(10).take(100), content="[]")
-  inspect((100).until(101, step=4), content="[100]")
-  inspect((1).until(2, step=0), content="[]")
-  inspect(1.0.until(2.0, step=0), content="[]")
-  inspect(0L.until(10, step=0), content="[]")
+  debug_inspect(
+    (0).until(10).take(100).to_array(),
+    content=(
+      #|[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    ),
+  )
+  debug_inspect(
+    (100).until(10).take(100).to_array(),
+    content=(
+      #|[]
+    ),
+  )
+  debug_inspect(
+    (100).until(101, step=4).to_array(),
+    content=(
+      #|[100]
+    ),
+  )
+  debug_inspect(
+    (1).until(2, step=0).to_array(),
+    content=(
+      #|[]
+    ),
+  )
+  debug_inspect(
+    1.0.until(2.0, step=0).to_array(),
+    content=(
+      #|[]
+    ),
+  )
+  debug_inspect(
+    0L.until(10, step=0).to_array(),
+    content=(
+      #|[]
+    ),
+  )
   // inclusive
-  inspect(
-    (@int.MAX_VALUE - 2).until(@int.MAX_VALUE - 1),
-    content="[2147483645]",
+  debug_inspect(
+    (@int.MAX_VALUE - 2).until(@int.MAX_VALUE - 1).to_array(),
+    content=(
+      #|[2147483645]
+    ),
   )
-  inspect(
-    (@int.MAX_VALUE - 2).until(@int.MAX_VALUE - 1, inclusive=true),
-    content="[2147483645, 2147483646]",
+  debug_inspect(
+    (@int.MAX_VALUE - 2).until(@int.MAX_VALUE - 1, inclusive=true).to_array(),
+    content=(
+      #|[2147483645, 2147483646]
+    ),
   )
-  inspect((@int.MAX_VALUE - 1).until(@int.MAX_VALUE), content="[2147483646]")
-  inspect(
+  debug_inspect(
+    (@int.MAX_VALUE - 1).until(@int.MAX_VALUE).to_array(),
+    content=(
+      #|[2147483646]
+    ),
+  )
+  debug_inspect(
     (@int.MAX_VALUE - 1)
     .until(@int.MAX_VALUE, inclusive=true)
-    .concat([0].iter()),
-    content="[2147483646, 2147483647, 0]",
+    .concat([0].iter())
+    .to_array(),
+    content=(
+      #|[2147483646, 2147483647, 0]
+    ),
   )
-  inspect((@int.MAX_VALUE - 1).until(@int.MAX_VALUE), content="[2147483646]")
-  inspect(
-    (@int.MAX_VALUE - 1).until(@int.MAX_VALUE, inclusive=true),
-    content="[2147483646, 2147483647]",
+  debug_inspect(
+    (@int.MAX_VALUE - 1).until(@int.MAX_VALUE).to_array(),
+    content=(
+      #|[2147483646]
+    ),
   )
-  inspect(
-    (@int64.MAX_VALUE - 2).until(@int64.MAX_VALUE - 1L, inclusive=true),
-    content="[9223372036854775805, 9223372036854775806]",
+  debug_inspect(
+    (@int.MAX_VALUE - 1).until(@int.MAX_VALUE, inclusive=true).to_array(),
+    content=(
+      #|[2147483646, 2147483647]
+    ),
   )
-  inspect(
-    (@int64.MAX_VALUE - 1).until(@int64.MAX_VALUE, inclusive=true),
-    content="[9223372036854775806, 9223372036854775807]",
+  debug_inspect(
+    (@int64.MAX_VALUE - 2)
+    .until(@int64.MAX_VALUE - 1L, inclusive=true)
+    .to_array(),
+    content=(
+      #|[9223372036854775805, 9223372036854775806]
+    ),
   )
-  inspect(
-    0.0.until(1.0, step=0.1, inclusive=true),
-    content="[0, 0.1, 0.2, 0.30000000000000004, 0.4, 0.5, 0.6, 0.7, 0.7999999999999999, 0.8999999999999999, 0.9999999999999999]",
+  debug_inspect(
+    (@int64.MAX_VALUE - 1).until(@int64.MAX_VALUE, inclusive=true).to_array(),
+    content=(
+      #|[9223372036854775806, 9223372036854775807]
+    ),
   )
-  inspect(
-    0.0.until(1.0, step=0.1, inclusive=false),
-    content="[0, 0.1, 0.2, 0.30000000000000004, 0.4, 0.5, 0.6, 0.7, 0.7999999999999999, 0.8999999999999999, 0.9999999999999999]",
+  debug_inspect(
+    0.0.until(1.0, step=0.1, inclusive=true).to_array(),
+    content=(
+      #|[
+      #|  0,
+      #|  0.1,
+      #|  0.2,
+      #|  0.30000000000000004,
+      #|  0.4,
+      #|  0.5,
+      #|  0.6,
+      #|  0.7,
+      #|  0.7999999999999999,
+      #|  0.8999999999999999,
+      #|  0.9999999999999999,
+      #|]
+    ),
   )
-  inspect(0.0.until(10.0), content="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]")
-  inspect(
-    0.0.until(10.0, inclusive=true),
-    content="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]",
+  debug_inspect(
+    0.0.until(1.0, step=0.1, inclusive=false).to_array(),
+    content=(
+      #|[
+      #|  0,
+      #|  0.1,
+      #|  0.2,
+      #|  0.30000000000000004,
+      #|  0.4,
+      #|  0.5,
+      #|  0.6,
+      #|  0.7,
+      #|  0.7999999999999999,
+      #|  0.8999999999999999,
+      #|  0.9999999999999999,
+      #|]
+    ),
+  )
+  debug_inspect(
+    0.0.until(10.0).to_array(),
+    content=(
+      #|[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    ),
+  )
+  debug_inspect(
+    0.0.until(10.0, inclusive=true).to_array(),
+    content=(
+      #|[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    ),
   )
   // until
-  inspect(
-    (0).until(10).take(5).concat((0).until(2)),
-    content="[0, 1, 2, 3, 4, 0, 1]",
+  debug_inspect(
+    (0).until(10).take(5).concat((0).until(2)).to_array(),
+    content=(
+      #|[0, 1, 2, 3, 4, 0, 1]
+    ),
   )
-  inspect(
+  debug_inspect(
     0x80000000L
     .until(0x80000000L + 10L)
     .take(5)
-    .concat((0x80000000L + 10L).until(0x80000000L + 20L).take(3)),
-    content="[2147483648, 2147483649, 2147483650, 2147483651, 2147483652, 2147483658, 2147483659, 2147483660]",
+    .concat((0x80000000L + 10L).until(0x80000000L + 20L).take(3))
+    .to_array(),
+    content=(
+      #|[
+      #|  2147483648,
+      #|  2147483649,
+      #|  2147483650,
+      #|  2147483651,
+      #|  2147483652,
+      #|  2147483658,
+      #|  2147483659,
+      #|  2147483660,
+      #|]
+    ),
   )
-  inspect(
-    0.0.until(10.0).take(5).concat(0.0.until(2.0)),
-    content="[0, 1, 2, 3, 4, 0, 1]",
+  debug_inspect(
+    0.0.until(10.0).take(5).concat(0.0.until(2.0)).to_array(),
+    content=(
+      #|[0, 1, 2, 3, 4, 0, 1]
+    ),
   )
-  inspect(
-    (-50).until(50, step=10).take(100),
-    content="[-50, -40, -30, -20, -10, 0, 10, 20, 30, 40]",
+  debug_inspect(
+    (-50).until(50, step=10).take(100).to_array(),
+    content=(
+      #|[-50, -40, -30, -20, -10, 0, 10, 20, 30, 40]
+    ),
   )
-  inspect(
-    0.1.until(0.4, step=0.1).take(5),
-    content="[0.1, 0.2, 0.30000000000000004]",
+  debug_inspect(
+    0.1.until(0.4, step=0.1).take(5).to_array(),
+    content=(
+      #|[0.1, 0.2, 0.30000000000000004]
+    ),
   )
-  inspect(0.1.until(0.3, step=0.1), content="[0.1, 0.2]")
-  inspect(
-    0.1.until(0.4, step=0.1).take(5),
-    content="[0.1, 0.2, 0.30000000000000004]",
+  debug_inspect(
+    0.1.until(0.3, step=0.1).to_array(),
+    content=(
+      #|[0.1, 0.2]
+    ),
   )
-  inspect(
-    0x80000000L.until(0x80000000L + 10L, step=2L),
-    content="[2147483648, 2147483650, 2147483652, 2147483654, 2147483656]",
+  debug_inspect(
+    0.1.until(0.4, step=0.1).take(5).to_array(),
+    content=(
+      #|[0.1, 0.2, 0.30000000000000004]
+    ),
+  )
+  debug_inspect(
+    0x80000000L.until(0x80000000L + 10L, step=2L).to_array(),
+    content=(
+      #|[2147483648, 2147483650, 2147483652, 2147483654, 2147483656]
+    ),
   )
   // step < 0
-  inspect((10).until(0, step=-1).take(5), content="[10, 9, 8, 7, 6]")
-  inspect(
-    0x80000000L.until(0x80000000L - 10L, step=-2L).take(5),
-    content="[2147483648, 2147483646, 2147483644, 2147483642, 2147483640]",
+  debug_inspect(
+    (10).until(0, step=-1).take(5).to_array(),
+    content=(
+      #|[10, 9, 8, 7, 6]
+    ),
   )
-  inspect(
-    0.0.until(-1.0, step=-0.1).take(5),
-    content="[0, -0.1, -0.2, -0.30000000000000004, -0.4]",
+  debug_inspect(
+    0x80000000L.until(0x80000000L - 10L, step=-2L).take(5).to_array(),
+    content=(
+      #|[2147483648, 2147483646, 2147483644, 2147483642, 2147483640]
+    ),
+  )
+  debug_inspect(
+    0.0.until(-1.0, step=-0.1).take(5).to_array(),
+    content=(
+      #|[0, -0.1, -0.2, -0.30000000000000004, -0.4]
+    ),
   )
 }
 
@@ -612,7 +740,7 @@ test "eachi" {
 test "intersperse early end" {
   let iter = test_from_array([1, 2, 3])
   let res = iter.intersperse(0).take(1).collect()
-  inspect(res, content="[1]")
+  debug_inspect(res, content="[1]")
 }
 
 ///|
@@ -625,7 +753,7 @@ test "intersperse stops on separator" {
       break
     }
   }
-  inspect(seen, content="[1, 0]")
+  debug_inspect(seen, content="[1, 0]")
 }
 
 // For testing purposes
@@ -697,13 +825,30 @@ test "tree" {
 
 ///|
 test "Iter::intersperse" {
-  inspect([1, 2, 3].iter().intersperse(0), content="[1, 0, 2, 0, 3]")
-  inspect(
-    [1, 2, 3, 4, 5, 6, 7, 8, 9].iter().intersperse(0),
-    content="[1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 7, 0, 8, 0, 9]",
+  debug_inspect(
+    [1, 2, 3].iter().intersperse(0).to_array(),
+    content=(
+      #|[1, 0, 2, 0, 3]
+    ),
   )
-  inspect(([] : Array[Int]).iter().intersperse(0), content="[]")
-  inspect([1].iter().intersperse(0), content="[1]")
+  debug_inspect(
+    [1, 2, 3, 4, 5, 6, 7, 8, 9].iter().intersperse(0).to_array(),
+    content=(
+      #|[1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 7, 0, 8, 0, 9]
+    ),
+  )
+  debug_inspect(
+    ([] : Array[Int]).iter().intersperse(0).to_array(),
+    content=(
+      #|[]
+    ),
+  )
+  debug_inspect(
+    [1].iter().intersperse(0).to_array(),
+    content=(
+      #|[1]
+    ),
+  )
 }
 
 ///|
@@ -722,16 +867,46 @@ test "Iter::head" {
 
 ///|
 test "Iter::as_view" {
-  inspect([1, 2, 3].iter()[1:2], content="[2]")
-  inspect([1, 2, 3].iter()[1:], content="[2, 3]")
-  inspect([1, 2, 3].iter()[1:], content="[2, 3]")
-  inspect([1, 2, 3].iter()[:], content="[1, 2, 3]")
+  debug_inspect(
+    [1, 2, 3].iter()[1:2].to_array(),
+    content=(
+      #|[2]
+    ),
+  )
+  debug_inspect(
+    [1, 2, 3].iter()[1:].to_array(),
+    content=(
+      #|[2, 3]
+    ),
+  )
+  debug_inspect(
+    [1, 2, 3].iter()[1:].to_array(),
+    content=(
+      #|[2, 3]
+    ),
+  )
+  debug_inspect(
+    [1, 2, 3].iter()[:].to_array(),
+    content=(
+      #|[1, 2, 3]
+    ),
+  )
 }
 
 ///|
 test "Iter::enumerate" {
-  inspect([1, 2, 3].iter2(), content="[(0, 1), (1, 2), (2, 3)]")
-  inspect([1, 2, 3].iter2().to_string(), content="[(0, 1), (1, 2), (2, 3)]")
+  debug_inspect(
+    [1, 2, 3].iter2().to_array(),
+    content=(
+      #|[(0, 1), (1, 2), (2, 3)]
+    ),
+  )
+  debug_inspect(
+    [1, 2, 3].iter2().to_string(),
+    content=(
+      #|"[(0, 1), (1, 2), (2, 3)]"
+    ),
+  )
 }
 
 ///|
@@ -837,14 +1012,14 @@ test "@builtin.Iter::minimum" {
 test "Iter::intersperse with early termination" {
   let iter = [1, 2, 3].iter()
   let result = iter.intersperse(0).take(3).collect()
-  inspect(result, content="[1, 0, 2]")
+  debug_inspect(result, content="[1, 0, 2]")
 }
 
 ///|
 test "Iter::iter method" {
   let original = [1, 2, 3].iter()
   let result = original.iter().collect()
-  inspect(result, content="[1, 2, 3]")
+  debug_inspect(result, content="[1, 2, 3]")
 }
 
 ///|
@@ -858,7 +1033,7 @@ test "Iter::contains method" {
 test "Iter::flatten method" {
   let nested = [[1, 2], [3, 4], [5, 6]].iter().map(x => x.iter())
   let flattened = nested.flatten().collect()
-  inspect(flattened, content="[1, 2, 3, 4, 5, 6]")
+  debug_inspect(flattened, content="[1, 2, 3, 4, 5, 6]")
 }
 
 ///|
@@ -866,31 +1041,31 @@ test "Iter::add operator" {
   let iter1 = [1, 2, 3].iter()
   let iter2 = [4, 5, 6].iter()
   let result = (iter1 + iter2).collect()
-  inspect(result, content="[1, 2, 3, 4, 5, 6]")
+  debug_inspect(result, content="[1, 2, 3, 4, 5, 6]")
 }
 
 ///|
 test "Float::until with step=0" {
   let result = 1.0.until(2.0, step=0.0).collect()
-  inspect(result, content="[]")
+  debug_inspect(result, content="[]")
 }
 
 ///|
 test "Float::until basic test" {
   let result = 0.0.until(3.0, step=1.0).collect()
-  inspect(result, content="[0, 1, 2]")
+  debug_inspect(result, content="[0, 1, 2]")
 }
 
 ///|
 test "Float::until with early termination" {
   let result = 0.0.until(10.0).take(3).collect()
-  inspect(result, content="[0, 1, 2]")
+  debug_inspect(result, content="[0, 1, 2]")
 }
 
 ///|
 test "Double::until with large numbers" {
   let result = 1000000.0.until(2000000.0, step=500000.0).collect()
-  inspect(result, content="[1000000, 1500000]")
+  debug_inspect(result, content="[1000000, 1500000]")
 }
 
 ///|
@@ -899,7 +1074,7 @@ test "Double::until with NaN step" {
   for x in 1.0.until(1.0, step=@double.not_a_number, inclusive=true) {
     values.push(x)
   }
-  inspect(values, content="[1]")
+  debug_inspect(values, content="[1]")
 }
 
 ///|
@@ -915,7 +1090,7 @@ test "Float::until with early break" {
 ///|
 test "Float::until negative step" {
   let result = 10.0.until(0.0, step=-2.0).collect()
-  inspect(result, content="[10, 8, 6, 4, 2]")
+  debug_inspect(result, content="[10, 8, 6, 4, 2]")
 }
 
 ///|
@@ -1023,7 +1198,7 @@ test "Iter::to_json and any on empty" {
 ///|
 test "Iter::map_while empty and last" {
   let empty : Iter[Int] = Iter::empty()
-  inspect(empty.map_while(_ => Some(1)).collect(), content="[]")
+  debug_inspect(empty.map_while(_ => Some(1)).collect(), content="[]")
   debug_inspect([1, 2, 3].iter().last(), content="Some(3)")
   let empty_last : Iter[Int] = Iter::empty()
   debug_inspect(empty_last.last(), content="None")
@@ -1038,17 +1213,17 @@ test "Iter::maximum" {
 
 ///|
 test "Iter::view variants" {
-  inspect([1, 2, 3].iter().view(start=-1).collect(), content="[1, 2, 3]")
-  inspect([1, 2, 3].iter()[:2].collect(), content="[1, 2]")
-  inspect([1, 2, 3].iter()[1:].collect(), content="[2, 3]")
-  inspect([1, 2, 3, 4].iter()[1:3].collect(), content="[2, 3]")
-  inspect([1, 2, 3].iter()[2:2].collect(), content="[]")
-  inspect([1, 2, 3].iter()[1:0].collect(), content="[]")
+  debug_inspect([1, 2, 3].iter().view(start=-1).collect(), content="[1, 2, 3]")
+  debug_inspect([1, 2, 3].iter()[:2].collect(), content="[1, 2]")
+  debug_inspect([1, 2, 3].iter()[1:].collect(), content="[2, 3]")
+  debug_inspect([1, 2, 3, 4].iter()[1:3].collect(), content="[2, 3]")
+  debug_inspect([1, 2, 3].iter()[2:2].collect(), content="[]")
+  debug_inspect([1, 2, 3].iter()[1:0].collect(), content="[]")
 }
 
 ///|
 test "Iter::iter and Iter2 conversions" {
-  inspect([1, 2].iter().iter().collect(), content="[1, 2]")
+  debug_inspect([1, 2].iter().iter().collect(), content="[1, 2]")
   let pairs = ['a', 'b']
     .iter2()
     .iter()
@@ -1057,7 +1232,7 @@ test "Iter::iter and Iter2 conversions" {
       "\{i}:\{ch}"
     })
     .collect()
-  inspect(pairs, content="[\"0:a\", \"1:b\"]")
+  debug_inspect(pairs, content="[\"0:a\", \"1:b\"]")
   let buf = StringBuilder()
   let iter2 = ['x', 'y'].iter2().iter2()
   while iter2.next() is Some((_, ch)) {

@@ -291,7 +291,9 @@ pub fn[T] Array::view(
 ///   let end = 4
 ///   debug_inspect(
 ///     arr.get_view(start~, end~),
-///     content="Some(<ArrayView: [2, 3, 4]>)",
+///     content=(
+///       #|Some(<ArrayView: [2, 3, 4]>)
+///     ),
 ///   )
 ///   let start = 3
 ///   let end = 10
@@ -386,7 +388,12 @@ pub fn[T] ArrayView::view(
 ///   let view = arr[1:4] // view = [2, 3, 4]
 ///   let start = 1
 ///   let end = 2
-///   debug_inspect(view.get_view(start~, end~), content="Some(<ArrayView: [3]>)")
+///   debug_inspect(
+///     view.get_view(start~, end~),
+///     content=(
+///       #|Some(<ArrayView: [3]>)
+///     ),
+///   )
 ///   let start = 4
 ///   let end = 5
 ///   debug_inspect(view.get_view(start~, end~), content="None")
@@ -486,7 +493,9 @@ pub fn[T] FixedArray::view(
 ///   let end = 4
 ///   debug_inspect(
 ///     arr.get_view(start~, end~),
-///     content="Some(<ArrayView: [2, 3, 4]>)",
+///     content=(
+///       #|Some(<ArrayView: [2, 3, 4]>)
+///     ),
 ///   )
 ///   let start = 2
 ///   let end = 10
@@ -524,8 +533,18 @@ pub fn[T] FixedArray::get_view(
 /// ```mbt check
 /// test {
 ///   let v = [1, 2][:]
-///   inspect(v.suffixes().collect(), content="[[1, 2], [2]]")
-///   inspect(v.suffixes(include_empty=true).collect(), content="[[1, 2], [2], []]")
+///   debug_inspect(
+///     v.suffixes().collect(),
+///     content=(
+///       #|[<ArrayView: [1, 2]>, <ArrayView: [2]>]
+///     ),
+///   )
+///   debug_inspect(
+///     v.suffixes(include_empty=true).collect(),
+///     content=(
+///       #|[<ArrayView: [1, 2]>, <ArrayView: [2]>, <ArrayView: []>]
+///     ),
+///   )
 /// }
 /// ```
 pub fn[T] ArrayView::suffixes(
@@ -568,7 +587,12 @@ pub fn[T] ArrayView::suffixes(
 /// ```mbt check
 /// test {
 ///   let v = [1, 2, 3, 4, 5, 6, 7][:]
-///   inspect(v.chunks(3), content="[[1, 2, 3], [4, 5, 6], [7]]")
+///   debug_inspect(
+///     v.chunks(3),
+///     content=(
+///       #|[<ArrayView: [1, 2, 3]>, <ArrayView: [4, 5, 6]>, <ArrayView: [7]>]
+///     ),
+///   )
 /// }
 /// ```
 pub fn[T] ArrayView::chunks(
@@ -598,7 +622,17 @@ pub fn[T] ArrayView::chunks(
 /// ```mbt check
 /// test {
 ///   let v = [1, 1, 2, 2, 2, 3, 1][:]
-///   inspect(v.chunk_by((a, b) => a == b), content="[[1, 1], [2, 2, 2], [3], [1]]")
+///   debug_inspect(
+///     v.chunk_by((a, b) => a == b),
+///     content=(
+///       #|[
+///       #|  <ArrayView: [1, 1]>,
+///       #|  <ArrayView: [2, 2, 2]>,
+///       #|  <ArrayView: [3]>,
+///       #|  <ArrayView: [1]>,
+///       #|]
+///     ),
+///   )
 /// }
 /// ```
 #locals(pred)
@@ -635,7 +669,16 @@ pub fn[T] ArrayView::chunk_by(
 /// ```mbt check
 /// test {
 ///   let v = [1, 2, 3, 4, 5][:]
-///   inspect(v.windows(3), content="[[1, 2, 3], [2, 3, 4], [3, 4, 5]]")
+///   debug_inspect(
+///     v.windows(3),
+///     content=(
+///       #|[
+///       #|  <ArrayView: [1, 2, 3]>,
+///       #|  <ArrayView: [2, 3, 4]>,
+///       #|  <ArrayView: [3, 4, 5]>,
+///       #|]
+///     ),
+///   )
 /// }
 /// ```
 pub fn[T] ArrayView::windows(
@@ -703,7 +746,7 @@ pub fn[X] ArrayView::iter(self : ArrayView[X]) -> Iter[X] {
 /// ```mbt check
 /// test {
 ///   let values = [1, 2, 3][:].rev_iter().collect()
-///   inspect(values, content="[3, 2, 1]")
+///   debug_inspect(values, content="[3, 2, 1]")
 /// }
 /// ```
 #alias(rev_iterator, deprecated)
@@ -819,7 +862,7 @@ pub fn[T] ArrayView::eachi(
 ///   let v = [1, 2, 3, 4, 5][1:4]
 ///   let out = []
 ///   v.rev_each(x => out.push(x))
-///   inspect(out, content="[4, 3, 2]")
+///   debug_inspect(out, content="[4, 3, 2]")
 /// }
 /// ```
 #locals(f)
@@ -845,7 +888,7 @@ pub fn[T] ArrayView::rev_each(
 ///   let v = [10, 20, 30][:]
 ///   let out = []
 ///   v.rev_eachi((i, x) => out.push((i, x)))
-///   inspect(out, content="[(0, 30), (1, 20), (2, 10)]")
+///   debug_inspect(out, content="[(0, 30), (1, 20), (2, 10)]")
 /// }
 /// ```
 #locals(f)
@@ -1058,7 +1101,9 @@ pub fn[T : Eq] ArrayView::ends_with(
 ///   let v = [1, 2, 3, 4, 5][:]
 ///   debug_inspect(
 ///     v.strip_prefix([1, 2][:]),
-///     content="Some(<ArrayView: [3, 4, 5]>)",
+///     content=(
+///       #|Some(<ArrayView: [3, 4, 5]>)
+///     ),
 ///   )
 ///   debug_inspect(v.strip_prefix([2, 3][:]), content="None")
 /// }
@@ -1086,7 +1131,9 @@ pub fn[T : Eq] ArrayView::strip_prefix(
 ///   let v = [1, 2, 3, 4, 5][:]
 ///   debug_inspect(
 ///     v.strip_suffix([4, 5][:]),
-///     content="Some(<ArrayView: [1, 2, 3]>)",
+///     content=(
+///       #|Some(<ArrayView: [1, 2, 3]>)
+///     ),
 ///   )
 ///   debug_inspect(v.strip_suffix([3, 4][:]), content="None")
 /// }
@@ -1109,8 +1156,8 @@ pub fn[T : Eq] ArrayView::strip_suffix(
 /// ```mbt check
 /// test {
 ///   let view = [1, 3, 5, 7, 9][:]
-///   inspect(view.binary_search(5), content="Ok(2)")
-///   inspect(view.binary_search(6), content="Err(3)")
+///   debug_inspect(view.binary_search(5), content="Ok(2)")
+///   debug_inspect(view.binary_search(6), content="Err(3)")
 /// }
 /// ```
 pub fn[T : Compare] ArrayView::binary_search(
@@ -1142,7 +1189,7 @@ pub fn[T : Compare] ArrayView::binary_search(
 /// test {
 ///   let view = [1, 3, 5, 7, 9][:]
 ///   let result = view.binary_search_by(x => x.compare(5))
-///   inspect(result, content="Ok(2)")
+///   debug_inspect(result, content="Ok(2)")
 /// }
 /// ```
 #locals(cmp)
@@ -1342,7 +1389,7 @@ pub fn[T] ArrayView::filter(
 /// ```mbt check
 /// test {
 ///   let v = [1, 2, 3, 4, 5][1:4]
-///   inspect(
+///   debug_inspect(
 ///     v.filter_map(x => if x % 2 == 0 { Some(x * 10) } else { None }),
 ///     content="[20, 40]",
 ///   )
@@ -1485,9 +1532,14 @@ pub fn[T : Compare] ArrayView::lexical_compare(
 /// ```mbt check
 /// test {
 ///   let v = [1, 2, 3, 4, 5][1:4]
-///   inspect(v.rev(), content="[4, 3, 2]")
+///   debug_inspect(v.rev(), content="[4, 3, 2]")
 ///   // The view itself is unchanged.
-///   inspect(v, content="[2, 3, 4]")
+///   debug_inspect(
+///     v,
+///     content=(
+///       #|<ArrayView: [2, 3, 4]>
+///     ),
+///   )
 /// }
 /// ```
 pub fn[T] ArrayView::rev(self : ArrayView[T]) -> Array[T] {
@@ -1562,7 +1614,12 @@ pub impl[A : Hash] Hash for ArrayView[A] with hash_combine(self, hasher) {
 /// test {
 ///   let a = [1, 2, 3, 4, 5][1:4]
 ///   let b = [10, 20, 30][:2]
-///   inspect(a + b, content="[2, 3, 4, 10, 20]")
+///   debug_inspect(
+///     a + b,
+///     content=(
+///       #|<ArrayView: [2, 3, 4, 10, 20]>
+///     ),
+///   )
 /// }
 /// ```
 pub impl[T] Add for ArrayView[T] with add(self, other) {

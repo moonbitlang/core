@@ -186,9 +186,12 @@ test "fixedarray_byte_blit_from_string" {
   let arr : FixedArray[Byte] = FixedArray::make(10, Byte::default())
   let str = "Hello"
   arr.blit_from_string(0, str, 0, str.length())
-  inspect(
+  debug_inspect(
     arr,
-    content="[b'\\x48', b'\\x00', b'\\x65', b'\\x00', b'\\x6C', b'\\x00', b'\\x6C', b'\\x00', b'\\x6F', b'\\x00']",
+    content=(
+      #|<FixedArray:
+      #|  [0x48, 0x00, 0x65, 0x00, 0x6c, 0x00, 0x6c, 0x00, 0x6f, 0x00]>
+    ),
   )
 }
 
@@ -197,7 +200,12 @@ test "fixedarray_byte_blit_from_bytes" {
   let arr : FixedArray[Byte] = FixedArray::make(5, Byte::default())
   let bytes = b"Hello"
   arr.blit_from_bytes(0, bytes, 0, bytes.length())
-  inspect(arr, content="[b'\\x48', b'\\x65', b'\\x6C', b'\\x6C', b'\\x6F']")
+  debug_inspect(
+    arr,
+    content=(
+      #|<FixedArray: [0x48, 0x65, 0x6c, 0x6c, 0x6f]>
+    ),
+  )
 }
 
 ///|
@@ -219,13 +227,23 @@ test "Bytes::equal with differing bytes" {
 test "Bytes::to_fixedarray with len" {
   let bytes = b"hello"
   let arr = bytes[:3].to_fixedarray()
-  inspect(arr, content="[b'\\x68', b'\\x65', b'\\x6C']")
+  debug_inspect(
+    arr,
+    content=(
+      #|<FixedArray: [0x68, 0x65, 0x6c]>
+    ),
+  )
 }
 
 ///|
 test "Bytes::iter2" {
   let iter = b"ab".iter2()
-  inspect(iter, content="[(0, b'\\x61'), (1, b'\\x62')]")
+  debug_inspect(
+    iter.to_array(),
+    content=(
+      #|[(0, 0x61), (1, 0x62)]
+    ),
+  )
 }
 
 ///|
@@ -265,7 +283,12 @@ test "blit_from_bytesview basic case" {
   let arr = FixedArray::make(4, b'\x00')
   let view = b"\x01\x02\x03"[1:] // view contains "\x02\x03"
   arr.blit_from_bytesview(1, view)
-  inspect(arr, content="[b'\\x00', b'\\x02', b'\\x03', b'\\x00']")
+  debug_inspect(
+    arr,
+    content=(
+      #|<FixedArray: [0x00, 0x02, 0x03, 0x00]>
+    ),
+  )
 }
 
 ///|
@@ -445,5 +468,10 @@ test "Bytes has_prefix/has_suffix/chop" {
 ///|
 test "BytesView::to_array" {
   let view = b"hi"[:]
-  inspect(view.to_array(), content="[b'\\x68', b'\\x69']")
+  debug_inspect(
+    view.to_array(),
+    content=(
+      #|[0x68, 0x69]
+    ),
+  )
 }

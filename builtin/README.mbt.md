@@ -35,9 +35,9 @@ test "inspect usage" {
   let value = 42
   inspect(value, content="42")
   let list = [1, 2, 3]
-  inspect(list, content="[1, 2, 3]")
+  debug_inspect(list, content="[1, 2, 3]")
   let result : Result[Int, String] = Ok(100)
-  inspect(result, content="Ok(100)")
+  debug_inspect(result, content="Ok(100)")
 }
 ```
 
@@ -58,11 +58,11 @@ test "result type" {
 
   // Success case
   let result1 = divide(10, 2)
-  inspect(result1, content="Ok(5)")
+  debug_inspect(result1, content="Ok(5)")
 
   // Error case
   let result2 = divide(10, 0)
-  inspect(result2, content="Err(\"Division by zero\")")
+  debug_inspect(result2, content="Err(\"Division by zero\")")
 
   // Pattern matching on Result
   match result1 {
@@ -117,15 +117,15 @@ test "iterators" {
 
   // Collect back to array
   let collected = iter.collect()
-  inspect(collected, content="[1, 2, 3, 4, 5]")
+  debug_inspect(collected, content="[1, 2, 3, 4, 5]")
 
   // Map transformation
   let doubled = numbers.iter().map(fn(x) { x * 2 }).collect()
-  inspect(doubled, content="[2, 4, 6, 8, 10]")
+  debug_inspect(doubled, content="[2, 4, 6, 8, 10]")
 
   // Filter elements
   let evens = numbers.iter().filter(fn(x) { x % 2 == 0 }).collect()
-  inspect(evens, content="[2, 4]")
+  debug_inspect(evens, content="[2, 4]")
 
   // Fold (reduce) operation
   let sum = numbers.iter().fold(init=0, fn(acc, x) { acc + x })
@@ -145,11 +145,11 @@ test "arrays" {
   arr1.push(1)
   arr1.push(2)
   arr1.push(3)
-  inspect(arr1, content="[1, 2, 3]")
+  debug_inspect(arr1, content="[1, 2, 3]")
 
   // Array from literal
   let arr2 = [10, 20, 30]
-  inspect(arr2, content="[10, 20, 30]")
+  debug_inspect(arr2, content="[10, 20, 30]")
 
   // Array operations
   let length = arr2.length()
@@ -166,7 +166,12 @@ Fixed-size array for storing collections of constant size:
 test "fixed arrays" {
   // FixedArray from literal
   let fixed_arr : FixedArray[Int] = [10, 20, 30]
-  inspect(fixed_arr, content="[10, 20, 30]")
+  debug_inspect(
+    fixed_arr,
+    content=(
+      #|<FixedArray: [10, 20, 30]>
+    ),
+  )
 
   // FixedArray operations
   let length = fixed_arr.length()

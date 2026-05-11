@@ -16,21 +16,21 @@
 test "panic set with out-of-bounds index" {
   let v = @vector.from_array([1, 2, 3, 4, 5])
   let v1 = v.set(10, 10) // This should trigger the panic in set function
-  inspect(v1, content="ImmutableVec::[1, 2, 3, 4, 5]")
+  debug_inspect(v1, content="ImmutableVec::[1, 2, 3, 4, 5]")
 }
 
 ///|
 test "panic set with negative index" {
   let v = @vector.from_array([1, 2, 3, 4, 5])
   let v1 = v.set(-1, 10) // This should trigger the panic in set function
-  inspect(v1, content="ImmutableVec::[1, 2, 3, 4, 5]")
+  debug_inspect(v1, content="ImmutableVec::[1, 2, 3, 4, 5]")
 }
 
 ///|
 test "panic set with empty vector" {
   let v = @vector.new()
   let v1 = v.set(0, 10) // This should trigger the panic in set function
-  inspect(v1, content="ImmutableVec::[]")
+  debug_inspect(v1, content="ImmutableVec::[]")
 }
 
 ///|

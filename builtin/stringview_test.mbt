@@ -156,7 +156,12 @@ test "panic String::view invalid range" {
 ///|
 test "StringView iter2 and eq length mismatch" {
   let view = "abc"[:]
-  inspect(view.iter2().to_string(), content="[(0, 'a'), (1, 'b'), (2, 'c')]")
+  debug_inspect(
+    view.iter2().to_string(),
+    content=(
+      #|"[(0, 'a'), (1, 'b'), (2, 'c')]"
+    ),
+  )
   inspect(view == "ab", content="false")
 }
 

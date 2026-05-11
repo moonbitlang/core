@@ -41,7 +41,12 @@ test "from_fixed_array_1" {
 ///|
 test "from_fixed_array_2" {
   let q : @queue.Queue[Int] = @queue.from_array([])
-  inspect(q, content="@queue.from_array([])")
+  debug_inspect(
+    q,
+    content=(
+      #|<Queue: []>
+    ),
+  )
 }
 
 ///|
@@ -69,26 +74,66 @@ test "Queue constructor" {
 ///|
 test "from_array_2" {
   let q : @queue.Queue[Int] = @queue.from_array([])
-  inspect(q, content="@queue.from_array([])")
+  debug_inspect(
+    q,
+    content=(
+      #|<Queue: []>
+    ),
+  )
   let array = Array::makei(3, idx => idx + 1)
   let q : @queue.Queue[Int] = @queue.from_array(array)
-  inspect(q, content="@queue.from_array([1, 2, 3])")
+  debug_inspect(
+    q,
+    content=(
+      #|<Queue: [1, 2, 3]>
+    ),
+  )
   let q : @queue.Queue[Int] = @queue.from_array(Array::new(capacity=10))
-  inspect(q, content="@queue.from_array([])")
+  debug_inspect(
+    q,
+    content=(
+      #|<Queue: []>
+    ),
+  )
 }
 
 ///|
 test "to_string" {
   let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
-  inspect(queue, content="@queue.from_array([1, 2, 3, 4])")
+  debug_inspect(
+    queue,
+    content=(
+      #|<Queue: [1, 2, 3, 4]>
+    ),
+  )
   queue.push(11)
-  inspect(queue, content="@queue.from_array([1, 2, 3, 4, 11])")
+  debug_inspect(
+    queue,
+    content=(
+      #|<Queue: [1, 2, 3, 4, 11]>
+    ),
+  )
   queue.unsafe_pop() |> ignore
-  inspect(queue, content="@queue.from_array([2, 3, 4, 11])")
+  debug_inspect(
+    queue,
+    content=(
+      #|<Queue: [2, 3, 4, 11]>
+    ),
+  )
   let queue : @queue.Queue[Int] = @queue.from_array([])
-  inspect(queue, content="@queue.from_array([])")
+  debug_inspect(
+    queue,
+    content=(
+      #|<Queue: []>
+    ),
+  )
   let queue : @queue.Queue[Int] = @queue.from_array([9, 8, 7, 5])
-  inspect(queue, content="@queue.from_array([9, 8, 7, 5])")
+  debug_inspect(
+    queue,
+    content=(
+      #|<Queue: [9, 8, 7, 5]>
+    ),
+  )
 }
 
 ///|
@@ -209,31 +254,50 @@ test "iter" {
 
 ///|
 test "from_iter multiple elements iter" {
-  inspect(
+  debug_inspect(
     @queue.from_iter([1, 2, 3].iter()),
-    content="@queue.from_array([1, 2, 3])",
+    content=(
+      #|<Queue: [1, 2, 3]>
+    ),
   )
 }
 
 ///|
 test "from_iter single element iter" {
-  inspect(@queue.from_iter([1].iter()), content="@queue.from_array([1])")
+  debug_inspect(
+    @queue.from_iter([1].iter()),
+    content=(
+      #|<Queue: [1]>
+    ),
+  )
 }
 
 ///|
 test "from_iter empty iter" {
   let pq : @queue.Queue[Int] = @queue.from_iter(Iter::empty())
-  inspect(pq, content="@queue.from_array([])")
+  debug_inspect(
+    pq,
+    content=(
+      #|<Queue: []>
+    ),
+  )
 }
 
 ///|
 test "queue arbitrary" {
   let samples : Array[@queue.Queue[Int]] = @quickcheck.samples(20)
-  inspect(
+  debug_inspect(
     samples[1:5],
-    content="[@queue.from_array([]), @queue.from_array([]), @queue.from_array([0]), @queue.from_array([0])]",
+    content=(
+      #|<ArrayView: [<Queue: []>, <Queue: []>, <Queue: [0]>, <Queue: [0]>]>
+    ),
   )
-  inspect(samples[15], content="@queue.from_array([])")
+  debug_inspect(
+    samples[15],
+    content=(
+      #|<Queue: []>
+    ),
+  )
 }
 
 ///|
@@ -242,7 +306,12 @@ test "transfer_self" {
   let q : @queue.Queue[Int] = @queue.from_array([1, 2, 3])
   q.transfer(q)
   // After self-transfer, queue should remain unchanged
-  inspect(q, content="@queue.from_array([1, 2, 3])")
+  debug_inspect(
+    q,
+    content=(
+      #|<Queue: [1, 2, 3]>
+    ),
+  )
 }
 
 ///|
@@ -250,5 +319,10 @@ test "transfer_self_empty" {
   // Test self-transfer on empty queue
   let q : @queue.Queue[Int] = @queue.Queue([])
   q.transfer(q)
-  inspect(q, content="@queue.from_array([])")
+  debug_inspect(
+    q,
+    content=(
+      #|<Queue: []>
+    ),
+  )
 }

@@ -191,7 +191,7 @@ test "iter_collect" {
   let map = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
   let array = map.iter().collect()
   array.sort()
-  inspect(
+  debug_inspect(
     array,
     content=(
       #|[(1, "one"), (2, "two"), (3, "three")]
@@ -217,7 +217,7 @@ test "iter2" {
   let map = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
   let array = map.iter2().to_array()
   array.sort()
-  inspect(
+  debug_inspect(
     array,
     content=(
       #|[(1, "one"), (2, "two"), (3, "three")]
@@ -230,7 +230,7 @@ test "iter" {
   let map = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
   let array = map.iter().collect()
   array.sort()
-  inspect(
+  debug_inspect(
     array,
     content=(
       #|[(1, "one"), (2, "two"), (3, "three")]
@@ -243,7 +243,7 @@ test "to_array" {
   let map = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
   let array = map.to_array()
   array.sort()
-  inspect(
+  debug_inspect(
     array,
     content=(
       #|[(1, "one"), (2, "two"), (3, "three")]
@@ -254,7 +254,7 @@ test "to_array" {
 ///|
 test "to_array empty" {
   let map : @hashmap.HashMap[Int, String] = @hashmap.HashMap([])
-  inspect(map.to_array(), content="[]")
+  debug_inspect(map.to_array(), content="[]")
 }
 
 ///|
@@ -342,16 +342,23 @@ test "from_iter multiple elements iter" {
 
 ///|
 test "from_iter single element iter" {
-  inspect(
+  debug_inspect(
     @hashmap.from_iter([(1, 1)].iter()),
-    content="HashMap::from_array([(1, 1)])",
+    content=(
+      #|<HashMap: { 1: 1 }>
+    ),
   )
 }
 
 ///|
 test "from_iter empty iter" {
   let map : @hashmap.HashMap[Int, Int] = @hashmap.from_iter(Iter::empty())
-  inspect(map, content="HashMap::from_array([])")
+  debug_inspect(
+    map,
+    content=(
+      #|<HashMap: {}>
+    ),
+  )
 }
 
 ///|
@@ -434,7 +441,12 @@ test "@hashmap.map" {
   let v : @hashmap.HashMap[String, String] = @hashmap.HashMap([]).map((k, v) => {
     k + v
   })
-  inspect(v, content="HashMap::from_array([])")
+  debug_inspect(
+    v,
+    content=(
+      #|<HashMap: {}>
+    ),
+  )
 }
 
 ///|
@@ -448,7 +460,12 @@ test "@hashmap.copy" {
   let copy = map.copy()
   verify_content(copy, [("e", 20), ("a", 1), ("b", 2), ("d", 10)])
   let copy : @hashmap.HashMap[String, String] = @hashmap.HashMap([]).copy()
-  inspect(copy, content="HashMap::from_array([])")
+  debug_inspect(
+    copy,
+    content=(
+      #|<HashMap: {}>
+    ),
+  )
 }
 
 ///|

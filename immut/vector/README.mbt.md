@@ -136,7 +136,7 @@ Use `iter()` to get an iterator, or `each()` / `eachi()` for direct traversal.
 test {
   let v = @vector.from_array([1, 2, 3, 4, 5])
   // iterator
-  inspect(v.iter(), content="[1, 2, 3, 4, 5]")
+  debug_inspect(v.iter().to_array(), content="[1, 2, 3, 4, 5]")
   // each
   let buf = []
   v.each(fn(x) { buf.push(x) })

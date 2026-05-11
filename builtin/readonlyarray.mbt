@@ -192,7 +192,7 @@ pub fn[T] ReadOnlyArray::iter2(self : ReadOnlyArray[T]) -> Iter2[Int, T] {
 ///   let arr : ReadOnlyArray[Int] = [1, 2, 3]
 ///   let result = []
 ///   arr.each(fn(x) { result.push(x * 2) })
-///   inspect(result, content="[2, 4, 6]")
+///   debug_inspect(result, content="[2, 4, 6]")
 /// }
 /// ```
 pub fn[T] ReadOnlyArray::each(
@@ -211,7 +211,7 @@ pub fn[T] ReadOnlyArray::each(
 ///   let arr : ReadOnlyArray[Int] = [10, 20, 30]
 ///   let result = []
 ///   arr.eachi(fn(i, x) { result.push((i, x)) })
-///   inspect(result, content="[(0, 10), (1, 20), (2, 30)]")
+///   debug_inspect(result, content="[(0, 10), (1, 20), (2, 30)]")
 /// }
 /// ```
 pub fn[T] ReadOnlyArray::eachi(
@@ -230,7 +230,7 @@ pub fn[T] ReadOnlyArray::eachi(
 ///   let arr : ReadOnlyArray[Int] = [1, 2, 3]
 ///   let result = []
 ///   arr.rev_each(fn(x) { result.push(x) })
-///   inspect(result, content="[3, 2, 1]")
+///   debug_inspect(result, content="[3, 2, 1]")
 /// }
 /// ```
 pub fn[T] ReadOnlyArray::rev_each(
@@ -249,7 +249,7 @@ pub fn[T] ReadOnlyArray::rev_each(
 ///   let arr : ReadOnlyArray[Int] = [10, 20, 30]
 ///   let result = []
 ///   arr.rev_eachi(fn(i, x) { result.push((i, x)) })
-///   inspect(result, content="[(0, 30), (1, 20), (2, 10)]")
+///   debug_inspect(result, content="[(0, 30), (1, 20), (2, 10)]")
 /// }
 /// ```
 pub fn[T] ReadOnlyArray::rev_eachi(
@@ -527,8 +527,8 @@ pub fn[T] ReadOnlyArray::any(
 /// ```mbt check
 /// test {
 ///   let arr : ReadOnlyArray[Int] = [1, 3, 5, 7, 9]
-///   inspect(arr.binary_search(5), content="Ok(2)")
-///   inspect(arr.binary_search(6), content="Err(3)")
+///   debug_inspect(arr.binary_search(5), content="Ok(2)")
+///   debug_inspect(arr.binary_search(6), content="Err(3)")
 /// }
 /// ```
 pub fn[T : Compare] ReadOnlyArray::binary_search(
@@ -546,7 +546,7 @@ pub fn[T : Compare] ReadOnlyArray::binary_search(
 /// test {
 ///   let arr : ReadOnlyArray[Int] = [1, 3, 5, 7, 9]
 ///   let result = arr.binary_search_by(fn(x) { x.compare(5) })
-///   inspect(result, content="Ok(2)")
+///   debug_inspect(result, content="Ok(2)")
 /// }
 /// ```
 pub fn[T] ReadOnlyArray::binary_search_by(
@@ -592,7 +592,9 @@ pub fn[T] ReadOnlyArray::view(
 ///   let end = 4
 ///   debug_inspect(
 ///     arr.get_view(start~, end~),
-///     content="Some(<ArrayView: [2, 3, 4]>)",
+///     content=(
+///       #|Some(<ArrayView: [2, 3, 4]>)
+///     ),
 ///   )
 ///   let start = 4
 ///   let end = 10

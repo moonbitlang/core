@@ -95,7 +95,12 @@ test "ReadOnlyArray trait implementations" {
 
   // Test Show
   let arr : ReadOnlyArray[Int] = [1, 2, 3]
-  inspect(arr.to_string(), content="[1, 2, 3]")
+  debug_inspect(
+    arr.to_string(),
+    content=(
+      #|"[1, 2, 3]"
+    ),
+  )
 
   // Test join for strings
   let str_arr : ReadOnlyArray[String] = ["a", "b", "c"]
@@ -154,8 +159,13 @@ test "ReadOnlyArray compare" {
 ///|
 test "ReadOnlyArray iter and sub" {
   let arr : ReadOnlyArray[Int] = [1, 2, 3]
-  inspect(arr.iter().to_array(), content="[1, 2, 3]")
-  inspect(arr[1:], content="[2, 3]")
+  debug_inspect(arr.iter().to_array(), content="[1, 2, 3]")
+  debug_inspect(
+    arr[1:],
+    content=(
+      #|<ArrayView: [2, 3]>
+    ),
+  )
 }
 
 ///|

@@ -119,7 +119,7 @@ test "HAMT::iter" {
   ])
   let array = data.iter().collect()
   array.sort()
-  inspect(
+  debug_inspect(
     array,
     content=(
       #|[(0, "a"), (2, "b"), (3, "d"), (5, "e"), (11111, "f")]
@@ -138,7 +138,7 @@ test "HAMT::iter2" {
   ])
   let array = data.iter2().to_array()
   array.sort()
-  inspect(
+  debug_inspect(
     array,
     content=(
       #|[(0, "a"), (2, "b"), (3, "d"), (5, "e"), (11111, "f")]

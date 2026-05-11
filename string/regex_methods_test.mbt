@@ -199,7 +199,12 @@ test "split/non_word_boundary_does_not_break_surrogate_pair" {
 test "split_replace/range_crossing_surrogate_gap_does_not_break_surrogate_pair" {
   let regex = @string.Regex("[\\uD7FF-\\uE000]")
   let split_result = regex.split("😀").to_array()
-  inspect(split_result, content="[\"😀\"]")
+  debug_inspect(
+    split_result,
+    content=(
+      #|[<StringView: "😀">]
+    ),
+  )
 
   let replaced = regex.replace_by("😀", _m => "#")
   inspect(replaced, content="😀")
@@ -251,14 +256,30 @@ test "replace_by/non_word_boundary_does_not_break_surrogate_pair" {
 test "split/zero_width_with_surrogate_pair" {
   let regex = @string.Regex("")
   let result = regex.split("a😀b").to_array()
-  inspect(result, content="[\"\", \"a\", \"😀\", \"b\", \"\"]")
+  debug_inspect(
+    result,
+    content=(
+      #|[
+      #|  <StringView: "">,
+      #|  <StringView: "a">,
+      #|  <StringView: "😀">,
+      #|  <StringView: "b">,
+      #|  <StringView: "">,
+      #|]
+    ),
+  )
 }
 
 ///|
 test "split/empty_pattern_empty_input" {
   let regex = @string.Regex("")
   let result = regex.split("").to_array()
-  inspect(result, content="[\"\", \"\"]")
+  debug_inspect(
+    result,
+    content=(
+      #|[<StringView: "">, <StringView: "">]
+    ),
+  )
 }
 
 ///|
@@ -308,9 +329,19 @@ test "find/capture_groups_and_named_groups" {
     .find("ab-12 cd-345")
     .map(m => m.named_group("missing"))
     .collect()
-  inspect(words, content="[\"ab\", \"cd\"]")
-  inspect(nums, content="[\"12\", \"345\"]")
-  inspect(spans, content="[(0, 5, 7), (6, 6, 0)]")
+  debug_inspect(
+    words,
+    content=(
+      #|[<StringView: "ab">, <StringView: "cd">]
+    ),
+  )
+  debug_inspect(
+    nums,
+    content=(
+      #|[<StringView: "12">, <StringView: "345">]
+    ),
+  )
+  debug_inspect(spans, content="[(0, 5, 7), (6, 6, 0)]")
   debug_inspect(missing, content="[None, None]")
 }
 
@@ -339,7 +370,7 @@ test "find/word_boundary_positions" {
     .find("hello world")
     .map(m => m.before().length())
     .collect()
-  inspect(positions, content="[0, 5, 6, 11]")
+  debug_inspect(positions, content="[0, 5, 6, 11]")
 }
 
 ///|
@@ -351,7 +382,7 @@ test "find/empty_pattern_progress_and_empty_input" {
     .map(m => m.before().length())
     .collect()
   let empty_positions = regex.find("").map(m => m.before().length()).collect()
-  inspect(positions, content="[0, 1, 2, 3]")
-  inspect(surrogate_positions, content="[0, 1, 3, 4]")
-  inspect(empty_positions, content="[0]")
+  debug_inspect(positions, content="[0, 1, 2, 3]")
+  debug_inspect(surrogate_positions, content="[0, 1, 3, 4]")
+  debug_inspect(empty_positions, content="[0]")
 }

@@ -89,9 +89,11 @@ test "panic invalid index6" {
 test "iter" {
   let bs = b"\x00\x01\x02\x03\x04\x05"
   let bv = bs[:]
-  inspect(
+  debug_inspect(
     bv.iter().to_array(),
-    content="[b'\\x00', b'\\x01', b'\\x02', b'\\x03', b'\\x04', b'\\x05']",
+    content=(
+      #|[0x00, 0x01, 0x02, 0x03, 0x04, 0x05]
+    ),
   )
 }
 
@@ -99,9 +101,11 @@ test "iter" {
 test "iter2" {
   let bs = b"\x00\x01\x02\x03\x04\x05"
   let bv = bs[1:5]
-  inspect(
-    bv.iter2(),
-    content="[(0, b'\\x01'), (1, b'\\x02'), (2, b'\\x03'), (3, b'\\x04')]",
+  debug_inspect(
+    bv.iter2().to_array(),
+    content=(
+      #|[(0, 0x01), (1, 0x02), (2, 0x03), (3, 0x04)]
+    ),
   )
 }
 
