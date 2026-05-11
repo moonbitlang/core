@@ -140,7 +140,7 @@ test "string benchmarks" {
 
   // Benchmark StringBuilder (should be faster)
   bencher.bench(name="stringbuilder", fn() {
-    let builder = StringBuilder::new()
+    let builder = StringBuilder::StringBuilder()
     for _ in 0..<5 {
       builder.write_string("x")
     }

@@ -14,7 +14,7 @@
 
 ///|
 fn[T : Show] debug_string(t : T) -> String {
-  let buf = StringBuilder::new(size_hint=50)
+  let buf = StringBuilder::StringBuilder(size_hint=50)
   t.output(buf)
   buf.to_string()
 }

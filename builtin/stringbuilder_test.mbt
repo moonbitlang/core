@@ -19,7 +19,7 @@
 
 ///|
 test "stringbuilder" {
-  let buf = StringBuilder::new()
+  let buf = StringBuilder::StringBuilder()
   buf.write_string("hello")
   buf.write_char(' ')
   buf.write_view("world"[:3])
@@ -28,7 +28,7 @@ test "stringbuilder" {
 
 ///|
 test "is_empty method" {
-  let buf = StringBuilder::new()
+  let buf = StringBuilder::StringBuilder()
   inspect(buf.is_empty(), content="true")
   buf.write_string("Test")
   inspect(buf.is_empty(), content="false")
@@ -38,7 +38,7 @@ test "is_empty method" {
 
 ///|
 test "reset does not mutate returned string" {
-  let buf = StringBuilder::new(size_hint=10)
+  let buf = StringBuilder::StringBuilder(size_hint=10)
   buf.write_string("hello")
   let first = buf.to_string()
   buf.reset()
@@ -52,19 +52,19 @@ test {
   let data = ["a", "b", "c", "hello world"]
   @json.json_inspect(
     data.map(fn(s) {
-      let sb = StringBuilder::new()
+      let sb = StringBuilder::StringBuilder()
       sb.write_string(s)
       sb.to_string()
     }),
     content=["a", "b", "c", "hello world"],
   )
-  // assert_eq({ let sb = StringBuilder::new(); sb.write_string("hello"); sb.to_string() }, "hello")
+  // assert_eq({ let sb = StringBuilder::StringBuilder(); sb.write_string("hello"); sb.to_string() }, "hello")
 }
 
 ///|
 test "write_iter" {
   let str = "Hello🤣🤣🤣"
-  let sb = StringBuilder::new()
+  let sb = StringBuilder::StringBuilder()
   sb.write_iter(str.iter())
   inspect(sb.to_string(), content="Hello🤣🤣🤣")
   let str_view = str[1:7]
@@ -75,7 +75,7 @@ test "write_iter" {
 ///|
 test "StringBuilder::write_stringview" {
   let str = "Hello🤣🤣🤣"
-  let sb = StringBuilder::new()
+  let sb = StringBuilder::StringBuilder()
 
   // Test basic substring
   let str_view = str[1:7]
@@ -104,13 +104,13 @@ test "StringBuilder::write_stringview" {
 
 ///|
 test "panic StringBuilder::write_char with invalid code point" {
-  let sb = StringBuilder::new()
+  let sb = StringBuilder::StringBuilder()
   sb.write_char((0x110000).unsafe_to_char()) |> ignore
 }
 
 ///|
 test "StringBuilder::write" {
-  let sb = StringBuilder::new()
+  let sb = StringBuilder::StringBuilder()
   sb.write("abc\n")
   assert_eq(sb.to_string(), "\"abc\\n\"")
 }

@@ -300,7 +300,7 @@ pub fn BytesView::iter(self : BytesView) -> Iter[Byte] {
 ///
 /// ```mbt check
 /// test {
-///   let buf = StringBuilder::new(size_hint=5)
+///   let buf = StringBuilder::StringBuilder(size_hint=5)
 ///   let keys = []
 ///   let it = b"abcde"[:].iter2()
 ///   while it.next() is Some((i, x)) {
@@ -773,7 +773,7 @@ pub fn BytesView::to_owned(self : BytesView) -> Bytes {
 
 ///|
 pub impl ToJson for BytesView with to_json(self) -> Json {
-  let sb = StringBuilder::new()
+  let sb = StringBuilder::StringBuilder()
   for byte in self {
     if byte is (b' '..=b'~') && byte != b'"' && byte != b'\\' {
       sb.write_char(byte.to_char())

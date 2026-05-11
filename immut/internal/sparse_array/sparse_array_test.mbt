@@ -80,7 +80,7 @@ test "SparseArray::intersection partial" {
 ///|
 test "SparseArray::iter" {
   let arr = @sparse_array.singleton(0, 0).add(1, 1).add(3, 3).add(31, 31)
-  let buf = StringBuilder::new(size_hint=0)
+  let buf = StringBuilder::StringBuilder(size_hint=0)
   let mut is_first = true
   arr.each(x => {
     if is_first {

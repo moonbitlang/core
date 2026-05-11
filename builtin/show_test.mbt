@@ -655,7 +655,7 @@ test "Show for BytesView" {
 ///|
 test "Show for String" {
   fn to_string_using_output(str) {
-    let buf = StringBuilder::new()
+    let buf = StringBuilder::StringBuilder()
     Show::output(str, buf)
     buf.to_string()
   }
@@ -828,30 +828,30 @@ test "Show for Char special cases" {
   inspect('\''.to_string(), content="'")
 
   // Test various special character outputs
-  let quote_buf = StringBuilder::new()
+  let quote_buf = StringBuilder::StringBuilder()
   '\''.output(quote_buf)
   inspect(quote_buf.to_string(), content="'\\''")
-  let backslash_buf = StringBuilder::new()
+  let backslash_buf = StringBuilder::StringBuilder()
   '\\'.output(backslash_buf)
   inspect(backslash_buf.to_string(), content="'\\\\'")
-  let cr_buf = StringBuilder::new()
+  let cr_buf = StringBuilder::StringBuilder()
   '\r'.output(cr_buf)
   inspect(cr_buf.to_string(), content="'\\r'")
-  let backspace_buf = StringBuilder::new()
+  let backspace_buf = StringBuilder::StringBuilder()
   '\b'.output(backspace_buf)
   inspect(backspace_buf.to_string(), content="'\\b'")
-  let tab_buf = StringBuilder::new()
+  let tab_buf = StringBuilder::StringBuilder()
   '\t'.output(tab_buf)
   inspect(tab_buf.to_string(), content="'\\t'")
 
   // Test hex output for control characters
-  let ctrl1_buf = StringBuilder::new()
+  let ctrl1_buf = StringBuilder::StringBuilder()
   '\u{01}'.output(ctrl1_buf)
   inspect(ctrl1_buf.to_string(), content="'\\u{01}'")
-  let ctrl_f_buf = StringBuilder::new()
+  let ctrl_f_buf = StringBuilder::StringBuilder()
   '\u{0F}'.output(ctrl_f_buf)
   inspect(ctrl_f_buf.to_string(), content="'\\u{0f}'")
-  let ctrl_1f_buf = StringBuilder::new()
+  let ctrl_1f_buf = StringBuilder::StringBuilder()
   '\u{1F}'.output(ctrl_1f_buf)
   inspect(ctrl_1f_buf.to_string(), content="'\\u{1f}'")
 }

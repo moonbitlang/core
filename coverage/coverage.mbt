@@ -110,7 +110,7 @@ pub fn end() -> Unit {
   println("----- BEGIN MOONBIT COVERAGE -----")
   let sbuf = StringBuffer::StringBuffer([])
   coverage_log(counters.val, sbuf)
-  let line_buf = StringBuilder::new()
+  let line_buf = StringBuilder::StringBuilder()
   for str in sbuf.0 {
     let start = for j in 0..<str.length(); start = 0 {
       if str.unsafe_get(j) == '\n' {
@@ -204,7 +204,7 @@ test "log" {
     ("foo/foo", test_counter_a),
     MCons(("foo/bar", test_counter_b), MNil),
   )
-  let buf = StringBuilder::new(size_hint=1024)
+  let buf = StringBuilder::StringBuilder(size_hint=1024)
   coverage_log(counters, buf)
   inspect(
     buf,
@@ -232,7 +232,7 @@ test "reset" {
     ("foo/foo", test_counter_a),
     MCons(("foo/bar", test_counter_b), MNil),
   )
-  let buf = StringBuilder::new(size_hint=1024)
+  let buf = StringBuilder::StringBuilder(size_hint=1024)
   coverage_log(counters, buf)
   inspect(
     buf,
@@ -243,7 +243,7 @@ test "reset" {
     ),
   )
   coverage_reset(counters)
-  let buf = StringBuilder::new(size_hint=1024)
+  let buf = StringBuilder::StringBuilder(size_hint=1024)
   coverage_log(counters, buf)
   inspect(
     buf,

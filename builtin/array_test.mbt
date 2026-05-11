@@ -244,7 +244,7 @@ test "array_eachi" {
 ///|
 test "array_rev_eachi" {
   let arr = ['a', 'b', 'c']
-  let buf = StringBuilder::new()
+  let buf = StringBuilder::StringBuilder()
   arr.rev_eachi((i, x) => {
     buf.write_object(i)
     buf.write_string(": ")

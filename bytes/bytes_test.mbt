@@ -143,7 +143,7 @@ test "from_iter empty iterator" {
 
 ///|
 test "iter" {
-  let buf = StringBuilder::new(size_hint=5)
+  let buf = StringBuilder::StringBuilder(size_hint=5)
   b"abcde".iter().each(x => buf.write_string(x.to_string()))
   inspect(buf, content="b'\\x61'b'\\x62'b'\\x63'b'\\x64'b'\\x65'")
   buf.reset()
@@ -153,7 +153,7 @@ test "iter" {
 
 ///|
 test "iter2" {
-  let buf = StringBuilder::new(size_hint=5)
+  let buf = StringBuilder::StringBuilder(size_hint=5)
   let keys = []
   b"abcde"
   .iter2()
