@@ -431,7 +431,10 @@ pub fn Char::to_ascii_uppercase(self : Self) -> Char {
 }
 
 ///|
-/// Convert Char to String
+/// Returns the original character as a string without escaping.
+/// `Show::output` for `Char` also writes the raw character through this
+/// `Show::to_string` implementation.
+/// Use `Char::escape` when a quoted and escaped representation is needed.
 pub impl Show for Char with to_string(self : Char) -> String {
   char_to_string(self)
 }
