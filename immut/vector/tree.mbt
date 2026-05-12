@@ -729,52 +729,7 @@ fn[A] compute_sizes(
 //-----------------------------------------------------------------------------
 
 ///|
-/// Print the tree structure. For debug use only.
-#deprecated("Use Debug instead of Show for debugging purposes.")
-impl[A : Show] Show for Tree[A]
-
-///|
-/// Print the tree structure. For debug use only.
-#warnings("-deprecated")
-impl[A : Show] Show for Tree[A] with output(self, logger : &Logger) {
-  fn indent_str(s : String, indent : Int) -> String {
-    String::make(indent, ' ') + s
-  }
-
-  fn aux(t : Tree[A], ident : Int) {
-    match t {
-      Empty => indent_str("Empty", ident)
-      Leaf(l) => {
-        let s = for i in 0..<l.length(); s = "Leaf(" {
-          let s = s + l[i].to_string()
-          if i != l.length() - 1 {
-            continue s + ", "
-          } else {
-            continue s
-          }
-        } nobreak {
-          s
-        }
-        indent_str(s + ")", ident) + "\n"
-      }
-      Node(children, _sizes) => {
-        let s = for
-          i in 0..<children.length()
-          s = indent_str("Node(", ident) + "\n" {
-          continue s + aux(children[i], ident + 2)
-        } nobreak {
-          s
-        }
-        s + indent_str(")", ident) + "\n"
-      }
-    }
-  }
-
-  logger.write_string(aux(self, 0))
-}
-
-///|
-test "Show for Tree" {
+test "Debug for Tree" {
   @debug.debug_inspect((Empty : Tree[Int]), content="Empty")
   @debug.debug_inspect(
     Node([Leaf([4, 2])], Some([2])),

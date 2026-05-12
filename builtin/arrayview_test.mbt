@@ -886,8 +886,6 @@ test "ArrayView::op_add full slice equals Array Add" {
 test "ArrayView::op_add generic string elements" {
   let a = ["hello", "world"][:]
   let b = ["foo"][:]
-  let expected =
-    #|["hello", "world", "foo"]
   debug_inspect(
     a + b,
     content=(
