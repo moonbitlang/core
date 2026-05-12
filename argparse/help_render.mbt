@@ -291,9 +291,7 @@ fn render_section(
 
 ///|
 fn format_entries(display : Array[(String, String)]) -> Array[String] {
-  let max_len = display
-    .iter()
-    .fold(init=0, (acc, item) => acc.max(item.0.length()))
+  let max_len = display.fold(init=0, (acc, item) => acc.max(item.0.length()))
   fn fmt(name : String, doc : String) -> String {
     let padding = " ".repeat(max_len - name.length() + 2)
     "  \{name}\{padding}\{doc}"
