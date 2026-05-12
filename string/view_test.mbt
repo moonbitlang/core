@@ -648,7 +648,7 @@ test "make" {
 ///|
 test "to_json" {
   let v = "hello".view(start_offset=1, end_offset=4)
-  inspect(
+  debug_inspect(
     v.to_json(),
     content=(
       #|String("ell")

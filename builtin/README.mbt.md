@@ -229,13 +229,13 @@ Basic JSON operations:
 test "json" {
   // JSON values
   let json_null = null
-  inspect(json_null, content="Null")
+  @debug.debug_inspect(json_null, content="Null")
   let json_bool = true.to_json()
-  inspect(json_bool, content="True")
+  @debug.debug_inspect(json_bool, content="True")
   let json_number = (42 : Int).to_json()
-  inspect(json_number, content="Number(42)")
+  @debug.debug_inspect(json_number, content="Number(42)")
   let json_string = "hello".to_json()
-  inspect(
+  @debug.debug_inspect(
     json_string,
     content=(
       #|String("hello")

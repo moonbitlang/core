@@ -30,7 +30,7 @@ pub fn[A] Vector::new() -> Vector[A] {
 /// ```mbt check
 /// test {
 ///   let v = @vector.singleton(42)
-///   assert_eq(v, @vector.from_array([42]))
+///   @debug.assert_eq(v, @vector.from_array([42]))
 ///   assert_eq(v.length(), 1)
 /// }
 /// ```
@@ -91,7 +91,7 @@ pub fn[A] Vector::makei(len : Int, f : (Int) -> A raise?) -> Vector[A] raise? {
 /// ```mbt check
 /// test {
 ///   let v = @vector.Vector([1, 2, 3])
-///   assert_eq(v, @vector.from_array([1, 2, 3]))
+///   @debug.assert_eq(v, @vector.from_array([1, 2, 3]))
 /// }
 /// ```
 #alias(from_array)
@@ -277,7 +277,7 @@ pub fn[A : Eq] Vector::contains(self : Vector[A], value : A) -> Bool {
 /// ```mbt check
 /// test {
 ///   let v = @vector.from_array([1, 2, 3, 4, 5])
-///   assert_eq(v.set(1, 10), @vector.from_array([1, 10, 3, 4, 5]))
+///   @debug.assert_eq(v.set(1, 10), @vector.from_array([1, 10, 3, 4, 5]))
 /// }
 /// ```
 pub fn[A] Vector::set(self : Vector[A], index : Int, value : A) -> Vector[A] {
@@ -317,7 +317,7 @@ pub fn[A] Vector::set(self : Vector[A], index : Int, value : A) -> Vector[A] {
 /// ```mbt check
 /// test {
 ///   let v = @vector.from_array([1, 2, 3])
-///   assert_eq(v.push(4), @vector.from_array([1, 2, 3, 4]))
+///   @debug.assert_eq(v.push(4), @vector.from_array([1, 2, 3, 4]))
 /// }
 /// ```
 pub fn[A] Vector::push(self : Vector[A], value : A) -> Vector[A] {
@@ -494,7 +494,7 @@ pub fn[A] Vector::iter(self : Vector[A]) -> Iter[A] {
 ///   let arr = []
 ///   let v = @vector.from_array([1, 2, 3, 4, 5])
 ///   v.each(e => arr.push(e))
-///   assert_eq(arr, [1, 2, 3, 4, 5])
+///   @debug.assert_eq(arr, [1, 2, 3, 4, 5])
 /// }
 /// ```
 pub fn[A] Vector::each(self : Vector[A], f : (A) -> Unit raise?) -> Unit raise? {
@@ -511,7 +511,7 @@ pub fn[A] Vector::each(self : Vector[A], f : (A) -> Unit raise?) -> Unit raise? 
 ///   let arr = []
 ///   let v = @vector.from_array([1, 2, 3, 4, 5])
 ///   v.eachi((i, e) => arr.push(i * e))
-///   assert_eq(arr, [0, 2, 6, 12, 20])
+///   @debug.assert_eq(arr, [0, 2, 6, 12, 20])
 /// }
 /// ```
 pub fn[A] Vector::eachi(
@@ -572,7 +572,7 @@ pub fn[A, B] Vector::rev_fold(
 /// ```mbt check
 /// test {
 ///   let v = @vector.from_array([1, 2, 3, 4, 5])
-///   assert_eq(v.map(e => e * 2), @vector.from_array([2, 4, 6, 8, 10]))
+///   @debug.assert_eq(v.map(e => e * 2), @vector.from_array([2, 4, 6, 8, 10]))
 /// }
 /// ```
 pub fn[A, B] Vector::map(
@@ -589,7 +589,7 @@ pub fn[A, B] Vector::map(
 /// ```mbt check
 /// test {
 ///   let v = @vector.from_array([1, 2, 3, 4, 5])
-///   assert_eq(v.filter(x => x % 2 == 0), @vector.from_array([2, 4]))
+///   @debug.assert_eq(v.filter(x => x % 2 == 0), @vector.from_array([2, 4]))
 /// }
 /// ```
 pub fn[A] Vector::filter(
@@ -608,7 +608,7 @@ pub fn[A] Vector::filter(
 /// ```mbt check
 /// test {
 ///   let v = @vector.from_array([1, 2, 3, 4, 5])
-///   assert_eq(v.rev(), @vector.from_array([5, 4, 3, 2, 1]))
+///   @debug.assert_eq(v.rev(), @vector.from_array([5, 4, 3, 2, 1]))
 /// }
 /// ```
 pub fn[A] Vector::rev(self : Vector[A]) -> Vector[A] {

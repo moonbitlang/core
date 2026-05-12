@@ -341,10 +341,10 @@ test "UInt16::mod" {
 
 ///|
 test "UInt16::to_json" {
-  inspect(UInt16::to_json(0), content="Number(0)")
-  inspect(UInt16::to_json(1), content="Number(1)")
-  inspect(UInt16::to_json(66), content="Number(66)")
-  inspect(UInt16::to_json(65535), content="Number(65535)")
+  @debug.debug_inspect(UInt16::to_json(0), content="Number(0)")
+  @debug.debug_inspect(UInt16::to_json(1), content="Number(1)")
+  @debug.debug_inspect(UInt16::to_json(66), content="Number(66)")
+  @debug.debug_inspect(UInt16::to_json(65535), content="Number(65535)")
 }
 
 ///|

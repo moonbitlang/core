@@ -180,13 +180,13 @@ test "error to json" {
     err.to_json()
   }
 
-  inspect(
+  debug_inspect(
     j(ErrWithToJson(42)),
     content=(
       #|Array([String("ErrWithToJson"), Number(42)])
     ),
   )
-  inspect(
+  debug_inspect(
     j(ErrWithoutToJson(42)),
     content=(
       #|String("moonbitlang/core/error_blackbox_test.ErrWithoutToJson.ErrWithoutToJson")

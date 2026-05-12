@@ -104,6 +104,7 @@ test "@hashset.iter" {
 }
 
 ///|
+#warnings("-deprecated")
 test "@hashset.to_string" {
   let set = @hashset.new().add(1).add(3).add(0x0f_ff_ff_ff).add(42)
   let content = set.iter().collect()
@@ -276,16 +277,6 @@ impl Hash for MyString with hash_combine(_self, hasher) {
 ///|
 impl Eq for MyString with equal(self, other) {
   self.0 == other.0
-}
-
-///|
-impl Show for MyString with to_string(self) {
-  self.0
-}
-
-///|
-impl Show for MyString with output(self, logger) {
-  logger.write_string(self.0)
 }
 
 ///|
@@ -468,13 +459,12 @@ test "add duplicate in collision leaf" {
 }
 
 ///|
-#warnings("-deprecated")
 test "collision equal coverage" {
   let a = MyString("a")
   let b = MyString("b")
   let set1 = @hashset.new().add(a).add(b)
   let set2 = @hashset.new().add(b).add(a)
-  @builtin.assert_eq(set1, set2)
+  @debug.assert_eq(set1, set2)
 }
 
 ///|

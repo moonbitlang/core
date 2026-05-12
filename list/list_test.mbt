@@ -678,6 +678,7 @@ test "iter_map_fold" {
 }
 
 ///|
+#warnings("-deprecated")
 test "List::output with non-empty list" {
   let buf = StringBuilder(size_hint=100)
   let list = @list.from_array([1, 2, 3, 4, 5])
@@ -691,6 +692,7 @@ test "List::output with non-empty list" {
 }
 
 ///|
+#warnings("-deprecated")
 test "List::output with empty list" {
   let buf = StringBuilder(size_hint=100)
   let list : @list.List[Int] = @list.empty()
@@ -718,7 +720,7 @@ test "List::to_json with empty list" {
 ///|
 test "List::from_json" {
   for xs in (@quickcheck.samples(20) : Array[@list.List[Int]]) {
-    assert_eq(xs, @json.from_json(xs.to_json()))
+    @debug.assert_eq(xs, @json.from_json(xs.to_json()))
   }
 }
 
@@ -768,7 +770,7 @@ test "List::zip with lists of equal length" {
   let list2 = @list.from_array(["a", "b", "c"])
   let zipped = list1.zip(list2)
   let expected = @list.from_array([(1, "a"), (2, "b"), (3, "c")])
-  assert_eq(zipped, expected)
+  @debug.assert_eq(zipped, expected)
 }
 
 ///|
@@ -970,10 +972,10 @@ test "equality" {
   let l5 = @list.from_array([1, 2, 3, 4])
 
   // Test equality
-  assert_eq(l1, l2)
-  assert_not_eq(l1, l3)
-  assert_not_eq(l1, l4)
-  assert_not_eq(l1, l5)
+  assert_true(l1 == l2)
+  assert_true(l1 != l3)
+  assert_true(l1 != l4)
+  assert_true(l1 != l5)
 }
 
 ///|

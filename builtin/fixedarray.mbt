@@ -508,13 +508,13 @@ pub fn[T, U] FixedArray::map(
 ///|
 test "map" {
   let empty : FixedArray[Unit] = FixedArray::default().map(x => x)
-  assert_eq(empty, [])
+  assert_true(empty == [])
   let simple_arr : FixedArray[_] = [6]
   let simple_doubled = simple_arr.map(x => x * 2)
-  assert_eq(simple_doubled, [12])
+  assert_true(simple_doubled == [12])
   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
   let doubled = arr.map(x => x * 2)
-  assert_eq(doubled, [2, 4, 6, 8, 10])
+  assert_true(doubled == [2, 4, 6, 8, 10])
 }
 
 ///|
@@ -546,13 +546,13 @@ pub fn[T, U] FixedArray::mapi(
 ///|
 test "mapi" {
   let empty : FixedArray[Int] = FixedArray::default().mapi((i, x) => x + i)
-  assert_eq(empty, [])
+  assert_true(empty == [])
   let simple_arr : FixedArray[_] = [6]
   let simple_doubled = simple_arr.mapi((i, x) => x * 2 + i)
-  assert_eq(simple_doubled, [12])
+  assert_true(simple_doubled == [12])
   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
   let doubled = arr.mapi((i, x) => x * 2 + i)
-  assert_eq(doubled, [2, 5, 8, 11, 14])
+  assert_true(doubled == [2, 5, 8, 11, 14])
 }
 
 ///|
@@ -643,7 +643,7 @@ pub fn[T] FixedArray::from_array(array : ArrayView[T]) -> FixedArray[T] {
 ///|
 test "from_array" {
   let array = FixedArray::from_array([1, 2, 3, 4, 5])
-  assert_eq(array, [1, 2, 3, 4, 5])
+  assert_true(array == [1, 2, 3, 4, 5])
 }
 
 ///|
@@ -875,48 +875,48 @@ test "rev in place" {
   {
     let arr : FixedArray[Int] = []
     arr.rev_in_place()
-    assert_eq(arr, [])
+    assert_true(arr == [])
   }
   {
     let arr : FixedArray[_] = [1]
     arr.rev_in_place()
-    assert_eq(arr, [1])
+    assert_true(arr == [1])
   }
   {
     let arr : FixedArray[_] = [1, 2]
     arr.rev_in_place()
-    assert_eq(arr, [2, 1])
+    assert_true(arr == [2, 1])
   }
   {
     let arr : FixedArray[_] = [1, 2, 3, 4, 5]
     arr.rev_in_place()
-    assert_eq(arr, [5, 4, 3, 2, 1])
+    assert_true(arr == [5, 4, 3, 2, 1])
   }
   let arr : FixedArray[_] = [1, 2, 3, 4, 5, 6]
   arr.rev_in_place()
-  assert_eq(arr, [6, 5, 4, 3, 2, 1])
+  assert_true(arr == [6, 5, 4, 3, 2, 1])
 }
 
 ///|
 test "rev" {
   {
     let arr : FixedArray[Int] = []
-    assert_eq(arr.rev(), [])
+    assert_true(arr.rev() == [])
   }
   {
     let arr : FixedArray[_] = [1]
-    assert_eq(arr.rev(), [1])
+    assert_true(arr.rev() == [1])
   }
   {
     let arr : FixedArray[_] = [1, 2]
-    assert_eq(arr.rev(), [2, 1])
+    assert_true(arr.rev() == [2, 1])
   }
   {
     let arr : FixedArray[_] = [1, 2, 3, 4, 5]
-    assert_eq(arr.rev(), [5, 4, 3, 2, 1])
+    assert_true(arr.rev() == [5, 4, 3, 2, 1])
   }
   let arr : FixedArray[_] = [1, 2, 3, 4, 5, 6]
-  assert_eq(arr.rev(), [6, 5, 4, 3, 2, 1])
+  assert_true(arr.rev() == [6, 5, 4, 3, 2, 1])
 }
 
 ///|
@@ -942,20 +942,20 @@ test "swap" {
   {
     let arr : FixedArray[Int] = [1]
     arr.swap(0, 0)
-    assert_eq(arr, [1])
+    assert_true(arr == [1])
   }
   {
     let arr : FixedArray[_] = [1, 2]
     arr.swap(0, 0)
-    assert_eq(arr, [1, 2])
+    assert_true(arr == [1, 2])
     arr.swap(0, 1)
-    assert_eq(arr, [2, 1])
+    assert_true(arr == [2, 1])
   }
   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
   arr.swap(3, 3)
-  assert_eq(arr, [1, 2, 3, 4, 5])
+  assert_true(arr == [1, 2, 3, 4, 5])
   arr.swap(1, 3)
-  assert_eq(arr, [1, 4, 3, 2, 5])
+  assert_true(arr == [1, 4, 3, 2, 5])
 }
 
 ///|
@@ -1038,16 +1038,16 @@ test "fill" {
   {
     let arr : FixedArray[Int] = []
     arr.fill(3)
-    assert_eq(arr, [])
+    assert_true(arr == [])
   }
   {
     let arr : FixedArray[_] = [6]
     arr.fill(5)
-    assert_eq(arr, [5])
+    assert_true(arr == [5])
   }
   let arr : FixedArray[_] = [0, 0, 0, 0, 0]
   arr.fill(3)
-  assert_eq(arr, [3, 3, 3, 3, 3])
+  assert_true(arr == [3, 3, 3, 3, 3])
 }
 
 ///|
@@ -1361,24 +1361,18 @@ pub impl[T] Add for FixedArray[T] with add(self, other) {
 ///|
 test "add" {
   {
-    inspect(([] : FixedArray[Int]) + [], content="[]")
-    inspect(([] : FixedArray[_]) + [1, 2, 3, 4, 5], content="[1, 2, 3, 4, 5]")
-    inspect(([1, 2, 3, 4, 5] : FixedArray[_]) + [], content="[1, 2, 3, 4, 5]")
+    assert_true(([] : FixedArray[Int]) + [] == [])
+    assert_true(([] : FixedArray[_]) + [1, 2, 3, 4, 5] == [1, 2, 3, 4, 5])
+    assert_true(([1, 2, 3, 4, 5] : FixedArray[_]) + [] == [1, 2, 3, 4, 5])
   }
   {
-    inspect(([1] : FixedArray[_]) + [2], content="[1, 2]")
-    inspect(
-      ([1] : FixedArray[_]) + [1, 2, 3, 4, 5],
-      content="[1, 1, 2, 3, 4, 5]",
-    )
-    inspect(
-      ([1, 2, 3, 4, 5] : FixedArray[_]) + [1],
-      content="[1, 2, 3, 4, 5, 1]",
-    )
+    assert_true(([1] : FixedArray[_]) + [2] == [1, 2])
+    assert_true(([1] : FixedArray[_]) + [1, 2, 3, 4, 5] == [1, 1, 2, 3, 4, 5])
+    assert_true(([1, 2, 3, 4, 5] : FixedArray[_]) + [1] == [1, 2, 3, 4, 5, 1])
   }
-  inspect(
-    ([1, 2, 3, 4, 5] : FixedArray[_]) + [6, 7, 8, 9, 10],
-    content="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]",
+  assert_true(
+    ([1, 2, 3, 4, 5] : FixedArray[_]) + [6, 7, 8, 9, 10] ==
+    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
   )
 }
 
@@ -1640,7 +1634,7 @@ pub fn[T] FixedArray::copy(self : FixedArray[T]) -> FixedArray[T] {
 /// test {
 ///   let original = [1, 2, 3]
 ///   let copied = original.copy()
-///   inspect(copied, content="[1, 2, 3]")
+///   @debug.debug_inspect(copied, content="[1, 2, 3]")
 ///   inspect(physical_equal(original, copied), content="false")
 /// }
 /// ```

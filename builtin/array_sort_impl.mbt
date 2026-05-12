@@ -347,7 +347,7 @@ test "fixed_try_bubble_sort" {
   let arr : FixedArray[_] = [8, 7, 6, 5, 4, 3, 2, 1]
   let sorted = fixed_try_bubble_sort(arr.mut_view())
   inspect(sorted, content="true")
-  assert_eq(arr, [1, 2, 3, 4, 5, 6, 7, 8])
+  assert_true(arr == [1, 2, 3, 4, 5, 6, 7, 8])
 }
 
 ///|
@@ -451,13 +451,13 @@ fn[T : Compare] fixed_sift_down(arr : MutArrayView[T], index : Int) -> Unit {
 fn fixed_test_sort(f : (MutArrayView[Int]) -> Unit) -> Unit raise {
   let arr : FixedArray[_] = [5, 4, 3, 2, 1]
   f(arr.mut_view())
-  assert_eq(arr, [1, 2, 3, 4, 5])
+  assert_true(arr == [1, 2, 3, 4, 5])
   let arr : FixedArray[_] = [5, 5, 5, 5, 1]
   f(arr.mut_view())
-  assert_eq(arr, [1, 5, 5, 5, 5])
+  assert_true(arr == [1, 5, 5, 5, 5])
   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
   f(arr.mut_view())
-  assert_eq(arr, [1, 2, 3, 4, 5])
+  assert_true(arr == [1, 2, 3, 4, 5])
   let arr = FixedArray::make(1000, 0)
   for i in 0..<1000 {
     arr[i] = 1000 - i - 1
@@ -471,7 +471,7 @@ fn fixed_test_sort(f : (MutArrayView[Int]) -> Unit) -> Unit raise {
   for i in 0..<1000 {
     expected[i] = i
   }
-  assert_eq(arr, expected)
+  assert_true(arr == expected)
 }
 
 ///|
@@ -493,7 +493,7 @@ test "sort" {
 test "stable_sort" {
   let arr : FixedArray[_] = [5, 1, 3, 4, 2]
   arr.mut_view().stable_sort()
-  assert_eq(arr, [1, 2, 3, 4, 5])
+  assert_true(arr == [1, 2, 3, 4, 5])
   let arr = FixedArray::make(1000, 0)
   for i in 0..<1000 {
     arr[i] = 1000 - i - 1
@@ -507,7 +507,7 @@ test "stable_sort" {
   for i in 0..<1000 {
     expected[i] = i
   }
-  assert_eq(arr, expected)
+  assert_true(arr == expected)
 }
 
 ///|

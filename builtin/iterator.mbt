@@ -1070,6 +1070,7 @@ pub fn[X, Y] Iter2::next(self : Iter2[X, Y]) -> (X, Y)? {
 pub impl[X : Show, Y : Show] Show for Iter2[X, Y]
 
 ///|
+#warnings("-deprecated")
 pub impl[X : Show, Y : Show] Show for Iter2[X, Y] with output(self, logger) {
   self.0.output(logger)
 }

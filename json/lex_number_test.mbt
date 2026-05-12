@@ -39,16 +39,16 @@ test "lex_zero invalid case" {
 ///|
 test "parse numbers" {
   // Basic float parsing
-  @builtin.inspect(@json.parse("123.45"), content="Number(123.45)")
-  @builtin.inspect(@json.parse("-123.45"), content="Number(-123.45)")
+  debug_inspect(@json.parse("123.45"), content="Number(123.45)")
+  debug_inspect(@json.parse("-123.45"), content="Number(-123.45)")
 
   // Exponential notation
   // Note: The actual format depends on the implementation details of Double.to_string()
   let exp_plus = @json.parse("123.45e+10")
-  @builtin.inspect(exp_plus, content="Number(1234500000000)")
+  debug_inspect(exp_plus, content="Number(1234500000000)")
   @builtin.inspect(exp_plus.stringify(), content="1234500000000")
   let exp_minus = @json.parse("123.45e-10")
-  @builtin.inspect(exp_minus, content="Number(1.2345e-8)")
+  debug_inspect(exp_minus, content="Number(1.2345e-8)")
   @builtin.inspect(exp_minus.stringify(), content="1.2345e-8")
   let exp_upper_plus = @json.parse("123.45E+10")
   @builtin.inspect(exp_upper_plus.stringify(), content="1234500000000")
@@ -79,17 +79,17 @@ test "parse and stringify large integers" {
   // Test integers at Int boundaries
   let min_int = "-2147483648" // Int.min_value
   let parsed_min = @json.parse("\{min_int}")
-  @builtin.inspect(parsed_min, content="Number(-2147483648)")
+  debug_inspect(parsed_min, content="Number(-2147483648)")
   @builtin.inspect(parsed_min.stringify(), content="-2147483648")
   let max_int = "2147483647" // Int.max_value
   let parsed_max = @json.parse("\{max_int}")
-  @builtin.inspect(parsed_max, content="Number(2147483647)")
+  debug_inspect(parsed_max, content="Number(2147483647)")
   @builtin.inspect(parsed_max.stringify(), content="2147483647")
 
   // Test integers beyond safe JavaScript integer precision (±2^53)
   let beyond_js_safe = "9007199254740993" // 2^53 + 1
   let parsed_beyond = @json.parse(beyond_js_safe)
-  @builtin.inspect(
+  debug_inspect(
     parsed_beyond,
     content=(
       #|Number(Infinity, repr=Some("9007199254740993"))
@@ -100,7 +100,7 @@ test "parse and stringify large integers" {
   // Test very large integers
   let very_large = "12345678901234567890123456789"
   let parsed_large = @json.parse(very_large)
-  @builtin.inspect(
+  debug_inspect(
     parsed_large,
     content=(
       #|Number(Infinity, repr=Some("12345678901234567890123456789"))
@@ -116,10 +116,13 @@ test "parse and stringify large integers" {
 test "parse and stringify large double" {
   let very_large = "10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000003.141592653589793238462643383279"
   let parsed_large = @json.parse(very_large)
-  @builtin.inspect(
+  debug_inspect(
     parsed_large,
     content=(
-      #|Number(Infinity, repr=Some("10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000003.141592653589793238462643383279"))
+      #|Number(
+      #|  Infinity,
+      #|  repr=Some("10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000003.141592653589793238462643383279"),
+      #|)
     ),
   )
 }
@@ -130,28 +133,31 @@ test "parse number with huge exponent" {
   // lexer as a parse failure, so the value is preserved as `Infinity` with the
   // original textual representation rather than being silently rounded.
   let huge_pos = "1e999999999999999999999999999999999999"
-  @builtin.inspect(
+  debug_inspect(
     @json.parse(huge_pos),
     content=(
       #|Number(Infinity, repr=Some("1e999999999999999999999999999999999999"))
     ),
   )
   let huge_neg = "-1e999999999999999999999999999999999999"
-  @builtin.inspect(
+  debug_inspect(
     @json.parse(huge_neg),
     content=(
-      #|Number(-Infinity, repr=Some("-1e999999999999999999999999999999999999"))
+      #|Number(
+      #|  -Infinity,
+      #|  repr=Some("-1e999999999999999999999999999999999999"),
+      #|)
     ),
   )
   let tiny_pos = "1e-999999999999999999999999999999999999"
-  @builtin.inspect(
+  debug_inspect(
     @json.parse(tiny_pos),
     content=(
       #|Number(0)
     ),
   )
   let tiny_neg = "-1e-999999999999999999999999999999999999"
-  @builtin.inspect(
+  debug_inspect(
     @json.parse(tiny_neg),
     content=(
       #|Number(0)

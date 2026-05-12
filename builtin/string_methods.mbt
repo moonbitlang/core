@@ -453,7 +453,7 @@ pub fn StringView::strip_suffix(
 /// test {
 ///   let view = "Hello🤣xa"[1:-1]
 ///   let chars = view.to_array()
-///   debug_inspect(chars, content="['e', 'l', 'l', 'o', '🤣', 'x']")
+///   @debug.debug_inspect(chars, content="['e', 'l', 'l', 'o', '🤣', 'x']")
 /// }
 /// ```
 pub fn StringView::to_array(self : StringView) -> Array[Char] {
@@ -509,13 +509,13 @@ test "View::strip_suffix" {
 test "View::to_array" {
   let view = "Hello🤣"[:]
   let chars = view.to_array()
-  assert_eq(chars, ['H', 'e', 'l', 'l', 'o', '🤣'])
+  assert_true(chars == ['H', 'e', 'l', 'l', 'o', '🤣'])
   let empty_view = ""[:]
   let empty_chars = empty_view.to_array()
-  assert_eq(empty_chars, [])
+  assert_true(empty_chars == [])
   let sub_view = "Hello World"[6:11] // "World"
   let sub_chars = sub_view.to_array()
-  assert_eq(sub_chars, ['W', 'o', 'r', 'l', 'd'])
+  assert_true(sub_chars == ['W', 'o', 'r', 'l', 'd'])
 }
 
 ///|
@@ -1335,33 +1335,41 @@ pub fn String::rev_after(self : String, needle : StringView) -> StringView? {
 
 ///|
 test "split" {
-  assert_eq("a,b,c".split(",").map(x => x.to_owned()).collect(), ["a", "b", "c"])
-  assert_eq("a,b,c".split("").map(x => x.to_owned()).collect(), [
-    "a", ",", "b", ",", "c",
-  ])
-  assert_eq(
-    "apple::orange::banana".split("::").map(x => x.to_owned()).collect(),
+  assert_true(
+    "a,b,c".split(",").map(x => x.to_owned()).collect() == ["a", "b", "c"],
+  )
+  assert_true(
+    "a,b,c".split("").map(x => x.to_owned()).collect() ==
+    ["a", ",", "b", ",", "c"],
+  )
+  assert_true(
+    "apple::orange::banana".split("::").map(x => x.to_owned()).collect() ==
     ["apple", "orange", "banana"],
   )
-  assert_eq("abc".split("").map(x => x.to_owned()).collect(), ["a", "b", "c"])
-  assert_eq("hello".split(",").map(x => x.to_owned()).collect(), ["hello"])
-  assert_eq(",a,b,c".split(",").map(x => x.to_owned()).collect(), [
-    "", "a", "b", "c",
-  ])
-  assert_eq("a,b,c,".split(",").map(x => x.to_owned()).collect(), [
-    "a", "b", "c", "",
-  ])
-  assert_eq("a,b,c".split("").map(x => x.to_owned()).collect(), [
-    "a", ",", "b", ",", "c",
-  ])
-  assert_eq("".split("").map(x => x.to_owned()).collect(), [])
-  assert_eq("".split(",").map(x => x.to_owned()).collect(), [""])
-  assert_eq("😀,😃,😄".split(",").map(x => x.to_owned()).collect(), [
-    "😀", "😃", "😄",
-  ])
-  assert_eq("a😀b😀c".split("😀").map(x => x.to_owned()).collect(), [
-    "a", "b", "c",
-  ])
+  assert_true(
+    "abc".split("").map(x => x.to_owned()).collect() == ["a", "b", "c"],
+  )
+  assert_true("hello".split(",").map(x => x.to_owned()).collect() == ["hello"])
+  assert_true(
+    ",a,b,c".split(",").map(x => x.to_owned()).collect() == ["", "a", "b", "c"],
+  )
+  assert_true(
+    "a,b,c,".split(",").map(x => x.to_owned()).collect() == ["a", "b", "c", ""],
+  )
+  assert_true(
+    "a,b,c".split("").map(x => x.to_owned()).collect() ==
+    ["a", ",", "b", ",", "c"],
+  )
+  assert_true("".split("").map(x => x.to_owned()).collect() == [])
+  assert_true("".split(",").map(x => x.to_owned()).collect() == [""])
+  assert_true(
+    "😀,😃,😄".split(",").map(x => x.to_owned()).collect() ==
+    ["😀", "😃", "😄"],
+  )
+  assert_true(
+    "a😀b😀c".split("😀").map(x => x.to_owned()).collect() ==
+    ["a", "b", "c"],
+  )
 }
 
 ///|
@@ -1791,11 +1799,11 @@ pub fn[A] String::fold(
 
 ///|
 test "fold" {
-  assert_eq(
+  assert_true(
     "hello".fold(init=[], (acc, c) => {
       acc.push(c)
       acc
-    }),
+    }) ==
     ['h', 'e', 'l', 'l', 'o'],
   )
   assert_eq(
@@ -1812,7 +1820,7 @@ test "fold with raise" {
     }
     acc + 1
   })
-  inspect(result, content="Err(Failure(\"found l\"))")
+  assert_true(result is Err(Failure("found l")))
 }
 
 ///|
@@ -1842,11 +1850,11 @@ pub fn[A] String::rev_fold(
 
 ///|
 test "rev_fold" {
-  assert_eq(
+  assert_true(
     "hello".rev_fold(init=[], (acc, c) => {
       acc.push(c)
       acc
-    }),
+    }) ==
     ['o', 'l', 'l', 'e', 'h'],
   )
   assert_eq(
@@ -1863,7 +1871,7 @@ test "rev_fold with raise" {
     }
     acc + 1
   })
-  inspect(result, content="Err(Failure(\"found l\"))")
+  assert_true(result is Err(Failure("found l")))
 }
 
 ///|

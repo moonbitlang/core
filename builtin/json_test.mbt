@@ -15,16 +15,16 @@
 ///|
 test "Json default value" {
   let j = @builtin.Json::default()
-  inspect(j, content="False")
+  debug_inspect(j, content="False")
 }
 
 ///|
 test "Json null and bool equality" {
   let n1 = Json::null()
   let n2 = Json::null()
-  inspect(n1 == n2, content="true")
-  inspect(false.to_json() == false.to_json(), content="true")
-  inspect(Json::null(), content="Null")
+  debug_inspect(n1 == n2, content="true")
+  debug_inspect(false.to_json() == false.to_json(), content="true")
+  debug_inspect(Json::null(), content="Null")
 }
 
 ///|
@@ -32,8 +32,8 @@ test "Json number equality" {
   let a = Json::number(1.5)
   let b = Json::number(1.5)
   let c = Json::number(2.0)
-  inspect(a == b, content="true")
-  inspect(a == c, content="false")
+  debug_inspect(a == b, content="true")
+  debug_inspect(a == c, content="false")
 }
 
 ///|
@@ -41,8 +41,8 @@ test "Json string equality" {
   let a = Json::string("hi")
   let b = Json::string("hi")
   let c = Json::string("bye")
-  inspect(a == b, content="true")
-  inspect(a == c, content="false")
+  debug_inspect(a == b, content="true")
+  debug_inspect(a == c, content="false")
 }
 
 ///|
@@ -50,8 +50,8 @@ test "Json array equality" {
   let a = Json::array([Json::number(1), Json::string("x")])
   let b = Json::array([Json::number(1), Json::string("x")])
   let c = Json::array([Json::number(2)])
-  inspect(a == b, content="true")
-  inspect(a == c, content="false")
+  debug_inspect(a == b, content="true")
+  debug_inspect(a == c, content="false")
 }
 
 ///|
@@ -59,34 +59,34 @@ test "Json object equality" {
   let a = Json::object({ "x": Json::number(1), "y": Json::string("a") })
   let b = Json::object({ "x": Json::number(1), "y": Json::string("a") })
   let c = Json::object({ "x": Json::number(2) })
-  inspect(a == b, content="true")
-  inspect(a == c, content="false")
+  debug_inspect(a == b, content="true")
+  debug_inspect(a == c, content="false")
 }
 
 ///|
 test "Json equality mismatch" {
   let a = Json::null()
   let b = Json::string("x")
-  inspect(a == b, content="false")
+  debug_inspect(a == b, content="false")
 }
 
 ///|
 test "Int64 to_json" {
   let i : Int64 = 42L
-  inspect(i.to_json(), content="String(\"42\")")
+  debug_inspect(i.to_json(), content="String(\"42\")")
 }
 
 ///|
 test "UInt to_json" {
   let x = 42U
   let json = UInt::to_json(x)
-  inspect(json, content="Number(42)")
+  debug_inspect(json, content="Number(42)")
 }
 
 ///|
 test "double to json with positive infinity" {
   let pos_inf = 1.0 / 0.0
-  inspect(
+  debug_inspect(
     pos_inf.to_json(),
     content=(
       #|String("Infinity")
@@ -98,7 +98,7 @@ test "double to json with positive infinity" {
 ///|
 test "double to json with negative infinity" {
   let neg_inf = -1.0 / 0.0
-  inspect(
+  debug_inspect(
     neg_inf.to_json(),
     content=(
       #|String("-Infinity")
@@ -112,62 +112,62 @@ test "double to json with negative infinity" {
 test "test_float_to_json" {
   let float : Float = 3.14
   let json_val = float.to_json()
-  inspect(json_val, content="Number(3.140000104904175)")
+  debug_inspect(json_val, content="Number(3.140000104904175)")
 }
 
 ///|
 test "to_json on empty fixed array" {
   let arr : FixedArray[Int] = FixedArray::make(0, 0)
-  inspect(arr.to_json(), content="Array([])")
+  debug_inspect(arr.to_json(), content="Array([])")
 }
 
 ///|
 test "test map with string values" {
   let m : Map[String, Int] = {}
-  inspect(m.to_json(), content="Object({})")
+  debug_inspect(m.to_json(), content="Object({})")
 }
 
 ///|
 test "Option::to_json with None" {
   let none : Int? = None
-  inspect(none.to_json(), content="Null")
+  debug_inspect(none.to_json(), content="Null")
 }
 
 ///|
 test "Option::to_json with Some value" {
   let some : Int? = Some(42)
-  inspect(some.to_json(), content="Array([Number(42)])")
+  debug_inspect(some.to_json(), content="Array([Number(42)])")
 }
 
 ///|
 test "Result to_json with Ok value" {
   let ok : Result[Int, String] = Ok(42)
-  inspect(ok.to_json(), content="Object({\"Ok\": Number(42)})")
+  debug_inspect(ok.to_json(), content="Object({ \"Ok\": Number(42) })")
 }
 
 ///|
 test "Unit::to_json" {
   let r = ().to_json()
-  inspect(r, content="Null")
+  debug_inspect(r, content="Null")
 }
 
 ///|
 test "Bool::to_json false" {
-  inspect(false.to_json(), content="False")
+  debug_inspect(false.to_json(), content="False")
 }
 
 ///|
 test "test UInt64::to_json" {
   let num : UInt64 = UInt64::default()
   let json = num.to_json()
-  inspect(json, content="String(\"0\")")
+  debug_inspect(json, content="String(\"0\")")
 }
 
 ///|
 test "escape control characters" {
   let str = "abc\u{01}def" // Control character with code 1
   let json = str.to_json()
-  inspect(
+  debug_inspect(
     json,
     content=(
       #|String("abc\u{01}def")
@@ -179,7 +179,7 @@ test "escape control characters" {
 test "test carriage return and backspace" {
   let test_string = "CR\rBS\b"
   let json = test_string.to_json()
-  inspect(
+  debug_inspect(
     json,
     content=(
       #|String("CR\rBS\b")
@@ -191,7 +191,7 @@ test "test carriage return and backspace" {
 test "test form feed" {
   let test_string = "Form\u000CFeed"
   let json = test_string.to_json()
-  inspect(
+  debug_inspect(
     json,
     content=(
       #|String("Form\u{0c}Feed")
@@ -202,13 +202,13 @@ test "test form feed" {
 ///|
 test "to_json BigInt" {
   let n = BigInt::from_int(42)
-  inspect(BigInt::to_json(n), content="String(\"42\")")
+  debug_inspect(BigInt::to_json(n), content="String(\"42\")")
 }
 
 ///|
 test "Result to_json with Err value" {
   let err : Result[Int, String] = Err("error")
-  inspect(err.to_json(), content="Object({\"Err\": String(\"error\")})")
+  debug_inspect(err.to_json(), content="Object({ \"Err\": String(\"error\") })")
 }
 
 ///|
@@ -228,14 +228,14 @@ test "to_hex_digit" {
 test "Char::to_json converts char to JSON string" {
   let c = 'A'
   let json = c.to_json()
-  inspect(json, content="String(\"A\")")
+  debug_inspect(json, content="String(\"A\")")
 }
 
 ///|
 test "Byte::to_json" {
-  inspect(b'\x00'.to_json(), content="Number(0)")
-  inspect(b'\xff'.to_json(), content="Number(255)")
-  inspect(b'\x42'.to_json(), content="Number(66)")
+  debug_inspect(b'\x00'.to_json(), content="Number(0)")
+  debug_inspect(b'\xff'.to_json(), content="Number(255)")
+  debug_inspect(b'\x42'.to_json(), content="Number(66)")
 }
 
 ///|

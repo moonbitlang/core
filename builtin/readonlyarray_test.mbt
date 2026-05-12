@@ -93,12 +93,12 @@ test "ReadOnlyArray trait implementations" {
   let empty : ReadOnlyArray[Int] = ReadOnlyArray::default()
   inspect(empty.length(), content="0")
 
-  // Test Show
+  // Test Debug
   let arr : ReadOnlyArray[Int] = [1, 2, 3]
   debug_inspect(
-    arr.to_string(),
+    arr,
     content=(
-      #|"[1, 2, 3]"
+      #|<ReadOnlyArray: [1, 2, 3]>
     ),
   )
 

@@ -387,22 +387,22 @@ test "bigint" {
 test "jsonvalue" {
   let u = Json::string("str")
   let v : Json = @json.from_json(u)
-  inspect(v, content="String(\"str\")")
+  debug_inspect(v, content="String(\"str\")")
   let u = Json::number(123)
   let v : Json = @json.from_json(u)
-  inspect(v, content="Number(123)")
+  debug_inspect(v, content="Number(123)")
   let u = Json::boolean(true)
   let v : Json = @json.from_json(u)
-  inspect(v, content="True")
+  debug_inspect(v, content="True")
   let u = Json::boolean(false)
   let v : Json = @json.from_json(u)
-  inspect(v, content="False")
+  debug_inspect(v, content="False")
   let u = null
   let v : Json = @json.from_json(u)
-  inspect(v, content="Null")
+  debug_inspect(v, content="Null")
   let u = Json::array([Json::number(1), Json::string("str")])
   let v : Json = @json.from_json(u)
-  inspect(
+  debug_inspect(
     v,
     content=(
       #|Array([Number(1), String("str")])
@@ -410,10 +410,10 @@ test "jsonvalue" {
   )
   let u = Json::object({ "x": Json::number(1) })
   let v : Json = @json.from_json(u)
-  inspect(
+  debug_inspect(
     v,
     content=(
-      #|Object({"x": Number(1)})
+      #|Object({ "x": Number(1) })
     ),
   )
 }
@@ -527,7 +527,7 @@ test "uint64 roundtrip" {
 ///|
 test "unicode" {
   let u = "\u{1F600}".to_json()
-  inspect(
+  debug_inspect(
     u,
     content=(
       #|String("😀")
@@ -553,7 +553,7 @@ test "unicode" {
 ///|
 test "char to/from json roundtrip" {
   let u = 'a'.to_json()
-  inspect(
+  debug_inspect(
     u,
     content=(
       #|String("a")
@@ -564,7 +564,7 @@ test "char to/from json roundtrip" {
 
   // emoji char roundtrip
   let u = '😀'.to_json()
-  inspect(
+  debug_inspect(
     u,
     content=(
       #|String("😀")
@@ -575,7 +575,7 @@ test "char to/from json roundtrip" {
 
   // jdk char roundtrip
   let u = '中'.to_json()
-  inspect(
+  debug_inspect(
     u,
     content=(
       #|String("中")

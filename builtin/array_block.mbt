@@ -41,7 +41,7 @@
 ///   let src = [1, 2, 3, 4, 5]
 ///   let dst = [0, 0, 0, 0, 0]
 ///   Array::unsafe_blit(dst, 1, src, 2, 2)
-///   debug_inspect(dst, content="[0, 3, 4, 0, 0]")
+///   @debug.debug_inspect(dst, content="[0, 3, 4, 0, 0]")
 /// }
 /// ```
 ///
@@ -88,7 +88,7 @@ pub fn[A] Array::unsafe_blit(
 ///     src[i] = i + 1
 ///   }
 ///   Array::unsafe_blit_fixed(dst, 1, src, 0, 2)
-///   debug_inspect(dst, content="[0, 1, 2, 0, 0]")
+///   @debug.debug_inspect(dst, content="[0, 1, 2, 0, 0]")
 /// }
 /// ```
 pub fn[A] Array::unsafe_blit_fixed(
@@ -129,7 +129,7 @@ pub fn[A] Array::unsafe_blit_fixed(
 ///   let src = [1, 2, 3, 4, 5]
 ///   let dst = [0, 0]
 ///   src[:3].blit_to(dst, dst_offset=1)
-///   debug_inspect(dst, content="[0, 1, 2, 3]")
+///   @debug.debug_inspect(dst, content="[0, 1, 2, 3]")
 /// }
 /// ```
 ///
@@ -180,7 +180,7 @@ pub fn[A] Array::blit_to(
 ///   let view = src[1:4] // view = [2, 3, 4]
 ///   let dst = [0, 0]
 ///   view.blit_to(dst, dst_offset=1)
-///   debug_inspect(dst, content="[0, 2, 3, 4]")
+///   @debug.debug_inspect(dst, content="[0, 2, 3, 4]")
 /// }
 /// ```
 ///
@@ -212,11 +212,11 @@ test "Array::blit_to/basic" {
   let src = [1, 2, 3, 4, 5]
   let dst = [0, 0, 0, 0, 0]
   src[1:4].blit_to(dst, dst_offset=2)
-  inspect(dst, content="[0, 0, 2, 3, 4]")
+  assert_true(dst == [0, 0, 2, 3, 4])
   let src = [1, 2, 3, 4, 5]
   let dst = [0, 0, 0, 0, 0]
   src[0:3].blit_to(dst)
-  inspect(dst, content="[1, 2, 3, 0, 0]")
+  assert_true(dst == [1, 2, 3, 0, 0])
 }
 
 ///|
@@ -224,7 +224,7 @@ test "Array::blit_to/zero_length" {
   let src = [1, 2, 3]
   let dst = [4, 5, 6]
   src[0:0].blit_to(dst)
-  inspect(dst, content="[4, 5, 6]")
+  assert_true(dst == [4, 5, 6])
 }
 
 ///|
@@ -232,7 +232,7 @@ test "Array::blit_to/grow_destination" {
   let src = [1, 2, 3, 4, 5]
   let dst = [0, 0]
   src[0:3].blit_to(dst, dst_offset=1)
-  inspect(dst, content="[0, 1, 2, 3]")
+  assert_true(dst == [0, 1, 2, 3])
 }
 
 ///|
@@ -241,19 +241,19 @@ test "Array::blit_to/edge_cases" {
   let src = [1, 2, 3, 4, 5]
   let dst = [0, 0, 0, 0, 0]
   src[1:3].blit_to(dst, dst_offset=2)
-  inspect(dst, content="[0, 0, 2, 3, 0]")
+  assert_true(dst == [0, 0, 2, 3, 0])
 
   // Test when src and dst are the same array
   src[0:2].blit_to(src, dst_offset=3)
-  inspect(src, content="[1, 2, 3, 1, 2]")
+  assert_true(src == [1, 2, 3, 1, 2])
 
   // Test with len equal to 0
   src[0:0].blit_to(dst, dst_offset=0)
-  inspect(dst, content="[0, 0, 2, 3, 0]")
+  assert_true(dst == [0, 0, 2, 3, 0])
 
   // Test with len equal to the length of src
   src[0:5].blit_to(dst)
-  inspect(dst, content="[1, 2, 3, 1, 2]")
+  assert_true(dst == [1, 2, 3, 1, 2])
 }
 
 ///|
@@ -300,15 +300,15 @@ test "Array::blit_to - random cases" {
 
   // Random len, src_offset, and dst_offset
   src[2:4].blit_to(dst, dst_offset=1)
-  inspect(dst, content="[0, 30, 40, 0, 0]")
+  assert_true(dst == [0, 30, 40, 0, 0])
 
   // Another random case
   src[1:4].blit_to(dst, dst_offset=2)
-  inspect(dst, content="[0, 30, 20, 30, 40]")
+  assert_true(dst == [0, 30, 20, 30, 40])
 
   // Yet another random case
   src[4:5].blit_to(dst, dst_offset=4)
-  inspect(dst, content="[0, 30, 20, 30, 50]")
+  assert_true(dst == [0, 30, 20, 30, 50])
 }
 
 ///|
@@ -318,15 +318,15 @@ test "Array::blit_to - boundary cases" {
 
   // Test with src_offset at the end of src
   src[4:5].blit_to(dst, dst_offset=0)
-  inspect(dst, content="[5, 0, 0, 0, 0]")
+  assert_true(dst == [5, 0, 0, 0, 0])
 
   // Test with dst_offset at the end of dst
   src[0:1].blit_to(dst, dst_offset=4)
-  inspect(dst, content="[5, 0, 0, 0, 1]")
+  assert_true(dst == [5, 0, 0, 0, 1])
 
   // Test with len equal to the remaining length of src
   src[3:5].blit_to(dst, dst_offset=3)
-  inspect(dst, content="[5, 0, 0, 4, 5]")
+  assert_true(dst == [5, 0, 0, 4, 5])
 }
 
 ///|
@@ -334,7 +334,7 @@ test "Array::unsafe_blit_fixed" {
   let src = FixedArray::make(3, 1) // Create a FixedArray with 3 elements of value 1
   let dst = Array::make(5, 0) // Create an Array with 5 elements of value 0
   Array::unsafe_blit_fixed(dst, 1, src, 0, 2) // Copy 2 elements from src[0] to dst[1]
-  inspect(dst, content="[0, 1, 1, 0, 0]")
+  assert_true(dst == [0, 1, 1, 0, 0])
 }
 
 ///|
@@ -343,7 +343,7 @@ test "ArrayView::blit_to/basic" {
   let view = src[1:4] // view = [2, 3, 4]
   let dst = [0, 0, 0, 0, 0]
   view.blit_to(dst)
-  inspect(dst, content="[2, 3, 4, 0, 0]")
+  assert_true(dst == [2, 3, 4, 0, 0])
 }
 
 ///|
@@ -352,7 +352,7 @@ test "ArrayView::blit_to/with_offset" {
   let view = src[1:4] // view = [2, 3, 4]
   let dst = [0, 0, 0, 0, 0]
   view.blit_to(dst, dst_offset=2)
-  inspect(dst, content="[0, 0, 2, 3, 4]")
+  assert_true(dst == [0, 0, 2, 3, 4])
 }
 
 ///|
@@ -361,7 +361,7 @@ test "ArrayView::blit_to/grow_destination" {
   let view = src[1:4] // view = [2, 3, 4]
   let dst = [0, 0]
   view.blit_to(dst, dst_offset=1)
-  inspect(dst, content="[0, 2, 3, 4]")
+  assert_true(dst == [0, 2, 3, 4])
 }
 
 ///|
@@ -370,7 +370,7 @@ test "ArrayView::blit_to/empty_view" {
   let view = src[2:2] // empty view
   let dst = [0, 0, 0]
   view.blit_to(dst)
-  inspect(dst, content="[0, 0, 0]")
+  assert_true(dst == [0, 0, 0])
 }
 
 ///|
@@ -380,7 +380,7 @@ test "ArrayView::blit_to/nested_view" {
   let view2 = view1[1:4] // [3, 4, 5]
   let dst = [0, 0, 0, 0, 0]
   view2.blit_to(dst, dst_offset=1)
-  inspect(dst, content="[0, 3, 4, 5, 0]")
+  assert_true(dst == [0, 3, 4, 5, 0])
 }
 
 ///|

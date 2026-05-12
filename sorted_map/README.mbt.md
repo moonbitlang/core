@@ -111,8 +111,8 @@ test {
     keys.push(k)
     values.push(v)
   })
-  assert_eq(keys, [1, 2, 3])
-  assert_eq(values, ["one", "two", "three"])
+  @debug.assert_eq(keys, [1, 2, 3])
+  @debug.assert_eq(values, ["one", "two", "three"])
 }
 ```
 
@@ -124,7 +124,7 @@ test {
   let map = @sorted_map.from_array([(3, "three"), (1, "one"), (2, "two")])
   let result = []
   map.eachi((i, k, v) => result.push((i, k, v)))
-  assert_eq(result, [(0, 1, "one"), (1, 2, "two"), (2, 3, "three")])
+  @debug.assert_eq(result, [(0, 1, "one"), (1, 2, "two"), (2, 3, "three")])
 }
 ```
 
@@ -167,8 +167,8 @@ Get all keys or values from the map.
 ///|
 test {
   let map = @sorted_map.from_array([(3, "three"), (1, "one"), (2, "two")])
-  assert_eq(map.keys_as_iter().collect(), [1, 2, 3])
-  assert_eq(map.values_as_iter().collect(), ["one", "two", "three"])
+  @debug.assert_eq(map.keys_as_iter().collect(), [1, 2, 3])
+  @debug.assert_eq(map.values_as_iter().collect(), ["one", "two", "three"])
 }
 ```
 
@@ -178,7 +178,7 @@ Convert the map to an array of key-value pairs.
 ///|
 test {
   let map = @sorted_map.from_array([(3, "three"), (1, "one"), (2, "two")])
-  assert_eq(map.to_array(), [(1, "one"), (2, "two"), (3, "three")])
+  @debug.assert_eq(map.to_array(), [(1, "one"), (2, "two"), (3, "three")])
 }
 ```
 
@@ -198,7 +198,7 @@ test {
   ])
   let range_items = []
   map.range(2, 4).each((k, v) => range_items.push((k, v)))
-  assert_eq(range_items, [(2, "two"), (3, "three"), (4, "four")])
+  @debug.assert_eq(range_items, [(2, "two"), (3, "three"), (4, "four")])
 }
 ```
 
@@ -214,12 +214,12 @@ test {
   let map = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
   let range_items = []
   map.range(0, 10).each((k, v) => range_items.push((k, v)))
-  assert_eq(range_items, [(1, "one"), (2, "two"), (3, "three")])
+  @debug.assert_eq(range_items, [(1, "one"), (2, "two"), (3, "three")])
 
   // Example with invalid range
   let empty_range : Array[(Int, String)] = []
   map.range(10, 5).each((k, v) => empty_range.push((k, v)))
-  assert_eq(empty_range, [])
+  @debug.assert_eq(empty_range, [])
 }
 ```
 
@@ -243,7 +243,7 @@ Use the `iter` method to get an iterator over key-value pairs:
 test {
   let map = @sorted_map.from_array([(3, "three"), (1, "one"), (2, "two")])
   let pairs = map.iter().to_array()
-  assert_eq(pairs, [(1, "one"), (2, "two"), (3, "three")])
+  @debug.assert_eq(pairs, [(1, "one"), (2, "two"), (3, "three")])
 }
 ```
 
@@ -255,7 +255,7 @@ test {
   let map = @sorted_map.from_array([(3, "three"), (1, "one"), (2, "two")])
   let transformed = []
   map.iter2().each((k, v) => transformed.push(k.to_string() + ": " + v))
-  assert_eq(transformed, ["1: one", "2: two", "3: three"])
+  @debug.assert_eq(transformed, ["1: one", "2: two", "3: three"])
 }
 ```
 

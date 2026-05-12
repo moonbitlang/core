@@ -20,7 +20,7 @@
 /// ```mbt check
 /// test {
 ///   let ls : @list.List[Int] = @list.new()
-///   assert_eq(ls, @list.empty())
+///   @debug.assert_eq(ls, @list.empty())
 /// }
 /// ```
 #alias(empty)
@@ -44,7 +44,7 @@ pub fn[A] List::new() -> List[A] {
 /// test {
 ///   let tail = @list.from_array([2, 3, 4])
 ///   let ls = @list.cons(1, tail)
-///   assert_eq(ls, @list.from_array([1, 2, 3, 4]))
+///   @debug.assert_eq(ls, @list.from_array([1, 2, 3, 4]))
 /// }
 /// ```
 #as_free_fn
@@ -63,7 +63,7 @@ pub fn[A] List::cons(head : A, tail : List[A]) -> List[A] {
 /// ```mbt check
 /// test {
 ///   let ls = @list.from_array([2, 3, 4]).prepend(1)
-///   assert_eq(ls, @list.from_array([1, 2, 3, 4]))
+///   @debug.assert_eq(ls, @list.from_array([1, 2, 3, 4]))
 /// }
 /// ```
 #alias(add)
@@ -116,7 +116,7 @@ pub impl[A : ToJson] ToJson for List[A] with to_json(self) {
 /// test {
 ///   let ls = @list.from_array([1, 2, 3])
 ///   let json = ls.to_json()
-///   inspect(json, content="Array([Number(1), Number(2), Number(3)])")
+///   @debug.debug_inspect(json, content="Array([Number(1), Number(2), Number(3)])")
 /// }
 /// ```
 pub fn[A : ToJson] List::to_json(self : List[A]) -> Json {
@@ -159,7 +159,7 @@ pub fn[A : @json.FromJson] List::from_json(
 /// ```mbt check
 /// test {
 ///   let ls = @list.from_array([1, 2, 3, 4, 5])
-///   assert_eq(ls, @list.from_array([1, 2, 3, 4, 5]))
+///   @debug.assert_eq(ls, @list.from_array([1, 2, 3, 4, 5]))
 /// }
 /// ```
 #as_free_fn
@@ -193,7 +193,7 @@ pub fn[A] List::length(self : List[A]) -> Int {
 /// test {
 ///   let arr = []
 ///   @list.from_array([1, 2, 3, 4, 5]).each(x => arr.push(x))
-///   assert_eq(arr, [1, 2, 3, 4, 5])
+///   @debug.assert_eq(arr, [1, 2, 3, 4, 5])
 /// }
 /// ```
 #locals(f)
@@ -218,7 +218,7 @@ pub fn[A] List::each(self : List[A], f : (A) -> Unit raise?) -> Unit raise? {
 /// test {
 ///   let arr = []
 ///   @list.from_array([1, 2, 3, 4, 5]).eachi((i, x) => arr.push("(\{i},\{x})"))
-///   assert_eq(arr, ["(0,1)", "(1,2)", "(2,3)", "(3,4)", "(4,5)"])
+///   @debug.assert_eq(arr, ["(0,1)", "(1,2)", "(2,3)", "(3,4)", "(4,5)"])
 /// }
 /// ```
 #locals(f)
@@ -244,7 +244,7 @@ pub fn[A] List::eachi(
 ///
 /// ```mbt check
 /// test {
-///   assert_eq(
+///   @debug.assert_eq(
 ///     @list.from_array([1, 2, 3, 4, 5]).map(x => x * 2),
 ///     @list.from_array([2, 4, 6, 8, 10]),
 ///   )
@@ -284,7 +284,7 @@ pub fn[A, B] List::map(self : List[A], f : (A) -> B raise?) -> List[B] raise? {
 /// test {
 ///   let ls = @list.from_array([10, 20, 30])
 ///   let result = ls.mapi((i, x) => x + i)
-///   assert_eq(result, @list.from_array([10, 21, 32]))
+///   @debug.assert_eq(result, @list.from_array([10, 21, 32]))
 /// }
 /// ```
 #locals(f)
@@ -320,7 +320,7 @@ pub fn[A, B] List::mapi(
 /// # Example
 /// ```mbt check
 /// test {
-///   assert_eq(
+///   @debug.assert_eq(
 ///     @list.from_array([1, 2, 3, 4, 5]).rev_map(x => x * 2),
 ///     @list.from_array([10, 8, 6, 4, 2]),
 ///   )
@@ -350,7 +350,7 @@ pub fn[A, B] List::rev_map(
 /// test {
 ///   let ls = @list.from_array([1, 2, 3, 4, 5])
 ///   let arr = ls.to_array()
-///   assert_eq(arr, [1, 2, 3, 4, 5])
+///   @debug.assert_eq(arr, [1, 2, 3, 4, 5])
 /// }
 /// ```
 pub fn[A] List::to_array(self : List[A]) -> Array[A] {
@@ -366,7 +366,7 @@ pub fn[A] List::to_array(self : List[A]) -> Array[A] {
 ///
 /// ```mbt check
 /// test {
-///   assert_eq(
+///   @debug.assert_eq(
 ///     @list.from_array([1, 2, 3, 4, 5]).filter(x => x % 2 == 0),
 ///     @list.from_array([2, 4]),
 ///   )
@@ -481,7 +481,7 @@ pub fn[A] List::unsafe_head(self : List[A]) -> A {
 /// test {
 ///   let ls = @list.from_array([1, 2, 3, 4, 5])
 ///   let tail = ls.unsafe_tail()
-///   assert_eq(tail, @list.from_array([2, 3, 4, 5]))
+///   @debug.assert_eq(tail, @list.from_array([2, 3, 4, 5]))
 /// }
 /// ```
 /// 
@@ -572,7 +572,7 @@ pub fn[A] List::last(self : List[A]) -> A? {
 ///   let ls = @list.from_array([1, 2, 3, 4, 5]).concat(
 ///     @list.from_array([6, 7, 8, 9, 10]),
 ///   )
-///   assert_eq(ls, @list.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]))
+///   @debug.assert_eq(ls, @list.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]))
 /// }
 /// ```
 pub fn[A] List::concat(self : List[A], other : List[A]) -> List[A] {
@@ -610,7 +610,7 @@ pub fn[A] List::concat(self : List[A], other : List[A]) -> List[A] {
 ///   let ls = @list.from_array([1, 2, 3, 4, 5]).rev_concat(
 ///     @list.from_array([6, 7, 8, 9, 10]),
 ///   )
-///   assert_eq(ls, @list.from_array([5, 4, 3, 2, 1, 6, 7, 8, 9, 10]))
+///   @debug.assert_eq(ls, @list.from_array([5, 4, 3, 2, 1, 6, 7, 8, 9, 10]))
 /// }
 /// ```
 pub fn[A] List::rev_concat(self : List[A], other : List[A]) -> List[A] {
@@ -629,7 +629,7 @@ pub fn[A] List::rev_concat(self : List[A], other : List[A]) -> List[A] {
 ///
 /// ```mbt check
 /// test {
-///   assert_eq(
+///   @debug.assert_eq(
 ///     @list.from_array([1, 2, 3, 4, 5]).rev(),
 ///     @list.from_array([5, 4, 3, 2, 1]),
 ///   )
@@ -707,12 +707,15 @@ pub fn[A, B] List::foldi(
 ///     @list.from_array([1, 2, 3, 4, 5]),
 ///     @list.from_array([6, 7, 8, 9, 10]),
 ///   )
-///   assert_eq(r, @list.from_array([(1, 6), (2, 7), (3, 8), (4, 9), (5, 10)]))
+///   @debug.assert_eq(
+///     r,
+///     @list.from_array([(1, 6), (2, 7), (3, 8), (4, 9), (5, 10)]),
+///   )
 ///   let r2 = @list.zip(
 ///     @list.from_array([1, 2]),
 ///     @list.from_array([6, 7, 8, 9, 10]),
 ///   )
-///   assert_eq(r2, @list.from_array([(1, 6), (2, 7)]))
+///   @debug.assert_eq(r2, @list.from_array([(1, 6), (2, 7)]))
 /// }
 /// ```
 #as_free_fn
@@ -739,7 +742,7 @@ pub fn[A, B] List::zip(self : List[A], other : List[B]) -> List[(A, B)] {
 /// test {
 ///   let ls = @list.from_array([1, 2, 3])
 ///   let r = ls.flat_map(x => @list.from_array([x, x * 2]))
-///   assert_eq(r, @list.from_array([1, 2, 2, 4, 3, 6]))
+///   @debug.assert_eq(r, @list.from_array([1, 2, 2, 4, 3, 6]))
 /// }
 /// ```
 #locals(f)
@@ -804,7 +807,7 @@ pub fn[A, B] List::flat_map(
 /// test {
 ///   let ls = @list.from_array([4, 2, 2, 6, 3, 1])
 ///   let r = ls.filter_map(x => if x >= 3 { Some(x) } else { None })
-///   assert_eq(r, @list.from_array([4, 6, 3]))
+///   @debug.assert_eq(r, @list.from_array([4, 6, 3]))
 /// }
 /// ```
 #locals(f)
@@ -905,7 +908,7 @@ pub fn[A] List::nth(self : List[A], n : Int) -> A? {
 ///
 /// ```mbt check
 /// test {
-///   assert_eq(@list.repeat(5, 1), @list.from_array([1, 1, 1, 1, 1]))
+///   @debug.assert_eq(@list.repeat(5, 1), @list.from_array([1, 1, 1, 1, 1]))
 /// }
 /// ```
 #as_free_fn
@@ -933,7 +936,10 @@ pub fn[A] List::repeat(n : Int, x : A) -> List[A] {
 /// ```mbt check
 /// test {
 ///   let ls = @list.from_array(["1", "2", "3", "4", "5"]).intersperse("|")
-///   assert_eq(ls, @list.from_array(["1", "|", "2", "|", "3", "|", "4", "|", "5"]))
+///   @debug.assert_eq(
+///     ls,
+///     @list.from_array(["1", "|", "2", "|", "3", "|", "4", "|", "5"]),
+///   )
 /// }
 /// ```
 pub fn[A] List::intersperse(self : List[A], separator : A) -> List[A] {
@@ -986,8 +992,8 @@ pub fn[A] List::is_empty(self : List[A]) -> Bool {
 /// ```mbt check
 /// test {
 ///   let (a, b) = @list.from_array([(1, 2), (3, 4), (5, 6)]).unzip()
-///   assert_eq(a, @list.from_array([1, 3, 5]))
-///   assert_eq(b, @list.from_array([2, 4, 6]))
+///   @debug.assert_eq(a, @list.from_array([1, 3, 5]))
+///   @debug.assert_eq(b, @list.from_array([2, 4, 6]))
 /// }
 /// ```
 pub fn[A, B] List::unzip(self : List[(A, B)]) -> (List[A], List[B]) {
@@ -1024,7 +1030,7 @@ pub fn[A, B] List::unzip(self : List[(A, B)]) -> (List[A], List[B]) {
 ///     @list.from_array([4, 5, 6]),
 ///     @list.from_array([7, 8, 9]),
 ///   ]).flatten()
-///   assert_eq(ls, @list.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9]))
+///   @debug.assert_eq(ls, @list.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9]))
 /// }
 /// ```
 pub fn[A] List::flatten(self : List[List[A]]) -> List[A] {
@@ -1212,7 +1218,7 @@ pub fn[A : Compare] List::minimum(self : List[A]) -> A? {
 /// ```mbt check
 /// test {
 ///   let ls = @list.from_array([1, 123, 52, 3, 6, 0, -6, -76]).sort()
-///   assert_eq(ls, @list.from_array([-76, -6, 0, 1, 3, 6, 52, 123]))
+///   @debug.assert_eq(ls, @list.from_array([-76, -6, 0, 1, 3, 6, 52, 123]))
 /// }
 /// ```
 pub fn[A : Compare] List::sort(self : List[A]) -> List[A] {
@@ -1234,7 +1240,7 @@ pub fn[A : Compare] List::sort(self : List[A]) -> List[A] {
 ///   let a = @list.from_array([1, 2, 3])
 ///   let b = @list.from_array([4, 5, 6])
 ///   let result = a + b
-///   assert_eq(result, @list.from_array([1, 2, 3, 4, 5, 6]))
+///   @debug.assert_eq(result, @list.from_array([1, 2, 3, 4, 5, 6]))
 /// }
 /// ```
 pub impl[A] Add for List[A] with add(self, other) {
@@ -1273,7 +1279,7 @@ pub fn[A : Eq] List::contains(self : List[A], value : A) -> Bool {
 /// ```mbt check
 /// test {
 ///   let r = @list.unfold(init=0, i => if i == 3 { None } else { Some((i, i + 1)) })
-///   assert_eq(r, @list.from_array([0, 1, 2]))
+///   @debug.assert_eq(r, @list.from_array([0, 1, 2]))
 /// }
 /// ```
 #as_free_fn
@@ -1316,7 +1322,7 @@ pub fn[A, S] List::unfold(
 ///     i => if i == 3 { None } else { Some((i, i + 1)) },
 ///     init=0,
 ///   )
-///   assert_eq(r, @list.from_array([2, 1, 0]))
+///   @debug.assert_eq(r, @list.from_array([2, 1, 0]))
 /// }
 /// ```
 #as_free_fn
@@ -1343,7 +1349,7 @@ pub fn[A, S] List::rev_unfold(
 /// test {
 ///   let ls = @list.from_array([1, 2, 3, 4, 5])
 ///   let r = ls.take(3)
-///   assert_eq(r, @list.from_array([1, 2, 3]))
+///   @debug.assert_eq(r, @list.from_array([1, 2, 3]))
 /// }
 /// ```
 pub fn[A] List::take(self : List[A], n : Int) -> List[A] {
@@ -1381,7 +1387,7 @@ pub fn[A] List::take(self : List[A], n : Int) -> List[A] {
 /// test {
 ///   let ls = @list.from_array([1, 2, 3, 4, 5])
 ///   let r = ls.drop(3)
-///   assert_eq(r, @list.from_array([4, 5]))
+///   @debug.assert_eq(r, @list.from_array([4, 5]))
 /// }
 /// ```
 pub fn[A] List::drop(self : List[A], n : Int) -> List[A] {
@@ -1407,7 +1413,7 @@ pub fn[A] List::drop(self : List[A], n : Int) -> List[A] {
 /// test {
 ///   let ls = @list.from_array([1, 2, 3, 4])
 ///   let r = ls.take_while(x => x < 3)
-///   assert_eq(r, @list.from_array([1, 2]))
+///   @debug.assert_eq(r, @list.from_array([1, 2]))
 /// }
 /// ```
 #locals(p)
@@ -1447,7 +1453,7 @@ pub fn[A] List::take_while(
 /// test {
 ///   let ls = @list.from_array([1, 2, 3, 4])
 ///   let r = ls.drop_while(x => x < 3)
-///   assert_eq(r, @list.from_array([3, 4]))
+///   @debug.assert_eq(r, @list.from_array([3, 4]))
 /// }
 /// ```
 #locals(p)
@@ -1477,7 +1483,7 @@ pub fn[A] List::drop_while(
 /// test {
 ///   let ls = @list.from_array([1, 2, 3, 4, 5])
 ///   let r = ls.scan_left((acc, x) => acc + x, init=0)
-///   assert_eq(r, @list.from_array([0, 1, 3, 6, 10, 15]))
+///   @debug.assert_eq(r, @list.from_array([0, 1, 3, 6, 10, 15]))
 /// }
 /// ```
 #locals(f)
@@ -1511,7 +1517,7 @@ pub fn[A, E] List::scan_left(
 /// test {
 ///   let ls = @list.from_array([1, 2, 3, 4, 5])
 ///   let r = ls.scan_right((acc, x) => acc + x, init=0)
-///   assert_eq(r, @list.from_array([15, 14, 12, 9, 5, 0]))
+///   @debug.assert_eq(r, @list.from_array([15, 14, 12, 9, 5, 0]))
 /// }
 /// ```
 pub fn[A, B] List::scan_right(
@@ -1656,7 +1662,7 @@ pub fn[A] List::findi(self : List[A], f : (A, Int) -> Bool raise?) -> A? raise? 
 ///
 /// ```mbt check
 /// test {
-///   assert_eq(
+///   @debug.assert_eq(
 ///     @list.from_array([1, 2, 3, 4, 5]).remove_at(2),
 ///     @list.from_array([1, 2, 4, 5]),
 ///   )
@@ -1695,7 +1701,7 @@ pub fn[A] List::remove_at(self : List[A], index : Int) -> List[A] {
 ///
 /// ```mbt check
 /// test {
-///   assert_eq(
+///   @debug.assert_eq(
 ///     @list.from_array([1, 2, 3, 4, 5]).remove(3),
 ///     @list.from_array([1, 2, 4, 5]),
 ///   )
@@ -1787,7 +1793,7 @@ pub fn[A : Eq] List::is_suffix(self : List[A], suffix : List[A]) -> Bool {
 ///     @list.from_array([7, 8, 9]),
 ///   ])
 ///   let r = ls.intercalate(@list.from_array([0]))
-///   assert_eq(r, @list.from_array([1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9]))
+///   @debug.assert_eq(r, @list.from_array([1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9]))
 /// }
 /// ```
 pub fn[A] List::intercalate(self : List[List[A]], sep : List[A]) -> List[A] {
@@ -1891,7 +1897,7 @@ pub fn[A] List::iter2(self : List[A]) -> Iter2[Int, A] {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let iter = arr.iter()
 ///   let ls = @list.from_iter(iter)
-///   assert_eq(ls, @list.from_array([1, 2, 3, 4, 5]))
+///   @debug.assert_eq(ls, @list.from_array([1, 2, 3, 4, 5]))
 /// }
 /// ```
 #as_free_fn
@@ -1929,7 +1935,7 @@ pub fn[A] List::from_iter(iter : Iter[A]) -> List[A] {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let iter = arr.iter()
 ///   let ls = @list.from_iter_rev(iter)
-///   assert_eq(ls, @list.from_array([5, 4, 3, 2, 1]))
+///   @debug.assert_eq(ls, @list.from_array([5, 4, 3, 2, 1]))
 /// }
 /// ```
 #as_free_fn
@@ -1948,7 +1954,7 @@ pub fn[A] List::from_iter_rev(iter : Iter[A]) -> List[A] {
 ///
 /// ```mbt test
 /// let ls = @list.from_array([1, 2, 3, 4, 5])
-/// assert_eq(ls.to_array(), [1, 2, 3, 4, 5])
+/// @debug.assert_eq(ls.to_array(), [1, 2, 3, 4, 5])
 /// ```
 
 ///|
@@ -1972,7 +1978,7 @@ pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for List[X] with arbit
 /// ```mbt check
 /// test {
 ///   let ls = @list.singleton(42)
-///   assert_eq(ls, @list.from_array([42]))
+///   @debug.assert_eq(ls, @list.from_array([42]))
 ///   assert_eq(ls.length(), 1)
 /// }
 /// ```

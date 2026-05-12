@@ -338,16 +338,6 @@ pub fn[K, V] HashMap::eachi(
 ///
 /// * `self` : The hash map to be converted to string.
 /// * `logger` : The buffer to write the string representation to.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let map = @hashmap.from_array([(1, "one"), (2, "two")])
-///   let array = map.to_array()
-///   assert_eq(map.to_string(), "HashMap::from_array(\{array})")
-/// }
-/// ```
 #deprecated("Use Debug instead of Show for debugging purposes.")
 pub impl[K : Show, V : Show] Show for HashMap[K, V]
 

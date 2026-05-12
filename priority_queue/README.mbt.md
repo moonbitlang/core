@@ -142,7 +142,7 @@ test {
   let pq = @priority_queue.from_array([3, 1, 4, 1, 5])
   let arr = pq.to_array()
   // to_array returns elements sorted by priority (descending)
-  assert_eq(arr, [5, 4, 3, 1, 1])
+  @debug.assert_eq(arr, [5, 4, 3, 1, 1])
 }
 ```
 

@@ -96,7 +96,10 @@ test "error display and json" {
 
   // Error can be converted to JSON
   let error_json = error.to_json()
-  inspect(error_json, content="Array([String(\"MyError\"), Number(42)])")
+  @debug.debug_inspect(
+    error_json,
+    content="Array([String(\"MyError\"), Number(42)])",
+  )
 }
 ```
 

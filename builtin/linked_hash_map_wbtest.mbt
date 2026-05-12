@@ -49,10 +49,7 @@ test "constructor capacity" {
   assert_eq(below_length.length(), 3)
   let above_length = Map([("a", 1), ("b", 2), ("c", 3)], capacity=16)
   assert_eq(above_length.capacity, 16)
-  inspect(
-    above_length.to_array(),
-    content="[(\"a\", 1), (\"b\", 2), (\"c\", 3)]",
-  )
+  assert_true(above_length.to_array() == [("a", 1), ("b", 2), ("c", 3)])
 }
 
 ///|
@@ -178,7 +175,7 @@ test "update_or_default preserves insertion order" {
   m.update_or_default("a", 1, x => x + 1)
   let keys = []
   m.each((k, _v) => keys.push(k))
-  assert_eq(keys, ["b", "a", "c"])
+  assert_true(keys == ["b", "a", "c"])
 }
 
 ///|
@@ -358,71 +355,43 @@ test "iter order" {
 ///|
 test "linked list" {
   let m = {}
-  inspect(m, content="{}")
+  assert_true(m.is_empty())
   m["one"] = 1
   m["two"] = 2
   m["three"] = 3
   m["four"] = 4
   m["five"] = 5
-  inspect(
-    m,
-    content=(
-      #|{"one": 1, "two": 2, "three": 3, "four": 4, "five": 5}
-    ),
+  assert_true(
+    m.to_array() ==
+    [("one", 1), ("two", 2), ("three", 3), ("four", 4), ("five", 5)],
   )
   m.remove("three")
-  inspect(
-    m,
-    content=(
-      #|{"one": 1, "two": 2, "four": 4, "five": 5}
-    ),
+  assert_true(
+    m.to_array() == [("one", 1), ("two", 2), ("four", 4), ("five", 5)],
   )
   m.set("two", 20)
-  inspect(
-    m,
-    content=(
-      #|{"one": 1, "two": 20, "four": 4, "five": 5}
-    ),
+  assert_true(
+    m.to_array() == [("one", 1), ("two", 20), ("four", 4), ("five", 5)],
   )
   m.remove("one")
-  inspect(
-    m,
-    content=(
-      #|{"two": 20, "four": 4, "five": 5}
-    ),
-  )
+  assert_true(m.to_array() == [("two", 20), ("four", 4), ("five", 5)])
   m.remove("five")
-  inspect(
-    m,
-    content=(
-      #|{"two": 20, "four": 4}
-    ),
-  )
+  assert_true(m.to_array() == [("two", 20), ("four", 4)])
   m.remove("two")
-  inspect(
-    m,
-    content=(
-      #|{"four": 4}
-    ),
-  )
+  assert_true(m.to_array() == [("four", 4)])
   m.remove("four")
-  inspect(m, content="{}")
+  assert_true(m.is_empty())
 }
 
 ///|
 test "to_array" {
   let map = { 1: "one", 2: "two", 3: "three" }
-  inspect(
-    map.to_array(),
-    content=(
-      #|[(1, "one"), (2, "two"), (3, "three")]
-    ),
-  )
+  assert_true(map.to_array() == [(1, "one"), (2, "two"), (3, "three")])
   let m : Map[String, Int] = Map([])
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
-  assert_eq(m.to_array(), [("a", 1), ("b", 2), ("c", 3)])
+  assert_true(m.to_array() == [("a", 1), ("b", 2), ("c", 3)])
 }
 
 ///|
@@ -524,6 +493,7 @@ test "equal_2" {
 }
 
 ///|
+#warnings("-deprecated")
 test "to_string" {
   let m = {}
   inspect(m.to_string(), content="{}")

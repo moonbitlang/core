@@ -335,7 +335,7 @@ test "get_nonexistent_key_with_psl" {
 test "from_iter multiple elements iter" {
   let map = @hashmap.from_iter([(1, 1), (2, 2), (3, 3)].iter())
   guard map is { 1: 1, 2: 2, 3: 3, .. } else {
-    fail("Map is not expected: \{map}")
+    fail("Map is not expected: \{@debug.to_repr(map)}")
   }
   inspect(map.length(), content="3")
 }
@@ -469,7 +469,7 @@ test "@hashmap.copy" {
 }
 
 ///|
-fn[K : Hash + Eq + Show, V : Eq + Show] verify_content(
+fn[K : Hash + Eq + Debug, V : Eq + Debug] verify_content(
   map : @hashmap.HashMap[K, V],
   expected : Array[(K, V)],
 ) -> Unit raise {
@@ -477,7 +477,7 @@ fn[K : Hash + Eq + Show, V : Eq + Show] verify_content(
     let (k, v) = entry
     assert_true(
       map.contains_kv(k, v),
-      msg="Key \{k} with value \{v} not found in map \{map}",
+      msg="Key \{@debug.to_repr(k)} with value \{@debug.to_repr(v)} not found in map \{@debug.to_repr(map)}",
     )
   }
   assert_eq(map.length(), expected.length())

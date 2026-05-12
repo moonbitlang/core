@@ -121,7 +121,7 @@ test "try_bubble_sort" {
   let arr : FixedArray[_] = [8, 7, 6, 5, 4, 3, 2, 1]
   let sorted = fixed_try_bubble_sort_by(arr.mut_view(), (a, b) => a - b)
   inspect(sorted, content="true")
-  assert_eq(arr, [1, 2, 3, 4, 5, 6, 7, 8])
+  assert_true(arr == [1, 2, 3, 4, 5, 6, 7, 8])
 }
 
 ///|
@@ -248,7 +248,7 @@ test "sort" {
 test "sort_by" {
   let arr = [5, 1, 3, 4, 2]
   arr.mut_view().sort_by_key(x => -x)
-  assert_eq(arr, [5, 4, 3, 2, 1])
+  assert_true(arr == [5, 4, 3, 2, 1])
 }
 
 ///|

@@ -51,18 +51,30 @@ struct Hello3[A, B] {
 test {
   let h = Hello::{ fieldA: 1, fieldB: "hello", data: { "a": 1, "b": 2 } }
   let j = h.to_json()
-  inspect(
+  debug_inspect(
     j,
     content=(
-      #|Object({"fieldA": Number(1), "fieldB": String("hello"), "data": Object({"a": Number(1), "b": Number(2)})})
+      #|Object(
+      #|  {
+      #|    "fieldA": Number(1),
+      #|    "fieldB": String("hello"),
+      #|    "data": Object({ "a": Number(1), "b": Number(2) }),
+      #|  },
+      #|)
     ),
   )
   let h3 = Hello3::{ fieldAX: 1, fieldB: "hello", data: { 1: 1, 2: 2 } }
   let j3 = h3.to_json()
-  inspect(
+  debug_inspect(
     j3,
     content=(
-      #|Object({"fieldAX": Number(1), "fieldB": String("hello"), "data": Object({"1": Number(1), "2": Number(2)})})
+      #|Object(
+      #|  {
+      #|    "fieldAX": Number(1),
+      #|    "fieldB": String("hello"),
+      #|    "data": Object({ "1": Number(1), "2": Number(2) }),
+      #|  },
+      #|)
     ),
   )
 }

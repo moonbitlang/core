@@ -186,15 +186,20 @@ test {
 }
 ```
 
-### Stringify
+### Debug
 
-SortedSet implements to_string (i.e. Show trait), which allows you to directly output it.
+SortedSet implements Debug, which allows you to inspect its elements in sorted order.
 
 ```mbt check
 ///|
 test {
   let set = @sorted_set.from_array([1, 2, 3])
-  assert_eq(set.to_string(), "@sorted_set.from_array([1, 2, 3])")
+  debug_inspect(
+    set,
+    content=(
+      #|<SortedSet: [1, 2, 3]>
+    ),
+  )
 }
 ```
 
@@ -224,4 +229,3 @@ Choose SortedSet when you need:
 - Elements in sorted order
 - Efficient ordered iteration
 - Logarithmic time operations
-

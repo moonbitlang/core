@@ -57,7 +57,7 @@ test "HAMT::get" {
     }
   }
   for i in 0..<100 {
-    assert_eq((i, map[i]), (i, i))
+    @debug.assert_eq((i, map[i]), (i, i))
   }
 }
 
@@ -177,6 +177,7 @@ test "HAMT::from_iter empty" {
 }
 
 ///|
+#warnings("-deprecated")
 test "HAMT::to_string" {
   let map = @hashmap.new()
     .add(1, 1)
@@ -668,8 +669,8 @@ test "HAMT::remove from collision bucket non-primary key" {
 test "HAMT::union with empty" {
   let m1 = @hashmap.from_array([(1, 1)])
   let m2 = @hashmap.new()
-  assert_eq(m1.union(m2), m1)
-  assert_eq(m2.union(m1), m1)
+  @debug.assert_eq(m1.union(m2), m1)
+  @debug.assert_eq(m2.union(m1), m1)
 }
 
 ///|
@@ -908,7 +909,7 @@ test "HAMT::intersection_with collision no overlap" {
 test "HAMT::difference with empty" {
   let m1 = @hashmap.from_array([(1, 1)])
   let m2 = @hashmap.new()
-  assert_eq(m1.difference(m2), m1)
+  @debug.assert_eq(m1.difference(m2), m1)
   assert_eq(m2.difference(m1).length(), 0)
 }
 

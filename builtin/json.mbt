@@ -83,7 +83,7 @@ pub let null : Json = Null
 ///
 /// ```mbt check
 /// test {
-///   inspect(Json::number(3.14), content="Number(3.14)")
+///   @debug.debug_inspect(Json::number(3.14), content="Number(3.14)")
 ///   inspect(
 ///     Json::number(@double.infinity, repr="1e9999999999999999999999999999999").stringify(),
 ///     content="1e9999999999999999999999999999999",
@@ -107,7 +107,7 @@ pub fn Json::number(number : Double, repr? : String) -> Json {
 ///
 /// ```mbt check
 /// test {
-///   inspect(Json::string("hello"), content="String(\"hello\")")
+///   @debug.debug_inspect(Json::string("hello"), content="String(\"hello\")")
 /// }
 /// ```
 pub fn Json::string(string : String) -> Json {
@@ -127,8 +127,8 @@ pub fn Json::string(string : String) -> Json {
 ///
 /// ```mbt check
 /// test {
-///   inspect(Json::boolean(true), content="True")
-///   inspect(Json::boolean(false), content="False")
+///   @debug.debug_inspect(Json::boolean(true), content="True")
+///   @debug.debug_inspect(Json::boolean(false), content="False")
 /// }
 /// ```
 pub fn Json::boolean(boolean : Bool) -> Json {
@@ -153,7 +153,10 @@ pub fn Json::boolean(boolean : Bool) -> Json {
 /// ```mbt check
 /// test {
 ///   let values : Array[Json] = [1.0, "hello"]
-///   inspect(Json::array(values), content="Array([Number(1), String(\"hello\")])")
+///   @debug.debug_inspect(
+///     Json::array(values),
+///     content="Array([Number(1), String(\"hello\")])",
+///   )
 /// }
 /// ```
 pub fn Json::array(array : Array[Json]) -> Json {
@@ -175,9 +178,9 @@ pub fn Json::array(array : Array[Json]) -> Json {
 /// ```mbt check
 /// test {
 ///   let map : Map[String, Json] = { "name": "John", "age": 42.0 }
-///   inspect(
+///   @debug.debug_inspect(
 ///     Json::object(map),
-///     content="Object({\"name\": String(\"John\"), \"age\": Number(42)})",
+///     content="Object({ \"name\": String(\"John\"), \"age\": Number(42) })",
 ///   )
 /// }
 /// ```

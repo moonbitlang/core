@@ -2,6 +2,10 @@ import {
   "moonbitlang/core/builtin",
 }
 
+import {
+  "moonbitlang/core/debug",
+} for "test"
+
 options(
   targets: { "panic_test.mbt": [ "not", "native", "llvm" ] },
 )

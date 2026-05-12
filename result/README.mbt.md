@@ -90,7 +90,7 @@ and remains unchanged if it is `Err`.
 test {
   let result : Result[Int, String] = Ok(42)
   let new_result = result.map(x => x + 1)
-  assert_eq(new_result, Ok(43))
+  @debug.assert_eq(new_result, Ok(43))
 }
 ```
 
@@ -100,7 +100,7 @@ A dual method to `map` is `map_err`, which applies a function to the error value
 test {
   let result : Result[Int, String] = Err("error")
   let new_result = result.map_err(x => x + "!")
-  assert_eq(new_result, Err("error!"))
+  @debug.assert_eq(new_result, Err("error!"))
 }
 ```
 
@@ -124,7 +124,7 @@ Moonbit provides monadic operations for `Result`, such as `flatten` and `bind`, 
 test {
   let result : Result[Result[Int, String], String] = Ok(Ok(42))
   let flattened = result.flatten()
-  assert_eq(flattened, Ok(42))
+  @debug.assert_eq(flattened, Ok(42))
 }
 ```
 
@@ -134,6 +134,6 @@ The `bind` method is similar to `map`, but the function passed to it should retu
 test {
   let result : Result[Int, String] = Ok(42)
   let new_result = result.bind(x => Ok(x + 1))
-  assert_eq(new_result, Ok(43))
+  @debug.assert_eq(new_result, Ok(43))
 }
 ```

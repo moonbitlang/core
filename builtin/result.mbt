@@ -37,8 +37,8 @@ test "map" {
   let y = x.map((v : Int) => v * 7)
   let z : Result[Int, Int] = Err(3)
   let w = z.map((v : Int) => v * 7)
-  assert_eq(y, Ok(42))
-  assert_eq(w, Err(3))
+  assert_true(y == Ok(42))
+  assert_true(w == Err(3))
 }
 
 ///|
@@ -69,8 +69,8 @@ test "map_err" {
   let y = x.map_err((v : String) => v + "!")
   let z : Result[Int, Int] = Ok(6)
   let w = z.map_err((v : Int) => v + 6)
-  assert_eq(y, Err("error!"))
-  assert_eq(w, Ok(6))
+  assert_true(y == Err("error!"))
+  assert_true(w == Ok(6))
 }
 
 ///|
@@ -163,8 +163,8 @@ test "flatten" {
   let y = x.flatten()
   let z : Result[Result[Int, String], String] = Err("error")
   let w = z.flatten()
-  assert_eq(y, Ok(6))
-  assert_eq(w, Err("error"))
+  assert_true(y == Ok(6))
+  assert_true(w == Err("error"))
 }
 
 ///|
@@ -193,7 +193,7 @@ pub fn[T, E, U] Result::bind(
 test "bind" {
   let x : Result[Int, String] = Ok(6)
   let y = x.bind((v : Int) => Ok(v * 7))
-  assert_eq(y, Ok(42))
+  assert_true(y == Ok(42))
 }
 
 ///|
@@ -291,6 +291,7 @@ pub fn[T, E] Result::unwrap_err(self : Result[T, E]) -> E {
 }
 
 ///|
+#warnings("-deprecated")
 test "show" {
   let ok : Result[_, String] = Ok("hello")
   inspect(
@@ -336,17 +337,13 @@ pub fn[T, E : Error] Result::unwrap_or_error(self : Result[T, E]) -> T raise E {
 
 ///|
 test "unwrap exn" {
-  (try
+  let result = try
     (Err(Failure("This is serious")) : Result[Unit, Failure]).unwrap_or_error()
     |> Ok
   catch {
     Failure(msg) => Err(msg)
-  })
-  |> inspect(
-    content=(
-      #|Err("This is serious")
-    ),
-  )
+  }
+  assert_true(result == Err("This is serious"))
 }
 
 ///|

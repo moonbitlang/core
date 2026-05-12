@@ -486,9 +486,9 @@ test "iter2" {
   let arr = [1, 2, 3, 4, 5]
   let iter = arr.iter2()
   debug_inspect(
-    iter.to_string(),
+    iter.to_array(),
     content=(
-      #|"[(0, 1), (1, 2), (2, 3), (3, 4), (4, 5)]"
+      #|[(0, 1), (1, 2), (2, 3), (3, 4), (4, 5)]
     ),
   )
 }
@@ -527,9 +527,9 @@ test "MutArrayView iterators" {
   debug_inspect(view.iter().to_array(), content="[1, 2, 3]")
   debug_inspect(view.rev_iter().to_array(), content="[3, 2, 1]")
   debug_inspect(
-    view.iter2().to_string(),
+    view.iter2().to_array(),
     content=(
-      #|"[(0, 1), (1, 2), (2, 3)]"
+      #|[(0, 1), (1, 2), (2, 3)]
     ),
   )
 }
