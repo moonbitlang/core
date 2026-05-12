@@ -206,11 +206,6 @@ fn StringView::escape_to(
 }
 
 ///|
-pub impl Show for String with output(self, logger) {
-  self[:].escape_to(logger)
-}
-
-///|
 /// This is different from `Show::output`,
 /// here it returns the original string without escaping.
 /// The rationale is in string interpolation,

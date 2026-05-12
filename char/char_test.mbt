@@ -25,15 +25,15 @@ test "show output" {
     buf.to_string()
   }
 
-  inspect(repr('a'), content="'a'")
-  inspect(repr('\''), content="'\\''")
-  inspect(repr('"'), content="'\"'")
-  inspect(repr('\\'), content="'\\\\'")
-  inspect(repr('\n'), content="'\\n'")
-  inspect(repr('\r'), content="'\\r'")
-  inspect(repr('\b'), content="'\\b'")
-  inspect(repr('\t'), content="'\\t'")
-  assert_eq(repr((0).unsafe_to_char()), "'\\u{00}'")
+  assert_eq(repr('a'), "a")
+  assert_eq(repr('\''), "'")
+  assert_eq(repr('"'), "\"")
+  assert_eq(repr('\\'), "\\")
+  assert_eq(repr('\n'), "\n")
+  assert_eq(repr('\r'), "\r")
+  assert_eq(repr('\b'), "\b")
+  assert_eq(repr('\t'), "\t")
+  assert_eq(repr((0).unsafe_to_char()), "\u{00}")
 }
 
 ///|

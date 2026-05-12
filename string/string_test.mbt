@@ -231,27 +231,17 @@ test "Show::output" {
     buf.to_string()
   }
 
-  assert_eq(repr("a"), "\"a\"")
-  assert_eq(repr("'"), "\"'\"")
-  assert_eq(repr("\""), "\"\\\"\"")
-  assert_eq(repr("\\"), "\"\\\\\"")
-  assert_eq(repr("\n"), "\"\\n\"")
-  assert_eq(repr("\r"), "\"\\r\"")
-  assert_eq(repr("\b"), "\"\\b\"")
-  assert_eq(repr("\t"), "\"\\t\"")
-  inspect(
-    repr("\u{00}"),
-    content=(
-      #|"\u{00}"
-    ),
-  )
-  inspect(
-    repr("\u0000"),
-    content=(
-      #|"\u{00}"
-    ),
-  )
-  assert_eq(repr("abc'\"def\\"), "\"abc'\\\"def\\\\\"")
+  assert_eq(repr("a"), "a")
+  assert_eq(repr("'"), "'")
+  assert_eq(repr("\""), "\"")
+  assert_eq(repr("\\"), "\\")
+  assert_eq(repr("\n"), "\n")
+  assert_eq(repr("\r"), "\r")
+  assert_eq(repr("\b"), "\b")
+  assert_eq(repr("\t"), "\t")
+  assert_eq(repr("\u{00}"), "\u{00}")
+  assert_eq(repr("\u0000"), "\u{00}")
+  assert_eq(repr("abc'\"def\\"), "abc'\"def\\")
 }
 
 ///|

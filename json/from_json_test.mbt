@@ -292,7 +292,7 @@ test "tuple failure" {
   inspect(
     v.unwrap_err(),
     content=(
-      #|JsonDecodeError((, "expected tuple of size 3"))
+      #|JsonDecodeError((, expected tuple of size 3))
     ),
   )
   let u = ((1, 2), (3, 4))
@@ -302,7 +302,7 @@ test "tuple failure" {
   inspect(
     v.unwrap_err(),
     content=(
-      #|JsonDecodeError((/1, "Int::from_json: expected number"))
+      #|JsonDecodeError((/1, Int::from_json: expected number))
     ),
   )
 }

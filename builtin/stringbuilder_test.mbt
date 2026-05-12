@@ -112,5 +112,5 @@ test "panic StringBuilder::write_char with invalid code point" {
 test "StringBuilder::write" {
   let sb = StringBuilder()
   sb.write("abc\n")
-  assert_eq(sb.to_string(), "\"abc\\n\"")
+  assert_eq(sb.to_string(), "abc\n")
 }

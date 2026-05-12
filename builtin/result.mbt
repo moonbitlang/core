@@ -297,14 +297,14 @@ test "show" {
   inspect(
     ok,
     content=(
-      #|Ok("hello")
+      #|Ok(hello)
     ),
   )
   let err : Result[String, _] = Err("world")
   inspect(
     err,
     content=(
-      #|Err("world")
+      #|Err(world)
     ),
   )
 }

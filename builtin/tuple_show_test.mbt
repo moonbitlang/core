@@ -16,41 +16,35 @@
 #warnings("-deprecated")
 test "2-tuple to_json" {
   let pair = (42, "hello")
-  @json.json_inspect(pair.to_string(), content="(42, \"hello\")")
+  @json.json_inspect(pair.to_string(), content="(42, hello)")
 }
 
 ///|
 #warnings("-deprecated")
 test "3-tuple to_json" {
   let triple = (42, "hello", true)
-  @json.json_inspect(triple.to_string(), content="(42, \"hello\", true)")
+  @json.json_inspect(triple.to_string(), content="(42, hello, true)")
 }
 
 ///|
 #warnings("-deprecated")
 test "4-tuple to_json" {
   let tuple = (42, "hello", true, 3.14)
-  @json.json_inspect(tuple.to_string(), content="(42, \"hello\", true, 3.14)")
+  @json.json_inspect(tuple.to_string(), content="(42, hello, true, 3.14)")
 }
 
 ///|
 #warnings("-deprecated")
 test "5-tuple to_json" {
   let tuple = (42, "hello", true, 3.14, 'a')
-  @json.json_inspect(
-    tuple.to_string(),
-    content="(42, \"hello\", true, 3.14, 'a')",
-  )
+  @json.json_inspect(tuple.to_string(), content="(42, hello, true, 3.14, a)")
 }
 
 ///|
 #warnings("-deprecated")
 test "6-tuple to_json" {
   let tuple = (42, "hello", true, 3.14, 'a', 1)
-  @json.json_inspect(
-    tuple.to_string(),
-    content="(42, \"hello\", true, 3.14, 'a', 1)",
-  )
+  @json.json_inspect(tuple.to_string(), content="(42, hello, true, 3.14, a, 1)")
 }
 
 ///|
@@ -59,7 +53,7 @@ test "7-tuple to_json" {
   let tuple = (42, "hello", true, 3.14, 'a', 1, "world")
   @json.json_inspect(
     tuple.to_string(),
-    content="(42, \"hello\", true, 3.14, 'a', 1, \"world\")",
+    content="(42, hello, true, 3.14, a, 1, world)",
   )
 }
 
@@ -69,7 +63,7 @@ test "8-tuple to_json" {
   let tuple = (42, "hello", true, 3.14, 'a', 1, "world", false)
   @json.json_inspect(
     tuple.to_string(),
-    content="(42, \"hello\", true, 3.14, 'a', 1, \"world\", false)",
+    content="(42, hello, true, 3.14, a, 1, world, false)",
   )
 }
 
@@ -79,7 +73,7 @@ test "9-tuple to_json" {
   let tuple = (42, "hello", true, 3.14, 'a', 1, "world", false, 2.71)
   @json.json_inspect(
     tuple.to_string(),
-    content="(42, \"hello\", true, 3.14, 'a', 1, \"world\", false, 2.71)",
+    content="(42, hello, true, 3.14, a, 1, world, false, 2.71)",
   )
 }
 
@@ -89,7 +83,7 @@ test "10-tuple to_json" {
   let tuple = (42, "hello", true, 3.14, 'a', 1, "world", false, 2.71, 'b')
   @json.json_inspect(
     tuple.to_string(),
-    content="(42, \"hello\", true, 3.14, 'a', 1, \"world\", false, 2.71, 'b')",
+    content="(42, hello, true, 3.14, a, 1, world, false, 2.71, b)",
   )
 }
 
@@ -99,7 +93,7 @@ test "11-tuple to_json" {
   let tuple = (42, "hello", true, 3.14, 'a', 1, "world", false, 2.71, 'b', 43UL)
   @json.json_inspect(
     tuple.to_string(),
-    content="(42, \"hello\", true, 3.14, 'a', 1, \"world\", false, 2.71, 'b', 43)",
+    content="(42, hello, true, 3.14, a, 1, world, false, 2.71, b, 43)",
   )
 }
 
@@ -111,7 +105,7 @@ test "12-tuple to_json" {
   )
   @json.json_inspect(
     tuple.to_string(),
-    content="(42, \"hello\", true, 3.14, 'a', 1, \"world\", false, 2.71, 'b', 43, 305419896)",
+    content="(42, hello, true, 3.14, a, 1, world, false, 2.71, b, 43, 305419896)",
   )
 }
 
@@ -124,7 +118,7 @@ test "13-tuple to_json" {
   )
   @json.json_inspect(
     tuple.to_string(),
-    content="(42, \"hello\", true, 3.14, 'a', 1, \"world\", false, 2.71, 'b', 43, 305419896, 2271560481)",
+    content="(42, hello, true, 3.14, a, 1, world, false, 2.71, b, 43, 305419896, 2271560481)",
   )
 }
 
@@ -149,7 +143,7 @@ test "14-tuple to_json" {
   )
   @json.json_inspect(
     tuple.to_string(),
-    content="(42, \"hello\", true, 3.14, 'a', 1, \"world\", false, 2.71, 'b', 43, 305419896, 2271560481, (11259375, 1234567890))",
+    content="(42, hello, true, 3.14, a, 1, world, false, 2.71, b, 43, 305419896, 2271560481, (11259375, 1234567890))",
   )
 }
 
@@ -175,7 +169,7 @@ test "15-tuple to_json" {
   )
   @json.json_inspect(
     tuple.to_string(),
-    content="(42, \"hello\", true, 3.14, 'a', 1, \"world\", false, 2.71, 'b', 43, 305419896, 2271560481, (11259375, 1234567890), (305419896, 2271560481, 11259375))",
+    content="(42, hello, true, 3.14, a, 1, world, false, 2.71, b, 43, 305419896, 2271560481, (11259375, 1234567890), (305419896, 2271560481, 11259375))",
   )
 }
 
@@ -202,6 +196,6 @@ test "16-tuple to_json" {
   )
   @json.json_inspect(
     tuple.to_string(),
-    content="(42, \"hello\", true, 3.14, 'a', 1, \"world\", false, 2.71, 'b', 43, 305419896, 2271560481, (11259375, 1234567890), (305419896, 2271560481, 11259375), (\"wow\", [2271560481, 1234567890]))",
+    content="(42, hello, true, 3.14, a, 1, world, false, 2.71, b, 43, 305419896, 2271560481, (11259375, 1234567890), (305419896, 2271560481, 11259375), (wow, [2271560481, 1234567890]))",
   )
 }
