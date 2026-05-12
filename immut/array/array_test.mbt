@@ -195,7 +195,7 @@ test "map" {
   inspect(
     v.map(e => e.to_string()),
     content=(
-      #|@immut/array.from_array(["1", "2", "3", "4", "5"])
+      #|@immut/array.from_array([1, 2, 3, 4, 5])
     ),
   )
   inspect(

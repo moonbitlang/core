@@ -500,11 +500,6 @@ fn Char::escape_to(self : Char, logger : &Logger, quote? : Bool = true) -> Unit 
 }
 
 ///|
-pub impl Show for Char with output(self, logger) {
-  self.escape_to(logger)
-}
-
-///|
 pub impl ToJson for Char with to_json(self : Char) -> Json {
   Json::string(self.to_string())
 }

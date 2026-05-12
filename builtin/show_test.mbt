@@ -663,14 +663,15 @@ test "Show for String" {
   inspect(
     to_string_using_output("abcdefg中文字符"),
     content=(
-      #|"abcdefg中文字符"
+      #|abcdefg中文字符
     ),
   )
   inspect(Show::to_string("abcdefg中文字符"), content="abcdefg中文字符")
   inspect(
     to_string_using_output("---\"---'---\\---\n---\t---\u{67}---"),
     content=(
-      #|"---\"---'---\\---\n---\t---g---"
+      #|---"---'---\---
+      #|---	---g---
     ),
   )
   // should be identity
@@ -694,13 +695,13 @@ test "Show for Result" {
   inspect(
     result_to_string(Ok("abc")),
     content=(
-      #|Ok("abc")
+      #|Ok(abc)
     ),
   )
   inspect(
     result_to_string(Err("def")),
     content=(
-      #|Err("def")
+      #|Err(def)
     ),
   )
 }
@@ -711,7 +712,7 @@ test "Show for Ref" {
   debug_inspect(
     Ref("abc").to_string(),
     content=(
-      #|"{val: \"abc\"}"
+      #|"{val: abc}"
     ),
   )
 }
@@ -722,7 +723,7 @@ test "Show for FixedArray" {
   debug_inspect(
     (["a", "b", "c"] : FixedArray[_]).to_string(),
     content=(
-      #|"[\"a\", \"b\", \"c\"]"
+      #|"[a, b, c]"
     ),
   )
   debug_inspect(
@@ -739,7 +740,7 @@ test "Show for Array" {
   debug_inspect(
     ["a", "b", "c"].to_string(),
     content=(
-      #|"[\"a\", \"b\", \"c\"]"
+      #|"[a, b, c]"
     ),
   )
   debug_inspect(
@@ -757,7 +758,7 @@ test "Show for ArrayView" {
   debug_inspect(
     arr[1:3].to_string(),
     content=(
-      #|"[\"b\", \"c\"]"
+      #|"[b, c]"
     ),
   )
   debug_inspect(
@@ -837,7 +838,7 @@ test "Show for Failure" {
   inspect(
     f.to_string(),
     content=(
-      #|Failure("test error message")
+      #|Failure(test error message)
     ),
   )
 }
@@ -850,30 +851,30 @@ test "Show for Char special cases" {
   // Test various special character outputs
   let quote_buf = StringBuilder()
   '\''.output(quote_buf)
-  inspect(quote_buf.to_string(), content="'\\''")
+  assert_eq(quote_buf.to_string(), "'")
   let backslash_buf = StringBuilder()
   '\\'.output(backslash_buf)
-  inspect(backslash_buf.to_string(), content="'\\\\'")
+  assert_eq(backslash_buf.to_string(), "\\")
   let cr_buf = StringBuilder()
   '\r'.output(cr_buf)
-  inspect(cr_buf.to_string(), content="'\\r'")
+  assert_eq(cr_buf.to_string(), "\r")
   let backspace_buf = StringBuilder()
   '\b'.output(backspace_buf)
-  inspect(backspace_buf.to_string(), content="'\\b'")
+  assert_eq(backspace_buf.to_string(), "\b")
   let tab_buf = StringBuilder()
   '\t'.output(tab_buf)
-  inspect(tab_buf.to_string(), content="'\\t'")
+  assert_eq(tab_buf.to_string(), "\t")
 
   // Test hex output for control characters
   let ctrl1_buf = StringBuilder()
   '\u{01}'.output(ctrl1_buf)
-  inspect(ctrl1_buf.to_string(), content="'\\u{01}'")
+  assert_eq(ctrl1_buf.to_string(), "\u{01}")
   let ctrl_f_buf = StringBuilder()
   '\u{0F}'.output(ctrl_f_buf)
-  inspect(ctrl_f_buf.to_string(), content="'\\u{0f}'")
+  assert_eq(ctrl_f_buf.to_string(), "\u{0f}")
   let ctrl_1f_buf = StringBuilder()
   '\u{1F}'.output(ctrl_1f_buf)
-  inspect(ctrl_1f_buf.to_string(), content="'\\u{1f}'")
+  assert_eq(ctrl_1f_buf.to_string(), "\u{1f}")
 }
 
 ///|

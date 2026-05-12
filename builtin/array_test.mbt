@@ -254,9 +254,9 @@ test "array_rev_eachi" {
   inspect(
     buf,
     content=(
-      #|0: 'c'
-      #|1: 'b'
-      #|2: 'a'
+      #|0: c
+      #|1: b
+      #|2: a
       #|
     ),
   )
