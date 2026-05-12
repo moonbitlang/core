@@ -292,7 +292,7 @@ pub fn[A] PriorityQueue::length(self : PriorityQueue[A]) -> Int {
 }
 
 ///|
-#deprecated("Use Debug instead of Show for debugging purposes.")
+#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[A : Show + Compare] Show for PriorityQueue[A]
 
 ///|

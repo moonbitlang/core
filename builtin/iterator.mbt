@@ -80,7 +80,7 @@ pub fn[X] Iter::just_run(self : Iter[X], f : (X) -> IterResult) -> Unit {
 }
 
 ///|
-#deprecated("Use Debug instead of Show for debugging purposes.")
+#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[X : Show] Show for Iter[X]
 
 ///|
@@ -1066,7 +1066,7 @@ pub fn[X, Y] Iter2::next(self : Iter2[X, Y]) -> (X, Y)? {
 }
 
 ///|
-#deprecated("Use Debug instead of Show for debugging purposes.")
+#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[X : Show, Y : Show] Show for Iter2[X, Y]
 
 ///|

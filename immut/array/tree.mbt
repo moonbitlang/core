@@ -735,7 +735,7 @@ fn[A] compute_sizes(
 
 ///|
 /// Print the tree structure. For debug use only.
-#deprecated("Use Debug instead of Show for debugging purposes.")
+#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 impl[A : Show] Show for Tree[A]
 
 ///|

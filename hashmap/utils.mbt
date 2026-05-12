@@ -338,7 +338,7 @@ pub fn[K, V] HashMap::eachi(
 ///
 /// * `self` : The hash map to be converted to string.
 /// * `logger` : The buffer to write the string representation to.
-#deprecated("Use Debug instead of Show for debugging purposes.")
+#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[K : Show, V : Show] Show for HashMap[K, V]
 
 ///|

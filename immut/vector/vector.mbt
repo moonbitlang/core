@@ -660,7 +660,7 @@ pub impl[A : Eq] Eq for Vector[A] with equal(self, other) {
 }
 
 ///|
-#deprecated("Use Debug instead of Show for debugging purposes.")
+#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[A : Show] Show for Vector[A]
 
 ///|

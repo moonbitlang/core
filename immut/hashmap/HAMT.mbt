@@ -695,7 +695,7 @@ pub fn[K : Eq + Hash, V] HashMap::from_iter(
 }
 
 ///|
-#deprecated("Use Debug instead of Show for debugging purposes.")
+#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[K : Show, V : Show] Show for HashMap[K, V]
 
 ///|

@@ -1556,7 +1556,7 @@ pub fn[T] ArrayView::rev(self : ArrayView[T]) -> Array[T] {
 // #region trait impls
 
 ///|
-#deprecated("Use Debug instead of Show for debugging purposes.")
+#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[X : Show] Show for ArrayView[X]
 
 ///|

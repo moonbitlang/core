@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-#deprecated("Use Debug instead of Show for debugging purposes.")
+#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[A : Show, B : Show] Show for (A, B)
 
 ///|
@@ -27,7 +27,7 @@ pub impl[A : Show, B : Show] Show for (A, B) with output(self, logger) {
 }
 
 ///|
-#deprecated("Use Debug instead of Show for debugging purposes.")
+#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[A : Show, B : Show, C : Show] Show for (A, B, C)
 
 ///|
@@ -46,7 +46,7 @@ pub impl[A : Show, B : Show, C : Show] Show for (A, B, C) with output(
 }
 
 ///|
-#deprecated("Use Debug instead of Show for debugging purposes.")
+#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[A : Show, B : Show, C : Show, D : Show] Show for (A, B, C, D)
 
 ///|
@@ -67,7 +67,7 @@ pub impl[A : Show, B : Show, C : Show, D : Show] Show for (A, B, C, D) with outp
 }
 
 ///|
-#deprecated("Use Debug instead of Show for debugging purposes.")
+#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[A : Show, B : Show, C : Show, D : Show, E : Show] Show for (
   A,
   B,
@@ -99,7 +99,7 @@ pub impl[A : Show, B : Show, C : Show, D : Show, E : Show] Show for (
 }
 
 ///|
-#deprecated("Use Debug instead of Show for debugging purposes.")
+#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show] Show for (
   A,
   B,
@@ -135,7 +135,7 @@ pub impl[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show] Show for (
 }
 
 ///|
-#deprecated("Use Debug instead of Show for debugging purposes.")
+#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show, G : Show] Show for (
   A,
   B,
@@ -175,7 +175,7 @@ pub impl[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show, G : Show] S
 }
 
 ///|
-#deprecated("Use Debug instead of Show for debugging purposes.")
+#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[
   T0 : Show,
   T1 : Show,
@@ -219,7 +219,7 @@ pub impl[
 }
 
 ///|
-#deprecated("Use Debug instead of Show for debugging purposes.")
+#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[
   T0 : Show,
   T1 : Show,
@@ -267,7 +267,7 @@ pub impl[
 }
 
 ///|
-#deprecated("Use Debug instead of Show for debugging purposes.")
+#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[
   T0 : Show,
   T1 : Show,
@@ -319,7 +319,7 @@ pub impl[
 }
 
 ///|
-#deprecated("Use Debug instead of Show for debugging purposes.")
+#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[
   T0 : Show,
   T1 : Show,
@@ -378,7 +378,7 @@ pub impl[
 }
 
 ///|
-#deprecated("Use Debug instead of Show for debugging purposes.")
+#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[
   T0 : Show,
   T1 : Show,
@@ -441,7 +441,7 @@ pub impl[
 }
 
 ///|
-#deprecated("Use Debug instead of Show for debugging purposes.")
+#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[
   T0 : Show,
   T1 : Show,
@@ -508,7 +508,7 @@ pub impl[
 }
 
 ///|
-#deprecated("Use Debug instead of Show for debugging purposes.")
+#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[
   T0 : Show,
   T1 : Show,
@@ -579,7 +579,7 @@ pub impl[
 }
 
 ///|
-#deprecated("Use Debug instead of Show for debugging purposes.")
+#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[
   T0 : Show,
   T1 : Show,
@@ -654,7 +654,7 @@ pub impl[
 }
 
 ///|
-#deprecated("Use Debug instead of Show for debugging purposes.")
+#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[
   T0 : Show,
   T1 : Show,

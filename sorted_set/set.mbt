@@ -469,7 +469,7 @@ pub fn[V : Compare] SortedSet::from_iter(iter : Iter[V]) -> SortedSet[V] {
 
 ///|
 /// Outputs the set's string representation to a logger.
-#deprecated("Use Debug instead of Show for debugging purposes.")
+#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[V : Show] Show for SortedSet[V]
 
 ///|
@@ -486,7 +486,7 @@ pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for SortedSe
 }
 
 ///|
-#deprecated("Use Debug instead of Show for debugging purposes.")
+#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 impl[T : Show] Show for Node[T]
 
 ///|
