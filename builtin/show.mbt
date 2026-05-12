@@ -206,10 +206,10 @@ fn StringView::escape_to(
 }
 
 ///|
-/// This is different from `Show::output`,
-/// here it returns the original string without escaping.
-/// The rationale is in string interpolation,
-/// we want to show the original string, not the escaped one.
+/// Returns the original string without escaping.
+/// `Show::output` for `String` also writes the raw string through this
+/// `Show::to_string` implementation.
+/// Use `String::escape` when a quoted and escaped representation is needed.
 /// # Examples
 ///
 /// ```mbt check
