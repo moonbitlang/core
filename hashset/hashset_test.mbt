@@ -441,12 +441,7 @@ test "@hashset.to_array/multiple" {
   set.add(4)
   let arr = set.to_array()
   arr.sort()
-  debug_inspect(
-    arr.to_string(),
-    content=(
-      #|"[1, 2, 3, 4]"
-    ),
-  )
+  debug_inspect(arr, content="[1, 2, 3, 4]")
 }
 
 ///|

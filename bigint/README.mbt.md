@@ -256,12 +256,15 @@ test "json serialization" {
 
   // Convert to JSON (as string to preserve precision)
   let json = big.to_json()
-  inspect(json, content="String(\"12345678901234567890\")")
+  @debug.debug_inspect(json, content="String(\"12345678901234567890\")")
 
   // Large numbers that exceed JavaScript's safe integer range
   let very_big = @bigint.BigInt::from_string("123456789012345678901234567890")
   let big_json = very_big.to_json()
-  inspect(big_json, content="String(\"123456789012345678901234567890\")")
+  @debug.debug_inspect(
+    big_json,
+    content="String(\"123456789012345678901234567890\")",
+  )
 }
 ```
 

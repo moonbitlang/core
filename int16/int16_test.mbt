@@ -435,10 +435,10 @@ test "Int16::abs" {
 
 ///|
 test "Int16::to_json" {
-  inspect(Int16::to_json(0), content="Number(0)")
-  inspect(Int16::to_json(1), content="Number(1)")
-  inspect(Int16::to_json(32767), content="Number(32767)")
-  inspect(Int16::to_json(-32768), content="Number(-32768)")
+  @debug.debug_inspect(Int16::to_json(0), content="Number(0)")
+  @debug.debug_inspect(Int16::to_json(1), content="Number(1)")
+  @debug.debug_inspect(Int16::to_json(32767), content="Number(32767)")
+  @debug.debug_inspect(Int16::to_json(-32768), content="Number(-32768)")
 }
 
 ///|

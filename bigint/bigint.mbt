@@ -32,7 +32,7 @@
 /// test {
 ///   let big = 12345678901234567890N
 ///   let json = big.to_json()
-///   inspect(
+///   @debug.debug_inspect(
 ///     json,
 ///     content=(
 ///       #|String("12345678901234567890")

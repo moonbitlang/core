@@ -684,6 +684,7 @@ test "Show for String" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Show for Result" {
   // use explicit type annotation to specify the type of Ok/Err
   fn result_to_string(x : Result[String, String]) {
@@ -705,6 +706,7 @@ test "Show for Result" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Show for Ref" {
   debug_inspect(
     Ref("abc").to_string(),
@@ -715,6 +717,7 @@ test "Show for Ref" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Show for FixedArray" {
   debug_inspect(
     (["a", "b", "c"] : FixedArray[_]).to_string(),
@@ -731,6 +734,7 @@ test "Show for FixedArray" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Show for Array" {
   debug_inspect(
     ["a", "b", "c"].to_string(),
@@ -747,6 +751,7 @@ test "Show for Array" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Show for ArrayView" {
   let arr = ["a", "b", "c", "d"]
   debug_inspect(

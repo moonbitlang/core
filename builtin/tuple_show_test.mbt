@@ -13,24 +13,28 @@
 // limitations under the License.
 
 ///|
+#warnings("-deprecated")
 test "2-tuple to_json" {
   let pair = (42, "hello")
   @json.json_inspect(pair.to_string(), content="(42, \"hello\")")
 }
 
 ///|
+#warnings("-deprecated")
 test "3-tuple to_json" {
   let triple = (42, "hello", true)
   @json.json_inspect(triple.to_string(), content="(42, \"hello\", true)")
 }
 
 ///|
+#warnings("-deprecated")
 test "4-tuple to_json" {
   let tuple = (42, "hello", true, 3.14)
   @json.json_inspect(tuple.to_string(), content="(42, \"hello\", true, 3.14)")
 }
 
 ///|
+#warnings("-deprecated")
 test "5-tuple to_json" {
   let tuple = (42, "hello", true, 3.14, 'a')
   @json.json_inspect(
@@ -40,6 +44,7 @@ test "5-tuple to_json" {
 }
 
 ///|
+#warnings("-deprecated")
 test "6-tuple to_json" {
   let tuple = (42, "hello", true, 3.14, 'a', 1)
   @json.json_inspect(
@@ -49,6 +54,7 @@ test "6-tuple to_json" {
 }
 
 ///|
+#warnings("-deprecated")
 test "7-tuple to_json" {
   let tuple = (42, "hello", true, 3.14, 'a', 1, "world")
   @json.json_inspect(
@@ -58,6 +64,7 @@ test "7-tuple to_json" {
 }
 
 ///|
+#warnings("-deprecated")
 test "8-tuple to_json" {
   let tuple = (42, "hello", true, 3.14, 'a', 1, "world", false)
   @json.json_inspect(
@@ -67,6 +74,7 @@ test "8-tuple to_json" {
 }
 
 ///|
+#warnings("-deprecated")
 test "9-tuple to_json" {
   let tuple = (42, "hello", true, 3.14, 'a', 1, "world", false, 2.71)
   @json.json_inspect(
@@ -76,6 +84,7 @@ test "9-tuple to_json" {
 }
 
 ///|
+#warnings("-deprecated")
 test "10-tuple to_json" {
   let tuple = (42, "hello", true, 3.14, 'a', 1, "world", false, 2.71, 'b')
   @json.json_inspect(
@@ -85,6 +94,7 @@ test "10-tuple to_json" {
 }
 
 ///|
+#warnings("-deprecated")
 test "11-tuple to_json" {
   let tuple = (42, "hello", true, 3.14, 'a', 1, "world", false, 2.71, 'b', 43UL)
   @json.json_inspect(
@@ -94,6 +104,7 @@ test "11-tuple to_json" {
 }
 
 ///|
+#warnings("-deprecated")
 test "12-tuple to_json" {
   let tuple = (
     42, "hello", true, 3.14, 'a', 1, "world", false, 2.71, 'b', 43UL, 0x12345678U,
@@ -105,6 +116,7 @@ test "12-tuple to_json" {
 }
 
 ///|
+#warnings("-deprecated")
 test "13-tuple to_json" {
   let tuple = (
     42, "hello", true, 3.14, 'a', 1, "world", false, 2.71, 'b', 43UL, 0x12345678U,
@@ -117,6 +129,7 @@ test "13-tuple to_json" {
 }
 
 ///|
+#warnings("-deprecated")
 test "14-tuple to_json" {
   let tuple = (
     42,
@@ -141,6 +154,7 @@ test "14-tuple to_json" {
 }
 
 ///|
+#warnings("-deprecated")
 test "15-tuple to_json" {
   let tuple = (
     42,
@@ -166,6 +180,7 @@ test "15-tuple to_json" {
 }
 
 ///|
+#warnings("-deprecated")
 test "16-tuple to_json" {
   let tuple = (
     42,

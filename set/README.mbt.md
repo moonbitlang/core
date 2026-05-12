@@ -218,12 +218,12 @@ test "json serialization" {
   let json = set.to_json()
 
   // JSON representation is an array
-  inspect(json, content="Array([Number(1), Number(2), Number(3)])")
+  @debug.debug_inspect(json, content="Array([Number(1), Number(2), Number(3)])")
 
   // String set
   let string_set = @set.Set(["a", "b", "c"])
   let string_json = string_set.to_json()
-  inspect(
+  @debug.debug_inspect(
     string_json,
     content="Array([String(\"a\"), String(\"b\"), String(\"c\")])",
   )

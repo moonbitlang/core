@@ -63,6 +63,11 @@ pub impl Show for ParseError with output(self, logger) {
 }
 
 ///|
+#deprecated("Use Debug instead of Show for debugging purposes.")
+pub impl Show for Json
+
+///|
+#warnings("-deprecated")
 pub impl Show for Json with output(self, logger) {
   match self {
     Null => logger.write_string("Null")

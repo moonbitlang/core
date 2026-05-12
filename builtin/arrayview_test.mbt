@@ -607,7 +607,7 @@ test "iter2" {
 test "to_string" {
   let arr = [0, 1, 2, 3, 4]
   @json.json_inspect(arr[1:3], content=[1, 2])
-  @json.json_inspect("\{arr[1:3]}!", content="[1, 2]!")
+  @json.json_inspect("\{to_repr(arr[1:3])}!", content="<ArrayView: [1, 2]>!")
 }
 
 ///|

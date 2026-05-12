@@ -462,6 +462,7 @@ pub fn[X] MutArrayView::iter2(self : MutArrayView[X]) -> Iter2[Int, X] {
 pub impl[X : Show] Show for MutArrayView[X]
 
 ///|
+#warnings("-deprecated")
 pub impl[X : Show] Show for MutArrayView[X] with output(self, logger) {
   self[:].output(logger)
 }

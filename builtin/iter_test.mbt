@@ -901,12 +901,6 @@ test "Iter::enumerate" {
       #|[(0, 1), (1, 2), (2, 3)]
     ),
   )
-  debug_inspect(
-    [1, 2, 3].iter2().to_string(),
-    content=(
-      #|"[(0, 1), (1, 2), (2, 3)]"
-    ),
-  )
 }
 
 ///|

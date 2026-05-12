@@ -3,6 +3,7 @@ import {
 }
 
 import {
+  "moonbitlang/core/debug",
   "moonbitlang/core/uint16",
   "moonbitlang/core/json",
 } for "test"

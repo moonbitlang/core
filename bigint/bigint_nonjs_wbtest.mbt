@@ -18,16 +18,8 @@ struct MyBigInt(BigInt)
 ///|
 impl Show for MyBigInt with output(self, logger) {
   logger.write_string(
-    "{limbs : \{self.limbs}, sign : \{self.sign}, len : \{self.len} }",
+    "{limbs : \{@debug.to_repr(self.limbs)}, sign : \{@debug.to_repr(self.sign)}, len : \{self.len} }",
   )
-}
-
-///|
-impl Show for Sign with output(self, logger) {
-  match self {
-    Positive => logger.write_string("Positive")
-    Negative => logger.write_string("Negative")
-  }
 }
 
 ///|
@@ -43,15 +35,15 @@ test "debug_string" {
   inspect(
     buf,
     content=(
-      #|{limbs : [0, 0], sign : Positive, len : 1 }
-      #|{limbs : [1, 0], sign : Positive, len : 1 }
-      #|{limbs : [2, 0], sign : Positive, len : 1 }
-      #|{limbs : [3, 0], sign : Positive, len : 1 }
-      #|{limbs : [4, 0], sign : Positive, len : 1 }
-      #|{limbs : [0, 0], sign : Positive, len : 1 }
-      #|{limbs : [1, 0], sign : Negative, len : 1 }
-      #|{limbs : [2, 0], sign : Negative, len : 1 }
-      #|{limbs : [3, 0], sign : Negative, len : 1 }
+      #|{limbs : <FixedArray: [0, 0]>, sign : Positive, len : 1 }
+      #|{limbs : <FixedArray: [1, 0]>, sign : Positive, len : 1 }
+      #|{limbs : <FixedArray: [2, 0]>, sign : Positive, len : 1 }
+      #|{limbs : <FixedArray: [3, 0]>, sign : Positive, len : 1 }
+      #|{limbs : <FixedArray: [4, 0]>, sign : Positive, len : 1 }
+      #|{limbs : <FixedArray: [0, 0]>, sign : Positive, len : 1 }
+      #|{limbs : <FixedArray: [1, 0]>, sign : Negative, len : 1 }
+      #|{limbs : <FixedArray: [2, 0]>, sign : Negative, len : 1 }
+      #|{limbs : <FixedArray: [3, 0]>, sign : Negative, len : 1 }
     ),
   )
 }
@@ -75,13 +67,13 @@ fn check_invariant(a : BigInt) -> Unit raise {
   } else {
     guard a.len == 1 && a.limbs[0] == 0 else {
       fail(
-        "invariant (forall 0 <= i < len. limbs[i] == 0) => limbs[0] == 0 and len == 1 is broken: len = \{a.len}, limbs = \{a.limbs}",
+        "invariant (forall 0 <= i < len. limbs[i] == 0) => limbs[0] == 0 and len == 1 is broken: len = \{a.len}, limbs = \{@debug.to_repr(a.limbs)}",
       )
     }
   }
   guard a.limbs.iter().drop(a.len).all(x => x == 0) else {
     fail(
-      "invariant forall len <= i < limbs.length(). limbs[i] == 0 is broken: len = \{a.len}, limbs = \{a.limbs}",
+      "invariant forall len <= i < limbs.length(). limbs[i] == 0 is broken: len = \{a.len}, limbs = \{@debug.to_repr(a.limbs)}",
     )
   }
 }
@@ -151,10 +143,10 @@ test "BigInt::ctz" {
 test {
   inspect(
     MyBigInt(-9223372036854775809N),
-    content="{limbs : [1, 2147483648, 0], sign : Negative, len : 2 }",
+    content="{limbs : <FixedArray: [1, 2147483648, 0]>, sign : Negative, len : 2 }",
   ) // Int64.min_value - 1
   inspect(
     MyBigInt(-9223372036854775810N),
-    content="{limbs : [2, 2147483648, 0], sign : Negative, len : 2 }",
+    content="{limbs : <FixedArray: [2, 2147483648, 0]>, sign : Negative, len : 2 }",
   ) // Int64.min_value - 2
 }

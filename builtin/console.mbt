@@ -30,7 +30,6 @@ fn println_mono(s : String) -> Unit = "%println"
 ///   if false {
 ///     println(42)
 ///     println("Hello, World!")
-///     println([1, 2, 3])
 ///   }
 /// }
 /// ```

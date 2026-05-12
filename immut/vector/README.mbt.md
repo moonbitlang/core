@@ -31,7 +31,7 @@ test {
   let v2 = @vector.from_array([1, 2, 3, 4, 5])
   assert_eq(v2.length(), 5)
   let v3 = @vector.from_iter((1).until(5))
-  assert_eq(v3.to_array(), [1, 2, 3, 4])
+  @debug.assert_eq(v3.to_array(), [1, 2, 3, 4])
 }
 ```
 
@@ -41,9 +41,9 @@ Use `make()` to create a vector filled with a value, or `makei()` to generate va
 ///|
 test {
   let v1 = @vector.make(5, 0)
-  assert_eq(v1.to_array(), [0, 0, 0, 0, 0])
+  @debug.assert_eq(v1.to_array(), [0, 0, 0, 0, 0])
   let v2 = @vector.makei(5, fn(i) { i * i })
-  assert_eq(v2.to_array(), [0, 1, 4, 9, 16])
+  @debug.assert_eq(v2.to_array(), [0, 1, 4, 9, 16])
 }
 ```
 
@@ -69,8 +69,8 @@ test {
 test {
   let v1 = @vector.from_array([1, 2, 3])
   let v2 = v1.set(1, 20)
-  assert_eq(v1.to_array(), [1, 2, 3]) // original unchanged
-  assert_eq(v2.to_array(), [1, 20, 3])
+  @debug.assert_eq(v1.to_array(), [1, 2, 3]) // original unchanged
+  @debug.assert_eq(v2.to_array(), [1, 20, 3])
 }
 ```
 
@@ -83,9 +83,9 @@ test {
 test {
   let v1 = @vector.from_array([1, 2, 3])
   let v2 = v1.push(4)
-  assert_eq(v2.to_array(), [1, 2, 3, 4])
+  @debug.assert_eq(v2.to_array(), [1, 2, 3, 4])
   let v3 = v2.pop().unwrap()
-  assert_eq(v3.to_array(), [1, 2, 3])
+  @debug.assert_eq(v3.to_array(), [1, 2, 3])
   // pop on empty vector returns None
   let empty : @vector.Vector[Int] = @vector.new()
   assert_true(empty.pop() == None)
@@ -101,8 +101,8 @@ Use `concat()` or the `+` operator to join two vectors.
 test {
   let a = @vector.from_array([1, 2, 3])
   let b = @vector.from_array([4, 5, 6])
-  assert_eq(a.concat(b).to_array(), [1, 2, 3, 4, 5, 6])
-  assert_eq((a + b).to_array(), [1, 2, 3, 4, 5, 6])
+  @debug.assert_eq(a.concat(b).to_array(), [1, 2, 3, 4, 5, 6])
+  @debug.assert_eq((a + b).to_array(), [1, 2, 3, 4, 5, 6])
 }
 ```
 
@@ -116,14 +116,14 @@ test {
   let v = @vector.from_iter((0).until(10))
   // split at index: [0, index) and [index, len)
   let (left, right) = v.split(4)
-  assert_eq(left.to_array(), [0, 1, 2, 3])
-  assert_eq(right.to_array(), [4, 5, 6, 7, 8, 9])
+  @debug.assert_eq(left.to_array(), [0, 1, 2, 3])
+  @debug.assert_eq(right.to_array(), [4, 5, 6, 7, 8, 9])
   // take first n elements
-  assert_eq(v.take(3).to_array(), [0, 1, 2])
+  @debug.assert_eq(v.take(3).to_array(), [0, 1, 2])
   // drop first n elements
-  assert_eq(v.drop(7).to_array(), [7, 8, 9])
+  @debug.assert_eq(v.drop(7).to_array(), [7, 8, 9])
   // slice [start, end)
-  assert_eq(v.slice(2, 6).to_array(), [2, 3, 4, 5])
+  @debug.assert_eq(v.slice(2, 6).to_array(), [2, 3, 4, 5])
 }
 ```
 
@@ -140,11 +140,11 @@ test {
   // each
   let buf = []
   v.each(fn(x) { buf.push(x) })
-  assert_eq(buf, [1, 2, 3, 4, 5])
+  @debug.assert_eq(buf, [1, 2, 3, 4, 5])
   // eachi (with index)
   let pairs = []
   v.eachi(fn(i, x) { pairs.push((i, x)) })
-  assert_eq(pairs, [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5)])
+  @debug.assert_eq(pairs, [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5)])
 }
 ```
 
@@ -162,7 +162,7 @@ test {
   let result = v.rev_fold(fn(acc, x) { acc + x.to_string() }, init="")
   assert_eq(result, "54321")
   // map
-  assert_eq(v.map(fn(x) { x * 2 }).to_array(), [2, 4, 6, 8, 10])
+  @debug.assert_eq(v.map(fn(x) { x * 2 }).to_array(), [2, 4, 6, 8, 10])
 }
 ```
 

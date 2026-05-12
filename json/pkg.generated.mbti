@@ -69,6 +69,7 @@ pub fn Json::stringify(Self, escape_slash? : Bool, indent? : Int, replacer? : Re
 pub fn Json::transform(Self, Replacer) -> Self
 #deprecated
 pub fn Json::value(Self, String) -> Self?
+#deprecated
 pub impl Show for Json
 pub impl ToJson for Json
 
