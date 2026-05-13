@@ -14,7 +14,7 @@ import {
 type LazyList[A]
 pub fn[A] LazyList::concat(Self[A], Self[A]) -> Self[A]
 pub fn[A] LazyList::drop(Self[A], Int) -> Self[A]
-pub fn[A] LazyList::drop_while(Self[A], (A) -> Bool) -> Self[A]
+pub fn[A] LazyList::drop_while(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 pub fn[A] LazyList::each(Self[A], (A) -> Unit raise?) -> Unit raise?
 #as_free_fn
 pub fn[A] LazyList::empty() -> Self[A]

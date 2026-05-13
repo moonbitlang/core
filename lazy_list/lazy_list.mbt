@@ -204,11 +204,18 @@ pub fn[A] LazyList::take_while(
 }
 
 ///|
-/// Skips elements while `pred` holds, returning the rest.
+/// Skips elements while `pred` holds, returning the rest. `pred` is
+/// called eagerly during the skip; a raising `pred` propagates here.
+///
+/// (Contrast with `map` / `filter` / `take_while` / `flat_map`, whose
+/// callbacks also run inside lazy thunks. `@lazy.Lazy` thunks are
+/// non-raising by design — see `@lazy`'s rationale — so those
+/// combinators cannot accept a raising callback. `drop_while` only runs
+/// `pred` during the strict skip phase, so it can.)
 pub fn[A] LazyList::drop_while(
   self : LazyList[A],
-  pred : (A) -> Bool,
-) -> LazyList[A] {
+  pred : (A) -> Bool raise?,
+) -> LazyList[A] raise? {
   let mut cur = self
   while cur.cell is Cons(x, tail~) && pred(x) {
     cur = tail.force()

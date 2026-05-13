@@ -155,6 +155,32 @@ test "iter does not over-force the tail" {
 }
 
 ///|
+suberror NegativeFound
+
+///|
+test "drop_while accepts a raising predicate" {
+  // Strict skip phase: a raising predicate propagates immediately. The
+  // lazy combinators (map / filter / take_while / flat_map) cannot
+  // accept raise? because they run the callback inside `@lazy.Lazy`
+  // thunks, which are non-raising by design.
+  fn pred(x : Int) -> Bool raise NegativeFound {
+    if x < 0 {
+      raise NegativeFound
+    }
+    x < 3
+  }
+
+  let xs = @lazy_list.from_iter([1, 2, 3, 4].iter())
+  debug_inspect(xs.drop_while(pred).to_array(), content="[3, 4]")
+  // A predicate that raises mid-skip propagates out of drop_while.
+  let ys = @lazy_list.from_iter([1, -1, 5].iter())
+  let result : Result[@lazy_list.LazyList[Int], NegativeFound] = try? ys.drop_while(
+    pred,
+  )
+  inspect(result is Err(_), content="true")
+}
+
+///|
 test "zip is left-biased: does not force right tail when left ends first" {
   // After consuming the only pair, the right side's tail must not be
   // forced — `zip` detects end-of-stream from the left side first.
