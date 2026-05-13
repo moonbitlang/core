@@ -6,6 +6,7 @@ import {
   "moonbitlang/core/tuple",
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/int",
+  "moonbitlang/core/json",
 }
 
 import {

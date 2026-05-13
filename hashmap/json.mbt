@@ -23,3 +23,34 @@ pub impl[K : Show, V : ToJson] ToJson for HashMap[K, V] with to_json(self) {
     ),
   )
 }
+
+///|
+/// Decodes a `HashMap[String, V]` from a JSON object.
+///
+/// Each key in the JSON object becomes a `String` key in the map, and each
+/// value is decoded using `V`'s `FromJson` implementation.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let m : @hashmap.HashMap[String, Int] = @json.from_json(
+///     { "a": 1, "b": 2 }.to_json(),
+///   )
+///   debug_inspect(m.get("a"), content="Some(1)")
+///   debug_inspect(m.get("b"), content="Some(2)")
+/// }
+/// ```
+pub impl[V : @json.FromJson] @json.FromJson for HashMap[String, V] with from_json(
+  json,
+  path,
+) {
+  guard json is Object(obj) else {
+    raise @json.JsonDecodeError((path, "HashMap::from_json: expected object"))
+  }
+  let res : HashMap[String, V] = HashMap([])
+  for k, v in obj {
+    res[k] = @json.FromJson::from_json(v, path.add_key(k))
+  }
+  res
+}
