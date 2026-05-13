@@ -1,0 +1,10 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/lazy",
+  "moonbitlang/core/array",
+  "moonbitlang/core/debug",
+}
+
+import {
+  "moonbitlang/core/list",
+} for "test"

@@ -1,0 +1,41 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/lazy_list"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+type LazyList[A]
+pub fn[A] LazyList::concat(Self[A], Self[A]) -> Self[A]
+pub fn[A] LazyList::drop(Self[A], Int) -> Self[A]
+pub fn[A] LazyList::drop_while(Self[A], (A) -> Bool raise?) -> Self[A] raise?
+pub fn[A] LazyList::each(Self[A], (A) -> Unit raise?) -> Unit raise?
+#as_free_fn
+pub fn[A] LazyList::empty() -> Self[A]
+pub fn[A] LazyList::filter(Self[A], (A) -> Bool) -> Self[A]
+pub fn[A, B] LazyList::flat_map(Self[A], (A) -> Self[B]) -> Self[B]
+pub fn[A, B] LazyList::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
+#as_free_fn
+pub fn[A] LazyList::from_iter(Iter[A]) -> Self[A]
+pub fn[A] LazyList::head(Self[A]) -> A?
+pub fn[A] LazyList::is_empty(Self[A]) -> Bool
+pub fn[A] LazyList::iter(Self[A]) -> Iter[A]
+#as_free_fn
+pub fn[A] LazyList::lazy_cons(A, () -> Self[A]) -> Self[A]
+pub fn[A, B] LazyList::map(Self[A], (A) -> B) -> Self[B]
+pub fn[A] LazyList::tail(Self[A]) -> Self[A]?
+pub fn[A] LazyList::take(Self[A], Int) -> Self[A]
+pub fn[A] LazyList::take_while(Self[A], (A) -> Bool) -> Self[A]
+pub fn[A] LazyList::to_array(Self[A]) -> Array[A]
+pub fn[A, B] LazyList::zip(Self[A], Self[B]) -> Self[(A, B)]
+pub impl[A : @debug.Debug] @debug.Debug for LazyList[A]
+
+// Type aliases
+
+// Traits
+
