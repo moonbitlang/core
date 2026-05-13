@@ -268,9 +268,13 @@ pub fn[A, B] LazyList::flat_map(
 }
 
 ///|
-/// Element-wise pairs two lazy lists, stopping at the shorter one. When
-/// resuming the lazy tail, the left side is forced first; if it is empty
-/// the right side is left untouched.
+/// Element-wise pairs two lazy lists, stopping at the shorter one.
+///
+/// `zip` is asymmetric in which side it forces first: the left tail is
+/// forced before the right. If the left side ends first the right
+/// remains untouched. If the right side ends first the left will have
+/// been forced one cell past the boundary before `zip` can observe the
+/// termination — this is unavoidable without a look-ahead protocol.
 pub fn[A, B] LazyList::zip(
   self : LazyList[A],
   other : LazyList[B],

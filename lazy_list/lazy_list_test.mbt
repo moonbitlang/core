@@ -155,18 +155,35 @@ test "iter does not over-force the tail" {
 }
 
 ///|
-test "zip does not over-force when one side is shorter" {
-  // After consuming the only pair, the longer side's tail must not be
-  // forced — zip should detect end-of-stream from the shorter side.
-  let pulls : Ref[Int] = Ref(0)
-  let short = @lazy_list.lazy_cons(1, () => @lazy_list.empty())
-  let long = @lazy_list.lazy_cons(2, () => {
-    pulls.val += 1
+test "zip is left-biased: does not force right tail when left ends first" {
+  // After consuming the only pair, the right side's tail must not be
+  // forced — `zip` detects end-of-stream from the left side first.
+  let right_pulls : Ref[Int] = Ref(0)
+  let short_left = @lazy_list.lazy_cons(1, () => @lazy_list.empty())
+  let long_right = @lazy_list.lazy_cons(2, () => {
+    right_pulls.val += 1
     @lazy_list.empty()
   })
-  let zipped = short.zip(long).to_array()
+  let zipped = short_left.zip(long_right).to_array()
   debug_inspect(zipped, content="[(1, 2)]")
-  inspect(pulls.val, content="0")
+  inspect(right_pulls.val, content="0")
+}
+
+///|
+test "zip's left bias: right-shorter forces one extra left tail" {
+  // Documenting the asymmetric behavior: when the right side is shorter,
+  // `zip` cannot detect termination without first forcing the next left
+  // cell. This is unavoidable without a look-ahead protocol.
+  let left_pulls : Ref[Int] = Ref(0)
+  let long_left = @lazy_list.lazy_cons(1, () => {
+    left_pulls.val += 1
+    @lazy_list.empty()
+  })
+  let short_right = @lazy_list.lazy_cons(2, () => @lazy_list.empty())
+  let zipped = long_left.zip(short_right).to_array()
+  debug_inspect(zipped, content="[(1, 2)]")
+  // Exactly one extra force on the left tail, as documented.
+  inspect(left_pulls.val, content="1")
 }
 
 ///|

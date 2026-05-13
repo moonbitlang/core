@@ -23,6 +23,11 @@ using @debug {trait Debug, type Repr}
 /// A fully forced list renders as `<LazyList: [1, 2, 3]>`. A list whose
 /// spine is still lazy renders the prefix that has been evaluated and
 /// then `...` to mark the unforced tail, e.g. `<LazyList: [1, 2, ...]>`.
+///
+/// Caveat: a deliberately constructed forced cycle (e.g. a `lazy_cons`
+/// whose thunk returns an ancestor cell, then forced) will cause this
+/// impl to loop. `@list.List`'s `Debug` has the same property; cycle
+/// detection is not provided.
 pub impl[A : Debug] Debug for LazyList[A] with to_repr(self) {
   let parts = []
   for cur = self {
