@@ -186,8 +186,8 @@ pub impl[K : Arbitrary + Hash + Eq, V : Arbitrary] Arbitrary for Map[K, V] with 
 ) {
   let m : Map[K, V] = {}
   let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
-  for _ in 0..<len {
-    m.set(K::arbitrary(size, rs), V::arbitrary(size, rs))
+  for i in 0..<len {
+    m.set(K::arbitrary(i, rs), V::arbitrary(i, rs))
   }
   m
 }
