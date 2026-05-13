@@ -36,6 +36,8 @@ pub fn[K, V] HashMap::eachi(Self[K, V], (Int, K, V) -> Unit raise?) -> Unit rais
 #as_free_fn
 pub fn[K : Hash + Eq, V] HashMap::from_iter(Iter[(K, V)]) -> Self[K, V]
 pub fn[K : Hash + Eq, V] HashMap::get(Self[K, V], K) -> V?
+pub fn[V] HashMap::get_from_bytes(Self[Bytes, V], BytesView) -> V?
+pub fn[V] HashMap::get_from_string(Self[String, V], StringView) -> V?
 pub fn[K : Hash + Eq, V] HashMap::get_or_default(Self[K, V], K, V) -> V
 pub fn[K : Hash + Eq, V] HashMap::get_or_init(Self[K, V], K, () -> V) -> V
 pub fn[K, V] HashMap::is_empty(Self[K, V]) -> Bool
