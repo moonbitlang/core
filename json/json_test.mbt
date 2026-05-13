@@ -13,6 +13,11 @@
 // limitations under the License.
 
 ///|
+struct NestedJsonValue {
+  w : Int
+} derive(ToJson)
+
+///|
 test "deep access" {
   let json : Json = {
     "key": [1.0, true, null, [], { "key": "value", "value": 100.0 }],
@@ -461,11 +466,8 @@ test "stringify with indent" {
 
 ///|
 test "nested json" {
-  struct X {
-    w : Int
-  } derive(ToJson)
   let u : Int = 3
-  let h = X::{ w: 3 }
+  let h = NestedJsonValue::{ w: 3 }
   let v : Json = {
     "nestedmap": {
       "key1": u, // auto to json

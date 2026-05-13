@@ -13,6 +13,9 @@
 // limitations under the License.
 
 ///|
+struct Empty {} derive(Debug)
+
+///|
 test "diff: arrays collapse when all children differ" {
   let x = Repr::array([Repr::integer("1"), Repr::integer("2")])
   let y = Repr::array([Repr::integer("3"), Repr::integer("4")])
@@ -24,7 +27,6 @@ test "diff: arrays collapse when all children differ" {
 
 ///|
 test "diff: empty containers stay Same" {
-  struct Empty {} derive(Debug)
   let empty : Array[Int] = []
   let delta = diff_repr(Debug::to_repr(empty), Debug::to_repr(empty))
   guard delta is Same(Array([]), []) else {
