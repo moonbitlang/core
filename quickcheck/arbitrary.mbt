@@ -168,3 +168,26 @@ pub impl[X : Arbitrary] Arbitrary for Array[X] with arbitrary(size, rs) {
   let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
   Array::makei(len, x => X::arbitrary(x, rs))
 }
+
+///|
+/// Returns a randomly generated map containing arbitrary key-value pairs.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let samples : Array[Map[Int, String]] = @quickcheck.samples(5)
+///   inspect(samples.length(), content="5")
+/// }
+/// ```
+pub impl[K : Arbitrary + Hash + Eq, V : Arbitrary] Arbitrary for Map[K, V] with arbitrary(
+  size,
+  rs,
+) {
+  let m : Map[K, V] = {}
+  let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
+  for _ in 0..<len {
+    m.set(K::arbitrary(size, rs), V::arbitrary(size, rs))
+  }
+  m
+}
