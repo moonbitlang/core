@@ -347,13 +347,15 @@ pub fn[A] HashSet::each(
 }
 
 ///|
+priv enum CurrNode[A] {
+  Tree(Node[A])
+  Bucket(@list.List[A])
+}
+
+///|
 /// Converted to Iter
 #alias(iterator, deprecated)
 pub fn[A] HashSet::iter(self : HashSet[A]) -> Iter[A] {
-  enum CurrNode {
-    Tree(Node[A])
-    Bucket(@list.List[A])
-  }
   let empty = Bucket(@list.new())
   let mut curr_node = match self.0 {
     Some(tree) => Tree(tree)
