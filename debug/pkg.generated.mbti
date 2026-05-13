@@ -17,6 +17,7 @@ pub fn[T : Debug] dump(T, name? : String, loc~ : SourceLoc) -> T
 
 pub fn render(Repr, max_depth? : Int) -> String
 
+#alias(repr)
 pub fn[T : Debug] to_string(T) -> String
 
 // Errors

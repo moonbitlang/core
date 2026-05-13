@@ -193,3 +193,19 @@ test "repr" {
     ),
   )
 }
+
+///|
+test "repr alias: prelude-visible shortcut for @debug.to_string" {
+  // `repr` is the prelude-exported alias for `@debug.to_string`. Both
+  // names resolve to the same function and produce the same Debug-style
+  // string. Strings render quoted (unlike Show), tuples / arrays render
+  // structurally.
+  assert_eq(repr("hi"), "\"hi\"")
+  assert_eq(repr('a'), "'a'")
+  assert_eq(repr([1, 2, 3]), "[1, 2, 3]")
+  assert_eq(repr((1, "x")), "(1, \"x\")")
+  // Aliases agree.
+  assert_eq(repr(42), @debug.to_string(42))
+  assert_eq(repr("hi"), @debug.to_string("hi"))
+  assert_eq(repr([1, 2]), @debug.to_string([1, 2]))
+}

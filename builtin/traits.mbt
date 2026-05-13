@@ -200,8 +200,11 @@ pub fn[T : Show] &Logger::write_iter(
 // TODO: Logger::write_double(self:Logger, val:Double) -> Unit
 
 ///|
-/// Function `repr`.
-#deprecated("use `to_repr` for debugging representation")
+/// Deprecated `Show`-based string conversion. Kept for compatibility
+/// with callers using the qualified spelling `@builtin.repr(...)`. New
+/// code should use the prelude-exported `repr` (re-exported from
+/// `@debug.to_string`), which uses `Debug`.
+#deprecated("use `repr` (Debug-based) from prelude, or `@debug.repr` / `@debug.to_string`")
 pub fn[T : Show] repr(t : T) -> String {
   let logger = StringBuilder()
   t.output(logger)
