@@ -55,6 +55,43 @@ test "force returns each captured value" {
 }
 
 ///|
+test "peek does not force the thunk" {
+  let mut runs = 0
+  let cell = @lazy.Lazy(() => {
+    runs += 1
+    "x"
+  })
+  debug_inspect(cell.peek(), content="None")
+  inspect(runs, content="0")
+  ignore(cell.force())
+  debug_inspect(
+    cell.peek(),
+    content=(
+      #|Some("x")
+    ),
+  )
+  inspect(runs, content="1")
+}
+
+///|
+test "peek on a ready cell returns Some without running" {
+  let cell = @lazy.Lazy::ready(42)
+  debug_inspect(cell.peek(), content="Some(42)")
+}
+
+///|
+test "Debug renders forced and unforced cells safely" {
+  let unforced : @lazy.Lazy[Int] = @lazy.Lazy(() => abort("must not run"))
+  @debug.debug_inspect(unforced, content="<Lazy: unforced>")
+  let forced = @lazy.Lazy::ready(42)
+  @debug.debug_inspect(forced, content="<Lazy: 42>")
+  let later = @lazy.Lazy(() => 7)
+  @debug.debug_inspect(later, content="<Lazy: unforced>")
+  ignore(later.force())
+  @debug.debug_inspect(later, content="<Lazy: 7>")
+}
+
+///|
 test "Result-as-data bridge for fallible thunks" {
   let mut runs = 0
   let cell : @lazy.Lazy[Result[Int, Error]] = @lazy.Lazy(() => {

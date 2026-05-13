@@ -103,6 +103,31 @@ pub fn[A] Lazy::ready(value : A) -> Lazy[A] {
 }
 
 ///|
+/// Returns the cached value if the cell has already been forced, or
+/// `None` if the thunk has not yet run (or is currently running). Never
+/// invokes the thunk — safe to call on cells whose thunks are infinite,
+/// effectful, or expensive.
+///
+/// Useful for introspection / debugging of lazy data structures: you can
+/// walk a chain of `Lazy` cells and render only the parts that are
+/// already evaluated.
+///
+/// ```mbt check
+/// test {
+///   let cell = @lazy.Lazy(() => 7)
+///   debug_inspect(cell.peek(), content="None")
+///   ignore(cell.force())
+///   debug_inspect(cell.peek(), content="Some(7)")
+/// }
+/// ```
+pub fn[A] Lazy::peek(self : Lazy[A]) -> A? {
+  match self.state {
+    Forced(v) => Some(v)
+    _ => None
+  }
+}
+
+///|
 /// Returns the cell's value, running the thunk on the first call and
 /// caching the result. Later calls return the cached value in O(1).
 ///
