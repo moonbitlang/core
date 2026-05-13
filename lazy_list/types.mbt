@@ -13,13 +13,21 @@
 // limitations under the License.
 
 ///|
-/// A persistent linked list with a memoized lazy tail. The head is always
-/// strict; the tail is computed on first access and cached, so repeated
-/// traversals share evaluation work.
+/// Internal cell representation. Kept private so users go through the
+/// `head` / `tail` / `iter` accessors and cannot observe (or accidentally
+/// force) the underlying `@lazy.Lazy` representation.
+priv enum LazyListCell[A] {
+  Empty
+  Cons(A, tail~ : @lazy.Lazy[LazyList[A]])
+}
+
+///|
+/// A persistent linked list with a memoized lazy tail. The head element
+/// of each cell is always strict; the tail is computed on first access
+/// and cached, so repeated traversals share evaluation work.
 ///
 /// Unlike `Iter[A]`, which is a single-use pull-based iterator, a
 /// `LazyList[A]` can be re-traversed any number of times.
-pub enum LazyList[A] {
-  Empty
-  Cons(A, tail~ : @lazy.Lazy[LazyList[A]])
+struct LazyList[A] {
+  cell : LazyListCell[A]
 }

@@ -26,7 +26,7 @@ using @debug {trait Debug, type Repr}
 pub impl[A : Debug] Debug for LazyList[A] with to_repr(self) {
   let parts = []
   for cur = self {
-    match cur {
+    match cur.cell {
       Empty => break
       Cons(x, tail~) => {
         parts.push(@debug.to_repr(x))

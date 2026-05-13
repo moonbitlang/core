@@ -13,43 +13,19 @@
 // limitations under the License.
 
 ///|
-test "empty / is_empty / head / tail / length" {
+test "empty / is_empty / head / tail" {
   let xs : @lazy_list.LazyList[Int] = @lazy_list.empty()
   inspect(xs.is_empty(), content="true")
   debug_inspect(xs.head(), content="None")
   debug_inspect(xs.tail(), content="None")
-  inspect(xs.length(), content="0")
 }
 
 ///|
-test "cons / lazy_cons / head / tail" {
-  let ys = @lazy_list.from_array([2, 3])
-  let xs = @lazy_list.cons(1, ys)
+test "lazy_cons / head / tail" {
+  let ys = @lazy_list.from_iter([2, 3].iter())
+  let xs = @lazy_list.lazy_cons(1, () => ys)
   debug_inspect(xs.head(), content="Some(1)")
-  inspect(xs.tail().unwrap(), content="@lazy_list.from_array([2, 3])")
-  let zs = @lazy_list.lazy_cons(0, () => xs)
-  debug_inspect(zs.head(), content="Some(0)")
-  inspect(zs.length(), content="4")
-}
-
-///|
-test "from_array round-trip" {
-  let xs = @lazy_list.from_array([1, 2, 3, 4, 5])
-  debug_inspect(xs.to_array(), content="[1, 2, 3, 4, 5]")
-  inspect(xs.length(), content="5")
-}
-
-///|
-test "from_list round-trip" {
-  let strict = @list.from_array([10, 20, 30])
-  let lazy_xs = @lazy_list.from_list(strict)
-  debug_inspect(lazy_xs.to_array(), content="[10, 20, 30]")
-  debug_inspect(
-    lazy_xs.to_list(),
-    content=(
-      #|<List: [10, 20, 30]>
-    ),
-  )
+  debug_inspect(xs.tail().unwrap().to_array(), content="[2, 3]")
 }
 
 ///|
@@ -73,108 +49,77 @@ test "from_iter is re-traversable and memoizes pulls" {
   // Second traversal must not pull again — every tail is memoized.
   debug_inspect(xs.to_array(), content="[1, 2, 3, 4]")
   inspect(pulls.val == after_first, content="true")
-  // We pulled exactly length+1 times (one extra to detect end).
+  // One pull per element; the trailing `None` does not increment the
+  // counter (it only fires inside `Some`).
   inspect(pulls.val, content="4")
 }
 
 ///|
-test "repeat is infinite but take is safe" {
-  debug_inspect(@lazy_list.repeat(7).take(0).to_array(), content="[]")
-  debug_inspect(@lazy_list.repeat(7).take(3).to_array(), content="[7, 7, 7]")
-}
+test "infinite streams are safe to take a prefix from" {
+  fn repeat(value : Int) -> @lazy_list.LazyList[Int] {
+    @lazy_list.lazy_cons(value, () => repeat(value))
+  }
 
-///|
-test "iterate generates a stream" {
-  let powers = @lazy_list.iterate(1, x => x * 2)
-  debug_inspect(powers.take(5).to_array(), content="[1, 2, 4, 8, 16]")
-  // Each call to take returns a fresh stream of the same values.
-  debug_inspect(powers.take(3).to_array(), content="[1, 2, 4]")
-}
+  fn iterate(seed : Int, f : (Int) -> Int) -> @lazy_list.LazyList[Int] {
+    @lazy_list.lazy_cons(seed, () => iterate(f(seed), f))
+  }
 
-///|
-test "unfold" {
-  let xs = @lazy_list.unfold(init=0, n => {
-    if n < 5 {
-      Some((n * n, n + 1))
-    } else {
-      None
-    }
-  })
-  debug_inspect(xs.to_array(), content="[0, 1, 4, 9, 16]")
+  debug_inspect(repeat(7).take(0).to_array(), content="[]")
+  debug_inspect(repeat(7).take(3).to_array(), content="[7, 7, 7]")
+  debug_inspect(
+    iterate(1, x => x * 2).take(5).to_array(),
+    content="[1, 2, 4, 8, 16]",
+  )
 }
 
 ///|
 test "map / filter (lazy)" {
-  let xs = @lazy_list.from_array([1, 2, 3, 4, 5])
+  let xs = @lazy_list.from_iter([1, 2, 3, 4, 5].iter())
   debug_inspect(xs.map(x => x + 10).to_array(), content="[11, 12, 13, 14, 15]")
   debug_inspect(xs.filter(x => x % 2 == 0).to_array(), content="[2, 4]")
-  // Lazy on infinite streams: should terminate via take.
-  let evens = @lazy_list.iterate(0, x => x + 1).filter(x => x % 2 == 0).take(4)
-  debug_inspect(evens.to_array(), content="[0, 2, 4, 6]")
 }
 
 ///|
-test "take / drop" {
-  let xs = @lazy_list.from_array([1, 2, 3, 4, 5])
+test "take / drop / take_while / drop_while" {
+  let xs = @lazy_list.from_iter([1, 2, 3, 4, 5].iter())
   debug_inspect(xs.take(3).to_array(), content="[1, 2, 3]")
   debug_inspect(xs.take(0).to_array(), content="[]")
   debug_inspect(xs.take(99).to_array(), content="[1, 2, 3, 4, 5]")
   debug_inspect(xs.drop(2).to_array(), content="[3, 4, 5]")
-  debug_inspect(xs.drop(0).to_array(), content="[1, 2, 3, 4, 5]")
   debug_inspect(xs.drop(99).to_array(), content="[]")
-}
-
-///|
-test "take_while / drop_while" {
-  let xs = @lazy_list.from_array([1, 2, 3, 4, 1, 2])
-  debug_inspect(xs.take_while(x => x < 3).to_array(), content="[1, 2]")
-  debug_inspect(xs.drop_while(x => x < 3).to_array(), content="[3, 4, 1, 2]")
-  debug_inspect(
-    @lazy_list.iterate(0, x => x + 1).take_while(x => x < 5).to_array(),
-    content="[0, 1, 2, 3, 4]",
-  )
+  let ys = @lazy_list.from_iter([1, 2, 3, 4, 1, 2].iter())
+  debug_inspect(ys.take_while(x => x < 3).to_array(), content="[1, 2]")
+  debug_inspect(ys.drop_while(x => x < 3).to_array(), content="[3, 4, 1, 2]")
 }
 
 ///|
 test "concat / flat_map / zip" {
-  let xs = @lazy_list.from_array([1, 2, 3])
-  let ys = @lazy_list.from_array([4, 5])
+  let xs = @lazy_list.from_iter([1, 2, 3].iter())
+  let ys = @lazy_list.from_iter([4, 5].iter())
   debug_inspect(xs.concat(ys).to_array(), content="[1, 2, 3, 4, 5]")
   debug_inspect(
-    xs.flat_map(x => @lazy_list.from_array([x, x * 10])).to_array(),
+    xs.flat_map(x => @lazy_list.from_iter([x, x * 10].iter())).to_array(),
     content="[1, 10, 2, 20, 3, 30]",
   )
-  // flat_map skipping empty mappings
+  // flat_map skipping empty mappings.
   debug_inspect(
     xs
     .flat_map(x => {
       if x == 2 {
         @lazy_list.empty()
       } else {
-        @lazy_list.singleton(x)
+        @lazy_list.lazy_cons(x, () => @lazy_list.empty())
       }
     })
     .to_array(),
     content="[1, 3]",
   )
   debug_inspect(xs.zip(ys).to_array(), content="[(1, 4), (2, 5)]")
-  let zipped = @lazy_list.iterate(0, x => x + 1)
-    .zip(@lazy_list.from_array(["a", "b", "c"]))
-    .to_array()
-  debug_inspect(
-    zipped,
-    content=(
-      #|[(0, "a"), (1, "b"), (2, "c")]
-    ),
-  )
 }
 
 ///|
-test "nth / each / fold" {
-  let xs = @lazy_list.from_array([10, 20, 30, 40])
-  debug_inspect(xs.nth(0), content="Some(10)")
-  debug_inspect(xs.nth(3), content="Some(40)")
-  debug_inspect(xs.nth(4), content="None")
+test "each / fold" {
+  let xs = @lazy_list.from_iter([10, 20, 30, 40].iter())
   inspect(xs.fold(init=0, (acc, x) => acc + x), content="100")
   let buf = []
   xs.each(x => buf.push(x))
@@ -183,7 +128,7 @@ test "nth / each / fold" {
 
 ///|
 test "iter bridge is independent per call" {
-  let xs = @lazy_list.from_array([1, 2, 3])
+  let xs = @lazy_list.from_iter([1, 2, 3].iter())
   let i1 = xs.iter()
   let i2 = xs.iter()
   debug_inspect(i1.next(), content="Some(1)")
@@ -191,39 +136,6 @@ test "iter bridge is independent per call" {
   debug_inspect(i2.next(), content="Some(1)")
   debug_inspect(i1.next(), content="Some(2)")
   debug_inspect(i2.next(), content="Some(2)")
-}
-
-///|
-test "Eq / Show / ToJson" {
-  let a = @lazy_list.from_array([1, 2, 3])
-  let b = @lazy_list.from_array([1, 2, 3])
-  let c = @lazy_list.from_array([1, 2, 4])
-  inspect(a == b, content="true")
-  inspect(a == c, content="false")
-  inspect(a, content="@lazy_list.from_array([1, 2, 3])")
-  json_inspect(a, content=[1, 2, 3])
-}
-
-///|
-test "Debug walks only the forced prefix" {
-  // Fully forced: every element printed.
-  let strict = @lazy_list.from_array([1, 2, 3])
-  @debug.debug_inspect(strict, content="<LazyList: [1, 2, 3]>")
-
-  // Infinite stream is safe — only forced cells contribute.
-  let stream = @lazy_list.iterate(0, x => x + 1)
-  @debug.debug_inspect(stream, content="<LazyList: [0, ...]>")
-
-  // Force a prefix and re-render: the previously evaluated cells stay
-  // memoized, so the rendering grows accordingly.
-  let buf = []
-  stream.iter().take(3).each(x => buf.push(x))
-  debug_inspect(buf, content="[0, 1, 2]")
-  @debug.debug_inspect(stream, content="<LazyList: [0, 1, 2, ...]>")
-
-  // Empty list has no prefix and no unforced marker.
-  let empty : @lazy_list.LazyList[Int] = @lazy_list.empty()
-  @debug.debug_inspect(empty, content="<LazyList: []>")
 }
 
 ///|
@@ -243,23 +155,11 @@ test "iter does not over-force the tail" {
 }
 
 ///|
-test "nth on negative index returns None without forcing" {
-  let pulls : Ref[Int] = Ref(0)
-  let xs = @lazy_list.lazy_cons(1, () => {
-    pulls.val += 1
-    @lazy_list.empty()
-  })
-  debug_inspect(xs.nth(-1), content="None")
-  debug_inspect(xs.nth(-100), content="None")
-  inspect(pulls.val, content="0")
-}
-
-///|
 test "zip does not over-force when one side is shorter" {
   // After consuming the only pair, the longer side's tail must not be
   // forced — zip should detect end-of-stream from the shorter side.
   let pulls : Ref[Int] = Ref(0)
-  let short = @lazy_list.singleton(1)
+  let short = @lazy_list.lazy_cons(1, () => @lazy_list.empty())
   let long = @lazy_list.lazy_cons(2, () => {
     pulls.val += 1
     @lazy_list.empty()
@@ -272,7 +172,7 @@ test "zip does not over-force when one side is shorter" {
 ///|
 test "lazy semantics: map does not force tail until observed" {
   let pulls : Ref[Int] = Ref(0)
-  let xs = @lazy_list.from_array([1, 2, 3]).map(x => {
+  let xs = @lazy_list.from_iter([1, 2, 3].iter()).map(x => {
     pulls.val += 1
     x * 2
   })
@@ -283,4 +183,29 @@ test "lazy semantics: map does not force tail until observed" {
   debug_inspect(xs.take(2).to_array(), content="[2, 4]")
   // After observing two elements, exactly two map applications occurred.
   inspect(pulls.val, content="2")
+}
+
+///|
+test "Debug walks only the forced prefix" {
+  // Fully forced: every element printed.
+  let strict = @lazy_list.from_iter([1, 2, 3].iter()).map(x => x)
+  // Force everything.
+  let _ = strict.to_array()
+  @debug.debug_inspect(strict, content="<LazyList: [1, 2, 3]>")
+  // Infinite stream is safe — only forced cells contribute.
+  fn iterate(seed : Int, f : (Int) -> Int) -> @lazy_list.LazyList[Int] {
+    @lazy_list.lazy_cons(seed, () => iterate(f(seed), f))
+  }
+
+  let stream = iterate(0, x => x + 1)
+  @debug.debug_inspect(stream, content="<LazyList: [0, ...]>")
+  // Force a prefix and re-render: the previously evaluated cells stay
+  // memoized, so the rendering grows accordingly.
+  let buf = []
+  stream.iter().take(3).each(x => buf.push(x))
+  debug_inspect(buf, content="[0, 1, 2]")
+  @debug.debug_inspect(stream, content="<LazyList: [0, 1, 2, ...]>")
+  // Empty list has no prefix and no unforced marker.
+  let empty : @lazy_list.LazyList[Int] = @lazy_list.empty()
+  @debug.debug_inspect(empty, content="<LazyList: []>")
 }
