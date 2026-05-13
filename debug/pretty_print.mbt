@@ -272,15 +272,29 @@ pub fn[T : Debug] debug(x : T) -> Unit {
 }
 
 ///|
-/// Convert a value to its debug string representation.
+/// Convert a value to its debug string representation. Equivalent to
+/// `@debug.to_repr(x).to_string()`, but spelled in one step.
+///
+/// Also exported under the shorter name `repr` (re-exported from prelude,
+/// so it is callable without import). The two names refer to the same
+/// function; pick whichever reads better at the call site.
+///
+/// Note: this is the **debug** rendering, which differs from `T::to_string`
+/// (the `Show` rendering) for some types — most visibly, strings and chars
+/// are quoted and escaped here. Use `@debug.to_string` / `repr` for
+/// developer-facing output (logs, snapshots, error messages), and the
+/// `Show` `to_string` for user-facing output.
 ///
 /// # Examples
 /// ```mbt check
 /// test {
 ///   let str = @debug.to_string([1, 2, 3])
 ///   assert_eq(str, "[1, 2, 3]")
+///   // Same function under a shorter name.
+///   assert_eq(repr("hi"), "\"hi\"")
 /// }
 /// ```
+#alias(repr)
 pub fn[T : Debug] to_string(x : T) -> String {
   render(x.to_repr())
 }
