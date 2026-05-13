@@ -16,12 +16,20 @@
 using @debug {trait Debug, type Repr}
 
 ///|
-/// Debug implementation. Never forces the thunk: a forced cell renders
-/// as `<Lazy: value>`, an unforced or in-progress cell as
-/// `<Lazy: unforced>`. Safe to call on infinite or effectful thunks.
+/// Debug implementation. Never forces the thunk:
+///
+/// - `Forced(v)`  → `<Lazy: <v>>`
+/// - `Unforced`   → `<Lazy: ...>` (matches the opaque-container
+///   convention used by `Iter`).
+/// - `Forcing`    → `<Lazy: forcing>` — only observable from inside the
+///   thunk itself (a reentrant peek). Surfacing it explicitly helps
+///   diagnose the reentrancy that would otherwise abort `force`.
+///
+/// Safe to call on infinite or effectful thunks.
 pub impl[A : Debug] Debug for Lazy[A] with to_repr(self) {
   match self.state {
     Forced(v) => Repr::opaque_("Lazy", @debug.to_repr(v))
-    _ => Repr::opaque_("Lazy", Repr::literal("unforced"))
+    Forcing => Repr::opaque_("Lazy", Repr::literal("forcing"))
+    Unforced(_) => Repr::opaque_("Lazy", Repr::omitted())
   }
 }
