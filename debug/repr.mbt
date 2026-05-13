@@ -220,10 +220,7 @@ pub fn Repr::array(children : Array[Repr]) -> Repr {
 /// Construct a `Record` node from pre-built child `Repr`s.
 #doc(hidden)
 pub fn Repr::record(fields : Map[String, Repr]) -> Repr {
-  Record([
-    for name, value in fields =>
-      RecordField(name, value)
-  ])
+  Record([ for name, value in fields => RecordField(name, value) ])
 }
 
 ///|
