@@ -3,7 +3,6 @@ package "moonbitlang/core/lazy_list"
 
 import {
   "moonbitlang/core/debug",
-  "moonbitlang/core/list",
 }
 
 // Values
@@ -33,7 +32,6 @@ pub fn[A] LazyList::tail(Self[A]) -> Self[A]?
 pub fn[A] LazyList::take(Self[A], Int) -> Self[A]
 pub fn[A] LazyList::take_while(Self[A], (A) -> Bool) -> Self[A]
 pub fn[A] LazyList::to_array(Self[A]) -> Array[A]
-pub fn[A] LazyList::to_list(Self[A]) -> @list.List[A]
 pub fn[A, B] LazyList::zip(Self[A], Self[B]) -> Self[(A, B)]
 pub impl[A : @debug.Debug] @debug.Debug for LazyList[A]
 

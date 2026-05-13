@@ -210,8 +210,18 @@ test {
 
 ## Consuming strictly
 
-`each`, `fold`, `to_array`, `to_list` force the entire spine. **Do not call
-them on an infinite list.**
+`each`, `fold`, `to_array` force the entire spine. **Do not call them on an
+infinite list.** If you need a strict `@list.List`, pipe the iterator
+through `@list.from_iter`:
+
+```mbt check
+///|
+test {
+  let xs = @lazy_list.from_iter([1, 2, 3].iter())
+  let strict : @list.List[Int] = @list.from_iter(xs.iter())
+  @debug.debug_inspect(strict, content="<List: [1, 2, 3]>")
+}
+```
 
 ```mbt check
 ///|
@@ -262,7 +272,7 @@ test {
 Note: `Show`, `Eq`, and `ToJson` are deliberately **not** provided. Each
 would force the entire spine and silently diverge on infinite lists. Use
 `Debug` for inspection; for equality / serialization, materialize through
-`to_array` or `to_list` once you're sure the list is finite.
+`to_array` (or `@list.from_iter(xs.iter())`) once you're sure the list is finite.
 
 ---
 

@@ -340,21 +340,6 @@ pub fn[A] LazyList::to_array(self : LazyList[A]) -> Array[A] {
 }
 
 ///|
-/// Materializes the lazy list as a strict `@list.List`. Forces the
-/// entire spine. Builds the result directly (no intermediate array).
-pub fn[A] LazyList::to_list(self : LazyList[A]) -> @list.List[A] {
-  // Walk forward, prepending to an accumulator, then reverse — O(n)
-  // total, single pass, no array allocation.
-  let mut acc = @list.empty()
-  let mut cur = self
-  while cur.cell is Cons(x, tail~) {
-    acc = acc.prepend(x)
-    cur = tail.force()
-  }
-  acc.rev()
-}
-
-///|
 /// Bridges the lazy list back to a pull-based `Iter`. The returned
 /// iterator does not consume the lazy list — re-call `iter()` to get
 /// a fresh traversal.
