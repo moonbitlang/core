@@ -873,12 +873,14 @@ test "length_eq" {
 }
 
 ///|
+enum StringPatternToken {
+  True
+  False
+  Other
+} derive(Debug)
+
+///|
 test "string pattern matching" {
-  enum Token {
-    True
-    False
-    Other
-  } derive(Debug)
   fn process_string(s : String) {
     match s {
       [.. "true", ..] => True

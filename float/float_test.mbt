@@ -66,11 +66,13 @@ test "Float::to_int" {
 }
 
 ///|
+struct FloatHashInput {
+  a : Float
+} derive(Hash)
+
+///|
 test "Hash" {
-  struct A {
-    a : Float
-  } derive(Hash)
-  let a = A::{ a: 1.0 }
+  let a = FloatHashInput::{ a: 1.0 }
   let h1 = Hasher::new(seed=0)
   h1.combine(a)
   inspect(h1.finalize(), content="1986884538")

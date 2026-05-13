@@ -22,11 +22,13 @@ test "write_iter with trailing" {
 }
 
 ///|
+struct Data {
+  x : Array[Int]
+  y : FixedArray[Int]
+} derive(Hash, Eq, Debug)
+
+///|
 test "hash_data" {
-  struct Data {
-    x : Array[Int]
-    y : FixedArray[Int]
-  } derive(Hash, Eq, Debug)
   let data = Data::{ x: [1, 2, 3], y: [4, 5, 6] }
   let map = {}
   map[data] = 1

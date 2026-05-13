@@ -13,10 +13,12 @@
 // limitations under the License.
 
 ///|
+struct Data {
+  val : String
+} derive(Debug)
+
+///|
 test {
-  struct Data {
-    val : String
-  } derive(Debug)
   let data = Data::{ val: "Hello, 世界\t\n!" }
   // TODO: the data type annotation is not needed
   debug_inspect(

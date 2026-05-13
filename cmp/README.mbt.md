@@ -60,12 +60,13 @@ With `@cmp.maximum_by_key()` and `@cmp.minimum_by_key()`, it is possible to comp
 
 ```mbt check
 ///|
-test "cmp_by_key" {
-  struct Person {
-    name : String
-    age : Int
-  } derive(Debug)
+struct Person {
+  name : String
+  age : Int
+} derive(Debug)
 
+///|
+test "cmp_by_key" {
   // Compare strings by their length
   let s1 = "hello"
   let s2 = "hi"

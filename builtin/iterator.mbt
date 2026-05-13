@@ -25,6 +25,13 @@ struct Iter[X] {
 }
 
 ///|
+priv enum IntersperseState[X] {
+  IntersperseInit
+  IntersperseElem(X)
+  IntersperseSep
+}
+
+///|
 /// Get the next element from an iterator, or return `None` if no more element exists.
 /// The returned element will be consumed from the iterator.
 /// Calling `next` repeatedly will iterate through all elements in the iterator.
@@ -868,12 +875,7 @@ pub fn[X] Iter::last(self : Iter[X]) -> X? {
 /// # Note
 /// The old iterator `self` must not be used again after calling `intersperse`.
 pub fn[X] Iter::intersperse(self : Iter[X], sep : X) -> Iter[X] {
-  enum State {
-    Init
-    Output_Elem(X)
-    Output_Sep
-  }
-  let mut state = Init
+  let mut state : IntersperseState[X] = IntersperseInit
   let size_hint = match self.size_hint {
     Some(0) => Some(0)
     Some(n) => Some(n * 2 - 1)
@@ -882,20 +884,20 @@ pub fn[X] Iter::intersperse(self : Iter[X], sep : X) -> Iter[X] {
   {
     f: fn() {
       match state {
-        Init => {
+        IntersperseInit => {
           let result = self.next()
-          state = Output_Sep
+          state = IntersperseSep
           result
         }
-        Output_Elem(x) => {
-          state = Output_Sep
+        IntersperseElem(x) => {
+          state = IntersperseSep
           Some(x)
         }
-        Output_Sep =>
+        IntersperseSep =>
           // make sure we only output the separator when there is remaining element
           match self.next() {
             Some(x) => {
-              state = Output_Elem(x)
+              state = IntersperseElem(x)
               Some(sep)
             }
             None => None

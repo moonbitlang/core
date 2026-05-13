@@ -38,9 +38,6 @@ struct BigInt {
 }
 
 ///|
-using @debug {trait Debug, type Repr}
-
-///|
 priv enum Sign {
   Positive
   Negative
@@ -48,13 +45,10 @@ priv enum Sign {
 
 ///|
 test "internal repr" {
-  struct BigIntRepr {
-    limbs : FixedArray[UInt]
-    sign : Sign
-    len : Int
-  } derive(Debug)
-  fn convert(b : BigInt) -> BigIntRepr {
-    { limbs: b.limbs, sign: b.sign, len: b.len }
+  fn convert(b : BigInt) -> @debug.Repr {
+    @debug.Repr::literal(
+      "{ limbs: \{@debug.to_string(b.limbs)}, sign: \{@debug.to_string(b.sign)}, len: \{b.len} }",
+    )
   }
   @debug.debug_inspect(
     [0N, 1, 2, 3, 4, -1, -2, -3, -4].map(convert),

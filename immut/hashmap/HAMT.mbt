@@ -28,6 +28,12 @@
 // - <https://lampwww.epfl.ch/papers/idealhashtrees.pdf>
 
 ///|
+priv enum CurrNode[K, V] {
+  Tree(Node[K, V])
+  Bucket(@list.List[(K, V)])
+}
+
+///|
 /// Create a new instance.
 #as_free_fn
 pub fn[K, V] HashMap::new() -> HashMap[K, V] {
@@ -632,10 +638,6 @@ pub fn[K, V] HashMap::values(self : HashMap[K, V]) -> Iter[V] {
 /// Converted to Iter
 #alias(iterator, deprecated)
 pub fn[K, V] HashMap::iter(self : HashMap[K, V]) -> Iter[(K, V)] {
-  enum CurrNode {
-    Tree(Node[K, V])
-    Bucket(@list.List[(K, V)])
-  }
   let empty = Bucket(@list.new())
   let mut curr_node = match self.0 {
     Some(tree) => Tree(tree)

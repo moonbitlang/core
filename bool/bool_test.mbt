@@ -23,11 +23,13 @@ test "Bool hash function" {
 }
 
 ///|
+struct TestHash {
+  flag : Bool
+  x : Int
+} derive(Hash, Eq, Debug)
+
+///|
 test "Bool hash function with struct" {
-  struct TestHash {
-    flag : Bool
-    x : Int
-  } derive(Hash, Eq, Debug)
   // type MyInt Int derive(Show) this does not work
   // let m : Map[TestHash, Char] = {}
   let m = {}
