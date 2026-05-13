@@ -82,13 +82,32 @@ test "peek on a ready cell returns Some without running" {
 ///|
 test "Debug renders forced and unforced cells safely" {
   let unforced : @lazy.Lazy[Int] = @lazy.Lazy(() => abort("must not run"))
-  @debug.debug_inspect(unforced, content="<Lazy: unforced>")
+  @debug.debug_inspect(unforced, content="<Lazy: ...>")
   let forced = @lazy.Lazy::ready(42)
   @debug.debug_inspect(forced, content="<Lazy: 42>")
   let later = @lazy.Lazy(() => 7)
-  @debug.debug_inspect(later, content="<Lazy: unforced>")
+  @debug.debug_inspect(later, content="<Lazy: ...>")
   ignore(later.force())
   @debug.debug_inspect(later, content="<Lazy: 7>")
+}
+
+///|
+test "Debug renders the in-progress Forcing state" {
+  // A thunk that, while running, observes its own cell sees the
+  // transient `Forcing` state. `Debug` surfaces this explicitly to help
+  // diagnose the reentrancy that would otherwise abort `force`.
+  // The thunk signature is non-raising, so we capture the rendered
+  // string and assert outside.
+  let observed : Ref[String] = Ref("")
+  let holder : Array[@lazy.Lazy[Int]] = []
+  let cell = @lazy.Lazy(() => {
+    observed.val = @debug.to_repr(holder[0]).to_string()
+    42
+  })
+  holder.push(cell)
+  inspect(cell.force(), content="42")
+  inspect(observed.val, content="<Lazy: forcing>")
+  @debug.debug_inspect(cell, content="<Lazy: 42>")
 }
 
 ///|
