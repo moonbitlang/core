@@ -19,7 +19,7 @@ using @debug {trait Debug, type Repr}
 pub impl[K : Debug] Debug for SortedSet[K] with to_repr(self) {
   Repr::opaque_(
     "SortedSet",
-    Repr::array(self.to_array().map(x => @debug.to_repr(x))),
+    Repr::array([ for x in self => @debug.to_repr(x) ]),
   )
 }
 

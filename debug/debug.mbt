@@ -162,14 +162,7 @@ pub impl Debug for StringBuilder with to_repr(self) {
 
 ///|
 pub impl[K : Debug, V : Debug] Debug for Map[K, V] with to_repr(self) {
-  Repr::map(
-    self
-    .to_array()
-    .map(kv => {
-      let (k, v) = kv
-      (to_repr(k), to_repr(v))
-    }),
-  )
+  Repr::map([ for k, v in self => (to_repr(k), to_repr(v)) ])
 }
 
 ///|
