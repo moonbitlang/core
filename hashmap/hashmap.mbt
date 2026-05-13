@@ -218,6 +218,78 @@ pub fn[K : Hash + Eq, V] HashMap::get(self : HashMap[K, V], key : K) -> V? {
 }
 
 ///|
+/// Retrieves the value associated with a `BytesView` key in a hash map with
+/// `Bytes` keys.
+///
+/// This allows efficient lookups using a `BytesView` (e.g. a sub-slice of a
+/// larger byte buffer) without allocating a fresh `Bytes`.
+///
+/// Returns `Some(value)` if a matching key exists in the map, `None` otherwise.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let map = @hashmap.from_array([(b"hello", 1), (b"world", 2)])
+///   let bytes = b"prefix_hello_suffix"
+///   let view = bytes[7:12] // view of "hello"
+///   @debug.debug_inspect(map.get_from_bytes(view), content="Some(1)")
+/// }
+/// ```
+pub fn[V] HashMap::get_from_bytes(
+  self : HashMap[Bytes, V],
+  key : BytesView,
+) -> V? {
+  let hash = key.hash()
+  for i = 0, idx = hash & self.capacity_mask {
+    guard self.entries[idx] is Some(entry) else { break None }
+    if entry.hash == hash && key.equal_to_bytes(entry.key) {
+      break Some(entry.value)
+    }
+    if i > entry.psl {
+      break None
+    }
+    continue i + 1, (idx + 1) & self.capacity_mask
+  }
+}
+
+///|
+/// Retrieves the value associated with a `StringView` key in a hash map with
+/// `String` keys.
+///
+/// This allows efficient lookups using a `StringView` (e.g. a substring of a
+/// larger string) without allocating a fresh `String`.
+///
+/// Returns `Some(value)` if a matching key exists in the map, `None` otherwise.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let map = @hashmap.from_array([("hello", 1), ("world", 2)])
+///   let str = "say hello to everyone"
+///   let view = str.view(start_offset=4, end_offset=9) // view of "hello"
+///   @debug.debug_inspect(map.get_from_string(view), content="Some(1)")
+/// }
+/// ```
+pub fn[V] HashMap::get_from_string(
+  self : HashMap[String, V],
+  key : StringView,
+) -> V? {
+  let hash = key.hash()
+  for i = 0, idx = hash & self.capacity_mask {
+    guard self.entries[idx] is Some(entry) else { break None }
+    if entry.hash == hash && key.equal_to_string(entry.key) {
+      break Some(entry.value)
+    }
+    if i > entry.psl {
+      break None
+    }
+    continue i + 1, (idx + 1) & self.capacity_mask
+  }
+}
+
+///|
 /// Retrieves the value associated with a given key in the hash map.
 ///
 /// Parameters:

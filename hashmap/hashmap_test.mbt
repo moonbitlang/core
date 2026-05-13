@@ -622,3 +622,75 @@ test "hashmap default" {
   let map : @hashmap.HashMap[Int, Int] = Default::default()
   inspect(map.length(), content="0")
 }
+
+///|
+test "HashMap::get_from_string" {
+  let map = @hashmap.HashMap([("hello", 1), ("world", 2), ("test", 3)])
+
+  // Basic string view access
+  let view1 = "hello"[:]
+  debug_inspect(map.get_from_string(view1), content="Some(1)")
+
+  // String view from substring
+  let full_str = "prefix_world_suffix"
+  let view2 = full_str.view(start_offset=7, end_offset=12)
+  debug_inspect(map.get_from_string(view2), content="Some(2)")
+
+  // Non-existent key
+  let view3 = "notfound"[:]
+  debug_inspect(map.get_from_string(view3), content="None")
+
+  // Length mismatch
+  let short_view = "hell"[:]
+  debug_inspect(map.get_from_string(short_view), content="None")
+
+  // Same length, different content
+  let mismatch_view = "hella"[:]
+  debug_inspect(map.get_from_string(mismatch_view), content="None")
+
+  // Empty key
+  let empty_map = @hashmap.HashMap([("", 42)])
+  let empty_view = ""[:]
+  debug_inspect(empty_map.get_from_string(empty_view), content="Some(42)")
+
+  // Substring of a longer string
+  let longer = "this is a test string"
+  let test_view = longer.view(start_offset=10, end_offset=14)
+  debug_inspect(map.get_from_string(test_view), content="Some(3)")
+}
+
+///|
+test "HashMap::get_from_bytes" {
+  let map = @hashmap.HashMap([(b"hello", 1), (b"world", 2), (b"test", 3)])
+
+  // Basic bytes view access
+  let view1 = b"hello"[:]
+  debug_inspect(map.get_from_bytes(view1), content="Some(1)")
+
+  // Bytes view from sub-array
+  let full_bytes = b"prefix_world_suffix"
+  let view2 = full_bytes[7:12]
+  debug_inspect(map.get_from_bytes(view2), content="Some(2)")
+
+  // Non-existent key
+  let view3 = b"notfound"[:]
+  debug_inspect(map.get_from_bytes(view3), content="None")
+
+  // Length mismatch
+  let short_view = b"hell"[:]
+  debug_inspect(map.get_from_bytes(short_view), content="None")
+
+  // Same length, different content
+  let mismatch_view = b"hellx"[:]
+  debug_inspect(map.get_from_bytes(mismatch_view), content="None")
+
+  // Empty key
+  let empty_map = @hashmap.HashMap([(b"", 42)])
+  let empty_view = b""[:]
+  debug_inspect(empty_map.get_from_bytes(empty_view), content="Some(42)")
+
+  // Subbytes of a longer bytes
+  let longer = b"this is a test string"
+  let test_view = longer[10:14]
+  debug_inspect(map.get_from_bytes(test_view), content="Some(3)")
+}
