@@ -25,6 +25,11 @@ pub extend HashMap with Eq::{equal}
 pub extend HashMap with @debug.Debug::{to_repr}
 
 ///|
+#deprecated("Use `@json.from_json` instead", skip_current_package=true)
+#doc(hidden)
+pub extend HashMap with @json.FromJson::{from_json}
+
+///|
 #deprecated("Use `Default::default` instead", skip_current_package=true)
 #doc(hidden)
 pub extend HashMap with Default::{default}

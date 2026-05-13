@@ -4,6 +4,7 @@ import {
   "moonbitlang/core/debug",
   "moonbitlang/core/test",
   "moonbitlang/core/int",
+  "moonbitlang/core/json",
 }
 
 import {
