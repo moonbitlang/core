@@ -49,6 +49,7 @@ test "Map::default" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Map::of" {
   let arr : FixedArray[(String, Int)] = [("a", 1), ("b", 2), ("c", 3)]
   let map = Map::of(arr)

@@ -393,6 +393,7 @@ pub fn[K : Eq, V] Map::merge(Self[K, V], Self[K, V]) -> Self[K, V]
 pub fn[K : Eq, V] Map::merge_in_place(Self[K, V], Self[K, V]) -> Unit
 #deprecated
 pub fn[K, V] Map::new(capacity? : Int) -> Self[K, V]
+#deprecated
 pub fn[K : Hash + Eq, V] Map::of(FixedArray[(K, V)]) -> Self[K, V]
 pub fn[K : Hash + Eq, V] Map::remove(Self[K, V], K) -> Unit
 pub fn[K, V] Map::retain(Self[K, V], (K, V) -> Bool) -> Unit
