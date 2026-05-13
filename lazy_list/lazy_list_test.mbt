@@ -159,7 +159,7 @@ test "concat / flat_map / zip" {
   inspect(
     zipped,
     content=(
-      #|[(0, "a"), (1, "b"), (2, "c")]
+      #|[(0, a), (1, b), (2, c)]
     ),
   )
 }
@@ -197,6 +197,28 @@ test "Eq / Show / ToJson" {
   inspect(a == c, content="false")
   inspect(a, content="@lazy_list.from_array([1, 2, 3])")
   json_inspect(a, content=[1, 2, 3])
+}
+
+///|
+test "Debug walks only the forced prefix" {
+  // Fully forced: every element printed.
+  let strict = @lazy_list.from_array([1, 2, 3])
+  @debug.debug_inspect(strict, content="<LazyList: [1, 2, 3]>")
+
+  // Infinite stream is safe — only forced cells contribute.
+  let stream = @lazy_list.iterate(0, x => x + 1)
+  @debug.debug_inspect(stream, content="<LazyList: [0, ...]>")
+
+  // Force a prefix and re-render: the previously evaluated cells stay
+  // memoized, so the rendering grows accordingly.
+  let buf = []
+  stream.iter().take(3).each(x => buf.push(x))
+  inspect(buf, content="[0, 1, 2]")
+  @debug.debug_inspect(stream, content="<LazyList: [0, 1, 2, ...]>")
+
+  // Empty list has no prefix and no unforced marker.
+  let empty : @lazy_list.LazyList[Int] = @lazy_list.empty()
+  @debug.debug_inspect(empty, content="<LazyList: []>")
 }
 
 ///|

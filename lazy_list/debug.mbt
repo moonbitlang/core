@@ -16,11 +16,29 @@
 using @debug {trait Debug, type Repr}
 
 ///|
-/// Debug implementation. Forces the entire spine; do not call on infinite
-/// lists.
+/// Debug implementation. Walks only the cells whose tails have already
+/// been forced — never runs a thunk — so it is safe on infinite or
+/// effectful streams.
+///
+/// A fully forced list renders as `<LazyList: [1, 2, 3]>`. A list whose
+/// spine is still lazy renders the prefix that has been evaluated and
+/// then `...` to mark the unforced tail, e.g. `<LazyList: [1, 2, ...]>`.
 pub impl[A : Debug] Debug for LazyList[A] with to_repr(self) {
-  Repr::opaque_(
-    "LazyList",
-    Repr::array(self.to_array().map(x => @debug.to_repr(x))),
-  )
+  let parts = []
+  for cur = self {
+    match cur {
+      Empty => break
+      Cons(x, tail~) => {
+        parts.push(@debug.to_repr(x))
+        match tail.peek() {
+          Some(next) => continue next
+          None => {
+            parts.push(Repr::omitted())
+            break
+          }
+        }
+      }
+    }
+  }
+  Repr::opaque_("LazyList", Repr::array(parts))
 }
