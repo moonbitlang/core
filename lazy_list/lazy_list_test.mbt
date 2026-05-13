@@ -172,6 +172,10 @@ test "drop_while accepts a raising predicate" {
 
   let xs = @lazy_list.from_iter([1, 2, 3, 4].iter())
   debug_inspect(xs.drop_while(pred).to_array(), content="[3, 4]")
+  // Short-circuits: pred(3) returns false, so pred(-1) is never called
+  // and no error is raised even though -1 would trigger one.
+  let zs = @lazy_list.from_iter([1, 3, -1].iter())
+  debug_inspect(zs.drop_while(pred).to_array(), content="[3, -1]")
   // A predicate that raises mid-skip propagates out of drop_while.
   let ys = @lazy_list.from_iter([1, -1, 5].iter())
   let result : Result[@lazy_list.LazyList[Int], NegativeFound] = try? ys.drop_while(
@@ -200,10 +204,15 @@ test "zip's left bias: right-shorter forces one extra left tail" {
   // Documenting the asymmetric behavior: when the right side is shorter,
   // `zip` cannot detect termination without first forcing the next left
   // cell. This is unavoidable without a look-ahead protocol.
+  //
+  // Setup: left has 2 elements ([1, 3]), right has 1 element ([2]).
+  // After yielding (1, 2), zip forces the left tail to discover whether
+  // there's a second pair — at that point it sees the right is empty
+  // and stops. The left tail force is the "one extra".
   let left_pulls : Ref[Int] = Ref(0)
   let long_left = @lazy_list.lazy_cons(1, () => {
     left_pulls.val += 1
-    @lazy_list.empty()
+    @lazy_list.lazy_cons(3, () => @lazy_list.empty())
   })
   let short_right = @lazy_list.lazy_cons(2, () => @lazy_list.empty())
   let zipped = long_left.zip(short_right).to_array()
