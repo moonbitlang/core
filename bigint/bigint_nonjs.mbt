@@ -46,9 +46,11 @@ priv enum Sign {
 ///|
 test "internal repr" {
   fn convert(b : BigInt) -> @debug.Repr {
-    @debug.Repr::literal(
-      "{ limbs: \{@debug.to_string(b.limbs)}, sign: \{@debug.to_string(b.sign)}, len: \{b.len} }",
-    )
+    @debug.Repr::record({
+      "limbs": @debug.to_repr(b.limbs),
+      "sign": @debug.to_repr(b.sign),
+      "len": @debug.to_repr(b.len),
+    })
   }
   @debug.debug_inspect(
     [0N, 1, 2, 3, 4, -1, -2, -3, -4].map(convert),
