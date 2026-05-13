@@ -63,7 +63,7 @@ pub fn[A] LazyList::cons(head : A, tail : LazyList[A]) -> LazyList[A] {
 ///     @lazy_list.lazy_cons(n, () => nat_from(n + 1))
 ///   }
 ///   let xs = nat_from(0).take(4).to_array()
-///   inspect(xs, content="[0, 1, 2, 3]")
+///   debug_inspect(xs, content="[0, 1, 2, 3]")
 /// }
 /// ```
 #as_free_fn
@@ -89,7 +89,7 @@ pub fn[A] LazyList::singleton(value : A) -> LazyList[A] {
 ///
 /// ```mbt check
 /// test {
-///   inspect(@lazy_list.repeat(7).take(3).to_array(), content="[7, 7, 7]")
+///   debug_inspect(@lazy_list.repeat(7).take(3).to_array(), content="[7, 7, 7]")
 /// }
 /// ```
 #as_free_fn
@@ -105,7 +105,7 @@ pub fn[A] LazyList::repeat(value : A) -> LazyList[A] {
 /// ```mbt check
 /// test {
 ///   let powers = @lazy_list.iterate(1, x => x * 2)
-///   inspect(powers.take(5).to_array(), content="[1, 2, 4, 8, 16]")
+///   debug_inspect(powers.take(5).to_array(), content="[1, 2, 4, 8, 16]")
 /// }
 /// ```
 #as_free_fn
@@ -129,7 +129,7 @@ pub fn[A] LazyList::iterate(seed : A, f : (A) -> A) -> LazyList[A] {
 ///       None
 ///     }
 ///   })
-///   inspect(xs.to_array(), content="[0, 1, 4]")
+///   debug_inspect(xs.to_array(), content="[0, 1, 4]")
 /// }
 /// ```
 #as_free_fn
@@ -175,9 +175,9 @@ pub fn[A] LazyList::from_list(list : @list.List[A]) -> LazyList[A] {
 /// ```mbt check
 /// test {
 ///   let xs = @lazy_list.from_iter([1, 2, 3].iter())
-///   inspect(xs.to_array(), content="[1, 2, 3]")
+///   debug_inspect(xs.to_array(), content="[1, 2, 3]")
 ///   // The lazy list is re-traversable.
-///   inspect(xs.to_array(), content="[1, 2, 3]")
+///   debug_inspect(xs.to_array(), content="[1, 2, 3]")
 /// }
 /// ```
 #as_free_fn

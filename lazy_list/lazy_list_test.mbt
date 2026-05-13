@@ -35,7 +35,7 @@ test "cons / lazy_cons / head / tail" {
 ///|
 test "from_array round-trip" {
   let xs = @lazy_list.from_array([1, 2, 3, 4, 5])
-  inspect(xs.to_array(), content="[1, 2, 3, 4, 5]")
+  debug_inspect(xs.to_array(), content="[1, 2, 3, 4, 5]")
   inspect(xs.length(), content="5")
 }
 
@@ -43,8 +43,13 @@ test "from_array round-trip" {
 test "from_list round-trip" {
   let strict = @list.from_array([10, 20, 30])
   let lazy_xs = @lazy_list.from_list(strict)
-  inspect(lazy_xs.to_array(), content="[10, 20, 30]")
-  inspect(lazy_xs.to_list(), content="@list.from_array([10, 20, 30])")
+  debug_inspect(lazy_xs.to_array(), content="[10, 20, 30]")
+  debug_inspect(
+    lazy_xs.to_list(),
+    content=(
+      #|<List: [10, 20, 30]>
+    ),
+  )
 }
 
 ///|
@@ -63,10 +68,10 @@ test "from_iter is re-traversable and memoizes pulls" {
   })
   let xs = @lazy_list.from_iter(counted)
   // First traversal forces every cell.
-  inspect(xs.to_array(), content="[1, 2, 3, 4]")
+  debug_inspect(xs.to_array(), content="[1, 2, 3, 4]")
   let after_first = pulls.val
   // Second traversal must not pull again — every tail is memoized.
-  inspect(xs.to_array(), content="[1, 2, 3, 4]")
+  debug_inspect(xs.to_array(), content="[1, 2, 3, 4]")
   inspect(pulls.val == after_first, content="true")
   // We pulled exactly length+1 times (one extra to detect end).
   inspect(pulls.val, content="4")
@@ -74,16 +79,16 @@ test "from_iter is re-traversable and memoizes pulls" {
 
 ///|
 test "repeat is infinite but take is safe" {
-  inspect(@lazy_list.repeat(7).take(0).to_array(), content="[]")
-  inspect(@lazy_list.repeat(7).take(3).to_array(), content="[7, 7, 7]")
+  debug_inspect(@lazy_list.repeat(7).take(0).to_array(), content="[]")
+  debug_inspect(@lazy_list.repeat(7).take(3).to_array(), content="[7, 7, 7]")
 }
 
 ///|
 test "iterate generates a stream" {
   let powers = @lazy_list.iterate(1, x => x * 2)
-  inspect(powers.take(5).to_array(), content="[1, 2, 4, 8, 16]")
+  debug_inspect(powers.take(5).to_array(), content="[1, 2, 4, 8, 16]")
   // Each call to take returns a fresh stream of the same values.
-  inspect(powers.take(3).to_array(), content="[1, 2, 4]")
+  debug_inspect(powers.take(3).to_array(), content="[1, 2, 4]")
 }
 
 ///|
@@ -95,36 +100,36 @@ test "unfold" {
       None
     }
   })
-  inspect(xs.to_array(), content="[0, 1, 4, 9, 16]")
+  debug_inspect(xs.to_array(), content="[0, 1, 4, 9, 16]")
 }
 
 ///|
 test "map / filter (lazy)" {
   let xs = @lazy_list.from_array([1, 2, 3, 4, 5])
-  inspect(xs.map(x => x + 10).to_array(), content="[11, 12, 13, 14, 15]")
-  inspect(xs.filter(x => x % 2 == 0).to_array(), content="[2, 4]")
+  debug_inspect(xs.map(x => x + 10).to_array(), content="[11, 12, 13, 14, 15]")
+  debug_inspect(xs.filter(x => x % 2 == 0).to_array(), content="[2, 4]")
   // Lazy on infinite streams: should terminate via take.
   let evens = @lazy_list.iterate(0, x => x + 1).filter(x => x % 2 == 0).take(4)
-  inspect(evens.to_array(), content="[0, 2, 4, 6]")
+  debug_inspect(evens.to_array(), content="[0, 2, 4, 6]")
 }
 
 ///|
 test "take / drop" {
   let xs = @lazy_list.from_array([1, 2, 3, 4, 5])
-  inspect(xs.take(3).to_array(), content="[1, 2, 3]")
-  inspect(xs.take(0).to_array(), content="[]")
-  inspect(xs.take(99).to_array(), content="[1, 2, 3, 4, 5]")
-  inspect(xs.drop(2).to_array(), content="[3, 4, 5]")
-  inspect(xs.drop(0).to_array(), content="[1, 2, 3, 4, 5]")
-  inspect(xs.drop(99).to_array(), content="[]")
+  debug_inspect(xs.take(3).to_array(), content="[1, 2, 3]")
+  debug_inspect(xs.take(0).to_array(), content="[]")
+  debug_inspect(xs.take(99).to_array(), content="[1, 2, 3, 4, 5]")
+  debug_inspect(xs.drop(2).to_array(), content="[3, 4, 5]")
+  debug_inspect(xs.drop(0).to_array(), content="[1, 2, 3, 4, 5]")
+  debug_inspect(xs.drop(99).to_array(), content="[]")
 }
 
 ///|
 test "take_while / drop_while" {
   let xs = @lazy_list.from_array([1, 2, 3, 4, 1, 2])
-  inspect(xs.take_while(x => x < 3).to_array(), content="[1, 2]")
-  inspect(xs.drop_while(x => x < 3).to_array(), content="[3, 4, 1, 2]")
-  inspect(
+  debug_inspect(xs.take_while(x => x < 3).to_array(), content="[1, 2]")
+  debug_inspect(xs.drop_while(x => x < 3).to_array(), content="[3, 4, 1, 2]")
+  debug_inspect(
     @lazy_list.iterate(0, x => x + 1).take_while(x => x < 5).to_array(),
     content="[0, 1, 2, 3, 4]",
   )
@@ -134,13 +139,13 @@ test "take_while / drop_while" {
 test "concat / flat_map / zip" {
   let xs = @lazy_list.from_array([1, 2, 3])
   let ys = @lazy_list.from_array([4, 5])
-  inspect(xs.concat(ys).to_array(), content="[1, 2, 3, 4, 5]")
-  inspect(
+  debug_inspect(xs.concat(ys).to_array(), content="[1, 2, 3, 4, 5]")
+  debug_inspect(
     xs.flat_map(x => @lazy_list.from_array([x, x * 10])).to_array(),
     content="[1, 10, 2, 20, 3, 30]",
   )
   // flat_map skipping empty mappings
-  inspect(
+  debug_inspect(
     xs
     .flat_map(x => {
       if x == 2 {
@@ -152,14 +157,14 @@ test "concat / flat_map / zip" {
     .to_array(),
     content="[1, 3]",
   )
-  inspect(xs.zip(ys).to_array(), content="[(1, 4), (2, 5)]")
+  debug_inspect(xs.zip(ys).to_array(), content="[(1, 4), (2, 5)]")
   let zipped = @lazy_list.iterate(0, x => x + 1)
     .zip(@lazy_list.from_array(["a", "b", "c"]))
     .to_array()
-  inspect(
+  debug_inspect(
     zipped,
     content=(
-      #|[(0, a), (1, b), (2, c)]
+      #|[(0, "a"), (1, "b"), (2, "c")]
     ),
   )
 }
@@ -173,7 +178,7 @@ test "nth / each / fold" {
   inspect(xs.fold(init=0, (acc, x) => acc + x), content="100")
   let buf = []
   xs.each(x => buf.push(x))
-  inspect(buf, content="[10, 20, 30, 40]")
+  debug_inspect(buf, content="[10, 20, 30, 40]")
 }
 
 ///|
@@ -213,7 +218,7 @@ test "Debug walks only the forced prefix" {
   // memoized, so the rendering grows accordingly.
   let buf = []
   stream.iter().take(3).each(x => buf.push(x))
-  inspect(buf, content="[0, 1, 2]")
+  debug_inspect(buf, content="[0, 1, 2]")
   @debug.debug_inspect(stream, content="<LazyList: [0, 1, 2, ...]>")
 
   // Empty list has no prefix and no unforced marker.
@@ -260,7 +265,7 @@ test "zip does not over-force when one side is shorter" {
     @lazy_list.empty()
   })
   let zipped = short.zip(long).to_array()
-  inspect(zipped, content="[(1, 2)]")
+  debug_inspect(zipped, content="[(1, 2)]")
   inspect(pulls.val, content="0")
 }
 
@@ -275,7 +280,7 @@ test "lazy semantics: map does not force tail until observed" {
   // happened when constructing the mapped Cons. Tails are still lazy.
   inspect(pulls.val, content="1")
   debug_inspect(xs.head(), content="Some(2)")
-  inspect(xs.take(2).to_array(), content="[2, 4]")
+  debug_inspect(xs.take(2).to_array(), content="[2, 4]")
   // After observing two elements, exactly two map applications occurred.
   inspect(pulls.val, content="2")
 }
