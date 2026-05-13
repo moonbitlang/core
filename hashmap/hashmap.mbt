@@ -314,6 +314,103 @@ pub fn[K : Hash + Eq, V] HashMap::get_or_init(
 }
 
 ///|
+/// Updates a value in the map based on the existing value.
+///
+/// This method allows you to conditionally update, insert, or remove a key-value pair
+/// based on whether the key already exists in the map. The provided function `f` is
+/// called with `Some(current_value)` if the key exists, or `None` if it doesn't.
+///
+/// Parameters:
+///
+/// * `self` : The map to update.
+/// * `key` : The key to update.
+/// * `f` : A function that takes the current value (wrapped in `Option`) and returns
+///   the new value (wrapped in `Option`). Returning `None` will remove the key-value
+///   pair from the map.
+///
+/// Behavior:
+///
+/// * If the key exists and `f` returns `Some(new_value)`, the value is updated.
+/// * If the key exists and `f` returns `None`, the key-value pair is removed.
+/// * If the key doesn't exist and `f` returns `Some(new_value)`, a new pair is inserted.
+/// * If the key doesn't exist and `f` returns `None`, no operation is performed.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let map : @hashmap.HashMap[String, Int] = @hashmap.HashMap([
+///     ("a", 1),
+///     ("b", 2),
+///   ])
+///
+///   // Update existing value
+///   map.update("a", fn(v) {
+///     match v {
+///       Some(x) => Some(x + 10)
+///       None => Some(0)
+///     }
+///   })
+///   debug_inspect(map.get("a"), content="Some(11)")
+///
+///   // Insert new value
+///   map.update("c", fn(v) {
+///     match v {
+///       Some(x) => Some(x)
+///       None => Some(3)
+///     }
+///   })
+///   debug_inspect(map.get("c"), content="Some(3)")
+///
+///   // Remove existing value
+///   map.update("b", fn(_) { None })
+///   debug_inspect(map.get("b"), content="None")
+/// }
+/// ```
+pub fn[K : Hash + Eq, V] HashMap::update(
+  self : HashMap[K, V],
+  key : K,
+  f : (V?) -> V?,
+) -> Unit {
+  let hash = key.hash()
+  let (idx, psl, new_value, push_away) = for psl = 0, idx = hash &
+                                               self.capacity_mask {
+    match self.entries[idx] {
+      Some(entry) => {
+        if entry.hash == hash && entry.key == key {
+          if f(Some(entry.value)) is Some(new_value) {
+            entry.value = new_value
+          } else {
+            self.shift_back(idx)
+            self.size -= 1
+          }
+          return
+        }
+        if psl > entry.psl {
+          guard f(None) is Some(new_value) else { return }
+          break (idx, psl, new_value, Some(entry))
+        }
+        continue psl + 1, (idx + 1) & self.capacity_mask
+      }
+      None => {
+        guard f(None) is Some(new_value) else { return }
+        break (idx, psl, new_value, None)
+      }
+    }
+  }
+  if self.size >= self.capacity / 2 {
+    self.grow()
+    self.set_with_hash(key, new_value, hash)
+  } else {
+    if push_away is Some(entry) {
+      self.push_away(idx, entry)
+    }
+    self.entries[idx] = Some({ psl, hash, key, value: new_value })
+    self.size += 1
+  }
+}
+
+///|
 /// Inserts `default` for `key` if it is absent, otherwise replaces the existing
 /// value with `f(existing)`. The pairing of an eager `default` value with a
 /// modifier function lets the canonical counter pattern read literally:
