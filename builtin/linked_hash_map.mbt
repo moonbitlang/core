@@ -769,7 +769,7 @@ pub impl[K : Hash + Eq, V : Eq] Eq for Map[K, V] with equal(
 
 ///|
 /// Function `of`.
-#deprecated("Use `Map([..])` or `Map::from_array` instead")
+#deprecated("Use `Map([(k, v), ...])` or `Map::from_array` instead")
 pub fn[K : Hash + Eq, V] Map::of(arr : FixedArray[(K, V)]) -> Map[K, V] {
   let length = arr.length()
   let m = new_map(capacity_for_length(length))
