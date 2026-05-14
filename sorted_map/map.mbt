@@ -266,7 +266,8 @@ pub fn[K, V] SortedMap::eachi(
 
 ///|
 /// Returns an iterator over the keys in ascending order.
-pub fn[K, V] SortedMap::keys_as_iter(self : SortedMap[K, V]) -> Iter[K] {
+#alias(keys_as_iter, deprecated)
+pub fn[K, V] SortedMap::keys(self : SortedMap[K, V]) -> Iter[K] {
   let todo_list = []
   let mut next_node = self.root
   Iter::new(
@@ -291,7 +292,8 @@ pub fn[K, V] SortedMap::keys_as_iter(self : SortedMap[K, V]) -> Iter[K] {
 
 ///|
 /// Returns an iterator over the values in ascending key order.
-pub fn[K, V] SortedMap::values_as_iter(self : SortedMap[K, V]) -> Iter[V] {
+#alias(values_as_iter, deprecated)
+pub fn[K, V] SortedMap::values(self : SortedMap[K, V]) -> Iter[V] {
   let todo_list = []
   let mut next_node = self.root
   Iter::new(

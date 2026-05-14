@@ -127,7 +127,7 @@ test "eachi" {
 test "keys" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
   debug_inspect(
-    map.keys_as_iter().to_array(),
+    map.keys().to_array(),
     content=(
       #|[1, 2, 3]
     ),
@@ -138,7 +138,7 @@ test "keys" {
 test "values" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
   debug_inspect(
-    map.values_as_iter().to_array(),
+    [..map.values()],
     content=(
       #|["a", "b", "c"]
     ),

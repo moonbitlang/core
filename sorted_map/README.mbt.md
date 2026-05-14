@@ -167,8 +167,8 @@ Get all keys or values from the map.
 ///|
 test {
   let map = @sorted_map.from_array([(3, "three"), (1, "one"), (2, "two")])
-  @debug.assert_eq(map.keys_as_iter().collect(), [1, 2, 3])
-  @debug.assert_eq(map.values_as_iter().collect(), ["one", "two", "three"])
+  @debug.assert_eq(map.keys().collect(), [1, 2, 3])
+  @debug.assert_eq(map.values().collect(), ["one", "two", "three"])
 }
 ```
 
