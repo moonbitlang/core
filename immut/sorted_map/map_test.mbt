@@ -107,7 +107,7 @@ test "fold" {
     ("d", 4),
     ("e", 5),
   ])
-  assert_eq(m.foldl_with_key((acc, _, v) => acc + v, init=0), 15)
+  assert_eq(m.fold((acc, _, v) => acc + v, init=0), 15)
 }
 
 ///|
@@ -120,7 +120,7 @@ test "foldl_with_key" {
     ("e", 5),
   ])
   assert_eq(
-    m.foldl_with_key((acc, k, v) => acc + k + v.to_string(), init=""),
+    m.fold((acc, k, v) => acc + k + v.to_string(), init=""),
     "a1b2c3d4e5",
   )
 }

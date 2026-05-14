@@ -105,7 +105,8 @@ pub fn[K : Compare, V] SortedMap::remove(
 
 ///|
 /// Filter key-value pairs that satisfy the predicate
-pub fn[K, V] SortedMap::filter_with_key(
+#alias(filter_with_key, deprecated)
+pub fn[K, V] SortedMap::filter(
   self : SortedMap[K, V],
   pred : (K, V) -> Bool raise?,
 ) -> SortedMap[K, V] raise? {
@@ -113,9 +114,9 @@ pub fn[K, V] SortedMap::filter_with_key(
     Empty => Empty
     Tree(k, value=v, l, r, ..) =>
       if pred(k, v) {
-        balance(k, v, l.filter_with_key(pred), r.filter_with_key(pred))
+        balance(k, v, l.filter(pred), r.filter(pred))
       } else {
-        glue(l.filter_with_key(pred), r.filter_with_key(pred))
+        glue(l.filter(pred), r.filter(pred))
       }
   }
 }
@@ -373,7 +374,7 @@ test "map" {
     (2, "two"),
     (0, "zero"),
   ])
-  let n = m.map_with_key((_, v) => v + "X")
+  let n = m.map((_, v) => v + "X")
   @test.assert_eq(
     n.debug_tree(),
     "(3,threeX,(1,oneX,(0,zeroX,_,_),(2,twoX,_,_)),(8,eightX,_,_))",
@@ -389,7 +390,7 @@ test "map_with_key" {
     (2, "two"),
     (0, "zero"),
   ])
-  let n = m.map_with_key((k, v) => "\{k}-\{v}")
+  let n = m.map((k, v) => "\{k}-\{v}")
   @test.assert_eq(
     n.debug_tree(),
     "(3,3-three,(1,1-one,(0,0-zero,_,_),(2,2-two,_,_)),(8,8-eight,_,_))",
@@ -405,7 +406,7 @@ test "filter" {
     (2, "two"),
     (0, "zero"),
   ])
-  let fm = m.filter_with_key((_, v) => v.length() > 3)
+  let fm = m.filter((_, v) => v.length() > 3)
   inspect(fm.debug_tree(), content="(3,three,(0,zero,_,_),(8,eight,_,_))")
 }
 
@@ -418,7 +419,7 @@ test "filter_with_key" {
     (2, "two"),
     (0, "zero"),
   ])
-  let fm = m.filter_with_key((k, v) => k > 3 && v.length() > 3)
+  let fm = m.filter((k, v) => k > 3 && v.length() > 3)
   inspect(fm.debug_tree(), content="(8,eight,_,_)")
 }
 

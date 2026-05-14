@@ -160,14 +160,15 @@ pub fn[K, V] SortedMap::eachi(
 
 ///|
 /// Maps over the key-value pairs in the map.
-pub fn[K, X, Y] SortedMap::map_with_key(
+#alias(map_with_key, deprecated)
+pub fn[K, X, Y] SortedMap::map(
   self : SortedMap[K, X],
   f : (K, X) -> Y,
 ) -> SortedMap[K, Y] {
   match self {
     Empty => Empty
     Tree(k, value~, l, r, size~) =>
-      Tree(k, value=f(k, value), size~, l.map_with_key(f), r.map_with_key(f))
+      Tree(k, value=f(k, value), size~, l.map(f), r.map(f))
   }
 }
 
@@ -193,7 +194,8 @@ pub fn[K, V, A] SortedMap::rev_fold(
 ///|
 /// Pre-order fold.
 /// O(n).
-pub fn[K, V, A] SortedMap::foldl_with_key(
+#alias(foldl_with_key, deprecated)
+pub fn[K, V, A] SortedMap::fold(
   self : SortedMap[K, V],
   f : (A, K, V) -> A,
   init~ : A,
