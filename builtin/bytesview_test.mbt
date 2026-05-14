@@ -74,3 +74,19 @@ test "BytesView::get_view" {
   debug_inspect(view.get_view(start=3, end=2), content="None")
   guard view.get_view(start=1) is Some([b'\x02', b'\x03', ..])
 }
+
+///|
+test "BytesView::equal_to_bytes" {
+  let buf = b"prefix_hello_suffix"
+  // Sub-view of "hello" matches the owned bytes.
+  inspect(buf[7:12].equal_to_bytes(b"hello"), content="true")
+  // Same length, different content.
+  inspect(buf[7:12].equal_to_bytes(b"world"), content="false")
+  // Length mismatch short-circuits.
+  inspect(buf[7:12].equal_to_bytes(b"hell"), content="false")
+  inspect(buf[7:12].equal_to_bytes(b"hello!"), content="false")
+  // Empty view vs empty bytes.
+  inspect(b""[:].equal_to_bytes(b""), content="true")
+  // Full view of the same buffer.
+  inspect(buf[:].equal_to_bytes(buf), content="true")
+}

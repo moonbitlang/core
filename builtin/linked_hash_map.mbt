@@ -1108,37 +1108,6 @@ pub fn[K : Hash + Eq, V] Map::update(
 // Special handling for Views as accessors
 
 ///|
-fn StringView::equal_to_string(self : Self, other : String) -> Bool {
-  let str = self.str()
-  let start = self.start()
-  let end = self.end()
-  let len = end - start
-  guard len == other.length() else { return false }
-  if physical_equal(str, other) && self.start() == 0 {
-    return true
-  }
-  for i in 0..<len {
-    guard str.unsafe_get(self.start() + i) == other.unsafe_get(i) else {
-      return false
-    }
-  }
-  true
-}
-
-///|
-fn BytesView::equal_to_bytes(self : Self, other : Bytes) -> Bool {
-  let self_len = self.len()
-  let start = self.start()
-  guard self_len == other.length() else { return false }
-  for i in 0..<self_len {
-    guard self.bytes().unsafe_get(i + start) == other.unsafe_get(i) else {
-      return false
-    }
-  }
-  true
-}
-
-///|
 /// Retrieves the value associated with a `BytesView` key in a map with `Bytes` keys.
 ///
 /// This function allows efficient lookups using `BytesView` without creating a new `Bytes` object.

@@ -654,11 +654,35 @@ pub impl Show for Bytes with output(self, logger) {
 /// }
 /// ```
 pub impl Eq for BytesView with equal(self, other) -> Bool {
-  guard self.length() == other.length() else { return false }
-  for i, byte in self {
-    guard byte == other.unsafe_get(i) else { return false }
-  }
-  true
+  let len = self.length()
+  guard len == other.length() else { return false }
+  self
+  .bytes()
+  .unsafe_range_equal(self.start(), other.bytes(), other.start(), len)
+}
+
+///|
+/// Compares a `BytesView` to a `Bytes` byte-for-byte.
+///
+/// This is the cross-type equivalent of `==` and avoids materializing a fresh
+/// `Bytes` (or a wrapping `BytesView`) when probing an owned-`Bytes`-keyed
+/// container with a view-shaped key.
+///
+/// Returns `true` if the lengths match and every byte in `self` equals the
+/// byte at the same index in `other`.
+///
+/// Example:
+/// ```mbt check
+/// test {
+///   let buf = b"prefix_hello_suffix"
+///   inspect(buf[7:12].equal_to_bytes(b"hello"), content="true")
+///   inspect(buf[7:12].equal_to_bytes(b"world"), content="false")
+/// }
+/// ```
+pub fn BytesView::equal_to_bytes(self : BytesView, other : Bytes) -> Bool {
+  let len = self.length()
+  guard len == other.length() else { return false }
+  self.bytes().unsafe_range_equal(self.start(), other, 0, len)
 }
 
 ///|
