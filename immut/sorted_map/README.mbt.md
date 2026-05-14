@@ -132,10 +132,7 @@ Pre-order; use `rev_fold()` for a Post-order fold.
 test {
   let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
   assert_eq(map.fold((acc, _, v) => acc + v, init=0), 6) // 6
-  assert_eq(
-    map.fold((acc, k, v) => acc + k + v.to_string(), init=""),
-    "a1b2c3",
-  ) // "a1b2c3"
+  assert_eq(map.fold((acc, k, v) => acc + k + v.to_string(), init=""), "a1b2c3") // "a1b2c3"
   assert_eq(
     map.rev_fold((acc, k, v) => acc + k + v.to_string(), init=""),
     "c3b2a1",
