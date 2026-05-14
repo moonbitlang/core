@@ -21,4 +21,3 @@
 pub fn[K, V] SortedMap::new() -> SortedMap[K, V] {
   new_sorted_map()
 }
-
