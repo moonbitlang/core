@@ -291,3 +291,35 @@ test "StringView::get_view" {
   // Pattern-match composition: the optional form is matchable.
   guard s.get_view(end=5) is Some("Hello")
 }
+
+///|
+test "StringView::equal_to_string" {
+  let s = "say hello to everyone"
+  // Sub-view of "hello" matches the owned string.
+  inspect(
+    s.view(start_offset=4, end_offset=9).equal_to_string("hello"),
+    content="true",
+  )
+  // Same length, different content.
+  inspect(
+    s.view(start_offset=4, end_offset=9).equal_to_string("world"),
+    content="false",
+  )
+  // Length mismatch short-circuits.
+  inspect(
+    s.view(start_offset=4, end_offset=9).equal_to_string("hell"),
+    content="false",
+  )
+  inspect(
+    s.view(start_offset=4, end_offset=9).equal_to_string("hello!"),
+    content="false",
+  )
+  // Empty view vs empty string.
+  inspect(""[:].equal_to_string(""), content="true")
+  // Full view of the same backing string takes the physical-equal fast path.
+  inspect(s[:].equal_to_string(s), content="true")
+  // Multi-byte (surrogate pair) content compares correctly.
+  let smile = "Hello🤣World"
+  inspect(smile[:].equal_to_string("Hello🤣World"), content="true")
+  inspect(smile[5:7].equal_to_string("🤣"), content="true")
+}

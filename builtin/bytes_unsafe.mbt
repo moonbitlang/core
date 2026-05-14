@@ -543,6 +543,40 @@ pub fn BytesView::unsafe_read_uint16_be(
   bytes.bytes().unsafe_read_uint16_be(bytes.start() + index)
 }
 
+///|
+/// **UNSAFE**: Compares two byte ranges for equality without bounds checking.
+///
+/// ⚠️ **Warning: This function is unsafe and can cause undefined behavior!**
+///
+/// # Safety
+/// - **No bounds checking**: caller must ensure both ranges
+///   `[self_off, self_off + len)` and `[other_off, other_off + len)` are fully
+///   within their respective buffers.
+///
+/// # Parameters
+/// - `self`, `other`: the two byte sequences
+/// - `self_off`, `other_off`: starting byte offsets
+/// - `len`: number of bytes to compare
+///
+/// This is the shared primitive backing view/owned equality comparisons
+/// (e.g. `BytesView == BytesView`, `BytesView::equal_to_bytes`). It is a
+/// candidate for an `memcmp`-style intrinsic in the future.
+#borrow(self, other)
+fn Bytes::unsafe_range_equal(
+  self : Bytes,
+  self_off : Int,
+  other : Bytes,
+  other_off : Int,
+  len : Int,
+) -> Bool {
+  for i in 0..<len {
+    guard self.unsafe_get(self_off + i) == other.unsafe_get(other_off + i) else {
+      return false
+    }
+  }
+  true
+}
+
 // #endregion
 // #region FixedArray fastpath helpers
 //

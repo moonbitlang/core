@@ -292,6 +292,45 @@ pub impl Eq for StringView with equal(self, other) {
 }
 
 ///|
+/// Compares a `StringView` to a `String` code-unit-for-code-unit.
+///
+/// This is the cross-type equivalent of `==` and avoids materializing a fresh
+/// `String` (or a wrapping `StringView`) when probing an owned-`String`-keyed
+/// container with a view-shaped key. When the view spans an entire backing
+/// string that is physically the same as `other`, this short-circuits.
+///
+/// Returns `true` if the lengths match and every UTF-16 code unit in `self`
+/// equals the code unit at the same index in `other`.
+///
+/// Example:
+/// ```mbt check
+/// test {
+///   let s = "say hello to everyone"
+///   inspect(
+///     s.view(start_offset=4, end_offset=9).equal_to_string("hello"),
+///     content="true",
+///   )
+///   inspect(
+///     s.view(start_offset=4, end_offset=9).equal_to_string("world"),
+///     content="false",
+///   )
+/// }
+/// ```
+pub fn StringView::equal_to_string(self : StringView, other : String) -> Bool {
+  let len = self.length()
+  guard len == other.length() else { return false }
+  if physical_equal(self.str(), other) && self.start() == 0 {
+    return true
+  }
+  for i in 0..<len {
+    guard self.str().unsafe_get(self.start() + i) == other.unsafe_get(i) else {
+      return false
+    }
+  }
+  true
+}
+
+///|
 /// Views are ordered based on shortlex order by their charcodes (code units). This 
 /// orders Unicode characters based on their positions in the code charts. This is
 /// not necessarily the same as "alphabetical" order, which varies by language
