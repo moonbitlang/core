@@ -24,12 +24,10 @@ pub fn[K, V] SortedMap::each(Self[K, V], (K, V) -> Unit) -> Unit
 pub fn[K, V] SortedMap::eachi(Self[K, V], (Int, K, V) -> Unit) -> Unit
 #deprecated
 pub fn[K, V] SortedMap::elems(Self[K, V]) -> Array[V]
-#deprecated
-pub fn[K, V] SortedMap::filter(Self[K, V], (V) -> Bool raise?) -> Self[K, V] raise?
-pub fn[K, V] SortedMap::filter_with_key(Self[K, V], (K, V) -> Bool raise?) -> Self[K, V] raise?
-#deprecated
-pub fn[K, V, A] SortedMap::fold(Self[K, V], init~ : A, (A, V) -> A) -> A
-pub fn[K, V, A] SortedMap::foldl_with_key(Self[K, V], (A, K, V) -> A, init~ : A) -> A
+#alias(filter_with_key, deprecated)
+pub fn[K, V] SortedMap::filter(Self[K, V], (K, V) -> Bool raise?) -> Self[K, V] raise?
+#alias(foldl_with_key, deprecated)
+pub fn[K, V, A] SortedMap::fold(Self[K, V], (A, K, V) -> A, init~ : A) -> A
 #alias(of, deprecated)
 #as_free_fn(of, deprecated)
 #as_free_fn
@@ -52,9 +50,8 @@ pub fn[K, V] SortedMap::keys(Self[K, V]) -> Array[K]
 pub fn[K, V] SortedMap::keys_as_iter(Self[K, V]) -> Iter[K]
 #alias(size, deprecated)
 pub fn[K, V] SortedMap::length(Self[K, V]) -> Int
-#deprecated
-pub fn[K, X, Y] SortedMap::map(Self[K, X], (X) -> Y) -> Self[K, Y]
-pub fn[K, X, Y] SortedMap::map_with_key(Self[K, X], (K, X) -> Y) -> Self[K, Y]
+#alias(map_with_key, deprecated)
+pub fn[K, X, Y] SortedMap::map(Self[K, X], (K, X) -> Y) -> Self[K, Y]
 pub fn[K : Compare, V] SortedMap::merge(Self[K, V], Self[K, V]) -> Self[K, V]
 #alias(empty, deprecated)
 #as_free_fn

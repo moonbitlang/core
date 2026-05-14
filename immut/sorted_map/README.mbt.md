@@ -111,29 +111,29 @@ test {
 }
 ```
 
-Use `map_with_key()` to map a function over all values.
+Use `map()` to map a function over all key-value pairs.
 
 ```mbt check
 ///|
 test {
   let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
-  let map = map.map_with_key((_, v) => v + 1)
+  let map = map.map((_, v) => v + 1)
   assert_eq(map.values().collect(), [2, 3, 4])
-  let map = map.map_with_key((_k, v) => v + 1)
+  let map = map.map((_k, v) => v + 1)
   assert_eq(map.values().collect(), [3, 4, 5])
 }
 ```
 
-Use `foldl_with_key()` to fold the values in the map. The default order of fold
-is Pre-order. Similarly, you can use `rev_fold()` to do a Post-order fold.
+Use `fold()` to fold over the key-value pairs of the map. The default order is
+Pre-order; use `rev_fold()` for a Post-order fold.
 
 ```mbt check
 ///|
 test {
   let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
-  assert_eq(map.foldl_with_key((acc, _, v) => acc + v, init=0), 6) // 6
+  assert_eq(map.fold((acc, _, v) => acc + v, init=0), 6) // 6
   assert_eq(
-    map.foldl_with_key((acc, k, v) => acc + k + v.to_string(), init=""),
+    map.fold((acc, k, v) => acc + k + v.to_string(), init=""),
     "a1b2c3",
   ) // "a1b2c3"
   assert_eq(
@@ -143,16 +143,16 @@ test {
 }
 ```
 
-Use `filter_with_key()` to filter all keys/values that satisfy the predicate.
+Use `filter()` to filter all key-value pairs that satisfy the predicate.
 
 ```mbt check
 ///|
 test {
   let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
-  let map = map.filter_with_key((_, v) => v > 1)
+  let map = map.filter((_, v) => v > 1)
   assert_eq(map.values().collect(), [2, 3])
   assert_eq(map.keys_as_iter().collect(), ["b", "c"])
-  let map = map.filter_with_key((k, v) => k > "a" && v > 1)
+  let map = map.filter((k, v) => k > "a" && v > 1)
   assert_eq(map.values().collect(), [2, 3])
   assert_eq(map.keys_as_iter().collect(), ["b", "c"])
 }
