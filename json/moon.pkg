@@ -14,4 +14,5 @@ import {
   "moonbitlang/core/result",
   "moonbitlang/core/unit",
   "moonbitlang/core/bigint",
+  "moonbitlang/core/bench",
 } for "test"
