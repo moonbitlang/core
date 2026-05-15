@@ -52,8 +52,7 @@ let int_pow10_table : ReadOnlyArray[UInt64] = [
 ///|
 priv struct JsonNumberScan {
   negative : Bool
-  has_decimal : Bool
-  has_exponent : Bool
+  is_integer : Bool
   mantissa : UInt64
   exponent : Int64
   many_digits : Bool
@@ -126,13 +125,7 @@ fn ParseContext::scan_json_number(
   start : Int,
   end : Int,
 ) -> JsonNumberScan {
-  let mut i = start
-  let negative = if ctx.input.unsafe_get(i) == '-' {
-    i += 1
-    true
-  } else {
-    false
-  }
+  let negative = ctx.input.unsafe_get(start) == '-'
   let mut has_decimal = false
   let mut has_exponent = false
   let mut exponent_negative = false
@@ -141,15 +134,17 @@ fn ParseContext::scan_json_number(
   let mut mantissa = 0UL
   let mut significant_digits = 0
   let mut seen_nonzero = false
-  while i < end {
+  for i = (if negative { start + 1 } else { start }); i < end; i = i + 1 {
     let c = ctx.input.unsafe_get(i)
     if c is ('0'..='9') {
       let digit = c.to_int() - '0'
       if has_exponent {
         if exponent_part < EXPONENT_CAP {
-          exponent_part = exponent_part * 10L + digit.to_int64()
-          if exponent_part > EXPONENT_CAP {
-            exponent_part = EXPONENT_CAP
+          let next_exponent = exponent_part * 10L + digit.to_int64()
+          exponent_part = if next_exponent > EXPONENT_CAP {
+            EXPONENT_CAP
+          } else {
+            next_exponent
           }
         }
       } else {
@@ -173,13 +168,9 @@ fn ParseContext::scan_json_number(
         let next = ctx.input.unsafe_get(i + 1)
         if next == '-' {
           exponent_negative = true
-          i += 1
-        } else if next == '+' {
-          i += 1
         }
       }
     }
-    i += 1
   }
   let exponent_part = if exponent_negative {
     -exponent_part
@@ -188,8 +179,7 @@ fn ParseContext::scan_json_number(
   }
   {
     negative,
-    has_decimal,
-    has_exponent,
+    is_integer: !has_decimal && !has_exponent,
     mantissa,
     exponent: exponent_part - fractional_digits.to_int64(),
     many_digits: significant_digits > 19,
@@ -202,15 +192,13 @@ fn ParseContext::lex_integer_end(
   start : Int,
   end : Int,
 ) -> (Double, StringView?) {
-  let mut i = start
-  let negative = if ctx.input.unsafe_get(i) == '-' {
-    i += 1
-    true
-  } else {
-    false
-  }
-  let mut acc = 0L
-  while i < end {
+  let negative = ctx.input.unsafe_get(start) == '-'
+  let number_start = if negative { start + 1 } else { start }
+  for i = number_start, acc = 0L {
+    if i >= end {
+      let value = if negative { -acc } else { acc }
+      break (value.to_double(), None)
+    }
     let digit = (ctx.input.unsafe_get(i).to_int() - '0').to_int64()
     if acc > (SAFE_INTEGER_LIMIT - digit) / 10L {
       let s = ctx.input.view(start_offset=start, end_offset=end)
@@ -220,11 +208,8 @@ fn ParseContext::lex_integer_end(
         (@double.infinity, Some(s))
       }
     }
-    acc = acc * 10L + digit
-    i += 1
+    continue i + 1, acc * 10L + digit
   }
-  let value = if negative { -acc } else { acc }
-  (value.to_double(), None)
 }
 
 ///|
@@ -364,8 +349,12 @@ fn ParseContext::lex_number_end(
   start : Int,
   end : Int,
 ) -> (Double, StringView?) {
+  // Fast path for JSON numbers: the lexer has already validated the grammar,
+  // so scan raw UTF-16 digits once and bypass the general strconv parser for
+  // safe integers and Clinger-style fast-path doubles. Fall back to strconv for
+  // large or precision-sensitive numbers so existing rounding behavior is kept.
   let scan = ctx.scan_json_number(start, end)
-  if !scan.has_decimal && !scan.has_exponent {
+  if scan.is_integer {
     return ctx.lex_integer_end(start, end)
   }
   match scan.try_fast_double() {

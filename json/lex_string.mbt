@@ -15,8 +15,9 @@
 ///|
 fn ParseContext::lex_string(ctx : ParseContext) -> String raise ParseError {
   let string_start = ctx.offset
-  let mut i = string_start
-  while i < ctx.end_offset {
+  // Fast path for ordinary strings: scan raw UTF-16 code units and materialize
+  // the slice directly when there are no escapes or control characters.
+  for i = string_start; i < ctx.end_offset; i = i + 1 {
     let c = ctx.input.unsafe_get(i)
     if c == '"' {
       ctx.offset = i + 1
@@ -27,7 +28,6 @@ fn ParseContext::lex_string(ctx : ParseContext) -> String raise ParseError {
       ctx.offset = i + 1
       ctx.invalid_char(shift=-1)
     }
-    i += 1
   }
   raise InvalidEof
 }
