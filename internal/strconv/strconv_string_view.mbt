@@ -20,17 +20,12 @@ fn[T] StringView::fold_digits(
   init : T,
   f : (Int, T) -> T,
 ) -> (Self, T, Int) {
-  let mut ret = init
-  let mut len = 0
-  let mut str = self
-  while str is [ch, .. rest] {
-    if ch is ('0'..='9') {
-      len += 1
-      ret = f(ch.to_int() - '0', ret)
-    } else if ch != '_' {
-      break
+  for str = self, ret = init, len = 0 {
+    match str {
+      ['0'..='9' as ch, .. rest] =>
+        continue rest, f(ch.to_int() - '0', ret), len + 1
+      ['_', .. rest] => continue rest, ret, len
+      _ => break (str, ret, len)
     }
-    str = rest
   }
-  (str, ret, len)
 }

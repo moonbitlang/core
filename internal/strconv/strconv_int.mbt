@@ -169,37 +169,31 @@ fn check_underscore(str : StringView) -> Bool {
     ("0[bB]", rest) => (rest, true, false)
     _ => (rest, false, false)
   }
-
-  // 'e' and 'E' are valid hex digits
-  // but are not treated as digits in decimal strings since they're used for scientific notation
-  fn is_digit(c : Char) -> Bool {
-    c is ('0'..='9') || (hex && c is ('a'..='f' | 'A'..='F'))
-  }
-
   // Track whether the previous character was an underscore
   let follow_underscore = false
   for rest = rest, allow_underscore = allow_underscore, follow_underscore = follow_underscore {
     match (rest, allow_underscore, follow_underscore) {
-      // Empty string is valid
+      // Empty string is valid.
       ([], _, _) => break true
-      // String ending with underscore is invalid
+      // String ending with underscore is invalid.
       (['_'], _, _) => break false
-      // Underscore not allowed in current position (e.g., between non-digits)
+      // Underscore not allowed in current position, e.g. between non-digits.
       (['_', ..], false, _) => break false
-      // Valid underscore - continue but mark that next char must be a digit
+      // Valid underscore: the following character must be a digit.
       (['_', .. rest], true, _) => continue rest, false, true
-      // Handle non-underscore character
-      ([c, .. rest], _, follow_underscore) =>
-        if is_digit(c) {
-          // Digit found - allow underscore in next position
-          continue rest, true, false
-        } else if follow_underscore {
-          // Non-digit found after underscore - invalid
-          break false
-        } else {
-          // Non-digit found (not after underscore) - continue but don't allow underscores
-          continue rest, false, false
-        }
+      // Decimal digits allow an underscore after them.
+      (['0'..='9', .. rest], _, _) => continue rest, true, false
+      // 'e' and 'E' are valid hex digits, but not decimal digits.
+      (['a'..='f' | 'A'..='F', .. rest], _, _) if hex =>
+        continue rest, true, false
+      // Common decimal separators/signs reset underscore allowance.
+      (['.' | 'e' | 'E' | '+' | '-', ..], _, true) => break false
+      (['.' | 'e' | 'E' | '+' | '-', .. rest], _, _) =>
+        continue rest, false, false
+      // Other characters are uncommon here. They are allowed unless they
+      // immediately follow an underscore; the number parser rejects them later.
+      ([_, ..], _, true) => break false
+      ([_, .. rest], _, _) => continue rest, false, false
     }
   }
 }
