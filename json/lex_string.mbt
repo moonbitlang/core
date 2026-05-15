@@ -14,6 +14,26 @@
 
 ///|
 fn ParseContext::lex_string(ctx : ParseContext) -> String raise ParseError {
+  let string_start = ctx.offset
+  let mut i = string_start
+  while i < ctx.end_offset {
+    let c = ctx.input.unsafe_get(i)
+    if c == '"' {
+      ctx.offset = i + 1
+      return ctx.input.view(start_offset=string_start, end_offset=i).to_owned()
+    } else if c == '\\' {
+      return ctx.lex_string_slow()
+    } else if c == '\n' || c == '\r' || c.to_int() < 32 {
+      ctx.offset = i + 1
+      ctx.invalid_char(shift=-1)
+    }
+    i += 1
+  }
+  raise InvalidEof
+}
+
+///|
+fn ParseContext::lex_string_slow(ctx : ParseContext) -> String raise ParseError {
   let buf = StringBuilder()
   let mut start = ctx.offset
   fn flush(end : Int) {
