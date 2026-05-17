@@ -165,6 +165,25 @@ test "ReadOnlyArray compare" {
 }
 
 ///|
+test "ReadOnlyArray lexical_compare" {
+  let a : ReadOnlyArray[Int] = [1, 2]
+  let b : ReadOnlyArray[Int] = [1, 2, 3]
+  let c : ReadOnlyArray[Int] = [1, 2, 4]
+  inspect(a.lexical_compare(b), content="-1") // a is a strict prefix
+  inspect(b.lexical_compare(a), content="1")
+  inspect(b.lexical_compare(b), content="0")
+  inspect(b.lexical_compare(c), content="-1")
+
+  // The pure-lex order differs from shortlex `compare` when one array is
+  // longer but its first differing element is greater. With shortlex, the
+  // shorter wins (length first); with lexical, the smaller element wins.
+  let short_big : ReadOnlyArray[Int] = [9]
+  let long_small : ReadOnlyArray[Int] = [1, 2, 3]
+  inspect(short_big.compare(long_small), content="-1") // shortlex
+  inspect(short_big.lexical_compare(long_small), content="1") // lex
+}
+
+///|
 test "ReadOnlyArray iter and sub" {
   let arr : ReadOnlyArray[Int] = [1, 2, 3]
   debug_inspect(arr.iter().to_array(), content="[1, 2, 3]")
