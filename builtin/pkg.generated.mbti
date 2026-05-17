@@ -941,6 +941,8 @@ pub fn[A, B] ReadOnlyArray::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B raise
 pub fn[T : Eq] ReadOnlyArray::search(Self[T], T) -> Int?
 pub fn[T] ReadOnlyArray::search_by(Self[T], (T) -> Bool raise?) -> Int? raise?
 pub fn[T : Eq] ReadOnlyArray::starts_with(Self[T], ArrayView[T]) -> Bool
+pub fn[T : Eq] ReadOnlyArray::strip_prefix(Self[T], ArrayView[T]) -> ArrayView[T]?
+pub fn[T : Eq] ReadOnlyArray::strip_suffix(Self[T], ArrayView[T]) -> ArrayView[T]?
 #alias("_[_:_]")
 #alias(sub, deprecated)
 pub fn[T] ReadOnlyArray::view(Self[T], start? : Int, end? : Int) -> ArrayView[T]

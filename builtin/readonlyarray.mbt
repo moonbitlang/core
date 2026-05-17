@@ -499,6 +499,56 @@ pub fn[T : Eq] ReadOnlyArray::ends_with(
 }
 
 ///|
+/// If the array starts with `prefix`, returns a view of the remainder.
+/// Otherwise returns `None`. The returned view shares the backing storage —
+/// no allocation.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
+///   debug_inspect(
+///     arr.strip_prefix([1, 2][:]),
+///     content=(
+///       #|Some(<ArrayView: [3, 4, 5]>)
+///     ),
+///   )
+///   debug_inspect(arr.strip_prefix([2, 3][:]), content="None")
+/// }
+/// ```
+pub fn[T : Eq] ReadOnlyArray::strip_prefix(
+  self : ReadOnlyArray[T],
+  prefix : ArrayView[T],
+) -> ArrayView[T]? {
+  self[:].strip_prefix(prefix)
+}
+
+///|
+/// If the array ends with `suffix`, returns a view of the leading portion.
+/// Otherwise returns `None`. The returned view shares the backing storage —
+/// no allocation.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
+///   debug_inspect(
+///     arr.strip_suffix([4, 5][:]),
+///     content=(
+///       #|Some(<ArrayView: [1, 2, 3]>)
+///     ),
+///   )
+///   debug_inspect(arr.strip_suffix([3, 4][:]), content="None")
+/// }
+/// ```
+pub fn[T : Eq] ReadOnlyArray::strip_suffix(
+  self : ReadOnlyArray[T],
+  suffix : ArrayView[T],
+) -> ArrayView[T]? {
+  self[:].strip_suffix(suffix)
+}
+
+///|
 /// Checks if all elements satisfy the given predicate.
 ///
 /// # Example
