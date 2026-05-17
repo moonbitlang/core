@@ -575,6 +575,32 @@ pub fn[T] ReadOnlyArray::binary_search_by(
 }
 
 ///|
+/// Performs a lexicographical comparison of two arrays.
+///
+/// Unlike the `Compare` trait implementation (shortlex — shorter arrays come
+/// first), this method compares purely by element values; length only breaks
+/// ties when one array is a prefix of the other.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let a : ReadOnlyArray[Int] = [1, 2]
+///   let b : ReadOnlyArray[Int] = [1, 2, 3]
+///   inspect(a.lexical_compare(b), content="-1")
+///   inspect(b.lexical_compare(a), content="1")
+///   inspect(b.lexical_compare(b), content="0")
+///   let c : ReadOnlyArray[Int] = [1, 2, 4]
+///   inspect(b.lexical_compare(c), content="-1")
+/// }
+/// ```
+pub fn[T : Compare] ReadOnlyArray::lexical_compare(
+  self : ReadOnlyArray[T],
+  other : ReadOnlyArray[T],
+) -> Int {
+  self[:].lexical_compare(other[:])
+}
+
+///|
 /// Creates a view of a subarray.
 ///
 /// # Example
