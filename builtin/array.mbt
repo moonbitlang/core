@@ -1845,7 +1845,10 @@ pub fn[A] Array::truncate(self : Array[A], len : Int) -> Unit {
 /// }
 /// ```
 #locals(f)
-pub fn[A] Array::retain_map(self : Array[A], f : (A) -> A?) -> Unit {
+pub fn[A] Array::retain_map(
+  self : Array[A],
+  f : (A) -> A? raise?,
+) -> Unit raise? {
   if self.is_empty() {
     return
   }
