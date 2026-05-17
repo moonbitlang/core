@@ -926,7 +926,7 @@ pub fn[T : Compare] ReadOnlyArray::is_sorted(Self[T]) -> Bool
 #alias(iterator, deprecated)
 pub fn[T] ReadOnlyArray::iter(Self[T]) -> Iter[T]
 pub fn[T] ReadOnlyArray::iter2(Self[T]) -> Iter2[Int, T]
-pub fn ReadOnlyArray::join(Self[String], StringView) -> String
+pub fn[A : ToStringView] ReadOnlyArray::join(Self[A], StringView) -> String
 pub fn[T] ReadOnlyArray::last(Self[T]) -> T?
 pub fn[T] ReadOnlyArray::length(Self[T]) -> Int
 pub fn[T] ReadOnlyArray::makei(Int, (Int) -> T raise?) -> Self[T] raise?

@@ -105,6 +105,10 @@ test "ReadOnlyArray trait implementations" {
   // Test join for strings
   let str_arr : ReadOnlyArray[String] = ["a", "b", "c"]
   inspect(str_arr.join(","), content="a,b,c")
+
+  // Test join for any ToStringView element (here: StringView).
+  let view_arr : ReadOnlyArray[StringView] = ["a"[:], "b"[:], "c"[:]]
+  inspect(view_arr.join("-"), content="a-b-c")
 }
 
 ///|
