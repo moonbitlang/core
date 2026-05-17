@@ -184,6 +184,22 @@ pub fn[T] ReadOnlyArray::iter2(self : ReadOnlyArray[T]) -> Iter2[Int, T] {
 }
 
 ///|
+/// Returns an iterator that yields each element from the last to the first.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let arr : ReadOnlyArray[Int] = [1, 2, 3]
+///   let result = []
+///   arr.rev_iter().each(x => result.push(x))
+///   debug_inspect(result, content="[3, 2, 1]")
+/// }
+/// ```
+pub fn[T] ReadOnlyArray::rev_iter(self : ReadOnlyArray[T]) -> Iter[T] {
+  self[:].rev_iter()
+}
+
+///|
 /// Iterates over each element in the ReadOnlyArray.
 ///
 /// # Example

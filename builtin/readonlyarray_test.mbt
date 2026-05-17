@@ -195,6 +195,9 @@ test "ReadOnlyArray strip_prefix and strip_suffix" {
 test "ReadOnlyArray iter and sub" {
   let arr : ReadOnlyArray[Int] = [1, 2, 3]
   debug_inspect(arr.iter().to_array(), content="[1, 2, 3]")
+  debug_inspect(arr.rev_iter().to_array(), content="[3, 2, 1]")
+  let empty : ReadOnlyArray[Int] = []
+  debug_inspect(empty.rev_iter().to_array(), content="[]")
   debug_inspect(
     arr[1:],
     content=(
