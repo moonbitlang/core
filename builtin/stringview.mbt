@@ -189,6 +189,11 @@ pub fn StringView::to_owned(self : StringView) -> String {
 }
 
 ///|
+pub impl Show for StringView with output(self, logger) {
+  logger.write_view(self)
+}
+
+///|
 pub impl Show for StringView with to_string(self) {
   self.to_owned()
 }
