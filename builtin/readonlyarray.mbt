@@ -413,6 +413,24 @@ pub fn[T : Eq] ReadOnlyArray::search(
 }
 
 ///|
+/// Returns the index of the first element satisfying `f`, or `None`.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
+///   debug_inspect(arr.search_by(x => x > 3), content="Some(3)")
+///   debug_inspect(arr.search_by(x => x > 99), content="None")
+/// }
+/// ```
+pub fn[T] ReadOnlyArray::search_by(
+  self : ReadOnlyArray[T],
+  f : (T) -> Bool raise?,
+) -> Int? raise? {
+  self[:].search_by(f)
+}
+
+///|
 /// Checks if the ReadOnlyArray contains a specific value.
 ///
 /// # Example

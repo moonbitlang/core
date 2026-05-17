@@ -77,6 +77,10 @@ test "ReadOnlyArray search methods" {
   debug_inspect(arr.search(2), content="Some(1)")
   debug_inspect(arr.search(5), content="None")
 
+  // Test search_by
+  debug_inspect(arr.search_by(x => x > 2), content="Some(2)")
+  debug_inspect(arr.search_by(x => x > 99), content="None")
+
   // Test contains
   inspect(arr.contains(3), content="true")
   inspect(arr.contains(5), content="false")
