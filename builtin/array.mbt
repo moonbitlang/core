@@ -1444,7 +1444,10 @@ pub fn[T : Eq] Array::dedup(self : Array[T]) -> Unit {
 /// }
 /// ```
 #locals(f)
-pub fn[T] Array::extract_if(self : Array[T], f : (T) -> Bool) -> Array[T] {
+pub fn[T] Array::extract_if(
+  self : Array[T],
+  f : (T) -> Bool raise?,
+) -> Array[T] raise? {
   let removed = []
   for read in 0..<self.length(); write = 0 {
     let elem = self[read]
