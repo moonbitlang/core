@@ -614,7 +614,7 @@ pub fn[T] ReadOnlyArray::get_view(
 }
 
 ///|
-/// Joins string elements with a separator.
+/// Joins the string-renderable elements with a separator.
 ///
 /// # Example
 /// ```mbt check
@@ -624,11 +624,11 @@ pub fn[T] ReadOnlyArray::get_view(
 ///   inspect(arr.join(" "), content="hello world moon")
 /// }
 /// ```
-pub fn ReadOnlyArray::join(
-  self : ReadOnlyArray[String],
+pub fn[A : ToStringView] ReadOnlyArray::join(
+  self : ReadOnlyArray[A],
   separator : StringView,
 ) -> String {
-  self.unsafe_reinterpret_to_fixed_array().join(separator)
+  self[:].join(separator)
 }
 
 ///|
