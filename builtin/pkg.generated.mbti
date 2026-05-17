@@ -863,7 +863,7 @@ pub fn[T : Compare] FixedArray::is_sorted(Self[T]) -> Bool
 pub fn[X] FixedArray::iter(Self[X]) -> Iter[X]
 #alias(iterator2, deprecated)
 pub fn[X] FixedArray::iter2(Self[X]) -> Iter2[Int, X]
-pub fn FixedArray::join(Self[String], StringView) -> String
+pub fn[A : ToStringView] FixedArray::join(Self[A], StringView) -> String
 pub fn[A] FixedArray::last(Self[A]) -> A?
 pub fn[T] FixedArray::length(Self[T]) -> Int
 pub fn[T : Compare] FixedArray::lexical_compare(Self[T], Self[T]) -> Int
