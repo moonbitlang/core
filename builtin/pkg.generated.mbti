@@ -134,7 +134,7 @@ pub fn[T] Array::resize(Self[T], Int, T) -> Unit
 pub fn[T] Array::retain(Self[T], (T) -> Bool raise?) -> Unit raise?
 pub fn[A] Array::retain_map(Self[A], (A) -> A?) -> Unit
 pub fn[T] Array::rev(Self[T]) -> Self[T]
-pub fn[T] Array::rev_each(Self[T], (T) -> Unit) -> Unit
+pub fn[T] Array::rev_each(Self[T], (T) -> Unit raise?) -> Unit raise?
 pub fn[T] Array::rev_eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
 #alias(fold_right, deprecated)
 pub fn[A, B] Array::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
