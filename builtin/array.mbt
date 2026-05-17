@@ -1003,7 +1003,10 @@ pub fn[T : Eq] Array::search(self : Array[T], value : T) -> Int? {
 /// ```
 #locals(f)
 #alias(find_index, deprecated)
-pub fn[T] Array::search_by(self : Array[T], f : (T) -> Bool) -> Int? {
+pub fn[T] Array::search_by(
+  self : Array[T],
+  f : (T) -> Bool raise?,
+) -> Int? raise? {
   for i, v in self {
     if f(v) {
       break Some(i)

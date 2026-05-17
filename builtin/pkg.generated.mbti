@@ -146,7 +146,7 @@ pub fn[T] Array::rev_in_place(Self[T]) -> Unit
 pub fn[T] Array::rev_iter(Self[T]) -> Iter[T]
 pub fn[T : Eq] Array::search(Self[T], T) -> Int?
 #alias(find_index, deprecated)
-pub fn[T] Array::search_by(Self[T], (T) -> Bool) -> Int?
+pub fn[T] Array::search_by(Self[T], (T) -> Bool raise?) -> Int? raise?
 #alias("_[_]=_")
 pub fn[T] Array::set(Self[T], Int, T) -> Unit
 pub fn[T] Array::shrink_to_fit(Self[T]) -> Unit
