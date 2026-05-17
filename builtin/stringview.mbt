@@ -163,11 +163,6 @@ pub fn StringView::char_length(self : StringView) -> Int {
 }
 
 ///|
-pub impl Show for StringView with output(self, logger) {
-  self.escape_to(logger)
-}
-
-///|
 /// Materialize this view into an owned `String`.
 ///
 /// This crosses an ownership boundary and generally allocates. Use format

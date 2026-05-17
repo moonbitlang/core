@@ -82,7 +82,7 @@ fn SourceLocRepr::parse(repr : String) -> SourceLocRepr {
 fn SourceLocRepr::to_json_string(self : SourceLocRepr) -> String {
   let sb = StringBuilder()
   sb.write_string("{\"filename\":")
-  sb.write_object(self.filename)
+  self.filename.escape_to(sb)
   sb.write_string(",\"start_line\":\{self.start_line}")
   sb.write_string(",\"start_column\":\{self.start_column}")
   sb.write_string(",\"end_line\":\{self.end_line}")

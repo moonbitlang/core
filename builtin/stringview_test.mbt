@@ -323,3 +323,27 @@ test "StringView::equal_to_string" {
   inspect(smile[:].equal_to_string("Hello🤣World"), content="true")
   inspect(smile[5:7].equal_to_string("🤣"), content="true")
 }
+
+///|
+/// `Show::output` for `StringView` must agree with `Show::to_string` and write
+/// the raw view contents (no quoting/escaping), matching the behavior of
+/// `Show` for `String`.
+test "StringView Show output matches to_string" {
+  fn via_output(v : StringView) {
+    let sb = StringBuilder()
+    sb.write_object(v)
+    sb.to_string()
+  }
+
+  let cases = [
+    "", "hello", "quote\"and\\back", "line1\nline2", "Hello🤣World",
+  ]
+  for case in cases {
+    let v = case[:]
+    assert_eq(via_output(v), Show::to_string(v))
+    assert_eq(via_output(v), case)
+  }
+  // Sub-view also produces raw, unescaped contents.
+  let s = "ab\"cd"
+  inspect(s[1:4], content="b\"c")
+}
