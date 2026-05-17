@@ -1458,44 +1458,46 @@ pub fn[A] FixedArray::last(self : FixedArray[A]) -> A? {
 }
 
 ///|
-/// Concatenate strings within an array into a single complete string.
+/// Concatenate the string-renderable elements of the array into a single
+/// complete string, separated by `separator`.
 ///
 /// Example:
-/// 
+///
 /// ```mbt check
 /// test {
 ///   let fixed_array : FixedArray[String] = ["1", "2", "3"]
 ///   inspect(fixed_array.join(","), content="1,2,3")
 /// }
 /// ```
-pub fn FixedArray::join(
-  self : FixedArray[String],
+pub fn[A : ToStringView] FixedArray::join(
+  self : FixedArray[A],
   separator : StringView,
 ) -> String {
   let len = self.length()
   if len == 0 {
     return ""
   }
-  let first = self[0]
+  let first = self[0].to_string_view()
   let size_hint = for i in 1..<len; size_hint = first.length() {
-    continue size_hint + separator.length() + self[i].length()
+    continue size_hint + separator.length() + self[i].to_string_view().length()
   } nobreak {
     size_hint
   }
   let string = StringBuilder(size_hint~)
   if separator.is_empty() {
-    for i in 0..<len {
-      string.write_string(self[i])
+    string.write_view(first)
+    for i in 1..<len {
+      string.write_view(self[i].to_string_view())
     }
   } else {
-    string.write_string(self[0])
+    string.write_view(first)
     for i in 1..<len {
       string.write_substring(
         separator.data(),
         separator.start_offset(),
         separator.length(),
       )
-      string.write_string(self[i])
+      string.write_view(self[i].to_string_view())
     }
   }
   string.to_string()
@@ -1541,6 +1543,9 @@ test "FixedArray::join" {
   inspect(fixed_array.join(" "), content="1 2 3")
   let fixed_array_empty : FixedArray[String] = []
   inspect(fixed_array_empty.join(","), content="")
+  // Any ToStringView element type works (here: StringView).
+  let view_array : FixedArray[StringView] = ["a"[:], "b"[:], "c"[:]]
+  inspect(view_array.join("-"), content="a-b-c")
 }
 
 ///|
