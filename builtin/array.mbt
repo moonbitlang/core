@@ -469,7 +469,10 @@ pub fn[T] Array::each(self : Array[T], f : (T) -> Unit raise?) -> Unit raise? {
 /// }
 /// ```
 #locals(f)
-pub fn[T] Array::rev_each(self : Array[T], f : (T) -> Unit raise?) -> Unit raise? {
+pub fn[T] Array::rev_each(
+  self : Array[T],
+  f : (T) -> Unit raise?,
+) -> Unit raise? {
   let len = self.length()
   for i in 0..<len {
     f(self[len - i - 1])
