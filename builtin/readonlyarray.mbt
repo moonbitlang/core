@@ -688,6 +688,59 @@ pub fn[T] ReadOnlyArray::binary_search_by(
 }
 
 ///|
+/// Splits the array into consecutive non-overlapping chunks of length `size`,
+/// from left to right. The final chunk is shorter when `length` is not a
+/// multiple of `size`. Each returned sub-view shares the original backing
+/// storage — no allocation per chunk.
+///
+/// Panics if `size <= 0`.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5, 6, 7]
+///   debug_inspect(
+///     arr.chunks(3),
+///     content=(
+///       #|[<ArrayView: [1, 2, 3]>, <ArrayView: [4, 5, 6]>, <ArrayView: [7]>]
+///     ),
+///   )
+/// }
+/// ```
+pub fn[T] ReadOnlyArray::chunks(
+  self : ReadOnlyArray[T],
+  size : Int,
+) -> Array[ArrayView[T]] {
+  self[:].chunks(size)
+}
+
+///|
+/// Returns all contiguous sub-views of length `size`, from left to right. The
+/// result has `length - size + 1` entries when `size <= length`, and is empty
+/// otherwise. Each sub-view shares the original backing storage.
+///
+/// Panics if `size <= 0`.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4]
+///   debug_inspect(
+///     arr.windows(2),
+///     content=(
+///       #|[<ArrayView: [1, 2]>, <ArrayView: [2, 3]>, <ArrayView: [3, 4]>]
+///     ),
+///   )
+/// }
+/// ```
+pub fn[T] ReadOnlyArray::windows(
+  self : ReadOnlyArray[T],
+  size : Int,
+) -> Array[ArrayView[T]] {
+  self[:].windows(size)
+}
+
+///|
 /// Performs a lexicographical comparison of two arrays.
 ///
 /// Unlike the `Compare` trait implementation (shortlex — shorter arrays come

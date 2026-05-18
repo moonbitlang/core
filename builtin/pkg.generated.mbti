@@ -910,6 +910,7 @@ pub fn[T] ReadOnlyArray::any(Self[T], (T) -> Bool raise?) -> Bool raise?
 pub fn[T] ReadOnlyArray::at(Self[T], Int) -> T
 pub fn[T : Compare] ReadOnlyArray::binary_search(Self[T], T) -> Result[Int, Int]
 pub fn[T] ReadOnlyArray::binary_search_by(Self[T], (T) -> Int raise?) -> Result[Int, Int] raise?
+pub fn[T] ReadOnlyArray::chunks(Self[T], Int) -> Array[ArrayView[T]]
 pub fn[T : Eq] ReadOnlyArray::contains(Self[T], T) -> Bool
 pub fn[T] ReadOnlyArray::each(Self[T], (T) -> Unit raise?) -> Unit raise?
 pub fn[T] ReadOnlyArray::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
@@ -949,6 +950,7 @@ pub fn[T : Eq] ReadOnlyArray::strip_suffix(Self[T], ArrayView[T]) -> ArrayView[T
 #alias("_[_:_]")
 #alias(sub, deprecated)
 pub fn[T] ReadOnlyArray::view(Self[T], start? : Int, end? : Int) -> ArrayView[T]
+pub fn[T] ReadOnlyArray::windows(Self[T], Int) -> Array[ArrayView[T]]
 
 #alias("_[_]")
 pub fn Bytes::at(Bytes, Int) -> Byte
