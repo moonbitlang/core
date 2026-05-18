@@ -70,6 +70,31 @@ test "ReadOnlyArray functional methods" {
 }
 
 ///|
+test "ReadOnlyArray filter and filter_map" {
+  let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
+  let evens = arr.filter(x => x % 2 == 0)
+  inspect(evens.length(), content="2")
+  inspect(evens[0], content="2")
+  inspect(evens[1], content="4")
+
+  // filter_map: keep evens, multiply by 10.
+  let mapped = arr.filter_map(x => if x % 2 == 0 { Some(x * 10) } else { None })
+  inspect(mapped.length(), content="2")
+  inspect(mapped[0], content="20")
+  inspect(mapped[1], content="40")
+
+  // Empty input passes through.
+  let empty : ReadOnlyArray[Int] = []
+  inspect(empty.filter(_ => true).length(), content="0")
+  inspect(empty.filter_map(x => Some(x)).length(), content="0")
+
+  // No element passes / all dropped.
+  inspect(arr.filter(_ => false).length(), content="0")
+  let none_out : ReadOnlyArray[Int] = arr.filter_map(_ => None)
+  inspect(none_out.length(), content="0")
+}
+
+///|
 test "ReadOnlyArray search methods" {
   let arr : ReadOnlyArray[Int] = [1, 2, 3, 2, 4]
 
