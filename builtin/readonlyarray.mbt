@@ -317,6 +317,53 @@ pub fn[T, U] ReadOnlyArray::mapi(
 }
 
 ///|
+/// Returns a new ReadOnlyArray containing the elements for which `f` returns
+/// `true`, in original order.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
+///   debug_inspect(
+///     arr.filter(x => x % 2 == 0),
+///     content=(
+///       #|<ReadOnlyArray: [2, 4]>
+///     ),
+///   )
+/// }
+/// ```
+pub fn[T] ReadOnlyArray::filter(
+  self : ReadOnlyArray[T],
+  f : (T) -> Bool raise?,
+) -> ReadOnlyArray[T] raise? {
+  ReadOnlyArray::from_array(self[:].filter(f)[:])
+}
+
+///|
+/// Returns a new ReadOnlyArray that maps and filters in one pass: for each
+/// element, `Some(new_value)` includes the mapped value and `None` drops it.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
+///   let out = arr.filter_map(x => if x % 2 == 0 { Some(x * 10) } else { None })
+///   debug_inspect(
+///     out,
+///     content=(
+///       #|<ReadOnlyArray: [20, 40]>
+///     ),
+///   )
+/// }
+/// ```
+pub fn[A, B] ReadOnlyArray::filter_map(
+  self : ReadOnlyArray[A],
+  f : (A) -> B? raise?,
+) -> ReadOnlyArray[B] raise? {
+  ReadOnlyArray::from_array(self[:].filter_map(f)[:])
+}
+
+///|
 /// Folds the ReadOnlyArray from left to right.
 ///
 /// # Example
