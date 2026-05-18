@@ -190,6 +190,44 @@ test "ReadOnlyArray compare" {
 }
 
 ///|
+test "ReadOnlyArray chunks and windows" {
+  let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5, 6, 7]
+  debug_inspect(
+    arr.chunks(3),
+    content=(
+      #|[<ArrayView: [1, 2, 3]>, <ArrayView: [4, 5, 6]>, <ArrayView: [7]>]
+    ),
+  )
+  // Exact multiple: no trailing short chunk.
+  debug_inspect(
+    arr.chunks(7),
+    content=(
+      #|[<ArrayView: [1, 2, 3, 4, 5, 6, 7]>]
+    ),
+  )
+  // Empty input gives no chunks.
+  let empty : ReadOnlyArray[Int] = []
+  debug_inspect(empty.chunks(3), content="[]")
+
+  // Windows: length - size + 1 entries.
+  let small : ReadOnlyArray[Int] = [1, 2, 3, 4]
+  debug_inspect(
+    small.windows(2),
+    content=(
+      #|[<ArrayView: [1, 2]>, <ArrayView: [2, 3]>, <ArrayView: [3, 4]>]
+    ),
+  )
+  debug_inspect(
+    small.windows(4),
+    content=(
+      #|[<ArrayView: [1, 2, 3, 4]>]
+    ),
+  )
+  // size > length yields empty.
+  debug_inspect(small.windows(5), content="[]")
+}
+
+///|
 test "ReadOnlyArray strip_prefix and strip_suffix" {
   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
   debug_inspect(
