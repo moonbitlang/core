@@ -688,56 +688,62 @@ pub fn[T] ReadOnlyArray::binary_search_by(
 }
 
 ///|
-/// Splits the array into consecutive non-overlapping chunks of length `size`,
-/// from left to right. The final chunk is shorter when `length` is not a
-/// multiple of `size`. Each returned sub-view shares the original backing
-/// storage — no allocation per chunk.
-///
-/// Panics if `size <= 0`.
+/// Groups consecutive elements into chunks where each adjacent pair satisfies
+/// `pred`. A new chunk starts as soon as `pred(prev, cur)` is `false`. Each
+/// returned sub-view shares the original backing storage.
 ///
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5, 6, 7]
+///   let arr : ReadOnlyArray[Int] = [1, 1, 2, 2, 2, 3, 1]
 ///   debug_inspect(
-///     arr.chunks(3),
+///     arr.chunk_by((a, b) => a == b),
 ///     content=(
-///       #|[<ArrayView: [1, 2, 3]>, <ArrayView: [4, 5, 6]>, <ArrayView: [7]>]
+///       #|[
+///       #|  <ArrayView: [1, 1]>,
+///       #|  <ArrayView: [2, 2, 2]>,
+///       #|  <ArrayView: [3]>,
+///       #|  <ArrayView: [1]>,
+///       #|]
 ///     ),
 ///   )
 /// }
 /// ```
-pub fn[T] ReadOnlyArray::chunks(
+pub fn[T] ReadOnlyArray::chunk_by(
   self : ReadOnlyArray[T],
-  size : Int,
-) -> Array[ArrayView[T]] {
-  self[:].chunks(size)
+  pred : (T, T) -> Bool raise?,
+) -> Array[ArrayView[T]] raise? {
+  self[:].chunk_by(pred)
 }
 
 ///|
-/// Returns all contiguous sub-views of length `size`, from left to right. The
-/// result has `length - size + 1` entries when `size <= length`, and is empty
-/// otherwise. Each sub-view shares the original backing storage.
-///
-/// Panics if `size <= 0`.
+/// Yields all suffix views from the longest down to length 1 (and the empty
+/// view if `include_empty=true`). Each suffix shares the original backing
+/// storage.
 ///
 /// # Example
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4]
+///   let arr : ReadOnlyArray[Int] = [1, 2]
 ///   debug_inspect(
-///     arr.windows(2),
+///     arr.suffixes().collect(),
 ///     content=(
-///       #|[<ArrayView: [1, 2]>, <ArrayView: [2, 3]>, <ArrayView: [3, 4]>]
+///       #|[<ArrayView: [1, 2]>, <ArrayView: [2]>]
+///     ),
+///   )
+///   debug_inspect(
+///     arr.suffixes(include_empty=true).collect(),
+///     content=(
+///       #|[<ArrayView: [1, 2]>, <ArrayView: [2]>, <ArrayView: []>]
 ///     ),
 ///   )
 /// }
 /// ```
-pub fn[T] ReadOnlyArray::windows(
+pub fn[T] ReadOnlyArray::suffixes(
   self : ReadOnlyArray[T],
-  size : Int,
-) -> Array[ArrayView[T]] {
-  self[:].windows(size)
+  include_empty? : Bool = false,
+) -> Iter[ArrayView[T]] {
+  self[:].suffixes(include_empty~)
 }
 
 ///|

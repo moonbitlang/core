@@ -190,41 +190,56 @@ test "ReadOnlyArray compare" {
 }
 
 ///|
-test "ReadOnlyArray chunks and windows" {
-  let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5, 6, 7]
+test "ReadOnlyArray chunk_by and suffixes" {
+  let arr : ReadOnlyArray[Int] = [1, 1, 2, 2, 2, 3, 1]
   debug_inspect(
-    arr.chunks(3),
+    arr.chunk_by((a, b) => a == b),
     content=(
-      #|[<ArrayView: [1, 2, 3]>, <ArrayView: [4, 5, 6]>, <ArrayView: [7]>]
+      #|[
+      #|  <ArrayView: [1, 1]>,
+      #|  <ArrayView: [2, 2, 2]>,
+      #|  <ArrayView: [3]>,
+      #|  <ArrayView: [1]>,
+      #|]
     ),
   )
-  // Exact multiple: no trailing short chunk.
-  debug_inspect(
-    arr.chunks(7),
-    content=(
-      #|[<ArrayView: [1, 2, 3, 4, 5, 6, 7]>]
-    ),
-  )
-  // Empty input gives no chunks.
-  let empty : ReadOnlyArray[Int] = []
-  debug_inspect(empty.chunks(3), content="[]")
 
-  // Windows: length - size + 1 entries.
-  let small : ReadOnlyArray[Int] = [1, 2, 3, 4]
+  // Empty input.
+  let empty : ReadOnlyArray[Int] = []
+  debug_inspect(empty.chunk_by((a, b) => a == b), content="[]")
+
+  // Singleton: one chunk.
+  let single : ReadOnlyArray[Int] = [42]
   debug_inspect(
-    small.windows(2),
+    single.chunk_by((a, b) => a == b),
     content=(
-      #|[<ArrayView: [1, 2]>, <ArrayView: [2, 3]>, <ArrayView: [3, 4]>]
+      #|[<ArrayView: [42]>]
+    ),
+  )
+
+  // suffixes.
+  let pair : ReadOnlyArray[Int] = [1, 2]
+  debug_inspect(
+    pair.suffixes().collect(),
+    content=(
+      #|[<ArrayView: [1, 2]>, <ArrayView: [2]>]
     ),
   )
   debug_inspect(
-    small.windows(4),
+    pair.suffixes(include_empty=true).collect(),
     content=(
-      #|[<ArrayView: [1, 2, 3, 4]>]
+      #|[<ArrayView: [1, 2]>, <ArrayView: [2]>, <ArrayView: []>]
     ),
   )
-  // size > length yields empty.
-  debug_inspect(small.windows(5), content="[]")
+
+  // Suffixes on empty input: nothing unless include_empty.
+  debug_inspect(empty.suffixes().collect(), content="[]")
+  debug_inspect(
+    empty.suffixes(include_empty=true).collect(),
+    content=(
+      #|[<ArrayView: []>]
+    ),
+  )
 }
 
 ///|
