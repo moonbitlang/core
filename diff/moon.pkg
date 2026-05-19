@@ -1,0 +1,13 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/int",
+  "moonbitlang/core/debug",
+  "moonbitlang/core/hashmap",
+}
+
+import {
+  "moonbitlang/core/json",
+  "moonbitlang/core/ref",
+  "moonbitlang/core/test",
+  "moonbitlang/core/debug",
+} for "wbtest"
