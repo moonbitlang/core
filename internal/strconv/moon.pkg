@@ -7,3 +7,7 @@ import {
   "moonbitlang/core/array",
   "moonbitlang/core/test",
 }
+
+import {
+  "moonbitlang/core/bench",
+} for "test"
