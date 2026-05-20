@@ -6,3 +6,12 @@ import {
 import {
   "moonbitlang/core/buffer",
 } for "test"
+
+options(
+  targets: {
+    "decode_js.mbt": [ "js" ],
+    "decode_nonjs.mbt": [ "not", "js" ],
+    "encode_js.mbt": [ "js" ],
+    "encode_nonjs.mbt": [ "not", "js" ],
+  },
+)

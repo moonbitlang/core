@@ -108,6 +108,51 @@ test "decode_lossy with bom" {
 }
 
 ///|
+test "decode sliced views" {
+  inspect(
+    try! @utf8.decode(b".A\xC2\xA9\xE4\xB8\xAD\xF0\x9F\x98\x80B."[1:12]),
+    content="A©中😀B",
+  )
+  inspect(try! @utf8.decode(b".Hi!"[1:3]), content="Hi")
+  inspect(@utf8.decode_lossy(b".A\x80\xFFB."[1:5]), content="A��B")
+}
+
+///|
+test "decode malformed sliced views" {
+  try {
+    let _ = @utf8.decode(b".A\x80\xFFB."[1:5])
+    panic()
+  } catch {
+    Malformed(e) =>
+      inspect(
+        e,
+        content=(
+          #|b"\x80\xffB"
+        ),
+      )
+  }
+  try {
+    let _ = @utf8.decode(b"xy\xF4\x90\x80\x80z"[2:7])
+    panic()
+  } catch {
+    Malformed(e) =>
+      inspect(
+        e,
+        content=(
+          #|b"\xf4\x90\x80\x80z"
+        ),
+      )
+  }
+}
+
+///|
+test "decode lossy partial prefixes" {
+  inspect(@utf8.decode_lossy(b"xy\xC2"[2:3]), content="�")
+  inspect(@utf8.decode_lossy(b"xy\xE1\x80"[2:4]), content="�")
+  inspect(@utf8.decode_lossy(b"xy\xF0\x91\x92z"[2:6]), content="�z")
+}
+
+///|
 test "Debug for Malformed" {
   try {
     let _ = @utf8.decode(b"\xff")
