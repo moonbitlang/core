@@ -14,7 +14,7 @@
 
 ///|
 trait Leb128 {
-  fn output(Self, Buffer) -> Unit
+  output(Self, Buffer) -> Unit
 }
 
 ///|
