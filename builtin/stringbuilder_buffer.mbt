@@ -152,6 +152,12 @@ pub fn StringBuilder::to_string(self : StringBuilder) -> String {
 }
 
 ///|
+#doc(hidden)
+pub fn StringBuilder::write_end(self : StringBuilder) -> String {
+  self.to_string()
+}
+
+///|
 pub impl Show for StringBuilder with to_string(self) {
   StringBuilder::to_string(self)
 }
