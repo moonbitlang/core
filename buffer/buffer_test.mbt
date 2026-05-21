@@ -43,7 +43,7 @@ test "create buffer from iterator" {
 test "length method" {
   let buf = Buffer(size_hint=100)
   inspect(buf.length(), content="0")
-  buf.write_string("Test")
+  buf.write_string_utf16le("Test")
   inspect(buf.length(), content="8")
 }
 
@@ -51,30 +51,30 @@ test "length method" {
 test "is_empty method" {
   let buf = Buffer(size_hint=100)
   inspect(buf.is_empty(), content="true")
-  buf.write_string("Test")
+  buf.write_string_utf16le("Test")
   inspect(buf.is_empty(), content="false")
 }
 
 ///|
 test "expect method with matching content" {
   let buf = Buffer(size_hint=100)
-  buf.write_string("Test")
+  buf.write_string_utf16le("Test")
   inspect(buf, content="Test")
 }
 
 ///|
 test "grow_if_necessary method" {
   let buf = Buffer(size_hint=10)
-  buf.write_string(
+  buf.write_string_utf16le(
     "This is a test string that is longer than the initial capacity",
   )
   assert_true(buf.to_bytes().length() >= 60)
 }
 
 ///|
-test "write_substring method" {
+test "write UTF-16LE string view" {
   let buf = Buffer(size_hint=10)
-  buf.write_view("Hello, World!"[7:12])
+  buf.write_string_utf16le("Hello, World!"[7:12])
   inspect(buf, content="World")
 }
 
@@ -103,7 +103,7 @@ test "write_utf8 method" {
 ///|
 test "to_bytes method" {
   let buf = Buffer(size_hint=10)
-  buf.write_string("Test")
+  buf.write_string_utf16le("Test")
   let bytes = buf.to_bytes()
   inspect(bytes.length(), content="8") // Each character in "Test" is 2 bytes
 }
@@ -359,21 +359,6 @@ test "write_char_utf8" {
     buf.to_bytes(),
     content=(
       #|b"A\xce\xb1\xe5\x95\x8a\xf0\x9f\x98\xa6"
-    ),
-  )
-}
-
-///|
-test "write_char" {
-  let buf = Buffer(size_hint=10)
-  buf.write_char('A')
-  buf.write_char('α')
-  buf.write_char('啊')
-  buf.write_char('😦')
-  inspect(
-    buf.to_bytes(),
-    content=(
-      #|b"A\x00\xb1\x03JU=\xd8&\xde"
     ),
   )
 }

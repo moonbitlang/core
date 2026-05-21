@@ -144,15 +144,14 @@ test {
 
 ## Writing Show Objects
 
-Write any type that implements `Show` via `write_object()`. The buffer also implements the `Logger` trait, so it can be passed to `output()`.
+Write any type that implements `Show` as UTF-8 bytes via `write_utf8()`. The current `write_object()` and `Logger` implementation for `Buffer` write UTF-16LE bytes and are deprecated; a future breaking release may restore them with UTF-8 semantics.
 
 ```mbt check
 ///|
 test {
   let buf = Buffer()
-  buf.write_object(42)
-  // write_object uses the Show trait, producing UTF-16LE string bytes
-  assert_eq(buf.length(), 4) // "42" in UTF-16LE = 4 bytes
+  buf.write_utf8(42)
+  inspect(buf.to_bytes(), content="b\"42\"")
 }
 ```
 
