@@ -49,6 +49,7 @@ pub fn Buffer::write_int_be(Self, Int) -> Unit
 pub fn Buffer::write_int_le(Self, Int) -> Unit
 pub fn Buffer::write_iter(Self, Iter[Byte]) -> Unit
 pub fn[A : Leb128] Buffer::write_leb128(Self, A) -> Unit
+#deprecated
 pub fn Buffer::write_object(Self, &Show) -> Unit
 pub fn Buffer::write_string_utf16be(Self, StringView) -> Unit
 #alias(write_stringview, deprecated)
@@ -61,6 +62,7 @@ pub fn Buffer::write_uint64_le(Self, UInt64) -> Unit
 pub fn Buffer::write_uint_be(Self, UInt) -> Unit
 pub fn Buffer::write_uint_le(Self, UInt) -> Unit
 pub fn[T : Show] Buffer::write_utf8(Self, T) -> Unit
+#deprecated
 pub impl Logger for Buffer
 pub impl Show for Buffer
 pub impl @debug.Debug for Buffer
