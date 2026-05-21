@@ -22,7 +22,7 @@ pub(all) suberror JsonDecodeError {
 ///|
 /// Trait for types that can be converted from `Json`
 pub(open) trait FromJson {
-  fn from_json(Json, JsonPath) -> Self raise JsonDecodeError
+  from_json(Json, JsonPath) -> Self raise JsonDecodeError
 }
 
 ///|
