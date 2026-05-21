@@ -87,6 +87,20 @@ test "write_byte method" {
 }
 
 ///|
+test "write_utf8 method" {
+  let buf = @buffer.new()
+  buf.write_utf8(42)
+  buf.write_utf8('!')
+  buf.write_utf8("hi"[:])
+  inspect(
+    buf.contents(),
+    content=(
+      #|b"42!hi"
+    ),
+  )
+}
+
+///|
 test "to_bytes method" {
   let buf = @buffer.new(size_hint=10)
   buf.write_string("Test")

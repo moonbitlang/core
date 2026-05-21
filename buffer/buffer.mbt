@@ -716,6 +716,34 @@ pub fn Buffer::write_object(self : Buffer, value : &Show) -> Unit {
 }
 
 ///|
+/// Writes the `Show` representation of any value into the buffer as UTF-8
+/// encoded bytes.
+///
+/// Parameters:
+///
+/// * `self` : The buffer to write to.
+/// * `value` : Any value that implements the `Show` trait. The value is
+/// converted to a string via `Show::to_string` and then encoded as UTF-8.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let buf = @buffer.new()
+///   buf.write_utf8(42)
+///   inspect(
+///     buf.contents(),
+///     content=(
+///       #|b"42"
+///     ),
+///   )
+/// }
+/// ```
+pub fn[T : Show] Buffer::write_utf8(self : Buffer, value : T) -> Unit {
+  self.write_string_utf8(value.to_string())
+}
+
+///|
 /// Writes a sequence of bytes into the buffer.
 ///
 /// Parameters:
