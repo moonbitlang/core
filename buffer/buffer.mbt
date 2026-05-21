@@ -24,8 +24,8 @@
 ///
 /// ```mbt nocheck
 ///   let buf = Buffer(size_hint=100)
-///   buf.write_string("Tes")
-///   buf.write_char('t')
+///   buf.write_string_utf16le("Tes")
+///   buf.write_char_utf16le('t')
 ///   inspect(
 ///     buf.contents(), 
 ///     content=(
@@ -72,7 +72,7 @@ fn Buffer::grow_if_necessary(self : Buffer, required : Int) -> Unit {
 /// ```mbt check
 /// test {
 ///   let buf = Buffer()
-///   buf.write_string("Test")
+///   buf.write_string_utf16le("Test")
 ///   inspect(buf.length(), content="8") // each char takes 2 bytes in UTF-16
 /// }
 /// ```
@@ -96,7 +96,7 @@ pub fn Buffer::length(self : Buffer) -> Int {
 /// test {
 ///   let buf = Buffer()
 ///   inspect(buf.is_empty(), content="true")
-///   buf.write_string("test")
+///   buf.write_string_utf16le("test")
 ///   inspect(buf.is_empty(), content="false")
 /// }
 /// ```
@@ -121,7 +121,7 @@ pub fn Buffer::is_empty(self : Buffer) -> Bool {
 /// test {
 ///   let buf = Buffer(size_hint=10)
 ///   inspect(buf.length(), content="0")
-///   buf.write_string("test")
+///   buf.write_string_utf16le("test")
 ///   inspect(buf.length(), content="8")
 /// }
 /// ```
@@ -146,7 +146,7 @@ pub fn new(size_hint? : Int = 0) -> Buffer {
 /// ```mbt check
 /// test {
 ///   let buf = Buffer()
-///   buf.write_string("test")
+///   buf.write_string_utf16le("test")
 ///   inspect(buf.length(), content="8")
 /// }
 /// ```
@@ -209,26 +209,6 @@ pub fn from_iter(iter : Iter[Byte]) -> Buffer {
 ///
 /// * `buffer` : The buffer to write to.
 /// * `string` : The string to be written.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let buf = Buffer()
-///   buf.write_string("Test")
-///   // Each UTF-16 char takes 2 bytes in little-endian format
-///   // 'T' -> [0x54, 0x00]
-///   // 'e' -> [0x65, 0x00]
-///   // 's' -> [0x73, 0x00]
-///   // 't' -> [0x74, 0x00]
-///   inspect(
-///     buf.contents(),
-///     content=(
-///       #|b"T\x00e\x00s\x00t\x00"
-///     ),
-///   )
-/// }
-/// ```
 
 ///|
 /// This Logger impl currently writes UTF-16LE bytes for compatibility. After a
@@ -735,16 +715,6 @@ pub fn Buffer::write_float_le(self : Buffer, value : Float) -> Unit {
 /// * `value` : Any value that implements the `Show` trait. The value will be
 /// converted to a string using its `to_string` method before being written to
 /// the buffer.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let buf = Buffer()
-///   buf.write_object(42)
-///   inspect(buf.contents().to_unchecked_string(), content="42")
-/// }
-/// ```
 #deprecated("Buffer::write_object writes UTF-16LE bytes; use write_utf8 or explicit Buffer encoders. A future breaking release may restore it with UTF-8 semantics.", skip_current_package=true)
 pub fn Buffer::write_object(self : Buffer, value : &Show) -> Unit {
   self.write_string(value.to_string())
@@ -1013,21 +983,6 @@ pub fn Buffer::write_string_utf16be(buf : Self, string : StringView) -> Unit {
 /// non-negative.
 /// * `count` : The number of characters to write. Must be non-negative and
 /// `offset + count` must not exceed the length of the source string.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let buf = Buffer()
-///   buf.write_view("Hello, World!"[:5])
-///   inspect(
-///     buf.contents(),
-///     content=(
-///       #|b"H\x00e\x00l\x00l\x00o\x00"
-///     ),
-///   )
-/// }
-/// ```
 pub impl Logger for Buffer with write_view(self : Buffer, value : StringView) -> Unit {
   self.grow_if_necessary(self.len + value.length() * 2)
   self.data.blit_from_string(
@@ -1047,21 +1002,6 @@ pub impl Logger for Buffer with write_view(self : Buffer, value : StringView) ->
 ///
 /// * `buffer` : The buffer to write to.
 /// * `char` : The character to be written.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let buf = Buffer()
-///   buf.write_char('A')
-///   inspect(
-///     buf.contents(),
-///     content=(
-///       #|b"A\x00"
-///     ),
-///   )
-/// }
-/// ```
 pub impl Logger for Buffer with write_char(self : Buffer, value : Char) -> Unit {
   self.grow_if_necessary(self.len + 4)
   let inc = self.data.set_utf16le_char(self.len, value)
@@ -1139,7 +1079,7 @@ pub fn Buffer::write_iter(self : Buffer, iter : Iter[Byte]) -> Unit {
 /// ```mbt check
 /// test {
 ///   let buf = Buffer()
-///   buf.write_string("Hello")
+///   buf.write_string_utf16le("Hello")
 ///   inspect(buf.length(), content="10")
 ///   buf.reset()
 ///   inspect(buf.length(), content="0")
@@ -1166,7 +1106,7 @@ pub fn Buffer::reset(self : Buffer) -> Unit {
 /// ```mbt check
 /// test {
 ///   let buf = Buffer()
-///   buf.write_string("Test")
+///   buf.write_string_utf16le("Test")
 ///   let bytes = buf.to_bytes()
 ///   inspect(bytes.length(), content="8") //utf16
 /// }
