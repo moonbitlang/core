@@ -132,6 +132,30 @@ pub fn new(size_hint? : Int = 0) -> Buffer {
 }
 
 ///|
+/// Creates a new extensible buffer. Enables the constructor-call syntax
+/// `Buffer()` (also `Buffer(size_hint=N)`) when `Buffer` is in scope, e.g.
+/// via the prelude.
+///
+/// Parameters:
+///
+/// * `size_hint` : Initial capacity of the buffer in bytes. Defaults to 0.
+///
+/// Returns a new `Buffer`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let buf = Buffer()
+///   buf.write_string("test")
+///   inspect(buf.length(), content="8")
+/// }
+/// ```
+pub fn Buffer::Buffer(size_hint? : Int = 0) -> Buffer {
+  new(size_hint=size_hint)
+}
+
+///|
 /// Create a buffer from a bytes.
 pub fn from_bytes(bytes : BytesView) -> Buffer {
   let val_len = bytes.length()

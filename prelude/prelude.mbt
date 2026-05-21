@@ -13,6 +13,9 @@
 // limitations under the License.
 
 ///|
+pub using @buffer {type Buffer}
+
+///|
 pub using @set {type Set}
 
 ///|

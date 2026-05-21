@@ -3,6 +3,7 @@ package "moonbitlang/core/prelude"
 
 import {
   "moonbitlang/core/bigint",
+  "moonbitlang/core/buffer",
   "moonbitlang/core/builtin",
   "moonbitlang/core/debug",
   "moonbitlang/core/json",
@@ -82,6 +83,8 @@ pub using @builtin {type Array}
 pub using @builtin {type ArrayView}
 
 pub using @bigint {type BigInt}
+
+pub using @buffer {type Buffer}
 
 pub using @builtin {type Failure}
 

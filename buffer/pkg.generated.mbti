@@ -18,7 +18,10 @@ pub fn new(size_hint? : Int) -> Buffer
 
 // Types and methods
 #alias(T, deprecated)
-type Buffer
+pub struct Buffer {
+  // private fields
+}
+pub fn Buffer::Buffer(size_hint? : Int) -> Self
 pub fn Buffer::is_empty(Self) -> Bool
 pub fn Buffer::length(Self) -> Int
 pub fn Buffer::reset(Self) -> Unit
