@@ -76,7 +76,7 @@ test "binary representation" {
 
   // Convert to big-endian and little-endian bytes
   // Different byte orders should produce different results
-  let buffer = @buffer.new()
+  let buffer = Buffer()
   buffer.write_double_be(num)
   inspect(
     buffer.to_bytes(),

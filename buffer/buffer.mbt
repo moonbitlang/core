@@ -23,7 +23,7 @@
 /// # Usage
 ///
 /// ```mbt nocheck
-///   let buf = @buffer.new(size_hint=100)
+///   let buf = Buffer(size_hint=100)
 ///   buf.write_string("Tes")
 ///   buf.write_char('t')
 ///   inspect(
@@ -71,7 +71,7 @@ fn Buffer::grow_if_necessary(self : Buffer, required : Int) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let buf = @buffer.new()
+///   let buf = Buffer()
 ///   buf.write_string("Test")
 ///   inspect(buf.length(), content="8") // each char takes 2 bytes in UTF-16
 /// }
@@ -94,7 +94,7 @@ pub fn Buffer::length(self : Buffer) -> Int {
 ///
 /// ```mbt check
 /// test {
-///   let buf = @buffer.new()
+///   let buf = Buffer()
 ///   inspect(buf.is_empty(), content="true")
 ///   buf.write_string("test")
 ///   inspect(buf.is_empty(), content="false")
@@ -119,16 +119,15 @@ pub fn Buffer::is_empty(self : Buffer) -> Bool {
 ///
 /// ```mbt check
 /// test {
-///   let buf = @buffer.new(size_hint=10)
+///   let buf = Buffer(size_hint=10)
 ///   inspect(buf.length(), content="0")
 ///   buf.write_string("test")
 ///   inspect(buf.length(), content="8")
 /// }
 /// ```
+#deprecated("use `Buffer()` instead (with `Buffer` in scope via the prelude)")
 pub fn new(size_hint? : Int = 0) -> Buffer {
-  let initial = if size_hint < 1 { 1 } else { size_hint }
-  let data = FixedArray::make(initial, Byte::default())
-  { data, len: 0 }
+  Buffer(size_hint~)
 }
 
 ///|
@@ -152,14 +151,16 @@ pub fn new(size_hint? : Int = 0) -> Buffer {
 /// }
 /// ```
 pub fn Buffer::Buffer(size_hint? : Int = 0) -> Buffer {
-  new(size_hint=size_hint)
+  let initial = if size_hint < 1 { 1 } else { size_hint }
+  let data = FixedArray::make(initial, Byte::default())
+  { data, len: 0 }
 }
 
 ///|
 /// Create a buffer from a bytes.
 pub fn from_bytes(bytes : BytesView) -> Buffer {
   let val_len = bytes.length()
-  let buf = new(size_hint=val_len)
+  let buf = Buffer(size_hint=val_len)
   // inline write_bytes, skip grow_if_necessary check
   // SAFETY: known bytes size
   buf.data.blit_from_bytes(0, bytes.data(), bytes.start_offset(), val_len)
@@ -170,7 +171,7 @@ pub fn from_bytes(bytes : BytesView) -> Buffer {
 ///|
 /// Create a buffer from an array.
 pub fn from_array(arr : ArrayView[Byte]) -> Buffer {
-  let buf = new(size_hint=arr.length())
+  let buf = Buffer(size_hint=arr.length())
   for byte in arr {
     // inline write_byte, skip grow_if_necessary check
     // SAFETY: known array size
@@ -183,7 +184,7 @@ pub fn from_array(arr : ArrayView[Byte]) -> Buffer {
 ///|
 /// Create a buffer from an iterator.
 pub fn from_iter(iter : Iter[Byte]) -> Buffer {
-  let buf = new()
+  let buf = Buffer()
   for byte in iter; capacity = buf.data.length() {
     // inline write_byte and grow_if_necessary
     // only call grow_if_necessary when necessary
@@ -213,7 +214,7 @@ pub fn from_iter(iter : Iter[Byte]) -> Buffer {
 ///
 /// ```mbt check
 /// test {
-///   let buf = @buffer.new()
+///   let buf = Buffer()
 ///   buf.write_string("Test")
 ///   // Each UTF-16 char takes 2 bytes in little-endian format
 ///   // 'T' -> [0x54, 0x00]
@@ -247,7 +248,7 @@ pub impl Logger for Buffer with write_string(self, value) {
 ///
 /// ```mbt check
 /// test {
-///   let buf = @buffer.new()
+///   let buf = Buffer()
 ///   buf.write_uint64_be(0xAABBCCDD11223344)
 ///   // Bytes are written in big-endian order
 ///   inspect(
@@ -285,7 +286,7 @@ pub fn Buffer::write_uint64_be(self : Buffer, value : UInt64) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let buf = @buffer.new()
+///   let buf = Buffer()
 ///   buf.write_uint64_le(0x0123456789ABCDEF)
 ///   inspect(
 ///     buf.contents(),
@@ -322,7 +323,7 @@ pub fn Buffer::write_uint64_le(self : Buffer, value : UInt64) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let buf = @buffer.new()
+///   let buf = Buffer()
 ///   buf.write_int64_be(0x0102030405060708L)
 ///   inspect(
 ///     buf.contents(),
@@ -348,7 +349,7 @@ pub fn Buffer::write_int64_be(self : Buffer, value : Int64) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let buf = @buffer.new()
+///   let buf = Buffer()
 ///   buf.write_int64_le(-1L)
 ///   inspect(
 ///     buf.contents(),
@@ -375,7 +376,7 @@ pub fn Buffer::write_int64_le(self : Buffer, value : Int64) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let buf = @buffer.new()
+///   let buf = Buffer()
 ///   buf.write_uint_be(0x12345678)
 ///   inspect(
 ///     buf.contents(),
@@ -409,7 +410,7 @@ pub fn Buffer::write_uint_be(self : Buffer, value : UInt) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let buf = @buffer.new()
+///   let buf = Buffer()
 ///   buf.write_uint_le(0x12345678)
 ///   inspect(
 ///     buf.contents(),
@@ -442,7 +443,7 @@ pub fn Buffer::write_uint_le(self : Buffer, value : UInt) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let buf = @buffer.new()
+///   let buf = Buffer()
 ///   buf.write_int_be(0x12345678)
 ///   inspect(
 ///     buf.contents(),
@@ -470,7 +471,7 @@ pub fn Buffer::write_int_be(self : Buffer, value : Int) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let buf = @buffer.new()
+///   let buf = Buffer()
 ///   buf.write_int_le(-1)
 ///   inspect(buf.contents(), content="b\"\\xff\\xff\\xff\\xff\"")
 /// }
@@ -492,7 +493,7 @@ pub fn Buffer::write_int_le(self : Buffer, value : Int) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let buf = @buffer.new()
+///   let buf = Buffer()
 ///   buf.write_uint16_be(0x1234)
 ///   inspect(
 ///     buf.contents(),
@@ -524,7 +525,7 @@ pub fn Buffer::write_uint16_be(self : Buffer, value : UInt16) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let buf = @buffer.new()
+///   let buf = Buffer()
 ///   buf.write_uint16_le(0x1234)
 ///   inspect(
 ///     buf.contents(),
@@ -555,7 +556,7 @@ pub fn Buffer::write_uint16_le(self : Buffer, value : UInt16) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let buf = @buffer.new()
+///   let buf = Buffer()
 ///   buf.write_int16_be(0x1234)
 ///   inspect(
 ///     buf.contents(),
@@ -586,7 +587,7 @@ pub fn Buffer::write_int16_be(self : Buffer, value : Int16) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let buf = @buffer.new()
+///   let buf = Buffer()
 ///   buf.write_int16_le(-1)
 ///   inspect(
 ///     buf.contents(),
@@ -617,7 +618,7 @@ pub fn Buffer::write_int16_le(self : Buffer, value : Int16) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let buf = @buffer.new()
+///   let buf = Buffer()
 ///   buf.write_double_be(1.0)
 ///   inspect(
 ///     buf.contents(),
@@ -644,7 +645,7 @@ pub fn Buffer::write_double_be(self : Buffer, value : Double) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let buf = @buffer.new()
+///   let buf = Buffer()
 ///   buf.write_double_le(3.14)
 ///   inspect(
 ///     buf.contents(),
@@ -672,7 +673,7 @@ pub fn Buffer::write_double_le(self : Buffer, value : Double) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let buf = @buffer.new()
+///   let buf = Buffer()
 ///   buf.write_float_be(3.14)
 ///   // In big-endian format, 3.14 is represented as [0x40, 0x48, 0xF5, 0xC3]
 ///   inspect(
@@ -700,7 +701,7 @@ pub fn Buffer::write_float_be(self : Buffer, value : Float) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let buf = @buffer.new()
+///   let buf = Buffer()
 ///   buf.write_float_le(3.14)
 ///   // The bytes are written in little-endian format
 ///   inspect(
@@ -730,7 +731,7 @@ pub fn Buffer::write_float_le(self : Buffer, value : Float) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let buf = @buffer.new()
+///   let buf = Buffer()
 ///   buf.write_object(42)
 ///   inspect(buf.contents().to_unchecked_string(), content="42")
 /// }
@@ -753,7 +754,7 @@ pub fn Buffer::write_object(self : Buffer, value : &Show) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let buf = @buffer.new()
+///   let buf = Buffer()
 ///   buf.write_utf8(42)
 ///   inspect(
 ///     buf.contents(),
@@ -779,7 +780,7 @@ pub fn[T : Show] Buffer::write_utf8(self : Buffer, value : T) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let buf = @buffer.new()
+///   let buf = Buffer()
 ///   buf.write_bytes(b"Test")
 ///   inspect(
 ///     buf.contents(),
@@ -805,7 +806,7 @@ pub fn Buffer::write_bytes(self : Buffer, value : BytesView) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let buf = @buffer.new()
+///   let buf = Buffer()
 ///   let view = b"Test"[1:3]
 ///   buf.write_bytesview(view)
 ///   inspect(
@@ -923,7 +924,7 @@ pub fn Buffer::write_char_utf16be(buf : Self, value : Char) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let buf = @buffer.new()
+///   let buf = Buffer()
 ///   buf.write_string_utf8("Hi")
 ///   inspect(buf.contents().length(), content="2")
 /// }
@@ -946,7 +947,7 @@ pub fn Buffer::write_string_utf8(buf : Self, string : StringView) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let buf = @buffer.new()
+///   let buf = Buffer()
 ///   buf.write_string_utf16le("A")
 ///   inspect(buf.contents().length(), content="2")
 /// }
@@ -976,7 +977,7 @@ pub fn Buffer::write_string_utf16le(buf : Self, string : StringView) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let buf = @buffer.new()
+///   let buf = Buffer()
 ///   buf.write_string_utf16be("A")
 ///   inspect(buf.contents().length(), content="2")
 /// }
@@ -1007,7 +1008,7 @@ pub fn Buffer::write_string_utf16be(buf : Self, string : StringView) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let buf = @buffer.new()
+///   let buf = Buffer()
 ///   buf.write_view("Hello, World!"[:5])
 ///   inspect(
 ///     buf.contents(),
@@ -1041,7 +1042,7 @@ pub impl Logger for Buffer with write_view(self : Buffer, value : StringView) ->
 ///
 /// ```mbt check
 /// test {
-///   let buf = @buffer.new()
+///   let buf = Buffer()
 ///   buf.write_char('A')
 ///   inspect(
 ///     buf.contents(),
@@ -1070,7 +1071,7 @@ pub impl Logger for Buffer with write_char(self : Buffer, value : Char) -> Unit 
 ///
 /// ```mbt check
 /// test {
-///   let buf = @buffer.new()
+///   let buf = Buffer()
 ///   buf.write_byte(b'\x41')
 ///   inspect(
 ///     buf.contents(),
@@ -1098,7 +1099,7 @@ pub fn Buffer::write_byte(self : Buffer, value : Byte) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let buf = @buffer.new()
+///   let buf = Buffer()
 ///   let bytes = b"Hello"
 ///   buf.write_iter(bytes.iter())
 ///   inspect(
@@ -1127,7 +1128,7 @@ pub fn Buffer::write_iter(self : Buffer, iter : Iter[Byte]) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let buf = @buffer.new()
+///   let buf = Buffer()
 ///   buf.write_string("Hello")
 ///   inspect(buf.length(), content="10")
 ///   buf.reset()
@@ -1154,7 +1155,7 @@ pub fn Buffer::reset(self : Buffer) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let buf = @buffer.new()
+///   let buf = Buffer()
 ///   buf.write_string("Test")
 ///   let bytes = buf.to_bytes()
 ///   inspect(bytes.length(), content="8") //utf16
@@ -1175,7 +1176,7 @@ pub fn Buffer::to_bytes(self : Buffer) -> Bytes {
 ///
 /// ```mbt check
 /// test {
-///   let buf = @buffer.new()
+///   let buf = Buffer()
 ///   buf.write_byte(b'A')
 ///   let v = buf.view()
 ///   inspect(v.length(), content="1")

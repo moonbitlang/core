@@ -33,7 +33,7 @@ test "encode" {
 
 ///|
 fn encode_via_buffer(str : StringView, bom : Bool) -> Bytes {
-  let buffer = @buffer.new(size_hint=str.length() * 4)
+  let buffer = Buffer(size_hint=str.length() * 4)
   if bom {
     buffer.write_char_utf8('\u{FEFF}')
   }

@@ -20,7 +20,7 @@ fn[A : Leb128] @buffer.Buffer::test_leb128(self : Self, x : A) -> Unit {
 
 ///|
 test "write_leb128 Int" {
-  let buffer = @buffer.new()
+  let buffer = Buffer()
   buffer.test_leb128(0)
   inspect(
     buffer.to_bytes(),
@@ -63,7 +63,7 @@ test "write_leb128 Int" {
 
 ///|
 test "write_leb128 Int64" {
-  let buffer = @buffer.new()
+  let buffer = Buffer()
   buffer.write_leb128(0L)
   assert_eq(buffer.to_bytes(), b"\x00")
   buffer.reset()
@@ -88,7 +88,7 @@ test "write_leb128 Int64" {
 
 ///|
 test "write_leb128 UInt" {
-  let buffer = @buffer.new()
+  let buffer = Buffer()
   // Test zero
   buffer.write_leb128(0U)
   assert_eq(buffer.to_bytes(), b"\x00")
@@ -137,7 +137,7 @@ test "write_leb128 UInt" {
 
 ///|
 test "write_leb128_edge_cases" {
-  let buffer = @buffer.new()
+  let buffer = Buffer()
 
   // Test boundary values for each byte length
   buffer.write_leb128(0U)
@@ -171,7 +171,7 @@ test "write_leb128_edge_cases" {
 
 ///|
 test "write_leb128_consecutive_writes" {
-  let buffer = @buffer.new()
+  let buffer = Buffer()
 
   // Test writing multiple values consecutively
   buffer.write_leb128(1U)
@@ -184,7 +184,7 @@ test "write_leb128_consecutive_writes" {
 
 ///|
 test "write_leb128_negative_values" {
-  let buffer = @buffer.new()
+  let buffer = Buffer()
 
   // Test negative values for SLEB128
   buffer.write_leb128(-1)
@@ -206,7 +206,7 @@ test "write_leb128_negative_values" {
 
 ///|
 test "write_leb128_negative_Int64" {
-  let buffer = @buffer.new()
+  let buffer = Buffer()
 
   // Test negative Int64 values for SLEB128
   buffer.write_leb128(-1L)
@@ -254,14 +254,14 @@ test "write_leb128_negative_Int64" {
 
 ///|
 test {
-  let buffer = @buffer.new()
+  let buffer = Buffer()
   buffer.write_leb128(-65)
   assert_eq(buffer.to_bytes(), b"\xbf\x7f")
 }
 
 ///|
 test "write_leb128 UInt64" {
-  let buffer = @buffer.new()
+  let buffer = Buffer()
   buffer.write_leb128(0UL)
   assert_eq(buffer.to_bytes(), b"\x00")
   buffer.reset()
@@ -287,7 +287,7 @@ test "write_leb128 UInt64" {
 
 ///|
 test "write_leb128 UInt64 large values" {
-  let buffer = @buffer.new()
+  let buffer = Buffer()
   buffer.write_leb128(0xFFFFFFFFUL)
   assert_eq(buffer.to_bytes(), b"\xff\xff\xff\xff\x0f")
   buffer.reset()

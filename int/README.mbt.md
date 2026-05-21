@@ -29,7 +29,7 @@ test "byte conversions" {
   let num = 258 // 0x0102 in hex
 
   // Big-endian conversion (most significant byte first)
-  let buf = @buffer.new()
+  let buf = Buffer()
   buf.write_int_be(num)
   let be_bytes = buf.contents()
   inspect(
@@ -65,7 +65,7 @@ test "method syntax" {
   inspect(n.abs(), content="42")
 
   // Byte conversions using method syntax
-  let buf = @buffer.new()
+  let buf = Buffer()
   buf.write_int_be(n)
   let be = buf.contents()
   buf.reset()

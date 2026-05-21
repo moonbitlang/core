@@ -129,7 +129,7 @@ test "Int64::popcnt mixed cases" {
 ///|
 fn Int64::to_be_bytes_local(self : Int64) -> Bytes {
   // self.reinterpret_as_uint64().to_be_bytes()
-  let buf = @buffer.new(size_hint=8)
+  let buf = Buffer(size_hint=8)
   buf.write_int64_be(self)
   buf.to_bytes()
 }
@@ -148,7 +148,7 @@ test "to_be_bytes" {
 ///|
 fn Int64::to_le_bytes_local(self : Int64) -> Bytes {
   // self.reinterpret_as_uint64().to_le_bytes()
-  let buf = @buffer.new(size_hint=8)
+  let buf = Buffer(size_hint=8)
   buf.write_int64_le(self)
   buf.to_bytes()
 }

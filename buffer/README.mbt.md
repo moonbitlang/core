@@ -9,9 +9,9 @@ Create an empty buffer, optionally with a capacity hint to reduce reallocations:
 ```mbt check
 ///|
 test {
-  let buf = @buffer.new()
+  let buf = Buffer()
   assert_eq(buf.is_empty(), true)
-  let buf2 = @buffer.new(size_hint=1024)
+  let buf2 = Buffer(size_hint=1024)
   assert_eq(buf2.length(), 0)
 }
 ```
@@ -37,17 +37,17 @@ Write individual bytes, byte slices, or byte iterators:
 ```mbt check
 ///|
 test {
-  let buf = @buffer.new()
+  let buf = Buffer()
   buf.write_byte(b'H')
   buf.write_byte(b'i')
   buf.write_bytes(b" world")
   inspect(buf.to_bytes(), content="b\"Hi world\"")
   // write a sub-range via BytesView
-  let buf2 = @buffer.new()
+  let buf2 = Buffer()
   buf2.write_bytesview(b"Hello"[0:2])
   inspect(buf2.to_bytes(), content="b\"He\"")
   // write from an iterator
-  let buf3 = @buffer.new()
+  let buf3 = Buffer()
   buf3.write_iter(b"ok".iter())
   inspect(buf3.to_bytes(), content="b\"ok\"")
 }
@@ -61,14 +61,14 @@ All integer writes come in `_be` (big-endian) and `_le` (little-endian) variants
 ///|
 test {
   // 32-bit signed/unsigned
-  let buf = @buffer.new()
+  let buf = Buffer()
   buf.write_int_be(0x01020304)
   inspect(buf.to_bytes(), content="b\"\\x01\\x02\\x03\\x04\"")
-  let buf2 = @buffer.new()
+  let buf2 = Buffer()
   buf2.write_int_le(0x01020304)
   inspect(buf2.to_bytes(), content="b\"\\x04\\x03\\x02\\x01\"")
   // unsigned 32-bit
-  let buf3 = @buffer.new()
+  let buf3 = Buffer()
   buf3.write_uint_be(0xAABBU)
   inspect(buf3.to_bytes(), content="b\"\\x00\\x00\\xaa\\xbb\"")
 }
@@ -80,23 +80,23 @@ test {
 ///|
 test {
   // 16-bit signed
-  let buf = @buffer.new()
+  let buf = Buffer()
   buf.write_int16_be((0x0102 : Int16))
   buf.write_int16_le((0x0102 : Int16))
   inspect(buf.to_bytes(), content="b\"\\x01\\x02\\x02\\x01\"")
   // 16-bit unsigned
-  let buf2 = @buffer.new()
+  let buf2 = Buffer()
   buf2.write_uint16_be(Int::to_uint16(0x00AB))
   inspect(buf2.to_bytes(), content="b\"\\x00\\xab\"")
   // 64-bit signed
-  let buf3 = @buffer.new()
+  let buf3 = Buffer()
   buf3.write_int64_be(0x0102030405060708L)
   inspect(
     buf3.to_bytes(),
     content="b\"\\x01\\x02\\x03\\x04\\x05\\x06\\x07\\x08\"",
   )
   // 64-bit unsigned
-  let buf4 = @buffer.new()
+  let buf4 = Buffer()
   buf4.write_uint64_le(0xAABBUL)
   inspect(
     buf4.to_bytes(),
@@ -110,10 +110,10 @@ test {
 ```mbt check
 ///|
 test {
-  let buf = @buffer.new()
+  let buf = Buffer()
   buf.write_float_be(1.0)
   assert_eq(buf.length(), 4)
-  let buf2 = @buffer.new()
+  let buf2 = Buffer()
   buf2.write_double_le(1.0)
   assert_eq(buf2.length(), 8)
 }
@@ -127,16 +127,16 @@ Write individual characters or entire strings as UTF-8 or UTF-16 (LE/BE):
 ///|
 test {
   // UTF-8
-  let buf = @buffer.new()
+  let buf = Buffer()
   buf.write_char_utf8('A')
   buf.write_string_utf8("BC")
   inspect(buf.to_bytes(), content="b\"ABC\"")
   // UTF-16 little-endian
-  let buf2 = @buffer.new()
+  let buf2 = Buffer()
   buf2.write_char_utf16le('A')
   inspect(buf2.to_bytes(), content="b\"A\\x00\"")
   // UTF-16 big-endian
-  let buf3 = @buffer.new()
+  let buf3 = Buffer()
   buf3.write_string_utf16be("AB")
   inspect(buf3.to_bytes(), content="b\"\\x00A\\x00B\"")
 }
@@ -149,7 +149,7 @@ Write any type that implements `Show` via `write_object()`. The buffer also impl
 ```mbt check
 ///|
 test {
-  let buf = @buffer.new()
+  let buf = Buffer()
   buf.write_object(42)
   // write_object uses the Show trait, producing UTF-16LE string bytes
   assert_eq(buf.length(), 4) // "42" in UTF-16LE = 4 bytes
@@ -163,10 +163,10 @@ Write integers in LEB128 variable-length encoding. Supported for `Int`, `UInt`, 
 ```mbt check
 ///|
 test {
-  let buf = @buffer.new()
+  let buf = Buffer()
   buf.write_leb128(624485)
   inspect(buf.to_bytes(), content="b\"\\xe5\\x8e&\"")
-  let buf2 = @buffer.new()
+  let buf2 = Buffer()
   buf2.write_leb128(300UL)
   inspect(buf2.to_bytes(), content="b\"\\xac\\x02\"")
 }
@@ -179,7 +179,7 @@ test {
 ```mbt check
 ///|
 test {
-  let buf = @buffer.new()
+  let buf = Buffer()
   buf.write_bytes(b"hello")
   let bytes = buf.to_bytes()
   inspect(bytes, content="b\"hello\"")
@@ -195,7 +195,7 @@ test {
 ```mbt check
 ///|
 test {
-  let buf = @buffer.new()
+  let buf = Buffer()
   buf.write_bytes(b"data")
   assert_eq(buf.length(), 4)
   buf.reset()
@@ -210,7 +210,7 @@ Pre-allocate capacity to minimize reallocations when the final size is known:
 ```mbt check
 ///|
 test {
-  let buf = @buffer.new(size_hint=1024)
+  let buf = Buffer(size_hint=1024)
   for i in 0..<100 {
     buf.write_int_le(i)
   }

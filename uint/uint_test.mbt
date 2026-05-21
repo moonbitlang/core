@@ -65,7 +65,7 @@ test "default" {
 test "to_le_bytes" {
   let x : UInt = 0x12345678U
   // let bytes = x.to_le_bytes()
-  let buf = @buffer.new()
+  let buf = Buffer()
   buf.write_uint_le(x)
   let bytes = buf.to_bytes()
   inspect(bytes[0].to_int(), content="120") // 0x78

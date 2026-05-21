@@ -27,7 +27,7 @@ test "U+FFFD" {
 
 ///|
 test "decoding UTF8 encoded data to String" {
-  let buf = @buffer.new(size_hint=10)
+  let buf = Buffer(size_hint=10)
   buf.write_bytes(b"abc")
   buf.write_bytes(b"\xe4\xbd\xa0") // 你
   buf.write_bytes(b"\xe5\xa5\xbd") // 好

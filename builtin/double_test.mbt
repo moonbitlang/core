@@ -92,7 +92,7 @@ test "panic is_close with invalid relative and absolute tolerances" {
 ///|
 fn Double::to_le_bytes_local(self : Double) -> Bytes {
   // self.reinterpret_as_uint64().to_le_bytes()
-  let buf = @buffer.new(size_hint=8)
+  let buf = Buffer(size_hint=8)
   buf.write_uint64_le(self.reinterpret_as_uint64())
   return buf.to_bytes()
 }
@@ -100,7 +100,7 @@ fn Double::to_le_bytes_local(self : Double) -> Bytes {
 ///|
 fn Double::to_be_bytes_local(self : Double) -> Bytes {
   // self.reinterpret_as_uint64().to_be_bytes()
-  let buf = @buffer.new(size_hint=8)
+  let buf = Buffer(size_hint=8)
   buf.write_uint64_be(self.reinterpret_as_uint64())
   return buf.to_bytes()
 }

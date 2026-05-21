@@ -28,7 +28,7 @@ pub fn Buffer::to_repr(self : Buffer) -> Repr {
 
 ///|
 test "Debug for Buffer" {
-  let buf = new()
+  let buf = Buffer()
   buf.write_bytes(b"ab")
   @debug.debug_inspect(buf, content="<Buffer: [0x61, 0x62]>")
 }
