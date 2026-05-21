@@ -12,6 +12,7 @@ pub fn from_bytes(BytesView) -> Buffer
 
 pub fn from_iter(Iter[Byte]) -> Buffer
 
+#deprecated
 pub fn new(size_hint? : Int) -> Buffer
 
 // Errors

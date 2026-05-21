@@ -22,7 +22,7 @@ pub(all) suberror JsonDecodeError {
 ///|
 /// Trait for types that can be converted from `Json`
 pub(open) trait FromJson {
-  from_json(Json, JsonPath) -> Self raise JsonDecodeError
+  fn from_json(Json, JsonPath) -> Self raise JsonDecodeError
 }
 
 ///|
@@ -292,7 +292,7 @@ pub impl FromJson for Bytes with from_json(json, path) {
   guard json is String(a) else {
     decode_error(path, "Bytes::from_json: expected string")
   }
-  let buffer = @buffer.new(size_hint=a.length())
+  let buffer = @buffer.Buffer(size_hint=a.length())
   for x = a[:] {
     match x {
       [] => break

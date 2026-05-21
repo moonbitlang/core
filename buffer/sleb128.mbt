@@ -14,7 +14,7 @@
 
 ///|
 trait Leb128 {
-  output(Self, Buffer) -> Unit
+  fn output(Self, Buffer) -> Unit
 }
 
 ///|
@@ -74,7 +74,7 @@ pub impl Leb128 for Int64 with output(self, buffer) {
 ///
 /// ```mbt check
 /// test {
-///   let buf = @buffer.new()
+///   let buf = Buffer()
 ///   buf.write_leb128(127)
 ///   inspect(buf.contents().length() > 0, content="true")
 /// }
