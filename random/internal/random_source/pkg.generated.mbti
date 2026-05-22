@@ -8,7 +8,7 @@ package "moonbitlang/core/random/internal/random_source"
 // Types and methods
 type ChaCha8
 pub fn ChaCha8::new(BytesView) -> Self
-pub fn ChaCha8::next(Self) -> UInt64?
+pub fn ChaCha8::next_uint64(Self) -> UInt64
 pub fn ChaCha8::refill(Self) -> Unit
 
 // Type aliases

@@ -51,17 +51,18 @@ const BUFFER_CHUNK_NUM = 32
 const SEED_CHUNK_NUM = 4
 
 ///|
-/// Function `next`.
-pub fn ChaCha8::next(self : ChaCha8) -> UInt64? {
+/// Return the next random `UInt64`, refilling the internal buffer when needed.
+pub fn ChaCha8::next_uint64(self : ChaCha8) -> UInt64 {
   let i = self.i
   if i >= self.n {
-    return None
+    self.refill()
   }
+  let i = self.i
   self.i = i + 1
   let index = i.reinterpret_as_int() & (BUFFER_CHUNK_NUM - 1)
   let lo = self.buffer[index * 2].to_uint64()
   let hi = self.buffer[index * 2 + 1].to_uint64()
-  Some((hi << 32) | lo)
+  (hi << 32) | lo
 }
 
 ///|
@@ -283,17 +284,8 @@ test "BUFFER_CHUNK_NUM is power of 2" {
 test "output" {
   let s = ChaCha8::new(b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456")
   let res = Array::new(capacity=372)
-  fn uint64(s : ChaCha8) -> UInt64 {
-    for ;; {
-      if s.next() is Some(x) {
-        return x
-      }
-      s.refill()
-    }
-  }
-
   for _ in 0..<372 {
-    let x = uint64(s)
+    let x = s.next_uint64()
     res.push(x)
   }
   let expected = [
