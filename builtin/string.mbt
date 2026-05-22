@@ -182,7 +182,7 @@ test "panic substring/out_of_bounds" {
 /// orders Unicode characters based on their positions in the code charts. This is
 /// not necessarily the same as "alphabetical" order, which varies by language
 /// and locale.
-pub impl Compare for String with compare(self, other) {
+pub impl Compare for String with fn compare(self, other) {
   let len = self.length()
   match len.compare(other.length()) {
     0 => {
@@ -200,7 +200,7 @@ pub impl Compare for String with compare(self, other) {
 
 ///|
 /// The empty string
-pub impl Default for String with default() {
+pub impl Default for String with fn default() {
   ""
 }
 

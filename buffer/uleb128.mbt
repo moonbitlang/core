@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-pub impl Leb128 for UInt with output(self, buffer) {
+pub impl Leb128 for UInt with fn output(self, buffer) {
   for value = self {
     if value < 128 {
       // Single byte: no continuation bit (0xxxxxxx)
@@ -28,7 +28,7 @@ pub impl Leb128 for UInt with output(self, buffer) {
 }
 
 ///|
-pub impl Leb128 for UInt64 with output(self, buffer) {
+pub impl Leb128 for UInt64 with fn output(self, buffer) {
   for value = self {
     if value < 128 {
       // Single byte: no continuation bit (0xxxxxxx)

@@ -79,7 +79,7 @@ fn FixedArray::unsafe_blit_from_string(
 
 ///|
 /// Writes a string to the StringBuilder.
-pub impl Logger for StringBuilder with write_string(self, str) {
+pub impl Logger for StringBuilder with fn write_string(self, str) {
   let str_len = str.length()
   self.grow_if_necessary(self.len + str_len)
   self.data.unsafe_blit_from_string(self.len, str, 0, str_len)
@@ -88,7 +88,7 @@ pub impl Logger for StringBuilder with write_string(self, str) {
 
 ///|
 /// Writes a character to the StringBuilder.
-pub impl Logger for StringBuilder with write_char(self, ch) {
+pub impl Logger for StringBuilder with fn write_char(self, ch) {
   let code = ch.to_uint()
   if code <= 0xFFFFU {
     self.grow_if_necessary(self.len + 1)
@@ -124,7 +124,7 @@ pub impl Logger for StringBuilder with write_char(self, ch) {
 ///   assert_eq(sb.to_string(), "Hello")
 /// }
 /// ```
-pub impl Logger for StringBuilder with write_view(
+pub impl Logger for StringBuilder with fn write_view(
   self : StringBuilder,
   str : StringView,
 ) -> Unit {
@@ -158,7 +158,7 @@ pub fn StringBuilder::write_end(self : StringBuilder) -> String {
 }
 
 ///|
-pub impl Show for StringBuilder with to_string(self) {
+pub impl Show for StringBuilder with fn to_string(self) {
   StringBuilder::to_string(self)
 }
 

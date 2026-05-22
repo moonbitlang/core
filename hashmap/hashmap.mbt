@@ -779,7 +779,7 @@ test "of" {
 pub impl[K : @quickcheck.Arbitrary + Hash + Eq, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for HashMap[
   K,
   V,
-] with arbitrary(size, rs) {
+] with fn arbitrary(size, rs) {
   let m = new_hashmap(default_init_capacity)
   (@quickcheck.Arbitrary::arbitrary(size, rs) : Iter[(K, V)]).each(kv => {
     m.set(kv.0, kv.1)
@@ -788,7 +788,7 @@ pub impl[K : @quickcheck.Arbitrary + Hash + Eq, V : @quickcheck.Arbitrary] @quic
 }
 
 ///|
-pub impl[K, V] Default for HashMap[K, V] with default() {
+pub impl[K, V] Default for HashMap[K, V] with fn default() {
   new_hashmap(default_init_capacity)
 }
 
@@ -915,14 +915,14 @@ priv struct MyString(String) derive(Eq, Debug)
 
 ///|
 #coverage.skip
-impl Hash for MyString with hash(self) {
+impl Hash for MyString with fn hash(self) {
   let MyString(self) = self
   self.length()
 }
 
 ///|
 #coverage.skip
-impl Hash for MyString with hash_combine(self, hasher) {
+impl Hash for MyString with fn hash_combine(self, hasher) {
   hasher.combine_string(self.0)
 }
 

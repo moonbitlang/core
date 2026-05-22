@@ -14,7 +14,7 @@
 
 ///|
 trait FromString {
-  from_string(String) -> Self
+  fn from_string(String) -> Self
 }
 
 ///|
@@ -23,7 +23,7 @@ struct MyInt(Int) derive(Debug)
 // _ allow in names
 
 ///|
-impl FromString for MyInt with from_string(_s) {
+impl FromString for MyInt with fn from_string(_s) {
   0
 }
 
@@ -31,7 +31,7 @@ impl FromString for MyInt with from_string(_s) {
 struct MyString(String) derive(Debug)
 
 ///|
-impl FromString for MyString with from_string(_s) {
+impl FromString for MyString with fn from_string(_s) {
   ""
 }
 

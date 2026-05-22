@@ -228,7 +228,7 @@ test "to_option" {
 }
 
 ///|
-pub impl[T : Compare, E : Compare] Compare for Result[T, E] with compare(
+pub impl[T : Compare, E : Compare] Compare for Result[T, E] with fn compare(
   self : Result[T, E],
   other : Result[T, E],
 ) -> Int {
@@ -347,7 +347,7 @@ test "unwrap exn" {
 }
 
 ///|
-pub impl[T : Eq, E : Eq] Eq for Result[T, E] with equal(self, other) {
+pub impl[T : Eq, E : Eq] Eq for Result[T, E] with fn equal(self, other) {
   match (self, other) {
     (Ok(x), Ok(y)) => x == y
     (Err(x), Err(y)) => x == y

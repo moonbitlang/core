@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-pub impl[K : Show, V : ToJson] ToJson for HashMap[K, V] with to_json(self) {
+pub impl[K : Show, V : ToJson] ToJson for HashMap[K, V] with fn to_json(self) {
   Json::object(
     Map(
       capacity=self.capacity,

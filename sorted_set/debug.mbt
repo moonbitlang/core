@@ -16,7 +16,7 @@
 using @debug {trait Debug, type Repr}
 
 ///|
-pub impl[V : Debug] Debug for SortedSet[V] with to_repr(self) {
+pub impl[V : Debug] Debug for SortedSet[V] with fn to_repr(self) {
   Repr::opaque_(
     "SortedSet",
     Repr::array([ for x in self => @debug.to_repr(x) ]),

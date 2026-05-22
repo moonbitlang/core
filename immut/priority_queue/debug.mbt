@@ -16,7 +16,7 @@
 using @debug {trait Debug, type Repr}
 
 ///|
-pub impl[A : Debug + Compare] Debug for PriorityQueue[A] with to_repr(self) {
+pub impl[A : Debug + Compare] Debug for PriorityQueue[A] with fn to_repr(self) {
   let xs : Array[Repr] = self.to_array().map(x => @debug.to_repr(x))
   Repr::opaque_("PriorityQueue", Repr::array(xs))
 }

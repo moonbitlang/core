@@ -82,12 +82,12 @@ priv enum ExprDef {
 }
 
 ///|
-impl Eq for Expr with equal(self, other) {
+impl Eq for Expr with fn equal(self, other) {
   self.id == other.id
 }
 
 ///|
-impl Hash for Expr with hash_combine(self, hasher) {
+impl Hash for Expr with fn hash_combine(self, hasher) {
   hasher.combine(self.id)
 }
 

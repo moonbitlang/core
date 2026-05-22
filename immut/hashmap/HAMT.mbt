@@ -702,7 +702,7 @@ pub impl[K : Show, V : Show] Show for HashMap[K, V]
 
 ///|
 #warnings("-deprecated")
-pub impl[K : Show, V : Show] Show for HashMap[K, V] with output(self, logger) {
+pub impl[K : Show, V : Show] Show for HashMap[K, V] with fn output(self, logger) {
   logger.write_iter(
     self.iter(),
     prefix="@immut/hashmap.from_array([",
@@ -741,12 +741,12 @@ pub fn[K, V] HashMap::to_array(self : HashMap[K, V]) -> Array[(K, V)] {
 pub impl[K : Eq + Hash + @quickcheck.Arbitrary, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for HashMap[
   K,
   V,
-] with arbitrary(size, rs) {
+] with fn arbitrary(size, rs) {
   @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
 }
 
 ///|
-impl[K : Eq, V : Eq] Eq for Node[K, V] with equal(self, other) {
+impl[K : Eq, V : Eq] Eq for Node[K, V] with fn equal(self, other) {
   if physical_equal(self, other) {
     return true
   }
@@ -765,7 +765,7 @@ impl[K : Eq, V : Eq] Eq for Node[K, V] with equal(self, other) {
 }
 
 ///|
-pub impl[K : Hash, V : Hash] Hash for HashMap[K, V] with hash_combine(
+pub impl[K : Hash, V : Hash] Hash for HashMap[K, V] with fn hash_combine(
   self,
   hasher,
 ) {

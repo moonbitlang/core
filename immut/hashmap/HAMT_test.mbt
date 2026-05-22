@@ -517,12 +517,12 @@ test "HAMT::singleton" {
 struct MyString(String)
 
 ///|
-impl Hash for MyString with hash_combine(_self, hasher) {
+impl Hash for MyString with fn hash_combine(_self, hasher) {
   hasher.combine(1)
 }
 
 ///|
-impl Eq for MyString with equal(self, other) {
+impl Eq for MyString with fn equal(self, other) {
   self.0 == other.0
 }
 
@@ -530,19 +530,19 @@ impl Eq for MyString with equal(self, other) {
 struct SegKey(Int, Int)
 
 ///|
-impl Hash for SegKey with hash(self) {
+impl Hash for SegKey with fn hash(self) {
   let SegKey(_, hash) = self
   hash
 }
 
 ///|
-impl Hash for SegKey with hash_combine(self, hasher) {
+impl Hash for SegKey with fn hash_combine(self, hasher) {
   let SegKey(_, hash) = self
   hasher.combine_int(hash)
 }
 
 ///|
-impl Eq for SegKey with equal(self, other) {
+impl Eq for SegKey with fn equal(self, other) {
   self.0 == other.0
 }
 

@@ -116,7 +116,7 @@ pub fn Bool::to_uint64(self : Bool) -> UInt64 {
 }
 
 ///|
-pub impl Hash for Bool with hash_combine(self, hasher) {
+pub impl Hash for Bool with fn hash_combine(self, hasher) {
   hasher.combine_bool(self)
 }
 

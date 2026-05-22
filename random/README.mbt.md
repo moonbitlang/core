@@ -122,7 +122,7 @@ struct MySource {
 }
 
 ///|
-impl @random.Source for MySource with next(self) -> UInt64 {
+impl @random.Source for MySource with fn next(self) -> UInt64 {
   self.value = self.value * 6364136223846793005UL + 1UL
   self.value
 }

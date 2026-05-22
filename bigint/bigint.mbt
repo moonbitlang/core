@@ -41,17 +41,17 @@
 /// }
 /// ```
 ///
-pub impl ToJson for BigInt with to_json(self : BigInt) -> Json {
+pub impl ToJson for BigInt with fn to_json(self : BigInt) -> Json {
   Json::string(self.to_string())
 }
 
 ///|
-pub impl Show for BigInt with to_string(self) {
+pub impl Show for BigInt with fn to_string(self) {
   BigInt::to_string(self)
 }
 
 ///|
-pub impl @json.FromJson for BigInt with from_json(json, path) {
+pub impl @json.FromJson for BigInt with fn from_json(json, path) {
   guard json is String(s) else {
     raise @json.JsonDecodeError(
       (path, "BigInt::from_json: expected number in string representation"),
@@ -62,7 +62,7 @@ pub impl @json.FromJson for BigInt with from_json(json, path) {
 }
 
 ///|
-pub impl @quickcheck.Arbitrary for BigInt with arbitrary(size, rs) {
+pub impl @quickcheck.Arbitrary for BigInt with fn arbitrary(size, rs) {
   if size == 0 {
     0
   } else {
@@ -72,7 +72,7 @@ pub impl @quickcheck.Arbitrary for BigInt with arbitrary(size, rs) {
 
 ///|
 /// Returns the default value `0` for `BigInt`
-pub impl Default for BigInt with default() {
+pub impl Default for BigInt with fn default() {
   zero
 }
 
@@ -312,7 +312,7 @@ test "can_convert_to_int64" {
 ///   inspect(hasher.finalize(), content="890579181")
 /// }
 /// ```
-pub impl Hash for BigInt with hash_combine(self, hasher) {
+pub impl Hash for BigInt with fn hash_combine(self, hasher) {
   hasher.combine(self.signum())
   for limb in self.limbs() {
     hasher.combine(limb)
@@ -383,6 +383,6 @@ pub fn BigInt::to_int16(self : BigInt) -> Int16 {
 }
 
 ///|
-pub impl @debug.Debug for BigInt with to_repr(self) {
+pub impl @debug.Debug for BigInt with fn to_repr(self) {
   @debug.Repr::integer(self.to_string())
 }

@@ -26,7 +26,7 @@ pub fn[A] SortedSet::new() -> SortedSet[A] {
 }
 
 ///|
-pub impl[A] Default for SortedSet[A] with default() {
+pub impl[A] Default for SortedSet[A] with fn default() {
   Empty
 }
 
@@ -450,7 +450,7 @@ pub fn[A : Compare] SortedSet::union(
 ///   )
 /// }
 /// ```
-pub impl[A : Compare] Add for SortedSet[A] with add(self, other) {
+pub impl[A : Compare] Add for SortedSet[A] with fn add(self, other) {
   return self.union(other)
 }
 
@@ -787,7 +787,7 @@ pub fn[A] SortedSet::filter(
 pub impl[A : Show] Show for SortedSet[A]
 
 ///|
-pub impl[A : Show] Show for SortedSet[A] with output(self, logger) {
+pub impl[A : Show] Show for SortedSet[A] with fn output(self, logger) {
   logger.write_iter(
     self.iter(),
     prefix="@immut/sorted_set.from_array([",
@@ -796,7 +796,7 @@ pub impl[A : Show] Show for SortedSet[A] with output(self, logger) {
 }
 
 ///|
-pub impl[A : ToJson] ToJson for SortedSet[A] with to_json(self) {
+pub impl[A : ToJson] ToJson for SortedSet[A] with fn to_json(self) {
   [
     for a in self => a
   ]
@@ -809,7 +809,7 @@ pub fn[A : ToJson] SortedSet::to_json(self : SortedSet[A]) -> Json {
 }
 
 ///|
-pub impl[A : @json.FromJson + Compare] @json.FromJson for SortedSet[A] with from_json(
+pub impl[A : @json.FromJson + Compare] @json.FromJson for SortedSet[A] with fn from_json(
   json,
   path,
 ) {
@@ -837,7 +837,7 @@ pub fn[A : @json.FromJson + Compare] SortedSet::from_json(
 ///|
 pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for SortedSet[
   X,
-] with arbitrary(size, rs) {
+] with fn arbitrary(size, rs) {
   @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
 }
 
@@ -854,7 +854,7 @@ priv enum SplitBis[A] {
 }
 
 ///|
-impl[T] Show for SplitBis[T] with output(self, logger) {
+impl[T] Show for SplitBis[T] with fn output(self, logger) {
   match self {
     Found => logger.write_string("Found")
     NotFound(_) => logger.write_string("NotFound")
@@ -1037,7 +1037,7 @@ fn[A] SortedSet::concat(
 }
 
 ///|
-pub impl[A : Hash] Hash for SortedSet[A] with hash_combine(self, hasher) {
+pub impl[A : Hash] Hash for SortedSet[A] with fn hash_combine(self, hasher) {
   for t in self {
     t.hash_combine(hasher)
   }

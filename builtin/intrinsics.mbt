@@ -110,7 +110,7 @@ pub fn not(x : Bool) -> Bool = "%bool_not"
 ///   inspect(false == false, content="true")
 /// }
 /// ```
-pub impl Eq for Bool with equal(self : Bool, other : Bool) -> Bool = "%bool_eq"
+pub impl Eq for Bool with fn equal(self : Bool, other : Bool) -> Bool = "%bool_eq"
 
 ///|
 /// Compares two boolean values and returns their relative order. This is a
@@ -170,7 +170,7 @@ pub fn Bool::op_compare(self : Bool, other : Bool) -> Int = "%bool_compare"
 ///   inspect(true.compare(true), content="0") // true = true
 /// }
 /// ```
-pub impl Compare for Bool with compare(self, other) = "%bool_compare"
+pub impl Compare for Bool with fn compare(self, other) = "%bool_compare"
 
 ///|
 /// Returns the default value for the `Bool` type, which is `false`.
@@ -185,7 +185,7 @@ pub impl Compare for Bool with compare(self, other) = "%bool_compare"
 ///   inspect(b, content="false")
 /// }
 /// ```
-pub impl Default for Bool with default() = "%bool_default"
+pub impl Default for Bool with fn default() = "%bool_default"
 
 // int32 primitive ops
 
@@ -211,7 +211,7 @@ pub impl Default for Bool with default() = "%bool_default"
 ///   inspect(2147483647, content="2147483647") // negating near min value
 /// }
 /// ```
-pub impl Neg for Int with neg(self) = "%i32_neg"
+pub impl Neg for Int with fn neg(self) = "%i32_neg"
 
 ///|
 /// Adds two 32-bit signed integers. Performs two's complement arithmetic, which
@@ -235,7 +235,7 @@ pub impl Neg for Int with neg(self) = "%i32_neg"
 ///   inspect(2147483647 + 1, content="-2147483648") // Overflow wraps around to minimum value
 /// }
 /// ```
-pub impl Add for Int with add(self, other) = "%i32_add"
+pub impl Add for Int with fn add(self, other) = "%i32_add"
 
 ///|
 /// Performs subtraction between two 32-bit integers, following standard two's
@@ -260,7 +260,7 @@ pub impl Add for Int with add(self, other) = "%i32_add"
 ///   inspect(max - -1, content="-2147483648") // Overflow case
 /// }
 /// ```
-pub impl Sub for Int with sub(self, other) = "%i32_sub"
+pub impl Sub for Int with fn sub(self, other) = "%i32_sub"
 
 ///|
 /// Multiplies two 32-bit integers. This is the implementation of the `*`
@@ -284,7 +284,7 @@ pub impl Sub for Int with sub(self, other) = "%i32_sub"
 ///   inspect(max * 2, content="-2") // Overflow wraps around
 /// }
 /// ```
-pub impl Mul for Int with mul(self, other) = "%i32_mul"
+pub impl Mul for Int with fn mul(self, other) = "%i32_mul"
 
 ///|
 /// Performs integer division between two 32-bit integers. The result is
@@ -309,7 +309,7 @@ pub impl Mul for Int with mul(self, other) = "%i32_mul"
 ///   inspect(10 / -3, content="-3")
 /// }
 /// ```
-pub impl Div for Int with div(self, other) = "%i32_div"
+pub impl Div for Int with fn div(self, other) = "%i32_div"
 
 ///|
 /// Calculates the remainder of dividing one integer by another. The result
@@ -333,7 +333,7 @@ pub impl Div for Int with div(self, other) = "%i32_div"
 ///   inspect(7 % -3, content="1")
 /// }
 /// ```
-pub impl Mod for Int with mod(self, other) = "%i32_mod"
+pub impl Mod for Int with fn mod(self, other) = "%i32_mod"
 
 ///|
 /// Performs a bitwise NOT operation on a 32-bit integer. Flips each bit in the
@@ -378,7 +378,7 @@ pub fn Int::lnot(self : Int) -> Int = "%i32_lnot"
 ///   inspect(x & y, content="160") // 10100000 = 160
 /// }
 /// ```
-pub impl BitAnd for Int with land(self : Int, other : Int) -> Int = "%i32_land"
+pub impl BitAnd for Int with fn land(self : Int, other : Int) -> Int = "%i32_land"
 
 ///|
 /// Performs a bitwise OR operation between two 32-bit integers. For each bit
@@ -402,7 +402,7 @@ pub impl BitAnd for Int with land(self : Int, other : Int) -> Int = "%i32_land"
 ///   inspect(x | y, content="65535") // 1111_1111_1111_1111 = 65535
 /// }
 /// ```
-pub impl BitOr for Int with lor(self : Int, other : Int) -> Int = "%i32_lor"
+pub impl BitOr for Int with fn lor(self : Int, other : Int) -> Int = "%i32_lor"
 
 ///|
 /// Performs a bitwise XOR operation between two integers.
@@ -425,7 +425,7 @@ pub impl BitOr for Int with lor(self : Int, other : Int) -> Int = "%i32_lor"
 ///   inspect(x ^ x, content="0") // XOR with self gives 0
 /// }
 /// ```
-pub impl BitXOr for Int with lxor(self : Int, other : Int) -> Int = "%i32_lxor"
+pub impl BitXOr for Int with fn lxor(self : Int, other : Int) -> Int = "%i32_lxor"
 
 ///|
 /// Performs a left shift operation on a 32-bit integer. Shifts each bit in the
@@ -452,7 +452,7 @@ pub impl BitXOr for Int with lxor(self : Int, other : Int) -> Int = "%i32_lxor"
 ///   inspect(y << 2, content="-16") // Binary: 100 -> 10000
 /// }
 /// ```
-pub impl Shl for Int with shl(self, other) = "%i32_shl"
+pub impl Shl for Int with fn shl(self, other) = "%i32_shl"
 
 ///|
 /// Performs an arithmetic right shift operation on an integer value. Shifts the
@@ -479,7 +479,7 @@ pub impl Shl for Int with shl(self, other) = "%i32_shl"
 ///   inspect(p >> 2, content="4") // Regular right shift for positive numbers
 /// }
 /// ```
-pub impl Shr for Int with shr(self, other) = "%i32_shr"
+pub impl Shr for Int with fn shr(self, other) = "%i32_shr"
 
 ///|
 /// Performs a left shift operation on a 32-bit integer. Shifts each bit in the
@@ -690,7 +690,7 @@ pub fn Int::popcnt(self : Int) -> Int = "%i32_popcnt"
 ///   inspect(42 == -42, content="false")
 /// }
 /// ```
-pub impl Eq for Int with equal(self : Int, other : Int) -> Bool = "%i32_eq"
+pub impl Eq for Int with fn equal(self : Int, other : Int) -> Bool = "%i32_eq"
 
 ///|
 /// Compares two integers for inequality.
@@ -710,7 +710,7 @@ pub impl Eq for Int with equal(self : Int, other : Int) -> Bool = "%i32_eq"
 ///   inspect(42 != -42, content="true")
 /// }
 /// ```
-pub impl Eq for Int with not_equal(self : Int, other : Int) -> Bool = "%i32_ne"
+pub impl Eq for Int with fn not_equal(self : Int, other : Int) -> Bool = "%i32_ne"
 
 ///|
 /// Compares two integers and returns their relative order.
@@ -737,19 +737,19 @@ pub impl Eq for Int with not_equal(self : Int, other : Int) -> Bool = "%i32_ne"
 ///   inspect(a.compare(a), content="0") // 42 = 42
 /// }
 /// ```
-pub impl Compare for Int with compare(self, other) = "%i32_compare"
+pub impl Compare for Int with fn compare(self, other) = "%i32_compare"
 
 ///|
-pub impl Compare for Int with op_lt(x, y) = "%i32.lt"
+pub impl Compare for Int with fn op_lt(x, y) = "%i32.lt"
 
 ///|
-pub impl Compare for Int with op_le(x, y) = "%i32.le"
+pub impl Compare for Int with fn op_le(x, y) = "%i32.le"
 
 ///|
-pub impl Compare for Int with op_gt(x, y) = "%i32.gt"
+pub impl Compare for Int with fn op_gt(x, y) = "%i32.gt"
 
 ///|
-pub impl Compare for Int with op_ge(x, y) = "%i32.ge"
+pub impl Compare for Int with fn op_ge(x, y) = "%i32.ge"
 
 ///|
 /// Return `true` if integer is strictly positive.
@@ -799,7 +799,7 @@ pub fn Int::is_non_neg(self : Int) -> Bool = "%i32_is_non_neg"
 ///   inspect(x, content="0")
 /// }
 /// ```
-pub impl Default for Int with default() = "%i32_default"
+pub impl Default for Int with fn default() = "%i32_default"
 
 ///|
 /// Converts a 32-bit integer to a double-precision floating-point number. The
@@ -928,7 +928,7 @@ pub fn Int::to_uint64(self : Int) -> UInt64 {
 ///   inspect(-(0.0 / 0.0), content="NaN") // Negating NaN returns NaN
 /// }
 /// ```
-pub impl Neg for Double with neg(self) = "%f64_neg"
+pub impl Neg for Double with fn neg(self) = "%f64_neg"
 
 ///|
 /// Adds two double-precision floating-point numbers together following IEEE 754
@@ -954,7 +954,7 @@ pub impl Neg for Double with neg(self) = "%f64_neg"
 ///   inspect(1.0 / 0.0 + -1.0 / 0.0, content="NaN") // Infinity + -Infinity = NaN
 /// }
 /// ```
-pub impl Add for Double with add(self, other) = "%f64_add"
+pub impl Add for Double with fn add(self, other) = "%f64_add"
 
 ///|
 /// Performs subtraction between two double-precision floating-point numbers.
@@ -977,7 +977,7 @@ pub impl Add for Double with add(self, other) = "%f64_add"
 ///   inspect(0.0 / 0.0 - 1.0, content="NaN") // NaN - anything = NaN
 /// }
 /// ```
-pub impl Sub for Double with sub(self, other) = "%f64_sub"
+pub impl Sub for Double with fn sub(self, other) = "%f64_sub"
 
 ///|
 /// Multiplies two double-precision floating-point numbers. This is the
@@ -1007,7 +1007,7 @@ pub impl Sub for Double with sub(self, other) = "%f64_sub"
 ///   inspect(nan * 1.0, content="NaN")
 /// }
 /// ```
-pub impl Mul for Double with mul(self, other) = "%f64_mul"
+pub impl Mul for Double with fn mul(self, other) = "%f64_mul"
 
 ///|
 /// Performs division between two double-precision floating-point numbers.
@@ -1037,7 +1037,7 @@ pub impl Mul for Double with mul(self, other) = "%f64_mul"
 ///   inspect(1.0 / 0.0, content="Infinity")
 /// }
 /// ```
-pub impl Div for Double with div(self, other) = "%f64_div"
+pub impl Div for Double with fn div(self, other) = "%f64_div"
 
 ///|
 /// Calculates the square root of a double-precision floating-point number. For
@@ -1089,7 +1089,7 @@ pub fn Double::sqrt(self : Double) -> Double = "%f64_sqrt"
 ///   inspect(nan == nan, content="false") // NaN != NaN
 /// }
 /// ```
-pub impl Eq for Double with equal(self : Double, other : Double) -> Bool = "%f64_eq"
+pub impl Eq for Double with fn equal(self : Double, other : Double) -> Bool = "%f64_eq"
 
 ///|
 /// Compares two double-precision floating-point numbers for inequality following
@@ -1115,7 +1115,7 @@ pub impl Eq for Double with equal(self : Double, other : Double) -> Bool = "%f64
 ///   inspect(nan != nan, content="true") // NaN != NaN is true
 /// }
 /// ```
-pub impl Eq for Double with not_equal(self : Double, other : Double) -> Bool = "%f64_ne"
+pub impl Eq for Double with fn not_equal(self : Double, other : Double) -> Bool = "%f64_ne"
 
 ///|
 /// Deprecated inequality helper; use `a != b`.
@@ -1154,19 +1154,19 @@ pub fn Double::op_neq(self : Double, other : Double) -> Bool = "%f64_ne"
 ///   inspect(a.compare(a), content="0") // 3.14 = 3.14
 /// }
 /// ```
-pub impl Compare for Double with compare(self, other) = "%f64_compare"
+pub impl Compare for Double with fn compare(self, other) = "%f64_compare"
 
 ///|
-pub impl Compare for Double with op_lt(x, y) = "%f64.lt"
+pub impl Compare for Double with fn op_lt(x, y) = "%f64.lt"
 
 ///|
-pub impl Compare for Double with op_le(x, y) = "%f64.le"
+pub impl Compare for Double with fn op_le(x, y) = "%f64.le"
 
 ///|
-pub impl Compare for Double with op_gt(x, y) = "%f64.gt"
+pub impl Compare for Double with fn op_gt(x, y) = "%f64.gt"
 
 ///|
-pub impl Compare for Double with op_ge(x, y) = "%f64.ge"
+pub impl Compare for Double with fn op_ge(x, y) = "%f64.ge"
 
 ///|
 /// Returns the default value for double-precision floating-point numbers (0.0).
@@ -1180,7 +1180,7 @@ pub impl Compare for Double with op_ge(x, y) = "%f64.ge"
 ///   inspect(Double::default(), content="0")
 /// }
 /// ```
-pub impl Default for Double with default() = "%f64_default"
+pub impl Default for Double with fn default() = "%f64_default"
 
 ///|
 /// Converts an unsigned 32-bit integer to a double-precision floating-point
@@ -1283,7 +1283,7 @@ pub fn Char::from_int(val : Int) -> Char = "%char_from_int"
 ///   inspect(a == c, content="false")
 /// }
 /// ```
-pub impl Eq for Char with equal(self : Char, other : Char) -> Bool = "%char_eq"
+pub impl Eq for Char with fn equal(self : Char, other : Char) -> Bool = "%char_eq"
 
 ///|
 /// Compares two characters for inequality.
@@ -1307,7 +1307,7 @@ pub impl Eq for Char with equal(self : Char, other : Char) -> Bool = "%char_eq"
 ///   inspect(a != c, content="true")
 /// }
 /// ```
-pub impl Eq for Char with not_equal(self : Char, other : Char) -> Bool = "%i32_ne"
+pub impl Eq for Char with fn not_equal(self : Char, other : Char) -> Bool = "%i32_ne"
 
 ///|
 /// Compares two characters based on their Unicode code points. Returns a
@@ -1335,19 +1335,19 @@ pub impl Eq for Char with not_equal(self : Char, other : Char) -> Bool = "%i32_n
 ///   inspect('a'.compare('a'), content="0")
 /// }
 /// ```
-pub impl Compare for Char with compare(self, other) = "%char_compare"
+pub impl Compare for Char with fn compare(self, other) = "%char_compare"
 
 ///|
-pub impl Compare for Char with op_lt(x, y) = "%i32.lt"
+pub impl Compare for Char with fn op_lt(x, y) = "%i32.lt"
 
 ///|
-pub impl Compare for Char with op_le(x, y) = "%i32.le"
+pub impl Compare for Char with fn op_le(x, y) = "%i32.le"
 
 ///|
-pub impl Compare for Char with op_gt(x, y) = "%i32.gt"
+pub impl Compare for Char with fn op_gt(x, y) = "%i32.gt"
 
 ///|
-pub impl Compare for Char with op_ge(x, y) = "%i32.ge"
+pub impl Compare for Char with fn op_ge(x, y) = "%i32.ge"
 
 ///|
 /// Returns the default value for the `Char` type, which is the null character
@@ -1362,7 +1362,7 @@ pub impl Compare for Char with op_ge(x, y) = "%i32.ge"
 ///   assert_true(Char::default().to_string() == "\u0000")
 /// }
 /// ```
-pub impl Default for Char with default() = "%char_default"
+pub impl Default for Char with fn default() = "%char_default"
 
 // Bytes primitive ops
 
@@ -1801,7 +1801,7 @@ pub fn String::unsafe_charcode_at(self : String, idx : Int) -> Int = "%string.un
 ///   inspect("" + "abc", content="abc") // concatenating with empty string
 /// }
 /// ```
-pub impl Add for String with add(self, other) = "%string_add"
+pub impl Add for String with fn add(self, other) = "%string_add"
 
 ///|
 /// Tests whether two strings are equal by comparing their characters.
@@ -1825,7 +1825,7 @@ pub impl Add for String with add(self, other) = "%string_add"
 ///   inspect(str1 == str3, content="false")
 /// }
 /// ```
-pub impl Eq for String with equal(self : String, other : String) -> Bool = "%string_eq"
+pub impl Eq for String with fn equal(self : String, other : String) -> Bool = "%string_eq"
 
 // For internal use only
 
@@ -1951,7 +1951,7 @@ pub fn UInt::to_int(self : UInt) -> Int = "%u32.to_i32_reinterpret"
 ///   inspect(max + 1U, content="0")
 /// }
 /// ```
-pub impl Add for UInt with add(self, other) = "%u32.add"
+pub impl Add for UInt with fn add(self, other) = "%u32.add"
 
 ///|
 /// Performs subtraction between two unsigned 32-bit integers. When the result
@@ -1979,7 +1979,7 @@ pub impl Add for UInt with add(self, other) = "%u32.add"
 ///   inspect(c - d, content="4294967294") // wraps around to 2^32 - 2
 /// }
 /// ```
-pub impl Sub for UInt with sub(self, other) = "%u32.sub"
+pub impl Sub for UInt with fn sub(self, other) = "%u32.sub"
 
 ///|
 /// Performs multiplication between two unsigned 32-bit integers. The result
@@ -2005,7 +2005,7 @@ pub impl Sub for UInt with sub(self, other) = "%u32.sub"
 ///   inspect(max * 2U, content="4294967294") // Wraps around to max * 2 % 2^32
 /// }
 /// ```
-pub impl Mul for UInt with mul(self, other) = "%u32.mul"
+pub impl Mul for UInt with fn mul(self, other) = "%u32.mul"
 
 ///|
 /// Performs division between two unsigned 32-bit integers. The operation follows
@@ -2028,7 +2028,7 @@ pub impl Mul for UInt with mul(self, other) = "%u32.mul"
 ///   inspect(a / b, content="8") // Using infix operator
 /// }
 /// ```
-pub impl Div for UInt with div(self, other) = "%u32.div"
+pub impl Div for UInt with fn div(self, other) = "%u32.div"
 
 ///|
 /// Calculates the remainder of dividing one unsigned integer by another.
@@ -2052,7 +2052,7 @@ pub impl Div for UInt with div(self, other) = "%u32.div"
 ///   inspect(7U % 4U, content="3")
 /// }
 /// ```
-pub impl Mod for UInt with mod(self, other) = "%u32.mod"
+pub impl Mod for UInt with fn mod(self, other) = "%u32.mod"
 
 ///|
 /// Compares two unsigned 32-bit integers for equality.
@@ -2075,7 +2075,7 @@ pub impl Mod for UInt with mod(self, other) = "%u32.mod"
 ///   inspect(a == c, content="false")
 /// }
 /// ```
-pub impl Eq for UInt with equal(self : UInt, other : UInt) -> Bool = "%u32.eq"
+pub impl Eq for UInt with fn equal(self : UInt, other : UInt) -> Bool = "%u32.eq"
 
 ///|
 /// Compares two unsigned 32-bit integers for inequality.
@@ -2098,7 +2098,7 @@ pub impl Eq for UInt with equal(self : UInt, other : UInt) -> Bool = "%u32.eq"
 ///   inspect(a != c, content="true")
 /// }
 /// ```
-pub impl Eq for UInt with not_equal(self : UInt, other : UInt) -> Bool = "%u32.ne"
+pub impl Eq for UInt with fn not_equal(self : UInt, other : UInt) -> Bool = "%u32.ne"
 
 ///|
 /// Deprecated inequality helper; use `a != b`.
@@ -2132,19 +2132,19 @@ pub fn UInt::op_neq(self : UInt, other : UInt) -> Bool = "%u32.ne"
 ///   inspect(a.compare(a), content="0") // 42 = 42
 /// }
 /// ```
-pub impl Compare for UInt with compare(self, other) = "%u32.compare"
+pub impl Compare for UInt with fn compare(self, other) = "%u32.compare"
 
 ///|
-pub impl Compare for UInt with op_lt(x, y) = "%u32.lt"
+pub impl Compare for UInt with fn op_lt(x, y) = "%u32.lt"
 
 ///|
-pub impl Compare for UInt with op_le(x, y) = "%u32.le"
+pub impl Compare for UInt with fn op_le(x, y) = "%u32.le"
 
 ///|
-pub impl Compare for UInt with op_gt(x, y) = "%u32.gt"
+pub impl Compare for UInt with fn op_gt(x, y) = "%u32.gt"
 
 ///|
-pub impl Compare for UInt with op_ge(x, y) = "%u32.ge"
+pub impl Compare for UInt with fn op_ge(x, y) = "%u32.ge"
 
 ///|
 /// Performs a bitwise AND operation between two unsigned 32-bit integers. For
@@ -2168,7 +2168,7 @@ pub impl Compare for UInt with op_ge(x, y) = "%u32.ge"
 ///   inspect(a & b, content="61440") // 1111_0000_0000_0000 = 61440
 /// }
 /// ```
-pub impl BitAnd for UInt with land(self : UInt, other : UInt) -> UInt = "%u32.bitand"
+pub impl BitAnd for UInt with fn land(self : UInt, other : UInt) -> UInt = "%u32.bitand"
 
 ///|
 /// Performs a bitwise OR operation between two unsigned 32-bit integers. For
@@ -2191,7 +2191,7 @@ pub impl BitAnd for UInt with land(self : UInt, other : UInt) -> UInt = "%u32.bi
 ///   inspect(a | b, content="65535") // Binary: 1111_1111_1111_1111
 /// }
 /// ```
-pub impl BitOr for UInt with lor(self : UInt, other : UInt) -> UInt = "%u32.bitor"
+pub impl BitOr for UInt with fn lor(self : UInt, other : UInt) -> UInt = "%u32.bitor"
 
 ///|
 /// Performs a bitwise XOR (exclusive OR) operation between two unsigned 32-bit
@@ -2214,7 +2214,7 @@ pub impl BitOr for UInt with lor(self : UInt, other : UInt) -> UInt = "%u32.bito
 ///   inspect(a ^ b, content="61455") // Binary: 1111_0000_0000_1111
 /// }
 /// ```
-pub impl BitXOr for UInt with lxor(self : UInt, other : UInt) -> UInt = "%u32.bitxor"
+pub impl BitXOr for UInt with fn lxor(self : UInt, other : UInt) -> UInt = "%u32.bitxor"
 
 ///|
 /// Performs a bitwise NOT operation on an unsigned 32-bit integer. Flips all
@@ -2370,7 +2370,7 @@ pub fn UInt::shr(self : UInt, shift : Int) -> UInt = "%u32.shr"
 ///   inspect(y << 16, content="4294901760") // All bits after position 16 are discarded
 /// }
 /// ```
-pub impl Shl for UInt with shl(self, shift) = "%u32.shl"
+pub impl Shl for UInt with fn shl(self, shift) = "%u32.shl"
 
 ///|
 /// Performs a logical right shift operation on an unsigned 32-bit integer. The
@@ -2398,7 +2398,7 @@ pub impl Shl for UInt with shl(self, shift) = "%u32.shl"
 ///   inspect(x >> 32, content="4278190080") // Same as x >> 0 due to masking
 /// }
 /// ```
-pub impl Shr for UInt with shr(self, shift) = "%u32.shr"
+pub impl Shr for UInt with fn shr(self, shift) = "%u32.shr"
 
 ///|
 /// Counts the number of leading zero bits in an unsigned 32-bit integer,

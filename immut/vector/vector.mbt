@@ -467,7 +467,7 @@ pub fn[A] Vector::slice(self : Vector[A], start : Int, end : Int) -> Vector[A] {
 
 ///|
 /// Concat two vectors.
-pub impl[A] Add for Vector[A] with add(self, other) {
+pub impl[A] Add for Vector[A] with fn add(self, other) {
   self.concat(other)
 }
 
@@ -672,7 +672,7 @@ pub fn[A] Vector::rev(self : Vector[A]) -> Vector[A] {
 //-----------------------------------------------------------------------------
 
 ///|
-pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Vector[X] with arbitrary(
+pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Vector[X] with fn arbitrary(
   size,
   rs,
 ) {
@@ -680,14 +680,14 @@ pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Vector[X] with arb
 }
 
 ///|
-pub impl[A : Hash] Hash for Vector[A] with hash_combine(self, hasher) {
+pub impl[A : Hash] Hash for Vector[A] with fn hash_combine(self, hasher) {
   for e in self {
     hasher.combine(e)
   }
 }
 
 ///|
-pub impl[A : Eq] Eq for Vector[A] with equal(self, other) {
+pub impl[A : Eq] Eq for Vector[A] with fn equal(self, other) {
   if physical_equal(self, other) {
     true
   } else if self.size != other.size {
@@ -710,7 +710,7 @@ pub impl[A : Eq] Eq for Vector[A] with equal(self, other) {
 pub impl[A : Show] Show for Vector[A]
 
 ///|
-pub impl[A : Show] Show for Vector[A] with output(self, logger) {
+pub impl[A : Show] Show for Vector[A] with fn output(self, logger) {
   logger.write_iter(
     self.iter(),
     prefix="@immut/vector.from_array([",
@@ -719,14 +719,14 @@ pub impl[A : Show] Show for Vector[A] with output(self, logger) {
 }
 
 ///|
-pub impl[A : ToJson] ToJson for Vector[A] with to_json(self) {
+pub impl[A : ToJson] ToJson for Vector[A] with fn to_json(self) {
   [
     for value in self => value
   ]
 }
 
 ///|
-pub impl[A : @json.FromJson] @json.FromJson for Vector[A] with from_json(
+pub impl[A : @json.FromJson] @json.FromJson for Vector[A] with fn from_json(
   json,
   path,
 ) {
@@ -776,7 +776,7 @@ pub impl[A : @json.FromJson] @json.FromJson for Vector[A] with from_json(
 ///   inspect(arr1.compare(arr1), content="0") // arr1 = arr1
 /// }
 /// ```
-pub impl[A : Compare] Compare for Vector[A] with compare(self, other) {
+pub impl[A : Compare] Compare for Vector[A] with fn compare(self, other) {
   let len_self = self.length()
   let len_other = other.length()
   let cmp = len_self.compare(len_other)

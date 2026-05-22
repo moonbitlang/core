@@ -253,7 +253,7 @@ pub fn Double::is_neg_inf(self : Double) -> Bool {
 }
 
 ///|
-pub impl Hash for Double with hash_combine(self, hasher) {
+pub impl Hash for Double with fn hash_combine(self, hasher) {
   hasher.combine_double(self)
 }
 
@@ -285,7 +285,7 @@ pub fn Double::to_string(self : Double) -> String {
 }
 
 ///|
-pub impl Show for Double with to_string(self) {
+pub impl Show for Double with fn to_string(self) {
   Double::to_string(self)
 }
 

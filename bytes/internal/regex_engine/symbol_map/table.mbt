@@ -17,12 +17,12 @@
 ///
 /// `map_set` applies the mapping to an entire character set.
 pub trait Table {
-  map(self : Self, c : @shared_types.Rechar) -> @shared_types.Rechar
-  map_set(self : Self, set : @shared_types.RecharSet) -> @shared_types.RecharSet = _
+  fn map(self : Self, c : @shared_types.Rechar) -> @shared_types.Rechar
+  fn map_set(self : Self, set : @shared_types.RecharSet) -> @shared_types.RecharSet = _
 }
 
 ///|
-impl Table with map_set(self, set) {
+impl Table with fn map_set(self, set) {
   // This is safe because map(c) keeps the order
   set.offset_by(c => self.map(c))
 }

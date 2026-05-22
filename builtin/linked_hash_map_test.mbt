@@ -616,13 +616,13 @@ test "Map::merge_in_place empty maps" {
 priv struct LKey(Int, Int) derive(Eq)
 
 ///|
-impl Hash for LKey with hash(self) {
+impl Hash for LKey with fn hash(self) {
   let LKey(_, hash) = self
   hash
 }
 
 ///|
-impl Hash for LKey with hash_combine(self, hasher) {
+impl Hash for LKey with fn hash_combine(self, hasher) {
   let LKey(_, hash) = self
   hasher.combine_int(hash)
 }

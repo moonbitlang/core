@@ -40,7 +40,7 @@ test "Char::to_hex" {
 }
 
 ///|
-pub impl Hash for Char with hash_combine(self, hasher) -> Unit {
+pub impl Hash for Char with fn hash_combine(self, hasher) -> Unit {
   hasher.combine_char(self)
 }
 
@@ -435,7 +435,7 @@ pub fn Char::to_ascii_uppercase(self : Self) -> Char {
 /// `Show::output` for `Char` also writes the raw character through this
 /// `Show::to_string` implementation.
 /// Use `Char::escape` when a quoted and escaped representation is needed.
-pub impl Show for Char with to_string(self : Char) -> String {
+pub impl Show for Char with fn to_string(self : Char) -> String {
   char_to_string(self)
 }
 
@@ -503,7 +503,7 @@ fn Char::escape_to(self : Char, logger : &Logger, quote? : Bool = true) -> Unit 
 }
 
 ///|
-pub impl ToJson for Char with to_json(self : Char) -> Json {
+pub impl ToJson for Char with fn to_json(self : Char) -> Json {
   Json::string(self.to_string())
 }
 

@@ -40,12 +40,12 @@ pub(all) type SourceLoc
 fn SourceLoc::repr(self : Self) -> String = "%loc_to_string"
 
 ///|
-pub impl Show for SourceLoc with output(self, logger) {
+pub impl Show for SourceLoc with fn output(self, logger) {
   logger.write_string(self.repr())
 }
 
 ///|
-pub impl Show for SourceLoc with to_string(self) {
+pub impl Show for SourceLoc with fn to_string(self) {
   self.repr()
 }
 
@@ -105,7 +105,7 @@ pub(all) struct ArgsLoc(Array[SourceLoc?])
 
 ///|
 #warnings("-deprecated")
-pub impl Show for ArgsLoc with output(self, logger) {
+pub impl Show for ArgsLoc with fn output(self, logger) {
   let ArgsLoc(arr) = self
   arr.output(logger)
 }

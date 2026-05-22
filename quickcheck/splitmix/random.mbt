@@ -149,7 +149,7 @@ fn mix_gamma(z0 : UInt64) -> UInt64 {
 }
 
 ///|
-pub impl Default for RandomState with default() {
+pub impl Default for RandomState with fn default() {
   new()
 }
 

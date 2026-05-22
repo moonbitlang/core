@@ -80,8 +80,8 @@ pub using @rechar_set {type RecharSet}
 
 // Traits
 pub trait Input {
-  length(Self) -> Int
-  get(Self, Int) -> Int
+  fn length(Self) -> Int
+  fn get(Self, Int) -> Int
 }
 pub impl Input for BytesView
 pub impl Input for StringView

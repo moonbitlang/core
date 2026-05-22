@@ -16,7 +16,7 @@
 struct MyBigInt(BigInt)
 
 ///|
-impl Show for MyBigInt with output(self, logger) {
+impl Show for MyBigInt with fn output(self, logger) {
   logger.write_string(
     "{limbs : \{@debug.to_repr(self.limbs)}, sign : \{@debug.to_repr(self.sign)}, len : \{self.len} }",
   )

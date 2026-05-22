@@ -34,7 +34,7 @@ pub enum Json {
 }
 
 ///|
-pub impl Eq for Json with equal(a, b) {
+pub impl Eq for Json with fn equal(a, b) {
   match (a, b) {
     (Null, Null) => true
     (True, True) => true
@@ -191,11 +191,11 @@ pub fn Json::object(object : Map[String, Json]) -> Json {
 ///|
 /// Trait for types that can be converted to `Json`
 pub(open) trait ToJson {
-  to_json(Self) -> Json
+  fn to_json(Self) -> Json
 }
 
 ///|
-pub impl ToJson for Bool with to_json(self : Bool) -> Json {
+pub impl ToJson for Bool with fn to_json(self : Bool) -> Json {
   if self {
     true
   } else {
@@ -204,32 +204,32 @@ pub impl ToJson for Bool with to_json(self : Bool) -> Json {
 }
 
 ///|
-pub impl ToJson for Byte with to_json(self : Byte) -> Json {
+pub impl ToJson for Byte with fn to_json(self : Byte) -> Json {
   Json::number(self.to_double())
 }
 
 ///|
-pub impl ToJson for Int with to_json(self : Int) -> Json {
+pub impl ToJson for Int with fn to_json(self : Int) -> Json {
   Json::number(self.to_double())
 }
 
 ///|
-pub impl ToJson for Int64 with to_json(self : Int64) -> Json {
+pub impl ToJson for Int64 with fn to_json(self : Int64) -> Json {
   String::to_json(self.to_string())
 }
 
 ///|
-pub impl ToJson for UInt with to_json(self : UInt) -> Json {
+pub impl ToJson for UInt with fn to_json(self : UInt) -> Json {
   Json::number(self.to_uint64().to_double())
 }
 
 ///|
-pub impl ToJson for UInt64 with to_json(self : UInt64) -> Json {
+pub impl ToJson for UInt64 with fn to_json(self : UInt64) -> Json {
   String::to_json(self.to_string())
 }
 
 ///|
-pub impl ToJson for Double with to_json(self : Double) -> Json {
+pub impl ToJson for Double with fn to_json(self : Double) -> Json {
   if self != self {
     Json::string("NaN")
   } else if self > 0x7FEFFFFFFFFFFFFFL.reinterpret_as_double() {
@@ -242,17 +242,17 @@ pub impl ToJson for Double with to_json(self : Double) -> Json {
 }
 
 ///|
-pub impl ToJson for String with to_json(self : String) -> Json {
+pub impl ToJson for String with fn to_json(self : String) -> Json {
   String(self)
 }
 
 ///|
-pub impl[X : ToJson] ToJson for Array[X] with to_json(self) {
+pub impl[X : ToJson] ToJson for Array[X] with fn to_json(self) {
   Array(self.map(x => x.to_json()))
 }
 
 ///|
-pub impl[X : ToJson] ToJson for FixedArray[X] with to_json(self) {
+pub impl[X : ToJson] ToJson for FixedArray[X] with fn to_json(self) {
   let len = self.length()
   if len == 0 {
     return []
@@ -265,7 +265,7 @@ pub impl[X : ToJson] ToJson for FixedArray[X] with to_json(self) {
 }
 
 ///|
-pub impl[X : ToJson] ToJson for ArrayView[X] with to_json(self) {
+pub impl[X : ToJson] ToJson for ArrayView[X] with fn to_json(self) {
   let len = self.length()
   if len == 0 {
     return []
@@ -278,7 +278,7 @@ pub impl[X : ToJson] ToJson for ArrayView[X] with to_json(self) {
 }
 
 ///|
-pub impl[K : Show, V : ToJson] ToJson for Map[K, V] with to_json(self) {
+pub impl[K : Show, V : ToJson] ToJson for Map[K, V] with fn to_json(self) {
   let object = Map([], capacity=self.capacity)
   for k, v in self {
     object[k.to_string()] = v.to_json()
@@ -287,7 +287,7 @@ pub impl[K : Show, V : ToJson] ToJson for Map[K, V] with to_json(self) {
 }
 
 ///|
-pub impl[T : ToJson] ToJson for T? with to_json(self) {
+pub impl[T : ToJson] ToJson for T? with fn to_json(self) {
   match self {
     None => Null
     Some(value) => [value]
@@ -295,7 +295,7 @@ pub impl[T : ToJson] ToJson for T? with to_json(self) {
 }
 
 ///|
-pub impl[Ok : ToJson, Err : ToJson] ToJson for Result[Ok, Err] with to_json(
+pub impl[Ok : ToJson, Err : ToJson] ToJson for Result[Ok, Err] with fn to_json(
   self : Result[Ok, Err],
 ) -> Json {
   match self {
@@ -307,11 +307,11 @@ pub impl[Ok : ToJson, Err : ToJson] ToJson for Result[Ok, Err] with to_json(
 //| unit
 
 ///|
-pub impl ToJson for Unit with to_json(_self) {
+pub impl ToJson for Unit with fn to_json(_self) {
   Null
 }
 
 ///|
-pub impl Default for Json with default() {
+pub impl Default for Json with fn default() {
   false
 }

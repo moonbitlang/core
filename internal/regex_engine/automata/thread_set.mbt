@@ -138,7 +138,7 @@ fn ThreadSet::merge(l : ThreadSet, r : ThreadSet) -> ThreadSet {
 }
 
 ///|
-impl Add for ThreadSet with add(self, other) {
+impl Add for ThreadSet with fn add(self, other) {
   ThreadSet::merge(self, other)
 }
 
@@ -343,7 +343,7 @@ fn ts_seq(
 }
 
 ///|
-impl Eq for ThreadSet with equal(self, other) {
+impl Eq for ThreadSet with fn equal(self, other) {
   let it1 = self.iter()
   let it2 = other.iter()
   for v1 = it1.next(), v2 = it2.next() {
@@ -361,7 +361,7 @@ impl Eq for ThreadSet with equal(self, other) {
 }
 
 ///|
-impl Hash for ThreadSet with hash_combine(self, hasher) {
+impl Hash for ThreadSet with fn hash_combine(self, hasher) {
   for thread in self {
     hasher.combine(thread)
   }

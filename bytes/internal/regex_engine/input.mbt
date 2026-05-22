@@ -17,26 +17,26 @@
 ///
 /// Provides random access by index and total length.
 pub trait Input {
-  length(Self) -> Int
-  get(Self, Int) -> Rechar
+  fn length(Self) -> Int
+  fn get(Self, Int) -> Rechar
 }
 
 ///|
-pub impl Input for BytesView with length(self) {
+pub impl Input for BytesView with fn length(self) {
   self.length()
 }
 
 ///|
-pub impl Input for BytesView with get(self, index) {
+pub impl Input for BytesView with fn get(self, index) {
   self.unsafe_get(index).to_int()
 }
 
 ///|
-pub impl Input for StringView with length(self) {
+pub impl Input for StringView with fn length(self) {
   self.length()
 }
 
 ///|
-pub impl Input for StringView with get(self, index) {
+pub impl Input for StringView with fn get(self, index) {
   self.unsafe_get(index).to_int()
 }

@@ -16,7 +16,7 @@
 using @debug {trait Debug, type Repr}
 
 ///|
-pub impl Debug for Bench with to_repr(self) {
+pub impl Debug for Bench with fn to_repr(self) {
   Repr::opaque_(
     "Bench",
     Repr::array(self.summaries.map(s => @debug.to_repr(s))),
@@ -24,6 +24,6 @@ pub impl Debug for Bench with to_repr(self) {
 }
 
 ///|
-pub impl Debug for Timestamp with to_repr(_) {
+pub impl Debug for Timestamp with fn to_repr(_) {
   Repr::opaque_("Timestamp", Repr::omitted())
 }

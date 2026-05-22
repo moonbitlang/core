@@ -22,36 +22,36 @@
 /// Trait for parsing values from textual input.
 pub(open) trait FromStr {
   #as_free_fn
-  from_str(StringView) -> Self raise
+  fn from_str(StringView) -> Self raise
 }
 
 ///|
-pub impl FromStr for Bool with from_str(str) {
+pub impl FromStr for Bool with fn from_str(str) {
   parse_bool(str)
 }
 
 ///|
-pub impl FromStr for Int with from_str(str) {
+pub impl FromStr for Int with fn from_str(str) {
   parse_int(str)
 }
 
 ///|
-pub impl FromStr for Int64 with from_str(str) {
+pub impl FromStr for Int64 with fn from_str(str) {
   parse_int64(str)
 }
 
 ///|
-pub impl FromStr for UInt with from_str(str) {
+pub impl FromStr for UInt with fn from_str(str) {
   parse_uint(str)
 }
 
 ///|
-pub impl FromStr for UInt64 with from_str(str) {
+pub impl FromStr for UInt64 with fn from_str(str) {
   parse_uint64(str)
 }
 
 ///|
-pub impl FromStr for Double with from_str(str) {
+pub impl FromStr for Double with fn from_str(str) {
   parse_double(str)
 }
 

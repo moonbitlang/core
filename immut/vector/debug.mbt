@@ -16,7 +16,7 @@
 using @debug {trait Debug, type Repr}
 
 ///|
-pub impl[A : Debug] Debug for Vector[A] with to_repr(self) {
+pub impl[A : Debug] Debug for Vector[A] with fn to_repr(self) {
   Repr::opaque_(
     "Vector",
     Repr::array(self.to_array().map(x => @debug.to_repr(x))),

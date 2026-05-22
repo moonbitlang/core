@@ -559,7 +559,7 @@ fn Decimal::trim(self : Decimal) -> Unit {
 }
 
 ///|
-impl Show for Decimal with output(self, logger) {
+impl Show for Decimal with fn output(self, logger) {
   if self.digits_num == 0 {
     logger.write_char('0')
     return

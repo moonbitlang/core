@@ -34,6 +34,6 @@ pub impl @debug.Debug for Rand
 
 // Traits
 pub(open) trait Source {
-  next(Self) -> UInt64
+  fn next(Self) -> UInt64
 }
 

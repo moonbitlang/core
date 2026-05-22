@@ -20,7 +20,7 @@ pub(all) suberror StrConvError {
 } derive(@debug.Debug)
 
 ///|
-pub impl Show for StrConvError with output(self, logger) {
+pub impl Show for StrConvError with fn output(self, logger) {
   match self {
     StrConvError(err) => logger.write_string(err)
   }

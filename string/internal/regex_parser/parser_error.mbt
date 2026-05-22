@@ -18,7 +18,7 @@ suberror ParserError {
 } derive(Debug)
 
 ///|
-pub impl Show for ParserError with output(self, logger) {
+pub impl Show for ParserError with fn output(self, logger) {
   match self {
     ParserError(at~, hint~) => {
       logger.write_string("ParserError at position ")

@@ -42,13 +42,13 @@ pub fn StringBuilder::is_empty(self : StringBuilder) -> Bool {
 
 ///|
 /// Writes a string to the StringBuilder.
-pub impl Logger for StringBuilder with write_string(self, str) {
+pub impl Logger for StringBuilder with fn write_string(self, str) {
   self.val += str
 }
 
 ///|
 /// Writes a character to the StringBuilder.
-pub impl Logger for StringBuilder with write_char(self, ch) {
+pub impl Logger for StringBuilder with fn write_char(self, ch) {
   self.val += char_to_string(ch)
 }
 
@@ -71,7 +71,7 @@ pub impl Logger for StringBuilder with write_char(self, ch) {
 ///   assert_eq(sb.to_string(), "Hello")
 /// }
 /// ```
-pub impl Logger for StringBuilder with write_view(
+pub impl Logger for StringBuilder with fn write_view(
   self : StringBuilder,
   str : StringView,
 ) -> Unit {
@@ -79,7 +79,7 @@ pub impl Logger for StringBuilder with write_view(
 }
 
 ///|
-pub impl Show for StringBuilder with output(self, logger) {
+pub impl Show for StringBuilder with fn output(self, logger) {
   logger.write_string(self.val)
 }
 

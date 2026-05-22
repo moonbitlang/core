@@ -36,7 +36,7 @@ const MAX_REPEAT_QUANTIFIER = 256
 using @debug {trait Debug, type Repr}
 
 ///|
-pub impl Debug for Regex with to_repr(self) {
+pub impl Debug for Regex with fn to_repr(self) {
   Repr::opaque_("Regex", @debug.to_repr(self.pat))
 }
 
@@ -283,7 +283,7 @@ pub fn Regex::repeat(
 /// }
 /// ```
 #intrinsic("%regex.seq")
-pub impl Add for Regex with add(self, other) -> Regex {
+pub impl Add for Regex with fn add(self, other) -> Regex {
   { pat: @re.seq([self.pat, other.pat]), re: None }
 }
 
@@ -300,7 +300,7 @@ pub impl Add for Regex with add(self, other) -> Regex {
 /// }
 /// ```
 #intrinsic("%regex.alt")
-pub impl BitOr for Regex with lor(self, other) -> Regex {
+pub impl BitOr for Regex with fn lor(self, other) -> Regex {
   { pat: @re.alt([self.pat, other.pat]), re: None }
 }
 

@@ -902,7 +902,7 @@ pub fn[A : ToStringView] ReadOnlyArray::join(
 
 ///|
 /// Default implementation for ReadOnlyArray - returns empty array.
-pub impl[T] Default for ReadOnlyArray[T] with default() {
+pub impl[T] Default for ReadOnlyArray[T] with fn default() {
   unsafe_reinterpret_from_fixed_array(FixedArray::default())
 }
 
@@ -913,30 +913,30 @@ pub impl[T : Show] Show for ReadOnlyArray[T]
 ///|
 /// Show implementation for ReadOnlyArray.
 #warnings("-deprecated")
-pub impl[T : Show] Show for ReadOnlyArray[T] with output(self, logger) {
+pub impl[T : Show] Show for ReadOnlyArray[T] with fn output(self, logger) {
   self.unsafe_reinterpret_to_fixed_array().output(logger)
 }
 
 ///|
 /// ToJson implementation for ReadOnlyArray.
-pub impl[T : ToJson] ToJson for ReadOnlyArray[T] with to_json(self) {
+pub impl[T : ToJson] ToJson for ReadOnlyArray[T] with fn to_json(self) {
   self.unsafe_reinterpret_to_fixed_array().to_json()
 }
 
 ///|
-pub impl[T : Eq] Eq for ReadOnlyArray[T] with equal(self, other) {
+pub impl[T : Eq] Eq for ReadOnlyArray[T] with fn equal(self, other) {
   self
   .unsafe_reinterpret_to_fixed_array()
   .equal(other.unsafe_reinterpret_to_fixed_array())
 }
 
 ///|
-pub impl[T : Hash] Hash for ReadOnlyArray[T] with hash_combine(self, hasher) {
+pub impl[T : Hash] Hash for ReadOnlyArray[T] with fn hash_combine(self, hasher) {
   self.unsafe_reinterpret_to_fixed_array().hash_combine(hasher)
 }
 
 ///|
-pub impl[T : Compare] Compare for ReadOnlyArray[T] with compare(self, other) {
+pub impl[T : Compare] Compare for ReadOnlyArray[T] with fn compare(self, other) {
   self
   .unsafe_reinterpret_to_fixed_array()
   .compare(other.unsafe_reinterpret_to_fixed_array())

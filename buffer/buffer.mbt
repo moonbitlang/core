@@ -218,7 +218,7 @@ pub fn from_iter(iter : Iter[Byte]) -> Buffer {
 pub impl Logger for Buffer
 
 ///|
-pub impl Logger for Buffer with write_string(self, value) {
+pub impl Logger for Buffer with fn write_string(self, value) {
   self.grow_if_necessary(self.len + value.length() * 2)
   self.data.blit_from_string(self.len, value, 0, value.length())
   self.len += value.length() * 2
@@ -983,7 +983,7 @@ pub fn Buffer::write_string_utf16be(buf : Self, string : StringView) -> Unit {
 /// non-negative.
 /// * `count` : The number of characters to write. Must be non-negative and
 /// `offset + count` must not exceed the length of the source string.
-pub impl Logger for Buffer with write_view(self : Buffer, value : StringView) -> Unit {
+pub impl Logger for Buffer with fn write_view(self : Buffer, value : StringView) -> Unit {
   self.grow_if_necessary(self.len + value.length() * 2)
   self.data.blit_from_string(
     self.len,
@@ -1002,7 +1002,7 @@ pub impl Logger for Buffer with write_view(self : Buffer, value : StringView) ->
 ///
 /// * `buffer` : The buffer to write to.
 /// * `char` : The character to be written.
-pub impl Logger for Buffer with write_char(self : Buffer, value : Char) -> Unit {
+pub impl Logger for Buffer with fn write_char(self : Buffer, value : Char) -> Unit {
   self.grow_if_necessary(self.len + 4)
   let inc = self.data.set_utf16le_char(self.len, value)
   self.len += inc
@@ -1138,6 +1138,6 @@ pub fn Buffer::view(self : Buffer) -> ArrayView[Byte] {
 }
 
 ///|
-pub impl Show for Buffer with output(self, logger) {
+pub impl Show for Buffer with fn output(self, logger) {
   logger.write_string(self.contents().to_unchecked_string())
 }

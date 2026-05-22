@@ -37,7 +37,7 @@ pub fn UInt::to_int64(self : UInt) -> Int64 {
 }
 
 ///|
-pub impl Default for UInt with default() {
+pub impl Default for UInt with fn default() {
   0
 }
 

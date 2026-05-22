@@ -410,7 +410,7 @@ pub fn[A : Eq + Hash] HashSet::from_iter(iter : Iter[A]) -> HashSet[A] {
 pub impl[A : Show] Show for HashSet[A]
 
 ///|
-pub impl[A : Show] Show for HashSet[A] with output(self, logger) {
+pub impl[A : Show] Show for HashSet[A] with fn output(self, logger) {
   logger.write_iter(
     self.iter(),
     prefix="@immut/hashset.from_array([",
@@ -436,12 +436,12 @@ pub fn[A : Eq + Hash] HashSet::from_array(arr : ArrayView[A]) -> HashSet[A] {
 }
 
 ///|
-pub impl[A : Hash] Hash for HashSet[A] with hash_combine(self, hasher) {
+pub impl[A : Hash] Hash for HashSet[A] with fn hash_combine(self, hasher) {
   hasher.combine(self.iter().fold(init=0, (x, y) => x ^ y.hash()))
 }
 
 ///|
-impl[A : Eq] Eq for Node[A] with equal(self, other) {
+impl[A : Eq] Eq for Node[A] with fn equal(self, other) {
   if physical_equal(self, other) {
     return true
   }
@@ -462,7 +462,7 @@ impl[A : Eq] Eq for Node[A] with equal(self, other) {
 ///|
 pub impl[K : Eq + Hash + @quickcheck.Arbitrary] @quickcheck.Arbitrary for HashSet[
   K,
-] with arbitrary(size, rs) {
+] with fn arbitrary(size, rs) {
   @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
 }
 

@@ -42,7 +42,7 @@ fn AsciiCaseInsensitiveString::new(s : String) -> AsciiCaseInsensitiveString {
 ///|
 /// Hash the folded (ASCII-lowered) code units so that "Foo" and "FOO" land in
 /// the same bucket.
-impl Hash for AsciiCaseInsensitiveString with hash_combine(self, hasher) {
+impl Hash for AsciiCaseInsensitiveString with fn hash_combine(self, hasher) {
   let s = self.raw
   for i in 0..<s.length() {
     let mut c = s.unsafe_get(i)
@@ -56,7 +56,7 @@ impl Hash for AsciiCaseInsensitiveString with hash_combine(self, hasher) {
 
 ///|
 /// Two keys are equal iff they are equal under ASCII case folding.
-impl Eq for AsciiCaseInsensitiveString with equal(self, other) {
+impl Eq for AsciiCaseInsensitiveString with fn equal(self, other) {
   self.raw.equal_ignore_ascii_case(other.raw)
 }
 

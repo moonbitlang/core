@@ -20,11 +20,13 @@ struct Rand(&Source)
 ///|
 /// The [Source] trait defines a method to generate random numbers.
 pub(open) trait Source {
-  next(Self) -> UInt64
+  fn next(Self) -> UInt64
 }
 
 ///|
-impl Source for @random_source.ChaCha8 with next(self : @random_source.ChaCha8) -> UInt64 {
+impl Source for @random_source.ChaCha8 with fn next(
+  self : @random_source.ChaCha8,
+) -> UInt64 {
   for ;; {
     if self.next() is Some(x) {
       return x

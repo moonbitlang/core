@@ -84,7 +84,7 @@ struct Point {
 } derive(Debug)
 
 ///|
-impl Arbitrary for Point with arbitrary(size, r0) {
+impl Arbitrary for Point with fn arbitrary(size, r0) {
   let r1 = r0.split()
   let y = @quickcheck.Arbitrary::arbitrary(size, r1)
   { x: @quickcheck.Arbitrary::arbitrary(size, r0), y }

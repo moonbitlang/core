@@ -28,7 +28,7 @@ using @debug {trait Debug, type Repr}
 /// whose thunk returns an ancestor cell, then forced) will cause this
 /// impl to loop. `@list.List`'s `Debug` has the same property; cycle
 /// detection is not provided.
-pub impl[A : Debug] Debug for LazyList[A] with to_repr(self) {
+pub impl[A : Debug] Debug for LazyList[A] with fn to_repr(self) {
   let parts = []
   for cur = self {
     match cur.cell {

@@ -31,77 +31,77 @@ pub const MIN_VALUE : Int16 = -32768
 pub let min_value : Int16 = -32768
 
 ///|
-pub impl Add for Int16 with add(self : Int16, that : Int16) -> Int16 {
+pub impl Add for Int16 with fn add(self : Int16, that : Int16) -> Int16 {
   Int16::from_int(self.to_int() + that.to_int())
 }
 
 ///|
-pub impl Sub for Int16 with sub(self : Int16, that : Int16) -> Int16 {
+pub impl Sub for Int16 with fn sub(self : Int16, that : Int16) -> Int16 {
   Int16::from_int(self.to_int() - that.to_int())
 }
 
 ///|
-pub impl Mul for Int16 with mul(self : Int16, that : Int16) -> Int16 {
+pub impl Mul for Int16 with fn mul(self : Int16, that : Int16) -> Int16 {
   Int16::from_int(self.to_int() * that.to_int())
 }
 
 ///|
-pub impl Div for Int16 with div(self : Int16, that : Int16) -> Int16 {
+pub impl Div for Int16 with fn div(self : Int16, that : Int16) -> Int16 {
   Int16::from_int(self.to_int() / that.to_int())
 }
 
 ///|
-pub impl Mod for Int16 with mod(self : Int16, that : Int16) -> Int16 {
+pub impl Mod for Int16 with fn mod(self : Int16, that : Int16) -> Int16 {
   Int16::from_int(self.to_int() % that.to_int())
 }
 
 ///|
-pub impl Eq for Int16 with equal(self, that) {
+pub impl Eq for Int16 with fn equal(self, that) {
   self.to_int() == that.to_int()
 }
 
 ///|
-pub impl Eq for Int16 with not_equal(self, that) {
+pub impl Eq for Int16 with fn not_equal(self, that) {
   self.to_int() != that.to_int()
 }
 
 ///|
-pub impl Compare for Int16 with compare(self, that) {
+pub impl Compare for Int16 with fn compare(self, that) {
   self.to_int().compare(that.to_int())
 }
 
 ///|
-pub impl Hash for Int16 with hash_combine(self, hasher) {
+pub impl Hash for Int16 with fn hash_combine(self, hasher) {
   hasher.combine_int(self.to_int())
 }
 
 ///|
-pub impl Shl for Int16 with shl(self : Int16, that : Int) -> Int16 {
+pub impl Shl for Int16 with fn shl(self : Int16, that : Int) -> Int16 {
   Int16::from_int(self.to_int() << that)
 }
 
 ///|
-pub impl Shr for Int16 with shr(self : Int16, that : Int) -> Int16 {
+pub impl Shr for Int16 with fn shr(self : Int16, that : Int) -> Int16 {
   Int16::from_int(self.to_int() >> that)
 }
 
 ///|
-pub impl BitOr for Int16 with lor(self : Int16, that : Int16) -> Int16 {
+pub impl BitOr for Int16 with fn lor(self : Int16, that : Int16) -> Int16 {
   Int16::from_int(self.to_int() | that.to_int())
 }
 
 ///|
-pub impl BitAnd for Int16 with land(self : Int16, that : Int16) -> Int16 {
+pub impl BitAnd for Int16 with fn land(self : Int16, that : Int16) -> Int16 {
   Int16::from_int(self.to_int() & that.to_int())
 }
 
 ///|
-pub impl BitXOr for Int16 with lxor(self : Int16, that : Int16) -> Int16 {
+pub impl BitXOr for Int16 with fn lxor(self : Int16, that : Int16) -> Int16 {
   Int16::from_int(self.to_int() ^ that.to_int())
 }
 
 ///|
-pub impl Neg for Int16 with neg(self : Int16) -> Int16 {
+pub impl Neg for Int16 with fn neg(self : Int16) -> Int16 {
   Int16::from_int(-self.to_int())
 }
 
@@ -116,17 +116,17 @@ pub fn Int16::abs(self : Int16) -> Int16 {
 }
 
 ///|
-pub impl Default for Int16 with default() {
+pub impl Default for Int16 with fn default() {
   0
 }
 
 ///|
-pub impl ToJson for Int16 with to_json(self : Int16) -> Json {
+pub impl ToJson for Int16 with fn to_json(self : Int16) -> Json {
   Json::number(self.to_int().to_double())
 }
 
 ///|
-pub impl Show for Int16 with to_string(self) {
+pub impl Show for Int16 with fn to_string(self) {
   Int16::to_string(self)
 }
 

@@ -35,7 +35,7 @@ priv struct ContentParens {
 ///|
 
 ///|
-impl Add for ContentParens with add(self, other) {
+impl Add for ContentParens with fn add(self, other) {
   { size: self.size + other.size, lines: self.lines + other.lines }
 }
 

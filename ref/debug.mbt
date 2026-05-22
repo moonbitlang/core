@@ -16,7 +16,7 @@
 using @debug {trait Debug, type Repr}
 
 ///|
-pub impl[T : Debug] Debug for Ref[T] with to_repr(self) {
+pub impl[T : Debug] Debug for Ref[T] with fn to_repr(self) {
   Repr::opaque_("Ref", @debug.to_repr(self.val))
 }
 

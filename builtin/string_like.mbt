@@ -17,15 +17,15 @@
 ///
 /// Types implementing this trait provide zero-copy access to string-like data.
 pub trait ToStringView {
-  to_string_view(Self) -> StringView
+  fn to_string_view(Self) -> StringView
 }
 
 ///|
-pub impl ToStringView for String with to_string_view(self) -> StringView {
+pub impl ToStringView for String with fn to_string_view(self) -> StringView {
   self
 }
 
 ///|
-pub impl ToStringView for StringView with to_string_view(self) -> StringView {
+pub impl ToStringView for StringView with fn to_string_view(self) -> StringView {
   self
 }

@@ -35,7 +35,7 @@
 pub(all) struct Reverse[T](T) derive(Eq, Show, Hash, @debug.Debug)
 
 ///|
-pub impl[T : Compare] Compare for Reverse[T] with compare(a, b) {
+pub impl[T : Compare] Compare for Reverse[T] with fn compare(a, b) {
   -a.0.compare(b.0)
 }
 

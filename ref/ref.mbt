@@ -32,7 +32,7 @@ pub(all) struct Ref[T] {
 pub impl[X : Show] Show for Ref[X]
 
 ///|
-pub impl[X : Show] Show for Ref[X] with output(self, logger) {
+pub impl[X : Show] Show for Ref[X] with fn output(self, logger) {
   logger.write_string("{val: ")
   logger.write_object(self.val)
   logger.write_string("}")
@@ -169,7 +169,7 @@ test "incr" {
 }
 
 ///|
-pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Ref[X] with arbitrary(
+pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Ref[X] with fn arbitrary(
   size,
   rs,
 ) {

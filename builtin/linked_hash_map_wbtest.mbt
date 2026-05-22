@@ -16,13 +16,13 @@
 struct MyString(String) derive(Eq)
 
 ///|
-impl Hash for MyString with hash(self) {
+impl Hash for MyString with fn hash(self) {
   let MyString(s) = self
   s.length()
 }
 
 ///|
-impl Hash for MyString with hash_combine(self, hasher) {
+impl Hash for MyString with fn hash_combine(self, hasher) {
   let MyString(s) = self
   hasher.combine_string(s)
 }

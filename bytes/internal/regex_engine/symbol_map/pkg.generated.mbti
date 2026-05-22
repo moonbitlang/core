@@ -19,7 +19,7 @@ pub fn SymbolMap::split(Self, @rechar_set.RecharSet) -> Unit
 
 // Traits
 pub trait Table {
-  map(Self, Int) -> Int
-  map_set(Self, @rechar_set.RecharSet) -> @rechar_set.RecharSet
+  fn map(Self, Int) -> Int
+  fn map_set(Self, @rechar_set.RecharSet) -> @rechar_set.RecharSet
 }
 

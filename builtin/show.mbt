@@ -13,17 +13,17 @@
 // limitations under the License.
 
 ///|
-pub impl Show for Unit with output(_self, logger) {
+pub impl Show for Unit with fn output(_self, logger) {
   logger.write_string("()")
 }
 
 ///|
-pub impl Show for Unit with to_string(_self) {
+pub impl Show for Unit with fn to_string(_self) {
   "()"
 }
 
 ///|
-pub impl Show for Bool with to_string(self) {
+pub impl Show for Bool with fn to_string(self) {
   if self {
     "true"
   } else {
@@ -32,32 +32,32 @@ pub impl Show for Bool with to_string(self) {
 }
 
 ///|
-pub impl Show for Int with to_string(self) {
+pub impl Show for Int with fn to_string(self) {
   Int::to_string(self)
 }
 
 ///|
-pub impl Show for Int64 with to_string(self) {
+pub impl Show for Int64 with fn to_string(self) {
   Int64::to_string(self)
 }
 
 ///|
-pub impl Show for UInt with to_string(self) {
+pub impl Show for UInt with fn to_string(self) {
   UInt::to_string(self)
 }
 
 ///|
-pub impl Show for UInt64 with to_string(self) {
+pub impl Show for UInt64 with fn to_string(self) {
   UInt64::to_string(self)
 }
 
 ///|
-pub impl Show for Byte with to_string(self) {
+pub impl Show for Byte with fn to_string(self) {
   Byte::to_string(self)
 }
 
 ///|
-pub impl Show for UInt16 with to_string(self) {
+pub impl Show for UInt16 with fn to_string(self) {
   UInt16::to_string(self)
 }
 
@@ -219,7 +219,7 @@ fn StringView::escape_to(
 ///   inspect(str.escape(quote=true), content="\"Hello \\n\"")
 /// }
 /// ```
-pub impl Show for String with to_string(self) {
+pub impl Show for String with fn to_string(self) {
   self
 }
 
@@ -228,7 +228,7 @@ pub impl Show for String with to_string(self) {
 pub impl[X : Show] Show for X?
 
 ///|
-pub impl[X : Show] Show for X? with output(self, logger) {
+pub impl[X : Show] Show for X? with fn output(self, logger) {
   match self {
     None => logger.write_string("None")
     Some(arg) => {
@@ -244,7 +244,7 @@ pub impl[X : Show] Show for X? with output(self, logger) {
 pub impl[T : Show, E : Show] Show for Result[T, E]
 
 ///|
-pub impl[T : Show, E : Show] Show for Result[T, E] with output(self, logger) {
+pub impl[T : Show, E : Show] Show for Result[T, E] with fn output(self, logger) {
   match self {
     Ok(x) => {
       logger.write_string("Ok(")
@@ -264,7 +264,7 @@ pub impl[T : Show, E : Show] Show for Result[T, E] with output(self, logger) {
 pub impl[X : Show] Show for FixedArray[X]
 
 ///|
-pub impl[X : Show] Show for FixedArray[X] with output(self, logger) {
+pub impl[X : Show] Show for FixedArray[X] with fn output(self, logger) {
   logger.write_iter(self.iter())
 }
 
@@ -273,6 +273,6 @@ pub impl[X : Show] Show for FixedArray[X] with output(self, logger) {
 pub impl[X : Show] Show for Array[X]
 
 ///|
-pub impl[X : Show] Show for Array[X] with output(self, logger) {
+pub impl[X : Show] Show for Array[X] with fn output(self, logger) {
   logger.write_iter(self.iter())
 }

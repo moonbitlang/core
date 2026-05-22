@@ -23,42 +23,42 @@ fn num(value : Int) -> Num {
 }
 
 ///|
-impl Add for Num with add(self, other) {
+impl Add for Num with fn add(self, other) {
   num(self.value + other.value)
 }
 
 ///|
-impl Sub for Num with sub(self, other) {
+impl Sub for Num with fn sub(self, other) {
   num(self.value - other.value)
 }
 
 ///|
-impl Mul for Num with mul(self, other) {
+impl Mul for Num with fn mul(self, other) {
   num(self.value * other.value)
 }
 
 ///|
-impl Div for Num with div(self, other) {
+impl Div for Num with fn div(self, other) {
   num(self.value / other.value)
 }
 
 ///|
-impl Mod for Num with mod(self, other) {
+impl Mod for Num with fn mod(self, other) {
   num(self.value % other.value)
 }
 
 ///|
-impl Neg for Num with neg(self) {
+impl Neg for Num with fn neg(self) {
   num(-self.value)
 }
 
 ///|
-impl Shl for Num with shl(self, i) {
+impl Shl for Num with fn shl(self, i) {
   num(self.value << i)
 }
 
 ///|
-impl Shr for Num with shr(self, i) {
+impl Shr for Num with fn shr(self, i) {
   num(self.value >> i)
 }
 

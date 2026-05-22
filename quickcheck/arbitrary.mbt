@@ -18,21 +18,21 @@ pub(open) trait Arbitrary {
   // `arbitrary` function takes a random number generator and a number that 
   // determines the size of the generated value as arguments, and returns a
   // randomly generated value of certain type.
-  arbitrary(Int, @splitmix.RandomState) -> Self
+  fn arbitrary(Int, @splitmix.RandomState) -> Self
 }
 
 ///|
-pub impl Arbitrary for Unit with arbitrary(_, _) {
+pub impl Arbitrary for Unit with fn arbitrary(_, _) {
   ()
 }
 
 ///|
-pub impl Arbitrary for Bool with arbitrary(_, rs) {
+pub impl Arbitrary for Bool with fn arbitrary(_, rs) {
   rs.next_double() < 0.5
 }
 
 ///|
-pub impl Arbitrary for Int with arbitrary(size, rs) {
+pub impl Arbitrary for Int with fn arbitrary(size, rs) {
   if size == 0 {
     0
   } else {
@@ -41,7 +41,7 @@ pub impl Arbitrary for Int with arbitrary(size, rs) {
 }
 
 ///|
-pub impl Arbitrary for UInt with arbitrary(size, rs) {
+pub impl Arbitrary for UInt with fn arbitrary(size, rs) {
   if size == 0 {
     0
   } else {
@@ -50,12 +50,12 @@ pub impl Arbitrary for UInt with arbitrary(size, rs) {
 }
 
 ///|
-pub impl Arbitrary for Byte with arbitrary(_, rs) {
+pub impl Arbitrary for Byte with fn arbitrary(_, rs) {
   rs.next_uint().to_byte()
 }
 
 ///|
-pub impl Arbitrary for Bytes with arbitrary(size, rs) {
+pub impl Arbitrary for Bytes with fn arbitrary(size, rs) {
   if size == 0 {
     Bytes::new(0)
   } else {
@@ -65,7 +65,7 @@ pub impl Arbitrary for Bytes with arbitrary(size, rs) {
 }
 
 ///|
-pub impl Arbitrary for Int64 with arbitrary(size, rs) {
+pub impl Arbitrary for Int64 with fn arbitrary(size, rs) {
   if size == 0 {
     0
   } else {
@@ -74,7 +74,7 @@ pub impl Arbitrary for Int64 with arbitrary(size, rs) {
 }
 
 ///|
-pub impl Arbitrary for UInt64 with arbitrary(size, rs) {
+pub impl Arbitrary for UInt64 with fn arbitrary(size, rs) {
   if size == 0 {
     0
   } else {
@@ -83,23 +83,23 @@ pub impl Arbitrary for UInt64 with arbitrary(size, rs) {
 }
 
 ///|
-pub impl Arbitrary for Float with arbitrary(_, rs) {
+pub impl Arbitrary for Float with fn arbitrary(_, rs) {
   rs.next_float()
 }
 
 ///|
-pub impl Arbitrary for Double with arbitrary(_, rs) {
+pub impl Arbitrary for Double with fn arbitrary(_, rs) {
   rs.next_double()
 }
 
 ///|
-pub impl Arbitrary for Char with arbitrary(_, rs) {
+pub impl Arbitrary for Char with fn arbitrary(_, rs) {
   // Choose only ASCII characters
   ((rs.next_uint() % 128) |> UInt::reinterpret_as_int).unsafe_to_char()
 }
 
 ///|
-pub impl Arbitrary for String with arbitrary(size, rs) {
+pub impl Arbitrary for String with fn arbitrary(size, rs) {
   let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
   for i in 0..<len; s = "" {
     let c : Char = Arbitrary::arbitrary(i, rs)
@@ -110,7 +110,7 @@ pub impl Arbitrary for String with arbitrary(size, rs) {
 }
 
 ///|
-pub impl[X : Arbitrary] Arbitrary for Iter[X] with arbitrary(size, rs) {
+pub impl[X : Arbitrary] Arbitrary for Iter[X] with fn arbitrary(size, rs) {
   let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
   let mut i = 0
   Iter::new(() => {
@@ -130,7 +130,7 @@ pub fn[T : Arbitrary] gen(size? : Int, state? : @splitmix.RandomState) -> T {
 }
 
 ///|
-pub impl[X : Arbitrary] Arbitrary for X? with arbitrary(i, rs) {
+pub impl[X : Arbitrary] Arbitrary for X? with fn arbitrary(i, rs) {
   if rs.next_double() < 0.3 {
     None
   } else {
@@ -139,7 +139,7 @@ pub impl[X : Arbitrary] Arbitrary for X? with arbitrary(i, rs) {
 }
 
 ///|
-pub impl[T : Arbitrary, E : Arbitrary] Arbitrary for Result[T, E] with arbitrary(
+pub impl[T : Arbitrary, E : Arbitrary] Arbitrary for Result[T, E] with fn arbitrary(
   size,
   rs,
 ) {
@@ -151,20 +151,20 @@ pub impl[T : Arbitrary, E : Arbitrary] Arbitrary for Result[T, E] with arbitrary
 }
 
 ///|
-pub impl[X : Arbitrary] Arbitrary for FixedArray[X] with arbitrary(size, rs) {
+pub impl[X : Arbitrary] Arbitrary for FixedArray[X] with fn arbitrary(size, rs) {
   let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
   FixedArray::makei(len, i => X::arbitrary(i, rs))
 }
 
 ///|
-pub impl[A : Arbitrary] Arbitrary for ArrayView[A] with arbitrary(size, rs) {
+pub impl[A : Arbitrary] Arbitrary for ArrayView[A] with fn arbitrary(size, rs) {
   let arr : Array[A] = Arbitrary::arbitrary(size, rs)
   // Note can not use Array::arbitrary
   arr
 }
 
 ///|
-pub impl[X : Arbitrary] Arbitrary for Array[X] with arbitrary(size, rs) {
+pub impl[X : Arbitrary] Arbitrary for Array[X] with fn arbitrary(size, rs) {
   let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
   Array::makei(len, x => X::arbitrary(x, rs))
 }

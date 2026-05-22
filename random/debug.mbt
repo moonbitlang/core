@@ -16,6 +16,6 @@
 using @debug {trait Debug, type Repr}
 
 ///|
-pub impl Debug for Rand with to_repr(_) {
+pub impl Debug for Rand with fn to_repr(_) {
   Repr::opaque_("Rand", Repr::omitted())
 }

@@ -255,13 +255,13 @@ pub fn render(r : Repr, max_depth? : Int) -> String {
 }
 
 ///|
-pub impl Show for Repr with output(self, logger) {
+pub impl Show for Repr with fn output(self, logger) {
   logger.write_string(render(self))
 }
 
 ///|
 /// `Repr` is its own debug representation: `to_repr` is the identity.
-pub impl Debug for Repr with to_repr(self) {
+pub impl Debug for Repr with fn to_repr(self) {
   self
 }
 

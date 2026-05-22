@@ -287,7 +287,7 @@ pub fn[T] Array::set(self : Array[T], index : Int, value : T) -> Unit {
 ///   inspect(arr1 == arr3, content="false")
 /// }
 /// ```
-pub impl[T : Eq] Eq for Array[T] with equal(self, other) {
+pub impl[T : Eq] Eq for Array[T] with fn equal(self, other) {
   let self_len = self.length()
   let other_len = other.length()
   guard self_len == other_len else { return false }
@@ -299,7 +299,7 @@ pub impl[T : Eq] Eq for Array[T] with equal(self, other) {
 }
 
 ///|
-pub impl[T : Hash] Hash for Array[T] with hash_combine(self, hasher) {
+pub impl[T : Hash] Hash for Array[T] with fn hash_combine(self, hasher) {
   for v in self {
     v.hash_combine(hasher)
   }
@@ -337,7 +337,7 @@ pub impl[T : Hash] Hash for Array[T] with hash_combine(self, hasher) {
 ///   inspect(arr1.compare(arr1), content="0") // arr1 = arr1
 /// }
 /// ```
-pub impl[T : Compare] Compare for Array[T] with compare(self, other) {
+pub impl[T : Compare] Compare for Array[T] with fn compare(self, other) {
   let len_self = self.length()
   let len_other = other.length()
   let cmp = len_self.compare(len_other)
@@ -370,7 +370,7 @@ pub impl[T : Compare] Compare for Array[T] with compare(self, other) {
 ///   debug_inspect(a + b, content="[1, 2, 3, 4, 5]")
 /// }
 /// ```
-pub impl[T] Add for Array[T] with add(self, other) {
+pub impl[T] Add for Array[T] with fn add(self, other) {
   let result = Array::make_uninit(self.length() + other.length())
   UninitializedArray::unsafe_blit(
     result.buffer(),
@@ -1782,7 +1782,7 @@ pub fn[A] Array::iter2(self : Array[A]) -> Iter2[Int, A] {
 ///   inspect(arr.is_empty(), content="true")
 /// }
 /// ```
-pub impl[T] Default for Array[T] with default() {
+pub impl[T] Default for Array[T] with fn default() {
   []
 }
 

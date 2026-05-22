@@ -16,7 +16,7 @@
 using @debug {trait Debug, type Repr}
 
 ///|
-pub impl Debug for Buffer with to_repr(self) {
+pub impl Debug for Buffer with fn to_repr(self) {
   Repr::opaque_("Buffer", @debug.to_repr(self.to_bytes().to_array()))
 }
 

@@ -591,7 +591,7 @@ fn calc_grow_threshold(capacity : Int) -> Int {
 pub impl[K : Show, V : Show] Show for Map[K, V]
 
 ///|
-pub impl[K : Show, V : Show] Show for Map[K, V] with output(self, logger) {
+pub impl[K : Show, V : Show] Show for Map[K, V] with fn output(self, logger) {
   logger.write_string("{")
   for x = 0, y = self.head {
     match (x, y) {
@@ -755,7 +755,7 @@ pub fn[K, V] Map::to_array(self : Map[K, V]) -> Array[(K, V)] {
 }
 
 ///|
-pub impl[K : Hash + Eq, V : Eq] Eq for Map[K, V] with equal(
+pub impl[K : Hash + Eq, V : Eq] Eq for Map[K, V] with fn equal(
   self : Map[K, V],
   that : Map[K, V],
 ) -> Bool {
@@ -792,7 +792,7 @@ pub fn[K : Hash + Eq, V] Map::from_iter(iter : Iter[(K, V)]) -> Map[K, V] {
 }
 
 ///|
-pub impl[K, V] Default for Map[K, V] with default() {
+pub impl[K, V] Default for Map[K, V] with fn default() {
   new_map(default_init_capacity)
 }
 

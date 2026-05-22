@@ -13,21 +13,21 @@
 // limitations under the License.
 
 ///|
-pub impl Eq for Unit with equal(_ : Unit, _ : Unit) -> Bool {
+pub impl Eq for Unit with fn equal(_ : Unit, _ : Unit) -> Bool {
   true
 }
 
 ///|
-pub impl Compare for Unit with compare(_, _) {
+pub impl Compare for Unit with fn compare(_, _) {
   0
 }
 
 ///|
-pub impl Default for Unit with default() -> Unit {
+pub impl Default for Unit with fn default() -> Unit {
   ()
 }
 
 ///|
-pub impl Hash for Unit with hash_combine(_, hasher) -> Unit {
+pub impl Hash for Unit with fn hash_combine(_, hasher) -> Unit {
   hasher.combine_unit()
 }

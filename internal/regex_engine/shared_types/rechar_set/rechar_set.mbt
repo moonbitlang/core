@@ -343,21 +343,21 @@ pub fn RecharSet::from_sorted_array(
 }
 
 ///|
-pub impl Add for RecharSet with add(self, other) {
+pub impl Add for RecharSet with fn add(self, other) {
   RecharSet::union(self, other)
 }
 
 ///|
-pub impl Sub for RecharSet with sub(self, other) {
+pub impl Sub for RecharSet with fn sub(self, other) {
   RecharSet::difference(self, other)
 }
 
 ///|
-pub impl BitAnd for RecharSet with land(self, other) {
+pub impl BitAnd for RecharSet with fn land(self, other) {
   RecharSet::intersection(self, other)
 }
 
 ///|
-pub impl @debug.Debug for RecharSet with to_repr(self) {
+pub impl @debug.Debug for RecharSet with fn to_repr(self) {
   @debug.to_repr(self.intervals().to_array())
 }

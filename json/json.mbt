@@ -483,7 +483,7 @@ pub fn Json::transform(self : Self, replacer : Replacer) -> Json {
 
 ///|
 /// Useful for json interpolation
-pub impl ToJson for Json with to_json(self) {
+pub impl ToJson for Json with fn to_json(self) {
   self
 }
 
