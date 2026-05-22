@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-pub impl Show for Float with to_string(self) {
+pub impl Show for Float with fn to_string(self) {
   self.to_double().to_string()
 }
 
@@ -29,7 +29,7 @@ pub impl Show for Float with to_string(self) {
 ///   inspect(Float::default(), content="0")
 /// }
 /// ```
-pub impl Default for Float with default() {
+pub impl Default for Float with fn default() {
   0
 }
 
@@ -51,7 +51,7 @@ pub impl Default for Float with default() {
 ///   inspect(Hash::hash(x) == Hash::hash(y), content="true")
 /// }
 /// ```
-pub impl Hash for Float with hash_combine(self, hasher) {
+pub impl Hash for Float with fn hash_combine(self, hasher) {
   hasher.combine_uint(self.reinterpret_as_uint())
 }
 
@@ -384,7 +384,7 @@ pub fn Float::is_close(
 ///   inspect((-5.7 : Float).mod(2.0), content="-1.6999998092651367")
 /// }
 /// ```
-pub impl Mod for Float with mod(self : Float, other : Float) -> Float {
+pub impl Mod for Float with fn mod(self : Float, other : Float) -> Float {
   Float::from_double(self.to_double() % other.to_double())
 }
 
@@ -453,7 +453,7 @@ pub fn Float::until(
 pub fn Float::to_double(self : Float) -> Double = "%f32.to_f64"
 
 ///|
-pub impl ToJson for Float with to_json(self : Float) -> Json {
+pub impl ToJson for Float with fn to_json(self : Float) -> Json {
   Json::number(self.to_double())
 }
 
@@ -538,7 +538,7 @@ pub fn Float::reinterpret_as_int(self : Float) -> Int = "%f32.to_i32_reinterpret
 ///   inspect((-zero).to_double(), content="0")
 /// }
 /// ```
-pub impl Neg for Float with neg(self) = "%f32.neg"
+pub impl Neg for Float with fn neg(self) = "%f32.neg"
 
 ///|
 /// Performs addition between two single-precision floating-point numbers.
@@ -562,7 +562,7 @@ pub impl Neg for Float with neg(self) = "%f32.neg"
 ///   inspect(sum.to_double(), content="6")
 /// }
 /// ```
-pub impl Add for Float with add(self, other) = "%f32.add"
+pub impl Add for Float with fn add(self, other) = "%f32.add"
 
 ///|
 /// Performs subtraction between two single-precision floating-point numbers.
@@ -585,7 +585,7 @@ pub impl Add for Float with add(self, other) = "%f32.add"
 ///   inspect(result.to_double(), content="2.140000104904175")
 /// }
 /// ```
-pub impl Sub for Float with sub(self, other) = "%f32.sub"
+pub impl Sub for Float with fn sub(self, other) = "%f32.sub"
 
 ///|
 /// Performs multiplication between two single-precision floating-point numbers
@@ -610,7 +610,7 @@ pub impl Sub for Float with sub(self, other) = "%f32.sub"
 ///   inspect(z.to_double(), content="6")
 /// }
 /// ```
-pub impl Mul for Float with mul(self, other) = "%f32.mul"
+pub impl Mul for Float with fn mul(self, other) = "%f32.mul"
 
 ///|
 /// Performs division between two 32-bit floating-point numbers according to IEEE
@@ -642,7 +642,7 @@ pub impl Mul for Float with mul(self, other) = "%f32.mul"
 ///   )
 /// }
 /// ```
-pub impl Div for Float with div(self, other) = "%f32.div"
+pub impl Div for Float with fn div(self, other) = "%f32.div"
 
 ///|
 /// Tests two floating-point numbers for equality. Follows IEEE 754 equality
@@ -668,7 +668,7 @@ pub impl Div for Float with div(self, other) = "%f32.div"
 ///   inspect(z == z, content="false") // NaN is not equal to itself
 /// }
 /// ```
-pub impl Eq for Float with equal(self : Float, other : Float) -> Bool = "%f32.eq"
+pub impl Eq for Float with fn equal(self : Float, other : Float) -> Bool = "%f32.eq"
 
 ///|
 /// Tests two floating-point numbers for inequality. Follows IEEE 754 inequality
@@ -694,7 +694,7 @@ pub impl Eq for Float with equal(self : Float, other : Float) -> Bool = "%f32.eq
 ///   inspect(z != z, content="true") // NaN is not equal to itself
 /// }
 /// ```
-pub impl Eq for Float with not_equal(self : Float, other : Float) -> Bool = "%f32.ne"
+pub impl Eq for Float with fn not_equal(self : Float, other : Float) -> Bool = "%f32.ne"
 
 ///|
 /// Operator helper `op_neq`.
@@ -727,19 +727,19 @@ pub fn Float::op_neq(self : Float, other : Float) -> Bool = "%f32.ne"
 ///   inspect(a.compare(a), content="0") // 3.14 = 3.14
 /// }
 /// ```
-pub impl Compare for Float with compare(self, other) = "%f32.compare"
+pub impl Compare for Float with fn compare(self, other) = "%f32.compare"
 
 ///|
-pub impl Compare for Float with op_lt(x, y) = "%f32.lt"
+pub impl Compare for Float with fn op_lt(x, y) = "%f32.lt"
 
 ///|
-pub impl Compare for Float with op_le(x, y) = "%f32.le"
+pub impl Compare for Float with fn op_le(x, y) = "%f32.le"
 
 ///|
-pub impl Compare for Float with op_gt(x, y) = "%f32.gt"
+pub impl Compare for Float with fn op_gt(x, y) = "%f32.gt"
 
 ///|
-pub impl Compare for Float with op_ge(x, y) = "%f32.ge"
+pub impl Compare for Float with fn op_ge(x, y) = "%f32.ge"
 
 ///|
 /// Reinterprets the bits of a 32-bit floating-point number as an unsigned 32-bit

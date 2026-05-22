@@ -280,7 +280,7 @@ pub fn[A] T::concat(self : T[A], other : T[A]) -> T[A] {
 
 ///|
 /// Concat two arrays.
-pub impl[A] Add for T[A] with add(self, other) {
+pub impl[A] Add for T[A] with fn add(self, other) {
   self.concat(other)
 }
 
@@ -391,7 +391,7 @@ pub fn[A, B] T::map(self : T[A], f : (A) -> B raise?) -> T[B] raise? {
 //-----------------------------------------------------------------------------
 
 ///|
-pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X] with arbitrary(
+pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X] with fn arbitrary(
   size,
   rs,
 ) {
@@ -399,14 +399,14 @@ pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X] with arbitrar
 }
 
 ///|
-pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
+pub impl[A : Hash] Hash for T[A] with fn hash_combine(self, hasher) {
   for e in self {
     hasher.combine(e)
   }
 }
 
 ///|
-pub impl[A : Eq] Eq for T[A] with equal(self, other) {
+pub impl[A : Eq] Eq for T[A] with fn equal(self, other) {
   physical_equal(self, other) ||
   (self.size == other.size && self.tree == other.tree)
 }
@@ -416,7 +416,7 @@ pub impl[A : Eq] Eq for T[A] with equal(self, other) {
 pub impl[A : Show] Show for T[A]
 
 ///|
-pub impl[A : Show] Show for T[A] with output(self, logger) {
+pub impl[A : Show] Show for T[A] with fn output(self, logger) {
   logger.write_iter(
     self.iter(),
     prefix="@immut/array.from_array([",
@@ -456,7 +456,7 @@ pub impl[A : Show] Show for T[A] with output(self, logger) {
 ///   inspect(arr1.compare(arr1), content="0") // arr1 = arr1
 /// }
 /// ```
-pub impl[A : Compare] Compare for T[A] with compare(self, other) {
+pub impl[A : Compare] Compare for T[A] with fn compare(self, other) {
   let len_self = self.length()
   let len_other = other.length()
   let cmp = len_self.compare(len_other)

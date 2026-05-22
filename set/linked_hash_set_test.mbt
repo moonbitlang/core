@@ -22,12 +22,12 @@ struct Key {
 } derive(Eq)
 
 ///|
-impl Hash for Key with hash_combine(self, hasher) {
+impl Hash for Key with fn hash_combine(self, hasher) {
   hasher.combine_int(self.hash_value)
 }
 
 ///|
-impl Hash for Key with hash(self) {
+impl Hash for Key with fn hash(self) {
   self.hash_value
 }
 

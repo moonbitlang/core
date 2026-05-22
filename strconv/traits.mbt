@@ -26,49 +26,49 @@
 pub(open) trait FromStr {
   #as_free_fn
   #deprecated("use `@string.from_str` instead", skip_current_package=true)
-  from_str(StringView) -> Self raise StrConvError = _
+  fn from_str(StringView) -> Self raise StrConvError = _
   #deprecated("use `@string.from_str` instead", skip_current_package=true)
-  from_string(String) -> Self raise StrConvError = _
+  fn from_string(String) -> Self raise StrConvError = _
 }
 
 ///|
 #deprecated("replace `impl @strconv.FromStr::from_string` with `impl @string.FromStr::from_str`", skip_current_package=true)
-impl FromStr with from_str(str) {
+impl FromStr with fn from_str(str) {
   FromStr::from_string(str.to_string())
 }
 
 ///|
-impl FromStr with from_string(str) {
+impl FromStr with fn from_string(str) {
   FromStr::from_str(str)
 }
 
 ///|
-pub impl FromStr for Bool with from_str(str) {
+pub impl FromStr for Bool with fn from_str(str) {
   parse_bool(str)
 }
 
 ///|
-pub impl FromStr for Int with from_str(str) {
+pub impl FromStr for Int with fn from_str(str) {
   parse_int(str)
 }
 
 ///|
-pub impl FromStr for Int64 with from_str(str) {
+pub impl FromStr for Int64 with fn from_str(str) {
   parse_int64(str)
 }
 
 ///|
-pub impl FromStr for UInt with from_str(str) {
+pub impl FromStr for UInt with fn from_str(str) {
   parse_uint(str)
 }
 
 ///|
-pub impl FromStr for UInt64 with from_str(str) {
+pub impl FromStr for UInt64 with fn from_str(str) {
   parse_uint64(str)
 }
 
 ///|
-pub impl FromStr for Double with from_str(str) {
+pub impl FromStr for Double with fn from_str(str) {
   parse_double(str)
 }
 

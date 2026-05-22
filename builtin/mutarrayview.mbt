@@ -463,21 +463,21 @@ pub impl[X : Show] Show for MutArrayView[X]
 
 ///|
 #warnings("-deprecated")
-pub impl[X : Show] Show for MutArrayView[X] with output(self, logger) {
+pub impl[X : Show] Show for MutArrayView[X] with fn output(self, logger) {
   self[:].output(logger)
 }
 
 ///|
-pub impl[T : Eq] Eq for MutArrayView[T] with equal(self, other) -> Bool {
+pub impl[T : Eq] Eq for MutArrayView[T] with fn equal(self, other) -> Bool {
   self[:] == other
 }
 
 ///|
-pub impl[T : Compare] Compare for MutArrayView[T] with compare(self, other) -> Int {
+pub impl[T : Compare] Compare for MutArrayView[T] with fn compare(self, other) -> Int {
   self[:].compare(other)
 }
 
 ///|
-pub impl[A : Hash] Hash for MutArrayView[A] with hash_combine(self, hasher) {
+pub impl[A : Hash] Hash for MutArrayView[A] with fn hash_combine(self, hasher) {
   self[:].hash_combine(hasher)
 }

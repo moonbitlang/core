@@ -14,11 +14,11 @@
 
 ///|
 trait Leb128 {
-  output(Self, Buffer) -> Unit
+  fn output(Self, Buffer) -> Unit
 }
 
 ///|
-pub impl Leb128 for Int with output(self, buffer) {
+pub impl Leb128 for Int with fn output(self, buffer) {
   for value = self {
     let byte = value & 0x7f // Get the low 7 bits
     let next_value = value >> 7 // Arithmetic right shift
@@ -39,7 +39,7 @@ pub impl Leb128 for Int with output(self, buffer) {
 }
 
 ///|
-pub impl Leb128 for Int64 with output(self, buffer) {
+pub impl Leb128 for Int64 with fn output(self, buffer) {
   for value = self {
     let byte = value & 0x7f // Get the low 7 bits
     let next_value = value >> 7 // Arithmetic right shift

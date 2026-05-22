@@ -24,16 +24,16 @@ struct RangeImpl[T] {
 
 ///|
 trait Range {
-  range(Self, Self) -> RangeImpl[Self]
+  fn range(Self, Self) -> RangeImpl[Self]
 }
 
 ///|
-impl Range for Int with range(lo, hi) {
+impl Range for Int with fn range(lo, hi) {
   { lo, hi }
 }
 
 ///|
-impl Range for String with range(lo, hi) {
+impl Range for String with fn range(lo, hi) {
   { lo, hi }
 }
 

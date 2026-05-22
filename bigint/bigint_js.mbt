@@ -227,7 +227,7 @@ extern "js" fn BigInt::compare(self : BigInt, other : BigInt) -> Int =
   #|(x, y) => x < y ? -1 : x > y ? 1 : 0
 
 ///|
-pub impl Compare for BigInt with compare(self, other) {
+pub impl Compare for BigInt with fn compare(self, other) {
   self.compare(other)
 }
 
@@ -236,7 +236,7 @@ extern "js" fn BigInt::equal(self : BigInt, other : BigInt) -> Bool =
   #|(x, y) => x === y
 
 ///|
-pub impl Eq for BigInt with equal(self, other) {
+pub impl Eq for BigInt with fn equal(self, other) {
   self.equal(other)
 }
 
@@ -264,7 +264,7 @@ extern "js" fn BigInt::op_neg_ffi(self : BigInt) -> BigInt =
   #|(x) => -x
 
 ///|
-pub impl Neg for BigInt with neg(self) {
+pub impl Neg for BigInt with fn neg(self) {
   self.op_neg_ffi()
 }
 
@@ -273,7 +273,7 @@ extern "js" fn BigInt::op_add_ffi(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x + y
 
 ///|
-pub impl Add for BigInt with add(self, other) {
+pub impl Add for BigInt with fn add(self, other) {
   self.op_add_ffi(other)
 }
 
@@ -282,7 +282,7 @@ extern "js" fn BigInt::op_sub_ffi(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x - y
 
 ///|
-pub impl Sub for BigInt with sub(self, other) {
+pub impl Sub for BigInt with fn sub(self, other) {
   self.op_sub_ffi(other)
 }
 
@@ -291,7 +291,7 @@ extern "js" fn BigInt::op_mul_ffi(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x * y
 
 ///|
-pub impl Mul for BigInt with mul(self, other) {
+pub impl Mul for BigInt with fn mul(self, other) {
   self.op_mul_ffi(other)
 }
 
@@ -300,7 +300,7 @@ extern "js" fn BigInt::op_div_ffi(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x / y
 
 ///|
-pub impl Div for BigInt with div(self, other) {
+pub impl Div for BigInt with fn div(self, other) {
   self.op_div_ffi(other)
 }
 
@@ -309,7 +309,7 @@ extern "js" fn BigInt::op_mod_ffi(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x % y
 
 ///|
-pub impl Mod for BigInt with mod(self, other) {
+pub impl Mod for BigInt with fn mod(self, other) {
   self.op_mod_ffi(other)
 }
 
@@ -362,7 +362,7 @@ extern "js" fn BigInt::to_byte(self : BigInt) -> Byte =
   #|(x) => Number(BigInt.asUintN(8, x)) | 0
 
 ///|
-pub impl Shl for BigInt with shl(self : BigInt, n : Int) -> BigInt {
+pub impl Shl for BigInt with fn shl(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
     abort("negative shift count")
   }
@@ -370,7 +370,7 @@ pub impl Shl for BigInt with shl(self : BigInt, n : Int) -> BigInt {
 }
 
 ///|
-pub impl Shr for BigInt with shr(self : BigInt, n : Int) -> BigInt {
+pub impl Shr for BigInt with fn shr(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
     abort("negative shift count")
   }
@@ -390,7 +390,7 @@ extern "js" fn BigInt::js_land(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x & y
 
 ///|
-pub impl BitAnd for BigInt with land(self, other) {
+pub impl BitAnd for BigInt with fn land(self, other) {
   self.js_land(other)
 }
 
@@ -422,7 +422,7 @@ extern "js" fn BigInt::js_lor(self : BigInt, other : BigInt) -> BigInt =
 /// }
 /// ```
 ///
-pub impl BitOr for BigInt with lor(self, other) {
+pub impl BitOr for BigInt with fn lor(self, other) {
   self.js_lor(other)
 }
 
@@ -462,7 +462,7 @@ extern "js" fn BigInt::js_lxor(self : BigInt, other : BigInt) -> BigInt =
 /// }
 /// ```
 ///
-pub impl BitXOr for BigInt with lxor(self, other) {
+pub impl BitXOr for BigInt with fn lxor(self, other) {
   self.js_lxor(other)
 }
 

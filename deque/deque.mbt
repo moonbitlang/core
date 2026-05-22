@@ -55,7 +55,7 @@ fn[A] Deque::tail_index(self : Deque[A]) -> Int {
 pub impl[A : Show] Show for Deque[A]
 
 ///|
-pub impl[A : Show] Show for Deque[A] with output(self, logger) {
+pub impl[A : Show] Show for Deque[A] with fn output(self, logger) {
   logger.write_iter(self.iter(), prefix="@deque.from_array([", suffix="])")
 }
 
@@ -88,7 +88,7 @@ pub impl[A : Show] Show for Deque[A] with output(self, logger) {
 /// - The order of elements matters. Deques with the same elements but in
 ///   different orders will produce different hash values.
 ///
-pub impl[A : Hash] Hash for Deque[A] with hash_combine(self, hasher) {
+pub impl[A : Hash] Hash for Deque[A] with fn hash_combine(self, hasher) {
   for v in self {
     v.hash_combine(hasher)
   }
@@ -117,7 +117,7 @@ pub impl[A : Hash] Hash for Deque[A] with hash_combine(self, hasher) {
 ///   @debug.debug_inspect(dq3.to_array(), content="[4, 5, 6, 7]")
 /// }
 /// ```
-pub impl[A] Add for Deque[A] with add(self, other) {
+pub impl[A] Add for Deque[A] with fn add(self, other) {
   let len = self.len + other.len
   let buf = UninitializedArray::make(len)
   self.unsafe_blit_to(buf, 0)
@@ -933,7 +933,7 @@ fn[A] Deque::unsafe_blit_to(
 ///   inspect(dq1 == dq3, content="false")
 /// }
 /// ```
-pub impl[A : Eq] Eq for Deque[A] with equal(self, other) {
+pub impl[A : Eq] Eq for Deque[A] with fn equal(self, other) {
   if self.len != other.len {
     return false
   }
@@ -1772,7 +1772,7 @@ pub fn Deque::join(self : Deque[String], separator : StringView) -> String {
 ///   inspect(json, content="Array([Number(1), Number(2), Number(3)])")
 /// ```
 ///
-pub impl[A : ToJson] ToJson for Deque[A] with to_json(self : Deque[A]) -> Json {
+pub impl[A : ToJson] ToJson for Deque[A] with fn to_json(self : Deque[A]) -> Json {
   [
     for x in self => x
   ]
@@ -1808,7 +1808,7 @@ pub impl[A : ToJson] ToJson for Deque[A] with to_json(self : Deque[A]) -> Json {
 /// }
 /// ```
 ///
-pub impl[A : @json.FromJson] @json.FromJson for Deque[A] with from_json(
+pub impl[A : @json.FromJson] @json.FromJson for Deque[A] with fn from_json(
   json,
   path,
 ) {
@@ -2378,7 +2378,7 @@ pub fn[A : Compare] Deque::binary_search(
 ///   inspect(dq1.compare(dq1), content="0") // dq1 = dq1
 /// }
 /// ```
-pub impl[A : Compare] Compare for Deque[A] with compare(self, other) {
+pub impl[A : Compare] Compare for Deque[A] with fn compare(self, other) {
   let len_self = self.length()
   let len_other = other.length()
   let cmp = len_self.compare(len_other)

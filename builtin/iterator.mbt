@@ -91,7 +91,7 @@ pub fn[X] Iter::just_run(self : Iter[X], f : (X) -> IterResult) -> Unit {
 pub impl[X : Show] Show for Iter[X]
 
 ///|
-pub impl[X : Show] Show for Iter[X] with output(self, logger) {
+pub impl[X : Show] Show for Iter[X] with fn output(self, logger) {
   logger.write_string("[")
   if self.next() is Some(x) {
     logger.write_object(x)
@@ -104,7 +104,7 @@ pub impl[X : Show] Show for Iter[X] with output(self, logger) {
 }
 
 ///|
-pub impl[X : ToJson] ToJson for Iter[X] with to_json(self) {
+pub impl[X : ToJson] ToJson for Iter[X] with fn to_json(self) {
   [
     for x in self => x
   ]
@@ -799,7 +799,7 @@ pub fn[X, Y] Iter::zip(self : Iter[X], other : Iter[Y]) -> Iter[(X, Y)] {
 }
 
 ///|
-pub impl[T] Add for Iter[T] with add(self, other) {
+pub impl[T] Add for Iter[T] with fn add(self, other) {
   self.concat(other)
 }
 
@@ -1074,7 +1074,7 @@ pub impl[X : Show, Y : Show] Show for Iter2[X, Y]
 
 ///|
 #warnings("-deprecated")
-pub impl[X : Show, Y : Show] Show for Iter2[X, Y] with output(self, logger) {
+pub impl[X : Show, Y : Show] Show for Iter2[X, Y] with fn output(self, logger) {
   self.0.output(logger)
 }
 

@@ -15,65 +15,65 @@
 ///|
 /// types implementing this trait can use the `+` operator
 pub(open) trait Add {
-  add(Self, Self) -> Self
+  fn add(Self, Self) -> Self
 }
 
 ///|
 /// types implementing this trait can use the `-` operator
 pub(open) trait Sub {
-  sub(Self, Self) -> Self
+  fn sub(Self, Self) -> Self
 }
 
 ///|
 /// types implementing this trait can use the `*` operator
 pub(open) trait Mul {
-  mul(Self, Self) -> Self
+  fn mul(Self, Self) -> Self
 }
 
 ///|
 /// types implementing this trait can use the `/` operator
 pub(open) trait Div {
-  div(Self, Self) -> Self
+  fn div(Self, Self) -> Self
 }
 
 ///|
 /// types implementing this trait can use the unary `-` operator
 pub(open) trait Neg {
-  neg(Self) -> Self
+  fn neg(Self) -> Self
 }
 
 ///|
 /// types implementing this trait can use the `%` operator
 pub(open) trait Mod {
-  mod(Self, Self) -> Self
+  fn mod(Self, Self) -> Self
 }
 
 ///|
 /// types implementing this trait can use the `&` operator
 pub(open) trait BitAnd {
-  land(Self, Self) -> Self
+  fn land(Self, Self) -> Self
 }
 
 ///|
 /// types implementing this trait can use the `|` operator
 pub(open) trait BitOr {
-  lor(Self, Self) -> Self
+  fn lor(Self, Self) -> Self
 }
 
 ///|
 /// types implementing this trait can use the `^` operator
 pub(open) trait BitXOr {
-  lxor(Self, Self) -> Self
+  fn lxor(Self, Self) -> Self
 }
 
 ///|
 /// types implementing this trait can use the `<<` operator
 pub(open) trait Shl {
-  shl(Self, Int) -> Self
+  fn shl(Self, Int) -> Self
 }
 
 ///|
 /// types implementing this trait can use the `>>` operator
 pub(open) trait Shr {
-  shr(Self, Int) -> Self
+  fn shr(Self, Int) -> Self
 }

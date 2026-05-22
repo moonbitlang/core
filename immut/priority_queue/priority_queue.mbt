@@ -296,7 +296,10 @@ pub fn[A] PriorityQueue::length(self : PriorityQueue[A]) -> Int {
 pub impl[A : Show + Compare] Show for PriorityQueue[A]
 
 ///|
-pub impl[A : Show + Compare] Show for PriorityQueue[A] with output(self, logger) {
+pub impl[A : Show + Compare] Show for PriorityQueue[A] with fn output(
+  self,
+  logger,
+) {
   logger.write_iter(
     self.iter(),
     prefix="@immut/priority_queue.from_array([",
@@ -307,18 +310,18 @@ pub impl[A : Show + Compare] Show for PriorityQueue[A] with output(self, logger)
 ///|
 pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for PriorityQueue[
   X,
-] with arbitrary(size, rs) {
+] with fn arbitrary(size, rs) {
   @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
 }
 
 ///|
-pub impl[A : Compare] Eq for PriorityQueue[A] with equal(self, other) {
+pub impl[A : Compare] Eq for PriorityQueue[A] with fn equal(self, other) {
   physical_equal(self, other) ||
   (self.length() == other.length() && self.to_array() == other.to_array())
 }
 
 ///|
-pub impl[A : Hash + Compare] Hash for PriorityQueue[A] with hash_combine(
+pub impl[A : Hash + Compare] Hash for PriorityQueue[A] with fn hash_combine(
   self,
   hasher,
 ) {
@@ -354,7 +357,7 @@ pub impl[A : Hash + Compare] Hash for PriorityQueue[A] with hash_combine(
 ///   inspect(pq1.compare(pq1), content="0") // pq1 = pq1
 /// }
 /// ```
-pub impl[A : Compare] Compare for PriorityQueue[A] with compare(self, other) {
+pub impl[A : Compare] Compare for PriorityQueue[A] with fn compare(self, other) {
   let len_cmp = self.length().compare(other.length())
   if len_cmp != 0 {
     return len_cmp

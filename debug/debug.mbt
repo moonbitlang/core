@@ -16,116 +16,116 @@
 /// Trait for types that can be converted to human-readable debugging info.
 pub(open) trait Debug {
   #as_free_fn
-  to_repr(Self) -> Repr
+  fn to_repr(Self) -> Repr
 }
 
 ///|
-pub impl Debug for Int with to_repr(self) {
+pub impl Debug for Int with fn to_repr(self) {
   Repr::integer(self.to_string())
 }
 
 ///|
-pub impl Debug for Int16 with to_repr(self) {
+pub impl Debug for Int16 with fn to_repr(self) {
   Repr::integer(self.to_string())
 }
 
 ///|
-pub impl Debug for Int64 with to_repr(self) {
+pub impl Debug for Int64 with fn to_repr(self) {
   Repr::integer(self.to_string())
 }
 
 ///|
-pub impl Debug for UInt16 with to_repr(self) {
+pub impl Debug for UInt16 with fn to_repr(self) {
   Repr::integer(self.to_string())
 }
 
 ///|
-pub impl Debug for UInt with to_repr(self) {
+pub impl Debug for UInt with fn to_repr(self) {
   Repr::integer(self.to_string())
 }
 
 ///|
-pub impl Debug for UInt64 with to_repr(self) {
+pub impl Debug for UInt64 with fn to_repr(self) {
   Repr::integer(self.to_string())
 }
 
 ///|
-pub impl Debug for Double with to_repr(self) {
+pub impl Debug for Double with fn to_repr(self) {
   Repr::double(self)
 }
 
 ///|
-pub impl Debug for Float with to_repr(self) {
+pub impl Debug for Float with fn to_repr(self) {
   Repr::float(self)
 }
 
 ///|
-pub impl Debug for Bool with to_repr(self) {
+pub impl Debug for Bool with fn to_repr(self) {
   Repr::bool(self)
 }
 
 ///|
-pub impl Debug for Byte with to_repr(self) {
+pub impl Debug for Byte with fn to_repr(self) {
   // Use hex to make byte sequences easier to read.
   Repr::literal("0x" + self.to_hex())
 }
 
 ///|
-pub impl Debug for Char with to_repr(self) {
+pub impl Debug for Char with fn to_repr(self) {
   Repr::char(self)
 }
 
 ///|
-pub impl Debug for String with to_repr(self) {
+pub impl Debug for String with fn to_repr(self) {
   Repr::string(self)
 }
 
 ///|
-pub impl Debug for StringView with to_repr(self) {
+pub impl Debug for StringView with fn to_repr(self) {
   Repr::opaque_("StringView", Repr::string(self.to_owned()))
 }
 
 ///|
-pub impl Debug for Bytes with to_repr(self) {
+pub impl Debug for Bytes with fn to_repr(self) {
   Repr::opaque_("Bytes", Repr::array(self.to_array().map(x => to_repr(x))))
 }
 
 ///|
-pub impl Debug for BytesView with to_repr(self) {
+pub impl Debug for BytesView with fn to_repr(self) {
   Repr::opaque_("BytesView", Repr::array(self.to_array().map(x => to_repr(x))))
 }
 
 ///|
-pub impl Debug for Unit with to_repr(_) {
+pub impl Debug for Unit with fn to_repr(_) {
   Repr::unit()
 }
 
 ///|
-pub impl[T : Debug] Debug for Array[T] with to_repr(self) {
+pub impl[T : Debug] Debug for Array[T] with fn to_repr(self) {
   Repr::array(self.map(x => to_repr(x)))
 }
 
 ///|
-pub impl[T : Debug] Debug for ArrayView[T] with to_repr(self) {
+pub impl[T : Debug] Debug for ArrayView[T] with fn to_repr(self) {
   Repr::opaque_("ArrayView", Repr::array(self.map(x => to_repr(x))))
 }
 
 ///|
-pub impl[T : Debug] Debug for FixedArray[T] with to_repr(self) {
+pub impl[T : Debug] Debug for FixedArray[T] with fn to_repr(self) {
   // `FixedArray` can be viewed as `ArrayView` via slicing.
   let view : ArrayView[T] = self
   Repr::opaque_("FixedArray", Repr::array(view.map(x => to_repr(x))))
 }
 
 ///|
-pub impl[T : Debug] Debug for ReadOnlyArray[T] with to_repr(self) {
+pub impl[T : Debug] Debug for ReadOnlyArray[T] with fn to_repr(self) {
   // `ReadOnlyArray` can be viewed as `ArrayView` via slicing.
   let view : ArrayView[T] = self
   Repr::opaque_("ReadOnlyArray", Repr::array(view.map(x => to_repr(x))))
 }
 
 ///|
-pub impl[T : Debug] Debug for T? with to_repr(self) {
+pub impl[T : Debug] Debug for T? with fn to_repr(self) {
   match self {
     None => Repr::ctor("None", [])
     Some(x) => Repr::ctor("Some", [(None, to_repr(x))])
@@ -133,7 +133,7 @@ pub impl[T : Debug] Debug for T? with to_repr(self) {
 }
 
 ///|
-pub impl[T : Debug, E : Debug] Debug for Result[T, E] with to_repr(self) {
+pub impl[T : Debug, E : Debug] Debug for Result[T, E] with fn to_repr(self) {
   match self {
     Ok(x) => Repr::ctor("Ok", [(None, to_repr(x))])
     Err(e) => Repr::ctor("Err", [(None, to_repr(e))])
@@ -141,32 +141,32 @@ pub impl[T : Debug, E : Debug] Debug for Result[T, E] with to_repr(self) {
 }
 
 ///|
-pub impl[A] Debug for Iter[A] with to_repr(_) {
+pub impl[A] Debug for Iter[A] with fn to_repr(_) {
   Repr::opaque_("Iter", Omitted)
 }
 
 ///|
-pub impl[A, B] Debug for Iter2[A, B] with to_repr(_) {
+pub impl[A, B] Debug for Iter2[A, B] with fn to_repr(_) {
   Repr::opaque_("Iter2", Omitted)
 }
 
 ///|
-pub impl[T : Debug] Debug for MutArrayView[T] with to_repr(self) {
+pub impl[T : Debug] Debug for MutArrayView[T] with fn to_repr(self) {
   Repr::opaque_("MutArrayView", Repr::array(self[:].map(x => to_repr(x))))
 }
 
 ///|
-pub impl Debug for StringBuilder with to_repr(self) {
+pub impl Debug for StringBuilder with fn to_repr(self) {
   Repr::string(self.to_string())
 }
 
 ///|
-pub impl[K : Debug, V : Debug] Debug for Map[K, V] with to_repr(self) {
+pub impl[K : Debug, V : Debug] Debug for Map[K, V] with fn to_repr(self) {
   Repr::map([ for k, v in self => (to_repr(k), to_repr(v)) ])
 }
 
 ///|
-pub impl Debug for Json with to_repr(self) {
+pub impl Debug for Json with fn to_repr(self) {
   match self {
     Null => Repr::ctor("Null", [])
     True => Repr::ctor("True", [])
@@ -187,7 +187,7 @@ pub impl Debug for Json with to_repr(self) {
 }
 
 ///|
-pub impl Debug for SourceLoc with to_repr(self) {
+pub impl Debug for SourceLoc with fn to_repr(self) {
   Repr::opaque_("SourceLoc", Repr::string(self.to_string()))
 }
 
@@ -324,21 +324,21 @@ test "dump" {
 }
 
 ///|
-pub impl Debug for InspectError with to_repr(self) {
+pub impl Debug for InspectError with fn to_repr(self) {
   match self {
     InspectError(msg) => Repr::ctor("InspectError", [(None, Repr::string(msg))])
   }
 }
 
 ///|
-pub impl Debug for Failure with to_repr(self) {
+pub impl Debug for Failure with fn to_repr(self) {
   match self {
     Failure(msg) => Repr::ctor("Failure", [(None, Repr::string(msg))])
   }
 }
 
 ///|
-pub impl Debug for SnapshotError with to_repr(self) {
+pub impl Debug for SnapshotError with fn to_repr(self) {
   match self {
     SnapshotError(msg) =>
       Repr::ctor("SnapshotError", [(None, Repr::string(msg))])
@@ -347,26 +347,26 @@ pub impl Debug for SnapshotError with to_repr(self) {
 
 ///|
 #warnings("-deprecated")
-pub impl Debug for BenchError with to_repr(self) {
+pub impl Debug for BenchError with fn to_repr(self) {
   match self {
     BenchError(msg) => Repr::ctor("BenchError", [(None, Repr::string(msg))])
   }
 }
 
 ///|
-pub impl Debug for ArgsLoc with to_repr(self) {
+pub impl Debug for ArgsLoc with fn to_repr(self) {
   let ArgsLoc(arr) = self
   Repr::opaque_("ArgsLoc", to_repr(arr))
 }
 
 ///|
-pub impl Debug for Hasher with to_repr(_) {
+pub impl Debug for Hasher with fn to_repr(_) {
   Repr::opaque_("Hasher", Repr::omitted())
 }
 
 ///|
 #warnings("-deprecated")
-pub impl Debug for IterResult with to_repr(self) {
+pub impl Debug for IterResult with fn to_repr(self) {
   match self {
     IterEnd => Repr::ctor("IterEnd", [])
     IterContinue => Repr::ctor("IterContinue", [])
@@ -374,7 +374,7 @@ pub impl Debug for IterResult with to_repr(self) {
 }
 
 ///|
-pub impl[T] Debug for UninitializedArray[T] with to_repr(_) {
+pub impl[T] Debug for UninitializedArray[T] with fn to_repr(_) {
   Repr::opaque_("UninitializedArray", Repr::omitted())
 }
 

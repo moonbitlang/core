@@ -49,13 +49,13 @@ pub fn[A] Queue::Queue(arr : ArrayView[A]) -> Queue[A] {
 pub impl[A : Show] Show for Queue[A]
 
 ///|
-pub impl[A : Show] Show for Queue[A] with output(self, logger) {
+pub impl[A : Show] Show for Queue[A] with fn output(self, logger) {
   logger.write_iter(self.iter(), prefix="@queue.from_array([", suffix="])")
 }
 
 ///|
 /// Tests if two queues are equal.
-impl[A : Eq] Eq for Queue[A] with equal(self, other) {
+impl[A : Eq] Eq for Queue[A] with fn equal(self, other) {
   self.length == other.length && self.first == other.first
 }
 
@@ -464,7 +464,7 @@ test "cell_equal" {
 }
 
 ///|
-pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Queue[X] with arbitrary(
+pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Queue[X] with fn arbitrary(
   size,
   rs,
 ) {

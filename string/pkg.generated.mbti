@@ -55,7 +55,7 @@ pub using @builtin {trait ToStringView}
 // Traits
 pub(open) trait FromStr {
   #as_free_fn
-  from_str(StringView) -> Self raise
+  fn from_str(StringView) -> Self raise
 }
 pub impl FromStr for Bool
 pub impl FromStr for Int

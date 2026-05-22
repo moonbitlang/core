@@ -36,7 +36,7 @@ pub fn CoverageCounter::incr(self : CoverageCounter, idx : Int) -> Unit {
 }
 
 ///|
-pub impl Show for CoverageCounter with output(self, logger) {
+pub impl Show for CoverageCounter with fn output(self, logger) {
   let CoverageCounter(self) = self
   logger.write_char('[')
   for i, v in self {
@@ -73,20 +73,23 @@ pub fn track(name : String, counter : CoverageCounter) -> Unit {
 
 ///|
 priv trait Output {
-  output(Self, String) -> Unit
+  fn output(Self, String) -> Unit
 }
 
 ///|
 priv struct StringBuffer(Array[String])
 
 ///|
-impl Output for StringBuffer with output(self : StringBuffer, content : String) -> Unit {
+impl Output for StringBuffer with fn output(
+  self : StringBuffer,
+  content : String,
+) -> Unit {
   let StringBuffer(self) = self
   self.push(content)
 }
 
 ///|
-impl Output for StringBuilder with output(self, content) -> Unit {
+impl Output for StringBuilder with fn output(self, content) -> Unit {
   self.write_string(content)
 }
 

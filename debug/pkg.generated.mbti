@@ -32,7 +32,7 @@ pub impl Debug for Repr
 // Traits
 pub(open) trait Debug {
   #as_free_fn
-  to_repr(Self) -> Repr
+  fn to_repr(Self) -> Repr
 }
 pub impl Debug for Unit
 pub impl Debug for Bool

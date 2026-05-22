@@ -77,7 +77,7 @@ pub impl ToJson for Json
 
 // Traits
 pub(open) trait FromJson {
-  from_json(Json, JsonPath) -> Self raise JsonDecodeError
+  fn from_json(Json, JsonPath) -> Self raise JsonDecodeError
 }
 pub impl FromJson for Unit
 pub impl FromJson for Bool

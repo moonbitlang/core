@@ -615,7 +615,7 @@ pub fn BytesView::to_double_le(self : BytesView) -> Double {
 }
 
 ///|
-pub impl Show for BytesView with output(self, logger) {
+pub impl Show for BytesView with fn output(self, logger) {
   logger.write_string("b\"")
   for byte in self {
     if byte is (b' '..=b'~') && byte != b'"' && byte != b'\\' {
@@ -629,7 +629,7 @@ pub impl Show for BytesView with output(self, logger) {
 }
 
 ///|
-pub impl Show for Bytes with output(self, logger) {
+pub impl Show for Bytes with fn output(self, logger) {
   BytesView::output(self, logger)
 }
 
@@ -653,7 +653,7 @@ pub impl Show for Bytes with output(self, logger) {
 ///   inspect(bytes[0:4] == bytes[3:6], content="false")
 /// }
 /// ```
-pub impl Eq for BytesView with equal(self, other) -> Bool {
+pub impl Eq for BytesView with fn equal(self, other) -> Bool {
   let len = self.length()
   guard len == other.length() else { return false }
   self
@@ -713,7 +713,7 @@ pub fn BytesView::equal_to_bytes(self : BytesView, other : Bytes) -> Bool {
 ///   inspect(bytes[1:5].compare(bytes[2:5]), content="1") // bcab > cab
 /// }
 /// ```
-pub impl Compare for BytesView with compare(self, other) -> Int {
+pub impl Compare for BytesView with fn compare(self, other) -> Int {
   let self_len = self.length()
   let other_len = other.length()
   let cmp = self_len.compare(other_len)
@@ -801,7 +801,7 @@ pub fn BytesView::to_owned(self : BytesView) -> Bytes {
 }
 
 ///|
-pub impl ToJson for BytesView with to_json(self) -> Json {
+pub impl ToJson for BytesView with fn to_json(self) -> Json {
   let sb = StringBuilder()
   for byte in self {
     if byte is (b' '..=b'~') && byte != b'"' && byte != b'\\' {
@@ -819,6 +819,6 @@ pub impl ToJson for BytesView with to_json(self) -> Json {
 /// The representation is picked for easier debugging.
 /// Printable ASCII characters (from space to tilde, excluding '"' and '\') are output as-is.
 /// All other bytes are represented as \xHH, where HH is the two-digit hexadecimal value of the byte.
-pub impl ToJson for Bytes with to_json(self : Bytes) -> Json {
+pub impl ToJson for Bytes with fn to_json(self : Bytes) -> Json {
   BytesView::to_json(self)
 }

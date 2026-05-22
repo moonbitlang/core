@@ -35,12 +35,12 @@ priv enum Direction {
 /// `step_one()` is the natural unit step for the type (`1` for ints,
 /// `1.0` for floats, `1N` for `BigInt`, etc.).
 trait Step: Add + Compare {
-  direction(Self) -> Int
-  step_one() -> Self
+  fn direction(Self) -> Int
+  fn step_one() -> Self
 }
 
 ///|
-pub impl Step for Int with direction(self) {
+pub impl Step for Int with fn direction(self) {
   if self > 0 {
     1
   } else if self < 0 {
@@ -51,12 +51,12 @@ pub impl Step for Int with direction(self) {
 }
 
 ///|
-pub impl Step for Int with step_one() {
+pub impl Step for Int with fn step_one() {
   1
 }
 
 ///|
-pub impl Step for Int64 with direction(self) {
+pub impl Step for Int64 with fn direction(self) {
   if self > 0L {
     1
   } else if self < 0L {
@@ -67,12 +67,12 @@ pub impl Step for Int64 with direction(self) {
 }
 
 ///|
-pub impl Step for Int64 with step_one() {
+pub impl Step for Int64 with fn step_one() {
   1L
 }
 
 ///|
-pub impl Step for UInt with direction(self) {
+pub impl Step for UInt with fn direction(self) {
   if self > 0U {
     1
   } else {
@@ -81,12 +81,12 @@ pub impl Step for UInt with direction(self) {
 }
 
 ///|
-pub impl Step for UInt with step_one() {
+pub impl Step for UInt with fn step_one() {
   1U
 }
 
 ///|
-pub impl Step for UInt64 with direction(self) {
+pub impl Step for UInt64 with fn direction(self) {
   if self > 0UL {
     1
   } else {
@@ -95,12 +95,12 @@ pub impl Step for UInt64 with direction(self) {
 }
 
 ///|
-pub impl Step for UInt64 with step_one() {
+pub impl Step for UInt64 with fn step_one() {
   1UL
 }
 
 ///|
-pub impl Step for Float with direction(self) {
+pub impl Step for Float with fn direction(self) {
   if self > (0.0 : Float) {
     1
   } else if self < (0.0 : Float) {
@@ -111,12 +111,12 @@ pub impl Step for Float with direction(self) {
 }
 
 ///|
-pub impl Step for Float with step_one() {
+pub impl Step for Float with fn step_one() {
   (1.0 : Float)
 }
 
 ///|
-pub impl Step for Double with direction(self) {
+pub impl Step for Double with fn direction(self) {
   if self > 0.0 {
     1
   } else if self < 0.0 {
@@ -127,12 +127,12 @@ pub impl Step for Double with direction(self) {
 }
 
 ///|
-pub impl Step for Double with step_one() {
+pub impl Step for Double with fn step_one() {
   1.0
 }
 
 ///|
-pub impl Step for Int16 with direction(self) {
+pub impl Step for Int16 with fn direction(self) {
   if self > (0 : Int16) {
     1
   } else if self < (0 : Int16) {
@@ -143,12 +143,12 @@ pub impl Step for Int16 with direction(self) {
 }
 
 ///|
-pub impl Step for Int16 with step_one() {
+pub impl Step for Int16 with fn step_one() {
   (1 : Int16)
 }
 
 ///|
-pub impl Step for UInt16 with direction(self) {
+pub impl Step for UInt16 with fn direction(self) {
   if self > (0 : UInt16) {
     1
   } else {
@@ -157,12 +157,12 @@ pub impl Step for UInt16 with direction(self) {
 }
 
 ///|
-pub impl Step for UInt16 with step_one() {
+pub impl Step for UInt16 with fn step_one() {
   (1 : UInt16)
 }
 
 ///|
-pub impl Step for Byte with direction(self) {
+pub impl Step for Byte with fn direction(self) {
   if self > (0 : Byte) {
     1
   } else {
@@ -171,12 +171,12 @@ pub impl Step for Byte with direction(self) {
 }
 
 ///|
-pub impl Step for Byte with step_one() {
+pub impl Step for Byte with fn step_one() {
   (1 : Byte)
 }
 
 ///|
-pub impl Step for @bigint.BigInt with direction(self) {
+pub impl Step for @bigint.BigInt with fn direction(self) {
   if self > 0N {
     1
   } else if self < 0N {
@@ -187,7 +187,7 @@ pub impl Step for @bigint.BigInt with direction(self) {
 }
 
 ///|
-pub impl Step for @bigint.BigInt with step_one() {
+pub impl Step for @bigint.BigInt with fn step_one() {
   1N
 }
 

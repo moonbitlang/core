@@ -69,7 +69,7 @@ pub enum Status {
 }
 
 ///|
-pub impl Eq for State with equal(self, other) {
+pub impl Eq for State with fn equal(self, other) {
   self.hash == other.hash &&
   self.slot == other.slot &&
   self.cat == other.cat &&
@@ -77,7 +77,7 @@ pub impl Eq for State with equal(self, other) {
 }
 
 ///|
-pub impl Hash for State with hash_combine(self, hasher) {
+pub impl Hash for State with fn hash_combine(self, hasher) {
   hasher.combine(self.hash)
 }
 

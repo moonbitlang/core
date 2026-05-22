@@ -22,7 +22,7 @@ pub(all) suberror JsonDecodeError {
 ///|
 /// Trait for types that can be converted from `Json`
 pub(open) trait FromJson {
-  from_json(Json, JsonPath) -> Self raise JsonDecodeError
+  fn from_json(Json, JsonPath) -> Self raise JsonDecodeError
 }
 
 ///|
@@ -40,7 +40,7 @@ fn[T] decode_error(path : JsonPath, msg : String) -> T raise JsonDecodeError {
 }
 
 ///|
-pub impl FromJson for Bool with from_json(json, path) {
+pub impl FromJson for Bool with fn from_json(json, path) {
   match json {
     true => true
     false => false
@@ -49,7 +49,7 @@ pub impl FromJson for Bool with from_json(json, path) {
 }
 
 ///|
-pub impl FromJson for Int with from_json(json, path) {
+pub impl FromJson for Int with fn from_json(json, path) {
   guard json is Number(n, ..) &&
     n != @double.infinity &&
     n != @double.neg_infinity else {
@@ -67,7 +67,7 @@ pub impl FromJson for Int with from_json(json, path) {
 ///|
 
 ///|
-pub impl FromJson for Int64 with from_json(json, path) {
+pub impl FromJson for Int64 with fn from_json(json, path) {
   guard json is String(str) else {
     decode_error(
       path, "Int64::from_json: expected number in string representation",
@@ -81,7 +81,7 @@ pub impl FromJson for Int64 with from_json(json, path) {
 }
 
 ///|
-pub impl FromJson for UInt with from_json(json, path) {
+pub impl FromJson for UInt with fn from_json(json, path) {
   guard json is Number(n, ..) &&
     n != @double.infinity &&
     n != @double.neg_infinity else {
@@ -98,7 +98,7 @@ pub impl FromJson for UInt with from_json(json, path) {
 ///|
 
 ///|
-pub impl FromJson for UInt64 with from_json(json, path) {
+pub impl FromJson for UInt64 with fn from_json(json, path) {
   guard json is String(str) else {
     decode_error(
       path, "UInt64::from_json: expected number in string representation",
@@ -112,7 +112,7 @@ pub impl FromJson for UInt64 with from_json(json, path) {
 }
 
 ///|
-pub impl FromJson for Double with from_json(json, path) {
+pub impl FromJson for Double with fn from_json(json, path) {
   match json {
     String("NaN") => @double.not_a_number
     String("Infinity") => @double.infinity
@@ -123,7 +123,7 @@ pub impl FromJson for Double with from_json(json, path) {
 }
 
 ///|
-pub impl FromJson for Float with from_json(json, path) {
+pub impl FromJson for Float with fn from_json(json, path) {
   match json {
     String("NaN") => @float.not_a_number
     String("Infinity") => @float.infinity
@@ -135,7 +135,7 @@ pub impl FromJson for Float with from_json(json, path) {
 }
 
 ///|
-pub impl FromJson for String with from_json(json, path) {
+pub impl FromJson for String with fn from_json(json, path) {
   guard json is String(a) else {
     decode_error(path, "String::from_json: expected string")
   }
@@ -143,7 +143,7 @@ pub impl FromJson for String with from_json(json, path) {
 }
 
 ///|
-pub impl FromJson for StringView with from_json(json, path) {
+pub impl FromJson for StringView with fn from_json(json, path) {
   guard json is String(a) else {
     decode_error(path, "View::from_json: expected string")
   }
@@ -151,7 +151,7 @@ pub impl FromJson for StringView with from_json(json, path) {
 }
 
 ///|
-pub impl FromJson for Char with from_json(json, path) {
+pub impl FromJson for Char with fn from_json(json, path) {
   guard json is String(a) else {
     decode_error(path, "Char::from_json: expected string")
   }
@@ -173,7 +173,7 @@ pub impl FromJson for Char with from_json(json, path) {
 }
 
 ///|
-pub impl[X : FromJson] FromJson for Array[X] with from_json(json, path) {
+pub impl[X : FromJson] FromJson for Array[X] with fn from_json(json, path) {
   guard json is Array(a) else {
     decode_error(path, "Array::from_json: expected array")
   }
@@ -185,7 +185,7 @@ pub impl[X : FromJson] FromJson for Array[X] with from_json(json, path) {
 }
 
 ///|
-pub impl[X : FromJson] FromJson for ArrayView[X] with from_json(json, path) {
+pub impl[X : FromJson] FromJson for ArrayView[X] with fn from_json(json, path) {
   guard json is Array(a) else {
     decode_error(path, "ArrayView::from_json: expected array")
   }
@@ -197,7 +197,7 @@ pub impl[X : FromJson] FromJson for ArrayView[X] with from_json(json, path) {
 }
 
 ///|
-pub impl[X : FromJson] FromJson for FixedArray[X] with from_json(json, path) {
+pub impl[X : FromJson] FromJson for FixedArray[X] with fn from_json(json, path) {
   guard json is Array(a) else {
     decode_error(path, "FixedArray::from_json: expected array")
   }
@@ -218,7 +218,7 @@ pub impl[X : FromJson] FromJson for FixedArray[X] with from_json(json, path) {
 }
 
 ///|
-pub impl[V : FromJson] FromJson for Map[String, V] with from_json(json, path) {
+pub impl[V : FromJson] FromJson for Map[String, V] with fn from_json(json, path) {
   // Note in theory, we can make it more general like
   // Map[K : FromString, V : FromJson]
   // but currently we don't have FromString 
@@ -238,7 +238,7 @@ pub impl[V : FromJson] FromJson for Map[String, V] with from_json(json, path) {
 }
 
 ///|
-pub impl[T : FromJson] FromJson for T? with from_json(json, path) {
+pub impl[T : FromJson] FromJson for T? with fn from_json(json, path) {
   match json {
     Null => None
     Array([value]) => Some(FromJson::from_json(value, path.add_index(0)))
@@ -247,7 +247,7 @@ pub impl[T : FromJson] FromJson for T? with from_json(json, path) {
 }
 
 ///|
-pub impl[Ok : FromJson, Err : FromJson] FromJson for Result[Ok, Err] with from_json(
+pub impl[Ok : FromJson, Err : FromJson] FromJson for Result[Ok, Err] with fn from_json(
   json,
   path,
 ) {
@@ -268,14 +268,14 @@ pub impl[Ok : FromJson, Err : FromJson] FromJson for Result[Ok, Err] with from_j
 }
 
 ///|
-pub impl FromJson for Unit with from_json(json, path) {
+pub impl FromJson for Unit with fn from_json(json, path) {
   guard json is Null else {
     decode_error(path, "Unit::from_json: expected null")
   }
 }
 
 ///|
-pub impl FromJson for Json with from_json(json, _path) {
+pub impl FromJson for Json with fn from_json(json, _path) {
   json
 }
 
@@ -288,7 +288,7 @@ pub impl FromJson for Json with from_json(json, _path) {
 /// - Any invalid escape sequence or character will result in a `JsonDecodeError`.
 /// 
 /// Example valid input: `"hello\\x20world"` (where `\\x20` is a space character).
-pub impl FromJson for Bytes with from_json(json, path) {
+pub impl FromJson for Bytes with fn from_json(json, path) {
   guard json is String(a) else {
     decode_error(path, "Bytes::from_json: expected string")
   }

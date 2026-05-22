@@ -16,7 +16,7 @@
 using @debug {trait Debug, type Repr}
 
 ///|
-pub impl[K : Debug, V : Debug] Debug for HashMap[K, V] with to_repr(self) {
+pub impl[K : Debug, V : Debug] Debug for HashMap[K, V] with fn to_repr(self) {
   Repr::opaque_(
     "HashMap",
     Repr::map([ for k, v in self => (@debug.to_repr(k), @debug.to_repr(v)) ]),

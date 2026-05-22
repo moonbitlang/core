@@ -356,7 +356,7 @@ pub fn FixedArray::set_utf16be_char(
 ///   inspect(bytes1 == bytes3, content="false")
 /// }
 /// ```
-pub impl Eq for Bytes with equal(self : Bytes, other : Bytes) -> Bool {
+pub impl Eq for Bytes with fn equal(self : Bytes, other : Bytes) -> Bool {
   if self.length() != other.length() {
     false
   } else {
@@ -402,7 +402,7 @@ pub impl Eq for Bytes with equal(self : Bytes, other : Bytes) -> Bool {
 ///   inspect(b.compare(a), content="1") // longer sequence is greater
 /// }
 /// ```
-pub impl Compare for Bytes with compare(self, other) {
+pub impl Compare for Bytes with fn compare(self, other) {
   let self_len = self.length()
   let other_len = other.length()
   let cmp = self_len.compare(other_len)
@@ -750,7 +750,7 @@ pub fn Bytes::iter2(self : Bytes) -> Iter2[Int, Byte] {
 ///   inspect(bytes.length(), content="0")
 /// }
 /// ```
-pub impl Default for Bytes with default() {
+pub impl Default for Bytes with fn default() {
   b""
 }
 
@@ -812,7 +812,7 @@ fn unsafe_to_fixedarray(array : UninitializedArray[Byte]) -> FixedArray[Byte] = 
 /// * `self` : The first bytes sequence.
 /// * `other` : The second bytes sequence.
 /// TODO: marked as intrinsic, inline if it is constant
-pub impl Add for Bytes with add(self : Bytes, other : Bytes) -> Bytes {
+pub impl Add for Bytes with fn add(self : Bytes, other : Bytes) -> Bytes {
   let len_self = self.length()
   let len_other = other.length()
   let rv : FixedArray[Byte] = FixedArray::make(len_self + len_other, 0)
@@ -822,7 +822,7 @@ pub impl Add for Bytes with add(self : Bytes, other : Bytes) -> Bytes {
 }
 
 ///|
-pub impl Hash for Bytes with hash_combine(self, hasher) {
+pub impl Hash for Bytes with fn hash_combine(self, hasher) {
   hasher.combine(self[:])
 }
 

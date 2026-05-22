@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-pub impl[X : Eq] Eq for X? with equal(self, other) {
+pub impl[X : Eq] Eq for X? with fn equal(self, other) {
   match (self, other) {
     (None, None) => true
     (Some(x), Some(y)) => x == y
@@ -78,7 +78,7 @@ pub fn[T : Default] Option::unwrap_or_default(self : T?) -> T {
 }
 
 ///|
-pub impl[X : Compare] Compare for X? with compare(self, other) {
+pub impl[X : Compare] Compare for X? with fn compare(self, other) {
   match (self, other) {
     (Some(x), Some(y)) => x.compare(y)
     (Some(_), None) => 1
@@ -102,7 +102,7 @@ pub fn[T, Err : Error] Option::unwrap_or_error(
 
 ///|
 /// `None`
-pub impl[X] Default for X? with default() {
+pub impl[X] Default for X? with fn default() {
   None
 }
 

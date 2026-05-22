@@ -57,12 +57,12 @@ struct Wrapper {
 }
 
 ///|
-impl Eq for Wrapper with equal(self, other) {
+impl Eq for Wrapper with fn equal(self, other) {
   self.value == other.value
 }
 
 ///|
-impl Logger for TestLogger with write_view(self, value) {
+impl Logger for TestLogger with fn write_view(self, value) {
   self.output = self.output + value.to_owned()
 }
 

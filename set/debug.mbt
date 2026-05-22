@@ -16,7 +16,7 @@
 using @debug {trait Debug, type Repr}
 
 ///|
-pub impl[K : Debug] Debug for Set[K] with to_repr(self) {
+pub impl[K : Debug] Debug for Set[K] with fn to_repr(self) {
   Repr::opaque_("Set", Repr::array(self.to_array().map(x => @debug.to_repr(x))))
 }
 

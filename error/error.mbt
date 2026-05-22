@@ -16,7 +16,7 @@
 fn Error::to_string(self : Error) -> String = "%error.to_string"
 
 ///|
-pub impl Show for Error with to_string(self) {
+pub impl Show for Error with fn to_string(self) {
   Error::to_string(self)
 }
 
@@ -24,6 +24,6 @@ pub impl Show for Error with to_string(self) {
 fn Error::to_json(self : Error) -> Json = "%error.to_json"
 
 ///|
-pub impl ToJson for Error with to_json(self) {
+pub impl ToJson for Error with fn to_json(self) {
   self.to_json()
 }

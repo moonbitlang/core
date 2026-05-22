@@ -15,12 +15,12 @@
 ///|
 /// Trait for types whose elements can test for equality
 pub(open) trait Eq {
-  equal(Self, Self) -> Bool
-  not_equal(Self, Self) -> Bool = _
+  fn equal(Self, Self) -> Bool
+  fn not_equal(Self, Self) -> Bool = _
 }
 
 ///|
-impl Eq with not_equal(x, y) {
+impl Eq with fn not_equal(x, y) {
   !(x == y)
 }
 
@@ -32,30 +32,30 @@ impl Eq with not_equal(x, y) {
 /// - negative, if the first argument is smaller
 /// - positive, if the first argument is greater
 pub(open) trait Compare: Eq {
-  compare(Self, Self) -> Int
-  op_lt(Self, Self) -> Bool = _
-  op_gt(Self, Self) -> Bool = _
-  op_le(Self, Self) -> Bool = _
-  op_ge(Self, Self) -> Bool = _
+  fn compare(Self, Self) -> Int
+  fn op_lt(Self, Self) -> Bool = _
+  fn op_gt(Self, Self) -> Bool = _
+  fn op_le(Self, Self) -> Bool = _
+  fn op_ge(Self, Self) -> Bool = _
 }
 
 ///|
-impl Compare with op_lt(x, y) {
+impl Compare with fn op_lt(x, y) {
   x.compare(y).is_neg()
 }
 
 ///|
-impl Compare with op_gt(x, y) {
+impl Compare with fn op_gt(x, y) {
   x.compare(y).is_pos()
 }
 
 ///|
-impl Compare with op_le(x, y) {
+impl Compare with fn op_le(x, y) {
   x.compare(y).is_non_pos()
 }
 
 ///|
-impl Compare with op_ge(x, y) {
+impl Compare with fn op_ge(x, y) {
   x.compare(y).is_non_neg()
 }
 
@@ -71,12 +71,12 @@ impl Compare with op_ge(x, y) {
 /// The `hash` method does not need to be implemented if `hash_combine` is implemented,
 /// When implemented separately, `hash` **does not need** to produce a hash value that is consistent with `hash_combine`.
 pub(open) trait Hash {
-  hash_combine(Self, Hasher) -> Unit
-  hash(Self) -> Int = _
+  fn hash_combine(Self, Hasher) -> Unit
+  fn hash(Self) -> Int = _
 }
 
 ///|
-impl Hash with hash(self) {
+impl Hash with fn hash(self) {
   let h = Hasher::new()
   h.combine(self)
   h.finalize()
@@ -85,7 +85,7 @@ impl Hash with hash(self) {
 ///|
 /// Trait for types with a default value
 pub(open) trait Default {
-  default() -> Self
+  fn default() -> Self
 }
 
 ///|
@@ -95,44 +95,44 @@ pub(open) trait Default {
 /// complete `String` first.
 pub(open) trait Logger {
   /// Writes a string to the logger.
-  write_string(Self, String) -> Unit = _
+  fn write_string(Self, String) -> Unit = _
   /// Writes a substring of the given string to the logger.
   #deprecated("use `write_view` instead", skip_current_package=true)
-  write_substring(Self, String, Int, Int) -> Unit = _
+  fn write_substring(Self, String, Int, Int) -> Unit = _
   /// Writes a string view to the logger.
-  write_view(Self, StringView) -> Unit = _
+  fn write_view(Self, StringView) -> Unit = _
   /// Writes a character to the logger.
-  write_char(Self, Char) -> Unit = _
-  write(Self, &Show) -> Unit = _
+  fn write_char(Self, Char) -> Unit = _
+  fn write(Self, &Show) -> Unit = _
 }
 
 ///|
-impl Logger with write(self, show) {
+impl Logger with fn write(self, show) {
   show.output(self)
 }
 
 ///|
 /// Writes a substring of the given string to the logger.
-impl Logger with write_substring(self, value, start, len) {
+impl Logger with fn write_substring(self, value, start, len) {
   self.write_view(value[start:start + len])
 }
 
 ///|
 /// Writes a string to the logger.
-impl Logger with write_string(self, value) {
+impl Logger with fn write_string(self, value) {
   self.write_view(value)
 }
 
 ///|
 /// Writes a string view to the logger.
 #deprecated("replace `impl write_substring` with `impl write_view`")
-impl Logger with write_view(self, value) {
+impl Logger with fn write_view(self, value) {
   self.write_substring(value.data(), value.start_offset(), value.length())
 }
 
 ///|
 /// Writes a character to the logger.
-impl Logger with write_char(self, value) {
+impl Logger with fn write_char(self, value) {
   self.write_string([value])
 }
 
@@ -142,21 +142,21 @@ impl Logger with write_char(self, value) {
 pub(open) trait Show {
   // `output` writes a string representation of `self` to a logger.
   // The behaviors of output and to_string should be the same.
-  output(Self, &Logger) -> Unit = _
+  fn output(Self, &Logger) -> Unit = _
   // `to_string` should be used by end users of `Show`,
   // for printing, interpolation, etc. only, and should not be used for composition.
-  to_string(Self) -> String = _
+  fn to_string(Self) -> String = _
 }
 
 ///|
 /// Default implementation for `Show::output`, uses `Show::to_string`.
-impl Show with output(self, logger) {
+impl Show with fn output(self, logger) {
   logger.write_string(self.to_string())
 }
 
 ///|
 /// Default implementation for `Show::to_string`, uses a `StringBuilder`
-impl Show with to_string(self) {
+impl Show with fn to_string(self) {
   let logger = StringBuilder()
   self.output(logger)
   logger.to_string()

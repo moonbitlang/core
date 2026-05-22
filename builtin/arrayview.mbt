@@ -1560,12 +1560,12 @@ pub fn[T] ArrayView::rev(self : ArrayView[T]) -> Array[T] {
 pub impl[X : Show] Show for ArrayView[X]
 
 ///|
-pub impl[X : Show] Show for ArrayView[X] with output(self, logger) {
+pub impl[X : Show] Show for ArrayView[X] with fn output(self, logger) {
   logger.write_iter(self.iter())
 }
 
 ///|
-pub impl[T : Eq] Eq for ArrayView[T] with equal(self, other) -> Bool {
+pub impl[T : Eq] Eq for ArrayView[T] with fn equal(self, other) -> Bool {
   if self.length() != other.length() {
     return false
   }
@@ -1579,7 +1579,7 @@ pub impl[T : Eq] Eq for ArrayView[T] with equal(self, other) -> Bool {
 }
 
 ///|
-pub impl[T : Compare] Compare for ArrayView[T] with compare(self, other) -> Int {
+pub impl[T : Compare] Compare for ArrayView[T] with fn compare(self, other) -> Int {
   let len_self = self.length()
   let len_other = other.length()
   let cmp = len_self.compare(len_other)
@@ -1593,7 +1593,7 @@ pub impl[T : Compare] Compare for ArrayView[T] with compare(self, other) -> Int 
 }
 
 ///|
-pub impl[A : Hash] Hash for ArrayView[A] with hash_combine(self, hasher) {
+pub impl[A : Hash] Hash for ArrayView[A] with fn hash_combine(self, hasher) {
   for e in self {
     hasher.combine(e)
   }
@@ -1622,7 +1622,7 @@ pub impl[A : Hash] Hash for ArrayView[A] with hash_combine(self, hasher) {
 ///   )
 /// }
 /// ```
-pub impl[T] Add for ArrayView[T] with add(self, other) {
+pub impl[T] Add for ArrayView[T] with fn add(self, other) {
   let len_self = self.length()
   let len_other = other.length()
   let result = Array::make_uninit(len_self + len_other)

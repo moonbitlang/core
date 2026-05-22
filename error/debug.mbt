@@ -19,7 +19,7 @@ using @debug {trait Debug, type Repr}
 fn error_to_repr(e : Error) -> Repr = "%error.to_repr"
 
 ///|
-pub impl Debug for Error with to_repr(self) {
+pub impl Debug for Error with fn to_repr(self) {
   error_to_repr(self)
 }
 

@@ -27,7 +27,7 @@ priv enum Node[A] {
 }
 
 ///|
-pub impl[A : ToJson + Compare] ToJson for PriorityQueue[A] with to_json(
+pub impl[A : ToJson + Compare] ToJson for PriorityQueue[A] with fn to_json(
   self : PriorityQueue[A],
 ) {
   [

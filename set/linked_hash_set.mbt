@@ -402,7 +402,7 @@ fn[K : Eq] Set::grow(self : Set[K]) -> Unit {
 pub impl[K : Show] Show for Set[K]
 
 ///|
-pub impl[K : Show] Show for Set[K] with output(self, logger) {
+pub impl[K : Show] Show for Set[K] with fn output(self, logger) {
   logger.write_string("{")
   for i = 0, curr = self.head {
     match (i, curr) {
@@ -511,7 +511,7 @@ pub fn[K] Set::to_array(self : Set[K]) -> Array[K] {
 }
 
 ///|
-pub impl[K : Hash + Eq] Eq for Set[K] with equal(self, other) {
+pub impl[K : Hash + Eq] Eq for Set[K] with fn equal(self, other) {
   guard self.size == other.size else { return false }
   for k in self {
     guard other.contains(k) else { return false }
@@ -534,7 +534,7 @@ pub fn[K : Hash + Eq] Set::from_iter(iter : Iter[K]) -> Set[K] {
 }
 
 ///|
-pub impl[K] Default for Set[K] with default() {
+pub impl[K] Default for Set[K] with fn default() {
   new_set(default_init_capacity)
 }
 
@@ -614,7 +614,7 @@ pub fn[K : Hash + Eq] Set::intersection(
 }
 
 ///|
-pub impl[X : ToJson] ToJson for Set[X] with to_json(self) {
+pub impl[X : ToJson] ToJson for Set[X] with fn to_json(self) {
   let res = Array::new(capacity=self.size)
   for v in self {
     res.push(v.to_json())
@@ -664,25 +664,25 @@ pub fn[K : Hash + Eq] Set::is_superset(self : Set[K], other : Set[K]) -> Bool {
 
 ///|
 /// Intersection of two hash sets.
-pub impl[K : Hash + Eq] BitAnd for Set[K] with land(self, other) {
+pub impl[K : Hash + Eq] BitAnd for Set[K] with fn land(self, other) {
   self.intersection(other)
 }
 
 ///|
 /// Union of two hash sets.
-pub impl[K : Hash + Eq] BitOr for Set[K] with lor(self, other) {
+pub impl[K : Hash + Eq] BitOr for Set[K] with fn lor(self, other) {
   self.union(other)
 }
 
 ///|
 /// Symmetric difference of two hash sets.
-pub impl[K : Hash + Eq] BitXOr for Set[K] with lxor(self, other) {
+pub impl[K : Hash + Eq] BitXOr for Set[K] with fn lxor(self, other) {
   self.symmetric_difference(other)
 }
 
 ///|
 /// Difference of two hash sets.
-pub impl[K : Hash + Eq] Sub for Set[K] with sub(self, other) {
+pub impl[K : Hash + Eq] Sub for Set[K] with fn sub(self, other) {
   self.difference(other)
 }
 

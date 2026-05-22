@@ -35,7 +35,7 @@
 ///   inspect(c * c, content="b'\\x01'") // 255 * 255 = 65025, truncated to 1
 /// }
 /// ```
-pub impl Mul for Byte with mul(self : Byte, that : Byte) -> Byte {
+pub impl Mul for Byte with fn mul(self : Byte, that : Byte) -> Byte {
   (self.to_int() * that.to_int()).to_byte()
 }
 
@@ -59,12 +59,12 @@ pub impl Mul for Byte with mul(self : Byte, that : Byte) -> Byte {
 ///   inspect(a / b, content="b'\\x55'") // 255 / 3 = 85 (0x55)
 /// }
 /// ```
-pub impl Div for Byte with div(self : Byte, that : Byte) -> Byte {
+pub impl Div for Byte with fn div(self : Byte, that : Byte) -> Byte {
   (self.to_int() / that.to_int()).to_byte()
 }
 
 ///|
-pub impl Mod for Byte with mod(self : Byte, that : Byte) -> Byte {
+pub impl Mod for Byte with fn mod(self : Byte, that : Byte) -> Byte {
   (self.to_int() % that.to_int()).to_byte()
 }
 
@@ -77,7 +77,7 @@ pub impl Mod for Byte with mod(self : Byte, that : Byte) -> Byte {
 /// - `that` : The second `Byte` value to compare.
 ///
 /// Returns `true` if the two `Byte` values are equal, otherwise `false`.
-pub impl Eq for Byte with equal(self : Byte, that : Byte) -> Bool {
+pub impl Eq for Byte with fn equal(self : Byte, that : Byte) -> Bool {
   self.to_int() == that.to_int()
 }
 
@@ -90,7 +90,7 @@ pub impl Eq for Byte with equal(self : Byte, that : Byte) -> Bool {
 /// - `that` : The second `Byte` value to compare.
 ///
 /// Returns `true` if the two `Byte` values are not equal, otherwise `false`.
-pub impl Eq for Byte with not_equal(self : Byte, that : Byte) -> Bool {
+pub impl Eq for Byte with fn not_equal(self : Byte, that : Byte) -> Bool {
   self.to_int() != that.to_int()
 }
 
@@ -103,7 +103,7 @@ pub impl Eq for Byte with not_equal(self : Byte, that : Byte) -> Bool {
 /// - `byte2` : The second `Byte` value to be added.
 ///
 /// Returns the sum of `byte1` and `byte2` as a `Byte`.
-pub impl Add for Byte with add(self : Byte, that : Byte) -> Byte {
+pub impl Add for Byte with fn add(self : Byte, that : Byte) -> Byte {
   (self.to_int() + that.to_int()).to_byte()
 }
 
@@ -117,7 +117,7 @@ pub impl Add for Byte with add(self : Byte, that : Byte) -> Byte {
 /// - `that` : The byte to subtract from the first byte.
 ///
 /// Returns the result of the subtraction as a byte.
-pub impl Sub for Byte with sub(self : Byte, that : Byte) -> Byte {
+pub impl Sub for Byte with fn sub(self : Byte, that : Byte) -> Byte {
   (self.to_int() - that.to_int()).to_byte()
 }
 
@@ -134,27 +134,27 @@ pub impl Sub for Byte with sub(self : Byte, that : Byte) -> Byte {
 /// - A value less than 0 indicates that `byte1` is less than `byte2`.
 /// - A value of 0 indicates that `byte1` is equal to `byte2`.
 /// - A value greater than 0 indicates that `byte1` is greater than `byte2`.
-pub impl Compare for Byte with compare(self : Byte, that : Byte) -> Int {
+pub impl Compare for Byte with fn compare(self : Byte, that : Byte) -> Int {
   self.to_int().compare(that.to_int())
 }
 
 ///|
-pub impl Compare for Byte with op_lt(x, y) {
+pub impl Compare for Byte with fn op_lt(x, y) {
   x.to_int() < y.to_int()
 }
 
 ///|
-pub impl Compare for Byte with op_le(x, y) {
+pub impl Compare for Byte with fn op_le(x, y) {
   x.to_int() <= y.to_int()
 }
 
 ///|
-pub impl Compare for Byte with op_gt(x, y) {
+pub impl Compare for Byte with fn op_gt(x, y) {
   x.to_int() > y.to_int()
 }
 
 ///|
-pub impl Compare for Byte with op_ge(x, y) {
+pub impl Compare for Byte with fn op_ge(x, y) {
   x.to_int() >= y.to_int()
 }
 
@@ -216,7 +216,7 @@ pub fn Byte::to_string(self : Byte) -> String {
 ///   inspect(hasher.finalize(), content="1955036104")
 /// }
 /// ```
-pub impl Hash for Byte with hash_combine(self, hasher) {
+pub impl Hash for Byte with fn hash_combine(self, hasher) {
   hasher.combine_byte(self)
 }
 
@@ -228,7 +228,7 @@ pub impl Hash for Byte with hash_combine(self, hasher) {
 /// - None
 ///
 /// Returns the default `Byte` value, which is `b'\x00'`.
-pub impl Default for Byte with default() {
+pub impl Default for Byte with fn default() {
   b'\x00'
 }
 
@@ -254,7 +254,7 @@ pub fn Byte::lnot(self : Byte) -> Byte {
 ///   with.
 ///
 /// Returns the result of the bitwise AND operation as a `Byte`.
-pub impl BitAnd for Byte with land(self : Byte, that : Byte) -> Byte {
+pub impl BitAnd for Byte with fn land(self : Byte, that : Byte) -> Byte {
   (self.to_int() & that.to_int()).to_byte()
 }
 
@@ -267,7 +267,7 @@ pub impl BitAnd for Byte with land(self : Byte, that : Byte) -> Byte {
 /// - `that` : The second `Byte` value.
 ///
 /// Returns a new `Byte` value resulting from the bitwise OR operation.
-pub impl BitOr for Byte with lor(self : Byte, that : Byte) -> Byte {
+pub impl BitOr for Byte with fn lor(self : Byte, that : Byte) -> Byte {
   (self.to_int() | that.to_int()).to_byte()
 }
 
@@ -280,7 +280,7 @@ pub impl BitOr for Byte with lor(self : Byte, that : Byte) -> Byte {
 /// - `that` : The second `Byte` value.
 ///
 /// Returns the result of the bitwise XOR operation as a `Byte`.
-pub impl BitXOr for Byte with lxor(self : Byte, that : Byte) -> Byte {
+pub impl BitXOr for Byte with fn lxor(self : Byte, that : Byte) -> Byte {
   (self.to_int() ^ that.to_int()).to_byte()
 }
 
@@ -353,7 +353,7 @@ pub fn Byte::popcnt(self : Byte) -> Int {
 ///   the left.
 ///
 /// Returns the resulting `Byte` value after the shift operation.
-pub impl Shl for Byte with shl(self : Byte, count : Int) -> Byte {
+pub impl Shl for Byte with fn shl(self : Byte, count : Int) -> Byte {
   (self.to_int() << count).to_byte()
 }
 
@@ -368,6 +368,6 @@ pub impl Shl for Byte with shl(self : Byte, count : Int) -> Byte {
 ///   right.
 ///
 /// Returns the resulting `Byte` value after the bitwise right shift operation.
-pub impl Shr for Byte with shr(self : Byte, count : Int) -> Byte {
+pub impl Shr for Byte with fn shr(self : Byte, count : Int) -> Byte {
   (self.to_uint() >> count).reinterpret_as_int().to_byte()
 }

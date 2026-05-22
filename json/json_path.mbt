@@ -32,7 +32,7 @@ pub fn JsonPath::add_key(self : JsonPath, key : String) -> JsonPath {
 }
 
 ///|
-pub impl Show for JsonPath with output(self, logger) {
+pub impl Show for JsonPath with fn output(self, logger) {
   // Helper to write a JSON Pointer token without intermediate allocations
   fn write_token(logger : &Logger, token : String) -> Unit {
     if !token.contains_any(chars="~/") {
@@ -69,7 +69,7 @@ pub impl Show for JsonPath with output(self, logger) {
 }
 
 ///|
-pub impl ToJson for JsonPath with to_json(self) {
+pub impl ToJson for JsonPath with fn to_json(self) {
   String(self.to_string())
 }
 

@@ -13,12 +13,12 @@
 // limitations under the License.
 
 ///|
-pub impl[A : Default, B : Default] Default for (A, B) with default() {
+pub impl[A : Default, B : Default] Default for (A, B) with fn default() {
   (Default::default(), Default::default())
 }
 
 ///|
-pub impl[A : Default, B : Default, C : Default] Default for (A, B, C) with default() {
+pub impl[A : Default, B : Default, C : Default] Default for (A, B, C) with fn default() {
   (Default::default(), Default::default(), Default::default())
 }
 
@@ -28,7 +28,7 @@ pub impl[A : Default, B : Default, C : Default, D : Default] Default for (
   B,
   C,
   D,
-) with default() {
+) with fn default() {
   (
     Default::default(),
     Default::default(),
@@ -44,7 +44,7 @@ pub impl[A : Default, B : Default, C : Default, D : Default, E : Default] Defaul
   C,
   D,
   E,
-) with default() {
+) with fn default() {
   (
     Default::default(),
     Default::default(),
@@ -62,7 +62,7 @@ pub impl[
   D : Default,
   E : Default,
   F : Default,
-] Default for (A, B, C, D, E, F) with default() {
+] Default for (A, B, C, D, E, F) with fn default() {
   (
     Default::default(),
     Default::default(),
@@ -82,7 +82,7 @@ pub impl[
   E : Default,
   F : Default,
   G : Default,
-] Default for (A, B, C, D, E, F, G) with default() {
+] Default for (A, B, C, D, E, F, G) with fn default() {
   (
     Default::default(),
     Default::default(),
@@ -104,7 +104,7 @@ pub impl[
   F : Default,
   G : Default,
   H : Default,
-] Default for (A, B, C, D, E, F, G, H) with default() {
+] Default for (A, B, C, D, E, F, G, H) with fn default() {
   (
     Default::default(),
     Default::default(),
@@ -128,7 +128,7 @@ pub impl[
   G : Default,
   H : Default,
   I : Default,
-] Default for (A, B, C, D, E, F, G, H, I) with default() {
+] Default for (A, B, C, D, E, F, G, H, I) with fn default() {
   (
     Default::default(),
     Default::default(),
@@ -154,7 +154,7 @@ pub impl[
   H : Default,
   I : Default,
   J : Default,
-] Default for (A, B, C, D, E, F, G, H, I, J) with default() {
+] Default for (A, B, C, D, E, F, G, H, I, J) with fn default() {
   (
     Default::default(),
     Default::default(),
@@ -182,7 +182,7 @@ pub impl[
   I : Default,
   J : Default,
   K : Default,
-] Default for (A, B, C, D, E, F, G, H, I, J, K) with default() {
+] Default for (A, B, C, D, E, F, G, H, I, J, K) with fn default() {
   (
     Default::default(),
     Default::default(),
@@ -212,7 +212,7 @@ pub impl[
   J : Default,
   K : Default,
   L : Default,
-] Default for (A, B, C, D, E, F, G, H, I, J, K, L) with default() {
+] Default for (A, B, C, D, E, F, G, H, I, J, K, L) with fn default() {
   (
     Default::default(),
     Default::default(),
@@ -244,7 +244,7 @@ pub impl[
   K : Default,
   L : Default,
   M : Default,
-] Default for (A, B, C, D, E, F, G, H, I, J, K, L, M) with default() {
+] Default for (A, B, C, D, E, F, G, H, I, J, K, L, M) with fn default() {
   (
     Default::default(),
     Default::default(),
@@ -278,7 +278,7 @@ pub impl[
   L : Default,
   M : Default,
   N : Default,
-] Default for (A, B, C, D, E, F, G, H, I, J, K, L, M, N) with default() {
+] Default for (A, B, C, D, E, F, G, H, I, J, K, L, M, N) with fn default() {
   (
     Default::default(),
     Default::default(),
@@ -314,7 +314,7 @@ pub impl[
   M : Default,
   N : Default,
   O : Default,
-] Default for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O) with default() {
+] Default for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O) with fn default() {
   (
     Default::default(),
     Default::default(),
@@ -352,7 +352,7 @@ pub impl[
   N : Default,
   O : Default,
   P : Default,
-] Default for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P) with default() {
+] Default for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P) with fn default() {
   (
     Default::default(),
     Default::default(),

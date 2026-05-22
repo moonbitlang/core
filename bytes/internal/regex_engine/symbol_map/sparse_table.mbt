@@ -24,7 +24,7 @@ priv struct SparseTableEntry {
 priv struct SparseTable(ReadOnlyArray[SparseTableEntry])
 
 ///|
-impl Table for SparseTable with map(self, c) {
+impl Table for SparseTable with fn map(self, c) {
   let arr = self.0
   for left = 0, right = arr.length() - 1; left <= right; {
     let mid = left + (right - left) / 2

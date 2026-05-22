@@ -72,7 +72,7 @@ pub fn[A] List::prepend(self : List[A], head : A) -> List[A] {
 }
 
 ///|
-pub impl[A : Eq] Eq for List[A] with equal(self, other) -> Bool {
+pub impl[A : Eq] Eq for List[A] with fn equal(self, other) -> Bool {
   if physical_equal(self, other) {
     return true
   }
@@ -90,14 +90,14 @@ pub impl[A : Show] Show for List[A]
 ///|
 /// Show implementation for List.
 /// Outputs the list in the format @list.from_array([element1, element2, ...]).
-pub impl[A : Show] Show for List[A] with output(xs, logger) {
+pub impl[A : Show] Show for List[A] with fn output(xs, logger) {
   logger.write_iter(xs.iter(), prefix="@list.from_array([", suffix="])")
 }
 
 ///|
 /// ToJson implementation for List.
 /// Converts a list to a JSON array.
-pub impl[A : ToJson] ToJson for List[A] with to_json(self) {
+pub impl[A : ToJson] ToJson for List[A] with fn to_json(self) {
   let capacity = self.length()
   guard capacity != 0 else { return [] }
   let jsons = Array::new(capacity~)
@@ -126,7 +126,7 @@ pub fn[A : ToJson] List::to_json(self : List[A]) -> Json {
 ///|
 /// FromJson implementation for List.
 /// Parses a JSON array into a list.
-pub impl[A : @json.FromJson] @json.FromJson for List[A] with from_json(
+pub impl[A : @json.FromJson] @json.FromJson for List[A] with fn from_json(
   json,
   path,
 ) {
@@ -1243,7 +1243,7 @@ pub fn[A : Compare] List::sort(self : List[A]) -> List[A] {
 ///   @debug.assert_eq(result, @list.from_array([1, 2, 3, 4, 5, 6]))
 /// }
 /// ```
-pub impl[A] Add for List[A] with add(self, other) {
+pub impl[A] Add for List[A] with fn add(self, other) {
   self.concat(other)
 }
 
@@ -1804,7 +1804,7 @@ pub fn[A] List::intercalate(self : List[List[A]], sep : List[A]) -> List[A] {
 /// Default implementation for List.
 /// 
 /// Returns an empty list as the default value.
-pub impl[X] Default for List[X] with default() {
+pub impl[X] Default for List[X] with fn default() {
   Empty
 }
 
@@ -1961,7 +1961,7 @@ pub fn[A] List::from_iter_rev(iter : Iter[A]) -> List[A] {
 /// Arbitrary implementation for quickcheck testing.
 /// 
 /// Generates random lists for property-based testing with quickcheck.
-pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for List[X] with arbitrary(
+pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for List[X] with fn arbitrary(
   size,
   rs,
 ) {
@@ -1992,7 +1992,7 @@ pub fn[A] List::singleton(x : A) -> List[A] {
 /// 
 /// Computes the hash value for a list by combining the hash values
 /// of all its elements.
-pub impl[A : Hash] Hash for List[A] with hash_combine(self, hasher) {
+pub impl[A : Hash] Hash for List[A] with fn hash_combine(self, hasher) {
   for e in self {
     hasher.combine(e)
   }
@@ -2050,7 +2050,7 @@ fn[A] List::reverse_in_place(self : List[A]) -> List[A] {
 ///   inspect(list1.compare(list1), content="0") // list1 = list1
 /// }
 /// ```
-pub impl[A : Compare] Compare for List[A] with compare(self, other) {
+pub impl[A : Compare] Compare for List[A] with fn compare(self, other) {
   for a = self, b = other {
     match (a, b) {
       (Empty, Empty) => break 0

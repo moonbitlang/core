@@ -132,7 +132,7 @@ pub fn[A : Compare] PriorityQueue::iter(self : PriorityQueue[A]) -> Iter[A] {
 }
 
 ///|
-pub impl[A : ToJson + Compare] ToJson for PriorityQueue[A] with to_json(self) {
+pub impl[A : ToJson + Compare] ToJson for PriorityQueue[A] with fn to_json(self) {
   [
     for x in self => x
   ]
@@ -317,7 +317,10 @@ pub fn[A] PriorityQueue::is_empty(self : PriorityQueue[A]) -> Bool {
 pub impl[A : Show + Compare] Show for PriorityQueue[A]
 
 ///|
-pub impl[A : Show + Compare] Show for PriorityQueue[A] with output(self, logger) {
+pub impl[A : Show + Compare] Show for PriorityQueue[A] with fn output(
+  self,
+  logger,
+) {
   logger.write_iter(
     self.iter(),
     prefix="@priority_queue.from_array([",
@@ -328,7 +331,7 @@ pub impl[A : Show + Compare] Show for PriorityQueue[A] with output(self, logger)
 ///|
 pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for PriorityQueue[
   X,
-] with arbitrary(size, rs) {
+] with fn arbitrary(size, rs) {
   let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
   guard len > 0 else { return new_priority_queue() }
   for i = 1, acc = { content: X::arbitrary(0, rs), sibling: None, child: None } {
@@ -372,6 +375,6 @@ test "priority queue arbitrary" {
 }
 
 ///|
-pub impl[K] Default for PriorityQueue[K] with default() {
+pub impl[K] Default for PriorityQueue[K] with fn default() {
   new_priority_queue()
 }

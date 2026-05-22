@@ -30,7 +30,7 @@ pub(all) suberror ParseError {
 } derive(Eq, ToJson, @debug.Debug)
 
 ///|
-pub impl Show for ParseError with output(self, logger) {
+pub impl Show for ParseError with fn output(self, logger) {
   match self {
     InvalidChar({ line, column }, c) => {
       logger.write_string("Invalid character ")
@@ -68,7 +68,7 @@ pub impl Show for Json
 
 ///|
 #warnings("-deprecated")
-pub impl Show for Json with output(self, logger) {
+pub impl Show for Json with fn output(self, logger) {
   match self {
     Null => logger.write_string("Null")
     True => logger.write_string("True")

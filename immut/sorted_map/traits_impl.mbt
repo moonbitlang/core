@@ -13,12 +13,12 @@
 // limitations under the License.
 
 ///|
-pub impl[K, V] Default for SortedMap[K, V] with default() {
+pub impl[K, V] Default for SortedMap[K, V] with fn default() {
   new()
 }
 
 ///|
-pub impl[K : Eq, V : Eq] Eq for SortedMap[K, V] with equal(self, other) -> Bool {
+pub impl[K : Eq, V : Eq] Eq for SortedMap[K, V] with fn equal(self, other) -> Bool {
   if physical_equal(self, other) {
     return true
   }
@@ -33,7 +33,7 @@ pub impl[K : Eq, V : Eq] Eq for SortedMap[K, V] with equal(self, other) -> Bool 
 }
 
 ///|
-pub impl[K : Compare, V : Compare] Compare for SortedMap[K, V] with compare(
+pub impl[K : Compare, V : Compare] Compare for SortedMap[K, V] with fn compare(
   self,
   other,
 ) -> Int {
@@ -54,12 +54,12 @@ pub impl[K : Compare, V : Compare] Compare for SortedMap[K, V] with compare(
 pub impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for SortedMap[
   K,
   V,
-] with arbitrary(size, rs) {
+] with fn arbitrary(size, rs) {
   @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
 }
 
 ///|
-pub impl[K : Hash, V : Hash] Hash for SortedMap[K, V] with hash_combine(
+pub impl[K : Hash, V : Hash] Hash for SortedMap[K, V] with fn hash_combine(
   self,
   hasher,
 ) {
@@ -75,7 +75,10 @@ pub impl[K : Show, V : Show] Show for SortedMap[K, V]
 
 ///|
 #warnings("-deprecated")
-pub impl[K : Show, V : Show] Show for SortedMap[K, V] with output(self, logger) {
+pub impl[K : Show, V : Show] Show for SortedMap[K, V] with fn output(
+  self,
+  logger,
+) {
   logger.write_iter(
     self.iter(),
     prefix="@immut/sorted_map.from_array([",
@@ -84,7 +87,7 @@ pub impl[K : Show, V : Show] Show for SortedMap[K, V] with output(self, logger) 
 }
 
 ///|
-pub impl[K : Show, V : ToJson] ToJson for SortedMap[K, V] with to_json(self) {
+pub impl[K : Show, V : ToJson] ToJson for SortedMap[K, V] with fn to_json(self) {
   Json::object(
     Map(
       capacity=self.length(),
@@ -96,7 +99,7 @@ pub impl[K : Show, V : ToJson] ToJson for SortedMap[K, V] with to_json(self) {
 }
 
 ///|
-pub impl[V : @json.FromJson] @json.FromJson for SortedMap[String, V] with from_json(
+pub impl[V : @json.FromJson] @json.FromJson for SortedMap[String, V] with fn from_json(
   json,
   path,
 ) {

@@ -1473,12 +1473,12 @@ priv struct CompareCounter {
 }
 
 ///|
-impl Eq for CompareCounter with equal(self, other) {
+impl Eq for CompareCounter with fn equal(self, other) {
   self.value == other.value
 }
 
 ///|
-impl Compare for CompareCounter with compare(self, other) {
+impl Compare for CompareCounter with fn compare(self, other) {
   self.counter.val += 1
   self.value.compare(other.value)
 }

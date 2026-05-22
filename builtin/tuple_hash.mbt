@@ -13,14 +13,14 @@
 // limitations under the License.
 
 ///|
-pub impl[A : Hash, B : Hash] Hash for (A, B) with hash_combine(self, hasher) {
+pub impl[A : Hash, B : Hash] Hash for (A, B) with fn hash_combine(self, hasher) {
   let (a, b) = self
   hasher.combine(a)
   hasher.combine(b)
 }
 
 ///|
-pub impl[A : Hash, B : Hash, C : Hash] Hash for (A, B, C) with hash_combine(
+pub impl[A : Hash, B : Hash, C : Hash] Hash for (A, B, C) with fn hash_combine(
   self,
   hasher,
 ) {
@@ -31,7 +31,7 @@ pub impl[A : Hash, B : Hash, C : Hash] Hash for (A, B, C) with hash_combine(
 }
 
 ///|
-pub impl[A : Hash, B : Hash, C : Hash, D : Hash] Hash for (A, B, C, D) with hash_combine(
+pub impl[A : Hash, B : Hash, C : Hash, D : Hash] Hash for (A, B, C, D) with fn hash_combine(
   self,
   hasher,
 ) {
@@ -49,7 +49,7 @@ pub impl[A : Hash, B : Hash, C : Hash, D : Hash, E : Hash] Hash for (
   C,
   D,
   E,
-) with hash_combine(self, hasher) {
+) with fn hash_combine(self, hasher) {
   let (a, b, c, d, e) = self
   hasher.combine(a)
   hasher.combine(b)
@@ -66,7 +66,7 @@ pub impl[A : Hash, B : Hash, C : Hash, D : Hash, E : Hash, F : Hash] Hash for (
   D,
   E,
   F,
-) with hash_combine(self, hasher) {
+) with fn hash_combine(self, hasher) {
   let (a, b, c, d, e, f) = self
   hasher.combine(a)
   hasher.combine(b)
@@ -85,7 +85,7 @@ pub impl[A : Hash, B : Hash, C : Hash, D : Hash, E : Hash, F : Hash, G : Hash] H
   E,
   F,
   G,
-) with hash_combine(self, hasher) {
+) with fn hash_combine(self, hasher) {
   let (a, b, c, d, e, f, g) = self
   hasher.combine(a)
   hasher.combine(b)

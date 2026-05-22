@@ -1109,7 +1109,7 @@ pub fn StringView::view(Self, start_offset? : Int, end_offset? : Int) -> Self
 
 // Traits
 pub(open) trait Add {
-  add(Self, Self) -> Self
+  fn add(Self, Self) -> Self
 }
 pub impl Add for Byte
 pub impl Add for Int
@@ -1124,7 +1124,7 @@ pub impl Add for Bytes
 pub impl Add for StringView
 
 pub(open) trait BitAnd {
-  land(Self, Self) -> Self
+  fn land(Self, Self) -> Self
 }
 pub impl BitAnd for Byte
 pub impl BitAnd for Int
@@ -1134,7 +1134,7 @@ pub impl BitAnd for UInt16
 pub impl BitAnd for UInt64
 
 pub(open) trait BitOr {
-  lor(Self, Self) -> Self
+  fn lor(Self, Self) -> Self
 }
 pub impl BitOr for Byte
 pub impl BitOr for Int
@@ -1144,7 +1144,7 @@ pub impl BitOr for UInt16
 pub impl BitOr for UInt64
 
 pub(open) trait BitXOr {
-  lxor(Self, Self) -> Self
+  fn lxor(Self, Self) -> Self
 }
 pub impl BitXOr for Byte
 pub impl BitXOr for Int
@@ -1154,11 +1154,11 @@ pub impl BitXOr for UInt16
 pub impl BitXOr for UInt64
 
 pub(open) trait Compare : Eq {
-  compare(Self, Self) -> Int
-  op_lt(Self, Self) -> Bool = _
-  op_gt(Self, Self) -> Bool = _
-  op_le(Self, Self) -> Bool = _
-  op_ge(Self, Self) -> Bool = _
+  fn compare(Self, Self) -> Int
+  fn op_lt(Self, Self) -> Bool = _
+  fn op_gt(Self, Self) -> Bool = _
+  fn op_le(Self, Self) -> Bool = _
+  fn op_ge(Self, Self) -> Bool = _
 }
 pub impl Compare for Unit
 pub impl Compare for Bool
@@ -1195,7 +1195,7 @@ pub impl Compare for BytesView
 pub impl Compare for StringView
 
 pub(open) trait Default {
-  default() -> Self
+  fn default() -> Self
 }
 pub impl Default for Unit
 pub impl Default for Bool
@@ -1214,7 +1214,7 @@ pub impl Default for Bytes
 pub impl Default for StringView
 
 pub(open) trait Div {
-  div(Self, Self) -> Self
+  fn div(Self, Self) -> Self
 }
 pub impl Div for Byte
 pub impl Div for Int
@@ -1225,8 +1225,8 @@ pub impl Div for UInt64
 pub impl Div for Double
 
 pub(open) trait Eq {
-  equal(Self, Self) -> Bool
-  not_equal(Self, Self) -> Bool = _
+  fn equal(Self, Self) -> Bool
+  fn not_equal(Self, Self) -> Bool = _
 }
 pub impl Eq for Unit
 pub impl Eq for Bool
@@ -1263,8 +1263,8 @@ pub impl Eq for BytesView
 pub impl Eq for StringView
 
 pub(open) trait Hash {
-  hash_combine(Self, Hasher) -> Unit
-  hash(Self) -> Int = _
+  fn hash_combine(Self, Hasher) -> Unit
+  fn hash(Self) -> Int = _
 }
 pub impl Hash for Unit
 pub impl Hash for Bool
@@ -1292,18 +1292,18 @@ pub impl Hash for BytesView
 pub impl Hash for StringView
 
 pub(open) trait Logger {
-  write_string(Self, String) -> Unit = _
+  fn write_string(Self, String) -> Unit = _
   #deprecated
-  write_substring(Self, String, Int, Int) -> Unit = _
-  write_view(Self, StringView) -> Unit = _
-  write_char(Self, Char) -> Unit = _
-  write(Self, &Show) -> Unit = _
+  fn write_substring(Self, String, Int, Int) -> Unit = _
+  fn write_view(Self, StringView) -> Unit = _
+  fn write_char(Self, Char) -> Unit = _
+  fn write(Self, &Show) -> Unit = _
 }
 pub fn[T : Show] &Logger::write_iter(Self, Iter[T], prefix? : String, suffix? : String, sep? : String, trailing? : Bool) -> Unit
 pub fn[Obj : Show] &Logger::write_object(Self, Obj) -> Unit
 
 pub(open) trait Mod {
-  mod(Self, Self) -> Self
+  fn mod(Self, Self) -> Self
 }
 pub impl Mod for Byte
 pub impl Mod for Int
@@ -1314,7 +1314,7 @@ pub impl Mod for UInt64
 pub impl Mod for Double
 
 pub(open) trait Mul {
-  mul(Self, Self) -> Self
+  fn mul(Self, Self) -> Self
 }
 pub impl Mul for Byte
 pub impl Mul for Int
@@ -1325,14 +1325,14 @@ pub impl Mul for UInt64
 pub impl Mul for Double
 
 pub(open) trait Neg {
-  neg(Self) -> Self
+  fn neg(Self) -> Self
 }
 pub impl Neg for Int
 pub impl Neg for Int64
 pub impl Neg for Double
 
 pub(open) trait Shl {
-  shl(Self, Int) -> Self
+  fn shl(Self, Int) -> Self
 }
 pub impl Shl for Byte
 pub impl Shl for Int
@@ -1343,8 +1343,8 @@ pub impl Shl for UInt64
 
 #must_implement_one(output, to_string)
 pub(open) trait Show {
-  output(Self, &Logger) -> Unit = _
-  to_string(Self) -> String = _
+  fn output(Self, &Logger) -> Unit = _
+  fn to_string(Self) -> String = _
 }
 pub impl Show for Unit
 pub impl Show for Bool
@@ -1400,7 +1400,7 @@ pub impl Show for BytesView
 pub impl Show for StringView
 
 pub(open) trait Shr {
-  shr(Self, Int) -> Self
+  fn shr(Self, Int) -> Self
 }
 pub impl Shr for Byte
 pub impl Shr for Int
@@ -1410,7 +1410,7 @@ pub impl Shr for UInt16
 pub impl Shr for UInt64
 
 pub(open) trait Sub {
-  sub(Self, Self) -> Self
+  fn sub(Self, Self) -> Self
 }
 pub impl Sub for Byte
 pub impl Sub for Int
@@ -1421,7 +1421,7 @@ pub impl Sub for UInt64
 pub impl Sub for Double
 
 pub(open) trait ToJson {
-  to_json(Self) -> Json
+  fn to_json(Self) -> Json
 }
 pub impl ToJson for Unit
 pub impl ToJson for Bool
@@ -1458,7 +1458,7 @@ pub impl ToJson for BytesView
 pub impl ToJson for StringView
 
 pub trait ToStringView {
-  to_string_view(Self) -> StringView
+  fn to_string_view(Self) -> StringView
 }
 pub impl ToStringView for String
 pub impl ToStringView for StringView

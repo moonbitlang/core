@@ -59,9 +59,9 @@ pub impl Show for Decimal
 pub(open) trait FromStr {
   #as_free_fn
   #deprecated
-  from_str(StringView) -> Self raise StrConvError = _
+  fn from_str(StringView) -> Self raise StrConvError = _
   #deprecated
-  from_string(String) -> Self raise StrConvError = _
+  fn from_string(String) -> Self raise StrConvError = _
 }
 pub impl FromStr for Bool
 pub impl FromStr for Int

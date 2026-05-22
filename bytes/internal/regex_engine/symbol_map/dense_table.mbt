@@ -16,7 +16,7 @@
 priv struct DenseTableWithZeroLb(FixedArray[@shared_types.Rechar])
 
 ///|
-impl Table for DenseTableWithZeroLb with map(self, c) {
+impl Table for DenseTableWithZeroLb with fn map(self, c) {
   self.0.unsafe_get(c)
 }
 
@@ -24,6 +24,6 @@ impl Table for DenseTableWithZeroLb with map(self, c) {
 priv struct DenseTable(FixedArray[@shared_types.Rechar], @shared_types.Rechar)
 
 ///|
-impl Table for DenseTable with map(self, c) {
+impl Table for DenseTable with fn map(self, c) {
   self.0.unsafe_get(c - self.1)
 }

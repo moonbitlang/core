@@ -342,7 +342,7 @@ pub fn[K, V] HashMap::eachi(
 pub impl[K : Show, V : Show] Show for HashMap[K, V]
 
 ///|
-pub impl[K : Show, V : Show] Show for HashMap[K, V] with output(self, logger) {
+pub impl[K : Show, V : Show] Show for HashMap[K, V] with fn output(self, logger) {
   logger.write_string("HashMap::from_array([")
   self.eachi((i, k, v) => {
     if i > 0 {

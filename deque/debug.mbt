@@ -16,7 +16,7 @@
 using @debug {trait Debug, type Repr}
 
 ///|
-pub impl[A : Debug] Debug for Deque[A] with to_repr(self) {
+pub impl[A : Debug] Debug for Deque[A] with fn to_repr(self) {
   Repr::opaque_(
     "Deque",
     Repr::array(self.to_array().map(x => @debug.to_repr(x))),

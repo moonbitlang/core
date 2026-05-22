@@ -16,7 +16,7 @@
 struct ShowOnly(Int) derive(Eq)
 
 ///|
-impl Show for ShowOnly with output(self, logger) {
+impl Show for ShowOnly with fn output(self, logger) {
   let ShowOnly(value) = self
   logger.write_object(value)
 }

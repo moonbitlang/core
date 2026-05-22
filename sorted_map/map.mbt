@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-pub impl[K : Eq, V : Eq] Eq for SortedMap[K, V] with equal(self, other) {
+pub impl[K : Eq, V : Eq] Eq for SortedMap[K, V] with fn equal(self, other) {
   guard self.size == other.size else { return false }
   let iter = self.iter()
   let iter1 = other.iter()
@@ -376,7 +376,7 @@ pub fn[K : Compare, V] SortedMap::from_iter(
 pub impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for SortedMap[
   K,
   V,
-] with arbitrary(size, rs) {
+] with fn arbitrary(size, rs) {
   @quickcheck.Arbitrary::arbitrary(size, rs) |> from_iter
 }
 
@@ -911,6 +911,6 @@ test "copy" {
 }
 
 ///|
-pub impl[K, V] Default for SortedMap[K, V] with default() {
+pub impl[K, V] Default for SortedMap[K, V] with fn default() {
   new_sorted_map()
 }

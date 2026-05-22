@@ -23,14 +23,14 @@ priv suberror ArgError {
 }
 
 ///|
-impl Show for ArgError with output(self : ArgError, logger) {
+impl Show for ArgError with fn output(self : ArgError, logger) {
   match self {
     Message(msg) => logger.write_string(msg)
   }
 }
 
 ///|
-impl @debug.Debug for ArgError with to_repr(self) {
+impl @debug.Debug for ArgError with fn to_repr(self) {
   match self {
     Message(msg) => @debug.Repr::literal(msg)
   }

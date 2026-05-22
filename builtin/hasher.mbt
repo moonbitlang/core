@@ -493,12 +493,12 @@ fn endian32(input : Bytes, cur : Int) -> UInt {
 ///   inspect(Hash::hash(s1) == Hash::hash(s3), content="false")
 /// }
 /// ```
-pub impl Hash for String with hash_combine(self, hasher) {
+pub impl Hash for String with fn hash_combine(self, hasher) {
   hasher.combine_string(self)
 }
 
 ///|
-pub impl Hash for StringView with hash_combine(
+pub impl Hash for StringView with fn hash_combine(
   self : StringView,
   hasher : Hasher,
 ) -> Unit {
@@ -527,7 +527,7 @@ pub impl Hash for StringView with hash_combine(
 ///   inspect(hasher.finalize(), content="1161967057")
 /// }
 /// ```
-pub impl Hash for Int with hash_combine(self, hasher) {
+pub impl Hash for Int with fn hash_combine(self, hasher) {
   hasher.combine_int(self)
 }
 
@@ -551,7 +551,7 @@ pub impl Hash for Int with hash_combine(self, hasher) {
 ///   inspect(hasher.finalize(), content="1161967057")
 /// }
 /// ```
-pub impl Hash for UInt with hash_combine(self, hasher) {
+pub impl Hash for UInt with fn hash_combine(self, hasher) {
   hasher.combine_uint(self)
 }
 
@@ -573,7 +573,7 @@ pub impl Hash for UInt with hash_combine(self, hasher) {
 ///   inspect(hasher.finalize(), content="-1962516083")
 /// }
 /// ```
-pub impl Hash for UInt64 with hash_combine(self, hasher) {
+pub impl Hash for UInt64 with fn hash_combine(self, hasher) {
   hasher.combine_uint64(self)
 }
 
@@ -600,7 +600,7 @@ pub impl Hash for UInt64 with hash_combine(self, hasher) {
 ///   inspect(hasher2.finalize(), content="148298089")
 /// }
 /// ```
-pub impl[X : Hash] Hash for X? with hash_combine(self, hasher) {
+pub impl[X : Hash] Hash for X? with fn hash_combine(self, hasher) {
   match self {
     None => hasher.combine_int(0)
     Some(x) => {
@@ -633,7 +633,7 @@ pub impl[X : Hash] Hash for X? with hash_combine(self, hasher) {
 ///   inspect(hasher.finalize(), content="1953766574")
 /// }
 /// ```
-pub impl[T : Hash, E : Hash] Hash for Result[T, E] with hash_combine(
+pub impl[T : Hash, E : Hash] Hash for Result[T, E] with fn hash_combine(
   self,
   hasher,
 ) {
@@ -650,7 +650,10 @@ pub impl[T : Hash, E : Hash] Hash for Result[T, E] with hash_combine(
 }
 
 ///|
-pub impl Hash for BytesView with hash_combine(self : BytesView, hasher : Hasher) {
+pub impl Hash for BytesView with fn hash_combine(
+  self : BytesView,
+  hasher : Hasher,
+) {
   let data = self.bytes()
   let (start, rest) = for start = self.start(), rest = self.len(); rest >= 4; {
     let result = for i in 0..<=3; result = (0 : UInt) {

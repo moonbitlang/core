@@ -101,7 +101,7 @@ test {
 }
 
 ///|
-pub impl[A : Eq] Eq for SortedSet[A] with equal(self, other) -> Bool {
+pub impl[A : Eq] Eq for SortedSet[A] with fn equal(self, other) -> Bool {
   if physical_equal(self, other) {
     return true
   }
@@ -118,7 +118,7 @@ pub impl[A : Eq] Eq for SortedSet[A] with equal(self, other) -> Bool {
 }
 
 ///|
-pub impl[A : Compare] Compare for SortedSet[A] with compare(self, other) -> Int {
+pub impl[A : Compare] Compare for SortedSet[A] with fn compare(self, other) -> Int {
   let my_size = self.length()
   let other_size = other.length()
   guard my_size == other_size else { return my_size - other_size }

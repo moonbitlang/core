@@ -740,7 +740,7 @@ impl[A : Show] Show for Tree[A]
 
 ///|
 /// Print the tree structure. For debug use only.
-impl[A : Show] Show for Tree[A] with output(self, logger : &Logger) {
+impl[A : Show] Show for Tree[A] with fn output(self, logger : &Logger) {
   fn indent_str(s : String, indent : Int) -> String {
     String::make(indent, ' ') + s
   }

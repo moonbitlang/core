@@ -44,7 +44,7 @@ struct FixedSource {
 }
 
 ///|
-impl @random.Source for FixedSource with next(self) -> UInt64 {
+impl @random.Source for FixedSource with fn next(self) -> UInt64 {
   let current = self.value
   self.value += 1UL
   current

@@ -347,7 +347,7 @@ pub fn[V : Compare] SortedSet::disjoint(
 // General collection operations
 
 ///|
-pub impl[V : Eq] Eq for SortedSet[V] with equal(self, other) {
+pub impl[V : Eq] Eq for SortedSet[V] with fn equal(self, other) {
   guard self.size == other.size else { return false }
   let iter = self.iter()
   let iter1 = other.iter()
@@ -474,14 +474,14 @@ pub impl[V : Show] Show for SortedSet[V]
 
 ///|
 /// Outputs the set's string representation to a logger.
-pub impl[V : Show] Show for SortedSet[V] with output(self, logger) {
+pub impl[V : Show] Show for SortedSet[V] with fn output(self, logger) {
   logger.write_iter(self.iter(), prefix="@sorted_set.from_array([", suffix="])")
 }
 
 ///|
 pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for SortedSet[
   X,
-] with arbitrary(size, rs) {
+] with fn arbitrary(size, rs) {
   @quickcheck.Arbitrary::arbitrary(size, rs) |> from_iter
 }
 
@@ -490,7 +490,7 @@ pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for SortedSe
 impl[T : Show] Show for Node[T]
 
 ///|
-impl[T : Show] Show for Node[T] with output(self, logger) {
+impl[T : Show] Show for Node[T] with fn output(self, logger) {
   fn count(root : Node[T]?) -> Int {
     match root {
       None => 0
@@ -1323,6 +1323,6 @@ test "add_and_remove" {
 }
 
 ///|
-pub impl[K] Default for SortedSet[K] with default() {
+pub impl[K] Default for SortedSet[K] with fn default() {
   new_sorted_set()
 }

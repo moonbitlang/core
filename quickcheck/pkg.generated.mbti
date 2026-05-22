@@ -18,7 +18,7 @@ pub fn[X : Arbitrary] samples(Int) -> Array[X]
 
 // Traits
 pub(open) trait Arbitrary {
-  arbitrary(Int, @splitmix.RandomState) -> Self
+  fn arbitrary(Int, @splitmix.RandomState) -> Self
 }
 pub impl Arbitrary for Unit
 pub impl Arbitrary for Bool

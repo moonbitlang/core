@@ -586,13 +586,13 @@ test "@hashmap.set updating existing key should not grow" {
 priv struct Key(Int, Int) derive(Eq)
 
 ///|
-impl Hash for Key with hash(self) {
+impl Hash for Key with fn hash(self) {
   let Key(_, hash) = self
   hash
 }
 
 ///|
-impl Hash for Key with hash_combine(self, hasher) {
+impl Hash for Key with fn hash_combine(self, hasher) {
   let Key(_, hash) = self
   hasher.combine_int(hash)
 }

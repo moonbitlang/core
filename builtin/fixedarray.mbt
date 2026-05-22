@@ -57,7 +57,7 @@ pub fn[T] FixedArray::get(self : FixedArray[T], idx : Int) -> T? {
 ///   inspect(arr.is_empty(), content="true")
 /// }
 /// ```
-pub impl[X] Default for FixedArray[X] with default() {
+pub impl[X] Default for FixedArray[X] with fn default() {
   []
 }
 
@@ -1234,7 +1234,7 @@ test "ends_with" {
 ///   inspect(arr1 == arr3, content="false")
 /// }
 /// ```
-pub impl[T : Eq] Eq for FixedArray[T] with equal(
+pub impl[T : Eq] Eq for FixedArray[T] with fn equal(
   self : FixedArray[T],
   that : FixedArray[T],
 ) -> Bool {
@@ -1250,7 +1250,7 @@ pub impl[T : Eq] Eq for FixedArray[T] with equal(
 }
 
 ///|
-pub impl[T : Hash] Hash for FixedArray[T] with hash_combine(self, hasher) {
+pub impl[T : Hash] Hash for FixedArray[T] with fn hash_combine(self, hasher) {
   for v in self {
     v.hash_combine(hasher)
   }
@@ -1306,7 +1306,7 @@ test "equal" {
 ///   inspect(arr1.compare(arr1), content="0") // arr1 = arr1
 /// }
 /// ```
-pub impl[T : Compare] Compare for FixedArray[T] with compare(self, other) {
+pub impl[T : Compare] Compare for FixedArray[T] with fn compare(self, other) {
   let len_self = self.length()
   let len_other = other.length()
   let cmp = len_self.compare(len_other)
@@ -1346,7 +1346,7 @@ pub impl[T : Compare] Compare for FixedArray[T] with compare(self, other) {
 ///   )
 /// }
 /// ```
-pub impl[T] Add for FixedArray[T] with add(self, other) {
+pub impl[T] Add for FixedArray[T] with fn add(self, other) {
   let slen = self.length()
   let nlen = other.length()
   FixedArray::makei(slen + nlen, i => {

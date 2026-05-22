@@ -18,7 +18,7 @@ fn[K, V] new_node(key : K, value : V) -> Node[K, V] {
 }
 
 ///|
-impl[K : Eq, V] Eq for Node[K, V] with equal(self, other) {
+impl[K : Eq, V] Eq for Node[K, V] with fn equal(self, other) {
   self.key == other.key
 }
 
@@ -66,12 +66,15 @@ pub impl[K : Show, V : Show] Show for SortedMap[K, V]
 
 ///|
 #warnings("-deprecated")
-pub impl[K : Show, V : Show] Show for SortedMap[K, V] with output(self, logger) {
+pub impl[K : Show, V : Show] Show for SortedMap[K, V] with fn output(
+  self,
+  logger,
+) {
   logger.write_iter(self.iter(), prefix="@sorted_map.from_array([", suffix="])")
 }
 
 ///|
-pub impl[K : Show, V : ToJson] ToJson for SortedMap[K, V] with to_json(self) {
+pub impl[K : Show, V : ToJson] ToJson for SortedMap[K, V] with fn to_json(self) {
   Json::object(
     Map(
       capacity=self.length(),
@@ -83,7 +86,7 @@ pub impl[K : Show, V : ToJson] ToJson for SortedMap[K, V] with to_json(self) {
 }
 
 ///|
-pub impl[V : @json.FromJson] @json.FromJson for SortedMap[String, V] with from_json(
+pub impl[V : @json.FromJson] @json.FromJson for SortedMap[String, V] with fn from_json(
   json,
   path,
 ) {

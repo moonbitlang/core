@@ -189,12 +189,12 @@ pub fn StringView::to_owned(self : StringView) -> String {
 }
 
 ///|
-pub impl Show for StringView with output(self, logger) {
+pub impl Show for StringView with fn output(self, logger) {
   logger.write_view(self)
 }
 
 ///|
-pub impl Show for StringView with to_string(self) {
+pub impl Show for StringView with fn to_string(self) {
   self.to_owned()
 }
 
@@ -276,7 +276,7 @@ pub fn StringView::rev_iter(self : StringView) -> Iter[Char] {
 ///|
 /// Compares two views for equality. Returns true only if both views
 /// have the same length and contain identical characters in the same order.
-pub impl Eq for StringView with equal(self, other) {
+pub impl Eq for StringView with fn equal(self, other) {
   let len = self.length()
   guard len == other.length() else { return false }
   if physical_equal(self.str(), other.str()) && self.start() == other.start() {
@@ -335,7 +335,7 @@ pub fn StringView::equal_to_string(self : StringView, other : String) -> Bool {
 /// orders Unicode characters based on their positions in the code charts. This is
 /// not necessarily the same as "alphabetical" order, which varies by language
 /// and locale.
-pub impl Compare for StringView with compare(self, other) {
+pub impl Compare for StringView with fn compare(self, other) {
   let self_len = self.length()
   let other_len = other.length()
   let cmp = self_len.compare(other_len)
@@ -819,7 +819,7 @@ pub fn StringView::offset_of_nth_char(self : StringView, i : Int) -> Int? {
 
 ///|
 /// The empty view of a string
-pub impl Default for StringView with default() {
+pub impl Default for StringView with fn default() {
   ""
 }
 
@@ -830,11 +830,11 @@ pub fn StringView::make(length : Int, value : Char) -> StringView {
 }
 
 ///|
-pub impl ToJson for StringView with to_json(self) {
+pub impl ToJson for StringView with fn to_json(self) {
   String::to_json(self.to_owned())
 }
 
 ///|
-pub impl Add for StringView with add(self, other) {
+pub impl Add for StringView with fn add(self, other) {
   [..self, ..other]
 }

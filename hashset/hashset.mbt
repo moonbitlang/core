@@ -253,7 +253,7 @@ fn[K : Eq] HashSet::grow(self : HashSet[K]) -> Unit {
 pub impl[K : Show] Show for HashSet[K]
 
 ///|
-pub impl[K : Show] Show for HashSet[K] with output(self, logger) {
+pub impl[K : Show] Show for HashSet[K] with fn output(self, logger) {
   logger.write_iter(self.iter(), prefix="@hashset.from_array([", suffix="])")
 }
 
@@ -440,25 +440,25 @@ pub fn[K : Hash + Eq] HashSet::is_superset(
 
 ///|
 /// Intersection of two hash sets.
-pub impl[K : Hash + Eq] BitAnd for HashSet[K] with land(self, other) {
+pub impl[K : Hash + Eq] BitAnd for HashSet[K] with fn land(self, other) {
   self.intersection(other)
 }
 
 ///|
 /// Union of two hash sets.
-pub impl[K : Hash + Eq] BitOr for HashSet[K] with lor(self, other) {
+pub impl[K : Hash + Eq] BitOr for HashSet[K] with fn lor(self, other) {
   self.union(other)
 }
 
 ///|
 /// Symmetric difference of two hash sets.
-pub impl[K : Hash + Eq] BitXOr for HashSet[K] with lxor(self, other) {
+pub impl[K : Hash + Eq] BitXOr for HashSet[K] with fn lxor(self, other) {
   self.symmetric_difference(other)
 }
 
 ///|
 /// Difference of two hash sets.
-pub impl[K : Hash + Eq] Sub for HashSet[K] with sub(self, other) {
+pub impl[K : Hash + Eq] Sub for HashSet[K] with fn sub(self, other) {
   self.difference(other)
 }
 
@@ -484,7 +484,7 @@ pub fn[K] HashSet::retain(self : HashSet[K], f : (K) -> Bool) -> Unit {
 ///|
 pub impl[X : @quickcheck.Arbitrary + Eq + Hash] @quickcheck.Arbitrary for HashSet[
   X,
-] with arbitrary(size, rs) {
+] with fn arbitrary(size, rs) {
   @quickcheck.Arbitrary::arbitrary(size, rs) |> from_iter
 }
 
@@ -510,13 +510,13 @@ fn[K : Show] HashSet::_debug_entries(self : HashSet[K]) -> String {
 priv struct MyString(String) derive(Eq, Debug)
 
 ///|
-impl Hash for MyString with hash(self) {
+impl Hash for MyString with fn hash(self) {
   let MyString(self) = self
   self.length()
 }
 
 ///|
-impl Hash for MyString with hash_combine(self, hasher) {
+impl Hash for MyString with fn hash_combine(self, hasher) {
   let MyString(self) = self
   hasher.combine_string(self)
 }
@@ -691,7 +691,7 @@ pub fn[K] HashSet::copy(self : HashSet[K]) -> HashSet[K] {
 
 ///|
 /// ToJson implementation for hashset
-pub impl[X : ToJson] ToJson for HashSet[X] with to_json(self) {
+pub impl[X : ToJson] ToJson for HashSet[X] with fn to_json(self) {
   [
     for entry in self.entries if entry is Some({ key, .. }) => key
   ]
@@ -699,7 +699,7 @@ pub impl[X : ToJson] ToJson for HashSet[X] with to_json(self) {
 
 ///|
 /// Default implementation for hashset
-pub impl[K] Default for HashSet[K] with default() {
+pub impl[K] Default for HashSet[K] with fn default() {
   new_hashset(default_init_capacity)
 }
 
