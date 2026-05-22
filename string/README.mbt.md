@@ -214,33 +214,42 @@ test "string regex basics" {
 
 ## Parsing
 
-Parse primitive types from strings. All parsing functions raise on invalid input.
+Parse primitive types from strings. Prefer the type-directed `from_str` API for
+ordinary parsing. All parsing APIs raise on invalid input.
 
 ```mbt check
 ///|
-test "parse numbers" {
-  // integers (decimal by default)
-  inspect(@string.parse_int("42"), content="42")
-  inspect(@string.parse_int("-17"), content="-17")
-  // explicit base
-  inspect(@string.parse_int("ff", base=16), content="255")
-  inspect(@string.parse_int("101", base=2), content="5")
-  // unsigned
-  inspect(@string.parse_uint("42"), content="42")
-  // 64-bit
-  inspect(@string.parse_int64("9999999999"), content="9999999999")
-  inspect(
-    @string.parse_uint64("18446744073709551615"),
-    content="18446744073709551615",
-  )
-  // double
-  inspect(@string.parse_double("3.14"), content="3.14")
-  // bool
-  inspect(@string.parse_bool("true"), content="true")
+test "from_str" {
+  let i : Int = @string.from_str("42")
+  inspect(i, content="42")
+  let negative : Int = @string.from_str("-17")
+  inspect(negative, content="-17")
+  let u : UInt = @string.from_str("42")
+  inspect(u, content="42")
+  let i64 : Int64 = @string.from_str("9999999999")
+  inspect(i64, content="9999999999")
+  let u64 : UInt64 = @string.from_str("18446744073709551615")
+  inspect(u64, content="18446744073709551615")
+  let d : Double = @string.from_str("3.14")
+  inspect(d, content="3.14")
+  let b : Bool = @string.from_str("true")
+  inspect(b, content="true")
 }
 ```
 
-The `FromStr` trait provides a generic `from_str()` method for `Bool`, `Int`, `Int64`, `UInt`, `UInt64`, and `Double`.
+The `FromStr` trait provides `from_str()` for `Bool`, `Int`, `Int64`, `UInt`,
+`UInt64`, and `Double`. Use concrete parsers when you need parser-specific
+options or an explicit parser name. For example, integer parsers accept an
+optional base:
+
+```mbt check
+///|
+test "parse integers with base" {
+  inspect(@string.parse_int("ff", base=16), content="255")
+  inspect(@string.parse_int("101", base=2), content="5")
+  inspect(@string.parse_uint64("ff_ff", base=16), content="65535")
+}
+```
 
 ## Regex Match Results
 
