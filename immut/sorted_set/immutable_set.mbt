@@ -901,12 +901,23 @@ pub fn[A] SortedSet::length(self : SortedSet[A]) -> Int {
 
 ///|
 /// Creates a new node.
+#inline
 fn[A] create(
   left : SortedSet[A],
   value : A,
   right : SortedSet[A],
 ) -> SortedSet[A] {
-  Node(left~, right~, value~, size=left.length() + right.length() + 1)
+  // Inline size extraction: same shape as SortedSet::length() but avoids
+  // the function call. Hot during union / intersection / balance recursion.
+  let ls = match left {
+    Empty => 0
+    Node(size~, ..) => size
+  }
+  let rs = match right {
+    Empty => 0
+    Node(size~, ..) => size
+  }
+  Node(left~, right~, value~, size=ls + rs + 1)
 }
 
 ///|

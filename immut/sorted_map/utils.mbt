@@ -68,14 +68,25 @@ pub fn[K, V] SortedMap::is_empty(self : SortedMap[K, V]) -> Bool {
 }
 
 ///|
+#inline
 fn[K, V] make_tree(
   key : K,
   value : V,
   l : SortedMap[K, V],
   r : SortedMap[K, V],
 ) -> SortedMap[K, V] {
-  let size = l.length() + r.length() + 1
-  Tree(key, value~, size~, l, r)
+  // Inline the size extraction so make_tree does a single match per child
+  // instead of going through SortedMap::length() (which is the same match
+  // but as a separate call). Hot during merge / balance recursion.
+  let ls = match l {
+    Empty => 0
+    Tree(_, size=s, _, _, ..) => s
+  }
+  let rs = match r {
+    Empty => 0
+    Tree(_, size=s, _, _, ..) => s
+  }
+  Tree(key, value~, size=ls + rs + 1, l, r)
 }
 
 ///|
