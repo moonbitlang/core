@@ -355,6 +355,15 @@ fn ParseContext::lex_number_end(
   // large or precision-sensitive numbers so existing rounding behavior is kept.
   let scan = ctx.scan_json_number(start, end)
   if scan.is_integer {
+    // For safe integers, scan_json_number already computed the absolute value
+    // in scan.mantissa. Use it directly instead of re-scanning digits in
+    // lex_integer_end. Overflow / many-digits paths still defer to that helper.
+    if !scan.many_digits &&
+      scan.mantissa <= SAFE_INTEGER_LIMIT.reinterpret_as_uint64() {
+      let v = scan.mantissa.reinterpret_as_int64()
+      let signed = if scan.negative { -v } else { v }
+      return (signed.to_double(), None)
+    }
     return ctx.lex_integer_end(start, end)
   }
   match scan.try_fast_double() {
