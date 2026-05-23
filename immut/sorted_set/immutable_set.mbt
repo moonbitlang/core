@@ -892,6 +892,7 @@ fn[A : Compare] SortedSet::split_bis(
 ///|
 /// Get the height of set.
 #alias(size, deprecated)
+#inline
 pub fn[A] SortedSet::length(self : SortedSet[A]) -> Int {
   match self {
     Empty => 0
@@ -907,17 +908,9 @@ fn[A] create(
   value : A,
   right : SortedSet[A],
 ) -> SortedSet[A] {
-  // Inline size extraction: same shape as SortedSet::length() but avoids
-  // the function call. Hot during union / intersection / balance recursion.
-  let ls = match left {
-    Empty => 0
-    Node(size~, ..) => size
-  }
-  let rs = match right {
-    Empty => 0
-    Node(size~, ..) => size
-  }
-  Node(left~, right~, value~, size=ls + rs + 1)
+  // length() is #inline, so the size match collapses into create, which is
+  // itself #inline into union / intersection / balance.
+  Node(left~, right~, value~, size=left.length() + right.length() + 1)
 }
 
 ///|
