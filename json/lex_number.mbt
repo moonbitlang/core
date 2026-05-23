@@ -355,10 +355,20 @@ fn ParseContext::lex_number_end(
   // large or precision-sensitive numbers so existing rounding behavior is kept.
   let scan = ctx.scan_json_number(start, end)
   if scan.is_integer {
-    // For safe integers, scan_json_number already computed the absolute value
-    // in scan.mantissa. Use it directly instead of re-scanning digits in
-    // lex_integer_end. Overflow / many-digits paths still defer to that helper.
+    // `is_integer` is set by `scan_json_number` only when no `.` and no `e/E`
+    // are seen, so for that branch `scan.exponent` is structurally 0 and
+    // `scan.mantissa` is exactly the unsigned absolute value of the integer
+    // literal. The `scan.exponent == 0L` guard restates that invariant
+    // locally so a future relaxation of `is_integer` cannot silently make
+    // this branch return an unscaled value; in that case we just fall
+    // through to `lex_integer_end`.
+    //
+    // The mantissa <= 2^53 - 1 check (`SAFE_INTEGER_LIMIT`) keeps the
+    // returned Double lossless. `reinterpret_as_uint64` / `reinterpret_as_int64`
+    // are value-preserving here because both operands sit in [0, 2^53), well
+    // inside the overlap of Int64+ and UInt64.
     if !scan.many_digits &&
+      scan.exponent == 0L &&
       scan.mantissa <= SAFE_INTEGER_LIMIT.reinterpret_as_uint64() {
       let v = scan.mantissa.reinterpret_as_int64()
       let signed = if scan.negative { -v } else { v }
