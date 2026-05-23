@@ -54,6 +54,7 @@ pub fn[K : Compare, V] SortedMap::contains(
 ///|
 /// Get the number of key-value pairs in the map.
 #alias(size, deprecated)
+#inline
 pub fn[K, V] SortedMap::length(self : SortedMap[K, V]) -> Int {
   match self {
     Empty => 0
@@ -75,18 +76,10 @@ fn[K, V] make_tree(
   l : SortedMap[K, V],
   r : SortedMap[K, V],
 ) -> SortedMap[K, V] {
-  // Inline the size extraction so make_tree does a single match per child
-  // instead of going through SortedMap::length() (which is the same match
-  // but as a separate call). Hot during merge / balance recursion.
-  let ls = match l {
-    Empty => 0
-    Tree(_, size=s, _, _, ..) => s
-  }
-  let rs = match r {
-    Empty => 0
-    Tree(_, size=s, _, _, ..) => s
-  }
-  Tree(key, value~, size=ls + rs + 1, l, r)
+  // length() is #inline, so the size match collapses into make_tree, which
+  // is itself #inline into balance / merge / add.
+  let size = l.length() + r.length() + 1
+  Tree(key, value~, size~, l, r)
 }
 
 ///|
