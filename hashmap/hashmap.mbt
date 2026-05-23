@@ -722,7 +722,13 @@ fn[K, V] HashMap::shift_back(self : HashMap[K, V], idx : Int) -> Unit {
 }
 
 ///|
-fn[K, V] HashMap::grow(self : HashMap[K, V]) -> Unit {
+/// `[K : Eq]` is kept on the signature even though the rehash loop no
+/// longer calls `key == key`: it keeps the trait surface of `grow`
+/// symmetric with the rest of the HashMap private API (every other
+/// helper that touches `entries` carries it) and leaves room for a
+/// future debug-only invariant check without an API change.
+#warnings("-unused_trait_bound")
+fn[K : Eq, V] HashMap::grow(self : HashMap[K, V]) -> Unit {
   let old_entries = self.entries
   let new_capacity = self.capacity << 1
   let new_mask = new_capacity - 1

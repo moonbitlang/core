@@ -223,7 +223,10 @@ fn[K] HashSet::shift_back(self : HashSet[K], idx : Int) -> Unit {
 }
 
 ///|
-fn[K] HashSet::grow(self : HashSet[K]) -> Unit {
+/// `[K : Eq]` kept for trait-surface symmetry with the rest of the
+/// HashSet private API; the rehash loop does not call `key == key`.
+#warnings("-unused_trait_bound")
+fn[K : Eq] HashSet::grow(self : HashSet[K]) -> Unit {
   // handle zero capacity
   if self.capacity == 0 {
     self.capacity = default_init_capacity

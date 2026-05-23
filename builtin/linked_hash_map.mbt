@@ -558,7 +558,10 @@ fn[K, V] Map::shift_back(self : Map[K, V], idx : Int) -> Unit {
 }
 
 ///|
-fn[K, V] Map::grow(self : Map[K, V]) -> Unit {
+/// `[K : Eq]` kept for trait-surface symmetry with the rest of the
+/// builtin `Map` private API; the rehash loop does not call `key == key`.
+#warnings("-unused_trait_bound")
+fn[K : Eq, V] Map::grow(self : Map[K, V]) -> Unit {
   let old_head = self.head
   let new_capacity = self.capacity << 1
   self.entries = FixedArray::make(new_capacity, None)
