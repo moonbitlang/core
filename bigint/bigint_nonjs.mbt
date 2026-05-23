@@ -401,8 +401,12 @@ pub impl Mul for BigInt with fn mul(self : BigInt, other : BigInt) -> BigInt {
 }
 
 ///|
-/// Multiply by a single radix-limb. Used as the fast path of `Mul::mul`
-/// when one operand has `len == 1`.
+/// Multiply the magnitude of `self` by a single radix-limb `x`. Returns
+/// a `Positive`-signed result regardless of `self.sign` — the caller in
+/// `Mul::mul` overwrites `sign` with the correct combined sign. This
+/// matches the convention of the other magnitude-only multiply helpers
+/// (`grade_school_mul`, `karatsuba_mul`). Do not call directly when a
+/// signed product is needed.
 fn BigInt::mul_single_limb(self : BigInt, x : UInt) -> BigInt {
   let n = self.len
   let limbs = FixedArray::make(n + 1, 0U)
