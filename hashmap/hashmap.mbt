@@ -722,16 +722,38 @@ fn[K, V] HashMap::shift_back(self : HashMap[K, V], idx : Int) -> Unit {
 }
 
 ///|
-fn[K : Eq, V] HashMap::grow(self : HashMap[K, V]) -> Unit {
+fn[K, V] HashMap::grow(self : HashMap[K, V]) -> Unit {
   let old_entries = self.entries
   let new_capacity = self.capacity << 1
+  let new_mask = new_capacity - 1
   self.entries = FixedArray::make(new_capacity, None)
   self.capacity = new_capacity
-  self.capacity_mask = new_capacity - 1
-  self.size = 0
+  self.capacity_mask = new_mask
+  // size is unchanged: we move the same entries, no Eq check, no
+  // load-factor check. set_with_hash's general path repeats key == key on
+  // every probe step and re-checks `size >= capacity/2`; both are pure
+  // overhead during a rehash.
   for entry in old_entries {
-    if entry is Some({ key, value, hash, .. }) {
-      self.set_with_hash(key, value, hash)
+    if entry is Some(e) {
+      let hash = e.hash
+      // Robin Hood probe specialized for "all keys are distinct"
+      for psl = 0, idx = hash & new_mask, ent = e {
+        match self.entries[idx] {
+          None => {
+            ent.psl = psl
+            self.entries[idx] = Some(ent)
+            break
+          }
+          Some(curr) =>
+            if psl > curr.psl {
+              ent.psl = psl
+              self.entries[idx] = Some(ent)
+              continue curr.psl + 1, (idx + 1) & new_mask, curr
+            } else {
+              continue psl + 1, (idx + 1) & new_mask, ent
+            }
+        }
+      }
     }
   }
 }

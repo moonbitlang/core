@@ -223,7 +223,7 @@ fn[K] HashSet::shift_back(self : HashSet[K], idx : Int) -> Unit {
 }
 
 ///|
-fn[K : Eq] HashSet::grow(self : HashSet[K]) -> Unit {
+fn[K] HashSet::grow(self : HashSet[K]) -> Unit {
   // handle zero capacity
   if self.capacity == 0 {
     self.capacity = default_init_capacity
@@ -236,12 +236,33 @@ fn[K : Eq] HashSet::grow(self : HashSet[K]) -> Unit {
   let old_entries = self.entries
   self.entries = FixedArray::make(self.capacity * 2, None)
   self.capacity = self.capacity * 2
-  self.capacity_mask = self.capacity - 1
+  let new_mask = self.capacity - 1
+  self.capacity_mask = new_mask
   self.grow_at = calc_grow_threshold(self.capacity)
-  self.size = 0
+  // size unchanged: we move the same entries. add_with_hash's general path
+  // repeats key == key on every probe step and re-checks grow_at; both are
+  // pure overhead during a rehash since all old keys are unique and the
+  // load factor just halved.
   for entry in old_entries {
-    if entry is Some({ key, hash, .. }) {
-      self.add_with_hash(key, hash)
+    if entry is Some(e) {
+      let hash = e.hash
+      for psl = 0, idx = hash & new_mask, ent = e {
+        match self.entries[idx] {
+          None => {
+            ent.psl = psl
+            self.entries[idx] = Some(ent)
+            break
+          }
+          Some(curr) =>
+            if psl > curr.psl {
+              ent.psl = psl
+              self.entries[idx] = Some(ent)
+              continue curr.psl + 1, (idx + 1) & new_mask, curr
+            } else {
+              continue psl + 1, (idx + 1) & new_mask, ent
+            }
+        }
+      }
     }
   }
 }
