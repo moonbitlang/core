@@ -389,7 +389,9 @@ fn[K] Set::grow(self : Set[K]) -> Unit {
       None => break
       Some(e) => {
         let next_in_chain = e.next
-        // Reset LL fields; rehash_place_entry fills them.
+        // Clear `next` so the entry detaches from the old chain;
+        // rehash_place_entry will rewrite `prev` and `psl` and link this
+        // entry as the new tail.
         e.next = None
         self.rehash_place_entry(e)
         continue next_in_chain
