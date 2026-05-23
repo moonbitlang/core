@@ -374,7 +374,11 @@ fn[K] Set::shift_back(self : Set[K], idx : Int) -> Unit {
 }
 
 ///|
-fn[K] Set::grow(self : Set[K]) -> Unit {
+/// `[K : Eq]` kept for trait-surface symmetry with the rest of the
+/// `Set` (linked hash set) private API; the rehash loop does not call
+/// `key == key`.
+#warnings("-unused_trait_bound")
+fn[K : Eq] Set::grow(self : Set[K]) -> Unit {
   let old_head = self.head
   let new_capacity = self.capacity << 1
   self.entries = FixedArray::make(new_capacity, None)
