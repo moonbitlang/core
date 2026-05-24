@@ -29,6 +29,66 @@ fn[T] Array::make_uninit(len : Int) -> Array[T] {
 }
 
 ///|
+fn[T] Array::unsafe_make_and_blit(
+  src : UninitializedArray[T],
+  allocate_len~ : Int,
+  len~ : Int,
+  src_offset? : Int = 0,
+  dst_offset? : Int = 0,
+) -> Array[T] {
+  {
+    buf: UninitializedArray::make_and_blit(
+      src,
+      allocate_len~,
+      src_offset~,
+      dst_offset~,
+      len~,
+    ),
+    len: allocate_len,
+  }
+}
+
+///|
+fn[T] Array::unsafe_make_and_blit_from_fixed(
+  src : FixedArray[T],
+  allocate_len~ : Int,
+  len~ : Int,
+  src_offset? : Int = 0,
+  dst_offset? : Int = 0,
+) -> Array[T] {
+  {
+    buf: UninitializedArray::unsafe_make_and_blit_from_fixed(
+      src, allocate_len, src_offset, dst_offset, len,
+    ),
+    len: allocate_len,
+  }
+}
+
+///|
+fn[T] Array::unsafe_resize_with_default(
+  self : Array[T],
+  new_len : Int,
+  value : T,
+) -> Unit {
+  let len = self.length()
+  guard new_len >= len
+  if new_len <= self.capacity() {
+    self.buf.unchecked_fill(len, value, new_len - len)
+  } else {
+    let new_buf = UninitializedArray::unsafe_make_and_blit_with_init(
+      self.buf,
+      new_len,
+      value,
+      0,
+      0,
+      len,
+    )
+    self.buf = new_buf
+  }
+  self.len = new_len
+}
+
+///|
 /// Creates a new empty array with an optional initial capacity.
 ///
 /// Parameters:

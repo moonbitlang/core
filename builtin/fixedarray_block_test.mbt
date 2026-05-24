@@ -61,3 +61,22 @@ test "unsafe_blit from back to front" {
     ),
   )
 }
+
+///|
+test "make_and_blit copies range and initializes the rest" {
+  let src = FixedArray::from_array([1, 2, 3, 4])
+  let dst = FixedArray::make_and_blit(
+    src,
+    allocate_len=6,
+    init=0,
+    src_offset=1,
+    dst_offset=2,
+    len=2,
+  )
+  debug_inspect(
+    dst,
+    content=(
+      #|<FixedArray: [0, 0, 2, 3, 0, 0]>
+    ),
+  )
+}

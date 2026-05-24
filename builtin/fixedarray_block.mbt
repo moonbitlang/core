@@ -75,6 +75,49 @@ fn[T] UninitializedArray::unsafe_blit_fixed(
 }
 
 ///|
+/// Unsafe variant of `make` followed by `unsafe_blit`.
+#intrinsic("%fixedarray.make_with_init_blit")
+#owned(src, init)
+fn[T] FixedArray::unsafe_make_and_blit(
+  src : FixedArray[T],
+  allocate_len : Int,
+  init : T,
+  src_offset : Int,
+  dst_offset : Int,
+  blit_len : Int,
+) -> FixedArray[T] {
+  let dst = FixedArray::make(allocate_len, init)
+  FixedArray::unsafe_blit(dst, dst_offset, src, src_offset, blit_len)
+  dst
+}
+
+///|
+/// Creates a fixed array initialized with `init`, then blits `len` elements
+/// from `src` into it.
+pub fn[T] FixedArray::make_and_blit(
+  src : FixedArray[T],
+  allocate_len~ : Int,
+  init~ : T,
+  len~ : Int,
+  src_offset? : Int = 0,
+  dst_offset? : Int = 0,
+) -> FixedArray[T] {
+  guard allocate_len >= 0 &&
+    len >= 0 &&
+    src_offset >= 0 &&
+    dst_offset >= 0 &&
+    src_offset + len <= src.length() &&
+    dst_offset + len <= allocate_len else {
+    abort(
+      "bounds check failed: allocate_len = \{allocate_len}, src_offset = \{src_offset}, dst_offset = \{dst_offset}, len = \{len}, src.length = \{src.length()}",
+    )
+  }
+  FixedArray::unsafe_make_and_blit(
+    src, allocate_len, init, src_offset, dst_offset, len,
+  )
+}
+
+///|
 /// Copies a sequence of elements from the source fixed array to a destination
 /// fixed array. The arrays may overlap, in which case the copy is performed in a
 /// way that preserves the data.
