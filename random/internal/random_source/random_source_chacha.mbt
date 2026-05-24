@@ -53,11 +53,11 @@ const SEED_CHUNK_NUM = 4
 ///|
 /// Return the next random `UInt64`, refilling the internal buffer when needed.
 pub fn ChaCha8::next_uint64(self : ChaCha8) -> UInt64 {
-  let i = self.i
+  let mut i = self.i
   if i >= self.n {
     self.refill()
+    i = 0
   }
-  let i = self.i
   self.i = i + 1
   let index = i.reinterpret_as_int() & (BUFFER_CHUNK_NUM - 1)
   let lo = self.buffer[index * 2].to_uint64()
@@ -66,7 +66,10 @@ pub fn ChaCha8::next_uint64(self : ChaCha8) -> UInt64 {
 }
 
 ///|
-/// Function `refill`.
+/// Refill the internal buffer and reset the read cursor.
+///
+/// After refill, `self.i == 0` and `self.n` is either `BUFFER_CHUNK_NUM` or
+/// `BUFFER_CHUNK_NUM - SEED_CHUNK_NUM`, so `self.i < self.n`.
 pub fn ChaCha8::refill(self : ChaCha8) -> Unit {
   self.counter += COUNTER_INC
   if self.counter == COUNTER_MAX {
