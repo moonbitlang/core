@@ -500,8 +500,7 @@ pub fn Bytes::from_fixedarray(arr : FixedArray[Byte], len? : Int) -> Bytes {
       x
     }
   }
-  let result = unsafe_to_fixedarray(UninitializedArray::make(len))
-  arr.blit_to(result, len~)
+  let result = FixedArray::make_and_blit(arr, allocate_len=len, init=0, len~)
   result.unsafe_reinterpret_as_bytes()
 }
 
@@ -551,9 +550,12 @@ pub fn Bytes::to_fixedarray(self : Bytes, len? : Int) -> FixedArray[Byte] {
       x
     }
   }
-  let arr = unsafe_to_fixedarray(UninitializedArray::make(len))
-  arr.blit_from_bytes(0, self, 0, len)
-  arr
+  FixedArray::make_and_blit(
+    unsafe_from_bytes(self),
+    allocate_len=len,
+    init=0,
+    len~,
+  )
 }
 
 ///|
@@ -574,9 +576,13 @@ pub fn Bytes::to_fixedarray(self : Bytes, len? : Int) -> FixedArray[Byte] {
 /// ```
 pub fn BytesView::to_fixedarray(self : BytesView) -> FixedArray[Byte] {
   let len = self.length()
-  let arr = unsafe_to_fixedarray(UninitializedArray::make(len))
-  arr.blit_from_bytes(0, self.data(), self.start_offset(), len)
-  arr
+  FixedArray::make_and_blit(
+    unsafe_from_bytes(self.data()),
+    allocate_len=len,
+    init=0,
+    src_offset=self.start_offset(),
+    len~,
+  )
 }
 
 ///|
@@ -632,15 +638,11 @@ pub fn Bytes::from_iter(iter : Iter[Byte]) -> Bytes {
 /// ```
 pub fn Bytes::to_array(self : Bytes) -> Array[Byte] {
   let len = self.length()
-  let rv = Array::make_uninit(len)
-  UninitializedArray::unsafe_blit_fixed(
-    rv.buffer(),
-    0,
+  Array::unsafe_make_and_blit_from_fixed(
     unsafe_from_bytes(self),
-    0,
-    len,
+    allocate_len=len,
+    len~,
   )
-  rv
 }
 
 ///|
@@ -657,15 +659,12 @@ pub fn Bytes::to_array(self : Bytes) -> Array[Byte] {
 /// ```
 pub fn BytesView::to_array(self : BytesView) -> Array[Byte] {
   let len = self.length()
-  let rv = Array::make_uninit(len)
-  UninitializedArray::unsafe_blit_fixed(
-    rv.buffer(),
-    0,
+  Array::unsafe_make_and_blit_from_fixed(
     unsafe_from_bytes(self.data()),
-    self.start_offset(),
-    len,
+    allocate_len=len,
+    src_offset=self.start_offset(),
+    len~,
   )
-  rv
 }
 
 ///|
@@ -800,9 +799,6 @@ pub fn Bytes::get(self : Bytes, index : Int) -> Byte? {
   guard index >= 0 && index < self.length() else { None }
   Some(self[index])
 }
-
-///|
-fn unsafe_to_fixedarray(array : UninitializedArray[Byte]) -> FixedArray[Byte] = "%identity"
 
 ///|
 /// Concatenates two bytes sequences.

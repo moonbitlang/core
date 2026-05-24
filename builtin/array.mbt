@@ -34,9 +34,7 @@
 /// ```
 pub fn[T] Array::from_fixed_array(arr : FixedArray[T]) -> Array[T] {
   let len = arr.length()
-  let arr2 = Array::make_uninit(len)
-  UninitializedArray::unsafe_blit_fixed(arr2.buffer(), 0, arr, 0, len)
-  arr2
+  Array::unsafe_make_and_blit_from_fixed(arr, allocate_len=len, len~)
 }
 
 ///|
@@ -371,22 +369,29 @@ pub impl[T : Compare] Compare for Array[T] with fn compare(self, other) {
 /// }
 /// ```
 pub impl[T] Add for Array[T] with fn add(self, other) {
-  let result = Array::make_uninit(self.length() + other.length())
-  UninitializedArray::unsafe_blit(
-    result.buffer(),
-    0,
-    self.buffer(),
-    0,
-    self.length(),
-  )
-  UninitializedArray::unsafe_blit(
-    result.buffer(),
-    self.length(),
-    other.buffer(),
-    0,
-    other.length(),
-  )
-  result
+  let len_self = self.length()
+  let len_other = other.length()
+  if len_self == 0 {
+    Array::unsafe_make_and_blit(
+      other.buffer(),
+      allocate_len=len_other,
+      len=len_other,
+    )
+  } else {
+    let result = Array::unsafe_make_and_blit(
+      self.buffer(),
+      allocate_len=len_self + len_other,
+      len=len_self,
+    )
+    UninitializedArray::unsafe_blit(
+      result.buffer(),
+      len_self,
+      other.buffer(),
+      0,
+      len_other,
+    )
+    result
+  }
 }
 
 ///|
@@ -805,17 +810,21 @@ pub fn[T] Array::split_at(self : Array[T], index : Int) -> (Array[T], Array[T]) 
       "index out of bounds: the len is from 0 to \{len} but the index is \{index}",
     )
   }
-  let v1 = Array::make_uninit(index)
-  let v2 = Array::make_uninit(self.length() - index)
-  UninitializedArray::unsafe_blit(v1.buffer(), 0, self.buffer(), 0, index)
-  if index != self.length() {
-    UninitializedArray::unsafe_blit(
-      v2.buffer(),
-      0,
+  let v1 = Array::unsafe_make_and_blit(
+    self.buffer(),
+    allocate_len=index,
+    len=index,
+  )
+  let v2 = if index != self.length() {
+    let len2 = self.length() - index
+    Array::unsafe_make_and_blit(
       self.buffer(),
-      index,
-      self.length() - index,
+      allocate_len=len2,
+      src_offset=index,
+      len=len2,
     )
+  } else {
+    Array::make_uninit(0)
   }
   (v1, v2)
 }
@@ -1201,13 +1210,11 @@ pub fn[T] Array::resize(self : Array[T], new_len : Int, f : T) -> Unit {
   if new_len < 0 {
     abort("negative new length")
   }
-  if new_len < self.length() {
+  let len = self.length()
+  if new_len < len {
     self.unsafe_truncate_to_length(new_len)
-  } else {
-    let len = self.length()
-    for _ in len..<new_len {
-      self.push(f)
-    }
+  } else if new_len > len {
+    self.unsafe_resize_with_default(new_len, f)
   }
 }
 

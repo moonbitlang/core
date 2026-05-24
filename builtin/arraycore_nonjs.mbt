@@ -187,11 +187,14 @@ fn[T] Array::buffer(self : Array[T]) -> UninitializedArray[T] {
 
 ///|
 fn[T] Array::resize_buffer(self : Array[T], new_capacity : Int) -> Unit {
-  let new_buf = UninitializedArray::make(new_capacity)
   let old_buf = self.buf
   let old_cap = old_buf.0.length()
   let copy_len = if old_cap < new_capacity { old_cap } else { new_capacity }
-  UninitializedArray::unsafe_blit(new_buf, 0, old_buf, 0, copy_len)
+  let new_buf = UninitializedArray::make_and_blit(
+    old_buf,
+    allocate_len=new_capacity,
+    len=copy_len,
+  )
   self.buf = new_buf
 }
 
@@ -415,8 +418,15 @@ pub fn[T] Array::remove(self : Array[T], index : Int) -> T {
 pub fn[T] Array::drain(self : Array[T], begin : Int, end : Int) -> Array[T] {
   guard begin >= 0 && end <= self.length() && begin <= end
   let num = end - begin
-  let v = Array::make_uninit(num)
-  UninitializedArray::unsafe_blit(v.buffer(), 0, self.buffer(), begin, num)
+  let v = {
+    buf: UninitializedArray::make_and_blit(
+      self.buffer(),
+      allocate_len=num,
+      src_offset=begin,
+      len=num,
+    ),
+    len: num,
+  }
   UninitializedArray::unsafe_blit(
     self.buffer(),
     begin,
@@ -476,8 +486,11 @@ pub fn[T] Array::insert(self : Array[T], index : Int, value : T) -> Unit {
 ///
 fn[T] Array::unsafe_grow_to_length(self : Array[T], new_len : Int) -> Unit {
   guard new_len >= self.length()
-  let new_buf = UninitializedArray::make(new_len)
-  UninitializedArray::unsafe_blit(new_buf, 0, self.buf, 0, self.len)
+  let new_buf = UninitializedArray::make_and_blit(
+    self.buf,
+    allocate_len=new_len,
+    len=self.len,
+  )
   self.len = new_len
   self.buf = new_buf
 }

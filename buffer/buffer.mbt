@@ -52,8 +52,12 @@ fn Buffer::grow_if_necessary(self : Buffer, required : Int) -> Unit {
     continue space * 2
   }
   if enough_space != self.data.length() {
-    let new_data = FixedArray::make(enough_space, Byte::default())
-    new_data.unsafe_blit(0, self.data, 0, self.len)
+    let new_data = FixedArray::make_and_blit(
+      self.data,
+      allocate_len=enough_space,
+      init=Byte::default(),
+      len=self.len,
+    )
     self.data = new_data
   }
 }

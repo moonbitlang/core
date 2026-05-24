@@ -135,9 +135,7 @@ pub fn[A] Vector::from_iter(iter : Iter[A]) -> Vector[A] {
       []
     }
   } else {
-    let res = FixedArray::make(index, buf[0])
-    buf.blit_to(res, len=index)
-    res
+    FixedArray::make_and_blit(buf, allocate_len=index, init=buf[0], len=index)
   }
   let tree_len = leaves.length() * branching_factor
   let (tree, shift) = if tree_len == 0 {

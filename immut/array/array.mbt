@@ -118,8 +118,12 @@ pub fn[A] T::from_iter(iter : Iter[A]) -> T[A] {
   if index == branching_factor {
     leaves.push(buf)
   } else if index > 0 {
-    let res = FixedArray::make(index, buf[0])
-    buf.blit_to(res, len=index)
+    let res = FixedArray::make_and_blit(
+      buf,
+      allocate_len=index,
+      init=buf[0],
+      len=index,
+    )
     leaves.push(res)
   }
   let size = leaves.fold(init=0, (acc, xs) => acc + xs.length())

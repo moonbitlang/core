@@ -1426,11 +1426,12 @@ pub fn[T] ArrayView::to_owned(self : ArrayView[T]) -> Array[T] {
   if len == 0 {
     []
   } else {
-    let arr = Array::make(len, self[0])
-    for i, v in self {
-      arr[i] = v
-    }
-    arr
+    Array::unsafe_make_and_blit(
+      self.buf(),
+      allocate_len=len,
+      src_offset=self.start(),
+      len~,
+    )
   }
 }
 
@@ -1625,22 +1626,29 @@ pub impl[A : Hash] Hash for ArrayView[A] with fn hash_combine(self, hasher) {
 pub impl[T] Add for ArrayView[T] with fn add(self, other) {
   let len_self = self.length()
   let len_other = other.length()
-  let result = Array::make_uninit(len_self + len_other)
-  UninitializedArray::unsafe_blit(
-    result.buffer(),
-    0,
-    self.buf(),
-    self.start(),
-    len_self,
-  )
-  UninitializedArray::unsafe_blit(
-    result.buffer(),
-    len_self,
-    other.buf(),
-    other.start(),
-    len_other,
-  )
-  result
+  if len_self == 0 {
+    Array::unsafe_make_and_blit(
+      other.buf(),
+      allocate_len=len_other,
+      src_offset=other.start(),
+      len=len_other,
+    )
+  } else {
+    let result = Array::unsafe_make_and_blit(
+      self.buf(),
+      allocate_len=len_self + len_other,
+      src_offset=self.start(),
+      len=len_self,
+    )
+    UninitializedArray::unsafe_blit(
+      result.buffer(),
+      len_self,
+      other.buf(),
+      other.start(),
+      len_other,
+    )
+    result
+  }
 }
 
 // #endregion
