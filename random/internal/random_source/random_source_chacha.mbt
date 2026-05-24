@@ -13,19 +13,68 @@
 // limitations under the License.
 
 ///|
+/// A pseudo-random number generator built on the `chacha8rand`
+/// construction used by Go's `math/rand/v2` and specified at
+/// https://c2sp.org/chacha8rand. It pairs a 4-block-batched ChaCha8
+/// stream with delayed key erasure.
+///
+/// Each `refill` runs four ChaCha8 blocks in parallel: block counters
+/// `counter`, `counter + 1`, `counter + 2`, `counter + 3`, producing
+/// 256 bytes (32 * `UInt64`) of output. Every fourth batch reserves the
+/// tail 32 bytes as the next key, and the following `refill` installs it
+/// before generating more output. Because that key erasure is delayed, a
+/// memory dump can reconstruct recent buffered output, but not output
+/// before the previous reseed.
+///
+/// This differs from a plain ChaCha8 keystream in two ways: only the key
+/// rows (rows 4-11) of the state are added back into the output, and the
+/// four blocks share a SIMD-friendly interleaved memory layout.
 struct ChaCha8 {
-  /// length = BUFFER_CHUNK_NUM * 2
+  /// Generated keystream. Dual-purposed across the two phases of a
+  /// refill, with a length of `BUFFER_CHUNK_NUM * 2 = 64` 32-bit words:
+  ///
+  /// - During `chacha_block`: a 16-row by 4-lane interleaved ChaCha state
+  ///   matrix, with row `r` of lane `l` at `buffer[r * 4 + l]`.
+  /// - After `chacha_block` returns: 32 consecutive little-endian
+  ///   `UInt64` outputs, where output `k` lives at `buffer[k * 2]` (low)
+  ///   and `buffer[k * 2 + 1]` (high). The two layouts coincide because
+  ///   `16 rows * 4 lanes = 32 outputs * 2 halves = 64` words.
   buffer : FixedArray[UInt]
-  /// length = SEED_CHUNK_NUM * 2
+  /// The current ChaCha key (256 bits) as `SEED_CHUNK_NUM * 2 = 8`
+  /// little-endian 32-bit words. On every reseed (every 4 refills) the
+  /// final 32 bytes of the previous keystream overwrite this field: the
+  /// fast-key-erasure step.
   seed : FixedArray[UInt]
+  /// Index of the next `UInt64` to return, counted in 64-bit units from
+  /// the start of `buffer`. `next_uint64` refills before reading when
+  /// `i >= n`, so every read has `i < n <= BUFFER_CHUNK_NUM`. The mask in
+  /// the buffer index is valid because `BUFFER_CHUNK_NUM` is a power of 2.
   mut i : UInt
+  /// Number of `UInt64`s in `buffer` that may be returned this cycle.
+  /// Normally `BUFFER_CHUNK_NUM = 32`. On the refill immediately before a
+  /// reseed it drops to `BUFFER_CHUNK_NUM - SEED_CHUNK_NUM = 28`, because
+  /// the trailing 4 `UInt64`s are reserved as the next key and must not
+  /// be exposed as output.
   mut n : UInt
+  /// ChaCha block counter for the *next* call to `chacha_block`: the
+  /// counter of the first of the 4 parallel lanes. Advances by
+  /// `COUNTER_INC = 4` per refill and wraps to 0 on reaching
+  /// `COUNTER_MAX = 16`, which is also the reseed trigger.
   mut counter : UInt
 }
 
 ///|
-/// [seed] must be 32 bytes long.
-pub fn ChaCha8::new(seed : BytesView) -> ChaCha8 {
+/// Constructs a fresh `ChaCha8` PRNG from a 32-byte key.
+///
+/// The seed is parsed as 8 little-endian 32-bit words. The first
+/// keystream batch is produced eagerly so that the first call to
+/// `next_uint64` does not pay the cost of a refill.
+///
+/// Aborts if `seed` is not exactly 32 bytes long.
+pub fn ChaCha8::ChaCha8(seed : BytesView) -> ChaCha8 {
+  if seed.length() != 32 {
+    abort("seed must be 32 bytes long")
+  }
   let seed = FixedArray::makei(SEED_CHUNK_NUM * 2, i => {
     match seed[i * 4:] {
       [u32le(x), ..] => x
@@ -38,16 +87,28 @@ pub fn ChaCha8::new(seed : BytesView) -> ChaCha8 {
 }
 
 ///|
+/// Step applied to `counter` per refill: equals the number of ChaCha
+/// blocks generated in parallel by one call to `chacha_block`.
 const COUNTER_INC = 4U
 
 ///|
+/// Counter value at which the generator reseeds. After
+/// `COUNTER_MAX / COUNTER_INC = 4` refills, `counter` wraps back to 0 and
+/// the tail of the most recent keystream becomes the new key.
 const COUNTER_MAX = 16U
 
 ///|
-/// Must be a power of 2
+/// Number of 64-bit outputs produced per refill. Must be a power of 2 so
+/// that buffer indexing can use a bitmask (`& (BUFFER_CHUNK_NUM - 1)`)
+/// instead of a division. With 4 lanes * 16 32-bit words per block / 2
+/// words per `UInt64` = 32 outputs, this also matches the natural
+/// capacity of `chacha_block`.
 const BUFFER_CHUNK_NUM = 32
 
 ///|
+/// Number of 64-bit words in the ChaCha key (256 bits = 4 * 64 bits) and,
+/// equivalently, the number of `UInt64`s reserved at the end of each
+/// reseed cycle to become the next key.
 const SEED_CHUNK_NUM = 4
 
 ///|
@@ -68,8 +129,13 @@ pub fn ChaCha8::next_uint64(self : ChaCha8) -> UInt64 {
 ///|
 /// Refill the internal buffer and reset the read cursor.
 ///
-/// After refill, `self.i == 0` and `self.n` is either `BUFFER_CHUNK_NUM` or
-/// `BUFFER_CHUNK_NUM - SEED_CHUNK_NUM`, so `self.i < self.n`.
+/// After refill, `self.i == 0` and `self.n` is either `BUFFER_CHUNK_NUM`
+/// or `BUFFER_CHUNK_NUM - SEED_CHUNK_NUM`, so `self.i < self.n`.
+///
+/// On the refill that wraps `counter` from `COUNTER_MAX - COUNTER_INC`
+/// back to 0, the trailing `SEED_CHUNK_NUM * 2` words of the previous
+/// keystream are copied over `seed` (the fast-key-erasure reseed) before
+/// the next batch is generated.
 pub fn ChaCha8::refill(self : ChaCha8) -> Unit {
   self.counter += COUNTER_INC
   if self.counter == COUNTER_MAX {
@@ -92,10 +158,28 @@ pub fn ChaCha8::refill(self : ChaCha8) -> Unit {
 }
 
 ///|
+/// The 4-word working set of a single ChaCha quarter-round. `#valtype`
+/// keeps it unboxed so that `qr` is effectively a pure register-level
+/// operation with no heap traffic.
 #valtype
 priv struct Quadruple(UInt, UInt, UInt, UInt)
 
 ///|
+/// Runs four parallel ChaCha8 blocks into `buf`, using `seed` as the key
+/// and `(counter, counter + 1, counter + 2, counter + 3)` as the four
+/// block counters.
+///
+/// State is laid out in interleaved SIMD form: row `r` of lane `l` lives
+/// at `buf[r * 4 + l]`. The outer `for i in 0..<4` loop walks the lanes;
+/// holding all 16 state words in locals `b0..b15` across the inner
+/// `for _ in 0..<4` double-round loop lets the backend keep them in
+/// registers for the entire permutation.
+///
+/// After 4 double-rounds (= 8 rounds) of column + diagonal quarter
+/// rounds, only the key rows (rows 4-11) are added back into the
+/// output; the constant and counter/nonce rows are written directly.
+/// This is intentional per the `chacha8rand` spec and is what makes the
+/// output differ from a plain ChaCha8 keystream.
 fn chacha_block(
   seed : FixedArray[UInt],
   buf : FixedArray[UInt],
@@ -206,6 +290,17 @@ fn chacha_block(
 }
 
 ///|
+/// Initializes the interleaved 16-by-4 state matrix in `b32` from the key
+/// and block counter, ready for `chacha_block` to permute.
+///
+/// All four lanes share the same constants (rows 0-3), the same key (rows
+/// 4-11), and zero nonce (rows 13-15); only the block counter in row 12
+/// differs across lanes, taking values `counter, counter + 1,
+/// counter + 2, counter + 3`.
+///
+/// Rows 0-3 hold the four 32-bit words of the ASCII string
+/// `"expand 32-byte k"` (`"expa" / "nd 3" / "2-by" / "te k"` in
+/// little-endian): the standard ChaCha sigma constants.
 fn setup(
   seed : FixedArray[UInt],
   b32 : FixedArray[UInt],
@@ -284,13 +379,57 @@ test "BUFFER_CHUNK_NUM is power of 2" {
 }
 
 ///|
+fn chacha8_values_at(seed : BytesView, positions : Array[Int]) -> Array[UInt64] {
+  let s = ChaCha8(seed)
+  let values = [
+    for _ in 0..<=positions[positions.length() - 1] => s.next_uint64()
+  ]
+  [
+    for position in positions => values[position]
+  ]
+}
+
+///|
+test "boundary conformance samples" {
+  let positions = [
+    0, 1, 31, 32, 33, 95, 96, 123, 124, 125, 247, 248, 249, 371, 372,
+  ]
+  // Generated from an independent C2SP-style ChaCha8Rand reference. The
+  // selected indices cover starts, 32-value refill boundaries, the 124-value
+  // reseed iteration boundary, and the first value after three reseeds.
+  @test.assert_eq(chacha8_values_at(Bytes::make(32, b'\x00'), positions), [
+    12432809566553409497UL, 7766219816435805978UL, 125952780581614778UL, 11456203247299035011UL,
+    11766211380141310478UL, 6247410371955873534UL, 3688096476295560216UL, 8184198519316962464UL,
+    10179668788428909817UL, 5258471208527403019UL, 7420841827674394489UL, 10937539205284161074UL,
+    7354588099337910803UL, 1988377183516050978UL, 14819101479397601098UL,
+  ])
+  @test.assert_eq(
+    chacha8_values_at(Bytes::makei(32, i => i.to_byte()), positions),
+    [
+      12537355132343524571UL, 11147319424196738781UL, 10643391562797985389UL, 3312211745067898083UL,
+      9018521450285820678UL, 4858190046463179352UL, 990490856749627748UL, 7053860951501379351UL,
+      7333627332515303615UL, 13837653776835850180UL, 2865794351678725456UL, 5128231522832781158UL,
+      5308840319225627323UL, 16534914931032675201UL, 9337503077864249277UL,
+    ],
+  )
+  @test.assert_eq(
+    chacha8_values_at(Bytes::makei(32, i => (31 - i).to_byte()), positions),
+    [
+      13207452830590730783UL, 5009552866163029026UL, 10502404787336730197UL, 9712881148437595521UL,
+      16401154181191732095UL, 16593913030854572746UL, 14562847379601139255UL, 7882510831935376133UL,
+      7240113522724531080UL, 1369140773094178244UL, 12544778259996841346UL, 17662407199021422433UL,
+      8595294092888404219UL, 3588698780051976674UL, 13209002768099367735UL,
+    ],
+  )
+}
+
+///|
 test "output" {
-  let s = ChaCha8::new(b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456")
-  let res = Array::new(capacity=372)
-  for _ in 0..<372 {
-    let x = s.next_uint64()
-    res.push(x)
-  }
+  let s = ChaCha8(b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456")
+  // C2SP's sample output is the first 2976 bytes of ChaCha8Rand output,
+  // interpreted here as 372 little-endian UInt64 values. That spans three
+  // 992-byte iterations and exercises both refill and reseed transitions.
+  let res = [ for _ in 0..<372 => s.next_uint64() ]
   let expected = [
     13219109469176600229UL, 1252193259764759612UL, 10098646897834928252UL, 9142445797040479446UL,
     14963947397558572717UL, 1011356013395962489UL, 4360278772332321598UL, 11266561239126549327UL,
