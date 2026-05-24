@@ -6,8 +6,10 @@ package "moonbitlang/core/random/internal/random_source"
 // Errors
 
 // Types and methods
-type ChaCha8
-pub fn ChaCha8::new(BytesView) -> Self
+pub struct ChaCha8 {
+  // private fields
+}
+pub fn ChaCha8::ChaCha8(BytesView) -> Self
 pub fn ChaCha8::next_uint64(Self) -> UInt64
 pub fn ChaCha8::refill(Self) -> Unit
 

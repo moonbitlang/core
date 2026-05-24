@@ -13,6 +13,11 @@
 // limitations under the License.
 
 ///|
-test "panic ChaCha8::new invalid seed length" {
-  ignore(@random_source.ChaCha8::new(b"short seed"))
+test "panic ChaCha8 constructor short seed" {
+  ignore(@random_source.ChaCha8(b"short seed"))
+}
+
+///|
+test "panic ChaCha8 constructor long seed" {
+  ignore(@random_source.ChaCha8(Bytes::make(33, b'\x00')))
 }
