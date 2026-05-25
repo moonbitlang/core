@@ -23,25 +23,7 @@ fn[T : Show] debug_string(t : T) -> String {
 }
 
 ///|
-/// Assert two values are equal using `Debug` output for diagnostics.
-///
-/// This is the preferred test assertion for new code, especially for types
-/// that implement `Debug` but not `Show`.
-#callsite(autofill(loc))
-pub fn[T : Eq + Debug] assert_eq(
-  a : T,
-  b : T,
-  msg? : String,
-  loc~ : SourceLoc,
-) -> Unit raise {
-  if a != b {
-    let fail_msg = match msg {
-      Some(msg) => msg
-      None => "`\{@debug.to_string(a)} != \{@debug.to_string(b)}`"
-    }
-    fail(fail_msg, loc~)
-  }
-}
+pub using @debug {assert_eq}
 
 ///|
 /// Assert two values are not equal using `Debug` output for diagnostics.
