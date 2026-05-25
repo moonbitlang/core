@@ -248,6 +248,9 @@ pub fn debug_inspect(
 
 ///|
 /// Assert two values are equal for debugging/tests.
+///
+/// This is the preferred test assertion for new code, especially for types
+/// that implement `Debug` but not `Show`.
 #callsite(autofill(loc))
 pub fn[T : Eq + Debug] assert_eq(
   a : T,
