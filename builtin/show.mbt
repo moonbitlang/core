@@ -231,11 +231,9 @@ pub impl[X : Show] Show for X?
 pub impl[X : Show] Show for X? with fn output(self, logger) {
   match self {
     None => logger.write_string("None")
-    Some(arg) => {
-      logger.write_string("Some(")
-      logger.write_object(arg)
-      logger.write_string(")")
-    }
+    Some(arg) =>
+      logger <+
+        $|Some(\{arg})
   }
 }
 
@@ -246,16 +244,12 @@ pub impl[T : Show, E : Show] Show for Result[T, E]
 ///|
 pub impl[T : Show, E : Show] Show for Result[T, E] with fn output(self, logger) {
   match self {
-    Ok(x) => {
-      logger.write_string("Ok(")
-      logger.write_object(x)
-      logger.write_string(")")
-    }
-    Err(e) => {
-      logger.write_string("Err(")
-      logger.write_object(e)
-      logger.write_string(")")
-    }
+    Ok(x) =>
+      logger <+
+        $|Ok(\{x})
+    Err(e) =>
+      logger <+
+        $|Err(\{e})
   }
 }
 
