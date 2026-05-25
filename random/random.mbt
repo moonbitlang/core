@@ -27,12 +27,7 @@ pub(open) trait Source {
 impl Source for @random_source.ChaCha8 with fn next(
   self : @random_source.ChaCha8,
 ) -> UInt64 {
-  for ;; {
-    if self.next() is Some(x) {
-      return x
-    }
-    self.refill()
-  }
+  self.next_uint64()
 }
 
 ///|
@@ -44,7 +39,7 @@ pub fn Rand::chacha8(
   if seed.length() != 32 {
     abort("seed must be 32 bytes long")
   }
-  Rand(@random_source.ChaCha8::new(seed) as &Source)
+  Rand(@random_source.ChaCha8(seed) as &Source)
 }
 
 ///|

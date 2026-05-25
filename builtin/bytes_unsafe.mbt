@@ -558,10 +558,12 @@ pub fn BytesView::unsafe_read_uint16_be(
 /// - `self_off`, `other_off`: starting byte offsets
 /// - `len`: number of bytes to compare
 ///
-/// This is the shared primitive backing view/owned equality comparisons
-/// (e.g. `BytesView == BytesView`, `BytesView::equal_to_bytes`). It is a
-/// candidate for an `memcmp`-style intrinsic in the future.
+/// This is the shared intrinsic-backed primitive for view/owned equality
+/// comparisons (e.g. `BytesView == BytesView`, `BytesView::equal_to_bytes`).
+/// The function body is the fallback implementation for targets without the
+/// intrinsic.
 #borrow(self, other)
+#intrinsic("%bytes.unsafe_range_equal")
 fn Bytes::unsafe_range_equal(
   self : Bytes,
   self_off : Int,
