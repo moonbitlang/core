@@ -32,29 +32,16 @@ pub(all) suberror ParseError {
 ///|
 pub impl Show for ParseError with fn output(self, logger) {
   match self {
-    InvalidChar({ line, column }, c) => {
-      logger.write_string("Invalid character ")
-      logger.write_string(c.escape())
-      logger.write_string(" at line ")
-      logger.write_object(line)
-      logger.write_string(", column ")
-      logger.write_object(column)
-    }
+    InvalidChar({ line, column }, c) =>
+      logger <+
+        $|Invalid character \{c.escape()} at line \{line}, column \{column}
     InvalidEof => logger.write_string("Unexpected end of file")
-    InvalidNumber({ line, column }, s) => {
-      logger.write_string("Invalid number ")
-      logger.write_string(s)
-      logger.write_string(" at line ")
-      logger.write_object(line)
-      logger.write_string(", column ")
-      logger.write_object(column)
-    }
-    InvalidIdentEscape({ line, column }) => {
-      logger.write_string("Invalid escape sequence in identifier at line ")
-      logger.write_object(line)
-      logger.write_string(", column ")
-      logger.write_object(column)
-    }
+    InvalidNumber({ line, column }, s) =>
+      logger <+
+        $|Invalid number \{s} at line \{line}, column \{column}
+    InvalidIdentEscape({ line, column }) =>
+      logger <+
+        $|Invalid escape sequence in identifier at line \{line}, column \{column}
     DepthLimitExceeded =>
       logger.write_string(
         "Depth limit exceeded, please increase the max_nesting_depth parameter",
