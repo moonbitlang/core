@@ -114,12 +114,54 @@ test "expect_char with surrogate pair" {
 }
 
 ///|
+// Hot path: this runs at the start of every `lex_value` and
+// `lex_after_*` step. The previous `lexmatch` path constructed a
+// fresh `StringView` of the remaining input on every call, which
+// shows up as a top allocation source in JSON parsing workloads.
+// JSON whitespace is ASCII-only, so we can scan UTF-16 code units
+// directly on the existing input view with the same semantics.
+//
+// `offset` is held in a local for the duration of the scan so each
+// consumed whitespace character is one `local.set` instead of a
+// `struct.set` against `ctx`.
 fn ParseContext::lex_skip_whitespace(ctx : ParseContext) -> Unit {
-  let rest = ctx.input.view(start_offset=ctx.offset, end_offset=ctx.end_offset)
-  lexmatch rest with longest {
-    ("[ \t\r\n]+", next) => ctx.offset = ctx.end_offset - next.length()
-    _ => ()
+  let end = ctx.end_offset
+  let mut offset = ctx.offset
+  while offset < end {
+    let c = ctx.input.unsafe_get(offset)
+    if c == ' ' || c == '\t' || c == '\r' || c == '\n' {
+      offset = offset + 1
+    } else {
+      break
+    }
   }
+  ctx.offset = offset
+}
+
+///|
+test "lex_skip_whitespace" {
+  // Empty input: nothing to skip.
+  let ctx = ParseContext::make("", 1)
+  ctx.lex_skip_whitespace()
+  json_inspect(ctx.offset, content=0)
+  // Only whitespace: offset advances to end.
+  let ctx = ParseContext::make("   \t\r\n", 1)
+  ctx.lex_skip_whitespace()
+  json_inspect(ctx.offset, content=6)
+  // Mixed whitespace before a token: stops at the first non-ws byte.
+  let ctx = ParseContext::make(" \t\r\n{", 1)
+  ctx.lex_skip_whitespace()
+  json_inspect(ctx.offset, content=4)
+  // No leading whitespace: offset unchanged.
+  let ctx = ParseContext::make("{}", 1)
+  ctx.lex_skip_whitespace()
+  json_inspect(ctx.offset, content=0)
+  // Non-ASCII / Unicode whitespace (e.g. U+00A0 NBSP) must NOT be
+  // treated as JSON whitespace — RFC 8259 limits the set to the four
+  // ASCII chars handled above.
+  let ctx = ParseContext::make("\u{00A0}x", 1)
+  ctx.lex_skip_whitespace()
+  json_inspect(ctx.offset, content=0)
 }
 
 ///|
