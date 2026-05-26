@@ -18,6 +18,13 @@ priv struct ParseContext {
   input : StringView
   end_offset : Int
   mut remaining_available_depth : Int
+  // Side channel for the optional string representation of a parsed
+  // number. The lex_number chain used to return `(Double, StringView?)`,
+  // but in the steady state `StringView?` is `None` and the tuple
+  // itself is a per-call heap allocation. Each `lex_*_end` writes here
+  // before returning the `Double`; the lex_main caller reads + clears
+  // when constructing the `Number` token.
+  mut last_number_repr : StringView?
 }
 
 ///|
@@ -30,6 +37,7 @@ fn ParseContext::make(
     input,
     end_offset: input.length(),
     remaining_available_depth: max_nesting_depth,
+    last_number_repr: None,
   }
 }
 

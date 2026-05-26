@@ -50,6 +50,12 @@ let int_pow10_table : ReadOnlyArray[UInt64] = [
 ]
 
 ///|
+// `#valtype` keeps this struct stack-allocated on the native target.
+// `scan_json_number` builds + returns one of these on every JSON
+// number, and without the annotation each call boxes a ~32-byte heap
+// object — measured as ~50 % of total alloc bytes in the all-integer
+// json bench (300 k numbers → 9.16 MB / 300 k allocs eliminated).
+#valtype
 priv struct JsonNumberScan {
   negative : Bool
   is_integer : Bool
@@ -86,16 +92,22 @@ fn checked_mul(a : UInt64, b : UInt64) -> UInt64? {
 }
 
 ///|
-fn JsonNumberScan::try_fast_double(self : JsonNumberScan) -> Double? {
+// Returns NaN to mean "fast path didn't apply; caller should fall
+// back to strconv". The fast path itself can only produce 0 or a
+// finite Double (the `checked_mul` guard rules out infinity), so NaN
+// is a free sentinel — and dodging the `Double?` return means no
+// per-number `Some` allocation on the json_parse hot path (one less
+// ~16-byte boxed `Option<Double>` per number).
+fn JsonNumberScan::try_fast_double(self : JsonNumberScan) -> Double {
   if self.mantissa == 0UL {
     let value = 0.0
-    return Some(if self.negative { -value } else { value })
+    return if self.negative { -value } else { value }
   }
   if self.many_digits ||
     self.exponent < MIN_EXPONENT_FAST_PATH ||
     self.exponent > MAX_EXPONENT_DISGUISED_FAST_PATH ||
     self.mantissa > MAX_MANTISSA_FAST_PATH {
-    return None
+    return @double.not_a_number
   }
   let value = if self.exponent <= MAX_EXPONENT_FAST_PATH {
     let value = self.mantissa.to_double()
@@ -109,14 +121,18 @@ fn JsonNumberScan::try_fast_double(self : JsonNumberScan) -> Double? {
     let mantissa = match
       checked_mul(self.mantissa, int_pow10_table[shift.to_int()]) {
       Some(m) => m
-      None => return None
+      None => return @double.not_a_number
     }
     if mantissa > MAX_MANTISSA_FAST_PATH {
-      return None
+      return @double.not_a_number
     }
     mantissa.to_double() * json_pow10_fast_path(MAX_EXPONENT_FAST_PATH.to_int())
   }
-  Some(if self.negative { -value } else { value })
+  if self.negative {
+    -value
+  } else {
+    value
+  }
 }
 
 ///|
@@ -187,26 +203,29 @@ fn ParseContext::scan_json_number(
 }
 
 ///|
+// Returns the parsed `Double` and writes the optional string form to
+// `ctx.last_number_repr` (instead of returning a `(Double, StringView?)`
+// tuple). The tuple used to dominate native-target allocation in
+// integer-heavy parses — one heap object per integer, 1.2 M / 18 MB on
+// the 10 k-integer bench. See `internal_types.mbt` for the rationale.
 fn ParseContext::lex_integer_end(
   ctx : ParseContext,
   start : Int,
   end : Int,
-) -> (Double, StringView?) {
+) -> Double {
   let negative = ctx.input.unsafe_get(start) == '-'
   let number_start = if negative { start + 1 } else { start }
   for i = number_start, acc = 0L {
     if i >= end {
       let value = if negative { -acc } else { acc }
-      break (value.to_double(), None)
+      ctx.last_number_repr = None
+      break value.to_double()
     }
     let digit = (ctx.input.unsafe_get(i).to_int() - '0').to_int64()
     if acc > (SAFE_INTEGER_LIMIT - digit) / 10L {
       let s = ctx.input.view(start_offset=start, end_offset=end)
-      return if negative {
-        (@double.neg_infinity, Some(s))
-      } else {
-        (@double.infinity, Some(s))
-      }
+      ctx.last_number_repr = Some(s)
+      return if negative { @double.neg_infinity } else { @double.infinity }
     }
     continue i + 1, acc * 10L + digit
   }
@@ -216,7 +235,7 @@ fn ParseContext::lex_integer_end(
 fn ParseContext::lex_decimal_integer(
   ctx : ParseContext,
   start~ : Int,
-) -> (Double, StringView?) raise ParseError {
+) -> Double raise ParseError {
   for ;; {
     match ctx.read_char() {
       Some('.') => return ctx.lex_decimal_point(start~)
@@ -237,7 +256,7 @@ fn ParseContext::lex_decimal_integer(
 fn ParseContext::lex_decimal_point(
   ctx : ParseContext,
   start~ : Int,
-) -> (Double, StringView?) raise ParseError {
+) -> Double raise ParseError {
   match ctx.read_char() {
     Some(c) =>
       if c is ('0'..='9') {
@@ -253,7 +272,7 @@ fn ParseContext::lex_decimal_point(
 fn ParseContext::lex_decimal_fraction(
   ctx : ParseContext,
   start~ : Int,
-) -> (Double, StringView?) raise ParseError {
+) -> Double raise ParseError {
   for ;; {
     match ctx.read_char() {
       Some('e' | 'E') => return ctx.lex_decimal_exponent(start~)
@@ -273,7 +292,7 @@ fn ParseContext::lex_decimal_fraction(
 fn ParseContext::lex_decimal_exponent(
   ctx : ParseContext,
   start~ : Int,
-) -> (Double, StringView?) raise ParseError {
+) -> Double raise ParseError {
   match ctx.read_char() {
     Some('+') | Some('-') => return ctx.lex_decimal_exponent_sign(start~)
     Some(c) => {
@@ -291,7 +310,7 @@ fn ParseContext::lex_decimal_exponent(
 fn ParseContext::lex_decimal_exponent_sign(
   ctx : ParseContext,
   start~ : Int,
-) -> (Double, StringView?) raise ParseError {
+) -> Double raise ParseError {
   match ctx.read_char() {
     Some(c) => {
       if c is ('0'..='9') {
@@ -308,7 +327,7 @@ fn ParseContext::lex_decimal_exponent_sign(
 fn ParseContext::lex_decimal_exponent_integer(
   ctx : ParseContext,
   start~ : Int,
-) -> (Double, StringView?) {
+) -> Double {
   for ;; {
     match ctx.read_char() {
       Some(c) => {
@@ -327,7 +346,7 @@ fn ParseContext::lex_decimal_exponent_integer(
 fn ParseContext::lex_zero(
   ctx : ParseContext,
   start~ : Int,
-) -> (Double, StringView?) raise ParseError {
+) -> Double raise ParseError {
   match ctx.read_char() {
     Some('.') => ctx.lex_decimal_point(start~)
     Some('e' | 'E') => ctx.lex_decimal_exponent(start~)
@@ -348,7 +367,7 @@ fn ParseContext::lex_number_end(
   ctx : ParseContext,
   start : Int,
   end : Int,
-) -> (Double, StringView?) {
+) -> Double {
   // Fast path for JSON numbers: the lexer has already validated the grammar,
   // so scan raw UTF-16 digits once and bypass the general strconv parser for
   // safe integers and Clinger-style fast-path doubles. Fall back to strconv for
@@ -372,25 +391,32 @@ fn ParseContext::lex_number_end(
       scan.mantissa <= SAFE_INTEGER_LIMIT.reinterpret_as_uint64() {
       let v = scan.mantissa.reinterpret_as_int64()
       let signed = if scan.negative { -v } else { v }
-      return (signed.to_double(), None)
+      ctx.last_number_repr = None
+      return signed.to_double()
     }
     return ctx.lex_integer_end(start, end)
   }
-  match scan.try_fast_double() {
-    Some(d) => (d, None)
-    None => {
-      let s = ctx.input.view(start_offset=start, end_offset=end)
-      let parsed_double = try? @internal/strconv.parse_double(s)
-      match parsed_double {
-        // For normal values, return without string representation
-        Ok(d) => (d, None)
-        // If parsing fails as a double, treat it as infinity and preserve the string
-        Err(_) =>
-          if scan.negative {
-            (@double.neg_infinity, Some(s))
-          } else {
-            (@double.infinity, Some(s))
-          }
+  let fast = scan.try_fast_double()
+  if !fast.is_nan() {
+    ctx.last_number_repr = None
+    return fast
+  }
+  let s = ctx.input.view(start_offset=start, end_offset=end)
+  let parsed_double = try? @internal/strconv.parse_double(s)
+  match parsed_double {
+    // For normal values, return without string representation.
+    Ok(d) => {
+      ctx.last_number_repr = None
+      d
+    }
+    // If parsing fails as a double, treat it as infinity and preserve
+    // the string for the caller's `Number(_, Some(_))`.
+    Err(_) => {
+      ctx.last_number_repr = Some(s)
+      if scan.negative {
+        @double.neg_infinity
+      } else {
+        @double.infinity
       }
     }
   }
