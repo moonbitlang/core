@@ -97,6 +97,14 @@ pub impl Hash for Int64 with fn hash_combine(self, hasher) {
 }
 
 ///|
+// Avoid the per-call `Hasher::new()` heap allocation by forwarding to
+// the `UInt64` inline override in `hasher.mbt`. See `Hash for Int
+// with fn hash` for the rationale.
+pub impl Hash for Int64 with fn hash(self : Int64) -> Int {
+  Hash::hash(self.reinterpret_as_uint64())
+}
+
+///|
 /// Performs unary negation on a 64-bit signed integer, returning its arithmetic
 /// inverse.
 ///

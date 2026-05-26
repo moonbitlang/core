@@ -498,6 +498,29 @@ pub impl Hash for String with fn hash_combine(self, hasher) {
 }
 
 ///|
+// Override the default `Hash::hash` for `String` to skip the per-call
+// `Hasher::new()` heap allocation. The per-codepoint math is exactly
+// what `combine_string` + `finalize` does, just with the accumulator
+// held in a local `UInt` instead of a boxed `Hasher`. Big win on
+// String-keyed `HashMap`/`HashSet` probe paths — measured −450 k allocs
+// on a 10 k-element ×30-iter String-keyed hashmap bench. See
+// `Hash for Int with fn hash` for the broader rationale.
+pub impl Hash for String with fn hash(self : String) -> Int {
+  let mut acc = seed.reinterpret_as_uint() + GPRIME5
+  for i in 0..<self.length() {
+    acc = acc + 4U
+    let v = self.unsafe_get(i).to_int().reinterpret_as_uint()
+    acc = rotl(acc + v * GPRIME3, 17) * GPRIME4
+  }
+  let acc = acc ^ (acc >> 15)
+  let acc = acc * GPRIMES2
+  let acc = acc ^ (acc >> 13)
+  let acc = acc * GPRIME3
+  let acc = acc ^ (acc >> 16)
+  acc.reinterpret_as_int()
+}
+
+///|
 pub impl Hash for StringView with fn hash_combine(
   self : StringView,
   hasher : Hasher,
@@ -506,6 +529,25 @@ pub impl Hash for StringView with fn hash_combine(
   for i in self.start()..<self.end() {
     hasher.combine_uint(str.unsafe_get(i).to_int().reinterpret_as_uint())
   }
+}
+
+///|
+// Same inline-the-combine-loop trick as `Hash for String with fn hash`,
+// applied to the substring case.
+pub impl Hash for StringView with fn hash(self : StringView) -> Int {
+  let str = self.str()
+  let mut acc = seed.reinterpret_as_uint() + GPRIME5
+  for i in self.start()..<self.end() {
+    acc = acc + 4U
+    let v = str.unsafe_get(i).to_int().reinterpret_as_uint()
+    acc = rotl(acc + v * GPRIME3, 17) * GPRIME4
+  }
+  let acc = acc ^ (acc >> 15)
+  let acc = acc * GPRIMES2
+  let acc = acc ^ (acc >> 13)
+  let acc = acc * GPRIME3
+  let acc = acc ^ (acc >> 16)
+  acc.reinterpret_as_int()
 }
 
 ///|
@@ -529,6 +571,25 @@ pub impl Hash for StringView with fn hash_combine(
 /// ```
 pub impl Hash for Int with fn hash_combine(self, hasher) {
   hasher.combine_int(self)
+}
+
+///|
+// Override the default `Hash::hash` for `Int` to avoid the per-call
+// `Hasher::new()` heap allocation. The default builds a fresh
+// `Hasher` ({ mut acc : UInt }), combines, finalizes — on the
+// native target that is one boxed allocation per hash, which
+// dominates `HashSet`/`HashMap` probe paths over `Int` keys
+// (~1 M extra allocs on a 10 k-element × 50-iter HashSet bench).
+// Inline the equivalent math so single-`Int` hashing is alloc-free.
+pub impl Hash for Int with fn hash(self : Int) -> Int {
+  let acc = seed.reinterpret_as_uint() + GPRIME5 + 4U
+  let acc = rotl(acc + self.reinterpret_as_uint() * GPRIME3, 17) * GPRIME4
+  let acc = acc ^ (acc >> 15)
+  let acc = acc * GPRIMES2
+  let acc = acc ^ (acc >> 13)
+  let acc = acc * GPRIME3
+  let acc = acc ^ (acc >> 16)
+  acc.reinterpret_as_int()
 }
 
 ///|
@@ -556,6 +617,21 @@ pub impl Hash for UInt with fn hash_combine(self, hasher) {
 }
 
 ///|
+// `Hash for UInt` shares the inline math with `Int` (same single
+// 32-bit combine + avalanche) — just skips the `reinterpret_as_uint`
+// hop. See the comment on `Hash for Int with fn hash`.
+pub impl Hash for UInt with fn hash(self : UInt) -> Int {
+  let acc = seed.reinterpret_as_uint() + GPRIME5 + 4U
+  let acc = rotl(acc + self * GPRIME3, 17) * GPRIME4
+  let acc = acc ^ (acc >> 15)
+  let acc = acc * GPRIMES2
+  let acc = acc ^ (acc >> 13)
+  let acc = acc * GPRIME3
+  let acc = acc ^ (acc >> 16)
+  acc.reinterpret_as_int()
+}
+
+///|
 /// Implements the `Hash` trait for `UInt64` by combining the hash value of an
 /// unsigned 64-bit integer into a hasher.
 ///
@@ -575,6 +651,24 @@ pub impl Hash for UInt with fn hash_combine(self, hasher) {
 /// ```
 pub impl Hash for UInt64 with fn hash_combine(self, hasher) {
   hasher.combine_uint64(self)
+}
+
+///|
+// Inline 64-bit hash to skip the `Hasher::new()` heap alloc. Mirrors
+// `Hasher::combine_int64` (which combines two 32-bit halves) followed
+// by `finalize`. See the comment on `Hash for Int with fn hash`.
+pub impl Hash for UInt64 with fn hash(self : UInt64) -> Int {
+  let acc = seed.reinterpret_as_uint() + GPRIME5 + 8U
+  let low = self.to_uint()
+  let high = (self >> 32).to_uint()
+  let acc = rotl(acc + low * GPRIME3, 17) * GPRIME4
+  let acc = rotl(acc + high * GPRIME3, 17) * GPRIME4
+  let acc = acc ^ (acc >> 15)
+  let acc = acc * GPRIMES2
+  let acc = acc ^ (acc >> 13)
+  let acc = acc * GPRIME3
+  let acc = acc ^ (acc >> 16)
+  acc.reinterpret_as_int()
 }
 
 ///|
