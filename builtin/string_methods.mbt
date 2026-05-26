@@ -1716,12 +1716,19 @@ pub fn StringView::to_lower(self : StringView) -> StringView {
   let buf = StringBuilder(size_hint=self.length())
   let head = self.view(end_offset=idx)
   buf.write_substring(head.data(), head.start_offset(), head.length())
-  for c in self.view(start_offset=idx) {
-    if c.is_ascii_uppercase() {
-      // 'A' is 65 in ASCII, 'a' is 97, the difference is 32
-      buf.write_char((c.to_int() + 32).unsafe_to_char())
+  // Manual UTF-16 code-unit loop avoids the per-call `Iter` heap
+  // allocation that `for c in self.view(...)` triggers on the native
+  // target. Same ASCII-only conversion as before; any non-ASCII unit
+  // (BMP or surrogate half) is written through bit-identically since
+  // `write_char` of a code unit ≤ 0xFFFF emits exactly one UTF-16 unit.
+  let len = self.length()
+  for i = idx; i < len; i = i + 1 {
+    let cui = self.unsafe_get(i).to_int()
+    if cui >= 0x41 && cui <= 0x5A {
+      // 'A' is 65, 'a' is 97; difference is 32.
+      buf.write_char((cui + 32).unsafe_to_char())
     } else {
-      buf.write_char(c)
+      buf.write_char(cui.unsafe_to_char())
     }
   }
   buf.to_string()
@@ -1737,12 +1744,14 @@ pub fn String::to_lower(self : String) -> String {
   let buf = StringBuilder(size_hint=self.length())
   let head = self.view(end_offset=idx)
   buf.write_substring(head.data(), head.start_offset(), head.length())
-  for c in self.view(start_offset=idx) {
-    if c.is_ascii_uppercase() {
-      // 'A' is 65 in ASCII, 'a' is 97, the difference is 32
-      buf.write_char((c.to_int() + 32).unsafe_to_char())
+  // Manual UTF-16 code-unit loop — see `StringView::to_lower` above.
+  let len = self.length()
+  for i = idx; i < len; i = i + 1 {
+    let cui = self.unsafe_get(i).to_int()
+    if cui >= 0x41 && cui <= 0x5A {
+      buf.write_char((cui + 32).unsafe_to_char())
     } else {
-      buf.write_char(c)
+      buf.write_char(cui.unsafe_to_char())
     }
   }
   buf.to_string()
