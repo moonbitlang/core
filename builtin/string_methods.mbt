@@ -1802,6 +1802,9 @@ test "to_lower" {
   assert_eq("Hello, World!".to_lower(), "hello, world!")
   assert_eq("🤣A".to_lower(), "🤣a")
   assert_eq("A🤣B".to_lower(), "a🤣b")
+  let unpaired = String::from_array([(0xD800).unsafe_to_char(), 'A'])
+  let lowered_unpaired = String::from_array([(0xD800).unsafe_to_char(), 'a'])
+  assert_eq(unpaired.to_lower(), lowered_unpaired)
 }
 
 ///|
@@ -1810,6 +1813,9 @@ test "View::to_lower" {
   assert_eq("HELLO"[:].to_lower(), "hello")
   assert_eq("Hello, World!"[:].to_lower(), "hello, world!")
   assert_eq("x🤣ABy"[1:-1].to_lower(), "🤣ab")
+  let unpaired = String::from_array([(0xD800).unsafe_to_char(), 'A'])
+  let lowered_unpaired = String::from_array([(0xD800).unsafe_to_char(), 'a'])
+  assert_eq(unpaired[:].to_lower(), lowered_unpaired)
 }
 
 ///|
