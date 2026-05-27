@@ -326,7 +326,7 @@ test "ReadOnlyArray iter and sub" {
 test "ReadOnlyArray json and hash" {
   let arr : ReadOnlyArray[Int] = [1, 2, 3]
   @json.json_inspect(arr, content=[1, 2, 3])
-  let hasher = Hasher::new(seed=0)
+  let hasher = Hasher(seed=0)
   hasher.combine(arr)
   inspect(hasher.finalize() != 0, content="true")
 }

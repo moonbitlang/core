@@ -14,7 +14,7 @@
 
 ///|
 test "Bool hash combine" {
-  let hasher = Hasher::new(seed=0)
+  let hasher = Hasher(seed=0)
   hasher.combine(true)
   inspect(hasher.finalize() != 0, content="true")
 }

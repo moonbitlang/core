@@ -46,7 +46,7 @@ pub impl Hash for Char with fn hash_combine(self, hasher) -> Unit {
 
 ///|
 // Forward to the inline `UInt` hash to skip the per-call
-// `Hasher::new()` allocation. See `Hash for Int with fn hash` in
+// `Hasher()` allocation. See `Hash for Int with fn hash` in
 // `hasher.mbt` for the rationale.
 pub impl Hash for Char with fn hash(self : Char) -> Int {
   Hash::hash(self.to_uint())

@@ -541,7 +541,7 @@ test "MutArrayView equality compare hash" {
   let right = arr.mut_view()
   inspect(left == right, content="true")
   inspect(left.compare(right), content="0")
-  let hasher = Hasher::new(seed=0)
+  let hasher = Hasher(seed=0)
   hasher.combine(left)
   inspect(hasher.finalize() != 0, content="true")
 }

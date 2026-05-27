@@ -771,7 +771,7 @@ pub impl[K : Hash, V : Hash] Hash for HashMap[K, V] with fn hash_combine(
 ) {
   hasher.combine(
     self.fold(init=0, (acc, k, v) => {
-      let h = Hasher::new()
+      let h = Hasher()
       h.combine((k, v))
       acc ^ h.finalize()
     }),

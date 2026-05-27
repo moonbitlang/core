@@ -174,13 +174,13 @@ test "UInt16::compare" {
 
 ///|
 test "UInt16::hash" {
-  let h1 = Hasher::new(seed=0)
+  let h1 = Hasher(seed=0)
   h1.combine(0)
   inspect(h1.finalize(), content="148298089")
-  let h2 = Hasher::new(seed=0)
+  let h2 = Hasher(seed=0)
   h2.combine(123)
   inspect(h2.finalize(), content="-868461090")
-  let h3 = Hasher::new(seed=0)
+  let h3 = Hasher(seed=0)
   h3.combine(65535)
   inspect(h3.finalize(), content="-888052495")
 }
@@ -367,7 +367,7 @@ test "UInt16::to_uint64" {
 
 ///|
 test "UInt16::hash_combine" {
-  let hasher = @builtin.Hasher::new(seed=0)
+  let hasher = @builtin.Hasher(seed=0)
   let value : UInt16 = 42
   value.hash_combine(hasher)
   inspect(hasher.finalize(), content="1161967057")
