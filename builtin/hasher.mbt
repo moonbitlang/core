@@ -40,7 +40,7 @@ const GPRIME5 : UInt = 0x165667B1
 ///
 /// ```mbt check
 /// test {
-///   let hasher = Hasher::new(seed=0)
+///   let hasher = Hasher(seed=0)
 ///   hasher.combine_int(42)
 ///   hasher.combine_string("hello")
 ///   inspect(hasher.finalize(), content="860601284")
@@ -51,7 +51,8 @@ struct Hasher {
 }
 
 ///|
-/// Creates a new hasher with an optional seed value.
+/// Creates a new hasher with an optional seed value. Enables the constructor
+/// call syntax `Hasher()` and `Hasher(seed=...)`.
 ///
 /// Parameters:
 ///
@@ -64,15 +65,18 @@ struct Hasher {
 ///
 /// ```mbt check
 /// test {
-///   let h1 = Hasher::new(seed=0) // Create a hasher with default seed
-///   let h2 = Hasher::new(seed=42) // Create a hasher with custom seed
+///   let h1 = Hasher(seed=0) // Create a hasher with default seed
+///   let h2 = Hasher(seed=42) // Create a hasher with custom seed
 ///   let x = 123
 ///   h1.combine(x)
 ///   h2.combine(x)
 ///   inspect(h1.finalize() != h2.finalize(), content="true") // Different seeds produce different hashes
 /// }
 /// ```
-pub fn Hasher::new(seed? : Int = seed) -> Hasher {
+///
+/// `Hasher::new` remains available as a deprecated alias.
+#alias(new, deprecated="Use `Hasher()` instead")
+pub fn Hasher::Hasher(seed? : Int = seed) -> Hasher {
   { acc: seed.reinterpret_as_uint() + GPRIME5 }
 }
 
@@ -111,7 +115,7 @@ extern "js" fn random_seed() -> Int =
 ///
 /// ```mbt check
 /// test {
-///   let hasher = Hasher::new(seed=0)
+///   let hasher = Hasher(seed=0)
 ///   hasher.combine(42)
 ///   hasher.combine("hello")
 ///   inspect(hasher.finalize(), content="860601284")
@@ -133,7 +137,7 @@ pub fn[T : Hash] Hasher::combine(self : Hasher, value : T) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let hasher = Hasher::new(seed=0)
+///   let hasher = Hasher(seed=0)
 ///   hasher.combine_unit()
 ///   inspect(hasher.finalize(), content="148298089")
 /// }
@@ -156,7 +160,7 @@ pub fn Hasher::combine_unit(self : Hasher) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let hasher = Hasher::new(seed=0)
+///   let hasher = Hasher(seed=0)
 ///   hasher.combine_bool(true)
 ///   inspect(hasher.finalize(), content="-205818221")
 /// }
@@ -179,7 +183,7 @@ pub fn Hasher::combine_bool(self : Hasher, value : Bool) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let hasher = Hasher::new(seed=0)
+///   let hasher = Hasher(seed=0)
 ///   hasher.combine_int(42)
 ///   inspect(hasher.finalize(), content="1161967057")
 /// }
@@ -203,7 +207,7 @@ pub fn Hasher::combine_int(self : Hasher, value : Int) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let hasher = Hasher::new(seed=0)
+///   let hasher = Hasher(seed=0)
 ///   hasher.combine_int64(42L)
 ///   inspect(hasher.finalize(), content="-1962516083")
 /// }
@@ -228,7 +232,7 @@ pub fn Hasher::combine_int64(self : Hasher, value : Int64) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let hasher = Hasher::new(seed=0)
+///   let hasher = Hasher(seed=0)
 ///   hasher.combine_uint(42U)
 ///   inspect(hasher.finalize(), content="1161967057")
 /// }
@@ -252,7 +256,7 @@ pub fn Hasher::combine_uint(self : Hasher, value : UInt) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let hasher = Hasher::new(seed=0)
+///   let hasher = Hasher(seed=0)
 ///   hasher.combine_uint64(42UL)
 ///   inspect(hasher.finalize(), content="-1962516083")
 /// }
@@ -276,7 +280,7 @@ pub fn Hasher::combine_uint64(self : Hasher, value : UInt64) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let hasher = Hasher::new(seed=0)
+///   let hasher = Hasher(seed=0)
 ///   hasher.combine_double(3.14)
 ///   inspect(hasher.finalize(), content="-428265677")
 /// }
@@ -300,7 +304,7 @@ pub fn Hasher::combine_double(self : Hasher, value : Double) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let hasher = Hasher::new(seed=0)
+///   let hasher = Hasher(seed=0)
 ///   hasher.combine(3.14F)
 ///   inspect(hasher.finalize(), content="635116317") // Hash of the bits of 3.14
 /// }
@@ -325,7 +329,7 @@ fn Float::reinterpret_as_uint(self : Float) -> UInt = "%f32.to_i32_reinterpret"
 ///
 /// ```mbt check
 /// test {
-///   let hasher = Hasher::new(seed=0)
+///   let hasher = Hasher(seed=0)
 ///   hasher.combine_byte(b'\xFF')
 ///   inspect(hasher.finalize(), content="1955036104")
 /// }
@@ -348,7 +352,7 @@ pub fn Hasher::combine_byte(self : Hasher, value : Byte) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let hasher = Hasher::new(seed=0)
+///   let hasher = Hasher(seed=0)
 ///   hasher.combine_bytes(b"\xFF\x00\xFF\x00")
 ///   inspect(hasher.finalize(), content="-686861102")
 /// }
@@ -379,7 +383,7 @@ pub fn Hasher::combine_bytes(self : Hasher, value : Bytes) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let hasher = Hasher::new(seed=0)
+///   let hasher = Hasher(seed=0)
 ///   hasher.combine_string("hello")
 ///   inspect(hasher.finalize(), content="-655549713")
 /// }
@@ -404,7 +408,7 @@ pub fn Hasher::combine_string(self : Hasher, value : String) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let hasher = Hasher::new(seed=0)
+///   let hasher = Hasher(seed=0)
 ///   hasher.combine_char('A')
 ///   inspect(hasher.finalize(), content="-1625495534")
 /// }
@@ -427,7 +431,7 @@ pub fn Hasher::combine_char(self : Hasher, value : Char) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let hasher = Hasher::new(seed=0)
+///   let hasher = Hasher(seed=0)
 ///   hasher.combine_byte(b'\xFF')
 ///   inspect(hasher.finalize(), content="1955036104")
 /// }
@@ -509,7 +513,7 @@ pub impl Hash for String with fn hash_combine(self, hasher) {
 
 ///|
 // Override the default `Hash::hash` for `String` to skip the per-call
-// `Hasher::new()` heap allocation. The per-codepoint math is exactly
+// `Hasher()` heap allocation. The per-codepoint math is exactly
 // what `combine_string` + `finalize` does, just with the accumulator
 // held in a local `UInt` instead of a boxed `Hasher`. Big win on
 // String-keyed `HashMap`/`HashSet` probe paths — measured −450 k allocs
@@ -564,7 +568,7 @@ pub impl Hash for StringView with fn hash(self : StringView) -> Int {
 ///
 /// ```mbt check
 /// test {
-///   let hasher = Hasher::new(seed=0)
+///   let hasher = Hasher(seed=0)
 ///   hasher.combine_int(42)
 ///   inspect(hasher.finalize(), content="1161967057")
 /// }
@@ -575,7 +579,7 @@ pub impl Hash for Int with fn hash_combine(self, hasher) {
 
 ///|
 // Override the default `Hash::hash` for `Int` to avoid the per-call
-// `Hasher::new()` heap allocation. The default builds a fresh
+// `Hasher()` heap allocation. The default builds a fresh
 // `Hasher` ({ mut acc : UInt }), combines, finalizes — on the
 // native target that is one boxed allocation per hash, which
 // dominates `HashSet`/`HashMap` probe paths over `Int` keys
@@ -601,7 +605,7 @@ pub impl Hash for Int with fn hash(self : Int) -> Int {
 ///
 /// ```mbt check
 /// test {
-///   let hasher = Hasher::new(seed=0)
+///   let hasher = Hasher(seed=0)
 ///   hasher.combine_uint(42U)
 ///   inspect(hasher.finalize(), content="1161967057")
 /// }
@@ -632,7 +636,7 @@ pub impl Hash for UInt with fn hash(self : UInt) -> Int {
 ///
 /// ```mbt check
 /// test {
-///   let hasher = Hasher::new(seed=0)
+///   let hasher = Hasher(seed=0)
 ///   hasher.combine_uint64(42UL)
 ///   inspect(hasher.finalize(), content="-1962516083")
 /// }
@@ -642,7 +646,7 @@ pub impl Hash for UInt64 with fn hash_combine(self, hasher) {
 }
 
 ///|
-// Inline 64-bit hash to skip the `Hasher::new()` heap alloc. Mirrors
+// Inline 64-bit hash to skip the `Hasher()` heap alloc. Mirrors
 // `Hasher::combine_int64` (which combines two 32-bit halves) followed
 // by `finalize`. See the comment on `Hash for Int with fn hash`.
 pub impl Hash for UInt64 with fn hash(self : UInt64) -> Int {
@@ -667,12 +671,12 @@ pub impl Hash for UInt64 with fn hash(self : UInt64) -> Int {
 ///
 /// ```mbt check
 /// test {
-///   let hasher = Hasher::new(seed=0)
+///   let hasher = Hasher(seed=0)
 ///   let some_value : Int? = Some(42)
 ///   let none_value : Int? = None
 ///   hasher.combine(some_value)
 ///   inspect(hasher.finalize(), content="2103260413")
-///   let hasher2 = Hasher::new(seed=0)
+///   let hasher2 = Hasher(seed=0)
 ///   hasher2.combine(none_value)
 ///   inspect(hasher2.finalize(), content="148298089")
 /// }
@@ -700,12 +704,12 @@ pub impl[X : Hash] Hash for X? with fn hash_combine(self, hasher) {
 ///
 /// ```mbt check
 /// test {
-///   let hasher = Hasher::new(seed=0)
+///   let hasher = Hasher(seed=0)
 ///   let ok_result : Result[Int, String] = Ok(42)
 ///   let err_result : Result[Int, String] = Err("error")
 ///   hasher.combine(ok_result)
 ///   inspect(hasher.finalize(), content="-1948635851")
-///   let hasher = Hasher::new(seed=0)
+///   let hasher = Hasher(seed=0)
 ///   hasher.combine(err_result)
 ///   inspect(hasher.finalize(), content="1953766574")
 /// }

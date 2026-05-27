@@ -1155,7 +1155,7 @@ test "compare_uint and compare_uint64" {
 ///|
 test "@bigint.BigInt::hash" {
   // Test zero
-  let hash1 = Hasher::new(seed=0)
+  let hash1 = Hasher(seed=0)
     |> x => {
       x.combine(0N)
       x.finalize()
@@ -1167,7 +1167,7 @@ test "@bigint.BigInt::hash" {
   assert_not_eq(1N.hash(), (-1N).hash())
 
   // Test small positive numbers
-  let hash2 = Hasher::new(seed=0)
+  let hash2 = Hasher(seed=0)
     |> x => {
       x.combine(42N)
       x.finalize()
@@ -1175,7 +1175,7 @@ test "@bigint.BigInt::hash" {
   inspect(hash2, content="2103260413")
 
   // Test small negative numbers
-  let hash3 = Hasher::new(seed=0)
+  let hash3 = Hasher(seed=0)
     |> x => {
       x.combine(-42N)
       x.finalize()
@@ -1184,13 +1184,13 @@ test "@bigint.BigInt::hash" {
 
   // Test larger numbers
   let large = 123456789N
-  let hash4 = Hasher::new(seed=0)
+  let hash4 = Hasher(seed=0)
     |> x => {
       x.combine(large)
       x.finalize()
     }
   inspect(hash4, content="275171670")
-  let hash5 = Hasher::new(seed=0)
+  let hash5 = Hasher(seed=0)
     |> x => {
       x.combine(-large)
       x.finalize()
@@ -1199,13 +1199,13 @@ test "@bigint.BigInt::hash" {
 
   // Test very large numbers (multi-limb)
   let very_large = 12345678901234567890123456789N
-  let hash6 = Hasher::new(seed=0)
+  let hash6 = Hasher(seed=0)
     |> x => {
       x.combine(very_large)
       x.finalize()
     }
   inspect(hash6, content="2115080653")
-  let hash7 = Hasher::new(seed=0)
+  let hash7 = Hasher(seed=0)
     |> x => {
       x.combine(-very_large)
       x.finalize()
@@ -1215,13 +1215,13 @@ test "@bigint.BigInt::hash" {
   // Test that equal BigInts have equal hashes
   let a = 987654321098765432N
   let b = @bigint.BigInt::from_string("00987654321098765432")
-  let hash8 = Hasher::new(seed=0)
+  let hash8 = Hasher(seed=0)
     |> x => {
       x.combine(a)
       x.finalize()
     }
   inspect(hash8, content="-1950963429")
-  let hash9 = Hasher::new(seed=0)
+  let hash9 = Hasher(seed=0)
     |> x => {
       x.combine(b)
       x.finalize()
@@ -1230,7 +1230,7 @@ test "@bigint.BigInt::hash" {
 
   // Test that different BigInts have different hashes (usually)
   let c = a + 1N
-  let hash10 = Hasher::new(seed=0)
+  let hash10 = Hasher(seed=0)
     |> x => {
       x.combine(c)
       x.finalize()

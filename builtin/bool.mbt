@@ -122,7 +122,7 @@ pub impl Hash for Bool with fn hash_combine(self, hasher) {
 
 ///|
 // Forward to the inline `UInt` hash to skip the per-call
-// `Hasher::new()` allocation. See `Hash for Int with fn hash` in
+// `Hasher()` allocation. See `Hash for Int with fn hash` in
 // `hasher.mbt` for the rationale.
 pub impl Hash for Bool with fn hash(self : Bool) -> Int {
   Hash::hash(if self { 1U } else { 0U })

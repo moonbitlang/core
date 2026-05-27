@@ -211,7 +211,7 @@ pub fn Byte::to_string(self : Byte) -> String {
 ///
 /// ```mbt check
 /// test {
-///   let hasher = Hasher::new(seed=0)
+///   let hasher = Hasher(seed=0)
 ///   hasher.combine_byte(b'\xFF')
 ///   inspect(hasher.finalize(), content="1955036104")
 /// }
