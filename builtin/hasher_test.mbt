@@ -192,6 +192,44 @@ test "combine all" {
 }
 
 ///|
+fn[T : Hash] assert_hash_matches_hash_combine(value : T) -> Unit raise {
+  let hasher = Hasher::new()
+  Hash::hash_combine(value, hasher)
+  assert_eq(Hash::hash(value), hasher.finalize())
+}
+
+///|
+test "primitive hash matches hash_combine default path" {
+  assert_hash_matches_hash_combine(false)
+  assert_hash_matches_hash_combine(true)
+  assert_hash_matches_hash_combine('A')
+  assert_hash_matches_hash_combine('🤣')
+  assert_hash_matches_hash_combine(0)
+  assert_hash_matches_hash_combine(1)
+  assert_hash_matches_hash_combine(-1)
+  assert_hash_matches_hash_combine(2147483647)
+  assert_hash_matches_hash_combine(-2147483648)
+  assert_hash_matches_hash_combine(0U)
+  assert_hash_matches_hash_combine(1U)
+  assert_hash_matches_hash_combine(0xFFFF_FFFFU)
+  assert_hash_matches_hash_combine(0L)
+  assert_hash_matches_hash_combine(1L)
+  assert_hash_matches_hash_combine(-1L)
+  assert_hash_matches_hash_combine(9223372036854775807L)
+  assert_hash_matches_hash_combine(-9223372036854775808L)
+  assert_hash_matches_hash_combine(0UL)
+  assert_hash_matches_hash_combine(1UL)
+  assert_hash_matches_hash_combine(0xFFFF_FFFFUL)
+  assert_hash_matches_hash_combine(0x1_0000_0000UL)
+  assert_hash_matches_hash_combine(0xFFFF_FFFF_0000_0000UL)
+  assert_hash_matches_hash_combine(0xFFFF_FFFF_FFFF_FFFFUL)
+  assert_hash_matches_hash_combine("")
+  assert_hash_matches_hash_combine("abc")
+  assert_hash_matches_hash_combine("a🤣b")
+  assert_hash_matches_hash_combine("xa🤣by"[1:-1])
+}
+
+///|
 test "combine_unit" {
   let hasher = @builtin.Hasher::new(seed=0)
   hasher.combine_unit()
