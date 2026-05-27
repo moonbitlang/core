@@ -433,12 +433,17 @@ pub fn Hasher::combine_char(self : Hasher, value : Char) -> Unit {
 /// }
 /// ```
 pub fn Hasher::finalize(self : Hasher) -> Int {
-  self.avalanche().reinterpret_as_int()
+  finalize_acc(self.acc)
 }
 
 ///|
-fn Hasher::avalanche(self : Hasher) -> UInt {
-  let mut acc = self.acc
+fn finalize_acc(acc : UInt) -> Int {
+  avalanche_acc(acc).reinterpret_as_int()
+}
+
+///|
+fn avalanche_acc(acc : UInt) -> UInt {
+  let mut acc = acc
   acc = acc ^ (acc >> 15)
   acc *= GPRIMES2
   acc = acc ^ (acc >> 13)
@@ -449,7 +454,12 @@ fn Hasher::avalanche(self : Hasher) -> UInt {
 
 ///|
 fn Hasher::consume4(self : Hasher, input : UInt) -> Unit {
-  self.acc = rotl(self.acc + input * GPRIME3, 17) * GPRIME4
+  self.acc = consume4_acc(self.acc, input)
+}
+
+///|
+fn consume4_acc(acc : UInt, input : UInt) -> UInt {
+  rotl(acc + input * GPRIME3, 17) * GPRIME4
 }
 
 ///|
@@ -510,14 +520,9 @@ pub impl Hash for String with fn hash(self : String) -> Int {
   for i in 0..<self.length() {
     acc = acc + 4U
     let v = self.unsafe_get(i).to_int().reinterpret_as_uint()
-    acc = rotl(acc + v * GPRIME3, 17) * GPRIME4
+    acc = consume4_acc(acc, v)
   }
-  let acc = acc ^ (acc >> 15)
-  let acc = acc * GPRIMES2
-  let acc = acc ^ (acc >> 13)
-  let acc = acc * GPRIME3
-  let acc = acc ^ (acc >> 16)
-  acc.reinterpret_as_int()
+  finalize_acc(acc)
 }
 
 ///|
@@ -540,14 +545,9 @@ pub impl Hash for StringView with fn hash(self : StringView) -> Int {
   for i in self.start()..<self.end() {
     acc = acc + 4U
     let v = str.unsafe_get(i).to_int().reinterpret_as_uint()
-    acc = rotl(acc + v * GPRIME3, 17) * GPRIME4
+    acc = consume4_acc(acc, v)
   }
-  let acc = acc ^ (acc >> 15)
-  let acc = acc * GPRIMES2
-  let acc = acc ^ (acc >> 13)
-  let acc = acc * GPRIME3
-  let acc = acc ^ (acc >> 16)
-  acc.reinterpret_as_int()
+  finalize_acc(acc)
 }
 
 ///|
@@ -583,13 +583,7 @@ pub impl Hash for Int with fn hash_combine(self, hasher) {
 // Inline the equivalent math so single-`Int` hashing is alloc-free.
 pub impl Hash for Int with fn hash(self : Int) -> Int {
   let acc = seed.reinterpret_as_uint() + GPRIME5 + 4U
-  let acc = rotl(acc + self.reinterpret_as_uint() * GPRIME3, 17) * GPRIME4
-  let acc = acc ^ (acc >> 15)
-  let acc = acc * GPRIMES2
-  let acc = acc ^ (acc >> 13)
-  let acc = acc * GPRIME3
-  let acc = acc ^ (acc >> 16)
-  acc.reinterpret_as_int()
+  finalize_acc(consume4_acc(acc, self.reinterpret_as_uint()))
 }
 
 ///|
@@ -622,13 +616,7 @@ pub impl Hash for UInt with fn hash_combine(self, hasher) {
 // hop. See the comment on `Hash for Int with fn hash`.
 pub impl Hash for UInt with fn hash(self : UInt) -> Int {
   let acc = seed.reinterpret_as_uint() + GPRIME5 + 4U
-  let acc = rotl(acc + self * GPRIME3, 17) * GPRIME4
-  let acc = acc ^ (acc >> 15)
-  let acc = acc * GPRIMES2
-  let acc = acc ^ (acc >> 13)
-  let acc = acc * GPRIME3
-  let acc = acc ^ (acc >> 16)
-  acc.reinterpret_as_int()
+  finalize_acc(consume4_acc(acc, self))
 }
 
 ///|
@@ -659,16 +647,11 @@ pub impl Hash for UInt64 with fn hash_combine(self, hasher) {
 // by `finalize`. See the comment on `Hash for Int with fn hash`.
 pub impl Hash for UInt64 with fn hash(self : UInt64) -> Int {
   let acc = seed.reinterpret_as_uint() + GPRIME5 + 8U
-  let low = self.to_uint()
-  let high = (self >> 32).to_uint()
-  let acc = rotl(acc + low * GPRIME3, 17) * GPRIME4
-  let acc = rotl(acc + high * GPRIME3, 17) * GPRIME4
-  let acc = acc ^ (acc >> 15)
-  let acc = acc * GPRIMES2
-  let acc = acc ^ (acc >> 13)
-  let acc = acc * GPRIME3
-  let acc = acc ^ (acc >> 16)
-  acc.reinterpret_as_int()
+  let low = (self & 0xFFFF_FFFFUL).to_uint()
+  let high = ((self >> 32) & 0xFFFF_FFFFUL).to_uint()
+  let acc = consume4_acc(acc, low)
+  let acc = consume4_acc(acc, high)
+  finalize_acc(acc)
 }
 
 ///|
