@@ -536,6 +536,49 @@ test "from_string radix 16" {
 }
 
 ///|
+// Regression coverage for the leading-zero scan in
+// `from_string_radix_pow2` (the loop that skips zeros before the first
+// significant digit). Exercises the power-of-2 radix path across the
+// boundary cases of that scan: all-zeros, leading zeros before a value,
+// leading zeros that span more than one limb, and the negative sign.
+test "from_string pow2 radix leading zeros" {
+  // All zeros (any length / radix) must normalize to 0.
+  inspect(@bigint.BigInt::from_string("0", radix=2).to_string(), content="0")
+  inspect(@bigint.BigInt::from_string("0000", radix=2).to_string(), content="0")
+  inspect(
+    @bigint.BigInt::from_string("00000000", radix=16).to_string(),
+    content="0",
+  )
+  inspect(
+    @bigint.BigInt::from_string("-0000", radix=16).to_string(),
+    content="0",
+  )
+  // Leading zeros before a value: the scan must land on the first
+  // significant digit and produce the same result as without them.
+  inspect(@bigint.BigInt::from_string("0010", radix=2).to_string(), content="2")
+  inspect(
+    @bigint.BigInt::from_string("00ff", radix=16).to_string(),
+    content="255",
+  )
+  inspect(
+    @bigint.BigInt::from_string("-00ff", radix=16).to_string(),
+    content="-255",
+  )
+  inspect(@bigint.BigInt::from_string("0007", radix=8).to_string(), content="7")
+  // Many leading zeros (more than one limb's worth) followed by a large
+  // multi-limb value: result must match the zero-free spelling.
+  inspect(
+    @bigint.BigInt::from_string("0000000000000000112210F47DE98115", radix=16).to_string(),
+    content="1234567890123456789",
+  )
+  // A single significant digit after a long run of zeros.
+  inspect(
+    @bigint.BigInt::from_string("00000000000000000000000000000001", radix=16).to_string(),
+    content="1",
+  )
+}
+
+///|
 test "from_string negative zero" {
   let z = @bigint.BigInt::from_string("-0")
   inspect(z.to_string(), content="0")
