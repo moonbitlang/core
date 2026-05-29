@@ -1157,16 +1157,21 @@ fn BigInt::from_string_radix_pow2(
   if start == len {
     abort("invalid character")
   }
-  let mut first = start
-  while first < len {
+  // Skip leading zeros; `first` is the index of the first significant
+  // digit. Carried as a functional loop variable rather than a mutable
+  // local, yielded via `break first`.
+  let first = for first = start {
+    if first >= len {
+      break first
+    }
     let digit = digit_from_char(input.unsafe_get(first).to_int())
     if digit < 0 || digit >= radix {
       abort("invalid character")
     }
     if digit != 0 {
-      break
+      break first
     }
-    first += 1
+    continue first + 1
   }
   if first == len {
     return zero
