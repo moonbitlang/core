@@ -126,16 +126,17 @@ test "expect_char with surrogate pair" {
 // `struct.set` against `ctx`.
 fn ParseContext::lex_skip_whitespace(ctx : ParseContext) -> Unit {
   let end = ctx.end_offset
-  let mut offset = ctx.offset
-  while offset < end {
+  ctx.offset = for offset = ctx.offset {
+    if offset >= end {
+      break offset
+    }
     let c = ctx.input.unsafe_get(offset)
     if c == ' ' || c == '\t' || c == '\r' || c == '\n' {
-      offset = offset + 1
+      continue offset + 1
     } else {
-      break
+      break offset
     }
   }
-  ctx.offset = offset
 }
 
 ///|
