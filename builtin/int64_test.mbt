@@ -5235,7 +5235,7 @@ test "test to_uint64 with large double" {
 
 ///|
 test "Int64 hash combine" {
-  let hasher = Hasher::new(seed=0)
+  let hasher = Hasher(seed=0)
   hasher.combine(42L)
   inspect(hasher.finalize() != 0, content="true")
 }

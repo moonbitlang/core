@@ -45,6 +45,14 @@ pub impl Hash for Char with fn hash_combine(self, hasher) -> Unit {
 }
 
 ///|
+// Forward to the inline `UInt` hash to skip the per-call
+// `Hasher()` allocation. See `Hash for Int with fn hash` in
+// `hasher.mbt` for the rationale.
+pub impl Hash for Char with fn hash(self : Char) -> Int {
+  Hash::hash(self.to_uint())
+}
+
+///|
 /// Checks if the value is within the ASCII range.
 pub fn Char::is_ascii(self : Self) -> Bool {
   self is ('\u{00}'..='\u{7F}')
