@@ -1,3 +1,6 @@
 import {
   "moonbitlang/core/builtin",
+  "moonbitlang/core/float",
+  "moonbitlang/core/int16",
+  "moonbitlang/core/int64",
 }
