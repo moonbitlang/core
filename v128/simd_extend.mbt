@@ -61,6 +61,25 @@ fn narrow_i32_to_i16_u(value : UInt) -> UInt16 {
 }
 
 ///|
+fn i16_q15mulr_sat_s(value : UInt16, other : UInt16) -> UInt16 {
+  let rounded = (i16_signed(value) * i16_signed(other) + 0x4000) >> 15
+  if rounded > 32767 {
+    0x7fff
+  } else if rounded < -32768 {
+    0x8000
+  } else {
+    rounded.to_uint16()
+  }
+}
+
+///|
+fn i16_pair_dot(value : V128, other : V128, pair : Int) -> UInt {
+  (i16_signed(u16_lane(value, pair * 2)) * i16_signed(u16_lane(other, pair * 2)) +
+  i16_signed(u16_lane(value, pair * 2 + 1)) *
+  i16_signed(u16_lane(other, pair * 2 + 1))).reinterpret_as_uint()
+}
+
+///|
 pub fn i16x8_extend_low_i8x16_s(value : V128) -> V128 {
   pack_u16x8_by(i => i8_signed(u8_lane(value, i)).to_uint16())
 }
@@ -125,6 +144,66 @@ pub fn i64x2_extend_low_i32x4_u(value : V128) -> V128 {
 ///|
 pub fn i64x2_extend_high_i32x4_u(value : V128) -> V128 {
   pack_u64x2_by(i => u32_lane(value, i + 2).to_uint64())
+}
+
+///|
+pub fn i8x16_relaxed_laneselect(
+  value : V128,
+  other : V128,
+  mask : V128,
+) -> V128 {
+  pack_u8x16_by(i => {
+    if (u8_lane(mask, i) & 0x80) != 0 {
+      u8_lane(value, i)
+    } else {
+      u8_lane(other, i)
+    }
+  })
+}
+
+///|
+pub fn i16x8_relaxed_laneselect(
+  value : V128,
+  other : V128,
+  mask : V128,
+) -> V128 {
+  pack_u16x8_by(i => {
+    if (u16_lane(mask, i) & 0x8000) != 0 {
+      u16_lane(value, i)
+    } else {
+      u16_lane(other, i)
+    }
+  })
+}
+
+///|
+pub fn i32x4_relaxed_laneselect(
+  value : V128,
+  other : V128,
+  mask : V128,
+) -> V128 {
+  pack_u32x4_by(i => {
+    if (u32_lane(mask, i) & 0x80000000) != 0 {
+      u32_lane(value, i)
+    } else {
+      u32_lane(other, i)
+    }
+  })
+}
+
+///|
+pub fn i64x2_relaxed_laneselect(
+  value : V128,
+  other : V128,
+  mask : V128,
+) -> V128 {
+  pack_u64x2_by(i => {
+    if (u64_lane(mask, i) & 0x8000000000000000UL) != 0UL {
+      u64_lane(value, i)
+    } else {
+      u64_lane(other, i)
+    }
+  })
 }
 
 ///|
@@ -242,6 +321,16 @@ pub fn i64x2_extmul_high_i32x4_u(value : V128, other : V128) -> V128 {
 }
 
 ///|
+pub fn i16x8_q15mulr_sat_s(value : V128, other : V128) -> V128 {
+  pack_u16x8_by(i => i16_q15mulr_sat_s(u16_lane(value, i), u16_lane(other, i)))
+}
+
+///|
+pub fn i16x8_relaxed_q15mulr_s(value : V128, other : V128) -> V128 {
+  i16x8_q15mulr_sat_s(value, other)
+}
+
+///|
 pub fn i16x8_extadd_pairwise_i8x16_s(value : V128) -> V128 {
   pack_u16x8_by(i => {
     (i8_signed(u8_lane(value, i * 2)) + i8_signed(u8_lane(value, i * 2 + 1))).to_uint16()
@@ -278,10 +367,15 @@ pub fn i16x8_relaxed_dot_s_i8x16(value : V128, other : V128) -> V128 {
 }
 
 ///|
-pub fn i32x4_relaxed_dot_add_s_i16x8(value : V128, other : V128) -> V128 {
-  pack_u32x4_by(i => {
-    (i16_signed(u16_lane(value, i * 2)) * i16_signed(u16_lane(other, i * 2)) +
-    i16_signed(u16_lane(value, i * 2 + 1)) *
-    i16_signed(u16_lane(other, i * 2 + 1))).reinterpret_as_uint()
-  })
+pub fn i32x4_dot_i16x8_s(value : V128, other : V128) -> V128 {
+  pack_u32x4_by(i => i16_pair_dot(value, other, i))
+}
+
+///|
+pub fn i32x4_relaxed_dot_add_s_i16x8(
+  value : V128,
+  other : V128,
+  accumulator : V128,
+) -> V128 {
+  i32x4_add(i32x4_dot_i16x8_s(value, other), accumulator)
 }

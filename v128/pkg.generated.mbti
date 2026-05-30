@@ -48,9 +48,13 @@ pub fn f32x4_pmax(V128, V128) -> V128
 
 pub fn f32x4_pmin(V128, V128) -> V128
 
+pub fn f32x4_relaxed_madd(V128, V128, V128) -> V128
+
 pub fn f32x4_relaxed_max(V128, V128) -> V128
 
 pub fn f32x4_relaxed_min(V128, V128) -> V128
+
+pub fn f32x4_relaxed_nmadd(V128, V128, V128) -> V128
 
 pub fn f32x4_replace_lane(V128, Int, Float) -> V128
 
@@ -108,9 +112,13 @@ pub fn f64x2_pmin(V128, V128) -> V128
 
 pub fn f64x2_promote_low_f32x4(V128) -> V128
 
+pub fn f64x2_relaxed_madd(V128, V128, V128) -> V128
+
 pub fn f64x2_relaxed_max(V128, V128) -> V128
 
 pub fn f64x2_relaxed_min(V128, V128) -> V128
+
+pub fn f64x2_relaxed_nmadd(V128, V128, V128) -> V128
 
 pub fn f64x2_replace_lane(V128, Int, Double) -> V128
 
@@ -200,7 +208,13 @@ pub fn i16x8_ne(V128, V128) -> V128
 
 pub fn i16x8_neg(V128) -> V128
 
+pub fn i16x8_q15mulr_sat_s(V128, V128) -> V128
+
 pub fn i16x8_relaxed_dot_s_i8x16(V128, V128) -> V128
+
+pub fn i16x8_relaxed_laneselect(V128, V128, V128) -> V128
+
+pub fn i16x8_relaxed_q15mulr_s(V128, V128) -> V128
 
 pub fn i16x8_replace_lane(V128, Int, UInt) -> V128
 
@@ -227,6 +241,8 @@ pub fn i32x4_all_true(V128) -> Bool
 pub fn i32x4_bitmask(V128) -> Int
 
 pub fn i32x4_const(UInt, UInt, UInt, UInt) -> V128
+
+pub fn i32x4_dot_i16x8_s(V128, V128) -> V128
 
 pub fn i32x4_eq(V128, V128) -> V128
 
@@ -282,7 +298,9 @@ pub fn i32x4_ne(V128, V128) -> V128
 
 pub fn i32x4_neg(V128) -> V128
 
-pub fn i32x4_relaxed_dot_add_s_i16x8(V128, V128) -> V128
+pub fn i32x4_relaxed_dot_add_s_i16x8(V128, V128, V128) -> V128
+
+pub fn i32x4_relaxed_laneselect(V128, V128, V128) -> V128
 
 pub fn i32x4_relaxed_trunc_f32x4_s(V128) -> V128
 
@@ -356,6 +374,8 @@ pub fn i64x2_ne(V128, V128) -> V128
 
 pub fn i64x2_neg(V128) -> V128
 
+pub fn i64x2_relaxed_laneselect(V128, V128, V128) -> V128
+
 pub fn i64x2_replace_lane(V128, Int, UInt64) -> V128
 
 pub fn i64x2_shl(V128, Int) -> V128
@@ -423,6 +443,8 @@ pub fn i8x16_ne(V128, V128) -> V128
 pub fn i8x16_neg(V128) -> V128
 
 pub fn i8x16_popcnt(V128) -> V128
+
+pub fn i8x16_relaxed_laneselect(V128, V128, V128) -> V128
 
 pub fn i8x16_relaxed_swizzle(V128, V128) -> V128
 
