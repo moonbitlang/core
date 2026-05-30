@@ -260,6 +260,22 @@ pub fn f32x4_relaxed_max(value : V128, other : V128) -> V128 {
 }
 
 ///|
+pub fn f32x4_relaxed_madd(value : V128, other : V128, addend : V128) -> V128 {
+  pack_f32x4_by(i => {
+    f32x4_extract_lane(value, i) * f32x4_extract_lane(other, i) +
+    f32x4_extract_lane(addend, i)
+  })
+}
+
+///|
+pub fn f32x4_relaxed_nmadd(value : V128, other : V128, addend : V128) -> V128 {
+  pack_f32x4_by(i => {
+    f32x4_extract_lane(addend, i) -
+    f32x4_extract_lane(value, i) * f32x4_extract_lane(other, i)
+  })
+}
+
+///|
 pub fn f32x4_eq(value : V128, other : V128) -> V128 {
   f32x4_compare(value, other, fn(x, y) { x == y })
 }
@@ -412,6 +428,22 @@ pub fn f64x2_relaxed_min(value : V128, other : V128) -> V128 {
 ///|
 pub fn f64x2_relaxed_max(value : V128, other : V128) -> V128 {
   f64x2_max(value, other)
+}
+
+///|
+pub fn f64x2_relaxed_madd(value : V128, other : V128, addend : V128) -> V128 {
+  pack_f64x2_by(i => {
+    f64x2_extract_lane(value, i) * f64x2_extract_lane(other, i) +
+    f64x2_extract_lane(addend, i)
+  })
+}
+
+///|
+pub fn f64x2_relaxed_nmadd(value : V128, other : V128, addend : V128) -> V128 {
+  pack_f64x2_by(i => {
+    f64x2_extract_lane(addend, i) -
+    f64x2_extract_lane(value, i) * f64x2_extract_lane(other, i)
+  })
 }
 
 ///|

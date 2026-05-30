@@ -519,8 +519,43 @@ test "integer widening narrowing and dot products" {
     @v128.i32x4_const(0x10000, 0x1fffe, 2, 4),
   )
   assert_eq(
-    @v128.i32x4_relaxed_dot_add_s_i16x8(words, @v128.i16x8_splat(2)),
+    @v128.i16x8_q15mulr_sat_s(
+      @v128.i16x8_const(0x4000, 0x7fff, 0x8000, 0xc000, 0, 1, 2, 3),
+      @v128.i16x8_const(0x4000, 0x7fff, 0x8000, 0x4000, 0x7fff, 0x8000, 2, 3),
+    ),
+    @v128.i16x8_const(0x2000, 0x7ffe, 0x7fff, 0xe000, 0, 0xffff, 0, 0),
+  )
+  assert_eq(
+    @v128.i32x4_dot_i16x8_s(words, @v128.i16x8_splat(2)),
     @v128.i32x4_const(0xfffefffe, 6, 0xfffe, 0x2464),
+  )
+  assert_eq(
+    @v128.i32x4_relaxed_dot_add_s_i16x8(
+      words,
+      @v128.i16x8_splat(2),
+      @v128.i32x4_splat(1),
+    ),
+    @v128.i32x4_const(0xfffeffff, 7, 0xffff, 0x2465),
+  )
+
+  assert_eq(
+    @v128.i8x16_relaxed_laneselect(
+      @v128.i8x16_splat(0xaa),
+      @v128.i8x16_splat(0x55),
+      @v128.i8x16_const(0x80, 0, 0xff, 0x7f, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+    ),
+    @v128.i8x16_const(
+      0xaa, 0x55, 0xaa, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55,
+      0x55, 0x55, 0x55,
+    ),
+  )
+  assert_eq(
+    @v128.i32x4_relaxed_laneselect(
+      @v128.i32x4_splat(0xaaaaaaaa),
+      @v128.i32x4_splat(0x55555555),
+      @v128.i32x4_const(0x80000000, 0, 0xffffffff, 0x7fffffff),
+    ),
+    @v128.i32x4_const(0xaaaaaaaa, 0x55555555, 0xaaaaaaaa, 0x55555555),
   )
 
   let dwords0 = @v128.i32x4_const(0x80000000, 0xffffffff, 0, 65536)
@@ -593,6 +628,22 @@ test "floating point arithmetic comparisons and conversion" {
     @v128.f32x4_const(1.0, 2.0, 3.0, 4.0),
   )
   assert_eq(
+    @v128.f32x4_relaxed_madd(
+      @v128.f32x4_const(1.0, 2.0, 3.0, 4.0),
+      @v128.f32x4_splat(2.0),
+      @v128.f32x4_splat(1.0),
+    ),
+    @v128.f32x4_const(3.0, 5.0, 7.0, 9.0),
+  )
+  assert_eq(
+    @v128.f32x4_relaxed_nmadd(
+      @v128.f32x4_const(1.0, 2.0, 3.0, 4.0),
+      @v128.f32x4_splat(2.0),
+      @v128.f32x4_splat(10.0),
+    ),
+    @v128.f32x4_const(8.0, 6.0, 4.0, 2.0),
+  )
+  assert_eq(
     @v128.i32x4_trunc_sat_f32x4_s(@v128.f32x4_const(-1.9, 2.9, 1.0e20, -1.0e20)),
     @v128.i32x4_const(0xffffffff, 2, 0x7fffffff, 0x80000000),
   )
@@ -615,6 +666,22 @@ test "floating point arithmetic comparisons and conversion" {
   assert_eq(
     @v128.f64x2_convert_low_i32x4_s(@v128.i32x4_const(0xffffffff, 2, 3, 4)),
     @v128.f64x2_const(-1.0, 2.0),
+  )
+  assert_eq(
+    @v128.f64x2_relaxed_madd(
+      @v128.f64x2_const(2.0, 3.0),
+      @v128.f64x2_splat(4.0),
+      @v128.f64x2_splat(1.0),
+    ),
+    @v128.f64x2_const(9.0, 13.0),
+  )
+  assert_eq(
+    @v128.f64x2_relaxed_nmadd(
+      @v128.f64x2_const(2.0, 3.0),
+      @v128.f64x2_splat(4.0),
+      @v128.f64x2_splat(20.0),
+    ),
+    @v128.f64x2_const(12.0, 8.0),
   )
   assert_eq(
     @v128.f64x2_promote_low_f32x4(@v128.f32x4_const(1.5, -2.5, 3.0, 4.0)),
