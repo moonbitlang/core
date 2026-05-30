@@ -77,7 +77,7 @@ pub(open) trait Hash {
 
 ///|
 impl Hash with fn hash(self) {
-  let h = Hasher::new()
+  let h = Hasher()
   h.combine(self)
   h.finalize()
 }

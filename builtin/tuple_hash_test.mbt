@@ -17,7 +17,7 @@ let seed = 0x533D
 
 ///|
 fn h() -> Hasher {
-  Hasher::new(seed~)
+  Hasher(seed~)
 }
 
 ///|

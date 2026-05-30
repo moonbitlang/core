@@ -36,17 +36,17 @@ test {
 ///|
 test {
   let unit = ()
-  let h = Hasher::new(seed=0)
+  let h = Hasher(seed=0)
   h.combine(unit)
   inspect(h.finalize(), content="148298089")
 }
 
 ///|
 test "Unit hash_combine test" {
-  let hasher = Hasher::new()
+  let hasher = Hasher()
   let _ = Hash::hash_combine((), hasher)
   let hash1 = hasher.finalize()
-  let hasher2 = Hasher::new()
+  let hasher2 = Hasher()
   assert_not_eq(hash1, hasher2.finalize())
 }
 

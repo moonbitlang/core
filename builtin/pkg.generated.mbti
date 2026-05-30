@@ -243,7 +243,11 @@ pub impl[A : Hash] Hash for ArrayView[A]
 pub impl[X : Show] Show for ArrayView[X]
 pub impl[X : ToJson] ToJson for ArrayView[X]
 
-type Hasher
+pub struct Hasher {
+  // private fields
+}
+#alias(new, deprecated)
+pub fn Hasher::Hasher(seed? : Int) -> Self
 pub fn[T : Hash] Hasher::combine(Self, T) -> Unit
 pub fn Hasher::combine_bool(Self, Bool) -> Unit
 pub fn Hasher::combine_byte(Self, Byte) -> Unit
@@ -259,7 +263,6 @@ pub fn Hasher::combine_uint(Self, UInt) -> Unit
 pub fn Hasher::combine_uint64(Self, UInt64) -> Unit
 pub fn Hasher::combine_unit(Self) -> Unit
 pub fn Hasher::finalize(Self) -> Int
-pub fn Hasher::new(seed? : Int) -> Self
 
 #alias(Iterator, deprecated)
 type Iter[X]
