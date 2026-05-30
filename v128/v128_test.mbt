@@ -445,3 +445,116 @@ test "loads and stores" {
   let with_lane = @v128.v128_load32_lane(bytes, 16, @v128.i32x4_splat(0), 2)
   assert_eq(with_lane, @v128.i32x4_const(0, 0, 0x40302010, 0))
 }
+
+///|
+test "integer widening narrowing and dot products" {
+  let bytes = @v128.i8x16_const(
+    0x80, 0xff, 1, 2, 3, 4, 5, 6, 0x7f, 0, 0xfe, 0xfd, 8, 9, 10, 11,
+  )
+  assert_eq(
+    @v128.i16x8_extend_low_i8x16_s(bytes),
+    @v128.i16x8_const(0xff80, 0xffff, 1, 2, 3, 4, 5, 6),
+  )
+  assert_eq(
+    @v128.i16x8_extend_high_i8x16_u(bytes),
+    @v128.i16x8_const(0x7f, 0, 0xfe, 0xfd, 8, 9, 10, 11),
+  )
+  assert_eq(
+    @v128.i16x8_extadd_pairwise_i8x16_s(bytes),
+    @v128.i16x8_const(0xff7f, 3, 7, 11, 0x7f, 0xfffb, 17, 21),
+  )
+  assert_eq(
+    @v128.i16x8_extadd_pairwise_i8x16_u(bytes),
+    @v128.i16x8_const(383, 3, 7, 11, 127, 507, 17, 21),
+  )
+
+  assert_eq(
+    @v128.i16x8_extmul_low_i8x16_s(bytes, @v128.i8x16_splat(2)),
+    @v128.i16x8_const(0xff00, 0xfffe, 2, 4, 6, 8, 10, 12),
+  )
+  assert_eq(
+    @v128.i16x8_extmul_high_i8x16_u(bytes, @v128.i8x16_splat(2)),
+    @v128.i16x8_const(254, 0, 508, 506, 16, 18, 20, 22),
+  )
+  assert_eq(
+    @v128.i16x8_relaxed_dot_s_i8x16(bytes, @v128.i8x16_splat(2)),
+    @v128.i16x8_const(0xfefe, 6, 14, 22, 254, 0xfff6, 34, 42),
+  )
+
+  let words0 = @v128.i16x8_const(
+    0x8000, 0xff80, 0xffff, 0, 1, 0x007f, 0x0080, 0x7fff,
+  )
+  let words1 = @v128.i16x8_const(
+    0xffff, 0, 0x00ff, 0x0100, 0x7fff, 0x8000, 42, 0xff00,
+  )
+  assert_eq(
+    @v128.i8x16_narrow_i16x8_s(words0, words1),
+    @v128.i8x16_const(
+      0x80, 0x80, 0xff, 0, 1, 0x7f, 0x7f, 0x7f, 0xff, 0, 0x7f, 0x7f, 0x7f, 0x80,
+      42, 0x80,
+    ),
+  )
+  assert_eq(
+    @v128.i8x16_narrow_i16x8_u(words0, words1),
+    @v128.i8x16_const(
+      0, 0, 0, 0, 1, 127, 128, 255, 0, 0, 255, 255, 255, 0, 42, 0,
+    ),
+  )
+
+  let words = @v128.i16x8_const(0x8000, 0xffff, 1, 2, 0x7fff, 0, 0xfffe, 0x1234)
+  assert_eq(
+    @v128.i32x4_extend_low_i16x8_s(words),
+    @v128.i32x4_const(0xffff8000, 0xffffffff, 1, 2),
+  )
+  assert_eq(
+    @v128.i32x4_extend_high_i16x8_u(words),
+    @v128.i32x4_const(0x7fff, 0, 0xfffe, 0x1234),
+  )
+  assert_eq(
+    @v128.i32x4_extadd_pairwise_i16x8_s(words),
+    @v128.i32x4_const(0xffff7fff, 3, 32767, 4658),
+  )
+  assert_eq(
+    @v128.i32x4_extmul_low_i16x8_u(words, @v128.i16x8_splat(2)),
+    @v128.i32x4_const(0x10000, 0x1fffe, 2, 4),
+  )
+  assert_eq(
+    @v128.i32x4_relaxed_dot_add_s_i16x8(words, @v128.i16x8_splat(2)),
+    @v128.i32x4_const(0xfffefffe, 6, 0xfffe, 0x2464),
+  )
+
+  let dwords0 = @v128.i32x4_const(0x80000000, 0xffffffff, 0, 65536)
+  let dwords1 = @v128.i32x4_const(0x7fffffff, 0x00010000, 0xffffffff, 42)
+  assert_eq(
+    @v128.i16x8_narrow_i32x4_s(dwords0, dwords1),
+    @v128.i16x8_const(0x8000, 0xffff, 0, 0x7fff, 0x7fff, 0x7fff, 0xffff, 42),
+  )
+  assert_eq(
+    @v128.i16x8_narrow_i32x4_u(dwords0, dwords1),
+    @v128.i16x8_const(0, 0, 0, 0xffff, 0xffff, 0xffff, 0, 42),
+  )
+
+  let dwords = @v128.i32x4_const(0x80000000, 0xffffffff, 2, 3)
+  assert_eq(
+    @v128.i64x2_extend_low_i32x4_s(dwords),
+    @v128.i64x2_const(0xffffffff80000000UL, 0xffffffffffffffffUL),
+  )
+  assert_eq(
+    @v128.i64x2_extend_high_i32x4_u(dwords),
+    @v128.i64x2_const(2UL, 3UL),
+  )
+  assert_eq(
+    @v128.i64x2_extmul_low_i32x4_s(
+      @v128.i32x4_const(0xffffffff, 2, 0, 0),
+      @v128.i32x4_const(2, 3, 0, 0),
+    ),
+    @v128.i64x2_const(0xfffffffffffffffeUL, 6UL),
+  )
+  assert_eq(
+    @v128.i64x2_extmul_high_i32x4_u(
+      @v128.i32x4_const(0, 0, 0xffffffff, 3),
+      @v128.i32x4_const(0, 0, 2, 4),
+    ),
+    @v128.i64x2_const(0x00000001fffffffeUL, 12UL),
+  )
+}
