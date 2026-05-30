@@ -92,16 +92,22 @@ fn checked_mul(a : UInt64, b : UInt64) -> UInt64? {
 }
 
 ///|
-fn JsonNumberScan::try_fast_double(self : JsonNumberScan) -> Double? {
+// Returns NaN to mean "fast path didn't apply; caller should fall
+// back to strconv". The fast path itself can only produce 0 or a
+// finite Double (the `checked_mul` guard rules out infinity), so NaN
+// is a free sentinel — and dodging the `Double?` return means no
+// per-number `Some` allocation on the json_parse hot path (one less
+// ~16-byte boxed `Option<Double>` per number).
+fn JsonNumberScan::try_fast_double(self : JsonNumberScan) -> Double {
   if self.mantissa == 0UL {
     let value = 0.0
-    return Some(if self.negative { -value } else { value })
+    return if self.negative { -value } else { value }
   }
   if self.many_digits ||
     self.exponent < MIN_EXPONENT_FAST_PATH ||
     self.exponent > MAX_EXPONENT_DISGUISED_FAST_PATH ||
     self.mantissa > MAX_MANTISSA_FAST_PATH {
-    return None
+    return @double.not_a_number
   }
   let value = if self.exponent <= MAX_EXPONENT_FAST_PATH {
     let value = self.mantissa.to_double()
@@ -115,14 +121,18 @@ fn JsonNumberScan::try_fast_double(self : JsonNumberScan) -> Double? {
     let mantissa = match
       checked_mul(self.mantissa, int_pow10_table[shift.to_int()]) {
       Some(m) => m
-      None => return None
+      None => return @double.not_a_number
     }
     if mantissa > MAX_MANTISSA_FAST_PATH {
-      return None
+      return @double.not_a_number
     }
     mantissa.to_double() * json_pow10_fast_path(MAX_EXPONENT_FAST_PATH.to_int())
   }
-  Some(if self.negative { -value } else { value })
+  if self.negative {
+    -value
+  } else {
+    value
+  }
 }
 
 ///|
@@ -382,22 +392,21 @@ fn ParseContext::lex_number_end(
     }
     return ctx.lex_integer_end(start, end)
   }
-  match scan.try_fast_double() {
-    Some(d) => (d, None)
-    None => {
-      let s = ctx.input.view(start_offset=start, end_offset=end)
-      let parsed_double = try? @internal/strconv.parse_double(s)
-      match parsed_double {
-        // For normal values, return without string representation
-        Ok(d) => (d, None)
-        // If parsing fails as a double, treat it as infinity and preserve the string
-        Err(_) =>
-          if scan.negative {
-            (@double.neg_infinity, Some(s))
-          } else {
-            (@double.infinity, Some(s))
-          }
+  let fast = scan.try_fast_double()
+  if !fast.is_nan() {
+    return (fast, None)
+  }
+  let s = ctx.input.view(start_offset=start, end_offset=end)
+  let parsed_double = try? @internal/strconv.parse_double(s)
+  match parsed_double {
+    // For normal values, return without string representation
+    Ok(d) => (d, None)
+    // If parsing fails as a double, treat it as infinity and preserve the string
+    Err(_) =>
+      if scan.negative {
+        (@double.neg_infinity, Some(s))
+      } else {
+        (@double.infinity, Some(s))
       }
-    }
   }
 }
