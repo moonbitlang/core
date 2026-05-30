@@ -700,3 +700,308 @@ test "floating point arithmetic comparisons and conversion" {
     @v128.i32x4_const(0, 0xffffffff, 0, 0),
   )
 }
+
+///|
+test "systematic lane extraction and replacement" {
+  let bytes = @v128.i8x16_const(
+    0, 1, 2, 3, 4, 5, 6, 7, 128, 129, 130, 131, 252, 253, 254, 255,
+  )
+  for lane in 0..<16 {
+    assert_eq(
+      @v128.i8x16_extract_lane_u(bytes, lane),
+      if lane < 8 {
+        lane.reinterpret_as_uint()
+      } else if lane < 12 {
+        (lane + 120).reinterpret_as_uint()
+      } else {
+        (lane + 240).reinterpret_as_uint()
+      },
+    )
+    let replaced = @v128.i8x16_replace_lane(bytes, lane, 0xee)
+    for i in 0..<16 {
+      assert_eq(
+        @v128.i8x16_extract_lane_u(replaced, i),
+        if i == lane {
+          0xee
+        } else {
+          @v128.i8x16_extract_lane_u(bytes, i)
+        },
+      )
+    }
+  }
+
+  let words = @v128.i16x8_const(0, 1, 2, 0x7fff, 0x8000, 0xfffd, 0xfffe, 0xffff)
+  for lane in 0..<8 {
+    let replaced = @v128.i16x8_replace_lane(words, lane, 0xbeef)
+    for i in 0..<8 {
+      assert_eq(
+        @v128.i16x8_extract_lane_u(replaced, i),
+        if i == lane {
+          0xbeef
+        } else {
+          @v128.i16x8_extract_lane_u(words, i)
+        },
+      )
+    }
+  }
+
+  let dwords = @v128.i32x4_const(0, 1, 0x80000000, 0xffffffff)
+  for lane in 0..<4 {
+    let replaced = @v128.i32x4_replace_lane(dwords, lane, 0xdeadbeef)
+    for i in 0..<4 {
+      assert_eq(
+        @v128.i32x4_extract_lane(replaced, i),
+        if i == lane {
+          0xdeadbeef
+        } else {
+          @v128.i32x4_extract_lane(dwords, i)
+        },
+      )
+    }
+  }
+
+  let qwords = @v128.i64x2_const(0x0123456789abcdefUL, 0xfedcba9876543210UL)
+  for lane in 0..<2 {
+    let replaced = @v128.i64x2_replace_lane(qwords, lane, 0xa5a5a5a5a5a5a5a5UL)
+    for i in 0..<2 {
+      assert_eq(
+        @v128.i64x2_extract_lane(replaced, i),
+        if i == lane {
+          0xa5a5a5a5a5a5a5a5UL
+        } else {
+          @v128.i64x2_extract_lane(qwords, i)
+        },
+      )
+    }
+  }
+
+  let floats = @v128.f32x4_const(-0.0, 1.5, -2.5, 4.0)
+  for lane in 0..<4 {
+    let replaced = @v128.f32x4_replace_lane(floats, lane, 9.0)
+    for i in 0..<4 {
+      assert_eq(
+        @v128.f32x4_extract_lane(replaced, i).reinterpret_as_uint(),
+        if i == lane {
+          9.0F.reinterpret_as_uint()
+        } else {
+          @v128.f32x4_extract_lane(floats, i).reinterpret_as_uint()
+        },
+      )
+    }
+  }
+
+  let doubles = @v128.f64x2_const(-0.0, 1.5)
+  for lane in 0..<2 {
+    let replaced = @v128.f64x2_replace_lane(doubles, lane, -9.0)
+    for i in 0..<2 {
+      assert_eq(
+        @v128.f64x2_extract_lane(replaced, i).reinterpret_as_uint64(),
+        if i == lane {
+          (-9.0).reinterpret_as_uint64()
+        } else {
+          @v128.f64x2_extract_lane(doubles, i).reinterpret_as_uint64()
+        },
+      )
+    }
+  }
+}
+
+///|
+test "systematic memory lane offsets" {
+  let bytes : FixedArray[Byte] = [
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+    22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+  ]
+
+  for lane in 0..<16 {
+    let loaded = @v128.v128_load8_lane(
+      bytes,
+      lane,
+      @v128.i8x16_splat(0xaa),
+      lane,
+    )
+    for i in 0..<16 {
+      assert_eq(
+        @v128.i8x16_extract_lane_u(loaded, i),
+        if i == lane {
+          lane.reinterpret_as_uint()
+        } else {
+          0xaa
+        },
+      )
+    }
+    let out : FixedArray[Byte] = FixedArray::make(32, 0)
+    @v128.v128_store8_lane(out, lane, @v128.v128_load(bytes, 0), lane)
+    assert_eq(out.unsafe_get(lane), lane.to_byte())
+  }
+
+  for lane in 0..<8 {
+    let offset = lane * 2
+    let expected = ((offset + 1).reinterpret_as_uint() << 8) |
+      offset.reinterpret_as_uint()
+    let loaded = @v128.v128_load16_lane(
+      bytes,
+      offset,
+      @v128.i16x8_splat(0xaaaa),
+      lane,
+    )
+    for i in 0..<8 {
+      assert_eq(
+        @v128.i16x8_extract_lane_u(loaded, i),
+        if i == lane {
+          expected
+        } else {
+          0xaaaa
+        },
+      )
+    }
+    let out : FixedArray[Byte] = FixedArray::make(32, 0)
+    @v128.v128_store16_lane(out, offset, loaded, lane)
+    assert_eq(out.unsafe_get(offset), offset.to_byte())
+    assert_eq(out.unsafe_get(offset + 1), (offset + 1).to_byte())
+  }
+
+  for lane in 0..<4 {
+    let offset = lane * 4
+    let expected = ((offset + 3).reinterpret_as_uint() << 24) |
+      ((offset + 2).reinterpret_as_uint() << 16) |
+      ((offset + 1).reinterpret_as_uint() << 8) |
+      offset.reinterpret_as_uint()
+    let loaded = @v128.v128_load32_lane(
+      bytes,
+      offset,
+      @v128.i32x4_splat(0xaaaaaaaa),
+      lane,
+    )
+    for i in 0..<4 {
+      assert_eq(
+        @v128.i32x4_extract_lane(loaded, i),
+        if i == lane {
+          expected
+        } else {
+          0xaaaaaaaa
+        },
+      )
+    }
+    let out : FixedArray[Byte] = FixedArray::make(32, 0)
+    @v128.v128_store32_lane(out, offset, loaded, lane)
+    for i in 0..<4 {
+      assert_eq(out.unsafe_get(offset + i), (offset + i).to_byte())
+    }
+  }
+
+  for lane in 0..<2 {
+    let offset = lane * 8
+    let loaded = @v128.v128_load64_lane(
+      bytes,
+      offset,
+      @v128.i64x2_splat(0xaaaaaaaaaaaaaaaaUL),
+      lane,
+    )
+    let out : FixedArray[Byte] = FixedArray::make(32, 0)
+    @v128.v128_store64_lane(out, offset, loaded, lane)
+    for i in 0..<8 {
+      assert_eq(out.unsafe_get(offset + i), (offset + i).to_byte())
+    }
+  }
+}
+
+///|
+test "systematic shifts and saturation boundaries" {
+  let bytes = @v128.i8x16_const(
+    0x01, 0x02, 0x7f, 0x80, 0xff, 0x40, 0xc0, 0x55, 0xaa, 0x10, 0xf0, 0x08, 0x81,
+    0x3f, 0xfe, 0x00,
+  )
+  assert_eq(@v128.i8x16_shl(bytes, 8), bytes)
+  assert_eq(@v128.i8x16_shl(bytes, 9), @v128.i8x16_shl(bytes, 1))
+  assert_eq(@v128.i8x16_shr_u(bytes, 8), bytes)
+  assert_eq(@v128.i8x16_shr_s(bytes, 9), @v128.i8x16_shr_s(bytes, 1))
+
+  let words = @v128.i16x8_const(
+    0x0001, 0x0002, 0x7fff, 0x8000, 0xffff, 0x4000, 0xc000, 0,
+  )
+  assert_eq(@v128.i16x8_shl(words, 16), words)
+  assert_eq(@v128.i16x8_shl(words, 17), @v128.i16x8_shl(words, 1))
+  assert_eq(@v128.i16x8_shr_u(words, 16), words)
+  assert_eq(@v128.i16x8_shr_s(words, 17), @v128.i16x8_shr_s(words, 1))
+
+  let dwords = @v128.i32x4_const(1, 0x7fffffff, 0x80000000, 0xffffffff)
+  assert_eq(@v128.i32x4_shl(dwords, 32), dwords)
+  assert_eq(@v128.i32x4_shl(dwords, 33), @v128.i32x4_shl(dwords, 1))
+  assert_eq(@v128.i32x4_shr_u(dwords, 32), dwords)
+  assert_eq(@v128.i32x4_shr_s(dwords, 33), @v128.i32x4_shr_s(dwords, 1))
+
+  let qwords = @v128.i64x2_const(1UL, 0x8000000000000000UL)
+  assert_eq(@v128.i64x2_shl(qwords, 64), qwords)
+  assert_eq(@v128.i64x2_shl(qwords, 65), @v128.i64x2_shl(qwords, 1))
+  assert_eq(@v128.i64x2_shr_u(qwords, 64), qwords)
+  assert_eq(@v128.i64x2_shr_s(qwords, 65), @v128.i64x2_shr_s(qwords, 1))
+
+  assert_eq(
+    @v128.i8x16_add_sat_s(
+      @v128.i8x16_const(
+        0x7e, 0x7f, 0x80, 0x81, 0xff, 0, 1, 2, 126, 127, 128, 129, 254, 255, 0, 1,
+      ),
+      @v128.i8x16_const(
+        1, 1, 0xff, 0xff, 0xff, 0xff, 0x7f, 0x80, 2, 2, 0xfe, 0xfe, 2, 2, 0x80, 0x7f,
+      ),
+    ),
+    @v128.i8x16_const(
+      0x7f, 0x7f, 0x80, 0x80, 0xfe, 0xff, 0x7f, 0x82, 0x7f, 0x7f, 0x80, 0x80, 0,
+      1, 0x80, 0x7f,
+    ),
+  )
+  assert_eq(
+    @v128.i16x8_sub_sat_s(
+      @v128.i16x8_const(0x8000, 0x8001, 0x7fff, 0x7ffe, 0, 1, 0xffff, 0x4000),
+      @v128.i16x8_const(1, 2, 0xffff, 0xfffe, 1, 0x8000, 0x7fff, 0xc000),
+    ),
+    @v128.i16x8_const(
+      0x8000, 0x8000, 0x7fff, 0x7fff, 0xffff, 0x7fff, 0x8000, 0x7fff,
+    ),
+  )
+}
+
+///|
+test "floating point edge cases" {
+  let nan32 = Float::reinterpret_from_uint(0x7fc00000)
+  let float_edges = @v128.f32x4_const(nan32, -0.0, 0.0, 1.0)
+  assert_eq(
+    @v128.f32x4_eq(float_edges, float_edges),
+    @v128.i32x4_const(0, 0xffffffff, 0xffffffff, 0xffffffff),
+  )
+  assert_eq(
+    @v128.f32x4_ne(float_edges, float_edges),
+    @v128.i32x4_const(0xffffffff, 0, 0, 0),
+  )
+  assert_eq(
+    @v128.f32x4_abs(@v128.f32x4_const(-0.0, -1.0, -2.5, -4.0)),
+    @v128.f32x4_const(0.0, 1.0, 2.5, 4.0),
+  )
+  assert_eq(
+    @v128.f32x4_nearest(@v128.f32x4_const(0.5, -0.5, 3.5, -3.5)),
+    @v128.f32x4_const(0.0, -0.0, 4.0, -4.0),
+  )
+  assert_eq(
+    @v128.f32x4_pmin(
+      @v128.f32x4_const(nan32, 1.0, -0.0, 3.0),
+      @v128.f32x4_const(2.0, nan32, 0.0, -4.0),
+    ),
+    @v128.f32x4_const(2.0, nan32, 0.0, -4.0),
+  )
+
+  let nan64 = 0x7ff8000000000000UL.reinterpret_as_double()
+  let double_edges = @v128.f64x2_const(nan64, -0.0)
+  assert_eq(
+    @v128.f64x2_eq(double_edges, double_edges),
+    @v128.i64x2_const(0UL, 0xffffffffffffffffUL),
+  )
+  assert_eq(
+    @v128.f64x2_ne(double_edges, double_edges),
+    @v128.i64x2_const(0xffffffffffffffffUL, 0UL),
+  )
+  assert_eq(
+    @v128.f64x2_nearest(@v128.f64x2_const(0.5, -0.5)),
+    @v128.f64x2_const(0.0, -0.0),
+  )
+}
