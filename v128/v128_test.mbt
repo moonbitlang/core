@@ -558,3 +558,78 @@ test "integer widening narrowing and dot products" {
     @v128.i64x2_const(0x00000001fffffffeUL, 12UL),
   )
 }
+
+///|
+test "floating point arithmetic comparisons and conversion" {
+  let f = @v128.f32x4_const(-1.5, 2.5, 4.0, -0.5)
+  assert_eq(@v128.f32x4_abs(f), @v128.f32x4_const(1.5, 2.5, 4.0, 0.5))
+  assert_eq(@v128.f32x4_neg(f), @v128.f32x4_const(1.5, -2.5, -4.0, 0.5))
+  assert_eq(
+    @v128.f32x4_add(f, @v128.f32x4_splat(1.0)),
+    @v128.f32x4_const(-0.5, 3.5, 5.0, 0.5),
+  )
+  assert_eq(
+    @v128.f32x4_mul(f, @v128.f32x4_splat(2.0)),
+    @v128.f32x4_const(-3.0, 5.0, 8.0, -1.0),
+  )
+  assert_eq(
+    @v128.f32x4_sqrt(@v128.f32x4_const(4.0, 9.0, 16.0, 25.0)),
+    @v128.f32x4_const(2.0, 3.0, 4.0, 5.0),
+  )
+  assert_eq(
+    @v128.f32x4_nearest(@v128.f32x4_const(1.5, 2.5, -1.5, -2.5)),
+    @v128.f32x4_const(2.0, 2.0, -2.0, -2.0),
+  )
+  assert_eq(
+    @v128.f32x4_lt(f, @v128.f32x4_const(0.0, 2.0, 5.0, -1.0)),
+    @v128.i32x4_const(0xffffffff, 0, 0xffffffff, 0),
+  )
+  assert_eq(
+    @v128.f32x4_convert_i32x4_s(@v128.i32x4_const(0xffffffff, 2, 0xfffffffd, 4)),
+    @v128.f32x4_const(-1.0, 2.0, -3.0, 4.0),
+  )
+  assert_eq(
+    @v128.f32x4_convert_i32x4_u(@v128.i32x4_const(1, 2, 3, 4)),
+    @v128.f32x4_const(1.0, 2.0, 3.0, 4.0),
+  )
+  assert_eq(
+    @v128.i32x4_trunc_sat_f32x4_s(@v128.f32x4_const(-1.9, 2.9, 1.0e20, -1.0e20)),
+    @v128.i32x4_const(0xffffffff, 2, 0x7fffffff, 0x80000000),
+  )
+  assert_eq(
+    @v128.i32x4_trunc_sat_f32x4_u(@v128.f32x4_const(-1.9, 2.9, 1.0e20, 0.0)),
+    @v128.i32x4_const(0, 2, 0xffffffff, 0),
+  )
+
+  let d = @v128.f64x2_const(-1.5, 2.5)
+  assert_eq(@v128.f64x2_abs(d), @v128.f64x2_const(1.5, 2.5))
+  assert_eq(@v128.f64x2_nearest(d), @v128.f64x2_const(-2.0, 2.0))
+  assert_eq(
+    @v128.f64x2_div(@v128.f64x2_const(6.0, 10.0), @v128.f64x2_const(2.0, 4.0)),
+    @v128.f64x2_const(3.0, 2.5),
+  )
+  assert_eq(
+    @v128.f64x2_ge(d, @v128.f64x2_const(-2.0, 3.0)),
+    @v128.i64x2_const(0xffffffffffffffffUL, 0UL),
+  )
+  assert_eq(
+    @v128.f64x2_convert_low_i32x4_s(@v128.i32x4_const(0xffffffff, 2, 3, 4)),
+    @v128.f64x2_const(-1.0, 2.0),
+  )
+  assert_eq(
+    @v128.f64x2_promote_low_f32x4(@v128.f32x4_const(1.5, -2.5, 3.0, 4.0)),
+    @v128.f64x2_const(1.5, -2.5),
+  )
+  assert_eq(
+    @v128.f32x4_demote_f64x2_zero(@v128.f64x2_const(1.5, -2.5)),
+    @v128.f32x4_const(1.5, -2.5, 0.0, 0.0),
+  )
+  assert_eq(
+    @v128.i32x4_trunc_sat_f64x2_s_zero(@v128.f64x2_const(-1.9, 1.0e40)),
+    @v128.i32x4_const(0xffffffff, 0x7fffffff, 0, 0),
+  )
+  assert_eq(
+    @v128.i32x4_trunc_sat_f64x2_u_zero(@v128.f64x2_const(-1.9, 1.0e40)),
+    @v128.i32x4_const(0, 0xffffffff, 0, 0),
+  )
+}

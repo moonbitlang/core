@@ -2,21 +2,125 @@
 package "moonbitlang/core/v128"
 
 // Values
+pub fn f32x4_abs(V128) -> V128
+
+pub fn f32x4_add(V128, V128) -> V128
+
+pub fn f32x4_ceil(V128) -> V128
+
 pub fn f32x4_const(Float, Float, Float, Float) -> V128
 
+pub fn f32x4_convert_i32x4_s(V128) -> V128
+
+pub fn f32x4_convert_i32x4_u(V128) -> V128
+
+pub fn f32x4_demote_f64x2_zero(V128) -> V128
+
+pub fn f32x4_div(V128, V128) -> V128
+
+pub fn f32x4_eq(V128, V128) -> V128
+
 pub fn f32x4_extract_lane(V128, Int) -> Float
+
+pub fn f32x4_floor(V128) -> V128
+
+pub fn f32x4_ge(V128, V128) -> V128
+
+pub fn f32x4_gt(V128, V128) -> V128
+
+pub fn f32x4_le(V128, V128) -> V128
+
+pub fn f32x4_lt(V128, V128) -> V128
+
+pub fn f32x4_max(V128, V128) -> V128
+
+pub fn f32x4_min(V128, V128) -> V128
+
+pub fn f32x4_mul(V128, V128) -> V128
+
+pub fn f32x4_ne(V128, V128) -> V128
+
+pub fn f32x4_nearest(V128) -> V128
+
+pub fn f32x4_neg(V128) -> V128
+
+pub fn f32x4_pmax(V128, V128) -> V128
+
+pub fn f32x4_pmin(V128, V128) -> V128
+
+pub fn f32x4_relaxed_max(V128, V128) -> V128
+
+pub fn f32x4_relaxed_min(V128, V128) -> V128
 
 pub fn f32x4_replace_lane(V128, Int, Float) -> V128
 
 pub fn f32x4_splat(Float) -> V128
 
+pub fn f32x4_sqrt(V128) -> V128
+
+pub fn f32x4_sub(V128, V128) -> V128
+
+pub fn f32x4_trunc(V128) -> V128
+
+pub fn f64x2_abs(V128) -> V128
+
+pub fn f64x2_add(V128, V128) -> V128
+
+pub fn f64x2_ceil(V128) -> V128
+
 pub fn f64x2_const(Double, Double) -> V128
 
+pub fn f64x2_convert_low_i32x4_s(V128) -> V128
+
+pub fn f64x2_convert_low_i32x4_u(V128) -> V128
+
+pub fn f64x2_div(V128, V128) -> V128
+
+pub fn f64x2_eq(V128, V128) -> V128
+
 pub fn f64x2_extract_lane(V128, Int) -> Double
+
+pub fn f64x2_floor(V128) -> V128
+
+pub fn f64x2_ge(V128, V128) -> V128
+
+pub fn f64x2_gt(V128, V128) -> V128
+
+pub fn f64x2_le(V128, V128) -> V128
+
+pub fn f64x2_lt(V128, V128) -> V128
+
+pub fn f64x2_max(V128, V128) -> V128
+
+pub fn f64x2_min(V128, V128) -> V128
+
+pub fn f64x2_mul(V128, V128) -> V128
+
+pub fn f64x2_ne(V128, V128) -> V128
+
+pub fn f64x2_nearest(V128) -> V128
+
+pub fn f64x2_neg(V128) -> V128
+
+pub fn f64x2_pmax(V128, V128) -> V128
+
+pub fn f64x2_pmin(V128, V128) -> V128
+
+pub fn f64x2_promote_low_f32x4(V128) -> V128
+
+pub fn f64x2_relaxed_max(V128, V128) -> V128
+
+pub fn f64x2_relaxed_min(V128, V128) -> V128
 
 pub fn f64x2_replace_lane(V128, Int, Double) -> V128
 
 pub fn f64x2_splat(Double) -> V128
+
+pub fn f64x2_sqrt(V128) -> V128
+
+pub fn f64x2_sub(V128, V128) -> V128
+
+pub fn f64x2_trunc(V128) -> V128
 
 pub fn hi(V128) -> UInt64
 
@@ -180,6 +284,14 @@ pub fn i32x4_neg(V128) -> V128
 
 pub fn i32x4_relaxed_dot_add_s_i16x8(V128, V128) -> V128
 
+pub fn i32x4_relaxed_trunc_f32x4_s(V128) -> V128
+
+pub fn i32x4_relaxed_trunc_f32x4_u(V128) -> V128
+
+pub fn i32x4_relaxed_trunc_f64x2_s_zero(V128) -> V128
+
+pub fn i32x4_relaxed_trunc_f64x2_u_zero(V128) -> V128
+
 pub fn i32x4_replace_lane(V128, Int, UInt) -> V128
 
 pub fn i32x4_shl(V128, Int) -> V128
@@ -191,6 +303,14 @@ pub fn i32x4_shr_u(V128, Int) -> V128
 pub fn i32x4_splat(UInt) -> V128
 
 pub fn i32x4_sub(V128, V128) -> V128
+
+pub fn i32x4_trunc_sat_f32x4_s(V128) -> V128
+
+pub fn i32x4_trunc_sat_f32x4_u(V128) -> V128
+
+pub fn i32x4_trunc_sat_f64x2_s_zero(V128) -> V128
+
+pub fn i32x4_trunc_sat_f64x2_u_zero(V128) -> V128
 
 pub fn i64x2_abs(V128) -> V128
 
