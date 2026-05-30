@@ -50,6 +50,12 @@ let int_pow10_table : ReadOnlyArray[UInt64] = [
 ]
 
 ///|
+// `#valtype` keeps this struct stack-allocated on the native target.
+// `scan_json_number` builds + returns one of these on every JSON
+// number, and without the annotation each call boxes a ~32-byte heap
+// object — measured as ~50 % of total alloc bytes in the all-integer
+// json bench (300 k numbers → 9.16 MB / 300 k allocs eliminated).
+#valtype
 priv struct JsonNumberScan {
   negative : Bool
   is_integer : Bool
