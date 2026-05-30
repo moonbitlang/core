@@ -236,6 +236,8 @@ pub fn i8x16_neg(V128) -> V128
 
 pub fn i8x16_popcnt(V128) -> V128
 
+pub fn i8x16_relaxed_swizzle(V128, V128) -> V128
+
 pub fn i8x16_replace_lane(V128, Int, UInt) -> V128
 
 pub fn i8x16_shl(V128, Int) -> V128
@@ -244,6 +246,8 @@ pub fn i8x16_shr_s(V128, Int) -> V128
 
 pub fn i8x16_shr_u(V128, Int) -> V128
 
+pub fn i8x16_shuffle(V128, V128, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) -> V128
+
 pub fn i8x16_splat(Byte) -> V128
 
 pub fn i8x16_sub(V128, V128) -> V128
@@ -251,6 +255,8 @@ pub fn i8x16_sub(V128, V128) -> V128
 pub fn i8x16_sub_sat_s(V128, V128) -> V128
 
 pub fn i8x16_sub_sat_u(V128, V128) -> V128
+
+pub fn i8x16_swizzle(V128, V128) -> V128
 
 pub fn lo(V128) -> UInt64
 
@@ -266,9 +272,55 @@ pub fn v128_bitselect(V128, V128, V128) -> V128
 
 pub fn v128_eq(V128, V128) -> Bool
 
+pub fn v128_load(FixedArray[Byte], Int) -> V128
+
+pub fn v128_load16_lane(FixedArray[Byte], Int, V128, Int) -> V128
+
+pub fn v128_load16_splat(FixedArray[Byte], Int) -> V128
+
+pub fn v128_load16x4_s(FixedArray[Byte], Int) -> V128
+
+pub fn v128_load16x4_u(FixedArray[Byte], Int) -> V128
+
+pub fn v128_load32_lane(FixedArray[Byte], Int, V128, Int) -> V128
+
+pub fn v128_load32_splat(FixedArray[Byte], Int) -> V128
+
+pub fn v128_load32_zero(FixedArray[Byte], Int) -> V128
+
+pub fn v128_load32x2_s(FixedArray[Byte], Int) -> V128
+
+pub fn v128_load32x2_u(FixedArray[Byte], Int) -> V128
+
+pub fn v128_load64_lane(FixedArray[Byte], Int, V128, Int) -> V128
+
+pub fn v128_load64_splat(FixedArray[Byte], Int) -> V128
+
+pub fn v128_load64_zero(FixedArray[Byte], Int) -> V128
+
+pub fn v128_load8_lane(FixedArray[Byte], Int, V128, Int) -> V128
+
+pub fn v128_load8_splat(FixedArray[Byte], Int) -> V128
+
+pub fn v128_load8x8_s(FixedArray[Byte], Int) -> V128
+
+pub fn v128_load8x8_u(FixedArray[Byte], Int) -> V128
+
 pub fn v128_not(V128) -> V128
 
 pub fn v128_or_(V128, V128) -> V128
+
+pub fn v128_store(FixedArray[Byte], Int, V128) -> Unit
+
+pub fn v128_store16_lane(FixedArray[Byte], Int, V128, Int) -> Unit
+
+pub fn v128_store32_lane(FixedArray[Byte], Int, V128, Int) -> Unit
+
+pub fn v128_store64_lane(FixedArray[Byte], Int, V128, Int) -> Unit
+
+pub fn v128_store8_lane(FixedArray[Byte], Int, V128, Int) -> Unit
+
+pub fn v128_to_string(V128) -> String
 
 pub fn v128_xor(V128, V128) -> V128
 

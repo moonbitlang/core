@@ -360,3 +360,88 @@ test "integer comparisons and min max" {
     @v128.i64x2_const(0UL, 0xffffffffffffffffUL),
   )
 }
+
+///|
+test "shuffle and swizzle" {
+  let a = @v128.i8x16_const(
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+  )
+  let b = @v128.i8x16_const(
+    16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+  )
+  assert_eq(
+    @v128.i8x16_shuffle(
+      a, b, 31, 30, 17, 16, 15, 14, 1, 0, 8, 9, 10, 11, 20, 21, 22, 23,
+    ),
+    @v128.i8x16_const(
+      31, 30, 17, 16, 15, 14, 1, 0, 8, 9, 10, 11, 20, 21, 22, 23,
+    ),
+  )
+  assert_eq(
+    @v128.i8x16_swizzle(
+      a,
+      @v128.i8x16_const(15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 16),
+    ),
+    @v128.i8x16_const(15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0),
+  )
+}
+
+///|
+test "loads and stores" {
+  let bytes : FixedArray[Byte] = [
+    0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x80, 0xff, 0xaa, 0xbb, 0xcc,
+    0xdd, 0xee, 0xff, 0x10, 0x20, 0x30, 0x40,
+  ]
+  assert_eq(
+    @v128.v128_load(bytes, 0),
+    @v128.i8x16_const(
+      0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x80, 0xff, 0xaa, 0xbb, 0xcc,
+      0xdd, 0xee, 0xff,
+    ),
+  )
+  assert_eq(
+    @v128.v128_load8x8_s(bytes, 8),
+    @v128.i16x8_const(
+      0xff80, 0xffff, 0xffaa, 0xffbb, 0xffcc, 0xffdd, 0xffee, 0xffff,
+    ),
+  )
+  assert_eq(
+    @v128.v128_load8x8_u(bytes, 8),
+    @v128.i16x8_const(0x80, 0xff, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff),
+  )
+  assert_eq(
+    @v128.v128_load16x4_s(bytes, 8),
+    @v128.i32x4_const(0xffffff80, 0xffffbbaa, 0xffffddcc, 0xffffffee),
+  )
+  assert_eq(
+    @v128.v128_load32x2_u(bytes, 8),
+    @v128.i64x2_const(0xbbaaff80UL, 0xffeeddccUL),
+  )
+  assert_eq(
+    @v128.v128_load32_zero(bytes, 0),
+    @v128.i32x4_const(0x03020100, 0, 0, 0),
+  )
+  assert_eq(
+    @v128.v128_load64_splat(bytes, 0),
+    @v128.i64x2_const(0x0706050403020100UL, 0x0706050403020100UL),
+  )
+
+  let out : FixedArray[Byte] = FixedArray::make(20, 0)
+  @v128.v128_store(out, 2, @v128.v128_load(bytes, 0))
+  inspect(out.unsafe_get(2), content="b'\\x00'")
+  inspect(out.unsafe_get(9), content="b'\\x07'")
+  inspect(out.unsafe_get(10), content="b'\\x80'")
+  inspect(out.unsafe_get(17), content="b'\\xFF'")
+
+  @v128.v128_store16_lane(
+    out,
+    0,
+    @v128.i16x8_const(0x1234, 0xabcd, 0, 0, 0, 0, 0, 0),
+    1,
+  )
+  inspect(out.unsafe_get(0), content="b'\\xCD'")
+  inspect(out.unsafe_get(1), content="b'\\xAB'")
+
+  let with_lane = @v128.v128_load32_lane(bytes, 16, @v128.i32x4_splat(0), 2)
+  assert_eq(with_lane, @v128.i32x4_const(0, 0, 0x40302010, 0))
+}
