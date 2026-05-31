@@ -39,13 +39,31 @@ priv enum IntersperseState[X] {
 #alias(head)
 pub fn[X] Iter::next(self : Iter[X]) -> X? {
   let result = (self.f)()
-  match (result, self.size_hint) {
-    (Some(_), Some(n)) =>
-      self.size_hint = if n > 0 { Some(n - 1) } else { Some(0) }
-    (None, _) => self.size_hint = Some(0)
-    _ => ()
+  match result {
+    Some(_) => self.consume_size_hint()
+    None => self.finish_size_hint()
   }
   result
+}
+
+///|
+/// Update `size_hint` after an element has been consumed.
+///
+/// Eager consumers call the underlying iterator function directly to avoid
+/// `next` call overhead, but share this bookkeeping with `next`.
+#inline
+fn[X] Iter::consume_size_hint(self : Iter[X]) -> Unit {
+  match self.size_hint {
+    Some(n) if n > 0 => self.size_hint = Some(n - 1)
+    Some(_) => self.size_hint = None
+    None => ()
+  }
+}
+
+///|
+#inline
+fn[X] Iter::finish_size_hint(self : Iter[X]) -> Unit {
+  self.size_hint = Some(0)
 }
 
 ///|
@@ -123,8 +141,20 @@ pub impl[X : ToJson] ToJson for Iter[X] with fn to_json(self) {
 /// - `f`: A function that takes an element of type `X` and returns `Unit`. This function is applied to each element of the iterator.
 #locals(f)
 pub fn[X] Iter::each(self : Iter[X], f : (X) -> Unit raise?) -> Unit raise? {
-  while self.next() is Some(x) {
-    f(x)
+  // Hot eager consumers avoid `next` call overhead but share its bookkeeping.
+  let next_fn = self.f
+  for next = next_fn() {
+    match next {
+      Some(x) => {
+        self.consume_size_hint()
+        f(x)
+        continue next_fn()
+      }
+      None => {
+        self.finish_size_hint()
+        break
+      }
+    }
   }
 }
 
@@ -133,12 +163,21 @@ pub fn[X] Iter::each(self : Iter[X], f : (X) -> Unit raise?) -> Unit raise? {
 /// Function `any`.
 #locals(f)
 pub fn[X] Iter::any(self : Iter[X], f : (X) -> Bool) -> Bool {
-  while self.next() is Some(x) {
-    if f(x) {
-      break true
+  let next_fn = self.f
+  for next = next_fn() {
+    match next {
+      Some(x) => {
+        self.consume_size_hint()
+        if f(x) {
+          break true
+        }
+        continue next_fn()
+      }
+      None => {
+        self.finish_size_hint()
+        break false
+      }
     }
-  } nobreak {
-    false
   }
 }
 
@@ -147,10 +186,19 @@ pub fn[X] Iter::any(self : Iter[X], f : (X) -> Bool) -> Bool {
 /// Function `all`.
 #locals(f)
 pub fn[X] Iter::all(self : Iter[X], f : (X) -> Bool) -> Bool {
-  while self.next() is Some(x) {
-    guard f(x) else { break false }
-  } nobreak {
-    true
+  let next_fn = self.f
+  for next = next_fn() {
+    match next {
+      Some(x) => {
+        self.consume_size_hint()
+        guard f(x) else { break false }
+        continue next_fn()
+      }
+      None => {
+        self.finish_size_hint()
+        break true
+      }
+    }
   }
 }
 
@@ -171,9 +219,20 @@ pub fn[X] Iter::eachi(
   f : (Int, X) -> Unit raise?,
 ) -> Unit raise? {
   let mut i = 0
-  while self.next() is Some(x) {
-    f(i, x)
-    i += 1
+  let next_fn = self.f
+  for next = next_fn() {
+    match next {
+      Some(x) => {
+        self.consume_size_hint()
+        f(i, x)
+        i += 1
+        continue next_fn()
+      }
+      None => {
+        self.finish_size_hint()
+        break
+      }
+    }
   }
 }
 
@@ -201,8 +260,19 @@ pub fn[X, R] Iter::fold(
   f : (R, X) -> R raise?,
 ) -> R raise? {
   let mut acc = init
-  while self.next() is Some(x) {
-    acc = f(acc, x)
+  let next_fn = self.f
+  for next = next_fn() {
+    match next {
+      Some(x) => {
+        self.consume_size_hint()
+        acc = f(acc, x)
+        continue next_fn()
+      }
+      None => {
+        self.finish_size_hint()
+        break
+      }
+    }
   }
   acc
 }
@@ -725,12 +795,21 @@ pub fn[X] Iter::drop_while(self : Iter[X], f : (X) -> Bool) -> Iter[X] {
 /// # Note
 /// The iterator `self` will advance past the returned element.
 pub fn[X] Iter::find_first(self : Iter[X], f : (X) -> Bool) -> X? {
-  while self.next() is Some(x) {
-    if f(x) {
-      break Some(x)
+  let next_fn = self.f
+  for next = next_fn() {
+    match next {
+      Some(x) => {
+        self.consume_size_hint()
+        if f(x) {
+          break Some(x)
+        }
+        continue next_fn()
+      }
+      None => {
+        self.finish_size_hint()
+        break None
+      }
     }
-  } nobreak {
-    None
   }
 }
 
@@ -844,8 +923,19 @@ pub fn[X] Iter::to_array(self : Iter[X]) -> Array[X] {
     Some(n) => Array::new(capacity=n)
     None => []
   }
-  while self.next() is Some(x) {
-    result.push(x)
+  let next_fn = self.f
+  for next = next_fn() {
+    match next {
+      Some(x) => {
+        self.consume_size_hint()
+        result.push(x)
+        continue next_fn()
+      }
+      None => {
+        self.finish_size_hint()
+        break
+      }
+    }
   }
   result
 }
@@ -879,12 +969,22 @@ pub fn[X] Iter::iter2(self : Iter[X]) -> Iter2[Int, X] {
 /// Returns the last element of the iterator, or `None` if the iterator is empty.
 /// The old iterator `self` must not be used again after calling `last`.
 pub fn[X] Iter::last(self : Iter[X]) -> X? {
-  for x = (None : X?), y = self.next() {
-    match (x, y) {
-      (last, None) => break last
-      (_, Some(_) as x) => continue x, self.next()
+  let mut last = None
+  let next_fn = self.f
+  for next = next_fn() {
+    match next {
+      Some(_) as x => {
+        self.consume_size_hint()
+        last = x
+        continue next_fn()
+      }
+      None => {
+        self.finish_size_hint()
+        break
+      }
     }
   }
+  last
 }
 
 ///|
@@ -1011,12 +1111,21 @@ pub fn[X] Iter::view(self : Iter[X], start? : Int = 0, end? : Int) -> Iter[X] {
 /// # Note
 /// The old iterator `self` will advance past the searched element.
 pub fn[X : Eq] Iter::contains(self : Iter[X], value : X) -> Bool {
-  while self.next() is Some(x) {
-    if x == value {
-      break true
+  let next_fn = self.f
+  for next = next_fn() {
+    match next {
+      Some(x) => {
+        self.consume_size_hint()
+        if x == value {
+          break true
+        }
+        continue next_fn()
+      }
+      None => {
+        self.finish_size_hint()
+        break false
+      }
     }
-  } nobreak {
-    false
   }
 }
 
@@ -1026,21 +1135,49 @@ pub fn[X : Eq] Iter::contains(self : Iter[X], value : X) -> Bool {
 /// The iterator `self` will advance past the returned element.
 pub fn[X] Iter::nth(self : Iter[X], n : Int) -> X? {
   guard n >= 0 else { None }
-  for _ in 0..<n {
-    guard self.next() is Some(_) else { break None }
-  } nobreak {
-    self.next()
+  let mut i = 0
+  let next_fn = self.f
+  for next = next_fn() {
+    match next {
+      Some(x) => {
+        self.consume_size_hint()
+        if i == n {
+          break Some(x)
+        }
+        i += 1
+        continue next_fn()
+      }
+      None => {
+        self.finish_size_hint()
+        break None
+      }
+    }
   }
 }
 
 ///|
 /// Return the maximum element, or `None` if empty.
 pub fn[X : Compare] Iter::maximum(self : Iter[X]) -> X? {
-  guard self.next() is Some(x) else { return None }
+  let next_fn = self.f
+  guard next_fn() is Some(x) else {
+    self.finish_size_hint()
+    return None
+  }
+  self.consume_size_hint()
   let mut res = x
-  while self.next() is Some(x) {
-    if x > res {
-      res = x
+  for next = next_fn() {
+    match next {
+      Some(x) => {
+        self.consume_size_hint()
+        if x > res {
+          res = x
+        }
+        continue next_fn()
+      }
+      None => {
+        self.finish_size_hint()
+        break
+      }
     }
   }
   Some(res)
@@ -1049,11 +1186,26 @@ pub fn[X : Compare] Iter::maximum(self : Iter[X]) -> X? {
 ///|
 /// Return the minimum element, or `None` if empty.
 pub fn[X : Compare] Iter::minimum(self : Iter[X]) -> X? {
-  guard self.next() is Some(x) else { return None }
+  let next_fn = self.f
+  guard next_fn() is Some(x) else {
+    self.finish_size_hint()
+    return None
+  }
+  self.consume_size_hint()
   let mut res = x
-  while self.next() is Some(x) {
-    if x < res {
-      res = x
+  for next = next_fn() {
+    match next {
+      Some(x) => {
+        self.consume_size_hint()
+        if x < res {
+          res = x
+        }
+        continue next_fn()
+      }
+      None => {
+        self.finish_size_hint()
+        break
+      }
     }
   }
   Some(res)

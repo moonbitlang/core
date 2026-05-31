@@ -364,11 +364,98 @@ test "size_hint" {
   )
   debug_inspect(too_small.collect(), content="[1, 2, 3]")
   debug_inspect(too_small.size_hint(), content="Some(0)")
+  let mut j = 0
+  let underflow = Iter::new(
+    fn() {
+      if j < 3 {
+        j += 1
+        Some(j)
+      } else {
+        None
+      }
+    },
+    size_hint=1,
+  )
+  debug_inspect(underflow.next(), content="Some(1)")
+  debug_inspect(underflow.size_hint(), content="Some(0)")
+  debug_inspect(underflow.next(), content="Some(2)")
+  debug_inspect(underflow.size_hint(), content="None")
+  debug_inspect(underflow.collect(), content="[3]")
+  debug_inspect(underflow.size_hint(), content="Some(0)")
   let too_large : Iter[Int] = Iter::new(() => None, size_hint=3)
   debug_inspect(too_large.next(), content="None")
   debug_inspect(too_large.size_hint(), content="Some(0)")
   let negative_hint : Iter[Int] = Iter::new(() => None, size_hint=-1)
   debug_inspect(negative_hint.size_hint(), content="Some(0)")
+}
+
+///|
+test "size_hint during eager consumers" {
+  let each_iter = [1, 2, 3].iter()
+  let each_hints = []
+  each_iter.each(_ => each_hints.push(each_iter.size_hint()))
+  debug_inspect(each_hints, content="[Some(2), Some(1), Some(0)]")
+  debug_inspect(each_iter.size_hint(), content="Some(0)")
+  let fold_iter = [1, 2, 3].iter()
+  let fold_hints = []
+  let sum = fold_iter.fold(init=0, (acc, x) => {
+    fold_hints.push(fold_iter.size_hint())
+    acc + x
+  })
+  debug_inspect(sum, content="6")
+  debug_inspect(fold_hints, content="[Some(2), Some(1), Some(0)]")
+  debug_inspect(fold_iter.size_hint(), content="Some(0)")
+  let eachi_iter = [1, 2, 3].iter()
+  let eachi_hints = []
+  eachi_iter.eachi((_, _) => eachi_hints.push(eachi_iter.size_hint()))
+  debug_inspect(eachi_hints, content="[Some(2), Some(1), Some(0)]")
+  debug_inspect(eachi_iter.size_hint(), content="Some(0)")
+  let count_iter = [1, 2, 3].iter()
+  debug_inspect(count_iter.count(), content="3")
+  debug_inspect(count_iter.size_hint(), content="Some(0)")
+  let to_array_iter = [1, 2, 3].iter()
+  debug_inspect(to_array_iter.to_array(), content="[1, 2, 3]")
+  debug_inspect(to_array_iter.size_hint(), content="Some(0)")
+  let mut j = 0
+  let underflow_iter = Iter::new(
+    fn() {
+      if j < 3 {
+        j += 1
+        Some(j)
+      } else {
+        None
+      }
+    },
+    size_hint=1,
+  )
+  let underflow_hints = []
+  underflow_iter.each(_ => underflow_hints.push(underflow_iter.size_hint()))
+  debug_inspect(underflow_hints, content="[Some(0), None, None]")
+  debug_inspect(underflow_iter.size_hint(), content="Some(0)")
+  let any_iter = [1, 2, 3].iter()
+  debug_inspect(any_iter.any(x => x == 2), content="true")
+  debug_inspect(any_iter.size_hint(), content="Some(1)")
+  let all_iter = [1, 2, 3].iter()
+  debug_inspect(all_iter.all(x => x < 2), content="false")
+  debug_inspect(all_iter.size_hint(), content="Some(1)")
+  let find_iter = [1, 2, 3].iter()
+  debug_inspect(find_iter.find_first(x => x == 2), content="Some(2)")
+  debug_inspect(find_iter.size_hint(), content="Some(1)")
+  let contains_iter = [1, 2, 3].iter()
+  debug_inspect(contains_iter.contains(2), content="true")
+  debug_inspect(contains_iter.size_hint(), content="Some(1)")
+  let nth_iter = [1, 2, 3].iter()
+  debug_inspect(nth_iter.nth(1), content="Some(2)")
+  debug_inspect(nth_iter.size_hint(), content="Some(1)")
+  let last_iter = [1, 2, 3].iter()
+  debug_inspect(last_iter.last(), content="Some(3)")
+  debug_inspect(last_iter.size_hint(), content="Some(0)")
+  let maximum_iter = [1, 3, 2].iter()
+  debug_inspect(maximum_iter.maximum(), content="Some(3)")
+  debug_inspect(maximum_iter.size_hint(), content="Some(0)")
+  let minimum_iter = [2, 1, 3].iter()
+  debug_inspect(minimum_iter.minimum(), content="Some(1)")
+  debug_inspect(minimum_iter.size_hint(), content="Some(0)")
 }
 
 ///|
@@ -1003,6 +1090,11 @@ test "@builtin.Iter::maximum" {
   // Empty iter should return None
   let empty_iter : Iter[Int] = Iter::empty()
   debug_inspect(empty_iter.maximum(), content="None")
+  debug_inspect([1.0, @double.not_a_number].iter().maximum(), content="Some(1)")
+  debug_inspect(
+    [@double.not_a_number, 1.0].iter().maximum(),
+    content="Some(NaN)",
+  )
 }
 
 ///|
@@ -1018,6 +1110,11 @@ test "@builtin.Iter::minimum" {
   // Test with empty sequence
   let empty : Iter[Int] = Iter::empty()
   debug_inspect(empty.minimum(), content="None")
+  debug_inspect([1.0, @double.not_a_number].iter().minimum(), content="Some(1)")
+  debug_inspect(
+    [@double.not_a_number, 1.0].iter().minimum(),
+    content="Some(NaN)",
+  )
 }
 
 ///|
