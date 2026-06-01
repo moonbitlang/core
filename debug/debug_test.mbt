@@ -47,16 +47,18 @@ test "debug repr for json" {
 }
 
 ///|
-fn output(x : Result[Unit, Error]) -> StringView {
-  match x {
-    Err(Failure::Failure(s)) =>
+fn output(f : () -> Unit raise Error) -> StringView {
+  try {
+    f()
+    "ok"
+  } catch {
+    Failure::Failure(s) =>
       if s =~ (re"FAILED:", after=next) {
         "FAILED:\{next}"
       } else {
         s
       }
-    Ok(_) => "ok"
-    Err(e) =>
+    e =>
       if "\{e}" =~ (re"FAILED:", after=next) {
         "FAILED:\{next}"
       } else {
@@ -67,9 +69,9 @@ fn output(x : Result[Unit, Error]) -> StringView {
 
 ///|
 test "assert_eq" {
-  inspect(output(try? @debug.assert_eq(1, 1)), content="ok")
+  inspect(output(() => @debug.assert_eq(1, 1)), content="ok")
   inspect(
-    output(try? @debug.assert_eq(1, 2)),
+    output(() => @debug.assert_eq(1, 2)),
     content=(
       #|FAILED: `1 != 2`
       #|diff:
@@ -77,16 +79,16 @@ test "assert_eq" {
     ),
   )
   inspect(
-    output(try? @debug.assert_eq("a", "b")),
+    output(() => @debug.assert_eq("a", "b")),
     content=(
       #|FAILED: `"a" != "b"`
       #|diff:
       #|-"a" +"b"
     ),
   )
-  inspect(output(try? @debug.assert_eq([1, 2, 3], [1, 2, 3])), content="ok")
+  inspect(output(() => @debug.assert_eq([1, 2, 3], [1, 2, 3])), content="ok")
   inspect(
-    output(try? @debug.assert_eq([1, 2, 3], [1, 222, 3])),
+    output(() => @debug.assert_eq([1, 2, 3], [1, 222, 3])),
     content=(
       #|FAILED: `[1, 2, 3] != [1, 222, 3]`
       #|diff:
@@ -94,7 +96,7 @@ test "assert_eq" {
     ),
   )
   inspect(
-    output(try? @debug.assert_eq((true, "string", 123), (true, "s", 1))),
+    output(() => @debug.assert_eq((true, "string", 123), (true, "s", 1))),
     content=(
       #|FAILED: `(true, "string", 123) != (true, "s", 1)`
       #|diff:
@@ -102,7 +104,7 @@ test "assert_eq" {
     ),
   )
   inspect(
-    output(try? @debug.assert_eq({ "k1": 1.0, "k2": 2 }, { "k1": 2, "k3": 5 })),
+    output(() => @debug.assert_eq({ "k1": 1.0, "k2": 2 }, { "k1": 2, "k3": 5 })),
     content=(
       #|FAILED: `{ "k1": 1, "k2": 2 } != { "k1": 2, "k3": 5 }`
       #|diff:
@@ -110,11 +112,11 @@ test "assert_eq" {
     ),
   )
   inspect(
-    output(try? @debug.assert_eq(1, 2, msg="numbers mismatch")),
+    output(() => @debug.assert_eq(1, 2, msg="numbers mismatch")),
     content="FAILED: numbers mismatch",
   )
   inspect(
-    output(try? @debug.assert_eq(Some(1), Some(2))),
+    output(() => @debug.assert_eq(Some(1), Some(2))),
     content=(
       #|FAILED: `Some(1) != Some(2)`
       #|diff:
@@ -122,7 +124,7 @@ test "assert_eq" {
     ),
   )
   inspect(
-    output(try? @debug.assert_eq(Result::Ok(1), Err("e"))),
+    output(() => @debug.assert_eq(Result::Ok(1), Err("e"))),
     content=(
       #|FAILED: `Ok(1) != Err("e")`
       #|diff:
@@ -134,7 +136,7 @@ test "assert_eq" {
 ///|
 test "assert_eq for arrays" {
   inspect(
-    output(try? @debug.assert_eq([1, 2], [1, 2, 3])),
+    output(() => @debug.assert_eq([1, 2], [1, 2, 3])),
     content=(
       #|FAILED: `[1, 2] != [1, 2, 3]`
       #|diff:
@@ -142,7 +144,7 @@ test "assert_eq for arrays" {
     ),
   )
   inspect(
-    output(try? @debug.assert_eq([1, 2], [1, 2, 3, 4])),
+    output(() => @debug.assert_eq([1, 2], [1, 2, 3, 4])),
     content=(
       #|FAILED: `[1, 2] != [1, 2, 3, 4]`
       #|diff:
@@ -150,7 +152,7 @@ test "assert_eq for arrays" {
     ),
   )
   inspect(
-    output(try? @debug.assert_eq([1, 2, 3], [1, 2])),
+    output(() => @debug.assert_eq([1, 2, 3], [1, 2])),
     content=(
       #|FAILED: `[1, 2, 3] != [1, 2]`
       #|diff:
@@ -158,7 +160,7 @@ test "assert_eq for arrays" {
     ),
   )
   inspect(
-    output(try? @debug.assert_eq([1, 2, 3, 4], [1, 2])),
+    output(() => @debug.assert_eq([1, 2, 3, 4], [1, 2])),
     content=(
       #|FAILED: `[1, 2, 3, 4] != [1, 2]`
       #|diff:
@@ -166,7 +168,7 @@ test "assert_eq for arrays" {
     ),
   )
   inspect(
-    output(try? @debug.assert_eq([1, 2, 3, 4], [1, 4])),
+    output(() => @debug.assert_eq([1, 2, 3, 4], [1, 4])),
     content=(
       #|FAILED: `[1, 2, 3, 4] != [1, 4]`
       #|diff:
@@ -174,7 +176,7 @@ test "assert_eq for arrays" {
     ),
   )
   inspect(
-    output(try? @debug.assert_eq([1, 4], [1, 2, 3, 4])),
+    output(() => @debug.assert_eq([1, 4], [1, 2, 3, 4])),
     content=(
       #|FAILED: `[1, 4] != [1, 2, 3, 4]`
       #|diff:
