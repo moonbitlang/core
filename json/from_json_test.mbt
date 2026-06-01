@@ -31,11 +31,14 @@ test {
 ///|
 test {
   let u = Json::array([Json::number(1), Json::string("str")])
-  let v : Result[Array[Int], _] = try? @json.from_json(u)
+  let err = expect_json_decode_error(
+    () => ignore((@json.from_json(u) : Array[Int])),
+    "expected Array[Int] decode failure",
+  )
   debug_inspect(
-    v,
+    err,
     content=(
-      #|Err(JsonDecodeError((Index(Root, index=1), "Int::from_json: expected number")))
+      #|JsonDecodeError((Index(Root, index=1), "Int::from_json: expected number"))
     ),
   )
 }
@@ -46,16 +49,17 @@ test {
     "x": Json::object({ "xx": Json::number(1) }),
     "y": Json::object({ "yy": Json::string("str") }),
   })
-  let v : Result[Map[String, Map[String, Double]], _] = try? @json.from_json(u)
+  let err = expect_json_decode_error(
+    () => ignore((@json.from_json(u) : Map[String, Map[String, Double]])),
+    "expected Map decode failure",
+  )
   debug_inspect(
-    v,
+    err,
     content=(
-      #|Err(
-      #|  JsonDecodeError(
-      #|    (
-      #|      Key(Key(Root, key="y"), key="yy"),
-      #|      "Double::from_json: expected number",
-      #|    ),
+      #|JsonDecodeError(
+      #|  (
+      #|    Key(Key(Root, key="y"), key="yy"),
+      #|    "Double::from_json: expected number",
       #|  ),
       #|)
     ),
@@ -288,19 +292,23 @@ test "tuple roundtrip" {
 ///|
 test "tuple failure" {
   let u = [1, 2]
-  let v : Result[(Int, Int, Int), _] = try? @json.from_json(u.to_json())
+  let err = expect_json_decode_error(
+    () => ignore((@json.from_json(u.to_json()) : (Int, Int, Int))),
+    "expected tuple size error",
+  )
   inspect(
-    v.unwrap_err(),
+    err,
     content=(
       #|JsonDecodeError((, expected tuple of size 3))
     ),
   )
   let u = ((1, 2), (3, 4))
-  let v : Result[((Int, Int), Int), _] = try? @json.from_json(
-    ToJson::to_json(u),
+  let err = expect_json_decode_error(
+    () => ignore((@json.from_json(ToJson::to_json(u)) : ((Int, Int), Int))),
+    "expected tuple element error",
   )
   inspect(
-    v.unwrap_err(),
+    err,
     content=(
       #|JsonDecodeError((/1, Int::from_json: expected number))
     ),
@@ -454,19 +462,25 @@ test "uint" {
   let v : UInt = @json.from_json(Json::number(4294967295))
   inspect(v, content="4294967295")
   // negative should error
-  let neg_res : Result[UInt, _] = try? @json.from_json(Json::number(-1))
+  let neg_err = expect_json_decode_error(
+    () => ignore((@json.from_json(Json::number(-1)) : UInt)),
+    "expected UInt overflow",
+  )
   debug_inspect(
-    neg_res,
+    neg_err,
     content=(
-      #|Err(JsonDecodeError((Root, "UInt::from_json: overflow")))
+      #|JsonDecodeError((Root, "UInt::from_json: overflow"))
     ),
   )
   // overflow should error
-  let ovf_res : Result[UInt, _] = try? @json.from_json(Json::number(4294967296))
+  let ovf_err = expect_json_decode_error(
+    () => ignore((@json.from_json(Json::number(4294967296)) : UInt)),
+    "expected UInt overflow",
+  )
   debug_inspect(
-    ovf_res,
+    ovf_err,
     content=(
-      #|Err(JsonDecodeError((Root, "UInt::from_json: overflow")))
+      #|JsonDecodeError((Root, "UInt::from_json: overflow"))
     ),
   )
 }
@@ -474,31 +488,34 @@ test "uint" {
 ///|
 test "Int from_json overflow should error" {
   let json = @json.parse("2147483648") // INT_MAX + 1 for 32-bit
-  let res : Result[Int, _] = try? @json.from_json(json)
-  match res {
-    Ok(v) => fail("BUG: Int overflow not detected, decoded as \{v}")
-    Err(_) => ()
-  }
+  ignore(
+    expect_json_decode_error(
+      () => ignore((@json.from_json(json) : Int)),
+      "BUG: Int overflow not detected",
+    ),
+  )
 }
 
 ///|
 test "Int from_json negative overflow should error" {
   let json = @json.parse("-2147483649") // INT_MIN - 1 for 32-bit
-  let res : Result[Int, _] = try? @json.from_json(json)
-  match res {
-    Ok(v) => fail("BUG: Int negative overflow not detected, decoded as \{v}")
-    Err(_) => ()
-  }
+  ignore(
+    expect_json_decode_error(
+      () => ignore((@json.from_json(json) : Int)),
+      "BUG: Int negative overflow not detected",
+    ),
+  )
 }
 
 ///|
 test "UInt from_json overflow should error" {
   let json = @json.parse("4294967296") // UINT_MAX + 1 for 32-bit
-  let res : Result[UInt, _] = try? @json.from_json(json)
-  match res {
-    Ok(v) => fail("BUG: UInt overflow not detected, decoded as \{v}")
-    Err(_) => ()
-  }
+  ignore(
+    expect_json_decode_error(
+      () => ignore((@json.from_json(json) : UInt)),
+      "BUG: UInt overflow not detected",
+    ),
+  )
 }
 
 ///|
@@ -541,11 +558,14 @@ test "unicode" {
   inspect(v, content="\u{1F600}")
   let bs1 : Bytes = [0xD8, 0x3D, 0xDE, 0x00]
   let u = bs1.to_unchecked_string().to_json()
-  let v : Result[Char, _] = try? @json.from_json(u)
+  let err = expect_json_decode_error(
+    () => ignore((@json.from_json(u) : Char)),
+    "expected Char decode failure",
+  )
   debug_inspect(
-    v,
+    err,
     content=(
-      #|Err(JsonDecodeError((Root, "Char::from_json: invalid surrogate pair")))
+      #|JsonDecodeError((Root, "Char::from_json: invalid surrogate pair"))
     ),
   )
 }
@@ -595,27 +615,36 @@ test "string view from json" {
 ///|
 test "Bool from_json error handling" {
   let json_null = null
-  let result : Result[Bool, _] = try? @json.from_json(json_null)
+  let err = expect_json_decode_error(
+    () => ignore((@json.from_json(json_null) : Bool)),
+    "expected Bool decode failure",
+  )
   debug_inspect(
-    result,
+    err,
     content=(
-      #|Err(JsonDecodeError((Root, "Bool::from_json: expected boolean")))
+      #|JsonDecodeError((Root, "Bool::from_json: expected boolean"))
     ),
   )
   let json_number = Json::number(42)
-  let result : Result[Bool, _] = try? @json.from_json(json_number)
+  let err = expect_json_decode_error(
+    () => ignore((@json.from_json(json_number) : Bool)),
+    "expected Bool decode failure",
+  )
   debug_inspect(
-    result,
+    err,
     content=(
-      #|Err(JsonDecodeError((Root, "Bool::from_json: expected boolean")))
+      #|JsonDecodeError((Root, "Bool::from_json: expected boolean"))
     ),
   )
   let json_string = Json::string("true")
-  let result : Result[Bool, _] = try? @json.from_json(json_string)
+  let err = expect_json_decode_error(
+    () => ignore((@json.from_json(json_string) : Bool)),
+    "expected Bool decode failure",
+  )
   debug_inspect(
-    result,
+    err,
     content=(
-      #|Err(JsonDecodeError((Root, "Bool::from_json: expected boolean")))
+      #|JsonDecodeError((Root, "Bool::from_json: expected boolean"))
     ),
   )
 }
@@ -623,19 +652,25 @@ test "Bool from_json error handling" {
 ///|
 test "Int64 from_json error handling" {
   let json_number = Json::number(123)
-  let result : Result[Int64, _] = try? @json.from_json(json_number)
+  let err = expect_json_decode_error(
+    () => ignore((@json.from_json(json_number) : Int64)),
+    "expected Int64 decode failure",
+  )
   debug_inspect(
-    result,
+    err,
     content=(
-      #|Err(JsonDecodeError((Root, "Int64::from_json: expected number in string representation")))
+      #|JsonDecodeError((Root, "Int64::from_json: expected number in string representation"))
     ),
   )
   let json_invalid_string = Json::string("not a number")
-  let result : Result[Int64, _] = try? @json.from_json(json_invalid_string)
+  let err = expect_json_decode_error(
+    () => ignore((@json.from_json(json_invalid_string) : Int64)),
+    "expected Int64 parse failure",
+  )
   debug_inspect(
-    result,
+    err,
     content=(
-      #|Err(JsonDecodeError((Root, "Int64::from_json: parsing failure invalid syntax")))
+      #|JsonDecodeError((Root, "Int64::from_json: parsing failure invalid syntax"))
     ),
   )
 }
@@ -643,11 +678,14 @@ test "Int64 from_json error handling" {
 ///|
 test "UInt from_json error handling" {
   let json_string = Json::string("123")
-  let result : Result[UInt, _] = try? @json.from_json(json_string)
+  let err = expect_json_decode_error(
+    () => ignore((@json.from_json(json_string) : UInt)),
+    "expected UInt decode failure",
+  )
   debug_inspect(
-    result,
+    err,
     content=(
-      #|Err(JsonDecodeError((Root, "UInt::from_json: expected number")))
+      #|JsonDecodeError((Root, "UInt::from_json: expected number"))
     ),
   )
 }
@@ -655,19 +693,25 @@ test "UInt from_json error handling" {
 ///|
 test "UInt64 from_json error handling" {
   let json_number = Json::number(123)
-  let result : Result[UInt64, _] = try? @json.from_json(json_number)
+  let err = expect_json_decode_error(
+    () => ignore((@json.from_json(json_number) : UInt64)),
+    "expected UInt64 decode failure",
+  )
   debug_inspect(
-    result,
+    err,
     content=(
-      #|Err(JsonDecodeError((Root, "UInt64::from_json: expected number in string representation")))
+      #|JsonDecodeError((Root, "UInt64::from_json: expected number in string representation"))
     ),
   )
   let json_invalid_string = Json::string("not a number")
-  let result : Result[UInt64, _] = try? @json.from_json(json_invalid_string)
+  let err = expect_json_decode_error(
+    () => ignore((@json.from_json(json_invalid_string) : UInt64)),
+    "expected UInt64 parse failure",
+  )
   debug_inspect(
-    result,
+    err,
     content=(
-      #|Err(JsonDecodeError((Root, "UInt64::from_json: parsing failure invalid syntax")))
+      #|JsonDecodeError((Root, "UInt64::from_json: parsing failure invalid syntax"))
     ),
   )
 }
@@ -675,11 +719,14 @@ test "UInt64 from_json error handling" {
 ///|
 test "String from_json error handling" {
   let json_number = Json::number(123)
-  let result : Result[String, _] = try? @json.from_json(json_number)
+  let err = expect_json_decode_error(
+    () => ignore((@json.from_json(json_number) : String)),
+    "expected String decode failure",
+  )
   debug_inspect(
-    result,
+    err,
     content=(
-      #|Err(JsonDecodeError((Root, "String::from_json: expected string")))
+      #|JsonDecodeError((Root, "String::from_json: expected string"))
     ),
   )
 }
@@ -687,11 +734,14 @@ test "String from_json error handling" {
 ///|
 test "String View from_json error handling" {
   let json_number = Json::number(123)
-  let result : Result[StringView, _] = try? @json.from_json(json_number)
+  let err = expect_json_decode_error(
+    () => ignore((@json.from_json(json_number) : StringView)),
+    "expected StringView decode failure",
+  )
   debug_inspect(
-    result,
+    err,
     content=(
-      #|Err(JsonDecodeError((Root, "View::from_json: expected string")))
+      #|JsonDecodeError((Root, "View::from_json: expected string"))
     ),
   )
 }
@@ -699,27 +749,36 @@ test "String View from_json error handling" {
 ///|
 test "Char from_json error handling" {
   let json_number = Json::number(123)
-  let result : Result[Char, _] = try? @json.from_json(json_number)
+  let err = expect_json_decode_error(
+    () => ignore((@json.from_json(json_number) : Char)),
+    "expected Char decode failure",
+  )
   debug_inspect(
-    result,
+    err,
     content=(
-      #|Err(JsonDecodeError((Root, "Char::from_json: expected string")))
+      #|JsonDecodeError((Root, "Char::from_json: expected string"))
     ),
   )
   let json_empty_string = Json::string("")
-  let result : Result[Char, _] = try? @json.from_json(json_empty_string)
+  let err = expect_json_decode_error(
+    () => ignore((@json.from_json(json_empty_string) : Char)),
+    "expected Char decode failure",
+  )
   debug_inspect(
-    result,
+    err,
     content=(
-      #|Err(JsonDecodeError((Root, "Char::from_json: expected single character")))
+      #|JsonDecodeError((Root, "Char::from_json: expected single character"))
     ),
   )
   let json_long_string = Json::string("abc")
-  let result : Result[Char, _] = try? @json.from_json(json_long_string)
+  let err = expect_json_decode_error(
+    () => ignore((@json.from_json(json_long_string) : Char)),
+    "expected Char decode failure",
+  )
   debug_inspect(
-    result,
+    err,
     content=(
-      #|Err(JsonDecodeError((Root, "Char::from_json: expected single character")))
+      #|JsonDecodeError((Root, "Char::from_json: expected single character"))
     ),
   )
 }
@@ -727,11 +786,14 @@ test "Char from_json error handling" {
 ///|
 test "BigInt from_json error handling" {
   let json_number = Json::number(123)
-  let result : Result[BigInt, _] = try? @json.from_json(json_number)
+  let err = expect_json_decode_error(
+    () => ignore((@json.from_json(json_number) : BigInt)),
+    "expected BigInt decode failure",
+  )
   debug_inspect(
-    result,
+    err,
     content=(
-      #|Err(JsonDecodeError((Root, "BigInt::from_json: expected number in string representation")))
+      #|JsonDecodeError((Root, "BigInt::from_json: expected number in string representation"))
     ),
   )
 }
@@ -739,11 +801,14 @@ test "BigInt from_json error handling" {
 ///|
 test "Array from_json error handling" {
   let json_string = Json::string("not an array")
-  let result : Result[Array[Int], _] = try? @json.from_json(json_string)
+  let err = expect_json_decode_error(
+    () => ignore((@json.from_json(json_string) : Array[Int])),
+    "expected Array decode failure",
+  )
   debug_inspect(
-    result,
+    err,
     content=(
-      #|Err(JsonDecodeError((Root, "Array::from_json: expected array")))
+      #|JsonDecodeError((Root, "Array::from_json: expected array"))
     ),
   )
 }
@@ -751,11 +816,14 @@ test "Array from_json error handling" {
 ///|
 test "FixedArray from_json error handling" {
   let json_string = Json::string("not an array")
-  let result : Result[FixedArray[Int], _] = try? @json.from_json(json_string)
+  let err = expect_json_decode_error(
+    () => ignore((@json.from_json(json_string) : FixedArray[Int])),
+    "expected FixedArray decode failure",
+  )
   debug_inspect(
-    result,
+    err,
     content=(
-      #|Err(JsonDecodeError((Root, "FixedArray::from_json: expected array")))
+      #|JsonDecodeError((Root, "FixedArray::from_json: expected array"))
     ),
   )
 }
@@ -763,11 +831,14 @@ test "FixedArray from_json error handling" {
 ///|
 test "Map from_json error handling" {
   let json_array = Json::array([])
-  let result : Result[Map[String, Int], _] = try? @json.from_json(json_array)
+  let err = expect_json_decode_error(
+    () => ignore((@json.from_json(json_array) : Map[String, Int])),
+    "expected Map decode failure",
+  )
   debug_inspect(
-    result,
+    err,
     content=(
-      #|Err(JsonDecodeError((Root, "Map::from_json: expected object")))
+      #|JsonDecodeError((Root, "Map::from_json: expected object"))
     ),
   )
 }
@@ -775,11 +846,14 @@ test "Map from_json error handling" {
 ///|
 test "Option from_json error handling" {
   let json_string = Json::string("not an option")
-  let result : Result[Int?, _] = try? @json.from_json(json_string)
+  let err = expect_json_decode_error(
+    () => ignore((@json.from_json(json_string) : Int?)),
+    "expected Option decode failure",
+  )
   debug_inspect(
-    result,
+    err,
     content=(
-      #|Err(JsonDecodeError((Root, "Option::from_json: expected array or null")))
+      #|JsonDecodeError((Root, "Option::from_json: expected array or null"))
     ),
   )
 }
@@ -787,33 +861,36 @@ test "Option from_json error handling" {
 ///|
 test "Result from_json error handling" {
   let json_string = Json::string("not a result")
-  let result : Result[Result[Int, String], _] = try? @json.from_json(
-    json_string,
+  let err = expect_json_decode_error(
+    () => ignore((@json.from_json(json_string) : Result[Int, String])),
+    "expected Result decode failure",
   )
   debug_inspect(
-    result,
+    err,
     content=(
-      #|Err(JsonDecodeError((Root, "Result::from_json: expected object")))
+      #|JsonDecodeError((Root, "Result::from_json: expected object"))
     ),
   )
   let json_empty_obj = Json::object({})
-  let result : Result[Result[Int, String], _] = try? @json.from_json(
-    json_empty_obj,
+  let err = expect_json_decode_error(
+    () => ignore((@json.from_json(json_empty_obj) : Result[Int, String])),
+    "expected Result decode failure",
   )
   debug_inspect(
-    result,
+    err,
     content=(
-      #|Err(JsonDecodeError((Root, "Result::from_json: expected object with one field")))
+      #|JsonDecodeError((Root, "Result::from_json: expected object with one field"))
     ),
   )
   let json_invalid_obj = Json::object({ "Invalid": Json::number(1) })
-  let result : Result[Result[Int, String], _] = try? @json.from_json(
-    json_invalid_obj,
+  let err = expect_json_decode_error(
+    () => ignore((@json.from_json(json_invalid_obj) : Result[Int, String])),
+    "expected Result decode failure",
   )
   debug_inspect(
-    result,
+    err,
     content=(
-      #|Err(JsonDecodeError((Root, "Result::from_json: expected object with Ok or Err field")))
+      #|JsonDecodeError((Root, "Result::from_json: expected object with Ok or Err field"))
     ),
   )
 }
@@ -821,11 +898,14 @@ test "Result from_json error handling" {
 ///|
 test "Unit from_json error handling" {
   let json_string = Json::string("not null")
-  let result : Result[Unit, _] = try? @json.from_json(json_string)
+  let err = expect_json_decode_error(
+    () => ignore((@json.from_json(json_string) : Unit)),
+    "expected Unit decode failure",
+  )
   debug_inspect(
-    result,
+    err,
     content=(
-      #|Err(JsonDecodeError((Root, "Unit::from_json: expected null")))
+      #|JsonDecodeError((Root, "Unit::from_json: expected null"))
     ),
   )
 }
@@ -834,11 +914,11 @@ test "Unit from_json error handling" {
 test "Bytes from_json" {
   let bytes = b"\x00\x01abcd\"\\"
   let json = bytes.to_json()
-  let result : Result[Bytes, _] = try? @json.from_json(json)
+  let bytes : Bytes = @json.from_json(json)
   debug_inspect(
-    result,
+    bytes,
     content=(
-      #|Ok(<Bytes: [0x00, 0x01, 0x61, 0x62, 0x63, 0x64, 0x22, 0x5c]>)
+      #|<Bytes: [0x00, 0x01, 0x61, 0x62, 0x63, 0x64, 0x22, 0x5c]>
     ),
   )
 }
@@ -882,35 +962,47 @@ test "float special values" {
 ///|
 test "Float from_json error handling" {
   let json_string = Json::string("not a number")
-  let result : Result[Float, _] = try? @json.from_json(json_string)
+  let err = expect_json_decode_error(
+    () => ignore((@json.from_json(json_string) : Float)),
+    "expected Float decode failure",
+  )
   debug_inspect(
-    result,
+    err,
     content=(
-      #|Err(JsonDecodeError((Root, "Float::from_json: expected number")))
+      #|JsonDecodeError((Root, "Float::from_json: expected number"))
     ),
   )
   let json_array = Json::array([])
-  let result : Result[Float, _] = try? @json.from_json(json_array)
+  let err = expect_json_decode_error(
+    () => ignore((@json.from_json(json_array) : Float)),
+    "expected Float decode failure",
+  )
   debug_inspect(
-    result,
+    err,
     content=(
-      #|Err(JsonDecodeError((Root, "Float::from_json: expected number")))
+      #|JsonDecodeError((Root, "Float::from_json: expected number"))
     ),
   )
   let json_object = Json::object({})
-  let result : Result[Float, _] = try? @json.from_json(json_object)
+  let err = expect_json_decode_error(
+    () => ignore((@json.from_json(json_object) : Float)),
+    "expected Float decode failure",
+  )
   debug_inspect(
-    result,
+    err,
     content=(
-      #|Err(JsonDecodeError((Root, "Float::from_json: expected number")))
+      #|JsonDecodeError((Root, "Float::from_json: expected number"))
     ),
   )
   let json_null = null
-  let result : Result[Float, _] = try? @json.from_json(json_null)
+  let err = expect_json_decode_error(
+    () => ignore((@json.from_json(json_null) : Float)),
+    "expected Float decode failure",
+  )
   debug_inspect(
-    result,
+    err,
     content=(
-      #|Err(JsonDecodeError((Root, "Float::from_json: expected number")))
+      #|JsonDecodeError((Root, "Float::from_json: expected number"))
     ),
   )
 }
@@ -935,32 +1027,36 @@ test "from_json special cases" {
   @json.json_inspect(inf_value, content="Infinity")
   let neg_inf_value : Double = @json.from_json(Json::string("-Infinity"))
   @json.json_inspect(neg_inf_value, content="-Infinity")
-  let array_view_result : Result[ArrayView[Int], _] = try? @json.from_json(
-    Json::string("oops"),
+  let array_view_err = expect_json_decode_error(
+    () => ignore((@json.from_json(Json::string("oops")) : ArrayView[Int])),
+    "expected ArrayView::from_json error",
   )
-  guard array_view_result
-    is Err(JsonDecodeError((_, "ArrayView::from_json: expected array"))) else {
+  guard array_view_err
+    is JsonDecodeError((_, "ArrayView::from_json: expected array")) else {
     fail("expected ArrayView::from_json error")
   }
-  let bytes_type_result : Result[Bytes, _] = try? @json.from_json(
-    Json::number(1),
+  let bytes_type_err = expect_json_decode_error(
+    () => ignore((@json.from_json(Json::number(1)) : Bytes)),
+    "expected Bytes::from_json type error",
   )
-  guard bytes_type_result
-    is Err(JsonDecodeError((_, "Bytes::from_json: expected string"))) else {
+  guard bytes_type_err
+    is JsonDecodeError((_, "Bytes::from_json: expected string")) else {
     fail("expected Bytes::from_json type error")
   }
-  let bytes_escape_result : Result[Bytes, _] = try? @json.from_json(
-    Json::string("bad\\\\"),
+  let bytes_escape_err = expect_json_decode_error(
+    () => ignore((@json.from_json(Json::string("bad\\\\")) : Bytes)),
+    "expected Bytes::from_json escape error",
   )
-  guard bytes_escape_result
-    is Err(JsonDecodeError((_, "Bytes::from_json: invalid escape sequence"))) else {
+  guard bytes_escape_err
+    is JsonDecodeError((_, "Bytes::from_json: invalid escape sequence")) else {
     fail("expected Bytes::from_json escape error")
   }
-  let bytes_invalid_result : Result[Bytes, _] = try? @json.from_json(
-    Json::string("\u{0}"),
+  let bytes_invalid_err = expect_json_decode_error(
+    () => ignore((@json.from_json(Json::string("\u{0}")) : Bytes)),
+    "expected Bytes::from_json byte error",
   )
-  guard bytes_invalid_result
-    is Err(JsonDecodeError((_, "Bytes::from_json: invalid byte sequence"))) else {
+  guard bytes_invalid_err
+    is JsonDecodeError((_, "Bytes::from_json: invalid byte sequence")) else {
     fail("expected Bytes::from_json byte error")
   }
 }
@@ -968,108 +1064,195 @@ test "from_json special cases" {
 ///|
 test "tuple size mismatch" {
   let wrong = [1].to_json()
-  let res2 : Result[(Int, Int), _] = try? @json.from_json(wrong)
-  guard res2 is Err(JsonDecodeError((_, "expected tuple of size 2"))) else {
+  let err2 = expect_json_decode_error(
+    () => ignore((@json.from_json(wrong) : (Int, Int))),
+    "expected size 2 error",
+  )
+  guard err2 is JsonDecodeError((_, "expected tuple of size 2")) else {
     fail("expected size 2 error")
   }
-  let res3 : Result[(Int, Int, Int), _] = try? @json.from_json(wrong)
-  guard res3 is Err(JsonDecodeError((_, "expected tuple of size 3"))) else {
+  let err3 = expect_json_decode_error(
+    () => ignore((@json.from_json(wrong) : (Int, Int, Int))),
+    "expected size 3 error",
+  )
+  guard err3 is JsonDecodeError((_, "expected tuple of size 3")) else {
     fail("expected size 3 error")
   }
-  let res4 : Result[(Int, Int, Int, Int), _] = try? @json.from_json(wrong)
-  guard res4 is Err(JsonDecodeError((_, "expected tuple of size 4"))) else {
+  let err4 = expect_json_decode_error(
+    () => ignore((@json.from_json(wrong) : (Int, Int, Int, Int))),
+    "expected size 4 error",
+  )
+  guard err4 is JsonDecodeError((_, "expected tuple of size 4")) else {
     fail("expected size 4 error")
   }
-  let res5 : Result[(Int, Int, Int, Int, Int), _] = try? @json.from_json(wrong)
-  guard res5 is Err(JsonDecodeError((_, "expected tuple of size 5"))) else {
+  let err5 = expect_json_decode_error(
+    () => ignore((@json.from_json(wrong) : (Int, Int, Int, Int, Int))),
+    "expected size 5 error",
+  )
+  guard err5 is JsonDecodeError((_, "expected tuple of size 5")) else {
     fail("expected size 5 error")
   }
-  let res6 : Result[(Int, Int, Int, Int, Int, Int), _] = try? @json.from_json(
-    wrong,
+  let err6 = expect_json_decode_error(
+    () => ignore((@json.from_json(wrong) : (Int, Int, Int, Int, Int, Int))),
+    "expected size 6 error",
   )
-  guard res6 is Err(JsonDecodeError((_, "expected tuple of size 6"))) else {
+  guard err6 is JsonDecodeError((_, "expected tuple of size 6")) else {
     fail("expected size 6 error")
   }
-  let res7 : Result[(Int, Int, Int, Int, Int, Int, Int), _] = try? @json.from_json(
-    wrong,
+  let err7 = expect_json_decode_error(
+    () => ignore((@json.from_json(wrong) : (Int, Int, Int, Int, Int, Int, Int))),
+    "expected size 7 error",
   )
-  guard res7 is Err(JsonDecodeError((_, "expected tuple of size 7"))) else {
+  guard err7 is JsonDecodeError((_, "expected tuple of size 7")) else {
     fail("expected size 7 error")
   }
-  let res8 : Result[(Int, Int, Int, Int, Int, Int, Int, Int), _] = try? @json.from_json(
-    wrong,
+  let err8 = expect_json_decode_error(
+    () => {
+      ignore(
+        (@json.from_json(wrong) : (Int, Int, Int, Int, Int, Int, Int, Int)),
+      )
+    },
+    "expected size 8 error",
   )
-  guard res8 is Err(JsonDecodeError((_, "expected tuple of size 8"))) else {
+  guard err8 is JsonDecodeError((_, "expected tuple of size 8")) else {
     fail("expected size 8 error")
   }
-  let res9 : Result[(Int, Int, Int, Int, Int, Int, Int, Int, Int), _] = try? @json.from_json(
-    wrong,
+  let err9 = expect_json_decode_error(
+    () => {
+      let _ : (Int, Int, Int, Int, Int, Int, Int, Int, Int) = @json.from_json(
+        wrong,
+      )
+      ()
+    },
+    "expected size 9 error",
   )
-  guard res9 is Err(JsonDecodeError((_, "expected tuple of size 9"))) else {
+  guard err9 is JsonDecodeError((_, "expected tuple of size 9")) else {
     fail("expected size 9 error")
   }
-  let res10 : Result[(Int, Int, Int, Int, Int, Int, Int, Int, Int, Int), _] = try? @json.from_json(
-    wrong,
+  let err10 = expect_json_decode_error(
+    () => {
+      let _ : (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) = @json.from_json(
+        wrong,
+      )
+      ()
+    },
+    "expected size 10 error",
   )
-  guard res10 is Err(JsonDecodeError((_, "expected tuple of size 10"))) else {
+  guard err10 is JsonDecodeError((_, "expected tuple of size 10")) else {
     fail("expected size 10 error")
   }
-  let res11 : Result[(Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int), _] = try? @json.from_json(
-    wrong,
+  let err11 = expect_json_decode_error(
+    () => {
+      let _ : (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) = @json.from_json(
+        wrong,
+      )
+      ()
+    },
+    "expected size 11 error",
   )
-  guard res11 is Err(JsonDecodeError((_, "expected tuple of size 11"))) else {
+  guard err11 is JsonDecodeError((_, "expected tuple of size 11")) else {
     fail("expected size 11 error")
   }
-  let res12 : Result[
-    (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int),
-    _,
-  ] = try? @json.from_json(wrong)
-  guard res12 is Err(JsonDecodeError((_, "expected tuple of size 12"))) else {
+  let err12 = expect_json_decode_error(
+    () => {
+      let _ : (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) = @json.from_json(
+        wrong,
+      )
+      ()
+    },
+    "expected size 12 error",
+  )
+  guard err12 is JsonDecodeError((_, "expected tuple of size 12")) else {
     fail("expected size 12 error")
   }
-  let res13 : Result[
-    (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int),
-    _,
-  ] = try? @json.from_json(wrong)
-  guard res13 is Err(JsonDecodeError((_, "expected tuple of size 13"))) else {
+  let err13 = expect_json_decode_error(
+    () => {
+      let _ : (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) = @json.from_json(
+        wrong,
+      )
+      ()
+    },
+    "expected size 13 error",
+  )
+  guard err13 is JsonDecodeError((_, "expected tuple of size 13")) else {
     fail("expected size 13 error")
   }
-  let res14 : Result[
-    (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int),
-    _,
-  ] = try? @json.from_json(wrong)
-  guard res14 is Err(JsonDecodeError((_, "expected tuple of size 14"))) else {
+  let err14 = expect_json_decode_error(
+    () => {
+      let _ : (
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+      ) = @json.from_json(wrong)
+      ()
+    },
+    "expected size 14 error",
+  )
+  guard err14 is JsonDecodeError((_, "expected tuple of size 14")) else {
     fail("expected size 14 error")
   }
-  let res15 : Result[
-    (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int),
-    _,
-  ] = try? @json.from_json(wrong)
-  guard res15 is Err(JsonDecodeError((_, "expected tuple of size 15"))) else {
+  let err15 = expect_json_decode_error(
+    () => {
+      let _ : (
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+      ) = @json.from_json(wrong)
+      ()
+    },
+    "expected size 15 error",
+  )
+  guard err15 is JsonDecodeError((_, "expected tuple of size 15")) else {
     fail("expected size 15 error")
   }
-  let res16 : Result[
-    (
-      Int,
-      Int,
-      Int,
-      Int,
-      Int,
-      Int,
-      Int,
-      Int,
-      Int,
-      Int,
-      Int,
-      Int,
-      Int,
-      Int,
-      Int,
-      Int,
-    ),
-    _,
-  ] = try? @json.from_json(wrong)
-  guard res16 is Err(JsonDecodeError((_, "expected tuple of size 16"))) else {
+  let err16 = expect_json_decode_error(
+    () => {
+      let _ : (
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+        Int,
+      ) = @json.from_json(wrong)
+      ()
+    },
+    "expected size 16 error",
+  )
+  guard err16 is JsonDecodeError((_, "expected tuple of size 16")) else {
     fail("expected size 16 error")
   }
 }

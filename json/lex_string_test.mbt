@@ -25,9 +25,9 @@ test "lex_string with forward slash escape" {
 ///|
 test "lex_hex_digits incomplete hex digits" {
   debug_inspect(
-    try? @json.parse("\"\\u123"),
+    expect_parse_error("\"\\u123", "expected InvalidEof"),
     content=(
-      #|Err(InvalidEof)
+      #|InvalidEof
     ),
   )
 }

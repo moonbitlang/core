@@ -24,21 +24,21 @@ fn test_parse(input : String, loc~ : SourceLoc) -> Json raise Error {
 
 ///|
 test "parses empty object" {
-  debug_inspect(try? @json.parse("{}"), content="Ok(Object({}))")
+  debug_inspect(test_parse("{}"), content="Object({})")
 }
 
 ///|
 test "parses object" {
   debug_inspect(
-    try? @json.parse("{\"a\":1}"),
+    test_parse("{\"a\":1}"),
     content=(
-      #|Ok(Object({ "a": Number(1) }))
+      #|Object({ "a": Number(1) })
     ),
   )
   debug_inspect(
-    try? @json.parse("{\"a\":1,\"b\":2}"),
+    test_parse("{\"a\":1,\"b\":2}"),
     content=(
-      #|Ok(Object({ "a": Number(1), "b": Number(2) }))
+      #|Object({ "a": Number(1), "b": Number(2) })
     ),
   )
 }
@@ -46,9 +46,9 @@ test "parses object" {
 ///|
 test "parses multiple properties" {
   debug_inspect(
-    try? @json.parse("{\"abc\":1,\"def\":2}"),
+    test_parse("{\"abc\":1,\"def\":2}"),
     content=(
-      #|Ok(Object({ "abc": Number(1), "def": Number(2) }))
+      #|Object({ "abc": Number(1), "def": Number(2) })
     ),
   )
 }
@@ -56,9 +56,9 @@ test "parses multiple properties" {
 ///|
 test "parses nested objects" {
   debug_inspect(
-    try? @json.parse("{\"a\":{\"b\":2}}"),
+    test_parse("{\"a\":{\"b\":2}}"),
     content=(
-      #|Ok(Object({ "a": Object({ "b": Number(2) }) }))
+      #|Object({ "a": Object({ "b": Number(2) }) })
     ),
   )
 }
@@ -255,62 +255,62 @@ test "valid" {
 
 ///|
 test "parse unexpected token in value" {
-  let result = try? @json.parse("{a:1}")
+  let err = expect_parse_error("{a:1}", "expected parse failure")
   debug_inspect(
-    result,
+    err,
     content=(
-      #|Err(InvalidChar({ line: 1, column: 1 }, 'a'))
+      #|InvalidChar({ line: 1, column: 1 }, 'a')
     ),
   )
 }
 
 ///|
 test "parse unexpected token in object property name" {
-  let result = try? @json.parse("{\"a\":1, b:2}")
+  let err = expect_parse_error("{\"a\":1, b:2}", "expected parse failure")
   debug_inspect(
-    result,
+    err,
     content=(
-      #|Err(InvalidChar({ line: 1, column: 8 }, 'b'))
+      #|InvalidChar({ line: 1, column: 8 }, 'b')
     ),
   )
 }
 
 ///|
 test "parse unexpected token after object property name" {
-  let result = try? @json.parse("{\"a\" b:2}")
+  let err = expect_parse_error("{\"a\" b:2}", "expected parse failure")
   debug_inspect(
-    result,
+    err,
     content=(
-      #|Err(InvalidChar({ line: 1, column: 5 }, 'b'))
+      #|InvalidChar({ line: 1, column: 5 }, 'b')
     ),
   )
 }
 
 ///|
 test "parse unexpected token after object value" {
-  let result = try? @json.parse("{\"a\":1 b:2}")
+  let err = expect_parse_error("{\"a\":1 b:2}", "expected parse failure")
   debug_inspect(
-    result,
+    err,
     content=(
-      #|Err(InvalidChar({ line: 1, column: 7 }, 'b'))
+      #|InvalidChar({ line: 1, column: 7 }, 'b')
     ),
   )
 }
 
 ///|
 test "parse unexpected token in array" {
-  let result = try? @json.parse("[1, 2 a]")
+  let err = expect_parse_error("[1, 2 a]", "expected parse failure")
   debug_inspect(
-    result,
+    err,
     content=(
-      #|Err(InvalidChar({ line: 1, column: 6 }, 'a'))
+      #|InvalidChar({ line: 1, column: 6 }, 'a')
     ),
   )
 }
 
 ///|
 test "parse multi-lines json" {
-  let result = try? @json.parse(
+  let json = test_parse(
     (
       #|{
       #|  "a":2,
@@ -319,27 +319,28 @@ test "parse multi-lines json" {
     ),
   )
   debug_inspect(
-    result,
+    json,
     content=(
-      #|Ok(Object({ "a": Number(2), "b": Number(3) }))
+      #|Object({ "a": Number(2), "b": Number(3) })
     ),
   )
 }
 
 ///|
 test "parse multi-lines json error" {
-  let result = try? @json.parse(
+  let err = expect_parse_error(
     (
       #|{
       #|  "a":2,
       #|  "b":a
       #|}
     ),
+    "expected parse failure",
   )
   debug_inspect(
-    result,
+    err,
     content=(
-      #|Err(InvalidChar({ line: 3, column: 6 }, 'a'))
+      #|InvalidChar({ line: 3, column: 6 }, 'a')
     ),
   )
 }
@@ -347,21 +348,21 @@ test "parse multi-lines json error" {
 ///|
 test "parser error" {
   debug_inspect(
-    try? @json.parse("]"),
+    expect_parse_error("]", "expected parse failure"),
     content=(
-      #|Err(InvalidChar({ line: 1, column: 0 }, ']'))
+      #|InvalidChar({ line: 1, column: 0 }, ']')
     ),
   )
   debug_inspect(
-    try? @json.parse("}"),
+    expect_parse_error("}", "expected parse failure"),
     content=(
-      #|Err(InvalidChar({ line: 1, column: 0 }, '}'))
+      #|InvalidChar({ line: 1, column: 0 }, '}')
     ),
   )
   debug_inspect(
-    try? @json.parse(","),
+    expect_parse_error(",", "expected parse failure"),
     content=(
-      #|Err(InvalidChar({ line: 1, column: 0 }, ','))
+      #|InvalidChar({ line: 1, column: 0 }, ',')
     ),
   )
 }
@@ -370,28 +371,28 @@ test "parser error" {
 test "emoji" {
   debug_inspect(
     // test first char is emoji
-    try? @json.parse("\u{1F600}"),
+    expect_parse_error("\u{1F600}", "expected parse failure"),
     content=(
-      #|Err(InvalidChar({ line: 1, column: 0 }, '😀'))
+      #|InvalidChar({ line: 1, column: 0 }, '😀')
     ),
   )
   debug_inspect(
-    try? @json.parse("a😀"),
+    expect_parse_error("a😀", "expected parse failure"),
     content=(
-      #|Err(InvalidChar({ line: 1, column: 0 }, 'a'))
+      #|InvalidChar({ line: 1, column: 0 }, 'a')
     ),
   )
   debug_inspect(
-    try? @json.parse("a"),
+    expect_parse_error("a", "expected parse failure"),
     content=(
-      #|Err(InvalidChar({ line: 1, column: 0 }, 'a'))
+      #|InvalidChar({ line: 1, column: 0 }, 'a')
     ),
   )
   debug_inspect(
     // test first char is emoji (standalone emoji)
-    try? @json.parse("😀"),
+    expect_parse_error("😀", "expected parse failure"),
     content=(
-      #|Err(InvalidChar({ line: 1, column: 0 }, '😀'))
+      #|InvalidChar({ line: 1, column: 0 }, '😀')
     ),
   )
 }
