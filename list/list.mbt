@@ -26,6 +26,7 @@
 #alias(empty)
 #as_free_fn
 #as_free_fn(empty)
+#inline
 pub fn[A] List::new() -> List[A] {
   Empty
 }
