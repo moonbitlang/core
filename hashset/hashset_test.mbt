@@ -16,6 +16,21 @@
 let default_init_capacity = 8
 
 ///|
+priv struct HashSetKey(Int, Int) derive(Eq)
+
+///|
+impl Hash for HashSetKey with fn hash(self) {
+  let HashSetKey(_, hash) = self
+  hash
+}
+
+///|
+impl Hash for HashSetKey with fn hash_combine(self, hasher) {
+  let HashSetKey(_, hash) = self
+  hasher.combine_int(hash)
+}
+
+///|
 test "new_with_capacity_then_add " {
   let set : @hashset.HashSet[(String, String)] = @hashset.HashSet(
     [],
@@ -324,6 +339,23 @@ test "insert_and_grow" {
   }
   inspect(m.length(), content="10")
   inspect(m.capacity(), content="16")
+}
+
+///|
+test "grow rehashes collision cluster" {
+  let set : @hashset.HashSet[HashSetKey] = @hashset.HashSet([], capacity=2)
+  for i in 0..<12 {
+    set.add(HashSetKey::HashSetKey(i, i % 4))
+  }
+  inspect(set.length(), content="12")
+  for i in 0..<12 {
+    assert_true(set.contains(HashSetKey::HashSetKey(i, i % 4)))
+  }
+  set.remove(HashSetKey::HashSetKey(5, 1))
+  assert_false(set.contains(HashSetKey::HashSetKey(5, 1)))
+  set.add(HashSetKey::HashSetKey(12, 0))
+  assert_true(set.contains(HashSetKey::HashSetKey(12, 0)))
+  inspect(set.length(), content="12")
 }
 
 ///|
