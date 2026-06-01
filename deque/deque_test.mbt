@@ -283,10 +283,11 @@ test "from_json_tail_bug" {
 ///|
 test "from_json rejects non-array" {
   let bad_json : Json = { "a": 1 }
-  let result : Result[@deque.Deque[Int], @json.JsonDecodeError] = try? @json.from_json(
-    bad_json,
-  )
-  inspect(result is Err(_), content="true")
+  try ignore((@json.from_json(bad_json) : @deque.Deque[Int])) catch {
+    _ => ()
+  } noraise {
+    _ => fail("expected Deque::from_json failure")
+  }
 }
 
 ///|
