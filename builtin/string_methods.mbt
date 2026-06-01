@@ -1814,13 +1814,20 @@ test "fold" {
 
 ///|
 test "fold with raise" {
-  let result = try? "hello".fold(init=0, (acc, c) => {
-    if c == 'l' {
-      raise Failure("found l")
-    }
-    acc + 1
-  })
-  assert_true(result is Err(Failure("found l")))
+  try
+    ignore(
+      "hello".fold(init=0, (acc, c) => {
+        if c == 'l' {
+          raise Failure("found l")
+        }
+        acc + 1
+      }),
+    )
+  catch {
+    e => assert_true(e is Failure("found l"))
+  } noraise {
+    _ => fail("expected fold to raise")
+  }
 }
 
 ///|
@@ -1865,13 +1872,20 @@ test "rev_fold" {
 
 ///|
 test "rev_fold with raise" {
-  let result = try? "hello".rev_fold(init=0, (acc, c) => {
-    if c == 'l' {
-      raise Failure("found l")
-    }
-    acc + 1
-  })
-  assert_true(result is Err(Failure("found l")))
+  try
+    ignore(
+      "hello".rev_fold(init=0, (acc, c) => {
+        if c == 'l' {
+          raise Failure("found l")
+        }
+        acc + 1
+      }),
+    )
+  catch {
+    e => assert_true(e is Failure("found l"))
+  } noraise {
+    _ => fail("expected rev_fold to raise")
+  }
 }
 
 ///|
