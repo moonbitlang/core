@@ -558,10 +558,7 @@ fn[K, V] Map::shift_back(self : Map[K, V], idx : Int) -> Unit {
 }
 
 ///|
-/// `[K : Eq]` kept for trait-surface symmetry with the rest of the
-/// builtin `Map` private API; the rehash loop does not call `key == key`.
-#warnings("-unused_trait_bound")
-fn[K : Eq, V] Map::grow(self : Map[K, V]) -> Unit {
+fn[K, V] Map::grow(self : Map[K, V]) -> Unit {
   let old_head = self.head
   let new_capacity = self.capacity << 1
   self.entries = FixedArray::make(new_capacity, None)
@@ -576,9 +573,6 @@ fn[K : Eq, V] Map::grow(self : Map[K, V]) -> Unit {
       None => break
       Some(e) => {
         let next_in_chain = e.next
-        // Clear `next` so the entry detaches from the old chain;
-        // rehash_place_entry will rewrite `prev` and `psl` and link this
-        // entry as the new tail.
         e.next = None
         self.rehash_place_entry(e)
         continue next_in_chain
@@ -588,10 +582,6 @@ fn[K : Eq, V] Map::grow(self : Map[K, V]) -> Unit {
 }
 
 ///|
-/// Place an existing entry into the (already-resized) table. This is the
-/// fast path used by `grow`: like `set_with_hash` but skips the key
-/// equality check (entries from the old table are unique) and the
-/// load-factor check (we just doubled capacity).
 fn[K, V] Map::rehash_place_entry(self : Map[K, V], outer : Entry[K, V]) -> Unit {
   let hash = outer.hash
   for psl = 0, idx = hash & self.capacity_mask {

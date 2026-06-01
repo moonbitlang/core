@@ -374,11 +374,7 @@ fn[K] Set::shift_back(self : Set[K], idx : Int) -> Unit {
 }
 
 ///|
-/// `[K : Eq]` kept for trait-surface symmetry with the rest of the
-/// `Set` (linked hash set) private API; the rehash loop does not call
-/// `key == key`.
-#warnings("-unused_trait_bound")
-fn[K : Eq] Set::grow(self : Set[K]) -> Unit {
+fn[K] Set::grow(self : Set[K]) -> Unit {
   let old_head = self.head
   let new_capacity = self.capacity << 1
   self.entries = FixedArray::make(new_capacity, None)
@@ -393,9 +389,6 @@ fn[K : Eq] Set::grow(self : Set[K]) -> Unit {
       None => break
       Some(e) => {
         let next_in_chain = e.next
-        // Clear `next` so the entry detaches from the old chain;
-        // rehash_place_entry will rewrite `prev` and `psl` and link this
-        // entry as the new tail.
         e.next = None
         self.rehash_place_entry(e)
         continue next_in_chain
@@ -405,10 +398,6 @@ fn[K : Eq] Set::grow(self : Set[K]) -> Unit {
 }
 
 ///|
-/// Place an existing entry into the (already-resized) table. Like
-/// `add_with_hash` but skips the key equality check (entries from the
-/// old table are unique) and the load-factor check (we just doubled
-/// capacity).
 fn[K] Set::rehash_place_entry(self : Set[K], outer : Entry[K]) -> Unit {
   let hash = outer.hash
   for psl = 0, idx = hash & self.capacity_mask {

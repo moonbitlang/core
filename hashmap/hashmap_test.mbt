@@ -618,6 +618,23 @@ test "hashmap get_or_init push_away" {
 }
 
 ///|
+test "hashmap grow rehashes collision cluster" {
+  let map : @hashmap.HashMap[Key, Int] = @hashmap.HashMap([], capacity=2)
+  for i in 0..<12 {
+    map.set(Key::Key(i, i % 4), i * 10)
+  }
+  inspect(map.length(), content="12")
+  for i in 0..<12 {
+    assert_eq(map.get(Key::Key(i, i % 4)), Some(i * 10))
+  }
+  map.remove(Key::Key(5, 1))
+  assert_eq(map.get(Key::Key(5, 1)), None)
+  map.set(Key::Key(12, 0), 120)
+  assert_eq(map.get(Key::Key(12, 0)), Some(120))
+  inspect(map.length(), content="12")
+}
+
+///|
 test "hashmap default" {
   let map : @hashmap.HashMap[Int, Int] = Default::default()
   inspect(map.length(), content="0")
