@@ -14,85 +14,132 @@
 
 ///|
 test "parse error branches" {
-  guard (try? @json.parse("")) is Err(InvalidEof) else {
+  guard expect_parse_error("", "expected InvalidEof for empty input")
+    is InvalidEof else {
     fail("expected InvalidEof for empty input")
   }
-  guard (try? @json.parse(" \t\r\n")) is Err(InvalidEof) else {
+  guard expect_parse_error(
+      " \t\r\n", "expected InvalidEof for whitespace-only input",
+    )
+    is InvalidEof else {
     fail("expected InvalidEof for whitespace-only input")
   }
-  guard (try? @json.parse("@")) is Err(InvalidChar(_, _)) else {
+  guard expect_parse_error("@", "expected InvalidChar for invalid start")
+    is InvalidChar(_, _) else {
     fail("expected InvalidChar for invalid start")
   }
-  guard (try? @json.parse("nullx")) is Err(InvalidChar(_, _)) else {
+  guard expect_parse_error("nullx", "expected InvalidChar for trailing data")
+    is InvalidChar(_, _) else {
     fail("expected InvalidChar for trailing data")
   }
-  guard (try? @json.parse("\u{00A0}null")) is Err(InvalidChar(_, _)) else {
+  guard expect_parse_error(
+      "\u{00A0}null", "expected InvalidChar for leading non-breaking space",
+    )
+    is InvalidChar(_, _) else {
     fail("expected InvalidChar for leading non-breaking space")
   }
-  guard (try? @json.parse("tx")) is Err(InvalidChar(_, _)) else {
+  guard expect_parse_error("tx", "expected InvalidChar for invalid literal")
+    is InvalidChar(_, _) else {
     fail("expected InvalidChar for invalid literal")
   }
-  guard (try? @json.parse("-x")) is Err(InvalidChar(_, _)) else {
+  guard expect_parse_error("-x", "expected InvalidChar for invalid minus")
+    is InvalidChar(_, _) else {
     fail("expected InvalidChar for invalid minus")
   }
-  guard (try? @json.parse("-")) is Err(InvalidEof) else {
+  guard expect_parse_error("-", "expected InvalidEof for dangling minus")
+    is InvalidEof else {
     fail("expected InvalidEof for dangling minus")
   }
-  guard (try? @json.parse("1.")) is Err(InvalidEof) else {
+  guard expect_parse_error("1.", "expected InvalidEof for trailing dot")
+    is InvalidEof else {
     fail("expected InvalidEof for trailing dot")
   }
-  guard (try? @json.parse("1.a")) is Err(InvalidChar(_, _)) else {
+  guard expect_parse_error("1.a", "expected InvalidChar for bad fraction")
+    is InvalidChar(_, _) else {
     fail("expected InvalidChar for bad fraction")
   }
-  guard (try? @json.parse("1eA")) is Err(InvalidChar(_, _)) else {
+  guard expect_parse_error("1eA", "expected InvalidChar for bad exponent")
+    is InvalidChar(_, _) else {
     fail("expected InvalidChar for bad exponent")
   }
-  guard (try? @json.parse("1e+a")) is Err(InvalidChar(_, _)) else {
+  guard expect_parse_error("1e+a", "expected InvalidChar for bad exponent sign")
+    is InvalidChar(_, _) else {
     fail("expected InvalidChar for bad exponent sign")
   }
-  guard (try? @json.parse("1e+")) is Err(InvalidEof) else {
+  guard expect_parse_error("1e+", "expected InvalidEof for missing exponent")
+    is InvalidEof else {
     fail("expected InvalidEof for missing exponent")
   }
-  guard (try? @json.parse("\"line\nbreak\"")) is Err(InvalidChar(_, _)) else {
+  guard expect_parse_error(
+      "\"line\nbreak\"", "expected InvalidChar for newline in string",
+    )
+    is InvalidChar(_, _) else {
     fail("expected InvalidChar for newline in string")
   }
-  guard (try? @json.parse("\"\\q\"")) is Err(InvalidChar(_, _)) else {
+  guard expect_parse_error("\"\\q\"", "expected InvalidChar for invalid escape")
+    is InvalidChar(_, _) else {
     fail("expected InvalidChar for invalid escape")
   }
-  guard (try? @json.parse("\"a\u{1}b\"")) is Err(InvalidChar(_, _)) else {
+  guard expect_parse_error(
+      "\"a\u{1}b\"", "expected InvalidChar for control char",
+    )
+    is InvalidChar(_, _) else {
     fail("expected InvalidChar for control char")
   }
-  guard (try? @json.parse("\"unterminated")) is Err(InvalidEof) else {
+  guard expect_parse_error(
+      "\"unterminated", "expected InvalidEof for unterminated string",
+    )
+    is InvalidEof else {
     fail("expected InvalidEof for unterminated string")
   }
-  guard (try? @json.parse("\"endswith\\")) is Err(InvalidEof) else {
+  guard expect_parse_error(
+      "\"endswith\\", "expected InvalidEof for trailing escape",
+    )
+    is InvalidEof else {
     fail("expected InvalidEof for trailing escape")
   }
-  guard (try? @json.parse("\"\\u:000\"")) is Err(InvalidChar(_, _)) else {
+  guard expect_parse_error(
+      "\"\\u:000\"", "expected InvalidChar for invalid hex digit",
+    )
+    is InvalidChar(_, _) else {
     fail("expected InvalidChar for invalid hex digit")
   }
-  guard (try? @json.parse("\"\\u/000\"")) is Err(InvalidChar(_, _)) else {
+  guard expect_parse_error(
+      "\"\\u/000\"", "expected InvalidChar for invalid hex digit",
+    )
+    is InvalidChar(_, _) else {
     fail("expected InvalidChar for invalid hex digit")
   }
-  guard (try? @json.parse("\"\\uG000\"")) is Err(InvalidChar(_, _)) else {
+  guard expect_parse_error(
+      "\"\\uG000\"", "expected InvalidChar for invalid hex letter",
+    )
+    is InvalidChar(_, _) else {
     fail("expected InvalidChar for invalid hex letter")
   }
-  guard (try? @json.parse("[1")) is Err(InvalidEof) else {
+  guard expect_parse_error("[1", "expected InvalidEof for incomplete array")
+    is InvalidEof else {
     fail("expected InvalidEof for incomplete array")
   }
-  guard (try? @json.parse("{\"a\"")) is Err(InvalidEof) else {
+  guard expect_parse_error("{\"a\"", "expected InvalidEof for missing colon")
+    is InvalidEof else {
     fail("expected InvalidEof for missing colon")
   }
-  guard (try? @json.parse("{\"a\":1")) is Err(InvalidEof) else {
+  guard expect_parse_error(
+      "{\"a\":1", "expected InvalidEof for incomplete object",
+    )
+    is InvalidEof else {
     fail("expected InvalidEof for incomplete object")
   }
-  guard (try? @json.parse("{\"a\":1,")) is Err(InvalidEof) else {
+  guard expect_parse_error(
+      "{\"a\":1,", "expected InvalidEof after trailing comma",
+    )
+    is InvalidEof else {
     fail("expected InvalidEof after trailing comma")
   }
-  let depth_result : Result[Json, _] = try? @json.parse(
+  let err = expect_parse_error(
     String::make(1025, '[') + String::make(1025, ']'),
+    "expected DepthLimitExceeded",
   )
-  guard depth_result is Err(err) else { fail("expected DepthLimitExceeded") }
   guard err is DepthLimitExceeded else { fail("expected DepthLimitExceeded") }
   inspect(
     err.to_string(),

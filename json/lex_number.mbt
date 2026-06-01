@@ -397,12 +397,13 @@ fn ParseContext::lex_number_end(
     return (fast, None)
   }
   let s = ctx.input.view(start_offset=start, end_offset=end)
-  let parsed_double = try? @internal/strconv.parse_double(s)
-  match parsed_double {
+  try {
+    let d = @internal/strconv.parse_double(s)
     // For normal values, return without string representation
-    Ok(d) => (d, None)
+    (d, None)
+  } catch {
     // If parsing fails as a double, treat it as infinity and preserve the string
-    Err(_) =>
+    _ =>
       if scan.negative {
         (@double.neg_infinity, Some(s))
       } else {
