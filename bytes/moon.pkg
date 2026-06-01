@@ -10,7 +10,6 @@ import {
   "moonbitlang/core/uint64",
   "moonbitlang/core/test",
   "moonbitlang/core/quickcheck",
-  "moonbitlang/core/error",
   "moonbitlang/core/json",
   "moonbitlang/core/float",
   "moonbitlang/core/debug",
