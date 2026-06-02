@@ -374,7 +374,7 @@ fn[K] Set::shift_back(self : Set[K], idx : Int) -> Unit {
 }
 
 ///|
-fn[K : Eq] Set::grow(self : Set[K]) -> Unit {
+fn[K] Set::grow(self : Set[K]) -> Unit {
   let old_head = self.head
   let new_capacity = self.capacity << 1
   self.entries = FixedArray::make(new_capacity, None)
@@ -386,11 +386,38 @@ fn[K : Eq] Set::grow(self : Set[K]) -> Unit {
   self.tail = -1
   for x = old_head {
     match x {
-      Some({ next, key, hash, .. }) => {
-        self.add_with_hash(key, hash)
-        continue next
-      }
       None => break
+      Some(e) => {
+        let next_in_chain = e.next
+        e.next = None
+        self.rehash_place_entry(e)
+        continue next_in_chain
+      }
+    }
+  }
+}
+
+///|
+fn[K] Set::rehash_place_entry(self : Set[K], outer : Entry[K]) -> Unit {
+  let hash = outer.hash
+  for psl = 0, idx = hash & self.capacity_mask {
+    match self.entries[idx] {
+      None => {
+        outer.psl = psl
+        outer.prev = self.tail
+        self.add_entry_to_tail(idx, outer)
+        return
+      }
+      Some(curr) =>
+        if psl > curr.psl {
+          self.push_away(idx, curr)
+          outer.psl = psl
+          outer.prev = self.tail
+          self.add_entry_to_tail(idx, outer)
+          return
+        } else {
+          continue psl + 1, (idx + 1) & self.capacity_mask
+        }
     }
   }
 }

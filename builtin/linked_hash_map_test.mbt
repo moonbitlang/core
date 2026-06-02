@@ -648,6 +648,26 @@ test "Map collision probe paths" {
 }
 
 ///|
+test "Map grow rehashes collision cluster in insertion order" {
+  let map : Map[LKey, Int] = Map([], capacity=2)
+  for i in 0..<12 {
+    map[LKey::LKey(i, i % 4)] = i * 10
+  }
+  inspect(map.length(), content="12")
+  for i in 0..<12 {
+    assert_eq(map.get(LKey::LKey(i, i % 4)), Some(i * 10))
+  }
+  map.remove(LKey::LKey(5, 1))
+  assert_eq(map.get(LKey::LKey(5, 1)), None)
+  map[LKey::LKey(12, 0)] = 120
+  assert_eq(map.get(LKey::LKey(12, 0)), Some(120))
+  debug_inspect(
+    map.values().to_array(),
+    content="[0, 10, 20, 30, 40, 60, 70, 80, 90, 100, 110, 120]",
+  )
+}
+
+///|
 test "Map early exit on psl" {
   let map : Map[LKey, Int] = {}
   let k1 = LKey::LKey(1, 0)

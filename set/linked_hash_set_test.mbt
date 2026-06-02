@@ -502,6 +502,24 @@ test "trigger grow" {
 }
 
 ///|
+test "grow rehashes collision cluster in insertion order" {
+  let set : @set.Set[Key] = @set.Set([], capacity=2)
+  for i in 0..<12 {
+    set.add({ id: i, hash_value: i % 4 })
+  }
+  inspect(set.length(), content="12")
+  for i in 0..<12 {
+    assert_true(set.contains({ id: i, hash_value: i % 4 }))
+  }
+  set.remove({ id: 5, hash_value: 1 })
+  assert_false(set.contains({ id: 5, hash_value: 1 }))
+  set.add({ id: 12, hash_value: 0 })
+  let mut ids = ""
+  set.each(key => ids += "\{key.id},")
+  inspect(ids, content="0,1,2,3,4,6,7,8,9,10,11,12,")
+}
+
+///|
 test "is_disjoint" {
   let set1 = @set.Set(["a", "b"])
   let set2 = @set.Set(["c", "d"])

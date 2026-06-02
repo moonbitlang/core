@@ -223,7 +223,7 @@ fn[K] HashSet::shift_back(self : HashSet[K], idx : Int) -> Unit {
 }
 
 ///|
-fn[K : Eq] HashSet::grow(self : HashSet[K]) -> Unit {
+fn[K] HashSet::grow(self : HashSet[K]) -> Unit {
   // handle zero capacity
   if self.capacity == 0 {
     self.capacity = default_init_capacity
@@ -234,14 +234,37 @@ fn[K : Eq] HashSet::grow(self : HashSet[K]) -> Unit {
     return
   }
   let old_entries = self.entries
-  self.entries = FixedArray::make(self.capacity * 2, None)
-  self.capacity = self.capacity * 2
-  self.capacity_mask = self.capacity - 1
+  let new_capacity = self.capacity * 2
+  self.entries = FixedArray::make(new_capacity, None)
+  self.capacity = new_capacity
+  self.capacity_mask = new_capacity - 1
   self.grow_at = calc_grow_threshold(self.capacity)
-  self.size = 0
   for entry in old_entries {
-    if entry is Some({ key, hash, .. }) {
-      self.add_with_hash(key, hash)
+    if entry is Some(entry) {
+      self.rehash_place_entry(entry)
+    }
+  }
+}
+
+///|
+fn[K] HashSet::rehash_place_entry(self : HashSet[K], entry : Entry[K]) -> Unit {
+  let hash = entry.hash
+  for psl = 0, idx = hash & self.capacity_mask {
+    match self.entries[idx] {
+      None => {
+        entry.psl = psl
+        self.set_entry(entry, idx)
+        return
+      }
+      Some(curr) =>
+        if psl > curr.psl {
+          self.push_away(idx, curr)
+          entry.psl = psl
+          self.set_entry(entry, idx)
+          return
+        } else {
+          continue psl + 1, (idx + 1) & self.capacity_mask
+        }
     }
   }
 }

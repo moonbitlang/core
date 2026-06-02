@@ -722,16 +722,41 @@ fn[K, V] HashMap::shift_back(self : HashMap[K, V], idx : Int) -> Unit {
 }
 
 ///|
-fn[K : Eq, V] HashMap::grow(self : HashMap[K, V]) -> Unit {
+fn[K, V] HashMap::grow(self : HashMap[K, V]) -> Unit {
   let old_entries = self.entries
   let new_capacity = self.capacity << 1
   self.entries = FixedArray::make(new_capacity, None)
   self.capacity = new_capacity
   self.capacity_mask = new_capacity - 1
-  self.size = 0
   for entry in old_entries {
-    if entry is Some({ key, value, hash, .. }) {
-      self.set_with_hash(key, value, hash)
+    if entry is Some(entry) {
+      self.rehash_place_entry(entry)
+    }
+  }
+}
+
+///|
+fn[K, V] HashMap::rehash_place_entry(
+  self : HashMap[K, V],
+  entry : Entry[K, V],
+) -> Unit {
+  let hash = entry.hash
+  for psl = 0, idx = hash & self.capacity_mask {
+    match self.entries[idx] {
+      None => {
+        entry.psl = psl
+        self.entries[idx] = Some(entry)
+        return
+      }
+      Some(curr) =>
+        if psl > curr.psl {
+          self.push_away(idx, curr)
+          entry.psl = psl
+          self.entries[idx] = Some(entry)
+          return
+        } else {
+          continue psl + 1, (idx + 1) & self.capacity_mask
+        }
     }
   }
 }

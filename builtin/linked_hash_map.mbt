@@ -558,7 +558,7 @@ fn[K, V] Map::shift_back(self : Map[K, V], idx : Int) -> Unit {
 }
 
 ///|
-fn[K : Eq, V] Map::grow(self : Map[K, V]) -> Unit {
+fn[K, V] Map::grow(self : Map[K, V]) -> Unit {
   let old_head = self.head
   let new_capacity = self.capacity << 1
   self.entries = FixedArray::make(new_capacity, None)
@@ -570,11 +570,38 @@ fn[K : Eq, V] Map::grow(self : Map[K, V]) -> Unit {
   self.tail = -1
   for x = old_head {
     match x {
-      Some({ next, key, value, hash, .. }) => {
-        self.set_with_hash(key, value, hash)
-        continue next
-      }
       None => break
+      Some(e) => {
+        let next_in_chain = e.next
+        e.next = None
+        self.rehash_place_entry(e)
+        continue next_in_chain
+      }
+    }
+  }
+}
+
+///|
+fn[K, V] Map::rehash_place_entry(self : Map[K, V], outer : Entry[K, V]) -> Unit {
+  let hash = outer.hash
+  for psl = 0, idx = hash & self.capacity_mask {
+    match self.entries[idx] {
+      None => {
+        outer.psl = psl
+        outer.prev = self.tail
+        self.add_entry_to_tail(idx, outer)
+        return
+      }
+      Some(curr) =>
+        if psl > curr.psl {
+          self.push_away(idx, curr)
+          outer.psl = psl
+          outer.prev = self.tail
+          self.add_entry_to_tail(idx, outer)
+          return
+        } else {
+          continue psl + 1, (idx + 1) & self.capacity_mask
+        }
     }
   }
 }
