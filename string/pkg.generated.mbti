@@ -22,6 +22,18 @@ pub fn parse_uint64(StringView, base? : Int) -> UInt64 raise
 // Errors
 
 // Types and methods
+type LexscanBuf
+pub fn LexscanBuf::advance(Self, Int) -> Unit
+pub fn LexscanBuf::buffer_end(Self) -> Int
+pub fn LexscanBuf::clear_backup(Self) -> Unit
+pub fn LexscanBuf::eof_reached(Self) -> Bool
+pub fn LexscanBuf::from_function(async () -> ReadOnlyArray[Char]) -> Self
+pub fn LexscanBuf::get_char(Self, Int) -> Int
+pub fn LexscanBuf::get_cursor(Self) -> Int
+pub fn LexscanBuf::get_stringview(Self, Int, Int) -> StringView
+pub async fn LexscanBuf::refill(Self) -> Unit
+pub fn LexscanBuf::set_backup(Self) -> Unit
+
 type MatchResult derive(@debug.Debug)
 pub fn MatchResult::after(Self) -> StringView
 pub fn MatchResult::before(Self) -> StringView
