@@ -270,6 +270,7 @@ pub fn[X] Iter::all(Self[X], (X) -> Bool) -> Bool
 pub fn[X] Iter::any(Self[X], (X) -> Bool) -> Bool
 pub fn[X] Iter::concat(Self[X], Self[X]) -> Self[X]
 pub fn[X : Eq] Iter::contains(Self[X], X) -> Bool
+#alias(length)
 pub fn[X] Iter::count(Self[X]) -> Int
 pub fn[X] Iter::drop(Self[X], Int) -> Self[X]
 pub fn[X] Iter::drop_while(Self[X], (X) -> Bool) -> Self[X]
