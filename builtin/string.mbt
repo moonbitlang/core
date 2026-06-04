@@ -228,6 +228,15 @@ pub fn String::to_array(self : String) -> Array[Char] {
 }
 
 ///|
+/// Returns an `ArrayView` containing the UTF-16 code units of the string.
+///
+/// This method yields code units, not Unicode characters. Surrogate pairs are
+/// represented as two `UInt16` values.
+pub fn String::code_units(self : String) -> ArrayView[UInt16] {
+  Array::makei(self.length(), i => self.unsafe_get(i))[:]
+}
+
+///|
 /// Returns an iterator over the Unicode characters in the string.
 ///
 /// Note: This iterator yields Unicode characters, not Utf16 code units.

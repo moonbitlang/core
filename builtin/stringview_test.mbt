@@ -66,6 +66,22 @@ test "unsafe_get" {
 }
 
 ///|
+test "StringView::code_units" {
+  let view = "ZA😀BY"[1:-1]
+  let units = view.code_units()
+  inspect(units.length(), content="4")
+  inspect(units.unsafe_get(0), content="65")
+  inspect(units.unsafe_get(1), content="55357")
+  inspect(units.unsafe_get(2), content="56832")
+  inspect(units.unsafe_get(3), content="66")
+  let mut sum = 0
+  for unit in units {
+    sum += unit.to_int()
+  }
+  inspect(sum, content="112320")
+}
+
+///|
 test "StringView core operations" {
   let view = "ab😀c".view(start_offset=1)
   inspect(view.char_length(), content="3")
