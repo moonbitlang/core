@@ -42,6 +42,8 @@ test "repeat" {
 test "count" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   assert_eq(iter.count(), 5)
+  let iter = test_from_array(['1', '2', '3', '4', '5'])
+  assert_eq(iter.length(), 5)
 }
 
 ///|

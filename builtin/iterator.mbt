@@ -221,6 +221,7 @@ pub fn[X, R] Iter::fold(
 /// # Returns
 ///
 /// Returns the number of elements in the iterator.
+#alias(length)
 pub fn[X] Iter::count(self : Iter[X]) -> Int {
   self.fold((acc, _) => acc + 1, init=0)
 }
