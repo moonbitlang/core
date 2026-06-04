@@ -130,6 +130,15 @@ pub fn StringView::unsafe_get(self : StringView, index : Int) -> UInt16 {
 }
 
 ///|
+/// Returns an `ArrayView` containing the UTF-16 code units of the string view.
+///
+/// This method yields code units, not Unicode characters. Surrogate pairs are
+/// represented as two `UInt16` values.
+pub fn StringView::code_units(self : StringView) -> ArrayView[UInt16] {
+  Array::makei(self.length(), i => self.unsafe_get(i))[:]
+}
+
+///|
 /// Returns the charcode(code unit) at the given index without checking if the
 /// index is within bounds.
 /// 
