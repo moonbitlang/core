@@ -133,11 +133,58 @@ pub fn[T : Debug] assert_not_same_object(
 
 ///|
 /// Expected to be used in test blocks, don't catch this error.
-///  
+///
 /// Produces an error message similar to @builtin.fail.
 #callsite(autofill(loc))
 pub fn[T] fail(msg : StringView, loc~ : SourceLoc) -> T raise {
   @builtin.fail(msg, loc~)
+}
+
+///|
+/// Assert that the given callback raises an error.
+///
+/// Use this when you only care that the callback raises, not what was raised.
+/// If you need to inspect the error value, use `@test.expect_error` instead.
+///
+/// If the callback does not raise, the test fails at the call site of
+/// `assert_raise`.
+#callsite(autofill(loc))
+pub fn[T, E : Error] assert_raise(
+  f : () -> T raise E,
+  loc~ : SourceLoc,
+) -> Unit raise {
+  try f() catch {
+    _ => ()
+  } noraise {
+    _ =>
+      @builtin.fail(
+        "expected error, but program succeed without raising anything",
+        loc~,
+      )
+  }
+}
+
+///|
+/// Run the given callback and return the error it raises, so the caller can
+/// further interrogate it (`inspect`, `guard ... is`, `assert_true`, etc.).
+///
+/// If the callback does not raise, the test fails at the call site of
+/// `expect_error`. If you do not need the error value, prefer
+/// `@test.assert_raise`.
+#callsite(autofill(loc))
+pub fn[T, E : Error] expect_error(
+  f : () -> T raise E,
+  loc~ : SourceLoc,
+) -> E raise {
+  try f() catch {
+    err => err
+  } noraise {
+    _ =>
+      @builtin.fail(
+        "expected error, but program succeed without raising anything",
+        loc~,
+      )
+  }
 }
 
 ///|

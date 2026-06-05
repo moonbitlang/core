@@ -47,3 +47,60 @@ test "Test name" {
   let t = @test.new("sample")
   inspect(t.name(), content="sample")
 }
+
+///|
+suberror MyError {
+  NotFound(String)
+  Invalid(reason~ : String)
+} derive(Debug)
+
+///|
+fn maybe_raise(should_raise : Bool) -> Unit raise MyError {
+  if should_raise {
+    raise MyError::NotFound("file.txt")
+  }
+}
+
+///|
+fn raise_invalid() -> Unit raise MyError {
+  raise MyError::Invalid(reason="bad input")
+}
+
+///|
+test "assert_raise passes when the callback raises" {
+  @test.assert_raise(() => maybe_raise(true))
+}
+
+///|
+test "panic assert_raise fails when the callback does not raise" {
+  @test.assert_raise(() => maybe_raise(false))
+}
+
+///|
+test "expect_error returns the raised error" {
+  let err = @test.expect_error(() => maybe_raise(true))
+  debug_inspect(
+    err,
+    content=(
+      #|NotFound("file.txt")
+    ),
+  )
+}
+
+///|
+test "expect_error result composes with guard ... is" {
+  guard @test.expect_error(() => maybe_raise(true)) is NotFound(_) else {
+    @test.fail("expected NotFound variant")
+  }
+}
+
+///|
+test "expect_error result composes with assert_true(... is ...)" {
+  let err = @test.expect_error(raise_invalid)
+  assert_true(err is Invalid(reason=_))
+}
+
+///|
+test "panic expect_error fails when the callback does not raise" {
+  let _ = @test.expect_error(() => maybe_raise(false))
+}
