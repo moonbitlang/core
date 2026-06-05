@@ -47,3 +47,26 @@ test "Test name" {
   let t = @test.new("sample")
   inspect(t.name(), content="sample")
 }
+
+///|
+fn maybe_raise(should_raise : Bool) -> Unit raise {
+  if should_raise {
+    raise Failure::Failure("failure")
+  }
+}
+
+///|
+test "expect_error" {
+  inspect(
+    @test.expect_error(() => maybe_raise(true)),
+    content=(
+      #|Failure(failure)
+    ),
+  )
+  inspect(
+    @test.expect_error(() => @test.expect_error(() => maybe_raise(false))),
+    content=(
+      #|Failure(test/test_test.mbt:67:30-67:74@moonbitlang/core FAILED: expected error, but program succeed without raising anything)
+    ),
+  )
+}

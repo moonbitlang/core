@@ -191,3 +191,20 @@ pub fn Test::snapshot(
 pub fn Test::name(self : Self) -> String {
   self.name
 }
+
+///|
+#callsite(autofill(loc))
+pub fn[T, E : Error] expect_error(
+  f : () -> T raise E,
+  loc~ : SourceLoc,
+) -> E raise Failure {
+  try f() catch {
+    err => err
+  } noraise {
+    _ =>
+      @builtin.fail(
+        "expected error, but program succeed without raising anything",
+        loc~,
+      )
+  }
+}
