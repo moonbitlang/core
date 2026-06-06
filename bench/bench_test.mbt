@@ -29,7 +29,7 @@ test "bench single_bench minimal" {
 
 ///|
 test "bench buffer writes with multiple samples" {
-  let bench = @bench.Bench::new()
+  let bench = @bench.Bench()
   bench.bench(() => ignore(1 + 1), name="first", count=1)
   bench.bench(() => ignore(2 + 2), name="second", count=1)
   inspect(bench.dump_summaries().contains(","), content="true")
@@ -37,7 +37,7 @@ test "bench buffer writes with multiple samples" {
 
 ///|
 test "Debug for Bench and Timestamp" {
-  let bench = @bench.Bench::new()
+  let bench = @bench.Bench()
   @debug.debug_inspect(bench, content="<Bench: []>")
   let ts = @bench.monotonic_clock_start()
   @debug.debug_inspect(ts, content="<Timestamp: ...>")
