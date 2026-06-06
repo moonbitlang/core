@@ -144,7 +144,7 @@ test "bench - Summary struct properties" {
 ///|
 #skip("slow benchmarking test")
 test "bench - T struct and bench method" {
-  let bench_obj = new()
+  let bench_obj = Bench()
 
   // Ensure the buffer is initially empty
   inspect(bench_obj.buffer.is_empty(), content="true")
@@ -199,7 +199,7 @@ test "bench - monotonic clock functionality" {
 
 ///|
 test "bench - keep stores value" {
-  let b = new()
+  let b = Bench()
   @test.assert_eq(b.summaries.length(), 0)
   b.keep(123)
   @test.assert_eq(b.summaries.length(), 0)

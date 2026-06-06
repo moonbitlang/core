@@ -16,12 +16,16 @@ pub fn single_bench(name? : String, () -> Unit, count? : UInt) -> Summary
 
 // Types and methods
 #alias(T)
-type Bench
+pub struct Bench {
+  // private fields
+}
+#alias(new, deprecated)
+#as_free_fn(new, deprecated)
+#as_free_fn
+pub fn Bench::Bench() -> Self
 pub fn Bench::bench(Self, name? : String, () -> Unit, count? : UInt) -> Unit
 pub fn Bench::dump_summaries(Self) -> String
 pub fn[Any] Bench::keep(Self, Any) -> Unit
-#as_free_fn
-pub fn Bench::new() -> Self
 pub impl @debug.Debug for Bench
 
 type Summary derive(ToJson, @debug.Debug)

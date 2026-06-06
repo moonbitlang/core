@@ -31,7 +31,7 @@ Use the `T` type to collect multiple benchmarks:
 ///|
 #skip("slow tests")
 test "benchmark collection" {
-  let bencher = @bench.new()
+  let bencher = @bench.Bench()
 
   // Add multiple benchmarks to the collection
   bencher.bench(name="array_creation", fn() {
@@ -62,7 +62,7 @@ Compare the performance of different implementations:
 ///|
 #skip("slow tests")
 test "algorithm comparison" {
-  let bencher = @bench.new()
+  let bencher = @bench.Bench()
 
   // Benchmark linear search
   bencher.bench(name="linear_search", fn() {
@@ -96,7 +96,7 @@ Benchmark different data structure operations:
 ///|
 #skip("slow tests")
 test "data structure benchmarks" {
-  let bencher = @bench.new()
+  let bencher = @bench.Bench()
 
   // Benchmark Array operations
   bencher.bench(name="array_append", fn() {
@@ -128,7 +128,7 @@ Measure string manipulation performance:
 ///|
 #skip("slow tests")
 test "string benchmarks" {
-  let bencher = @bench.new()
+  let bencher = @bench.Bench()
 
   // Benchmark string concatenation
   bencher.bench(name="string_concat", fn() {
@@ -159,7 +159,7 @@ Use `keep` to prevent compiler optimizations from eliminating benchmarked code:
 ///|
 #skip("slow tests")
 test "preventing optimization" {
-  let bencher = @bench.new()
+  let bencher = @bench.Bench()
   bencher.bench(name="with_keep", fn() {
     let result = Array::makei(5, fn(i) { i * i })
     // Prevent the compiler from optimizing away the computation
@@ -178,7 +178,7 @@ Control the number of benchmark iterations:
 ///|
 #skip("slow tests")
 test "iteration control" {
-  let bencher = @bench.new()
+  let bencher = @bench.Bench()
 
   // Run with more iterations for more stable results
   bencher.bench(
@@ -216,7 +216,7 @@ test "iteration control" {
 ///|
 #skip("slow tests")
 test "isolation example" {
-  let bencher = @bench.new()
+  let bencher = @bench.Bench()
 
   // Good: Measure only the operation of interest
   let data = Array::makei(10, fn(i) { i }) // Setup outside benchmark
@@ -238,7 +238,7 @@ test "isolation example" {
 ///|
 #skip("slow tests")
 test "warmup example" {
-  let bencher = @bench.new()
+  let bencher = @bench.Bench()
   fn expensive_operation() -> Int {
     let mut result = 0
     for i in 0..<5 {
@@ -268,7 +268,7 @@ test "warmup example" {
 ///|
 #skip("slow tests")
 test "meaningful names" {
-  let bencher = @bench.new()
+  let bencher = @bench.Bench()
 
   // Good: Descriptive names that explain what's being measured
   bencher.bench(name="array_insert_10_items", fn() {
@@ -305,7 +305,7 @@ Benchmarks can be integrated into your testing workflow:
 ///|
 #skip("slow tests")
 test "performance regression test" {
-  let bencher = @bench.new()
+  let bencher = @bench.Bench()
 
   // Benchmark a critical path
   bencher.bench(name="critical_algorithm", fn() {
