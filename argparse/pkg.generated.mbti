@@ -19,8 +19,8 @@ pub fn ArgGroup::new(StringView, required? : Bool, multiple? : Bool, args? : Arr
 pub struct Command {
   // private fields
 } derive(@debug.Debug)
+#alias(new, deprecated)
 pub fn Command::Command(StringView, flags? : ArrayView[FlagArg], options? : ArrayView[OptionArg], positionals? : ArrayView[PositionArg], subcommands? : ArrayView[Self], about? : StringView, version? : StringView, disable_help_flag? : Bool, disable_version_flag? : Bool, disable_help_subcommand? : Bool, arg_required_else_help? : Bool, subcommand_required? : Bool, hidden? : Bool, groups? : ArrayView[ArgGroup]) -> Self
-pub fn Command::new(StringView, flags? : ArrayView[FlagArg], options? : ArrayView[OptionArg], positionals? : ArrayView[PositionArg], subcommands? : ArrayView[Self], about? : StringView, version? : StringView, disable_help_flag? : Bool, disable_version_flag? : Bool, disable_help_subcommand? : Bool, arg_required_else_help? : Bool, subcommand_required? : Bool, hidden? : Bool, groups? : ArrayView[ArgGroup]) -> Self
 #as_free_fn
 pub fn Command::parse(Self, argv? : ArrayView[String], env? : Map[String, String]) -> Matches raise
 pub fn Command::render_help(Self) -> String
