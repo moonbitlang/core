@@ -663,18 +663,25 @@ test "parse decimal with underscore" {
 
 ///|
 test "parse decimal error" {
-  assert_true((try? parse_decimal_priv("1e")) is Err(Failure("invalid syntax")))
   assert_true(
-    (try? parse_decimal_priv("1e+")) is Err(Failure("invalid syntax")),
+    @test.expect_error(() => parse_decimal_priv("1e"))
+    is Failure("invalid syntax"),
   )
   assert_true(
-    (try? parse_decimal_priv("1e_")) is Err(Failure("invalid syntax")),
+    @test.expect_error(() => parse_decimal_priv("1e+"))
+    is Failure("invalid syntax"),
   )
   assert_true(
-    (try? parse_decimal_priv("1-23")) is Err(Failure("invalid syntax")),
+    @test.expect_error(() => parse_decimal_priv("1e_"))
+    is Failure("invalid syntax"),
   )
   assert_true(
-    (try? parse_decimal_priv("1.2.3")) is Err(Failure("invalid syntax")),
+    @test.expect_error(() => parse_decimal_priv("1-23"))
+    is Failure("invalid syntax"),
+  )
+  assert_true(
+    @test.expect_error(() => parse_decimal_priv("1.2.3"))
+    is Failure("invalid syntax"),
   )
 }
 
@@ -720,9 +727,15 @@ test "rounded_integer overflow when decimal_point > 20" {
 
 ///|
 test "corner cases" {
-  assert_true((try? parse_decimal_priv(".123")) is Ok(_))
-  assert_true((try? parse_decimal_priv(".")) is Err(Failure("invalid syntax")))
-  assert_true((try? parse_decimal_priv("-")) is Err(Failure("invalid syntax")))
+  let _ = parse_decimal_priv(".123")
+  assert_true(
+    @test.expect_error(() => parse_decimal_priv("."))
+    is Failure("invalid syntax"),
+  )
+  assert_true(
+    @test.expect_error(() => parse_decimal_priv("-"))
+    is Failure("invalid syntax"),
+  )
 }
 
 ///|

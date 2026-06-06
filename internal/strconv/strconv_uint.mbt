@@ -264,8 +264,9 @@ test "parse_uint" {
 
 ///|
 test "parse_uint64 uppercase hex and invalid base" {
-  assert_true((try? parse_uint64("ABCD", base=16)) is Ok(43981))
+  @test.assert_eq(parse_uint64("ABCD", base=16), 43981)
   assert_true(
-    (try? parse_uint64("1234", base=37)) is Err(Failure("invalid base")),
+    @test.expect_error(() => parse_uint64("1234", base=37))
+    is Failure("invalid base"),
   )
 }
