@@ -20,6 +20,51 @@ pub struct Regex {
 }
 
 ///|
+/// Compiles a regex pattern string into a `Regex` object.
+///
+/// The regex syntax follows MoonBit `lexmatch` regex literals.
+/// The following constructs are recognized:
+///
+/// - `.` wildcard (matches any character, including newline)
+/// - Character classes: `[abc]`, `[^abc]`, `[a-z]`, POSIX classes such as
+///   `[[:digit:]]`, `[[:alpha:]]`, `[[:space:]]`, `[[:word:]]`
+/// - Quantifiers: `*`, `+`, `?`, `{n}`, `{n,}`, `{n,m}` and non-greedy forms
+///   `*?`, `+?`, `??`, `{n}?`, `{n,}?`, `{n,m}?`
+/// - Grouping and alternation: `( ... )`, `(?: ... )` (non-capturing),
+///   `(?<name> ... )`, `a|b`
+/// - Assertions and modifiers: `^`, `$`, `\b`, `\B`, `(?i: ... )`
+///
+/// Escape sequences include `\n`, `\r`, `\t`, `\f`, `\v`, and escaped
+/// metacharacters. In `Regex::compile`, Unicode escapes are supported:
+/// `\uXXXX` and `\u{X...}`. `\xHH` is not supported in `Regex::compile`.
+///
+/// `^` and `$` are non-multiline anchors: they match only the beginning and
+/// end of the whole input, not per-line boundaries.
+///
+/// `\d`, `\D`, `\s`, `\S`, `\w`, and `\W` are not supported; use POSIX
+/// character classes instead.
+///
+/// POSIX character classes are ASCII-based.
+///
+/// In character classes, the dash `-` is used to specify ranges (e.g., `[a-z]`).
+/// To match a literal dash, it must be escaped as `\-`. Placing a dash at the
+/// start or end of a character class (e.g., `[-a]` or `[a-]`) is not supported.
+///
+/// For full grammar and semantics, see:
+/// <https://github.com/moonbitlang/lexmatch_spec>
+///
+/// Raises when `pattern` is not a valid regex pattern.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let regex = @string.Regex("[[:digit:]]+")
+///   guard regex.execute("a12b") is Some(m) else { fail("Expected match") }
+///   inspect(m.content(), content="12")
+/// }
+/// ```
+#alias(new, deprecated="Use `Regex()` instead")
 pub fn Regex::Regex(pattern : StringView) -> Regex raise {
   let pat = @regex_parser.parse(
     profile=re_profile_unicode,
@@ -104,7 +149,7 @@ pub fn Regex::internal_compile_pattern(pat : Pattern) -> Regex {
 #internal(internal, "not intended for public use")
 #doc(hidden)
 pub fn Regex::internal_from_string(pat : String) -> Regex {
-  try! Regex::new(pat)
+  try! Regex(pat)
 }
 
 ///|
@@ -121,66 +166,12 @@ fn Regex::re(self : Regex) -> @re.Regex {
 }
 
 ///|
-/// Compiles a regex pattern string into a `Regex` object.
-///
-/// The regex syntax follows MoonBit `lexmatch` regex literals.
-/// The following constructs are recognized:
-///
-/// - `.` wildcard (matches any character, including newline)
-/// - Character classes: `[abc]`, `[^abc]`, `[a-z]`, POSIX classes such as
-///   `[[:digit:]]`, `[[:alpha:]]`, `[[:space:]]`, `[[:word:]]`
-/// - Quantifiers: `*`, `+`, `?`, `{n}`, `{n,}`, `{n,m}` and non-greedy forms
-///   `*?`, `+?`, `??`, `{n}?`, `{n,}?`, `{n,m}?`
-/// - Grouping and alternation: `( ... )`, `(?: ... )` (non-capturing),
-///   `(?<name> ... )`, `a|b`
-/// - Assertions and modifiers: `^`, `$`, `\b`, `\B`, `(?i: ... )`
-///
-/// Escape sequences include `\n`, `\r`, `\t`, `\f`, `\v`, and escaped
-/// metacharacters. In `Regex::compile`, Unicode escapes are supported:
-/// `\uXXXX` and `\u{X...}`. `\xHH` is not supported in `Regex::compile`.
-///
-/// `^` and `$` are non-multiline anchors: they match only the beginning and
-/// end of the whole input, not per-line boundaries.
-///
-/// `\d`, `\D`, `\s`, `\S`, `\w`, and `\W` are not supported; use POSIX
-/// character classes instead.
-///
-/// POSIX character classes are ASCII-based.
-///
-/// In character classes, the dash `-` is used to specify ranges (e.g., `[a-z]`).
-/// To match a literal dash, it must be escaped as `\-`. Placing a dash at the
-/// start or end of a character class (e.g., `[-a]` or `[a-]`) is not supported.
-///
-/// For full grammar and semantics, see:
-/// <https://github.com/moonbitlang/lexmatch_spec>
-///
-/// Raises when `pattern` is not a valid regex pattern.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let regex = @string.Regex("[[:digit:]]+")
-///   guard regex.execute("a12b") is Some(m) else { fail("Expected match") }
-///   inspect(m.content(), content="12")
-/// }
-/// ```
-pub fn Regex::new(pattern : StringView) -> Regex raise {
-  let pat = @regex_parser.parse(
-    profile=re_profile_unicode,
-    pattern,
-    mode=String,
-  )
-  { pat, re: None }
-}
-
-///|
 /// Compiles a regex pattern string into a `Regex` object, panicking on invalid patterns.
 ///
-/// This function is equivalent to `Regex::new(pattern)` but converts any compilation
+/// This function is equivalent to `Regex(pattern)` but converts any compilation
 /// error into a panic instead of raising an exception.
 ///
-/// The regex syntax follows the same rules as `Regex::new`.
+/// The regex syntax follows the same rules as `Regex`.
 ///
 /// Panics when `pattern` is not a valid regex pattern.
 ///
@@ -194,13 +185,13 @@ pub fn Regex::new(pattern : StringView) -> Regex raise {
 /// }
 /// ```
 pub fn Regex::unsafe_from_string(pattern : StringView) -> Regex {
-  try! Regex::new(pattern)
+  try! Regex(pattern)
 }
 
 ///|
 /// Builds a regex that matches `str` literally.
 ///
-/// This is equivalent to `Regex::new(Regex::escape(str))`.
+/// This is equivalent to `Regex(Regex::escape(str))`.
 ///
 /// Example:
 ///
