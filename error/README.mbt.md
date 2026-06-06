@@ -65,16 +65,16 @@ test "custom errors" {
 
   // Test validation error
   try validate_email("short") catch {
-    _ => inspect(true, content="true")
+    _ => ()
   } noraise {
-    _ => inspect(false, content="true")
+    _ => fail("expected validation error")
   }
 
   // Test network error
   try fetch_data("short") catch {
-    _ => inspect(true, content="true")
+    _ => ()
   } noraise {
-    _ => inspect(false, content="true")
+    _ => fail("expected network error")
   }
 }
 ```
@@ -143,9 +143,9 @@ test "error propagation" {
 
   // Error propagation
   try read_and_parse("invalid") catch {
-    _ => inspect(true, content="true")
+    _ => ()
   } noraise {
-    _ => inspect(false, content="true")
+    _ => fail("expected error propagation")
   }
 }
 ```
@@ -177,9 +177,9 @@ test "resource management" {
   }
 
   try use_resource() catch {
-    _ => inspect(true, content="true")
+    _ => ()
   } noraise {
-    _ => inspect(false, content="true")
+    _ => fail("expected resource error")
   }
 }
 ```
