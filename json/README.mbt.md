@@ -209,7 +209,7 @@ test "replacer custom" {
   let json : Json = { "x": 1.0, "y": 2.0 }
   // double all number values
   let replaced = json.transform(
-    @json.Replacer::new(fn(_key, value) {
+    @json.Replacer(fn(_key, value) {
       match value {
         Number(n, ..) => Some(Json::number(n * 2))
         other => Some(other)

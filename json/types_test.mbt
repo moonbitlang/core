@@ -63,7 +63,7 @@ test "Debug for ParseError" {
 
 ///|
 test "Debug for Replacer" {
-  let r = @json.Replacer::new(fn(_, v) { Some(v) })
+  let r = @json.Replacer(fn(_, v) { Some(v) })
   @debug.debug_inspect(
     r,
     content=(
