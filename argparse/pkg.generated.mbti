@@ -68,8 +68,8 @@ pub fn PositionArg::new(StringView, about? : StringView, env? : StringView, defa
 pub struct ValueRange {
   // private fields
 } derive(Eq, Show, @debug.Debug)
+#alias(new, deprecated)
 pub fn ValueRange::ValueRange(lower? : Int, upper? : Int) -> Self
-pub fn ValueRange::new(lower? : Int, upper? : Int) -> Self
 pub fn ValueRange::single() -> Self
 
 pub enum ValueSource {
