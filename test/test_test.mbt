@@ -44,7 +44,7 @@ test "panic is_not called with the same object" {
 
 ///|
 test "Test name" {
-  let t = @test.new("sample")
+  let t = @test.Test("sample")
   inspect(t.name(), content="sample")
 }
 

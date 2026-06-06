@@ -209,7 +209,7 @@ pub fn Test::writeln(self : Test, obj : &Show) -> Unit {
 /// 
 /// ```mbt check
 /// test {
-///   let t = @test.new("test.txt")
+///   let t = @test.Test("test.txt")
 ///   t.writeln("hello")
 ///   t.snapshot(filename="test.txt") // actual test block end
 /// }

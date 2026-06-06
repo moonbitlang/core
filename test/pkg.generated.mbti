@@ -40,10 +40,14 @@ pub fn[T : Show] same_object(T, T, loc~ : SourceLoc) -> Unit raise
 
 // Types and methods
 #alias(T, deprecated)
-type Test derive(@debug.Debug)
-pub fn Test::name(Self) -> String
+pub struct Test {
+  // private fields
+} derive(@debug.Debug)
+#alias(new, deprecated)
+#as_free_fn(new, deprecated)
 #as_free_fn
-pub fn Test::new(String) -> Self
+pub fn Test::Test(String) -> Self
+pub fn Test::name(Self) -> String
 #callsite(autofill(args_loc, loc))
 pub fn Test::snapshot(Self, filename~ : String, loc~ : SourceLoc, args_loc~ : ArgsLoc) -> Unit raise SnapshotError
 pub fn Test::write(Self, &Show) -> Unit
