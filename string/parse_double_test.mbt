@@ -17,9 +17,7 @@ test "parse_double huge exponent" {
   // Exponents whose digit count exceeds what fits in `Int` must clamp before
   // they overflow the slow-path accumulator. Positive side overflows to a
   // range error; negative side underflows to zero.
-  try
-    @string.parse_double("1e999999999999999999999999999999999999") |> ignore
-  catch {
+  try @string.parse_double("1e999999999999999999999999999999999999") catch {
     e =>
       debug_inspect(
         e,
@@ -30,9 +28,7 @@ test "parse_double huge exponent" {
   } noraise {
     _ => fail("expected error")
   }
-  try
-    @string.parse_double("-1e999999999999999999999999999999999999") |> ignore
-  catch {
+  try @string.parse_double("-1e999999999999999999999999999999999999") catch {
     e =>
       debug_inspect(
         e,

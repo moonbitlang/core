@@ -72,7 +72,7 @@ test "execute/range_crossing_surrogate_gap_has_no_half_match" {
 
 ///|
 test "compile/error_unclosed_group" {
-  try ignore(@string.Regex("(")) catch {
+  try @string.Regex("(") catch {
     _ => ()
   } noraise {
     _ => fail("Expected compile failure for unclosed group")
@@ -81,7 +81,7 @@ test "compile/error_unclosed_group" {
 
 ///|
 test "compile/error_unclosed_char_class" {
-  try ignore(@string.Regex("[abc")) catch {
+  try @string.Regex("[abc") catch {
     _ => ()
   } noraise {
     _ => fail("Expected compile failure for unclosed char class")
@@ -663,7 +663,7 @@ test "add/with_any_quantifier_and_empty_wrappers" {
 ///|
 test "should_raise" {
   for pattern in ["[-a]", "[^-a]", "[a-]"] {
-    try ignore(@string.Regex(pattern)) catch {
+    try @string.Regex(pattern) catch {
       _ => ()
     } noraise {
       _ => fail("expected error for pattern \{pattern}")

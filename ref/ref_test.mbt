@@ -105,14 +105,12 @@ test "Ref::new with string" {
 test "map with error handling" {
   let x = @ref.new(10)
   try
-    ignore(
-      x.map(a => {
-        if a > 5 {
-          fail("value too large")
-        }
-        a * 2
-      }),
-    )
+    x.map(a => {
+      if a > 5 {
+        fail("value too large")
+      }
+      a * 2
+    })
   catch {
     _ => ()
   } noraise {
