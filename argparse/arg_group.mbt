@@ -25,33 +25,14 @@ pub struct ArgGroup {
 
 ///|
 /// Create an argument group.
-pub fn ArgGroup::ArgGroup(
-  name : StringView,
-  required? : Bool = false,
-  multiple? : Bool = true,
-  args? : ArrayView[String] = [],
-  requires? : ArrayView[String] = [],
-  conflicts_with? : ArrayView[String] = [],
-) -> ArgGroup {
-  {
-    name: name.to_owned(),
-    required,
-    multiple,
-    args: args.to_owned(),
-    requires: requires.to_owned(),
-    conflicts_with: conflicts_with.to_owned(),
-  }
-}
-
-///|
-/// Create an argument group.
 ///
 /// Notes:
 /// - `required=true` means at least one member of the group must be present.
 /// - `multiple=false` means group members are mutually exclusive.
 /// - `requires` and `conflicts_with` may reference either group names or
 ///   argument names.
-pub fn ArgGroup::new(
+#alias(new, deprecated="Use `ArgGroup()` instead")
+pub fn ArgGroup::ArgGroup(
   name : StringView,
   required? : Bool = false,
   multiple? : Bool = true,

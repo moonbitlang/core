@@ -13,8 +13,8 @@ import {
 pub struct ArgGroup {
   // private fields
 } derive(@debug.Debug)
+#alias(new, deprecated)
 pub fn ArgGroup::ArgGroup(StringView, required? : Bool, multiple? : Bool, args? : ArrayView[String], requires? : ArrayView[String], conflicts_with? : ArrayView[String]) -> Self
-pub fn ArgGroup::new(StringView, required? : Bool, multiple? : Bool, args? : ArrayView[String], requires? : ArrayView[String], conflicts_with? : ArrayView[String]) -> Self
 
 pub struct Command {
   // private fields
