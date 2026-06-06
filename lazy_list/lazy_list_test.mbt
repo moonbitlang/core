@@ -179,9 +179,9 @@ test "drop_while accepts a raising predicate" {
   // A predicate that raises mid-skip propagates out of drop_while.
   let ys = @lazy_list.from_iter([1, -1, 5].iter())
   try ignore(ys.drop_while(pred)) catch {
-    _ => inspect(true, content="true")
+    _ => ()
   } noraise {
-    _ => inspect(false, content="true")
+    _ => fail("expected NegativeFound to propagate")
   }
 }
 

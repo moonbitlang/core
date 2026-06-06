@@ -520,8 +520,8 @@ test "from_json rejects non-object" {
       (@sorted_map.from_json(bad_json) : @sorted_map.SortedMap[String, Int]),
     )
   catch {
-    _ => inspect(true, content="true")
+    _ => ()
   } noraise {
-    _ => inspect(false, content="true")
+    _ => fail("expected JsonDecodeError")
   }
 }
