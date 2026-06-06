@@ -34,8 +34,11 @@ pub let st_dummy : State
 // Errors
 
 // Types and methods
-type Context
-pub fn Context::new() -> Self
+pub struct Context {
+  // private fields
+}
+#alias(new, deprecated)
+pub fn Context::Context() -> Self
 
 type Expr
 
