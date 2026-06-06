@@ -516,9 +516,7 @@ test "from_json free function" {
 test "from_json rejects non-object" {
   let bad_json : Json = [1, 2, 3]
   try
-    ignore(
-      (@sorted_map.from_json(bad_json) : @sorted_map.SortedMap[String, Int]),
-    )
+    (@sorted_map.from_json(bad_json) : @sorted_map.SortedMap[String, Int])
   catch {
     _ => ()
   } noraise {

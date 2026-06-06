@@ -316,9 +316,7 @@ test "from_json" {
 ///|
 test "from_json rejects non-object" {
   let bad_json : Json = 1
-  try
-    ignore((@json.from_json(bad_json) : @sorted_map.SortedMap[String, Int]))
-  catch {
+  try (@json.from_json(bad_json) : @sorted_map.SortedMap[String, Int]) catch {
     _ => ()
   } noraise {
     _ => fail("expected JsonDecodeError")
