@@ -28,12 +28,17 @@ test "show error" {
   }
 
   inspect(try! f(true), content="ok")
-  debug_inspect(
-    try? f(false),
-    content=(
-      #|Err(<moonbitlang/core/error_blackbox_test.IntError.IntError: ...>)
-    ),
-  )
+  try f(false) catch {
+    e =>
+      debug_inspect(
+        e,
+        content=(
+          #|<moonbitlang/core/error_blackbox_test.IntError.IntError: ...>
+        ),
+      )
+  } noraise {
+    _ => fail("expected error")
+  }
 }
 
 ///|
@@ -94,67 +99,94 @@ fn[A] protect2(finalize~ : () -> Unit raise?, work : () -> A raise) -> A raise {
 
 ///|
 test "protect" {
-  let x = try? protect(finalize=() => (), () => {
-    if true {
-      raise Failure::Failure("error")
-    } else {
-      1
-    }
-  })
-  debug_inspect(
-    x,
-    content=(
-      #|Err(Failure("error"))
-    ),
-  )
+  try
+    protect(finalize=() => (), () => {
+      if true {
+        raise Failure::Failure("error")
+      } else {
+        1
+      }
+    })
+  catch {
+    e =>
+      debug_inspect(
+        e,
+        content=(
+          #|Failure("error")
+        ),
+      )
+  } noraise {
+    _ => fail("expected error")
+  }
 }
 
 ///|
 test "protect & finally raise error" {
-  let x = try? protect(finalize=() => raise Failure::Failure("finally error"), () => {
-    if true {
-      raise Failure::Failure("error")
-    } else {
-      1
-    }
-  })
-  debug_inspect(
-    x,
-    content=(
-      #|Err(Failure("error"))
-    ),
-  )
+  try
+    protect(finalize=() => raise Failure::Failure("finally error"), () => {
+      if true {
+        raise Failure::Failure("error")
+      } else {
+        1
+      }
+    })
+  catch {
+    e =>
+      debug_inspect(
+        e,
+        content=(
+          #|Failure("error")
+        ),
+      )
+  } noraise {
+    _ => fail("expected error")
+  }
 }
 
 ///|
 test "protect2" {
-  let x = try? protect2(finalize=() => (), () => {
-    if true {
-      raise Failure::Failure("error")
-    } else {
-      1
-    }
-  })
-  debug_inspect(
-    x,
-    content=(
-      #|Err(Failure("error"))
-    ),
-  )
+  try
+    protect2(finalize=() => (), () => {
+      if true {
+        raise Failure::Failure("error")
+      } else {
+        1
+      }
+    })
+  catch {
+    e =>
+      debug_inspect(
+        e,
+        content=(
+          #|Failure("error")
+        ),
+      )
+  } noraise {
+    _ => fail("expected error")
+  }
 }
 
 ///|
 test "protect2 & finally raise error" {
-  let x = try? protect2(
-    finalize=() => raise Failure::Failure("finally error"),
-    () => if true { raise Failure::Failure("error") } else { 1 },
-  )
-  debug_inspect(
-    x,
-    content=(
-      #|Err(Failure("finally error"))
-    ),
-  )
+  try
+    protect2(finalize=() => raise Failure::Failure("finally error"), () => {
+      if true {
+        raise Failure::Failure("error")
+      } else {
+        1
+      }
+    })
+  catch {
+    e =>
+      debug_inspect(
+        e,
+        content=(
+          #|Failure("finally error")
+        ),
+      )
+  } noraise {
+    _ => fail("expected error")
+  }
 }
 
 ///|

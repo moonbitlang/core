@@ -119,17 +119,19 @@ test "from_json" {
 
 ///|
 test "from_json rejects invalid input" {
-  let not_array : Result[@vector.Vector[Int], @json.JsonDecodeError] = try? @json.from_json({
-      "a": 1,
-    },
-  )
+  let not_array : Result[@vector.Vector[Int], @json.JsonDecodeError] = Ok(
+    @json.from_json({ "a": 1 }),
+  ) catch {
+    e => Err(e)
+  }
   @json.json_inspect(not_array, content={
     "Err": ["JsonDecodeError", ["", "@immut/vector.from_json: expected array"]],
   })
-  let bad_item : Result[@vector.Vector[Int], @json.JsonDecodeError] = try? @json.from_json([
-      1, "x", 3,
-    ],
-  )
+  let bad_item : Result[@vector.Vector[Int], @json.JsonDecodeError] = Ok(
+    @json.from_json([1, "x", 3]),
+  ) catch {
+    e => Err(e)
+  }
   @json.json_inspect(bad_item, content={
     "Err": ["JsonDecodeError", ["/1", "Int::from_json: expected number"]],
   })

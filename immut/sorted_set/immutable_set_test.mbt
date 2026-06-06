@@ -602,10 +602,13 @@ test "from_json free function" {
 ///|
 test "from_json rejects non-array" {
   let bad_json : Json = { "a": 1 }
-  let result : Result[@sorted_set.SortedSet[Int], @json.JsonDecodeError] = try? @sorted_set.from_json(
-    bad_json,
-  )
-  inspect(result is Err(_), content="true")
+  try
+    ignore((@sorted_set.from_json(bad_json) : @sorted_set.SortedSet[Int]))
+  catch {
+    _ => inspect(true, content="true")
+  } noraise {
+    _ => inspect(false, content="true")
+  }
 }
 
 ///|

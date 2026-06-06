@@ -515,8 +515,13 @@ test "from_json free function" {
 ///|
 test "from_json rejects non-object" {
   let bad_json : Json = [1, 2, 3]
-  let result : Result[@sorted_map.SortedMap[String, Int], @json.JsonDecodeError] = try? @sorted_map.from_json(
-    bad_json,
-  )
-  inspect(result is Err(_), content="true")
+  try
+    ignore(
+      (@sorted_map.from_json(bad_json) : @sorted_map.SortedMap[String, Int]),
+    )
+  catch {
+    _ => inspect(true, content="true")
+  } noraise {
+    _ => inspect(false, content="true")
+  }
 }

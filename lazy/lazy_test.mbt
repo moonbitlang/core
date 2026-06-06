@@ -115,12 +115,16 @@ test "Result-as-data bridge for fallible thunks" {
   let mut runs = 0
   let cell : @lazy.Lazy[Result[Int, Error]] = @lazy.Lazy(() => {
     runs += 1
-    try? ({
-      if runs > 1 {
-        fail("should not re-run")
-      }
-      runs
-    })
+    Ok(
+      {
+        if runs > 1 {
+          fail("should not re-run")
+        }
+        runs
+      },
+    ) catch {
+      e => Err(e)
+    }
   })
   assert_true(cell.force() is Ok(1))
   assert_true(cell.force() is Ok(1))
