@@ -731,10 +731,11 @@ test "to_json/from_json" {
   @json.json_inspect(list, content=json_expected)
   let list2 : @list.List[Int] = @json.from_json(json_expected)
   @json.json_inspect(list2, content=json_expected)
-  let v : Result[@list.List[Int], @json.JsonDecodeError] = try? @json.from_json({
-      "a": 1,
-    },
-  )
+  let v : Result[@list.List[Int], @json.JsonDecodeError] = Ok(
+    @json.from_json({ "a": 1 }),
+  ) catch {
+    e => Err(e)
+  }
   @json.json_inspect(v, content={
     "Err": ["JsonDecodeError", ["", "@list.from_json: expected array"]],
   })

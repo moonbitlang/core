@@ -129,10 +129,12 @@ pub fn[T] tap(value : T, f : (T) -> Unit raise) -> T raise {
 /// 
 /// ```mbt check
 /// test {
-///   let result : Result[Unit, Failure] = try? (5 |> x => { fail(x.to_string()) })
-///   match result {
-///     Err(Failure(_)) => ()
-///     Ok(_) => fail("expected failure")
+///   try {
+///     let _ : Unit = 5 |> x => { fail(x.to_string()) }
+///   } catch {
+///     Failure(_) => ()
+///   } noraise {
+///     _ => fail("expected failure")
 ///   }
 /// }
 /// ```

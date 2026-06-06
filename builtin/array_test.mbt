@@ -794,20 +794,6 @@ test "array view implicit conversion" {
 test "each with error callback" {
   let arr = [1, 2, 3]
   let mut sum = 0
-  let v = try? arr.each(x => {
-    if x == 2 {
-      fail("Error at 2")
-    }
-    sum += x
-  })
-  assert_true(v is Err(_))
-  inspect(sum, content="1")
-}
-
-///|
-test "each with error callback 2" {
-  let arr = [1, 2, 3]
-  let mut sum = 0
   try
     arr.each(x => {
       if x == 2 {
@@ -824,20 +810,6 @@ test "each with error callback 2" {
 
 ///|
 test "eachi with error callback" {
-  let arr = [1, 2, 3]
-  let mut sum = 0
-  let v = try? arr.eachi((i, x) => {
-    if x == 2 {
-      fail("Error at 2")
-    }
-    sum += x + i
-  })
-  assert_true(v is Err(_))
-  inspect(sum, content="1")
-}
-
-///|
-test "eachi with error callback 2" {
   let arr = [1, 2, 3]
   let mut sum = 0
   try
@@ -857,23 +829,6 @@ test "eachi with error callback 2" {
 ///|
 test "map with error callback" {
   let arr = [1, 2, 3]
-  let v = try? arr.map(x => {
-    if x == 2 {
-      raise Failure::Failure("Error at 2")
-    }
-    x + 1
-  })
-  debug_inspect(
-    v,
-    content=(
-      #|Err(Failure("Error at 2"))
-    ),
-  )
-}
-
-///|
-test "map with error callback 2" {
-  let arr = [1, 2, 3]
   try
     arr.map(x => {
       if x == 2 {
@@ -890,23 +845,6 @@ test "map with error callback 2" {
 
 ///|
 test "mapi with error callback" {
-  let arr = [1, 2, 3]
-  let v = try? arr.mapi((i, x) => {
-    if x == 2 {
-      raise Failure::Failure("Error at 2")
-    }
-    x + i
-  })
-  debug_inspect(
-    v,
-    content=(
-      #|Err(Failure("Error at 2"))
-    ),
-  )
-}
-
-///|
-test "mapi with error callback 2" {
   let arr = [1, 2, 3]
   try
     arr.mapi((i, x) => {
@@ -925,23 +863,6 @@ test "mapi with error callback 2" {
 ///|
 test "filter with error callback" {
   let arr = [1, 2, 3]
-  let v = try? arr.filter(x => {
-    if x == 2 {
-      raise Failure::Failure("Error at 2")
-    }
-    x % 2 == 0
-  })
-  debug_inspect(
-    v,
-    content=(
-      #|Err(Failure("Error at 2"))
-    ),
-  )
-}
-
-///|
-test "filter with error callback 2" {
-  let arr = [1, 2, 3]
   try
     arr.filter(x => {
       if x == 2 {
@@ -958,23 +879,6 @@ test "filter with error callback 2" {
 
 ///|
 test "map_inplace with error callback" {
-  let arr = [1, 2, 3]
-  let v = try? arr.map_in_place(x => {
-    if x == 2 {
-      raise Failure::Failure("Error at 2")
-    }
-    x + 1
-  })
-  debug_inspect(
-    v,
-    content=(
-      #|Err(Failure("Error at 2"))
-    ),
-  )
-}
-
-///|
-test "map_inplace with error callback 2" {
   let arr = [1, 2, 3]
   try
     arr.map_in_place(x => {
@@ -993,18 +897,24 @@ test "map_inplace with error callback 2" {
 ///|
 test "mapi_inplace with error callback" {
   let arr = [1, 2, 3]
-  let v = try? arr.mapi_in_place((i, x) => {
-    if x == 2 {
-      raise Failure::Failure("Error at 2")
-    }
-    x + i
-  })
-  debug_inspect(
-    v,
-    content=(
-      #|Err(Failure("Error at 2"))
-    ),
-  )
+  try
+    arr.mapi_in_place((i, x) => {
+      if x == 2 {
+        raise Failure::Failure("Error at 2")
+      }
+      x + i
+    })
+  catch {
+    e =>
+      debug_inspect(
+        e,
+        content=(
+          #|Failure("Error at 2")
+        ),
+      )
+  } noraise {
+    _ => fail("expected error")
+  }
 }
 
 ///|

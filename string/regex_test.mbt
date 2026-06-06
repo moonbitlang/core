@@ -72,15 +72,19 @@ test "execute/range_crossing_surrogate_gap_has_no_half_match" {
 
 ///|
 test "compile/error_unclosed_group" {
-  guard (try? @string.Regex("(")) is Err(_) else {
-    fail("Expected compile failure for unclosed group")
+  try ignore(@string.Regex("(")) catch {
+    _ => ()
+  } noraise {
+    _ => fail("Expected compile failure for unclosed group")
   }
 }
 
 ///|
 test "compile/error_unclosed_char_class" {
-  guard (try? @string.Regex("[abc")) is Err(_) else {
-    fail("Expected compile failure for unclosed char class")
+  try ignore(@string.Regex("[abc")) catch {
+    _ => ()
+  } noraise {
+    _ => fail("Expected compile failure for unclosed char class")
   }
 }
 
@@ -658,18 +662,18 @@ test "add/with_any_quantifier_and_empty_wrappers" {
 
 ///|
 test "should_raise" {
-  assert_true(
-    [
-      try? @string.Regex::new("[-a]"),
-      try? @string.Regex::new("[^-a]"),
-      try? @string.Regex::new("[a-]"),
-    ].all(it => it is Err(_)),
-  )
+  for pattern in ["[-a]", "[^-a]", "[a-]"] {
+    try ignore(@string.Regex(pattern)) catch {
+      _ => ()
+    } noraise {
+      _ => fail("expected error for pattern \{pattern}")
+    }
+  }
 }
 
 ///|
 test "escaped_dash_in_char_class" {
-  let regex = @string.Regex::new("[a\\-z]")
+  let regex = @string.Regex("[a\\-z]")
   inspect(regex.execute("a-z") is Some(_), content="true")
   inspect(regex.execute("b") is Some(_), content="false")
   inspect(regex.execute("-") is Some(_), content="true")
