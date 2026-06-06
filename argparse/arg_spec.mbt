@@ -137,50 +137,6 @@ pub struct OptionArg {
 
 ///|
 /// Create an option argument.
-// FIXME(upstram) rename does not work here
-pub fn OptionArg::OptionArg(
-  name : StringView,
-  short? : Char,
-  long? : StringView = name,
-  about? : StringView,
-  action? : OptionAction = Set,
-  env? : StringView,
-  default_values? : ArrayView[String],
-  allow_hyphen_values? : Bool = false,
-  requires? : ArrayView[String] = [],
-  conflicts_with? : ArrayView[String] = [],
-  required? : Bool = false,
-  global? : Bool = false,
-  hidden? : Bool = false,
-) -> OptionArg {
-  let name = name.to_owned()
-  let long = if long == "" { None } else { Some(long.to_owned()) }
-  let about = about.map(v => v.to_owned())
-  let env = env.map(v => v.to_owned())
-  {
-    arg: {
-      name,
-      about,
-      env,
-      requires: requires.to_owned(),
-      conflicts_with: conflicts_with.to_owned(),
-      required,
-      global,
-      hidden,
-      info: OptionInfo(
-        short~,
-        long~,
-        action~,
-        default_values=default_values.map(values => values.to_owned()),
-        allow_hyphen_values~,
-      ),
-      multiple: action is Append,
-    },
-  }
-}
-
-///|
-/// Create an option argument.
 ///
 /// Notes:
 /// - `long` defaults to `name`.
@@ -190,7 +146,8 @@ pub fn OptionArg::OptionArg(
 /// - `global=true` makes the option available in subcommands.
 /// - `allow_hyphen_values=true` allows values like `-1` or `--raw` to be
 ///   consumed as this option's value when parsing argv.
-pub fn OptionArg::new(
+#alias(new, deprecated="Use `OptionArg()` instead")
+pub fn OptionArg::OptionArg(
   name : StringView,
   short? : Char,
   long? : StringView = name,
