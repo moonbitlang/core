@@ -274,43 +274,6 @@ pub struct PositionArg {
 
 ///|
 /// Create a positional argument.
-pub fn PositionArg::PositionArg(
-  name : StringView,
-  about? : StringView,
-  env? : StringView,
-  default_values? : ArrayView[String],
-  num_args? : ValueRange,
-  allow_hyphen_values? : Bool = false,
-  requires? : ArrayView[String] = [],
-  conflicts_with? : ArrayView[String] = [],
-  global? : Bool = false,
-  hidden? : Bool = false,
-) -> PositionArg {
-  let name = name.to_owned()
-  let about = about.map(v => v.to_owned())
-  let env = env.map(v => v.to_owned())
-  {
-    arg: {
-      name,
-      about,
-      env,
-      requires: requires.to_owned(),
-      conflicts_with: conflicts_with.to_owned(),
-      required: false,
-      global,
-      hidden,
-      info: PositionalInfo(
-        num_args~,
-        default_values=default_values.map(values => values.to_owned()),
-        allow_hyphen_values~,
-      ),
-      multiple: range_allows_multiple(num_args),
-    },
-  }
-}
-
-///|
-/// Create a positional argument.
 ///
 /// Notes:
 /// - PositionArg order follows declaration order.
@@ -321,7 +284,8 @@ pub fn PositionArg::PositionArg(
 /// - `allow_hyphen_values=true` allows leading-`-` tokens to be consumed as
 ///   positional values (unless they match a declared option).
 /// - Tokens after `--` are always treated as positional values.
-pub fn PositionArg::new(
+#alias(new, deprecated="Use `PositionArg()` instead")
+pub fn PositionArg::PositionArg(
   name : StringView,
   about? : StringView,
   env? : StringView,
