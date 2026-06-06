@@ -35,9 +35,9 @@ test "Debug for Error" {
     raise InspectError::InspectError("test error")
   }
 
-  let result : Result[Unit, Error] = try? fail_with_error()
-  match result {
-    Err(e) => @debug.debug_inspect(e, content="InspectError(\"test error\")")
-    Ok(_) => fail("expected error")
+  try fail_with_error() catch {
+    e => @debug.debug_inspect(e, content="InspectError(\"test error\")")
+  } noraise {
+    _ => fail("expected error")
   }
 }
