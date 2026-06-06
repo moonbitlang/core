@@ -84,42 +84,6 @@ pub struct FlagArg {
 
 ///|
 /// Create a flag argument.
-pub fn FlagArg::FlagArg(
-  name : StringView,
-  short? : Char,
-  long? : StringView = name,
-  about? : StringView,
-  action? : FlagAction = SetTrue,
-  env? : StringView,
-  requires? : ArrayView[String] = [],
-  conflicts_with? : ArrayView[String] = [],
-  required? : Bool = false,
-  global? : Bool = false,
-  negatable? : Bool = false,
-  hidden? : Bool = false,
-) -> FlagArg {
-  let name = name.to_owned()
-  let long = if long == "" { None } else { Some(long.to_owned()) }
-  let about = about.map(v => v.to_owned())
-  let env = env.map(v => v.to_owned())
-  {
-    arg: {
-      name,
-      about,
-      env,
-      global,
-      hidden,
-      requires: requires.to_owned(),
-      conflicts_with: conflicts_with.to_owned(),
-      required,
-      info: FlagInfo(short~, long~, action~, negatable~),
-      multiple: false,
-    },
-  }
-}
-
-///|
-/// Create a flag argument.
 ///
 /// Notes:
 /// - `long` defaults to `name`.
@@ -129,7 +93,8 @@ pub fn FlagArg::FlagArg(
 /// - `negatable=true` accepts `--no-<long>` for long flags.
 /// - If `env` is set, accepted boolean values are:
 ///   `1`, `0`, `true`, `false`, `yes`, `no`, `on`, `off`.
-pub fn FlagArg::new(
+#alias(new, deprecated="Use `FlagArg()` instead")
+pub fn FlagArg::FlagArg(
   name : StringView,
   short? : Char,
   long? : StringView = name,

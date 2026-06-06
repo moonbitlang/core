@@ -36,8 +36,8 @@ pub(all) enum FlagAction {
 pub struct FlagArg {
   // private fields
 } derive(@debug.Debug)
+#alias(new, deprecated)
 pub fn FlagArg::FlagArg(StringView, short? : Char, long? : StringView, about? : StringView, action? : FlagAction, env? : StringView, requires? : ArrayView[String], conflicts_with? : ArrayView[String], required? : Bool, global? : Bool, negatable? : Bool, hidden? : Bool) -> Self
-pub fn FlagArg::new(StringView, short? : Char, long? : StringView, about? : StringView, action? : FlagAction, env? : StringView, requires? : ArrayView[String], conflicts_with? : ArrayView[String], required? : Bool, global? : Bool, negatable? : Bool, hidden? : Bool) -> Self
 
 pub struct Matches {
   flags : Map[String, Bool]
