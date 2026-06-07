@@ -48,7 +48,7 @@ test "reverse comparison" {
 ///|
 test "reverse with arrays" {
   // Create an array with reversed integers for descending sort
-  let arr = [@cmp.Reverse(3), @cmp.Reverse(1), @cmp.Reverse(4), @cmp.Reverse(2)]
+  let arr = [@cmp.Reverse(3), Reverse(1), Reverse(4), Reverse(2)]
   // When sorted, the array will be in descending order of the wrapped values
   inspect(arr[0], content="Reverse(3)") // Access first element
 }

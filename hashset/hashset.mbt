@@ -72,7 +72,7 @@ pub fn[K : Hash + Eq] HashSet::HashSet(
 ///
 /// ```mbt check
 /// test {
-///   let set : @hashset.HashSet[String] = @hashset.HashSet([])
+///   let set : @hashset.HashSet[String] = HashSet([])
 ///   set.add("key")
 ///   inspect(set.contains("key"), content="true")
 ///   set.add("key") // no effect since it already exists
@@ -652,7 +652,7 @@ test "clear" {
 ///
 /// ```mbt check
 /// test {
-///   let set : @hashset.HashSet[String] = @hashset.HashSet([])
+///   let set : @hashset.HashSet[String] = HashSet([])
 ///   inspect(set.add_and_check("key"), content="true") // First insertion
 ///   inspect(set.add_and_check("key"), content="false") // Already exists
 ///   inspect(set.length(), content="1")

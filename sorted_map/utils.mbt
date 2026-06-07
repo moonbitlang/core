@@ -91,9 +91,7 @@ pub impl[V : @json.FromJson] @json.FromJson for SortedMap[String, V] with fn fro
   path,
 ) {
   guard json is Object(obj) else {
-    raise @json.JsonDecodeError(
-      (path, "@sorted_map.from_json: expected object"),
-    )
+    raise JsonDecodeError((path, "@sorted_map.from_json: expected object"))
   }
   let map = new_sorted_map()
   for k, v in obj {

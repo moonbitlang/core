@@ -45,10 +45,10 @@ struct Line {
 
 ///|
 test "json inspect" {
-  let p1 = { x: 0, y: 0, color: Color::Red }
-  let p2 = { x: 1, y: 2, color: Color::Green }
+  let p1 = { x: 0, y: 0, color: Red }
+  let p2 = { x: 1, y: 2, color: Green }
   @json.json_inspect(p1, content={ "x": 0, "y": 0, "color": "Red" })
-  let line = { p1, p2, color: Color::Blue }
+  let line = { p1, p2, color: Blue }
   @json.json_inspect(line, content={
     "p1": { "x": 0, "y": 0, "color": "Red" },
     "p2": { "x": 1, "y": 2, "color": "Green" },

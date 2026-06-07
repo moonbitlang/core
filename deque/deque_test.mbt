@@ -293,7 +293,7 @@ test "from_json rejects non-array" {
 ///|
 test "copy" {
   debug_inspect(
-    (@deque.Deque([]) : @deque.Deque[Int]).copy(),
+    (Deque([]) : @deque.Deque[Int]).copy(),
     content=(
       #|<Deque: []>
     ),
@@ -431,20 +431,20 @@ test "front_and_back" {
   let dv = @deque.from_array([1, 2, 3, 4, 5])
   @test.assert_eq(dv.back(), Some(5))
   @test.assert_eq(dv.front(), Some(1))
-  let dv : @deque.Deque[Int] = @deque.Deque([])
+  let dv : @deque.Deque[Int] = Deque([])
   @test.assert_eq(dv.back(), None)
   @test.assert_eq(dv.front(), None)
 }
 
 ///|
 test "new_with_capacity" {
-  let d : @deque.Deque[Int] = @deque.Deque([], capacity=0)
+  let d : @deque.Deque[Int] = Deque([], capacity=0)
   inspect(d.capacity(), content="0")
 }
 
 ///|
 test "new_with_capacity_non_zero" {
-  let d : @deque.Deque[Int] = @deque.Deque([], capacity=10)
+  let d : @deque.Deque[Int] = Deque([], capacity=10)
   inspect(d.capacity(), content="10")
 }
 
@@ -710,7 +710,7 @@ test "deque push_back when empty" {
 ///|
 test "deque as_views" {
   // Test empty deque
-  let dq1 : @deque.Deque[Int] = @deque.Deque([])
+  let dq1 : @deque.Deque[Int] = Deque([])
   @json.json_inspect(dq1.as_views(), content=[[], []])
 
   // Test contiguous case (head_len >= len)
@@ -751,7 +751,7 @@ test "test_get" {
 
 ///|
 test "test_reserve_capacity" {
-  let tester : @deque.Deque[Int] = @deque.Deque([], capacity=1)
+  let tester : @deque.Deque[Int] = Deque([], capacity=1)
   inspect(tester.capacity(), content="1")
   tester.reserve_capacity(2)
   inspect(tester.capacity(), content="2")
@@ -970,7 +970,7 @@ test "deque guard iter2 coverage improvement" {
 ///|
 test "deque truncate" {
   // Empty deque
-  let dq : @deque.Deque[Int] = @deque.Deque([])
+  let dq : @deque.Deque[Int] = Deque([])
   dq.truncate(3)
   @json.json_inspect(dq, content=[])
 
@@ -1015,7 +1015,7 @@ test "deque retain" {
   let is_even = x => x % 2 == 0
 
   // Empty deque
-  let dq : @deque.Deque[Int] = @deque.Deque([])
+  let dq : @deque.Deque[Int] = Deque([])
   dq.retain(is_even)
   @json.json_inspect(dq, content=[])
 
@@ -1112,7 +1112,7 @@ test "deque retain_map" {
   let inc_if_even = inc_if(is_even)
 
   // Empty deque
-  let dq : @deque.Deque[Int] = @deque.Deque([])
+  let dq : @deque.Deque[Int] = Deque([])
   dq.retain_map(inc_if_even)
   @json.json_inspect(dq, content=[])
 
@@ -1196,7 +1196,7 @@ test "deque retain_map clears full wrapped deque" {
 
 ///|
 test "@deque.to_array/empty" {
-  let dq : @deque.Deque[Int] = @deque.Deque([])
+  let dq : @deque.Deque[Int] = Deque([])
   let arr = dq.to_array()
   @json.json_inspect(arr, content=[])
 }
@@ -1766,7 +1766,7 @@ test "rev_inplace" {
   @test.assert_eq(dq, @deque.from_array([3, 4]))
 
   // Test with empty deque
-  let empty : @deque.Deque[Int] = @deque.Deque([])
+  let empty : @deque.Deque[Int] = Deque([])
   empty.rev_in_place()
   @test.assert_eq(empty, @deque.from_array([]))
 
@@ -1803,7 +1803,7 @@ test "rev" {
   @test.assert_eq(reversed_back, @deque.from_array([3, 4, 5]))
 
   // Test with empty deque
-  let empty : @deque.Deque[Int] = @deque.Deque([])
+  let empty : @deque.Deque[Int] = Deque([])
   let empty_reversed = empty.rev()
   @test.assert_eq(empty, @deque.from_array([]))
   @test.assert_eq(empty_reversed, @deque.from_array([]))

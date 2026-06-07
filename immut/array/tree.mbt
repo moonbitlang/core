@@ -48,7 +48,7 @@ let e_max_2 : Int = E_MAX / 2
 
 ///|
 fn[T] Tree::empty() -> Tree[T] {
-  Tree::Empty
+  Empty
 }
 
 ///|

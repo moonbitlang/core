@@ -24,7 +24,7 @@ You can create an empty SortedMap or a SortedMap from other containers.
 ```mbt check
 ///|
 test {
-  let _map1 : @sorted_map.SortedMap[Int, String] = @sorted_map.SortedMap([])
+  let _map1 : @sorted_map.SortedMap[Int, String] = SortedMap([])
   let _map2 = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
 }
 ```
@@ -143,7 +143,7 @@ Check if the map is empty.
 ```mbt check
 ///|
 test {
-  let map : @sorted_map.SortedMap[Int, String] = @sorted_map.SortedMap([])
+  let map : @sorted_map.SortedMap[Int, String] = SortedMap([])
   @test.assert_eq(map.is_empty(), true)
 }
 ```

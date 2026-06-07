@@ -14,8 +14,7 @@
 
 ///|
 test "new" {
-  let queue : @priority_queue.PriorityQueue[Int] = @priority_queue.PriorityQueue([],
-  )
+  let queue : @priority_queue.PriorityQueue[Int] = PriorityQueue([])
   @test.assert_eq(queue.length(), 0)
 }
 
@@ -128,7 +127,7 @@ test "pop" {
 
 ///|
 test "pop empty" {
-  let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.PriorityQueue([])
+  let pq : @priority_queue.PriorityQueue[Int] = PriorityQueue([])
   debug_inspect(pq.pop(), content="None")
 }
 

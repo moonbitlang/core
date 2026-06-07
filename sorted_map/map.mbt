@@ -165,7 +165,7 @@ pub fn[K : Compare, V] SortedMap::get_or_init(
 /// # Example
 /// ```mbt check
 /// test {
-///   let counts : @sorted_map.SortedMap[String, Int] = @sorted_map.SortedMap([])
+///   let counts : @sorted_map.SortedMap[String, Int] = SortedMap([])
 ///   counts.update_or_default("a", 1, x => x + 1)
 ///   counts.update_or_default("a", 1, x => x + 1)
 ///   counts.update_or_default("b", 1, x => x + 1)

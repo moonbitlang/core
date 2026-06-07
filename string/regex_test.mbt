@@ -235,7 +235,7 @@ test "complex/email_pattern" {
   // Put - at end to avoid it being interpreted as a range operator
   let username = @string.Regex("[a-zA-Z0-9_.+\\-]+")
   let domain_part = @string.Regex("[a-zA-Z0-9\\-]+")
-  let tld = @string.Regex("com") | @string.Regex("org") | @string.Regex("net")
+  let tld = @string.Regex("com") | Regex("org") | Regex("net")
   let email = username +
     @string.Regex::string("@") +
     domain_part +
@@ -276,7 +276,7 @@ test "complex/url_protocol" {
   let https = @string.Regex::string("https")
   let ftp = @string.Regex::string("ftp")
   let protocol = http | https | ftp
-  let url = protocol + @string.Regex::string("://") + @string.Regex("[^/]+")
+  let url = protocol + @string.Regex::string("://") + Regex("[^/]+")
   guard url.execute("https://example.com") is Some(m) else {
     fail("Expected URL match")
   }
@@ -426,7 +426,7 @@ test "complex/log_level" {
   // Fixed: Use [^\\]] to match anything except closing bracket
   // Otherwise .+ is greedy and matches past the ]
   let timestamp = @string.Regex::string("[") +
-    @string.Regex("[^\\]]+") +
+    Regex("[^\\]]+") +
     @string.Regex::string("]")
   let log_line = timestamp + @string.Regex::string(" ") + level
   guard log_line.execute("[2026-02-26 10:30:45] ERROR") is Some(m) else {
@@ -461,7 +461,7 @@ test "complex/log_level" {
 test "complex/phone_number" {
   // Match phone with optional country code and various formats
   let plus = @string.Regex::string("+")
-  let country = plus + @string.Regex("[[:digit:]]{1,3}")
+  let country = plus + Regex("[[:digit:]]{1,3}")
   let space = @string.Regex::string(" ")
   let dash = @string.Regex::string("-")
   let lparen = @string.Regex::string("(")
@@ -655,7 +655,7 @@ test "add/with_any_quantifier" {
 ///|
 test "add/with_any_quantifier_and_empty_wrappers" {
   let empty = @string.Regex::string("")
-  let re = empty + @string.Regex(".*?\\.") + empty + @string.Regex::string(" ")
+  let re = empty + Regex(".*?\\.") + empty + @string.Regex::string(" ")
   guard re.execute("abc. ") is Some(m) else { fail("Expected match") }
   inspect(m.content(), content="abc. ")
 }

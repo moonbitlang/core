@@ -97,7 +97,6 @@ pub fn BytesRegex::execute(
 ) -> MatchResult? {
   match self.0.execute(input, last_index) {
     None => None
-    Some(result) =>
-      Some(MatchResult::{ input, group_names: self.0.group_names(), result })
+    Some(result) => Some({ input, group_names: self.0.group_names(), result })
   }
 }

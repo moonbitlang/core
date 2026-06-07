@@ -14,7 +14,7 @@
 
 ///|
 test "new" {
-  let m : @hashmap.HashMap[Int, Int] = @hashmap.HashMap([])
+  let m : @hashmap.HashMap[Int, Int] = HashMap([])
   inspect(m.capacity(), content="8")
   inspect(m.length(), content="0")
 }
@@ -57,7 +57,7 @@ test "get_or_default" {
 
 ///|
 test "get_or_init" {
-  let m : @hashmap.HashMap[String, Array[Int]] = @hashmap.HashMap([])
+  let m : @hashmap.HashMap[String, Array[Int]] = HashMap([])
   m.get_or_init("a", () => Array::new()).push(1)
   m.get_or_init("b", () => Array::new()).push(2)
   m.get_or_init("a", () => Array::new()).push(3)
@@ -77,7 +77,7 @@ test "get_or_init full" {
 
 ///|
 test "update_or_default inserts default when absent" {
-  let m : @hashmap.HashMap[String, String] = @hashmap.HashMap([])
+  let m : @hashmap.HashMap[String, String] = HashMap([])
   m.update_or_default("k", "v", x => x + "!")
   // f is NOT applied to default on first insert
   @test.assert_eq(m.get("k"), Some("v"))
@@ -86,7 +86,7 @@ test "update_or_default inserts default when absent" {
 
 ///|
 test "update_or_default applies f when present" {
-  let m : @hashmap.HashMap[String, String] = @hashmap.HashMap([])
+  let m : @hashmap.HashMap[String, String] = HashMap([])
   m.set("k", "v")
   // default is ignored when key is present; f is applied to the existing value
   m.update_or_default("k", "z", x => x + "!")
@@ -96,7 +96,7 @@ test "update_or_default applies f when present" {
 
 ///|
 test "update_or_default counter pattern" {
-  let counts : @hashmap.HashMap[String, Int] = @hashmap.HashMap([])
+  let counts : @hashmap.HashMap[String, Int] = HashMap([])
   for label in ["a", "b", "a", "c", "a", "b"] {
     counts.update_or_default(label, 1, x => x + 1)
   }
@@ -107,7 +107,7 @@ test "update_or_default counter pattern" {
 
 ///|
 test "update_or_default triggers grow" {
-  let m : @hashmap.HashMap[Int, Int] = @hashmap.HashMap([], capacity=2)
+  let m : @hashmap.HashMap[Int, Int] = HashMap([], capacity=2)
   for i in 0..<5 {
     m.update_or_default(i, 1, x => x + 1)
   }
@@ -253,7 +253,7 @@ test "to_array" {
 
 ///|
 test "to_array empty" {
-  let map : @hashmap.HashMap[Int, String] = @hashmap.HashMap([])
+  let map : @hashmap.HashMap[Int, String] = HashMap([])
   debug_inspect(map.to_array(), content="[]")
 }
 
@@ -363,7 +363,7 @@ test "from_iter empty iter" {
 
 ///|
 test "@hashmap.contains/empty" {
-  let map : @hashmap.HashMap[Int, String] = @hashmap.HashMap([])
+  let map : @hashmap.HashMap[Int, String] = HashMap([])
   inspect(map.contains(42), content="false")
 }
 
@@ -506,7 +506,7 @@ test "@hashmap.merge" {
 
 ///|
 test "@hashmap.merge empty maps" {
-  let map1 : @hashmap.HashMap[String, Int] = @hashmap.HashMap([])
+  let map1 : @hashmap.HashMap[String, Int] = HashMap([])
   let map2 = @hashmap.from_array([("a", 1), ("b", 2)])
   let merged1 = map1.merge(map2)
   verify_content(merged1, [("a", 1), ("b", 2)])
@@ -531,7 +531,7 @@ test "@hashmap.merge_in_place" {
 
 ///|
 test "@hashmap.merge_in_place empty maps" {
-  let map1 : @hashmap.HashMap[String, Int] = @hashmap.HashMap([])
+  let map1 : @hashmap.HashMap[String, Int] = HashMap([])
   let map2 = @hashmap.from_array([("a", 1), ("b", 2)])
   map1.merge_in_place(map2)
   verify_content(map1, [("a", 1), ("b", 2)])
@@ -541,7 +541,7 @@ test "@hashmap.merge_in_place empty maps" {
 
 ///|
 test "@hashmap.merge_in_place self-aliasing should be no-op" {
-  let map : @hashmap.HashMap[String, Int] = @hashmap.HashMap([])
+  let map : @hashmap.HashMap[String, Int] = HashMap([])
   // With 4 elements: capacity=8, size=4
   // The grow condition is size >= capacity/2, i.e., 4 >= 4
   // Without fix, merge_in_place(map) calls set_with_hash which triggers grow()
@@ -563,7 +563,7 @@ test "@hashmap.merge_in_place self-aliasing should be no-op" {
 
 ///|
 test "@hashmap.set updating existing key should not grow" {
-  let map : @hashmap.HashMap[String, Int] = @hashmap.HashMap([])
+  let map : @hashmap.HashMap[String, Int] = HashMap([])
   // Fill to exactly at grow threshold: capacity=8, size=4
   for i in 0..<4 {
     map.set(i.to_string(), i)
@@ -599,38 +599,38 @@ impl Hash for Key with fn hash_combine(self, hasher) {
 
 ///|
 test "hashmap collision probe paths" {
-  let map : @hashmap.HashMap[Key, Int] = @hashmap.HashMap([])
+  let map : @hashmap.HashMap[Key, Int] = HashMap([])
   let k0 = Key::Key(0, 0)
   let k1 = Key::Key(1, 1)
   map.set(k0, 10)
   map.set(k1, 20)
-  inspect(map.get_or_default(Key::Key(2, 0), 99), content="99")
-  inspect(map.contains(Key::Key(3, 0)), content="false")
+  inspect(map.get_or_default(Key(2, 0), 99), content="99")
+  inspect(map.contains(Key(3, 0)), content="false")
 }
 
 ///|
 test "hashmap get_or_init push_away" {
-  let map : @hashmap.HashMap[Key, Int] = @hashmap.HashMap([])
-  map.set(Key::Key(1, 1), 10)
-  map.set(Key::Key(2, 2), 20)
-  inspect(map.get_or_init(Key::Key(3, 1), () => 30), content="30")
-  debug_inspect(map.get(Key::Key(3, 1)), content="Some(30)")
+  let map : @hashmap.HashMap[Key, Int] = HashMap([])
+  map.set(Key(1, 1), 10)
+  map.set(Key(2, 2), 20)
+  inspect(map.get_or_init(Key(3, 1), () => 30), content="30")
+  debug_inspect(map.get(Key(3, 1)), content="Some(30)")
 }
 
 ///|
 test "hashmap grow rehashes collision cluster" {
-  let map : @hashmap.HashMap[Key, Int] = @hashmap.HashMap([], capacity=2)
+  let map : @hashmap.HashMap[Key, Int] = HashMap([], capacity=2)
   for i in 0..<12 {
-    map.set(Key::Key(i, i % 4), i * 10)
+    map.set(Key(i, i % 4), i * 10)
   }
   inspect(map.length(), content="12")
   for i in 0..<12 {
-    @test.assert_eq(map.get(Key::Key(i, i % 4)), Some(i * 10))
+    @test.assert_eq(map.get(Key(i, i % 4)), Some(i * 10))
   }
-  map.remove(Key::Key(5, 1))
-  @test.assert_eq(map.get(Key::Key(5, 1)), None)
-  map.set(Key::Key(12, 0), 120)
-  @test.assert_eq(map.get(Key::Key(12, 0)), Some(120))
+  map.remove(Key(5, 1))
+  @test.assert_eq(map.get(Key(5, 1)), None)
+  map.set(Key(12, 0), 120)
+  @test.assert_eq(map.get(Key(12, 0)), Some(120))
   inspect(map.length(), content="12")
 }
 

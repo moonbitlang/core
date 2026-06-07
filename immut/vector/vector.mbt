@@ -730,10 +730,8 @@ pub impl[A : @json.FromJson] @json.FromJson for Vector[A] with fn from_json(
   json,
   path,
 ) {
-  guard json is Json::Array(arr) else {
-    raise @json.JsonDecodeError(
-      (path, "@immut/vector.from_json: expected array"),
-    )
+  guard json is Array(arr) else {
+    raise JsonDecodeError((path, "@immut/vector.from_json: expected array"))
   }
   let len = arr.length()
   guard len != 0 else { return new() }

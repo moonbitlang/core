@@ -119,7 +119,7 @@ pub fn[K : Hash + Eq] Set::Set(arr : ArrayView[K], capacity? : Int) -> Set[K] {
 ///
 /// ```mbt check
 /// test {
-///   let set : @set.Set[String] = @set.Set([])
+///   let set : @set.Set[String] = Set([])
 ///   set.add("key")
 ///   inspect(set.contains("key"), content="true")
 ///   set.add("key") // no effect since it already exists
@@ -202,7 +202,7 @@ fn[K] Set::set_entry(self : Set[K], entry : Entry[K], new_idx : Int) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let set : @set.Set[String] = @set.Set([])
+///   let set : @set.Set[String] = Set([])
 ///   inspect(set.add_and_check("key"), content="true") // First insertion
 ///   inspect(set.add_and_check("key"), content="false") // Already exists
 ///   inspect(set.length(), content="1")

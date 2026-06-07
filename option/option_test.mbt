@@ -103,7 +103,7 @@ test "map" {
 ///|
 test "map_or" {
   let a = Option::Some("foo")
-  let b : String? = Option::None
+  let b : String? = None
   assert_eq(a.map_or(42, x => x.length()), 3)
   assert_eq(b.map_or(42, x => x.length()), 42)
 }
@@ -112,7 +112,7 @@ test "map_or" {
 test "map_or_else" {
   let k = 21
   let a = Option::Some("foo")
-  let b : String? = Option::None
+  let b : String? = None
   assert_eq(a.map_or_else(() => 2 * k, x => x.length()), 3)
   assert_eq(b.map_or_else(() => 2 * k, x => x.length()), 42)
 }
@@ -174,7 +174,7 @@ test "compare" {
   let some1 = Option::Some(1)
   let some2 = Option::Some(2)
   let none = Option::None
-  assert_eq(0, some1.compare(Option::Some(1)))
+  assert_eq(0, some1.compare(Some(1)))
   assert_eq(-1, some1.compare(some2))
   assert_eq(1, some2.compare(some1))
   assert_eq(0, none.compare(none))

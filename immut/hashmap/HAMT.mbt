@@ -291,7 +291,7 @@ fn[K : Eq, V] Node::remove_with_path(
     Leaf(key1, value1, bucket) =>
       if key1 == key {
         match bucket {
-          @list.Empty => None
+          Empty => None
           More((key2, value2), tail~) => Some(Leaf(key2, value2, tail))
         }
       } else if bucket.find_index(kv => kv.0 == key) is Some(index) {

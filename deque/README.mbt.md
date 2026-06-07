@@ -11,7 +11,7 @@ Create an empty deque with `Deque([])`, or construct one from an array or iterat
 ```mbt check
 ///|
 test {
-  let dv : @deque.Deque[Int] = @deque.Deque([])
+  let dv : @deque.Deque[Int] = Deque([])
   @test.assert_eq(dv.is_empty(), true)
   let dv2 = @deque.from_array([1, 2, 3, 4, 5])
   @test.assert_eq(dv2.length(), 5)
@@ -25,7 +25,7 @@ Pre-allocate capacity to avoid resizing:
 ```mbt check
 ///|
 test {
-  let dv : @deque.Deque[Int] = @deque.Deque([], capacity=1024)
+  let dv : @deque.Deque[Int] = Deque([], capacity=1024)
   @test.assert_eq(dv.capacity(), 1024)
 }
 ```

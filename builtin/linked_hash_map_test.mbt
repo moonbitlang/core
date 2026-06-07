@@ -643,24 +643,24 @@ test "Map collision probe paths" {
   })
   debug_inspect(map.get(k1b), content="Some(30)")
   inspect(map[k1b], content="30")
-  inspect(map.get_or_default(LKey::LKey(4, 0), 99), content="99")
-  inspect(map.contains(LKey::LKey(5, 0)), content="false")
+  inspect(map.get_or_default(LKey(4, 0), 99), content="99")
+  inspect(map.contains(LKey(5, 0)), content="false")
 }
 
 ///|
 test "Map grow rehashes collision cluster in insertion order" {
   let map : Map[LKey, Int] = Map([], capacity=2)
   for i in 0..<12 {
-    map[LKey::LKey(i, i % 4)] = i * 10
+    map[LKey(i, i % 4)] = i * 10
   }
   inspect(map.length(), content="12")
   for i in 0..<12 {
-    @test.assert_eq(map.get(LKey::LKey(i, i % 4)), Some(i * 10))
+    @test.assert_eq(map.get(LKey(i, i % 4)), Some(i * 10))
   }
-  map.remove(LKey::LKey(5, 1))
-  @test.assert_eq(map.get(LKey::LKey(5, 1)), None)
-  map[LKey::LKey(12, 0)] = 120
-  @test.assert_eq(map.get(LKey::LKey(12, 0)), Some(120))
+  map.remove(LKey(5, 1))
+  @test.assert_eq(map.get(LKey(5, 1)), None)
+  map[LKey(12, 0)] = 120
+  @test.assert_eq(map.get(LKey(12, 0)), Some(120))
   debug_inspect(
     map.values().to_array(),
     content="[0, 10, 20, 30, 40, 60, 70, 80, 90, 100, 110, 120]",

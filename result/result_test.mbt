@@ -28,7 +28,7 @@ test "bind with Err" {
 
 ///|
 test "wrap0 with error" {
-  let f : () -> Int raise Failure = () => raise Failure::Failure("error")
+  let f : () -> Int raise Failure = () => raise Failure("error")
   try f() catch {
     e =>
       debug_inspect(
@@ -44,9 +44,7 @@ test "wrap0 with error" {
 
 ///|
 test "wrap2 with error result" {
-  let f : (Int, Int) -> Unit raise Failure = (_, _) => {
-    raise Failure::Failure("error")
-  }
+  let f : (Int, Int) -> Unit raise Failure = (_, _) => raise Failure("error")
   try f(1, 2) catch {
     e =>
       debug_inspect(

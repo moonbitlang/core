@@ -40,7 +40,7 @@ fn Regex::new(
   symbol_table : &@symbol_map.Table,
   symbol_repr : ReadOnlyArray[Rechar],
 ) -> Regex {
-  Regex::{
+  {
     profile,
     ctx,
     expr,
@@ -48,7 +48,7 @@ fn Regex::new(
     symbol_table,
     symbol_repr,
     start_states: [],
-    state_table: @hashmap.HashMap([]),
+    state_table: HashMap([]),
     states: [],
   }
 }

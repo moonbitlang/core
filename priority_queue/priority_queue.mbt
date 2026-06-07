@@ -303,8 +303,7 @@ pub fn[A] PriorityQueue::clear(self : PriorityQueue[A]) -> Unit {
 /// # Example
 /// ```mbt check
 /// test {
-///   let queue : @priority_queue.PriorityQueue[Int] = @priority_queue.PriorityQueue([],
-///   )
+///   let queue : @priority_queue.PriorityQueue[Int] = PriorityQueue([])
 ///   @test.assert_eq(queue.is_empty(), true)
 /// }
 /// ```

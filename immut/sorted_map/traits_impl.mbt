@@ -104,7 +104,7 @@ pub impl[V : @json.FromJson] @json.FromJson for SortedMap[String, V] with fn fro
   path,
 ) {
   guard json is Object(obj) else {
-    raise @json.JsonDecodeError(
+    raise JsonDecodeError(
       (path, "@immut/sorted_map.from_json: expected object"),
     )
   }

@@ -93,7 +93,7 @@ pub fn[K : Hash + Eq, V] HashMap::HashMap(
 ///
 /// ```mbt check
 /// test {
-///   let map : @hashmap.HashMap[String, Int] = @hashmap.HashMap([])
+///   let map : @hashmap.HashMap[String, Int] = HashMap([])
 ///   map.set("key", 42)
 ///   debug_inspect(map.get("key"), content="Some(42)")
 ///   map.set("key", 24) // update existing key
@@ -339,7 +339,7 @@ pub fn[K : Hash + Eq, V] HashMap::at(self : HashMap[K, V], key : K) -> V {
 ///
 /// ```mbt check
 /// test {
-///   let map : @hashmap.HashMap[String, Int] = @hashmap.HashMap([])
+///   let map : @hashmap.HashMap[String, Int] = HashMap([])
 ///   let value = map.get_or_init("key", () => 42)
 ///   inspect(value, content="42")
 ///   debug_inspect(map.get("key"), content="Some(42)")
@@ -411,10 +411,7 @@ pub fn[K : Hash + Eq, V] HashMap::get_or_init(
 ///
 /// ```mbt check
 /// test {
-///   let map : @hashmap.HashMap[String, Int] = @hashmap.HashMap([
-///     ("a", 1),
-///     ("b", 2),
-///   ])
+///   let map : @hashmap.HashMap[String, Int] = HashMap([("a", 1), ("b", 2)])
 ///
 ///   // Update existing value
 ///   map.update("a", fn(v) {
@@ -489,7 +486,7 @@ pub fn[K : Hash + Eq, V] HashMap::update(
 ///
 /// ```mbt check
 /// test {
-///   let counts : @hashmap.HashMap[String, Int] = @hashmap.HashMap([])
+///   let counts : @hashmap.HashMap[String, Int] = HashMap([])
 ///   counts.update_or_default("a", 1, x => x + 1)
 ///   counts.update_or_default("a", 1, x => x + 1)
 ///   counts.update_or_default("b", 1, x => x + 1)

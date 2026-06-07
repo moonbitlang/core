@@ -12,7 +12,7 @@ You can create an empty set using `HashSet([])` or construct it from entries usi
 ///|
 test {
   let _set1 = @hashset.HashSet([1, 2, 3, 4, 5])
-  let _set2 : @hashset.HashSet[String] = @hashset.HashSet([])
+  let _set2 : @hashset.HashSet[String] = HashSet([])
 }
 ```
 
@@ -23,7 +23,7 @@ You can use `insert()` to add a key to the set, and `contains()` to check whethe
 ```mbt check
 ///|
 test {
-  let set : @hashset.HashSet[String] = @hashset.HashSet([])
+  let set : @hashset.HashSet[String] = HashSet([])
   set.add("a")
   @test.assert_eq(set.contains("a"), true)
 }
@@ -60,7 +60,7 @@ Similarly, you can use `is_empty()` to check whether the set is empty.
 ```mbt check
 ///|
 test {
-  let set : @hashset.HashSet[Int] = @hashset.HashSet([])
+  let set : @hashset.HashSet[Int] = HashSet([])
   @test.assert_eq(set.is_empty(), true)
 }
 ```

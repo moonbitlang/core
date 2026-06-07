@@ -14,7 +14,7 @@
 
 ///|
 test "Result equality with Ok" {
-  let result1 : Result[Int, String] = Result::Ok(1)
+  let result1 : Result[Int, String] = Ok(1)
   let result2 = Result::Ok(1)
   let result3 = Result::Ok(2)
   @test.assert_eq(result1, result2)
@@ -23,7 +23,7 @@ test "Result equality with Ok" {
 
 ///|
 test "Result equality with Err" {
-  let result1 : Result[Int, String] = Result::Err("error")
+  let result1 : Result[Int, String] = Err("error")
   let result2 = Result::Err("error")
   let result3 = Result::Err("different error")
   @test.assert_eq(result1, result2)

@@ -357,7 +357,7 @@ pub fn Regex::execute(
   match self.re().execute(input, last_index) {
     None => None
     Some(result) =>
-      Some(MatchResult::{ input, group_names: self.re().group_names(), result })
+      Some({ input, group_names: self.re().group_names(), result })
   }
 }
 
