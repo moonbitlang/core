@@ -25,7 +25,7 @@ fn TranslateContext::new(
   ctx : @automata.Context,
   symbol_table : @symbol_map.Table,
 ) -> TranslateContext {
-  TranslateContext::{ ctx, pref: First, groups: [], symbol_table }
+  { ctx, pref: First, groups: [], symbol_table }
 }
 
 ///|
@@ -89,12 +89,12 @@ fn translate(
         @automata.e_seq(
           ctx~,
           First,
-          @automata.e_mark(ctx~, @automata.Mark(group_index * 2)),
+          @automata.e_mark(ctx~, Mark(group_index * 2)),
           @automata.e_seq(
             ctx~,
             First,
             cr,
-            @automata.e_mark(ctx~, @automata.Mark(group_index * 2 + 1)),
+            @automata.e_mark(ctx~, Mark(group_index * 2 + 1)),
           ),
         ),
         pref2,

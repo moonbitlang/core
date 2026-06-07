@@ -47,7 +47,7 @@ fn random_test_gen(rng : Random, times : Int, max_lvl : Int) -> Array[Op] {
         // concat
         let len = rng.int(limit=max_len)
         let a = Array::make(len, rng.int(limit=max_val))
-        ret.push(Op::Concat(a))
+        ret.push(Concat(a))
         continue cur_len + len
       }
       2 => {
@@ -57,7 +57,7 @@ fn random_test_gen(rng : Random, times : Int, max_lvl : Int) -> Array[Op] {
         }
         let idx = rng.int(limit=cur_len)
         let val = rng.int(limit=max_val)
-        ret.push(Op::Set(idx, val))
+        ret.push(Set(idx, val))
         continue cur_len
       }
       _ => abort("Invalid op")
@@ -131,7 +131,7 @@ fn check_array_eq(a : Array[Int], t : Vector[Int]) -> Unit raise {
 ///|
 /// Generate a random reference array of length `n`.
 fn random_array(n : Int) -> Array[Int] {
-  let rng = Random(@ref.Ref(0))
+  let rng = Random(Ref(0))
   Array::makei(n, i => rng.int(limit=i))
 }
 

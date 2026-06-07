@@ -57,13 +57,13 @@ suberror MyError {
 ///|
 fn maybe_raise(should_raise : Bool) -> Unit raise MyError {
   if should_raise {
-    raise MyError::NotFound("file.txt")
+    raise NotFound("file.txt")
   }
 }
 
 ///|
 fn raise_invalid() -> Unit raise MyError {
-  raise MyError::Invalid(reason="bad input")
+  raise Invalid(reason="bad input")
 }
 
 ///|

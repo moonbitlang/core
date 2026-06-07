@@ -1335,10 +1335,7 @@ test "ArrayView::windows shares backing" {
 ///|
 test "ArrayView::strip_prefix basic" {
   let v = [1, 2, 3, 4, 5][:]
-  debug_inspect(
-    v.strip_prefix([1, 2]),
-    content="Some(<ArrayView: [3, 4, 5]>)",
-  )
+  debug_inspect(v.strip_prefix([1, 2]), content="Some(<ArrayView: [3, 4, 5]>)")
   debug_inspect(v.strip_prefix([2, 3]), content="None")
 }
 
@@ -1382,10 +1379,7 @@ test "ArrayView::strip_prefix shares backing" {
 ///|
 test "ArrayView::strip_suffix basic" {
   let v = [1, 2, 3, 4, 5][:]
-  debug_inspect(
-    v.strip_suffix([4, 5]),
-    content="Some(<ArrayView: [1, 2, 3]>)",
-  )
+  debug_inspect(v.strip_suffix([4, 5]), content="Some(<ArrayView: [1, 2, 3]>)")
   debug_inspect(v.strip_suffix([3, 4]), content="None")
 }
 

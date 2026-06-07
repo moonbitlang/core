@@ -64,7 +64,7 @@ pub fn[A] LazyList::lazy_cons(
   head : A,
   tail : () -> LazyList[A],
 ) -> LazyList[A] {
-  { cell: Cons(head, tail=@lazy.Lazy(tail)) }
+  { cell: Cons(head, tail=Lazy(tail)) }
 }
 
 ///|

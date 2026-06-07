@@ -38,7 +38,7 @@ fn State::new(desc : @automata.State, num_symbols : Int) -> State {
     Match(_) | Failed => true
     Running => false
   }
-  State::{
+  {
     kind: if is_break {
       Break
     } else {

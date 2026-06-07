@@ -24,7 +24,7 @@ fn[A] new_queue() -> Queue[A] {
 /// ```mbt check
 /// test {
 ///   let array = Array::makei(3, idx => idx + 1)
-///   let queue : @queue.Queue[Int] = @queue.Queue(array)
+///   let queue : @queue.Queue[Int] = Queue(array)
 ///   @test.assert_eq(queue.length(), 3)
 /// }
 /// ```
@@ -81,7 +81,7 @@ pub fn[A] Queue::clear(self : Queue[A]) -> Unit {
 /// # Example
 /// ```mbt check
 /// test {
-///   let queue : @queue.Queue[Int] = @queue.Queue([])
+///   let queue : @queue.Queue[Int] = Queue([])
 ///   @test.assert_eq(queue.length(), 0)
 /// }
 /// ```
@@ -95,7 +95,7 @@ pub fn[A] Queue::length(self : Queue[A]) -> Int {
 /// # Example
 /// ```mbt check
 /// test {
-///   let queue : @queue.Queue[Int] = @queue.Queue([])
+///   let queue : @queue.Queue[Int] = Queue([])
 ///   assert_true(queue.is_empty())
 /// }
 /// ```
@@ -109,7 +109,7 @@ pub fn[A] Queue::is_empty(self : Queue[A]) -> Bool {
 /// # Example
 /// ```mbt check
 /// test {
-///   let queue : @queue.Queue[Int] = @queue.Queue([])
+///   let queue : @queue.Queue[Int] = Queue([])
 ///   queue.push(1)
 /// }
 /// ```
@@ -270,7 +270,7 @@ pub fn[A] Queue::eachi(self : Queue[A], f : (Int, A) -> Unit) -> Unit {
 /// # Example
 /// ```mbt check
 /// test {
-///   let queue : @queue.Queue[Int] = @queue.Queue([])
+///   let queue : @queue.Queue[Int] = Queue([])
 ///   let sum = queue.fold(init=0, (acc, x) => acc + x)
 ///   @test.assert_eq(sum, 0)
 /// }
@@ -322,7 +322,7 @@ pub fn[A] Queue::copy(self : Queue[A]) -> Queue[A] {
 /// # Example
 /// ```mbt check
 /// test {
-///   let dst : @queue.Queue[Int] = @queue.Queue([])
+///   let dst : @queue.Queue[Int] = Queue([])
 ///   let src : @queue.Queue[Int] = @queue.from_array([5, 6, 7, 8])
 ///   src.transfer(dst)
 /// }

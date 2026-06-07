@@ -87,7 +87,7 @@ fn State::new(
   cat : @shared_types.Category,
   desc : ThreadSet,
 ) -> State {
-  State::{ slot, cat, desc, hash: (slot, cat, desc).hash() }
+  { slot, cat, desc, hash: (slot, cat, desc).hash() }
 }
 
 ///|

@@ -12,7 +12,7 @@ You can create an empty map using `HashMap([])` or construct it from entries usi
 ///|
 test {
   let _map1 = @hashmap.HashMap([("a", 1), ("b", 2)])
-  let _map2 : @hashmap.HashMap[String, Int] = @hashmap.HashMap([])
+  let _map2 : @hashmap.HashMap[String, Int] = HashMap([])
 }
 ```
 
@@ -23,7 +23,7 @@ You can use `set()` to add a key-value pair to the map, and use `get()` to get a
 ```mbt check
 ///|
 test {
-  let map : @hashmap.HashMap[String, Int] = @hashmap.HashMap([])
+  let map : @hashmap.HashMap[String, Int] = HashMap([])
   map.set("a", 1)
   @test.assert_eq(map.get("a"), Some(1))
   @test.assert_eq(map.get_or_default("a", 0), 1)
@@ -77,7 +77,7 @@ Similarly, you can use `is_empty()` to check whether the map is empty.
 ```mbt check
 ///|
 test {
-  let map : @hashmap.HashMap[String, Int] = @hashmap.HashMap([])
+  let map : @hashmap.HashMap[String, Int] = HashMap([])
   @test.assert_eq(map.is_empty(), true)
 }
 ```
@@ -129,7 +129,7 @@ Use `get_or_init()` to get a value or initialize it if missing:
 ```mbt check
 ///|
 test {
-  let map : @hashmap.HashMap[String, Int] = @hashmap.HashMap([])
+  let map : @hashmap.HashMap[String, Int] = HashMap([])
   let val = map.get_or_init("key", () => 42)
   @test.assert_eq(val, 42)
   @test.assert_eq(map.get("key"), Some(42))

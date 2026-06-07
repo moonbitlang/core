@@ -32,10 +32,7 @@ impl Hash for HashSetKey with fn hash_combine(self, hasher) {
 
 ///|
 test "new_with_capacity_then_add " {
-  let set : @hashset.HashSet[(String, String)] = @hashset.HashSet(
-    [],
-    capacity=20,
-  )
+  let set : @hashset.HashSet[(String, String)] = HashSet([], capacity=20)
   set.add(("None", "Hash"))
   debug_inspect(
     set,
@@ -55,7 +52,7 @@ test "to_array" {
 
 ///|
 test "add_and_check" {
-  let set : @hashset.HashSet[String] = @hashset.HashSet([])
+  let set : @hashset.HashSet[String] = HashSet([])
   inspect(set.add_and_check("key"), content="true") // First insertion
   inspect(set.add_and_check("key"), content="false") // Already exists
   inspect(set.length(), content="1")
@@ -97,14 +94,14 @@ test "to_json" {
 
 ///|
 test "new" {
-  let m : @hashset.HashSet[Int] = @hashset.HashSet([])
+  let m : @hashset.HashSet[Int] = HashSet([])
   @test.assert_eq(m.capacity(), default_init_capacity)
   inspect(m.length(), content="0")
 }
 
 ///|
 test "new with zero capacity grows on insert" {
-  let m : @hashset.HashSet[Int] = @hashset.HashSet([], capacity=0)
+  let m : @hashset.HashSet[Int] = HashSet([], capacity=0)
   m.add(1)
   assert_true(m.contains(1))
   assert_true(m.capacity() > 0)
@@ -343,18 +340,18 @@ test "insert_and_grow" {
 
 ///|
 test "grow rehashes collision cluster" {
-  let set : @hashset.HashSet[HashSetKey] = @hashset.HashSet([], capacity=2)
+  let set : @hashset.HashSet[HashSetKey] = HashSet([], capacity=2)
   for i in 0..<12 {
-    set.add(HashSetKey::HashSetKey(i, i % 4))
+    set.add(HashSetKey(i, i % 4))
   }
   inspect(set.length(), content="12")
   for i in 0..<12 {
-    assert_true(set.contains(HashSetKey::HashSetKey(i, i % 4)))
+    assert_true(set.contains(HashSetKey(i, i % 4)))
   }
-  set.remove(HashSetKey::HashSetKey(5, 1))
-  assert_false(set.contains(HashSetKey::HashSetKey(5, 1)))
-  set.add(HashSetKey::HashSetKey(12, 0))
-  assert_true(set.contains(HashSetKey::HashSetKey(12, 0)))
+  set.remove(HashSetKey(5, 1))
+  assert_false(set.contains(HashSetKey(5, 1)))
+  set.add(HashSetKey(12, 0))
+  assert_true(set.contains(HashSetKey(12, 0)))
   inspect(set.length(), content="12")
 }
 
@@ -453,7 +450,7 @@ test "hashset arbitrary" {
 
 ///|
 test "@hashset.to_array/empty" {
-  let set : @hashset.HashSet[Int] = @hashset.HashSet([])
+  let set : @hashset.HashSet[Int] = HashSet([])
   debug_inspect(set.to_array(), content="[]")
 }
 
@@ -506,7 +503,7 @@ test "retain/none_removed" {
 
 ///|
 test "retain/empty_set" {
-  let set : @hashset.HashSet[Int] = @hashset.HashSet([])
+  let set : @hashset.HashSet[Int] = HashSet([])
   set.retain(_x => true)
   @test.assert_eq(set.length(), 0)
 }

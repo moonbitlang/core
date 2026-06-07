@@ -228,7 +228,7 @@ pub fn[K, V] HashMap::length(self : HashMap[K, V]) -> Int {
 ///
 /// ```mbt check
 /// test {
-///   let map : @hashmap.HashMap[Int, String] = @hashmap.HashMap([], capacity=16)
+///   let map : @hashmap.HashMap[Int, String] = HashMap([], capacity=16)
 ///   inspect(map.capacity(), content="16")
 /// }
 /// ```
@@ -250,7 +250,7 @@ pub fn[K, V] HashMap::capacity(self : HashMap[K, V]) -> Int {
 ///
 /// ```mbt check
 /// test {
-///   let map : @hashmap.HashMap[String, Int] = @hashmap.HashMap([])
+///   let map : @hashmap.HashMap[String, Int] = HashMap([])
 ///   inspect(map.is_empty(), content="true")
 ///   map.set("key", 42)
 ///   inspect(map.is_empty(), content="false")

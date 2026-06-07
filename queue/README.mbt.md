@@ -9,7 +9,7 @@ You can create a queue manually by using the `new` or construct it using the `fr
 ```mbt check
 ///|
 test {
-  let _queue : @queue.Queue[Int] = @queue.Queue([])
+  let _queue : @queue.Queue[Int] = Queue([])
   let _queue1 = @queue.from_array([1, 2, 3])
 }
 ```

@@ -34,5 +34,5 @@ pub fn Profile::Profile(
 ) -> Profile {
   guard valid.first_interval() is Some((lb, _)) else { panic() }
   guard valid.last_interval() is Some((_, ub)) else { panic() }
-  Profile::{ lb, ub, valid, word, word_symbolize_splits, category }
+  { lb, ub, valid, word, word_symbolize_splits, category }
 }

@@ -247,7 +247,7 @@ test "compare" {
   let err1 = Result::Err(1)
   let err2 = Result::Err(2)
   assert_eq(0, ok1.compare(ok1))
-  assert_eq(0, err2.compare(Result::Err(2)))
+  assert_eq(0, err2.compare(Err(2)))
   assert_eq(-1, ok1.compare(ok2))
   assert_eq(1, ok2.compare(ok1))
   assert_eq(-1, err1.compare(err2))

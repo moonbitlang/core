@@ -14,11 +14,11 @@
 
 ///|
 test {
-  @test.assert_eq((Option::None : Unit?), Option::None)
-  @test.assert_eq(Option::Some(1), Option::Some(1))
-  @test.assert_not_eq(Option::Some(1), Option::Some(2))
-  @test.assert_not_eq(Option::None, Option::Some(1))
-  @test.assert_not_eq(Option::Some(1), Option::None)
+  @test.assert_eq((None : Unit?), None)
+  @test.assert_eq(Option::Some(1), Some(1))
+  @test.assert_not_eq(Option::Some(1), Some(2))
+  @test.assert_not_eq(Option::None, Some(1))
+  @test.assert_not_eq(Option::Some(1), None)
 }
 
 ///|

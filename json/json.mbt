@@ -296,7 +296,7 @@ pub fn Json::stringify(
               buf.write_char('{')
               buf.write_string(indent_str(depth, indent))
               // After child value printed, we resume from this frame
-              stack.push(WriteFrame::Object(members.iter(), first=true))
+              stack.push(Object(members.iter(), first=true))
             }
           Array(arr) =>
             if arr.is_empty() {
@@ -305,7 +305,7 @@ pub fn Json::stringify(
               depth += 1
               buf.write_char('[')
               buf.write_string(indent_str(depth, indent))
-              stack.push(WriteFrame::Array(arr, i=0))
+              stack.push(Array(arr, i=0))
             }
           String(s) => {
             buf.write_char('\"')
@@ -327,7 +327,7 @@ pub fn Json::stringify(
         // No current node to write; try to resume a pending container
         match stack {
           [] => break
-          [.., WriteFrame::Array(arr, i~) as frame] =>
+          [.., Array(arr, i~) as frame] =>
             if i < arr.length() {
               let element = arr[i]
               frame.i = i + 1
@@ -343,7 +343,7 @@ pub fn Json::stringify(
               buf.write_char(']')
               continue None
             }
-          [.., WriteFrame::Object(iterator, first~) as frame] =>
+          [.., Object(iterator, first~) as frame] =>
             match iterator.next() {
               Some((k, v)) => {
                 let mut v2 = v
@@ -436,7 +436,7 @@ fn escape(str : String, escape_slash~ : Bool) -> String {
 ///   // Remove sensitive data and double numeric values  
 ///   ignore(
 ///     json.transform(
-///       @json.Replacer((key, value) => {
+///       Replacer((key, value) => {
 ///         match key {
 ///           "password" => None // exclude password fields
 ///           _ =>
@@ -501,7 +501,7 @@ pub fn json_inspect(
     Some(x) => x.stringify(escape_slash=false)
   }
   if actual != want {
-    raise InspectError::InspectError(
+    raise InspectError(
       "@EXPECT_FAILED {\"loc\": \{loc}, \"args_loc\": \{args_loc}, \"expect\": \{want.escape()}, \"actual\": \{actual.escape()}, \"mode\": \"json\"}",
     )
   }

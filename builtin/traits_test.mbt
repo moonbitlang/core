@@ -70,8 +70,8 @@ impl Logger for TestLogger with fn write_view(self, value) {
 test "Eq helpers" {
   inspect(Eq::not_equal(1, 2), content="true")
   inspect(Eq::equal(3, 3), content="true")
-  let a : Pair = Pair::{ left: 1, right: 2 }
-  let b : Pair = Pair::{ left: 1, right: 3 }
+  let a : Pair = { left: 1, right: 2 }
+  let b : Pair = { left: 1, right: 3 }
   inspect(Eq::not_equal(a, b), content="true")
 }
 
