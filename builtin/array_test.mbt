@@ -58,7 +58,7 @@ test "array_get" {
 
 ///|
 test "array_set" {
-  let arr = [1, 2, 3]
+  let arr : FixedArray[Int] = [1, 2, 3]
   arr[1] = 42
   @test.assert_eq(arr[1], 42)
 }

@@ -1071,7 +1071,7 @@ test "ArrayView::rev does not mutate source" {
 
 ///|
 test "ArrayView::rev result is independent" {
-  let arr = [1, 2, 3, 4]
+  let arr : FixedArray[Int] = [1, 2, 3, 4]
   let v = arr[:]
   let r = v.rev()
   arr[0] = 99
@@ -1203,7 +1203,7 @@ test "ArrayView::chunks on sliced view" {
 
 ///|
 test "ArrayView::chunks shares backing" {
-  let arr = [1, 2, 3, 4]
+  let arr : FixedArray[Int] = [1, 2, 3, 4]
   let parts = arr[:].chunks(2)
   arr[0] = 99
   arr[3] = 88
@@ -1321,7 +1321,7 @@ test "ArrayView::windows on sliced view" {
 
 ///|
 test "ArrayView::windows shares backing" {
-  let arr = [1, 2, 3, 4]
+  let arr : FixedArray[Int] = [1, 2, 3, 4]
   let ws = arr[:].windows(2)
   arr[1] = 99
   debug_inspect(
@@ -1365,7 +1365,7 @@ test "ArrayView::strip_prefix on sliced view" {
 
 ///|
 test "ArrayView::strip_prefix shares backing" {
-  let arr = [1, 2, 3, 4, 5]
+  let arr : FixedArray[Int] = [1, 2, 3, 4, 5]
   guard arr[:].strip_prefix([1, 2]) is Some(rest)
   arr[2] = 99
   debug_inspect(

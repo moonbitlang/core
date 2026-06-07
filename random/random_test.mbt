@@ -76,7 +76,7 @@ test "panic random with invalid seed length" {
 ///|
 test "panic negative limit in shuffle" {
   let r = @random.Rand::new()
-  let arr = [1, 2, 3]
+  let arr : FixedArray[Int] = [1, 2, 3]
   r.shuffle(-1, (i : Int, j : Int) => {
     let t = arr[i]
     arr[i] = arr[j]
