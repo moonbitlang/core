@@ -963,7 +963,7 @@ test "@builtin.join/multiple_elements_without_separator" {
 
 ///|
 test "@builtin.join/any_to_string_view_element" {
-  let iter : Iter[StringView] = ["a"[:], "b"[:], "c"[:]].iter()
+  let iter : Iter[StringView] = ["a"[:], "b", "c"].iter()
   inspect(iter.join("-"), content="a-b-c")
 }
 

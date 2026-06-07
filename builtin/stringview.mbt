@@ -135,7 +135,7 @@ pub fn StringView::unsafe_get(self : StringView, index : Int) -> UInt16 {
 /// This method yields code units, not Unicode characters. Surrogate pairs are
 /// represented as two `UInt16` values.
 pub fn StringView::code_units(self : StringView) -> ArrayView[UInt16] {
-  Array::makei(self.length(), i => self.unsafe_get(i))[:]
+  Array::makei(self.length(), i => self.unsafe_get(i))
 }
 
 ///|

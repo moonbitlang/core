@@ -136,7 +136,7 @@ test "ReadOnlyArray trait implementations" {
   inspect(str_arr.join(","), content="a,b,c")
 
   // Test join for any ToStringView element (here: StringView).
-  let view_arr : ReadOnlyArray[StringView] = ["a"[:], "b"[:], "c"[:]]
+  let view_arr : ReadOnlyArray[StringView] = ["a", "b", "c"]
   inspect(view_arr.join("-"), content="a-b-c")
 }
 
@@ -284,23 +284,23 @@ test "ReadOnlyArray chunk_by and suffixes" {
 test "ReadOnlyArray strip_prefix and strip_suffix" {
   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
   debug_inspect(
-    arr.strip_prefix([1, 2][:]),
+    arr.strip_prefix([1, 2]),
     content=(
       #|Some(<ArrayView: [3, 4, 5]>)
     ),
   )
-  debug_inspect(arr.strip_prefix([2, 3][:]), content="None")
+  debug_inspect(arr.strip_prefix([2, 3]), content="None")
   debug_inspect(
-    arr.strip_suffix([4, 5][:]),
+    arr.strip_suffix([4, 5]),
     content=(
       #|Some(<ArrayView: [1, 2, 3]>)
     ),
   )
-  debug_inspect(arr.strip_suffix([3, 4][:]), content="None")
+  debug_inspect(arr.strip_suffix([3, 4]), content="None")
 
   // Empty prefix / suffix returns the full / empty trailing view.
   debug_inspect(
-    arr.strip_prefix([][:]),
+    arr.strip_prefix([]),
     content=(
       #|Some(<ArrayView: [1, 2, 3, 4, 5]>)
     ),

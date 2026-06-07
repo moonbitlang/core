@@ -1544,7 +1544,7 @@ test "FixedArray::join" {
   let fixed_array_empty : FixedArray[String] = []
   inspect(fixed_array_empty.join(","), content="")
   // Any ToStringView element type works (here: StringView).
-  let view_array : FixedArray[StringView] = ["a"[:], "b"[:], "c"[:]]
+  let view_array : FixedArray[StringView] = ["a", "b", "c"]
   inspect(view_array.join("-"), content="a-b-c")
 }
 

@@ -922,7 +922,7 @@ pub fn[T : Eq] Array::ends_with(self : Array[T], suffix : ArrayView[T]) -> Bool 
 /// ```mbt check
 /// test {
 ///   let v = [1, 2, 3, 4, 5]
-///   let v2 = v.strip_prefix([1, 2][:])
+///   let v2 = v.strip_prefix([1, 2])
 ///   debug_inspect(
 ///     v2,
 ///     content=(
@@ -949,7 +949,7 @@ pub fn[T : Eq] Array::strip_prefix(
 /// ```mbt check
 /// test {
 ///   let v = [3, 4, 5]
-///   let v2 = v.strip_suffix([5][:])
+///   let v2 = v.strip_suffix([5])
 ///   debug_inspect(
 ///     v2,
 ///     content=(

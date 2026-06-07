@@ -233,7 +233,7 @@ pub fn String::to_array(self : String) -> Array[Char] {
 /// This method yields code units, not Unicode characters. Surrogate pairs are
 /// represented as two `UInt16` values.
 pub fn String::code_units(self : String) -> ArrayView[UInt16] {
-  Array::makei(self.length(), i => self.unsafe_get(i))[:]
+  Array::makei(self.length(), i => self.unsafe_get(i))
 }
 
 ///|

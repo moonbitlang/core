@@ -406,17 +406,17 @@ test "lexical_compare" {
 ///|
 test "array_strip_prefix" {
   let arr = [1, 2, 3]
-  debug_inspect(arr.strip_prefix([1, 2][:]), content="Some(<ArrayView: [3]>)")
-  debug_inspect(arr.strip_prefix([1, 2, 3][:]), content="Some(<ArrayView: []>)")
-  debug_inspect(arr.strip_prefix([2, 3][:]), content="None")
+  debug_inspect(arr.strip_prefix([1, 2]), content="Some(<ArrayView: [3]>)")
+  debug_inspect(arr.strip_prefix([1, 2, 3]), content="Some(<ArrayView: []>)")
+  debug_inspect(arr.strip_prefix([2, 3]), content="None")
 }
 
 ///|
 test "array_strip_suffix" {
   let arr = [1, 2, 3]
-  debug_inspect(arr.strip_suffix([2, 3][:]), content="Some(<ArrayView: [1]>)")
-  debug_inspect(arr.strip_suffix([1, 2, 3][:]), content="Some(<ArrayView: []>)")
-  debug_inspect(arr.strip_suffix([1, 2][:]), content="None")
+  debug_inspect(arr.strip_suffix([2, 3]), content="Some(<ArrayView: [1]>)")
+  debug_inspect(arr.strip_suffix([1, 2, 3]), content="Some(<ArrayView: []>)")
+  debug_inspect(arr.strip_suffix([1, 2]), content="None")
 }
 
 ///|
