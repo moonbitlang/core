@@ -136,7 +136,7 @@ test "of" {
 
 ///|
 test "from_array" {
-  let arr = ["a", "b", "c"]
+  let arr : ReadOnlyArray[String] = ["a", "b", "c"]
   let m = @hashset.from_array(arr)
   assert_true(m.contains("a"))
   assert_true(m.contains("b"))
@@ -421,7 +421,7 @@ test "from_iter empty iter" {
 ///|
 test "hashset arbitrary" {
   let samples : Array[@hashset.HashSet[Int]] = @quickcheck.samples(20)
-  let cases = [
+  let cases : ReadOnlyArray[@hashset.HashSet[Int]] = [
     @hashset.from_array([]),
     @hashset.from_array([]),
     @hashset.from_array([]),

@@ -121,7 +121,7 @@ pub fn[T, K : Compare] MutArrayView::sort_by_key(
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let view = arr[1:4]
 ///   inspect(view.is_sorted(), content="true")
-///   let descending = [5, 4, 3, 2, 1]
+///   let descending : ReadOnlyArray[Int] = [5, 4, 3, 2, 1]
 ///   inspect(descending[:].is_sorted(), content="false")
 /// }
 /// ```

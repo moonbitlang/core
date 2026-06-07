@@ -148,7 +148,7 @@ pub fn[T] Array::capacity(self : Array[T]) -> Int {
 ///
 /// ```mbt check
 /// test {
-///   let arr = [1, 2, 3]
+///   let arr : Array[Int] = [1, 2, 3]
 ///   inspect(arr.unsafe_get(1), content="2")
 /// }
 /// ```
@@ -175,7 +175,7 @@ pub fn[T] Array::unsafe_get(self : Array[T], idx : Int) -> T {
 ///
 /// ```mbt check
 /// test {
-///   let arr = [1, 2, 3]
+///   let arr : ReadOnlyArray[Int] = [1, 2, 3]
 ///   inspect(arr[1], content="2")
 /// }
 /// ```
@@ -403,11 +403,11 @@ pub impl[T] Add for Array[T] with fn add(self, other) {
 /// ```mbt check
 /// test {
 ///   let v1 = [1, 2, 3]
-///   let v2 = [4, 5, 6]
+///   let v2 : ReadOnlyArray[Int] = [4, 5, 6]
 ///   v1.append(v2)
 ///   debug_inspect(v1, content="[1, 2, 3, 4, 5, 6]")
 ///   let v1 = [1, 2, 3]
-///   let v2 : Array[Int] = []
+///   let v2 : ReadOnlyArray[Int] = []
 ///   v1.append(v2)
 ///   debug_inspect(v1, content="[1, 2, 3]")
 /// }

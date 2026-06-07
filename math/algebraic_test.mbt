@@ -55,7 +55,7 @@ test "@math.hypotf" {
 
 ///|
 test "@math.hypot small ratio" {
-  let ys = [0.0]
+  let ys : ReadOnlyArray[Double] = [0.0]
   let small = @math.hypot(1.0, ys[0])
   assert_true(small.is_close(1.0))
 }

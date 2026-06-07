@@ -150,7 +150,7 @@ test "add_empty" {
 ///
 /// ```mbt check
 /// test {
-///   let arr = [1, 2, 3, 4, 5]
+///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
 ///   let dq = @deque.Deque(arr)
 ///   @debug.debug_inspect(
 ///     dq,
