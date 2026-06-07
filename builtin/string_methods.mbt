@@ -327,9 +327,9 @@ test "has_prefix" {
 ///
 /// ```mbt check
 /// test {
-///   assert_true("hello world".strip_suffix(" world") == Some("hello"[:]))
+///   assert_true("hello world".strip_suffix(" world") == Some("hello"))
 ///   assert_true("hello world".strip_suffix(" moon") == None)
-///   assert_true("hello".strip_suffix("hello") == Some(""[:]))
+///   assert_true("hello".strip_suffix("hello") == Some(""))
 /// }
 /// ```
 #alias(chop_suffix)
@@ -339,26 +339,26 @@ pub fn String::strip_suffix(self : String, suffix : StringView) -> StringView? {
 
 ///|
 test "strip_prefix" {
-  assert_true("hello world".strip_prefix("hello ") == Some("world"[:]))
+  assert_true("hello world".strip_prefix("hello ") == Some("world"))
   assert_true("hello world".strip_prefix("hi ") == None)
-  assert_true("hello".strip_prefix("hello") == Some(""[:]))
-  assert_true("".strip_prefix("") == Some(""[:]))
+  assert_true("hello".strip_prefix("hello") == Some(""))
+  assert_true("".strip_prefix("") == Some(""))
   assert_true("".strip_prefix("a") == None)
-  assert_true("abc".strip_prefix("") == Some("abc"[:]))
-  assert_true("😀hello".strip_prefix("😀") == Some("hello"[:]))
-  assert_true("😀😃hello".strip_prefix("😀😃") == Some("hello"[:]))
+  assert_true("abc".strip_prefix("") == Some("abc"))
+  assert_true("😀hello".strip_prefix("😀") == Some("hello"))
+  assert_true("😀😃hello".strip_prefix("😀😃") == Some("hello"))
 }
 
 ///|
 test "strip_suffix" {
-  assert_true("hello world".strip_suffix(" world") == Some("hello"[:]))
+  assert_true("hello world".strip_suffix(" world") == Some("hello"))
   assert_true("hello world".strip_suffix(" moon") == None)
-  assert_true("hello".strip_suffix("hello") == Some(""[:]))
-  assert_true("".strip_suffix("") == Some(""[:]))
+  assert_true("hello".strip_suffix("hello") == Some(""))
+  assert_true("".strip_suffix("") == Some(""))
   assert_true("".strip_suffix("a") == None)
-  assert_true("abc".strip_suffix("") == Some("abc"[:]))
-  assert_true("hello😀".strip_suffix("😀") == Some("hello"[:]))
-  assert_true("hello😀😃".strip_suffix("😀😃") == Some("hello"[:]))
+  assert_true("abc".strip_suffix("") == Some("abc"))
+  assert_true("hello😀".strip_suffix("😀") == Some("hello"))
+  assert_true("hello😀😃".strip_suffix("😀😃") == Some("hello"))
 }
 
 ///|
@@ -372,9 +372,9 @@ test "strip_suffix" {
 ///
 /// ```mbt check
 /// test {
-///   assert_true("hello world".strip_prefix("hello ") == Some("world"[:]))
+///   assert_true("hello world".strip_prefix("hello ") == Some("world"))
 ///   assert_true("hello world".strip_prefix("hi ") == None)
-///   assert_true("hello".strip_prefix("hello") == Some(""[:]))
+///   assert_true("hello".strip_prefix("hello") == Some(""))
 /// }
 /// ```
 #alias(chop_prefix)
@@ -394,9 +394,9 @@ pub fn String::strip_prefix(self : String, prefix : StringView) -> StringView? {
 /// ```mbt check
 /// test {
 ///   let view = "hello world"[:]
-///   assert_true(view.strip_prefix("hello ") == Some("world"[:]))
+///   assert_true(view.strip_prefix("hello ") == Some("world"))
 ///   assert_true(view.strip_prefix("hi ") == None)
-///   assert_true(view.strip_prefix("hello world") == Some(""[:]))
+///   assert_true(view.strip_prefix("hello world") == Some(""))
 /// }
 /// ```
 #alias(chop_prefix)
@@ -424,9 +424,9 @@ pub fn StringView::strip_prefix(
 /// ```mbt check
 /// test {
 ///   let view = "hello world"[:]
-///   assert_true(view.strip_suffix(" world") == Some("hello"[:]))
+///   assert_true(view.strip_suffix(" world") == Some("hello"))
 ///   assert_true(view.strip_suffix(" moon") == None)
-///   assert_true(view.strip_suffix("hello world") == Some(""[:]))
+///   assert_true(view.strip_suffix("hello world") == Some(""))
 /// }
 /// ```
 #alias(chop_suffix)
@@ -478,30 +478,30 @@ pub fn StringView::to_bytes(self : StringView) -> Bytes {
 ///|
 test "View::strip_prefix" {
   let view = "hello world"[:]
-  assert_true(view.strip_prefix("hello ") == Some("world"[:]))
+  assert_true(view.strip_prefix("hello ") == Some("world"))
   assert_true(view.strip_prefix("hi ") == None)
-  assert_true(view.strip_prefix("hello world") == Some(""[:]))
-  assert_true(view.strip_prefix("") == Some("hello world"[:]))
+  assert_true(view.strip_prefix("hello world") == Some(""))
+  assert_true(view.strip_prefix("") == Some("hello world"))
   let empty_view = ""[:]
-  assert_true(empty_view.strip_prefix("") == Some(""[:]))
+  assert_true(empty_view.strip_prefix("") == Some(""))
   assert_true(empty_view.strip_prefix("a") == None)
   let unicode_view = "😀hello😃"[:]
-  assert_true(unicode_view.strip_prefix("😀") == Some("hello😃"[:]))
+  assert_true(unicode_view.strip_prefix("😀") == Some("hello😃"))
   assert_true(unicode_view.strip_prefix("😃") == None)
 }
 
 ///|
 test "View::strip_suffix" {
   let view = "hello world"[:]
-  assert_true(view.strip_suffix(" world") == Some("hello"[:]))
+  assert_true(view.strip_suffix(" world") == Some("hello"))
   assert_true(view.strip_suffix(" moon") == None)
-  assert_true(view.strip_suffix("hello world") == Some(""[:]))
-  assert_true(view.strip_suffix("") == Some("hello world"[:]))
+  assert_true(view.strip_suffix("hello world") == Some(""))
+  assert_true(view.strip_suffix("") == Some("hello world"))
   let empty_view = ""[:]
-  assert_true(empty_view.strip_suffix("") == Some(""[:]))
+  assert_true(empty_view.strip_suffix("") == Some(""))
   assert_true(empty_view.strip_suffix("a") == None)
   let unicode_view = "😀hello😃"[:]
-  assert_true(unicode_view.strip_suffix("😃") == Some("😀hello"[:]))
+  assert_true(unicode_view.strip_suffix("😃") == Some("😀hello"))
   assert_true(unicode_view.strip_suffix("😀") == None)
 }
 
@@ -1218,7 +1218,7 @@ pub fn String::after(self : String, needle : StringView) -> StringView? {
 ///
 /// ```mbt check
 /// test {
-///   assert_true("a::b::c".rev_split_once("::") == Some(("a::b"[:], "c"[:])))
+///   assert_true("a::b::c".rev_split_once("::") == Some(("a::b", "c")))
 ///   assert_true("nope".rev_split_once("::") == None)
 /// }
 /// ```
@@ -1247,7 +1247,7 @@ pub fn StringView::rev_split_once(
 ///
 /// ```mbt check
 /// test {
-///   assert_true("a::b::c".rev_split_once("::") == Some(("a::b"[:], "c"[:])))
+///   assert_true("a::b::c".rev_split_once("::") == Some(("a::b", "c")))
 /// }
 /// ```
 pub fn String::rev_split_once(
@@ -1266,7 +1266,7 @@ pub fn String::rev_split_once(
 ///
 /// ```mbt check
 /// test {
-///   assert_true("a/b/c.txt".rev_before("/") == Some("a/b"[:]))
+///   assert_true("a/b/c.txt".rev_before("/") == Some("a/b"))
 /// }
 /// ```
 pub fn StringView::rev_before(
@@ -1288,7 +1288,7 @@ pub fn StringView::rev_before(
 ///
 /// ```mbt check
 /// test {
-///   assert_true("a/b/c.txt".rev_before("/") == Some("a/b"[:]))
+///   assert_true("a/b/c.txt".rev_before("/") == Some("a/b"))
 /// }
 /// ```
 pub fn String::rev_before(self : String, needle : StringView) -> StringView? {
@@ -1304,7 +1304,7 @@ pub fn String::rev_before(self : String, needle : StringView) -> StringView? {
 ///
 /// ```mbt check
 /// test {
-///   assert_true("a/b/c.txt".rev_after("/") == Some("c.txt"[:]))
+///   assert_true("a/b/c.txt".rev_after("/") == Some("c.txt"))
 /// }
 /// ```
 pub fn StringView::rev_after(
@@ -1326,7 +1326,7 @@ pub fn StringView::rev_after(
 ///
 /// ```mbt check
 /// test {
-///   assert_true("a/b/c.txt".rev_after("/") == Some("c.txt"[:]))
+///   assert_true("a/b/c.txt".rev_after("/") == Some("c.txt"))
 /// }
 /// ```
 pub fn String::rev_after(self : String, needle : StringView) -> StringView? {
@@ -1374,34 +1374,34 @@ test "split" {
 
 ///|
 test "split_once before after" {
-  assert_true("a=b=c".split_once("=") == Some(("a"[:], "b=c"[:])))
-  assert_true("a=b=c".before("=") == Some("a"[:]))
-  assert_true("a=b=c".after("=") == Some("b=c"[:]))
+  assert_true("a=b=c".split_once("=") == Some(("a", "b=c")))
+  assert_true("a=b=c".before("=") == Some("a"))
+  assert_true("a=b=c".after("=") == Some("b=c"))
   assert_true("nope".split_once("=") == None)
   assert_true("nope".before("=") == None)
   assert_true("nope".after("=") == None)
-  assert_true("".split_once("") == Some((""[:], ""[:])))
-  assert_true("".before("") == Some(""[:]))
-  assert_true("".after("") == Some(""[:]))
-  assert_true("hello".split_once("") == Some((""[:], "hello"[:])))
-  assert_true("hello".before("") == Some(""[:]))
-  assert_true("hello".after("") == Some("hello"[:]))
-  assert_true("😊::🚀".split_once("::") == Some(("😊"[:], "🚀"[:])))
+  assert_true("".split_once("") == Some(("", "")))
+  assert_true("".before("") == Some(""))
+  assert_true("".after("") == Some(""))
+  assert_true("hello".split_once("") == Some(("", "hello")))
+  assert_true("hello".before("") == Some(""))
+  assert_true("hello".after("") == Some("hello"))
+  assert_true("😊::🚀".split_once("::") == Some(("😊", "🚀")))
 }
 
 ///|
 test "rev_split_once rev_before rev_after" {
-  assert_true("a=b=c".rev_split_once("=") == Some(("a=b"[:], "c"[:])))
-  assert_true("a=b=c".rev_before("=") == Some("a=b"[:]))
-  assert_true("a=b=c".rev_after("=") == Some("c"[:]))
+  assert_true("a=b=c".rev_split_once("=") == Some(("a=b", "c")))
+  assert_true("a=b=c".rev_before("=") == Some("a=b"))
+  assert_true("a=b=c".rev_after("=") == Some("c"))
   assert_true("nope".rev_split_once("=") == None)
   assert_true("nope".rev_before("=") == None)
   assert_true("nope".rev_after("=") == None)
-  assert_true("a/b/c.txt".rev_before("/") == Some("a/b"[:]))
-  assert_true("a/b/c.txt".rev_after("/") == Some("c.txt"[:]))
-  assert_true("one=two".rev_split_once("=") == Some(("one"[:], "two"[:])))
+  assert_true("a/b/c.txt".rev_before("/") == Some("a/b"))
+  assert_true("a/b/c.txt".rev_after("/") == Some("c.txt"))
+  assert_true("one=two".rev_split_once("=") == Some(("one", "two")))
   assert_true(
-    "😊::🚀::⭐".rev_split_once("::") == Some(("😊::🚀"[:], "⭐"[:])),
+    "😊::🚀::⭐".rev_split_once("::") == Some(("😊::🚀", "⭐")),
   )
 }
 
