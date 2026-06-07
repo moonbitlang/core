@@ -24,7 +24,7 @@ test "panic array_op_get" {
 
 ///|
 test "panic array_set_out_of_bounds" {
-  let arr = [1, 2, 3]
+  let arr : FixedArray[Int] = [1, 2, 3]
   arr[3] = 4 // This should panic
 }
 

@@ -304,7 +304,7 @@ test "umul128: handles zero correctly" {
 /// ```mbt check
 /// test {
 ///   let r = @random.Rand::new()
-///   let a = [1, 2, 3, 4, 5]
+///   let a : FixedArray[Int] = [1, 2, 3, 4, 5]
 ///   r.shuffle(a.length(), (i : Int, j : Int) => {
 ///     let t = a[i]
 ///     a[i] = a[j]
