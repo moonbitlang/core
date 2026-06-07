@@ -59,7 +59,7 @@ pub struct Regex {
 ///
 /// ```mbt check
 /// test {
-///   let regex = @string.Regex("[[:digit:]]+")
+///   let regex = re"[[:digit:]]+"
 ///   guard regex.execute("a12b") is Some(m) else { fail("Expected match") }
 ///   inspect(m.content(), content="12")
 /// }
@@ -220,15 +220,11 @@ pub fn Regex::string(str : StringView) -> Regex {
 ///
 /// ```mbt check
 /// test {
-///   let greedy = @string.Regex("[[:digit:]]").repeat(min=2, max=4)
+///   let greedy = re"[[:digit:]]".repeat(min=2, max=4)
 ///   guard greedy.execute("a12345") is Some(m1) else { fail("Expected match") }
 ///   inspect(m1.content(), content="1234")
 ///
-///   let nongreedy = @string.Regex("[[:digit:]]").repeat(
-///     min=2,
-///     max=4,
-///     greedy=false,
-///   )
+///   let nongreedy = re"[[:digit:]]".repeat(min=2, max=4, greedy=false)
 ///   guard nongreedy.execute("a12345") is Some(m2) else { fail("Expected match") }
 ///   inspect(m2.content(), content="12")
 /// }
@@ -326,7 +322,7 @@ pub impl BitOr for Regex with fn lor(self, other) -> Regex {
 ///
 /// ```mbt check
 /// test {
-///   let regex = @string.Regex("[[:digit:]]+")
+///   let regex = re"[[:digit:]]+"
 ///   let input = "a12b34"
 ///
 ///   guard regex.execute(input) is Some(first) else {
@@ -344,7 +340,7 @@ pub impl BitOr for Regex with fn lor(self, other) -> Regex {
 ///
 /// ```mbt check
 /// test {
-///   let anchored = @string.Regex("^ab$")
+///   let anchored = re"^ab$"
 ///   inspect(anchored.execute("ab", last_index=0) is Some(_), content="true")
 ///   inspect(anchored.execute("xaby", last_index=1) is Some(_), content="false")
 /// }
@@ -371,7 +367,7 @@ pub fn Regex::execute(
 ///
 /// ```mbt check
 /// test {
-///   let digit = @string.Regex("[[:digit:]]+").capture("number")
+///   let digit = re"[[:digit:]]+".capture("number")
 ///   let regex = @string.Regex::string("ID: ") + digit
 ///   guard regex.execute("ID: 12345") is Some(m) else { fail("Expected match") }
 ///   debug_inspect(
@@ -385,9 +381,9 @@ pub fn Regex::execute(
 ///
 /// ```mbt check
 /// test {
-///   let user = @string.Regex("[[:alpha:]]+").capture("user")
-///   let domain = @string.Regex("[[:alpha:]]+").capture("domain")
-///   let tld = @string.Regex("[[:alpha:]]+").capture("tld")
+///   let user = re"[[:alpha:]]+".capture("user")
+///   let domain = re"[[:alpha:]]+".capture("domain")
+///   let tld = re"[[:alpha:]]+".capture("tld")
 ///   let email = user +
 ///     @string.Regex::string("@") +
 ///     domain +

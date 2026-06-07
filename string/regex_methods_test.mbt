@@ -37,7 +37,7 @@ fn has_unpaired_surrogate(str : StringView) -> Bool {
 
 ///|
 test "split/basic" {
-  let regex = @string.Regex(" ")
+  let regex = re" "
   let result = regex.split("hello world test").to_array()
   inspect(result.length(), content="3")
   inspect(result[0], content="hello")
@@ -47,7 +47,7 @@ test "split/basic" {
 
 ///|
 test "split/multiple_spaces" {
-  let regex = @string.Regex("[[:space:]]+")
+  let regex = re"[[:space:]]+"
   let result = regex.split("hello   world\t\ntest").to_array()
   inspect(result.length(), content="3")
   inspect(result[0], content="hello")
@@ -57,7 +57,7 @@ test "split/multiple_spaces" {
 
 ///|
 test "split/digit_delimiter" {
-  let regex = @string.Regex("[[:digit:]]+")
+  let regex = re"[[:digit:]]+"
   let result = regex.split("abc123def456ghi").to_array()
   inspect(result.length(), content="3")
   inspect(result[0], content="abc")
@@ -67,7 +67,7 @@ test "split/digit_delimiter" {
 
 ///|
 test "split/no_match" {
-  let regex = @string.Regex("xyz")
+  let regex = re"xyz"
   let result = regex.split("hello world test").to_array()
   inspect(result.length(), content="1")
   inspect(result[0], content="hello world test")
@@ -75,7 +75,7 @@ test "split/no_match" {
 
 ///|
 test "split/pattern_at_start" {
-  let regex = @string.Regex("^hello")
+  let regex = re"^hello"
   let result = regex.split("hello world test").to_array()
   inspect(result.length(), content="2")
   inspect(result[0], content="")
@@ -84,7 +84,7 @@ test "split/pattern_at_start" {
 
 ///|
 test "split/pattern_at_end" {
-  let regex = @string.Regex("test$")
+  let regex = re"test$"
   let result = regex.split("hello world test").to_array()
   inspect(result.length(), content="2")
   inspect(result[0], content="hello world ")
@@ -93,7 +93,7 @@ test "split/pattern_at_end" {
 
 ///|
 test "split/consecutive_delimiters" {
-  let regex = @string.Regex(",")
+  let regex = re","
   let result = regex.split("a,,b,,,c").to_array()
   inspect(result.length(), content="6")
   inspect(result[0], content="a")
@@ -106,7 +106,7 @@ test "split/consecutive_delimiters" {
 
 ///|
 test "split/empty_string" {
-  let regex = @string.Regex("a")
+  let regex = re"a"
   let result = regex.split("").to_array()
   inspect(result.length(), content="1")
   inspect(result[0], content="")
@@ -114,7 +114,7 @@ test "split/empty_string" {
 
 ///|
 test "split/single_character" {
-  let regex = @string.Regex("a")
+  let regex = re"a"
   let result = regex.split("banana").to_array()
   inspect(result.length(), content="4")
   inspect(result[0], content="b")
@@ -125,7 +125,7 @@ test "split/single_character" {
 
 ///|
 test "split/unicode" {
-  let regex = @string.Regex("，")
+  let regex = re"，"
   let result = regex.split("你好，世界，谢谢").to_array()
   inspect(result.length(), content="3")
   inspect(result[0], content="你好")
@@ -135,7 +135,7 @@ test "split/unicode" {
 
 ///|
 test "split/alternation_pattern" {
-  let regex = @string.Regex("[,;]")
+  let regex = re"[,;]"
   let result = regex.split("a,b;c,d").to_array()
   inspect(result.length(), content="4")
   inspect(result[0], content="a")
@@ -146,7 +146,7 @@ test "split/alternation_pattern" {
 
 ///|
 test "split/complex_pattern" {
-  let regex = @string.Regex("[[:alpha:]]+")
+  let regex = re"[[:alpha:]]+"
   let result = regex.split("123abc456def789").to_array()
   inspect(result.length(), content="3")
   inspect(result[0], content="123")
@@ -156,7 +156,7 @@ test "split/complex_pattern" {
 
 ///|
 test "split/single_element_no_split" {
-  let regex = @string.Regex(",")
+  let regex = re","
   let result = regex.split("hello").to_array()
   inspect(result.length(), content="1")
   inspect(result[0], content="hello")
@@ -164,7 +164,7 @@ test "split/single_element_no_split" {
 
 ///|
 test "split/entire_match" {
-  let regex = @string.Regex(".+")
+  let regex = re".+"
   let result = regex.split("hello").to_array()
   inspect(result.length(), content="2")
   inspect(result[0], content="")
@@ -197,7 +197,7 @@ test "split/non_word_boundary_does_not_break_surrogate_pair" {
 
 ///|
 test "split_replace/range_crossing_surrogate_gap_does_not_break_surrogate_pair" {
-  let regex = @string.Regex("[\\uD7FF-\\uE000]")
+  let regex = re"[\uD7FF-\uE000]"
   let split_result = regex.split("😀").to_array()
   debug_inspect(
     split_result,
@@ -212,35 +212,35 @@ test "split_replace/range_crossing_surrogate_gap_does_not_break_surrogate_pair" 
 
 ///|
 test "replace_by/zero_width_edge_case" {
-  let regex = @string.Regex("")
+  let regex = re""
   let result = regex.replace_by("abc", _m => "x")
   inspect(result, content="xaxbxcx")
 }
 
 ///|
 test "replace_by/limit_basic" {
-  let regex = @string.Regex("[[:digit:]]+")
+  let regex = re"[[:digit:]]+"
   let result = regex.replace_by("a1b22c333", _m => "#", limit=2)
   inspect(result, content="a#b#c333")
 }
 
 ///|
 test "replace_by/limit_zero" {
-  let regex = @string.Regex("[[:digit:]]+")
+  let regex = re"[[:digit:]]+"
   let result = regex.replace_by("a1b22", _m => "#", limit=0)
   inspect(result, content="a1b22")
 }
 
 ///|
 test "replace_by/limit_with_empty_pattern_and_surrogate_pair" {
-  let regex = @string.Regex("")
+  let regex = re""
   let result = regex.replace_by("a😀b", _m => "x", limit=2)
   inspect(result, content="xax😀b")
 }
 
 ///|
 test "replace_by/zero_width_with_surrogate_pair" {
-  let regex = @string.Regex("")
+  let regex = re""
   let result = regex.replace_by("a😀b", _m => "x")
   inspect(result, content="xax😀xbx")
 }
@@ -254,7 +254,7 @@ test "replace_by/non_word_boundary_does_not_break_surrogate_pair" {
 
 ///|
 test "split/zero_width_with_surrogate_pair" {
-  let regex = @string.Regex("")
+  let regex = re""
   let result = regex.split("a😀b").to_array()
   debug_inspect(
     result,
@@ -272,7 +272,7 @@ test "split/zero_width_with_surrogate_pair" {
 
 ///|
 test "split/empty_pattern_empty_input" {
-  let regex = @string.Regex("")
+  let regex = re""
   let result = regex.split("").to_array()
   debug_inspect(
     result,
@@ -284,7 +284,7 @@ test "split/empty_pattern_empty_input" {
 
 ///|
 test "split/long_string" {
-  let regex = @string.Regex(",")
+  let regex = re","
   let result = regex.split("a,b,c,d,e,f,g,h,i,j").to_array()
   inspect(result.length(), content="10")
   inspect(result[0], content="a")
@@ -293,7 +293,7 @@ test "split/long_string" {
 
 ///|
 test "split/alternation_multiple" {
-  let regex = @string.Regex("[abc]")
+  let regex = re"[abc]"
   let result = regex.split("xayazbzc").to_array()
   inspect(result.length(), content="5")
   inspect(result[0], content="x")
@@ -315,7 +315,7 @@ test "split/tab_and_newline" {
 
 ///|
 test "find/capture_groups_and_named_groups" {
-  let regex = @string.Regex("(?<word>[a-z]+)-(?<num>[0-9]+)")
+  let regex = re"(?<word>[a-z]+)-(?<num>[0-9]+)"
   let words = regex
     .find("ab-12 cd-345")
     .map(m => m.named_group("word").unwrap())
@@ -347,7 +347,7 @@ test "find/capture_groups_and_named_groups" {
 
 ///|
 test "find/next_and_exhaustion" {
-  let regex = @string.Regex("[[:digit:]]+")
+  let regex = re"[[:digit:]]+"
   let iter = regex.find("a1b22")
   guard iter.next() is Some(first) else { fail("Expected first match") }
   guard iter.next() is Some(second) else { fail("Expected second match") }
@@ -358,7 +358,7 @@ test "find/next_and_exhaustion" {
 
 ///|
 test "find/no_match" {
-  let regex = @string.Regex("xyz")
+  let regex = re"xyz"
   let iter = regex.find("hello world")
   guard iter.next() is None else { fail("Expected no match") }
 }
@@ -375,7 +375,7 @@ test "find/word_boundary_positions" {
 
 ///|
 test "find/empty_pattern_progress_and_empty_input" {
-  let regex = @string.Regex("")
+  let regex = re""
   let positions = regex.find("abc").map(m => m.before().length()).collect()
   let surrogate_positions = regex
     .find("a😀b")
