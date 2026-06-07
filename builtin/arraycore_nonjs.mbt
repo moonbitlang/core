@@ -71,9 +71,9 @@ pub fn[T] Array::new(capacity? : Int = 0) -> Array[T] {
 ///
 /// ```mbt check
 /// test {
-///   let arr = [1, 2, 3]
+///   let arr : ReadOnlyArray[Int] = [1, 2, 3]
 ///   inspect(arr.length(), content="3")
-///   let empty : Array[Int] = []
+///   let empty : ReadOnlyArray[Int] = []
 ///   inspect(empty.length(), content="0")
 /// }
 /// ```

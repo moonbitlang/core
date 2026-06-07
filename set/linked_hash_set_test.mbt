@@ -104,7 +104,7 @@ test "of" {
 
 ///|
 test "from_array" {
-  let arr = ["a", "b", "c"]
+  let arr : ReadOnlyArray[String] = ["a", "b", "c"]
   let m = @set.Set(arr)
   assert_true(m.contains("a"))
   assert_true(m.contains("b"))

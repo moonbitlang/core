@@ -56,7 +56,7 @@ test "bytes creation" {
 ```mbt check
 ///|
 test "bytes conversion" {
-  let original = [b'x', b'y', b'z']
+  let original : ReadOnlyArray[Byte] = [b'x', b'y', b'z']
   let bytes = Bytes::from_array(original)
 
   // Convert to array

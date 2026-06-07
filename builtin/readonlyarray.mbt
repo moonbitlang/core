@@ -46,7 +46,7 @@ pub fn[T] ReadOnlyArray::at(self : ReadOnlyArray[T], index : Int) -> T {
 /// # Example
 /// ```mbt check
 /// test {
-///   let dynamic_array = [1, 2, 3, 4, 5]
+///   let dynamic_array : Array[Int] = [1, 2, 3, 4, 5]
 ///   let immut_array = ReadOnlyArray::from_array(dynamic_array)
 ///   inspect(immut_array[0], content="1")
 /// }

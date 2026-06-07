@@ -67,7 +67,7 @@ test "bool to specialized integer types" {
 ///|
 test "boolean indexing" {
   // Use boolean conversion for array indexing
-  let options = ["default", "enhanced"]
+  let options : ReadOnlyArray[String] = ["default", "enhanced"]
   let use_enhanced = true
   let selected = options[use_enhanced.to_int()]
   inspect(selected, content="enhanced")
@@ -112,8 +112,8 @@ test "statistical operations" {
   inspect(success_rate > 0.7, content="true")
 
   // Boolean to numeric conversion for weighted calculations
-  let feature_enabled = [true, false, true]
-  let weights = [0.6, 0.3, 0.1]
+  let feature_enabled : ReadOnlyArray[Bool] = [true, false, true]
+  let weights : ReadOnlyArray[Double] = [0.6, 0.3, 0.1]
 
   // Calculate weighted score manually to avoid zip complexity
   let score1 = feature_enabled[0].to_int().to_double() * weights[0]

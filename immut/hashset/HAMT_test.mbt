@@ -175,7 +175,7 @@ test "from_array with empty array" {
 
 ///|
 test "from_array with non-empty array" {
-  let array = [1, 2, 3]
+  let array : ReadOnlyArray[Int] = [1, 2, 3]
   let set = @hashset.from_array(array)
   inspect(set.contains(1), content="true")
   inspect(set.contains(2), content="true")

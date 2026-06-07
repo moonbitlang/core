@@ -143,7 +143,7 @@ test "array_drain" {
 ///|
 test "array_append" {
   let arr1 = [1, 2, 3]
-  let arr2 = [4, 5, 6]
+  let arr2 : ReadOnlyArray[Int] = [4, 5, 6]
   arr1.append(arr2)
   @test.assert_eq(arr1.length(), 6)
   // @test.assert_eq(arr1.capacity(), 6)
@@ -786,7 +786,7 @@ test "array view implicit conversion" {
     x.length()
   }
 
-  let arr = [1, 2, 3]
+  let arr : ReadOnlyArray[Int] = [1, 2, 3]
   inspect(f(arr), content="3")
 }
 

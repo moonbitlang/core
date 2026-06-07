@@ -626,7 +626,7 @@ test "fixedarray_new_with_index" {
 ///
 /// ```mbt check
 /// test {
-///   let dynamic_array = [1, 2, 3, 4, 5]
+///   let dynamic_array : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
 ///   let fixed_array = FixedArray::from_array(dynamic_array)
 ///   debug_inspect(
 ///     fixed_array,

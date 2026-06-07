@@ -434,7 +434,7 @@ pub impl Compare for Bytes with fn compare(self, other) {
 ///
 /// ```mbt check
 /// test {
-///   let arr = [b'h', b'i']
+///   let arr : ReadOnlyArray[Byte] = [b'h', b'i']
 ///   let bytes = Bytes::from_array(arr)
 ///   inspect(
 ///     bytes,

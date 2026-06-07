@@ -387,7 +387,7 @@ test "@hashmap.contains/after_operations" {
 
 ///|
 test "@hashmap.from_array" {
-  let array = [("a", 1), ("b", 2), ("c", 3)]
+  let array : ReadOnlyArray[(String, Int)] = [("a", 1), ("b", 2), ("c", 3)]
   let map = @hashmap.from_array(array)
   for k, v in map {
     @test.assert_eq(map.get(k), Some(v))
@@ -397,7 +397,11 @@ test "@hashmap.from_array" {
 
 ///|
 test "@hashmap.from_array with int key" {
-  let array = [(1, "one"), (2, "two"), (3, "three")]
+  let array : ReadOnlyArray[(Int, String)] = [
+    (1, "one"),
+    (2, "two"),
+    (3, "three"),
+  ]
   let map = @hashmap.from_array(array)
   for k, v in map {
     @test.assert_eq(map.get(k), Some(v))

@@ -468,7 +468,7 @@ test "fixedarray_sub" {
 
 ///|
 test "ArrayView::suffixes" {
-  let arr = [1, 2, 3]
+  let arr : ReadOnlyArray[Int] = [1, 2, 3]
   let suffixes = arr[:].suffixes().collect()
   @json.json_inspect(suffixes, content=[[1, 2, 3], [2, 3], [3]])
   let suffixes_with_empty = arr[:].suffixes(include_empty=true).collect()

@@ -11,7 +11,7 @@ Create strings from various sources:
 ///|
 test "string creation" {
   // From character array
-  let chars = ['H', 'e', 'l', 'l', 'o']
+  let chars : ReadOnlyArray[Char] = ['H', 'e', 'l', 'l', 'o']
   let str1 = String::from_array(chars)
   inspect(str1, content="Hello")
 

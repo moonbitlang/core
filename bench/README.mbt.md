@@ -108,7 +108,7 @@ test "data structure benchmarks" {
 
   // Benchmark FixedArray access
   bencher.bench(name="fixedarray_access", fn() {
-    let arr = [0, 1, 2, 3, 4]
+    let arr : ReadOnlyArray[Int] = [0, 1, 2, 3, 4]
     let mut sum = 0
     for i in 0..<arr.length() {
       sum = sum + arr[i]

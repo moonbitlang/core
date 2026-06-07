@@ -49,7 +49,7 @@ fn capacity_for_length(length : Int) -> Int {
 ///
 /// ```mbt check
 /// test {
-///   let arr = [(1, "one"), (2, "two"), (1, "ONE")]
+///   let arr : ReadOnlyArray[(Int, String)] = [(1, "one"), (2, "two"), (1, "ONE")]
 ///   let map = @hashmap.HashMap(arr)
 ///   debug_inspect(map.get(1), content="Some(\"ONE\")")
 ///   debug_inspect(map.get(2), content="Some(\"two\")")
@@ -963,7 +963,7 @@ fn[K : Hash + Eq, V : Eq] verify_content(
 ///|
 test "arbitrary" {
   let samples : Array[HashMap[String, Int]] = @quickcheck.samples(20)
-  let data = [
+  let data : ReadOnlyArray[Array[(String, Int)]] = [
     [],
     [],
     [],

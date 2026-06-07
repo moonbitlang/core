@@ -537,7 +537,7 @@ test "from_iter empty iter" {
 
 ///|
 test "from_array with single element" {
-  let arr = [42]
+  let arr : ReadOnlyArray[Int] = [42]
   let deque = @deque.from_array(arr)
   inspect(deque.length(), content="1")
   @test.assert_eq(deque.front(), Some(42))
