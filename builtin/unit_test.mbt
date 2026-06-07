@@ -16,7 +16,7 @@
 test {
   let unit1 = ()
   let unit2 = ()
-  assert_eq(unit1, unit2)
+  @test.assert_eq(unit1, unit2)
 }
 
 ///|
@@ -47,7 +47,7 @@ test "Unit hash_combine test" {
   let _ = Hash::hash_combine((), hasher)
   let hash1 = hasher.finalize()
   let hasher2 = Hasher()
-  assert_not_eq(hash1, hasher2.finalize())
+  @test.assert_not_eq(hash1, hasher2.finalize())
 }
 
 ///|

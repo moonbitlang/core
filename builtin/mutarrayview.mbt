@@ -22,8 +22,8 @@
 /// test {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let view = arr.mut_view(start=1, end=4) // Creates a view of elements at indices 1,2,3
-///   assert_eq(view[0], 2)
-///   assert_eq(view.length(), 3)
+///   @test.assert_eq(view[0], 2)
+///   @test.assert_eq(view.length(), 3)
 /// }
 /// ```
 #builtin.valtype

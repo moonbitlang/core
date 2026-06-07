@@ -27,11 +27,11 @@
 /// test {
 ///   let map1 = @sorted_map.from_array([(3, "three"), (8, "eight"), (1, "one")])
 ///   let map2 = map1.add(2, "two").remove(3)
-///   assert_eq(map2.get(2), Some("two"))
+///   @test.assert_eq(map2.get(2), Some("two"))
 ///   let map3 = map2.add(2, "updated")
-///   assert_eq(map2.get(3), None)
-///   assert_eq(map3.get(3), None)
-///   assert_eq(map3.get(2), Some("updated"))
+///   @test.assert_eq(map2.get(3), None)
+///   @test.assert_eq(map3.get(3), None)
+///   @test.assert_eq(map3.get(2), Some("updated"))
 /// }
 /// ```
 #alias(T, deprecated)

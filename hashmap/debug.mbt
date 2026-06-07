@@ -13,19 +13,24 @@
 // limitations under the License.
 
 ///|
-using @debug {trait Debug, type Repr}
-
-///|
-pub impl[K : Debug, V : Debug] Debug for HashMap[K, V] with fn to_repr(self) {
-  Repr::opaque_(
+pub impl[K : @debug.Debug, V : @debug.Debug] @debug.Debug for HashMap[K, V] with fn to_repr(
+  self,
+) {
+  @debug.Repr::opaque_(
     "HashMap",
-    Repr::map([ for k, v in self => (@debug.to_repr(k), @debug.to_repr(v)) ]),
+    @debug.Repr::map(
+      [
+        for k, v in self => (@debug.to_repr(k), @debug.to_repr(v))
+      ],
+    ),
   )
 }
 
 ///|
 #deprecated("use `to_repr(a)` instead", skip_current_package=true)
-pub fn[K : Debug, V : Debug] HashMap::to_repr(self : HashMap[K, V]) -> Repr {
+pub fn[K : @debug.Debug, V : @debug.Debug] HashMap::to_repr(
+  self : HashMap[K, V],
+) -> @debug.Repr {
   @debug.to_repr(self)
 }
 

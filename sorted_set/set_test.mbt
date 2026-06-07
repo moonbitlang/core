@@ -28,7 +28,7 @@ test "default" {
 ///|
 test "SortedSet constructor" {
   let set = @sorted_set.SortedSet([3, 1, 2])
-  assert_eq(set.to_array(), [1, 2, 3])
+  @test.assert_eq(set.to_array(), [1, 2, 3])
 }
 
 ///|

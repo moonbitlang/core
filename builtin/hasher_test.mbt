@@ -195,7 +195,7 @@ test "combine all" {
 fn[T : Hash] assert_hash_matches_hash_combine(value : T) -> Unit raise {
   let hasher = Hasher()
   Hash::hash_combine(value, hasher)
-  assert_eq(Hash::hash(value), hasher.finalize())
+  @test.assert_eq(Hash::hash(value), hasher.finalize())
 }
 
 ///|
@@ -248,14 +248,14 @@ test "combine_bool" {
   let hasher2 = @builtin.Hasher(seed=0)
   hasher2.combine_int(1)
   let hash2 = hasher2.finalize()
-  assert_eq(hash1, hash2)
+  @test.assert_eq(hash1, hash2)
   let hasher3 = @builtin.Hasher(seed=0)
   hasher3.combine_bool(false)
   let hash3 = hasher3.finalize()
   let hasher4 = @builtin.Hasher(seed=0)
   hasher4.combine_int(0)
   let hash4 = hasher4.finalize()
-  assert_eq(hash3, hash4)
+  @test.assert_eq(hash3, hash4)
 }
 
 ///|

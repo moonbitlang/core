@@ -21,7 +21,7 @@ pub(all) enum Mode {
 
 ///|
 priv struct ParserContext {
-  profile : Profile
+  profile : @re.Profile
   base : Int
   ignore_case : Bool
   mode : Mode
@@ -29,7 +29,7 @@ priv struct ParserContext {
 
 ///|
 fn ParserContext::new(
-  profile~ : Profile,
+  profile~ : @re.Profile,
   base~ : Int,
   mode~ : Mode,
 ) -> ParserContext {

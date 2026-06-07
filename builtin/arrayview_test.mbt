@@ -540,11 +540,11 @@ test "equal" {
 
 ///|
 test "compare" {
-  assert_eq([1, 2, 4][:].compare([1, 2, 3]), 1)
-  assert_eq([-1, 2, 4][:].compare([1, 2, 4]), -1)
-  assert_eq([1, 2, 3][:].compare([1, 2, 3]), 0)
-  assert_eq([1, 2, 0][:].compare([1, 2]), 1)
-  assert_eq([1, 2][:].compare([1, 2, 0]), -1)
+  @test.assert_eq([1, 2, 4][:].compare([1, 2, 3]), 1)
+  @test.assert_eq([-1, 2, 4][:].compare([1, 2, 4]), -1)
+  @test.assert_eq([1, 2, 3][:].compare([1, 2, 3]), 0)
+  @test.assert_eq([1, 2, 0][:].compare([1, 2]), 1)
+  @test.assert_eq([1, 2][:].compare([1, 2, 0]), -1)
 }
 
 ///|
@@ -670,11 +670,11 @@ test "arrayview_filter" {
 test "arrayview_to_owned" {
   let view = [1, 2, 3, 4, 5, 6][2:4]
   let arr = view.to_owned()
-  assert_eq(arr, [3, 4])
+  @test.assert_eq(arr, [3, 4])
   let empty_view = [1, 2, 3][0:0]
-  assert_eq(empty_view.to_owned(), [])
+  @test.assert_eq(empty_view.to_owned(), [])
   let single_view = [1, 2, 3][1:2]
-  assert_eq(single_view.to_owned(), [2])
+  @test.assert_eq(single_view.to_owned(), [2])
 }
 
 ///|
@@ -723,7 +723,7 @@ test "arrayview hash invariant" {
   let arr : Array[Array[Int]] = @quickcheck.samples(20)
   for v in arr {
     let view = v[:]
-    assert_eq(v.hash(), view.hash())
+    @test.assert_eq(v.hash(), view.hash())
   }
 }
 
@@ -740,7 +740,7 @@ test "ArrayView::rev_iter empty" {
   let v = [1, 2, 3]
   let view = v[1:1]
   let iter = view.rev_iter()
-  assert_eq(iter.next(), None)
+  @test.assert_eq(iter.next(), None)
 }
 
 ///|
@@ -760,7 +760,7 @@ test "ArrayView::iter2 empty" {
   let v = [1, 2, 3]
   let view = v[2:2]
   let iter = view.iter2()
-  assert_eq(iter.next(), None)
+  @test.assert_eq(iter.next(), None)
 }
 
 ///|
@@ -798,7 +798,7 @@ test "ArrayView::op_add empty left" {
       #|<ArrayView: [4, 5, 6]>
     ),
   )
-  assert_eq(result.length(), 3)
+  @test.assert_eq(result.length(), 3)
 }
 
 ///|
@@ -812,7 +812,7 @@ test "ArrayView::op_add empty right" {
       #|<ArrayView: [1, 2, 3]>
     ),
   )
-  assert_eq(result.length(), 3)
+  @test.assert_eq(result.length(), 3)
 }
 
 ///|
@@ -826,7 +826,7 @@ test "ArrayView::op_add both empty" {
       #|<ArrayView: []>
     ),
   )
-  assert_eq(result.length(), 0)
+  @test.assert_eq(result.length(), 0)
   assert_true(result.is_empty())
 }
 
@@ -876,9 +876,9 @@ test "ArrayView::op_add full slice equals Array Add" {
   let b = [4, 5, 6]
   let view_sum = a[:] + b
   let array_sum = a + b
-  assert_eq(view_sum.length(), array_sum.length())
+  @test.assert_eq(view_sum.length(), array_sum.length())
   for i in 0..<view_sum.length() {
-    assert_eq(view_sum[i], array_sum[i])
+    @test.assert_eq(view_sum[i], array_sum[i])
   }
 }
 
@@ -932,9 +932,9 @@ test "ArrayView::op_add large" {
   let a = Array::makei(n, i => i)
   let b = Array::makei(n, i => i + n)
   let result = a[:] + b
-  assert_eq(result.length(), 2 * n)
+  @test.assert_eq(result.length(), 2 * n)
   for i in 0..<(2 * n) {
-    assert_eq(result[i], i)
+    @test.assert_eq(result[i], i)
   }
 }
 
@@ -968,7 +968,7 @@ test "ArrayView::rev_each matches rev_iter order" {
   let a = []
   v.rev_each(x => a.push(x))
   let b = v.rev_iter().to_array()
-  assert_eq(a, b)
+  @test.assert_eq(a, b)
 }
 
 ///|
@@ -1089,9 +1089,9 @@ test "ArrayView::rev matches Array::rev" {
   let arr = [1, 2, 3, 4, 5]
   let view_rev = arr[:].rev()
   let array_rev = arr.rev()
-  assert_eq(view_rev.length(), array_rev.length())
+  @test.assert_eq(view_rev.length(), array_rev.length())
   for i in 0..<view_rev.length() {
-    assert_eq(view_rev[i], array_rev[i])
+    @test.assert_eq(view_rev[i], array_rev[i])
   }
 }
 

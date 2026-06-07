@@ -22,7 +22,7 @@ pub(all) struct Quantifier {
   min : Int
   max : Int?
   mode : @shared_types.QuantifierMode
-} derive(Debug)
+} derive(@debug.Debug)
 
 ///|
 /// Zero-width regex assertions.
@@ -34,7 +34,7 @@ pub enum Assertion {
   StartOfWord
   EndOfWord
   NotWordBoundary
-} derive(Debug)
+} derive(@debug.Debug)
 
 ///|
 /// Core regex pattern AST node with cached nullability.
@@ -44,7 +44,7 @@ pub struct Pattern {
 }
 
 ///|
-pub impl Debug for Pattern with fn to_repr(self) {
+pub impl @debug.Debug for Pattern with fn to_repr(self) {
   @debug.to_repr(self.desc)
 }
 
@@ -58,7 +58,7 @@ pub enum PatternDesc {
   Preference(@shared_types.Preference, Pattern)
   Capture(name~ : String?, Pattern)
   Assertion(Assertion)
-} derive(Debug)
+} derive(@debug.Debug)
 
 ///|
 /// Return whether the pattern is anchored to input boundaries.

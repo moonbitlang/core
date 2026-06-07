@@ -21,7 +21,7 @@ test "get with existing key" {
     (2, "two"),
     (0, "zero"),
   ])
-  assert_eq(map.get(3), Some("three"))
+  @test.assert_eq(map.get(3), Some("three"))
 }
 
 ///|
@@ -33,7 +33,7 @@ test "_[_] with existing key" {
     (2, "two"),
     (0, "zero"),
   ])
-  assert_eq(map[3], "three")
+  @test.assert_eq(map[3], "three")
 }
 
 ///|
@@ -45,7 +45,7 @@ test "get with non-existing key" {
     (2, "two"),
     (0, "zero"),
   ])
-  assert_eq(map.get(4), None)
+  @test.assert_eq(map.get(4), None)
 }
 
 ///|
@@ -71,7 +71,7 @@ test "get after insertion" {
     (0, "zero"),
   ])
   let map = map.add(4, "four")
-  assert_eq(map.get(4), Some("four"))
+  @test.assert_eq(map.get(4), Some("four"))
 }
 
 ///|
@@ -84,7 +84,7 @@ test "_[_] after insertion" {
     (0, "zero"),
   ])
   let map = map.add(4, "four")
-  assert_eq(map[4], "four")
+  @test.assert_eq(map[4], "four")
 }
 
 ///|
@@ -97,7 +97,7 @@ test "get after removal" {
     (0, "zero"),
   ])
   let map = map.remove(3)
-  assert_eq(map.get(3), None)
+  @test.assert_eq(map.get(3), None)
 }
 
 ///|
@@ -161,7 +161,7 @@ test "iter" {
 ///|
 test "get with empty map" {
   let map : @sorted_map.SortedMap[Int, String] = @sorted_map.new()
-  assert_eq(map.get(3), None)
+  @test.assert_eq(map.get(3), None)
 }
 
 ///|
@@ -193,7 +193,7 @@ test "to_json with empty map" {
 test "from_json" {
   for
     xs in (@quickcheck.samples(20) : Array[@sorted_map.SortedMap[String, Int]]) {
-    assert_eq(xs, @json.from_json(xs.to_json()))
+    @test.assert_eq(xs, @json.from_json(xs.to_json()))
   }
 }
 
@@ -274,7 +274,7 @@ test "rev_keys is reverse of keys" {
   ])
   let forward = map.keys_as_iter().collect()
   let reverse = map.rev_keys().collect()
-  assert_eq(reverse, forward.rev())
+  @test.assert_eq(reverse, forward.rev())
 }
 
 ///|
@@ -282,7 +282,7 @@ test "rev_keys is reverse of keys (quickcheck)" {
   for xs in (@quickcheck.samples(50) : Array[@sorted_map.SortedMap[Int, Int]]) {
     let forward = xs.keys_as_iter().collect()
     let reverse = xs.rev_keys().collect()
-    assert_eq(reverse, forward.rev())
+    @test.assert_eq(reverse, forward.rev())
   }
 }
 
@@ -297,7 +297,7 @@ test "rev_values is reverse of values" {
   ])
   let forward = map.values().collect()
   let reverse = map.rev_values().collect()
-  assert_eq(reverse, forward.rev())
+  @test.assert_eq(reverse, forward.rev())
 }
 
 ///|

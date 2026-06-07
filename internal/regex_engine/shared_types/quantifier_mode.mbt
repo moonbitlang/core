@@ -17,4 +17,4 @@
 pub(all) enum QuantifierMode {
   Greedy
   NonGreedy
-} derive(Debug)
+} derive(@debug.Debug)

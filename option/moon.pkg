@@ -6,6 +6,7 @@ import {
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/json",
   "moonbitlang/core/array",
+  "moonbitlang/core/test",
 } for "test"
 
 options(

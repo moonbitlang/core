@@ -13,19 +13,16 @@
 // limitations under the License.
 
 ///|
-using @debug {trait Debug, type Repr}
-
-///|
-pub impl[A : Debug] Debug for Vector[A] with fn to_repr(self) {
-  Repr::opaque_(
+pub impl[A : @debug.Debug] @debug.Debug for Vector[A] with fn to_repr(self) {
+  @debug.Repr::opaque_(
     "Vector",
-    Repr::array(self.to_array().map(x => @debug.to_repr(x))),
+    @debug.Repr::array(self.to_array().map(x => @debug.to_repr(x))),
   )
 }
 
 ///|
 #deprecated("use `to_repr(a)` instead", skip_current_package=true)
-pub fn[A : Debug] Vector::to_repr(self : Vector[A]) -> Repr {
+pub fn[A : @debug.Debug] Vector::to_repr(self : Vector[A]) -> @debug.Repr {
   @debug.to_repr(self)
 }
 

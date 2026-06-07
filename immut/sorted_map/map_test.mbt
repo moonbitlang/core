@@ -21,9 +21,9 @@ test "lookup" {
     (2, "two"),
     (0, "zero"),
   ])
-  assert_eq(m.get(8), Some("eight"))
-  assert_eq(m.get(2), Some("two"))
-  assert_eq(m.get(4), None)
+  @test.assert_eq(m.get(8), Some("eight"))
+  @test.assert_eq(m.get(2), Some("two"))
+  @test.assert_eq(m.get(4), None)
 }
 
 ///|
@@ -107,7 +107,7 @@ test "fold" {
     ("d", 4),
     ("e", 5),
   ])
-  assert_eq(m.fold((acc, _, v) => acc + v, init=0), 15)
+  @test.assert_eq(m.fold((acc, _, v) => acc + v, init=0), 15)
 }
 
 ///|
@@ -119,7 +119,7 @@ test "foldl_with_key" {
     ("d", 4),
     ("e", 5),
   ])
-  assert_eq(
+  @test.assert_eq(
     m.fold((acc, k, v) => acc + k + v.to_string(), init=""),
     "a1b2c3d4e5",
   )
@@ -134,7 +134,7 @@ test "foldr_with_key" {
     ("d", 4),
     ("e", 5),
   ])
-  assert_eq(
+  @test.assert_eq(
     m.foldr_with_key((acc, k, v) => acc + k + v.to_string(), init=""),
     "e5d4c3b2a1",
   )
@@ -143,25 +143,25 @@ test "foldr_with_key" {
 ///|
 test "collect" {
   let m = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
-  assert_eq(m.iter().collect(), [(1, "one"), (2, "two"), (3, "three")])
+  @test.assert_eq(m.iter().collect(), [(1, "one"), (2, "two"), (3, "three")])
 }
 
 ///|
 test "to_array" {
   let m = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
-  assert_eq(m.to_array(), [(1, "one"), (2, "two"), (3, "three")])
+  @test.assert_eq(m.to_array(), [(1, "one"), (2, "two"), (3, "three")])
 }
 
 ///|
 test "keys" {
   let m = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
-  assert_eq(m.keys_as_iter().collect(), [1, 2, 3])
+  @test.assert_eq(m.keys_as_iter().collect(), [1, 2, 3])
 }
 
 ///|
 test "values" {
   let m = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
-  assert_eq(m.values().collect(), ["one", "two", "three"])
+  @test.assert_eq(m.values().collect(), ["one", "two", "three"])
 }
 
 ///|
@@ -195,7 +195,7 @@ test "compare" {
   let xss : Array[@sorted_map.SortedMap[Int, Int]] = @quickcheck.samples(5)
   for xs in xss {
     for ys in xss {
-      assert_eq(xs.compare(ys), xs.to_array().compare(ys.to_array()))
+      @test.assert_eq(xs.compare(ys), xs.to_array().compare(ys.to_array()))
     }
   }
 }

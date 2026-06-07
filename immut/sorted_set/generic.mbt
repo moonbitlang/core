@@ -24,7 +24,7 @@
 /// ```mbt nocheck
 ///   let set = @sorted_set.from_array([1, 2, 3, 4, 5])
 ///   let result = set.rev_iter().collect()
-///   assert_eq(result, [5, 4, 3, 2, 1])
+///   @test.assert_eq(result, [5, 4, 3, 2, 1])
 /// ```
 #alias(rev_iterator, deprecated)
 pub fn[A] SortedSet::rev_iter(self : SortedSet[A]) -> Iter[A] {

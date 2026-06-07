@@ -116,7 +116,7 @@ test "iter" {
   let set = @hashset.from_array([1, 2, 3])
   let arr = set.iter().to_array()
   arr.sort()
-  assert_eq(arr, [1, 2, 3])
+  @test.assert_eq(arr, [1, 2, 3])
 }
 ```
 

@@ -1701,7 +1701,7 @@ pub fn[T] FixedArray::length(self : FixedArray[T]) -> Int = "%fixedarray.length"
 /// test {
 ///   let two_dimension_array = FixedArray::make(10, FixedArray::make(10, 0))
 ///   two_dimension_array[0][5] = 10
-///   assert_eq(two_dimension_array[5][5], 10)
+///   @test.assert_eq(two_dimension_array[5][5], 10)
 /// }
 /// ```
 /// This is because all the cells reference to the same object (the FixedArray[Int] in this case). 

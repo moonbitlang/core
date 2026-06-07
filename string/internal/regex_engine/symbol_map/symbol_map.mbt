@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-struct SymbolMap(@sorted_set.SortedSet[Rechar])
+struct SymbolMap(@sorted_set.SortedSet[@shared_types.Rechar])
 
 ///|
 /// Create a new instance.

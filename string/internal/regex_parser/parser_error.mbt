@@ -15,7 +15,7 @@
 ///|
 suberror ParserError {
   ParserError(at~ : Int, hint~ : String)
-} derive(Debug)
+} derive(@debug.Debug)
 
 ///|
 pub impl Show for ParserError with fn output(self, logger) {

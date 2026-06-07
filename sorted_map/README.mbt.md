@@ -38,7 +38,7 @@ Add a key-value pair to the SortedMap in place.
 test {
   let map = @sorted_map.from_array([(1, "one"), (2, "two")])
   map.set(3, "three")
-  assert_eq(map.length(), 3)
+  @test.assert_eq(map.length(), 3)
 }
 ```
 
@@ -50,7 +50,7 @@ test {
   let map = @sorted_map.SortedMap([])
   map[1] = "one"
   map[2] = "two"
-  assert_eq(map.length(), 2)
+  @test.assert_eq(map.length(), 2)
 }
 ```
 
@@ -61,8 +61,8 @@ Remove a key-value pair from the SortedMap in place.
 test {
   let map = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
   map.remove(2)
-  assert_eq(map.length(), 2)
-  assert_eq(map.contains(2), false)
+  @test.assert_eq(map.length(), 2)
+  @test.assert_eq(map.contains(2), false)
 }
 ```
 
@@ -94,8 +94,8 @@ Check if a key exists in the map.
 ///|
 test {
   let map = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
-  assert_eq(map.contains(2), true)
-  assert_eq(map.contains(4), false)
+  @test.assert_eq(map.contains(2), true)
+  @test.assert_eq(map.contains(4), false)
 }
 ```
 
@@ -134,7 +134,7 @@ Get the size of the map.
 ///|
 test {
   let map = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
-  assert_eq(map.length(), 3)
+  @test.assert_eq(map.length(), 3)
 }
 ```
 
@@ -144,7 +144,7 @@ Check if the map is empty.
 ///|
 test {
   let map : @sorted_map.SortedMap[Int, String] = @sorted_map.SortedMap([])
-  assert_eq(map.is_empty(), true)
+  @test.assert_eq(map.is_empty(), true)
 }
 ```
 
@@ -155,7 +155,7 @@ Clear the map.
 test {
   let map = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
   map.clear()
-  assert_eq(map.is_empty(), true)
+  @test.assert_eq(map.is_empty(), true)
 }
 ```
 
@@ -232,7 +232,7 @@ The SortedMap supports several iterator patterns. Create a map from an iterator:
 test {
   let pairs = [(1, "one"), (2, "two"), (3, "three")].iter()
   let map = @sorted_map.from_iter(pairs)
-  assert_eq(map.length(), 3)
+  @test.assert_eq(map.length(), 3)
 }
 ```
 
@@ -268,7 +268,7 @@ Maps with the same key-value pairs are considered equal, regardless of the order
 test {
   let map1 = @sorted_map.from_array([(1, "one"), (2, "two")])
   let map2 = @sorted_map.from_array([(2, "two"), (1, "one")])
-  assert_eq(map1 == map2, true)
+  @test.assert_eq(map1 == map2, true)
 }
 ```
 
@@ -280,8 +280,8 @@ Use subscript syntax `map[key]` (the `at` operator) for direct access. Panics if
 ///|
 test {
   let map = @sorted_map.from_array([(1, "one"), (2, "two")])
-  assert_eq(map[1], "one")
-  assert_eq(map[2], "two")
+  @test.assert_eq(map[1], "one")
+  @test.assert_eq(map[2], "two")
 }
 ```
 
@@ -293,12 +293,12 @@ test {
 ///|
 test {
   let map = @sorted_map.from_array([(1, "one")])
-  assert_eq(map.get_or_default(1, "???"), "one")
-  assert_eq(map.get_or_default(2, "???"), "???")
+  @test.assert_eq(map.get_or_default(1, "???"), "one")
+  @test.assert_eq(map.get_or_default(2, "???"), "???")
   // get_or_init inserts the value if missing
   let val = map.get_or_init(3, fn() { "three" })
-  assert_eq(val, "three")
-  assert_eq(map.contains(3), true) // now in the map
+  @test.assert_eq(val, "three")
+  @test.assert_eq(map.contains(3), true) // now in the map
 }
 ```
 
@@ -312,8 +312,8 @@ test {
   let map = @sorted_map.from_array([(1, "a"), (2, "b")])
   let cloned = map.copy()
   cloned.set(3, "c")
-  assert_eq(map.contains(3), false) // original unchanged
-  assert_eq(cloned.contains(3), true)
+  @test.assert_eq(map.contains(3), false) // original unchanged
+  @test.assert_eq(cloned.contains(3), true)
 }
 ```
 
@@ -333,7 +333,7 @@ test {
   let m3 = @sorted_map.from_array([(1, "x")])
   let m4 = @sorted_map.from_array([(2, "y")])
   m3.merge_in_place(m4)
-  assert_eq(m3.contains(2), true)
+  @test.assert_eq(m3.contains(2), true)
 }
 ```
 
@@ -362,10 +362,10 @@ test "safe_key_access" {
   let scores = @sorted_map.from_array([(1001, 85), (1002, 92), (1003, 78)])
 
   // Access an existing key
-  assert_eq(get_score(scores, 1001), 85)
+  @test.assert_eq(get_score(scores, 1001), 85)
 
   // Access a non-existent key, returning the default value
-  assert_eq(get_score(scores, 9999), 0)
+  @test.assert_eq(get_score(scores, 9999), 0)
 }
 ```
 

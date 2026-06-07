@@ -14,11 +14,11 @@
 
 ///|
 test "UInt::min, UInt::max and UInt::clamp" {
-  assert_eq((1 : UInt).min(2), 1)
-  assert_eq((2 : UInt).max(1), 2)
-  assert_eq((1 : UInt).clamp(min=0, max=2), 1)
-  assert_eq((0 : UInt).clamp(min=1, max=2), 1)
-  assert_eq((3 : UInt).clamp(min=1, max=2), 2)
+  @test.assert_eq((1 : UInt).min(2), 1)
+  @test.assert_eq((2 : UInt).max(1), 2)
+  @test.assert_eq((1 : UInt).clamp(min=0, max=2), 1)
+  @test.assert_eq((0 : UInt).clamp(min=1, max=2), 1)
+  @test.assert_eq((3 : UInt).clamp(min=1, max=2), 2)
 }
 
 ///|

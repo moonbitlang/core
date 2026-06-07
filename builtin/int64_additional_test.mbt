@@ -16,37 +16,37 @@
 test "int64 bit ops and counts" {
   let hi_only : Int64 = 0x1_0000_0000L
   let lo_only : Int64 = 8L
-  assert_eq(hi_only.clz(), 31)
-  assert_eq(hi_only.ctz(), 32)
-  assert_eq(lo_only.clz(), 60)
-  assert_eq(lo_only.ctz(), 3)
-  assert_eq((hi_only | lo_only).popcnt(), 2)
-  assert_eq(0xF0L & 0x0FL, 0L)
-  assert_eq(0xF0L | 0x0FL, 0xFFL)
-  assert_eq(0xF0L ^ 0x0FL, 0xFFL)
+  @test.assert_eq(hi_only.clz(), 31)
+  @test.assert_eq(hi_only.ctz(), 32)
+  @test.assert_eq(lo_only.clz(), 60)
+  @test.assert_eq(lo_only.ctz(), 3)
+  @test.assert_eq((hi_only | lo_only).popcnt(), 2)
+  @test.assert_eq(0xF0L & 0x0FL, 0L)
+  @test.assert_eq(0xF0L | 0x0FL, 0xFFL)
+  @test.assert_eq(0xF0L ^ 0x0FL, 0xFFL)
 }
 
 ///|
 test "int64 conversions and defaults" {
   let value : Int64 = 123L
-  assert_eq(value.to_int(), 123)
-  assert_eq(value.to_byte(), (123 : Byte))
-  assert_eq(value.to_uint16(), (123 : UInt16))
-  assert_eq((65535 : UInt16).to_int64(), 65535L)
-  assert_eq(Int64::default(), 0L)
+  @test.assert_eq(value.to_int(), 123)
+  @test.assert_eq(value.to_byte(), (123 : Byte))
+  @test.assert_eq(value.to_uint16(), (123 : UInt16))
+  @test.assert_eq((65535 : UInt16).to_int64(), 65535L)
+  @test.assert_eq(Int64::default(), 0L)
   let u_hi : UInt64 = 0x1_0000_0000UL
-  assert_eq(u_hi.clz(), 31)
-  assert_eq(u_hi.ctz(), 32)
-  assert_eq(UInt64::trunc_double(1234567.89), 1234567UL)
+  @test.assert_eq(u_hi.clz(), 31)
+  @test.assert_eq(u_hi.ctz(), 32)
+  @test.assert_eq(UInt64::trunc_double(1234567.89), 1234567UL)
 }
 
 ///|
 test "Int64::min, Int64::max and Int64::clamp" {
-  assert_eq(1L.min(2L), 1L)
-  assert_eq(2L.max(1L), 2L)
-  assert_eq(1L.clamp(min=0L, max=2L), 1L)
-  assert_eq((-1L).clamp(min=0L, max=2L), 0L)
-  assert_eq(3L.clamp(min=0L, max=2L), 2L)
+  @test.assert_eq(1L.min(2L), 1L)
+  @test.assert_eq(2L.max(1L), 2L)
+  @test.assert_eq(1L.clamp(min=0L, max=2L), 1L)
+  @test.assert_eq((-1L).clamp(min=0L, max=2L), 0L)
+  @test.assert_eq(3L.clamp(min=0L, max=2L), 2L)
 }
 
 ///|

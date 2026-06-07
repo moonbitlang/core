@@ -27,7 +27,7 @@ test "unit construction" {
 
   }
   // All unit values are identical
-  assert_eq(u1, u2)
+  @test.assert_eq(u1, u2)
 
   // Common pattern: functions that return unit
   fn log_message(msg : String) -> Unit {

@@ -27,8 +27,8 @@ You can use the `length` to get the length of the immutable priority queue.
 ///|
 test {
   let pq = @priority_queue.PriorityQueue([])
-  assert_eq(pq.length(), 0)
-  assert_eq(pq.push(1).length(), 1)
+  @test.assert_eq(pq.length(), 0)
+  @test.assert_eq(pq.push(1).length(), 1)
 }
 ```
 
@@ -38,7 +38,7 @@ You can use the `is_empty` to determine whether the immutable priority queue is 
 ///|
 test {
   let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.PriorityQueue([])
-  assert_eq(pq.is_empty(), true)
+  @test.assert_eq(pq.is_empty(), true)
 }
 ```
 

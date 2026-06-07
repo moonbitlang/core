@@ -31,7 +31,7 @@ pub fn[A] Vector::new() -> Vector[A] {
 /// test {
 ///   let v = @vector.singleton(42)
 ///   @debug.assert_eq(v, @vector.from_array([42]))
-///   assert_eq(v.length(), 1)
+///   @test.assert_eq(v.length(), 1)
 /// }
 /// ```
 #as_free_fn
@@ -578,7 +578,7 @@ pub fn[A] Vector::eachi(
 /// ```mbt check
 /// test {
 ///   let v = @vector.from_array([1, 2, 3, 4, 5])
-///   assert_eq(v.fold((a, b) => a + b, init=0), 15)
+///   @test.assert_eq(v.fold((a, b) => a + b, init=0), 15)
 /// }
 /// ```
 #alias(fold_left, deprecated)
@@ -598,7 +598,7 @@ pub fn[A, B] Vector::fold(
 /// ```mbt check
 /// test {
 ///   let v = @vector.from_array([1, 2, 3, 4, 5])
-///   assert_eq(v.rev_fold((a, b) => a + b, init=0), 15)
+///   @test.assert_eq(v.rev_fold((a, b) => a + b, init=0), 15)
 /// }
 /// ```
 #alias(fold_right, deprecated)
@@ -706,7 +706,7 @@ pub impl[A : Eq] Eq for Vector[A] with fn equal(self, other) {
 }
 
 ///|
-#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
+#deprecated("Use @debug.Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[A : Show] Show for Vector[A]
 
 ///|

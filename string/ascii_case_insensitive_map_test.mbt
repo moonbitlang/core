@@ -159,6 +159,6 @@ test "AsciiCaseInsensitiveString agrees with equal_ignore_ascii_case" {
     m[key(k1)] = 1
     let map_says_same = m.contains(key(k2))
     let api_says_same = k1.equal_ignore_ascii_case(k2)
-    assert_eq(map_says_same, api_says_same)
+    @test.assert_eq(map_says_same, api_says_same)
   }
 }

@@ -38,8 +38,8 @@ fn[T : Show] debug_string(t : T) -> String {
 ///
 /// ```mbt check
 /// test {
-///   assert_eq(1, 1)
-///   assert_eq("hello", "hello")
+///   @test.assert_eq(1, 1)
+///   @test.assert_eq("hello", "hello")
 /// }
 /// ```
 #deprecated("use `using @test {assert_eq}` instead", skip_current_package=true)
@@ -79,7 +79,7 @@ pub fn[T : Eq + Show] assert_eq(
 ///
 /// ```mbt check
 /// test {
-///   assert_not_eq(1, 2) // Passes
+///   @test.assert_not_eq(1, 2) // Passes
 /// }
 /// ```
 #deprecated("use `using @test {assert_not_eq}` instead", skip_current_package=true)

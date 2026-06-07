@@ -14,11 +14,11 @@
 
 ///|
 test {
-  assert_eq((Option::None : Unit?), Option::None)
-  assert_eq(Option::Some(1), Option::Some(1))
-  assert_not_eq(Option::Some(1), Option::Some(2))
-  assert_not_eq(Option::None, Option::Some(1))
-  assert_not_eq(Option::Some(1), Option::None)
+  @test.assert_eq((Option::None : Unit?), Option::None)
+  @test.assert_eq(Option::Some(1), Option::Some(1))
+  @test.assert_not_eq(Option::Some(1), Option::Some(2))
+  @test.assert_not_eq(Option::None, Option::Some(1))
+  @test.assert_not_eq(Option::Some(1), Option::None)
 }
 
 ///|
@@ -73,13 +73,13 @@ test "map_or and filter" {
 
 ///|
 test "unwrap_or_error" {
-  assert_eq(
+  @test.assert_eq(
     (None : String?).unwrap_or_error(Failure::Failure("boom")) catch {
       Failure(err) => err
     },
     "boom",
   )
-  assert_eq(
+  @test.assert_eq(
     Some("ok").unwrap_or_error(Failure::Failure("boom")) catch {
       Failure(err) => err
     },

@@ -870,7 +870,7 @@ pub fn[X] Iter::last(self : Iter[X]) -> X? {
 /// test {
 ///   let arr = []
 ///   [1, 2, 3].iter().intersperse(0).each(i => arr.push(i))
-///   assert_eq(arr, [1, 0, 2, 0, 3])
+///   @test.assert_eq(arr, [1, 0, 2, 0, 3])
 /// }
 /// ```
 ///

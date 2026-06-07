@@ -26,8 +26,8 @@
 /// test {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let view = arr[1:4] // Creates a view of elements at indices 1,2,3
-///   assert_eq(view[0], 2)
-///   assert_eq(view.length(), 3)
+///   @test.assert_eq(view[0], 2)
+///   @test.assert_eq(view.length(), 3)
 /// }
 /// ```
 #builtin.valtype
@@ -1317,7 +1317,7 @@ pub fn[A, B] ArrayView::rev_foldi(
 /// test {
 ///   let v = [3, 4, 5]
 ///   let v2 = v[1:].map(x => x + 1)
-///   assert_eq(v2, [5, 6])
+///   @test.assert_eq(v2, [5, 6])
 /// }
 /// ```
 #locals(f)
@@ -1340,7 +1340,7 @@ pub fn[T, U] ArrayView::map(
 /// test {
 ///   let v = [3, 4, 5]
 ///   let v2 = v[1:].mapi((i, x) => x + i)
-///   assert_eq(v2, [4, 6])
+///   @test.assert_eq(v2, [4, 6])
 /// }
 /// ```
 #locals(f)
@@ -1363,7 +1363,7 @@ pub fn[T, U] ArrayView::mapi(
 /// test {
 ///   let arr = [1, 2, 3, 4, 5, 6]
 ///   let v = arr[2:].filter(x => x % 2 == 0)
-///   assert_eq(v, [4, 6])
+///   @test.assert_eq(v, [4, 6])
 /// }
 /// ```
 #locals(f)
@@ -1417,7 +1417,7 @@ pub fn[A, B] ArrayView::filter_map(
 /// test {
 ///   let view = [1, 2, 3, 4, 5, 6][2:4]
 ///   let arr = view.to_owned()
-///   assert_eq(arr, [3, 4])
+///   @test.assert_eq(arr, [3, 4])
 /// }
 /// ```
 #alias(to_array, deprecated)

@@ -13,9 +13,6 @@
 // limitations under the License.
 
 ///|
-using @debug {trait Debug}
-
-///|
 fn[T : Show] debug_string(t : T) -> String {
   let buf = StringBuilder(size_hint=50)
   t.output(buf)
@@ -26,9 +23,9 @@ fn[T : Show] debug_string(t : T) -> String {
 pub using @debug {assert_eq}
 
 ///|
-/// Assert two values are not equal using `Debug` output for diagnostics.
+/// Assert two values are not equal using `@debug.Debug` output for diagnostics.
 #callsite(autofill(loc))
-pub fn[T : Eq + Debug] assert_not_eq(
+pub fn[T : Eq + @debug.Debug] assert_not_eq(
   a : T,
   b : T,
   msg? : String,
@@ -70,13 +67,13 @@ pub fn[T : Show] same_object(a : T, b : T, loc~ : SourceLoc) -> Unit raise {
 }
 
 ///|
-/// Assert referential equality of two values using `Debug` output for
+/// Assert referential equality of two values using `@debug.Debug` output for
 /// diagnostics.
 ///
 /// This is the preferred identity assertion for new code that only implements
-/// `Debug`.
+/// `@debug.Debug`.
 #callsite(autofill(loc))
-pub fn[T : Debug] assert_same_object(
+pub fn[T : @debug.Debug] assert_same_object(
   a : T,
   b : T,
   loc~ : SourceLoc,
@@ -116,10 +113,10 @@ pub fn[T : Show] not_same_object(a : T, b : T, loc~ : SourceLoc) -> Unit raise {
 }
 
 ///|
-/// Assert referential inequality of two values using `Debug` output for
+/// Assert referential inequality of two values using `@debug.Debug` output for
 /// diagnostics.
 #callsite(autofill(loc))
-pub fn[T : Debug] assert_not_same_object(
+pub fn[T : @debug.Debug] assert_not_same_object(
   a : T,
   b : T,
   loc~ : SourceLoc,

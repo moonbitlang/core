@@ -7,4 +7,5 @@ import {
 import {
   "moonbitlang/core/char",
   "moonbitlang/core/debug",
+  "moonbitlang/core/test",
 } for "test"

@@ -71,8 +71,8 @@ Use `map["key"]` (the `at` operator) for direct access. Panics if the key is not
 ///|
 test "index_access" {
   let map = @hashmap.from_array([("x", 10), ("y", 20)])
-  assert_eq(map["x"], 10)
-  assert_eq(map["y"], 20)
+  @test.assert_eq(map["x"], 10)
+  @test.assert_eq(map["y"], 20)
 }
 ```
 
@@ -90,7 +90,7 @@ test "iteration_full" {
   debug_inspect(buf, content="[(\"a\", 1)]")
   // fold
   let sum = map.fold(init=0, fn(acc, _k, v) { acc + v })
-  assert_eq(sum, 1)
+  @test.assert_eq(sum, 1)
   // keys / values
   debug_inspect(map.keys().to_array(), content="[\"a\"]")
   debug_inspect(map.values().to_array(), content="[1]")

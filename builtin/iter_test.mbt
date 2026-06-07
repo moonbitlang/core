@@ -41,9 +41,9 @@ test "repeat" {
 ///|
 test "count" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  assert_eq(iter.count(), 5)
+  @test.assert_eq(iter.count(), 5)
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  assert_eq(iter.length(), 5)
+  @test.assert_eq(iter.length(), 5)
 }
 
 ///|
@@ -422,16 +422,16 @@ test "flat_map2" {
 test "fold" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let result = (iter.fold((acc, x) => acc + x.to_int(), init=0) / 5).unsafe_to_char()
-  assert_eq(result, '3')
+  @test.assert_eq(result, '3')
 }
 
 ///|
 test "find_first" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let result = iter.find_first(x => x > '3')
-  assert_eq(result, Some('4'))
+  @test.assert_eq(result, Some('4'))
   let result2 = iter.find_first(x => x > '5')
-  assert_eq(result2, None)
+  @test.assert_eq(result2, None)
 }
 
 ///|
@@ -495,7 +495,7 @@ test "collect" {
   let arr = ['1', '2', '3', '4', '5']
   let iter = arr.iter()
   let vec = iter.collect()
-  assert_eq(vec, ['1', '2', '3', '4', '5'])
+  @test.assert_eq(vec, ['1', '2', '3', '4', '5'])
 }
 
 ///|
@@ -768,21 +768,21 @@ fn[T] test_from_array(arr : Array[T]) -> Iter[T] {
 ///|
 test "any" {
   let iter = [1, 2, 3, 4, 5, 6] |> test_from_array
-  assert_eq(iter.take(3).any(x => x < 4), true)
-  assert_eq(iter.take(8).any(x => x < 7), true)
-  assert_eq(iter.take(6).any(x => x < 7), true)
+  @test.assert_eq(iter.take(3).any(x => x < 4), true)
+  @test.assert_eq(iter.take(8).any(x => x < 7), true)
+  @test.assert_eq(iter.take(6).any(x => x < 7), true)
   let iter = [1, 2, 3, 4, 5, 6] |> test_from_array
-  assert_eq(iter.all(x => x < 4), false)
-  assert_eq(iter.take(8).all(x => x < 7), true)
+  @test.assert_eq(iter.all(x => x < 4), false)
+  @test.assert_eq(iter.take(8).all(x => x < 7), true)
 }
 
 ///|
 test "all" {
   let iter = [1, 2, 3, 4, 5, 6] |> test_from_array
-  assert_eq(iter.take(3).all(x => x < 4), true)
-  assert_eq(iter.take(3).all(x => x < 2), false)
-  assert_eq(iter.take(8).all(x => x < 7), true)
-  assert_eq(iter.take(6).all(x => x < 7), true)
+  @test.assert_eq(iter.take(3).all(x => x < 4), true)
+  @test.assert_eq(iter.take(3).all(x => x < 2), false)
+  @test.assert_eq(iter.take(8).all(x => x < 7), true)
+  @test.assert_eq(iter.take(6).all(x => x < 7), true)
 }
 
 ///|
@@ -1099,49 +1099,49 @@ test "Float::until negative step" {
 // test "group_by with consecutive identical elements" {
 //   let iter = [1, 1, 2, 2, 3, 3].iter()
 //   let grouped = iter.group_by((x) => { x })
-//   assert_eq(grouped.get(1), Some([1, 1]))
-//   assert_eq(grouped.get(2), Some([2, 2]))
-//   assert_eq(grouped.get(3), Some([3, 3]))
+//   @test.assert_eq(grouped.get(1), Some([1, 1]))
+//   @test.assert_eq(grouped.get(2), Some([2, 2]))
+//   @test.assert_eq(grouped.get(3), Some([3, 3]))
 // }
 
 ///|
 // test "group_by with non-consecutive identical elements" {
 //   let iter = [1, 2, 1, 3, 2, 1].iter()
 //   let grouped = iter.group_by((x) => { x })
-//   assert_eq(grouped.get(1), Some([1, 1, 1]))
-//   assert_eq(grouped.get(2), Some([2, 2]))
-//   assert_eq(grouped.get(3), Some([3]))
+//   @test.assert_eq(grouped.get(1), Some([1, 1, 1]))
+//   @test.assert_eq(grouped.get(2), Some([2, 2]))
+//   @test.assert_eq(grouped.get(3), Some([3]))
 // }
 
 ///|
 // test "group_by with empty input" {
 //   let iter : Iter[Int] = Iter::empty()
 //   let grouped = iter.group_by((x) => { x })
-//   assert_eq(grouped.length(), 0)
+//   @test.assert_eq(grouped.length(), 0)
 // }
 
 ///|
 // test "group_by with single element input" {
 //   let iter = [42].iter()
 //   let grouped = iter.group_by((x) => { x })
-//   assert_eq(grouped.get(42), Some([42]))
+//   @test.assert_eq(grouped.get(42), Some([42]))
 // }
 
 ///|
 // test "group_by with custom key function" {
 //   let iter = [1, 2, 3, 4].iter()
 //   let grouped = iter.group_by((x) => { x % 2 })
-//   assert_eq(grouped.get(0), Some([2, 4]))
-//   assert_eq(grouped.get(1), Some([1, 3]))
+//   @test.assert_eq(grouped.get(0), Some([2, 4]))
+//   @test.assert_eq(grouped.get(1), Some([1, 3]))
 // }
 
 ///|
 // test "group_by with strings" {
 //   let iter = ["apple", "avocado", "banana", "cherry", "blueberry"].iter()
 //   let grouped = iter.group_by((s) => { s.charcode_at(0) })
-//   assert_eq(grouped.get('a'), Some(["apple", "avocado"]))
-//   assert_eq(grouped.get('b'), Some(["banana", "blueberry"]))
-//   assert_eq(grouped.get('c'), Some(["cherry"]))
+//   @test.assert_eq(grouped.get('a'), Some(["apple", "avocado"]))
+//   @test.assert_eq(grouped.get('b'), Some(["banana", "blueberry"]))
+//   @test.assert_eq(grouped.get('c'), Some(["cherry"]))
 // }
 
 ///|
@@ -1159,7 +1159,7 @@ test "Float::until negative step" {
 //   ].iter()
 //   let grouped = people.group_by((p) => { p.age })
 //   let groups = grouped.values().map((a) => { a.map((p) => { p.name }) }).collect()
-//   assert_eq(groups, [["Alice", "Bob"], ["Charlie", "Eve"], ["Dave"]])
+//   @test.assert_eq(groups, [["Alice", "Bob"], ["Charlie", "Eve"], ["Dave"]])
 // }
 
 ///|
@@ -1170,11 +1170,11 @@ test "iter2" {
   }
   let iter = [0, 1, 2].iter().iter2()
   while iter.next() is Some((i, x)) {
-    assert_eq(i, x)
+    @test.assert_eq(i, x)
   }
   let iter = [0, 1, 2].iter()
   for i, x in iter.iter2() {
-    assert_eq(i, x)
+    @test.assert_eq(i, x)
   }
 }
 
@@ -1182,10 +1182,10 @@ test "iter2" {
 test "Iter::iter2" {
   let iter = [0, 1, 2].iter()
   for i, x in iter.iter2() {
-    assert_eq(i, x)
+    @test.assert_eq(i, x)
   }
   for i, x in iter {
-    assert_eq(i, x)
+    @test.assert_eq(i, x)
   }
 }
 

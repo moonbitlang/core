@@ -13,16 +13,13 @@
 // limitations under the License.
 
 ///|
-using @debug {trait Debug, type Repr}
-
-///|
-pub impl[T : Debug] Debug for Ref[T] with fn to_repr(self) {
-  Repr::opaque_("Ref", @debug.to_repr(self.val))
+pub impl[T : @debug.Debug] @debug.Debug for Ref[T] with fn to_repr(self) {
+  @debug.Repr::opaque_("Ref", @debug.to_repr(self.val))
 }
 
 ///|
 #deprecated("use `to_repr(a)` instead", skip_current_package=true)
-pub fn[T : Debug] Ref::to_repr(self : Ref[T]) -> Repr {
+pub fn[T : @debug.Debug] Ref::to_repr(self : Ref[T]) -> @debug.Repr {
   @debug.to_repr(self)
 }
 
