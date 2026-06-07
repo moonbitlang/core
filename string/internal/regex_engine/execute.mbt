@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-/// FIXME: derive(@debug.Debug) pulls in such local using
+/// NOTE: `derive(@debug.Debug)` is used here so this file doesn’t need a local `using @debug { ... }` import.
 
 ///|
 struct MatchResult(Array[Int]) derive(@debug.Debug)
