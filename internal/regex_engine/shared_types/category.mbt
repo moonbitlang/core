@@ -84,6 +84,7 @@ pub fn Category::inexistant_or_non_word_start() -> Category {
 }
 
 ///|
+/// Convenience category: outside input or non-word (end-of-match side).
 pub fn Category::inexistant_or_non_word_end() -> Category {
   Category(1 | 8)
 }
