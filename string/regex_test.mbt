@@ -14,7 +14,7 @@
 
 ///|
 test "execute/non_capture_group" {
-  let regex = @string.Regex("(?:ab)(c)(?:d)")
+  let regex = re"(?:ab)(c)(?:d)"
   guard regex.execute("abcd") is Some(m) else { fail("Expected match") }
   debug_inspect(
     m,
@@ -30,7 +30,7 @@ test "execute/non_capture_group" {
 
 ///|
 test "execute/non_capture_with_named_group" {
-  let regex = @string.Regex("(?:a)(b)(?:c)(?<d>d)")
+  let regex = re"(?:a)(b)(?:c)(?<d>d)"
   guard regex.execute("abcd") is Some(m) else { fail("Expected match") }
   debug_inspect(
     m,
@@ -46,7 +46,7 @@ test "execute/non_capture_with_named_group" {
 
 ///|
 test "execute/any_char_on_supplementary_plane" {
-  let regex = @string.Regex(".")
+  let regex = re"."
   guard regex.execute("😀") is Some(m) else {
     fail("Expected match for supplementary-plane Unicode escape")
   }
@@ -64,7 +64,7 @@ test "execute/any_char_on_supplementary_plane" {
 
 ///|
 test "execute/range_crossing_surrogate_gap_has_no_half_match" {
-  let regex = @string.Regex("[\\uD7FF-\\uE000]")
+  let regex = re"[\uD7FF-\uE000]"
   guard regex.execute("😀") is None else {
     fail("Expected no surrogate-half match")
   }
@@ -90,7 +90,7 @@ test "compile/error_unclosed_char_class" {
 
 ///|
 test "compile/unicode_escape_supplementary_plane" {
-  let regex = @string.Regex("\\u{1F600}")
+  let regex = re"\u{1F600}"
   guard regex.execute("a😀b") is Some(m) else {
     fail("Expected match for supplementary-plane Unicode escape")
   }
@@ -132,7 +132,7 @@ test "string/literal_metacharacters" {
 
 ///|
 test "repeat/greedy_and_nongreedy" {
-  let base = @string.Regex("[[:digit:]]")
+  let base = re"[[:digit:]]"
   let greedy = base.repeat(min=2, max=4)
   let nongreedy = base.repeat(min=2, max=4, greedy=false)
   guard greedy.execute("a12345") is Some(m1) else {
@@ -165,25 +165,25 @@ test "repeat/greedy_and_nongreedy" {
 
 ///|
 test "panic repeat/invalid_min_negative" {
-  let base = @string.Regex("[[:digit:]]")
+  let base = re"[[:digit:]]"
   ignore(base.repeat(min=-1))
 }
 
 ///|
 test "panic repeat/invalid_max_less_than_min" {
-  let base = @string.Regex("[[:digit:]]")
+  let base = re"[[:digit:]]"
   ignore(base.repeat(min=3, max=2))
 }
 
 ///|
 test "panic repeat/invalid_min_too_large" {
-  let base = @string.Regex("[[:digit:]]")
+  let base = re"[[:digit:]]"
   ignore(base.repeat(min=257))
 }
 
 ///|
 test "panic repeat/invalid_max_too_large" {
-  let base = @string.Regex("[[:digit:]]")
+  let base = re"[[:digit:]]"
   ignore(base.repeat(min=0, max=257))
 }
 
@@ -233,9 +233,9 @@ test "complex/email_pattern" {
   // Build readable email pattern using + and |
   // Use simpler character class - avoid complex mixing with POSIX classes
   // Put - at end to avoid it being interpreted as a range operator
-  let username = @string.Regex("[a-zA-Z0-9_.+\\-]+")
-  let domain_part = @string.Regex("[a-zA-Z0-9\\-]+")
-  let tld = @string.Regex("com") | Regex("org") | Regex("net")
+  let username = re"[a-zA-Z0-9_.+\-]+"
+  let domain_part = re"[a-zA-Z0-9\-]+"
+  let tld = re"com" | re"org" | re"net"
   let email = username +
     @string.Regex::string("@") +
     domain_part +
@@ -276,7 +276,7 @@ test "complex/url_protocol" {
   let https = @string.Regex::string("https")
   let ftp = @string.Regex::string("ftp")
   let protocol = http | https | ftp
-  let url = protocol + @string.Regex::string("://") + Regex("[^/]+")
+  let url = protocol + @string.Regex::string("://") + re"[^/]+"
   guard url.execute("https://example.com") is Some(m) else {
     fail("Expected URL match")
   }
@@ -314,9 +314,9 @@ test "complex/url_protocol" {
 ///|
 test "complex/date_formats" {
   // Support multiple date formats using | for readability
-  let year = @string.Regex("[[:digit:]]{4}")
-  let month = @string.Regex("[[:digit:]]{2}")
-  let day = @string.Regex("[[:digit:]]{2}")
+  let year = re"[[:digit:]]{4}"
+  let month = re"[[:digit:]]{2}"
+  let day = re"[[:digit:]]{2}"
   let dash_sep = @string.Regex::string("-")
   let slash_sep = @string.Regex::string("/")
   let dot_sep = @string.Regex::string(".")
@@ -366,8 +366,8 @@ test "complex/date_formats" {
 ///|
 test "complex/programming_identifier" {
   // Match valid programming identifiers with optional namespace
-  let start_char = @string.Regex("[[:alpha:]_]")
-  let id_char = @string.Regex("[[:alnum:]_]")
+  let start_char = re"[[:alpha:]_]"
+  let id_char = re"[[:alnum:]_]"
   let identifier = start_char + id_char.repeat(min=0)
   let namespace_sep = @string.Regex::string("::")
   let namespaced_id = (identifier + namespace_sep).repeat(min=0) + identifier
@@ -426,7 +426,7 @@ test "complex/log_level" {
   // Fixed: Use [^\\]] to match anything except closing bracket
   // Otherwise .+ is greedy and matches past the ]
   let timestamp = @string.Regex::string("[") +
-    Regex("[^\\]]+") +
+    re"[^\]]+" +
     @string.Regex::string("]")
   let log_line = timestamp + @string.Regex::string(" ") + level
   guard log_line.execute("[2026-02-26 10:30:45] ERROR") is Some(m) else {
@@ -461,14 +461,14 @@ test "complex/log_level" {
 test "complex/phone_number" {
   // Match phone with optional country code and various formats
   let plus = @string.Regex::string("+")
-  let country = plus + Regex("[[:digit:]]{1,3}")
+  let country = plus + re"[[:digit:]]{1,3}"
   let space = @string.Regex::string(" ")
   let dash = @string.Regex::string("-")
   let lparen = @string.Regex::string("(")
   let rparen = @string.Regex::string(")")
-  let area = @string.Regex("[[:digit:]]{3}")
-  let prefix = @string.Regex("[[:digit:]]{3}")
-  let line = @string.Regex("[[:digit:]]{4}")
+  let area = re"[[:digit:]]{3}"
+  let prefix = re"[[:digit:]]{3}"
+  let line = re"[[:digit:]]{4}"
   let phone = country.repeat(min=0, max=1) +
     space.repeat(min=0, max=1) +
     ((lparen + area + rparen) | area) +
@@ -494,13 +494,13 @@ test "complex/phone_number" {
 ///|
 test "complex/semantic_version" {
   // Match semantic versioning with optional pre-release and build metadata
-  let digits = @string.Regex("[[:digit:]]+")
+  let digits = re"[[:digit:]]+"
   let dot = @string.Regex::string(".")
   let major_minor_patch = digits + dot + digits + dot + digits
   let dash = @string.Regex::string("-")
   // Fixed: pre-release and build can contain dots (e.g., "beta.1", "build.123")
   // Put - at the very end to avoid range interpretation
-  let alphanum = @string.Regex("[a-zA-Z0-9.\\-]+")
+  let alphanum = re"[a-zA-Z0-9.\-]+"
   let pre_release = dash + alphanum
   let plus = @string.Regex::string("+")
   let build_meta = plus + alphanum
@@ -539,7 +539,7 @@ test "complex/semantic_version" {
 test "complex/hex_color" {
   // Match hex colors in different formats
   let hash = @string.Regex::string("#")
-  let hex = @string.Regex("[0-9a-fA-F]")
+  let hex = re"[0-9a-fA-F]"
   // Match longest first to avoid short match on long colors
   let alpha_color = hash + hex + hex + hex + hex + hex + hex + hex + hex
   let long_color = hash + hex + hex + hex + hex + hex + hex
@@ -592,8 +592,8 @@ test "complex/json_number" {
   let minus = @string.Regex::string("-")
   let plus_sign = @string.Regex::string("+")
   let zero = @string.Regex::string("0")
-  let digit19 = @string.Regex("[1-9]")
-  let digit = @string.Regex("[[:digit:]]")
+  let digit19 = re"[1-9]"
+  let digit = re"[[:digit:]]"
   let int = zero | (digit19 + digit.repeat(min=0))
   let dot = @string.Regex::string(".")
   let frac = dot + digit.repeat(min=1)
@@ -646,7 +646,7 @@ test "complex/json_number" {
 
 ///|
 test "add/with_any_quantifier" {
-  let re1 = @string.Regex(".*?\\.")
+  let re1 = re".*?\."
   let re2 = re1 + @string.Regex::string(" ")
   guard re1.execute("abc.") is Some(_) else { fail("Expected match") }
   guard re2.execute("abc. ") is Some(_) else { fail("Expected match") }
@@ -655,7 +655,7 @@ test "add/with_any_quantifier" {
 ///|
 test "add/with_any_quantifier_and_empty_wrappers" {
   let empty = @string.Regex::string("")
-  let re = empty + Regex(".*?\\.") + empty + @string.Regex::string(" ")
+  let re = empty + re".*?\." + empty + @string.Regex::string(" ")
   guard re.execute("abc. ") is Some(m) else { fail("Expected match") }
   inspect(m.content(), content="abc. ")
 }
@@ -673,7 +673,7 @@ test "should_raise" {
 
 ///|
 test "escaped_dash_in_char_class" {
-  let regex = @string.Regex("[a\\-z]")
+  let regex = re"[a\-z]"
   inspect(regex.execute("a-z") is Some(_), content="true")
   inspect(regex.execute("b") is Some(_), content="false")
   inspect(regex.execute("-") is Some(_), content="true")
@@ -683,7 +683,7 @@ test "escaped_dash_in_char_class" {
 
 ///|
 test "capture/simple_named_group" {
-  let digit = @string.Regex("[[:digit:]]+").capture("number")
+  let digit = re"[[:digit:]]+".capture("number")
   let regex = @string.Regex::string("ID: ") + digit
   guard regex.execute("ID: 12345") is Some(m) else { fail("Expected match") }
   inspect(m.content(), content="ID: 12345")
@@ -697,9 +697,9 @@ test "capture/simple_named_group" {
 
 ///|
 test "capture/email_with_named_groups" {
-  let user = @string.Regex("[[:alpha:]]+").capture("user")
-  let domain = @string.Regex("[[:alpha:]]+").capture("domain")
-  let tld = @string.Regex("[[:alpha:]]+").capture("tld")
+  let user = re"[[:alpha:]]+".capture("user")
+  let domain = re"[[:alpha:]]+".capture("domain")
+  let tld = re"[[:alpha:]]+".capture("tld")
   let email = user +
     @string.Regex::string("@") +
     domain +
@@ -726,7 +726,7 @@ test "capture/email_with_named_groups" {
 
 ///|
 test "capture/multiple_captures_same_pattern" {
-  let word = @string.Regex("[[:alpha:]]+")
+  let word = re"[[:alpha:]]+"
   let first = word.capture("first")
   let second = word.capture("second")
   let regex = first + @string.Regex::string(" ") + second

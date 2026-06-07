@@ -39,7 +39,7 @@ fn StringView::next_char_index(self : StringView, index : Int) -> Int {
 /// 
 /// ```mbt check
 /// test {
-///   let regex = @string.Regex("[[:digit:]]+")
+///   let regex = re"[[:digit:]]+"
 ///   let result = regex.replace_by("a12b3", m => "[\{m.content()}]")
 ///   inspect(result, content="a[12]b[3]")
 /// }
@@ -104,7 +104,7 @@ pub fn Regex::replace_by(
 ///
 /// ```mbt check
 /// test {
-///   let regex = @string.Regex("[[:digit:]]+")
+///   let regex = re"[[:digit:]]+"
 ///   let matches = regex.find("a12b3").to_array()
 ///   inspect(matches.length(), content="2")
 ///   inspect(matches[0].content(), content="12")
@@ -141,7 +141,7 @@ pub fn Regex::find(regex : Regex, str : StringView) -> Iter[MatchResult] {
 /// 
 /// ```mbt check
 /// test {
-///   let regex = @string.Regex(",")
+///   let regex = re","
 ///   let parts = regex.split("a,,b").to_array()
 ///   inspect(parts.length(), content="3")
 ///   inspect(parts[0], content="a")

@@ -199,7 +199,7 @@ Use `Regex` for string regex matching, replacement, and splitting:
 ```mbt check
 ///|
 test "string regex basics" {
-  let regex = @string.Regex("[[:digit:]]+")
+  let regex = re"[[:digit:]]+"
 
   guard regex.execute("id=42") is Some(m) else { fail("Expected match") }
   inspect(m.content(), content="42")
@@ -258,7 +258,7 @@ test "parse integers with base" {
 ```mbt check
 ///|
 test "match result" {
-  let re = @string.Regex("([[:alpha:]]+)=([[:digit:]]+)")
+  let re = re"([[:alpha:]]+)=([[:digit:]]+)"
   guard re.execute("key=42") is Some(m) else { fail("no match") }
   inspect(m.content(), content="key=42")
   inspect(m.before(), content="")
@@ -273,7 +273,7 @@ Named capture groups via `(?<name>...)`:
 ```mbt check
 ///|
 test "named groups" {
-  let re = @string.Regex("(?<name>[[:alpha:]]+):(?<val>[[:digit:]]+)")
+  let re = re"(?<name>[[:alpha:]]+):(?<val>[[:digit:]]+)"
   guard re.execute("age:30") is Some(m) else { fail("no match") }
   debug_inspect(m.named_group("name"), content="Some(<StringView: \"age\">)")
   debug_inspect(m.named_group("val"), content="Some(<StringView: \"30\">)")
@@ -287,7 +287,7 @@ test "named groups" {
 ```mbt check
 ///|
 test "find and split" {
-  let digits = @string.Regex("[[:digit:]]+")
+  let digits = re"[[:digit:]]+"
   let matches = digits
     .find("a1b22c333")
     .map(fn(m) { m.content().to_owned() })
@@ -309,7 +309,7 @@ test "regex combinators" {
   let abc = @string.Regex::string("abc")
   inspect(abc.execute("xabcy") is Some(_), content="true")
   // repeat: match 2 to 4 digits
-  let digits = @string.Regex("[[:digit:]]").repeat(min=2, max=4)
+  let digits = re"[[:digit:]]".repeat(min=2, max=4)
   guard digits.execute("a12345") is Some(m) else { fail("no match") }
   inspect(m.content(), content="1234") // greedy: takes max
   // alternation with |
