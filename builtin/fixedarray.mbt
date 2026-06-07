@@ -178,7 +178,7 @@ pub fn[T] FixedArray::is_empty(self : FixedArray[T]) -> Bool {
 /// test {
 ///   let v : FixedArray[Int] = [3, 4, 5]
 ///   let result = v.binary_search(3)
-///   assert_eq(result, Ok(0)) // The element 3 is found at index 0
+///   @test.assert_eq(result, Ok(0)) // The element 3 is found at index 0
 /// }
 /// ```
 ///
@@ -263,7 +263,7 @@ pub fn[T] FixedArray::binary_search_by(
 /// test {
 ///   let arr = []
 ///   [1, 2, 3, 4, 5].each(x => arr.push(x))
-///   assert_eq(arr, [1, 2, 3, 4, 5])
+///   @test.assert_eq(arr, [1, 2, 3, 4, 5])
 /// }
 /// ```
 #locals(f)
@@ -318,7 +318,7 @@ test "each" {
 /// test {
 ///   let arr = []
 ///   [1, 2, 3, 4, 5].eachi((index, elem) => arr.push((index, elem)))
-///   assert_eq(arr, [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5)])
+///   @test.assert_eq(arr, [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5)])
 /// }
 /// ```
 #locals(f)
@@ -373,7 +373,7 @@ test "eachi" {
 /// test {
 ///   let arr = []
 ///   [1, 2, 3, 4, 5].rev_each(x => arr.push(x))
-///   assert_eq(arr, [5, 4, 3, 2, 1])
+///   @test.assert_eq(arr, [5, 4, 3, 2, 1])
 /// }
 /// ```
 #locals(f)
@@ -428,7 +428,7 @@ test "rev_each" {
 /// test {
 ///   let arr = []
 ///   [1, 2, 3, 4, 5].rev_eachi((index, elem) => arr.push((index, elem)))
-///   assert_eq(arr, [(0, 5), (1, 4), (2, 3), (3, 2), (4, 1)])
+///   @test.assert_eq(arr, [(0, 5), (1, 4), (2, 3), (3, 2), (4, 1)])
 /// }
 /// ```
 #locals(f)
@@ -487,7 +487,7 @@ test "rev_eachi" {
 /// test {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let doubled = arr.map(x => x * 2)
-///   assert_eq(doubled, [2, 4, 6, 8, 10])
+///   @test.assert_eq(doubled, [2, 4, 6, 8, 10])
 /// }
 /// ```
 #locals(f)
@@ -525,7 +525,7 @@ test "map" {
 /// test {
 ///   let arr = [3, 4, 5]
 ///   let added = arr.mapi((i, x) => x + i)
-///   assert_eq(added, [3, 5, 7])
+///   @test.assert_eq(added, [3, 5, 7])
 /// }
 /// ```
 #locals(f)
@@ -928,7 +928,7 @@ test "rev" {
 /// test {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   arr.swap(0, 1)
-///   assert_eq(arr, [2, 1, 3, 4, 5])
+///   @test.assert_eq(arr, [2, 1, 3, 4, 5])
 /// }
 /// ```
 pub fn[T] FixedArray::swap(self : FixedArray[T], i : Int, j : Int) -> Unit {
@@ -1057,7 +1057,7 @@ test "fill" {
 /// ```mbt check
 /// test {
 ///   let arr : FixedArray[Int] = [3, 4, 5]
-///   assert_eq(arr.search(3), Some(0))
+///   @test.assert_eq(arr.search(3), Some(0))
 /// }
 /// ```
 pub fn[T : Eq] FixedArray::search(self : FixedArray[T], value : T) -> Int? {

@@ -167,9 +167,9 @@ pub fn BytesView::unsafe_get(self : BytesView, index : Int) -> Byte {
 ///   let bs = b"\x00\x01\x02\x03\x04\x05"
 ///   let bv = bs[1:4]
 ///   inspect(bv.length(), content="3")
-///   assert_eq(bv[0], b'\x01')
-///   assert_eq(bv[1], b'\x02')
-///   assert_eq(bv[2], b'\x03')
+///   @test.assert_eq(bv[0], b'\x01')
+///   @test.assert_eq(bv[1], b'\x02')
+///   @test.assert_eq(bv[2], b'\x03')
 /// }
 /// ```
 #alias("_[_:_]")
@@ -248,7 +248,7 @@ pub fn BytesView::get_view(
 ///   let bv = b"\x00\x01\x02\x03\x04\x05"[:]
 ///   let bv2 = bv[1:4]
 ///   inspect(bv2.length(), content="3")
-///   assert_eq(bv2[1], b'\x02')
+///   @test.assert_eq(bv2[1], b'\x02')
 /// }
 /// ```
 #alias("_[_:_]")

@@ -121,10 +121,10 @@ fn branching_factor_power(a : Int) -> Int {
 /// If we `inspect` the vector, it will raise an error if the arrays are too long.
 /// I guess that's because it exceeds the heap limit of the VM.
 fn check_array_eq(a : Array[Int], t : Vector[Int]) -> Unit raise {
-  assert_eq(a.length(), t.size)
+  @test.assert_eq(a.length(), t.size)
   let len = t.size
   for i in 0..<len {
-    assert_eq(t[i], a[i])
+    @test.assert_eq(t[i], a[i])
   }
 }
 

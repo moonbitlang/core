@@ -37,7 +37,7 @@ pub fn[T : Show] StringBuilder::write_object(
 ///   let sb = StringBuilder()
 ///   let chars = "Hello🤣".iter()
 ///   sb.write_iter(chars)
-///   assert_eq(sb.to_string(), "Hello🤣")
+///   @test.assert_eq(sb.to_string(), "Hello🤣")
 /// }
 /// ```
 pub fn StringBuilder::write_iter(
@@ -68,7 +68,7 @@ pub fn StringBuilder::write_iter(
 ///   let str = "Hello, world!"
 ///   let view = str[7:12] // "world"
 ///   sb.write_stringview(view)
-///   assert_eq(sb.to_string(), "world")
+///   @test.assert_eq(sb.to_string(), "world")
 /// }
 /// ```
 pub fn StringBuilder::write_stringview(

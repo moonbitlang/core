@@ -115,8 +115,8 @@ test "tuple16_equal" {
   let t3 = (1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
   assert_true(t1 == t2)
   assert_false(t1 == t3)
-  assert_eq(t1, t2)
-  assert_not_eq(t1, t3)
+  @test.assert_eq(t1, t2)
+  @test.assert_not_eq(t1, t3)
 }
 
 ///|

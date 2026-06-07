@@ -32,9 +32,9 @@ You can check the variant of a `Result` using the `is_ok` and `is_err` methods.
 test {
   let result : Result[Int, String] = Ok(42)
   let is_ok = result is Ok(_)
-  assert_eq(is_ok, true)
+  @test.assert_eq(is_ok, true)
   let is_err = result is Err(_)
-  assert_eq(is_err, false)
+  @test.assert_eq(is_err, false)
 }
 ```
 
@@ -48,7 +48,7 @@ test {
     Ok(value) => value
     Err(_) => -1
   }
-  assert_eq(val, 33)
+  @test.assert_eq(val, 33)
 }
 ```
 
@@ -58,7 +58,7 @@ Or using the `unwrap` method, which will panic if the result is `Err` and return
 test {
   let result : Result[Int, String] = Ok(42)
   let value = result.unwrap()
-  assert_eq(value, 42)
+  @test.assert_eq(value, 42)
 }
 ```
 
@@ -68,7 +68,7 @@ A safe alternative is the `or` method, which returns the value if the result is 
 test {
   let result : Result[Int, String] = Err("error")
   let value = result.or(0)
-  assert_eq(value, 0)
+  @test.assert_eq(value, 0)
 }
 ```
 
@@ -78,7 +78,7 @@ There is a lazy version of `or` called `or_else`, which takes a function that re
 test {
   let result : Result[Int, String] = Err("error")
   let value = result.or_else(() => 0)
-  assert_eq(value, 0)
+  @test.assert_eq(value, 0)
 }
 ```
 

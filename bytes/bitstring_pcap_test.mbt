@@ -34,7 +34,7 @@ fn pcap_test(data : BytesView) -> Unit raise {
       u32be(_),
       .. packet,
     ] => {
-      assert_eq(magic, 0xd4c3b2a1)
+      @test.assert_eq(magic, 0xd4c3b2a1)
       pcap_packet_test(packet)
     }
     _ => fail("Not a valid pcap file")
@@ -120,11 +120,11 @@ test "pcap_test" {
 ///|
 test "u32le u32be last" {
   match b"\x01\x02\x03\x04" {
-    [.., u32le(x)] => assert_eq(x, 0x04030201)
+    [.., u32le(x)] => @test.assert_eq(x, 0x04030201)
     _ => fail("Not matched")
   }
   match b"\x01\x02\x03\x04" {
-    [.., u32be(x)] => assert_eq(x, 0x01020304)
+    [.., u32be(x)] => @test.assert_eq(x, 0x01020304)
     _ => fail("Not matched")
   }
 }

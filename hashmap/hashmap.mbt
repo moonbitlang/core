@@ -936,7 +936,7 @@ pub fn[K : Eq, V] HashMap::merge_in_place(
 }
 
 ///|
-priv struct MyString(String) derive(Eq, Debug)
+priv struct MyString(String) derive(Eq, @debug.Debug)
 
 ///|
 #coverage.skip

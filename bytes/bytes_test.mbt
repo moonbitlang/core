@@ -81,7 +81,7 @@ test "from array literal" {
   let b2 = Bytes::from_array([
     65, 0, 66, 0, 67, 0, 68, 0, 69, 0, 70, 0, 71, 0, 72, 0, 73, 0,
   ])
-  assert_eq(b1, b2)
+  @test.assert_eq(b1, b2)
 }
 
 ///|

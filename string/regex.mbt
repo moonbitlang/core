@@ -78,11 +78,8 @@ pub fn Regex::Regex(pattern : StringView) -> Regex raise {
 const MAX_REPEAT_QUANTIFIER = 256
 
 ///|
-using @debug {trait Debug, type Repr}
-
-///|
-pub impl Debug for Regex with fn to_repr(self) {
-  Repr::opaque_("Regex", @debug.to_repr(self.pat))
+pub impl @debug.Debug for Regex with fn to_repr(self) {
+  @debug.Repr::opaque_("Regex", @debug.to_repr(self.pat))
 }
 
 ///|
@@ -91,7 +88,7 @@ struct MatchResult {
   input : StringView
   group_names : ReadOnlyArray[String?]
   result : @re.MatchResult
-} derive(Debug)
+} derive(@debug.Debug)
 
 ///|
 /// Return match `before` view.

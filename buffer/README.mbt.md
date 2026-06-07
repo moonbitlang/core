@@ -10,9 +10,9 @@ Create an empty buffer, optionally with a capacity hint to reduce reallocations:
 ///|
 test {
   let buf = Buffer()
-  assert_eq(buf.is_empty(), true)
+  @test.assert_eq(buf.is_empty(), true)
   let buf2 = Buffer(size_hint=1024)
-  assert_eq(buf2.length(), 0)
+  @test.assert_eq(buf2.length(), 0)
 }
 ```
 
@@ -22,11 +22,11 @@ Create from existing data:
 ///|
 test {
   let buf = @buffer.from_bytes(b"hello")
-  assert_eq(buf.length(), 5)
+  @test.assert_eq(buf.length(), 5)
   let buf2 = @buffer.from_array([b'a', b'b', b'c'])
-  assert_eq(buf2.length(), 3)
+  @test.assert_eq(buf2.length(), 3)
   let buf3 = @buffer.from_iter(b"hi".iter())
-  assert_eq(buf3.length(), 2)
+  @test.assert_eq(buf3.length(), 2)
 }
 ```
 
@@ -112,10 +112,10 @@ test {
 test {
   let buf = Buffer()
   buf.write_float_be(1.0)
-  assert_eq(buf.length(), 4)
+  @test.assert_eq(buf.length(), 4)
   let buf2 = Buffer()
   buf2.write_double_le(1.0)
-  assert_eq(buf2.length(), 8)
+  @test.assert_eq(buf2.length(), 8)
 }
 ```
 
@@ -183,7 +183,7 @@ test {
   let bytes = buf.to_bytes()
   inspect(bytes, content="b\"hello\"")
   let v = buf.view()
-  assert_eq(v.length(), 5)
+  @test.assert_eq(v.length(), 5)
 }
 ```
 
@@ -196,9 +196,9 @@ test {
 test {
   let buf = Buffer()
   buf.write_bytes(b"data")
-  assert_eq(buf.length(), 4)
+  @test.assert_eq(buf.length(), 4)
   buf.reset()
-  assert_eq(buf.is_empty(), true)
+  @test.assert_eq(buf.is_empty(), true)
 }
 ```
 
@@ -213,6 +213,6 @@ test {
   for i in 0..<100 {
     buf.write_int_le(i)
   }
-  assert_eq(buf.length(), 400) // 100 × 4 bytes
+  @test.assert_eq(buf.length(), 400) // 100 × 4 bytes
 }
 ```

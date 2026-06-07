@@ -27,7 +27,7 @@ test {
   let a = r.int()
   let r2 = @random.Rand::chacha8(seed=b"0123456789abcdef0123456789abcdef")
   let b = r2.int()
-  assert_eq(a, b) // same seed → same sequence
+  @test.assert_eq(a, b) // same seed → same sequence
 }
 ```
 
@@ -94,7 +94,7 @@ test {
     a[j] = t
   })
   a.sort()
-  assert_eq(a, [1, 2, 3, 4, 5]) // same elements, just reordered
+  @test.assert_eq(a, [1, 2, 3, 4, 5]) // same elements, just reordered
 }
 ```
 

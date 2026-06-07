@@ -29,13 +29,13 @@ test "default" {
 
 ///|
 test "compare" {
-  assert_eq(0, "".compare(""))
-  assert_eq(-1, "".compare("abc"))
-  assert_eq(1, "abc".compare(""))
-  assert_eq(-1, "abcd".compare("abce"))
-  assert_eq(1, "abce".compare("abcd"))
-  assert_eq(-1, "c".compare("ab"))
-  assert_eq(1, "ab".compare("c"))
+  @test.assert_eq(0, "".compare(""))
+  @test.assert_eq(-1, "".compare("abc"))
+  @test.assert_eq(1, "abc".compare(""))
+  @test.assert_eq(-1, "abcd".compare("abce"))
+  @test.assert_eq(1, "abce".compare("abcd"))
+  @test.assert_eq(-1, "c".compare("ab"))
+  @test.assert_eq(1, "ab".compare("c"))
 }
 
 ///|
@@ -219,7 +219,10 @@ test "equal_ignore_ascii_case" {
   ]
   for pair in pairs {
     let (x, y) = pair
-    assert_eq(x.equal_ignore_ascii_case(y), x.compare_ignore_ascii_case(y) == 0)
+    @test.assert_eq(
+      x.equal_ignore_ascii_case(y),
+      x.compare_ignore_ascii_case(y) == 0,
+    )
   }
 }
 
@@ -231,17 +234,17 @@ test "Show::output" {
     buf.to_string()
   }
 
-  assert_eq(repr("a"), "a")
-  assert_eq(repr("'"), "'")
-  assert_eq(repr("\""), "\"")
-  assert_eq(repr("\\"), "\\")
-  assert_eq(repr("\n"), "\n")
-  assert_eq(repr("\r"), "\r")
-  assert_eq(repr("\b"), "\b")
-  assert_eq(repr("\t"), "\t")
-  assert_eq(repr("\u{00}"), "\u{00}")
-  assert_eq(repr("\u0000"), "\u{00}")
-  assert_eq(repr("abc'\"def\\"), "abc'\"def\\")
+  @test.assert_eq(repr("a"), "a")
+  @test.assert_eq(repr("'"), "'")
+  @test.assert_eq(repr("\""), "\"")
+  @test.assert_eq(repr("\\"), "\\")
+  @test.assert_eq(repr("\n"), "\n")
+  @test.assert_eq(repr("\r"), "\r")
+  @test.assert_eq(repr("\b"), "\b")
+  @test.assert_eq(repr("\t"), "\t")
+  @test.assert_eq(repr("\u{00}"), "\u{00}")
+  @test.assert_eq(repr("\u0000"), "\u{00}")
+  @test.assert_eq(repr("abc'\"def\\"), "abc'\"def\\")
 }
 
 ///|
@@ -344,7 +347,7 @@ test "iter2" {
 test "Buffer::to_bytes" {
   let buffer = StringBuilder(size_hint=16)
   buffer.write_string("中文")
-  assert_eq(buffer.to_string(), "中文")
+  @test.assert_eq(buffer.to_string(), "中文")
 }
 
 ///|
@@ -964,7 +967,7 @@ test "offset_of_nth_char property" {
   let n = s.char_length()
   for i in 0..<n {
     let index = s.offset_of_nth_char(i).unwrap()
-    assert_eq(s.get_char(index).unwrap(), s.iter().nth(i).unwrap())
+    @test.assert_eq(s.get_char(index).unwrap(), s.iter().nth(i).unwrap())
   }
 }
 
@@ -974,24 +977,27 @@ test "offset_of_nth_char property negative" {
   let n = s.char_length()
   for i in 1..<=n {
     let index = s.offset_of_nth_char(-i).unwrap()
-    assert_eq(s.get_char(index).unwrap(), s.rev_iter().nth(i - 1).unwrap())
+    @test.assert_eq(
+      s.get_char(index).unwrap(),
+      s.rev_iter().nth(i - 1).unwrap(),
+    )
   }
 }
 
 ///|
 test "split and then join should be identity" {
   let string = ""
-  assert_eq(string, string.split("").map(x => x.to_owned()).join(""))
-  assert_eq(string, string.split("a").map(x => x.to_owned()).join("a"))
+  @test.assert_eq(string, string.split("").map(x => x.to_owned()).join(""))
+  @test.assert_eq(string, string.split("a").map(x => x.to_owned()).join("a"))
   let string = "a,b,c,"
-  assert_eq(string, string.split("").map(x => x.to_owned()).join(""))
-  assert_eq(string, string.split(",").map(x => x.to_owned()).join(","))
+  @test.assert_eq(string, string.split("").map(x => x.to_owned()).join(""))
+  @test.assert_eq(string, string.split(",").map(x => x.to_owned()).join(","))
   let string = "a b c"
-  assert_eq(string, string.split("").map(x => x.to_owned()).join(""))
-  assert_eq(string, string.split(" ").map(x => x.to_owned()).join(" "))
+  @test.assert_eq(string, string.split("").map(x => x.to_owned()).join(""))
+  @test.assert_eq(string, string.split(" ").map(x => x.to_owned()).join(" "))
   let string = "aaaaa"
-  assert_eq(string, string.split("").map(x => x.to_owned()).join(""))
-  assert_eq(string, string.split("a").map(x => x.to_owned()).join("a"))
+  @test.assert_eq(string, string.split("").map(x => x.to_owned()).join(""))
+  @test.assert_eq(string, string.split("a").map(x => x.to_owned()).join("a"))
 }
 
 ///|
@@ -1006,7 +1012,7 @@ test "string chars array" {
 test "gard tail position" {
   let s = "abc"
   guard s is [.., ch]
-  assert_eq(ch, 'c') // failed
+  @test.assert_eq(ch, 'c') // failed
 }
 
 ///|

@@ -18,7 +18,7 @@
 /// ```mbt check
 /// test {
 ///   let s = String::from_array(['H', 'e', 'l', 'l', 'o'])
-///   assert_eq(s, "Hello")
+///   @test.assert_eq(s, "Hello")
 /// }
 /// ```
 ///

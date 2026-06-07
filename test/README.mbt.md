@@ -24,7 +24,7 @@ Use `@test.assert_eq` and `@test.assert_not_eq` to compare values in tests:
 
 ```mbt check
 ///|
-struct User(Int) derive(Eq, Debug)
+struct User(Int) derive(Eq, @debug.Debug)
 
 ///|
 test "equality assertions" {

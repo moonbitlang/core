@@ -214,14 +214,14 @@ test "StringView::to_string full view returns backing string unchanged" {
   let s = "hello"
   let v = s[:]
   // When the view covers the whole backing string, no copy is made.
-  assert_eq(v.to_owned(), s)
+  @test.assert_eq(v.to_owned(), s)
 }
 
 ///|
 test "StringView::to_string empty view" {
   let v = "abc"[1:1]
   inspect(v.to_owned(), content="")
-  assert_eq(v.to_owned().length(), 0)
+  @test.assert_eq(v.to_owned().length(), 0)
 }
 
 ///|
@@ -237,8 +237,8 @@ test "StringView::to_string is independent of data()" {
   // slice.
   let s = "hello world"
   let v = s[6:]
-  assert_eq(v.data(), "hello world")
-  assert_eq(v.to_owned(), "world")
+  @test.assert_eq(v.data(), "hello world")
+  @test.assert_eq(v.to_owned(), "world")
 }
 
 ///|
@@ -356,8 +356,8 @@ test "StringView Show output matches to_string" {
   ]
   for case in cases {
     let v = case[:]
-    assert_eq(via_output(v), Show::to_string(v))
-    assert_eq(via_output(v), case)
+    @test.assert_eq(via_output(v), Show::to_string(v))
+    @test.assert_eq(via_output(v), case)
   }
   // Sub-view also produces raw, unescaped contents.
   let s = "ab\"cd"

@@ -16,14 +16,14 @@
 #warnings("-deprecated")
 test "to_string with empty FixedArray" {
   let emptyArray : FixedArray[Int] = FixedArray::default()
-  assert_eq(emptyArray.to_string(), "[]")
+  @test.assert_eq(emptyArray.to_string(), "[]")
 }
 
 ///|
 #warnings("-deprecated")
 test "to_string with non-empty FixedArray" {
   let array : FixedArray[Int] = [1, 2, 3]
-  assert_eq(array.to_string(), "[1, 2, 3]")
+  @test.assert_eq(array.to_string(), "[1, 2, 3]")
 }
 
 ///|
@@ -129,42 +129,42 @@ test "FixedArray::iter2 with single element" {
 ///|
 test "fixedarray_binary_search_int_test" {
   let arr : FixedArray[Int] = [1, 2, 3, 4]
-  assert_eq(arr.binary_search(-100), Err(0))
-  assert_eq(arr.binary_search(-1), Err(0))
-  assert_eq(arr.binary_search(1), Ok(0))
-  assert_eq(arr.binary_search(3), Ok(2))
-  assert_eq(arr.binary_search(4), Ok(3))
-  assert_eq(arr.binary_search(5), Err(4))
-  assert_eq(arr.binary_search(60), Err(4))
+  @test.assert_eq(arr.binary_search(-100), Err(0))
+  @test.assert_eq(arr.binary_search(-1), Err(0))
+  @test.assert_eq(arr.binary_search(1), Ok(0))
+  @test.assert_eq(arr.binary_search(3), Ok(2))
+  @test.assert_eq(arr.binary_search(4), Ok(3))
+  @test.assert_eq(arr.binary_search(5), Err(4))
+  @test.assert_eq(arr.binary_search(60), Err(4))
 }
 
 ///|
 test "fixedarray_binary_search_duplicate_int_test" {
   let arr : FixedArray[Int] = [1, 2, 3, 3, 4, 4, 4, 5]
-  assert_eq(arr.binary_search(3), Ok(2))
-  assert_eq(arr.binary_search(4), Ok(4))
-  assert_eq(arr.binary_search(5), Ok(7))
+  @test.assert_eq(arr.binary_search(3), Ok(2))
+  @test.assert_eq(arr.binary_search(4), Ok(4))
+  @test.assert_eq(arr.binary_search(5), Ok(7))
   let arr = [0, 1, 1, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55]
-  assert_eq(arr.binary_search(1), Ok(1))
+  @test.assert_eq(arr.binary_search(1), Ok(1))
 }
 
 ///|
 test "fixedarray_binary_search_float_test" {
   let arr : FixedArray[Float] = [-0.25, 0.0, 1.5]
-  assert_eq(arr.binary_search(-0.25), Ok(0))
-  assert_eq(arr.binary_search(0.0), Ok(1))
-  assert_eq(arr.binary_search(1.5), Ok(2))
-  assert_eq(arr.binary_search(1.6), Err(3))
+  @test.assert_eq(arr.binary_search(-0.25), Ok(0))
+  @test.assert_eq(arr.binary_search(0.0), Ok(1))
+  @test.assert_eq(arr.binary_search(1.5), Ok(2))
+  @test.assert_eq(arr.binary_search(1.6), Err(3))
 }
 
 ///|
 test "fixedarray_binary_search_str_test" {
   let arr : FixedArray[String] = ["hello", "world", "moon", "bit"]
   arr.sort()
-  assert_eq(arr.binary_search("bit"), Ok(0))
-  assert_eq(arr.binary_search("moon"), Ok(1))
-  assert_eq(arr.binary_search("hello"), Ok(2))
-  assert_eq(arr.binary_search("world"), Ok(3))
+  @test.assert_eq(arr.binary_search("bit"), Ok(0))
+  @test.assert_eq(arr.binary_search("moon"), Ok(1))
+  @test.assert_eq(arr.binary_search("hello"), Ok(2))
+  @test.assert_eq(arr.binary_search("world"), Ok(3))
 }
 
 ///|
@@ -191,13 +191,13 @@ test "fixedarray_binary_search_by_test" {
     }
   }
 
-  assert_eq(arr.binary_search_by(cmp), Ok(1))
+  @test.assert_eq(arr.binary_search_by(cmp), Ok(1))
   target = { num2: 48 }
-  assert_eq(arr.binary_search_by(cmp), Ok(3))
+  @test.assert_eq(arr.binary_search_by(cmp), Ok(3))
   target = { num2: -8 }
-  assert_eq(arr.binary_search_by(cmp), Err(0))
+  @test.assert_eq(arr.binary_search_by(cmp), Err(0))
   target = { num2: 49 }
-  assert_eq(arr.binary_search_by(cmp), Err(4))
+  @test.assert_eq(arr.binary_search_by(cmp), Err(4))
 }
 
 ///|
@@ -407,7 +407,7 @@ test "FixedArray::from_array with non-empty array" {
   let fixedArray = FixedArray::from_array(array)
   inspect(fixedArray.length(), content="5")
   for i in 0..<5 {
-    assert_eq(fixedArray[i], array[i])
+    @test.assert_eq(fixedArray[i], array[i])
   }
 }
 
@@ -417,7 +417,7 @@ test "FixedArray::from_array with array of different type" {
   let fixedArray = FixedArray::from_array(array)
   inspect(fixedArray.length(), content="3")
   for i in 0..<3 {
-    assert_eq(fixedArray[i], array[i])
+    @test.assert_eq(fixedArray[i], array[i])
   }
 }
 
@@ -425,21 +425,21 @@ test "FixedArray::from_array with array of different type" {
 test "FixedArray::from_iter with multiple elements iterator" {
   let iter = [1, 2, 3, 4, 5].iter()
   let result = FixedArray::from_iter(iter)
-  assert_eq(result, [1, 2, 3, 4, 5])
+  @test.assert_eq(result, [1, 2, 3, 4, 5])
 }
 
 ///|
 test "FixedArray::from_iter with single element iterator" {
   let iter = [1].iter()
   let result = FixedArray::from_iter(iter)
-  assert_eq(result, [1])
+  @test.assert_eq(result, [1])
 }
 
 ///|
 test "FixedArray::from_iter with empty iterator" {
   let iter : Iter[Int] = Iter::empty()
   let result = FixedArray::from_iter(iter)
-  assert_eq(result, [])
+  @test.assert_eq(result, [])
 }
 
 ///|

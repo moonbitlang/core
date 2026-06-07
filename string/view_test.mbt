@@ -357,8 +357,8 @@ test "length_eq test with surrogate pair" {
 test "length_ge with high surrogate" {
   let str = "🐰" // This emoji is represented using a surrogate pair
   let view = str.view(start_offset=0)
-  assert_eq(view.char_length_ge(1), true)
-  assert_eq(view.char_length_ge(2), false)
+  @test.assert_eq(view.char_length_ge(1), true)
+  @test.assert_eq(view.char_length_ge(2), false)
 }
 
 ///|
@@ -661,8 +661,8 @@ test "hash" {
   let a = "abc"
   let b = "def"
   let c = "abc"
-  assert_eq(a.hash(), c.hash())
-  assert_not_eq(a.hash(), b.hash())
+  @test.assert_eq(a.hash(), c.hash())
+  @test.assert_not_eq(a.hash(), b.hash())
 }
 
 ///|
@@ -674,7 +674,7 @@ test "string view hash invariant" {
   let strings : Array[String] = @quickcheck.samples(20)
   for s in strings {
     let view = s[:]
-    assert_eq(s.hash(), view.hash())
+    @test.assert_eq(s.hash(), view.hash())
   }
 }
 
@@ -1227,7 +1227,7 @@ test "stringview equal_ignore_ascii_case" {
   let cases = [("Foo", "FOO"), ("Foo", "Bar"), ("Foo", "FoO!"), ("ä", "Ä")]
   for c in cases {
     let (x, y) = c
-    assert_eq(
+    @test.assert_eq(
       x.view().equal_ignore_ascii_case(y.view()),
       x.view().compare_ignore_ascii_case(y.view()) == 0,
     )

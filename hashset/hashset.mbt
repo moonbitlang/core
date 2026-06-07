@@ -272,7 +272,7 @@ fn[K] HashSet::rehash_place_entry(self : HashSet[K], entry : Entry[K]) -> Unit {
 // Utils
 
 ///|
-#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
+#deprecated("Use @debug.Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[K : Show] Show for HashSet[K]
 
 ///|
@@ -530,7 +530,7 @@ fn[K : Show] HashSet::_debug_entries(self : HashSet[K]) -> String {
 }
 
 ///|
-priv struct MyString(String) derive(Eq, Debug)
+priv struct MyString(String) derive(Eq, @debug.Debug)
 
 ///|
 impl Hash for MyString with fn hash(self) {

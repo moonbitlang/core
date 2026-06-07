@@ -43,7 +43,7 @@ pub fn FixedArray::unsafe_reinterpret_as_bytes(
 /// ```mbt check
 /// test {
 ///   let bytes = Bytes::makei(3, i => (i + 65).to_byte())
-///   assert_eq(bytes, b"ABC")
+///   @test.assert_eq(bytes, b"ABC")
 /// }
 /// ```
 #locals(value)

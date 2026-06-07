@@ -25,11 +25,11 @@ You can use `set()` to add a key-value pair to the map, and use `get()` to get a
 test {
   let map : @hashmap.HashMap[String, Int] = @hashmap.HashMap([])
   map.set("a", 1)
-  assert_eq(map.get("a"), Some(1))
-  assert_eq(map.get_or_default("a", 0), 1)
-  assert_eq(map.get_or_default("b", 0), 0)
+  @test.assert_eq(map.get("a"), Some(1))
+  @test.assert_eq(map.get_or_default("a", 0), 1)
+  @test.assert_eq(map.get_or_default("b", 0), 0)
   map.remove("a")
-  assert_eq(map.contains("a"), false)
+  @test.assert_eq(map.contains("a"), false)
 }
 ```
 
@@ -54,8 +54,8 @@ You can use `contains()` to check whether a key exists.
 ///|
 test {
   let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
-  assert_eq(map.contains("a"), true)
-  assert_eq(map.contains("d"), false)
+  @test.assert_eq(map.contains("a"), true)
+  @test.assert_eq(map.contains("d"), false)
 }
 ```
 
@@ -67,8 +67,8 @@ You can use `size()` to get the number of key-value pairs in the map, or `capaci
 ///|
 test {
   let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
-  assert_eq(map.length(), 3)
-  assert_eq(map.capacity(), 8)
+  @test.assert_eq(map.length(), 3)
+  @test.assert_eq(map.capacity(), 8)
 }
 ```
 
@@ -78,7 +78,7 @@ Similarly, you can use `is_empty()` to check whether the map is empty.
 ///|
 test {
   let map : @hashmap.HashMap[String, Int] = @hashmap.HashMap([])
-  assert_eq(map.is_empty(), true)
+  @test.assert_eq(map.is_empty(), true)
 }
 ```
 
@@ -91,7 +91,7 @@ You can use `clear` to remove all key-value pairs from the map, but the allocate
 test {
   let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
   map.clear()
-  assert_eq(map.is_empty(), true)
+  @test.assert_eq(map.is_empty(), true)
 }
 ```
 
@@ -131,8 +131,8 @@ Use `get_or_init()` to get a value or initialize it if missing:
 test {
   let map : @hashmap.HashMap[String, Int] = @hashmap.HashMap([])
   let val = map.get_or_init("key", () => 42)
-  assert_eq(val, 42)
-  assert_eq(map.get("key"), Some(42))
+  @test.assert_eq(val, 42)
+  @test.assert_eq(map.get("key"), Some(42))
 }
 ```
 
@@ -145,11 +145,11 @@ Use `map()` to transform values and `retain()` to filter in place:
 test {
   let map = @hashmap.from_array([(1, "a"), (2, "b")])
   let mapped = map.map((k, _v) => k * 10)
-  assert_eq(mapped.get(1), Some(10))
+  @test.assert_eq(mapped.get(1), Some(10))
   let map2 = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
   map2.retain((_k, v) => v > 1)
-  assert_eq(map2.contains("a"), false)
-  assert_eq(map2.contains("b"), true)
+  @test.assert_eq(map2.contains("a"), false)
+  @test.assert_eq(map2.contains("b"), true)
 }
 ```
 
@@ -161,9 +161,9 @@ Use subscript syntax `map[key]` for direct access. Panics if the key is not foun
 ///|
 test {
   let map = @hashmap.from_array([("x", 10), ("y", 20)])
-  assert_eq(map["x"], 10)
+  @test.assert_eq(map["x"], 10)
   map["z"] = 30
-  assert_eq(map["z"], 30)
+  @test.assert_eq(map["z"], 30)
 }
 ```
 
@@ -175,8 +175,8 @@ test {
 ///|
 test {
   let map = @hashmap.from_array([("a", 1), ("b", 2)])
-  assert_eq(map.contains_kv("a", 1), true)
-  assert_eq(map.contains_kv("a", 99), false)
+  @test.assert_eq(map.contains_kv("a", 1), true)
+  @test.assert_eq(map.contains_kv("a", 99), false)
 }
 ```
 
@@ -190,7 +190,7 @@ test {
   let map = @hashmap.from_array([("a", 1)])
   let cloned = map.copy()
   cloned.set("b", 2)
-  assert_eq(map.contains("b"), false) // original unchanged
+  @test.assert_eq(map.contains("b"), false) // original unchanged
 }
 ```
 
@@ -200,7 +200,7 @@ test {
 ///|
 test {
   let map = @hashmap.from_iter([("a", 1), ("b", 2)].iter())
-  assert_eq(map.length(), 2)
+  @test.assert_eq(map.length(), 2)
 }
 ```
 
@@ -214,12 +214,12 @@ test {
   let m1 = @hashmap.from_array([("a", 1)])
   let m2 = @hashmap.from_array([("b", 2)])
   let merged = m1.merge(m2)
-  assert_eq(merged.get("a"), Some(1))
-  assert_eq(merged.get("b"), Some(2))
+  @test.assert_eq(merged.get("a"), Some(1))
+  @test.assert_eq(merged.get("b"), Some(2))
   // merge_in_place
   let m3 = @hashmap.from_array([("x", 1)])
   let m4 = @hashmap.from_array([("y", 2)])
   m3.merge_in_place(m4)
-  assert_eq(m3.contains("y"), true)
+  @test.assert_eq(m3.contains("y"), true)
 }
 ```

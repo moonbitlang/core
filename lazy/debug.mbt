@@ -13,10 +13,7 @@
 // limitations under the License.
 
 ///|
-using @debug {trait Debug, type Repr}
-
-///|
-/// Debug implementation. Never forces the thunk:
+/// @debug.Debug implementation. Never forces the thunk:
 ///
 /// - `Forced(v)`  → `<Lazy: <v>>`
 /// - `Unforced`   → `<Lazy: ...>` (matches the opaque-container
@@ -26,10 +23,10 @@ using @debug {trait Debug, type Repr}
 ///   diagnose the reentrancy that would otherwise abort `force`.
 ///
 /// Safe to call on infinite or effectful thunks.
-pub impl[A : Debug] Debug for Lazy[A] with fn to_repr(self) {
+pub impl[A : @debug.Debug] @debug.Debug for Lazy[A] with fn to_repr(self) {
   match self.state {
-    Forced(v) => Repr::opaque_("Lazy", @debug.to_repr(v))
-    Forcing => Repr::opaque_("Lazy", Repr::literal("forcing"))
-    Unforced(_) => Repr::opaque_("Lazy", Repr::omitted())
+    Forced(v) => @debug.Repr::opaque_("Lazy", @debug.to_repr(v))
+    Forcing => @debug.Repr::opaque_("Lazy", @debug.Repr::literal("forcing"))
+    Unforced(_) => @debug.Repr::opaque_("Lazy", @debug.Repr::omitted())
   }
 }

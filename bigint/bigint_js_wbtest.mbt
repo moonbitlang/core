@@ -19,12 +19,12 @@ fn check_invariant(_a : BigInt) -> Unit raise {
 
 ///|
 test "BigInt::to_uint" {
-  assert_eq(BigInt::from_int64(-1L).to_uint(), (-1).reinterpret_as_uint())
+  @test.assert_eq(BigInt::from_int64(-1L).to_uint(), (-1).reinterpret_as_uint())
 }
 
 ///|
 test "BigInt::to_int64" {
-  assert_eq(BigInt::from_int64(-1).to_int64(), -1L)
+  @test.assert_eq(BigInt::from_int64(-1).to_int64(), -1L)
 }
 
 ///|

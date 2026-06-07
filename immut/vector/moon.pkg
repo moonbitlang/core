@@ -8,6 +8,7 @@ import {
 
 import {
   "moonbitlang/core/bench",
+  "moonbitlang/core/test",
 } for "test"
 
 import {

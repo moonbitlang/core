@@ -28,7 +28,10 @@ fn hex2i(hex : StringView) -> Int {
 }
 
 ///|
-fn pattern_map_char(pat : Pattern, f : (RecharSet) -> RecharSet) -> Pattern {
+fn pattern_map_char(
+  pat : @re.Pattern,
+  f : (@re.RecharSet) -> @re.RecharSet,
+) -> @re.Pattern {
   match pat.desc {
     Capture(name~, pat) => @re.capture(name?, pattern_map_char(pat, f))
     Preference(pref, pat) => @re.preference(pref, pattern_map_char(pat, f))
@@ -41,42 +44,43 @@ fn pattern_map_char(pat : Pattern, f : (RecharSet) -> RecharSet) -> Pattern {
 }
 
 ///|
-fn ignore_case(cs : RecharSet) -> RecharSet {
+fn ignore_case(cs : @re.RecharSet) -> @re.RecharSet {
   cs +
   (cs & @re.RecharSet::char_range('A', 'Z')).offset_by(it => it + 32) +
   (cs & @re.RecharSet::char_range('a', 'z')).offset_by(it => it - 32)
 }
 
 ///|
-let posix_cset_ascii : RecharSet = RecharSet::char_range(0, 0x7f)
+let posix_cset_ascii : @re.RecharSet = @re.RecharSet::char_range(0, 0x7f)
 
 ///|
-let posix_cset_upper : RecharSet = RecharSet::char_range('A', 'Z')
+let posix_cset_upper : @re.RecharSet = @re.RecharSet::char_range('A', 'Z')
 
 ///|
-let posix_cset_lower : RecharSet = RecharSet::char_range('a', 'z')
+let posix_cset_lower : @re.RecharSet = @re.RecharSet::char_range('a', 'z')
 
 ///|
-let posix_cset_alpha : RecharSet = posix_cset_upper + posix_cset_lower
+let posix_cset_alpha : @re.RecharSet = posix_cset_upper + posix_cset_lower
 
 ///|
-let posix_cset_digit : RecharSet = RecharSet::char_range('0', '9')
+let posix_cset_digit : @re.RecharSet = @re.RecharSet::char_range('0', '9')
 
 ///|
-let posix_cset_xdigit : RecharSet = posix_cset_digit +
-  RecharSet::char_range('a', 'f') +
-  RecharSet::char_range('A', 'F')
+let posix_cset_xdigit : @re.RecharSet = posix_cset_digit +
+  @re.RecharSet::char_range('a', 'f') +
+  @re.RecharSet::char_range('A', 'F')
 
 ///|
-let posix_cset_alnum : RecharSet = posix_cset_alpha + posix_cset_digit
+let posix_cset_alnum : @re.RecharSet = posix_cset_alpha + posix_cset_digit
 
 ///|
-let posix_cset_space : RecharSet = RecharSet::char(' ') +
-  RecharSet::char('\t') +
-  RecharSet::char('\n') +
-  RecharSet::char('\r') +
-  RecharSet::char('\u{000B}') +
-  RecharSet::char('\f')
+let posix_cset_space : @re.RecharSet = @re.RecharSet::char(' ') +
+  @re.RecharSet::char('\t') +
+  @re.RecharSet::char('\n') +
+  @re.RecharSet::char('\r') +
+  @re.RecharSet::char('\u{000B}') +
+  @re.RecharSet::char('\f')
 
 ///|
-let posix_cset_blank : RecharSet = RecharSet::char(' ') + RecharSet::char('\t')
+let posix_cset_blank : @re.RecharSet = @re.RecharSet::char(' ') +
+  @re.RecharSet::char('\t')

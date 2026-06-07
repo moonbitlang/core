@@ -31,11 +31,11 @@ priv struct Entry[K] {
 /// ```mbt check
 /// test {
 ///   let set = @set.Set(["three", "eight", "one"])
-///   assert_eq(set.contains("two"), false)
-///   assert_eq(set.contains("three"), true)
+///   @test.assert_eq(set.contains("two"), false)
+///   @test.assert_eq(set.contains("three"), true)
 ///   set.add("three") // no effect since it already exists
 ///   set.add("two")
-///   assert_eq(set.contains("two"), true)
+///   @test.assert_eq(set.contains("two"), true)
 /// }
 /// ```
 struct Set[K] {
@@ -425,7 +425,7 @@ fn[K] Set::rehash_place_entry(self : Set[K], outer : Entry[K]) -> Unit {
 // Utils
 
 ///|
-#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
+#deprecated("Use @debug.Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[K : Show] Show for Set[K]
 
 ///|

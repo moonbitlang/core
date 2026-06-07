@@ -81,7 +81,7 @@ pub fn[A] T::makei(len : Int, f : (Int) -> A raise?) -> T[A] raise? {
 /// ```mbt check
 /// test {
 ///   let v = @array.from_array([1, 2, 3])
-///   assert_eq(v, @array.from_array([1, 2, 3]))
+///   @test.assert_eq(v, @array.from_array([1, 2, 3]))
 /// }
 /// ```
 #deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
@@ -229,7 +229,7 @@ pub fn[A] T::get(self : T[A], index : Int) -> A? {
 /// ```mbt check
 /// test {
 ///   let v = @array.from_array([1, 2, 3, 4, 5])
-///   assert_eq(v.set(1, 10), @array.from_array([1, 10, 3, 4, 5]))
+///   @test.assert_eq(v.set(1, 10), @array.from_array([1, 10, 3, 4, 5]))
 /// }
 /// ```
 #deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
@@ -249,7 +249,7 @@ pub fn[A] T::set(self : T[A], index : Int, value : A) -> T[A] {
 /// ```mbt check
 /// test {
 ///   let v = @array.from_array([1, 2, 3])
-///   assert_eq(v.push(4), @array.from_array([1, 2, 3, 4]))
+///   @test.assert_eq(v.push(4), @array.from_array([1, 2, 3, 4]))
 /// }
 /// ```
 #deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
@@ -306,7 +306,7 @@ pub fn[A] T::iter(self : T[A]) -> Iter[A] {
 ///   let arr = []
 ///   let v = @array.from_array([1, 2, 3, 4, 5])
 ///   v.each(e => arr.push(e))
-///   assert_eq(arr, [1, 2, 3, 4, 5])
+///   @test.assert_eq(arr, [1, 2, 3, 4, 5])
 /// }
 /// ```
 #deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
@@ -323,7 +323,7 @@ pub fn[A] T::each(self : T[A], f : (A) -> Unit raise?) -> Unit raise? {
 ///   let arr = []
 ///   let v = @array.from_array([1, 2, 3, 4, 5])
 ///   v.eachi((i, e) => arr.push(i * e))
-///   assert_eq(arr, [0, 2, 6, 12, 20])
+///   @test.assert_eq(arr, [0, 2, 6, 12, 20])
 /// }
 /// ```
 #deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
@@ -338,7 +338,7 @@ pub fn[A] T::eachi(self : T[A], f : (Int, A) -> Unit raise?) -> Unit raise? {
 /// ```mbt check
 /// test {
 ///   let v = @array.from_array([1, 2, 3, 4, 5])
-///   assert_eq(v.fold((a, b) => a + b, init=0), 15)
+///   @test.assert_eq(v.fold((a, b) => a + b, init=0), 15)
 /// }
 /// ```
 #deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
@@ -358,7 +358,7 @@ pub fn[A, B] T::fold(
 /// ```mbt check
 /// test {
 ///   let v = @array.from_array([1, 2, 3, 4, 5])
-///   assert_eq(v.rev_fold((a, b) => a + b, init=0), 15)
+///   @test.assert_eq(v.rev_fold((a, b) => a + b, init=0), 15)
 /// }
 /// ```
 #deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
@@ -378,7 +378,7 @@ pub fn[A, B] T::rev_fold(
 /// ```mbt check
 /// test {
 ///   let v = @array.from_array([1, 2, 3, 4, 5])
-///   assert_eq(v.map(e => e * 2), @array.from_array([2, 4, 6, 8, 10]))
+///   @test.assert_eq(v.map(e => e * 2), @array.from_array([2, 4, 6, 8, 10]))
 /// }
 /// ```
 #deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
@@ -412,7 +412,7 @@ pub impl[A : Eq] Eq for T[A] with fn equal(self, other) {
 }
 
 ///|
-#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
+#deprecated("Use @debug.Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[A : Show] Show for T[A]
 
 ///|

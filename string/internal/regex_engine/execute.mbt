@@ -13,11 +13,10 @@
 // limitations under the License.
 
 ///|
-/// FIXME: derive(Debug) pulls in such local using
-using @debug {trait Debug, type Repr}
+/// FIXME: derive(@debug.Debug) pulls in such local using
 
 ///|
-struct MatchResult(Array[Int]) derive(Debug)
+struct MatchResult(Array[Int]) derive(@debug.Debug)
 
 ///|
 const NULL_SYMBOL : Rechar = -1

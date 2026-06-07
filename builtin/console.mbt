@@ -214,7 +214,7 @@ pub fn inspect(
 /// test {
 ///   let err : SnapshotError = SnapshotError("failed to load snapshot")
 ///   match err {
-///     SnapshotError(msg) => assert_eq(msg, "failed to load snapshot")
+///     SnapshotError(msg) => @test.assert_eq(msg, "failed to load snapshot")
 ///   }
 /// }
 /// ```

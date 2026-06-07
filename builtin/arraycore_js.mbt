@@ -151,7 +151,7 @@ test "UninitializedArray::unsafe_blit_fixed" {
 /// test {
 ///   let v = [1]
 ///   v.reserve_capacity(10)
-///   assert_eq(v.capacity(), 1)
+///   @test.assert_eq(v.capacity(), 1)
 /// }
 /// ```
 pub fn[T] Array::reserve_capacity(self : Array[T], capacity : Int) -> Unit {
@@ -171,9 +171,9 @@ pub fn[T] Array::reserve_capacity(self : Array[T], capacity : Int) -> Unit {
 ///   v.push(1)
 ///   v.push(2)
 ///   v.push(3)
-///   assert_eq(v.capacity(), 3)
+///   @test.assert_eq(v.capacity(), 3)
 ///   v.shrink_to_fit()
-///   assert_eq(v.capacity(), 3)
+///   @test.assert_eq(v.capacity(), 3)
 /// }
 /// ```
 pub fn[T] Array::shrink_to_fit(self : Array[T]) -> Unit {
@@ -204,8 +204,8 @@ pub fn[T] Array::push(self : Array[T], value : T) -> Unit {
 /// test {
 ///   let v = [1, 2, 3]
 ///   let vv = v.pop()
-///   assert_eq(vv, Some(3))
-///   assert_eq(v, [1, 2])
+///   @test.assert_eq(vv, Some(3))
+///   @test.assert_eq(v, [1, 2])
 /// }
 /// ```
 pub fn[T] Array::pop(self : Array[T]) -> T? {
@@ -242,8 +242,8 @@ pub fn[T] Array::unsafe_pop(self : Array[T]) -> T {
 /// test {
 ///   let v = [3, 4, 5]
 ///   let vv = v.remove(1)
-///   assert_eq(vv, 4)
-///   assert_eq(v, [3, 5])
+///   @test.assert_eq(vv, 4)
+///   @test.assert_eq(v, [3, 5])
 /// }
 /// ```
 pub fn[T] Array::remove(self : Array[T], index : Int) -> T {
@@ -269,8 +269,8 @@ pub fn[T] Array::remove(self : Array[T], index : Int) -> T {
 /// test {
 ///   let v = [3, 4, 5]
 ///   let vv = v.drain(1, 2) // vv = [4], v = [3, 5]
-///   assert_eq(vv, [4])
-///   assert_eq(v, [3, 5])
+///   @test.assert_eq(vv, [4])
+///   @test.assert_eq(v, [3, 5])
 /// }
 /// ```
 pub fn[T] Array::drain(self : Array[T], begin : Int, end : Int) -> Array[T] {

@@ -25,7 +25,7 @@ You can use `insert()` to add a key to the set, and `contains()` to check whethe
 test {
   let set : @hashset.HashSet[String] = @hashset.HashSet([])
   set.add("a")
-  assert_eq(set.contains("a"), true)
+  @test.assert_eq(set.contains("a"), true)
 }
 ```
 
@@ -38,7 +38,7 @@ You can use `remove()` to remove a key.
 test {
   let set = @hashset.from_array(["a", "b", "c"])
   set.remove("a")
-  assert_eq(set.contains("a"), false)
+  @test.assert_eq(set.contains("a"), false)
 }
 ```
 
@@ -50,8 +50,8 @@ You can use `size()` to get the number of keys in the set, or `capacity()` to ge
 ///|
 test {
   let set = @hashset.from_array(["a", "b", "c"])
-  assert_eq(set.length(), 3)
-  assert_eq(set.capacity(), 8)
+  @test.assert_eq(set.length(), 3)
+  @test.assert_eq(set.capacity(), 8)
 }
 ```
 
@@ -61,7 +61,7 @@ Similarly, you can use `is_empty()` to check whether the set is empty.
 ///|
 test {
   let set : @hashset.HashSet[Int] = @hashset.HashSet([])
-  assert_eq(set.is_empty(), true)
+  @test.assert_eq(set.is_empty(), true)
 }
 ```
 
@@ -74,7 +74,7 @@ You can use `clear` to remove all keys from the set, but the allocated memory wi
 test {
   let set = @hashset.from_array(["a", "b", "c"])
   set.clear()
-  assert_eq(set.is_empty(), true)
+  @test.assert_eq(set.is_empty(), true)
 }
 ```
 
@@ -101,10 +101,10 @@ test {
 ///|
 test {
   let set = @hashset.from_array([1, 2, 3])
-  assert_eq(set.add_and_check(4), true) // new element
-  assert_eq(set.add_and_check(4), false) // already exists
-  assert_eq(set.remove_and_check(4), true) // removed
-  assert_eq(set.remove_and_check(4), false) // not present
+  @test.assert_eq(set.add_and_check(4), true) // new element
+  @test.assert_eq(set.add_and_check(4), false) // already exists
+  @test.assert_eq(set.remove_and_check(4), true) // removed
+  @test.assert_eq(set.remove_and_check(4), false) // not present
 }
 ```
 
@@ -117,8 +117,8 @@ test {
 test {
   let set = @hashset.from_array([1, 2, 3, 4, 5])
   set.retain(fn(x) { x % 2 == 0 })
-  assert_eq(set.contains(1), false)
-  assert_eq(set.contains(2), true)
+  @test.assert_eq(set.contains(1), false)
+  @test.assert_eq(set.contains(2), true)
 }
 ```
 
@@ -132,8 +132,8 @@ test {
   let set = @hashset.from_array([1, 2, 3])
   let cloned = set.copy()
   cloned.add(4)
-  assert_eq(set.contains(4), false) // original unchanged
-  assert_eq(cloned.contains(4), true)
+  @test.assert_eq(set.contains(4), false) // original unchanged
+  @test.assert_eq(cloned.contains(4), true)
 }
 ```
 
@@ -147,10 +147,10 @@ test {
   let set = @hashset.from_array([1, 2, 3])
   let arr = set.to_array()
   arr.sort()
-  assert_eq(arr, [1, 2, 3])
+  @test.assert_eq(arr, [1, 2, 3])
   // from_iter
   let set2 = @hashset.from_iter([4, 5, 6].iter())
-  assert_eq(set2.length(), 3)
+  @test.assert_eq(set2.length(), 3)
 }
 ```
 
@@ -169,15 +169,15 @@ test {
     arr
   }
 
-  assert_eq(m1.union(m2) |> to_sorted_array, ["a", "b", "c", "d"])
-  assert_eq(m1.intersection(m2) |> to_sorted_array, ["b", "c"])
-  assert_eq(m1.difference(m2) |> to_sorted_array, ["a"])
-  assert_eq(m1.symmetric_difference(m2) |> to_sorted_array, ["a", "d"])
+  @test.assert_eq(m1.union(m2) |> to_sorted_array, ["a", "b", "c", "d"])
+  @test.assert_eq(m1.intersection(m2) |> to_sorted_array, ["b", "c"])
+  @test.assert_eq(m1.difference(m2) |> to_sorted_array, ["a"])
+  @test.assert_eq(m1.symmetric_difference(m2) |> to_sorted_array, ["a", "d"])
   // operator aliases
-  assert_eq((m1 | m2) |> to_sorted_array, ["a", "b", "c", "d"])
-  assert_eq((m1 & m2) |> to_sorted_array, ["b", "c"])
-  assert_eq((m1 - m2) |> to_sorted_array, ["a"])
-  assert_eq((m1 ^ m2) |> to_sorted_array, ["a", "d"])
+  @test.assert_eq((m1 | m2) |> to_sorted_array, ["a", "b", "c", "d"])
+  @test.assert_eq((m1 & m2) |> to_sorted_array, ["b", "c"])
+  @test.assert_eq((m1 - m2) |> to_sorted_array, ["a"])
+  @test.assert_eq((m1 ^ m2) |> to_sorted_array, ["a", "d"])
 }
 ```
 
@@ -191,9 +191,9 @@ test {
   let small = @hashset.from_array([1, 2])
   let big = @hashset.from_array([1, 2, 3, 4])
   let other = @hashset.from_array([5, 6])
-  assert_eq(small.is_subset(big), true)
-  assert_eq(big.is_superset(small), true)
-  assert_eq(small.is_disjoint(other), true)
-  assert_eq(small.is_disjoint(big), false)
+  @test.assert_eq(small.is_subset(big), true)
+  @test.assert_eq(big.is_superset(small), true)
+  @test.assert_eq(small.is_disjoint(other), true)
+  @test.assert_eq(small.is_disjoint(big), false)
 }
 ```

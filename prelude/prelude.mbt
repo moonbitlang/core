@@ -123,7 +123,7 @@ pub fn[T] tap(value : T, f : (T) -> Unit raise) -> T raise {
 /// test {
 ///   let x = 5
 ///   let result = x |> n => { n * 2 }
-///   assert_eq(result, 10)
+///   @test.assert_eq(result, 10)
 /// }
 /// ```
 /// 

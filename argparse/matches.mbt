@@ -13,16 +13,13 @@
 // limitations under the License.
 
 ///|
-using @debug {trait Debug, type Repr}
-
-///|
 /// Where a value/flag came from.
 #warnings("-deprecated_syntax")
 pub enum ValueSource {
   Argv
   Env
   Default
-} derive(Eq, Show, Debug)
+} derive(Eq, Show, @debug.Debug)
 
 ///|
 /// Parse results for declarative commands.
@@ -42,7 +39,7 @@ pub struct Matches {
   priv flag_sources : Map[String, ValueSource]
   priv value_sources : Map[String, ValueSource]
   priv mut parsed_subcommand : (String, Matches)?
-} derive(Debug)
+} derive(@debug.Debug)
 
 ///|
 fn new_matches_parse_state() -> Matches {

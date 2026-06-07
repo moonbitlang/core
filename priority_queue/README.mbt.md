@@ -49,7 +49,7 @@ You can use `length()` to get the number of elements in the current priority que
 ///|
 test {
   let pq = @priority_queue.from_array([1, 2, 3, 4, 5])
-  assert_eq(pq.length(), 5)
+  @test.assert_eq(pq.length(), 5)
 }
 ```
 
@@ -59,7 +59,7 @@ Similarly, you can use the `is_empty` to determine whether the priority queue is
 ///|
 test {
   let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.PriorityQueue([])
-  assert_eq(pq.is_empty(), true)
+  @test.assert_eq(pq.is_empty(), true)
 }
 ```
 
@@ -105,7 +105,7 @@ test {
 ///|
 test {
   let pq = @priority_queue.from_array([5, 4, 3, 2, 1])
-  assert_eq(pq.length(), 5)
+  @test.assert_eq(pq.length(), 5)
 }
 ```
 
@@ -118,7 +118,7 @@ You can use `clear` to clear a priority queue.
 test {
   let pq = @priority_queue.from_array([1, 2, 3, 4, 5])
   pq.clear()
-  assert_eq(pq.is_empty(), true)
+  @test.assert_eq(pq.is_empty(), true)
 }
 ```
 
@@ -156,6 +156,6 @@ test {
   let pq = @priority_queue.from_array([1, 2, 3])
   let pq2 = pq.copy()
   @test.assert_eq(pq2.pop(), Some(3))
-  assert_eq(pq.length(), 3) // original unchanged
+  @test.assert_eq(pq.length(), 3) // original unchanged
 }
 ```

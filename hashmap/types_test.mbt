@@ -16,7 +16,7 @@
 test "HashMap equality - identical maps" {
   let map1 = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
   let map2 = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
-  assert_eq(map1, map2)
+  @test.assert_eq(map1, map2)
   assert_true(map1 == map2)
 }
 
@@ -24,7 +24,7 @@ test "HashMap equality - identical maps" {
 test "HashMap equality - same content different order" {
   let map1 = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
   let map2 = @hashmap.from_array([(3, "three"), (1, "one"), (2, "two")])
-  assert_eq(map1, map2)
+  @test.assert_eq(map1, map2)
   assert_true(map1 == map2)
 }
 
@@ -32,7 +32,7 @@ test "HashMap equality - same content different order" {
 test "HashMap equality - empty maps" {
   let map1 : @hashmap.HashMap[Int, String] = @hashmap.HashMap([])
   let map2 : @hashmap.HashMap[Int, String] = @hashmap.HashMap([])
-  assert_eq(map1, map2)
+  @test.assert_eq(map1, map2)
   assert_true(map1 == map2)
 }
 
@@ -71,7 +71,7 @@ test "HashMap equality - one empty one non-empty" {
 ///|
 test "HashMap equality - self equality" {
   let map = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
-  assert_eq(map, map)
+  @test.assert_eq(map, map)
   assert_true(map == map)
 }
 
@@ -79,7 +79,7 @@ test "HashMap equality - self equality" {
 test "HashMap equality - mixed types" {
   let map1 = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
   let map2 = @hashmap.from_array([("c", 3), ("a", 1), ("b", 2)])
-  assert_eq(map1, map2)
+  @test.assert_eq(map1, map2)
   assert_true(map1 == map2)
   let map3 = @hashmap.from_array([("a", 1), ("b", 2), ("d", 4)])
   assert_false(map1 == map3)

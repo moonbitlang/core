@@ -9,4 +9,5 @@ import {
 
 import {
   "moonbitlang/core/int",
+  "moonbitlang/core/test",
 } for "test"

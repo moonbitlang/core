@@ -20,7 +20,7 @@ fn unsafe_make_string(length : Int, value : Char) -> String = "$moonbit.unsafe_m
 ///
 /// ```mbt check
 /// test {
-///   assert_eq(String::make(5, 'S'), "SSSSS")
+///   @test.assert_eq(String::make(5, 'S'), "SSSSS")
 /// }
 /// ```
 pub fn String::make(length : Int, value : Char) -> String {
@@ -245,8 +245,8 @@ pub fn String::code_units(self : String) -> ArrayView[UInt16] {
 /// ```mbt check
 /// test {
 ///   let s = "Hello, World!🤣"
-///   assert_eq(s.iter().count(), 14) // Unicode characters
-///   assert_eq(s.length(), 15)
+///   @test.assert_eq(s.iter().count(), 14) // Unicode characters
+///   @test.assert_eq(s.length(), 15)
 /// } // Utf16 code units
 /// ```
 #alias(iterator, deprecated)
@@ -302,7 +302,7 @@ pub fn String::iter2(self : String) -> Iter2[Int, Char] {
 /// test {
 ///   let input = "Hello, World!"
 ///   let reversed = input.rev_iter().collect()
-///   assert_eq(reversed, [
+///   @test.assert_eq(reversed, [
 ///     '!', 'd', 'l', 'r', 'o', 'W', ' ', ',', 'o', 'l', 'l', 'e', 'H',
 ///   ])
 /// }
@@ -576,7 +576,7 @@ pub fn String::equal_ignore_ascii_case(self : String, other : String) -> Bool {
 /// ```mbt check
 /// test {
 ///   let s = String::from_array(['H', 'e', 'l', 'l', 'o'])
-///   assert_eq(s, "Hello")
+///   @test.assert_eq(s, "Hello")
 /// }
 /// ```
 ///

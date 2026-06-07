@@ -110,7 +110,7 @@ test "rev_iter is reverse of iter" {
   let set = @sorted_set.from_array([3, 1, 4, 1, 5, 9, 2, 6])
   let forward = set.iter().collect()
   let reverse = set.rev_iter().collect()
-  assert_eq(reverse, forward.rev())
+  @test.assert_eq(reverse, forward.rev())
 }
 
 ///|

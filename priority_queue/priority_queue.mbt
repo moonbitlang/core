@@ -24,7 +24,7 @@ fn[A] new_priority_queue() -> PriorityQueue[A] {
 /// ```mbt check
 /// test {
 ///   let queue = @priority_queue.PriorityQueue([1, 2, 3, 4, 5])
-///   assert_eq(queue.length(), 5)
+///   @test.assert_eq(queue.length(), 5)
 /// }
 /// ```
 #alias(from_array)
@@ -248,7 +248,7 @@ pub fn[A : Compare] PriorityQueue::pop(self : PriorityQueue[A]) -> A? {
 /// test {
 ///   let queue = @priority_queue.PriorityQueue([])
 ///   queue.push(1)
-///   assert_eq(queue.length(), 1)
+///   @test.assert_eq(queue.length(), 1)
 /// }
 /// ```
 pub fn[A : Compare] PriorityQueue::push(
@@ -289,7 +289,7 @@ pub fn[A] PriorityQueue::peek(self : PriorityQueue[A]) -> A? {
 /// test {
 ///   let queue = @priority_queue.from_array([1, 2, 3, 4])
 ///   queue.clear()
-///   assert_eq(queue.length(), 0)
+///   @test.assert_eq(queue.length(), 0)
 /// }
 /// ```
 pub fn[A] PriorityQueue::clear(self : PriorityQueue[A]) -> Unit {
@@ -305,7 +305,7 @@ pub fn[A] PriorityQueue::clear(self : PriorityQueue[A]) -> Unit {
 /// test {
 ///   let queue : @priority_queue.PriorityQueue[Int] = @priority_queue.PriorityQueue([],
 ///   )
-///   assert_eq(queue.is_empty(), true)
+///   @test.assert_eq(queue.is_empty(), true)
 /// }
 /// ```
 pub fn[A] PriorityQueue::is_empty(self : PriorityQueue[A]) -> Bool {
@@ -313,7 +313,7 @@ pub fn[A] PriorityQueue::is_empty(self : PriorityQueue[A]) -> Bool {
 }
 
 ///|
-#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
+#deprecated("Use @debug.Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[A : Show + Compare] Show for PriorityQueue[A]
 
 ///|

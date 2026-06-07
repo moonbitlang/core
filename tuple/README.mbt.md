@@ -25,13 +25,13 @@ Access elements using dot notation or pattern matching:
 test {
   let tuple = (1, "hello", true)
   // Dot access
-  assert_eq(tuple.0, 1)
-  assert_eq(tuple.1, "hello")
+  @test.assert_eq(tuple.0, 1)
+  @test.assert_eq(tuple.1, "hello")
   // Pattern matching
   let (a, b, c) = tuple
-  assert_eq(a, 1)
-  assert_eq(b, "hello")
-  assert_eq(c, true)
+  @test.assert_eq(a, 1)
+  @test.assert_eq(b, "hello")
+  @test.assert_eq(c, true)
 }
 ```
 

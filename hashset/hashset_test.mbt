@@ -92,13 +92,13 @@ test "to_json" {
   for item in data {
     assert_true(array.contains(item.to_json()))
   }
-  assert_eq(array.length(), 3)
+  @test.assert_eq(array.length(), 3)
 }
 
 ///|
 test "new" {
   let m : @hashset.HashSet[Int] = @hashset.HashSet([])
-  assert_eq(m.capacity(), default_init_capacity)
+  @test.assert_eq(m.capacity(), default_init_capacity)
   inspect(m.length(), content="0")
 }
 
@@ -375,7 +375,7 @@ test "remove_and_shift_back" {
 ///|
 test "capacity_and_size" {
   let m = @hashset.HashSet([])
-  assert_eq(m.capacity(), default_init_capacity)
+  @test.assert_eq(m.capacity(), default_init_capacity)
   inspect(m.length(), content="0")
   m.add("a")
   inspect(m.length(), content="1")
@@ -480,7 +480,7 @@ test "@hashset.to_array/multiple" {
 test "retain/partial" {
   let set = @hashset.from_array([1, 2, 3, 4, 5, 6])
   set.retain(x => x % 2 == 0)
-  assert_eq(set.length(), 3)
+  @test.assert_eq(set.length(), 3)
   assert_true(set.contains(2))
   assert_true(set.contains(4))
   assert_true(set.contains(6))
@@ -493,7 +493,7 @@ test "retain/partial" {
 test "retain/all_removed" {
   let set = @hashset.from_array([1, 2, 3])
   set.retain(_x => false)
-  assert_eq(set.length(), 0)
+  @test.assert_eq(set.length(), 0)
   assert_true(set.is_empty())
 }
 
@@ -501,12 +501,12 @@ test "retain/all_removed" {
 test "retain/none_removed" {
   let set = @hashset.from_array([1, 2, 3])
   set.retain(_x => true)
-  assert_eq(set.length(), 3)
+  @test.assert_eq(set.length(), 3)
 }
 
 ///|
 test "retain/empty_set" {
   let set : @hashset.HashSet[Int] = @hashset.HashSet([])
   set.retain(_x => true)
-  assert_eq(set.length(), 0)
+  @test.assert_eq(set.length(), 0)
 }

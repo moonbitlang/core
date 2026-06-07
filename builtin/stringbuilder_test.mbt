@@ -58,7 +58,7 @@ test {
     }),
     content=["a", "b", "c", "hello world"],
   )
-  // assert_eq({ let sb = StringBuilder(); sb.write_string("hello"); sb.to_string() }, "hello")
+  // @test.assert_eq({ let sb = StringBuilder(); sb.write_string("hello"); sb.to_string() }, "hello")
 }
 
 ///|
@@ -112,5 +112,5 @@ test "panic StringBuilder::write_char with invalid code point" {
 test "StringBuilder::write" {
   let sb = StringBuilder()
   sb.write("abc\n")
-  assert_eq(sb.to_string(), "abc\n")
+  @test.assert_eq(sb.to_string(), "abc\n")
 }

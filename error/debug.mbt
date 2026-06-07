@@ -13,19 +13,16 @@
 // limitations under the License.
 
 ///|
-using @debug {trait Debug, type Repr}
+fn error_to_repr(e : Error) -> @debug.Repr = "%error.to_repr"
 
 ///|
-fn error_to_repr(e : Error) -> Repr = "%error.to_repr"
-
-///|
-pub impl Debug for Error with fn to_repr(self) {
+pub impl @debug.Debug for Error with fn to_repr(self) {
   error_to_repr(self)
 }
 
 ///|
 #deprecated("use `to_repr(a)` instead", skip_current_package=true)
-pub fn Error::to_repr(self : Error) -> Repr {
+pub fn Error::to_repr(self : Error) -> @debug.Repr {
   @debug.to_repr(self)
 }
 

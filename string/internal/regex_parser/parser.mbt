@@ -17,8 +17,8 @@ priv type Parser
 
 ///|
 priv enum CharOrClass {
-  Char(Rechar)
-  Class(RecharSet)
+  Char(@re.Rechar)
+  Class(@re.RecharSet)
 }
 
 ///|
@@ -92,8 +92,8 @@ fn Parser::class_atom(
 fn Parser::class_contents(
   rest : StringView,
   ctx~ : ParserContext,
-) -> (StringView, RecharSet) raise ParserError {
-  outer~: for rest = rest, char_set = RecharSet::empty() {
+) -> (StringView, @re.RecharSet) raise ParserError {
+  outer~: for rest = rest, char_set = @re.RecharSet::empty() {
     match rest {
       [] => raise ctx.error_at(rest, HINT_UNCLOSED_CHAR_CLASS)
       [']', ..] => break (rest, char_set)
@@ -119,7 +119,7 @@ fn Parser::class_contents(
                     guard c <= c2 else {
                       raise ctx.error_at(rest, HINT_INVALID_CHAR_RANGE)
                     }
-                    (rest2, RecharSet::char_range(c, c2))
+                    (rest2, @re.RecharSet::char_range(c, c2))
                   }
                   Class(_) =>
                     raise ctx.error_at(
@@ -129,7 +129,7 @@ fn Parser::class_contents(
                     )
                 }
               }
-              _ => (rest, RecharSet::char(c))
+              _ => (rest, @re.RecharSet::char(c))
             }
           Class(cs) => (rest, cs)
         }
@@ -150,7 +150,7 @@ fn Parser::class_contents(
 fn Parser::character_class(
   rest : StringView,
   ctx~ : ParserContext,
-) -> (StringView, RecharSet) raise ParserError {
+) -> (StringView, @re.RecharSet) raise ParserError {
   let (rest, neg) = match rest {
     ['[', '^', .. rest] => (rest, true)
     ['[', .. rest] => (rest, false)
@@ -181,7 +181,7 @@ fn Parser::character_class(
 fn Parser::quantifier_opt(
   rest : StringView,
   ctx~ : ParserContext,
-) -> (StringView, Quantifier?) raise ParserError {
+) -> (StringView, @re.Quantifier?) raise ParserError {
   let (rest, range) = lexmatch rest with longest {
     ("\*", rest) => (rest, Some((0, None)))
     ("\+", rest) => (rest, Some((1, None)))
@@ -209,7 +209,7 @@ fn Parser::quantifier_opt(
     Some((min, max)) => {
       let rest0 = rest
       let (rest, mode) = match rest {
-        ['?', .. rest] => (rest, QuantifierMode::NonGreedy)
+        ['?', .. rest] => (rest, @re.QuantifierMode::NonGreedy)
         ['+', ..] =>
           raise ctx.error_at(rest0, HINT_UNSUPPORTED_POSSESSIVE_QUANTIFIER)
         _ => (rest, Greedy)
@@ -241,7 +241,7 @@ fn Parser::quant_bound(
 fn Parser::term(
   rest : StringView,
   ctx~ : ParserContext,
-) -> (StringView, Pattern) raise ParserError {
+) -> (StringView, @re.Pattern) raise ParserError {
   let (rest, pat, is_assertion) = lexmatch rest with longest {
     ("\^", rest) => (rest, @re.start_of_input, true)
     ("\$", rest) => (rest, @re.end_of_input, true)
@@ -250,16 +250,16 @@ fn Parser::term(
     ("\\" "B", rest) => (rest, @re.not_word_boundary, true)
     ("\\" "[dDsSwW]", _) =>
       raise ctx.error_at(rest, HINT_USE_POSIX_CHARACTER_CLASS)
-    ("\\" "f", rest) => (rest, @re.char(RecharSet::char('\f')), false)
-    ("\\" "n", rest) => (rest, @re.char(RecharSet::char('\n')), false)
-    ("\\" "r", rest) => (rest, @re.char(RecharSet::char('\r')), false)
-    ("\\" "t", rest) => (rest, @re.char(RecharSet::char('\t')), false)
-    ("\\" "v", rest) => (rest, @re.char(RecharSet::char('\u{0b}')), false)
+    ("\\" "f", rest) => (rest, @re.char(@re.RecharSet::char('\f')), false)
+    ("\\" "n", rest) => (rest, @re.char(@re.RecharSet::char('\n')), false)
+    ("\\" "r", rest) => (rest, @re.char(@re.RecharSet::char('\r')), false)
+    ("\\" "t", rest) => (rest, @re.char(@re.RecharSet::char('\t')), false)
+    ("\\" "v", rest) => (rest, @re.char(@re.RecharSet::char('\u{0b}')), false)
     ("\\" "x" ("[0-9A-Fa-f]{2}" as hex), rest) => {
       if ctx.mode is String {
         raise ctx.error_at(rest, HINT_BYTE_ESCAPE_NOT_ALLOWED)
       }
-      (rest, @re.char(RecharSet::char(hex2i(hex))), false)
+      (rest, @re.char(@re.RecharSet::char(hex2i(hex))), false)
     }
     ("\\" "u" ("[0-9A-Fa-f]{4}" as hex), rest) => {
       if ctx.mode is Bytes {
@@ -269,7 +269,7 @@ fn Parser::term(
       guard ctx.profile.valid.contains(c) else {
         raise ctx.error_at(rest, HINT_CHARACTER_OUT_OF_RANGE)
       }
-      (rest, @re.char(RecharSet::char(c)), false)
+      (rest, @re.char(@re.RecharSet::char(c)), false)
     }
     ("\\" "u" "[{]" ("[0-9A-Fa-f]{1,6}" as hex) "[}]", rest) => {
       if ctx.mode is Bytes {
@@ -279,10 +279,10 @@ fn Parser::term(
       guard ctx.profile.valid.contains(c) else {
         raise ctx.error_at(rest, HINT_CHARACTER_OUT_OF_RANGE)
       }
-      (rest, @re.char(RecharSet::char(c)), false)
+      (rest, @re.char(@re.RecharSet::char(c)), false)
     }
     ("\\" ("[\^$\\.*+?()\[\]{}|/\"]" as c), rest) =>
-      (rest, @re.char(RecharSet::char(c.to_int())), false)
+      (rest, @re.char(@re.RecharSet::char(c.to_int())), false)
     ("\\" ".", _) => raise ctx.error_at(rest, HINT_INVALID_ESCAPE)
     ("\.", rest) => (rest, @re.char(ctx.profile.valid), false)
     ("\(\?=", _) => raise ctx.error_at(rest, HINT_UNSUPPORTED_LOOKAHEAD)
@@ -335,7 +335,7 @@ fn Parser::term(
       guard ctx.profile.valid.contains(c.to_int()) else {
         raise ctx.error_at(rest, HINT_CHARACTER_OUT_OF_RANGE)
       }
-      (rest2, @re.char(RecharSet::char(c.to_int())), false)
+      (rest2, @re.char(@re.RecharSet::char(c.to_int())), false)
     }
     _ => raise ctx.error_at(rest, HINT_UNEXPECTED_CHAR)
   }
@@ -354,7 +354,7 @@ fn Parser::term(
 fn Parser::alternative(
   rest : StringView,
   ctx~ : ParserContext,
-) -> (StringView, Pattern) raise ParserError {
+) -> (StringView, @re.Pattern) raise ParserError {
   let seq = []
   let rest = for rest = rest {
     match rest {
@@ -373,7 +373,7 @@ fn Parser::alternative(
 fn Parser::parse_group_continue(
   rest : StringView,
   ctx~ : ParserContext,
-) -> (StringView, Pattern) raise ParserError {
+) -> (StringView, @re.Pattern) raise ParserError {
   let (rest, pat) = Parser::disjunction(rest, ctx~)
   match rest {
     [')', .. rest] => (rest, pat)
@@ -386,7 +386,7 @@ fn Parser::parse_group_continue(
 fn Parser::disjunction(
   rest : StringView,
   ctx~ : ParserContext,
-) -> (StringView, Pattern) raise ParserError {
+) -> (StringView, @re.Pattern) raise ParserError {
   let alts = []
   let (rest, alt) = Parser::alternative(rest, ctx~)
   alts.push(alt)
@@ -406,10 +406,10 @@ fn Parser::disjunction(
 ///|
 /// Parse input into this package's structured value.
 pub fn parse(
-  profile~ : Profile,
+  profile~ : @re.Profile,
   mode~ : Mode,
   pattern : StringView,
-) -> Pattern raise ParserError {
+) -> @re.Pattern raise ParserError {
   let ctx = ParserContext::new(profile~, base=pattern.start_offset(), mode~)
   let (rest, pat) = Parser::disjunction(pattern, ctx~)
   if !rest.is_empty() {

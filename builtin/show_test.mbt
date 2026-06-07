@@ -851,30 +851,30 @@ test "Show for Char special cases" {
   // Test various special character outputs
   let quote_buf = StringBuilder()
   '\''.output(quote_buf)
-  assert_eq(quote_buf.to_string(), "'")
+  @test.assert_eq(quote_buf.to_string(), "'")
   let backslash_buf = StringBuilder()
   '\\'.output(backslash_buf)
-  assert_eq(backslash_buf.to_string(), "\\")
+  @test.assert_eq(backslash_buf.to_string(), "\\")
   let cr_buf = StringBuilder()
   '\r'.output(cr_buf)
-  assert_eq(cr_buf.to_string(), "\r")
+  @test.assert_eq(cr_buf.to_string(), "\r")
   let backspace_buf = StringBuilder()
   '\b'.output(backspace_buf)
-  assert_eq(backspace_buf.to_string(), "\b")
+  @test.assert_eq(backspace_buf.to_string(), "\b")
   let tab_buf = StringBuilder()
   '\t'.output(tab_buf)
-  assert_eq(tab_buf.to_string(), "\t")
+  @test.assert_eq(tab_buf.to_string(), "\t")
 
   // Test hex output for control characters
   let ctrl1_buf = StringBuilder()
   '\u{01}'.output(ctrl1_buf)
-  assert_eq(ctrl1_buf.to_string(), "\u{01}")
+  @test.assert_eq(ctrl1_buf.to_string(), "\u{01}")
   let ctrl_f_buf = StringBuilder()
   '\u{0F}'.output(ctrl_f_buf)
-  assert_eq(ctrl_f_buf.to_string(), "\u{0f}")
+  @test.assert_eq(ctrl_f_buf.to_string(), "\u{0f}")
   let ctrl_1f_buf = StringBuilder()
   '\u{1F}'.output(ctrl_1f_buf)
-  assert_eq(ctrl_1f_buf.to_string(), "\u{1f}")
+  @test.assert_eq(ctrl_1f_buf.to_string(), "\u{1f}")
 }
 
 ///|

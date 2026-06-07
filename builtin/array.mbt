@@ -68,7 +68,7 @@ pub fn[T] Array::from_fixed_array(arr : FixedArray[T]) -> Array[T] {
 /// test {
 ///   let two_dimension_array = Array::make(10, Array::make(10, 0))
 ///   two_dimension_array[0][5] = 10
-///   assert_eq(two_dimension_array[5][5], 10)
+///   @test.assert_eq(two_dimension_array[5][5], 10)
 /// }
 /// ```
 /// This is because all the cells reference to the same object (the Array[Int] in this case).
@@ -488,7 +488,7 @@ pub fn[T] Array::rev_each(
 ///   let v = [3, 4, 5]
 ///   let mut sum = 0
 ///   v.rev_eachi((i, x) => sum = sum + x + i)
-///   assert_eq(sum, 15)
+///   @test.assert_eq(sum, 15)
 /// }
 /// ```
 #locals(f)
@@ -566,7 +566,7 @@ pub fn[T] Array::any(self : Array[T], f : (T) -> Bool raise?) -> Bool raise? {
 /// test {
 ///   let v = [3, 4, 5]
 ///   v.clear()
-///   assert_eq(v.length(), 0)
+///   @test.assert_eq(v.length(), 0)
 /// }
 /// ```
 pub fn[T] Array::clear(self : Array[T]) -> Unit {
@@ -581,7 +581,7 @@ pub fn[T] Array::clear(self : Array[T]) -> Unit {
 /// test {
 ///   let v = [3, 4, 5]
 ///   let v2 = v.map(x => x + 1)
-///   assert_eq(v2, [4, 5, 6])
+///   @test.assert_eq(v2, [4, 5, 6])
 /// }
 /// ```
 #locals(f)
@@ -604,7 +604,7 @@ pub fn[T, U] Array::map(
 /// test {
 ///   let v = [3, 4, 5]
 ///   v.map_in_place(x => x + 1)
-///   assert_eq(v, [4, 5, 6])
+///   @test.assert_eq(v, [4, 5, 6])
 /// }
 /// ```
 #locals(f)
@@ -626,7 +626,7 @@ pub fn[T] Array::map_in_place(
 /// test {
 ///   let v = [3, 4, 5]
 ///   let v2 = v.mapi((i, x) => x + i)
-///   assert_eq(v2, [3, 5, 7])
+///   @test.assert_eq(v2, [3, 5, 7])
 /// }
 /// ```
 #locals(f)
@@ -652,7 +652,7 @@ pub fn[T, U] Array::mapi(
 /// test {
 ///   let v = [3, 4, 5]
 ///   v.mapi_in_place((i, x) => x + i)
-///   assert_eq(v, [3, 5, 7])
+///   @test.assert_eq(v, [3, 5, 7])
 /// }
 /// ```
 #locals(f)
@@ -792,8 +792,8 @@ pub fn[T] Array::rev(self : Array[T]) -> Array[T] {
 /// test {
 ///   let v = [3, 4, 5]
 ///   let (v1, v2) = (v[:1], v[1:])
-///   assert_eq(v1, [3])
-///   assert_eq(v2, [4, 5])
+///   @test.assert_eq(v1, [3])
+///   @test.assert_eq(v2, [4, 5])
 /// }
 /// ```
 #deprecated("Use ArrayView instead, e.g, (a[:index], a[index:])")
@@ -999,7 +999,7 @@ pub fn[T : Eq] Array::search(self : Array[T], value : T) -> Int? {
 /// test {
 ///   let v = [1, 2, 3, 4, 5]
 ///   match v.search_by(x => x == 3) {
-///     Some(index) => assert_eq(index, 2) // 2
+///     Some(index) => @test.assert_eq(index, 2) // 2
 ///     None => println("Not found")
 ///   }
 /// }
@@ -1027,7 +1027,7 @@ pub fn[T] Array::search_by(
 /// test {
 ///   let v = [3, 4, 5]
 ///   let result = v.binary_search(3)
-///   assert_eq(result, Ok(0)) // The element 3 is found at index 0
+///   @test.assert_eq(result, Ok(0)) // The element 3 is found at index 0
 /// }
 /// ```
 ///
@@ -1219,7 +1219,7 @@ pub fn[T] Array::resize(self : Array[T], new_len : Int, f : T) -> Unit {
 /// ```mbt check
 /// test {
 ///   let v = [[3, 4], [5, 6]].flatten()
-///   assert_eq(v, [3, 4, 5, 6])
+///   @test.assert_eq(v, [3, 4, 5, 6])
 /// }
 /// ```
 pub fn[T] Array::flatten(self : Array[Array[T]]) -> Array[T] {
@@ -1246,7 +1246,7 @@ pub fn[T] Array::flatten(self : Array[Array[T]]) -> Array[T] {
 /// ```mbt check
 /// test {
 ///   let v = [3, 4].repeat(2)
-///   assert_eq(v, [3, 4, 3, 4])
+///   @test.assert_eq(v, [3, 4, 3, 4])
 /// }
 /// ```
 pub fn[T] Array::repeat(self : Array[T], times : Int) -> Array[T] {
@@ -1281,7 +1281,7 @@ pub fn[T] Array::repeat(self : Array[T], times : Int) -> Array[T] {
 /// ```mbt check
 /// test {
 ///   let sum = [1, 2, 3, 4, 5].fold(init=0, (sum, elem) => sum + elem)
-///   assert_eq(sum, 15)
+///   @test.assert_eq(sum, 15)
 /// }
 /// ```
 #locals(f)
@@ -1306,7 +1306,7 @@ pub fn[A, B] Array::fold(
 /// ```mbt check
 /// test {
 ///   let sum = [1, 2, 3, 4, 5].rev_fold(init=0, (sum, elem) => sum + elem)
-///   assert_eq(sum, 15)
+///   @test.assert_eq(sum, 15)
 /// }
 /// ```
 #locals(f)
@@ -1331,7 +1331,7 @@ pub fn[A, B] Array::rev_fold(
 /// ```mbt check
 /// test {
 ///   let sum = [1, 2, 3, 4, 5].foldi(init=0, (index, sum, _elem) => sum + index)
-///   assert_eq(sum, 10)
+///   @test.assert_eq(sum, 10)
 /// }
 /// ```
 #locals(f)
@@ -1356,7 +1356,7 @@ pub fn[A, B] Array::foldi(
 /// ```mbt check
 /// test {
 ///   let sum = [1, 2, 3, 4, 5].rev_foldi(init=0, (index, sum, _elem) => sum + index)
-///   assert_eq(sum, 10)
+///   @test.assert_eq(sum, 10)
 /// }
 /// ```
 #locals(f)
@@ -1794,7 +1794,7 @@ pub impl[T] Default for Array[T] with fn default() {
 /// test {
 ///   let array = [1, 2, 3, 4, 5]
 ///   array.unsafe_pop_back()
-///   assert_eq(array.last(), Some(4))
+///   @test.assert_eq(array.last(), Some(4))
 /// }
 /// ```
 #internal(unsafe, "Panic if the array is empty on non-JS backend.")
@@ -1904,7 +1904,7 @@ pub fn[T] Array::from_iter(iter : Iter[T]) -> Array[T] {
 ///   let u = [1, 2, 3]
 ///   let v = [4, 5, 6]
 ///   u.push_iter(v.iter())
-///   assert_eq(u, [1, 2, 3, 4, 5, 6])
+///   @test.assert_eq(u, [1, 2, 3, 4, 5, 6])
 /// }
 /// ```
 pub fn[T] Array::push_iter(self : Self[T], iter : Iter[T]) -> Unit {

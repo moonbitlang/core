@@ -21,7 +21,7 @@
 /// test {
 ///   let x : Result[Int, Unit] = Ok(6)
 ///   let y = x.map((v : Int) => v * 7)
-///   assert_eq(y, Ok(42))
+///   @test.assert_eq(y, Ok(42))
 /// }
 /// ```
 pub fn[T, E, U] Result::map(self : Result[T, E], f : (T) -> U) -> Result[U, E] {
@@ -50,7 +50,7 @@ test "map" {
 /// test {
 ///   let x : Result[Int, String] = Err("error")
 ///   let y = x.map_err((v : String) => v + "!")
-///   assert_eq(y, Err("error!"))
+///   @test.assert_eq(y, Err("error!"))
 /// }
 /// ```
 pub fn[T, E, F] Result::map_err(
@@ -82,8 +82,8 @@ test "map_err" {
 /// test {
 ///   let x : Result[Int, String] = Ok(3)
 ///   let y : Result[Int, String] = Err("error")
-///   assert_eq(x.unwrap_or(5), 3)
-///   assert_eq(y.unwrap_or(5), 5)
+///   @test.assert_eq(x.unwrap_or(5), 3)
+///   @test.assert_eq(y.unwrap_or(5), 5)
 /// }
 /// ```
 #alias(or)
@@ -113,8 +113,8 @@ test "unwrap_or" {
 /// test {
 ///   let x : Result[Int, String] = Ok(3)
 ///   let y : Result[Int, String] = Err("error")
-///   assert_eq(x.unwrap_or_else(() => 5), 3)
-///   assert_eq(y.unwrap_or_else(() => 5), 5)
+///   @test.assert_eq(x.unwrap_or_else(() => 5), 3)
+///   @test.assert_eq(y.unwrap_or_else(() => 5), 5)
 /// }
 /// ```
 #alias(or_else)
@@ -147,7 +147,7 @@ test "unwrap_or_else" {
 /// test {
 ///   let x : Result[Result[Int, String], String] = Ok(Ok(6))
 ///   let y = x.flatten()
-///   assert_eq(y, Ok(6))
+///   @test.assert_eq(y, Ok(6))
 /// }
 /// ```
 pub fn[T, E] Result::flatten(self : Result[Result[T, E], E]) -> Result[T, E] {
@@ -176,7 +176,7 @@ test "flatten" {
 /// test {
 ///   let x : Result[Int, String] = Ok(6)
 ///   let y = x.bind((v : Int) => Ok(v * 7))
-///   assert_eq(y, Ok(42))
+///   @test.assert_eq(y, Ok(42))
 /// }
 /// ```
 pub fn[T, E, U] Result::bind(
@@ -207,7 +207,7 @@ test "bind" {
 /// test {
 ///   let x : Result[Int, String] = Ok(6)
 ///   let y = x.to_option()
-///   assert_eq(y, Some(6))
+///   @test.assert_eq(y, Some(6))
 /// }
 /// ```
 pub fn[T, E] Result::to_option(self : Result[T, E]) -> T? {

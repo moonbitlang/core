@@ -13,13 +13,10 @@
 // limitations under the License.
 
 ///|
-using @debug {trait Debug, type Repr}
-
-///|
-pub impl[V : Debug] Debug for SortedSet[V] with fn to_repr(self) {
-  Repr::opaque_(
+pub impl[V : @debug.Debug] @debug.Debug for SortedSet[V] with fn to_repr(self) {
+  @debug.Repr::opaque_(
     "SortedSet",
-    Repr::array([ for x in self => @debug.to_repr(x) ]),
+    @debug.Repr::array([ for x in self => @debug.to_repr(x) ]),
   )
 }
 

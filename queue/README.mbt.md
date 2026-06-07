@@ -29,8 +29,8 @@ You can get the length of the queue by using the `length` method. The `is_empty`
 ///|
 test {
   let queue = @queue.from_array([1, 2, 3])
-  assert_eq(queue.length(), 3)
-  assert_eq(queue.is_empty(), false)
+  @test.assert_eq(queue.length(), 3)
+  @test.assert_eq(queue.is_empty(), false)
 }
 ```
 
@@ -42,8 +42,8 @@ test {
   let queue = @queue.Queue([])
   queue.push(1)
   queue.push(2)
-  assert_eq(queue.pop(), Some(1))
-  assert_eq(queue.pop(), Some(2))
+  @test.assert_eq(queue.pop(), Some(1))
+  @test.assert_eq(queue.pop(), Some(2))
 }
 ```
 
@@ -53,7 +53,7 @@ You can get the first element of the queue without removing it using the `peek` 
 ///|
 test {
   let queue = @queue.from_array([1, 2, 3])
-  assert_eq(queue.peek(), Some(1))
+  @test.assert_eq(queue.peek(), Some(1))
 }
 ```
 
@@ -63,7 +63,7 @@ test {
 ///|
 test {
   let queue = @queue.from_iter([1, 2, 3].iter())
-  assert_eq(queue.length(), 3)
+  @test.assert_eq(queue.length(), 3)
 }
 ```
 
@@ -78,14 +78,14 @@ test {
   // each
   let buf = []
   queue.each(fn(x) { buf.push(x) })
-  assert_eq(buf, [1, 2, 3])
+  @test.assert_eq(buf, [1, 2, 3])
   // eachi
   let pairs = []
   queue.eachi(fn(i, x) { pairs.push((i, x)) })
-  assert_eq(pairs, [(0, 1), (1, 2), (2, 3)])
+  @test.assert_eq(pairs, [(0, 1), (1, 2), (2, 3)])
   // fold
   let sum = queue.fold(init=0, fn(acc, x) { acc + x })
-  assert_eq(sum, 6)
+  @test.assert_eq(sum, 6)
 }
 ```
 
@@ -110,8 +110,8 @@ test {
 test {
   let queue = @queue.from_array([1, 2, 3])
   let cloned = queue.copy()
-  assert_eq(cloned.pop(), Some(1))
-  assert_eq(queue.length(), 3) // original unchanged
+  @test.assert_eq(cloned.pop(), Some(1))
+  @test.assert_eq(queue.length(), 3) // original unchanged
 }
 ```
 
@@ -121,8 +121,8 @@ test {
   let dst = @queue.from_array([1, 2])
   let src = @queue.from_array([3, 4])
   src.transfer(dst)
-  assert_eq(src.is_empty(), true)
-  assert_eq(dst.length(), 4)
-  assert_eq(dst.pop(), Some(1))
+  @test.assert_eq(src.is_empty(), true)
+  @test.assert_eq(dst.length(), 4)
+  @test.assert_eq(dst.pop(), Some(1))
 }
 ```

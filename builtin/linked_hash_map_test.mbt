@@ -655,12 +655,12 @@ test "Map grow rehashes collision cluster in insertion order" {
   }
   inspect(map.length(), content="12")
   for i in 0..<12 {
-    assert_eq(map.get(LKey::LKey(i, i % 4)), Some(i * 10))
+    @test.assert_eq(map.get(LKey::LKey(i, i % 4)), Some(i * 10))
   }
   map.remove(LKey::LKey(5, 1))
-  assert_eq(map.get(LKey::LKey(5, 1)), None)
+  @test.assert_eq(map.get(LKey::LKey(5, 1)), None)
   map[LKey::LKey(12, 0)] = 120
-  assert_eq(map.get(LKey::LKey(12, 0)), Some(120))
+  @test.assert_eq(map.get(LKey::LKey(12, 0)), Some(120))
   debug_inspect(
     map.values().to_array(),
     content="[0, 10, 20, 30, 40, 60, 70, 80, 90, 100, 110, 120]",
@@ -689,11 +689,11 @@ test "Map::merge_in_place self should not grow" {
   let cap_before = map.capacity()
   map.merge_in_place(map)
   // Capacity should remain unchanged since no new entries are added
-  assert_eq(map.capacity(), cap_before)
-  assert_eq(map.length(), 6)
+  @test.assert_eq(map.capacity(), cap_before)
+  @test.assert_eq(map.length(), 6)
   // Verify all entries are still intact
   for i in 0..<6 {
-    assert_eq(map.get(i.to_string()), Some(i))
+    @test.assert_eq(map.get(i.to_string()), Some(i))
   }
 }
 
@@ -704,16 +704,16 @@ test "Map::set updating existing key should not grow" {
   for i in 0..<6 {
     map.set(i.to_string(), i)
   }
-  assert_eq(map.capacity(), 8)
-  assert_eq(map.length(), 6)
+  @test.assert_eq(map.capacity(), 8)
+  @test.assert_eq(map.length(), 6)
   // Update existing keys - should NOT trigger grow
   for i in 0..<6 {
     map.set(i.to_string(), i * 10)
   }
-  assert_eq(map.capacity(), 8) // Should still be 8, not 16
-  assert_eq(map.length(), 6)
+  @test.assert_eq(map.capacity(), 8) // Should still be 8, not 16
+  @test.assert_eq(map.length(), 6)
   // Verify values were updated
   for i in 0..<6 {
-    assert_eq(map.get(i.to_string()), Some(i * 10))
+    @test.assert_eq(map.get(i.to_string()), Some(i * 10))
   }
 }
