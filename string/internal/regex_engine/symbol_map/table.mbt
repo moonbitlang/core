@@ -16,6 +16,9 @@
 struct Table(FixedArray[@shared_types.Rechar])
 
 ///|
+/// Map a single `Rechar` through the symbol table. ASCII codepoints are
+/// looked up directly; higher codepoints are resolved via a binary search
+/// over `(lo, hi, target)` triples stored after the ASCII region.
 pub fn Table::map(
   self : Table,
   c : @shared_types.Rechar,
@@ -43,6 +46,7 @@ pub fn Table::map(
 }
 
 ///|
+/// Apply `Table::map` to every `Rechar` in the input set.
 pub fn Table::map_set(
   self : Table,
   set : @shared_types.RecharSet,
