@@ -37,18 +37,18 @@ pub fn encode(
     let arr = FixedArray::make(str.length() * 2 + 2, b'\x00')
     arr[0] = 0xFE
     arr[1] = 0xFF
-    for i in 0..<str.length() {
-      let code_unit = str.code_unit_at(i)
-      arr[2 + i * 2] = (code_unit >> 8).to_byte()
-      arr[2 + i * 2 + 1] = (code_unit & 0xFF).to_byte()
+    for code_unit in str.code_units(); i = 2 {
+      arr[i] = (code_unit >> 8).to_byte()
+      arr[i + 1] = (code_unit & 0xFF).to_byte()
+      continue i + 2
     }
     arr.unsafe_reinterpret_as_bytes()
   } else {
     let arr = FixedArray::make(str.length() * 2, b'\x00')
-    for i in 0..<str.length() {
-      let code_unit = str.code_unit_at(i)
-      arr[i * 2] = (code_unit >> 8).to_byte()
-      arr[i * 2 + 1] = (code_unit & 0xFF).to_byte()
+    for code_unit in str.code_units(); i = 0 {
+      arr[i] = (code_unit >> 8).to_byte()
+      arr[i + 1] = (code_unit & 0xFF).to_byte()
+      continue i + 2
     }
     arr.unsafe_reinterpret_as_bytes()
   }

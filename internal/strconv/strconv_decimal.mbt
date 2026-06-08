@@ -481,11 +481,11 @@ fn Decimal::new_digits(self : Decimal, s : Int) -> Int {
   let new_digits = left_shift_cheats[s].0
   let cheat_num = left_shift_cheats[s].1
   // check if the leading digits lexicographically less than cheats num.
-  let less = for i in 0..<cheat_num.length() {
+  let less = for i, code_unit in cheat_num.code_units() {
     if i >= self.digits_num {
       break true
     }
-    let d = cheat_num.unsafe_get(i).to_int() - '0'.to_int()
+    let d = code_unit.to_int() - '0'.to_int()
     if self.digits[i].to_int() != d {
       break self.digits[i].to_int() < d
     }

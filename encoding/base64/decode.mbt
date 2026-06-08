@@ -54,8 +54,8 @@ pub fn decode(
   let buffer = @buffer.Buffer(size_hint=text.length() / 4 * 3)
   let quartet = FixedArray::make(4, 0)
   let mut count = 0
-  for i in 0..<text.length() {
-    match base64_value(text.code_unit_at(i).to_int()) {
+  for i, code_unit in text.code_units() {
+    match base64_value(code_unit.to_int()) {
       WRITESPACE =>
         if ignore_whitespace {
           continue
@@ -84,9 +84,8 @@ pub fn decode(
             }
             // check no rest
             if ignore_whitespace {
-              for j in (i + 1)..<text.length() {
-                guard text.code_unit_at(j).to_int()
-                  is (' ' | '\n' | '\r' | '\t') else {
+              for code_unit in text.code_units()[i + 1:] {
+                guard code_unit.to_int() is (' ' | '\n' | '\r' | '\t') else {
                   raise Malformed(text)
                 }
               }
@@ -145,8 +144,8 @@ pub fn decode_lossy(
   let buffer = @buffer.Buffer(size_hint=text.length() / 4 * 3)
   let quartet = FixedArray::make(4, 0)
   let mut count = 0
-  for i in 0..<text.length() {
-    match base64_value(text.code_unit_at(i).to_int()) {
+  for code_unit in text.code_units() {
+    match base64_value(code_unit.to_int()) {
       WRITESPACE => if !ignore_whitespace { break }
       PADDING => break
       INVALID_CHAR => ()
