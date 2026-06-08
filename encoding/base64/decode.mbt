@@ -85,7 +85,7 @@ pub fn decode(
             // check no rest
             if ignore_whitespace {
               for code_unit in text.code_units()[i + 1:] {
-                guard code_unit.to_int() is (' ' | '\n' | '\r' | '\t') else {
+                guard code_unit is (' ' | '\n' | '\r' | '\t') else {
                   raise Malformed(text)
                 }
               }
