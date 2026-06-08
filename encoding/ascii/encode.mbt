@@ -19,8 +19,7 @@
 pub fn encode(str : StringView) -> Bytes {
   let length = str.length()
   let arr = FixedArray::make(length, b'\x00')
-  for i in 0..<length {
-    let code_unit = str.code_unit_at(i)
+  for i, code_unit in str.code_units() {
     if code_unit > 0x7F {
       panic()
     }
