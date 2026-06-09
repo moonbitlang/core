@@ -522,8 +522,6 @@ pub fn v128_store64_lane(FixedArray[Byte], Int, V128, Int) -> Unit
 
 pub fn v128_store8_lane(FixedArray[Byte], Int, V128, Int) -> Unit
 
-pub fn v128_to_string(V128) -> String
-
 pub fn v128_xor(V128, V128) -> V128
 
 // Errors
