@@ -1008,3 +1008,503 @@ test "floating point edge cases" {
     @v128.f64x2_const(0.0, -0.0),
   )
 }
+
+///|
+test "explicit coverage for basic and memory ops" {
+  let value = @v128.i64x2_const(0x0123456789abcdefUL, 0xfedcba9876543210UL)
+  assert_true(@v128.v128_eq(value, value))
+  assert_false(@v128.v128_eq(value, @v128.i64x2_splat(0UL)))
+  assert_eq(
+    @v128.v128_andnot(
+      @v128.i32x4_const(0xffff0000, 0x00ff00ff, 0xffffffff, 0),
+      @v128.i32x4_const(0x00ff00ff, 0xffff0000, 0, 0xffffffff),
+    ),
+    @v128.i32x4_const(0xff000000, 0x000000ff, 0xffffffff, 0),
+  )
+  inspect(
+    @v128.v128_to_string(@v128.i64x2_const(1UL, 2UL)),
+    content="V128(1, 2)",
+  )
+
+  let bytes : FixedArray[Byte] = [
+    0xff, 0xff, 0xff, 0xff, 0, 0, 0, 0x80, 1, 2, 3, 4, 5, 6, 7, 8,
+  ]
+  assert_eq(@v128.v128_load8_splat(bytes, 8), @v128.i8x16_splat(1))
+  assert_eq(@v128.v128_load16_splat(bytes, 8), @v128.i16x8_splat(0x0201))
+  assert_eq(@v128.v128_load32_splat(bytes, 8), @v128.i32x4_splat(0x04030201))
+  assert_eq(
+    @v128.v128_load16x4_u(bytes, 8),
+    @v128.i32x4_const(0x0201, 0x0403, 0x0605, 0x0807),
+  )
+  assert_eq(
+    @v128.v128_load32x2_s(bytes, 0),
+    @v128.i64x2_const(0xffffffffffffffffUL, 0xffffffff80000000UL),
+  )
+  assert_eq(
+    @v128.v128_load64_zero(bytes, 8),
+    @v128.i64x2_const(0x0807060504030201UL, 0UL),
+  )
+}
+
+///|
+test "explicit coverage for i8 ops" {
+  let a = @v128.i8x16_const(
+    0xff, 0x80, 0x7f, 5, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+  )
+  let b = @v128.i8x16_const(
+    1, 0xff, 0x80, 2, 0, 1, 3, 2, 5, 4, 6, 0, 9, 8, 10, 12,
+  )
+  assert_eq(
+    @v128.i8x16_abs(a),
+    @v128.i8x16_const(1, 0x80, 0x7f, 5, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11),
+  )
+  assert_eq(
+    @v128.i8x16_neg(
+      @v128.i8x16_const(
+        1, 0xff, 0x80, 0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
+      ),
+    ),
+    @v128.i8x16_const(
+      0xff, 1, 0x80, 0, 0xfe, 0xfd, 0xfc, 0xfb, 0xfa, 0xf9, 0xf8, 0xf7, 0xf6, 0xf5,
+      0xf4, 0xf3,
+    ),
+  )
+  assert_eq(
+    @v128.i8x16_sub(@v128.i8x16_splat(3), @v128.i8x16_splat(5)),
+    @v128.i8x16_splat(0xfe),
+  )
+  assert_eq(
+    @v128.i8x16_sub_sat_s(
+      @v128.i8x16_const(
+        0x80, 0x7f, 10, 0xf0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+      ),
+      @v128.i8x16_const(
+        1, 0xff, 20, 0x10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+      ),
+    ),
+    @v128.i8x16_const(
+      0x80, 0x7f, 0xf6, 0xe0, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+      0xff, 0xff, 0xff,
+    ),
+  )
+  assert_eq(
+    @v128.i8x16_eq(a, b),
+    @v128.i8x16_const(
+      0, 0, 0, 0, 0xff, 0xff, 0, 0, 0, 0, 0xff, 0, 0, 0, 0xff, 0,
+    ),
+  )
+  assert_eq(
+    @v128.i8x16_ne(a, b),
+    @v128.i8x16_const(
+      0xff, 0xff, 0xff, 0xff, 0, 0, 0xff, 0xff, 0xff, 0xff, 0, 0xff, 0xff, 0xff,
+      0, 0xff,
+    ),
+  )
+  assert_eq(
+    @v128.i8x16_le_s(a, b),
+    @v128.i8x16_const(
+      0xff, 0xff, 0, 0, 0xff, 0xff, 0xff, 0, 0xff, 0, 0xff, 0, 0xff, 0, 0xff, 0xff,
+    ),
+  )
+  assert_eq(
+    @v128.i8x16_le_u(a, b),
+    @v128.i8x16_const(
+      0, 0xff, 0xff, 0, 0xff, 0xff, 0xff, 0, 0xff, 0, 0xff, 0, 0xff, 0, 0xff, 0xff,
+    ),
+  )
+  assert_eq(
+    @v128.i8x16_gt_s(a, b),
+    @v128.i8x16_const(
+      0, 0, 0xff, 0xff, 0, 0, 0, 0xff, 0, 0xff, 0, 0xff, 0, 0xff, 0, 0,
+    ),
+  )
+  assert_eq(
+    @v128.i8x16_gt_u(a, b),
+    @v128.i8x16_const(
+      0xff, 0, 0, 0xff, 0, 0, 0, 0xff, 0, 0xff, 0, 0xff, 0, 0xff, 0, 0,
+    ),
+  )
+  assert_eq(@v128.i8x16_ge_s(a, b), @v128.v128_not(@v128.i8x16_lt_s(a, b)))
+  assert_eq(@v128.i8x16_ge_u(a, b), @v128.v128_not(@v128.i8x16_lt_u(a, b)))
+  assert_eq(
+    @v128.i8x16_max_s(a, b),
+    @v128.i8x16_const(1, 0xff, 0x7f, 5, 0, 1, 3, 3, 5, 5, 6, 7, 9, 9, 10, 12),
+  )
+  assert_eq(
+    @v128.i8x16_min_u(a, b),
+    @v128.i8x16_const(1, 0x80, 0x7f, 2, 0, 1, 2, 2, 4, 4, 6, 0, 8, 8, 10, 11),
+  )
+  assert_eq(
+    @v128.i8x16_relaxed_swizzle(a, @v128.i8x16_splat(17)),
+    @v128.i8x16_splat(0),
+  )
+}
+
+///|
+test "explicit coverage for i16 ops" {
+  let a = @v128.i16x8_const(0xffff, 0xfffe, 0x7fff, 5, 0, 1, 2, 3)
+  let b = @v128.i16x8_const(1, 0xffff, 0x8000, 2, 0, 1, 3, 2)
+  assert_eq(@v128.i16x8_abs(a), @v128.i16x8_const(1, 2, 0x7fff, 5, 0, 1, 2, 3))
+  assert_eq(
+    @v128.i16x8_neg(@v128.i16x8_const(1, 0xffff, 0x8000, 0, 2, 3, 4, 5)),
+    @v128.i16x8_const(0xffff, 1, 0x8000, 0, 0xfffe, 0xfffd, 0xfffc, 0xfffb),
+  )
+  assert_eq(
+    @v128.i16x8_add(@v128.i16x8_splat(0xffff), @v128.i16x8_splat(2)),
+    @v128.i16x8_splat(1),
+  )
+  assert_eq(
+    @v128.i16x8_sub(@v128.i16x8_splat(3), @v128.i16x8_splat(5)),
+    @v128.i16x8_splat(0xfffe),
+  )
+  assert_eq(
+    @v128.i16x8_eq(a, b),
+    @v128.i16x8_const(0, 0, 0, 0, 0xffff, 0xffff, 0, 0),
+  )
+  assert_eq(
+    @v128.i16x8_ne(a, b),
+    @v128.i16x8_const(0xffff, 0xffff, 0xffff, 0xffff, 0, 0, 0xffff, 0xffff),
+  )
+  assert_eq(@v128.i16x8_le_s(a, b), @v128.v128_not(@v128.i16x8_gt_s(a, b)))
+  assert_eq(@v128.i16x8_le_u(a, b), @v128.v128_not(@v128.i16x8_gt_u(a, b)))
+  assert_eq(@v128.i16x8_ge_s(a, b), @v128.v128_not(@v128.i16x8_lt_s(a, b)))
+  assert_eq(@v128.i16x8_ge_u(a, b), @v128.v128_not(@v128.i16x8_lt_u(a, b)))
+  assert_eq(
+    @v128.i16x8_gt_s(a, b),
+    @v128.i16x8_const(0, 0, 0xffff, 0xffff, 0, 0, 0, 0xffff),
+  )
+  assert_eq(
+    @v128.i16x8_gt_u(a, b),
+    @v128.i16x8_const(0xffff, 0, 0, 0xffff, 0, 0, 0, 0xffff),
+  )
+  assert_eq(
+    @v128.i16x8_max_s(a, b),
+    @v128.i16x8_const(1, 0xffff, 0x7fff, 5, 0, 1, 3, 3),
+  )
+  assert_eq(
+    @v128.i16x8_min_u(a, b),
+    @v128.i16x8_const(1, 0xfffe, 0x7fff, 2, 0, 1, 2, 2),
+  )
+
+  let bytes = @v128.i8x16_const(
+    0x80, 1, 2, 3, 4, 5, 6, 7, 0xff, 0xfe, 8, 9, 10, 11, 12, 13,
+  )
+  assert_eq(
+    @v128.i16x8_extend_high_i8x16_s(bytes),
+    @v128.i16x8_const(0xffff, 0xfffe, 8, 9, 10, 11, 12, 13),
+  )
+  assert_eq(
+    @v128.i16x8_extend_low_i8x16_u(bytes),
+    @v128.i16x8_const(0x80, 1, 2, 3, 4, 5, 6, 7),
+  )
+  assert_eq(
+    @v128.i16x8_extmul_high_i8x16_s(bytes, @v128.i8x16_splat(2)),
+    @v128.i16x8_const(0xfffe, 0xfffc, 16, 18, 20, 22, 24, 26),
+  )
+  assert_eq(
+    @v128.i16x8_extmul_low_i8x16_u(bytes, @v128.i8x16_splat(2)),
+    @v128.i16x8_const(0x100, 2, 4, 6, 8, 10, 12, 14),
+  )
+  assert_eq(
+    @v128.i16x8_relaxed_laneselect(
+      @v128.i16x8_splat(0xaaaa),
+      @v128.i16x8_splat(0x5555),
+      @v128.i16x8_const(0x8000, 0, 0xffff, 0x7fff, 0, 0, 0, 0),
+    ),
+    @v128.i16x8_const(
+      0xaaaa, 0x5555, 0xaaaa, 0x5555, 0x5555, 0x5555, 0x5555, 0x5555,
+    ),
+  )
+  assert_eq(
+    @v128.i16x8_relaxed_q15mulr_s(
+      @v128.i16x8_splat(0x4000),
+      @v128.i16x8_splat(0x4000),
+    ),
+    @v128.i16x8_splat(0x2000),
+  )
+}
+
+///|
+test "explicit coverage for i32 ops" {
+  let a = @v128.i32x4_const(0xffffffff, 0xfffffffe, 0x7fffffff, 5)
+  let b = @v128.i32x4_const(1, 0xffffffff, 0x80000000, 2)
+  assert_eq(@v128.i32x4_abs(a), @v128.i32x4_const(1, 2, 0x7fffffff, 5))
+  assert_eq(
+    @v128.i32x4_neg(@v128.i32x4_const(1, 0xffffffff, 0x80000000, 0)),
+    @v128.i32x4_const(0xffffffff, 1, 0x80000000, 0),
+  )
+  assert_eq(
+    @v128.i32x4_add(@v128.i32x4_splat(0xffffffff), @v128.i32x4_splat(2)),
+    @v128.i32x4_splat(1),
+  )
+  assert_eq(
+    @v128.i32x4_mul(
+      @v128.i32x4_const(2, 3, 4, 5),
+      @v128.i32x4_const(6, 7, 8, 9),
+    ),
+    @v128.i32x4_const(12, 21, 32, 45),
+  )
+  assert_true(@v128.i32x4_all_true(@v128.i32x4_const(1, 2, 3, 4)))
+  assert_false(@v128.i32x4_all_true(@v128.i32x4_const(1, 2, 0, 4)))
+  assert_eq(@v128.i32x4_eq(a, b), @v128.i32x4_const(0, 0, 0, 0))
+  assert_eq(
+    @v128.i32x4_ne(a, b),
+    @v128.i32x4_const(0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff),
+  )
+  assert_eq(@v128.i32x4_le_s(a, b), @v128.v128_not(@v128.i32x4_gt_s(a, b)))
+  assert_eq(@v128.i32x4_le_u(a, b), @v128.v128_not(@v128.i32x4_gt_u(a, b)))
+  assert_eq(@v128.i32x4_ge_s(a, b), @v128.v128_not(@v128.i32x4_lt_s(a, b)))
+  assert_eq(@v128.i32x4_ge_u(a, b), @v128.v128_not(@v128.i32x4_lt_u(a, b)))
+  assert_eq(
+    @v128.i32x4_gt_s(a, b),
+    @v128.i32x4_const(0, 0, 0xffffffff, 0xffffffff),
+  )
+  assert_eq(
+    @v128.i32x4_gt_u(a, b),
+    @v128.i32x4_const(0xffffffff, 0, 0, 0xffffffff),
+  )
+  assert_eq(
+    @v128.i32x4_max_s(a, b),
+    @v128.i32x4_const(1, 0xffffffff, 0x7fffffff, 5),
+  )
+  assert_eq(
+    @v128.i32x4_min_u(a, b),
+    @v128.i32x4_const(1, 0xfffffffe, 0x7fffffff, 2),
+  )
+
+  let words = @v128.i16x8_const(0x8000, 1, 2, 3, 0xffff, 0xfffe, 8, 9)
+  assert_eq(
+    @v128.i32x4_extadd_pairwise_i16x8_u(words),
+    @v128.i32x4_const(0x8001, 5, 0x1fffd, 17),
+  )
+  assert_eq(
+    @v128.i32x4_extend_high_i16x8_s(words),
+    @v128.i32x4_const(0xffffffff, 0xfffffffe, 8, 9),
+  )
+  assert_eq(
+    @v128.i32x4_extend_low_i16x8_u(words),
+    @v128.i32x4_const(0x8000, 1, 2, 3),
+  )
+  assert_eq(
+    @v128.i32x4_extmul_high_i16x8_s(words, @v128.i16x8_splat(2)),
+    @v128.i32x4_const(0xfffffffe, 0xfffffffc, 16, 18),
+  )
+  assert_eq(
+    @v128.i32x4_extmul_high_i16x8_u(words, @v128.i16x8_splat(2)),
+    @v128.i32x4_const(0x1fffe, 0x1fffc, 16, 18),
+  )
+  assert_eq(
+    @v128.i32x4_extmul_low_i16x8_s(words, @v128.i16x8_splat(2)),
+    @v128.i32x4_const(0xffff0000, 2, 4, 6),
+  )
+  assert_eq(
+    @v128.i32x4_relaxed_trunc_f32x4_s(@v128.f32x4_const(-1.9, 2.9, 0.0, 1.0e20)),
+    @v128.i32x4_const(0xffffffff, 2, 0, 0x7fffffff),
+  )
+  assert_eq(
+    @v128.i32x4_relaxed_trunc_f32x4_u(@v128.f32x4_const(-1.9, 2.9, 0.0, 1.0e20)),
+    @v128.i32x4_const(0, 2, 0, 0xffffffff),
+  )
+  assert_eq(
+    @v128.i32x4_relaxed_trunc_f64x2_s_zero(@v128.f64x2_const(-1.9, 1.0e40)),
+    @v128.i32x4_const(0xffffffff, 0x7fffffff, 0, 0),
+  )
+  assert_eq(
+    @v128.i32x4_relaxed_trunc_f64x2_u_zero(@v128.f64x2_const(-1.9, 1.0e40)),
+    @v128.i32x4_const(0, 0xffffffff, 0, 0),
+  )
+}
+
+///|
+test "explicit coverage for i64 ops" {
+  let a = @v128.i64x2_const(0xffffffffffffffffUL, 5UL)
+  let b = @v128.i64x2_const(1UL, 2UL)
+  assert_eq(@v128.i64x2_abs(a), @v128.i64x2_const(1UL, 5UL))
+  assert_eq(
+    @v128.i64x2_neg(@v128.i64x2_const(1UL, 0xffffffffffffffffUL)),
+    @v128.i64x2_const(0xffffffffffffffffUL, 1UL),
+  )
+  assert_eq(
+    @v128.i64x2_sub(@v128.i64x2_const(3UL, 4UL), @v128.i64x2_const(5UL, 1UL)),
+    @v128.i64x2_const(0xfffffffffffffffeUL, 3UL),
+  )
+  assert_eq(
+    @v128.i64x2_mul(@v128.i64x2_const(2UL, 3UL), @v128.i64x2_const(4UL, 5UL)),
+    @v128.i64x2_const(8UL, 15UL),
+  )
+  assert_true(@v128.i64x2_all_true(@v128.i64x2_const(1UL, 2UL)))
+  assert_false(@v128.i64x2_all_true(@v128.i64x2_const(1UL, 0UL)))
+  assert_eq(@v128.i64x2_eq(a, b), @v128.i64x2_const(0UL, 0UL))
+  assert_eq(
+    @v128.i64x2_ne(a, b),
+    @v128.i64x2_const(0xffffffffffffffffUL, 0xffffffffffffffffUL),
+  )
+  assert_eq(
+    @v128.i64x2_le_s(a, b),
+    @v128.i64x2_const(0xffffffffffffffffUL, 0UL),
+  )
+  assert_eq(
+    @v128.i64x2_gt_s(a, b),
+    @v128.i64x2_const(0UL, 0xffffffffffffffffUL),
+  )
+  assert_eq(
+    @v128.i64x2_relaxed_laneselect(
+      @v128.i64x2_splat(0xaaaaaaaaaaaaaaaaUL),
+      @v128.i64x2_splat(0x5555555555555555UL),
+      @v128.i64x2_const(0x8000000000000000UL, 0UL),
+    ),
+    @v128.i64x2_const(0xaaaaaaaaaaaaaaaaUL, 0x5555555555555555UL),
+  )
+
+  let dwords = @v128.i32x4_const(0x80000000, 1, 0xffffffff, 2)
+  assert_eq(
+    @v128.i64x2_extend_high_i32x4_s(dwords),
+    @v128.i64x2_const(0xffffffffffffffffUL, 2UL),
+  )
+  assert_eq(
+    @v128.i64x2_extend_low_i32x4_u(dwords),
+    @v128.i64x2_const(0x80000000UL, 1UL),
+  )
+  assert_eq(
+    @v128.i64x2_extmul_high_i32x4_s(dwords, @v128.i32x4_splat(2)),
+    @v128.i64x2_const(0xfffffffffffffffeUL, 4UL),
+  )
+  assert_eq(
+    @v128.i64x2_extmul_low_i32x4_u(dwords, @v128.i32x4_splat(2)),
+    @v128.i64x2_const(0x100000000UL, 2UL),
+  )
+}
+
+///|
+test "explicit coverage for floating point ops" {
+  let f = @v128.f32x4_const(-1.25, 2.75, 4.0, -8.0)
+  assert_eq(
+    @v128.f32x4_sub(f, @v128.f32x4_splat(1.0)),
+    @v128.f32x4_const(-2.25, 1.75, 3.0, -9.0),
+  )
+  assert_eq(
+    @v128.f32x4_div(
+      @v128.f32x4_const(6.0, 8.0, -9.0, 10.0),
+      @v128.f32x4_const(2.0, 4.0, 3.0, 5.0),
+    ),
+    @v128.f32x4_const(3.0, 2.0, -3.0, 2.0),
+  )
+  assert_eq(@v128.f32x4_ceil(f), @v128.f32x4_const(-1.0, 3.0, 4.0, -8.0))
+  assert_eq(@v128.f32x4_floor(f), @v128.f32x4_const(-2.0, 2.0, 4.0, -8.0))
+  assert_eq(@v128.f32x4_trunc(f), @v128.f32x4_const(-1.0, 2.0, 4.0, -8.0))
+  assert_eq(
+    @v128.f32x4_min(
+      @v128.f32x4_const(1.0, -2.0, 3.0, 4.0),
+      @v128.f32x4_const(2.0, -3.0, 2.0, 5.0),
+    ),
+    @v128.f32x4_const(1.0, -3.0, 2.0, 4.0),
+  )
+  assert_eq(
+    @v128.f32x4_max(
+      @v128.f32x4_const(1.0, -2.0, 3.0, 4.0),
+      @v128.f32x4_const(2.0, -3.0, 2.0, 5.0),
+    ),
+    @v128.f32x4_const(2.0, -2.0, 3.0, 5.0),
+  )
+  assert_eq(
+    @v128.f32x4_pmax(
+      @v128.f32x4_const(1.0, -2.0, 3.0, 4.0),
+      @v128.f32x4_const(2.0, -3.0, 2.0, 5.0),
+    ),
+    @v128.f32x4_const(2.0, -2.0, 3.0, 5.0),
+  )
+  assert_eq(
+    @v128.f32x4_relaxed_min(
+      @v128.f32x4_const(1.0, -2.0, 3.0, 4.0),
+      @v128.f32x4_const(2.0, -3.0, 2.0, 5.0),
+    ),
+    @v128.f32x4_const(1.0, -3.0, 2.0, 4.0),
+  )
+  assert_eq(
+    @v128.f32x4_relaxed_max(
+      @v128.f32x4_const(1.0, -2.0, 3.0, 4.0),
+      @v128.f32x4_const(2.0, -3.0, 2.0, 5.0),
+    ),
+    @v128.f32x4_const(2.0, -2.0, 3.0, 5.0),
+  )
+  assert_eq(
+    @v128.f32x4_le(f, @v128.f32x4_const(-1.25, 3.0, 3.0, -9.0)),
+    @v128.i32x4_const(0xffffffff, 0xffffffff, 0, 0),
+  )
+  assert_eq(
+    @v128.f32x4_gt(f, @v128.f32x4_const(-2.0, 3.0, 3.0, -9.0)),
+    @v128.i32x4_const(0xffffffff, 0, 0xffffffff, 0xffffffff),
+  )
+  assert_eq(
+    @v128.f32x4_ge(f, @v128.f32x4_const(-1.25, 3.0, 3.0, -9.0)),
+    @v128.i32x4_const(0xffffffff, 0, 0xffffffff, 0xffffffff),
+  )
+
+  let d = @v128.f64x2_const(-1.25, 2.75)
+  assert_eq(
+    @v128.f64x2_add(d, @v128.f64x2_splat(1.0)),
+    @v128.f64x2_const(-0.25, 3.75),
+  )
+  assert_eq(
+    @v128.f64x2_sub(d, @v128.f64x2_splat(1.0)),
+    @v128.f64x2_const(-2.25, 1.75),
+  )
+  assert_eq(
+    @v128.f64x2_mul(d, @v128.f64x2_const(2.0, 4.0)),
+    @v128.f64x2_const(-2.5, 11.0),
+  )
+  assert_eq(@v128.f64x2_neg(d), @v128.f64x2_const(1.25, -2.75))
+  assert_eq(
+    @v128.f64x2_sqrt(@v128.f64x2_const(4.0, 9.0)),
+    @v128.f64x2_const(2.0, 3.0),
+  )
+  assert_eq(@v128.f64x2_ceil(d), @v128.f64x2_const(-1.0, 3.0))
+  assert_eq(@v128.f64x2_floor(d), @v128.f64x2_const(-2.0, 2.0))
+  assert_eq(@v128.f64x2_trunc(d), @v128.f64x2_const(-1.0, 2.0))
+  assert_eq(
+    @v128.f64x2_min(@v128.f64x2_const(1.0, -2.0), @v128.f64x2_const(2.0, -3.0)),
+    @v128.f64x2_const(1.0, -3.0),
+  )
+  assert_eq(
+    @v128.f64x2_max(@v128.f64x2_const(1.0, -2.0), @v128.f64x2_const(2.0, -3.0)),
+    @v128.f64x2_const(2.0, -2.0),
+  )
+  assert_eq(
+    @v128.f64x2_pmin(@v128.f64x2_const(1.0, -2.0), @v128.f64x2_const(2.0, -3.0)),
+    @v128.f64x2_const(1.0, -3.0),
+  )
+  assert_eq(
+    @v128.f64x2_pmax(@v128.f64x2_const(1.0, -2.0), @v128.f64x2_const(2.0, -3.0)),
+    @v128.f64x2_const(2.0, -2.0),
+  )
+  assert_eq(
+    @v128.f64x2_relaxed_min(
+      @v128.f64x2_const(1.0, -2.0),
+      @v128.f64x2_const(2.0, -3.0),
+    ),
+    @v128.f64x2_const(1.0, -3.0),
+  )
+  assert_eq(
+    @v128.f64x2_relaxed_max(
+      @v128.f64x2_const(1.0, -2.0),
+      @v128.f64x2_const(2.0, -3.0),
+    ),
+    @v128.f64x2_const(2.0, -2.0),
+  )
+  assert_eq(
+    @v128.f64x2_lt(d, @v128.f64x2_const(0.0, 2.0)),
+    @v128.i64x2_const(0xffffffffffffffffUL, 0UL),
+  )
+  assert_eq(
+    @v128.f64x2_le(d, @v128.f64x2_const(-1.25, 2.0)),
+    @v128.i64x2_const(0xffffffffffffffffUL, 0UL),
+  )
+  assert_eq(
+    @v128.f64x2_gt(d, @v128.f64x2_const(-2.0, 3.0)),
+    @v128.i64x2_const(0xffffffffffffffffUL, 0UL),
+  )
+  assert_eq(
+    @v128.f64x2_convert_low_i32x4_u(@v128.i32x4_const(1, 2, 0xffffffff, 4)),
+    @v128.f64x2_const(1.0, 2.0),
+  )
+}
