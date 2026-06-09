@@ -14,12 +14,12 @@
 
 ///|
 /// Creates a 128-bit vector value from its low and high 64-bit lanes.
-pub fn make(lo : UInt64, hi : UInt64) -> V128 = "%v128.make"
+fn make(lo : UInt64, hi : UInt64) -> V128 = "%v128.make"
 
 ///|
 /// Returns the low 64-bit lane of a 128-bit vector value.
-pub fn lo(value : V128) -> UInt64 = "%v128.lo"
+fn lo(value : V128) -> UInt64 = "%v128.lo"
 
 ///|
 /// Returns the high 64-bit lane of a 128-bit vector value.
-pub fn hi(value : V128) -> UInt64 = "%v128.hi"
+fn hi(value : V128) -> UInt64 = "%v128.hi"
