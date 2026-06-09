@@ -4,3 +4,5 @@ import {
   "moonbitlang/core/int16",
   "moonbitlang/core/int64",
 }
+
+warnings = "-missing_doc"
