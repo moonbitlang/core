@@ -17,3 +17,12 @@ import {
 } for "test"
 
 warnings = "-alert_visibility-test_unqualified_package"
+
+options(
+  targets: {
+    "trace_debug.mbt": [ "debug" ],
+    "trace_debug_test.mbt": [ "debug" ],
+    "trace_release.mbt": [ "not", "debug" ],
+    "trace_release_test.mbt": [ "not", "debug" ],
+  },
+)

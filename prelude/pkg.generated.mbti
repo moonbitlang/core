@@ -35,6 +35,8 @@ pub fn debug_assert(() -> Bool) -> Unit
 #callsite(autofill(args_loc, loc))
 pub fn debug_inspect(&@debug.Debug, content? : String, loc~ : @builtin.SourceLoc, args_loc~ : @builtin.ArgsLoc) -> Unit raise @builtin.InspectError
 
+pub let debug_object : @debug.DebugObject?
+
 #deprecated
 #callsite(autofill(loc))
 pub fn[T : @debug.Debug] dump(T, name? : String, loc~ : @builtin.SourceLoc) -> T

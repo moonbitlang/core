@@ -11,6 +11,8 @@ pub fn[T : Debug] debug(T) -> Unit
 #callsite(autofill(args_loc, loc))
 pub fn debug_inspect(&Debug, content? : String, loc~ : SourceLoc, args_loc~ : ArgsLoc) -> Unit raise InspectError
 
+pub let debug_object : DebugObject?
+
 #deprecated
 #callsite(autofill(loc))
 pub fn[T : Debug] dump(T, name? : String, loc~ : SourceLoc) -> T
@@ -23,6 +25,11 @@ pub fn[T : Debug] to_string(T) -> String
 // Errors
 
 // Types and methods
+type DebugObject
+pub fn DebugObject::write_object_begin(Self) -> Unit
+pub fn DebugObject::write_object_end(Self) -> Unit
+pub fn[T : Debug] DebugObject::write_object_field(Self, String, T) -> Unit
+
 type Repr
 pub impl Show for Repr
 pub impl Debug for Repr

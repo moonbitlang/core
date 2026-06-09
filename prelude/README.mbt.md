@@ -42,7 +42,7 @@ test "Set constructor from prelude" {
 ## Re-exported Functions
 
 - `println`, `abort`, `panic`, `fail` — output and error handling
-- `inspect`, `debug_inspect`, `debug`, `to_repr` — debugging
+- `inspect`, `debug_inspect`, `debug`, `debug_object`, `to_repr` — debugging
 - `@test.assert_eq`, `@test.assert_not_eq`, `assert_true`, `assert_false`, `debug_assert` — assertions
 - `ignore`, `physical_equal` — utilities
 - `json_inspect` — JSON-based snapshot testing

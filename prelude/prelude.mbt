@@ -82,7 +82,15 @@ pub using @builtin {not}
 pub using @builtin {type IterResult}
 
 ///|
-pub using @debug {debug, type Repr, trait Debug, debug_inspect, repr, to_repr}
+pub using @debug {
+  debug,
+  debug_object,
+  type Repr,
+  trait Debug,
+  debug_inspect,
+  repr,
+  to_repr,
+}
 
 ///|
 #deprecated("for debugging only, not for production")
