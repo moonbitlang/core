@@ -32,11 +32,6 @@ pub impl Show for V128 with fn output(self : V128, logger) {
 }
 
 ///|
-pub fn v128_eq(value : V128, other : V128) -> Bool {
-  value == other
-}
-
-///|
 pub fn i8x16_const(
   a0 : Byte,
   a1 : Byte,

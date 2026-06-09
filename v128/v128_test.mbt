@@ -1012,8 +1012,8 @@ test "floating point edge cases" {
 ///|
 test "explicit coverage for basic and memory ops" {
   let value = @v128.i64x2_const(0x0123456789abcdefUL, 0xfedcba9876543210UL)
-  assert_true(@v128.v128_eq(value, value))
-  assert_false(@v128.v128_eq(value, @v128.i64x2_splat(0UL)))
+  assert_true(value == value)
+  assert_true(value != @v128.i64x2_splat(0UL))
   assert_eq(
     @v128.v128_andnot(
       @v128.i32x4_const(0xffff0000, 0x00ff00ff, 0xffffffff, 0),
