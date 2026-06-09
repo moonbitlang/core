@@ -1021,10 +1021,7 @@ test "explicit coverage for basic and memory ops" {
     ),
     @v128.i32x4_const(0xff000000, 0x000000ff, 0xffffffff, 0),
   )
-  inspect(
-    @v128.v128_to_string(@v128.i64x2_const(1UL, 2UL)),
-    content="V128(1, 2)",
-  )
+  inspect(@v128.i64x2_const(1UL, 2UL).to_string(), content="V128(1, 2)")
 
   let bytes : FixedArray[Byte] = [
     0xff, 0xff, 0xff, 0xff, 0, 0, 0, 0x80, 1, 2, 3, 4, 5, 6, 7, 8,

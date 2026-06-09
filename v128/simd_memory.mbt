@@ -290,8 +290,3 @@ pub fn v128_store64_lane(
 ) -> Unit {
   store_u64_le(bytes, offset, u64_lane(value, lane))
 }
-
-///|
-pub fn v128_to_string(value : V128) -> String {
-  value.to_string()
-}
