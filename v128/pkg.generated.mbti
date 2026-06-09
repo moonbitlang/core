@@ -474,8 +474,6 @@ pub fn v128_any_true(V128) -> Bool
 
 pub fn v128_bitselect(V128, V128, V128) -> V128
 
-pub fn v128_eq(V128, V128) -> Bool
-
 pub fn v128_load(FixedArray[Byte], Int) -> V128
 
 pub fn v128_load16_lane(FixedArray[Byte], Int, V128, Int) -> V128
