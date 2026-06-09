@@ -359,7 +359,7 @@ pub fn i32x4_extadd_pairwise_i16x8_u(value : V128) -> V128 {
 }
 
 ///|
-pub fn i16x8_relaxed_dot_s_i8x16(value : V128, other : V128) -> V128 {
+pub fn i16x8_relaxed_dot_i8x16_i7x16_s(value : V128, other : V128) -> V128 {
   pack_u16x8_by(i => {
     (i8_signed(u8_lane(value, i * 2)) * i8_signed(u8_lane(other, i * 2)) +
     i8_signed(u8_lane(value, i * 2 + 1)) * i8_signed(u8_lane(other, i * 2 + 1))).to_uint16()
@@ -372,10 +372,13 @@ pub fn i32x4_dot_i16x8_s(value : V128, other : V128) -> V128 {
 }
 
 ///|
-pub fn i32x4_relaxed_dot_add_s_i16x8(
+pub fn i32x4_relaxed_dot_i8x16_i7x16_add_s(
   value : V128,
   other : V128,
   accumulator : V128,
 ) -> V128 {
-  i32x4_add(i32x4_dot_i16x8_s(value, other), accumulator)
+  i32x4_add(
+    i32x4_extadd_pairwise_i16x8_s(i16x8_relaxed_dot_i8x16_i7x16_s(value, other)),
+    accumulator,
+  )
 }

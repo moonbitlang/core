@@ -480,7 +480,7 @@ test "integer widening narrowing and dot products" {
     @v128.i16x8_const(254, 0, 508, 506, 16, 18, 20, 22),
   )
   assert_eq(
-    @v128.i16x8_relaxed_dot_s_i8x16(bytes, @v128.i8x16_splat(2)),
+    @v128.i16x8_relaxed_dot_i8x16_i7x16_s(bytes, @v128.i8x16_splat(2)),
     @v128.i16x8_const(0xfefe, 6, 14, 22, 254, 0xfff6, 34, 42),
   )
 
@@ -533,12 +533,12 @@ test "integer widening narrowing and dot products" {
     @v128.i32x4_const(0xfffefffe, 6, 0xfffe, 0x2464),
   )
   assert_eq(
-    @v128.i32x4_relaxed_dot_add_s_i16x8(
-      words,
-      @v128.i16x8_splat(2),
+    @v128.i32x4_relaxed_dot_i8x16_i7x16_add_s(
+      bytes,
+      @v128.i8x16_splat(2),
       @v128.i32x4_splat(1),
     ),
-    @v128.i32x4_const(0xfffeffff, 7, 0xffff, 0x2465),
+    @v128.i32x4_const(0xffffff05, 37, 245, 77),
   )
 
   assert_eq(
