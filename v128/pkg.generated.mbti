@@ -130,8 +130,6 @@ pub fn f64x2_sub(V128, V128) -> V128
 
 pub fn f64x2_trunc(V128) -> V128
 
-pub fn hi(V128) -> UInt64
-
 pub fn i16x8_abs(V128) -> V128
 
 pub fn i16x8_add(V128, V128) -> V128
@@ -467,10 +465,6 @@ pub fn i8x16_sub_sat_s(V128, V128) -> V128
 pub fn i8x16_sub_sat_u(V128, V128) -> V128
 
 pub fn i8x16_swizzle(V128, V128) -> V128
-
-pub fn lo(V128) -> UInt64
-
-pub fn make(UInt64, UInt64) -> V128
 
 pub fn v128_and_(V128, V128) -> V128
 
