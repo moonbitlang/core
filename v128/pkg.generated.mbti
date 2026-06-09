@@ -208,7 +208,7 @@ pub fn i16x8_neg(V128) -> V128
 
 pub fn i16x8_q15mulr_sat_s(V128, V128) -> V128
 
-pub fn i16x8_relaxed_dot_s_i8x16(V128, V128) -> V128
+pub fn i16x8_relaxed_dot_i8x16_i7x16_s(V128, V128) -> V128
 
 pub fn i16x8_relaxed_laneselect(V128, V128, V128) -> V128
 
@@ -296,7 +296,7 @@ pub fn i32x4_ne(V128, V128) -> V128
 
 pub fn i32x4_neg(V128) -> V128
 
-pub fn i32x4_relaxed_dot_add_s_i16x8(V128, V128, V128) -> V128
+pub fn i32x4_relaxed_dot_i8x16_i7x16_add_s(V128, V128, V128) -> V128
 
 pub fn i32x4_relaxed_laneselect(V128, V128, V128) -> V128
 
