@@ -14,55 +14,55 @@
 
 ///|
 pub fn i8x16_shl(value : V128, shift : Int) -> V128 {
-  let shift = shift % 8
+  let shift = shift & 7
   pack_u8x16_by(i => (u8_lane(value, i).to_uint() << shift).to_byte())
 }
 
 ///|
 pub fn i8x16_shr_u(value : V128, shift : Int) -> V128 {
-  let shift = shift % 8
+  let shift = shift & 7
   pack_u8x16_by(i => (u8_lane(value, i).to_uint() >> shift).to_byte())
 }
 
 ///|
 pub fn i8x16_shr_s(value : V128, shift : Int) -> V128 {
-  let shift = shift % 8
+  let shift = shift & 7
   pack_u8x16_by(i => (i8_signed(u8_lane(value, i)) >> shift).to_byte())
 }
 
 ///|
 pub fn i16x8_shl(value : V128, shift : Int) -> V128 {
-  let shift = shift % 16
+  let shift = shift & 15
   pack_u16x8_by(i => (u16_lane(value, i).to_uint() << shift).to_uint16())
 }
 
 ///|
 pub fn i16x8_shr_u(value : V128, shift : Int) -> V128 {
-  let shift = shift % 16
+  let shift = shift & 15
   pack_u16x8_by(i => (u16_lane(value, i).to_uint() >> shift).to_uint16())
 }
 
 ///|
 pub fn i16x8_shr_s(value : V128, shift : Int) -> V128 {
-  let shift = shift % 16
+  let shift = shift & 15
   pack_u16x8_by(i => (i16_signed(u16_lane(value, i)) >> shift).to_uint16())
 }
 
 ///|
 pub fn i32x4_shl(value : V128, shift : Int) -> V128 {
-  let shift = shift % 32
+  let shift = shift & 31
   pack_u32x4_by(i => u32_lane(value, i) << shift)
 }
 
 ///|
 pub fn i32x4_shr_u(value : V128, shift : Int) -> V128 {
-  let shift = shift % 32
+  let shift = shift & 31
   pack_u32x4_by(i => u32_lane(value, i) >> shift)
 }
 
 ///|
 pub fn i32x4_shr_s(value : V128, shift : Int) -> V128 {
-  let shift = shift % 32
+  let shift = shift & 31
   pack_u32x4_by(i => {
     (u32_lane(value, i).reinterpret_as_int() >> shift).reinterpret_as_uint()
   })
@@ -70,19 +70,19 @@ pub fn i32x4_shr_s(value : V128, shift : Int) -> V128 {
 
 ///|
 pub fn i64x2_shl(value : V128, shift : Int) -> V128 {
-  let shift = shift % 64
+  let shift = shift & 63
   make(lo(value) << shift, hi(value) << shift)
 }
 
 ///|
 pub fn i64x2_shr_u(value : V128, shift : Int) -> V128 {
-  let shift = shift % 64
+  let shift = shift & 63
   make(lo(value) >> shift, hi(value) >> shift)
 }
 
 ///|
 pub fn i64x2_shr_s(value : V128, shift : Int) -> V128 {
-  let shift = shift % 64
+  let shift = shift & 63
   pack_u64x2_by(i => {
     (u64_lane(value, i).reinterpret_as_int64() >> shift).reinterpret_as_uint64()
   })

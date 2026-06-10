@@ -23,12 +23,38 @@ pub impl Eq for V128 with fn not_equal(self : V128, other : V128) -> Bool {
 }
 
 ///|
+fn u64_hex(value : UInt64) -> String {
+  let digits = value.to_string(radix=16)
+  let buf = StringBuilder::new()
+  buf.write_string("0x")
+  for _ in digits.length()..<16 {
+    buf.write_char('0')
+  }
+  buf.write_string(digits)
+  buf.to_string()
+}
+
+///|
+/// Prints the two 64-bit words in zero-padded hex so every byte lane is
+/// visible; lane 0 is the lowest byte of the first word.
 pub impl Show for V128 with fn output(self : V128, logger) {
   logger.write_string("V128(")
-  logger.write_string(lo(self).to_string())
+  logger.write_string(u64_hex(lo(self)))
   logger.write_string(", ")
-  logger.write_string(hi(self).to_string())
+  logger.write_string(u64_hex(hi(self)))
   logger.write_string(")")
+}
+
+///|
+/// Shows the two 64-bit words in the same zero-padded hex form as `Show`.
+pub impl @debug.Debug for V128 with fn to_repr(self) {
+  @debug.Repr::opaque_(
+    "V128",
+    @debug.Repr::tuple([
+      @debug.Repr::literal(u64_hex(lo(self))),
+      @debug.Repr::literal(u64_hex(hi(self))),
+    ]),
+  )
 }
 
 ///|
