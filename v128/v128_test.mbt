@@ -940,6 +940,12 @@ test "systematic shifts and saturation boundaries" {
   assert_eq(@v128.i64x2_shr_u(qwords, 64), qwords)
   assert_eq(@v128.i64x2_shr_s(qwords, 65), @v128.i64x2_shr_s(qwords, 1))
 
+  // negative counts wrap like wasm's unsigned modulo: -7 mod 8 == 1
+  assert_eq(@v128.i8x16_shl(bytes, -7), @v128.i8x16_shl(bytes, 1))
+  assert_eq(@v128.i16x8_shr_u(words, -15), @v128.i16x8_shr_u(words, 1))
+  assert_eq(@v128.i32x4_shr_s(dwords, -31), @v128.i32x4_shr_s(dwords, 1))
+  assert_eq(@v128.i64x2_shl(qwords, -63), @v128.i64x2_shl(qwords, 1))
+
   assert_eq(
     @v128.i8x16_add_sat_s(
       @v128.i8x16_const(
@@ -990,7 +996,7 @@ test "floating point edge cases" {
       @v128.f32x4_const(nan32, 1.0, -0.0, 3.0),
       @v128.f32x4_const(2.0, nan32, 0.0, -4.0),
     ),
-    @v128.f32x4_const(2.0, nan32, 0.0, -4.0),
+    @v128.f32x4_const(nan32, 1.0, -0.0, -4.0),
   )
 
   let nan64 = 0x7ff8000000000000UL.reinterpret_as_double()
@@ -1010,6 +1016,49 @@ test "floating point edge cases" {
 }
 
 ///|
+test "min/max NaN propagation and signed zeros" {
+  let nan32 = Float::reinterpret_from_uint(0x7fc00000)
+  let a32 = @v128.f32x4_const(nan32, 1.0, -0.0, 0.0)
+  let b32 = @v128.f32x4_const(2.0, nan32, 0.0, -0.0)
+  assert_eq(
+    @v128.f32x4_min(a32, b32),
+    @v128.f32x4_const(nan32, nan32, -0.0, -0.0),
+  )
+  assert_eq(
+    @v128.f32x4_max(a32, b32),
+    @v128.f32x4_const(nan32, nan32, 0.0, 0.0),
+  )
+  // pmin/pmax return the first operand on ties and NaN
+  assert_eq(@v128.f32x4_pmin(a32, b32), a32)
+  assert_eq(@v128.f32x4_pmax(a32, b32), a32)
+
+  let nan64 = 0x7ff8000000000000UL.reinterpret_as_double()
+  let a64 = @v128.f64x2_const(nan64, -0.0)
+  let b64 = @v128.f64x2_const(5.0, 0.0)
+  assert_eq(@v128.f64x2_min(a64, b64), @v128.f64x2_const(nan64, -0.0))
+  assert_eq(@v128.f64x2_min(b64, a64), @v128.f64x2_const(nan64, -0.0))
+  assert_eq(@v128.f64x2_max(a64, b64), @v128.f64x2_const(nan64, 0.0))
+  assert_eq(@v128.f64x2_max(b64, a64), @v128.f64x2_const(nan64, 0.0))
+  assert_eq(@v128.f64x2_pmin(a64, b64), a64)
+  assert_eq(@v128.f64x2_pmin(b64, a64), b64)
+  assert_eq(@v128.f64x2_pmax(a64, b64), a64)
+  assert_eq(@v128.f64x2_pmax(b64, a64), b64)
+
+  // ordering still works on plain values
+  assert_eq(
+    @v128.f32x4_min(
+      @v128.f32x4_const(1.5, -2.0, 7.0, -8.0),
+      @v128.f32x4_const(2.5, -1.0, 6.0, -9.0),
+    ),
+    @v128.f32x4_const(1.5, -2.0, 6.0, -9.0),
+  )
+  assert_eq(
+    @v128.f64x2_max(@v128.f64x2_const(1.5, -2.0), @v128.f64x2_const(2.5, -3.0)),
+    @v128.f64x2_const(2.5, -2.0),
+  )
+}
+
+///|
 test "explicit coverage for basic and memory ops" {
   let value = @v128.i64x2_const(0x0123456789abcdefUL, 0xfedcba9876543210UL)
   assert_true(value == value)
@@ -1021,7 +1070,10 @@ test "explicit coverage for basic and memory ops" {
     ),
     @v128.i32x4_const(0xff000000, 0x000000ff, 0xffffffff, 0),
   )
-  inspect(@v128.i64x2_const(1UL, 2UL).to_string(), content="V128(1, 2)")
+  inspect(
+    @v128.i64x2_const(1UL, 0xfedcba9876543210UL).to_string(),
+    content="V128(0x0000000000000001, 0xfedcba9876543210)",
+  )
 
   let bytes : FixedArray[Byte] = [
     0xff, 0xff, 0xff, 0xff, 0, 0, 0, 0x80, 1, 2, 3, 4, 5, 6, 7, 8,
@@ -1503,5 +1555,17 @@ test "explicit coverage for floating point ops" {
   assert_eq(
     @v128.f64x2_convert_low_i32x4_u(@v128.i32x4_const(1, 2, 0xffffffff, 4)),
     @v128.f64x2_const(1.0, 2.0),
+  )
+}
+
+///|
+test "debug repr" {
+  @debug.debug_inspect(
+    @v128.i64x2_const(1UL, 0xfedcba9876543210UL),
+    content="<V128: (0x0000000000000001, 0xfedcba9876543210)>",
+  )
+  @debug.debug_inspect(
+    @v128.i8x16_splat(0xab),
+    content="<V128: (0xabababababababab, 0xabababababababab)>",
   )
 }

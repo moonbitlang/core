@@ -1,6 +1,10 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/v128"
 
+import {
+  "moonbitlang/core/debug",
+}
+
 // Values
 pub fn f32x4_abs(V128) -> V128
 
@@ -529,6 +533,7 @@ pub fn v128_xor(V128, V128) -> V128
 // Types and methods
 pub impl Eq for V128
 pub impl Show for V128
+pub impl @debug.Debug for V128
 
 // Type aliases
 

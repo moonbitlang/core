@@ -119,38 +119,108 @@ fn f64_nearest_even(value : Double) -> Double {
 }
 
 ///|
-fn f32_pmin(value : Float, other : Float) -> Float {
-  if value < other {
+/// Wasm `min` semantics: NaN in either operand propagates, and
+/// `min(-0.0, +0.0)` is `-0.0`.
+fn f32_min(value : Float, other : Float) -> Float {
+  if value.is_nan() {
+    value
+  } else if other.is_nan() {
+    other
+  } else if value == other {
+    Float::reinterpret_from_uint(
+      value.reinterpret_as_uint() | other.reinterpret_as_uint(),
+    )
+  } else if value < other {
     value
   } else {
     other
+  }
+}
+
+///|
+/// Wasm `max` semantics: NaN in either operand propagates, and
+/// `max(-0.0, +0.0)` is `+0.0`.
+fn f32_max(value : Float, other : Float) -> Float {
+  if value.is_nan() {
+    value
+  } else if other.is_nan() {
+    other
+  } else if value == other {
+    Float::reinterpret_from_uint(
+      value.reinterpret_as_uint() & other.reinterpret_as_uint(),
+    )
+  } else if value > other {
+    value
+  } else {
+    other
+  }
+}
+
+///|
+fn f64_min(value : Double, other : Double) -> Double {
+  if value.is_nan() {
+    value
+  } else if other.is_nan() {
+    other
+  } else if value == other {
+    (value.reinterpret_as_uint64() | other.reinterpret_as_uint64()).reinterpret_as_double()
+  } else if value < other {
+    value
+  } else {
+    other
+  }
+}
+
+///|
+fn f64_max(value : Double, other : Double) -> Double {
+  if value.is_nan() {
+    value
+  } else if other.is_nan() {
+    other
+  } else if value == other {
+    (value.reinterpret_as_uint64() & other.reinterpret_as_uint64()).reinterpret_as_double()
+  } else if value > other {
+    value
+  } else {
+    other
+  }
+}
+
+///|
+/// Wasm `pmin(z1, z2)` is `z2 < z1 ? z2 : z1`: the first operand wins on
+/// ties and NaN.
+fn f32_pmin(value : Float, other : Float) -> Float {
+  if other < value {
+    other
+  } else {
+    value
   }
 }
 
 ///|
 fn f32_pmax(value : Float, other : Float) -> Float {
-  if value > other {
-    value
-  } else {
+  if value < other {
     other
+  } else {
+    value
   }
 }
 
 ///|
 fn f64_pmin(value : Double, other : Double) -> Double {
-  if value < other {
-    value
-  } else {
+  if other < value {
     other
+  } else {
+    value
   }
 }
 
 ///|
 fn f64_pmax(value : Double, other : Double) -> Double {
-  if value > other {
-    value
-  } else {
+  if value < other {
     other
+  } else {
+    value
   }
 }
 
@@ -231,12 +301,12 @@ pub fn f32x4_div(value : V128, other : V128) -> V128 {
 
 ///|
 pub fn f32x4_min(value : V128, other : V128) -> V128 {
-  f32x4_zip(value, other, fn(x, y) { x.min(y) })
+  f32x4_zip(value, other, f32_min)
 }
 
 ///|
 pub fn f32x4_max(value : V128, other : V128) -> V128 {
-  f32x4_zip(value, other, fn(x, y) { x.max(y) })
+  f32x4_zip(value, other, f32_max)
 }
 
 ///|
@@ -402,12 +472,12 @@ pub fn f64x2_div(value : V128, other : V128) -> V128 {
 
 ///|
 pub fn f64x2_min(value : V128, other : V128) -> V128 {
-  f64x2_zip(value, other, fn(x, y) { x.min(y) })
+  f64x2_zip(value, other, f64_min)
 }
 
 ///|
 pub fn f64x2_max(value : V128, other : V128) -> V128 {
-  f64x2_zip(value, other, fn(x, y) { x.max(y) })
+  f64x2_zip(value, other, f64_max)
 }
 
 ///|
