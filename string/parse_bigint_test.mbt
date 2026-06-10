@@ -13,14 +13,11 @@
 // limitations under the License.
 
 ///|
-pub using @internal/strconv {
-  parse_int64,
-  parse_int,
-  parse_uint64,
-  parse_uint,
-  parse_bool,
-  parse_double,
+test "@string.parse_bigint" {
+  inspect(@string.parse_bigint("42"), content="42")
+  inspect(@string.parse_bigint("deadbeef", base=16), content="3735928559")
+  assert_true(
+    @test.expect_error(() => @string.parse_bigint("not-a-number"))
+    is Failure::Failure("invalid syntax"),
+  )
 }
-
-///|
-pub using @bigint {parse_bigint}

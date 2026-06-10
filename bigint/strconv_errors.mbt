@@ -13,14 +13,17 @@
 // limitations under the License.
 
 ///|
-pub using @internal/strconv {
-  parse_int64,
-  parse_int,
-  parse_uint64,
-  parse_uint,
-  parse_bool,
-  parse_double,
+let syntax_err_str = "invalid syntax"
+
+///|
+let base_err_str = "invalid base"
+
+///|
+fn[T] syntax_err() -> T raise {
+  raise Failure::Failure(syntax_err_str)
 }
 
 ///|
-pub using @bigint {parse_bigint}
+fn[T] base_err() -> T raise {
+  raise Failure::Failure(base_err_str)
+}

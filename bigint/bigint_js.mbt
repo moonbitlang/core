@@ -19,49 +19,35 @@ type BigInt
 let zero = 0N
 
 ///|
-/// Converts a string representation in the specified radix to a `BigInt` value.
-/// The string can optionally start with a minus sign (-) to indicate a negative
-/// number, followed by one or more digits valid for the radix.
+/// Parses a string into a `BigInt` using the specified base (2 to 36).
 ///
-/// Parameters:
+/// Returns an error if the input is malformed or the base is invalid.
+pub fn parse_bigint(str : StringView, base? : Int = 10) -> BigInt raise {
+  if base < 2 || base > 36 {
+    base_err()
+  }
+  let input = str.to_owned()
+  if input.length() == 0 {
+    syntax_err()
+  }
+  if base != 10 {
+    return BigInt::from_string_radix(input, base)
+  }
+  if input == "-" {
+    syntax_err()
+  }
+  BigInt::js_from_string(input)
+}
+
+///|
+/// Converts a string representation in the specified radix to a BigInt value.
 ///
-/// * `str` : The string to be converted. Must be a valid number string in the
-/// given radix.
-/// * `radix` : The base to use for parsing (2 to 36). Defaults to 10.
-///
-/// Returns a `BigInt` value representing the number in the input string.
-///
-/// Throws a panic if:
-///
-/// * The input string is empty
-/// * The input string contains digits not valid for the given radix
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let pos = @bigint.BigInt::from_string("12345")
-///   let neg = @bigint.BigInt::from_string("-12345")
-///   let hex = @bigint.BigInt::from_string("ff", radix=16)
-///   inspect(pos, content="12345")
-///   inspect(neg, content="-12345")
-///   inspect(hex, content="255")
-/// }
-/// ```
+/// Panics if the input is malformed. Use `parse_bigint` to handle errors.
 pub fn BigInt::from_string(str : String, radix? : Int = 10) -> BigInt {
-  if str.length() == 0 {
-    abort("empty string")
+  parse_bigint(str.view(), base=radix) catch {
+    Failure(msg) => abort(msg)
+    _ => abort("invalid syntax")
   }
-  if radix < 2 || radix > 36 {
-    abort("radix must be between 2 and 36")
-  }
-  if radix != 10 {
-    return BigInt::from_string_radix(str, radix)
-  }
-  if str == "-" {
-    abort("invalid character")
-  }
-  BigInt::js_from_string(str)
 }
 
 ///|
@@ -88,12 +74,12 @@ fn pow2_shift(radix : Int) -> Int? {
 }
 
 ///|
-fn BigInt::from_string_radix(str : String, radix : Int) -> BigInt {
+fn BigInt::from_string_radix(str : String, radix : Int) -> BigInt raise {
   let len = str.length()
   let sign = if str.unsafe_get(0) == '-' { -1 } else { 1 }
   let start = if sign == -1 { 1 } else { 0 }
   if start == len {
-    abort("invalid character")
+    syntax_err()
   }
   let mut acc = 0N
   match pow2_shift(radix) {
@@ -101,7 +87,7 @@ fn BigInt::from_string_radix(str : String, radix : Int) -> BigInt {
       for i in start..<len {
         let digit = digit_from_char(str.unsafe_get(i).to_int())
         if digit < 0 || digit >= radix {
-          abort("invalid character")
+          syntax_err()
         }
         acc = (acc << shift) | BigInt::from_int(digit)
       }
@@ -110,7 +96,7 @@ fn BigInt::from_string_radix(str : String, radix : Int) -> BigInt {
       for i in start..<len {
         let digit = digit_from_char(str.unsafe_get(i).to_int())
         if digit < 0 || digit >= radix {
-          abort("invalid character")
+          syntax_err()
         }
         acc = acc * base + BigInt::from_int(digit)
       }
