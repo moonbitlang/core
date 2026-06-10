@@ -245,91 +245,109 @@ fn f64_trunc_sat_u(value : Double) -> UInt {
 }
 
 ///|
+#intrinsic("%v128.f32x4_abs")
 pub fn f32x4_abs(value : V128) -> V128 {
   f32x4_map(value, fn(x) { x.abs() })
 }
 
 ///|
+#intrinsic("%v128.f32x4_neg")
 pub fn f32x4_neg(value : V128) -> V128 {
   f32x4_map(value, fn(x) { -x })
 }
 
 ///|
+#intrinsic("%v128.f32x4_sqrt")
 pub fn f32x4_sqrt(value : V128) -> V128 {
   f32x4_map(value, fn(x) { x.sqrt() })
 }
 
 ///|
+#intrinsic("%v128.f32x4_ceil")
 pub fn f32x4_ceil(value : V128) -> V128 {
   f32x4_map(value, fn(x) { x.ceil() })
 }
 
 ///|
+#intrinsic("%v128.f32x4_floor")
 pub fn f32x4_floor(value : V128) -> V128 {
   f32x4_map(value, fn(x) { x.floor() })
 }
 
 ///|
+#intrinsic("%v128.f32x4_trunc")
 pub fn f32x4_trunc(value : V128) -> V128 {
   f32x4_map(value, fn(x) { x.trunc() })
 }
 
 ///|
+#intrinsic("%v128.f32x4_nearest")
 pub fn f32x4_nearest(value : V128) -> V128 {
   f32x4_map(value, f32_nearest_even)
 }
 
 ///|
+#intrinsic("%v128.f32x4_add")
 pub fn f32x4_add(value : V128, other : V128) -> V128 {
   f32x4_zip(value, other, fn(x, y) { x + y })
 }
 
 ///|
+#intrinsic("%v128.f32x4_sub")
 pub fn f32x4_sub(value : V128, other : V128) -> V128 {
   f32x4_zip(value, other, fn(x, y) { x - y })
 }
 
 ///|
+#intrinsic("%v128.f32x4_mul")
 pub fn f32x4_mul(value : V128, other : V128) -> V128 {
   f32x4_zip(value, other, fn(x, y) { x * y })
 }
 
 ///|
+#intrinsic("%v128.f32x4_div")
 pub fn f32x4_div(value : V128, other : V128) -> V128 {
   f32x4_zip(value, other, fn(x, y) { x / y })
 }
 
 ///|
+#intrinsic("%v128.f32x4_min")
 pub fn f32x4_min(value : V128, other : V128) -> V128 {
   f32x4_zip(value, other, f32_min)
 }
 
 ///|
+#intrinsic("%v128.f32x4_max")
 pub fn f32x4_max(value : V128, other : V128) -> V128 {
   f32x4_zip(value, other, f32_max)
 }
 
 ///|
+#intrinsic("%v128.f32x4_pmin")
 pub fn f32x4_pmin(value : V128, other : V128) -> V128 {
   f32x4_zip(value, other, f32_pmin)
 }
 
 ///|
+#intrinsic("%v128.f32x4_pmax")
 pub fn f32x4_pmax(value : V128, other : V128) -> V128 {
   f32x4_zip(value, other, f32_pmax)
 }
 
 ///|
+#intrinsic("%v128.f32x4_relaxed_min")
 pub fn f32x4_relaxed_min(value : V128, other : V128) -> V128 {
   f32x4_min(value, other)
 }
 
 ///|
+#intrinsic("%v128.f32x4_relaxed_max")
 pub fn f32x4_relaxed_max(value : V128, other : V128) -> V128 {
   f32x4_max(value, other)
 }
 
 ///|
+#intrinsic("%v128.f32x4_relaxed_madd")
 pub fn f32x4_relaxed_madd(value : V128, other : V128, addend : V128) -> V128 {
   pack_f32x4_by(i => {
     f32x4_extract_lane(value, i) * f32x4_extract_lane(other, i) +
@@ -338,6 +356,7 @@ pub fn f32x4_relaxed_madd(value : V128, other : V128, addend : V128) -> V128 {
 }
 
 ///|
+#intrinsic("%v128.f32x4_relaxed_nmadd")
 pub fn f32x4_relaxed_nmadd(value : V128, other : V128, addend : V128) -> V128 {
   pack_f32x4_by(i => {
     f32x4_extract_lane(addend, i) -
@@ -346,46 +365,55 @@ pub fn f32x4_relaxed_nmadd(value : V128, other : V128, addend : V128) -> V128 {
 }
 
 ///|
+#intrinsic("%v128.f32x4_eq")
 pub fn f32x4_eq(value : V128, other : V128) -> V128 {
   f32x4_compare(value, other, fn(x, y) { x == y })
 }
 
 ///|
+#intrinsic("%v128.f32x4_ne")
 pub fn f32x4_ne(value : V128, other : V128) -> V128 {
   f32x4_compare(value, other, fn(x, y) { x != y })
 }
 
 ///|
+#intrinsic("%v128.f32x4_lt")
 pub fn f32x4_lt(value : V128, other : V128) -> V128 {
   f32x4_compare(value, other, fn(x, y) { x < y })
 }
 
 ///|
+#intrinsic("%v128.f32x4_le")
 pub fn f32x4_le(value : V128, other : V128) -> V128 {
   f32x4_compare(value, other, fn(x, y) { x <= y })
 }
 
 ///|
+#intrinsic("%v128.f32x4_gt")
 pub fn f32x4_gt(value : V128, other : V128) -> V128 {
   f32x4_compare(value, other, fn(x, y) { x > y })
 }
 
 ///|
+#intrinsic("%v128.f32x4_ge")
 pub fn f32x4_ge(value : V128, other : V128) -> V128 {
   f32x4_compare(value, other, fn(x, y) { x >= y })
 }
 
 ///|
+#intrinsic("%v128.f32x4_convert_i32x4_s")
 pub fn f32x4_convert_i32x4_s(value : V128) -> V128 {
   pack_f32x4_by(i => Float::from_int(u32_lane(value, i).reinterpret_as_int()))
 }
 
 ///|
+#intrinsic("%v128.f32x4_convert_i32x4_u")
 pub fn f32x4_convert_i32x4_u(value : V128) -> V128 {
   pack_f32x4_by(i => Float::from_uint(u32_lane(value, i)))
 }
 
 ///|
+#intrinsic("%v128.f32x4_demote_f64x2_zero")
 pub fn f32x4_demote_f64x2_zero(value : V128) -> V128 {
   f32x4_const(
     Float::from_double(f64x2_extract_lane(value, 0)),
@@ -396,111 +424,133 @@ pub fn f32x4_demote_f64x2_zero(value : V128) -> V128 {
 }
 
 ///|
+#intrinsic("%v128.i32x4_trunc_sat_f32x4_s")
 pub fn i32x4_trunc_sat_f32x4_s(value : V128) -> V128 {
   pack_u32x4_by(i => f32_trunc_sat_s(f32x4_extract_lane(value, i)))
 }
 
 ///|
+#intrinsic("%v128.i32x4_trunc_sat_f32x4_u")
 pub fn i32x4_trunc_sat_f32x4_u(value : V128) -> V128 {
   pack_u32x4_by(i => f32_trunc_sat_u(f32x4_extract_lane(value, i)))
 }
 
 ///|
+#intrinsic("%v128.i32x4_relaxed_trunc_f32x4_s")
 pub fn i32x4_relaxed_trunc_f32x4_s(value : V128) -> V128 {
   i32x4_trunc_sat_f32x4_s(value)
 }
 
 ///|
+#intrinsic("%v128.i32x4_relaxed_trunc_f32x4_u")
 pub fn i32x4_relaxed_trunc_f32x4_u(value : V128) -> V128 {
   i32x4_trunc_sat_f32x4_u(value)
 }
 
 ///|
+#intrinsic("%v128.f64x2_abs")
 pub fn f64x2_abs(value : V128) -> V128 {
   f64x2_map(value, fn(x) { x.abs() })
 }
 
 ///|
+#intrinsic("%v128.f64x2_neg")
 pub fn f64x2_neg(value : V128) -> V128 {
   f64x2_map(value, fn(x) { -x })
 }
 
 ///|
+#intrinsic("%v128.f64x2_sqrt")
 pub fn f64x2_sqrt(value : V128) -> V128 {
   f64x2_map(value, fn(x) { x.sqrt() })
 }
 
 ///|
+#intrinsic("%v128.f64x2_ceil")
 pub fn f64x2_ceil(value : V128) -> V128 {
   f64x2_map(value, fn(x) { x.ceil() })
 }
 
 ///|
+#intrinsic("%v128.f64x2_floor")
 pub fn f64x2_floor(value : V128) -> V128 {
   f64x2_map(value, fn(x) { x.floor() })
 }
 
 ///|
+#intrinsic("%v128.f64x2_trunc")
 pub fn f64x2_trunc(value : V128) -> V128 {
   f64x2_map(value, fn(x) { x.trunc() })
 }
 
 ///|
+#intrinsic("%v128.f64x2_nearest")
 pub fn f64x2_nearest(value : V128) -> V128 {
   f64x2_map(value, f64_nearest_even)
 }
 
 ///|
+#intrinsic("%v128.f64x2_add")
 pub fn f64x2_add(value : V128, other : V128) -> V128 {
   f64x2_zip(value, other, fn(x, y) { x + y })
 }
 
 ///|
+#intrinsic("%v128.f64x2_sub")
 pub fn f64x2_sub(value : V128, other : V128) -> V128 {
   f64x2_zip(value, other, fn(x, y) { x - y })
 }
 
 ///|
+#intrinsic("%v128.f64x2_mul")
 pub fn f64x2_mul(value : V128, other : V128) -> V128 {
   f64x2_zip(value, other, fn(x, y) { x * y })
 }
 
 ///|
+#intrinsic("%v128.f64x2_div")
 pub fn f64x2_div(value : V128, other : V128) -> V128 {
   f64x2_zip(value, other, fn(x, y) { x / y })
 }
 
 ///|
+#intrinsic("%v128.f64x2_min")
 pub fn f64x2_min(value : V128, other : V128) -> V128 {
   f64x2_zip(value, other, f64_min)
 }
 
 ///|
+#intrinsic("%v128.f64x2_max")
 pub fn f64x2_max(value : V128, other : V128) -> V128 {
   f64x2_zip(value, other, f64_max)
 }
 
 ///|
+#intrinsic("%v128.f64x2_pmin")
 pub fn f64x2_pmin(value : V128, other : V128) -> V128 {
   f64x2_zip(value, other, f64_pmin)
 }
 
 ///|
+#intrinsic("%v128.f64x2_pmax")
 pub fn f64x2_pmax(value : V128, other : V128) -> V128 {
   f64x2_zip(value, other, f64_pmax)
 }
 
 ///|
+#intrinsic("%v128.f64x2_relaxed_min")
 pub fn f64x2_relaxed_min(value : V128, other : V128) -> V128 {
   f64x2_min(value, other)
 }
 
 ///|
+#intrinsic("%v128.f64x2_relaxed_max")
 pub fn f64x2_relaxed_max(value : V128, other : V128) -> V128 {
   f64x2_max(value, other)
 }
 
 ///|
+#intrinsic("%v128.f64x2_relaxed_madd")
 pub fn f64x2_relaxed_madd(value : V128, other : V128, addend : V128) -> V128 {
   pack_f64x2_by(i => {
     f64x2_extract_lane(value, i) * f64x2_extract_lane(other, i) +
@@ -509,6 +559,7 @@ pub fn f64x2_relaxed_madd(value : V128, other : V128, addend : V128) -> V128 {
 }
 
 ///|
+#intrinsic("%v128.f64x2_relaxed_nmadd")
 pub fn f64x2_relaxed_nmadd(value : V128, other : V128, addend : V128) -> V128 {
   pack_f64x2_by(i => {
     f64x2_extract_lane(addend, i) -
@@ -517,51 +568,61 @@ pub fn f64x2_relaxed_nmadd(value : V128, other : V128, addend : V128) -> V128 {
 }
 
 ///|
+#intrinsic("%v128.f64x2_eq")
 pub fn f64x2_eq(value : V128, other : V128) -> V128 {
   f64x2_compare(value, other, fn(x, y) { x == y })
 }
 
 ///|
+#intrinsic("%v128.f64x2_ne")
 pub fn f64x2_ne(value : V128, other : V128) -> V128 {
   f64x2_compare(value, other, fn(x, y) { x != y })
 }
 
 ///|
+#intrinsic("%v128.f64x2_lt")
 pub fn f64x2_lt(value : V128, other : V128) -> V128 {
   f64x2_compare(value, other, fn(x, y) { x < y })
 }
 
 ///|
+#intrinsic("%v128.f64x2_le")
 pub fn f64x2_le(value : V128, other : V128) -> V128 {
   f64x2_compare(value, other, fn(x, y) { x <= y })
 }
 
 ///|
+#intrinsic("%v128.f64x2_gt")
 pub fn f64x2_gt(value : V128, other : V128) -> V128 {
   f64x2_compare(value, other, fn(x, y) { x > y })
 }
 
 ///|
+#intrinsic("%v128.f64x2_ge")
 pub fn f64x2_ge(value : V128, other : V128) -> V128 {
   f64x2_compare(value, other, fn(x, y) { x >= y })
 }
 
 ///|
+#intrinsic("%v128.f64x2_convert_low_i32x4_s")
 pub fn f64x2_convert_low_i32x4_s(value : V128) -> V128 {
   pack_f64x2_by(i => Double::from_int(u32_lane(value, i).reinterpret_as_int()))
 }
 
 ///|
+#intrinsic("%v128.f64x2_convert_low_i32x4_u")
 pub fn f64x2_convert_low_i32x4_u(value : V128) -> V128 {
   pack_f64x2_by(i => Double::convert_uint(u32_lane(value, i)))
 }
 
 ///|
+#intrinsic("%v128.f64x2_promote_low_f32x4")
 pub fn f64x2_promote_low_f32x4(value : V128) -> V128 {
   pack_f64x2_by(i => f32x4_extract_lane(value, i).to_double())
 }
 
 ///|
+#intrinsic("%v128.i32x4_trunc_sat_f64x2_s_zero")
 pub fn i32x4_trunc_sat_f64x2_s_zero(value : V128) -> V128 {
   i32x4_const(
     f64_trunc_sat_s(f64x2_extract_lane(value, 0)),
@@ -572,6 +633,7 @@ pub fn i32x4_trunc_sat_f64x2_s_zero(value : V128) -> V128 {
 }
 
 ///|
+#intrinsic("%v128.i32x4_trunc_sat_f64x2_u_zero")
 pub fn i32x4_trunc_sat_f64x2_u_zero(value : V128) -> V128 {
   i32x4_const(
     f64_trunc_sat_u(f64x2_extract_lane(value, 0)),
@@ -582,11 +644,13 @@ pub fn i32x4_trunc_sat_f64x2_u_zero(value : V128) -> V128 {
 }
 
 ///|
+#intrinsic("%v128.i32x4_relaxed_trunc_f64x2_s_zero")
 pub fn i32x4_relaxed_trunc_f64x2_s_zero(value : V128) -> V128 {
   i32x4_trunc_sat_f64x2_s_zero(value)
 }
 
 ///|
+#intrinsic("%v128.i32x4_relaxed_trunc_f64x2_u_zero")
 pub fn i32x4_relaxed_trunc_f64x2_u_zero(value : V128) -> V128 {
   i32x4_trunc_sat_f64x2_u_zero(value)
 }
