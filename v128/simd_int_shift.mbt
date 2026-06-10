@@ -13,54 +13,63 @@
 // limitations under the License.
 
 ///|
+#intrinsic("%v128.i8x16_shl")
 pub fn i8x16_shl(value : V128, shift : Int) -> V128 {
   let shift = shift & 7
   pack_u8x16_by(i => (u8_lane(value, i).to_uint() << shift).to_byte())
 }
 
 ///|
+#intrinsic("%v128.i8x16_shr_u")
 pub fn i8x16_shr_u(value : V128, shift : Int) -> V128 {
   let shift = shift & 7
   pack_u8x16_by(i => (u8_lane(value, i).to_uint() >> shift).to_byte())
 }
 
 ///|
+#intrinsic("%v128.i8x16_shr_s")
 pub fn i8x16_shr_s(value : V128, shift : Int) -> V128 {
   let shift = shift & 7
   pack_u8x16_by(i => (i8_signed(u8_lane(value, i)) >> shift).to_byte())
 }
 
 ///|
+#intrinsic("%v128.i16x8_shl")
 pub fn i16x8_shl(value : V128, shift : Int) -> V128 {
   let shift = shift & 15
   pack_u16x8_by(i => (u16_lane(value, i).to_uint() << shift).to_uint16())
 }
 
 ///|
+#intrinsic("%v128.i16x8_shr_u")
 pub fn i16x8_shr_u(value : V128, shift : Int) -> V128 {
   let shift = shift & 15
   pack_u16x8_by(i => (u16_lane(value, i).to_uint() >> shift).to_uint16())
 }
 
 ///|
+#intrinsic("%v128.i16x8_shr_s")
 pub fn i16x8_shr_s(value : V128, shift : Int) -> V128 {
   let shift = shift & 15
   pack_u16x8_by(i => (i16_signed(u16_lane(value, i)) >> shift).to_uint16())
 }
 
 ///|
+#intrinsic("%v128.i32x4_shl")
 pub fn i32x4_shl(value : V128, shift : Int) -> V128 {
   let shift = shift & 31
   pack_u32x4_by(i => u32_lane(value, i) << shift)
 }
 
 ///|
+#intrinsic("%v128.i32x4_shr_u")
 pub fn i32x4_shr_u(value : V128, shift : Int) -> V128 {
   let shift = shift & 31
   pack_u32x4_by(i => u32_lane(value, i) >> shift)
 }
 
 ///|
+#intrinsic("%v128.i32x4_shr_s")
 pub fn i32x4_shr_s(value : V128, shift : Int) -> V128 {
   let shift = shift & 31
   pack_u32x4_by(i => {
@@ -69,18 +78,21 @@ pub fn i32x4_shr_s(value : V128, shift : Int) -> V128 {
 }
 
 ///|
+#intrinsic("%v128.i64x2_shl")
 pub fn i64x2_shl(value : V128, shift : Int) -> V128 {
   let shift = shift & 63
   make(lo(value) << shift, hi(value) << shift)
 }
 
 ///|
+#intrinsic("%v128.i64x2_shr_u")
 pub fn i64x2_shr_u(value : V128, shift : Int) -> V128 {
   let shift = shift & 63
   make(lo(value) >> shift, hi(value) >> shift)
 }
 
 ///|
+#intrinsic("%v128.i64x2_shr_s")
 pub fn i64x2_shr_s(value : V128, shift : Int) -> V128 {
   let shift = shift & 63
   pack_u64x2_by(i => {
@@ -89,6 +101,7 @@ pub fn i64x2_shr_s(value : V128, shift : Int) -> V128 {
 }
 
 ///|
+#intrinsic("%v128.i8x16_all_true")
 pub fn i8x16_all_true(value : V128) -> Bool {
   for i in 0..<16 {
     if u8_lane(value, i) == 0 {
@@ -99,6 +112,7 @@ pub fn i8x16_all_true(value : V128) -> Bool {
 }
 
 ///|
+#intrinsic("%v128.i16x8_all_true")
 pub fn i16x8_all_true(value : V128) -> Bool {
   for i in 0..<8 {
     if u16_lane(value, i) == 0 {
@@ -109,6 +123,7 @@ pub fn i16x8_all_true(value : V128) -> Bool {
 }
 
 ///|
+#intrinsic("%v128.i32x4_all_true")
 pub fn i32x4_all_true(value : V128) -> Bool {
   for i in 0..<4 {
     if u32_lane(value, i) == 0 {
@@ -119,11 +134,13 @@ pub fn i32x4_all_true(value : V128) -> Bool {
 }
 
 ///|
+#intrinsic("%v128.i64x2_all_true")
 pub fn i64x2_all_true(value : V128) -> Bool {
   lo(value) != 0UL && hi(value) != 0UL
 }
 
 ///|
+#intrinsic("%v128.i8x16_bitmask")
 pub fn i8x16_bitmask(value : V128) -> Int {
   let mut result = 0
   for i in 0..<16 {
@@ -133,6 +150,7 @@ pub fn i8x16_bitmask(value : V128) -> Int {
 }
 
 ///|
+#intrinsic("%v128.i16x8_bitmask")
 pub fn i16x8_bitmask(value : V128) -> Int {
   let mut result = 0
   for i in 0..<8 {
@@ -142,6 +160,7 @@ pub fn i16x8_bitmask(value : V128) -> Int {
 }
 
 ///|
+#intrinsic("%v128.i32x4_bitmask")
 pub fn i32x4_bitmask(value : V128) -> Int {
   let mut result = 0
   for i in 0..<4 {
@@ -152,6 +171,7 @@ pub fn i32x4_bitmask(value : V128) -> Int {
 }
 
 ///|
+#intrinsic("%v128.i64x2_bitmask")
 pub fn i64x2_bitmask(value : V128) -> Int {
   let mut result = 0
   for i in 0..<2 {

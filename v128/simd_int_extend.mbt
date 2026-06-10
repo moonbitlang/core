@@ -80,46 +80,55 @@ fn i16_pair_dot(value : V128, other : V128, pair : Int) -> UInt {
 }
 
 ///|
+#intrinsic("%v128.i16x8_extend_low_i8x16_s")
 pub fn i16x8_extend_low_i8x16_s(value : V128) -> V128 {
   pack_u16x8_by(i => i8_signed(u8_lane(value, i)).to_uint16())
 }
 
 ///|
+#intrinsic("%v128.i16x8_extend_high_i8x16_s")
 pub fn i16x8_extend_high_i8x16_s(value : V128) -> V128 {
   pack_u16x8_by(i => i8_signed(u8_lane(value, i + 8)).to_uint16())
 }
 
 ///|
+#intrinsic("%v128.i16x8_extend_low_i8x16_u")
 pub fn i16x8_extend_low_i8x16_u(value : V128) -> V128 {
   pack_u16x8_by(i => u8_lane(value, i).to_uint16())
 }
 
 ///|
+#intrinsic("%v128.i16x8_extend_high_i8x16_u")
 pub fn i16x8_extend_high_i8x16_u(value : V128) -> V128 {
   pack_u16x8_by(i => u8_lane(value, i + 8).to_uint16())
 }
 
 ///|
+#intrinsic("%v128.i32x4_extend_low_i16x8_s")
 pub fn i32x4_extend_low_i16x8_s(value : V128) -> V128 {
   pack_u32x4_by(i => i16_signed(u16_lane(value, i)).reinterpret_as_uint())
 }
 
 ///|
+#intrinsic("%v128.i32x4_extend_high_i16x8_s")
 pub fn i32x4_extend_high_i16x8_s(value : V128) -> V128 {
   pack_u32x4_by(i => i16_signed(u16_lane(value, i + 4)).reinterpret_as_uint())
 }
 
 ///|
+#intrinsic("%v128.i32x4_extend_low_i16x8_u")
 pub fn i32x4_extend_low_i16x8_u(value : V128) -> V128 {
   pack_u32x4_by(i => u16_lane(value, i).to_uint())
 }
 
 ///|
+#intrinsic("%v128.i32x4_extend_high_i16x8_u")
 pub fn i32x4_extend_high_i16x8_u(value : V128) -> V128 {
   pack_u32x4_by(i => u16_lane(value, i + 4).to_uint())
 }
 
 ///|
+#intrinsic("%v128.i64x2_extend_low_i32x4_s")
 pub fn i64x2_extend_low_i32x4_s(value : V128) -> V128 {
   pack_u64x2_by(i => {
     u32_lane(value, i).reinterpret_as_int().to_int64().reinterpret_as_uint64()
@@ -127,6 +136,7 @@ pub fn i64x2_extend_low_i32x4_s(value : V128) -> V128 {
 }
 
 ///|
+#intrinsic("%v128.i64x2_extend_high_i32x4_s")
 pub fn i64x2_extend_high_i32x4_s(value : V128) -> V128 {
   pack_u64x2_by(i => {
     u32_lane(value, i + 2)
@@ -137,16 +147,19 @@ pub fn i64x2_extend_high_i32x4_s(value : V128) -> V128 {
 }
 
 ///|
+#intrinsic("%v128.i64x2_extend_low_i32x4_u")
 pub fn i64x2_extend_low_i32x4_u(value : V128) -> V128 {
   pack_u64x2_by(i => u32_lane(value, i).to_uint64())
 }
 
 ///|
+#intrinsic("%v128.i64x2_extend_high_i32x4_u")
 pub fn i64x2_extend_high_i32x4_u(value : V128) -> V128 {
   pack_u64x2_by(i => u32_lane(value, i + 2).to_uint64())
 }
 
 ///|
+#intrinsic("%v128.i8x16_relaxed_laneselect")
 pub fn i8x16_relaxed_laneselect(
   value : V128,
   other : V128,
@@ -162,6 +175,7 @@ pub fn i8x16_relaxed_laneselect(
 }
 
 ///|
+#intrinsic("%v128.i16x8_relaxed_laneselect")
 pub fn i16x8_relaxed_laneselect(
   value : V128,
   other : V128,
@@ -177,6 +191,7 @@ pub fn i16x8_relaxed_laneselect(
 }
 
 ///|
+#intrinsic("%v128.i32x4_relaxed_laneselect")
 pub fn i32x4_relaxed_laneselect(
   value : V128,
   other : V128,
@@ -192,6 +207,7 @@ pub fn i32x4_relaxed_laneselect(
 }
 
 ///|
+#intrinsic("%v128.i64x2_relaxed_laneselect")
 pub fn i64x2_relaxed_laneselect(
   value : V128,
   other : V128,
@@ -207,6 +223,7 @@ pub fn i64x2_relaxed_laneselect(
 }
 
 ///|
+#intrinsic("%v128.i8x16_narrow_i16x8_s")
 pub fn i8x16_narrow_i16x8_s(value : V128, other : V128) -> V128 {
   pack_u8x16_by(i => {
     if i < 8 {
@@ -218,6 +235,7 @@ pub fn i8x16_narrow_i16x8_s(value : V128, other : V128) -> V128 {
 }
 
 ///|
+#intrinsic("%v128.i8x16_narrow_i16x8_u")
 pub fn i8x16_narrow_i16x8_u(value : V128, other : V128) -> V128 {
   pack_u8x16_by(i => {
     if i < 8 {
@@ -229,6 +247,7 @@ pub fn i8x16_narrow_i16x8_u(value : V128, other : V128) -> V128 {
 }
 
 ///|
+#intrinsic("%v128.i16x8_narrow_i32x4_s")
 pub fn i16x8_narrow_i32x4_s(value : V128, other : V128) -> V128 {
   pack_u16x8_by(i => {
     if i < 4 {
@@ -240,6 +259,7 @@ pub fn i16x8_narrow_i32x4_s(value : V128, other : V128) -> V128 {
 }
 
 ///|
+#intrinsic("%v128.i16x8_narrow_i32x4_u")
 pub fn i16x8_narrow_i32x4_u(value : V128, other : V128) -> V128 {
   pack_u16x8_by(i => {
     if i < 4 {
@@ -251,46 +271,55 @@ pub fn i16x8_narrow_i32x4_u(value : V128, other : V128) -> V128 {
 }
 
 ///|
+#intrinsic("%v128.i16x8_extmul_low_i8x16_s")
 pub fn i16x8_extmul_low_i8x16_s(value : V128, other : V128) -> V128 {
   i16x8_mul(i16x8_extend_low_i8x16_s(value), i16x8_extend_low_i8x16_s(other))
 }
 
 ///|
+#intrinsic("%v128.i16x8_extmul_high_i8x16_s")
 pub fn i16x8_extmul_high_i8x16_s(value : V128, other : V128) -> V128 {
   i16x8_mul(i16x8_extend_high_i8x16_s(value), i16x8_extend_high_i8x16_s(other))
 }
 
 ///|
+#intrinsic("%v128.i16x8_extmul_low_i8x16_u")
 pub fn i16x8_extmul_low_i8x16_u(value : V128, other : V128) -> V128 {
   i16x8_mul(i16x8_extend_low_i8x16_u(value), i16x8_extend_low_i8x16_u(other))
 }
 
 ///|
+#intrinsic("%v128.i16x8_extmul_high_i8x16_u")
 pub fn i16x8_extmul_high_i8x16_u(value : V128, other : V128) -> V128 {
   i16x8_mul(i16x8_extend_high_i8x16_u(value), i16x8_extend_high_i8x16_u(other))
 }
 
 ///|
+#intrinsic("%v128.i32x4_extmul_low_i16x8_s")
 pub fn i32x4_extmul_low_i16x8_s(value : V128, other : V128) -> V128 {
   i32x4_mul(i32x4_extend_low_i16x8_s(value), i32x4_extend_low_i16x8_s(other))
 }
 
 ///|
+#intrinsic("%v128.i32x4_extmul_high_i16x8_s")
 pub fn i32x4_extmul_high_i16x8_s(value : V128, other : V128) -> V128 {
   i32x4_mul(i32x4_extend_high_i16x8_s(value), i32x4_extend_high_i16x8_s(other))
 }
 
 ///|
+#intrinsic("%v128.i32x4_extmul_low_i16x8_u")
 pub fn i32x4_extmul_low_i16x8_u(value : V128, other : V128) -> V128 {
   i32x4_mul(i32x4_extend_low_i16x8_u(value), i32x4_extend_low_i16x8_u(other))
 }
 
 ///|
+#intrinsic("%v128.i32x4_extmul_high_i16x8_u")
 pub fn i32x4_extmul_high_i16x8_u(value : V128, other : V128) -> V128 {
   i32x4_mul(i32x4_extend_high_i16x8_u(value), i32x4_extend_high_i16x8_u(other))
 }
 
 ///|
+#intrinsic("%v128.i64x2_extmul_low_i32x4_s")
 pub fn i64x2_extmul_low_i32x4_s(value : V128, other : V128) -> V128 {
   pack_u64x2_by(i => {
     (u32_lane(value, i).reinterpret_as_int().to_int64() *
@@ -299,6 +328,7 @@ pub fn i64x2_extmul_low_i32x4_s(value : V128, other : V128) -> V128 {
 }
 
 ///|
+#intrinsic("%v128.i64x2_extmul_high_i32x4_s")
 pub fn i64x2_extmul_high_i32x4_s(value : V128, other : V128) -> V128 {
   pack_u64x2_by(i => {
     (u32_lane(value, i + 2).reinterpret_as_int().to_int64() *
@@ -307,6 +337,7 @@ pub fn i64x2_extmul_high_i32x4_s(value : V128, other : V128) -> V128 {
 }
 
 ///|
+#intrinsic("%v128.i64x2_extmul_low_i32x4_u")
 pub fn i64x2_extmul_low_i32x4_u(value : V128, other : V128) -> V128 {
   pack_u64x2_by(i => {
     u32_lane(value, i).to_uint64() * u32_lane(other, i).to_uint64()
@@ -314,6 +345,7 @@ pub fn i64x2_extmul_low_i32x4_u(value : V128, other : V128) -> V128 {
 }
 
 ///|
+#intrinsic("%v128.i64x2_extmul_high_i32x4_u")
 pub fn i64x2_extmul_high_i32x4_u(value : V128, other : V128) -> V128 {
   pack_u64x2_by(i => {
     u32_lane(value, i + 2).to_uint64() * u32_lane(other, i + 2).to_uint64()
@@ -321,16 +353,19 @@ pub fn i64x2_extmul_high_i32x4_u(value : V128, other : V128) -> V128 {
 }
 
 ///|
+#intrinsic("%v128.i16x8_q15mulr_sat_s")
 pub fn i16x8_q15mulr_sat_s(value : V128, other : V128) -> V128 {
   pack_u16x8_by(i => i16_q15mulr_sat_s(u16_lane(value, i), u16_lane(other, i)))
 }
 
 ///|
+#intrinsic("%v128.i16x8_relaxed_q15mulr_s")
 pub fn i16x8_relaxed_q15mulr_s(value : V128, other : V128) -> V128 {
   i16x8_q15mulr_sat_s(value, other)
 }
 
 ///|
+#intrinsic("%v128.i16x8_extadd_pairwise_i8x16_s")
 pub fn i16x8_extadd_pairwise_i8x16_s(value : V128) -> V128 {
   pack_u16x8_by(i => {
     (i8_signed(u8_lane(value, i * 2)) + i8_signed(u8_lane(value, i * 2 + 1))).to_uint16()
@@ -338,6 +373,7 @@ pub fn i16x8_extadd_pairwise_i8x16_s(value : V128) -> V128 {
 }
 
 ///|
+#intrinsic("%v128.i16x8_extadd_pairwise_i8x16_u")
 pub fn i16x8_extadd_pairwise_i8x16_u(value : V128) -> V128 {
   pack_u16x8_by(i => {
     u8_lane(value, i * 2).to_uint16() + u8_lane(value, i * 2 + 1).to_uint16()
@@ -345,6 +381,7 @@ pub fn i16x8_extadd_pairwise_i8x16_u(value : V128) -> V128 {
 }
 
 ///|
+#intrinsic("%v128.i32x4_extadd_pairwise_i16x8_s")
 pub fn i32x4_extadd_pairwise_i16x8_s(value : V128) -> V128 {
   pack_u32x4_by(i => {
     (i16_signed(u16_lane(value, i * 2)) + i16_signed(u16_lane(value, i * 2 + 1))).reinterpret_as_uint()
@@ -352,6 +389,7 @@ pub fn i32x4_extadd_pairwise_i16x8_s(value : V128) -> V128 {
 }
 
 ///|
+#intrinsic("%v128.i32x4_extadd_pairwise_i16x8_u")
 pub fn i32x4_extadd_pairwise_i16x8_u(value : V128) -> V128 {
   pack_u32x4_by(i => {
     u16_lane(value, i * 2).to_uint() + u16_lane(value, i * 2 + 1).to_uint()
@@ -359,6 +397,7 @@ pub fn i32x4_extadd_pairwise_i16x8_u(value : V128) -> V128 {
 }
 
 ///|
+#intrinsic("%v128.i16x8_relaxed_dot_s_i8x16")
 pub fn i16x8_relaxed_dot_i8x16_i7x16_s(value : V128, other : V128) -> V128 {
   pack_u16x8_by(i => {
     (i8_signed(u8_lane(value, i * 2)) * i8_signed(u8_lane(other, i * 2)) +
@@ -367,11 +406,13 @@ pub fn i16x8_relaxed_dot_i8x16_i7x16_s(value : V128, other : V128) -> V128 {
 }
 
 ///|
+#intrinsic("%v128.i32x4_dot_i16x8_s")
 pub fn i32x4_dot_i16x8_s(value : V128, other : V128) -> V128 {
   pack_u32x4_by(i => i16_pair_dot(value, other, i))
 }
 
 ///|
+#intrinsic("%v128.i32x4_relaxed_dot_add_s_i16x8")
 pub fn i32x4_relaxed_dot_i8x16_i7x16_add_s(
   value : V128,
   other : V128,

@@ -58,6 +58,7 @@ pub impl @debug.Debug for V128 with fn to_repr(self) {
 }
 
 ///|
+#intrinsic("%v128.v128_const_i8x16")
 pub fn i8x16_const(
   a0 : Byte,
   a1 : Byte,
@@ -97,6 +98,7 @@ pub fn i8x16_const(
 }
 
 ///|
+#intrinsic("%v128.v128_const_i16x8")
 pub fn i16x8_const(
   a0 : UInt16,
   a1 : UInt16,
@@ -120,6 +122,7 @@ pub fn i16x8_const(
 }
 
 ///|
+#intrinsic("%v128.v128_const_i32x4")
 pub fn i32x4_const(a0 : UInt, a1 : UInt, a2 : UInt, a3 : UInt) -> V128 {
   make(
     a0.to_uint64() | (a1.to_uint64() << 32),
@@ -128,11 +131,13 @@ pub fn i32x4_const(a0 : UInt, a1 : UInt, a2 : UInt, a3 : UInt) -> V128 {
 }
 
 ///|
+#intrinsic("%v128.v128_const_i64x2")
 pub fn i64x2_const(a0 : UInt64, a1 : UInt64) -> V128 {
   make(a0, a1)
 }
 
 ///|
+#intrinsic("%v128.v128_const_f32x4")
 pub fn f32x4_const(a0 : Float, a1 : Float, a2 : Float, a3 : Float) -> V128 {
   i32x4_const(
     a0.reinterpret_as_uint(),
@@ -143,81 +148,97 @@ pub fn f32x4_const(a0 : Float, a1 : Float, a2 : Float, a3 : Float) -> V128 {
 }
 
 ///|
+#intrinsic("%v128.v128_const_f64x2")
 pub fn f64x2_const(a0 : Double, a1 : Double) -> V128 {
   i64x2_const(a0.reinterpret_as_uint64(), a1.reinterpret_as_uint64())
 }
 
 ///|
+#intrinsic("%v128.i8x16_splat")
 pub fn i8x16_splat(value : Byte) -> V128 {
   pack_u8x16_by(_ => value)
 }
 
 ///|
+#intrinsic("%v128.i16x8_splat")
 pub fn i16x8_splat(value : UInt16) -> V128 {
   pack_u16x8_by(_ => value)
 }
 
 ///|
+#intrinsic("%v128.i32x4_splat")
 pub fn i32x4_splat(value : UInt) -> V128 {
   pack_u32x4_by(_ => value)
 }
 
 ///|
+#intrinsic("%v128.i64x2_splat")
 pub fn i64x2_splat(value : UInt64) -> V128 {
   make(value, value)
 }
 
 ///|
+#intrinsic("%v128.f32x4_splat")
 pub fn f32x4_splat(value : Float) -> V128 {
   f32x4_const(value, value, value, value)
 }
 
 ///|
+#intrinsic("%v128.f64x2_splat")
 pub fn f64x2_splat(value : Double) -> V128 {
   f64x2_const(value, value)
 }
 
 ///|
+#intrinsic("%v128.i8x16_extract_lane_u")
 pub fn i8x16_extract_lane_u(value : V128, lane : Int) -> UInt {
   u8_lane(value, lane).to_uint()
 }
 
 ///|
+#intrinsic("%v128.i8x16_extract_lane_s")
 pub fn i8x16_extract_lane_s(value : V128, lane : Int) -> UInt {
   i8_signed(u8_lane(value, lane)).reinterpret_as_uint()
 }
 
 ///|
+#intrinsic("%v128.i16x8_extract_lane_u")
 pub fn i16x8_extract_lane_u(value : V128, lane : Int) -> UInt {
   u16_lane(value, lane).to_uint()
 }
 
 ///|
+#intrinsic("%v128.i16x8_extract_lane_s")
 pub fn i16x8_extract_lane_s(value : V128, lane : Int) -> UInt {
   i16_signed(u16_lane(value, lane)).reinterpret_as_uint()
 }
 
 ///|
+#intrinsic("%v128.i32x4_extract_lane")
 pub fn i32x4_extract_lane(value : V128, lane : Int) -> UInt {
   u32_lane(value, lane)
 }
 
 ///|
+#intrinsic("%v128.i64x2_extract_lane")
 pub fn i64x2_extract_lane(value : V128, lane : Int) -> UInt64 {
   u64_lane(value, lane)
 }
 
 ///|
+#intrinsic("%v128.f32x4_extract_lane")
 pub fn f32x4_extract_lane(value : V128, lane : Int) -> Float {
   Float::reinterpret_from_uint(u32_lane(value, lane))
 }
 
 ///|
+#intrinsic("%v128.f64x2_extract_lane")
 pub fn f64x2_extract_lane(value : V128, lane : Int) -> Double {
   u64_lane(value, lane).reinterpret_as_double()
 }
 
 ///|
+#intrinsic("%v128.i8x16_replace_lane")
 pub fn i8x16_replace_lane(value : V128, lane : Int, replacement : UInt) -> V128 {
   pack_u8x16_by(i => {
     if i == lane {
@@ -229,6 +250,7 @@ pub fn i8x16_replace_lane(value : V128, lane : Int, replacement : UInt) -> V128 
 }
 
 ///|
+#intrinsic("%v128.i16x8_replace_lane")
 pub fn i16x8_replace_lane(value : V128, lane : Int, replacement : UInt) -> V128 {
   pack_u16x8_by(i => {
     if i == lane {
@@ -240,11 +262,13 @@ pub fn i16x8_replace_lane(value : V128, lane : Int, replacement : UInt) -> V128 
 }
 
 ///|
+#intrinsic("%v128.i32x4_replace_lane")
 pub fn i32x4_replace_lane(value : V128, lane : Int, replacement : UInt) -> V128 {
   pack_u32x4_by(i => if i == lane { replacement } else { u32_lane(value, i) })
 }
 
 ///|
+#intrinsic("%v128.i64x2_replace_lane")
 pub fn i64x2_replace_lane(
   value : V128,
   lane : Int,
@@ -254,6 +278,7 @@ pub fn i64x2_replace_lane(
 }
 
 ///|
+#intrinsic("%v128.f32x4_replace_lane")
 pub fn f32x4_replace_lane(
   value : V128,
   lane : Int,
@@ -263,6 +288,7 @@ pub fn f32x4_replace_lane(
 }
 
 ///|
+#intrinsic("%v128.f64x2_replace_lane")
 pub fn f64x2_replace_lane(
   value : V128,
   lane : Int,
@@ -272,36 +298,43 @@ pub fn f64x2_replace_lane(
 }
 
 ///|
+#intrinsic("%v128.v128_not")
 pub fn v128_not(value : V128) -> V128 {
   make(lo(value).lnot(), hi(value).lnot())
 }
 
 ///|
+#intrinsic("%v128.v128_and")
 pub fn v128_and_(value : V128, other : V128) -> V128 {
   make(lo(value) & lo(other), hi(value) & hi(other))
 }
 
 ///|
+#intrinsic("%v128.v128_or")
 pub fn v128_or_(value : V128, other : V128) -> V128 {
   make(lo(value) | lo(other), hi(value) | hi(other))
 }
 
 ///|
+#intrinsic("%v128.v128_xor")
 pub fn v128_xor(value : V128, other : V128) -> V128 {
   make(lo(value) ^ lo(other), hi(value) ^ hi(other))
 }
 
 ///|
+#intrinsic("%v128.v128_andnot")
 pub fn v128_andnot(value : V128, other : V128) -> V128 {
   v128_and_(value, v128_not(other))
 }
 
 ///|
+#intrinsic("%v128.v128_bitselect")
 pub fn v128_bitselect(value : V128, other : V128, mask : V128) -> V128 {
   v128_or_(v128_and_(value, mask), v128_andnot(other, mask))
 }
 
 ///|
+#intrinsic("%v128.v128_any_true")
 pub fn v128_any_true(value : V128) -> Bool {
   lo(value) != 0UL || hi(value) != 0UL
 }

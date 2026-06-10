@@ -545,7 +545,9 @@ test "integer widening narrowing and dot products" {
     @v128.i8x16_relaxed_laneselect(
       @v128.i8x16_splat(0xaa),
       @v128.i8x16_splat(0x55),
-      @v128.i8x16_const(0x80, 0, 0xff, 0x7f, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+      // relaxed_laneselect is only deterministic when every mask lane is
+      // all ones or all zeros
+      @v128.i8x16_const(0xff, 0, 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
     ),
     @v128.i8x16_const(
       0xaa, 0x55, 0xaa, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55,
@@ -556,7 +558,7 @@ test "integer widening narrowing and dot products" {
     @v128.i32x4_relaxed_laneselect(
       @v128.i32x4_splat(0xaaaaaaaa),
       @v128.i32x4_splat(0x55555555),
-      @v128.i32x4_const(0x80000000, 0, 0xffffffff, 0x7fffffff),
+      @v128.i32x4_const(0xffffffff, 0, 0xffffffff, 0),
     ),
     @v128.i32x4_const(0xaaaaaaaa, 0x55555555, 0xaaaaaaaa, 0x55555555),
   )
@@ -1258,7 +1260,9 @@ test "explicit coverage for i16 ops" {
     @v128.i16x8_relaxed_laneselect(
       @v128.i16x8_splat(0xaaaa),
       @v128.i16x8_splat(0x5555),
-      @v128.i16x8_const(0x8000, 0, 0xffff, 0x7fff, 0, 0, 0, 0),
+      // relaxed_laneselect is only deterministic when every mask lane is
+      // all ones or all zeros
+      @v128.i16x8_const(0xffff, 0, 0xffff, 0, 0, 0, 0, 0),
     ),
     @v128.i16x8_const(
       0xaaaa, 0x5555, 0xaaaa, 0x5555, 0x5555, 0x5555, 0x5555, 0x5555,
@@ -1400,7 +1404,9 @@ test "explicit coverage for i64 ops" {
     @v128.i64x2_relaxed_laneselect(
       @v128.i64x2_splat(0xaaaaaaaaaaaaaaaaUL),
       @v128.i64x2_splat(0x5555555555555555UL),
-      @v128.i64x2_const(0x8000000000000000UL, 0UL),
+      // relaxed_laneselect is only deterministic when every mask lane is
+      // all ones or all zeros
+      @v128.i64x2_const(0xffffffffffffffffUL, 0UL),
     ),
     @v128.i64x2_const(0xaaaaaaaaaaaaaaaaUL, 0x5555555555555555UL),
   )
@@ -1568,4 +1574,42 @@ test "debug repr" {
     @v128.i8x16_splat(0xab),
     content="<V128: (0xabababababababab, 0xabababababababab)>",
   )
+}
+
+///|
+/// Literal lane indices so the wasm backends specialize every
+/// load/store_lane instruction (loop-variable lanes use the fallback).
+test "memory lane intrinsics with immediate lanes" {
+  let bytes : FixedArray[Byte] = [
+    0x10, 0x32, 0x54, 0x76, 0x98, 0xba, 0xdc, 0xfe, 1, 2, 3, 4, 5, 6, 7, 8,
+  ]
+  let base = @v128.i64x2_splat(0xaaaaaaaaaaaaaaaaUL)
+  assert_eq(
+    @v128.v128_load8_lane(bytes, 0, base, 1),
+    @v128.i64x2_const(0xaaaaaaaaaaaa10aaUL, 0xaaaaaaaaaaaaaaaaUL),
+  )
+  assert_eq(
+    @v128.v128_load16_lane(bytes, 0, base, 2),
+    @v128.i64x2_const(0xaaaa3210aaaaaaaaUL, 0xaaaaaaaaaaaaaaaaUL),
+  )
+  assert_eq(
+    @v128.v128_load32_lane(bytes, 0, base, 3),
+    @v128.i64x2_const(0xaaaaaaaaaaaaaaaaUL, 0x76543210aaaaaaaaUL),
+  )
+  assert_eq(
+    @v128.v128_load64_lane(bytes, 0, base, 0),
+    @v128.i64x2_const(0xfedcba9876543210UL, 0xaaaaaaaaaaaaaaaaUL),
+  )
+  let v = @v128.i64x2_const(0xfedcba9876543210UL, 0x0807060504030201UL)
+  let out : FixedArray[Byte] = FixedArray::make(16, 0)
+  @v128.v128_store8_lane(out, 0, v, 5)
+  @v128.v128_store16_lane(out, 2, v, 3)
+  @v128.v128_store32_lane(out, 4, v, 2)
+  @v128.v128_store64_lane(out, 8, v, 1)
+  let expected : FixedArray[Byte] = [
+    0xba, 0, 0xdc, 0xfe, 1, 2, 3, 4, 1, 2, 3, 4, 5, 6, 7, 8,
+  ]
+  for i in 0..<16 {
+    assert_eq(out.unsafe_get(i), expected.unsafe_get(i))
+  }
 }
