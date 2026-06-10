@@ -90,8 +90,10 @@ fn ParseContext::lex_hex_digits(
     match ctx.read_char() {
       Some(c) =>
         if c >= 'A' {
+          // Case-folding maps '`' (0x60) to '@' (0x40), i.e. d == 9, so
+          // reject anything outside the letter range 'A'..'F' (10..15).
           let d = (c.to_int() & (32).lnot()) - 'A'.to_int() + 10
-          if d > 15 {
+          if d < 10 || d > 15 {
             ctx.invalid_char(shift=-1)
           }
           continue (r << 4) | d
