@@ -166,7 +166,7 @@ pub fn BigInt::from_octets(octets : BytesView, signum? : Int = 1) -> BigInt {
   for octet in octets {
     str.write_string(hex2(octet))
   }
-  try parse_bigint(str.to_string().view(), base=16) catch {
+  parse_bigint(str.to_string().view(), base=16) catch {
     Failure(msg) => abort(msg)
     _ => abort("invalid syntax")
   }
