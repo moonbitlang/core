@@ -45,10 +45,6 @@ pub fn BigInt::from_string(str : String, radix? : Int = 10) -> BigInt {
 }
 
 ///|
-extern "js" fn BigInt::js_from_string(str : String) -> BigInt =
-  #|(x) => BigInt(x)
-
-///|
 fn digit_from_char(x : Int) -> Int {
   match x {
     '0'..='9' => x - '0'
