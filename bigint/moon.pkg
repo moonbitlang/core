@@ -1,6 +1,7 @@
 import {
   "moonbitlang/core/builtin",
   "moonbitlang/core/char",
+  "moonbitlang/core/error",
   "moonbitlang/core/uint",
   "moonbitlang/core/json",
   "moonbitlang/core/quickcheck",
@@ -9,6 +10,10 @@ import {
   "moonbitlang/core/uint16",
   "moonbitlang/core/debug",
 }
+
+import {
+  "moonbitlang/core/test",
+} for "test"
 
 import {
   "moonbitlang/core/test",
