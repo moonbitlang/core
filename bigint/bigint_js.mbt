@@ -30,13 +30,7 @@ pub fn parse_bigint(str : StringView, base? : Int = 10) -> BigInt raise {
   if input.length() == 0 {
     syntax_err()
   }
-  if base != 10 {
-    return BigInt::from_string_radix(input, base)
-  }
-  if input == "-" {
-    syntax_err()
-  }
-  BigInt::js_from_string(input)
+  BigInt::from_string_radix(input, base)
 }
 
 ///|
@@ -173,11 +167,13 @@ pub fn BigInt::from_octets(octets : BytesView, signum? : Int = 1) -> BigInt {
     abort("empty octet string")
   }
   let str = StringBuilder()
-  str.write_string("0x")
   for octet in octets {
     str.write_string(hex2(octet))
   }
-  BigInt::from_string(str.to_string())
+  try parse_bigint(str.to_string().view(), base=16) catch {
+    Failure(msg) => abort(msg)
+    _ => abort("invalid syntax")
+  }
 }
 
 ///|
