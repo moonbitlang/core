@@ -388,10 +388,10 @@ pub impl Mul for BigInt with fn mul(self : BigInt, other : BigInt) -> BigInt {
   // this on every multiplication, and the general grade-school loop has
   // a per-i branch on `j < other_len` plus carry propagation overhead
   // that disappears here.
-  let ret = if other.limbs[:other.len] is [single] {
-    self.mul_single_limb(single)
-  } else if self.limbs[:self.len] is [single] {
-    other.mul_single_limb(single)
+  let ret = if other.len == 1 {
+    self.mul_single_limb(other.limbs.unsafe_get(0))
+  } else if self.len == 1 {
+    other.mul_single_limb(self.limbs.unsafe_get(0))
   } else if self.len < karatsuba_threshold || other.len < karatsuba_threshold {
     self.grade_school_mul(other)
   } else {
