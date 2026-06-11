@@ -136,14 +136,14 @@ test "splats and lane replacement" {
       0xab, 0xab, 0xab,
     ),
   )
-  let replaced = @v128.i16x8_replace_lane(@v128.i16x8_splat(1), 4, 0xbeef)
+  let replaced = @v128.i16x8_replace_lane(@v128.i16x8_splat(1), 0xbeef, 4)
   assert_eq(replaced, @v128.i16x8_const(1, 1, 1, 1, 0xbeef, 1, 1, 1))
   assert_eq(
-    @v128.i32x4_replace_lane(@v128.i32x4_splat(7), 2, 0xfeedface),
+    @v128.i32x4_replace_lane(@v128.i32x4_splat(7), 0xfeedface, 2),
     @v128.i32x4_const(7, 7, 0xfeedface, 7),
   )
   assert_eq(
-    @v128.i64x2_replace_lane(@v128.i64x2_splat(3UL), 1, 0x0123456789abcdefUL),
+    @v128.i64x2_replace_lane(@v128.i64x2_splat(3UL), 0x0123456789abcdefUL, 1),
     @v128.i64x2_const(3UL, 0x0123456789abcdefUL),
   )
 }
@@ -722,7 +722,7 @@ test "systematic lane extraction and replacement" {
         (lane + 240).reinterpret_as_uint()
       },
     )
-    let replaced = @v128.i8x16_replace_lane(bytes, lane, 0xee)
+    let replaced = @v128.i8x16_replace_lane(bytes, 0xee, lane)
     for i in 0..<16 {
       assert_eq(
         @v128.i8x16_extract_lane_u(replaced, i),
@@ -737,7 +737,7 @@ test "systematic lane extraction and replacement" {
 
   let words = @v128.i16x8_const(0, 1, 2, 0x7fff, 0x8000, 0xfffd, 0xfffe, 0xffff)
   for lane in 0..<8 {
-    let replaced = @v128.i16x8_replace_lane(words, lane, 0xbeef)
+    let replaced = @v128.i16x8_replace_lane(words, 0xbeef, lane)
     for i in 0..<8 {
       assert_eq(
         @v128.i16x8_extract_lane_u(replaced, i),
@@ -752,7 +752,7 @@ test "systematic lane extraction and replacement" {
 
   let dwords = @v128.i32x4_const(0, 1, 0x80000000, 0xffffffff)
   for lane in 0..<4 {
-    let replaced = @v128.i32x4_replace_lane(dwords, lane, 0xdeadbeef)
+    let replaced = @v128.i32x4_replace_lane(dwords, 0xdeadbeef, lane)
     for i in 0..<4 {
       assert_eq(
         @v128.i32x4_extract_lane(replaced, i),
@@ -767,7 +767,7 @@ test "systematic lane extraction and replacement" {
 
   let qwords = @v128.i64x2_const(0x0123456789abcdefUL, 0xfedcba9876543210UL)
   for lane in 0..<2 {
-    let replaced = @v128.i64x2_replace_lane(qwords, lane, 0xa5a5a5a5a5a5a5a5UL)
+    let replaced = @v128.i64x2_replace_lane(qwords, 0xa5a5a5a5a5a5a5a5UL, lane)
     for i in 0..<2 {
       assert_eq(
         @v128.i64x2_extract_lane(replaced, i),
@@ -782,7 +782,7 @@ test "systematic lane extraction and replacement" {
 
   let floats = @v128.f32x4_const(-0.0, 1.5, -2.5, 4.0)
   for lane in 0..<4 {
-    let replaced = @v128.f32x4_replace_lane(floats, lane, 9.0)
+    let replaced = @v128.f32x4_replace_lane(floats, 9.0, lane)
     for i in 0..<4 {
       assert_eq(
         @v128.f32x4_extract_lane(replaced, i).reinterpret_as_uint(),
@@ -797,7 +797,7 @@ test "systematic lane extraction and replacement" {
 
   let doubles = @v128.f64x2_const(-0.0, 1.5)
   for lane in 0..<2 {
-    let replaced = @v128.f64x2_replace_lane(doubles, lane, -9.0)
+    let replaced = @v128.f64x2_replace_lane(doubles, -9.0, lane)
     for i in 0..<2 {
       assert_eq(
         @v128.f64x2_extract_lane(replaced, i).reinterpret_as_uint64(),
@@ -1612,4 +1612,279 @@ test "memory lane intrinsics with immediate lanes" {
   for i in 0..<16 {
     assert_eq(out.unsafe_get(i), expected.unsafe_get(i))
   }
+}
+
+///|
+/// High-bit operands so the 32x32 cross terms of the 64-bit multiply
+/// lowerings are actually exercised.
+test "multiplication wraparound and cross terms" {
+  assert_eq(
+    @v128.i32x4_mul(
+      @v128.i32x4_const(0xffffffff, 0x80000000, 0x7fffffff, 0x12345678),
+      @v128.i32x4_const(0xffffffff, 2, 0x7fffffff, 0x9abcdef0),
+    ),
+    @v128.i32x4_const(1, 0, 1, 0x242d2080),
+  )
+  assert_eq(
+    @v128.i64x2_mul(
+      @v128.i64x2_const(0xffffffffffffffffUL, 0x123456789abcdef0UL),
+      @v128.i64x2_const(0xffffffffffffffffUL, 0xfedcba9876543210UL),
+    ),
+    @v128.i64x2_const(1UL, 0x236d88fe5618cf00UL),
+  )
+  assert_eq(
+    @v128.i64x2_mul(
+      @v128.i64x2_const(0x100000000UL, 0x1ffffffffUL),
+      @v128.i64x2_const(0x100000000UL, 0x200000003UL),
+    ),
+    @v128.i64x2_const(0UL, 0x3fffffffdUL),
+  )
+  assert_eq(
+    @v128.i64x2_extmul_low_i32x4_u(
+      @v128.i32x4_const(0xffffffff, 0x80000000, 0, 0),
+      @v128.i32x4_const(0xffffffff, 0x80000000, 0, 0),
+    ),
+    @v128.i64x2_const(0xfffffffe00000001UL, 0x4000000000000000UL),
+  )
+  assert_eq(
+    @v128.i64x2_extmul_high_i32x4_u(
+      @v128.i32x4_const(0, 0, 0xffffffff, 2),
+      @v128.i32x4_const(0, 0, 0x80000000, 0xffffffff),
+    ),
+    @v128.i64x2_const(0x7fffffff80000000UL, 0x1fffffffeUL),
+  )
+}
+
+///|
+test "trunc_sat and conversions with special values" {
+  let nan32 = Float::reinterpret_from_uint(0x7fc00000)
+  let inf32 = Float::reinterpret_from_uint(0x7f800000)
+  let neg_inf32 = Float::reinterpret_from_uint(0xff800000)
+  assert_eq(
+    @v128.i32x4_trunc_sat_f32x4_s(
+      @v128.f32x4_const(nan32, inf32, neg_inf32, 2147483648.0),
+    ),
+    @v128.i32x4_const(0, 0x7fffffff, 0x80000000, 0x7fffffff),
+  )
+  assert_eq(
+    @v128.i32x4_trunc_sat_f32x4_s(
+      @v128.f32x4_const(2147483520.0, -2147483648.0, -0.9, 0.0),
+    ),
+    @v128.i32x4_const(0x7fffff80, 0x80000000, 0, 0),
+  )
+  assert_eq(
+    @v128.i32x4_trunc_sat_f32x4_u(
+      @v128.f32x4_const(nan32, inf32, neg_inf32, 4294967040.0),
+    ),
+    @v128.i32x4_const(0, 0xffffffff, 0, 0xffffff00),
+  )
+  assert_eq(
+    @v128.i32x4_trunc_sat_f32x4_u(
+      @v128.f32x4_const(-0.9, 0.5, 2147483648.0, 4294967296.0),
+    ),
+    @v128.i32x4_const(0, 0, 0x80000000, 0xffffffff),
+  )
+  let nan64 = 0x7ff8000000000000UL.reinterpret_as_double()
+  let inf64 = 0x7ff0000000000000UL.reinterpret_as_double()
+  let neg_inf64 = 0xfff0000000000000UL.reinterpret_as_double()
+  assert_eq(
+    @v128.i32x4_trunc_sat_f64x2_s_zero(@v128.f64x2_const(nan64, inf64)),
+    @v128.i32x4_const(0, 0x7fffffff, 0, 0),
+  )
+  assert_eq(
+    @v128.i32x4_trunc_sat_f64x2_s_zero(
+      @v128.f64x2_const(neg_inf64, 2147483647.0),
+    ),
+    @v128.i32x4_const(0x80000000, 0x7fffffff, 0, 0),
+  )
+  assert_eq(
+    @v128.i32x4_trunc_sat_f64x2_u_zero(@v128.f64x2_const(nan64, 4294967295.0)),
+    @v128.i32x4_const(0, 0xffffffff, 0, 0),
+  )
+  assert_eq(
+    @v128.i32x4_trunc_sat_f64x2_u_zero(@v128.f64x2_const(inf64, -1.0)),
+    @v128.i32x4_const(0xffffffff, 0, 0, 0),
+  )
+  assert_eq(
+    @v128.f32x4_convert_i32x4_u(
+      @v128.i32x4_const(0xffffffff, 0x80000000, 0xfffffff0, 1),
+    ),
+    @v128.f32x4_const(4294967296.0, 2147483648.0, 4294967296.0, 1.0),
+  )
+  assert_eq(
+    @v128.f64x2_convert_low_i32x4_u(
+      @v128.i32x4_const(0xffffffff, 0x80000000, 9, 9),
+    ),
+    @v128.f64x2_const(4294967295.0, 2147483648.0),
+  )
+  assert_eq(
+    @v128.f32x4_demote_f64x2_zero(@v128.f64x2_const(1.0e308, -1.0e308)),
+    @v128.f32x4_const(inf32, neg_inf32, 0.0, 0.0),
+  )
+  assert_eq(
+    @v128.f64x2_promote_low_f32x4(@v128.f32x4_const(inf32, -0.0, 9.0, 9.0)),
+    @v128.f64x2_const(inf64, -0.0),
+  )
+}
+
+///|
+test "rounding preserves the sign of zero" {
+  assert_eq(
+    @v128.f32x4_ceil(@v128.f32x4_const(-0.5, -0.0, 0.5, 2.5)),
+    @v128.f32x4_const(-0.0, -0.0, 1.0, 3.0),
+  )
+  assert_eq(
+    @v128.f32x4_floor(@v128.f32x4_const(0.5, -0.5, -0.0, 0.0)),
+    @v128.f32x4_const(0.0, -1.0, -0.0, 0.0),
+  )
+  assert_eq(
+    @v128.f32x4_trunc(@v128.f32x4_const(-0.5, 0.5, -2.5, 2.5)),
+    @v128.f32x4_const(-0.0, 0.0, -2.0, 2.0),
+  )
+  assert_eq(
+    @v128.f64x2_ceil(@v128.f64x2_const(-0.5, -0.0)),
+    @v128.f64x2_const(-0.0, -0.0),
+  )
+  assert_eq(
+    @v128.f64x2_floor(@v128.f64x2_const(-0.5, 0.5)),
+    @v128.f64x2_const(-1.0, 0.0),
+  )
+  assert_eq(
+    @v128.f64x2_trunc(@v128.f64x2_const(-0.5, -0.0)),
+    @v128.f64x2_const(-0.0, -0.0),
+  )
+}
+
+///|
+test "unaligned memory offsets" {
+  let bytes : FixedArray[Byte] = [
+    0x10, 0x21, 0x32, 0x43, 0x54, 0x65, 0x76, 0x87, 0x98, 0xa9, 0xba, 0xcb, 0xdc,
+    0xed, 0xfe, 0x0f, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88,
+  ]
+  assert_eq(
+    @v128.v128_load(bytes, 1),
+    @v128.i8x16_const(
+      0x21, 0x32, 0x43, 0x54, 0x65, 0x76, 0x87, 0x98, 0xa9, 0xba, 0xcb, 0xdc, 0xed,
+      0xfe, 0x0f, 0x11,
+    ),
+  )
+  assert_eq(
+    @v128.v128_load(bytes, 3),
+    @v128.i8x16_const(
+      0x43, 0x54, 0x65, 0x76, 0x87, 0x98, 0xa9, 0xba, 0xcb, 0xdc, 0xed, 0xfe, 0x0f,
+      0x11, 0x22, 0x33,
+    ),
+  )
+  assert_eq(
+    @v128.v128_load8x8_s(bytes, 5),
+    @v128.i16x8_const(
+      0x65, 0x76, 0xff87, 0xff98, 0xffa9, 0xffba, 0xffcb, 0xffdc,
+    ),
+  )
+  assert_eq(
+    @v128.v128_load16x4_u(bytes, 1),
+    @v128.i32x4_const(0x3221, 0x5443, 0x7665, 0x9887),
+  )
+  assert_eq(
+    @v128.v128_load16x4_s(bytes, 3),
+    @v128.i32x4_const(0x5443, 0x7665, 0xffff9887, 0xffffbaa9),
+  )
+  assert_eq(
+    @v128.v128_load32x2_s(bytes, 1),
+    @v128.i64x2_const(0x54433221UL, 0xffffffff98877665UL),
+  )
+  assert_eq(
+    @v128.v128_load32x2_u(bytes, 3),
+    @v128.i64x2_const(0x76655443UL, 0xbaa99887UL),
+  )
+  assert_eq(@v128.v128_load16_splat(bytes, 1), @v128.i16x8_splat(0x3221))
+  assert_eq(@v128.v128_load32_splat(bytes, 3), @v128.i32x4_splat(0x76655443))
+  assert_eq(
+    @v128.v128_load64_splat(bytes, 1),
+    @v128.i64x2_splat(0x9887766554433221UL),
+  )
+  assert_eq(
+    @v128.v128_load32_zero(bytes, 1),
+    @v128.i32x4_const(0x54433221, 0, 0, 0),
+  )
+  assert_eq(
+    @v128.v128_load64_zero(bytes, 3),
+    @v128.i64x2_const(0xbaa9988776655443UL, 0UL),
+  )
+  let base = @v128.i64x2_splat(0xaaaaaaaaaaaaaaaaUL)
+  assert_eq(
+    @v128.v128_load16_lane(bytes, 1, base, 3),
+    @v128.i64x2_const(0x3221aaaaaaaaaaaaUL, 0xaaaaaaaaaaaaaaaaUL),
+  )
+  assert_eq(
+    @v128.v128_load32_lane(bytes, 3, base, 2),
+    @v128.i64x2_const(0xaaaaaaaaaaaaaaaaUL, 0xaaaaaaaa76655443UL),
+  )
+  assert_eq(
+    @v128.v128_load64_lane(bytes, 5, base, 1),
+    @v128.i64x2_const(0xaaaaaaaaaaaaaaaaUL, 0xdccbbaa998877665UL),
+  )
+  let out : FixedArray[Byte] = FixedArray::make(20, 0)
+  @v128.v128_store(out, 3, @v128.v128_load(bytes, 0))
+  for i in 0..<16 {
+    assert_eq(out.unsafe_get(i + 3), bytes.unsafe_get(i))
+  }
+  assert_eq(out.unsafe_get(2), 0)
+  assert_eq(out.unsafe_get(19), 0)
+  @v128.v128_store16_lane(out, 1, base, 0)
+  assert_eq(out.unsafe_get(1), 0xaa)
+  assert_eq(out.unsafe_get(2), 0xaa)
+  @v128.v128_store32_lane(out, 15, @v128.v128_load(bytes, 0), 1)
+  assert_eq(out.unsafe_get(15), 0x54)
+  assert_eq(out.unsafe_get(16), 0x65)
+  assert_eq(out.unsafe_get(17), 0x76)
+  assert_eq(out.unsafe_get(18), 0x87)
+  @v128.v128_store64_lane(out, 7, base, 1)
+  for i in 0..<8 {
+    assert_eq(out.unsafe_get(7 + i), 0xaa)
+  }
+  @v128.v128_store8_lane(out, 0, @v128.v128_load(bytes, 1), 2)
+  assert_eq(out.unsafe_get(0), 0x43)
+}
+
+///|
+test "bitmask lane patterns" {
+  inspect(@v128.i8x16_bitmask(@v128.i8x16_splat(0xff)), content="65535")
+  inspect(@v128.i8x16_bitmask(@v128.i8x16_splat(0x7f)), content="0")
+  inspect(
+    @v128.i8x16_bitmask(
+      @v128.i8x16_const(
+        0x80, 0, 0x80, 0, 0x80, 0, 0x80, 0, 0x80, 0, 0x80, 0, 0x80, 0, 0x80, 0,
+      ),
+    ),
+    content="21845",
+  )
+  inspect(
+    @v128.i8x16_bitmask(
+      @v128.i8x16_const(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x80),
+    ),
+    content="32768",
+  )
+  inspect(@v128.i16x8_bitmask(@v128.i16x8_splat(0x8000)), content="255")
+  inspect(
+    @v128.i16x8_bitmask(
+      @v128.i16x8_const(
+        0x8000, 0x7fff, 0x8000, 0x7fff, 0x8000, 0x7fff, 0x8000, 0x7fff,
+      ),
+    ),
+    content="85",
+  )
+  inspect(@v128.i32x4_bitmask(@v128.i32x4_splat(0xffffffff)), content="15")
+  inspect(
+    @v128.i32x4_bitmask(@v128.i32x4_const(0, 0, 0, 0x80000000)),
+    content="8",
+  )
+  inspect(
+    @v128.i64x2_bitmask(@v128.i64x2_splat(0xffffffffffffffffUL)),
+    content="3",
+  )
+  inspect(
+    @v128.i64x2_bitmask(@v128.i64x2_const(0UL, 0x8000000000000000UL)),
+    content="2",
+  )
 }
