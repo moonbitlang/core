@@ -205,8 +205,8 @@ pub fn BigInt::from_uint64(n : UInt64) -> BigInt {
   }
   let limbs = FixedArray::make(64 / RADIX_BIT_LEN, 0U)
   let i = for m = n, i = 0; m > 0; {
-    limbs[i] = (m % RADIX).to_uint()
-    continue m / RADIX, i + 1
+    limbs[i] = (m & RADIX_MASK).to_uint()
+    continue m >> RADIX_BIT_LEN, i + 1
   } nobreak {
     i
   }
@@ -281,8 +281,8 @@ pub impl Add for BigInt with fn add(self : BigInt, other : BigInt) -> BigInt {
     let a = if i < self_len { self.limbs[i].to_uint64() } else { 0 }
     let b = if i < other_len { other.limbs[i].to_uint64() } else { 0 }
     let sum = a + b + carry
-    limbs[i] = (sum % RADIX).to_uint()
-    continue sum / RADIX, i + 1
+    limbs[i] = (sum & RADIX_MASK).to_uint()
+    continue sum >> RADIX_BIT_LEN, i + 1
   } nobreak {
     i
   }
@@ -446,8 +446,8 @@ fn BigInt::grade_school_mul(self : BigInt, other : BigInt) -> BigInt {
         self.limbs[i].to_uint64() *
         (if j < other_len { other.limbs[j].to_uint64() } else { 0 }) +
         carry
-      limbs[i + j] = (product % RADIX).to_uint()
-      carry = product / RADIX
+      limbs[i + j] = (product & RADIX_MASK).to_uint()
+      carry = product >> RADIX_BIT_LEN
     }
   }
   if limbs[self_len + other_len - 1] == 0 {
@@ -762,7 +762,7 @@ pub impl Shl for BigInt with fn shl(self : BigInt, n : Int) -> BigInt {
     if r != 0 {
       let carry = for i in 0..<self.len; carry = 0UL {
         let carry = carry | (a[i].to_uint64() << r)
-        new_limbs[i + lz] = (carry % RADIX).to_uint()
+        new_limbs[i + lz] = (carry & RADIX_MASK).to_uint()
         continue carry >> RADIX_BIT_LEN
       } nobreak {
         carry
@@ -838,7 +838,7 @@ pub impl Shr for BigInt with fn shr(self : BigInt, n : Int) -> BigInt {
     let carry = for i in self.len>..lz; carry = 0UL {
       let x = a[i].to_uint64()
       new_limbs[i - lz] = ((x >> r) | carry).to_uint()
-      continue (x << (RADIX_BIT_LEN - r)) % RADIX
+      continue (x << (RADIX_BIT_LEN - r)) & RADIX_MASK
     } nobreak {
       carry
     }
@@ -1309,8 +1309,8 @@ fn BigInt::from_string_dec(input : String) -> BigInt {
     let mut carry = x.reinterpret_as_uint().to_uint64()
     for j in 0..<b_len {
       carry += b[j].to_uint64() * 10
-      b[j] = (carry % RADIX).to_uint()
-      carry /= RADIX
+      b[j] = (carry & RADIX_MASK).to_uint()
+      carry = carry >> RADIX_BIT_LEN
     }
   }
   while b[b_len - 1] == 0 && b_len > 1 {
