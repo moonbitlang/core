@@ -52,7 +52,7 @@ test "debug_string" {
 fn check_invariant(a : BigInt) -> Unit raise {
   guard a.len > 0 else { fail("invariant len > 0 is broken: len = \{a.len}") }
   for i in 0..<a.len {
-    guard a.limbs[i].to_uint64() < radix else {
+    guard a.limbs[i].to_uint64() < RADIX else {
       fail(
         "invariant forall 0 <= i < len. 0 <= limbs[i] < radix is broken: a.limbs[\{i}] = \{a.limbs[i]}",
       )
@@ -87,8 +87,8 @@ test "shr" {
   let c = a >> 64
   check_invariant(c)
   inspect(c, content="0")
-  let a = BigInt::from_int64((radix * radix / 2).reinterpret_as_int64())
-  let b = a >> (radix_bit_len * 2)
+  let a = BigInt::from_int64((RADIX * RADIX / 2).reinterpret_as_int64())
+  let b = a >> (RADIX_BIT_LEN * 2)
   check_invariant(b)
   inspect(b, content="0")
 }

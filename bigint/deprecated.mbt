@@ -73,8 +73,8 @@ pub fn BigInt::to_hex(self : BigInt, uppercase? : Bool = true) -> String {
   if self.is_zero() {
     return "0"
   }
-  // WARN: this implementation assumes that `radix_bit_len` is a multiple of 4.
-  let digits_per_limb = radix_bit_len / 4
+  // WARN: this implementation assumes that `RADIX_BIT_LEN` is a multiple of 4.
+  let digits_per_limb = RADIX_BIT_LEN / 4
   let buf = if self.sign is Negative {
     let builder = StringBuilder(size_hint=self.len * digits_per_limb + 2)
     builder.write_char('-')
@@ -126,7 +126,7 @@ pub extern "js" fn BigInt::to_hex(
 #coverage.skip
 #cfg(not(target="js"))
 pub fn BigInt::from_hex(input : String) -> BigInt {
-  // WARN: this implementation assumes that `radix_bit_len` is a multiple of 4.
+  // WARN: this implementation assumes that `RADIX_BIT_LEN` is a multiple of 4.
   fn char_from_hex(x : Int) -> UInt {
     (match x {
       '0'..='9' => x - '0'
@@ -145,7 +145,7 @@ pub fn BigInt::from_hex(input : String) -> BigInt {
   } else {
     (Positive, len)
   }
-  let nb_char = radix_bit_len / 4 // number of char per limb
+  let nb_char = RADIX_BIT_LEN / 4 // number of char per limb
   let quotient = number_len / nb_char
   let mod = number_len % nb_char
   let b_len = if mod == 0 { quotient } else { quotient + 1 }
