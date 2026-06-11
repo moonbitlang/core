@@ -441,12 +441,17 @@ fn BigInt::grade_school_mul(self : BigInt, other : BigInt) -> BigInt {
   let limbs = FixedArray::make(len, 0U)
   for i in 0..<self_len {
     let mut carry = 0UL
+    // Safety of unsafe_get/unsafe_set: row i's partial sum fits in
+    // limbs[0..=i+other_len], so the carry flush ends with i + j <=
+    // i + other_len < limbs.length(); the self/other reads are guarded
+    // by self_len/other_len. The checked version relies on the same
+    // invariant to not panic.
     for j = 0; j < other_len || carry != 0; j = j + 1 {
-      let product = limbs[i + j].to_uint64() +
-        self.limbs[i].to_uint64() *
-        (if j < other_len { other.limbs[j].to_uint64() } else { 0 }) +
+      let product = limbs.unsafe_get(i + j).to_uint64() +
+        self.limbs.unsafe_get(i).to_uint64() *
+        (if j < other_len { other.limbs.unsafe_get(j).to_uint64() } else { 0 }) +
         carry
-      limbs[i + j] = (product & RADIX_MASK).to_uint()
+      limbs.unsafe_set(i + j, (product & RADIX_MASK).to_uint())
       carry = product >> RADIX_BIT_LEN
     }
   }
