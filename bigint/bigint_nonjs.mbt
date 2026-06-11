@@ -388,10 +388,10 @@ pub impl Mul for BigInt with fn mul(self : BigInt, other : BigInt) -> BigInt {
   // this on every multiplication, and the general grade-school loop has
   // a per-i branch on `j < other_len` plus carry propagation overhead
   // that disappears here.
-  let ret = if other.len == 1 {
-    self.mul_single_limb(other.limbs[0])
-  } else if self.len == 1 {
-    other.mul_single_limb(self.limbs[0])
+  let ret = if other.limbs[:other.len] is [single] {
+    self.mul_single_limb(single)
+  } else if self.limbs[:self.len] is [single] {
+    other.mul_single_limb(single)
   } else if self.len < karatsuba_threshold || other.len < karatsuba_threshold {
     self.grade_school_mul(other)
   } else {
@@ -407,13 +407,18 @@ pub impl Mul for BigInt with fn mul(self : BigInt, other : BigInt) -> BigInt {
 /// matches the convention of the other magnitude-only multiply helpers
 /// (`grade_school_mul`, `karatsuba_mul`). Do not call directly when a
 /// signed product is needed.
+///
+/// Requires `self` to be non-zero and `x > 0`: with a zero operand the
+/// result would be an all-zero magnitude with `len > 1`, breaking the
+/// no-leading-zeros invariant. The call site in `Mul::mul` guarantees
+/// this via its `is_zero` guard.
 fn BigInt::mul_single_limb(self : BigInt, x : UInt) -> BigInt {
   let n = self.len
   let limbs = FixedArray::make(n + 1, 0U)
-  let xq = x.to_uint64()
+  let x_u64 = x.to_uint64()
   let mut carry = 0UL
   for i in 0..<n {
-    let product = self.limbs[i].to_uint64() * xq + carry
+    let product = self.limbs[i].to_uint64() * x_u64 + carry
     limbs[i] = (product & radix_mask).to_uint()
     carry = product >> radix_bit_len
   }
