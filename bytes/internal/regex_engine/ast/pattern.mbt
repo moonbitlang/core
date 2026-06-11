@@ -22,7 +22,7 @@ pub(all) struct Quantifier {
   min : Int
   max : Int?
   mode : @shared_types.QuantifierMode
-} derive(Debug)
+} derive(@debug.Debug)
 
 ///|
 /// Zero-width regex assertions.
@@ -34,7 +34,7 @@ pub enum Assertion {
   StartOfWord
   EndOfWord
   NotWordBoundary
-} derive(Debug)
+} derive(@debug.Debug)
 
 ///|
 /// Core regex pattern AST node with cached nullability.
@@ -44,7 +44,7 @@ pub struct Pattern {
 }
 
 ///|
-pub impl Debug for Pattern with fn to_repr(self) {
+pub impl @debug.Debug for Pattern with fn to_repr(self) {
   @debug.to_repr(self.desc)
 }
 
@@ -58,7 +58,7 @@ pub enum PatternDesc {
   Preference(@shared_types.Preference, Pattern)
   Capture(name~ : String?, Pattern)
   Assertion(Assertion)
-} derive(Debug)
+} derive(@debug.Debug)
 
 ///|
 /// Return whether the pattern is anchored to input boundaries.
@@ -81,13 +81,13 @@ pub fn char(cs : @shared_types.RecharSet) -> Pattern {
   if cs.is_empty() {
     empty
   } else {
-    Pattern::{ desc: Char(cs), nullable: false }
+    { desc: Char(cs), nullable: false }
   }
 }
 
 ///|
 /// Epsilon pattern that matches empty input.
-pub let epsilon : Pattern = Pattern::{ desc: Sequence([]), nullable: true }
+pub let epsilon : Pattern = { desc: Sequence([]), nullable: true }
 
 ///|
 /// Concatenate patterns.
@@ -107,7 +107,7 @@ pub fn seq(exprs : ReadOnlyArray[Pattern]) -> Pattern {
     [] => epsilon
     [expr] => expr
     exprs =>
-      Pattern::{
+      {
         desc: Sequence(ReadOnlyArray::from_array(exprs)),
         nullable: exprs.all(e => e.nullable),
       }
@@ -116,7 +116,7 @@ pub fn seq(exprs : ReadOnlyArray[Pattern]) -> Pattern {
 
 ///|
 /// Empty pattern that matches nothing.
-pub let empty : Pattern = Pattern::{ desc: Alternation([]), nullable: false }
+pub let empty : Pattern = { desc: Alternation([]), nullable: false }
 
 ///|
 /// Build an alternation of patterns.
@@ -124,11 +124,7 @@ pub fn alt(exprs : ReadOnlyArray[Pattern]) -> Pattern {
   match exprs {
     [] => empty
     [expr] => expr
-    exprs =>
-      Pattern::{
-        desc: Alternation(exprs),
-        nullable: exprs.any(e => e.nullable),
-      }
+    exprs => { desc: Alternation(exprs), nullable: exprs.any(e => e.nullable) }
   }
 }
 
@@ -139,7 +135,7 @@ pub fn alt(exprs : ReadOnlyArray[Pattern]) -> Pattern {
 pub fn quantifier(expr : Pattern, q : Quantifier) -> Pattern {
   guard q.min >= 0 else { panic() }
   guard q.max is None || (q.max is Some(max) && max >= q.min) else { panic() }
-  Pattern::{ desc: Quantifier(q, expr), nullable: expr.nullable || q.min == 0 }
+  { desc: Quantifier(q, expr), nullable: expr.nullable || q.min == 0 }
 }
 
 ///|
@@ -148,7 +144,7 @@ pub fn preference(pref : @shared_types.Preference, expr : Pattern) -> Pattern {
   if expr.desc is Char(_) {
     expr
   } else {
-    Pattern::{ desc: Preference(pref, expr), nullable: expr.nullable }
+    { desc: Preference(pref, expr), nullable: expr.nullable }
   }
 }
 
@@ -173,13 +169,13 @@ pub fn first(expr : Pattern) -> Pattern {
 ///|
 /// Wrap a pattern in a capturing group.
 pub fn capture(name? : String, expr : Pattern) -> Pattern {
-  Pattern::{ desc: Capture(name~, expr), nullable: expr.nullable }
+  { desc: Capture(name~, expr), nullable: expr.nullable }
 }
 
 ///|
 /// Create an assertion pattern node.
 pub fn assertion(a : Assertion) -> Pattern {
-  Pattern::{ desc: Assertion(a), nullable: true }
+  { desc: Assertion(a), nullable: true }
 }
 
 ///|

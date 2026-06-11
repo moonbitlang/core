@@ -13,11 +13,11 @@
 // limitations under the License.
 
 ///|
-using @debug {trait Debug, type Repr}
-
-///|
-pub impl[K : Debug] Debug for Set[K] with fn to_repr(self) {
-  Repr::opaque_("Set", Repr::array(self.to_array().map(x => @debug.to_repr(x))))
+pub impl[K : @debug.Debug] @debug.Debug for Set[K] with fn to_repr(self) {
+  @debug.Repr::opaque_(
+    "Set",
+    @debug.Repr::array(self.to_array().map(x => @debug.to_repr(x))),
+  )
 }
 
 ///|

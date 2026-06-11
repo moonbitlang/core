@@ -243,7 +243,11 @@ pub impl[A : Hash] Hash for ArrayView[A]
 pub impl[X : Show] Show for ArrayView[X]
 pub impl[X : ToJson] ToJson for ArrayView[X]
 
-type Hasher
+pub struct Hasher {
+  // private fields
+}
+#alias(new, deprecated)
+pub fn Hasher::Hasher(seed? : Int) -> Self
 pub fn[T : Hash] Hasher::combine(Self, T) -> Unit
 pub fn Hasher::combine_bool(Self, Bool) -> Unit
 pub fn Hasher::combine_byte(Self, Byte) -> Unit
@@ -259,7 +263,6 @@ pub fn Hasher::combine_uint(Self, UInt) -> Unit
 pub fn Hasher::combine_uint64(Self, UInt64) -> Unit
 pub fn Hasher::combine_unit(Self) -> Unit
 pub fn Hasher::finalize(Self) -> Int
-pub fn Hasher::new(seed? : Int) -> Self
 
 #alias(Iterator, deprecated)
 type Iter[X]
@@ -267,6 +270,7 @@ pub fn[X] Iter::all(Self[X], (X) -> Bool) -> Bool
 pub fn[X] Iter::any(Self[X], (X) -> Bool) -> Bool
 pub fn[X] Iter::concat(Self[X], Self[X]) -> Self[X]
 pub fn[X : Eq] Iter::contains(Self[X], X) -> Bool
+#alias(length)
 pub fn[X] Iter::count(Self[X]) -> Int
 pub fn[X] Iter::drop(Self[X], Int) -> Self[X]
 pub fn[X] Iter::drop_while(Self[X], (X) -> Bool) -> Self[X]
@@ -718,6 +722,7 @@ pub fn String::before(String, StringView) -> StringView?
 pub fn String::char_length(String, start_offset? : Int, end_offset? : Int) -> Int
 pub fn String::char_length_eq(String, Int, start_offset? : Int, end_offset? : Int) -> Bool
 pub fn String::char_length_ge(String, Int, start_offset? : Int, end_offset? : Int) -> Bool
+pub fn String::code_units(String) -> ArrayView[UInt16]
 pub fn String::compare_ignore_ascii_case(String, String) -> Int
 pub fn String::contains(String, StringView) -> Bool
 pub fn String::contains_any(String, chars~ : StringView) -> Bool
@@ -1032,6 +1037,7 @@ pub fn StringView::before(Self, Self) -> Self?
 pub fn StringView::char_length(Self) -> Int
 pub fn StringView::char_length_eq(Self, Int) -> Bool
 pub fn StringView::char_length_ge(Self, Int) -> Bool
+pub fn StringView::code_units(Self) -> ArrayView[UInt16]
 pub fn StringView::compare_ignore_ascii_case(Self, Self) -> Int
 pub fn StringView::contains(Self, Self) -> Bool
 pub fn StringView::contains_any(Self, chars~ : Self) -> Bool

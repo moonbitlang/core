@@ -11,7 +11,7 @@ You can create an empty SortedSet or a SortedSet from other containers.
 ```mbt check
 ///|
 test {
-  let _set1 : @sorted_set.SortedSet[Int] = @sorted_set.SortedSet([])
+  let _set1 : @sorted_set.SortedSet[Int] = SortedSet([])
   let _set2 = @sorted_set.singleton(1)
   let _set3 = @sorted_set.from_array([1])
 }
@@ -26,7 +26,7 @@ test {
   let set4 = @sorted_set.from_array([1, 2, 3, 4])
   set4.add(5) // ()
   let set6 = @sorted_set.from_array([1, 2, 3, 4, 5])
-  assert_eq(set6.to_array(), [1, 2, 3, 4, 5])
+  @test.assert_eq(set6.to_array(), [1, 2, 3, 4, 5])
 }
 ```
 
@@ -38,7 +38,7 @@ test {
   let set = @sorted_set.from_array([3, 8, 1])
   set.remove(8) // () 
   let set7 = @sorted_set.from_array([1, 3])
-  assert_eq(set7.to_array(), [1, 3])
+  @test.assert_eq(set7.to_array(), [1, 3])
 }
 ```
 
@@ -48,8 +48,8 @@ Whether an element is in the set.
 ///|
 test {
   let set = @sorted_set.from_array([1, 2, 3, 4])
-  assert_eq(set.contains(1), true)
-  assert_eq(set.contains(5), false)
+  @test.assert_eq(set.contains(1), true)
+  @test.assert_eq(set.contains(5), false)
 }
 ```
 
@@ -60,7 +60,7 @@ Iterates over the elements in the set.
 test {
   let arr = []
   @sorted_set.from_array([1, 2, 3, 4]).each(v => arr.push(v))
-  assert_eq(arr, [1, 2, 3, 4])
+  @test.assert_eq(arr, [1, 2, 3, 4])
 }
 ```
 
@@ -70,7 +70,7 @@ Get the size of the set.
 ///|
 test {
   let set = @sorted_set.from_array([1, 2, 3, 4])
-  assert_eq(set.length(), 4)
+  @test.assert_eq(set.length(), 4)
 }
 ```
 
@@ -79,8 +79,8 @@ Whether the set is empty.
 ```mbt check
 ///|
 test {
-  let set : @sorted_set.SortedSet[Int] = @sorted_set.SortedSet([])
-  assert_eq(set.is_empty(), true)
+  let set : @sorted_set.SortedSet[Int] = SortedSet([])
+  @test.assert_eq(set.is_empty(), true)
 }
 ```
 
@@ -94,11 +94,11 @@ test {
   let set1 = @sorted_set.from_array([3, 4, 5])
   let set2 = @sorted_set.from_array([4, 5, 6])
   let set3 = set1.union(set2)
-  assert_eq(set3.to_array(), [3, 4, 5, 6])
+  @test.assert_eq(set3.to_array(), [3, 4, 5, 6])
   let set4 = set1.intersection(set2)
-  assert_eq(set4.to_array(), [4, 5])
+  @test.assert_eq(set4.to_array(), [4, 5])
   let set5 = set1.difference(set2)
-  assert_eq(set5.to_array(), [3])
+  @test.assert_eq(set5.to_array(), [3])
 }
 ```
 
@@ -109,9 +109,9 @@ Determine the inclusion and separation relationship between two sets.
 test {
   let set1 = @sorted_set.from_array([1, 2, 3])
   let set2 = @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1])
-  assert_eq(set1.subset(set2), true)
+  @test.assert_eq(set1.subset(set2), true)
   let set3 = @sorted_set.from_array([4, 5, 6])
-  assert_eq(set1.disjoint(set3), true)
+  @test.assert_eq(set1.disjoint(set3), true)
 }
 ```
 
@@ -124,7 +124,7 @@ Elements in one set but not both:
 test {
   let a = @sorted_set.from_array([1, 2, 3])
   let b = @sorted_set.from_array([2, 3, 4])
-  assert_eq(a.symmetric_difference(b).to_array(), [1, 4])
+  @test.assert_eq(a.symmetric_difference(b).to_array(), [1, 4])
 }
 ```
 
@@ -137,7 +137,7 @@ test {
 test {
   let set = @sorted_set.from_array([1, 3, 5, 7, 9, 11])
   let in_range = set.range(3, 9).collect()
-  assert_eq(in_range, [3, 5, 7, 9])
+  @test.assert_eq(in_range, [3, 5, 7, 9])
 }
 ```
 
@@ -151,7 +151,7 @@ test {
   let set = @sorted_set.from_array([10, 20, 30])
   let pairs = []
   set.eachi(fn(i, v) { pairs.push((i, v)) })
-  assert_eq(pairs, [(0, 10), (1, 20), (2, 30)])
+  @test.assert_eq(pairs, [(0, 10), (1, 20), (2, 30)])
 }
 ```
 
@@ -164,10 +164,10 @@ test {
   // iter returns elements in sorted order
   debug_inspect(set.iter().to_array(), content="[1, 2, 3]")
   // to_array
-  assert_eq(set.to_array(), [1, 2, 3])
+  @test.assert_eq(set.to_array(), [1, 2, 3])
   // from_iter
   let set2 = @sorted_set.from_iter([4, 5, 6].iter())
-  assert_eq(set2.to_array(), [4, 5, 6])
+  @test.assert_eq(set2.to_array(), [4, 5, 6])
 }
 ```
 
@@ -181,14 +181,14 @@ test {
   let set = @sorted_set.from_array([1, 2, 3])
   let cloned = set.copy()
   cloned.add(4)
-  assert_eq(set.to_array(), [1, 2, 3]) // original unchanged
-  assert_eq(cloned.to_array(), [1, 2, 3, 4])
+  @test.assert_eq(set.to_array(), [1, 2, 3]) // original unchanged
+  @test.assert_eq(cloned.to_array(), [1, 2, 3, 4])
 }
 ```
 
-### Debug
+### @debug.Debug
 
-SortedSet implements Debug, which allows you to inspect its elements in sorted order.
+SortedSet implements @debug.Debug, which allows you to inspect its elements in sorted order.
 
 ```mbt check
 ///|

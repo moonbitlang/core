@@ -37,6 +37,9 @@ pub struct Slot {
 } derive(Eq, Hash)
 
 ///|
+/// Wrap a raw slot index into a `Slot`. The index must be one that was
+/// previously produced by the slot allocator; constructing arbitrary slots
+/// is meaningful only inside the engine.
 pub fn Slot::from_index(index : Int) -> Slot {
   { index, }
 }

@@ -138,6 +138,21 @@ test "code_unit_at" {
 }
 
 ///|
+test "String::code_units" {
+  let units = "A😀B".code_units()
+  inspect(units.length(), content="4")
+  inspect(units.unsafe_get(0), content="65")
+  inspect(units.unsafe_get(1), content="55357")
+  inspect(units.unsafe_get(2), content="56832")
+  inspect(units.unsafe_get(3), content="66")
+  let mut sum = 0
+  for unit in units {
+    sum += unit.to_int()
+  }
+  inspect(sum, content="112320")
+}
+
+///|
 test "String default and to_array" {
   inspect(String::default(), content="")
   let chars = "Hi".to_array()

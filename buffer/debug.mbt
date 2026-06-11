@@ -13,16 +13,13 @@
 // limitations under the License.
 
 ///|
-using @debug {trait Debug, type Repr}
-
-///|
-pub impl Debug for Buffer with fn to_repr(self) {
-  Repr::opaque_("Buffer", @debug.to_repr(self.to_bytes().to_array()))
+pub impl @debug.Debug for Buffer with fn to_repr(self) {
+  @debug.Repr::opaque_("Buffer", @debug.to_repr(self.to_bytes().to_array()))
 }
 
 ///|
 #deprecated("use `to_repr(a)` instead", skip_current_package=true)
-pub fn Buffer::to_repr(self : Buffer) -> Repr {
+pub fn Buffer::to_repr(self : Buffer) -> @debug.Repr {
   @debug.to_repr(self)
 }
 

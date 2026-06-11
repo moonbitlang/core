@@ -28,26 +28,32 @@ test "bind with Err" {
 
 ///|
 test "wrap0 with error" {
-  let f : () -> Int raise Failure = () => raise Failure::Failure("error")
-  let result = try? f()
-  debug_inspect(
-    result,
-    content=(
-      #|Err(Failure("error"))
-    ),
-  )
+  let f : () -> Int raise Failure = () => raise Failure("error")
+  try f() catch {
+    e =>
+      debug_inspect(
+        e,
+        content=(
+          #|Failure("error")
+        ),
+      )
+  } noraise {
+    _ => fail("expected error")
+  }
 }
 
 ///|
 test "wrap2 with error result" {
-  let f : (Int, Int) -> Unit raise Failure = (_, _) => {
-    raise Failure::Failure("error")
+  let f : (Int, Int) -> Unit raise Failure = (_, _) => raise Failure("error")
+  try f(1, 2) catch {
+    e =>
+      debug_inspect(
+        e,
+        content=(
+          #|Failure("error")
+        ),
+      )
+  } noraise {
+    _ => fail("expected error")
   }
-  let r = try? f(1, 2)
-  debug_inspect(
-    r,
-    content=(
-      #|Err(Failure("error"))
-    ),
-  )
 }

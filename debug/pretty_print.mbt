@@ -289,9 +289,9 @@ pub fn[T : Debug] debug(x : T) -> Unit {
 /// ```mbt check
 /// test {
 ///   let str = @debug.to_string([1, 2, 3])
-///   assert_eq(str, "[1, 2, 3]")
+///   @test.assert_eq(str, "[1, 2, 3]")
 ///   // Same function under a shorter name.
-///   assert_eq(repr("hi"), "\"hi\"")
+///   @test.assert_eq(repr("hi"), "\"hi\"")
 /// }
 /// ```
 #alias(repr)

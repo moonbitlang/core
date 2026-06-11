@@ -12,16 +12,16 @@ MoonBit provides built-in assertion functions for testing:
 ///|
 test "assertions" {
   // Basic equality assertion
-  assert_eq(1 + 1, 2)
-  assert_eq("hello", "hello")
+  @test.assert_eq(1 + 1, 2)
+  @test.assert_eq("hello", "hello")
 
   // Boolean assertions
   assert_true(5 > 3)
   assert_false(2 > 5)
 
   // Inequality assertion
-  assert_not_eq(1, 2)
-  assert_not_eq("foo", "bar")
+  @test.assert_not_eq(1, 2)
+  @test.assert_not_eq("foo", "bar")
 }
 ```
 

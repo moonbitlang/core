@@ -643,8 +643,28 @@ test "Map collision probe paths" {
   })
   debug_inspect(map.get(k1b), content="Some(30)")
   inspect(map[k1b], content="30")
-  inspect(map.get_or_default(LKey::LKey(4, 0), 99), content="99")
-  inspect(map.contains(LKey::LKey(5, 0)), content="false")
+  inspect(map.get_or_default(LKey(4, 0), 99), content="99")
+  inspect(map.contains(LKey(5, 0)), content="false")
+}
+
+///|
+test "Map grow rehashes collision cluster in insertion order" {
+  let map : Map[LKey, Int] = Map([], capacity=2)
+  for i in 0..<12 {
+    map[LKey(i, i % 4)] = i * 10
+  }
+  inspect(map.length(), content="12")
+  for i in 0..<12 {
+    @test.assert_eq(map.get(LKey(i, i % 4)), Some(i * 10))
+  }
+  map.remove(LKey(5, 1))
+  @test.assert_eq(map.get(LKey(5, 1)), None)
+  map[LKey(12, 0)] = 120
+  @test.assert_eq(map.get(LKey(12, 0)), Some(120))
+  debug_inspect(
+    map.values().to_array(),
+    content="[0, 10, 20, 30, 40, 60, 70, 80, 90, 100, 110, 120]",
+  )
 }
 
 ///|
@@ -669,11 +689,11 @@ test "Map::merge_in_place self should not grow" {
   let cap_before = map.capacity()
   map.merge_in_place(map)
   // Capacity should remain unchanged since no new entries are added
-  assert_eq(map.capacity(), cap_before)
-  assert_eq(map.length(), 6)
+  @test.assert_eq(map.capacity(), cap_before)
+  @test.assert_eq(map.length(), 6)
   // Verify all entries are still intact
   for i in 0..<6 {
-    assert_eq(map.get(i.to_string()), Some(i))
+    @test.assert_eq(map.get(i.to_string()), Some(i))
   }
 }
 
@@ -684,16 +704,16 @@ test "Map::set updating existing key should not grow" {
   for i in 0..<6 {
     map.set(i.to_string(), i)
   }
-  assert_eq(map.capacity(), 8)
-  assert_eq(map.length(), 6)
+  @test.assert_eq(map.capacity(), 8)
+  @test.assert_eq(map.length(), 6)
   // Update existing keys - should NOT trigger grow
   for i in 0..<6 {
     map.set(i.to_string(), i * 10)
   }
-  assert_eq(map.capacity(), 8) // Should still be 8, not 16
-  assert_eq(map.length(), 6)
+  @test.assert_eq(map.capacity(), 8) // Should still be 8, not 16
+  @test.assert_eq(map.length(), 6)
   // Verify values were updated
   for i in 0..<6 {
-    assert_eq(map.get(i.to_string()), Some(i * 10))
+    @test.assert_eq(map.get(i.to_string()), Some(i * 10))
   }
 }

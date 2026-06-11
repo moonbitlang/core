@@ -14,7 +14,7 @@
 
 ///|
 test "remove on empty set" {
-  let set : @sorted_set.SortedSet[Int] = @sorted_set.SortedSet([])
+  let set : @sorted_set.SortedSet[Int] = SortedSet([])
   set.remove(0)
   inspect(set.length(), content="0")
 }
@@ -28,7 +28,7 @@ test "default" {
 ///|
 test "SortedSet constructor" {
   let set = @sorted_set.SortedSet([3, 1, 2])
-  assert_eq(set.to_array(), [1, 2, 3])
+  @test.assert_eq(set.to_array(), [1, 2, 3])
 }
 
 ///|
@@ -97,7 +97,7 @@ test "each" {
   let result = StringBuilder(size_hint=10)
   set.each(x => result.write_string(x.to_string()))
   inspect(result.to_string(), content="123456789")
-  let set : @sorted_set.SortedSet[Int] = @sorted_set.SortedSet([])
+  let set : @sorted_set.SortedSet[Int] = SortedSet([])
   set.each(_x => abort("Impossible to reach"))
 }
 

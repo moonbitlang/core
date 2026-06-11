@@ -19,9 +19,9 @@
 ///|
 test "parse invalid decimal exponent sign" {
   debug_inspect(
-    try? @json.parse("1e"),
+    expect_parse_error("1e", "expected InvalidEof"),
     content=(
-      #|Err(InvalidEof)
+      #|InvalidEof
     ),
   )
 }
@@ -29,9 +29,9 @@ test "parse invalid decimal exponent sign" {
 ///|
 test "lex_zero invalid case" {
   debug_inspect(
-    try? @json.parse("01"),
+    expect_parse_error("01", "expected InvalidChar"),
     content=(
-      #|Err(InvalidChar({ line: 1, column: 1 }, '1'))
+      #|InvalidChar({ line: 1, column: 1 }, '1')
     ),
   )
 }
@@ -57,9 +57,9 @@ test "parse numbers" {
 
   // Very large number
   debug_inspect(
-    try? @json.parse("1e999999999"),
+    @json.parse("1e999999999"),
     content=(
-      #|Ok(Number(Infinity, repr=Some("1e999999999")))
+      #|Number(Infinity, repr=Some("1e999999999"))
     ),
   )
 }
@@ -67,9 +67,9 @@ test "parse numbers" {
 ///|
 test "parse negative huge exponent" {
   debug_inspect(
-    try? @json.parse("-1e999999999"),
+    @json.parse("-1e999999999"),
     content=(
-      #|Ok(Number(-Infinity, repr=Some("-1e999999999")))
+      #|Number(-Infinity, repr=Some("-1e999999999"))
     ),
   )
 }

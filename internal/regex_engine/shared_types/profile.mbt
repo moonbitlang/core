@@ -24,6 +24,8 @@ pub struct Profile {
 }
 
 ///|
+/// Create a new instance.
+#alias(new, deprecated="Use `Profile()` instead")
 pub fn Profile::Profile(
   valid~ : RecharSet,
   word~ : RecharSet,
@@ -32,18 +34,5 @@ pub fn Profile::Profile(
 ) -> Profile {
   guard valid.first_interval() is Some((lb, _)) else { panic() }
   guard valid.last_interval() is Some((_, ub)) else { panic() }
-  Profile::{ lb, ub, valid, word, word_symbolize_splits, category }
-}
-
-///|
-/// Create a new instance.
-pub fn Profile::new(
-  valid~ : RecharSet,
-  word~ : RecharSet,
-  word_symbolize_splits? : ReadOnlyArray[RecharSet] = [word],
-  category~ : (Rechar) -> Category,
-) -> Profile {
-  guard valid.first_interval() is Some((lb, _)) else { panic() }
-  guard valid.last_interval() is Some((_, ub)) else { panic() }
-  Profile::{ lb, ub, valid, word, word_symbolize_splits, category }
+  { lb, ub, valid, word, word_symbolize_splits, category }
 }

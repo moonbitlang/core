@@ -17,7 +17,7 @@ fn[T] set_null(buffer : UninitializedArray[T], index : Int) = "%fixedarray.set_n
 
 ///|
 fn[A] new_deque(capacity : Int) -> Deque[A] {
-  Deque::{ buf: UninitializedArray::make(capacity), len: 0, head: 0 }
+  { buf: UninitializedArray::make(capacity), len: 0, head: 0 }
 }
 
 ///|
@@ -51,7 +51,7 @@ fn[A] Deque::tail_index(self : Deque[A]) -> Int {
 /// }
 /// ```
 ///
-#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
+#deprecated("Use @debug.Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[A : Show] Show for Deque[A]
 
 ///|
@@ -121,7 +121,7 @@ pub impl[A] Add for Deque[A] with fn add(self, other) {
   let len = self.len + other.len
   let buf = self.unsafe_make_and_blit_to(len, 0)
   other.unsafe_blit_to(buf, self.len)
-  Deque::{ buf, len, head: 0 }
+  { buf, len, head: 0 }
 }
 
 ///|
@@ -149,7 +149,7 @@ test "add_empty" {
 ///
 /// ```mbt check
 /// test {
-///   let arr = [1, 2, 3, 4, 5]
+///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
 ///   let dq = @deque.Deque(arr)
 ///   @debug.debug_inspect(
 ///     dq,
@@ -173,7 +173,7 @@ pub fn[A] Deque::Deque(arr : ArrayView[A], capacity? : Int) -> Deque[A] {
   for i, x in arr {
     buf[i] = x
   }
-  Deque::{ buf, len, head: 0 }
+  { buf, len, head: 0 }
 }
 
 ///|
@@ -214,7 +214,7 @@ test "from_array_empty" {
 pub fn[A] Deque::copy(self : Deque[A]) -> Deque[A] {
   let len = self.len
   let buf = self.unsafe_make_and_blit_to(len, 0)
-  Deque::{ buf, len, head: 0 }
+  { buf, len, head: 0 }
 }
 
 ///|
@@ -1097,7 +1097,7 @@ pub fn[A, U] Deque::map(self : Deque[A], f : (A) -> U) -> Deque[U] {
       let idx = (self.head + i) % cap
       buf[i] = f(self.buf[idx])
     }
-    Deque::{ buf, len: self.len, head: 0 }
+    { buf, len: self.len, head: 0 }
   }
 }
 
@@ -1123,7 +1123,7 @@ pub fn[A, U] Deque::mapi(self : Deque[A], f : (Int, A) -> U) -> Deque[U] {
       let idx = (self.head + i) % cap
       buf[i] = f(i, self.buf[idx])
     }
-    Deque::{ buf, len: self.len, head: 0 }
+    { buf, len: self.len, head: 0 }
   }
 }
 
@@ -1825,7 +1825,7 @@ pub impl[A : @json.FromJson] @json.FromJson for Deque[A] with fn from_json(
   path,
 ) {
   guard json is Array(arr) else {
-    raise @json.JsonDecodeError((path, "Deque::from_json: expected array"))
+    raise JsonDecodeError((path, "Deque::from_json: expected array"))
   }
   let len = arr.length()
   let buf = UninitializedArray::make(len)
@@ -2422,7 +2422,7 @@ pub impl[A : Compare] Compare for Deque[A] with fn compare(self, other) {
 ///       #|<Deque: [5, 4, 3, 2, 1]>
 ///     ),
 ///   )
-///   let dq : @deque.Deque[Int] = @deque.Deque([])
+///   let dq : @deque.Deque[Int] = Deque([])
 ///   dq.rev_in_place()
 ///   @debug.debug_inspect(
 ///     dq,
@@ -2482,7 +2482,7 @@ pub fn[A] Deque::rev(self : Deque[A]) -> Deque[A] {
     new_buf[i] = self.buf[src_idx]
   }
   // Create new deque with reversed elements
-  Deque::{ buf: new_buf, len, head: 0 }
+  { buf: new_buf, len, head: 0 }
 }
 
 ///|

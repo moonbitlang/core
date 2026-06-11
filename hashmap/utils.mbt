@@ -228,7 +228,7 @@ pub fn[K, V] HashMap::length(self : HashMap[K, V]) -> Int {
 ///
 /// ```mbt check
 /// test {
-///   let map : @hashmap.HashMap[Int, String] = @hashmap.HashMap([], capacity=16)
+///   let map : @hashmap.HashMap[Int, String] = HashMap([], capacity=16)
 ///   inspect(map.capacity(), content="16")
 /// }
 /// ```
@@ -250,7 +250,7 @@ pub fn[K, V] HashMap::capacity(self : HashMap[K, V]) -> Int {
 ///
 /// ```mbt check
 /// test {
-///   let map : @hashmap.HashMap[String, Int] = @hashmap.HashMap([])
+///   let map : @hashmap.HashMap[String, Int] = HashMap([])
 ///   inspect(map.is_empty(), content="true")
 ///   map.set("key", 42)
 ///   inspect(map.is_empty(), content="false")
@@ -338,7 +338,7 @@ pub fn[K, V] HashMap::eachi(
 ///
 /// * `self` : The hash map to be converted to string.
 /// * `logger` : The buffer to write the string representation to.
-#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
+#deprecated("Use @debug.Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[K : Show, V : Show] Show for HashMap[K, V]
 
 ///|

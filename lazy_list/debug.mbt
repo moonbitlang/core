@@ -13,10 +13,7 @@
 // limitations under the License.
 
 ///|
-using @debug {trait Debug, type Repr}
-
-///|
-/// Debug implementation. Walks only the cells whose tails have already
+/// @debug.Debug implementation. Walks only the cells whose tails have already
 /// been forced — never runs a thunk — so it is safe on infinite or
 /// effectful streams.
 ///
@@ -26,9 +23,9 @@ using @debug {trait Debug, type Repr}
 ///
 /// Caveat: a deliberately constructed forced cycle (e.g. a `lazy_cons`
 /// whose thunk returns an ancestor cell, then forced) will cause this
-/// impl to loop. `@list.List`'s `Debug` has the same property; cycle
+/// impl to loop. `@list.List`'s `@debug.Debug` has the same property; cycle
 /// detection is not provided.
-pub impl[A : Debug] Debug for LazyList[A] with fn to_repr(self) {
+pub impl[A : @debug.Debug] @debug.Debug for LazyList[A] with fn to_repr(self) {
   let parts = []
   for cur = self {
     match cur.cell {
@@ -38,12 +35,12 @@ pub impl[A : Debug] Debug for LazyList[A] with fn to_repr(self) {
         match tail.peek() {
           Some(next) => continue next
           None => {
-            parts.push(Repr::omitted())
+            parts.push(@debug.Repr::omitted())
             break
           }
         }
       }
     }
   }
-  Repr::opaque_("LazyList", Repr::array(parts))
+  @debug.Repr::opaque_("LazyList", @debug.Repr::array(parts))
 }

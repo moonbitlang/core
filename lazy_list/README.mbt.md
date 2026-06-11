@@ -13,7 +13,7 @@ without re-running the underlying computation.
 4. [Observing](#observing)
 5. [Transforming](#transforming)
 6. [Consuming strictly](#consuming-strictly)
-7. [Inspecting with `Debug`](#inspecting-with-debug)
+7. [Inspecting with `@debug.Debug`](#inspecting-with-debug)
 8. [Design trade-offs](#design-trade-offs)
 
 ---
@@ -249,9 +249,9 @@ test {
 
 ---
 
-## Inspecting with `Debug`
+## Inspecting with `@debug.Debug`
 
-`Debug` walks only the cells that have *already been forced*. Safe to call on
+`@debug.Debug` walks only the cells that have *already been forced*. Safe to call on
 infinite streams — they render with `...` for the unforced tail.
 
 ```mbt check
@@ -263,7 +263,7 @@ test {
 
   let stream = iterate(0, x => x + 1)
   @debug.debug_inspect(stream, content="<LazyList: [0, ...]>")
-  // Force a prefix; subsequent `Debug` shows what's been memoized.
+  // Force a prefix; subsequent `@debug.Debug` shows what's been memoized.
   let _ = stream.iter().take(3).each(_ => ())
   @debug.debug_inspect(stream, content="<LazyList: [0, 1, 2, ...]>")
 }
@@ -271,7 +271,7 @@ test {
 
 Note: `Show`, `Eq`, and `ToJson` are deliberately **not** provided. Each
 would force the entire spine and silently diverge on infinite lists. Use
-`Debug` for inspection; for equality / serialization, materialize through
+`@debug.Debug` for inspection; for equality / serialization, materialize through
 `to_array` (or `@list.from_iter(xs.iter())`) once you're sure the list is finite.
 
 ---
@@ -365,8 +365,8 @@ the primitives stays out of the package. If a particular helper turns up
 repeatedly in user code, we can add it back — the reverse (removing a
 public API) is much harder.
 
-### Forced cycles can hang `Debug`
+### Forced cycles can hang `@debug.Debug`
 
 If you deliberately construct a self-referential `lazy_cons` and force it,
-`Debug` will loop walking the cached cells. `@list.List`'s `Debug` has the
+`@debug.Debug` will loop walking the cached cells. `@list.List`'s `@debug.Debug` has the
 same property; cycle detection is not provided.

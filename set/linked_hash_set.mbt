@@ -31,11 +31,11 @@ priv struct Entry[K] {
 /// ```mbt check
 /// test {
 ///   let set = @set.Set(["three", "eight", "one"])
-///   assert_eq(set.contains("two"), false)
-///   assert_eq(set.contains("three"), true)
+///   @test.assert_eq(set.contains("two"), false)
+///   @test.assert_eq(set.contains("three"), true)
 ///   set.add("three") // no effect since it already exists
 ///   set.add("two")
-///   assert_eq(set.contains("two"), true)
+///   @test.assert_eq(set.contains("two"), true)
 /// }
 /// ```
 struct Set[K] {
@@ -119,7 +119,7 @@ pub fn[K : Hash + Eq] Set::Set(arr : ArrayView[K], capacity? : Int) -> Set[K] {
 ///
 /// ```mbt check
 /// test {
-///   let set : @set.Set[String] = @set.Set([])
+///   let set : @set.Set[String] = Set([])
 ///   set.add("key")
 ///   inspect(set.contains("key"), content="true")
 ///   set.add("key") // no effect since it already exists
@@ -202,7 +202,7 @@ fn[K] Set::set_entry(self : Set[K], entry : Entry[K], new_idx : Int) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let set : @set.Set[String] = @set.Set([])
+///   let set : @set.Set[String] = Set([])
 ///   inspect(set.add_and_check("key"), content="true") // First insertion
 ///   inspect(set.add_and_check("key"), content="false") // Already exists
 ///   inspect(set.length(), content="1")
@@ -374,7 +374,7 @@ fn[K] Set::shift_back(self : Set[K], idx : Int) -> Unit {
 }
 
 ///|
-fn[K : Eq] Set::grow(self : Set[K]) -> Unit {
+fn[K] Set::grow(self : Set[K]) -> Unit {
   let old_head = self.head
   let new_capacity = self.capacity << 1
   self.entries = FixedArray::make(new_capacity, None)
@@ -386,11 +386,38 @@ fn[K : Eq] Set::grow(self : Set[K]) -> Unit {
   self.tail = -1
   for x = old_head {
     match x {
-      Some({ next, key, hash, .. }) => {
-        self.add_with_hash(key, hash)
-        continue next
-      }
       None => break
+      Some(e) => {
+        let next_in_chain = e.next
+        e.next = None
+        self.rehash_place_entry(e)
+        continue next_in_chain
+      }
+    }
+  }
+}
+
+///|
+fn[K] Set::rehash_place_entry(self : Set[K], outer : Entry[K]) -> Unit {
+  let hash = outer.hash
+  for psl = 0, idx = hash & self.capacity_mask {
+    match self.entries[idx] {
+      None => {
+        outer.psl = psl
+        outer.prev = self.tail
+        self.add_entry_to_tail(idx, outer)
+        return
+      }
+      Some(curr) =>
+        if psl > curr.psl {
+          self.push_away(idx, curr)
+          outer.psl = psl
+          outer.prev = self.tail
+          self.add_entry_to_tail(idx, outer)
+          return
+        } else {
+          continue psl + 1, (idx + 1) & self.capacity_mask
+        }
     }
   }
 }
@@ -398,7 +425,7 @@ fn[K : Eq] Set::grow(self : Set[K]) -> Unit {
 // Utils
 
 ///|
-#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
+#deprecated("Use @debug.Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[K : Show] Show for Set[K]
 
 ///|

@@ -783,7 +783,7 @@ pub fn[A] SortedSet::filter(
 }
 
 ///|
-#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
+#deprecated("Use @debug.Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[A : Show] Show for SortedSet[A]
 
 ///|
@@ -814,9 +814,7 @@ pub impl[A : @json.FromJson + Compare] @json.FromJson for SortedSet[A] with fn f
   path,
 ) {
   guard json is Array(arr) else {
-    raise @json.JsonDecodeError(
-      (path, "@immut/sorted_set.from_json: expected array"),
-    )
+    raise JsonDecodeError((path, "@immut/sorted_set.from_json: expected array"))
   }
   for i, x in arr; set = (new() : SortedSet[A]) {
     continue set.add(A::from_json(x, path.add_index(i)))

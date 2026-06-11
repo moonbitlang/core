@@ -53,12 +53,24 @@ test "encode matches previous buffer implementation" {
 }
 
 ///|
+test "encode sliced view with mixed width characters" {
+  inspect(
+    @utf8.encode("ZA©中😀BY"[1:7]),
+    content=(
+      #|b"A\xc2\xa9\xe4\xb8\xad\xf0\x9f\x98\x80B"
+    ),
+  )
+}
+
+///|
+#cfg(not(target="js"))
 test "panic encode with invalid leading surrogate" {
   let invalid = String::from_array([(0xD800).unsafe_to_char(), 'A'])
   ignore(@utf8.encode(invalid))
 }
 
 ///|
+#cfg(not(target="js"))
 test "panic encode with dangling trailing surrogate" {
   let invalid = String::from_array(['A', (0xDC00).unsafe_to_char()])
   ignore(@utf8.encode(invalid))

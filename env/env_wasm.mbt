@@ -36,8 +36,8 @@ fn finish_create_string(handle : XStringCreateHandle) -> XExternString = "__moon
 ///|
 fn string_to_extern(s : String) -> XExternString {
   let handle = begin_create_string()
-  for i in 0..<s.length() {
-    string_append_char(handle, s.code_unit_at(i).unsafe_to_char())
+  for code_unit in s.code_units() {
+    string_append_char(handle, code_unit.unsafe_to_char())
   }
   finish_create_string(handle)
 }

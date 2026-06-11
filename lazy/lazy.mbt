@@ -79,9 +79,9 @@ struct Lazy[A] {
 ///     runs += 1
 ///     42
 ///   })
-///   assert_eq(cell.force(), 42)
-///   assert_eq(cell.force(), 42)
-///   assert_eq(runs, 1)
+///   @test.assert_eq(cell.force(), 42)
+///   @test.assert_eq(cell.force(), 42)
+///   @test.assert_eq(runs, 1)
 /// }
 /// ```
 pub fn[A] Lazy::Lazy(thunk : () -> A) -> Lazy[A] {
@@ -95,7 +95,7 @@ pub fn[A] Lazy::Lazy(thunk : () -> A) -> Lazy[A] {
 /// ```mbt check
 /// test {
 ///   let cell = @lazy.Lazy::ready(7)
-///   assert_eq(cell.force(), 7)
+///   @test.assert_eq(cell.force(), 7)
 /// }
 /// ```
 pub fn[A] Lazy::ready(value : A) -> Lazy[A] {

@@ -115,8 +115,8 @@ pub fn end() -> Unit {
   coverage_log(counters.val, sbuf)
   let line_buf = StringBuilder()
   for str in sbuf.0 {
-    let start = for j in 0..<str.length(); start = 0 {
-      if str.unsafe_get(j) == '\n' {
+    let start = for j, code_unit in str.code_units(); start = 0 {
+      if code_unit == '\n' {
         line_buf.write_view(str[start:j])
         println(line_buf.to_string())
         line_buf.reset()

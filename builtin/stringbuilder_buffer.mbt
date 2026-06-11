@@ -125,7 +125,7 @@ pub impl Logger for StringBuilder with fn write_char(self, ch) {
 /// test {
 ///   let sb = StringBuilder()
 ///   sb.write_view("Hello, world!"[:5])
-///   assert_eq(sb.to_string(), "Hello")
+///   @test.assert_eq(sb.to_string(), "Hello")
 /// }
 /// ```
 pub impl Logger for StringBuilder with fn write_view(

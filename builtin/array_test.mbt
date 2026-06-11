@@ -15,25 +15,25 @@
 ///|
 test "array_new" {
   let arr : Array[Int] = Array::new()
-  assert_eq(arr.length(), 0)
+  @test.assert_eq(arr.length(), 0)
 }
 
 ///|
 test "array_from_fixed_array" {
   let fixed_arr : FixedArray[Int] = [1, 2, 3]
   let arr = Array::from_fixed_array(fixed_arr)
-  assert_eq(arr.length(), 3)
-  assert_eq(arr[0], 1)
-  assert_eq(arr[1], 2)
-  assert_eq(arr[2], 3)
+  @test.assert_eq(arr.length(), 3)
+  @test.assert_eq(arr[0], 1)
+  @test.assert_eq(arr[1], 2)
+  @test.assert_eq(arr[2], 3)
 }
 
 ///|
 test "array_make" {
   let arr = Array::make(5, 42)
-  assert_eq(arr.length(), 5)
+  @test.assert_eq(arr.length(), 5)
   for i in 0..<5 {
-    assert_eq(arr[i], 42)
+    @test.assert_eq(arr[i], 42)
   }
 }
 
@@ -43,24 +43,24 @@ test "array_realloc" {
   arr.push(1)
   arr.push(2)
   arr.push(3) // This should trigger a reallocation
-  assert_eq(arr.length(), 3)
-  assert_eq(arr[0], 1)
-  assert_eq(arr[1], 2)
-  assert_eq(arr[2], 3)
+  @test.assert_eq(arr.length(), 3)
+  @test.assert_eq(arr[0], 1)
+  @test.assert_eq(arr[1], 2)
+  @test.assert_eq(arr[2], 3)
 }
 
 ///|
 test "array_get" {
   let arr = [1, 2, 3]
-  assert_eq(arr.get(0), Some(1))
-  assert_eq(arr.get(3), None)
+  @test.assert_eq(arr.get(0), Some(1))
+  @test.assert_eq(arr.get(3), None)
 }
 
 ///|
 test "array_set" {
-  let arr = [1, 2, 3]
+  let arr : FixedArray[Int] = [1, 2, 3]
   arr[1] = 42
-  assert_eq(arr[1], 42)
+  @test.assert_eq(arr[1], 42)
 }
 
 ///|
@@ -68,9 +68,9 @@ test "array_equal" {
   let arr1 = [1, 2, 3]
   let arr2 = [1, 2, 3]
   let arr3 = [1, 2, 4]
-  assert_eq(arr1, arr2)
-  assert_not_eq(arr1, arr3)
-  assert_not_eq([1, 2], [1, 2, 3])
+  @test.assert_eq(arr1, arr2)
+  @test.assert_not_eq(arr1, arr3)
+  @test.assert_not_eq([1, 2], [1, 2, 3])
 }
 
 ///|
@@ -98,21 +98,21 @@ test "array_add" {
 ///|
 test "array_pop" {
   let arr = [1, 2, 3]
-  assert_eq(arr.pop(), Some(3))
-  assert_eq(arr.length(), 2)
+  @test.assert_eq(arr.pop(), Some(3))
+  @test.assert_eq(arr.length(), 2)
 }
 
 ///|
 test "array_pop_empty" {
   let arr : Array[Int] = []
-  assert_eq(arr.pop(), None)
+  @test.assert_eq(arr.pop(), None)
 }
 
 ///|
 test "array_unsafe_pop" {
   let arr = [1, 2, 3]
-  assert_eq(arr.unsafe_pop(), 3)
-  assert_eq(arr.length(), 2)
+  @test.assert_eq(arr.unsafe_pop(), 3)
+  @test.assert_eq(arr.length(), 2)
 }
 
 ///|
@@ -128,8 +128,8 @@ test "array_unsafe_pop reference" {
 test "array_push" {
   let arr = [1, 2, 3]
   arr.push(4)
-  assert_eq(arr.length(), 4)
-  assert_eq(arr[3], 4)
+  @test.assert_eq(arr.length(), 4)
+  @test.assert_eq(arr[3], 4)
 }
 
 ///|
@@ -143,17 +143,17 @@ test "array_drain" {
 ///|
 test "array_append" {
   let arr1 = [1, 2, 3]
-  let arr2 = [4, 5, 6]
+  let arr2 : ReadOnlyArray[Int] = [4, 5, 6]
   arr1.append(arr2)
-  assert_eq(arr1.length(), 6)
-  // assert_eq(arr1.capacity(), 6)
-  assert_eq(arr1[3], 4)
+  @test.assert_eq(arr1.length(), 6)
+  // @test.assert_eq(arr1.capacity(), 6)
+  @test.assert_eq(arr1[3], 4)
   let cap = 20
   let arr3 = Array::new(capacity=cap)
   arr3.resize(cap, 10)
   arr1.append(arr3)
-  assert_eq(arr1.length(), 6 + cap)
-  // assert_eq(arr1.capacity(), arr1.length())
+  @test.assert_eq(arr1.length(), 6 + cap)
+  // @test.assert_eq(arr1.capacity(), arr1.length())
   // Not testing capacity as it may be platform/algorithm
   // dependent and not guaranteed to be equal to length
 }
@@ -171,18 +171,18 @@ test "array_blit_to_grows_dst" {
 test "array_sort_with_duplicates" {
   let arr = Array::make(40, 7)
   arr.sort()
-  assert_eq(arr.length(), 40)
-  assert_eq(arr[0], 7)
-  assert_eq(arr[39], 7)
+  @test.assert_eq(arr.length(), 40)
+  @test.assert_eq(arr[0], 7)
+  @test.assert_eq(arr[39], 7)
 }
 
 ///|
 test "array_sort_by_all_equal" {
   let arr = Array::make(32, 1)
   arr.sort_by((_, _) => 0)
-  assert_eq(arr.length(), 32)
-  assert_eq(arr[0], 1)
-  assert_eq(arr[31], 1)
+  @test.assert_eq(arr.length(), 32)
+  @test.assert_eq(arr[0], 1)
+  @test.assert_eq(arr[31], 1)
 }
 
 ///|
@@ -197,8 +197,8 @@ test "array_sort_pred_skip_duplicates" {
   arr[24] = 1
   arr.sort()
   assert_true(arr.is_sorted())
-  assert_eq(arr[0], 1)
-  assert_eq(arr[31], 9)
+  @test.assert_eq(arr[0], 1)
+  @test.assert_eq(arr[31], 9)
 }
 
 ///|
@@ -213,8 +213,8 @@ test "array_sort_by_pred_skip_duplicates" {
   arr[24] = 1
   arr.sort_by((a, b) => a.compare(b))
   assert_true(arr.is_sorted())
-  assert_eq(arr[0], 1)
-  assert_eq(arr[31], 9)
+  @test.assert_eq(arr[0], 1)
+  @test.assert_eq(arr[31], 9)
 }
 
 ///|
@@ -222,7 +222,7 @@ test "array_each" {
   let arr = [1, 2, 3]
   let mut sum = 0
   arr.each(x => sum = sum + x)
-  assert_eq(sum, 6)
+  @test.assert_eq(sum, 6)
 }
 
 ///|
@@ -238,7 +238,7 @@ test "array_eachi" {
   let arr = [1, 2, 3]
   let mut sum = 0
   arr.eachi((i, x) => sum = sum + i + x)
-  assert_eq(sum, 9)
+  @test.assert_eq(sum, 9)
 }
 
 ///|
@@ -266,7 +266,7 @@ test "array_rev_eachi" {
 test "array_clear" {
   let arr = [1, 2, 3]
   arr.clear()
-  assert_eq(arr.length(), 0)
+  @test.assert_eq(arr.length(), 0)
 }
 
 ///|
@@ -406,24 +406,24 @@ test "lexical_compare" {
 ///|
 test "array_strip_prefix" {
   let arr = [1, 2, 3]
-  debug_inspect(arr.strip_prefix([1, 2][:]), content="Some(<ArrayView: [3]>)")
-  debug_inspect(arr.strip_prefix([1, 2, 3][:]), content="Some(<ArrayView: []>)")
-  debug_inspect(arr.strip_prefix([2, 3][:]), content="None")
+  debug_inspect(arr.strip_prefix([1, 2]), content="Some(<ArrayView: [3]>)")
+  debug_inspect(arr.strip_prefix([1, 2, 3]), content="Some(<ArrayView: []>)")
+  debug_inspect(arr.strip_prefix([2, 3]), content="None")
 }
 
 ///|
 test "array_strip_suffix" {
   let arr = [1, 2, 3]
-  debug_inspect(arr.strip_suffix([2, 3][:]), content="Some(<ArrayView: [1]>)")
-  debug_inspect(arr.strip_suffix([1, 2, 3][:]), content="Some(<ArrayView: []>)")
-  debug_inspect(arr.strip_suffix([1, 2][:]), content="None")
+  debug_inspect(arr.strip_suffix([2, 3]), content="Some(<ArrayView: [1]>)")
+  debug_inspect(arr.strip_suffix([1, 2, 3]), content="Some(<ArrayView: []>)")
+  debug_inspect(arr.strip_suffix([1, 2]), content="None")
 }
 
 ///|
 test "array_search" {
   let arr = [1, 2, 3]
-  assert_eq(arr.search(2), Some(1))
-  assert_eq(arr.search(4), None)
+  @test.assert_eq(arr.search(2), Some(1))
+  @test.assert_eq(arr.search(4), None)
 }
 
 ///|
@@ -444,7 +444,7 @@ test "array_retain" {
 test "array_remove" {
   let arr = [1, 2, 3]
   let removed = arr.remove(1)
-  assert_eq(removed, 2)
+  @test.assert_eq(removed, 2)
   debug_inspect(arr, content="[1, 3]")
 }
 
@@ -488,28 +488,28 @@ test "panic array_repeat negative" {
 test "array_fold" {
   let arr = [1, 2, 3]
   let sum = arr.fold((acc, x) => acc + x, init=0)
-  assert_eq(sum, 6)
+  @test.assert_eq(sum, 6)
 }
 
 ///|
 test "array_rev_fold" {
   let arr = [1, 2, 3]
   let sum = arr.rev_fold((acc, x) => acc + x, init=0)
-  assert_eq(sum, 6)
+  @test.assert_eq(sum, 6)
 }
 
 ///|
 test "array_foldi" {
   let arr = [1, 2, 3]
   let sum = arr.foldi((i, acc, x) => acc + i + x, init=0)
-  assert_eq(sum, 9)
+  @test.assert_eq(sum, 9)
 }
 
 ///|
 test "array_rev_foldi" {
   let arr = [1, 2, 3]
   let sum = arr.rev_foldi((i, acc, x) => acc + i + x, init=0)
-  assert_eq(sum, 9)
+  @test.assert_eq(sum, 9)
 }
 
 ///|
@@ -720,23 +720,23 @@ test "array_search_by" {
 ///|
 test "array_binary_search_int_test" {
   let arr = [1, 2, 3, 4]
-  assert_eq(arr.binary_search(-100), Err(0))
-  assert_eq(arr.binary_search(-1), Err(0))
-  assert_eq(arr.binary_search(1), Ok(0))
-  assert_eq(arr.binary_search(3), Ok(2))
-  assert_eq(arr.binary_search(4), Ok(3))
-  assert_eq(arr.binary_search(5), Err(4))
-  assert_eq(arr.binary_search(60), Err(4))
+  @test.assert_eq(arr.binary_search(-100), Err(0))
+  @test.assert_eq(arr.binary_search(-1), Err(0))
+  @test.assert_eq(arr.binary_search(1), Ok(0))
+  @test.assert_eq(arr.binary_search(3), Ok(2))
+  @test.assert_eq(arr.binary_search(4), Ok(3))
+  @test.assert_eq(arr.binary_search(5), Err(4))
+  @test.assert_eq(arr.binary_search(60), Err(4))
 }
 
 ///|
 test "array_binary_search_duplicate_int_test" {
   let arr = [1, 2, 3, 3, 4, 4, 4, 5]
-  assert_eq(arr.binary_search(3), Ok(2))
-  assert_eq(arr.binary_search(4), Ok(4))
-  assert_eq(arr.binary_search(5), Ok(7))
+  @test.assert_eq(arr.binary_search(3), Ok(2))
+  @test.assert_eq(arr.binary_search(4), Ok(4))
+  @test.assert_eq(arr.binary_search(5), Ok(7))
   let arr = [0, 1, 1, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55]
-  assert_eq(arr.binary_search(1), Ok(1))
+  @test.assert_eq(arr.binary_search(1), Ok(1))
 }
 
 ///|
@@ -749,13 +749,13 @@ test "array_binary_search_by_test" {
   let arr = [{ num: 10 }, { num: 22 }, { num: 35 }, { num: 48 }]
   let mut target = { num: 22 }
   let cmp = (val : TestStruct) => val.num - target.num
-  assert_eq(arr.binary_search_by(cmp), Ok(1))
+  @test.assert_eq(arr.binary_search_by(cmp), Ok(1))
   target = { num: 48 }
-  assert_eq(arr.binary_search_by(cmp), Ok(3))
+  @test.assert_eq(arr.binary_search_by(cmp), Ok(3))
   target = { num: -8 }
-  assert_eq(arr.binary_search_by(cmp), Err(0))
+  @test.assert_eq(arr.binary_search_by(cmp), Err(0))
   target = { num: 49 }
-  assert_eq(arr.binary_search_by(cmp), Err(4))
+  @test.assert_eq(arr.binary_search_by(cmp), Err(4))
 }
 
 ///|
@@ -786,7 +786,7 @@ test "array view implicit conversion" {
     x.length()
   }
 
-  let arr = [1, 2, 3]
+  let arr : ReadOnlyArray[Int] = [1, 2, 3]
   inspect(f(arr), content="3")
 }
 
@@ -794,13 +794,18 @@ test "array view implicit conversion" {
 test "each with error callback" {
   let arr = [1, 2, 3]
   let mut sum = 0
-  let v = try? arr.each(x => {
-    if x == 2 {
-      fail("Error at 2")
-    }
-    sum += x
-  })
-  assert_true(v is Err(_))
+  try
+    arr.each(x => {
+      if x == 2 {
+        fail("Error at 2")
+      }
+      sum += x
+    })
+  catch {
+    _ => ()
+  } noraise {
+    _ => fail("expected error")
+  }
   inspect(sum, content="1")
 }
 
@@ -818,7 +823,7 @@ test "each with error callback 2" {
   catch {
     Failure(_) => inspect(sum, content="1")
   } noraise {
-    _ => assert_true(false)
+    _ => fail("expected error")
   }
 }
 
@@ -826,13 +831,18 @@ test "each with error callback 2" {
 test "eachi with error callback" {
   let arr = [1, 2, 3]
   let mut sum = 0
-  let v = try? arr.eachi((i, x) => {
-    if x == 2 {
-      fail("Error at 2")
-    }
-    sum += x + i
-  })
-  assert_true(v is Err(_))
+  try
+    arr.eachi((i, x) => {
+      if x == 2 {
+        fail("Error at 2")
+      }
+      sum += x + i
+    })
+  catch {
+    _ => ()
+  } noraise {
+    _ => fail("expected error")
+  }
   inspect(sum, content="1")
 }
 
@@ -850,25 +860,31 @@ test "eachi with error callback 2" {
   catch {
     Failure(_) => inspect(sum, content="1")
   } noraise {
-    _ => assert_true(false)
+    _ => fail("expected error")
   }
 }
 
 ///|
 test "map with error callback" {
   let arr = [1, 2, 3]
-  let v = try? arr.map(x => {
-    if x == 2 {
-      raise Failure::Failure("Error at 2")
-    }
-    x + 1
-  })
-  debug_inspect(
-    v,
-    content=(
-      #|Err(Failure("Error at 2"))
-    ),
-  )
+  try
+    arr.map(x => {
+      if x == 2 {
+        raise Failure::Failure("Error at 2")
+      }
+      x + 1
+    })
+  catch {
+    e =>
+      debug_inspect(
+        e,
+        content=(
+          #|Failure("Error at 2")
+        ),
+      )
+  } noraise {
+    _ => fail("expected error")
+  }
 }
 
 ///|
@@ -884,25 +900,31 @@ test "map with error callback 2" {
   catch {
     Failure(_) => ()
   } noraise {
-    _ => assert_true(false)
+    _ => fail("expected error")
   }
 }
 
 ///|
 test "mapi with error callback" {
   let arr = [1, 2, 3]
-  let v = try? arr.mapi((i, x) => {
-    if x == 2 {
-      raise Failure::Failure("Error at 2")
-    }
-    x + i
-  })
-  debug_inspect(
-    v,
-    content=(
-      #|Err(Failure("Error at 2"))
-    ),
-  )
+  try
+    arr.mapi((i, x) => {
+      if x == 2 {
+        raise Failure::Failure("Error at 2")
+      }
+      x + i
+    })
+  catch {
+    e =>
+      debug_inspect(
+        e,
+        content=(
+          #|Failure("Error at 2")
+        ),
+      )
+  } noraise {
+    _ => fail("expected error")
+  }
 }
 
 ///|
@@ -918,25 +940,31 @@ test "mapi with error callback 2" {
   catch {
     Failure(_) => ()
   } noraise {
-    _ => assert_true(false)
+    _ => fail("expected error")
   }
 }
 
 ///|
 test "filter with error callback" {
   let arr = [1, 2, 3]
-  let v = try? arr.filter(x => {
-    if x == 2 {
-      raise Failure::Failure("Error at 2")
-    }
-    x % 2 == 0
-  })
-  debug_inspect(
-    v,
-    content=(
-      #|Err(Failure("Error at 2"))
-    ),
-  )
+  try
+    arr.filter(x => {
+      if x == 2 {
+        raise Failure::Failure("Error at 2")
+      }
+      x % 2 == 0
+    })
+  catch {
+    e =>
+      debug_inspect(
+        e,
+        content=(
+          #|Failure("Error at 2")
+        ),
+      )
+  } noraise {
+    _ => fail("expected error")
+  }
 }
 
 ///|
@@ -952,25 +980,31 @@ test "filter with error callback 2" {
   catch {
     Failure(_) => ()
   } noraise {
-    _ => assert_true(false)
+    _ => fail("expected error")
   }
 }
 
 ///|
 test "map_inplace with error callback" {
   let arr = [1, 2, 3]
-  let v = try? arr.map_in_place(x => {
-    if x == 2 {
-      raise Failure::Failure("Error at 2")
-    }
-    x + 1
-  })
-  debug_inspect(
-    v,
-    content=(
-      #|Err(Failure("Error at 2"))
-    ),
-  )
+  try
+    arr.map_in_place(x => {
+      if x == 2 {
+        raise Failure::Failure("Error at 2")
+      }
+      x + 1
+    })
+  catch {
+    e =>
+      debug_inspect(
+        e,
+        content=(
+          #|Failure("Error at 2")
+        ),
+      )
+  } noraise {
+    _ => fail("expected error")
+  }
 }
 
 ///|
@@ -986,25 +1020,31 @@ test "map_inplace with error callback 2" {
   catch {
     Failure(_) => ()
   } noraise {
-    _ => assert_true(false)
+    _ => fail("expected error")
   }
 }
 
 ///|
 test "mapi_inplace with error callback" {
   let arr = [1, 2, 3]
-  let v = try? arr.mapi_in_place((i, x) => {
-    if x == 2 {
-      raise Failure::Failure("Error at 2")
-    }
-    x + i
-  })
-  debug_inspect(
-    v,
-    content=(
-      #|Err(Failure("Error at 2"))
-    ),
-  )
+  try
+    arr.mapi_in_place((i, x) => {
+      if x == 2 {
+        raise Failure::Failure("Error at 2")
+      }
+      x + i
+    })
+  catch {
+    e =>
+      debug_inspect(
+        e,
+        content=(
+          #|Failure("Error at 2")
+        ),
+      )
+  } noraise {
+    _ => fail("expected error")
+  }
 }
 
 ///|
@@ -1148,7 +1188,7 @@ test "shuffle_in_place" {
 
   let shuffled = Array::shuffle(arr, rand~)
   Array::shuffle_in_place(arr, rand~)
-  assert_eq(shuffled, arr)
+  @test.assert_eq(shuffled, arr)
   debug_inspect(arr, content="[3, 2, 1, 5, 6, 7, 4]")
 }
 
@@ -1156,7 +1196,7 @@ test "shuffle_in_place" {
 test "copy" {
   let arr = [1, 2, 3, 4, 5]
   let copied = arr.copy()
-  assert_eq(copied, [1, 2, 3, 4, 5])
+  @test.assert_eq(copied, [1, 2, 3, 4, 5])
   @test.assert_not_same_object(arr, copied)
   debug_inspect(([] : Array[Int]).copy(), content="[]")
 }
@@ -1164,19 +1204,19 @@ test "copy" {
 ///|
 test "Array::makei with positive length" {
   let arr = Array::makei(5, i => i * 2)
-  assert_eq(arr, [0, 2, 4, 6, 8])
+  @test.assert_eq(arr, [0, 2, 4, 6, 8])
 }
 
 ///|
 test "Array::makei with zero length" {
   let arr = Array::makei(0, i => i * 2)
-  assert_eq(arr, [])
+  @test.assert_eq(arr, [])
 }
 
 ///|
 test "Array::makei with negative length" {
   let arr = Array::makei(-1, i => i * 2)
-  assert_eq(arr, [])
+  @test.assert_eq(arr, [])
 }
 
 ///|
@@ -1241,14 +1281,14 @@ test "unzip" {
   // Test with a non-empty array of tuples
   let arr = [(1, "a"), (2, "b"), (3, "c")]
   let (nums, strs) = arr.unzip()
-  assert_eq(nums, [1, 2, 3])
-  assert_eq(strs, ["a", "b", "c"])
+  @test.assert_eq(nums, [1, 2, 3])
+  @test.assert_eq(strs, ["a", "b", "c"])
 
   // Test with an empty array
   let empty : Array[(Int, String)] = []
   let (e1, e2) = empty.unzip()
-  assert_eq(e1, [])
-  assert_eq(e2, [])
+  @test.assert_eq(e1, [])
+  @test.assert_eq(e2, [])
 }
 
 ///|
@@ -1412,7 +1452,7 @@ test "Array::rev_iter" {
 test "Array::rev_iter empty" {
   let arr : Array[Int] = []
   let iter = arr.rev_iter()
-  assert_eq(iter.next(), None)
+  @test.assert_eq(iter.next(), None)
 }
 
 ///|
@@ -1430,7 +1470,7 @@ test "Array::iter2" {
 test "Array::iter2 empty" {
   let arr : Array[Int] = []
   let iter = arr.iter2()
-  assert_eq(iter.next(), None)
+  @test.assert_eq(iter.next(), None)
 }
 
 ///|

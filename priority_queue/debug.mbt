@@ -13,21 +13,20 @@
 // limitations under the License.
 
 ///|
-using @debug {trait Debug, type Repr}
-
-///|
-pub impl[A : Debug + Compare] Debug for PriorityQueue[A] with fn to_repr(self) {
-  Repr::opaque_(
+pub impl[A : @debug.Debug + Compare] @debug.Debug for PriorityQueue[A] with fn to_repr(
+  self,
+) {
+  @debug.Repr::opaque_(
     "PriorityQueue",
-    Repr::array([ for x in self => @debug.to_repr(x) ]),
+    @debug.Repr::array([ for x in self => @debug.to_repr(x) ]),
   )
 }
 
 ///|
 #deprecated("use `to_repr(a)` instead", skip_current_package=true)
-pub fn[A : Debug + Compare] PriorityQueue::to_repr(
+pub fn[A : @debug.Debug + Compare] PriorityQueue::to_repr(
   self : PriorityQueue[A],
-) -> Repr {
+) -> @debug.Repr {
   @debug.to_repr(self)
 }
 

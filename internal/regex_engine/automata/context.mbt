@@ -21,8 +21,9 @@ struct Context {
 
 ///|
 /// Create a new instance.
-pub fn Context::new() -> Context {
-  Context::{
+#alias(new, deprecated="Use `Context()` instead")
+pub fn Context::Context() -> Context {
+  {
     next_expr_id: EXPR_ID_RESERVED + 1,
     book: SlotBook::empty(),
     book_dirty: false,

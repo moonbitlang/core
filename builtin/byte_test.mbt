@@ -51,35 +51,35 @@ test "byte_equal" {
 
 ///|
 test "byte_lsl" {
-  assert_eq(b'\xFF' << 8, b'\x00')
-  assert_eq((b'\xFF' << 8).to_int(), 0)
+  @test.assert_eq(b'\xFF' << 8, b'\x00')
+  @test.assert_eq((b'\xFF' << 8).to_int(), 0)
 }
 
 ///|
 test "byte_lsr" {
-  assert_eq(b'\xFF' >> 8, b'\x00')
-  assert_eq((0xFFF).to_byte() >> 8, b'\x00')
+  @test.assert_eq(b'\xFF' >> 8, b'\x00')
+  @test.assert_eq((0xFFF).to_byte() >> 8, b'\x00')
 }
 
 ///|
 test "byte_lxor" {
-  assert_eq(b'\xFF' ^ b'\xFF', b'\x00')
-  assert_eq(b'\xFF' ^ b'\x0F', b'\xF0')
-  assert_eq(b'\x0F' ^ b'\xFF', b'\xF0')
+  @test.assert_eq(b'\xFF' ^ b'\xFF', b'\x00')
+  @test.assert_eq(b'\xFF' ^ b'\x0F', b'\xF0')
+  @test.assert_eq(b'\x0F' ^ b'\xFF', b'\xF0')
 }
 
 ///|
 test "byte_lor" {
-  assert_eq(b'\xFF' | b'\xFF', b'\xFF')
-  assert_eq(b'\xFF' | b'\x0F', b'\xFF')
-  assert_eq(b'\x0F' | b'\xFF', b'\xFF')
+  @test.assert_eq(b'\xFF' | b'\xFF', b'\xFF')
+  @test.assert_eq(b'\xFF' | b'\x0F', b'\xFF')
+  @test.assert_eq(b'\x0F' | b'\xFF', b'\xFF')
 }
 
 ///|
 test "byte_land" {
-  assert_eq(b'\xFF' & b'\xFF', b'\xFF')
-  assert_eq(b'\xFF' & b'\x0F', b'\x0F')
-  assert_eq(b'\x0F' & b'\xFF', b'\x0F')
+  @test.assert_eq(b'\xFF' & b'\xFF', b'\xFF')
+  @test.assert_eq(b'\xFF' & b'\x0F', b'\x0F')
+  @test.assert_eq(b'\x0F' & b'\xFF', b'\x0F')
 }
 
 ///|

@@ -32,7 +32,7 @@ test "Set" {
     }
   }
   for i in 0..<100 {
-    assert_eq((i, map.contains(i)), (i, true))
+    @test.assert_eq((i, map.contains(i)), (i, true))
   }
   debug_inspect((100, map.contains(100)), content="(100, false)")
   let map = map.add(100)
@@ -42,9 +42,9 @@ test "Set" {
 ///|
 test "@hashset.size" {
   for i = 0, set = @hashset.new(); i < 20; i = i + 1, set = set.add(i) {
-    assert_eq(set.length(), i)
+    @test.assert_eq(set.length(), i)
   } nobreak {
-    assert_eq(set.add(0).length(), 20)
+    @test.assert_eq(set.add(0).length(), 20)
   }
   let set = @hashset.new()
   inspect(set.length(), content="0")
@@ -65,7 +65,7 @@ test "@hashset.remove" {
     }
   }
   for i in 0..<100 {
-    assert_eq((i, map.contains(i)), (i, true))
+    @test.assert_eq((i, map.contains(i)), (i, true))
   }
   let map = for i = 0, map = map {
     match (i, map) {
@@ -74,8 +74,8 @@ test "@hashset.remove" {
     }
   }
   for i = 0; i < 100; i = i + 2 {
-    assert_eq(map.contains(i), false)
-    assert_eq(map.contains(i + 1), true)
+    @test.assert_eq(map.contains(i), false)
+    @test.assert_eq(map.contains(i + 1), true)
   }
 }
 
@@ -108,7 +108,7 @@ test "@hashset.iter" {
 test "@hashset.to_string" {
   let set = @hashset.new().add(1).add(3).add(0x0f_ff_ff_ff).add(42)
   let content = set.iter().collect()
-  assert_eq(set.to_string(), "@immut/hashset.from_array(\{content})")
+  @test.assert_eq(set.to_string(), "@immut/hashset.from_array(\{content})")
 }
 
 ///|
@@ -175,7 +175,7 @@ test "from_array with empty array" {
 
 ///|
 test "from_array with non-empty array" {
-  let array = [1, 2, 3]
+  let array : ReadOnlyArray[Int] = [1, 2, 3]
   let set = @hashset.from_array(array)
   inspect(set.contains(1), content="true")
   inspect(set.contains(2), content="true")
@@ -219,14 +219,14 @@ test "arbitrary implementation for hashset" {
   // Make sure the generated set is valid by converting it to array and back
   let arr = set.iter().to_array()
   let set2 = @hashset.from_array(arr)
-  assert_eq(set, set2)
+  @test.assert_eq(set, set2)
 }
 
 ///|
 test "equal between different constructors" {
   let set1 = @hashset.from_array([])
   let set2 = @hashset.from_array(["a"])
-  assert_not_eq(set1, set2)
+  @test.assert_not_eq(set1, set2)
 }
 
 ///|
@@ -242,8 +242,8 @@ test "union 2 hashsets" {
 test "HAMT::union with empty" {
   let m1 = @hashset.from_array([1])
   let m2 = @hashset.new()
-  assert_eq(m1.union(m2), m1)
-  assert_eq(m2.union(m1), m1)
+  @test.assert_eq(m1.union(m2), m1)
+  @test.assert_eq(m2.union(m1), m1)
 }
 
 ///|
@@ -251,9 +251,9 @@ test "HAMT::union with leaf" {
   let m1 = @hashset.from_array([1, 2])
   let m2 = @hashset.from_array([3])
   let m3 = @hashset.from_array([2])
-  assert_eq(m1.union(m2), @hashset.from_array([1, 2, 3]))
-  assert_eq(m1.union(m3), @hashset.from_array([1, 2]))
-  assert_eq(m3.union(m1), @hashset.from_array([1, 2]))
+  @test.assert_eq(m1.union(m2), @hashset.from_array([1, 2, 3]))
+  @test.assert_eq(m1.union(m3), @hashset.from_array([1, 2]))
+  @test.assert_eq(m3.union(m1), @hashset.from_array([1, 2]))
 }
 
 ///|
@@ -262,7 +262,7 @@ test "HAMT::union with branch" {
   let m2 = @hashset.from_array([4, 5, 6])
   let u = m1.union(m2)
   for i in 1..<=6 {
-    assert_eq(u.contains(i), true)
+    @test.assert_eq(u.contains(i), true)
   }
 }
 
@@ -314,8 +314,8 @@ test "HAMT::remove_with_hash collision" {
   let set1 = set.remove(MyString("c"))
   inspect(set1.length(), content="2")
   let set2 = set.remove(MyString("a"))
-  assert_eq(set2.contains(MyString("a")), false)
-  assert_eq(set2.contains(MyString("b")), true)
+  @test.assert_eq(set2.contains(MyString("a")), false)
+  @test.assert_eq(set2.contains(MyString("b")), true)
   inspect(set2.length(), content="1")
   let set3 = set2.remove(MyString("b"))
   inspect(set3.length(), content="0")
@@ -326,9 +326,9 @@ test "HAMT::union with collision" {
   let m1 = @hashset.from_array([MyString("a"), MyString("b")])
   let m2 = @hashset.from_array([MyString("b"), MyString("c")])
   let u = m1.union(m2)
-  assert_eq(u.contains(MyString("a")), true)
-  assert_eq(u.contains(MyString("b")), true)
-  assert_eq(u.contains(MyString("c")), true)
+  @test.assert_eq(u.contains(MyString("a")), true)
+  @test.assert_eq(u.contains(MyString("b")), true)
+  @test.assert_eq(u.contains(MyString("c")), true)
 }
 
 ///|
@@ -347,16 +347,16 @@ test "HAMT::union all cases" {
   let leaf = @hashset.from_array([1])
   let branch = @hashset.from_array([1, 2])
   let collision = @hashset.from_array([MyString("a"), MyString("b")])
-  assert_eq(empty.union(leaf).contains(1), true)
-  assert_eq(leaf.union(branch).contains(2), true)
+  @test.assert_eq(empty.union(leaf).contains(1), true)
+  @test.assert_eq(leaf.union(branch).contains(2), true)
   let u1 = branch.union(branch)
   inspect(u1.contains(1), content="true")
   inspect(u1.contains(2), content="true")
   let collision2 = @hashset.from_array([MyString("b"), MyString("c")])
   let u2 = collision.union(collision2)
-  assert_eq(u2.contains(MyString("a")), true)
-  assert_eq(u2.contains(MyString("b")), true)
-  assert_eq(u2.contains(MyString("c")), true)
+  @test.assert_eq(u2.contains(MyString("a")), true)
+  @test.assert_eq(u2.contains(MyString("b")), true)
+  @test.assert_eq(u2.contains(MyString("c")), true)
 }
 
 ///|
@@ -473,9 +473,9 @@ test "difference with collision - Leaf case" {
   let set1 = @hashset.from_array([MyString("a"), MyString("b"), MyString("c")])
   let set2 = @hashset.from_array([MyString("b")])
   let diff = set1.difference(set2)
-  assert_eq(diff.contains(MyString("a")), true)
-  assert_eq(diff.contains(MyString("b")), false)
-  assert_eq(diff.contains(MyString("c")), true)
+  @test.assert_eq(diff.contains(MyString("a")), true)
+  @test.assert_eq(diff.contains(MyString("b")), false)
+  @test.assert_eq(diff.contains(MyString("c")), true)
   inspect(diff.length(), content="2")
   // Test when all elements in set1 are removed
   let set3 = @hashset.from_array([MyString("a"), MyString("b"), MyString("c")])
@@ -490,7 +490,7 @@ test "difference Flat vs Branch" {
   let small = @hashset.from_array([100])
   let large = @hashset.from_array([1, 2, 3, 4, 5])
   let diff1 = small.difference(large)
-  assert_eq(diff1.contains(100), true)
+  @test.assert_eq(diff1.contains(100), true)
   inspect(diff1.length(), content="1")
   // When Flat element is in the other set - should return None
   let small2 = @hashset.from_array([1])
@@ -500,7 +500,7 @@ test "difference Flat vs Branch" {
   let single = @hashset.from_array([MyString("z")])
   let collision_set = @hashset.from_array([MyString("a"), MyString("b")])
   let diff3 = single.difference(collision_set)
-  assert_eq(diff3.contains(MyString("z")), true)
+  @test.assert_eq(diff3.contains(MyString("z")), true)
   inspect(diff3.length(), content="1")
   // Test Flat element that exists in collision set
   let single2 = @hashset.from_array([MyString("a")])
@@ -515,8 +515,8 @@ test "difference Branch returns single Flat" {
   let set1 = @hashset.from_array([1, 2])
   let set2 = @hashset.from_array([2])
   let diff = set1.difference(set2)
-  assert_eq(diff.contains(1), true)
-  assert_eq(diff.contains(2), false)
+  @test.assert_eq(diff.contains(1), true)
+  @test.assert_eq(diff.contains(2), false)
   inspect(diff.length(), content="1")
 }
 
@@ -532,10 +532,10 @@ test "difference Leaf collision - More case" {
   ])
   let set2 = @hashset.from_array([MyString("a"), MyString("b")])
   let diff = set1.difference(set2)
-  assert_eq(diff.contains(MyString("a")), false)
-  assert_eq(diff.contains(MyString("b")), false)
-  assert_eq(diff.contains(MyString("c")), true)
-  assert_eq(diff.contains(MyString("d")), true)
+  @test.assert_eq(diff.contains(MyString("a")), false)
+  @test.assert_eq(diff.contains(MyString("b")), false)
+  @test.assert_eq(diff.contains(MyString("c")), true)
+  @test.assert_eq(diff.contains(MyString("d")), true)
   inspect(diff.length(), content="2")
 }
 
@@ -545,7 +545,7 @@ test "difference Branch single Flat result" {
   let set1 = @hashset.from_array([1, 2, 3, 4, 5])
   let set2 = @hashset.from_array([2, 3, 4, 5])
   let diff = set1.difference(set2)
-  assert_eq(diff.contains(1), true)
-  assert_eq(diff.contains(2), false)
+  @test.assert_eq(diff.contains(1), true)
+  @test.assert_eq(diff.contains(2), false)
   inspect(diff.length(), content="1")
 }

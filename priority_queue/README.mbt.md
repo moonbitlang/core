@@ -11,8 +11,7 @@ You can use `PriorityQueue([])` or `of()` to create a priority queue.
 ```mbt check
 ///|
 test {
-  let queue1 : @priority_queue.PriorityQueue[Int] = @priority_queue.PriorityQueue([],
-  )
+  let queue1 : @priority_queue.PriorityQueue[Int] = PriorityQueue([])
   let queue2 = @priority_queue.from_array([1, 2, 3])
   @json.json_inspect(queue1, content=[])
   @json.json_inspect(queue2, content=[3, 2, 1])
@@ -31,9 +30,9 @@ test {
   // Create a min-heap by wrapping elements with @cmp.Reverse
   let min_heap = @priority_queue.from_array([
     @cmp.Reverse(5),
-    @cmp.Reverse(2),
-    @cmp.Reverse(8),
-    @cmp.Reverse(1),
+    Reverse(2),
+    Reverse(8),
+    Reverse(1),
   ])
 
   // The smallest wrapped value (1) should be at the top
@@ -49,7 +48,7 @@ You can use `length()` to get the number of elements in the current priority que
 ///|
 test {
   let pq = @priority_queue.from_array([1, 2, 3, 4, 5])
-  assert_eq(pq.length(), 5)
+  @test.assert_eq(pq.length(), 5)
 }
 ```
 
@@ -58,8 +57,8 @@ Similarly, you can use the `is_empty` to determine whether the priority queue is
 ```mbt check
 ///|
 test {
-  let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.PriorityQueue([])
-  assert_eq(pq.is_empty(), true)
+  let pq : @priority_queue.PriorityQueue[Int] = PriorityQueue([])
+  @test.assert_eq(pq.is_empty(), true)
 }
 ```
 
@@ -82,7 +81,7 @@ You can use `push()` to add elements to the priority queue.
 ```mbt check
 ///|
 test {
-  let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.PriorityQueue([])
+  let pq : @priority_queue.PriorityQueue[Int] = PriorityQueue([])
   pq.push(1)
   pq.push(2)
   @test.assert_eq(pq.peek(), Some(2))
@@ -105,7 +104,7 @@ test {
 ///|
 test {
   let pq = @priority_queue.from_array([5, 4, 3, 2, 1])
-  assert_eq(pq.length(), 5)
+  @test.assert_eq(pq.length(), 5)
 }
 ```
 
@@ -118,7 +117,7 @@ You can use `clear` to clear a priority queue.
 test {
   let pq = @priority_queue.from_array([1, 2, 3, 4, 5])
   pq.clear()
-  assert_eq(pq.is_empty(), true)
+  @test.assert_eq(pq.is_empty(), true)
 }
 ```
 
@@ -156,6 +155,6 @@ test {
   let pq = @priority_queue.from_array([1, 2, 3])
   let pq2 = pq.copy()
   @test.assert_eq(pq2.pop(), Some(3))
-  assert_eq(pq.length(), 3) // original unchanged
+  @test.assert_eq(pq.length(), 3) // original unchanged
 }
 ```

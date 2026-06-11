@@ -13,13 +13,16 @@
 // limitations under the License.
 
 ///|
-using @debug {trait Debug, type Repr}
-
-///|
-pub impl[K : Debug, V : Debug] Debug for SortedMap[K, V] with fn to_repr(self) {
-  Repr::opaque_(
+pub impl[K : @debug.Debug, V : @debug.Debug] @debug.Debug for SortedMap[K, V] with fn to_repr(
+  self,
+) {
+  @debug.Repr::opaque_(
     "SortedMap",
-    Repr::map([ for k, v in self => (@debug.to_repr(k), @debug.to_repr(v)) ]),
+    @debug.Repr::map(
+      [
+        for k, v in self => (@debug.to_repr(k), @debug.to_repr(v))
+      ],
+    ),
   )
 }
 

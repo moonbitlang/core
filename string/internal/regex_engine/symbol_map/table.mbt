@@ -13,10 +13,16 @@
 // limitations under the License.
 
 ///|
-struct Table(FixedArray[Rechar])
+struct Table(FixedArray[@shared_types.Rechar])
 
 ///|
-pub fn Table::map(self : Table, c : Rechar) -> Rechar {
+/// Map a single `Rechar` through the symbol table. ASCII codepoints are
+/// looked up directly; higher codepoints are resolved via a binary search
+/// over `(lo, hi, target)` triples stored after the ASCII region.
+pub fn Table::map(
+  self : Table,
+  c : @shared_types.Rechar,
+) -> @shared_types.Rechar {
   if c < 128 {
     self.0.unsafe_get(c)
   } else {
@@ -40,6 +46,10 @@ pub fn Table::map(self : Table, c : Rechar) -> Rechar {
 }
 
 ///|
-pub fn Table::map_set(self : Table, set : RecharSet) -> RecharSet {
+/// Apply `Table::map` to every `Rechar` in the input set.
+pub fn Table::map_set(
+  self : Table,
+  set : @shared_types.RecharSet,
+) -> @shared_types.RecharSet {
   set.offset_by(c => self.map(c))
 }

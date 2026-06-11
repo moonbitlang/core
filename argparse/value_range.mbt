@@ -22,6 +22,13 @@ pub struct ValueRange {
 
 ///|
 /// Create a value-count range.
+///
+/// Notes:
+/// - `lower` defaults to `0`.
+/// - `upper` omitted means no upper bound.
+/// - `ValueRange(lower=0)` means `0..`.
+/// - `ValueRange(lower=1, upper=3)` means `1..=3`.
+#alias(new, deprecated="Use `ValueRange()` instead")
 pub fn ValueRange::ValueRange(lower? : Int = 0, upper? : Int) -> ValueRange {
   { lower, upper }
 }
@@ -30,16 +37,4 @@ pub fn ValueRange::ValueRange(lower? : Int = 0, upper? : Int) -> ValueRange {
 /// Exact single-value range (`1..1`).
 pub fn ValueRange::single() -> ValueRange {
   ValueRange(lower=1, upper=1)
-}
-
-///|
-/// Create a value-count range.
-///
-/// Notes:
-/// - `lower` defaults to `0`.
-/// - `upper` omitted means no upper bound.
-/// - `ValueRange(lower=0)` means `0..`.
-/// - `ValueRange(lower=1, upper=3)` means `1..=3`.
-pub fn ValueRange::new(lower? : Int = 0, upper? : Int) -> ValueRange {
-  { lower, upper }
 }

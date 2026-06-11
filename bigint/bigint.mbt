@@ -53,7 +53,7 @@ pub impl Show for BigInt with fn to_string(self) {
 ///|
 pub impl @json.FromJson for BigInt with fn from_json(json, path) {
   guard json is String(s) else {
-    raise @json.JsonDecodeError(
+    raise JsonDecodeError(
       (path, "BigInt::from_json: expected number in string representation"),
     )
   }
@@ -306,7 +306,7 @@ test "can_convert_to_int64" {
 ///
 /// ```mbt check
 /// test {
-///   let hasher = Hasher::new(seed=0)
+///   let hasher = Hasher(seed=0)
 ///   let big = 12345N
 ///   hasher.combine(big)
 ///   inspect(hasher.finalize(), content="890579181")

@@ -46,7 +46,7 @@ test "ready returns the value without running anything" {
 
 ///|
 test "force returns each captured value" {
-  let cells = [@lazy.Lazy(() => 1), @lazy.Lazy(() => 2), @lazy.Lazy(() => 3)]
+  let cells = [@lazy.Lazy(() => 1), Lazy(() => 2), Lazy(() => 3)]
   let mut sum = 0
   for c in cells {
     sum += c.force()
@@ -81,7 +81,7 @@ test "peek on a ready cell returns Some without running" {
 
 ///|
 test "Debug renders forced and unforced cells safely" {
-  let unforced : @lazy.Lazy[Int] = @lazy.Lazy(() => abort("must not run"))
+  let unforced : @lazy.Lazy[Int] = Lazy(() => abort("must not run"))
   @debug.debug_inspect(unforced, content="<Lazy: ...>")
   let forced = @lazy.Lazy::ready(42)
   @debug.debug_inspect(forced, content="<Lazy: 42>")
@@ -113,14 +113,18 @@ test "Debug renders the in-progress Forcing state" {
 ///|
 test "Result-as-data bridge for fallible thunks" {
   let mut runs = 0
-  let cell : @lazy.Lazy[Result[Int, Error]] = @lazy.Lazy(() => {
+  let cell : @lazy.Lazy[Result[Int, Error]] = Lazy(() => {
     runs += 1
-    try? ({
-      if runs > 1 {
-        fail("should not re-run")
-      }
-      runs
-    })
+    Ok(
+      {
+        if runs > 1 {
+          fail("should not re-run")
+        }
+        runs
+      },
+    ) catch {
+      e => Err(e)
+    }
   })
   assert_true(cell.force() is Ok(1))
   assert_true(cell.force() is Ok(1))

@@ -13,11 +13,10 @@
 // limitations under the License.
 
 ///|
-/// FIXME: derive(Debug) pulls in such local using
-using @debug {trait Debug, type Repr}
+/// NOTE: `derive(@debug.Debug)` is used here so this file doesn’t need a local `using @debug { ... }` import.
 
 ///|
-struct MatchResult(Array[Int]) derive(Debug)
+struct MatchResult(Array[Int]) derive(@debug.Debug)
 
 ///|
 const NULL_SYMBOL : Rechar = -1

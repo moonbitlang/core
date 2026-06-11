@@ -32,49 +32,6 @@ pub struct Command {
 
 ///|
 /// Create a declarative command specification.
-pub fn Command::Command(
-  name : StringView,
-  flags? : ArrayView[FlagArg] = [],
-  options? : ArrayView[OptionArg] = [],
-  positionals? : ArrayView[PositionArg] = [],
-  subcommands? : ArrayView[Command] = [],
-  about? : StringView,
-  version? : StringView,
-  disable_help_flag? : Bool = false,
-  disable_version_flag? : Bool = false,
-  disable_help_subcommand? : Bool = false,
-  arg_required_else_help? : Bool = false,
-  subcommand_required? : Bool = false,
-  hidden? : Bool = false,
-  groups? : ArrayView[ArgGroup] = [],
-) -> Command {
-  let (parsed_args, arg_error) = collect_args(flags, options, positionals)
-  let groups = groups.to_owned()
-  let cmd = Command::{
-    name: name.to_owned(),
-    args: parsed_args,
-    groups,
-    subcommands: subcommands.to_owned(),
-    about: about.map(v => v.to_owned()),
-    version: version.map(v => v.to_owned()),
-    disable_help_flag,
-    disable_version_flag,
-    disable_help_subcommand,
-    arg_required_else_help,
-    subcommand_required,
-    hidden,
-    build_error: arg_error,
-  }
-  if cmd.build_error is None {
-    validate_command(cmd, parsed_args, groups, []) catch {
-      err => cmd.build_error = Some(err)
-    }
-  }
-  cmd
-}
-
-///|
-/// Create a declarative command specification.
 ///
 /// Notes:
 /// - `flags`, `options`, and `positionals` declare arguments by kind.
@@ -85,7 +42,8 @@ pub fn Command::Command(
 /// - `arg_required_else_help=true` prints help when no argv tokens are provided.
 /// - `subcommand_required=true` requires selecting a subcommand.
 /// - `hidden=true` omits this command from parent command listings.
-pub fn Command::new(
+#alias(new, deprecated="Use `Command()` instead")
+pub fn Command::Command(
   name : StringView,
   flags? : ArrayView[FlagArg] = [],
   options? : ArrayView[OptionArg] = [],

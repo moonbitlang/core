@@ -13,17 +13,14 @@
 // limitations under the License.
 
 ///|
-using @debug {trait Debug, type Repr}
-
-///|
-pub impl Debug for Bench with fn to_repr(self) {
-  Repr::opaque_(
+pub impl @debug.Debug for Bench with fn to_repr(self) {
+  @debug.Repr::opaque_(
     "Bench",
-    Repr::array(self.summaries.map(s => @debug.to_repr(s))),
+    @debug.Repr::array(self.summaries.map(s => @debug.to_repr(s))),
   )
 }
 
 ///|
-pub impl Debug for Timestamp with fn to_repr(_) {
-  Repr::opaque_("Timestamp", Repr::omitted())
+pub impl @debug.Debug for Timestamp with fn to_repr(_) {
+  @debug.Repr::opaque_("Timestamp", @debug.Repr::omitted())
 }

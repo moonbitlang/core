@@ -26,6 +26,7 @@
 #alias(empty)
 #as_free_fn
 #as_free_fn(empty)
+#inline
 pub fn[A] List::new() -> List[A] {
   Empty
 }
@@ -84,7 +85,7 @@ pub impl[A : Eq] Eq for List[A] with fn equal(self, other) -> Bool {
 }
 
 ///|
-#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
+#deprecated("Use @debug.Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[A : Show] Show for List[A]
 
 ///|
@@ -131,7 +132,7 @@ pub impl[A : @json.FromJson] @json.FromJson for List[A] with fn from_json(
   path,
 ) {
   guard json is Array(arr) else {
-    raise @json.JsonDecodeError((path, "@list.from_json: expected array"))
+    raise JsonDecodeError((path, "@list.from_json: expected array"))
   }
   for i = arr.length() - 1, list = Empty; i >= 0; {
     continue i - 1, list.prepend(A::from_json(arr[i], path.add_index(i)))
@@ -417,9 +418,9 @@ pub fn[A] List::filter(
 /// ```mbt check
 /// test {
 ///   let ls = @list.from_array([2, 4, 6, 8])
-///   assert_eq(ls.all(x => x % 2 == 0), true)
+///   @test.assert_eq(ls.all(x => x % 2 == 0), true)
 ///   let ls2 = @list.from_array([2, 3, 6, 8])
-///   assert_eq(ls2.all(x => x % 2 == 0), false)
+///   @test.assert_eq(ls2.all(x => x % 2 == 0), false)
 /// }
 /// ```
 #locals(f)
@@ -443,9 +444,9 @@ pub fn[A] List::all(self : List[A], f : (A) -> Bool raise?) -> Bool raise? {
 /// ```mbt check
 /// test {
 ///   let ls = @list.from_array([1, 3, 5, 6])
-///   assert_eq(ls.any(x => x % 2 == 0), true)
+///   @test.assert_eq(ls.any(x => x % 2 == 0), true)
 ///   let ls2 = @list.from_array([1, 3, 5, 7])
-///   assert_eq(ls2.any(x => x % 2 == 0), false)
+///   @test.assert_eq(ls2.any(x => x % 2 == 0), false)
 /// }
 /// ```
 #locals(f)
@@ -523,7 +524,7 @@ pub fn[A] List::head(self : List[A]) -> A? {
 /// ```mbt check
 /// test {
 ///   let ls = @list.from_array([1, 2, 3, 4, 5])
-///   assert_eq(ls.unsafe_last(), 5)
+///   @test.assert_eq(ls.unsafe_last(), 5)
 /// }
 /// ```
 /// 
@@ -855,7 +856,7 @@ pub fn[A, B] List::filter_map(
 /// ```mbt check
 /// test {
 ///   let ls = @list.from_array([1, 2, 3, 4, 5])
-///   assert_eq(ls.unsafe_nth(2), 3)
+///   @test.assert_eq(ls.unsafe_nth(2), 3)
 /// }
 /// ```
 /// 
@@ -975,9 +976,9 @@ pub fn[A] List::intersperse(self : List[A], separator : A) -> List[A] {
 /// ```mbt check
 /// test {
 ///   let empty_list : @list.List[Int] = @list.empty()
-///   assert_eq(empty_list.is_empty(), true)
+///   @test.assert_eq(empty_list.is_empty(), true)
 ///   let non_empty = @list.from_array([1, 2, 3])
-///   assert_eq(non_empty.is_empty(), false)
+///   @test.assert_eq(non_empty.is_empty(), false)
 /// }
 /// ```
 pub fn[A] List::is_empty(self : List[A]) -> Bool {
@@ -1093,7 +1094,7 @@ pub fn[A] List::flatten(self : List[List[A]]) -> List[A] {
 /// ```mbt check
 /// test {
 ///   let ls = @list.from_array([1, 3, 2, 5, 4])
-///   assert_eq(ls.unsafe_maximum(), 5)
+///   @test.assert_eq(ls.unsafe_maximum(), 5)
 /// }
 /// ```
 /// 
@@ -1157,7 +1158,7 @@ pub fn[A : Compare] List::maximum(self : List[A]) -> A? {
 /// ```mbt check
 /// test {
 ///   let ls = @list.from_array([1, 3, 2, 5, 4])
-///   assert_eq(ls.unsafe_minimum(), 1)
+///   @test.assert_eq(ls.unsafe_minimum(), 1)
 /// }
 /// ```
 /// 
@@ -1258,8 +1259,8 @@ pub impl[A] Add for List[A] with fn add(self, other) {
 /// ```mbt check
 /// test {
 ///   let ls = @list.from_array([1, 2, 3, 4, 5])
-///   assert_eq(ls.contains(3), true)
-///   assert_eq(ls.contains(6), false)
+///   @test.assert_eq(ls.contains(3), true)
+///   @test.assert_eq(ls.contains(6), false)
 /// }
 /// ```
 pub fn[A : Eq] List::contains(self : List[A], value : A) -> Bool {
@@ -1739,7 +1740,7 @@ pub fn[A : Eq] List::remove(self : List[A], elem : A) -> List[A] {
 ///
 /// ```mbt check
 /// test {
-///   assert_eq(
+///   @test.assert_eq(
 ///     @list.from_array([1, 2, 3, 4, 5]).is_prefix(@list.from_array([1, 2, 3])),
 ///     true,
 ///   )
@@ -1767,7 +1768,7 @@ pub fn[A : Eq] List::is_prefix(self : List[A], prefix : List[A]) -> Bool {
 ///
 /// ```mbt check
 /// test {
-///   assert_eq(
+///   @test.assert_eq(
 ///     @list.from_array([1, 2, 3, 4, 5]).is_suffix(@list.from_array([3, 4, 5])),
 ///     true,
 ///   )
@@ -1816,7 +1817,7 @@ pub impl[X] Default for List[X] with fn default() {
 /// ```mbt check
 /// test {
 ///   let ls : @list.List[Int] = @list.default()
-///   assert_eq(ls.is_empty(), true)
+///   @test.assert_eq(ls.is_empty(), true)
 /// }
 /// ```
 pub fn[X] default() -> List[X] {
@@ -1979,7 +1980,7 @@ pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for List[X] with fn ar
 /// test {
 ///   let ls = @list.singleton(42)
 ///   @debug.assert_eq(ls, @list.from_array([42]))
-///   assert_eq(ls.length(), 1)
+///   @test.assert_eq(ls.length(), 1)
 /// }
 /// ```
 #as_free_fn

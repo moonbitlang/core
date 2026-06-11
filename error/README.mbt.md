@@ -21,9 +21,12 @@ test "basic error handling" {
   let result1 = try! divide(10, 2)
   inspect(result1, content="5")
 
-  // Handle error with try?
-  let result2 = try? divide(10, 0)
-  debug_inspect(result2, content="Err(Failure(\"Division by zero\"))")
+  // Handle error with try/catch/noraise
+  try divide(10, 0) catch {
+    e => debug_inspect(e, content="Failure(\"Division by zero\")")
+  } noraise {
+    _ => fail("expected error")
+  }
 }
 ```
 
@@ -61,17 +64,17 @@ test "custom errors" {
   }
 
   // Test validation error
-  let email_result = try? validate_email("short")
-  match email_result {
-    Ok(_) => inspect(false, content="true")
-    Err(_) => inspect(true, content="true")
+  try validate_email("short") catch {
+    _ => ()
+  } noraise {
+    _ => fail("expected validation error")
   }
 
-  // Test network error  
-  let data_result = try? fetch_data("short")
-  match data_result {
-    Ok(_) => inspect(false, content="true")
-    Err(_) => inspect(true, content="true")
+  // Test network error
+  try fetch_data("short") catch {
+    _ => ()
+  } noraise {
+    _ => fail("expected network error")
   }
 }
 ```
@@ -139,10 +142,10 @@ test "error propagation" {
   inspect(result1, content="42")
 
   // Error propagation
-  let result2 = try? read_and_parse("invalid")
-  match result2 {
-    Ok(_) => inspect(false, content="true")
-    Err(_) => inspect(true, content="true")
+  try read_and_parse("invalid") catch {
+    _ => ()
+  } noraise {
+    _ => fail("expected error propagation")
   }
 }
 ```
@@ -173,10 +176,10 @@ test "resource management" {
     }
   }
 
-  let result = try? use_resource()
-  match result {
-    Ok(_) => inspect(false, content="true")
-    Err(_) => inspect(true, content="true")
+  try use_resource() catch {
+    _ => ()
+  } noraise {
+    _ => fail("expected resource error")
   }
 }
 ```

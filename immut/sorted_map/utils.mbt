@@ -324,7 +324,7 @@ pub fn[K, V] SortedMap::iter2(self : SortedMap[K, V]) -> Iter2[K, V] {
 ///   for k, v in map.range(low=2, high=4) {
 ///     result.push((k, v))
 ///   }
-///   assert_eq(result, [(2, "b"), (3, "c"), (4, "d")])
+///   @test.assert_eq(result, [(2, "b"), (3, "c"), (4, "d")])
 /// }
 /// ```
 pub fn[K : Compare, V] SortedMap::range(
@@ -396,7 +396,7 @@ pub fn[K, V] SortedMap::values(self : SortedMap[K, V]) -> Iter[V] {
 /// test {
 ///   let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
 ///   let keys = map.rev_keys().collect()
-///   assert_eq(keys, ["c", "b", "a"])
+///   @test.assert_eq(keys, ["c", "b", "a"])
 /// }
 /// ```
 pub fn[K, V] SortedMap::rev_keys(self : SortedMap[K, V]) -> Iter[K] {
@@ -434,7 +434,7 @@ pub fn[K, V] SortedMap::rev_keys(self : SortedMap[K, V]) -> Iter[K] {
 /// ```mbt nocheck
 ///   let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
 ///   let values = map.rev_values().collect()
-///   assert_eq(values, [3, 2, 1])
+///   @test.assert_eq(values, [3, 2, 1])
 /// ```
 pub fn[K, V] SortedMap::rev_values(self : SortedMap[K, V]) -> Iter[V] {
   let mut curr_node = self

@@ -14,13 +14,13 @@
 
 ///|
 test "new" {
-  let queue : @queue.Queue[Int] = @queue.Queue([])
-  assert_eq(queue.length(), 0)
+  let queue : @queue.Queue[Int] = Queue([])
+  @test.assert_eq(queue.length(), 0)
 }
 
 ///|
 test "copy empty" {
-  let queue : @queue.Queue[Int] = @queue.Queue([])
+  let queue : @queue.Queue[Int] = Queue([])
   let copied = queue.copy()
   inspect(copied.length(), content="0")
 }
@@ -29,13 +29,13 @@ test "copy empty" {
 test "from_fixed_array_1" {
   let queue = @queue.from_array([1, 2, 3, 4])
   let queue2 = @queue.from_array([1])
-  assert_eq(queue.length(), 4)
-  assert_eq(queue.unsafe_pop(), 1)
-  assert_eq(queue.unsafe_pop(), 2)
-  assert_eq(queue.unsafe_pop(), 3)
-  assert_eq(queue.unsafe_pop(), 4)
-  assert_eq(queue2.unsafe_pop(), 1)
-  assert_eq(queue2.length(), 0)
+  @test.assert_eq(queue.length(), 4)
+  @test.assert_eq(queue.unsafe_pop(), 1)
+  @test.assert_eq(queue.unsafe_pop(), 2)
+  @test.assert_eq(queue.unsafe_pop(), 3)
+  @test.assert_eq(queue.unsafe_pop(), 4)
+  @test.assert_eq(queue2.unsafe_pop(), 1)
+  @test.assert_eq(queue2.length(), 0)
 }
 
 ///|
@@ -53,22 +53,22 @@ test "from_fixed_array_2" {
 test "from_array_1" {
   let queue = @queue.from_array([1, 2, 3, 4])
   let queue2 = @queue.from_array([1])
-  assert_eq(queue.length(), 4)
-  assert_eq(queue.unsafe_pop(), 1)
-  assert_eq(queue.unsafe_pop(), 2)
-  assert_eq(queue.unsafe_pop(), 3)
-  assert_eq(queue.unsafe_pop(), 4)
-  assert_eq(queue2.unsafe_pop(), 1)
-  assert_eq(queue2.length(), 0)
+  @test.assert_eq(queue.length(), 4)
+  @test.assert_eq(queue.unsafe_pop(), 1)
+  @test.assert_eq(queue.unsafe_pop(), 2)
+  @test.assert_eq(queue.unsafe_pop(), 3)
+  @test.assert_eq(queue.unsafe_pop(), 4)
+  @test.assert_eq(queue2.unsafe_pop(), 1)
+  @test.assert_eq(queue2.length(), 0)
 }
 
 ///|
 test "Queue constructor" {
   let queue = @queue.Queue([1, 2, 3])
-  assert_eq(queue.length(), 3)
-  assert_eq(queue.unsafe_pop(), 1)
-  assert_eq(queue.unsafe_pop(), 2)
-  assert_eq(queue.unsafe_pop(), 3)
+  @test.assert_eq(queue.length(), 3)
+  @test.assert_eq(queue.unsafe_pop(), 1)
+  @test.assert_eq(queue.unsafe_pop(), 2)
+  @test.assert_eq(queue.unsafe_pop(), 3)
 }
 
 ///|
@@ -139,14 +139,14 @@ test "to_string" {
 ///|
 test "clear" {
   let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
-  assert_eq(queue.length(), 4)
+  @test.assert_eq(queue.length(), 4)
   queue.clear()
-  assert_eq(queue.length(), 0)
+  @test.assert_eq(queue.length(), 0)
 }
 
 ///|
 test "is_empty" {
-  let queue : @queue.Queue[Int] = @queue.Queue([])
+  let queue : @queue.Queue[Int] = Queue([])
   assert_true(queue.is_empty())
   queue.push(1)
   queue.push(2)
@@ -158,51 +158,51 @@ test "is_empty" {
 ///|
 test "unsafe_peek" {
   let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
-  assert_eq(queue.unsafe_peek(), 1)
-  assert_eq(queue.length(), 4)
-  assert_eq(queue.unsafe_pop(), 1)
-  assert_eq(queue.unsafe_peek(), 2)
-  assert_eq(queue.length(), 3)
+  @test.assert_eq(queue.unsafe_peek(), 1)
+  @test.assert_eq(queue.length(), 4)
+  @test.assert_eq(queue.unsafe_pop(), 1)
+  @test.assert_eq(queue.unsafe_peek(), 2)
+  @test.assert_eq(queue.length(), 3)
 }
 
 ///|
 test "peek" {
   let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
-  assert_eq(queue.peek(), Some(1))
+  @test.assert_eq(queue.peek(), Some(1))
   queue.clear()
-  assert_eq(queue.peek(), None)
+  @test.assert_eq(queue.peek(), None)
 }
 
 ///|
 test "unsafe_pop" {
   let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
-  assert_eq(queue.unsafe_pop(), 1)
-  assert_eq(queue.unsafe_pop(), 2)
-  assert_eq(queue.unsafe_pop(), 3)
-  assert_eq(queue.unsafe_pop(), 4)
-  assert_eq(queue.length(), 0)
+  @test.assert_eq(queue.unsafe_pop(), 1)
+  @test.assert_eq(queue.unsafe_pop(), 2)
+  @test.assert_eq(queue.unsafe_pop(), 3)
+  @test.assert_eq(queue.unsafe_pop(), 4)
+  @test.assert_eq(queue.length(), 0)
 }
 
 ///|
 test "pop" {
   let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
-  assert_eq(queue.pop(), Some(1))
-  assert_eq(queue.pop(), Some(2))
-  assert_eq(queue.pop(), Some(3))
-  assert_eq(queue.pop(), Some(4))
-  assert_eq(queue.pop(), None)
+  @test.assert_eq(queue.pop(), Some(1))
+  @test.assert_eq(queue.pop(), Some(2))
+  @test.assert_eq(queue.pop(), Some(3))
+  @test.assert_eq(queue.pop(), Some(4))
+  @test.assert_eq(queue.pop(), None)
 }
 
 ///|
 test "each" {
-  let queue : @queue.Queue[Int] = @queue.Queue([])
+  let queue : @queue.Queue[Int] = Queue([])
   let mut sum = 0
   queue.each(x => sum = sum + x)
-  assert_eq(sum, 0)
+  @test.assert_eq(sum, 0)
   @queue.from_array([1, 2, 3, 4]).transfer(queue)
   sum = 0
   queue.each(x => sum = sum + x)
-  assert_eq(sum, 10)
+  @test.assert_eq(sum, 10)
 }
 
 ///|
@@ -213,26 +213,26 @@ test "iter_fold" {
 
 ///|
 test "iteri" {
-  let queue : @queue.Queue[Int] = @queue.Queue([])
+  let queue : @queue.Queue[Int] = Queue([])
   let mut sum = 0
   queue.eachi((i, x) => sum = sum + i * x)
-  assert_eq(sum, 0)
+  @test.assert_eq(sum, 0)
   @queue.from_array([1, 2, 3, 4]).transfer(queue)
   sum = 0
   queue.eachi((i, x) => sum = sum + i * x)
-  assert_eq(sum, 20)
+  @test.assert_eq(sum, 20)
 }
 
 ///|
 test "fold" {
-  let queue : @queue.Queue[Int] = @queue.Queue([])
+  let queue : @queue.Queue[Int] = Queue([])
   let sum = queue.fold(init=0, (acc, x) => acc + x)
-  assert_eq(sum, 0)
+  @test.assert_eq(sum, 0)
   @queue.from_array([1, 2, 3, 4]).transfer(queue)
   let sum = queue.fold(init=0, (acc, x) => acc + x)
-  assert_eq(sum, 10)
+  @test.assert_eq(sum, 10)
   let sum2 = @queue.from_array([1, 2, 3, 4]).fold(init=0, (acc, x) => acc + x)
-  assert_eq(sum2, 10)
+  @test.assert_eq(sum2, 10)
   inspect(
     @queue.from_array([1, 2, 3, 4]).fold(init=0L, (acc, x) => acc + x.to_int64()),
     content="10",
@@ -317,7 +317,7 @@ test "transfer_self" {
 ///|
 test "transfer_self_empty" {
   // Test self-transfer on empty queue
-  let q : @queue.Queue[Int] = @queue.Queue([])
+  let q : @queue.Queue[Int] = Queue([])
   q.transfer(q)
   debug_inspect(
     q,

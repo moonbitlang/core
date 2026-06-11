@@ -34,7 +34,7 @@ test {
     Some(value) => value
     None => abort("unreachable")
   }
-  assert_eq(j, 42)
+  @test.assert_eq(j, 42)
 }
 ```
 
@@ -45,7 +45,7 @@ Or using the `unwrap` method, which will panic if the result is `None` and retur
 test {
   let some : Int? = Some(42)
   let value = some.unwrap() // 42
-  assert_eq(value, 42)
+  @test.assert_eq(value, 42)
 }
 ```
 
@@ -56,7 +56,7 @@ A safer alternative to `unwrap` is the `or` method, which returns the value if i
 test {
   let none : Int? = None
   let value = none.unwrap_or(0) // 0
-  assert_eq(value, 0)
+  @test.assert_eq(value, 0)
 }
 ```
 
@@ -67,7 +67,7 @@ There is also the `or_else` method, which returns the value if it is `Some`, oth
 test {
   let none : Int? = None
   let value = none.unwrap_or_else(() => 0) // 0
-  assert_eq(value, 0)
+  @test.assert_eq(value, 0)
 }
 ```
 

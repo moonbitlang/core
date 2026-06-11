@@ -13,9 +13,6 @@
 // limitations under the License.
 
 ///|
-using @debug {trait Debug}
-
-///|
 fn[T : Show] debug_string(t : T) -> String {
   let buf = StringBuilder(size_hint=50)
   t.output(buf)
@@ -23,30 +20,12 @@ fn[T : Show] debug_string(t : T) -> String {
 }
 
 ///|
-/// Assert two values are equal using `Debug` output for diagnostics.
-///
-/// This is the preferred test assertion for new code, especially for types
-/// that implement `Debug` but not `Show`.
-#callsite(autofill(loc))
-pub fn[T : Eq + Debug] assert_eq(
-  a : T,
-  b : T,
-  msg? : String,
-  loc~ : SourceLoc,
-) -> Unit raise {
-  if a != b {
-    let fail_msg = match msg {
-      Some(msg) => msg
-      None => "`\{@debug.to_string(a)} != \{@debug.to_string(b)}`"
-    }
-    fail(fail_msg, loc~)
-  }
-}
+pub using @debug {assert_eq}
 
 ///|
-/// Assert two values are not equal using `Debug` output for diagnostics.
+/// Assert two values are not equal using `@debug.Debug` output for diagnostics.
 #callsite(autofill(loc))
-pub fn[T : Eq + Debug] assert_not_eq(
+pub fn[T : Eq + @debug.Debug] assert_not_eq(
   a : T,
   b : T,
   msg? : String,
@@ -88,13 +67,13 @@ pub fn[T : Show] same_object(a : T, b : T, loc~ : SourceLoc) -> Unit raise {
 }
 
 ///|
-/// Assert referential equality of two values using `Debug` output for
+/// Assert referential equality of two values using `@debug.Debug` output for
 /// diagnostics.
 ///
 /// This is the preferred identity assertion for new code that only implements
-/// `Debug`.
+/// `@debug.Debug`.
 #callsite(autofill(loc))
-pub fn[T : Debug] assert_same_object(
+pub fn[T : @debug.Debug] assert_same_object(
   a : T,
   b : T,
   loc~ : SourceLoc,
@@ -134,10 +113,10 @@ pub fn[T : Show] not_same_object(a : T, b : T, loc~ : SourceLoc) -> Unit raise {
 }
 
 ///|
-/// Assert referential inequality of two values using `Debug` output for
+/// Assert referential inequality of two values using `@debug.Debug` output for
 /// diagnostics.
 #callsite(autofill(loc))
-pub fn[T : Debug] assert_not_same_object(
+pub fn[T : @debug.Debug] assert_not_same_object(
   a : T,
   b : T,
   loc~ : SourceLoc,
@@ -151,11 +130,58 @@ pub fn[T : Debug] assert_not_same_object(
 
 ///|
 /// Expected to be used in test blocks, don't catch this error.
-///  
+///
 /// Produces an error message similar to @builtin.fail.
 #callsite(autofill(loc))
 pub fn[T] fail(msg : StringView, loc~ : SourceLoc) -> T raise {
   @builtin.fail(msg, loc~)
+}
+
+///|
+/// Assert that the given callback raises an error.
+///
+/// Use this when you only care that the callback raises, not what was raised.
+/// If you need to inspect the error value, use `@test.expect_error` instead.
+///
+/// If the callback does not raise, the test fails at the call site of
+/// `assert_raise`.
+#callsite(autofill(loc))
+pub fn[T, E : Error] assert_raise(
+  f : () -> T raise E,
+  loc~ : SourceLoc,
+) -> Unit raise {
+  try f() catch {
+    _ => ()
+  } noraise {
+    _ =>
+      @builtin.fail(
+        "expected error, but program succeed without raising anything",
+        loc~,
+      )
+  }
+}
+
+///|
+/// Run the given callback and return the error it raises, so the caller can
+/// further interrogate it (`inspect`, `guard ... is`, `assert_true`, etc.).
+///
+/// If the callback does not raise, the test fails at the call site of
+/// `expect_error`. If you do not need the error value, prefer
+/// `@test.assert_raise`.
+#callsite(autofill(loc))
+pub fn[T, E : Error] expect_error(
+  f : () -> T raise E,
+  loc~ : SourceLoc,
+) -> E raise {
+  try f() catch {
+    err => err
+  } noraise {
+    _ =>
+      @builtin.fail(
+        "expected error, but program succeed without raising anything",
+        loc~,
+      )
+  }
 }
 
 ///|
@@ -180,7 +206,7 @@ pub fn Test::writeln(self : Test, obj : &Show) -> Unit {
 /// 
 /// ```mbt check
 /// test {
-///   let t = @test.new("test.txt")
+///   let t = @test.Test("test.txt")
 ///   t.writeln("hello")
 ///   t.snapshot(filename="test.txt") // actual test block end
 /// }
@@ -199,7 +225,7 @@ pub fn Test::snapshot(
   let actual = self.buffer.to_string().escape()
   let expect = filename.escape()
   // always raise SnapshotError, moon will handle this
-  raise SnapshotError::SnapshotError(
+  raise SnapshotError(
     "@SNAPSHOT_TESTING {\"loc\": \{loc}, \"args_loc\": \{args_loc}, \"expect\": \{expect}, \"actual\": \{actual}, \"snapshot\": true}",
   )
 }

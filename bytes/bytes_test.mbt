@@ -81,7 +81,7 @@ test "from array literal" {
   let b2 = Bytes::from_array([
     65, 0, 66, 0, 67, 0, 68, 0, 69, 0, 70, 0, 71, 0, 72, 0, 73, 0,
   ])
-  assert_eq(b1, b2)
+  @test.assert_eq(b1, b2)
 }
 
 ///|
@@ -100,16 +100,16 @@ test "hash" {
   let b4 = Bytes::from_array([
     b'\x7f', b'\xff', b'\xff', b'\xff', b'\xff', b'\xff', b'\xff', b'\xff',
   ])
-  let h1 = Hasher::new(seed=0)
+  let h1 = Hasher(seed=0)
   h1.combine(b1)
   inspect(h1.finalize(), content="-892426428")
-  let h2 = Hasher::new(seed=0)
+  let h2 = Hasher(seed=0)
   h2.combine(b2)
   inspect(h2.finalize(), content="404189")
-  let h3 = Hasher::new(seed=0)
+  let h3 = Hasher(seed=0)
   h3.combine(b3)
   inspect(h3.finalize(), content="-1666368731")
-  let h4 = Hasher::new(seed=0)
+  let h4 = Hasher(seed=0)
   h4.combine(b4)
   inspect(h4.finalize(), content="1297183151")
   inspect(b1.hash() == b1.hash(), content="true")

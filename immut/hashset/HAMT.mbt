@@ -147,7 +147,7 @@ fn[A : Eq] Node::remove_with_path(
     Leaf(key1, bucket) =>
       if key1 == key {
         match bucket {
-          @list.Empty => None
+          Empty => None
           More(key2, tail=xs) => Some(Leaf(key2, xs))
         }
       } else if bucket.find_index(x => key.equal(x)) is Some(index) {
@@ -406,7 +406,7 @@ pub fn[A : Eq + Hash] HashSet::from_iter(iter : Iter[A]) -> HashSet[A] {
 }
 
 ///|
-#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
+#deprecated("Use @debug.Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[A : Show] Show for HashSet[A]
 
 ///|

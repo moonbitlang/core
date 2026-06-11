@@ -80,7 +80,7 @@ test "bench regex large pattern" (it : @bench.T) {
     }
     filenames
   }
-  let re = try! @string.Regex::new(make_large_pattern())
+  let re = try! @string.Regex(make_large_pattern())
   let filenames = make_filenames()
   it.bench(() => {
     for filename in filenames {

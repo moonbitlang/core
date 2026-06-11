@@ -18,9 +18,9 @@
 /// ```mbt check
 /// test {
 ///   let x = @ref.Ref(42)
-///   assert_eq(x.val, 42)
+///   @test.assert_eq(x.val, 42)
 ///   x.val = 100
-///   assert_eq(x.val, 100)
+///   @test.assert_eq(x.val, 100)
 /// }
 /// ```
 pub(all) struct Ref[T] {
@@ -28,14 +28,13 @@ pub(all) struct Ref[T] {
 }
 
 ///|
-#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
+#deprecated("Use @debug.Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[X : Show] Show for Ref[X]
 
 ///|
 pub impl[X : Show] Show for Ref[X] with fn output(self, logger) {
-  logger.write_string("{val: ")
-  logger.write_object(self.val)
-  logger.write_string("}")
+  logger <+
+    $|{val: \{self.val}}
 }
 
 ///|
@@ -68,7 +67,7 @@ pub fn[T] new(x : T) -> Ref[T] {
 ///
 /// ```mbt check
 /// test {
-///   assert_eq(@ref.new(1).map(a => a + 1).val, 2)
+///   @test.assert_eq(@ref.new(1).map(a => a + 1).val, 2)
 /// }
 /// ```
 pub fn[T, R] Ref::map(self : Ref[T], f : (T) -> R raise?) -> Ref[R] raise? {
@@ -95,7 +94,7 @@ pub fn[T, R] Ref::map(self : Ref[T], f : (T) -> R raise?) -> Ref[R] raise? {
 /// test {
 ///   let x = @ref.new(1)
 ///   x.protect(2, () => x.val = 3)
-///   assert_eq(x.val, 1)
+///   @test.assert_eq(x.val, 1)
 /// }
 /// ```
 pub fn[T, R] Ref::protect(self : Ref[T], a : T, f : () -> R raise?) -> R raise? {
@@ -124,8 +123,8 @@ pub fn[T, R] Ref::protect(self : Ref[T], a : T, f : () -> R raise?) -> R raise? 
 ///   let x = @ref.new(1)
 ///   let y = @ref.new(2)
 ///   @ref.swap(x, y)
-///   assert_eq(x.val, 2)
-///   assert_eq(y.val, 1)
+///   @test.assert_eq(x.val, 2)
+///   @test.assert_eq(y.val, 1)
 /// }
 /// ```
 #as_free_fn

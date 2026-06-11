@@ -14,19 +14,10 @@
 
 ///|
 test "ParseError::to_string coverage" {
-  let invalidCharError = @json.InvalidChar(
-    @json.Position::{ line: 1, column: 0 },
-    'a',
-  )
+  let invalidCharError = @json.InvalidChar({ line: 1, column: 0 }, 'a')
   let invalidEofError = @json.InvalidEof
-  let invalidNumberError = @json.InvalidNumber(
-    @json.Position::{ line: 1, column: 0 },
-    "123abc",
-  )
-  let invalidIdentEscapeError = @json.InvalidIdentEscape(@json.Position::{
-    line: 1,
-    column: 0,
-  })
+  let invalidNumberError = @json.InvalidNumber({ line: 1, column: 0 }, "123abc")
+  let invalidIdentEscapeError = @json.InvalidIdentEscape({ line: 1, column: 0 })
   assert_eq(
     invalidCharError.to_string(),
     "Invalid character 'a' at line 1, column 0",
@@ -55,15 +46,12 @@ test "Debug for Position" {
 
 ///|
 test "Debug for ParseError" {
-  @debug.debug_inspect(
-    (@json.ParseError::InvalidEof : @json.ParseError),
-    content="InvalidEof",
-  )
+  @debug.debug_inspect((InvalidEof : @json.ParseError), content="InvalidEof")
 }
 
 ///|
 test "Debug for Replacer" {
-  let r = @json.Replacer::new(fn(_, v) { Some(v) })
+  let r = @json.Replacer(fn(_, v) { Some(v) })
   @debug.debug_inspect(
     r,
     content=(

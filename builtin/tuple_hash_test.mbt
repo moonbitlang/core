@@ -17,7 +17,7 @@ let seed = 0x533D
 
 ///|
 fn h() -> Hasher {
-  Hasher::new(seed~)
+  Hasher(seed~)
 }
 
 ///|
@@ -27,7 +27,7 @@ test "hash_combine for 2-tuple" {
   h1.combine("hello")
   let h2 = h()
   h2.combine((1, "hello"))
-  assert_eq(h1.finalize(), h2.finalize())
+  @test.assert_eq(h1.finalize(), h2.finalize())
 }
 
 ///|
@@ -38,7 +38,7 @@ test "hash_combine for 3-tuple" {
   h1.combine(3.14)
   let h2 = h()
   h2.combine((1, "hello", 3.14))
-  assert_eq(h1.finalize(), h2.finalize())
+  @test.assert_eq(h1.finalize(), h2.finalize())
 }
 
 ///|
@@ -50,7 +50,7 @@ test "hash_combine for 4-tuple" {
   h1.combine(15)
   let h2 = h()
   h2.combine((1, "hello", 3.14, 15))
-  assert_eq(h1.finalize(), h2.finalize())
+  @test.assert_eq(h1.finalize(), h2.finalize())
 }
 
 ///|
@@ -63,7 +63,7 @@ test "hash_combine for 5-tuple" {
   h1.combine('a')
   let h2 = h()
   h2.combine((1, "hello", 3.14, 15, 'a'))
-  assert_eq(h1.finalize(), h2.finalize())
+  @test.assert_eq(h1.finalize(), h2.finalize())
 }
 
 ///|
@@ -77,7 +77,7 @@ test "hash_combine for 6-tuple" {
   h1.combine(0x12345678UL)
   let h2 = h()
   h2.combine((1, "hello", 3.14, 15, 'a', 0x12345678UL))
-  assert_eq(h1.finalize(), h2.finalize())
+  @test.assert_eq(h1.finalize(), h2.finalize())
 }
 
 ///|
@@ -92,5 +92,5 @@ test "hash_combine for 7-tuple" {
   h1.combine(b's')
   let h2 = h()
   h2.combine((1, "hello", 3.14, 15, 'a', 0x12345678UL, b's'))
-  assert_eq(h1.finalize(), h2.finalize())
+  @test.assert_eq(h1.finalize(), h2.finalize())
 }

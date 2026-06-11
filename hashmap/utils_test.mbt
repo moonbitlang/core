@@ -68,7 +68,7 @@ test "T::retain - remove all" {
 
 ///|
 test "T::retain - empty map" {
-  let map : @hashmap.HashMap[String, Int] = @hashmap.HashMap([])
+  let map : @hashmap.HashMap[String, Int] = HashMap([])
   map.retain((_k, _v) => true)
   inspect(map.length(), content="0")
   inspect(map.is_empty(), content="true")
@@ -145,7 +145,7 @@ test "T::retain - large map with complex predicate" {
 test "T::retain - with collisions" {
   // Create keys that likely hash to same buckets
   let map = @hashmap.HashMap([])
-  let keys = ["a", "aa", "aaa", "aaaa", "aaaaa"]
+  let keys : ReadOnlyArray[String] = ["a", "aa", "aaa", "aaaa", "aaaaa"]
   for i = 0; i < keys.length(); i = i + 1 {
     map.set(keys[i], i)
   }

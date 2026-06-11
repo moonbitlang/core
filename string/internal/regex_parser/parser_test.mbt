@@ -253,7 +253,9 @@ test "parse/character_class_range_clipped_to_profile_valid" {
 ///|
 test "parse/error_nested_character_class" {
   debug_inspect(
-    try? parse(profile=profile_unicode(), mode=String, "[[a-z][0-9]]"),
+    Ok(parse(profile=profile_unicode(), mode=String, "[[a-z][0-9]]")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(ParserError(at=1, hint="Unsupported nested character class"))
     ),
@@ -480,7 +482,9 @@ test "parse/char_class_with_unicode_escape" {
 ///|
 test "parse/error_use_posix_class" {
   debug_inspect(
-    try? parse(profile=profile_unicode(), mode=String, "\\d"),
+    Ok(parse(profile=profile_unicode(), mode=String, "\\d")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(
       #|  ParserError(
@@ -495,7 +499,9 @@ test "parse/error_use_posix_class" {
 ///|
 test "parse/error_use_posix_class_in_char_class" {
   debug_inspect(
-    try? parse(profile=profile_unicode(), mode=String, "[\\d]"),
+    Ok(parse(profile=profile_unicode(), mode=String, "[\\d]")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(
       #|  ParserError(
@@ -510,7 +516,9 @@ test "parse/error_use_posix_class_in_char_class" {
 ///|
 test "parse/error_byte_escape_in_string_mode" {
   debug_inspect(
-    try? parse(profile=profile_unicode(), mode=String, "[\\x41]"),
+    Ok(parse(profile=profile_unicode(), mode=String, "[\\x41]")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(ParserError(at=5, hint="Byte escape sequences are not allowed"))
     ),
@@ -520,7 +528,9 @@ test "parse/error_byte_escape_in_string_mode" {
 ///|
 test "parse/error_byte_escape_in_string_mode_term" {
   debug_inspect(
-    try? parse(profile=profile_unicode(), mode=String, "\\x41"),
+    Ok(parse(profile=profile_unicode(), mode=String, "\\x41")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(ParserError(at=4, hint="Byte escape sequences are not allowed"))
     ),
@@ -530,7 +540,9 @@ test "parse/error_byte_escape_in_string_mode_term" {
 ///|
 test "parse/error_unicode_escape_in_bytes_mode" {
   debug_inspect(
-    try? parse(profile=profile_bytes(), mode=Bytes, "[\\u0041]"),
+    Ok(parse(profile=profile_bytes(), mode=Bytes, "[\\u0041]")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(ParserError(at=1, hint="Unicode escape sequences are not allowed"))
     ),
@@ -540,7 +552,9 @@ test "parse/error_unicode_escape_in_bytes_mode" {
 ///|
 test "parse/error_unicode_escape_out_of_range_in_class" {
   debug_inspect(
-    try? parse(profile=profile_bytes(), mode=String, "[\\u0100]"),
+    Ok(parse(profile=profile_bytes(), mode=String, "[\\u0100]")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(ParserError(at=1, hint="Character out of range"))
     ),
@@ -550,7 +564,9 @@ test "parse/error_unicode_escape_out_of_range_in_class" {
 ///|
 test "parse/error_unicode_escape_in_bytes_mode_term" {
   debug_inspect(
-    try? parse(profile=profile_bytes(), mode=Bytes, "\\u0041"),
+    Ok(parse(profile=profile_bytes(), mode=Bytes, "\\u0041")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(ParserError(at=6, hint="Unicode escape sequences are not allowed"))
     ),
@@ -560,7 +576,9 @@ test "parse/error_unicode_escape_in_bytes_mode_term" {
 ///|
 test "parse/error_unicode_brace_escape_in_bytes_mode" {
   debug_inspect(
-    try? parse(profile=profile_bytes(), mode=Bytes, "[\\u{41}]"),
+    Ok(parse(profile=profile_bytes(), mode=Bytes, "[\\u{41}]")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(ParserError(at=7, hint="Unicode escape sequences are not allowed"))
     ),
@@ -570,7 +588,9 @@ test "parse/error_unicode_brace_escape_in_bytes_mode" {
 ///|
 test "parse/error_unsupported_posix_class" {
   debug_inspect(
-    try? parse(profile=profile_unicode(), mode=String, "[[:foo:]]"),
+    Ok(parse(profile=profile_unicode(), mode=String, "[[:foo:]]")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(ParserError(at=1, hint="Unsupported POSIX character class"))
     ),
@@ -580,7 +600,9 @@ test "parse/error_unsupported_posix_class" {
 ///|
 test "parse/error_unclosed_char_class" {
   debug_inspect(
-    try? parse(profile=profile_unicode(), mode=String, "[abc"),
+    Ok(parse(profile=profile_unicode(), mode=String, "[abc")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(ParserError(at=4, hint="Unclosed character class"))
     ),
@@ -590,7 +612,9 @@ test "parse/error_unclosed_char_class" {
 ///|
 test "parse/error_unclosed_group" {
   debug_inspect(
-    try? parse(profile=profile_unicode(), mode=String, "("),
+    Ok(parse(profile=profile_unicode(), mode=String, "(")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(ParserError(at=1, hint="Unclosed group"))
     ),
@@ -600,7 +624,9 @@ test "parse/error_unclosed_group" {
 ///|
 test "parse/error_invalid_quantifier" {
   debug_inspect(
-    try? parse(profile=profile_unicode(), mode=String, "a{abc}"),
+    Ok(parse(profile=profile_unicode(), mode=String, "a{abc}")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(ParserError(at=1, hint="Invalid quantifier"))
     ),
@@ -610,7 +636,9 @@ test "parse/error_invalid_quantifier" {
 ///|
 test "parse/error_invalid_quantifier_range" {
   debug_inspect(
-    try? parse(profile=profile_unicode(), mode=String, "a{5,2}"),
+    Ok(parse(profile=profile_unicode(), mode=String, "a{5,2}")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(ParserError(at=6, hint="Invalid quantifier"))
     ),
@@ -620,7 +648,9 @@ test "parse/error_invalid_quantifier_range" {
 ///|
 test "parse/error_quantifier_too_large" {
   debug_inspect(
-    try? parse(profile=profile_unicode(), mode=String, "a{999}"),
+    Ok(parse(profile=profile_unicode(), mode=String, "a{999}")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(ParserError(at=2, hint="Quantifier too large"))
     ),
@@ -630,11 +660,9 @@ test "parse/error_quantifier_too_large" {
 ///|
 test "parse/error_quantifier_too_large_overflow" {
   debug_inspect(
-    try? parse(
-      profile=profile_unicode(),
-      mode=String,
-      "a{99999999999999999999}",
-    ),
+    Ok(parse(profile=profile_unicode(), mode=String, "a{99999999999999999999}")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(ParserError(at=2, hint="Quantifier too large"))
     ),
@@ -644,7 +672,9 @@ test "parse/error_quantifier_too_large_overflow" {
 ///|
 test "parse/error_max_quantifier_too_large" {
   debug_inspect(
-    try? parse(profile=profile_unicode(), mode=String, "a{1,999}"),
+    Ok(parse(profile=profile_unicode(), mode=String, "a{1,999}")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(ParserError(at=4, hint="Quantifier too large"))
     ),
@@ -654,7 +684,9 @@ test "parse/error_max_quantifier_too_large" {
 ///|
 test "parse/error_possessive_quantifier" {
   debug_inspect(
-    try? parse(profile=profile_unicode(), mode=String, "a++"),
+    Ok(parse(profile=profile_unicode(), mode=String, "a++")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(ParserError(at=2, hint="Unsupported possessive quantifier"))
     ),
@@ -664,7 +696,9 @@ test "parse/error_possessive_quantifier" {
 ///|
 test "parse/error_lookahead" {
   debug_inspect(
-    try? parse(profile=profile_unicode(), mode=String, "(?=abc)"),
+    Ok(parse(profile=profile_unicode(), mode=String, "(?=abc)")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(ParserError(at=0, hint="Unsupported lookahead assertion"))
     ),
@@ -674,7 +708,9 @@ test "parse/error_lookahead" {
 ///|
 test "parse/error_negative_lookahead" {
   debug_inspect(
-    try? parse(profile=profile_unicode(), mode=String, "(?!abc)"),
+    Ok(parse(profile=profile_unicode(), mode=String, "(?!abc)")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(ParserError(at=0, hint="Unsupported negative lookahead assertion"))
     ),
@@ -684,7 +720,9 @@ test "parse/error_negative_lookahead" {
 ///|
 test "parse/error_lookbehind" {
   debug_inspect(
-    try? parse(profile=profile_unicode(), mode=String, "(?<=abc)"),
+    Ok(parse(profile=profile_unicode(), mode=String, "(?<=abc)")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(ParserError(at=0, hint="Unsupported lookbehind assertion"))
     ),
@@ -694,7 +732,9 @@ test "parse/error_lookbehind" {
 ///|
 test "parse/error_negative_lookbehind" {
   debug_inspect(
-    try? parse(profile=profile_unicode(), mode=String, "(?<!abc)"),
+    Ok(parse(profile=profile_unicode(), mode=String, "(?<!abc)")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(ParserError(at=0, hint="Unsupported negative lookbehind assertion"))
     ),
@@ -704,7 +744,9 @@ test "parse/error_negative_lookbehind" {
 ///|
 test "parse/error_invalid_group" {
   debug_inspect(
-    try? parse(profile=profile_unicode(), mode=String, "(?<>abc)"),
+    Ok(parse(profile=profile_unicode(), mode=String, "(?<>abc)")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(ParserError(at=0, hint="Invalid group"))
     ),
@@ -714,7 +756,9 @@ test "parse/error_invalid_group" {
 ///|
 test "parse/error_invalid_flags" {
   debug_inspect(
-    try? parse(profile=profile_unicode(), mode=String, "(?xyz:abc)"),
+    Ok(parse(profile=profile_unicode(), mode=String, "(?xyz:abc)")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(ParserError(at=6, hint="Invalid group"))
     ),
@@ -724,7 +768,9 @@ test "parse/error_invalid_flags" {
 ///|
 test "parse/error_bare_posix_class" {
   debug_inspect(
-    try? parse(profile=profile_unicode(), mode=String, "[:digit:]"),
+    Ok(parse(profile=profile_unicode(), mode=String, "[:digit:]")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(
       #|  ParserError(
@@ -739,7 +785,9 @@ test "parse/error_bare_posix_class" {
 ///|
 test "parse/error_invalid_char_range" {
   debug_inspect(
-    try? parse(profile=profile_unicode(), mode=String, "[z-a]"),
+    Ok(parse(profile=profile_unicode(), mode=String, "[z-a]")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(ParserError(at=3, hint="Invalid character class range"))
     ),
@@ -749,7 +797,9 @@ test "parse/error_invalid_char_range" {
 ///|
 test "parse/error_char_range_over_sets" {
   debug_inspect(
-    try? parse(profile=profile_unicode(), mode=String, "[a-[:digit:]]"),
+    Ok(parse(profile=profile_unicode(), mode=String, "[a-[:digit:]]")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(ParserError(at=4, hint="Character class range over sets"))
     ),
@@ -759,7 +809,9 @@ test "parse/error_char_range_over_sets" {
 ///|
 test "parse/error_unsupported_class_set_expression" {
   debug_inspect(
-    try? parse(profile=profile_unicode(), mode=String, "[a--b]"),
+    Ok(parse(profile=profile_unicode(), mode=String, "[a--b]")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(ParserError(at=2, hint="Unsupported character class set expression"))
     ),
@@ -769,7 +821,9 @@ test "parse/error_unsupported_class_set_expression" {
 ///|
 test "parse/error_class_set_ampersand" {
   debug_inspect(
-    try? parse(profile=profile_unicode(), mode=String, "[a&&b]"),
+    Ok(parse(profile=profile_unicode(), mode=String, "[a&&b]")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(ParserError(at=2, hint="Unsupported character class set expression"))
     ),
@@ -779,7 +833,9 @@ test "parse/error_class_set_ampersand" {
 ///|
 test "parse/error_unexpected_char_in_range" {
   debug_inspect(
-    try? parse(profile=profile_unicode(), mode=String, "[a-]"),
+    Ok(parse(profile=profile_unicode(), mode=String, "[a-]")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(
       #|  ParserError(
@@ -794,7 +850,9 @@ test "parse/error_unexpected_char_in_range" {
 ///|
 test "parse/error_dash_at_start" {
   debug_inspect(
-    try? parse(profile=profile_unicode(), mode=String, "[-a]"),
+    Ok(parse(profile=profile_unicode(), mode=String, "[-a]")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(
       #|  ParserError(
@@ -809,7 +867,9 @@ test "parse/error_dash_at_start" {
 ///|
 test "parse/error_dash_at_start_negated" {
   debug_inspect(
-    try? parse(profile=profile_unicode(), mode=String, "[^-a]"),
+    Ok(parse(profile=profile_unicode(), mode=String, "[^-a]")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(
       #|  ParserError(
@@ -825,7 +885,9 @@ test "parse/error_dash_at_start_negated" {
 test "parse/error_invalid_escape" {
   // \q is not a valid escape sequence
   debug_inspect(
-    try? parse(profile=profile_unicode(), mode=String, "\\q"),
+    Ok(parse(profile=profile_unicode(), mode=String, "\\q")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(ParserError(at=0, hint="Invalid escape sequence"))
     ),
@@ -835,7 +897,9 @@ test "parse/error_invalid_escape" {
 ///|
 test "parse/error_unicode_out_of_range" {
   debug_inspect(
-    try? parse(profile=profile_bytes(), mode=String, "[\\u{FFFFFF}]"),
+    Ok(parse(profile=profile_bytes(), mode=String, "[\\u{FFFFFF}]")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(ParserError(at=11, hint="Character out of range"))
     ),
@@ -845,7 +909,9 @@ test "parse/error_unicode_out_of_range" {
 ///|
 test "parse/error_unicode_brace_out_of_range_term" {
   debug_inspect(
-    try? parse(profile=profile_unicode(), mode=String, "\\u{110000}"),
+    Ok(parse(profile=profile_unicode(), mode=String, "\\u{110000}")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(ParserError(at=10, hint="Character out of range"))
     ),
@@ -855,7 +921,9 @@ test "parse/error_unicode_brace_out_of_range_term" {
 ///|
 test "parse/error_invalid_posix_class" {
   debug_inspect(
-    try? parse(profile=profile_unicode(), mode=String, "[[:abc"),
+    Ok(parse(profile=profile_unicode(), mode=String, "[[:abc")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(ParserError(at=1, hint="Invalid POSIX character class"))
     ),
@@ -966,7 +1034,9 @@ test "parse/ignore_case_with_anchors" {
 test "parse/parser_error_show" {
   // Cover syntax_error.mbt line 8: Show for ParserError
   debug_inspect(
-    try? parse(profile=profile_unicode(), mode=String, "\\d"),
+    Ok(parse(profile=profile_unicode(), mode=String, "\\d")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(
       #|  ParserError(
@@ -981,7 +1051,9 @@ test "parse/parser_error_show" {
 ///|
 test "parse/double_dash_at_start_of_class" {
   debug_inspect(
-    try? parse(profile=profile_unicode(), mode=String, "[a-z--[aeiou]]"),
+    Ok(parse(profile=profile_unicode(), mode=String, "[a-z--[aeiou]]")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(ParserError(at=4, hint="Unsupported character class set expression"))
     ),
@@ -1044,7 +1116,9 @@ test "parse/formfeed_in_char_class" {
 test "parse/parser_error_show_impl" {
   // Show for ParserError via debug rendering
   debug_inspect(
-    try? parse(profile=profile_unicode(), mode=String, "\\d"),
+    Ok(parse(profile=profile_unicode(), mode=String, "\\d")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(
       #|  ParserError(
@@ -1058,7 +1132,9 @@ test "parse/parser_error_show_impl" {
 
 ///|
 test "parse/parser_error_to_string" {
-  let result = try? parse(profile=profile_unicode(), mode=String, "\\d")
+  let result = Ok(parse(profile=profile_unicode(), mode=String, "\\d")) catch {
+    e => Err(e)
+  }
   match result {
     Err(err) =>
       inspect(
@@ -1084,7 +1160,9 @@ test "parse/escaped_special_chars_in_class" {
 test "parse/error_triple_ampersand" {
   // Triple ampersand triggers set expression error
   debug_inspect(
-    try? parse(profile=profile_unicode(), mode=String, "[a&&&b]"),
+    Ok(parse(profile=profile_unicode(), mode=String, "[a&&&b]")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(ParserError(at=2, hint="Unsupported character class set expression"))
     ),
@@ -1159,7 +1237,9 @@ test "parse/nested_ignore_case" {
 test "parse/error_unmatched_paren" {
   // Extra closing paren should trigger unexpected char error
   debug_inspect(
-    try? parse(profile=profile_unicode(), mode=String, "abc)"),
+    Ok(parse(profile=profile_unicode(), mode=String, "abc)")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(ParserError(at=3, hint="Unexpected character"))
     ),
@@ -1170,7 +1250,9 @@ test "parse/error_unmatched_paren" {
 test "parse/error_empty_quantifier" {
   // Quantifier on empty pattern should trigger error
   debug_inspect(
-    try? parse(profile=profile_unicode(), mode=String, "*"),
+    Ok(parse(profile=profile_unicode(), mode=String, "*")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(ParserError(at=0, hint="Unexpected character"))
     ),
@@ -1195,7 +1277,9 @@ test "parse/unicode_brace_in_char_class" {
 test "parse/error_dDsSwW_in_char_class" {
   // \d, \D, \s, \S, \w, \W should error inside character class too
   debug_inspect(
-    try? parse(profile=profile_unicode(), mode=String, "[\\w]"),
+    Ok(parse(profile=profile_unicode(), mode=String, "[\\w]")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(
       #|  ParserError(
@@ -1226,7 +1310,9 @@ test "parse/ignore_case_quantifier" {
 test "parse/error_non_ascii_in_bytes_mode" {
   // Non-ASCII character in bytes mode should trigger CHARACTER_OUT_OF_RANGE
   debug_inspect(
-    try? parse(profile=profile_bytes(), mode=Bytes, "中"),
+    Ok(parse(profile=profile_bytes(), mode=Bytes, "中")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(ParserError(at=0, hint="Character out of range"))
     ),
@@ -1237,7 +1323,9 @@ test "parse/error_non_ascii_in_bytes_mode" {
 test "parse/error_non_ascii_in_bytes_mode_char_class" {
   // Non-ASCII character in character class in bytes mode
   debug_inspect(
-    try? parse(profile=profile_bytes(), mode=Bytes, "[中]"),
+    Ok(parse(profile=profile_bytes(), mode=Bytes, "[中]")) catch {
+      e => Err(e)
+    },
     content=(
       #|Err(ParserError(at=2, hint="Character out of range"))
     ),

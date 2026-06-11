@@ -15,9 +15,9 @@
 ///|
 test "parse error" {
   debug_inspect(
-    try? @json.parse("[1, 2, \u000c]"),
+    expect_parse_error("[1, 2, \u000c]", "expected InvalidChar"),
     content=(
-      #|Err(InvalidChar({ line: 1, column: 7 }, '\u{0c}'))
+      #|InvalidChar({ line: 1, column: 7 }, '\u{0c}')
     ),
   )
 }

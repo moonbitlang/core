@@ -14,7 +14,7 @@
 
 ///|
 test "new" {
-  let m : @hashmap.HashMap[Int, Int] = @hashmap.HashMap([])
+  let m : @hashmap.HashMap[Int, Int] = HashMap([])
   inspect(m.capacity(), content="8")
   inspect(m.length(), content="0")
 }
@@ -39,8 +39,8 @@ test "_[_]" {
   let m = @hashmap.HashMap([])
   m.set("a", 1)
   m.set("b", 2)
-  assert_eq(m["a"], 1)
-  assert_eq(m["b"], 2)
+  @test.assert_eq(m["a"], 1)
+  @test.assert_eq(m["b"], 2)
 }
 
 ///|
@@ -57,13 +57,13 @@ test "get_or_default" {
 
 ///|
 test "get_or_init" {
-  let m : @hashmap.HashMap[String, Array[Int]] = @hashmap.HashMap([])
+  let m : @hashmap.HashMap[String, Array[Int]] = HashMap([])
   m.get_or_init("a", () => Array::new()).push(1)
   m.get_or_init("b", () => Array::new()).push(2)
   m.get_or_init("a", () => Array::new()).push(3)
-  assert_eq(m.get("a"), Some([1, 3]))
-  assert_eq(m.get("b"), Some([2]))
-  assert_eq(m.length(), 2)
+  @test.assert_eq(m.get("a"), Some([1, 3]))
+  @test.assert_eq(m.get("b"), Some([2]))
+  @test.assert_eq(m.length(), 2)
 }
 
 ///|
@@ -72,48 +72,48 @@ test "get_or_init full" {
   m.get_or_init("a", () => 0) |> ignore
   m.get_or_init("b", () => 0) |> ignore
   m.get_or_init("c", () => 0) |> ignore
-  assert_eq(m.length(), 3)
+  @test.assert_eq(m.length(), 3)
 }
 
 ///|
 test "update_or_default inserts default when absent" {
-  let m : @hashmap.HashMap[String, String] = @hashmap.HashMap([])
+  let m : @hashmap.HashMap[String, String] = HashMap([])
   m.update_or_default("k", "v", x => x + "!")
   // f is NOT applied to default on first insert
-  assert_eq(m.get("k"), Some("v"))
-  assert_eq(m.length(), 1)
+  @test.assert_eq(m.get("k"), Some("v"))
+  @test.assert_eq(m.length(), 1)
 }
 
 ///|
 test "update_or_default applies f when present" {
-  let m : @hashmap.HashMap[String, String] = @hashmap.HashMap([])
+  let m : @hashmap.HashMap[String, String] = HashMap([])
   m.set("k", "v")
   // default is ignored when key is present; f is applied to the existing value
   m.update_or_default("k", "z", x => x + "!")
-  assert_eq(m.get("k"), Some("v!"))
-  assert_eq(m.length(), 1)
+  @test.assert_eq(m.get("k"), Some("v!"))
+  @test.assert_eq(m.length(), 1)
 }
 
 ///|
 test "update_or_default counter pattern" {
-  let counts : @hashmap.HashMap[String, Int] = @hashmap.HashMap([])
+  let counts : @hashmap.HashMap[String, Int] = HashMap([])
   for label in ["a", "b", "a", "c", "a", "b"] {
     counts.update_or_default(label, 1, x => x + 1)
   }
-  assert_eq(counts.get("a"), Some(3))
-  assert_eq(counts.get("b"), Some(2))
-  assert_eq(counts.get("c"), Some(1))
+  @test.assert_eq(counts.get("a"), Some(3))
+  @test.assert_eq(counts.get("b"), Some(2))
+  @test.assert_eq(counts.get("c"), Some(1))
 }
 
 ///|
 test "update_or_default triggers grow" {
-  let m : @hashmap.HashMap[Int, Int] = @hashmap.HashMap([], capacity=2)
+  let m : @hashmap.HashMap[Int, Int] = HashMap([], capacity=2)
   for i in 0..<5 {
     m.update_or_default(i, 1, x => x + 1)
   }
-  assert_eq(m.length(), 5)
+  @test.assert_eq(m.length(), 5)
   for i in 0..<5 {
-    assert_eq(m.get(i), Some(1))
+    @test.assert_eq(m.get(i), Some(1))
   }
 }
 
@@ -122,8 +122,8 @@ test "_[_]=_" {
   let m = @hashmap.HashMap([])
   m["a"] = 1
   m["b"] = 2
-  assert_eq(m.get("a"), Some(1))
-  assert_eq(m.get("b"), Some(2))
+  @test.assert_eq(m.get("a"), Some(1))
+  @test.assert_eq(m.get("b"), Some(2))
 }
 
 ///|
@@ -139,9 +139,9 @@ test "set_update" {
   let m = @hashmap.HashMap([])
   m.set("a", 1)
   m.set("b", 2)
-  assert_eq(m.get("a"), Some(1))
+  @test.assert_eq(m.get("a"), Some(1))
   m.set("a", 2)
-  assert_eq(m.get("a"), Some(2))
+  @test.assert_eq(m.get("a"), Some(2))
 }
 
 ///|
@@ -155,9 +155,9 @@ test "contains" {
 ///|
 test "from_array" {
   let m = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
-  assert_eq(m.get("a"), Some(1))
-  assert_eq(m.get("b"), Some(2))
-  assert_eq(m.get("c"), Some(3))
+  @test.assert_eq(m.get("a"), Some(1))
+  @test.assert_eq(m.get("b"), Some(2))
+  @test.assert_eq(m.get("c"), Some(3))
 }
 
 ///|
@@ -253,7 +253,7 @@ test "to_array" {
 
 ///|
 test "to_array empty" {
-  let map : @hashmap.HashMap[Int, String] = @hashmap.HashMap([])
+  let map : @hashmap.HashMap[Int, String] = HashMap([])
   debug_inspect(map.to_array(), content="[]")
 }
 
@@ -363,7 +363,7 @@ test "from_iter empty iter" {
 
 ///|
 test "@hashmap.contains/empty" {
-  let map : @hashmap.HashMap[Int, String] = @hashmap.HashMap([])
+  let map : @hashmap.HashMap[Int, String] = HashMap([])
   inspect(map.contains(42), content="false")
 }
 
@@ -387,30 +387,34 @@ test "@hashmap.contains/after_operations" {
 
 ///|
 test "@hashmap.from_array" {
-  let array = [("a", 1), ("b", 2), ("c", 3)]
+  let array : ReadOnlyArray[(String, Int)] = [("a", 1), ("b", 2), ("c", 3)]
   let map = @hashmap.from_array(array)
   for k, v in map {
-    assert_eq(map.get(k), Some(v))
+    @test.assert_eq(map.get(k), Some(v))
   }
-  assert_eq(map.length(), array.length())
+  @test.assert_eq(map.length(), array.length())
 }
 
 ///|
 test "@hashmap.from_array with int key" {
-  let array = [(1, "one"), (2, "two"), (3, "three")]
+  let array : ReadOnlyArray[(Int, String)] = [
+    (1, "one"),
+    (2, "two"),
+    (3, "three"),
+  ]
   let map = @hashmap.from_array(array)
   for k, v in map {
-    assert_eq(map.get(k), Some(v))
+    @test.assert_eq(map.get(k), Some(v))
   }
-  assert_eq(map.length(), array.length())
+  @test.assert_eq(map.length(), array.length())
 }
 
 ///|
 test "@hashmap.HashMap constructor" {
   let map = @hashmap.HashMap([("a", 1), ("b", 2), ("a", 3)])
-  assert_eq(map.length(), 2)
-  assert_eq(map.get("a"), Some(3))
-  assert_eq(map.get("b"), Some(2))
+  @test.assert_eq(map.length(), 2)
+  @test.assert_eq(map.get("a"), Some(3))
+  @test.assert_eq(map.get("b"), Some(2))
 }
 
 ///|
@@ -480,14 +484,14 @@ fn[K : Hash + Eq + Debug, V : Eq + Debug] verify_content(
       msg="Key \{@debug.to_repr(k)} with value \{@debug.to_repr(v)} not found in map \{@debug.to_repr(map)}",
     )
   }
-  assert_eq(map.length(), expected.length())
+  @test.assert_eq(map.length(), expected.length())
 }
 
 ///|
 test "hashmap.to_json" {
   let map = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
   let json : Json = { "1": "one", "2": "two", "3": "three" }
-  assert_eq(map.to_json(), json)
+  @test.assert_eq(map.to_json(), json)
 }
 
 ///|
@@ -506,7 +510,7 @@ test "@hashmap.merge" {
 
 ///|
 test "@hashmap.merge empty maps" {
-  let map1 : @hashmap.HashMap[String, Int] = @hashmap.HashMap([])
+  let map1 : @hashmap.HashMap[String, Int] = HashMap([])
   let map2 = @hashmap.from_array([("a", 1), ("b", 2)])
   let merged1 = map1.merge(map2)
   verify_content(merged1, [("a", 1), ("b", 2)])
@@ -531,7 +535,7 @@ test "@hashmap.merge_in_place" {
 
 ///|
 test "@hashmap.merge_in_place empty maps" {
-  let map1 : @hashmap.HashMap[String, Int] = @hashmap.HashMap([])
+  let map1 : @hashmap.HashMap[String, Int] = HashMap([])
   let map2 = @hashmap.from_array([("a", 1), ("b", 2)])
   map1.merge_in_place(map2)
   verify_content(map1, [("a", 1), ("b", 2)])
@@ -541,7 +545,7 @@ test "@hashmap.merge_in_place empty maps" {
 
 ///|
 test "@hashmap.merge_in_place self-aliasing should be no-op" {
-  let map : @hashmap.HashMap[String, Int] = @hashmap.HashMap([])
+  let map : @hashmap.HashMap[String, Int] = HashMap([])
   // With 4 elements: capacity=8, size=4
   // The grow condition is size >= capacity/2, i.e., 4 >= 4
   // Without fix, merge_in_place(map) calls set_with_hash which triggers grow()
@@ -549,36 +553,36 @@ test "@hashmap.merge_in_place self-aliasing should be no-op" {
     map.set(i.to_string(), i)
   }
   let cap_before = map.capacity()
-  assert_eq(cap_before, 8) // Verify initial state
-  assert_eq(map.length(), 4)
+  @test.assert_eq(cap_before, 8) // Verify initial state
+  @test.assert_eq(map.length(), 4)
   // Merging with self should be a no-op - capacity should NOT grow from 8 to 16
   map.merge_in_place(map)
-  assert_eq(map.capacity(), cap_before)
-  assert_eq(map.length(), 4)
+  @test.assert_eq(map.capacity(), cap_before)
+  @test.assert_eq(map.length(), 4)
   // Verify all entries are still correct
   for i in 0..<4 {
-    assert_eq(map.get(i.to_string()), Some(i))
+    @test.assert_eq(map.get(i.to_string()), Some(i))
   }
 }
 
 ///|
 test "@hashmap.set updating existing key should not grow" {
-  let map : @hashmap.HashMap[String, Int] = @hashmap.HashMap([])
+  let map : @hashmap.HashMap[String, Int] = HashMap([])
   // Fill to exactly at grow threshold: capacity=8, size=4
   for i in 0..<4 {
     map.set(i.to_string(), i)
   }
-  assert_eq(map.capacity(), 8)
-  assert_eq(map.length(), 4)
+  @test.assert_eq(map.capacity(), 8)
+  @test.assert_eq(map.length(), 4)
   // Update existing keys - should NOT trigger grow
   for i in 0..<4 {
     map.set(i.to_string(), i * 10)
   }
-  assert_eq(map.capacity(), 8) // Should still be 8, not 16
-  assert_eq(map.length(), 4)
+  @test.assert_eq(map.capacity(), 8) // Should still be 8, not 16
+  @test.assert_eq(map.length(), 4)
   // Verify values were updated
   for i in 0..<4 {
-    assert_eq(map.get(i.to_string()), Some(i * 10))
+    @test.assert_eq(map.get(i.to_string()), Some(i * 10))
   }
 }
 
@@ -599,22 +603,39 @@ impl Hash for Key with fn hash_combine(self, hasher) {
 
 ///|
 test "hashmap collision probe paths" {
-  let map : @hashmap.HashMap[Key, Int] = @hashmap.HashMap([])
+  let map : @hashmap.HashMap[Key, Int] = HashMap([])
   let k0 = Key::Key(0, 0)
   let k1 = Key::Key(1, 1)
   map.set(k0, 10)
   map.set(k1, 20)
-  inspect(map.get_or_default(Key::Key(2, 0), 99), content="99")
-  inspect(map.contains(Key::Key(3, 0)), content="false")
+  inspect(map.get_or_default(Key(2, 0), 99), content="99")
+  inspect(map.contains(Key(3, 0)), content="false")
 }
 
 ///|
 test "hashmap get_or_init push_away" {
-  let map : @hashmap.HashMap[Key, Int] = @hashmap.HashMap([])
-  map.set(Key::Key(1, 1), 10)
-  map.set(Key::Key(2, 2), 20)
-  inspect(map.get_or_init(Key::Key(3, 1), () => 30), content="30")
-  debug_inspect(map.get(Key::Key(3, 1)), content="Some(30)")
+  let map : @hashmap.HashMap[Key, Int] = HashMap([])
+  map.set(Key(1, 1), 10)
+  map.set(Key(2, 2), 20)
+  inspect(map.get_or_init(Key(3, 1), () => 30), content="30")
+  debug_inspect(map.get(Key(3, 1)), content="Some(30)")
+}
+
+///|
+test "hashmap grow rehashes collision cluster" {
+  let map : @hashmap.HashMap[Key, Int] = HashMap([], capacity=2)
+  for i in 0..<12 {
+    map.set(Key(i, i % 4), i * 10)
+  }
+  inspect(map.length(), content="12")
+  for i in 0..<12 {
+    @test.assert_eq(map.get(Key(i, i % 4)), Some(i * 10))
+  }
+  map.remove(Key(5, 1))
+  @test.assert_eq(map.get(Key(5, 1)), None)
+  map.set(Key(12, 0), 120)
+  @test.assert_eq(map.get(Key(12, 0)), Some(120))
+  inspect(map.length(), content="12")
 }
 
 ///|

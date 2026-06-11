@@ -19,7 +19,7 @@ struct Num {
 
 ///|
 fn num(value : Int) -> Num {
-  Num::{ value, }
+  { value, }
 }
 
 ///|

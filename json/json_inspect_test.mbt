@@ -45,10 +45,10 @@ struct Line {
 
 ///|
 test "json inspect" {
-  let p1 = { x: 0, y: 0, color: Color::Red }
-  let p2 = { x: 1, y: 2, color: Color::Green }
+  let p1 = { x: 0, y: 0, color: Red }
+  let p2 = { x: 1, y: 2, color: Green }
   @json.json_inspect(p1, content={ "x": 0, "y": 0, "color": "Red" })
-  let line = { p1, p2, color: Color::Blue }
+  let line = { p1, p2, color: Blue }
   @json.json_inspect(line, content={
     "p1": { "x": 0, "y": 0, "color": "Red" },
     "p2": { "x": 1, "y": 2, "color": "Green" },
@@ -58,16 +58,8 @@ test "json inspect" {
 
 ///|
 test "json inspect error paths" {
-  let default_result = try? @json.json_inspect(1)
-  let default_is_err = match default_result {
-    Ok(_) => false
-    Err(_) => true
-  }
-  inspect(default_is_err, content="true")
-  let mismatch_result = try? @json.json_inspect(1, content=2)
-  let mismatch_is_err = match mismatch_result {
-    Ok(_) => false
-    Err(_) => true
-  }
-  inspect(mismatch_is_err, content="true")
+  ignore(expect_error(() => @json.json_inspect(1), "expected default mismatch"))
+  ignore(
+    expect_error(() => @json.json_inspect(1, content=2), "expected mismatch"),
+  )
 }

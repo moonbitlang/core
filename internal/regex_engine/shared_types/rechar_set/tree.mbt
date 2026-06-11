@@ -22,8 +22,8 @@ priv enum Tree {
 #inline
 fn nw(tree : Tree) -> Int {
   match tree {
-    Tree::Empty => 1
-    Tree::Node(..) as n => n.w
+    Empty => 1
+    Node(..) as n => n.w
   }
 }
 
@@ -89,9 +89,9 @@ fn bal(l : Tree, lo : Rechar, hi : Rechar, r : Tree) -> Tree {
 ///|
 fn cat(l : Tree, r : Tree) -> Tree {
   match (l, r) {
-    (Tree::Empty, r) => r
-    (l, Tree::Empty) => l
-    (Tree::Node(..) as l, Tree::Node(..) as r) => {
+    (Empty, r) => r
+    (l, Empty) => l
+    (Node(..) as l, Node(..) as r) => {
       fn go(r : Tree) -> Tree {
         match r {
           Empty => panic()

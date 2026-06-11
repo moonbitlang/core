@@ -126,24 +126,19 @@ pub struct Replacer {
 } derive(@debug.Debug)
 
 ///|
-pub fn Replacer::Replacer(f : (String, Json) -> Json?) -> Replacer {
-  { f, }
-}
-
-///|
 /// Create a new Replacer with a custom function.
-/// 
+///
 /// The function receives `(key, value)` pairs and should return:
 /// - `Some(transformed_value)` to include the property
 /// - `None` to exclude the property
-/// 
+///
 /// ## Example
-/// 
+///
 /// ```mbt check
 /// test {
 ///   // Transform numbers and exclude sensitive fields
 ///   ignore(
-///     @json.Replacer::new((key, value) => {
+///     @json.Replacer((key, value) => {
 ///       match key {
 ///         "password" | "secret" => None // exclude sensitive fields
 ///         _ =>
@@ -156,7 +151,8 @@ pub fn Replacer::Replacer(f : (String, Json) -> Json?) -> Replacer {
 ///   )
 /// }
 /// ```
-pub fn Replacer::new(f : (String, Json) -> Json?) -> Replacer {
+#alias(new, deprecated="Use `Replacer()` instead")
+pub fn Replacer::Replacer(f : (String, Json) -> Json?) -> Replacer {
   { f, }
 }
 
@@ -217,7 +213,7 @@ pub fn Replacer::exclude(array : ArrayView[StringView]) -> Replacer {
 /// 
 /// ### Creating Replacers
 /// 
-/// 1. **Replacer::new(f)** - Create a custom replacer with a function `(String, Json) -> Json?`:
+/// 1. **Replacer(f)** - Create a custom replacer with a function `(String, Json) -> Json?`:
 ///    - Return `Some(value)` to include the property (possibly transformed)
 ///    - Return `None` to exclude the property
 /// 
@@ -240,7 +236,7 @@ pub fn Replacer::exclude(array : ArrayView[StringView]) -> Replacer {
 ///   ignore(json.stringify(replacer=exclude_replacer)) // {"a":1,"b":2,"c":3}
 ///
 ///   // Custom transformation
-///   let transform_replacer = @json.Replacer::new((_key, value) => {
+///   let transform_replacer = @json.Replacer((_key, value) => {
 ///     match value {
 ///       Number(n, ..) => Some(Json::number(n * 10.0)) // multiply numbers by 10
 ///       _ => Some(value) // keep other values unchanged
@@ -249,7 +245,7 @@ pub fn Replacer::exclude(array : ArrayView[StringView]) -> Replacer {
 ///   ignore(json.stringify(replacer=transform_replacer)) // {"a":10,"b":20,"c":30,"password":"secret"}
 ///
 ///   // Filter and transform
-///   let filter_replacer = @json.Replacer::new((key, value) => {
+///   let filter_replacer = @json.Replacer((key, value) => {
 ///     match key {
 ///       "password" => None // exclude password
 ///       _ =>
@@ -300,7 +296,7 @@ pub fn Json::stringify(
               buf.write_char('{')
               buf.write_string(indent_str(depth, indent))
               // After child value printed, we resume from this frame
-              stack.push(WriteFrame::Object(members.iter(), first=true))
+              stack.push(Object(members.iter(), first=true))
             }
           Array(arr) =>
             if arr.is_empty() {
@@ -309,7 +305,7 @@ pub fn Json::stringify(
               depth += 1
               buf.write_char('[')
               buf.write_string(indent_str(depth, indent))
-              stack.push(WriteFrame::Array(arr, i=0))
+              stack.push(Array(arr, i=0))
             }
           String(s) => {
             buf.write_char('\"')
@@ -331,7 +327,7 @@ pub fn Json::stringify(
         // No current node to write; try to resume a pending container
         match stack {
           [] => break
-          [.., WriteFrame::Array(arr, i~) as frame] =>
+          [.., Array(arr, i~) as frame] =>
             if i < arr.length() {
               let element = arr[i]
               frame.i = i + 1
@@ -347,7 +343,7 @@ pub fn Json::stringify(
               buf.write_char(']')
               continue None
             }
-          [.., WriteFrame::Object(iterator, first~) as frame] =>
+          [.., Object(iterator, first~) as frame] =>
             match iterator.next() {
               Some((k, v)) => {
                 let mut v2 = v
@@ -440,7 +436,7 @@ fn escape(str : String, escape_slash~ : Bool) -> String {
 ///   // Remove sensitive data and double numeric values  
 ///   ignore(
 ///     json.transform(
-///       @json.Replacer::new((key, value) => {
+///       Replacer((key, value) => {
 ///         match key {
 ///           "password" => None // exclude password fields
 ///           _ =>
@@ -505,7 +501,7 @@ pub fn json_inspect(
     Some(x) => x.stringify(escape_slash=false)
   }
   if actual != want {
-    raise InspectError::InspectError(
+    raise InspectError(
       "@EXPECT_FAILED {\"loc\": \{loc}, \"args_loc\": \{args_loc}, \"expect\": \{want.escape()}, \"actual\": \{actual.escape()}, \"mode\": \"json\"}",
     )
   }

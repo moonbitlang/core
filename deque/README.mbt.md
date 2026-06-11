@@ -11,12 +11,12 @@ Create an empty deque with `Deque([])`, or construct one from an array or iterat
 ```mbt check
 ///|
 test {
-  let dv : @deque.Deque[Int] = @deque.Deque([])
-  assert_eq(dv.is_empty(), true)
+  let dv : @deque.Deque[Int] = Deque([])
+  @test.assert_eq(dv.is_empty(), true)
   let dv2 = @deque.from_array([1, 2, 3, 4, 5])
-  assert_eq(dv2.length(), 5)
+  @test.assert_eq(dv2.length(), 5)
   let dv3 = @deque.from_iter([1, 2, 3].iter())
-  assert_eq(dv3.length(), 3)
+  @test.assert_eq(dv3.length(), 3)
 }
 ```
 
@@ -25,8 +25,8 @@ Pre-allocate capacity to avoid resizing:
 ```mbt check
 ///|
 test {
-  let dv : @deque.Deque[Int] = @deque.Deque([], capacity=1024)
-  assert_eq(dv.capacity(), 1024)
+  let dv : @deque.Deque[Int] = Deque([], capacity=1024)
+  @test.assert_eq(dv.capacity(), 1024)
 }
 ```
 
@@ -36,14 +36,14 @@ test {
 ///|
 test {
   let dv = @deque.from_array([1, 2, 3])
-  assert_eq(dv.length(), 3)
-  assert_eq(dv.is_empty(), false)
+  @test.assert_eq(dv.length(), 3)
+  @test.assert_eq(dv.is_empty(), false)
   // reserve additional capacity
   dv.reserve_capacity(100)
   inspect(dv.capacity() >= 100, content="true")
   // shrink to fit actual contents
   dv.shrink_to_fit()
-  assert_eq(dv.capacity(), 3)
+  @test.assert_eq(dv.capacity(), 3)
 }
 ```
 
@@ -55,12 +55,12 @@ Use index syntax `dv[i]` or `at()` for direct access. Use `get()` for a safe loo
 ///|
 test {
   let dv = @deque.from_array([10, 20, 30, 40, 50])
-  assert_eq(dv[0], 10)
-  assert_eq(dv[4], 50)
-  assert_eq(dv.get(2), Some(30))
-  assert_eq(dv.get(99), None)
-  assert_eq(dv.front(), Some(10))
-  assert_eq(dv.back(), Some(50))
+  @test.assert_eq(dv[0], 10)
+  @test.assert_eq(dv[4], 50)
+  @test.assert_eq(dv.get(2), Some(30))
+  @test.assert_eq(dv.get(99), None)
+  @test.assert_eq(dv.front(), Some(10))
+  @test.assert_eq(dv.back(), Some(50))
 }
 ```
 
@@ -80,8 +80,8 @@ test {
       #|<Deque: [1, 2, 3, 4]>
     ),
   )
-  assert_eq(dv.pop_front(), Some(1))
-  assert_eq(dv.pop_back(), Some(4))
+  @test.assert_eq(dv.pop_front(), Some(1))
+  @test.assert_eq(dv.pop_back(), Some(4))
   debug_inspect(
     dv,
     content=(
@@ -102,7 +102,7 @@ Mutate elements by index:
 test {
   let dv = @deque.from_array([1, 2, 3])
   dv[1] = 20
-  assert_eq(dv[1], 20)
+  @test.assert_eq(dv[1], 20)
 }
 ```
 
@@ -122,7 +122,7 @@ test {
     ),
   )
   let removed = dv.remove(0)
-  assert_eq(removed, 1)
+  @test.assert_eq(removed, 1)
   debug_inspect(
     dv,
     content=(
@@ -165,13 +165,13 @@ Linear search with `contains()` and `search()`. Binary search on sorted deques w
 ///|
 test {
   let dv = @deque.from_array([1, 2, 3, 4, 5])
-  assert_eq(dv.contains(3), true)
-  assert_eq(dv.search(3), Some(2))
+  @test.assert_eq(dv.contains(3), true)
+  @test.assert_eq(dv.search(3), Some(2))
   // binary_search returns Ok(index) if found, Err(insertion_point) if not
-  assert_eq(dv.binary_search(3), Ok(2))
-  assert_eq(dv.binary_search(6), Err(5))
+  @test.assert_eq(dv.binary_search(3), Ok(2))
+  @test.assert_eq(dv.binary_search(6), Err(5))
   // binary_search_by takes a comparison function
-  assert_eq(dv.binary_search_by(fn(x) { x.compare(3) }), Ok(2))
+  @test.assert_eq(dv.binary_search_by(fn(x) { x.compare(3) }), Ok(2))
 }
 ```
 
@@ -186,14 +186,14 @@ test {
   // each / eachi
   let buf = []
   dv.each(fn(x) { buf.push(x) })
-  assert_eq(buf, [1, 2, 3])
+  @test.assert_eq(buf, [1, 2, 3])
   let pairs = []
   dv.eachi(fn(i, x) { pairs.push((i, x)) })
-  assert_eq(pairs, [(0, 1), (1, 2), (2, 3)])
+  @test.assert_eq(pairs, [(0, 1), (1, 2), (2, 3)])
   // reverse iteration
   let rev = []
   dv.rev_each(fn(x) { rev.push(x) })
-  assert_eq(rev, [3, 2, 1])
+  @test.assert_eq(rev, [3, 2, 1])
   // iterators
   debug_inspect(dv.iter().to_array(), content="[1, 2, 3]")
   debug_inspect(dv.rev_iter().to_array(), content="[3, 2, 1]")
@@ -343,7 +343,7 @@ test {
 test {
   let dv = @deque.from_array([1, 2, 3, 4, 5])
   let shuffled = dv.shuffle(rand=fn(_n) { 0 }) // deterministic for test
-  assert_eq(shuffled.length(), 5)
+  @test.assert_eq(shuffled.length(), 5)
 }
 ```
 
@@ -363,7 +363,7 @@ test {
     ),
   )
   dv.clear()
-  assert_eq(dv.is_empty(), true)
+  @test.assert_eq(dv.is_empty(), true)
 }
 ```
 
@@ -418,7 +418,7 @@ test {
   let dv = @deque.from_array([1, 2, 3])
   let (v1, v2) = dv.as_views()
   // for a non-wrapped deque, all elements are in the first view
-  assert_eq(v1.length() + v2.length(), 3)
+  @test.assert_eq(v1.length() + v2.length(), 3)
 }
 ```
 
@@ -428,7 +428,7 @@ test {
 ///|
 test {
   let dv = @deque.from_array([1, 2, 3])
-  assert_eq(dv.to_array(), [1, 2, 3])
+  @test.assert_eq(dv.to_array(), [1, 2, 3])
 }
 ```
 
@@ -441,7 +441,7 @@ Deques support `==` (element-wise equality) and `compare()` (shortlex order).
 test {
   let a = @deque.from_array([1, 2, 3])
   let b = @deque.from_array([1, 2, 3])
-  assert_eq(a == b, true)
-  assert_eq(a.compare(@deque.from_array([1, 2, 4])) < 0, true)
+  @test.assert_eq(a == b, true)
+  @test.assert_eq(a.compare(@deque.from_array([1, 2, 4])) < 0, true)
 }
 ```

@@ -46,7 +46,7 @@ pub fn[T] ReadOnlyArray::at(self : ReadOnlyArray[T], index : Int) -> T {
 /// # Example
 /// ```mbt check
 /// test {
-///   let dynamic_array = [1, 2, 3, 4, 5]
+///   let dynamic_array : Array[Int] = [1, 2, 3, 4, 5]
 ///   let immut_array = ReadOnlyArray::from_array(dynamic_array)
 ///   inspect(immut_array[0], content="1")
 /// }
@@ -336,7 +336,7 @@ pub fn[T] ReadOnlyArray::filter(
   self : ReadOnlyArray[T],
   f : (T) -> Bool raise?,
 ) -> ReadOnlyArray[T] raise? {
-  ReadOnlyArray::from_array(self[:].filter(f)[:])
+  ReadOnlyArray::from_array(self[:].filter(f))
 }
 
 ///|
@@ -360,7 +360,7 @@ pub fn[A, B] ReadOnlyArray::filter_map(
   self : ReadOnlyArray[A],
   f : (A) -> B? raise?,
 ) -> ReadOnlyArray[B] raise? {
-  ReadOnlyArray::from_array(self[:].filter_map(f)[:])
+  ReadOnlyArray::from_array(self[:].filter_map(f))
 }
 
 ///|
@@ -534,7 +534,7 @@ pub fn[T : Compare] ReadOnlyArray::is_sorted(self : ReadOnlyArray[T]) -> Bool {
 /// ```mbt check
 /// test {
 ///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
-///   inspect(arr.starts_with([1, 2][:]), content="true")
+///   inspect(arr.starts_with([1, 2]), content="true")
 /// }
 /// ```
 pub fn[T : Eq] ReadOnlyArray::starts_with(
@@ -551,7 +551,7 @@ pub fn[T : Eq] ReadOnlyArray::starts_with(
 /// ```mbt check
 /// test {
 ///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
-///   inspect(arr.ends_with([4, 5][:]), content="true")
+///   inspect(arr.ends_with([4, 5]), content="true")
 /// }
 /// ```
 pub fn[T : Eq] ReadOnlyArray::ends_with(
@@ -571,12 +571,12 @@ pub fn[T : Eq] ReadOnlyArray::ends_with(
 /// test {
 ///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
 ///   debug_inspect(
-///     arr.strip_prefix([1, 2][:]),
+///     arr.strip_prefix([1, 2]),
 ///     content=(
 ///       #|Some(<ArrayView: [3, 4, 5]>)
 ///     ),
 ///   )
-///   debug_inspect(arr.strip_prefix([2, 3][:]), content="None")
+///   debug_inspect(arr.strip_prefix([2, 3]), content="None")
 /// }
 /// ```
 pub fn[T : Eq] ReadOnlyArray::strip_prefix(
@@ -596,12 +596,12 @@ pub fn[T : Eq] ReadOnlyArray::strip_prefix(
 /// test {
 ///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
 ///   debug_inspect(
-///     arr.strip_suffix([4, 5][:]),
+///     arr.strip_suffix([4, 5]),
 ///     content=(
 ///       #|Some(<ArrayView: [1, 2, 3]>)
 ///     ),
 ///   )
-///   debug_inspect(arr.strip_suffix([3, 4][:]), content="None")
+///   debug_inspect(arr.strip_suffix([3, 4]), content="None")
 /// }
 /// ```
 pub fn[T : Eq] ReadOnlyArray::strip_suffix(
@@ -822,7 +822,7 @@ pub fn[T : Compare] ReadOnlyArray::lexical_compare(
   self : ReadOnlyArray[T],
   other : ReadOnlyArray[T],
 ) -> Int {
-  self[:].lexical_compare(other[:])
+  self[:].lexical_compare(other)
 }
 
 ///|

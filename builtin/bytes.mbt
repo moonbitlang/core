@@ -43,7 +43,7 @@ pub fn FixedArray::unsafe_reinterpret_as_bytes(
 /// ```mbt check
 /// test {
 ///   let bytes = Bytes::makei(3, i => (i + 65).to_byte())
-///   assert_eq(bytes, b"ABC")
+///   @test.assert_eq(bytes, b"ABC")
 /// }
 /// ```
 #locals(value)
@@ -434,7 +434,7 @@ pub impl Compare for Bytes with fn compare(self, other) {
 ///
 /// ```mbt check
 /// test {
-///   let arr = [b'h', b'i']
+///   let arr : ReadOnlyArray[Byte] = [b'h', b'i']
 ///   let bytes = Bytes::from_array(arr)
 ///   inspect(
 ///     bytes,

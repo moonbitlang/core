@@ -221,6 +221,7 @@ pub fn[X, R] Iter::fold(
 /// # Returns
 ///
 /// Returns the number of elements in the iterator.
+#alias(length)
 pub fn[X] Iter::count(self : Iter[X]) -> Int {
   self.fold((acc, _) => acc + 1, init=0)
 }
@@ -869,7 +870,7 @@ pub fn[X] Iter::last(self : Iter[X]) -> X? {
 /// test {
 ///   let arr = []
 ///   [1, 2, 3].iter().intersperse(0).each(i => arr.push(i))
-///   assert_eq(arr, [1, 0, 2, 0, 3])
+///   @test.assert_eq(arr, [1, 0, 2, 0, 3])
 /// }
 /// ```
 ///

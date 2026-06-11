@@ -24,7 +24,7 @@ fn ParseContext::lex_string(ctx : ParseContext) -> String raise ParseError {
       return ctx.input.view(start_offset=string_start, end_offset=i).to_owned()
     } else if c == '\\' {
       return ctx.lex_string_slow()
-    } else if c == '\n' || c == '\r' || c.to_int() < 32 {
+    } else if c == '\n' || c == '\r' || c < ' ' {
       ctx.offset = i + 1
       ctx.invalid_char(shift=-1)
     }

@@ -15,17 +15,14 @@
 ///|
 suberror ParserError {
   ParserError(at~ : Int, hint~ : String)
-} derive(Debug)
+} derive(@debug.Debug)
 
 ///|
 pub impl Show for ParserError with fn output(self, logger) {
   match self {
-    ParserError(at~, hint~) => {
-      logger.write_string("ParserError at position ")
-      logger.write_object(at)
-      logger.write_string(": ")
-      logger.write_string(hint)
-    }
+    ParserError(at~, hint~) =>
+      logger <+
+        $|ParserError at position \{at}: \{hint}
   }
 }
 

@@ -54,13 +54,16 @@ fn check_and_consume_base(
 ///|
 test {
   assert_true(
-    (try? parse_int64("0b01", base=3)) is Err(Failure("invalid syntax")),
+    @test.expect_error(() => parse_int64("0b01", base=3))
+    is Failure("invalid syntax"),
   )
   assert_true(
-    (try? parse_int64("0x01", base=3)) is Err(Failure("invalid syntax")),
+    @test.expect_error(() => parse_int64("0x01", base=3))
+    is Failure("invalid syntax"),
   )
   assert_true(
-    (try? parse_int64("0o01", base=3)) is Err(Failure("invalid syntax")),
+    @test.expect_error(() => parse_int64("0o01", base=3))
+    is Failure("invalid syntax"),
   )
 }
 

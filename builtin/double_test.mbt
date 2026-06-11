@@ -17,9 +17,9 @@ test "hash" {
   let d1 = 123.456
   let d2 = 789.012
   let d3 = 123.456
-  assert_eq(d1.hash(), d1.reinterpret_as_int64() |> Hash::hash())
-  assert_not_eq(d1.hash(), d2.hash())
-  assert_eq(d1.hash(), d3.hash())
+  @test.assert_eq(d1.hash(), d1.reinterpret_as_int64() |> Hash::hash())
+  @test.assert_not_eq(d1.hash(), d2.hash())
+  @test.assert_eq(d1.hash(), d3.hash())
 }
 
 ///|
@@ -134,24 +134,24 @@ test "Double::from_int with additional cases" {
 
 ///|
 test "Double::from_int" {
-  assert_eq(Double::from_int(1), 1.0)
-  assert_eq(Double::from_int(0), 0.0)
-  assert_eq(Double::from_int(100000), 1.0e5)
+  @test.assert_eq(Double::from_int(1), 1.0)
+  @test.assert_eq(Double::from_int(0), 0.0)
+  @test.assert_eq(Double::from_int(100000), 1.0e5)
 }
 
 ///|
 test "Double::abs" {
   let d = -1.0
-  assert_eq(d.abs(), 1.0)
-  assert_eq(1.0.abs(), 1.0)
+  @test.assert_eq(d.abs(), 1.0)
+  @test.assert_eq(1.0.abs(), 1.0)
 }
 
 ///|
 test "Double::signum" {
   let d = -2.0
-  assert_eq(d.signum(), -1.0)
-  assert_eq(1.0.signum(), 1.0)
-  assert_eq(0.0.signum(), 0.0)
+  @test.assert_eq(d.signum(), -1.0)
+  @test.assert_eq(1.0.signum(), 1.0)
+  @test.assert_eq(0.0.signum(), 0.0)
   assert_true(@double.not_a_number.signum().is_nan())
 }
 
@@ -195,18 +195,18 @@ test "min equal to neg max" {
 
 ///|
 test "Double::min and Double::max" {
-  assert_eq(1.0.min(2.0), 1.0)
-  assert_eq(2.0.min(1.0), 1.0)
-  assert_eq(1.0.max(2.0), 2.0)
-  assert_eq(2.0.max(1.0), 2.0)
+  @test.assert_eq(1.0.min(2.0), 1.0)
+  @test.assert_eq(2.0.min(1.0), 1.0)
+  @test.assert_eq(1.0.max(2.0), 2.0)
+  @test.assert_eq(2.0.max(1.0), 2.0)
 }
 
 ///|
 test "Double::min and Double::max with NaN" {
-  assert_eq(@double.not_a_number.min(1.0), 1.0)
-  assert_eq(1.0.min(@double.not_a_number), 1.0)
-  assert_eq(@double.not_a_number.max(1.0), 1.0)
-  assert_eq(1.0.max(@double.not_a_number), 1.0)
+  @test.assert_eq(@double.not_a_number.min(1.0), 1.0)
+  @test.assert_eq(1.0.min(@double.not_a_number), 1.0)
+  @test.assert_eq(@double.not_a_number.max(1.0), 1.0)
+  @test.assert_eq(1.0.max(@double.not_a_number), 1.0)
   assert_true(@double.not_a_number.min(@double.not_a_number).is_nan())
   assert_true(@double.not_a_number.max(@double.not_a_number).is_nan())
 }

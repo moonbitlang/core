@@ -81,12 +81,8 @@ fn SourceLocRepr::parse(repr : String) -> SourceLocRepr {
 ///|
 fn SourceLocRepr::to_json_string(self : SourceLocRepr) -> String {
   let sb = StringBuilder()
-  sb.write_string("{\"filename\":")
-  self.filename.escape_to(sb)
-  sb.write_string(",\"start_line\":\{self.start_line}")
-  sb.write_string(",\"start_column\":\{self.start_column}")
-  sb.write_string(",\"end_line\":\{self.end_line}")
-  sb.write_string(",\"end_column\":\{self.end_column}}")
+  sb <+
+    $|{"filename":\{sb => self.filename.escape_to(sb)},"start_line":\{self.start_line},"start_column":\{self.start_column},"end_line":\{self.end_line},"end_column":\{self.end_column}}
   sb.to_string()
 }
 

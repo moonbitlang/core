@@ -24,7 +24,7 @@ Use `@test.assert_eq` and `@test.assert_not_eq` to compare values in tests:
 
 ```mbt check
 ///|
-struct User(Int) derive(Eq, Debug)
+struct User(Int) derive(Eq, @debug.Debug)
 
 ///|
 test "equality assertions" {
@@ -90,7 +90,7 @@ Create structured test outputs using the Test type:
 ```mbt check
 ///|
 test "test output" {
-  let t = @test.new("Example Test")
+  let t = @test.Test("Example Test")
 
   // Write output to test buffer
   t.write("Testing basic functionality: ")
@@ -112,7 +112,7 @@ Compare test outputs against saved snapshots:
 ```mbt check
 ///|
 test "snapshot testing" {
-  let t = @test.new("Snapshot Test")
+  let t = @test.Test("Snapshot Test")
 
   // Generate some output
   t.writeln("Current timestamp: 2024-01-01")

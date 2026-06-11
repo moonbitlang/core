@@ -13,6 +13,7 @@ import {
   "moonbitlang/core/deque",
   "moonbitlang/core/error",
   "moonbitlang/core/queue",
+  "moonbitlang/core/test",
 } for "test"
 
 warnings = "-alert_visibility-test_unqualified_package"

@@ -19,7 +19,7 @@ priv struct Entry[K, V] {
   hash : Int
   key : K
   mut value : V
-} derive(Debug)
+} derive(@debug.Debug)
 
 /// A mutable hash map implements with Robin Hood hashing.
 ///
@@ -35,10 +35,10 @@ priv struct Entry[K, V] {
 /// ```mbt check
 /// test {
 ///   let map = @hashmap.HashMap([(3, "three"), (8, "eight"), (1, "one")])
-///   assert_eq(map.get(2), None)
-///   assert_eq(map.get(3), Some("three"))
+///   @test.assert_eq(map.get(2), None)
+///   @test.assert_eq(map.get(3), Some("three"))
 ///   map.set(3, "updated")
-///   assert_eq(map.get(3), Some("updated"))
+///   @test.assert_eq(map.get(3), Some("updated"))
 /// }
 /// ```
 #alias(T, deprecated)

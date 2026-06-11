@@ -13,16 +13,16 @@
 // limitations under the License.
 
 ///|
-using @debug {trait Debug, type Repr}
-
-///|
-pub impl[K : Debug] Debug for HashSet[K] with fn to_repr(self) {
-  Repr::opaque_("HashSet", Repr::array([ for x in self => @debug.to_repr(x) ]))
+pub impl[K : @debug.Debug] @debug.Debug for HashSet[K] with fn to_repr(self) {
+  @debug.Repr::opaque_(
+    "HashSet",
+    @debug.Repr::array([ for x in self => @debug.to_repr(x) ]),
+  )
 }
 
 ///|
 #deprecated("use `to_repr(a)` instead", skip_current_package=true)
-pub fn[K : Debug] HashSet::to_repr(self : HashSet[K]) -> Repr {
+pub fn[K : @debug.Debug] HashSet::to_repr(self : HashSet[K]) -> @debug.Repr {
   @debug.to_repr(self)
 }
 

@@ -33,19 +33,19 @@ test "char nested" {
 
 ///|
 test "char show" {
-  assert_eq('\b'.to_string(), "\u0008")
-  assert_eq('\b'.to_string(), "\u{8}")
+  @test.assert_eq('\b'.to_string(), "\u0008")
+  @test.assert_eq('\b'.to_string(), "\u{8}")
   inspect('\b', content="\u{8}")
-  assert_eq('\r'.to_string(), "\u000d")
+  @test.assert_eq('\r'.to_string(), "\u000d")
   inspect('\r', content="\u{d}")
-  assert_eq('\n'.to_string(), "\u000a")
+  @test.assert_eq('\n'.to_string(), "\u000a")
   inspect('\n', content="\u{a}")
-  assert_eq('\t'.to_string(), "\u0009")
+  @test.assert_eq('\t'.to_string(), "\u0009")
   inspect('\t', content="\u{9}")
-  assert_eq('\u0000'.to_string(), "\u0000")
-  assert_eq('\u0001'.to_string(), "\u0001")
-  assert_eq('\u0002'.to_string(), "\u0002")
-  assert_eq('\b'.to_string().escape(), "\"\\b\"")
+  @test.assert_eq('\u0000'.to_string(), "\u0000")
+  @test.assert_eq('\u0001'.to_string(), "\u0001")
+  @test.assert_eq('\u0002'.to_string(), "\u0002")
+  @test.assert_eq('\b'.to_string().escape(), "\"\\b\"")
   inspect('中', content="中")
 }
 

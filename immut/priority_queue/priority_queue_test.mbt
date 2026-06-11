@@ -37,7 +37,7 @@ test "to_array" {
   debug_inspect(v.to_array(), content="[4, 3, 2, 1]")
   debug_inspect(v.push(0).to_array(), content="[4, 3, 2, 1, 0]")
   debug_inspect(
-    (@priority_queue.PriorityQueue([]) : @priority_queue.PriorityQueue[Int]).to_array(),
+    (PriorityQueue([]) : @priority_queue.PriorityQueue[Int]).to_array(),
     content="[]",
   )
 }
@@ -172,7 +172,7 @@ test "hash" {
   inspect(pq1.hash() == pq2.hash(), content="true")
   let pq3 = @priority_queue.from_array([5, 4, 3, 2, 1])
   inspect(pq1.hash() == pq3.hash(), content="true")
-  let pq4 : @priority_queue.PriorityQueue[Int] = @priority_queue.PriorityQueue([])
+  let pq4 : @priority_queue.PriorityQueue[Int] = PriorityQueue([])
   inspect(pq1.hash() == pq4.hash(), content="false")
   inspect(pq4.hash() == pq4.hash(), content="true")
   let pq5 = @priority_queue.from_array([1, 2, 3, 4, 6])
@@ -187,7 +187,7 @@ test "equal" {
   inspect(pq1 == pq2, content="true")
   let pq3 = @priority_queue.from_array([5, 4, 3, 2, 1])
   inspect(pq1 == pq3, content="true")
-  let pq4 : @priority_queue.PriorityQueue[Int] = @priority_queue.PriorityQueue([])
+  let pq4 : @priority_queue.PriorityQueue[Int] = PriorityQueue([])
   inspect(pq1 == pq4, content="false")
   let pq5 = @priority_queue.from_array([1, 2, 3])
   inspect(pq1 == pq5, content="false")
@@ -204,7 +204,7 @@ test "complex" {
   arr.shuffle_in_place(rand~)
   let pq = for
     i in 0..<=1000
-    pq = (@priority_queue.PriorityQueue([]) : @priority_queue.PriorityQueue[Int]) {
+    pq = (PriorityQueue([]) : @priority_queue.PriorityQueue[Int]) {
     continue pq.push(arr[i])
   } nobreak {
     pq
@@ -230,8 +230,7 @@ test "compare" {
   let pq1 = @priority_queue.from_array([1, 2, 3])
   let pq2 = @priority_queue.from_array([1, 2, 4])
   let pq3 = @priority_queue.from_array([1, 2])
-  let empty : @priority_queue.PriorityQueue[Int] = @priority_queue.PriorityQueue([],
-  )
+  let empty : @priority_queue.PriorityQueue[Int] = PriorityQueue([])
   inspect(pq1.compare(pq2), content="-1")
   inspect(pq1.compare(pq3), content="1")
   inspect(pq3.compare(pq1), content="-1")

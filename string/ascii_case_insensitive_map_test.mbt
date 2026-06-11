@@ -44,8 +44,8 @@ fn AsciiCaseInsensitiveString::new(s : String) -> AsciiCaseInsensitiveString {
 /// the same bucket.
 impl Hash for AsciiCaseInsensitiveString with fn hash_combine(self, hasher) {
   let s = self.raw
-  for i in 0..<s.length() {
-    let mut c = s.unsafe_get(i)
+  for code_unit in s.code_units() {
+    let mut c = code_unit
     // Fold ASCII 'A'..'Z' (0x41..0x5A) to 'a'..'z' (0x61..0x7A).
     if c >= ('A' : UInt16) && c <= ('Z' : UInt16) {
       c = c + (32 : UInt16)
@@ -159,6 +159,6 @@ test "AsciiCaseInsensitiveString agrees with equal_ignore_ascii_case" {
     m[key(k1)] = 1
     let map_says_same = m.contains(key(k2))
     let api_says_same = k1.equal_ignore_ascii_case(k2)
-    assert_eq(map_says_same, api_says_same)
+    @test.assert_eq(map_says_same, api_says_same)
   }
 }

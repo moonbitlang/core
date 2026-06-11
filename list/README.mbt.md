@@ -80,7 +80,7 @@ Get the number of elements in the list.
 ///|
 test {
   let list = @list.from_array([1, 2, 3, 4, 5])
-  assert_eq(list.length(), 5)
+  @test.assert_eq(list.length(), 5)
 }
 ```
 
@@ -92,7 +92,7 @@ Determine if the list is empty.
 ///|
 test {
   let empty_list : @list.List[Int] = @list.new()
-  assert_eq(empty_list.is_empty(), true)
+  @test.assert_eq(empty_list.is_empty(), true)
 }
 ```
 
@@ -187,7 +187,7 @@ test {
 ///|
 test {
   let list = @list.from_array([1, 2, 3])
-  assert_eq(list.fold(init=0, fn(acc, x) { acc + x }), 6)
+  @test.assert_eq(list.fold(init=0, fn(acc, x) { acc + x }), 6)
   let indexed = list.foldi(init="", fn(i, acc, x) {
     acc + i.to_string() + ":" + x.to_string() + " "
   })
@@ -203,10 +203,10 @@ test {
   let list = @list.from_array([1, 2, 3, 4, 5])
   assert_true(list.find(fn(x) { x > 3 }) == Some(4))
   assert_true(list.find_index(fn(x) { x == 3 }) == Some(2))
-  assert_eq(list.any(fn(x) { x > 4 }), true)
-  assert_eq(list.all(fn(x) { x > 0 }), true)
-  assert_eq(list.contains(3), true)
-  assert_eq(list.contains(9), false)
+  @test.assert_eq(list.any(fn(x) { x > 4 }), true)
+  @test.assert_eq(list.all(fn(x) { x > 0 }), true)
+  @test.assert_eq(list.contains(3), true)
+  @test.assert_eq(list.contains(9), false)
 }
 ```
 
@@ -377,8 +377,8 @@ test {
 ///|
 test {
   let list = @list.from_array([1, 2, 3, 4, 5])
-  assert_eq(list.is_prefix(@list.from_array([1, 2, 3])), true)
-  assert_eq(list.is_suffix(@list.from_array([4, 5])), true)
+  @test.assert_eq(list.is_prefix(@list.from_array([1, 2, 3])), true)
+  @test.assert_eq(list.is_suffix(@list.from_array([4, 5])), true)
 }
 ```
 
@@ -468,7 +468,7 @@ Lists with the same elements in the same order are considered equal.
 test {
   let list1 = @list.from_array([1, 2, 3])
   let list2 = @list.from_array([1, 2, 3])
-  assert_eq(list1 == list2, true)
+  @test.assert_eq(list1 == list2, true)
 }
 ```
 
@@ -490,9 +490,9 @@ fn safe_head(list : @list.List[Int]) -> Int {
 ///|
 test {
   let list = @list.from_array([1, 2, 3])
-  assert_eq(safe_head(list), 1)
+  @test.assert_eq(safe_head(list), 1)
   let empty_list : @list.List[Int] = @list.new()
-  assert_eq(safe_head(empty_list), 0)
+  @test.assert_eq(safe_head(empty_list), 0)
 }
 ```
 

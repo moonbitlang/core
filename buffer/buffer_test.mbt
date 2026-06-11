@@ -21,7 +21,7 @@ test "create buffer from bytes" {
 
 ///|
 test "create buffer from array" {
-  let arr = [b'4', b'\x00', b'5', b'\x00', b'6', b'\x00']
+  let arr : ReadOnlyArray[Byte] = [b'4', b'\x00', b'5', b'\x00', b'6', b'\x00']
   let buf = @buffer.from_array(arr)
   inspect(buf, content="456")
 }

@@ -72,7 +72,7 @@ pub fn[K : Hash + Eq] HashSet::HashSet(
 ///
 /// ```mbt check
 /// test {
-///   let set : @hashset.HashSet[String] = @hashset.HashSet([])
+///   let set : @hashset.HashSet[String] = HashSet([])
 ///   set.add("key")
 ///   inspect(set.contains("key"), content="true")
 ///   set.add("key") // no effect since it already exists
@@ -223,7 +223,7 @@ fn[K] HashSet::shift_back(self : HashSet[K], idx : Int) -> Unit {
 }
 
 ///|
-fn[K : Eq] HashSet::grow(self : HashSet[K]) -> Unit {
+fn[K] HashSet::grow(self : HashSet[K]) -> Unit {
   // handle zero capacity
   if self.capacity == 0 {
     self.capacity = default_init_capacity
@@ -234,14 +234,37 @@ fn[K : Eq] HashSet::grow(self : HashSet[K]) -> Unit {
     return
   }
   let old_entries = self.entries
-  self.entries = FixedArray::make(self.capacity * 2, None)
-  self.capacity = self.capacity * 2
-  self.capacity_mask = self.capacity - 1
+  let new_capacity = self.capacity * 2
+  self.entries = FixedArray::make(new_capacity, None)
+  self.capacity = new_capacity
+  self.capacity_mask = new_capacity - 1
   self.grow_at = calc_grow_threshold(self.capacity)
-  self.size = 0
   for entry in old_entries {
-    if entry is Some({ key, hash, .. }) {
-      self.add_with_hash(key, hash)
+    if entry is Some(entry) {
+      self.rehash_place_entry(entry)
+    }
+  }
+}
+
+///|
+fn[K] HashSet::rehash_place_entry(self : HashSet[K], entry : Entry[K]) -> Unit {
+  let hash = entry.hash
+  for psl = 0, idx = hash & self.capacity_mask {
+    match self.entries[idx] {
+      None => {
+        entry.psl = psl
+        self.set_entry(entry, idx)
+        return
+      }
+      Some(curr) =>
+        if psl > curr.psl {
+          self.push_away(idx, curr)
+          entry.psl = psl
+          self.set_entry(entry, idx)
+          return
+        } else {
+          continue psl + 1, (idx + 1) & self.capacity_mask
+        }
     }
   }
 }
@@ -249,7 +272,7 @@ fn[K : Eq] HashSet::grow(self : HashSet[K]) -> Unit {
 // Utils
 
 ///|
-#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
+#deprecated("Use @debug.Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[K : Show] Show for HashSet[K]
 
 ///|
@@ -507,7 +530,7 @@ fn[K : Show] HashSet::_debug_entries(self : HashSet[K]) -> String {
 }
 
 ///|
-priv struct MyString(String) derive(Eq, Debug)
+priv struct MyString(String) derive(Eq, @debug.Debug)
 
 ///|
 impl Hash for MyString with fn hash(self) {
@@ -629,7 +652,7 @@ test "clear" {
 ///
 /// ```mbt check
 /// test {
-///   let set : @hashset.HashSet[String] = @hashset.HashSet([])
+///   let set : @hashset.HashSet[String] = HashSet([])
 ///   inspect(set.add_and_check("key"), content="true") // First insertion
 ///   inspect(set.add_and_check("key"), content="false") // Already exists
 ///   inspect(set.length(), content="1")

@@ -25,7 +25,7 @@
 /// test {
 ///   let arr = [5, 3, 2, 4, 1]
 ///   arr.mut_view().sort_by((a, b) => a - b)
-///   assert_eq(arr, [1, 2, 3, 4, 5])
+///   @test.assert_eq(arr, [1, 2, 3, 4, 5])
 /// }
 /// ```
 pub fn[T] MutArrayView::sort_by(self : Self[T], cmp : (T, T) -> Int) -> Unit {
@@ -43,7 +43,7 @@ pub fn[T] MutArrayView::sort_by(self : Self[T], cmp : (T, T) -> Int) -> Unit {
 /// test {
 ///   let arr = [5, 4, 3, 2, 1]
 ///   arr.mut_view().sort()
-///   assert_eq(arr, [1, 2, 3, 4, 5])
+///   @test.assert_eq(arr, [1, 2, 3, 4, 5])
 /// }
 /// ```
 pub fn[T : Compare] MutArrayView::sort(self : MutArrayView[T]) -> Unit {
@@ -61,7 +61,7 @@ pub fn[T : Compare] MutArrayView::sort(self : MutArrayView[T]) -> Unit {
 /// test {
 ///   let arr : FixedArray[Int] = [5, 4, 3, 2, 1]
 ///   arr.mut_view().stable_sort()
-///   assert_eq(arr, [1, 2, 3, 4, 5])
+///   @test.assert_eq(arr, [1, 2, 3, 4, 5])
 /// }
 /// ```
 pub fn[T : Compare] MutArrayView::stable_sort(self : MutArrayView[T]) -> Unit {
@@ -79,7 +79,7 @@ pub fn[T : Compare] MutArrayView::stable_sort(self : MutArrayView[T]) -> Unit {
 /// test {
 ///   let arr = [5, 3, 2, 4, 1]
 ///   arr.mut_view().sort_by_key(x => -x)
-///   assert_eq(arr, [5, 4, 3, 2, 1])
+///   @test.assert_eq(arr, [5, 4, 3, 2, 1])
 /// }
 /// ```
 pub fn[T, K : Compare] MutArrayView::sort_by_key(
@@ -121,7 +121,7 @@ pub fn[T, K : Compare] MutArrayView::sort_by_key(
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let view = arr[1:4]
 ///   inspect(view.is_sorted(), content="true")
-///   let descending = [5, 4, 3, 2, 1]
+///   let descending : ReadOnlyArray[Int] = [5, 4, 3, 2, 1]
 ///   inspect(descending[:].is_sorted(), content="false")
 /// }
 /// ```
@@ -182,7 +182,7 @@ pub fn[T : Compare] Array::is_sorted(self : Array[T]) -> Bool {
 /// test {
 ///   let arr = [5, 4, 3, 2, 1]
 ///   arr.sort()
-///   assert_eq(arr, [1, 2, 3, 4, 5])
+///   @test.assert_eq(arr, [1, 2, 3, 4, 5])
 /// }
 /// ```
 pub fn[T : Compare] Array::sort(self : Array[T]) -> Unit {
@@ -200,7 +200,7 @@ pub fn[T : Compare] Array::sort(self : Array[T]) -> Unit {
 /// test {
 ///   let arr = [5, 3, 2, 4, 1]
 ///   arr.sort_by_key(x => -x)
-///   assert_eq(arr, [5, 4, 3, 2, 1])
+///   @test.assert_eq(arr, [5, 4, 3, 2, 1])
 /// }
 /// ```
 pub fn[T, K : Compare] Array::sort_by_key(
@@ -221,7 +221,7 @@ pub fn[T, K : Compare] Array::sort_by_key(
 /// test {
 ///   let arr = [5, 3, 2, 4, 1]
 ///   arr.sort_by((a, b) => a - b)
-///   assert_eq(arr, [1, 2, 3, 4, 5])
+///   @test.assert_eq(arr, [1, 2, 3, 4, 5])
 /// }
 /// ```
 pub fn[T] Array::sort_by(self : Array[T], cmp : (T, T) -> Int) -> Unit {
@@ -269,7 +269,7 @@ pub fn[T : Compare] FixedArray::is_sorted(arr : FixedArray[T]) -> Bool {
 /// test {
 ///   let arr : FixedArray[Int] = [5, 4, 3, 2, 1]
 ///   arr.stable_sort()
-///   assert_eq(arr, [1, 2, 3, 4, 5])
+///   @test.assert_eq(arr, [1, 2, 3, 4, 5])
 /// }
 /// ```
 pub fn[T : Compare] FixedArray::stable_sort(self : FixedArray[T]) -> Unit {
@@ -287,7 +287,7 @@ pub fn[T : Compare] FixedArray::stable_sort(self : FixedArray[T]) -> Unit {
 /// test {
 ///   let arr = [5, 3, 2, 4, 1]
 ///   arr.sort_by_key(x => -x)
-///   assert_eq(arr, [5, 4, 3, 2, 1])
+///   @test.assert_eq(arr, [5, 4, 3, 2, 1])
 /// }
 /// ```
 pub fn[T, K : Compare] FixedArray::sort_by_key(
@@ -318,7 +318,7 @@ test "FixedArray::sort_by_key/basic" {
 /// test {
 ///   let arr = [5, 3, 2, 4, 1]
 ///   arr.sort_by((a, b) => a - b)
-///   assert_eq(arr, [1, 2, 3, 4, 5])
+///   @test.assert_eq(arr, [1, 2, 3, 4, 5])
 /// }
 /// ```
 pub fn[T] FixedArray::sort_by(

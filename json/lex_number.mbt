@@ -50,6 +50,12 @@ let int_pow10_table : ReadOnlyArray[UInt64] = [
 ]
 
 ///|
+// `#valtype` keeps this struct stack-allocated on the native target.
+// `scan_json_number` builds + returns one of these on every JSON
+// number, and without the annotation each call boxes a ~32-byte heap
+// object — measured as ~50 % of total alloc bytes in the all-integer
+// json bench (300 k numbers → 9.16 MB / 300 k allocs eliminated).
+#valtype
 priv struct JsonNumberScan {
   negative : Bool
   is_integer : Bool
@@ -86,16 +92,22 @@ fn checked_mul(a : UInt64, b : UInt64) -> UInt64? {
 }
 
 ///|
-fn JsonNumberScan::try_fast_double(self : JsonNumberScan) -> Double? {
+// Returns NaN to mean "fast path didn't apply; caller should fall
+// back to strconv". The fast path itself can only produce 0 or a
+// finite Double (the `checked_mul` guard rules out infinity), so NaN
+// is a free sentinel — and dodging the `Double?` return means no
+// per-number `Some` allocation on the json_parse hot path (one less
+// ~16-byte boxed `Option<Double>` per number).
+fn JsonNumberScan::try_fast_double(self : JsonNumberScan) -> Double {
   if self.mantissa == 0UL {
     let value = 0.0
-    return Some(if self.negative { -value } else { value })
+    return if self.negative { -value } else { value }
   }
   if self.many_digits ||
     self.exponent < MIN_EXPONENT_FAST_PATH ||
     self.exponent > MAX_EXPONENT_DISGUISED_FAST_PATH ||
     self.mantissa > MAX_MANTISSA_FAST_PATH {
-    return None
+    return @double.not_a_number
   }
   let value = if self.exponent <= MAX_EXPONENT_FAST_PATH {
     let value = self.mantissa.to_double()
@@ -109,14 +121,18 @@ fn JsonNumberScan::try_fast_double(self : JsonNumberScan) -> Double? {
     let mantissa = match
       checked_mul(self.mantissa, int_pow10_table[shift.to_int()]) {
       Some(m) => m
-      None => return None
+      None => return @double.not_a_number
     }
     if mantissa > MAX_MANTISSA_FAST_PATH {
-      return None
+      return @double.not_a_number
     }
     mantissa.to_double() * json_pow10_fast_path(MAX_EXPONENT_FAST_PATH.to_int())
   }
-  Some(if self.negative { -value } else { value })
+  if self.negative {
+    -value
+  } else {
+    value
+  }
 }
 
 ///|
@@ -355,24 +371,43 @@ fn ParseContext::lex_number_end(
   // large or precision-sensitive numbers so existing rounding behavior is kept.
   let scan = ctx.scan_json_number(start, end)
   if scan.is_integer {
+    // `is_integer` is set by `scan_json_number` only when no `.` and no `e/E`
+    // are seen, so for that branch `scan.exponent` is structurally 0 and
+    // `scan.mantissa` is exactly the unsigned absolute value of the integer
+    // literal. The `scan.exponent == 0L` guard restates that invariant
+    // locally so a future relaxation of `is_integer` cannot silently make
+    // this branch return an unscaled value; in that case we just fall
+    // through to `lex_integer_end`.
+    //
+    // The mantissa <= 2^53 - 1 check (`SAFE_INTEGER_LIMIT`) keeps the
+    // returned Double lossless. `reinterpret_as_uint64` / `reinterpret_as_int64`
+    // are value-preserving here because both operands sit in [0, 2^53), well
+    // inside the overlap of Int64+ and UInt64.
+    if !scan.many_digits &&
+      scan.exponent == 0L &&
+      scan.mantissa <= SAFE_INTEGER_LIMIT.reinterpret_as_uint64() {
+      let v = scan.mantissa.reinterpret_as_int64()
+      let signed = if scan.negative { -v } else { v }
+      return (signed.to_double(), None)
+    }
     return ctx.lex_integer_end(start, end)
   }
-  match scan.try_fast_double() {
-    Some(d) => (d, None)
-    None => {
-      let s = ctx.input.view(start_offset=start, end_offset=end)
-      let parsed_double = try? @internal/strconv.parse_double(s)
-      match parsed_double {
-        // For normal values, return without string representation
-        Ok(d) => (d, None)
-        // If parsing fails as a double, treat it as infinity and preserve the string
-        Err(_) =>
-          if scan.negative {
-            (@double.neg_infinity, Some(s))
-          } else {
-            (@double.infinity, Some(s))
-          }
+  let fast = scan.try_fast_double()
+  if !fast.is_nan() {
+    return (fast, None)
+  }
+  let s = ctx.input.view(start_offset=start, end_offset=end)
+  try {
+    let d = @internal/strconv.parse_double(s)
+    // For normal values, return without string representation
+    (d, None)
+  } catch {
+    // If parsing fails as a double, treat it as infinity and preserve the string
+    _ =>
+      if scan.negative {
+        (@double.neg_infinity, Some(s))
+      } else {
+        (@double.infinity, Some(s))
       }
-    }
   }
 }

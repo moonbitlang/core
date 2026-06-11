@@ -18,7 +18,7 @@ priv struct Entry[K] {
   mut psl : Int
   hash : Int
   key : K
-} derive(Debug)
+} derive(@debug.Debug)
 
 /// A mutable hash set implements with Robin Hood hashing.
 ///
@@ -35,7 +35,7 @@ priv struct Entry[K] {
 /// test {
 ///   let set = @hashset.HashSet([(3, "three"), (8, "eight"), (1, "one")])
 ///   set.add((4, "four"))
-///   assert_eq(set.contains((4, "four")), true)
+///   @test.assert_eq(set.contains((4, "four")), true)
 /// }
 /// ```
 #alias(T, deprecated)

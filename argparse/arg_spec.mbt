@@ -84,42 +84,6 @@ pub struct FlagArg {
 
 ///|
 /// Create a flag argument.
-pub fn FlagArg::FlagArg(
-  name : StringView,
-  short? : Char,
-  long? : StringView = name,
-  about? : StringView,
-  action? : FlagAction = SetTrue,
-  env? : StringView,
-  requires? : ArrayView[String] = [],
-  conflicts_with? : ArrayView[String] = [],
-  required? : Bool = false,
-  global? : Bool = false,
-  negatable? : Bool = false,
-  hidden? : Bool = false,
-) -> FlagArg {
-  let name = name.to_owned()
-  let long = if long == "" { None } else { Some(long.to_owned()) }
-  let about = about.map(v => v.to_owned())
-  let env = env.map(v => v.to_owned())
-  {
-    arg: {
-      name,
-      about,
-      env,
-      global,
-      hidden,
-      requires: requires.to_owned(),
-      conflicts_with: conflicts_with.to_owned(),
-      required,
-      info: FlagInfo(short~, long~, action~, negatable~),
-      multiple: false,
-    },
-  }
-}
-
-///|
-/// Create a flag argument.
 ///
 /// Notes:
 /// - `long` defaults to `name`.
@@ -129,7 +93,8 @@ pub fn FlagArg::FlagArg(
 /// - `negatable=true` accepts `--no-<long>` for long flags.
 /// - If `env` is set, accepted boolean values are:
 ///   `1`, `0`, `true`, `false`, `yes`, `no`, `on`, `off`.
-pub fn FlagArg::new(
+#alias(new, deprecated="Use `FlagArg()` instead")
+pub fn FlagArg::FlagArg(
   name : StringView,
   short? : Char,
   long? : StringView = name,
@@ -172,50 +137,6 @@ pub struct OptionArg {
 
 ///|
 /// Create an option argument.
-// FIXME(upstram) rename does not work here
-pub fn OptionArg::OptionArg(
-  name : StringView,
-  short? : Char,
-  long? : StringView = name,
-  about? : StringView,
-  action? : OptionAction = Set,
-  env? : StringView,
-  default_values? : ArrayView[String],
-  allow_hyphen_values? : Bool = false,
-  requires? : ArrayView[String] = [],
-  conflicts_with? : ArrayView[String] = [],
-  required? : Bool = false,
-  global? : Bool = false,
-  hidden? : Bool = false,
-) -> OptionArg {
-  let name = name.to_owned()
-  let long = if long == "" { None } else { Some(long.to_owned()) }
-  let about = about.map(v => v.to_owned())
-  let env = env.map(v => v.to_owned())
-  {
-    arg: {
-      name,
-      about,
-      env,
-      requires: requires.to_owned(),
-      conflicts_with: conflicts_with.to_owned(),
-      required,
-      global,
-      hidden,
-      info: OptionInfo(
-        short~,
-        long~,
-        action~,
-        default_values=default_values.map(values => values.to_owned()),
-        allow_hyphen_values~,
-      ),
-      multiple: action is Append,
-    },
-  }
-}
-
-///|
-/// Create an option argument.
 ///
 /// Notes:
 /// - `long` defaults to `name`.
@@ -225,7 +146,8 @@ pub fn OptionArg::OptionArg(
 /// - `global=true` makes the option available in subcommands.
 /// - `allow_hyphen_values=true` allows values like `-1` or `--raw` to be
 ///   consumed as this option's value when parsing argv.
-pub fn OptionArg::new(
+#alias(new, deprecated="Use `OptionArg()` instead")
+pub fn OptionArg::OptionArg(
   name : StringView,
   short? : Char,
   long? : StringView = name,
@@ -274,43 +196,6 @@ pub struct PositionArg {
 
 ///|
 /// Create a positional argument.
-pub fn PositionArg::PositionArg(
-  name : StringView,
-  about? : StringView,
-  env? : StringView,
-  default_values? : ArrayView[String],
-  num_args? : ValueRange,
-  allow_hyphen_values? : Bool = false,
-  requires? : ArrayView[String] = [],
-  conflicts_with? : ArrayView[String] = [],
-  global? : Bool = false,
-  hidden? : Bool = false,
-) -> PositionArg {
-  let name = name.to_owned()
-  let about = about.map(v => v.to_owned())
-  let env = env.map(v => v.to_owned())
-  {
-    arg: {
-      name,
-      about,
-      env,
-      requires: requires.to_owned(),
-      conflicts_with: conflicts_with.to_owned(),
-      required: false,
-      global,
-      hidden,
-      info: PositionalInfo(
-        num_args~,
-        default_values=default_values.map(values => values.to_owned()),
-        allow_hyphen_values~,
-      ),
-      multiple: range_allows_multiple(num_args),
-    },
-  }
-}
-
-///|
-/// Create a positional argument.
 ///
 /// Notes:
 /// - PositionArg order follows declaration order.
@@ -321,7 +206,8 @@ pub fn PositionArg::PositionArg(
 /// - `allow_hyphen_values=true` allows leading-`-` tokens to be consumed as
 ///   positional values (unless they match a declared option).
 /// - Tokens after `--` are always treated as positional values.
-pub fn PositionArg::new(
+#alias(new, deprecated="Use `PositionArg()` instead")
+pub fn PositionArg::PositionArg(
   name : StringView,
   about? : StringView,
   env? : StringView,

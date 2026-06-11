@@ -64,7 +64,7 @@ test "UInt16 compare and conversions" {
 
 ///|
 test "UInt16 hash combine" {
-  let hasher = Hasher::new(seed=0)
+  let hasher = Hasher(seed=0)
   hasher.combine((0x00FF : UInt16))
   inspect(hasher.finalize() != 0, content="true")
 }

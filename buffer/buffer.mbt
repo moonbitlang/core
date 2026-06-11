@@ -940,11 +940,11 @@ pub fn Buffer::write_string_utf8(buf : Self, string : StringView) -> Unit {
 pub fn Buffer::write_string_utf16le(buf : Self, string : StringView) -> Unit {
   let len = string.length()
   buf.grow_if_necessary(buf.len + len * 2)
-  for i in 0..<len {
-    let j = buf.len + i * 2
-    let c = string.unsafe_get(i).to_int().reinterpret_as_uint()
+  for code_unit in string.code_units(); j = buf.len {
+    let c = code_unit.to_int().reinterpret_as_uint()
     buf.data[j] = (c & 0xff).to_byte()
     buf.data[j + 1] = (c >> 8).to_byte()
+    continue j + 2
   }
   buf.len += len * 2
 }
@@ -969,11 +969,11 @@ pub fn Buffer::write_string_utf16le(buf : Self, string : StringView) -> Unit {
 pub fn Buffer::write_string_utf16be(buf : Self, string : StringView) -> Unit {
   let len = string.length()
   buf.grow_if_necessary(buf.len + len * 2)
-  for i in 0..<len {
-    let j = buf.len + i * 2
-    let c = string.unsafe_get(i).to_int().reinterpret_as_uint()
+  for code_unit in string.code_units(); j = buf.len {
+    let c = code_unit.to_int().reinterpret_as_uint()
     buf.data[j + 1] = (c & 0xff).to_byte()
     buf.data[j] = (c >> 8).to_byte()
+    continue j + 2
   }
   buf.len += len * 2
 }

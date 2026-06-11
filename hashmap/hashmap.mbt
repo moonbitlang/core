@@ -49,7 +49,7 @@ fn capacity_for_length(length : Int) -> Int {
 ///
 /// ```mbt check
 /// test {
-///   let arr = [(1, "one"), (2, "two"), (1, "ONE")]
+///   let arr : ReadOnlyArray[(Int, String)] = [(1, "one"), (2, "two"), (1, "ONE")]
 ///   let map = @hashmap.HashMap(arr)
 ///   debug_inspect(map.get(1), content="Some(\"ONE\")")
 ///   debug_inspect(map.get(2), content="Some(\"two\")")
@@ -93,7 +93,7 @@ pub fn[K : Hash + Eq, V] HashMap::HashMap(
 ///
 /// ```mbt check
 /// test {
-///   let map : @hashmap.HashMap[String, Int] = @hashmap.HashMap([])
+///   let map : @hashmap.HashMap[String, Int] = HashMap([])
 ///   map.set("key", 42)
 ///   debug_inspect(map.get("key"), content="Some(42)")
 ///   map.set("key", 24) // update existing key
@@ -339,7 +339,7 @@ pub fn[K : Hash + Eq, V] HashMap::at(self : HashMap[K, V], key : K) -> V {
 ///
 /// ```mbt check
 /// test {
-///   let map : @hashmap.HashMap[String, Int] = @hashmap.HashMap([])
+///   let map : @hashmap.HashMap[String, Int] = HashMap([])
 ///   let value = map.get_or_init("key", () => 42)
 ///   inspect(value, content="42")
 ///   debug_inspect(map.get("key"), content="Some(42)")
@@ -411,10 +411,7 @@ pub fn[K : Hash + Eq, V] HashMap::get_or_init(
 ///
 /// ```mbt check
 /// test {
-///   let map : @hashmap.HashMap[String, Int] = @hashmap.HashMap([
-///     ("a", 1),
-///     ("b", 2),
-///   ])
+///   let map : @hashmap.HashMap[String, Int] = HashMap([("a", 1), ("b", 2)])
 ///
 ///   // Update existing value
 ///   map.update("a", fn(v) {
@@ -489,7 +486,7 @@ pub fn[K : Hash + Eq, V] HashMap::update(
 ///
 /// ```mbt check
 /// test {
-///   let counts : @hashmap.HashMap[String, Int] = @hashmap.HashMap([])
+///   let counts : @hashmap.HashMap[String, Int] = HashMap([])
 ///   counts.update_or_default("a", 1, x => x + 1)
 ///   counts.update_or_default("a", 1, x => x + 1)
 ///   counts.update_or_default("b", 1, x => x + 1)
@@ -722,16 +719,41 @@ fn[K, V] HashMap::shift_back(self : HashMap[K, V], idx : Int) -> Unit {
 }
 
 ///|
-fn[K : Eq, V] HashMap::grow(self : HashMap[K, V]) -> Unit {
+fn[K, V] HashMap::grow(self : HashMap[K, V]) -> Unit {
   let old_entries = self.entries
   let new_capacity = self.capacity << 1
   self.entries = FixedArray::make(new_capacity, None)
   self.capacity = new_capacity
   self.capacity_mask = new_capacity - 1
-  self.size = 0
   for entry in old_entries {
-    if entry is Some({ key, value, hash, .. }) {
-      self.set_with_hash(key, value, hash)
+    if entry is Some(entry) {
+      self.rehash_place_entry(entry)
+    }
+  }
+}
+
+///|
+fn[K, V] HashMap::rehash_place_entry(
+  self : HashMap[K, V],
+  entry : Entry[K, V],
+) -> Unit {
+  let hash = entry.hash
+  for psl = 0, idx = hash & self.capacity_mask {
+    match self.entries[idx] {
+      None => {
+        entry.psl = psl
+        self.entries[idx] = Some(entry)
+        return
+      }
+      Some(curr) =>
+        if psl > curr.psl {
+          self.push_away(idx, curr)
+          entry.psl = psl
+          self.entries[idx] = Some(entry)
+          return
+        } else {
+          continue psl + 1, (idx + 1) & self.capacity_mask
+        }
     }
   }
 }
@@ -911,7 +933,7 @@ pub fn[K : Eq, V] HashMap::merge_in_place(
 }
 
 ///|
-priv struct MyString(String) derive(Eq, Debug)
+priv struct MyString(String) derive(Eq, @debug.Debug)
 
 ///|
 #coverage.skip
@@ -941,7 +963,7 @@ fn[K : Hash + Eq, V : Eq] verify_content(
 ///|
 test "arbitrary" {
   let samples : Array[HashMap[String, Int]] = @quickcheck.samples(20)
-  let data = [
+  let data : ReadOnlyArray[Array[(String, Int)]] = [
     [],
     [],
     [],

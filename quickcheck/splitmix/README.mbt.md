@@ -145,8 +145,16 @@ test "deterministic testing" {
   let rng2 = @splitmix.new(seed=777UL)
 
   // Generate same sequence
-  let seq1 = [rng1.next_int(), rng1.next_int(), rng1.next_int()]
-  let seq2 = [rng2.next_int(), rng2.next_int(), rng2.next_int()]
+  let seq1 : ReadOnlyArray[Int] = [
+    rng1.next_int(),
+    rng1.next_int(),
+    rng1.next_int(),
+  ]
+  let seq2 : ReadOnlyArray[Int] = [
+    rng2.next_int(),
+    rng2.next_int(),
+    rng2.next_int(),
+  ]
   inspect(seq1[0] == seq2[0], content="true")
   inspect(seq1[1] == seq2[1], content="true")
   inspect(seq1[2] == seq2[2], content="true")

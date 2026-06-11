@@ -27,9 +27,9 @@ Create an empty vector with `new()`, or construct one from an array or iterator.
 ///|
 test {
   let v1 : @vector.Vector[Int] = @vector.new()
-  assert_eq(v1.length(), 0)
+  @test.assert_eq(v1.length(), 0)
   let v2 = @vector.from_array([1, 2, 3, 4, 5])
-  assert_eq(v2.length(), 5)
+  @test.assert_eq(v2.length(), 5)
   let v3 = @vector.from_iter((1).until(5))
   @debug.assert_eq(v3.to_array(), [1, 2, 3, 4])
 }
@@ -55,7 +55,7 @@ Use index syntax `v[i]` or `at()` for direct access. Use `get()` for a safe look
 ///|
 test {
   let v = @vector.from_array([10, 20, 30, 40, 50])
-  assert_eq(v[2], 30)
+  @test.assert_eq(v[2], 30)
   assert_true(v.get(2) == Some(30))
   assert_true(v.get(99) == None)
   assert_true(v.peek() == Some(50)) // last element
@@ -157,10 +157,10 @@ test {
 test {
   let v = @vector.from_array([1, 2, 3, 4, 5])
   // sum via fold
-  assert_eq(v.fold(fn(acc, x) { acc + x }, init=0), 15)
+  @test.assert_eq(v.fold(fn(acc, x) { acc + x }, init=0), 15)
   // reverse fold
   let result = v.rev_fold(fn(acc, x) { acc + x.to_string() }, init="")
-  assert_eq(result, "54321")
+  @test.assert_eq(result, "54321")
   // map
   @debug.assert_eq(v.map(fn(x) { x * 2 }).to_array(), [2, 4, 6, 8, 10])
 }
@@ -172,10 +172,10 @@ test {
 ///|
 test {
   let v = @vector.from_array([1, 2, 3])
-  assert_eq(v.length(), 3)
-  assert_eq(v.is_empty(), false)
+  @test.assert_eq(v.length(), 3)
+  @test.assert_eq(v.is_empty(), false)
   let empty : @vector.Vector[Int] = @vector.new()
-  assert_eq(empty.is_empty(), true)
+  @test.assert_eq(empty.is_empty(), true)
 }
 ```
 
@@ -189,8 +189,8 @@ test {
   let a = @vector.from_array([1, 2, 3])
   let b = @vector.from_array([1, 2, 3])
   let c = @vector.from_array([1, 2, 4])
-  assert_eq(a == b, true)
-  assert_eq(a == c, false)
-  assert_eq(a.compare(c) < 0, true)
+  @test.assert_eq(a == b, true)
+  @test.assert_eq(a == c, false)
+  @test.assert_eq(a.compare(c) < 0, true)
 }
 ```

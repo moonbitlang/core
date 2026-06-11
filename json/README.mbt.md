@@ -147,7 +147,7 @@ test "json path" {
     let _arr : Array[Int] = @json.from_json(([42, "not a number", 49] : Json))
     panic()
   } catch {
-    @json.JsonDecodeError((path, msg)) => {
+    JsonDecodeError((path, msg)) => {
       inspect(path, content="/1")
       inspect(msg, content="Int::from_json: expected number")
     }
@@ -209,7 +209,7 @@ test "replacer custom" {
   let json : Json = { "x": 1.0, "y": 2.0 }
   // double all number values
   let replaced = json.transform(
-    @json.Replacer::new(fn(_key, value) {
+    Replacer(fn(_key, value) {
       match value {
         Number(n, ..) => Some(Json::number(n * 2))
         other => Some(other)
@@ -232,7 +232,7 @@ test "parse errors" {
     let _ = @json.parse("{invalid")
     panic()
   } catch {
-    @json.InvalidChar(pos, _ch) =>
+    InvalidChar(pos, _ch) =>
       debug_inspect((pos.line, pos.column), content="(1, 1)")
     _ => panic()
   }
@@ -241,7 +241,7 @@ test "parse errors" {
     let _ = @json.parse("{\"a\":")
     panic()
   } catch {
-    @json.InvalidEof => ()
+    InvalidEof => ()
     _ => panic()
   }
 }

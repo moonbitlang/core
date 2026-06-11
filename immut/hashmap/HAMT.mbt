@@ -291,7 +291,7 @@ fn[K : Eq, V] Node::remove_with_path(
     Leaf(key1, value1, bucket) =>
       if key1 == key {
         match bucket {
-          @list.Empty => None
+          Empty => None
           More((key2, value2), tail~) => Some(Leaf(key2, value2, tail))
         }
       } else if bucket.find_index(kv => kv.0 == key) is Some(index) {
@@ -697,7 +697,7 @@ pub fn[K : Eq + Hash, V] HashMap::from_iter(
 }
 
 ///|
-#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
+#deprecated("Use @debug.Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[K : Show, V : Show] Show for HashMap[K, V]
 
 ///|
@@ -771,7 +771,7 @@ pub impl[K : Hash, V : Hash] Hash for HashMap[K, V] with fn hash_combine(
 ) {
   hasher.combine(
     self.fold(init=0, (acc, k, v) => {
-      let h = Hasher::new()
+      let h = Hasher()
       h.combine((k, v))
       acc ^ h.finalize()
     }),

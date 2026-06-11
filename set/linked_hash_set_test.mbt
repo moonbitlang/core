@@ -33,14 +33,14 @@ impl Hash for Key with fn hash(self) {
 
 ///|
 test "empty constructor" {
-  let m : @set.Set[Int] = @set.Set([])
+  let m : @set.Set[Int] = Set([])
   assert_eq(m.capacity(), default_init_capacity)
   assert_eq(m.length(), 0)
 }
 
 ///|
 test "constructor capacity" {
-  let empty : @set.Set[Int] = @set.Set([], capacity=16)
+  let empty : @set.Set[Int] = Set([], capacity=16)
   assert_eq(empty.capacity(), 16)
   assert_eq(empty.length(), 0)
   let below_length = @set.Set([1, 2, 3], capacity=2)
@@ -59,7 +59,7 @@ test "default" {
 
 ///|
 test "copy empty" {
-  let m : @set.Set[Int] = @set.Set([])
+  let m : @set.Set[Int] = Set([])
   let copied = m.copy()
   inspect(copied.length(), content="0")
 }
@@ -104,7 +104,7 @@ test "of" {
 
 ///|
 test "from_array" {
-  let arr = ["a", "b", "c"]
+  let arr : ReadOnlyArray[String] = ["a", "b", "c"]
   let m = @set.Set(arr)
   assert_true(m.contains("a"))
   assert_true(m.contains("b"))
@@ -146,7 +146,7 @@ test "is_disjoint detects overlap in else branch" {
 
 ///|
 test "remove stops on shorter probe" {
-  let set : @set.Set[Key] = @set.Set([])
+  let set : @set.Set[Key] = Set([])
   set.add({ id: 1, hash_value: 0 })
   set.add({ id: 2, hash_value: 1 })
   set.remove({ id: 3, hash_value: 0 })
@@ -332,7 +332,7 @@ test "remove item causes break when psl < i" {
 
 ///|
 test "to_array_empty" {
-  debug_inspect((@set.Set([]) : @set.Set[Int]).to_array(), content="[]")
+  debug_inspect((Set([]) : @set.Set[Int]).to_array(), content="[]")
 }
 
 ///|
@@ -372,8 +372,8 @@ test "equal: same sets" {
 
 ///|
 test "equal: empty sets" {
-  let set1 : @set.Set[Int] = @set.Set([])
-  let set2 : @set.Set[Int] = @set.Set([])
+  let set1 : @set.Set[Int] = Set([])
+  let set2 : @set.Set[Int] = Set([])
   inspect(set1 == set2, content="true")
 }
 
@@ -499,6 +499,24 @@ test "trigger grow" {
       #|<Set: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]>
     ),
   )
+}
+
+///|
+test "grow rehashes collision cluster in insertion order" {
+  let set : @set.Set[Key] = Set([], capacity=2)
+  for i in 0..<12 {
+    set.add({ id: i, hash_value: i % 4 })
+  }
+  inspect(set.length(), content="12")
+  for i in 0..<12 {
+    assert_true(set.contains({ id: i, hash_value: i % 4 }))
+  }
+  set.remove({ id: 5, hash_value: 1 })
+  assert_false(set.contains({ id: 5, hash_value: 1 }))
+  set.add({ id: 12, hash_value: 0 })
+  let mut ids = ""
+  set.each(key => ids += "\{key.id},")
+  inspect(ids, content="0,1,2,3,4,6,7,8,9,10,11,12,")
 }
 
 ///|

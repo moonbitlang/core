@@ -535,10 +535,10 @@ test "View::to_bytes" {
 test "impl Hash for View" {
   let b0 : Bytes = b"12345678"
   let b1 : Bytes = b"56781234"
-  assert_eq(b0[0:4].hash(), b1[4:8].hash())
-  assert_eq(b0[4:8].hash(), b1[0:4].hash())
-  assert_not_eq(b0[0:4].hash(), b1[0:4].hash())
-  assert_not_eq(b0[4:8].hash(), b1[4:8].hash())
+  @test.assert_eq(b0[0:4].hash(), b1[4:8].hash())
+  @test.assert_eq(b0[4:8].hash(), b1[0:4].hash())
+  @test.assert_not_eq(b0[0:4].hash(), b1[0:4].hash())
+  @test.assert_not_eq(b0[4:8].hash(), b1[4:8].hash())
 }
 
 ///|
@@ -550,6 +550,6 @@ test "bytes view hash invariant" {
   let bytes : Array[Bytes] = @quickcheck.samples(20)
   for b in bytes {
     let view = b[:]
-    assert_eq(view.hash(), b.hash())
+    @test.assert_eq(view.hash(), b.hash())
   }
 }

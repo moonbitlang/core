@@ -21,7 +21,9 @@ struct Test {
 
 ///|
 /// Create a new instance.
+#alias(new, deprecated="Use `Test()` instead")
 #as_free_fn
-pub fn Test::new(name : String) -> Test {
+#as_free_fn(new, deprecated="Use `Test()` instead")
+pub fn Test::Test(name : String) -> Test {
   { name, buffer: StringBuilder() }
 }

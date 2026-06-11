@@ -20,6 +20,51 @@ pub struct Regex {
 }
 
 ///|
+/// Compiles a regex pattern string into a `Regex` object.
+///
+/// The regex syntax follows MoonBit `lexmatch` regex literals.
+/// The following constructs are recognized:
+///
+/// - `.` wildcard (matches any character, including newline)
+/// - Character classes: `[abc]`, `[^abc]`, `[a-z]`, POSIX classes such as
+///   `[[:digit:]]`, `[[:alpha:]]`, `[[:space:]]`, `[[:word:]]`
+/// - Quantifiers: `*`, `+`, `?`, `{n}`, `{n,}`, `{n,m}` and non-greedy forms
+///   `*?`, `+?`, `??`, `{n}?`, `{n,}?`, `{n,m}?`
+/// - Grouping and alternation: `( ... )`, `(?: ... )` (non-capturing),
+///   `(?<name> ... )`, `a|b`
+/// - Assertions and modifiers: `^`, `$`, `\b`, `\B`, `(?i: ... )`
+///
+/// Escape sequences include `\n`, `\r`, `\t`, `\f`, `\v`, and escaped
+/// metacharacters. In `Regex::compile`, Unicode escapes are supported:
+/// `\uXXXX` and `\u{X...}`. `\xHH` is not supported in `Regex::compile`.
+///
+/// `^` and `$` are non-multiline anchors: they match only the beginning and
+/// end of the whole input, not per-line boundaries.
+///
+/// `\d`, `\D`, `\s`, `\S`, `\w`, and `\W` are not supported; use POSIX
+/// character classes instead.
+///
+/// POSIX character classes are ASCII-based.
+///
+/// In character classes, the dash `-` is used to specify ranges (e.g., `[a-z]`).
+/// To match a literal dash, it must be escaped as `\-`. Placing a dash at the
+/// start or end of a character class (e.g., `[-a]` or `[a-]`) is not supported.
+///
+/// For full grammar and semantics, see:
+/// <https://github.com/moonbitlang/lexmatch_spec>
+///
+/// Raises when `pattern` is not a valid regex pattern.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let regex = re"[[:digit:]]+"
+///   guard regex.execute("a12b") is Some(m) else { fail("Expected match") }
+///   inspect(m.content(), content="12")
+/// }
+/// ```
+#alias(new, deprecated="Use `Regex()` instead")
 pub fn Regex::Regex(pattern : StringView) -> Regex raise {
   let pat = @regex_parser.parse(
     profile=re_profile_unicode,
@@ -33,11 +78,8 @@ pub fn Regex::Regex(pattern : StringView) -> Regex raise {
 const MAX_REPEAT_QUANTIFIER = 256
 
 ///|
-using @debug {trait Debug, type Repr}
-
-///|
-pub impl Debug for Regex with fn to_repr(self) {
-  Repr::opaque_("Regex", @debug.to_repr(self.pat))
+pub impl @debug.Debug for Regex with fn to_repr(self) {
+  @debug.Repr::opaque_("Regex", @debug.to_repr(self.pat))
 }
 
 ///|
@@ -46,7 +88,7 @@ struct MatchResult {
   input : StringView
   group_names : ReadOnlyArray[String?]
   result : @re.MatchResult
-} derive(Debug)
+} derive(@debug.Debug)
 
 ///|
 /// Return match `before` view.
@@ -104,7 +146,7 @@ pub fn Regex::internal_compile_pattern(pat : Pattern) -> Regex {
 #internal(internal, "not intended for public use")
 #doc(hidden)
 pub fn Regex::internal_from_string(pat : String) -> Regex {
-  try! Regex::new(pat)
+  try! Regex(pat)
 }
 
 ///|
@@ -121,66 +163,12 @@ fn Regex::re(self : Regex) -> @re.Regex {
 }
 
 ///|
-/// Compiles a regex pattern string into a `Regex` object.
-///
-/// The regex syntax follows MoonBit `lexmatch` regex literals.
-/// The following constructs are recognized:
-///
-/// - `.` wildcard (matches any character, including newline)
-/// - Character classes: `[abc]`, `[^abc]`, `[a-z]`, POSIX classes such as
-///   `[[:digit:]]`, `[[:alpha:]]`, `[[:space:]]`, `[[:word:]]`
-/// - Quantifiers: `*`, `+`, `?`, `{n}`, `{n,}`, `{n,m}` and non-greedy forms
-///   `*?`, `+?`, `??`, `{n}?`, `{n,}?`, `{n,m}?`
-/// - Grouping and alternation: `( ... )`, `(?: ... )` (non-capturing),
-///   `(?<name> ... )`, `a|b`
-/// - Assertions and modifiers: `^`, `$`, `\b`, `\B`, `(?i: ... )`
-///
-/// Escape sequences include `\n`, `\r`, `\t`, `\f`, `\v`, and escaped
-/// metacharacters. In `Regex::compile`, Unicode escapes are supported:
-/// `\uXXXX` and `\u{X...}`. `\xHH` is not supported in `Regex::compile`.
-///
-/// `^` and `$` are non-multiline anchors: they match only the beginning and
-/// end of the whole input, not per-line boundaries.
-///
-/// `\d`, `\D`, `\s`, `\S`, `\w`, and `\W` are not supported; use POSIX
-/// character classes instead.
-///
-/// POSIX character classes are ASCII-based.
-///
-/// In character classes, the dash `-` is used to specify ranges (e.g., `[a-z]`).
-/// To match a literal dash, it must be escaped as `\-`. Placing a dash at the
-/// start or end of a character class (e.g., `[-a]` or `[a-]`) is not supported.
-///
-/// For full grammar and semantics, see:
-/// <https://github.com/moonbitlang/lexmatch_spec>
-///
-/// Raises when `pattern` is not a valid regex pattern.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let regex = @string.Regex("[[:digit:]]+")
-///   guard regex.execute("a12b") is Some(m) else { fail("Expected match") }
-///   inspect(m.content(), content="12")
-/// }
-/// ```
-pub fn Regex::new(pattern : StringView) -> Regex raise {
-  let pat = @regex_parser.parse(
-    profile=re_profile_unicode,
-    pattern,
-    mode=String,
-  )
-  { pat, re: None }
-}
-
-///|
 /// Compiles a regex pattern string into a `Regex` object, panicking on invalid patterns.
 ///
-/// This function is equivalent to `Regex::new(pattern)` but converts any compilation
+/// This function is equivalent to `Regex(pattern)` but converts any compilation
 /// error into a panic instead of raising an exception.
 ///
-/// The regex syntax follows the same rules as `Regex::new`.
+/// The regex syntax follows the same rules as `Regex`.
 ///
 /// Panics when `pattern` is not a valid regex pattern.
 ///
@@ -194,13 +182,13 @@ pub fn Regex::new(pattern : StringView) -> Regex raise {
 /// }
 /// ```
 pub fn Regex::unsafe_from_string(pattern : StringView) -> Regex {
-  try! Regex::new(pattern)
+  try! Regex(pattern)
 }
 
 ///|
 /// Builds a regex that matches `str` literally.
 ///
-/// This is equivalent to `Regex::new(Regex::escape(str))`.
+/// This is equivalent to `Regex(Regex::escape(str))`.
 ///
 /// Example:
 ///
@@ -232,15 +220,11 @@ pub fn Regex::string(str : StringView) -> Regex {
 ///
 /// ```mbt check
 /// test {
-///   let greedy = @string.Regex("[[:digit:]]").repeat(min=2, max=4)
+///   let greedy = re"[[:digit:]]".repeat(min=2, max=4)
 ///   guard greedy.execute("a12345") is Some(m1) else { fail("Expected match") }
 ///   inspect(m1.content(), content="1234")
 ///
-///   let nongreedy = @string.Regex("[[:digit:]]").repeat(
-///     min=2,
-///     max=4,
-///     greedy=false,
-///   )
+///   let nongreedy = re"[[:digit:]]".repeat(min=2, max=4, greedy=false)
 ///   guard nongreedy.execute("a12345") is Some(m2) else { fail("Expected match") }
 ///   inspect(m2.content(), content="12")
 /// }
@@ -338,7 +322,7 @@ pub impl BitOr for Regex with fn lor(self, other) -> Regex {
 ///
 /// ```mbt check
 /// test {
-///   let regex = @string.Regex("[[:digit:]]+")
+///   let regex = re"[[:digit:]]+"
 ///   let input = "a12b34"
 ///
 ///   guard regex.execute(input) is Some(first) else {
@@ -356,7 +340,7 @@ pub impl BitOr for Regex with fn lor(self, other) -> Regex {
 ///
 /// ```mbt check
 /// test {
-///   let anchored = @string.Regex("^ab$")
+///   let anchored = re"^ab$"
 ///   inspect(anchored.execute("ab", last_index=0) is Some(_), content="true")
 ///   inspect(anchored.execute("xaby", last_index=1) is Some(_), content="false")
 /// }
@@ -369,7 +353,7 @@ pub fn Regex::execute(
   match self.re().execute(input, last_index) {
     None => None
     Some(result) =>
-      Some(MatchResult::{ input, group_names: self.re().group_names(), result })
+      Some({ input, group_names: self.re().group_names(), result })
   }
 }
 
@@ -383,7 +367,7 @@ pub fn Regex::execute(
 ///
 /// ```mbt check
 /// test {
-///   let digit = @string.Regex("[[:digit:]]+").capture("number")
+///   let digit = re"[[:digit:]]+".capture("number")
 ///   let regex = @string.Regex::string("ID: ") + digit
 ///   guard regex.execute("ID: 12345") is Some(m) else { fail("Expected match") }
 ///   debug_inspect(
@@ -397,9 +381,9 @@ pub fn Regex::execute(
 ///
 /// ```mbt check
 /// test {
-///   let user = @string.Regex("[[:alpha:]]+").capture("user")
-///   let domain = @string.Regex("[[:alpha:]]+").capture("domain")
-///   let tld = @string.Regex("[[:alpha:]]+").capture("tld")
+///   let user = re"[[:alpha:]]+".capture("user")
+///   let domain = re"[[:alpha:]]+".capture("domain")
+///   let tld = re"[[:alpha:]]+".capture("tld")
 ///   let email = user +
 ///     @string.Regex::string("@") +
 ///     domain +

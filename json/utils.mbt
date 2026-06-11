@@ -14,14 +14,14 @@
 
 ///|
 fn offset_to_position(input : StringView, offset : Int) -> Position {
-  for i in 0..<offset; line = 1, column = 0 {
-    if input.unsafe_get(i) == '\n' {
+  for code_unit in input.code_units()[:offset]; line = 1, column = 0 {
+    if code_unit == '\n' {
       continue line + 1, 0
     } else {
       continue line, column + 1
     }
   } nobreak {
-    Position::{ line, column }
+    { line, column }
   }
 }
 

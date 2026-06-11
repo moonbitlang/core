@@ -36,13 +36,15 @@ struct Bench {
 ///
 /// ```mbt check
 /// test {
-///   let b = @bench.new()
+///   let b = @bench.Bench()
 ///   let json = b.dump_summaries()
 ///   inspect(json, content="[]")
 /// }
 /// ```
+#alias(new, deprecated="Use `Bench()` instead")
 #as_free_fn
-pub fn Bench::new() -> Bench {
+#as_free_fn(new, deprecated="Use `Bench()` instead")
+pub fn Bench::Bench() -> Bench {
   let buffer = StringBuilder()
   let summaries = []
   { buffer, summaries, _storage: @ref.new(()) }

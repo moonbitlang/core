@@ -162,7 +162,7 @@ fn compact_lines(lines : Array[String]) -> Array[String] {
         let joined0 = parts.join(" ")
         let joined : StringView = match joined0.strip_suffix(",") {
           Some(sv) => sv
-          None => joined0[:]
+          None => joined0
         }
 
         // Match expected style:
@@ -210,7 +210,7 @@ fn compact_lines(lines : Array[String]) -> Array[String] {
         let joined0 = parts.join(" ")
         let joined : StringView = match joined0.strip_suffix(",") {
           Some(sv) => sv
-          None => joined0[:]
+          None => joined0
         }
         ["\{first}\{joined}\{last}"]
       } else {

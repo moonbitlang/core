@@ -11,16 +11,3 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-///|
-using @re {
-  type Profile,
-  type Rechar,
-  type RecharSet,
-  type Quantifier,
-  type QuantifierMode,
-  type Pattern,
-}
-
-///|
-using @debug {trait Debug, type Repr}

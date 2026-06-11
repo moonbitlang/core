@@ -13,9 +13,6 @@
 // limitations under the License.
 
 ///|
-using @debug {trait Debug, type Repr}
-
-///|
-pub impl Debug for Rand with fn to_repr(_) {
-  Repr::opaque_("Rand", Repr::omitted())
+pub impl @debug.Debug for Rand with fn to_repr(_) {
+  @debug.Repr::opaque_("Rand", @debug.Repr::omitted())
 }

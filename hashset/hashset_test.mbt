@@ -16,11 +16,23 @@
 let default_init_capacity = 8
 
 ///|
+priv struct HashSetKey(Int, Int) derive(Eq)
+
+///|
+impl Hash for HashSetKey with fn hash(self) {
+  let HashSetKey(_, hash) = self
+  hash
+}
+
+///|
+impl Hash for HashSetKey with fn hash_combine(self, hasher) {
+  let HashSetKey(_, hash) = self
+  hasher.combine_int(hash)
+}
+
+///|
 test "new_with_capacity_then_add " {
-  let set : @hashset.HashSet[(String, String)] = @hashset.HashSet(
-    [],
-    capacity=20,
-  )
+  let set : @hashset.HashSet[(String, String)] = HashSet([], capacity=20)
   set.add(("None", "Hash"))
   debug_inspect(
     set,
@@ -40,7 +52,7 @@ test "to_array" {
 
 ///|
 test "add_and_check" {
-  let set : @hashset.HashSet[String] = @hashset.HashSet([])
+  let set : @hashset.HashSet[String] = HashSet([])
   inspect(set.add_and_check("key"), content="true") // First insertion
   inspect(set.add_and_check("key"), content="false") // Already exists
   inspect(set.length(), content="1")
@@ -77,19 +89,19 @@ test "to_json" {
   for item in data {
     assert_true(array.contains(item.to_json()))
   }
-  assert_eq(array.length(), 3)
+  @test.assert_eq(array.length(), 3)
 }
 
 ///|
 test "new" {
-  let m : @hashset.HashSet[Int] = @hashset.HashSet([])
-  assert_eq(m.capacity(), default_init_capacity)
+  let m : @hashset.HashSet[Int] = HashSet([])
+  @test.assert_eq(m.capacity(), default_init_capacity)
   inspect(m.length(), content="0")
 }
 
 ///|
 test "new with zero capacity grows on insert" {
-  let m : @hashset.HashSet[Int] = @hashset.HashSet([], capacity=0)
+  let m : @hashset.HashSet[Int] = HashSet([], capacity=0)
   m.add(1)
   assert_true(m.contains(1))
   assert_true(m.capacity() > 0)
@@ -124,7 +136,7 @@ test "of" {
 
 ///|
 test "from_array" {
-  let arr = ["a", "b", "c"]
+  let arr : ReadOnlyArray[String] = ["a", "b", "c"]
   let m = @hashset.from_array(arr)
   assert_true(m.contains("a"))
   assert_true(m.contains("b"))
@@ -327,6 +339,23 @@ test "insert_and_grow" {
 }
 
 ///|
+test "grow rehashes collision cluster" {
+  let set : @hashset.HashSet[HashSetKey] = HashSet([], capacity=2)
+  for i in 0..<12 {
+    set.add(HashSetKey(i, i % 4))
+  }
+  inspect(set.length(), content="12")
+  for i in 0..<12 {
+    assert_true(set.contains(HashSetKey(i, i % 4)))
+  }
+  set.remove(HashSetKey(5, 1))
+  assert_false(set.contains(HashSetKey(5, 1)))
+  set.add(HashSetKey(12, 0))
+  assert_true(set.contains(HashSetKey(12, 0)))
+  inspect(set.length(), content="12")
+}
+
+///|
 test "remove_and_shift_back" {
   let m = @hashset.HashSet([])
   m.add("a")
@@ -343,7 +372,7 @@ test "remove_and_shift_back" {
 ///|
 test "capacity_and_size" {
   let m = @hashset.HashSet([])
-  assert_eq(m.capacity(), default_init_capacity)
+  @test.assert_eq(m.capacity(), default_init_capacity)
   inspect(m.length(), content="0")
   m.add("a")
   inspect(m.length(), content="1")
@@ -392,7 +421,7 @@ test "from_iter empty iter" {
 ///|
 test "hashset arbitrary" {
   let samples : Array[@hashset.HashSet[Int]] = @quickcheck.samples(20)
-  let cases = [
+  let cases : ReadOnlyArray[@hashset.HashSet[Int]] = [
     @hashset.from_array([]),
     @hashset.from_array([]),
     @hashset.from_array([]),
@@ -421,7 +450,7 @@ test "hashset arbitrary" {
 
 ///|
 test "@hashset.to_array/empty" {
-  let set : @hashset.HashSet[Int] = @hashset.HashSet([])
+  let set : @hashset.HashSet[Int] = HashSet([])
   debug_inspect(set.to_array(), content="[]")
 }
 
@@ -448,7 +477,7 @@ test "@hashset.to_array/multiple" {
 test "retain/partial" {
   let set = @hashset.from_array([1, 2, 3, 4, 5, 6])
   set.retain(x => x % 2 == 0)
-  assert_eq(set.length(), 3)
+  @test.assert_eq(set.length(), 3)
   assert_true(set.contains(2))
   assert_true(set.contains(4))
   assert_true(set.contains(6))
@@ -461,7 +490,7 @@ test "retain/partial" {
 test "retain/all_removed" {
   let set = @hashset.from_array([1, 2, 3])
   set.retain(_x => false)
-  assert_eq(set.length(), 0)
+  @test.assert_eq(set.length(), 0)
   assert_true(set.is_empty())
 }
 
@@ -469,12 +498,12 @@ test "retain/all_removed" {
 test "retain/none_removed" {
   let set = @hashset.from_array([1, 2, 3])
   set.retain(_x => true)
-  assert_eq(set.length(), 3)
+  @test.assert_eq(set.length(), 3)
 }
 
 ///|
 test "retain/empty_set" {
-  let set : @hashset.HashSet[Int] = @hashset.HashSet([])
+  let set : @hashset.HashSet[Int] = HashSet([])
   set.retain(_x => true)
-  assert_eq(set.length(), 0)
+  @test.assert_eq(set.length(), 0)
 }

@@ -18,4 +18,4 @@ pub(all) enum Preference {
   Shortest
   Longest
   First
-} derive(Eq, Hash, Debug)
+} derive(Eq, Hash, @debug.Debug)

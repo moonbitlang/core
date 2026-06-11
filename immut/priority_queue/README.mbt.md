@@ -11,8 +11,7 @@ You can use `PriorityQueue([])` or `of()` to create an immutable priority queue.
 ```mbt check
 ///|
 test {
-  let _queue1 : @priority_queue.PriorityQueue[Int] = @priority_queue.PriorityQueue([],
-  )
+  let _queue1 : @priority_queue.PriorityQueue[Int] = PriorityQueue([])
   let _queue2 = @priority_queue.from_array([1, 2, 3])
 }
 ```
@@ -27,8 +26,8 @@ You can use the `length` to get the length of the immutable priority queue.
 ///|
 test {
   let pq = @priority_queue.PriorityQueue([])
-  assert_eq(pq.length(), 0)
-  assert_eq(pq.push(1).length(), 1)
+  @test.assert_eq(pq.length(), 0)
+  @test.assert_eq(pq.push(1).length(), 1)
 }
 ```
 
@@ -37,8 +36,8 @@ You can use the `is_empty` to determine whether the immutable priority queue is 
 ```mbt check
 ///|
 test {
-  let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.PriorityQueue([])
-  assert_eq(pq.is_empty(), true)
+  let pq : @priority_queue.PriorityQueue[Int] = PriorityQueue([])
+  @test.assert_eq(pq.is_empty(), true)
 }
 ```
 
@@ -62,7 +61,7 @@ You can use `push()` to add elements to the immutable priority queue and get a n
 ```mbt check
 ///|
 test {
-  let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.PriorityQueue([])
+  let pq : @priority_queue.PriorityQueue[Int] = PriorityQueue([])
   @test.assert_eq(pq.push(1).peek(), Some(1))
 }
 ```

@@ -31,7 +31,7 @@ test "remove3" {
 
 ///|
 test "remove on empty map" {
-  let map : @sorted_map.SortedMap[Int, String] = @sorted_map.SortedMap([])
+  let map : @sorted_map.SortedMap[Int, String] = SortedMap([])
   map.remove(1)
   inspect(map.length(), content="0")
 }
@@ -95,7 +95,7 @@ test "equal" {
 
 ///|
 test "is_empty" {
-  let map : @sorted_map.SortedMap[Int, String] = @sorted_map.SortedMap([])
+  let map : @sorted_map.SortedMap[Int, String] = SortedMap([])
   inspect(map.is_empty(), content="true")
   map[1] = "a"
   inspect(map.is_empty(), content="false")
@@ -295,7 +295,7 @@ test "to_json with non-empty map" {
 
 ///|
 test "to_json with empty map" {
-  let map : @sorted_map.SortedMap[Int, String] = @sorted_map.SortedMap([])
+  let map : @sorted_map.SortedMap[Int, String] = SortedMap([])
   @json.json_inspect(map.to_json(), content={})
 }
 
@@ -316,10 +316,11 @@ test "from_json" {
 ///|
 test "from_json rejects non-object" {
   let bad_json : Json = 1
-  let result : Result[@sorted_map.SortedMap[String, Int], @json.JsonDecodeError] = try? @json.from_json(
-    bad_json,
-  )
-  inspect(result is Err(_), content="true")
+  try (@json.from_json(bad_json) : @sorted_map.SortedMap[String, Int]) catch {
+    _ => ()
+  } noraise {
+    _ => fail("expected JsonDecodeError")
+  }
 }
 
 ///|
@@ -345,7 +346,7 @@ test "@sorted_map.merge" {
 
 ///|
 test "@sorted_map.merge empty maps" {
-  let map1 : @sorted_map.SortedMap[Int, String] = @sorted_map.SortedMap([])
+  let map1 : @sorted_map.SortedMap[Int, String] = SortedMap([])
   let map2 = @sorted_map.from_array([(1, "a"), (2, "b")])
   let merged1 = map1.merge(map2)
   debug_inspect(merged1.to_array(), content="[(1, \"a\"), (2, \"b\")]")
@@ -370,7 +371,7 @@ test "@sorted_map.merge_in_place" {
 
 ///|
 test "@sorted_map.merge_in_place empty maps" {
-  let map1 : @sorted_map.SortedMap[Int, String] = @sorted_map.SortedMap([])
+  let map1 : @sorted_map.SortedMap[Int, String] = SortedMap([])
   let map2 = @sorted_map.from_array([(1, "a"), (2, "b")])
   map1.merge_in_place(map2)
   debug_inspect(map1.to_array(), content="[(1, \"a\"), (2, \"b\")]")
@@ -436,7 +437,7 @@ test "update_or_default applies f when present" {
 
 ///|
 test "update_or_default counter pattern" {
-  let counts : @sorted_map.SortedMap[String, Int] = @sorted_map.SortedMap([])
+  let counts : @sorted_map.SortedMap[String, Int] = SortedMap([])
   for label in ["a", "b", "a", "c", "a", "b"] {
     counts.update_or_default(label, 1, x => x + 1)
   }
@@ -484,7 +485,7 @@ test "range with out-of-bounds keys" {
 
 ///|
 test "range on empty map" {
-  let map : @sorted_map.SortedMap[Int, String] = @sorted_map.SortedMap([])
+  let map : @sorted_map.SortedMap[Int, String] = SortedMap([])
   debug_inspect(
     map.range(1, 5).to_array(),
     content=(

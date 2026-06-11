@@ -481,11 +481,11 @@ fn Decimal::new_digits(self : Decimal, s : Int) -> Int {
   let new_digits = left_shift_cheats[s].0
   let cheat_num = left_shift_cheats[s].1
   // check if the leading digits lexicographically less than cheats num.
-  let less = for i in 0..<cheat_num.length() {
+  let less = for i, code_unit in cheat_num.code_units() {
     if i >= self.digits_num {
       break true
     }
-    let d = cheat_num.unsafe_get(i).to_int() - '0'.to_int()
+    let d = code_unit.to_int() - '0'.to_int()
     if self.digits[i].to_int() != d {
       break self.digits[i].to_int() < d
     }
@@ -663,18 +663,25 @@ test "parse decimal with underscore" {
 
 ///|
 test "parse decimal error" {
-  assert_true((try? parse_decimal_priv("1e")) is Err(Failure("invalid syntax")))
   assert_true(
-    (try? parse_decimal_priv("1e+")) is Err(Failure("invalid syntax")),
+    @test.expect_error(() => parse_decimal_priv("1e"))
+    is Failure("invalid syntax"),
   )
   assert_true(
-    (try? parse_decimal_priv("1e_")) is Err(Failure("invalid syntax")),
+    @test.expect_error(() => parse_decimal_priv("1e+"))
+    is Failure("invalid syntax"),
   )
   assert_true(
-    (try? parse_decimal_priv("1-23")) is Err(Failure("invalid syntax")),
+    @test.expect_error(() => parse_decimal_priv("1e_"))
+    is Failure("invalid syntax"),
   )
   assert_true(
-    (try? parse_decimal_priv("1.2.3")) is Err(Failure("invalid syntax")),
+    @test.expect_error(() => parse_decimal_priv("1-23"))
+    is Failure("invalid syntax"),
+  )
+  assert_true(
+    @test.expect_error(() => parse_decimal_priv("1.2.3"))
+    is Failure("invalid syntax"),
   )
 }
 
@@ -720,9 +727,15 @@ test "rounded_integer overflow when decimal_point > 20" {
 
 ///|
 test "corner cases" {
-  assert_true((try? parse_decimal_priv(".123")) is Ok(_))
-  assert_true((try? parse_decimal_priv(".")) is Err(Failure("invalid syntax")))
-  assert_true((try? parse_decimal_priv("-")) is Err(Failure("invalid syntax")))
+  let _ = parse_decimal_priv(".123")
+  assert_true(
+    @test.expect_error(() => parse_decimal_priv("."))
+    is Failure("invalid syntax"),
+  )
+  assert_true(
+    @test.expect_error(() => parse_decimal_priv("-"))
+    is Failure("invalid syntax"),
+  )
 }
 
 ///|

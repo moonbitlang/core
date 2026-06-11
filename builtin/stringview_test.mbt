@@ -66,6 +66,22 @@ test "unsafe_get" {
 }
 
 ///|
+test "StringView::code_units" {
+  let view = "ZA😀BY"[1:-1]
+  let units = view.code_units()
+  inspect(units.length(), content="4")
+  inspect(units.unsafe_get(0), content="65")
+  inspect(units.unsafe_get(1), content="55357")
+  inspect(units.unsafe_get(2), content="56832")
+  inspect(units.unsafe_get(3), content="66")
+  let mut sum = 0
+  for unit in units {
+    sum += unit.to_int()
+  }
+  inspect(sum, content="112320")
+}
+
+///|
 test "StringView core operations" {
   let view = "ab😀c".view(start_offset=1)
   inspect(view.char_length(), content="3")
@@ -198,14 +214,14 @@ test "StringView::to_string full view returns backing string unchanged" {
   let s = "hello"
   let v = s[:]
   // When the view covers the whole backing string, no copy is made.
-  assert_eq(v.to_owned(), s)
+  @test.assert_eq(v.to_owned(), s)
 }
 
 ///|
 test "StringView::to_string empty view" {
   let v = "abc"[1:1]
   inspect(v.to_owned(), content="")
-  assert_eq(v.to_owned().length(), 0)
+  @test.assert_eq(v.to_owned().length(), 0)
 }
 
 ///|
@@ -221,8 +237,8 @@ test "StringView::to_string is independent of data()" {
   // slice.
   let s = "hello world"
   let v = s[6:]
-  assert_eq(v.data(), "hello world")
-  assert_eq(v.to_owned(), "world")
+  @test.assert_eq(v.data(), "hello world")
+  @test.assert_eq(v.to_owned(), "world")
 }
 
 ///|
@@ -340,8 +356,8 @@ test "StringView Show output matches to_string" {
   ]
   for case in cases {
     let v = case[:]
-    assert_eq(via_output(v), Show::to_string(v))
-    assert_eq(via_output(v), case)
+    @test.assert_eq(via_output(v), Show::to_string(v))
+    @test.assert_eq(via_output(v), case)
   }
   // Sub-view also produces raw, unescaped contents.
   let s = "ab\"cd"
