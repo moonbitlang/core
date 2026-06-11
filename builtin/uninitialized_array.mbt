@@ -114,6 +114,84 @@ pub fn[T] UninitializedArray::unsafe_blit(
 }
 
 ///|
+/// Unsafe variant of `make` followed by `unsafe_blit`.
+#intrinsic("%fixedarray.make_with_blit")
+#owned(src)
+fn[T] UninitializedArray::unsafe_make_and_blit(
+  src : UninitializedArray[T],
+  allocate_len : Int,
+  src_offset : Int,
+  dst_offset : Int,
+  blit_len : Int,
+) -> UninitializedArray[T] {
+  let dst = UninitializedArray::make(allocate_len)
+  UninitializedArray::unsafe_blit(dst, dst_offset, src, src_offset, blit_len)
+  dst
+}
+
+///|
+/// Unsafe variant of `make` with `init` followed by `unsafe_blit`.
+#cfg(not(target="js"))
+#intrinsic("%fixedarray.make_with_init_blit")
+#owned(src, init)
+fn[T] UninitializedArray::unsafe_make_and_blit_with_init(
+  src : UninitializedArray[T],
+  allocate_len : Int,
+  init : T,
+  src_offset : Int,
+  dst_offset : Int,
+  blit_len : Int,
+) -> UninitializedArray[T] {
+  let dst = UninitializedArray::make(allocate_len)
+  dst.unchecked_fill(0, init, allocate_len)
+  UninitializedArray::unsafe_blit(dst, dst_offset, src, src_offset, blit_len)
+  dst
+}
+
+///|
+/// Checked variant of `unsafe_make_and_blit`.
+pub fn[T] UninitializedArray::make_and_blit(
+  src : UninitializedArray[T],
+  allocate_len~ : Int,
+  len~ : Int,
+  src_offset? : Int = 0,
+  dst_offset? : Int = 0,
+) -> UninitializedArray[T] {
+  guard allocate_len >= 0 &&
+    len >= 0 &&
+    src_offset >= 0 &&
+    dst_offset >= 0 &&
+    src_offset + len <= src.length() &&
+    dst_offset + len <= allocate_len else {
+    abort(
+      "bounds check failed: allocate_len = \{allocate_len}, src_offset = \{src_offset}, dst_offset = \{dst_offset}, len = \{len}, src.length = \{src.length()}",
+    )
+  }
+  UninitializedArray::unsafe_make_and_blit(
+    src, allocate_len, src_offset, dst_offset, len,
+  )
+}
+
+///|
+/// Unsafe variant of `make` followed by `unsafe_blit_fixed`.
+#cfg(not(target="js"))
+#intrinsic("%fixedarray.make_with_blit")
+#owned(src)
+fn[T] UninitializedArray::unsafe_make_and_blit_from_fixed(
+  src : FixedArray[T],
+  allocate_len : Int,
+  src_offset : Int,
+  dst_offset : Int,
+  blit_len : Int,
+) -> UninitializedArray[T] {
+  let dst = UninitializedArray::make(allocate_len)
+  UninitializedArray::unsafe_blit_fixed(
+    dst, dst_offset, src, src_offset, blit_len,
+  )
+  dst
+}
+
+///|
 test "as_view with valid_range" {
   let arr : UninitializedArray[Int] = UninitializedArray::make(5)
   let view = arr[1:4]

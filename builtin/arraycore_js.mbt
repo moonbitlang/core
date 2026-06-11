@@ -96,6 +96,58 @@ type Array[T]
 fn[T] Array::make_uninit(len : Int) -> Array[T] = "%fixedarray.make_uninit"
 
 ///|
+fn[T] Array::unsafe_make_and_blit(
+  src : UninitializedArray[T],
+  allocate_len~ : Int,
+  len~ : Int,
+  src_offset? : Int = 0,
+  dst_offset? : Int = 0,
+) -> Array[T] {
+  let dst = Array::make_uninit(allocate_len)
+  UninitializedArray::unsafe_blit(
+    dst.buffer(),
+    dst_offset,
+    src,
+    src_offset,
+    len,
+  )
+  dst
+}
+
+///|
+fn[T] Array::unsafe_make_and_blit_from_fixed(
+  src : FixedArray[T],
+  allocate_len~ : Int,
+  len~ : Int,
+  src_offset? : Int = 0,
+  dst_offset? : Int = 0,
+) -> Array[T] {
+  let dst = Array::make_uninit(allocate_len)
+  UninitializedArray::unsafe_blit_fixed(
+    dst.buffer(),
+    dst_offset,
+    src,
+    src_offset,
+    len,
+  )
+  dst
+}
+
+///|
+fn[T] Array::unsafe_resize_with_default(
+  self : Array[T],
+  new_len : Int,
+  value : T,
+) -> Unit {
+  let len = self.length()
+  guard new_len >= len
+  JSArray::ofAnyArray(self).set_length(new_len)
+  for i in len..<new_len {
+    self.unsafe_set(i, value)
+  }
+}
+
+///|
 /// Creates a new array.
 pub fn[T] Array::new(capacity? : Int = 0) -> Array[T] {
   ignore(capacity)

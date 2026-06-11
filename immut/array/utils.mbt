@@ -27,8 +27,12 @@ fn[T] immutable_set(arr : FixedArray[T], i : Int, v : T) -> FixedArray[T] {
 /// Add an element to the end of the array. This operation is O(n).
 fn[T] immutable_push(arr : FixedArray[T], val : T) -> FixedArray[T] {
   let len = arr.length()
-  let new_arr = FixedArray::make(len + 1, val)
-  arr.blit_to(new_arr, len~)
+  let new_arr = FixedArray::make_and_blit(
+    arr,
+    allocate_len=len + 1,
+    init=val,
+    len~,
+  )
   new_arr[len] = val
   new_arr
 }

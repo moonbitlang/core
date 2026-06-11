@@ -1616,9 +1616,7 @@ pub fn[T] FixedArray::copy(self : FixedArray[T]) -> FixedArray[T] {
   if len == 0 {
     []
   } else {
-    let arr = FixedArray::make(len, self[0])
-    FixedArray::unsafe_blit(arr, 0, self, 0, len)
-    arr
+    FixedArray::make_and_blit(self, allocate_len=len, init=self[0], len~)
   }
 }
 

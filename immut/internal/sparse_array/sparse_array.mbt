@@ -78,13 +78,19 @@ pub fn[X] SparseArray::add(
   let old_len = old_data.length()
   let new_len = old_len + 1
   let pos_of_new_item = self.elem_info.index_of(idx)
-  let new_data = FixedArray::make(new_len, value)
-  old_data.blit_to(new_data, len=pos_of_new_item)
-  old_data.blit_to(
+  let new_data = FixedArray::make_and_blit(
+    old_data,
+    allocate_len=new_len,
+    init=value,
+    len=pos_of_new_item,
+  )
+  new_data[pos_of_new_item] = value
+  FixedArray::unsafe_blit(
     new_data,
-    len=old_len - pos_of_new_item,
-    src_offset=pos_of_new_item,
-    dst_offset=pos_of_new_item + 1,
+    pos_of_new_item + 1,
+    old_data,
+    pos_of_new_item,
+    old_len - pos_of_new_item,
   )
   { elem_info: self.elem_info.add(idx), data: new_data }
 }
@@ -99,18 +105,18 @@ pub fn[X] SparseArray::remove(
   let old_data = self.data
   let old_len = old_data.length()
   let pos_of_removed_item = self.elem_info.index_of(idx)
-  let new_data = FixedArray::make(old_len - 1, old_data.unsafe_get(0))
-  old_data.blit_to(
-    new_data,
+  let new_data = FixedArray::make_and_blit(
+    old_data,
+    allocate_len=old_len - 1,
+    init=old_data.unsafe_get(0),
     len=pos_of_removed_item,
-    src_offset=0,
-    dst_offset=0,
   )
-  old_data.blit_to(
+  FixedArray::unsafe_blit(
     new_data,
-    len=old_len - pos_of_removed_item - 1,
-    src_offset=pos_of_removed_item + 1,
-    dst_offset=pos_of_removed_item,
+    pos_of_removed_item,
+    old_data,
+    pos_of_removed_item + 1,
+    old_len - pos_of_removed_item - 1,
   )
   { elem_info: self.elem_info.remove(idx), data: new_data }
 }
@@ -144,9 +150,7 @@ fn[A] FixedArray::copy_prefix(
   self : FixedArray[A],
   len~ : Int,
 ) -> FixedArray[A] {
-  let res = FixedArray::make(len, self[0])
-  FixedArray::unsafe_blit(res, 0, self, 0, len)
-  res
+  FixedArray::make_and_blit(self, allocate_len=len, init=self[0], len~)
 }
 
 ///|

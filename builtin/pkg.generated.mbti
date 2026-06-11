@@ -469,6 +469,7 @@ type UninitializedArray[T]
 pub fn[T] UninitializedArray::at(Self[T], Int) -> T
 pub fn[A] UninitializedArray::length(Self[A]) -> Int
 pub fn[T] UninitializedArray::make(Int) -> Self[T]
+pub fn[T] UninitializedArray::make_and_blit(Self[T], allocate_len~ : Int, len~ : Int, src_offset? : Int, dst_offset? : Int) -> Self[T]
 #alias("_[_]=_")
 pub fn[T] UninitializedArray::set(Self[T], Int, T) -> Unit
 #alias("_[_:_]")
@@ -873,6 +874,7 @@ pub fn[A] FixedArray::last(Self[A]) -> A?
 pub fn[T] FixedArray::length(Self[T]) -> Int
 pub fn[T : Compare] FixedArray::lexical_compare(Self[T], Self[T]) -> Int
 pub fn[T] FixedArray::make(Int, T) -> Self[T]
+pub fn[T] FixedArray::make_and_blit(Self[T], allocate_len~ : Int, init~ : T, len~ : Int, src_offset? : Int, dst_offset? : Int) -> Self[T]
 pub fn[T] FixedArray::makei(Int, (Int) -> T raise?) -> Self[T] raise?
 pub fn[T, U] FixedArray::map(Self[T], (T) -> U raise?) -> Self[U] raise?
 pub fn[T, U] FixedArray::mapi(Self[T], (Int, T) -> U raise?) -> Self[U] raise?

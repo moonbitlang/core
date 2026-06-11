@@ -119,8 +119,7 @@ pub impl[A : Hash] Hash for Deque[A] with fn hash_combine(self, hasher) {
 /// ```
 pub impl[A] Add for Deque[A] with fn add(self, other) {
   let len = self.len + other.len
-  let buf = UninitializedArray::make(len)
-  self.unsafe_blit_to(buf, 0)
+  let buf = self.unsafe_make_and_blit_to(len, 0)
   other.unsafe_blit_to(buf, self.len)
   { buf, len, head: 0 }
 }
@@ -214,8 +213,7 @@ test "from_array_empty" {
 #alias(clone, deprecated)
 pub fn[A] Deque::copy(self : Deque[A]) -> Deque[A] {
   let len = self.len
-  let buf = UninitializedArray::make(len)
-  self.unsafe_blit_to(buf, 0)
+  let buf = self.unsafe_make_and_blit_to(len, 0)
   { buf, len, head: 0 }
 }
 
@@ -579,8 +577,7 @@ pub fn[A] Deque::capacity(self : Deque[A]) -> Int {
 fn[A] Deque::realloc(self : Deque[A]) -> Unit {
   let old_cap = self.buf.length()
   let new_cap = if old_cap == 0 { 8 } else { old_cap * 2 }
-  let new_buf = UninitializedArray::make(new_cap)
-  self.unsafe_blit_to(new_buf, 0)
+  let new_buf = self.unsafe_make_and_blit_to(new_cap, 0)
   self.head = 0
   self.buf = new_buf
 }
@@ -909,6 +906,30 @@ fn[A] Deque::unsafe_blit_to(
     back.start_offset(),
     back.length(),
   )
+}
+
+///|
+fn[A] Deque::unsafe_make_and_blit_to(
+  self : Deque[A],
+  allocate_len : Int,
+  dst_offset : Int,
+) -> UninitializedArray[A] {
+  guard self.len != 0 else { return UninitializedArray::make(allocate_len) }
+  let (front, back) = self.as_views()
+  let dst = UninitializedArray::make_and_blit(
+    self.buf,
+    allocate_len~,
+    src_offset=front.start_offset(),
+    dst_offset~,
+    len=front.length(),
+  )
+  dst.unsafe_blit(
+    dst_offset + front.length(),
+    self.buf,
+    back.start_offset(),
+    back.length(),
+  )
+  dst
 }
 
 ///|
@@ -1286,14 +1307,9 @@ pub fn[A] Deque::reserve_capacity(self : Deque[A], capacity : Int) -> Unit {
   if self.capacity() >= capacity {
     return
   }
-  let new_buf : UninitializedArray[A] = UninitializedArray::make(capacity)
-  let { buf, len, head } = self
+  let new_buf = self.unsafe_make_and_blit_to(capacity, 0)
   self.buf = new_buf
   self.head = 0
-  for i in 0..<len {
-    let idx = (head + i) % buf.length()
-    self.buf[i] = buf[idx]
-  }
 }
 
 ///|
@@ -1316,13 +1332,9 @@ pub fn[A] Deque::shrink_to_fit(self : Deque[A]) -> Unit {
   if self.capacity() <= self.length() {
     return
   }
-  let { buf, len, head } = self
-  self.buf = UninitializedArray::make(len)
+  let new_buf = self.unsafe_make_and_blit_to(self.len, 0)
+  self.buf = new_buf
   self.head = 0
-  for i in 0..<len {
-    let idx = (head + i) % buf.length()
-    self.buf[i] = buf[idx]
-  }
 }
 
 ///|

@@ -58,8 +58,12 @@ fn StringBuilder::grow_if_necessary(
   } nobreak {
     enough_space
   }
-  let new_data = FixedArray::make(enough_space, UInt16::default())
-  new_data.unsafe_blit(0, self.data, 0, self.len)
+  let new_data = FixedArray::make_and_blit(
+    self.data,
+    allocate_len=enough_space,
+    init=UInt16::default(),
+    len=self.len,
+  )
   self.data = new_data
 }
 
@@ -145,8 +149,12 @@ pub fn StringBuilder::to_string(self : StringBuilder) -> String {
   if self.len == self.data.length() {
     unsafe_fixedarray_uint16_to_string(self.data)
   } else {
-    let data = FixedArray::make(self.len, UInt16::default())
-    data.unsafe_blit(0, self.data, 0, self.len)
+    let data = FixedArray::make_and_blit(
+      self.data,
+      allocate_len=self.len,
+      init=UInt16::default(),
+      len=self.len,
+    )
     unsafe_fixedarray_uint16_to_string(data)
   }
 }
