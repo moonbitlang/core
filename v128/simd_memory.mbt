@@ -145,128 +145,146 @@ pub fn i8x16_shuffle(
 
 ///|
 #intrinsic("%v128.v128_load")
+#borrow(bytes)
 pub fn v128_load(bytes : FixedArray[Byte], offset : Int) -> V128 {
   make(load_u64_le(bytes, offset), load_u64_le(bytes, offset + 8))
 }
 
 ///|
 #intrinsic("%v128.v128_load8x8_s")
+#borrow(bytes)
 pub fn v128_load8x8_s(bytes : FixedArray[Byte], offset : Int) -> V128 {
   pack_u16x8_by(i => i8_extend_s(bytes.unsafe_get(offset + i)))
 }
 
 ///|
 #intrinsic("%v128.v128_load8x8_u")
+#borrow(bytes)
 pub fn v128_load8x8_u(bytes : FixedArray[Byte], offset : Int) -> V128 {
   pack_u16x8_by(i => bytes.unsafe_get(offset + i).to_uint16())
 }
 
 ///|
 #intrinsic("%v128.v128_load16x4_s")
+#borrow(bytes)
 pub fn v128_load16x4_s(bytes : FixedArray[Byte], offset : Int) -> V128 {
   pack_u32x4_by(i => i16_extend_s(load_u16_le(bytes, offset + i * 2)))
 }
 
 ///|
 #intrinsic("%v128.v128_load16x4_u")
+#borrow(bytes)
 pub fn v128_load16x4_u(bytes : FixedArray[Byte], offset : Int) -> V128 {
   pack_u32x4_by(i => load_u16_le(bytes, offset + i * 2).to_uint())
 }
 
 ///|
 #intrinsic("%v128.v128_load32x2_s")
+#borrow(bytes)
 pub fn v128_load32x2_s(bytes : FixedArray[Byte], offset : Int) -> V128 {
   pack_u64x2_by(i => i32_extend_s(load_u32_le(bytes, offset + i * 4)))
 }
 
 ///|
 #intrinsic("%v128.v128_load32x2_u")
+#borrow(bytes)
 pub fn v128_load32x2_u(bytes : FixedArray[Byte], offset : Int) -> V128 {
   pack_u64x2_by(i => load_u32_le(bytes, offset + i * 4).to_uint64())
 }
 
 ///|
 #intrinsic("%v128.v128_load8_splat")
+#borrow(bytes)
 pub fn v128_load8_splat(bytes : FixedArray[Byte], offset : Int) -> V128 {
   i8x16_splat(bytes.unsafe_get(offset))
 }
 
 ///|
 #intrinsic("%v128.v128_load16_splat")
+#borrow(bytes)
 pub fn v128_load16_splat(bytes : FixedArray[Byte], offset : Int) -> V128 {
   i16x8_splat(load_u16_le(bytes, offset))
 }
 
 ///|
 #intrinsic("%v128.v128_load32_splat")
+#borrow(bytes)
 pub fn v128_load32_splat(bytes : FixedArray[Byte], offset : Int) -> V128 {
   i32x4_splat(load_u32_le(bytes, offset))
 }
 
 ///|
 #intrinsic("%v128.v128_load64_splat")
+#borrow(bytes)
 pub fn v128_load64_splat(bytes : FixedArray[Byte], offset : Int) -> V128 {
   i64x2_splat(load_u64_le(bytes, offset))
 }
 
 ///|
 #intrinsic("%v128.v128_load32_zero")
+#borrow(bytes)
 pub fn v128_load32_zero(bytes : FixedArray[Byte], offset : Int) -> V128 {
   i32x4_const(load_u32_le(bytes, offset), 0, 0, 0)
 }
 
 ///|
 #intrinsic("%v128.v128_load64_zero")
+#borrow(bytes)
 pub fn v128_load64_zero(bytes : FixedArray[Byte], offset : Int) -> V128 {
   make(load_u64_le(bytes, offset), 0UL)
 }
 
 ///|
 #intrinsic("%v128.v128_load8_lane")
+#borrow(bytes)
 pub fn v128_load8_lane(
   bytes : FixedArray[Byte],
   offset : Int,
   value : V128,
   lane : Int,
 ) -> V128 {
-  i8x16_replace_lane(value, lane, bytes.unsafe_get(offset).to_uint())
+  i8x16_replace_lane(value, bytes.unsafe_get(offset).to_uint(), lane)
 }
 
 ///|
 #intrinsic("%v128.v128_load16_lane")
+#borrow(bytes)
 pub fn v128_load16_lane(
   bytes : FixedArray[Byte],
   offset : Int,
   value : V128,
   lane : Int,
 ) -> V128 {
-  i16x8_replace_lane(value, lane, load_u16_le(bytes, offset).to_uint())
+  i16x8_replace_lane(value, load_u16_le(bytes, offset).to_uint(), lane)
 }
 
 ///|
 #intrinsic("%v128.v128_load32_lane")
+#borrow(bytes)
 pub fn v128_load32_lane(
   bytes : FixedArray[Byte],
   offset : Int,
   value : V128,
   lane : Int,
 ) -> V128 {
-  i32x4_replace_lane(value, lane, load_u32_le(bytes, offset))
+  i32x4_replace_lane(value, load_u32_le(bytes, offset), lane)
 }
 
 ///|
 #intrinsic("%v128.v128_load64_lane")
+#borrow(bytes)
 pub fn v128_load64_lane(
   bytes : FixedArray[Byte],
   offset : Int,
   value : V128,
   lane : Int,
 ) -> V128 {
-  i64x2_replace_lane(value, lane, load_u64_le(bytes, offset))
+  i64x2_replace_lane(value, load_u64_le(bytes, offset), lane)
 }
 
 ///|
 #intrinsic("%v128.v128_store")
+#borrow(bytes)
 pub fn v128_store(bytes : FixedArray[Byte], offset : Int, value : V128) -> Unit {
   store_u64_le(bytes, offset, lo(value))
   store_u64_le(bytes, offset + 8, hi(value))
@@ -274,6 +292,7 @@ pub fn v128_store(bytes : FixedArray[Byte], offset : Int, value : V128) -> Unit 
 
 ///|
 #intrinsic("%v128.v128_store8_lane")
+#borrow(bytes)
 pub fn v128_store8_lane(
   bytes : FixedArray[Byte],
   offset : Int,
@@ -285,6 +304,7 @@ pub fn v128_store8_lane(
 
 ///|
 #intrinsic("%v128.v128_store16_lane")
+#borrow(bytes)
 pub fn v128_store16_lane(
   bytes : FixedArray[Byte],
   offset : Int,
@@ -296,6 +316,7 @@ pub fn v128_store16_lane(
 
 ///|
 #intrinsic("%v128.v128_store32_lane")
+#borrow(bytes)
 pub fn v128_store32_lane(
   bytes : FixedArray[Byte],
   offset : Int,
@@ -307,6 +328,7 @@ pub fn v128_store32_lane(
 
 ///|
 #intrinsic("%v128.v128_store64_lane")
+#borrow(bytes)
 pub fn v128_store64_lane(
   bytes : FixedArray[Byte],
   offset : Int,

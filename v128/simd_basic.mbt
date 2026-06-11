@@ -239,7 +239,7 @@ pub fn f64x2_extract_lane(value : V128, lane : Int) -> Double {
 
 ///|
 #intrinsic("%v128.i8x16_replace_lane")
-pub fn i8x16_replace_lane(value : V128, lane : Int, replacement : UInt) -> V128 {
+pub fn i8x16_replace_lane(value : V128, replacement : UInt, lane : Int) -> V128 {
   pack_u8x16_by(i => {
     if i == lane {
       replacement.to_byte()
@@ -251,7 +251,7 @@ pub fn i8x16_replace_lane(value : V128, lane : Int, replacement : UInt) -> V128 
 
 ///|
 #intrinsic("%v128.i16x8_replace_lane")
-pub fn i16x8_replace_lane(value : V128, lane : Int, replacement : UInt) -> V128 {
+pub fn i16x8_replace_lane(value : V128, replacement : UInt, lane : Int) -> V128 {
   pack_u16x8_by(i => {
     if i == lane {
       replacement.to_uint16()
@@ -263,7 +263,7 @@ pub fn i16x8_replace_lane(value : V128, lane : Int, replacement : UInt) -> V128 
 
 ///|
 #intrinsic("%v128.i32x4_replace_lane")
-pub fn i32x4_replace_lane(value : V128, lane : Int, replacement : UInt) -> V128 {
+pub fn i32x4_replace_lane(value : V128, replacement : UInt, lane : Int) -> V128 {
   pack_u32x4_by(i => if i == lane { replacement } else { u32_lane(value, i) })
 }
 
@@ -271,8 +271,8 @@ pub fn i32x4_replace_lane(value : V128, lane : Int, replacement : UInt) -> V128 
 #intrinsic("%v128.i64x2_replace_lane")
 pub fn i64x2_replace_lane(
   value : V128,
-  lane : Int,
   replacement : UInt64,
+  lane : Int,
 ) -> V128 {
   pack_u64x2_by(i => if i == lane { replacement } else { u64_lane(value, i) })
 }
@@ -281,20 +281,20 @@ pub fn i64x2_replace_lane(
 #intrinsic("%v128.f32x4_replace_lane")
 pub fn f32x4_replace_lane(
   value : V128,
-  lane : Int,
   replacement : Float,
+  lane : Int,
 ) -> V128 {
-  i32x4_replace_lane(value, lane, replacement.reinterpret_as_uint())
+  i32x4_replace_lane(value, replacement.reinterpret_as_uint(), lane)
 }
 
 ///|
 #intrinsic("%v128.f64x2_replace_lane")
 pub fn f64x2_replace_lane(
   value : V128,
-  lane : Int,
   replacement : Double,
+  lane : Int,
 ) -> V128 {
-  i64x2_replace_lane(value, lane, replacement.reinterpret_as_uint64())
+  i64x2_replace_lane(value, replacement.reinterpret_as_uint64(), lane)
 }
 
 ///|
