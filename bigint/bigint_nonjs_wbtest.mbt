@@ -94,6 +94,36 @@ test "shr" {
 }
 
 ///|
+test "mul_single_limb boundaries" {
+  // 1-limb x 1-limb with maximal carry-out: (2^32 - 1)^2
+  let max_limb = 4294967295N
+  let p = max_limb * max_limb
+  check_invariant(p)
+  inspect(p, content="18446744065119617025")
+  // all-max limbs: (2^96 - 1) * (2^32 - 1), carry grows len to n + 1
+  let a = (1N << 96) - 1N
+  let p = a * max_limb
+  check_invariant(p)
+  inspect(p, content="340282366841710300949110269833929293825")
+  // commuted operand order takes the same fast path
+  let p = max_limb * a
+  check_invariant(p)
+  inspect(p, content="340282366841710300949110269833929293825")
+  // no carry-out: len stays at self.len, the spare limb beyond len stays zero
+  let p = (1N << 64) * 2N
+  check_invariant(p)
+  inspect(p, content="36893488147419103232")
+  // the dispatch applies the sign on top of the magnitude-only helper
+  inspect(a * -max_limb, content="-340282366841710300949110269833929293825")
+  inspect(-a * max_limb, content="-340282366841710300949110269833929293825")
+  inspect(-a * -max_limb, content="340282366841710300949110269833929293825")
+  // fast path agrees with the general routine on the same magnitudes
+  let fast = a.mul_single_limb(4294967295U)
+  check_invariant(fast)
+  @test.assert_eq(fast, a.grade_school_mul(max_limb))
+}
+
+///|
 test "add coverage for max(self_len, other_len)" {
   let a = BigInt::from_int(123456789)
   let b = BigInt::from_int(987654321)

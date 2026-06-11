@@ -268,6 +268,22 @@ test "mul" {
 }
 
 ///|
+test "mul by single-limb scalar" {
+  // boundary cases for the (n-limb) x (1-limb) fast path; on the js
+  // backend these go through the native BigInt, which doubles as a
+  // cross-backend oracle
+  let max_limb = 4294967295N // 2^32 - 1
+  inspect(max_limb * max_limb, content="18446744065119617025")
+  let a = (1N << 96) - 1N
+  inspect(a * max_limb, content="340282366841710300949110269833929293825")
+  inspect(max_limb * a, content="340282366841710300949110269833929293825")
+  inspect((1N << 64) * 2N, content="36893488147419103232")
+  inspect(a * -max_limb, content="-340282366841710300949110269833929293825")
+  inspect(-a * max_limb, content="-340282366841710300949110269833929293825")
+  inspect(-a * -max_limb, content="340282366841710300949110269833929293825")
+}
+
+///|
 test "div" {
   let a = @bigint.BigInt::from_int64(987654321098765432L)
   let b = @bigint.BigInt::from_int64(123456789012345678L)
