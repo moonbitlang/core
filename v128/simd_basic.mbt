@@ -238,33 +238,50 @@ pub fn f64x2_extract_lane(value : V128, lane : Int) -> Double {
 }
 
 ///|
+/// The fallback splices the lane into the affected 64-bit word with mask
+/// arithmetic; lanes outside 0..15 leave the value unchanged.
 #intrinsic("%v128.i8x16_replace_lane")
 pub fn i8x16_replace_lane(value : V128, replacement : UInt, lane : Int) -> V128 {
-  pack_u8x16_by(i => {
-    if i == lane {
-      replacement.to_byte()
-    } else {
-      u8_lane(value, i)
-    }
-  })
+  let shift = (lane & 7) * 8
+  let mask = 0xffUL << shift
+  let bits = (replacement.to_uint64() & 0xffUL) << shift
+  if lane >= 0 && lane < 8 {
+    make((lo(value) & mask.lnot()) | bits, hi(value))
+  } else if lane < 16 {
+    make(lo(value), (hi(value) & mask.lnot()) | bits)
+  } else {
+    value
+  }
 }
 
 ///|
 #intrinsic("%v128.i16x8_replace_lane")
 pub fn i16x8_replace_lane(value : V128, replacement : UInt, lane : Int) -> V128 {
-  pack_u16x8_by(i => {
-    if i == lane {
-      replacement.to_uint16()
-    } else {
-      u16_lane(value, i)
-    }
-  })
+  let shift = (lane & 3) * 16
+  let mask = 0xffffUL << shift
+  let bits = (replacement.to_uint64() & 0xffffUL) << shift
+  if lane >= 0 && lane < 4 {
+    make((lo(value) & mask.lnot()) | bits, hi(value))
+  } else if lane < 8 {
+    make(lo(value), (hi(value) & mask.lnot()) | bits)
+  } else {
+    value
+  }
 }
 
 ///|
 #intrinsic("%v128.i32x4_replace_lane")
 pub fn i32x4_replace_lane(value : V128, replacement : UInt, lane : Int) -> V128 {
-  pack_u32x4_by(i => if i == lane { replacement } else { u32_lane(value, i) })
+  let shift = (lane & 1) * 32
+  let mask = 0xffffffffUL << shift
+  let bits = replacement.to_uint64() << shift
+  if lane >= 0 && lane < 2 {
+    make((lo(value) & mask.lnot()) | bits, hi(value))
+  } else if lane < 4 {
+    make(lo(value), (hi(value) & mask.lnot()) | bits)
+  } else {
+    value
+  }
 }
 
 ///|
@@ -274,7 +291,13 @@ pub fn i64x2_replace_lane(
   replacement : UInt64,
   lane : Int,
 ) -> V128 {
-  pack_u64x2_by(i => if i == lane { replacement } else { u64_lane(value, i) })
+  if lane == 0 {
+    make(replacement, hi(value))
+  } else if lane == 1 {
+    make(lo(value), replacement)
+  } else {
+    value
+  }
 }
 
 ///|
