@@ -174,6 +174,43 @@ test "String rev_iter with surrogate" {
 }
 
 ///|
+test "String::all and any" {
+  inspect("".all(c => c == 'x'), content="true")
+  inspect("".any(c => c == 'x'), content="false")
+  inspect("abc".all(c => c.is_ascii_lowercase()), content="true")
+  inspect("abc1".all(c => c.is_ascii_lowercase()), content="false")
+  inspect("abc".every(c => c.is_ascii_lowercase()), content="true")
+  inspect("abc1".any(c => c.is_ascii_digit()), content="true")
+  inspect("abc".any(c => c.is_ascii_digit()), content="false")
+  inspect("abc".exists(c => c == 'b'), content="true")
+  inspect(
+    "a😀c".all(c => c == 'a' || c == '😀' || c == 'c'),
+    content="true",
+  )
+  inspect("a😀c".any(c => c == '😀'), content="true")
+
+  let mut any_calls = 0
+  inspect(
+    "abc".any(c => {
+      any_calls += 1
+      c == 'b'
+    }),
+    content="true",
+  )
+  inspect(any_calls, content="2")
+
+  let mut all_calls = 0
+  inspect(
+    "abc".all(c => {
+      all_calls += 1
+      c != 'b'
+    }),
+    content="false",
+  )
+  inspect(all_calls, content="2")
+}
+
+///|
 test "char_length_eq and char_length_ge" {
   let s = "hi😀"
   inspect(s.char_length_eq(3), content="true")

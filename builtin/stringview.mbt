@@ -283,6 +283,58 @@ pub fn StringView::rev_iter(self : StringView) -> Iter[Char] {
 }
 
 ///|
+/// Checks if all characters in the string view match the condition.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   let view = "zabc!"[1:-1]
+///   assert_true(view.all(c => c.is_ascii_lowercase()))
+///   assert_false(view.all(c => c == 'a'))
+/// }
+/// ```
+#locals(f)
+#alias(every)
+pub fn StringView::all(
+  self : StringView,
+  f : (Char) -> Bool raise?,
+) -> Bool raise? {
+  for c in self {
+    if !f(c) {
+      return false
+    }
+  }
+  true
+}
+
+///|
+/// Checks if any character in the string view matches the condition.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   let view = "zabc!"[1:-1]
+///   assert_true(view.any(c => c == 'b'))
+///   assert_false(view.any(c => c.is_ascii_digit()))
+/// }
+/// ```
+#locals(f)
+#alias(exists)
+pub fn StringView::any(
+  self : StringView,
+  f : (Char) -> Bool raise?,
+) -> Bool raise? {
+  for c in self {
+    if f(c) {
+      return true
+    }
+  }
+  false
+}
+
+///|
 /// Compares two views for equality. Returns true only if both views
 /// have the same length and contain identical characters in the same order.
 pub impl Eq for StringView with fn equal(self, other) {

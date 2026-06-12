@@ -106,6 +106,39 @@ test "StringView core operations" {
 }
 
 ///|
+test "StringView::all and any" {
+  let view = "Za😀b!"[1:-1]
+  inspect(""[0:0].all(c => c == 'x'), content="true")
+  inspect(""[0:0].any(c => c == 'x'), content="false")
+  inspect(view.all(c => c == 'a' || c == '😀' || c == 'b'), content="true")
+  inspect(view.all(c => c.is_ascii_lowercase()), content="false")
+  inspect(view.every(c => c == 'a' || c == '😀' || c == 'b'), content="true")
+  inspect(view.any(c => c == '😀'), content="true")
+  inspect(view.any(c => c.is_ascii_digit()), content="false")
+  inspect(view.exists(c => c == 'b'), content="true")
+
+  let mut any_calls = 0
+  inspect(
+    view.any(c => {
+      any_calls += 1
+      c == '😀'
+    }),
+    content="true",
+  )
+  inspect(any_calls, content="2")
+
+  let mut all_calls = 0
+  inspect(
+    view.all(c => {
+      all_calls += 1
+      c != '😀'
+    }),
+    content="false",
+  )
+  inspect(all_calls, content="2")
+}
+
+///|
 test "StringView comparisons" {
   let base = "hello"
   let v1 = base[:]

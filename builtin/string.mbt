@@ -278,6 +278,50 @@ pub fn String::iter2(self : String) -> Iter2[Int, Char] {
 }
 
 ///|
+/// Checks if all characters in the string match the condition.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   assert_true("abc".all(c => c.is_ascii_lowercase()))
+///   assert_false("abc1".all(c => c.is_ascii_lowercase()))
+/// }
+/// ```
+#locals(f)
+#alias(every)
+pub fn String::all(self : String, f : (Char) -> Bool raise?) -> Bool raise? {
+  for c in self {
+    if !f(c) {
+      return false
+    }
+  }
+  true
+}
+
+///|
+/// Checks if any character in the string matches the condition.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   assert_true("abc1".any(c => c.is_ascii_digit()))
+///   assert_false("abc".any(c => c.is_ascii_digit()))
+/// }
+/// ```
+#locals(f)
+#alias(exists)
+pub fn String::any(self : String, f : (Char) -> Bool raise?) -> Bool raise? {
+  for c in self {
+    if f(c) {
+      return true
+    }
+  }
+  false
+}
+
+///|
 /// Returns an iterator that yields characters from the end to the start of the string. This function handles
 /// Unicode surrogate pairs correctly, ensuring that characters are not split across surrogate pairs.
 ///
