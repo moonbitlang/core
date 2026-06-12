@@ -15,6 +15,7 @@
 ///|
 /// Writes the string representation of an object to the StringBuilder.
 #alias(write)
+#alias(write_string_interpolation)
 pub fn[T : Show] StringBuilder::write_object(
   self : StringBuilder,
   obj : T,

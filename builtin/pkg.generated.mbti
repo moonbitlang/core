@@ -459,6 +459,7 @@ pub fn StringBuilder::reset(Self) -> Unit
 pub fn StringBuilder::to_string(Self) -> String
 pub fn StringBuilder::write_iter(Self, Iter[Char]) -> Unit
 #alias(write)
+#alias(write_string_interpolation)
 pub fn[T : Show] StringBuilder::write_object(Self, T) -> Unit
 pub fn StringBuilder::write_stringview(Self, StringView) -> Unit
 pub impl Logger for StringBuilder
