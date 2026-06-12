@@ -714,6 +714,10 @@ pub fn Double::trunc(Double) -> Double
 pub fn Double::until(Double, Double, step? : Double, inclusive? : Bool) -> Iter[Double]
 
 pub fn String::after(String, StringView) -> StringView?
+#alias(every)
+pub fn String::all(String, (Char) -> Bool raise?) -> Bool raise?
+#alias(exists)
+pub fn String::any(String, (Char) -> Bool raise?) -> Bool raise?
 #alias("_[_]")
 #alias(code_unit_at)
 pub fn String::at(String, Int) -> UInt16
@@ -1030,6 +1034,10 @@ pub fn BytesView::to_owned(Self) -> Bytes
 pub fn BytesView::view(Self, start? : Int, end? : Int) -> Self
 
 pub fn StringView::after(Self, Self) -> Self?
+#alias(every)
+pub fn StringView::all(Self, (Char) -> Bool raise?) -> Bool raise?
+#alias(exists)
+pub fn StringView::any(Self, (Char) -> Bool raise?) -> Bool raise?
 #alias("_[_]")
 #alias(code_unit_at)
 pub fn StringView::at(Self, Int) -> UInt16
