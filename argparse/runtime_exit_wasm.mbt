@@ -13,7 +13,11 @@
 // limitations under the License.
 
 ///|
-#cfg(any(target="wasm", target="wasm-gc"))
+#cfg(target="wasm")
+fn runtime_wasm_exit(code : Int) -> Unit = "wasi_snapshot_preview1" "proc_exit"
+
+///|
+#cfg(target="wasm-gc")
 fn runtime_wasm_exit(code : Int) -> Unit = "__moonbit_sys_unstable" "exit"
 
 ///|
