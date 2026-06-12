@@ -519,15 +519,42 @@ test "View::to_array" {
 }
 
 ///|
+/// Returns true if this string view contains the given UTF-16 code unit.
+///
+/// This searches raw UTF-16 code units and does not combine surrogate pairs.
+/// Use `contains_char` when searching for a Unicode character.
+pub fn StringView::contains_code_unit(self : StringView, code : UInt16) -> Bool {
+  for i in 0..<self.length() {
+    if self.unsafe_get(i) == code {
+      return true
+    }
+  }
+  false
+}
+
+///|
 /// Returns true if this string contains the given substring.
 pub fn StringView::contains(self : StringView, str : StringView) -> Bool {
-  self.find(str) is Some(_)
+  match str.length() {
+    0 => true
+    1 => self.contains_code_unit(str.unsafe_get(0))
+    _ => self.find(str) is Some(_)
+  }
 }
 
 ///|
 /// Returns true if this string contains the given substring.
 pub fn String::contains(self : String, str : StringView) -> Bool {
   self[:].contains(str)
+}
+
+///|
+/// Returns true if this string contains the given UTF-16 code unit.
+///
+/// This searches raw UTF-16 code units and does not combine surrogate pairs.
+/// Use `contains_char` when searching for a Unicode character.
+pub fn String::contains_code_unit(self : String, code : UInt16) -> Bool {
+  self[:].contains_code_unit(code)
 }
 
 ///|
@@ -566,6 +593,20 @@ test "contains" {
   inspect("hello hello".contains("hello"), content="true")
   inspect("aaa".contains("aa"), content="true")
   inspect("😀😀".contains("😀"), content="true")
+  let leading_surrogate = String::from_array([(0xD800).unsafe_to_char()])
+  inspect(leading_surrogate.contains(leading_surrogate), content="true")
+}
+
+///|
+test "contains_code_unit" {
+  inspect("hello".contains_code_unit(('h' : UInt16)), content="true")
+  inspect("hello".contains_code_unit(('x' : UInt16)), content="false")
+  inspect("xhello"[1:].contains_code_unit(('h' : UInt16)), content="true")
+  inspect("xhello"[1:].contains_code_unit(('x' : UInt16)), content="false")
+  inspect("😀".contains_code_unit(0xD83D), content="true")
+  inspect("😀".contains_code_unit(0xDE00), content="true")
+  let leading_surrogate = String::from_array([(0xD800).unsafe_to_char()])
+  inspect(leading_surrogate.contains_code_unit(0xD800), content="true")
 }
 
 ///|
@@ -585,24 +626,24 @@ pub fn StringView::contains_char(self : StringView, c : Char) -> Bool {
   // Check empty
   guard len > 0 else { return false }
   let c = c.to_int()
-  if c <= 0xFFFF {
+  if c >= 0 && c <= 0xFFFF {
     // Search BMP
-    for i in 0..<len {
-      if self.unsafe_get(i).to_int() == c {
-        return true
-      }
-    }
+    return self.contains_code_unit(c.to_uint16())
+  } else if c < 0 {
+    return false
   } else {
     // Check insufficient
     guard len >= 2 else { return false }
     // Calc surrogate pair
     let adj = c - 0x10000
     let high = 0xD800 + (adj >> 10)
-    let low = 0xDC00 + (adj & 0x3FF)
+    guard high <= 0xFFFF else { return false }
+    let high = high.to_uint16()
+    let low = (0xDC00 + (adj & 0x3FF)).to_uint16()
     // Search surrogate pair
     for i = 0; i < len - 1; {
-      if self.unsafe_get(i).to_int() == high {
-        if self.unsafe_get(i + 1).to_int() == low {
+      if self.unsafe_get(i) == high {
+        if self.unsafe_get(i + 1) == low {
           return true
         }
         continue i + 2
@@ -632,6 +673,13 @@ test "contains_char" {
   inspect("😀😀".contains_char('😀'), content="true")
   inspect("😀😀".contains_char('😃'), content="false")
   inspect("hello".contains_char((104).unsafe_to_char()), content="true") // 'h' is 104 in ASCII
+  let leading_surrogate = String::from_array([(0xD800).unsafe_to_char()])
+  inspect(
+    leading_surrogate.contains_char((0xD800).unsafe_to_char()),
+    content="true",
+  )
+  let max_code_unit = String::from_array([(0xFFFF).unsafe_to_char()])
+  inspect(max_code_unit.contains_char((-1).unsafe_to_char()), content="false")
 }
 
 ///|

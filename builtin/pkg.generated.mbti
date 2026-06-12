@@ -732,6 +732,7 @@ pub fn String::compare_ignore_ascii_case(String, String) -> Int
 pub fn String::contains(String, StringView) -> Bool
 pub fn String::contains_any(String, chars~ : StringView) -> Bool
 pub fn String::contains_char(String, Char) -> Bool
+pub fn String::contains_code_unit(String, UInt16) -> Bool
 pub fn String::equal_ignore_ascii_case(String, String) -> Bool
 pub fn String::escape(String, quote? : Bool) -> String
 pub fn String::find(String, StringView) -> Int?
@@ -1051,6 +1052,7 @@ pub fn StringView::compare_ignore_ascii_case(Self, Self) -> Int
 pub fn StringView::contains(Self, Self) -> Bool
 pub fn StringView::contains_any(Self, chars~ : Self) -> Bool
 pub fn StringView::contains_char(Self, Char) -> Bool
+pub fn StringView::contains_code_unit(Self, UInt16) -> Bool
 pub fn StringView::data(Self) -> String
 pub fn StringView::equal_ignore_ascii_case(Self, Self) -> Bool
 pub fn StringView::equal_to_string(Self, String) -> Bool
