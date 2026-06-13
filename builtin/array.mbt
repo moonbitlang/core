@@ -862,6 +862,46 @@ pub fn[T : Eq] Array::contains(self : Array[T], value : T) -> Bool {
 }
 
 ///|
+/// Counts how many elements in the array are equal to `value`.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let arr = [1, 2, 1, 3, 1]
+///   inspect(arr.count(1), content="3")
+///   inspect(arr.count(4), content="0")
+/// }
+/// ```
+pub fn[T : Eq] Array::count(self : Array[T], value : T) -> Int {
+  self[:].count(value)
+}
+
+///|
+/// Counts how many elements in the array satisfy the predicate.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let arr = [1, 2, 3, 4, 5]
+///   inspect(arr.count_if(x => x % 2 == 0), content="2")
+/// }
+/// ```
+#locals(f)
+pub fn[T] Array::count_if(
+  self : Array[T],
+  f : (T) -> Bool raise?,
+) -> Int raise? {
+  for v in self; count = 0 {
+    if f(v) {
+      continue count + 1
+    }
+    continue count
+  } nobreak {
+    count
+  }
+}
+
+///|
 /// Checks if the array begins with all elements of the provided prefix array in
 /// order.
 ///

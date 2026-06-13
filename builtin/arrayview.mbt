@@ -986,6 +986,53 @@ pub fn[T : Eq] ArrayView::contains(self : ArrayView[T], value : T) -> Bool {
 }
 
 ///|
+/// Counts how many elements in the array view are equal to `value`.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let view = [1, 2, 1, 3, 1][:]
+///   inspect(view.count(1), content="3")
+///   inspect(view.count(4), content="0")
+/// }
+/// ```
+pub fn[T : Eq] ArrayView::count(self : ArrayView[T], value : T) -> Int {
+  for v in self; count = 0 {
+    if v == value {
+      continue count + 1
+    }
+    continue count
+  } nobreak {
+    count
+  }
+}
+
+///|
+/// Counts how many elements in the array view satisfy the predicate.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let view = [1, 2, 3, 4, 5][:]
+///   inspect(view.count_if(x => x % 2 == 0), content="2")
+/// }
+/// ```
+#locals(f)
+pub fn[T] ArrayView::count_if(
+  self : ArrayView[T],
+  f : (T) -> Bool raise?,
+) -> Int raise? {
+  for v in self; count = 0 {
+    if f(v) {
+      continue count + 1
+    }
+    continue count
+  } nobreak {
+    count
+  }
+}
+
+///|
 /// Searches for the first occurrence of a value in the array view.
 ///
 /// # Example

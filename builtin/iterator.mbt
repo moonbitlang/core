@@ -223,7 +223,38 @@ pub fn[X, R] Iter::fold(
 /// Returns the number of elements in the iterator.
 #alias(length)
 pub fn[X] Iter::count(self : Iter[X]) -> Int {
-  self.fold((acc, _) => acc + 1, init=0)
+  for _ in self; count = 0 {
+    continue count + 1
+  } nobreak {
+    count
+  }
+}
+
+///|
+/// Counts the number of elements in the iterator that satisfy the predicate.
+///
+/// # Type Parameters
+///
+/// - `X`: The type of the elements in the iterator.
+///
+/// # Arguments
+///
+/// - `self`: The iterator to consume.
+/// - `f`: A predicate function applied to each element.
+///
+/// # Returns
+///
+/// Returns the number of elements for which `f` returns `true`.
+#locals(f)
+pub fn[X] Iter::count_if(self : Iter[X], f : (X) -> Bool) -> Int {
+  for x in self; count = 0 {
+    if f(x) {
+      continue count + 1
+    }
+    continue count
+  } nobreak {
+    count
+  }
 }
 
 // Producers

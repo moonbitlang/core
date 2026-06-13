@@ -84,6 +84,8 @@ pub fn[T] Array::clear(Self[T]) -> Unit
 pub fn[T : Eq] Array::contains(Self[T], T) -> Bool
 #alias(clone, deprecated)
 pub fn[T] Array::copy(Self[T]) -> Self[T]
+pub fn[T : Eq] Array::count(Self[T], T) -> Int
+pub fn[T] Array::count_if(Self[T], (T) -> Bool raise?) -> Int raise?
 pub fn[T : Eq] Array::dedup(Self[T]) -> Unit
 pub fn[T] Array::drain(Self[T], Int, Int) -> Self[T]
 pub fn[T] Array::each(Self[T], (T) -> Unit raise?) -> Unit raise?
@@ -194,6 +196,8 @@ pub fn[A] ArrayView::blit_to(Self[A], Array[A], dst_offset? : Int) -> Unit
 pub fn[T] ArrayView::chunk_by(Self[T], (T, T) -> Bool raise?) -> Array[Self[T]] raise?
 pub fn[T] ArrayView::chunks(Self[T], Int) -> Array[Self[T]]
 pub fn[T : Eq] ArrayView::contains(Self[T], T) -> Bool
+pub fn[T : Eq] ArrayView::count(Self[T], T) -> Int
+pub fn[T] ArrayView::count_if(Self[T], (T) -> Bool raise?) -> Int raise?
 pub fn[T] ArrayView::each(Self[T], (T) -> Unit raise?) -> Unit raise?
 pub fn[T] ArrayView::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
 pub fn[T : Eq] ArrayView::ends_with(Self[T], Self[T]) -> Bool
@@ -272,6 +276,7 @@ pub fn[X] Iter::concat(Self[X], Self[X]) -> Self[X]
 pub fn[X : Eq] Iter::contains(Self[X], X) -> Bool
 #alias(length)
 pub fn[X] Iter::count(Self[X]) -> Int
+pub fn[X] Iter::count_if(Self[X], (X) -> Bool) -> Int
 pub fn[X] Iter::drop(Self[X], Int) -> Self[X]
 pub fn[X] Iter::drop_while(Self[X], (X) -> Bool) -> Self[X]
 pub fn[X] Iter::each(Self[X], (X) -> Unit raise?) -> Unit raise?
