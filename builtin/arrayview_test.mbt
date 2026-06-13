@@ -996,6 +996,70 @@ test "ArrayView::rev_eachi empty" {
 }
 
 ///|
+test "ArrayView::count basic" {
+  let v = [1, 2, 1, 3, 1][:]
+  inspect(v.count(1), content="3")
+  inspect(v.count(4), content="0")
+}
+
+///|
+test "ArrayView::count sliced view" {
+  let v = [1, 2, 1, 3, 1][1:4]
+  inspect(v.count(1), content="1")
+  inspect(v.count(2), content="1")
+}
+
+///|
+test "ArrayView::count empty" {
+  let v : ArrayView[Int] = [1, 2, 3][0:0]
+  inspect(v.count(1), content="0")
+}
+
+///|
+test "ArrayView::count_if basic" {
+  let v = [1, 2, 3, 4, 5][:]
+  inspect(v.count_if(x => x % 2 == 0), content="2")
+  inspect(v.count_if(x => x > 99), content="0")
+}
+
+///|
+test "ArrayView::count_if sliced view" {
+  let v = [1, 2, 3, 4, 5][1:4]
+  inspect(v.count_if(x => x % 2 == 0), content="2")
+}
+
+///|
+test "ArrayView::count_if empty" {
+  let v : ArrayView[Int] = [1, 2, 3][0:0]
+  inspect(v.count_if(_ => true), content="0")
+}
+
+///|
+test "ArrayView::count_if propagates error" {
+  let v = [1, 2, 3][:]
+  try
+    ignore(
+      v.count_if(x => {
+        if x == 2 {
+          raise Failure::Failure("count_if failed")
+        }
+        true
+      }),
+    )
+  catch {
+    e =>
+      debug_inspect(
+        e,
+        content=(
+          #|Failure("count_if failed")
+        ),
+      )
+  } noraise {
+    _ => fail("expected error")
+  }
+}
+
+///|
 test "ArrayView::search_by basic" {
   let v = [1, 2, 3, 4, 5][:]
   debug_inspect(v.search_by(x => x > 3), content="Some(3)")

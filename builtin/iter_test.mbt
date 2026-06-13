@@ -47,6 +47,16 @@ test "count" {
 }
 
 ///|
+test "count_if" {
+  let iter = test_from_array([1, 2, 3, 4, 5, 6])
+  @test.assert_eq(iter.count_if(x => x % 2 == 0), 3)
+  let iter = test_from_array([1, 2, 3])
+  @test.assert_eq(iter.count_if(x => x > 99), 0)
+  let iter : Iter[Int] = Iter::empty()
+  @test.assert_eq(iter.count_if(_ => true), 0)
+}
+
+///|
 test "take" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = StringBuilder(size_hint=0)

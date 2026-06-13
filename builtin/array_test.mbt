@@ -985,6 +985,51 @@ test "filter with error callback 2" {
 }
 
 ///|
+test "Array::count basic" {
+  let arr = [1, 2, 1, 3, 1]
+  inspect(arr.count(1), content="3")
+  inspect(arr.count(4), content="0")
+}
+
+///|
+test "Array::count empty" {
+  let arr : Array[Int] = []
+  inspect(arr.count(1), content="0")
+}
+
+///|
+test "Array::count_if basic" {
+  let arr = [1, 2, 3, 4, 5]
+  inspect(arr.count_if(x => x % 2 == 0), content="2")
+  inspect(arr.count_if(x => x > 99), content="0")
+}
+
+///|
+test "Array::count_if propagates error" {
+  let arr = [1, 2, 3]
+  try
+    ignore(
+      arr.count_if(x => {
+        if x == 2 {
+          raise Failure::Failure("count_if failed")
+        }
+        true
+      }),
+    )
+  catch {
+    e =>
+      debug_inspect(
+        e,
+        content=(
+          #|Failure("count_if failed")
+        ),
+      )
+  } noraise {
+    _ => fail("expected error")
+  }
+}
+
+///|
 test "map_inplace with error callback" {
   let arr = [1, 2, 3]
   try
