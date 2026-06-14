@@ -25,10 +25,10 @@ test "UInt16 surrogate checks" {
 }
 
 ///|
-test "UInt16 to_char and unsafe_to_char" {
-  let a = (0x0041 : UInt16)
+test "UInt16 to_char" {
+  let a = ('A' : UInt16)
   assert_true(a.to_char() is Some('A'))
-  inspect(a.unsafe_to_char(), content="A")
+  inspect(a.to_char().unwrap(), content="A")
   assert_true((0xD800 : UInt16).to_char() is None)
 }
 

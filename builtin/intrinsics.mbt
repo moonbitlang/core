@@ -1529,6 +1529,7 @@ pub fn Int::to_byte(self : Int) -> Byte = "%i32_to_byte"
 /// Convert integer to char without validity checks.
 ///
 /// Undefined behavior for surrogate or out-of-range values.
+#doc(hidden)
 pub fn Int::unsafe_to_char(self : Int) -> Char = "%char_from_int"
 
 ///|

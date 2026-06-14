@@ -390,15 +390,11 @@ test "Int16::reinterpret_from_uint16" {
 }
 
 ///|
-test "UInt16::unsafe_to_char" {
-  let c1 = (0x41 : UInt16).unsafe_to_char()
-  inspect(c1.to_int(), content="65")
-  let c2 = (0x61 : UInt16).unsafe_to_char()
-  inspect(c2.to_int(), content="97")
-  let c3 = (0x30 : UInt16).unsafe_to_char()
-  inspect(c3.to_int(), content="48")
-  let c4 = (0x20 : UInt16).unsafe_to_char()
-  inspect(c4.to_int(), content="32")
+test "UInt16 char literal overloading" {
+  inspect(('A' : UInt16).to_int(), content="65")
+  inspect(('a' : UInt16).to_int(), content="97")
+  inspect(('0' : UInt16).to_int(), content="48")
+  inspect((' ' : UInt16).to_int(), content="32")
 }
 
 ///|

@@ -65,6 +65,7 @@ pub fn UInt16::is_surrogate(self : Self) -> Bool {
 
 ///|
 /// Unsafe variant of `to_char`.
+#doc(hidden)
 pub fn UInt16::unsafe_to_char(self : UInt16) -> Char {
   self.to_int().unsafe_to_char()
 }
