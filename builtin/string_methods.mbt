@@ -672,7 +672,7 @@ test "contains_char" {
   inspect("hello world".contains_char('w'), content="true")
   inspect("😀😀".contains_char('😀'), content="true")
   inspect("😀😀".contains_char('😃'), content="false")
-  inspect("hello".contains_char((104).unsafe_to_char()), content="true") // 'h' is 104 in ASCII
+  inspect("hello".contains_char('h'), content="true")
   let leading_surrogate = String::from_array([(0xD800).unsafe_to_char()])
   inspect(
     leading_surrogate.contains_char((0xD800).unsafe_to_char()),

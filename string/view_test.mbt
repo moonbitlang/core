@@ -401,7 +401,7 @@ test "panic length_eq should panic on invalid surrogate pair" {
 test "panic_length_ge invalid surrogate pair" {
   let invalid_surrogate_pair = String::from_array([
     (0xD800).unsafe_to_char(), // Leading surrogate
-    (0x0041).unsafe_to_char(), // Invalid trailing surrogate (just a regular 'A')
+    'A', // Invalid trailing surrogate (just a regular 'A')
   ])
   let view = invalid_surrogate_pair[:]
   // This should abort with "invalid surrogate pair"

@@ -431,7 +431,7 @@ test "flat_map2" {
 ///|
 test "fold" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let result = (iter.fold((acc, x) => acc + x.to_int(), init=0) / 5).unsafe_to_char()
+  let result = iter.fold((acc, x) => acc + x.to_int(), init=0) / 5
   @test.assert_eq(result, '3')
 }
 
