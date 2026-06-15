@@ -748,6 +748,7 @@ pub fn Buffer::write_object(self : Buffer, value : &Show) -> Unit {
 ///   )
 /// }
 /// ```
+#alias(write_bytes_interpolation)
 pub fn[T : Show] Buffer::write_utf8(self : Buffer, value : T) -> Unit {
   self.write_string_utf8(value.to_string())
 }

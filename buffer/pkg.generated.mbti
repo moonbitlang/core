@@ -61,6 +61,7 @@ pub fn Buffer::write_uint64_be(Self, UInt64) -> Unit
 pub fn Buffer::write_uint64_le(Self, UInt64) -> Unit
 pub fn Buffer::write_uint_be(Self, UInt) -> Unit
 pub fn Buffer::write_uint_le(Self, UInt) -> Unit
+#alias(write_bytes_interpolation)
 pub fn[T : Show] Buffer::write_utf8(Self, T) -> Unit
 #deprecated
 pub impl Logger for Buffer
