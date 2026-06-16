@@ -139,7 +139,7 @@ pub fn cosh(x : Double) -> Double {
     return 0.5 * t + 0.5 / t
   }
   if ix < 0x40862E42 {
-    return (0.5 * x.abs()) |> exp
+    return 0.5 * exp(x.abs())
   }
   let lx = get_low_word(x).reinterpret_as_int()
   if ix < 0x408633ce || (ix == 0x408633ce && lx <= 0x8fb9f87d) {
