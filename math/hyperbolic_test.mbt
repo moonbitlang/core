@@ -165,3 +165,18 @@ test "hyperbolic double branch coverage" {
   assert_true(@math.asinh(1.0e20) > 0.0)
   assert_true(@math.acosh(1.0e20) > 0.0)
 }
+
+///|
+test "cosh large-arg coverage" {
+  inspect(@math.cosh(22.0), content="1792456423.065796")
+  inspect(@math.cosh(100.0), content="1.3440585709080678e+43")
+  inspect(@math.cosh(709.0), content="4.109203730777486e+307")
+  inspect(
+    @math.cosh(709.78),
+    content=(
+      #|8.964113971972578e+307
+    ),
+  )
+  inspect(@math.cosh(-22.0), content="1792456423.065796")
+  assert_true(!@math.cosh(710.475).is_inf())
+}
