@@ -178,5 +178,7 @@ test "cosh large-arg coverage" {
     ),
   )
   inspect(@math.cosh(-22.0), content="1792456423.065796")
-  assert_true(!@math.cosh(710.475).is_inf())
+  let cosh_near_overflow = @math.cosh(710.475)
+  assert_true(!cosh_near_overflow.is_inf())
+  assert_true(!cosh_near_overflow.is_nan())
 }
