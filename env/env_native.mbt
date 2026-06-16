@@ -132,7 +132,7 @@ fn unset_env_var_internal(key : String) -> Unit {
 extern "c" fn unset_env_var_ffi(key : OsString) -> Unit = "moonbit_rt_unset_env_var2"
 
 ///|
-#cfg(target_os = "windows")
+#cfg(target_os="windows")
 fn rand_internal(n : Int) -> Bytes? {
   if n <= 0 {
     return Some(b"")
@@ -154,12 +154,12 @@ fn rand_internal(n : Int) -> Bytes? {
 }
 
 ///|
-#cfg(target_os = "windows")
+#cfg(target_os="windows")
 #borrow(value)
 extern "c" fn rand_s(value : Bytes) -> Int = "rand_s"
 
 ///|
-#cfg(not(target_os = "windows"))
+#cfg(not(target_os="windows"))
 fn rand_internal(n : Int) -> Bytes? {
   if n <= 0 {
     return Some(b"")
@@ -182,7 +182,7 @@ fn rand_internal(n : Int) -> Bytes? {
 }
 
 ///|
-#cfg(not(target_os = "windows"))
+#cfg(not(target_os="windows"))
 #borrow(buf)
 extern "c" fn getentropy(buf : FixedArray[Byte], len : UInt) -> Int = "getentropy"
 
