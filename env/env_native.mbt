@@ -136,18 +136,26 @@ fn rand_internal(n : Int) -> Bytes? {
   if n <= 0 {
     return Some(b"")
   }
-  let buf = Bytes::new(n)
-  let got = getrandom(buf, n.reinterpret_as_uint(), 0U)
-  if got < n {
-    None
-  } else {
-    Some(buf)
+  let buf : FixedArray[Byte] = FixedArray::make(n, b'\x00')
+  let chunk : FixedArray[Byte] = FixedArray::make(256, b'\x00')
+  let mut offset = 0
+  while offset < n {
+    let len = if n - offset < 256 { n - offset } else { 256 }
+    let rc = getentropy(chunk, len.reinterpret_as_uint())
+    if rc != 0 {
+      return None
+    }
+    for i = 0; i < len; i = i + 1 {
+      buf[offset + i] = chunk[i]
+    }
+    offset += len
   }
+  Some(Bytes::from_array(buf))
 }
 
 ///|
 #borrow(buf)
-extern "c" fn getrandom(buf : Bytes, len : UInt, flags : UInt) -> Int = "getrandom"
+extern "c" fn getentropy(buf : FixedArray[Byte], len : UInt) -> Int = "getentropy"
 
 ///|
 #cfg(platform="windows")
