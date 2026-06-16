@@ -176,3 +176,21 @@ fn unset_env_var_internal(key : String) -> Unit {
 ///|
 #borrow(_key)
 extern "c" fn unset_env_var_ffi(_key : Bytes) -> Unit = "moonbit_rt_unset_env_var"
+
+///|
+fn rand_internal(n : Int) -> Bytes? {
+  if n <= 0 {
+    return Some(b"")
+  }
+  let buf = Bytes::new(n)
+  let got = getrandom(buf, n.reinterpret_as_uint(), 0U)
+  if got < n {
+    None
+  } else {
+    Some(buf)
+  }
+}
+
+///|
+#borrow(buf)
+extern "c" fn getrandom(buf : Bytes, len : UInt, flags : UInt) -> Int = "getrandom"

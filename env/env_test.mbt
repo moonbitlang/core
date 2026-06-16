@@ -32,6 +32,14 @@ test "current_dir returns reasonable directory" {
 }
 
 ///|
+test "rand returns requested length or none" {
+  match @env.rand(32) {
+    Some(bytes) => @test.assert_eq(bytes.length(), 32)
+    None => () // acceptable on platforms without entropy
+  }
+}
+
+///|
 test "env var round trip" {
   let key = "__MOONBIT_CORE_ENV_TEST_" + @env.now().to_string()
 
