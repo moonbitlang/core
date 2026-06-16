@@ -43,10 +43,37 @@ pub fn Rand::chacha8(
 }
 
 ///|
+let fixed_test_seed : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456"
+
+///|
+priv struct SeedCounter {
+  mut value : UInt64
+}
+
+///|
+let seed_counter : SeedCounter = { value: 0UL }
+
+///|
+fn make_fallback_seed() -> Bytes {
+  let time = @env.now()
+  let c = seed_counter.value
+  seed_counter.value += 1UL
+  Bytes::makei(32, fn(i) {
+    let time_byte = (time >> (i % 8 * 8)).to_byte()
+    let counter_byte = (c >> (i % 8 * 8)).to_byte()
+    (time_byte.to_int() ^ counter_byte.to_int()).to_byte()
+  })
+}
+
+///|
 /// Create a new random number generator with a given [Gen] source.
 pub fn Rand::new(generator? : &Source) -> Rand {
   match generator {
-    None => Rand::chacha8()
+    None =>
+      match @env.rand(32) {
+        Some(seed) => Rand::chacha8(seed~)
+        None => Rand::chacha8(seed=make_fallback_seed())
+      }
     Some(gen) => Rand(gen)
   }
 }
@@ -59,7 +86,7 @@ fn Rand::next(self : Rand) -> UInt64 {
 
 ///|
 test "next" {
-  let r = Rand::new()
+  let r = Rand::chacha8(seed=fixed_test_seed)
   let n = r.next()
   let exp = 13219109469176600229UL
   @test.assert_eq(n, exp)
@@ -122,7 +149,7 @@ pub fn Rand::uint(self : Rand, limit? : UInt = 0) -> UInt {
 
 ///|
 test "uint" {
-  let r = Rand::new()
+  let r = Rand::chacha8(seed=fixed_test_seed)
   let n = r.uint(limit=10U)
   inspect(n, content="7")
   let n = r.uint(limit=10U)
@@ -160,11 +187,11 @@ pub fn Rand::uint64(self : Rand, limit? : UInt64 = 0) -> UInt64 {
 
 ///|
 test "UInt64" {
-  let r = Rand::new()
+  let r = Rand::chacha8(seed=fixed_test_seed)
   let n = r.uint64()
   let exp = 13219109469176600229UL
   @test.assert_eq(n, exp)
-  let r = Rand::new()
+  let r = Rand::chacha8(seed=fixed_test_seed)
   let n = r.uint64(limit=10UL)
   inspect(n, content="7")
   let n = r.uint64(limit=10UL)
@@ -182,7 +209,7 @@ pub fn Rand::double(self : Rand) -> Double {
 
 ///|
 test "double" {
-  let r = Rand::new()
+  let r = Rand::chacha8(seed=fixed_test_seed)
   let n = r.double()
   inspect(n, content="0.615969772029264")
 }
@@ -232,7 +259,7 @@ pub fn Rand::bigint(self : Rand, bits : Int) -> @bigint.BigInt {
 
 ///|
 test "bigint" {
-  let r = Rand::new()
+  let r = Rand::chacha8(seed=fixed_test_seed)
   inspect(r.bigint(1), content="1")
   inspect(r.bigint(3), content="4")
   inspect(r.bigint(7), content="124")
@@ -328,7 +355,7 @@ pub fn Rand::shuffle(
 
 ///|
 test "shuffle" {
-  let r = Rand::new()
+  let r = Rand::chacha8(seed=fixed_test_seed)
   let a = [1, 2, 3, 4, 5]
   r.shuffle(a.length(), (i : Int, j : Int) => {
     let t = a[i]

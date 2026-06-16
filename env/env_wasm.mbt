@@ -174,3 +174,11 @@ fn unset_env_var_internal(key : String) -> Unit {
 
 ///|
 fn unset_env_var_ffi(key : XExternString) = "__moonbit_fs_unstable" "unset_env_var"
+
+///|
+fn rand_internal(_n : Int) -> Bytes? {
+  // WASI random_get requires a raw linear-memory pointer, which is not
+  // accessible through the public FFI. Return None until a runtime helper
+  // is available.
+  None
+}

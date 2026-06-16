@@ -132,5 +132,23 @@ fn unset_env_var_internal(key : String) -> Unit {
 extern "c" fn unset_env_var_ffi(key : OsString) -> Unit = "moonbit_rt_unset_env_var2"
 
 ///|
+fn rand_internal(n : Int) -> Bytes? {
+  if n <= 0 {
+    return Some(b"")
+  }
+  let buf = Bytes::new(n)
+  let got = getrandom(buf, n.reinterpret_as_uint(), 0U)
+  if got < n {
+    None
+  } else {
+    Some(buf)
+  }
+}
+
+///|
+#borrow(buf)
+extern "c" fn getrandom(buf : Bytes, len : UInt, flags : UInt) -> Int = "getrandom"
+
+///|
 #cfg(platform="windows")
 let _supressed_unused_warning_windows : Unit = ignore(@utf8.encode(""))
