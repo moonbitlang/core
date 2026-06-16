@@ -178,6 +178,34 @@ fn unset_env_var_internal(key : String) -> Unit {
 extern "c" fn unset_env_var_ffi(_key : Bytes) -> Unit = "moonbit_rt_unset_env_var"
 
 ///|
+#cfg(target_os = "windows")
+fn rand_internal(n : Int) -> Bytes? {
+  if n <= 0 {
+    return Some(b"")
+  }
+  let buf = Bytes::new(n)
+  let word = Bytes::new(4)
+  let mut offset = 0
+  while offset < n {
+    let rc = rand_s(word)
+    if rc != 0 {
+      return None
+    }
+    for i = 0; i < 4 && offset + i < n; i = i + 1 {
+      buf[offset + i] = word[i]
+    }
+    offset += 4
+  }
+  Some(buf)
+}
+
+///|
+#cfg(target_os = "windows")
+#borrow(value)
+extern "c" fn rand_s(value : Bytes) -> Int = "rand_s"
+
+///|
+#cfg(not(target_os = "windows"))
 fn rand_internal(n : Int) -> Bytes? {
   if n <= 0 {
     return Some(b"")
@@ -200,5 +228,6 @@ fn rand_internal(n : Int) -> Bytes? {
 }
 
 ///|
+#cfg(not(target_os = "windows"))
 #borrow(buf)
 extern "c" fn getentropy(buf : FixedArray[Byte], len : UInt) -> Int = "getentropy"
