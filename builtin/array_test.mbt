@@ -1231,13 +1231,17 @@ test "push_iter" {
 ///|
 test "shuffle_in_place" {
   let arr : Array[Int] = [1, 2, 3, 4, 5, 6, 7]
-  fn rand(upper : Int) -> Int {
-    let rng = @random.Rand::new()
+  fn rand1(upper : Int) -> Int {
+    let rng = @random.Rand::chacha8(seed=b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456")
+    rng.int() % upper
+  }
+  fn rand2(upper : Int) -> Int {
+    let rng = @random.Rand::chacha8(seed=b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456")
     rng.int() % upper
   }
 
-  let shuffled = Array::shuffle(arr, rand~)
-  Array::shuffle_in_place(arr, rand~)
+  let shuffled = Array::shuffle(arr, rand=rand1)
+  Array::shuffle_in_place(arr, rand=rand2)
   @test.assert_eq(shuffled, arr)
   debug_inspect(arr, content="[3, 2, 1, 5, 6, 7, 4]")
 }
