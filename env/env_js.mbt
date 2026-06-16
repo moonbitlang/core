@@ -119,3 +119,22 @@ extern "js" fn unset_env_var_ffi(key : String) -> Unit =
   #|     delete process.env[key];
   #|   }
   #| }
+
+///|
+fn rand_internal(n : Int) -> Bytes? {
+  if n <= 0 {
+    return Some(b"")
+  }
+  get_random_values_js(n)
+}
+
+///|
+extern "js" fn get_random_values_js(n : Int) -> Bytes? =
+  #| function(n) {
+  #|   if (typeof crypto === "undefined" || typeof crypto.getRandomValues !== "function") {
+  #|     return null;
+  #|   }
+  #|   const arr = new Uint8Array(n);
+  #|   crypto.getRandomValues(arr);
+  #|   return arr;
+  #| }

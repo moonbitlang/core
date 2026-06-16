@@ -55,6 +55,14 @@ pub fn unset_env_var(key : String) -> Unit {
 }
 
 ///|
+/// Get `n` random bytes from a platform entropy source.
+/// Returns `Some(bytes)` when the platform can provide secure random bytes,
+/// and `None` on targets/environments that do not support entropy.
+pub fn rand(n : Int) -> Bytes? {
+  rand_internal(n)
+}
+
+///|
 /// Currently `moon` does not support conditional import,
 /// so native-only import will result in unused import warning on other targets.
 /// Manually supress the unused warning here.
