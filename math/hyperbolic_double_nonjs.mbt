@@ -141,8 +141,13 @@ pub fn cosh(x : Double) -> Double {
   if ix < 0x40862E42 {
     return 0.5 * exp(x.abs())
   }
-  let lx = get_low_word(x).reinterpret_as_int()
-  if ix < 0x408633ce || (ix == 0x408633ce && lx <= 0x8fb9f87d) {
+  // |x| in [log(maxdouble), overflow threshold]: compute via the scaled form
+  // 0.5 * exp(0.5*|x|) * exp(0.5*|x|) to avoid overflow in the intermediate exp.
+  // The threshold bit pattern 0x408633ce8fb9f87d must be compared as an unsigned
+  // 64-bit integer (mirroring `sinh`); a split high/low-word comparison with a
+  // signed low word misclassifies low words in [0, 0x7fffffff] and wrongly
+  // overflows to infinity for finite values just below the threshold.
+  if x.abs().reinterpret_as_uint64() <= 0x408633ce8fb9f87d {
     let w = exp(0.5 * x.abs())
     let t = 0.5 * w
     return t * w
