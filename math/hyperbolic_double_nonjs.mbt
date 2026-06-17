@@ -81,7 +81,11 @@ pub fn sinh(x : Double) -> Double {
   if ix < 0x40862E42 {
     return h * exp(abs_x)
   }
-  if abs_x.reinterpret_as_uint64() < 0x408633ce8fb9f87d {
+  // |x| in [log(maxdouble), overflow threshold]: the boundary is inclusive, so
+  // the exact threshold value 0x408633ce8fb9f87d (~710.4758600739439) still has a
+  // finite sinh and must take the scaled branch. Matches the fdlibm `e_sinh.c`
+  // reference and the analogous `cosh` branch.
+  if abs_x.reinterpret_as_uint64() <= 0x408633ce8fb9f87d {
     let w = exp(0.5 * abs_x)
     let t = h * w
     return t * w

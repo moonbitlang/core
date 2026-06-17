@@ -196,3 +196,20 @@ test "cosh near-overflow low-word boundary" {
   assert_true(!pos.is_inf() && !pos.is_nan() && pos > 1.79e308)
   assert_true(!neg.is_inf() && !neg.is_nan() && neg > 1.79e308)
 }
+
+///|
+test "sinh overflow-threshold boundary" {
+  // 0x1.633ce8fb9f87dp9 (bit pattern 0x408633ce8fb9f87d) is exactly the overflow
+  // threshold ~710.4758600739439, written as a Double hex-float literal so the test
+  // does not depend on decimal rounding. The boundary is inclusive: sinh is still
+  // finite here (~1.7977e308, just below DBL_MAX); a strict `<` comparison wrongly
+  // overflowed to +/-Infinity at this exact value. Guard both signs, plus a larger
+  // value that must still overflow.
+  let threshold : Double = 0x1.633ce8fb9f87dp9
+  assert_eq(threshold.reinterpret_as_uint64(), 0x408633ce8fb9f87d)
+  let pos = @math.sinh(threshold)
+  let neg = @math.sinh(-threshold)
+  assert_true(!pos.is_inf() && !pos.is_nan() && pos > 1.79e308)
+  assert_true(!neg.is_inf() && !neg.is_nan() && neg < -1.79e308)
+  assert_true(@math.sinh(711.0).is_inf())
+}
