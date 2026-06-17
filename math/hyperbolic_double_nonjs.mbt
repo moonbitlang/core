@@ -126,8 +126,9 @@ pub fn cosh(x : Double) -> Double {
     return @double.infinity
   }
   let ix = get_high_word(x).reinterpret_as_int() & 0x7fffffff
+  let abs_x = x.abs()
   if ix < 0x3fd62e43 {
-    let t = expm1(x.abs())
+    let t = expm1(abs_x)
     let w = 1.0 + t
     if ix < 0x3c800000 {
       return w
@@ -135,11 +136,11 @@ pub fn cosh(x : Double) -> Double {
     return 1.0 + t * t / (w + w)
   }
   if ix < 0x40360000 {
-    let t = exp(x.abs())
+    let t = exp(abs_x)
     return 0.5 * t + 0.5 / t
   }
   if ix < 0x40862E42 {
-    return 0.5 * exp(x.abs())
+    return 0.5 * exp(abs_x)
   }
   // |x| in [log(maxdouble), overflow threshold]: compute via the scaled form
   // 0.5 * exp(0.5*|x|) * exp(0.5*|x|) to avoid overflow in the intermediate exp.
@@ -147,8 +148,8 @@ pub fn cosh(x : Double) -> Double {
   // 64-bit integer (mirroring `sinh`); a split high/low-word comparison with a
   // signed low word misclassifies low words in [0, 0x7fffffff] and wrongly
   // overflows to infinity for finite values just below the threshold.
-  if x.abs().reinterpret_as_uint64() <= 0x408633ce8fb9f87d {
-    let w = exp(0.5 * x.abs())
+  if abs_x.reinterpret_as_uint64() <= 0x408633ce8fb9f87d {
+    let w = exp(0.5 * abs_x)
     let t = 0.5 * w
     return t * w
   }

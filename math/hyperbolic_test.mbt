@@ -181,17 +181,18 @@ test "cosh large-arg coverage" {
 
 ///|
 test "cosh near-overflow low-word boundary" {
-  // 710.4757080078125 has bit pattern 0x408633ce40000000: it shares the high-word
-  // bucket 0x408633ce with the overflow threshold, and its low word 0x40000000 is
-  // below the threshold low word 0x8fb9f87d as an unsigned value. The old code
-  // compared low words as signed Int, where the threshold 0x8fb9f87d is negative
-  // (-1883637635), so a positive low word such as 0x40000000 failed
-  // `lx <= 0x8fb9f87d` and wrongly fell through to Infinity, even though cosh here
-  // is finite (~1.7974e308, just below DBL_MAX). Guard both signs.
-  let x = 710.4757080078125
-  assert_true(!@math.cosh(x).is_inf())
-  assert_true(!@math.cosh(x).is_nan())
-  assert_true(@math.cosh(x) > 1.79e308)
-  assert_true(!@math.cosh(-x).is_inf())
-  assert_true(@math.cosh(-x) > 1.79e308)
+  // Build the value from its exact bit pattern 0x408633ce40000000
+  // (~710.4757080078125) so the test does not depend on decimal-literal rounding.
+  // It shares the high-word bucket 0x408633ce with the overflow threshold, and its
+  // low word 0x40000000 is below the threshold low word 0x8fb9f87d as an unsigned
+  // value. The old code compared low words as signed Int, where the threshold
+  // 0x8fb9f87d is negative (-1883637635), so a positive low word such as
+  // 0x40000000 failed `lx <= 0x8fb9f87d` and wrongly fell through to Infinity, even
+  // though cosh here is finite (~1.7974e308, just below DBL_MAX). Guard both signs.
+  let x = 0x408633ce40000000L.reinterpret_as_double()
+  assert_eq(x.reinterpret_as_uint64(), 0x408633ce40000000)
+  let pos = @math.cosh(x)
+  let neg = @math.cosh(-x)
+  assert_true(!pos.is_inf() && !pos.is_nan() && pos > 1.79e308)
+  assert_true(!neg.is_inf() && !neg.is_nan() && neg > 1.79e308)
 }
