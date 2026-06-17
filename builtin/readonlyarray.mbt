@@ -105,6 +105,35 @@ pub fn[T] ReadOnlyArray::get(self : ReadOnlyArray[T], index : Int) -> T? {
 }
 
 ///|
+/// Retrieves an element from a read-only array at the specified index.
+/// This is an unsafe operation: it is undefined behavior if the index is out of bounds.
+///
+/// Parameters:
+///
+/// * `array` : The read-only array to retrieve the element from.
+/// * `index` : The position in the array from which to retrieve the element.
+///
+/// Returns the element at the specified index in the array.
+///
+/// It is undefined behavior if the index is out of bounds (negative or greater than or
+/// equal to the array's length).
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let arr : ReadOnlyArray[Int] = [42, 42, 42]
+///   inspect(arr.unsafe_get(1), content="42")
+/// }
+/// ```
+///
+#internal(unsafe, "Undefined behavior if index is out of bounds")
+#doc(hidden)
+pub fn[T] ReadOnlyArray::unsafe_get(self : ReadOnlyArray[T], index : Int) -> T {
+  self.unsafe_reinterpret_to_fixed_array().unsafe_get(index)
+}
+
+///|
 /// Returns the length of the ReadOnlyArray.
 ///
 /// # Example
