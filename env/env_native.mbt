@@ -178,56 +178,18 @@ fn unset_env_var_internal(key : String) -> Unit {
 extern "c" fn unset_env_var_ffi(_key : Bytes) -> Unit = "moonbit_rt_unset_env_var"
 
 ///|
-#cfg(target_os="windows")
 fn rand_internal(n : Int) -> Bytes? {
   if n <= 0 {
     return Some(b"")
   }
   let buf = Bytes::new(n)
-  let word = Bytes::new(4)
-  let mut offset = 0
-  while offset < n {
-    let rc = rand_s(word)
-    if rc != 0 {
-      return None
-    }
-    for i = 0; i < 4 && offset + i < n; i = i + 1 {
-      buf[offset + i] = word[i]
-    }
-    offset += 4
+  let rc = moonbit_rt_get_random(buf, n)
+  if rc != 0 {
+    return None
   }
   Some(buf)
 }
 
 ///|
-#cfg(target_os="windows")
-#borrow(value)
-extern "c" fn rand_s(value : Bytes) -> Int = "rand_s"
-
-///|
-#cfg(not(target_os="windows"))
-fn rand_internal(n : Int) -> Bytes? {
-  if n <= 0 {
-    return Some(b"")
-  }
-  let buf : FixedArray[Byte] = FixedArray::make(n, b'\x00')
-  let chunk : FixedArray[Byte] = FixedArray::make(256, b'\x00')
-  let mut offset = 0
-  while offset < n {
-    let len = if n - offset < 256 { n - offset } else { 256 }
-    let rc = getentropy(chunk, len.reinterpret_as_uint())
-    if rc != 0 {
-      return None
-    }
-    for i = 0; i < len; i = i + 1 {
-      buf[offset + i] = chunk[i]
-    }
-    offset += len
-  }
-  Some(Bytes::from_array(buf))
-}
-
-///|
-#cfg(not(target_os="windows"))
 #borrow(buf)
-extern "c" fn getentropy(buf : FixedArray[Byte], len : UInt) -> Int = "getentropy"
+extern "c" fn moonbit_rt_get_random(buf : Bytes, len : Int) -> Int = "moonbit_rt_get_random"
