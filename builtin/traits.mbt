@@ -103,7 +103,7 @@ pub(open) trait Logger {
   fn write_view(Self, StringView) -> Unit = _
   /// Writes a character to the logger.
   fn write_char(Self, Char) -> Unit = _
-  fn[T : Show] write_string_interpolation(Self, T) -> Unit = _
+  fn write_string_interpolation(Self, &Show) -> Unit = _
   fn write(Self, &Show) -> Unit = _
 }
 

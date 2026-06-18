@@ -1319,6 +1319,7 @@ pub(open) trait Logger {
   fn write_substring(Self, String, Int, Int) -> Unit = _
   fn write_view(Self, StringView) -> Unit = _
   fn write_char(Self, Char) -> Unit = _
+  fn write_string_interpolation(Self, &Show) -> Unit = _
   fn write(Self, &Show) -> Unit = _
 }
 pub fn[T : Show] &Logger::write_iter(Self, Iter[T], prefix? : String, suffix? : String, sep? : String, trailing? : Bool) -> Unit
