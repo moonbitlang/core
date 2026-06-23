@@ -501,7 +501,7 @@ pub fn V128::i16x8_relaxed_q15mulr_s(value : V128, other : V128) -> V128 {
 }
 
 ///|
-/// Adds adjacent signed lane pairs, widening, into eight 16-bit integer lanes.
+/// Sign-extends adjacent lane pairs and adds each pair into eight 16-bit integer lanes.
 #intrinsic("%v128.i16x8_extadd_pairwise_i8x16_s")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
@@ -513,7 +513,7 @@ pub fn V128::i16x8_extadd_pairwise_i8x16_s(value : V128) -> V128 {
 }
 
 ///|
-/// Adds adjacent unsigned lane pairs, widening, into eight 16-bit integer lanes.
+/// Zero-extends adjacent lane pairs and adds each pair into eight 16-bit integer lanes.
 #intrinsic("%v128.i16x8_extadd_pairwise_i8x16_u")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
@@ -525,7 +525,7 @@ pub fn V128::i16x8_extadd_pairwise_i8x16_u(value : V128) -> V128 {
 }
 
 ///|
-/// Adds adjacent signed lane pairs, widening, into four 32-bit integer lanes.
+/// Sign-extends adjacent lane pairs and adds each pair into four 32-bit integer lanes.
 #intrinsic("%v128.i32x4_extadd_pairwise_i16x8_s")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
@@ -537,7 +537,7 @@ pub fn V128::i32x4_extadd_pairwise_i16x8_s(value : V128) -> V128 {
 }
 
 ///|
-/// Adds adjacent unsigned lane pairs, widening, into four 32-bit integer lanes.
+/// Zero-extends adjacent lane pairs and adds each pair into four 32-bit integer lanes.
 #intrinsic("%v128.i32x4_extadd_pairwise_i16x8_u")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)

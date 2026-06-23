@@ -305,7 +305,7 @@ pub fn V128::f32x4_trunc(value : V128) -> V128 {
 }
 
 ///|
-/// Lane-wise round to nearest, ties to even, over four 32-bit float lanes.
+/// Lane-wise round to nearest (ties to even) over four 32-bit float lanes.
 #intrinsic("%v128.f32x4_nearest")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
@@ -644,7 +644,7 @@ pub fn V128::f64x2_trunc(value : V128) -> V128 {
 }
 
 ///|
-/// Lane-wise round to nearest, ties to even, over two 64-bit float lanes.
+/// Lane-wise round to nearest (ties to even) over two 64-bit float lanes.
 #intrinsic("%v128.f64x2_nearest")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
