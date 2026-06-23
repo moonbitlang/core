@@ -245,110 +245,186 @@ fn f64_trunc_sat_u(value : Double) -> UInt {
 }
 
 ///|
+/// Lane-wise absolute value over four 32-bit float lanes.
 #intrinsic("%v128.f32x4_abs")
-pub fn f32x4_abs(value : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f32x4_abs(value : V128) -> V128 {
   f32x4_map(value, fn(x) { x.abs() })
 }
 
 ///|
+/// Lane-wise negation over four 32-bit float lanes.
 #intrinsic("%v128.f32x4_neg")
-pub fn f32x4_neg(value : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f32x4_neg(value : V128) -> V128 {
   f32x4_map(value, fn(x) { -x })
 }
 
 ///|
+/// Lane-wise square root over four 32-bit float lanes.
 #intrinsic("%v128.f32x4_sqrt")
-pub fn f32x4_sqrt(value : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f32x4_sqrt(value : V128) -> V128 {
   f32x4_map(value, fn(x) { x.sqrt() })
 }
 
 ///|
+/// Lane-wise round toward positive infinity over four 32-bit float lanes.
 #intrinsic("%v128.f32x4_ceil")
-pub fn f32x4_ceil(value : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f32x4_ceil(value : V128) -> V128 {
   f32x4_map(value, fn(x) { x.ceil() })
 }
 
 ///|
+/// Lane-wise round toward negative infinity over four 32-bit float lanes.
 #intrinsic("%v128.f32x4_floor")
-pub fn f32x4_floor(value : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f32x4_floor(value : V128) -> V128 {
   f32x4_map(value, fn(x) { x.floor() })
 }
 
 ///|
+/// Lane-wise round toward zero over four 32-bit float lanes.
 #intrinsic("%v128.f32x4_trunc")
-pub fn f32x4_trunc(value : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f32x4_trunc(value : V128) -> V128 {
   f32x4_map(value, fn(x) { x.trunc() })
 }
 
 ///|
+/// Lane-wise round to nearest, ties to even, over four 32-bit float lanes.
 #intrinsic("%v128.f32x4_nearest")
-pub fn f32x4_nearest(value : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f32x4_nearest(value : V128) -> V128 {
   f32x4_map(value, f32_nearest_even)
 }
 
 ///|
+/// Lane-wise wrapping addition over four 32-bit float lanes.
 #intrinsic("%v128.f32x4_add")
-pub fn f32x4_add(value : V128, other : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f32x4_add(value : V128, other : V128) -> V128 {
   f32x4_zip(value, other, fn(x, y) { x + y })
 }
 
 ///|
+/// Lane-wise wrapping subtraction over four 32-bit float lanes.
 #intrinsic("%v128.f32x4_sub")
-pub fn f32x4_sub(value : V128, other : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f32x4_sub(value : V128, other : V128) -> V128 {
   f32x4_zip(value, other, fn(x, y) { x - y })
 }
 
 ///|
+/// Lane-wise wrapping multiplication over four 32-bit float lanes.
 #intrinsic("%v128.f32x4_mul")
-pub fn f32x4_mul(value : V128, other : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f32x4_mul(value : V128, other : V128) -> V128 {
   f32x4_zip(value, other, fn(x, y) { x * y })
 }
 
 ///|
+/// Lane-wise division over four 32-bit float lanes.
 #intrinsic("%v128.f32x4_div")
-pub fn f32x4_div(value : V128, other : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f32x4_div(value : V128, other : V128) -> V128 {
   f32x4_zip(value, other, fn(x, y) { x / y })
 }
 
 ///|
+/// Lane-wise minimum over four 32-bit float lanes (propagates NaN).
 #intrinsic("%v128.f32x4_min")
-pub fn f32x4_min(value : V128, other : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f32x4_min(value : V128, other : V128) -> V128 {
   f32x4_zip(value, other, f32_min)
 }
 
 ///|
+/// Lane-wise maximum over four 32-bit float lanes (propagates NaN).
 #intrinsic("%v128.f32x4_max")
-pub fn f32x4_max(value : V128, other : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f32x4_max(value : V128, other : V128) -> V128 {
   f32x4_zip(value, other, f32_max)
 }
 
 ///|
+/// Lane-wise pseudo-minimum over four 32-bit float lanes (returns the first operand on ties and NaN).
 #intrinsic("%v128.f32x4_pmin")
-pub fn f32x4_pmin(value : V128, other : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f32x4_pmin(value : V128, other : V128) -> V128 {
   f32x4_zip(value, other, f32_pmin)
 }
 
 ///|
+/// Lane-wise pseudo-maximum over four 32-bit float lanes (returns the first operand on ties and NaN).
 #intrinsic("%v128.f32x4_pmax")
-pub fn f32x4_pmax(value : V128, other : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f32x4_pmax(value : V128, other : V128) -> V128 {
   f32x4_zip(value, other, f32_pmax)
 }
 
 ///|
+/// Relaxed lane-wise minimum over four 32-bit float lanes (NaN and signed-zero behavior implementation-defined).
 #intrinsic("%v128.f32x4_relaxed_min")
-pub fn f32x4_relaxed_min(value : V128, other : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f32x4_relaxed_min(value : V128, other : V128) -> V128 {
   f32x4_min(value, other)
 }
 
 ///|
+/// Relaxed lane-wise maximum over four 32-bit float lanes (NaN and signed-zero behavior implementation-defined).
 #intrinsic("%v128.f32x4_relaxed_max")
-pub fn f32x4_relaxed_max(value : V128, other : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f32x4_relaxed_max(value : V128, other : V128) -> V128 {
   f32x4_max(value, other)
 }
 
 ///|
+/// Relaxed fused multiply-add `a * b + c` over four 32-bit float lanes (fusion is implementation-defined).
 #intrinsic("%v128.f32x4_relaxed_madd")
-pub fn f32x4_relaxed_madd(value : V128, other : V128, addend : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f32x4_relaxed_madd(
+  value : V128,
+  other : V128,
+  addend : V128,
+) -> V128 {
   pack_f32x4_by(i => {
     f32x4_extract_lane(value, i) * f32x4_extract_lane(other, i) +
     f32x4_extract_lane(addend, i)
@@ -356,8 +432,16 @@ pub fn f32x4_relaxed_madd(value : V128, other : V128, addend : V128) -> V128 {
 }
 
 ///|
+/// Relaxed fused negated multiply-add `c - a * b` over four 32-bit float lanes (fusion is implementation-defined).
 #intrinsic("%v128.f32x4_relaxed_nmadd")
-pub fn f32x4_relaxed_nmadd(value : V128, other : V128, addend : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f32x4_relaxed_nmadd(
+  value : V128,
+  other : V128,
+  addend : V128,
+) -> V128 {
   pack_f32x4_by(i => {
     f32x4_extract_lane(addend, i) -
     f32x4_extract_lane(value, i) * f32x4_extract_lane(other, i)
@@ -365,56 +449,92 @@ pub fn f32x4_relaxed_nmadd(value : V128, other : V128, addend : V128) -> V128 {
 }
 
 ///|
+/// Lane-wise equality comparison over four 32-bit float lanes; each lane is all-ones when true, zero otherwise.
 #intrinsic("%v128.f32x4_eq")
-pub fn f32x4_eq(value : V128, other : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f32x4_eq(value : V128, other : V128) -> V128 {
   f32x4_compare(value, other, fn(x, y) { x == y })
 }
 
 ///|
+/// Lane-wise inequality comparison over four 32-bit float lanes; each lane is all-ones when true, zero otherwise.
 #intrinsic("%v128.f32x4_ne")
-pub fn f32x4_ne(value : V128, other : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f32x4_ne(value : V128, other : V128) -> V128 {
   f32x4_compare(value, other, fn(x, y) { x != y })
 }
 
 ///|
+/// Lane-wise less-than comparison over four 32-bit float lanes; each lane is all-ones when true, zero otherwise.
 #intrinsic("%v128.f32x4_lt")
-pub fn f32x4_lt(value : V128, other : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f32x4_lt(value : V128, other : V128) -> V128 {
   f32x4_compare(value, other, fn(x, y) { x < y })
 }
 
 ///|
+/// Lane-wise less-than-or-equal comparison over four 32-bit float lanes; each lane is all-ones when true, zero otherwise.
 #intrinsic("%v128.f32x4_le")
-pub fn f32x4_le(value : V128, other : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f32x4_le(value : V128, other : V128) -> V128 {
   f32x4_compare(value, other, fn(x, y) { x <= y })
 }
 
 ///|
+/// Lane-wise greater-than comparison over four 32-bit float lanes; each lane is all-ones when true, zero otherwise.
 #intrinsic("%v128.f32x4_gt")
-pub fn f32x4_gt(value : V128, other : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f32x4_gt(value : V128, other : V128) -> V128 {
   f32x4_compare(value, other, fn(x, y) { x > y })
 }
 
 ///|
+/// Lane-wise greater-than-or-equal comparison over four 32-bit float lanes; each lane is all-ones when true, zero otherwise.
 #intrinsic("%v128.f32x4_ge")
-pub fn f32x4_ge(value : V128, other : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f32x4_ge(value : V128, other : V128) -> V128 {
   f32x4_compare(value, other, fn(x, y) { x >= y })
 }
 
 ///|
+/// Converts four signed 32-bit integers to f32 lanes.
 #intrinsic("%v128.f32x4_convert_i32x4_s")
-pub fn f32x4_convert_i32x4_s(value : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f32x4_convert_i32x4_s(value : V128) -> V128 {
   pack_f32x4_by(i => Float::from_int(u32_lane(value, i).reinterpret_as_int()))
 }
 
 ///|
+/// Converts four unsigned 32-bit integers to f32 lanes.
 #intrinsic("%v128.f32x4_convert_i32x4_u")
-pub fn f32x4_convert_i32x4_u(value : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f32x4_convert_i32x4_u(value : V128) -> V128 {
   pack_f32x4_by(i => Float::from_uint(u32_lane(value, i)))
 }
 
 ///|
+/// Demotes two f64 lanes to f32, zeroing the upper two lanes.
 #intrinsic("%v128.f32x4_demote_f64x2_zero")
-pub fn f32x4_demote_f64x2_zero(value : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f32x4_demote_f64x2_zero(value : V128) -> V128 {
   f32x4_const(
     Float::from_double(f64x2_extract_lane(value, 0)),
     Float::from_double(f64x2_extract_lane(value, 1)),
@@ -424,134 +544,226 @@ pub fn f32x4_demote_f64x2_zero(value : V128) -> V128 {
 }
 
 ///|
+/// Truncates f32 lanes to signed 32-bit integers with saturation (NaN -> 0).
 #intrinsic("%v128.i32x4_trunc_sat_f32x4_s")
-pub fn i32x4_trunc_sat_f32x4_s(value : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::i32x4_trunc_sat_f32x4_s(value : V128) -> V128 {
   pack_u32x4_by(i => f32_trunc_sat_s(f32x4_extract_lane(value, i)))
 }
 
 ///|
+/// Truncates f32 lanes to unsigned 32-bit integers with saturation (NaN -> 0).
 #intrinsic("%v128.i32x4_trunc_sat_f32x4_u")
-pub fn i32x4_trunc_sat_f32x4_u(value : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::i32x4_trunc_sat_f32x4_u(value : V128) -> V128 {
   pack_u32x4_by(i => f32_trunc_sat_u(f32x4_extract_lane(value, i)))
 }
 
 ///|
+/// Relaxed saturating truncation of f32 lanes to signed 32-bit integers.
 #intrinsic("%v128.i32x4_relaxed_trunc_f32x4_s")
-pub fn i32x4_relaxed_trunc_f32x4_s(value : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::i32x4_relaxed_trunc_f32x4_s(value : V128) -> V128 {
   i32x4_trunc_sat_f32x4_s(value)
 }
 
 ///|
+/// Relaxed saturating truncation of f32 lanes to unsigned 32-bit integers.
 #intrinsic("%v128.i32x4_relaxed_trunc_f32x4_u")
-pub fn i32x4_relaxed_trunc_f32x4_u(value : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::i32x4_relaxed_trunc_f32x4_u(value : V128) -> V128 {
   i32x4_trunc_sat_f32x4_u(value)
 }
 
 ///|
+/// Lane-wise absolute value over two 64-bit float lanes.
 #intrinsic("%v128.f64x2_abs")
-pub fn f64x2_abs(value : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f64x2_abs(value : V128) -> V128 {
   f64x2_map(value, fn(x) { x.abs() })
 }
 
 ///|
+/// Lane-wise negation over two 64-bit float lanes.
 #intrinsic("%v128.f64x2_neg")
-pub fn f64x2_neg(value : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f64x2_neg(value : V128) -> V128 {
   f64x2_map(value, fn(x) { -x })
 }
 
 ///|
+/// Lane-wise square root over two 64-bit float lanes.
 #intrinsic("%v128.f64x2_sqrt")
-pub fn f64x2_sqrt(value : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f64x2_sqrt(value : V128) -> V128 {
   f64x2_map(value, fn(x) { x.sqrt() })
 }
 
 ///|
+/// Lane-wise round toward positive infinity over two 64-bit float lanes.
 #intrinsic("%v128.f64x2_ceil")
-pub fn f64x2_ceil(value : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f64x2_ceil(value : V128) -> V128 {
   f64x2_map(value, fn(x) { x.ceil() })
 }
 
 ///|
+/// Lane-wise round toward negative infinity over two 64-bit float lanes.
 #intrinsic("%v128.f64x2_floor")
-pub fn f64x2_floor(value : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f64x2_floor(value : V128) -> V128 {
   f64x2_map(value, fn(x) { x.floor() })
 }
 
 ///|
+/// Lane-wise round toward zero over two 64-bit float lanes.
 #intrinsic("%v128.f64x2_trunc")
-pub fn f64x2_trunc(value : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f64x2_trunc(value : V128) -> V128 {
   f64x2_map(value, fn(x) { x.trunc() })
 }
 
 ///|
+/// Lane-wise round to nearest, ties to even, over two 64-bit float lanes.
 #intrinsic("%v128.f64x2_nearest")
-pub fn f64x2_nearest(value : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f64x2_nearest(value : V128) -> V128 {
   f64x2_map(value, f64_nearest_even)
 }
 
 ///|
+/// Lane-wise wrapping addition over two 64-bit float lanes.
 #intrinsic("%v128.f64x2_add")
-pub fn f64x2_add(value : V128, other : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f64x2_add(value : V128, other : V128) -> V128 {
   f64x2_zip(value, other, fn(x, y) { x + y })
 }
 
 ///|
+/// Lane-wise wrapping subtraction over two 64-bit float lanes.
 #intrinsic("%v128.f64x2_sub")
-pub fn f64x2_sub(value : V128, other : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f64x2_sub(value : V128, other : V128) -> V128 {
   f64x2_zip(value, other, fn(x, y) { x - y })
 }
 
 ///|
+/// Lane-wise wrapping multiplication over two 64-bit float lanes.
 #intrinsic("%v128.f64x2_mul")
-pub fn f64x2_mul(value : V128, other : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f64x2_mul(value : V128, other : V128) -> V128 {
   f64x2_zip(value, other, fn(x, y) { x * y })
 }
 
 ///|
+/// Lane-wise division over two 64-bit float lanes.
 #intrinsic("%v128.f64x2_div")
-pub fn f64x2_div(value : V128, other : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f64x2_div(value : V128, other : V128) -> V128 {
   f64x2_zip(value, other, fn(x, y) { x / y })
 }
 
 ///|
+/// Lane-wise minimum over two 64-bit float lanes (propagates NaN).
 #intrinsic("%v128.f64x2_min")
-pub fn f64x2_min(value : V128, other : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f64x2_min(value : V128, other : V128) -> V128 {
   f64x2_zip(value, other, f64_min)
 }
 
 ///|
+/// Lane-wise maximum over two 64-bit float lanes (propagates NaN).
 #intrinsic("%v128.f64x2_max")
-pub fn f64x2_max(value : V128, other : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f64x2_max(value : V128, other : V128) -> V128 {
   f64x2_zip(value, other, f64_max)
 }
 
 ///|
+/// Lane-wise pseudo-minimum over two 64-bit float lanes (returns the first operand on ties and NaN).
 #intrinsic("%v128.f64x2_pmin")
-pub fn f64x2_pmin(value : V128, other : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f64x2_pmin(value : V128, other : V128) -> V128 {
   f64x2_zip(value, other, f64_pmin)
 }
 
 ///|
+/// Lane-wise pseudo-maximum over two 64-bit float lanes (returns the first operand on ties and NaN).
 #intrinsic("%v128.f64x2_pmax")
-pub fn f64x2_pmax(value : V128, other : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f64x2_pmax(value : V128, other : V128) -> V128 {
   f64x2_zip(value, other, f64_pmax)
 }
 
 ///|
+/// Relaxed lane-wise minimum over two 64-bit float lanes (NaN and signed-zero behavior implementation-defined).
 #intrinsic("%v128.f64x2_relaxed_min")
-pub fn f64x2_relaxed_min(value : V128, other : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f64x2_relaxed_min(value : V128, other : V128) -> V128 {
   f64x2_min(value, other)
 }
 
 ///|
+/// Relaxed lane-wise maximum over two 64-bit float lanes (NaN and signed-zero behavior implementation-defined).
 #intrinsic("%v128.f64x2_relaxed_max")
-pub fn f64x2_relaxed_max(value : V128, other : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f64x2_relaxed_max(value : V128, other : V128) -> V128 {
   f64x2_max(value, other)
 }
 
 ///|
+/// Relaxed fused multiply-add `a * b + c` over two 64-bit float lanes (fusion is implementation-defined).
 #intrinsic("%v128.f64x2_relaxed_madd")
-pub fn f64x2_relaxed_madd(value : V128, other : V128, addend : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f64x2_relaxed_madd(
+  value : V128,
+  other : V128,
+  addend : V128,
+) -> V128 {
   pack_f64x2_by(i => {
     f64x2_extract_lane(value, i) * f64x2_extract_lane(other, i) +
     f64x2_extract_lane(addend, i)
@@ -559,8 +771,16 @@ pub fn f64x2_relaxed_madd(value : V128, other : V128, addend : V128) -> V128 {
 }
 
 ///|
+/// Relaxed fused negated multiply-add `c - a * b` over two 64-bit float lanes (fusion is implementation-defined).
 #intrinsic("%v128.f64x2_relaxed_nmadd")
-pub fn f64x2_relaxed_nmadd(value : V128, other : V128, addend : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f64x2_relaxed_nmadd(
+  value : V128,
+  other : V128,
+  addend : V128,
+) -> V128 {
   pack_f64x2_by(i => {
     f64x2_extract_lane(addend, i) -
     f64x2_extract_lane(value, i) * f64x2_extract_lane(other, i)
@@ -568,62 +788,102 @@ pub fn f64x2_relaxed_nmadd(value : V128, other : V128, addend : V128) -> V128 {
 }
 
 ///|
+/// Lane-wise equality comparison over two 64-bit float lanes; each lane is all-ones when true, zero otherwise.
 #intrinsic("%v128.f64x2_eq")
-pub fn f64x2_eq(value : V128, other : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f64x2_eq(value : V128, other : V128) -> V128 {
   f64x2_compare(value, other, fn(x, y) { x == y })
 }
 
 ///|
+/// Lane-wise inequality comparison over two 64-bit float lanes; each lane is all-ones when true, zero otherwise.
 #intrinsic("%v128.f64x2_ne")
-pub fn f64x2_ne(value : V128, other : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f64x2_ne(value : V128, other : V128) -> V128 {
   f64x2_compare(value, other, fn(x, y) { x != y })
 }
 
 ///|
+/// Lane-wise less-than comparison over two 64-bit float lanes; each lane is all-ones when true, zero otherwise.
 #intrinsic("%v128.f64x2_lt")
-pub fn f64x2_lt(value : V128, other : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f64x2_lt(value : V128, other : V128) -> V128 {
   f64x2_compare(value, other, fn(x, y) { x < y })
 }
 
 ///|
+/// Lane-wise less-than-or-equal comparison over two 64-bit float lanes; each lane is all-ones when true, zero otherwise.
 #intrinsic("%v128.f64x2_le")
-pub fn f64x2_le(value : V128, other : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f64x2_le(value : V128, other : V128) -> V128 {
   f64x2_compare(value, other, fn(x, y) { x <= y })
 }
 
 ///|
+/// Lane-wise greater-than comparison over two 64-bit float lanes; each lane is all-ones when true, zero otherwise.
 #intrinsic("%v128.f64x2_gt")
-pub fn f64x2_gt(value : V128, other : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f64x2_gt(value : V128, other : V128) -> V128 {
   f64x2_compare(value, other, fn(x, y) { x > y })
 }
 
 ///|
+/// Lane-wise greater-than-or-equal comparison over two 64-bit float lanes; each lane is all-ones when true, zero otherwise.
 #intrinsic("%v128.f64x2_ge")
-pub fn f64x2_ge(value : V128, other : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f64x2_ge(value : V128, other : V128) -> V128 {
   f64x2_compare(value, other, fn(x, y) { x >= y })
 }
 
 ///|
+/// Converts the low two signed 32-bit integers to f64 lanes.
 #intrinsic("%v128.f64x2_convert_low_i32x4_s")
-pub fn f64x2_convert_low_i32x4_s(value : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f64x2_convert_low_i32x4_s(value : V128) -> V128 {
   pack_f64x2_by(i => Double::from_int(u32_lane(value, i).reinterpret_as_int()))
 }
 
 ///|
+/// Converts the low two unsigned 32-bit integers to f64 lanes.
 #intrinsic("%v128.f64x2_convert_low_i32x4_u")
-pub fn f64x2_convert_low_i32x4_u(value : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f64x2_convert_low_i32x4_u(value : V128) -> V128 {
   pack_f64x2_by(i => Double::convert_uint(u32_lane(value, i)))
 }
 
 ///|
+/// Promotes the low two f32 lanes to f64.
 #intrinsic("%v128.f64x2_promote_low_f32x4")
-pub fn f64x2_promote_low_f32x4(value : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::f64x2_promote_low_f32x4(value : V128) -> V128 {
   pack_f64x2_by(i => f32x4_extract_lane(value, i).to_double())
 }
 
 ///|
+/// Truncates two f64 lanes to signed 32-bit integers with saturation, zeroing the upper lanes.
 #intrinsic("%v128.i32x4_trunc_sat_f64x2_s_zero")
-pub fn i32x4_trunc_sat_f64x2_s_zero(value : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::i32x4_trunc_sat_f64x2_s_zero(value : V128) -> V128 {
   i32x4_const(
     f64_trunc_sat_s(f64x2_extract_lane(value, 0)),
     f64_trunc_sat_s(f64x2_extract_lane(value, 1)),
@@ -633,8 +893,12 @@ pub fn i32x4_trunc_sat_f64x2_s_zero(value : V128) -> V128 {
 }
 
 ///|
+/// Truncates two f64 lanes to unsigned 32-bit integers with saturation, zeroing the upper lanes.
 #intrinsic("%v128.i32x4_trunc_sat_f64x2_u_zero")
-pub fn i32x4_trunc_sat_f64x2_u_zero(value : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::i32x4_trunc_sat_f64x2_u_zero(value : V128) -> V128 {
   i32x4_const(
     f64_trunc_sat_u(f64x2_extract_lane(value, 0)),
     f64_trunc_sat_u(f64x2_extract_lane(value, 1)),
@@ -644,13 +908,21 @@ pub fn i32x4_trunc_sat_f64x2_u_zero(value : V128) -> V128 {
 }
 
 ///|
+/// Relaxed saturating truncation of two f64 lanes to signed 32-bit integers, zeroing the upper lanes.
 #intrinsic("%v128.i32x4_relaxed_trunc_f64x2_s_zero")
-pub fn i32x4_relaxed_trunc_f64x2_s_zero(value : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::i32x4_relaxed_trunc_f64x2_s_zero(value : V128) -> V128 {
   i32x4_trunc_sat_f64x2_s_zero(value)
 }
 
 ///|
+/// Relaxed saturating truncation of two f64 lanes to unsigned 32-bit integers, zeroing the upper lanes.
 #intrinsic("%v128.i32x4_relaxed_trunc_f64x2_u_zero")
-pub fn i32x4_relaxed_trunc_f64x2_u_zero(value : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::i32x4_relaxed_trunc_f64x2_u_zero(value : V128) -> V128 {
   i32x4_trunc_sat_f64x2_u_zero(value)
 }

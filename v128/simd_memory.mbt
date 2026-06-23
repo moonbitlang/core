@@ -72,8 +72,12 @@ fn i32_extend_s(value : UInt) -> UInt64 {
 }
 
 ///|
+/// Selects bytes of `value` indexed by `indices`; indices >= 16 yield zero.
 #intrinsic("%v128.i8x16_swizzle")
-pub fn i8x16_swizzle(value : V128, indices : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::i8x16_swizzle(value : V128, indices : V128) -> V128 {
   pack_u8x16_by(i => {
     let index = u8_lane(indices, i).to_int()
     if index < 16 {
@@ -85,8 +89,12 @@ pub fn i8x16_swizzle(value : V128, indices : V128) -> V128 {
 }
 
 ///|
+/// Relaxed byte swizzle; behavior for out-of-range indices is implementation-defined.
 #intrinsic("%v128.i8x16_relaxed_swizzle")
-pub fn i8x16_relaxed_swizzle(value : V128, indices : V128) -> V128 {
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::i8x16_relaxed_swizzle(value : V128, indices : V128) -> V128 {
   i8x16_swizzle(value, indices)
 }
 
@@ -100,8 +108,12 @@ fn shuffle_lane(value : V128, other : V128, index : Int) -> Byte {
 }
 
 ///|
+/// Selects 16 bytes from the concatenation of the two vectors by constant lane indices.
 #intrinsic("%v128.i8x16_shuffle")
-pub fn i8x16_shuffle(
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+#as_free_fn
+pub fn V128::i8x16_shuffle(
   value : V128,
   other : V128,
   i0 : Int,
@@ -144,99 +156,141 @@ pub fn i8x16_shuffle(
 }
 
 ///|
+/// Loads a 128-bit vector from `bytes` at `offset` (little-endian).
 #intrinsic("%v128.v128_load")
 #borrow(bytes)
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
 pub fn v128_load(bytes : FixedArray[Byte], offset : Int) -> V128 {
   make(load_u64_le(bytes, offset), load_u64_le(bytes, offset + 8))
 }
 
 ///|
+/// Loads packed elements from `bytes` and sign-extends them into the vector.
 #intrinsic("%v128.v128_load8x8_s")
 #borrow(bytes)
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
 pub fn v128_load8x8_s(bytes : FixedArray[Byte], offset : Int) -> V128 {
   pack_u16x8_by(i => i8_extend_s(bytes.unsafe_get(offset + i)))
 }
 
 ///|
+/// Loads packed elements from `bytes` and zero-extends them into the vector.
 #intrinsic("%v128.v128_load8x8_u")
 #borrow(bytes)
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
 pub fn v128_load8x8_u(bytes : FixedArray[Byte], offset : Int) -> V128 {
   pack_u16x8_by(i => bytes.unsafe_get(offset + i).to_uint16())
 }
 
 ///|
+/// Loads packed elements from `bytes` and sign-extends them into the vector.
 #intrinsic("%v128.v128_load16x4_s")
 #borrow(bytes)
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
 pub fn v128_load16x4_s(bytes : FixedArray[Byte], offset : Int) -> V128 {
   pack_u32x4_by(i => i16_extend_s(load_u16_le(bytes, offset + i * 2)))
 }
 
 ///|
+/// Loads packed elements from `bytes` and zero-extends them into the vector.
 #intrinsic("%v128.v128_load16x4_u")
 #borrow(bytes)
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
 pub fn v128_load16x4_u(bytes : FixedArray[Byte], offset : Int) -> V128 {
   pack_u32x4_by(i => load_u16_le(bytes, offset + i * 2).to_uint())
 }
 
 ///|
+/// Loads packed elements from `bytes` and sign-extends them into the vector.
 #intrinsic("%v128.v128_load32x2_s")
 #borrow(bytes)
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
 pub fn v128_load32x2_s(bytes : FixedArray[Byte], offset : Int) -> V128 {
   pack_u64x2_by(i => i32_extend_s(load_u32_le(bytes, offset + i * 4)))
 }
 
 ///|
+/// Loads packed elements from `bytes` and zero-extends them into the vector.
 #intrinsic("%v128.v128_load32x2_u")
 #borrow(bytes)
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
 pub fn v128_load32x2_u(bytes : FixedArray[Byte], offset : Int) -> V128 {
   pack_u64x2_by(i => load_u32_le(bytes, offset + i * 4).to_uint64())
 }
 
 ///|
+/// Loads one element from `bytes` and splats it across the vector.
 #intrinsic("%v128.v128_load8_splat")
 #borrow(bytes)
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
 pub fn v128_load8_splat(bytes : FixedArray[Byte], offset : Int) -> V128 {
   i8x16_splat(bytes.unsafe_get(offset))
 }
 
 ///|
+/// Loads one element from `bytes` and splats it across the vector.
 #intrinsic("%v128.v128_load16_splat")
 #borrow(bytes)
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
 pub fn v128_load16_splat(bytes : FixedArray[Byte], offset : Int) -> V128 {
   i16x8_splat(load_u16_le(bytes, offset))
 }
 
 ///|
+/// Loads one element from `bytes` and splats it across the vector.
 #intrinsic("%v128.v128_load32_splat")
 #borrow(bytes)
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
 pub fn v128_load32_splat(bytes : FixedArray[Byte], offset : Int) -> V128 {
   i32x4_splat(load_u32_le(bytes, offset))
 }
 
 ///|
+/// Loads one element from `bytes` and splats it across the vector.
 #intrinsic("%v128.v128_load64_splat")
 #borrow(bytes)
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
 pub fn v128_load64_splat(bytes : FixedArray[Byte], offset : Int) -> V128 {
   i64x2_splat(load_u64_le(bytes, offset))
 }
 
 ///|
+/// Loads one element from `bytes` into the low lane, zeroing the rest.
 #intrinsic("%v128.v128_load32_zero")
 #borrow(bytes)
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
 pub fn v128_load32_zero(bytes : FixedArray[Byte], offset : Int) -> V128 {
   i32x4_const(load_u32_le(bytes, offset), 0, 0, 0)
 }
 
 ///|
+/// Loads one element from `bytes` into the low lane, zeroing the rest.
 #intrinsic("%v128.v128_load64_zero")
 #borrow(bytes)
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
 pub fn v128_load64_zero(bytes : FixedArray[Byte], offset : Int) -> V128 {
   make(load_u64_le(bytes, offset), 0UL)
 }
 
 ///|
+/// Loads one element from `bytes` into lane `lane`, keeping the other lanes.
 #intrinsic("%v128.v128_load8_lane")
 #borrow(bytes)
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
 pub fn v128_load8_lane(
   bytes : FixedArray[Byte],
   offset : Int,
@@ -247,8 +301,11 @@ pub fn v128_load8_lane(
 }
 
 ///|
+/// Loads one element from `bytes` into lane `lane`, keeping the other lanes.
 #intrinsic("%v128.v128_load16_lane")
 #borrow(bytes)
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
 pub fn v128_load16_lane(
   bytes : FixedArray[Byte],
   offset : Int,
@@ -259,8 +316,11 @@ pub fn v128_load16_lane(
 }
 
 ///|
+/// Loads one element from `bytes` into lane `lane`, keeping the other lanes.
 #intrinsic("%v128.v128_load32_lane")
 #borrow(bytes)
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
 pub fn v128_load32_lane(
   bytes : FixedArray[Byte],
   offset : Int,
@@ -271,8 +331,11 @@ pub fn v128_load32_lane(
 }
 
 ///|
+/// Loads one element from `bytes` into lane `lane`, keeping the other lanes.
 #intrinsic("%v128.v128_load64_lane")
 #borrow(bytes)
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
 pub fn v128_load64_lane(
   bytes : FixedArray[Byte],
   offset : Int,
@@ -283,16 +346,22 @@ pub fn v128_load64_lane(
 }
 
 ///|
+/// Stores a 128-bit vector to `bytes` at `offset` (little-endian).
 #intrinsic("%v128.v128_store")
 #borrow(bytes)
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
 pub fn v128_store(bytes : FixedArray[Byte], offset : Int, value : V128) -> Unit {
   store_u64_le(bytes, offset, lo(value))
   store_u64_le(bytes, offset + 8, hi(value))
 }
 
 ///|
+/// Stores lane `lane` to `bytes` at `offset` (little-endian).
 #intrinsic("%v128.v128_store8_lane")
 #borrow(bytes)
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
 pub fn v128_store8_lane(
   bytes : FixedArray[Byte],
   offset : Int,
@@ -303,8 +372,11 @@ pub fn v128_store8_lane(
 }
 
 ///|
+/// Stores lane `lane` to `bytes` at `offset` (little-endian).
 #intrinsic("%v128.v128_store16_lane")
 #borrow(bytes)
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
 pub fn v128_store16_lane(
   bytes : FixedArray[Byte],
   offset : Int,
@@ -315,8 +387,11 @@ pub fn v128_store16_lane(
 }
 
 ///|
+/// Stores lane `lane` to `bytes` at `offset` (little-endian).
 #intrinsic("%v128.v128_store32_lane")
 #borrow(bytes)
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
 pub fn v128_store32_lane(
   bytes : FixedArray[Byte],
   offset : Int,
@@ -327,8 +402,11 @@ pub fn v128_store32_lane(
 }
 
 ///|
+/// Stores lane `lane` to `bytes` at `offset` (little-endian).
 #intrinsic("%v128.v128_store64_lane")
 #borrow(bytes)
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
 pub fn v128_store64_lane(
   bytes : FixedArray[Byte],
   offset : Int,
