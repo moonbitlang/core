@@ -537,13 +537,16 @@ test "integer widening narrowing and dot products" {
     @v128.i32x4_dot_i16x8_s(words, @v128.i16x8_splat(2)),
     @v128.i32x4_const(0xfffefffe, 6, 0xfffe, 0x2464),
   )
-  // i32x4_relaxed_dot_i8x16_i7x16_add_s is implementation-defined and
-  // engines disagree on the exact result (NEON differs from the wasm/js/
-  // scalar paths), so only smoke-test that it lowers and runs.
-  let _relaxed_dot_add = @v128.i32x4_relaxed_dot_i8x16_i7x16_add_s(
-    dot_in,
-    @v128.i8x16_splat(2),
-    @v128.i32x4_splat(1),
+  // Runs via the portable fallback (the intrinsic is omitted pending a
+  // compiler naming/lowering fix), so the exact result is deterministic
+  // across all backends.
+  assert_eq(
+    @v128.i32x4_relaxed_dot_i8x16_i7x16_add_s(
+      dot_in,
+      @v128.i8x16_splat(2),
+      @v128.i32x4_splat(1),
+    ),
+    @v128.i32x4_const(21, 53, 85, 117),
   )
 
   assert_eq(
