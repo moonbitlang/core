@@ -316,8 +316,8 @@ pub fn V128::f64x2_extract_lane(value : V128, lane : Int) -> Double {
 }
 
 ///|
-/// The fallback splices the lane into the affected 64-bit word with mask
-/// arithmetic; lanes outside 0..15 leave the value unchanged.
+/// Returns a copy with lane `lane` replaced by `replacement` (sixteen 8-bit
+/// integer lanes). Lanes outside 0..15 leave the value unchanged.
 #intrinsic("%v128.i8x16_replace_lane")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
