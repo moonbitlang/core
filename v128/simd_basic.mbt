@@ -332,7 +332,7 @@ pub fn V128::i8x16_replace_lane(
   let bits = (replacement.to_uint64() & 0xffUL) << shift
   if lane >= 0 && lane < 8 {
     make((lo(value) & mask.lnot()) | bits, hi(value))
-  } else if lane < 16 {
+  } else if lane >= 8 && lane < 16 {
     make(lo(value), (hi(value) & mask.lnot()) | bits)
   } else {
     value
@@ -355,7 +355,7 @@ pub fn V128::i16x8_replace_lane(
   let bits = (replacement.to_uint64() & 0xffffUL) << shift
   if lane >= 0 && lane < 4 {
     make((lo(value) & mask.lnot()) | bits, hi(value))
-  } else if lane < 8 {
+  } else if lane >= 4 && lane < 8 {
     make(lo(value), (hi(value) & mask.lnot()) | bits)
   } else {
     value
@@ -378,7 +378,7 @@ pub fn V128::i32x4_replace_lane(
   let bits = replacement.to_uint64() << shift
   if lane >= 0 && lane < 2 {
     make((lo(value) & mask.lnot()) | bits, hi(value))
-  } else if lane < 4 {
+  } else if lane >= 2 && lane < 4 {
     make(lo(value), (hi(value) & mask.lnot()) | bits)
   } else {
     value
