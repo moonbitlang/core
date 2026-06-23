@@ -315,7 +315,7 @@ pub fn V128::f32x4_nearest(value : V128) -> V128 {
 }
 
 ///|
-/// Lane-wise wrapping addition over four 32-bit float lanes.
+/// Lane-wise addition over four 32-bit float lanes.
 #intrinsic("%v128.f32x4_add")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
@@ -325,7 +325,7 @@ pub fn V128::f32x4_add(value : V128, other : V128) -> V128 {
 }
 
 ///|
-/// Lane-wise wrapping subtraction over four 32-bit float lanes.
+/// Lane-wise subtraction over four 32-bit float lanes.
 #intrinsic("%v128.f32x4_sub")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
@@ -335,7 +335,7 @@ pub fn V128::f32x4_sub(value : V128, other : V128) -> V128 {
 }
 
 ///|
-/// Lane-wise wrapping multiplication over four 32-bit float lanes.
+/// Lane-wise multiplication over four 32-bit float lanes.
 #intrinsic("%v128.f32x4_mul")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
@@ -654,7 +654,7 @@ pub fn V128::f64x2_nearest(value : V128) -> V128 {
 }
 
 ///|
-/// Lane-wise wrapping addition over two 64-bit float lanes.
+/// Lane-wise addition over two 64-bit float lanes.
 #intrinsic("%v128.f64x2_add")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
@@ -664,7 +664,7 @@ pub fn V128::f64x2_add(value : V128, other : V128) -> V128 {
 }
 
 ///|
-/// Lane-wise wrapping subtraction over two 64-bit float lanes.
+/// Lane-wise subtraction over two 64-bit float lanes.
 #intrinsic("%v128.f64x2_sub")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
@@ -674,7 +674,7 @@ pub fn V128::f64x2_sub(value : V128, other : V128) -> V128 {
 }
 
 ///|
-/// Lane-wise wrapping multiplication over two 64-bit float lanes.
+/// Lane-wise multiplication over two 64-bit float lanes.
 #intrinsic("%v128.f64x2_mul")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
