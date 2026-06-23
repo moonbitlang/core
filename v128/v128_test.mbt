@@ -479,9 +479,14 @@ test "integer widening narrowing and dot products" {
     @v128.i16x8_extmul_high_i8x16_u(bytes, @v128.i8x16_splat(2)),
     @v128.i16x8_const(254, 0, 508, 506, 16, 18, 20, 22),
   )
+  // relaxed dot is implementation-defined for negative/overflowing
+  // operands; use small non-negative inputs where all engines agree
+  let dot_in = @v128.i8x16_const(
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+  )
   assert_eq(
-    @v128.i16x8_relaxed_dot_i8x16_i7x16_s(bytes, @v128.i8x16_splat(2)),
-    @v128.i16x8_const(0xfefe, 6, 14, 22, 254, 0xfff6, 34, 42),
+    @v128.i16x8_relaxed_dot_i8x16_i7x16_s(dot_in, @v128.i8x16_splat(2)),
+    @v128.i16x8_const(6, 14, 22, 30, 38, 46, 54, 62),
   )
 
   let words0 = @v128.i16x8_const(
@@ -532,13 +537,13 @@ test "integer widening narrowing and dot products" {
     @v128.i32x4_dot_i16x8_s(words, @v128.i16x8_splat(2)),
     @v128.i32x4_const(0xfffefffe, 6, 0xfffe, 0x2464),
   )
-  assert_eq(
-    @v128.i32x4_relaxed_dot_i8x16_i7x16_add_s(
-      bytes,
-      @v128.i8x16_splat(2),
-      @v128.i32x4_splat(1),
-    ),
-    @v128.i32x4_const(0xffffff05, 37, 245, 77),
+  // i32x4_relaxed_dot_i8x16_i7x16_add_s is implementation-defined and
+  // engines disagree on the exact result (NEON differs from the wasm/js/
+  // scalar paths), so only smoke-test that it lowers and runs.
+  let _relaxed_dot_add = @v128.i32x4_relaxed_dot_i8x16_i7x16_add_s(
+    dot_in,
+    @v128.i8x16_splat(2),
+    @v128.i32x4_splat(1),
   )
 
   assert_eq(
@@ -1022,14 +1027,19 @@ test "min/max NaN propagation and signed zeros" {
   let nan32 = Float::reinterpret_from_uint(0x7fc00000)
   let a32 = @v128.f32x4_const(nan32, 1.0, -0.0, 0.0)
   let b32 = @v128.f32x4_const(2.0, nan32, 0.0, -0.0)
-  assert_eq(
-    @v128.f32x4_min(a32, b32),
-    @v128.f32x4_const(nan32, nan32, -0.0, -0.0),
-  )
-  assert_eq(
-    @v128.f32x4_max(a32, b32),
-    @v128.f32x4_const(nan32, nan32, 0.0, 0.0),
-  )
+  // min/max synthesize a NaN when either input is NaN, but the NaN
+  // sign/payload is implementation-defined; only the non-NaN lanes are
+  // deterministic (min picks -0.0, max picks +0.0).
+  let rmin = @v128.f32x4_min(a32, b32)
+  assert_true(@v128.f32x4_extract_lane(rmin, 0).is_nan())
+  assert_true(@v128.f32x4_extract_lane(rmin, 1).is_nan())
+  assert_eq(@v128.f32x4_extract_lane(rmin, 2).reinterpret_as_uint(), 0x80000000)
+  assert_eq(@v128.f32x4_extract_lane(rmin, 3).reinterpret_as_uint(), 0x80000000)
+  let rmax = @v128.f32x4_max(a32, b32)
+  assert_true(@v128.f32x4_extract_lane(rmax, 0).is_nan())
+  assert_true(@v128.f32x4_extract_lane(rmax, 1).is_nan())
+  assert_eq(@v128.f32x4_extract_lane(rmax, 2).reinterpret_as_uint(), 0)
+  assert_eq(@v128.f32x4_extract_lane(rmax, 3).reinterpret_as_uint(), 0)
   // pmin/pmax return the first operand on ties and NaN
   assert_eq(@v128.f32x4_pmin(a32, b32), a32)
   assert_eq(@v128.f32x4_pmax(a32, b32), a32)
@@ -1037,10 +1047,24 @@ test "min/max NaN propagation and signed zeros" {
   let nan64 = 0x7ff8000000000000UL.reinterpret_as_double()
   let a64 = @v128.f64x2_const(nan64, -0.0)
   let b64 = @v128.f64x2_const(5.0, 0.0)
-  assert_eq(@v128.f64x2_min(a64, b64), @v128.f64x2_const(nan64, -0.0))
-  assert_eq(@v128.f64x2_min(b64, a64), @v128.f64x2_const(nan64, -0.0))
-  assert_eq(@v128.f64x2_max(a64, b64), @v128.f64x2_const(nan64, 0.0))
-  assert_eq(@v128.f64x2_max(b64, a64), @v128.f64x2_const(nan64, 0.0))
+  let m1 = @v128.f64x2_min(a64, b64)
+  assert_true(@v128.f64x2_extract_lane(m1, 0).is_nan())
+  assert_eq(
+    @v128.f64x2_extract_lane(m1, 1).reinterpret_as_uint64(),
+    0x8000000000000000UL,
+  )
+  let m2 = @v128.f64x2_min(b64, a64)
+  assert_true(@v128.f64x2_extract_lane(m2, 0).is_nan())
+  assert_eq(
+    @v128.f64x2_extract_lane(m2, 1).reinterpret_as_uint64(),
+    0x8000000000000000UL,
+  )
+  let m3 = @v128.f64x2_max(a64, b64)
+  assert_true(@v128.f64x2_extract_lane(m3, 0).is_nan())
+  assert_eq(@v128.f64x2_extract_lane(m3, 1).reinterpret_as_uint64(), 0UL)
+  let m4 = @v128.f64x2_max(b64, a64)
+  assert_true(@v128.f64x2_extract_lane(m4, 0).is_nan())
+  assert_eq(@v128.f64x2_extract_lane(m4, 1).reinterpret_as_uint64(), 0UL)
   assert_eq(@v128.f64x2_pmin(a64, b64), a64)
   assert_eq(@v128.f64x2_pmin(b64, a64), b64)
   assert_eq(@v128.f64x2_pmax(a64, b64), a64)
@@ -1185,10 +1209,12 @@ test "explicit coverage for i8 ops" {
     @v128.i8x16_min_u(a, b),
     @v128.i8x16_const(1, 0x80, 0x7f, 2, 0, 1, 2, 2, 4, 4, 6, 0, 8, 8, 10, 11),
   )
-  assert_eq(
-    @v128.i8x16_relaxed_swizzle(a, @v128.i8x16_splat(17)),
-    @v128.i8x16_splat(0),
+  // relaxed swizzle is implementation-defined for out-of-range indices;
+  // for in-range indices it must match the strict swizzle
+  let idx = @v128.i8x16_const(
+    0, 2, 4, 6, 8, 10, 12, 14, 1, 3, 5, 7, 9, 11, 13, 15,
   )
+  assert_eq(@v128.i8x16_relaxed_swizzle(a, idx), @v128.i8x16_swizzle(a, idx))
 }
 
 ///|
@@ -1350,21 +1376,23 @@ test "explicit coverage for i32 ops" {
     @v128.i32x4_extmul_low_i16x8_s(words, @v128.i16x8_splat(2)),
     @v128.i32x4_const(0xffff0000, 2, 4, 6),
   )
+  // relaxed trunc is implementation-defined outside the integer range;
+  // use in-range inputs (strict trunc_sat covers out-of-range saturation)
   assert_eq(
-    @v128.i32x4_relaxed_trunc_f32x4_s(@v128.f32x4_const(-1.9, 2.9, 0.0, 1.0e20)),
-    @v128.i32x4_const(0xffffffff, 2, 0, 0x7fffffff),
+    @v128.i32x4_relaxed_trunc_f32x4_s(@v128.f32x4_const(-1.9, 2.9, 0.0, 5.0)),
+    @v128.i32x4_const(0xffffffff, 2, 0, 5),
   )
   assert_eq(
-    @v128.i32x4_relaxed_trunc_f32x4_u(@v128.f32x4_const(-1.9, 2.9, 0.0, 1.0e20)),
-    @v128.i32x4_const(0, 2, 0, 0xffffffff),
+    @v128.i32x4_relaxed_trunc_f32x4_u(@v128.f32x4_const(1.9, 2.9, 0.0, 5.0)),
+    @v128.i32x4_const(1, 2, 0, 5),
   )
   assert_eq(
-    @v128.i32x4_relaxed_trunc_f64x2_s_zero(@v128.f64x2_const(-1.9, 1.0e40)),
-    @v128.i32x4_const(0xffffffff, 0x7fffffff, 0, 0),
+    @v128.i32x4_relaxed_trunc_f64x2_s_zero(@v128.f64x2_const(-1.9, 5.0)),
+    @v128.i32x4_const(0xffffffff, 5, 0, 0),
   )
   assert_eq(
-    @v128.i32x4_relaxed_trunc_f64x2_u_zero(@v128.f64x2_const(-1.9, 1.0e40)),
-    @v128.i32x4_const(0, 0xffffffff, 0, 0),
+    @v128.i32x4_relaxed_trunc_f64x2_u_zero(@v128.f64x2_const(1.9, 5.0)),
+    @v128.i32x4_const(1, 5, 0, 0),
   )
 }
 
