@@ -1937,3 +1937,18 @@ test "dot-application (method style via #as_free_fn)" {
   // free-fn form (the wasm-opcode mirror) remains available unchanged
   assert_eq(@v128.f32x4_splat(2.0).f32x4_sqrt(), @v128.f32x4_splat(1.4142135))
 }
+
+///|
+test "replace_lane out-of-range index leaves value unchanged" {
+  let v = @v128.i8x16_const(
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+  )
+  // runtime lane (loop variable) forces the fallback path on every backend;
+  // negative and too-large indices must be a no-op, not corrupt a lane.
+  for lane in [-1, -8, -100, 16, 17, 100] {
+    assert_eq(@v128.i8x16_replace_lane(v, 0xaa, lane), v)
+    assert_eq(@v128.i16x8_replace_lane(v, 0xbeef, lane), v)
+    assert_eq(@v128.i32x4_replace_lane(v, 0xdeadbeef, lane), v)
+    assert_eq(@v128.i64x2_replace_lane(v, 0x0123456789abcdefUL, lane), v)
+  }
+}
