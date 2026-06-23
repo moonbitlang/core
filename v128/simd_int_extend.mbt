@@ -550,7 +550,12 @@ pub fn V128::i32x4_extadd_pairwise_i16x8_u(value : V128) -> V128 {
 
 ///|
 /// Relaxed dot product of signed 8-bit by 7-bit lanes into 16-bit lanes.
-#intrinsic("%v128.i16x8_relaxed_dot_s_i8x16")
+///
+/// No `#intrinsic` annotation: the existing intrinsic
+/// `%v128.i16x8_relaxed_dot_s_i8x16` does not follow the spec/function
+/// naming convention (`i16x8.relaxed_dot_i8x16_i7x16_s`) and is slated to
+/// be renamed in the compiler. Until then this runs via the portable
+/// fallback below, which is correct on every backend.
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 #as_free_fn
@@ -576,7 +581,14 @@ pub fn V128::i32x4_dot_i16x8_s(value : V128, other : V128) -> V128 {
 
 ///|
 /// Relaxed dot product of signed 8-bit by 7-bit lanes, accumulated into 32-bit lanes.
-#intrinsic("%v128.i32x4_relaxed_dot_add_s_i16x8")
+///
+/// No `#intrinsic` annotation: the existing intrinsic
+/// `%v128.i32x4_relaxed_dot_add_s_i16x8` is misnamed. Its `_i16x8` suffix
+/// describes the intermediate vector, not the i8x16/i7x16 inputs, and the
+/// NEON lowering followed the name and multiplied the inputs as i16 lanes
+/// (vmull_s16) instead of i8 lanes (vmull_s8), producing wrong results.
+/// Omit the annotation until the compiler's intrinsic name and lowering are
+/// fixed; the portable fallback below is correct on every backend.
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 #as_free_fn
