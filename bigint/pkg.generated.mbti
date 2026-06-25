@@ -9,6 +9,7 @@ import {
 }
 
 // Values
+pub fn parse_bigint(StringView, base? : Int) -> BigInt raise
 
 // Errors
 
