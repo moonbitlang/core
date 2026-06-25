@@ -5,6 +5,7 @@ import {
 
 import {
   "moonbitlang/core/buffer",
+  "moonbitlang/core/bench",
 } for "test"
 
 options(
@@ -13,5 +14,7 @@ options(
     "decode_nonjs.mbt": [ "not", "js" ],
     "encode_js.mbt": [ "js" ],
     "encode_nonjs.mbt": [ "not", "js" ],
+    "is_valid_js.mbt": [ "js" ],
+    "is_valid_nonjs.mbt": [ "not", "js" ],
   },
 )
