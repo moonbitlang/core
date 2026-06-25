@@ -51,37 +51,6 @@ extern "js" fn decode_utf8_lossy_js(
   #| )
 
 ///|
-fn utf8_find_malformed(src : Bytes, src_offset : Int, src_length : Int) -> Int {
-  let view = src[src_offset:src_offset + src_length]
-  for bytes = view {
-    match bytes {
-      [] => break -1
-      [
-        _..=0x7F,
-        _..=0x7F,
-        _..=0x7F,
-        _..=0x7F,
-        _..=0x7F,
-        _..=0x7F,
-        _..=0x7F,
-        _..=0x7F,
-        .. rest,
-      ] => continue rest
-      [0..=0x7F, .. rest] => continue rest
-      [0xC2..=0xDF, 0x80..=0xBF, .. rest] => continue rest
-      [0xE0, 0xA0..=0xBF, 0x80..=0xBF, .. rest]
-      | [0xE1..=0xEC, 0x80..=0xBF, 0x80..=0xBF, .. rest]
-      | [0xED, 0x80..=0x9F, 0x80..=0xBF, .. rest]
-      | [0xEE..=0xEF, 0x80..=0xBF, 0x80..=0xBF, .. rest] => continue rest
-      [0xF0, 0x90..=0xBF, 0x80..=0xBF, 0x80..=0xBF, .. rest]
-      | [0xF1..=0xF3, 0x80..=0xBF, 0x80..=0xBF, 0x80..=0xBF, .. rest]
-      | [0xF4, 0x80..=0x8F, 0x80..=0xBF, 0x80..=0xBF, .. rest] => continue rest
-      malformed => break malformed.start_offset() - src_offset
-    }
-  }
-}
-
-///|
 fn strict_malformed_suffix(bytes : BytesView) -> BytesView {
   let input = bytes.data()
   let src_offset = bytes.start_offset()

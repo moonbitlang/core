@@ -118,6 +118,32 @@ test "decode sliced views" {
 }
 
 ///|
+test "is_valid UTF-8" {
+  assert_true(@utf8.is_valid(b""))
+  assert_true(@utf8.is_valid(b"hello"))
+  assert_true(@utf8.is_valid(b"\xc2\xa9"))
+  assert_true(@utf8.is_valid(b"\xe4\xb8\xad"))
+  assert_true(@utf8.is_valid(b"\xf0\x9f\x98\x80"))
+  assert_true(@utf8.is_valid(b".A\xc2\xa9\xe4\xb8\xad."[1:7]))
+  assert_false(@utf8.is_valid(b"\x80"))
+  assert_false(@utf8.is_valid(b"\xc2"))
+  assert_false(@utf8.is_valid(b"\xc0\x80"))
+  assert_false(@utf8.is_valid(b"\xe0\x80\x80"))
+  assert_false(@utf8.is_valid(b"\xed\xa0\x80"))
+  assert_false(@utf8.is_valid(b"\xf4\x90\x80\x80"))
+  assert_false(@utf8.is_valid(b"\xff"))
+}
+
+///|
+test "is_valid UTF-8 with bom" {
+  let bytes = b"\xef\xbb\xbfhello"
+  assert_true(@utf8.is_valid(bytes))
+  assert_true(@utf8.is_valid(bytes, ignore_bom=true))
+  assert_false(@utf8.is_valid(b"\xef\xbb\xbf\xff"))
+  assert_false(@utf8.is_valid(b"\xef\xbb\xbf\xff", ignore_bom=true))
+}
+
+///|
 test "decode malformed sliced views" {
   try {
     let _ = @utf8.decode(b".A\x80\xFFB."[1:5])

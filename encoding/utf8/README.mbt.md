@@ -35,6 +35,18 @@ test "decode" {
 }
 ```
 
+## Validation
+
+Use `is_valid` to check whether bytes are well-formed UTF-8 without decoding them.
+
+```mbt check
+///|
+test "is_valid" {
+  inspect(@utf8.is_valid(b"hi"), content="true")
+  inspect(@utf8.is_valid(b"\x80"), content="false")
+}
+```
+
 ## Lossy Decoding
 
 Use `decode_lossy` to decode bytes that may contain invalid UTF-8, replacing invalid sequences with the Unicode replacement character (U+FFFD).
