@@ -87,7 +87,10 @@ test "shr" {
   let c = a >> 64
   check_invariant(c)
   inspect(c, content="0")
-  let a = BigInt::from_int64((RADIX * RADIX / 2).reinterpret_as_int64())
+  // 2^63 spans two 32-bit limbs; shifting right by 2 * RADIX_BIT_LEN bits
+  // (64) drops both limbs to 0. Built as a BigInt because 2^63 overflows the
+  // UInt64 product RADIX * RADIX (= 2^64, wraps to 0) and Int64's range.
+  let a = 1N << 63
   let b = a >> (RADIX_BIT_LEN * 2)
   check_invariant(b)
   inspect(b, content="0")
