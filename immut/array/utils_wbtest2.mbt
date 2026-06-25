@@ -39,7 +39,7 @@ test "shr_as_uint" {
 
 ///|
 test "radix_indexing" {
-  // Assuming bitmask is 31 (0x1F) for 5 bits
+  // Assuming BITMASK is 31 (0x1F) for 5 bits
   inspect(radix_indexing(35, 5), content="1") // 35 >> 5 = 1, 1 & 31 = 1
   inspect(radix_indexing(100, 5), content="3") // 100 >> 5 = 3, 3 & 31 = 3
   inspect(radix_indexing(7, 5), content="0") // 7 >> 5 = 0, 0 & 31 = 0

@@ -56,7 +56,7 @@ fn[T] Tree::append_right_leaf(
         guard shift == 0 else {
           abort("Unreachable: Leaf should only appear at shift 0")
         }
-        if elems.length() + delta <= branching_factor {
+        if elems.length() + delta <= BRANCHING_FACTOR {
           Some(Leaf(immutable_concat(elems, leaf)))
         } else {
           None
@@ -64,7 +64,7 @@ fn[T] Tree::append_right_leaf(
       }
       Node(nodes, sizes) => {
         let len = nodes.length()
-        match worker(nodes[len - 1], shift - num_bits, leaf, delta) {
+        match worker(nodes[len - 1], shift - NUM_BITS, leaf, delta) {
           Some(new_node) =>
             Some(
               Node(
@@ -73,10 +73,10 @@ fn[T] Tree::append_right_leaf(
               ),
             )
           None =>
-            if len < branching_factor {
+            if len < BRANCHING_FACTOR {
               Some(
                 Node(
-                  immutable_push(nodes, new_branch_left(leaf, shift - num_bits)),
+                  immutable_push(nodes, new_branch_left(leaf, shift - NUM_BITS)),
                   push_sizes_last(sizes, delta),
                 ),
               )
@@ -104,7 +104,7 @@ fn[T] Tree::append_right_leaf(
           Empty =>
             abort("Unreachable: Empty tree should have been handled in worker")
         },
-        shift + num_bits,
+        shift + NUM_BITS,
       )
     }
   }
@@ -127,7 +127,7 @@ fn[T] Tree::concat_with_suffix(
   if left_shift > right_shift {
     let (c, c_shift) = Tree::concat_with_suffix(
       left.right_child(),
-      left_shift - num_bits,
+      left_shift - NUM_BITS,
       suffix,
       right,
       right_shift,
@@ -141,7 +141,7 @@ fn[T] Tree::concat_with_suffix(
       left_shift,
       suffix,
       right.left_child(),
-      right_shift - num_bits,
+      right_shift - NUM_BITS,
       false,
     )
     guard c_shift == right_shift
@@ -154,15 +154,15 @@ fn[T] Tree::concat_with_suffix(
       (new_children[0], 0)
     } else {
       let node = Node(new_children, compute_sizes(new_children, 0))
-      (node, num_bits)
+      (node, NUM_BITS)
     }
   } else {
     let (c, c_shift) = Tree::concat_with_suffix(
       left.right_child(),
-      left_shift - num_bits,
+      left_shift - NUM_BITS,
       suffix,
       right.left_child(),
-      right_shift - num_bits,
+      right_shift - NUM_BITS,
       false,
     )
     guard c_shift == left_shift

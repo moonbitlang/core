@@ -46,7 +46,7 @@ fn shr_as_uint(x : Int, y : Int) -> Int {
 ///|
 /// Given an index and a shift, return the index of the branch that contains the given index.
 fn radix_indexing(index : Int, shift : Int) -> Int {
-  shr_as_uint(index, shift) & bitmask
+  shr_as_uint(index, shift) & BITMASK
 }
 
 ///|

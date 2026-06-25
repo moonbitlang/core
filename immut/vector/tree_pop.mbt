@@ -30,17 +30,17 @@ fn[A] Tree::pop_rightmost_leaf(self : Tree[A], shift : Int) -> Tree[A] {
     Leaf(_) => Empty
     Node(children, _) => {
       let last_index = children.length() - 1
-      let new_last = children[last_index].pop_rightmost_leaf(shift - num_bits)
+      let new_last = children[last_index].pop_rightmost_leaf(shift - NUM_BITS)
       if new_last is Empty {
         if last_index == 0 {
           Empty
         } else {
           let new_children = immutable_slice(children, 0, last_index)
-          Node(new_children, compute_sizes(new_children, shift - num_bits))
+          Node(new_children, compute_sizes(new_children, shift - NUM_BITS))
         }
       } else {
         let new_children = immutable_set(children, last_index, new_last)
-        Node(new_children, compute_sizes(new_children, shift - num_bits))
+        Node(new_children, compute_sizes(new_children, shift - NUM_BITS))
       }
     }
   }
@@ -52,7 +52,7 @@ fn[A] Tree::shrink_top(self : Tree[A], shift : Int) -> (Tree[A], Int) {
   for tree = self {
     match tree {
       Node(children, _) if current_shift > 0 && children.length() == 1 => {
-        current_shift -= num_bits
+        current_shift -= NUM_BITS
         continue children[0]
       }
       Empty => break (Empty, 0)

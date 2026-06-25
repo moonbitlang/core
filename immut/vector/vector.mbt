@@ -51,8 +51,8 @@ pub fn[A] Vector::make(len : Int, value : A) -> Vector[A] {
     (Tree::empty(), 0)
   } else {
     let leaves = Array::make(
-      tree_len / branching_factor,
-      FixedArray::make(branching_factor, value),
+      tree_len / BRANCHING_FACTOR,
+      FixedArray::make(BRANCHING_FACTOR, value),
     )
     let (shift, cap) = shift_cap_of_size(tree_len)
     (from_leaves(leaves, cap), shift)
@@ -71,11 +71,11 @@ pub fn[A] Vector::makei(len : Int, f : (Int) -> A raise?) -> Vector[A] raise? {
   let (tree, shift) = if tree_len == 0 {
     (Tree::empty(), 0)
   } else {
-    let quot = tree_len / branching_factor
+    let quot = tree_len / BRANCHING_FACTOR
     let leaves : Array[FixedArray[A]] = Array::make(quot, [])
     for k in 0..<quot {
-      leaves[k] = FixedArray::makei(branching_factor, i => {
-        f(k * branching_factor + i)
+      leaves[k] = FixedArray::makei(BRANCHING_FACTOR, i => {
+        f(k * BRANCHING_FACTOR + i)
       })
     }
     let (shift, cap) = shift_cap_of_size(tree_len)
@@ -113,21 +113,21 @@ pub fn[A] Vector::from_iter(iter : Iter[A]) -> Vector[A] {
   let leaves = []
   while iter.next() is Some(x) {
     if index == 0 {
-      buf = FixedArray::make(branching_factor, x)
+      buf = FixedArray::make(BRANCHING_FACTOR, x)
       index += 1
-    } else if index < branching_factor {
+    } else if index < BRANCHING_FACTOR {
       buf[index] = x
       index += 1
     } else {
       leaves.push(buf)
       index = 1
-      buf = FixedArray::make(branching_factor, x)
+      buf = FixedArray::make(BRANCHING_FACTOR, x)
     }
   }
   if index == 0 {
     return new()
   }
-  let tail = if index == branching_factor {
+  let tail = if index == BRANCHING_FACTOR {
     if leaves.is_empty() {
       buf
     } else {
@@ -137,7 +137,7 @@ pub fn[A] Vector::from_iter(iter : Iter[A]) -> Vector[A] {
   } else {
     FixedArray::make_and_blit(buf, allocate_len=index, init=buf[0], len=index)
   }
-  let tree_len = leaves.length() * branching_factor
+  let tree_len = leaves.length() * BRANCHING_FACTOR
   let (tree, shift) = if tree_len == 0 {
     (Tree::empty(), 0)
   } else {
@@ -319,7 +319,7 @@ pub fn[A] Vector::set(self : Vector[A], index : Int, value : A) -> Vector[A] {
 /// }
 /// ```
 pub fn[A] Vector::push(self : Vector[A], value : A) -> Vector[A] {
-  if self.tail.length() < branching_factor {
+  if self.tail.length() < BRANCHING_FACTOR {
     make_t(
       self.tree,
       immutable_push(self.tail, value),
@@ -400,7 +400,7 @@ pub fn[A] Vector::concat(self : Vector[A], other : Vector[A]) -> Vector[A] {
   let size = self.size + other.size
   if other.tree is Empty {
     let combined_tail_len = self.tail.length() + other.tail.length()
-    if combined_tail_len <= branching_factor {
+    if combined_tail_len <= BRANCHING_FACTOR {
       return make_t(
         self.tree,
         immutable_concat(self.tail, other.tail),
@@ -801,20 +801,20 @@ fn[A] make_t(
 
 ///|
 fn[A] from_leaves(leaves : ArrayView[FixedArray[A]], cap : Int) -> Tree[A] {
-  if cap == branching_factor {
+  if cap == BRANCHING_FACTOR {
     Leaf(leaves[0])
-  } else if leaves.length() <= branching_factor {
+  } else if leaves.length() <= BRANCHING_FACTOR {
     let arr = FixedArray::make(leaves.length(), Empty)
     for i, leaf in leaves {
       arr[i] = Leaf(leaf)
     }
     Node(arr, None)
   } else {
-    let len = leaves.length() * branching_factor
-    let child_cap = cap / branching_factor
+    let len = leaves.length() * BRANCHING_FACTOR
+    let child_cap = cap / BRANCHING_FACTOR
     let quot = len / child_cap
     let rem = len % child_cap
-    let times = child_cap / branching_factor
+    let times = child_cap / BRANCHING_FACTOR
     let arr = if rem == 0 {
       FixedArray::makei(quot, i => {
         from_leaves(leaves[i * times:(i + 1) * times], child_cap)
@@ -833,10 +833,10 @@ fn[A] from_leaves(leaves : ArrayView[FixedArray[A]], cap : Int) -> Tree[A] {
 
 ///|
 fn tail_len_of_size(size : Int) -> Int {
-  if size <= branching_factor {
+  if size <= BRANCHING_FACTOR {
     size
   } else {
-    let rem = size % branching_factor
+    let rem = size % BRANCHING_FACTOR
     if rem == 0 {
       0
     } else {
@@ -905,9 +905,9 @@ fn[A] Vector::slice_unchecked(
 
 ///|
 fn shift_cap_of_size(size : Int) -> (Int, Int) {
-  for cap = branching_factor, depth = 0; cap < size; {
-    continue cap * branching_factor, depth + 1
+  for cap = BRANCHING_FACTOR, depth = 0; cap < size; {
+    continue cap * BRANCHING_FACTOR, depth + 1
   } nobreak {
-    (num_bits * depth, cap)
+    (NUM_BITS * depth, cap)
   }
 }
