@@ -110,7 +110,7 @@ fn execute_array_test(rs : Array[Op]) -> Unit raise {
 /// Compute the power of the branching factor.
 fn branching_factor_power(a : Int) -> Int {
   for _ in 0..<a; ret = 1 {
-    continue ret * branching_factor
+    continue ret * BRANCHING_FACTOR
   } nobreak {
     ret
   }

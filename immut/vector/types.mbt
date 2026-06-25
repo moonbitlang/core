@@ -14,9 +14,9 @@
 
 ///|
 /// Invariants:
-/// - `shift` = tree height * `num_bits`. When it is 0, we are at the leaf level.
+/// - `shift` = tree height * `NUM_BITS`. When it is 0, we are at the leaf level.
 /// - `size` = the total number of elements in `tree` and `tail`.
-/// - `tail` stores the right-most chunk and has at most `branching_factor` elements.
+/// - `tail` stores the right-most chunk and has at most `BRANCHING_FACTOR` elements.
 /// - `tree` stores the prefix before `tail`.
 /// - `shift` is not used when `tree` is `Empty`.
 struct Vector[A] {

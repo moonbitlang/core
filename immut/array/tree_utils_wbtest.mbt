@@ -110,8 +110,8 @@ test "Tree::size for Node without sizes" {
   let node_tree = Node(FixedArray::from_array([child1, child2]), None)
 
   // This will compute size based on the formula
-  // The calculation: (len_1 << shift) + children[len_1].size(shift - num_bits)
-  // With shift=6 and num_bits=5 (typical for immutable arrays)
+  // The calculation: (len_1 << shift) + children[len_1].size(shift - NUM_BITS)
+  // With shift=6 and NUM_BITS=5 (typical for immutable arrays)
   let result = node_tree.size(6)
   inspect(result >= 3, content="true") // At least the size of the last leaf
 }

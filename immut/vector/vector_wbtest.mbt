@@ -148,7 +148,7 @@ test "mix" {
   inspect(ct1, content="19800")
   inspect(ct2, content="19800")
   inspect(v.tree.is_empty_tree(), content="false")
-  let large_const = branching_factor * branching_factor + 1
+  let large_const = BRANCHING_FACTOR * BRANCHING_FACTOR + 1
   let v = for i in 0..<large_const; v = (new() : Vector[Int]) {
     continue v.push(i)
   } nobreak {
@@ -170,7 +170,7 @@ test "get" {
   inspect(v[0], content=v_content[0].to_string())
   inspect(v[bf - 1], content=v_content[bf - 1].to_string())
   inspect(v[bf / 2], content=v_content[bf / 2].to_string())
-  let bf = branching_factor
+  let bf = BRANCHING_FACTOR
   let v_content = random_array(bf)
   let v = from_iter(v_content.iter())
   inspect(v.length(), content=bf.to_string())
@@ -226,11 +226,11 @@ test "from_iter keeps trailing chunk in tail" {
 
 ///|
 test "push flushes full tail into tree" {
-  let values = from_iter((0).until(branching_factor))
-  let pushed = values.push(branching_factor)
+  let values = from_iter((0).until(BRANCHING_FACTOR))
+  let pushed = values.push(BRANCHING_FACTOR)
   inspect(pushed.tree.is_empty_tree(), content="false")
   inspect(pushed.tail.length(), content="1")
-  inspect(pushed.tail[0], content=branching_factor.to_string())
+  inspect(pushed.tail[0], content=BRANCHING_FACTOR.to_string())
 }
 
 ///|
@@ -260,7 +260,7 @@ test "concat with exact-multiple inputs keeps result tree-only" {
   let right = from_iter((64).until(128))
   let combined = left.concat(right)
   inspect(combined.tree.is_empty_tree(), content="false")
-  @test.assert_eq(combined.shift, num_bits)
+  @test.assert_eq(combined.shift, NUM_BITS)
   @test.assert_eq(combined.tail.length(), 0)
   @test.assert_eq(combined.to_array(), Array::makei(128, i => i))
 }
@@ -271,10 +271,10 @@ test "pop singleton tail promotes previous leaf into tail" {
   let popped = values.pop().unwrap()
   inspect(popped.tree.is_empty_tree(), content="true")
   @test.assert_eq(popped.shift, 0)
-  @test.assert_eq(popped.tail.length(), branching_factor)
+  @test.assert_eq(popped.tail.length(), BRANCHING_FACTOR)
   @test.assert_eq(popped.tail[0], 0)
-  @test.assert_eq(popped.tail[branching_factor - 1], branching_factor - 1)
-  @test.assert_eq(popped.to_array(), Array::makei(branching_factor, i => i))
+  @test.assert_eq(popped.tail[BRANCHING_FACTOR - 1], BRANCHING_FACTOR - 1)
+  @test.assert_eq(popped.to_array(), Array::makei(BRANCHING_FACTOR, i => i))
 }
 
 ///|
@@ -291,14 +291,14 @@ test "pop tree-only suffix promotes partial leaf into tail" {
 
 ///|
 test "pop shrinks top after removing last branch" {
-  let size = branching_factor * branching_factor + branching_factor + 1
+  let size = BRANCHING_FACTOR * BRANCHING_FACTOR + BRANCHING_FACTOR + 1
   let values = from_iter((0).until(size))
   let popped = values.pop().unwrap()
   @test.assert_eq(popped.length(), size - 1)
-  @test.assert_eq(popped.shift, num_bits)
-  @test.assert_eq(popped.tail.length(), branching_factor)
-  @test.assert_eq(popped.tail[0], branching_factor * branching_factor)
-  @test.assert_eq(popped.tail[branching_factor - 1], size - 2)
+  @test.assert_eq(popped.shift, NUM_BITS)
+  @test.assert_eq(popped.tail.length(), BRANCHING_FACTOR)
+  @test.assert_eq(popped.tail[0], BRANCHING_FACTOR * BRANCHING_FACTOR)
+  @test.assert_eq(popped.tail[BRANCHING_FACTOR - 1], size - 2)
   @test.assert_eq(popped.to_array(), Array::makei(size - 1, i => i))
 }
 

@@ -21,14 +21,14 @@
 ///|
 /// The controlling factor of the tree depth.
 /// This is the only parameter you normally would adjust.
-let num_bits = 5
+const NUM_BITS = 5
 
 ///|
-/// Invariant: `branching_factor` is a power of 2.
-let branching_factor : Int = 1 << num_bits
+/// Invariant: `BRANCHING_FACTOR` is a power of 2.
+const BRANCHING_FACTOR : Int = 1 << NUM_BITS
 
 ///|
-let bitmask : Int = branching_factor - 1
+const BITMASK : Int = BRANCHING_FACTOR - 1
 
 ///|
 /// The threshold for switching to a linear search.
@@ -56,7 +56,7 @@ fn[T] Tree::empty() -> Tree[T] {
 fn[T] new_branch_left(leaf : FixedArray[T], shift : Int) -> Tree[T] {
   match shift {
     0 => Leaf(leaf)
-    s => Node([new_branch_left(leaf, s - num_bits)], None) // size is None because we can use radix indexing
+    s => Node([new_branch_left(leaf, s - NUM_BITS)], None) // size is None because we can use radix indexing
   }
 }
 
@@ -68,14 +68,14 @@ fn[T] new_branch_left(leaf : FixedArray[T], shift : Int) -> Tree[T] {
 /// Get the element at the given index.
 /// 
 /// Precondition:
-/// - `self` is of height `shift / num_bits`.
+/// - `self` is of height `shift / NUM_BITS`.
 fn[T] Tree::get(self : Tree[T], index : Int, shift : Int) -> T {
   fn get_radix(node : Tree[T], shift : Int) -> T {
     for cur = node, s = shift {
       match cur {
-        Leaf(leaf) => break leaf[index & bitmask]
+        Leaf(leaf) => break leaf[index & BITMASK]
         Node(node, None) =>
-          continue node[radix_indexing(index, s)], s - num_bits
+          continue node[radix_indexing(index, s)], s - NUM_BITS
         Node(_, Some(_)) =>
           abort("Unreachable: Node should not have sizes in get_radix")
         Empty => abort("Index out of bounds")
@@ -92,7 +92,7 @@ fn[T] Tree::get(self : Tree[T], index : Int, shift : Int) -> T {
       } else {
         index - sizes[branch_index - 1]
       }
-      children[branch_index].get(sub_index, shift - num_bits)
+      children[branch_index].get(sub_index, shift - NUM_BITS)
     }
     Node(_, None) => get_radix(self, shift)
     Empty => abort("Index out of bounds")
@@ -107,19 +107,19 @@ fn[T] Tree::get(self : Tree[T], index : Int, shift : Int) -> T {
 /// Set a value at the given index.
 /// 
 /// Precondition:
-/// - `self` is of height `shift / num_bits`.
+/// - `self` is of height `shift / NUM_BITS`.
 fn[T] Tree::set(self : Tree[T], index : Int, shift : Int, value : T) -> Tree[T] {
   // TODO: optimize this as loop
   fn set_radix(node : Tree[T], shift : Int) -> Tree[T] {
     match node {
-      Leaf(leaf) => Leaf(immutable_set(leaf, index & bitmask, value))
+      Leaf(leaf) => Leaf(immutable_set(leaf, index & BITMASK, value))
       Node(node, None) => {
         let sub_idx = radix_indexing(index, shift)
         Node(
           immutable_set(
             node,
             sub_idx,
-            set_radix(node[radix_indexing(index, shift)], shift - num_bits),
+            set_radix(node[radix_indexing(index, shift)], shift - NUM_BITS),
           ),
           None,
         )
@@ -131,7 +131,7 @@ fn[T] Tree::set(self : Tree[T], index : Int, shift : Int, value : T) -> Tree[T] 
   }
 
   match self {
-    Leaf(leaf) => Leaf(immutable_set(leaf, index & bitmask, value))
+    Leaf(leaf) => Leaf(immutable_set(leaf, index & BITMASK, value))
     Node(children, Some(sizes)) => {
       let branch_index = get_branch_index(sizes, index)
       let sub_index = if branch_index == 0 {
@@ -143,7 +143,7 @@ fn[T] Tree::set(self : Tree[T], index : Int, shift : Int, value : T) -> Tree[T] 
         immutable_set(
           children,
           branch_index,
-          children[branch_index].set(sub_index, shift - num_bits, value),
+          children[branch_index].set(sub_index, shift - NUM_BITS, value),
         ),
         Some(sizes),
       )
@@ -157,7 +157,7 @@ fn[T] Tree::set(self : Tree[T], index : Int, shift : Int, value : T) -> Tree[T] 
 /// Push a value to the end of the tree.
 /// 
 /// Precondition:
-/// - The height of `self` = `shift` / `num_bits` (the height starts from 0).
+/// - The height of `self` = `shift` / `NUM_BITS` (the height starts from 0).
 /// - `length` is the number of elements in the tree.
 fn[T] Tree::push_end(self : Tree[T], shift : Int, value : T) -> (Tree[T], Int) {
   fn update_sizes_last(sizes : FixedArray[Int]?) -> FixedArray[Int]? {
@@ -186,7 +186,7 @@ fn[T] Tree::push_end(self : Tree[T], shift : Int, value : T) -> (Tree[T], Int) {
             "Unreachable: Leaf should not have a non-zero shift, which means we have not reached the bottom of the tree",
           )
         }
-        if leaf.length() < branching_factor {
+        if leaf.length() < BRANCHING_FACTOR {
           Some(Leaf(immutable_push(leaf, value)))
         } else {
           None
@@ -194,7 +194,7 @@ fn[T] Tree::push_end(self : Tree[T], shift : Int, value : T) -> (Tree[T], Int) {
       }
       Node(nodes, sizes) => {
         let len = nodes.length()
-        match worker(nodes[len - 1], shift - num_bits) {
+        match worker(nodes[len - 1], shift - NUM_BITS) {
           // We have successfully pushed the value, now duplicate its ancestor nodes.
           Some(new_node) => {
             let new_nodes = nodes.copy()
@@ -204,13 +204,13 @@ fn[T] Tree::push_end(self : Tree[T], shift : Int, value : T) -> (Tree[T], Int) {
           }
           // We need to create a new node to push the value.
           None =>
-            if len < branching_factor {
+            if len < BRANCHING_FACTOR {
               let sizes = push_sizes_last(sizes)
               Some(
                 Node(
                   immutable_push(
                     nodes,
-                    new_branch_left([value], shift - num_bits),
+                    new_branch_left([value], shift - NUM_BITS),
                   ),
                   sizes,
                 ),
@@ -242,7 +242,7 @@ fn[T] Tree::push_end(self : Tree[T], shift : Int, value : T) -> (Tree[T], Int) {
               "Unreachable: Empty tree should have fallen into the Some(new_tree) branch",
             )
         },
-        shift + num_bits,
+        shift + NUM_BITS,
       )
     }
   }
@@ -296,14 +296,14 @@ fn[A] Tree::eachi(
         f(start + i, x)
       }
     Node(ns, None) => {
-      let child_shift = shift - num_bits
+      let child_shift = shift - NUM_BITS
       for child in ns; start = start {
         child.eachi(f, child_shift, start)
         continue start + (1 << shift)
       }
     }
     Node(ns, Some(sizes)) => {
-      let child_shift = shift - num_bits
+      let child_shift = shift - NUM_BITS
       for i, child in ns; offset = 0 {
         child.eachi(f, child_shift, start + offset)
         continue sizes[i]
@@ -361,7 +361,7 @@ fn[A, B] Tree::map(self : Tree[A], f : (A) -> B raise?) -> Tree[B] raise? {
 /// 
 /// Preconditions:
 /// - `left` and `right` are not `Empty`.
-/// - `left` and `right` are of height `left_shift / num_bits` and `right_shift / num_bits`, respectively.
+/// - `left` and `right` are of height `left_shift / NUM_BITS` and `right_shift / NUM_BITS`, respectively.
 fn[A] Tree::concat(
   left : Tree[A],
   left_shift : Int,
@@ -372,7 +372,7 @@ fn[A] Tree::concat(
   if left_shift > right_shift {
     let (c, c_shift) = Tree::concat(
       left.right_child(),
-      left_shift - num_bits,
+      left_shift - NUM_BITS,
       right,
       right_shift,
       false,
@@ -384,7 +384,7 @@ fn[A] Tree::concat(
       left,
       left_shift,
       right.left_child(),
-      right_shift - num_bits,
+      right_shift - NUM_BITS,
       false,
     )
     guard c_shift == right_shift
@@ -396,7 +396,7 @@ fn[A] Tree::concat(
     let left_len = left_elems.length()
     let right_len = right_elems.length()
     let len = left_len + right_len
-    if top && len <= branching_factor {
+    if top && len <= BRANCHING_FACTOR {
       return (
         Leaf(
           FixedArray::makei(len, (i : Int) => {
@@ -415,16 +415,16 @@ fn[A] Tree::concat(
           FixedArray::from_array([left, right]),
           Some(FixedArray::from_array([left_len, len])),
         ),
-        num_bits,
+        NUM_BITS,
       )
     }
   } else {
     // Handle Node case
     let (c, c_shift) = Tree::concat(
       left.right_child(),
-      left_shift - num_bits,
+      left_shift - NUM_BITS,
       right.left_child(),
-      right_shift - num_bits,
+      right_shift - NUM_BITS,
       false,
     )
     guard c_shift == left_shift
@@ -434,7 +434,7 @@ fn[A] Tree::concat(
 }
 
 ///|
-/// Given three `Node`s of the same height (`shift` / `num_bits`), rebalance them into two.
+/// Given three `Node`s of the same height (`shift` / `NUM_BITS`), rebalance them into two.
 /// `top` is `true` if the resulting node has no upper node.
 /// Returns the new node and its shift.
 fn[A] rebalance(
@@ -444,38 +444,38 @@ fn[A] rebalance(
   shift : Int,
   top : Bool,
 ) -> (Tree[A], Int) {
-  // Suppose H = shift / num_bits
+  // Suppose H = shift / NUM_BITS
   let t = tri_merge(left, center, right) // t is a list of trees of (H-1) height
   let (nc, nc_len) = redis_plan(t)
-  let new_t = redis(t, nc, nc_len, shift - num_bits) // new_t is a list of trees of (H-1) height
+  let new_t = redis(t, nc, nc_len, shift - NUM_BITS) // new_t is a list of trees of (H-1) height
   guard new_t.length() == nc_len
-  if nc_len <= branching_factor {
+  if nc_len <= BRANCHING_FACTOR {
     // All nodes can be accommodated in a single node
-    let node = Node(new_t, compute_sizes(new_t, shift - num_bits)) // node of H height
+    let node = Node(new_t, compute_sizes(new_t, shift - NUM_BITS)) // node of H height
     if !top {
-      return (Node(FixedArray::from_array([node]), None), shift + num_bits)
+      return (Node(FixedArray::from_array([node]), None), shift + NUM_BITS)
       // return (H+1) height node, add another layer to align with the case at the end of the thisfunction
     } else {
       return (node, shift)
       // return H height node, no upper node so no need to add another layer on top of it
     }
   } else {
-    let new_child_1 = FixedArray::makei(branching_factor, i => new_t[i])
-    let new_child_2 = FixedArray::makei(new_t.length() - branching_factor, i => {
-      new_t[i + branching_factor]
+    let new_child_1 = FixedArray::makei(BRANCHING_FACTOR, i => new_t[i])
+    let new_child_2 = FixedArray::makei(new_t.length() - BRANCHING_FACTOR, i => {
+      new_t[i + BRANCHING_FACTOR]
     })
     let new_node_1 = Node(
       new_child_1,
-      compute_sizes(new_child_1, shift - num_bits),
+      compute_sizes(new_child_1, shift - NUM_BITS),
     ) // height H
     let new_node_2 = Node(
       new_child_2,
-      compute_sizes(new_child_2, shift - num_bits),
+      compute_sizes(new_child_2, shift - NUM_BITS),
     ) // height H
     let new_children = FixedArray::from_array([new_node_1, new_node_2])
     return (
       Node(new_children, compute_sizes(new_children, shift)),
-      shift + num_bits,
+      shift + NUM_BITS,
     ) // return (H+1) height node
   }
 }
@@ -484,7 +484,7 @@ fn[A] rebalance(
 /// Given three trees of the same height (if not `Empty`), merge them into one.
 /// `left` and `right` might be `Node` or `Empty`.
 /// `center` is always a `Node`.
-/// The resulting array might be longer than `branching_factor`,
+/// The resulting array might be longer than `BRANCHING_FACTOR`,
 /// which will be handled by `rebalance` later.
 /// 
 /// Preconditions:
@@ -536,20 +536,20 @@ fn[A] tri_merge(
 fn[A] redis_plan(t : FixedArray[Tree[A]]) -> (FixedArray[Int], Int) {
   let node_counts = FixedArray::makei(t.length(), i => t[i].local_size())
   let total_nodes = node_counts.fold(init=0, (acc, x) => acc + x)
-  // round up to the nearest integer of S/branching_factor
-  let opt_len = (total_nodes + branching_factor - 1) / branching_factor
+  // round up to the nearest integer of S/BRANCHING_FACTOR
+  let opt_len = (total_nodes + BRANCHING_FACTOR - 1) / BRANCHING_FACTOR
   let mut new_len = t.length()
   let mut i = 0
   while opt_len + e_max_2 < new_len {
     // Skip over all nodes satisfying the invariant.
-    while node_counts[i] > branching_factor - e_max_2 {
+    while node_counts[i] > BRANCHING_FACTOR - e_max_2 {
       i += 1
     }
 
     // Found short node, so redistribute over the next nodes
     let mut remaining_nodes = node_counts[i]
     while remaining_nodes > 0 {
-      let min_size = min(remaining_nodes + node_counts[i + 1], branching_factor)
+      let min_size = min(remaining_nodes + node_counts[i + 1], BRANCHING_FACTOR)
       node_counts[i] = min_size
       remaining_nodes = remaining_nodes + node_counts[i + 1] - min_size
       i += 1
@@ -568,7 +568,7 @@ fn[A] redis_plan(t : FixedArray[Tree[A]]) -> (FixedArray[Int], Int) {
 /// 
 /// Preconditions:
 /// - forall i in 0..node_nums, old_t[i] != Empty.
-/// - `old_t` contains a list of trees, each of (`shift` / `num_bits`) height.
+/// - `old_t` contains a list of trees, each of (`shift` / `NUM_BITS`) height.
 /// - `node_counts` contains the number of children of each node in `new_t` (the redistributed version of `old_t`).
 /// - `node_nums` is the length of `node_counts`.
 /// 
@@ -661,8 +661,8 @@ fn[A] redis(
         }
         new_t[i] = Node(
           new_node_chldrn,
-          compute_sizes(new_node_chldrn, shift - num_bits),
-        ) // each node in `new_t` is of height (`shift` / `num_bits`)
+          compute_sizes(new_node_chldrn, shift - NUM_BITS),
+        ) // each node in `new_t` is of height (`shift` / `NUM_BITS`)
       }
     }
   }
@@ -670,7 +670,7 @@ fn[A] redis(
 }
 
 ///|
-/// Given a list of trees as `children` with heights of (`shift` / `num_bits`), compute the sizes array of the subtrees.
+/// Given a list of trees as `children` with heights of (`shift` / `NUM_BITS`), compute the sizes array of the subtrees.
 fn[A] compute_sizes(
   children : FixedArray[Tree[A]],
   shift : Int,
@@ -679,7 +679,7 @@ fn[A] compute_sizes(
   let sizes = FixedArray::make(len, 0)
   let mut sum = 0
   let mut flag = true
-  let full_subtree_size = branching_factor << shift
+  let full_subtree_size = BRANCHING_FACTOR << shift
   for i in 0..<len {
     let sz = children[i].size(shift)
     flag = flag && sz == full_subtree_size

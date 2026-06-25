@@ -83,7 +83,7 @@ fn[A] Tree::size(self : Tree[A], shift : Int) -> Int {
     Node(_, Some(sizes)) => sizes[sizes.length() - 1]
     Node(children, None) => {
       let len_1 = children.length() - 1
-      (len_1 << shift) + children[len_1].size(shift - num_bits)
+      (len_1 << shift) + children[len_1].size(shift - NUM_BITS)
     }
   }
 }

@@ -44,7 +44,7 @@ test "mix" {
   inspect(ct1, content="19800")
   inspect(ct2, content="19800")
   inspect(v.tree.is_empty_tree(), content="false")
-  let large_const = branching_factor * branching_factor + 1
+  let large_const = BRANCHING_FACTOR * BRANCHING_FACTOR + 1
   let v = for i in 0..<large_const; v = (T::new() : T[Int]) {
     continue v.push(i)
   } nobreak {
@@ -66,7 +66,7 @@ test "get" {
   inspect(v[0], content=v_content[0].to_string())
   inspect(v[bf - 1], content=v_content[bf - 1].to_string())
   inspect(v[bf / 2], content=v_content[bf / 2].to_string())
-  let bf = branching_factor
+  let bf = BRANCHING_FACTOR
   let v_content = random_array(bf)
   let v = T::from_iter(v_content.iter())
   inspect(v.length(), content=bf.to_string())

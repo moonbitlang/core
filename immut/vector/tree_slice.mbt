@@ -22,7 +22,7 @@ fn[A] Tree::slice_right(self : Tree[A], shift : Int, end : Int) -> Tree[A] {
     Empty => Empty
     Leaf(leaf) => Leaf(immutable_slice(leaf, 0, end))
     Node(children, sizes) => {
-      let child_shift = shift - num_bits
+      let child_shift = shift - NUM_BITS
       let child_index = match sizes {
         Some(sizes) => get_branch_index(sizes, end - 1)
         None => radix_indexing(end - 1, shift)
@@ -52,7 +52,7 @@ fn[A] Tree::slice_left(self : Tree[A], shift : Int, start : Int) -> Tree[A] {
     Empty => Empty
     Leaf(leaf) => Leaf(immutable_slice(leaf, start, leaf.length()))
     Node(children, sizes) => {
-      let child_shift = shift - num_bits
+      let child_shift = shift - NUM_BITS
       let child_index = match sizes {
         Some(sizes) => get_branch_index(sizes, start)
         None => radix_indexing(start, shift)

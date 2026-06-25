@@ -14,7 +14,7 @@
 
 ///|
 /// Invariants:
-/// - `shift` = tree height * `num_bits`. When it is 0, we are at the leaf level.
+/// - `shift` = tree height * `NUM_BITS`. When it is 0, we are at the leaf level.
 /// - `size` = the number of elements in the tree.
 /// - `shift` is not used when `tree` is `Empty`.
 struct T[A] {
