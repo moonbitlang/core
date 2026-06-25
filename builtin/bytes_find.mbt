@@ -16,18 +16,7 @@
 /// Returns the offset of the first occurrence of the given
 /// bytes substring. If the substring is not found, `None` is returned.
 pub fn BytesView::find(target : BytesView, pattern : BytesView) -> Int? {
-  // TODO: more efficient algorithm
-  let target_len = target.length()
-  let pattern_len = pattern.length()
-  for i in 0..<=(target_len - pattern_len) {
-    for j in 0..<pattern_len {
-      guard target.unsafe_get(i + j) == pattern.unsafe_get(j) else { break }
-    } nobreak {
-      return Some(i)
-    }
-  } nobreak {
-    None
-  }
+  bytes_find_index(target, pattern)
 }
 
 ///|

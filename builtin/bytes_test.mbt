@@ -428,6 +428,30 @@ test "Bytes find and rev_find" {
 }
 
 ///|
+test "BytesView find edge cases" {
+  let target = b"--abcabc--"[2:8]
+  debug_inspect(target.find(b""), content="Some(0)")
+  debug_inspect(target.find(b"abc"), content="Some(0)")
+  debug_inspect(target.find(b"bca"), content="Some(1)")
+  debug_inspect(target.find(b"cab"), content="Some(2)")
+  debug_inspect(target.find(b"abcabc"), content="Some(0)")
+  debug_inspect(target.find(b"abcabcx"), content="None")
+  debug_inspect(b""[:].find(b""), content="Some(0)")
+  debug_inspect(b""[:].find(b"a"), content="None")
+}
+
+///|
+test "BytesView find long input" {
+  let target = Bytes::makei(64, i => if i == 60 { b'Z' } else { b'a' })
+  debug_inspect(target.find(b"Z"), content="Some(60)")
+  debug_inspect(target.find(b"aaaaZ"), content="Some(56)")
+  debug_inspect(target.find(b"b"), content="None")
+  let view = target[3:63]
+  debug_inspect(view.find(b"Z"), content="Some(57)")
+  debug_inspect(view.find(b"aaaaZ"), content="Some(53)")
+}
+
+///|
 test "Bytes has_prefix/has_suffix/chop" {
   let bytes = b"hello"
   inspect(bytes.has_prefix(b"h"), content="true")
