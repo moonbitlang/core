@@ -484,6 +484,8 @@ test "Unicode edge cases for numeric detection" {
   assert_true('\u{1D7CE}'.is_numeric()) // Mathematical monospace digit zero
 
   // Test non-numeric characters that might be confused with numbers
+  assert_false('/'.is_numeric()) // Before ASCII digit range
+  assert_false(':'.is_numeric()) // After ASCII digit range
   assert_false('O'.is_numeric()) // Letter O (not zero)
   assert_false('l'.is_numeric()) // Letter l (not one)
   assert_false('I'.is_numeric()) // Letter I (not Roman numeral)
@@ -492,12 +494,15 @@ test "Unicode edge cases for numeric detection" {
 ///|
 test "Whitespace edge cases" {
   // Test all ASCII whitespace characters
+  assert_false('\u{0008}'.is_whitespace()) // Before TAB
   assert_true('\u{0009}'.is_ascii_whitespace()) // TAB
   assert_true('\u{000A}'.is_ascii_whitespace()) // LF
   assert_true('\u{000B}'.is_ascii_whitespace()) // VT
   assert_true('\u{000C}'.is_ascii_whitespace()) // FF
   assert_true('\u{000D}'.is_ascii_whitespace()) // CR
+  assert_false('\u{000E}'.is_whitespace()) // After CR
   assert_true('\u{0020}'.is_ascii_whitespace()) // SPACE
+  assert_false('\u{0021}'.is_whitespace()) // After SPACE
 
   // Test characters that are not ASCII whitespace
   assert_false('\u{00A0}'.is_ascii_whitespace()) // NBSP (Unicode whitespace but not ASCII)

@@ -136,7 +136,8 @@ pub fn Char::is_ascii_uppercase(self : Self) -> Bool {
 /// Checks if the value is an ASCII whitespace character:
 /// U+0020 SPACE, U+0009 HORIZONTAL TAB, U+000A LINE FEED, U+000B VERTICAL TAB, U+000C FORM FEED, or U+000D CARRIAGE RETURN.
 pub fn Char::is_ascii_whitespace(self : Self) -> Bool {
-  self is ('\u{20}' | '\u{09}' | '\u{0A}' | '\u{0B}' | '\u{0C}' | '\u{0D}')
+  let code = self.to_int()
+  code <= 0x20 && (code == 0x20 || (code >= 0x09 && code <= 0x0D))
 }
 
 ///|
@@ -164,26 +165,36 @@ pub fn Char::is_digit(self : Self, radix : UInt) -> Bool {
 ///|
 /// Returns true if this char has the White_Space property.
 pub fn Char::is_whitespace(self : Self) -> Bool {
-  self
-  is ('\u0009'..='\u000D'
-  | '\u0020'
-  | '\u0085'
-  | '\u00A0'
-  | '\u1680'
-  | '\u2000'..='\u200A'
-  | '\u2028'
-  | '\u2029'
-  | '\u202F'
-  | '\u205F'
-  | '\u3000')
+  let code = self.to_int()
+  if code <= 0x20 {
+    return code == 0x20 || (code >= 0x09 && code <= 0x0D)
+  }
+  if code < 0x85 || code > 0x3000 {
+    return false
+  }
+  code == 0x85 ||
+  code == 0xA0 ||
+  code == 0x1680 ||
+  (code >= 0x2000 && code <= 0x200A) ||
+  code == 0x2028 ||
+  code == 0x2029 ||
+  code == 0x202F ||
+  code == 0x205F ||
+  code == 0x3000
 }
 
 ///|
 /// Returns true if this char has one of the general categories for numbers.
 pub fn Char::is_numeric(self : Self) -> Bool {
+  let code = self.to_int()
+  if code <= 0x39 {
+    return code >= 0x30
+  }
+  if code < 0xB2 {
+    return false
+  }
   self
-  is ('\u0030'..='\u0039'
-  | '\u00B2'
+  is ('\u00B2'
   | '\u00B3'
   | '\u00B9'
   | '\u00BC'
