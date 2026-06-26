@@ -101,6 +101,28 @@ pub impl BitXOr for Int16 with fn lxor(self : Int16, that : Int16) -> Int16 {
 }
 
 ///|
+/// Performs a bitwise NOT operation on an `Int16` value, flipping every bit
+/// within its 16-bit width.
+///
+/// Parameters:
+///
+/// * `self` : The `Int16` value to apply the bitwise NOT operation on.
+///
+/// Returns the result of the bitwise NOT operation as an `Int16`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect((0 : Int16).lnot(), content="-1")
+///   inspect((-1 : Int16).lnot(), content="0")
+/// }
+/// ```
+pub fn Int16::lnot(self : Int16) -> Int16 {
+  Int16::from_int(self.to_int().lnot())
+}
+
+///|
 pub impl Neg for Int16 with fn neg(self : Int16) -> Int16 {
   Int16::from_int(-self.to_int())
 }
