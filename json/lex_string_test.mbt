@@ -33,15 +33,47 @@ test "lex_hex_digits incomplete hex digits" {
 }
 
 ///|
-test "lex_hex_digits rejects backtick as hex digit" {
-  // '`' (0x60) case-folds to '@' (0x40) via `c & ~32`, yielding d == 9,
-  // so "\u`bcd" is accepted as U+9BCD instead of raising. This test
-  // asserts the desired InvalidChar and FAILS on the current lexer,
-  // pinning down the bug before the fix.
+test "lex_hex_digits rejects non-hex characters near the letter range" {
+  // '`' (0x60) case-folds to '@' (0x40) and was previously accepted as
+  // hex digit 9, so "\u`bcd" parsed as U+9BCD instead of raising.
   debug_inspect(
     expect_parse_error("\"\\u`bcd\"", "expected InvalidChar"),
     content=(
       #|InvalidChar({ line: 1, column: 3 }, '`')
+    ),
+  )
+  debug_inspect(
+    expect_parse_error("\"\\u@bcd\"", "expected InvalidChar"),
+    content=(
+      #|InvalidChar({ line: 1, column: 3 }, '@')
+    ),
+  )
+  debug_inspect(
+    expect_parse_error("\"\\u1G23\"", "expected InvalidChar"),
+    content=(
+      #|InvalidChar({ line: 1, column: 4 }, 'G')
+    ),
+  )
+  debug_inspect(
+    expect_parse_error("\"\\u1g23\"", "expected InvalidChar"),
+    content=(
+      #|InvalidChar({ line: 1, column: 4 }, 'g')
+    ),
+  )
+}
+
+///|
+test "lex_hex_digits accepts all hex digit ranges" {
+  debug_inspect(
+    @json.parse("\"\\u09aF\""),
+    content=(
+      #|String("য")
+    ),
+  )
+  debug_inspect(
+    @json.parse("\"\\uAbfa\""),
+    content=(
+      #|String("꯺")
     ),
   )
 }
