@@ -25,7 +25,9 @@ fn[K] new_hashset(capacity : Int) -> HashSet[K] {
     capacity,
     capacity_mask: capacity - 1,
     grow_at: calc_grow_threshold(capacity),
-    entries: FixedArray::make(capacity, None),
+    psls: FixedArray::make(capacity, empty_psl),
+    hashes: FixedArray::make(capacity, 0),
+    keys: UninitializedArray::make(capacity),
   }
 }
 
@@ -94,60 +96,63 @@ fn[K : Eq] HashSet::add_with_hash(
     self.grow()
   }
   let (idx, psl) = for psl = 0, idx = hash & self.capacity_mask {
-    match self.entries[idx] {
-      None => break (idx, psl)
-      Some(curr_entry) => {
-        if curr_entry.hash == hash && curr_entry.key == key {
-          return
-        }
-        if psl > curr_entry.psl {
-          self.push_away(idx, curr_entry)
-          break (idx, psl)
-        }
-        continue psl + 1, (idx + 1) & self.capacity_mask
-      }
+    let curr_psl = self.psls[idx]
+    if curr_psl == empty_psl {
+      break (idx, psl)
     }
+    if self.hashes[idx] == hash && self.keys[idx] == key {
+      return
+    }
+    if psl > curr_psl {
+      // Displace the richer occupant of `idx`, then write the new key here.
+      self.push_away(idx, curr_psl, self.hashes[idx], self.keys[idx])
+      break (idx, psl)
+    }
+    continue psl + 1, (idx + 1) & self.capacity_mask
   }
-  let entry = { psl, key, hash }
-  self.set_entry(entry, idx)
+  self.set_slot(idx, psl, hash, key)
   self.size += 1
 }
 
 ///|
+// Relocates the key triple `(psl, hash, key)` -- which has just been bumped out
+// of an earlier slot -- to a later slot, Robin-Hood style, starting from the
+// slot after `idx`.
 fn[K] HashSet::push_away(
   self : HashSet[K],
   idx : Int,
-  entry : Entry[K],
+  psl : Int,
+  hash : Int,
+  key : K,
 ) -> Unit {
-  for psl = entry.psl + 1, idx = (idx + 1) & self.capacity_mask, entry = entry {
-    match self.entries[idx] {
-      None => {
-        entry.psl = psl
-        self.set_entry(entry, idx)
-        break
-      }
-      Some(curr_entry) =>
-        if psl > curr_entry.psl {
-          entry.psl = psl
-          self.set_entry(entry, idx)
-          continue curr_entry.psl + 1,
-            (idx + 1) & self.capacity_mask,
-            curr_entry
-        } else {
-          continue psl + 1, (idx + 1) & self.capacity_mask, entry
-        }
+  for psl = psl + 1, idx = (idx + 1) & self.capacity_mask, hash = hash, key = key {
+    let curr_psl = self.psls[idx]
+    if curr_psl == empty_psl {
+      self.set_slot(idx, psl, hash, key)
+      break
+    } else if psl > curr_psl {
+      let curr_hash = self.hashes[idx]
+      let curr_key = self.keys[idx]
+      self.set_slot(idx, psl, hash, key)
+      continue curr_psl + 1, (idx + 1) & self.capacity_mask, curr_hash, curr_key
+    } else {
+      continue psl + 1, (idx + 1) & self.capacity_mask, hash, key
     }
   }
 }
 
 ///|
 #inline
-fn[K] HashSet::set_entry(
+fn[K] HashSet::set_slot(
   self : HashSet[K],
-  entry : Entry[K],
-  new_idx : Int,
+  idx : Int,
+  psl : Int,
+  hash : Int,
+  key : K,
 ) -> Unit {
-  self.entries[new_idx] = Some(entry)
+  self.psls[idx] = psl
+  self.hashes[idx] = hash
+  self.keys[idx] = key
 }
 
 ///|
@@ -156,11 +161,12 @@ pub fn[K : Hash + Eq] HashSet::contains(self : HashSet[K], key : K) -> Bool {
   // inline lookup to avoid unnecessary allocations
   let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {
-    guard self.entries[idx] is Some(entry) else { break false }
-    if entry.hash == hash && entry.key == key {
+    let psl = self.psls[idx]
+    guard psl != empty_psl else { break false }
+    if self.hashes[idx] == hash && self.keys[idx] == key {
       break true
     }
-    if i > entry.psl {
+    if i > psl {
       break false
     }
     continue i + 1, (idx + 1) & self.capacity_mask
@@ -191,13 +197,14 @@ pub fn[K : Hash + Eq] HashSet::contains(self : HashSet[K], key : K) -> Bool {
 pub fn[K : Hash + Eq] HashSet::remove(self : HashSet[K], key : K) -> Unit {
   let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {
-    guard self.entries[idx] is Some(entry) else { break }
-    if entry.hash == hash && entry.key == key {
+    let psl = self.psls[idx]
+    guard psl != empty_psl else { break }
+    if self.hashes[idx] == hash && self.keys[idx] == key {
       self.shift_back(idx)
       self.size -= 1
       break
     }
-    if i > entry.psl {
+    if i > psl {
       break
     }
     continue i + 1, (idx + 1) & self.capacity_mask
@@ -208,16 +215,14 @@ pub fn[K : Hash + Eq] HashSet::remove(self : HashSet[K], key : K) -> Unit {
 fn[K] HashSet::shift_back(self : HashSet[K], idx : Int) -> Unit {
   for cur = idx {
     let next = (cur + 1) & self.capacity_mask
-    match self.entries[next] {
-      None | Some({ psl: 0, .. }) => {
-        self.entries[cur] = None
-        break
-      }
-      Some(entry) => {
-        entry.psl -= 1
-        self.set_entry(entry, cur)
-        continue next
-      }
+    let next_psl = self.psls[next]
+    if next_psl == empty_psl || next_psl == 0 {
+      self.psls[cur] = empty_psl
+      set_null(self.keys, cur)
+      break
+    } else {
+      self.set_slot(cur, next_psl - 1, self.hashes[next], self.keys[next])
+      continue next
     }
   }
 }
@@ -230,41 +235,46 @@ fn[K] HashSet::grow(self : HashSet[K]) -> Unit {
     self.capacity_mask = self.capacity - 1
     self.grow_at = calc_grow_threshold(self.capacity)
     self.size = 0
-    self.entries = FixedArray::make(self.capacity, None)
+    self.psls = FixedArray::make(self.capacity, empty_psl)
+    self.hashes = FixedArray::make(self.capacity, 0)
+    self.keys = UninitializedArray::make(self.capacity)
     return
   }
-  let old_entries = self.entries
+  let old_psls = self.psls
+  let old_hashes = self.hashes
+  let old_keys = self.keys
+  let old_capacity = self.capacity
   let new_capacity = self.capacity * 2
-  self.entries = FixedArray::make(new_capacity, None)
+  self.psls = FixedArray::make(new_capacity, empty_psl)
+  self.hashes = FixedArray::make(new_capacity, 0)
+  self.keys = UninitializedArray::make(new_capacity)
   self.capacity = new_capacity
   self.capacity_mask = new_capacity - 1
   self.grow_at = calc_grow_threshold(self.capacity)
-  for entry in old_entries {
-    if entry is Some(entry) {
-      self.rehash_place_entry(entry)
+  for i in 0..<old_capacity {
+    if old_psls[i] != empty_psl {
+      self.rehash_place_entry(old_hashes[i], old_keys[i])
     }
   }
 }
 
 ///|
-fn[K] HashSet::rehash_place_entry(self : HashSet[K], entry : Entry[K]) -> Unit {
-  let hash = entry.hash
+fn[K] HashSet::rehash_place_entry(
+  self : HashSet[K],
+  hash : Int,
+  key : K,
+) -> Unit {
   for psl = 0, idx = hash & self.capacity_mask {
-    match self.entries[idx] {
-      None => {
-        entry.psl = psl
-        self.set_entry(entry, idx)
-        return
-      }
-      Some(curr) =>
-        if psl > curr.psl {
-          self.push_away(idx, curr)
-          entry.psl = psl
-          self.set_entry(entry, idx)
-          return
-        } else {
-          continue psl + 1, (idx + 1) & self.capacity_mask
-        }
+    let curr_psl = self.psls[idx]
+    if curr_psl == empty_psl {
+      self.set_slot(idx, psl, hash, key)
+      return
+    } else if psl > curr_psl {
+      self.push_away(idx, curr_psl, self.hashes[idx], self.keys[idx])
+      self.set_slot(idx, psl, hash, key)
+      return
+    } else {
+      continue psl + 1, (idx + 1) & self.capacity_mask
     }
   }
 }
@@ -306,9 +316,9 @@ pub fn[K] HashSet::each(
   self : HashSet[K],
   f : (K) -> Unit raise?,
 ) -> Unit raise? {
-  for entry in self.entries {
-    if entry is Some({ key, .. }) {
-      f(key)
+  for i in 0..<self.capacity {
+    if self.psls[i] != empty_psl {
+      f(self.keys[i])
     }
   }
 }
@@ -321,8 +331,8 @@ pub fn[K] HashSet::eachi(
   f : (Int, K) -> Unit raise?,
 ) -> Unit raise? {
   for i in 0..<self.capacity; idx = 0 {
-    if self.entries[i] is Some({ key, .. }) {
-      f(idx, key)
+    if self.psls[i] != empty_psl {
+      f(idx, self.keys[i])
       continue idx + 1
     } else {
       continue idx
@@ -333,7 +343,14 @@ pub fn[K] HashSet::eachi(
 ///|
 /// Clears the set, removing all keys. Keeps the allocated space.
 pub fn[K] HashSet::clear(self : HashSet[K]) -> Unit {
-  self.entries.fill(None)
+  // Reuse the existing buffers (keeps the allocated space) and only null the
+  // occupied key slots so their references can be reclaimed.
+  for i in 0..<self.capacity {
+    if self.psls[i] != empty_psl {
+      self.psls[i] = empty_psl
+      set_null(self.keys, i)
+    }
+  }
   self.size = 0
 }
 
@@ -342,14 +359,14 @@ pub fn[K] HashSet::clear(self : HashSet[K]) -> Unit {
 #alias(iterator, deprecated)
 pub fn[K] HashSet::iter(self : HashSet[K]) -> Iter[K] {
   let mut i = 0
-  let len = self.entries.length()
+  let len = self.capacity
   Iter::new(
     fn() {
       while i < len {
-        let entry = self.entries.unsafe_get(i)
+        let idx = i
         i += 1
-        if entry is Some({ key, .. }) {
-          return Some(key)
+        if self.psls[idx] != empty_psl {
+          return Some(self.keys[idx])
         }
       } nobreak {
         None
@@ -362,9 +379,13 @@ pub fn[K] HashSet::iter(self : HashSet[K]) -> Iter[K] {
 ///|
 /// Converts the hash set to an array.
 pub fn[K] HashSet::to_array(self : HashSet[K]) -> Array[K] {
-  [
-    for entry in self.entries if entry is Some({ key, .. }) => key
-  ]
+  let arr = Array::new(capacity=self.size)
+  for i in 0..<self.capacity {
+    if self.psls[i] != empty_psl {
+      arr.push(self.keys[i])
+    }
+  }
+  arr
 }
 
 ///|
@@ -492,9 +513,9 @@ pub fn[K] HashSet::retain(self : HashSet[K], f : (K) -> Bool) -> Unit {
   let size = self.size
   let mut j = 0
   for i = 0; j < size; i = i + 1 {
-    while self.entries[i] is Some(entry) {
+    while self.psls[i] != empty_psl {
       j = j + 1
-      if f(entry.key) {
+      if f(self.keys[i]) {
         break
       } else {
         self.shift_back(i)
@@ -518,11 +539,12 @@ fn calc_grow_threshold(capacity : Int) -> Int {
 
 ///|
 fn[K : Show] HashSet::_debug_entries(self : HashSet[K]) -> String {
-  for i in 0..<self.entries.length(); s = "" {
+  for i in 0..<self.capacity; s = "" {
     let s = if i > 0 { s + "," } else { s }
-    continue match self.entries[i] {
-        None => s + "_"
-        Some({ psl, key, .. }) => s + "(\{psl},\{key})"
+    continue if self.psls[i] == empty_psl {
+        s + "_"
+      } else {
+        s + "(\{self.psls[i]},\{self.keys[i]})"
       }
   } nobreak {
     s
@@ -530,7 +552,7 @@ fn[K : Show] HashSet::_debug_entries(self : HashSet[K]) -> String {
 }
 
 ///|
-priv struct MyString(String) derive(Eq, @debug.Debug)
+priv struct MyString(String) derive(Eq)
 
 ///|
 impl Hash for MyString with fn hash(self) {
@@ -632,8 +654,8 @@ test "clear" {
   m.clear()
   inspect(m.length(), content="0")
   inspect(m.capacity(), content="8")
-  for entry in m.entries {
-    @test.assert_same_object(entry, None)
+  for i in 0..<m.capacity {
+    @test.assert_eq(m.psls[i], empty_psl)
   }
 }
 
@@ -703,21 +725,23 @@ pub fn[K : Hash + Eq] HashSet::remove_and_check(
 pub fn[K] HashSet::copy(self : HashSet[K]) -> HashSet[K] {
   let other = {
     capacity: self.capacity,
-    entries: FixedArray::make(self.capacity, None),
+    psls: FixedArray::make(self.capacity, empty_psl),
+    hashes: FixedArray::make(self.capacity, 0),
+    keys: UninitializedArray::make(self.capacity),
     size: self.size,
     capacity_mask: self.capacity_mask,
     grow_at: self.grow_at,
   }
-  self.entries.blit_to(other.entries, len=self.capacity)
+  self.psls.blit_to(other.psls, len=self.capacity)
+  self.hashes.blit_to(other.hashes, len=self.capacity)
+  UninitializedArray::unsafe_blit(other.keys, 0, self.keys, 0, self.capacity)
   other
 }
 
 ///|
 /// ToJson implementation for hashset
 pub impl[X : ToJson] ToJson for HashSet[X] with fn to_json(self) {
-  [
-    for entry in self.entries if entry is Some({ key, .. }) => key
-  ]
+  self.to_array().to_json()
 }
 
 ///|
