@@ -151,41 +151,43 @@ fn ParseContext::scan_json_number(
   let mut significant_digits = 0
   let mut seen_nonzero = false
   for i = (if negative { start + 1 } else { start }); i < end; i = i + 1 {
-    let c = ctx.input.unsafe_get(i)
-    if c is ('0'..='9') {
-      let digit = c.to_int() - '0'
-      if has_exponent {
-        if exponent_part < EXPONENT_CAP {
-          let next_exponent = exponent_part * 10L + digit.to_int64()
-          exponent_part = if next_exponent > EXPONENT_CAP {
-            EXPONENT_CAP
-          } else {
-            next_exponent
+    match ctx.input.unsafe_get(i) {
+      '0'..='9' as c => {
+        let digit = c.to_int() - '0'
+        if has_exponent {
+          if exponent_part < EXPONENT_CAP {
+            let next_exponent = exponent_part * 10L + digit.to_int64()
+            exponent_part = if next_exponent > EXPONENT_CAP {
+              EXPONENT_CAP
+            } else {
+              next_exponent
+            }
           }
-        }
-      } else {
-        if has_decimal {
-          fractional_digits += 1
-        }
-        if digit != 0 || seen_nonzero {
-          seen_nonzero = true
-          significant_digits += 1
-          if significant_digits <= 19 {
-            mantissa = mantissa * 10UL +
-              UInt64::extend_uint(digit.reinterpret_as_uint())
+        } else {
+          if has_decimal {
+            fractional_digits += 1
+          }
+          if digit != 0 || seen_nonzero {
+            seen_nonzero = true
+            significant_digits += 1
+            if significant_digits <= 19 {
+              mantissa = mantissa * 10UL +
+                UInt64::extend_uint(digit.reinterpret_as_uint())
+            }
           }
         }
       }
-    } else if c == '.' {
-      has_decimal = true
-    } else if c == 'e' || c == 'E' {
-      has_exponent = true
-      if i + 1 < end {
-        let next = ctx.input.unsafe_get(i + 1)
-        if next == '-' {
-          exponent_negative = true
+      '.' => has_decimal = true
+      'e' | 'E' => {
+        has_exponent = true
+        if i + 1 < end {
+          let next = ctx.input.unsafe_get(i + 1)
+          if next == '-' {
+            exponent_negative = true
+          }
         }
       }
+      _ => ()
     }
   }
   let exponent_part = if exponent_negative {
