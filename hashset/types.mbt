@@ -13,14 +13,15 @@
 // limitations under the License.
 
 ///|
-#warnings("-deprecated_syntax")
-priv struct Entry[K] {
-  mut psl : Int
-  hash : Int
-  key : K
-} derive(@debug.Debug)
+/// `psls[i] == empty_psl` marks an empty slot. A real probe-sequence length is
+/// always `>= 0`, so `-1` is a safe sentinel.
+let empty_psl : Int = -1
 
-/// A mutable hash set implements with Robin Hood hashing.
+///|
+/// Releases the key reference stored at `idx` so the collector can reclaim it.
+fn[K] set_null(keys : UninitializedArray[K], idx : Int) = "%fixedarray.set_null"
+
+/// A mutable hash set implemented with Robin Hood hashing.
 ///
 /// reference:
 /// - <https://programming.guide/robin-hood-hashing.html>
@@ -28,6 +29,12 @@ priv struct Entry[K] {
 
 ///|
 /// Mutable hash set, not thread safe.
+///
+/// The table is stored as a struct-of-arrays (`psls` / `hashes` / `keys`)
+/// rather than an array of boxed entries, so inserting a key does not allocate
+/// a per-entry object. For an occupied slot `i`, `hashes[i]` caches the key's
+/// hash and `keys[i]` holds the key; for an empty slot `psls[i] == empty_psl`
+/// and `keys[i]` is unused.
 ///
 /// # Example
 ///
@@ -39,7 +46,9 @@ priv struct Entry[K] {
 /// }
 /// ```
 struct HashSet[K] {
-  mut entries : FixedArray[Entry[K]?]
+  mut psls : FixedArray[Int] // probe sequence length, or empty_psl when empty
+  mut hashes : FixedArray[Int] // cached key hash for occupied slots
+  mut keys : UninitializedArray[K] // key storage for occupied slots
   mut size : Int // active key count
   mut capacity : Int // current capacity
   mut capacity_mask : Int // capacity_mask = capacity - 1, used to find idx
