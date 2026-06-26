@@ -48,8 +48,8 @@ fn[T] fixed_quick_sort_by(
     if pred is Some(p) {
       // pred is less than all elements in arr
       // If pivot equals to pred, then we can skip all elements that are equal to pred.
-      if cmp(p, arr[pivot]) == 0 {
-        let i = for i = pivot; i < len && cmp(p, arr[i]) == 0; {
+      if cmp(p, arr.unsafe_get(pivot)) == 0 {
+        let i = for i = pivot; i < len && cmp(p, arr.unsafe_get(i)) == 0; {
           continue i + 1
         } nobreak {
           i
@@ -62,9 +62,13 @@ fn[T] fixed_quick_sort_by(
     // Reduce the stack depth by only call quick_sort on the smaller partition.
     if left.length() < right.length() {
       fixed_quick_sort_by(left, cmp, pred, limit)
-      continue limit, right, Some(arr[pivot]), was_partitioned, balanced
+      continue limit,
+        right,
+        Some(arr.unsafe_get(pivot)),
+        was_partitioned,
+        balanced
     } else {
-      fixed_quick_sort_by(right, cmp, Some(arr[pivot]), limit)
+      fixed_quick_sort_by(right, cmp, Some(arr.unsafe_get(pivot)), limit)
       continue limit, left, pred, was_partitioned, balanced
     }
   }
@@ -82,7 +86,8 @@ fn[T] fixed_try_bubble_sort_by(
 ) -> Bool {
   let max_tries = 8
   for i in 1..<arr.length(); tries = 0 {
-    let sorted = for j = i, sorted = true; j > 0 && cmp(arr[j - 1], arr[j]) > 0; {
+    let sorted = for j = i, sorted = true; j > 0 &&
+                    cmp(arr.unsafe_get(j - 1), arr.unsafe_get(j)) > 0; {
       arr.swap(j, j - 1)
       continue j - 1, false
     } nobreak {
@@ -110,7 +115,9 @@ fn[T] fixed_try_bubble_sort_by(
 /// Returns whether the array is sorted.
 fn[T] fixed_bubble_sort_by(arr : MutArrayView[T], cmp : (T, T) -> Int) -> Unit {
   for i in 1..<arr.length() {
-    for j = i; j > 0 && cmp(arr[j - 1], arr[j]) > 0; j = j - 1 {
+    for j = i
+        j > 0 && cmp(arr.unsafe_get(j - 1), arr.unsafe_get(j)) > 0
+        j = j - 1 {
       arr.swap(j, j - 1)
     }
   }
@@ -131,11 +138,11 @@ fn[T] fixed_partition_by(
   pivot_index : Int,
 ) -> (Int, Bool) {
   arr.swap(pivot_index, arr.length() - 1)
-  let pivot = arr[arr.length() - 1]
+  let pivot = arr.unsafe_get(arr.length() - 1)
   let (i, partitioned) = for
     j in 0..<(arr.length() - 1)
     i = 0, partitioned = true {
-    if cmp(arr[j], pivot) < 0 {
+    if cmp(arr.unsafe_get(j), pivot) < 0 {
       if i != j {
         arr.swap(i, j)
         continue i + 1, false
@@ -171,7 +178,7 @@ fn[T] fixed_choose_pivot_by(
     let a = len / 4 * 1
     let c = len / 4 * 3
     let sort_2 = (a : Int, b : Int) => {
-      if cmp(arr[a], arr[b]) > 0 {
+      if cmp(arr.unsafe_get(a), arr.unsafe_get(b)) > 0 {
         arr.swap(a, b)
         swaps += 1
       }
@@ -216,12 +223,13 @@ fn[T] fixed_sift_down_by(
 ) -> Unit {
   let len = arr.length()
   for index = index, child = index * 2 + 1; child < len; {
-    let child = if child + 1 < len && cmp(arr[child], arr[child + 1]) < 0 {
+    let child = if child + 1 < len &&
+      cmp(arr.unsafe_get(child), arr.unsafe_get(child + 1)) < 0 {
       child + 1
     } else {
       child
     }
-    if cmp(arr[index], arr[child]) >= 0 {
+    if cmp(arr.unsafe_get(index), arr.unsafe_get(child)) >= 0 {
       return
     }
     arr.swap(index, child)

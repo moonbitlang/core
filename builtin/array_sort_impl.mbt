@@ -64,7 +64,7 @@ fn[T : Compare] timsort(arr : MutArrayView[T]) -> Unit {
 ///|
 fn[T : Compare] MutArrayView::insertion_sort(arr : MutArrayView[T]) -> Unit {
   for i in 1..<arr.length() {
-    for j = i; j > 0 && arr[j] < arr[j - 1]; j = j - 1 {
+    for j = i; j > 0 && arr.unsafe_get(j) < arr.unsafe_get(j - 1); j = j - 1 {
       arr.swap(j, j - 1)
     }
   }
@@ -84,11 +84,11 @@ fn[T : Compare] merge(arr : MutArrayView[T], mid : Int) -> Unit {
   let buf_remaining = for p1 = mid - 1, p2 = buf_len - 1, p = mid + buf_len - 1; p1 >=
                          0 &&
                          p2 >= 0; {
-    if arr[p1] > buf[p2] {
-      arr[p] = arr[p1]
+    if arr.unsafe_get(p1) > buf[p2] {
+      arr.unsafe_set(p, arr.unsafe_get(p1))
       continue p1 - 1, p2, p - 1
     } else {
-      arr[p] = buf[p2]
+      arr.unsafe_set(p, buf[p2])
       continue p1, p2 - 1, p - 1
     }
   } nobreak {
@@ -114,10 +114,10 @@ fn[T : Compare] find_streak(arr : MutArrayView[T]) -> (Int, Bool) {
   if len < 2 {
     return (len, false)
   }
-  let assume_reverse = arr[1] < arr[0]
+  let assume_reverse = arr.unsafe_get(1) < arr.unsafe_get(0)
   if assume_reverse {
     let end = for idx in 2..<len {
-      if arr[idx] < arr[idx - 1] {
+      if arr.unsafe_get(idx) < arr.unsafe_get(idx - 1) {
         continue
       }
       break idx
@@ -127,7 +127,7 @@ fn[T : Compare] find_streak(arr : MutArrayView[T]) -> (Int, Bool) {
     (end, true)
   } else {
     let end = for idx in 2..<len {
-      if arr[idx] >= arr[idx - 1] {
+      if arr.unsafe_get(idx) >= arr.unsafe_get(idx - 1) {
         continue
       }
       break idx
@@ -219,9 +219,10 @@ fn[T] MutArrayView::slice(
 
 ///|
 fn[T] MutArrayView::swap(arr : MutArrayView[T], i : Int, j : Int) -> Unit {
-  let temp = arr[i]
-  arr[i] = arr[j]
-  arr[j] = temp
+  // Callers are internal sort helpers that only pass in-bounds indices.
+  let temp = arr.unsafe_get(i)
+  arr.unsafe_set(i, arr.unsafe_get(j))
+  arr.unsafe_set(j, temp)
 }
 
 ///|
@@ -230,10 +231,10 @@ fn[T] MutArrayView::rev_in_place(arr : MutArrayView[T]) -> Unit {
   let mid_len = len / 2
   for i in 0..<mid_len {
     let j = len - i - 1
-    // Swap elements
-    let temp = arr[i]
-    arr[i] = arr[j]
-    arr[j] = temp
+    // Swap elements (i and j are in bounds by construction)
+    let temp = arr.unsafe_get(i)
+    arr.unsafe_set(i, arr.unsafe_get(j))
+    arr.unsafe_set(j, temp)
   }
 }
 
@@ -272,8 +273,8 @@ fn[T : Compare] fixed_quick_sort(
     if pred is Some(p) {
       // pred is less than all elements in arr
       // If pivot equals to pred, then we can skip all elements that are equal to pred.
-      if p == arr[pivot] {
-        let i = for i = pivot; i < len && p == arr[i]; {
+      if p == arr.unsafe_get(pivot) {
+        let i = for i = pivot; i < len && p == arr.unsafe_get(i); {
           continue i + 1
         } nobreak {
           i
@@ -286,9 +287,13 @@ fn[T : Compare] fixed_quick_sort(
     // Reduce the stack depth by only call fixed_quick_sort on the smaller fixed_partition.
     if left.length() < right.length() {
       fixed_quick_sort(left, pred, limit)
-      continue limit, right, Some(arr[pivot]), was_partitioned, balanced
+      continue limit,
+        right,
+        Some(arr.unsafe_get(pivot)),
+        was_partitioned,
+        balanced
     } else {
-      fixed_quick_sort(right, Some(arr[pivot]), limit)
+      fixed_quick_sort(right, Some(arr.unsafe_get(pivot)), limit)
       continue limit, left, pred, was_partitioned, balanced
     }
   }
@@ -312,7 +317,8 @@ fn fixed_get_limit(len : Int) -> Int {
 fn[T : Compare] fixed_try_bubble_sort(arr : MutArrayView[T]) -> Bool {
   let max_tries = 8
   for i in 1..<arr.length(); tries = 0 {
-    let sorted = for j = i, sorted = true; j > 0 && arr[j - 1] > arr[j]; {
+    let sorted = for j = i, sorted = true; j > 0 &&
+                    arr.unsafe_get(j - 1) > arr.unsafe_get(j); {
       arr.swap(j, j - 1)
       continue j - 1, false
     } nobreak {
@@ -340,7 +346,7 @@ fn[T : Compare] fixed_try_bubble_sort(arr : MutArrayView[T]) -> Bool {
 /// Returns whether the array is sorted.
 fn[T : Compare] fixed_bubble_sort(arr : MutArrayView[T]) -> Unit {
   for i in 1..<arr.length() {
-    for j = i; j > 0 && arr[j - 1] > arr[j]; j = j - 1 {
+    for j = i; j > 0 && arr.unsafe_get(j - 1) > arr.unsafe_get(j); j = j - 1 {
       arr.swap(j, j - 1)
     }
   }
@@ -360,11 +366,11 @@ fn[T : Compare] fixed_partition(
   pivot_index : Int,
 ) -> (Int, Bool) {
   arr.swap(pivot_index, arr.length() - 1)
-  let pivot = arr[arr.length() - 1]
+  let pivot = arr.unsafe_get(arr.length() - 1)
   let (i, partitioned) = for
     j in 0..<(arr.length() - 1)
     i = 0, partitioned = true {
-    if arr[j] < pivot {
+    if arr.unsafe_get(j) < pivot {
       if i != j {
         arr.swap(i, j)
         continue i + 1, false
@@ -397,7 +403,7 @@ fn[T : Compare] fixed_choose_pivot(arr : MutArrayView[T]) -> (Int, Bool) {
     let a = len / 4 * 1
     let c = len / 4 * 3
     let sort_2 = (a : Int, b : Int) => {
-      if arr[a] > arr[b] {
+      if arr.unsafe_get(a) > arr.unsafe_get(b) {
         arr.swap(a, b)
         swaps += 1
       }
@@ -438,12 +444,13 @@ fn[T : Compare] fixed_heap_sort(arr : MutArrayView[T]) -> Unit {
 fn[T : Compare] fixed_sift_down(arr : MutArrayView[T], index : Int) -> Unit {
   let len = arr.length()
   for index = index, child = index * 2 + 1; child < len; {
-    let child = if child + 1 < len && arr[child] < arr[child + 1] {
+    let child = if child + 1 < len &&
+      arr.unsafe_get(child) < arr.unsafe_get(child + 1) {
       child + 1
     } else {
       child
     }
-    if arr[index] >= arr[child] {
+    if arr.unsafe_get(index) >= arr.unsafe_get(child) {
       return
     }
     arr.swap(index, child)
