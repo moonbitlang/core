@@ -1047,7 +1047,7 @@ pub fn BigInt::to_string(self : BigInt, radix? : Int = 10) -> String {
   let chars = FixedArray::make(cap, '0')
   let mut pos = cap
   // Lower slots each contribute exactly `decimal_radix_bit_len` digits,
-  // zero-padded (leading zeros fall out of `char_from_digit(0)`).
+  // zero-padded (the most-significant slot is handled separately to avoid leading zeros).
   for i in 0..<(v_idx - 1) {
     let mut x = v[i]
     for _ in 0..<decimal_radix_bit_len {
