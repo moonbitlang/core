@@ -17,6 +17,7 @@
 /// (a leading 1 followed by repeated 9s), so `to_string` cost scales with the
 /// requested width.
 fn make_decimal(digits : Int) -> @bigint.BigInt {
+  guard digits >= 1 else { abort("make_decimal: digits must be >= 1") }
   let buf = StringBuilder(size_hint=digits)
   buf.write_char('1')
   for _ in 1..<digits {
