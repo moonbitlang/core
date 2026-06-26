@@ -394,6 +394,18 @@ test "Int16::lxor" {
 }
 
 ///|
+test "Int16::lnot" {
+  let lnot = (a : Int16) => a.lnot()
+  inspect(lnot(0), content="-1")
+  inspect(lnot(-1), content="0")
+  inspect(lnot(1), content="-2")
+  inspect(lnot(32767), content="-32768")
+  inspect(lnot(-32768), content="32767")
+  // Double negation is the identity within the 16-bit width.
+  inspect(lnot(lnot(12345)), content="12345")
+}
+
+///|
 test "Int16::mod" {
   let mod = (a : Int16, b : Int16) => a % b
   inspect(mod(10, 3), content="1")

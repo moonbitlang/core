@@ -19,6 +19,7 @@ pub fn Int16::abs(Int16) -> Int16
 pub fn Int16::from_byte(Byte) -> Int16
 pub fn Int16::from_int(Int) -> Int16
 pub fn Int16::from_int64(Int64) -> Int16
+pub fn Int16::lnot(Int16) -> Int16
 pub fn Int16::reinterpret_as_uint16(Int16) -> UInt16
 pub fn Int16::reinterpret_from_uint16(UInt16) -> Int16
 pub fn Int16::to_byte(Int16) -> Byte
