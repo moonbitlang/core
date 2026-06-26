@@ -52,13 +52,11 @@ fn ParseContext::lex_value(
           let (n, repr) = ctx.lex_zero(start=ctx.offset - 2)
           return Number(n, repr.map(repr => repr.to_owned()))
         }
-        Some(c2) => {
-          if c2 is ('1'..='9') {
-            let (n, repr) = ctx.lex_decimal_integer(start=ctx.offset - 2)
-            return Number(n, repr.map(repr => repr.to_owned()))
-          }
-          ctx.invalid_char(shift=-1)
+        Some('1'..='9') => {
+          let (n, repr) = ctx.lex_decimal_integer(start=ctx.offset - 2)
+          return Number(n, repr.map(repr => repr.to_owned()))
         }
+        Some(_) => ctx.invalid_char(shift=-1)
         None => raise InvalidEof
       }
     Some('0') => {
