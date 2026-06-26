@@ -205,25 +205,42 @@ fn ParseContext::scan_json_number(
 }
 
 ///|
+// Shared result type for the number lexing helpers. `#valtype` keeps it
+// stack-allocated on the native target, so returning it does not heap-allocate
+// the way the previous `(Double, StringView?)` tuple did (one box per parsed
+// number).
+// `repr` is `Some` only for the rare out-of-range values that fall back to a
+// string-preserving representation; it is `None` in the common case.
+// Field order matters: the reference field (`repr`) must precede the `Double`
+// (`value`). With `value` first, the Wasm backend currently mis-compiles the
+// destructuring in `lex_value` (`i32.wrap_i64 expected i64, found f64`), so keep
+// `repr` first.
+#valtype
+priv struct LexedNumber {
+  repr : StringView?
+  value : Double
+}
+
+///|
 fn ParseContext::lex_integer_end(
   ctx : ParseContext,
   start : Int,
   end : Int,
-) -> (Double, StringView?) {
+) -> LexedNumber {
   let negative = ctx.input.unsafe_get(start) == '-'
   let number_start = if negative { start + 1 } else { start }
   for i = number_start, acc = 0L {
     if i >= end {
       let value = if negative { -acc } else { acc }
-      break (value.to_double(), None)
+      break { value: value.to_double(), repr: None }
     }
     let digit = (ctx.input.unsafe_get(i).to_int() - '0').to_int64()
     if acc > (SAFE_INTEGER_LIMIT - digit) / 10L {
       let s = ctx.input.view(start_offset=start, end_offset=end)
       return if negative {
-        (@double.neg_infinity, Some(s))
+        { value: @double.neg_infinity, repr: Some(s) }
       } else {
-        (@double.infinity, Some(s))
+        { value: @double.infinity, repr: Some(s) }
       }
     }
     continue i + 1, acc * 10L + digit
@@ -234,7 +251,7 @@ fn ParseContext::lex_integer_end(
 fn ParseContext::lex_decimal_integer(
   ctx : ParseContext,
   start~ : Int,
-) -> (Double, StringView?) raise ParseError {
+) -> LexedNumber raise ParseError {
   for ;; {
     match ctx.read_char() {
       Some('.') => return ctx.lex_decimal_point(start~)
@@ -253,7 +270,7 @@ fn ParseContext::lex_decimal_integer(
 fn ParseContext::lex_decimal_point(
   ctx : ParseContext,
   start~ : Int,
-) -> (Double, StringView?) raise ParseError {
+) -> LexedNumber raise ParseError {
   match ctx.read_char() {
     Some('0'..='9') => ctx.lex_decimal_fraction(start~)
     Some(_) => ctx.invalid_char(shift=-1)
@@ -265,7 +282,7 @@ fn ParseContext::lex_decimal_point(
 fn ParseContext::lex_decimal_fraction(
   ctx : ParseContext,
   start~ : Int,
-) -> (Double, StringView?) raise ParseError {
+) -> LexedNumber raise ParseError {
   for ;; {
     match ctx.read_char() {
       Some('e' | 'E') => return ctx.lex_decimal_exponent(start~)
@@ -283,7 +300,7 @@ fn ParseContext::lex_decimal_fraction(
 fn ParseContext::lex_decimal_exponent(
   ctx : ParseContext,
   start~ : Int,
-) -> (Double, StringView?) raise ParseError {
+) -> LexedNumber raise ParseError {
   match ctx.read_char() {
     Some('+' | '-') => return ctx.lex_decimal_exponent_sign(start~)
     Some('0'..='9') => return ctx.lex_decimal_exponent_integer(start~)
@@ -299,7 +316,7 @@ fn ParseContext::lex_decimal_exponent(
 fn ParseContext::lex_decimal_exponent_sign(
   ctx : ParseContext,
   start~ : Int,
-) -> (Double, StringView?) raise ParseError {
+) -> LexedNumber raise ParseError {
   match ctx.read_char() {
     Some('0'..='9') => return ctx.lex_decimal_exponent_integer(start~)
     Some(_) => {
@@ -314,7 +331,7 @@ fn ParseContext::lex_decimal_exponent_sign(
 fn ParseContext::lex_decimal_exponent_integer(
   ctx : ParseContext,
   start~ : Int,
-) -> (Double, StringView?) {
+) -> LexedNumber {
   for ;; {
     match ctx.read_char() {
       Some('0'..='9') => continue
@@ -331,7 +348,7 @@ fn ParseContext::lex_decimal_exponent_integer(
 fn ParseContext::lex_zero(
   ctx : ParseContext,
   start~ : Int,
-) -> (Double, StringView?) raise ParseError {
+) -> LexedNumber raise ParseError {
   match ctx.read_char() {
     Some('.') => ctx.lex_decimal_point(start~)
     Some('e' | 'E') => ctx.lex_decimal_exponent(start~)
@@ -352,7 +369,7 @@ fn ParseContext::lex_number_end(
   ctx : ParseContext,
   start : Int,
   end : Int,
-) -> (Double, StringView?) {
+) -> LexedNumber {
   // Fast path for JSON numbers: the lexer has already validated the grammar,
   // so scan raw UTF-16 digits once and bypass the general strconv parser for
   // safe integers and Clinger-style fast-path doubles. Fall back to strconv for
@@ -376,26 +393,26 @@ fn ParseContext::lex_number_end(
       scan.mantissa <= SAFE_INTEGER_LIMIT.reinterpret_as_uint64() {
       let v = scan.mantissa.reinterpret_as_int64()
       let signed = if scan.negative { -v } else { v }
-      return (signed.to_double(), None)
+      return { value: signed.to_double(), repr: None }
     }
     return ctx.lex_integer_end(start, end)
   }
   let fast = scan.try_fast_double()
   if !fast.is_nan() {
-    return (fast, None)
+    return { value: fast, repr: None }
   }
   let s = ctx.input.view(start_offset=start, end_offset=end)
   try {
     let d = @internal/strconv.parse_double(s)
     // For normal values, return without string representation
-    (d, None)
+    { value: d, repr: None }
   } catch {
     // If parsing fails as a double, treat it as infinity and preserve the string
     _ =>
       if scan.negative {
-        (@double.neg_infinity, Some(s))
+        { value: @double.neg_infinity, repr: Some(s) }
       } else {
-        (@double.infinity, Some(s))
+        { value: @double.infinity, repr: Some(s) }
       }
   }
 }
