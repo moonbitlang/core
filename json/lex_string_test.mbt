@@ -31,3 +31,17 @@ test "lex_hex_digits incomplete hex digits" {
     ),
   )
 }
+
+///|
+test "lex_hex_digits rejects backtick as hex digit" {
+  // '`' (0x60) case-folds to '@' (0x40) via `c & ~32`, yielding d == 9,
+  // so "\u`bcd" is accepted as U+9BCD instead of raising. This test
+  // asserts the desired InvalidChar and FAILS on the current lexer,
+  // pinning down the bug before the fix.
+  debug_inspect(
+    expect_parse_error("\"\\u`bcd\"", "expected InvalidChar"),
+    content=(
+      #|InvalidChar({ line: 1, column: 3 }, '`')
+    ),
+  )
+}
