@@ -87,27 +87,14 @@ fn ParseContext::lex_hex_digits(
   n : Int,
 ) -> Int raise ParseError {
   for _ in 0..<n; r = 0 {
-    match ctx.read_char() {
-      Some(c) =>
-        if c >= 'A' {
-          // Case-folding maps '`' (0x60) to '@' (0x40), i.e. d == 9, so
-          // reject anything outside the letter range 'A'..'F' (10..15).
-          let d = (c.to_int() & (32).lnot()) - 'A'.to_int() + 10
-          if d < 10 || d > 15 {
-            ctx.invalid_char(shift=-1)
-          }
-          continue (r << 4) | d
-        } else if c >= '0' {
-          let d = c.to_int() - '0'.to_int()
-          if d > 9 {
-            ctx.invalid_char(shift=-1)
-          }
-          continue (r << 4) | d
-        } else {
-          ctx.invalid_char(shift=-1)
-        }
+    let d = match ctx.read_char() {
+      Some('0'..='9' as c) => c.to_int() - '0'
+      Some('A'..='F' as c) => c.to_int() - 'A' + 10
+      Some('a'..='f' as c) => c.to_int() - 'a' + 10
+      Some(_) => ctx.invalid_char(shift=-1)
       None => raise InvalidEof
     }
+    continue (r << 4) | d
   } nobreak {
     r
   }
