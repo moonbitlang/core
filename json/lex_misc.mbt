@@ -138,11 +138,9 @@ fn ParseContext::lex_skip_whitespace(ctx : ParseContext) -> Unit {
     if offset >= end {
       break offset
     }
-    let c = ctx.input.unsafe_get(offset)
-    if c == ' ' || c == '\t' || c == '\r' || c == '\n' {
-      continue offset + 1
-    } else {
-      break offset
+    match ctx.input.unsafe_get(offset) {
+      ' ' | '\t' | '\r' | '\n' => continue offset + 1
+      _ => break offset
     }
   }
 }
