@@ -23,6 +23,18 @@ test "lex_string with forward slash escape" {
 }
 
 ///|
+test "lex_string_slow rejects raw control char after an escape" {
+  // A valid '\t' escape switches lexing to the slow path; the following
+  // raw newline must still be rejected by the control-char check.
+  debug_inspect(
+    expect_parse_error("\"\\t\nbreak\"", "expected InvalidChar"),
+    content=(
+      #|InvalidChar({ line: 1, column: 3 }, '\n')
+    ),
+  )
+}
+
+///|
 test "lex_hex_digits incomplete hex digits" {
   debug_inspect(
     expect_parse_error("\"\\u123", "expected InvalidEof"),

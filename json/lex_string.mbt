@@ -24,7 +24,9 @@ fn ParseContext::lex_string(ctx : ParseContext) -> String raise ParseError {
       return ctx.input.view(start_offset=string_start, end_offset=i).to_owned()
     } else if c == '\\' {
       return ctx.lex_string_slow()
-    } else if c == '\n' || c == '\r' || c < ' ' {
+    } else if c < ' ' {
+      // Unescaped control characters (U+0000..U+001F, including \n, \r,
+      // \t) are invalid inside a JSON string.
       ctx.offset = i + 1
       ctx.invalid_char(shift=-1)
     }
@@ -48,7 +50,6 @@ fn ParseContext::lex_string_slow(ctx : ParseContext) -> String raise ParseError 
         flush(ctx.offset - 1)
         break
       }
-      Some('\n' | '\r') => ctx.invalid_char(shift=-1)
       Some('\\') => {
         flush(ctx.offset - 1)
         match ctx.read_char() {
