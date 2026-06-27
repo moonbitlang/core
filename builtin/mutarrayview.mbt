@@ -119,7 +119,7 @@ pub fn[T] MutArrayView::at(self : MutArrayView[T], index : Int) -> T {
       "index out of bounds: the len is from 0 to \{self.len()} but the index is \{index}",
     )
   }
-  self.buf()[self.start() + index]
+  self.buf().unsafe_get(self.start() + index)
 }
 
 ///|
@@ -183,7 +183,7 @@ pub fn[T] MutArrayView::set(
       "index out of bounds: the len is from 0 to \{self.len()} but the index is \{index}",
     )
   }
-  self.buf()[self.start() + index] = value
+  self.buf().unsafe_set(self.start() + index, value)
 }
 
 ///|
