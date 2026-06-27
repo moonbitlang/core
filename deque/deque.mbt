@@ -813,10 +813,7 @@ pub fn[A] Deque::pop_back(self : Deque[A]) -> A? {
 #alias("_[_]")
 pub fn[A] Deque::at(self : Deque[A], index : Int) -> A {
   if index < 0 || index >= self.len {
-    let len = self.len
-    abort(
-      "index out of bounds: the len is from 0 to \{len} but the index is \{index}",
-    )
+    index_out_of_bounds(self.len, index)
   }
   if self.head + index < self.buf.length() {
     self.buf[self.head + index]
@@ -841,10 +838,7 @@ pub fn[A] Deque::at(self : Deque[A], index : Int) -> A {
 #alias("_[_]=_")
 pub fn[A] Deque::set(self : Deque[A], index : Int, value : A) -> Unit {
   if index < 0 || index >= self.len {
-    let len = self.len
-    abort(
-      "index out of bounds: the len is from 0 to \{len} but the index is \{index}",
-    )
+    index_out_of_bounds(self.len, index)
   }
   if self.head + index < self.buf.length() {
     self.buf[self.head + index] = value
