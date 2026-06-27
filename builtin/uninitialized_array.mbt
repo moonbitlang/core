@@ -41,6 +41,13 @@ pub fn[T] UninitializedArray::at(
 ) -> T = "%fixedarray.get"
 
 ///|
+#internal(unsafe, "For internal use only.")
+fn[T] UninitializedArray::unsafe_get(
+  self : UninitializedArray[T],
+  index : Int,
+) -> T = "%fixedarray.unsafe_get"
+
+///|
 /// Sets the value at the specified index in an uninitialized array.
 ///
 /// Parameters:
@@ -54,6 +61,14 @@ pub fn[T] UninitializedArray::set(
   index : Int,
   value : T,
 ) = "%fixedarray.set"
+
+///|
+#internal(unsafe, "For internal use only.")
+fn[T] UninitializedArray::unsafe_set(
+  self : UninitializedArray[T],
+  index : Int,
+  value : T,
+) -> Unit = "%fixedarray.unsafe_set"
 
 ///|
 /// Creates a view into a portion of the uninitialized array.
