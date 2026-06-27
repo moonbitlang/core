@@ -27,3 +27,14 @@ fn[T] index_out_of_bounds(len : Int, index : Int) -> T {
     "index out of bounds: the len is from 0 to \{len} but the index is \{index}",
   )
 }
+
+///|
+/// Variant of [index_out_of_bounds] for accessors that take two indices (e.g.
+/// `Array::swap`). Kept `#inline(never)` for the same reason: keep the cold
+/// formatting out of the small hot accessor body so it stays inlineable.
+#inline(never)
+fn[T] index_out_of_bounds2(len : Int, i : Int, j : Int) -> T {
+  abort(
+    "index out of bounds: the len is from 0 to \{len} but the index is (\{i}, \{j})",
+  )
+}

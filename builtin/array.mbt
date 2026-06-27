@@ -1170,10 +1170,7 @@ pub fn[T] Array::binary_search_by(
 /// ```
 pub fn[T] Array::swap(self : Array[T], i : Int, j : Int) -> Unit {
   if i >= self.length() || j >= self.length() || i < 0 || j < 0 {
-    let len = self.length()
-    abort(
-      "index out of bounds: the len is from 0 to \{len} but the index is (\{i}, \{j})",
-    )
+    index_out_of_bounds2(self.length(), i, j)
   }
   let temp = self.unsafe_get(i)
   self.unsafe_set(i, self.unsafe_get(j))
