@@ -32,13 +32,16 @@ priv enum CovShape {
 
 ///|
 /// Run `assert_eq` on two values and return whether it reported a difference,
-/// so the diff machinery runs to completion without aborting the test.
-fn[T : Eq + @debug.Debug] reports_diff(a : T, b : T) -> Bool {
+/// so the diff machinery runs to completion without aborting the test. Only the
+/// `Failure` raised by `assert_eq` is treated as a reported diff; anything else
+/// propagates so genuine errors are not masked.
+fn[T : Eq + @debug.Debug] reports_diff(a : T, b : T) -> Bool raise {
   try {
     @debug.assert_eq(a, b)
     false
   } catch {
-    _ => true
+    Failure(_) => true
+    err => raise err
   }
 }
 
@@ -166,14 +169,18 @@ test "depth-limited render replaces deep subtrees with ellipsis" {
   assert_true(
     @debug.render(@debug.to_repr(nested), max_depth=1).contains("..."),
   )
+  // a depth-limited record still renders its (pruned) fields
   let p : CovPoint = { x: 7, y: 8.0 }
   assert_true(@debug.render(@debug.to_repr(p), max_depth=1).length() > 0)
-  // depth <= 0 is treated as 1
-  assert_true(@debug.render(@debug.to_repr(nested), max_depth=0).length() > 0)
+  // depth <= 0 is treated as 1, so max_depth=0 renders identically to max_depth=1
+  let r = @debug.to_repr(nested)
+  @debug.assert_eq(@debug.render(r, max_depth=0), @debug.render(r, max_depth=1))
 }
 
 ///|
-test "debug prints a value to stdout" {
+test "debug runs over representative values (smoke)" {
+  // `@debug.debug` only prints to stdout; this is a coverage/smoke check that it
+  // executes for primitive, collection and record values without raising.
   @debug.debug(42)
   @debug.debug([1, 2, 3])
   let p : CovPoint = { x: 1, y: 2.0 }
