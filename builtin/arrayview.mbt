@@ -139,7 +139,7 @@ pub fn[T] ArrayView::at(self : ArrayView[T], index : Int) -> T {
       "index out of bounds: the len is from 0 to \{self.len()} but the index is \{index}",
     )
   }
-  self.buf()[self.start() + index]
+  self.buf().unsafe_get(self.start() + index)
 }
 
 ///|
@@ -169,7 +169,7 @@ pub fn[T] ArrayView::at(self : ArrayView[T], index : Int) -> T {
 pub fn[T] ArrayView::get(self : ArrayView[T], index : Int) -> T? {
   let len = self.length()
   guard index >= 0 && index < len else { None }
-  Some(self.buf()[self.start() + index])
+  Some(self.buf().unsafe_get(self.start() + index))
 }
 
 ///|
@@ -1301,7 +1301,7 @@ pub fn[A, B] ArrayView::rev_fold(
   f : (B, A) -> B raise?,
 ) -> B raise? {
   for i = self.length() - 1, acc = init; i >= 0; {
-    continue i - 1, f(acc, self[i])
+    continue i - 1, f(acc, self.unsafe_get(i))
   } nobreak {
     acc
   }
@@ -1350,7 +1350,7 @@ pub fn[A, B] ArrayView::rev_foldi(
 ) -> B raise? {
   let len = self.length()
   for i in len>..0; acc = init {
-    continue f(len - i - 1, acc, self[i])
+    continue f(len - i - 1, acc, self.unsafe_get(i))
   } nobreak {
     acc
   }
@@ -1618,7 +1618,7 @@ pub impl[T : Eq] Eq for ArrayView[T] with fn equal(self, other) -> Bool {
     return false
   }
   for i, x in self {
-    if !(x == other[i]) {
+    if !(x == other.unsafe_get(i)) {
       return false
     }
   } nobreak {
@@ -1633,7 +1633,7 @@ pub impl[T : Compare] Compare for ArrayView[T] with fn compare(self, other) -> I
   let cmp = len_self.compare(len_other)
   guard cmp == 0 else { return cmp }
   for i, x in self {
-    let cmp = x.compare(other[i])
+    let cmp = x.compare(other.unsafe_get(i))
     guard cmp == 0 else { break cmp }
   } nobreak {
     0
