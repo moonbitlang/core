@@ -13,11 +13,13 @@
 // limitations under the License.
 
 // Black-box tests covering the `Step` instances the existing suite misses:
-// the zero-step (empty) direction for every numeric type, the default
-// `step_one` for Int64/Float, and a descending Float range.
+// the zero-step (empty) direction for the types not already exercised
+// (Int64/UInt/UInt64/Int16/UInt16/Byte/Float/BigInt — Int and Double are
+// covered elsewhere), the default `step_one` for Int64/Float, and a
+// descending Float range.
 
 ///|
-test "a zero step yields an empty range for every Step type" {
+test "a zero step yields an empty range for the remaining Step types" {
   inspect(@range.iter(from=(1 : Int64), to=5, step=0).count(), content="0")
   inspect(@range.iter(from=(1 : UInt), to=5, step=0).count(), content="0")
   inspect(@range.iter(from=(1 : UInt64), to=5, step=0).count(), content="0")
