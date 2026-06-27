@@ -17,13 +17,19 @@
 // escapes, nesting-depth limits, and the `Show` instance for `Json`.
 
 ///|
-/// Whether parsing `s` raises a `ParseError`.
+/// Whether parsing `s` raises a `ParseError`. The match is exhaustive over the
+/// `ParseError` variants rather than a catch-all, so an unexpected error type
+/// would fail to compile instead of being silently swallowed.
 fn parse_raises(s : String) -> Bool {
   try {
     @json.parse(s) |> ignore
     false
   } catch {
-    _ => true
+    InvalidChar(_, _)
+    | InvalidEof
+    | InvalidNumber(_, _)
+    | InvalidIdentEscape(_)
+    | DepthLimitExceeded => true
   }
 }
 
@@ -106,14 +112,14 @@ test "Int64 and UInt64 from_json reject non-numeric strings" {
     (@json.from_json(bad) : Int64) |> ignore
     false
   } catch {
-    _ => true
+    JsonDecodeError(_) => true
   }
   inspect(i64, content="true")
   let u64 = try {
     (@json.from_json(bad) : UInt64) |> ignore
     false
   } catch {
-    _ => true
+    JsonDecodeError(_) => true
   }
   inspect(u64, content="true")
 }
