@@ -1,0 +1,33 @@
+name: accessor-inlining
+
+# Guards that the small checked index accessors in `builtin`
+# (ArrayView/MutArrayView/BytesView/StringView at/set, Array::swap, Deque::at/set)
+# stay inlineable by the native C/LLVM backend, so hot view/array loops keep
+# auto-vectorizing. See .github/scripts/check-accessor-inlining.sh and #3716/#3717.
+#
+# Single-platform (ubuntu + clang) by design: the inline-cost threshold is
+# architecture-independent, so one runner is enough. The guard fails open on
+# infra issues and only fails the job on a genuine inlining regression.
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  merge_group:
+
+jobs:
+  accessor-inlining:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install
+        uses: ./.github/actions/setup
+
+      - name: clang version
+        run: clang --version
+
+      - name: check checked-accessor inlining
+        timeout-minutes: 10
+        run: bash .github/scripts/check-accessor-inlining.sh
