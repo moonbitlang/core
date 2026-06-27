@@ -37,7 +37,7 @@ fn StringView::make_view(str : String, start : Int, end : Int) -> StringView = "
 #alias(code_unit_at)
 pub fn StringView::at(self : StringView, index : Int) -> UInt16 {
   guard index >= 0 && index < self.length() else {
-    abort("Index out of bounds")
+    index_out_of_bounds(self.length(), index)
   }
   self.unsafe_get(index)
 }
