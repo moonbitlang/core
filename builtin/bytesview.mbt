@@ -89,7 +89,7 @@ pub fn BytesView::at(self : BytesView, index : Int) -> Byte {
       "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
     )
   }
-  self.bytes()[self.start() + index]
+  self.bytes().unsafe_get(self.start() + index)
 }
 
 ///|
