@@ -244,25 +244,9 @@ fn[T] Tree::push_end(self : Tree[T], shift : Int, value : T) -> (Tree[T], Int) {
       // branch is always a partial leaf, so the root needs explicit sizes even
       // when `self` was radix.
       let new_branch = new_branch_left([value], shift)
+      let len = self.size(shift)
       (
-        match self {
-          Leaf(leaf) => {
-            let len = leaf.length()
-            Node([self, new_branch], Some([len, 1 + len]))
-          }
-          Node(_nodes, Some(sizes)) => {
-            let len = sizes[sizes.length() - 1]
-            Node([self, new_branch], Some([len, 1 + len]))
-          }
-          Node(_nodes, None) => {
-            let len = self.size(shift)
-            Node([self, new_branch], Some([len, 1 + len]))
-          }
-          Empty =>
-            abort(
-              "Unreachable: Empty tree should have fallen into the Some(new_tree) branch",
-            )
-        },
+        Node([self, new_branch], Some(FixedArray::from_array([len, 1 + len]))),
         shift + NUM_BITS,
       )
     }
