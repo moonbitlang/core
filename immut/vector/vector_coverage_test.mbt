@@ -40,8 +40,8 @@ test "deep tree built by from_iter round-trips through index and update" {
     }
   }
   @debug.assert_eq(v.at(n - 1), n - 1)
-  inspect(v.get(n), content="None")
-  inspect(v.get(-1), content="None")
+  @debug.assert_eq(v.get(n), None)
+  @debug.assert_eq(v.get(-1), None)
   // deep update keeps neighbours intact
   let v2 = v.set(1234, -7)
   @debug.assert_eq(v2.at(1234), -7)
@@ -124,7 +124,7 @@ test "repeated pop collapses a deep tree element by element" {
     v = v.pop().unwrap()
   }
   @debug.assert_eq(v.length(), 0)
-  inspect(v.pop(), content="None")
+  assert_true(v.pop() is None)
 }
 
 ///|
