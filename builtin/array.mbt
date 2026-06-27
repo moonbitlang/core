@@ -183,7 +183,7 @@ pub fn[T] Array::unsafe_get(self : Array[T], idx : Int) -> T {
 pub fn[T] Array::at(self : Array[T], index : Int) -> T {
   let len = self.length()
   guard index >= 0 && index < len
-  self.buffer()[index]
+  self.buffer().unsafe_get(index)
 }
 
 ///|
@@ -260,7 +260,7 @@ pub fn[T] Array::unsafe_set(self : Array[T], idx : Int, val : T) -> Unit {
 pub fn[T] Array::set(self : Array[T], index : Int, value : T) -> Unit {
   let len = self.length()
   guard index >= 0 && index < len
-  self.buffer()[index] = value
+  self.buffer().unsafe_set(index, value)
 }
 
 ///|
