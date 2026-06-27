@@ -17,35 +17,39 @@
 // disguised double fast-path, and underscore handling.
 
 ///|
-/// Whether parsing `s` as an Int64 (in the given base) raises.
-fn int64_raises(s : String, base : Int) -> Bool {
+/// Whether parsing `s` as an Int64 (in the given base) raises the expected
+/// `Failure` (any other error propagates so it is not masked as a parse error).
+fn int64_raises(s : String, base : Int) -> Bool raise {
   try {
     @strconv.parse_int64(s, base~) |> ignore
     false
   } catch {
-    _ => true
+    Failure::Failure(_) => true
+    err => raise err
   }
 }
 
 ///|
-/// Whether parsing `s` as a Double raises.
-fn double_raises(s : String) -> Bool {
+/// Whether parsing `s` as a Double raises the expected `Failure`.
+fn double_raises(s : String) -> Bool raise {
   try {
     @strconv.parse_double(s) |> ignore
     false
   } catch {
-    _ => true
+    Failure::Failure(_) => true
+    err => raise err
   }
 }
 
 ///|
-/// Whether parsing `s` as an Int (32-bit) raises.
-fn int_raises(s : String) -> Bool {
+/// Whether parsing `s` as an Int (32-bit) raises the expected `Failure`.
+fn int_raises(s : String) -> Bool raise {
   try {
     @strconv.parse_int(s) |> ignore
     false
   } catch {
-    _ => true
+    Failure::Failure(_) => true
+    err => raise err
   }
 }
 
@@ -105,8 +109,10 @@ test "double disguised fast path and overflow fallback" {
   inspect(@strconv.parse_double("1e23") == 1.0e23, content="true")
   inspect(@strconv.parse_double("2e23") == 2.0e23, content="true")
   // large mantissa * large disguised exponent overflows the checked multiply
-  // and falls back to the slow path, still producing a finite value
-  inspect(@strconv.parse_double("9007199254740992e37") > 0.0, content="true")
+  // and falls back to the slow path, still producing a finite positive value
+  // (`v - v == 0.0` is false for both infinity and NaN)
+  let disguised = @strconv.parse_double("9007199254740992e37")
+  inspect(disguised > 0.0 && disguised - disguised == 0.0, content="true")
 }
 
 ///|
