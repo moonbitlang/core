@@ -31,9 +31,13 @@ test "deep tree built by from_iter round-trips through index and update" {
   @debug.assert_eq(v.length(), n)
   @debug.assert_eq(v.iter().to_array(), ident(n))
   @debug.assert_eq(v.to_array(), ident(n))
-  // index every leaf boundary across the structure
-  for i = 0; i < n; i = i + 31 {
+  // index at and around every leaf boundary (multiples of the branching
+  // factor, 32) so both boundary and interior offsets are exercised
+  for i = 0; i < n; i = i + 32 {
     @debug.assert_eq(v.at(i), i)
+    if i > 0 {
+      @debug.assert_eq(v.at(i - 1), i - 1)
+    }
   }
   @debug.assert_eq(v.at(n - 1), n - 1)
   inspect(v.get(n), content="None")
