@@ -17,30 +17,49 @@
 // specialized bytes/string lookups that miss after probing, and `Show`.
 
 ///|
+/// A key whose hash deliberately maps every value into one of only 8 buckets,
+/// so insertions collide heavily and deterministically (independent of the
+/// runtime hash seed, which is randomized on some targets). This forces the
+/// Robin Hood push-away path to run regardless of platform.
+priv struct Collide(Int) derive(Eq)
+
+///|
+impl Hash for Collide with fn hash(self) {
+  let Collide(x) = self
+  x % 8
+}
+
+///|
+impl Hash for Collide with fn hash_combine(self, hasher) {
+  let Collide(x) = self
+  hasher.combine_int(x % 8)
+}
+
+///|
 test "set into a half-full map triggers robin hood displacement" {
-  // a large capacity keeps the map below the grow threshold while enough
-  // colliding insertions force entries to be pushed away
-  let m : @hashmap.HashMap[Int, Int] = HashMap([], capacity=512)
+  // a large capacity keeps the map below the grow threshold while the
+  // collision-heavy keys force entries to be pushed away
+  let m : @hashmap.HashMap[Collide, Int] = HashMap([], capacity=512)
   for i in 0..<240 {
-    m.set(i, i * 10)
+    m.set(Collide(i), i * 10)
   }
   @debug.assert_eq(m.length(), 240)
   // every key remains retrievable after the displacements
   for i in 0..<240 {
-    @debug.assert_eq(m.get(i), Some(i * 10))
+    @debug.assert_eq(m.get(Collide(i)), Some(i * 10))
   }
   // overwriting an existing key keeps the size stable
-  m.set(100, -1)
-  @debug.assert_eq(m.get(100), Some(-1))
+  m.set(Collide(100), -1)
+  @debug.assert_eq(m.get(Collide(100)), Some(-1))
   @debug.assert_eq(m.length(), 240)
 }
 
 ///|
 test "update inserts, modifies and removes through the probe chain" {
-  let m : @hashmap.HashMap[Int, Int] = HashMap([], capacity=512)
-  // insert many keys via update (f(None) -> Some) to provoke displacement
+  let m : @hashmap.HashMap[Collide, Int] = HashMap([], capacity=512)
+  // insert many colliding keys via update (f(None) -> Some) to force displacement
   for i in 0..<240 {
-    m.update(i, v => {
+    m.update(Collide(i), v => {
       match v {
         None => Some(i)
         Some(x) => Some(x + 1)
@@ -49,37 +68,37 @@ test "update inserts, modifies and removes through the probe chain" {
   }
   @debug.assert_eq(m.length(), 240)
   // update an existing key (f(Some) -> Some)
-  m.update(5, v => {
+  m.update(Collide(5), v => {
     match v {
       Some(x) => Some(x + 100)
       None => Some(0)
     }
   })
-  @debug.assert_eq(m.get(5), Some(105))
+  @debug.assert_eq(m.get(Collide(5)), Some(105))
   // update that returns None for an absent key is a no-op
-  m.update(10000, _ => None)
-  @debug.assert_eq(m.get(10000), None)
+  m.update(Collide(10000), _ => None)
+  @debug.assert_eq(m.get(Collide(10000)), None)
   @debug.assert_eq(m.length(), 240)
   // update that returns None for an existing key removes it
-  m.update(5, _ => None)
-  @debug.assert_eq(m.get(5), None)
+  m.update(Collide(5), _ => None)
+  @debug.assert_eq(m.get(Collide(5)), None)
   @debug.assert_eq(m.length(), 239)
 }
 
 ///|
 test "update_or_default inserts and modifies through the probe chain" {
-  let m : @hashmap.HashMap[Int, Int] = HashMap([], capacity=512)
+  let m : @hashmap.HashMap[Collide, Int] = HashMap([], capacity=512)
   for i in 0..<240 {
-    m.update_or_default(i, 1, x => x + 1)
+    m.update_or_default(Collide(i), 1, x => x + 1)
   }
   @debug.assert_eq(m.length(), 240)
   // all first insertions store the default (f is not applied on insert)
   for i in 0..<240 {
-    @debug.assert_eq(m.get(i), Some(1))
+    @debug.assert_eq(m.get(Collide(i)), Some(1))
   }
   // a second update applies f to the existing value
-  m.update_or_default(7, 1, x => x + 41)
-  @debug.assert_eq(m.get(7), Some(42))
+  m.update_or_default(Collide(7), 1, x => x + 41)
+  @debug.assert_eq(m.get(Collide(7)), Some(42))
   @debug.assert_eq(m.length(), 240)
 }
 
