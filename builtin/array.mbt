@@ -153,7 +153,7 @@ pub fn[T] Array::capacity(self : Array[T]) -> Int {
 ///
 #intrinsic("%array.unsafe_get")
 pub fn[T] Array::unsafe_get(self : Array[T], idx : Int) -> T {
-  self.buffer()[idx]
+  self.buffer().unsafe_get(idx)
 }
 
 ///|
@@ -229,7 +229,7 @@ pub fn[T] Array::get(self : Array[T], index : Int) -> T? {
 /// ```
 #intrinsic("%array.unsafe_set")
 pub fn[T] Array::unsafe_set(self : Array[T], idx : Int, val : T) -> Unit {
-  self.buffer()[idx] = val
+  self.buffer().unsafe_set(idx, val)
 }
 
 ///|
