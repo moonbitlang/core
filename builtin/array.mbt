@@ -180,6 +180,7 @@ pub fn[T] Array::unsafe_get(self : Array[T], idx : Int) -> T {
 ///
 #intrinsic("%array.get")
 #alias("_[_]")
+#deprecated("use `arr[i]` instead of `arr.at(i)`")
 pub fn[T] Array::at(self : Array[T], index : Int) -> T {
   let len = self.length()
   guard index >= 0 && index < len

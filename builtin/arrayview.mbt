@@ -133,6 +133,7 @@ pub fn[T] ArrayView::start_offset(self : Self[T]) -> Int {
 /// }
 /// ```
 #alias("_[_]")
+#deprecated("use `view[i]` instead of `view.at(i)`")
 pub fn[T] ArrayView::at(self : ArrayView[T], index : Int) -> T {
   guard index >= 0 && index < self.len() else {
     index_out_of_bounds(self.len(), index)

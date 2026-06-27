@@ -1389,6 +1389,7 @@ pub impl Default for Char with fn default() = "%char_default"
 /// }
 /// ```
 #alias("_[_]")
+#deprecated("use `bytes[i]` instead of `bytes.at(i)`")
 pub fn Bytes::at(self : Bytes, idx : Int) -> Byte = "%bytes_get"
 
 ///|
@@ -1741,6 +1742,7 @@ pub fn String::length(self : String) -> Int = "%string_length"
 /// Panics if the index is out of bounds.
 #alias("_[_]")
 #alias(code_unit_at)
+#deprecated("use `str[i]` (or `str.code_unit_at(i)`) instead of `str.at(i)`")
 pub fn String::at(self : String, idx : Int) -> UInt16 = "%string_get"
 
 ///|

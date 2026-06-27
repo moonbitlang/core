@@ -71,6 +71,7 @@ pub fn[T] Array::all(Self[T], (T) -> Bool raise?) -> Bool raise?
 pub fn[T] Array::any(Self[T], (T) -> Bool raise?) -> Bool raise?
 pub fn[T] Array::append(Self[T], ArrayView[T]) -> Unit
 #alias("_[_]")
+#deprecated
 pub fn[T] Array::at(Self[T], Int) -> T
 pub fn[T : Compare] Array::binary_search(Self[T], T) -> Result[Int, Int]
 pub fn[T] Array::binary_search_by(Self[T], (T) -> Int raise?) -> Result[Int, Int] raise?
@@ -189,6 +190,7 @@ pub fn[T] ArrayView::all(Self[T], (T) -> Bool raise?) -> Bool raise?
 #alias(exists)
 pub fn[T] ArrayView::any(Self[T], (T) -> Bool raise?) -> Bool raise?
 #alias("_[_]")
+#deprecated
 pub fn[T] ArrayView::at(Self[T], Int) -> T
 pub fn[T : Compare] ArrayView::binary_search(Self[T], T) -> Result[Int, Int]
 pub fn[T] ArrayView::binary_search_by(Self[T], (T) -> Int raise?) -> Result[Int, Int] raise?
@@ -724,6 +726,7 @@ pub fn String::all(String, (Char) -> Bool raise?) -> Bool raise?
 pub fn String::any(String, (Char) -> Bool raise?) -> Bool raise?
 #alias("_[_]")
 #alias(code_unit_at)
+#deprecated
 pub fn String::at(String, Int) -> UInt16
 pub fn String::before(String, StringView) -> StringView?
 #alias(codepoint_length, deprecated)
@@ -971,6 +974,7 @@ pub fn[T] ReadOnlyArray::view(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 pub fn[T] ReadOnlyArray::windows(Self[T], Int) -> Array[ArrayView[T]]
 
 #alias("_[_]")
+#deprecated
 pub fn Bytes::at(Bytes, Int) -> Byte
 pub fn Bytes::chop_prefix(Bytes, BytesView) -> BytesView?
 pub fn Bytes::chop_suffix(Bytes, BytesView) -> BytesView?
