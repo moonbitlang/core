@@ -198,7 +198,7 @@ test "duplicate short-only set option reports the short flag label" {
 }
 
 ///|
-test "boolean env flags accept falsey values" {
+test "boolean env flags accept falsy values" {
   let cmd = @argparse.Command("demo", flags=[
     FlagArg("on", long="on", action=SetTrue, env="ON"),
     FlagArg("off", long="off", action=SetFalse, env="OFF"),
