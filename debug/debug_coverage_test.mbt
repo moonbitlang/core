@@ -40,7 +40,7 @@ fn[T : Eq + @debug.Debug] reports_diff(a : T, b : T) -> Bool raise {
     @debug.assert_eq(a, b)
     false
   } catch {
-    Failure(_) => true
+    Failure::Failure(_) => true
     err => raise err
   }
 }
