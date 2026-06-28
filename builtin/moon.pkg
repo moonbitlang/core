@@ -33,6 +33,8 @@ options(
     "assert_debug_test.mbt": [ "debug" ],
     "assert_release.mbt": [ "not", "debug" ],
     "assert_release_test.mbt": [ "not", "debug" ],
+    "bytes_equal_fast.mbt": [ "not", "wasm-gc" ],
+    "bytes_equal_wasmgc.mbt": [ "wasm-gc" ],
     "double_mod_js.mbt": [ "js" ],
     "double_mod_nonjs.mbt": [ "not", "js" ],
     "double_pow_js.mbt": [ "js" ],

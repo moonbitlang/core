@@ -335,43 +335,6 @@ pub fn FixedArray::set_utf16be_char(
 }
 
 ///|
-/// Compares two byte sequences for equality. Returns true only if both sequences
-/// have the same length and contain identical bytes in the same order.
-///
-/// Parameters:
-///
-/// * `self` : The first byte sequence to compare.
-/// * `other` : The second byte sequence to compare.
-///
-/// Returns `true` if the byte sequences are equal, `false` otherwise.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let bytes1 = b"\x01\x02\x03"
-///   let bytes2 = b"\x01\x02\x03"
-///   let bytes3 = b"\x01\x02\x04"
-///   inspect(bytes1 == bytes2, content="true")
-///   inspect(bytes1 == bytes3, content="false")
-/// }
-/// ```
-pub impl Eq for Bytes with fn equal(self : Bytes, other : Bytes) -> Bool {
-  if self.length() != other.length() {
-    false
-  } else {
-    let len = self.length()
-    for i in 0..<len {
-      if self[i] != other[i] {
-        break false
-      }
-    } nobreak {
-      true
-    }
-  }
-}
-
-///|
 /// Compares two byte sequences based on shortlex order. First compares the lengths of
 /// the sequences, then compares bytes pairwise until a difference is found or
 /// all bytes have been compared.

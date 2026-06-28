@@ -558,8 +558,9 @@ pub fn BytesView::unsafe_read_uint16_be(
 /// - `self_off`, `other_off`: starting byte offsets
 /// - `len`: number of bytes to compare
 ///
-/// This is the shared intrinsic-backed primitive for view/owned equality
-/// comparisons (e.g. `BytesView == BytesView`, `BytesView::equal_to_bytes`).
+/// This is the shared intrinsic-backed primitive for owned/view equality
+/// comparisons (e.g. `Bytes == Bytes`, `BytesView == BytesView`,
+/// `BytesView::equal_to_bytes`).
 /// The function body is the fallback implementation for targets without the
 /// intrinsic.
 #borrow(self, other)
