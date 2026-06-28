@@ -40,6 +40,8 @@ pub fn[K : Compare, V] SortedMap::from_array(ArrayView[(K, V)]) -> Self[K, V]
 pub fn[K : Compare, V] SortedMap::from_iter(Iter[(K, V)]) -> Self[K, V]
 #as_free_fn
 pub fn[V : @json.FromJson] SortedMap::from_json(Json) -> Self[String, V] raise @json.JsonDecodeError
+#as_free_fn
+pub fn[K, V] SortedMap::from_sorted_array(ArrayView[(K, V)]) -> Self[K, V]
 #alias(lookup, deprecated)
 pub fn[K : Compare, V] SortedMap::get(Self[K, V], K) -> V?
 pub fn[K, V] SortedMap::is_empty(Self[K, V]) -> Bool
