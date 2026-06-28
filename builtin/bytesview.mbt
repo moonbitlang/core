@@ -42,6 +42,7 @@ fn BytesView::make(b : Bytes, start : Int, len : Int) -> BytesView = "%bytesview
 ///   inspect(view.length(), content="2")
 /// }
 /// ```
+#intrinsic("%bytesview.length")
 pub fn BytesView::length(self : BytesView) -> Int {
   self.len()
 }
@@ -82,6 +83,7 @@ pub fn BytesView::is_empty(self : BytesView) -> Bool {
 ///   inspect(view[1], content="b'\\x03'")
 /// }
 /// ```
+#intrinsic("%bytesview.get")
 #alias("_[_]")
 pub fn BytesView::at(self : BytesView, index : Int) -> Byte {
   guard index >= 0 && index < self.length() else {
@@ -149,6 +151,7 @@ pub fn BytesView::get(self : BytesView, index : Int) -> Byte? {
 /// }
 /// ```
 ///
+#intrinsic("%bytesview.unsafe_get")
 #internal(unsafe, "Panic if index is out of bounds")
 #doc(hidden)
 pub fn BytesView::unsafe_get(self : BytesView, index : Int) -> Byte {
