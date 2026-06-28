@@ -17,9 +17,9 @@ fn hex2i(hex : StringView) -> Int {
   for c in hex; value = 0 {
     let value = value * 16
     match c {
-      '0'..='9' => continue value + (c.to_int() - '0'.to_int())
-      'a'..='f' => continue value + (c.to_int() - 'a'.to_int() + 10)
-      'A'..='F' => continue value + (c.to_int() - 'A'.to_int() + 10)
+      '0'..='9' => continue value + (c.to_int() - '0')
+      'a'..='f' => continue value + (c.to_int() - 'a' + 10)
+      'A'..='F' => continue value + (c.to_int() - 'A' + 10)
       _ => panic()
     }
   } nobreak {
