@@ -15,10 +15,10 @@
 ///|
 /// Performs a lexicographical comparison of two byte views.
 ///
-/// This method compares the views byte by byte until a difference is found
-/// or one view is exhausted. Unlike the `Compare` trait implementation which
-/// uses shortlex order (shorter views come first), this method compares based
-/// purely on byte values until a difference is found.
+/// This method returns the lexicographical ordering by byte value. Unlike the
+/// `Compare` trait implementation which uses shortlex order (shorter views come
+/// first), this method compares based purely on byte values until a difference
+/// is found.
 ///
 /// # Returns
 ///
@@ -30,10 +30,10 @@
 ///
 /// ```mbt check
 /// test {
-///   inspect(b""[:].lexical_compare(b""), content="-1")
-///   inspect(b""[:].lexical_compare(b""), content="1")
-///   inspect(b""[:].lexical_compare(b""), content="0")
-///   inspect(b""[:].lexical_compare(b""), content="-1")
+///   inspect(b"\x01\x02"[:].lexical_compare(b"\x01\x02\x03"), content="-1")
+///   inspect(b"\x01\x02\x03"[:].lexical_compare(b"\x01\x02"), content="1")
+///   inspect(b"\x01\x02\x03"[:].lexical_compare(b"\x01\x02\x03"), content="0")
+///   inspect(b"\x01\x02\x03"[:].lexical_compare(b"\x01\x02\x04"), content="-1")
 /// }
 /// ```
 ///
@@ -44,7 +44,8 @@ pub fn BytesView::lexical_compare(self : BytesView, other : BytesView) -> Int {
   let other_len = other.length()
   let min_len = if self_len < other_len { self_len } else { other_len }
   let mut i = 0
-  while i + 8 <= min_len {
+  let block_limit = min_len - min_len % 8
+  while i < block_limit {
     let a = self.unsafe_read_uint64_be(i)
     let b = other.unsafe_read_uint64_be(i)
     if a != b {

@@ -15,10 +15,10 @@
 ///|
 /// Performs a lexicographical comparison of two byte views.
 ///
-/// This method compares the views byte by byte until a difference is found
-/// or one view is exhausted. Unlike the `Compare` trait implementation which
-/// uses shortlex order (shorter views come first), this method compares based
-/// purely on byte values until a difference is found.
+/// This method returns the lexicographical ordering by byte value. Unlike the
+/// `Compare` trait implementation which uses shortlex order (shorter views come
+/// first), this method compares based purely on byte values until a difference
+/// is found.
 ///
 /// # Returns
 ///
@@ -30,14 +30,15 @@
 ///
 /// ```mbt check
 /// test {
-///   inspect(b""[:].lexical_compare(b""), content="-1")
-///   inspect(b""[:].lexical_compare(b""), content="1")
-///   inspect(b""[:].lexical_compare(b""), content="0")
-///   inspect(b""[:].lexical_compare(b""), content="-1")
+///   inspect(b"\x01\x02"[:].lexical_compare(b"\x01\x02\x03"), content="-1")
+///   inspect(b"\x01\x02\x03"[:].lexical_compare(b"\x01\x02"), content="1")
+///   inspect(b"\x01\x02\x03"[:].lexical_compare(b"\x01\x02\x03"), content="0")
+///   inspect(b"\x01\x02\x03"[:].lexical_compare(b"\x01\x02\x04"), content="-1")
 /// }
 /// ```
 ///
-/// Scalar variant for backends where 64-bit reads are emulated (wasm-gc / js):
+/// Scalar variant for backends where 64-bit reads are emulated or not selected
+/// for this optimization (wasm-gc / js / llvm):
 /// a plain byte-by-byte comparison avoids the slow `UInt64` path.
 pub fn BytesView::lexical_compare(self : BytesView, other : BytesView) -> Int {
   let self_len = self.length()

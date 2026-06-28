@@ -731,7 +731,7 @@ pub impl Compare for BytesView with fn compare(self, other) -> Int {
 // `BytesView::lexical_compare` is defined per-backend: a SWAR version
 // (`bytesview_lexcmp_swar.mbt`) on native / wasm where 64-bit integer reads
 // are cheap, and a scalar version (`bytesview_lexcmp_scalar.mbt`) on wasm-gc /
-// js where emulated `UInt64` would make SWAR slower.
+// js / llvm where this optimization is not selected.
 
 ///|
 /// Retrieves the underlying `Bytes` from a `View`.
