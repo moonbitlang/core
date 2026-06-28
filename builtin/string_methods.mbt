@@ -1708,6 +1708,8 @@ test "View::replace_all boundary cases" {
 
 ///|
 /// Helpers for ASCII-only lowercase conversion over UTF-16 code units.
+/// Non-ASCII code units, including surrogate halves, are copied with
+/// `write_substring` and are never converted through `Char`.
 fn is_ascii_uppercase_code_unit(code_unit : Int) -> Bool {
   code_unit >= 0x41 && code_unit <= 0x5A
 }
@@ -1734,7 +1736,9 @@ fn StringBuilder::write_ascii_lowercase_code_unit(
   self : StringBuilder,
   code_unit : Int,
 ) -> Unit {
-  // SAFETY: code_unit is ASCII uppercase, so +32 is ASCII lowercase.
+  // SAFETY: code_unit is ASCII uppercase, so +32 is an ASCII lowercase code
+  // point and a valid `Char`; this helper is not used for arbitrary UTF-16
+  // code units or surrogate halves.
   self.write_char((code_unit + 32).unsafe_to_char())
 }
 
