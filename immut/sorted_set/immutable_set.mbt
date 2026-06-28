@@ -39,11 +39,62 @@ pub fn[A] SortedSet::singleton(value : A) -> SortedSet[A] {
 
 ///|
 /// Initialize a `SortedSet[A]` from an array.
+/// O(n) when the input is already monotonic, otherwise O(n*log n).
 #as_free_fn(deprecated="Use @immut/sorted_set.SortedSet([...]) instead")
 #alias(of, deprecated="Use @immut/sorted_set.SortedSet([...]) instead")
 #as_free_fn(of, deprecated="Use @immut/sorted_set.SortedSet([...]) instead")
 #deprecated("Use @immut/sorted_set.SortedSet([...]) instead")
 pub fn[A : Compare] SortedSet::from_array(array : ArrayView[A]) -> SortedSet[A] {
+  sorted_set_from_array(array)
+}
+
+///|
+fn[A : Compare] sorted_set_from_array(array : ArrayView[A]) -> SortedSet[A] {
+  let (order, has_duplicates) = sorted_set_array_order(array)
+  if order == 1 {
+    if has_duplicates {
+      let compacted = sorted_set_compact_ordered_array(array, true)
+      return sorted_set_from_sorted_array(compacted, 0, compacted.length())
+    }
+    return sorted_set_from_ordered_array(array, 0, array.length(), true)
+  } else if order == -1 {
+    if has_duplicates {
+      let compacted = sorted_set_compact_ordered_array(array, false)
+      return sorted_set_from_sorted_array(compacted, 0, compacted.length())
+    }
+    return sorted_set_from_ordered_array(array, 0, array.length(), false)
+  }
+  if array.length() >= sorted_set_sort_build_threshold {
+    sorted_set_from_unsorted_array(array)
+  } else {
+    sorted_set_from_array_by_add(array)
+  }
+}
+
+///|
+let sorted_set_sort_build_threshold = 64
+
+///|
+fn[A : Compare] sorted_set_from_unsorted_array(
+  array : ArrayView[A],
+) -> SortedSet[A] {
+  let entries = Array::makei(array.length(), i => (array[i], i))
+  entries.sort_by((a, b) => {
+    let c = a.0.compare(b.0)
+    if c == 0 {
+      a.1.compare(b.1)
+    } else {
+      c
+    }
+  })
+  let compacted = sorted_set_compact_sorted_entries(entries)
+  sorted_set_from_sorted_array(compacted, 0, compacted.length())
+}
+
+///|
+fn[A : Compare] sorted_set_from_array_by_add(
+  array : ArrayView[A],
+) -> SortedSet[A] {
   for i = array.length() - 1, set = Empty; i >= 0; {
     continue i - 1, set.add(array[i])
   } nobreak {
@@ -62,10 +113,142 @@ pub fn[A : Compare] SortedSet::from_array(array : ArrayView[A]) -> SortedSet[A] 
 /// }
 /// ```
 pub fn[A : Compare] SortedSet::SortedSet(array : ArrayView[A]) -> SortedSet[A] {
-  for i = array.length() - 1, set = Empty; i >= 0; {
-    continue i - 1, set.add(array[i])
-  } nobreak {
-    set
+  sorted_set_from_array(array)
+}
+
+///|
+fn[A : Compare] sorted_set_compact_sorted_entries(
+  entries : Array[(A, Int)],
+) -> Array[A] {
+  let result = []
+  let len = entries.length()
+  for start = 0; start < len; {
+    let end = for end = start; end + 1 < len &&
+                 entries[end].0.compare(entries[end + 1].0) == 0; {
+      continue end + 1
+    } nobreak {
+      end
+    }
+    result.push(entries[end].0)
+    continue end + 1
+  }
+  result
+}
+
+///|
+fn[A : Compare] sorted_set_array_order(array : ArrayView[A]) -> (Int, Bool) {
+  let len = array.length()
+  guard len > 1 else { return (1, false) }
+  let mut order = 0
+  let mut has_duplicates = false
+  for i in 1..<len {
+    let cmp = array[i - 1].compare(array[i])
+    if cmp == 0 {
+      has_duplicates = true
+    } else {
+      let current = if cmp < 0 { 1 } else { -1 }
+      if order == 0 {
+        order = current
+      } else if order != current {
+        return (0, has_duplicates)
+      }
+    }
+  }
+  (if order == 0 { 1 } else { order }, has_duplicates)
+}
+
+///|
+fn[A : Compare] sorted_set_compact_ordered_array(
+  array : ArrayView[A],
+  ascending : Bool,
+) -> Array[A] {
+  let result = []
+  let len = array.length()
+  if ascending {
+    for start = 0; start < len; {
+      let end = for end = start; end + 1 < len &&
+                   array[end].compare(array[end + 1]) == 0; {
+        continue end + 1
+      } nobreak {
+        end
+      }
+      result.push(array[end])
+      continue end + 1
+    }
+  } else {
+    for end = len - 1; end >= 0; {
+      let start = for start = end; start > 0 &&
+                     array[start - 1].compare(array[start]) == 0; {
+        continue start - 1
+      } nobreak {
+        start
+      }
+      result.push(array[end])
+      continue start - 1
+    }
+  }
+  result
+}
+
+///|
+/// Build a set from values that are already strictly sorted.
+///
+/// The input must be in ascending order and must not contain duplicates.
+/// This function does not validate that precondition.
+/// O(n).
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let set = @sorted_set.from_sorted_array([1, 2, 3])
+///   @test.assert_eq(set.to_array(), [1, 2, 3])
+/// }
+/// ```
+#as_free_fn
+pub fn[A] SortedSet::from_sorted_array(array : ArrayView[A]) -> SortedSet[A] {
+  sorted_set_from_sorted_array(array, 0, array.length())
+}
+
+///|
+fn[A] sorted_set_from_ordered_array(
+  array : ArrayView[A],
+  start : Int,
+  end : Int,
+  ascending : Bool,
+) -> SortedSet[A] {
+  if start >= end {
+    Empty
+  } else {
+    let mid = (start + end) / 2
+    let value = array[mid]
+    let left = if ascending {
+      sorted_set_from_ordered_array(array, start, mid, ascending)
+    } else {
+      sorted_set_from_ordered_array(array, mid + 1, end, ascending)
+    }
+    let right = if ascending {
+      sorted_set_from_ordered_array(array, mid + 1, end, ascending)
+    } else {
+      sorted_set_from_ordered_array(array, start, mid, ascending)
+    }
+    create(left, value, right)
+  }
+}
+
+///|
+fn[A] sorted_set_from_sorted_array(
+  array : ArrayView[A],
+  start : Int,
+  end : Int,
+) -> SortedSet[A] {
+  if start >= end {
+    Empty
+  } else {
+    let mid = (start + end) / 2
+    let value = array[mid]
+    let left = sorted_set_from_sorted_array(array, start, mid)
+    let right = sorted_set_from_sorted_array(array, mid + 1, end)
+    create(left, value, right)
   }
 }
 
