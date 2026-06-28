@@ -651,12 +651,30 @@ test "grow" {
 ///|
 test "clear" {
   let m : HashSet[MyString] = new_hashset(default_init_capacity)
+  fn i(s) {
+    MyString::MyString(s)
+  }
+
+  m.add("C" |> i)
+  m.add("Go" |> i)
+  m.add("C++" |> i)
+  m.add("Java" |> i)
+  let psls = m.psls
+  let hashes = m.hashes
+  let keys = m.keys
+  inspect(m.length(), content="4")
   m.clear()
   inspect(m.length(), content="0")
   inspect(m.capacity(), content="8")
+  inspect(physical_equal(m.psls, psls), content="true")
+  inspect(physical_equal(m.hashes, hashes), content="true")
+  inspect(physical_equal(m.keys, keys), content="true")
   for i in 0..<m.capacity {
     @test.assert_eq(m.psls[i], empty_psl)
   }
+  m.add("MoonBit" |> i)
+  inspect(m.length(), content="1")
+  inspect(m.contains("MoonBit" |> i), content="true")
 }
 
 ///|
