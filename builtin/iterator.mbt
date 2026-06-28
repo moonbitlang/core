@@ -49,8 +49,11 @@ pub fn[X] Iter::next(self : Iter[X]) -> X? {
 ///|
 /// Update `size_hint` after an element has been consumed.
 ///
-/// Eager consumers call the underlying iterator function directly to avoid
-/// `next` call overhead, but share this bookkeeping with `next`.
+/// Hot eager consumers call the underlying iterator function directly as a
+/// performance-only shortcut: they intentionally avoid one extra `next` call
+/// per element, but must route every successful pull through this helper and
+/// every exhausted pull through `finish_size_hint`, matching `next`'s
+/// bookkeeping contract.
 #inline
 fn[X] Iter::consume_size_hint(self : Iter[X]) -> Unit {
   match self.size_hint {
@@ -141,7 +144,7 @@ pub impl[X : ToJson] ToJson for Iter[X] with fn to_json(self) {
 /// - `f`: A function that takes an element of type `X` and returns `Unit`. This function is applied to each element of the iterator.
 #locals(f)
 pub fn[X] Iter::each(self : Iter[X], f : (X) -> Unit raise?) -> Unit raise? {
-  // Hot eager consumers avoid `next` call overhead but share its bookkeeping.
+  // See `consume_size_hint` for why hot eager consumers call `self.f` directly.
   let next_fn = self.f
   for next = next_fn() {
     match next {
