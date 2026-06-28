@@ -1071,9 +1071,9 @@ fn digit_from_char(x : Int) -> Int {
 ///|
 fn char_from_digit(d : Int) -> Char {
   if d < 10 {
-    (d + '0'.to_int()).unsafe_to_char()
+    (d + '0').unsafe_to_char()
   } else {
-    (d - 10 + 'a'.to_int()).unsafe_to_char()
+    (d - 10 + 'a').unsafe_to_char()
   }
 }
 
@@ -1307,7 +1307,7 @@ fn BigInt::from_string_dec(input : String) -> BigInt {
       Negative => 1
       Positive => 0
     })..<input.length() {
-    let x = input.unsafe_get(i).to_int() - '0'.to_int()
+    let x = input.unsafe_get(i).to_int() - '0'
     if x < 0 || x > 9 {
       abort("invalid character")
     }
