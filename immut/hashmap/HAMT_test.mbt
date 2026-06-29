@@ -177,6 +177,59 @@ test "HAMT::from_iter empty" {
 }
 
 ///|
+fn rebuild_from_array_by_add(
+  data : Array[(Int, Int)],
+) -> @hashmap.HashMap[Int, Int] {
+  for n = data.length(), map = @hashmap.new() {
+    match n {
+      0 => break map
+      _ => {
+        let (k, v) = data[n - 1]
+        continue n - 1, map.add(k, v)
+      }
+    }
+  }
+}
+
+///|
+fn rebuild_from_iter_by_add(
+  data : Array[(Int, Int)],
+) -> @hashmap.HashMap[Int, Int] {
+  for kv in data; map = @hashmap.new() {
+    continue map.add(kv.0, kv.1)
+  } nobreak {
+    map
+  }
+}
+
+///|
+test "HAMT::from_array matches reverse add with duplicates" {
+  let data = Array::makei(256, i => ((i * 1103515245 + 12345) & 63, i))
+  @test.assert_eq(@hashmap.HashMap(data), rebuild_from_array_by_add(data))
+}
+
+///|
+test "HAMT::from_iter matches forward add with duplicates" {
+  let data = Array::makei(256, i => ((i * 1103515245 + 12345) & 63, i))
+  @test.assert_eq(
+    @hashmap.from_iter(data.iter()),
+    rebuild_from_iter_by_add(data),
+  )
+}
+
+///|
+test "HAMT::from_array duplicate keeps first value" {
+  let map = @hashmap.HashMap([(1, "first"), (1, "second")])
+  @test.assert_eq(map.get(1), Some("first"))
+}
+
+///|
+test "HAMT::from_iter duplicate keeps last value" {
+  let map = @hashmap.from_iter([(1, "first"), (1, "second")].iter())
+  @test.assert_eq(map.get(1), Some("second"))
+}
+
+///|
 #warnings("-deprecated")
 test "HAMT::to_string" {
   let map = @hashmap.new()
