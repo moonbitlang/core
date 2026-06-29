@@ -310,6 +310,42 @@ test "from_iter multiple elements iter" {
 }
 
 ///|
+test "from_iter duplicate keeps first key and last value" {
+  let m = @sorted_map.from_iter(
+    [
+      ({ rank: 1, label: "first" }, "a"),
+      ({ rank: 1, label: "second" }, "b"),
+      ({ rank: 2, label: "third" }, "c"),
+    ].iter(),
+  )
+  @test.assert_eq(m.to_array().map(kv => (kv.0.label, kv.1)), [
+    ("first", "b"),
+    ("third", "c"),
+  ])
+}
+
+///|
+test "from_iter large unordered duplicate keeps first key and last value" {
+  let items = Array::makei(70, i => {
+    if i == 5 {
+      ({ rank: 10, label: "first" }, "a")
+    } else if i == 50 {
+      ({ rank: 10, label: "second" }, "b")
+    } else {
+      ({ rank: 1000 - i, label: "other-\{i}" }, "other")
+    }
+  })
+  let m = @sorted_map.from_iter(items.iter())
+  let matched = []
+  for k, v in m {
+    if k.rank == 10 {
+      matched.push((k.label, v))
+    }
+  }
+  @test.assert_eq(matched, [("first", "b")])
+}
+
+///|
 test "from_iter single element iter" {
   debug_inspect(
     @sorted_map.from_iter([(1, 1)].iter()),

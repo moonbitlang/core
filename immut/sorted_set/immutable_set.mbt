@@ -53,19 +53,19 @@ fn[A : Compare] sorted_set_from_array(array : ArrayView[A]) -> SortedSet[A] {
   let (order, has_duplicates) = sorted_set_array_order(array)
   if order == 1 {
     if has_duplicates {
-      let compacted = sorted_set_compact_ordered_array(array, true)
+      let compacted = sorted_set_compact_ordered_array(array, true, false)
       return sorted_set_from_sorted_array(compacted, 0, compacted.length())
     }
     return sorted_set_from_ordered_array(array, 0, array.length(), true)
   } else if order == -1 {
     if has_duplicates {
-      let compacted = sorted_set_compact_ordered_array(array, false)
+      let compacted = sorted_set_compact_ordered_array(array, false, false)
       return sorted_set_from_sorted_array(compacted, 0, compacted.length())
     }
     return sorted_set_from_ordered_array(array, 0, array.length(), false)
   }
   if array.length() >= sorted_set_sort_build_threshold {
-    sorted_set_from_unsorted_array(array)
+    sorted_set_from_unsorted_array(array, false)
   } else {
     sorted_set_from_array_by_add(array)
   }
@@ -77,6 +77,7 @@ let sorted_set_sort_build_threshold = 64
 ///|
 fn[A : Compare] sorted_set_from_unsorted_array(
   array : ArrayView[A],
+  keep_first : Bool,
 ) -> SortedSet[A] {
   let entries = Array::makei(array.length(), i => (array[i], i))
   entries.sort_by((a, b) => {
@@ -87,7 +88,7 @@ fn[A : Compare] sorted_set_from_unsorted_array(
       c
     }
   })
-  let compacted = sorted_set_compact_sorted_entries(entries)
+  let compacted = sorted_set_compact_sorted_entries(entries, keep_first)
   sorted_set_from_sorted_array(compacted, 0, compacted.length())
 }
 
@@ -117,8 +118,45 @@ pub fn[A : Compare] SortedSet::SortedSet(array : ArrayView[A]) -> SortedSet[A] {
 }
 
 ///|
+fn[A : Compare] sorted_set_from_iter_array(
+  array : ArrayView[A],
+) -> SortedSet[A] {
+  let (order, has_duplicates) = sorted_set_array_order(array)
+  if order == 1 {
+    if has_duplicates {
+      let compacted = sorted_set_compact_ordered_array(array, true, true)
+      return sorted_set_from_sorted_array(compacted, 0, compacted.length())
+    }
+    return sorted_set_from_ordered_array(array, 0, array.length(), true)
+  } else if order == -1 {
+    if has_duplicates {
+      let compacted = sorted_set_compact_ordered_array(array, false, true)
+      return sorted_set_from_sorted_array(compacted, 0, compacted.length())
+    }
+    return sorted_set_from_ordered_array(array, 0, array.length(), false)
+  }
+  if array.length() >= sorted_set_sort_build_threshold {
+    sorted_set_from_unsorted_array(array, true)
+  } else {
+    sorted_set_from_iter_array_by_add(array)
+  }
+}
+
+///|
+fn[A : Compare] sorted_set_from_iter_array_by_add(
+  array : ArrayView[A],
+) -> SortedSet[A] {
+  for item in array; set = Empty {
+    continue set.add(item)
+  } nobreak {
+    set
+  }
+}
+
+///|
 fn[A : Compare] sorted_set_compact_sorted_entries(
   entries : Array[(A, Int)],
+  keep_first : Bool,
 ) -> Array[A] {
   let result = []
   let len = entries.length()
@@ -129,7 +167,7 @@ fn[A : Compare] sorted_set_compact_sorted_entries(
     } nobreak {
       end
     }
-    result.push(entries[end].0)
+    result.push(if keep_first { entries[start].0 } else { entries[end].0 })
     continue end + 1
   }
   result
@@ -161,6 +199,7 @@ fn[A : Compare] sorted_set_array_order(array : ArrayView[A]) -> (Int, Bool) {
 fn[A : Compare] sorted_set_compact_ordered_array(
   array : ArrayView[A],
   ascending : Bool,
+  keep_first : Bool,
 ) -> Array[A] {
   let result = []
   let len = array.length()
@@ -172,7 +211,7 @@ fn[A : Compare] sorted_set_compact_ordered_array(
       } nobreak {
         end
       }
-      result.push(array[end])
+      result.push(if keep_first { array[start] } else { array[end] })
       continue end + 1
     }
   } else {
@@ -183,7 +222,7 @@ fn[A : Compare] sorted_set_compact_ordered_array(
       } nobreak {
         start
       }
-      result.push(array[end])
+      result.push(if keep_first { array[start] } else { array[end] })
       continue start - 1
     }
   }
