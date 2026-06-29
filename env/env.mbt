@@ -53,3 +53,13 @@ pub fn set_env_var(key : String, value : String) -> Unit {
 pub fn unset_env_var(key : String) -> Unit {
   unset_env_var_internal(key)
 }
+
+///|
+/// Currently `moon` does not support conditional import,
+/// so native-only import will result in unused import warning on other targets.
+/// Manually supress the unused warning here.
+#cfg(not(target="native"))
+let _supress_unused_warning : Unit = {
+  ignore(@ref.Ref(42))
+  ignore(@utf8.encode(""))
+}

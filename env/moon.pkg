@@ -1,5 +1,7 @@
 import {
   "moonbitlang/core/builtin",
+  "moonbitlang/core/ref",
+  "moonbitlang/core/encoding/utf8",
 }
 
 import {
