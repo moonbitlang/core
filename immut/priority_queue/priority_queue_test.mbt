@@ -25,6 +25,22 @@ test "from_array" {
 }
 
 ///|
+test "from_array large pop order" {
+  let values = Array::makei(1000, i => (i * 1103515245 + 12345) & 0x7fffffff)
+  let expected = values.copy()
+  expected.sort()
+  expected.rev_in_place()
+  let pq = @priority_queue.from_array(values)
+  let pq = for value in expected; pq = pq {
+    @test.assert_eq(pq.peek(), Some(value))
+    continue pq.pop().unwrap()
+  } nobreak {
+    pq
+  }
+  @test.assert_eq(pq.is_empty(), true)
+}
+
+///|
 test "PriorityQueue constructor" {
   let queue = @priority_queue.PriorityQueue([1, 6, 3, 4, 5])
   debug_inspect(queue.peek(), content="Some(6)")

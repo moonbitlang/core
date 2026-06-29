@@ -19,6 +19,7 @@ fn[A] new_priority_queue() -> PriorityQueue[A] {
 
 ///|
 /// Creates a new immutable priority queue from an array.
+/// O(n).
 ///
 /// # Example
 /// ```mbt check
@@ -34,10 +35,63 @@ fn[A] new_priority_queue() -> PriorityQueue[A] {
 pub fn[A : Compare] PriorityQueue::PriorityQueue(
   array : ArrayView[A],
 ) -> PriorityQueue[A] {
-  for x in array; pq = (new_priority_queue() : PriorityQueue[A]) {
-    continue pq.push(x)
-  } nobreak {
-    pq
+  let len = array.length()
+  guard len > 0 else { return new_priority_queue() }
+  let heap = Array::makei(len, i => array[i])
+  priority_queue_heapify(heap)
+  { node: priority_queue_node_from_heap(heap, 0, len), size: len }
+}
+
+///|
+fn[A : Compare] priority_queue_heapify(heap : Array[A]) -> Unit {
+  let len = heap.length()
+  for i = len / 2 - 1; i >= 0; {
+    priority_queue_sift_down(heap, i, len)
+    continue i - 1
+  }
+}
+
+///|
+fn[A : Compare] priority_queue_sift_down(
+  heap : Array[A],
+  start : Int,
+  len : Int,
+) -> Unit {
+  for root = start {
+    let left = root * 2 + 1
+    guard left < len else { break }
+    let right = left + 1
+    let child = if right < len && heap[right] > heap[left] {
+      right
+    } else {
+      left
+    }
+    guard heap[root] < heap[child] else { break }
+    heap.swap(root, child)
+    continue child
+  }
+}
+
+///|
+fn[A] priority_queue_node_from_heap(
+  heap : Array[A],
+  index : Int,
+  len : Int,
+) -> Node[A] {
+  if index >= len {
+    Empty
+  } else {
+    let value = heap[index]
+    let left_index = index * 2 + 1
+    if left_index >= len {
+      Leaf(value)
+    } else {
+      Branch(
+        value,
+        left=priority_queue_node_from_heap(heap, left_index, len),
+        right=priority_queue_node_from_heap(heap, left_index + 1, len),
+      )
+    }
   }
 }
 
@@ -79,7 +133,7 @@ pub fn[A : Compare] PriorityQueue::iter(self : PriorityQueue[A]) -> Iter[A] {
 pub fn[A : Compare] PriorityQueue::from_iter(
   iter : Iter[A],
 ) -> PriorityQueue[A] {
-  iter.fold(init=new_priority_queue(), (s, e) => s.push(e))
+  PriorityQueue(iter.to_array())
 }
 
 ///|
