@@ -13,9 +13,7 @@ import {
 // Errors
 
 // Types and methods
-pub struct Vector[A] {
-  // private fields
-}
+type Vector[A]
 #alias(from_array)
 #alias(of, deprecated)
 #as_free_fn(of, deprecated)
