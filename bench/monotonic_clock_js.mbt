@@ -16,9 +16,20 @@
 type Timestamp
 
 ///|
+/// Capture the current monotonic timestamp.
+///
+/// Use the returned timestamp with `monotonic_clock_end` to measure elapsed
+/// time. A monotonic clock is not affected by system clock adjustments.
 pub extern "js" fn monotonic_clock_start() -> Timestamp =
   #| () => performance.now()
 
 ///|
+/// Compute elapsed time in microseconds since `ts`.
+///
+/// Parameters:
+///
+/// - `ts`: a timestamp created by `monotonic_clock_start`.
+///
+/// Returns elapsed time in microseconds.
 pub extern "js" fn monotonic_clock_end(ts : Timestamp) -> Double =
   #| (ts) => (performance.now() - ts) * 1000.0

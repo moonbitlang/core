@@ -151,6 +151,28 @@ pub impl BitXOr for UInt16 with fn lxor(self : UInt16, that : UInt16) -> UInt16 
 }
 
 ///|
+/// Performs a bitwise NOT operation on a `UInt16` value, flipping every bit
+/// within its 16-bit width.
+///
+/// Parameters:
+///
+/// - `self` : The `UInt16` value to apply the bitwise NOT operation on.
+///
+/// Returns the result of the bitwise NOT operation as a `UInt16`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect((0x0000 : UInt16).lnot().to_int(), content="65535")
+///   inspect((0xFFFF : UInt16).lnot().to_int(), content="0")
+/// }
+/// ```
+pub fn UInt16::lnot(self : UInt16) -> UInt16 {
+  self.to_int().lnot().to_uint16()
+}
+
+///|
 pub impl Default for UInt16 with fn default() {
   0
 }
