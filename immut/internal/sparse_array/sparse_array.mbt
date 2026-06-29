@@ -67,6 +67,22 @@ pub fn[X] doubleton(
 }
 
 ///|
+/// Create a sparse array from sorted unique indices and corresponding data.
+///
+/// The caller must ensure that `indices` are sorted, unique, and have the same
+/// length as `data`.
+pub fn[X] from_sorted_fixed_array(
+  indices : FixedArray[Int],
+  data : FixedArray[X],
+) -> SparseArray[X] {
+  let mut elem_info = empty_bitset
+  for idx in indices {
+    elem_info = elem_info.add(idx)
+  }
+  { elem_info, data }
+}
+
+///|
 /// Add a new element into the sparse array.
 /// `idx` must be absent from `self`
 pub fn[X] SparseArray::add(

@@ -6,6 +6,8 @@ pub fn[X] doubleton(Int, X, Int, X) -> SparseArray[X]
 
 pub fn[X] empty() -> SparseArray[X]
 
+pub fn[X] from_sorted_fixed_array(FixedArray[Int], FixedArray[X]) -> SparseArray[X]
+
 pub fn[X] singleton(Int, X) -> SparseArray[X]
 
 // Errors
