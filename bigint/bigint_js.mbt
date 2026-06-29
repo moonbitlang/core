@@ -170,7 +170,7 @@ extern "js" fn hex2(b : Byte) -> String =
 /// Parameters:
 ///
 /// * `octets` : A sequence of bytes representing the magnitude of the number in
-/// big-endian order.
+/// big-endian order. It must not be empty unless `signum` is 0.
 /// * `signum` : The sign of the resulting number. A negative value creates a
 /// negative number, zero returns zero, and a positive value creates a positive
 /// number. Defaults to 1.
@@ -182,6 +182,9 @@ pub fn BigInt::from_octets(octets : BytesView, signum? : Int = 1) -> BigInt {
   }
   if signum == 0 {
     return 0N
+  }
+  if octets.length() == 0 {
+    abort("empty octet string")
   }
   let str = StringBuilder()
   str.write_string("0x")
