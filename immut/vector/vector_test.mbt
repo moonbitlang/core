@@ -173,6 +173,17 @@ test "iter concatenated vectors" {
 }
 
 ///|
+test "concat preserves random access after normalizing singleton tail" {
+  let v = @vector.from_iter((0).until(33)).concat(
+    @vector.from_iter((33).until(65)),
+  )
+  @debug.assert_eq(v.iter().to_array(), Array::makei(65, i => i))
+  for j in 0..<65 {
+    @test.assert_eq(v.get(j), Some(j))
+  }
+}
+
+///|
 test "length" {
   let v = @vector.from_array([1, 2, 3, 4, 5])
   let ve : @vector.Vector[Int] = @vector.new()
