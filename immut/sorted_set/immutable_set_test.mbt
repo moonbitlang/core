@@ -799,6 +799,39 @@ test "from_iter multiple elements iter" {
 }
 
 ///|
+test "from_iter ordered duplicates keep first representative" {
+  let set = @sorted_set.from_iter(
+    [
+      { rank: 1, label: "first" },
+      { rank: 1, label: "second" },
+      { rank: 2, label: "third" },
+    ].iter(),
+  )
+  @test.assert_eq(set.to_array().map(v => v.label), ["first", "third"])
+}
+
+///|
+test "from_iter large unordered duplicates keep first representative" {
+  let values = Array::makei(70, i => {
+    if i == 5 {
+      { rank: 10, label: "first" }
+    } else if i == 50 {
+      { rank: 10, label: "second" }
+    } else {
+      { rank: 1000 - i, label: "other-\{i}" }
+    }
+  })
+  let set = @sorted_set.from_iter(values.iter())
+  let matched = []
+  for value in set {
+    if value.rank == 10 {
+      matched.push(value.label)
+    }
+  }
+  @test.assert_eq(matched, ["first"])
+}
+
+///|
 test "from_iter single element iter" {
   debug_inspect(
     @sorted_set.from_iter([1].iter()),
