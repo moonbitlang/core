@@ -164,6 +164,18 @@ extern "js" fn hex2(b : Byte) -> String =
   #|(x) => x.toString(16).padStart(2, '0')
 
 ///|
+/// Converts a big-endian byte sequence to a `BigInt` value with an optional
+/// sign.
+///
+/// Parameters:
+///
+/// * `octets` : A sequence of bytes representing the magnitude of the number in
+/// big-endian order.
+/// * `signum` : The sign of the resulting number. A negative value creates a
+/// negative number, zero returns zero, and a positive value creates a positive
+/// number. Defaults to 1.
+///
+/// Returns a `BigInt` value represented by the byte sequence and sign.
 pub fn BigInt::from_octets(octets : BytesView, signum? : Int = 1) -> BigInt {
   if signum < 0 {
     return -1N * BigInt::from_octets(octets, signum=1)
@@ -180,6 +192,20 @@ pub fn BigInt::from_octets(octets : BytesView, signum? : Int = 1) -> BigInt {
 }
 
 ///|
+/// Converts a non-negative `BigInt` to a big-endian byte sequence.
+///
+/// Parameters:
+///
+/// * `self` : The arbitrary-precision integer to convert. Must be
+/// non-negative.
+/// * `length` : Optional minimum length of the output byte sequence. When the
+/// requested length is larger than the natural representation, the result is
+/// padded with leading zeros.
+///
+/// Returns a byte sequence representing the number in big-endian order.
+///
+/// Throws a panic if the input number is negative, or if `length` is zero or
+/// negative for a non-zero input.
 pub fn BigInt::to_octets(self : BigInt, length? : Int) -> Bytes {
   if self < 0 {
     abort("negative BigInt")
@@ -241,21 +267,57 @@ pub impl Eq for BigInt with fn equal(self, other) {
 }
 
 ///|
+/// Converts a 32-bit signed integer to a `BigInt`.
+///
+/// Parameters:
+///
+/// * `x` : The 32-bit signed integer to be converted.
+///
+/// Returns a `BigInt` equivalent to the input integer.
 pub extern "js" fn BigInt::from_int(x : Int) -> BigInt =
   #|(x) => BigInt(x)
 
 ///|
+/// Converts an unsigned 32-bit integer to a `BigInt`.
+///
+/// Parameters:
+///
+/// * `x` : The unsigned 32-bit integer to be converted.
+///
+/// Returns a `BigInt` representing the same numerical value as the input.
 pub extern "js" fn BigInt::from_uint(x : UInt) -> BigInt =
   #|(x) => BigInt(x >>> 0)
 
 ///|
+/// Converts a signed 64-bit integer to a `BigInt`.
+///
+/// Parameters:
+///
+/// * `x` : The signed 64-bit integer to be converted.
+///
+/// Returns a `BigInt` value that represents the same numerical value as the
+/// input.
 pub extern "js" fn BigInt::from_int64(x : Int64) -> BigInt =
   #|(x) => BigInt.asIntN(64, x)
 
 ///|
+/// Converts an unsigned 64-bit integer to a `BigInt`.
+///
+/// Parameters:
+///
+/// * `x` : The unsigned 64-bit integer to be converted.
+///
+/// Returns a `BigInt` with the same value as the input.
 pub fn BigInt::from_uint64(x : UInt64) -> BigInt = "%identity"
 
 ///|
+/// Checks whether a `BigInt` value is equal to zero.
+///
+/// Parameters:
+///
+/// * `self` : The `BigInt` value to be checked.
+///
+/// Returns `true` if the `BigInt` is zero, `false` otherwise.
 pub extern "js" fn BigInt::is_zero(self : BigInt) -> Bool =
   #|(x) => x === 0n
 
@@ -338,6 +400,21 @@ extern "js" fn BigInt::pow_ffi(self : BigInt, exponent : BigInt) -> BigInt =
   #|(x, y) => x ** y
 
 ///|
+/// Computes the result of raising a `BigInt` to the power of another `BigInt`,
+/// with an optional modulus.
+///
+/// Parameters:
+///
+/// * `self` : The base number to be raised to a power.
+/// * `exponent` : The exponent. It must be non-negative.
+/// * `modulus` : Optional modulus for modular exponentiation. If provided, it
+/// must be positive.
+///
+/// Returns the result of the exponentiation, or the result modulo `modulus` if a
+/// modulus is provided.
+///
+/// Throws a panic if the exponent is negative or if the provided modulus is zero
+/// or negative.
 pub fn BigInt::pow(
   self : BigInt,
   exponent : BigInt,
