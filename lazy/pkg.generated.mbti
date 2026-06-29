@@ -10,9 +10,7 @@ import {
 // Errors
 
 // Types and methods
-pub struct Lazy[A] {
-  // private fields
-}
+type Lazy[A]
 pub fn[A] Lazy::Lazy(() -> A) -> Self[A]
 pub fn[A] Lazy::force(Self[A]) -> A
 pub fn[A] Lazy::peek(Self[A]) -> A?
