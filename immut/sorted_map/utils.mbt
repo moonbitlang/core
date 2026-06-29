@@ -586,7 +586,7 @@ pub fn[K : Compare, V] SortedMap::range(
 pub fn[K : Compare, V] SortedMap::from_iter(
   iter : Iter[(K, V)],
 ) -> SortedMap[K, V] {
-  iter.fold(init=new(), (m, e) => m.add(e.0, e.1))
+  sorted_map_from_array(iter.to_array())
 }
 
 ///|
