@@ -30,8 +30,8 @@ pub fn parse(
   input : StringView,
   max_nesting_depth? : Int = 1024,
 ) -> Json raise ParseError {
-  let ctx = ParseContext::make(input, max_nesting_depth)
-  let val = ctx.parse_value()
+  let ctx = ParseContext::make(input)
+  let val = ctx.parse_value(remaining_available_depth=max_nesting_depth)
   ctx.lex_skip_whitespace()
   if ctx.offset >= ctx.end_offset {
     val
@@ -41,15 +41,19 @@ pub fn parse(
 }
 
 ///|
-fn ParseContext::parse_value(ctx : ParseContext) -> Json raise ParseError {
+fn ParseContext::parse_value(
+  ctx : ParseContext,
+  remaining_available_depth~ : Int,
+) -> Json raise ParseError {
   let tok = ctx.lex_value(allow_rbracket=false)
-  ctx.parse_value2(tok)
+  ctx.parse_value2(tok, remaining_available_depth~)
 }
 
 ///|
 fn ParseContext::parse_value2(
   ctx : ParseContext,
   tok : Token,
+  remaining_available_depth~ : Int,
 ) -> Json raise ParseError {
   match tok {
     Null => null
@@ -57,34 +61,33 @@ fn ParseContext::parse_value2(
     False => Json::boolean(false)
     Number(n, repr) => Json::number(n, repr?)
     String(s) => Json::string(s)
-    LBrace => ctx.parse_object()
-    LBracket => ctx.parse_array()
+    LBrace => ctx.parse_object(remaining_available_depth~)
+    LBracket => ctx.parse_array(remaining_available_depth~)
     RBracket | RBrace | Comma => abort("unreachable")
   }
 }
 
 ///|
-fn ParseContext::parse_object(ctx : ParseContext) -> Json raise ParseError {
-  if ctx.remaining_available_depth <= 0 {
+fn ParseContext::parse_object(
+  ctx : ParseContext,
+  remaining_available_depth~ : Int,
+) -> Json raise ParseError {
+  if remaining_available_depth <= 0 {
     raise DepthLimitExceeded
   }
-  ctx.remaining_available_depth -= 1
+  let child_remaining_available_depth = remaining_available_depth - 1
   let map = Map([])
   for x = ctx.lex_property_name() {
     match x {
-      RBrace => {
-        ctx.remaining_available_depth += 1
-        break Json::object(map)
-      }
+      RBrace => break Json::object(map)
       String(name) => {
         ctx.lex_after_property_name()
-        map[name] = ctx.parse_value()
+        map[name] = ctx.parse_value(
+          remaining_available_depth=child_remaining_available_depth,
+        )
         match ctx.lex_after_object_value() {
           Comma => continue ctx.lex_property_name2()
-          RBrace => {
-            ctx.remaining_available_depth += 1
-            break Json::object(map)
-          }
+          RBrace => break Json::object(map)
           _ => abort("unreachable")
         }
       }
@@ -94,27 +97,29 @@ fn ParseContext::parse_object(ctx : ParseContext) -> Json raise ParseError {
 }
 
 ///|
-fn ParseContext::parse_array(ctx : ParseContext) -> Json raise ParseError {
-  if ctx.remaining_available_depth <= 0 {
+fn ParseContext::parse_array(
+  ctx : ParseContext,
+  remaining_available_depth~ : Int,
+) -> Json raise ParseError {
+  if remaining_available_depth <= 0 {
     raise DepthLimitExceeded
   }
-  ctx.remaining_available_depth -= 1
+  let child_remaining_available_depth = remaining_available_depth - 1
   let vec = []
   for x = ctx.lex_value(allow_rbracket=true) {
     match x {
-      RBracket => {
-        ctx.remaining_available_depth += 1
-        break Json::array(vec)
-      }
+      RBracket => break Json::array(vec)
       tok => {
-        vec.push(ctx.parse_value2(tok))
+        vec.push(
+          ctx.parse_value2(
+            tok,
+            remaining_available_depth=child_remaining_available_depth,
+          ),
+        )
         let tok2 = ctx.lex_after_array_value()
         match tok2 {
           Comma => continue ctx.lex_value(allow_rbracket=false)
-          RBracket => {
-            ctx.remaining_available_depth += 1
-            break Json::array(vec)
-          }
+          RBracket => break Json::array(vec)
           _ => abort("unreachable")
         }
       }
