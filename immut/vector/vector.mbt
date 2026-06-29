@@ -853,10 +853,14 @@ fn[A] Vector::normalize_tree(self : Vector[A]) -> (Tree[A], Int) {
     (self.tree, self.shift)
   } else if self.tail_offset() == 0 {
     (Leaf(self.tail), 0)
-  } else if self.tail.length() == 1 {
-    self.tree.push_end(self.shift, self.tail[0])
   } else {
-    self.tree.append_right_leaf(self.shift, self.tail)
+    // Fold the (possibly partial) tail into the tree through the relaxing
+    // concat. The tail leaf may be shorter than `BRANCHING_FACTOR`, and such a
+    // non-full leaf must yield a properly sized (relaxed) node. The previous
+    // `push_end` / `append_right_leaf` fold instead left the new node marked as
+    // a full radix node, so once a later concat pushed the partial leaf into an
+    // interior position, radix indexing read out of bounds (see #3721).
+    Tree::concat(self.tree, self.shift, Leaf(self.tail), 0, true)
   }
 }
 
