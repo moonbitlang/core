@@ -528,6 +528,12 @@ pub fn[A : Compare] SortedSet::difference(
 }
 
 ///|
+/// Difference of two sorted sets.
+pub impl[A : Compare] Sub for SortedSet[A] with fn sub(self, other) {
+  self.difference(other)
+}
+
+///|
 /// Returns a new set containing elements that are in either `self` or `other`,
 /// but not in both sets.
 ///

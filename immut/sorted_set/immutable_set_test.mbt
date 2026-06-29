@@ -126,6 +126,18 @@ test "diff" {
 }
 
 ///|
+test "sub" {
+  let set1 = @sorted_set.SortedSet([1, 2, 3])
+  let set2 = @sorted_set.SortedSet([2, 4])
+  debug_inspect(
+    set1 - set2,
+    content=(
+      #|<SortedSet: [1, 3]>
+    ),
+  )
+}
+
+///|
 test "inter" {
   debug_inspect(
     @sorted_set.SortedSet([3, 4, 5]).intersection(SortedSet([4, 5, 6])),
