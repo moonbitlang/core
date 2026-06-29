@@ -38,8 +38,8 @@ pub impl Eq for Bytes with fn equal(self : Bytes, other : Bytes) -> Bool {
   if physical_equal(self, other) {
     return true
   }
-  guard self.length() == other.length() else { return false }
   let len = self.length()
+  guard len == other.length() else { return false }
   for i in 0..<len {
     if self[i] != other[i] {
       break false
