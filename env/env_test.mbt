@@ -51,3 +51,24 @@ test "env var round trip" {
   @test.assert_eq(@env.get_env_var(key), None)
   @test.assert_eq(@env.get_env_vars().get(key), None)
 }
+
+///|
+test "unicode env var round trip" {
+  let key = "__MOONBIT_CORE_ENV_TEST_中文字符_" + @env.now().to_string()
+
+  @test.assert_eq(@env.get_env_var(key), None)
+  @test.assert_eq(@env.get_env_vars().get(key), None)
+
+  @env.set_env_var(key, "")
+  @test.assert_eq(@env.get_env_var(key), Some(""))
+  @test.assert_eq(@env.get_env_vars().get(key), Some(""))
+
+  let value = "环境变量_" + @env.now().to_string()
+  @env.set_env_var(key, value)
+  @test.assert_eq(@env.get_env_var(key), Some(value))
+  @test.assert_eq(@env.get_env_vars().get(key), Some(value))
+
+  @env.unset_env_var(key)
+  @test.assert_eq(@env.get_env_var(key), None)
+  @test.assert_eq(@env.get_env_vars().get(key), None)
+}
