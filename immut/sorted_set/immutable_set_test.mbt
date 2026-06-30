@@ -320,7 +320,7 @@ test "from_fixed_array" {
 }
 
 ///|
-test "from_array" {
+test "SortedSet constructor" {
   debug_inspect(
     @sorted_set.SortedSet([7, 2, 9, 4, 5, 6, 3, 8, 1]),
     content=(
