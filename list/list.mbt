@@ -163,12 +163,33 @@ pub fn[A : @json.FromJson] List::from_json(
 ///   @debug.assert_eq(ls, @list.from_array([1, 2, 3, 4, 5]))
 /// }
 /// ```
-#as_free_fn
-#alias(of, deprecated="Use from_array instead")
-#as_free_fn(of, deprecated="Use from_array instead")
+#as_free_fn(deprecated="Use @list.List([...]) instead")
+#alias(of, deprecated="Use @list.List([...]) instead")
+#as_free_fn(of, deprecated="Use @list.List([...]) instead")
+#deprecated("Use @list.List([...]) instead")
 pub fn[A] List::from_array(arr : ArrayView[A]) -> List[A] {
   for i = arr.length() - 1, list = Empty; i >= 0; {
     continue i - 1, More(arr[i], tail=list)
+  } nobreak {
+    list
+  }
+}
+
+///|
+/// ```mbt check
+/// test {
+///   let lst = @list.List([1, 2, 3, 4, 5])
+///   debug_inspect(
+///     lst,
+///     content=(
+///       #|<List: [1, 2, 3, 4]>
+///     ),
+///   )
+/// }
+/// ```
+pub fn[A] List::List(arr : ArrayView[A]) -> List[A] {
+  for i in (arr.length() - 1)>..0; list = Empty {
+    continue More(arr[i], tail=list)
   } nobreak {
     list
   }
