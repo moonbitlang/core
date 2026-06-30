@@ -28,6 +28,6 @@ pub fn[A : @debug.Debug] List::to_repr(self : List[A]) -> @debug.Repr {
 
 ///|
 test "Debug for List" {
-  let xs : List[Int] = from_array([1, 2, 3])
+  let xs : List[Int] = List([1, 2, 3])
   @debug.debug_inspect(xs, content="<List: [1, 2, 3]>")
 }
