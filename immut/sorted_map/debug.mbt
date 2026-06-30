@@ -34,7 +34,7 @@ pub fn[K : @debug.Debug, V : @debug.Debug] SortedMap::to_repr(
 
 ///|
 test "Debug for SortedMap" {
-  let sm : SortedMap[Int, String] = from_array([(1, "a"), (2, "b")])
+  let sm : SortedMap[Int, String] = SortedMap([(1, "a"), (2, "b")])
   @debug.debug_inspect(
     sm,
     content=(
