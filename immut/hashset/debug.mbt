@@ -28,6 +28,6 @@ pub fn[K : @debug.Debug] HashSet::to_repr(self : HashSet[K]) -> @debug.Repr {
 
 ///|
 test "Debug for HashSet" {
-  let hs : HashSet[Int] = from_array([3])
+  let hs : HashSet[Int] = HashSet([3])
   @debug.debug_inspect(hs, content="<HashSet: [3]>")
 }

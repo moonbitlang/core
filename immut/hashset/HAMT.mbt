@@ -31,13 +31,13 @@
 /// Create a new instance.
 #as_free_fn
 pub fn[A] HashSet::new() -> HashSet[A] {
-  None
+  { data: None }
 }
 
 ///|
 /// Lookup a value from the hash set
 pub fn[A : Eq + Hash] HashSet::contains(self : HashSet[A], key : A) -> Bool {
-  self.0 is Some(node) && node.contains(key, @path.of(key))
+  self.data is Some(node) && node.contains(key, @path.of(key))
 }
 
 ///|
@@ -122,18 +122,22 @@ fn[A : Eq] Node::add_with_path(
 ///|
 /// Add a key to the hashset.
 pub fn[A : Eq + Hash] HashSet::add(self : HashSet[A], key : A) -> HashSet[A] {
-  match self.0 {
-    None => Some(Flat(key, @path.of(key)))
-    Some(node) => Some(node.add_with_path(key, @path.of(key)))
+  {
+    data: match self.data {
+      None => Some(Flat(key, @path.of(key)))
+      Some(node) => Some(node.add_with_path(key, @path.of(key)))
+    },
   }
 }
 
 ///|
 /// Remove an element from a set
 pub fn[A : Eq + Hash] HashSet::remove(self : HashSet[A], key : A) -> HashSet[A] {
-  match self.0 {
-    None => None
-    Some(node) => node.remove_with_path(key, @path.of(key))
+  {
+    data: match self.data {
+      None => None
+      Some(node) => node.remove_with_path(key, @path.of(key))
+    },
   }
 }
 
@@ -202,7 +206,7 @@ pub fn[A] HashSet::length(self : HashSet[A]) -> Int {
     }
   }
 
-  match self.0 {
+  match self.data {
     None => 0
     Some(node) => node_size(node)
   }
@@ -232,9 +236,11 @@ pub fn[K : Eq] HashSet::union(
     }
   }
 
-  match (self.0, other.0) {
-    (None, x) | (x, None) => x
-    (Some(a), Some(b)) => Some(go(a, b))
+  {
+    data: match (self.data, other.data) {
+      (None, x) | (x, None) => x
+      (Some(a), Some(b)) => Some(go(a, b))
+    },
   }
 }
 
@@ -271,9 +277,11 @@ pub fn[K : Eq] HashSet::intersection(
     }
   }
 
-  match (self.0, other.0) {
-    (None, _) | (_, None) => None
-    (Some(a), Some(b)) => go(a, b)
+  {
+    data: match (self.data, other.data) {
+      (None, _) | (_, None) => None
+      (Some(a), Some(b)) => go(a, b)
+    },
   }
 }
 
@@ -311,17 +319,17 @@ pub fn[K : Eq] HashSet::difference(
     }
   }
 
-  match (self.0, other.0) {
-    (None, _) => None
+  match (self.data, other.data) {
+    (None, _) => { data: None }
     (_, None) => self
-    (Some(a), Some(b)) => go(a, b)
+    (Some(a), Some(b)) => { data: go(a, b) }
   }
 }
 
 ///|
 /// Returns true if the hash set is empty.
 pub fn[A] HashSet::is_empty(self : HashSet[A]) -> Bool {
-  self.0 is None
+  self.data is None
 }
 
 ///|
@@ -341,7 +349,7 @@ pub fn[A] HashSet::each(
     }
   }
 
-  if self.0 is Some(node) {
+  if self.data is Some(node) {
     go(node)
   }
 }
@@ -357,7 +365,7 @@ priv enum CurrNode[A] {
 #alias(iterator, deprecated)
 pub fn[A] HashSet::iter(self : HashSet[A]) -> Iter[A] {
   let empty = Bucket(@list.new())
-  let mut curr_node = match self.0 {
+  let mut curr_node = match self.data {
     Some(tree) => Tree(tree)
     None => empty
   }
@@ -420,10 +428,35 @@ pub impl[A : Show] Show for HashSet[A] with fn output(self, logger) {
 
 ///|
 /// Creates a hash set from an array of values.
-#as_free_fn
-#alias(of, deprecated="Use from_array instead")
-#as_free_fn(of, deprecated="Use from_array instead")
+#as_free_fn(deprecated="Use @immut/hashset.HashSet([...]) instead")
+#alias(of, deprecated="Use @immut/hashset.HashSet([...]) instead")
+#as_free_fn(of, deprecated="Use @immut/hashset.HashSet([...]) instead")
+#deprecated("Use @immut/hashset.HashSet([...]) instead")
 pub fn[A : Eq + Hash] HashSet::from_array(arr : ArrayView[A]) -> HashSet[A] {
+  for n = arr.length(), set = new() {
+    match (n, set) {
+      (0, set) => break set
+      (n, set) => {
+        let k = arr[n - 1]
+        continue n - 1, set.add(k)
+      }
+    }
+  }
+}
+
+///|
+/// Creates a hash set from an array of values.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   let set = @hashset.HashSet([3, 1, 2, 3])
+///   @test.assert_eq(set.contains(1), true)
+///   @test.assert_eq(set.contains(4), false)
+/// }
+/// ```
+pub fn[A : Eq + Hash] HashSet::HashSet(arr : ArrayView[A]) -> HashSet[A] {
   for n = arr.length(), set = new() {
     match (n, set) {
       (0, set) => break set
@@ -463,23 +496,23 @@ impl[A : Eq] Eq for Node[A] with fn equal(self, other) {
 pub impl[K : Eq + Hash + @quickcheck.Arbitrary] @quickcheck.Arbitrary for HashSet[
   K,
 ] with fn arbitrary(size, rs) {
-  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
+  @quickcheck.Arbitrary::arbitrary(size, rs) |> HashSet
 }
 
 ///|
 test "hash" {
   @test.assert_eq(
-    Hash::hash(from_array([1, 2, 3, 4])),
-    Hash::hash(from_array([3, 2]).add(1).add(4)),
+    Hash::hash(HashSet([1, 2, 3, 4])),
+    Hash::hash(HashSet([3, 2]).add(1).add(4)),
   )
   @test.assert_not_eq(
-    Hash::hash(from_array([1, 2, 3])),
-    Hash::hash(from_array([1, 2, 4])),
+    Hash::hash(HashSet([1, 2, 3])),
+    Hash::hash(HashSet([1, 2, 4])),
   )
 }
 
 ///|
 test "eq" {
-  @test.assert_eq(from_array([1, 2, 3, 4]), from_array([3, 2]).add(1).add(4))
-  @test.assert_not_eq(from_array([1, 2, 3]), from_array([1, 2, 4]))
+  @test.assert_eq(HashSet([1, 2, 3, 4]), HashSet([3, 2]).add(1).add(4))
+  @test.assert_not_eq(HashSet([1, 2, 3]), HashSet([1, 2, 4]))
 }
