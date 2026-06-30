@@ -92,7 +92,7 @@ test "remove on empty set" {
 
 ///|
 test "@hashset.iter" {
-  let data = @hashset.from_array(["a", "b", "d", "e", "f"])
+  let data = @hashset.HashSet(["a", "b", "d", "e", "f"])
   let array = data.iter().collect()
   array.sort()
   debug_inspect(
@@ -113,7 +113,7 @@ test "@hashset.to_string" {
 
 ///|
 test "@hashset.from_array" {
-  let set = @hashset.from_array(["1", "2", "42"])
+  let set = @hashset.HashSet(["1", "2", "42"])
   inspect(set.contains("1"), content="true")
   inspect(set.contains("2"), content="true")
   inspect(set.contains("42"), content="true")
@@ -169,14 +169,14 @@ test "each on empty set" {
 ///|
 test "from_array with empty array" {
   let empty_array : Array[Int] = []
-  let set = @hashset.from_array(empty_array)
+  let set = @hashset.HashSet(empty_array)
   inspect(set.is_empty(), content="true")
 }
 
 ///|
 test "from_array with non-empty array" {
   let array : ReadOnlyArray[Int] = [1, 2, 3]
-  let set = @hashset.from_array(array)
+  let set = @hashset.HashSet(array)
   inspect(set.contains(1), content="true")
   inspect(set.contains(2), content="true")
   inspect(set.contains(3), content="true")
@@ -185,7 +185,7 @@ test "from_array with non-empty array" {
 
 ///|
 test "remove non-existent key from leaf" {
-  let set = @hashset.from_array([1])
+  let set = @hashset.HashSet([1])
   let result = set.remove(2)
   debug_inspect(
     result,
@@ -198,14 +198,14 @@ test "remove non-existent key from leaf" {
 ///|
 test "from_array - non-empty array" {
   let data = [1, 2, 3]
-  let set = @hashset.from_array(data)
+  let set = @hashset.HashSet(data)
   verify_content(set, data)
 }
 
 ///|
 test "hashset equality" {
-  let set1 = @hashset.from_array([1, 2])
-  let set2 = @hashset.from_array([2, 1])
+  let set1 = @hashset.HashSet([1, 2])
+  let set2 = @hashset.HashSet([2, 1])
   inspect(set1 == set2, content="true")
   let empty1 : @hashset.HashSet[Unit] = @hashset.new()
   let empty2 : @hashset.HashSet[Unit] = @hashset.new()
@@ -218,29 +218,29 @@ test "arbitrary implementation for hashset" {
   let set : @hashset.HashSet[Int] = @quickcheck.gen()
   // Make sure the generated set is valid by converting it to array and back
   let arr = set.iter().to_array()
-  let set2 = @hashset.from_array(arr)
+  let set2 = @hashset.HashSet(arr)
   @test.assert_eq(set, set2)
 }
 
 ///|
 test "equal between different constructors" {
-  let set1 = @hashset.from_array([])
-  let set2 = @hashset.from_array(["a"])
+  let set1 = @hashset.HashSet([])
+  let set2 = @hashset.HashSet(["a"])
   @test.assert_not_eq(set1, set2)
 }
 
 ///|
 test "union 2 hashsets" {
-  let set1 = @hashset.from_array([1, 2, 3])
-  let set2 = @hashset.from_array([3, 4, 5])
+  let set1 = @hashset.HashSet([1, 2, 3])
+  let set2 = @hashset.HashSet([3, 4, 5])
   let set3 = set1.union(set2)
-  let set4 = @hashset.from_array([1, 2, 3, 4, 5])
+  let set4 = @hashset.HashSet([1, 2, 3, 4, 5])
   inspect(set3 == set4, content="true")
 }
 
 ///|
 test "HAMT::union with empty" {
-  let m1 = @hashset.from_array([1])
+  let m1 = @hashset.HashSet([1])
   let m2 = @hashset.new()
   @test.assert_eq(m1.union(m2), m1)
   @test.assert_eq(m2.union(m1), m1)
@@ -248,18 +248,18 @@ test "HAMT::union with empty" {
 
 ///|
 test "HAMT::union with leaf" {
-  let m1 = @hashset.from_array([1, 2])
-  let m2 = @hashset.from_array([3])
-  let m3 = @hashset.from_array([2])
-  @test.assert_eq(m1.union(m2), @hashset.from_array([1, 2, 3]))
-  @test.assert_eq(m1.union(m3), @hashset.from_array([1, 2]))
-  @test.assert_eq(m3.union(m1), @hashset.from_array([1, 2]))
+  let m1 = @hashset.HashSet([1, 2])
+  let m2 = @hashset.HashSet([3])
+  let m3 = @hashset.HashSet([2])
+  @test.assert_eq(m1.union(m2), HashSet([1, 2, 3]))
+  @test.assert_eq(m1.union(m3), HashSet([1, 2]))
+  @test.assert_eq(m3.union(m1), HashSet([1, 2]))
 }
 
 ///|
 test "HAMT::union with branch" {
-  let m1 = @hashset.from_array([1, 2, 3])
-  let m2 = @hashset.from_array([4, 5, 6])
+  let m1 = @hashset.HashSet([1, 2, 3])
+  let m2 = @hashset.HashSet([4, 5, 6])
   let u = m1.union(m2)
   for i in 1..<=6 {
     @test.assert_eq(u.contains(i), true)
@@ -310,7 +310,7 @@ test "HAMT join_2 last segment split" {
 
 ///|
 test "HAMT::remove_with_hash collision" {
-  let set = @hashset.from_array([MyString("a"), MyString("b")])
+  let set = @hashset.HashSet([MyString("a"), MyString("b")])
   let set1 = set.remove(MyString("c"))
   inspect(set1.length(), content="2")
   let set2 = set.remove(MyString("a"))
@@ -323,8 +323,8 @@ test "HAMT::remove_with_hash collision" {
 
 ///|
 test "HAMT::union with collision" {
-  let m1 = @hashset.from_array([MyString("a"), MyString("b")])
-  let m2 = @hashset.from_array([MyString("b"), MyString("c")])
+  let m1 = @hashset.HashSet([MyString("a"), MyString("b")])
+  let m2 = @hashset.HashSet([MyString("b"), MyString("c")])
   let u = m1.union(m2)
   @test.assert_eq(u.contains(MyString("a")), true)
   @test.assert_eq(u.contains(MyString("b")), true)
@@ -333,8 +333,8 @@ test "HAMT::union with collision" {
 
 ///|
 test "HAMT::union collision identical" {
-  let m1 = @hashset.from_array([MyString("a"), MyString("b")])
-  let m2 = @hashset.from_array([MyString("a"), MyString("b")])
+  let m1 = @hashset.HashSet([MyString("a"), MyString("b")])
+  let m2 = @hashset.HashSet([MyString("a"), MyString("b")])
   let u = m1.union(m2)
   inspect(u.contains(MyString("a")), content="true")
   inspect(u.contains(MyString("b")), content="true")
@@ -344,15 +344,15 @@ test "HAMT::union collision identical" {
 ///|
 test "HAMT::union all cases" {
   let empty = @hashset.new()
-  let leaf = @hashset.from_array([1])
-  let branch = @hashset.from_array([1, 2])
-  let collision = @hashset.from_array([MyString("a"), MyString("b")])
+  let leaf = @hashset.HashSet([1])
+  let branch = @hashset.HashSet([1, 2])
+  let collision = @hashset.HashSet([MyString("a"), MyString("b")])
   @test.assert_eq(empty.union(leaf).contains(1), true)
   @test.assert_eq(leaf.union(branch).contains(2), true)
   let u1 = branch.union(branch)
   inspect(u1.contains(1), content="true")
   inspect(u1.contains(2), content="true")
-  let collision2 = @hashset.from_array([MyString("b"), MyString("c")])
+  let collision2 = @hashset.HashSet([MyString("b"), MyString("c")])
   let u2 = collision.union(collision2)
   @test.assert_eq(u2.contains(MyString("a")), true)
   @test.assert_eq(u2.contains(MyString("b")), true)
@@ -361,8 +361,8 @@ test "HAMT::union all cases" {
 
 ///|
 test "HAMT::union leaf to non-overlapping map" {
-  let leaf = @hashset.from_array([42])
-  let other = @hashset.from_array([1, 2])
+  let leaf = @hashset.HashSet([42])
+  let other = @hashset.HashSet([1, 2])
   let u = leaf.union(other)
   inspect(u.contains(42), content="true")
   inspect(u.contains(1), content="true")
@@ -371,11 +371,11 @@ test "HAMT::union leaf to non-overlapping map" {
 
 ///|
 test "@hashset.difference patch" {
-  let set1 = @hashset.from_array([1, 2, 3, 4])
-  let set2 = @hashset.from_array([3, 4, 5, 6])
-  let set3 = @hashset.from_array([])
-  let set4 = @hashset.from_array([1, 2, 3, 4, 5, 6])
-  let leaf = @hashset.from_array([1])
+  let set1 = @hashset.HashSet([1, 2, 3, 4])
+  let set2 = @hashset.HashSet([3, 4, 5, 6])
+  let set3 = @hashset.HashSet([])
+  let set4 = @hashset.HashSet([1, 2, 3, 4, 5, 6])
+  let leaf = @hashset.HashSet([1])
   verify_content(set1.difference(set2), [1, 2])
   verify_content(set1.difference(set3), [1, 2, 3, 4])
   verify_content(set3.difference(set1), [])
@@ -386,12 +386,12 @@ test "@hashset.difference patch" {
 
 ///|
 test "@hashset.intersection patch" {
-  let set1 = @hashset.from_array([1, 2, 3, 4])
-  let set2 = @hashset.from_array([3, 4, 5, 6])
-  let set3 = @hashset.from_array([])
-  let set4 = @hashset.from_array([1, 2, 3, 4, 5, 6])
-  let set5 = @hashset.from_array([7, 8, 9, 10])
-  let leaf = @hashset.from_array([1])
+  let set1 = @hashset.HashSet([1, 2, 3, 4])
+  let set2 = @hashset.HashSet([3, 4, 5, 6])
+  let set3 = @hashset.HashSet([])
+  let set4 = @hashset.HashSet([1, 2, 3, 4, 5, 6])
+  let set5 = @hashset.HashSet([7, 8, 9, 10])
+  let leaf = @hashset.HashSet([1])
   verify_content(set1.intersection(set2), [3, 4])
   verify_content(set1.intersection(set3), [])
   verify_content(set3.intersection(set1), [])
@@ -403,8 +403,8 @@ test "@hashset.intersection patch" {
 
 ///|
 test "intersection single common key" {
-  let set1 = @hashset.from_array([1, 2, 3])
-  let set2 = @hashset.from_array([3, 4, 5])
+  let set1 = @hashset.HashSet([1, 2, 3])
+  let set2 = @hashset.HashSet([3, 4, 5])
   let inter = set1.intersection(set2)
   debug_inspect(
     inter,
@@ -416,8 +416,8 @@ test "intersection single common key" {
 
 ///|
 test "intersection collision leaf" {
-  let set1 = @hashset.from_array([MyString("a"), MyString("b")])
-  let set2 = @hashset.from_array([MyString("b"), MyString("c")])
+  let set1 = @hashset.HashSet([MyString("a"), MyString("b")])
+  let set2 = @hashset.HashSet([MyString("b"), MyString("c")])
   let inter = set1.intersection(set2)
   inspect(inter.contains(MyString("b")), content="true")
   inspect(inter.length(), content="1")
@@ -425,8 +425,8 @@ test "intersection collision leaf" {
 
 ///|
 test "intersection collision empty" {
-  let set1 = @hashset.from_array([MyString("a"), MyString("b")])
-  let set2 = @hashset.from_array([MyString("c"), MyString("d")])
+  let set1 = @hashset.HashSet([MyString("a"), MyString("b")])
+  let set2 = @hashset.HashSet([MyString("c"), MyString("d")])
   let inter = set1.intersection(set2)
   inspect(inter.length(), content="0")
 }
@@ -470,15 +470,15 @@ test "collision equal coverage" {
 ///|
 test "difference with collision - Leaf case" {
   // Test (Leaf, Leaf) branch: hash collision handling
-  let set1 = @hashset.from_array([MyString("a"), MyString("b"), MyString("c")])
-  let set2 = @hashset.from_array([MyString("b")])
+  let set1 = @hashset.HashSet([MyString("a"), MyString("b"), MyString("c")])
+  let set2 = @hashset.HashSet([MyString("b")])
   let diff = set1.difference(set2)
   @test.assert_eq(diff.contains(MyString("a")), true)
   @test.assert_eq(diff.contains(MyString("b")), false)
   @test.assert_eq(diff.contains(MyString("c")), true)
   inspect(diff.length(), content="2")
   // Test when all elements in set1 are removed
-  let set3 = @hashset.from_array([MyString("a"), MyString("b"), MyString("c")])
+  let set3 = @hashset.HashSet([MyString("a"), MyString("b"), MyString("c")])
   let diff2 = set1.difference(set3)
   inspect(diff2.length(), content="0")
 }
@@ -487,23 +487,23 @@ test "difference with collision - Leaf case" {
 test "difference Flat vs Branch" {
   // Test (Flat, node) branch where Flat is not in node - line 277-282
   // When a single-element set is differenced with a multi-element set
-  let small = @hashset.from_array([100])
-  let large = @hashset.from_array([1, 2, 3, 4, 5])
+  let small = @hashset.HashSet([100])
+  let large = @hashset.HashSet([1, 2, 3, 4, 5])
   let diff1 = small.difference(large)
   @test.assert_eq(diff1.contains(100), true)
   inspect(diff1.length(), content="1")
   // When Flat element is in the other set - should return None
-  let small2 = @hashset.from_array([1])
+  let small2 = @hashset.HashSet([1])
   let diff2 = small2.difference(large)
   inspect(diff2.length(), content="0")
   // Test Flat vs collision node (Leaf)
-  let single = @hashset.from_array([MyString("z")])
-  let collision_set = @hashset.from_array([MyString("a"), MyString("b")])
+  let single = @hashset.HashSet([MyString("z")])
+  let collision_set = @hashset.HashSet([MyString("a"), MyString("b")])
   let diff3 = single.difference(collision_set)
   @test.assert_eq(diff3.contains(MyString("z")), true)
   inspect(diff3.length(), content="1")
   // Test Flat element that exists in collision set
-  let single2 = @hashset.from_array([MyString("a")])
+  let single2 = @hashset.HashSet([MyString("a")])
   let diff4 = single2.difference(collision_set)
   inspect(diff4.length(), content="0")
 }
@@ -512,8 +512,8 @@ test "difference Flat vs Branch" {
 test "difference Branch returns single Flat" {
   // Test case where Branch.difference returns a single Flat node
   // This happens when the result has only one element
-  let set1 = @hashset.from_array([1, 2])
-  let set2 = @hashset.from_array([2])
+  let set1 = @hashset.HashSet([1, 2])
+  let set2 = @hashset.HashSet([2])
   let diff = set1.difference(set2)
   @test.assert_eq(diff.contains(1), true)
   @test.assert_eq(diff.contains(2), false)
@@ -524,13 +524,13 @@ test "difference Branch returns single Flat" {
 test "difference Leaf collision - More case" {
   // Test (Leaf, Leaf) returning More(head, tail~) - line 295
   // Need hash collision where filtering leaves 2+ elements
-  let set1 = @hashset.from_array([
+  let set1 = @hashset.HashSet([
     MyString("a"),
     MyString("b"),
     MyString("c"),
     MyString("d"),
   ])
-  let set2 = @hashset.from_array([MyString("a"), MyString("b")])
+  let set2 = @hashset.HashSet([MyString("a"), MyString("b")])
   let diff = set1.difference(set2)
   @test.assert_eq(diff.contains(MyString("a")), false)
   @test.assert_eq(diff.contains(MyString("b")), false)
@@ -542,8 +542,8 @@ test "difference Leaf collision - More case" {
 ///|
 test "difference Branch single Flat result" {
   // Test Branch difference returning single Flat with path.push - line 287
-  let set1 = @hashset.from_array([1, 2, 3, 4, 5])
-  let set2 = @hashset.from_array([2, 3, 4, 5])
+  let set1 = @hashset.HashSet([1, 2, 3, 4, 5])
+  let set2 = @hashset.HashSet([2, 3, 4, 5])
   let diff = set1.difference(set2)
   @test.assert_eq(diff.contains(1), true)
   @test.assert_eq(diff.contains(2), false)

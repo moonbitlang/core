@@ -14,13 +14,15 @@ import {
 // Types and methods
 #alias(T, deprecated)
 type HashSet[A] derive(Eq)
+pub fn[A : Eq + Hash] HashSet::HashSet(ArrayView[A]) -> Self[A]
 pub fn[A : Eq + Hash] HashSet::add(Self[A], A) -> Self[A]
 pub fn[A : Eq + Hash] HashSet::contains(Self[A], A) -> Bool
 pub fn[K : Eq] HashSet::difference(Self[K], Self[K]) -> Self[K]
 pub fn[A] HashSet::each(Self[A], (A) -> Unit raise?) -> Unit raise?
 #alias(of, deprecated)
 #as_free_fn(of, deprecated)
-#as_free_fn
+#as_free_fn(deprecated)
+#deprecated
 pub fn[A : Eq + Hash] HashSet::from_array(ArrayView[A]) -> Self[A]
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
