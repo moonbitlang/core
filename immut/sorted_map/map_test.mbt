@@ -14,7 +14,7 @@
 
 ///|
 test "lookup" {
-  let m = @sorted_map.from_array([
+  let m = @sorted_map.SortedMap([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -28,7 +28,7 @@ test "lookup" {
 
 ///|
 test "size" {
-  let m = @sorted_map.from_array([
+  let m = @sorted_map.SortedMap([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -50,7 +50,7 @@ test "is_empty" {
 
 ///|
 test "iter" {
-  let m = @sorted_map.from_array([
+  let m = @sorted_map.SortedMap([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -64,7 +64,7 @@ test "iter" {
 
 ///|
 test "iteri" {
-  let m = @sorted_map.from_array([
+  let m = @sorted_map.SortedMap([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -79,7 +79,7 @@ test "iteri" {
 ///|
 test "iter_take_each" {
   let buf = StringBuilder(size_hint=20)
-  let map = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
+  let map = @sorted_map.SortedMap([(1, "one"), (2, "two"), (3, "three")])
   map
   .iter()
   .each(e => {
@@ -100,7 +100,7 @@ test "iter_take_each" {
 
 ///|
 test "fold" {
-  let m = @sorted_map.from_array([
+  let m = @sorted_map.SortedMap([
     ("a", 1),
     ("b", 2),
     ("c", 3),
@@ -112,7 +112,7 @@ test "fold" {
 
 ///|
 test "foldl_with_key" {
-  let m = @sorted_map.from_array([
+  let m = @sorted_map.SortedMap([
     ("a", 1),
     ("b", 2),
     ("c", 3),
@@ -127,7 +127,7 @@ test "foldl_with_key" {
 
 ///|
 test "foldr_with_key" {
-  let m = @sorted_map.from_array([
+  let m = @sorted_map.SortedMap([
     ("a", 1),
     ("b", 2),
     ("c", 3),
@@ -142,45 +142,45 @@ test "foldr_with_key" {
 
 ///|
 test "collect" {
-  let m = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
+  let m = @sorted_map.SortedMap([(1, "one"), (2, "two"), (3, "three")])
   @test.assert_eq(m.iter().collect(), [(1, "one"), (2, "two"), (3, "three")])
 }
 
 ///|
 test "to_array" {
-  let m = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
+  let m = @sorted_map.SortedMap([(1, "one"), (2, "two"), (3, "three")])
   @test.assert_eq(m.to_array(), [(1, "one"), (2, "two"), (3, "three")])
 }
 
 ///|
 test "keys" {
-  let m = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
+  let m = @sorted_map.SortedMap([(1, "one"), (2, "two"), (3, "three")])
   @test.assert_eq(m.keys_as_iter().collect(), [1, 2, 3])
 }
 
 ///|
 test "values" {
-  let m = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
+  let m = @sorted_map.SortedMap([(1, "one"), (2, "two"), (3, "three")])
   @test.assert_eq(m.values().collect(), ["one", "two", "three"])
 }
 
 ///|
 test "equal" {
-  let m1 = @sorted_map.from_array([
+  let m1 = @sorted_map.SortedMap([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
     (2, "two"),
     (0, "zero"),
   ])
-  let m2 = @sorted_map.from_array([
+  let m2 = @sorted_map.SortedMap([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
     (2, "two"),
     (0, "zero"),
   ])
-  let m3 = @sorted_map.from_array([
+  let m3 = @sorted_map.SortedMap([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -203,7 +203,7 @@ test "compare" {
 ///|
 test "iterator" {
   let buf = StringBuilder(size_hint=20)
-  let map = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
+  let map = @sorted_map.SortedMap([(1, "one"), (2, "two"), (3, "three")])
   map
   .iter()
   .each(e => {
@@ -224,7 +224,7 @@ test "iterator" {
 
 ///|
 test "show" {
-  let m = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
+  let m = @sorted_map.SortedMap([(1, "one"), (2, "two"), (3, "three")])
   debug_inspect(
     m,
     content=(
@@ -268,19 +268,19 @@ test "from_iter empty iter" {
 
 ///|
 test "hash" {
-  let map1 = @sorted_map.from_array([("one", 1), ("two", 2)])
-  let map2 = @sorted_map.from_array([("one", 1), ("two", 2)])
+  let map1 = @sorted_map.SortedMap([("one", 1), ("two", 2)])
+  let map2 = @sorted_map.SortedMap([("one", 1), ("two", 2)])
   inspect(map1.hash() == map2.hash(), content="true")
-  let map3 = @sorted_map.from_array([("two", 2), ("one", 1)])
+  let map3 = @sorted_map.SortedMap([("two", 2), ("one", 1)])
   inspect(map1.hash() == map3.hash(), content="true")
-  let map4 = @sorted_map.from_array([("one", 1), ("two", 2), ("three", 3)])
+  let map4 = @sorted_map.SortedMap([("one", 1), ("two", 2), ("three", 3)])
   inspect(map1.hash() == map4.hash(), content="false")
 }
 
 ///|
 test "@immut/sorted_map.merge" {
-  let map1 = @sorted_map.from_array([(1, "a"), (2, "b")])
-  let map2 = @sorted_map.from_array([(2, "c"), (3, "d")])
+  let map1 = @sorted_map.SortedMap([(1, "a"), (2, "b")])
+  let map2 = @sorted_map.SortedMap([(2, "c"), (3, "d")])
   let merged = map1.merge(map2)
   debug_inspect(merged.get(1), content="Some(\"a\")")
   debug_inspect(merged.get(2), content="Some(\"c\")")
@@ -294,7 +294,7 @@ test "@immut/sorted_map.merge" {
 ///|
 test "@immut/sorted_map.merge empty maps" {
   let map1 : @sorted_map.SortedMap[Int, String] = @sorted_map.new()
-  let map2 = @sorted_map.from_array([(1, "a"), (2, "b")])
+  let map2 = @sorted_map.SortedMap([(1, "a"), (2, "b")])
   let merged1 = map1.merge(map2)
   debug_inspect(merged1.to_array(), content="[(1, \"a\"), (2, \"b\")]")
   let merged2 = map2.merge(map1)
@@ -305,8 +305,8 @@ test "@immut/sorted_map.merge empty maps" {
 
 ///|
 test "@immut/sorted_map.merge with overlapping keys" {
-  let map1 = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
-  let map2 = @sorted_map.from_array([(2, "TWO"), (3, "THREE"), (4, "FOUR")])
+  let map1 = @sorted_map.SortedMap([(1, "one"), (2, "two"), (3, "three")])
+  let map2 = @sorted_map.SortedMap([(2, "TWO"), (3, "THREE"), (4, "FOUR")])
   let merged = map1.merge(map2)
   debug_inspect(merged.get(1), content="Some(\"one\")")
   debug_inspect(merged.get(2), content="Some(\"TWO\")")

@@ -55,7 +55,7 @@ pub impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickc
   K,
   V,
 ] with fn arbitrary(size, rs) {
-  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
+  @quickcheck.Arbitrary::arbitrary(size, rs) |> SortedMap
 }
 
 ///|

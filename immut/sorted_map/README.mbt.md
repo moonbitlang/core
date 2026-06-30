@@ -24,7 +24,7 @@ Also, you can construct it from an array using `of()` or `from_array()`.
 ```mbt check
 ///|
 test {
-  let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
+  let map = @sorted_map.SortedMap([("a", 1), ("b", 2), ("c", 3)])
   @test.assert_eq(map.values().collect(), [1, 2, 3])
   @test.assert_eq(map.keys_as_iter().collect(), ["a", "b", "c"])
 }
@@ -51,7 +51,7 @@ You can use `remove()` to remove a key-value pair from the map.
 ```mbt check
 ///|
 test {
-  let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
+  let map = @sorted_map.SortedMap([("a", 1), ("b", 2), ("c", 3)])
   let map = map.remove("a")
   @test.assert_eq(map.get("a"), None)
 }
@@ -64,7 +64,7 @@ You can use `contains()` to check whether a key exists.
 ```mbt check
 ///|
 test {
-  let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
+  let map = @sorted_map.SortedMap([("a", 1), ("b", 2), ("c", 3)])
   @test.assert_eq(map.contains("a"), true)
   @test.assert_eq(map.contains("d"), false)
 }
@@ -77,7 +77,7 @@ You can use `size()` to get the number of key-value pairs in the map.
 ```mbt check
 ///|
 test {
-  let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
+  let map = @sorted_map.SortedMap([("a", 1), ("b", 2), ("c", 3)])
   @test.assert_eq(map.length(), 3)
 }
 ```
@@ -99,7 +99,7 @@ Use `each()` or `eachi()` to iterate through all key-value pairs.
 ```mbt check
 ///|
 test {
-  let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
+  let map = @sorted_map.SortedMap([("a", 1), ("b", 2), ("c", 3)])
   let arr = []
   map.each((k, v) => arr.push("key:\{k}, value:\{v}"))
   @test.assert_eq(arr, ["key:a, value:1", "key:b, value:2", "key:c, value:3"])
@@ -116,7 +116,7 @@ Use `map()` to map a function over all key-value pairs.
 ```mbt check
 ///|
 test {
-  let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
+  let map = @sorted_map.SortedMap([("a", 1), ("b", 2), ("c", 3)])
   let map = map.map((_, v) => v + 1)
   @test.assert_eq(map.values().collect(), [2, 3, 4])
   let map = map.map((_k, v) => v + 1)
@@ -130,7 +130,7 @@ Pre-order; use `rev_fold()` for a Post-order fold.
 ```mbt check
 ///|
 test {
-  let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
+  let map = @sorted_map.SortedMap([("a", 1), ("b", 2), ("c", 3)])
   @test.assert_eq(map.fold((acc, _, v) => acc + v, init=0), 6) // 6
   @test.assert_eq(
     map.fold((acc, k, v) => acc + k + v.to_string(), init=""),
@@ -148,7 +148,7 @@ Use `filter()` to filter all key-value pairs that satisfy the predicate.
 ```mbt check
 ///|
 test {
-  let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
+  let map = @sorted_map.SortedMap([("a", 1), ("b", 2), ("c", 3)])
   let map = map.filter((_, v) => v > 1)
   @test.assert_eq(map.values().collect(), [2, 3])
   @test.assert_eq(map.keys_as_iter().collect(), ["b", "c"])
@@ -165,7 +165,7 @@ Use `values()` to get all values in ascending order of their keys.
 ```mbt check
 ///|
 test {
-  let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
+  let map = @sorted_map.SortedMap([("a", 1), ("b", 2), ("c", 3)])
   let values = map.values()
   @test.assert_eq(values.collect(), [1, 2, 3])
 }
@@ -176,7 +176,7 @@ Use `keys()` to get all keys of the map in ascending order.
 ```mbt check
 ///|
 test {
-  let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
+  let map = @sorted_map.SortedMap([("a", 1), ("b", 2), ("c", 3)])
   let keys = map.keys_as_iter() // ["a", "b", "c"]
   @test.assert_eq(keys.collect(), ["a", "b", "c"])
 }
@@ -189,7 +189,7 @@ Use `rev_keys()` to get all keys in descending order.
 ```mbt check
 ///|
 test {
-  let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
+  let map = @sorted_map.SortedMap([("a", 1), ("b", 2), ("c", 3)])
   let keys = map.rev_keys().collect()
   @test.assert_eq(keys, ["c", "b", "a"])
 }
@@ -200,7 +200,7 @@ Use `rev_values()` to get all values in descending order of their keys.
 ```mbt check
 ///|
 test {
-  let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
+  let map = @sorted_map.SortedMap([("a", 1), ("b", 2), ("c", 3)])
   let values = map.rev_values().collect()
   @test.assert_eq(values, [3, 2, 1])
 }

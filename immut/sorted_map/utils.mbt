@@ -229,10 +229,35 @@ fn[K : Show, V : Show] SortedMap::debug_tree(self : SortedMap[K, V]) -> String {
 ///|
 /// Build a map from an array of key-value pairs.
 /// O(n*log n).
-#as_free_fn
-#alias(of, deprecated="Use from_array instead")
-#as_free_fn(of, deprecated="Use from_array instead")
+#as_free_fn(deprecated="Use @immut/sorted_map.SortedMap([...]) instead")
+#alias(of, deprecated="Use @immut/sorted_map.SortedMap([...]) instead")
+#as_free_fn(of, deprecated="Use @immut/sorted_map.SortedMap([...]) instead")
+#deprecated("Use @immut/sorted_map.SortedMap([...]) instead")
 pub fn[K : Compare, V] SortedMap::from_array(
+  array : ArrayView[(K, V)],
+) -> SortedMap[K, V] {
+  for item in array; mp = Empty {
+    let (k, v) = item
+    continue mp.add(k, v)
+  } nobreak {
+    mp
+  }
+}
+
+///|
+/// Build a map from an array of key-value pairs.
+/// O(n*log n).
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   let m = @sorted_map.SortedMap([(3, "c"), (1, "a"), (2, "b")])
+///   @test.assert_eq(m.get(1), Some("a"))
+///   @test.assert_eq(m.get(3), Some("c"))
+/// }
+/// ```
+pub fn[K : Compare, V] SortedMap::SortedMap(
   array : ArrayView[(K, V)],
 ) -> SortedMap[K, V] {
   for item in array; mp = Empty {
@@ -313,7 +338,7 @@ pub fn[K, V] SortedMap::iter2(self : SortedMap[K, V]) -> Iter2[K, V] {
 ///
 /// ```mbt check
 /// test {
-///   let map = @sorted_map.from_array([
+///   let map = @sorted_map.SortedMap([
 ///     (1, "a"),
 ///     (2, "b"),
 ///     (3, "c"),
@@ -394,7 +419,7 @@ pub fn[K, V] SortedMap::values(self : SortedMap[K, V]) -> Iter[V] {
 ///
 /// ```mbt check
 /// test {
-///   let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
+///   let map = @sorted_map.SortedMap([("a", 1), ("b", 2), ("c", 3)])
 ///   let keys = map.rev_keys().collect()
 ///   @test.assert_eq(keys, ["c", "b", "a"])
 /// }
@@ -432,7 +457,7 @@ pub fn[K, V] SortedMap::rev_keys(self : SortedMap[K, V]) -> Iter[K] {
 /// # Example
 ///
 /// ```mbt nocheck
-///   let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
+///   let map = @sorted_map.SortedMap([("a", 1), ("b", 2), ("c", 3)])
 ///   let values = map.rev_values().collect()
 ///   @test.assert_eq(values, [3, 2, 1])
 /// ```

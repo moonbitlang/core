@@ -15,6 +15,7 @@ import {
 // Types and methods
 #alias(T, deprecated)
 type SortedMap[K, V]
+pub fn[K : Compare, V] SortedMap::SortedMap(ArrayView[(K, V)]) -> Self[K, V]
 #alias(insert, deprecated)
 pub fn[K : Compare, V] SortedMap::add(Self[K, V], K, V) -> Self[K, V]
 #alias("_[_]")
@@ -30,7 +31,8 @@ pub fn[K, V] SortedMap::filter(Self[K, V], (K, V) -> Bool raise?) -> Self[K, V] 
 pub fn[K, V, A] SortedMap::fold(Self[K, V], (A, K, V) -> A, init~ : A) -> A
 #alias(of, deprecated)
 #as_free_fn(of, deprecated)
-#as_free_fn
+#as_free_fn(deprecated)
+#deprecated
 pub fn[K : Compare, V] SortedMap::from_array(ArrayView[(K, V)]) -> Self[K, V]
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
