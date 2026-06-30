@@ -38,7 +38,7 @@ pub fn[A] SortedSet::singleton(value : A) -> SortedSet[A] {
 }
 
 ///|
-/// Initialize an ImmutableSet[T] from an Array[T]
+/// Initialize a `SortedSet[A]` from an array.
 #as_free_fn(deprecated="Use @immut/sorted_set.SortedSet([...]) instead")
 #alias(of, deprecated="Use @immut/sorted_set.SortedSet([...]) instead")
 #as_free_fn(of, deprecated="Use @immut/sorted_set.SortedSet([...]) instead")
