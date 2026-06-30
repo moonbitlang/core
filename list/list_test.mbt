@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-test "from_array" {
+test "List constructor" {
   let ls = @list.List([1, 2, 3, 4, 5])
   let el : @list.List[Int] = @list.empty()
   debug_inspect(ls, content="<List: [1, 2, 3, 4, 5]>")
