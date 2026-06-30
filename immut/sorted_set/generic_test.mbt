@@ -14,21 +14,21 @@
 
 ///|
 test "sorted set equality comparison with unequal elements" {
-  let set1 = @sorted_set.from_array([1, 2, 3])
-  let set2 = @sorted_set.from_array([1, 2, 4])
+  let set1 = @sorted_set.SortedSet([1, 2, 3])
+  let set2 = @sorted_set.SortedSet([1, 2, 4])
   assert_false(set1 == set2)
 }
 
 ///|
 test "compare with shared prefix" {
-  let set1 = @sorted_set.from_array([1, 2, 3])
-  let set2 = @sorted_set.from_array([1, 2, 4])
+  let set1 = @sorted_set.SortedSet([1, 2, 3])
+  let set2 = @sorted_set.SortedSet([1, 2, 4])
   assert_true(set1 < set2)
 }
 
 ///|
 test "iter early termination - value" {
-  let set = @sorted_set.from_array([1, 2, 3])
+  let set = @sorted_set.SortedSet([1, 2, 3])
   let count = for x in set; count = 0 {
     if x == 2 {
       break count
@@ -43,7 +43,7 @@ test "iter early termination - value" {
 
 ///|
 test "iter terminates on right" {
-  let set = @sorted_set.from_array([1, 2, 3])
+  let set = @sorted_set.SortedSet([1, 2, 3])
   let result = set.iter().take(2).to_array()
   debug_inspect(result, content="[1, 2]")
 }
@@ -72,7 +72,7 @@ test "iter with early termination on left subtree" {
 
 ///|
 test "rev_iter returns elements in descending order" {
-  let set = @sorted_set.from_array([1, 2, 3, 4, 5])
+  let set = @sorted_set.SortedSet([1, 2, 3, 4, 5])
   let result = set.rev_iter().collect()
   debug_inspect(result, content="[5, 4, 3, 2, 1]")
 }
@@ -93,21 +93,21 @@ test "rev_iter on single element set" {
 
 ///|
 test "rev_iter early termination" {
-  let set = @sorted_set.from_array([1, 2, 3, 4, 5])
+  let set = @sorted_set.SortedSet([1, 2, 3, 4, 5])
   let result = set.rev_iter().take(3).collect()
   debug_inspect(result, content="[5, 4, 3]")
 }
 
 ///|
 test "rev_iter on unbalanced insertion" {
-  let set = @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1])
+  let set = @sorted_set.SortedSet([7, 2, 9, 4, 5, 6, 3, 8, 1])
   let result = set.rev_iter().collect()
   debug_inspect(result, content="[9, 8, 7, 6, 5, 4, 3, 2, 1]")
 }
 
 ///|
 test "rev_iter is reverse of iter" {
-  let set = @sorted_set.from_array([3, 1, 4, 1, 5, 9, 2, 6])
+  let set = @sorted_set.SortedSet([3, 1, 4, 1, 5, 9, 2, 6])
   let forward = set.iter().collect()
   let reverse = set.rev_iter().collect()
   @test.assert_eq(reverse, forward.rev())
@@ -138,7 +138,7 @@ test "rev_iter with early termination on right subtree" {
 
 ///|
 test "rev_iter with complex tree structure" {
-  let set = @sorted_set.from_array([
+  let set = @sorted_set.SortedSet([
     15, 10, 20, 5, 12, 18, 25, 3, 7, 11, 14, 17, 19, 23, 27,
   ])
   let result = set.rev_iter().collect()
@@ -150,7 +150,7 @@ test "rev_iter with complex tree structure" {
 
 ///|
 test "rev_iter terminates on left" {
-  let set = @sorted_set.from_array([1, 2, 3])
+  let set = @sorted_set.SortedSet([1, 2, 3])
   let result = set.rev_iter().take(2).to_array()
   debug_inspect(result, content="[3, 2]")
 }
