@@ -37,14 +37,14 @@ priv enum CurrNode[K, V] {
 /// Create a new instance.
 #as_free_fn
 pub fn[K, V] HashMap::new() -> HashMap[K, V] {
-  None
+  { data: None }
 }
 
 ///|
 /// Create a map with a single key-value pair.
 #as_free_fn
 pub fn[K : Hash, V] HashMap::singleton(key : K, value : V) -> HashMap[K, V] {
-  Some(Flat(key, value, @path.of(key)))
+  { data: Some(Flat(key, value, @path.of(key))) }
 }
 
 ///|
@@ -60,7 +60,7 @@ pub fn[K : Eq + Hash, V] HashMap::contains(
 /// Lookup a key from a hash map
 #alias(find, deprecated)
 pub fn[K : Eq + Hash, V] HashMap::get(self : HashMap[K, V], key : K) -> V? {
-  match self.0 {
+  match self.data {
     None => None
     Some(node) => node.get_with_path(key, @path.of(key))
   }
@@ -70,7 +70,7 @@ pub fn[K : Eq + Hash, V] HashMap::get(self : HashMap[K, V], key : K) -> V? {
 /// Get value with `at` access semantics.
 #alias("_[_]")
 pub fn[K : Eq + Hash, V] HashMap::at(self : HashMap[K, V], key : K) -> V {
-  guard self.0 is Some(node)
+  guard self.data is Some(node)
   node.get_with_path(key, @path.of(key)).unwrap()
 }
 
@@ -200,9 +200,11 @@ pub fn[K, V] HashMap::filter(
     }
   }
 
-  match self.0 {
-    None => None
-    Some(node) => go(node)
+  {
+    data: match self.data {
+      None => None
+      Some(node) => go(node)
+    },
   }
 }
 
@@ -226,7 +228,7 @@ pub fn[K, V, A] HashMap::fold(
     }
   }
 
-  match self.0 {
+  match self.data {
     None => init
     Some(node) => go(init, node)
   }
@@ -248,9 +250,11 @@ pub fn[K, V, A] HashMap::map(
     }
   }
 
-  match self.0 {
-    None => None
-    Some(node) => Some(go(node))
+  {
+    data: match self.data {
+      None => None
+      Some(node) => Some(go(node))
+    },
   }
 }
 
@@ -263,9 +267,11 @@ pub fn[K : Eq + Hash, V] HashMap::add(
   key : K,
   value : V,
 ) -> HashMap[K, V] {
-  match self.0 {
-    None => Some(Flat(key, value, @path.of(key)))
-    Some(node) => Some(node.add_with_path(key, value, @path.of(key)))
+  {
+    data: match self.data {
+      None => Some(Flat(key, value, @path.of(key)))
+      Some(node) => Some(node.add_with_path(key, value, @path.of(key)))
+    },
   }
 }
 
@@ -275,9 +281,11 @@ pub fn[K : Eq + Hash, V] HashMap::remove(
   self : HashMap[K, V],
   key : K,
 ) -> HashMap[K, V] {
-  match self.0 {
-    None => None
-    Some(node) => node.remove_with_path(key, @path.of(key))
+  {
+    data: match self.data {
+      None => None
+      Some(node) => node.remove_with_path(key, @path.of(key))
+    },
   }
 }
 
@@ -352,7 +360,7 @@ pub fn[K, V] HashMap::length(self : HashMap[K, V]) -> Int {
     }
   }
 
-  match self.0 {
+  match self.data {
     None => 0
     Some(node) => node_size(node)
   }
@@ -387,9 +395,11 @@ pub fn[K : Eq, V] HashMap::union(
     }
   }
 
-  match (self.0, other.0) {
-    (None, x) | (x, None) => x
-    (Some(a), Some(b)) => Some(go(a, b))
+  {
+    data: match (self.data, other.data) {
+      (None, x) | (x, None) => x
+      (Some(a), Some(b)) => Some(go(a, b))
+    },
   }
 }
 
@@ -427,9 +437,11 @@ pub fn[K : Eq, V] HashMap::union_with(
     }
   }
 
-  match (self.0, other.0) {
-    (None, x) | (x, None) => x
-    (Some(a), Some(b)) => Some(go(a, b))
+  {
+    data: match (self.data, other.data) {
+      (None, x) | (x, None) => x
+      (Some(a), Some(b)) => Some(go(a, b))
+    },
   }
 }
 
@@ -491,9 +503,11 @@ pub fn[K : Eq, V] HashMap::intersection(
     }
   }
 
-  match (self.0, other.0) {
-    (None, _) | (_, None) => None
-    (Some(a), Some(b)) => go(a, b)
+  {
+    data: match (self.data, other.data) {
+      (None, _) | (_, None) => None
+      (Some(a), Some(b)) => go(a, b)
+    },
   }
 }
 
@@ -532,9 +546,11 @@ pub fn[K : Eq, V] HashMap::intersection_with(
     }
   }
 
-  match (self.0, other.0) {
-    (None, _) | (_, None) => None
-    (Some(a), Some(b)) => go(a, b)
+  {
+    data: match (self.data, other.data) {
+      (None, _) | (_, None) => None
+      (Some(a), Some(b)) => go(a, b)
+    },
   }
 }
 
@@ -592,10 +608,10 @@ pub fn[K : Eq, V] HashMap::difference(
     }
   }
 
-  match (self.0, other.0) {
-    (None, _) => None
+  match (self.data, other.data) {
+    (None, _) => { data: None }
     (_, None) => self
-    (Some(a), Some(b)) => go(a, b)
+    (Some(a), Some(b)) => { data: go(a, b) }
   }
 }
 
@@ -616,7 +632,7 @@ pub fn[K, V] HashMap::each(
     }
   }
 
-  if self.0 is Some(node) {
+  if self.data is Some(node) {
     go(node)
   }
 }
@@ -639,7 +655,7 @@ pub fn[K, V] HashMap::values(self : HashMap[K, V]) -> Iter[V] {
 #alias(iterator, deprecated)
 pub fn[K, V] HashMap::iter(self : HashMap[K, V]) -> Iter[(K, V)] {
   let empty = Bucket(@list.new())
-  let mut curr_node = match self.0 {
+  let mut curr_node = match self.data {
     Some(tree) => Tree(tree)
     None => empty
   }
@@ -712,10 +728,37 @@ pub impl[K : Show, V : Show] Show for HashMap[K, V] with fn output(self, logger)
 
 ///|
 /// Creates a hash map from an array of key-value pairs.
-#as_free_fn
-#alias(of, deprecated="Use from_array instead")
-#as_free_fn(of, deprecated="Use from_array instead")
+#as_free_fn(deprecated="Use @immut/hashmap.HashMap([...]) instead")
+#alias(of, deprecated="Use @immut/hashmap.HashMap([...]) instead")
+#as_free_fn(of, deprecated="Use @immut/hashmap.HashMap([...]) instead")
+#deprecated("Use @immut/hashmap.HashMap([...]) instead")
 pub fn[K : Eq + Hash, V] HashMap::from_array(
+  arr : ArrayView[(K, V)],
+) -> HashMap[K, V] {
+  for n = arr.length(), map = new() {
+    match (n, map) {
+      (0, map) => break map
+      (n, map) => {
+        let (k, v) = arr[n - 1]
+        continue n - 1, map.add(k, v)
+      }
+    }
+  }
+}
+
+///|
+/// Creates a hash map from an array of key-value pairs.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   let m = @hashmap.HashMap([(1, "one"), (2, "two")])
+///   @test.assert_eq(m.get(1), Some("one"))
+///   @test.assert_eq(m.get(2), Some("two"))
+/// }
+/// ```
+pub fn[K : Eq + Hash, V] HashMap::HashMap(
   arr : ArrayView[(K, V)],
 ) -> HashMap[K, V] {
   for n = arr.length(), map = new() {
@@ -742,7 +785,7 @@ pub impl[K : Eq + Hash + @quickcheck.Arbitrary, V : @quickcheck.Arbitrary] @quic
   K,
   V,
 ] with fn arbitrary(size, rs) {
-  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
+  @quickcheck.Arbitrary::arbitrary(size, rs) |> HashMap
 }
 
 ///|

@@ -11,7 +11,7 @@ test "create" {
   inspect(empty.length(), content="0")
   let single = @hashmap.singleton("a", 1)
   debug_inspect(single.get("a"), content="Some(1)")
-  let from_arr = @hashmap.from_array([("a", 1), ("b", 2)])
+  let from_arr = @hashmap.HashMap([("a", 1), ("b", 2)])
   inspect(from_arr.length(), content="2")
 }
 ```
@@ -54,7 +54,7 @@ test "iteration" {
 ```mbt check
 ///|
 test "transform" {
-  let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
+  let map = @hashmap.HashMap([("a", 1), ("b", 2), ("c", 3)])
   let doubled = map.map((_k, v) => v * 2)
   debug_inspect(doubled.get("b"), content="Some(4)")
   let filtered = map.filter((_k, v) => v > 1)
@@ -70,7 +70,7 @@ Use `map["key"]` (the `at` operator) for direct access. Panics if the key is not
 ```mbt check
 ///|
 test "index_access" {
-  let map = @hashmap.from_array([("x", 10), ("y", 20)])
+  let map = @hashmap.HashMap([("x", 10), ("y", 20)])
   @test.assert_eq(map["x"], 10)
   @test.assert_eq(map["y"], 20)
 }
@@ -106,8 +106,8 @@ test "iteration_full" {
 ```mbt check
 ///|
 test "set_operations" {
-  let m1 = @hashmap.from_array([("a", 1), ("b", 2)])
-  let m2 = @hashmap.from_array([("b", 20), ("c", 3)])
+  let m1 = @hashmap.HashMap([("a", 1), ("b", 2)])
+  let m2 = @hashmap.HashMap([("b", 20), ("c", 3)])
   // Union prefers right map on conflicts
   let u = m1.union(m2)
   debug_inspect(u.get("b"), content="Some(20)")
