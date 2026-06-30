@@ -37,51 +37,49 @@ pub fn[A : Compare] PriorityQueue::PriorityQueue(
 ) -> PriorityQueue[A] {
   let len = array.length()
   guard len > 0 else { return new_priority_queue() }
-  let heap = Array::makei(len, i => array[i])
-  priority_queue_heapify(heap)
+  let heap = FixedArray::from_array(array)
+  heapify(heap)
   { node: priority_queue_node_from_heap(heap, 0, len), size: len }
 }
 
 ///|
-fn[A : Compare] priority_queue_heapify(heap : Array[A]) -> Unit {
+fn[A : Compare] heapify(heap : FixedArray[A]) -> Unit {
   let len = heap.length()
   for i = len / 2 - 1; i >= 0; {
-    priority_queue_sift_down(heap, i, len)
+    sift_down(heap, i, len)
     continue i - 1
   }
 }
 
 ///|
-fn[A : Compare] priority_queue_sift_down(
-  heap : Array[A],
-  start : Int,
-  len : Int,
-) -> Unit {
+fn[A : Compare] sift_down(heap : FixedArray[A], start : Int, len : Int) -> Unit {
   for root = start {
     let left = root * 2 + 1
     guard left < len else { break }
     let right = left + 1
-    let child = if right < len && heap[right] > heap[left] {
+    let child = if right < len && heap.unsafe_get(right) > heap.unsafe_get(left) {
       right
     } else {
       left
     }
-    guard heap[root] < heap[child] else { break }
-    heap.swap(root, child)
+    guard heap.unsafe_get(root) < heap.unsafe_get(child) else { break }
+    let root_value = heap.unsafe_get(root)
+    heap.unsafe_set(root, heap.unsafe_get(child))
+    heap.unsafe_set(child, root_value)
     continue child
   }
 }
 
 ///|
 fn[A] priority_queue_node_from_heap(
-  heap : Array[A],
+  heap : FixedArray[A],
   index : Int,
   len : Int,
 ) -> Node[A] {
   if index >= len {
     Empty
   } else {
-    let value = heap[index]
+    let value = heap.unsafe_get(index)
     let left_index = index * 2 + 1
     if left_index >= len {
       Leaf(value)
