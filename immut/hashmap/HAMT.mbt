@@ -450,7 +450,7 @@ fn[K : Eq, V] @list.List::union_with(
       res.push(kv2)
     }
   }
-  guard @list.from_array(res) is More((k, v), tail~)
+  guard @list.List(res) is More((k, v), tail~)
   Leaf(k, v, tail)
 }
 
@@ -553,7 +553,7 @@ fn[K : Eq, V] @list.List::intersection_with(
       }
     }
   }
-  match @list.from_array(res) {
+  match @list.List(res) {
     Empty => None
     More((k, v), tail~) => Some(Leaf(k, v, tail))
   }

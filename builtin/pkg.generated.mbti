@@ -247,9 +247,7 @@ pub impl[A : Hash] Hash for ArrayView[A]
 pub impl[X : Show] Show for ArrayView[X]
 pub impl[X : ToJson] ToJson for ArrayView[X]
 
-pub struct Hasher {
-  // private fields
-}
+type Hasher
 #alias(new, deprecated)
 pub fn Hasher::Hasher(seed? : Int) -> Self
 pub fn[T : Hash] Hasher::combine(Self, T) -> Unit
@@ -367,9 +365,7 @@ pub fn Json::string(String) -> Self
 pub impl Default for Json
 pub impl Eq for Json
 
-pub struct Map[K, V] {
-  // private fields
-}
+type Map[K, V]
 #alias(from_array)
 pub fn[K : Hash + Eq, V] Map::Map(ArrayView[(K, V)], capacity? : Int) -> Self[K, V]
 #alias("_[_]")
@@ -454,9 +450,7 @@ pub(all) type SourceLoc
 pub fn SourceLoc::to_json_string(Self) -> String
 pub impl Show for SourceLoc
 
-pub struct StringBuilder {
-  // private fields
-}
+type StringBuilder
 #alias(new)
 pub fn StringBuilder::StringBuilder(size_hint? : Int) -> Self
 pub fn StringBuilder::is_empty(Self) -> Bool
@@ -644,6 +638,7 @@ pub fn UInt::trunc_double(Double) -> UInt
 pub fn UInt16::is_leading_surrogate(UInt16) -> Bool
 pub fn UInt16::is_surrogate(UInt16) -> Bool
 pub fn UInt16::is_trailing_surrogate(UInt16) -> Bool
+pub fn UInt16::lnot(UInt16) -> UInt16
 pub fn UInt16::to_byte(UInt16) -> Byte
 pub fn UInt16::to_char(UInt16) -> Char?
 pub fn UInt16::to_int(UInt16) -> Int

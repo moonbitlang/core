@@ -111,7 +111,7 @@ list, an array, an unfolding generator. We deliberately don't provide
 ///|
 test {
   let from_arr = @lazy_list.from_iter([1, 2, 3].iter())
-  let from_list = @lazy_list.from_iter(@list.from_array([4, 5, 6]).iter())
+  let from_list = @lazy_list.from_iter(@list.List([4, 5, 6]).iter())
   debug_inspect(from_arr.to_array(), content="[1, 2, 3]")
   debug_inspect(from_list.to_array(), content="[4, 5, 6]")
 }

@@ -28,6 +28,6 @@ pub fn[K : @debug.Debug] SortedSet::to_repr(self : SortedSet[K]) -> @debug.Repr 
 
 ///|
 test "Debug for SortedSet" {
-  let ss : SortedSet[Int] = from_array([3, 1, 2])
+  let ss : SortedSet[Int] = SortedSet([3, 1, 2])
   @debug.debug_inspect(ss, content="<SortedSet: [1, 2, 3]>")
 }

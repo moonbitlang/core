@@ -12,9 +12,7 @@ import {
 
 // Types and methods
 #alias(T, deprecated)
-pub struct Deque[A] {
-  // private fields
-}
+type Deque[A]
 #alias(from_array)
 #alias(of, deprecated)
 #as_free_fn(of, deprecated)

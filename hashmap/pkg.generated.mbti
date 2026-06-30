@@ -13,9 +13,7 @@ import {
 
 // Types and methods
 #alias(T, deprecated)
-pub struct HashMap[K, V] {
-  // private fields
-}
+type HashMap[K, V]
 #alias(from_array)
 #alias(of, deprecated)
 #as_free_fn(of, deprecated)
