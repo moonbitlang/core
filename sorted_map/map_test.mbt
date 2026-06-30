@@ -158,7 +158,7 @@ test "to_array" {
 
 ///|
 test "iter_collect" {
-  let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
+  let map = from_array([(3, "c"), (2, "b"), (1, "a")])
   debug_inspect(
     map.iter().collect(),
     content=(
@@ -176,7 +176,7 @@ test "iter_collect" {
 ///|
 test "from_iter multiple elements iter" {
   debug_inspect(
-    @sorted_map.from_iter([(1, 1), (2, 2), (3, 3)].iter()),
+    from_iter([(1, 1), (2, 2), (3, 3)].iter()),
     content=(
       #|<SortedMap: { 1: 1, 2: 2, 3: 3 }>
     ),
