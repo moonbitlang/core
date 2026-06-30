@@ -71,6 +71,7 @@ fn[T] ArrayView::make(
 ///   inspect(view.length(), content="2")
 /// }
 /// ```
+#intrinsic("%arrayview.length")
 pub fn[T] ArrayView::length(self : ArrayView[T]) -> Int {
   self.len()
 }
@@ -132,6 +133,7 @@ pub fn[T] ArrayView::start_offset(self : Self[T]) -> Int {
 ///   inspect(view[1], content="4")
 /// }
 /// ```
+#intrinsic("%arrayview.get")
 #alias("_[_]")
 pub fn[T] ArrayView::at(self : ArrayView[T], index : Int) -> T {
   guard index >= 0 && index < self.len() else {

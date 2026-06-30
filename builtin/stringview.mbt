@@ -32,7 +32,7 @@ fn StringView::make_view(str : String, start : Int, end : Int) -> StringView = "
 /// 
 /// This method has O(1) complexity.
 /// Panics if the index is out of bounds.
-/// TODO: make it intrinsic
+#intrinsic("%stringview.get")
 #alias("_[_]")
 #alias(code_unit_at)
 pub fn StringView::at(self : StringView, index : Int) -> UInt16 {
@@ -46,6 +46,7 @@ pub fn StringView::at(self : StringView, index : Int) -> UInt16 {
 /// Returns the length of the view.
 /// 
 /// This method counts the charcodes(code unit) in the view and has O(1) complexity.
+#intrinsic("%stringview.length")
 pub fn StringView::length(self : StringView) -> Int {
   self.end() - self.start()
 }
@@ -124,6 +125,7 @@ pub fn StringView::view(
 /// index is within bounds.
 ///
 /// This method has O(1) complexity.
+#intrinsic("%stringview.unsafe_get")
 #internal(unsafe, "Undefined behavior if index is out of bounds.")
 pub fn StringView::unsafe_get(self : StringView, index : Int) -> UInt16 {
   self.str().unsafe_get(self.start() + index)

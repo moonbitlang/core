@@ -900,3 +900,539 @@ test "aligned fastpath known values" {
   inspect(sview.unsafe_extract_int16_le_aligned(0), content="-1")
   inspect(sview.unsafe_extract_int_le_aligned(0), content="-1")
 }
+
+// ----------------------------------------------------------------------
+// Forwarder cross-checks: every Array[Byte] / FixedArray[Byte] / Bytes /
+// ReadOnlyArray[Byte] accessor must agree with the BytesView reference on
+// identical data. Covers the byte-offset aligned fastpaths too.
+// ----------------------------------------------------------------------
+
+///|
+test "forwarders: bit / bit_signed (all types)" {
+  let by = b"\x01\x23\x45\x67\x89\xab\xcd\xef\x12\x34\x56\x78\x9a\xbc\xde\xf0"
+  let bv : BytesView = by
+  let arr : Array[Byte] = by.to_array()
+  let fa : FixedArray[Byte] = FixedArray::from_array(arr)
+  let ro : ReadOnlyArray[Byte] = ReadOnlyArray::from_array(arr)
+  for i in 0..<(by.length() * 8) {
+    @test.assert_eq(by.unsafe_extract_bit(i, 1), bv.unsafe_extract_bit(i, 1))
+    @test.assert_eq(arr.unsafe_extract_bit(i, 1), bv.unsafe_extract_bit(i, 1))
+    @test.assert_eq(fa.unsafe_extract_bit(i, 1), bv.unsafe_extract_bit(i, 1))
+    @test.assert_eq(ro.unsafe_extract_bit(i, 1), bv.unsafe_extract_bit(i, 1))
+    @test.assert_eq(
+      by.unsafe_extract_bit_signed(i, 1),
+      bv.unsafe_extract_bit_signed(i, 1),
+    )
+    @test.assert_eq(
+      arr.unsafe_extract_bit_signed(i, 1),
+      bv.unsafe_extract_bit_signed(i, 1),
+    )
+    @test.assert_eq(
+      fa.unsafe_extract_bit_signed(i, 1),
+      bv.unsafe_extract_bit_signed(i, 1),
+    )
+    @test.assert_eq(
+      ro.unsafe_extract_bit_signed(i, 1),
+      bv.unsafe_extract_bit_signed(i, 1),
+    )
+  }
+}
+
+///|
+test "forwarders: byte / byte_signed (all types)" {
+  let by = b"\x01\x23\x45\x67\x89\xab\xcd\xef\x12\x34\x56\x78\x9a\xbc\xde\xf0"
+  let bv : BytesView = by
+  let arr : Array[Byte] = by.to_array()
+  let fa : FixedArray[Byte] = FixedArray::from_array(arr)
+  let ro : ReadOnlyArray[Byte] = ReadOnlyArray::from_array(arr)
+  for i in 0..<=(by.length() * 8 - 8) {
+    for len in [2, 3, 4, 5, 8] {
+      @test.assert_eq(
+        by.unsafe_extract_byte(i, len),
+        bv.unsafe_extract_byte(i, len),
+      )
+      @test.assert_eq(
+        arr.unsafe_extract_byte(i, len),
+        bv.unsafe_extract_byte(i, len),
+      )
+      @test.assert_eq(
+        fa.unsafe_extract_byte(i, len),
+        bv.unsafe_extract_byte(i, len),
+      )
+      @test.assert_eq(
+        ro.unsafe_extract_byte(i, len),
+        bv.unsafe_extract_byte(i, len),
+      )
+      @test.assert_eq(
+        by.unsafe_extract_byte_signed(i, len),
+        bv.unsafe_extract_byte_signed(i, len),
+      )
+      @test.assert_eq(
+        arr.unsafe_extract_byte_signed(i, len),
+        bv.unsafe_extract_byte_signed(i, len),
+      )
+      @test.assert_eq(
+        fa.unsafe_extract_byte_signed(i, len),
+        bv.unsafe_extract_byte_signed(i, len),
+      )
+      @test.assert_eq(
+        ro.unsafe_extract_byte_signed(i, len),
+        bv.unsafe_extract_byte_signed(i, len),
+      )
+    }
+  }
+}
+
+///|
+test "forwarders: uint/int 9..32 le/be (all types)" {
+  let by = b"\x01\x23\x45\x67\x89\xab\xcd\xef\x12\x34\x56\x78\x9a\xbc\xde\xf0"
+  let bv : BytesView = by
+  let arr : Array[Byte] = by.to_array()
+  let fa : FixedArray[Byte] = FixedArray::from_array(arr)
+  let ro : ReadOnlyArray[Byte] = ReadOnlyArray::from_array(arr)
+  for i in 0..<=(by.length() * 8 - 32) {
+    for len in [9, 12, 16, 23, 24, 32] {
+      @test.assert_eq(
+        by.unsafe_extract_uint_le(i, len),
+        bv.unsafe_extract_uint_le(i, len),
+      )
+      @test.assert_eq(
+        arr.unsafe_extract_uint_le(i, len),
+        bv.unsafe_extract_uint_le(i, len),
+      )
+      @test.assert_eq(
+        fa.unsafe_extract_uint_le(i, len),
+        bv.unsafe_extract_uint_le(i, len),
+      )
+      @test.assert_eq(
+        ro.unsafe_extract_uint_le(i, len),
+        bv.unsafe_extract_uint_le(i, len),
+      )
+      @test.assert_eq(
+        by.unsafe_extract_uint_be(i, len),
+        bv.unsafe_extract_uint_be(i, len),
+      )
+      @test.assert_eq(
+        arr.unsafe_extract_uint_be(i, len),
+        bv.unsafe_extract_uint_be(i, len),
+      )
+      @test.assert_eq(
+        fa.unsafe_extract_uint_be(i, len),
+        bv.unsafe_extract_uint_be(i, len),
+      )
+      @test.assert_eq(
+        ro.unsafe_extract_uint_be(i, len),
+        bv.unsafe_extract_uint_be(i, len),
+      )
+      @test.assert_eq(
+        by.unsafe_extract_int_le(i, len),
+        bv.unsafe_extract_int_le(i, len),
+      )
+      @test.assert_eq(
+        arr.unsafe_extract_int_le(i, len),
+        bv.unsafe_extract_int_le(i, len),
+      )
+      @test.assert_eq(
+        fa.unsafe_extract_int_le(i, len),
+        bv.unsafe_extract_int_le(i, len),
+      )
+      @test.assert_eq(
+        ro.unsafe_extract_int_le(i, len),
+        bv.unsafe_extract_int_le(i, len),
+      )
+      @test.assert_eq(
+        by.unsafe_extract_int_be(i, len),
+        bv.unsafe_extract_int_be(i, len),
+      )
+      @test.assert_eq(
+        arr.unsafe_extract_int_be(i, len),
+        bv.unsafe_extract_int_be(i, len),
+      )
+      @test.assert_eq(
+        fa.unsafe_extract_int_be(i, len),
+        bv.unsafe_extract_int_be(i, len),
+      )
+      @test.assert_eq(
+        ro.unsafe_extract_int_be(i, len),
+        bv.unsafe_extract_int_be(i, len),
+      )
+    }
+  }
+}
+
+///|
+test "forwarders: uint/int 33..64 le/be (all types)" {
+  let by = b"\x01\x23\x45\x67\x89\xab\xcd\xef\x12\x34\x56\x78\x9a\xbc\xde\xf0"
+  let bv : BytesView = by
+  let arr : Array[Byte] = by.to_array()
+  let fa : FixedArray[Byte] = FixedArray::from_array(arr)
+  let ro : ReadOnlyArray[Byte] = ReadOnlyArray::from_array(arr)
+  for i in 0..<=(by.length() * 8 - 64) {
+    for len in [33, 40, 45, 48, 56, 64] {
+      @test.assert_eq(
+        by.unsafe_extract_uint64_le(i, len),
+        bv.unsafe_extract_uint64_le(i, len),
+      )
+      @test.assert_eq(
+        arr.unsafe_extract_uint64_le(i, len),
+        bv.unsafe_extract_uint64_le(i, len),
+      )
+      @test.assert_eq(
+        fa.unsafe_extract_uint64_le(i, len),
+        bv.unsafe_extract_uint64_le(i, len),
+      )
+      @test.assert_eq(
+        ro.unsafe_extract_uint64_le(i, len),
+        bv.unsafe_extract_uint64_le(i, len),
+      )
+      @test.assert_eq(
+        by.unsafe_extract_uint64_be(i, len),
+        bv.unsafe_extract_uint64_be(i, len),
+      )
+      @test.assert_eq(
+        arr.unsafe_extract_uint64_be(i, len),
+        bv.unsafe_extract_uint64_be(i, len),
+      )
+      @test.assert_eq(
+        fa.unsafe_extract_uint64_be(i, len),
+        bv.unsafe_extract_uint64_be(i, len),
+      )
+      @test.assert_eq(
+        ro.unsafe_extract_uint64_be(i, len),
+        bv.unsafe_extract_uint64_be(i, len),
+      )
+      @test.assert_eq(
+        by.unsafe_extract_int64_le(i, len),
+        bv.unsafe_extract_int64_le(i, len),
+      )
+      @test.assert_eq(
+        arr.unsafe_extract_int64_le(i, len),
+        bv.unsafe_extract_int64_le(i, len),
+      )
+      @test.assert_eq(
+        fa.unsafe_extract_int64_le(i, len),
+        bv.unsafe_extract_int64_le(i, len),
+      )
+      @test.assert_eq(
+        ro.unsafe_extract_int64_le(i, len),
+        bv.unsafe_extract_int64_le(i, len),
+      )
+      @test.assert_eq(
+        by.unsafe_extract_int64_be(i, len),
+        bv.unsafe_extract_int64_be(i, len),
+      )
+      @test.assert_eq(
+        arr.unsafe_extract_int64_be(i, len),
+        bv.unsafe_extract_int64_be(i, len),
+      )
+      @test.assert_eq(
+        fa.unsafe_extract_int64_be(i, len),
+        bv.unsafe_extract_int64_be(i, len),
+      )
+      @test.assert_eq(
+        ro.unsafe_extract_int64_be(i, len),
+        bv.unsafe_extract_int64_be(i, len),
+      )
+    }
+  }
+}
+
+///|
+test "forwarders: bytesview (all types)" {
+  let by = b"\x01\x23\x45\x67\x89\xab\xcd\xef\x12\x34\x56\x78\x9a\xbc\xde\xf0"
+  let bv : BytesView = by
+  let arr : Array[Byte] = by.to_array()
+  let fa : FixedArray[Byte] = FixedArray::from_array(arr)
+  let ro : ReadOnlyArray[Byte] = ReadOnlyArray::from_array(arr)
+  fn ck_av(a : ArrayView[Byte], e : BytesView) raise {
+    @test.assert_eq(a.length(), e.length())
+    for k in 0..<a.length() {
+      @test.assert_eq(a[k], e[k])
+    }
+  }
+
+  fn ck_bv(a : BytesView, e : BytesView) raise {
+    @test.assert_eq(a.length(), e.length())
+    for k in 0..<a.length() {
+      @test.assert_eq(a[k], e[k])
+    }
+  }
+
+  for i in 0..<=by.length() {
+    for j in 0..<=(by.length() - i) {
+      let e = bv.unsafe_extract_bytesview(i * 8, j * 8)
+      ck_av(arr.unsafe_extract_bytesview(i * 8, j * 8), e)
+      ck_av(fa.unsafe_extract_bytesview(i * 8, j * 8), e)
+      ck_av(ro.unsafe_extract_bytesview(i * 8, j * 8), e)
+      ck_bv(by.unsafe_extract_bytesview(i * 8, j * 8), e)
+    }
+  }
+}
+
+///|
+test "forwarders aligned: byte (all types)" {
+  let by = b"\x01\x23\x45\x67\x89\xab\xcd\xef\x12\x34\x56\x78\x9a\xbc\xde\xf0"
+  let bv : BytesView = by
+  let arr : Array[Byte] = by.to_array()
+  let fa : FixedArray[Byte] = FixedArray::from_array(arr)
+  let ro : ReadOnlyArray[Byte] = ReadOnlyArray::from_array(arr)
+  for b in 0..<=(by.length() - 1) {
+    @test.assert_eq(
+      by.unsafe_extract_byte_aligned(b),
+      bv.unsafe_extract_byte_aligned(b),
+    )
+    @test.assert_eq(
+      arr.unsafe_extract_byte_aligned(b),
+      bv.unsafe_extract_byte_aligned(b),
+    )
+    @test.assert_eq(
+      fa.unsafe_extract_byte_aligned(b),
+      bv.unsafe_extract_byte_aligned(b),
+    )
+    @test.assert_eq(
+      ro.unsafe_extract_byte_aligned(b),
+      bv.unsafe_extract_byte_aligned(b),
+    )
+    @test.assert_eq(
+      by.unsafe_extract_byte_signed_aligned(b),
+      bv.unsafe_extract_byte_signed_aligned(b),
+    )
+    @test.assert_eq(
+      arr.unsafe_extract_byte_signed_aligned(b),
+      bv.unsafe_extract_byte_signed_aligned(b),
+    )
+    @test.assert_eq(
+      fa.unsafe_extract_byte_signed_aligned(b),
+      bv.unsafe_extract_byte_signed_aligned(b),
+    )
+    @test.assert_eq(
+      ro.unsafe_extract_byte_signed_aligned(b),
+      bv.unsafe_extract_byte_signed_aligned(b),
+    )
+  }
+}
+
+///|
+test "forwarders aligned: 16-bit (all types)" {
+  let by = b"\x01\x23\x45\x67\x89\xab\xcd\xef\x12\x34\x56\x78\x9a\xbc\xde\xf0"
+  let bv : BytesView = by
+  let arr : Array[Byte] = by.to_array()
+  let fa : FixedArray[Byte] = FixedArray::from_array(arr)
+  let ro : ReadOnlyArray[Byte] = ReadOnlyArray::from_array(arr)
+  for b in 0..<=(by.length() - 2) {
+    @test.assert_eq(
+      by.unsafe_extract_uint16_le_aligned(b),
+      bv.unsafe_extract_uint16_le_aligned(b),
+    )
+    @test.assert_eq(
+      arr.unsafe_extract_uint16_le_aligned(b),
+      bv.unsafe_extract_uint16_le_aligned(b),
+    )
+    @test.assert_eq(
+      fa.unsafe_extract_uint16_le_aligned(b),
+      bv.unsafe_extract_uint16_le_aligned(b),
+    )
+    @test.assert_eq(
+      ro.unsafe_extract_uint16_le_aligned(b),
+      bv.unsafe_extract_uint16_le_aligned(b),
+    )
+    @test.assert_eq(
+      by.unsafe_extract_uint16_be_aligned(b),
+      bv.unsafe_extract_uint16_be_aligned(b),
+    )
+    @test.assert_eq(
+      arr.unsafe_extract_uint16_be_aligned(b),
+      bv.unsafe_extract_uint16_be_aligned(b),
+    )
+    @test.assert_eq(
+      fa.unsafe_extract_uint16_be_aligned(b),
+      bv.unsafe_extract_uint16_be_aligned(b),
+    )
+    @test.assert_eq(
+      ro.unsafe_extract_uint16_be_aligned(b),
+      bv.unsafe_extract_uint16_be_aligned(b),
+    )
+    @test.assert_eq(
+      by.unsafe_extract_int16_le_aligned(b),
+      bv.unsafe_extract_int16_le_aligned(b),
+    )
+    @test.assert_eq(
+      arr.unsafe_extract_int16_le_aligned(b),
+      bv.unsafe_extract_int16_le_aligned(b),
+    )
+    @test.assert_eq(
+      fa.unsafe_extract_int16_le_aligned(b),
+      bv.unsafe_extract_int16_le_aligned(b),
+    )
+    @test.assert_eq(
+      ro.unsafe_extract_int16_le_aligned(b),
+      bv.unsafe_extract_int16_le_aligned(b),
+    )
+    @test.assert_eq(
+      by.unsafe_extract_int16_be_aligned(b),
+      bv.unsafe_extract_int16_be_aligned(b),
+    )
+    @test.assert_eq(
+      arr.unsafe_extract_int16_be_aligned(b),
+      bv.unsafe_extract_int16_be_aligned(b),
+    )
+    @test.assert_eq(
+      fa.unsafe_extract_int16_be_aligned(b),
+      bv.unsafe_extract_int16_be_aligned(b),
+    )
+    @test.assert_eq(
+      ro.unsafe_extract_int16_be_aligned(b),
+      bv.unsafe_extract_int16_be_aligned(b),
+    )
+  }
+}
+
+///|
+test "forwarders aligned: 32-bit (all types)" {
+  let by = b"\x01\x23\x45\x67\x89\xab\xcd\xef\x12\x34\x56\x78\x9a\xbc\xde\xf0"
+  let bv : BytesView = by
+  let arr : Array[Byte] = by.to_array()
+  let fa : FixedArray[Byte] = FixedArray::from_array(arr)
+  let ro : ReadOnlyArray[Byte] = ReadOnlyArray::from_array(arr)
+  for b in 0..<=(by.length() - 4) {
+    @test.assert_eq(
+      by.unsafe_extract_uint_le_aligned(b),
+      bv.unsafe_extract_uint_le_aligned(b),
+    )
+    @test.assert_eq(
+      arr.unsafe_extract_uint_le_aligned(b),
+      bv.unsafe_extract_uint_le_aligned(b),
+    )
+    @test.assert_eq(
+      fa.unsafe_extract_uint_le_aligned(b),
+      bv.unsafe_extract_uint_le_aligned(b),
+    )
+    @test.assert_eq(
+      ro.unsafe_extract_uint_le_aligned(b),
+      bv.unsafe_extract_uint_le_aligned(b),
+    )
+    @test.assert_eq(
+      by.unsafe_extract_uint_be_aligned(b),
+      bv.unsafe_extract_uint_be_aligned(b),
+    )
+    @test.assert_eq(
+      arr.unsafe_extract_uint_be_aligned(b),
+      bv.unsafe_extract_uint_be_aligned(b),
+    )
+    @test.assert_eq(
+      fa.unsafe_extract_uint_be_aligned(b),
+      bv.unsafe_extract_uint_be_aligned(b),
+    )
+    @test.assert_eq(
+      ro.unsafe_extract_uint_be_aligned(b),
+      bv.unsafe_extract_uint_be_aligned(b),
+    )
+    @test.assert_eq(
+      by.unsafe_extract_int_le_aligned(b),
+      bv.unsafe_extract_int_le_aligned(b),
+    )
+    @test.assert_eq(
+      arr.unsafe_extract_int_le_aligned(b),
+      bv.unsafe_extract_int_le_aligned(b),
+    )
+    @test.assert_eq(
+      fa.unsafe_extract_int_le_aligned(b),
+      bv.unsafe_extract_int_le_aligned(b),
+    )
+    @test.assert_eq(
+      ro.unsafe_extract_int_le_aligned(b),
+      bv.unsafe_extract_int_le_aligned(b),
+    )
+    @test.assert_eq(
+      by.unsafe_extract_int_be_aligned(b),
+      bv.unsafe_extract_int_be_aligned(b),
+    )
+    @test.assert_eq(
+      arr.unsafe_extract_int_be_aligned(b),
+      bv.unsafe_extract_int_be_aligned(b),
+    )
+    @test.assert_eq(
+      fa.unsafe_extract_int_be_aligned(b),
+      bv.unsafe_extract_int_be_aligned(b),
+    )
+    @test.assert_eq(
+      ro.unsafe_extract_int_be_aligned(b),
+      bv.unsafe_extract_int_be_aligned(b),
+    )
+  }
+}
+
+///|
+test "forwarders aligned: 64-bit (all types)" {
+  let by = b"\x01\x23\x45\x67\x89\xab\xcd\xef\x12\x34\x56\x78\x9a\xbc\xde\xf0"
+  let bv : BytesView = by
+  let arr : Array[Byte] = by.to_array()
+  let fa : FixedArray[Byte] = FixedArray::from_array(arr)
+  let ro : ReadOnlyArray[Byte] = ReadOnlyArray::from_array(arr)
+  for b in 0..<=(by.length() - 8) {
+    @test.assert_eq(
+      by.unsafe_extract_uint64_le_aligned(b),
+      bv.unsafe_extract_uint64_le_aligned(b),
+    )
+    @test.assert_eq(
+      arr.unsafe_extract_uint64_le_aligned(b),
+      bv.unsafe_extract_uint64_le_aligned(b),
+    )
+    @test.assert_eq(
+      fa.unsafe_extract_uint64_le_aligned(b),
+      bv.unsafe_extract_uint64_le_aligned(b),
+    )
+    @test.assert_eq(
+      ro.unsafe_extract_uint64_le_aligned(b),
+      bv.unsafe_extract_uint64_le_aligned(b),
+    )
+    @test.assert_eq(
+      by.unsafe_extract_uint64_be_aligned(b),
+      bv.unsafe_extract_uint64_be_aligned(b),
+    )
+    @test.assert_eq(
+      arr.unsafe_extract_uint64_be_aligned(b),
+      bv.unsafe_extract_uint64_be_aligned(b),
+    )
+    @test.assert_eq(
+      fa.unsafe_extract_uint64_be_aligned(b),
+      bv.unsafe_extract_uint64_be_aligned(b),
+    )
+    @test.assert_eq(
+      ro.unsafe_extract_uint64_be_aligned(b),
+      bv.unsafe_extract_uint64_be_aligned(b),
+    )
+    @test.assert_eq(
+      by.unsafe_extract_int64_le_aligned(b),
+      bv.unsafe_extract_int64_le_aligned(b),
+    )
+    @test.assert_eq(
+      arr.unsafe_extract_int64_le_aligned(b),
+      bv.unsafe_extract_int64_le_aligned(b),
+    )
+    @test.assert_eq(
+      fa.unsafe_extract_int64_le_aligned(b),
+      bv.unsafe_extract_int64_le_aligned(b),
+    )
+    @test.assert_eq(
+      ro.unsafe_extract_int64_le_aligned(b),
+      bv.unsafe_extract_int64_le_aligned(b),
+    )
+    @test.assert_eq(
+      by.unsafe_extract_int64_be_aligned(b),
+      bv.unsafe_extract_int64_be_aligned(b),
+    )
+    @test.assert_eq(
+      arr.unsafe_extract_int64_be_aligned(b),
+      bv.unsafe_extract_int64_be_aligned(b),
+    )
+    @test.assert_eq(
+      fa.unsafe_extract_int64_be_aligned(b),
+      bv.unsafe_extract_int64_be_aligned(b),
+    )
+    @test.assert_eq(
+      ro.unsafe_extract_int64_be_aligned(b),
+      bv.unsafe_extract_int64_be_aligned(b),
+    )
+  }
+}

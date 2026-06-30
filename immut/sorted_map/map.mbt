@@ -149,8 +149,8 @@ pub fn[K, V] SortedMap::to_array(self : SortedMap[K, V]) -> Array[(K, V)] {
 ///
 /// ```mbt check
 /// test {
-///   let map1 = @sorted_map.from_array([(1, "a"), (2, "b")])
-///   let map2 = @sorted_map.from_array([(2, "c"), (3, "d")])
+///   let map1 = @sorted_map.SortedMap([(1, "a"), (2, "b")])
+///   let map2 = @sorted_map.SortedMap([(2, "c"), (3, "d")])
 ///   let merged = map1.merge(map2)
 ///   debug_inspect(merged.get(1), content="Some(\"a\")")
 ///   debug_inspect(merged.get(2), content="Some(\"c\")")
@@ -299,7 +299,7 @@ fn[K, V] balance(
 
 ///|
 test "from_array" {
-  let m = from_array([
+  let m = SortedMap([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -314,7 +314,7 @@ test "from_array" {
 
 ///|
 test "insert" {
-  let m = from_array([(3, "three"), (8, "eight"), (1, "one")])
+  let m = SortedMap([(3, "three"), (8, "eight"), (1, "one")])
   inspect(m.debug_tree(), content="(3,three,(1,one,_,_),(8,eight,_,_))")
   let m = m.add(5, "five").add(2, "two").add(0, "zero").add(1, "one_updated")
   inspect(
@@ -325,7 +325,7 @@ test "insert" {
 
 ///|
 test "remove" {
-  let m1 = from_array([
+  let m1 = SortedMap([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -349,7 +349,7 @@ test "remove" {
 
 ///|
 test "contains" {
-  let m = from_array([
+  let m = SortedMap([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -367,7 +367,7 @@ test "contains" {
 
 ///|
 test "map" {
-  let m = from_array([
+  let m = SortedMap([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -383,7 +383,7 @@ test "map" {
 
 ///|
 test "map_with_key" {
-  let m = from_array([
+  let m = SortedMap([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -399,7 +399,7 @@ test "map_with_key" {
 
 ///|
 test "filter" {
-  let m = from_array([
+  let m = SortedMap([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -412,7 +412,7 @@ test "filter" {
 
 ///|
 test "filter_with_key" {
-  let m = from_array([
+  let m = SortedMap([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -437,7 +437,7 @@ test "empty" {
 
 ///|
 test "split_max" {
-  let m = from_array([
+  let m = SortedMap([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -459,7 +459,7 @@ test "split_max" {
 
 ///|
 test "split_min" {
-  let m = from_array([
+  let m = SortedMap([
     (3, "three"),
     (8, "eight"),
     (2, "two"),
@@ -481,7 +481,7 @@ test "split_min" {
 
 ///|
 test "glue" {
-  let m = from_array([
+  let m = SortedMap([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -505,7 +505,7 @@ test "glue" {
 
 ///|
 test "split_max with non-empty tree" {
-  let m = from_array([
+  let m = SortedMap([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
