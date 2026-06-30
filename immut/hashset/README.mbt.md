@@ -15,11 +15,11 @@ test "creating immutable sets" {
   inspect(empty.is_empty(), content="true")
 
   // From array
-  let from_array_result = @hashset.from_array([1, 2, 3, 2, 1]) // Duplicates removed
+  let from_array_result = @hashset.HashSet([1, 2, 3, 2, 1]) // Duplicates removed
   inspect(from_array_result.length(), content="3")
 
   // From fixed array
-  let from_fixed = @hashset.from_array([10, 20, 30])
+  let from_fixed = @hashset.HashSet([10, 20, 30])
   inspect(from_fixed.length(), content="3")
 
   // From iterator
@@ -35,7 +35,7 @@ All operations return new sets without modifying the original:
 ```mbt check
 ///|
 test "immutable operations" {
-  let original = @hashset.from_array([1, 2, 3])
+  let original = @hashset.HashSet([1, 2, 3])
 
   // Add element - returns new set
   let with_four = original.add(4)
@@ -61,8 +61,8 @@ Perform mathematical set operations immutably:
 ```mbt check
 ///|
 test "set operations" {
-  let set1 = @hashset.from_array([1, 2, 3, 4])
-  let set2 = @hashset.from_array([3, 4, 5, 6])
+  let set1 = @hashset.HashSet([1, 2, 3, 4])
+  let set2 = @hashset.HashSet([3, 4, 5, 6])
 
   // Union - all elements from both sets
   let union_set = set1.union(set2)
@@ -89,7 +89,7 @@ Test membership and query the set:
 ```mbt check
 ///|
 test "membership and queries" {
-  let numbers = @hashset.from_array([10, 20, 30, 40, 50])
+  let numbers = @hashset.HashSet([10, 20, 30, 40, 50])
 
   // Membership testing
   inspect(numbers.contains(30), content="true")
@@ -113,7 +113,7 @@ test "membership and queries" {
 ```mbt check
 ///|
 test "iter" {
-  let set = @hashset.from_array([1, 2, 3])
+  let set = @hashset.HashSet([1, 2, 3])
   let arr = set.iter().to_array()
   arr.sort()
   @test.assert_eq(arr, [1, 2, 3])
@@ -127,7 +127,7 @@ Immutable sets share structure efficiently:
 ```mbt check
 ///|
 test "structural sharing" {
-  let base_set = @hashset.from_array([1, 2, 3, 4, 5])
+  let base_set = @hashset.HashSet([1, 2, 3, 4, 5])
 
   // Adding elements creates new sets that share structure
   let set_with_six = base_set.add(6)
@@ -154,12 +154,12 @@ Transform sets while maintaining immutability:
 ```mbt check
 ///|
 test "filtering and transformation" {
-  let numbers = @hashset.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+  let numbers = @hashset.HashSet([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 
   // Create filtered sets manually (no built-in filter/map)
-  let evens = @hashset.from_array([2, 4, 6, 8, 10])
+  let evens = @hashset.HashSet([2, 4, 6, 8, 10])
   inspect(evens.length(), content="5")
-  let doubled = @hashset.from_array([2, 4, 6, 8, 10, 12, 14, 16, 18, 20])
+  let doubled = @hashset.HashSet([2, 4, 6, 8, 10, 12, 14, 16, 18, 20])
   inspect(doubled.length(), content="10")
   inspect(doubled.contains(6), content="true") // 3 * 2 = 6
 
@@ -176,9 +176,9 @@ Build complex sets from simpler ones:
 ```mbt check
 ///|
 test "combining sets" {
-  let small_primes = @hashset.from_array([2, 3, 5, 7])
-  let small_evens = @hashset.from_array([2, 4, 6, 8])
-  let small_odds = @hashset.from_array([1, 3, 5, 7, 9])
+  let small_primes = @hashset.HashSet([2, 3, 5, 7])
+  let small_evens = @hashset.HashSet([2, 4, 6, 8])
+  let small_odds = @hashset.HashSet([1, 3, 5, 7, 9])
 
   // Combine multiple sets
   let all_small = small_primes.union(small_evens).union(small_odds)
@@ -203,7 +203,7 @@ Key differences from mutable sets:
 ///|
 test "immutable vs mutable comparison" {
   // Immutable set - creates new instances
-  let immut_set = @hashset.from_array([1, 2, 3])
+  let immut_set = @hashset.HashSet([1, 2, 3])
   let immut_with_four = immut_set.add(4)
 
   // Both sets exist independently
@@ -223,8 +223,8 @@ More complex set operations:
 ```mbt check
 ///|
 test "advanced operations" {
-  let set1 = @hashset.from_array([1, 2, 3, 4, 5])
-  let set2 = @hashset.from_array([4, 5, 6, 7, 8])
+  let set1 = @hashset.HashSet([1, 2, 3, 4, 5])
+  let set2 = @hashset.HashSet([4, 5, 6, 7, 8])
 
   // Symmetric difference (elements in either but not both)
   let sym_diff = set1.difference(set2).union(set2.difference(set1))
@@ -247,7 +247,7 @@ Immutable sets provide several performance advantages:
 ```mbt check
 ///|
 test "performance benefits" {
-  let base = @hashset.from_array([1, 2, 3, 4, 5])
+  let base = @hashset.HashSet([1, 2, 3, 4, 5])
 
   // Multiple derived sets share structure
   let derived1 = base.add(6)
@@ -286,11 +286,11 @@ test "functional programming style" {
     _numbers : @hashset.HashSet[Int],
   ) -> @hashset.HashSet[Int] {
     // Manually create processed set (no built-in filter/map)
-    let positive_squares = @hashset.from_array([1, 4, 9]) // Squares of 1, 2, 3
+    let positive_squares = @hashset.HashSet([1, 4, 9]) // Squares of 1, 2, 3
     positive_squares.add(1) // Add the number 1 (though 1 already exists)
   }
 
-  let input = @hashset.from_array([-2, -1, 0, 1, 2, 3])
+  let input = @hashset.HashSet([-2, -1, 0, 1, 2, 3])
   let result = process_numbers(input)
 
   // Input unchanged, result is new set
@@ -306,7 +306,7 @@ test "functional programming style" {
 ```mbt check
 ///|
 test "configuration usage" {
-  let base_config = @hashset.from_array(["feature1", "feature2", "feature3"])
+  let base_config = @hashset.HashSet(["feature1", "feature2", "feature3"])
   fn enable_feature(
     config : @hashset.HashSet[String],
     feature : String,

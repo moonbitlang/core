@@ -158,6 +158,11 @@ pub fn parse_int(str : StringView, base? : Int = 0) -> Int raise {
 
 ///|
 fn check_underscore(str : StringView) -> Bool {
+  // Fast path: underscores are rare in practice. Without any underscore the
+  // per-character scan below can never reach a `break false` arm (those all
+  // require a preceding underscore), so validation always succeeds. Probe the
+  // raw code units once (no sub-view allocation) and skip the loop entirely.
+  guard str.contains_code_unit(('_' : UInt16)) else { return true }
   // skip the sign
   let rest = match str {
     ['+' | '-', .. rest] => rest

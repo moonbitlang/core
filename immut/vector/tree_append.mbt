@@ -36,6 +36,22 @@ fn push_sizes_last(sizes : FixedArray[Int]?, delta : Int) -> FixedArray[Int]? {
 }
 
 ///|
+/// Sizes for a previously radix (`None`) node whose right spine just absorbed a
+/// leaf of `delta` elements. It stays radix only when a full leaf was appended;
+/// any partial leaf leaves the node non-full, so it needs explicit sizes.
+fn[T] radix_append_sizes(
+  children : FixedArray[Tree[T]],
+  child_shift : Int,
+  delta : Int,
+) -> FixedArray[Int]? {
+  if delta == BRANCHING_FACTOR {
+    None
+  } else {
+    compute_sizes(children, child_shift)
+  }
+}
+
+///|
 /// Append a leaf to the right spine of a tree without going through generic tree concat.
 fn[T] Tree::append_right_leaf(
   self : Tree[T],
@@ -65,21 +81,28 @@ fn[T] Tree::append_right_leaf(
       Node(nodes, sizes) => {
         let len = nodes.length()
         match worker(nodes[len - 1], shift - NUM_BITS, leaf, delta) {
-          Some(new_node) =>
-            Some(
-              Node(
-                immutable_set(nodes, len - 1, new_node),
-                append_sizes_last(sizes, delta),
-              ),
-            )
+          Some(new_node) => {
+            // The right spine absorbed the leaf below us. If `sizes` was `None`
+            // (radix) and we just folded in a partial leaf, the node is no
+            // longer full and must carry an explicit sizes array.
+            let new_nodes = immutable_set(nodes, len - 1, new_node)
+            let new_sizes = match sizes {
+              Some(_) => append_sizes_last(sizes, delta)
+              None => radix_append_sizes(new_nodes, shift - NUM_BITS, delta)
+            }
+            Some(Node(new_nodes, new_sizes))
+          }
           None =>
             if len < BRANCHING_FACTOR {
-              Some(
-                Node(
-                  immutable_push(nodes, new_branch_left(leaf, shift - NUM_BITS)),
-                  push_sizes_last(sizes, delta),
-                ),
+              let new_nodes = immutable_push(
+                nodes,
+                new_branch_left(leaf, shift - NUM_BITS),
               )
+              let new_sizes = match sizes {
+                Some(_) => push_sizes_last(sizes, delta)
+                None => radix_append_sizes(new_nodes, shift - NUM_BITS, delta)
+              }
+              Some(Node(new_nodes, new_sizes))
             } else {
               None
             }
@@ -92,20 +115,24 @@ fn[T] Tree::append_right_leaf(
   match worker(self, shift, leaf, delta) {
     Some(new_tree) => (new_tree, shift)
     None => {
+      // A fresh root over `[self, new_branch]` stays radix only when every leaf
+      // is full: `self` is already radix and the appended leaf is full too.
       let new_branch = new_branch_left(leaf, shift)
-      (
-        match self {
-          Leaf(_) => Node([self, new_branch], None)
-          Node(_, Some(sizes)) => {
-            let len = sizes[sizes.length() - 1]
-            Node([self, new_branch], Some([len, len + delta]))
-          }
-          Node(_, None) => Node([self, new_branch], None)
-          Empty =>
-            abort("Unreachable: Empty tree should have been handled in worker")
-        },
-        shift + NUM_BITS,
-      )
+      let self_radix = match self {
+        Node(_, None) => true
+        Leaf(elems) => elems.length() == BRANCHING_FACTOR
+        Node(_, Some(_)) => false
+        Empty =>
+          abort("Unreachable: Empty tree should have been handled in worker")
+      }
+      let new_sizes : FixedArray[Int]? = if self_radix &&
+        delta == BRANCHING_FACTOR {
+        None
+      } else {
+        let len = self.size(shift)
+        Some([len, len + delta])
+      }
+      (Node([self, new_branch], new_sizes), shift + NUM_BITS)
     }
   }
 }

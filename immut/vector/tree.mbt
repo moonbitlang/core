@@ -54,9 +54,18 @@ fn[T] Tree::empty() -> Tree[T] {
 ///|
 /// Create a new tree with a single leaf. Note that the resulting tree is a left-skewed tree.
 fn[T] new_branch_left(leaf : FixedArray[T], shift : Int) -> Tree[T] {
+  // A full leaf keeps the branch radix-indexable (`None`). A partial leaf must
+  // be relaxed (`Some`): on its own it sits at the right edge, but once another
+  // leaf is appended to its right it becomes an interior, non-full leaf and
+  // radix indexing would read out of bounds.
+  let sizes : FixedArray[Int]? = if leaf.length() == BRANCHING_FACTOR {
+    None
+  } else {
+    Some([leaf.length()])
+  }
   match shift {
     0 => Leaf(leaf)
-    s => Node([new_branch_left(leaf, s - NUM_BITS)], None) // size is None because we can use radix indexing
+    s => Node([new_branch_left(leaf, s - NUM_BITS)], sizes)
   }
 }
 
@@ -196,25 +205,29 @@ fn[T] Tree::push_end(self : Tree[T], shift : Int, value : T) -> (Tree[T], Int) {
         let len = nodes.length()
         match worker(nodes[len - 1], shift - NUM_BITS) {
           // We have successfully pushed the value, now duplicate its ancestor nodes.
+          // Pushing a single value always lands in a partial leaf, so a radix
+          // (`None`) node must switch to explicit sizes.
           Some(new_node) => {
             let new_nodes = nodes.copy()
             new_nodes[len - 1] = new_node
-            let sizes = update_sizes_last(sizes)
-            Some(Node(new_nodes, sizes))
+            let new_sizes = match sizes {
+              Some(_) => update_sizes_last(sizes)
+              None => compute_sizes(new_nodes, shift - NUM_BITS)
+            }
+            Some(Node(new_nodes, new_sizes))
           }
           // We need to create a new node to push the value.
           None =>
             if len < BRANCHING_FACTOR {
-              let sizes = push_sizes_last(sizes)
-              Some(
-                Node(
-                  immutable_push(
-                    nodes,
-                    new_branch_left([value], shift - NUM_BITS),
-                  ),
-                  sizes,
-                ),
+              let new_nodes = immutable_push(
+                nodes,
+                new_branch_left([value], shift - NUM_BITS),
               )
+              let new_sizes = match sizes {
+                Some(_) => push_sizes_last(sizes)
+                None => compute_sizes(new_nodes, shift - NUM_BITS)
+              }
+              Some(Node(new_nodes, new_sizes))
             } else {
               None
             }
@@ -227,21 +240,13 @@ fn[T] Tree::push_end(self : Tree[T], shift : Int, value : T) -> (Tree[T], Int) {
   match worker(self, shift) {
     Some(new_tree) => (new_tree, shift)
     None => {
+      // The new root holds `self` plus a fresh single-element branch. That
+      // branch is always a partial leaf, so the root needs explicit sizes even
+      // when `self` was radix.
       let new_branch = new_branch_left([value], shift)
+      let len = self.size(shift)
       (
-        match self {
-          Leaf(_leaf) => Node([self, new_branch], None)
-          Node(_nodes, Some(sizes)) => {
-            let len = sizes[sizes.length() - 1]
-            let sizes = FixedArray::from_array([len, 1 + len])
-            Node([self, new_branch], Some(sizes))
-          }
-          Node(_nodes, None) => Node([self, new_branch], None)
-          Empty =>
-            abort(
-              "Unreachable: Empty tree should have fallen into the Some(new_tree) branch",
-            )
-        },
+        Node([self, new_branch], Some(FixedArray::from_array([len, 1 + len]))),
         shift + NUM_BITS,
       )
     }

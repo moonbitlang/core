@@ -51,8 +51,8 @@ You can create an empty list or a list from an array.
 test {
   let empty_list : @list.List[Int] = @list.new()
   assert_true(empty_list.is_empty())
-  let list = @list.from_array([1, 2, 3, 4, 5])
-  @debug.assert_eq(list, @list.from_array([1, 2, 3, 4, 5]))
+  let list = @list.List([1, 2, 3, 4, 5])
+  @debug.assert_eq(list, List([1, 2, 3, 4, 5]))
 }
 ```
 
@@ -67,8 +67,8 @@ Add an element to the beginning of the list.
 ```mbt check
 ///|
 test {
-  let list = @list.from_array([2, 3, 4, 5]).prepend(1)
-  @debug.assert_eq(list, @list.from_array([1, 2, 3, 4, 5]))
+  let list = @list.List([2, 3, 4, 5]).prepend(1)
+  @debug.assert_eq(list, List([1, 2, 3, 4, 5]))
 }
 ```
 
@@ -79,7 +79,7 @@ Get the number of elements in the list.
 ```mbt check
 ///|
 test {
-  let list = @list.from_array([1, 2, 3, 4, 5])
+  let list = @list.List([1, 2, 3, 4, 5])
   @test.assert_eq(list.length(), 5)
 }
 ```
@@ -107,7 +107,7 @@ Get the first element of the list as an `Option`.
 ```mbt check
 ///|
 test {
-  let list = @list.from_array([1, 2, 3, 4, 5])
+  let list = @list.List([1, 2, 3, 4, 5])
   assert_true(list.head() == Some(1))
 }
 ```
@@ -119,8 +119,8 @@ Get the list without its first element.
 ```mbt check
 ///|
 test {
-  let list = @list.from_array([1, 2, 3, 4, 5])
-  @debug.assert_eq(list.unsafe_tail(), @list.from_array([2, 3, 4, 5]))
+  let list = @list.List([1, 2, 3, 4, 5])
+  @debug.assert_eq(list.unsafe_tail(), List([2, 3, 4, 5]))
 }
 ```
 
@@ -131,7 +131,7 @@ Get the nth element of the list as an `Option`.
 ```mbt check
 ///|
 test {
-  let list = @list.from_array([1, 2, 3, 4, 5])
+  let list = @list.List([1, 2, 3, 4, 5])
   assert_true(list.nth(2) == Some(3))
 }
 ```
@@ -148,7 +148,7 @@ Iterate over the elements of the list.
 ///|
 test {
   let arr = []
-  @list.from_array([1, 2, 3, 4, 5]).each(x => arr.push(x))
+  @list.List([1, 2, 3, 4, 5]).each(x => arr.push(x))
   @debug.assert_eq(arr, [1, 2, 3, 4, 5])
 }
 ```
@@ -160,8 +160,8 @@ Transform each element of the list.
 ```mbt check
 ///|
 test {
-  let list = @list.from_array([1, 2, 3, 4, 5]).map(x => x * 2)
-  @debug.assert_eq(list, @list.from_array([2, 4, 6, 8, 10]))
+  let list = @list.List([1, 2, 3, 4, 5]).map(x => x * 2)
+  @debug.assert_eq(list, List([2, 4, 6, 8, 10]))
 }
 ```
 
@@ -172,10 +172,10 @@ test {
 ```mbt check
 ///|
 test {
-  let list = @list.from_array([1, 2, 3, 4, 5])
-  @debug.assert_eq(list.filter(fn(x) { x % 2 == 0 }), @list.from_array([2, 4]))
+  let list = @list.List([1, 2, 3, 4, 5])
+  @debug.assert_eq(list.filter(fn(x) { x % 2 == 0 }), List([2, 4]))
   let fm = list.filter_map(fn(x) { if x > 3 { Some(x * 10) } else { None } })
-  @debug.assert_eq(fm, @list.from_array([40, 50]))
+  @debug.assert_eq(fm, List([40, 50]))
 }
 ```
 
@@ -186,7 +186,7 @@ test {
 ```mbt check
 ///|
 test {
-  let list = @list.from_array([1, 2, 3])
+  let list = @list.List([1, 2, 3])
   @test.assert_eq(list.fold(init=0, fn(acc, x) { acc + x }), 6)
   let indexed = list.foldi(init="", fn(i, acc, x) {
     acc + i.to_string() + ":" + x.to_string() + " "
@@ -200,7 +200,7 @@ test {
 ```mbt check
 ///|
 test {
-  let list = @list.from_array([1, 2, 3, 4, 5])
+  let list = @list.List([1, 2, 3, 4, 5])
   assert_true(list.find(fn(x) { x > 3 }) == Some(4))
   assert_true(list.find_index(fn(x) { x == 3 }) == Some(2))
   @test.assert_eq(list.any(fn(x) { x > 4 }), true)
@@ -215,9 +215,9 @@ test {
 ```mbt check
 ///|
 test {
-  let list = @list.from_array([1, 2, 3])
-  let result = list.flat_map(fn(x) { @list.from_array([x, x * 10]) })
-  @debug.assert_eq(result, @list.from_array([1, 10, 2, 20, 3, 30]))
+  let list = @list.List([1, 2, 3])
+  let result = list.flat_map(fn(x) { List([x, x * 10]) })
+  @debug.assert_eq(result, List([1, 10, 2, 20, 3, 30]))
 }
 ```
 
@@ -232,14 +232,11 @@ test {
 ```mbt check
 ///|
 test {
-  let list = @list.from_array([1, 2, 3, 4, 5])
-  @debug.assert_eq(list.take(3), @list.from_array([1, 2, 3]))
-  @debug.assert_eq(list.drop(3), @list.from_array([4, 5]))
-  @debug.assert_eq(
-    list.take_while(fn(x) { x < 4 }),
-    @list.from_array([1, 2, 3]),
-  )
-  @debug.assert_eq(list.drop_while(fn(x) { x < 4 }), @list.from_array([4, 5]))
+  let list = @list.List([1, 2, 3, 4, 5])
+  @debug.assert_eq(list.take(3), List([1, 2, 3]))
+  @debug.assert_eq(list.drop(3), List([4, 5]))
+  @debug.assert_eq(list.take_while(fn(x) { x < 4 }), List([1, 2, 3]))
+  @debug.assert_eq(list.drop_while(fn(x) { x < 4 }), List([4, 5]))
 }
 ```
 
@@ -250,9 +247,9 @@ test {
 ```mbt check
 ///|
 test {
-  let list = @list.from_array([1, 2, 3, 2, 1])
-  @debug.assert_eq(list.remove(2), @list.from_array([1, 3, 2, 1]))
-  @debug.assert_eq(list.remove_at(0), @list.from_array([2, 3, 2, 1]))
+  let list = @list.List([1, 2, 3, 2, 1])
+  @debug.assert_eq(list.remove(2), List([1, 3, 2, 1]))
+  @debug.assert_eq(list.remove_at(0), List([2, 3, 2, 1]))
 }
 ```
 
@@ -261,7 +258,7 @@ test {
 ```mbt check
 ///|
 test {
-  let list = @list.from_array([3, 1, 4, 1, 5])
+  let list = @list.List([3, 1, 4, 1, 5])
   assert_true(list.last() == Some(5))
   assert_true(list.minimum() == Some(1))
   assert_true(list.maximum() == Some(5))
@@ -275,8 +272,8 @@ Reverse the list.
 ```mbt check
 ///|
 test {
-  let list = @list.from_array([1, 2, 3, 4, 5]).rev()
-  @debug.assert_eq(list, @list.from_array([5, 4, 3, 2, 1]))
+  let list = @list.List([1, 2, 3, 4, 5]).rev()
+  @debug.assert_eq(list, List([5, 4, 3, 2, 1]))
 }
 ```
 
@@ -287,8 +284,8 @@ Concatenate two lists.
 ```mbt check
 ///|
 test {
-  let list = @list.from_array([1, 2, 3]).concat(@list.from_array([4, 5]))
-  @debug.assert_eq(list, @list.from_array([1, 2, 3, 4, 5]))
+  let list = @list.List([1, 2, 3]).concat(List([4, 5]))
+  @debug.assert_eq(list, List([1, 2, 3, 4, 5]))
 }
 ```
 
@@ -299,11 +296,8 @@ Flatten a list of lists.
 ```mbt check
 ///|
 test {
-  let list = @list.from_array([
-    @list.from_array([1, 2]),
-    @list.from_array([3, 4]),
-  ]).flatten()
-  @debug.assert_eq(list, @list.from_array([1, 2, 3, 4]))
+  let list = @list.List([@list.List([1, 2]), List([3, 4])]).flatten()
+  @debug.assert_eq(list, List([1, 2, 3, 4]))
 }
 ```
 
@@ -314,8 +308,8 @@ Sort the list in ascending order.
 ```mbt check
 ///|
 test {
-  let list = @list.from_array([3, 1, 4, 1, 5, 9]).sort()
-  @debug.assert_eq(list, @list.from_array([1, 1, 3, 4, 5, 9]))
+  let list = @list.List([3, 1, 4, 1, 5, 9]).sort()
+  @debug.assert_eq(list, List([1, 1, 3, 4, 5, 9]))
 }
 ```
 
@@ -326,18 +320,11 @@ test {
 ```mbt check
 ///|
 test {
-  let list = @list.from_array([1, 2, 3])
-  @debug.assert_eq(list.intersperse(0), @list.from_array([1, 0, 2, 0, 3]))
-  let nested = @list.from_array([
-    @list.from_array([1, 2]),
-    @list.from_array([3, 4]),
-    @list.from_array([5]),
-  ])
-  let sep = @list.from_array([0])
-  @debug.assert_eq(
-    nested.intercalate(sep),
-    @list.from_array([1, 2, 0, 3, 4, 0, 5]),
-  )
+  let list = @list.List([1, 2, 3])
+  @debug.assert_eq(list.intersperse(0), List([1, 0, 2, 0, 3]))
+  let nested = @list.List([@list.List([1, 2]), List([3, 4]), List([5])])
+  let sep = @list.List([0])
+  @debug.assert_eq(nested.intercalate(sep), List([1, 2, 0, 3, 4, 0, 5]))
 }
 ```
 
@@ -346,13 +333,13 @@ test {
 ```mbt check
 ///|
 test {
-  let a = @list.from_array([1, 2, 3])
-  let b = @list.from_array(["a", "b", "c"])
+  let a = @list.List([1, 2, 3])
+  let b = @list.List(["a", "b", "c"])
   let zipped = @list.zip(a, b)
-  @debug.assert_eq(zipped, @list.from_array([(1, "a"), (2, "b"), (3, "c")]))
+  @debug.assert_eq(zipped, List([(1, "a"), (2, "b"), (3, "c")]))
   let (xs, ys) = zipped.unzip()
-  @debug.assert_eq(xs, @list.from_array([1, 2, 3]))
-  @debug.assert_eq(ys, @list.from_array(["a", "b", "c"]))
+  @debug.assert_eq(xs, List([1, 2, 3]))
+  @debug.assert_eq(ys, List(["a", "b", "c"]))
 }
 ```
 
@@ -363,10 +350,10 @@ test {
 ```mbt check
 ///|
 test {
-  let list = @list.from_array([1, 2, 3])
+  let list = @list.List([1, 2, 3])
   @debug.assert_eq(
     list.scan_left(fn(acc, x) { acc + x }, init=0),
-    @list.from_array([0, 1, 3, 6]),
+    List([0, 1, 3, 6]),
   )
 }
 ```
@@ -376,9 +363,9 @@ test {
 ```mbt check
 ///|
 test {
-  let list = @list.from_array([1, 2, 3, 4, 5])
-  @test.assert_eq(list.is_prefix(@list.from_array([1, 2, 3])), true)
-  @test.assert_eq(list.is_suffix(@list.from_array([4, 5])), true)
+  let list = @list.List([1, 2, 3, 4, 5])
+  @test.assert_eq(list.is_prefix(List([1, 2, 3])), true)
+  @test.assert_eq(list.is_suffix(List([4, 5])), true)
 }
 ```
 
@@ -389,7 +376,7 @@ Look up a value in an association list (list of key-value pairs):
 ```mbt check
 ///|
 test {
-  let assoc = @list.from_array([("a", 1), ("b", 2), ("c", 3)])
+  let assoc = @list.List([("a", 1), ("b", 2), ("c", 3)])
   assert_true(assoc.lookup("b") == Some(2))
   assert_true(assoc.lookup("z") == None)
 }
@@ -409,7 +396,7 @@ test {
       Some((n, n + 1))
     }
   })
-  @debug.assert_eq(list, @list.from_array([1, 2, 3, 4, 5]))
+  @debug.assert_eq(list, List([1, 2, 3, 4, 5]))
 }
 ```
 
@@ -422,10 +409,10 @@ test {
 ```mbt check
 ///|
 test {
-  let list = @list.from_array([1, 2, 3])
+  let list = @list.List([1, 2, 3])
   debug_inspect(list.iter().to_array(), content="[1, 2, 3]")
   let list2 = @list.from_iter([4, 5, 6].iter())
-  @debug.assert_eq(list2, @list.from_array([4, 5, 6]))
+  @debug.assert_eq(list2, List([4, 5, 6]))
 }
 ```
 
@@ -440,7 +427,7 @@ Convert a list to an array.
 ```mbt check
 ///|
 test {
-  let list = @list.from_array([1, 2, 3, 4, 5])
+  let list = @list.List([1, 2, 3, 4, 5])
   @debug.assert_eq(list.to_array(), [1, 2, 3, 4, 5])
 }
 ```
@@ -452,8 +439,8 @@ Create a list from an array.
 ```mbt check
 ///|
 test {
-  let list = @list.from_array([1, 2, 3, 4, 5])
-  @debug.assert_eq(list, @list.from_array([1, 2, 3, 4, 5]))
+  let list = @list.List([1, 2, 3, 4, 5])
+  @debug.assert_eq(list, List([1, 2, 3, 4, 5]))
 }
 ```
 
@@ -466,8 +453,8 @@ Lists with the same elements in the same order are considered equal.
 ```mbt check
 ///|
 test {
-  let list1 = @list.from_array([1, 2, 3])
-  let list2 = @list.from_array([1, 2, 3])
+  let list1 = @list.List([1, 2, 3])
+  let list2 = @list.List([1, 2, 3])
   @test.assert_eq(list1 == list2, true)
 }
 ```
@@ -489,7 +476,7 @@ fn safe_head(list : @list.List[Int]) -> Int {
 
 ///|
 test {
-  let list = @list.from_array([1, 2, 3])
+  let list = @list.List([1, 2, 3])
   @test.assert_eq(safe_head(list), 1)
   let empty_list : @list.List[Int] = @list.new()
   @test.assert_eq(safe_head(empty_list), 0)

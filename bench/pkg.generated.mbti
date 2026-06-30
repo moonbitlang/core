@@ -16,9 +16,7 @@ pub fn single_bench(name? : String, () -> Unit, count? : UInt) -> Summary
 
 // Types and methods
 #alias(T)
-pub struct Bench {
-  // private fields
-}
+type Bench
 #alias(new, deprecated)
 #as_free_fn(new, deprecated)
 #as_free_fn

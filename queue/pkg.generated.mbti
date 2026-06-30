@@ -13,9 +13,7 @@ import {
 
 // Types and methods
 #alias(T, deprecated)
-pub struct Queue[A] {
-  // private fields
-}
+type Queue[A]
 #alias(from_array)
 #alias(of, deprecated)
 #as_free_fn(of, deprecated)

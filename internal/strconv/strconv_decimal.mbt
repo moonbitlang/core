@@ -485,7 +485,7 @@ fn Decimal::new_digits(self : Decimal, s : Int) -> Int {
     if i >= self.digits_num {
       break true
     }
-    let d = code_unit.to_int() - '0'.to_int()
+    let d = code_unit.to_int() - '0'
     if self.digits[i].to_int() != d {
       break self.digits[i].to_int() < d
     }

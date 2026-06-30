@@ -19,6 +19,7 @@ pub enum List[A] {
   Empty
   More(A, mut tail~ : List[A])
 }
+pub fn[A] List::List(ArrayView[A]) -> Self[A]
 pub fn[A] List::all(Self[A], (A) -> Bool raise?) -> Bool raise?
 pub fn[A] List::any(Self[A], (A) -> Bool raise?) -> Bool raise?
 pub fn[A] List::concat(Self[A], Self[A]) -> Self[A]
@@ -41,7 +42,8 @@ pub fn[A, B] List::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 pub fn[A, B] List::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
 #alias(of, deprecated)
 #as_free_fn(of, deprecated)
-#as_free_fn
+#as_free_fn(deprecated)
+#deprecated
 pub fn[A] List::from_array(ArrayView[A]) -> Self[A]
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)

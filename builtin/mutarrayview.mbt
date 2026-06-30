@@ -63,6 +63,7 @@ fn[T] MutArrayView::make(
 ///   inspect(view.length(), content="2")
 /// }
 /// ```
+#intrinsic("%mutarrayview.length")
 pub fn[T] MutArrayView::length(self : MutArrayView[T]) -> Int {
   self.len()
 }
@@ -112,6 +113,7 @@ pub fn[T] MutArrayView::start_offset(self : MutArrayView[T]) -> Int {
 ///   inspect(view[1], content="4")
 /// }
 /// ```
+#intrinsic("%mutarrayview.get")
 #alias("_[_]")
 pub fn[T] MutArrayView::at(self : MutArrayView[T], index : Int) -> T {
   guard index >= 0 && index < self.len() else {
@@ -141,7 +143,7 @@ pub fn[T] MutArrayView::at(self : MutArrayView[T], index : Int) -> T {
 ///   inspect(view.unsafe_get(1), content="3")
 /// }
 /// ```
-#intrinsic("%arrayview.unsafe_get")
+#intrinsic("%mutarrayview.unsafe_get")
 #internal(unsafe, "Panic if index is out of bounds")
 pub fn[T] MutArrayView::unsafe_get(self : MutArrayView[T], index : Int) -> T {
   self.buf()[self.start() + index]
@@ -170,6 +172,7 @@ pub fn[T] MutArrayView::unsafe_get(self : MutArrayView[T], index : Int) -> T {
 ///   inspect(arr[2], content="10")
 /// }
 /// ```
+#intrinsic("%mutarrayview.set")
 #alias("_[_]=_")
 pub fn[T] MutArrayView::set(
   self : MutArrayView[T],
@@ -202,7 +205,7 @@ pub fn[T] MutArrayView::set(
 ///   inspect(view[1], content="10")
 /// }
 /// ```
-#intrinsic("%arrayview.unsafe_set")
+#intrinsic("%mutarrayview.unsafe_set")
 #internal(unsafe, "Panic if index is out of bounds")
 pub fn[T] MutArrayView::unsafe_set(
   self : MutArrayView[T],

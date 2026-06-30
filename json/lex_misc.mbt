@@ -93,7 +93,7 @@ fn ParseContext::expect_ascii_char(
 
 ///|
 test "expect_char" {
-  let ctx = ParseContext::make("abc", 1)
+  let ctx = ParseContext::make("abc")
   ctx.expect_char('a')
   ctx.expect_char('b')
   ctx.expect_char('c')
@@ -107,7 +107,7 @@ test "expect_char" {
 ///|
 test "expect_char with surrogate pair" {
   // "\uD83D\uDE00" // todo: shall we allow this?
-  let ctx = ParseContext::make("a\u{1F600}bc\u{1F600}c", 1)
+  let ctx = ParseContext::make("a\u{1F600}bc\u{1F600}c")
   ctx.expect_char('a')
   ctx.expect_char((0x1F600).unsafe_to_char())
   ctx.expect_char('b')
@@ -148,25 +148,25 @@ fn ParseContext::lex_skip_whitespace(ctx : ParseContext) -> Unit {
 ///|
 test "lex_skip_whitespace" {
   // Empty input: nothing to skip.
-  let ctx = ParseContext::make("", 1)
+  let ctx = ParseContext::make("")
   ctx.lex_skip_whitespace()
   json_inspect(ctx.offset, content=0)
   // Only whitespace: offset advances to end.
-  let ctx = ParseContext::make("   \t\r\n", 1)
+  let ctx = ParseContext::make("   \t\r\n")
   ctx.lex_skip_whitespace()
   json_inspect(ctx.offset, content=6)
   // Mixed whitespace before a token: stops at the first non-ws byte.
-  let ctx = ParseContext::make(" \t\r\n{", 1)
+  let ctx = ParseContext::make(" \t\r\n{")
   ctx.lex_skip_whitespace()
   json_inspect(ctx.offset, content=4)
   // No leading whitespace: offset unchanged.
-  let ctx = ParseContext::make("{}", 1)
+  let ctx = ParseContext::make("{}")
   ctx.lex_skip_whitespace()
   json_inspect(ctx.offset, content=0)
   // Non-ASCII / Unicode whitespace (e.g. U+00A0 NBSP) must NOT be
   // treated as JSON whitespace — RFC 8259 limits the set to the four
   // ASCII chars handled above.
-  let ctx = ParseContext::make("\u{00A0}x", 1)
+  let ctx = ParseContext::make("\u{00A0}x")
   ctx.lex_skip_whitespace()
   json_inspect(ctx.offset, content=0)
 }

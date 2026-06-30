@@ -46,6 +46,10 @@ test "UInt16 arithmetic and bit ops" {
   inspect((a | b).to_int(), content="19")
   inspect((a & b).to_int(), content="0")
   inspect((a ^ b).to_int(), content="19")
+  inspect(a.lnot().to_int(), content="65519")
+  inspect((0x0000 : UInt16).lnot().to_int(), content="65535")
+  inspect((0xFFFF : UInt16).lnot().to_int(), content="0")
+  inspect(a.lnot().lnot().to_int(), content="16")
   inspect(a == b, content="false")
   inspect(a != b, content="true")
 }

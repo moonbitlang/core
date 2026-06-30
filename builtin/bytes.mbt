@@ -356,20 +356,7 @@ pub fn FixedArray::set_utf16be_char(
 ///   inspect(bytes1 == bytes3, content="false")
 /// }
 /// ```
-pub impl Eq for Bytes with fn equal(self : Bytes, other : Bytes) -> Bool {
-  if self.length() != other.length() {
-    false
-  } else {
-    let len = self.length()
-    for i in 0..<len {
-      if self[i] != other[i] {
-        break false
-      }
-    } nobreak {
-      true
-    }
-  }
-}
+pub impl Eq for Bytes with fn equal(self : Bytes, other : Bytes) -> Bool = "%bytes.equal"
 
 ///|
 /// Compares two byte sequences based on shortlex order. First compares the lengths of

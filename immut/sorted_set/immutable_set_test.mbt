@@ -41,104 +41,84 @@ test "default" {
 ///|
 test "disjoint" {
   inspect(
-    @sorted_set.from_array([1]).disjoint(@sorted_set.from_array([1, 2, 3])),
+    @sorted_set.SortedSet([1]).disjoint(SortedSet([1, 2, 3])),
     content="false",
   )
   inspect(
-    @sorted_set.from_array([1, 2, 3]).disjoint(
-      @sorted_set.from_array([1, 2, 3]),
-    ),
+    @sorted_set.SortedSet([1, 2, 3]).disjoint(SortedSet([1, 2, 3])),
     content="false",
   )
   inspect(
-    @sorted_set.from_array([1, 2, 3]).disjoint(
-      @sorted_set.from_array([4, 5, 6]),
-    ),
+    @sorted_set.SortedSet([1, 2, 3]).disjoint(SortedSet([4, 5, 6])),
     content="true",
   )
   inspect(
-    @sorted_set.from_array([1, 2, 3]).subset(@sorted_set.from_array([3, 4, 5])),
+    @sorted_set.SortedSet([1, 2, 3]).subset(SortedSet([3, 4, 5])),
     content="false",
   )
 }
 
 ///|
 test "disjoint same instance" {
-  let set = @sorted_set.from_array([1, 2, 3])
+  let set = @sorted_set.SortedSet([1, 2, 3])
   inspect(set.disjoint(set), content="false")
 }
 
 ///|
 test "subset" {
   inspect(
-    @sorted_set.from_array([1, 2, 3]).subset(
-      @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]),
+    @sorted_set.SortedSet([1, 2, 3]).subset(
+      SortedSet([7, 2, 9, 4, 5, 6, 3, 8, 1]),
     ),
     content="true",
   )
   inspect(
-    @sorted_set.from_array([1, 2, 3]).subset(
-      @sorted_set.from_array([10, 11, 12, 13, 14]),
-    ),
+    @sorted_set.SortedSet([1, 2, 3]).subset(SortedSet([10, 11, 12, 13, 14])),
     content="false",
   )
   // element not in other but previously missed by buggy self-reference
   inspect(
-    @sorted_set.from_array([1, 2, 5]).subset(
-      @sorted_set.from_array([1, 2, 3, 4]),
-    ),
+    @sorted_set.SortedSet([1, 2, 5]).subset(SortedSet([1, 2, 3, 4])),
     content="false",
   )
   inspect(
-    @sorted_set.from_array([0, 3, 4]).subset(
-      @sorted_set.from_array([1, 2, 3, 4]),
-    ),
+    @sorted_set.SortedSet([0, 3, 4]).subset(SortedSet([1, 2, 3, 4])),
     content="false",
   )
   // exact match
   inspect(
-    @sorted_set.from_array([1, 2, 3]).subset(@sorted_set.from_array([1, 2, 3])),
+    @sorted_set.SortedSet([1, 2, 3]).subset(SortedSet([1, 2, 3])),
     content="true",
   )
   // empty is subset of anything
-  inspect(
-    @sorted_set.new().subset(@sorted_set.from_array([1, 2, 3])),
-    content="true",
-  )
+  inspect(@sorted_set.new().subset(SortedSet([1, 2, 3])), content="true")
   // nothing is subset of empty (except empty)
-  inspect(
-    @sorted_set.from_array([1]).subset(@sorted_set.new()),
-    content="false",
-  )
+  inspect(@sorted_set.SortedSet([1]).subset(@sorted_set.new()), content="false")
 }
 
 ///|
 test "diff" {
   let empty = @sorted_set.new()
   debug_inspect(
-    empty.difference(@sorted_set.from_array([1, 2, 3])),
+    empty.difference(SortedSet([1, 2, 3])),
     content=(
       #|<SortedSet: []>
     ),
   )
   debug_inspect(
-    @sorted_set.from_array([1, 2, 3]).difference(empty),
+    @sorted_set.SortedSet([1, 2, 3]).difference(empty),
     content=(
       #|<SortedSet: [1, 2, 3]>
     ),
   )
   debug_inspect(
-    @sorted_set.from_array([1, 2, 3]).difference(
-      @sorted_set.from_array([4, 5, 1]),
-    ),
+    @sorted_set.SortedSet([1, 2, 3]).difference(SortedSet([4, 5, 1])),
     content=(
       #|<SortedSet: [2, 3]>
     ),
   )
   debug_inspect(
-    @sorted_set.from_array([1, 2, 3]).difference(
-      @sorted_set.from_array([1, 2, 3]),
-    ),
+    @sorted_set.SortedSet([1, 2, 3]).difference(SortedSet([1, 2, 3])),
     content=(
       #|<SortedSet: []>
     ),
@@ -148,15 +128,13 @@ test "diff" {
 ///|
 test "inter" {
   debug_inspect(
-    @sorted_set.from_array([3, 4, 5]).intersection(
-      @sorted_set.from_array([4, 5, 6]),
-    ),
+    @sorted_set.SortedSet([3, 4, 5]).intersection(SortedSet([4, 5, 6])),
     content=(
       #|<SortedSet: [4, 5]>
     ),
   )
   debug_inspect(
-    @sorted_set.from_array([3, 4]).intersection(@sorted_set.from_array([5, 6])),
+    @sorted_set.SortedSet([3, 4]).intersection(SortedSet([5, 6])),
     content=(
       #|<SortedSet: []>
     ),
@@ -167,37 +145,37 @@ test "inter" {
 test "union" {
   let empty = @sorted_set.new()
   debug_inspect(
-    empty.union(@sorted_set.from_array([4, 5, 6])),
+    empty.union(SortedSet([4, 5, 6])),
     content=(
       #|<SortedSet: [4, 5, 6]>
     ),
   )
   debug_inspect(
-    @sorted_set.from_array([4, 5, 6]).union(empty),
+    @sorted_set.SortedSet([4, 5, 6]).union(empty),
     content=(
       #|<SortedSet: [4, 5, 6]>
     ),
   )
   debug_inspect(
-    @sorted_set.from_array([3]).union(@sorted_set.from_array([4, 5, 6])),
+    @sorted_set.SortedSet([3]).union(SortedSet([4, 5, 6])),
     content=(
       #|<SortedSet: [3, 4, 5, 6]>
     ),
   )
   debug_inspect(
-    @sorted_set.from_array([3, 4, 5]).union(@sorted_set.from_array([6])),
+    @sorted_set.SortedSet([3, 4, 5]).union(SortedSet([6])),
     content=(
       #|<SortedSet: [3, 4, 5, 6]>
     ),
   )
   debug_inspect(
-    @sorted_set.from_array([3, 4, 5]).union(@sorted_set.from_array([4, 5, 6])),
+    @sorted_set.SortedSet([3, 4, 5]).union(SortedSet([4, 5, 6])),
     content=(
       #|<SortedSet: [3, 4, 5, 6]>
     ),
   )
   debug_inspect(
-    @sorted_set.from_array([3, 4, 5]) + @sorted_set.from_array([4, 5, 6]),
+    @sorted_set.SortedSet([3, 4, 5]) + SortedSet([4, 5, 6]),
     content=(
       #|<SortedSet: [3, 4, 5, 6]>
     ),
@@ -206,8 +184,8 @@ test "union" {
 
 ///|
 test "union smaller left non-singleton" {
-  let left = @sorted_set.from_array([1, 3])
-  let right = @sorted_set.from_array([0, 2, 4, 5])
+  let left = @sorted_set.SortedSet([1, 3])
+  let right = @sorted_set.SortedSet([0, 2, 4, 5])
   debug_inspect(
     left.union(right),
     content=(
@@ -221,7 +199,7 @@ test "union smaller left non-singleton" {
 ///|
 test "map" {
   debug_inspect(
-    @sorted_set.from_array([1, 2, 3, 4, 5]).map(x => x * 2),
+    @sorted_set.SortedSet([1, 2, 3, 4, 5]).map(x => x * 2),
     content=(
       #|<SortedSet: [2, 4, 6, 8, 10]>
     ),
@@ -230,7 +208,7 @@ test "map" {
 
 ///|
 test "map non-monotonic" {
-  let set = @sorted_set.from_array([1, 2, 3])
+  let set = @sorted_set.SortedSet([1, 2, 3])
   debug_inspect(
     set.map(x => 4 - x),
     content=(
@@ -241,24 +219,18 @@ test "map non-monotonic" {
 
 ///|
 test "all" {
+  inspect(@sorted_set.SortedSet([2, 4, 6]).all(v => v % 2 == 0), content="true")
   inspect(
-    @sorted_set.from_array([2, 4, 6]).all(v => v % 2 == 0),
-    content="true",
-  )
-  inspect(
-    @sorted_set.from_array([1, 3, 5]).all(v => v % 2 == 0),
+    @sorted_set.SortedSet([1, 3, 5]).all(v => v % 2 == 0),
     content="false",
   )
 }
 
 ///|
 test "any" {
+  inspect(@sorted_set.SortedSet([1, 4, 3]).any(v => v % 2 == 0), content="true")
   inspect(
-    @sorted_set.from_array([1, 4, 3]).any(v => v % 2 == 0),
-    content="true",
-  )
-  inspect(
-    @sorted_set.from_array([1, 5, 3]).any(v => v % 2 == 0),
+    @sorted_set.SortedSet([1, 5, 3]).any(v => v % 2 == 0),
     content="false",
   )
 }
@@ -266,7 +238,7 @@ test "any" {
 ///|
 test "fold" {
   inspect(
-    @sorted_set.from_array([1, 2, 3, 4, 5]).fold(init=0, (acc, x) => acc + x),
+    @sorted_set.SortedSet([1, 2, 3, 4, 5]).fold(init=0, (acc, x) => acc + x),
     content="15",
   )
 }
@@ -274,7 +246,7 @@ test "fold" {
 ///|
 test "filter" {
   debug_inspect(
-    @sorted_set.from_array([1, 2, 3, 4, 5, 6]).filter(v => v % 2 == 0),
+    @sorted_set.SortedSet([1, 2, 3, 4, 5, 6]).filter(v => v % 2 == 0),
     content=(
       #|<SortedSet: [2, 4, 6]>
     ),
@@ -283,9 +255,9 @@ test "filter" {
 
 ///|
 test "split" {
-  let (left, present, right) = @sorted_set.from_array([
-    7, 2, 9, 4, 5, 6, 3, 8, 1,
-  ]).split(5)
+  let (left, present, right) = @sorted_set.SortedSet([7, 2, 9, 4, 5, 6, 3, 8, 1]).split(
+    5,
+  )
   inspect(present, content="true")
   debug_inspect(
     left,
@@ -299,9 +271,9 @@ test "split" {
       #|<SortedSet: [6, 7, 8, 9]>
     ),
   )
-  let (left, present, right) = @sorted_set.from_array([
-    7, 2, 9, 4, 5, 6, 3, 8, 1,
-  ]).split(0)
+  let (left, present, right) = @sorted_set.SortedSet([7, 2, 9, 4, 5, 6, 3, 8, 1]).split(
+    0,
+  )
   inspect(present, content="false")
   debug_inspect(
     left,
@@ -320,11 +292,11 @@ test "split" {
 ///|
 test "contain" {
   inspect(
-    @sorted_set.from_array([7, 2, 9, 4, 6, 3, 8, 1]).add(5).contains(5),
+    @sorted_set.SortedSet([7, 2, 9, 4, 6, 3, 8, 1]).add(5).contains(5),
     content="true",
   )
   inspect(
-    @sorted_set.from_array([7, 2, 9, 4, 6, 3, 8, 1]).contains(5),
+    @sorted_set.SortedSet([7, 2, 9, 4, 6, 3, 8, 1]).contains(5),
     content="false",
   )
 }
@@ -332,7 +304,7 @@ test "contain" {
 ///|
 test "to_array" {
   debug_inspect(
-    @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).to_array(),
+    @sorted_set.SortedSet([7, 2, 9, 4, 5, 6, 3, 8, 1]).to_array(),
     content="[1, 2, 3, 4, 5, 6, 7, 8, 9]",
   )
 }
@@ -340,7 +312,7 @@ test "to_array" {
 ///|
 test "from_fixed_array" {
   debug_inspect(
-    @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]),
+    @sorted_set.SortedSet([7, 2, 9, 4, 5, 6, 3, 8, 1]),
     content=(
       #|<SortedSet: [1, 2, 3, 4, 5, 6, 7, 8, 9]>
     ),
@@ -348,9 +320,9 @@ test "from_fixed_array" {
 }
 
 ///|
-test "from_array" {
+test "SortedSet constructor" {
   debug_inspect(
-    @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]),
+    @sorted_set.SortedSet([7, 2, 9, 4, 5, 6, 3, 8, 1]),
     content=(
       #|<SortedSet: [1, 2, 3, 4, 5, 6, 7, 8, 9]>
     ),
@@ -360,7 +332,7 @@ test "from_array" {
 ///|
 test "remove_min" {
   debug_inspect(
-    @sorted_set.from_array([3, 4, 5]).remove_min(),
+    @sorted_set.SortedSet([3, 4, 5]).remove_min(),
     content=(
       #|<SortedSet: [4, 5]>
     ),
@@ -370,55 +342,55 @@ test "remove_min" {
 ///|
 test "add" {
   debug_inspect(
-    @sorted_set.from_array([7, 2, 9, 4, 6, 3, 8, 1]).add(5),
+    @sorted_set.SortedSet([7, 2, 9, 4, 6, 3, 8, 1]).add(5),
     content=(
       #|<SortedSet: [1, 2, 3, 4, 5, 6, 7, 8, 9]>
     ),
   )
   debug_inspect(
-    @sorted_set.from_array([2]).add(1),
+    @sorted_set.SortedSet([2]).add(1),
     content=(
       #|<SortedSet: [1, 2]>
     ),
   )
   debug_inspect(
-    @sorted_set.from_array([2]).add(3),
+    @sorted_set.SortedSet([2]).add(3),
     content=(
       #|<SortedSet: [2, 3]>
     ),
   )
   debug_inspect(
-    @sorted_set.from_array([2]).add(1).add(3),
+    @sorted_set.SortedSet([2]).add(1).add(3),
     content=(
       #|<SortedSet: [1, 2, 3]>
     ),
   )
   debug_inspect(
-    @sorted_set.from_array([1, 2]).add(1),
+    @sorted_set.SortedSet([1, 2]).add(1),
     content=(
       #|<SortedSet: [1, 2]>
     ),
   )
   debug_inspect(
-    @sorted_set.from_array([2, 3]).add(3),
+    @sorted_set.SortedSet([2, 3]).add(3),
     content=(
       #|<SortedSet: [2, 3]>
     ),
   )
   debug_inspect(
-    @sorted_set.from_array([1, 2, 3]).add(1),
+    @sorted_set.SortedSet([1, 2, 3]).add(1),
     content=(
       #|<SortedSet: [1, 2, 3]>
     ),
   )
   debug_inspect(
-    @sorted_set.from_array([1, 2, 3]).add(3),
+    @sorted_set.SortedSet([1, 2, 3]).add(3),
     content=(
       #|<SortedSet: [1, 2, 3]>
     ),
   )
   debug_inspect(
-    @sorted_set.from_array([1]).add(2).add(2),
+    @sorted_set.SortedSet([1]).add(2).add(2),
     content=(
       #|<SortedSet: [1, 2]>
     ),
@@ -435,31 +407,31 @@ test "remove" {
     ),
   )
   debug_inspect(
-    @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(1),
+    @sorted_set.SortedSet([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(1),
     content=(
       #|<SortedSet: [2, 3, 4, 5, 6, 7, 8, 9]>
     ),
   )
   debug_inspect(
-    @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(9),
+    @sorted_set.SortedSet([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(9),
     content=(
       #|<SortedSet: [1, 2, 3, 4, 5, 6, 7, 8]>
     ),
   )
   debug_inspect(
-    @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(8),
+    @sorted_set.SortedSet([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(8),
     content=(
       #|<SortedSet: [1, 2, 3, 4, 5, 6, 7, 9]>
     ),
   )
   debug_inspect(
-    @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(0),
+    @sorted_set.SortedSet([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(0),
     content=(
       #|<SortedSet: [1, 2, 3, 4, 5, 6, 7, 8, 9]>
     ),
   )
   debug_inspect(
-    @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(10),
+    @sorted_set.SortedSet([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(10),
     content=(
       #|<SortedSet: [1, 2, 3, 4, 5, 6, 7, 8, 9]>
     ),
@@ -486,10 +458,7 @@ test "merge and concat with empty right" {
 
 ///|
 test "min" {
-  inspect(
-    @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).min(),
-    content="1",
-  )
+  inspect(@sorted_set.SortedSet([7, 2, 9, 4, 5, 6, 3, 8, 1]).min(), content="1")
 }
 
 ///|
@@ -497,17 +466,14 @@ test "min_option" {
   let empty : @sorted_set.SortedSet[Int] = @sorted_set.new()
   debug_inspect(empty.min_option(), content="None")
   debug_inspect(
-    @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).min_option(),
+    @sorted_set.SortedSet([7, 2, 9, 4, 5, 6, 3, 8, 1]).min_option(),
     content="Some(1)",
   )
 }
 
 ///|
 test "max" {
-  inspect(
-    @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).max(),
-    content="9",
-  )
+  inspect(@sorted_set.SortedSet([7, 2, 9, 4, 5, 6, 3, 8, 1]).max(), content="9")
 }
 
 ///|
@@ -515,7 +481,7 @@ test "max_option" {
   let empty : @sorted_set.SortedSet[Int] = @sorted_set.new()
   debug_inspect(empty.max_option(), content="None")
   debug_inspect(
-    @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).max_option(),
+    @sorted_set.SortedSet([7, 2, 9, 4, 5, 6, 3, 8, 1]).max_option(),
     content="Some(9)",
   )
 }
@@ -523,22 +489,22 @@ test "max_option" {
 ///|
 test "is_empty" {
   inspect(
-    (@sorted_set.from_array([]) : @sorted_set.SortedSet[Int]).is_empty(),
+    (SortedSet([]) : @sorted_set.SortedSet[Int]).is_empty(),
     content="true",
   )
-  inspect(@sorted_set.from_array([1]).is_empty(), content="false")
+  inspect(@sorted_set.SortedSet([1]).is_empty(), content="false")
 }
 
 ///|
 test "to_string" {
   debug_inspect(
-    @sorted_set.from_array([1, 2, 3, 4, 5]),
+    @sorted_set.SortedSet([1, 2, 3, 4, 5]),
     content=(
       #|<SortedSet: [1, 2, 3, 4, 5]>
     ),
   )
   debug_inspect(
-    (@sorted_set.from_array([]) : @sorted_set.SortedSet[Int]),
+    (SortedSet([]) : @sorted_set.SortedSet[Int]),
     content=(
       #|<SortedSet: []>
     ),
@@ -571,13 +537,10 @@ test "compare" {
 
 ///|
 test "to_json" {
-  @json.json_inspect(@sorted_set.from_array([5, 2, 4, 3, 1]), content=[
+  @json.json_inspect(@sorted_set.SortedSet([5, 2, 4, 3, 1]), content=[
     1, 2, 3, 4, 5,
   ])
-  @json.json_inspect(
-    (@sorted_set.from_array([]) : @sorted_set.SortedSet[Int]),
-    content=[],
-  )
+  @json.json_inspect((SortedSet([]) : @sorted_set.SortedSet[Int]), content=[])
 }
 
 ///|
@@ -612,11 +575,11 @@ test "from_json rejects non-array" {
 ///|
 test "iter" {
   let mut s = ""
-  @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).each(x => {
+  @sorted_set.SortedSet([7, 2, 9, 4, 5, 6, 3, 8, 1]).each(x => {
     s += x.to_string()
   })
   inspect(s, content="123456789")
-  let empty : @sorted_set.SortedSet[Int] = @sorted_set.from_array([])
+  let empty : @sorted_set.SortedSet[Int] = SortedSet([])
   s = ""
   empty.each(x => s += x.to_string())
   inspect(s, content="")
@@ -625,7 +588,7 @@ test "iter" {
 ///|
 test "iter_loop" {
   let buf = StringBuilder(size_hint=20)
-  let set = [2, 7, 1, 2, 3, 4, 5] |> @sorted_set.from_array
+  let set = [2, 7, 1, 2, 3, 4, 5] |> @sorted_set.SortedSet
   for x in set {
     buf.write_object(x)
   }
@@ -689,7 +652,7 @@ test "iter_loop" {
 
 ///|
 test "split with value not in set" {
-  let set = @sorted_set.from_array([1, 2, 3, 4, 5])
+  let set = @sorted_set.SortedSet([1, 2, 3, 4, 5])
   let (left, present, right) = set.split(6)
   inspect(present, content="false")
   debug_inspect(
@@ -708,7 +671,7 @@ test "split with value not in set" {
 
 ///|
 test "remove_min on non-empty set" {
-  let set = @sorted_set.from_array([3, 4, 5])
+  let set = @sorted_set.SortedSet([3, 4, 5])
   let new_set = set.remove_min()
   debug_inspect(
     new_set,
@@ -720,22 +683,22 @@ test "remove_min on non-empty set" {
 
 ///|
 test "min on non-empty set" {
-  let set = @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1])
+  let set = @sorted_set.SortedSet([7, 2, 9, 4, 5, 6, 3, 8, 1])
   let min_value = set.min()
   inspect(min_value, content="1")
 }
 
 ///|
 test "max on non-empty set" {
-  let set = @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1])
+  let set = @sorted_set.SortedSet([7, 2, 9, 4, 5, 6, 3, 8, 1])
   let max_value = set.max()
   inspect(max_value, content="9")
 }
 
 ///|
 test "union with different heights" {
-  let set1 = @sorted_set.from_array([3, 4, 5])
-  let set2 = @sorted_set.from_array([4, 5, 6])
+  let set1 = @sorted_set.SortedSet([3, 4, 5])
+  let set2 = @sorted_set.SortedSet([4, 5, 6])
   let union_set = set1.union(set2)
   debug_inspect(
     union_set,
@@ -747,8 +710,8 @@ test "union with different heights" {
 
 ///|
 test "disjoint with different sets" {
-  let set1 = @sorted_set.from_array([1, 2, 3])
-  let set2 = @sorted_set.from_array([4, 5, 6])
+  let set1 = @sorted_set.SortedSet([1, 2, 3])
+  let set2 = @sorted_set.SortedSet([4, 5, 6])
   let disjoint = set1.disjoint(set2)
   inspect(disjoint, content="true")
 }
@@ -791,12 +754,12 @@ test "size" {
   inspect(empty_set.length(), content="0")
 
   // Single element set should have size 1
-  inspect(@sorted_set.from_array([1]).length(), content="1")
+  inspect(@sorted_set.SortedSet([1]).length(), content="1")
 
   // Multiple elements set should have correct size
   // The order of insertion should not affect the size
   inspect(
-    @sorted_set.from_array([3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5]).length(),
+    @sorted_set.SortedSet([3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5]).length(),
     content="7",
   )
 }
@@ -805,7 +768,7 @@ test "size" {
 test "@sorted_set.symmetric_difference" {
   // Empty sets
   let empty = @sorted_set.new()
-  let set1 = @sorted_set.from_array([1, 2, 3])
+  let set1 = @sorted_set.SortedSet([1, 2, 3])
   debug_inspect(
     empty.symmetric_difference(empty),
     content=(
@@ -829,8 +792,8 @@ test "@sorted_set.symmetric_difference" {
 ///|
 test "@sorted_set.symmetric_difference/disjoint" {
   // Disjoint sets should union all elements
-  let set1 = @sorted_set.from_array([1, 3, 5])
-  let set2 = @sorted_set.from_array([2, 4, 6])
+  let set1 = @sorted_set.SortedSet([1, 3, 5])
+  let set2 = @sorted_set.SortedSet([2, 4, 6])
   debug_inspect(
     set1.symmetric_difference(set2),
     content=(
@@ -842,8 +805,8 @@ test "@sorted_set.symmetric_difference/disjoint" {
 ///|
 test "@sorted_set.symmetric_difference/overlapping" {
   // Sets with overlapping elements should only include non-common elements
-  let set1 = @sorted_set.from_array([1, 2, 3, 4])
-  let set2 = @sorted_set.from_array([3, 4, 5, 6])
+  let set1 = @sorted_set.SortedSet([1, 2, 3, 4])
+  let set2 = @sorted_set.SortedSet([3, 4, 5, 6])
   debug_inspect(
     set1.symmetric_difference(set2),
     content=(
@@ -865,7 +828,7 @@ test "range on empty set" {
 
 ///|
 test "range with no matches" {
-  let set = @sorted_set.from_array([1, 2, 3])
+  let set = @sorted_set.SortedSet([1, 2, 3])
   let count = for _ in set.range(low=10, high=20); count = 0 {
     continue count + 1
   } nobreak {
@@ -876,7 +839,7 @@ test "range with no matches" {
 
 ///|
 test "range matching all elements" {
-  let set = @sorted_set.from_array([1, 2, 3])
+  let set = @sorted_set.SortedSet([1, 2, 3])
   let arr = []
   for v in set.range(low=0, high=10) {
     arr.push(v)
@@ -886,7 +849,7 @@ test "range matching all elements" {
 
 ///|
 test "range partial match" {
-  let set = @sorted_set.from_array([1, 2, 3, 4, 5])
+  let set = @sorted_set.SortedSet([1, 2, 3, 4, 5])
   let arr = []
   for v in set.range(low=2, high=4) {
     arr.push(v)
@@ -896,7 +859,7 @@ test "range partial match" {
 
 ///|
 test "range with single element" {
-  let set = @sorted_set.from_array([1, 2, 3, 4, 5])
+  let set = @sorted_set.SortedSet([1, 2, 3, 4, 5])
   let arr = []
   for v in set.range(low=3, high=3) {
     arr.push(v)
@@ -906,7 +869,7 @@ test "range with single element" {
 
 ///|
 test "range at left boundary" {
-  let set = @sorted_set.from_array([1, 2, 3, 4, 5])
+  let set = @sorted_set.SortedSet([1, 2, 3, 4, 5])
   let arr = []
   for v in set.range(low=1, high=2) {
     arr.push(v)
@@ -916,7 +879,7 @@ test "range at left boundary" {
 
 ///|
 test "range at right boundary" {
-  let set = @sorted_set.from_array([1, 2, 3, 4, 5])
+  let set = @sorted_set.SortedSet([1, 2, 3, 4, 5])
   let arr = []
   for v in set.range(low=4, high=5) {
     arr.push(v)
@@ -926,7 +889,7 @@ test "range at right boundary" {
 
 ///|
 test "range with gaps in data" {
-  let set = @sorted_set.from_array([1, 3, 5, 7, 9])
+  let set = @sorted_set.SortedSet([1, 3, 5, 7, 9])
   let arr = []
   for v in set.range(low=2, high=8) {
     arr.push(v)
@@ -936,7 +899,7 @@ test "range with gaps in data" {
 
 ///|
 test "range with inverted bounds" {
-  let set = @sorted_set.from_array([1, 2, 3, 4, 5])
+  let set = @sorted_set.SortedSet([1, 2, 3, 4, 5])
   let count = for _ in set.range(low=5, high=2); count = 0 {
     continue count + 1
   } nobreak {
@@ -947,7 +910,7 @@ test "range with inverted bounds" {
 
 ///|
 test "range with early termination" {
-  let set = @sorted_set.from_array([1, 2, 3, 4, 5])
+  let set = @sorted_set.SortedSet([1, 2, 3, 4, 5])
   let count = for _ in set.range(low=1, high=5); count = 0 {
     let count = count + 1
     if count == 2 {
@@ -963,7 +926,7 @@ test "range with early termination" {
 ///|
 test "range on large dataset" {
   let arr = Array::makei(100, fn(i) { i })
-  let set = @sorted_set.from_array(arr)
+  let set = @sorted_set.SortedSet(arr)
   let count = for _ in set.range(low=25, high=75); count = 0 {
     continue count + 1
   } nobreak {
@@ -974,7 +937,7 @@ test "range on large dataset" {
 
 ///|
 test "range with non-existent boundaries" {
-  let set = @sorted_set.from_array([2, 4, 6, 8])
+  let set = @sorted_set.SortedSet([2, 4, 6, 8])
   let arr = []
   for v in set.range(low=3, high=7) {
     arr.push(v)

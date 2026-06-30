@@ -14,7 +14,7 @@
 
 ///|
 test "get with existing key" {
-  let map = @sorted_map.from_array([
+  let map = @sorted_map.SortedMap([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -26,7 +26,7 @@ test "get with existing key" {
 
 ///|
 test "_[_] with existing key" {
-  let map = @sorted_map.from_array([
+  let map = @sorted_map.SortedMap([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -38,7 +38,7 @@ test "_[_] with existing key" {
 
 ///|
 test "get with non-existing key" {
-  let map = @sorted_map.from_array([
+  let map = @sorted_map.SortedMap([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -50,7 +50,7 @@ test "get with non-existing key" {
 
 ///|
 test "get with pattern" {
-  let map = @sorted_map.from_array([
+  let map = @sorted_map.SortedMap([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -63,7 +63,7 @@ test "get with pattern" {
 
 ///|
 test "get after insertion" {
-  let map = @sorted_map.from_array([
+  let map = @sorted_map.SortedMap([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -76,7 +76,7 @@ test "get after insertion" {
 
 ///|
 test "_[_] after insertion" {
-  let map = @sorted_map.from_array([
+  let map = @sorted_map.SortedMap([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -89,7 +89,7 @@ test "_[_] after insertion" {
 
 ///|
 test "get after removal" {
-  let map = @sorted_map.from_array([
+  let map = @sorted_map.SortedMap([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -102,7 +102,7 @@ test "get after removal" {
 
 ///|
 test "panic get with non-existing key" {
-  let map = @sorted_map.from_array([
+  let map = @sorted_map.SortedMap([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -114,7 +114,7 @@ test "panic get with non-existing key" {
 
 ///|
 test "panic get after removal" {
-  let map = @sorted_map.from_array([
+  let map = @sorted_map.SortedMap([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -128,7 +128,7 @@ test "panic get after removal" {
 ///|
 test "iter" {
   let map = [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
-    |> @sorted_map.from_array
+    |> @sorted_map.SortedMap
   let buf = StringBuilder()
   for k, v in map {
     buf.write_object(k)
@@ -173,7 +173,7 @@ test "panic get with empty map" {
 ///|
 test "to_json with non-empty map" {
   let map = [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
-    |> @sorted_map.from_array
+    |> @sorted_map.SortedMap
   @json.json_inspect(map.to_json(), content={
     "0": "zero",
     "1": "one",
@@ -205,20 +205,20 @@ test "default" {
 
 ///|
 test "iter2" {
-  let map = @sorted_map.from_array([(2, "two"), (1, "one")])
+  let map = @sorted_map.SortedMap([(2, "two"), (1, "one")])
   debug_inspect(map.iter2().to_array(), content="[(1, \"one\"), (2, \"two\")]")
 }
 
 ///|
 test "rev_keys returns keys in descending order" {
-  let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
+  let map = @sorted_map.SortedMap([("a", 1), ("b", 2), ("c", 3)])
   let keys = map.rev_keys().collect()
   debug_inspect(keys, content="[\"c\", \"b\", \"a\"]")
 }
 
 ///|
 test "rev_values returns values in descending key order" {
-  let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
+  let map = @sorted_map.SortedMap([("a", 1), ("b", 2), ("c", 3)])
   let values = map.rev_values().collect()
   debug_inspect(values, content="[3, 2, 1]")
 }
@@ -251,21 +251,21 @@ test "rev_values on single element map" {
 
 ///|
 test "rev_keys early termination" {
-  let map = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
+  let map = @sorted_map.SortedMap([(1, "one"), (2, "two"), (3, "three")])
   let result = map.rev_keys().take(2).collect()
   debug_inspect(result, content="[3, 2]")
 }
 
 ///|
 test "rev_values early termination" {
-  let map = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
+  let map = @sorted_map.SortedMap([(1, "one"), (2, "two"), (3, "three")])
   let result = map.rev_values().take(2).collect()
   debug_inspect(result, content="[\"three\", \"two\"]")
 }
 
 ///|
 test "rev_keys is reverse of keys" {
-  let map = @sorted_map.from_array([
+  let map = @sorted_map.SortedMap([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -288,7 +288,7 @@ test "rev_keys is reverse of keys (quickcheck)" {
 
 ///|
 test "rev_values is reverse of values" {
-  let map = @sorted_map.from_array([
+  let map = @sorted_map.SortedMap([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -302,7 +302,7 @@ test "rev_values is reverse of values" {
 
 ///|
 test "rev_keys with complex tree" {
-  let map = @sorted_map.from_array([
+  let map = @sorted_map.SortedMap([
     (15, "15"),
     (10, "10"),
     (20, "20"),
@@ -317,7 +317,7 @@ test "rev_keys with complex tree" {
 
 ///|
 test "rev_values with complex tree" {
-  let map = @sorted_map.from_array([
+  let map = @sorted_map.SortedMap([
     (15, "15"),
     (10, "10"),
     (20, "20"),
@@ -346,7 +346,7 @@ test "range on empty map" {
 
 ///|
 test "range with no matches" {
-  let map = @sorted_map.from_array([(1, "a"), (2, "b"), (3, "c")])
+  let map = @sorted_map.SortedMap([(1, "a"), (2, "b"), (3, "c")])
   let count = for _, _ in map.range(low=10, high=20); count = 0 {
     continue count + 1
   } nobreak {
@@ -357,7 +357,7 @@ test "range with no matches" {
 
 ///|
 test "range matching all elements" {
-  let map = @sorted_map.from_array([(1, "a"), (2, "b"), (3, "c")])
+  let map = @sorted_map.SortedMap([(1, "a"), (2, "b"), (3, "c")])
   let buf = StringBuilder()
   for k, v in map.range(low=0, high=10) {
     buf.write_string("[\{k},\{v}]")
@@ -367,7 +367,7 @@ test "range matching all elements" {
 
 ///|
 test "range partial match" {
-  let map = @sorted_map.from_array([
+  let map = @sorted_map.SortedMap([
     (1, "a"),
     (2, "b"),
     (3, "c"),
@@ -383,7 +383,7 @@ test "range partial match" {
 
 ///|
 test "range with single element" {
-  let map = @sorted_map.from_array([
+  let map = @sorted_map.SortedMap([
     (1, "a"),
     (2, "b"),
     (3, "c"),
@@ -399,7 +399,7 @@ test "range with single element" {
 
 ///|
 test "range at left boundary" {
-  let map = @sorted_map.from_array([
+  let map = @sorted_map.SortedMap([
     (1, "a"),
     (2, "b"),
     (3, "c"),
@@ -415,7 +415,7 @@ test "range at left boundary" {
 
 ///|
 test "range at right boundary" {
-  let map = @sorted_map.from_array([
+  let map = @sorted_map.SortedMap([
     (1, "a"),
     (2, "b"),
     (3, "c"),
@@ -431,7 +431,7 @@ test "range at right boundary" {
 
 ///|
 test "range with gaps in data" {
-  let map = @sorted_map.from_array([
+  let map = @sorted_map.SortedMap([
     (1, "a"),
     (3, "c"),
     (5, "e"),
@@ -447,7 +447,7 @@ test "range with gaps in data" {
 
 ///|
 test "range with inverted bounds" {
-  let map = @sorted_map.from_array([
+  let map = @sorted_map.SortedMap([
     (1, "a"),
     (2, "b"),
     (3, "c"),
@@ -464,7 +464,7 @@ test "range with inverted bounds" {
 
 ///|
 test "range with early termination" {
-  let map = @sorted_map.from_array([
+  let map = @sorted_map.SortedMap([
     (1, "a"),
     (2, "b"),
     (3, "c"),
@@ -486,7 +486,7 @@ test "range with early termination" {
 ///|
 test "range on large dataset" {
   let arr = Array::makei(100, fn(i) { (i, "val\{i}") })
-  let map = @sorted_map.from_array(arr)
+  let map = @sorted_map.SortedMap(arr)
   let count = for _, _ in map.range(low=25, high=75); count = 0 {
     continue count + 1
   } nobreak {
@@ -497,7 +497,7 @@ test "range on large dataset" {
 
 ///|
 test "range with non-existent boundaries" {
-  let map = @sorted_map.from_array([(2, "b"), (4, "d"), (6, "f"), (8, "h")])
+  let map = @sorted_map.SortedMap([(2, "b"), (4, "d"), (6, "f"), (8, "h")])
   let buf = StringBuilder()
   for k, v in map.range(low=3, high=7) {
     buf.write_string("[\{k},\{v}]")
