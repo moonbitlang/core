@@ -36,7 +36,7 @@ pub fn[K : @debug.Debug, V : @debug.Debug] HashMap::to_repr(
 
 ///|
 test "Debug for HashMap" {
-  let hm : HashMap[Int, String] = from_array([(2, "b")])
+  let hm : HashMap[Int, String] = HashMap([(2, "b")])
   @debug.debug_inspect(
     hm,
     content=(

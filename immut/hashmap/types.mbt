@@ -23,4 +23,6 @@ priv enum Node[K, V] {
 
 ///|
 #alias(T, deprecated)
-struct HashMap[K, V](Node[K, V]?) derive(Eq)
+struct HashMap[K, V] {
+  data : Node[K, V]?
+} derive(Eq)
