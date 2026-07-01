@@ -79,6 +79,41 @@ fn pack_u64x2_by(f : (Int) -> UInt64) -> V128 {
 }
 
 ///|
+fn widen_u8x4_to_u16x4(value : UInt64) -> UInt64 {
+  (value & 0xffUL) |
+  ((value & 0xff00UL) << 8) |
+  ((value & 0xff0000UL) << 16) |
+  ((value & 0xff000000UL) << 24)
+}
+
+///|
+fn sign_extend_u8x4_to_u16x4(value : UInt64) -> UInt64 {
+  let value = widen_u8x4_to_u16x4(value)
+  value | (((value & 0x0080008000800080UL) << 1) * 0xffUL)
+}
+
+///|
+fn widen_u16x2_to_u32x2(value : UInt64) -> UInt64 {
+  (value & 0xffffUL) | ((value & 0xffff0000UL) << 16)
+}
+
+///|
+fn sign_extend_u16x2_to_u32x2(value : UInt64) -> UInt64 {
+  let value = widen_u16x2_to_u32x2(value)
+  value | (((value & 0x0000800000008000UL) << 1) * 0xffffUL)
+}
+
+///|
+fn sign_extend_u32_to_u64(value : UInt64) -> UInt64 {
+  let value = value & 0xffffffffUL
+  if (value & 0x80000000UL) != 0UL {
+    value | 0xffffffff00000000UL
+  } else {
+    value
+  }
+}
+
+///|
 fn i8_signed(value : Byte) -> Int {
   let value = value.to_int()
   if value >= 128 {

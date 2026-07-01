@@ -65,21 +65,6 @@ fn store_u64_le(bytes : FixedArray[Byte], offset : Int, value : UInt64) -> Unit 
 }
 
 ///|
-fn i8_extend_s(value : Byte) -> UInt16 {
-  i8_signed(value).to_uint16()
-}
-
-///|
-fn i16_extend_s(value : UInt16) -> UInt {
-  i16_signed(value).reinterpret_as_uint()
-}
-
-///|
-fn i32_extend_s(value : UInt) -> UInt64 {
-  value.reinterpret_as_int().to_int64().reinterpret_as_uint64()
-}
-
-///|
 /// Selects bytes of `value` indexed by `indices`; indices >= 16 yield zero.
 #intrinsic("%v128.i8x16_swizzle")
 #internal(experimental, "subject to breaking change without notice")
@@ -177,7 +162,8 @@ pub fn v128_load(bytes : FixedArray[Byte], offset : Int) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn v128_load8x8_s(bytes : FixedArray[Byte], offset : Int) -> V128 {
-  pack_u16x8_by(i => i8_extend_s(bytes.unsafe_get(offset + i)))
+  let value = load_u64_le(bytes, offset)
+  make(sign_extend_u8x4_to_u16x4(value), sign_extend_u8x4_to_u16x4(value >> 32))
 }
 
 ///|
@@ -187,7 +173,8 @@ pub fn v128_load8x8_s(bytes : FixedArray[Byte], offset : Int) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn v128_load8x8_u(bytes : FixedArray[Byte], offset : Int) -> V128 {
-  pack_u16x8_by(i => bytes.unsafe_get(offset + i).to_uint16())
+  let value = load_u64_le(bytes, offset)
+  make(widen_u8x4_to_u16x4(value), widen_u8x4_to_u16x4(value >> 32))
 }
 
 ///|
@@ -197,7 +184,11 @@ pub fn v128_load8x8_u(bytes : FixedArray[Byte], offset : Int) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn v128_load16x4_s(bytes : FixedArray[Byte], offset : Int) -> V128 {
-  pack_u32x4_by(i => i16_extend_s(load_u16_le(bytes, offset + i * 2)))
+  let value = load_u64_le(bytes, offset)
+  make(
+    sign_extend_u16x2_to_u32x2(value),
+    sign_extend_u16x2_to_u32x2(value >> 32),
+  )
 }
 
 ///|
@@ -207,7 +198,8 @@ pub fn v128_load16x4_s(bytes : FixedArray[Byte], offset : Int) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn v128_load16x4_u(bytes : FixedArray[Byte], offset : Int) -> V128 {
-  pack_u32x4_by(i => load_u16_le(bytes, offset + i * 2).to_uint())
+  let value = load_u64_le(bytes, offset)
+  make(widen_u16x2_to_u32x2(value), widen_u16x2_to_u32x2(value >> 32))
 }
 
 ///|
@@ -217,7 +209,8 @@ pub fn v128_load16x4_u(bytes : FixedArray[Byte], offset : Int) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn v128_load32x2_s(bytes : FixedArray[Byte], offset : Int) -> V128 {
-  pack_u64x2_by(i => i32_extend_s(load_u32_le(bytes, offset + i * 4)))
+  let value = load_u64_le(bytes, offset)
+  make(sign_extend_u32_to_u64(value), sign_extend_u32_to_u64(value >> 32))
 }
 
 ///|
@@ -227,7 +220,8 @@ pub fn v128_load32x2_s(bytes : FixedArray[Byte], offset : Int) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn v128_load32x2_u(bytes : FixedArray[Byte], offset : Int) -> V128 {
-  pack_u64x2_by(i => load_u32_le(bytes, offset + i * 4).to_uint64())
+  let value = load_u64_le(bytes, offset)
+  make(value & 0xffffffffUL, value >> 32)
 }
 
 ///|

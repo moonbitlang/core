@@ -13,6 +13,17 @@
 // limitations under the License.
 
 ///|
+fn has_zero_byte(value : UInt64) -> Bool {
+  ((value - 0x0101010101010101UL) & value.lnot() & 0x8080808080808080UL) != 0UL
+}
+
+///|
+fn has_zero_u16_lane(value : UInt64) -> Bool {
+  let bytes = value | (value >> 8) | 0xff00ff00ff00ff00UL
+  has_zero_byte(bytes)
+}
+
+///|
 /// Lane-wise left shift over sixteen 8-bit integer lanes by `shift` (modulo lane width).
 #intrinsic("%v128.i8x16_shl")
 #internal(experimental, "subject to breaking change without notice")
@@ -142,12 +153,7 @@ pub fn i64x2_shr_s(value : V128, shift : Int) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn i8x16_all_true(value : V128) -> Bool {
-  for i in 0..<16 {
-    if u8_lane(value, i) == 0 {
-      return false
-    }
-  }
-  true
+  !has_zero_byte(lo(value)) && !has_zero_byte(hi(value))
 }
 
 ///|
@@ -156,12 +162,7 @@ pub fn i8x16_all_true(value : V128) -> Bool {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn i16x8_all_true(value : V128) -> Bool {
-  for i in 0..<8 {
-    if u16_lane(value, i) == 0 {
-      return false
-    }
-  }
-  true
+  !has_zero_u16_lane(lo(value)) && !has_zero_u16_lane(hi(value))
 }
 
 ///|
@@ -170,12 +171,12 @@ pub fn i16x8_all_true(value : V128) -> Bool {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn i32x4_all_true(value : V128) -> Bool {
-  for i in 0..<4 {
-    if u32_lane(value, i) == 0 {
-      return false
-    }
-  }
-  true
+  let lo_word = lo(value)
+  let hi_word = hi(value)
+  (lo_word & 0xffffffffUL) != 0UL &&
+  lo_word >> 32 != 0UL &&
+  (hi_word & 0xffffffffUL) != 0UL &&
+  hi_word >> 32 != 0UL
 }
 
 ///|
