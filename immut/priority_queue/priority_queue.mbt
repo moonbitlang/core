@@ -79,8 +79,8 @@ fn[A : Compare] heapify(heap : MutArrayView[A]) -> Unit {
   // Nodes from index `len / 2` on are leaves and already trivial heaps, so sift
   // down every internal node from the last one back to the root. The descending
   // order is required: each subtree is already a heap when its parent is sifted.
-  // `(len / 2)>..0` iterates `len / 2 - 1` down to `0` inclusive.
-  for i in (len / 2)>..0 {
+  // `(len / 2)>..0` iterates from `len / 2 - 1` down to `0` inclusive (and is
+  // empty when `len < 2`).
     sift_down(heap, i, len)
   }
 }
