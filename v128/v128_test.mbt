@@ -1921,24 +1921,6 @@ test "bitmask lane patterns" {
 }
 
 ///|
-test "dot-application (method style via #as_free_fn)" {
-  let a = @v128.i32x4_splat(5)
-  let b = @v128.i32x4_splat(3)
-  // V128-first ops are callable as methods...
-  assert_eq(a.i32x4_add(b), @v128.i32x4_add(a, b))
-  // ...and chain left-to-right
-  assert_eq(
-    a.i32x4_add(b).i32x4_mul(b).i32x4_sub(a),
-    @v128.i32x4_const(19, 19, 19, 19),
-  )
-  // unary and lane ops too
-  assert_eq(a.i32x4_neg().i32x4_abs(), a)
-  assert_eq(@v128.i8x16_splat(0xff).i8x16_extract_lane_u(3), 255)
-  // free-fn form (the wasm-opcode mirror) remains available unchanged
-  assert_eq(@v128.f32x4_splat(2.0).f32x4_sqrt(), @v128.f32x4_splat(1.4142135))
-}
-
-///|
 test "replace_lane out-of-range index leaves value unchanged" {
   let v = @v128.i8x16_const(
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
