@@ -35,9 +35,9 @@ fn brute_force_find(haystack : StringView, needle : StringView) -> Int? {
   guard haystack_len >= needle_len else { return None }
   let needle_first = needle.unsafe_get(0)
   let forward_len = haystack_len - needle_len
-  for i = 0; i <= forward_len; {
+  for i in 0..<=forward_len {
     if haystack.unsafe_get(i) != needle_first {
-      continue i + 1
+      continue
     }
     // Check remaining charcodes for full match
     for j in 1..<needle_len {
@@ -47,7 +47,6 @@ fn brute_force_find(haystack : StringView, needle : StringView) -> Int? {
     } nobreak {
       return Some(i)
     }
-    continue i + 1
   }
   None
 }
@@ -182,9 +181,9 @@ fn brute_force_rev_find(haystack : StringView, needle : StringView) -> Int? {
   guard needle_len > 0 else { return Some(haystack_len) }
   guard haystack_len >= needle_len else { return None }
   let needle_first = needle.unsafe_get(0)
-  for i = haystack_len - needle_len; i >= 0; {
+  for i in (haystack_len - needle_len)>=..0 {
     if haystack.unsafe_get(i) != needle_first {
-      continue i - 1
+      continue
     }
     // Check remaining charcodes for full match
     for j in 1..<needle_len {
@@ -194,7 +193,6 @@ fn brute_force_rev_find(haystack : StringView, needle : StringView) -> Int? {
     } nobreak {
       return Some(i)
     }
-    continue i - 1
   }
   None
 }
