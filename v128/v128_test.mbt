@@ -218,20 +218,30 @@ test "integer masks and truth tests" {
   inspect(@v128.i8x16_bitmask(bytes), content="32773")
   assert_false(@v128.i8x16_all_true(bytes))
   assert_true(@v128.i8x16_all_true(@v128.i8x16_splat(1)))
+  assert_false(
+    @v128.i8x16_all_true(
+      @v128.i8x16_const(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0),
+    ),
+  )
 
   let words = @v128.i16x8_const(0x8000, 0, 1, 2, 3, 4, 0xffff, 0x7fff)
   inspect(@v128.i16x8_bitmask(words), content="65")
   assert_false(@v128.i16x8_all_true(words))
   assert_true(@v128.i16x8_all_true(@v128.i16x8_splat(1)))
+  assert_false(@v128.i16x8_all_true(@v128.i16x8_const(1, 2, 3, 4, 5, 6, 7, 0)))
 
   inspect(
     @v128.i32x4_bitmask(@v128.i32x4_const(0x80000000, 0, 0xffffffff, 1)),
     content="5",
   )
+  assert_false(@v128.i32x4_all_true(@v128.i32x4_const(1, 2, 3, 0)))
+  assert_true(@v128.i32x4_all_true(@v128.i32x4_splat(1)))
   inspect(
     @v128.i64x2_bitmask(@v128.i64x2_const(0x8000000000000000UL, 1UL)),
     content="1",
   )
+  assert_false(@v128.i64x2_all_true(@v128.i64x2_const(1UL, 0UL)))
+  assert_true(@v128.i64x2_all_true(@v128.i64x2_splat(1UL)))
 }
 
 ///|

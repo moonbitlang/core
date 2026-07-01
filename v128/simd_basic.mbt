@@ -314,15 +314,14 @@ pub fn f64x2_extract_lane(value : V128, lane : Int) -> Double {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn i8x16_replace_lane(value : V128, replacement : UInt, lane : Int) -> V128 {
+  guard lane >= 0 && lane < 16 else { return value }
   let shift = (lane & 7) * 8
   let mask = 0xffUL << shift
   let bits = (replacement.to_uint64() & 0xffUL) << shift
-  if lane >= 0 && lane < 8 {
+  if lane < 8 {
     make((lo(value) & mask.lnot()) | bits, hi(value))
-  } else if lane >= 8 && lane < 16 {
-    make(lo(value), (hi(value) & mask.lnot()) | bits)
   } else {
-    value
+    make(lo(value), (hi(value) & mask.lnot()) | bits)
   }
 }
 
@@ -332,15 +331,14 @@ pub fn i8x16_replace_lane(value : V128, replacement : UInt, lane : Int) -> V128 
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn i16x8_replace_lane(value : V128, replacement : UInt, lane : Int) -> V128 {
+  guard lane >= 0 && lane < 8 else { return value }
   let shift = (lane & 3) * 16
   let mask = 0xffffUL << shift
   let bits = (replacement.to_uint64() & 0xffffUL) << shift
-  if lane >= 0 && lane < 4 {
+  if lane < 4 {
     make((lo(value) & mask.lnot()) | bits, hi(value))
-  } else if lane >= 4 && lane < 8 {
-    make(lo(value), (hi(value) & mask.lnot()) | bits)
   } else {
-    value
+    make(lo(value), (hi(value) & mask.lnot()) | bits)
   }
 }
 
@@ -350,15 +348,14 @@ pub fn i16x8_replace_lane(value : V128, replacement : UInt, lane : Int) -> V128 
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn i32x4_replace_lane(value : V128, replacement : UInt, lane : Int) -> V128 {
+  guard lane >= 0 && lane < 4 else { return value }
   let shift = (lane & 1) * 32
   let mask = 0xffffffffUL << shift
   let bits = replacement.to_uint64() << shift
-  if lane >= 0 && lane < 2 {
+  if lane < 2 {
     make((lo(value) & mask.lnot()) | bits, hi(value))
-  } else if lane >= 2 && lane < 4 {
-    make(lo(value), (hi(value) & mask.lnot()) | bits)
   } else {
-    value
+    make(lo(value), (hi(value) & mask.lnot()) | bits)
   }
 }
 

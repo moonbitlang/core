@@ -28,11 +28,14 @@ fn load_u32_le(bytes : FixedArray[Byte], offset : Int) -> UInt {
 
 ///|
 fn load_u64_le(bytes : FixedArray[Byte], offset : Int) -> UInt64 {
-  let mut result = 0UL
-  for i in 0..<8 {
-    result = result | (bytes.unsafe_get(offset + i).to_uint64() << (i * 8))
-  }
-  result
+  bytes.unsafe_get(offset).to_uint64() |
+  (bytes.unsafe_get(offset + 1).to_uint64() << 8) |
+  (bytes.unsafe_get(offset + 2).to_uint64() << 16) |
+  (bytes.unsafe_get(offset + 3).to_uint64() << 24) |
+  (bytes.unsafe_get(offset + 4).to_uint64() << 32) |
+  (bytes.unsafe_get(offset + 5).to_uint64() << 40) |
+  (bytes.unsafe_get(offset + 6).to_uint64() << 48) |
+  (bytes.unsafe_get(offset + 7).to_uint64() << 56)
 }
 
 ///|
@@ -51,24 +54,14 @@ fn store_u32_le(bytes : FixedArray[Byte], offset : Int, value : UInt) -> Unit {
 
 ///|
 fn store_u64_le(bytes : FixedArray[Byte], offset : Int, value : UInt64) -> Unit {
-  for i in 0..<8 {
-    bytes.unsafe_set(offset + i, (value >> (i * 8)).to_byte())
-  }
-}
-
-///|
-fn i8_extend_s(value : Byte) -> UInt16 {
-  i8_signed(value).to_uint16()
-}
-
-///|
-fn i16_extend_s(value : UInt16) -> UInt {
-  i16_signed(value).reinterpret_as_uint()
-}
-
-///|
-fn i32_extend_s(value : UInt) -> UInt64 {
-  value.reinterpret_as_int().to_int64().reinterpret_as_uint64()
+  bytes.unsafe_set(offset, value.to_byte())
+  bytes.unsafe_set(offset + 1, (value >> 8).to_byte())
+  bytes.unsafe_set(offset + 2, (value >> 16).to_byte())
+  bytes.unsafe_set(offset + 3, (value >> 24).to_byte())
+  bytes.unsafe_set(offset + 4, (value >> 32).to_byte())
+  bytes.unsafe_set(offset + 5, (value >> 40).to_byte())
+  bytes.unsafe_set(offset + 6, (value >> 48).to_byte())
+  bytes.unsafe_set(offset + 7, (value >> 56).to_byte())
 }
 
 ///|
@@ -169,7 +162,8 @@ pub fn v128_load(bytes : FixedArray[Byte], offset : Int) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn v128_load8x8_s(bytes : FixedArray[Byte], offset : Int) -> V128 {
-  pack_u16x8_by(i => i8_extend_s(bytes.unsafe_get(offset + i)))
+  let value = load_u64_le(bytes, offset)
+  make(sign_extend_u8x4_to_u16x4(value), sign_extend_u8x4_to_u16x4(value >> 32))
 }
 
 ///|
@@ -179,7 +173,8 @@ pub fn v128_load8x8_s(bytes : FixedArray[Byte], offset : Int) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn v128_load8x8_u(bytes : FixedArray[Byte], offset : Int) -> V128 {
-  pack_u16x8_by(i => bytes.unsafe_get(offset + i).to_uint16())
+  let value = load_u64_le(bytes, offset)
+  make(widen_u8x4_to_u16x4(value), widen_u8x4_to_u16x4(value >> 32))
 }
 
 ///|
@@ -189,7 +184,11 @@ pub fn v128_load8x8_u(bytes : FixedArray[Byte], offset : Int) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn v128_load16x4_s(bytes : FixedArray[Byte], offset : Int) -> V128 {
-  pack_u32x4_by(i => i16_extend_s(load_u16_le(bytes, offset + i * 2)))
+  let value = load_u64_le(bytes, offset)
+  make(
+    sign_extend_u16x2_to_u32x2(value),
+    sign_extend_u16x2_to_u32x2(value >> 32),
+  )
 }
 
 ///|
@@ -199,7 +198,8 @@ pub fn v128_load16x4_s(bytes : FixedArray[Byte], offset : Int) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn v128_load16x4_u(bytes : FixedArray[Byte], offset : Int) -> V128 {
-  pack_u32x4_by(i => load_u16_le(bytes, offset + i * 2).to_uint())
+  let value = load_u64_le(bytes, offset)
+  make(widen_u16x2_to_u32x2(value), widen_u16x2_to_u32x2(value >> 32))
 }
 
 ///|
@@ -209,7 +209,8 @@ pub fn v128_load16x4_u(bytes : FixedArray[Byte], offset : Int) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn v128_load32x2_s(bytes : FixedArray[Byte], offset : Int) -> V128 {
-  pack_u64x2_by(i => i32_extend_s(load_u32_le(bytes, offset + i * 4)))
+  let value = load_u64_le(bytes, offset)
+  make(sign_extend_u32_to_u64(value), sign_extend_u32_to_u64(value >> 32))
 }
 
 ///|
@@ -219,7 +220,8 @@ pub fn v128_load32x2_s(bytes : FixedArray[Byte], offset : Int) -> V128 {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn v128_load32x2_u(bytes : FixedArray[Byte], offset : Int) -> V128 {
-  pack_u64x2_by(i => load_u32_le(bytes, offset + i * 4).to_uint64())
+  let value = load_u64_le(bytes, offset)
+  make(value & 0xffffffffUL, value >> 32)
 }
 
 ///|
