@@ -81,6 +81,7 @@ fn[A : Compare] heapify(heap : MutArrayView[A]) -> Unit {
   // order is required: each subtree is already a heap when its parent is sifted.
   // `(len / 2)>..0` iterates from `len / 2 - 1` down to `0` inclusive (and is
   // empty when `len < 2`).
+  for i in (len / 2)>..0 {
     sift_down(heap, i, len)
   }
 }
