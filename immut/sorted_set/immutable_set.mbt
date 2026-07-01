@@ -243,8 +243,11 @@ fn[A : Compare] sorted_set_compact_ordered_array(
 ///   @test.assert_eq(set.to_array(), [1, 2, 3])
 /// }
 /// ```
+#warnings("-unused_trait_bound")
 #as_free_fn
-pub fn[A] SortedSet::from_sorted_array(array : ArrayView[A]) -> SortedSet[A] {
+pub fn[A : Compare] SortedSet::from_sorted_array(
+  array : ArrayView[A],
+) -> SortedSet[A] {
   sorted_set_from_sorted_array(array, 0, array.length())
 }
 
