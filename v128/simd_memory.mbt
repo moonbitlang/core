@@ -76,8 +76,7 @@ fn i32_extend_s(value : UInt) -> UInt64 {
 #intrinsic("%v128.i8x16_swizzle")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i8x16_swizzle(value : V128, indices : V128) -> V128 {
+pub fn i8x16_swizzle(value : V128, indices : V128) -> V128 {
   pack_u8x16_by(i => {
     let index = u8_lane(indices, i).to_int()
     if index < 16 {
@@ -93,8 +92,7 @@ pub fn V128::i8x16_swizzle(value : V128, indices : V128) -> V128 {
 #intrinsic("%v128.i8x16_relaxed_swizzle")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i8x16_relaxed_swizzle(value : V128, indices : V128) -> V128 {
+pub fn i8x16_relaxed_swizzle(value : V128, indices : V128) -> V128 {
   i8x16_swizzle(value, indices)
 }
 
@@ -112,8 +110,7 @@ fn shuffle_lane(value : V128, other : V128, index : Int) -> Byte {
 #intrinsic("%v128.i8x16_shuffle")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i8x16_shuffle(
+pub fn i8x16_shuffle(
   value : V128,
   other : V128,
   i0 : Int,

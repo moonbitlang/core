@@ -240,8 +240,7 @@ pub fn f64x2_splat(value : Double) -> V128 {
 #intrinsic("%v128.i8x16_extract_lane_u")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i8x16_extract_lane_u(value : V128, lane : Int) -> UInt {
+pub fn i8x16_extract_lane_u(value : V128, lane : Int) -> UInt {
   u8_lane(value, lane).to_uint()
 }
 
@@ -250,8 +249,7 @@ pub fn V128::i8x16_extract_lane_u(value : V128, lane : Int) -> UInt {
 #intrinsic("%v128.i8x16_extract_lane_s")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i8x16_extract_lane_s(value : V128, lane : Int) -> UInt {
+pub fn i8x16_extract_lane_s(value : V128, lane : Int) -> UInt {
   i8_signed(u8_lane(value, lane)).reinterpret_as_uint()
 }
 
@@ -260,8 +258,7 @@ pub fn V128::i8x16_extract_lane_s(value : V128, lane : Int) -> UInt {
 #intrinsic("%v128.i16x8_extract_lane_u")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i16x8_extract_lane_u(value : V128, lane : Int) -> UInt {
+pub fn i16x8_extract_lane_u(value : V128, lane : Int) -> UInt {
   u16_lane(value, lane).to_uint()
 }
 
@@ -270,8 +267,7 @@ pub fn V128::i16x8_extract_lane_u(value : V128, lane : Int) -> UInt {
 #intrinsic("%v128.i16x8_extract_lane_s")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i16x8_extract_lane_s(value : V128, lane : Int) -> UInt {
+pub fn i16x8_extract_lane_s(value : V128, lane : Int) -> UInt {
   i16_signed(u16_lane(value, lane)).reinterpret_as_uint()
 }
 
@@ -280,8 +276,7 @@ pub fn V128::i16x8_extract_lane_s(value : V128, lane : Int) -> UInt {
 #intrinsic("%v128.i32x4_extract_lane")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i32x4_extract_lane(value : V128, lane : Int) -> UInt {
+pub fn i32x4_extract_lane(value : V128, lane : Int) -> UInt {
   u32_lane(value, lane)
 }
 
@@ -290,8 +285,7 @@ pub fn V128::i32x4_extract_lane(value : V128, lane : Int) -> UInt {
 #intrinsic("%v128.i64x2_extract_lane")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i64x2_extract_lane(value : V128, lane : Int) -> UInt64 {
+pub fn i64x2_extract_lane(value : V128, lane : Int) -> UInt64 {
   u64_lane(value, lane)
 }
 
@@ -300,8 +294,7 @@ pub fn V128::i64x2_extract_lane(value : V128, lane : Int) -> UInt64 {
 #intrinsic("%v128.f32x4_extract_lane")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::f32x4_extract_lane(value : V128, lane : Int) -> Float {
+pub fn f32x4_extract_lane(value : V128, lane : Int) -> Float {
   Float::reinterpret_from_uint(u32_lane(value, lane))
 }
 
@@ -310,8 +303,7 @@ pub fn V128::f32x4_extract_lane(value : V128, lane : Int) -> Float {
 #intrinsic("%v128.f64x2_extract_lane")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::f64x2_extract_lane(value : V128, lane : Int) -> Double {
+pub fn f64x2_extract_lane(value : V128, lane : Int) -> Double {
   u64_lane(value, lane).reinterpret_as_double()
 }
 
@@ -321,12 +313,7 @@ pub fn V128::f64x2_extract_lane(value : V128, lane : Int) -> Double {
 #intrinsic("%v128.i8x16_replace_lane")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i8x16_replace_lane(
-  value : V128,
-  replacement : UInt,
-  lane : Int,
-) -> V128 {
+pub fn i8x16_replace_lane(value : V128, replacement : UInt, lane : Int) -> V128 {
   let shift = (lane & 7) * 8
   let mask = 0xffUL << shift
   let bits = (replacement.to_uint64() & 0xffUL) << shift
@@ -344,12 +331,7 @@ pub fn V128::i8x16_replace_lane(
 #intrinsic("%v128.i16x8_replace_lane")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i16x8_replace_lane(
-  value : V128,
-  replacement : UInt,
-  lane : Int,
-) -> V128 {
+pub fn i16x8_replace_lane(value : V128, replacement : UInt, lane : Int) -> V128 {
   let shift = (lane & 3) * 16
   let mask = 0xffffUL << shift
   let bits = (replacement.to_uint64() & 0xffffUL) << shift
@@ -367,12 +349,7 @@ pub fn V128::i16x8_replace_lane(
 #intrinsic("%v128.i32x4_replace_lane")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i32x4_replace_lane(
-  value : V128,
-  replacement : UInt,
-  lane : Int,
-) -> V128 {
+pub fn i32x4_replace_lane(value : V128, replacement : UInt, lane : Int) -> V128 {
   let shift = (lane & 1) * 32
   let mask = 0xffffffffUL << shift
   let bits = replacement.to_uint64() << shift
@@ -390,8 +367,7 @@ pub fn V128::i32x4_replace_lane(
 #intrinsic("%v128.i64x2_replace_lane")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i64x2_replace_lane(
+pub fn i64x2_replace_lane(
   value : V128,
   replacement : UInt64,
   lane : Int,
@@ -410,8 +386,7 @@ pub fn V128::i64x2_replace_lane(
 #intrinsic("%v128.f32x4_replace_lane")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::f32x4_replace_lane(
+pub fn f32x4_replace_lane(
   value : V128,
   replacement : Float,
   lane : Int,
@@ -424,8 +399,7 @@ pub fn V128::f32x4_replace_lane(
 #intrinsic("%v128.f64x2_replace_lane")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::f64x2_replace_lane(
+pub fn f64x2_replace_lane(
   value : V128,
   replacement : Double,
   lane : Int,
@@ -438,8 +412,7 @@ pub fn V128::f64x2_replace_lane(
 #intrinsic("%v128.v128_not")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::v128_not(value : V128) -> V128 {
+pub fn v128_not(value : V128) -> V128 {
   make(lo(value).lnot(), hi(value).lnot())
 }
 
@@ -448,8 +421,7 @@ pub fn V128::v128_not(value : V128) -> V128 {
 #intrinsic("%v128.v128_and")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::v128_and_(value : V128, other : V128) -> V128 {
+pub fn v128_and_(value : V128, other : V128) -> V128 {
   make(lo(value) & lo(other), hi(value) & hi(other))
 }
 
@@ -458,8 +430,7 @@ pub fn V128::v128_and_(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.v128_or")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::v128_or_(value : V128, other : V128) -> V128 {
+pub fn v128_or_(value : V128, other : V128) -> V128 {
   make(lo(value) | lo(other), hi(value) | hi(other))
 }
 
@@ -468,8 +439,7 @@ pub fn V128::v128_or_(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.v128_xor")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::v128_xor(value : V128, other : V128) -> V128 {
+pub fn v128_xor(value : V128, other : V128) -> V128 {
   make(lo(value) ^ lo(other), hi(value) ^ hi(other))
 }
 
@@ -478,8 +448,7 @@ pub fn V128::v128_xor(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.v128_andnot")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::v128_andnot(value : V128, other : V128) -> V128 {
+pub fn v128_andnot(value : V128, other : V128) -> V128 {
   v128_and_(value, v128_not(other))
 }
 
@@ -488,8 +457,7 @@ pub fn V128::v128_andnot(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.v128_bitselect")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::v128_bitselect(value : V128, other : V128, mask : V128) -> V128 {
+pub fn v128_bitselect(value : V128, other : V128, mask : V128) -> V128 {
   v128_or_(v128_and_(value, mask), v128_andnot(other, mask))
 }
 
@@ -498,7 +466,6 @@ pub fn V128::v128_bitselect(value : V128, other : V128, mask : V128) -> V128 {
 #intrinsic("%v128.v128_any_true")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::v128_any_true(value : V128) -> Bool {
+pub fn v128_any_true(value : V128) -> Bool {
   lo(value) != 0UL || hi(value) != 0UL
 }

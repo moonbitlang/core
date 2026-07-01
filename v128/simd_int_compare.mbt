@@ -17,8 +17,7 @@
 #intrinsic("%v128.i8x16_eq")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i8x16_eq(value : V128, other : V128) -> V128 {
+pub fn i8x16_eq(value : V128, other : V128) -> V128 {
   pack_u8x16_by(i => bool_to_u8_mask(u8_lane(value, i) == u8_lane(other, i)))
 }
 
@@ -27,8 +26,7 @@ pub fn V128::i8x16_eq(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.i8x16_ne")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i8x16_ne(value : V128, other : V128) -> V128 {
+pub fn i8x16_ne(value : V128, other : V128) -> V128 {
   pack_u8x16_by(i => bool_to_u8_mask(u8_lane(value, i) != u8_lane(other, i)))
 }
 
@@ -37,8 +35,7 @@ pub fn V128::i8x16_ne(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.i8x16_lt_s")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i8x16_lt_s(value : V128, other : V128) -> V128 {
+pub fn i8x16_lt_s(value : V128, other : V128) -> V128 {
   pack_u8x16_by(i => {
     bool_to_u8_mask(i8_signed(u8_lane(value, i)) < i8_signed(u8_lane(other, i)))
   })
@@ -49,8 +46,7 @@ pub fn V128::i8x16_lt_s(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.i8x16_lt_u")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i8x16_lt_u(value : V128, other : V128) -> V128 {
+pub fn i8x16_lt_u(value : V128, other : V128) -> V128 {
   pack_u8x16_by(i => bool_to_u8_mask(u8_lane(value, i) < u8_lane(other, i)))
 }
 
@@ -59,8 +55,7 @@ pub fn V128::i8x16_lt_u(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.i8x16_le_s")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i8x16_le_s(value : V128, other : V128) -> V128 {
+pub fn i8x16_le_s(value : V128, other : V128) -> V128 {
   pack_u8x16_by(i => {
     bool_to_u8_mask(
       i8_signed(u8_lane(value, i)) <= i8_signed(u8_lane(other, i)),
@@ -73,8 +68,7 @@ pub fn V128::i8x16_le_s(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.i8x16_le_u")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i8x16_le_u(value : V128, other : V128) -> V128 {
+pub fn i8x16_le_u(value : V128, other : V128) -> V128 {
   pack_u8x16_by(i => bool_to_u8_mask(u8_lane(value, i) <= u8_lane(other, i)))
 }
 
@@ -83,8 +77,7 @@ pub fn V128::i8x16_le_u(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.i8x16_gt_s")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i8x16_gt_s(value : V128, other : V128) -> V128 {
+pub fn i8x16_gt_s(value : V128, other : V128) -> V128 {
   pack_u8x16_by(i => {
     bool_to_u8_mask(i8_signed(u8_lane(value, i)) > i8_signed(u8_lane(other, i)))
   })
@@ -95,8 +88,7 @@ pub fn V128::i8x16_gt_s(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.i8x16_gt_u")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i8x16_gt_u(value : V128, other : V128) -> V128 {
+pub fn i8x16_gt_u(value : V128, other : V128) -> V128 {
   pack_u8x16_by(i => bool_to_u8_mask(u8_lane(value, i) > u8_lane(other, i)))
 }
 
@@ -105,8 +97,7 @@ pub fn V128::i8x16_gt_u(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.i8x16_ge_s")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i8x16_ge_s(value : V128, other : V128) -> V128 {
+pub fn i8x16_ge_s(value : V128, other : V128) -> V128 {
   pack_u8x16_by(i => {
     bool_to_u8_mask(
       i8_signed(u8_lane(value, i)) >= i8_signed(u8_lane(other, i)),
@@ -119,8 +110,7 @@ pub fn V128::i8x16_ge_s(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.i8x16_ge_u")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i8x16_ge_u(value : V128, other : V128) -> V128 {
+pub fn i8x16_ge_u(value : V128, other : V128) -> V128 {
   pack_u8x16_by(i => bool_to_u8_mask(u8_lane(value, i) >= u8_lane(other, i)))
 }
 
@@ -129,8 +119,7 @@ pub fn V128::i8x16_ge_u(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.i16x8_eq")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i16x8_eq(value : V128, other : V128) -> V128 {
+pub fn i16x8_eq(value : V128, other : V128) -> V128 {
   pack_u16x8_by(i => bool_to_u16_mask(u16_lane(value, i) == u16_lane(other, i)))
 }
 
@@ -139,8 +128,7 @@ pub fn V128::i16x8_eq(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.i16x8_ne")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i16x8_ne(value : V128, other : V128) -> V128 {
+pub fn i16x8_ne(value : V128, other : V128) -> V128 {
   pack_u16x8_by(i => bool_to_u16_mask(u16_lane(value, i) != u16_lane(other, i)))
 }
 
@@ -149,8 +137,7 @@ pub fn V128::i16x8_ne(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.i16x8_lt_s")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i16x8_lt_s(value : V128, other : V128) -> V128 {
+pub fn i16x8_lt_s(value : V128, other : V128) -> V128 {
   pack_u16x8_by(i => {
     bool_to_u16_mask(
       i16_signed(u16_lane(value, i)) < i16_signed(u16_lane(other, i)),
@@ -163,8 +150,7 @@ pub fn V128::i16x8_lt_s(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.i16x8_lt_u")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i16x8_lt_u(value : V128, other : V128) -> V128 {
+pub fn i16x8_lt_u(value : V128, other : V128) -> V128 {
   pack_u16x8_by(i => bool_to_u16_mask(u16_lane(value, i) < u16_lane(other, i)))
 }
 
@@ -173,8 +159,7 @@ pub fn V128::i16x8_lt_u(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.i16x8_le_s")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i16x8_le_s(value : V128, other : V128) -> V128 {
+pub fn i16x8_le_s(value : V128, other : V128) -> V128 {
   pack_u16x8_by(i => {
     bool_to_u16_mask(
       i16_signed(u16_lane(value, i)) <= i16_signed(u16_lane(other, i)),
@@ -187,8 +172,7 @@ pub fn V128::i16x8_le_s(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.i16x8_le_u")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i16x8_le_u(value : V128, other : V128) -> V128 {
+pub fn i16x8_le_u(value : V128, other : V128) -> V128 {
   pack_u16x8_by(i => bool_to_u16_mask(u16_lane(value, i) <= u16_lane(other, i)))
 }
 
@@ -197,8 +181,7 @@ pub fn V128::i16x8_le_u(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.i16x8_gt_s")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i16x8_gt_s(value : V128, other : V128) -> V128 {
+pub fn i16x8_gt_s(value : V128, other : V128) -> V128 {
   pack_u16x8_by(i => {
     bool_to_u16_mask(
       i16_signed(u16_lane(value, i)) > i16_signed(u16_lane(other, i)),
@@ -211,8 +194,7 @@ pub fn V128::i16x8_gt_s(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.i16x8_gt_u")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i16x8_gt_u(value : V128, other : V128) -> V128 {
+pub fn i16x8_gt_u(value : V128, other : V128) -> V128 {
   pack_u16x8_by(i => bool_to_u16_mask(u16_lane(value, i) > u16_lane(other, i)))
 }
 
@@ -221,8 +203,7 @@ pub fn V128::i16x8_gt_u(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.i16x8_ge_s")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i16x8_ge_s(value : V128, other : V128) -> V128 {
+pub fn i16x8_ge_s(value : V128, other : V128) -> V128 {
   pack_u16x8_by(i => {
     bool_to_u16_mask(
       i16_signed(u16_lane(value, i)) >= i16_signed(u16_lane(other, i)),
@@ -235,8 +216,7 @@ pub fn V128::i16x8_ge_s(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.i16x8_ge_u")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i16x8_ge_u(value : V128, other : V128) -> V128 {
+pub fn i16x8_ge_u(value : V128, other : V128) -> V128 {
   pack_u16x8_by(i => bool_to_u16_mask(u16_lane(value, i) >= u16_lane(other, i)))
 }
 
@@ -245,8 +225,7 @@ pub fn V128::i16x8_ge_u(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.i32x4_eq")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i32x4_eq(value : V128, other : V128) -> V128 {
+pub fn i32x4_eq(value : V128, other : V128) -> V128 {
   pack_u32x4_by(i => bool_to_u32_mask(u32_lane(value, i) == u32_lane(other, i)))
 }
 
@@ -255,8 +234,7 @@ pub fn V128::i32x4_eq(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.i32x4_ne")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i32x4_ne(value : V128, other : V128) -> V128 {
+pub fn i32x4_ne(value : V128, other : V128) -> V128 {
   pack_u32x4_by(i => bool_to_u32_mask(u32_lane(value, i) != u32_lane(other, i)))
 }
 
@@ -265,8 +243,7 @@ pub fn V128::i32x4_ne(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.i32x4_lt_s")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i32x4_lt_s(value : V128, other : V128) -> V128 {
+pub fn i32x4_lt_s(value : V128, other : V128) -> V128 {
   pack_u32x4_by(i => {
     bool_to_u32_mask(
       u32_lane(value, i).reinterpret_as_int() <
@@ -280,8 +257,7 @@ pub fn V128::i32x4_lt_s(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.i32x4_lt_u")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i32x4_lt_u(value : V128, other : V128) -> V128 {
+pub fn i32x4_lt_u(value : V128, other : V128) -> V128 {
   pack_u32x4_by(i => bool_to_u32_mask(u32_lane(value, i) < u32_lane(other, i)))
 }
 
@@ -290,8 +266,7 @@ pub fn V128::i32x4_lt_u(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.i32x4_le_s")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i32x4_le_s(value : V128, other : V128) -> V128 {
+pub fn i32x4_le_s(value : V128, other : V128) -> V128 {
   pack_u32x4_by(i => {
     bool_to_u32_mask(
       u32_lane(value, i).reinterpret_as_int() <=
@@ -305,8 +280,7 @@ pub fn V128::i32x4_le_s(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.i32x4_le_u")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i32x4_le_u(value : V128, other : V128) -> V128 {
+pub fn i32x4_le_u(value : V128, other : V128) -> V128 {
   pack_u32x4_by(i => bool_to_u32_mask(u32_lane(value, i) <= u32_lane(other, i)))
 }
 
@@ -315,8 +289,7 @@ pub fn V128::i32x4_le_u(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.i32x4_gt_s")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i32x4_gt_s(value : V128, other : V128) -> V128 {
+pub fn i32x4_gt_s(value : V128, other : V128) -> V128 {
   pack_u32x4_by(i => {
     bool_to_u32_mask(
       u32_lane(value, i).reinterpret_as_int() >
@@ -330,8 +303,7 @@ pub fn V128::i32x4_gt_s(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.i32x4_gt_u")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i32x4_gt_u(value : V128, other : V128) -> V128 {
+pub fn i32x4_gt_u(value : V128, other : V128) -> V128 {
   pack_u32x4_by(i => bool_to_u32_mask(u32_lane(value, i) > u32_lane(other, i)))
 }
 
@@ -340,8 +312,7 @@ pub fn V128::i32x4_gt_u(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.i32x4_ge_s")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i32x4_ge_s(value : V128, other : V128) -> V128 {
+pub fn i32x4_ge_s(value : V128, other : V128) -> V128 {
   pack_u32x4_by(i => {
     bool_to_u32_mask(
       u32_lane(value, i).reinterpret_as_int() >=
@@ -355,8 +326,7 @@ pub fn V128::i32x4_ge_s(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.i32x4_ge_u")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i32x4_ge_u(value : V128, other : V128) -> V128 {
+pub fn i32x4_ge_u(value : V128, other : V128) -> V128 {
   pack_u32x4_by(i => bool_to_u32_mask(u32_lane(value, i) >= u32_lane(other, i)))
 }
 
@@ -365,8 +335,7 @@ pub fn V128::i32x4_ge_u(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.i64x2_eq")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i64x2_eq(value : V128, other : V128) -> V128 {
+pub fn i64x2_eq(value : V128, other : V128) -> V128 {
   pack_u64x2_by(i => bool_to_u64_mask(u64_lane(value, i) == u64_lane(other, i)))
 }
 
@@ -375,8 +344,7 @@ pub fn V128::i64x2_eq(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.i64x2_ne")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i64x2_ne(value : V128, other : V128) -> V128 {
+pub fn i64x2_ne(value : V128, other : V128) -> V128 {
   pack_u64x2_by(i => bool_to_u64_mask(u64_lane(value, i) != u64_lane(other, i)))
 }
 
@@ -385,8 +353,7 @@ pub fn V128::i64x2_ne(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.i64x2_lt_s")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i64x2_lt_s(value : V128, other : V128) -> V128 {
+pub fn i64x2_lt_s(value : V128, other : V128) -> V128 {
   pack_u64x2_by(i => {
     bool_to_u64_mask(
       u64_lane(value, i).reinterpret_as_int64() <
@@ -400,8 +367,7 @@ pub fn V128::i64x2_lt_s(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.i64x2_le_s")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i64x2_le_s(value : V128, other : V128) -> V128 {
+pub fn i64x2_le_s(value : V128, other : V128) -> V128 {
   pack_u64x2_by(i => {
     bool_to_u64_mask(
       u64_lane(value, i).reinterpret_as_int64() <=
@@ -415,8 +381,7 @@ pub fn V128::i64x2_le_s(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.i64x2_gt_s")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i64x2_gt_s(value : V128, other : V128) -> V128 {
+pub fn i64x2_gt_s(value : V128, other : V128) -> V128 {
   pack_u64x2_by(i => {
     bool_to_u64_mask(
       u64_lane(value, i).reinterpret_as_int64() >
@@ -430,8 +395,7 @@ pub fn V128::i64x2_gt_s(value : V128, other : V128) -> V128 {
 #intrinsic("%v128.i64x2_ge_s")
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
-#as_free_fn
-pub fn V128::i64x2_ge_s(value : V128, other : V128) -> V128 {
+pub fn i64x2_ge_s(value : V128, other : V128) -> V128 {
   pack_u64x2_by(i => {
     bool_to_u64_mask(
       u64_lane(value, i).reinterpret_as_int64() >=
