@@ -90,7 +90,7 @@ pub fn[A] SortedSet::iter(self : SortedSet[A]) -> Iter[A] {
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
 pub fn[A : Compare] SortedSet::from_iter(iter : Iter[A]) -> SortedSet[A] {
-  iter.fold(init=new(), (s, e) => s.add(e))
+  sorted_set_from_iter_array(iter.to_array())
 }
 
 ///|

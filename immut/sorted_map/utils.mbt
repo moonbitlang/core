@@ -227,13 +227,67 @@ fn[K : Show, V : Show] SortedMap::debug_tree(self : SortedMap[K, V]) -> String {
 }
 
 ///|
+
+///|
 /// Build a map from an array of key-value pairs.
-/// O(n*log n).
+/// O(n) when the input is already monotonic by key, otherwise O(n*log n).
 #as_free_fn(deprecated="Use @immut/sorted_map.SortedMap([...]) instead")
 #alias(of, deprecated="Use @immut/sorted_map.SortedMap([...]) instead")
 #as_free_fn(of, deprecated="Use @immut/sorted_map.SortedMap([...]) instead")
 #deprecated("Use @immut/sorted_map.SortedMap([...]) instead")
 pub fn[K : Compare, V] SortedMap::from_array(
+  array : ArrayView[(K, V)],
+) -> SortedMap[K, V] {
+  sorted_map_from_array(array)
+}
+
+///|
+fn[K : Compare, V] sorted_map_from_array(
+  array : ArrayView[(K, V)],
+) -> SortedMap[K, V] {
+  let (order, has_duplicates) = sorted_map_array_order(array)
+  if order == 1 {
+    if has_duplicates {
+      let compacted = sorted_map_compact_ordered_array(array, true)
+      return sorted_map_from_sorted_array(compacted, 0, compacted.length())
+    }
+    return sorted_map_from_ordered_array(array, 0, array.length(), true)
+  } else if order == -1 {
+    if has_duplicates {
+      let compacted = sorted_map_compact_ordered_array(array, false)
+      return sorted_map_from_sorted_array(compacted, 0, compacted.length())
+    }
+    return sorted_map_from_ordered_array(array, 0, array.length(), false)
+  }
+  if array.length() >= sorted_map_sort_build_threshold {
+    sorted_map_from_unsorted_array(array)
+  } else {
+    sorted_map_from_array_by_add(array)
+  }
+}
+
+///|
+let sorted_map_sort_build_threshold = 64
+
+///|
+fn[K : Compare, V] sorted_map_from_unsorted_array(
+  array : ArrayView[(K, V)],
+) -> SortedMap[K, V] {
+  let entries = Array::makei(array.length(), i => (array[i].0, array[i].1, i))
+  entries.sort_by((a, b) => {
+    let c = a.0.compare(b.0)
+    if c == 0 {
+      a.2.compare(b.2)
+    } else {
+      c
+    }
+  })
+  let compacted = sorted_map_compact_sorted_entries(entries)
+  sorted_map_from_sorted_array(compacted, 0, compacted.length())
+}
+
+///|
+fn[K : Compare, V] sorted_map_from_array_by_add(
   array : ArrayView[(K, V)],
 ) -> SortedMap[K, V] {
   for item in array; mp = Empty {
@@ -246,7 +300,7 @@ pub fn[K : Compare, V] SortedMap::from_array(
 
 ///|
 /// Build a map from an array of key-value pairs.
-/// O(n*log n).
+/// O(n) when the input is already monotonic by key, otherwise O(n*log n).
 ///
 /// # Example
 ///
@@ -260,11 +314,147 @@ pub fn[K : Compare, V] SortedMap::from_array(
 pub fn[K : Compare, V] SortedMap::SortedMap(
   array : ArrayView[(K, V)],
 ) -> SortedMap[K, V] {
-  for item in array; mp = Empty {
-    let (k, v) = item
-    continue mp.add(k, v)
-  } nobreak {
-    mp
+  sorted_map_from_array(array)
+}
+
+///|
+fn[K : Compare, V] sorted_map_compact_sorted_entries(
+  entries : Array[(K, V, Int)],
+) -> Array[(K, V)] {
+  let result = []
+  let len = entries.length()
+  for start = 0; start < len; {
+    let end = for end = start; end + 1 < len &&
+                 entries[end].0.compare(entries[end + 1].0) == 0; {
+      continue end + 1
+    } nobreak {
+      end
+    }
+    result.push((entries[start].0, entries[end].1))
+    continue end + 1
+  }
+  result
+}
+
+///|
+fn[K : Compare, V] sorted_map_array_order(
+  array : ArrayView[(K, V)],
+) -> (Int, Bool) {
+  let len = array.length()
+  guard len > 1 else { return (1, false) }
+  let mut order = 0
+  let mut has_duplicates = false
+  for i in 1..<len {
+    let cmp = array[i - 1].0.compare(array[i].0)
+    if cmp == 0 {
+      has_duplicates = true
+    } else {
+      let current = if cmp < 0 { 1 } else { -1 }
+      if order == 0 {
+        order = current
+      } else if order != current {
+        return (0, has_duplicates)
+      }
+    }
+  }
+  (if order == 0 { 1 } else { order }, has_duplicates)
+}
+
+///|
+fn[K : Compare, V] sorted_map_compact_ordered_array(
+  array : ArrayView[(K, V)],
+  ascending : Bool,
+) -> Array[(K, V)] {
+  let result = []
+  let len = array.length()
+  if ascending {
+    for start = 0; start < len; {
+      let end = for end = start; end + 1 < len &&
+                   array[end].0.compare(array[end + 1].0) == 0; {
+        continue end + 1
+      } nobreak {
+        end
+      }
+      result.push((array[start].0, array[end].1))
+      continue end + 1
+    }
+  } else {
+    for end = len - 1; end >= 0; {
+      let start = for start = end; start > 0 &&
+                     array[start - 1].0.compare(array[start].0) == 0; {
+        continue start - 1
+      } nobreak {
+        start
+      }
+      result.push((array[start].0, array[end].1))
+      continue start - 1
+    }
+  }
+  result
+}
+
+///|
+/// Build a map from key-value pairs that are already strictly sorted by key.
+///
+/// The input must be in ascending key order and must not contain duplicate keys.
+/// This function does not validate that precondition.
+/// O(n).
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let map = @sorted_map.from_sorted_array([(1, "a"), (2, "b")])
+///   @test.assert_eq(map.to_array(), [(1, "a"), (2, "b")])
+/// }
+/// ```
+#warnings("-unused_trait_bound")
+#as_free_fn
+pub fn[K : Compare, V] SortedMap::from_sorted_array(
+  array : ArrayView[(K, V)],
+) -> SortedMap[K, V] {
+  sorted_map_from_sorted_array(array, 0, array.length())
+}
+
+///|
+fn[K, V] sorted_map_from_ordered_array(
+  array : ArrayView[(K, V)],
+  start : Int,
+  end : Int,
+  ascending : Bool,
+) -> SortedMap[K, V] {
+  if start >= end {
+    Empty
+  } else {
+    let mid = (start + end) / 2
+    let (key, value) = array[mid]
+    let left = if ascending {
+      sorted_map_from_ordered_array(array, start, mid, ascending)
+    } else {
+      sorted_map_from_ordered_array(array, mid + 1, end, ascending)
+    }
+    let right = if ascending {
+      sorted_map_from_ordered_array(array, mid + 1, end, ascending)
+    } else {
+      sorted_map_from_ordered_array(array, start, mid, ascending)
+    }
+    make_tree(key, value, left, right)
+  }
+}
+
+///|
+fn[K, V] sorted_map_from_sorted_array(
+  array : ArrayView[(K, V)],
+  start : Int,
+  end : Int,
+) -> SortedMap[K, V] {
+  if start >= end {
+    Empty
+  } else {
+    let mid = (start + end) / 2
+    let (key, value) = array[mid]
+    let left = sorted_map_from_sorted_array(array, start, mid)
+    let right = sorted_map_from_sorted_array(array, mid + 1, end)
+    make_tree(key, value, left, right)
   }
 }
 
@@ -397,7 +587,7 @@ pub fn[K : Compare, V] SortedMap::range(
 pub fn[K : Compare, V] SortedMap::from_iter(
   iter : Iter[(K, V)],
 ) -> SortedMap[K, V] {
-  iter.fold(init=new(), (m, e) => m.add(e.0, e.1))
+  sorted_map_from_array(iter.to_array())
 }
 
 ///|
