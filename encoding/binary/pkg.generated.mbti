@@ -1,0 +1,43 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/encoding/binary"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub const MAX_VARINT_LEN_16 : Int = 3
+
+pub const MAX_VARINT_LEN_32 : Int = 5
+
+pub const MAX_VARINT_LEN_64 : Int = 10
+
+pub fn encode_uvarint(UInt64) -> Bytes
+
+pub fn encode_varint(Int64) -> Bytes
+
+pub fn uvarint(BytesView) -> (UInt64, Int) raise Malformed
+
+pub fn varint(BytesView) -> (Int64, Int) raise Malformed
+
+// Errors
+pub suberror Malformed {
+  Malformed(BytesView)
+} derive(@debug.Debug)
+
+// Types and methods
+pub(all) enum Endian {
+  Little
+  Big
+} derive(@debug.Debug)
+pub fn Endian::decode_uint16(Self, BytesView) -> UInt16 raise Malformed
+pub fn Endian::decode_uint32(Self, BytesView) -> UInt raise Malformed
+pub fn Endian::decode_uint64(Self, BytesView) -> UInt64 raise Malformed
+pub fn Endian::encode_uint16(Self, UInt16) -> Bytes
+pub fn Endian::encode_uint32(Self, UInt) -> Bytes
+pub fn Endian::encode_uint64(Self, UInt64) -> Bytes
+
+// Type aliases
+
+// Traits
+
