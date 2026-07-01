@@ -13,13 +13,11 @@
 // limitations under the License.
 
 ///|
-fn[A] new_priority_queue() -> PriorityQueue[A] {
-  { node: Empty, size: 0 }
-}
-
-///|
 /// Creates a new immutable priority queue from an array.
-/// O(n).
+///
+/// Runs in O(n): the elements are copied once and turned into a heap in place,
+/// which is asymptotically faster than inserting them one by one with `push`
+/// (O(n log n)).
 ///
 /// # Example
 /// ```mbt check
@@ -35,16 +33,51 @@ fn[A] new_priority_queue() -> PriorityQueue[A] {
 pub fn[A : Compare] PriorityQueue::PriorityQueue(
   array : ArrayView[A],
 ) -> PriorityQueue[A] {
-  let len = array.length()
-  guard len > 0 else { return new_priority_queue() }
-  let heap = FixedArray::from_array(array)
+  // `array` is borrowed, so copy it into a buffer we own before heapifying.
+  from_array_in_place(array.to_owned().mut_view())
+}
+
+///|
+/// Builds a priority queue from `heap`, reordering it in place.
+///
+/// The caller must own the buffer behind `heap` and not use it afterwards: the
+/// elements are permuted into heap order rather than copied, which is what lets
+/// callers such as `from_iter` skip the extra allocation that
+/// `PriorityQueue(ArrayView)` needs for its defensive copy.
+///
+/// ## Why this produces a valid queue
+///
+/// The queue is a binary max-heap kept as a complete binary tree (`Node`). The
+/// exact same tree is what `push`/`pop` maintain: the `k`-th node in level
+/// order lands at array index `k`, whose children live at `2*k+1` and `2*k+2`.
+/// So reading `heap` with that child rule yields a tree of the *same shape* the
+/// rest of the module expects.
+///
+/// `heapify` then enforces the ordering invariant with Floyd's bottom-up
+/// build-heap: it sifts down every internal node from `len/2 - 1` back to the
+/// root. Visiting a node only after both of its child subtrees are already
+/// heaps means a single `sift_down` per node suffices to make `heap` a max-heap
+/// (each parent `>=` both children). Because most nodes sit near the bottom and
+/// sink only a short distance, the whole pass is O(n) rather than the
+/// O(n log n) of `len` repeated `push`es.
+///
+/// Finally `priority_queue_node_from_heap` transcribes the implicit array tree
+/// into `Node` using the same index-to-child mapping, so the result keeps both
+/// the complete-tree shape and the heap invariant and can be consumed directly
+/// by `pop`/`peek`.
+fn[A : Compare] from_array_in_place(heap : MutArrayView[A]) -> PriorityQueue[A] {
+  let len = heap.length()
+  guard len > 0 else { return { node: Empty, size: 0 } }
   heapify(heap)
   { node: priority_queue_node_from_heap(heap, 0, len), size: len }
 }
 
 ///|
-fn[A : Compare] heapify(heap : FixedArray[A]) -> Unit {
+/// Floyd bottom-up build-heap: reorders `heap` into a max-heap in O(n).
+fn[A : Compare] heapify(heap : MutArrayView[A]) -> Unit {
   let len = heap.length()
+  // Everything past `len / 2 - 1` is a leaf and already a trivial heap, so only
+  // the internal nodes need sifting, deepest first.
   for i = len / 2 - 1; i >= 0; {
     sift_down(heap, i, len)
     continue i - 1
@@ -52,7 +85,13 @@ fn[A : Compare] heapify(heap : FixedArray[A]) -> Unit {
 }
 
 ///|
-fn[A : Compare] sift_down(heap : FixedArray[A], start : Int, len : Int) -> Unit {
+/// Sinks the element at `start` until the subtree rooted there is a max-heap,
+/// repeatedly swapping it with its larger child.
+fn[A : Compare] sift_down(
+  heap : MutArrayView[A],
+  start : Int,
+  len : Int,
+) -> Unit {
   for root = start {
     let left = root * 2 + 1
     guard left < len else { break }
@@ -71,8 +110,10 @@ fn[A : Compare] sift_down(heap : FixedArray[A], start : Int, len : Int) -> Unit 
 }
 
 ///|
+/// Transcribes the implicit array heap into the persistent `Node` tree,
+/// preserving the `index -> (2*index+1, 2*index+2)` child mapping.
 fn[A] priority_queue_node_from_heap(
-  heap : FixedArray[A],
+  heap : MutArrayView[A],
   index : Int,
   len : Int,
 ) -> Node[A] {
@@ -131,7 +172,9 @@ pub fn[A : Compare] PriorityQueue::iter(self : PriorityQueue[A]) -> Iter[A] {
 pub fn[A : Compare] PriorityQueue::from_iter(
   iter : Iter[A],
 ) -> PriorityQueue[A] {
-  PriorityQueue(iter.to_array())
+  // `to_array` already yields a fresh array we own, so view it in place and
+  // heapify without copying it again through the public ctor.
+  from_array_in_place(iter.to_array().mut_view())
 }
 
 ///|
