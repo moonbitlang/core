@@ -407,8 +407,9 @@ fn[K : Compare, V] sorted_map_compact_ordered_array(
 ///   @test.assert_eq(map.to_array(), [(1, "a"), (2, "b")])
 /// }
 /// ```
+#warnings("-unused_trait_bound")
 #as_free_fn
-pub fn[K, V] SortedMap::from_sorted_array(
+pub fn[K : Compare, V] SortedMap::from_sorted_array(
   array : ArrayView[(K, V)],
 ) -> SortedMap[K, V] {
   sorted_map_from_sorted_array(array, 0, array.length())
