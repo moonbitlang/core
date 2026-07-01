@@ -53,3 +53,11 @@ pub fn set_env_var(key : String, value : String) -> Unit {
 pub fn unset_env_var(key : String) -> Unit {
   unset_env_var_internal(key)
 }
+
+///|
+/// Get `n` random bytes from a platform entropy source.
+/// Returns `Some(bytes)` when the platform can provide secure random bytes,
+/// and `None` on targets/environments that do not support entropy.
+pub fn rand(n : Int) -> Bytes? {
+  rand_internal(n)
+}

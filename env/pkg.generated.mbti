@@ -12,6 +12,8 @@ pub fn get_env_vars() -> Map[String, String]
 
 pub fn now() -> UInt64
 
+pub fn rand(Int) -> Bytes?
+
 pub fn set_env_var(String, String) -> Unit
 
 pub fn unset_env_var(String) -> Unit
