@@ -5,3 +5,7 @@ import {
   "moonbitlang/core/int16",
   "moonbitlang/core/int64",
 }
+
+import {
+  "moonbitlang/core/bench",
+} for "test"

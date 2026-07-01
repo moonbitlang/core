@@ -28,11 +28,14 @@ fn load_u32_le(bytes : FixedArray[Byte], offset : Int) -> UInt {
 
 ///|
 fn load_u64_le(bytes : FixedArray[Byte], offset : Int) -> UInt64 {
-  let mut result = 0UL
-  for i in 0..<8 {
-    result = result | (bytes.unsafe_get(offset + i).to_uint64() << (i * 8))
-  }
-  result
+  bytes.unsafe_get(offset).to_uint64() |
+  (bytes.unsafe_get(offset + 1).to_uint64() << 8) |
+  (bytes.unsafe_get(offset + 2).to_uint64() << 16) |
+  (bytes.unsafe_get(offset + 3).to_uint64() << 24) |
+  (bytes.unsafe_get(offset + 4).to_uint64() << 32) |
+  (bytes.unsafe_get(offset + 5).to_uint64() << 40) |
+  (bytes.unsafe_get(offset + 6).to_uint64() << 48) |
+  (bytes.unsafe_get(offset + 7).to_uint64() << 56)
 }
 
 ///|
@@ -51,9 +54,14 @@ fn store_u32_le(bytes : FixedArray[Byte], offset : Int, value : UInt) -> Unit {
 
 ///|
 fn store_u64_le(bytes : FixedArray[Byte], offset : Int, value : UInt64) -> Unit {
-  for i in 0..<8 {
-    bytes.unsafe_set(offset + i, (value >> (i * 8)).to_byte())
-  }
+  bytes.unsafe_set(offset, value.to_byte())
+  bytes.unsafe_set(offset + 1, (value >> 8).to_byte())
+  bytes.unsafe_set(offset + 2, (value >> 16).to_byte())
+  bytes.unsafe_set(offset + 3, (value >> 24).to_byte())
+  bytes.unsafe_set(offset + 4, (value >> 32).to_byte())
+  bytes.unsafe_set(offset + 5, (value >> 40).to_byte())
+  bytes.unsafe_set(offset + 6, (value >> 48).to_byte())
+  bytes.unsafe_set(offset + 7, (value >> 56).to_byte())
 }
 
 ///|
