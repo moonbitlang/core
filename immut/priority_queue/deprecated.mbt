@@ -19,5 +19,5 @@
 #deprecated("Use `PriorityQueue([])` instead")
 #as_free_fn(deprecated="Use `PriorityQueue([])` instead")
 pub fn[A] PriorityQueue::new() -> PriorityQueue[A] {
-  new_priority_queue()
+  { node: Empty, size: 0 }
 }
