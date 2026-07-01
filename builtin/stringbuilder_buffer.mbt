@@ -23,16 +23,16 @@ struct StringBuilder {
 ///
 /// Parameters:
 ///
-/// * `size_hint` : An optional initial capacity hint for the internal buffer. If
-/// less than 1, a minimum capacity of 1 is used. Defaults to 0. It is the size of bytes, 
-/// not the size of characters. `size_hint` may be ignored on some platforms, JS for example.
+/// * `size_hint` : An optional initial capacity hint for the internal buffer,
+/// in UTF-16 code units. Defaults to 8. Use 0 to request an empty initial
+/// buffer. `size_hint` may be ignored on some platforms, JS for example.
 ///
-/// Returns a new `StringBuilder` instance with the specified initial capacity.
+/// Returns a new `StringBuilder` instance.
 ///
 #alias(new)
-pub fn StringBuilder::StringBuilder(size_hint? : Int = 0) -> StringBuilder {
-  let initial = if size_hint < 1 { 1 } else { (size_hint + 1) / 2 }
-  let data : FixedArray[UInt16] = FixedArray::make(initial, 0)
+pub fn StringBuilder::StringBuilder(size_hint? : Int = 8) -> StringBuilder {
+  guard size_hint >= 0 else { abort("size_hint must be non-negative") }
+  let data : FixedArray[UInt16] = FixedArray::make(size_hint, 0)
   { data, len: 0 }
 }
 
@@ -51,9 +51,9 @@ fn StringBuilder::grow_if_necessary(
   if required <= current_len {
     return
   }
-  // current_len is at least 1
-  // double the enough_space until it larger than required
-  let enough_space = for enough_space = current_len; enough_space < required; {
+  // Double the capacity until it can hold the required length.
+  let initial = current_len.max(1)
+  let enough_space = for enough_space = initial; enough_space < required; {
     continue enough_space * 2
   } nobreak {
     enough_space
