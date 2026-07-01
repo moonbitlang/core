@@ -28,6 +28,57 @@ test "find" {
 }
 
 ///|
+test "BytesView find edge cases" {
+  let target = b"--abcabc--"[2:8]
+  debug_inspect(target.find(b""), content="Some(0)")
+  debug_inspect(target.find(b"abc"), content="Some(0)")
+  debug_inspect(target.find(b"bca"), content="Some(1)")
+  debug_inspect(target.find(b"cab"), content="Some(2)")
+  debug_inspect(target.find(b"abcabc"), content="Some(0)")
+  debug_inspect(target.find(b"abcabcx"), content="None")
+  debug_inspect(b""[:].find(b""), content="Some(0)")
+  debug_inspect(b""[:].find(b"a"), content="None")
+}
+
+///|
+test "BytesView find long input" {
+  let target = Bytes::makei(64, i => if i == 60 { b'Z' } else { b'a' })
+  debug_inspect(target.find(b"Z"), content="Some(60)")
+  debug_inspect(target.find(b"aaaaZ"), content="Some(56)")
+  debug_inspect(target.find(b"b"), content="None")
+  let view = target[3:63]
+  debug_inspect(view.find(b"Z"), content="Some(57)")
+  debug_inspect(view.find(b"aaaaZ"), content="Some(53)")
+}
+
+///|
+test "BytesView find dense candidates" {
+  let target = Bytes::makei(160, i => if i == 127 { b'b' } else { b'a' })
+  let pattern = Bytes::makei(40, i => if i == 39 { b'b' } else { b'a' })
+  debug_inspect(target.find(pattern), content="Some(88)")
+  debug_inspect(
+    target.find(Bytes::makei(40, i => if i == 39 { b'c' } else { b'a' })),
+    content="None",
+  )
+}
+
+///|
+test "BytesView find long pattern offset view" {
+  let data = Bytes::makei(180, i => {
+    if i >= 97 && i < 136 {
+      b'a'
+    } else if i == 136 {
+      b'b'
+    } else {
+      b'x'
+    }
+  })
+  let view = data[9:170]
+  let pattern = Bytes::makei(40, i => if i == 39 { b'b' } else { b'a' })
+  debug_inspect(view.find(pattern), content="Some(88)")
+}
+
+///|
 test "rev_find" {
   debug_inspect(b"hello".rev_find(b"o"), content="Some(4)")
   debug_inspect(b"hello".rev_find(b"l"), content="Some(3)")
