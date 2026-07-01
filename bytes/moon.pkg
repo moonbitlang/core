@@ -5,6 +5,7 @@ import {
 
 import {
   "moonbitlang/core/array",
+  "moonbitlang/core/bench",
   "moonbitlang/core/double",
   "moonbitlang/core/uint",
   "moonbitlang/core/uint64",
