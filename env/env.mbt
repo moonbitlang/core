@@ -59,7 +59,8 @@ pub fn unset_env_var(key : String) -> Unit {
 /// so native-only import will result in unused import warning on other targets.
 /// Manually supress the unused warning here.
 #cfg(not(target="native"))
-let _supress_unused_warning : Unit = {
+#warnings("-unused_value")
+fn unused_function() -> Unit {
   ignore(@ref.Ref(42))
   ignore(@utf8.encode(""))
 }
