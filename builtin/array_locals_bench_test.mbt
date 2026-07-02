@@ -118,6 +118,28 @@ test "bench FixedArray::fold n=100000" (it : @bench.T) {
 }
 
 ///|
+test "bench FixedArray::iter fold n=100000" (it : @bench.T) {
+  let data = make_array_locals_bench_fixedarray()
+  it.bench(fn() { it.keep(data.iter().fold(init=0, (sum, x) => sum + x)) })
+}
+
+///|
+test "bench FixedArray::iter each n=100000" (it : @bench.T) {
+  let data = make_array_locals_bench_fixedarray()
+  it.bench(fn() {
+    let mut sum = 0
+    data.iter().each(x => sum = sum + x)
+    it.keep(sum)
+  })
+}
+
+///|
+test "bench FixedArray::iter to_array n=100000" (it : @bench.T) {
+  let data = make_array_locals_bench_fixedarray()
+  it.bench(fn() { it.keep(data.iter().to_array()) })
+}
+
+///|
 test "bench FixedArray::rev_fold n=100000" (it : @bench.T) {
   let data = make_array_locals_bench_fixedarray()
   it.bench(fn() { it.keep(data.rev_fold(init=0, (sum, x) => sum + x)) })
@@ -214,6 +236,31 @@ test "bench ArrayView::fold n=100000" (it : @bench.T) {
   let data = make_array_locals_bench_fixedarray()
   let view = data[:]
   it.bench(fn() { it.keep(view.fold(init=0, (sum, x) => sum + x)) })
+}
+
+///|
+test "bench ArrayView::iter fold n=100000" (it : @bench.T) {
+  let data = make_array_locals_bench_fixedarray()
+  let view = data[:]
+  it.bench(fn() { it.keep(view.iter().fold(init=0, (sum, x) => sum + x)) })
+}
+
+///|
+test "bench ArrayView::iter each n=100000" (it : @bench.T) {
+  let data = make_array_locals_bench_fixedarray()
+  let view = data[:]
+  it.bench(fn() {
+    let mut sum = 0
+    view.iter().each(x => sum = sum + x)
+    it.keep(sum)
+  })
+}
+
+///|
+test "bench ArrayView::iter to_array n=100000" (it : @bench.T) {
+  let data = make_array_locals_bench_fixedarray()
+  let view = data[:]
+  it.bench(fn() { it.keep(view.iter().to_array()) })
 }
 
 ///|
