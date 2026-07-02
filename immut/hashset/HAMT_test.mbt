@@ -159,6 +159,40 @@ test "from_iter empty iter" {
 }
 
 ///|
+fn rebuild_from_array_by_add(data : Array[Int]) -> @hashset.HashSet[Int] {
+  for n = data.length(), set = @hashset.new() {
+    match n {
+      0 => break set
+      _ => continue n - 1, set.add(data[n - 1])
+    }
+  }
+}
+
+///|
+fn rebuild_from_iter_by_add(data : Array[Int]) -> @hashset.HashSet[Int] {
+  for value in data; set = @hashset.new() {
+    continue set.add(value)
+  } nobreak {
+    set
+  }
+}
+
+///|
+test "from_array matches reverse add with duplicates" {
+  let data = Array::makei(256, i => (i * 1103515245 + 12345) & 63)
+  @test.assert_eq(@hashset.HashSet(data), rebuild_from_array_by_add(data))
+}
+
+///|
+test "from_iter matches forward add with duplicates" {
+  let data = Array::makei(256, i => (i * 1103515245 + 12345) & 63)
+  @test.assert_eq(
+    @hashset.from_iter(data.iter()),
+    rebuild_from_iter_by_add(data),
+  )
+}
+
+///|
 test "each on empty set" {
   let s = @hashset.new()
   let mut count = 0
@@ -297,6 +331,39 @@ impl Hash for SegKey with fn hash_combine(self, hasher) {
 ///|
 impl Eq for SegKey with fn equal(self, other) {
   self.0 == other.0
+}
+
+///|
+struct SameKey(Int, String)
+
+///|
+impl Hash for SameKey with fn hash_combine(self, hasher) {
+  hasher.combine_int(self.0)
+}
+
+///|
+impl Eq for SameKey with fn equal(self, other) {
+  self.0 == other.0
+}
+
+///|
+test "from_array duplicate keeps last representative" {
+  let set = @hashset.HashSet([SameKey(1, "first"), SameKey(1, "second")])
+  let values = set.iter().to_array()
+  @test.assert_eq(values.length(), 1)
+  let SameKey(_, label) = values[0]
+  inspect(label, content="second")
+}
+
+///|
+test "from_iter duplicate keeps first representative" {
+  let set = @hashset.from_iter(
+    [SameKey(1, "first"), SameKey(1, "second")].iter(),
+  )
+  let values = set.iter().to_array()
+  @test.assert_eq(values.length(), 1)
+  let SameKey(_, label) = values[0]
+  inspect(label, content="first")
 }
 
 ///|
