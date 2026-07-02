@@ -1709,23 +1709,79 @@ test "View::replace_all boundary cases" {
 }
 
 ///|
+/// Helpers for ASCII-only lowercase conversion over UTF-16 code units.
+/// Non-ASCII code units, including surrogate halves, are copied with
+/// `write_substring` and are never converted through `Char`.
+fn is_ascii_uppercase_code_unit(code_unit : Int) -> Bool {
+  code_unit >= 0x41 && code_unit <= 0x5A
+}
+
+///|
+fn find_ascii_uppercase_code_unit(
+  data : String,
+  start : Int,
+  len : Int,
+) -> Int? {
+  let end = start + len
+  for i = start; i < end; i = i + 1 {
+    // SAFETY: i stays within the caller-provided UTF-16 slice bounds.
+    let code_unit = data.unsafe_get(i).to_int()
+    if is_ascii_uppercase_code_unit(code_unit) {
+      return Some(i - start)
+    }
+  }
+  None
+}
+
+///|
+fn StringBuilder::write_ascii_lowercase_code_unit(
+  self : StringBuilder,
+  code_unit : Int,
+) -> Unit {
+  // SAFETY: code_unit is ASCII uppercase, so +32 is an ASCII lowercase code
+  // point and a valid `Char`; this helper is not used for arbitrary UTF-16
+  // code units or surrogate halves.
+  self.write_char((code_unit + 32).unsafe_to_char())
+}
+
+///|
+fn StringBuilder::write_ascii_lowered_substring(
+  self : StringBuilder,
+  data : String,
+  start : Int,
+  len : Int,
+) -> Unit {
+  let end = start + len
+  let mut segment_start = start
+  for i = start; i < end; i = i + 1 {
+    // SAFETY: i stays within the caller-provided UTF-16 slice bounds.
+    let code_unit = data.unsafe_get(i).to_int()
+    if is_ascii_uppercase_code_unit(code_unit) {
+      if segment_start < i {
+        self.write_substring(data, segment_start, i - segment_start)
+      }
+      self.write_ascii_lowercase_code_unit(code_unit)
+      segment_start = i + 1
+    }
+  }
+  if segment_start < end {
+    self.write_substring(data, segment_start, end - segment_start)
+  }
+}
+
+///|
 /// Converts this string to lowercase.
 pub fn StringView::to_lower(self : StringView) -> StringView {
   // TODO: deal with non-ascii characters
-  guard self.find_by(x => x.is_ascii_uppercase()) is Some(idx) else {
+  let data = self.data()
+  let start = self.start_offset()
+  let len = self.length()
+  guard find_ascii_uppercase_code_unit(data, start, len) is Some(idx) else {
     return self
   }
-  let buf = StringBuilder(size_hint=self.length())
-  let head = self.view(end_offset=idx)
-  buf.write_substring(head.data(), head.start_offset(), head.length())
-  for c in self.view(start_offset=idx) {
-    if c.is_ascii_uppercase() {
-      // 'A' is 65 in ASCII, 'a' is 97, the difference is 32
-      buf.write_char((c.to_int() + 32).unsafe_to_char())
-    } else {
-      buf.write_char(c)
-    }
-  }
+  let buf = StringBuilder(size_hint=len)
+  buf.write_substring(data, start, idx)
+  buf.write_ascii_lowered_substring(data, start + idx, len - idx)
   buf.to_string()
 }
 
@@ -1733,20 +1789,13 @@ pub fn StringView::to_lower(self : StringView) -> StringView {
 /// Converts this string to lowercase.
 pub fn String::to_lower(self : String) -> String {
   // TODO: deal with non-ascii characters
-  guard self.find_by(x => x.is_ascii_uppercase()) is Some(idx) else {
+  let len = self.length()
+  guard find_ascii_uppercase_code_unit(self, 0, len) is Some(idx) else {
     return self
   }
-  let buf = StringBuilder(size_hint=self.length())
-  let head = self.view(end_offset=idx)
-  buf.write_substring(head.data(), head.start_offset(), head.length())
-  for c in self.view(start_offset=idx) {
-    if c.is_ascii_uppercase() {
-      // 'A' is 65 in ASCII, 'a' is 97, the difference is 32
-      buf.write_char((c.to_int() + 32).unsafe_to_char())
-    } else {
-      buf.write_char(c)
-    }
-  }
+  let buf = StringBuilder(size_hint=len)
+  buf.write_substring(self, 0, idx)
+  buf.write_ascii_lowered_substring(self, idx, len - idx)
   buf.to_string()
 }
 
@@ -1755,6 +1804,11 @@ test "to_lower" {
   assert_eq("Hello".to_lower(), "hello")
   assert_eq("HELLO".to_lower(), "hello")
   assert_eq("Hello, World!".to_lower(), "hello, world!")
+  assert_eq("🤣A".to_lower(), "🤣a")
+  assert_eq("A🤣B".to_lower(), "a🤣b")
+  let unpaired = String::from_array([(0xD800).unsafe_to_char(), 'A'])
+  let lowered_unpaired = String::from_array([(0xD800).unsafe_to_char(), 'a'])
+  assert_eq(unpaired.to_lower(), lowered_unpaired)
 }
 
 ///|
@@ -1762,6 +1816,10 @@ test "View::to_lower" {
   assert_eq("Hello"[:].to_lower(), "hello")
   assert_eq("HELLO"[:].to_lower(), "hello")
   assert_eq("Hello, World!"[:].to_lower(), "hello, world!")
+  assert_eq("x🤣ABy"[1:-1].to_lower(), "🤣ab")
+  let unpaired = String::from_array([(0xD800).unsafe_to_char(), 'A'])
+  let lowered_unpaired = String::from_array([(0xD800).unsafe_to_char(), 'a'])
+  assert_eq(unpaired[:].to_lower(), lowered_unpaired)
 }
 
 ///|
