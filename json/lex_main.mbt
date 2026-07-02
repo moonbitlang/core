@@ -49,22 +49,22 @@ fn ParseContext::lex_value(
     Some('-') =>
       match ctx.read_char() {
         Some('0') => {
-          let (n, repr) = ctx.lex_zero(start=ctx.offset - 2)
+          let { value: n, repr } = ctx.lex_zero(start=ctx.offset - 2)
           return Number(n, repr.map(repr => repr.to_owned()))
         }
         Some('1'..='9') => {
-          let (n, repr) = ctx.lex_decimal_integer(start=ctx.offset - 2)
+          let { value: n, repr } = ctx.lex_decimal_integer(start=ctx.offset - 2)
           return Number(n, repr.map(repr => repr.to_owned()))
         }
         Some(_) => ctx.invalid_char(shift=-1)
         None => raise InvalidEof
       }
     Some('0') => {
-      let (n, repr) = ctx.lex_zero(start=ctx.offset - 1)
+      let { value: n, repr } = ctx.lex_zero(start=ctx.offset - 1)
       return Number(n, repr.map(repr => repr.to_owned()))
     }
     Some('1'..='9') => {
-      let (n, repr) = ctx.lex_decimal_integer(start=ctx.offset - 1)
+      let { value: n, repr } = ctx.lex_decimal_integer(start=ctx.offset - 1)
       return Number(n, repr.map(repr => repr.to_owned()))
     }
     Some('"') => {
