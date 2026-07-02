@@ -1025,7 +1025,6 @@ pub fn BigInt::to_string(self : BigInt, radix? : Int = 10) -> String {
     decimal_radix_bit_len.to_double() +
     1,
   )
-  let s = if self.sign == Negative { "-" } else { "" }
   let v = Array::make(decimal_len, 0L)
   let mut v_idx = 0
   for i in self.len>..0 {
@@ -1041,21 +1040,33 @@ pub fn BigInt::to_string(self : BigInt, radix? : Int = 10) -> String {
       x /= decimal_mask
     }
   }
-  let mut ret = ""
+  // Materialize the decimal digits into a pre-sized buffer, filling from the
+  // least-significant end, so the result is built with a single allocation
+  // instead of the O(n^2) prepending string concatenations this used to do.
+  let cap = v_idx * decimal_radix_bit_len + 1 // +1 for an optional sign
+  let chars = FixedArray::make(cap, '0')
+  let mut pos = cap
+  // Lower slots each contribute exactly `decimal_radix_bit_len` digits,
+  // zero-padded (the most-significant slot is handled separately to avoid leading zeros).
   for i in 0..<(v_idx - 1) {
+    let mut x = v[i]
     for _ in 0..<decimal_radix_bit_len {
-      let x = v[i] % 10L
-      v[i] /= 10L
-      ret = x.to_string() + ret
+      pos -= 1
+      chars[pos] = char_from_digit((x % 10L).to_int())
+      x /= 10L
     }
   }
-  let ret = for x = v[v_idx - 1], ret = ret; x > 0L; { // v_idx is at least 1, we check is_zero() at the beginning.
-    let y = x % 10L
-    continue x / 10L, y.to_string() + ret
-  } nobreak {
-    ret
+  // The most-significant slot is emitted without leading zeros. `v_idx >= 1`
+  // and the top slot is non-zero (guarded by the is_zero() check above).
+  for x = v[v_idx - 1]; x > 0L; x = x / 10L {
+    pos -= 1
+    chars[pos] = char_from_digit((x % 10L).to_int())
   }
-  s + ret
+  if self.sign == Negative {
+    pos -= 1
+    chars[pos] = '-'
+  }
+  String::from_array(chars[pos:])
 }
 
 ///|
