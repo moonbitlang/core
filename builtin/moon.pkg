@@ -26,6 +26,8 @@ warnings = "-test_unqualified_package"
 
 options(
   targets: {
+    "bytesview_lexcmp_swar.mbt": [ "native", "wasm" ],
+    "bytesview_lexcmp_scalar.mbt": [ "wasm-gc", "js", "llvm" ],
     "array_nonjs_test.mbt": [ "not", "js" ],
     "arraycore_js.mbt": [ "js" ],
     "arraycore_nonjs.mbt": [ "not", "js" ],
