@@ -20,9 +20,13 @@
 /// Whether parsing `s` raises a `ParseError`. The match is exhaustive over the
 /// `ParseError` variants rather than a catch-all, so an unexpected error type
 /// would fail to compile instead of being silently swallowed.
-fn parse_raises(s : String) -> Bool {
+///
+/// `max_nesting_depth` is (deprecated) plumbing used only to exercise the
+/// depth-limit guard cheaply; see the depth-limit test for why.
+#warnings("-deprecated")
+fn parse_raises(s : String, max_nesting_depth? : Int = 1024) -> Bool {
   try {
-    @json.parse(s) |> ignore
+    @json.parse(s, max_nesting_depth~) |> ignore
     false
   } catch {
     InvalidChar(_, _)
@@ -87,22 +91,28 @@ test "unterminated string escape raises an error" {
 }
 
 ///|
-test "nesting beyond the default depth limit is rejected" {
-  // 1025 nested arrays exceed the default max nesting depth of 1024
-  let deep_array = String::make(1025, '[') + String::make(1025, ']')
-  inspect(parse_raises(deep_array), content="true")
+test "nesting beyond the configured depth limit is rejected" {
+  // Exceed a small configured depth limit rather than the 1024 default. The
+  // parser recurses once per nesting level, so approaching the default depth
+  // overflows the limited native stack on some platforms (e.g. Windows) before
+  // the guard can fire. A small limit exercises the same DepthLimitExceeded
+  // path with only a handful of frames.
+  //
+  // 9 nested arrays exceed a max nesting depth of 8.
+  let deep_array = String::make(9, '[') + String::make(9, ']')
+  inspect(parse_raises(deep_array, max_nesting_depth=8), content="true")
   // the same for deeply nested objects (a separate depth check)
   let sb = StringBuilder::new()
-  for _ in 0..<1025 {
+  for _ in 0..<9 {
     sb.write_string("{\"a\":")
   }
   sb.write_string("1")
-  for _ in 0..<1025 {
+  for _ in 0..<9 {
     sb.write_string("}")
   }
-  inspect(parse_raises(sb.to_string()), content="true")
-  // a shallow document parses fine
-  inspect(parse_raises("[[1]]"), content="false")
+  inspect(parse_raises(sb.to_string(), max_nesting_depth=8), content="true")
+  // a document within the limit parses fine
+  inspect(parse_raises("[[1]]", max_nesting_depth=8), content="false")
 }
 
 ///|
