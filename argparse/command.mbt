@@ -26,6 +26,7 @@ pub struct Command {
   priv disable_help_subcommand : Bool
   priv arg_required_else_help : Bool
   priv subcommand_required : Bool
+  priv default_subcommand : String?
   priv hidden : Bool
   priv mut build_error : ArgBuildError?
 } derive(@debug.Debug)
@@ -41,6 +42,7 @@ pub struct Command {
 /// - `disable_help_subcommand` disables built-in `help <subcommand>` routing.
 /// - `arg_required_else_help=true` prints help when no argv tokens are provided.
 /// - `subcommand_required=true` requires selecting a subcommand.
+/// - `default_subcommand` dispatches missing subcommands to a visible child.
 /// - `hidden=true` omits this command from parent command listings.
 #alias(new, deprecated="Use `Command()` instead")
 pub fn Command::Command(
@@ -58,6 +60,7 @@ pub fn Command::Command(
   subcommand_required? : Bool = false,
   hidden? : Bool = false,
   groups? : ArrayView[ArgGroup] = [],
+  default_subcommand? : StringView,
 ) -> Command {
   let (parsed_args, arg_error) = collect_args(flags, options, positionals)
   let groups = groups.to_owned()
@@ -73,6 +76,7 @@ pub fn Command::Command(
     disable_help_subcommand,
     arg_required_else_help,
     subcommand_required,
+    default_subcommand: default_subcommand.map(v => v.to_owned()),
     hidden,
     build_error: arg_error,
   }

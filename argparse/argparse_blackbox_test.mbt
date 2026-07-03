@@ -331,6 +331,267 @@ test "global flag keeps parent argv over child env fallback" {
 }
 
 ///|
+test "default subcommand dispatches through normal child parsing" {
+  let tui = @argparse.Command(
+    "tui",
+    about="Start interactive UI",
+    flags=[FlagArg("trace", short='t')],
+    options=[OptionArg("theme", long="theme")],
+    positionals=[PositionArg("workspace")],
+  )
+  let mcp = @argparse.Command("mcp", about="Run MCP server", options=[
+    OptionArg("port", long="port"),
+  ])
+  let cmd = @argparse.Command(
+    "openseek",
+    options=[OptionArg("config", long="config", global=true)],
+    flags=[FlagArg("verbose", short='v', action=Count, global=true)],
+    subcommands=[tui, mcp],
+    default_subcommand="tui",
+  )
+
+  let bare = cmd.parse(argv=[], env=empty_env()) catch { _ => panic() }
+  assert_true(bare.subcommand is Some(("tui", _)))
+
+  let defaulted = cmd.parse(
+    argv=["--config", "config.toml", "--theme", "dark", "workspace"],
+    env=empty_env(),
+  ) catch {
+    _ => panic()
+  }
+  assert_true(defaulted.values is { "config": ["config.toml"], .. })
+  assert_true(
+    defaulted.subcommand is Some(("tui", sub)) &&
+    sub.values
+    is {
+      "config": ["config.toml"],
+      "theme": ["dark"],
+      "workspace": ["workspace"],
+      ..
+    },
+  )
+
+  let short_global = cmd.parse(argv=["-v", "--theme", "dark"], env=empty_env()) catch {
+    _ => panic()
+  }
+  assert_true(short_global.flag_counts is { "verbose": 1, .. })
+  assert_true(
+    short_global.subcommand is Some(("tui", sub)) &&
+    sub.values is { "theme": ["dark"], .. } &&
+    sub.flag_counts is { "verbose": 1, .. },
+  )
+
+  let mixed_short = cmd.parse(argv=["-vt"], env=empty_env()) catch {
+    _ => panic()
+  }
+  assert_true(mixed_short.flag_counts is { "verbose": 1, .. })
+  assert_true(
+    mixed_short.subcommand is Some(("tui", sub)) &&
+    sub.flags is { "trace": true, .. } &&
+    sub.flag_counts is { "verbose": 1, .. },
+  )
+
+  let explicit = cmd.parse(argv=["mcp", "--port", "9000"], env=empty_env()) catch {
+    _ => panic()
+  }
+  assert_true(
+    explicit.subcommand is Some(("mcp", sub)) &&
+    sub.values is { "port": ["9000"], .. },
+  )
+}
+
+///|
+test "default subcommand gives exact subcommands precedence over positionals" {
+  let cmd = @argparse.Command(
+    "openseek",
+    subcommands=[
+      Command("tui", positionals=[PositionArg("workspace")]),
+      Command("mcp"),
+    ],
+    default_subcommand="tui",
+  )
+
+  let explicit = cmd.parse(argv=["mcp"], env=empty_env()) catch { _ => panic() }
+  assert_true(explicit.subcommand is Some(("mcp", _)))
+
+  let positional = cmd.parse(argv=["project"], env=empty_env()) catch {
+    _ => panic()
+  }
+  assert_true(
+    positional.subcommand is Some(("tui", sub)) &&
+    sub.values is { "workspace": ["project"], .. },
+  )
+
+  let explicit_default = cmd.parse(argv=["tui", "mcp"], env=empty_env()) catch {
+    _ => panic()
+  }
+  assert_true(
+    explicit_default.subcommand is Some(("tui", sub)) &&
+    sub.values is { "workspace": ["mcp"], .. },
+  )
+
+  let after_dash_dash = cmd.parse(argv=["--", "mcp"], env=empty_env()) catch {
+    _ => panic()
+  }
+  assert_true(
+    after_dash_dash.subcommand is Some(("tui", sub)) &&
+    sub.values is { "workspace": ["mcp"], .. },
+  )
+}
+
+///|
+test "default subcommand help annotation and child error context" {
+  let cmd = @argparse.Command(
+    "openseek",
+    options=[OptionArg("config", long="config", about="config", global=true)],
+    subcommands=[
+      Command("tui", about="Start interactive UI", options=[
+        OptionArg("theme", long="theme", about="theme"),
+      ]),
+      Command("mcp", about="Run MCP server"),
+    ],
+    default_subcommand="tui",
+  )
+
+  inspect(
+    cmd.render_help(),
+    content=(
+      #|Usage: openseek [options] [command]
+      #|
+      #|Commands:
+      #|  tui   Start interactive UI (default)
+      #|  mcp   Run MCP server
+      #|  help  Print help for the subcommand(s).
+      #|
+      #|Options:
+      #|  -h, --help         Show help information.
+      #|  --config <config>  config
+      #|
+    ),
+  )
+
+  try cmd.parse(argv=["--unknown"], env=empty_env()) catch {
+    err =>
+      inspect(
+        err,
+        content=(
+          #|error: unexpected argument '--unknown' found
+          #|
+          #|Usage: openseek tui [options]
+          #|
+          #|Start interactive UI
+          #|
+          #|Options:
+          #|  -h, --help         Show help information.
+          #|  --config <config>  config
+          #|  --theme <theme>    theme
+          #|
+        ),
+      )
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
+test "default subcommand validation rejects ambiguous root configuration" {
+  try
+    @argparse.Command(
+      "demo",
+      subcommands=[Command("run")],
+      default_subcommand="missing",
+    ).parse(argv=[], env=empty_env())
+  catch {
+    err =>
+      inspect(
+        err,
+        content=(
+          #|error: command definition validation failed: default_subcommand must name a visible subcommand: missing
+        ),
+      )
+  } noraise {
+    _ => panic()
+  }
+
+  try
+    @argparse.Command(
+      "demo",
+      subcommands=[Command("run")],
+      subcommand_required=true,
+      default_subcommand="run",
+    ).parse(argv=[], env=empty_env())
+  catch {
+    err =>
+      inspect(
+        err,
+        content=(
+          #|error: command definition validation failed: default_subcommand cannot be used with subcommand_required
+        ),
+      )
+  } noraise {
+    _ => panic()
+  }
+
+  try
+    @argparse.Command(
+      "demo",
+      subcommands=[Command("run")],
+      arg_required_else_help=true,
+      default_subcommand="run",
+    ).parse(argv=[], env=empty_env())
+  catch {
+    err =>
+      inspect(
+        err,
+        content=(
+          #|error: command definition validation failed: default_subcommand cannot be used with arg_required_else_help
+        ),
+      )
+  } noraise {
+    _ => panic()
+  }
+
+  try
+    @argparse.Command(
+      "demo",
+      options=[OptionArg("mode", long="mode")],
+      subcommands=[Command("run")],
+      default_subcommand="run",
+    ).parse(argv=[], env=empty_env())
+  catch {
+    err =>
+      inspect(
+        err,
+        content=(
+          #|error: command definition validation failed: default_subcommand only supports global root flags/options
+        ),
+      )
+  } noraise {
+    _ => panic()
+  }
+
+  try
+    @argparse.Command(
+      "demo",
+      flags=[FlagArg("verbose", long="verbose", global=true)],
+      groups=[ArgGroup("verbosity", args=["verbose"])],
+      subcommands=[Command("run")],
+      default_subcommand="run",
+    ).parse(argv=[], env=empty_env())
+  catch {
+    err =>
+      inspect(
+        err,
+        content=(
+          #|error: command definition validation failed: default_subcommand does not support root groups
+        ),
+      )
+  } noraise {
+    _ => panic()
+  }
+}
+
+///|
 test "subcommand cannot follow positional arguments" {
   let cmd = @argparse.Command("demo", positionals=[PositionArg("input")], subcommands=[
     Command("run"),
