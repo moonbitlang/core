@@ -297,7 +297,7 @@ pub fn StringView::rev_iter(self : StringView) -> Iter[Char] {
 ///
 /// ```mbt check
 /// test {
-///   let view = "zabc!"[1:-1]
+///   let view = "zabc!"[1:4]
 ///   assert_true(view.all(c => c.is_ascii_lowercase()))
 ///   assert_false(view.all(c => c == 'a'))
 /// }
@@ -323,7 +323,7 @@ pub fn StringView::all(
 ///
 /// ```mbt check
 /// test {
-///   let view = "zabc!"[1:-1]
+///   let view = "zabc!"[1:4]
 ///   assert_true(view.any(c => c == 'b'))
 ///   assert_false(view.any(c => c.is_ascii_digit()))
 /// }
@@ -670,9 +670,8 @@ pub fn String::get_view(
   let len = self.length()
   let end = match end {
     None => len
-    Some(end) => if end < 0 { len + end } else { end }
+    Some(end) => end
   }
-  let start = if start < 0 { len + start } else { start }
   guard start >= 0 && start <= end && end <= len else { None }
   if start < len && self.unsafe_get(start).is_trailing_surrogate() {
     return None
@@ -695,13 +694,9 @@ pub fn StringView::get_view(
   let str_len = self.str().length()
   let abs_end = match end {
     None => self.end()
-    Some(end) => if end < 0 { self.end() + end } else { self.start() + end }
+    Some(end) => self.start() + end
   }
-  let abs_start = if start < 0 {
-    self.end() + start
-  } else {
-    self.start() + start
-  }
+  let abs_start = self.start() + start
   guard abs_start >= self.start() &&
     abs_start <= abs_end &&
     abs_end <= self.end() else {
@@ -722,13 +717,11 @@ pub fn StringView::get_view(
 ///
 /// # Parameters
 ///
-/// - `start` : Starting UTF-16 code unit index (default: 0)
-///   - If positive: counts from the beginning of the string
-///   - If negative: counts from the end of the string (e.g., -1 means last position)
+/// - `start` : Starting UTF-16 code unit index (default: 0), counting from the
+///   beginning of the string
 /// - `end` : Ending UTF-16 code unit index (optional)
 ///   - If `None`: extends to the end of the string
-///   - If positive: counts from the beginning of the string
-///   - If negative: counts from the end of the string
+///   - Otherwise: counts from the beginning of the string
 ///
 /// # Returns
 ///
@@ -754,7 +747,7 @@ pub fn StringView::get_view(
 ///   let str = "Hello🤣World"
 ///   let view1 = str[0:5]
 ///   inspect(view1, content="Hello")
-///   let view2 = str[-5:]
+///   let view2 = str[7:]
 ///   inspect(view2, content="World")
 /// }
 /// ```
@@ -763,9 +756,8 @@ pub fn String::sub(self : String, start? : Int = 0, end? : Int) -> StringView {
   let len = self.length()
   let end = match end {
     None => len
-    Some(end) => if end < 0 { len + end } else { end }
+    Some(end) => end
   }
-  let start = if start < 0 { len + start } else { start }
   guard start >= 0 && start <= end && end <= len
   if start < len {
     guard !self.unsafe_get(start).is_trailing_surrogate()
@@ -781,13 +773,11 @@ pub fn String::sub(self : String, start? : Int = 0, end? : Int) -> StringView {
 ///
 /// # Parameters
 ///
-/// - `start` : Starting UTF-16 code unit index relative to this view (default: 0)
-///   - If positive: counts from the beginning of this view
-///   - If negative: counts from the end of this view
+/// - `start` : Starting UTF-16 code unit index relative to this view (default: 0),
+///   counting from the beginning of this view
 /// - `end` : Ending UTF-16 code unit index relative to this view (optional)
 ///   - If `None`: extends to the end of this view
-///   - If positive: counts from the beginning of this view
-///   - If negative: counts from the end of this view
+///   - Otherwise: counts from the beginning of this view
 ///
 /// # Returns
 ///
@@ -810,10 +800,10 @@ pub fn String::sub(self : String, start? : Int = 0, end? : Int) -> StringView {
 ///
 /// ```mbt check
 /// test {
-///   let str = "Hello🤣World"[1:-1] // "ello🤣Worl"
+///   let str = "Hello🤣World"[1:11] // "ello🤣Worl"
 ///   let view1 = str[0:6]
 ///   inspect(view1, content="ello🤣")
-///   let view2 = str[-2:]
+///   let view2 = str[8:]
 ///   inspect(view2, content="rl")
 /// }
 /// ```
@@ -828,13 +818,9 @@ pub fn StringView::sub(
   // Calculate absolute positions in the original string
   let abs_end = match end {
     None => self.end()
-    Some(end) => if end < 0 { self.end() + end } else { self.start() + end }
+    Some(end) => self.start() + end
   }
-  let abs_start = if start < 0 {
-    self.end() + start
-  } else {
-    self.start() + start
-  }
+  let abs_start = self.start() + start
 
   // Validate bounds against the original string
   guard abs_start >= self.start() &&

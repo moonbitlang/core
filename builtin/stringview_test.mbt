@@ -67,7 +67,7 @@ test "unsafe_get" {
 
 ///|
 test "StringView::code_units" {
-  let view = "ZA😀BY"[1:-1]
+  let view = "ZA😀BY"[1:5]
   let units = view.code_units()
   inspect(units.length(), content="4")
   inspect(units.unsafe_get(0), content="65")
@@ -126,7 +126,7 @@ test "StringView core operations" {
 
 ///|
 test "StringView::all and any" {
-  let view = "Za😀b!"[1:-1]
+  let view = "Za😀b!"[1:5]
   inspect(""[0:0].all(c => c == 'x'), content="true")
   inspect(""[0:0].any(c => c == 'x'), content="false")
   inspect(view.all(c => c == 'a' || c == '😀' || c == 'b'), content="true")
@@ -174,11 +174,11 @@ test "StringView comparisons" {
 
 ///|
 test "StringView sub valid cases" {
-  let slice = "abcd"[:][1:-1]
+  let slice = "abcd"[:][1:3]
   inspect(slice.to_owned(), content="bc")
-  let tail = "abcd"[-2:]
+  let tail = "abcd"[2:]
   inspect(tail.to_owned(), content="cd")
-  let tail_view = "abcd"[:][-2:]
+  let tail_view = "abcd"[:][2:]
   inspect(tail_view.to_owned(), content="cd")
 }
 
@@ -195,14 +195,14 @@ test "panic String::sub index out of bounds" {
 ///|
 test "panic StringView::sub invalid index" {
   let s = "A😀B"
-  let view = s[1:-1]
+  let view = s[1:3]
   ignore(view[:1])
 }
 
 ///|
 test "panic StringView::sub index out of bounds" {
   let s = "A😀B"
-  let view = s[1:-1]
+  let view = s[1:3]
   ignore(view[0:10])
 }
 
@@ -309,7 +309,7 @@ test "String::get_view" {
     ),
   )
   debug_inspect(
-    s.get_view(start=-5).map(v => v.to_owned()),
+    s.get_view(start=7).map(v => v.to_owned()),
     content=(
       #|Some("World")
     ),
@@ -332,7 +332,7 @@ test "String::get_view" {
 ///|
 test "StringView::get_view" {
   let s = "Hello🤣World"
-  let view = s[1:-1] // "ello🤣Worl"
+  let view = s[1:11] // "ello🤣Worl"
   debug_inspect(
     view.get_view().map(v => v.to_owned()),
     content=(
@@ -346,7 +346,7 @@ test "StringView::get_view" {
     ),
   )
   debug_inspect(
-    view.get_view(start=-2).map(v => v.to_owned()),
+    view.get_view(start=8).map(v => v.to_owned()),
     content=(
       #|Some("rl")
     ),

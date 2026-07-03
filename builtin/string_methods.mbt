@@ -449,7 +449,7 @@ pub fn StringView::strip_suffix(
 ///
 /// ```mbt check
 /// test {
-///   let view = "Hello🤣xa"[1:-1]
+///   let view = "Hello🤣xa"[1:8]
 ///   let chars = view.to_array()
 ///   @debug.debug_inspect(chars, content="['e', 'l', 'l', 'o', '🤣', 'x']")
 /// }
@@ -1967,12 +1967,12 @@ test "String::get supports emoji (surrogate pair)" {
 
 ///|
 test "View::get basic cases" {
-  let v = "hello"[1:-1]
+  let v = "hello"[1:4]
   assert_true(v.get(0) == Some(101))
   assert_true(v.get(2) == Some(108))
   assert_true(v.get(3) == None)
   assert_true(v.get(-1) == None)
-  let v = "ab🤣cd"[1:-1]
+  let v = "ab🤣cd"[1:5]
   assert_true(v.get(0) == Some(98))
   assert_true(v.get(1) == Some(55358))
   assert_true(v.get(2) == Some(56611))
@@ -2042,7 +2042,7 @@ test "String::get_char basic cases" {
 ///|
 test "View::get_char basic cases" {
   let s = "a🤣b"
-  let v = s[0:-1]
+  let v = s[0:3]
   assert_true(v.get_char(0) == Some('a'))
   assert_true(v.get_char(1) == Some('🤣'))
   assert_true(v.get_char(2) == None)
