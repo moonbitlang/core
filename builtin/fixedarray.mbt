@@ -773,8 +773,8 @@ pub fn[A, B] FixedArray::rev_foldi(
   f : (Int, B, A) -> B raise?,
 ) -> B raise? {
   let len = self.length()
-  for i in len>..0; acc = init {
-    continue f(len - i - 1, acc, self.unsafe_get(i))
+  for read = len - 1, index = 0, acc = init; read >= 0; {
+    continue read - 1, index + 1, f(index, acc, self.unsafe_get(read))
   } nobreak {
     acc
   }
