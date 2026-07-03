@@ -384,32 +384,45 @@ pub fn Json::stringify(
 
 ///|
 fn escape(str : String, escape_slash~ : Bool) -> String {
+  let len = str.length()
+  let mut needs_escape = false
+  for i in 0..<len {
+    let code = str.unsafe_get(i)
+    if code == ('"' : UInt16) ||
+      code == ('\\' : UInt16) ||
+      code < (' ' : UInt16) ||
+      (escape_slash && code == ('/' : UInt16)) {
+      needs_escape = true
+      break
+    }
+  }
+  if !needs_escape {
+    return str
+  }
   let buf = StringBuilder(size_hint=str.length())
-  for c in str {
-    match c {
-      '"' => buf.write_string("\\\"")
-      '\\' => buf.write_string("\\\\")
-      '/' =>
+  for i in 0..<len {
+    let code = str.unsafe_get(i)
+    match code {
+      ('"' : UInt16) => buf.write_string("\\\"")
+      ('\\' : UInt16) => buf.write_string("\\\\")
+      ('/' : UInt16) =>
         if escape_slash {
           buf.write_string("\\/")
         } else {
-          buf.write_char(c)
+          buf.write_char('/')
         }
-      '\n' => buf.write_string("\\n")
-      '\r' => buf.write_string("\\r")
-      '\b' => buf.write_string("\\b")
-      '\t' => buf.write_string("\\t")
-      _ => {
-        let code = c.to_int()
-        if code == 0x0C {
-          buf.write_string("\\f")
-        } else if code < ' ' {
+      ('\n' : UInt16) => buf.write_string("\\n")
+      ('\r' : UInt16) => buf.write_string("\\r")
+      ('\b' : UInt16) => buf.write_string("\\b")
+      ('\t' : UInt16) => buf.write_string("\\t")
+      (0x0C : UInt16) => buf.write_string("\\f")
+      _ =>
+        if code < (' ' : UInt16) {
           buf.write_string("\\u00")
           buf.write_string(code.to_byte().to_hex())
         } else {
-          buf.write_char(c)
+          buf.write_char(code.to_int().unsafe_to_char())
         }
-      }
     }
   }
   buf.to_string()
