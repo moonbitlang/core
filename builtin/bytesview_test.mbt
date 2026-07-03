@@ -55,7 +55,7 @@ test "Bytes::get_view" {
   let bs = b"\x00\x01\x02\x03\x04\x05"
   inspect(bs.get_view() is Some(_), content="true")
   inspect(bs.get_view(start=1, end=4) is Some(_), content="true")
-  inspect(bs.get_view(start=-2) is Some(_), content="true")
+  debug_inspect(bs.get_view(start=-2), content="None")
   debug_inspect(bs.get_view(start=10), content="None")
   debug_inspect(bs.get_view(end=10), content="None")
   debug_inspect(bs.get_view(start=3, end=2), content="None")
@@ -68,7 +68,7 @@ test "BytesView::get_view" {
   let view = b"\x00\x01\x02\x03\x04\x05"[1:5] // [01 02 03 04]
   inspect(view.get_view() is Some(_), content="true")
   inspect(view.get_view(start=1, end=3) is Some(_), content="true")
-  inspect(view.get_view(start=-1) is Some(_), content="true")
+  debug_inspect(view.get_view(start=-1), content="None")
   debug_inspect(view.get_view(start=10), content="None")
   debug_inspect(view.get_view(end=10), content="None")
   debug_inspect(view.get_view(start=3, end=2), content="None")
