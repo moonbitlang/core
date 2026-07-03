@@ -90,7 +90,36 @@ test "rev_find" {
   debug_inspect(b"".rev_find(b"a"), content="None")
   debug_inspect(b"hello hello".rev_find(b"hello"), content="Some(6)")
   debug_inspect(b"aaa".rev_find(b"aa"), content="Some(1)")
-  debug_inspect(b"aabaaabaa".find(b"aaa"), content="Some(3)")
+  debug_inspect(b"aabaaabaa".rev_find(b"aaa"), content="Some(3)")
+}
+
+///|
+test "BytesView rev_find edge cases" {
+  let target = b"--abcabc--"[2:8]
+  debug_inspect(target.rev_find(b""), content="Some(6)")
+  debug_inspect(target.rev_find(b"abc"), content="Some(3)")
+  debug_inspect(target.rev_find(b"bca"), content="Some(1)")
+  debug_inspect(target.rev_find(b"cab"), content="Some(2)")
+  debug_inspect(target.rev_find(b"abcabc"), content="Some(0)")
+  debug_inspect(target.rev_find(b"xabcabc"), content="None")
+  debug_inspect(b""[:].rev_find(b""), content="Some(0)")
+  debug_inspect(b""[:].rev_find(b"a"), content="None")
+}
+
+///|
+test "BytesView rev_find long pattern offset view" {
+  let data = Bytes::makei(180, i => {
+    if i >= 97 && i < 136 {
+      b'a'
+    } else if i == 136 {
+      b'b'
+    } else {
+      b'x'
+    }
+  })
+  let view = data[9:170]
+  let pattern = Bytes::makei(40, i => if i == 39 { b'b' } else { b'a' })
+  debug_inspect(view.rev_find(pattern), content="Some(88)")
 }
 
 ///|
