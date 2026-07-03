@@ -480,10 +480,19 @@ pub fn[A] Vector::iter(self : Vector[A]) -> Iter[A] {
   let mut in_tree = true
   let mut curr_tree = self.tree
   let mut curr_index = 0
+  let mut curr_leaf : FixedArray[A] = []
+  let mut leaf_index = 0
+  let mut leaf_len = 0
   let parents = []
   let mut tail_index = 0
+  let tail_len = self.tail.length()
   Iter::new(
     fn() {
+      if leaf_index < leaf_len {
+        let elem = curr_leaf.unsafe_get(leaf_index)
+        leaf_index += 1
+        return Some(elem)
+      }
       let tree_result = if in_tree {
         for tree = curr_tree {
           match tree {
@@ -495,8 +504,12 @@ pub fn[A] Vector::iter(self : Vector[A]) -> Iter[A] {
               continue child
             }
             Leaf(elems) if curr_index < elems.length() => {
+              let len = elems.length()
               let elem = elems.unsafe_get(curr_index)
-              curr_index += 1
+              curr_leaf = elems
+              leaf_len = len
+              leaf_index = curr_index + 1
+              curr_index = len
               break Some(elem)
             }
             _ if parents.pop() is Some((parent_tree, parent_index)) => {
@@ -516,7 +529,7 @@ pub fn[A] Vector::iter(self : Vector[A]) -> Iter[A] {
       match tree_result {
         Some(_) => tree_result
         None =>
-          if tail_index < self.tail.length() {
+          if tail_index < tail_len {
             let elem = self.tail.unsafe_get(tail_index)
             tail_index += 1
             Some(elem)
