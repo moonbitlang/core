@@ -382,7 +382,7 @@ pub fn[T] FixedArray::rev_each(
   f : (T) -> Unit raise?,
 ) -> Unit raise? {
   for i in self.length()>..0 {
-    f(self[i])
+    f(self.unsafe_get(i))
   }
 }
 
@@ -438,7 +438,7 @@ pub fn[T] FixedArray::rev_eachi(
 ) -> Unit raise? {
   let len = self.length()
   for i in 0..<len {
-    f(i, self[len - i - 1])
+    f(i, self.unsafe_get(len - i - 1))
   }
 }
 
@@ -700,7 +700,7 @@ pub fn[A, B] FixedArray::rev_fold(
   f : (B, A) -> B raise?,
 ) -> B raise? {
   for i = self.length() - 1, acc = init; i >= 0; {
-    continue i - 1, f(acc, self[i])
+    continue i - 1, f(acc, self.unsafe_get(i))
   } nobreak {
     acc
   }
@@ -773,8 +773,8 @@ pub fn[A, B] FixedArray::rev_foldi(
   f : (Int, B, A) -> B raise?,
 ) -> B raise? {
   let len = self.length()
-  for i in len>..0; acc = init {
-    continue f(len - i - 1, acc, self[i])
+  for read = len - 1, index = 0, acc = init; read >= 0; {
+    continue read - 1, index + 1, f(index, acc, self.unsafe_get(read))
   } nobreak {
     acc
   }
