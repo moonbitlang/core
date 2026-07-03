@@ -77,7 +77,7 @@ fn FixedArray::unsafe_blit_from_string(
 ) -> Unit {
   let end_str_offset = str_offset + len
   for i = str_offset, j = dst_offset; i < end_str_offset; i = i + 1, j = j + 1 {
-    self[j] = str.unsafe_get(i)
+    self.unsafe_set(j, str.unsafe_get(i))
   }
 }
 
@@ -85,6 +85,9 @@ fn FixedArray::unsafe_blit_from_string(
 /// Writes a string to the StringBuilder.
 pub impl Logger for StringBuilder with fn write_string(self, str) {
   let str_len = str.length()
+  if str_len == 0 {
+    return
+  }
   self.grow_if_necessary(self.len + str_len)
   self.data.unsafe_blit_from_string(self.len, str, 0, str_len)
   self.len += str_len
@@ -133,6 +136,9 @@ pub impl Logger for StringBuilder with fn write_view(
   str : StringView,
 ) -> Unit {
   let str_len = str.length()
+  if str_len == 0 {
+    return
+  }
   self.grow_if_necessary(self.len + str_len)
   self.data.unsafe_blit_from_string(
     self.len,
@@ -146,7 +152,9 @@ pub impl Logger for StringBuilder with fn write_view(
 ///|
 /// Returns the current content of the StringBuilder as a string.
 pub fn StringBuilder::to_string(self : StringBuilder) -> String {
-  if self.len == self.data.length() {
+  if self.len == 0 {
+    ""
+  } else if self.len == self.data.length() {
     unsafe_fixedarray_uint16_to_string(self.data)
   } else {
     let data = FixedArray::make_and_blit(
