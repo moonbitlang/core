@@ -425,6 +425,10 @@ test "Bytes find and rev_find" {
   debug_inspect(target.find(b"zzz"), content="None")
   debug_inspect(target[:].find(b"bca"), content="Some(1)")
   debug_inspect(target[:].rev_find(b"bca"), content="Some(1)")
+  debug_inspect(target.rev_find(b""), content="Some(6)")
+  debug_inspect(target.rev_find(b"abcdefg"), content="None")
+  debug_inspect(target.rev_find(b"c"), content="Some(5)")
+  debug_inspect(b"xxabcxxabczz"[2:10].rev_find(pattern), content="Some(5)")
 }
 
 ///|

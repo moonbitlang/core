@@ -360,14 +360,34 @@ fn find_long_by_byte_scanner(target : BytesView, pattern : BytesView) -> Int? {
 /// Returns the offset of the last occurrence of the given
 /// bytes substring. If the substring is not found, `None` is returned.
 pub fn BytesView::rev_find(target : BytesView, pattern : BytesView) -> Int? {
-  // TODO: more efficient algorithm
   let target_len = target.length()
   let pattern_len = pattern.length()
-  for i = target_len - pattern_len; i >= 0; i = i - 1 {
-    for j in 0..<pattern_len {
-      guard target.unsafe_get(i + j) == pattern.unsafe_get(j) else { break }
+  if pattern_len == 0 {
+    return Some(target_len)
+  }
+  if pattern_len > target_len {
+    return None
+  }
+  if pattern_len == 1 {
+    let byte = pattern.unsafe_get(0)
+    return for i = target_len - 1; i >= 0; i = i - 1 {
+      if target.unsafe_get(i) == byte {
+        break Some(i)
+      }
     } nobreak {
-      return Some(i)
+      None
+    }
+  }
+  let last_offset = pattern_len - 1
+  let first = pattern.unsafe_get(0)
+  let last = pattern.unsafe_get(last_offset)
+  for candidate = target_len - pattern_len
+      candidate >= 0
+      candidate = candidate - 1 {
+    if target.unsafe_get(candidate) == first &&
+      target.unsafe_get(candidate + last_offset) == last &&
+      find_match_range(target, pattern, candidate, 1, last_offset) {
+      return Some(candidate)
     }
   } nobreak {
     None
