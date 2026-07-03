@@ -498,9 +498,10 @@ pub fn[T, U] FixedArray::map(
   if self.is_empty() {
     return []
   }
-  let res = FixedArray::make(self.length(), f(self[0]))
-  for i in 1..<self.length() {
-    res[i] = f(self[i])
+  let len = self.length()
+  let res = FixedArray::make(len, f(self.unsafe_get(0)))
+  for i in 1..<len {
+    res.unsafe_set(i, f(self.unsafe_get(i)))
   }
   res
 }
@@ -536,9 +537,10 @@ pub fn[T, U] FixedArray::mapi(
   if self.is_empty() {
     return []
   }
-  let res = FixedArray::make(self.length(), f(0, self[0]))
-  for i in 1..<self.length() {
-    res[i] = f(i, self[i])
+  let len = self.length()
+  let res = FixedArray::make(len, f(0, self.unsafe_get(0)))
+  for i in 1..<len {
+    res.unsafe_set(i, f(i, self.unsafe_get(i)))
   }
   res
 }
