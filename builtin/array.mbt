@@ -1203,17 +1203,22 @@ pub fn[T] Array::swap(self : Array[T], i : Int, j : Int) -> Unit {
 ///   debug_inspect(arr, content="[1, 2, 3]")
 /// }
 /// ```
-/// TODO: perf could be improved
 #locals(f)
 pub fn[T] Array::retain(self : Array[T], f : (T) -> Bool raise?) -> Unit raise? {
-  for v in self; j = 0 {
+  let len = self.length()
+  let write = for read, v in self; write = 0 {
     if f(v) {
-      self.unsafe_set(j, v)
-      continue j + 1
+      if read != write {
+        self.unsafe_set(write, v)
+      }
+      continue write + 1
     }
-    continue j
+    continue write
   } nobreak {
-    self.unsafe_truncate_to_length(j)
+    write
+  }
+  if write != len {
+    self.unsafe_truncate_to_length(write)
   }
 }
 
