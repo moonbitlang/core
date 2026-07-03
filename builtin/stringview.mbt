@@ -137,13 +137,20 @@ pub fn StringView::unsafe_get(self : StringView, index : Int) -> UInt16 {
 /// This method yields code units, not Unicode characters. Surrogate pairs are
 /// represented as two `UInt16` values.
 ///
-/// Note: the default implementation copies the entire underlying string into a
-/// fresh `FixedArray` and then slices it, so the returned view does not alias
-/// the original string's storage. Some backends lower the intrinsic to a
-/// zero-copy view instead.
+/// Note: the default implementation copies code units into a fresh
+/// `FixedArray`, so the returned view does not alias the original string's
+/// storage. Some backends lower the intrinsic to a zero-copy view instead.
 #intrinsic("%stringview.code_units")
 pub fn StringView::code_units(self : StringView) -> ArrayView[UInt16] {
-  FixedArray::makei(self.str().length(), i => self.str().unsafe_get(i))[self.start():self.end()]
+  let len = self.length()
+  let str_len = self.str().length()
+  if len * 2 < str_len {
+    let str = self.str()
+    let start = self.start()
+    FixedArray::makei(len, i => str.unsafe_get(start + i))
+  } else {
+    FixedArray::makei(self.str().length(), i => self.str().unsafe_get(i))[self.start():self.end()]
+  }
 }
 
 ///|
