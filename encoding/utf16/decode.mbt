@@ -24,13 +24,137 @@ pub suberror Malformed {
 const U_REP = '\u{FFFD}'
 
 ///|
-/// Decode input bytes/text into structured output.
-pub fn decode(
+#cfg(target="js")
+#warnings("-unused_value")
+fn suppress_unused_v128_import_on_js() -> Unit {
+  ignore(@v128.i8x16_splat(0))
+}
+
+///|
+#cfg(not(target="js"))
+fn unsafe_fixedarray_from_bytes(bytes : Bytes) -> FixedArray[Byte] = "%identity"
+
+///|
+#cfg(not(target="js"))
+fn is_utf16_surrogate(code_unit : UInt16) -> Bool {
+  let code = code_unit.to_int()
+  code >= 0xD800 && code <= 0xDFFF
+}
+
+///|
+#cfg(not(target="js"))
+fn utf16_swap_u16x8(value : V128) -> V128 {
+  @v128.i8x16_shuffle(
+    value, value, 1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14,
+  )
+}
+
+///|
+#cfg(not(target="js"))
+fn utf16_v128_has_surrogate(value : V128) -> Bool {
+  let lower = @v128.i16x8_splat(0xD800)
+  let upper = @v128.i16x8_splat(0xDFFF)
+  @v128.i16x8_bitmask(
+    @v128.v128_and_(
+      @v128.i16x8_ge_u(value, lower),
+      @v128.i16x8_le_u(value, upper),
+    ),
+  ) !=
+  0
+}
+
+///|
+#cfg(not(target="js"))
+fn utf16_has_surrogate_le_v128(bytes : BytesView) -> Bool {
+  if bytes.length() % 2 != 0 {
+    return true
+  }
+  let src = bytes.data()
+  if bytes.length() > 0 &&
+    is_utf16_surrogate(src.unsafe_read_uint16_le(bytes.start_offset())) {
+    return true
+  }
+  let src_bytes = unsafe_fixedarray_from_bytes(src)
+  let end = bytes.start_offset() + bytes.length()
+  let mut index = bytes.start_offset()
+  while index + 16 <= end {
+    if utf16_v128_has_surrogate(@v128.v128_load(src_bytes, index)) {
+      return true
+    }
+    index = index + 16
+  }
+  while index < end {
+    if is_utf16_surrogate(src.unsafe_read_uint16_le(index)) {
+      return true
+    }
+    index = index + 2
+  }
+  false
+}
+
+///|
+#cfg(not(target="js"))
+fn utf16_has_surrogate_be_v128(bytes : BytesView) -> Bool {
+  if bytes.length() % 2 != 0 {
+    return true
+  }
+  let src = bytes.data()
+  if bytes.length() > 0 &&
+    is_utf16_surrogate(src.unsafe_read_uint16_be(bytes.start_offset())) {
+    return true
+  }
+  let src_bytes = unsafe_fixedarray_from_bytes(src)
+  let end = bytes.start_offset() + bytes.length()
+  let mut index = bytes.start_offset()
+  while index + 16 <= end {
+    let swapped = utf16_swap_u16x8(@v128.v128_load(src_bytes, index))
+    if utf16_v128_has_surrogate(swapped) {
+      return true
+    }
+    index = index + 16
+  }
+  while index < end {
+    if is_utf16_surrogate(src.unsafe_read_uint16_be(index)) {
+      return true
+    }
+    index = index + 2
+  }
+  false
+}
+
+///|
+#cfg(not(target="js"))
+fn utf16_decode_be_no_surrogate_v128(bytes : BytesView) -> String {
+  let src = bytes.data()
+  let src_bytes = unsafe_fixedarray_from_bytes(src)
+  let string_bytes = FixedArray::make(bytes.length(), b'\x00')
+  let end = bytes.start_offset() + bytes.length()
+  let mut index = bytes.start_offset()
+  let mut written = 0
+  while index + 16 <= end {
+    let swapped = utf16_swap_u16x8(@v128.v128_load(src_bytes, index))
+    @v128.v128_store(string_bytes, written, swapped)
+    index = index + 16
+    written = written + 16
+  }
+  while index < end {
+    let code_unit = src.unsafe_read_uint16_be(index)
+    string_bytes[written] = (code_unit & 0xFF).to_byte()
+    string_bytes[written + 1] = (code_unit >> 8).to_byte()
+    index = index + 2
+    written = written + 2
+  }
+  string_bytes.unsafe_reinterpret_as_bytes().to_unchecked_string()
+}
+
+///|
+#inline
+fn drop_utf16_bom(
   bytes : BytesView,
-  ignore_bom? : Bool = false,
-  endianness? : Endian = Little,
-) -> String raise Malformed {
-  let bytes = if ignore_bom {
+  ignore_bom : Bool,
+  endianness : Endian,
+) -> BytesView {
+  if ignore_bom {
     if endianness is Little && bytes is [.. b"\xff\xfe", .. rest] {
       rest
     } else if endianness is Big && bytes is [.. b"\xfe\xff", .. rest] {
@@ -41,6 +165,13 @@ pub fn decode(
   } else {
     bytes
   }
+}
+
+///|
+fn decode_scalar(
+  bytes : BytesView,
+  endianness : Endian,
+) -> String raise Malformed {
   if endianness is Little {
     // check the string
     for x = bytes {
@@ -103,6 +234,38 @@ pub fn decode(
     }
     string_bytes.unsafe_reinterpret_as_bytes().to_unchecked_string()
   }
+}
+
+///|
+/// Decode input bytes/text into structured output.
+#cfg(target="js")
+pub fn decode(
+  bytes : BytesView,
+  ignore_bom? : Bool = false,
+  endianness? : Endian = Little,
+) -> String raise Malformed {
+  decode_scalar(drop_utf16_bom(bytes, ignore_bom, endianness), endianness)
+}
+
+///|
+/// Decode input bytes/text into structured output.
+#cfg(not(target="js"))
+pub fn decode(
+  bytes : BytesView,
+  ignore_bom? : Bool = false,
+  endianness? : Endian = Little,
+) -> String raise Malformed {
+  let bytes = drop_utf16_bom(bytes, ignore_bom, endianness)
+  if endianness is Little {
+    if !utf16_has_surrogate_le_v128(bytes) {
+      return bytes
+        .data()
+        .to_unchecked_string(offset=bytes.start_offset(), length=bytes.length())
+    }
+  } else if !utf16_has_surrogate_be_v128(bytes) {
+    return utf16_decode_be_no_surrogate_v128(bytes)
+  }
+  decode_scalar(bytes, endianness)
 }
 
 ///|
