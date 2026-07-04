@@ -764,6 +764,16 @@ fn BytesView::bytesview_lexical_compare_impl(
   let self_len = self.length()
   let other_len = other.length()
   let min_len = if self_len < other_len { self_len } else { other_len }
+  if min_len >= 16 {
+    let cmp = self.unsafe_get(0).compare(other.unsafe_get(0))
+    if cmp != 0 {
+      return cmp
+    }
+    let cmp = self.unsafe_get(1).compare(other.unsafe_get(1))
+    if cmp != 0 {
+      return cmp
+    }
+  }
   let self_bytes = unsafe_from_bytes(self.bytes())
   let other_bytes = unsafe_from_bytes(other.bytes())
   let self_start = self.start()
