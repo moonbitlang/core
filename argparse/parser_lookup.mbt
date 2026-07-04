@@ -71,7 +71,22 @@ fn resolve_help_target(
       raise InvalidArgument("unexpected help argument: \{name}")
     }
     guard subs.iter().find_first(sub => sub.name == name) is Some(sub) else {
-      raise InvalidArgument("unknown subcommand: \{name}")
+      let message = if suggest_name(
+          name,
+          [
+            for sub in subs if !sub.hidden => sub.name
+          ],
+        )
+        is Some(best) {
+        (
+          $|unknown subcommand: \{name}
+          $|
+          $|  tip: a similar subcommand exists: '\{best}'
+        )
+      } else {
+        "unknown subcommand: \{name}"
+      }
+      raise InvalidArgument(message)
     }
     let current_globals = merge_global_defs(
       current_globals,

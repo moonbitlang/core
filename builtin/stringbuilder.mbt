@@ -76,7 +76,5 @@ pub fn StringBuilder::write_stringview(
   self : StringBuilder,
   view : StringView,
 ) -> Unit {
-  let start = view.start()
-  let end = view.end()
-  self.write_substring(view.str(), start, end - start)
+  self.write_view(view)
 }
