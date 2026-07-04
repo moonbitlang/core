@@ -22,11 +22,8 @@ pub using @set {type Set}
 pub using @bigint {type BigInt}
 
 ///|
-#warnings("-deprecated")
 pub using @builtin {
   abort,
-  assert_eq,
-  assert_not_eq,
   assert_true,
   assert_false,
   debug_assert,
@@ -165,3 +162,6 @@ pub using @ref {type Ref}
 
 ///|
 pub using @lazy {type Lazy}
+
+///|
+pub using @test {assert_eq, assert_not_eq}
