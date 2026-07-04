@@ -952,10 +952,36 @@ pub impl[A : Eq] Eq for Deque[A] with fn equal(self, other) {
   if self.len != other.len {
     return false
   }
-  for i in 0..<self.len {
-    if self[i] != other[i] {
-      return false
+  let len = self.len
+  let scap = self.buf.length()
+  let ocap = other.buf.length()
+  // Compare runs where both ring buffers are contiguous, so the inner loop
+  // carries no wrap-around branches. There are at most three such runs.
+  let mut k = 0
+  while k < len {
+    let mut i = self.head + k
+    if i >= scap {
+      i -= scap
     }
+    let mut j = other.head + k
+    if j >= ocap {
+      j -= ocap
+    }
+    let mut run = len - k
+    if run > scap - i {
+      run = scap - i
+    }
+    if run > ocap - j {
+      run = ocap - j
+    }
+    for _ in 0..<run {
+      if self.buf[i] != other.buf[j] {
+        return false
+      }
+      i += 1
+      j += 1
+    }
+    k += run
   }
   true
 }
@@ -1721,16 +1747,11 @@ pub fn[A] Deque::from_iter(iter : Iter[A]) -> Deque[A] {
 /// ```
 ///
 pub fn[A] Deque::to_array(self : Deque[A]) -> Array[A] {
-  let len = self.length()
-  if len == 0 {
-    []
-  } else {
-    let xs = Array::make(len, self[0])
-    for i in 0..<len {
-      xs[i] = self[i]
-    }
-    xs
-  }
+  let (front, back) = self.as_views()
+  let xs = Array::new(capacity=self.len)
+  xs.append(front)
+  xs.append(back)
+  xs
 }
 
 ///|
@@ -2385,13 +2406,37 @@ pub fn[A : Compare] Deque::binary_search(
 /// }
 /// ```
 pub impl[A : Compare] Compare for Deque[A] with fn compare(self, other) {
-  let len_self = self.length()
-  let len_other = other.length()
-  let cmp = len_self.compare(len_other)
+  let cmp = self.len.compare(other.len)
   guard cmp is 0 else { return cmp }
-  for i in 0..<len_self {
-    let cmp = self[i].compare(other[i])
-    guard cmp is 0 else { return cmp }
+  let len = self.len
+  let scap = self.buf.length()
+  let ocap = other.buf.length()
+  // Compare runs where both ring buffers are contiguous, so the inner loop
+  // carries no wrap-around branches. There are at most three such runs.
+  let mut k = 0
+  while k < len {
+    let mut i = self.head + k
+    if i >= scap {
+      i -= scap
+    }
+    let mut j = other.head + k
+    if j >= ocap {
+      j -= ocap
+    }
+    let mut run = len - k
+    if run > scap - i {
+      run = scap - i
+    }
+    if run > ocap - j {
+      run = ocap - j
+    }
+    for _ in 0..<run {
+      let cmp = self.buf[i].compare(other.buf[j])
+      guard cmp is 0 else { return cmp }
+      i += 1
+      j += 1
+    }
+    k += run
   }
   0
 }
