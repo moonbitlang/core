@@ -82,6 +82,25 @@ test "StringView::code_units" {
 }
 
 ///|
+test "StringView::code_units start offset" {
+  // Index 0 of the returned view must map to the view's start offset, not the
+  // start of the underlying string.
+  let s = "Hello, 世界"
+  let view = s[7:] // "世界"
+  let units = view.code_units()
+  inspect(units.length(), content="2")
+  inspect(units[0], content="19990") // '世', not 'H'
+  inspect(units[1], content="30028") // '界'
+
+  // A view starting past a surrogate pair still indexes from its own offset.
+  let emoji = "😀ab"[2:] // "ab", skipping the two surrogate code units
+  let emoji_units = emoji.code_units()
+  inspect(emoji_units.length(), content="2")
+  inspect(emoji_units[0], content="97") // 'a'
+  inspect(emoji_units[1], content="98") // 'b'
+}
+
+///|
 test "StringView core operations" {
   let view = "ab😀c".view(start_offset=1)
   inspect(view.char_length(), content="3")
