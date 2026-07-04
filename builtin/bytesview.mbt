@@ -730,10 +730,10 @@ pub impl Compare for BytesView with fn compare(self, other) -> Int {
 ///|
 /// Performs a lexicographical comparison of two byte views.
 ///
-/// This method compares the views byte by byte until a difference is found
-/// or one view is exhausted. Unlike the `Compare` trait implementation which
-/// uses shortlex order (shorter views come first), this method compares based
-/// purely on byte values until a difference is found.
+/// This method returns the lexicographical ordering by byte value. Unlike the
+/// `Compare` trait implementation which uses shortlex order (shorter views come
+/// first), this method compares based purely on byte values until a difference
+/// is found.
 ///
 /// # Returns
 ///
@@ -752,6 +752,52 @@ pub impl Compare for BytesView with fn compare(self, other) -> Int {
 /// }
 /// ```
 pub fn BytesView::lexical_compare(self : BytesView, other : BytesView) -> Int {
+  self.bytesview_lexical_compare_impl(other)
+}
+
+///|
+#cfg(any(target="native", target="wasm"))
+fn BytesView::bytesview_lexical_compare_impl(
+  self : BytesView,
+  other : BytesView,
+) -> Int {
+  let self_len = self.length()
+  let other_len = other.length()
+  let min_len = if self_len < other_len { self_len } else { other_len }
+  let self_bytes = unsafe_from_bytes(self.bytes())
+  let other_bytes = unsafe_from_bytes(other.bytes())
+  let self_start = self.start()
+  let other_start = other.start()
+  let mut i = 0
+  let block_limit = min_len - min_len % 16
+  while i < block_limit {
+    let a = v128_load(self_bytes, self_start + i)
+    let b = v128_load(other_bytes, other_start + i)
+    let diff_bits = i8x16_bitmask(i8x16_eq(a, b)) ^ 0xFFFF
+    if diff_bits != 0 {
+      let lane = diff_bits.ctz()
+      return self_bytes
+        .unsafe_get(self_start + i + lane)
+        .compare(other_bytes.unsafe_get(other_start + i + lane))
+    }
+    i = i + 16
+  }
+  while i < min_len {
+    let cmp = self.unsafe_get(i).compare(other.unsafe_get(i))
+    if cmp != 0 {
+      return cmp
+    }
+    i = i + 1
+  }
+  self_len.compare(other_len)
+}
+
+///|
+#cfg(any(target="wasm-gc", target="js"))
+fn BytesView::bytesview_lexical_compare_impl(
+  self : BytesView,
+  other : BytesView,
+) -> Int {
   let self_len = self.length()
   let other_len = other.length()
   let min_len = if self_len < other_len { self_len } else { other_len }
