@@ -717,7 +717,7 @@ test "double/ryu.mbt:230" {
   if sum < high0 {
     high1 = high1 + 1UL
   }
-  assert_eq(high1, 222222222UL)
+  assert_true(high1 == 222222222UL)
 }
 
 ///|

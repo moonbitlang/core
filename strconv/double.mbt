@@ -258,10 +258,8 @@ test "parse_double" {
     ("123.5e+12_", Err(syntax_err_str)),
   ]
   for t in tests {
-    assert_eq(
-      Result::Ok(parse_double(t.0)) catch {
-        StrConvError(err) => Err(err)
-      },
+    assert_true(
+      (Result::Ok(parse_double(t.0)) catch { StrConvError(err) => Err(err) }) ==
       t.1,
     )
   }
@@ -269,13 +267,13 @@ test "parse_double" {
 
 ///|
 test "parse_double_inf" {
-  assert_eq(parse_double("inf"), @double.infinity)
-  assert_eq(parse_double("+Inf"), @double.infinity)
-  assert_eq(parse_double("-Inf"), @double.neg_infinity)
-  assert_eq(parse_double("+Infinity"), @double.infinity)
-  assert_eq(parse_double("-Infinity"), @double.neg_infinity)
-  assert_eq(parse_double("+INFINITY"), @double.infinity)
-  assert_eq(parse_double("-INFINITY"), @double.neg_infinity)
+  assert_true(parse_double("inf") == @double.infinity)
+  assert_true(parse_double("+Inf") == @double.infinity)
+  assert_true(parse_double("-Inf") == @double.neg_infinity)
+  assert_true(parse_double("+Infinity") == @double.infinity)
+  assert_true(parse_double("-Infinity") == @double.neg_infinity)
+  assert_true(parse_double("+INFINITY") == @double.infinity)
+  assert_true(parse_double("-INFINITY") == @double.neg_infinity)
 }
 
 ///|

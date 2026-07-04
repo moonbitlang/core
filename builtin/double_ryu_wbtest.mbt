@@ -27,20 +27,22 @@ test "Basic" {
 
 ///|
 test "Switch to Subnormal" {
-  assert_eq(ryu_to_string(2.2250738585072014e-308), "2.2250738585072014e-308")
-  assert_eq(
-    ryu_to_string(0x0010000000000000L.reinterpret_as_double()),
+  assert_true(
+    ryu_to_string(2.2250738585072014e-308) == "2.2250738585072014e-308",
+  )
+  assert_true(
+    ryu_to_string(0x0010000000000000L.reinterpret_as_double()) ==
     "2.2250738585072014e-308",
   )
 }
 
 ///|
 test "Min and Max" {
-  assert_eq(
-    ryu_to_string(0x7FEF_FFFF_FFFF_FFFFL.reinterpret_as_double()),
+  assert_true(
+    ryu_to_string(0x7FEF_FFFF_FFFF_FFFFL.reinterpret_as_double()) ==
     "1.7976931348623157e+308",
   )
-  assert_eq(ryu_to_string(1L.reinterpret_as_double()), "5e-324")
+  assert_true(ryu_to_string(1L.reinterpret_as_double()) == "5e-324")
 }
 
 ///|
@@ -79,16 +81,16 @@ test "Regression" {
 
 ///|
 test "Looks Like Pow5" {
-  assert_eq(
-    ryu_to_string(0x4830F0CF064DD592L.reinterpret_as_double()),
+  assert_true(
+    ryu_to_string(0x4830F0CF064DD592L.reinterpret_as_double()) ==
     "5.764607523034235e+39",
   )
-  assert_eq(
-    ryu_to_string(0x4840F0CF064DD592L.reinterpret_as_double()),
+  assert_true(
+    ryu_to_string(0x4840F0CF064DD592L.reinterpret_as_double()) ==
     "1.152921504606847e+40",
   )
-  assert_eq(
-    ryu_to_string(0x4850F0CF064DD592L.reinterpret_as_double()),
+  assert_true(
+    ryu_to_string(0x4850F0CF064DD592L.reinterpret_as_double()) ==
     "2.305843009213694e+40",
   )
 }
@@ -125,40 +127,39 @@ test "32-bit chunking" {
 
 ///|
 test "Min Max Shift" {
-  assert_eq(
-    ryu_to_string(ieee_parts_to_double(false, 4, 0L)),
+  assert_true(
+    ryu_to_string(ieee_parts_to_double(false, 4, 0L)) ==
     "1.7800590868057611e-307",
   )
-  assert_eq(
-    ryu_to_string(ieee_parts_to_double(false, 6, 0x0010000000000000L)),
+  assert_true(
+    ryu_to_string(ieee_parts_to_double(false, 6, 0x0010000000000000L)) ==
     "1.424047269444609e-306",
   )
-  assert_eq(
-    ryu_to_string(ieee_parts_to_double(false, 41, 0L)),
+  assert_true(
+    ryu_to_string(ieee_parts_to_double(false, 41, 0L)) ==
     "2.446494580089078e-296",
   )
-  assert_eq(
-    ryu_to_string(ieee_parts_to_double(false, 40, 0x0010000000000000L)),
+  assert_true(
+    ryu_to_string(ieee_parts_to_double(false, 40, 0x0010000000000000L)) ==
     "2.446494580089078e-296",
   )
-  assert_eq(
-    ryu_to_string(ieee_parts_to_double(false, 1077, 0L)),
+  assert_true(
+    ryu_to_string(ieee_parts_to_double(false, 1077, 0L)) == "18014398509481984",
+  )
+  assert_true(
+    ryu_to_string(ieee_parts_to_double(false, 1076, 0x0010000000000000L)) ==
     "18014398509481984",
   )
-  assert_eq(
-    ryu_to_string(ieee_parts_to_double(false, 1076, 0x0010000000000000L)),
-    "18014398509481984",
-  )
-  assert_eq(
-    ryu_to_string(ieee_parts_to_double(false, 307, 0L)),
+  assert_true(
+    ryu_to_string(ieee_parts_to_double(false, 307, 0L)) ==
     "2.900835519859558e-216",
   )
-  assert_eq(
-    ryu_to_string(ieee_parts_to_double(false, 306, 0x0010000000000000L)),
+  assert_true(
+    ryu_to_string(ieee_parts_to_double(false, 306, 0x0010000000000000L)) ==
     "2.900835519859558e-216",
   )
-  assert_eq(
-    ryu_to_string(ieee_parts_to_double(false, 934, 0x000FA7161A4D6E0CL)),
+  assert_true(
+    ryu_to_string(ieee_parts_to_double(false, 934, 0x000FA7161A4D6E0CL)) ==
     "3.196104012172126e-27",
   )
 }
@@ -305,8 +306,8 @@ fn ieee_parts_to_double(
 ///|
 test "double/ryu.mbt:90" {
   let value = 100L
-  assert_eq(value % 25L, 0L)
-  assert_not_eq(value % 125L, 0L)
+  assert_true(value % 25L == 0L)
+  assert_true(value % 125L != 0L)
 }
 
 ///|
@@ -324,5 +325,5 @@ test "double/ryu.mbt:403" {
   }
   inspect(vrIsTrailingZeros, content="true")
   inspect(vmIsTrailingZeros, content="true")
-  assert_eq(vp, 10L)
+  assert_true(vp == 10L)
 }

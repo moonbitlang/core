@@ -1606,30 +1606,32 @@ pub fn String::replace_all(
 
 ///|
 test "replace_all" {
-  assert_eq("hello".replace_all(old="o", new="a"), "hella")
-  assert_eq("hello".replace_all(old="l", new="a"), "heaao")
-  assert_eq("hello".replace_all(old="ll", new="rr"), "herro")
-  assert_eq("hello".replace_all(old="hello", new="world"), "world")
-  assert_eq("hello hello hello".replace_all(old="hello", new="hi"), "hi hi hi")
-  assert_eq(
-    "hello hello helloi".replace_all(old="hello", new="hi"),
-    "hi hi hii",
+  assert_true("hello".replace_all(old="o", new="a") == "hella")
+  assert_true("hello".replace_all(old="l", new="a") == "heaao")
+  assert_true("hello".replace_all(old="ll", new="rr") == "herro")
+  assert_true("hello".replace_all(old="hello", new="world") == "world")
+  assert_true(
+    "hello hello hello".replace_all(old="hello", new="hi") == "hi hi hi",
   )
-  assert_eq(
-    "hi hi hii".replace_all(old="hi", new="hello"),
-    "hello hello helloi",
+  assert_true(
+    "hello hello helloi".replace_all(old="hello", new="hi") == "hi hi hii",
   )
-  assert_eq("hello".replace_all(old="", new="a"), "ahaealalaoa")
-  assert_eq("hello".replace_all(old="world", new="a"), "hello")
-  assert_eq("".replace_all(old="", new="a"), "a")
-  assert_eq("aaa".replace_all(old="a", new="b"), "bbb")
-  assert_eq("aaa".replace_all(old="a", new="bb"), "bbbbbb")
-  assert_eq("aaa".replace_all(old="aa", new="b"), "ba")
-  assert_eq("🤣🤣🤣".replace_all(old="🤣", new="😊"), "😊😊😊")
-  assert_eq("abc123abc".replace_all(old="abc", new="xyz"), "xyz123xyz")
-  assert_eq("abcabcabc".replace_all(old="abc", new=""), "")
-  assert_eq("abc".replace_all(old="abc", new=""), "")
-  assert_eq("abc".replace_all(old="", new="x"), "xaxbxcx")
+  assert_true(
+    "hi hi hii".replace_all(old="hi", new="hello") == "hello hello helloi",
+  )
+  assert_true("hello".replace_all(old="", new="a") == "ahaealalaoa")
+  assert_true("hello".replace_all(old="world", new="a") == "hello")
+  assert_true("".replace_all(old="", new="a") == "a")
+  assert_true("aaa".replace_all(old="a", new="b") == "bbb")
+  assert_true("aaa".replace_all(old="a", new="bb") == "bbbbbb")
+  assert_true("aaa".replace_all(old="aa", new="b") == "ba")
+  assert_true(
+    "🤣🤣🤣".replace_all(old="🤣", new="😊") == "😊😊😊",
+  )
+  assert_true("abc123abc".replace_all(old="abc", new="xyz") == "xyz123xyz")
+  assert_true("abcabcabc".replace_all(old="abc", new="") == "")
+  assert_true("abc".replace_all(old="abc", new="") == "")
+  assert_true("abc".replace_all(old="", new="x") == "xaxbxcx")
 }
 
 ///|
@@ -1638,51 +1640,47 @@ test "String::replace_all boundary cases" {
   // This happens when the pattern is found at the very end of the string
 
   // Pattern at the end of string - should trigger the guard condition
-  assert_eq("helloworld".replace_all(old="world", new="X"), "helloX")
-  assert_eq("abcdef".replace_all(old="def", new="XYZ"), "abcXYZ")
+  assert_true("helloworld".replace_all(old="world", new="X") == "helloX")
+  assert_true("abcdef".replace_all(old="def", new="XYZ") == "abcXYZ")
 
   // Multiple patterns where the last one is at the end
-  assert_eq("abcabc".replace_all(old="abc", new="X"), "XX")
+  assert_true("abcabc".replace_all(old="abc", new="X") == "XX")
 
   // Pattern that exactly matches the string length
-  assert_eq("test".replace_all(old="test", new="done"), "done")
+  assert_true("test".replace_all(old="test", new="done") == "done")
 
   // Empty replacement at the end
-  assert_eq("remove_me".replace_all(old="_me", new=""), "remove")
+  assert_true("remove_me".replace_all(old="_me", new="") == "remove")
 }
 
 ///|
 test "View::replace_all" {
-  assert_eq("hello"[:].replace_all(old="o", new="a"), "hella")
-  assert_eq("hello"[:].replace_all(old="l", new="a"), "heaao")
-  assert_eq("hello"[:].replace_all(old="ll", new="rr"), "herro")
-  assert_eq("hello"[:].replace_all(old="hello", new="world"), "world")
-  assert_eq(
-    "hello hello hello"[:].replace_all(old="hello", new="hi"),
-    "hi hi hi",
+  assert_true("hello"[:].replace_all(old="o", new="a") == "hella")
+  assert_true("hello"[:].replace_all(old="l", new="a") == "heaao")
+  assert_true("hello"[:].replace_all(old="ll", new="rr") == "herro")
+  assert_true("hello"[:].replace_all(old="hello", new="world") == "world")
+  assert_true(
+    "hello hello hello"[:].replace_all(old="hello", new="hi") == "hi hi hi",
   )
-  assert_eq(
-    "hello hello helloi"[:].replace_all(old="hello", new="hi"),
-    "hi hi hii",
+  assert_true(
+    "hello hello helloi"[:].replace_all(old="hello", new="hi") == "hi hi hii",
   )
-  assert_eq(
-    "hi hi hii"[:].replace_all(old="hi", new="hello"),
-    "hello hello helloi",
+  assert_true(
+    "hi hi hii"[:].replace_all(old="hi", new="hello") == "hello hello helloi",
   )
-  assert_eq("hello"[:].replace_all(old="", new="a"), "ahaealalaoa")
-  assert_eq("hello"[:].replace_all(old="world", new="a"), "hello")
-  assert_eq(""[:].replace_all(old="", new="a"), "a")
-  assert_eq("aaa"[:].replace_all(old="a", new="b"), "bbb")
-  assert_eq("aaa"[:].replace_all(old="a", new="bb"), "bbbbbb")
-  assert_eq("aaa"[:].replace_all(old="aa", new="b"), "ba")
-  assert_eq(
-    "🤣🤣🤣"[:].replace_all(old="🤣", new="😊"),
-    "😊😊😊",
+  assert_true("hello"[:].replace_all(old="", new="a") == "ahaealalaoa")
+  assert_true("hello"[:].replace_all(old="world", new="a") == "hello")
+  assert_true(""[:].replace_all(old="", new="a") == "a")
+  assert_true("aaa"[:].replace_all(old="a", new="b") == "bbb")
+  assert_true("aaa"[:].replace_all(old="a", new="bb") == "bbbbbb")
+  assert_true("aaa"[:].replace_all(old="aa", new="b") == "ba")
+  assert_true(
+    "🤣🤣🤣"[:].replace_all(old="🤣", new="😊") == "😊😊😊",
   )
-  assert_eq("abc123abc"[:].replace_all(old="abc", new="xyz"), "xyz123xyz")
-  assert_eq("abcabcabc"[:].replace_all(old="abc", new=""), "")
-  assert_eq("abc"[:].replace_all(old="abc", new=""), "")
-  assert_eq("abc"[:].replace_all(old="", new="x"), "xaxbxcx")
+  assert_true("abc123abc"[:].replace_all(old="abc", new="xyz") == "xyz123xyz")
+  assert_true("abcabcabc"[:].replace_all(old="abc", new="") == "")
+  assert_true("abc"[:].replace_all(old="abc", new="") == "")
+  assert_true("abc"[:].replace_all(old="", new="x") == "xaxbxcx")
 }
 
 ///|
@@ -1694,14 +1692,14 @@ test "View::replace_all boundary cases" {
   // Actually, let me try a different approach - create a scenario where the view length changes
 
   // Try with overlapping patterns or edge cases
-  assert_eq("abcabc"[:].replace_all(old="abc", new="X"), "XX")
-  assert_eq("aaaa"[:].replace_all(old="aa", new="b"), "bb")
+  assert_true("abcabc"[:].replace_all(old="abc", new="X") == "XX")
+  assert_true("aaaa"[:].replace_all(old="aa", new="b") == "bb")
 
   // Pattern at exact end
-  assert_eq("hello"[:].replace_all(old="lo", new="X"), "helX")
+  assert_true("hello"[:].replace_all(old="lo", new="X") == "helX")
 
   // Test with empty string edge case
-  assert_eq("a"[:].replace_all(old="a", new=""), "")
+  assert_true("a"[:].replace_all(old="a", new="") == "")
 
   // Let me try to understand when end + old_len > len could happen...
   // Maybe when we have a complex replacement scenario
@@ -1752,16 +1750,16 @@ pub fn String::to_lower(self : String) -> String {
 
 ///|
 test "to_lower" {
-  assert_eq("Hello".to_lower(), "hello")
-  assert_eq("HELLO".to_lower(), "hello")
-  assert_eq("Hello, World!".to_lower(), "hello, world!")
+  assert_true("Hello".to_lower() == "hello")
+  assert_true("HELLO".to_lower() == "hello")
+  assert_true("Hello, World!".to_lower() == "hello, world!")
 }
 
 ///|
 test "View::to_lower" {
-  assert_eq("Hello"[:].to_lower(), "hello")
-  assert_eq("HELLO"[:].to_lower(), "hello")
-  assert_eq("Hello, World!"[:].to_lower(), "hello, world!")
+  assert_true("Hello"[:].to_lower() == "hello")
+  assert_true("HELLO"[:].to_lower() == "hello")
+  assert_true("Hello, World!"[:].to_lower() == "hello, world!")
 }
 
 ///|
@@ -1806,16 +1804,16 @@ pub fn String::to_upper(self : String) -> String {
 
 ///|
 test "to_upper" {
-  assert_eq("hello".to_upper(), "HELLO")
-  assert_eq("HELLO".to_upper(), "HELLO")
-  assert_eq("Hello, World!".to_upper(), "HELLO, WORLD!")
+  assert_true("hello".to_upper() == "HELLO")
+  assert_true("HELLO".to_upper() == "HELLO")
+  assert_true("Hello, World!".to_upper() == "HELLO, WORLD!")
 }
 
 ///|
 test "View::to_upper" {
-  assert_eq("hello"[:].to_upper(), "HELLO")
-  assert_eq("HELLO"[:].to_upper(), "HELLO")
-  assert_eq("Hello, World!"[:].to_upper(), "HELLO, WORLD!")
+  assert_true("hello"[:].to_upper() == "HELLO")
+  assert_true("HELLO"[:].to_upper() == "HELLO")
+  assert_true("Hello, World!"[:].to_upper() == "HELLO, WORLD!")
 }
 
 ///|
@@ -1852,8 +1850,8 @@ test "fold" {
     }) ==
     ['h', 'e', 'l', 'l', 'o'],
   )
-  assert_eq(
-    "hello".fold(init=0, (acc, c) => acc + c.to_int()),
+  assert_true(
+    "hello".fold(init=0, (acc, c) => acc + c.to_int()) ==
     104 + 101 + 108 + 108 + 111,
   )
 }
@@ -1910,8 +1908,8 @@ test "rev_fold" {
     }) ==
     ['o', 'l', 'l', 'e', 'h'],
   )
-  assert_eq(
-    "hello".rev_fold(init=0, (acc, c) => acc + c.to_int()),
+  assert_true(
+    "hello".rev_fold(init=0, (acc, c) => acc + c.to_int()) ==
     111 + 108 + 108 + 101 + 104,
   )
 }

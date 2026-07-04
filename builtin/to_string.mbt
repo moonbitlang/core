@@ -696,14 +696,14 @@ test "UInt::to_string" {
 
 ///|
 test "to_string" {
-  assert_eq((0x100).to_string(), "256")
-  assert_eq("\{0x100}", "256")
-  assert_eq(0x200U.to_string(), "512")
-  assert_eq("\{0x200U}", "512")
-  assert_eq(0x300L.to_string(), "768")
-  assert_eq("\{0x300L}", "768")
-  assert_eq(0x400UL.to_string(), "1024")
-  assert_eq("\{0x400UL}", "1024")
+  assert_true((0x100).to_string() == "256")
+  assert_true("\{0x100}" == "256")
+  assert_true(0x200U.to_string() == "512")
+  assert_true("\{0x200U}" == "512")
+  assert_true(0x300L.to_string() == "768")
+  assert_true("\{0x300L}" == "768")
+  assert_true(0x400UL.to_string() == "1024")
+  assert_true("\{0x400UL}" == "1024")
 }
 
 ///|

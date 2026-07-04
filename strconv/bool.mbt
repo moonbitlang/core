@@ -42,10 +42,8 @@ test "parse_bool" {
     ("True", Ok(true)),
   ]
   for t in tests {
-    assert_eq(
-      Result::Ok(parse_bool(t.0)) catch {
-        StrConvError(err) => Err(err)
-      },
+    assert_true(
+      (Result::Ok(parse_bool(t.0)) catch { StrConvError(err) => Err(err) }) ==
       t.1,
     )
   }

@@ -125,10 +125,8 @@ test "parse_uint64" {
     ("12345%", Err(syntax_err_str)),
   ]
   for t in tests {
-    assert_eq(
-      Result::Ok(parse_uint64(t.0)) catch {
-        StrConvError(err) => Err(err)
-      },
+    assert_true(
+      (Result::Ok(parse_uint64(t.0)) catch { StrConvError(err) => Err(err) }) ==
       t.1,
     )
   }
@@ -222,10 +220,10 @@ test "parse_uint64_base" {
     ("0x-f", 0, Err(syntax_err_str)),
   ]
   for t in tests {
-    assert_eq(
-      Result::Ok(parse_uint64(t.0, base=t.1)) catch {
+    assert_true(
+      (Result::Ok(parse_uint64(t.0, base=t.1)) catch {
         StrConvError(err) => Err(err)
-      },
+      }) ==
       t.2,
     )
   }
@@ -256,10 +254,8 @@ test "parse_uint" {
     ("123%45", Err(syntax_err_str)),
   ]
   for t in tests {
-    assert_eq(
-      Result::Ok(parse_uint(t.0)) catch {
-        StrConvError(err) => Err(err)
-      },
+    assert_true(
+      (Result::Ok(parse_uint(t.0)) catch { StrConvError(err) => Err(err) }) ==
       t.1,
     )
   }

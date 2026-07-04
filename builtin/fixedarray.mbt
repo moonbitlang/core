@@ -1389,7 +1389,7 @@ test "iter" {
     exb.write_char('\n')
     i = i + 1
   })
-  assert_eq(i, arr.length())
+  assert_true(i == arr.length())
   inspect(
     exb,
     content=(

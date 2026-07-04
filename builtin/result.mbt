@@ -98,8 +98,8 @@ pub fn[T, E] Result::unwrap_or(self : Result[T, E], default : T) -> T {
 test "unwrap_or" {
   let x : Result[Int, String] = Ok(3)
   let y : Result[Int, String] = Err("error")
-  assert_eq(x.unwrap_or(5), 3)
-  assert_eq(y.unwrap_or(5), 5)
+  assert_true(x.unwrap_or(5) == 3)
+  assert_true(y.unwrap_or(5) == 5)
 }
 
 ///|
@@ -132,8 +132,8 @@ pub fn[T, E] Result::unwrap_or_else(
 test "unwrap_or_else" {
   let x : Result[Int, String] = Ok(3)
   let y : Result[Int, String] = Err("error")
-  assert_eq(x.unwrap_or_else(() => 5), 3)
-  assert_eq(y.unwrap_or_else(() => 5), 5)
+  assert_true(x.unwrap_or_else(() => 5) == 3)
+  assert_true(y.unwrap_or_else(() => 5) == 5)
 }
 
 ///|
@@ -246,14 +246,14 @@ test "compare" {
   let ok2 = Result::Ok(2)
   let err1 = Result::Err(1)
   let err2 = Result::Err(2)
-  assert_eq(0, ok1.compare(ok1))
-  assert_eq(0, err2.compare(Err(2)))
-  assert_eq(-1, ok1.compare(ok2))
-  assert_eq(1, ok2.compare(ok1))
-  assert_eq(-1, err1.compare(err2))
-  assert_eq(1, err2.compare(err1))
-  assert_eq(-1, ok2.compare(err1))
-  assert_eq(1, err1.compare(ok2))
+  assert_true(0 == ok1.compare(ok1))
+  assert_true(0 == err2.compare(Err(2)))
+  assert_true(-1 == ok1.compare(ok2))
+  assert_true(1 == ok2.compare(ok1))
+  assert_true(-1 == err1.compare(err2))
+  assert_true(1 == err2.compare(err1))
+  assert_true(-1 == ok2.compare(err1))
+  assert_true(1 == err1.compare(ok2))
 }
 
 ///|
@@ -322,8 +322,8 @@ pub fn[T : Default, E] Result::unwrap_or_default(self : Result[T, E]) -> T {
 test "unwrap_or_default" {
   let x : Result[Int, String] = Ok(3)
   let y : Result[Int, String] = Err("error")
-  assert_eq(x.unwrap_or_default(), 3)
-  assert_eq(y.unwrap_or_default(), 0)
+  assert_true(x.unwrap_or_default() == 3)
+  assert_true(y.unwrap_or_default() == 0)
 }
 
 ///|
