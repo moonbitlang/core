@@ -13,15 +13,6 @@
 // limitations under the License.
 
 ///|
-fn[T : Show] debug_string(t : T) -> String {
-  let buf = StringBuilder(size_hint=50)
-  t.output(buf)
-  buf.to_string()
-}
-
-
-
-///|
 /// Asserts that the given boolean value is true. Throws an error with source
 /// location information if the assertion fails.
 ///
