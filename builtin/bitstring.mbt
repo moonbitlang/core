@@ -2307,14 +2307,14 @@ pub fn Bytes::unsafe_extract_int16_be_aligned(
 }
 
 ///|
-/// Forward to `BytesView::unsafe_extract_uint_le_aligned`.
+/// Extract an aligned little-endian UInt32 directly from `Bytes`.
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub fn Bytes::unsafe_extract_uint_le_aligned(
   bs : Bytes,
   byte_offset : Int,
 ) -> UInt {
-  bs[:].unsafe_extract_uint_le_aligned(byte_offset)
+  bs.unsafe_read_uint32_le(byte_offset)
 }
 
 ///|

@@ -202,37 +202,27 @@ fn arg_error_for_parse_failure(
   inherited_globals : Array[Arg],
   command_path : String,
 ) -> ArgError {
-  match err {
+  let message = match err {
     MissingGroup(name) =>
-      Message(
-        format_error_with_help(
-          missing_group_error_message(
-            cmd, inherited_globals, command_path, name,
-          ),
-          cmd,
-          inherited_globals,
-          command_path,
-        ),
-      )
-    GroupConflict(_) =>
-      Message(
-        format_error_with_help(
-          err.arg_parse_error_message(),
-          cmd,
-          inherited_globals,
-          command_path,
-        ),
-      )
-    _ =>
-      Message(
-        format_error_with_help(
-          err.arg_parse_error_message(),
-          cmd,
-          inherited_globals,
-          command_path,
-        ),
-      )
+      missing_group_error_message(cmd, inherited_globals, command_path, name)
+    TooManyPositionals(value, _) => {
+      let candidates = [ for sub in cmd.subcommands => sub.name ]
+      if help_subcommand_enabled(cmd) {
+        candidates.push("help")
+      }
+      if suggest_name(value, candidates) is Some(best) {
+        (
+          $|\{err.arg_parse_error_message()}
+          $|
+          $|  tip: a similar subcommand exists: '\{best}'
+        )
+      } else {
+        err.arg_parse_error_message()
+      }
+    }
+    _ => err.arg_parse_error_message()
   }
+  Message(format_error_with_help(message, cmd, inherited_globals, command_path))
 }
 
 ///|
