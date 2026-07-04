@@ -17,7 +17,7 @@ import {
 pub fn[T] abort(String) -> T
 
 #callsite(autofill(loc))
-pub fn[T : @builtin.Eq + @builtin.Show] assert_eq(T, T, msg? : String, loc~ : @builtin.SourceLoc) -> Unit raise
+pub fn[T : @builtin.Eq] assert_eq(T, T, msg? : String, loc~ : @builtin.SourceLoc) -> Unit raise
 
 #callsite(autofill(loc))
 pub fn assert_false(Bool, msg? : StringView, loc~ : @builtin.SourceLoc) -> Unit raise

@@ -20,32 +20,13 @@ fn[T : Show] debug_string(t : T) -> String {
 }
 
 ///|
-/// Asserts that two values are equal. If they are not equal, raises a failure
-/// with a message containing the source location and the values being compared.
+/// Asserts that two values are equal.
 ///
-/// Parameters:
-///
-/// * `a` : First value to compare.
-/// * `b` : Second value to compare.
-/// * `loc` : Source location information to include in failure messages. This is
-/// usually automatically provided by the compiler.
-///
-/// Throws a `Failure` error if the values are not equal, with a message showing
-/// the location of the failing assertion and the actual values that were
-/// compared.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   @test.assert_eq(1, 1)
-///   @test.assert_eq("hello", "hello")
-/// }
-/// ```
-#deprecated("use `using @test {assert_eq}` instead", skip_current_package=true)
+/// This assertion intentionally requires only `Eq`, so equality checks can be
+/// used in tests without requiring `Show` or `@debug.Debug` instances.
 #callsite(autofill(loc))
 #coverage.skip
-pub fn[T : Eq + Show] assert_eq(
+pub fn[T : Eq] assert_eq(
   a : T,
   b : T,
   msg? : String,
@@ -54,7 +35,7 @@ pub fn[T : Eq + Show] assert_eq(
   if a != b {
     let fail_msg = match msg {
       Some(msg) => msg
-      None => "`\{debug_string(a)} != \{debug_string(b)}`"
+      None => "assert_eq failed"
     }
     fail(fail_msg, loc~)
   }
