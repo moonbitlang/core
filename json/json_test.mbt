@@ -133,7 +133,7 @@ test "stringify" {
       inspect(i, content="100")
     _ => fail("Failed to match the JSON")
   }
-  @debug.assert_eq(newjson, json)
+  assert_eq(newjson, json)
 }
 
 ///|
@@ -278,7 +278,7 @@ test "stringify escape 4" {
 ///|
 test "stringify escape round trip" {
   let newjson = @json.parse(json.stringify())
-  @debug.assert_eq(newjson, json)
+  assert_eq(newjson, json)
 }
 
 ///|
@@ -372,9 +372,9 @@ test "stringify number" {
         if repr is Some(_) {
           assert_eq(newjson.stringify(), json.stringify())
         } else {
-          @debug.assert_eq(newjson, json)
+          assert_eq(newjson, json)
         }
-      newjson => @debug.assert_eq(newjson, json)
+      newjson => assert_eq(newjson, json)
     }
   }
   debug_inspect(err, content="[]")

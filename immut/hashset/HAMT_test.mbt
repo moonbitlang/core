@@ -464,7 +464,7 @@ test "collision equal coverage" {
   let b = MyString("b")
   let set1 = @hashset.new().add(a).add(b)
   let set2 = @hashset.new().add(b).add(a)
-  @debug.assert_eq(set1, set2)
+  assert_eq(set1, set2)
 }
 
 ///|

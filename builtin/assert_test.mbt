@@ -36,7 +36,7 @@ test "panic assert_false with true" {
 ///|
 #warnings("-deprecated")
 test "panic @test.assert_eq with unequal values" {
-  ignore(assert_eq(1, 2))
+  ignore(assert_true(1 == 2))
 }
 
 ///|
@@ -46,7 +46,7 @@ test "panic assert_true with false" {
 
 ///|
 #warnings("-deprecated")
-test "legacy @test.assert_eq still works for Show-only types" {
-  assert_eq(ShowOnly(1), ShowOnly(1))
+test "internal assert_eq supports Eq-only types" {
+  assert_true(ShowOnly(1) == ShowOnly(1))
   @builtin.assert_not_eq(ShowOnly(1), ShowOnly(2))
 }

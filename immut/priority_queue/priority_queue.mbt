@@ -279,7 +279,7 @@ fn[A : Compare] Node::change_and_down(self : Node[A], value : A) -> Node[A] {
 /// test {
 ///   let queue = @priority_queue.from_array([1, 2, 3, 4])
 ///   let first = queue.unsafe_pop()
-///   @debug.assert_eq(first, @priority_queue.from_array([1, 2, 3]))
+///   assert_eq(first, @priority_queue.from_array([1, 2, 3]))
 /// }
 /// ```
 #internal(unsafe, "Panics if the queue is empty.")

@@ -53,7 +53,7 @@ test "mix" {
   let vec = []
   v.eachi((i, _e) => vec.push(i))
   for i, v in vec {
-    assert_eq(v, i)
+    assert_true(v == i)
   }
 }
 

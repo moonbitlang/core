@@ -23,7 +23,7 @@ test "Result unwrap should return Ok value" {
 test "bind with Err" {
   let x : Result[Int, String] = Err("error")
   let y = x.bind(v => Ok(v * 7))
-  @debug.assert_eq(y, Err("error"))
+  assert_eq(y, Err("error"))
 }
 
 ///|

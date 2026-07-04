@@ -27,12 +27,12 @@ test "concat preserves random access (issue #3721)" {
   }
   let expected = Array::makei(total, i => i)
   // Iteration was always correct ...
-  @debug.assert_eq(v.iter().to_array(), expected)
+  assert_eq(v.iter().to_array(), expected)
   // ... and random access must agree with it.
-  @debug.assert_eq(Array::makei(total, j => v[j]), expected)
-  @debug.assert_eq(Array::makei(total, j => v.get(j).unwrap()), expected)
+  assert_eq(Array::makei(total, j => v[j]), expected)
+  assert_eq(Array::makei(total, j => v.get(j).unwrap()), expected)
   // `set` walks the same path, so it must agree too.
-  @debug.assert_eq(
+  assert_eq(
     Array::makei(total, j => v.set(j, -j)[j]),
     Array::makei(total, j => -j),
   )
@@ -52,7 +52,7 @@ test "concat random access matches iteration for many chunkings (issue #3721)" {
       }
       let by_iter = v.iter().to_array()
       let by_index = Array::makei(total, j => v[j])
-      @debug.assert_eq(by_index, by_iter)
+      assert_eq(by_index, by_iter)
     }
   }
 }

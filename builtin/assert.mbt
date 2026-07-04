@@ -20,13 +20,10 @@ fn[T : Show] debug_string(t : T) -> String {
 }
 
 ///|
-/// Asserts that two values are equal.
-///
-/// This assertion intentionally requires only `Eq`, so equality checks can be
-/// used in tests without requiring `Show` or `@debug.Debug` instances.
+/// Package-local equality helper used by internal builtin tests.
 #callsite(autofill(loc))
 #coverage.skip
-pub fn[T : Eq] assert_eq(
+fn[T : Eq] assert_eq(
   a : T,
   b : T,
   msg? : String,

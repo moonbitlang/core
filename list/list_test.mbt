@@ -681,7 +681,7 @@ test "List::to_json with empty list" {
 ///|
 test "List::from_json" {
   for xs in (@quickcheck.samples(20) : Array[@list.List[Int]]) {
-    @debug.assert_eq(xs, @json.from_json(xs.to_json()))
+    assert_eq(xs, @json.from_json(xs.to_json()))
   }
 }
 
@@ -732,7 +732,7 @@ test "List::zip with lists of equal length" {
   let list2 = @list.List(["a", "b", "c"])
   let zipped = list1.zip(list2)
   let expected = @list.List([(1, "a"), (2, "b"), (3, "c")])
-  @debug.assert_eq(zipped, expected)
+  assert_eq(zipped, expected)
 }
 
 ///|

@@ -113,7 +113,7 @@ test "to_json" {
 ///|
 test "from_json" {
   for xs in (@quickcheck.samples(20) : Array[@vector.Vector[Int]]) {
-    @debug.assert_eq(xs, @json.from_json(xs.to_json()))
+    assert_eq(xs, @json.from_json(xs.to_json()))
   }
 }
 
@@ -151,7 +151,7 @@ test "iter" {
 ///|
 test "iter tree and tail" {
   let values = @vector.from_iter((0).until(70))
-  @debug.assert_eq(values.iter().to_array(), Array::makei(70, i => i))
+  assert_eq(values.iter().to_array(), Array::makei(70, i => i))
   inspect(values.iter().count(), content="70")
 }
 
@@ -159,7 +159,7 @@ test "iter tree and tail" {
 test "iter sliced tree and tail" {
   let values = @vector.from_iter((0).until(96))
   let sliced = values.slice(17, 83)
-  @debug.assert_eq(sliced.iter().to_array(), Array::makei(66, i => i + 17))
+  assert_eq(sliced.iter().to_array(), Array::makei(66, i => i + 17))
   inspect(sliced.iter().count(), content="66")
 }
 
@@ -168,7 +168,7 @@ test "iter concatenated vectors" {
   let left = @vector.from_iter((0).until(45))
   let right = @vector.from_iter((45).until(90))
   let combined = left.concat(right)
-  @debug.assert_eq(combined.iter().to_array(), Array::makei(90, i => i))
+  assert_eq(combined.iter().to_array(), Array::makei(90, i => i))
   inspect(combined.iter().count(), content="90")
 }
 
@@ -728,27 +728,27 @@ test "concat_empty" {
 test "split" {
   let values = @vector.from_iter((0).until(40))
   let (left, right) = values.split(13)
-  @debug.assert_eq(left.to_array(), Array::makei(13, i => i))
-  @debug.assert_eq(right.to_array(), Array::makei(27, i => i + 13))
+  assert_eq(left.to_array(), Array::makei(13, i => i))
+  assert_eq(right.to_array(), Array::makei(27, i => i + 13))
   let (empty, all) = values.split(0)
-  @debug.assert_eq(empty.to_array(), [])
-  @debug.assert_eq(all, values)
+  assert_eq(empty.to_array(), [])
+  assert_eq(all, values)
   let (all, empty) = values.split(40)
-  @debug.assert_eq(all, values)
-  @debug.assert_eq(empty.to_array(), [])
+  assert_eq(all, values)
+  assert_eq(empty.to_array(), [])
 }
 
 ///|
 test "take drop and slice" {
   let values = @vector.from_iter((0).until(40))
-  @debug.assert_eq(values.take(5).to_array(), [0, 1, 2, 3, 4])
-  @debug.assert_eq(values.take(100), values)
-  @debug.assert_eq(values.take(-1).to_array(), [])
-  @debug.assert_eq(values.drop(35).to_array(), [35, 36, 37, 38, 39])
-  @debug.assert_eq(values.drop(100).to_array(), [])
-  @debug.assert_eq(values.drop(-1), values)
-  @debug.assert_eq(values.slice(7, 12).to_array(), [7, 8, 9, 10, 11])
-  @debug.assert_eq(values.slice(0, 40), values)
+  assert_eq(values.take(5).to_array(), [0, 1, 2, 3, 4])
+  assert_eq(values.take(100), values)
+  assert_eq(values.take(-1).to_array(), [])
+  assert_eq(values.drop(35).to_array(), [35, 36, 37, 38, 39])
+  assert_eq(values.drop(100).to_array(), [])
+  assert_eq(values.drop(-1), values)
+  assert_eq(values.slice(7, 12).to_array(), [7, 8, 9, 10, 11])
+  assert_eq(values.slice(0, 40), values)
   debug_inspect(
     values.slice(10, 20),
     content=(

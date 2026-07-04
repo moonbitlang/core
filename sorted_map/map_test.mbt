@@ -309,7 +309,7 @@ test "default" {
 test "from_json" {
   for
     xs in (@quickcheck.samples(20) : Array[@sorted_map.SortedMap[String, Int]]) {
-    @debug.assert_eq(xs, @json.from_json(xs.to_json()))
+    assert_eq(xs, @json.from_json(xs.to_json()))
   }
 }
 

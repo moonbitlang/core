@@ -25,7 +25,6 @@ pub using @bigint {type BigInt}
 #warnings("-deprecated")
 pub using @builtin {
   abort,
-  assert_eq,
   assert_not_eq,
   assert_true,
   assert_false,
@@ -82,7 +81,15 @@ pub using @builtin {not}
 pub using @builtin {type IterResult}
 
 ///|
-pub using @debug {debug, type Repr, trait Debug, debug_inspect, repr, to_repr}
+pub using @debug {
+  debug,
+  type Repr,
+  trait Debug,
+  debug_inspect,
+  repr,
+  to_repr,
+  assert_eq,
+}
 
 ///|
 #deprecated("for debugging only, not for production")

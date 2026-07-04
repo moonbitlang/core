@@ -5,9 +5,6 @@ package "moonbitlang/core/builtin"
 pub fn[T] abort(String) -> T
 
 #callsite(autofill(loc))
-pub fn[T : Eq] assert_eq(T, T, msg? : String, loc~ : SourceLoc) -> Unit raise
-
-#callsite(autofill(loc))
 pub fn assert_false(Bool, msg? : StringView, loc~ : SourceLoc) -> Unit raise
 
 #deprecated

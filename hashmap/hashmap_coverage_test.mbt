@@ -43,15 +43,15 @@ test "set into a half-full map triggers robin hood displacement" {
   for i in 0..<240 {
     m.set(Collide(i), i * 10)
   }
-  @debug.assert_eq(m.length(), 240)
+  assert_eq(m.length(), 240)
   // every key remains retrievable after the displacements
   for i in 0..<240 {
-    @debug.assert_eq(m.get(Collide(i)), Some(i * 10))
+    assert_eq(m.get(Collide(i)), Some(i * 10))
   }
   // overwriting an existing key keeps the size stable
   m.set(Collide(100), -1)
-  @debug.assert_eq(m.get(Collide(100)), Some(-1))
-  @debug.assert_eq(m.length(), 240)
+  assert_eq(m.get(Collide(100)), Some(-1))
+  assert_eq(m.length(), 240)
 }
 
 ///|
@@ -66,7 +66,7 @@ test "update inserts, modifies and removes through the probe chain" {
       }
     })
   }
-  @debug.assert_eq(m.length(), 240)
+  assert_eq(m.length(), 240)
   // update an existing key (f(Some) -> Some)
   m.update(Collide(5), v => {
     match v {
@@ -74,15 +74,15 @@ test "update inserts, modifies and removes through the probe chain" {
       None => Some(0)
     }
   })
-  @debug.assert_eq(m.get(Collide(5)), Some(105))
+  assert_eq(m.get(Collide(5)), Some(105))
   // update that returns None for an absent key is a no-op
   m.update(Collide(10000), _ => None)
-  @debug.assert_eq(m.get(Collide(10000)), None)
-  @debug.assert_eq(m.length(), 240)
+  assert_eq(m.get(Collide(10000)), None)
+  assert_eq(m.length(), 240)
   // update that returns None for an existing key removes it
   m.update(Collide(5), _ => None)
-  @debug.assert_eq(m.get(Collide(5)), None)
-  @debug.assert_eq(m.length(), 239)
+  assert_eq(m.get(Collide(5)), None)
+  assert_eq(m.length(), 239)
 }
 
 ///|
@@ -91,15 +91,15 @@ test "update_or_default inserts and modifies through the probe chain" {
   for i in 0..<240 {
     m.update_or_default(Collide(i), 1, x => x + 1)
   }
-  @debug.assert_eq(m.length(), 240)
+  assert_eq(m.length(), 240)
   // all first insertions store the default (f is not applied on insert)
   for i in 0..<240 {
-    @debug.assert_eq(m.get(Collide(i)), Some(1))
+    assert_eq(m.get(Collide(i)), Some(1))
   }
   // a second update applies f to the existing value
   m.update_or_default(Collide(7), 1, x => x + 41)
-  @debug.assert_eq(m.get(Collide(7)), Some(42))
-  @debug.assert_eq(m.length(), 240)
+  assert_eq(m.get(Collide(7)), Some(42))
+  assert_eq(m.length(), 240)
 }
 
 ///|
@@ -116,18 +116,18 @@ test "get_from_bytes and get_from_string miss after probing" {
   for i in 0..<28 {
     bytes_map.set(bytes_of("key\{i}"), i)
   }
-  @debug.assert_eq(bytes_map.get_from_bytes(bytes_of("key3")), Some(3))
+  assert_eq(bytes_map.get_from_bytes(bytes_of("key3")), Some(3))
   // absent keys still have to walk the probe chain before reporting a miss
   for i in 0..<12 {
-    @debug.assert_eq(bytes_map.get_from_bytes(bytes_of("absent\{i}")), None)
+    assert_eq(bytes_map.get_from_bytes(bytes_of("absent\{i}")), None)
   }
   let str_map : @hashmap.HashMap[String, Int] = HashMap([], capacity=64)
   for i in 0..<28 {
     str_map.set("k\{i}", i)
   }
-  @debug.assert_eq(str_map.get_from_string("k3"), Some(3))
+  assert_eq(str_map.get_from_string("k3"), Some(3))
   for i in 0..<12 {
-    @debug.assert_eq(str_map.get_from_string("missing\{i}"), None)
+    assert_eq(str_map.get_from_string("missing\{i}"), None)
   }
 }
 
