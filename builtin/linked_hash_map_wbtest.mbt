@@ -30,10 +30,10 @@ impl Hash for MyString with fn hash_combine(self, hasher) {
 ///|
 test "empty constructor" {
   let m : Map[String, Int] = Map([])
-  assert_eq(m.size, 0)
-  assert_eq(m.capacity, 8)
+  assert_true(m.size == 0)
+  assert_true(m.capacity == 8)
   assert_true(m.head is None)
-  assert_eq(m.tail, -1)
+  assert_true(m.tail == -1)
   for i in 0..<m.capacity {
     assert_true(m.entries[i] is None)
   }
@@ -42,13 +42,13 @@ test "empty constructor" {
 ///|
 test "constructor capacity" {
   let empty : Map[String, Int] = Map([], capacity=16)
-  assert_eq(empty.capacity, 16)
-  assert_eq(empty.length(), 0)
+  assert_true(empty.capacity == 16)
+  assert_true(empty.length() == 0)
   let below_length = Map([("a", 1), ("b", 2), ("c", 3)], capacity=2)
-  assert_eq(below_length.capacity, 4)
-  assert_eq(below_length.length(), 3)
+  assert_true(below_length.capacity == 4)
+  assert_true(below_length.length() == 3)
   let above_length = Map([("a", 1), ("b", 2), ("c", 3)], capacity=16)
-  assert_eq(above_length.capacity, 16)
+  assert_true(above_length.capacity == 16)
   assert_true(above_length.to_array() == [("a", 1), ("b", 2), ("c", 3)])
 }
 
@@ -62,7 +62,7 @@ test "set" {
   m.set("cd", 2)
   m.set("c", 1)
   m.set("d", 1)
-  assert_eq(m.size, 7)
+  assert_true(m.size == 7)
   // assert_eq(
   //   m._debug_entries(),
   //   "_,(0,a,1),(1,b,1),(2,c,1),(3,d,1),(3,bc,2),(4,cd,2),(4,abc,3),_,_,_,_,_,_,_,_",
@@ -89,8 +89,8 @@ test "at" {
   let m : Map[String, Int] = Map([])
   m.set("a", 1)
   m.set("b", 2)
-  assert_eq(m["a"], 1)
-  assert_eq(m["b"], 2)
+  assert_true(m["a"] == 1)
+  assert_true(m["b"] == 2)
 }
 
 ///|
@@ -99,10 +99,10 @@ test "get_or_default" {
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
-  assert_eq(m.get_or_default("a", 42), 1)
-  assert_eq(m.get_or_default("b", 42), 2)
-  assert_eq(m.get_or_default("c", 42), 3)
-  assert_eq(m.get_or_default("d", 42), 42)
+  assert_true(m.get_or_default("a", 42) == 1)
+  assert_true(m.get_or_default("b", 42) == 2)
+  assert_true(m.get_or_default("c", 42) == 3)
+  assert_true(m.get_or_default("d", 42) == 42)
 }
 
 ///|
@@ -113,7 +113,7 @@ test "get_or_init" {
   m.get_or_init("a", () => Array::new()).push(3)
   assert_true(m.get("a") == Some([1, 3]))
   assert_true(m.get("b") == Some([2]))
-  assert_eq(m.length(), 2)
+  assert_true(m.length() == 2)
 }
 
 ///|
@@ -133,7 +133,7 @@ test "get_or_init full" {
   m.get_or_init("a", () => 0) |> ignore
   m.get_or_init("b", () => 0) |> ignore
   m.get_or_init("c", () => 0) |> ignore
-  assert_eq(m.length(), 3)
+  assert_true(m.length() == 3)
 }
 
 ///|
@@ -142,7 +142,7 @@ test "update_or_default inserts default when absent" {
   m.update_or_default("k", "v", x => x + "!")
   // f is NOT applied to default on first insert
   assert_true(m.get("k") == Some("v"))
-  assert_eq(m.length(), 1)
+  assert_true(m.length() == 1)
 }
 
 ///|
@@ -152,7 +152,7 @@ test "update_or_default applies f when present" {
   // default is ignored when key is present; f is applied to the existing value
   m.update_or_default("k", "z", x => x + "!")
   assert_true(m.get("k") == Some("v!"))
-  assert_eq(m.length(), 1)
+  assert_true(m.length() == 1)
 }
 
 ///|
@@ -184,7 +184,7 @@ test "update_or_default triggers grow" {
   for i in 0..<5 {
     m.update_or_default(i, 1, x => x + 1)
   }
-  assert_eq(m.length(), 5)
+  assert_true(m.length() == 5)
   for i in 0..<5 {
     assert_true(m.get(i) == Some(1))
   }
@@ -221,8 +221,8 @@ test "set_update" {
 test "contains" {
   let m : Map[String, Int] = Map([])
   m.set("a", 1)
-  assert_eq(m.contains("a"), true)
-  assert_eq(m.contains("b"), false)
+  assert_true(m.contains("a"))
+  assert_false(m.contains("b"))
 }
 
 ///|
@@ -236,29 +236,29 @@ test "from_array" {
 ///|
 test "length" {
   let m : Map[String, Int] = Map([])
-  assert_eq(m.length(), 0)
+  assert_true(m.length() == 0)
   m.set("a", 1)
-  assert_eq(m.length(), 1)
+  assert_true(m.length() == 1)
 }
 
 ///|
 test "size" {
   let m : Map[String, Int] = Map([])
-  assert_eq(m.size, 0)
+  assert_true(m.size == 0)
   m.set("a", 1)
-  assert_eq(m.size, 1)
+  assert_true(m.size == 1)
 }
 
 ///|
 test "is_empty" {
   let m : Map[String, Int] = Map([])
-  assert_eq(m.is_empty(), true)
+  assert_true(m.is_empty())
   m.set("a", 1)
-  assert_eq(m.is_empty(), false)
+  assert_false(m.is_empty())
   m.remove("a")
-  assert_eq(m.is_empty(), true)
+  assert_true(m.is_empty())
   m.remove("a")
-  assert_eq(m.is_empty(), true)
+  assert_true(m.is_empty())
 }
 
 ///|
@@ -266,7 +266,7 @@ test "each" {
   let m = { "a": 1, "b": 2, "c": 3 }
   let mut sum = 0
   m.each((_k, v) => sum += v)
-  assert_eq(sum, 6)
+  assert_true(sum == 6)
 }
 
 ///|
@@ -278,18 +278,18 @@ test "eachi" {
     s += i.to_string()
     sum += v
   })
-  assert_eq(s, "012")
-  assert_eq(sum, 6)
+  assert_true(s == "012")
+  assert_true(sum == 6)
 }
 
 ///|
 test "clear" {
   let m = { "a": 1, "b": 2, "c": 3 }
   m.clear()
-  assert_eq(m.size, 0)
+  assert_true(m.size == 0)
   inspect(m.capacity, content="4")
   assert_true(m.head is None)
-  assert_eq(m.tail, -1)
+  assert_true(m.tail == -1)
   for i in 0..<m.capacity {
     assert_true(m.entries[i] is None)
   }
@@ -304,16 +304,16 @@ test "grow" {
   m.set("Java", 4)
   m.set("Scala", 5)
   m.set("Julia", 5)
-  assert_eq(m.length(), 6)
-  assert_eq(m.capacity(), 8)
+  assert_true(m.length() == 6)
+  assert_true(m.capacity() == 8)
   m.set("Cobol", 5)
-  assert_eq(m.length(), 7)
-  assert_eq(m.capacity(), 16)
+  assert_true(m.length() == 7)
+  assert_true(m.capacity() == 16)
   m.set("Python", 6)
   m.set("Haskell", 7)
   m.set("Rescript", 8)
-  assert_eq(m.length(), 10)
-  assert_eq(m.capacity(), 16)
+  assert_true(m.length() == 10)
+  assert_true(m.capacity() == 16)
   // assert_eq(
   //   m._debug_entries(),
   //   "_,(0,C,1),(0,Go,2),(0,C++,3),(0,Java,4),(0,Scala,5),(1,Julia,5),(2,Cobol,5),(2,Python,6),(2,Haskell,7),(2,Rescript,8),_,_,_,_,_",
@@ -401,7 +401,7 @@ test "set_existing_key" {
   m.set("b", 2)
   m.set("c", 3)
   m.set("a", 4)
-  assert_eq(m.size, 3)
+  assert_true(m.size == 3)
   assert_true(m.get("a") == Some(4))
 }
 
@@ -420,7 +420,7 @@ test "get_or_default_existing_key" {
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
-  assert_eq(m.get_or_default("a", 42), 1)
+  assert_true(m.get_or_default("a", 42) == 1)
 }
 
 ///|
@@ -429,7 +429,7 @@ test "get_or_default_nonexistent_key" {
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
-  assert_eq(m.get_or_default("d", 42), 42)
+  assert_true(m.get_or_default("d", 42) == 42)
 }
 
 ///|
@@ -439,7 +439,7 @@ test "remove_existing_key" {
   m.set("b", 2)
   m.set("c", 3)
   m.remove("b")
-  assert_eq(m.length(), 2)
+  assert_true(m.length() == 2)
   assert_true(m.get("b") == None)
 }
 
@@ -450,7 +450,7 @@ test "remove_nonexistent_key" {
   m.set("b", 2)
   m.set("c", 3)
   m.remove("d")
-  assert_eq(m.length(), 3)
+  assert_true(m.length() == 3)
 }
 
 ///|
@@ -459,7 +459,7 @@ test "contains_existing_key" {
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
-  assert_eq(m.contains("b"), true)
+  assert_true(m.contains("b"))
 }
 
 ///|
@@ -468,7 +468,7 @@ test "contains_nonexistent_key" {
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
-  assert_eq(m.contains("d"), false)
+  assert_false(m.contains("d"))
 }
 
 ///|
@@ -534,7 +534,7 @@ test "remove" {
   m.set("abc", 3)
   m.set("abcdef", 6)
   m.remove("ab")
-  assert_eq(m.length(), 5)
+  assert_true(m.length() == 5)
   // assert_eq(
   //   m._debug_entries(),
   //   "_,(0,a,1),(0,bc,2),(1,cd,2),(1,abc,3),_,(0,abcdef,6),_",
@@ -553,7 +553,7 @@ test "remove_unexist_key" {
   m.set("ab", 2)
   m.set("abc", 3)
   m.remove("d")
-  assert_eq(m.length(), 3)
+  assert_true(m.length() == 3)
   // assert_eq(m._debug_entries(), "_,(0,a,1),(0,ab,2),(0,abc,3),_,_,_,_")
 }
 
@@ -583,12 +583,12 @@ test "remove_entry_head" {
   // This should ensure the head is updated correctly
   assert_false(map.head is None)
   guard map.head is Some(head)
-  assert_eq(head.prev, -1)
+  assert_true(head.prev == -1)
   assert_true(head.next is None)
-  assert_eq(head.psl, 0)
-  assert_eq(head.hash, (2).hash())
-  assert_eq(head.key, 2)
-  assert_eq(head.value, 2)
+  assert_true(head.psl == 0)
+  assert_true(head.hash == (2).hash())
+  assert_true(head.key == 2)
+  assert_true(head.value == 2)
 }
 
 ///|
@@ -601,12 +601,12 @@ test "remove_entry_tail" {
   assert_false(map.tail is -1)
   assert_false(map.entries[map.tail] is None)
   guard map.entries[map.tail] is Some(tail)
-  assert_eq(tail.prev, -1)
+  assert_true(tail.prev == -1)
   assert_true(tail.next is None)
-  assert_eq(tail.psl, 0)
-  assert_eq(tail.hash, (1).hash())
-  assert_eq(tail.key, 1)
-  assert_eq(tail.value, 1)
+  assert_true(tail.psl == 0)
+  assert_true(tail.hash == (1).hash())
+  assert_true(tail.key == 1)
+  assert_true(tail.value == 1)
 }
 
 ///|
@@ -617,7 +617,7 @@ test "equal_size_mismatch" {
   map2.set(1, 1)
   map2.set(2, 2)
   // This should return false as the sizes are different
-  assert_eq(map1 == map2, false)
+  assert_false(map1 == map2)
 }
 
 ///|
@@ -629,7 +629,7 @@ test "equal_key_value_mismatch" {
   map2.set(1, 1)
   map2.set(2, 3)
   // This should return false as the values are different
-  assert_eq(map1 == map2, false)
+  assert_false(map1 == map2)
 }
 
 ///|

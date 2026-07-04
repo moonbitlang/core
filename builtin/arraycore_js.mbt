@@ -175,7 +175,7 @@ test "array_unsafe_blit_fixed" {
   }
   UninitializedArray::unsafe_blit_fixed(dst, 0, src, 0, 5)
   for i in 0..<5 {
-    assert_eq(dst[i], src[i])
+    assert_true(dst[i] == src[i])
   }
 }
 
@@ -188,7 +188,7 @@ test "UninitializedArray::unsafe_blit_fixed" {
   }
   UninitializedArray::unsafe_blit_fixed(dst, 0, src, 0, 5)
   for i in 0..<5 {
-    assert_eq(dst[i], src[i])
+    assert_true(dst[i] == src[i])
   }
 }
 

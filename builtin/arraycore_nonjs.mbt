@@ -207,7 +207,7 @@ test "array_unsafe_blit_fixed" {
   }
   UninitializedArray::unsafe_blit_fixed(dst, 0, src, 0, 5)
   for i in 0..<5 {
-    assert_eq(dst[i], src[i])
+    assert_true(dst[i] == src[i])
   }
 }
 
@@ -220,7 +220,7 @@ test "UninitializedArray::unsafe_blit_fixed" {
   }
   UninitializedArray::unsafe_blit_fixed(dst, 0, src, 0, 5)
   for i in 0..<5 {
-    assert_eq(dst[i], src[i])
+    assert_true(dst[i] == src[i])
   }
 }
 
@@ -230,14 +230,14 @@ test "Array::resize_buffer" {
   arr.push(1)
   arr.push(2)
   arr.resize_buffer(4)
-  assert_eq(arr.buffer().0.length() >= 4, true)
+  assert_true(arr.buffer().0.length() >= 4)
   arr.push(3)
   arr.push(4)
-  assert_eq(arr.length(), 4)
-  assert_eq(arr[0], 1)
-  assert_eq(arr[1], 2)
-  assert_eq(arr[2], 3)
-  assert_eq(arr[3], 4)
+  assert_true(arr.length() == 4)
+  assert_true(arr[0] == 1)
+  assert_true(arr[1] == 2)
+  assert_true(arr[2] == 3)
+  assert_true(arr[3] == 4)
 }
 
 ///|
