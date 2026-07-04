@@ -449,11 +449,12 @@ pub fn Bytes::from_array(arr : ArrayView[Byte]) -> Bytes {
   if len == 0 {
     return []
   }
-  let result = UninitializedArray::make_and_blit(
+  let result = UninitializedArray::unsafe_make_and_blit(
     arr.buf(),
-    allocate_len=len,
-    src_offset=arr.start(),
-    len~,
+    len,
+    arr.start(),
+    0,
+    len,
   )
   buffer_to_fixedarray(result).unsafe_reinterpret_as_bytes()
 }
