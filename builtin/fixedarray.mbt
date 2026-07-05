@@ -796,6 +796,16 @@ test "rev_foldi" {
 }
 
 ///|
+test "rev_foldi preserves reversed index element pairs" {
+  let trace = ([10, 20, 30] : FixedArray[_]).rev_foldi(init=0, (
+    index,
+    acc,
+    elem,
+  ) => acc * 1000 + index * 100 + elem)
+  inspect(trace, content="30120210")
+}
+
+///|
 /// Reverses the array in place by swapping elements from both ends until
 /// reaching the middle.
 ///
