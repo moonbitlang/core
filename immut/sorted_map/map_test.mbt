@@ -369,6 +369,37 @@ test "from_iter empty iter" {
 }
 
 ///|
+test "from_iter descending keys build ascending" {
+  debug_inspect(
+    @sorted_map.from_iter([(3, 3), (2, 2), (1, 1)].iter()),
+    content=(
+      #|<SortedMap: { 1: 1, 2: 2, 3: 3 }>
+    ),
+  )
+}
+
+///|
+test "from_iter descending duplicate keeps first key and last value" {
+  let m = @sorted_map.from_iter(
+    [
+      ({ rank: 2, label: "top" }, "a"),
+      ({ rank: 1, label: "first" }, "b"),
+      ({ rank: 1, label: "second" }, "c"),
+    ].iter(),
+  )
+  @test.assert_eq(m.to_array().map(kv => (kv.0.label, kv.1)), [
+    ("first", "c"),
+    ("top", "a"),
+  ])
+}
+
+///|
+test "from_iter small unsorted duplicate keeps last value" {
+  let m = @sorted_map.from_iter([(3, "a"), (1, "b"), (3, "c"), (2, "d")].iter())
+  @test.assert_eq(m.to_array(), [(1, "b"), (2, "d"), (3, "c")])
+}
+
+///|
 test "hash" {
   let map1 = @sorted_map.SortedMap([("one", 1), ("two", 2)])
   let map2 = @sorted_map.SortedMap([("one", 1), ("two", 2)])
