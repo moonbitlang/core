@@ -399,7 +399,7 @@ fn escape(str : String, escape_slash~ : Bool) -> String {
   if !needs_escape {
     return str
   }
-  let buf = StringBuilder(size_hint=str.length())
+  let buf = StringBuilder(size_hint=len)
   for i in 0..<len {
     let code = str.unsafe_get(i)
     match code {
@@ -421,7 +421,7 @@ fn escape(str : String, escape_slash~ : Bool) -> String {
           buf.write_string("\\u00")
           buf.write_string(code.to_byte().to_hex())
         } else {
-          buf.write_char(code.to_int().unsafe_to_char())
+          buf.write_char(code.unsafe_to_char())
         }
     }
   }
