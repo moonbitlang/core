@@ -270,18 +270,41 @@ fn[K : Compare, V] sorted_map_from_array(
 let sorted_map_sort_build_threshold = 64
 
 ///|
+/// A key-value pair tagged with its original position, used to sort an unsorted
+/// input by key while breaking ties on insertion order.
+priv struct SortEntry[K, V] {
+  key : K
+  value : V
+  index : Int
+}
+
+///|
+impl[K : Compare, V] Eq for SortEntry[K, V] with equal(self, other) {
+  self.key == other.key && self.index == other.index
+}
+
+///|
+// Ordering by key, then by original position, so that a plain (unstable) `sort`
+// still keeps duplicate keys in insertion order — the last one wins on compact.
+impl[K : Compare, V] Compare for SortEntry[K, V] with compare(self, other) {
+  let c = self.key.compare(other.key)
+  if c == 0 {
+    self.index.compare(other.index)
+  } else {
+    c
+  }
+}
+
+///|
 fn[K : Compare, V] sorted_map_from_unsorted_array(
   array : ArrayView[(K, V)],
 ) -> SortedMap[K, V] {
-  let entries = Array::makei(array.length(), i => (array[i].0, array[i].1, i))
-  entries.sort_by((a, b) => {
-    let c = a.0.compare(b.0)
-    if c == 0 {
-      a.2.compare(b.2)
-    } else {
-      c
-    }
+  let entries : Array[SortEntry[K, V]] = Array::makei(array.length(), i => {
+    key: array[i].0,
+    value: array[i].1,
+    index: i,
   })
+  entries.sort()
   let compacted = sorted_map_compact_sorted_entries(entries)
   sorted_map_from_sorted_array(compacted, 0, compacted.length())
 }
@@ -319,18 +342,18 @@ pub fn[K : Compare, V] SortedMap::SortedMap(
 
 ///|
 fn[K : Compare, V] sorted_map_compact_sorted_entries(
-  entries : Array[(K, V, Int)],
+  entries : Array[SortEntry[K, V]],
 ) -> Array[(K, V)] {
   let result = []
   let len = entries.length()
   for start = 0; start < len; {
     let end = for end = start; end + 1 < len &&
-                 entries[end].0.compare(entries[end + 1].0) == 0; {
+                 entries[end].key.compare(entries[end + 1].key) == 0; {
       continue end + 1
     } nobreak {
       end
     }
-    result.push((entries[start].0, entries[end].1))
+    result.push((entries[start].key, entries[end].value))
     continue end + 1
   }
   result
