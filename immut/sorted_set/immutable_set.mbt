@@ -54,15 +54,15 @@ fn[A : Compare] sorted_set_from_array(array : ArrayView[A]) -> SortedSet[A] {
   if order == 1 {
     if has_duplicates {
       let compacted = sorted_set_compact_ordered_array(array, true, false)
-      return sorted_set_from_sorted_array(compacted, 0, compacted.length())
+      return sorted_set_from_ascending_array(compacted, 0, compacted.length())
     }
-    return sorted_set_from_ordered_array(array, 0, array.length(), true)
+    return sorted_set_from_ascending_array(array, 0, array.length())
   } else if order == -1 {
     if has_duplicates {
       let compacted = sorted_set_compact_ordered_array(array, false, false)
-      return sorted_set_from_sorted_array(compacted, 0, compacted.length())
+      return sorted_set_from_ascending_array(compacted, 0, compacted.length())
     }
-    return sorted_set_from_ordered_array(array, 0, array.length(), false)
+    return sorted_set_from_descending_array(array, 0, array.length())
   }
   if array.length() >= sorted_set_sort_build_threshold {
     sorted_set_from_unsorted_array(array, false)
@@ -89,7 +89,7 @@ fn[A : Compare] sorted_set_from_unsorted_array(
     }
   })
   let compacted = sorted_set_compact_sorted_entries(entries, keep_first)
-  sorted_set_from_sorted_array(compacted, 0, compacted.length())
+  sorted_set_from_ascending_array(compacted, 0, compacted.length())
 }
 
 ///|
@@ -125,15 +125,15 @@ fn[A : Compare] sorted_set_from_iter_array(
   if order == 1 {
     if has_duplicates {
       let compacted = sorted_set_compact_ordered_array(array, true, true)
-      return sorted_set_from_sorted_array(compacted, 0, compacted.length())
+      return sorted_set_from_ascending_array(compacted, 0, compacted.length())
     }
-    return sorted_set_from_ordered_array(array, 0, array.length(), true)
+    return sorted_set_from_ascending_array(array, 0, array.length())
   } else if order == -1 {
     if has_duplicates {
       let compacted = sorted_set_compact_ordered_array(array, false, true)
-      return sorted_set_from_sorted_array(compacted, 0, compacted.length())
+      return sorted_set_from_ascending_array(compacted, 0, compacted.length())
     }
-    return sorted_set_from_ordered_array(array, 0, array.length(), false)
+    return sorted_set_from_descending_array(array, 0, array.length())
   }
   if array.length() >= sorted_set_sort_build_threshold {
     sorted_set_from_unsorted_array(array, true)
@@ -248,37 +248,33 @@ fn[A : Compare] sorted_set_compact_ordered_array(
 pub fn[A : Compare] SortedSet::from_sorted_array(
   array : ArrayView[A],
 ) -> SortedSet[A] {
-  sorted_set_from_sorted_array(array, 0, array.length())
+  sorted_set_from_ascending_array(array, 0, array.length())
 }
 
 ///|
-fn[A] sorted_set_from_ordered_array(
+/// Build a balanced tree from a slice sorted in ascending order.
+/// The ascending case of a monotonic array is exactly this construction.
+fn[A] sorted_set_from_ascending_array(
   array : ArrayView[A],
   start : Int,
   end : Int,
-  ascending : Bool,
 ) -> SortedSet[A] {
   if start >= end {
     Empty
   } else {
     let mid = (start + end) / 2
     let value = array[mid]
-    let left = if ascending {
-      sorted_set_from_ordered_array(array, start, mid, ascending)
-    } else {
-      sorted_set_from_ordered_array(array, mid + 1, end, ascending)
-    }
-    let right = if ascending {
-      sorted_set_from_ordered_array(array, mid + 1, end, ascending)
-    } else {
-      sorted_set_from_ordered_array(array, start, mid, ascending)
-    }
+    let left = sorted_set_from_ascending_array(array, start, mid)
+    let right = sorted_set_from_ascending_array(array, mid + 1, end)
     create(left, value, right)
   }
 }
 
 ///|
-fn[A] sorted_set_from_sorted_array(
+/// Build a balanced tree from a slice sorted in descending order, without
+/// materializing a reversed copy: the middle element is still the subtree root,
+/// but the smaller values sit at the higher indices, so the halves are swapped.
+fn[A] sorted_set_from_descending_array(
   array : ArrayView[A],
   start : Int,
   end : Int,
@@ -288,8 +284,8 @@ fn[A] sorted_set_from_sorted_array(
   } else {
     let mid = (start + end) / 2
     let value = array[mid]
-    let left = sorted_set_from_sorted_array(array, start, mid)
-    let right = sorted_set_from_sorted_array(array, mid + 1, end)
+    let left = sorted_set_from_descending_array(array, mid + 1, end)
+    let right = sorted_set_from_descending_array(array, start, mid)
     create(left, value, right)
   }
 }
