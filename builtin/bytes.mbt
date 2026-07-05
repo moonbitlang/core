@@ -445,7 +445,18 @@ pub impl Compare for Bytes with fn compare(self, other) {
 // TODO: marked as intrinsic, inline if it is constant
 #alias(of, deprecated)
 pub fn Bytes::from_array(arr : ArrayView[Byte]) -> Bytes {
-  Bytes::makei(arr.length(), i => arr[i])
+  let len = arr.length()
+  if len == 0 {
+    return []
+  }
+  let result = UninitializedArray::unsafe_make_and_blit(
+    arr.buf(),
+    len,
+    arr.start(),
+    0,
+    len,
+  )
+  buffer_to_fixedarray(result).unsafe_reinterpret_as_bytes()
 }
 
 ///|
