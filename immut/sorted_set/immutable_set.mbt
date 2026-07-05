@@ -65,7 +65,8 @@ fn[A : Compare] sorted_set_from_array(array : ArrayView[A]) -> SortedSet[A] {
     return sorted_set_from_descending_array(array, 0, array.length())
   }
   if array.length() >= sorted_set_sort_build_threshold {
-    sorted_set_from_unsorted_array(array, false)
+    // `array` is borrowed, so copy it into a buffer we own before sorting.
+    sorted_set_from_unsorted_buffer(array.to_owned().mut_view(), false)
   } else {
     sorted_set_from_array_by_add(array)
   }
@@ -75,21 +76,49 @@ fn[A : Compare] sorted_set_from_array(array : ArrayView[A]) -> SortedSet[A] {
 let sorted_set_sort_build_threshold = 64
 
 ///|
-fn[A : Compare] sorted_set_from_unsorted_array(
-  array : ArrayView[A],
+/// Sort an owned buffer in place and build a set from it, keeping the first or
+/// last element of each equal run per `keep_first`. `stable_sort` preserves the
+/// insertion order of equal elements, so the chosen representative matches
+/// building the set by repeated `add`. The caller must own `buf` and not use it
+/// afterwards, since the elements are permuted in place.
+fn[A : Compare] sorted_set_from_unsorted_buffer(
+  buf : MutArrayView[A],
   keep_first : Bool,
 ) -> SortedSet[A] {
-  let entries = Array::makei(array.length(), i => (array[i], i))
-  entries.sort_by((a, b) => {
-    let c = a.0.compare(b.0)
-    if c == 0 {
-      a.1.compare(b.1)
-    } else {
-      c
+  buf.stable_sort()
+  let len = sorted_set_dedupe_in_place(buf, keep_first)
+  sorted_set_from_ascending_array(buf.view(start=0, end=len), 0, len)
+}
+
+///|
+// Drop duplicate runs from a sorted buffer in place, keeping the first or last
+// element of each run per `keep_first`. The unique elements are packed at the
+// front and their count is returned; the tail is left untouched. Indices are
+// monotonic (write <= start <= end < len), so the unchecked accessors stay in
+// bounds.
+fn[A : Compare] sorted_set_dedupe_in_place(
+  buf : MutArrayView[A],
+  keep_first : Bool,
+) -> Int {
+  let len = buf.length()
+  let mut write = 0
+  for start = 0; start < len; {
+    let end = for end = start; end + 1 < len &&
+                 buf.unsafe_get(end).compare(buf.unsafe_get(end + 1)) == 0; {
+      continue end + 1
+    } nobreak {
+      end
     }
-  })
-  let compacted = sorted_set_compact_sorted_entries(entries, keep_first)
-  sorted_set_from_ascending_array(compacted, 0, compacted.length())
+    let survivor = if keep_first {
+      buf.unsafe_get(start)
+    } else {
+      buf.unsafe_get(end)
+    }
+    buf.unsafe_set(write, survivor)
+    write += 1
+    continue end + 1
+  }
+  write
 }
 
 ///|
@@ -118,9 +147,9 @@ pub fn[A : Compare] SortedSet::SortedSet(array : ArrayView[A]) -> SortedSet[A] {
 }
 
 ///|
-fn[A : Compare] sorted_set_from_iter_array(
-  array : ArrayView[A],
-) -> SortedSet[A] {
+// `array` is the fresh, owned buffer collected from the iterator, so the
+// unsorted branch can sort it in place instead of copying it again.
+fn[A : Compare] sorted_set_from_iter_array(array : Array[A]) -> SortedSet[A] {
   let (order, has_duplicates) = sorted_set_array_order(array)
   if order == 1 {
     if has_duplicates {
@@ -136,7 +165,7 @@ fn[A : Compare] sorted_set_from_iter_array(
     return sorted_set_from_descending_array(array, 0, array.length())
   }
   if array.length() >= sorted_set_sort_build_threshold {
-    sorted_set_from_unsorted_array(array, true)
+    sorted_set_from_unsorted_buffer(array.mut_view(), true)
   } else {
     sorted_set_from_iter_array_by_add(array)
   }
@@ -151,26 +180,6 @@ fn[A : Compare] sorted_set_from_iter_array_by_add(
   } nobreak {
     set
   }
-}
-
-///|
-fn[A : Compare] sorted_set_compact_sorted_entries(
-  entries : Array[(A, Int)],
-  keep_first : Bool,
-) -> Array[A] {
-  let result = []
-  let len = entries.length()
-  for start = 0; start < len; {
-    let end = for end = start; end + 1 < len &&
-                 entries[end].0.compare(entries[end + 1].0) == 0; {
-      continue end + 1
-    } nobreak {
-      end
-    }
-    result.push(if keep_first { entries[start].0 } else { entries[end].0 })
-    continue end + 1
-  }
-  result
 }
 
 ///|

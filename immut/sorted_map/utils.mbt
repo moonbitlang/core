@@ -299,14 +299,23 @@ impl[K : Compare, V] Compare for SortEntry[K, V] with fn compare(self, other) {
 fn[K : Compare, V] sorted_map_from_unsorted_array(
   array : ArrayView[(K, V)],
 ) -> SortedMap[K, V] {
-  let entries : Array[SortEntry[K, V]] = Array::makei(array.length(), i => {
-    key: array[i].0,
-    value: array[i].1,
-    index: i,
-  })
+  let entries : FixedArray[SortEntry[K, V]] = FixedArray::makei(
+    array.length(),
+    i => { key: array[i].0, value: array[i].1, index: i },
+  )
+  sorted_map_from_unsorted_entries(entries.mut_view())
+}
+
+///|
+/// Sort a `SortEntry` buffer in place, drop duplicate keys, and build the tree
+/// from its unique prefix. The caller owns the backing buffer, which is permuted
+/// in place. Shared by the array and iterator entry points.
+fn[K : Compare, V] sorted_map_from_unsorted_entries(
+  entries : MutArrayView[SortEntry[K, V]],
+) -> SortedMap[K, V] {
   entries.sort()
-  let compacted = sorted_map_compact_sorted_entries(entries)
-  sorted_map_from_ascending_array(compacted, 0, compacted.length())
+  let len = sorted_map_compact_entries_in_place(entries)
+  sorted_map_from_sorted_entries(entries.view(), 0, len)
 }
 
 ///|
@@ -341,22 +350,35 @@ pub fn[K : Compare, V] SortedMap::SortedMap(
 }
 
 ///|
-fn[K : Compare, V] sorted_map_compact_sorted_entries(
-  entries : Array[SortEntry[K, V]],
-) -> Array[(K, V)] {
-  let result = []
+// Deduplicate a key-sorted `SortEntry` buffer in place, keeping the last value
+// seen for each key (last writer wins, matching `add`). The unique entries are
+// packed at the front and their count is returned; the tail is left untouched
+// and must be ignored by the caller. Indices are monotonic (write <= start <=
+// end < len), so the unchecked accessors stay in bounds.
+fn[K : Compare, V] sorted_map_compact_entries_in_place(
+  entries : MutArrayView[SortEntry[K, V]],
+) -> Int {
   let len = entries.length()
+  let mut write = 0
   for start = 0; start < len; {
     let end = for end = start; end + 1 < len &&
-                 entries[end].key.compare(entries[end + 1].key) == 0; {
+                 entries.unsafe_get(end).key.compare(
+                   entries.unsafe_get(end + 1).key,
+                 ) ==
+                 0; {
       continue end + 1
     } nobreak {
       end
     }
-    result.push((entries[start].key, entries[end].value))
+    entries.unsafe_set(write, {
+      key: entries.unsafe_get(start).key,
+      value: entries.unsafe_get(end).value,
+      index: entries.unsafe_get(start).index,
+    })
+    write += 1
     continue end + 1
   }
-  result
+  write
 }
 
 ///|
@@ -474,6 +496,26 @@ fn[K, V] sorted_map_from_descending_array(
     let left = sorted_map_from_descending_array(array, mid + 1, end)
     let right = sorted_map_from_descending_array(array, start, mid)
     make_tree(key, value, left, right)
+  }
+}
+
+///|
+/// Build a balanced tree from the `[start, end)` slice of a key-sorted,
+/// duplicate-free `SortEntry` buffer, reading keys and values off the entries
+/// directly so no `(K, V)` copy is materialized.
+fn[K, V] sorted_map_from_sorted_entries(
+  entries : ArrayView[SortEntry[K, V]],
+  start : Int,
+  end : Int,
+) -> SortedMap[K, V] {
+  if start >= end {
+    Empty
+  } else {
+    let mid = (start + end) / 2
+    let entry = entries[mid]
+    let left = sorted_map_from_sorted_entries(entries, start, mid)
+    let right = sorted_map_from_sorted_entries(entries, mid + 1, end)
+    make_tree(entry.key, entry.value, left, right)
   }
 }
 
@@ -606,6 +648,9 @@ pub fn[K : Compare, V] SortedMap::range(
 pub fn[K : Compare, V] SortedMap::from_iter(
   iter : Iter[(K, V)],
 ) -> SortedMap[K, V] {
+  // Materialize into a `(K, V)` buffer and detect order there: monotonic input
+  // (the common case) builds in O(n) without ever tagging elements with an
+  // index, and only the genuinely-unsorted branch pays for the `SortEntry` sort.
   sorted_map_from_array(iter.to_array())
 }
 
