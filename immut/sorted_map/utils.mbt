@@ -249,15 +249,15 @@ fn[K : Compare, V] sorted_map_from_array(
   if order == 1 {
     if has_duplicates {
       let compacted = sorted_map_compact_ordered_array(array, true)
-      return sorted_map_from_sorted_array(compacted, 0, compacted.length())
+      return sorted_map_from_ascending_array(compacted, 0, compacted.length())
     }
-    return sorted_map_from_ordered_array(array, 0, array.length(), true)
+    return sorted_map_from_ascending_array(array, 0, array.length())
   } else if order == -1 {
     if has_duplicates {
       let compacted = sorted_map_compact_ordered_array(array, false)
-      return sorted_map_from_sorted_array(compacted, 0, compacted.length())
+      return sorted_map_from_ascending_array(compacted, 0, compacted.length())
     }
-    return sorted_map_from_ordered_array(array, 0, array.length(), false)
+    return sorted_map_from_descending_array(array, 0, array.length())
   }
   if array.length() >= sorted_map_sort_build_threshold {
     sorted_map_from_unsorted_array(array)
@@ -279,14 +279,14 @@ priv struct SortEntry[K, V] {
 }
 
 ///|
-impl[K : Compare, V] Eq for SortEntry[K, V] with equal(self, other) {
+impl[K : Compare, V] Eq for SortEntry[K, V] with fn equal(self, other) {
   self.key == other.key && self.index == other.index
 }
 
 ///|
 // Ordering by key, then by original position, so that a plain (unstable) `sort`
 // still keeps duplicate keys in insertion order — the last one wins on compact.
-impl[K : Compare, V] Compare for SortEntry[K, V] with compare(self, other) {
+impl[K : Compare, V] Compare for SortEntry[K, V] with fn compare(self, other) {
   let c = self.key.compare(other.key)
   if c == 0 {
     self.index.compare(other.index)
@@ -306,7 +306,7 @@ fn[K : Compare, V] sorted_map_from_unsorted_array(
   })
   entries.sort()
   let compacted = sorted_map_compact_sorted_entries(entries)
-  sorted_map_from_sorted_array(compacted, 0, compacted.length())
+  sorted_map_from_ascending_array(compacted, 0, compacted.length())
 }
 
 ///|
@@ -435,37 +435,33 @@ fn[K : Compare, V] sorted_map_compact_ordered_array(
 pub fn[K : Compare, V] SortedMap::from_sorted_array(
   array : ArrayView[(K, V)],
 ) -> SortedMap[K, V] {
-  sorted_map_from_sorted_array(array, 0, array.length())
+  sorted_map_from_ascending_array(array, 0, array.length())
 }
 
 ///|
-fn[K, V] sorted_map_from_ordered_array(
+/// Build a balanced tree from a slice sorted in ascending key order.
+/// The ascending case of a monotonic array is exactly this construction.
+fn[K, V] sorted_map_from_ascending_array(
   array : ArrayView[(K, V)],
   start : Int,
   end : Int,
-  ascending : Bool,
 ) -> SortedMap[K, V] {
   if start >= end {
     Empty
   } else {
     let mid = (start + end) / 2
     let (key, value) = array[mid]
-    let left = if ascending {
-      sorted_map_from_ordered_array(array, start, mid, ascending)
-    } else {
-      sorted_map_from_ordered_array(array, mid + 1, end, ascending)
-    }
-    let right = if ascending {
-      sorted_map_from_ordered_array(array, mid + 1, end, ascending)
-    } else {
-      sorted_map_from_ordered_array(array, start, mid, ascending)
-    }
+    let left = sorted_map_from_ascending_array(array, start, mid)
+    let right = sorted_map_from_ascending_array(array, mid + 1, end)
     make_tree(key, value, left, right)
   }
 }
 
 ///|
-fn[K, V] sorted_map_from_sorted_array(
+/// Build a balanced tree from a slice sorted in descending key order, without
+/// materializing a reversed copy: the middle element is still the subtree root,
+/// but the smaller keys sit at the higher indices, so the halves are swapped.
+fn[K, V] sorted_map_from_descending_array(
   array : ArrayView[(K, V)],
   start : Int,
   end : Int,
@@ -475,8 +471,8 @@ fn[K, V] sorted_map_from_sorted_array(
   } else {
     let mid = (start + end) / 2
     let (key, value) = array[mid]
-    let left = sorted_map_from_sorted_array(array, start, mid)
-    let right = sorted_map_from_sorted_array(array, mid + 1, end)
+    let left = sorted_map_from_descending_array(array, mid + 1, end)
+    let right = sorted_map_from_descending_array(array, start, mid)
     make_tree(key, value, left, right)
   }
 }
