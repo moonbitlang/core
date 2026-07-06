@@ -13,7 +13,6 @@
 // limitations under the License.
 
 ///|
-#alias(T, deprecated)
 struct PriorityQueue[A] {
   node : Node[A]
   size : Int

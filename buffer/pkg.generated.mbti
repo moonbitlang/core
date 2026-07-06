@@ -18,7 +18,6 @@ pub fn new(size_hint? : Int) -> Buffer
 // Errors
 
 // Types and methods
-#alias(T, deprecated)
 type Buffer
 pub fn Buffer::Buffer(size_hint? : Int) -> Self
 pub fn Buffer::is_empty(Self) -> Bool

@@ -187,7 +187,7 @@ pub fn[T, E : Error] expect_error(
 ///|
 /// Write data to snapshot buffer, use `snapshot` to output.
 /// 
-/// See also `@test.T::writeln`
+/// See also `@test.Test::writeln`
 pub fn Test::write(self : Test, obj : &Show) -> Unit {
   self.buffer.write_string(obj.to_string())
 }
@@ -195,7 +195,7 @@ pub fn Test::write(self : Test, obj : &Show) -> Unit {
 ///|
 /// Write data to snapshot buffer and newline, use `snapshot` to output.
 /// 
-/// See also `@test.T::write`
+/// See also `@test.Test::write`
 pub fn Test::writeln(self : Test, obj : &Show) -> Unit {
   self.write(obj)
   self.buffer.write_char('\n')
