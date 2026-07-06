@@ -102,6 +102,7 @@ fn validate_command(
   validate_group_refs(args, groups)
   validate_subcommand_defs(cmd.subcommands)
   validate_subcommand_required_policy(cmd)
+  validate_default_subcommand_policy(cmd)
   validate_help_subcommand(cmd)
   validate_version_actions(cmd)
   let child_inherited_globals = merge_inherited_globals(
@@ -449,6 +450,39 @@ fn validate_subcommand_required_policy(
 ) -> Unit raise ArgBuildError {
   if cmd.subcommand_required && cmd.subcommands.is_empty() {
     raise Unsupported("subcommand_required requires at least one subcommand")
+  }
+}
+
+///|
+fn validate_default_subcommand_policy(
+  cmd : Command,
+) -> Unit raise ArgBuildError {
+  guard cmd.default_subcommand is Some(name) else { return }
+  if cmd.subcommand_required {
+    raise Unsupported(
+      "default_subcommand cannot be used with subcommand_required",
+    )
+  }
+  if cmd.arg_required_else_help {
+    raise Unsupported(
+      "default_subcommand cannot be used with arg_required_else_help",
+    )
+  }
+  if cmd.subcommands.iter().find_first(sub => sub.name == name && !sub.hidden)
+    is None {
+    raise Unsupported(
+      "default_subcommand must name a visible subcommand: \{name}",
+    )
+  }
+  if !cmd.groups.is_empty() {
+    raise Unsupported("default_subcommand does not support root groups")
+  }
+  for arg in cmd.args {
+    if !(arg.global && arg.info is (FlagInfo(_) | OptionInfo(_))) {
+      raise Unsupported(
+        "default_subcommand only supports global root flags/options",
+      )
+    }
   }
 }
 

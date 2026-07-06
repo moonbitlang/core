@@ -240,7 +240,17 @@ fn positional_entries(cmd : Command) -> Array[String] {
 fn subcommand_entries(cmd : Command) -> Array[String] {
   let display = [
     for sub in cmd.subcommands if !sub.hidden => {
-      (sub.name, sub.about.unwrap_or(""))
+      let doc = sub.about.unwrap_or("")
+      let doc = if cmd.default_subcommand is Some(name) && name == sub.name {
+        if doc == "" {
+          "(default)"
+        } else {
+          "\{doc} (default)"
+        }
+      } else {
+        doc
+      }
+      (sub.name, doc)
     }
   ]
   if help_subcommand_enabled(cmd) {

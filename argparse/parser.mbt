@@ -367,9 +367,62 @@ fn parse_command_impl(
   let positional_values = []
   let mut i = 0
   let mut positional_arg_found = false
+  let default_subcommand = match cmd.default_subcommand {
+    Some(default_name) =>
+      subcommands
+      .iter()
+      .find_first(sub => sub.name == default_name && !sub.hidden)
+    None => None
+  }
+  fn dispatch_subcommand(
+    sub : Command,
+    rest : ArrayView[String],
+  ) -> Matches raise _ {
+    let sub_path = if command_path == "" {
+      sub.name
+    } else {
+      "\{command_path} \{sub.name}"
+    }
+    let child_local_non_globals = collect_non_global_names(sub.args)
+    let child_seed = seed_child_globals_from_parent(
+      matches, child_globals, child_local_non_globals,
+    )
+    let sub_matches = parse_command(
+      sub,
+      rest,
+      env,
+      child_globals,
+      child_version_long,
+      child_version_short,
+      sub_path,
+      seed_matches=child_seed,
+    )
+    matches.parsed_subcommand = Some((sub.name, sub_matches))
+    // Merge argv-provided globals from the subcommand parse into the parent
+    // so globals work even when they appear after the subcommand name.
+    merge_globals_from_child(
+      matches, sub_matches, child_globals, child_local_non_globals,
+    )
+    let env_args = env_resolution_args(inherited_globals, args)
+    let parent_matches = finalize_matches(
+      cmd, args, groups, matches, positionals, positional_values, env_args, env,
+    )
+    validate_relationships(parent_matches, args)
+    if parent_matches.parsed_subcommand is Some((sub_name, sub_m)) {
+      // After parent parsing, copy the final globals into the subcommand.
+      propagate_globals_to_child(
+        parent_matches, sub_m, child_globals, child_local_non_globals,
+      )
+      parent_matches.parsed_subcommand = Some((sub_name, sub_m))
+    }
+    parent_matches
+  }
   while i < argv.length() {
     let arg = argv[i]
     if arg == "--" {
+      if default_subcommand is Some(sub) {
+        return dispatch_subcommand(sub, argv[i:])
+      }
       if i + 1 < argv.length() {
         positional_arg_found = true
       }
@@ -430,6 +483,8 @@ fn parse_command_impl(
             }
             matches.flags[spec.name] = value
             matches.flag_sources[spec.name] = Argv
+          } else if default_subcommand is Some(sub) {
+            return dispatch_subcommand(sub, argv[i:])
           } else {
             raise_unknown_long(name, long_index)
           }
@@ -487,7 +542,17 @@ fn parse_command_impl(
         }
         let spec = match short_index.get(short) {
           Some(v) => v
-          None => raise_unknown_short(short, short_index)
+          None =>
+            if default_subcommand is Some(sub) {
+              let remaining = Array::new(capacity=argv.length() - i)
+              remaining.push("-\{short}\{String::from_iter(chars)}")
+              for rest in argv[i + 1:] {
+                remaining.push(rest)
+              }
+              return dispatch_subcommand(sub, remaining)
+            } else {
+              raise_unknown_short(short, short_index)
+            }
         }
         if spec.info is (OptionInfo(_) | PositionalInfo(_)) {
           check_duplicate_set_occurrence(matches, spec)
@@ -546,50 +611,18 @@ fn parse_command_impl(
       if positional_arg_found {
         raise_subcommand_conflict(sub.name)
       }
-      let rest = argv[i + 1:]
-      let sub_path = if command_path == "" {
-        sub.name
-      } else {
-        "\{command_path} \{sub.name}"
-      }
-      let child_local_non_globals = collect_non_global_names(sub.args)
-      let child_seed = seed_child_globals_from_parent(
-        matches, child_globals, child_local_non_globals,
-      )
-      let sub_matches = parse_command(
-        sub,
-        rest,
-        env,
-        child_globals,
-        child_version_long,
-        child_version_short,
-        sub_path,
-        seed_matches=child_seed,
-      )
-      matches.parsed_subcommand = Some((sub.name, sub_matches))
-      // Merge argv-provided globals from the subcommand parse into the parent
-      // so globals work even when they appear after the subcommand name.
-      merge_globals_from_child(
-        matches, sub_matches, child_globals, child_local_non_globals,
-      )
-      let env_args = env_resolution_args(inherited_globals, args)
-      let parent_matches = finalize_matches(
-        cmd, args, groups, matches, positionals, positional_values, env_args, env,
-      )
-      validate_relationships(parent_matches, args)
-      if parent_matches.parsed_subcommand is Some((sub_name, sub_m)) {
-        // After parent parsing, copy the final globals into the subcommand.
-        propagate_globals_to_child(
-          parent_matches, sub_m, child_globals, child_local_non_globals,
-        )
-        parent_matches.parsed_subcommand = Some((sub_name, sub_m))
-      }
-      return parent_matches
+      return dispatch_subcommand(sub, argv[i + 1:])
+    }
+    if default_subcommand is Some(sub) {
+      return dispatch_subcommand(sub, argv[i:])
     }
 
     positional_values.push(arg)
     positional_arg_found = true
     i = i + 1
+  }
+  if default_subcommand is Some(sub) {
+    return dispatch_subcommand(sub, [])
   }
   let env_args = env_resolution_args(inherited_globals, args)
   let final_matches = finalize_matches(
