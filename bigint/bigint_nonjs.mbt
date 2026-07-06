@@ -1161,7 +1161,7 @@ fn BigInt::to_string_radix_pow2(self : BigInt, shift : Int) -> String {
 }
 
 ///|
-fn BigInt::from_string_radix(input : String, radix : Int) -> BigInt raise {
+fn BigInt::from_string_radix(input : StringView, radix : Int) -> BigInt raise {
   match pow2_shift(radix) {
     Some(shift) => BigInt::from_string_radix_pow2(input, radix, shift)
     None => {
@@ -1199,7 +1199,7 @@ fn BigInt::from_string_radix(input : String, radix : Int) -> BigInt raise {
 
 ///|
 fn BigInt::from_string_radix_pow2(
-  input : String,
+  input : StringView,
   radix : Int,
   shift : Int,
 ) -> BigInt raise {
@@ -1259,39 +1259,20 @@ fn BigInt::from_string_radix_pow2(
 /// Parses a string into a `BigInt` using the specified base (2 to 36).
 ///
 /// Returns an error if the input is malformed or the base is invalid.
-///
-/// # Example
-///
-/// ```mbt check
-/// test {
-///   inspect(@bigint.parse_bigint("12345"), content="12345")
-///   inspect(@bigint.parse_bigint("-ff", base=16), content="-255")
-/// }
-/// ```
+#internal(internal, "use `@string.parse_bigint` instead")
+#doc(hidden)
 pub fn parse_bigint(str : StringView, base? : Int = 10) -> BigInt raise {
   if base < 2 || base > 36 {
     base_err()
   }
-  let input = str.to_owned()
   if base != 10 {
-    return BigInt::from_string_radix(input, base)
+    return BigInt::from_string_radix(str, base)
   }
-  BigInt::from_string_dec(input)
+  BigInt::from_string_dec(str)
 }
 
 ///|
-/// Converts a string representation in the specified radix to a BigInt value.
-///
-/// Panics if the input is malformed. Use `parse_bigint` to handle errors.
-pub fn BigInt::from_string(input : String, radix? : Int = 10) -> BigInt {
-  parse_bigint(input.view(), base=radix) catch {
-    Failure(msg) => abort(msg)
-    _ => abort("invalid syntax")
-  }
-}
-
-///|
-fn BigInt::from_string_dec(input : String) -> BigInt raise {
+fn BigInt::from_string_dec(input : StringView) -> BigInt raise {
   let len = input.length()
   if len == 0 {
     syntax_err()

@@ -13,11 +13,18 @@
 // limitations under the License.
 
 ///|
-pub using @internal/strconv {
-  parse_int64,
-  parse_int,
-  parse_uint64,
-  parse_uint,
-  parse_bool,
-  parse_double,
+/// Parses a string into a `BigInt` using the specified base (2 to 36).
+///
+/// Returns an error if the input is malformed or the base is invalid.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   inspect(@string.parse_bigint("12345"), content="12345")
+///   inspect(@string.parse_bigint("-ff", base=16), content="-255")
+/// }
+/// ```
+pub fn parse_bigint(str : StringView, base? : Int = 10) -> @bigint.BigInt raise {
+  @bigint.parse_bigint(str, base~)
 }

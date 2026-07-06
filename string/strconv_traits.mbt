@@ -56,6 +56,11 @@ pub impl FromStr for Double with fn from_str(str) {
 }
 
 ///|
+pub impl FromStr for @bigint.BigInt with fn from_str(str) {
+  parse_bigint(str)
+}
+
+///|
 test "parse" {
   let b : Bool = from_str("true")
   inspect(b, content="true")

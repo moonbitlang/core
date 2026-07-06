@@ -13,11 +13,10 @@
 // limitations under the License.
 
 ///|
-pub using @internal/strconv {
-  parse_int64,
-  parse_int,
-  parse_uint64,
-  parse_uint,
-  parse_bool,
-  parse_double,
+/// Parses a string into a `BigInt` using the specified base (2 to 36).
+///
+/// Returns an error if the input is malformed or the base is invalid.
+#deprecated("use `@string.parse_bigint` instead", skip_current_package=true)
+pub fn parse_bigint(str : StringView, base? : Int = 10) -> @bigint.BigInt raise {
+  @string.parse_bigint(str, base~)
 }
