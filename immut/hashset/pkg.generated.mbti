@@ -12,7 +12,6 @@ import {
 // Errors
 
 // Types and methods
-#alias(T, deprecated)
 type HashSet[A] derive(Eq)
 pub fn[A : Eq + Hash] HashSet::HashSet(ArrayView[A]) -> Self[A]
 pub fn[A : Eq + Hash] HashSet::add(Self[A], A) -> Self[A]

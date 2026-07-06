@@ -13,7 +13,6 @@ import {
 // Errors
 
 // Types and methods
-#alias(T, deprecated)
 type SortedSet[A]
 pub fn[A : Compare] SortedSet::SortedSet(ArrayView[A]) -> Self[A]
 pub fn[A : Compare] SortedSet::add(Self[A], A) -> Self[A]

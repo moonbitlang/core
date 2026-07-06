@@ -41,7 +41,6 @@ priv struct Entry[K, V] {
 ///   @test.assert_eq(map.get(3), Some("updated"))
 /// }
 /// ```
-#alias(T, deprecated)
 struct HashMap[K, V] {
   mut entries : FixedArray[Entry[K, V]?]
   mut capacity : Int

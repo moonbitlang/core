@@ -12,7 +12,6 @@ import {
 // Errors
 
 // Types and methods
-#alias(T, deprecated)
 type HashMap[K, V]
 #alias(from_array)
 #alias(of, deprecated)

@@ -20,7 +20,6 @@ priv struct Node[A] {
 }
 
 ///|
-#alias(T, deprecated="Use PriorityQueue instead")
 struct PriorityQueue[A] {
   mut len : Int
   mut top : Node[A]?

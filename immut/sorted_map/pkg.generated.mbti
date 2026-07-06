@@ -13,7 +13,6 @@ import {
 // Errors
 
 // Types and methods
-#alias(T, deprecated)
 type SortedMap[K, V]
 pub fn[K : Compare, V] SortedMap::SortedMap(ArrayView[(K, V)]) -> Self[K, V]
 #alias(insert, deprecated)

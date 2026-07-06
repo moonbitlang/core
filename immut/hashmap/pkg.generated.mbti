@@ -12,7 +12,6 @@ import {
 // Errors
 
 // Types and methods
-#alias(T, deprecated)
 type HashMap[K, V] derive(Eq)
 pub fn[K : Eq + Hash, V] HashMap::HashMap(ArrayView[(K, V)]) -> Self[K, V]
 pub fn[K : Eq + Hash, V] HashMap::add(Self[K, V], K, V) -> Self[K, V]
