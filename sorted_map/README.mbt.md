@@ -380,7 +380,7 @@ Key properties of the AVL tree implementation:
 
 ## Comparison with Other Collections
 
-- **@hashmap.T**: Provides O(1) average case lookups but doesn't maintain order; use when order doesn't matter
+- **@hashmap.HashMap**: Provides O(1) average case lookups but doesn't maintain order; use when order doesn't matter
 - **@indexmap.T**: Maintains insertion order but not sorted order; use when insertion order matters
 - **@sorted_map.SortedMap**: Maintains keys in sorted order; use when you need keys to be sorted
 
