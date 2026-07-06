@@ -504,8 +504,8 @@ Key properties of the implementation:
 
 ## Comparison with Other Collections
 
-- **@array.T**: Provides O(1) random access but is mutable; use when random access is required.  
-- **@list.T**: Immutable and optimized for recursive operations; use when immutability and functional patterns are required.  
+- **@array.Array**: Provides O(1) random access but is mutable; use when random access is required.  
+- **@list.List**: Immutable and optimized for recursive operations; use when immutability and functional patterns are required.  
 
 Choose `List` when you need:
 - Immutable data structures  
