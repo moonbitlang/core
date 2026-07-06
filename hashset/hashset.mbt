@@ -678,6 +678,40 @@ test "clear" {
 }
 
 ///|
+test "copy sparse set only copies occupied key slots" {
+  let m : HashSet[MyString] = new_hashset(default_init_capacity)
+  fn i(s) {
+    MyString::MyString(s)
+  }
+
+  m.add("a" |> i)
+  m.add("ab" |> i)
+  m.add("bc" |> i)
+  m.add("cd" |> i)
+  m.add("abc" |> i)
+  m.add("abcdef" |> i)
+  m.remove("ab" |> i)
+  let copied = m.copy()
+  inspect(copied.length(), content="5")
+  inspect(copied.capacity(), content="8")
+  inspect(physical_equal(copied.psls, m.psls), content="false")
+  inspect(physical_equal(copied.hashes, m.hashes), content="false")
+  inspect(physical_equal(copied.keys, m.keys), content="false")
+  let mut occupied = 0
+  for idx in 0..<m.capacity {
+    @test.assert_eq(copied.psls[idx], m.psls[idx])
+    @test.assert_eq(copied.hashes[idx], m.hashes[idx])
+    if m.psls[idx] != empty_psl {
+      occupied += 1
+      assert_true(copied.keys[idx] == m.keys[idx])
+    }
+  }
+  inspect(occupied, content="5")
+  inspect(copied.contains("ab" |> i), content="false")
+  inspect(copied.contains("abcdef" |> i), content="true")
+}
+
+///|
 /// Insert a key into the hash set and returns whether the key was successfully added.
 ///
 /// Parameters:
@@ -752,7 +786,11 @@ pub fn[K] HashSet::copy(self : HashSet[K]) -> HashSet[K] {
   }
   self.psls.blit_to(other.psls, len=self.capacity)
   self.hashes.blit_to(other.hashes, len=self.capacity)
-  UninitializedArray::unsafe_blit(other.keys, 0, self.keys, 0, self.capacity)
+  for i in 0..<self.capacity {
+    if self.psls[i] != empty_psl {
+      other.keys[i] = self.keys[i]
+    }
+  }
   other
 }
 
