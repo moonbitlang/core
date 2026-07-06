@@ -35,6 +35,17 @@ pub fn parse_bigint(str : StringView, base? : Int = 10) -> BigInt raise {
 }
 
 ///|
+/// Converts a string representation in the specified radix to a BigInt value.
+///
+/// Panics if the input is malformed. Use `@string.parse_bigint` to handle errors.
+pub fn BigInt::from_string(str : String, radix? : Int = 10) -> BigInt {
+  parse_bigint(str.view(), base=radix) catch {
+    Failure(msg) => abort(msg)
+    _ => abort("invalid syntax")
+  }
+}
+
+///|
 fn digit_from_char(x : Int) -> Int {
   match x {
     '0'..='9' => x - '0'

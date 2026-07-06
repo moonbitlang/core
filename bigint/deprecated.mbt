@@ -179,16 +179,3 @@ pub fn BigInt::from_hex(input : String) -> BigInt {
 #cfg(target="js")
 pub extern "js" fn BigInt::from_hex(str : String) -> BigInt =
   #|(x) => x.startsWith('-') ? -BigInt(`0x${x.slice(1)}`) : BigInt(`0x${x}`)
-
-///|
-/// Converts a string representation in the specified radix to a BigInt value.
-///
-/// Panics if the input is malformed. Use `@string.parse_bigint` to handle errors.
-#deprecated("use `@string.parse_bigint` instead")
-#coverage.skip
-pub fn BigInt::from_string(input : String, radix? : Int = 10) -> BigInt {
-  parse_bigint(input.view(), base=radix) catch {
-    Failure(msg) => abort(msg)
-    _ => abort("invalid syntax")
-  }
-}
