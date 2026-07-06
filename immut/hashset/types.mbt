@@ -22,7 +22,6 @@ priv enum Node[A] {
 }
 
 ///|
-#alias(T, deprecated)
 struct HashSet[A] {
   data : Node[A]?
 } derive(Eq)

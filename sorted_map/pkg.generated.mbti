@@ -13,7 +13,6 @@ import {
 // Errors
 
 // Types and methods
-#alias(T, deprecated)
 type SortedMap[K, V]
 #alias(from_array)
 #alias(of, deprecated)

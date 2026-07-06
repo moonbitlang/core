@@ -211,7 +211,7 @@ pub fn[K, V] HashMap::filter(
 ///|
 /// Fold the values in the map with key
 /// TODO: can not mark `f` as `#locals(f)` because 
-/// it will be shadowed by the `f` in the `@list.T::fold` function
+/// it will be shadowed by the `f` in the `@list.List::fold` function
 /// TO make it more useful in the future, we may need propagate
 #alias(fold_with_key, deprecated)
 pub fn[K, V, A] HashMap::fold(

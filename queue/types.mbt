@@ -28,7 +28,6 @@ priv struct Cons[A] {
 ///
 /// We keep both `first` and `last` so `pop` and `push` are O(1) without
 /// scanning the list.
-#alias(T, deprecated)
 struct Queue[A] {
   /// Number of elements in the queue.
   mut length : Int

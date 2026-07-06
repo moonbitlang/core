@@ -34,7 +34,6 @@
 ///   @test.assert_eq(map3.get(2), Some("updated"))
 /// }
 /// ```
-#alias(T, deprecated)
 enum SortedMap[K, V] {
   Empty
   Tree(K, value~ : V, size~ : Int, SortedMap[K, V], SortedMap[K, V])

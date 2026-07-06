@@ -38,7 +38,6 @@ priv struct Entry[K] {
 ///   @test.assert_eq(set.contains((4, "four")), true)
 /// }
 /// ```
-#alias(T, deprecated)
 struct HashSet[K] {
   mut entries : FixedArray[Entry[K]?]
   mut size : Int // active key count

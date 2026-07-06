@@ -46,7 +46,6 @@
 /// - Element at index `i` is at `buf[(head + i) % buf.length()]`
 /// - When `len > 0`: front is `buf[head]`, back is `buf[(head + len - 1) % cap]`
 /// - When `len == 0`: no valid element, `head` can be any valid index
-#alias(T, deprecated)
 struct Deque[A] {
   /// Circular buffer storing elements. May contain uninitialized slots.
   mut buf : UninitializedArray[A]

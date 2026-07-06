@@ -35,7 +35,6 @@
 ///     ),
 ///   )
 /// ```
-#alias(T, deprecated)
 struct Buffer {
   mut data : FixedArray[Byte]
   mut len : Int

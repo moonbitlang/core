@@ -13,7 +13,6 @@
 // limitations under the License.
 
 ///|
-#alias(T, deprecated)
 struct Test {
   name : String
   buffer : StringBuilder
