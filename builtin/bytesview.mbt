@@ -804,7 +804,7 @@ fn BytesView::bytesview_lexical_compare_impl(
 }
 
 ///|
-#cfg(any(target="wasm-gc", target="js"))
+#cfg(not(any(target="native", target="wasm")))
 fn BytesView::bytesview_lexical_compare_impl(
   self : BytesView,
   other : BytesView,
