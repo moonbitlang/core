@@ -27,6 +27,17 @@ test "decoding UTF16 encoded data to String" {
 
 ///|
 test "decoding UTF16 data without surrogate to String" {
+  let chars = @utf16.decode(b"\x61\x00\x62\x00\x63\x00\x60\x4f\x7d\x59")
+  inspect(chars, content="abc你好")
+  let chars_be = @utf16.decode(
+    b"\x00\x61\x00\x62\x00\x63\x4f\x60\x59\x7d",
+    endianness=Big,
+  )
+  inspect(chars_be, content="abc你好")
+}
+
+///|
+test "decoding UTF16 data without surrogate through V128 loop" {
   let chars = @utf16.decode(
     b"\x61\x00\x62\x00\x63\x00\x60\x4f\x7d\x59\x64\x00\x65\x00\x66\x00",
   )
