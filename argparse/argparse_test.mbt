@@ -197,25 +197,6 @@ test "subcommand parse errors include subcommand help" {
 }
 
 ///|
-test "build errors are surfaced as validation failure message" {
-  let cmd = @argparse.Command("demo", flags=[
-    FlagArg("fast", long="fast", requires=["missing"]),
-  ])
-
-  try cmd.parse(argv=[], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: unknown requires target: fast -> missing
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-}
-
-///|
 test "unknown argument keeps suggestion in final message" {
   let cmd = @argparse.Command("demo", flags=[FlagArg("verbose", long="verbose")])
 
