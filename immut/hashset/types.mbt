@@ -22,6 +22,7 @@ priv enum Node[A] {
 }
 
 ///|
+#valtype
 struct HashSet[A] {
   data : Node[A]?
 } derive(Eq)
