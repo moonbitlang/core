@@ -13,17 +13,6 @@
 // limitations under the License.
 
 ///|
-/// Control signal used by deprecated iterator callbacks.
-///
-/// `IterContinue` keeps iteration running, `IterEnd` stops it.
-///
-#deprecated(skip_current_package=true)
-pub(all) enum IterResult {
-  IterEnd // false
-  IterContinue // true
-} derive(Eq)
-
-///|
 /// Creates an iterator that iterates over a range of Int with default step 1.
 /// To grow the range downward, set the `step` parameter to a negative value.
 ///
