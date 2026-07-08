@@ -132,24 +132,13 @@ fn unset_env_var_internal(key : String) -> Unit {
 extern "c" fn unset_env_var_ffi(key : OsString) -> Unit = "moonbit_rt_unset_env_var2"
 
 ///|
-fn rand_internal(n : Int) -> Bytes? {
-  if n <= 0 {
-    return Some(b"")
-  }
-  let buf = Bytes::new(n)
-  let rc = moonbit_rt_get_random(buf, n)
-  if rc != 0 {
-    return None
-  }
-  Some(buf)
+fn rand_internal(to_be_filled : FixedArray[Byte]) -> Bool {
+  moonbit_rt_get_random(to_be_filled) == 0
 }
 
 ///|
-#borrow(buf)
-extern "c" fn moonbit_rt_get_random(
-  buf : Bytes,
-  len : Int,
-) -> Int = "moonbit_rt_get_random"
+#borrow(to_be_filled)
+extern "c" fn moonbit_rt_get_random(to_be_filled : FixedArray[Byte]) -> Int = "moonbit_rt_get_random"
 
 ///|
 #cfg(platform="windows")

@@ -59,7 +59,16 @@ pub fn unset_env_var(key : String) -> Unit {
 /// Returns `Some(bytes)` when the platform can provide secure random bytes,
 /// and `None` on targets/environments that do not support entropy.
 pub fn rand(n : Int) -> Bytes? {
-  rand_internal(n)
+  if n <= 0 {
+    let probe : FixedArray[Byte] = FixedArray::make(1, b'\x00')
+    return if rand_internal(probe) { Some(b"") } else { None }
+  }
+  let buf : FixedArray[Byte] = FixedArray::make(n, b'\x00')
+  if rand_internal(buf) {
+    Some(Bytes::from_array(buf))
+  } else {
+    None
+  }
 }
 
 ///|
