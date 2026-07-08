@@ -97,9 +97,6 @@ pub using @builtin {type Iter}
 pub using @builtin {type Iter2}
 
 #deprecated
-pub using @builtin {type IterResult}
-
-#deprecated
 pub using @builtin {type Iter as Iterator}
 
 #deprecated
