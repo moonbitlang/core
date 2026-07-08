@@ -124,8 +124,29 @@ test "boolean" {
 }
 
 ///|
-test "Rand::new is not deterministic" {
+test "Rand::new uses entropy when available" {
+  match @env.rand(0) {
+    Some(_) => {
+      let r1 = @random.Rand::new()
+      let r2 = @random.Rand::new()
+      @test.assert_not_eq(
+        [r1.uint64(), r1.uint64(), r1.uint64(), r1.uint64()],
+        [r2.uint64(), r2.uint64(), r2.uint64(), r2.uint64()],
+      )
+    }
+    None => ()
+  }
+}
+
+///|
+#cfg(any(target="wasm", target="wasm-gc"))
+test "Rand::new fallback is deterministic without entropy" {
   let r1 = @random.Rand::new()
   let r2 = @random.Rand::new()
-  @test.assert_not_eq(r1.uint64(), r2.uint64())
+  @test.assert_eq([r1.uint64(), r1.uint64(), r1.uint64(), r1.uint64()], [
+    r2.uint64(),
+    r2.uint64(),
+    r2.uint64(),
+    r2.uint64(),
+  ])
 }
