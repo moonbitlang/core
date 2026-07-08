@@ -46,33 +46,13 @@ pub fn Rand::chacha8(
 let fixed_test_seed : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456"
 
 ///|
-priv struct SeedCounter {
-  mut value : UInt64
-}
-
-///|
-let seed_counter : SeedCounter = { value: 0UL }
-
-///|
-fn make_fallback_seed() -> Bytes {
-  let time = @env.now()
-  let c = seed_counter.value
-  seed_counter.value += 1UL
-  Bytes::makei(32, fn(i) {
-    let time_byte = (time >> (i % 8 * 8)).to_byte()
-    let counter_byte = (c >> (i % 8 * 8)).to_byte()
-    (time_byte.to_int() ^ counter_byte.to_int()).to_byte()
-  })
-}
-
-///|
 /// Create a new random number generator with a given [Gen] source.
 pub fn Rand::new(generator? : &Source) -> Rand {
   match generator {
     None =>
       match @env.rand(32) {
         Some(seed) => Rand::chacha8(seed~)
-        None => Rand::chacha8(seed=make_fallback_seed())
+        None => Rand::chacha8()
       }
     Some(gen) => Rand(gen)
   }

@@ -121,20 +121,26 @@ extern "js" fn unset_env_var_ffi(key : String) -> Unit =
   #| }
 
 ///|
-fn rand_internal(n : Int) -> Bytes? {
-  if n <= 0 {
-    return Some(b"")
+fn rand_internal(to_be_filled : FixedArray[Byte]) -> Bool {
+  if to_be_filled.length() == 0 {
+    return true
   }
-  get_random_values_js(n)
+  get_random_values_js(to_be_filled)
 }
 
 ///|
-extern "js" fn get_random_values_js(n : Int) -> Bytes? =
-  #| function(n) {
-  #|   if (typeof crypto === "undefined" || typeof crypto.getRandomValues !== "function") {
-  #|     return null;
+extern "js" fn get_random_values_js(to_be_filled : FixedArray[Byte]) -> Bool =
+  #| function(toBeFilled) {
+  #|   const cryptoObj = globalThis.crypto;
+  #|   if (cryptoObj === undefined || typeof cryptoObj.getRandomValues !== "function") {
+  #|     return false;
   #|   }
-  #|   const arr = new Uint8Array(n);
-  #|   crypto.getRandomValues(arr);
-  #|   return arr;
+  #|   try {
+  #|     for (let offset = 0; offset < toBeFilled.length; offset += 65536) {
+  #|       cryptoObj.getRandomValues(toBeFilled.subarray(offset, offset + 65536));
+  #|     }
+  #|     return true;
+  #|   } catch (_) {
+  #|     return false;
+  #|   }
   #| }
