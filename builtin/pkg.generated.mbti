@@ -350,6 +350,7 @@ pub enum Json {
 }
 pub fn Json::array(Array[Self]) -> Self
 pub fn Json::boolean(Bool) -> Self
+pub fn Json::empty_object() -> Self
 pub fn Json::null() -> Self
 pub fn Json::number(Double, repr? : String) -> Self
 pub fn Json::object(Map[String, Self]) -> Self
