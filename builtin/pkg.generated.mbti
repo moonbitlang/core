@@ -284,8 +284,6 @@ pub fn[X] Iter::iter(Self[X]) -> Self[X]
 #alias(iterator2)
 pub fn[X] Iter::iter2(Self[X]) -> Iter2[Int, X]
 pub fn[A : ToStringView] Iter::join(Self[A], StringView) -> String
-#deprecated
-pub fn[X] Iter::just_run(Self[X], (X) -> IterResult) -> Unit
 pub fn[X] Iter::last(Self[X]) -> X?
 pub fn[X, Y] Iter::map(Self[X], (X) -> Y) -> Self[Y]
 pub fn[X, Y] Iter::map_while(Self[X], (X) -> Y?) -> Self[Y]
@@ -298,8 +296,6 @@ pub fn[X] Iter::new(() -> X?, size_hint? : Int) -> Self[X]
 pub fn[X] Iter::next(Self[X]) -> X?
 pub fn[X] Iter::nth(Self[X], Int) -> X?
 pub fn[X] Iter::repeat(X) -> Self[X]
-#deprecated
-pub fn[X] Iter::run(Self[X], (X) -> IterResult) -> IterResult
 pub fn[X] Iter::singleton(X) -> Self[X]
 pub fn[X] Iter::size_hint(Self[X]) -> Int?
 pub fn[X] Iter::take(Self[X], Int) -> Self[X]
@@ -327,17 +323,9 @@ pub fn[X, Y] Iter2::iter(Self[X, Y]) -> Iter[(X, Y)]
 pub fn[X, Y] Iter2::iter2(Self[X, Y]) -> Self[X, Y]
 pub fn[X, Y] Iter2::new(() -> (X, Y)?, size_hint? : Int) -> Self[X, Y]
 pub fn[X, Y] Iter2::next(Self[X, Y]) -> (X, Y)?
-#deprecated
-pub fn[X, Y] Iter2::run(Self[X, Y], (X, Y) -> IterResult) -> IterResult
 pub fn[X, Y] Iter2::to_array(Self[X, Y]) -> Array[(X, Y)]
 #deprecated
 pub impl[X : Show, Y : Show] Show for Iter2[X, Y]
-
-#deprecated
-pub(all) enum IterResult {
-  IterEnd
-  IterContinue
-} derive(Eq)
 
 pub enum Json {
   Null
@@ -350,6 +338,7 @@ pub enum Json {
 }
 pub fn Json::array(Array[Self]) -> Self
 pub fn Json::boolean(Bool) -> Self
+pub fn Json::empty_object() -> Self
 pub fn Json::null() -> Self
 pub fn Json::number(Double, repr? : String) -> Self
 pub fn Json::object(Map[String, Self]) -> Self

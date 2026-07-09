@@ -226,7 +226,7 @@ test "primitive hash matches hash_combine default path" {
   assert_hash_matches_hash_combine("")
   assert_hash_matches_hash_combine("abc")
   assert_hash_matches_hash_combine("a🤣b")
-  assert_hash_matches_hash_combine("xa🤣by"[1:-1])
+  assert_hash_matches_hash_combine("xa🤣by"[1:5])
 }
 
 ///|

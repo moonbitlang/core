@@ -250,9 +250,8 @@ pub fn[T] Array::mut_view(
   let len = self.length()
   let end = match end {
     None => len
-    Some(end) => if end < 0 { len + end } else { end }
+    Some(end) => end
   }
-  let start = if start < 0 { len + start } else { start }
   guard start >= 0 && start <= end && end <= len else {
     abort("View index out of bounds")
   }
@@ -299,9 +298,8 @@ pub fn[T] MutArrayView::mut_view(
   let len = self.length()
   let end = match end {
     None => len
-    Some(end) => if end < 0 { len + end } else { end }
+    Some(end) => end
   }
-  let start = if start < 0 { len + start } else { start }
   guard start >= 0 && start <= end && end <= len else {
     abort("View index out of bounds")
   }
@@ -344,9 +342,8 @@ pub fn[T] FixedArray::mut_view(
   let len = self.length()
   let end = match end {
     None => len
-    Some(end) => if end < 0 { len + end } else { end }
+    Some(end) => end
   }
-  let start = if start < 0 { len + start } else { start }
   guard start >= 0 && start <= end && end <= len else {
     abort("View index out of bounds")
   }
@@ -376,9 +373,8 @@ pub fn[T] MutArrayView::view(
   let len = self.length()
   let end = match end {
     None => len
-    Some(end) => if end < 0 { len + end } else { end }
+    Some(end) => end
   }
-  let start = if start < 0 { len + start } else { start }
   guard start >= 0 && start <= end && end <= len else {
     abort("View index out of bounds")
   }

@@ -74,11 +74,6 @@ pub using @builtin {
 pub using @builtin {not}
 
 ///|
-#deprecated
-#warnings("-deprecated")
-pub using @builtin {type IterResult}
-
-///|
 pub using @debug {debug, type Repr, trait Debug, debug_inspect, repr, to_repr}
 
 ///|

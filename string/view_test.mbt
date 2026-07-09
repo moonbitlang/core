@@ -714,8 +714,8 @@ test "String::op_as_view basic usage" {
   let view1 = str[0:5]
   inspect(view1, content="Hello")
 
-  // Negative indexing from end
-  let view2 = str[-5:]
+  // Indexing from position 7
+  let view2 = str[7:]
   inspect(view2, content="World")
 
   // Full string view
@@ -785,14 +785,14 @@ test "panic String::op_as_view splits second emoji" {
 
 ///|
 test "StringView::op_as_view basic usage" {
-  let str = "Hello🤣World"[1:-1] // "ello🤣Worl"
+  let str = "Hello🤣World"[1:11] // "ello🤣Worl"
 
   // Basic subview creation
   let view1 = str[0:6]
   inspect(view1, content="ello🤣")
 
-  // Negative indexing within view
-  let view2 = str[-2:]
+  // Indexing from position 8
+  let view2 = str[8:]
   inspect(view2, content="rl")
 
   // Full view
@@ -810,32 +810,32 @@ test "StringView::op_as_view basic usage" {
 
 ///|
 test "panic StringView::op_as_view beyond view range" {
-  ignore("Hello🤣World"[1:-1][0:15])
+  ignore("Hello🤣World"[1:11][0:15])
 }
 
 ///|
 test "panic StringView::op_as_view negative index too large" {
-  ignore("Hello🤣World"[1:-1][-20:])
+  ignore("Hello🤣World"[1:11][-20:])
 }
 
 ///|
 test "panic StringView::op_as_view start > end" {
-  ignore("Hello🤣World"[1:-1][5:3])
+  ignore("Hello🤣World"[1:11][5:3])
 }
 
 ///|
 test "panic StringView::op_as_view splits surrogate pair" {
-  ignore("Hello🤣World"[1:-1][:5])
+  ignore("Hello🤣World"[1:11][:5])
 }
 
 ///|
 test "panic StringView::op_as_view start beyond view" {
-  ignore("Hello🤣World"[1:-1][11:])
+  ignore("Hello🤣World"[1:11][11:])
 }
 
 ///|
 test "StringView::op_as_view with surrogate pairs" {
-  let str = "Hello🤣😭😂World"[1:-1] // "ello🤣😭😂Worl"
+  let str = "Hello🤣😭😂World"[1:15] // "ello🤣😭😂Worl"
 
   // View containing complete emoji
   let view1 = str[4:6]
@@ -852,12 +852,12 @@ test "StringView::op_as_view with surrogate pairs" {
 
 ///|
 test "panic StringView::op_as_view splits first emoji in view" {
-  ignore("Hello🤣😭😂World"[1:-1][4:5])
+  ignore("Hello🤣😭😂World"[1:15][4:5])
 }
 
 ///|
 test "panic StringView::op_as_view splits second emoji in view" {
-  ignore("Hello🤣😭😂World"[1:-1][6:7])
+  ignore("Hello🤣😭😂World"[1:15][6:7])
 }
 
 ///|
@@ -865,7 +865,7 @@ test "nested StringView::op_as_view operations" {
   let str = "Hello🤣World"
 
   // Create first view
-  let view1 = str[1:-1] // "ello🤣Worl"
+  let view1 = str[1:11] // "ello🤣Worl"
   inspect(view1, content="ello🤣Worl")
 
   // Create subview from first view
@@ -876,8 +876,8 @@ test "nested StringView::op_as_view operations" {
   let view3 = view2[2:] // "🤣"
   inspect(view3, content="🤣")
 
-  // Create subview with negative indexing
-  let view4 = view1[-4:-1] // "Wor"
+  // Create subview from a later range
+  let view4 = view1[6:9] // "Wor"
   inspect(view4, content="Wor")
 }
 
@@ -919,7 +919,7 @@ test "StringView::op_as_view with complex Unicode" {
   inspect(view2, content="o🤣😭😂🌍W")
 
   // View ending with emoji
-  let view3 = str[-7:]
+  let view3 = str[11:]
   inspect(view3, content="🌍World")
 
   // View starting with emoji
@@ -937,10 +937,10 @@ test "StringView::op_as_view performance characteristics" {
   let str = "Hello🤣World"
 
   // Test that operations are O(1) - multiple operations
-  let view1 = str[1:-1]
-  let view2 = view1[1:-1]
-  let view3 = view2[1:-1]
-  let view4 = view3[1:-1]
+  let view1 = str[1:11]
+  let view2 = view1[1:9]
+  let view3 = view2[1:7]
+  let view4 = view3[1:5]
   inspect(view4, content="o🤣W")
 
   // Test with longer string
@@ -980,10 +980,10 @@ test "StringView::op_as_view boundary validation" {
   let view2 = str[str.length():str.length()]
   inspect(view2, content="")
 
-  // Test negative boundary conditions
-  let view3 = str[-str.length():]
+  // Test full-range boundary conditions
+  let view3 = str[0:]
   inspect(view3, content="Hello🤣World")
-  let view4 = str[-1:]
+  let view4 = str[11:]
   inspect(view4, content="d")
 }
 
@@ -1032,7 +1032,7 @@ test "panic view op_get out of bounds" {
 ///|
 test "panic StringView::op_as_view start on trailing surrogate" {
   let base = "Hello🤣😭😂World"
-  let view = base[1:-1] // "ello🤣😭😂Worl"
+  let view = base[1:15] // "ello🤣😭😂Worl"
   ignore(view[5:])
 }
 
