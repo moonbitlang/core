@@ -70,6 +70,12 @@ pub fn Json::null() -> Json {
 pub let null : Json = Null
 
 ///|
+/// JSON `{}` constant.
+pub fn Json::empty_object() -> Json {
+  Object(Map([]))
+}
+
+///|
 /// Creates a JSON number value from a double-precision floating-point number.
 ///
 /// Parameters:

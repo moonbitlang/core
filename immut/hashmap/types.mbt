@@ -22,6 +22,7 @@ priv enum Node[K, V] {
 }
 
 ///|
+#valtype
 struct HashMap[K, V] {
   data : Node[K, V]?
 } derive(Eq)

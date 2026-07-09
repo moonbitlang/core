@@ -179,9 +179,8 @@ pub fn Bytes::view(self : Bytes, start? : Int = 0, end? : Int) -> BytesView {
   let len = self.length()
   let end = match end {
     None => len
-    Some(end) => if end < 0 { len + end } else { end }
+    Some(end) => end
   }
-  let start = if start < 0 { len + start } else { start }
   guard start >= 0 && start <= end && end <= len else {
     abort("Invalid index for View")
   }
@@ -213,9 +212,8 @@ pub fn Bytes::get_view(
   let len = self.length()
   let end = match end {
     None => len
-    Some(end) => if end < 0 { len + end } else { end }
+    Some(end) => end
   }
-  let start = if start < 0 { len + start } else { start }
   guard start >= 0 && start <= end && end <= len else { None }
   Some(BytesView::make(self, start, end - start))
 }
@@ -232,9 +230,8 @@ pub fn BytesView::get_view(
   let len = self.length()
   let end = match end {
     None => len
-    Some(end) => if end < 0 { len + end } else { end }
+    Some(end) => end
   }
-  let start = if start < 0 { len + start } else { start }
   guard start >= 0 && start <= end && end <= len else { None }
   Some(BytesView::make(self.bytes(), self.start() + start, end - start))
 }
@@ -262,9 +259,8 @@ pub fn BytesView::view(
   let len = self.length()
   let end = match end {
     None => len
-    Some(end) => if end < 0 { len + end } else { end }
+    Some(end) => end
   }
-  let start = if start < 0 { len + start } else { start }
   guard start >= 0 && start <= end && end <= len else {
     abort("Invalid index for View")
   }

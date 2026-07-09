@@ -368,15 +368,6 @@ pub impl Debug for Hasher with fn to_repr(_) {
 }
 
 ///|
-#warnings("-deprecated")
-pub impl Debug for IterResult with fn to_repr(self) {
-  match self {
-    IterEnd => Repr::ctor("IterEnd", [])
-    IterContinue => Repr::ctor("IterContinue", [])
-  }
-}
-
-///|
 pub impl[T] Debug for UninitializedArray[T] with fn to_repr(_) {
   Repr::opaque_("UninitializedArray", Repr::omitted())
 }

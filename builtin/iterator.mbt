@@ -58,35 +58,6 @@ pub fn[X] Iter::size_hint(self : Iter[X]) -> Int? {
 }
 
 ///|
-/// Consume iterator elements while callback returns `IterContinue`.
-///
-/// Deprecated: prefer explicit loops.
-/// Function `run`.
-#locals(f)
-#deprecated("write a loop instead.")
-pub fn[X] Iter::run(self : Iter[X], f : (X) -> IterResult) -> IterResult {
-  while self.next() is Some(x) {
-    guard f(x) is IterContinue else { break IterEnd }
-  } nobreak {
-    IterContinue
-  }
-}
-
-///|
-/// Consume iterator elements and ignore final continuation state.
-///
-/// Deprecated: prefer explicit loops.
-/// Function `just_run`.
-#deprecated("write a loop instead.")
-pub fn[X] Iter::just_run(self : Iter[X], f : (X) -> IterResult) -> Unit {
-  while self.next() is Some(x) {
-    if f(x) is IterEnd {
-      break
-    }
-  }
-}
-
-///|
 #deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[X : Show] Show for Iter[X]
 
@@ -1108,20 +1079,6 @@ pub impl[X : Show, Y : Show] Show for Iter2[X, Y]
 #warnings("-deprecated")
 pub impl[X : Show, Y : Show] Show for Iter2[X, Y] with fn output(self, logger) {
   self.0.output(logger)
-}
-
-///|
-/// Consume pairs while callback returns `IterContinue`.
-#deprecated("write a loop instead.")
-pub fn[X, Y] Iter2::run(
-  self : Iter2[X, Y],
-  f : (X, Y) -> IterResult,
-) -> IterResult {
-  while self.0.next() is Some((x, y)) {
-    guard f(x, y) is IterContinue else { break IterEnd }
-  } nobreak {
-    IterContinue
-  }
 }
 
 ///|

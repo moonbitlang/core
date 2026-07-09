@@ -29,198 +29,6 @@ test "get" {
 }
 
 ///|
-test "negative index1" {
-  let arr = [1, 2, 3]
-  let view = arr[-1:]
-  debug_inspect(
-    view,
-    content=(
-      #|<ArrayView: [3]>
-    ),
-  )
-  let view = arr[-2:]
-  debug_inspect(
-    view,
-    content=(
-      #|<ArrayView: [2, 3]>
-    ),
-  )
-  let view = arr[-3:]
-  debug_inspect(
-    view,
-    content=(
-      #|<ArrayView: [1, 2, 3]>
-    ),
-  )
-  let view = arr[:-1]
-  debug_inspect(
-    view,
-    content=(
-      #|<ArrayView: [1, 2]>
-    ),
-  )
-  let view = arr[:-2]
-  debug_inspect(
-    view,
-    content=(
-      #|<ArrayView: [1]>
-    ),
-  )
-  let view = arr[:-3]
-  debug_inspect(
-    view,
-    content=(
-      #|<ArrayView: []>
-    ),
-  )
-  let view = arr[-3:-3]
-  debug_inspect(
-    view,
-    content=(
-      #|<ArrayView: []>
-    ),
-  )
-  let view = arr[-3:-2]
-  debug_inspect(
-    view,
-    content=(
-      #|<ArrayView: [1]>
-    ),
-  )
-  let view = arr[-3:-1]
-  debug_inspect(
-    view,
-    content=(
-      #|<ArrayView: [1, 2]>
-    ),
-  )
-  let view = arr[-3:0]
-  debug_inspect(
-    view,
-    content=(
-      #|<ArrayView: []>
-    ),
-  )
-  let view = arr[-3:1]
-  debug_inspect(
-    view,
-    content=(
-      #|<ArrayView: [1]>
-    ),
-  )
-  let view = arr[-3:2]
-  debug_inspect(
-    view,
-    content=(
-      #|<ArrayView: [1, 2]>
-    ),
-  )
-  let view = arr[-3:3]
-  debug_inspect(
-    view,
-    content=(
-      #|<ArrayView: [1, 2, 3]>
-    ),
-  )
-}
-
-///|
-test "negative index2" {
-  let arr = [0, 1, 2, 3, 4][1:4]
-  let view = arr[-1:]
-  debug_inspect(
-    view,
-    content=(
-      #|<ArrayView: [3]>
-    ),
-  )
-  let view = arr[-2:]
-  debug_inspect(
-    view,
-    content=(
-      #|<ArrayView: [2, 3]>
-    ),
-  )
-  let view = arr[-3:]
-  debug_inspect(
-    view,
-    content=(
-      #|<ArrayView: [1, 2, 3]>
-    ),
-  )
-  let view = arr[:-1]
-  debug_inspect(
-    view,
-    content=(
-      #|<ArrayView: [1, 2]>
-    ),
-  )
-  let view = arr[:-2]
-  debug_inspect(
-    view,
-    content=(
-      #|<ArrayView: [1]>
-    ),
-  )
-  let view = arr[:-3]
-  debug_inspect(
-    view,
-    content=(
-      #|<ArrayView: []>
-    ),
-  )
-  let view = arr[-3:-3]
-  debug_inspect(
-    view,
-    content=(
-      #|<ArrayView: []>
-    ),
-  )
-  let view = arr[-3:-2]
-  debug_inspect(
-    view,
-    content=(
-      #|<ArrayView: [1]>
-    ),
-  )
-  let view = arr[-3:-1]
-  debug_inspect(
-    view,
-    content=(
-      #|<ArrayView: [1, 2]>
-    ),
-  )
-  let view = arr[-3:0]
-  debug_inspect(
-    view,
-    content=(
-      #|<ArrayView: []>
-    ),
-  )
-  let view = arr[-3:1]
-  debug_inspect(
-    view,
-    content=(
-      #|<ArrayView: [1]>
-    ),
-  )
-  let view = arr[-3:2]
-  debug_inspect(
-    view,
-    content=(
-      #|<ArrayView: [1, 2]>
-    ),
-  )
-  let view = arr[-3:3]
-  debug_inspect(
-    view,
-    content=(
-      #|<ArrayView: [1, 2, 3]>
-    ),
-  )
-}
-
-///|
 test "panic negative index1" {
   let arr = [1, 2, 3]
   let _ = arr[-4:]
@@ -305,19 +113,19 @@ test "fixedarray_sub" {
     ),
   )
   debug_inspect(
-    arr[:-2],
+    arr[:8],
     content=(
       #|<ArrayView: [0, 1, 2, 3, 4, 5, 6, 7]>
     ),
   )
   debug_inspect(
-    arr[3:-4],
+    arr[3:6],
     content=(
       #|<ArrayView: [3, 4, 5]>
     ),
   )
   debug_inspect(
-    arr[-5:],
+    arr[5:],
     content=(
       #|<ArrayView: [5, 6, 7, 8, 9]>
     ),
@@ -336,19 +144,19 @@ test "fixedarray_sub" {
     ),
   )
   debug_inspect(
-    arr[:-2],
+    arr[:8],
     content=(
       #|<ArrayView: [0, 1, 2, 3, 4, 100, 6, 7]>
     ),
   )
   debug_inspect(
-    arr[3:-4],
+    arr[3:6],
     content=(
       #|<ArrayView: [3, 4, 100]>
     ),
   )
   debug_inspect(
-    arr[-5:],
+    arr[5:],
     content=(
       #|<ArrayView: [100, 6, 7, 8, 9]>
     ),
@@ -391,20 +199,20 @@ test "fixedarray_sub" {
     ),
   )
   debug_inspect(
-    arr[:-2],
+    arr[:8],
     content=(
       #|<ArrayView:
       #|  [(0, 0), (1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7)]>
     ),
   )
   debug_inspect(
-    arr[3:-4],
+    arr[3:6],
     content=(
       #|<ArrayView: [(3, 3), (4, 4), (5, 5)]>
     ),
   )
   debug_inspect(
-    arr[-5:],
+    arr[5:],
     content=(
       #|<ArrayView: [(5, 5), (6, 6), (7, 7), (8, 8), (9, 9)]>
     ),
@@ -446,20 +254,20 @@ test "fixedarray_sub" {
     ),
   )
   debug_inspect(
-    arr[:-2],
+    arr[:8],
     content=(
       #|<ArrayView:
       #|  [(0, 0), (1, 1), (2, 2), (3, 3), (4, 4), (100, 100), (6, 6), (7, 7)]>
     ),
   )
   debug_inspect(
-    arr[3:-4],
+    arr[3:6],
     content=(
       #|<ArrayView: [(3, 3), (4, 4), (100, 100)]>
     ),
   )
   debug_inspect(
-    arr[-5:],
+    arr[5:],
     content=(
       #|<ArrayView: [(100, 100), (6, 6), (7, 7), (8, 8), (9, 9)]>
     ),
