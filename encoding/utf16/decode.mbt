@@ -32,6 +32,8 @@ fn suppress_unused_v128_import_on_js() -> Unit {
 
 ///|
 #cfg(not(target="js"))
+// V128 loads require FixedArray[Byte]; these types share a representation on
+// non-JS backends.
 fn unsafe_fixedarray_from_bytes(bytes : Bytes) -> FixedArray[Byte] = "%identity"
 
 ///|
@@ -65,7 +67,7 @@ fn utf16_v128_has_surrogate(value : V128) -> Bool {
 
 ///|
 #cfg(not(target="js"))
-fn utf16_has_surrogate_le_v128(bytes : BytesView) -> Bool {
+fn utf16_needs_scalar_le_v128(bytes : BytesView) -> Bool {
   if bytes.length() % 2 != 0 {
     return true
   }
@@ -94,7 +96,7 @@ fn utf16_has_surrogate_le_v128(bytes : BytesView) -> Bool {
 
 ///|
 #cfg(not(target="js"))
-fn utf16_has_surrogate_be_v128(bytes : BytesView) -> Bool {
+fn utf16_needs_scalar_be_v128(bytes : BytesView) -> Bool {
   if bytes.length() % 2 != 0 {
     return true
   }
@@ -125,6 +127,7 @@ fn utf16_has_surrogate_be_v128(bytes : BytesView) -> Bool {
 ///|
 #cfg(not(target="js"))
 fn utf16_decode_be_no_surrogate_v128(bytes : BytesView) -> String {
+  // The caller guarantees an even byte length with no surrogate code units.
   let src = bytes.data()
   let src_bytes = unsafe_fixedarray_from_bytes(src)
   let string_bytes = FixedArray::make(bytes.length(), b'\x00')
@@ -257,12 +260,12 @@ pub fn decode(
 ) -> String raise Malformed {
   let bytes = drop_utf16_bom(bytes, ignore_bom, endianness)
   if endianness is Little {
-    if !utf16_has_surrogate_le_v128(bytes) {
+    if !utf16_needs_scalar_le_v128(bytes) {
       return bytes
         .data()
         .to_unchecked_string(offset=bytes.start_offset(), length=bytes.length())
     }
-  } else if !utf16_has_surrogate_be_v128(bytes) {
+  } else if !utf16_needs_scalar_be_v128(bytes) {
     return utf16_decode_be_no_surrogate_v128(bytes)
   }
   decode_scalar(bytes, endianness)
@@ -277,17 +280,7 @@ pub fn decode_lossy(
   ignore_bom? : Bool = false,
   endianness? : Endian = Little,
 ) -> String {
-  let bytes = if ignore_bom {
-    if endianness is Little && bytes is [.. b"\xff\xfe", .. rest] {
-      rest
-    } else if endianness is Big && bytes is [.. b"\xfe\xff", .. rest] {
-      rest
-    } else {
-      bytes
-    }
-  } else {
-    bytes
-  }
+  let bytes = drop_utf16_bom(bytes, ignore_bom, endianness)
   let builder = StringBuilder(size_hint=bytes.length())
   if endianness is Little {
     for x = bytes {
