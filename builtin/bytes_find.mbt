@@ -108,6 +108,14 @@ fn find_match_range(
 }
 
 ///|
+declare fn find_byte_from_view(
+  target : BytesView,
+  start : Int,
+  end : Int,
+  byte : Byte,
+) -> Int
+
+///|
 // Scalar byte scanner for backends without direct linear-memory vector loads.
 #cfg(any(target="js", target="wasm-gc"))
 fn find_byte_from_view(
@@ -126,6 +134,37 @@ fn find_byte_from_view(
 }
 
 ///|
+// Convert view-relative bounds to backing `Bytes` offsets before scanning.
+#cfg(any(target="native", target="wasm"))
+fn find_byte_from_view(
+  target : BytesView,
+  start : Int,
+  end : Int,
+  byte : Byte,
+) -> Int {
+  let target_start = target.start_offset()
+  let found = find_byte_from_bytes(
+    target.data(),
+    target_start + start,
+    target_start + end,
+    byte,
+  )
+  if found < 0 {
+    -1
+  } else {
+    found - target_start
+  }
+}
+
+///|
+declare fn rev_find_byte_from_view(
+  target : BytesView,
+  start : Int,
+  end : Int,
+  byte : Byte,
+) -> Int
+
+///|
 // Scalar reverse byte scanner for backends without direct linear-memory vector
 // loads.
 #cfg(any(target="js", target="wasm-gc"))
@@ -142,6 +181,30 @@ fn rev_find_byte_from_view(
     continue pos - 1
   } nobreak {
     -1
+  }
+}
+
+///|
+// Convert view-relative bounds to backing `Bytes` offsets before reverse
+// scanning.
+#cfg(any(target="native", target="wasm"))
+fn rev_find_byte_from_view(
+  target : BytesView,
+  start : Int,
+  end : Int,
+  byte : Byte,
+) -> Int {
+  let target_start = target.start_offset()
+  let found = rev_find_byte_from_bytes(
+    target.data(),
+    target_start + start,
+    target_start + end,
+    byte,
+  )
+  if found < 0 {
+    -1
+  } else {
+    found - target_start
   }
 }
 
@@ -212,51 +275,7 @@ fn rev_find_byte_from_bytes(
 }
 
 ///|
-// Convert view-relative bounds to backing `Bytes` offsets before scanning.
-#cfg(any(target="native", target="wasm"))
-fn find_byte_from_view(
-  target : BytesView,
-  start : Int,
-  end : Int,
-  byte : Byte,
-) -> Int {
-  let target_start = target.start_offset()
-  let found = find_byte_from_bytes(
-    target.data(),
-    target_start + start,
-    target_start + end,
-    byte,
-  )
-  if found < 0 {
-    -1
-  } else {
-    found - target_start
-  }
-}
-
-///|
-// Convert view-relative bounds to backing `Bytes` offsets before reverse
-// scanning.
-#cfg(any(target="native", target="wasm"))
-fn rev_find_byte_from_view(
-  target : BytesView,
-  start : Int,
-  end : Int,
-  byte : Byte,
-) -> Int {
-  let target_start = target.start_offset()
-  let found = rev_find_byte_from_bytes(
-    target.data(),
-    target_start + start,
-    target_start + end,
-    byte,
-  )
-  if found < 0 {
-    -1
-  } else {
-    found - target_start
-  }
-}
+declare fn find_short(target : BytesView, pattern : BytesView) -> Int?
 
 ///|
 // Scalar short-pattern scanner: find matches for the last byte, then verify
@@ -277,6 +296,41 @@ fn find_short(target : BytesView, pattern : BytesView) -> Int? {
       break Some(candidate)
     }
     continue found + 1
+  } nobreak {
+    None
+  }
+}
+
+///|
+// Native/wasm short-needle path: use the SIMD prefilter to skip most false
+// candidates, then compare the unchecked middle range only on hits.
+#cfg(any(target="native", target="wasm"))
+fn find_short(target : BytesView, pattern : BytesView) -> Int? {
+  let target_len = target.length()
+  let pattern_len = pattern.length()
+  let last = target_len - pattern_len
+  let target_start = target.start_offset()
+  let candidate_end = target_start + last + 1
+  let first = pattern.unsafe_get(0)
+  let last_offset = pattern_len - 1
+  let last_byte = pattern.unsafe_get(last_offset)
+  for pos = 0; pos <= last; {
+    let found = find_short_candidate_from_bytes(
+      target.data(),
+      target_start + pos,
+      candidate_end,
+      first,
+      last_offset,
+      last_byte,
+    )
+    if found < 0 {
+      break None
+    }
+    let candidate = found - target_start
+    if find_match_range(target, pattern, candidate, 1, last_offset) {
+      break Some(candidate)
+    }
+    continue candidate + 1
   } nobreak {
     None
   }
@@ -382,39 +436,10 @@ fn rev_find_short_candidate_from_bytes(
 }
 
 ///|
-// Native/wasm short-needle path: use the SIMD prefilter to skip most false
-// candidates, then compare the unchecked middle range only on hits.
-#cfg(any(target="native", target="wasm"))
-fn find_short(target : BytesView, pattern : BytesView) -> Int? {
-  let target_len = target.length()
-  let pattern_len = pattern.length()
-  let last = target_len - pattern_len
-  let target_start = target.start_offset()
-  let candidate_end = target_start + last + 1
-  let first = pattern.unsafe_get(0)
-  let last_offset = pattern_len - 1
-  let last_byte = pattern.unsafe_get(last_offset)
-  for pos = 0; pos <= last; {
-    let found = find_short_candidate_from_bytes(
-      target.data(),
-      target_start + pos,
-      candidate_end,
-      first,
-      last_offset,
-      last_byte,
-    )
-    if found < 0 {
-      break None
-    }
-    let candidate = found - target_start
-    if find_match_range(target, pattern, candidate, 1, last_offset) {
-      break Some(candidate)
-    }
-    continue candidate + 1
-  } nobreak {
-    None
-  }
-}
+declare fn rev_find_by_byte_scanner(
+  target : BytesView,
+  pattern : BytesView,
+) -> Int?
 
 ///|
 // Scalar reverse scanner for all multi-byte patterns. It searches candidate
