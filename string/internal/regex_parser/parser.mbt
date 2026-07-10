@@ -29,21 +29,21 @@ fn Parser::class_atom(
   rest : StringView,
   ctx~ : ParserContext,
 ) -> (StringView, CharOrClass) raise ParserError {
-  lexmatch rest with longest {
-    ("\\" "[dDsSwW]", _) =>
+  lexscan rest with longest {
+    (re"^\\[dDsSwW]", after=_) =>
       raise ctx.error_at(rest, HINT_USE_POSIX_CHARACTER_CLASS)
-    ("\\" "b", rest) => (rest, Char('\b'))
-    ("\\" "f", rest) => (rest, Char('\f'))
-    ("\\" "n", rest) => (rest, Char('\n'))
-    ("\\" "r", rest) => (rest, Char('\r'))
-    ("\\" "t", rest) => (rest, Char('\t'))
-    ("\\" "x" ("[0-9A-Fa-f]{2}" as hex), rest) => {
+    (re"^\\b", after=rest) => (rest, Char('\b'))
+    (re"^\\f", after=rest) => (rest, Char('\f'))
+    (re"^\\n", after=rest) => (rest, Char('\n'))
+    (re"^\\r", after=rest) => (rest, Char('\r'))
+    (re"^\\t", after=rest) => (rest, Char('\t'))
+    (re"^\\x" + (re"[0-9A-Fa-f]{2}" as hex), after=rest) => {
       if ctx.mode is String {
         raise ctx.error_at(rest, HINT_BYTE_ESCAPE_NOT_ALLOWED)
       }
       (rest, Char(hex2i(hex)))
     }
-    ("\\" "u" ("[0-9A-Fa-f]{4}" as hex), rest2) => {
+    (re"^\\u" + (re"[0-9A-Fa-f]{4}" as hex), after=rest2) => {
       if ctx.mode is Bytes {
         raise ctx.error_at(rest, HINT_UNICODE_ESCAPE_NOT_ALLOWED)
       }
@@ -53,7 +53,7 @@ fn Parser::class_atom(
       }
       (rest2, Char(c))
     }
-    ("\\" "u" "[{]" ("[0-9A-Fa-f]{1,6}" as hex) "[}]", rest) => {
+    (re"^\\u[{]" + (re"[0-9A-Fa-f]{1,6}" as hex) + re"[}]", after=rest) => {
       if ctx.mode is Bytes {
         raise ctx.error_at(rest, HINT_UNICODE_ESCAPE_NOT_ALLOWED)
       }
@@ -63,22 +63,22 @@ fn Parser::class_atom(
       }
       (rest, Char(c))
     }
-    ("\\" ("[\^$\\.*+?()\[\]{}|/\"\-:&]" as c), rest) =>
+    (re"^\\" + (re"[\^$\\.*+?()\[\]{}|/\"\-:&]" as c), after=rest) =>
       (rest, Char(c.to_int()))
-    ("\[:ascii:\]", rest) => (rest, Class(posix_cset_ascii))
-    ("\[:upper:\]", rest) => (rest, Class(posix_cset_upper))
-    ("\[:lower:\]", rest) => (rest, Class(posix_cset_lower))
-    ("\[:alpha:\]", rest) => (rest, Class(posix_cset_alpha))
-    ("\[:alnum:\]", rest) => (rest, Class(posix_cset_alnum))
-    ("\[:digit:\]", rest) => (rest, Class(posix_cset_digit))
-    ("\[:xdigit:\]", rest) => (rest, Class(posix_cset_xdigit))
-    ("\[:blank:\]", rest) => (rest, Class(posix_cset_blank))
-    ("\[:space:\]", rest) => (rest, Class(posix_cset_space))
-    ("\[:word:\]", rest) => (rest, Class(ctx.profile.word))
-    ("\[:[A-Za-z0-9_\-]+:\]", _) =>
+    (re"^\[:ascii:\]", after=rest) => (rest, Class(posix_cset_ascii))
+    (re"^\[:upper:\]", after=rest) => (rest, Class(posix_cset_upper))
+    (re"^\[:lower:\]", after=rest) => (rest, Class(posix_cset_lower))
+    (re"^\[:alpha:\]", after=rest) => (rest, Class(posix_cset_alpha))
+    (re"^\[:alnum:\]", after=rest) => (rest, Class(posix_cset_alnum))
+    (re"^\[:digit:\]", after=rest) => (rest, Class(posix_cset_digit))
+    (re"^\[:xdigit:\]", after=rest) => (rest, Class(posix_cset_xdigit))
+    (re"^\[:blank:\]", after=rest) => (rest, Class(posix_cset_blank))
+    (re"^\[:space:\]", after=rest) => (rest, Class(posix_cset_space))
+    (re"^\[:word:\]", after=rest) => (rest, Class(ctx.profile.word))
+    (re"^\[:[A-Za-z0-9_\-]+:\]", after=_) =>
       raise ctx.error_at(rest, HINT_UNSUPPORTED_POSIX_CLASS)
-    ("\[:", _) => raise ctx.error_at(rest, HINT_INVALID_POSIX_CLASS)
-    ("." as c, rest) => {
+    (re"^\[:", after=_) => raise ctx.error_at(rest, HINT_INVALID_POSIX_CLASS)
+    (re"^." as c, after=rest) => {
       guard ctx.profile.valid.contains(c.to_int()) else {
         raise ctx.error_at(rest, HINT_CHARACTER_OUT_OF_RANGE)
       }
@@ -182,19 +182,26 @@ fn Parser::quantifier_opt(
   rest : StringView,
   ctx~ : ParserContext,
 ) -> (StringView, @re.Quantifier?) raise ParserError {
-  let (rest, range) = lexmatch rest with longest {
-    ("\*", rest) => (rest, Some((0, None)))
-    ("\+", rest) => (rest, Some((1, None)))
-    ("\?", rest) => (rest, Some((0, Some(1))))
-    ("[{]" ("[0-9]+" as min) "[}]", rest) => {
+  let (rest, range) = lexscan rest with longest {
+    (re"^\*", after=rest) => (rest, Some((0, None)))
+    (re"^\+", after=rest) => (rest, Some((1, None)))
+    (re"^\?", after=rest) => (rest, Some((0, Some(1))))
+    (re"^[{]" + (re"[0-9]+" as min) + re"[}]", after=rest) => {
       let min = Parser::quant_bound(min, ctx~)
       (rest, Some((min, Some(min))))
     }
-    ("[{]" ("[0-9]+" as min) "," "[}]", rest) => {
+    (re"^[{]" + (re"[0-9]+" as min) + re",[}]", after=rest) => {
       let min = Parser::quant_bound(min, ctx~)
       (rest, Some((min, None)))
     }
-    ("[{]" ("[0-9]+" as min) "," ("[0-9]+" as max) "[}]", rest) => {
+    (
+      re"^[{]" +
+      (re"[0-9]+" as min) +
+      re"," +
+      (re"[0-9]+" as max) +
+      re"[}]",
+      after=rest,
+    ) => {
       let min = Parser::quant_bound(min, ctx~)
       let max = Parser::quant_bound(max, ctx~)
       guard min <= max else {
@@ -202,7 +209,7 @@ fn Parser::quantifier_opt(
       }
       (rest, Some((min, Some(max))))
     }
-    ("[{]", _) => raise ctx.error_at(rest, HINT_INVALID_QUANTIFIER)
+    (re"^[{]", after=_) => raise ctx.error_at(rest, HINT_INVALID_QUANTIFIER)
     _ => (rest, None)
   }
   match range {
@@ -242,26 +249,27 @@ fn Parser::term(
   rest : StringView,
   ctx~ : ParserContext,
 ) -> (StringView, @re.Pattern) raise ParserError {
-  let (rest, pat, is_assertion) = lexmatch rest with longest {
-    ("\^", rest) => (rest, @re.start_of_input, true)
-    ("\$", rest) => (rest, @re.end_of_input, true)
-    ("\\" "b", rest) =>
+  let (rest, pat, is_assertion) = lexscan rest with longest {
+    (re"^\^", after=rest) => (rest, @re.start_of_input, true)
+    (re"^\$", after=rest) => (rest, @re.end_of_input, true)
+    (re"^\\b", after=rest) =>
       (rest, @re.alt([@re.start_of_word, @re.end_of_word]), true)
-    ("\\" "B", rest) => (rest, @re.not_word_boundary, true)
-    ("\\" "[dDsSwW]", _) =>
+    (re"^\\B", after=rest) => (rest, @re.not_word_boundary, true)
+    (re"^\\[dDsSwW]", after=_) =>
       raise ctx.error_at(rest, HINT_USE_POSIX_CHARACTER_CLASS)
-    ("\\" "f", rest) => (rest, @re.char(@re.RecharSet::char('\f')), false)
-    ("\\" "n", rest) => (rest, @re.char(@re.RecharSet::char('\n')), false)
-    ("\\" "r", rest) => (rest, @re.char(@re.RecharSet::char('\r')), false)
-    ("\\" "t", rest) => (rest, @re.char(@re.RecharSet::char('\t')), false)
-    ("\\" "v", rest) => (rest, @re.char(@re.RecharSet::char('\u{0b}')), false)
-    ("\\" "x" ("[0-9A-Fa-f]{2}" as hex), rest) => {
+    (re"^\\f", after=rest) => (rest, @re.char(@re.RecharSet::char('\f')), false)
+    (re"^\\n", after=rest) => (rest, @re.char(@re.RecharSet::char('\n')), false)
+    (re"^\\r", after=rest) => (rest, @re.char(@re.RecharSet::char('\r')), false)
+    (re"^\\t", after=rest) => (rest, @re.char(@re.RecharSet::char('\t')), false)
+    (re"^\\v", after=rest) =>
+      (rest, @re.char(@re.RecharSet::char('\u{0b}')), false)
+    (re"^\\x" + (re"[0-9A-Fa-f]{2}" as hex), after=rest) => {
       if ctx.mode is String {
         raise ctx.error_at(rest, HINT_BYTE_ESCAPE_NOT_ALLOWED)
       }
       (rest, @re.char(@re.RecharSet::char(hex2i(hex))), false)
     }
-    ("\\" "u" ("[0-9A-Fa-f]{4}" as hex), rest) => {
+    (re"^\\u" + (re"[0-9A-Fa-f]{4}" as hex), after=rest) => {
       if ctx.mode is Bytes {
         raise ctx.error_at(rest, HINT_UNICODE_ESCAPE_NOT_ALLOWED)
       }
@@ -271,7 +279,7 @@ fn Parser::term(
       }
       (rest, @re.char(@re.RecharSet::char(c)), false)
     }
-    ("\\" "u" "[{]" ("[0-9A-Fa-f]{1,6}" as hex) "[}]", rest) => {
+    (re"^\\u[{]" + (re"[0-9A-Fa-f]{1,6}" as hex) + re"[}]", after=rest) => {
       if ctx.mode is Bytes {
         raise ctx.error_at(rest, HINT_UNICODE_ESCAPE_NOT_ALLOWED)
       }
@@ -281,26 +289,28 @@ fn Parser::term(
       }
       (rest, @re.char(@re.RecharSet::char(c)), false)
     }
-    ("\\" ("[\^$\\.*+?()\[\]{}|/\"]" as c), rest) =>
+    (re"^\\" + (re"[\^$\\.*+?()\[\]{}|/\"]" as c), after=rest) =>
       (rest, @re.char(@re.RecharSet::char(c.to_int())), false)
-    ("\\" ".", _) => raise ctx.error_at(rest, HINT_INVALID_ESCAPE)
-    ("\.", rest) => (rest, @re.char(ctx.profile.valid), false)
-    ("\(\?=", _) => raise ctx.error_at(rest, HINT_UNSUPPORTED_LOOKAHEAD)
-    ("\(\?!", _) =>
+    (re"^\\.", after=_) => raise ctx.error_at(rest, HINT_INVALID_ESCAPE)
+    (re"^\.", after=rest) => (rest, @re.char(ctx.profile.valid), false)
+    (re"^\(\?=", after=_) =>
+      raise ctx.error_at(rest, HINT_UNSUPPORTED_LOOKAHEAD)
+    (re"^\(\?!", after=_) =>
       raise ctx.error_at(rest, HINT_UNSUPPORTED_NEGATIVE_LOOKAHEAD)
-    ("\(\?<=", _) => raise ctx.error_at(rest, HINT_UNSUPPORTED_LOOKBEHIND)
-    ("\(\?<!", _) =>
+    (re"^\(\?<=", after=_) =>
+      raise ctx.error_at(rest, HINT_UNSUPPORTED_LOOKBEHIND)
+    (re"^\(\?<!", after=_) =>
       raise ctx.error_at(rest, HINT_UNSUPPORTED_NEGATIVE_LOOKBEHIND)
-    ("\(\?<" ("[A-Za-z_][A-Za-z0-9_]*" as name) ">", rest) => {
+    (re"^\(\?<" + (re"[A-Za-z_][A-Za-z0-9_]*" as name) + re">", after=rest) => {
       let (rest, pat) = Parser::parse_group_continue(rest, ctx~)
       (rest, @re.capture(name=name.to_owned(), pat), false)
     }
-    ("\(\?:", rest) => {
+    (re"^\(\?:", after=rest) => {
       let (rest, pat) = Parser::parse_group_continue(rest, ctx~)
       (rest, pat, false)
     }
-    ("\(\?<", _) => raise ctx.error_at(rest, HINT_INVALID_GROUP)
-    ("\(\?" ("[A-Za-z]+" as modifier) ":", rest) =>
+    (re"^\(\?<", after=_) => raise ctx.error_at(rest, HINT_INVALID_GROUP)
+    (re"^\(\?" + (re"[A-Za-z]+" as modifier) + re":", after=rest) =>
       match modifier {
         "i" => {
           let need_process = !ctx.ignore_case
@@ -320,18 +330,18 @@ fn Parser::term(
         }
         _ => raise ctx.error_at(rest, HINT_INVALID_GROUP)
       }
-    ("\(", rest) => {
+    (re"^\(", after=rest) => {
       let (rest, pat) = Parser::parse_group_continue(rest, ctx~)
       (rest, @re.capture(pat), false)
     }
-    ("\[:", _) => raise ctx.error_at(rest, HINT_BARE_POSIX_CLASS)
-    ("\[", _) => {
+    (re"^\[:", after=_) => raise ctx.error_at(rest, HINT_BARE_POSIX_CLASS)
+    (re"^\[", after=_) => {
       let (rest, char_set) = Parser::character_class(rest, ctx~)
       (rest, @re.char(char_set), false)
     }
-    ("[\^$\\.*+?()\[\]{}|]", _) =>
+    (re"^[\^$\\.*+?()\[\]{}|]", after=_) =>
       raise ctx.error_at(rest, HINT_UNEXPECTED_CHAR)
-    ("." as c, rest2) => {
+    (re"^." as c, after=rest2) => {
       guard ctx.profile.valid.contains(c.to_int()) else {
         raise ctx.error_at(rest, HINT_CHARACTER_OUT_OF_RANGE)
       }

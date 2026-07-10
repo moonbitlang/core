@@ -60,20 +60,19 @@ priv struct SourceLocRepr {
 
 ///|
 fn SourceLocRepr::parse(repr : String) -> SourceLocRepr {
-  lexmatch repr[:] with longest {
-    (
-      (".+" as filename)
-      ":"
-      ("[[:digit:]]+" as start_line)
-      ":"
-      ("[[:digit:]]+" as start_column)
-      "-"
-      ("[[:digit:]]+" as end_line)
-      ":"
-      ("[[:digit:]]+" as end_column)
-      "@"
-      ("[^:]*" as _module)
-    ) => { filename, start_line, start_column, end_line, end_column }
+  lexscan repr[:] with longest {
+    (re"^.+" as filename) +
+    re":" +
+    (re"[[:digit:]]+" as start_line) +
+    re":" +
+    (re"[[:digit:]]+" as start_column) +
+    re"-" +
+    (re"[[:digit:]]+" as end_line) +
+    re":" +
+    (re"[[:digit:]]+" as end_column) +
+    re"@" +
+    (re"[^:]*$" as _module) =>
+      { filename, start_line, start_column, end_line, end_column }
     _ => panic()
   }
 }
