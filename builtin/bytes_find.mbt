@@ -108,6 +108,19 @@ fn find_match_range(
 }
 
 ///|
+/// Finds the first occurrence of `byte` in the view-relative range
+/// `[start, end)`.
+///
+/// The caller must ensure `0 <= start <= end <= target.length()`. The result is
+/// relative to `target`, or `-1` when `byte` does not occur in the range.
+///
+/// ```mbt check
+/// test {
+///   let target = b"--abcabc--"[2:8]
+///   debug_inspect(target[2:].find(b"b"), content="Some(2)")
+///   debug_inspect(target.find(b"x"), content="None")
+/// }
+/// ```
 declare fn find_byte_from_view(
   target : BytesView,
   start : Int,
@@ -157,6 +170,19 @@ fn find_byte_from_view(
 }
 
 ///|
+/// Finds the last occurrence of `byte` in the view-relative range
+/// `[start, end)`.
+///
+/// The caller must ensure `0 <= start <= end <= target.length()`. The result is
+/// relative to `target`, or `-1` when `byte` does not occur in the range.
+///
+/// ```mbt check
+/// test {
+///   let target = b"--abcabc--"[2:8]
+///   debug_inspect(target[:4].rev_find(b"b"), content="Some(1)")
+///   debug_inspect(target.rev_find(b"x"), content="None")
+/// }
+/// ```
 declare fn rev_find_byte_from_view(
   target : BytesView,
   start : Int,
@@ -275,6 +301,18 @@ fn rev_find_byte_from_bytes(
 }
 
 ///|
+/// Finds the first occurrence of a short, non-empty `pattern` in `target`.
+///
+/// The caller must ensure the pattern has at least two bytes, does not exceed
+/// the short-pattern limit, and is no longer than `target`.
+///
+/// ```mbt check
+/// test {
+///   let target = b"--abcabc--"[2:8]
+///   debug_inspect(target.find(b"bca"), content="Some(1)")
+///   debug_inspect(target.find(b"abd"), content="None")
+/// }
+/// ```
 declare fn find_short(target : BytesView, pattern : BytesView) -> Int?
 
 ///|
@@ -436,6 +474,18 @@ fn rev_find_short_candidate_from_bytes(
 }
 
 ///|
+/// Finds the last occurrence of a non-empty, multi-byte `pattern` in `target`.
+///
+/// The caller must ensure the pattern has at least two bytes and is shorter
+/// than `target`.
+///
+/// ```mbt check
+/// test {
+///   let target = b"--abcabc--"[2:8]
+///   debug_inspect(target.rev_find(b"abc"), content="Some(3)")
+///   debug_inspect(target.rev_find(b"abd"), content="None")
+/// }
+/// ```
 declare fn rev_find_by_byte_scanner(
   target : BytesView,
   pattern : BytesView,
