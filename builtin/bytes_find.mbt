@@ -243,6 +243,8 @@ fn Bytes::v128_load(self : Bytes, offset : Int) -> V128 {
 ///|
 // SIMD byte scanner for linear-memory backends. The vector loop scans 16 bytes
 // at a time, then the scalar tail handles the remaining bytes.
+//
+// Returns the first index of `byte` in `data[start..end)`, or -1 if absent.
 #cfg(any(target="native", target="wasm"))
 fn find_byte_from_bytes(
   data : Bytes,
@@ -250,16 +252,34 @@ fn find_byte_from_bytes(
   end : Int,
   byte : Byte,
 ) -> Int {
+  // Broadcast the needle to all 16 lanes so a single vector compare tests 16
+  // haystack bytes at once:
+  //   byte_v = [byte, byte, byte, ..., byte]   (lanes 15..0)
   let byte_v = i8x16_splat(byte)
+  // Vector loop. `for` is an expression here: `tail_start` is bound to the
+  // value the loop yields. It yields in one of two ways:
+  //   - `return` on a hit, exiting the whole function; or
+  //   - falling through the `pos + 16 <= end` guard (a full chunk no longer
+  //     fits), running `nobreak` whose `pos` becomes `tail_start`.
   let tail_start = for pos = start; pos + 16 <= end; {
+    // Load 16 bytes, compare lanewise (0xFF on match / 0x00 on miss), then
+    // gather each lane's high bit into a 16-bit integer: bit i set <=> lane i
+    // matched.
+    //
+    //   chunk :  ..  62 72 61 77 6E 20 61 78 20   (searching 0x61 'a')
+    //   eq    :  ..  00 00 FF 00 00 00 FF 00 00
+    //   mask  :  0b...0100_0100  = 0x0044         (bits 2 and 6 set)
     let mask = i8x16_bitmask(i8x16_eq(data.v128_load(pos), byte_v))
     if mask != 0 {
+      // ctz = index of the lowest set bit = first matching lane, which yields
+      // first-occurrence order. 0x0044 -> ctz 2 -> absolute index `pos + 2`.
       return pos + mask.ctz()
     }
     continue pos + 16
   } nobreak {
     pos
   }
+  // Scalar tail: fewer than 16 bytes remain, so scan them one at a time.
   for pos in tail_start..<end {
     if data.unsafe_get(pos) == byte {
       break pos
