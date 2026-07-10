@@ -566,10 +566,10 @@ pub fn BytesView::unsafe_read_uint16_be(
 #intrinsic("%bytes.unsafe_range_equal")
 fn Bytes::unsafe_range_equal(
   self : Bytes,
-  self_off : Int,
+  self_off~ : Int,
   other : Bytes,
-  other_off : Int,
-  len : Int,
+  other_off~ : Int,
+  len~ : Int,
 ) -> Bool {
   for i in 0..<len {
     guard self.unsafe_get(self_off + i) == other.unsafe_get(other_off + i) else {

@@ -62,7 +62,7 @@ fn find_index(target : BytesView, pattern : BytesView) -> Int? {
       Some(found)
     }
   } else if pattern_len == target_len {
-    if find_match_range(target, pattern, 0, 0, pattern_len) {
+    if target == pattern {
       Some(0)
     } else {
       None
@@ -80,31 +80,6 @@ fn find_index(target : BytesView, pattern : BytesView) -> Int? {
 #inline
 fn find_cutover(i : Int) -> Int {
   4 + i / 16
-}
-
-///|
-#inline
-fn find_match_range(
-  target : BytesView,
-  pattern : BytesView,
-  candidate : Int,
-  start : Int,
-  end : Int,
-) -> Bool {
-  // Some callers already check the full requested range.
-  if start >= end {
-    return true
-  }
-  // `candidate`, `start`, and `end` are relative to the views. Convert both
-  // sides to offsets in their backing `Bytes` before comparing.
-  target
-  .data()
-  .unsafe_range_equal(
-    target.start_offset() + candidate + start,
-    pattern.data(),
-    pattern.start_offset() + start,
-    end - start,
-  )
 }
 
 ///|
@@ -342,6 +317,8 @@ declare fn find_short(target : BytesView, pattern : BytesView) -> Int?
 fn find_short(target : BytesView, pattern : BytesView) -> Int? {
   let target_len = target.length()
   let pattern_len = pattern.length()
+  let target_start = target.start_offset()
+  let pattern_start = pattern.start_offset()
   let last_offset = pattern_len - 1
   let last_byte = pattern.unsafe_get(last_offset)
   for anchor_pos = last_offset; anchor_pos < target_len; {
@@ -349,8 +326,16 @@ fn find_short(target : BytesView, pattern : BytesView) -> Int? {
     if found < 0 {
       break None
     }
+    // The last byte already matched; verify the prefix range only.
     let candidate = found - last_offset
-    if find_match_range(target, pattern, candidate, 0, last_offset) {
+    if target
+      .data()
+      .unsafe_range_equal(
+        pattern.data(),
+        self_off=target_start + candidate,
+        other_off=pattern_start,
+        len=last_offset,
+      ) {
       break Some(candidate)
     }
     continue found + 1
@@ -368,10 +353,14 @@ fn find_short(target : BytesView, pattern : BytesView) -> Int? {
   let pattern_len = pattern.length()
   let last = target_len - pattern_len
   let target_start = target.start_offset()
+  let pattern_start = pattern.start_offset()
   let candidate_end = target_start + last + 1
   let first = pattern.unsafe_get(0)
   let last_offset = pattern_len - 1
   let last_byte = pattern.unsafe_get(last_offset)
+  // First and last bytes are matched by the prefilter; only the middle range
+  // needs verification. `len=0` (two-byte patterns) trivially compares equal.
+  let middle_len = last_offset - 1
   for pos = 0; pos <= last; {
     let found = find_short_candidate_from_bytes(
       target.data(),
@@ -385,7 +374,14 @@ fn find_short(target : BytesView, pattern : BytesView) -> Int? {
       break None
     }
     let candidate = found - target_start
-    if find_match_range(target, pattern, candidate, 1, last_offset) {
+    if target
+      .data()
+      .unsafe_range_equal(
+        pattern.data(),
+        self_off=found + 1,
+        other_off=pattern_start + 1,
+        len=middle_len,
+      ) {
       break Some(candidate)
     }
     continue candidate + 1
@@ -519,9 +515,15 @@ fn rev_find_by_byte_scanner(target : BytesView, pattern : BytesView) -> Int? {
   let target_len = target.length()
   let pattern_len = pattern.length()
   let last = target_len - pattern_len
+  let target_start = target.start_offset()
+  let pattern_start = pattern.start_offset()
   let first = pattern.unsafe_get(0)
   let last_offset = pattern_len - 1
   let last_byte = pattern.unsafe_get(last_offset)
+  // First and last bytes are matched by the candidate scanner; only the middle
+  // range needs verification. `len=0` (two-byte patterns) trivially compares
+  // equal.
+  let middle_len = last_offset - 1
   for candidate_end = last + 1; candidate_end > 0; {
     let found = rev_find_short_candidate_from_view(
       target, 0, candidate_end, first, last_offset, last_byte,
@@ -529,7 +531,14 @@ fn rev_find_by_byte_scanner(target : BytesView, pattern : BytesView) -> Int? {
     if found < 0 {
       break None
     }
-    if find_match_range(target, pattern, found, 1, last_offset) {
+    if target
+      .data()
+      .unsafe_range_equal(
+        pattern.data(),
+        self_off=target_start + found + 1,
+        other_off=pattern_start + 1,
+        len=middle_len,
+      ) {
       break Some(found)
     }
     continue found
@@ -547,9 +556,13 @@ fn rev_find_by_byte_scanner(target : BytesView, pattern : BytesView) -> Int? {
   let pattern_len = pattern.length()
   let last = target_len - pattern_len
   let target_start = target.start_offset()
+  let pattern_start = pattern.start_offset()
   let first = pattern.unsafe_get(0)
   let last_offset = pattern_len - 1
   let last_byte = pattern.unsafe_get(last_offset)
+  // First and last bytes are matched by the prefilter; only the middle range
+  // needs verification. `len=0` (two-byte patterns) trivially compares equal.
+  let middle_len = last_offset - 1
   for candidate_end = last + 1; candidate_end > 0; {
     let found = rev_find_short_candidate_from_bytes(
       target.data(),
@@ -563,7 +576,14 @@ fn rev_find_by_byte_scanner(target : BytesView, pattern : BytesView) -> Int? {
       break None
     }
     let candidate = found - target_start
-    if find_match_range(target, pattern, candidate, 1, last_offset) {
+    if target
+      .data()
+      .unsafe_range_equal(
+        pattern.data(),
+        self_off=found + 1,
+        other_off=pattern_start + 1,
+        len=middle_len,
+      ) {
       break Some(candidate)
     }
     continue candidate
@@ -602,11 +622,20 @@ fn find_rabin_karp_from(
   if start + pattern_len > target_len {
     return None
   }
+  let target_start = target.start_offset()
+  let pattern_start = pattern.start_offset()
   let pattern_hash = hash(pattern, 0, pattern_len)
   let pow = prime_pow(pattern_len)
   let hash = hash(target, start, pattern_len)
   if hash == pattern_hash &&
-    find_match_range(target, pattern, start, 0, pattern_len) {
+    target
+    .data()
+    .unsafe_range_equal(
+      pattern.data(),
+      self_off=target_start + start,
+      other_off=pattern_start,
+      len=pattern_len,
+    ) {
     return Some(start)
   }
   for index = start + pattern_len, hash = hash; index < target_len; {
@@ -614,7 +643,14 @@ fn find_rabin_karp_from(
     let hash = hash - pow * target.unsafe_get(index - pattern_len).to_uint()
     let candidate = index - pattern_len + 1
     if hash == pattern_hash &&
-      find_match_range(target, pattern, candidate, 0, pattern_len) {
+      target
+      .data()
+      .unsafe_range_equal(
+        pattern.data(),
+        self_off=target_start + candidate,
+        other_off=pattern_start,
+        len=pattern_len,
+      ) {
       break Some(candidate)
     }
     continue index + 1, hash
@@ -630,13 +666,23 @@ fn find_long_by_byte_scanner(target : BytesView, pattern : BytesView) -> Int? {
   let target_len = target.length()
   let pattern_len = pattern.length()
   let last = target_len - pattern_len
+  let target_start = target.start_offset()
+  let pattern_start = pattern.start_offset()
   let first_byte = pattern.unsafe_get(0)
   for pos = 0, failures = 0; pos <= last; {
     let found = find_byte_from_view(target, pos, target_len, first_byte)
     if found < 0 || found > last {
       break None
     }
-    if find_match_range(target, pattern, found, 1, pattern_len) {
+    // The first byte already matched; verify the remaining suffix range.
+    if target
+      .data()
+      .unsafe_range_equal(
+        pattern.data(),
+        self_off=target_start + found + 1,
+        other_off=pattern_start + 1,
+        len=pattern_len - 1,
+      ) {
       break Some(found)
     }
     let failures = failures + 1
@@ -674,7 +720,7 @@ pub fn BytesView::rev_find(target : BytesView, pattern : BytesView) -> Int? {
       Some(found)
     }
   } else if pattern_len == target_len {
-    if find_match_range(target, pattern, 0, 0, pattern_len) {
+    if target == pattern {
       Some(0)
     } else {
       None
