@@ -223,7 +223,7 @@ test "parses escaped characters" {
 ///|
 test "parses whitespace" {
   let json = test_parse("{\t \n\r}")
-  @debug.assert_eq(json, Json::object({}))
+  @debug.assert_eq(json, Json::empty_object())
 }
 
 ///|

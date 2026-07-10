@@ -14,7 +14,7 @@
 
 ///|
 fn empty_env() -> Map[String, String] {
-  {}
+  Map([])
 }
 
 ///|

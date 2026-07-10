@@ -227,7 +227,7 @@ pub impl[V : FromJson] FromJson for Map[String, V] with fn from_json(json, path)
   guard json is Object(obj) else {
     decode_error(path, "Map::from_json: expected object")
   }
-  let res = {}
+  let res = Map([])
   guard JsonPath::Key(path, key="") is (Key(_) as new_path)
   // Map::map_with_key
   for k, v in obj {

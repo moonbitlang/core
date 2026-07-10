@@ -70,7 +70,7 @@ extern "js" fn get_env_var_value_internal(key : String) -> String =
 ///|
 fn get_env_vars_internal() -> Map[String, String] {
   let tmp = get_env_vars_array_internal()
-  let res = {}
+  let res = Map([])
   for i = 0; i < tmp.length(); i = i + 2 {
     res[tmp[i]] = tmp[i + 1]
   }

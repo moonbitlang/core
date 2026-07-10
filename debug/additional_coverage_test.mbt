@@ -47,7 +47,7 @@ test "render unit and omitted repr" {
 ///|
 test "render empty containers" {
   inspect(render(Repr::array([])), content="[]")
-  inspect(render(Repr::record({})), content="{}")
+  inspect(render(Repr::record(Map([]))), content="{}")
 }
 
 ///|

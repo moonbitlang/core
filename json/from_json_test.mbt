@@ -871,7 +871,7 @@ test "Result from_json error handling" {
       #|JsonDecodeError((Root, "Result::from_json: expected object"))
     ),
   )
-  let json_empty_obj = Json::object({})
+  let json_empty_obj = Json::empty_object()
   let err = expect_json_decode_error(
     () => ignore((@json.from_json(json_empty_obj) : Result[Int, String])),
     "expected Result decode failure",
@@ -983,7 +983,7 @@ test "Float from_json error handling" {
       #|JsonDecodeError((Root, "Float::from_json: expected number"))
     ),
   )
-  let json_object = Json::object({})
+  let json_object = Json::empty_object()
   let err = expect_json_decode_error(
     () => ignore((@json.from_json(json_object) : Float)),
     "expected Float decode failure",

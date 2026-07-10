@@ -29,13 +29,13 @@ test "Map keys iter" {
     ),
   )
   debug_inspect(
-    ({} : Map[String, Int]).keys().to_array(),
+    (Map([]) : Map[String, Int]).keys().to_array(),
     content=(
       #|[]
     ),
   )
   debug_inspect(
-    ({} : Map[String, Int]).values().to_array(),
+    (Map([]) : Map[String, Int]).values().to_array(),
     content=(
       #|[]
     ),
@@ -176,7 +176,9 @@ test "Map::map" {
       #|{ "a": "a1", "b": "b2", "d": "d10", "e": "e20" }
     ),
   )
-  let v : Map[String, String] = {}.map((k, v) => k + v)
+  let v : Map[String, String] = (Map([]) : Map[String, String]).map((k, v) => {
+    k + v
+  })
   debug_inspect(v, content="{}")
 }
 
@@ -200,7 +202,7 @@ test "Map::copy" {
       #|{ "a": 1, "b": 2, "d": 10, "e": 20 }
     ),
   )
-  let copy : Map[String, String] = {}.copy()
+  let copy : Map[String, String] = (Map([]) : Map[String, String]).copy()
   debug_inspect(copy, content="{}")
 }
 
@@ -250,7 +252,7 @@ test "Map::update" {
   inspect(map.length(), content="3")
 
   // Test incrementing a counter (common use case)
-  let counter_map : Map[String, Int] = {}
+  let counter_map : Map[String, Int] = Map([])
   counter_map.update("clicks", fn(v) {
     match v {
       Some(count) => Some(count + 1)
@@ -267,7 +269,7 @@ test "Map::update" {
   debug_inspect(counter_map.get("clicks"), content="Some(2)")
 
   // Test on empty map
-  let empty_map : Map[String, Int] = {}
+  let empty_map : Map[String, Int] = Map([])
 
   // Test no-op on empty map
   empty_map.update("empty", fn(_) { None })
@@ -324,7 +326,7 @@ test "Map::retain - remove all" {
 
 ///|
 test "Map::retain - empty map" {
-  let map : Map[String, Int] = {}
+  let map : Map[String, Int] = Map([])
   map.retain((_k, _v) => true)
   inspect(map.length(), content="0")
   inspect(map.is_empty(), content="true")
@@ -629,7 +631,7 @@ impl Hash for LKey with fn hash_combine(self, hasher) {
 
 ///|
 test "Map collision probe paths" {
-  let map : Map[LKey, Int] = {}
+  let map : Map[LKey, Int] = Map([])
   let k1 = LKey::LKey(1, 1)
   let k2 = LKey::LKey(2, 2)
   map[k1] = 10
@@ -669,7 +671,7 @@ test "Map grow rehashes collision cluster in insertion order" {
 
 ///|
 test "Map early exit on psl" {
-  let map : Map[LKey, Int] = {}
+  let map : Map[LKey, Int] = Map([])
   let k1 = LKey::LKey(1, 0)
   let k2 = LKey::LKey(2, 1)
   map[k1] = 10
@@ -681,7 +683,7 @@ test "Map early exit on psl" {
 
 ///|
 test "Map::merge_in_place self should not grow" {
-  let map : Map[String, Int] = {}
+  let map : Map[String, Int] = Map([])
   // Add 6 entries to reach the growth threshold (default capacity 8, grow_at 6)
   for i in 0..<6 {
     map.set(i.to_string(), i)
@@ -699,7 +701,7 @@ test "Map::merge_in_place self should not grow" {
 
 ///|
 test "Map::set updating existing key should not grow" {
-  let map : Map[String, Int] = {}
+  let map : Map[String, Int] = Map([])
   // Add 6 entries to reach the growth threshold (default capacity 8, grow_at 6)
   for i in 0..<6 {
     map.set(i.to_string(), i)

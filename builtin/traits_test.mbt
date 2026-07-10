@@ -30,7 +30,7 @@ struct Data {
 ///|
 test "hash_data" {
   let data = Data::{ x: [1, 2, 3], y: [4, 5, 6] }
-  let map = {}
+  let map = Map([])
   map[data] = 1
   debug_inspect(
     map,

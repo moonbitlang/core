@@ -3056,7 +3056,7 @@ test "child global override env/default win over inherited definition" {
     sub.sources is { "mode": Env, .. },
   )
 
-  let from_default = cmd.parse(argv=["run"], env={}) catch { _ => panic() }
+  let from_default = cmd.parse(argv=["run"], env=Map([])) catch { _ => panic() }
   assert_true(from_default.values is { "mode": ["fast"], .. })
   assert_true(from_default.sources is { "mode": Default, .. })
   assert_true(
