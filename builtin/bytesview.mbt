@@ -655,7 +655,12 @@ pub impl Eq for BytesView with fn equal(self, other) -> Bool {
   guard len == other.length() else { return false }
   self
   .bytes()
-  .unsafe_range_equal(self.start(), other.bytes(), other.start(), len)
+  .unsafe_range_equal(
+    other.bytes(),
+    self_off=self.start(),
+    other_off=other.start(),
+    len~,
+  )
 }
 
 ///|
@@ -679,7 +684,9 @@ pub impl Eq for BytesView with fn equal(self, other) -> Bool {
 pub fn BytesView::equal_to_bytes(self : BytesView, other : Bytes) -> Bool {
   let len = self.length()
   guard len == other.length() else { return false }
-  self.bytes().unsafe_range_equal(self.start(), other, 0, len)
+  self
+  .bytes()
+  .unsafe_range_equal(other, self_off=self.start(), other_off=0, len~)
 }
 
 ///|
