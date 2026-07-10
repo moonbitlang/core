@@ -13,7 +13,7 @@ You can create an empty map using `Map([])` or construct it from entries using `
 ```mbt check 
 ///|
 test {
-  let _map1 : Map[String, Int] = {}
+  let _map1 : Map[String, Int] = Map([])
   let _map2 = { "one": 1, "two": 2, "three": 3, "four": 4, "five": 5 }
   let _map3 = Map([("one", 1), ("two", 2), ("three", 3)])
 }
@@ -26,7 +26,7 @@ You can use `set()` to add a key-value pair to the map, and use `get()` to get a
 ```mbt check
 ///|
 test {
-  let map : Map[String, Int] = {}
+  let map : Map[String, Int] = Map([])
   map.set("a", 1)
   debug_inspect(map.get("a"), content="Some(1)")
   inspect(map.get_or_default("a", 0), content="1")
@@ -107,7 +107,7 @@ Similarly, you can use `is_empty()` to check whether the map is empty.
 ```mbt check
 ///|
 test {
-  let map : Map[String, Int] = {}
+  let map : Map[String, Int] = Map([])
   inspect(map.is_empty(), content="true")
 }
 ```

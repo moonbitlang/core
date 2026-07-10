@@ -102,7 +102,7 @@ test "render of empty, single and nested collections" {
       #|[]
     ),
   )
-  let empty_map : Map[String, Int] = {}
+  let empty_map : Map[String, Int] = Map([])
   inspect(
     @debug.to_string(empty_map),
     content=(
@@ -116,7 +116,7 @@ test "render of empty, single and nested collections" {
       #|{ "k": 1 }
     ),
   )
-  let empty_inner : Map[Int, Int] = {}
+  let empty_inner : Map[Int, Int] = Map([])
   inspect(
     @debug.to_string((empty_arr, empty_inner)),
     content=(
@@ -131,7 +131,7 @@ test "render of large structures breaks into multiple lines" {
   assert_true(@debug.to_string(big).contains("\n"))
   let nested = Array::makei(8, i => Array::makei(8, j => i * 8 + j))
   assert_true(@debug.to_string(nested).contains("\n"))
-  let big_map : Map[Int, Array[Int]] = {}
+  let big_map : Map[Int, Array[Int]] = Map([])
   for i in 0..<12 {
     big_map[i] = Array::makei(6, j => i * 6 + j)
   }

@@ -25,7 +25,7 @@ test "deep access" {
     "double": 123.45,
     "null": null,
     "bool": false,
-    "obj": {},
+    "obj": Json::empty_object(),
   }
   debug_inspect(
     if json is Object({ "null": Null, .. }) {
@@ -116,7 +116,7 @@ test "stringify" {
     "double": 123.45,
     "null": null,
     "bool": false,
-    "obj": {},
+    "obj": Json::empty_object(),
   }
   inspect(
     json.stringify(),
@@ -388,7 +388,7 @@ test "stringify with indent" {
     "double": 123.45,
     "null": null,
     "bool": false,
-    "obj": {},
+    "obj": Json::empty_object(),
   }
   inspect(
     json.stringify(indent=0),
@@ -591,10 +591,10 @@ test "transformer with array" {
 
   // exclude
   let newjson3 = json.transform(@json.Replacer::exclude(["a"]))
-  @json.json_inspect(newjson3, content=[1, {}, [3, 4]])
+  @json.json_inspect(newjson3, content=[1, Json::empty_object(), [3, 4]])
   let newjson4 : Json = [{ "a": [{ "b": [{ "c": [{ "d": 1 }] }] }] }]
   @json.json_inspect(newjson4.transform(@json.Replacer::exclude(["d"])), content=[
-    { "a": [{ "b": [{ "c": [{}] }] }] },
+    { "a": [{ "b": [{ "c": [Json::empty_object()] }] }] },
   ])
 }
 

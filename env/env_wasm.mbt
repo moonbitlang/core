@@ -149,7 +149,7 @@ fn get_env_var_exists_ffi(key : XExternString) -> Bool = "__moonbit_fs_unstable"
 ///|
 fn get_env_vars_internal() -> Map[String, String] {
   let tmp = string_array_from_extern(get_env_vars_ffi())
-  let res = {}
+  let res = Map([])
   for i = 0; i < tmp.length(); i = i + 2 {
     res[tmp[i]] = tmp[i + 1]
   }

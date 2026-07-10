@@ -123,7 +123,7 @@ test "to_json on empty fixed array" {
 
 ///|
 test "test map with string values" {
-  let m : Map[String, Int] = {}
+  let m : Map[String, Int] = Map([])
   debug_inspect(m.to_json(), content="Object({})")
 }
 

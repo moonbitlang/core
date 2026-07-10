@@ -23,7 +23,7 @@ test "basic option + positional success snapshot" {
       PositionArg("target"),
     ]),
     argv=["--name", "alice", "file.txt"],
-    env={},
+    env=Map([]),
   )
   @debug.debug_inspect(
     matches.values,
@@ -38,7 +38,7 @@ test "basic option + positional failure snapshot" {
   let cmd = @argparse.Command("demo", options=[OptionArg("name")], positionals=[
     PositionArg("target"),
   ])
-  try cmd.parse(argv=["--bad"], env={}) catch {
+  try cmd.parse(argv=["--bad"], env=Map([])) catch {
     err =>
       inspect(
         err,
@@ -100,7 +100,7 @@ test "negatable flag success snapshot" {
     ),
   )
 
-  let parsed = try! cmd.parse(argv=["--no-cache"], env={})
+  let parsed = try! cmd.parse(argv=["--no-cache"], env=Map([]))
   @debug.debug_inspect(
     parsed.flags,
     content=(
@@ -121,7 +121,7 @@ test "global count flag success snapshot" {
     subcommands=[Command("run")],
   )
 
-  let parsed = try! cmd.parse(argv=["-v", "run", "-v"], env={})
+  let parsed = try! cmd.parse(argv=["-v", "run", "-v"], env=Map([]))
   @debug.debug_inspect(
     parsed.flag_counts,
     content=(
@@ -144,7 +144,7 @@ test "subcommand context failure snapshot" {
     flags=[FlagArg("verbose", short='v', action=Count, global=true)],
     subcommands=[Command("run")],
   )
-  try cmd.parse(argv=["run", "--oops"], env={}) catch {
+  try cmd.parse(argv=["run", "--oops"], env=Map([])) catch {
     err =>
       inspect(
         err,
@@ -188,7 +188,7 @@ test "value source precedence snapshots" {
     ),
   )
 
-  let from_default = try! cmd.parse(argv=[], env={})
+  let from_default = try! cmd.parse(argv=[], env=Map([]))
   @debug.debug_inspect(
     from_default.values,
     content=(
@@ -251,7 +251,7 @@ test "option input forms snapshot" {
     ),
   )
 
-  let long_split = try! cmd.parse(argv=["--count", "2"], env={})
+  let long_split = try! cmd.parse(argv=["--count", "2"], env=Map([]))
   @debug.debug_inspect(
     long_split.values,
     content=(
@@ -259,7 +259,7 @@ test "option input forms snapshot" {
     ),
   )
 
-  let long_inline = try! cmd.parse(argv=["--count=3"], env={})
+  let long_inline = try! cmd.parse(argv=["--count=3"], env=Map([]))
   @debug.debug_inspect(
     long_inline.values,
     content=(
@@ -267,7 +267,7 @@ test "option input forms snapshot" {
     ),
   )
 
-  let short_split = try! cmd.parse(argv=["-c", "4"], env={})
+  let short_split = try! cmd.parse(argv=["-c", "4"], env=Map([]))
   @debug.debug_inspect(
     short_split.values,
     content=(
@@ -275,7 +275,7 @@ test "option input forms snapshot" {
     ),
   )
 
-  let short_attached = try! cmd.parse(argv=["-c5"], env={})
+  let short_attached = try! cmd.parse(argv=["-c5"], env=Map([]))
   @debug.debug_inspect(
     short_attached.values,
     content=(
@@ -289,7 +289,7 @@ test "double-dash separator snapshot" {
   let cmd = @argparse.Command("demo", positionals=[
     PositionArg("tail", num_args=ValueRange(lower=0), allow_hyphen_values=true),
   ])
-  let parsed = try! cmd.parse(argv=["--", "--x", "-y"], env={})
+  let parsed = try! cmd.parse(argv=["--", "--x", "-y"], env=Map([]))
   @debug.debug_inspect(
     parsed.values,
     content=(
@@ -312,7 +312,10 @@ test "requires relationship success and failure snapshots" {
     OptionArg("config"),
   ])
 
-  let ok = try! cmd.parse(argv=["--mode", "fast", "--config", "cfg.toml"], env={})
+  let ok = try! cmd.parse(
+    argv=["--mode", "fast", "--config", "cfg.toml"],
+    env=Map([]),
+  )
   @debug.debug_inspect(
     ok.values,
     content=(
@@ -320,7 +323,7 @@ test "requires relationship success and failure snapshots" {
     ),
   )
 
-  try cmd.parse(argv=["--mode", "fast"], env={}) catch {
+  try cmd.parse(argv=["--mode", "fast"], env=Map([])) catch {
     err =>
       inspect(
         err,
@@ -351,7 +354,7 @@ test "arg group required and exclusive failure snapshot" {
     flags=[FlagArg("fast"), FlagArg("slow")],
   )
 
-  try cmd.parse(argv=[], env={}) catch {
+  try cmd.parse(argv=[], env=Map([])) catch {
     err =>
       inspect(
         err,
@@ -382,7 +385,7 @@ test "subcommand required policy failure snapshot" {
     Command("echo"),
   ])
 
-  try cmd.parse(argv=[], env={}) catch {
+  try cmd.parse(argv=[], env=Map([])) catch {
     err =>
       inspect(
         err,
@@ -414,7 +417,7 @@ test "conflicts_with success and failure snapshots" {
     FlagArg("quiet"),
   ])
 
-  let ok = try! cmd.parse(argv=["--verbose"], env={})
+  let ok = try! cmd.parse(argv=["--verbose"], env=Map([]))
   @debug.debug_inspect(
     ok.flags,
     content=(
@@ -422,7 +425,7 @@ test "conflicts_with success and failure snapshots" {
     ),
   )
 
-  try cmd.parse(argv=["--verbose", "--quiet"], env={}) catch {
+  try cmd.parse(argv=["--verbose", "--quiet"], env=Map([])) catch {
     err =>
       inspect(
         err,
@@ -456,7 +459,7 @@ test "bounded non-last positional success snapshot" {
     PositionArg("second", num_args=@argparse.ValueRange::single()),
   ])
 
-  let parsed = try! cmd.parse(argv=["a", "b", "c"], env={})
+  let parsed = try! cmd.parse(argv=["a", "b", "c"], env=Map([]))
   @debug.debug_inspect(
     parsed.values,
     content=(
@@ -471,7 +474,7 @@ test "bounded non-last positional failure snapshot" {
     PositionArg("first", num_args=ValueRange(lower=1, upper=2)),
     PositionArg("second", num_args=@argparse.ValueRange::single()),
   ])
-  try cmd.parse(argv=["a", "b", "c", "d"], env={}) catch {
+  try cmd.parse(argv=["a", "b", "c", "d"], env=Map([])) catch {
     err =>
       inspect(
         err,
@@ -515,7 +518,7 @@ test "positional passthrough keeps child argv after double-dash snapshot" {
     argv=[
       "--config", "cfg.toml", "--", "child", "--mode", "fast", "--", "--flag",
     ],
-    env={},
+    env=Map([]),
   )
   @debug.debug_inspect(
     parsed.values,
@@ -532,7 +535,7 @@ test "positional passthrough keeps child argv after double-dash snapshot" {
 test "without separator outer parser still consumes its own option names snapshot" {
   let parsed = try! cmd.parse(
     argv=["--config", "cfg.toml", "child", "--mode", "fast"],
-    env={},
+    env=Map([]),
   )
   @debug.debug_inspect(
     parsed.values,

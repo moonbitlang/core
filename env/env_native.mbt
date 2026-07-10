@@ -103,7 +103,7 @@ extern "c" fn get_env_var_ffi(
 ///|
 fn get_env_vars_internal() -> Map[String, String] {
   let env_vars = get_env_vars_ffi()
-  let res = {}
+  let res = Map([])
   for i = 0; i < env_vars.length(); i = i + 2 {
     res[env_vars[i].to_string()] = env_vars[i + 1].to_string()
   }

@@ -44,14 +44,14 @@ pub struct Matches {
 ///|
 fn new_matches_parse_state() -> Matches {
   {
-    flags: {},
-    values: {},
-    flag_counts: {},
-    sources: {},
+    flags: Map([]),
+    values: Map([]),
+    flag_counts: Map([]),
+    sources: Map([]),
     subcommand: None,
-    counts: {},
-    flag_sources: {},
-    value_sources: {},
+    counts: Map([]),
+    flag_sources: Map([]),
+    value_sources: Map([]),
     parsed_subcommand: None,
   }
 }

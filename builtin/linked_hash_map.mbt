@@ -811,7 +811,7 @@ pub fn[K : Hash + Eq, V] Map::of(arr : FixedArray[(K, V)]) -> Map[K, V] {
 /// Create from `iter`.
 #alias(from_iterator, deprecated)
 pub fn[K : Hash + Eq, V] Map::from_iter(iter : Iter[(K, V)]) -> Map[K, V] {
-  let m = {}
+  let m = Map([])
   while iter.next() is Some((k, v)) {
     m.set(k, v)
   }

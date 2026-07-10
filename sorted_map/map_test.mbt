@@ -296,7 +296,7 @@ test "to_json with non-empty map" {
 ///|
 test "to_json with empty map" {
   let map : @sorted_map.SortedMap[Int, String] = SortedMap([])
-  @json.json_inspect(map.to_json(), content={})
+  @json.json_inspect(map.to_json(), content=Json::empty_object())
 }
 
 ///|

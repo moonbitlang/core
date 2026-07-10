@@ -66,7 +66,7 @@ impl Eq for AsciiCaseInsensitiveString with fn equal(self, other) {
 
 ///|
 test "AsciiCaseInsensitiveString basic insert and lookup" {
-  let m : Map[AsciiCaseInsensitiveString, Int] = {}
+  let m : Map[AsciiCaseInsensitiveString, Int] = Map([])
   let key = AsciiCaseInsensitiveString::new
   m[key("Content-Type")] = 1
   m[key("Content-Length")] = 2
@@ -91,7 +91,7 @@ test "AsciiCaseInsensitiveString basic insert and lookup" {
 
 ///|
 test "AsciiCaseInsensitiveString update overrides under any casing" {
-  let m : Map[AsciiCaseInsensitiveString, String] = {}
+  let m : Map[AsciiCaseInsensitiveString, String] = Map([])
   let key = AsciiCaseInsensitiveString::new
   m[key("Accept")] = "first"
   m[key("ACCEPT")] = "second"
@@ -106,7 +106,7 @@ test "AsciiCaseInsensitiveString update overrides under any casing" {
 
 ///|
 test "AsciiCaseInsensitiveString remove respects case-insensitivity" {
-  let m : Map[AsciiCaseInsensitiveString, Int] = {}
+  let m : Map[AsciiCaseInsensitiveString, Int] = Map([])
   let key = AsciiCaseInsensitiveString::new
   m[key("X-Custom-Header")] = 42
   inspect(m.contains(key("x-custom-header")), content="true")
@@ -117,7 +117,7 @@ test "AsciiCaseInsensitiveString remove respects case-insensitivity" {
 
 ///|
 test "AsciiCaseInsensitiveString respects ASCII-only fold semantics" {
-  let m : Map[AsciiCaseInsensitiveString, Int] = {}
+  let m : Map[AsciiCaseInsensitiveString, Int] = Map([])
   let key = AsciiCaseInsensitiveString::new
 
   // Non-ASCII letters are NOT folded, matching `equal_ignore_ascii_case`.
@@ -129,7 +129,7 @@ test "AsciiCaseInsensitiveString respects ASCII-only fold semantics" {
   debug_inspect(m.get(key("ä")), content="Some(2)")
 
   // Mixed ASCII + non-ASCII: ASCII parts fold, non-ASCII parts don't
-  let m2 : Map[AsciiCaseInsensitiveString, Int] = {}
+  let m2 : Map[AsciiCaseInsensitiveString, Int] = Map([])
   m2[key("CaféAU")] = 1
   debug_inspect(m2.get(key("caféau")), content="Some(1)")
   debug_inspect(m2.get(key("CAFÉAU")), content="None") // É != é
@@ -155,7 +155,7 @@ test "AsciiCaseInsensitiveString agrees with equal_ignore_ascii_case" {
   ]
   for pair in key_pairs {
     let (k1, k2) = pair
-    let m : Map[AsciiCaseInsensitiveString, Int] = {}
+    let m : Map[AsciiCaseInsensitiveString, Int] = Map([])
     m[key(k1)] = 1
     let map_says_same = m.contains(key(k2))
     let api_says_same = k1.equal_ignore_ascii_case(k2)
