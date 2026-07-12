@@ -522,12 +522,60 @@ test "View::to_array" {
 /// This searches raw UTF-16 code units and does not combine surrogate pairs.
 /// Use `contains_char` when searching for a Unicode character.
 pub fn StringView::contains_code_unit(self : StringView, code : UInt16) -> Bool {
-  for i in 0..<self.length() {
-    if self.unsafe_get(i) == code {
+  string_contains_code_unit(self.str(), self.start(), self.end(), code)
+}
+
+///|
+// The caller must ensure `0 <= start <= end <= str.length()`.
+#inline
+fn string_contains_code_unit_scalar(
+  str : String,
+  start : Int,
+  end : Int,
+  code : UInt16,
+) -> Bool {
+  for i in start..<end {
+    if str.unsafe_get(i) == code {
       return true
     }
   }
   false
+}
+
+///|
+#cfg(not(any(target="native", target="wasm")))
+fn string_contains_code_unit(
+  str : String,
+  start : Int,
+  end : Int,
+  code : UInt16,
+) -> Bool {
+  string_contains_code_unit_scalar(str, start, end, code)
+}
+
+///|
+// Scan eight UTF-16 code units at a time on linear-memory backends, then scan
+// the remaining tail one code unit at a time.
+#cfg(any(target="native", target="wasm"))
+fn string_contains_code_unit(
+  str : String,
+  start : Int,
+  end : Int,
+  code : UInt16,
+) -> Bool {
+  guard start + 8 <= end else {
+    return string_contains_code_unit_scalar(str, start, end, code)
+  }
+  let needle = i16x8_splat(code)
+  let tail_start = for pos = start; pos + 8 <= end; {
+    if v128_any_true(i16x8_eq(v128_load_i16x8(str, pos), needle)) {
+      return true
+    }
+    continue pos + 8
+  } nobreak {
+    pos
+  }
+  string_contains_code_unit_scalar(str, tail_start, end, code)
 }
 
 ///|
@@ -552,7 +600,7 @@ pub fn String::contains(self : String, str : StringView) -> Bool {
 /// This searches raw UTF-16 code units and does not combine surrogate pairs.
 /// Use `contains_char` when searching for a Unicode character.
 pub fn String::contains_code_unit(self : String, code : UInt16) -> Bool {
-  self[:].contains_code_unit(code)
+  string_contains_code_unit(self, 0, self.length(), code)
 }
 
 ///|
@@ -605,6 +653,25 @@ test "contains_code_unit" {
   inspect("😀".contains_code_unit(0xDE00), content="true")
   let leading_surrogate = String::from_array([(0xD800).unsafe_to_char()])
   inspect(leading_surrogate.contains_code_unit(0xD800), content="true")
+}
+
+///|
+test "contains_code_unit SIMD blocks and view bounds" {
+  let str = "01234567abcdefghZ"
+  inspect(str.contains_code_unit(('0' : UInt16)), content="true")
+  inspect(str.contains_code_unit(('7' : UInt16)), content="true")
+  inspect(str.contains_code_unit(('a' : UInt16)), content="true")
+  inspect(str.contains_code_unit(('h' : UInt16)), content="true")
+  inspect(str.contains_code_unit(('Z' : UInt16)), content="true")
+  inspect(str.contains_code_unit(('x' : UInt16)), content="false")
+  let view = ("x" + str + "y")[1:18]
+  inspect(view.contains_code_unit(('x' : UInt16)), content="false")
+  inspect(view.contains_code_unit(('a' : UInt16)), content="true")
+  inspect(view.contains_code_unit(('Z' : UInt16)), content="true")
+  inspect(view.contains_code_unit(('y' : UInt16)), content="false")
+  let wide = "01234567abcd😀efgh"
+  inspect(wide.contains_code_unit(0xD83D), content="true")
+  inspect(wide.contains_code_unit(0xDE00), content="true")
 }
 
 ///|
