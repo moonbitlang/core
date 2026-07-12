@@ -13,13 +13,15 @@
 // limitations under the License.
 
 // The 128-bit vector operations used by the SIMD byte and UTF-16 scanners in
-// `bytes_find.mbt` and `string_find_code_unit.mbt`. `builtin` cannot import
-// `moonbitlang/core/v128` (that would be a cycle), so the few ops the scanners
-// need are hosted here directly.
+// `bytes_find.mbt`, `string_find_code_unit.mbt`, and `string_methods.mbt`.
+// `builtin` cannot import `moonbitlang/core/v128` (that would be a cycle), so
+// the few ops the scanners need are hosted here directly.
 //
 // Scanner-only operations are gated to the linear-memory backends that use
 // them. `v128_make` and `v128_load` also support aligned bitstring extraction,
 // so they remain available on every backend with portable fallback bodies.
+// Scanner intrinsic declarations also carry scalar bodies for native builds
+// without hardware SIMD support.
 
 ///|
 fn v128_make(lo : UInt64, hi : UInt64) -> V128 = "%v128.make"
@@ -117,6 +119,13 @@ fn i8x16_bitmask(value : V128) -> Int {
 #intrinsic("%v128.i16x8_bitmask")
 fn i16x8_bitmask(value : V128) -> Int {
   u64_u16_high_bits(v128_lo(value)) | (u64_u16_high_bits(v128_hi(value)) << 4)
+}
+
+///|
+#cfg(any(target="native", target="wasm"))
+#intrinsic("%v128.v128_any_true")
+fn v128_any_true(value : V128) -> Bool {
+  v128_lo(value) != 0 || v128_hi(value) != 0
 }
 
 ///|
