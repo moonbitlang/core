@@ -16,12 +16,11 @@
 // `bytes_find.mbt`. `builtin` cannot import `moonbitlang/core/v128` (that would
 // be a cycle), so the few ops the scanners need are hosted here directly.
 //
-// These are gated to the linear-memory backends that have the intrinsics, the
-// same targets the scanners run on; the function bodies exist only so the
-// `#intrinsic` declarations type-check and are never executed there.
+// Scanner-only operations are gated to the linear-memory backends that use
+// them. `v128_make` and `v128_load` also support aligned bitstring extraction,
+// so they remain available on every backend with portable fallback bodies.
 
 ///|
-#cfg(any(target="native", target="wasm"))
 fn v128_make(lo : UInt64, hi : UInt64) -> V128 = "%v128.make"
 
 ///|
@@ -42,7 +41,6 @@ fn i8x16_splat(value : Byte) -> V128 {
 
 ///|
 #borrow(bytes)
-#cfg(any(target="native", target="wasm"))
 #intrinsic("%v128.v128_load")
 fn v128_load(bytes : FixedArray[Byte], offset : Int) -> V128 {
   v128_make(
