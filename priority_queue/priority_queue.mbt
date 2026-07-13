@@ -333,10 +333,18 @@ pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for Priority
 ] with fn arbitrary(size, rs) {
   let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
   guard len > 0 else { return new_priority_queue() }
-  for i = 1, acc = { content: X::arbitrary(0, rs), sibling: None, child: None } {
+  for i = 1, acc = {
+          content: @quickcheck.Arbitrary::arbitrary(0, rs),
+          sibling: None,
+          child: None,
+        } {
     if i < len {
       continue i + 1,
-        meld(acc, { content: X::arbitrary(i, rs), sibling: None, child: None })
+        meld(acc, {
+          content: @quickcheck.Arbitrary::arbitrary(i, rs),
+          sibling: None,
+          child: None,
+        })
     } else {
       break { len, top: Some(acc) }
     }

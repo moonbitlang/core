@@ -833,7 +833,7 @@ pub impl[A : @json.FromJson + Compare] @json.FromJson for SortedSet[A] with fn f
     raise JsonDecodeError((path, "@immut/sorted_set.from_json: expected array"))
   }
   for i, x in arr; set = (new() : SortedSet[A]) {
-    continue set.add(A::from_json(x, path.add_index(i)))
+    continue set.add(@json.FromJson::from_json(x, path.add_index(i)))
   } nobreak {
     set
   }

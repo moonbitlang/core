@@ -128,7 +128,7 @@ pub fn[K : Hash + Eq] Set::Set(arr : ArrayView[K], capacity? : Int) -> Set[K] {
 /// ```
 #alias(insert, deprecated)
 pub fn[K : Hash + Eq] Set::add(self : Set[K], key : K) -> Unit {
-  self.add_with_hash(key, key.hash())
+  self.add_with_hash(key, Hash::hash(key))
 }
 
 ///|
@@ -212,7 +212,7 @@ pub fn[K : Hash + Eq] Set::add_and_check(self : Set[K], key : K) -> Bool {
   if self.size >= self.grow_at {
     self.grow()
   }
-  let hash = key.hash()
+  let hash = Hash::hash(key)
   let (idx, psl, added) = for psl = 0, idx = hash & self.capacity_mask {
     match self.entries[idx] {
       None => break (idx, psl, true)
@@ -239,7 +239,7 @@ pub fn[K : Hash + Eq] Set::add_and_check(self : Set[K], key : K) -> Bool {
 /// Check if the hash set contains a key.
 pub fn[K : Hash + Eq] Set::contains(self : Set[K], key : K) -> Bool {
   // inline lookup to avoid unnecessary allocations
-  let hash = key.hash()
+  let hash = Hash::hash(key)
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { break false }
     if entry.hash == hash && entry.key == key {
@@ -274,7 +274,7 @@ pub fn[K : Hash + Eq] Set::contains(self : Set[K], key : K) -> Bool {
 /// }
 /// ```
 pub fn[K : Hash + Eq] Set::remove(self : Set[K], key : K) -> Unit {
-  let hash = key.hash()
+  let hash = Hash::hash(key)
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { break }
     if entry.hash == hash && entry.key == key {
@@ -312,7 +312,7 @@ pub fn[K : Hash + Eq] Set::remove(self : Set[K], key : K) -> Unit {
 /// }
 /// ```
 pub fn[K : Hash + Eq] Set::remove_and_check(self : Set[K], key : K) -> Bool {
-  let hash = key.hash()
+  let hash = Hash::hash(key)
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { break false }
     if entry.hash == hash && entry.key == key {

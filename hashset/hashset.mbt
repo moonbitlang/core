@@ -81,7 +81,7 @@ pub fn[K : Hash + Eq] HashSet::HashSet(
 /// ```
 #alias(insert, deprecated)
 pub fn[K : Hash + Eq] HashSet::add(self : HashSet[K], key : K) -> Unit {
-  self.add_with_hash(key, key.hash())
+  self.add_with_hash(key, Hash::hash(key))
 }
 
 ///|
@@ -154,7 +154,7 @@ fn[K] HashSet::set_entry(
 /// Returns `true` if the set contains the given key.
 pub fn[K : Hash + Eq] HashSet::contains(self : HashSet[K], key : K) -> Bool {
   // inline lookup to avoid unnecessary allocations
-  let hash = key.hash()
+  let hash = Hash::hash(key)
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { break false }
     if entry.hash == hash && entry.key == key {
@@ -189,7 +189,7 @@ pub fn[K : Hash + Eq] HashSet::contains(self : HashSet[K], key : K) -> Bool {
 /// }
 /// ```
 pub fn[K : Hash + Eq] HashSet::remove(self : HashSet[K], key : K) -> Unit {
-  let hash = key.hash()
+  let hash = Hash::hash(key)
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { break }
     if entry.hash == hash && entry.key == key {
