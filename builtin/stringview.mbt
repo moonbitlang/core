@@ -669,8 +669,7 @@ pub fn String::get_view(
 ) -> StringView? {
   let len = self.length()
   let end = match end {
-    None => len
-    Some(end) => end
+    Some(end) | (None with end = len) => end
   }
   guard start >= 0 && start <= end && end <= len else { None }
   if start < len && self.unsafe_get(start).is_trailing_surrogate() {
@@ -755,8 +754,7 @@ pub fn StringView::get_view(
 pub fn String::sub(self : String, start? : Int = 0, end? : Int) -> StringView {
   let len = self.length()
   let end = match end {
-    None => len
-    Some(end) => end
+    Some(end) | (None with end = len) => end
   }
   guard start >= 0 && start <= end && end <= len
   if start < len {

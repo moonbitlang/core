@@ -786,9 +786,7 @@ pub fn[X] Iter::concat(self : Iter[X], other : Iter[X]) -> Iter[X] {
 pub fn[X, Y] Iter::zip(self : Iter[X], other : Iter[Y]) -> Iter[(X, Y)] {
   let size_hint = match (self.size_hint, other.size_hint) {
     (Some(n), Some(m)) if n < m => Some(n)
-    (Some(_), Some(m)) => Some(m)
-    (Some(0), _) => Some(0)
-    (_, Some(0)) => Some(0)
+    (Some(_), Some(m)) | ((Some(0), _) | (_, Some(0)) with m = 0) => Some(m)
     _ => None
   }
   {

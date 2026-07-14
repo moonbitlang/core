@@ -315,9 +315,9 @@ fn format_entries(display : Array[(String, String)]) -> Array[String] {
 fn arg_display(arg : Arg) -> String {
   let parts = Array::new(capacity=2)
   let (short, long) = match arg.info {
-    OptionInfo(short~, long~, ..) => (short, long)
-    FlagInfo(short~, long~, ..) => (short, long)
-    PositionalInfo(_) => (None, None)
+    OptionInfo(short~, long~, ..)
+    | FlagInfo(short~, long~, ..)
+    | (PositionalInfo(_) with short = None, long = None) => (short, long)
   }
   if short is Some(short) {
     parts.push("-\{short}")

@@ -1395,8 +1395,7 @@ pub fn[A] List::drop(self : List[A], n : Int) -> List[A] {
   } else {
     for a = n, b = self {
       match (a, b) {
-        (_, Empty) => break Empty
-        (1, More(_, tail=xs)) => break xs
+        (1, More(_, tail=xs)) | ((_, Empty) with xs = Empty) => break xs
         (n, More(_, tail=xs)) => continue n - 1, xs
       }
     }
@@ -1664,9 +1663,9 @@ pub fn[A] List::findi(self : List[A], f : (A, Int) -> Bool raise?) -> A? raise? 
 /// ```
 pub fn[A] List::remove_at(self : List[A], index : Int) -> List[A] {
   match (index, self) {
-    (_, Empty) => Empty
-    (_..<0, _) => self
-    (0, More(_, tail~)) => tail
+    (0, More(_, tail~))
+    | ((_, Empty) with tail = Empty)
+    | ((_..<0, _) with tail = self) => tail
     (n, More(head, tail~)) => {
       let dest = More(head, tail=Empty)
       for d = dest, t = tail, i = n - 1 {

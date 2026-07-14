@@ -120,8 +120,7 @@ pub fn String::unsafe_substring(
 pub fn String::substring(self : String, start? : Int = 0, end? : Int) -> String {
   let len = self.length()
   let end = match end {
-    Some(end) => end
-    None => len
+    Some(end) | (None with end = len) => end
   }
   guard start >= 0 && start <= end && end <= len
   self.unsafe_substring(start~, end~)
