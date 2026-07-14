@@ -15,9 +15,9 @@
 ///|
 /// Parse a string and return the represented boolean value or an error.
 pub fn parse_bool(str : StringView) -> Bool raise {
-  lexmatch str with longest {
-    "(true|TRUE|True|t|T|1)" => true
-    "(false|FALSE|False|f|F|0)" => false
+  lexscan str with longest {
+    re"^(true|TRUE|True|t|T|1)$" => true
+    re"^(false|FALSE|False|f|F|0)$" => false
     _ => syntax_err()
   }
 }

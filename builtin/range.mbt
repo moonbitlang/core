@@ -22,7 +22,7 @@ fn[T : Add + Compare + Default] until_impl(
   step : T,
   inclusive : Bool,
 ) -> Iter[T] {
-  let zero = T::default()
+  let zero = Default::default()
   if step == zero {
     return Iter::empty()
   }

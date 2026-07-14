@@ -251,16 +251,16 @@ pub fn[T : Step] iter(
   Iter::new(() => {
     guard !done else { None }
     let in_range = match dir {
-      Forward => i.compare(to) < 0
-      Backward => i.compare(to) > 0
+      Forward => Compare::compare(i, to) < 0
+      Backward => Compare::compare(i, to) > 0
       Still => false
     }
     guard in_range || (inclusive && i == to) else { None }
     let value = i
     let next = i + step
     let progress = match dir {
-      Forward => next.compare(i) > 0
-      Backward => next.compare(i) < 0
+      Forward => Compare::compare(next, i) > 0
+      Backward => Compare::compare(next, i) < 0
       Still => false
     }
     if progress {

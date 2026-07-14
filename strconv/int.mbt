@@ -163,10 +163,10 @@ fn check_underscore(str : StringView) -> Bool {
   }
 
   // base prefix
-  let (rest, allow_underscore, hex) = lexmatch rest with longest {
-    ("0[xX]", rest) => (rest, true, true)
-    ("0[oO]", rest) => (rest, true, false)
-    ("0[bB]", rest) => (rest, true, false)
+  let (rest, allow_underscore, hex) = lexscan rest with longest {
+    (re"^0[xX]", after=rest) => (rest, true, true)
+    (re"^0[oO]", after=rest) => (rest, true, false)
+    (re"^0[bB]", after=rest) => (rest, true, false)
     _ => (rest, false, false)
   }
 
