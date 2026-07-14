@@ -1,0 +1,42 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/lexbuf"
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct AsyncLexbuf {
+  // private fields
+}
+pub fn AsyncLexbuf::AsyncLexbuf(async () -> String?) -> Self
+pub fn AsyncLexbuf::advance(Self, Int) -> Unit
+pub fn AsyncLexbuf::buffer_end(Self) -> Int
+pub fn AsyncLexbuf::commit_to(Self, Int) -> Unit
+pub fn AsyncLexbuf::eof_reached(Self) -> Bool
+pub fn AsyncLexbuf::get_cursor(Self) -> Int
+pub fn AsyncLexbuf::get_stringview(Self, Int, Int) -> StringView
+pub async fn AsyncLexbuf::refill(Self) -> Unit
+pub fn AsyncLexbuf::retain_from_cursor(Self) -> Unit
+pub fn AsyncLexbuf::unsafe_code_unit_at(Self, Int) -> Int
+
+pub struct Lexbuf {
+  // private fields
+}
+pub fn Lexbuf::Lexbuf(() -> String?) -> Self
+pub fn Lexbuf::advance(Self, Int) -> Unit
+pub fn Lexbuf::buffer_end(Self) -> Int
+pub fn Lexbuf::commit_to(Self, Int) -> Unit
+pub fn Lexbuf::eof_reached(Self) -> Bool
+pub fn Lexbuf::from_chunks(Iter[String]) -> Self
+pub fn Lexbuf::from_string(String) -> Self
+pub fn Lexbuf::get_cursor(Self) -> Int
+pub fn Lexbuf::get_stringview(Self, Int, Int) -> StringView
+pub fn Lexbuf::refill(Self) -> Unit
+pub fn Lexbuf::retain_from_cursor(Self) -> Unit
+pub fn Lexbuf::unsafe_code_unit_at(Self, Int) -> Int
+
+// Type aliases
+
+// Traits
+
