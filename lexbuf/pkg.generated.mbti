@@ -1,0 +1,23 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/lexbuf"
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct AsyncLexbuf {
+  // private fields
+}
+pub fn AsyncLexbuf::from_fn(async () -> String?) -> Self
+
+pub struct Lexbuf {
+  // private fields
+}
+pub fn Lexbuf::from_fn(() -> String?) -> Self
+pub fn Lexbuf::from_string(String) -> Self
+
+// Type aliases
+
+// Traits
+
