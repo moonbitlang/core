@@ -33,8 +33,9 @@ pub fn[T : Eq + @debug.Debug] assert_not_eq(
 ) -> Unit raise {
   if !(a != b) {
     let fail_msg = match msg {
-      Some(msg) => msg
-      None => "`\{@debug.to_string(a)} == \{@debug.to_string(b)}`"
+      Some(msg)
+      | (None with msg = "`\{@debug.to_string(a)} == \{@debug.to_string(b)}`") =>
+        msg
     }
     fail(fail_msg, loc~)
   }

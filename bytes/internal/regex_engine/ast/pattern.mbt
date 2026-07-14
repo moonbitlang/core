@@ -104,8 +104,7 @@ pub fn seq(exprs : ReadOnlyArray[Pattern]) -> Pattern {
     }
   }
   match flatten {
-    [] => epsilon
-    [expr] => expr
+    [expr] | ([] with expr = epsilon) => expr
     exprs =>
       {
         desc: Sequence(ReadOnlyArray::from_array(exprs)),
@@ -122,8 +121,7 @@ pub let empty : Pattern = { desc: Alternation([]), nullable: false }
 /// Build an alternation of patterns.
 pub fn alt(exprs : ReadOnlyArray[Pattern]) -> Pattern {
   match exprs {
-    [] => empty
-    [expr] => expr
+    [expr] | ([] with expr = empty) => expr
     exprs => { desc: Alternation(exprs), nullable: exprs.any(e => e.nullable) }
   }
 }

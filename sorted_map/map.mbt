@@ -200,8 +200,7 @@ pub fn[K : Compare, V] SortedMap::get_or_default(
   default : V,
 ) -> V {
   match self.get(key) {
-    Some(v) => v
-    None => default
+    Some(v) | (None with v = default) => v
   }
 }
 

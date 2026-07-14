@@ -909,8 +909,7 @@ fn[A : Compare] SortedSet::split_bis(
 #inline
 pub fn[A] SortedSet::length(self : SortedSet[A]) -> Int {
   match self {
-    Empty => 0
-    Node(size~, ..) => size
+    Node(size~, ..) | (Empty with size = 0) => size
   }
 }
 

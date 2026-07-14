@@ -47,8 +47,7 @@ pub fn[X] Option::unwrap(self : X?) -> X {
 #alias(or, deprecated)
 pub fn[T] Option::unwrap_or(self : T?, default : T) -> T {
   match self {
-    None => default
-    Some(t) => t
+    Some(t) | (None with t = default) => t
   }
 }
 
@@ -72,8 +71,7 @@ pub fn[T] Option::unwrap_or_else(
 #alias(or_default, deprecated)
 pub fn[T : Default] Option::unwrap_or_default(self : T?) -> T {
   match self {
-    None => T::default()
-    Some(t) => t
+    Some(t) | (None with t = T::default()) => t
   }
 }
 

@@ -37,8 +37,7 @@
 pub fn assert_true(x : Bool, msg? : StringView, loc~ : SourceLoc) -> Unit raise {
   if !x {
     let fail_msg : StringView = match msg {
-      Some(msg) => msg
-      None => "`\{x}` is not true"
+      Some(msg) | (None with msg = "`\{x}` is not true") => msg
     }
     fail(fail_msg, loc~)
   }
@@ -74,8 +73,7 @@ pub fn assert_false(
 ) -> Unit raise {
   if x {
     let fail_msg : StringView = match msg {
-      Some(msg) => msg
-      None => "`\{x}` is not false"
+      Some(msg) | (None with msg = "`\{x}` is not false") => msg
     }
     fail(fail_msg, loc~)
   }

@@ -258,8 +258,7 @@ pub fn[T] Array::view(
 ) -> ArrayView[T] {
   let len = self.length()
   let end = match end {
-    None => len
-    Some(end) => end
+    Some(end) | (None with end = len) => end
   }
   guard start >= 0 && start <= end && end <= len else {
     abort("View index out of bounds")
@@ -306,8 +305,7 @@ pub fn[T] Array::get_view(
 ) -> ArrayView[T]? {
   let len = self.length()
   let end = match end {
-    None => len
-    Some(end) => end
+    Some(end) | (None with end = len) => end
   }
   guard start >= 0 && start <= end && end <= len else { None }
   Some(ArrayView::make(self.buffer(), start, end - start))
@@ -353,8 +351,7 @@ pub fn[T] ArrayView::view(
 ) -> ArrayView[T] {
   let len = self.length()
   let end = match end {
-    None => len
-    Some(end) => end
+    Some(end) | (None with end = len) => end
   }
   guard start >= 0 && start <= end && end <= len else {
     abort("View index out of bounds")
@@ -403,8 +400,7 @@ pub fn[T] ArrayView::get_view(
 ) -> ArrayView[T]? {
   let len = self.length()
   let end = match end {
-    None => len
-    Some(end) => end
+    Some(end) | (None with end = len) => end
   }
   guard start >= 0 && start <= end && end <= len else { None }
   Some(ArrayView::make(self.buf(), self.start() + start, end - start))
@@ -452,8 +448,7 @@ pub fn[T] FixedArray::view(
 ) -> ArrayView[T] {
   let len = self.length()
   let end = match end {
-    None => len
-    Some(end) => end
+    Some(end) | (None with end = len) => end
   }
   guard start >= 0 && start <= end && end <= len else {
     abort("View index out of bounds")
@@ -504,8 +499,7 @@ pub fn[T] FixedArray::get_view(
 ) -> ArrayView[T]? {
   let len = self.length()
   let end = match end {
-    None => len
-    Some(end) => end
+    Some(end) | (None with end = len) => end
   }
   guard start >= 0 && start <= end && end <= len else { None }
   Some(
