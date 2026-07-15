@@ -80,27 +80,26 @@ test "working directory" {
 ```mbt check
 ///|
 test "command line tool pattern" {
-  fn parse_command(args : Array[String]) -> Result[String, String] {
+  fn parse_command(args : Array[String]) -> String raise Failure {
     if args.length() < 2 {
-      Err("Usage: program <command> [args...]")
-    } else {
-      match args[1] {
-        "help" => Ok("Showing help information")
-        "version" => Ok("Version 1.0.0")
-        "status" => Ok("System is running")
-        cmd => Err("Unknown command: " + cmd)
-      }
+      raise Failure("Usage: program <command> [args...]")
+    }
+    match args[1] {
+      "help" => "Showing help information"
+      "version" => "Version 1.0.0"
+      "status" => "System is running"
+      cmd => raise Failure("Unknown command: \{cmd}")
     }
   }
 
   // Test with mock arguments
   let test_args = ["program", "help"]
   let result = parse_command(test_args)
-  debug_inspect(result, content="Ok(\"Showing help information\")")
-  let invalid_result = parse_command(["program", "invalid"])
-  match invalid_result {
-    Ok(_) => inspect(false, content="true")
-    Err(msg) => inspect(msg.length() > 10, content="true") // Should have error message
+  inspect(result, content="Showing help information")
+  try parse_command(["program", "invalid"]) |> ignore catch {
+    Failure(msg) => inspect(msg, content="Unknown command: invalid")
+  } noraise {
+    _ => fail("expected parse_command to raise on unknown command")
   }
 }
 ```
@@ -195,18 +194,16 @@ test "error handling" {
   fn validate_args(
     args : Array[String],
     min_count : Int,
-  ) -> Result[Unit, String] {
+  ) -> Unit raise Failure {
     if args.length() < min_count {
-      Err("Insufficient arguments: expected at least " + min_count.to_string())
-    } else {
-      Ok(())
+      raise Failure("Insufficient arguments: expected at least \{min_count}")
     }
   }
 
-  let validation = validate_args(["prog"], 2)
-  match validation {
-    Ok(_) => inspect(false, content="true")
-    Err(msg) => inspect(msg.length() > 10, content="true") // Should have error message
+  try validate_args(["prog"], 2) catch {
+    Failure(msg) => inspect(msg.length() > 10, content="true") // Should have error message
+  } noraise {
+    _ => fail("expected validation to fail")
   }
 }
 ```
@@ -237,29 +234,24 @@ test "graceful handling" {
 test "argument validation" {
   fn validate_and_parse_args(
     args : Array[String],
-  ) -> Result[(String, Array[String]), String] {
+  ) -> (String, Array[String]) raise Failure {
     if args.length() == 0 {
-      Err("No program name available")
+      raise Failure("No program name available")
     } else if args.length() == 1 {
-      Ok((args[0], [])) // Program name only, no arguments
+      (args[0], []) // Program name only, no arguments
     } else {
       let program = args[0]
       let arguments = Array::new()
       for i in 1..<args.length() {
         arguments.push(args[i])
       }
-      Ok((program, arguments))
+      (program, arguments)
     }
   }
 
-  let test_result = validate_and_parse_args(["myprogram", "arg1", "arg2"])
-  match test_result {
-    Ok((prog, args)) => {
-      inspect(prog, content="myprogram")
-      inspect(args.length(), content="2")
-    }
-    Err(_) => inspect(false, content="true")
-  }
+  let (prog, args) = validate_and_parse_args(["myprogram", "arg1", "arg2"])
+  inspect(prog, content="myprogram")
+  inspect(args.length(), content="2")
 }
 ```
 
