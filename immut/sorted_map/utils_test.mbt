@@ -213,7 +213,12 @@ test "iter2" {
 test "rev_keys returns keys in descending order" {
   let map = @sorted_map.SortedMap([("a", 1), ("b", 2), ("c", 3)])
   let keys = map.rev_keys().collect()
-  debug_inspect(keys, content="[\"c\", \"b\", \"a\"]")
+  debug_inspect(
+    keys,
+    content=(
+      #|["c", "b", "a"]
+    ),
+  )
 }
 
 ///|
@@ -329,7 +334,9 @@ test "rev_values with complex tree" {
   let values = map.rev_values().collect()
   debug_inspect(
     values,
-    content="[\"25\", \"20\", \"18\", \"15\", \"12\", \"10\", \"5\"]",
+    content=(
+      #|["25", "20", "18", "15", "12", "10", "5"]
+    ),
   )
 }
 

@@ -207,13 +207,21 @@ test "parses string" {
 
 ///|
 test "parses quotes in string" {
-  let json = test_parse("[\"\\\"\",\"'\"]")
+  let json = test_parse(
+    (
+      #|["\"","'"]
+    ),
+  )
   @debug.assert_eq(json, Json::array([Json::string("\""), Json::string("'")]))
 }
 
 ///|
 test "parses escaped characters" {
-  let json = test_parse("\"\\b\\f\\n\\r\\t\\u01fF\\\"\"")
+  let json = test_parse(
+    (
+      #|"\b\f\n\r\t\u01fF\""
+    ),
+  )
   @debug.assert_eq(json, Json::string("\u0008\u000C\n\r\t\u01FF\""))
 }
 //endregion

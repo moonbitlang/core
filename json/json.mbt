@@ -502,7 +502,9 @@ pub fn json_inspect(
   }
   if actual != want {
     raise InspectError(
-      "@EXPECT_FAILED {\"loc\": \{loc}, \"args_loc\": \{args_loc}, \"expect\": \{want.escape()}, \"actual\": \{actual.escape()}, \"mode\": \"json\"}",
+      (
+        $|@EXPECT_FAILED {"loc": \{loc}, "args_loc": \{args_loc}, "expect": \{want.escape()}, "actual": \{actual.escape()}, "mode": "json"}
+      ),
     )
   }
 }

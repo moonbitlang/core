@@ -123,7 +123,11 @@ fn format_error_with_help(
   inherited_globals : Array[Arg],
   command_path : String,
 ) -> String {
-  "\{msg}\n\n\{render_help_for_context(cmd, inherited_globals, command_path)}"
+  (
+    $|\{msg}
+    $|
+    $|\{render_help_for_context(cmd, inherited_globals, command_path)}
+  )
 }
 
 ///|

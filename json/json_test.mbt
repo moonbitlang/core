@@ -139,8 +139,22 @@ test "stringify" {
 ///|
 test "stringify with custom indents" {
   let json : Json = { "a": 1 }
-  inspect(json.stringify(indent=5), content="{\n     \"a\": 1\n}")
-  inspect(json.stringify(indent=7), content="{\n       \"a\": 1\n}")
+  inspect(
+    json.stringify(indent=5),
+    content=(
+      #|{
+      #|     "a": 1
+      #|}
+    ),
+  )
+  inspect(
+    json.stringify(indent=7),
+    content=(
+      #|{
+      #|       "a": 1
+      #|}
+    ),
+  )
 }
 
 ///|

@@ -120,7 +120,9 @@ test "to_be_bytes with negative number" {
 test "to_le_bytes with infinity" {
   inspect(
     (1.0 / 0.0).to_le_bytes_local(),
-    content="b\"\\x00\\x00\\x00\\x00\\x00\\x00\\xf0\\x7f\"",
+    content=(
+      #|b"\x00\x00\x00\x00\x00\x00\xf0\x7f"
+    ),
   )
 }
 

@@ -222,7 +222,12 @@ test "log" {
 ///|
 test "backslash escape" {
   let s = "\n\r\t\b\"'\\"
-  inspect(s.escape(), content="\"\\n\\r\\t\\b\\\"'\\\\\"")
+  inspect(
+    s.escape(),
+    content=(
+      #|"\n\r\t\b\"'\\"
+    ),
+  )
 }
 
 ///|
