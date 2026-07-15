@@ -241,7 +241,9 @@ pub fn debug_inspect(
   }
   if actual != want {
     raise InspectError(
-      "@EXPECT_FAILED {\"loc\": \{loc}, \"args_loc\": \{args_loc}, \"expect\": \{want.escape()}, \"actual\": \{actual.escape()} }",
+      (
+        $|@EXPECT_FAILED {"loc": \{loc}, "args_loc": \{args_loc}, "expect": \{want.escape()}, "actual": \{actual.escape()} }
+      ),
     )
   }
 }
@@ -265,7 +267,11 @@ pub fn[T : Eq + Debug] assert_eq(
         let repr_a = to_repr(a)
         let repr_b = to_repr(b)
         let diff = pretty_print_delta(diff_repr(repr_a, repr_b), use_ansi=false)
-        "`\{render(repr_a)} != \{render(repr_b)}`\ndiff:\n\{diff}"
+        (
+          $|`\{render(repr_a)} != \{render(repr_b)}`
+          $|diff:
+          $|\{diff}
+        )
       }
     }
     fail(fail_msg, loc~)

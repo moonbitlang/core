@@ -63,14 +63,29 @@ test {
   // 32-bit signed/unsigned
   let buf = Buffer()
   buf.write_int_be(0x01020304)
-  inspect(buf.to_bytes(), content="b\"\\x01\\x02\\x03\\x04\"")
+  inspect(
+    buf.to_bytes(),
+    content=(
+      #|b"\x01\x02\x03\x04"
+    ),
+  )
   let buf2 = Buffer()
   buf2.write_int_le(0x01020304)
-  inspect(buf2.to_bytes(), content="b\"\\x04\\x03\\x02\\x01\"")
+  inspect(
+    buf2.to_bytes(),
+    content=(
+      #|b"\x04\x03\x02\x01"
+    ),
+  )
   // unsigned 32-bit
   let buf3 = Buffer()
   buf3.write_uint_be(0xAABBU)
-  inspect(buf3.to_bytes(), content="b\"\\x00\\x00\\xaa\\xbb\"")
+  inspect(
+    buf3.to_bytes(),
+    content=(
+      #|b"\x00\x00\xaa\xbb"
+    ),
+  )
 }
 ```
 
@@ -83,24 +98,38 @@ test {
   let buf = Buffer()
   buf.write_int16_be((0x0102 : Int16))
   buf.write_int16_le((0x0102 : Int16))
-  inspect(buf.to_bytes(), content="b\"\\x01\\x02\\x02\\x01\"")
+  inspect(
+    buf.to_bytes(),
+    content=(
+      #|b"\x01\x02\x02\x01"
+    ),
+  )
   // 16-bit unsigned
   let buf2 = Buffer()
   buf2.write_uint16_be(Int::to_uint16(0x00AB))
-  inspect(buf2.to_bytes(), content="b\"\\x00\\xab\"")
+  inspect(
+    buf2.to_bytes(),
+    content=(
+      #|b"\x00\xab"
+    ),
+  )
   // 64-bit signed
   let buf3 = Buffer()
   buf3.write_int64_be(0x0102030405060708L)
   inspect(
     buf3.to_bytes(),
-    content="b\"\\x01\\x02\\x03\\x04\\x05\\x06\\x07\\x08\"",
+    content=(
+      #|b"\x01\x02\x03\x04\x05\x06\x07\x08"
+    ),
   )
   // 64-bit unsigned
   let buf4 = Buffer()
   buf4.write_uint64_le(0xAABBUL)
   inspect(
     buf4.to_bytes(),
-    content="b\"\\xbb\\xaa\\x00\\x00\\x00\\x00\\x00\\x00\"",
+    content=(
+      #|b"\xbb\xaa\x00\x00\x00\x00\x00\x00"
+    ),
   )
 }
 ```

@@ -1174,7 +1174,12 @@ test "array_fill - empty array" {
 test "array_fill - with different types" {
   let str_arr = ["a", "b", "c", "d"]
   str_arr.fill("x", start=1, end=3)
-  debug_inspect(str_arr, content="[\"a\", \"x\", \"x\", \"d\"]")
+  debug_inspect(
+    str_arr,
+    content=(
+      #|["a", "x", "x", "d"]
+    ),
+  )
   let bool_arr = [true, false, true, false]
   bool_arr.fill(true, start=0, end=2)
   debug_inspect(bool_arr, content="[true, true, true, false]")

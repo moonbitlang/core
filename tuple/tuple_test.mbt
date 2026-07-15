@@ -135,8 +135,18 @@ test "show" {
   let tuple4 = (1, 2, 3, "hello")
   let tuple5 = ([1], "2", 3, ([4] : Array[_]), 5)
   debug_inspect(tuple2, content="(1, 2)")
-  debug_inspect(tuple3, content="(\"a\", \"b\", \"c\")")
-  debug_inspect(tuple4, content="(1, 2, 3, \"hello\")")
+  debug_inspect(
+    tuple3,
+    content=(
+      #|("a", "b", "c")
+    ),
+  )
+  debug_inspect(
+    tuple4,
+    content=(
+      #|(1, 2, 3, "hello")
+    ),
+  )
   debug_inspect(
     tuple5,
     content=(

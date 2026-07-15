@@ -196,7 +196,9 @@ pub fn inspect(
     let expect_base64 = "\"\{base64_encode_string_codepoint(content)}\""
     let actual_base64 = "\"\{base64_encode_string_codepoint(actual)}\""
     raise InspectError(
-      "@EXPECT_FAILED {\"loc\": \{loc}, \"args_loc\": \{args_loc}, \"expect\": \{expect_escaped}, \"actual\": \{actual_escaped}, \"expect_base64\": \{expect_base64}, \"actual_base64\": \{actual_base64}}",
+      (
+        $|@EXPECT_FAILED {"loc": \{loc}, "args_loc": \{args_loc}, "expect": \{expect_escaped}, "actual": \{actual_escaped}, "expect_base64": \{expect_base64}, "actual_base64": \{actual_base64}}
+      ),
     )
   }
 }

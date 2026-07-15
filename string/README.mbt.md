@@ -292,9 +292,19 @@ test "find and split" {
     .find("a1b22c333")
     .map(fn(m) { m.content().to_owned() })
     .collect()
-  debug_inspect(matches, content="[\"1\", \"22\", \"333\"]")
+  debug_inspect(
+    matches,
+    content=(
+      #|["1", "22", "333"]
+    ),
+  )
   let parts = digits.split("a1b22c333").map(fn(v) { v.to_owned() }).collect()
-  debug_inspect(parts, content="[\"a\", \"b\", \"c\", \"\"]")
+  debug_inspect(
+    parts,
+    content=(
+      #|["a", "b", "c", ""]
+    ),
+  )
 }
 ```
 

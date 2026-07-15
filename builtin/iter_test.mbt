@@ -151,7 +151,15 @@ test "map_while1" {
   iter
   .map_while(x => if x != 4 { Some(x) } else { None })
   .each(x => exb.write_string("\{x}\n"))
-  inspect(exb, content="1\n2\n3\n")
+  inspect(
+    exb,
+    content=(
+      #|1
+      #|2
+      #|3
+      #|
+    ),
+  )
 }
 
 ///|
@@ -162,7 +170,16 @@ test "map_while2" {
   .map_while(x => if x != 4 { Some(x) } else { None })
   .concat(Iter::singleton(6))
   .each(x => exb.write_string("\{x}\n"))
-  inspect(exb, content="1\n2\n3\n6\n")
+  inspect(
+    exb,
+    content=(
+      #|1
+      #|2
+      #|3
+      #|6
+      #|
+    ),
+  )
 }
 
 ///|
@@ -475,7 +492,9 @@ test "zip" {
   let letters = ["a", "b", "c"].iter()
   debug_inspect(
     numbers.zip(letters).collect(),
-    content="[(1, \"a\"), (2, \"b\"), (3, \"c\")]",
+    content=(
+      #|[(1, "a"), (2, "b"), (3, "c")]
+    ),
   )
 }
 
@@ -485,7 +504,9 @@ test "zip alias combine" {
   let letters = ["x", "y", "z", "w"].iter()
   debug_inspect(
     numbers.combine(letters).collect(),
-    content="[(1, \"x\"), (2, \"y\"), (3, \"z\")]",
+    content=(
+      #|[(1, "x"), (2, "y"), (3, "z")]
+    ),
   )
 }
 

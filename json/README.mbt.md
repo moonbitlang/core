@@ -44,7 +44,9 @@ test "parse and validate jsons" {
 ///|
 test "json object navigation" {
   let json = @json.parse(
-    "{\"string\":\"hello\",\"number\":42,\"array\":[1,2,3]}",
+    (
+      #|{"string":"hello","number":42,"array":[1,2,3]}
+    ),
   )
 
   // Access string
@@ -166,20 +168,20 @@ test "stringify options" {
   // compact (default)
   inspect(
     json.stringify(),
-    content="{\"name\":\"Alice\",\"age\":30,\"secret\":\"hidden\"}",
+    content=(
+      #|{"name":"Alice","age":30,"secret":"hidden"}
+    ),
   )
   // pretty-printed
   inspect(
     json.stringify(indent=2),
-    content={
-      let output =
-        #|{
-        #|  "name": "Alice",
-        #|  "age": 30,
-        #|  "secret": "hidden"
-        #|}
-      output
-    },
+    content=(
+      #|{
+      #|  "name": "Alice",
+      #|  "age": 30,
+      #|  "secret": "hidden"
+      #|}
+    ),
   )
 }
 ```
@@ -194,10 +196,20 @@ test "replacer keep and exclude" {
   let json : Json = { "name": "Alice", "age": 30, "secret": "hidden" }
   // keep only specified keys
   let kept = json.stringify(replacer=@json.Replacer::keep(["name", "age"]))
-  inspect(kept, content="{\"name\":\"Alice\",\"age\":30}")
+  inspect(
+    kept,
+    content=(
+      #|{"name":"Alice","age":30}
+    ),
+  )
   // exclude specified keys
   let excluded = json.stringify(replacer=@json.Replacer::exclude(["secret"]))
-  inspect(excluded, content="{\"name\":\"Alice\",\"age\":30}")
+  inspect(
+    excluded,
+    content=(
+      #|{"name":"Alice","age":30}
+    ),
+  )
 }
 ```
 

@@ -19,10 +19,30 @@ test "basic1" {
   let bv2 = bs[:]
   let bv3 = bs[1:]
   let bv4 = bs[:4]
-  inspect(bv1, content="b\"\\x01\\x02\\x03\"")
-  inspect(bv2, content="b\"\\x00\\x01\\x02\\x03\\x04\\x05\"")
-  inspect(bv3, content="b\"\\x01\\x02\\x03\\x04\\x05\"")
-  inspect(bv4, content="b\"\\x00\\x01\\x02\\x03\"")
+  inspect(
+    bv1,
+    content=(
+      #|b"\x01\x02\x03"
+    ),
+  )
+  inspect(
+    bv2,
+    content=(
+      #|b"\x00\x01\x02\x03\x04\x05"
+    ),
+  )
+  inspect(
+    bv3,
+    content=(
+      #|b"\x01\x02\x03\x04\x05"
+    ),
+  )
+  inspect(
+    bv4,
+    content=(
+      #|b"\x00\x01\x02\x03"
+    ),
+  )
   @json.json_inspect(bv1, content="\\x01\\x02\\x03")
   @json.json_inspect(b"abc"[:], content="abc")
 }

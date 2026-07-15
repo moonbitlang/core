@@ -152,7 +152,11 @@ test "map::contains_kv" {
   inspect(map.contains_kv("a", 1), content="true")
   inspect(map.contains_kv("a", 2), content="false")
   guard map is { "a": 1, "b": 2, "c": 3, .. } else {
-    fail("map is not { \"a\": 1, \"b\": 2, \"c\": 3 }")
+    fail(
+      (
+        #|map is not { "a": 1, "b": 2, "c": 3 }
+      ),
+    )
   }
 }
 
@@ -444,7 +448,12 @@ test "Map::retain - iteration order after retain" {
   // Check that insertion order is maintained for remaining elements
   let keys = []
   map.each((k, _v) => keys.push(k))
-  debug_inspect(keys, content="[\"first\", \"second\", \"fourth\", \"fifth\"]")
+  debug_inspect(
+    keys,
+    content=(
+      #|["first", "second", "fourth", "fifth"]
+    ),
+  )
   let values = []
   map.each((_k, v) => values.push(v))
   debug_inspect(values, content="[1, 2, 4, 5]")

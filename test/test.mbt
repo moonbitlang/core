@@ -227,7 +227,9 @@ pub fn Test::snapshot(
   let expect = filename.escape()
   // always raise SnapshotError, moon will handle this
   raise SnapshotError(
-    "@SNAPSHOT_TESTING {\"loc\": \{loc}, \"args_loc\": \{args_loc}, \"expect\": \{expect}, \"actual\": \{actual}, \"snapshot\": true}",
+    (
+      $|@SNAPSHOT_TESTING {"loc": \{loc}, "args_loc": \{args_loc}, "expect": \{expect}, "actual": \{actual}, "snapshot": true}
+    ),
   )
 }
 
