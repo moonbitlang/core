@@ -144,16 +144,11 @@ fn assign_value(
 ///|
 fn option_conflict_label(arg : Arg) -> String {
   match arg.info {
-    FlagInfo(long~, short~, ..) | OptionInfo(long~, short~, ..) =>
-      match long {
-        Some(name) => "--\{name}"
-        None =>
-          match short {
-            Some(short) => "-\{short}"
-            None => arg.name
-          }
-      }
-    PositionalInfo(_) => arg.name
+    FlagInfo(long=Some(name), ..) | OptionInfo(long=Some(name), ..) =>
+      "--\{name}"
+    FlagInfo(short=Some(short), ..) | OptionInfo(short=Some(short), ..) =>
+      "-\{short}"
+    _ => arg.name
   }
 }
 

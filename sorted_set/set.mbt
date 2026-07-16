@@ -571,13 +571,13 @@ fn[V] Node::update_height(self : Node[V]) -> Unit {
 
 ///|
 fn[V] height_ge(x1 : Node[V]?, x2 : Node[V]?) -> Bool {
-  match x2 {
-    None => true
-    Some(n2) =>
-      match x1 {
-        None => false
-        Some(n1) => n1.height >= n2.height
-      }
+  match (x1, x2) {
+    (
+      Some({ height: h1, .. })
+      | (None with h1 = 0),
+      Some({ height: h2, .. })
+      | (None with h2 = 0),
+    ) => h1 >= h2
   }
 }
 

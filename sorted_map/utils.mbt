@@ -34,8 +34,7 @@ fn max(x : Int, y : Int) -> Int {
 ///|
 fn[K, V] height(node : Node[K, V]?) -> Int {
   match node {
-    None => 0
-    Some(n) => n.height
+    Some({ height, .. }) | (None with height = 0) => height
   }
 }
 
