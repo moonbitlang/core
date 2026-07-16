@@ -16,6 +16,10 @@
 test "buffer growth capacity doubles while representable" {
   inspect(buffer_growth_capacity(8, 8, 9), content="16")
   inspect(buffer_growth_capacity(8, 8, 33), content="64")
+  inspect(buffer_growth_capacity(1, 1, 100), content="128")
+  inspect(buffer_growth_capacity(3, 3, 24), content="24")
+  inspect(buffer_growth_capacity(16, 16, 16), content="16")
+  inspect(buffer_growth_capacity(16, 16, 17), content="32")
 }
 
 ///|
@@ -28,6 +32,11 @@ test "buffer growth capacity falls back to the exact requirement" {
     buffer_growth_capacity(0x20000000, 0x20000000, 0x40000001),
     content="1073741825",
   )
+}
+
+///|
+test "buffer growth from a non-power-of-two capacity stops before wraparound" {
+  inspect(buffer_growth_capacity(11, 11, 1_500_000_000), content="1500000000")
 }
 
 ///|
