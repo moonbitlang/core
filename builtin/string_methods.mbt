@@ -16,10 +16,23 @@
 /// Returns the offset (charcode index) of the first occurrence of the given
 /// substring. If the substring is not found, it returns None.
 pub fn StringView::find(self : StringView, str : StringView) -> Int? {
-  if str.length() <= 4 {
-    brute_force_find(self, str)
-  } else {
-    boyer_moore_horspool_find(self, str)
+  match str.length() {
+    0 => Some(0)
+    1 => {
+      let found = find_code_unit_from_view(
+        self,
+        0,
+        self.length(),
+        str.unsafe_get(0),
+      )
+      if found < 0 {
+        None
+      } else {
+        Some(found)
+      }
+    }
+    2..=4 => brute_force_find(self, str)
+    _ => boyer_moore_horspool_find(self, str)
   }
   // TODO: When the pattern string is long (>= 256),
   // consider using Two-Way algorithm to ensure linear time complexity.
@@ -163,10 +176,23 @@ test "find_by" {
 /// Returns the offset of the last occurrence of the given substring. If the
 /// substring is not found, it returns None.
 pub fn StringView::rev_find(self : StringView, str : StringView) -> Int? {
-  if str.length() <= 4 {
-    brute_force_rev_find(self, str)
-  } else {
-    boyer_moore_horspool_rev_find(self, str)
+  match str.length() {
+    0 => Some(self.length())
+    1 => {
+      let found = rev_find_code_unit_from_view(
+        self,
+        0,
+        self.length(),
+        str.unsafe_get(0),
+      )
+      if found < 0 {
+        None
+      } else {
+        Some(found)
+      }
+    }
+    2..=4 => brute_force_rev_find(self, str)
+    _ => boyer_moore_horspool_rev_find(self, str)
   }
   // TODO: When the pattern string is long (>= 256),
   // consider using Two-Way algorithm to ensure linear time complexity.
