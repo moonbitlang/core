@@ -79,3 +79,52 @@ test "bench StringView rev_find one code unit absent n=256" (it : @bench.T) {
   let view = str[1:257]
   it.bench(() => it.keep(view.rev_find("z")))
 }
+
+///|
+test "bench find two anchors absent n=256" (it : @bench.T) {
+  let str = String::make(256, 'a')
+  it.bench(() => it.keep(str.find("az")))
+}
+
+///|
+test "bench find two anchors present@end n=256" (it : @bench.T) {
+  let str = String::make(255, 'a') + "z"
+  it.bench(() => it.keep(str.find("az")))
+}
+
+///|
+test "bench find two anchors dense false positives n=256" (it : @bench.T) {
+  let str = String::make(256, 'a')
+  it.bench(() => it.keep(str.find("abaa")))
+}
+
+///|
+test "bench find two anchors long absent n=256" (it : @bench.T) {
+  let str = String::make(256, 'a')
+  it.bench(() => it.keep(str.find("zaaaaaaaaaaaaaaz")))
+}
+
+///|
+test "bench rev_find two anchors absent n=256" (it : @bench.T) {
+  let str = String::make(256, 'a')
+  it.bench(() => it.keep(str.rev_find("za")))
+}
+
+///|
+test "bench rev_find two anchors present@start n=256" (it : @bench.T) {
+  let str = "z" + String::make(255, 'a')
+  it.bench(() => it.keep(str.rev_find("za")))
+}
+
+///|
+test "bench rev_find two anchors dense false positives n=256" (it : @bench.T) {
+  let str = String::make(256, 'a')
+  it.bench(() => it.keep(str.rev_find("abaa")))
+}
+
+///|
+test "bench StringView find two anchors absent n=256" (it : @bench.T) {
+  let str = "x" + String::make(256, 'a') + "y"
+  let view = str[1:257]
+  it.bench(() => it.keep(view.find("az")))
+}

@@ -13,6 +13,59 @@
 // limitations under the License.
 
 ///|
+fn scalar_find_for_test(target : StringView, pattern : StringView) -> Int? {
+  let target_len = target.length()
+  let pattern_len = pattern.length()
+  if pattern_len == 0 {
+    return Some(0)
+  }
+  if pattern_len > target_len {
+    return None
+  }
+  for pos in 0..<=(target_len - pattern_len) {
+    let matches = for i in 0..<pattern_len {
+      if target.unsafe_get(pos + i) != pattern.unsafe_get(i) {
+        break false
+      }
+    } nobreak {
+      true
+    }
+    if matches {
+      break Some(pos)
+    }
+  } nobreak {
+    None
+  }
+}
+
+///|
+fn scalar_rev_find_for_test(target : StringView, pattern : StringView) -> Int? {
+  let target_len = target.length()
+  let pattern_len = pattern.length()
+  if pattern_len == 0 {
+    return Some(target_len)
+  }
+  if pattern_len > target_len {
+    return None
+  }
+  for pos = target_len - pattern_len; pos >= 0; {
+    let matches = for i in 0..<pattern_len {
+      if target.unsafe_get(pos + i) != pattern.unsafe_get(i) {
+        break false
+      }
+    } nobreak {
+      true
+    }
+    if matches {
+      break Some(pos)
+    }
+    continue pos - 1
+  } nobreak {
+    None
+  }
+}
+
+///|
 test "find one code unit across SIMD blocks and view bounds" {
   let str = "01234567abcdefghZ"
   debug_inspect(str.find("0"), content="Some(0)")
@@ -78,6 +131,50 @@ test "one-code-unit find agrees with scalar search for every view range" {
         }
         assert_eq(view.find(needle_str), expected)
         assert_eq(view.rev_find(needle_str), expected_rev)
+      }
+    }
+  }
+}
+
+///|
+test "two-anchor find and rev_find across SIMD blocks and view bounds" {
+  let str = "xxxxxxxabxxxxxxxab"
+  debug_inspect(str.find("ab"), content="Some(7)")
+  debug_inspect(str.rev_find("ab"), content="Some(16)")
+  debug_inspect(str.find("abx"), content="Some(7)")
+  debug_inspect(str.rev_find("abx"), content="Some(7)")
+  debug_inspect(str.find("abxxxxxxxab"), content="Some(7)")
+  debug_inspect(str.rev_find("abxxxxxxxab"), content="Some(7)")
+  debug_inspect(str.find("abaa"), content="None")
+  debug_inspect(str.rev_find("abaa"), content="None")
+  let view = ("q" + str + "r")[1:19]
+  debug_inspect(view.find("ab"), content="Some(7)")
+  debug_inspect(view.rev_find("ab"), content="Some(16)")
+  debug_inspect(view.find("qab"), content="None")
+  debug_inspect(view.rev_find("abr"), content="None")
+  debug_inspect(view.find(str + "x"), content="None")
+  debug_inspect(view.rev_find(str + "x"), content="None")
+  let forward_fallback = String::make(16, 'a') + "abaa"
+  debug_inspect(forward_fallback.find("abaa"), content="Some(16)")
+  let reverse_fallback = "abaa" + String::make(16, 'a')
+  debug_inspect(reverse_fallback.rev_find("abaa"), content="Some(0)")
+}
+
+///|
+test "multi-code-unit find agrees with scalar search for every view range" {
+  let str = "abacabadabacabaeabacabadabacaba"
+  let patterns = [
+    "aa", "ab", "ba", "aba", "caba", "abacabae", "abacabadabacabaeabac", "zz",
+  ]
+  for start in 0..<=str.length() {
+    for end in start..<=str.length() {
+      let view = str[start:end]
+      for pattern in patterns {
+        assert_eq(view.find(pattern), scalar_find_for_test(view, pattern))
+        assert_eq(
+          view.rev_find(pattern),
+          scalar_rev_find_for_test(view, pattern),
+        )
       }
     }
   }
