@@ -161,8 +161,7 @@ fn ThreadSet::flat_map(
 ///|
 fn ThreadSet::find_first_match(self : ThreadSet) -> MarkSlotMap? {
   match self {
-    Empty => None
-    Node(i={ no_match: true }, ..) => None
+    Empty | Node(i={ no_match: true }, ..) => None
     Node(l=Empty, t=End(marks), ..) => Some(marks)
     Node(l~, t~, r~, ..) =>
       match l.find_first_match() {
