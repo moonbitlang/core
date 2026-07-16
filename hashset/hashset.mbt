@@ -52,8 +52,8 @@ pub fn[K : Hash + Eq] HashSet::HashSet(
 ) -> HashSet[K] {
   let length = arr.length()
   let capacity = match capacity {
-    Some(capacity) => capacity.max(capacity_for_length(length))
-    None => default_init_capacity.max(capacity_for_length(length))
+    Some(capacity) | (None with capacity = default_init_capacity) =>
+      capacity.max(capacity_for_length(length))
   }
   let m = new_hashset(capacity)
   arr.each(e => m.add(e))

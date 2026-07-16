@@ -170,8 +170,7 @@ pub fn e_after(ctx~ : Context, cat : @shared_types.Category) -> Expr {
 /// - Otherwise → create Alt node
 pub fn e_alt(ctx~ : Context, xs : Array[Expr]) -> Expr {
   match xs {
-    [] => e_empty
-    [x] => x
+    [x] | ([] with x = e_empty) => x
     xs => { id: ctx.new_expr_id(), def: Alt(xs) }
   }
 }

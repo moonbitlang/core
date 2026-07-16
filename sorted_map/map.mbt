@@ -200,8 +200,7 @@ pub fn[K : Compare, V] SortedMap::get_or_default(
   default : V,
 ) -> V {
   match self.get(key) {
-    Some(v) => v
-    None => default
+    Some(v) | (None with v = default) => v
   }
 }
 
@@ -565,13 +564,13 @@ fn[K, V] Node::update_height(self : Node[K, V]) -> Unit {
 
 ///|
 fn[K, V] height_ge(x1 : Node[K, V]?, x2 : Node[K, V]?) -> Bool {
-  match x2 {
-    None => true
-    Some(n2) =>
-      match x1 {
-        None => false
-        Some(n1) => n1.height >= n2.height
-      }
+  match (x1, x2) {
+    (
+      Some({ height: h1, .. })
+      | (None with h1 = 0),
+      Some({ height: h2, .. })
+      | (None with h2 = 0),
+    ) => h1 >= h2
   }
 }
 

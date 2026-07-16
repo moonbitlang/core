@@ -93,8 +93,7 @@ pub fn[T] UninitializedArray::sub(
 ) -> ArrayView[T] {
   let len = self.length()
   let end = match end {
-    None => len
-    Some(end) => end
+    Some(end) | (None with end = len) => end
   }
   guard start >= 0 && start <= end && end <= len else {
     abort("View start index out of bounds")

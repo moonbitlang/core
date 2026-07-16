@@ -89,8 +89,7 @@ test "map_err" {
 #alias(or)
 pub fn[T, E] Result::unwrap_or(self : Result[T, E], default : T) -> T {
   match self {
-    Ok(value) => value
-    Err(_) => default
+    Ok(value) | (Err(_) with value = default) => value
   }
 }
 
@@ -313,8 +312,7 @@ test "show" {
 /// Return the contained `Ok` value or the result of the `T::default()`.
 pub fn[T : Default, E] Result::unwrap_or_default(self : Result[T, E]) -> T {
   match self {
-    Ok(value) => value
-    Err(_) => T::default()
+    Ok(value) | (Err(_) with value = T::default()) => value
   }
 }
 

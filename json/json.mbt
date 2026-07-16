@@ -497,8 +497,7 @@ pub fn json_inspect(
   let args_loc = args_loc.to_json()
   let actual = obj.to_json().stringify(escape_slash=false)
   let want = match content {
-    None => "".to_json().stringify(escape_slash=false)
-    Some(x) => x.stringify(escape_slash=false)
+    Some(x) | (None with x = "".to_json()) => x.stringify(escape_slash=false)
   }
   if actual != want {
     raise InspectError(
