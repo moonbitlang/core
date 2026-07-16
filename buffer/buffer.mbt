@@ -41,15 +41,25 @@ struct Buffer {
 }
 
 ///|
-/// Expand the buffer size if capacity smaller than required space.
-fn Buffer::grow_if_necessary(self : Buffer, required : Int) -> Unit {
-  let start = if self.data.length() <= 0 { 1 } else { self.data.length() }
-  let enough_space = for space = start {
+/// Smallest capacity reached by repeatedly doubling `current` until it
+/// covers `required`. Doubling a capacity past 2^30 overflows Int (and can
+/// loop forever, e.g. 2^30 -> INT_MIN -> 0 -> 0); when that happens, fall
+/// back to exactly `required`.
+fn grow_capacity(current : Int, required : Int) -> Int {
+  for space = current {
     if space >= required {
       break space
     }
-    continue space * 2
+    let doubled = space * 2
+    continue if doubled > 0 { doubled } else { required }
   }
+}
+
+///|
+/// Expand the buffer size if capacity smaller than required space.
+fn Buffer::grow_if_necessary(self : Buffer, required : Int) -> Unit {
+  let start = if self.data.length() <= 0 { 1 } else { self.data.length() }
+  let enough_space = grow_capacity(start, required)
   if enough_space != self.data.length() {
     let new_data = FixedArray::make_and_blit(
       self.data,
