@@ -12,12 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// The 128-bit vector operations used by the SIMD byte scanners in
-// `bytes_find.mbt`. `builtin` cannot import `moonbitlang/core/v128` (that would
-// be a cycle), so the few ops the scanners need are hosted here directly.
+// The 128-bit vector operations used by the SIMD byte and string routines in
+// `bytes_find.mbt` and `string_methods.mbt`. `builtin` cannot import
+// `moonbitlang/core/v128` (that would be a cycle), so the few ops they need are
+// hosted here directly.
 //
 // These are gated to the linear-memory backends that have the intrinsics, the
-// same targets the scanners run on; the function bodies exist only so the
+// same targets the routines run on; the function bodies exist only so the
 // `#intrinsic` declarations type-check and are never executed there.
 
 ///|
@@ -41,6 +42,14 @@ fn i8x16_splat(value : Byte) -> V128 {
 }
 
 ///|
+#cfg(any(target="native", target="wasm"))
+#intrinsic("%v128.i16x8_splat")
+fn i16x8_splat(value : UInt16) -> V128 {
+  let lane = value.to_uint64() * (0x0001000100010001 : UInt64)
+  v128_make(lane, lane)
+}
+
+///|
 #borrow(bytes)
 #cfg(any(target="native", target="wasm"))
 #intrinsic("%v128.v128_load")
@@ -52,10 +61,104 @@ fn v128_load(bytes : FixedArray[Byte], offset : Int) -> V128 {
 }
 
 ///|
+// Loads eight consecutive UTF-16 code units beginning at `offset`.
+#borrow(data)
+#cfg(any(target="native", target="wasm"))
+#intrinsic("%v128.v128_load_i16x8")
+fn v128_load_i16x8(data : FixedArray[UInt16], offset : Int) -> V128 {
+  let lo = for i in 0..<4; word = (0 : UInt64) {
+    continue word | (data.unsafe_get(offset + i).to_uint64() << (16 * i))
+  } nobreak {
+    word
+  }
+  let hi = for i in 0..<4; word = (0 : UInt64) {
+    continue word | (data.unsafe_get(offset + 4 + i).to_uint64() << (16 * i))
+  } nobreak {
+    word
+  }
+  v128_make(lo, hi)
+}
+
+///|
+// Loads eight consecutive UTF-16 code units from a string beginning at
+// `offset`.
+#borrow(data)
+#cfg(any(target="native", target="wasm"))
+#intrinsic("%v128.v128_load_i16x8")
+fn v128_load_string_i16x8(data : String, offset : Int) -> V128 {
+  let lo = for i in 0..<4; word = (0 : UInt64) {
+    continue word | (data.unsafe_get(offset + i).to_uint64() << (16 * i))
+  } nobreak {
+    word
+  }
+  let hi = for i in 0..<4; word = (0 : UInt64) {
+    continue word | (data.unsafe_get(offset + 4 + i).to_uint64() << (16 * i))
+  } nobreak {
+    word
+  }
+  v128_make(lo, hi)
+}
+
+///|
+// Stores eight consecutive UTF-16 code units beginning at `offset`.
+#borrow(data)
+#cfg(any(target="native", target="wasm"))
+#intrinsic("%v128.v128_store_i16x8")
+fn v128_store_i16x8(
+  data : FixedArray[UInt16],
+  offset : Int,
+  value : V128,
+) -> Unit {
+  for i in 0..<4 {
+    data.unsafe_set(offset + i, (v128_lo(value) >> (16 * i)).to_uint16())
+  }
+  for i in 0..<4 {
+    data.unsafe_set(offset + 4 + i, (v128_hi(value) >> (16 * i)).to_uint16())
+  }
+}
+
+///|
 #cfg(any(target="native", target="wasm"))
 #intrinsic("%v128.v128_and")
 fn v128_and(a : V128, b : V128) -> V128 {
   v128_make(v128_lo(a) & v128_lo(b), v128_hi(a) & v128_hi(b))
+}
+
+///|
+#cfg(any(target="native", target="wasm"))
+#intrinsic("%v128.v128_any_true")
+fn v128_any_true(value : V128) -> Bool {
+  v128_lo(value) != 0 || v128_hi(value) != 0
+}
+
+///|
+#cfg(any(target="native", target="wasm"))
+#intrinsic("%v128.i16x8_add")
+fn i16x8_add(a : V128, b : V128) -> V128 {
+  v128_make(
+    u64_u16x4_add(v128_lo(a), v128_lo(b)),
+    u64_u16x4_add(v128_hi(a), v128_hi(b)),
+  )
+}
+
+///|
+#cfg(any(target="native", target="wasm"))
+#intrinsic("%v128.i16x8_sub")
+fn i16x8_sub(a : V128, b : V128) -> V128 {
+  v128_make(
+    u64_u16x4_sub(v128_lo(a), v128_lo(b)),
+    u64_u16x4_sub(v128_hi(a), v128_hi(b)),
+  )
+}
+
+///|
+#cfg(any(target="native", target="wasm"))
+#intrinsic("%v128.i16x8_le_u")
+fn i16x8_le_u(a : V128, b : V128) -> V128 {
+  v128_make(
+    u64_u16x4_le_mask(v128_lo(a), v128_lo(b)),
+    u64_u16x4_le_mask(v128_hi(a), v128_hi(b)),
+  )
 }
 
 ///|
@@ -84,6 +187,49 @@ fn u64_byte_eq_mask(a : UInt64, b : UInt64) -> UInt64 {
     let shift = 8 * i
     let mask = if ((a >> shift) & 0xFF) == ((b >> shift) & 0xFF) {
       (0xFF : UInt64)
+    } else {
+      0
+    }
+    continue result | (mask << shift)
+  } nobreak {
+    result
+  }
+}
+
+///|
+// Wrapping addition over four packed 16-bit lanes.
+#cfg(any(target="native", target="wasm"))
+fn u64_u16x4_add(a : UInt64, b : UInt64) -> UInt64 {
+  for i in 0..<4; result = (0 : UInt64) {
+    let shift = 16 * i
+    let lane = (a >> shift).to_uint16() + (b >> shift).to_uint16()
+    continue result | (lane.to_uint64() << shift)
+  } nobreak {
+    result
+  }
+}
+
+///|
+// Wrapping subtraction over four packed 16-bit lanes.
+#cfg(any(target="native", target="wasm"))
+fn u64_u16x4_sub(a : UInt64, b : UInt64) -> UInt64 {
+  for i in 0..<4; result = (0 : UInt64) {
+    let shift = 16 * i
+    let lane = (a >> shift).to_uint16() - (b >> shift).to_uint16()
+    continue result | (lane.to_uint64() << shift)
+  } nobreak {
+    result
+  }
+}
+
+///|
+// Unsigned less-than-or-equal mask over four packed 16-bit lanes.
+#cfg(any(target="native", target="wasm"))
+fn u64_u16x4_le_mask(a : UInt64, b : UInt64) -> UInt64 {
+  for i in 0..<4; result = (0 : UInt64) {
+    let shift = 16 * i
+    let mask = if (a >> shift).to_uint16() <= (b >> shift).to_uint16() {
+      (0xFFFF : UInt64)
     } else {
       0
     }

@@ -1708,20 +1708,21 @@ test "View::replace_all boundary cases" {
 
 ///|
 /// Helpers for ASCII-only lowercase conversion over UTF-16 code units.
-/// Non-ASCII code units, including surrogate halves, are copied with
-/// `write_substring` and are never converted through `Char`.
+/// Non-ASCII code units, including surrogate halves, are copied unchanged and
+/// are never converted through `Char`.
 fn is_ascii_uppercase_code_unit(code_unit : Int) -> Bool {
   code_unit >= 0x41 && code_unit <= 0x5A
 }
 
 ///|
+#cfg(not(any(target="native", target="wasm")))
 fn find_ascii_uppercase_code_unit(
   data : String,
   start : Int,
   len : Int,
 ) -> Int? {
   let end = start + len
-  for i = start; i < end; i = i + 1 {
+  for i in start..<end {
     // SAFETY: i stays within the caller-provided UTF-16 slice bounds.
     let code_unit = data.unsafe_get(i).to_int()
     if is_ascii_uppercase_code_unit(code_unit) {
@@ -1732,32 +1733,152 @@ fn find_ascii_uppercase_code_unit(
 }
 
 ///|
-/// Appends `tail` lowercased, copying unchanged runs in bulk via
-/// `write_substring` and only rewriting the ASCII uppercase code units.
-/// Compare as `Int` (not `UInt16`) so the range check inlines on every backend.
-/// Keep `tail.code_units()` directly in the loop so compiler backends can
-/// recognize and lower the zero-copy traversal at the use site.
-fn StringBuilder::write_ascii_lowered_view(
-  self : StringBuilder,
-  tail : StringView,
-) -> Unit {
-  let data = tail.data()
-  let base = tail.start_offset()
+// Check the first code unit scalarly so capitalized strings retain the lowest
+// possible startup cost. Then scan full blocks eight UTF-16 code units at a
+// time and finish with a scalar tail.
+#cfg(any(target="native", target="wasm"))
+fn find_ascii_uppercase_code_unit_simd(
+  data : String,
+  start : Int,
+  len : Int,
+) -> Int? {
+  let end = start + len
+  if is_ascii_uppercase_code_unit(data.unsafe_get(start).to_int()) {
+    return Some(0)
+  }
+  let ascii_a = i16x8_splat(0x41)
+  let ascii_range = i16x8_splat(0x5A - 0x41)
+  let tail_start = for pos = start; pos + 8 <= end; {
+    let code_units = v128_load_string_i16x8(data, pos)
+    let uppercase_mask = i16x8_le_u(i16x8_sub(code_units, ascii_a), ascii_range)
+    if v128_any_true(uppercase_mask) {
+      for i in pos..<(pos + 8) {
+        if is_ascii_uppercase_code_unit(data.unsafe_get(i).to_int()) {
+          return Some(i - start)
+        }
+      }
+    }
+    continue pos + 8
+  } nobreak {
+    pos
+  }
+  for i in tail_start..<end {
+    if is_ascii_uppercase_code_unit(data.unsafe_get(i).to_int()) {
+      return Some(i - start)
+    }
+  }
+  None
+}
+
+///|
+// Three SIMD blocks are enough to amortize vector setup. Keep shorter searches
+// entirely scalar rather than splitting them into a prefix and tail.
+#inline
+#cfg(any(target="native", target="wasm"))
+fn find_ascii_uppercase_code_unit(
+  data : String,
+  start : Int,
+  len : Int,
+) -> Int? {
+  if len < 24 {
+    let end = start + len
+    for i in start..<end {
+      // SAFETY: i stays within the caller-provided UTF-16 slice bounds.
+      let code_unit = data.unsafe_get(i).to_int()
+      if is_ascii_uppercase_code_unit(code_unit) {
+        return Some(i - start)
+      }
+    }
+    None
+  } else {
+    find_ascii_uppercase_code_unit_simd(data, start, len)
+  }
+}
+
+///|
+/// Copies `view` into an exact-size UTF-16 buffer once, then patches the ASCII
+/// uppercase code units in place. `first_uppercase` is supplied by the
+/// allocation-free search in `to_lower`.
+/// Native and linear-memory Wasm can load and store this buffer eight code
+/// units at a time.
+#cfg(any(target="native", target="wasm"))
+fn ascii_lowercase_copy(view : StringView, first_uppercase : Int) -> String {
+  let len = view.length()
+  let output : FixedArray[UInt16] = FixedArray::make(len, 0)
+  output.unsafe_blit_from_string(0, view.data(), view.start_offset(), len)
+  let ascii_a = i16x8_splat(0x41)
+  let ascii_range = i16x8_splat(0x5A - 0x41)
+  let lowercase_delta = i16x8_splat(0x20)
+  let tail_start = for pos = first_uppercase; pos + 8 <= len; {
+    let code_units = v128_load_i16x8(output, pos)
+    // Subtraction wraps lanes below `A`, so this unsigned comparison selects
+    // exactly the inclusive `A..Z` range with one vector comparison.
+    let uppercase_mask = i16x8_le_u(i16x8_sub(code_units, ascii_a), ascii_range)
+    let lowered = i16x8_add(
+      code_units,
+      v128_and(uppercase_mask, lowercase_delta),
+    )
+    v128_store_i16x8(output, pos, lowered)
+    continue pos + 8
+  } nobreak {
+    pos
+  }
+  for i in tail_start..<len {
+    let code_unit = output.unsafe_get(i).to_int()
+    if is_ascii_uppercase_code_unit(code_unit) {
+      output.unsafe_set(i, (code_unit + 32).to_uint16())
+    }
+  }
+  unsafe_fixedarray_uint16_to_string(output)
+}
+
+///|
+/// wasm-gc and other non-linear-memory backends use scalar patching. In
+/// particular, wasm-gc represents this buffer as a GC array, for which SIMD
+/// loads and stores would expand into individual array accesses.
+#cfg(not(any(target="js", target="native", target="wasm")))
+fn ascii_lowercase_copy(view : StringView, first_uppercase : Int) -> String {
+  let len = view.length()
+  let output : FixedArray[UInt16] = FixedArray::make(len, 0)
+  output.unsafe_blit_from_string(0, view.data(), view.start_offset(), len)
+  let tail = view.view(start_offset=first_uppercase)
+  // Keep `tail.code_units()` directly in the loop so compiler backends can
+  // recognize and lower the zero-copy traversal at the use site.
+  for i, u in tail.code_units() {
+    let code_unit = u.to_int()
+    if is_ascii_uppercase_code_unit(code_unit) {
+      output.unsafe_set(first_uppercase + i, (code_unit + 32).to_uint16())
+    }
+  }
+  unsafe_fixedarray_uint16_to_string(output)
+}
+
+///|
+/// JavaScript strings cannot be patched in place, so its scalar fallback
+/// preserves chunked writes while using the non-deprecated `write_view` API.
+#cfg(target="js")
+fn ascii_lowercase_copy(view : StringView, first_uppercase : Int) -> String {
+  let buf = StringBuilder(size_hint=view.length())
+  if first_uppercase > 0 {
+    buf.write_view(view.view(end_offset=first_uppercase))
+  }
+  let tail = view.view(start_offset=first_uppercase)
   let n = tail.length()
   let mut seg = 0
   for i, u in tail.code_units() {
     let code_unit = u.to_int()
     if is_ascii_uppercase_code_unit(code_unit) {
       if seg < i {
-        self.write_substring(data, base + seg, i - seg)
+        buf.write_view(tail.view(start_offset=seg, end_offset=i))
       }
-      self.write_char((code_unit + 32).unsafe_to_char())
+      buf.write_char((code_unit + 32).unsafe_to_char())
       seg = i + 1
     }
   }
   if seg < n {
-    self.write_substring(data, base + seg, n - seg)
+    buf.write_view(tail.view(start_offset=seg))
   }
+  buf.to_string()
 }
 
 ///|
@@ -1770,10 +1891,7 @@ pub fn StringView::to_lower(self : StringView) -> StringView {
   guard find_ascii_uppercase_code_unit(data, start, len) is Some(idx) else {
     return self
   }
-  let buf = StringBuilder(size_hint=len)
-  buf.write_substring(data, start, idx)
-  buf.write_ascii_lowered_view(self.view(start_offset=idx))
-  buf.to_string()
+  ascii_lowercase_copy(self, idx)
 }
 
 ///|
@@ -1784,10 +1902,7 @@ pub fn String::to_lower(self : String) -> String {
   guard find_ascii_uppercase_code_unit(self, 0, len) is Some(idx) else {
     return self
   }
-  let buf = StringBuilder(size_hint=len)
-  buf.write_substring(self, 0, idx)
-  buf.write_ascii_lowered_view(self.view(start_offset=idx))
-  buf.to_string()
+  ascii_lowercase_copy(self, idx)
 }
 
 ///|
@@ -1795,11 +1910,25 @@ test "to_lower" {
   assert_true("Hello".to_lower() == "hello")
   assert_true("HELLO".to_lower() == "hello")
   assert_true("Hello, World!".to_lower() == "hello, world!")
+  // Starts at an unaligned code-unit offset, crosses both ASCII range
+  // boundaries, fills one vector, and leaves one scalar code unit.
+  assert_true("xxA@Z[az09!".to_lower() == "xxa@z[az09!")
   assert_true("🤣A".to_lower() == "🤣a")
   assert_true("A🤣B".to_lower() == "a🤣b")
   let unpaired = String::from_array([(0xD800).unsafe_to_char(), 'A'])
   let lowered_unpaired = String::from_array([(0xD800).unsafe_to_char(), 'a'])
   assert_true(unpaired.to_lower() == lowered_unpaired)
+}
+
+///|
+test "to_lower SIMD search boundaries" {
+  for uppercase_at in 0..<40 {
+    let prefix = "x".repeat(uppercase_at)
+    let suffix = "x".repeat(40 - uppercase_at)
+    assert_true((prefix + "A" + suffix).to_lower() == prefix + "a" + suffix)
+  }
+  let source = "A" + "x".repeat(40) + "Z"
+  assert_true(source[1:41].to_lower() == "x".repeat(40))
 }
 
 ///|
