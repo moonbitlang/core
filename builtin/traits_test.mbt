@@ -85,7 +85,7 @@ test "Eq::equal on custom impl" {
 ///|
 test "Logger defaults" {
   let logger = TestLogger::{ output: "" }
-  logger.write_string("hi")
-  logger.write_char('!')
+  Logger::write_string(logger, "hi")
+  Logger::write_char(logger, '!')
   inspect(logger.output, content="hi!")
 }
