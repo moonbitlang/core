@@ -12,9 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Benchmarks for `to_lower`. The optimization only takes effect when the input
-// contains an ASCII uppercase code unit (otherwise `to_lower` early-returns
-// `self` with no allocation), so every input below has uppercase present.
+// Benchmarks for the changed-input conversion path and the allocation-free
+// no-change search path in `to_lower`.
 
 ///|
 // Short header-like input: the per-call cost dominates, so this best exposes
@@ -22,9 +21,39 @@
 let to_lower_bench_short : String = "Content-Type"
 
 ///|
-// Longer mixed-case input with uppercase scattered throughout: also exercises
-// the batched `write_substring` path across many segments.
+// Longer mixed-case input with uppercase scattered throughout: exercises the
+// whole-view copy and in-place patch path.
 let to_lower_bench_long : String = "The Quick Brown Fox Jumps Over The Lazy Dog. ".repeat(
+  16,
+)
+
+///|
+// A single uppercase code unit followed by a long unchanged suffix. This
+// checks that the whole-view copy retains the benefit of large batches.
+let to_lower_bench_sparse : String = "A" + "x".repeat(719)
+
+///|
+// A single uppercase code unit at the end. This exercises the SIMD pre-scan
+// before the exact-size output buffer is allocated.
+let to_lower_bench_late_uppercase : String = "x".repeat(719) + "A"
+
+///|
+// Every unchanged run has length one. This guards against reintroducing the
+// per-run overhead that motivated the whole-view copy.
+let to_lower_bench_one_unit_runs : String = "Ax".repeat(360)
+
+///|
+// Every code unit is rewritten after the initial copy. This exposes the
+// worst-case cost of patching the copied buffer.
+let to_lower_bench_all_uppercase : String = "A".repeat(720)
+
+///|
+// No conversion is needed. These inputs exercise the allocation-free search
+// and should return the original string or view.
+let to_lower_bench_no_change_short : String = "content-type"
+
+///|
+let to_lower_bench_no_change_long : String = "the quick brown fox jumps over the lazy dog. ".repeat(
   16,
 )
 
@@ -39,6 +68,36 @@ test "bench String::to_lower long" (it : @bench.T) {
 }
 
 ///|
+test "bench String::to_lower sparse" (it : @bench.T) {
+  it.bench(fn() { it.keep(to_lower_bench_sparse.to_lower()) })
+}
+
+///|
+test "bench String::to_lower late-uppercase" (it : @bench.T) {
+  it.bench(fn() { it.keep(to_lower_bench_late_uppercase.to_lower()) })
+}
+
+///|
+test "bench String::to_lower one-unit runs" (it : @bench.T) {
+  it.bench(fn() { it.keep(to_lower_bench_one_unit_runs.to_lower()) })
+}
+
+///|
+test "bench String::to_lower all-uppercase" (it : @bench.T) {
+  it.bench(fn() { it.keep(to_lower_bench_all_uppercase.to_lower()) })
+}
+
+///|
+test "bench String::to_lower no-change short" (it : @bench.T) {
+  it.bench(fn() { it.keep(to_lower_bench_no_change_short.to_lower()) })
+}
+
+///|
+test "bench String::to_lower no-change long" (it : @bench.T) {
+  it.bench(fn() { it.keep(to_lower_bench_no_change_long.to_lower()) })
+}
+
+///|
 test "bench StringView::to_lower short" (it : @bench.T) {
   it.bench(fn() { it.keep(to_lower_bench_short[:].to_lower()) })
 }
@@ -46,4 +105,9 @@ test "bench StringView::to_lower short" (it : @bench.T) {
 ///|
 test "bench StringView::to_lower long" (it : @bench.T) {
   it.bench(fn() { it.keep(to_lower_bench_long[:].to_lower()) })
+}
+
+///|
+test "bench StringView::to_lower no-change long" (it : @bench.T) {
+  it.bench(fn() { it.keep(to_lower_bench_no_change_long[:].to_lower()) })
 }
