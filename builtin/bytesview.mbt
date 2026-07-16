@@ -174,7 +174,7 @@ pub fn BytesView::unsafe_get(self : BytesView, index : Int) -> Byte {
 /// }
 /// ```
 #alias("_[_:_]")
-#alias(sub, deprecated="Use _[_:_ instead")
+#alias(sub, deprecated="Use _[_:_] instead")
 pub fn Bytes::view(self : Bytes, start? : Int = 0, end? : Int) -> BytesView {
   let len = self.length()
   let end = match end {

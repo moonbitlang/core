@@ -18,15 +18,6 @@ impl[V : Eq] Eq for Node[V] with fn equal(self, other) {
 }
 
 ///|
-fn max(x : Int, y : Int) -> Int {
-  if x > y {
-    x
-  } else {
-    y
-  }
-}
-
-///|
 fn[V] height(node : Node[V]?) -> Int {
   match node {
     Some({ height, .. }) | (None with height = 0) => height

@@ -96,7 +96,7 @@ pub fn[T] UninitializedArray::sub(
     Some(end) | (None with end = len) => end
   }
   guard start >= 0 && start <= end && end <= len else {
-    abort("View start index out of bounds")
+    abort("View index out of bounds")
   }
   ArrayView::make(self, start, end - start)
 }

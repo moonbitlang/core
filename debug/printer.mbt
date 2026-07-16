@@ -169,14 +169,8 @@ fn compact_lines(lines : Array[String]) -> Array[String] {
         // - arrays: [a, b]
         // - records/maps: { field: value, field: value }
         if first == "{" {
-          let s1 = match joined.strip_prefix(" ") {
-            Some(sv) => sv
-            None => joined
-          }
-          let inner = match s1.strip_suffix(" ") {
-            Some(sv) => sv
-            None => s1
-          }
+          let s1 = joined.strip_prefix(" ").unwrap_or(joined)
+          let inner = s1.strip_suffix(" ").unwrap_or(s1)
           if inner == "" {
             ["{}"]
           } else {

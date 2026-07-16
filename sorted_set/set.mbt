@@ -91,7 +91,7 @@ fn[V] new_node_update_height(
   left~ : Node[V]?,
   right~ : Node[V]?,
 ) -> Node[V] {
-  { value, left, right, height: max(height(left), height(right)) + 1 }
+  { value, left, right, height: height(left).max(height(right)) + 1 }
 }
 
 // Manipulations
@@ -566,7 +566,7 @@ fn[V] replace_root_with_min(root : Node[V], node : Node[V]) -> Node[V]? {
 
 ///|
 fn[V] Node::update_height(self : Node[V]) -> Unit {
-  self.height = 1 + max(height(self.left), height(self.right))
+  self.height = 1 + height(self.left).max(height(self.right))
 }
 
 ///|

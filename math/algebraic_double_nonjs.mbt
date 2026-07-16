@@ -54,7 +54,7 @@ pub fn cbrt(x : Double) -> Double {
   let f = 1.60714285714285720630e+00 // 45/28     = 0x3FF9B6DB, 0x6DB6DB6E
   let g = 3.57142857142857150787e-01 // 5/14      = 0x3FD6DB6D, 0xB6DB6DB7
   let hx = get_high_word(x).reinterpret_as_int()
-  let sign = if x < 0.0 { true } else { false }
+  let sign = x < 0.0
   let x = abs(x)
   let t = if hx < 0x00100000 {
     let t : UInt64 = 0x43500000_00000000

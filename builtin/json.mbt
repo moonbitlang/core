@@ -36,9 +36,7 @@ pub enum Json {
 ///|
 pub impl Eq for Json with fn equal(a, b) {
   match (a, b) {
-    (Null, Null) => true
-    (True, True) => true
-    (False, False) => true
+    (Null, Null) | (True, True) | (False, False) => true
     (Number(a_num, ..), Number(b_num, ..)) => a_num == b_num
     (String(a_str), String(b_str)) => a_str == b_str
     (Array(a_arr), Array(b_arr)) => a_arr == b_arr

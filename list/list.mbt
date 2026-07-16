@@ -728,8 +728,7 @@ pub fn[A, B] List::foldi(
 pub fn[A, B] List::zip(self : List[A], other : List[B]) -> List[(A, B)] {
   let res = for a = self, b = other, acc = Empty {
     match (a, b, acc) {
-      (Empty, _, acc) => break acc
-      (_, Empty, acc) => break acc
+      (Empty, _, acc) | (_, Empty, acc) => break acc
       (More(x, tail=xs), More(y, tail=ys), acc) =>
         continue xs, ys, More((x, y), tail=acc)
     }
@@ -1361,8 +1360,7 @@ pub fn[A] List::take(self : List[A], n : Int) -> List[A] {
         let dest = More(head, tail=Empty)
         for d = dest, t = tail, i = n - 1 {
           match (d, t, i) {
-            (_, Empty, _) => break
-            (_, _, 0) => break
+            (_, Empty, _) | (_, _, 0) => break
             (More(_) as dest, More(x, tail=xs), n) => {
               dest.tail = More(x, tail=Empty)
               continue dest.tail, xs, n - 1
