@@ -47,7 +47,7 @@ fn check_node(
       }
       let (lh, lc) = check_node(n.left, lower, Some(n.key))
       let (rh, rc) = check_node(n.right, Some(n.key), upper)
-      let true_height = 1 + max(lh, rh)
+      let true_height = 1 + lh.max(rh)
       if n.height != true_height {
         fail(
           "stale cached height at key \{n.key}: stored \{n.height}, actual \{true_height}",

@@ -26,8 +26,7 @@ fn[A] Tree::last_leaf_elements(self : Tree[A]) -> FixedArray[A] {
 ///|
 fn[A] Tree::pop_rightmost_leaf(self : Tree[A], shift : Int) -> Tree[A] {
   match self {
-    Empty => Empty
-    Leaf(_) => Empty
+    Empty | Leaf(_) => Empty
     Node(children, _) => {
       let last_index = children.length() - 1
       let new_last = children[last_index].pop_rightmost_leaf(shift - NUM_BITS)
