@@ -564,3 +564,18 @@ test "intersection and difference preserve self's stored representatives" {
   let out3 = lone.difference(far).to_array()
   assert_true(out3.length() == 1 && out3[0].payload == 1)
 }
+
+///|
+test "union size is exact for overlapping, disjoint and identical sets" {
+  let a = @sorted_set.from_array([1, 2, 3, 4, 5])
+  let b = @sorted_set.from_array([4, 5, 6, 7])
+  inspect(a.union(b).length(), content="7")
+  inspect(b.union(a).length(), content="7")
+  inspect(a.union(@sorted_set.from_array([10, 11])).length(), content="7")
+  inspect(a.union(a).length(), content="5")
+  // size must agree with an actual element count
+  let u = a.union(b)
+  let mut n = 0
+  u.each(_x => n = n + 1)
+  inspect(u.length() == n, content="true")
+}
