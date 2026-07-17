@@ -2,11 +2,14 @@
 package "moonbitlang/core/string"
 
 import {
+  "moonbitlang/core/bigint",
   "moonbitlang/core/builtin",
   "moonbitlang/core/debug",
 }
 
 // Values
+pub fn parse_bigint(StringView, base? : Int) -> @bigint.BigInt raise
+
 pub fn parse_bool(StringView) -> Bool raise
 
 pub fn parse_double(StringView) -> Double raise
@@ -63,4 +66,5 @@ pub impl FromStr for Int64
 pub impl FromStr for UInt
 pub impl FromStr for UInt64
 pub impl FromStr for Double
+pub impl FromStr for @bigint.BigInt
 
