@@ -706,6 +706,7 @@ pub fn String::before(String, StringView) -> StringView?
 pub fn String::char_length(String, start_offset? : Int, end_offset? : Int) -> Int
 pub fn String::char_length_eq(String, Int, start_offset? : Int, end_offset? : Int) -> Bool
 pub fn String::char_length_ge(String, Int, start_offset? : Int, end_offset? : Int) -> Bool
+pub fn String::clamped_view(String, start? : Int, end? : Int) -> StringView
 pub fn String::code_units(String) -> ArrayView[UInt16]
 pub fn String::compare_ignore_ascii_case(String, String) -> Int
 pub fn String::contains(String, StringView) -> Bool
@@ -1026,6 +1027,7 @@ pub fn StringView::before(Self, Self) -> Self?
 pub fn StringView::char_length(Self) -> Int
 pub fn StringView::char_length_eq(Self, Int) -> Bool
 pub fn StringView::char_length_ge(Self, Int) -> Bool
+pub fn StringView::clamped_view(Self, start? : Int, end? : Int) -> Self
 pub fn StringView::code_units(Self) -> ArrayView[UInt16]
 pub fn StringView::compare_ignore_ascii_case(Self, Self) -> Int
 pub fn StringView::contains(Self, Self) -> Bool
