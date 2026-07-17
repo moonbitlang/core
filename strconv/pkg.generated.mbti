@@ -2,16 +2,12 @@
 package "moonbitlang/core/strconv"
 
 import {
-  "moonbitlang/core/bigint",
   "moonbitlang/core/debug",
 }
 
 // Values
 #deprecated
 pub fn[A : FromStr] parse(StringView) -> A raise StrConvError
-
-#deprecated
-pub fn parse_bigint(StringView, base? : Int) -> @bigint.BigInt raise
 
 #deprecated
 pub fn parse_bool(StringView) -> Bool raise StrConvError
