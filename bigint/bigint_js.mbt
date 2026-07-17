@@ -31,8 +31,60 @@ pub fn parse_bigint(str : StringView, base? : Int = 10) -> BigInt raise {
   if str.length() == 0 {
     syntax_err()
   }
-  BigInt::from_string_radix(str, base)
+  match str.unsafe_get(str.length() - 1) {
+    '0'..='9' | 'A'..='Z' | 'a'..='z' => ()
+    _ => syntax_err()
+  }
+  if base == 10 {
+    match str {
+      ['0', 'x' | 'X' | 'o' | 'O' | 'b' | 'B', ..]
+      | ['-', '0', 'x' | 'X' | 'o' | 'O' | 'b' | 'B', ..] => syntax_err()
+      ['0'..='9', ..] | ['-', '0'..='9', ..] => ()
+      _ => syntax_err()
+    }
+  }
+  match base {
+    2 | 8 | 10 | 16 =>
+      match
+        BigInt::js_parse_string(
+          str.data(),
+          str.start_offset(),
+          str.start_offset() + str.length(),
+          base,
+          value => Some(value),
+          None,
+        ) {
+        Some(value) => value
+        None => syntax_err()
+      }
+    _ => BigInt::from_string_radix(str, base)
+  }
 }
+
+///|
+extern "js" fn BigInt::js_parse_string(
+  str : String,
+  start : Int,
+  end : Int,
+  base : Int,
+  some : (BigInt) -> BigInt?,
+  none : BigInt?,
+) -> BigInt? =
+  #|(str, start, end, base, some, none) => {
+  #|  try {
+  #|    if (base === 10) {
+  #|      const input = start === 0 && end === str.length ? str : str.slice(start, end);
+  #|      return some(BigInt(input));
+  #|    }
+  #|    const negative = str.charCodeAt(start) === 45;
+  #|    const digits = str.slice(negative ? start + 1 : start, end);
+  #|    const prefix = base === 2 ? "0b" : base === 8 ? "0o" : "0x";
+  #|    const value = BigInt(prefix + digits);
+  #|    return some(negative ? -value : value);
+  #|  } catch (_) {
+  #|    return none;
+  #|  }
+  #|}
 
 ///|
 /// Converts a string representation in the specified radix to a BigInt value.
