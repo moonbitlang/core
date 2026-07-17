@@ -712,6 +712,110 @@ pub fn StringView::get_view(
 }
 
 ///|
+/// Returns the largest well-formed view contained in the requested range.
+/// Total: out-of-range offsets are clamped to the string, an offset that
+/// would split a surrogate pair is snapped inward (`start` forward, `end`
+/// backward), and an inverted range yields an empty view — this function
+/// never aborts and never cuts a surrogate pair in half.
+///
+/// Intended for truncation where the exact cut point does not matter, such
+/// as short summaries: the result is at most one character shorter than the
+/// requested range on each side. Unpaired surrogates already present in the
+/// input are treated as boundaries and pass through unchanged.
+///
+/// See `s[start:end]` for the aborting variant and `String::get_view` for
+/// the exact `Option`-returning variant.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   let s = "ab😀cd"
+///   inspect(s.clamped_view(end=3), content="ab") // 3 splits 😀: snapped to 2
+///   inspect(s.clamped_view(start=3), content="cd") // snapped to 4
+///   inspect(s.clamped_view(end=100), content="ab😀cd") // clamped
+///   inspect(s.clamped_view(start=3, end=3), content="") // inside the pair
+/// }
+/// ```
+pub fn String::clamped_view(
+  self : String,
+  start? : Int = 0,
+  end? : Int,
+) -> StringView {
+  let len = self.length()
+  let mut lo = if start < 0 { 0 } else if start > len { len } else { start }
+  let mut hi = match end {
+    None => len
+    Some(e) => if e < 0 { 0 } else if e > len { len } else { e }
+  }
+  if lo > 0 &&
+    lo < len &&
+    self.unsafe_get(lo).is_trailing_surrogate() &&
+    self.unsafe_get(lo - 1).is_leading_surrogate() {
+    lo += 1
+  }
+  if hi > 0 &&
+    hi < len &&
+    self.unsafe_get(hi).is_trailing_surrogate() &&
+    self.unsafe_get(hi - 1).is_leading_surrogate() {
+    hi -= 1
+  }
+  if lo >= hi {
+    StringView::make_view(self, lo, lo)
+  } else {
+    StringView::make_view(self, lo, hi)
+  }
+}
+
+///|
+/// Returns the largest well-formed sub-view contained in the requested range
+/// of this view; offsets are relative to the view. Total like
+/// `String::clamped_view`: clamps out-of-range offsets, snaps
+/// surrogate-splitting offsets inward, and yields an empty view for an
+/// inverted range.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   let v = "xx ab😀cd".view(start_offset=3)
+///   inspect(v.clamped_view(end=3), content="ab")
+///   inspect(v.clamped_view(start=3), content="cd")
+/// }
+/// ```
+pub fn StringView::clamped_view(
+  self : StringView,
+  start? : Int = 0,
+  end? : Int,
+) -> StringView {
+  let len = self.length()
+  let mut lo = if start < 0 { 0 } else if start > len { len } else { start }
+  let mut hi = match end {
+    None => len
+    Some(e) => if e < 0 { 0 } else if e > len { len } else { e }
+  }
+  let str = self.str()
+  let base = self.start()
+  if lo > 0 &&
+    lo < len &&
+    str.unsafe_get(base + lo).is_trailing_surrogate() &&
+    str.unsafe_get(base + lo - 1).is_leading_surrogate() {
+    lo += 1
+  }
+  if hi > 0 &&
+    hi < len &&
+    str.unsafe_get(base + hi).is_trailing_surrogate() &&
+    str.unsafe_get(base + hi - 1).is_leading_surrogate() {
+    hi -= 1
+  }
+  if lo >= hi {
+    StringView::make_view(str, base + lo, base + lo)
+  } else {
+    StringView::make_view(str, base + lo, base + hi)
+  }
+}
+
+///|
 /// Creates a view of a string with proper UTF-16 boundary validation.
 ///
 /// # Parameters
