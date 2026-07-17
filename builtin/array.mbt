@@ -540,9 +540,16 @@ pub fn[T] Array::eachi(
 ///   assert_false(arr.all(x => x < 5))
 /// }
 /// ```
+#locals(f)
 #alias(every)
 pub fn[T] Array::all(self : Array[T], f : (T) -> Bool raise?) -> Bool raise? {
-  self[:].all(f)
+  // Inlined for #locals(f); see Array::any.
+  for v in self {
+    if !f(v) {
+      return false
+    }
+  }
+  true
 }
 
 ///|
@@ -556,9 +563,18 @@ pub fn[T] Array::all(self : Array[T], f : (T) -> Bool raise?) -> Bool raise? {
 ///   assert_false(arr.any(x => x < 1))
 /// }
 /// ```
+#locals(f)
 #alias(exists)
 pub fn[T] Array::any(self : Array[T], f : (T) -> Bool raise?) -> Bool raise? {
-  self[:].any(f)
+  // Inlined rather than delegating to `self[:].any(f)`: passing `f` onward
+  // counts as an escape, which would reject `#locals(f)` (see issue about
+  // propagating localness through #locals-annotated callees).
+  for v in self {
+    if f(v) {
+      return true
+    }
+  }
+  false
 }
 
 ///|
