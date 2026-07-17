@@ -754,6 +754,7 @@ pub fn[A] String::rev_fold(String, init~ : A, (A, Char) -> A raise?) -> A raise?
 pub fn String::rev_iter(String) -> Iter[Char]
 pub fn String::rev_split_once(String, StringView) -> (StringView, StringView)?
 pub fn String::split(String, StringView) -> Iter[StringView]
+pub fn String::split_at(String, Int) -> (StringView, StringView)
 pub fn String::split_once(String, StringView) -> (StringView, StringView)?
 #alias(chop_prefix)
 pub fn String::strip_prefix(String, StringView) -> StringView?
@@ -1076,6 +1077,7 @@ pub fn[A] StringView::rev_fold(Self, init~ : A, (A, Char) -> A raise?) -> A rais
 pub fn StringView::rev_iter(Self) -> Iter[Char]
 pub fn StringView::rev_split_once(Self, Self) -> (Self, Self)?
 pub fn StringView::split(Self, Self) -> Iter[Self]
+pub fn StringView::split_at(Self, Int) -> (Self, Self)
 pub fn StringView::split_once(Self, Self) -> (Self, Self)?
 pub fn StringView::start_offset(Self) -> Int
 #alias(chop_prefix)
