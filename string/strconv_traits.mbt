@@ -74,4 +74,6 @@ test "parse" {
   @test.assert_eq(ui64, 18446744073709551615UL)
   let d : Double = from_str("1234.56789")
   @test.assert_eq(d, 1234.56789)
+  let bigint : @bigint.BigInt = from_str("123456789012345678901234567890")
+  inspect(bigint, content="123456789012345678901234567890")
 }

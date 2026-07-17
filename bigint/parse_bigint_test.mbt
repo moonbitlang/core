@@ -16,8 +16,19 @@
 test "parse_bigint valid" {
   inspect(@bigint.parse_bigint("12345"), content="12345")
   inspect(@bigint.parse_bigint("-12345"), content="-12345")
+  inspect(@bigint.parse_bigint("101010", base=2), content="42")
+  inspect(@bigint.parse_bigint("52", base=8), content="42")
   inspect(@bigint.parse_bigint("ff", base=16), content="255")
   inspect(@bigint.parse_bigint("-0"), content="0")
+}
+
+///|
+test "parse_bigint StringView" {
+  let input = "prefix-ffsuffix"
+  inspect(
+    @bigint.parse_bigint(input.view(start_offset=6, end_offset=9), base=16),
+    content="-255",
+  )
 }
 
 ///|
@@ -66,4 +77,25 @@ test "parse_bigint radix 16 invalid character" {
     @test.expect_error(() => @bigint.parse_bigint("g", base=16))
     is Failure::Failure("invalid syntax"),
   )
+}
+
+///|
+test "parse_bigint rejects prefixes and plus sign" {
+  for input in ["0x10", "0o10", "0b10", "-0x10", "+10"] {
+    assert_true(
+      @test.expect_error(() => @bigint.parse_bigint(input))
+      is Failure::Failure("invalid syntax"),
+    )
+  }
+}
+
+///|
+test "parse_bigint rejects trailing whitespace" {
+  for case in [("42 ", 10), ("10\t", 2), ("52\n", 8), ("ff ", 16)] {
+    let (input, base) = case
+    assert_true(
+      @test.expect_error(() => @bigint.parse_bigint(input, base~))
+      is Failure::Failure("invalid syntax"),
+    )
+  }
 }

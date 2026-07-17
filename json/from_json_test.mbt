@@ -796,6 +796,17 @@ test "BigInt from_json error handling" {
       #|JsonDecodeError((Root, "BigInt::from_json: expected number in string representation"))
     ),
   )
+  let json_invalid_number = Json::string("not-a-number")
+  let err = expect_json_decode_error(
+    () => ignore((@json.from_json(json_invalid_number) : BigInt)),
+    "expected invalid BigInt decode failure",
+  )
+  debug_inspect(
+    err,
+    content=(
+      #|JsonDecodeError((Root, "BigInt::from_json: invalid number in string representation"))
+    ),
+  )
 }
 
 ///|
