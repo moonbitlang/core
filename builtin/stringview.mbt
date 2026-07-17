@@ -816,6 +816,76 @@ pub fn StringView::clamped_view(
 }
 
 ///|
+/// Splits the string into a well-formed `(prefix, suffix)` pair at the given
+/// code-unit offset: the cut point is `at` clamped to the string and snapped
+/// down to the nearest character boundary, so the prefix never exceeds `at`
+/// units and a character straddling the cut goes to the suffix.
+///
+/// Total, O(1), and lossless: `prefix + suffix == self` always holds —
+/// unlike composing two `clamped_view` calls, which would drop a character
+/// straddling the cut from both halves. Unpaired surrogates are treated as
+/// boundaries and pass through unchanged.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   let s = "ab😀cd"
+///   let (p, q) = s.split_at(3) // 3 splits 😀: the cut snaps down to 2
+///   inspect(p, content="ab")
+///   inspect(q, content="😀cd")
+///   let (p2, q2) = s.split_at(100) // clamped
+///   inspect(p2, content="ab😀cd")
+///   inspect(q2, content="")
+/// }
+/// ```
+pub fn String::split_at(self : String, at : Int) -> (StringView, StringView) {
+  let len = self.length()
+  let mut cut = if at < 0 { 0 } else if at > len { len } else { at }
+  if cut > 0 &&
+    cut < len &&
+    self.unsafe_get(cut).is_trailing_surrogate() &&
+    self.unsafe_get(cut - 1).is_leading_surrogate() {
+    cut -= 1
+  }
+  (StringView::make_view(self, 0, cut), StringView::make_view(self, cut, len))
+}
+
+///|
+/// Splits the view into a well-formed `(prefix, suffix)` pair at the given
+/// view-relative code-unit offset; same contract as `String::split_at`.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   let v = "xx ab😀cd".view(start_offset=3)
+///   let (p, q) = v.split_at(3)
+///   inspect(p, content="ab")
+///   inspect(q, content="😀cd")
+/// }
+/// ```
+pub fn StringView::split_at(
+  self : StringView,
+  at : Int,
+) -> (StringView, StringView) {
+  let len = self.length()
+  let mut cut = if at < 0 { 0 } else if at > len { len } else { at }
+  let str = self.str()
+  let base = self.start()
+  if cut > 0 &&
+    cut < len &&
+    str.unsafe_get(base + cut).is_trailing_surrogate() &&
+    str.unsafe_get(base + cut - 1).is_leading_surrogate() {
+    cut -= 1
+  }
+  (
+    StringView::make_view(str, base, base + cut),
+    StringView::make_view(str, base + cut, self.end()),
+  )
+}
+
+///|
 /// Creates a view of a string with proper UTF-16 boundary validation.
 ///
 /// # Parameters
