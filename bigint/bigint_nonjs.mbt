@@ -1475,11 +1475,7 @@ pub fn BigInt::from_octets(input : BytesView, signum? : Int = 1) -> BigInt {
       limbs[i] = (limbs[i] << 8) | input[bytes_idx].to_uint()
     }
   }
-  if limbs[limbs_len - 1] == 0 {
-    { limbs, sign: Positive, len: max(1, limbs_len - 1) }
-  } else {
-    { limbs, sign: Positive, len: limbs_len }
-  }
+  { limbs, sign: Positive, len: normalize_len(limbs, limbs_len) }
 }
 
 ///|
