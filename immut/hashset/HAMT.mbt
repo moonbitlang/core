@@ -30,7 +30,7 @@
 ///|
 priv struct BuildEntry[A] {
   value : A
-  path : @path.Path
+  path : @path.Path // Full path; bulk construction tracks consumed segments by depth.
 }
 
 ///|
@@ -132,10 +132,12 @@ fn[A : Eq] Node::add_with_path(
 fn[A : Eq] BuildEntry::add_to_node(
   self : BuildEntry[A],
   node : Node[A]?,
+  depth : Int,
 ) -> Node[A] {
+  let path = self.path.advance(depth)
   match node {
-    None => Flat(self.value, self.path)
-    Some(node) => node.add_with_path(self.value, self.path)
+    None => Flat(self.value, path)
+    Some(node) => node.add_with_path(self.value, path)
   }
 }
 
@@ -144,6 +146,7 @@ fn[A : Eq] build_hashset_node_by_add(
   entries : Array[BuildEntry[A]],
   start : Int,
   end : Int,
+  depth : Int,
   reverse : Bool,
 ) -> Node[A] {
   if reverse {
@@ -151,7 +154,7 @@ fn[A : Eq] build_hashset_node_by_add(
       if i == start {
         break node.unwrap()
       }
-      let node = entries[i - 1].add_to_node(node)
+      let node = entries[i - 1].add_to_node(node, depth)
       continue i - 1, Some(node)
     }
   } else {
@@ -159,7 +162,7 @@ fn[A : Eq] build_hashset_node_by_add(
       if i == end {
         break node.unwrap()
       }
-      let node = entries[i].add_to_node(node)
+      let node = entries[i].add_to_node(node, depth)
       continue i + 1, Some(node)
     }
   }
@@ -170,18 +173,19 @@ fn[A : Eq] build_hashset_node_range(
   entries : Array[BuildEntry[A]],
   start : Int,
   end : Int,
+  depth : Int,
   reverse : Bool,
 ) -> Node[A] {
   if end - start == 1 {
     let entry = entries[start]
-    return Flat(entry.value, entry.path)
+    return Flat(entry.value, entry.path.advance(depth))
   }
-  if entries[start].path.is_last() {
-    return build_hashset_node_by_add(entries, start, end, reverse)
+  if entries[start].path.is_last_at(depth) {
+    return build_hashset_node_by_add(entries, start, end, depth, reverse)
   }
   let starts = FixedArray::make(32, 0)
   for i = start; i < end; i = i + 1 {
-    starts[entries[i].path.idx()] += 1
+    starts[entries[i].path.idx_at(depth)] += 1
   }
   let nexts = FixedArray::make(32, 0)
   for idx = 0, offset = 0; idx < 32; {
@@ -194,9 +198,9 @@ fn[A : Eq] build_hashset_node_range(
   let partitioned = Array::make(end - start, first)
   for i = start; i < end; i = i + 1 {
     let entry = entries[i]
-    let idx = entry.path.idx()
+    let idx = entry.path.idx_at(depth)
     let offset = nexts[idx]
-    partitioned[offset] = { value: entry.value, path: entry.path.next() }
+    partitioned[offset] = entry
     nexts[idx] = offset + 1
   }
   let mut child_count = 0
@@ -213,6 +217,7 @@ fn[A : Eq] build_hashset_node_range(
     partitioned,
     starts[first_idx],
     nexts[first_idx],
+    depth + 1,
     reverse,
   )
   if child_count == 1 {
@@ -232,6 +237,7 @@ fn[A : Eq] build_hashset_node_range(
       partitioned,
       starts[idx],
       nexts[idx],
+      depth + 1,
       reverse,
     )
     continue idx + 1, out + 1
@@ -266,7 +272,9 @@ fn[A : Eq + Hash] hash_set_from_array(arr : ArrayView[A]) -> HashSet[A] {
     let value = arr[i]
     { value, path: @path.of(value) }
   })
-  { data: Some(build_hashset_node_range(entries, 0, entries.length(), true)) }
+  {
+    data: Some(build_hashset_node_range(entries, 0, entries.length(), 0, true)),
+  }
 }
 
 ///|
@@ -572,7 +580,9 @@ pub fn[A : Eq + Hash] HashSet::from_iter(iter : Iter[A]) -> HashSet[A] {
     new()
   } else {
     {
-      data: Some(build_hashset_node_range(entries, 0, entries.length(), false)),
+      data: Some(
+        build_hashset_node_range(entries, 0, entries.length(), 0, false),
+      ),
     }
   }
 }

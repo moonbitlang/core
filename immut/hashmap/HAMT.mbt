@@ -37,7 +37,7 @@ priv enum CurrNode[K, V] {
 priv struct BuildEntry[K, V] {
   key : K
   value : V
-  path : @path.Path
+  path : @path.Path // Full path; bulk construction tracks consumed segments by depth.
 }
 
 ///|
@@ -180,10 +180,12 @@ fn[K : Eq, V] Node::add_with_path(
 fn[K : Eq, V] BuildEntry::add_to_node(
   self : BuildEntry[K, V],
   node : Node[K, V]?,
+  depth : Int,
 ) -> Node[K, V] {
+  let path = self.path.advance(depth)
   match node {
-    None => Flat(self.key, self.value, self.path)
-    Some(node) => node.add_with_path(self.key, self.value, self.path)
+    None => Flat(self.key, self.value, path)
+    Some(node) => node.add_with_path(self.key, self.value, path)
   }
 }
 
@@ -192,6 +194,7 @@ fn[K : Eq, V] build_hashmap_node_by_add(
   entries : Array[BuildEntry[K, V]],
   start : Int,
   end : Int,
+  depth : Int,
   reverse : Bool,
 ) -> Node[K, V] {
   if reverse {
@@ -199,7 +202,7 @@ fn[K : Eq, V] build_hashmap_node_by_add(
       if i == start {
         break node.unwrap()
       }
-      let node = entries[i - 1].add_to_node(node)
+      let node = entries[i - 1].add_to_node(node, depth)
       continue i - 1, Some(node)
     }
   } else {
@@ -207,7 +210,7 @@ fn[K : Eq, V] build_hashmap_node_by_add(
       if i == end {
         break node.unwrap()
       }
-      let node = entries[i].add_to_node(node)
+      let node = entries[i].add_to_node(node, depth)
       continue i + 1, Some(node)
     }
   }
@@ -218,18 +221,19 @@ fn[K : Eq, V] build_hashmap_node_range(
   entries : Array[BuildEntry[K, V]],
   start : Int,
   end : Int,
+  depth : Int,
   reverse : Bool,
 ) -> Node[K, V] {
   if end - start == 1 {
     let entry = entries[start]
-    return Flat(entry.key, entry.value, entry.path)
+    return Flat(entry.key, entry.value, entry.path.advance(depth))
   }
-  if entries[start].path.is_last() {
-    return build_hashmap_node_by_add(entries, start, end, reverse)
+  if entries[start].path.is_last_at(depth) {
+    return build_hashmap_node_by_add(entries, start, end, depth, reverse)
   }
   let starts = FixedArray::make(32, 0)
   for i = start; i < end; i = i + 1 {
-    starts[entries[i].path.idx()] += 1
+    starts[entries[i].path.idx_at(depth)] += 1
   }
   let nexts = FixedArray::make(32, 0)
   for idx = 0, offset = 0; idx < 32; {
@@ -242,13 +246,9 @@ fn[K : Eq, V] build_hashmap_node_range(
   let partitioned = Array::make(end - start, first)
   for i = start; i < end; i = i + 1 {
     let entry = entries[i]
-    let idx = entry.path.idx()
+    let idx = entry.path.idx_at(depth)
     let offset = nexts[idx]
-    partitioned[offset] = {
-      key: entry.key,
-      value: entry.value,
-      path: entry.path.next(),
-    }
+    partitioned[offset] = entry
     nexts[idx] = offset + 1
   }
   let mut child_count = 0
@@ -265,6 +265,7 @@ fn[K : Eq, V] build_hashmap_node_range(
     partitioned,
     starts[first_idx],
     nexts[first_idx],
+    depth + 1,
     reverse,
   )
   if child_count == 1 {
@@ -284,6 +285,7 @@ fn[K : Eq, V] build_hashmap_node_range(
       partitioned,
       starts[idx],
       nexts[idx],
+      depth + 1,
       reverse,
     )
     continue idx + 1, out + 1
@@ -325,7 +327,9 @@ fn[K : Eq + Hash, V] hash_map_from_array(
     let (k, v) = kv
     { key: k, value: v, path: @path.of(k) }
   })
-  { data: Some(build_hashmap_node_range(entries, 0, entries.length(), true)) }
+  {
+    data: Some(build_hashmap_node_range(entries, 0, entries.length(), 0, true)),
+  }
 }
 
 ///|
@@ -883,7 +887,9 @@ pub fn[K : Eq + Hash, V] HashMap::from_iter(
     new()
   } else {
     {
-      data: Some(build_hashmap_node_range(entries, 0, entries.length(), false)),
+      data: Some(
+        build_hashmap_node_range(entries, 0, entries.length(), 0, false),
+      ),
     }
   }
 }
