@@ -56,14 +56,6 @@ pub fn Path::is_last(self : Path) -> Bool {
 }
 
 ///|
-/// Returns whether only a single segment remains after skipping `depth`
-/// segments.
-pub fn Path::is_last_at(self : Path, depth : Int) -> Bool {
-  let Path(self) = self
-  self >> (SEGMENT_LENGTH * depth) <= MAX_TAIL
-}
-
-///|
 /// Push the given `idx` as the last segment to `self`.
 pub fn Path::push(self : Path, idx : Int) -> Path {
   let Path(self) = self

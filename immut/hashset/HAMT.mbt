@@ -180,11 +180,11 @@ fn[A : Eq] build_hashset_node_range(
     let entry = entries[start]
     return Flat(entry.value, entry.path.advance(depth))
   }
-  if entries[start].path.is_last_at(depth) {
+  if depth == 5 {
     return build_hashset_node_by_add(entries, start, end, depth, reverse)
   }
   let starts = FixedArray::make(32, 0)
-  for i = start; i < end; i = i + 1 {
+  for i in start..<end {
     starts[entries[i].path.idx_at(depth)] += 1
   }
   let nexts = FixedArray::make(32, 0)
@@ -196,22 +196,27 @@ fn[A : Eq] build_hashset_node_range(
   }
   let first = entries[start]
   let partitioned = Array::make(end - start, first)
-  for i = start; i < end; i = i + 1 {
+  for i in start..<end {
     let entry = entries[i]
     let idx = entry.path.idx_at(depth)
     let offset = nexts[idx]
     partitioned[offset] = entry
     nexts[idx] = offset + 1
   }
-  let mut child_count = 0
-  for idx = 0; idx < 32; idx = idx + 1 {
-    if nexts[idx] != starts[idx] {
-      child_count += 1
+  let child_count = for idx, next in nexts; count = 0 {
+    if next != starts[idx] {
+      continue count + 1
     }
+    continue count
+  } nobreak {
+    count
   }
-  let mut first_idx = 0
-  while nexts[first_idx] == starts[first_idx] {
-    first_idx += 1
+  let first_idx = for idx, next in nexts {
+    if next != starts[idx] {
+      break idx
+    }
+  } nobreak {
+    abort("unreachable")
   }
   let first_child = build_hashset_node_range(
     partitioned,
