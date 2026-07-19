@@ -45,6 +45,21 @@ test "path navigation" {
 }
 ```
 
+Depth-aware navigation reads the original path without allocating an
+intermediate path for every traversed level:
+
+```mbt check
+///|
+test "depth-aware path navigation" {
+  let path = @path.of("test_key")
+  for depth = 0, current = path; depth < 6; {
+    assert_eq(path.idx_at(depth), current.idx())
+    assert_true(path.advance(depth) == current)
+    continue depth + 1, current.next()
+  }
+}
+```
+
 ## Path Construction
 
 Build paths for tree navigation:

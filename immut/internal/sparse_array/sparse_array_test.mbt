@@ -37,6 +37,17 @@ test "SparseArray" {
 }
 
 ///|
+test "SparseArray::from_sorted_fixed_array" {
+  let arr = @sparse_array.from_sorted_fixed_array([0, 3, 31], ["a", "b", "c"])
+  debug_inspect(
+    [arr.get(0), arr.get(1), arr.get(3), arr.get(31)],
+    content=(
+      #|[Some("a"), None, Some("b"), Some("c")]
+    ),
+  )
+}
+
+///|
 test "SparseArray::union" {
   let arr1 = @sparse_array.singleton(0, 0)
     .add(1, 1)

@@ -70,8 +70,22 @@ pub fn Path::idx(self : Path) -> Int {
 }
 
 ///|
+/// Returns the segment at `depth` without consuming the path.
+pub fn Path::idx_at(self : Path, depth : Int) -> Int {
+  let Path(self) = self
+  ((self >> (SEGMENT_LENGTH * depth)) & INDEX_MASK).reinterpret_as_int()
+}
+
+///|
 /// Removes last segment of `self`.
 pub fn Path::next(self : Path) -> Path {
   let Path(self) = self
   self >> SEGMENT_LENGTH
+}
+
+///|
+/// Removes `depth` segments from the path.
+pub fn Path::advance(self : Path, depth : Int) -> Path {
+  let Path(self) = self
+  self >> (SEGMENT_LENGTH * depth)
 }

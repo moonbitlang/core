@@ -28,6 +28,15 @@
 // - <https://lampwww.epfl.ch/papers/idealhashtrees.pdf>
 
 ///|
+priv struct BuildEntry[A] {
+  value : A
+  path : @path.Path // Full path; bulk construction tracks consumed segments by depth.
+}
+
+///|
+let bulk_build_threshold = 64
+
+///|
 /// Create a new instance.
 #as_free_fn
 pub fn[A] HashSet::new() -> HashSet[A] {
@@ -116,6 +125,160 @@ fn[A : Eq] Node::add_with_path(
         }
       }
     }
+  }
+}
+
+///|
+fn[A : Eq] BuildEntry::add_to_node(
+  self : BuildEntry[A],
+  node : Node[A]?,
+  depth : Int,
+) -> Node[A] {
+  let path = self.path.advance(depth)
+  match node {
+    None => Flat(self.value, path)
+    Some(node) => node.add_with_path(self.value, path)
+  }
+}
+
+///|
+fn[A : Eq] build_hashset_node_by_add(
+  entries : Array[BuildEntry[A]],
+  start : Int,
+  end : Int,
+  depth : Int,
+  reverse : Bool,
+) -> Node[A] {
+  if reverse {
+    for i = end, node = (None : Node[A]?) {
+      if i == start {
+        break node.unwrap()
+      }
+      let node = entries[i - 1].add_to_node(node, depth)
+      continue i - 1, Some(node)
+    }
+  } else {
+    for i = start, node = (None : Node[A]?) {
+      if i == end {
+        break node.unwrap()
+      }
+      let node = entries[i].add_to_node(node, depth)
+      continue i + 1, Some(node)
+    }
+  }
+}
+
+///|
+fn[A : Eq] build_hashset_node_range(
+  entries : Array[BuildEntry[A]],
+  start : Int,
+  end : Int,
+  depth : Int,
+  reverse : Bool,
+) -> Node[A] {
+  if end - start == 1 {
+    let entry = entries[start]
+    return Flat(entry.value, entry.path.advance(depth))
+  }
+  if depth == 5 {
+    return build_hashset_node_by_add(entries, start, end, depth, reverse)
+  }
+  let starts = FixedArray::make(32, 0)
+  for i in start..<end {
+    starts[entries[i].path.idx_at(depth)] += 1
+  }
+  let nexts = FixedArray::make(32, 0)
+  for idx = 0, offset = 0; idx < 32; {
+    let count = starts[idx]
+    starts[idx] = offset
+    nexts[idx] = offset
+    continue idx + 1, offset + count
+  }
+  let first = entries[start]
+  let partitioned = Array::make(end - start, first)
+  for i in start..<end {
+    let entry = entries[i]
+    let idx = entry.path.idx_at(depth)
+    let offset = nexts[idx]
+    partitioned[offset] = entry
+    nexts[idx] = offset + 1
+  }
+  let child_count = for idx, next in nexts; count = 0 {
+    if next != starts[idx] {
+      continue count + 1
+    }
+    continue count
+  } nobreak {
+    count
+  }
+  let first_idx = for idx, next in nexts {
+    if next != starts[idx] {
+      break idx
+    }
+  } nobreak {
+    abort("unreachable")
+  }
+  let first_child = build_hashset_node_range(
+    partitioned,
+    starts[first_idx],
+    nexts[first_idx],
+    depth + 1,
+    reverse,
+  )
+  if child_count == 1 {
+    return match first_child {
+      Flat(value, path) => Flat(value, path.push(first_idx))
+      _ => Branch(@sparse_array.singleton(first_idx, first_child))
+    }
+  }
+  let indices = FixedArray::make(child_count, first_idx)
+  let children = FixedArray::make(child_count, first_child)
+  for idx = first_idx + 1, out = 1; idx < 32; {
+    if nexts[idx] == starts[idx] {
+      continue idx + 1, out
+    }
+    indices[out] = idx
+    children[out] = build_hashset_node_range(
+      partitioned,
+      starts[idx],
+      nexts[idx],
+      depth + 1,
+      reverse,
+    )
+    continue idx + 1, out + 1
+  }
+  Branch(@sparse_array.from_sorted_fixed_array(indices, children))
+}
+
+///|
+fn[A : Eq + Hash] hash_set_from_iter_by_add(iter : Iter[A]) -> HashSet[A] {
+  iter.fold(init=new(), (s, e) => s.add(e))
+}
+
+///|
+fn[A : Eq + Hash] hash_set_from_array_by_add(arr : ArrayView[A]) -> HashSet[A] {
+  for n = arr.length(), set = new() {
+    match (n, set) {
+      (0, set) => break set
+      (n, set) => {
+        let k = arr[n - 1]
+        continue n - 1, set.add(k)
+      }
+    }
+  }
+}
+
+///|
+fn[A : Eq + Hash] hash_set_from_array(arr : ArrayView[A]) -> HashSet[A] {
+  if arr.length() <= bulk_build_threshold {
+    return hash_set_from_array_by_add(arr)
+  }
+  let entries = Array::makei(arr.length(), i => {
+    let value = arr[i]
+    { value, path: @path.of(value) }
+  })
+  {
+    data: Some(build_hashset_node_range(entries, 0, entries.length(), 0, true)),
   }
 }
 
@@ -410,7 +573,23 @@ pub fn[A] HashSet::iter(self : HashSet[A]) -> Iter[A] {
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
 pub fn[A : Eq + Hash] HashSet::from_iter(iter : Iter[A]) -> HashSet[A] {
-  iter.fold(init=new(), (s, e) => s.add(e))
+  if iter.size_hint() is Some(len) && len <= bulk_build_threshold {
+    return hash_set_from_iter_by_add(iter)
+  }
+  let entries = match iter.size_hint() {
+    Some(len) => Array::new(capacity=len)
+    None => []
+  }
+  iter.each(value => entries.push({ value, path: @path.of(value) }))
+  if entries.length() == 0 {
+    new()
+  } else {
+    {
+      data: Some(
+        build_hashset_node_range(entries, 0, entries.length(), 0, false),
+      ),
+    }
+  }
 }
 
 ///|
@@ -433,15 +612,7 @@ pub impl[A : Show] Show for HashSet[A] with fn output(self, logger) {
 #as_free_fn(of, deprecated="Use @immut/hashset.HashSet([...]) instead")
 #deprecated("Use @immut/hashset.HashSet([...]) instead")
 pub fn[A : Eq + Hash] HashSet::from_array(arr : ArrayView[A]) -> HashSet[A] {
-  for n = arr.length(), set = new() {
-    match (n, set) {
-      (0, set) => break set
-      (n, set) => {
-        let k = arr[n - 1]
-        continue n - 1, set.add(k)
-      }
-    }
-  }
+  hash_set_from_array(arr)
 }
 
 ///|
@@ -457,15 +628,7 @@ pub fn[A : Eq + Hash] HashSet::from_array(arr : ArrayView[A]) -> HashSet[A] {
 /// }
 /// ```
 pub fn[A : Eq + Hash] HashSet::HashSet(arr : ArrayView[A]) -> HashSet[A] {
-  for n = arr.length(), set = new() {
-    match (n, set) {
-      (0, set) => break set
-      (n, set) => {
-        let k = arr[n - 1]
-        continue n - 1, set.add(k)
-      }
-    }
-  }
+  hash_set_from_array(arr)
 }
 
 ///|

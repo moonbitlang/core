@@ -34,6 +34,16 @@ priv enum CurrNode[K, V] {
 }
 
 ///|
+priv struct BuildEntry[K, V] {
+  key : K
+  value : V
+  path : @path.Path // Full path; bulk construction tracks consumed segments by depth.
+}
+
+///|
+let bulk_build_threshold = 64
+
+///|
 /// Create a new instance.
 #as_free_fn
 pub fn[K, V] HashMap::new() -> HashMap[K, V] {
@@ -163,6 +173,167 @@ fn[K : Eq, V] Node::add_with_path(
         }
       }
     }
+  }
+}
+
+///|
+fn[K : Eq, V] BuildEntry::add_to_node(
+  self : BuildEntry[K, V],
+  node : Node[K, V]?,
+  depth : Int,
+) -> Node[K, V] {
+  let path = self.path.advance(depth)
+  match node {
+    None => Flat(self.key, self.value, path)
+    Some(node) => node.add_with_path(self.key, self.value, path)
+  }
+}
+
+///|
+fn[K : Eq, V] build_hashmap_node_by_add(
+  entries : Array[BuildEntry[K, V]],
+  start : Int,
+  end : Int,
+  depth : Int,
+  reverse : Bool,
+) -> Node[K, V] {
+  if reverse {
+    for i = end, node = (None : Node[K, V]?) {
+      if i == start {
+        break node.unwrap()
+      }
+      let node = entries[i - 1].add_to_node(node, depth)
+      continue i - 1, Some(node)
+    }
+  } else {
+    for i = start, node = (None : Node[K, V]?) {
+      if i == end {
+        break node.unwrap()
+      }
+      let node = entries[i].add_to_node(node, depth)
+      continue i + 1, Some(node)
+    }
+  }
+}
+
+///|
+fn[K : Eq, V] build_hashmap_node_range(
+  entries : Array[BuildEntry[K, V]],
+  start : Int,
+  end : Int,
+  depth : Int,
+  reverse : Bool,
+) -> Node[K, V] {
+  if end - start == 1 {
+    let entry = entries[start]
+    return Flat(entry.key, entry.value, entry.path.advance(depth))
+  }
+  if depth == 5 {
+    return build_hashmap_node_by_add(entries, start, end, depth, reverse)
+  }
+  let starts = FixedArray::make(32, 0)
+  for i in start..<end {
+    starts[entries[i].path.idx_at(depth)] += 1
+  }
+  let nexts = FixedArray::make(32, 0)
+  for idx = 0, offset = 0; idx < 32; {
+    let count = starts[idx]
+    starts[idx] = offset
+    nexts[idx] = offset
+    continue idx + 1, offset + count
+  }
+  let first = entries[start]
+  let partitioned = Array::make(end - start, first)
+  for i in start..<end {
+    let entry = entries[i]
+    let idx = entry.path.idx_at(depth)
+    let offset = nexts[idx]
+    partitioned[offset] = entry
+    nexts[idx] = offset + 1
+  }
+  let child_count = for idx, next in nexts; count = 0 {
+    if next != starts[idx] {
+      continue count + 1
+    }
+    continue count
+  } nobreak {
+    count
+  }
+  let first_idx = for idx, next in nexts {
+    if next != starts[idx] {
+      break idx
+    }
+  } nobreak {
+    abort("unreachable")
+  }
+  let first_child = build_hashmap_node_range(
+    partitioned,
+    starts[first_idx],
+    nexts[first_idx],
+    depth + 1,
+    reverse,
+  )
+  if child_count == 1 {
+    return match first_child {
+      Flat(key, value, path) => Flat(key, value, path.push(first_idx))
+      _ => Branch(@sparse_array.singleton(first_idx, first_child))
+    }
+  }
+  let indices = FixedArray::make(child_count, first_idx)
+  let children = FixedArray::make(child_count, first_child)
+  for idx = first_idx + 1, out = 1; idx < 32; {
+    if nexts[idx] == starts[idx] {
+      continue idx + 1, out
+    }
+    indices[out] = idx
+    children[out] = build_hashmap_node_range(
+      partitioned,
+      starts[idx],
+      nexts[idx],
+      depth + 1,
+      reverse,
+    )
+    continue idx + 1, out + 1
+  }
+  Branch(@sparse_array.from_sorted_fixed_array(indices, children))
+}
+
+///|
+fn[K : Eq + Hash, V] hash_map_from_iter_by_add(
+  iter : Iter[(K, V)],
+) -> HashMap[K, V] {
+  iter.fold(init=new(), (m, e) => m.add(e.0, e.1))
+}
+
+///|
+fn[K : Eq + Hash, V] hash_map_from_array_by_add(
+  arr : ArrayView[(K, V)],
+) -> HashMap[K, V] {
+  for n = arr.length(), map = new() {
+    match (n, map) {
+      (0, map) => break map
+      (n, map) => {
+        let (k, v) = arr[n - 1]
+        continue n - 1, map.add(k, v)
+      }
+    }
+  }
+}
+
+///|
+fn[K : Eq + Hash, V] hash_map_from_array(
+  arr : ArrayView[(K, V)],
+) -> HashMap[K, V] {
+  if arr.length() <= bulk_build_threshold {
+    return hash_map_from_array_by_add(arr)
+  }
+  let entries = Array::makei(arr.length(), i => {
+    let kv = arr[i]
+    let (k, v) = kv
+    { key: k, value: v, path: @path.of(k) }
+  })
+  {
+    data: Some(build_hashmap_node_range(entries, 0, entries.length(), 0, true)),
   }
 }
 
@@ -709,7 +880,23 @@ pub fn[K, V] HashMap::iter2(self : HashMap[K, V]) -> Iter2[K, V] {
 pub fn[K : Eq + Hash, V] HashMap::from_iter(
   iter : Iter[(K, V)],
 ) -> HashMap[K, V] {
-  iter.fold(init=new(), (m, e) => m.add(e.0, e.1))
+  if iter.size_hint() is Some(len) && len <= bulk_build_threshold {
+    return hash_map_from_iter_by_add(iter)
+  }
+  let entries = match iter.size_hint() {
+    Some(len) => Array::new(capacity=len)
+    None => []
+  }
+  iter.each(e => entries.push({ key: e.0, value: e.1, path: @path.of(e.0) }))
+  if entries.length() == 0 {
+    new()
+  } else {
+    {
+      data: Some(
+        build_hashmap_node_range(entries, 0, entries.length(), 0, false),
+      ),
+    }
+  }
 }
 
 ///|
@@ -735,15 +922,7 @@ pub impl[K : Show, V : Show] Show for HashMap[K, V] with fn output(self, logger)
 pub fn[K : Eq + Hash, V] HashMap::from_array(
   arr : ArrayView[(K, V)],
 ) -> HashMap[K, V] {
-  for n = arr.length(), map = new() {
-    match (n, map) {
-      (0, map) => break map
-      (n, map) => {
-        let (k, v) = arr[n - 1]
-        continue n - 1, map.add(k, v)
-      }
-    }
-  }
+  hash_map_from_array(arr)
 }
 
 ///|
@@ -761,15 +940,7 @@ pub fn[K : Eq + Hash, V] HashMap::from_array(
 pub fn[K : Eq + Hash, V] HashMap::HashMap(
   arr : ArrayView[(K, V)],
 ) -> HashMap[K, V] {
-  for n = arr.length(), map = new() {
-    match (n, map) {
-      (0, map) => break map
-      (n, map) => {
-        let (k, v) = arr[n - 1]
-        continue n - 1, map.add(k, v)
-      }
-    }
-  }
+  hash_map_from_array(arr)
 }
 
 ///|
