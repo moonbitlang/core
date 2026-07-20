@@ -1758,7 +1758,10 @@ pub fn[A : Eq] List::is_prefix(self : List[A], prefix : List[A]) -> Bool {
 /// }
 /// ```
 pub fn[A : Eq] List::is_suffix(self : List[A], suffix : List[A]) -> Bool {
-  self.rev().is_prefix(suffix.rev())
+  let self_length = self.length()
+  let suffix_length = suffix.length()
+  suffix_length <= self_length &&
+  self.drop(self_length - suffix_length).is_prefix(suffix)
 }
 
 ///|
