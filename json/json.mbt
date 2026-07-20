@@ -404,6 +404,13 @@ fn need_escape_scalar(
 
 ///|
 #cfg(not(any(target="native", target="wasm")))
+#warnings("-unused_value")
+fn suppress_unused_v128_import_on_scalar_targets() -> Unit {
+  ignore(@v128.i16x8_splat(0))
+}
+
+///|
+#cfg(not(any(target="native", target="wasm")))
 fn need_escape(str : String, escape_slash : Bool) -> Bool {
   need_escape_scalar(str, escape_slash, 0, str.length())
 }
