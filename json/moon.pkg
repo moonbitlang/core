@@ -22,5 +22,3 @@ import {
   "moonbitlang/core/quickcheck/shrink",
   "moonbitlang/core/quickcheck/splitmix",
 } for "test"
-
-warnings = "-29"
