@@ -24,12 +24,16 @@ let string_char_set_bench_contains_miss : String = "a".repeat(
 )
 
 ///|
-let string_char_set_bench_contains_match_at_end : String =
-  "a".repeat(string_char_set_bench_size - 1) + "z"
+let string_char_set_bench_contains_match_at_end : String = "a".repeat(
+    string_char_set_bench_size - 1,
+  ) +
+  "z"
 
 ///|
-let string_char_set_bench_trim_start : String =
-  " ".repeat(string_char_set_bench_size) + "x"
+let string_char_set_bench_trim_start : String = " ".repeat(
+    string_char_set_bench_size,
+  ) +
+  "x"
 
 ///|
 let string_char_set_bench_trim_end : String = "x" +
