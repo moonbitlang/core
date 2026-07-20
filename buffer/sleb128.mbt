@@ -18,8 +18,11 @@ trait Leb128 {
 }
 
 ///|
-pub impl Leb128 for Int with fn output(self, buffer) {
-  for value = self {
+fn Buffer::write_sleb128_int(self : Buffer, value : Int) -> Unit {
+  self.grow_if_necessary(self.len + 5)
+  let data = self.data
+  let mut len = self.len
+  for value = value {
     let byte = value & 0x7f // Get the low 7 bits
     let next_value = value >> 7 // Arithmetic right shift
     let sign_bit_set = (byte & 0x40) != 0
@@ -29,34 +32,53 @@ pub impl Leb128 for Int with fn output(self, buffer) {
       next_value != -1 || !sign_bit_set
     }
     if need_more {
-      buffer.write_byte((byte | 0x80).to_byte())
+      data.unsafe_set(len, (byte | 0x80).to_byte())
+      len = len + 1
       continue next_value
     } else {
-      buffer.write_byte(byte.to_byte())
+      data.unsafe_set(len, byte.to_byte())
+      len = len + 1
       break
     }
   }
+  self.len = len
+}
+
+///|
+fn Buffer::write_sleb128_int64(self : Buffer, value : Int64) -> Unit {
+  self.grow_if_necessary(self.len + 10)
+  let data = self.data
+  let mut len = self.len
+  for value = value {
+    let byte = value & 0x7f // Get the low 7 bits
+    let next_value = value >> 7 // Arithmetic right shift
+    let sign_bit_set = (byte & 0x40) != 0
+    let need_more = if value >= 0 {
+      next_value != 0 || sign_bit_set
+    } else {
+      next_value != -1 || !sign_bit_set
+    }
+    if need_more {
+      data.unsafe_set(len, (byte | 0x80).to_byte())
+      len = len + 1
+      continue next_value
+    } else {
+      data.unsafe_set(len, byte.to_byte())
+      len = len + 1
+      break
+    }
+  }
+  self.len = len
+}
+
+///|
+pub impl Leb128 for Int with fn output(self, buffer) {
+  buffer.write_sleb128_int(self)
 }
 
 ///|
 pub impl Leb128 for Int64 with fn output(self, buffer) {
-  for value = self {
-    let byte = value & 0x7f // Get the low 7 bits
-    let next_value = value >> 7 // Arithmetic right shift
-    let sign_bit_set = (byte & 0x40) != 0
-    let need_more = if value >= 0 {
-      next_value != 0 || sign_bit_set
-    } else {
-      next_value != -1 || !sign_bit_set
-    }
-    if need_more {
-      buffer.write_byte((byte | 0x80).to_byte())
-      continue next_value
-    } else {
-      buffer.write_byte(byte.to_byte())
-      break
-    }
-  }
+  buffer.write_sleb128_int64(self)
 }
 
 ///|
