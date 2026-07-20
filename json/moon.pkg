@@ -8,6 +8,7 @@ import {
   "moonbitlang/core/internal/strconv" @internal/strconv,
   "moonbitlang/core/option",
   "moonbitlang/core/buffer",
+  "moonbitlang/core/v128", // Used only by the native and wasm SIMD implementation.
 }
 
 import {
@@ -16,3 +17,5 @@ import {
   "moonbitlang/core/bigint",
   "moonbitlang/core/bench",
 } for "test"
+
+warnings = "-29"

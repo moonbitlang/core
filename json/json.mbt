@@ -383,20 +383,70 @@ pub fn Json::stringify(
 }
 
 ///|
-fn escape(str : String, escape_slash~ : Bool) -> String {
-  let len = str.length()
-  let mut needs_escape = false
-  for i in 0..<len {
+#inline
+fn need_escape_scalar(
+  str : String,
+  escape_slash : Bool,
+  start : Int,
+  end : Int,
+) -> Bool {
+  for i in start..<end {
     let code = str.unsafe_get(i)
     if code == ('"' : UInt16) ||
       code == ('\\' : UInt16) ||
       code < (' ' : UInt16) ||
       (escape_slash && code == ('/' : UInt16)) {
-      needs_escape = true
-      break
+      return true
     }
   }
-  if !needs_escape {
+  false
+}
+
+///|
+#cfg(not(any(target="native", target="wasm")))
+fn need_escape(str : String, escape_slash : Bool) -> Bool {
+  need_escape_scalar(str, escape_slash, 0, str.length())
+}
+
+///|
+// Scan eight UTF-16 code units at a time on linear-memory backends, then scan
+// the remaining tail one code unit at a time.
+#cfg(any(target="native", target="wasm"))
+fn need_escape(str : String, escape_slash : Bool) -> Bool {
+  let len = str.length()
+  guard len >= 8 else { return need_escape_scalar(str, escape_slash, 0, len) }
+  let control_limit = @v128.i16x8_splat((' ' : UInt16))
+  let quote = @v128.i16x8_splat(('"' : UInt16))
+  let backslash = @v128.i16x8_splat(('\\' : UInt16))
+  let slash = @v128.i16x8_splat(('/' : UInt16))
+  let tail_start = for pos = 0; pos + 8 <= len; {
+    let block = @v128.v128_load_i16x8(str, pos)
+    let escaped = @v128.v128_or_(
+      @v128.i16x8_lt_u(block, control_limit),
+      @v128.v128_or_(
+        @v128.i16x8_eq(block, quote),
+        @v128.i16x8_eq(block, backslash),
+      ),
+    )
+    let escaped = if escape_slash {
+      @v128.v128_or_(escaped, @v128.i16x8_eq(block, slash))
+    } else {
+      escaped
+    }
+    if @v128.v128_any_true(escaped) {
+      return true
+    }
+    continue pos + 8
+  } nobreak {
+    pos
+  }
+  need_escape_scalar(str, escape_slash, tail_start, len)
+}
+
+///|
+fn escape(str : String, escape_slash~ : Bool) -> String {
+  let len = str.length()
+  if !need_escape(str, escape_slash) {
     return str
   }
   let buf = StringBuilder(size_hint=len)
