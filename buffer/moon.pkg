@@ -8,6 +8,8 @@ import {
 }
 
 import {
+  "moonbitlang/core/bench",
   "moonbitlang/core/int",
+  "moonbitlang/core/int64",
   "moonbitlang/core/test",
 } for "test"
