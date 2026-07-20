@@ -23,7 +23,15 @@ let bytes_hash_bench_map_size = 1024
 ///|
 fn make_bytes_hash_bench_map_keys() -> Array[Bytes] {
   Array::makei(bytes_hash_bench_map_size, i => {
-    Bytes::makei(32, j => ((i * 17 + j * 37 + 11) & 0xff).to_byte())
+    Bytes::makei(32, j => {
+      if j == 0 {
+        (i & 0xff).to_byte()
+      } else if j == 1 {
+        (i >> 8).to_byte()
+      } else {
+        ((i * 17 + j * 37 + 11) & 0xff).to_byte()
+      }
+    })
   })
 }
 
@@ -34,6 +42,12 @@ fn make_bytes_hash_bench_map(keys : Array[Bytes]) -> Map[Bytes, Int] {
     map.set(keys[i], i)
   }
   map
+}
+
+///|
+test "bytes hash bench map keys are distinct" {
+  let keys = make_bytes_hash_bench_map_keys()
+  assert_eq(make_bytes_hash_bench_map(keys).length(), bytes_hash_bench_map_size)
 }
 
 ///|
