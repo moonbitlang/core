@@ -97,3 +97,9 @@ test "bench List::is_suffix n=100000 suffix=50000" (it : @bench.T) {
   let suffix = data.drop(list_bench_size / 2)
   it.bench(fn() { it.keep(data.is_suffix(suffix)) })
 }
+
+///|
+test "bench List::scan_right n=100000" (it : @bench.T) {
+  let data = @list.List(make_list_bench_array())
+  it.bench(fn() { it.keep(data.scan_right(init=0, (acc, x) => acc + x)) })
+}
