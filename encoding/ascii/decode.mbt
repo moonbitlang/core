@@ -45,6 +45,7 @@ fn finish_string(buffer : FixedArray[UInt16], len : Int) -> String {
 
 ///|
 #cfg(not(target="js"))
+#inline
 fn decode_scalar(bytes : BytesView) -> String raise Malformed {
   let t : FixedArray[UInt16] = FixedArray::make(bytes.length(), 0)
   let tlen = for tlen = 0, bs = bytes {
