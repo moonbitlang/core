@@ -27,6 +27,12 @@ test "bench List::from_array n=100000" (it : @bench.T) {
 }
 
 ///|
+test "bench List::from_array n=8" (it : @bench.T) {
+  let data : ReadOnlyArray[Int] = [0, 1, 2, 3, 4, 5, 6, 7]
+  it.bench(fn() { it.keep(@list.List(data)) })
+}
+
+///|
 test "bench List::from_iter n=100000" (it : @bench.T) {
   let data = make_list_bench_array()
   it.bench(fn() { it.keep(@list.from_iter(data.iter())) })
@@ -102,4 +108,15 @@ test "bench List::is_suffix n=100000 suffix=50000" (it : @bench.T) {
 test "bench List::scan_right n=100000" (it : @bench.T) {
   let data = @list.List(make_list_bench_array())
   it.bench(fn() { it.keep(data.scan_right(init=0, (acc, x) => acc + x)) })
+}
+
+///|
+test "bench List::cons n=100000" (it : @bench.T) {
+  it.bench(fn() {
+    let mut result = @list.empty()
+    for i = 0; i < list_bench_size; i = i + 1 {
+      result = @list.cons(i, result)
+    }
+    it.keep(result)
+  })
 }

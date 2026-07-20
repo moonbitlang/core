@@ -21,6 +21,13 @@ test "List constructor" {
 }
 
 ///|
+test "List constructor ArrayView" {
+  let values = [0, 1, 2, 3, 4]
+  debug_inspect(@list.List(values[1:4]), content="<List: [1, 2, 3]>")
+  debug_inspect(@list.List(values[2:2]), content="<List: []>")
+}
+
+///|
 test "pipe" {
   debug_inspect(
     1 |> x => { @list.List::prepend(@list.empty(), x) },
