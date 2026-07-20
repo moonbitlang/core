@@ -556,19 +556,167 @@ pub fn String::contains_code_unit(self : String, code : UInt16) -> Bool {
 }
 
 ///|
+const ASCII_CHAR_SET_LIMIT : UInt = 128U
+
+///|
+const ASCII_CHAR_SET_WORD_MASK : UInt = 31U
+
+///|
+const ASCII_CHAR_SET_WORD_SHIFT = 5
+
+///|
+/// Tests membership in a 128-bit ASCII character set represented by four
+/// scalar words, so callers do not need a temporary heap allocation.
+fn ascii_char_set_contains(
+  bits0 : UInt,
+  bits1 : UInt,
+  bits2 : UInt,
+  bits3 : UInt,
+  c : Char,
+) -> Bool {
+  let code = c.to_uint()
+  guard code < ASCII_CHAR_SET_LIMIT else { return false }
+  let bit = 1U << (code & ASCII_CHAR_SET_WORD_MASK).reinterpret_as_int()
+  match code >> ASCII_CHAR_SET_WORD_SHIFT {
+    0 => (bits0 & bit) != 0U
+    1 => (bits1 & bit) != 0U
+    2 => (bits2 & bit) != 0U
+    _ => (bits3 & bit) != 0U
+  }
+}
+
+///|
+fn StringView::contains_any_ascii(
+  self : StringView,
+  bits0 : UInt,
+  bits1 : UInt,
+  bits2 : UInt,
+  bits3 : UInt,
+) -> Bool {
+  for c in self {
+    if ascii_char_set_contains(bits0, bits1, bits2, bits3, c) {
+      return true
+    }
+  }
+  false
+}
+
+///|
+fn StringView::trim_start_ascii(
+  self : StringView,
+  bits0 : UInt,
+  bits1 : UInt,
+  bits2 : UInt,
+  bits3 : UInt,
+) -> StringView {
+  for x = self {
+    match x {
+      [] as v => break v
+      [c, .. rest] as v =>
+        if ascii_char_set_contains(bits0, bits1, bits2, bits3, c) {
+          continue rest
+        } else {
+          break v
+        }
+    }
+  }
+}
+
+///|
+fn StringView::trim_end_ascii(
+  self : StringView,
+  bits0 : UInt,
+  bits1 : UInt,
+  bits2 : UInt,
+  bits3 : UInt,
+) -> StringView {
+  for x = self {
+    match x {
+      [] as v => break v
+      [.. rest, c] as v =>
+        if ascii_char_set_contains(bits0, bits1, bits2, bits3, c) {
+          continue rest
+        } else {
+          break v
+        }
+    }
+  }
+}
+
+///|
+fn StringView::trim_start_with_chars(
+  self : StringView,
+  chars : StringView,
+) -> StringView {
+  for x = self {
+    match x {
+      [] as v => break v
+      [c, .. rest] as v =>
+        if chars.contains_char(c) {
+          continue rest
+        } else {
+          break v
+        }
+    }
+  }
+}
+
+///|
+fn StringView::trim_end_with_chars(
+  self : StringView,
+  chars : StringView,
+) -> StringView {
+  for x = self {
+    match x {
+      [] as v => break v
+      [.. rest, c] as v =>
+        if chars.contains_char(c) {
+          continue rest
+        } else {
+          break v
+        }
+    }
+  }
+}
+
+///|
 /// Returns true if this string contains any character from the given set.
 pub fn StringView::contains_any(self : StringView, chars~ : StringView) -> Bool {
   match chars {
     [] => false
     [c] => self.contains_char(c) // specialize for single character
-    _ =>
-      for c in self {
-        if chars.contains_char(c) {
-          break true
+    _ => {
+      let mut bits0 = 0U
+      let mut bits1 = 0U
+      let mut bits2 = 0U
+      let mut bits3 = 0U
+      let mut ascii_only = true
+      for c in chars {
+        let code = c.to_uint()
+        if code >= ASCII_CHAR_SET_LIMIT {
+          ascii_only = false
+          break
         }
-      } nobreak {
-        false
+        let bit = 1U << (code & ASCII_CHAR_SET_WORD_MASK).reinterpret_as_int()
+        match code >> ASCII_CHAR_SET_WORD_SHIFT {
+          0 => bits0 = bits0 | bit
+          1 => bits1 = bits1 | bit
+          2 => bits2 = bits2 | bit
+          _ => bits3 = bits3 | bit
+        }
       }
+      if ascii_only {
+        self.contains_any_ascii(bits0, bits1, bits2, bits3)
+      } else {
+        for c in self {
+          if chars.contains_char(c) {
+            break true
+          }
+        } nobreak {
+          false
+        }
+      }
+    }
   }
 }
 
@@ -615,6 +763,15 @@ test "contains_any" {
   inspect("".contains_any(chars="abc"), content="false")
   inspect("😀😃".contains_any(chars="😄😀"), content="true")
   inspect("hello"[:].contains_any(chars="eo"), content="true")
+}
+
+///|
+test "contains_any and trim ASCII character sets" {
+  assert_true("😀a".contains_any(chars="az"))
+  assert_false("😀".contains_any(chars="az"))
+  assert_true("😀".contains_any(chars="a😀"))
+  let view = "x  hello \ty"[1:10]
+  assert_true(view.trim(chars=" \t") == "hello")
 }
 
 ///|
@@ -688,16 +845,29 @@ pub fn StringView::trim_start(
   self : StringView,
   chars? : StringView = "\t\n\r ",
 ) -> StringView {
-  for x = self {
-    match x {
-      [] as v => break v
-      [c, .. rest] as v =>
-        if chars.contains_char(c) {
-          continue rest
-        } else {
-          break v
-        }
+  let mut bits0 = 0U
+  let mut bits1 = 0U
+  let mut bits2 = 0U
+  let mut bits3 = 0U
+  let mut ascii_only = true
+  for c in chars {
+    let code = c.to_uint()
+    if code >= ASCII_CHAR_SET_LIMIT {
+      ascii_only = false
+      break
     }
+    let bit = 1U << (code & ASCII_CHAR_SET_WORD_MASK).reinterpret_as_int()
+    match code >> ASCII_CHAR_SET_WORD_SHIFT {
+      0 => bits0 = bits0 | bit
+      1 => bits1 = bits1 | bit
+      2 => bits2 = bits2 | bit
+      _ => bits3 = bits3 | bit
+    }
+  }
+  if ascii_only {
+    self.trim_start_ascii(bits0, bits1, bits2, bits3)
+  } else {
+    self.trim_start_with_chars(chars)
   }
 }
 
@@ -736,16 +906,29 @@ pub fn StringView::trim_end(
   self : StringView,
   chars? : StringView = "\t\n\r ",
 ) -> StringView {
-  for x = self {
-    match x {
-      [] as v => break v
-      [.. rest, c] as v =>
-        if chars.contains_char(c) {
-          continue rest
-        } else {
-          break v
-        }
+  let mut bits0 = 0U
+  let mut bits1 = 0U
+  let mut bits2 = 0U
+  let mut bits3 = 0U
+  let mut ascii_only = true
+  for c in chars {
+    let code = c.to_uint()
+    if code >= ASCII_CHAR_SET_LIMIT {
+      ascii_only = false
+      break
     }
+    let bit = 1U << (code & ASCII_CHAR_SET_WORD_MASK).reinterpret_as_int()
+    match code >> ASCII_CHAR_SET_WORD_SHIFT {
+      0 => bits0 = bits0 | bit
+      1 => bits1 = bits1 | bit
+      2 => bits2 = bits2 | bit
+      _ => bits3 = bits3 | bit
+    }
+  }
+  if ascii_only {
+    self.trim_end_ascii(bits0, bits1, bits2, bits3)
+  } else {
+    self.trim_end_with_chars(chars)
   }
 }
 
@@ -785,7 +968,32 @@ pub fn StringView::trim(
   self : StringView,
   chars? : StringView = "\t\n\r ",
 ) -> StringView {
-  self.trim_start(chars~).trim_end(chars~)
+  let mut bits0 = 0U
+  let mut bits1 = 0U
+  let mut bits2 = 0U
+  let mut bits3 = 0U
+  let mut ascii_only = true
+  for c in chars {
+    let code = c.to_uint()
+    if code >= ASCII_CHAR_SET_LIMIT {
+      ascii_only = false
+      break
+    }
+    let bit = 1U << (code & ASCII_CHAR_SET_WORD_MASK).reinterpret_as_int()
+    match code >> ASCII_CHAR_SET_WORD_SHIFT {
+      0 => bits0 = bits0 | bit
+      1 => bits1 = bits1 | bit
+      2 => bits2 = bits2 | bit
+      _ => bits3 = bits3 | bit
+    }
+  }
+  if ascii_only {
+    self
+    .trim_start_ascii(bits0, bits1, bits2, bits3)
+    .trim_end_ascii(bits0, bits1, bits2, bits3)
+  } else {
+    self.trim_start_with_chars(chars).trim_end_with_chars(chars)
+  }
 }
 
 ///|
