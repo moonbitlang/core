@@ -457,8 +457,7 @@ fn escape(str : String, escape_slash~ : Bool) -> String {
     return str
   }
   let buf = StringBuilder(size_hint=len)
-  for i in 0..<len {
-    let code = str.unsafe_get(i)
+  for code in str.code_units() {
     match code {
       ('"' : UInt16) => buf.write_string("\\\"")
       ('\\' : UInt16) => buf.write_string("\\\\")
