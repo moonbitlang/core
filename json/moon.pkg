@@ -17,5 +17,3 @@ import {
   "moonbitlang/core/bigint",
   "moonbitlang/core/bench",
 } for "test"
-
-warnings = "-29"
