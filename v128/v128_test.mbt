@@ -460,6 +460,19 @@ test "loads and stores" {
 }
 
 ///|
+#cfg(any(target="native", target="wasm"))
+test "load UTF-16 code units" {
+  assert_eq(
+    @v128.v128_load_i16x8("x01234567y", 1),
+    @v128.i16x8_const('0', '1', '2', '3', '4', '5', '6', '7'),
+  )
+  assert_eq(
+    @v128.v128_load_i16x8("x012345😀", 1),
+    @v128.i16x8_const('0', '1', '2', '3', '4', '5', 0xD83D, 0xDE00),
+  )
+}
+
+///|
 test "integer widening narrowing and dot products" {
   let bytes = @v128.i8x16_const(
     0x80, 0xff, 1, 2, 3, 4, 5, 6, 0x7f, 0, 0xfe, 0xfd, 8, 9, 10, 11,
