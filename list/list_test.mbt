@@ -603,6 +603,15 @@ test "equal" {
 ///|
 test "is_suffix" {
   debug_inspect(
+    (@list.empty() : @list.List[Int]).is_suffix(@list.empty()),
+    content="true",
+  )
+  debug_inspect(
+    (@list.empty() : @list.List[Int]).is_suffix(List([1])),
+    content="false",
+  )
+  debug_inspect(@list.List([1, 2]).is_suffix(@list.empty()), content="true")
+  debug_inspect(
     @list.List([1, 2, 3, 4, 5]).is_suffix(List([3, 4, 5])),
     content="true",
   )
