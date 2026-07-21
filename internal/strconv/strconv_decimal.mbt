@@ -105,7 +105,7 @@ fn parse_decimal_from_view(str : StringView) -> Decimal raise {
   }
   guard has_digits else { syntax_err() }
   if !has_dp {
-    d.decimal_point = d.digits_num + d.overflowed
+    d.decimal_point = d.digits_num
   }
   // read exponent part
   let rest = match rest {
@@ -174,7 +174,9 @@ fn Decimal::to_double_priv(self : Decimal) -> Double raise {
   let mut mantissa = 0L
   // check the underflow and overflow
   // Double: 1.79769e+308 (10^308) - 2.22507e-308 (10^-308)
-  if self.digits_num == 0 || self.decimal_point < -330 {
+  let effective_dp = self.decimal_point + self.overflowed
+
+  if self.digits_num == 0 || effective_dp < -330 {
     // zero
     mantissa = 0
     exponent = double_info.bias
