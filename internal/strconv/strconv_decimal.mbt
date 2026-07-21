@@ -24,6 +24,7 @@ priv struct Decimal {
   mut decimal_point : Int
   mut negative : Bool
   mut truncated : Bool
+  mut overflowed : Int 
 }
 
 ///|
@@ -41,6 +42,7 @@ fn Decimal::new_priv() -> Decimal {
     decimal_point: 0,
     negative: false,
     truncated: false,
+    overflowed: 0,
   }
 }
 
@@ -90,8 +92,11 @@ fn parse_decimal_from_view(str : StringView) -> Decimal raise {
         if d.digits_num < d.digits.length() {
           d.digits[d.digits_num] = (digit.to_int() - '0').to_byte()
           d.digits_num += 1
-        } else if digit != '0' {
-          d.truncated = true
+        } else {
+          d.overflowed += 1
+          if digit != '0' {
+            d.truncated = true
+          }
         }
         continue rest
       }
@@ -100,7 +105,7 @@ fn parse_decimal_from_view(str : StringView) -> Decimal raise {
   }
   guard has_digits else { syntax_err() }
   if !has_dp {
-    d.decimal_point = d.digits_num
+    d.decimal_point = d.digits_num + d.overflowed
   }
   // read exponent part
   let rest = match rest {
