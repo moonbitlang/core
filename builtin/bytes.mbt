@@ -821,6 +821,28 @@ pub impl Hash for Bytes with fn hash_combine(self, hasher) {
 }
 
 ///|
+// Keep the xxHash32 accumulator local for the common `Hash::hash` path. This
+// avoids allocating a `Hasher` for every Bytes key lookup while preserving the
+// `Hash::hash_combine` result. JavaScript already optimizes the default path
+// better than this explicit loop.
+#cfg(not(target="js"))
+pub impl Hash for Bytes with fn hash(self : Bytes) -> Int {
+  let mut acc = seed.reinterpret_as_uint() + GPRIME5
+  let (cur, remain) = for cur = 0, remain = self.length(); remain >= 4; {
+    acc += 4U
+    acc = consume4_acc(acc, self.unsafe_read_uint32_le(cur))
+    continue cur + 4, remain - 4
+  } nobreak {
+    (cur, remain)
+  }
+  for cur = cur, remain = remain; remain >= 1; {
+    acc = rotl(acc + self.unsafe_get(cur).to_uint() * GPRIME5, 11) * GPRIME1
+    continue cur + 1, remain - 1
+  }
+  finalize_acc(acc)
+}
+
+///|
 /// Returns a new `Bytes` consisting of `self` repeated `count` times.
 ///
 /// Aborts if `count` is negative. If `count == 0` or `self` is empty, an empty
