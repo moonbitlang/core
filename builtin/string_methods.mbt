@@ -261,7 +261,14 @@ test "rev_find" {
 /// Returns true if the given substring is suffix of this string.
 #alias(ends_with, deprecated)
 pub fn StringView::has_suffix(self : StringView, str : StringView) -> Bool {
-  self.rev_find(str) is Some(i) && i == self.length() - str.length()
+  let self_len = self.length()
+  let str_len = str.length()
+  guard str_len <= self_len else { return false }
+  let start = self_len - str_len
+  for i in 0..<str_len {
+    guard self.unsafe_get(start + i) == str.unsafe_get(i) else { return false }
+  }
+  true
 }
 
 ///|
@@ -289,7 +296,12 @@ test "has_suffix" {
 /// Returns true if this string starts with the given substring.
 #alias(starts_with, deprecated)
 pub fn StringView::has_prefix(self : StringView, str : StringView) -> Bool {
-  self.find(str) is Some(i) && i == 0
+  let str_len = str.length()
+  guard str_len <= self.length() else { return false }
+  for i in 0..<str_len {
+    guard self.unsafe_get(i) == str.unsafe_get(i) else { return false }
+  }
+  true
 }
 
 ///|
@@ -312,6 +324,17 @@ test "has_prefix" {
   inspect("😀😃hello".has_prefix("😀😃"), content="true")
   inspect("😀hello".has_prefix("😃"), content="false")
   inspect("hello😀".has_prefix("😀"), content="false")
+}
+
+///|
+test "StringView has_prefix and has_suffix" {
+  let view = "x😀hello worldy"[1:14]
+  assert_true(view.has_prefix("😀hello"))
+  assert_false(view.has_prefix("world"))
+  assert_false(view.has_prefix("😀hello world!"))
+  assert_true(view.has_suffix("world"))
+  assert_false(view.has_suffix("😀hello"))
+  assert_false(view.has_suffix("😀hello world!"))
 }
 
 ///|
