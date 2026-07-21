@@ -32,7 +32,7 @@ fn Decimal::new_priv() -> Decimal {
     decimal_point: 0,
     negative: false,
     truncated: false,
-    mut overflowed: 0,
+    overflowed: 0,
   }
 }
 

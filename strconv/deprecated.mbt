@@ -26,6 +26,7 @@ struct Decimal {
   mut decimal_point : Int
   mut negative : Bool
   mut truncated : Bool
+  mut overflowed : Int
 } derive(@debug.Debug)
 
 ///|
