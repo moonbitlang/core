@@ -42,6 +42,10 @@ pub(all) suberror BenchError {
 pub(all) suberror Failure {
   Failure(String)
 } derive(Show, ToJson)
+#deprecated
+pub fn Failure::output(Self, &Logger) -> Unit
+pub fn Failure::to_json(Self) -> Json
+pub fn Failure::to_string(Self) -> String
 
 pub(all) suberror InspectError {
   InspectError(String)
@@ -53,10 +57,14 @@ pub(all) suberror SnapshotError {
 
 // Types and methods
 pub(all) struct ArgsLoc(Array[SourceLoc?])
+#deprecated
+pub fn ArgsLoc::output(Self, &Logger) -> Unit
 pub fn ArgsLoc::to_json(Self) -> String
+pub fn ArgsLoc::to_string(Self) -> String
 pub impl Show for ArgsLoc
 
 type Array[T]
+pub fn[T] Array::add(Self[T], Self[T]) -> Self[T]
 #alias(every)
 pub fn[T] Array::all(Self[T], (T) -> Bool raise?) -> Bool raise?
 #alias(exists)
@@ -73,16 +81,20 @@ pub fn[T] Array::capacity(Self[T]) -> Int
 pub fn[T] Array::chunk_by(Self[T], (T, T) -> Bool raise?) -> Self[ArrayView[T]] raise?
 pub fn[T] Array::chunks(Self[T], Int) -> Self[ArrayView[T]]
 pub fn[T] Array::clear(Self[T]) -> Unit
+pub fn[T : Compare] Array::compare(Self[T], Self[T]) -> Int
 pub fn[T : Eq] Array::contains(Self[T], T) -> Bool
 #alias(clone, deprecated)
 pub fn[T] Array::copy(Self[T]) -> Self[T]
 pub fn[T : Eq] Array::count(Self[T], T) -> Int
 pub fn[T] Array::count_if(Self[T], (T) -> Bool raise?) -> Int raise?
 pub fn[T : Eq] Array::dedup(Self[T]) -> Unit
+pub fn[T] Array::default() -> Self[T]
 pub fn[T] Array::drain(Self[T], Int, Int) -> Self[T]
 pub fn[T] Array::each(Self[T], (T) -> Unit raise?) -> Unit raise?
 pub fn[T] Array::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
 pub fn[T : Eq] Array::ends_with(Self[T], ArrayView[T]) -> Bool
+#deprecated
+pub fn[T : Eq] Array::equal(Self[T], Self[T]) -> Bool
 pub fn[T] Array::extract_if(Self[T], (T) -> Bool raise?) -> Self[T] raise?
 pub fn[A] Array::fill(Self[A], A, start? : Int, end? : Int) -> Unit
 pub fn[T] Array::filter(Self[T], (T) -> Bool raise?) -> Self[T] raise?
@@ -97,6 +109,10 @@ pub fn[T] Array::from_fixed_array(FixedArray[T]) -> Self[T]
 pub fn[T] Array::from_iter(Iter[T]) -> Self[T]
 pub fn[T] Array::get(Self[T], Int) -> T?
 pub fn[T] Array::get_view(Self[T], start? : Int, end? : Int) -> ArrayView[T]?
+#deprecated
+pub fn[T : Hash] Array::hash(Self[T]) -> Int
+#deprecated
+pub fn[T : Hash] Array::hash_combine(Self[T], Hasher) -> Unit
 pub fn[T] Array::insert(Self[T], Int, T) -> Unit
 pub fn[T] Array::is_empty(Self[T]) -> Bool
 pub fn[T : Compare] Array::is_sorted(Self[T]) -> Bool
@@ -118,6 +134,14 @@ pub fn[T, U] Array::mapi(Self[T], (Int, T) -> U raise?) -> Self[U] raise?
 pub fn[T] Array::mapi_in_place(Self[T], (Int, T) -> T raise?) -> Unit raise?
 pub fn[T] Array::mut_view(Self[T], start? : Int, end? : Int) -> MutArrayView[T]
 pub fn[T] Array::new(capacity? : Int) -> Self[T]
+#deprecated
+pub fn[T : Eq] Array::not_equal(Self[T], Self[T]) -> Bool
+pub fn[T : Compare] Array::op_ge(Self[T], Self[T]) -> Bool
+pub fn[T : Compare] Array::op_gt(Self[T], Self[T]) -> Bool
+pub fn[T : Compare] Array::op_le(Self[T], Self[T]) -> Bool
+pub fn[T : Compare] Array::op_lt(Self[T], Self[T]) -> Bool
+#deprecated
+pub fn[X : Show] Array::output(Self[X], &Logger) -> Unit
 pub fn[T] Array::pop(Self[T]) -> T?
 pub fn[T] Array::push(Self[T], T) -> Unit
 pub fn[T] Array::push_iter(Self[T], Iter[T]) -> Unit
@@ -155,6 +179,9 @@ pub fn[T : Eq] Array::strip_prefix(Self[T], ArrayView[T]) -> ArrayView[T]?
 pub fn[T : Eq] Array::strip_suffix(Self[T], ArrayView[T]) -> ArrayView[T]?
 pub fn[T] Array::suffixes(Self[T], include_empty? : Bool) -> Iter[ArrayView[T]]
 pub fn[T] Array::swap(Self[T], Int, Int) -> Unit
+pub fn[X : ToJson] Array::to_json(Self[X]) -> Json
+#deprecated
+pub fn[X : Show] Array::to_string(Self[X]) -> String
 pub fn[A] Array::truncate(Self[A], Int) -> Unit
 pub fn[A] Array::unsafe_blit_fixed(Self[A], Int, FixedArray[A], Int, Int) -> Unit
 pub fn[T] Array::unsafe_get(Self[T], Int) -> T
@@ -176,6 +203,7 @@ pub impl[X : Show] Show for Array[X]
 pub impl[X : ToJson] ToJson for Array[X]
 
 type ArrayView[T]
+pub fn[T] ArrayView::add(Self[T], Self[T]) -> Self[T]
 #alias(every)
 pub fn[T] ArrayView::all(Self[T], (T) -> Bool raise?) -> Bool raise?
 #alias(exists)
@@ -187,18 +215,25 @@ pub fn[T] ArrayView::binary_search_by(Self[T], (T) -> Int raise?) -> Result[Int,
 pub fn[A] ArrayView::blit_to(Self[A], Array[A], dst_offset? : Int) -> Unit
 pub fn[T] ArrayView::chunk_by(Self[T], (T, T) -> Bool raise?) -> Array[Self[T]] raise?
 pub fn[T] ArrayView::chunks(Self[T], Int) -> Array[Self[T]]
+pub fn[T : Compare] ArrayView::compare(Self[T], Self[T]) -> Int
 pub fn[T : Eq] ArrayView::contains(Self[T], T) -> Bool
 pub fn[T : Eq] ArrayView::count(Self[T], T) -> Int
 pub fn[T] ArrayView::count_if(Self[T], (T) -> Bool raise?) -> Int raise?
 pub fn[T] ArrayView::each(Self[T], (T) -> Unit raise?) -> Unit raise?
 pub fn[T] ArrayView::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
 pub fn[T : Eq] ArrayView::ends_with(Self[T], Self[T]) -> Bool
+#deprecated
+pub fn[T : Eq] ArrayView::equal(Self[T], Self[T]) -> Bool
 pub fn[T] ArrayView::filter(Self[T], (T) -> Bool raise?) -> Array[T] raise?
 pub fn[A, B] ArrayView::filter_map(Self[A], (A) -> B? raise?) -> Array[B] raise?
 pub fn[A, B] ArrayView::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 pub fn[A, B] ArrayView::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
 pub fn[T] ArrayView::get(Self[T], Int) -> T?
 pub fn[T] ArrayView::get_view(Self[T], start? : Int, end? : Int) -> Self[T]?
+#deprecated
+pub fn[A : Hash] ArrayView::hash(Self[A]) -> Int
+#deprecated
+pub fn[A : Hash] ArrayView::hash_combine(Self[A], Hasher) -> Unit
 pub fn[T] ArrayView::is_empty(Self[T]) -> Bool
 pub fn[T : Compare] ArrayView::is_sorted(Self[T]) -> Bool
 #alias(iterator, deprecated)
@@ -211,6 +246,14 @@ pub fn[T] ArrayView::length(Self[T]) -> Int
 pub fn[T : Compare] ArrayView::lexical_compare(Self[T], Self[T]) -> Int
 pub fn[T, U] ArrayView::map(Self[T], (T) -> U raise?) -> Array[U] raise?
 pub fn[T, U] ArrayView::mapi(Self[T], (Int, T) -> U raise?) -> Array[U] raise?
+#deprecated
+pub fn[T : Eq] ArrayView::not_equal(Self[T], Self[T]) -> Bool
+pub fn[T : Compare] ArrayView::op_ge(Self[T], Self[T]) -> Bool
+pub fn[T : Compare] ArrayView::op_gt(Self[T], Self[T]) -> Bool
+pub fn[T : Compare] ArrayView::op_le(Self[T], Self[T]) -> Bool
+pub fn[T : Compare] ArrayView::op_lt(Self[T], Self[T]) -> Bool
+#deprecated
+pub fn[X : Show] ArrayView::output(Self[X], &Logger) -> Unit
 pub fn[T] ArrayView::rev(Self[T]) -> Array[T]
 pub fn[T] ArrayView::rev_each(Self[T], (T) -> Unit raise?) -> Unit raise?
 pub fn[T] ArrayView::rev_eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
@@ -225,8 +268,11 @@ pub fn[T : Eq] ArrayView::starts_with(Self[T], Self[T]) -> Bool
 pub fn[T : Eq] ArrayView::strip_prefix(Self[T], Self[T]) -> Self[T]?
 pub fn[T : Eq] ArrayView::strip_suffix(Self[T], Self[T]) -> Self[T]?
 pub fn[T] ArrayView::suffixes(Self[T], include_empty? : Bool) -> Iter[Self[T]]
+pub fn[X : ToJson] ArrayView::to_json(Self[X]) -> Json
 #alias(to_array, deprecated)
 pub fn[T] ArrayView::to_owned(Self[T]) -> Array[T]
+#deprecated
+pub fn[X : Show] ArrayView::to_string(Self[X]) -> String
 #alias("_[_:_]")
 #alias(sub, deprecated)
 pub fn[T] ArrayView::view(Self[T], start? : Int, end? : Int) -> Self[T]
@@ -260,6 +306,7 @@ pub fn Hasher::finalize(Self) -> Int
 
 #alias(Iterator, deprecated)
 type Iter[X]
+pub fn[T] Iter::add(Self[T], Self[T]) -> Self[T]
 pub fn[X] Iter::all(Self[X], (X) -> Bool) -> Bool
 pub fn[X] Iter::any(Self[X], (X) -> Bool) -> Bool
 pub fn[X] Iter::concat(Self[X], Self[X]) -> Self[X]
@@ -295,6 +342,8 @@ pub fn[X] Iter::new(() -> X?, size_hint? : Int) -> Self[X]
 #alias(peek, deprecated)
 pub fn[X] Iter::next(Self[X]) -> X?
 pub fn[X] Iter::nth(Self[X], Int) -> X?
+#deprecated
+pub fn[X : Show] Iter::output(Self[X], &Logger) -> Unit
 pub fn[X] Iter::repeat(X) -> Self[X]
 pub fn[X] Iter::singleton(X) -> Self[X]
 pub fn[X] Iter::size_hint(Self[X]) -> Int?
@@ -303,6 +352,9 @@ pub fn[X] Iter::take_while(Self[X], (X) -> Bool) -> Self[X]
 pub fn[X] Iter::tap(Self[X], (X) -> Unit) -> Self[X]
 #alias(collect)
 pub fn[X] Iter::to_array(Self[X]) -> Array[X]
+pub fn[X : ToJson] Iter::to_json(Self[X]) -> Json
+#deprecated
+pub fn[X : Show] Iter::to_string(Self[X]) -> String
 #alias("_[_:_]")
 #alias(sub, deprecated)
 pub fn[X] Iter::view(Self[X], start? : Int, end? : Int) -> Self[X]
@@ -323,7 +375,11 @@ pub fn[X, Y] Iter2::iter(Self[X, Y]) -> Iter[(X, Y)]
 pub fn[X, Y] Iter2::iter2(Self[X, Y]) -> Self[X, Y]
 pub fn[X, Y] Iter2::new(() -> (X, Y)?, size_hint? : Int) -> Self[X, Y]
 pub fn[X, Y] Iter2::next(Self[X, Y]) -> (X, Y)?
+#deprecated
+pub fn[X : Show, Y : Show] Iter2::output(Self[X, Y], &Logger) -> Unit
 pub fn[X, Y] Iter2::to_array(Self[X, Y]) -> Array[(X, Y)]
+#deprecated
+pub fn[X : Show, Y : Show] Iter2::to_string(Self[X, Y]) -> String
 #deprecated
 pub impl[X : Show, Y : Show] Show for Iter2[X, Y]
 
@@ -338,7 +394,12 @@ pub enum Json {
 }
 pub fn Json::array(Array[Self]) -> Self
 pub fn Json::boolean(Bool) -> Self
+pub fn Json::default() -> Self
 pub fn Json::empty_object() -> Self
+#deprecated
+pub fn Json::equal(Self, Self) -> Bool
+#deprecated
+pub fn Json::not_equal(Self, Self) -> Bool
 pub fn Json::null() -> Self
 pub fn Json::number(Double, repr? : String) -> Self
 pub fn Json::object(Map[String, Self]) -> Self
@@ -357,8 +418,11 @@ pub fn[K : Hash + Eq, V] Map::contains(Self[K, V], K) -> Bool
 pub fn[K : Hash + Eq, V : Eq] Map::contains_kv(Self[K, V], K, V) -> Bool
 #alias(clone, deprecated)
 pub fn[K, V] Map::copy(Self[K, V]) -> Self[K, V]
+pub fn[K, V] Map::default() -> Self[K, V]
 pub fn[K, V] Map::each(Self[K, V], (K, V) -> Unit raise?) -> Unit raise?
 pub fn[K, V] Map::eachi(Self[K, V], (Int, K, V) -> Unit raise?) -> Unit raise?
+#deprecated
+pub fn[K : Hash + Eq, V : Eq] Map::equal(Self[K, V], Self[K, V]) -> Bool
 #alias(from_iterator, deprecated)
 pub fn[K : Hash + Eq, V] Map::from_iter(Iter[(K, V)]) -> Self[K, V]
 pub fn[K : Hash + Eq, V] Map::get(Self[K, V], K) -> V?
@@ -380,12 +444,19 @@ pub fn[K : Eq, V] Map::merge_in_place(Self[K, V], Self[K, V]) -> Unit
 #deprecated
 pub fn[K, V] Map::new(capacity? : Int) -> Self[K, V]
 #deprecated
+pub fn[K : Hash + Eq, V : Eq] Map::not_equal(Self[K, V], Self[K, V]) -> Bool
+#deprecated
 pub fn[K : Hash + Eq, V] Map::of(FixedArray[(K, V)]) -> Self[K, V]
+#deprecated
+pub fn[K : Show, V : Show] Map::output(Self[K, V], &Logger) -> Unit
 pub fn[K : Hash + Eq, V] Map::remove(Self[K, V], K) -> Unit
 pub fn[K, V] Map::retain(Self[K, V], (K, V) -> Bool) -> Unit
 #alias("_[_]=_")
 pub fn[K : Hash + Eq, V] Map::set(Self[K, V], K, V) -> Unit
 pub fn[K, V] Map::to_array(Self[K, V]) -> Array[(K, V)]
+pub fn[K : Show, V : ToJson] Map::to_json(Self[K, V]) -> Json
+#deprecated
+pub fn[K : Show, V : Show] Map::to_string(Self[K, V]) -> String
 pub fn[K : Hash + Eq, V] Map::update(Self[K, V], K, (V?) -> V?) -> Unit
 pub fn[K : Hash + Eq, V] Map::update_or_default(Self[K, V], K, V, (V) -> V) -> Unit
 pub fn[K, V] Map::values(Self[K, V]) -> Iter[V]
@@ -398,6 +469,13 @@ pub impl[K : Show, V : ToJson] ToJson for Map[K, V]
 type MutArrayView[T]
 #alias("_[_]")
 pub fn[T] MutArrayView::at(Self[T], Int) -> T
+pub fn[T : Compare] MutArrayView::compare(Self[T], Self[T]) -> Int
+#deprecated
+pub fn[T : Eq] MutArrayView::equal(Self[T], Self[T]) -> Bool
+#deprecated
+pub fn[A : Hash] MutArrayView::hash(Self[A]) -> Int
+#deprecated
+pub fn[A : Hash] MutArrayView::hash_combine(Self[A], Hasher) -> Unit
 pub fn[T] MutArrayView::is_empty(Self[T]) -> Bool
 #alias(iterator, deprecated)
 pub fn[X] MutArrayView::iter(Self[X]) -> Iter[X]
@@ -405,6 +483,14 @@ pub fn[X] MutArrayView::iter(Self[X]) -> Iter[X]
 pub fn[X] MutArrayView::iter2(Self[X]) -> Iter2[Int, X]
 pub fn[T] MutArrayView::length(Self[T]) -> Int
 pub fn[T] MutArrayView::mut_view(Self[T], start? : Int, end? : Int) -> Self[T]
+#deprecated
+pub fn[T : Eq] MutArrayView::not_equal(Self[T], Self[T]) -> Bool
+pub fn[T : Compare] MutArrayView::op_ge(Self[T], Self[T]) -> Bool
+pub fn[T : Compare] MutArrayView::op_gt(Self[T], Self[T]) -> Bool
+pub fn[T : Compare] MutArrayView::op_le(Self[T], Self[T]) -> Bool
+pub fn[T : Compare] MutArrayView::op_lt(Self[T], Self[T]) -> Bool
+#deprecated
+pub fn[X : Show] MutArrayView::output(Self[X], &Logger) -> Unit
 #alias(rev_iterator, deprecated)
 pub fn[X] MutArrayView::rev_iter(Self[X]) -> Iter[X]
 #alias("_[_]=_")
@@ -416,6 +502,8 @@ pub fn[T : Compare] MutArrayView::stable_sort(Self[T]) -> Unit
 pub fn[T] MutArrayView::start_offset(Self[T]) -> Int
 #alias(to_array, deprecated)
 pub fn[T] MutArrayView::to_owned(Self[T]) -> Array[T]
+#deprecated
+pub fn[X : Show] MutArrayView::to_string(Self[X]) -> String
 pub fn[T] MutArrayView::unsafe_get(Self[T], Int) -> T
 pub fn[T] MutArrayView::unsafe_set(Self[T], Int, T) -> Unit
 #alias("_[_:_]")
@@ -428,20 +516,30 @@ pub impl[A : Hash] Hash for MutArrayView[A]
 pub impl[X : Show] Show for MutArrayView[X]
 
 pub(all) type SourceLoc
+#deprecated
+pub fn SourceLoc::output(Self, &Logger) -> Unit
 pub fn SourceLoc::to_json_string(Self) -> String
+pub fn SourceLoc::to_string(Self) -> String
 pub impl Show for SourceLoc
 
 type StringBuilder
 #alias(new)
 pub fn StringBuilder::StringBuilder(size_hint? : Int) -> Self
 pub fn StringBuilder::is_empty(Self) -> Bool
+#deprecated
+pub fn StringBuilder::output(Self, &Logger) -> Unit
 pub fn StringBuilder::reset(Self) -> Unit
 pub fn StringBuilder::to_string(Self) -> String
+pub fn StringBuilder::write_char(Self, Char) -> Unit
 pub fn StringBuilder::write_iter(Self, Iter[Char]) -> Unit
 #alias(write)
 #alias(write_string_interpolation)
 pub fn[T : Show] StringBuilder::write_object(Self, T) -> Unit
+pub fn StringBuilder::write_string(Self, String) -> Unit
 pub fn StringBuilder::write_stringview(Self, StringView) -> Unit
+#deprecated
+pub fn StringBuilder::write_substring(Self, String, Int, Int) -> Unit
+pub fn StringBuilder::write_view(Self, StringView) -> Unit
 pub impl Logger for StringBuilder
 pub impl Show for StringBuilder
 
@@ -456,21 +554,84 @@ pub fn[T] UninitializedArray::set(Self[T], Int, T) -> Unit
 #alias("_[_:_]")
 pub fn[T] UninitializedArray::sub(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 
+pub fn Unit::compare(Unit, Unit) -> Int
+pub fn Unit::default() -> Unit
+#deprecated
+pub fn Unit::equal(Unit, Unit) -> Bool
+#deprecated
+pub fn Unit::hash(Unit) -> Int
+#deprecated
+pub fn Unit::hash_combine(Unit, Hasher) -> Unit
+#deprecated
+pub fn Unit::not_equal(Unit, Unit) -> Bool
+pub fn Unit::op_ge(Unit, Unit) -> Bool
+pub fn Unit::op_gt(Unit, Unit) -> Bool
+pub fn Unit::op_le(Unit, Unit) -> Bool
+pub fn Unit::op_lt(Unit, Unit) -> Bool
+#deprecated
+pub fn Unit::output(Unit, &Logger) -> Unit
+pub fn Unit::to_json(Unit) -> Json
+pub fn Unit::to_string(Unit) -> String
+
+pub fn Bool::compare(Bool, Bool) -> Int
+pub fn Bool::default() -> Bool
+#deprecated
+pub fn Bool::equal(Bool, Bool) -> Bool
+#deprecated
+pub fn Bool::hash(Bool) -> Int
+#deprecated
+pub fn Bool::hash_combine(Bool, Hasher) -> Unit
+#deprecated
+pub fn Bool::not_equal(Bool, Bool) -> Bool
 #deprecated
 pub fn Bool::op_compare(Bool, Bool) -> Int
+pub fn Bool::op_ge(Bool, Bool) -> Bool
+pub fn Bool::op_gt(Bool, Bool) -> Bool
+pub fn Bool::op_le(Bool, Bool) -> Bool
+pub fn Bool::op_lt(Bool, Bool) -> Bool
+#deprecated
+pub fn Bool::output(Bool, &Logger) -> Unit
 pub fn Bool::to_int(Bool) -> Int
 pub fn Bool::to_int16(Bool) -> Int16
 pub fn Bool::to_int64(Bool) -> Int64
+pub fn Bool::to_json(Bool) -> Json
+pub fn Bool::to_string(Bool) -> String
 pub fn Bool::to_uint(Bool) -> UInt
 pub fn Bool::to_uint16(Bool) -> UInt16
 pub fn Bool::to_uint64(Bool) -> UInt64
 
+pub fn Byte::add(Byte, Byte) -> Byte
+pub fn Byte::compare(Byte, Byte) -> Int
+pub fn Byte::default() -> Byte
+pub fn Byte::div(Byte, Byte) -> Byte
+#deprecated
+pub fn Byte::equal(Byte, Byte) -> Bool
+#deprecated
+pub fn Byte::hash(Byte) -> Int
+#deprecated
+pub fn Byte::hash_combine(Byte, Hasher) -> Unit
+pub fn Byte::land(Byte, Byte) -> Byte
 pub fn Byte::lnot(Byte) -> Byte
+pub fn Byte::lor(Byte, Byte) -> Byte
 #deprecated
 pub fn Byte::lsl(Byte, Int) -> Byte
 #deprecated
 pub fn Byte::lsr(Byte, Int) -> Byte
+pub fn Byte::lxor(Byte, Byte) -> Byte
+pub fn Byte::mod(Byte, Byte) -> Byte
+pub fn Byte::mul(Byte, Byte) -> Byte
+#deprecated
+pub fn Byte::not_equal(Byte, Byte) -> Bool
+pub fn Byte::op_ge(Byte, Byte) -> Bool
+pub fn Byte::op_gt(Byte, Byte) -> Bool
+pub fn Byte::op_le(Byte, Byte) -> Bool
+pub fn Byte::op_lt(Byte, Byte) -> Bool
+#deprecated
+pub fn Byte::output(Byte, &Logger) -> Unit
 pub fn Byte::popcnt(Byte) -> Int
+pub fn Byte::shl(Byte, Int) -> Byte
+pub fn Byte::shr(Byte, Int) -> Byte
+pub fn Byte::sub(Byte, Byte) -> Byte
 pub fn Byte::to_char(Byte) -> Char
 pub fn Byte::to_double(Byte) -> Double
 #deprecated
@@ -480,14 +641,23 @@ pub fn Byte::to_int(Byte) -> Int
 #deprecated
 pub fn Byte::to_int16(Byte) -> Int16
 pub fn Byte::to_int64(Byte) -> Int64
+pub fn Byte::to_json(Byte) -> Json
 pub fn Byte::to_string(Byte) -> String
 pub fn Byte::to_uint(Byte) -> UInt
 pub fn Byte::to_uint16(Byte) -> UInt16
 pub fn Byte::to_uint64(Byte) -> UInt64
 
+pub fn Char::compare(Char, Char) -> Int
+pub fn Char::default() -> Char
+#deprecated
+pub fn Char::equal(Char, Char) -> Bool
 pub fn Char::escape(Char, quote? : Bool) -> String
 #deprecated
 pub fn Char::from_int(Int) -> Char
+#deprecated
+pub fn Char::hash(Char) -> Int
+#deprecated
+pub fn Char::hash_combine(Char, Hasher) -> Unit
 pub fn Char::is_ascii(Char) -> Bool
 pub fn Char::is_ascii_alphabetic(Char) -> Bool
 pub fn Char::is_ascii_control(Char) -> Bool
@@ -505,18 +675,38 @@ pub fn Char::is_digit(Char, UInt) -> Bool
 pub fn Char::is_numeric(Char) -> Bool
 pub fn Char::is_printable(Char) -> Bool
 pub fn Char::is_whitespace(Char) -> Bool
+#deprecated
+pub fn Char::not_equal(Char, Char) -> Bool
+pub fn Char::op_ge(Char, Char) -> Bool
+pub fn Char::op_gt(Char, Char) -> Bool
+pub fn Char::op_le(Char, Char) -> Bool
+pub fn Char::op_lt(Char, Char) -> Bool
+#deprecated
+pub fn Char::output(Char, &Logger) -> Unit
 pub fn Char::to_ascii_lowercase(Char) -> Char
 pub fn Char::to_ascii_uppercase(Char) -> Char
 pub fn Char::to_int(Char) -> Int
+pub fn Char::to_json(Char) -> Json
+pub fn Char::to_string(Char) -> String
 pub fn Char::to_uint(Char) -> UInt
 pub fn Char::utf16_len(Char) -> Int
 
 pub fn Int::abs(Int) -> Int
+pub fn Int::add(Int, Int) -> Int
 #deprecated
 pub fn Int::asr(Int, Int) -> Int
 pub fn Int::clamp(Int, min~ : Int, max~ : Int) -> Int
 pub fn Int::clz(Int) -> Int
+pub fn Int::compare(Int, Int) -> Int
 pub fn Int::ctz(Int) -> Int
+pub fn Int::default() -> Int
+pub fn Int::div(Int, Int) -> Int
+#deprecated
+pub fn Int::equal(Int, Int) -> Bool
+#deprecated
+pub fn Int::hash(Int) -> Int
+#deprecated
+pub fn Int::hash_combine(Int, Hasher) -> Unit
 pub fn Int::is_leading_surrogate(Int) -> Bool
 pub fn Int::is_neg(Int) -> Bool
 pub fn Int::is_non_neg(Int) -> Bool
@@ -524,14 +714,28 @@ pub fn Int::is_non_pos(Int) -> Bool
 pub fn Int::is_pos(Int) -> Bool
 pub fn Int::is_surrogate(Int) -> Bool
 pub fn Int::is_trailing_surrogate(Int) -> Bool
+pub fn Int::land(Int, Int) -> Int
 pub fn Int::lnot(Int) -> Int
+pub fn Int::lor(Int, Int) -> Int
 #deprecated
 pub fn Int::lsl(Int, Int) -> Int
 #deprecated
 pub fn Int::lsr(Int, Int) -> Int
+pub fn Int::lxor(Int, Int) -> Int
 pub fn Int::max(Int, Int) -> Int
 pub fn Int::min(Int, Int) -> Int
+pub fn Int::mod(Int, Int) -> Int
+pub fn Int::mul(Int, Int) -> Int
+pub fn Int::neg(Int) -> Int
 pub fn Int::next_power_of_two(Int) -> Int
+#deprecated
+pub fn Int::not_equal(Int, Int) -> Bool
+pub fn Int::op_ge(Int, Int) -> Bool
+pub fn Int::op_gt(Int, Int) -> Bool
+pub fn Int::op_le(Int, Int) -> Bool
+pub fn Int::op_lt(Int, Int) -> Bool
+#deprecated
+pub fn Int::output(Int, &Logger) -> Unit
 pub fn Int::popcnt(Int) -> Int
 #deprecated
 pub fn Int::reinterpret_as_float(Int) -> Float
@@ -540,6 +744,7 @@ pub fn Int::reinterpret_as_uint(Int) -> UInt
 pub fn Int::shl(Int, Int) -> Int
 #deprecated
 pub fn Int::shr(Int, Int) -> Int
+pub fn Int::sub(Int, Int) -> Int
 pub fn Int::to_byte(Int) -> Byte
 pub fn Int::to_char(Int) -> Char?
 pub fn Int::to_double(Int) -> Double
@@ -548,6 +753,7 @@ pub fn Int::to_float(Int) -> Float
 #deprecated
 pub fn Int::to_int16(Int) -> Int16
 pub fn Int::to_int64(Int) -> Int64
+pub fn Int::to_json(Int) -> Json
 pub fn Int::to_string(Int, radix? : Int) -> String
 #deprecated
 pub fn Int::to_uint(Int) -> UInt
@@ -556,19 +762,43 @@ pub fn Int::to_uint64(Int) -> UInt64
 pub fn Int::until(Int, Int, step? : Int, inclusive? : Bool) -> Iter[Int]
 
 pub fn Int64::abs(Int64) -> Int64
+pub fn Int64::add(Int64, Int64) -> Int64
 #deprecated
 pub fn Int64::asr(Int64, Int) -> Int64
 pub fn Int64::clamp(Int64, min~ : Int64, max~ : Int64) -> Int64
 pub fn Int64::clz(Int64) -> Int
+pub fn Int64::compare(Int64, Int64) -> Int
 pub fn Int64::ctz(Int64) -> Int
+pub fn Int64::default() -> Int64
+pub fn Int64::div(Int64, Int64) -> Int64
+#deprecated
+pub fn Int64::equal(Int64, Int64) -> Bool
 pub fn Int64::from_int(Int) -> Int64
+#deprecated
+pub fn Int64::hash(Int64) -> Int
+#deprecated
+pub fn Int64::hash_combine(Int64, Hasher) -> Unit
+pub fn Int64::land(Int64, Int64) -> Int64
 pub fn Int64::lnot(Int64) -> Int64
+pub fn Int64::lor(Int64, Int64) -> Int64
 #deprecated
 pub fn Int64::lsl(Int64, Int) -> Int64
 #deprecated
 pub fn Int64::lsr(Int64, Int) -> Int64
+pub fn Int64::lxor(Int64, Int64) -> Int64
 pub fn Int64::max(Int64, Int64) -> Int64
 pub fn Int64::min(Int64, Int64) -> Int64
+pub fn Int64::mod(Int64, Int64) -> Int64
+pub fn Int64::mul(Int64, Int64) -> Int64
+pub fn Int64::neg(Int64) -> Int64
+#deprecated
+pub fn Int64::not_equal(Int64, Int64) -> Bool
+pub fn Int64::op_ge(Int64, Int64) -> Bool
+pub fn Int64::op_gt(Int64, Int64) -> Bool
+pub fn Int64::op_le(Int64, Int64) -> Bool
+pub fn Int64::op_lt(Int64, Int64) -> Bool
+#deprecated
+pub fn Int64::output(Int64, &Logger) -> Unit
 pub fn Int64::popcnt(Int64) -> Int
 pub fn Int64::reinterpret_as_double(Int64) -> Double
 pub fn Int64::reinterpret_as_uint64(Int64) -> UInt64
@@ -576,27 +806,51 @@ pub fn Int64::reinterpret_as_uint64(Int64) -> UInt64
 pub fn Int64::shl(Int64, Int) -> Int64
 #deprecated
 pub fn Int64::shr(Int64, Int) -> Int64
+pub fn Int64::sub(Int64, Int64) -> Int64
 pub fn Int64::to_byte(Int64) -> Byte
 pub fn Int64::to_double(Int64) -> Double
 #deprecated
 pub fn Int64::to_float(Int64) -> Float
 pub fn Int64::to_int(Int64) -> Int
+pub fn Int64::to_json(Int64) -> Json
 pub fn Int64::to_string(Int64, radix? : Int) -> String
 pub fn Int64::to_uint16(Int64) -> UInt16
 #deprecated
 pub fn Int64::to_uint64(Int64) -> UInt64
 pub fn Int64::until(Int64, Int64, step? : Int64, inclusive? : Bool) -> Iter[Int64]
 
+pub fn UInt::add(UInt, UInt) -> UInt
 pub fn UInt::clamp(UInt, min~ : UInt, max~ : UInt) -> UInt
 pub fn UInt::clz(UInt) -> Int
+pub fn UInt::compare(UInt, UInt) -> Int
 pub fn UInt::ctz(UInt) -> Int
+pub fn UInt::div(UInt, UInt) -> UInt
+#deprecated
+pub fn UInt::equal(UInt, UInt) -> Bool
+#deprecated
+pub fn UInt::hash(UInt) -> Int
+#deprecated
+pub fn UInt::hash_combine(UInt, Hasher) -> Unit
+pub fn UInt::land(UInt, UInt) -> UInt
 pub fn UInt::lnot(UInt) -> UInt
+pub fn UInt::lor(UInt, UInt) -> UInt
 #deprecated
 pub fn UInt::lsl(UInt, Int) -> UInt
 #deprecated
 pub fn UInt::lsr(UInt, Int) -> UInt
+pub fn UInt::lxor(UInt, UInt) -> UInt
 pub fn UInt::max(UInt, UInt) -> UInt
 pub fn UInt::min(UInt, UInt) -> UInt
+pub fn UInt::mod(UInt, UInt) -> UInt
+pub fn UInt::mul(UInt, UInt) -> UInt
+#deprecated
+pub fn UInt::not_equal(UInt, UInt) -> Bool
+pub fn UInt::op_ge(UInt, UInt) -> Bool
+pub fn UInt::op_gt(UInt, UInt) -> Bool
+pub fn UInt::op_le(UInt, UInt) -> Bool
+pub fn UInt::op_lt(UInt, UInt) -> Bool
+#deprecated
+pub fn UInt::output(UInt, &Logger) -> Unit
 pub fn UInt::popcnt(UInt) -> Int
 #deprecated
 pub fn UInt::reinterpret_as_float(UInt) -> Float
@@ -605,37 +859,89 @@ pub fn UInt::reinterpret_as_int(UInt) -> Int
 pub fn UInt::shl(UInt, Int) -> UInt
 #deprecated
 pub fn UInt::shr(UInt, Int) -> UInt
+pub fn UInt::sub(UInt, UInt) -> UInt
 pub fn UInt::to_byte(UInt) -> Byte
 pub fn UInt::to_double(UInt) -> Double
 #deprecated
 pub fn UInt::to_float(UInt) -> Float
 #deprecated
 pub fn UInt::to_int(UInt) -> Int
+pub fn UInt::to_json(UInt) -> Json
 pub fn UInt::to_string(UInt, radix? : Int) -> String
 pub fn UInt::to_uint16(UInt) -> UInt16
 pub fn UInt::to_uint64(UInt) -> UInt64
 pub fn UInt::trunc_double(Double) -> UInt
 
+pub fn UInt16::add(UInt16, UInt16) -> UInt16
+pub fn UInt16::compare(UInt16, UInt16) -> Int
+pub fn UInt16::default() -> UInt16
+pub fn UInt16::div(UInt16, UInt16) -> UInt16
+#deprecated
+pub fn UInt16::equal(UInt16, UInt16) -> Bool
+#deprecated
+pub fn UInt16::hash(UInt16) -> Int
+#deprecated
+pub fn UInt16::hash_combine(UInt16, Hasher) -> Unit
 pub fn UInt16::is_leading_surrogate(UInt16) -> Bool
 pub fn UInt16::is_surrogate(UInt16) -> Bool
 pub fn UInt16::is_trailing_surrogate(UInt16) -> Bool
+pub fn UInt16::land(UInt16, UInt16) -> UInt16
 pub fn UInt16::lnot(UInt16) -> UInt16
+pub fn UInt16::lor(UInt16, UInt16) -> UInt16
+pub fn UInt16::lxor(UInt16, UInt16) -> UInt16
+pub fn UInt16::mod(UInt16, UInt16) -> UInt16
+pub fn UInt16::mul(UInt16, UInt16) -> UInt16
+#deprecated
+pub fn UInt16::not_equal(UInt16, UInt16) -> Bool
+pub fn UInt16::op_ge(UInt16, UInt16) -> Bool
+pub fn UInt16::op_gt(UInt16, UInt16) -> Bool
+pub fn UInt16::op_le(UInt16, UInt16) -> Bool
+pub fn UInt16::op_lt(UInt16, UInt16) -> Bool
+#deprecated
+pub fn UInt16::output(UInt16, &Logger) -> Unit
+pub fn UInt16::shl(UInt16, Int) -> UInt16
+pub fn UInt16::shr(UInt16, Int) -> UInt16
+pub fn UInt16::sub(UInt16, UInt16) -> UInt16
 pub fn UInt16::to_byte(UInt16) -> Byte
 pub fn UInt16::to_char(UInt16) -> Char?
 pub fn UInt16::to_int(UInt16) -> Int
 pub fn UInt16::to_int64(UInt16) -> Int64
+pub fn UInt16::to_json(UInt16) -> Json
 pub fn UInt16::to_string(UInt16, radix? : Int) -> String
 pub fn UInt16::to_uint(UInt16) -> UInt
 pub fn UInt16::to_uint64(UInt16) -> UInt64
 
+pub fn UInt64::add(UInt64, UInt64) -> UInt64
 pub fn UInt64::clz(UInt64) -> Int
+pub fn UInt64::compare(UInt64, UInt64) -> Int
 pub fn UInt64::ctz(UInt64) -> Int
+pub fn UInt64::default() -> UInt64
+pub fn UInt64::div(UInt64, UInt64) -> UInt64
+#deprecated
+pub fn UInt64::equal(UInt64, UInt64) -> Bool
 pub fn UInt64::extend_uint(UInt) -> UInt64
+#deprecated
+pub fn UInt64::hash(UInt64) -> Int
+#deprecated
+pub fn UInt64::hash_combine(UInt64, Hasher) -> Unit
+pub fn UInt64::land(UInt64, UInt64) -> UInt64
 pub fn UInt64::lnot(UInt64) -> UInt64
+pub fn UInt64::lor(UInt64, UInt64) -> UInt64
 #deprecated
 pub fn UInt64::lsl(UInt64, Int) -> UInt64
 #deprecated
 pub fn UInt64::lsr(UInt64, Int) -> UInt64
+pub fn UInt64::lxor(UInt64, UInt64) -> UInt64
+pub fn UInt64::mod(UInt64, UInt64) -> UInt64
+pub fn UInt64::mul(UInt64, UInt64) -> UInt64
+#deprecated
+pub fn UInt64::not_equal(UInt64, UInt64) -> Bool
+pub fn UInt64::op_ge(UInt64, UInt64) -> Bool
+pub fn UInt64::op_gt(UInt64, UInt64) -> Bool
+pub fn UInt64::op_le(UInt64, UInt64) -> Bool
+pub fn UInt64::op_lt(UInt64, UInt64) -> Bool
+#deprecated
+pub fn UInt64::output(UInt64, &Logger) -> Unit
 pub fn UInt64::popcnt(UInt64) -> Int
 pub fn UInt64::reinterpret_as_double(UInt64) -> Double
 pub fn UInt64::reinterpret_as_int64(UInt64) -> Int64
@@ -643,6 +949,7 @@ pub fn UInt64::reinterpret_as_int64(UInt64) -> Int64
 pub fn UInt64::shl(UInt64, Int) -> UInt64
 #deprecated
 pub fn UInt64::shr(UInt64, Int) -> UInt64
+pub fn UInt64::sub(UInt64, UInt64) -> UInt64
 pub fn UInt64::to_be_bytes(UInt64) -> Bytes
 pub fn UInt64::to_byte(UInt64) -> Byte
 pub fn UInt64::to_double(UInt64) -> Double
@@ -651,6 +958,7 @@ pub fn UInt64::to_float(UInt64) -> Float
 pub fn UInt64::to_int(UInt64) -> Int
 #deprecated
 pub fn UInt64::to_int64(UInt64) -> Int64
+pub fn UInt64::to_json(UInt64) -> Json
 pub fn UInt64::to_le_bytes(UInt64) -> Bytes
 pub fn UInt64::to_string(UInt64, radix? : Int) -> String
 pub fn UInt64::to_uint(UInt64) -> UInt
@@ -658,12 +966,22 @@ pub fn UInt64::to_uint16(UInt64) -> UInt16
 pub fn UInt64::trunc_double(Double) -> UInt64
 
 pub fn Double::abs(Double) -> Double
+pub fn Double::add(Double, Double) -> Double
 pub fn Double::ceil(Double) -> Double
 pub fn Double::clamp(Double, min~ : Double, max~ : Double) -> Double
+pub fn Double::compare(Double, Double) -> Int
 pub fn Double::convert_uint(UInt) -> Double
 pub fn Double::convert_uint64(UInt64) -> Double
+pub fn Double::default() -> Double
+pub fn Double::div(Double, Double) -> Double
+#deprecated
+pub fn Double::equal(Double, Double) -> Bool
 pub fn Double::floor(Double) -> Double
 pub fn Double::from_int(Int) -> Double
+#deprecated
+pub fn Double::hash(Double) -> Int
+#deprecated
+pub fn Double::hash_combine(Double, Hasher) -> Unit
 pub fn Double::is_close(Double, Double, relative_tolerance? : Double, absolute_tolerance? : Double) -> Bool
 pub fn Double::is_inf(Double) -> Bool
 pub fn Double::is_nan(Double) -> Bool
@@ -672,6 +990,17 @@ pub fn Double::is_pos_inf(Double) -> Bool
 pub fn Double::lerp(Double, target~ : Double, t~ : Double) -> Double
 pub fn Double::max(Double, Double) -> Double
 pub fn Double::min(Double, Double) -> Double
+pub fn Double::mod(Double, Double) -> Double
+pub fn Double::mul(Double, Double) -> Double
+pub fn Double::neg(Double) -> Double
+#deprecated
+pub fn Double::not_equal(Double, Double) -> Bool
+pub fn Double::op_ge(Double, Double) -> Bool
+pub fn Double::op_gt(Double, Double) -> Bool
+pub fn Double::op_le(Double, Double) -> Bool
+pub fn Double::op_lt(Double, Double) -> Bool
+#deprecated
+pub fn Double::output(Double, &Logger) -> Unit
 #deprecated
 pub fn Double::pow(Double, Double) -> Double
 #deprecated
@@ -683,16 +1012,19 @@ pub fn Double::reinterpret_as_uint64(Double) -> UInt64
 pub fn Double::round(Double) -> Double
 pub fn Double::signum(Double) -> Double
 pub fn Double::sqrt(Double) -> Double
+pub fn Double::sub(Double, Double) -> Double
 #deprecated
 pub fn Double::to_float(Double) -> Float
 pub fn Double::to_int(Double) -> Int
 pub fn Double::to_int64(Double) -> Int64
+pub fn Double::to_json(Double) -> Json
 pub fn Double::to_string(Double) -> String
 pub fn Double::to_uint(Double) -> UInt
 pub fn Double::to_uint64(Double) -> UInt64
 pub fn Double::trunc(Double) -> Double
 pub fn Double::until(Double, Double, step? : Double, inclusive? : Bool) -> Iter[Double]
 
+pub fn String::add(String, String) -> String
 pub fn String::after(String, StringView) -> StringView?
 #alias(every)
 pub fn String::all(String, (Char) -> Bool raise?) -> Bool raise?
@@ -708,11 +1040,15 @@ pub fn String::char_length_eq(String, Int, start_offset? : Int, end_offset? : In
 pub fn String::char_length_ge(String, Int, start_offset? : Int, end_offset? : Int) -> Bool
 pub fn String::clamped_view(String, start? : Int, end? : Int) -> StringView
 pub fn String::code_units(String) -> ArrayView[UInt16]
+pub fn String::compare(String, String) -> Int
 pub fn String::compare_ignore_ascii_case(String, String) -> Int
 pub fn String::contains(String, StringView) -> Bool
 pub fn String::contains_any(String, chars~ : StringView) -> Bool
 pub fn String::contains_char(String, Char) -> Bool
 pub fn String::contains_code_unit(String, UInt16) -> Bool
+pub fn String::default() -> String
+#deprecated
+pub fn String::equal(String, String) -> Bool
 pub fn String::equal_ignore_ascii_case(String, String) -> Bool
 pub fn String::escape(String, quote? : Bool) -> String
 pub fn String::find(String, StringView) -> Int?
@@ -729,6 +1065,10 @@ pub fn String::get_view(String, start? : Int, end? : Int) -> StringView?
 pub fn String::has_prefix(String, StringView) -> Bool
 #alias(ends_with, deprecated)
 pub fn String::has_suffix(String, StringView) -> Bool
+#deprecated
+pub fn String::hash(String) -> Int
+#deprecated
+pub fn String::hash_combine(String, Hasher) -> Unit
 pub fn String::is_blank(String) -> Bool
 pub fn String::is_empty(String) -> Bool
 #alias(iterator, deprecated)
@@ -739,7 +1079,15 @@ pub fn String::iter2(String) -> Iter2[Int, Char]
 pub fn String::length(String) -> Int
 pub fn String::lexical_compare(String, String) -> Int
 pub fn String::make(Int, Char) -> String
+#deprecated
+pub fn String::not_equal(String, String) -> Bool
 pub fn String::offset_of_nth_char(String, Int, start_offset? : Int, end_offset? : Int) -> Int?
+pub fn String::op_ge(String, String) -> Bool
+pub fn String::op_gt(String, String) -> Bool
+pub fn String::op_le(String, String) -> Bool
+pub fn String::op_lt(String, String) -> Bool
+#deprecated
+pub fn String::output(String, &Logger) -> Unit
 pub fn String::pad_end(String, Int, Char) -> String
 pub fn String::pad_start(String, Int, Char) -> String
 pub fn String::repeat(String, Int) -> String
@@ -768,7 +1116,10 @@ pub fn String::suffixes(String, include_empty? : Bool) -> Iter[StringView]
 pub fn String::to_array(String) -> Array[Char]
 #deprecated
 pub fn String::to_bytes(String) -> Bytes
+pub fn String::to_json(String) -> Json
 pub fn String::to_lower(String) -> String
+pub fn String::to_string(String) -> String
+pub fn String::to_string_view(String) -> StringView
 pub fn String::to_upper(String) -> String
 #label_migration(chars, alias=char_set)
 pub fn String::trim(String, chars? : StringView) -> StringView
@@ -784,9 +1135,17 @@ pub fn String::unsafe_substring(String, start~ : Int, end~ : Int) -> String
 pub fn String::view(String, start_offset? : Int, end_offset? : Int) -> StringView
 
 pub fn[T, U] Option::bind(T?, (T) -> U? raise?) -> U? raise?
+pub fn[X : Compare] Option::compare(X?, X?) -> Int
+pub fn[X] Option::default() -> X?
+#deprecated
+pub fn[X : Eq] Option::equal(X?, X?) -> Bool
 pub fn[T] Option::filter(T?, (T) -> Bool raise?) -> T? raise?
 #deprecated
 pub fn[T] Option::flatten(T??) -> T?
+#deprecated
+pub fn[X : Hash] Option::hash(X?) -> Int
+#deprecated
+pub fn[X : Hash] Option::hash_combine(X?, Hasher) -> Unit
 #deprecated
 pub fn[T] Option::is_empty(T?) -> Bool
 #deprecated
@@ -798,6 +1157,15 @@ pub fn[T] Option::iter(T?) -> Iter[T]
 pub fn[T, U] Option::map(T?, (T) -> U raise?) -> U? raise?
 pub fn[T, U] Option::map_or(T?, U, (T) -> U raise?) -> U raise?
 pub fn[T, U] Option::map_or_else(T?, () -> U raise?, (T) -> U raise?) -> U raise?
+#deprecated
+pub fn[X : Eq] Option::not_equal(X?, X?) -> Bool
+pub fn[X : Compare] Option::op_ge(X?, X?) -> Bool
+pub fn[X : Compare] Option::op_gt(X?, X?) -> Bool
+pub fn[X : Compare] Option::op_le(X?, X?) -> Bool
+pub fn[X : Compare] Option::op_lt(X?, X?) -> Bool
+#deprecated
+pub fn[X : Show] Option::output(X?, &Logger) -> Unit
+pub fn[T : ToJson] Option::to_json(T?) -> Json
 #deprecated
 pub fn[X : Show] Option::to_string(X?) -> String
 pub fn[X] Option::unwrap(X?) -> X
@@ -811,10 +1179,28 @@ pub fn[T] Option::unwrap_or_else(T?, () -> T raise?) -> T raise?
 pub fn[T, Err : Error] Option::unwrap_or_error(T?, Err) -> T raise Err
 
 pub fn[T, E, U] Result::bind(Self[T, E], (T) -> Self[U, E]) -> Self[U, E]
+pub fn[T : Compare, E : Compare] Result::compare(Self[T, E], Self[T, E]) -> Int
+#deprecated
+pub fn[T : Eq, E : Eq] Result::equal(Self[T, E], Self[T, E]) -> Bool
 pub fn[T, E] Result::flatten(Self[Self[T, E], E]) -> Self[T, E]
+#deprecated
+pub fn[T : Hash, E : Hash] Result::hash(Self[T, E]) -> Int
+#deprecated
+pub fn[T : Hash, E : Hash] Result::hash_combine(Self[T, E], Hasher) -> Unit
 pub fn[T, E, U] Result::map(Self[T, E], (T) -> U) -> Self[U, E]
 pub fn[T, E, F] Result::map_err(Self[T, E], (E) -> F) -> Self[T, F]
+#deprecated
+pub fn[T : Eq, E : Eq] Result::not_equal(Self[T, E], Self[T, E]) -> Bool
+pub fn[T : Compare, E : Compare] Result::op_ge(Self[T, E], Self[T, E]) -> Bool
+pub fn[T : Compare, E : Compare] Result::op_gt(Self[T, E], Self[T, E]) -> Bool
+pub fn[T : Compare, E : Compare] Result::op_le(Self[T, E], Self[T, E]) -> Bool
+pub fn[T : Compare, E : Compare] Result::op_lt(Self[T, E], Self[T, E]) -> Bool
+#deprecated
+pub fn[T : Show, E : Show] Result::output(Self[T, E], &Logger) -> Unit
+pub fn[Ok : ToJson, Err : ToJson] Result::to_json(Self[Ok, Err]) -> Json
 pub fn[T, E] Result::to_option(Self[T, E]) -> T?
+#deprecated
+pub fn[T : Show, E : Show] Result::to_string(Self[T, E]) -> String
 pub fn[T, E] Result::unwrap(Self[T, E]) -> T
 pub fn[T, E] Result::unwrap_err(Self[T, E]) -> E
 #alias(or)
@@ -824,6 +1210,7 @@ pub fn[T : Default, E] Result::unwrap_or_default(Self[T, E]) -> T
 pub fn[T, E] Result::unwrap_or_else(Self[T, E], () -> T raise?) -> T raise?
 pub fn[T, E : Error] Result::unwrap_or_error(Self[T, E]) -> T raise E
 
+pub fn[T] FixedArray::add(Self[T], Self[T]) -> Self[T]
 #alias(every)
 pub fn[T] FixedArray::all(Self[T], (T) -> Bool raise?) -> Bool raise?
 #alias(exists)
@@ -836,12 +1223,16 @@ pub fn FixedArray::blit_from_bytes(Self[Byte], Int, Bytes, Int, Int) -> Unit
 pub fn FixedArray::blit_from_bytesview(Self[Byte], Int, BytesView) -> Unit
 pub fn FixedArray::blit_from_string(Self[Byte], Int, String, Int, Int) -> Unit
 pub fn[A] FixedArray::blit_to(Self[A], Self[A], len~ : Int, src_offset? : Int, dst_offset? : Int) -> Unit
+pub fn[T : Compare] FixedArray::compare(Self[T], Self[T]) -> Int
 pub fn[T : Eq] FixedArray::contains(Self[T], T) -> Bool
 #alias(clone, deprecated)
 pub fn[T] FixedArray::copy(Self[T]) -> Self[T]
+pub fn[X] FixedArray::default() -> Self[X]
 pub fn[T] FixedArray::each(Self[T], (T) -> Unit raise?) -> Unit raise?
 pub fn[T] FixedArray::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
 pub fn[T : Eq] FixedArray::ends_with(Self[T], ArrayView[T]) -> Bool
+#deprecated
+pub fn[T : Eq] FixedArray::equal(Self[T], Self[T]) -> Bool
 pub fn[T] FixedArray::fill(Self[T], T, start? : Int, end? : Int) -> Unit
 pub fn[A, B] FixedArray::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 pub fn[A, B] FixedArray::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
@@ -850,6 +1241,10 @@ pub fn[T] FixedArray::from_array(ArrayView[T]) -> Self[T]
 pub fn[T] FixedArray::from_iter(Iter[T]) -> Self[T]
 pub fn[T] FixedArray::get(Self[T], Int) -> T?
 pub fn[T] FixedArray::get_view(Self[T], start? : Int, end? : Int) -> ArrayView[T]?
+#deprecated
+pub fn[T : Hash] FixedArray::hash(Self[T]) -> Int
+#deprecated
+pub fn[T : Hash] FixedArray::hash_combine(Self[T], Hasher) -> Unit
 pub fn[T] FixedArray::is_empty(Self[T]) -> Bool
 pub fn[T : Compare] FixedArray::is_sorted(Self[T]) -> Bool
 #alias(iterator, deprecated)
@@ -866,6 +1261,14 @@ pub fn[T] FixedArray::makei(Int, (Int) -> T raise?) -> Self[T] raise?
 pub fn[T, U] FixedArray::map(Self[T], (T) -> U raise?) -> Self[U] raise?
 pub fn[T, U] FixedArray::mapi(Self[T], (Int, T) -> U raise?) -> Self[U] raise?
 pub fn[T] FixedArray::mut_view(Self[T], start? : Int, end? : Int) -> MutArrayView[T]
+#deprecated
+pub fn[T : Eq] FixedArray::not_equal(Self[T], Self[T]) -> Bool
+pub fn[T : Compare] FixedArray::op_ge(Self[T], Self[T]) -> Bool
+pub fn[T : Compare] FixedArray::op_gt(Self[T], Self[T]) -> Bool
+pub fn[T : Compare] FixedArray::op_le(Self[T], Self[T]) -> Bool
+pub fn[T : Compare] FixedArray::op_lt(Self[T], Self[T]) -> Bool
+#deprecated
+pub fn[X : Show] FixedArray::output(Self[X], &Logger) -> Unit
 pub fn[T] FixedArray::rev(Self[T]) -> Self[T]
 pub fn[T] FixedArray::rev_each(Self[T], (T) -> Unit raise?) -> Unit raise?
 pub fn[T] FixedArray::rev_eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
@@ -885,6 +1288,9 @@ pub fn[T, K : Compare] FixedArray::sort_by_key(Self[T], (T) -> K) -> Unit
 pub fn[T : Compare] FixedArray::stable_sort(Self[T]) -> Unit
 pub fn[T : Eq] FixedArray::starts_with(Self[T], ArrayView[T]) -> Bool
 pub fn[T] FixedArray::swap(Self[T], Int, Int) -> Unit
+pub fn[X : ToJson] FixedArray::to_json(Self[X]) -> Json
+#deprecated
+pub fn[X : Show] FixedArray::to_string(Self[X]) -> String
 pub fn[A] FixedArray::unsafe_blit(Self[A], Int, Self[A], Int, Int) -> Unit
 pub fn FixedArray::unsafe_write_uint16_be(Self[Byte], Int, UInt16) -> Unit
 pub fn FixedArray::unsafe_write_uint16_le(Self[Byte], Int, UInt16) -> Unit
@@ -906,10 +1312,14 @@ pub fn[T : Compare] ReadOnlyArray::binary_search(Self[T], T) -> Result[Int, Int]
 pub fn[T] ReadOnlyArray::binary_search_by(Self[T], (T) -> Int raise?) -> Result[Int, Int] raise?
 pub fn[T] ReadOnlyArray::chunk_by(Self[T], (T, T) -> Bool raise?) -> Array[ArrayView[T]] raise?
 pub fn[T] ReadOnlyArray::chunks(Self[T], Int) -> Array[ArrayView[T]]
+pub fn[T : Compare] ReadOnlyArray::compare(Self[T], Self[T]) -> Int
 pub fn[T : Eq] ReadOnlyArray::contains(Self[T], T) -> Bool
+pub fn[T] ReadOnlyArray::default() -> Self[T]
 pub fn[T] ReadOnlyArray::each(Self[T], (T) -> Unit raise?) -> Unit raise?
 pub fn[T] ReadOnlyArray::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
 pub fn[T : Eq] ReadOnlyArray::ends_with(Self[T], ArrayView[T]) -> Bool
+#deprecated
+pub fn[T : Eq] ReadOnlyArray::equal(Self[T], Self[T]) -> Bool
 pub fn[T] ReadOnlyArray::filter(Self[T], (T) -> Bool raise?) -> Self[T] raise?
 pub fn[A, B] ReadOnlyArray::filter_map(Self[A], (A) -> B? raise?) -> Self[B] raise?
 pub fn[A, B] ReadOnlyArray::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
@@ -919,6 +1329,10 @@ pub fn[T] ReadOnlyArray::from_array(ArrayView[T]) -> Self[T]
 pub fn[T] ReadOnlyArray::from_iter(Iter[T]) -> Self[T]
 pub fn[T] ReadOnlyArray::get(Self[T], Int) -> T?
 pub fn[T] ReadOnlyArray::get_view(Self[T], start? : Int, end? : Int) -> ArrayView[T]?
+#deprecated
+pub fn[T : Hash] ReadOnlyArray::hash(Self[T]) -> Int
+#deprecated
+pub fn[T : Hash] ReadOnlyArray::hash_combine(Self[T], Hasher) -> Unit
 pub fn[T] ReadOnlyArray::is_empty(Self[T]) -> Bool
 pub fn[T : Compare] ReadOnlyArray::is_sorted(Self[T]) -> Bool
 #alias(iterator, deprecated)
@@ -931,6 +1345,14 @@ pub fn[T : Compare] ReadOnlyArray::lexical_compare(Self[T], Self[T]) -> Int
 pub fn[T] ReadOnlyArray::makei(Int, (Int) -> T raise?) -> Self[T] raise?
 pub fn[T, U] ReadOnlyArray::map(Self[T], (T) -> U raise?) -> Self[U] raise?
 pub fn[T, U] ReadOnlyArray::mapi(Self[T], (Int, T) -> U raise?) -> Self[U] raise?
+#deprecated
+pub fn[T : Eq] ReadOnlyArray::not_equal(Self[T], Self[T]) -> Bool
+pub fn[T : Compare] ReadOnlyArray::op_ge(Self[T], Self[T]) -> Bool
+pub fn[T : Compare] ReadOnlyArray::op_gt(Self[T], Self[T]) -> Bool
+pub fn[T : Compare] ReadOnlyArray::op_le(Self[T], Self[T]) -> Bool
+pub fn[T : Compare] ReadOnlyArray::op_lt(Self[T], Self[T]) -> Bool
+#deprecated
+pub fn[T : Show] ReadOnlyArray::output(Self[T], &Logger) -> Unit
 pub fn[T] ReadOnlyArray::rev(Self[T]) -> Self[T]
 pub fn[T] ReadOnlyArray::rev_each(Self[T], (T) -> Unit raise?) -> Unit raise?
 pub fn[T] ReadOnlyArray::rev_eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
@@ -943,18 +1365,26 @@ pub fn[T : Eq] ReadOnlyArray::starts_with(Self[T], ArrayView[T]) -> Bool
 pub fn[T : Eq] ReadOnlyArray::strip_prefix(Self[T], ArrayView[T]) -> ArrayView[T]?
 pub fn[T : Eq] ReadOnlyArray::strip_suffix(Self[T], ArrayView[T]) -> ArrayView[T]?
 pub fn[T] ReadOnlyArray::suffixes(Self[T], include_empty? : Bool) -> Iter[ArrayView[T]]
+pub fn[T : ToJson] ReadOnlyArray::to_json(Self[T]) -> Json
+#deprecated
+pub fn[T : Show] ReadOnlyArray::to_string(Self[T]) -> String
 #alias("_[_:_]")
 #alias(sub, deprecated)
 pub fn[T] ReadOnlyArray::view(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 pub fn[T] ReadOnlyArray::windows(Self[T], Int) -> Array[ArrayView[T]]
 
+pub fn Bytes::add(Bytes, Bytes) -> Bytes
 #alias("_[_]")
 pub fn Bytes::at(Bytes, Int) -> Byte
 pub fn Bytes::chop_prefix(Bytes, BytesView) -> BytesView?
 pub fn Bytes::chop_suffix(Bytes, BytesView) -> BytesView?
+pub fn Bytes::compare(Bytes, Bytes) -> Int
 #alias(clone, deprecated)
 #deprecated
 pub fn Bytes::copy(Bytes) -> Bytes
+pub fn Bytes::default() -> Bytes
+#deprecated
+pub fn Bytes::equal(Bytes, Bytes) -> Bool
 pub fn Bytes::find(Bytes, BytesView) -> Int?
 #alias(of, deprecated)
 pub fn Bytes::from_array(ArrayView[Byte]) -> Bytes
@@ -966,6 +1396,10 @@ pub fn Bytes::get(Bytes, Int) -> Byte?
 pub fn Bytes::get_view(Bytes, start? : Int, end? : Int) -> BytesView?
 pub fn Bytes::has_prefix(Bytes, BytesView) -> Bool
 pub fn Bytes::has_suffix(Bytes, BytesView) -> Bool
+#deprecated
+pub fn Bytes::hash(Bytes) -> Int
+#deprecated
+pub fn Bytes::hash_combine(Bytes, Hasher) -> Unit
 pub fn Bytes::is_empty(Bytes) -> Bool
 #alias(iterator, deprecated)
 pub fn Bytes::iter(Bytes) -> Iter[Byte]
@@ -977,28 +1411,294 @@ pub fn Bytes::make(Int, Byte) -> Bytes
 pub fn Bytes::makei(Int, (Int) -> Byte raise?) -> Bytes raise?
 pub fn Bytes::new(Int) -> Bytes
 #deprecated
+pub fn Bytes::not_equal(Bytes, Bytes) -> Bool
+#deprecated
 pub fn Bytes::of_string(String) -> Bytes
+pub fn Bytes::op_ge(Bytes, Bytes) -> Bool
+pub fn Bytes::op_gt(Bytes, Bytes) -> Bool
+pub fn Bytes::op_le(Bytes, Bytes) -> Bool
+pub fn Bytes::op_lt(Bytes, Bytes) -> Bool
+#deprecated
+pub fn Bytes::output(Bytes, &Logger) -> Unit
 pub fn Bytes::repeat(Bytes, Int) -> Bytes
 pub fn Bytes::rev_find(Bytes, BytesView) -> Int?
 pub fn Bytes::to_array(Bytes) -> Array[Byte]
 #label_migration(len, fill=false)
 pub fn Bytes::to_fixedarray(Bytes, len? : Int) -> FixedArray[Byte]
+pub fn Bytes::to_json(Bytes) -> Json
+pub fn Bytes::to_string(Bytes) -> String
 pub fn Bytes::to_unchecked_string(Bytes, offset? : Int, length? : Int) -> String
 #alias("_[_:_]")
 #alias(sub, deprecated)
 pub fn Bytes::view(Bytes, start? : Int, end? : Int) -> BytesView
 
+pub fn[T0 : Compare, T1 : Compare] Tuple(2)::compare((T0, T1), (T0, T1)) -> Int
+#deprecated
+pub fn[T0 : Eq, T1 : Eq] Tuple(2)::equal((T0, T1), (T0, T1)) -> Bool
+#deprecated
+pub fn[A : Hash, B : Hash] Tuple(2)::hash((A, B)) -> Int
+#deprecated
+pub fn[A : Hash, B : Hash] Tuple(2)::hash_combine((A, B), Hasher) -> Unit
+#deprecated
+pub fn[T0 : Eq, T1 : Eq] Tuple(2)::not_equal((T0, T1), (T0, T1)) -> Bool
+pub fn[T0 : Compare, T1 : Compare] Tuple(2)::op_ge((T0, T1), (T0, T1)) -> Bool
+pub fn[T0 : Compare, T1 : Compare] Tuple(2)::op_gt((T0, T1), (T0, T1)) -> Bool
+pub fn[T0 : Compare, T1 : Compare] Tuple(2)::op_le((T0, T1), (T0, T1)) -> Bool
+pub fn[T0 : Compare, T1 : Compare] Tuple(2)::op_lt((T0, T1), (T0, T1)) -> Bool
+#deprecated
+pub fn[A : Show, B : Show] Tuple(2)::output((A, B), &Logger) -> Unit
+pub fn[A : ToJson, B : ToJson] Tuple(2)::to_json((A, B)) -> Json
+#deprecated
+pub fn[A : Show, B : Show] Tuple(2)::to_string((A, B)) -> String
+
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare] Tuple(3)::compare((T0, T1, T2), (T0, T1, T2)) -> Int
+#deprecated
+pub fn[T0 : Eq, T1 : Eq, T2 : Eq] Tuple(3)::equal((T0, T1, T2), (T0, T1, T2)) -> Bool
+#deprecated
+pub fn[A : Hash, B : Hash, C : Hash] Tuple(3)::hash((A, B, C)) -> Int
+#deprecated
+pub fn[A : Hash, B : Hash, C : Hash] Tuple(3)::hash_combine((A, B, C), Hasher) -> Unit
+#deprecated
+pub fn[T0 : Eq, T1 : Eq, T2 : Eq] Tuple(3)::not_equal((T0, T1, T2), (T0, T1, T2)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare] Tuple(3)::op_ge((T0, T1, T2), (T0, T1, T2)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare] Tuple(3)::op_gt((T0, T1, T2), (T0, T1, T2)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare] Tuple(3)::op_le((T0, T1, T2), (T0, T1, T2)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare] Tuple(3)::op_lt((T0, T1, T2), (T0, T1, T2)) -> Bool
+#deprecated
+pub fn[A : Show, B : Show, C : Show] Tuple(3)::output((A, B, C), &Logger) -> Unit
+pub fn[A : ToJson, B : ToJson, C : ToJson] Tuple(3)::to_json((A, B, C)) -> Json
+#deprecated
+pub fn[A : Show, B : Show, C : Show] Tuple(3)::to_string((A, B, C)) -> String
+
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare] Tuple(4)::compare((T0, T1, T2, T3), (T0, T1, T2, T3)) -> Int
+#deprecated
+pub fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq] Tuple(4)::equal((T0, T1, T2, T3), (T0, T1, T2, T3)) -> Bool
+#deprecated
+pub fn[A : Hash, B : Hash, C : Hash, D : Hash] Tuple(4)::hash((A, B, C, D)) -> Int
+#deprecated
+pub fn[A : Hash, B : Hash, C : Hash, D : Hash] Tuple(4)::hash_combine((A, B, C, D), Hasher) -> Unit
+#deprecated
+pub fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq] Tuple(4)::not_equal((T0, T1, T2, T3), (T0, T1, T2, T3)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare] Tuple(4)::op_ge((T0, T1, T2, T3), (T0, T1, T2, T3)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare] Tuple(4)::op_gt((T0, T1, T2, T3), (T0, T1, T2, T3)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare] Tuple(4)::op_le((T0, T1, T2, T3), (T0, T1, T2, T3)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare] Tuple(4)::op_lt((T0, T1, T2, T3), (T0, T1, T2, T3)) -> Bool
+#deprecated
+pub fn[A : Show, B : Show, C : Show, D : Show] Tuple(4)::output((A, B, C, D), &Logger) -> Unit
+pub fn[A : ToJson, B : ToJson, C : ToJson, D : ToJson] Tuple(4)::to_json((A, B, C, D)) -> Json
+#deprecated
+pub fn[A : Show, B : Show, C : Show, D : Show] Tuple(4)::to_string((A, B, C, D)) -> String
+
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare] Tuple(5)::compare((T0, T1, T2, T3, T4), (T0, T1, T2, T3, T4)) -> Int
+#deprecated
+pub fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq] Tuple(5)::equal((T0, T1, T2, T3, T4), (T0, T1, T2, T3, T4)) -> Bool
+#deprecated
+pub fn[A : Hash, B : Hash, C : Hash, D : Hash, E : Hash] Tuple(5)::hash((A, B, C, D, E)) -> Int
+#deprecated
+pub fn[A : Hash, B : Hash, C : Hash, D : Hash, E : Hash] Tuple(5)::hash_combine((A, B, C, D, E), Hasher) -> Unit
+#deprecated
+pub fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq] Tuple(5)::not_equal((T0, T1, T2, T3, T4), (T0, T1, T2, T3, T4)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare] Tuple(5)::op_ge((T0, T1, T2, T3, T4), (T0, T1, T2, T3, T4)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare] Tuple(5)::op_gt((T0, T1, T2, T3, T4), (T0, T1, T2, T3, T4)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare] Tuple(5)::op_le((T0, T1, T2, T3, T4), (T0, T1, T2, T3, T4)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare] Tuple(5)::op_lt((T0, T1, T2, T3, T4), (T0, T1, T2, T3, T4)) -> Bool
+#deprecated
+pub fn[A : Show, B : Show, C : Show, D : Show, E : Show] Tuple(5)::output((A, B, C, D, E), &Logger) -> Unit
+pub fn[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson] Tuple(5)::to_json((A, B, C, D, E)) -> Json
+#deprecated
+pub fn[A : Show, B : Show, C : Show, D : Show, E : Show] Tuple(5)::to_string((A, B, C, D, E)) -> String
+
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare] Tuple(6)::compare((T0, T1, T2, T3, T4, T5), (T0, T1, T2, T3, T4, T5)) -> Int
+#deprecated
+pub fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq] Tuple(6)::equal((T0, T1, T2, T3, T4, T5), (T0, T1, T2, T3, T4, T5)) -> Bool
+#deprecated
+pub fn[A : Hash, B : Hash, C : Hash, D : Hash, E : Hash, F : Hash] Tuple(6)::hash((A, B, C, D, E, F)) -> Int
+#deprecated
+pub fn[A : Hash, B : Hash, C : Hash, D : Hash, E : Hash, F : Hash] Tuple(6)::hash_combine((A, B, C, D, E, F), Hasher) -> Unit
+#deprecated
+pub fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq] Tuple(6)::not_equal((T0, T1, T2, T3, T4, T5), (T0, T1, T2, T3, T4, T5)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare] Tuple(6)::op_ge((T0, T1, T2, T3, T4, T5), (T0, T1, T2, T3, T4, T5)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare] Tuple(6)::op_gt((T0, T1, T2, T3, T4, T5), (T0, T1, T2, T3, T4, T5)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare] Tuple(6)::op_le((T0, T1, T2, T3, T4, T5), (T0, T1, T2, T3, T4, T5)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare] Tuple(6)::op_lt((T0, T1, T2, T3, T4, T5), (T0, T1, T2, T3, T4, T5)) -> Bool
+#deprecated
+pub fn[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show] Tuple(6)::output((A, B, C, D, E, F), &Logger) -> Unit
+pub fn[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson] Tuple(6)::to_json((A, B, C, D, E, F)) -> Json
+#deprecated
+pub fn[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show] Tuple(6)::to_string((A, B, C, D, E, F)) -> String
+
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare] Tuple(7)::compare((T0, T1, T2, T3, T4, T5, T6), (T0, T1, T2, T3, T4, T5, T6)) -> Int
+#deprecated
+pub fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq] Tuple(7)::equal((T0, T1, T2, T3, T4, T5, T6), (T0, T1, T2, T3, T4, T5, T6)) -> Bool
+#deprecated
+pub fn[A : Hash, B : Hash, C : Hash, D : Hash, E : Hash, F : Hash, G : Hash] Tuple(7)::hash((A, B, C, D, E, F, G)) -> Int
+#deprecated
+pub fn[A : Hash, B : Hash, C : Hash, D : Hash, E : Hash, F : Hash, G : Hash] Tuple(7)::hash_combine((A, B, C, D, E, F, G), Hasher) -> Unit
+#deprecated
+pub fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq] Tuple(7)::not_equal((T0, T1, T2, T3, T4, T5, T6), (T0, T1, T2, T3, T4, T5, T6)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare] Tuple(7)::op_ge((T0, T1, T2, T3, T4, T5, T6), (T0, T1, T2, T3, T4, T5, T6)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare] Tuple(7)::op_gt((T0, T1, T2, T3, T4, T5, T6), (T0, T1, T2, T3, T4, T5, T6)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare] Tuple(7)::op_le((T0, T1, T2, T3, T4, T5, T6), (T0, T1, T2, T3, T4, T5, T6)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare] Tuple(7)::op_lt((T0, T1, T2, T3, T4, T5, T6), (T0, T1, T2, T3, T4, T5, T6)) -> Bool
+#deprecated
+pub fn[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show, G : Show] Tuple(7)::output((A, B, C, D, E, F, G), &Logger) -> Unit
+pub fn[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson] Tuple(7)::to_json((A, B, C, D, E, F, G)) -> Json
+#deprecated
+pub fn[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show, G : Show] Tuple(7)::to_string((A, B, C, D, E, F, G)) -> String
+
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare] Tuple(8)::compare((T0, T1, T2, T3, T4, T5, T6, T7), (T0, T1, T2, T3, T4, T5, T6, T7)) -> Int
+#deprecated
+pub fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq] Tuple(8)::equal((T0, T1, T2, T3, T4, T5, T6, T7), (T0, T1, T2, T3, T4, T5, T6, T7)) -> Bool
+#deprecated
+pub fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq] Tuple(8)::not_equal((T0, T1, T2, T3, T4, T5, T6, T7), (T0, T1, T2, T3, T4, T5, T6, T7)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare] Tuple(8)::op_ge((T0, T1, T2, T3, T4, T5, T6, T7), (T0, T1, T2, T3, T4, T5, T6, T7)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare] Tuple(8)::op_gt((T0, T1, T2, T3, T4, T5, T6, T7), (T0, T1, T2, T3, T4, T5, T6, T7)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare] Tuple(8)::op_le((T0, T1, T2, T3, T4, T5, T6, T7), (T0, T1, T2, T3, T4, T5, T6, T7)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare] Tuple(8)::op_lt((T0, T1, T2, T3, T4, T5, T6, T7), (T0, T1, T2, T3, T4, T5, T6, T7)) -> Bool
+#deprecated
+pub fn[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show] Tuple(8)::output((T0, T1, T2, T3, T4, T5, T6, T7), &Logger) -> Unit
+pub fn[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson] Tuple(8)::to_json((A, B, C, D, E, F, G, H)) -> Json
+#deprecated
+pub fn[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show] Tuple(8)::to_string((T0, T1, T2, T3, T4, T5, T6, T7)) -> String
+
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare] Tuple(9)::compare((T0, T1, T2, T3, T4, T5, T6, T7, T8), (T0, T1, T2, T3, T4, T5, T6, T7, T8)) -> Int
+#deprecated
+pub fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq] Tuple(9)::equal((T0, T1, T2, T3, T4, T5, T6, T7, T8), (T0, T1, T2, T3, T4, T5, T6, T7, T8)) -> Bool
+#deprecated
+pub fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq] Tuple(9)::not_equal((T0, T1, T2, T3, T4, T5, T6, T7, T8), (T0, T1, T2, T3, T4, T5, T6, T7, T8)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare] Tuple(9)::op_ge((T0, T1, T2, T3, T4, T5, T6, T7, T8), (T0, T1, T2, T3, T4, T5, T6, T7, T8)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare] Tuple(9)::op_gt((T0, T1, T2, T3, T4, T5, T6, T7, T8), (T0, T1, T2, T3, T4, T5, T6, T7, T8)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare] Tuple(9)::op_le((T0, T1, T2, T3, T4, T5, T6, T7, T8), (T0, T1, T2, T3, T4, T5, T6, T7, T8)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare] Tuple(9)::op_lt((T0, T1, T2, T3, T4, T5, T6, T7, T8), (T0, T1, T2, T3, T4, T5, T6, T7, T8)) -> Bool
+#deprecated
+pub fn[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show] Tuple(9)::output((T0, T1, T2, T3, T4, T5, T6, T7, T8), &Logger) -> Unit
+pub fn[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson] Tuple(9)::to_json((A, B, C, D, E, F, G, H, I)) -> Json
+#deprecated
+pub fn[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show] Tuple(9)::to_string((T0, T1, T2, T3, T4, T5, T6, T7, T8)) -> String
+
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare] Tuple(10)::compare((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)) -> Int
+#deprecated
+pub fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq] Tuple(10)::equal((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)) -> Bool
+#deprecated
+pub fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq] Tuple(10)::not_equal((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare] Tuple(10)::op_ge((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare] Tuple(10)::op_gt((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare] Tuple(10)::op_le((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare] Tuple(10)::op_lt((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)) -> Bool
+#deprecated
+pub fn[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show] Tuple(10)::output((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9), &Logger) -> Unit
+pub fn[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson] Tuple(10)::to_json((A, B, C, D, E, F, G, H, I, J)) -> Json
+#deprecated
+pub fn[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show] Tuple(10)::to_string((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)) -> String
+
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare] Tuple(11)::compare((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)) -> Int
+#deprecated
+pub fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq] Tuple(11)::equal((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)) -> Bool
+#deprecated
+pub fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq] Tuple(11)::not_equal((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare] Tuple(11)::op_ge((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare] Tuple(11)::op_gt((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare] Tuple(11)::op_le((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare] Tuple(11)::op_lt((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)) -> Bool
+#deprecated
+pub fn[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show] Tuple(11)::output((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10), &Logger) -> Unit
+pub fn[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson] Tuple(11)::to_json((A, B, C, D, E, F, G, H, I, J, K)) -> Json
+#deprecated
+pub fn[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show] Tuple(11)::to_string((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)) -> String
+
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare] Tuple(12)::compare((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)) -> Int
+#deprecated
+pub fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq] Tuple(12)::equal((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)) -> Bool
+#deprecated
+pub fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq] Tuple(12)::not_equal((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare] Tuple(12)::op_ge((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare] Tuple(12)::op_gt((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare] Tuple(12)::op_le((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare] Tuple(12)::op_lt((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)) -> Bool
+#deprecated
+pub fn[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show] Tuple(12)::output((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11), &Logger) -> Unit
+pub fn[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson] Tuple(12)::to_json((A, B, C, D, E, F, G, H, I, J, K, L)) -> Json
+#deprecated
+pub fn[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show] Tuple(12)::to_string((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)) -> String
+
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare] Tuple(13)::compare((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)) -> Int
+#deprecated
+pub fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq] Tuple(13)::equal((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)) -> Bool
+#deprecated
+pub fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq] Tuple(13)::not_equal((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare] Tuple(13)::op_ge((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare] Tuple(13)::op_gt((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare] Tuple(13)::op_le((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare] Tuple(13)::op_lt((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)) -> Bool
+#deprecated
+pub fn[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show] Tuple(13)::output((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12), &Logger) -> Unit
+pub fn[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson, M : ToJson] Tuple(13)::to_json((A, B, C, D, E, F, G, H, I, J, K, L, M)) -> Json
+#deprecated
+pub fn[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show] Tuple(13)::to_string((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)) -> String
+
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare] Tuple(14)::compare((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)) -> Int
+#deprecated
+pub fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq] Tuple(14)::equal((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)) -> Bool
+#deprecated
+pub fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq] Tuple(14)::not_equal((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare] Tuple(14)::op_ge((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare] Tuple(14)::op_gt((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare] Tuple(14)::op_le((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare] Tuple(14)::op_lt((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)) -> Bool
+#deprecated
+pub fn[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show] Tuple(14)::output((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13), &Logger) -> Unit
+pub fn[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson, M : ToJson, N : ToJson] Tuple(14)::to_json((A, B, C, D, E, F, G, H, I, J, K, L, M, N)) -> Json
+#deprecated
+pub fn[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show] Tuple(14)::to_string((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)) -> String
+
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare] Tuple(15)::compare((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)) -> Int
+#deprecated
+pub fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq, T14 : Eq] Tuple(15)::equal((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)) -> Bool
+#deprecated
+pub fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq, T14 : Eq] Tuple(15)::not_equal((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare] Tuple(15)::op_ge((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare] Tuple(15)::op_gt((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare] Tuple(15)::op_le((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare] Tuple(15)::op_lt((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)) -> Bool
+#deprecated
+pub fn[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show, T14 : Show] Tuple(15)::output((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14), &Logger) -> Unit
+pub fn[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson, M : ToJson, N : ToJson, O : ToJson] Tuple(15)::to_json((A, B, C, D, E, F, G, H, I, J, K, L, M, N, O)) -> Json
+#deprecated
+pub fn[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show, T14 : Show] Tuple(15)::to_string((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)) -> String
+
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare, T15 : Compare] Tuple(16)::compare((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)) -> Int
+#deprecated
+pub fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq, T14 : Eq, T15 : Eq] Tuple(16)::equal((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)) -> Bool
+#deprecated
+pub fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq, T14 : Eq, T15 : Eq] Tuple(16)::not_equal((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare, T15 : Compare] Tuple(16)::op_ge((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare, T15 : Compare] Tuple(16)::op_gt((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare, T15 : Compare] Tuple(16)::op_le((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)) -> Bool
+pub fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare, T15 : Compare] Tuple(16)::op_lt((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)) -> Bool
+#deprecated
+pub fn[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show, T14 : Show, T15 : Show] Tuple(16)::output((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15), &Logger) -> Unit
+pub fn[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson, M : ToJson, N : ToJson, O : ToJson, P : ToJson] Tuple(16)::to_json((A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P)) -> Json
+#deprecated
+pub fn[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show, T14 : Show, T15 : Show] Tuple(16)::to_string((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)) -> String
+
 #alias("_[_]")
 pub fn BytesView::at(Self, Int) -> Byte
 pub fn BytesView::chop_prefix(Self, Self) -> Self?
 pub fn BytesView::chop_suffix(Self, Self) -> Self?
+pub fn BytesView::compare(Self, Self) -> Int
 pub fn BytesView::data(Self) -> Bytes
+#deprecated
+pub fn BytesView::equal(Self, Self) -> Bool
 pub fn BytesView::equal_to_bytes(Self, Bytes) -> Bool
 pub fn BytesView::find(Self, Self) -> Int?
 pub fn BytesView::get(Self, Int) -> Byte?
 pub fn BytesView::get_view(Self, start? : Int, end? : Int) -> Self?
 pub fn BytesView::has_prefix(Self, Self) -> Bool
 pub fn BytesView::has_suffix(Self, Self) -> Bool
+#deprecated
+pub fn BytesView::hash(Self) -> Int
+#deprecated
+pub fn BytesView::hash_combine(Self, Hasher) -> Unit
 pub fn BytesView::is_empty(Self) -> Bool
 #alias(iterator, deprecated)
 pub fn BytesView::iter(Self) -> Iter[Byte]
@@ -1006,16 +1706,27 @@ pub fn BytesView::iter(Self) -> Iter[Byte]
 pub fn BytesView::iter2(Self) -> Iter2[Int, Byte]
 pub fn BytesView::length(Self) -> Int
 pub fn BytesView::lexical_compare(Self, Self) -> Int
+#deprecated
+pub fn BytesView::not_equal(Self, Self) -> Bool
+pub fn BytesView::op_ge(Self, Self) -> Bool
+pub fn BytesView::op_gt(Self, Self) -> Bool
+pub fn BytesView::op_le(Self, Self) -> Bool
+pub fn BytesView::op_lt(Self, Self) -> Bool
+#deprecated
+pub fn BytesView::output(Self, &Logger) -> Unit
 pub fn BytesView::rev_find(Self, Self) -> Int?
 pub fn BytesView::start_offset(Self) -> Int
 pub fn BytesView::to_array(Self) -> Array[Byte]
 pub fn BytesView::to_fixedarray(Self) -> FixedArray[Byte]
+pub fn BytesView::to_json(Self) -> Json
 #alias(to_bytes, deprecated)
 pub fn BytesView::to_owned(Self) -> Bytes
+pub fn BytesView::to_string(Self) -> String
 #alias("_[_:_]")
 #alias(sub, deprecated)
 pub fn BytesView::view(Self, start? : Int, end? : Int) -> Self
 
+pub fn StringView::add(Self, Self) -> Self
 pub fn StringView::after(Self, Self) -> Self?
 #alias(every)
 pub fn StringView::all(Self, (Char) -> Bool raise?) -> Bool raise?
@@ -1030,12 +1741,16 @@ pub fn StringView::char_length_eq(Self, Int) -> Bool
 pub fn StringView::char_length_ge(Self, Int) -> Bool
 pub fn StringView::clamped_view(Self, start? : Int, end? : Int) -> Self
 pub fn StringView::code_units(Self) -> ArrayView[UInt16]
+pub fn StringView::compare(Self, Self) -> Int
 pub fn StringView::compare_ignore_ascii_case(Self, Self) -> Int
 pub fn StringView::contains(Self, Self) -> Bool
 pub fn StringView::contains_any(Self, chars~ : Self) -> Bool
 pub fn StringView::contains_char(Self, Char) -> Bool
 pub fn StringView::contains_code_unit(Self, UInt16) -> Bool
 pub fn StringView::data(Self) -> String
+pub fn StringView::default() -> Self
+#deprecated
+pub fn StringView::equal(Self, Self) -> Bool
 pub fn StringView::equal_ignore_ascii_case(Self, Self) -> Bool
 pub fn StringView::equal_to_string(Self, String) -> Bool
 pub fn StringView::escape(Self, quote? : Bool) -> Self
@@ -1053,6 +1768,10 @@ pub fn StringView::get_view(Self, start? : Int, end? : Int) -> Self?
 pub fn StringView::has_prefix(Self, Self) -> Bool
 #alias(ends_with, deprecated)
 pub fn StringView::has_suffix(Self, Self) -> Bool
+#deprecated
+pub fn StringView::hash(Self) -> Int
+#deprecated
+pub fn StringView::hash_combine(Self, Hasher) -> Unit
 pub fn StringView::is_blank(Self) -> Bool
 pub fn StringView::is_empty(Self) -> Bool
 #alias(iterator, deprecated)
@@ -1062,7 +1781,15 @@ pub fn StringView::iter2(Self) -> Iter2[Int, Char]
 pub fn StringView::length(Self) -> Int
 pub fn StringView::lexical_compare(Self, Self) -> Int
 pub fn StringView::make(Int, Char) -> Self
+#deprecated
+pub fn StringView::not_equal(Self, Self) -> Bool
 pub fn StringView::offset_of_nth_char(Self, Int) -> Int?
+pub fn StringView::op_ge(Self, Self) -> Bool
+pub fn StringView::op_gt(Self, Self) -> Bool
+pub fn StringView::op_le(Self, Self) -> Bool
+pub fn StringView::op_lt(Self, Self) -> Bool
+#deprecated
+pub fn StringView::output(Self, &Logger) -> Unit
 pub fn StringView::pad_end(Self, Int, Char) -> String
 pub fn StringView::pad_start(Self, Int, Char) -> String
 pub fn StringView::repeat(Self, Int) -> Self
@@ -1090,9 +1817,11 @@ pub fn StringView::suffixes(Self, include_empty? : Bool) -> Iter[Self]
 pub fn StringView::to_array(Self) -> Array[Char]
 #deprecated
 pub fn StringView::to_bytes(Self) -> Bytes
+pub fn StringView::to_json(Self) -> Json
 pub fn StringView::to_lower(Self) -> Self
 #alias(to_string, deprecated)
 pub fn StringView::to_owned(Self) -> String
+pub fn StringView::to_string_view(Self) -> Self
 pub fn StringView::to_upper(Self) -> Self
 #label_migration(chars, alias=char_set)
 pub fn StringView::trim(Self, chars? : Self) -> Self
@@ -1108,6 +1837,35 @@ pub fn StringView::unsafe_get(Self, Int) -> UInt16
 pub fn StringView::view(Self, start_offset? : Int, end_offset? : Int) -> Self
 
 // Type aliases
+pub type Tuple10[A, B, C, D, E, F, G, H, I, J] = (A, B, C, D, E, F, G, H, I, J)
+
+pub type Tuple11[A, B, C, D, E, F, G, H, I, J, K] = (A, B, C, D, E, F, G, H, I, J, K)
+
+pub type Tuple12[A, B, C, D, E, F, G, H, I, J, K, L] = (A, B, C, D, E, F, G, H, I, J, K, L)
+
+pub type Tuple13[A, B, C, D, E, F, G, H, I, J, K, L, M] = (A, B, C, D, E, F, G, H, I, J, K, L, M)
+
+pub type Tuple14[A, B, C, D, E, F, G, H, I, J, K, L, M, N] = (A, B, C, D, E, F, G, H, I, J, K, L, M, N)
+
+pub type Tuple15[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O] = (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O)
+
+pub type Tuple16[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P] = (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P)
+
+pub type Tuple2[A, B] = (A, B)
+
+pub type Tuple3[A, B, C] = (A, B, C)
+
+pub type Tuple4[A, B, C, D] = (A, B, C, D)
+
+pub type Tuple5[A, B, C, D, E] = (A, B, C, D, E)
+
+pub type Tuple6[A, B, C, D, E, F] = (A, B, C, D, E, F)
+
+pub type Tuple7[A, B, C, D, E, F, G] = (A, B, C, D, E, F, G)
+
+pub type Tuple8[A, B, C, D, E, F, G, H] = (A, B, C, D, E, F, G, H)
+
+pub type Tuple9[A, B, C, D, E, F, G, H, I] = (A, B, C, D, E, F, G, H, I)
 
 // Traits
 pub(open) trait Add {

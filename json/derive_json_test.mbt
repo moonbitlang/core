@@ -78,3 +78,21 @@ test {
     ),
   )
 }
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend Hello with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use the `Debug` trait instead", skip_current_package=true)
+pub extend Hello with @debug.Debug::{to_repr}
+
+///|
+#deprecated("Use the `FromJson` trait instead", skip_current_package=true)
+pub extend Hello with @json.FromJson::{from_json}
+
+///|
+pub extend Hello with ToJson::{to_json}
+
+///|
+pub extend Hello3 with ToJson::{to_json}

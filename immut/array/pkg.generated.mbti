@@ -13,9 +13,13 @@ import {
 
 // Types and methods
 type T[A]
+pub fn[A] T::add(Self[A], Self[A]) -> Self[A]
+#deprecated
+pub fn[X : @quickcheck.Arbitrary] T::arbitrary(Int, @splitmix.RandomState) -> Self[X]
 #alias("_[_]")
 #deprecated
 pub fn[A] T::at(Self[A], Int) -> A
+pub fn[A : Compare] T::compare(Self[A], Self[A]) -> Int
 #deprecated
 pub fn[A] T::concat(Self[A], Self[A]) -> Self[A]
 #alias(clone, deprecated)
@@ -25,6 +29,8 @@ pub fn[A] T::copy(Self[A]) -> Self[A]
 pub fn[A] T::each(Self[A], (A) -> Unit raise?) -> Unit raise?
 #deprecated
 pub fn[A] T::eachi(Self[A], (Int, A) -> Unit raise?) -> Unit raise?
+#deprecated
+pub fn[A : Eq] T::equal(Self[A], Self[A]) -> Bool
 #alias(fold_left, deprecated)
 #deprecated
 pub fn[A, B] T::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
@@ -40,6 +46,10 @@ pub fn[A] T::from_array(ArrayView[A]) -> Self[A]
 pub fn[A] T::from_iter(Iter[A]) -> Self[A]
 #deprecated
 pub fn[A] T::get(Self[A], Int) -> A?
+#deprecated
+pub fn[A : Hash] T::hash(Self[A]) -> Int
+#deprecated
+pub fn[A : Hash] T::hash_combine(Self[A], Hasher) -> Unit
 #deprecated
 pub fn[A] T::is_empty(Self[A]) -> Bool
 #alias(iterator, deprecated)
@@ -59,6 +69,14 @@ pub fn[A, B] T::map(Self[A], (A) -> B raise?) -> Self[B] raise?
 #deprecated
 pub fn[A] T::new() -> Self[A]
 #deprecated
+pub fn[A : Eq] T::not_equal(Self[A], Self[A]) -> Bool
+pub fn[A : Compare] T::op_ge(Self[A], Self[A]) -> Bool
+pub fn[A : Compare] T::op_gt(Self[A], Self[A]) -> Bool
+pub fn[A : Compare] T::op_le(Self[A], Self[A]) -> Bool
+pub fn[A : Compare] T::op_lt(Self[A], Self[A]) -> Bool
+#deprecated
+pub fn[A : Show] T::output(Self[A], &Logger) -> Unit
+#deprecated
 pub fn[A] T::push(Self[A], A) -> Self[A]
 #alias(fold_right, deprecated)
 #deprecated
@@ -69,6 +87,8 @@ pub fn[A] T::set(Self[A], Int, A) -> Self[A]
 pub fn[A] T::to_array(Self[A]) -> Array[A]
 #deprecated
 pub fn[A : @debug.Debug] T::to_repr(Self[A]) -> @debug.Repr
+#deprecated
+pub fn[A : Show] T::to_string(Self[A]) -> String
 pub impl[A] Add for T[A]
 pub impl[A : Compare] Compare for T[A]
 pub impl[A : Eq] Eq for T[A]

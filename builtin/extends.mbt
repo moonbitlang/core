@@ -1,0 +1,1020 @@
+// Copyright 2026 International Digital Economy Academy
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend Array with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend ArrayView with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend Bool with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend Byte with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend Bytes with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend BytesView with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend Char with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend Double with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend FixedArray with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend Int with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend Int64 with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend Json with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend Map with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend MutArrayView with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend Option with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend ReadOnlyArray with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend Result with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend String with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend StringView with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend UInt with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend UInt16 with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend UInt64 with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend Unit with Eq::{equal, not_equal}
+
+///|
+pub extend ArgsLoc with Show::{to_string}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend ArgsLoc with Show::{output}
+
+///|
+pub extend Array with Add::{add}
+
+///|
+pub extend Array with Compare::{compare, op_ge, op_gt, op_le, op_lt}
+
+///|
+pub extend Array with Default::{default}
+
+///|
+#deprecated("Use the `Hash` trait instead", skip_current_package=true)
+pub extend Array with Hash::{hash, hash_combine}
+
+///|
+pub extend Array with Show::{to_string}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend Array with Show::{output}
+
+///|
+pub extend Array with ToJson::{to_json}
+
+///|
+pub extend ArrayView with Add::{add}
+
+///|
+pub extend ArrayView with Compare::{compare, op_ge, op_gt, op_le, op_lt}
+
+///|
+#deprecated("Use the `Hash` trait instead", skip_current_package=true)
+pub extend ArrayView with Hash::{hash, hash_combine}
+
+///|
+pub extend ArrayView with Show::{to_string}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend ArrayView with Show::{output}
+
+///|
+pub extend ArrayView with ToJson::{to_json}
+
+///|
+pub extend Bool with Compare::{compare, op_ge, op_gt, op_le, op_lt}
+
+///|
+pub extend Bool with Default::{default}
+
+///|
+#deprecated("Use the `Hash` trait instead", skip_current_package=true)
+pub extend Bool with Hash::{hash, hash_combine}
+
+///|
+pub extend Bool with Show::{to_string}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend Bool with Show::{output}
+
+///|
+pub extend Bool with ToJson::{to_json}
+
+///|
+pub extend Byte with Add::{add}
+
+///|
+pub extend Byte with BitAnd::{land}
+
+///|
+pub extend Byte with BitOr::{lor}
+
+///|
+pub extend Byte with BitXOr::{lxor}
+
+///|
+pub extend Byte with Compare::{compare, op_ge, op_gt, op_le, op_lt}
+
+///|
+pub extend Byte with Default::{default}
+
+///|
+pub extend Byte with Div::{div}
+
+///|
+#deprecated("Use the `Hash` trait instead", skip_current_package=true)
+pub extend Byte with Hash::{hash, hash_combine}
+
+///|
+pub extend Byte with Mod::{mod}
+
+///|
+pub extend Byte with Mul::{mul}
+
+///|
+pub extend Byte with Shl::{shl}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend Byte with Show::{output}
+
+///|
+pub extend Byte with Shr::{shr}
+
+///|
+pub extend Byte with Sub::{sub}
+
+///|
+pub extend Byte with ToJson::{to_json}
+
+///|
+pub extend Bytes with Add::{add}
+
+///|
+pub extend Bytes with Compare::{compare, op_ge, op_gt, op_le, op_lt}
+
+///|
+pub extend Bytes with Default::{default}
+
+///|
+#deprecated("Use the `Hash` trait instead", skip_current_package=true)
+pub extend Bytes with Hash::{hash, hash_combine}
+
+///|
+pub extend Bytes with Show::{to_string}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend Bytes with Show::{output}
+
+///|
+pub extend Bytes with ToJson::{to_json}
+
+///|
+pub extend BytesView with Compare::{compare, op_ge, op_gt, op_le, op_lt}
+
+///|
+#deprecated("Use the `Hash` trait instead", skip_current_package=true)
+pub extend BytesView with Hash::{hash, hash_combine}
+
+///|
+pub extend BytesView with Show::{to_string}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend BytesView with Show::{output}
+
+///|
+pub extend BytesView with ToJson::{to_json}
+
+///|
+pub extend Char with Compare::{compare, op_ge, op_gt, op_le, op_lt}
+
+///|
+pub extend Char with Default::{default}
+
+///|
+#deprecated("Use the `Hash` trait instead", skip_current_package=true)
+pub extend Char with Hash::{hash, hash_combine}
+
+///|
+pub extend Char with Show::{to_string}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend Char with Show::{output}
+
+///|
+pub extend Char with ToJson::{to_json}
+
+///|
+pub extend Double with Add::{add}
+
+///|
+pub extend Double with Compare::{compare, op_ge, op_gt, op_le, op_lt}
+
+///|
+pub extend Double with Default::{default}
+
+///|
+pub extend Double with Div::{div}
+
+///|
+#deprecated("Use the `Hash` trait instead", skip_current_package=true)
+pub extend Double with Hash::{hash, hash_combine}
+
+///|
+pub extend Double with Mul::{mul}
+
+///|
+pub extend Double with Neg::{neg}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend Double with Show::{output}
+
+///|
+pub extend Double with Sub::{sub}
+
+///|
+pub extend Double with ToJson::{to_json}
+
+///|
+pub extend Failure with Show::{to_string}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend Failure with Show::{output}
+
+///|
+pub extend Failure with ToJson::{to_json}
+
+///|
+pub extend FixedArray with Add::{add}
+
+///|
+pub extend FixedArray with Compare::{compare, op_ge, op_gt, op_le, op_lt}
+
+///|
+pub extend FixedArray with Default::{default}
+
+///|
+#deprecated("Use the `Hash` trait instead", skip_current_package=true)
+pub extend FixedArray with Hash::{hash, hash_combine}
+
+///|
+pub extend FixedArray with Show::{to_string}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend FixedArray with Show::{output}
+
+///|
+pub extend FixedArray with ToJson::{to_json}
+
+///|
+pub extend Int with Add::{add}
+
+///|
+pub extend Int with BitAnd::{land}
+
+///|
+pub extend Int with BitOr::{lor}
+
+///|
+pub extend Int with BitXOr::{lxor}
+
+///|
+pub extend Int with Compare::{compare, op_ge, op_gt, op_le, op_lt}
+
+///|
+pub extend Int with Default::{default}
+
+///|
+pub extend Int with Div::{div}
+
+///|
+#deprecated("Use the `Hash` trait instead", skip_current_package=true)
+pub extend Int with Hash::{hash, hash_combine}
+
+///|
+pub extend Int with Mod::{mod}
+
+///|
+pub extend Int with Mul::{mul}
+
+///|
+pub extend Int with Neg::{neg}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend Int with Show::{output}
+
+///|
+pub extend Int with Sub::{sub}
+
+///|
+pub extend Int with ToJson::{to_json}
+
+///|
+pub extend Int64 with Add::{add}
+
+///|
+pub extend Int64 with BitAnd::{land}
+
+///|
+pub extend Int64 with BitOr::{lor}
+
+///|
+pub extend Int64 with BitXOr::{lxor}
+
+///|
+pub extend Int64 with Compare::{compare, op_ge, op_gt, op_le, op_lt}
+
+///|
+pub extend Int64 with Default::{default}
+
+///|
+pub extend Int64 with Div::{div}
+
+///|
+#deprecated("Use the `Hash` trait instead", skip_current_package=true)
+pub extend Int64 with Hash::{hash, hash_combine}
+
+///|
+pub extend Int64 with Mod::{mod}
+
+///|
+pub extend Int64 with Mul::{mul}
+
+///|
+pub extend Int64 with Neg::{neg}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend Int64 with Show::{output}
+
+///|
+pub extend Int64 with Sub::{sub}
+
+///|
+pub extend Int64 with ToJson::{to_json}
+
+///|
+pub extend Iter with Add::{add}
+
+///|
+pub extend Iter with Show::{to_string}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend Iter with Show::{output}
+
+///|
+pub extend Iter with ToJson::{to_json}
+
+///|
+pub extend Iter2 with Show::{to_string}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend Iter2 with Show::{output}
+
+///|
+pub extend Json with Default::{default}
+
+///|
+pub extend Map with Default::{default}
+
+///|
+pub extend Map with Show::{to_string}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend Map with Show::{output}
+
+///|
+pub extend Map with ToJson::{to_json}
+
+///|
+pub extend MutArrayView with Compare::{compare, op_ge, op_gt, op_le, op_lt}
+
+///|
+#deprecated("Use the `Hash` trait instead", skip_current_package=true)
+pub extend MutArrayView with Hash::{hash, hash_combine}
+
+///|
+pub extend MutArrayView with Show::{to_string}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend MutArrayView with Show::{output}
+
+///|
+pub extend Option with Compare::{compare, op_ge, op_gt, op_le, op_lt}
+
+///|
+pub extend Option with Default::{default}
+
+///|
+#deprecated("Use the `Hash` trait instead", skip_current_package=true)
+pub extend Option with Hash::{hash, hash_combine}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend Option with Show::{output}
+
+///|
+pub extend Option with ToJson::{to_json}
+
+///|
+pub extend ReadOnlyArray with Compare::{compare, op_ge, op_gt, op_le, op_lt}
+
+///|
+pub extend ReadOnlyArray with Default::{default}
+
+///|
+#deprecated("Use the `Hash` trait instead", skip_current_package=true)
+pub extend ReadOnlyArray with Hash::{hash, hash_combine}
+
+///|
+pub extend ReadOnlyArray with Show::{to_string}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend ReadOnlyArray with Show::{output}
+
+///|
+pub extend ReadOnlyArray with ToJson::{to_json}
+
+///|
+pub extend Result with Compare::{compare, op_ge, op_gt, op_le, op_lt}
+
+///|
+#deprecated("Use the `Hash` trait instead", skip_current_package=true)
+pub extend Result with Hash::{hash, hash_combine}
+
+///|
+pub extend Result with Show::{to_string}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend Result with Show::{output}
+
+///|
+pub extend Result with ToJson::{to_json}
+
+///|
+pub extend SourceLoc with Show::{to_string}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend SourceLoc with Show::{output}
+
+///|
+pub extend String with Add::{add}
+
+///|
+pub extend String with Compare::{compare, op_ge, op_gt, op_le, op_lt}
+
+///|
+pub extend String with Default::{default}
+
+///|
+#deprecated("Use the `Hash` trait instead", skip_current_package=true)
+pub extend String with Hash::{hash, hash_combine}
+
+///|
+pub extend String with Show::{to_string}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend String with Show::{output}
+
+///|
+pub extend String with ToJson::{to_json}
+
+///|
+pub extend String with ToStringView::{to_string_view}
+
+///|
+pub extend StringView with Add::{add}
+
+///|
+pub extend StringView with Compare::{compare, op_ge, op_gt, op_le, op_lt}
+
+///|
+pub extend StringView with Default::{default}
+
+///|
+#deprecated("Use the `Hash` trait instead", skip_current_package=true)
+pub extend StringView with Hash::{hash, hash_combine}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend StringView with Show::{output}
+
+///|
+pub extend StringView with ToJson::{to_json}
+
+///|
+pub extend StringView with ToStringView::{to_string_view}
+
+///|
+pub extend UInt with Add::{add}
+
+///|
+pub extend UInt with BitAnd::{land}
+
+///|
+pub extend UInt with BitOr::{lor}
+
+///|
+pub extend UInt with BitXOr::{lxor}
+
+///|
+pub extend UInt with Compare::{compare, op_ge, op_gt, op_le, op_lt}
+
+///|
+pub extend UInt with Div::{div}
+
+///|
+#deprecated("Use the `Hash` trait instead", skip_current_package=true)
+pub extend UInt with Hash::{hash, hash_combine}
+
+///|
+pub extend UInt with Mod::{mod}
+
+///|
+pub extend UInt with Mul::{mul}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend UInt with Show::{output}
+
+///|
+pub extend UInt with Sub::{sub}
+
+///|
+pub extend UInt with ToJson::{to_json}
+
+///|
+pub extend UInt16 with Add::{add}
+
+///|
+pub extend UInt16 with BitAnd::{land}
+
+///|
+pub extend UInt16 with BitOr::{lor}
+
+///|
+pub extend UInt16 with BitXOr::{lxor}
+
+///|
+pub extend UInt16 with Compare::{compare, op_ge, op_gt, op_le, op_lt}
+
+///|
+pub extend UInt16 with Default::{default}
+
+///|
+pub extend UInt16 with Div::{div}
+
+///|
+#deprecated("Use the `Hash` trait instead", skip_current_package=true)
+pub extend UInt16 with Hash::{hash, hash_combine}
+
+///|
+pub extend UInt16 with Mod::{mod}
+
+///|
+pub extend UInt16 with Mul::{mul}
+
+///|
+pub extend UInt16 with Shl::{shl}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend UInt16 with Show::{output}
+
+///|
+pub extend UInt16 with Shr::{shr}
+
+///|
+pub extend UInt16 with Sub::{sub}
+
+///|
+pub extend UInt16 with ToJson::{to_json}
+
+///|
+pub extend UInt64 with Add::{add}
+
+///|
+pub extend UInt64 with BitAnd::{land}
+
+///|
+pub extend UInt64 with BitOr::{lor}
+
+///|
+pub extend UInt64 with BitXOr::{lxor}
+
+///|
+pub extend UInt64 with Compare::{compare, op_ge, op_gt, op_le, op_lt}
+
+///|
+pub extend UInt64 with Default::{default}
+
+///|
+pub extend UInt64 with Div::{div}
+
+///|
+#deprecated("Use the `Hash` trait instead", skip_current_package=true)
+pub extend UInt64 with Hash::{hash, hash_combine}
+
+///|
+pub extend UInt64 with Mod::{mod}
+
+///|
+pub extend UInt64 with Mul::{mul}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend UInt64 with Show::{output}
+
+///|
+pub extend UInt64 with Sub::{sub}
+
+///|
+pub extend UInt64 with ToJson::{to_json}
+
+///|
+pub extend Unit with Compare::{compare, op_ge, op_gt, op_le, op_lt}
+
+///|
+pub extend Unit with Default::{default}
+
+///|
+#deprecated("Use the `Hash` trait instead", skip_current_package=true)
+pub extend Unit with Hash::{hash, hash_combine}
+
+///|
+pub extend Unit with Show::{to_string}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend Unit with Show::{output}
+
+///|
+pub extend Unit with ToJson::{to_json}
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend Tuple10 with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend Tuple11 with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend Tuple12 with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend Tuple13 with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend Tuple14 with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend Tuple15 with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend Tuple16 with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend Tuple2 with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend Tuple3 with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend Tuple4 with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend Tuple5 with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend Tuple6 with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend Tuple7 with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend Tuple8 with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend Tuple9 with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend Tuple10 with Show::{output}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend Tuple11 with Show::{output}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend Tuple12 with Show::{output}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend Tuple13 with Show::{output}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend Tuple14 with Show::{output}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend Tuple15 with Show::{output}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend Tuple16 with Show::{output}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend Tuple2 with Show::{output}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend Tuple3 with Show::{output}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend Tuple4 with Show::{output}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend Tuple5 with Show::{output}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend Tuple6 with Show::{output}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend Tuple7 with Show::{output}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend Tuple8 with Show::{output}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+pub extend Tuple9 with Show::{output}
+
+///|
+#deprecated("Use the `Hash` trait instead", skip_current_package=true)
+pub extend Tuple2 with Hash::{hash, hash_combine}
+
+///|
+#deprecated("Use the `Hash` trait instead", skip_current_package=true)
+pub extend Tuple3 with Hash::{hash, hash_combine}
+
+///|
+#deprecated("Use the `Hash` trait instead", skip_current_package=true)
+pub extend Tuple4 with Hash::{hash, hash_combine}
+
+///|
+#deprecated("Use the `Hash` trait instead", skip_current_package=true)
+pub extend Tuple5 with Hash::{hash, hash_combine}
+
+///|
+#deprecated("Use the `Hash` trait instead", skip_current_package=true)
+pub extend Tuple6 with Hash::{hash, hash_combine}
+
+///|
+#deprecated("Use the `Hash` trait instead", skip_current_package=true)
+pub extend Tuple7 with Hash::{hash, hash_combine}
+
+///|
+pub extend Tuple10 with Compare::{compare, op_ge, op_gt, op_le, op_lt}
+
+///|
+pub extend Tuple10 with Show::{to_string}
+
+///|
+pub extend Tuple10 with ToJson::{to_json}
+
+///|
+pub extend Tuple11 with Compare::{compare, op_ge, op_gt, op_le, op_lt}
+
+///|
+pub extend Tuple11 with Show::{to_string}
+
+///|
+pub extend Tuple11 with ToJson::{to_json}
+
+///|
+pub extend Tuple12 with Compare::{compare, op_ge, op_gt, op_le, op_lt}
+
+///|
+pub extend Tuple12 with Show::{to_string}
+
+///|
+pub extend Tuple12 with ToJson::{to_json}
+
+///|
+pub extend Tuple13 with Compare::{compare, op_ge, op_gt, op_le, op_lt}
+
+///|
+pub extend Tuple13 with Show::{to_string}
+
+///|
+pub extend Tuple13 with ToJson::{to_json}
+
+///|
+pub extend Tuple14 with Compare::{compare, op_ge, op_gt, op_le, op_lt}
+
+///|
+pub extend Tuple14 with Show::{to_string}
+
+///|
+pub extend Tuple14 with ToJson::{to_json}
+
+///|
+pub extend Tuple15 with Compare::{compare, op_ge, op_gt, op_le, op_lt}
+
+///|
+pub extend Tuple15 with Show::{to_string}
+
+///|
+pub extend Tuple15 with ToJson::{to_json}
+
+///|
+pub extend Tuple16 with Compare::{compare, op_ge, op_gt, op_le, op_lt}
+
+///|
+pub extend Tuple16 with Show::{to_string}
+
+///|
+pub extend Tuple16 with ToJson::{to_json}
+
+///|
+pub extend Tuple2 with Compare::{compare, op_ge, op_gt, op_le, op_lt}
+
+///|
+pub extend Tuple2 with Show::{to_string}
+
+///|
+pub extend Tuple2 with ToJson::{to_json}
+
+///|
+pub extend Tuple3 with Compare::{compare, op_ge, op_gt, op_le, op_lt}
+
+///|
+pub extend Tuple3 with Show::{to_string}
+
+///|
+pub extend Tuple3 with ToJson::{to_json}
+
+///|
+pub extend Tuple4 with Compare::{compare, op_ge, op_gt, op_le, op_lt}
+
+///|
+pub extend Tuple4 with Show::{to_string}
+
+///|
+pub extend Tuple4 with ToJson::{to_json}
+
+///|
+pub extend Tuple5 with Compare::{compare, op_ge, op_gt, op_le, op_lt}
+
+///|
+pub extend Tuple5 with Show::{to_string}
+
+///|
+pub extend Tuple5 with ToJson::{to_json}
+
+///|
+pub extend Tuple6 with Compare::{compare, op_ge, op_gt, op_le, op_lt}
+
+///|
+pub extend Tuple6 with Show::{to_string}
+
+///|
+pub extend Tuple6 with ToJson::{to_json}
+
+///|
+pub extend Tuple7 with Compare::{compare, op_ge, op_gt, op_le, op_lt}
+
+///|
+pub extend Tuple7 with Show::{to_string}
+
+///|
+pub extend Tuple7 with ToJson::{to_json}
+
+///|
+pub extend Tuple8 with Compare::{compare, op_ge, op_gt, op_le, op_lt}
+
+///|
+pub extend Tuple8 with Show::{to_string}
+
+///|
+pub extend Tuple8 with ToJson::{to_json}
+
+///|
+pub extend Tuple9 with Compare::{compare, op_ge, op_gt, op_le, op_lt}
+
+///|
+pub extend Tuple9 with Show::{to_string}
+
+///|
+pub extend Tuple9 with ToJson::{to_json}

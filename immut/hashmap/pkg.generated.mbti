@@ -15,11 +15,15 @@ import {
 type HashMap[K, V] derive(Eq)
 pub fn[K : Eq + Hash, V] HashMap::HashMap(ArrayView[(K, V)]) -> Self[K, V]
 pub fn[K : Eq + Hash, V] HashMap::add(Self[K, V], K, V) -> Self[K, V]
+#deprecated
+pub fn[K : Eq + Hash + @quickcheck.Arbitrary, V : @quickcheck.Arbitrary] HashMap::arbitrary(Int, @splitmix.RandomState) -> Self[K, V]
 #alias("_[_]")
 pub fn[K : Eq + Hash, V] HashMap::at(Self[K, V], K) -> V
 pub fn[K : Eq + Hash, V] HashMap::contains(Self[K, V], K) -> Bool
 pub fn[K : Eq, V] HashMap::difference(Self[K, V], Self[K, V]) -> Self[K, V]
 pub fn[K, V] HashMap::each(Self[K, V], (K, V) -> Unit raise?) -> Unit raise?
+#deprecated
+pub fn[K : Eq, V : Eq] HashMap::equal(Self[K, V], Self[K, V]) -> Bool
 #alias(filter_with_key, deprecated)
 pub fn[K, V] HashMap::filter(Self[K, V], (K, V) -> Bool raise?) -> Self[K, V] raise?
 #alias(fold_with_key, deprecated)
@@ -35,6 +39,10 @@ pub fn[K : Eq + Hash, V] HashMap::from_array(ArrayView[(K, V)]) -> Self[K, V]
 pub fn[K : Eq + Hash, V] HashMap::from_iter(Iter[(K, V)]) -> Self[K, V]
 #alias(find, deprecated)
 pub fn[K : Eq + Hash, V] HashMap::get(Self[K, V], K) -> V?
+#deprecated
+pub fn[K : Hash, V : Hash] HashMap::hash(Self[K, V]) -> Int
+#deprecated
+pub fn[K : Hash, V : Hash] HashMap::hash_combine(Self[K, V], Hasher) -> Unit
 pub fn[K : Eq, V] HashMap::intersection(Self[K, V], Self[K, V]) -> Self[K, V]
 pub fn[K : Eq, V] HashMap::intersection_with(Self[K, V], Self[K, V], (K, V, V) -> V raise?) -> Self[K, V] raise?
 #alias(iterator, deprecated)
@@ -48,12 +56,18 @@ pub fn[K, V] HashMap::length(Self[K, V]) -> Int
 pub fn[K, V, A] HashMap::map(Self[K, V], (K, V) -> A raise?) -> Self[K, A] raise?
 #as_free_fn
 pub fn[K, V] HashMap::new() -> Self[K, V]
+#deprecated
+pub fn[K : Eq, V : Eq] HashMap::not_equal(Self[K, V], Self[K, V]) -> Bool
+#deprecated
+pub fn[K : Show, V : Show] HashMap::output(Self[K, V], &Logger) -> Unit
 pub fn[K : Eq + Hash, V] HashMap::remove(Self[K, V], K) -> Self[K, V]
 #as_free_fn
 pub fn[K : Hash, V] HashMap::singleton(K, V) -> Self[K, V]
 pub fn[K, V] HashMap::to_array(Self[K, V]) -> Array[(K, V)]
 #deprecated
 pub fn[K : @debug.Debug, V : @debug.Debug] HashMap::to_repr(Self[K, V]) -> @debug.Repr
+#deprecated
+pub fn[K : Show, V : Show] HashMap::to_string(Self[K, V]) -> String
 #alias(merge)
 pub fn[K : Eq, V] HashMap::union(Self[K, V], Self[K, V]) -> Self[K, V]
 pub fn[K : Eq, V] HashMap::union_with(Self[K, V], Self[K, V], (K, V, V) -> V raise?) -> Self[K, V] raise?

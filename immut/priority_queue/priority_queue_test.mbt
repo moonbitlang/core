@@ -185,14 +185,14 @@ test "from_iter empty iter" {
 test "hash" {
   let pq1 = @priority_queue.from_array([1, 2, 3, 4, 5])
   let pq2 = @priority_queue.from_array([1, 2, 3, 4, 5])
-  inspect(pq1.hash() == pq2.hash(), content="true")
+  inspect(Hash::hash(pq1) == Hash::hash(pq2), content="true")
   let pq3 = @priority_queue.from_array([5, 4, 3, 2, 1])
-  inspect(pq1.hash() == pq3.hash(), content="true")
+  inspect(Hash::hash(pq1) == Hash::hash(pq3), content="true")
   let pq4 : @priority_queue.PriorityQueue[Int] = PriorityQueue([])
-  inspect(pq1.hash() == pq4.hash(), content="false")
-  inspect(pq4.hash() == pq4.hash(), content="true")
+  inspect(Hash::hash(pq1) == Hash::hash(pq4), content="false")
+  inspect(Hash::hash(pq4) == Hash::hash(pq4), content="true")
   let pq5 = @priority_queue.from_array([1, 2, 3, 4, 6])
-  inspect(pq1.hash() == pq5.hash(), content="false")
+  inspect(Hash::hash(pq1) == Hash::hash(pq5), content="false")
 }
 
 ///|

@@ -18,12 +18,18 @@ pub(all) struct Ref[T] {
 }
 #alias(new, deprecated)
 pub fn[T] Ref::Ref(T) -> Self[T]
+#deprecated
+pub fn[X : @quickcheck.Arbitrary] Ref::arbitrary(Int, @splitmix.RandomState) -> Self[X]
 pub fn[T, R] Ref::map(Self[T], (T) -> R raise?) -> Self[R] raise?
+#deprecated
+pub fn[X : Show] Ref::output(Self[X], &Logger) -> Unit
 pub fn[T, R] Ref::protect(Self[T], T, () -> R raise?) -> R raise?
 #as_free_fn
 pub fn[T] Ref::swap(Self[T], Self[T]) -> Unit
 #deprecated
 pub fn[T : @debug.Debug] Ref::to_repr(Self[T]) -> @debug.Repr
+#deprecated
+pub fn[X : Show] Ref::to_string(Self[X]) -> String
 pub fn[T] Ref::update(Self[T], (T) -> T raise?) -> Unit raise?
 #deprecated
 pub impl[X : Show] Show for Ref[X]

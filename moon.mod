@@ -10,4 +10,4 @@ license = "Apache-2.0"
 
 keywords = [ "core", "standard library" ]
 
-warnings = "+test_unqualified_package+unqualified_local_using+missing_doc+unnecessary_view_op+unnecessary_annotation+prefer_fixed_array+prefer_readonly_array"
+warnings = "+test_unqualified_package+unqualified_local_using+missing_doc+unnecessary_view_op+unnecessary_annotation+prefer_fixed_array+prefer_readonly_array+implicit_impl_as_method"

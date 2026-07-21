@@ -633,7 +633,7 @@ pub fn[A : Eq + Hash] HashSet::HashSet(arr : ArrayView[A]) -> HashSet[A] {
 
 ///|
 pub impl[A : Hash] Hash for HashSet[A] with fn hash_combine(self, hasher) {
-  hasher.combine(self.iter().fold(init=0, (x, y) => x ^ y.hash()))
+  hasher.combine(self.iter().fold(init=0, (x, y) => x ^ Hash::hash(y)))
 }
 
 ///|

@@ -79,8 +79,8 @@ pub impl[A : Show] Show for Deque[A] with fn output(self, logger) {
 ///   let dq1 = @deque.from_array([1, 2, 3])
 ///   let dq2 = @deque.from_array([1, 2, 3])
 ///   let dq3 = @deque.from_array([1, 2, 3, 4])
-///   @test.assert_eq(dq1.hash(), dq2.hash()) // same elements → same hash
-///   @test.assert_not_eq(dq1.hash(), dq3.hash()) // different elements → different hash
+///   @test.assert_eq(Hash::hash(dq1), Hash::hash(dq2)) // same elements → same hash
+///   @test.assert_not_eq(Hash::hash(dq1), Hash::hash(dq3)) // different elements → different hash
 /// }
 /// ```
 ///
@@ -90,7 +90,7 @@ pub impl[A : Show] Show for Deque[A] with fn output(self, logger) {
 ///
 pub impl[A : Hash] Hash for Deque[A] with fn hash_combine(self, hasher) {
   for v in self {
-    v.hash_combine(hasher)
+    Hash::hash_combine(v, hasher)
   }
 }
 

@@ -16,12 +16,16 @@ pub fn encode(StringView, bom? : Bool, endianness? : Endian) -> Bytes
 pub suberror Malformed {
   Malformed(BytesView)
 } derive(@debug.Debug)
+#deprecated
+pub fn Malformed::to_repr(Self) -> @debug.Repr
 
 // Types and methods
 pub(all) enum Endian {
   Little
   Big
 } derive(@debug.Debug)
+#deprecated
+pub fn Endian::to_repr(Self) -> @debug.Repr
 
 // Type aliases
 

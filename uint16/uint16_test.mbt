@@ -187,12 +187,12 @@ test "UInt16::hash" {
 
 ///|
 test "UInt16::equal" {
-  inspect(UInt16::equal(1, 2), content="false")
-  inspect(UInt16::equal(2, 1), content="false")
-  inspect(UInt16::equal(1, 1), content="true")
-  inspect(UInt16::equal(0, 1), content="false")
-  inspect(UInt16::equal(1, 0), content="false")
-  inspect(UInt16::equal(0, 0), content="true")
+  inspect((1 : UInt16) == 2, content="false")
+  inspect((2 : UInt16) == 1, content="false")
+  inspect((1 : UInt16) == 1, content="true")
+  inspect((0 : UInt16) == 1, content="false")
+  inspect((1 : UInt16) == 0, content="false")
+  inspect((0 : UInt16) == 0, content="true")
 }
 
 ///|
@@ -369,7 +369,7 @@ test "UInt16::to_uint64" {
 test "UInt16::hash_combine" {
   let hasher = @builtin.Hasher(seed=0)
   let value : UInt16 = 42
-  value.hash_combine(hasher)
+  Hash::hash_combine(value, hasher)
   inspect(hasher.finalize(), content="1161967057")
 }
 

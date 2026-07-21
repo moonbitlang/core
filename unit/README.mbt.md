@@ -134,8 +134,8 @@ test "unit trait implementations" {
   inspect(u1.compare(u2), content="0")
 
   // Hashing: consistent hash values
-  let h1 = u1.hash()
-  let h2 = u2.hash()
+  let h1 = Hash::hash(u1)
+  let h2 = Hash::hash(u2)
   inspect(h1 == h2, content="true")
 
   // Default instance

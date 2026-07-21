@@ -117,3 +117,7 @@ test "diff: mismatched label kinds are Different" {
     fail("expected Different(Integer, StringLit)")
   }
 }
+
+///|
+#deprecated("Use the `Debug` trait instead", skip_current_package=true)
+pub extend Empty with Debug::{to_repr}

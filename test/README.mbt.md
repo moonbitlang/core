@@ -27,6 +27,14 @@ Use `@test.assert_eq` and `@test.assert_not_eq` to compare values in tests:
 struct User(Int) derive(Eq, @debug.Debug)
 
 ///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend User with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use the `Debug` trait instead", skip_current_package=true)
+pub extend User with @debug.Debug::{to_repr}
+
+///|
 test "equality assertions" {
   @test.assert_eq(User(1), User(1))
   @test.assert_not_eq(User(1), User(2))

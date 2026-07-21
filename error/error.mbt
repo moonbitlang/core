@@ -13,7 +13,8 @@
 // limitations under the License.
 
 ///|
-fn Error::to_string(self : Error) -> String = "%error.to_string"
+/// Returns the human-readable string representation of the error.
+pub fn Error::to_string(self : Error) -> String = "%error.to_string"
 
 ///|
 pub impl Show for Error with fn to_string(self) {
@@ -21,7 +22,8 @@ pub impl Show for Error with fn to_string(self) {
 }
 
 ///|
-fn Error::to_json(self : Error) -> Json = "%error.to_json"
+/// Returns the JSON representation of the error.
+pub fn Error::to_json(self : Error) -> Json = "%error.to_json"
 
 ///|
 pub impl ToJson for Error with fn to_json(self) {

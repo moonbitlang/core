@@ -961,7 +961,7 @@ pub impl[T : Eq] Eq for ReadOnlyArray[T] with fn equal(self, other) {
 
 ///|
 pub impl[T : Hash] Hash for ReadOnlyArray[T] with fn hash_combine(self, hasher) {
-  self.unsafe_reinterpret_to_fixed_array().hash_combine(hasher)
+  Hash::hash_combine(self.unsafe_reinterpret_to_fixed_array(), hasher)
 }
 
 ///|

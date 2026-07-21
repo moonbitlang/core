@@ -62,3 +62,11 @@ test {
   // let z0 = FromString::from_string("")
   // ...
 }
+
+///|
+#deprecated("Use the `Debug` trait instead", skip_current_package=true)
+pub extend MyInt with @debug.Debug::{to_repr}
+
+///|
+#deprecated("Use the `Debug` trait instead", skip_current_package=true)
+pub extend MyString with @debug.Debug::{to_repr}

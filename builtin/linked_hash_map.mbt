@@ -1158,7 +1158,7 @@ pub fn[K : Hash + Eq, V] Map::update(
 /// }
 /// ```
 pub fn[V] Map::get_from_bytes(map : Self[Bytes, V], key : BytesView) -> V? {
-  let hash = key.hash()
+  let hash = Hash::hash(key)
   for i = 0, idx = hash & map.capacity_mask {
     guard map.entries[idx] is Some(entry) else { break None }
     if entry.hash == hash && key.equal_to_bytes(entry.key) {
@@ -1195,7 +1195,7 @@ pub fn[V] Map::get_from_bytes(map : Self[Bytes, V], key : BytesView) -> V? {
 /// }
 /// ```
 pub fn[V] Map::get_from_string(map : Self[String, V], key : StringView) -> V? {
-  let hash = key.hash()
+  let hash = Hash::hash(key)
   for i = 0, idx = hash & map.capacity_mask {
     guard map.entries[idx] is Some(entry) else { break None }
     if entry.hash == hash && key.equal_to_string(entry.key) {

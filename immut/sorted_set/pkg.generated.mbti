@@ -18,11 +18,17 @@ pub fn[A : Compare] SortedSet::SortedSet(ArrayView[A]) -> Self[A]
 pub fn[A : Compare] SortedSet::add(Self[A], A) -> Self[A]
 pub fn[A] SortedSet::all(Self[A], (A) -> Bool raise?) -> Bool raise?
 pub fn[A] SortedSet::any(Self[A], (A) -> Bool raise?) -> Bool raise?
+#deprecated
+pub fn[X : @quickcheck.Arbitrary + Compare] SortedSet::arbitrary(Int, @splitmix.RandomState) -> Self[X]
+pub fn[A : Compare] SortedSet::compare(Self[A], Self[A]) -> Int
 pub fn[A : Compare] SortedSet::contains(Self[A], A) -> Bool
+pub fn[A] SortedSet::default() -> Self[A]
 #alias(diff, deprecated)
 pub fn[A : Compare] SortedSet::difference(Self[A], Self[A]) -> Self[A]
 pub fn[A : Compare] SortedSet::disjoint(Self[A], Self[A]) -> Bool
 pub fn[A] SortedSet::each(Self[A], (A) -> Unit raise?) -> Unit raise?
+#deprecated
+pub fn[A : Eq] SortedSet::equal(Self[A], Self[A]) -> Bool
 pub fn[A] SortedSet::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 pub fn[A, B] SortedSet::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 #alias(of, deprecated)
@@ -36,6 +42,10 @@ pub fn[A : Compare] SortedSet::from_array(ArrayView[A]) -> Self[A]
 pub fn[A : Compare] SortedSet::from_iter(Iter[A]) -> Self[A]
 #as_free_fn
 pub fn[A : @json.FromJson + Compare] SortedSet::from_json(Json) -> Self[A] raise @json.JsonDecodeError
+#deprecated
+pub fn[A : Hash] SortedSet::hash(Self[A]) -> Int
+#deprecated
+pub fn[A : Hash] SortedSet::hash_combine(Self[A], Hasher) -> Unit
 #alias(inter, deprecated)
 pub fn[A : Compare] SortedSet::intersection(Self[A], Self[A]) -> Self[A]
 pub fn[A] SortedSet::is_empty(Self[A]) -> Bool
@@ -50,6 +60,14 @@ pub fn[A] SortedSet::min(Self[A]) -> A
 pub fn[A] SortedSet::min_option(Self[A]) -> A?
 #as_free_fn
 pub fn[A] SortedSet::new() -> Self[A]
+#deprecated
+pub fn[A : Eq] SortedSet::not_equal(Self[A], Self[A]) -> Bool
+pub fn[A : Compare] SortedSet::op_ge(Self[A], Self[A]) -> Bool
+pub fn[A : Compare] SortedSet::op_gt(Self[A], Self[A]) -> Bool
+pub fn[A : Compare] SortedSet::op_le(Self[A], Self[A]) -> Bool
+pub fn[A : Compare] SortedSet::op_lt(Self[A], Self[A]) -> Bool
+#deprecated
+pub fn[A : Show] SortedSet::output(Self[A], &Logger) -> Unit
 pub fn[A : Compare] SortedSet::range(Self[A], low~ : A, high~ : A) -> Iter[A]
 pub fn[A : Compare] SortedSet::remove(Self[A], A) -> Self[A]
 pub fn[A] SortedSet::remove_min(Self[A]) -> Self[A]
@@ -58,12 +76,15 @@ pub fn[A] SortedSet::rev_iter(Self[A]) -> Iter[A]
 #as_free_fn
 pub fn[A] SortedSet::singleton(A) -> Self[A]
 pub fn[A : Compare] SortedSet::split(Self[A], A) -> (Self[A], Bool, Self[A])
+pub fn[A : Compare] SortedSet::sub(Self[A], Self[A]) -> Self[A]
 pub fn[A : Compare] SortedSet::subset(Self[A], Self[A]) -> Bool
 pub fn[A : Compare] SortedSet::symmetric_difference(Self[A], Self[A]) -> Self[A]
 pub fn[A] SortedSet::to_array(Self[A]) -> Array[A]
 pub fn[A : ToJson] SortedSet::to_json(Self[A]) -> Json
 #deprecated
 pub fn[K : @debug.Debug] SortedSet::to_repr(Self[K]) -> @debug.Repr
+#deprecated
+pub fn[A : Show] SortedSet::to_string(Self[A]) -> String
 pub fn[A : Compare] SortedSet::union(Self[A], Self[A]) -> Self[A]
 pub impl[A : Compare] Add for SortedSet[A]
 pub impl[A : Compare] Compare for SortedSet[A]

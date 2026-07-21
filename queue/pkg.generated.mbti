@@ -18,6 +18,8 @@ type Queue[A]
 #as_free_fn(of, deprecated)
 #as_free_fn(from_array)
 pub fn[A] Queue::Queue(ArrayView[A]) -> Self[A]
+#deprecated
+pub fn[X : @quickcheck.Arbitrary] Queue::arbitrary(Int, @splitmix.RandomState) -> Self[X]
 pub fn[A] Queue::clear(Self[A]) -> Unit
 #alias(clone, deprecated)
 pub fn[A] Queue::copy(Self[A]) -> Self[A]
@@ -35,11 +37,15 @@ pub fn[A] Queue::length(Self[A]) -> Int
 #as_free_fn(deprecated)
 #deprecated
 pub fn[A] Queue::new() -> Self[A]
+#deprecated
+pub fn[A : Show] Queue::output(Self[A], &Logger) -> Unit
 pub fn[A] Queue::peek(Self[A]) -> A?
 pub fn[A] Queue::pop(Self[A]) -> A?
 pub fn[A] Queue::push(Self[A], A) -> Unit
 #deprecated
 pub fn[A : @debug.Debug] Queue::to_repr(Self[A]) -> @debug.Repr
+#deprecated
+pub fn[A : Show] Queue::to_string(Self[A]) -> String
 pub fn[A] Queue::transfer(Self[A], Self[A]) -> Unit
 #deprecated
 pub impl[A : Show] Show for Queue[A]

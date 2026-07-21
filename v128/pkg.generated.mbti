@@ -10,6 +10,15 @@ import {
 // Errors
 
 // Types and methods
+#deprecated
+pub fn V128::equal(V128, V128) -> Bool
+#deprecated
+pub fn V128::not_equal(V128, V128) -> Bool
+#deprecated
+pub fn V128::output(V128, &Logger) -> Unit
+#deprecated
+pub fn V128::to_repr(V128) -> @debug.Repr
+pub fn V128::to_string(V128) -> String
 pub impl Eq for V128
 pub impl Show for V128
 pub impl @debug.Debug for V128

@@ -470,5 +470,5 @@ pub impl[T : Compare] Compare for MutArrayView[T] with fn compare(self, other) -
 
 ///|
 pub impl[A : Hash] Hash for MutArrayView[A] with fn hash_combine(self, hasher) {
-  self[:].hash_combine(hasher)
+  Hash::hash_combine(self[:], hasher)
 }

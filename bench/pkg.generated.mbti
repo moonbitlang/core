@@ -24,11 +24,18 @@ pub fn Bench::Bench() -> Self
 pub fn Bench::bench(Self, name? : String, () -> Unit, count? : UInt) -> Unit
 pub fn Bench::dump_summaries(Self) -> String
 pub fn[Any] Bench::keep(Self, Any) -> Unit
+#deprecated
+pub fn Bench::to_repr(Self) -> @debug.Repr
 pub impl @debug.Debug for Bench
 
 type Summary derive(ToJson, @debug.Debug)
+pub fn Summary::to_json(Self) -> Json
+#deprecated
+pub fn Summary::to_repr(Self) -> @debug.Repr
 
 type Timestamp
+#deprecated
+pub fn Timestamp::to_repr(Self) -> @debug.Repr
 pub impl @debug.Debug for Timestamp
 
 // Type aliases

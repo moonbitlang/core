@@ -199,12 +199,12 @@ test "Int16::hash" {
 
 ///|
 test "Int16::equal" {
-  inspect(Int16::equal(1, 2), content="false")
-  inspect(Int16::equal(2, 1), content="false")
-  inspect(Int16::equal(1, 1), content="true")
-  inspect(Int16::equal(-1, 1), content="false")
-  inspect(Int16::equal(1, -1), content="false")
-  inspect(Int16::equal(-1, -1), content="true")
+  inspect((1 : Int16) == 2, content="false")
+  inspect((2 : Int16) == 1, content="false")
+  inspect((1 : Int16) == 1, content="true")
+  inspect((-1 : Int16) == 1, content="false")
+  inspect((1 : Int16) == -1, content="false")
+  inspect((-1 : Int16) == -1, content="true")
 }
 
 ///|

@@ -12,13 +12,22 @@ import {
 
 // Types and methods
 pub struct Category(Int) derive(Eq, Hash)
+pub fn Category::add(Self, Self) -> Self
 pub fn Category::dummy() -> Self
+#deprecated
+pub fn Category::equal(Self, Self) -> Bool
+#deprecated
+pub fn Category::hash(Self) -> Int
+#deprecated
+pub fn Category::hash_combine(Self, Hasher) -> Unit
 pub fn Category::inexistant() -> Self
 pub fn Category::inexistant_or_newline() -> Self
 pub fn Category::inexistant_or_non_word_end() -> Self
 pub fn Category::inexistant_or_non_word_start() -> Self
 pub fn Category::intersects(Self, Self) -> Bool
 pub fn Category::newline() -> Self
+#deprecated
+pub fn Category::not_equal(Self, Self) -> Bool
 pub fn Category::not_word() -> Self
 pub fn Category::not_word_end() -> Self
 pub fn Category::not_word_start() -> Self
@@ -30,6 +39,16 @@ pub(all) enum Preference {
   Longest
   First
 } derive(Eq, Hash, @debug.Debug)
+#deprecated
+pub fn Preference::equal(Self, Self) -> Bool
+#deprecated
+pub fn Preference::hash(Self) -> Int
+#deprecated
+pub fn Preference::hash_combine(Self, Hasher) -> Unit
+#deprecated
+pub fn Preference::not_equal(Self, Self) -> Bool
+#deprecated
+pub fn Preference::to_repr(Self) -> @debug.Repr
 
 pub struct Profile {
   lb : Int
@@ -46,6 +65,8 @@ pub(all) enum QuantifierMode {
   Greedy
   NonGreedy
 } derive(@debug.Debug)
+#deprecated
+pub fn QuantifierMode::to_repr(Self) -> @debug.Repr
 
 // Type aliases
 pub type Rechar = Int

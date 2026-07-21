@@ -1013,6 +1013,21 @@ pub impl Logger for Buffer with fn write_char(self : Buffer, value : Char) -> Un
 }
 
 ///|
+/// Deprecated substring writer, kept as a regular method (rather than a promoted
+/// `Logger` method) because `Logger::write_substring` is itself deprecated and
+/// cannot be referenced from a cross-package `extend`. Delegates to `write_view`,
+/// matching the `Logger` trait's default behavior.
+#deprecated("use `write_view` instead", skip_current_package=true)
+pub fn Buffer::write_substring(
+  self : Buffer,
+  value : String,
+  start : Int,
+  len : Int,
+) -> Unit {
+  self.write_view(value[start:start + len])
+}
+
+///|
 /// Writes a single byte to the end of the buffer. The buffer will automatically
 /// grow if necessary to accommodate the new byte.
 ///

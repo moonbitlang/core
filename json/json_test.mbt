@@ -622,3 +622,6 @@ fn[A : FromJson] test_json_export(x : A) -> A {
 test {
   let _ : Int = test_json_export(42)
 }
+
+///|
+pub extend NestedJsonValue with ToJson::{to_json}

@@ -22,15 +22,22 @@ type Buffer
 pub fn Buffer::Buffer(size_hint? : Int) -> Self
 pub fn Buffer::is_empty(Self) -> Bool
 pub fn Buffer::length(Self) -> Int
+#deprecated
+pub fn Buffer::output(Self, &Logger) -> Unit
 pub fn Buffer::reset(Self) -> Unit
 #alias(contents)
 pub fn Buffer::to_bytes(Self) -> Bytes
 #deprecated
 pub fn Buffer::to_repr(Self) -> @debug.Repr
+pub fn Buffer::to_string(Self) -> String
 pub fn Buffer::view(Self) -> ArrayView[Byte]
+#deprecated
+pub fn Buffer::write(Self, &Show) -> Unit
 pub fn Buffer::write_byte(Self, Byte) -> Unit
 pub fn Buffer::write_bytes(Self, BytesView) -> Unit
 pub fn Buffer::write_bytesview(Self, BytesView) -> Unit
+#deprecated
+pub fn Buffer::write_char(Self, Char) -> Unit
 pub fn Buffer::write_char_utf16be(Self, Char) -> Unit
 pub fn Buffer::write_char_utf16le(Self, Char) -> Unit
 pub fn Buffer::write_char_utf8(Self, Char) -> Unit
@@ -48,10 +55,16 @@ pub fn Buffer::write_iter(Self, Iter[Byte]) -> Unit
 pub fn[A : Leb128] Buffer::write_leb128(Self, A) -> Unit
 #deprecated
 pub fn Buffer::write_object(Self, &Show) -> Unit
+#deprecated
+pub fn Buffer::write_string(Self, String) -> Unit
+#deprecated
+pub fn Buffer::write_string_interpolation(Self, &Show) -> Unit
 pub fn Buffer::write_string_utf16be(Self, StringView) -> Unit
 #alias(write_stringview, deprecated)
 pub fn Buffer::write_string_utf16le(Self, StringView) -> Unit
 pub fn Buffer::write_string_utf8(Self, StringView) -> Unit
+#deprecated
+pub fn Buffer::write_substring(Self, String, Int, Int) -> Unit
 pub fn Buffer::write_uint16_be(Self, UInt16) -> Unit
 pub fn Buffer::write_uint16_le(Self, UInt16) -> Unit
 pub fn Buffer::write_uint64_be(Self, UInt64) -> Unit
@@ -60,6 +73,8 @@ pub fn Buffer::write_uint_be(Self, UInt) -> Unit
 pub fn Buffer::write_uint_le(Self, UInt) -> Unit
 #alias(write_bytes_interpolation)
 pub fn[T : Show] Buffer::write_utf8(Self, T) -> Unit
+#deprecated
+pub fn Buffer::write_view(Self, StringView) -> Unit
 #deprecated
 pub impl Logger for Buffer
 pub impl Show for Buffer

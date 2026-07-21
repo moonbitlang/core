@@ -1254,7 +1254,7 @@ pub impl[T : Eq] Eq for FixedArray[T] with fn equal(
 ///|
 pub impl[T : Hash] Hash for FixedArray[T] with fn hash_combine(self, hasher) {
   for v in self {
-    v.hash_combine(hasher)
+    Hash::hash_combine(v, hasher)
   }
 }
 

@@ -15,6 +15,8 @@ pub struct ArgGroup {
 } derive(@debug.Debug)
 #alias(new, deprecated)
 pub fn ArgGroup::ArgGroup(StringView, required? : Bool, multiple? : Bool, args? : ArrayView[String], requires? : ArrayView[String], conflicts_with? : ArrayView[String]) -> Self
+#deprecated
+pub fn ArgGroup::to_repr(Self) -> @debug.Repr
 
 pub struct Command {
   // private fields
@@ -24,6 +26,8 @@ pub fn Command::Command(StringView, flags? : ArrayView[FlagArg], options? : Arra
 #as_free_fn
 pub fn Command::parse(Self, argv? : ArrayView[String], env? : Map[String, String]) -> Matches raise
 pub fn Command::render_help(Self) -> String
+#deprecated
+pub fn Command::to_repr(Self) -> @debug.Repr
 
 pub(all) enum FlagAction {
   SetTrue
@@ -32,12 +36,23 @@ pub(all) enum FlagAction {
   Help
   Version
 } derive(Eq, Show, @debug.Debug)
+#deprecated
+pub fn FlagAction::equal(Self, Self) -> Bool
+#deprecated
+pub fn FlagAction::not_equal(Self, Self) -> Bool
+#deprecated
+pub fn FlagAction::output(Self, &Logger) -> Unit
+#deprecated
+pub fn FlagAction::to_repr(Self) -> @debug.Repr
+pub fn FlagAction::to_string(Self) -> String
 
 pub struct FlagArg {
   // private fields
 } derive(@debug.Debug)
 #alias(new, deprecated)
 pub fn FlagArg::FlagArg(StringView, short? : Char, long? : StringView, about? : StringView, action? : FlagAction, env? : StringView, requires? : ArrayView[String], conflicts_with? : ArrayView[String], required? : Bool, global? : Bool, negatable? : Bool, hidden? : Bool) -> Self
+#deprecated
+pub fn FlagArg::to_repr(Self) -> @debug.Repr
 
 pub struct Matches {
   flags : Map[String, Bool]
@@ -47,36 +62,69 @@ pub struct Matches {
   subcommand : (String, Matches)?
   // private fields
 } derive(@debug.Debug)
+#deprecated
+pub fn Matches::to_repr(Self) -> @debug.Repr
 
 pub(all) enum OptionAction {
   Set
   Append
 } derive(Eq, Show, @debug.Debug)
+#deprecated
+pub fn OptionAction::equal(Self, Self) -> Bool
+#deprecated
+pub fn OptionAction::not_equal(Self, Self) -> Bool
+#deprecated
+pub fn OptionAction::output(Self, &Logger) -> Unit
+#deprecated
+pub fn OptionAction::to_repr(Self) -> @debug.Repr
+pub fn OptionAction::to_string(Self) -> String
 
 pub struct OptionArg {
   // private fields
 } derive(@debug.Debug)
 #alias(new, deprecated)
 pub fn OptionArg::OptionArg(StringView, short? : Char, long? : StringView, about? : StringView, action? : OptionAction, env? : StringView, default_values? : ArrayView[String], allow_hyphen_values? : Bool, requires? : ArrayView[String], conflicts_with? : ArrayView[String], required? : Bool, global? : Bool, hidden? : Bool) -> Self
+#deprecated
+pub fn OptionArg::to_repr(Self) -> @debug.Repr
 
 pub struct PositionArg {
   // private fields
 } derive(@debug.Debug)
 #alias(new, deprecated)
 pub fn PositionArg::PositionArg(StringView, about? : StringView, env? : StringView, default_values? : ArrayView[String], num_args? : ValueRange, allow_hyphen_values? : Bool, requires? : ArrayView[String], conflicts_with? : ArrayView[String], global? : Bool, hidden? : Bool) -> Self
+#deprecated
+pub fn PositionArg::to_repr(Self) -> @debug.Repr
 
 pub struct ValueRange {
   // private fields
 } derive(Eq, Show, @debug.Debug)
 #alias(new, deprecated)
 pub fn ValueRange::ValueRange(lower? : Int, upper? : Int) -> Self
+#deprecated
+pub fn ValueRange::equal(Self, Self) -> Bool
+#deprecated
+pub fn ValueRange::not_equal(Self, Self) -> Bool
+#deprecated
+pub fn ValueRange::output(Self, &Logger) -> Unit
 pub fn ValueRange::single() -> Self
+#deprecated
+pub fn ValueRange::to_repr(Self) -> @debug.Repr
+pub fn ValueRange::to_string(Self) -> String
 
 pub enum ValueSource {
   Argv
   Env
   Default
 } derive(Eq, Show, @debug.Debug)
+#deprecated
+pub fn ValueSource::equal(Self, Self) -> Bool
+#deprecated
+pub fn ValueSource::not_equal(Self, Self) -> Bool
+#deprecated
+pub fn ValueSource::output(Self, &Logger) -> Unit
+#deprecated
+pub fn ValueSource::to_repr(Self) -> @debug.Repr
+pub fn ValueSource::to_string(Self) -> String
 
 // Type aliases
 

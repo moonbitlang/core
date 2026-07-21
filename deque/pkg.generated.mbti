@@ -17,6 +17,7 @@ type Deque[A]
 #as_free_fn(of, deprecated)
 #as_free_fn(from_array)
 pub fn[A] Deque::Deque(ArrayView[A], capacity? : Int) -> Self[A]
+pub fn[A] Deque::add(Self[A], Self[A]) -> Self[A]
 pub fn[A] Deque::append(Self[A], Self[A]) -> Unit
 pub fn[A] Deque::as_views(Self[A]) -> (ArrayView[A], ArrayView[A])
 #alias("_[_]")
@@ -29,12 +30,15 @@ pub fn[A] Deque::capacity(Self[A]) -> Int
 pub fn[A] Deque::chunk_by(Self[A], (A, A) -> Bool raise?) -> Self[Self[A]] raise?
 pub fn[A] Deque::chunks(Self[A], Int) -> Self[Self[A]]
 pub fn[A] Deque::clear(Self[A]) -> Unit
+pub fn[A : Compare] Deque::compare(Self[A], Self[A]) -> Int
 pub fn[A : Eq] Deque::contains(Self[A], A) -> Bool
 #alias(clone, deprecated)
 pub fn[A] Deque::copy(Self[A]) -> Self[A]
 pub fn[A] Deque::drain(Self[A], start~ : Int, len? : Int) -> Self[A]
 pub fn[A] Deque::each(Self[A], (A) -> Unit) -> Unit
 pub fn[A] Deque::eachi(Self[A], (Int, A) -> Unit) -> Unit
+#deprecated
+pub fn[A : Eq] Deque::equal(Self[A], Self[A]) -> Bool
 pub fn[A] Deque::extract_if(Self[A], (A) -> Bool) -> Self[A]
 pub fn[A] Deque::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 pub fn[A] Deque::flatten(Self[Self[A]]) -> Self[A]
@@ -42,8 +46,14 @@ pub fn[A] Deque::flatten(Self[Self[A]]) -> Self[A]
 #as_free_fn(from_iterator, deprecated)
 #as_free_fn
 pub fn[A] Deque::from_iter(Iter[A]) -> Self[A]
+#deprecated
+pub fn[A : @json.FromJson] Deque::from_json(Json, @json.JsonPath) -> Self[A] raise @json.JsonDecodeError
 pub fn[A] Deque::front(Self[A]) -> A?
 pub fn[A] Deque::get(Self[A], Int) -> A?
+#deprecated
+pub fn[A : Hash] Deque::hash(Self[A]) -> Int
+#deprecated
+pub fn[A : Hash] Deque::hash_combine(Self[A], Hasher) -> Unit
 pub fn[A] Deque::insert(Self[A], Int, A) -> Unit
 pub fn[A] Deque::is_empty(Self[A]) -> Bool
 #alias(iterator, deprecated)
@@ -57,6 +67,14 @@ pub fn[A, U] Deque::mapi(Self[A], (Int, A) -> U) -> Self[U]
 #as_free_fn(deprecated)
 #deprecated
 pub fn[A] Deque::new(capacity? : Int) -> Self[A]
+#deprecated
+pub fn[A : Eq] Deque::not_equal(Self[A], Self[A]) -> Bool
+pub fn[A : Compare] Deque::op_ge(Self[A], Self[A]) -> Bool
+pub fn[A : Compare] Deque::op_gt(Self[A], Self[A]) -> Bool
+pub fn[A : Compare] Deque::op_le(Self[A], Self[A]) -> Bool
+pub fn[A : Compare] Deque::op_lt(Self[A], Self[A]) -> Bool
+#deprecated
+pub fn[A : Show] Deque::output(Self[A], &Logger) -> Unit
 pub fn[A] Deque::pop_back(Self[A]) -> A?
 pub fn[A] Deque::pop_front(Self[A]) -> A?
 pub fn[A] Deque::push_back(Self[A], A) -> Unit
@@ -82,8 +100,11 @@ pub fn[A] Deque::shrink_to_fit(Self[A]) -> Unit
 pub fn[A] Deque::shuffle(Self[A], rand~ : (Int) -> Int) -> Self[A]
 pub fn[A] Deque::shuffle_in_place(Self[A], rand~ : (Int) -> Int) -> Unit
 pub fn[A] Deque::to_array(Self[A]) -> Array[A]
+pub fn[A : ToJson] Deque::to_json(Self[A]) -> Json
 #deprecated
 pub fn[A : @debug.Debug] Deque::to_repr(Self[A]) -> @debug.Repr
+#deprecated
+pub fn[A : Show] Deque::to_string(Self[A]) -> String
 pub fn[A] Deque::truncate(Self[A], Int) -> Unit
 pub impl[A] Add for Deque[A]
 pub impl[A : Compare] Compare for Deque[A]

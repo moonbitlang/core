@@ -54,5 +54,7 @@ options(
     "panic_wbtest.mbt": [ "not", "native", "llvm" ],
     "stringbuilder_buffer.mbt": [ "not", "js" ],
     "stringbuilder_concat.mbt": [ "js" ],
+    "extends_js.mbt": [ "js" ],
+    "extends_nonjs.mbt": [ "not", "js" ],
   },
 )

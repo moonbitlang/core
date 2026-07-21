@@ -15,9 +15,13 @@ import {
 type HashSet[A] derive(Eq)
 pub fn[A : Eq + Hash] HashSet::HashSet(ArrayView[A]) -> Self[A]
 pub fn[A : Eq + Hash] HashSet::add(Self[A], A) -> Self[A]
+#deprecated
+pub fn[K : Eq + Hash + @quickcheck.Arbitrary] HashSet::arbitrary(Int, @splitmix.RandomState) -> Self[K]
 pub fn[A : Eq + Hash] HashSet::contains(Self[A], A) -> Bool
 pub fn[K : Eq] HashSet::difference(Self[K], Self[K]) -> Self[K]
 pub fn[A] HashSet::each(Self[A], (A) -> Unit raise?) -> Unit raise?
+#deprecated
+pub fn[A : Eq] HashSet::equal(Self[A], Self[A]) -> Bool
 #alias(of, deprecated)
 #as_free_fn(of, deprecated)
 #as_free_fn(deprecated)
@@ -27,6 +31,10 @@ pub fn[A : Eq + Hash] HashSet::from_array(ArrayView[A]) -> Self[A]
 #as_free_fn(from_iterator, deprecated)
 #as_free_fn
 pub fn[A : Eq + Hash] HashSet::from_iter(Iter[A]) -> Self[A]
+#deprecated
+pub fn[A : Hash] HashSet::hash(Self[A]) -> Int
+#deprecated
+pub fn[A : Hash] HashSet::hash_combine(Self[A], Hasher) -> Unit
 pub fn[K : Eq] HashSet::intersection(Self[K], Self[K]) -> Self[K]
 pub fn[A] HashSet::is_empty(Self[A]) -> Bool
 #alias(iterator, deprecated)
@@ -35,9 +43,15 @@ pub fn[A] HashSet::iter(Self[A]) -> Iter[A]
 pub fn[A] HashSet::length(Self[A]) -> Int
 #as_free_fn
 pub fn[A] HashSet::new() -> Self[A]
+#deprecated
+pub fn[A : Eq] HashSet::not_equal(Self[A], Self[A]) -> Bool
+#deprecated
+pub fn[A : Show] HashSet::output(Self[A], &Logger) -> Unit
 pub fn[A : Eq + Hash] HashSet::remove(Self[A], A) -> Self[A]
 #deprecated
 pub fn[K : @debug.Debug] HashSet::to_repr(Self[K]) -> @debug.Repr
+#deprecated
+pub fn[A : Show] HashSet::to_string(Self[A]) -> String
 pub fn[K : Eq] HashSet::union(Self[K], Self[K]) -> Self[K]
 pub impl[A : Hash] Hash for HashSet[A]
 #deprecated

@@ -71,6 +71,10 @@ struct Person {
 } derive(Debug)
 
 ///|
+#deprecated("Use the `Debug` trait instead", skip_current_package=true)
+pub extend Person with Debug::{to_repr}
+
+///|
 test "cmp_by_key" {
   // Compare strings by their length
   let s1 = "hello"

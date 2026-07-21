@@ -1056,7 +1056,7 @@ fn[A] SortedSet::concat(
 ///|
 pub impl[A : Hash] Hash for SortedSet[A] with fn hash_combine(self, hasher) {
   for t in self {
-    t.hash_combine(hasher)
+    Hash::hash_combine(t, hasher)
   }
 }
 

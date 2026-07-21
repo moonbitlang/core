@@ -35,6 +35,11 @@ pub fn parse_uint64(StringView, base? : Int) -> UInt64 raise StrConvError
 pub(all) suberror StrConvError {
   StrConvError(String)
 } derive(@debug.Debug)
+#deprecated
+pub fn StrConvError::output(Self, &Logger) -> Unit
+#deprecated
+pub fn StrConvError::to_repr(Self) -> @debug.Repr
+pub fn StrConvError::to_string(Self) -> String
 pub impl Show for StrConvError
 
 // Types and methods
@@ -45,11 +50,16 @@ pub fn Decimal::from_int64(Int64) -> Self
 #deprecated
 pub fn Decimal::new() -> Self
 #deprecated
+pub fn Decimal::output(Self, &Logger) -> Unit
+#deprecated
 pub fn Decimal::parse_decimal(StringView) -> Self raise StrConvError
 #deprecated
 pub fn Decimal::shift(Self, Int) -> Unit
 #deprecated
 pub fn Decimal::to_double(Self) -> Double raise StrConvError
+#deprecated
+pub fn Decimal::to_repr(Self) -> @debug.Repr
+pub fn Decimal::to_string(Self) -> String
 pub impl Show for Decimal
 
 // Type aliases

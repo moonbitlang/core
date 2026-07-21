@@ -28,5 +28,7 @@ options(
     "bigint_js_wbtest.mbt": [ "js" ],
     "bigint_nonjs.mbt": [ "not", "js" ],
     "bigint_nonjs_wbtest.mbt": [ "not", "js" ],
+    "extends_js.mbt": [ "js" ],
+    "extends_nonjs.mbt": [ "not", "js" ],
   },
 )

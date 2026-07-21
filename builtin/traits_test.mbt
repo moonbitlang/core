@@ -89,3 +89,23 @@ test "Logger defaults" {
   Logger::write_char(logger, '!')
   inspect(logger.output, content="hi!")
 }
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend Data with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend Pair with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use the `Debug` trait instead", skip_current_package=true)
+pub extend Data with @debug.Debug::{to_repr}
+
+///|
+#deprecated("Use the `Debug` trait instead", skip_current_package=true)
+pub extend Pair with @debug.Debug::{to_repr}
+
+///|
+#deprecated("Use the `Hash` trait instead", skip_current_package=true)
+pub extend Data with Hash::{hash, hash_combine}

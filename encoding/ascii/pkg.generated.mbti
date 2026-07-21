@@ -16,6 +16,8 @@ pub fn encode(StringView) -> Bytes
 pub suberror Malformed {
   Malformed(BytesView)
 } derive(@debug.Debug)
+#deprecated
+pub fn Malformed::to_repr(Self) -> @debug.Repr
 
 // Types and methods
 

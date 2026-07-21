@@ -616,3 +616,7 @@ test "difference Branch single Flat result" {
   @test.assert_eq(diff.contains(2), false)
   inspect(diff.length(), content="1")
 }
+
+///|
+#deprecated("Use the `Debug` trait instead", skip_current_package=true)
+pub extend MyString with @debug.Debug::{to_repr}

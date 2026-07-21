@@ -19,8 +19,12 @@ type Vector[A]
 #as_free_fn(of, deprecated)
 #as_free_fn(from_array)
 pub fn[A] Vector::Vector(ArrayView[A]) -> Self[A]
+pub fn[A] Vector::add(Self[A], Self[A]) -> Self[A]
+#deprecated
+pub fn[X : @quickcheck.Arbitrary] Vector::arbitrary(Int, @splitmix.RandomState) -> Self[X]
 #alias("_[_]")
 pub fn[A] Vector::at(Self[A], Int) -> A
+pub fn[A : Compare] Vector::compare(Self[A], Self[A]) -> Int
 pub fn[A] Vector::concat(Self[A], Self[A]) -> Self[A]
 pub fn[A : Eq] Vector::contains(Self[A], A) -> Bool
 #alias(clone, deprecated)
@@ -29,6 +33,8 @@ pub fn[A] Vector::copy(Self[A]) -> Self[A]
 pub fn[A] Vector::drop(Self[A], Int) -> Self[A]
 pub fn[A] Vector::each(Self[A], (A) -> Unit raise?) -> Unit raise?
 pub fn[A] Vector::eachi(Self[A], (Int, A) -> Unit raise?) -> Unit raise?
+#deprecated
+pub fn[A : Eq] Vector::equal(Self[A], Self[A]) -> Bool
 pub fn[A] Vector::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 #alias(fold_left, deprecated)
 pub fn[A, B] Vector::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
@@ -36,7 +42,13 @@ pub fn[A, B] Vector::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 #as_free_fn(from_iterator, deprecated)
 #as_free_fn
 pub fn[A] Vector::from_iter(Iter[A]) -> Self[A]
+#deprecated
+pub fn[A : @json.FromJson] Vector::from_json(Json, @json.JsonPath) -> Self[A] raise @json.JsonDecodeError
 pub fn[A] Vector::get(Self[A], Int) -> A?
+#deprecated
+pub fn[A : Hash] Vector::hash(Self[A]) -> Int
+#deprecated
+pub fn[A : Hash] Vector::hash_combine(Self[A], Hasher) -> Unit
 pub fn[A] Vector::is_empty(Self[A]) -> Bool
 #alias(iterator, deprecated)
 pub fn[A] Vector::iter(Self[A]) -> Iter[A]
@@ -48,6 +60,14 @@ pub fn[A] Vector::makei(Int, (Int) -> A raise?) -> Self[A] raise?
 pub fn[A, B] Vector::map(Self[A], (A) -> B raise?) -> Self[B] raise?
 #as_free_fn
 pub fn[A] Vector::new() -> Self[A]
+#deprecated
+pub fn[A : Eq] Vector::not_equal(Self[A], Self[A]) -> Bool
+pub fn[A : Compare] Vector::op_ge(Self[A], Self[A]) -> Bool
+pub fn[A : Compare] Vector::op_gt(Self[A], Self[A]) -> Bool
+pub fn[A : Compare] Vector::op_le(Self[A], Self[A]) -> Bool
+pub fn[A : Compare] Vector::op_lt(Self[A], Self[A]) -> Bool
+#deprecated
+pub fn[A : Show] Vector::output(Self[A], &Logger) -> Unit
 pub fn[A] Vector::peek(Self[A]) -> A?
 pub fn[A] Vector::pop(Self[A]) -> Self[A]?
 pub fn[A] Vector::push(Self[A], A) -> Self[A]
@@ -61,8 +81,11 @@ pub fn[A] Vector::slice(Self[A], Int, Int) -> Self[A]
 pub fn[A] Vector::split(Self[A], Int) -> (Self[A], Self[A])
 pub fn[A] Vector::take(Self[A], Int) -> Self[A]
 pub fn[A] Vector::to_array(Self[A]) -> Array[A]
+pub fn[A : ToJson] Vector::to_json(Self[A]) -> Json
 #deprecated
 pub fn[A : @debug.Debug] Vector::to_repr(Self[A]) -> @debug.Repr
+#deprecated
+pub fn[A : Show] Vector::to_string(Self[A]) -> String
 pub impl[A] Add for Vector[A]
 pub impl[A : Compare] Compare for Vector[A]
 pub impl[A : Eq] Eq for Vector[A]

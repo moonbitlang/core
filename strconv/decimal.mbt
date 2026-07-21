@@ -584,7 +584,8 @@ pub impl Show for Decimal with fn output(self, logger) {
 }
 
 ///|
-fn Decimal::to_string(self : Decimal) -> String {
+/// Returns the decimal string representation of this value.
+pub fn Decimal::to_string(self : Decimal) -> String {
   Show::to_string(self)
 }
 

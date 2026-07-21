@@ -26,6 +26,8 @@ pub fn Rand::int(Self, limit? : Int) -> Int
 pub fn Rand::int64(Self, limit? : Int64) -> Int64
 pub fn Rand::new(generator? : &Source) -> Self
 pub fn Rand::shuffle(Self, Int, (Int, Int) -> Unit) -> Unit
+#deprecated
+pub fn Rand::to_repr(Self) -> @debug.Repr
 pub fn Rand::uint(Self, limit? : UInt) -> UInt
 pub fn Rand::uint64(Self, limit? : UInt64) -> UInt64
 pub impl @debug.Debug for Rand

@@ -135,7 +135,7 @@ test "UInt64 default value" {
   let a : UInt64 = 0UL
   inspect(a, content="0")
 
-  // Hash support is available via .hash()
+  // Hash support is available via Hash::hash()
   let value : UInt64 = 42UL
   inspect(Hasher(seed=0)..combine(value).finalize(), content="-1962516083")
 }

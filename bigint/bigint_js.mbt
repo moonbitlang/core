@@ -283,21 +283,21 @@ pub fn BigInt::to_octets(self : BigInt, length? : Int) -> Bytes {
 }
 
 ///|
-extern "js" fn BigInt::compare(self : BigInt, other : BigInt) -> Int =
+extern "js" fn BigInt::compare_js(self : BigInt, other : BigInt) -> Int =
   #|(x, y) => x < y ? -1 : x > y ? 1 : 0
 
 ///|
 pub impl Compare for BigInt with fn compare(self, other) {
-  self.compare(other)
+  self.compare_js(other)
 }
 
 ///|
-extern "js" fn BigInt::equal(self : BigInt, other : BigInt) -> Bool =
+extern "js" fn BigInt::equal_js(self : BigInt, other : BigInt) -> Bool =
   #|(x, y) => x === y
 
 ///|
 pub impl Eq for BigInt with fn equal(self, other) {
-  self.equal(other)
+  self.equal_js(other)
 }
 
 ///|

@@ -1220,10 +1220,10 @@ test "@bigint.BigInt::hash" {
       x.finalize()
     }
   inspect(hash1, content="-813420232")
-  assert_eq(0N.hash(), (-0N).hash())
+  assert_eq(Hash::hash(0N), Hash::hash(-0N))
 
   // Positive and negative of same magnitude should have different hashes
-  assert_not_eq(1N.hash(), (-1N).hash())
+  assert_not_eq(Hash::hash(1N), Hash::hash(-1N))
 
   // Test small positive numbers
   let hash2 = Hasher(seed=0)
@@ -1301,16 +1301,16 @@ test "@bigint.BigInt::hash" {
 test "@bigint.BigInt::hash consistency" {
   // Test that hash is consistent across multiple calls
   let big = 999888777666555444333222111N
-  let hash1 = big.hash()
-  let hash2 = big.hash()
-  let hash3 = big.hash()
+  let hash1 = Hash::hash(big)
+  let hash2 = Hash::hash(big)
+  let hash3 = Hash::hash(big)
   assert_eq(hash1, hash2)
   assert_eq(hash1, hash3)
 
   // Test with negative number
   let neg_big = -big
-  let neg_hash1 = neg_big.hash()
-  let neg_hash2 = neg_big.hash()
+  let neg_hash1 = Hash::hash(neg_big)
+  let neg_hash2 = Hash::hash(neg_big)
   assert_eq(neg_hash1, neg_hash2)
   assert_not_eq(hash1, neg_hash1)
 }
@@ -1324,7 +1324,7 @@ test "default" {
 ///|
 test "BigInt bit ops and arbitrary" {
   let rs = @splitmix.new(seed=1)
-  let _ = @bigint.BigInt::arbitrary(1, rs)
+  let _ : @bigint.BigInt = @quickcheck.Arbitrary::arbitrary(1, rs)
   let small = @bigint.BigInt::from_int(1)
   let big = @bigint.BigInt::from_string("123456789012345678901234567891")
   inspect(small.land(big).to_string(), content="1")

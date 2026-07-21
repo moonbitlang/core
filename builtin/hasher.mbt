@@ -122,7 +122,7 @@ extern "js" fn random_seed() -> Int =
 /// }
 /// ```
 pub fn[T : Hash] Hasher::combine(self : Hasher, value : T) -> Unit {
-  value.hash_combine(self)
+  Hash::hash_combine(value, self)
 }
 
 ///|

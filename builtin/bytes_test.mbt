@@ -223,7 +223,7 @@ test "Bytes::equal with differing bytes" {
   arr2[2] = 0x04
   let bytes1 = Bytes::from_array(arr1)
   let bytes2 = Bytes::from_array(arr2)
-  inspect(Bytes::equal(bytes1, bytes2), content="false")
+  inspect(bytes1 == bytes2, content="false")
 }
 
 ///|

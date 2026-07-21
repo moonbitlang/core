@@ -576,3 +576,7 @@ test "bitwise_operations" {
   inspect(sym_diff.contains("a"), content="true")
   inspect(sym_diff.contains("d"), content="true")
 }
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend Key with Eq::{equal, not_equal}

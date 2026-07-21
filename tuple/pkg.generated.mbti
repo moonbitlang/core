@@ -37,40 +37,67 @@ pub fn[T, U, V] uncurry((T) -> (U) -> V) -> (T, U) -> V
 // Errors
 
 // Types and methods
+#deprecated
+pub fn[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary] Tuple(2)::arbitrary(Int, @splitmix.RandomState) -> (A, B)
+pub fn[A : Default, B : Default] Tuple(2)::default() -> (A, B)
 pub impl[A : Default, B : Default] Default for (A, B)
 pub impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (A, B)
 
+#deprecated
+pub fn[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary] Tuple(3)::arbitrary(Int, @splitmix.RandomState) -> (A, B, C)
+pub fn[A : Default, B : Default, C : Default] Tuple(3)::default() -> (A, B, C)
 pub impl[A : Default, B : Default, C : Default] Default for (A, B, C)
 pub impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (A, B, C)
 
+#deprecated
+pub fn[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary, D : @quickcheck.Arbitrary] Tuple(4)::arbitrary(Int, @splitmix.RandomState) -> (A, B, C, D)
+pub fn[A : Default, B : Default, C : Default, D : Default] Tuple(4)::default() -> (A, B, C, D)
 pub impl[A : Default, B : Default, C : Default, D : Default] Default for (A, B, C, D)
 pub impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary, D : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (A, B, C, D)
 
+#deprecated
+pub fn[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary, D : @quickcheck.Arbitrary, E : @quickcheck.Arbitrary] Tuple(5)::arbitrary(Int, @splitmix.RandomState) -> (A, B, C, D, E)
+pub fn[A : Default, B : Default, C : Default, D : Default, E : Default] Tuple(5)::default() -> (A, B, C, D, E)
 pub impl[A : Default, B : Default, C : Default, D : Default, E : Default] Default for (A, B, C, D, E)
 pub impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary, D : @quickcheck.Arbitrary, E : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (A, B, C, D, E)
 
+#deprecated
+pub fn[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary, D : @quickcheck.Arbitrary, E : @quickcheck.Arbitrary, F : @quickcheck.Arbitrary] Tuple(6)::arbitrary(Int, @splitmix.RandomState) -> (A, B, C, D, E, F)
+pub fn[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default] Tuple(6)::default() -> (A, B, C, D, E, F)
 pub impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default] Default for (A, B, C, D, E, F)
 pub impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary, D : @quickcheck.Arbitrary, E : @quickcheck.Arbitrary, F : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (A, B, C, D, E, F)
 
+#deprecated
+pub fn[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary, D : @quickcheck.Arbitrary, E : @quickcheck.Arbitrary, F : @quickcheck.Arbitrary, G : @quickcheck.Arbitrary] Tuple(7)::arbitrary(Int, @splitmix.RandomState) -> (A, B, C, D, E, F, G)
+pub fn[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default] Tuple(7)::default() -> (A, B, C, D, E, F, G)
 pub impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default] Default for (A, B, C, D, E, F, G)
 pub impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary, D : @quickcheck.Arbitrary, E : @quickcheck.Arbitrary, F : @quickcheck.Arbitrary, G : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (A, B, C, D, E, F, G)
 
+pub fn[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default] Tuple(8)::default() -> (A, B, C, D, E, F, G, H)
 pub impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default] Default for (A, B, C, D, E, F, G, H)
 
+pub fn[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default] Tuple(9)::default() -> (A, B, C, D, E, F, G, H, I)
 pub impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default] Default for (A, B, C, D, E, F, G, H, I)
 
+pub fn[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default] Tuple(10)::default() -> (A, B, C, D, E, F, G, H, I, J)
 pub impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default] Default for (A, B, C, D, E, F, G, H, I, J)
 
+pub fn[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default] Tuple(11)::default() -> (A, B, C, D, E, F, G, H, I, J, K)
 pub impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default] Default for (A, B, C, D, E, F, G, H, I, J, K)
 
+pub fn[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default, L : Default] Tuple(12)::default() -> (A, B, C, D, E, F, G, H, I, J, K, L)
 pub impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default, L : Default] Default for (A, B, C, D, E, F, G, H, I, J, K, L)
 
+pub fn[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default, L : Default, M : Default] Tuple(13)::default() -> (A, B, C, D, E, F, G, H, I, J, K, L, M)
 pub impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default, L : Default, M : Default] Default for (A, B, C, D, E, F, G, H, I, J, K, L, M)
 
+pub fn[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default, L : Default, M : Default, N : Default] Tuple(14)::default() -> (A, B, C, D, E, F, G, H, I, J, K, L, M, N)
 pub impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default, L : Default, M : Default, N : Default] Default for (A, B, C, D, E, F, G, H, I, J, K, L, M, N)
 
+pub fn[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default, L : Default, M : Default, N : Default, O : Default] Tuple(15)::default() -> (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O)
 pub impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default, L : Default, M : Default, N : Default, O : Default] Default for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O)
 
+pub fn[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default, L : Default, M : Default, N : Default, O : Default, P : Default] Tuple(16)::default() -> (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P)
 pub impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default, L : Default, M : Default, N : Default, O : Default, P : Default] Default for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P)
 
 // Type aliases

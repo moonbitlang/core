@@ -47,6 +47,8 @@ pub fn Test::Test(String) -> Self
 pub fn Test::name(Self) -> String
 #callsite(autofill(args_loc, loc))
 pub fn Test::snapshot(Self, filename~ : String, loc~ : SourceLoc, args_loc~ : ArgsLoc) -> Unit raise SnapshotError
+#deprecated
+pub fn Test::to_repr(Self) -> @debug.Repr
 pub fn Test::write(Self, &Show) -> Unit
 pub fn Test::writeln(Self, &Show) -> Unit
 

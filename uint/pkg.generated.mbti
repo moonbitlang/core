@@ -17,6 +17,7 @@ pub let min_value : UInt
 // Errors
 
 // Types and methods
+pub fn UInt::default() -> UInt
 pub fn UInt::to_int64(UInt) -> Int64
 pub impl Default for UInt
 

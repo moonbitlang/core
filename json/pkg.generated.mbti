@@ -21,6 +21,16 @@ pub fn valid(StringView) -> Bool
 pub(all) suberror JsonDecodeError {
   JsonDecodeError((JsonPath, String))
 } derive(Eq, Show, ToJson, @debug.Debug)
+#deprecated
+pub fn JsonDecodeError::equal(Self, Self) -> Bool
+#deprecated
+pub fn JsonDecodeError::not_equal(Self, Self) -> Bool
+#deprecated
+pub fn JsonDecodeError::output(Self, &Logger) -> Unit
+pub fn JsonDecodeError::to_json(Self) -> Json
+#deprecated
+pub fn JsonDecodeError::to_repr(Self) -> @debug.Repr
+pub fn JsonDecodeError::to_string(Self) -> String
 
 pub(all) suberror ParseError {
   InvalidChar(Position, Char)
@@ -29,12 +39,32 @@ pub(all) suberror ParseError {
   InvalidIdentEscape(Position)
   DepthLimitExceeded
 } derive(Eq, ToJson, @debug.Debug)
+#deprecated
+pub fn ParseError::equal(Self, Self) -> Bool
+#deprecated
+pub fn ParseError::not_equal(Self, Self) -> Bool
+#deprecated
+pub fn ParseError::output(Self, &Logger) -> Unit
+pub fn ParseError::to_json(Self) -> Json
+#deprecated
+pub fn ParseError::to_repr(Self) -> @debug.Repr
+pub fn ParseError::to_string(Self) -> String
 pub impl Show for ParseError
 
 // Types and methods
 type JsonPath derive(Eq, @debug.Debug)
 pub fn JsonPath::add_index(Self, Int) -> Self
 pub fn JsonPath::add_key(Self, String) -> Self
+#deprecated
+pub fn JsonPath::equal(Self, Self) -> Bool
+#deprecated
+pub fn JsonPath::not_equal(Self, Self) -> Bool
+#deprecated
+pub fn JsonPath::output(Self, &Logger) -> Unit
+pub fn JsonPath::to_json(Self) -> Json
+#deprecated
+pub fn JsonPath::to_repr(Self) -> @debug.Repr
+pub fn JsonPath::to_string(Self) -> String
 pub impl Show for JsonPath
 pub impl ToJson for JsonPath
 
@@ -42,6 +72,13 @@ pub(all) struct Position {
   line : Int
   column : Int
 } derive(Eq, ToJson, @debug.Debug)
+#deprecated
+pub fn Position::equal(Self, Self) -> Bool
+#deprecated
+pub fn Position::not_equal(Self, Self) -> Bool
+pub fn Position::to_json(Self) -> Json
+#deprecated
+pub fn Position::to_repr(Self) -> @debug.Repr
 
 pub struct Replacer {
   // private fields
@@ -50,6 +87,8 @@ pub struct Replacer {
 pub fn Replacer::Replacer((String, Json) -> Json?) -> Self
 pub fn Replacer::exclude(ArrayView[StringView]) -> Self
 pub fn Replacer::keep(ArrayView[StringView]) -> Self
+#deprecated
+pub fn Replacer::to_repr(Self) -> @debug.Repr
 
 #deprecated
 pub fn Json::as_array(Self) -> Array[Self]?
@@ -64,8 +103,15 @@ pub fn Json::as_object(Self) -> Map[String, Self]?
 #deprecated
 pub fn Json::as_string(Self) -> String?
 #deprecated
+pub fn Json::from_json(Self, JsonPath) -> Self raise JsonDecodeError
+#deprecated
 pub fn Json::item(Self, Int) -> Self?
+#deprecated
+pub fn Json::output(Self, &Logger) -> Unit
 pub fn Json::stringify(Self, escape_slash? : Bool, indent? : Int, replacer? : Replacer) -> String
+pub fn Json::to_json(Self) -> Self
+#deprecated
+pub fn Json::to_string(Self) -> String
 pub fn Json::transform(Self, Replacer) -> Self
 #deprecated
 pub fn Json::value(Self, String) -> Self?

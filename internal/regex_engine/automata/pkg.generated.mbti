@@ -41,21 +41,58 @@ pub fn Context::Context() -> Self
 type Expr
 
 pub(all) struct Mark(Int) derive(Compare, Eq, Hash)
+pub fn Mark::compare(Self, Self) -> Int
+#deprecated
+pub fn Mark::equal(Self, Self) -> Bool
+#deprecated
+pub fn Mark::hash(Self) -> Int
+#deprecated
+pub fn Mark::hash_combine(Self, Hasher) -> Unit
+#deprecated
+pub fn Mark::not_equal(Self, Self) -> Bool
+pub fn Mark::op_ge(Self, Self) -> Bool
+pub fn Mark::op_gt(Self, Self) -> Bool
+pub fn Mark::op_le(Self, Self) -> Bool
+pub fn Mark::op_lt(Self, Self) -> Bool
 
 type MarkSlotMap derive(Eq, Hash)
+#deprecated
+pub fn MarkSlotMap::equal(Self, Self) -> Bool
 pub fn MarkSlotMap::get_slot(Self, Mark) -> Slot
+#deprecated
+pub fn MarkSlotMap::hash(Self) -> Int
+#deprecated
+pub fn MarkSlotMap::hash_combine(Self, Hasher) -> Unit
 pub fn MarkSlotMap::iter2(Self) -> Iter2[Mark, Slot]
+#deprecated
+pub fn MarkSlotMap::not_equal(Self, Self) -> Bool
 
 pub struct Slot {
   index : Int
 } derive(Eq, Hash)
+#deprecated
+pub fn Slot::equal(Self, Self) -> Bool
 pub fn Slot::from_index(Int) -> Self
+#deprecated
+pub fn Slot::hash(Self) -> Int
+#deprecated
+pub fn Slot::hash_combine(Self, Hasher) -> Unit
 pub fn Slot::is_assigned(Self) -> Bool
+#deprecated
+pub fn Slot::not_equal(Self, Self) -> Bool
 pub fn Slot::unassigned() -> Self
 
 pub struct State {
   // private fields
 }
+#deprecated
+pub fn State::equal(Self, Self) -> Bool
+#deprecated
+pub fn State::hash(Self) -> Int
+#deprecated
+pub fn State::hash_combine(Self, Hasher) -> Unit
+#deprecated
+pub fn State::not_equal(Self, Self) -> Bool
 pub fn State::slot(Self) -> Slot
 pub fn State::start(@shared_types.Category, Expr) -> Self
 pub fn State::status(Self) -> Status

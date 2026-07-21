@@ -71,7 +71,7 @@ test "View::default and hash" {
   inspect(v, content="")
   let v1 = "abc".view()
   let v2 = "abc".view()
-  @test.assert_eq(v1.hash(), v2.hash())
+  @test.assert_eq(Hash::hash(v1), Hash::hash(v2))
 }
 
 ///|

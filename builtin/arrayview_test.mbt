@@ -531,7 +531,7 @@ test "arrayview hash invariant" {
   let arr : Array[Array[Int]] = @quickcheck.samples(20)
   for v in arr {
     let view = v[:]
-    @test.assert_eq(v.hash(), view.hash())
+    @test.assert_eq(Hash::hash(v), Hash::hash(view))
   }
 }
 

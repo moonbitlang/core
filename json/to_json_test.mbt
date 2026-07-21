@@ -478,3 +478,18 @@ test "Tuple::to_json" {
     ),
   )
 }
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend Opt with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use the `Debug` trait instead", skip_current_package=true)
+pub extend Opt with @debug.Debug::{to_repr}
+
+///|
+#deprecated("Use the `FromJson` trait instead", skip_current_package=true)
+pub extend Opt with @json.FromJson::{from_json}
+
+///|
+pub extend Opt with ToJson::{to_json}

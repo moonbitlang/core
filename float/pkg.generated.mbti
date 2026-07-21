@@ -22,9 +22,15 @@ pub let not_a_number : Float
 // Types and methods
 #as_free_fn(deprecated)
 pub fn Float::abs(Float) -> Float
+pub fn Float::add(Float, Float) -> Float
 #as_free_fn
 pub fn Float::ceil(Float) -> Float
 pub fn Float::clamp(Float, min~ : Float, max~ : Float) -> Float
+pub fn Float::compare(Float, Float) -> Int
+pub fn Float::default() -> Float
+pub fn Float::div(Float, Float) -> Float
+#deprecated
+pub fn Float::equal(Float, Float) -> Bool
 #as_free_fn
 pub fn Float::floor(Float) -> Float
 pub fn Float::from_byte(Byte) -> Float
@@ -33,6 +39,10 @@ pub fn Float::from_int(Int) -> Float
 pub fn Float::from_int64(Int64) -> Float
 pub fn Float::from_uint(UInt) -> Float
 pub fn Float::from_uint64(UInt64) -> Float
+#deprecated
+pub fn Float::hash(Float) -> Int
+#deprecated
+pub fn Float::hash_combine(Float, Hasher) -> Unit
 pub fn Float::is_close(Float, Float, relative_tolerance? : Float, absolute_tolerance? : Float) -> Bool
 pub fn Float::is_inf(Float) -> Bool
 pub fn Float::is_nan(Float) -> Bool
@@ -41,6 +51,17 @@ pub fn Float::is_pos_inf(Float) -> Bool
 pub fn Float::lerp(Float, target~ : Float, t~ : Float) -> Float
 pub fn Float::max(Float, Float) -> Float
 pub fn Float::min(Float, Float) -> Float
+pub fn Float::mod(Float, Float) -> Float
+pub fn Float::mul(Float, Float) -> Float
+pub fn Float::neg(Float) -> Float
+#deprecated
+pub fn Float::not_equal(Float, Float) -> Bool
+pub fn Float::op_ge(Float, Float) -> Bool
+pub fn Float::op_gt(Float, Float) -> Bool
+pub fn Float::op_le(Float, Float) -> Bool
+pub fn Float::op_lt(Float, Float) -> Bool
+#deprecated
+pub fn Float::output(Float, &Logger) -> Unit
 #as_free_fn(deprecated)
 #deprecated
 pub fn Float::pow(Float, Float) -> Float
@@ -52,10 +73,13 @@ pub fn Float::reinterpret_from_uint(UInt) -> Float
 pub fn Float::round(Float) -> Float
 pub fn Float::signum(Float) -> Float
 pub fn Float::sqrt(Float) -> Float
+pub fn Float::sub(Float, Float) -> Float
 pub fn Float::to_be_bytes(Float) -> Bytes
 pub fn Float::to_double(Float) -> Double
 pub fn Float::to_int(Float) -> Int
+pub fn Float::to_json(Float) -> Json
 pub fn Float::to_le_bytes(Float) -> Bytes
+pub fn Float::to_string(Float) -> String
 #as_free_fn
 pub fn Float::trunc(Float) -> Float
 pub fn Float::until(Float, Float, step? : Float, inclusive? : Bool) -> Iter[Float]

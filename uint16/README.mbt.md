@@ -110,10 +110,10 @@ test "UInt16 default value" {
   let a : UInt16 = 0
   inspect(a, content="0")
 
-  // Hash support is available via .hash()
+  // Hash support is available via Hash::hash()
   let value : UInt16 = 42
   // This may be random per process
-  let _ = value.hash()
+  let _ = Hash::hash(value)
 }
 ```
 

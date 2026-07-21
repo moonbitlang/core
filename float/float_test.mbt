@@ -242,3 +242,7 @@ test "Float::signum" {
   assert_eq((0.0 : Float).signum(), 0.0)
   assert_true(@float.not_a_number.signum().is_nan())
 }
+
+///|
+#deprecated("Use the `Hash` trait instead", skip_current_package=true)
+pub extend FloatHashInput with Hash::{hash, hash_combine}

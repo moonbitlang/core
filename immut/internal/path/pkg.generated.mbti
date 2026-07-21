@@ -9,10 +9,14 @@ pub fn[A : Hash] of(A) -> Path
 // Types and methods
 pub struct Path(UInt) derive(Eq)
 pub fn Path::advance(Self, Int) -> Self
+#deprecated
+pub fn Path::equal(Self, Self) -> Bool
 pub fn Path::idx(Self) -> Int
 pub fn Path::idx_at(Self, Int) -> Int
 pub fn Path::is_last(Self) -> Bool
 pub fn Path::next(Self) -> Self
+#deprecated
+pub fn Path::not_equal(Self, Self) -> Bool
 pub fn Path::push(Self, Int) -> Self
 
 // Type aliases

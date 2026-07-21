@@ -19,18 +19,25 @@ type SortedMap[K, V]
 #as_free_fn(of, deprecated)
 #as_free_fn(from_array)
 pub fn[K : Compare, V] SortedMap::SortedMap(ArrayView[(K, V)]) -> Self[K, V]
+#deprecated
+pub fn[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] SortedMap::arbitrary(Int, @splitmix.RandomState) -> Self[K, V]
 #alias("_[_]")
 pub fn[K : Compare, V] SortedMap::at(Self[K, V], K) -> V
 pub fn[K, V] SortedMap::clear(Self[K, V]) -> Unit
 pub fn[K : Compare, V] SortedMap::contains(Self[K, V], K) -> Bool
 #alias(clone, deprecated)
 pub fn[K, V] SortedMap::copy(Self[K, V]) -> Self[K, V]
+pub fn[K, V] SortedMap::default() -> Self[K, V]
 pub fn[K, V] SortedMap::each(Self[K, V], (K, V) -> Unit raise?) -> Unit raise?
 pub fn[K, V] SortedMap::eachi(Self[K, V], (Int, K, V) -> Unit raise?) -> Unit raise?
+#deprecated
+pub fn[K : Eq, V : Eq] SortedMap::equal(Self[K, V], Self[K, V]) -> Bool
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
 #as_free_fn
 pub fn[K : Compare, V] SortedMap::from_iter(Iter[(K, V)]) -> Self[K, V]
+#deprecated
+pub fn[V : @json.FromJson] SortedMap::from_json(Json, @json.JsonPath) -> Self[String, V] raise @json.JsonDecodeError
 pub fn[K : Compare, V] SortedMap::get(Self[K, V], K) -> V?
 pub fn[K : Compare, V] SortedMap::get_or_default(Self[K, V], K, V) -> V
 pub fn[K : Compare, V] SortedMap::get_or_init(Self[K, V], K, () -> V) -> V
@@ -48,12 +55,21 @@ pub fn[K : Compare, V] SortedMap::merge_in_place(Self[K, V], Self[K, V]) -> Unit
 #as_free_fn(deprecated)
 #deprecated
 pub fn[K, V] SortedMap::new() -> Self[K, V]
+#deprecated
+pub fn[K : Eq, V : Eq] SortedMap::not_equal(Self[K, V], Self[K, V]) -> Bool
+#deprecated
+pub fn[K : Show, V : Show] SortedMap::output(Self[K, V], &Logger) -> Unit
 pub fn[K : Compare, V] SortedMap::range(Self[K, V], K, K) -> Iter2[K, V]
 pub fn[K : Compare, V] SortedMap::remove(Self[K, V], K) -> Unit
 #alias("_[_]=_")
 #alias(add, deprecated)
 pub fn[K : Compare, V] SortedMap::set(Self[K, V], K, V) -> Unit
 pub fn[K, V] SortedMap::to_array(Self[K, V]) -> Array[(K, V)]
+pub fn[K : Show, V : ToJson] SortedMap::to_json(Self[K, V]) -> Json
+#deprecated
+pub fn[K : @debug.Debug, V : @debug.Debug] SortedMap::to_repr(Self[K, V]) -> @debug.Repr
+#deprecated
+pub fn[K : Show, V : Show] SortedMap::to_string(Self[K, V]) -> String
 pub fn[K : Compare, V] SortedMap::update_or_default(Self[K, V], K, V, (V) -> V) -> Unit
 #alias(values_as_iter, deprecated)
 pub fn[K, V] SortedMap::values(Self[K, V]) -> Iter[V]

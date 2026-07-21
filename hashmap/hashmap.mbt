@@ -203,7 +203,7 @@ fn[K, V] HashMap::push_away(
 /// }
 /// ```
 pub fn[K : Hash + Eq, V] HashMap::get(self : HashMap[K, V], key : K) -> V? {
-  // self.get_with_hash(key, key.hash())
+  // self.get_with_hash(key, Hash::hash(key))
   let hash = Hash::hash(key)
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { break None }
@@ -240,7 +240,7 @@ pub fn[V] HashMap::get_from_bytes(
   self : HashMap[Bytes, V],
   key : BytesView,
 ) -> V? {
-  let hash = key.hash()
+  let hash = Hash::hash(key)
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { break None }
     if entry.hash == hash && key.equal_to_bytes(entry.key) {
@@ -276,7 +276,7 @@ pub fn[V] HashMap::get_from_string(
   self : HashMap[String, V],
   key : StringView,
 ) -> V? {
-  let hash = key.hash()
+  let hash = Hash::hash(key)
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { break None }
     if entry.hash == hash && key.equal_to_string(entry.key) {

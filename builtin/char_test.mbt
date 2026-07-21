@@ -85,3 +85,7 @@ test "char printable and ascii case" {
 test "panic Char::is_digit invalid radix" {
   '0'.is_digit(1U) |> ignore
 }
+
+///|
+#deprecated("Use the `Debug` trait instead", skip_current_package=true)
+pub extend H with @debug.Debug::{to_repr}

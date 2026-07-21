@@ -299,7 +299,7 @@ pub impl[T : Eq] Eq for Array[T] with fn equal(self, other) {
 ///|
 pub impl[T : Hash] Hash for Array[T] with fn hash_combine(self, hasher) {
   for v in self {
-    v.hash_combine(hasher)
+    Hash::hash_combine(v, hasher)
   }
 }
 

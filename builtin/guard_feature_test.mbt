@@ -50,3 +50,14 @@ test "simplify" {
   let simplified = simplify(e)
   @json.json_inspect(simplified, content=["Lit", 0])
 }
+
+///|
+#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+pub extend Expr with Eq::{equal, not_equal}
+
+///|
+#deprecated("Use the `Debug` trait instead", skip_current_package=true)
+pub extend Expr with @debug.Debug::{to_repr}
+
+///|
+pub extend Expr with ToJson::{to_json}

@@ -143,3 +143,11 @@ test "arbitrary size branches" {
   let rs4 = @splitmix.RandomState::default()
   let _ : FixedArray[Int] = @quickcheck.Arbitrary::arbitrary(3, rs4)
 }
+
+///|
+#deprecated("Use the `Arbitrary` trait instead", skip_current_package=true)
+pub extend H with @quickcheck.Arbitrary::{arbitrary}
+
+///|
+#deprecated("Use the `Debug` trait instead", skip_current_package=true)
+pub extend H with Debug::{to_repr}

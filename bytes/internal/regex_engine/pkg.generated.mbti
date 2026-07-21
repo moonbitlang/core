@@ -54,6 +54,8 @@ pub let start_of_word : @ast.Pattern
 // Types and methods
 type MatchResult derive(@debug.Debug)
 pub fn MatchResult::group(Self, Int) -> (Int, Int)?
+#deprecated
+pub fn MatchResult::to_repr(Self) -> @debug.Repr
 
 type Regex
 pub fn[T : Input] Regex::execute(Self, T, Int) -> MatchResult?

@@ -1025,3 +1025,7 @@ test "guard const" {
 test "string default" {
   inspect(String::default(), content="")
 }
+
+///|
+#deprecated("Use the `Debug` trait instead", skip_current_package=true)
+pub extend StringPatternToken with @debug.Debug::{to_repr}

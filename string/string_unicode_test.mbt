@@ -37,3 +37,7 @@ test {
   // FIXME:The output is not ideal, we would prefer
   // to see the Unicode code points, e.g.
 }
+
+///|
+#deprecated("Use the `Debug` trait instead", skip_current_package=true)
+pub extend Data with @debug.Debug::{to_repr}

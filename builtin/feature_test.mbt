@@ -95,3 +95,10 @@ test "try!" {
 
   inspect(hello(), content="ello world")
 }
+
+///|
+#deprecated("Use the `Debug` trait instead", skip_current_package=true)
+pub extend RangeImpl with @debug.Debug::{to_repr}
+
+///|
+pub extend RangeImpl with ToJson::{to_json}

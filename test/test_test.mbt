@@ -104,3 +104,7 @@ test "expect_error result composes with assert_true(... is ...)" {
 test "panic expect_error fails when the callback does not raise" {
   let _ = @test.expect_error(() => maybe_raise(false))
 }
+
+///|
+#deprecated("Use the `Debug` trait instead", skip_current_package=true)
+pub extend MyError with @debug.Debug::{to_repr}
