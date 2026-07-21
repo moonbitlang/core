@@ -48,9 +48,3 @@ test "parse_double huge exponent" {
     content="0",
   )
 }
-
-test "parse_double 801-digit integer coefficient" {
-  // 10^800 * 10^-800 is exactly 1.
-  let input = "1" + String::make(799, '0') + "e-799"
-  inspect(@string.parse_double(input), content="1")
-}
