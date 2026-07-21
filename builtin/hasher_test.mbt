@@ -230,6 +230,15 @@ test "primitive hash matches hash_combine default path" {
 }
 
 ///|
+test "bytes hash matches hash_combine" {
+  for length in [0, 1, 2, 3, 4, 5, 7, 8, 31, 32, 33, 8192] {
+    assert_hash_matches_hash_combine(
+      Bytes::makei(length, i => ((i * 37 + 11) & 0xff).to_byte()),
+    )
+  }
+}
+
+///|
 test "combine_unit" {
   let hasher = @builtin.Hasher(seed=0)
   hasher.combine_unit()
