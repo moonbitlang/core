@@ -30,6 +30,19 @@ pub fn UInt16::is_leading_surrogate(self : Self) -> Bool {
 }
 
 ///|
+/// The identity constructor for `UInt16`, allowing values to be written using
+/// constructor syntax, e.g. `UInt16(3)`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(UInt16(3), content="3")
+/// }
+/// ```
+pub fn UInt16::UInt16(self : UInt16) -> UInt16 = "%identity"
+
+///|
 /// Checks if the integer value represents a UTF-16 trailing surrogate.
 /// Trailing surrogates are in the range 0xDC00 to 0xDFFF.
 ///

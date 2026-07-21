@@ -13,6 +13,19 @@
 // limitations under the License.
 
 ///|
+/// The identity constructor for `Int`, allowing values to be written using
+/// constructor syntax, e.g. `Int(3)`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(Int(3), content="3")
+/// }
+/// ```
+pub fn Int::Int(self : Int) -> Int = "%identity"
+
+///|
 /// Returns the smallest power of two greater than or equal to `self`.
 /// This function will panic if `self` is negative. For values greater than
 /// the largest representable power of two (2^30 = 1073741824), it returns
