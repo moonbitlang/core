@@ -414,3 +414,12 @@ test "UInt16::to_char" {
   debug_inspect((0xE000 : UInt16).to_char(), content="Some('\\u{e000}')")
   debug_inspect((0xFFFF : UInt16).to_char(), content="Some('\\u{ffff}')")
 }
+
+///|
+test "UInt16 constructor syntax" {
+  inspect(UInt16(3), content="3")
+  inspect(UInt16(0), content="0")
+  inspect(UInt16(65535), content="65535")
+  let x : UInt16 = 42
+  inspect(UInt16(x), content="42")
+}

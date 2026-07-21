@@ -163,3 +163,13 @@ test "to_le_bytes of negative Int64" {
     ),
   )
 }
+
+///|
+test "Int64 constructor syntax" {
+  inspect(Int64(3), content="3")
+  inspect(Int64(-3), content="-3")
+  inspect(Int64(9223372036854775807), content="9223372036854775807")
+  inspect(Int64(-9223372036854775808), content="-9223372036854775808")
+  let x = 42L
+  inspect(Int64(x), content="42")
+}
