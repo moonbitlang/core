@@ -82,7 +82,7 @@ fn parse_decimal_from_view(str : StringView) -> Decimal raise StrConvError {
         if d.digits_num < d.digits.length() {
           d.digits[d.digits_num] = (digit.to_int() - '0').to_byte()
           d.digits_num += 1
-        } else{
+        } else {
           d.overflowed += 1
           if digit != '0' {
             d.truncated = true
