@@ -18,7 +18,9 @@ pub fn[A : Compare] SortedSet::SortedSet(ArrayView[A]) -> Self[A]
 pub fn[A : Compare] SortedSet::add(Self[A], A) -> Self[A]
 pub fn[A] SortedSet::all(Self[A], (A) -> Bool raise?) -> Bool raise?
 pub fn[A] SortedSet::any(Self[A], (A) -> Bool raise?) -> Bool raise?
+pub fn[A : Compare] SortedSet::compare(Self[A], Self[A]) -> Int
 pub fn[A : Compare] SortedSet::contains(Self[A], A) -> Bool
+pub fn[A] SortedSet::default() -> Self[A]
 #alias(diff, deprecated)
 pub fn[A : Compare] SortedSet::difference(Self[A], Self[A]) -> Self[A]
 pub fn[A : Compare] SortedSet::disjoint(Self[A], Self[A]) -> Bool
@@ -58,6 +60,7 @@ pub fn[A] SortedSet::rev_iter(Self[A]) -> Iter[A]
 #as_free_fn
 pub fn[A] SortedSet::singleton(A) -> Self[A]
 pub fn[A : Compare] SortedSet::split(Self[A], A) -> (Self[A], Bool, Self[A])
+pub fn[A : Compare] SortedSet::sub(Self[A], Self[A]) -> Self[A]
 pub fn[A : Compare] SortedSet::subset(Self[A], Self[A]) -> Bool
 pub fn[A : Compare] SortedSet::symmetric_difference(Self[A], Self[A]) -> Self[A]
 pub fn[A] SortedSet::to_array(Self[A]) -> Array[A]
