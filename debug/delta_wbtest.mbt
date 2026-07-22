@@ -16,6 +16,9 @@
 struct Empty {} derive(Debug)
 
 ///|
+pub extend Empty with Debug::{to_repr}
+
+///|
 test "diff: arrays collapse when all children differ" {
   let x = Repr::array([Repr::integer("1"), Repr::integer("2")])
   let y = Repr::array([Repr::integer("3"), Repr::integer("4")])

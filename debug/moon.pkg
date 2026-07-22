@@ -16,4 +16,4 @@ import {
   "moonbitlang/core/test",
 } for "test"
 
-warnings = "-alert_visibility-test_unqualified_package"
+warnings = "-alert_visibility-test_unqualified_package+implicit_impl_as_method"
