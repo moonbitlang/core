@@ -17,6 +17,7 @@ type Deque[A]
 #as_free_fn(of, deprecated)
 #as_free_fn(from_array)
 pub fn[A] Deque::Deque(ArrayView[A], capacity? : Int) -> Self[A]
+pub fn[A] Deque::add(Self[A], Self[A]) -> Self[A]
 pub fn[A] Deque::append(Self[A], Self[A]) -> Unit
 pub fn[A] Deque::as_views(Self[A]) -> (ArrayView[A], ArrayView[A])
 #alias("_[_]")
@@ -29,6 +30,7 @@ pub fn[A] Deque::capacity(Self[A]) -> Int
 pub fn[A] Deque::chunk_by(Self[A], (A, A) -> Bool raise?) -> Self[Self[A]] raise?
 pub fn[A] Deque::chunks(Self[A], Int) -> Self[Self[A]]
 pub fn[A] Deque::clear(Self[A]) -> Unit
+pub fn[A : Compare] Deque::compare(Self[A], Self[A]) -> Int
 pub fn[A : Eq] Deque::contains(Self[A], A) -> Bool
 #alias(clone, deprecated)
 pub fn[A] Deque::copy(Self[A]) -> Self[A]

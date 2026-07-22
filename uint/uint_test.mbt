@@ -78,3 +78,12 @@ test "to_le_bytes" {
 test "test UInt::default" {
   inspect(UInt::default(), content="0")
 }
+
+///|
+test "UInt constructor syntax" {
+  inspect(UInt(3), content="3")
+  inspect(UInt(0), content="0")
+  inspect(UInt(4294967295), content="4294967295")
+  let x = 42U
+  inspect(UInt(x), content="42")
+}

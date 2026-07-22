@@ -13,6 +13,19 @@
 // limitations under the License.
 
 ///|
+/// The identity constructor for `UInt64`, allowing values to be written using
+/// constructor syntax, e.g. `UInt64(3)`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(UInt64(3), content="3")
+/// }
+/// ```
+pub fn UInt64::UInt64(self : UInt64) -> UInt64 = "%identity"
+
+///|
 pub impl Default for UInt64 with fn default() {
   0
 }

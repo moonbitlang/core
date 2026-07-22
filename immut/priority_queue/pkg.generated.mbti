@@ -18,6 +18,7 @@ type PriorityQueue[A]
 #as_free_fn(of, deprecated)
 #as_free_fn(from_array)
 pub fn[A : Compare] PriorityQueue::PriorityQueue(ArrayView[A]) -> Self[A]
+pub fn[A : Compare] PriorityQueue::compare(Self[A], Self[A]) -> Int
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
 #as_free_fn

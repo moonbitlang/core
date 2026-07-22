@@ -13,6 +13,19 @@
 // limitations under the License.
 
 ///|
+/// The identity constructor for `Byte`, allowing values to be written using
+/// constructor syntax, e.g. `Byte(3)`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(Byte(3), content="b'\\x03'")
+/// }
+/// ```
+pub fn Byte::Byte(self : Byte) -> Byte = "%identity"
+
+///|
 /// Performs multiplication between two byte values. The result is truncated to
 /// fit within the byte range.
 ///

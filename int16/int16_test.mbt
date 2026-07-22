@@ -530,3 +530,13 @@ test "Int16 int64 conversions" {
   let back = Int16::from_int64(as64)
   inspect(back.to_int(), content="123")
 }
+
+///|
+test "Int16 constructor syntax" {
+  inspect(Int16(3), content="3")
+  inspect(Int16(-3), content="-3")
+  inspect(Int16(32767), content="32767")
+  inspect(Int16(-32768), content="-32768")
+  let x : Int16 = 42
+  inspect(Int16(x), content="42")
+}

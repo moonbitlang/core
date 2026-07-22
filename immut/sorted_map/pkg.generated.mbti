@@ -19,7 +19,9 @@ pub fn[K : Compare, V] SortedMap::SortedMap(ArrayView[(K, V)]) -> Self[K, V]
 pub fn[K : Compare, V] SortedMap::add(Self[K, V], K, V) -> Self[K, V]
 #alias("_[_]")
 pub fn[K : Compare, V] SortedMap::at(Self[K, V], K) -> V
+pub fn[K : Compare, V : Compare] SortedMap::compare(Self[K, V], Self[K, V]) -> Int
 pub fn[K : Compare, V] SortedMap::contains(Self[K, V], K) -> Bool
+pub fn[K, V] SortedMap::default() -> Self[K, V]
 pub fn[K, V] SortedMap::each(Self[K, V], (K, V) -> Unit) -> Unit
 pub fn[K, V] SortedMap::eachi(Self[K, V], (Int, K, V) -> Unit) -> Unit
 #deprecated

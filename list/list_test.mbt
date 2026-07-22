@@ -813,12 +813,12 @@ test "from_iter empty iter" {
 test "hash" {
   let l1 = @list.List([1, 2, 3, 4, 5])
   let l2 = @list.List([1, 2, 3, 4, 5])
-  debug_inspect(l1.hash() == l2.hash(), content="true")
+  debug_inspect(Hash::hash(l1) == Hash::hash(l2), content="true")
   let l3 = @list.List([5, 4, 3, 2, 1])
-  debug_inspect(l1.hash() == l3.hash(), content="false")
+  debug_inspect(Hash::hash(l1) == Hash::hash(l3), content="false")
   let l4 : @list.List[Int] = List([])
-  debug_inspect(l1.hash() == l4.hash(), content="false")
-  debug_inspect(l4.hash() == l4.hash(), content="true")
+  debug_inspect(Hash::hash(l1) == Hash::hash(l4), content="false")
+  debug_inspect(Hash::hash(l4) == Hash::hash(l4), content="true")
 }
 
 ///|

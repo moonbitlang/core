@@ -13,6 +13,19 @@
 // limitations under the License.
 
 ///|
+/// The identity constructor for `UInt`, allowing values to be written using
+/// constructor syntax, e.g. `UInt(3)`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(UInt(3), content="3")
+/// }
+/// ```
+pub fn UInt::UInt(self : UInt) -> UInt = "%identity"
+
+///|
 /// Returns the minimum of two unsigned integers.
 pub fn UInt::min(self : UInt, other : UInt) -> UInt {
   if self < other {
