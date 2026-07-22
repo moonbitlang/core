@@ -663,6 +663,7 @@ pub fn UInt64::to_uint(UInt64) -> UInt
 pub fn UInt64::to_uint16(UInt64) -> UInt16
 pub fn UInt64::trunc_double(Double) -> UInt64
 
+pub fn Double::Double(Double) -> Double
 pub fn Double::abs(Double) -> Double
 pub fn Double::ceil(Double) -> Double
 pub fn Double::clamp(Double, min~ : Double, max~ : Double) -> Double
