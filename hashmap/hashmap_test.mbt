@@ -491,7 +491,7 @@ fn[K : Hash + Eq + Debug, V : Eq + Debug] verify_content(
 test "hashmap.to_json" {
   let map = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
   let json : Json = { "1": "one", "2": "two", "3": "three" }
-  @test.assert_eq(map.to_json(), json)
+  @test.assert_eq(@json.to_json(map), json)
 }
 
 ///|
