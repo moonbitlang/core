@@ -12,6 +12,7 @@ import {
 
 // Types and methods
 pub struct Category(Int) derive(Eq, Hash)
+pub fn Category::add(Self, Self) -> Self
 pub fn Category::dummy() -> Self
 pub fn Category::inexistant() -> Self
 pub fn Category::inexistant_or_newline() -> Self
