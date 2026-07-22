@@ -33,12 +33,12 @@ pub extend Deque with Compare::{op_ge, op_gt, op_le, op_lt}
 pub extend Deque with Eq::{equal, not_equal}
 
 ///|
-#deprecated("Use the `FromJson` trait instead", skip_current_package=true)
+#deprecated("Use `@json.from_json` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Deque with @json.FromJson::{from_json}
 
 ///|
-#deprecated("Use the `Hash` trait instead", skip_current_package=true)
+#deprecated("Use `Hash::hash` / `Hash::hash_combine` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Deque with Hash::{hash, hash_combine}
 

@@ -20,7 +20,7 @@ pub extend PriorityQueue with Default::{default}
 // --- deprecated: hidden from the generated interface ---
 
 ///|
-#deprecated("Use the `Arbitrary` trait instead", skip_current_package=true)
+#deprecated("Use `@quickcheck.Arbitrary::arbitrary` instead", skip_current_package=true)
 #doc(hidden)
 pub extend PriorityQueue with @quickcheck.Arbitrary::{arbitrary}
 
