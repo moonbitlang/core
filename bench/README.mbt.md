@@ -19,7 +19,7 @@ test "basic benchmarking" {
   })
 
   // The benchmark ran successfully (we can't inspect exact timing)
-  inspect(summary.to_json().stringify().length() > 0, content="true")
+  inspect(@json.to_json(summary).stringify().length() > 0, content="true")
 }
 ```
 
