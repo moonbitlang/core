@@ -22,6 +22,9 @@ struct Key {
 } derive(Eq)
 
 ///|
+pub extend Key with Eq::{equal, not_equal}
+
+///|
 impl Hash for Key with fn hash_combine(self, hasher) {
   hasher.combine_int(self.hash_value)
 }
