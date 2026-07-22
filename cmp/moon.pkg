@@ -6,3 +6,5 @@ import {
 import {
   "moonbitlang/core/int",
 } for "test"
+
+warnings = "+implicit_impl_as_method"

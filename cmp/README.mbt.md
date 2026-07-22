@@ -35,8 +35,8 @@ test "reverse comparison" {
   inspect(b.compare(a), content="-1")
 
   // Can be used with generic comparison functions
-  inspect(@cmp.maximum(a, b), content="Reverse(1)")
-  inspect(@cmp.minimum(a, b), content="Reverse(2)")
+  @debug.debug_inspect(@cmp.maximum(a, b), content="Reverse(1)")
+  @debug.debug_inspect(@cmp.minimum(a, b), content="Reverse(2)")
 }
 ```
 
@@ -55,7 +55,7 @@ test "reverse with arrays" {
     Reverse(2),
   ]
   // When sorted, the array will be in descending order of the wrapped values
-  inspect(arr[0], content="Reverse(3)") // Access first element
+  @debug.debug_inspect(arr[0], content="Reverse(3)") // Access first element
 }
 ```
 
@@ -69,6 +69,9 @@ struct Person {
   name : String
   age : Int
 } derive(Debug)
+
+///|
+pub extend Person with Debug::{to_repr}
 
 ///|
 test "cmp_by_key" {

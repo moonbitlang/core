@@ -28,11 +28,22 @@
 ///   inspect(a.compare(b), content="1") // 1 > 2 in reversed order
 ///   inspect(b.compare(a), content="-1") // 2 < 1 in reversed order
 ///   inspect(a == a, content="true") // Equality works correctly
-///   inspect(a.to_string(), content="Reverse(1)") // Shows wrapped value
+///   @debug.debug_inspect(a, content="Reverse(1)") // Shows wrapped value
 /// }
 /// ```
 #warnings("-deprecated_syntax")
-pub(all) struct Reverse[T](T) derive(Eq, Show, Hash, @debug.Debug)
+pub(all) struct Reverse[T](T) derive(Eq, Hash, @debug.Debug)
+
+///|
+#deprecated("Use `@debug.Debug` instead of `Show`", skip_current_package=true)
+pub impl[T : Show] Show for Reverse[T]
+
+///|
+pub impl[T : Show] Show for Reverse[T] with fn output(self, logger) {
+  logger.write_string("Reverse(")
+  Show::output(self.0, logger)
+  logger.write_string(")")
+}
 
 ///|
 pub impl[T : Compare] Compare for Reverse[T] with fn compare(a, b) {
