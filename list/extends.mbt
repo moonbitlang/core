@@ -23,7 +23,7 @@ pub extend List with Default::{default}
 // --- deprecated: hidden from the generated interface ---
 
 ///|
-#deprecated("Use the `Arbitrary` trait instead", skip_current_package=true)
+#deprecated("Use `@quickcheck.Arbitrary::arbitrary` instead", skip_current_package=true)
 #doc(hidden)
 pub extend List with @quickcheck.Arbitrary::{arbitrary}
 
@@ -38,7 +38,7 @@ pub extend List with Compare::{op_ge, op_gt, op_le, op_lt}
 pub extend List with Eq::{equal, not_equal}
 
 ///|
-#deprecated("Use the `Hash` trait instead", skip_current_package=true)
+#deprecated("Use `Hash::hash` / `Hash::hash_combine` instead", skip_current_package=true)
 #doc(hidden)
 pub extend List with Hash::{hash, hash_combine}
 
