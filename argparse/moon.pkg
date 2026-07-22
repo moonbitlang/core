@@ -7,4 +7,4 @@ import {
   "moonbitlang/core/debug",
 }
 
-warnings = "+unnecessary_annotation"
+warnings = "+unnecessary_annotation+implicit_impl_as_method"
