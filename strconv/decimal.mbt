@@ -584,11 +584,6 @@ pub impl Show for Decimal with fn output(self, logger) {
 }
 
 ///|
-fn Decimal::to_string(self : Decimal) -> String {
-  Show::to_string(self)
-}
-
-///|
 test "new" {
   let hpd = Decimal::from_int64_priv(1L)
   inspect(hpd.digits.length(), content="800")

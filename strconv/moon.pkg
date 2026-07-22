@@ -7,4 +7,4 @@ import {
   "moonbitlang/core/debug",
 }
 
-warnings = "-deprecated"
+warnings = "-deprecated+implicit_impl_as_method"
