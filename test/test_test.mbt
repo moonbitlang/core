@@ -55,6 +55,9 @@ suberror MyError {
 } derive(Debug)
 
 ///|
+pub extend MyError with @debug.Debug::{to_repr}
+
+///|
 fn maybe_raise(should_raise : Bool) -> Unit raise MyError {
   if should_raise {
     raise NotFound("file.txt")
