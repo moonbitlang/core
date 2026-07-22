@@ -3,3 +3,5 @@ import {
   "moonbitlang/core/builtin",
   "moonbitlang/core/debug",
 }
+
+warnings = "+implicit_impl_as_method"
