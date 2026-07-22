@@ -16,6 +16,8 @@ import {
   "moonbitlang/core/test",
 } for "wbtest"
 
+warnings = "+implicit_impl_as_method"
+
 options(
   targets: {
     "panic_test.mbt": [ "not", "native", "llvm" ],
