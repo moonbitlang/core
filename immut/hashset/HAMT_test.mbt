@@ -304,6 +304,9 @@ test "HAMT::union with branch" {
 struct MyString(String) derive(@debug.Debug)
 
 ///|
+pub extend MyString with @debug.Debug::{to_repr}
+
+///|
 impl Hash for MyString with fn hash_combine(_self, hasher) {
   hasher.combine(1)
 }
