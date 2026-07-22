@@ -84,7 +84,7 @@ test "copy" {
 test "to_json" {
   let data = [1, 2, 3]
   let set = @hashset.from_array([1, 2, 3])
-  let json = set.to_json()
+  let json = @json.to_json(set)
   guard json is Array(array) else { fail("Expected JSON array") }
   for item in data {
     assert_true(array.contains(item.to_json()))

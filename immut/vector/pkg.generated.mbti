@@ -19,8 +19,10 @@ type Vector[A]
 #as_free_fn(of, deprecated)
 #as_free_fn(from_array)
 pub fn[A] Vector::Vector(ArrayView[A]) -> Self[A]
+pub fn[A] Vector::add(Self[A], Self[A]) -> Self[A]
 #alias("_[_]")
 pub fn[A] Vector::at(Self[A], Int) -> A
+pub fn[A : Compare] Vector::compare(Self[A], Self[A]) -> Int
 pub fn[A] Vector::concat(Self[A], Self[A]) -> Self[A]
 pub fn[A : Eq] Vector::contains(Self[A], A) -> Bool
 #alias(clone, deprecated)

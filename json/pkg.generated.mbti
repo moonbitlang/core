@@ -15,6 +15,8 @@ pub fn json_inspect(&ToJson, content? : Json, loc~ : SourceLoc, args_loc~ : Args
 #label_migration(max_nesting_depth, fill=false)
 pub fn parse(StringView, max_nesting_depth? : Int) -> Json raise ParseError
 
+pub fn[T : ToJson] to_json(T) -> Json
+
 pub fn valid(StringView) -> Bool
 
 // Errors

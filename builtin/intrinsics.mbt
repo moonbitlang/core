@@ -2588,6 +2588,32 @@ pub fn Double::to_float(self : Double) -> Float = "%f64.to_f32"
 pub fn UInt::to_float(self : UInt) -> Float = "%u32.to_f32"
 
 ///|
+/// The identity constructor for `Float`, allowing values to be written using
+/// constructor syntax, e.g. `Float(3.2)`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   ignore(Float(3.2))
+/// }
+/// ```
+pub fn Float::Float(self : Float) -> Float = "%identity"
+
+///|
+/// The identity constructor for `Int16`, allowing values to be written using
+/// constructor syntax, e.g. `Int16(3)`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(Int16(3), content="3")
+/// }
+/// ```
+pub fn Int16::Int16(self : Int16) -> Int16 = "%identity"
+
+///|
 /// Convert `Int` to `Int16` (deprecated alias).
 /// Convert to `int16`.
 #deprecated("Use `Int16::from_int` instead")

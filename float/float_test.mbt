@@ -242,3 +242,12 @@ test "Float::signum" {
   assert_eq((0.0 : Float).signum(), 0.0)
   assert_true(@float.not_a_number.signum().is_nan())
 }
+
+///|
+test "Float constructor syntax" {
+  inspect(Float(3), content="3")
+  inspect(Float(-3.5), content="-3.5")
+  inspect(Float(3.2), content="3.200000047683716")
+  let x : Float = 42
+  inspect(Float(x), content="42")
+}

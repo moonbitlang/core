@@ -465,6 +465,7 @@ pub fn Bool::to_uint(Bool) -> UInt
 pub fn Bool::to_uint16(Bool) -> UInt16
 pub fn Bool::to_uint64(Bool) -> UInt64
 
+pub fn Byte::Byte(Byte) -> Byte
 pub fn Byte::lnot(Byte) -> Byte
 #deprecated
 pub fn Byte::lsl(Byte, Int) -> Byte
@@ -511,6 +512,7 @@ pub fn Char::to_int(Char) -> Int
 pub fn Char::to_uint(Char) -> UInt
 pub fn Char::utf16_len(Char) -> Int
 
+pub fn Int::Int(Int) -> Int
 pub fn Int::abs(Int) -> Int
 #deprecated
 pub fn Int::asr(Int, Int) -> Int
@@ -555,6 +557,7 @@ pub fn Int::to_uint16(Int) -> UInt16
 pub fn Int::to_uint64(Int) -> UInt64
 pub fn Int::until(Int, Int, step? : Int, inclusive? : Bool) -> Iter[Int]
 
+pub fn Int64::Int64(Int64) -> Int64
 pub fn Int64::abs(Int64) -> Int64
 #deprecated
 pub fn Int64::asr(Int64, Int) -> Int64
@@ -587,6 +590,7 @@ pub fn Int64::to_uint16(Int64) -> UInt16
 pub fn Int64::to_uint64(Int64) -> UInt64
 pub fn Int64::until(Int64, Int64, step? : Int64, inclusive? : Bool) -> Iter[Int64]
 
+pub fn UInt::UInt(UInt) -> UInt
 pub fn UInt::clamp(UInt, min~ : UInt, max~ : UInt) -> UInt
 pub fn UInt::clz(UInt) -> Int
 pub fn UInt::ctz(UInt) -> Int
@@ -616,6 +620,7 @@ pub fn UInt::to_uint16(UInt) -> UInt16
 pub fn UInt::to_uint64(UInt) -> UInt64
 pub fn UInt::trunc_double(Double) -> UInt
 
+pub fn UInt16::UInt16(UInt16) -> UInt16
 pub fn UInt16::is_leading_surrogate(UInt16) -> Bool
 pub fn UInt16::is_surrogate(UInt16) -> Bool
 pub fn UInt16::is_trailing_surrogate(UInt16) -> Bool
@@ -628,6 +633,7 @@ pub fn UInt16::to_string(UInt16, radix? : Int) -> String
 pub fn UInt16::to_uint(UInt16) -> UInt
 pub fn UInt16::to_uint64(UInt16) -> UInt64
 
+pub fn UInt64::UInt64(UInt64) -> UInt64
 pub fn UInt64::clz(UInt64) -> Int
 pub fn UInt64::ctz(UInt64) -> Int
 pub fn UInt64::extend_uint(UInt) -> UInt64
@@ -657,6 +663,7 @@ pub fn UInt64::to_uint(UInt64) -> UInt
 pub fn UInt64::to_uint16(UInt64) -> UInt16
 pub fn UInt64::trunc_double(Double) -> UInt64
 
+pub fn Double::Double(Double) -> Double
 pub fn Double::abs(Double) -> Double
 pub fn Double::ceil(Double) -> Double
 pub fn Double::clamp(Double, min~ : Double, max~ : Double) -> Double
