@@ -7,3 +7,5 @@ import {
 import {
   "moonbitlang/core/bench",
 } for "test"
+
+warnings = "+implicit_impl_as_method"
