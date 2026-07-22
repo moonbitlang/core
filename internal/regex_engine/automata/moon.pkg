@@ -5,3 +5,5 @@ import {
   "moonbitlang/core/internal/regex_engine/shared_types",
   "moonbitlang/core/ref",
 }
+
+warnings = "+implicit_impl_as_method"
