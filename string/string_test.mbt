@@ -1025,3 +1025,6 @@ test "guard const" {
 test "string default" {
   inspect(String::default(), content="")
 }
+
+///|
+pub extend StringPatternToken with Debug::{to_repr}

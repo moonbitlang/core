@@ -12,31 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-///|
-struct Data {
-  val : String
-} derive(Debug)
+// --- promoted: kept as regular methods (blessed public API) ---
 
 ///|
-test {
-  let data = Data::{ val: "Hello, 世界\t\n!" }
-  // TODO: the data type annotation is not needed
-  debug_inspect(
-    data,
-    content=(
-      #|{ val: "Hello, 世界\t\n!" }
-    ),
-  )
-  let v = "\u{00AD}Hello, \u{2060}世界\t\n!\u{1D173}"
-  inspect(
-    to_repr(v),
-    content=(
-      #|"­Hello, ⁠世界\t\n!𝅳"
-    ),
-  )
-  // FIXME:The output is not ideal, we would prefer
-  // to see the Unicode code points, e.g.
-}
+pub extend Regex with Add::{add}
 
 ///|
-pub extend Data with Debug::{to_repr}
+pub extend Regex with BitOr::{lor}
+
+// --- deprecated: hidden from the generated interface ---
+
+///|
+#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
+#doc(hidden)
+pub extend MatchResult with @debug.Debug::{to_repr}
+
+///|
+#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Regex with @debug.Debug::{to_repr}
