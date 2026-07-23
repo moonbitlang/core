@@ -86,23 +86,14 @@ pub fn Json::value(self : Json, key : String) -> Json? {
 }
 
 ///|
-fn indent_str(level : Int, indent : Int) -> String {
-  if indent == 0 {
-    ""
-  } else {
-    let spaces = indent * level
-    match spaces {
-      0 => "\n"
-      1 => "\n "
-      2 => "\n  "
-      3 => "\n   "
-      4 => "\n    "
-      5 => "\n     "
-      6 => "\n      "
-      7 => "\n       "
-      8 => "\n        "
-      _ => "\n" + " ".repeat(spaces)
-    }
+fn write_indent(buf : StringBuilder, level : Int, indent : Int) -> Unit {
+  // Non-positive indent means compact output.
+  if indent <= 0 {
+    return
+  }
+  buf.write_char('\n')
+  for _ in 0..<(indent * level) {
+    buf.write_char(' ')
   }
 }
 
@@ -294,7 +285,7 @@ pub fn Json::stringify(
             } else {
               depth += 1
               buf.write_char('{')
-              buf.write_string(indent_str(depth, indent))
+              write_indent(buf, depth, indent)
               // After child value printed, we resume from this frame
               stack.push(Object(members.iter(), first=true))
             }
@@ -304,12 +295,12 @@ pub fn Json::stringify(
             } else {
               depth += 1
               buf.write_char('[')
-              buf.write_string(indent_str(depth, indent))
+              write_indent(buf, depth, indent)
               stack.push(Array(arr, i=0))
             }
           String(s) => {
             buf.write_char('\"')
-            buf.write_string(escape(s, escape_slash~))
+            escape_into(buf, s, escape_slash~)
             buf.write_char('\"')
           }
           Number(n, repr~) =>
@@ -333,13 +324,13 @@ pub fn Json::stringify(
               frame.i = i + 1
               if i > 0 {
                 buf.write_char(',')
-                buf.write_string(indent_str(depth, indent))
+                write_indent(buf, depth, indent)
               }
               continue Some(element)
             } else {
               depth -= 1
               ignore(stack.pop())
-              buf.write_string(indent_str(depth, indent))
+              write_indent(buf, depth, indent)
               buf.write_char(']')
               continue None
             }
@@ -356,10 +347,10 @@ pub fn Json::stringify(
                 }
                 if !first {
                   buf.write_char(',')
-                  buf.write_string(indent_str(depth, indent))
+                  write_indent(buf, depth, indent)
                 }
                 buf.write_char('\"')
-                buf.write_string(escape(k, escape_slash~))
+                escape_into(buf, k, escape_slash~)
                 buf.write_char('\"')
                 buf.write_char(':')
                 if indent > 0 {
@@ -371,7 +362,7 @@ pub fn Json::stringify(
               None => {
                 depth -= 1
                 ignore(stack.pop())
-                buf.write_string(indent_str(depth, indent))
+                write_indent(buf, depth, indent)
                 buf.write_char('}')
                 continue None
               }
@@ -383,8 +374,24 @@ pub fn Json::stringify(
 }
 
 ///|
-fn escape(str : String, escape_slash~ : Bool) -> String {
-  let buf = StringBuilder(size_hint=str.length())
+/// Writes `str` into `buf` with JSON escaping. Most strings contain nothing
+/// that needs escaping, so scan for the first escapable code unit and bulk-
+/// copy the whole string when there is none; only strings that do contain
+/// one take the per-char path. Code-unit scanning is safe because every
+/// escapable character is ASCII.
+fn escape_into(buf : StringBuilder, str : String, escape_slash~ : Bool) -> Unit {
+  let mut clean = true
+  for i in 0..<str.length() {
+    let c = str[i]
+    if c == '"' || c == '\\' || c < 0x20 || (c == '/' && escape_slash) {
+      clean = false
+      break
+    }
+  }
+  if clean {
+    buf.write_string(str)
+    return
+  }
   for c in str {
     match c {
       '"' => buf.write_string("\\\"")
@@ -412,7 +419,6 @@ fn escape(str : String, escape_slash~ : Bool) -> String {
       }
     }
   }
-  buf.to_string()
 }
 
 ///|
