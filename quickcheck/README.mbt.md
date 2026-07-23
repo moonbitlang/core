@@ -84,6 +84,9 @@ struct Point {
 } derive(Debug)
 
 ///|
+pub extend Point with Debug::{to_repr}
+
+///|
 impl Arbitrary for Point with fn arbitrary(size, r0) {
   let r1 = r0.split()
   let y = @quickcheck.Arbitrary::arbitrary(size, r1)
