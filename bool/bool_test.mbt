@@ -58,3 +58,12 @@ test "bool convert" {
   inspect(true.to_int16(), content="1")
   inspect(false.to_int16(), content="0")
 }
+
+///|
+pub extend TestHash with Debug::{to_repr}
+
+///|
+pub extend TestHash with Eq::{equal, not_equal}
+
+///|
+pub extend TestHash with Hash::{hash, hash_combine}
