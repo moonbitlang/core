@@ -95,3 +95,9 @@ test "try!" {
 
   inspect(hello(), content="ello world")
 }
+
+///|
+pub extend RangeImpl with @debug.Debug::{to_repr}
+
+///|
+pub extend RangeImpl with ToJson::{to_json}

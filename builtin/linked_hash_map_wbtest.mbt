@@ -28,6 +28,9 @@ impl Hash for MyString with fn hash_combine(self, hasher) {
 }
 
 ///|
+pub extend MyString with Eq::{equal, not_equal}
+
+///|
 test "empty constructor" {
   let m : Map[String, Int] = Map([])
   assert_true(m.size == 0)

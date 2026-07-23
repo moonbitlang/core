@@ -85,3 +85,6 @@ test "char printable and ascii case" {
 test "panic Char::is_digit invalid radix" {
   '0'.is_digit(1U) |> ignore
 }
+
+///|
+pub extend H with @debug.Debug::{to_repr}

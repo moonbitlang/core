@@ -106,14 +106,14 @@ test "eq" {
 
 ///|
 test "compare" {
-  assert_eq((1, 2).compare((2, 1)), -1)
-  assert_eq((1, 2).compare((1, 3)), -1)
-  assert_eq((1, 2, 3).compare((1, 2, 5)), -1)
-  assert_eq((1, 2, 3).compare((1, 3, 3)), -1)
-  assert_eq((1, 2, (3, 4)).compare((1, 2, (4, 4))), -1)
-  assert_eq((1, 2, (4, 6)).compare((1, 2, (4, 5))), 1)
-  assert_eq((1, 2, 4).compare((1, 2, 3)), 1)
-  assert_eq((1, 3, 3).compare((1, 2, 3)), 1)
+  assert_eq(compare((1, 2), (2, 1)), -1)
+  assert_eq(compare((1, 2), (1, 3)), -1)
+  assert_eq(compare((1, 2, 3), (1, 2, 5)), -1)
+  assert_eq(compare((1, 2, 3), (1, 3, 3)), -1)
+  assert_eq(compare((1, 2, (3, 4)), (1, 2, (4, 4))), -1)
+  assert_eq(compare((1, 2, (4, 6)), (1, 2, (4, 5))), 1)
+  assert_eq(compare((1, 2, 4), (1, 2, 3)), 1)
+  assert_eq(compare((1, 3, 3), (1, 2, 3)), 1)
 }
 
 ///|

@@ -43,7 +43,7 @@ pub impl[K : Compare, V : Compare] Compare for SortedMap[K, V] with fn compare(
   let iter = self.iter()
   let iter1 = other.iter()
   while iter.next() is Some(a) && iter1.next() is Some(b) {
-    let cmp = a.compare(b)
+    let cmp = compare(a, b)
     guard cmp is 0 else { break cmp }
   } nobreak {
     0

@@ -62,3 +62,9 @@ test {
   // let z0 = FromString::from_string("")
   // ...
 }
+
+///|
+pub extend MyInt with @debug.Debug::{to_repr}
+
+///|
+pub extend MyString with @debug.Debug::{to_repr}
