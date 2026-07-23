@@ -12,6 +12,8 @@ pub fn decode_lossy(BytesView, ignore_bom? : Bool) -> String
 
 pub fn encode(StringView, bom? : Bool) -> Bytes
 
+pub fn is_valid(BytesView, ignore_bom? : Bool) -> Bool
+
 // Errors
 pub suberror Malformed {
   Malformed(BytesView)
