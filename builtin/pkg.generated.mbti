@@ -46,6 +46,8 @@ pub(all) suberror BenchError {
 pub(all) suberror Failure {
   Failure(String)
 } derive(Show, ToJson)
+pub fn Failure::to_json(Self) -> Json
+pub fn Failure::to_string(Self) -> String
 
 pub(all) suberror InspectError {
   InspectError(String)
@@ -58,9 +60,11 @@ pub(all) suberror SnapshotError {
 // Types and methods
 pub(all) struct ArgsLoc(Array[SourceLoc?])
 pub fn ArgsLoc::to_json(Self) -> String
+pub fn ArgsLoc::to_string(Self) -> String
 pub impl Show for ArgsLoc
 
 type Array[T]
+pub fn[T] Array::add(Self[T], Self[T]) -> Self[T]
 #alias(every)
 pub fn[T] Array::all(Self[T], (T) -> Bool raise?) -> Bool raise?
 #alias(exists)
@@ -77,12 +81,14 @@ pub fn[T] Array::capacity(Self[T]) -> Int
 pub fn[T] Array::chunk_by(Self[T], (T, T) -> Bool raise?) -> Self[ArrayView[T]] raise?
 pub fn[T] Array::chunks(Self[T], Int) -> Self[ArrayView[T]]
 pub fn[T] Array::clear(Self[T]) -> Unit
+pub fn[T : Compare] Array::compare(Self[T], Self[T]) -> Int
 pub fn[T : Eq] Array::contains(Self[T], T) -> Bool
 #alias(clone, deprecated)
 pub fn[T] Array::copy(Self[T]) -> Self[T]
 pub fn[T : Eq] Array::count(Self[T], T) -> Int
 pub fn[T] Array::count_if(Self[T], (T) -> Bool raise?) -> Int raise?
 pub fn[T : Eq] Array::dedup(Self[T]) -> Unit
+pub fn[T] Array::default() -> Self[T]
 pub fn[T] Array::drain(Self[T], Int, Int) -> Self[T]
 pub fn[T] Array::each(Self[T], (T) -> Unit raise?) -> Unit raise?
 pub fn[T] Array::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
@@ -159,6 +165,7 @@ pub fn[T : Eq] Array::strip_prefix(Self[T], ArrayView[T]) -> ArrayView[T]?
 pub fn[T : Eq] Array::strip_suffix(Self[T], ArrayView[T]) -> ArrayView[T]?
 pub fn[T] Array::suffixes(Self[T], include_empty? : Bool) -> Iter[ArrayView[T]]
 pub fn[T] Array::swap(Self[T], Int, Int) -> Unit
+pub fn[X : ToJson] Array::to_json(Self[X]) -> Json
 pub fn[A] Array::truncate(Self[A], Int) -> Unit
 pub fn[A] Array::unsafe_blit_fixed(Self[A], Int, FixedArray[A], Int, Int) -> Unit
 pub fn[T] Array::unsafe_get(Self[T], Int) -> T
@@ -180,6 +187,7 @@ pub impl[X : Show] Show for Array[X]
 pub impl[X : ToJson] ToJson for Array[X]
 
 type ArrayView[T]
+pub fn[T] ArrayView::add(Self[T], Self[T]) -> Self[T]
 #alias(every)
 pub fn[T] ArrayView::all(Self[T], (T) -> Bool raise?) -> Bool raise?
 #alias(exists)
@@ -191,6 +199,7 @@ pub fn[T] ArrayView::binary_search_by(Self[T], (T) -> Int raise?) -> Result[Int,
 pub fn[A] ArrayView::blit_to(Self[A], Array[A], dst_offset? : Int) -> Unit
 pub fn[T] ArrayView::chunk_by(Self[T], (T, T) -> Bool raise?) -> Array[Self[T]] raise?
 pub fn[T] ArrayView::chunks(Self[T], Int) -> Array[Self[T]]
+pub fn[T : Compare] ArrayView::compare(Self[T], Self[T]) -> Int
 pub fn[T : Eq] ArrayView::contains(Self[T], T) -> Bool
 pub fn[T : Eq] ArrayView::count(Self[T], T) -> Int
 pub fn[T] ArrayView::count_if(Self[T], (T) -> Bool raise?) -> Int raise?
@@ -229,6 +238,7 @@ pub fn[T : Eq] ArrayView::starts_with(Self[T], Self[T]) -> Bool
 pub fn[T : Eq] ArrayView::strip_prefix(Self[T], Self[T]) -> Self[T]?
 pub fn[T : Eq] ArrayView::strip_suffix(Self[T], Self[T]) -> Self[T]?
 pub fn[T] ArrayView::suffixes(Self[T], include_empty? : Bool) -> Iter[Self[T]]
+pub fn[X : ToJson] ArrayView::to_json(Self[X]) -> Json
 #alias(to_array, deprecated)
 pub fn[T] ArrayView::to_owned(Self[T]) -> Array[T]
 #alias("_[_:_]")
@@ -264,6 +274,7 @@ pub fn Hasher::finalize(Self) -> Int
 
 #alias(Iterator, deprecated)
 type Iter[X]
+pub fn[T] Iter::add(Self[T], Self[T]) -> Self[T]
 pub fn[X] Iter::all(Self[X], (X) -> Bool) -> Bool
 pub fn[X] Iter::any(Self[X], (X) -> Bool) -> Bool
 pub fn[X] Iter::concat(Self[X], Self[X]) -> Self[X]
@@ -307,6 +318,7 @@ pub fn[X] Iter::take_while(Self[X], (X) -> Bool) -> Self[X]
 pub fn[X] Iter::tap(Self[X], (X) -> Unit) -> Self[X]
 #alias(collect)
 pub fn[X] Iter::to_array(Self[X]) -> Array[X]
+pub fn[X : ToJson] Iter::to_json(Self[X]) -> Json
 #alias("_[_:_]")
 #alias(sub, deprecated)
 pub fn[X] Iter::view(Self[X], start? : Int, end? : Int) -> Self[X]
@@ -342,6 +354,7 @@ pub enum Json {
 }
 pub fn Json::array(Array[Self]) -> Self
 pub fn Json::boolean(Bool) -> Self
+pub fn Json::default() -> Self
 pub fn Json::empty_object() -> Self
 pub fn Json::null() -> Self
 pub fn Json::number(Double, repr? : String) -> Self
@@ -361,6 +374,7 @@ pub fn[K : Hash + Eq, V] Map::contains(Self[K, V], K) -> Bool
 pub fn[K : Hash + Eq, V : Eq] Map::contains_kv(Self[K, V], K, V) -> Bool
 #alias(clone, deprecated)
 pub fn[K, V] Map::copy(Self[K, V]) -> Self[K, V]
+pub fn[K, V] Map::default() -> Self[K, V]
 pub fn[K, V] Map::each(Self[K, V], (K, V) -> Unit raise?) -> Unit raise?
 pub fn[K, V] Map::eachi(Self[K, V], (Int, K, V) -> Unit raise?) -> Unit raise?
 #alias(from_iterator, deprecated)
@@ -390,6 +404,7 @@ pub fn[K, V] Map::retain(Self[K, V], (K, V) -> Bool) -> Unit
 #alias("_[_]=_")
 pub fn[K : Hash + Eq, V] Map::set(Self[K, V], K, V) -> Unit
 pub fn[K, V] Map::to_array(Self[K, V]) -> Array[(K, V)]
+pub fn[K : Show, V : ToJson] Map::to_json(Self[K, V]) -> Json
 pub fn[K : Hash + Eq, V] Map::update(Self[K, V], K, (V?) -> V?) -> Unit
 pub fn[K : Hash + Eq, V] Map::update_or_default(Self[K, V], K, V, (V) -> V) -> Unit
 pub fn[K, V] Map::values(Self[K, V]) -> Iter[V]
@@ -402,6 +417,7 @@ pub impl[K : Show, V : ToJson] ToJson for Map[K, V]
 type MutArrayView[T]
 #alias("_[_]")
 pub fn[T] MutArrayView::at(Self[T], Int) -> T
+pub fn[T : Compare] MutArrayView::compare(Self[T], Self[T]) -> Int
 pub fn[T] MutArrayView::is_empty(Self[T]) -> Bool
 #alias(iterator, deprecated)
 pub fn[X] MutArrayView::iter(Self[X]) -> Iter[X]
@@ -433,6 +449,7 @@ pub impl[X : Show] Show for MutArrayView[X]
 
 pub(all) type SourceLoc
 pub fn SourceLoc::to_json_string(Self) -> String
+pub fn SourceLoc::to_string(Self) -> String
 pub impl Show for SourceLoc
 
 type StringBuilder
@@ -441,11 +458,15 @@ pub fn StringBuilder::StringBuilder(size_hint? : Int) -> Self
 pub fn StringBuilder::is_empty(Self) -> Bool
 pub fn StringBuilder::reset(Self) -> Unit
 pub fn StringBuilder::to_string(Self) -> String
+pub fn StringBuilder::write_char(Self, Char) -> Unit
 pub fn StringBuilder::write_iter(Self, Iter[Char]) -> Unit
 #alias(write)
 #alias(write_string_interpolation)
 pub fn[T : Show] StringBuilder::write_object(Self, T) -> Unit
+pub fn StringBuilder::write_string(Self, String) -> Unit
 pub fn StringBuilder::write_stringview(Self, StringView) -> Unit
+pub fn StringBuilder::write_substring(Self, String, Int, Int) -> Unit
+pub fn StringBuilder::write_view(Self, StringView) -> Unit
 pub impl Logger for StringBuilder
 pub impl Show for StringBuilder
 
@@ -460,22 +481,43 @@ pub fn[T] UninitializedArray::set(Self[T], Int, T) -> Unit
 #alias("_[_:_]")
 pub fn[T] UninitializedArray::sub(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 
+pub fn Unit::compare(Unit, Unit) -> Int
+pub fn Unit::default() -> Unit
+pub fn Unit::to_json(Unit) -> Json
+pub fn Unit::to_string(Unit) -> String
+
+pub fn Bool::compare(Bool, Bool) -> Int
+pub fn Bool::default() -> Bool
 #deprecated
 pub fn Bool::op_compare(Bool, Bool) -> Int
 pub fn Bool::to_int(Bool) -> Int
 pub fn Bool::to_int16(Bool) -> Int16
 pub fn Bool::to_int64(Bool) -> Int64
+pub fn Bool::to_json(Bool) -> Json
+pub fn Bool::to_string(Bool) -> String
 pub fn Bool::to_uint(Bool) -> UInt
 pub fn Bool::to_uint16(Bool) -> UInt16
 pub fn Bool::to_uint64(Bool) -> UInt64
 
 pub fn Byte::Byte(Byte) -> Byte
+pub fn Byte::add(Byte, Byte) -> Byte
+pub fn Byte::compare(Byte, Byte) -> Int
+pub fn Byte::default() -> Byte
+pub fn Byte::div(Byte, Byte) -> Byte
+pub fn Byte::land(Byte, Byte) -> Byte
 pub fn Byte::lnot(Byte) -> Byte
+pub fn Byte::lor(Byte, Byte) -> Byte
 #deprecated
 pub fn Byte::lsl(Byte, Int) -> Byte
 #deprecated
 pub fn Byte::lsr(Byte, Int) -> Byte
+pub fn Byte::lxor(Byte, Byte) -> Byte
+pub fn Byte::mod(Byte, Byte) -> Byte
+pub fn Byte::mul(Byte, Byte) -> Byte
 pub fn Byte::popcnt(Byte) -> Int
+pub fn Byte::shl(Byte, Int) -> Byte
+pub fn Byte::shr(Byte, Int) -> Byte
+pub fn Byte::sub(Byte, Byte) -> Byte
 pub fn Byte::to_char(Byte) -> Char
 pub fn Byte::to_double(Byte) -> Double
 #deprecated
@@ -485,11 +527,14 @@ pub fn Byte::to_int(Byte) -> Int
 #deprecated
 pub fn Byte::to_int16(Byte) -> Int16
 pub fn Byte::to_int64(Byte) -> Int64
+pub fn Byte::to_json(Byte) -> Json
 pub fn Byte::to_string(Byte) -> String
 pub fn Byte::to_uint(Byte) -> UInt
 pub fn Byte::to_uint16(Byte) -> UInt16
 pub fn Byte::to_uint64(Byte) -> UInt64
 
+pub fn Char::compare(Char, Char) -> Int
+pub fn Char::default() -> Char
 pub fn Char::escape(Char, quote? : Bool) -> String
 #deprecated
 pub fn Char::from_int(Int) -> Char
@@ -513,16 +558,22 @@ pub fn Char::is_whitespace(Char) -> Bool
 pub fn Char::to_ascii_lowercase(Char) -> Char
 pub fn Char::to_ascii_uppercase(Char) -> Char
 pub fn Char::to_int(Char) -> Int
+pub fn Char::to_json(Char) -> Json
+pub fn Char::to_string(Char) -> String
 pub fn Char::to_uint(Char) -> UInt
 pub fn Char::utf16_len(Char) -> Int
 
 pub fn Int::Int(Int) -> Int
 pub fn Int::abs(Int) -> Int
+pub fn Int::add(Int, Int) -> Int
 #deprecated
 pub fn Int::asr(Int, Int) -> Int
 pub fn Int::clamp(Int, min~ : Int, max~ : Int) -> Int
 pub fn Int::clz(Int) -> Int
+pub fn Int::compare(Int, Int) -> Int
 pub fn Int::ctz(Int) -> Int
+pub fn Int::default() -> Int
+pub fn Int::div(Int, Int) -> Int
 pub fn Int::is_leading_surrogate(Int) -> Bool
 pub fn Int::is_neg(Int) -> Bool
 pub fn Int::is_non_neg(Int) -> Bool
@@ -530,13 +581,19 @@ pub fn Int::is_non_pos(Int) -> Bool
 pub fn Int::is_pos(Int) -> Bool
 pub fn Int::is_surrogate(Int) -> Bool
 pub fn Int::is_trailing_surrogate(Int) -> Bool
+pub fn Int::land(Int, Int) -> Int
 pub fn Int::lnot(Int) -> Int
+pub fn Int::lor(Int, Int) -> Int
 #deprecated
 pub fn Int::lsl(Int, Int) -> Int
 #deprecated
 pub fn Int::lsr(Int, Int) -> Int
+pub fn Int::lxor(Int, Int) -> Int
 pub fn Int::max(Int, Int) -> Int
 pub fn Int::min(Int, Int) -> Int
+pub fn Int::mod(Int, Int) -> Int
+pub fn Int::mul(Int, Int) -> Int
+pub fn Int::neg(Int) -> Int
 pub fn Int::next_power_of_two(Int) -> Int
 pub fn Int::popcnt(Int) -> Int
 #deprecated
@@ -546,6 +603,7 @@ pub fn Int::reinterpret_as_uint(Int) -> UInt
 pub fn Int::shl(Int, Int) -> Int
 #deprecated
 pub fn Int::shr(Int, Int) -> Int
+pub fn Int::sub(Int, Int) -> Int
 pub fn Int::to_byte(Int) -> Byte
 pub fn Int::to_char(Int) -> Char?
 pub fn Int::to_double(Int) -> Double
@@ -554,6 +612,7 @@ pub fn Int::to_float(Int) -> Float
 #deprecated
 pub fn Int::to_int16(Int) -> Int16
 pub fn Int::to_int64(Int) -> Int64
+pub fn Int::to_json(Int) -> Json
 pub fn Int::to_string(Int, radix? : Int) -> String
 #deprecated
 pub fn Int::to_uint(Int) -> UInt
@@ -563,19 +622,29 @@ pub fn Int::until(Int, Int, step? : Int, inclusive? : Bool) -> Iter[Int]
 
 pub fn Int64::Int64(Int64) -> Int64
 pub fn Int64::abs(Int64) -> Int64
+pub fn Int64::add(Int64, Int64) -> Int64
 #deprecated
 pub fn Int64::asr(Int64, Int) -> Int64
 pub fn Int64::clamp(Int64, min~ : Int64, max~ : Int64) -> Int64
 pub fn Int64::clz(Int64) -> Int
+pub fn Int64::compare(Int64, Int64) -> Int
 pub fn Int64::ctz(Int64) -> Int
+pub fn Int64::default() -> Int64
+pub fn Int64::div(Int64, Int64) -> Int64
 pub fn Int64::from_int(Int) -> Int64
+pub fn Int64::land(Int64, Int64) -> Int64
 pub fn Int64::lnot(Int64) -> Int64
+pub fn Int64::lor(Int64, Int64) -> Int64
 #deprecated
 pub fn Int64::lsl(Int64, Int) -> Int64
 #deprecated
 pub fn Int64::lsr(Int64, Int) -> Int64
+pub fn Int64::lxor(Int64, Int64) -> Int64
 pub fn Int64::max(Int64, Int64) -> Int64
 pub fn Int64::min(Int64, Int64) -> Int64
+pub fn Int64::mod(Int64, Int64) -> Int64
+pub fn Int64::mul(Int64, Int64) -> Int64
+pub fn Int64::neg(Int64) -> Int64
 pub fn Int64::popcnt(Int64) -> Int
 pub fn Int64::reinterpret_as_double(Int64) -> Double
 pub fn Int64::reinterpret_as_uint64(Int64) -> UInt64
@@ -583,11 +652,13 @@ pub fn Int64::reinterpret_as_uint64(Int64) -> UInt64
 pub fn Int64::shl(Int64, Int) -> Int64
 #deprecated
 pub fn Int64::shr(Int64, Int) -> Int64
+pub fn Int64::sub(Int64, Int64) -> Int64
 pub fn Int64::to_byte(Int64) -> Byte
 pub fn Int64::to_double(Int64) -> Double
 #deprecated
 pub fn Int64::to_float(Int64) -> Float
 pub fn Int64::to_int(Int64) -> Int
+pub fn Int64::to_json(Int64) -> Json
 pub fn Int64::to_string(Int64, radix? : Int) -> String
 pub fn Int64::to_uint16(Int64) -> UInt16
 #deprecated
@@ -595,16 +666,24 @@ pub fn Int64::to_uint64(Int64) -> UInt64
 pub fn Int64::until(Int64, Int64, step? : Int64, inclusive? : Bool) -> Iter[Int64]
 
 pub fn UInt::UInt(UInt) -> UInt
+pub fn UInt::add(UInt, UInt) -> UInt
 pub fn UInt::clamp(UInt, min~ : UInt, max~ : UInt) -> UInt
 pub fn UInt::clz(UInt) -> Int
+pub fn UInt::compare(UInt, UInt) -> Int
 pub fn UInt::ctz(UInt) -> Int
+pub fn UInt::div(UInt, UInt) -> UInt
+pub fn UInt::land(UInt, UInt) -> UInt
 pub fn UInt::lnot(UInt) -> UInt
+pub fn UInt::lor(UInt, UInt) -> UInt
 #deprecated
 pub fn UInt::lsl(UInt, Int) -> UInt
 #deprecated
 pub fn UInt::lsr(UInt, Int) -> UInt
+pub fn UInt::lxor(UInt, UInt) -> UInt
 pub fn UInt::max(UInt, UInt) -> UInt
 pub fn UInt::min(UInt, UInt) -> UInt
+pub fn UInt::mod(UInt, UInt) -> UInt
+pub fn UInt::mul(UInt, UInt) -> UInt
 pub fn UInt::popcnt(UInt) -> Int
 #deprecated
 pub fn UInt::reinterpret_as_float(UInt) -> Float
@@ -613,39 +692,63 @@ pub fn UInt::reinterpret_as_int(UInt) -> Int
 pub fn UInt::shl(UInt, Int) -> UInt
 #deprecated
 pub fn UInt::shr(UInt, Int) -> UInt
+pub fn UInt::sub(UInt, UInt) -> UInt
 pub fn UInt::to_byte(UInt) -> Byte
 pub fn UInt::to_double(UInt) -> Double
 #deprecated
 pub fn UInt::to_float(UInt) -> Float
 #deprecated
 pub fn UInt::to_int(UInt) -> Int
+pub fn UInt::to_json(UInt) -> Json
 pub fn UInt::to_string(UInt, radix? : Int) -> String
 pub fn UInt::to_uint16(UInt) -> UInt16
 pub fn UInt::to_uint64(UInt) -> UInt64
 pub fn UInt::trunc_double(Double) -> UInt
 
 pub fn UInt16::UInt16(UInt16) -> UInt16
+pub fn UInt16::add(UInt16, UInt16) -> UInt16
+pub fn UInt16::compare(UInt16, UInt16) -> Int
+pub fn UInt16::default() -> UInt16
+pub fn UInt16::div(UInt16, UInt16) -> UInt16
 pub fn UInt16::is_leading_surrogate(UInt16) -> Bool
 pub fn UInt16::is_surrogate(UInt16) -> Bool
 pub fn UInt16::is_trailing_surrogate(UInt16) -> Bool
+pub fn UInt16::land(UInt16, UInt16) -> UInt16
 pub fn UInt16::lnot(UInt16) -> UInt16
+pub fn UInt16::lor(UInt16, UInt16) -> UInt16
+pub fn UInt16::lxor(UInt16, UInt16) -> UInt16
+pub fn UInt16::mod(UInt16, UInt16) -> UInt16
+pub fn UInt16::mul(UInt16, UInt16) -> UInt16
+pub fn UInt16::shl(UInt16, Int) -> UInt16
+pub fn UInt16::shr(UInt16, Int) -> UInt16
+pub fn UInt16::sub(UInt16, UInt16) -> UInt16
 pub fn UInt16::to_byte(UInt16) -> Byte
 pub fn UInt16::to_char(UInt16) -> Char?
 pub fn UInt16::to_int(UInt16) -> Int
 pub fn UInt16::to_int64(UInt16) -> Int64
+pub fn UInt16::to_json(UInt16) -> Json
 pub fn UInt16::to_string(UInt16, radix? : Int) -> String
 pub fn UInt16::to_uint(UInt16) -> UInt
 pub fn UInt16::to_uint64(UInt16) -> UInt64
 
 pub fn UInt64::UInt64(UInt64) -> UInt64
+pub fn UInt64::add(UInt64, UInt64) -> UInt64
 pub fn UInt64::clz(UInt64) -> Int
+pub fn UInt64::compare(UInt64, UInt64) -> Int
 pub fn UInt64::ctz(UInt64) -> Int
+pub fn UInt64::default() -> UInt64
+pub fn UInt64::div(UInt64, UInt64) -> UInt64
 pub fn UInt64::extend_uint(UInt) -> UInt64
+pub fn UInt64::land(UInt64, UInt64) -> UInt64
 pub fn UInt64::lnot(UInt64) -> UInt64
+pub fn UInt64::lor(UInt64, UInt64) -> UInt64
 #deprecated
 pub fn UInt64::lsl(UInt64, Int) -> UInt64
 #deprecated
 pub fn UInt64::lsr(UInt64, Int) -> UInt64
+pub fn UInt64::lxor(UInt64, UInt64) -> UInt64
+pub fn UInt64::mod(UInt64, UInt64) -> UInt64
+pub fn UInt64::mul(UInt64, UInt64) -> UInt64
 pub fn UInt64::popcnt(UInt64) -> Int
 pub fn UInt64::reinterpret_as_double(UInt64) -> Double
 pub fn UInt64::reinterpret_as_int64(UInt64) -> Int64
@@ -653,6 +756,7 @@ pub fn UInt64::reinterpret_as_int64(UInt64) -> Int64
 pub fn UInt64::shl(UInt64, Int) -> UInt64
 #deprecated
 pub fn UInt64::shr(UInt64, Int) -> UInt64
+pub fn UInt64::sub(UInt64, UInt64) -> UInt64
 pub fn UInt64::to_be_bytes(UInt64) -> Bytes
 pub fn UInt64::to_byte(UInt64) -> Byte
 pub fn UInt64::to_double(UInt64) -> Double
@@ -661,6 +765,7 @@ pub fn UInt64::to_float(UInt64) -> Float
 pub fn UInt64::to_int(UInt64) -> Int
 #deprecated
 pub fn UInt64::to_int64(UInt64) -> Int64
+pub fn UInt64::to_json(UInt64) -> Json
 pub fn UInt64::to_le_bytes(UInt64) -> Bytes
 pub fn UInt64::to_string(UInt64, radix? : Int) -> String
 pub fn UInt64::to_uint(UInt64) -> UInt
@@ -669,10 +774,14 @@ pub fn UInt64::trunc_double(Double) -> UInt64
 
 pub fn Double::Double(Double) -> Double
 pub fn Double::abs(Double) -> Double
+pub fn Double::add(Double, Double) -> Double
 pub fn Double::ceil(Double) -> Double
 pub fn Double::clamp(Double, min~ : Double, max~ : Double) -> Double
+pub fn Double::compare(Double, Double) -> Int
 pub fn Double::convert_uint(UInt) -> Double
 pub fn Double::convert_uint64(UInt64) -> Double
+pub fn Double::default() -> Double
+pub fn Double::div(Double, Double) -> Double
 pub fn Double::floor(Double) -> Double
 pub fn Double::from_int(Int) -> Double
 pub fn Double::is_close(Double, Double, relative_tolerance? : Double, absolute_tolerance? : Double) -> Bool
@@ -683,6 +792,9 @@ pub fn Double::is_pos_inf(Double) -> Bool
 pub fn Double::lerp(Double, target~ : Double, t~ : Double) -> Double
 pub fn Double::max(Double, Double) -> Double
 pub fn Double::min(Double, Double) -> Double
+pub fn Double::mod(Double, Double) -> Double
+pub fn Double::mul(Double, Double) -> Double
+pub fn Double::neg(Double) -> Double
 #deprecated
 pub fn Double::pow(Double, Double) -> Double
 #deprecated
@@ -694,16 +806,19 @@ pub fn Double::reinterpret_as_uint64(Double) -> UInt64
 pub fn Double::round(Double) -> Double
 pub fn Double::signum(Double) -> Double
 pub fn Double::sqrt(Double) -> Double
+pub fn Double::sub(Double, Double) -> Double
 #deprecated
 pub fn Double::to_float(Double) -> Float
 pub fn Double::to_int(Double) -> Int
 pub fn Double::to_int64(Double) -> Int64
+pub fn Double::to_json(Double) -> Json
 pub fn Double::to_string(Double) -> String
 pub fn Double::to_uint(Double) -> UInt
 pub fn Double::to_uint64(Double) -> UInt64
 pub fn Double::trunc(Double) -> Double
 pub fn Double::until(Double, Double, step? : Double, inclusive? : Bool) -> Iter[Double]
 
+pub fn String::add(String, String) -> String
 pub fn String::after(String, StringView) -> StringView?
 #alias(every)
 pub fn String::all(String, (Char) -> Bool raise?) -> Bool raise?
@@ -719,11 +834,13 @@ pub fn String::char_length_eq(String, Int, start_offset? : Int, end_offset? : In
 pub fn String::char_length_ge(String, Int, start_offset? : Int, end_offset? : Int) -> Bool
 pub fn String::clamped_view(String, start? : Int, end? : Int) -> StringView
 pub fn String::code_units(String) -> ArrayView[UInt16]
+pub fn String::compare(String, String) -> Int
 pub fn String::compare_ignore_ascii_case(String, String) -> Int
 pub fn String::contains(String, StringView) -> Bool
 pub fn String::contains_any(String, chars~ : StringView) -> Bool
 pub fn String::contains_char(String, Char) -> Bool
 pub fn String::contains_code_unit(String, UInt16) -> Bool
+pub fn String::default() -> String
 pub fn String::equal_ignore_ascii_case(String, String) -> Bool
 pub fn String::escape(String, quote? : Bool) -> String
 pub fn String::find(String, StringView) -> Int?
@@ -779,7 +896,10 @@ pub fn String::suffixes(String, include_empty? : Bool) -> Iter[StringView]
 pub fn String::to_array(String) -> Array[Char]
 #deprecated
 pub fn String::to_bytes(String) -> Bytes
+pub fn String::to_json(String) -> Json
 pub fn String::to_lower(String) -> String
+pub fn String::to_string(String) -> String
+pub fn String::to_string_view(String) -> StringView
 pub fn String::to_upper(String) -> String
 #label_migration(chars, alias=char_set)
 pub fn String::trim(String, chars? : StringView) -> StringView
@@ -795,6 +915,8 @@ pub fn String::unsafe_substring(String, start~ : Int, end~ : Int) -> String
 pub fn String::view(String, start_offset? : Int, end_offset? : Int) -> StringView
 
 pub fn[T, U] Option::bind(T?, (T) -> U? raise?) -> U? raise?
+pub fn[X : Compare] Option::compare(X?, X?) -> Int
+pub fn[X] Option::default() -> X?
 pub fn[T] Option::filter(T?, (T) -> Bool raise?) -> T? raise?
 #deprecated
 pub fn[T] Option::flatten(T??) -> T?
@@ -809,6 +931,7 @@ pub fn[T] Option::iter(T?) -> Iter[T]
 pub fn[T, U] Option::map(T?, (T) -> U raise?) -> U? raise?
 pub fn[T, U] Option::map_or(T?, U, (T) -> U raise?) -> U raise?
 pub fn[T, U] Option::map_or_else(T?, () -> U raise?, (T) -> U raise?) -> U raise?
+pub fn[T : ToJson] Option::to_json(T?) -> Json
 #deprecated
 pub fn[X : Show] Option::to_string(X?) -> String
 pub fn[X] Option::unwrap(X?) -> X
@@ -822,9 +945,11 @@ pub fn[T] Option::unwrap_or_else(T?, () -> T raise?) -> T raise?
 pub fn[T, Err : Error] Option::unwrap_or_error(T?, Err) -> T raise Err
 
 pub fn[T, E, U] Result::bind(Self[T, E], (T) -> Self[U, E]) -> Self[U, E]
+pub fn[T : Compare, E : Compare] Result::compare(Self[T, E], Self[T, E]) -> Int
 pub fn[T, E] Result::flatten(Self[Self[T, E], E]) -> Self[T, E]
 pub fn[T, E, U] Result::map(Self[T, E], (T) -> U) -> Self[U, E]
 pub fn[T, E, F] Result::map_err(Self[T, E], (E) -> F) -> Self[T, F]
+pub fn[Ok : ToJson, Err : ToJson] Result::to_json(Self[Ok, Err]) -> Json
 pub fn[T, E] Result::to_option(Self[T, E]) -> T?
 pub fn[T, E] Result::unwrap(Self[T, E]) -> T
 pub fn[T, E] Result::unwrap_err(Self[T, E]) -> E
@@ -835,6 +960,7 @@ pub fn[T : Default, E] Result::unwrap_or_default(Self[T, E]) -> T
 pub fn[T, E] Result::unwrap_or_else(Self[T, E], () -> T raise?) -> T raise?
 pub fn[T, E : Error] Result::unwrap_or_error(Self[T, E]) -> T raise E
 
+pub fn[T] FixedArray::add(Self[T], Self[T]) -> Self[T]
 #alias(every)
 pub fn[T] FixedArray::all(Self[T], (T) -> Bool raise?) -> Bool raise?
 #alias(exists)
@@ -847,9 +973,11 @@ pub fn FixedArray::blit_from_bytes(Self[Byte], Int, Bytes, Int, Int) -> Unit
 pub fn FixedArray::blit_from_bytesview(Self[Byte], Int, BytesView) -> Unit
 pub fn FixedArray::blit_from_string(Self[Byte], Int, String, Int, Int) -> Unit
 pub fn[A] FixedArray::blit_to(Self[A], Self[A], len~ : Int, src_offset? : Int, dst_offset? : Int) -> Unit
+pub fn[T : Compare] FixedArray::compare(Self[T], Self[T]) -> Int
 pub fn[T : Eq] FixedArray::contains(Self[T], T) -> Bool
 #alias(clone, deprecated)
 pub fn[T] FixedArray::copy(Self[T]) -> Self[T]
+pub fn[X] FixedArray::default() -> Self[X]
 pub fn[T] FixedArray::each(Self[T], (T) -> Unit raise?) -> Unit raise?
 pub fn[T] FixedArray::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
 pub fn[T : Eq] FixedArray::ends_with(Self[T], ArrayView[T]) -> Bool
@@ -896,6 +1024,7 @@ pub fn[T, K : Compare] FixedArray::sort_by_key(Self[T], (T) -> K) -> Unit
 pub fn[T : Compare] FixedArray::stable_sort(Self[T]) -> Unit
 pub fn[T : Eq] FixedArray::starts_with(Self[T], ArrayView[T]) -> Bool
 pub fn[T] FixedArray::swap(Self[T], Int, Int) -> Unit
+pub fn[X : ToJson] FixedArray::to_json(Self[X]) -> Json
 pub fn[A] FixedArray::unsafe_blit(Self[A], Int, Self[A], Int, Int) -> Unit
 pub fn FixedArray::unsafe_write_uint16_be(Self[Byte], Int, UInt16) -> Unit
 pub fn FixedArray::unsafe_write_uint16_le(Self[Byte], Int, UInt16) -> Unit
@@ -917,7 +1046,9 @@ pub fn[T : Compare] ReadOnlyArray::binary_search(Self[T], T) -> Result[Int, Int]
 pub fn[T] ReadOnlyArray::binary_search_by(Self[T], (T) -> Int raise?) -> Result[Int, Int] raise?
 pub fn[T] ReadOnlyArray::chunk_by(Self[T], (T, T) -> Bool raise?) -> Array[ArrayView[T]] raise?
 pub fn[T] ReadOnlyArray::chunks(Self[T], Int) -> Array[ArrayView[T]]
+pub fn[T : Compare] ReadOnlyArray::compare(Self[T], Self[T]) -> Int
 pub fn[T : Eq] ReadOnlyArray::contains(Self[T], T) -> Bool
+pub fn[T] ReadOnlyArray::default() -> Self[T]
 pub fn[T] ReadOnlyArray::each(Self[T], (T) -> Unit raise?) -> Unit raise?
 pub fn[T] ReadOnlyArray::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
 pub fn[T : Eq] ReadOnlyArray::ends_with(Self[T], ArrayView[T]) -> Bool
@@ -954,18 +1085,22 @@ pub fn[T : Eq] ReadOnlyArray::starts_with(Self[T], ArrayView[T]) -> Bool
 pub fn[T : Eq] ReadOnlyArray::strip_prefix(Self[T], ArrayView[T]) -> ArrayView[T]?
 pub fn[T : Eq] ReadOnlyArray::strip_suffix(Self[T], ArrayView[T]) -> ArrayView[T]?
 pub fn[T] ReadOnlyArray::suffixes(Self[T], include_empty? : Bool) -> Iter[ArrayView[T]]
+pub fn[T : ToJson] ReadOnlyArray::to_json(Self[T]) -> Json
 #alias("_[_:_]")
 #alias(sub, deprecated)
 pub fn[T] ReadOnlyArray::view(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 pub fn[T] ReadOnlyArray::windows(Self[T], Int) -> Array[ArrayView[T]]
 
+pub fn Bytes::add(Bytes, Bytes) -> Bytes
 #alias("_[_]")
 pub fn Bytes::at(Bytes, Int) -> Byte
 pub fn Bytes::chop_prefix(Bytes, BytesView) -> BytesView?
 pub fn Bytes::chop_suffix(Bytes, BytesView) -> BytesView?
+pub fn Bytes::compare(Bytes, Bytes) -> Int
 #alias(clone, deprecated)
 #deprecated
 pub fn Bytes::copy(Bytes) -> Bytes
+pub fn Bytes::default() -> Bytes
 pub fn Bytes::find(Bytes, BytesView) -> Int?
 #alias(of, deprecated)
 pub fn Bytes::from_array(ArrayView[Byte]) -> Bytes
@@ -994,6 +1129,8 @@ pub fn Bytes::rev_find(Bytes, BytesView) -> Int?
 pub fn Bytes::to_array(Bytes) -> Array[Byte]
 #label_migration(len, fill=false)
 pub fn Bytes::to_fixedarray(Bytes, len? : Int) -> FixedArray[Byte]
+pub fn Bytes::to_json(Bytes) -> Json
+pub fn Bytes::to_string(Bytes) -> String
 pub fn Bytes::to_unchecked_string(Bytes, offset? : Int, length? : Int) -> String
 #alias("_[_:_]")
 #alias(sub, deprecated)
@@ -1003,6 +1140,7 @@ pub fn Bytes::view(Bytes, start? : Int, end? : Int) -> BytesView
 pub fn BytesView::at(Self, Int) -> Byte
 pub fn BytesView::chop_prefix(Self, Self) -> Self?
 pub fn BytesView::chop_suffix(Self, Self) -> Self?
+pub fn BytesView::compare(Self, Self) -> Int
 pub fn BytesView::data(Self) -> Bytes
 pub fn BytesView::equal_to_bytes(Self, Bytes) -> Bool
 pub fn BytesView::find(Self, Self) -> Int?
@@ -1021,12 +1159,15 @@ pub fn BytesView::rev_find(Self, Self) -> Int?
 pub fn BytesView::start_offset(Self) -> Int
 pub fn BytesView::to_array(Self) -> Array[Byte]
 pub fn BytesView::to_fixedarray(Self) -> FixedArray[Byte]
+pub fn BytesView::to_json(Self) -> Json
 #alias(to_bytes, deprecated)
 pub fn BytesView::to_owned(Self) -> Bytes
+pub fn BytesView::to_string(Self) -> String
 #alias("_[_:_]")
 #alias(sub, deprecated)
 pub fn BytesView::view(Self, start? : Int, end? : Int) -> Self
 
+pub fn StringView::add(Self, Self) -> Self
 pub fn StringView::after(Self, Self) -> Self?
 #alias(every)
 pub fn StringView::all(Self, (Char) -> Bool raise?) -> Bool raise?
@@ -1041,12 +1182,14 @@ pub fn StringView::char_length_eq(Self, Int) -> Bool
 pub fn StringView::char_length_ge(Self, Int) -> Bool
 pub fn StringView::clamped_view(Self, start? : Int, end? : Int) -> Self
 pub fn StringView::code_units(Self) -> ArrayView[UInt16]
+pub fn StringView::compare(Self, Self) -> Int
 pub fn StringView::compare_ignore_ascii_case(Self, Self) -> Int
 pub fn StringView::contains(Self, Self) -> Bool
 pub fn StringView::contains_any(Self, chars~ : Self) -> Bool
 pub fn StringView::contains_char(Self, Char) -> Bool
 pub fn StringView::contains_code_unit(Self, UInt16) -> Bool
 pub fn StringView::data(Self) -> String
+pub fn StringView::default() -> Self
 pub fn StringView::equal_ignore_ascii_case(Self, Self) -> Bool
 pub fn StringView::equal_to_string(Self, String) -> Bool
 pub fn StringView::escape(Self, quote? : Bool) -> Self
@@ -1101,9 +1244,11 @@ pub fn StringView::suffixes(Self, include_empty? : Bool) -> Iter[Self]
 pub fn StringView::to_array(Self) -> Array[Char]
 #deprecated
 pub fn StringView::to_bytes(Self) -> Bytes
+pub fn StringView::to_json(Self) -> Json
 pub fn StringView::to_lower(Self) -> Self
 #alias(to_string, deprecated)
 pub fn StringView::to_owned(Self) -> String
+pub fn StringView::to_string_view(Self) -> Self
 pub fn StringView::to_upper(Self) -> Self
 #label_migration(chars, alias=char_set)
 pub fn StringView::trim(Self, chars? : Self) -> Self
