@@ -212,8 +212,6 @@ pub fn from_iter(iter : Iter[Byte]) -> Buffer {
 ///
 /// * `buffer` : The buffer to write to.
 /// * `string` : The string to be written.
-
-///|
 /// This Logger impl currently writes UTF-16LE bytes for compatibility. After a
 /// breaking-change window, Buffer may implement Logger again with UTF-8
 /// semantics.
@@ -720,7 +718,7 @@ pub fn Buffer::write_float_le(self : Buffer, value : Float) -> Unit {
 /// the buffer.
 #deprecated("Buffer::write_object writes UTF-16LE bytes; use write_utf8 or explicit Buffer encoders. A future breaking release may restore it with UTF-8 semantics.", skip_current_package=true)
 pub fn Buffer::write_object(self : Buffer, value : &Show) -> Unit {
-  self.write_string(value.to_string())
+  self.write_string_utf16le(value.to_string())
 }
 
 ///|

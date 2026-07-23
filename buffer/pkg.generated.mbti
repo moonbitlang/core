@@ -61,6 +61,8 @@ pub fn Buffer::write_string_utf16be(Self, StringView) -> Unit
 #alias(write_stringview, deprecated)
 pub fn Buffer::write_string_utf16le(Self, StringView) -> Unit
 pub fn Buffer::write_string_utf8(Self, StringView) -> Unit
+#deprecated
+pub fn Buffer::write_substring(Self, String, Int, Int) -> Unit
 pub fn Buffer::write_uint16_be(Self, UInt16) -> Unit
 pub fn Buffer::write_uint16_le(Self, UInt16) -> Unit
 pub fn Buffer::write_uint64_be(Self, UInt64) -> Unit
