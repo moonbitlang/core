@@ -6,3 +6,5 @@ import {
   "moonbitlang/core/char",
   "moonbitlang/core/int16",
 } for "test"
+
+warnings = "+implicit_impl_as_method"
