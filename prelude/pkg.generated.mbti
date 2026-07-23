@@ -42,6 +42,8 @@ pub fn[T : @debug.Debug] dump(T, name? : String, loc~ : @builtin.SourceLoc) -> T
 #callsite(autofill(loc))
 pub fn[T] fail(StringView, loc~ : @builtin.SourceLoc) -> T raise @builtin.Failure
 
+pub fn[T : @builtin.Hash] hash(T) -> Int
+
 pub fn[T] ignore(T) -> Unit
 
 #callsite(autofill(args_loc, loc))

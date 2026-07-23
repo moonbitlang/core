@@ -29,6 +29,7 @@ pub using @builtin {
   debug_assert,
   fail,
   ignore,
+  hash,
   inspect,
   panic,
   physical_equal,
