@@ -251,3 +251,6 @@ test "Float constructor syntax" {
   let x : Float = 42
   inspect(Float(x), content="42")
 }
+
+///|
+pub extend FloatHashInput with Hash::{hash, hash_combine}
