@@ -12,31 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// --- promoted: kept as regular methods (blessed public API) ---
+// --- promoted: explicit trait-method promotions (may inherit deprecations from the underlying impl) ---
 
 ///|
+#deprecated
+#warnings("-deprecated")
 pub extend Buffer with Logger::{
   write_view,
   write_string,
   write_string_interpolation,
   write_char,
   write,
-}
-
-// `Logger::write_substring` is itself deprecated, so it cannot be named in an
-// `extend` (E0020). Define the promoted method manually instead -- it clears
-// E0079, stays callable, and is deprecated in step with the trait method.
-
-///|
-#deprecated("use `write_view` instead", skip_current_package=true)
-#doc(hidden)
-pub fn Buffer::write_substring(
-  self : Buffer,
-  value : String,
-  start : Int,
-  len : Int,
-) -> Unit {
-  self.write_view(value[start:start + len])
+  write_substring,
 }
 
 ///|
