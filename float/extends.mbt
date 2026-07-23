@@ -53,7 +53,7 @@ pub extend Float with ToJson::{to_json}
 ///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
 #doc(hidden)
-pub extend Float with Compare::{op_lt, op_le, op_ge, op_gt}
+pub extend Float with Compare::{op_ge, op_gt, op_le, op_lt}
 
 ///|
 #deprecated("Use `==` / `!=` instead", skip_current_package=true)
