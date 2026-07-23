@@ -91,6 +91,11 @@ test "panic from_octets empty" {
 }
 
 ///|
+test "panic from_octets empty negative signum" {
+  @bigint.BigInt::from_octets(Bytes::new(0), signum=-1) |> ignore
+}
+
+///|
 test "panic to_octets negative" {
   (-1N).to_octets() |> ignore
 }
