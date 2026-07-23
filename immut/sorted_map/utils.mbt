@@ -227,13 +227,99 @@ fn[K : Show, V : Show] SortedMap::debug_tree(self : SortedMap[K, V]) -> String {
 }
 
 ///|
+
+///|
 /// Build a map from an array of key-value pairs.
-/// O(n*log n).
+/// O(n) when the input is already monotonic by key, otherwise O(n*log n).
 #as_free_fn(deprecated="Use @immut/sorted_map.SortedMap([...]) instead")
 #alias(of, deprecated="Use @immut/sorted_map.SortedMap([...]) instead")
 #as_free_fn(of, deprecated="Use @immut/sorted_map.SortedMap([...]) instead")
 #deprecated("Use @immut/sorted_map.SortedMap([...]) instead")
 pub fn[K : Compare, V] SortedMap::from_array(
+  array : ArrayView[(K, V)],
+) -> SortedMap[K, V] {
+  sorted_map_from_array(array)
+}
+
+///|
+fn[K : Compare, V] sorted_map_from_array(
+  array : ArrayView[(K, V)],
+) -> SortedMap[K, V] {
+  let (order, has_duplicates) = sorted_map_array_order(array)
+  if order == 1 {
+    if has_duplicates {
+      let compacted = sorted_map_compact_ordered_array(array, true)
+      return sorted_map_from_ascending_array(compacted, 0, compacted.length())
+    }
+    return sorted_map_from_ascending_array(array, 0, array.length())
+  } else if order == -1 {
+    if has_duplicates {
+      let compacted = sorted_map_compact_ordered_array(array, false)
+      return sorted_map_from_ascending_array(compacted, 0, compacted.length())
+    }
+    return sorted_map_from_descending_array(array, 0, array.length())
+  }
+  if array.length() >= sorted_map_sort_build_threshold {
+    sorted_map_from_unsorted_array(array)
+  } else {
+    sorted_map_from_array_by_add(array)
+  }
+}
+
+///|
+let sorted_map_sort_build_threshold = 64
+
+///|
+/// A key-value pair tagged with its original position, used to sort an unsorted
+/// input by key while breaking ties on insertion order.
+priv struct SortEntry[K, V] {
+  key : K
+  value : V
+  index : Int
+}
+
+///|
+impl[K : Compare, V] Eq for SortEntry[K, V] with fn equal(self, other) {
+  self.key == other.key && self.index == other.index
+}
+
+///|
+// Ordering by key, then by original position, so that a plain (unstable) `sort`
+// still keeps duplicate keys in insertion order — the last one wins on compact.
+impl[K : Compare, V] Compare for SortEntry[K, V] with fn compare(self, other) {
+  let c = self.key.compare(other.key)
+  if c == 0 {
+    self.index.compare(other.index)
+  } else {
+    c
+  }
+}
+
+///|
+fn[K : Compare, V] sorted_map_from_unsorted_array(
+  array : ArrayView[(K, V)],
+) -> SortedMap[K, V] {
+  let entries : FixedArray[SortEntry[K, V]] = FixedArray::makei(
+    array.length(),
+    i => { key: array[i].0, value: array[i].1, index: i },
+  )
+  sorted_map_from_unsorted_entries(entries.mut_view())
+}
+
+///|
+/// Sort a `SortEntry` buffer in place, drop duplicate keys, and build the tree
+/// from its unique prefix. The caller owns the backing buffer, which is permuted
+/// in place. Shared by the array and iterator entry points.
+fn[K : Compare, V] sorted_map_from_unsorted_entries(
+  entries : MutArrayView[SortEntry[K, V]],
+) -> SortedMap[K, V] {
+  entries.sort()
+  let len = sorted_map_compact_entries_in_place(entries)
+  sorted_map_from_sorted_entries(entries.view(), 0, len)
+}
+
+///|
+fn[K : Compare, V] sorted_map_from_array_by_add(
   array : ArrayView[(K, V)],
 ) -> SortedMap[K, V] {
   for item in array; mp = Empty {
@@ -246,7 +332,7 @@ pub fn[K : Compare, V] SortedMap::from_array(
 
 ///|
 /// Build a map from an array of key-value pairs.
-/// O(n*log n).
+/// O(n) when the input is already monotonic by key, otherwise O(n*log n).
 ///
 /// # Example
 ///
@@ -260,11 +346,176 @@ pub fn[K : Compare, V] SortedMap::from_array(
 pub fn[K : Compare, V] SortedMap::SortedMap(
   array : ArrayView[(K, V)],
 ) -> SortedMap[K, V] {
-  for item in array; mp = Empty {
-    let (k, v) = item
-    continue mp.add(k, v)
-  } nobreak {
-    mp
+  sorted_map_from_array(array)
+}
+
+///|
+// Deduplicate a key-sorted `SortEntry` buffer in place, keeping the last value
+// seen for each key (last writer wins, matching `add`). The unique entries are
+// packed at the front and their count is returned; the tail is left untouched
+// and must be ignored by the caller. Indices are monotonic (write <= start <=
+// end < len), so the unchecked accessors stay in bounds.
+fn[K : Compare, V] sorted_map_compact_entries_in_place(
+  entries : MutArrayView[SortEntry[K, V]],
+) -> Int {
+  let len = entries.length()
+  let mut write = 0
+  for start = 0; start < len; {
+    let end = for end = start; end + 1 < len &&
+                 entries.unsafe_get(end).key.compare(
+                   entries.unsafe_get(end + 1).key,
+                 ) ==
+                 0; {
+      continue end + 1
+    } nobreak {
+      end
+    }
+    entries.unsafe_set(write, {
+      key: entries.unsafe_get(start).key,
+      value: entries.unsafe_get(end).value,
+      index: entries.unsafe_get(start).index,
+    })
+    write += 1
+    continue end + 1
+  }
+  write
+}
+
+///|
+fn[K : Compare, V] sorted_map_array_order(
+  array : ArrayView[(K, V)],
+) -> (Int, Bool) {
+  let len = array.length()
+  guard len > 1 else { return (1, false) }
+  let mut order = 0
+  let mut has_duplicates = false
+  for i in 1..<len {
+    let cmp = array[i - 1].0.compare(array[i].0)
+    if cmp == 0 {
+      has_duplicates = true
+    } else {
+      let current = if cmp < 0 { 1 } else { -1 }
+      if order == 0 {
+        order = current
+      } else if order != current {
+        return (0, has_duplicates)
+      }
+    }
+  }
+  (if order == 0 { 1 } else { order }, has_duplicates)
+}
+
+///|
+fn[K : Compare, V] sorted_map_compact_ordered_array(
+  array : ArrayView[(K, V)],
+  ascending : Bool,
+) -> Array[(K, V)] {
+  let result = []
+  let len = array.length()
+  if ascending {
+    for start = 0; start < len; {
+      let end = for end = start; end + 1 < len &&
+                   array[end].0.compare(array[end + 1].0) == 0; {
+        continue end + 1
+      } nobreak {
+        end
+      }
+      result.push((array[start].0, array[end].1))
+      continue end + 1
+    }
+  } else {
+    for end = len - 1; end >= 0; {
+      let start = for start = end; start > 0 &&
+                     array[start - 1].0.compare(array[start].0) == 0; {
+        continue start - 1
+      } nobreak {
+        start
+      }
+      result.push((array[start].0, array[end].1))
+      continue start - 1
+    }
+  }
+  result
+}
+
+///|
+/// Build a map from key-value pairs that are already strictly sorted by key.
+///
+/// The input must be in ascending key order and must not contain duplicate keys.
+/// This function does not validate that precondition.
+/// O(n).
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let map = @sorted_map.from_sorted_array([(1, "a"), (2, "b")])
+///   @test.assert_eq(map.to_array(), [(1, "a"), (2, "b")])
+/// }
+/// ```
+#warnings("-unused_trait_bound")
+#as_free_fn
+pub fn[K : Compare, V] SortedMap::from_sorted_array(
+  array : ArrayView[(K, V)],
+) -> SortedMap[K, V] {
+  sorted_map_from_ascending_array(array, 0, array.length())
+}
+
+///|
+/// Build a balanced tree from a slice sorted in ascending key order.
+/// The ascending case of a monotonic array is exactly this construction.
+fn[K, V] sorted_map_from_ascending_array(
+  array : ArrayView[(K, V)],
+  start : Int,
+  end : Int,
+) -> SortedMap[K, V] {
+  if start >= end {
+    Empty
+  } else {
+    let mid = (start + end) / 2
+    let (key, value) = array[mid]
+    let left = sorted_map_from_ascending_array(array, start, mid)
+    let right = sorted_map_from_ascending_array(array, mid + 1, end)
+    make_tree(key, value, left, right)
+  }
+}
+
+///|
+/// Build a balanced tree from a slice sorted in descending key order, without
+/// materializing a reversed copy: the middle element is still the subtree root,
+/// but the smaller keys sit at the higher indices, so the halves are swapped.
+fn[K, V] sorted_map_from_descending_array(
+  array : ArrayView[(K, V)],
+  start : Int,
+  end : Int,
+) -> SortedMap[K, V] {
+  if start >= end {
+    Empty
+  } else {
+    let mid = (start + end) / 2
+    let (key, value) = array[mid]
+    let left = sorted_map_from_descending_array(array, mid + 1, end)
+    let right = sorted_map_from_descending_array(array, start, mid)
+    make_tree(key, value, left, right)
+  }
+}
+
+///|
+/// Build a balanced tree from the `[start, end)` slice of a key-sorted,
+/// duplicate-free `SortEntry` buffer, reading keys and values off the entries
+/// directly so no `(K, V)` copy is materialized.
+fn[K, V] sorted_map_from_sorted_entries(
+  entries : ArrayView[SortEntry[K, V]],
+  start : Int,
+  end : Int,
+) -> SortedMap[K, V] {
+  if start >= end {
+    Empty
+  } else {
+    let mid = (start + end) / 2
+    let entry = entries[mid]
+    let left = sorted_map_from_sorted_entries(entries, start, mid)
+    let right = sorted_map_from_sorted_entries(entries, mid + 1, end)
+    make_tree(entry.key, entry.value, left, right)
   }
 }
 
@@ -397,7 +648,10 @@ pub fn[K : Compare, V] SortedMap::range(
 pub fn[K : Compare, V] SortedMap::from_iter(
   iter : Iter[(K, V)],
 ) -> SortedMap[K, V] {
-  iter.fold(init=new(), (m, e) => m.add(e.0, e.1))
+  // Materialize into a `(K, V)` buffer and detect order there: monotonic input
+  // (the common case) builds in O(n) without ever tagging elements with an
+  // index, and only the genuinely-unsorted branch pays for the `SortEntry` sort.
+  sorted_map_from_array(iter.to_array())
 }
 
 ///|
