@@ -9,6 +9,8 @@ import {
   "moonbitlang/core/debug",
 } for "test"
 
+warnings = "+implicit_impl_as_method"
+
 options(
   targets: {
     "round.mbt": [ "not", "js", "wasm", "wasm-gc" ],
