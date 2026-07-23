@@ -1105,29 +1105,61 @@ fn BigInt::to_string_radix(self : BigInt, radix : Int) -> String {
   match pow2_shift(radix) {
     Some(shift) => self.to_string_radix_pow2(shift)
     None => {
-      let is_negative = self.sign == Negative
-      let base = BigInt::from_int(radix)
-      let value = if is_negative { -self } else { self }
-      let digits = []
-      for v = value {
-        if v > zero {
-          let (q, r) = BigInt::grade_school_div(v, base)
-          digits.push(char_from_digit(r.to_int()))
-          continue q
-        } else {
-          break
+      // Same limb-by-limb conversion as the radix-10 path in to_string:
+      // convert to base chunk = radix^chunk_len using only Int64 division,
+      // then emit chunk_len digits per slot. This replaces one full BigInt
+      // division per output digit with one Int64 division per digit.
+      let radix64 = radix.to_int64()
+      // Largest radix^chunk_len such that (slot << RADIX_BIT_LEN) | limb
+      // still fits in Int64 (slots stay below 2^(63 - RADIX_BIT_LEN)).
+      let chunk_limit = 0x7FFF_FFFF_FFFF_FFFFL >> RADIX_BIT_LEN
+      let mut chunk = radix64
+      let mut chunk_len = 1
+      while chunk <= chunk_limit / radix64 {
+        chunk = chunk * radix64
+        chunk_len += 1
+      }
+      // Digits in radix >= 3 never exceed the bit count, so this bounds the
+      // number of slots.
+      let slots = self.len * RADIX_BIT_LEN / chunk_len + 2
+      let v = Array::make(slots, 0L)
+      let mut v_idx = 0
+      for i in self.len>..0 {
+        let mut x = self.limbs[i].to_int64()
+        for j in 0..<v_idx {
+          let y = (v[j] << RADIX_BIT_LEN) | x
+          x = y / chunk
+          v[j] = y % chunk
+        }
+        while x > 0L {
+          v[v_idx] = x % chunk
+          v_idx += 1
+          x /= chunk
         }
       }
-      let builder = StringBuilder(
-        size_hint=digits.length() + (if is_negative { 1 } else { 0 }),
-      )
-      if is_negative {
-        builder.write_char('-')
+      let cap = v_idx * chunk_len + 1 // +1 for an optional sign
+      let chars = FixedArray::make(cap, '0')
+      let mut pos = cap
+      // Lower slots each contribute exactly chunk_len digits, zero-padded.
+      for i in 0..<(v_idx - 1) {
+        let mut x = v[i]
+        for _ in 0..<chunk_len {
+          pos -= 1
+          chars[pos] = char_from_digit((x % radix64).to_int())
+          x /= radix64
+        }
       }
-      for i in digits.length()>..0 {
-        builder.write_char(digits[i])
+      // The most-significant slot is emitted without leading zeros; it is
+      // non-zero because self is non-zero.
+      for x = v[v_idx - 1]; x > 0L; x = x / radix64 {
+        pos -= 1
+        chars[pos] = char_from_digit((x % radix64).to_int())
       }
-      builder.to_string()
+      if self.sign == Negative {
+        pos -= 1
+        chars[pos] = '-'
+      }
+      String::from_array(chars[pos:])
     }
   }
 }

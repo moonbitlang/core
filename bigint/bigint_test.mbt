@@ -1370,3 +1370,31 @@ test "BigInt modpow negative base normalization" {
   // (-3)^3 = -27, -27 mod 10 = 3 (canonical non-negative)
   inspect((-3N).pow(3N, modulus=10N), content="3")
 }
+
+///|
+test "to_string non-power-of-two radixes round-trip and match known values" {
+  // known small values
+  inspect(255N.to_string(radix=3), content="100110")
+  inspect((-255N).to_string(radix=3), content="-100110")
+  inspect(35N.to_string(radix=36), content="z")
+  inspect(36N.to_string(radix=36), content="10")
+  inspect(6N.to_string(radix=6), content="10")
+  // round-trip large values through every non-power-of-two radix
+  let big = (@bigint.BigInt::from_string("123456789123456789") << 700) +
+    @bigint.BigInt::from_string("987654321987654321")
+  for radix in [3, 5, 6, 7, 11, 12, 15, 20, 33, 36] {
+    let s = big.to_string(radix~)
+    assert_eq(@bigint.BigInt::from_string(s, radix~), big)
+    let s_neg = (-big).to_string(radix~)
+    assert_eq(@bigint.BigInt::from_string(s_neg, radix~), -big)
+  }
+  // boundary around a chunk: radix 3 uses 19-digit chunks; exercise values
+  // spanning one and several slots
+  for e in [1, 18, 19, 20, 37, 38, 39] {
+    let p = @bigint.BigInt::from_string("3").pow(
+      @bigint.BigInt::from_string(e.to_string()),
+    )
+    assert_eq(@bigint.BigInt::from_string(p.to_string(radix=3), radix=3), p)
+    inspect(p.to_string(radix=3).length(), content=(e + 1).to_string())
+  }
+}
