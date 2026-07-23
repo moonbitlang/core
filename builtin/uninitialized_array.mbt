@@ -16,6 +16,10 @@
 struct UninitializedArray[T](FixedArray[UnsafeMaybeUninit[T]])
 
 ///|
+#owned(value)
+fn[T] unsafe_maybe_uninit(value : T) -> UnsafeMaybeUninit[T] = "%identity"
+
+///|
 /// Creates an uninitialized array of the specified size.
 ///
 /// Parameters:
