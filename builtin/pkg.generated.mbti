@@ -991,6 +991,7 @@ pub fn Bytes::to_array(Bytes) -> Array[Byte]
 #label_migration(len, fill=false)
 pub fn Bytes::to_fixedarray(Bytes, len? : Int) -> FixedArray[Byte]
 pub fn Bytes::to_unchecked_string(Bytes, offset? : Int, length? : Int) -> String
+pub fn Bytes::unsafe_from_array_owned(Array[Byte]) -> Bytes
 #alias("_[_:_]")
 #alias(sub, deprecated)
 pub fn Bytes::view(Bytes, start? : Int, end? : Int) -> BytesView

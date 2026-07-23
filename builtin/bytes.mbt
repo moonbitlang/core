@@ -460,6 +460,29 @@ pub fn Bytes::from_array(arr : ArrayView[Byte]) -> Bytes {
 }
 
 ///|
+/// Reinterprets an owned array of bytes as `Bytes`.
+///
+/// This avoids copying when the array length already matches its capacity. If
+/// the array has spare capacity, the array is first shrunk so the resulting
+/// `Bytes` length matches `arr.length()`, which may allocate and copy on some
+/// backends.
+///
+/// Safety: the returned `Bytes` aliases the array storage. The caller must not
+/// mutate or use `arr` after passing it to this function. Use
+/// `Bytes::from_array` when a copied immutable byte sequence is required.
+#owned(arr)
+pub fn Bytes::unsafe_from_array_owned(arr : Array[Byte]) -> Bytes {
+  let len = arr.length()
+  if len == 0 {
+    return []
+  }
+  if arr.capacity() != len {
+    arr.shrink_to_fit()
+  }
+  buffer_to_fixedarray(arr.buffer()).unsafe_reinterpret_as_bytes()
+}
+
+///|
 /// Creates a new bytes sequence from a fixed-size array of bytes with an
 /// optional length parameter.
 ///

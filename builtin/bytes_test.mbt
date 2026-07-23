@@ -58,6 +58,48 @@ test "blit_from_string" {
 }
 
 ///|
+test "unsafe_from_array_owned empty" {
+  let arr : Array[Byte] = []
+  let bytes = Bytes::unsafe_from_array_owned(arr)
+  inspect(
+    bytes,
+    content=(
+      #|b""
+    ),
+  )
+}
+
+///|
+test "unsafe_from_array_owned full capacity" {
+  let arr : Array[Byte] = Array::make(3, b'\x00')
+  arr[0] = b'a'
+  arr[1] = b'b'
+  arr[2] = b'c'
+  let bytes = Bytes::unsafe_from_array_owned(arr)
+  inspect(
+    bytes,
+    content=(
+      #|b"abc"
+    ),
+  )
+}
+
+///|
+test "unsafe_from_array_owned shrinks spare capacity" {
+  let arr : Array[Byte] = Array::new(capacity=8)
+  arr.push(b'a')
+  arr.push(b'b')
+  let bytes = Bytes::unsafe_from_array_owned(arr)
+  inspect(bytes.length(), content="2")
+  inspect(
+    bytes,
+    content=(
+      #|b"ab"
+    ),
+  )
+}
+
+///|
 test "set_utf8_char (ASCII)" {
   let arr = FixedArray::makei(4, _ => b'\x00')
   let char = 'A'
