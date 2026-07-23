@@ -153,12 +153,17 @@ pub fn[V : Compare] SortedSet::union(
   self : SortedSet[V],
   src : SortedSet[V],
 ) -> SortedSet[V] {
+  // Every element common to both sets is dropped exactly once, at the
+  // `comp == 0` branch of `split`; counting those drops gives the result
+  // size arithmetically instead of re-traversing the merged tree.
+  let mut dups = 0
   fn aux(a : Node[V]?, b : Node[V]?) -> Node[V]? {
     match (a, b) {
       (Some(_), None) => a
       (None, Some(_)) => b
       (Some({ value: va, left: la, right: ra, .. }), Some(_)) => {
-        let (l, r) = split(b, va)
+        let (l, r, d) = split(b, va)
+        dups += d
         Some(join(aux(la, l), va, aux(ra, r)))
       }
       (None, None) => None
@@ -170,12 +175,7 @@ pub fn[V : Compare] SortedSet::union(
       let t1 = copy_tree(self.root)
       let t2 = copy_tree(src.root)
       let t = aux(t1, t2)
-      let mut ct = 0
-      let ret = { root: t, size: 0 }
-      // TODO: optimize this. Avoid counting the size of the set.
-      ret.each(_x => ct = ct + 1)
-      ret.size = ct
-      ret
+      { root: t, size: self.size + src.size - dups }
     }
     (Some(_), None) => { root: copy_tree(self.root), size: self.size }
     (None, Some(_)) => { root: copy_tree(src.root), size: src.size }
@@ -184,19 +184,21 @@ pub fn[V : Compare] SortedSet::union(
 }
 
 ///|
-fn[V : Compare] split(root : Node[V]?, value : V) -> (Node[V]?, Node[V]?) {
+/// Splits `root` around `value`. The third component reports how many nodes
+/// equal to `value` the split dropped (0 or 1).
+fn[V : Compare] split(root : Node[V]?, value : V) -> (Node[V]?, Node[V]?, Int) {
   match root {
-    None => (None, None)
+    None => (None, None, 0)
     Some(node) => {
       let comp = value.compare(node.value)
       if comp == 0 {
-        (node.left, node.right)
+        (node.left, node.right, 1)
       } else if comp < 0 {
-        let (l, r) = split(node.left, value)
-        (l, Some(join(r, node.value, node.right)))
+        let (l, r, dups) = split(node.left, value)
+        (l, Some(join(r, node.value, node.right)), dups)
       } else {
-        let (l, r) = split(node.right, value)
-        (Some(join(node.left, node.value, l)), r)
+        let (l, r, dups) = split(node.right, value)
+        (Some(join(node.left, node.value, l)), r, dups)
       }
     }
   }
@@ -870,22 +872,27 @@ test "union" {
 ///|
 #warnings("-deprecated")
 test "split" {
-  let (l, r) = split(from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).root, 5)
+  let (l, r, dups) = split(from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).root, 5)
+  inspect(dups, content="1")
   inspect(l, content="Some([1, 2, 3, 4])")
   inspect(r, content="Some([6, 7, 8, 9])")
-  let (l, r) = split(from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).root, 0)
+  let (l, r, dups) = split(from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).root, 0)
+  inspect(dups, content="0")
   inspect(l, content="None")
   inspect(r, content="Some([1, 2, 3, 4, 5, 6, 7, 8, 9])")
-  let (l, r) = split(from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).root, 10)
+  let (l, r, dups) = split(from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).root, 10)
+  inspect(dups, content="0")
   inspect(l, content="Some([1, 2, 3, 4, 5, 6, 7, 8, 9])")
   inspect(r, content="None")
-  let (l, r) = split(from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).root, 4)
+  let (l, r, dups) = split(from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).root, 4)
+  inspect(dups, content="1")
   inspect(l, content="Some([1, 2, 3])")
   inspect(r, content="Some([5, 6, 7, 8, 9])")
-  let (l, r) = split(from_array([]).root, 7)
+  let (l, r, dups) = split(from_array([]).root, 7)
+  inspect(dups, content="0")
   inspect(l, content="None")
   inspect(r, content="None")
-  let (l, r) = split(
+  let (l, r, _) = split(
     from_array([
       0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
       22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
