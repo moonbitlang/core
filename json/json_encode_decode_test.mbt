@@ -91,3 +91,15 @@ test {
     ),
   )
 }
+
+///|
+pub extend AllThree with Debug::{to_repr}
+
+///|
+pub extend AllThree with Eq::{equal, not_equal}
+
+///|
+pub extend DecodeError with Debug::{to_repr}
+
+///|
+pub extend DecodeError with Eq::{equal, not_equal}

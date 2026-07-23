@@ -478,3 +478,15 @@ test "Tuple::to_json" {
     ),
   )
 }
+
+///|
+pub extend Opt with Debug::{to_repr}
+
+///|
+pub extend Opt with Eq::{equal, not_equal}
+
+///|
+pub extend Opt with FromJson::{from_json}
+
+///|
+pub extend Opt with ToJson::{to_json}
