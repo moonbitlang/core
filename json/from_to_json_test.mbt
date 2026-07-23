@@ -40,3 +40,15 @@ test {
   )
   assert_true(e0 == e)
 }
+
+///|
+pub extend Expr with Debug::{to_repr}
+
+///|
+pub extend Expr with Eq::{equal, not_equal}
+
+///|
+pub extend Expr with FromJson::{from_json}
+
+///|
+pub extend Expr with ToJson::{to_json}

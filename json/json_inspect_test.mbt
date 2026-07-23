@@ -63,3 +63,12 @@ test "json inspect error paths" {
     expect_error(() => @json.json_inspect(1, content=2), "expected mismatch"),
   )
 }
+
+///|
+pub extend Color with ToJson::{to_json}
+
+///|
+pub extend Line with ToJson::{to_json}
+
+///|
+pub extend P with ToJson::{to_json}

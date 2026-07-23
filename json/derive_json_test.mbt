@@ -78,3 +78,18 @@ test {
     ),
   )
 }
+
+///|
+pub extend Hello with Debug::{to_repr}
+
+///|
+pub extend Hello with Eq::{equal, not_equal}
+
+///|
+pub extend Hello with FromJson::{from_json}
+
+///|
+pub extend Hello with ToJson::{to_json}
+
+///|
+pub extend Hello3 with ToJson::{to_json}
