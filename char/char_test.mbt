@@ -524,3 +524,12 @@ test "Case conversion with non-letters" {
   assert_eq('a'.to_ascii_uppercase(), 'A')
   assert_eq('z'.to_ascii_uppercase(), 'Z')
 }
+
+///|
+pub extend TestHash with Debug::{to_repr}
+
+///|
+pub extend TestHash with Eq::{equal, not_equal}
+
+///|
+pub extend TestHash with Hash::{hash, hash_combine}
