@@ -953,6 +953,22 @@ pub fn Int::to_int64(self : Int) -> Int64 = "%i32_to_i64"
 pub fn UInt16::to_int64(self : UInt16) -> Int64 = "%u16_to_i64"
 
 ///|
+/// ```mbt check
+/// test {
+///   inspect(UInt16(32), content="32")
+/// }
+/// ```
+pub fn UInt16::UInt16(self : UInt16) -> UInt16 = "%identity"
+
+///|
+/// ```mbt check
+/// test {
+///   inspect(Int64(32), content="32")
+/// }
+/// ```
+pub fn Int64::Int64(self : Int64) -> Int64 = "%identity"
+
+///|
 /// Reinterprets the bits of a double-precision floating-point number as a 64-bit
 /// signed integer without any conversion. This is a low-level operation that
 /// simply reinterprets the bit pattern of the input value.
