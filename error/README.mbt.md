@@ -90,6 +90,9 @@ suberror MyError {
 } derive(ToJson)
 
 ///|
+pub extend MyError with ToJson::{to_json}
+
+///|
 test "error display and json" {
   let error : Error = MyError(42)
 

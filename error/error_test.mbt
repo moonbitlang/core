@@ -225,3 +225,6 @@ test "error to json" {
     ),
   )
 }
+
+///|
+pub extend ErrWithToJson with ToJson::{to_json}
