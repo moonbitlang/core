@@ -13,6 +13,207 @@
 // limitations under the License.
 
 ///|
+let string_find_max_bruteforce : Int = 64
+
+///|
+let string_find_prime_rk : UInt = 16777619U
+
+///|
+fn string_find_cutover(i : Int) -> Int {
+  4 + i / 16
+}
+
+///|
+fn string_find_prime_pow(length : Int) -> UInt {
+  for pow = 1U, square = string_find_prime_rk, exp = length; exp > 0; {
+    let next_pow = if exp % 2 == 1 { pow * square } else { pow }
+    continue next_pow, square * square, exp / 2
+  } nobreak {
+    pow
+  }
+}
+
+///|
+fn string_find_hash_range(data : String, start : Int, length : Int) -> UInt {
+  for i in 0..<length; hash = 0U {
+    continue hash * string_find_prime_rk + data.unsafe_get(start + i).to_uint()
+  } nobreak {
+    hash
+  }
+}
+
+///|
+fn string_find_match_range(
+  haystack : StringView,
+  needle : StringView,
+  candidate : Int,
+  start : Int,
+  end : Int,
+) -> Bool {
+  if start >= end {
+    return true
+  }
+  let haystack_data = haystack.data()
+  let needle_data = needle.data()
+  let haystack_start = haystack.start_offset() + candidate
+  let needle_start = needle.start_offset()
+  for j in start..<end {
+    if haystack_data.unsafe_get(haystack_start + j) !=
+      needle_data.unsafe_get(needle_start + j) {
+      break false
+    }
+  } nobreak {
+    true
+  }
+}
+
+///|
+fn string_find_rabin_karp_from(
+  haystack : StringView,
+  needle : StringView,
+  start : Int,
+) -> Int? {
+  let needle_len = needle.length()
+  let haystack_len = haystack.length()
+  if start + needle_len > haystack_len {
+    return None
+  }
+  let needle_data = needle.data()
+  let needle_start = needle.start_offset()
+  let haystack_data = haystack.data()
+  let haystack_start = haystack.start_offset()
+  let needle_hash = string_find_hash_range(
+    needle_data, needle_start, needle_len,
+  )
+  let pow = string_find_prime_pow(needle_len)
+  let hash = string_find_hash_range(
+    haystack_data,
+    haystack_start + start,
+    needle_len,
+  )
+  if hash == needle_hash &&
+    string_find_match_range(haystack, needle, start, 0, needle_len) {
+    return Some(start)
+  }
+  for index = start + needle_len, hash = hash; index < haystack_len; {
+    let hash = hash * string_find_prime_rk +
+      haystack_data.unsafe_get(haystack_start + index).to_uint()
+    let hash = hash -
+      pow *
+      haystack_data.unsafe_get(haystack_start + index - needle_len).to_uint()
+    let candidate = index - needle_len + 1
+    if hash == needle_hash &&
+      string_find_match_range(haystack, needle, candidate, 0, needle_len) {
+      break Some(candidate)
+    }
+    continue index + 1, hash
+  } nobreak {
+    None
+  }
+}
+
+///|
+fn string_rev_find_rabin_karp(
+  haystack : StringView,
+  needle : StringView,
+) -> Int? {
+  let needle_len = needle.length()
+  let haystack_len = haystack.length()
+  if needle_len > haystack_len {
+    return None
+  }
+  let needle_data = needle.data()
+  let needle_start = needle.start_offset()
+  let haystack_data = haystack.data()
+  let haystack_start = haystack.start_offset()
+  let needle_hash = string_find_hash_range(
+    needle_data, needle_start, needle_len,
+  )
+  let pow = string_find_prime_pow(needle_len)
+  let hash = string_find_hash_range(haystack_data, haystack_start, needle_len)
+  let mut result = None
+  if hash == needle_hash &&
+    string_find_match_range(haystack, needle, 0, 0, needle_len) {
+    result = Some(0)
+  }
+  for index = needle_len, hash = hash; index < haystack_len; {
+    let hash = hash * string_find_prime_rk +
+      haystack_data.unsafe_get(haystack_start + index).to_uint()
+    let hash = hash -
+      pow *
+      haystack_data.unsafe_get(haystack_start + index - needle_len).to_uint()
+    let candidate = index - needle_len + 1
+    if hash == needle_hash &&
+      string_find_match_range(haystack, needle, candidate, 0, needle_len) {
+      result = Some(candidate)
+    }
+    continue index + 1, hash
+  } nobreak {
+    result
+  }
+}
+
+///|
+fn string_find_by_code_unit_scanner_from(
+  haystack : StringView,
+  needle : StringView,
+  start : Int,
+) -> Int? {
+  let haystack_len = haystack.length()
+  let needle_len = needle.length()
+  let last = haystack_len - needle_len
+  let first = needle.unsafe_get(0)
+  let last_offset = needle_len - 1
+  let last_code = needle.unsafe_get(last_offset)
+  for pos = start, failures = 0; pos <= last; {
+    if haystack.unsafe_get(pos) == first &&
+      haystack.unsafe_get(pos + last_offset) == last_code {
+      if string_find_match_range(haystack, needle, pos, 1, last_offset) {
+        break Some(pos)
+      }
+      let failures = failures + 1
+      if failures > string_find_max_bruteforce ||
+        failures > string_find_cutover(pos - start) {
+        break string_find_rabin_karp_from(haystack, needle, pos + 1)
+      }
+      continue pos + 1, failures
+    }
+    continue pos + 1, failures
+  } nobreak {
+    None
+  }
+}
+
+///|
+fn string_rev_find_by_code_unit_scanner_until(
+  haystack : StringView,
+  needle : StringView,
+  end : Int,
+) -> Int? {
+  let needle_len = needle.length()
+  let first = needle.unsafe_get(0)
+  let last_offset = needle_len - 1
+  let last_code = needle.unsafe_get(last_offset)
+  for pos = end - 1, failures = 0; pos >= 0; {
+    if haystack.unsafe_get(pos) == first &&
+      haystack.unsafe_get(pos + last_offset) == last_code {
+      if string_find_match_range(haystack, needle, pos, 1, last_offset) {
+        break Some(pos)
+      }
+      let failures = failures + 1
+      if failures > string_find_max_bruteforce ||
+        failures > string_find_cutover(end - 1 - pos) {
+        break string_rev_find_rabin_karp(haystack, needle)
+      }
+      continue pos - 1, failures
+    }
+    continue pos - 1, failures
+  } nobreak {
+    None
+  }
+}
+
+///|
 /// Returns the offset (charcode index) of the first occurrence of the given
 /// substring. If the substring is not found, it returns None.
 pub fn StringView::find(self : StringView, str : StringView) -> Int? {
@@ -21,8 +222,6 @@ pub fn StringView::find(self : StringView, str : StringView) -> Int? {
   } else {
     boyer_moore_horspool_find(self, str)
   }
-  // TODO: When the pattern string is long (>= 256),
-  // consider using Two-Way algorithm to ensure linear time complexity.
 }
 
 ///|
@@ -67,18 +266,18 @@ fn boyer_moore_horspool_find(
   for i in 0..<(needle_len - 1) {
     skip_table[needle.unsafe_get(i).to_int() & 0xFF] = needle_len - 1 - i
   }
-  for i = 0
-      i <= haystack_len - needle_len
-      i = i +
-        skip_table[haystack.unsafe_get(i + needle_len - 1).to_int() & 0xFF] {
-    // Check all charcodes for match at current position
-    for j in 0..<=(needle_len - 1) {
-      if haystack.unsafe_get(i + j) != needle.unsafe_get(j) {
-        break
-      }
-    } nobreak {
+  for i = 0, failures = 0; i <= haystack_len - needle_len; {
+    if string_find_match_range(haystack, needle, i, 0, needle_len) {
       return Some(i)
     }
+    let failures = failures + 1
+    if failures > string_find_max_bruteforce ||
+      failures > string_find_cutover(i) {
+      return string_find_by_code_unit_scanner_from(haystack, needle, i + 1)
+    }
+    continue i +
+      skip_table[haystack.unsafe_get(i + needle_len - 1).to_int() & 0xFF],
+      failures
   }
   None
 }
@@ -168,8 +367,6 @@ pub fn StringView::rev_find(self : StringView, str : StringView) -> Int? {
   } else {
     boyer_moore_horspool_rev_find(self, str)
   }
-  // TODO: When the pattern string is long (>= 256),
-  // consider using Two-Way algorithm to ensure linear time complexity.
 }
 
 ///|
@@ -212,17 +409,16 @@ fn boyer_moore_horspool_rev_find(
   for i in needle_len>..1 {
     skip_table[needle.unsafe_get(i).to_int() & 0xFF] = i
   }
-  for i = haystack_len - needle_len
-      i >= 0
-      i = i - skip_table[haystack.unsafe_get(i).to_int() & 0xFF] {
-    // Check all charcodes for match at current position
-    for j in 0..<needle_len {
-      if haystack.unsafe_get(i + j) != needle.unsafe_get(j) {
-        break
-      }
-    } nobreak {
+  for i = haystack_len - needle_len, failures = 0; i >= 0; {
+    if string_find_match_range(haystack, needle, i, 0, needle_len) {
       return Some(i)
     }
+    let failures = failures + 1
+    if failures > string_find_max_bruteforce ||
+      failures > string_find_cutover(haystack_len - needle_len - i) {
+      return string_rev_find_by_code_unit_scanner_until(haystack, needle, i)
+    }
+    continue i - skip_table[haystack.unsafe_get(i).to_int() & 0xFF], failures
   }
   None
 }
