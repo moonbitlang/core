@@ -575,6 +575,30 @@ test "from_octets" {
   check_invariant(a)
   @test.assert_eq(a, 0)
 
+  // Test multiple leading zero limbs
+  let a = BigInt::from_octets(b"\x00\x00\x00\x00\x00\x00\x00\x00\x26")
+  check_invariant(a)
+  inspect(a.to_string(), content="38")
+  @test.assert_eq(a, 38N)
+  @test.assert_eq(a.compare(38N), 0)
+
+  // Test zero spanning multiple limbs
+  let a = BigInt::from_octets(
+    b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00",
+  )
+  check_invariant(a)
+  inspect(a.to_string(), content="0")
+  @test.assert_eq(a, 0N)
+  @test.assert_eq(a.compare(0N), 0)
+  let a = BigInt::from_octets(
+    b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00",
+    signum=-1,
+  )
+  check_invariant(a)
+  inspect(a.to_string(), content="0")
+  @test.assert_eq(a, 0N)
+  @test.assert_eq(a.compare(0N), 0)
+
   // Test positive number
   let a = BigInt::from_octets(b"\x01")
   check_invariant(a)
