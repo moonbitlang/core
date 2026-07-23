@@ -12,20 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-///|
-/// Returns the textual representation of this error.
-pub fn Error::to_string(self : Error) -> String = "%error.to_string"
+// --- promoted: kept as regular methods (blessed public API) ---
+
+// --- deprecated: hidden from the generated interface ---
 
 ///|
-pub impl Show for Error with fn to_string(self) {
-  Error::to_string(self)
-}
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Error with Show::{output}
 
 ///|
-/// Returns the JSON representation of this error.
-pub fn Error::to_json(self : Error) -> Json = "%error.to_json"
-
-///|
-pub impl ToJson for Error with fn to_json(self) {
-  self.to_json()
-}

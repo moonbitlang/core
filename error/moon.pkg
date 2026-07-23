@@ -6,3 +6,5 @@ import {
 import {
   "moonbitlang/core/json",
 } for "test"
+
+warnings = "+implicit_impl_as_method"
