@@ -20,7 +20,7 @@ import {
   "moonbitlang/core/test",
 } for "wbtest"
 
-warnings = "-29"
+warnings = "-29+implicit_impl_as_method"
 
 options(
   targets: {
