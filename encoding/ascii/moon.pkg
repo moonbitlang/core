@@ -1,4 +1,13 @@
 import {
   "moonbitlang/core/builtin",
   "moonbitlang/core/debug",
+  "moonbitlang/core/v128",
 }
+
+import {
+  "moonbitlang/core/bench",
+} for "test"
+
+options(
+  targets: { "decode_v128_wbtest.mbt": [ "not", "js" ] },
+)
