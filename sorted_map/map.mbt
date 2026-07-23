@@ -559,7 +559,7 @@ fn[K, V] replace_root_with_min(
 
 ///|
 fn[K, V] Node::update_height(self : Node[K, V]) -> Unit {
-  self.height = 1 + max(height(self.left), height(self.right))
+  self.height = 1 + height(self.left).max(height(self.right))
 }
 
 ///|

@@ -904,7 +904,7 @@ fn[A : Compare] SortedSet::split_bis(
 }
 
 ///|
-/// Get the height of set.
+/// Returns the number of elements in the set.
 #alias(size, deprecated)
 #inline
 pub fn[A] SortedSet::length(self : SortedSet[A]) -> Int {
