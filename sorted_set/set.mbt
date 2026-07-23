@@ -308,10 +308,37 @@ pub fn[V : Compare] SortedSet::symmetric_difference(
   self : SortedSet[V],
   other : SortedSet[V],
 ) -> SortedSet[V] {
-  // TODO: Optimize this function to avoid creating two intermediate sets.
-  let set1 = self.difference(other)
-  let set2 = other.difference(self)
-  set1.union(set2)
+  // Merge-walk both sets in ascending order, keeping elements present in
+  // exactly one of them; this avoids building intermediate sets.
+  let ret = new_sorted_set()
+  let it1 = self.iter()
+  let it2 = other.iter()
+  for a = it1.next(), b = it2.next() {
+    match (a, b) {
+      (None, None) => break
+      (Some(x), None) => {
+        ret.add(x)
+        continue it1.next(), None
+      }
+      (None, Some(y)) => {
+        ret.add(y)
+        continue None, it2.next()
+      }
+      (Some(x), Some(y)) => {
+        let c = x.compare(y)
+        if c < 0 {
+          ret.add(x)
+          continue it1.next(), b
+        } else if c > 0 {
+          ret.add(y)
+          continue a, it2.next()
+        } else {
+          continue it1.next(), it2.next()
+        }
+      }
+    }
+  }
+  ret
 }
 
 ///|

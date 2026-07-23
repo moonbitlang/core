@@ -500,6 +500,36 @@ test "@sorted_set.symmetric_difference/empty" {
 }
 
 ///|
+test "@sorted_set.symmetric_difference/interleaved" {
+  // Alternating order between the two sets exercises both advance paths
+  // of the merge walk
+  let set1 = @sorted_set.from_array([1, 3, 5, 7, 9])
+  let set2 = @sorted_set.from_array([2, 3, 6, 7, 10])
+  let result = set1.symmetric_difference(set2)
+  debug_inspect(
+    result,
+    content=(
+      #|<SortedSet: [1, 2, 5, 6, 9, 10]>
+    ),
+  )
+}
+
+///|
+test "@sorted_set.symmetric_difference/proper subset" {
+  // One set strictly inside the other's range
+  let set1 = @sorted_set.from_array([1, 2, 3, 4, 5, 6, 7, 8])
+  let set2 = @sorted_set.from_array([3, 4])
+  let result = set1.symmetric_difference(set2)
+  debug_inspect(
+    result,
+    content=(
+      #|<SortedSet: [1, 2, 5, 6, 7, 8]>
+    ),
+  )
+  debug_inspect(result.length(), content="6")
+}
+
+///|
 test "@sorted_set.symmetric_difference/identical" {
   // Test with identical sets
   let set1 = @sorted_set.from_array([1, 2, 3, 4, 5])
