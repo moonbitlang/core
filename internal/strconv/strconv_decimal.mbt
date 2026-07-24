@@ -24,6 +24,7 @@ priv struct Decimal {
   mut decimal_point : Int
   mut negative : Bool
   mut truncated : Bool
+  mut overflowed : Int
 }
 
 ///|
@@ -41,6 +42,7 @@ fn Decimal::new_priv() -> Decimal {
     decimal_point: 0,
     negative: false,
     truncated: false,
+    overflowed: 0,
   }
 }
 
@@ -90,8 +92,11 @@ fn parse_decimal_from_view(str : StringView) -> Decimal raise {
         if d.digits_num < d.digits.length() {
           d.digits[d.digits_num] = (digit.to_int() - '0').to_byte()
           d.digits_num += 1
-        } else if digit != '0' {
-          d.truncated = true
+        } else {
+          d.overflowed += 1
+          if digit != '0' {
+            d.truncated = true
+          }
         }
         continue rest
       }
@@ -169,7 +174,9 @@ fn Decimal::to_double_priv(self : Decimal) -> Double raise {
   let mut mantissa = 0L
   // check the underflow and overflow
   // Double: 1.79769e+308 (10^308) - 2.22507e-308 (10^-308)
-  if self.digits_num == 0 || self.decimal_point < -330 {
+  let effective_dp = self.decimal_point + self.overflowed
+
+  if self.digits_num == 0 || effective_dp < -330 {
     // zero
     mantissa = 0
     exponent = double_info.bias
