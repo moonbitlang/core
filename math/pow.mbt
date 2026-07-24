@@ -25,6 +25,28 @@
 // is preserved.
 // ====================================================
 ///
+/// Copyright (c) 1992-2026 The FreeBSD Project.
+/// 
+/// Redistribution and use in source and binary forms, with or without
+/// modification, are permitted provided that the following conditions
+/// are met:
+/// 1. Redistributions of source code must retain the above copyright
+///    notice, this list of conditions and the following disclaimer.
+/// 2. Redistributions in binary form must reproduce the above copyright
+///    notice, this list of conditions and the following disclaimer in the
+///    documentation and/or other materials provided with the distribution.
+/// 
+/// THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
+/// ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+/// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+/// ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+/// FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+/// DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+/// OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+/// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+/// LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+/// OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+/// SUCH DAMAGE.
 
 ///|
 /// Calculates the power of a floating-point number raised to another
@@ -54,8 +76,8 @@ pub fn powf(base : Float, exponent : Float) -> Float {
   let cp_l : Float = -1.1736857402e-04 // 0xb8f623c6 =tail of cp_h */
   let lg2 : Float = 6.9314718246e-01 // 0x3f317218 */
   let lg2_h : Float = 6.93145752e-01 // 0x3f317200 */
-  let lg2_l : Float = 1.4286067653e-06 // 0x35bfbe8c */
-  let ovt : Float = 8.0085662595e-08 // -(2**-28)/(log(2)**2) */
+  let lg2_l : Float = 1.42860654e-06 // 0x35bfbe8c */
+  let ovt : Float = 4.2995665694e-08 // -(128-log2(ovfl+.5ulp)) */
   let ivln2 : Float = 1.4426950216e+00 // 0x3f317218 */
   let ivln2_h : Float = 1.4426879883e+00 // 0x3f317218 */
   let ivln2_l : Float = 7.0526075433e-06 // 0x35bfbe8c */
@@ -200,7 +222,7 @@ pub fn powf(base : Float, exponent : Float) -> Float {
   if iy > 0x4d000000 {
     // if |y| > 2**27
     // over/underflow if x is not close to one
-    if ix < 0x3f7ffff8 {
+    if ix < 0x3f7ffff6 {
       return if hy < 0 { sn * huge * huge } else { sn * tiny * tiny }
     }
     if ix > 0x3f800007 {

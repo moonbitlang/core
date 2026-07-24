@@ -214,6 +214,30 @@ test "powf branch coverage" {
 }
 
 ///|
+test "powf large exponents near one" {
+  let base = Float::reinterpret_from_uint(0x3f7ffff7U)
+  let lower_base = Float::reinterpret_from_uint(0x3f7ffff6U)
+  let positive_exponent = Float::reinterpret_from_uint(0x4d000001U)
+  let negative_exponent = Float::reinterpret_from_uint(0xcd000001U)
+  inspect(
+    @math.powf(base, positive_exponent).reinterpret_as_uint(),
+    content="193703033", // 0x0b8bac79
+  )
+  inspect(
+    @math.powf(base, negative_exponent).reinterpret_as_uint(),
+    content="1936366233", // 0x736a9a99
+  )
+  inspect(
+    @math.powf(lower_base, positive_exponent).reinterpret_as_uint(),
+    content="96463638", // 0x05bfeb16
+  )
+  inspect(
+    @math.powf(lower_base, negative_exponent).reinterpret_as_uint(),
+    content="2032844099", // 0x792abd43
+  )
+}
+
+///|
 test "powf subnormal normalization path" {
   let sub = Float::reinterpret_from_int(1)
   let res = @math.powf(sub, 1.0)
