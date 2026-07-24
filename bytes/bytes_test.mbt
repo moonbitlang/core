@@ -112,9 +112,9 @@ test "hash" {
   let h4 = Hasher(seed=0)
   h4.combine(b4)
   inspect(h4.finalize(), content="1297183151")
-  inspect(b1.hash() == b1.hash(), content="true")
-  inspect(b2.hash() == b2.hash(), content="true")
-  inspect(b1.hash() == b2.hash(), content="false")
+  inspect(hash(b1) == hash(b1), content="true")
+  inspect(hash(b2) == hash(b2), content="true")
+  inspect(hash(b1) == hash(b2), content="false")
 }
 
 ///|

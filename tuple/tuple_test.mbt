@@ -120,12 +120,12 @@ test "compare" {
 test "hash" {
   let tuple1 = (1, 2, 3, 4, 5)
   let tuple2 = (1, 2, 3, 4, 5)
-  inspect(tuple1.hash() == tuple2.hash(), content="true")
+  inspect(hash(tuple1) == hash(tuple2), content="true")
   let tuple3 = (5, 4, 3, 2, 1)
-  inspect(tuple1.hash() == tuple1.hash(), content="true")
-  inspect(tuple2.hash() == tuple2.hash(), content="true")
-  inspect(tuple3.hash() == tuple3.hash(), content="true")
-  inspect(tuple1.hash() == tuple3.hash(), content="false")
+  inspect(hash(tuple1) == hash(tuple1), content="true")
+  inspect(hash(tuple2) == hash(tuple2), content="true")
+  inspect(hash(tuple3) == hash(tuple3), content="true")
+  inspect(hash(tuple1) == hash(tuple3), content="false")
 }
 
 ///|

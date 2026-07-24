@@ -17,9 +17,9 @@ test "hash" {
   let d1 = 123.456
   let d2 = 789.012
   let d3 = 123.456
-  @test.assert_eq(d1.hash(), d1.reinterpret_as_int64() |> Hash::hash())
-  @test.assert_not_eq(d1.hash(), d2.hash())
-  @test.assert_eq(d1.hash(), d3.hash())
+  @test.assert_eq(hash(d1), d1.reinterpret_as_int64() |> Hash::hash())
+  @test.assert_not_eq(hash(d1), hash(d2))
+  @test.assert_eq(hash(d1), hash(d3))
 }
 
 ///|

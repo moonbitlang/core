@@ -661,8 +661,8 @@ test "hash" {
   let a = "abc"
   let b = "def"
   let c = "abc"
-  @test.assert_eq(a.hash(), c.hash())
-  @test.assert_not_eq(a.hash(), b.hash())
+  @test.assert_eq(hash(a), hash(c))
+  @test.assert_not_eq(hash(a), hash(b))
 }
 
 ///|
@@ -674,7 +674,7 @@ test "string view hash invariant" {
   let strings : Array[String] = @quickcheck.samples(20)
   for s in strings {
     let view = s[:]
-    @test.assert_eq(s.hash(), view.hash())
+    @test.assert_eq(hash(s), hash(view))
   }
 }
 
