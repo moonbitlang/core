@@ -1,6 +1,7 @@
 import {
   "moonbitlang/core/builtin",
   "moonbitlang/core/debug",
+  "moonbitlang/core/deque",
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/test",
 }
