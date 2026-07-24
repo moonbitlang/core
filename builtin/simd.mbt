@@ -12,13 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// The 128-bit vector operations used by the SIMD byte scanners in
-// `bytes_find.mbt`. `builtin` cannot import `moonbitlang/core/v128` (that would
-// be a cycle), so the few ops the scanners need are hosted here directly.
+// The 128-bit vector operations used by the SIMD byte and UTF-16 scanners in
+// `bytes_find.mbt` and `string_methods.mbt`. `builtin` cannot import
+// `moonbitlang/core/v128` (that would be a cycle), so the few ops the scanners
+// need are hosted here directly.
 //
 // Scanner-only operations are gated to the linear-memory backends that use
 // them. `v128_make` and `v128_load` also support aligned bitstring extraction,
 // so they remain available on every backend with portable fallback bodies.
+// Scanner intrinsic declarations also carry scalar bodies for native builds
+// without hardware SIMD support.
 
 ///|
 fn v128_make(lo : UInt64, hi : UInt64) -> V128 = "%v128.make"
@@ -40,6 +43,14 @@ fn i8x16_splat(value : Byte) -> V128 {
 }
 
 ///|
+#cfg(any(target="native", target="wasm"))
+#intrinsic("%v128.i16x8_splat")
+fn i16x8_splat(value : UInt16) -> V128 {
+  let lane = value.to_uint64() * (0x0001000100010001 : UInt64)
+  v128_make(lane, lane)
+}
+
+///|
 #borrow(bytes)
 #intrinsic("%v128.v128_load")
 fn v128_load(bytes : FixedArray[Byte], offset : Int) -> V128 {
@@ -47,6 +58,26 @@ fn v128_load(bytes : FixedArray[Byte], offset : Int) -> V128 {
     fixedarray_read_uint64_le(bytes, offset),
     fixedarray_read_uint64_le(bytes, offset + 8),
   )
+}
+
+///|
+// Loads eight consecutive UTF-16 code units beginning at `offset`. The caller
+// must ensure `offset + 8 <= str.length()`.
+#borrow(str)
+#cfg(any(target="native", target="wasm"))
+#intrinsic("%v128.v128_load_i16x8")
+fn v128_load_i16x8(str : String, offset : Int) -> V128 {
+  let lo = for i in 0..<4; word = (0 : UInt64) {
+    continue word | (str.unsafe_get(offset + i).to_uint64() << (16 * i))
+  } nobreak {
+    word
+  }
+  let hi = for i in 0..<4; word = (0 : UInt64) {
+    continue word | (str.unsafe_get(offset + 4 + i).to_uint64() << (16 * i))
+  } nobreak {
+    word
+  }
+  v128_make(lo, hi)
 }
 
 ///|
@@ -68,9 +99,26 @@ fn i8x16_eq(a : V128, b : V128) -> V128 {
 
 ///|
 #cfg(any(target="native", target="wasm"))
+#intrinsic("%v128.i16x8_eq")
+fn i16x8_eq(a : V128, b : V128) -> V128 {
+  v128_make(
+    u64_u16_eq_mask(v128_lo(a), v128_lo(b)),
+    u64_u16_eq_mask(v128_hi(a), v128_hi(b)),
+  )
+}
+
+///|
+#cfg(any(target="native", target="wasm"))
 #intrinsic("%v128.i8x16_bitmask")
 fn i8x16_bitmask(value : V128) -> Int {
   u64_high_bits(v128_lo(value)) | (u64_high_bits(v128_hi(value)) << 8)
+}
+
+///|
+#cfg(any(target="native", target="wasm"))
+#intrinsic("%v128.v128_any_true")
+fn v128_any_true(value : V128) -> Bool {
+  v128_lo(value) != 0 || v128_hi(value) != 0
 }
 
 ///|
@@ -82,6 +130,24 @@ fn u64_byte_eq_mask(a : UInt64, b : UInt64) -> UInt64 {
     let shift = 8 * i
     let mask = if ((a >> shift) & 0xFF) == ((b >> shift) & 0xFF) {
       (0xFF : UInt64)
+    } else {
+      0
+    }
+    continue result | (mask << shift)
+  } nobreak {
+    result
+  }
+}
+
+///|
+// Per-lane equality mask over the four 16-bit lanes of a `UInt64`: each lane
+// becomes `0xFFFF` when the operands' lanes match, `0x0000` otherwise.
+#cfg(any(target="native", target="wasm"))
+fn u64_u16_eq_mask(a : UInt64, b : UInt64) -> UInt64 {
+  for i in 0..<4; result = (0 : UInt64) {
+    let shift = 16 * i
+    let mask = if ((a >> shift) & 0xFFFF) == ((b >> shift) & 0xFFFF) {
+      (0xFFFF : UInt64)
     } else {
       0
     }
