@@ -22,7 +22,7 @@
 ///
 /// ```mbt check
 /// test {
-///   inspect(compare(1, 2), content="-1")
+///   inspect(compare(1, 2).is_neg(), content="true")
 ///   inspect(compare("abc", "abc"), content="0")
 /// }
 /// ```
