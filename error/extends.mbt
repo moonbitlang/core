@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// --- promoted: kept as regular methods (blessed public API) ---
+///|
 
 // --- deprecated: hidden from the generated interface ---
 
@@ -20,5 +20,3 @@
 #deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Error with Show::{output}
-
-///|

@@ -449,8 +449,8 @@ pub impl[A : Hash + Compare] Hash for PriorityQueue[A] with fn hash_combine(
 ///   let pq2 = @priority_queue.from_array([1, 2, 4])
 ///   let pq3 = @priority_queue.from_array([1, 2])
 ///   inspect(pq1.compare(pq2), content="-1") // pq1 < pq2
-///   inspect(pq1.compare(pq3), content="1") // pq2 > pq1
-///   inspect(pq3.compare(pq1), content="-1") // pq1 > pq3 (longer)
+///   inspect(pq1.compare(pq3), content="1") // pq1 > pq3 (longer)
+///   inspect(pq3.compare(pq1), content="-1") // pq3 < pq1 (shorter)
 ///   inspect(pq1.compare(pq1), content="0") // pq1 = pq1
 /// }
 /// ```

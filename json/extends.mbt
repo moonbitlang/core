@@ -15,13 +15,25 @@
 // --- promoted: kept as regular methods (blessed public API) ---
 
 ///|
+pub extend JsonDecodeError with Eq::{equal, not_equal}
+
+///|
 pub extend JsonDecodeError with Show::{to_string}
+
+///|
+pub extend JsonPath with Eq::{equal, not_equal}
 
 ///|
 pub extend JsonPath with Show::{to_string}
 
 ///|
+pub extend ParseError with Eq::{equal, not_equal}
+
+///|
 pub extend ParseError with Show::{to_string}
+
+///|
+pub extend Position with Eq::{equal, not_equal}
 
 // --- deprecated: hidden from the generated interface ---
 
@@ -46,11 +58,6 @@ pub extend Json with ToJson::{to_json}
 pub extend JsonDecodeError with @debug.Debug::{to_repr}
 
 ///|
-#deprecated("Use `==` / `!=` instead", skip_current_package=true)
-#doc(hidden)
-pub extend JsonDecodeError with Eq::{equal, not_equal}
-
-///|
 #deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
 #doc(hidden)
 pub extend JsonDecodeError with Show::{output}
@@ -64,11 +71,6 @@ pub extend JsonDecodeError with ToJson::{to_json}
 #deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
 #doc(hidden)
 pub extend JsonPath with @debug.Debug::{to_repr}
-
-///|
-#deprecated("Use `==` / `!=` instead", skip_current_package=true)
-#doc(hidden)
-pub extend JsonPath with Eq::{equal, not_equal}
 
 ///|
 #deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
@@ -86,11 +88,6 @@ pub extend JsonPath with ToJson::{to_json}
 pub extend ParseError with @debug.Debug::{to_repr}
 
 ///|
-#deprecated("Use `==` / `!=` instead", skip_current_package=true)
-#doc(hidden)
-pub extend ParseError with Eq::{equal, not_equal}
-
-///|
 #deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
 #doc(hidden)
 pub extend ParseError with Show::{output}
@@ -104,11 +101,6 @@ pub extend ParseError with ToJson::{to_json}
 #deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Position with @debug.Debug::{to_repr}
-
-///|
-#deprecated("Use `==` / `!=` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Position with Eq::{equal, not_equal}
 
 ///|
 #deprecated("Use `@json.to_json` instead", skip_current_package=true)

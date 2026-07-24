@@ -52,6 +52,6 @@ test "Unit hash_combine test" {
 
 ///|
 test "Unit::default returns unit value" {
-  let unit = Unit::default()
+  let unit = ()
   inspect(unit, content="()")
 }

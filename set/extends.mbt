@@ -24,7 +24,7 @@ pub extend Set with BitOr::{lor}
 pub extend Set with BitXOr::{lxor}
 
 ///|
-pub extend Set with Default::{default}
+pub extend Set with Eq::{equal, not_equal}
 
 ///|
 pub extend Set with Sub::{sub}
@@ -37,9 +37,9 @@ pub extend Set with Sub::{sub}
 pub extend Set with @debug.Debug::{to_repr}
 
 ///|
-#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+#deprecated("Use `Default::default` instead", skip_current_package=true)
 #doc(hidden)
-pub extend Set with Eq::{equal, not_equal}
+pub extend Set with Default::{default}
 
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)

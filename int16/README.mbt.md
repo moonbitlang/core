@@ -93,7 +93,7 @@ test "int16 comparison" {
 ```mbt check
 ///|
 test "int16 default" {
-  let x = Int16::default()
+  let x = (Default::default() : Int16)
   inspect(x, content="0")
 }
 ```

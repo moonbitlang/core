@@ -76,7 +76,7 @@ test "to_le_bytes" {
 
 ///|
 test "test UInt::default" {
-  inspect(UInt::default(), content="0")
+  inspect((Default::default() : UInt), content="0")
 }
 
 ///|

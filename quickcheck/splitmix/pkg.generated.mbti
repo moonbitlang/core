@@ -13,7 +13,6 @@ pub fn new(seed? : UInt64) -> RandomState
 // Types and methods
 type RandomState derive(Show, @debug.Debug)
 pub fn RandomState::clone(Self) -> Self
-pub fn RandomState::default() -> Self
 #deprecated
 pub fn RandomState::new(seed? : UInt64) -> Self
 pub fn RandomState::next(Self) -> Unit

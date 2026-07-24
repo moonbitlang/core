@@ -21,10 +21,13 @@ pub extend Float with Add::{add}
 pub extend Float with Compare::{compare}
 
 ///|
-pub extend Float with Default::{default}
+pub extend Float with Div::{div}
 
 ///|
-pub extend Float with Div::{div}
+pub extend Float with Eq::{not_equal, equal}
+
+///|
+pub extend Float with Hash::{hash}
 
 ///|
 pub extend Float with Mod::{mod}
@@ -56,14 +59,14 @@ pub extend Float with ToJson::{to_json}
 pub extend Float with Compare::{op_ge, op_gt, op_le, op_lt}
 
 ///|
-#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+#deprecated("Use `Default::default` instead", skip_current_package=true)
 #doc(hidden)
-pub extend Float with Eq::{not_equal, equal}
+pub extend Float with Default::{default}
 
 ///|
-#deprecated("Use `Hash::hash` / `Hash::hash_combine` instead", skip_current_package=true)
+#deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
 #doc(hidden)
-pub extend Float with Hash::{hash, hash_combine}
+pub extend Float with Hash::{hash_combine}
 
 ///|
 #deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)

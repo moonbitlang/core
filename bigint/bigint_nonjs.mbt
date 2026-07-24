@@ -1527,7 +1527,7 @@ pub fn BigInt::to_octets(self : BigInt, length? : Int) -> Bytes {
   let tail_len = self.len - 1
   let len = (head_bits + 7) / 8 + tail_len * (RADIX_BIT_LEN / 8)
   let len = max(length, len)
-  let result = FixedArray::make(len, Byte::default())
+  let result = FixedArray::make(len, b'\x00')
   for i in 0..<len {
     if i / 4 >= self.len {
       break

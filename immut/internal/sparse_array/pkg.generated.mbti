@@ -14,7 +14,9 @@ pub fn[X] singleton(Int, X) -> SparseArray[X]
 
 // Types and methods
 pub struct Bitset(UInt) derive(Eq)
+pub fn Bitset::equal(Self, Self) -> Bool
 pub fn Bitset::first_idx(Self) -> Int
+pub fn Bitset::not_equal(Self, Self) -> Bool
 
 pub struct SparseArray[X] {
   elem_info : Bitset
@@ -23,12 +25,14 @@ pub struct SparseArray[X] {
 pub fn[X] SparseArray::add(Self[X], Int, X) -> Self[X]
 pub fn[X] SparseArray::difference(Self[X], Self[X], (X, X) -> X?) -> Self[X]?
 pub fn[X] SparseArray::each(Self[X], (X) -> Unit raise?) -> Unit raise?
+pub fn[X : Eq] SparseArray::equal(Self[X], Self[X]) -> Bool
 pub fn[X] SparseArray::filter(Self[X], (X) -> X? raise?) -> Self[X]? raise?
 pub fn[X] SparseArray::get(Self[X], Int) -> X?
 pub fn[X] SparseArray::intersection(Self[X], Self[X], (X, X) -> X? raise?) -> Self[X]? raise?
 #alias(size, deprecated)
 pub fn[X] SparseArray::length(Self[X]) -> Int
 pub fn[X, Y] SparseArray::map(Self[X], (X) -> Y raise?) -> Self[Y] raise?
+pub fn[X : Eq] SparseArray::not_equal(Self[X], Self[X]) -> Bool
 pub fn[X] SparseArray::remove(Self[X], Int) -> Self[X]
 pub fn[X] SparseArray::replace(Self[X], Int, X) -> Self[X]
 pub fn[X] SparseArray::union(Self[X], Self[X], (X, X) -> X raise?) -> Self[X] raise?

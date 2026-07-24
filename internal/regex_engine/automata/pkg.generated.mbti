@@ -42,21 +42,33 @@ type Expr
 
 pub(all) struct Mark(Int) derive(Compare, Eq, Hash)
 pub fn Mark::compare(Self, Self) -> Int
+pub fn Mark::equal(Self, Self) -> Bool
+pub fn Mark::hash(Self) -> Int
+pub fn Mark::not_equal(Self, Self) -> Bool
 
 type MarkSlotMap derive(Eq, Hash)
+pub fn MarkSlotMap::equal(Self, Self) -> Bool
 pub fn MarkSlotMap::get_slot(Self, Mark) -> Slot
+pub fn MarkSlotMap::hash(Self) -> Int
 pub fn MarkSlotMap::iter2(Self) -> Iter2[Mark, Slot]
+pub fn MarkSlotMap::not_equal(Self, Self) -> Bool
 
 pub struct Slot {
   index : Int
 } derive(Eq, Hash)
+pub fn Slot::equal(Self, Self) -> Bool
 pub fn Slot::from_index(Int) -> Self
+pub fn Slot::hash(Self) -> Int
 pub fn Slot::is_assigned(Self) -> Bool
+pub fn Slot::not_equal(Self, Self) -> Bool
 pub fn Slot::unassigned() -> Self
 
 pub struct State {
   // private fields
 }
+pub fn State::equal(Self, Self) -> Bool
+pub fn State::hash(Self) -> Int
+pub fn State::not_equal(Self, Self) -> Bool
 pub fn State::slot(Self) -> Slot
 pub fn State::start(@shared_types.Category, Expr) -> Self
 pub fn State::status(Self) -> Status

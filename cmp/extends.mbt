@@ -17,6 +17,12 @@
 ///|
 pub extend Reverse with Compare::{compare}
 
+///|
+pub extend Reverse with Eq::{equal, not_equal}
+
+///|
+pub extend Reverse with Hash::{hash}
+
 // --- deprecated: hidden from the generated interface ---
 
 ///|
@@ -30,14 +36,9 @@ pub extend Reverse with @debug.Debug::{to_repr}
 pub extend Reverse with Compare::{op_ge, op_gt, op_le, op_lt}
 
 ///|
-#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+#deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
 #doc(hidden)
-pub extend Reverse with Eq::{equal, not_equal}
-
-///|
-#deprecated("Use `Hash::hash` / `Hash::hash_combine` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Reverse with Hash::{hash, hash_combine}
+pub extend Reverse with Hash::{hash_combine}
 
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show`", skip_current_package=true)

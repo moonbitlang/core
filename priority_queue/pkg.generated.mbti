@@ -21,7 +21,6 @@ pub fn[A : Compare] PriorityQueue::PriorityQueue(ArrayView[A]) -> Self[A]
 pub fn[A] PriorityQueue::clear(Self[A]) -> Unit
 #alias(clone, deprecated)
 pub fn[A] PriorityQueue::copy(Self[A]) -> Self[A]
-pub fn[K] PriorityQueue::default() -> Self[K]
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
 #as_free_fn

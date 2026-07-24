@@ -15,14 +15,9 @@
 // --- promoted: kept as regular methods ---
 
 ///|
-pub extend SortedSet with Default::{default}
+pub extend SortedSet with Eq::{equal, not_equal}
 
 // --- deprecated: hidden from the generated interface ---
-
-///|
-#deprecated("Use `@quickcheck.Arbitrary::arbitrary` instead", skip_current_package=true)
-#doc(hidden)
-pub extend SortedSet with @quickcheck.Arbitrary::{arbitrary}
 
 ///|
 #deprecated("Use the `@debug.Debug` trait instead", skip_current_package=true)
@@ -30,9 +25,14 @@ pub extend SortedSet with @quickcheck.Arbitrary::{arbitrary}
 pub extend SortedSet with @debug.Debug::{to_repr}
 
 ///|
-#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+#deprecated("Use `@quickcheck.Arbitrary::arbitrary` instead", skip_current_package=true)
 #doc(hidden)
-pub extend SortedSet with Eq::{equal, not_equal}
+pub extend SortedSet with @quickcheck.Arbitrary::{arbitrary}
+
+///|
+#deprecated("Use `Default::default` instead", skip_current_package=true)
+#doc(hidden)
+pub extend SortedSet with Default::{default}
 
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)

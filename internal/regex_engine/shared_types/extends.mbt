@@ -17,17 +17,24 @@
 ///|
 pub extend Category with Add::{add}
 
-// --- deprecated: hidden from the generated interface ---
-
 ///|
-#deprecated("Use `==` / `!=` instead", skip_current_package=true)
-#doc(hidden)
 pub extend Category with Eq::{equal, not_equal}
 
 ///|
-#deprecated("Use `Hash::hash` / `Hash::hash_combine` instead", skip_current_package=true)
+pub extend Category with Hash::{hash}
+
+///|
+pub extend Preference with Eq::{equal, not_equal}
+
+///|
+pub extend Preference with Hash::{hash}
+
+// --- deprecated: hidden from the generated interface ---
+
+///|
+#deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
 #doc(hidden)
-pub extend Category with Hash::{hash, hash_combine}
+pub extend Category with Hash::{hash_combine}
 
 ///|
 #deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
@@ -35,14 +42,9 @@ pub extend Category with Hash::{hash, hash_combine}
 pub extend Preference with @debug.Debug::{to_repr}
 
 ///|
-#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+#deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
 #doc(hidden)
-pub extend Preference with Eq::{equal, not_equal}
-
-///|
-#deprecated("Use `Hash::hash` / `Hash::hash_combine` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Preference with Hash::{hash, hash_combine}
+pub extend Preference with Hash::{hash_combine}
 
 ///|
 #deprecated("Use `Debug::to_repr` instead", skip_current_package=true)

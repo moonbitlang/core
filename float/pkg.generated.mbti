@@ -27,8 +27,8 @@ pub fn Float::add(Float, Float) -> Float
 pub fn Float::ceil(Float) -> Float
 pub fn Float::clamp(Float, min~ : Float, max~ : Float) -> Float
 pub fn Float::compare(Float, Float) -> Int
-pub fn Float::default() -> Float
 pub fn Float::div(Float, Float) -> Float
+pub fn Float::equal(Float, Float) -> Bool
 #as_free_fn
 pub fn Float::floor(Float) -> Float
 pub fn Float::from_byte(Byte) -> Float
@@ -37,6 +37,7 @@ pub fn Float::from_int(Int) -> Float
 pub fn Float::from_int64(Int64) -> Float
 pub fn Float::from_uint(UInt) -> Float
 pub fn Float::from_uint64(UInt64) -> Float
+pub fn Float::hash(Float) -> Int
 pub fn Float::is_close(Float, Float, relative_tolerance? : Float, absolute_tolerance? : Float) -> Bool
 pub fn Float::is_inf(Float) -> Bool
 pub fn Float::is_nan(Float) -> Bool
@@ -48,6 +49,7 @@ pub fn Float::min(Float, Float) -> Float
 pub fn Float::mod(Float, Float) -> Float
 pub fn Float::mul(Float, Float) -> Float
 pub fn Float::neg(Float) -> Float
+pub fn Float::not_equal(Float, Float) -> Bool
 #as_free_fn(deprecated)
 #deprecated
 pub fn Float::pow(Float, Float) -> Float

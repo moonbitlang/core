@@ -27,7 +27,7 @@ let powtab : ReadOnlyArray[Int] = [
 ///|
 fn Decimal::new_priv() -> Decimal {
   {
-    digits: FixedArray::make(800, Byte::default()),
+    digits: FixedArray::make(800, b'\x00'),
     digits_num: 0,
     decimal_point: 0,
     negative: false,
@@ -322,7 +322,7 @@ fn Decimal::should_round_up(self : Decimal, d : Int) -> Bool {
 ///|
 /// Assign a Int64 value to decimal.
 fn Decimal::assign(self : Decimal, v : Int64) -> Unit {
-  let buf = FixedArray::make(24, Byte::default())
+  let buf = FixedArray::make(24, b'\x00')
 
   // write value to buf
   let n = for n = 0, v = v; v > 0; {

@@ -15,6 +15,9 @@
 // --- promoted: kept as regular methods ---
 
 ///|
+pub extend V128 with Eq::{equal, not_equal}
+
+///|
 pub extend V128 with Show::{to_string}
 
 // --- deprecated: hidden from the generated interface ---
@@ -23,11 +26,6 @@ pub extend V128 with Show::{to_string}
 #deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
 #doc(hidden)
 pub extend V128 with @debug.Debug::{to_repr}
-
-///|
-#deprecated("Use `==` / `!=` instead", skip_current_package=true)
-#doc(hidden)
-pub extend V128 with Eq::{equal, not_equal}
 
 ///|
 #deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)

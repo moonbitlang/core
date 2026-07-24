@@ -23,6 +23,8 @@ pub fn valid(StringView) -> Bool
 pub(all) suberror JsonDecodeError {
   JsonDecodeError((JsonPath, String))
 } derive(Eq, Show, ToJson, @debug.Debug)
+pub fn JsonDecodeError::equal(Self, Self) -> Bool
+pub fn JsonDecodeError::not_equal(Self, Self) -> Bool
 pub fn JsonDecodeError::to_string(Self) -> String
 
 pub(all) suberror ParseError {
@@ -32,6 +34,8 @@ pub(all) suberror ParseError {
   InvalidIdentEscape(Position)
   DepthLimitExceeded
 } derive(Eq, ToJson, @debug.Debug)
+pub fn ParseError::equal(Self, Self) -> Bool
+pub fn ParseError::not_equal(Self, Self) -> Bool
 pub fn ParseError::to_string(Self) -> String
 pub impl Show for ParseError
 
@@ -39,6 +43,8 @@ pub impl Show for ParseError
 type JsonPath derive(Eq, @debug.Debug)
 pub fn JsonPath::add_index(Self, Int) -> Self
 pub fn JsonPath::add_key(Self, String) -> Self
+pub fn JsonPath::equal(Self, Self) -> Bool
+pub fn JsonPath::not_equal(Self, Self) -> Bool
 pub fn JsonPath::to_string(Self) -> String
 pub impl Show for JsonPath
 pub impl ToJson for JsonPath
@@ -47,6 +53,8 @@ pub(all) struct Position {
   line : Int
   column : Int
 } derive(Eq, ToJson, @debug.Debug)
+pub fn Position::equal(Self, Self) -> Bool
+pub fn Position::not_equal(Self, Self) -> Bool
 
 pub struct Replacer {
   // private fields

@@ -14,14 +14,10 @@
 
 // Bitset and SparseArray have no promoted trait methods; every promotion below is deprecated.
 
-// --- deprecated: hidden from the generated interface ---
+// --- promoted: kept as regular methods ---
 
 ///|
-#deprecated("Use `==` / `!=` instead", skip_current_package=true)
-#doc(hidden)
 pub extend Bitset with Eq::{equal, not_equal}
 
 ///|
-#deprecated("Use `==` / `!=` instead", skip_current_package=true)
-#doc(hidden)
 pub extend SparseArray with Eq::{equal, not_equal}

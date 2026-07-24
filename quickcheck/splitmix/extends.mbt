@@ -15,9 +15,6 @@
 // --- promoted: kept as regular methods ---
 
 ///|
-pub extend RandomState with Default::{default}
-
-///|
 pub extend RandomState with Show::{to_string}
 
 // --- deprecated: hidden from the generated interface ---
@@ -26,6 +23,11 @@ pub extend RandomState with Show::{to_string}
 #deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
 #doc(hidden)
 pub extend RandomState with @debug.Debug::{to_repr}
+
+///|
+#deprecated("Use `Default::default` instead", skip_current_package=true)
+#doc(hidden)
+pub extend RandomState with Default::{default}
 
 ///|
 #deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)

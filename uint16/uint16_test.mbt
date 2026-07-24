@@ -375,7 +375,7 @@ test "UInt16::hash_combine" {
 
 ///|
 test "UInt16::default" {
-  inspect(UInt16::default(), content="0")
+  inspect((Default::default() : UInt16), content="0")
 }
 
 ///|

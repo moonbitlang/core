@@ -27,11 +27,11 @@ pub fn[A] List::concat(Self[A], Self[A]) -> Self[A]
 #as_free_fn
 pub fn[A] List::cons(A, Self[A]) -> Self[A]
 pub fn[A : Eq] List::contains(Self[A], A) -> Bool
-pub fn[X] List::default() -> Self[X]
 pub fn[A] List::drop(Self[A], Int) -> Self[A]
 pub fn[A] List::drop_while(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 pub fn[A] List::each(Self[A], (A) -> Unit raise?) -> Unit raise?
 pub fn[A] List::eachi(Self[A], (Int, A) -> Unit raise?) -> Unit raise?
+pub fn[A : Eq] List::equal(Self[A], Self[A]) -> Bool
 pub fn[A] List::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 pub fn[A, B] List::filter_map(Self[A], (A) -> B? raise?) -> Self[B] raise?
 pub fn[A] List::find(Self[A], (A) -> Bool raise?) -> A? raise?
@@ -56,6 +56,7 @@ pub fn[A] List::from_iter(Iter[A]) -> Self[A]
 pub fn[A] List::from_iter_rev(Iter[A]) -> Self[A]
 #as_free_fn
 pub fn[A : @json.FromJson] List::from_json(Json) -> Self[A] raise @json.JsonDecodeError
+pub fn[A : Hash] List::hash(Self[A]) -> Int
 pub fn[A] List::head(Self[A]) -> A?
 pub fn[A] List::intercalate(Self[Self[A]], Self[A]) -> Self[A]
 pub fn[A] List::intersperse(Self[A], A) -> Self[A]
@@ -77,6 +78,7 @@ pub fn[A : Compare] List::minimum(Self[A]) -> A?
 #as_free_fn(empty)
 #as_free_fn
 pub fn[A] List::new() -> Self[A]
+pub fn[A : Eq] List::not_equal(Self[A], Self[A]) -> Bool
 pub fn[A] List::nth(Self[A], Int) -> A?
 #alias(add)
 pub fn[A] List::prepend(Self[A], A) -> Self[A]

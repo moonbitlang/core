@@ -37,6 +37,7 @@ pub fn[A] Deque::copy(Self[A]) -> Self[A]
 pub fn[A] Deque::drain(Self[A], start~ : Int, len? : Int) -> Self[A]
 pub fn[A] Deque::each(Self[A], (A) -> Unit) -> Unit
 pub fn[A] Deque::eachi(Self[A], (Int, A) -> Unit) -> Unit
+pub fn[A : Eq] Deque::equal(Self[A], Self[A]) -> Bool
 pub fn[A] Deque::extract_if(Self[A], (A) -> Bool) -> Self[A]
 pub fn[A] Deque::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 pub fn[A] Deque::flatten(Self[Self[A]]) -> Self[A]
@@ -46,6 +47,7 @@ pub fn[A] Deque::flatten(Self[Self[A]]) -> Self[A]
 pub fn[A] Deque::from_iter(Iter[A]) -> Self[A]
 pub fn[A] Deque::front(Self[A]) -> A?
 pub fn[A] Deque::get(Self[A], Int) -> A?
+pub fn[A : Hash] Deque::hash(Self[A]) -> Int
 pub fn[A] Deque::insert(Self[A], Int, A) -> Unit
 pub fn[A] Deque::is_empty(Self[A]) -> Bool
 #alias(iterator, deprecated)
@@ -59,6 +61,7 @@ pub fn[A, U] Deque::mapi(Self[A], (Int, A) -> U) -> Self[U]
 #as_free_fn(deprecated)
 #deprecated
 pub fn[A] Deque::new(capacity? : Int) -> Self[A]
+pub fn[A : Eq] Deque::not_equal(Self[A], Self[A]) -> Bool
 pub fn[A] Deque::pop_back(Self[A]) -> A?
 pub fn[A] Deque::pop_front(Self[A]) -> A?
 pub fn[A] Deque::push_back(Self[A], A) -> Unit

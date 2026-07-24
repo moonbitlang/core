@@ -20,7 +20,7 @@ test "string creation" {
   inspect(str2, content="World")
 
   // Default empty string
-  let empty = String::default()
+  let empty = ""
   inspect(empty, content="")
 }
 ```

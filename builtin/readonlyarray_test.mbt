@@ -119,7 +119,7 @@ test "ReadOnlyArray search methods" {
 ///|
 test "ReadOnlyArray trait implementations" {
   // Test Default
-  let empty : ReadOnlyArray[Int] = ReadOnlyArray::default()
+  let empty : ReadOnlyArray[Int] = (Default::default() : ReadOnlyArray[_])
   inspect(empty.length(), content="0")
 
   // Test Debug

@@ -30,10 +30,13 @@ pub extend BigInt with BitXOr::{lxor}
 pub extend BigInt with Compare::{compare}
 
 ///|
-pub extend BigInt with Default::{default}
+pub extend BigInt with Div::{div}
 
 ///|
-pub extend BigInt with Div::{div}
+pub extend BigInt with Eq::{equal, not_equal}
+
+///|
+pub extend BigInt with Hash::{hash}
 
 ///|
 pub extend BigInt with Mod::{mod}
@@ -46,6 +49,12 @@ pub extend BigInt with Neg::{neg}
 
 ///|
 pub extend BigInt with Sub::{sub}
+
+// `BigInt::to_json` is promoted (not deprecated): it has cross-package method-syntax
+// callers (builtin/json tests); deprecating it would break `--deny-warn`.
+
+///|
+pub extend BigInt with ToJson::{to_json}
 
 // --- deprecated: hidden from the generated interface ---
 
@@ -70,22 +79,16 @@ pub extend BigInt with @quickcheck.Arbitrary::{arbitrary}
 pub extend BigInt with Compare::{op_lt, op_le, op_ge, op_gt}
 
 ///|
-#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+#deprecated("Use `Default::default` instead", skip_current_package=true)
 #doc(hidden)
-pub extend BigInt with Eq::{equal, not_equal}
+pub extend BigInt with Default::{default}
 
 ///|
-#deprecated("Use `Hash::hash` / `Hash::hash_combine` instead", skip_current_package=true)
+#deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
 #doc(hidden)
-pub extend BigInt with Hash::{hash, hash_combine}
+pub extend BigInt with Hash::{hash_combine}
 
 ///|
 #deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
 #doc(hidden)
 pub extend BigInt with Show::{output}
-
-// `BigInt::to_json` is promoted (not deprecated): it has cross-package method-syntax
-// callers (builtin/json tests); deprecating it would break `--deny-warn`.
-
-///|
-pub extend BigInt with ToJson::{to_json}
