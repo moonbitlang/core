@@ -11,7 +11,9 @@ import {
 // Errors
 
 // Types and methods
-type Deque[A]
+pub struct Deque[A] {
+  // private fields
+}
 #alias(from_array)
 #alias(of, deprecated)
 #as_free_fn(of, deprecated)
