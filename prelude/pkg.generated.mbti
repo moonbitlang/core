@@ -28,6 +28,8 @@ pub fn[T : @builtin.Eq + @debug.Debug] assert_not_eq(T, T, msg? : String, loc~ :
 #callsite(autofill(loc))
 pub fn assert_true(Bool, msg? : StringView, loc~ : @builtin.SourceLoc) -> Unit raise
 
+pub fn[A : @builtin.Compare] compare(A, A) -> Int
+
 pub fn[T : @debug.Debug] debug(T) -> Unit
 
 pub fn debug_assert(() -> Bool) -> Unit

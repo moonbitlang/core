@@ -26,6 +26,7 @@ pub using @builtin {
   abort,
   assert_true,
   assert_false,
+  compare,
   debug_assert,
   fail,
   ignore,
