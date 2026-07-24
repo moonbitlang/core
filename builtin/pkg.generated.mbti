@@ -10,6 +10,8 @@ pub fn assert_false(Bool, msg? : StringView, loc~ : SourceLoc) -> Unit raise
 #callsite(autofill(loc))
 pub fn assert_true(Bool, msg? : StringView, loc~ : SourceLoc) -> Unit raise
 
+pub fn[A : Compare] compare(A, A) -> Int
+
 pub fn debug_assert(() -> Bool) -> Unit
 
 #callsite(autofill(loc))
