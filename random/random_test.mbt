@@ -139,7 +139,7 @@ test "Rand::new uses entropy when available" {
 }
 
 ///|
-#cfg(any(target="wasm", target="wasm-gc"))
+#cfg(target="wasm-gc")
 test "Rand::new fallback is deterministic without entropy" {
   let r1 = @random.Rand::new()
   let r2 = @random.Rand::new()

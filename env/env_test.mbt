@@ -50,8 +50,17 @@ test "rand non-positive length probes availability" {
 }
 
 ///|
-#cfg(any(target="wasm", target="wasm-gc"))
-test "wasm rand empty request reports unsupported" {
+#cfg(target="wasm")
+test "wasm rand is always available" {
+  guard @env.rand(32) is Some(bytes) else {
+    fail("expected WASI random_get to be available")
+  }
+  @test.assert_eq(bytes.length(), 32)
+}
+
+///|
+#cfg(target="wasm-gc")
+test "wasm-gc rand empty request reports unsupported" {
   assert_true(@env.rand(0) is None)
 }
 
