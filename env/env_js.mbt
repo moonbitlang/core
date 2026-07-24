@@ -119,3 +119,28 @@ extern "js" fn unset_env_var_ffi(key : String) -> Unit =
   #|     delete process.env[key];
   #|   }
   #| }
+
+///|
+fn rand_internal(to_be_filled : FixedArray[Byte]) -> Bool {
+  if to_be_filled.length() == 0 {
+    return true
+  }
+  get_random_values_js(to_be_filled)
+}
+
+///|
+extern "js" fn get_random_values_js(to_be_filled : FixedArray[Byte]) -> Bool =
+  #| function(toBeFilled) {
+  #|   const cryptoObj = globalThis.crypto;
+  #|   if (cryptoObj === undefined || typeof cryptoObj.getRandomValues !== "function") {
+  #|     return false;
+  #|   }
+  #|   try {
+  #|     for (let offset = 0; offset < toBeFilled.length; offset += 65536) {
+  #|       cryptoObj.getRandomValues(toBeFilled.subarray(offset, offset + 65536));
+  #|     }
+  #|     return true;
+  #|   } catch (_) {
+  #|     return false;
+  #|   }
+  #| }
