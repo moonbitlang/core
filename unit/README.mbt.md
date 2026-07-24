@@ -22,7 +22,7 @@ test "unit construction" {
   let u1 = ()
 
   // Via default constructor
-  let u2 = Unit::default()
+  let u2 = ()
   fn println(_ : String) {
 
   }
@@ -139,7 +139,7 @@ test "unit trait implementations" {
   inspect(h1 == h2, content="true")
 
   // Default instance
-  let u3 = Unit::default()
+  let u3 = ()
   inspect(u3 == u1, content="true")
 }
 ```

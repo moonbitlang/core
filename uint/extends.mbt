@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// --- promoted: kept as regular methods ---
+// --- deprecated: hidden from the generated interface ---
 
 ///|
+#deprecated("Use `Default::default` instead", skip_current_package=true)
+#doc(hidden)
 pub extend UInt with Default::{default}

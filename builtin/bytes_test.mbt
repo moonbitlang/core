@@ -51,7 +51,7 @@ test "sub_string" {
 
 ///|
 test "blit_from_string" {
-  let bytes = FixedArray::make(10, Byte::default())
+  let bytes = FixedArray::make(10, b'\x00')
   let str = "Hello"
   bytes.blit_from_string(0, str, 0, str.length())
   @test.assert_eq(Bytes::from_array(bytes).to_unchecked_string(), str)
@@ -177,7 +177,7 @@ test "set_utf16be_char" {
 
 ///|
 test "equal" {
-  let copy_bytes = FixedArray::make(HELLO_WORLD.length(), Byte::default())
+  let copy_bytes = FixedArray::make(HELLO_WORLD.length(), b'\x00')
   copy_bytes.blit_from_bytes(0, HELLO_WORLD, 0, HELLO_WORLD.length())
   let copy_bytes = Bytes::from_array(copy_bytes)
   @test.assert_eq(HELLO_WORLD, copy_bytes)
@@ -186,7 +186,7 @@ test "equal" {
 
 ///|
 test "fixedarray_byte_blit_from_string" {
-  let arr : FixedArray[Byte] = FixedArray::make(10, Byte::default())
+  let arr : FixedArray[Byte] = FixedArray::make(10, b'\x00')
   let str = "Hello"
   arr.blit_from_string(0, str, 0, str.length())
   debug_inspect(
@@ -200,7 +200,7 @@ test "fixedarray_byte_blit_from_string" {
 
 ///|
 test "fixedarray_byte_blit_from_bytes" {
-  let arr : FixedArray[Byte] = FixedArray::make(5, Byte::default())
+  let arr : FixedArray[Byte] = FixedArray::make(5, b'\x00')
   let bytes = b"Hello"
   arr.blit_from_bytes(0, bytes, 0, bytes.length())
   debug_inspect(

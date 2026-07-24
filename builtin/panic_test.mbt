@@ -183,35 +183,35 @@ test "panic sub_string with invalid byte_offset + byte_length" {
 
 ///|
 test "panic blit_from_string with invalid length" {
-  let bytes = FixedArray::make(10, Byte::default())
+  let bytes = FixedArray::make(10, b'\x00')
   let str = "Hello"
   bytes.blit_from_string(0, str, 0, -1) |> ignore
 }
 
 ///|
 test "panic blit_from_string with invalid bytes_offset" {
-  let bytes = FixedArray::make(10, Byte::default())
+  let bytes = FixedArray::make(10, b'\x00')
   let str = "Hello"
   bytes.blit_from_string(-1, str, 0, str.length()) |> ignore
 }
 
 ///|
 test "panic blit_from_string with invalid str_offset" {
-  let bytes = FixedArray::make(10, Byte::default())
+  let bytes = FixedArray::make(10, b'\x00')
   let str = "Hello"
   bytes.blit_from_string(0, str, -1, str.length()) |> ignore
 }
 
 ///|
 test "panic blit_from_string with invalid bytes_offset + length" {
-  let bytes = FixedArray::make(10, Byte::default())
+  let bytes = FixedArray::make(10, b'\x00')
   let str = "Hello"
   bytes.blit_from_string(0, str, 0, bytes.length() + 1) |> ignore
 }
 
 ///|
 test "panic blit_from_string with invalid str_offset + length" {
-  let bytes = FixedArray::make(10, Byte::default())
+  let bytes = FixedArray::make(10, b'\x00')
   let str = "Hello"
   bytes.blit_from_string(0, str, 0, str.length() + 1) |> ignore
 }

@@ -14,7 +14,7 @@
 
 ///|
 test "Json default value" {
-  let j = @builtin.Json::default()
+  let j = (Default::default() : Json)
   debug_inspect(j, content="False")
 }
 
@@ -158,7 +158,7 @@ test "Bool::to_json false" {
 
 ///|
 test "test UInt64::to_json" {
-  let num : UInt64 = UInt64::default()
+  let num : UInt64 = (Default::default() : UInt64)
   let json = num.to_json()
   debug_inspect(json, content="String(\"0\")")
 }
