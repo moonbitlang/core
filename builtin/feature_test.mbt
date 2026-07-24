@@ -61,7 +61,7 @@ fn labeld_break(xss : Array[Array[Double]]) -> Double? {
       }
       continue threshold
     } nobreak {
-      continue threshold
+      continue mylabel~ threshold
     }
   } nobreak {
     None
