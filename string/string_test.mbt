@@ -24,7 +24,7 @@ test "String::from_iter" {
 
 ///|
 test "default" {
-  inspect(String::default())
+  inspect("")
 }
 
 ///|
@@ -1023,7 +1023,7 @@ test "guard const" {
 
 ///|
 test "string default" {
-  inspect(String::default(), content="")
+  inspect("", content="")
 }
 
 ///|

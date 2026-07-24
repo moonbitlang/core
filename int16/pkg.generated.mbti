@@ -18,11 +18,12 @@ pub let min_value : Int16
 pub fn Int16::abs(Int16) -> Int16
 pub fn Int16::add(Int16, Int16) -> Int16
 pub fn Int16::compare(Int16, Int16) -> Int
-pub fn Int16::default() -> Int16
 pub fn Int16::div(Int16, Int16) -> Int16
+pub fn Int16::equal(Int16, Int16) -> Bool
 pub fn Int16::from_byte(Byte) -> Int16
 pub fn Int16::from_int(Int) -> Int16
 pub fn Int16::from_int64(Int64) -> Int16
+pub fn Int16::hash(Int16) -> Int
 pub fn Int16::land(Int16, Int16) -> Int16
 pub fn Int16::lnot(Int16) -> Int16
 pub fn Int16::lor(Int16, Int16) -> Int16

@@ -932,7 +932,7 @@ pub fn[A : ToStringView] ReadOnlyArray::join(
 ///|
 /// Default implementation for ReadOnlyArray - returns empty array.
 pub impl[T] Default for ReadOnlyArray[T] with fn default() {
-  unsafe_reinterpret_from_fixed_array(FixedArray::default())
+  unsafe_reinterpret_from_fixed_array(([] : FixedArray[_]))
 }
 
 ///|

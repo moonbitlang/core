@@ -20,19 +20,19 @@ test "unwrap should return value on Some" {
 
 ///|
 test "Option::default should return None" {
-  let x : Int? = Option::default()
+  let x : Int? = None
   assert_true(x == None)
 }
 
 ///|
 test "Option::default should return None for String" {
-  let x : String? = Option::default()
+  let x : String? = None
   assert_true(x == None)
 }
 
 ///|
 test "Option::default should return None for Bool" {
-  let x : Bool? = Option::default()
+  let x : Bool? = None
   assert_true(x == None)
 }
 

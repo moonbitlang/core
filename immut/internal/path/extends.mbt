@@ -14,9 +14,14 @@
 
 // Every trait-method promotion below is deprecated (none are kept as regular methods).
 
+// --- promoted: kept as regular methods ---
+
+///|
+pub extend Path with Eq::{equal}
+
 // --- deprecated: hidden from the generated interface ---
 
 ///|
-#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+#deprecated("Use `!=` instead", skip_current_package=true)
 #doc(hidden)
-pub extend Path with Eq::{equal, not_equal}
+pub extend Path with Eq::{not_equal}

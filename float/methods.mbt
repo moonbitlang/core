@@ -26,7 +26,7 @@ pub impl Show for Float with fn to_string(self) {
 ///
 /// ```mbt check
 /// test {
-///   inspect(Float::default(), content="0")
+///   inspect((Default::default() : Float), content="0")
 /// }
 /// ```
 pub impl Default for Float with fn default() {
