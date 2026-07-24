@@ -710,7 +710,7 @@ pub impl Compare for Int64 with fn op_ge(x, y) = "%i64.ge"
 ///
 /// ```mbt check
 /// test {
-///   inspect(Int64::default(), content="0")
+///   inspect(0L, content="0")
 /// }
 /// ```
 pub impl Default for Int64 with fn default() = "%i64_default"

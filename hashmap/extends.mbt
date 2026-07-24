@@ -15,7 +15,7 @@
 // --- promoted: kept as regular methods ---
 
 ///|
-pub extend HashMap with Default::{default}
+pub extend HashMap with Eq::{equal, not_equal}
 
 // --- deprecated: hidden from the generated interface ---
 
@@ -25,9 +25,9 @@ pub extend HashMap with Default::{default}
 pub extend HashMap with @quickcheck.Arbitrary::{arbitrary}
 
 ///|
-#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+#deprecated("Use `Default::default` instead", skip_current_package=true)
 #doc(hidden)
-pub extend HashMap with Eq::{equal, not_equal}
+pub extend HashMap with Default::{default}
 
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)

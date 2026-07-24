@@ -23,6 +23,9 @@ pub fn[T, K : Compare] minmax_by_key(T, T, (T) -> K) -> (T, T)
 // Types and methods
 pub(all) struct Reverse[T](T) derive(Eq, Hash, @debug.Debug)
 pub fn[T : Compare] Reverse::compare(Self[T], Self[T]) -> Int
+pub fn[T : Eq] Reverse::equal(Self[T], Self[T]) -> Bool
+pub fn[T : Hash] Reverse::hash(Self[T]) -> Int
+pub fn[T : Eq] Reverse::not_equal(Self[T], Self[T]) -> Bool
 pub impl[T : Compare] Compare for Reverse[T]
 #deprecated
 pub impl[T : Show] Show for Reverse[T]

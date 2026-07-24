@@ -18,7 +18,10 @@
 pub extend SortedMap with Compare::{compare}
 
 ///|
-pub extend SortedMap with Default::{default}
+pub extend SortedMap with Eq::{equal, not_equal}
+
+///|
+pub extend SortedMap with Hash::{hash}
 
 // --- deprecated: hidden from the generated interface ---
 
@@ -33,14 +36,14 @@ pub extend SortedMap with @quickcheck.Arbitrary::{arbitrary}
 pub extend SortedMap with Compare::{op_ge, op_gt, op_le, op_lt}
 
 ///|
-#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+#deprecated("Use `Default::default` instead", skip_current_package=true)
 #doc(hidden)
-pub extend SortedMap with Eq::{equal, not_equal}
+pub extend SortedMap with Default::{default}
 
 ///|
-#deprecated("Use `Hash::hash` / `Hash::hash_combine` instead", skip_current_package=true)
+#deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
 #doc(hidden)
-pub extend SortedMap with Hash::{hash, hash_combine}
+pub extend SortedMap with Hash::{hash_combine}
 
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)

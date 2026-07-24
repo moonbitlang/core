@@ -14,7 +14,7 @@
 
 ///|
 test "String::default implementation" {
-  let s : String = String::default()
+  let s : String = ""
   inspect(s, content="")
   inspect(s.length(), content="0")
 }
@@ -67,7 +67,7 @@ test "View::compare identical" {
 
 ///|
 test "View::default and hash" {
-  let v : StringView = StringView::default()
+  let v : StringView = (Default::default() : StringView)
   inspect(v, content="")
   let v1 = "abc".view()
   let v2 = "abc".view()

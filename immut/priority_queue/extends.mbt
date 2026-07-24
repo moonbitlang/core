@@ -17,6 +17,12 @@
 ///|
 pub extend PriorityQueue with Compare::{compare}
 
+///|
+pub extend PriorityQueue with Eq::{equal, not_equal}
+
+///|
+pub extend PriorityQueue with Hash::{hash}
+
 // --- deprecated: hidden from the generated interface ---
 
 ///|
@@ -30,14 +36,9 @@ pub extend PriorityQueue with @quickcheck.Arbitrary::{arbitrary}
 pub extend PriorityQueue with Compare::{op_ge, op_gt, op_le, op_lt}
 
 ///|
-#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+#deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
 #doc(hidden)
-pub extend PriorityQueue with Eq::{equal, not_equal}
-
-///|
-#deprecated("Use `Hash::hash` / `Hash::hash_combine` instead", skip_current_package=true)
-#doc(hidden)
-pub extend PriorityQueue with Hash::{hash, hash_combine}
+pub extend PriorityQueue with Hash::{hash_combine}
 
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)

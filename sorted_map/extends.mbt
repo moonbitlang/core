@@ -15,14 +15,9 @@
 // --- promoted: kept as regular methods ---
 
 ///|
-pub extend SortedMap with Default::{default}
+pub extend SortedMap with Eq::{equal, not_equal}
 
 // --- deprecated: hidden from the generated interface ---
-
-///|
-#deprecated("Use `@quickcheck.Arbitrary::arbitrary` instead", skip_current_package=true)
-#doc(hidden)
-pub extend SortedMap with @quickcheck.Arbitrary::{arbitrary}
 
 ///|
 #deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
@@ -30,14 +25,19 @@ pub extend SortedMap with @quickcheck.Arbitrary::{arbitrary}
 pub extend SortedMap with @debug.Debug::{to_repr}
 
 ///|
-#deprecated("Use `==` / `!=` instead", skip_current_package=true)
-#doc(hidden)
-pub extend SortedMap with Eq::{equal, not_equal}
-
-///|
 #deprecated("Use `@json.from_json` instead", skip_current_package=true)
 #doc(hidden)
 pub extend SortedMap with @json.FromJson::{from_json}
+
+///|
+#deprecated("Use `@quickcheck.Arbitrary::arbitrary` instead", skip_current_package=true)
+#doc(hidden)
+pub extend SortedMap with @quickcheck.Arbitrary::{arbitrary}
+
+///|
+#deprecated("Use `Default::default` instead", skip_current_package=true)
+#doc(hidden)
+pub extend SortedMap with Default::{default}
 
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)

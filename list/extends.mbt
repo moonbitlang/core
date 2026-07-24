@@ -18,7 +18,10 @@
 pub extend List with Compare::{compare}
 
 ///|
-pub extend List with Default::{default}
+pub extend List with Eq::{equal, not_equal}
+
+///|
+pub extend List with Hash::{hash}
 
 // --- deprecated: hidden from the generated interface ---
 
@@ -33,14 +36,14 @@ pub extend List with @quickcheck.Arbitrary::{arbitrary}
 pub extend List with Compare::{op_ge, op_gt, op_le, op_lt}
 
 ///|
-#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+#deprecated("Use `Default::default` instead", skip_current_package=true)
 #doc(hidden)
-pub extend List with Eq::{equal, not_equal}
+pub extend List with Default::{default}
 
 ///|
-#deprecated("Use `Hash::hash` / `Hash::hash_combine` instead", skip_current_package=true)
+#deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
 #doc(hidden)
-pub extend List with Hash::{hash, hash_combine}
+pub extend List with Hash::{hash_combine}
 
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)

@@ -23,12 +23,12 @@ pub fn[V : Compare] SortedSet::contains(Self[V], V) -> Bool
 #alias(clone, deprecated)
 #alias(deep_clone, deprecated)
 pub fn[V] SortedSet::copy(Self[V]) -> Self[V]
-pub fn[K] SortedSet::default() -> Self[K]
 #alias(diff, deprecated)
 pub fn[V : Compare] SortedSet::difference(Self[V], Self[V]) -> Self[V]
 pub fn[V : Compare] SortedSet::disjoint(Self[V], Self[V]) -> Bool
 pub fn[V] SortedSet::each(Self[V], (V) -> Unit raise?) -> Unit raise?
 pub fn[V] SortedSet::eachi(Self[V], (Int, V) -> Unit raise?) -> Unit raise?
+pub fn[V : Eq] SortedSet::equal(Self[V], Self[V]) -> Bool
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
 #as_free_fn
@@ -43,6 +43,7 @@ pub fn[V] SortedSet::length(Self[V]) -> Int
 #as_free_fn(deprecated)
 #deprecated
 pub fn[V] SortedSet::new() -> Self[V]
+pub fn[V : Eq] SortedSet::not_equal(Self[V], Self[V]) -> Bool
 pub fn[V : Compare] SortedSet::range(Self[V], V, V) -> Iter[V]
 pub fn[V : Compare] SortedSet::remove(Self[V], V) -> Unit
 #as_free_fn

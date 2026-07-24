@@ -31,6 +31,7 @@ pub fn[A] Vector::copy(Self[A]) -> Self[A]
 pub fn[A] Vector::drop(Self[A], Int) -> Self[A]
 pub fn[A] Vector::each(Self[A], (A) -> Unit raise?) -> Unit raise?
 pub fn[A] Vector::eachi(Self[A], (Int, A) -> Unit raise?) -> Unit raise?
+pub fn[A : Eq] Vector::equal(Self[A], Self[A]) -> Bool
 pub fn[A] Vector::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 #alias(fold_left, deprecated)
 pub fn[A, B] Vector::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
@@ -39,6 +40,7 @@ pub fn[A, B] Vector::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 #as_free_fn
 pub fn[A] Vector::from_iter(Iter[A]) -> Self[A]
 pub fn[A] Vector::get(Self[A], Int) -> A?
+pub fn[A : Hash] Vector::hash(Self[A]) -> Int
 pub fn[A] Vector::is_empty(Self[A]) -> Bool
 #alias(iterator, deprecated)
 pub fn[A] Vector::iter(Self[A]) -> Iter[A]
@@ -50,6 +52,7 @@ pub fn[A] Vector::makei(Int, (Int) -> A raise?) -> Self[A] raise?
 pub fn[A, B] Vector::map(Self[A], (A) -> B raise?) -> Self[B] raise?
 #as_free_fn
 pub fn[A] Vector::new() -> Self[A]
+pub fn[A : Eq] Vector::not_equal(Self[A], Self[A]) -> Bool
 pub fn[A] Vector::peek(Self[A]) -> A?
 pub fn[A] Vector::pop(Self[A]) -> Self[A]?
 pub fn[A] Vector::push(Self[A], A) -> Self[A]

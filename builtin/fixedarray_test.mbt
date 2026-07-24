@@ -15,7 +15,7 @@
 ///|
 #warnings("-deprecated")
 test "to_string with empty FixedArray" {
-  let emptyArray : FixedArray[Int] = FixedArray::default()
+  let emptyArray : FixedArray[Int] = ([] : FixedArray[_])
   @test.assert_eq(emptyArray.to_string(), "[]")
 }
 

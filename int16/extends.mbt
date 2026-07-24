@@ -18,21 +18,6 @@
 pub extend Int16 with Add::{add}
 
 ///|
-pub extend Int16 with Sub::{sub}
-
-///|
-pub extend Int16 with Mul::{mul}
-
-///|
-pub extend Int16 with Div::{div}
-
-///|
-pub extend Int16 with Mod::{mod}
-
-///|
-pub extend Int16 with Neg::{neg}
-
-///|
 pub extend Int16 with BitAnd::{land}
 
 ///|
@@ -42,16 +27,34 @@ pub extend Int16 with BitOr::{lor}
 pub extend Int16 with BitXOr::{lxor}
 
 ///|
+pub extend Int16 with Compare::{compare}
+
+///|
+pub extend Int16 with Div::{div}
+
+///|
+pub extend Int16 with Eq::{equal, not_equal}
+
+///|
+pub extend Int16 with Hash::{hash}
+
+///|
+pub extend Int16 with Mod::{mod}
+
+///|
+pub extend Int16 with Mul::{mul}
+
+///|
+pub extend Int16 with Neg::{neg}
+
+///|
 pub extend Int16 with Shl::{shl}
 
 ///|
 pub extend Int16 with Shr::{shr}
 
 ///|
-pub extend Int16 with Compare::{compare}
-
-///|
-pub extend Int16 with Default::{default}
+pub extend Int16 with Sub::{sub}
 
 // --- deprecated: hidden from the generated interface ---
 
@@ -61,14 +64,14 @@ pub extend Int16 with Default::{default}
 pub extend Int16 with Compare::{op_ge, op_gt, op_le, op_lt}
 
 ///|
-#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+#deprecated("Use `Default::default` instead", skip_current_package=true)
 #doc(hidden)
-pub extend Int16 with Eq::{equal, not_equal}
+pub extend Int16 with Default::{default}
 
 ///|
-#deprecated("Use `Hash::hash` / `Hash::hash_combine` instead", skip_current_package=true)
+#deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
 #doc(hidden)
-pub extend Int16 with Hash::{hash, hash_combine}
+pub extend Int16 with Hash::{hash_combine}
 
 ///|
 #deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)

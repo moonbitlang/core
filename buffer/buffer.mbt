@@ -54,7 +54,7 @@ fn Buffer::grow_if_necessary(self : Buffer, required : Int) -> Unit {
     let new_data = FixedArray::make_and_blit(
       self.data,
       allocate_len=enough_space,
-      init=Byte::default(),
+      init=b'\x00',
       len=self.len,
     )
     self.data = new_data
@@ -155,7 +155,7 @@ pub fn new(size_hint? : Int = 0) -> Buffer {
 /// ```
 pub fn Buffer::Buffer(size_hint? : Int = 0) -> Buffer {
   let initial = if size_hint < 1 { 1 } else { size_hint }
-  let data = FixedArray::make(initial, Byte::default())
+  let data = FixedArray::make(initial, b'\x00')
   { data, len: 0 }
 }
 

@@ -1842,7 +1842,7 @@ pub fn[A] Array::iter2(self : Array[A]) -> Iter2[Int, A] {
 ///
 /// ```mbt check
 /// test {
-///   let arr : Array[Int] = Array::default()
+///   let arr : Array[Int] = []
 ///   inspect(arr.length(), content="0")
 ///   inspect(arr.is_empty(), content="true")
 /// }

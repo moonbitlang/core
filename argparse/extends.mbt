@@ -15,13 +15,25 @@
 // --- promoted: kept as regular methods ---
 
 ///|
+pub extend FlagAction with Eq::{equal, not_equal}
+
+///|
 pub extend FlagAction with Show::{to_string}
+
+///|
+pub extend OptionAction with Eq::{equal, not_equal}
 
 ///|
 pub extend OptionAction with Show::{to_string}
 
 ///|
+pub extend ValueRange with Eq::{equal, not_equal}
+
+///|
 pub extend ValueRange with Show::{to_string}
+
+///|
+pub extend ValueSource with Eq::{equal, not_equal}
 
 ///|
 pub extend ValueSource with Show::{to_string}
@@ -44,6 +56,11 @@ pub extend Command with @debug.Debug::{to_repr}
 pub extend FlagAction with @debug.Debug::{to_repr}
 
 ///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+#doc(hidden)
+pub extend FlagAction with Show::{output}
+
+///|
 #deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
 #doc(hidden)
 pub extend FlagArg with @debug.Debug::{to_repr}
@@ -57,6 +74,11 @@ pub extend Matches with @debug.Debug::{to_repr}
 #deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
 #doc(hidden)
 pub extend OptionAction with @debug.Debug::{to_repr}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+#doc(hidden)
+pub extend OptionAction with Show::{output}
 
 ///|
 #deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
@@ -74,44 +96,14 @@ pub extend PositionArg with @debug.Debug::{to_repr}
 pub extend ValueRange with @debug.Debug::{to_repr}
 
 ///|
-#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
-#doc(hidden)
-pub extend ValueSource with @debug.Debug::{to_repr}
-
-///|
-#deprecated("Use `==` / `!=` instead", skip_current_package=true)
-#doc(hidden)
-pub extend FlagAction with Eq::{equal, not_equal}
-
-///|
-#deprecated("Use `==` / `!=` instead", skip_current_package=true)
-#doc(hidden)
-pub extend OptionAction with Eq::{equal, not_equal}
-
-///|
-#deprecated("Use `==` / `!=` instead", skip_current_package=true)
-#doc(hidden)
-pub extend ValueRange with Eq::{equal, not_equal}
-
-///|
-#deprecated("Use `==` / `!=` instead", skip_current_package=true)
-#doc(hidden)
-pub extend ValueSource with Eq::{equal, not_equal}
-
-///|
-#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
-#doc(hidden)
-pub extend FlagAction with Show::{output}
-
-///|
-#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
-#doc(hidden)
-pub extend OptionAction with Show::{output}
-
-///|
 #deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
 #doc(hidden)
 pub extend ValueRange with Show::{output}
+
+///|
+#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
+#doc(hidden)
+pub extend ValueSource with @debug.Debug::{to_repr}
 
 ///|
 #deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)

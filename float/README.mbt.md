@@ -71,7 +71,7 @@ test "utility functions" {
   inspect(3.14.to_int(), content="3")
 
   // Default value
-  inspect(Float::default(), content="0")
+  inspect((Default::default() : Float), content="0")
 }
 ```
 

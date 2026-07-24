@@ -98,7 +98,7 @@ pub fn String::unsafe_substring(
     return str
   }
   let len = end - start
-  let bytes = FixedArray::make(len * 2, Byte::default())
+  let bytes = FixedArray::make(len * 2, b'\x00')
   bytes.blit_from_string(0, str, start, len)
   bytes.unsafe_reinterpret_as_bytes().to_unchecked_string()
 }
@@ -207,7 +207,7 @@ pub impl Default for String with fn default() {
 /// `String` holds a sequence of UTF-16 code units encoded in little endian format
 #deprecated("Check `@encoding/utf8.encode`")
 pub fn String::to_bytes(self : String) -> Bytes {
-  let array = FixedArray::make(self.length() * 2, Byte::default())
+  let array = FixedArray::make(self.length() * 2, b'\x00')
   array.blit_from_string(0, self, 0, self.length())
   array |> unsafe_to_bytes
 }

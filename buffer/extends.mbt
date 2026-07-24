@@ -15,6 +15,11 @@
 // --- promoted: explicit trait-method promotions (may inherit deprecations from the underlying impl) ---
 
 ///|
+pub extend Buffer with Show::{to_string}
+
+// --- deprecated: hidden from the generated interface ---
+
+///|
 #deprecated
 #warnings("-deprecated")
 pub extend Buffer with Logger::{
@@ -25,11 +30,6 @@ pub extend Buffer with Logger::{
   write,
   write_substring,
 }
-
-///|
-pub extend Buffer with Show::{to_string}
-
-// --- deprecated: hidden from the generated interface ---
 
 ///|
 #deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)

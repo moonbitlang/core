@@ -18,7 +18,10 @@
 pub extend SortedSet with Compare::{compare}
 
 ///|
-pub extend SortedSet with Default::{default}
+pub extend SortedSet with Eq::{equal, not_equal}
+
+///|
+pub extend SortedSet with Hash::{hash}
 
 ///|
 pub extend SortedSet with Sub::{sub}
@@ -36,14 +39,14 @@ pub extend SortedSet with @quickcheck.Arbitrary::{arbitrary}
 pub extend SortedSet with Compare::{op_ge, op_gt, op_le, op_lt}
 
 ///|
-#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+#deprecated("Use `Default::default` instead", skip_current_package=true)
 #doc(hidden)
-pub extend SortedSet with Eq::{equal, not_equal}
+pub extend SortedSet with Default::{default}
 
 ///|
-#deprecated("Use `Hash::hash` / `Hash::hash_combine` instead", skip_current_package=true)
+#deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
 #doc(hidden)
-pub extend SortedSet with Hash::{hash, hash_combine}
+pub extend SortedSet with Hash::{hash_combine}
 
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)

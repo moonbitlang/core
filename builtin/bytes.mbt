@@ -742,7 +742,7 @@ pub fn Bytes::iter2(self : Bytes) -> Iter2[Int, Byte] {
 ///
 /// ```mbt check
 /// test {
-///   let bytes = Bytes::default()
+///   let bytes = (Default::default() : Bytes)
 ///   inspect(bytes, content="b\"\"")
 ///   inspect(bytes.length(), content="0")
 /// }

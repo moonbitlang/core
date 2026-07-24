@@ -14,12 +14,15 @@ import {
 pub struct Category(Int) derive(Eq, Hash)
 pub fn Category::add(Self, Self) -> Self
 pub fn Category::dummy() -> Self
+pub fn Category::equal(Self, Self) -> Bool
+pub fn Category::hash(Self) -> Int
 pub fn Category::inexistant() -> Self
 pub fn Category::inexistant_or_newline() -> Self
 pub fn Category::inexistant_or_non_word_end() -> Self
 pub fn Category::inexistant_or_non_word_start() -> Self
 pub fn Category::intersects(Self, Self) -> Bool
 pub fn Category::newline() -> Self
+pub fn Category::not_equal(Self, Self) -> Bool
 pub fn Category::not_word() -> Self
 pub fn Category::not_word_end() -> Self
 pub fn Category::not_word_start() -> Self
@@ -31,6 +34,9 @@ pub(all) enum Preference {
   Longest
   First
 } derive(Eq, Hash, @debug.Debug)
+pub fn Preference::equal(Self, Self) -> Bool
+pub fn Preference::hash(Self) -> Int
+pub fn Preference::not_equal(Self, Self) -> Bool
 
 pub struct Profile {
   lb : Int

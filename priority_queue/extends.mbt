@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// --- promoted: kept as regular methods ---
-
-///|
-pub extend PriorityQueue with Default::{default}
-
 // --- deprecated: hidden from the generated interface ---
 
 ///|
 #deprecated("Use `@quickcheck.Arbitrary::arbitrary` instead", skip_current_package=true)
 #doc(hidden)
 pub extend PriorityQueue with @quickcheck.Arbitrary::{arbitrary}
+
+///|
+#deprecated("Use `Default::default` instead", skip_current_package=true)
+#doc(hidden)
+pub extend PriorityQueue with Default::{default}
 
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)

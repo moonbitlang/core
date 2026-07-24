@@ -118,7 +118,7 @@ test "StringView core operations" {
   inspect(from_iter.to_owned(), content="mn")
   let make_view = StringView::make(3, 'a')
   inspect(make_view.to_owned(), content="aaa")
-  inspect(StringView::default(), content="")
+  inspect((Default::default() : StringView), content="")
   inspect(("hi"[:] + "!").to_owned(), content="hi!")
   debug_inspect(view.offset_of_nth_char(1), content="Some(1)")
   debug_inspect(view.offset_of_nth_char(3), content="None")

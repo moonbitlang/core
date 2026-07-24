@@ -24,10 +24,10 @@ pub fn[K] Set::clear(Self[K]) -> Unit
 pub fn[K : Hash + Eq] Set::contains(Self[K], K) -> Bool
 #alias(clone, deprecated)
 pub fn[K] Set::copy(Self[K]) -> Self[K]
-pub fn[K] Set::default() -> Self[K]
 pub fn[K : Hash + Eq] Set::difference(Self[K], Self[K]) -> Self[K]
 pub fn[K] Set::each(Self[K], (K) -> Unit raise?) -> Unit raise?
 pub fn[K] Set::eachi(Self[K], (Int, K) -> Unit raise?) -> Unit raise?
+pub fn[K : Hash + Eq] Set::equal(Self[K], Self[K]) -> Bool
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
 #as_free_fn
@@ -47,6 +47,7 @@ pub fn[K : Hash + Eq] Set::lxor(Self[K], Self[K]) -> Self[K]
 #as_free_fn(deprecated)
 #deprecated
 pub fn[K] Set::new(capacity? : Int) -> Self[K]
+pub fn[K : Hash + Eq] Set::not_equal(Self[K], Self[K]) -> Bool
 pub fn[K : Hash + Eq] Set::remove(Self[K], K) -> Unit
 pub fn[K : Hash + Eq] Set::remove_and_check(Self[K], K) -> Bool
 pub fn[K : Hash + Eq] Set::sub(Self[K], Self[K]) -> Self[K]

@@ -21,11 +21,11 @@ pub fn[K : Compare, V] SortedMap::add(Self[K, V], K, V) -> Self[K, V]
 pub fn[K : Compare, V] SortedMap::at(Self[K, V], K) -> V
 pub fn[K : Compare, V : Compare] SortedMap::compare(Self[K, V], Self[K, V]) -> Int
 pub fn[K : Compare, V] SortedMap::contains(Self[K, V], K) -> Bool
-pub fn[K, V] SortedMap::default() -> Self[K, V]
 pub fn[K, V] SortedMap::each(Self[K, V], (K, V) -> Unit) -> Unit
 pub fn[K, V] SortedMap::eachi(Self[K, V], (Int, K, V) -> Unit) -> Unit
 #deprecated
 pub fn[K, V] SortedMap::elems(Self[K, V]) -> Array[V]
+pub fn[K : Eq, V : Eq] SortedMap::equal(Self[K, V], Self[K, V]) -> Bool
 #alias(filter_with_key, deprecated)
 pub fn[K, V] SortedMap::filter(Self[K, V], (K, V) -> Bool raise?) -> Self[K, V] raise?
 #alias(foldl_with_key, deprecated)
@@ -43,6 +43,7 @@ pub fn[K : Compare, V] SortedMap::from_iter(Iter[(K, V)]) -> Self[K, V]
 pub fn[V : @json.FromJson] SortedMap::from_json(Json) -> Self[String, V] raise @json.JsonDecodeError
 #alias(lookup, deprecated)
 pub fn[K : Compare, V] SortedMap::get(Self[K, V], K) -> V?
+pub fn[K : Hash, V : Hash] SortedMap::hash(Self[K, V]) -> Int
 pub fn[K, V] SortedMap::is_empty(Self[K, V]) -> Bool
 #alias(iterator, deprecated)
 pub fn[K, V] SortedMap::iter(Self[K, V]) -> Iter[(K, V)]
@@ -59,6 +60,7 @@ pub fn[K : Compare, V] SortedMap::merge(Self[K, V], Self[K, V]) -> Self[K, V]
 #alias(empty, deprecated)
 #as_free_fn
 pub fn[K, V] SortedMap::new() -> Self[K, V]
+pub fn[K : Eq, V : Eq] SortedMap::not_equal(Self[K, V], Self[K, V]) -> Bool
 pub fn[K : Compare, V] SortedMap::range(Self[K, V], low~ : K, high~ : K) -> Iter2[K, V]
 pub fn[K : Compare, V] SortedMap::remove(Self[K, V], K) -> Self[K, V]
 #alias(foldr_with_key)

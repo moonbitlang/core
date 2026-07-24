@@ -17,6 +17,30 @@
 ///|
 pub extend Mark with Compare::{compare}
 
+///|
+pub extend Mark with Eq::{equal, not_equal}
+
+///|
+pub extend Mark with Hash::{hash}
+
+///|
+pub extend MarkSlotMap with Eq::{equal, not_equal}
+
+///|
+pub extend MarkSlotMap with Hash::{hash}
+
+///|
+pub extend Slot with Eq::{equal, not_equal}
+
+///|
+pub extend Slot with Hash::{hash}
+
+///|
+pub extend State with Eq::{equal, not_equal}
+
+///|
+pub extend State with Hash::{hash}
+
 // --- deprecated: hidden from the generated interface ---
 
 ///|
@@ -25,41 +49,21 @@ pub extend Mark with Compare::{compare}
 pub extend Mark with Compare::{op_ge, op_gt, op_le, op_lt}
 
 ///|
-#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+#deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
 #doc(hidden)
-pub extend Mark with Eq::{equal, not_equal}
+pub extend Mark with Hash::{hash_combine}
 
 ///|
-#deprecated("Use `Hash::hash` / `Hash::hash_combine` instead", skip_current_package=true)
+#deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
 #doc(hidden)
-pub extend Mark with Hash::{hash, hash_combine}
+pub extend MarkSlotMap with Hash::{hash_combine}
 
 ///|
-#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+#deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
 #doc(hidden)
-pub extend MarkSlotMap with Eq::{equal, not_equal}
+pub extend Slot with Hash::{hash_combine}
 
 ///|
-#deprecated("Use `Hash::hash` / `Hash::hash_combine` instead", skip_current_package=true)
+#deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
 #doc(hidden)
-pub extend MarkSlotMap with Hash::{hash, hash_combine}
-
-///|
-#deprecated("Use `==` / `!=` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Slot with Eq::{equal, not_equal}
-
-///|
-#deprecated("Use `Hash::hash` / `Hash::hash_combine` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Slot with Hash::{hash, hash_combine}
-
-///|
-#deprecated("Use `==` / `!=` instead", skip_current_package=true)
-#doc(hidden)
-pub extend State with Eq::{equal, not_equal}
-
-///|
-#deprecated("Use `Hash::hash` / `Hash::hash_combine` instead", skip_current_package=true)
-#doc(hidden)
-pub extend State with Hash::{hash, hash_combine}
+pub extend State with Hash::{hash_combine}

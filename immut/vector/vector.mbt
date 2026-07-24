@@ -780,8 +780,8 @@ pub impl[A : @json.FromJson] @json.FromJson for Vector[A] with fn from_json(
 ///   let arr2 = @vector.from_array([1, 2, 4])
 ///   let arr3 = @vector.from_array([1, 2])
 ///   inspect(arr1.compare(arr2), content="-1") // arr1 < arr2
-///   inspect(arr1.compare(arr3), content="1") // arr2 > arr1
-///   inspect(arr3.compare(arr1), content="-1") // arr1 > arr3 (longer)
+///   inspect(arr1.compare(arr3), content="1") // arr1 > arr3 (longer)
+///   inspect(arr3.compare(arr1), content="-1") // arr3 < arr1 (shorter)
 ///   inspect(arr1.compare(arr1), content="0") // arr1 = arr1
 /// }
 /// ```

@@ -1317,7 +1317,7 @@ test "@bigint.BigInt::hash consistency" {
 
 ///|
 test "default" {
-  let a = @bigint.BigInt::default()
+  let a = (Default::default() : @bigint.BigInt)
   assert_eq(a, 0N)
 }
 
