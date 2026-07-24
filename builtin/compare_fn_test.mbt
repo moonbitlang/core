@@ -18,8 +18,8 @@ test "compare free function" {
   assert_eq(compare(1, 2), Compare::compare(1, 2))
   assert_eq(compare("abd", "abc"), Compare::compare("abd", "abc"))
   // three-way result
-  assert_eq(compare(1, 2), -1)
-  assert_eq(compare(2, 1), 1)
+  assert_true(compare(1, 2).is_neg())
+  assert_true(compare(2, 1).is_pos())
   assert_eq(compare("abc", "abc"), 0)
 }
 
