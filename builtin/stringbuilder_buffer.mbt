@@ -43,6 +43,20 @@ pub fn StringBuilder::is_empty(self : StringBuilder) -> Bool {
 }
 
 ///|
+/// Smallest capacity reached by repeatedly doubling `current` until it
+/// covers `required`. Doubling past 2^30 overflows `Int`; when that happens,
+/// fall back to exactly `required` instead of looping forever.
+fn stringbuilder_grow_capacity(current : Int, required : Int) -> Int {
+  for space = current {
+    if space >= required {
+      break space
+    }
+    let doubled = space * 2
+    continue if doubled > 0 { doubled } else { required }
+  }
+}
+
+///|
 fn StringBuilder::grow_if_necessary(
   self : StringBuilder,
   required : Int,
@@ -51,13 +65,7 @@ fn StringBuilder::grow_if_necessary(
   if required <= current_len {
     return
   }
-  // current_len is at least 1
-  // double the enough_space until it larger than required
-  let enough_space = for enough_space = current_len; enough_space < required; {
-    continue enough_space * 2
-  } nobreak {
-    enough_space
-  }
+  let enough_space = stringbuilder_grow_capacity(current_len, required)
   let new_data = FixedArray::make_and_blit(
     self.data,
     allocate_len=enough_space,
