@@ -21,6 +21,13 @@ test "List constructor" {
 }
 
 ///|
+test "List constructor ArrayView" {
+  let values = [0, 1, 2, 3, 4]
+  debug_inspect(@list.List(values[1:4]), content="<List: [1, 2, 3]>")
+  debug_inspect(@list.List(values[2:2]), content="<List: []>")
+}
+
+///|
 test "pipe" {
   debug_inspect(
     1 |> x => { @list.List::prepend(@list.empty(), x) },
@@ -602,6 +609,15 @@ test "equal" {
 
 ///|
 test "is_suffix" {
+  debug_inspect(
+    (@list.empty() : @list.List[Int]).is_suffix(@list.empty()),
+    content="true",
+  )
+  debug_inspect(
+    (@list.empty() : @list.List[Int]).is_suffix(List([1])),
+    content="false",
+  )
+  debug_inspect(@list.List([1, 2]).is_suffix(@list.empty()), content="true")
   debug_inspect(
     @list.List([1, 2, 3, 4, 5]).is_suffix(List([3, 4, 5])),
     content="true",
