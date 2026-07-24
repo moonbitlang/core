@@ -14,7 +14,7 @@
 
 ///|
 fn[A] new_queue() -> Queue[A] {
-  { length: 0, first: None, last: None }
+  { inner: Deque([]) }
 }
 
 ///|
@@ -33,15 +33,7 @@ fn[A] new_queue() -> Queue[A] {
 #alias(of, deprecated="Use from_array instead")
 #as_free_fn(of, deprecated="Use from_array instead")
 pub fn[A] Queue::Queue(arr : ArrayView[A]) -> Queue[A] {
-  guard arr.length() > 0 else { return new_queue() }
-  let length = arr.length()
-  let last = { content: arr[length - 1], next: None }
-  let first = for i = length - 2, x = last; i >= 0; {
-    continue i - 1, { content: arr[i], next: Some(x) }
-  } nobreak {
-    x
-  }
-  { length, first: Some(first), last: Some(last) }
+  { inner: Deque(arr) }
 }
 
 ///|
@@ -56,7 +48,7 @@ pub impl[A : Show] Show for Queue[A] with fn output(self, logger) {
 ///|
 /// Tests if two queues are equal.
 impl[A : Eq] Eq for Queue[A] with fn equal(self, other) {
-  self.length == other.length && self.first == other.first
+  self.inner == other.inner
 }
 
 ///|
@@ -70,9 +62,7 @@ impl[A : Eq] Eq for Queue[A] with fn equal(self, other) {
 /// }
 /// ```
 pub fn[A] Queue::clear(self : Queue[A]) -> Unit {
-  self.length = 0
-  self.first = None
-  self.last = None
+  self.inner.clear()
 }
 
 ///|
@@ -86,7 +76,7 @@ pub fn[A] Queue::clear(self : Queue[A]) -> Unit {
 /// }
 /// ```
 pub fn[A] Queue::length(self : Queue[A]) -> Int {
-  self.length
+  self.inner.length()
 }
 
 ///|
@@ -100,7 +90,7 @@ pub fn[A] Queue::length(self : Queue[A]) -> Int {
 /// }
 /// ```
 pub fn[A] Queue::is_empty(self : Queue[A]) -> Bool {
-  self.length == 0
+  self.inner.is_empty()
 }
 
 ///|
@@ -114,19 +104,7 @@ pub fn[A] Queue::is_empty(self : Queue[A]) -> Bool {
 /// }
 /// ```
 pub fn[A] Queue::push(self : Queue[A], x : A) -> Unit {
-  let cell = Some({ content: x, next: None })
-  match self.last {
-    None => {
-      self.length = 1
-      self.first = cell
-      self.last = cell
-    }
-    Some(last) => {
-      last.next = cell
-      self.length += 1
-      self.last = cell
-    }
-  }
+  self.inner.push_back(x)
 }
 
 ///|
@@ -143,9 +121,9 @@ pub fn[A] Queue::push(self : Queue[A], x : A) -> Unit {
 #doc(hidden)
 #alias(peek_exn, deprecated)
 pub fn[A] Queue::unsafe_peek(self : Queue[A]) -> A {
-  match self.first {
+  match self.inner.front() {
     None => abort("Queue is empty")
-    Some(first) => first.content
+    Some(x) => x
   }
 }
 
@@ -160,7 +138,7 @@ pub fn[A] Queue::unsafe_peek(self : Queue[A]) -> A {
 /// }
 /// ```
 pub fn[A] Queue::peek(self : Queue[A]) -> A? {
-  self.first.map(first => first.content)
+  self.inner.front()
 }
 
 ///|
@@ -177,17 +155,9 @@ pub fn[A] Queue::peek(self : Queue[A]) -> A? {
 #doc(hidden)
 #alias(pop_exn, deprecated)
 pub fn[A] Queue::unsafe_pop(self : Queue[A]) -> A {
-  match self.first {
+  match self.inner.pop_front() {
     None => abort("Queue is empty")
-    Some({ content, next: None }) => {
-      self.clear()
-      content
-    }
-    Some({ content, next }) => {
-      self.length -= 1
-      self.first = next
-      content
-    }
+    Some(x) => x
   }
 }
 
@@ -202,18 +172,7 @@ pub fn[A] Queue::unsafe_pop(self : Queue[A]) -> A {
 /// }
 /// ```
 pub fn[A] Queue::pop(self : Queue[A]) -> A? {
-  match self.first {
-    None => None
-    Some({ content, next: None }) => {
-      self.clear()
-      Some(content)
-    }
-    Some({ content, next }) => {
-      self.length -= 1
-      self.first = next
-      Some(content)
-    }
-  }
+  self.inner.pop_front()
 }
 
 ///|
@@ -229,14 +188,8 @@ pub fn[A] Queue::pop(self : Queue[A]) -> A? {
 /// ```
 #locals(f)
 pub fn[A] Queue::each(self : Queue[A], f : (A) -> Unit) -> Unit {
-  for x = self.first {
-    match x {
-      Some({ content, next }) => {
-        f(content)
-        continue next
-      }
-      None => break ()
-    }
+  for x in self.inner {
+    f(x)
   }
 }
 
@@ -253,14 +206,8 @@ pub fn[A] Queue::each(self : Queue[A], f : (A) -> Unit) -> Unit {
 /// ```
 #locals(f)
 pub fn[A] Queue::eachi(self : Queue[A], f : (Int, A) -> Unit) -> Unit {
-  for x = self.first, index = 0 {
-    match (x, index) {
-      (Some({ content, next }), index) => {
-        f(index, content)
-        continue next, index + 1
-      }
-      (None, _) => break ()
-    }
+  for i, x in self.inner {
+    f(i, x)
   }
 }
 
@@ -277,12 +224,11 @@ pub fn[A] Queue::eachi(self : Queue[A], f : (Int, A) -> Unit) -> Unit {
 /// ```
 #locals(f)
 pub fn[A, B] Queue::fold(self : Queue[A], init~ : B, f : (B, A) -> B) -> B {
-  for x = self.first, acc = init {
-    match (x, acc) {
-      (None, acc) => break acc
-      (Some({ content, next }), acc) => continue next, f(acc, content)
-    }
+  let mut acc = init
+  for x in self.inner {
+    acc = f(acc, x)
   }
+  acc
 }
 
 ///|
@@ -298,19 +244,7 @@ pub fn[A, B] Queue::fold(self : Queue[A], init~ : B, f : (B, A) -> B) -> B {
 /// ```
 #alias(clone, deprecated)
 pub fn[A] Queue::copy(self : Queue[A]) -> Queue[A] {
-  guard self.first is Some({ content, next }) else { return new_queue() }
-  let first = { content, next: None }
-  let last = for pre = first, n = next {
-    match (pre, n) {
-      (pre, Some({ content, next })) => {
-        let curr = { content, next: None }
-        pre.next = Some(curr)
-        continue curr, next
-      }
-      (pre, None) => break pre
-    }
-  }
-  { length: self.length, first: Some(first), last: Some(last) }
+  { inner: self.inner.copy() }
 }
 
 ///|
@@ -328,25 +262,11 @@ pub fn[A] Queue::copy(self : Queue[A]) -> Queue[A] {
 /// }
 /// ```
 pub fn[A] Queue::transfer(self : Queue[A], dst : Queue[A]) -> Unit {
-  if physical_equal(self, dst) {
+  if physical_equal(self.inner, dst.inner) {
     return // no-op for self-transfer
   }
-  if self.length > 0 {
-    match dst.last {
-      None => {
-        dst.length = self.length
-        dst.first = self.first
-        dst.last = self.last
-        self.clear()
-      }
-      Some(last) => {
-        last.next = self.first
-        dst.length = dst.length + self.length
-        dst.last = self.last
-        self.clear()
-      }
-    }
-  }
+  dst.inner.append(self.inner)
+  self.inner.clear()
 }
 
 ///|
@@ -362,18 +282,7 @@ pub fn[A] Queue::transfer(self : Queue[A], dst : Queue[A]) -> Unit {
 /// ```
 #alias(iterator, deprecated)
 pub fn[A] Queue::iter(self : Queue[A]) -> Iter[A] {
-  let mut next_node = self.first
-  let len = self.length
-  let mut remaining = len
-  Iter::new(
-    fn() {
-      guard remaining > 0 && next_node is Some({ content, next }) else { None }
-      next_node = next
-      remaining -= 1
-      Some(content)
-    },
-    size_hint=len,
-  )
+  self.inner.iter()
 }
 
 ///|
@@ -390,11 +299,7 @@ pub fn[A] Queue::iter(self : Queue[A]) -> Iter[A] {
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
 pub fn[A] Queue::from_iter(iter : Iter[A]) -> Queue[A] {
-  let q = new_queue()
-  while iter.next() is Some(e) {
-    q.push(e)
-  }
-  q
+  { inner: @deque.from_iter(iter) }
 }
 
 ///|
@@ -425,6 +330,7 @@ test "equal" {
   queue.unsafe_pop() |> ignore
   assert_false(queue == queue2)
   @test.assert_eq(queue, from_array([2, 3, 4]))
+  assert_false(from_array([]) == from_array([1]))
 }
 
 ///|
@@ -456,11 +362,6 @@ test "transfer" {
   @test.assert_eq(queue.length(), 0)
   @test.assert_eq(queue2.length(), 8)
   @test.assert_eq(queue2, from_array([5, 6, 7, 8, 1, 2, 3, 4]))
-}
-
-///|
-test "cell_equal" {
-  assert_false(from_array([]).first == from_array([1]).first)
 }
 
 ///|
