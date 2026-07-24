@@ -16,6 +16,7 @@
 struct StringBuilder {
   mut data : FixedArray[UInt16]
   mut len : Int
+  mut buffer_is_shared : Bool
 }
 
 ///|
@@ -33,7 +34,7 @@ struct StringBuilder {
 pub fn StringBuilder::StringBuilder(size_hint? : Int = 0) -> StringBuilder {
   let initial = if size_hint < 1 { 1 } else { (size_hint + 1) / 2 }
   let data : FixedArray[UInt16] = FixedArray::make(initial, 0)
-  { data, len: 0 }
+  { data, len: 0, buffer_is_shared: false }
 }
 
 ///|
@@ -65,6 +66,7 @@ fn StringBuilder::grow_if_necessary(
     len=self.len,
   )
   self.data = new_data
+  self.buffer_is_shared = false
 }
 
 ///|
@@ -155,6 +157,9 @@ pub fn StringBuilder::to_string(self : StringBuilder) -> String {
   if self.len == 0 {
     ""
   } else if self.len == self.data.length() {
+    // This conversion can reuse `data` without copying, so future resets must
+    // detach before the buffer is written again.
+    self.buffer_is_shared = true
     unsafe_fixedarray_uint16_to_string(self.data)
   } else {
     let data = FixedArray::make_and_blit(
@@ -181,6 +186,11 @@ pub impl Show for StringBuilder with fn to_string(self) {
 ///|
 /// Resets the string builder to an empty state.
 pub fn StringBuilder::reset(self : StringBuilder) -> Unit {
-  self.data = FixedArray::make(self.data.length(), UInt16::default())
+  // A full buffer may have been returned directly from `to_string`. Retain the
+  // backing storage in every other case, since it only contains value types.
+  if self.buffer_is_shared {
+    self.data = FixedArray::make(self.data.length(), UInt16::default())
+    self.buffer_is_shared = false
+  }
   self.len = 0
 }
