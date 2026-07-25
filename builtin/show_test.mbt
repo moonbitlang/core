@@ -814,16 +814,16 @@ test "char show hex digits" {
   // inspect('\x01', content="\x01")
   // FIXME: inspect('\x0b') will not work with update test
   // inspect('\x0b', content="\x0b")
-  inspect('\u{01}' |> to_repr, content="'\\u{01}'")
-  inspect('\u{0b}' |> to_repr, content="'\\u{0b}'")
+  inspect(Repr('\u{01}'), content="'\\u{01}'")
+  inspect(Repr('\u{0b}'), content="'\\u{0b}'")
 }
 
 ///|
 test "char show hex digits extended" {
-  inspect('\u{0605}' |> to_repr, content="'\\u{0605}'")
-  inspect('\u{FDD0}' |> to_repr, content="'\\u{fdd0}'")
-  inspect('\u{1FFFE}' |> to_repr, content="'\\u{01fffe}'")
-  inspect('\u{10FFFE}' |> to_repr, content="'\\u{10fffe}'")
+  inspect(Repr('\u{0605}'), content="'\\u{0605}'")
+  inspect(Repr('\u{FDD0}'), content="'\\u{fdd0}'")
+  inspect(Repr('\u{1FFFE}'), content="'\\u{01fffe}'")
+  inspect(Repr('\u{10FFFE}'), content="'\\u{10fffe}'")
 }
 
 ///|
