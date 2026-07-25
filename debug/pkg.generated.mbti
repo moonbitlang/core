@@ -33,7 +33,7 @@ pub impl Debug for Repr
 
 // Traits
 pub(open) trait Debug {
-  #as_free_fn
+  #as_free_fn(deprecated)
   fn to_repr(Self) -> Repr
 }
 pub impl Debug for Unit

@@ -16,14 +16,14 @@
 pub impl[A : @debug.Debug] @debug.Debug for T[A] with fn to_repr(self) {
   @debug.Repr::opaque_(
     "Array",
-    @debug.Repr::array(self.to_array().map(x => @debug.to_repr(x))),
+    @debug.Repr::array(self.to_array().map(x => Repr(x))),
   )
 }
 
 ///|
 #deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
 pub fn[A : @debug.Debug] T::to_repr(self : T[A]) -> @debug.Repr {
-  @debug.to_repr(self)
+  Repr(self)
 }
 
 ///|

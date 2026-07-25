@@ -47,9 +47,9 @@ priv enum Sign {
 test "internal repr" {
   fn convert(b : BigInt) -> @debug.Repr {
     @debug.Repr::record({
-      "limbs": @debug.to_repr(b.limbs),
-      "sign": @debug.to_repr(b.sign),
-      "len": @debug.to_repr(b.len),
+      "limbs": Repr(b.limbs),
+      "sign": Repr(b.sign),
+      "len": Repr(b.len),
     })
   }
   @debug.debug_inspect(

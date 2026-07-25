@@ -25,7 +25,7 @@
 /// Safe to call on infinite or effectful thunks.
 pub impl[A : @debug.Debug] @debug.Debug for Lazy[A] with fn to_repr(self) {
   match self.state {
-    Forced(v) => @debug.Repr::opaque_("Lazy", @debug.to_repr(v))
+    Forced(v) => @debug.Repr::opaque_("Lazy", Repr(v))
     Forcing => @debug.Repr::opaque_("Lazy", @debug.Repr::literal("forcing"))
     Unforced(_) => @debug.Repr::opaque_("Lazy", @debug.Repr::omitted())
   }
