@@ -18,18 +18,16 @@ pub impl[K : @debug.Debug, V : @debug.Debug] @debug.Debug for SortedMap[K, V] wi
 ) {
   @debug.Repr::opaque_(
     "SortedMap",
-    @debug.Repr::map(
-      self.to_array().map(kv => (@debug.to_repr(kv.0), @debug.to_repr(kv.1))),
-    ),
+    @debug.Repr::map(self.to_array().map(kv => (Repr(kv.0), Repr(kv.1)))),
   )
 }
 
 ///|
-#deprecated("use `to_repr(a)` instead", skip_current_package=true)
+#deprecated("use `Repr(a)` instead", skip_current_package=true)
 pub fn[K : @debug.Debug, V : @debug.Debug] SortedMap::to_repr(
   self : SortedMap[K, V],
 ) -> @debug.Repr {
-  @debug.to_repr(self)
+  Repr(self)
 }
 
 ///|

@@ -21,9 +21,9 @@ pub impl @debug.Debug for Error with fn to_repr(self) {
 }
 
 ///|
-#deprecated("use `to_repr(a)` instead", skip_current_package=true)
+#deprecated("use `Repr(a)` instead", skip_current_package=true)
 pub fn Error::to_repr(self : Error) -> @debug.Repr {
-  @debug.to_repr(self)
+  Repr(self)
 }
 
 ///|

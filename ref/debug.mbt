@@ -14,13 +14,13 @@
 
 ///|
 pub impl[T : @debug.Debug] @debug.Debug for Ref[T] with fn to_repr(self) {
-  @debug.Repr::opaque_("Ref", @debug.to_repr(self.val))
+  @debug.Repr::opaque_("Ref", Repr(self.val))
 }
 
 ///|
-#deprecated("use `to_repr(a)` instead", skip_current_package=true)
+#deprecated("use `Repr(a)` instead", skip_current_package=true)
 pub fn[T : @debug.Debug] Ref::to_repr(self : Ref[T]) -> @debug.Repr {
-  @debug.to_repr(self)
+  Repr(self)
 }
 
 ///|

@@ -101,7 +101,7 @@ test "Debug renders the in-progress Forcing state" {
   let observed : Ref[String] = Ref("")
   let holder : Array[@lazy.Lazy[Int]] = []
   let cell = @lazy.Lazy(() => {
-    observed.val = @debug.to_repr(holder[0]).to_string()
+    observed.val = Repr(holder[0]).to_string()
     42
   })
   holder.push(cell)

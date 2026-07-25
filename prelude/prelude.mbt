@@ -76,6 +76,7 @@ pub using @builtin {
 pub using @builtin {not}
 
 ///|
+#warnings("-deprecated")
 pub using @debug {debug, type Repr, trait Debug, debug_inspect, repr, to_repr}
 
 ///|
