@@ -23,21 +23,21 @@ test {
 }
 
 ///|
-struct P {
+priv struct P {
   x : Int
   y : Int
   color : Color
 } derive(ToJson)
 
 ///|
-enum Color {
+priv enum Color {
   Red
   Green
   Blue
 } derive(ToJson)
 
 ///|
-struct Line {
+priv struct Line {
   p1 : P
   p2 : P
   color : Color
@@ -63,12 +63,3 @@ test "json inspect error paths" {
     expect_error(() => @json.json_inspect(1, content=2), "expected mismatch"),
   )
 }
-
-///|
-pub extend Color with ToJson::{to_json}
-
-///|
-pub extend Line with ToJson::{to_json}
-
-///|
-pub extend P with ToJson::{to_json}

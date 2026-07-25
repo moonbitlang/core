@@ -14,11 +14,11 @@
 
 ///|
 /// Type `AllThree`.
-pub(all) struct AllThree {
+priv struct AllThree {
   ints : Array[Int]
   floats : Array[Double]
   strings : Array[String]
-} derive(Eq, Debug)
+} derive(Debug)
 
 ///|
 fn[T] array_to_json(arr : Array[T], f~ : (T) -> Json) -> Json {
@@ -36,9 +36,9 @@ fn AllThree::to_json(self : AllThree) -> Json {
 }
 
 ///|
-suberror DecodeError {
+priv suberror DecodeError {
   DecodeError(String)
-} derive(Eq, Debug)
+} derive(Debug)
 
 ///|
 fn of_json(jv : Json) -> AllThree raise DecodeError {
@@ -91,15 +91,3 @@ test {
     ),
   )
 }
-
-///|
-pub extend AllThree with Debug::{to_repr}
-
-///|
-pub extend AllThree with Eq::{equal, not_equal}
-
-///|
-pub extend DecodeError with Debug::{to_repr}
-
-///|
-pub extend DecodeError with Eq::{equal, not_equal}

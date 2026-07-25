@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-struct MyString(String) derive(Eq)
+priv struct MyString(String) derive(Eq)
 
 ///|
 impl Hash for MyString with fn hash(self) {
@@ -26,9 +26,6 @@ impl Hash for MyString with fn hash_combine(self, hasher) {
   let MyString(s) = self
   hasher.combine_string(s)
 }
-
-///|
-pub extend MyString with Eq::{equal, not_equal}
 
 ///|
 test "empty constructor" {

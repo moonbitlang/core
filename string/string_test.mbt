@@ -876,7 +876,7 @@ test "length_eq" {
 }
 
 ///|
-enum StringPatternToken {
+priv enum StringPatternToken {
   True
   False
   Other
@@ -1025,6 +1025,3 @@ test "guard const" {
 test "string default" {
   inspect("", content="")
 }
-
-///|
-pub extend StringPatternToken with Debug::{to_repr}

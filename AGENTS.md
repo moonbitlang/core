@@ -96,9 +96,13 @@ Within the "safe to promote" set:
   free function costs nothing.
 
 This policy governs a package's own `extends.mbt` (its public API surface).
-Test-fixture types defined in `_test.mbt` files may promote whatever traits their
-tests exercise (e.g. `Hash::hash_combine`, `Debug::to_repr`) — they aren't public
-API and aren't governed by this rule.
+
+**Test fixtures should be `priv`.** A type declared in a `_test.mbt` file with no
+visibility modifier is *abstract-public*, so `implicit_impl_as_method` fires for
+its derived impls and you end up writing `pub extend` ceremony that has nothing
+to do with the test. Declare such types `priv` instead — then they need no
+`extend` at all. If a test needs to call a promoted method on one, use the trait
+form (`ToJson::to_json(x)`, `Default::default()`).
 
 After editing `extends.mbt`, run `moon info && moon fmt` and check the `.mbti`
 diff. `#doc(hidden)` alone (no `#deprecated`) keeps a promotion working but hides

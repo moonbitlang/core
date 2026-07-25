@@ -49,13 +49,10 @@ test "Test name" {
 }
 
 ///|
-suberror MyError {
+priv suberror MyError {
   NotFound(String)
   Invalid(reason~ : String)
 } derive(Debug)
-
-///|
-pub extend MyError with @debug.Debug::{to_repr}
 
 ///|
 fn maybe_raise(should_raise : Bool) -> Unit raise MyError {
