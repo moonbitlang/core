@@ -8,7 +8,6 @@ import {
   "moonbitlang/core/debug",
 }
 
-
 options(
   targets: {
     "monotonic_clock_js.mbt": [ "js" ],

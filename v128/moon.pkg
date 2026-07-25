@@ -9,4 +9,3 @@ import {
 import {
   "moonbitlang/core/bench",
 } for "test"
-

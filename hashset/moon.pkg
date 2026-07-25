@@ -11,4 +11,3 @@ import {
   "moonbitlang/core/int",
   "moonbitlang/core/json",
 } for "test"
-

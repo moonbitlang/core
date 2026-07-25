@@ -7,7 +7,6 @@ import {
   "moonbitlang/core/buffer",
 } for "test"
 
-
 options(
   targets: {
     "decode_js.mbt": [ "js" ],

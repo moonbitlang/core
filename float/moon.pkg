@@ -9,7 +9,6 @@ import {
   "moonbitlang/core/debug",
 } for "test"
 
-
 options(
   targets: {
     "round.mbt": [ "not", "js", "wasm", "wasm-gc" ],
