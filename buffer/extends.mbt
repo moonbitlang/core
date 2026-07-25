@@ -35,3 +35,8 @@ pub extend Buffer with Logger::{
 #deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Buffer with Show::{output}
+
+///|
+#deprecated("Use `Debug::to_repr` via the trait or `Repr(x)` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Buffer with @debug.Debug::{to_repr}
