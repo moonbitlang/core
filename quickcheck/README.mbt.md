@@ -78,13 +78,10 @@ Implement `Arbitrary` trait for custom types:
 
 ```mbt check
 ///|
-struct Point {
+priv struct Point {
   x : Int
   y : Int
 } derive(Debug)
-
-///|
-pub extend Point with Debug::{to_repr}
 
 ///|
 impl Arbitrary for Point with fn arbitrary(size, r0) {

@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Bitset and SparseArray have no promoted trait methods; every promotion below is deprecated.
-
 // --- promoted: kept as regular methods ---
 
 ///|

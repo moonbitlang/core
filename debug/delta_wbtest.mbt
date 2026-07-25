@@ -13,10 +13,7 @@
 // limitations under the License.
 
 ///|
-struct Empty {} derive(Debug)
-
-///|
-pub extend Empty with Debug::{to_repr}
+priv struct Empty {} derive(Debug)
 
 ///|
 test "diff: arrays collapse when all children differ" {

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-enum Expr {
+priv enum Expr {
   Add(Expr, Expr)
   Sub(Expr, Expr)
   Mul(Expr, Expr)
@@ -50,12 +50,3 @@ test "simplify" {
   let simplified = simplify(e)
   @json.json_inspect(simplified, content=["Lit", 0])
 }
-
-///|
-pub extend Expr with @debug.Debug::{to_repr}
-
-///|
-pub extend Expr with Eq::{equal, not_equal}
-
-///|
-pub extend Expr with ToJson::{to_json}

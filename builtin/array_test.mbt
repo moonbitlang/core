@@ -771,13 +771,13 @@ test "array of bytes, new & push" {
 }
 
 ///|
-struct MX {
+priv struct MX {
   mm_num : Array[Int]
 } derive(Default, ToJson)
 
 ///|
 test {
-  @json.json_inspect(MX::default(), content={ "mm_num": [] })
+  @json.json_inspect((Default::default() : MX), content={ "mm_num": [] })
 }
 
 ///|
@@ -1595,9 +1595,3 @@ test "timsort_early_return_for_small_arrays" {
   // With the bug, we get at least 45 + 9 = 54 comparisons.
   inspect(count.val, content="45")
 }
-
-///|
-pub extend MX with Default::{default}
-
-///|
-pub extend MX with ToJson::{to_json}

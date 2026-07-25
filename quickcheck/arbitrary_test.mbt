@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-struct H {
+priv struct H {
   x : Int
   y : Int
 } derive(@quickcheck.Arbitrary, Debug)
@@ -143,9 +143,3 @@ test "arbitrary size branches" {
   let rs4 = (Default::default() : @splitmix.RandomState)
   let _ : FixedArray[Int] = @quickcheck.Arbitrary::arbitrary(3, rs4)
 }
-
-///|
-pub extend H with @quickcheck.Arbitrary::{arbitrary}
-
-///|
-pub extend H with Debug::{to_repr}

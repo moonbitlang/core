@@ -85,12 +85,9 @@ The error package provides `Show` and `ToJson` implementations:
 
 ```mbt check
 ///|
-suberror MyError {
+priv suberror MyError {
   MyError(Int)
 } derive(ToJson)
-
-///|
-pub extend MyError with ToJson::{to_json}
 
 ///|
 test "error display and json" {

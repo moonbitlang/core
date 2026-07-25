@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-struct Data {
+priv struct Data {
   val : String
 } derive(Debug)
 
@@ -37,6 +37,3 @@ test {
   // FIXME:The output is not ideal, we would prefer
   // to see the Unicode code points, e.g.
 }
-
-///|
-pub extend Data with Debug::{to_repr}
