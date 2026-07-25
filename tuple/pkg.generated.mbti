@@ -7,32 +7,6 @@ import {
 }
 
 // Values
-#deprecated
-pub fn[T, U, V] curry((T, U) -> V) -> (T) -> (U) -> V
-
-#deprecated
-pub fn[T, U] fst((T, U)) -> T
-
-#deprecated
-pub fn[T, U, V, W] map_both((T) -> U, (V) -> W, (T, V)) -> (U, W)
-
-#deprecated
-pub fn[T, U, V] map_fst((T) -> U, (T, V)) -> (U, V)
-
-#deprecated
-pub fn[T, U, V] map_snd((T) -> U, (V, T)) -> (V, U)
-
-#deprecated
-pub fn[T, U] pair(T, U) -> (T, U)
-
-#deprecated
-pub fn[T, U] snd((T, U)) -> U
-
-#deprecated
-pub fn[T, U] swap((T, U)) -> (U, T)
-
-#deprecated
-pub fn[T, U, V] uncurry((T) -> (U) -> V) -> (T, U) -> V
 
 // Errors
 
