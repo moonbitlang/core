@@ -15,8 +15,6 @@ import {
 // Types and methods
 type BigInt
 pub fn BigInt::add(Self, Self) -> Self
-#deprecated
-pub fn BigInt::asr(Self, Int) -> Self
 pub fn BigInt::bit_length(Self) -> Int
 pub fn BigInt::compare(Self, Self) -> Int
 pub fn BigInt::compare_int(Self, Int) -> Int
@@ -42,16 +40,12 @@ pub fn BigInt::hash(Self) -> Int
 pub fn BigInt::is_zero(Self) -> Bool
 pub fn BigInt::land(Self, Self) -> Self
 pub fn BigInt::lor(Self, Self) -> Self
-#deprecated
-pub fn BigInt::lsl(Self, Int) -> Self
 pub fn BigInt::lxor(Self, Self) -> Self
 pub fn BigInt::mod(Self, Self) -> Self
 pub fn BigInt::mul(Self, Self) -> Self
 pub fn BigInt::neg(Self) -> Self
 pub fn BigInt::pow(Self, Self, modulus? : Self) -> Self
-#deprecated
 pub fn BigInt::shl(Self, Int) -> Self
-#deprecated
 pub fn BigInt::shr(Self, Int) -> Self
 pub fn BigInt::sub(Self, Self) -> Self
 #deprecated

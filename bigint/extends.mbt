@@ -48,6 +48,12 @@ pub extend BigInt with Mul::{mul}
 pub extend BigInt with Neg::{neg}
 
 ///|
+pub extend BigInt with Shl::{shl}
+
+///|
+pub extend BigInt with Shr::{shr}
+
+///|
 pub extend BigInt with Sub::{sub}
 
 // `BigInt::to_json` is promoted (not deprecated): it has cross-package method-syntax
