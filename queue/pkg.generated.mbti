@@ -38,8 +38,6 @@ pub fn[A] Queue::new() -> Self[A]
 pub fn[A] Queue::peek(Self[A]) -> A?
 pub fn[A] Queue::pop(Self[A]) -> A?
 pub fn[A] Queue::push(Self[A], A) -> Unit
-#deprecated
-pub fn[A : @debug.Debug] Queue::to_repr(Self[A]) -> @debug.Repr
 pub fn[A] Queue::transfer(Self[A], Self[A]) -> Unit
 #deprecated
 pub impl[A : Show] Show for Queue[A]

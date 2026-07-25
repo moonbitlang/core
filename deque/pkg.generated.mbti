@@ -86,8 +86,6 @@ pub fn[A] Deque::shrink_to_fit(Self[A]) -> Unit
 pub fn[A] Deque::shuffle(Self[A], rand~ : (Int) -> Int) -> Self[A]
 pub fn[A] Deque::shuffle_in_place(Self[A], rand~ : (Int) -> Int) -> Unit
 pub fn[A] Deque::to_array(Self[A]) -> Array[A]
-#deprecated
-pub fn[A : @debug.Debug] Deque::to_repr(Self[A]) -> @debug.Repr
 pub fn[A] Deque::truncate(Self[A], Int) -> Unit
 pub impl[A] Add for Deque[A]
 pub impl[A : Compare] Compare for Deque[A]
