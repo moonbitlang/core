@@ -243,3 +243,25 @@ test "Iter[X] to_json" {
   let v = "a b c d".split(" ")
   @json.json_inspect(v, content=["a", "b", "c", "d"])
 }
+
+///|
+test "Json constructor" {
+  // `Json(x)` converts any `ToJson` value; it is the constructor of `Json`,
+  // re-exported by the prelude so no import is needed.
+  debug_inspect(Json(42), content="Number(42)")
+  debug_inspect(Json("hello"), content="String(\"hello\")")
+  debug_inspect(Json(true), content="True")
+  debug_inspect(Json([1, 2]), content="Array([Number(1), Number(2)])")
+  debug_inspect(
+    Json({ "k": 1 }),
+    content=(
+      #|Object({ "k": Number(1) })
+    ),
+  )
+}
+
+///|
+test "Json constructor is idempotent" {
+  let j : Json = [1, 2]
+  debug_inspect(Json(j), content="Array([Number(1), Number(2)])")
+}
