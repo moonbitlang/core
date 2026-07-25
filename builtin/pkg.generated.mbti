@@ -355,6 +355,7 @@ pub enum Json {
   Array(Array[Json])
   Object(Map[String, Json])
 }
+pub fn[T : ToJson] Json::Json(T) -> Self
 pub fn Json::array(Array[Self]) -> Self
 pub fn Json::boolean(Bool) -> Self
 pub fn Json::empty_object() -> Self

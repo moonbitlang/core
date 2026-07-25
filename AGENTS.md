@@ -87,13 +87,15 @@ Within the "safe to promote" set:
   Moon's generated test drivers call `FixedArray::make(512, Byte::default())`, so
   deprecating it breaks `moon test --build-only --deny-warn`. moonbitlang/moon#1938
   removes that call; deprecate `Byte` like the rest once a moon release ships.)
-- **`ToJson::to_json`**: **not promoted** (deprecated → `@json.to_json(x)`, or
-  `ToJson::to_json(x)` in the few `builtin`-source spots that can't reach
-  `@json`), for two reasons: (1) `ToJson` logically belongs in `@json` and may
-  move there — promoting it would cycle on the move (see above); (2) `Json` has
-  literal sugar — `([x, y] : Json)`, `({ "k": v } : Json)` — so you rarely need
-  `x.to_json()` at all. It's cold (not a hot-loop op), so routing through the
-  free function costs nothing.
+- **`ToJson::to_json`**: **not promoted** — use **`Json(x)`**, the constructor of
+  `Json` (re-exported by the prelude, so it needs no import and works from every
+  package, `builtin` included). Between that and `Json`'s literal sugar
+  (`([x, y] : Json)`, `({ "k": v } : Json)`) you rarely need `x.to_json()` at
+  all, and serialization is cold, so nothing is lost by going through the
+  constructor. Because `Json(x)` is spelled the same regardless of which package
+  `Json` lives in, moving `Json`/`ToJson` to `@json` later would not churn call
+  sites — exactly how `to_repr(x)` is spelled the same though `Debug`/`Repr` live
+  in `@debug`.
 
 This policy governs a package's own `extends.mbt` (its public API surface).
 
