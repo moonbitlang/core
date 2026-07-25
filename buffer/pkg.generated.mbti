@@ -25,8 +25,6 @@ pub fn Buffer::length(Self) -> Int
 pub fn Buffer::reset(Self) -> Unit
 #alias(contents)
 pub fn Buffer::to_bytes(Self) -> Bytes
-#deprecated
-pub fn Buffer::to_repr(Self) -> @debug.Repr
 pub fn Buffer::to_string(Self) -> String
 pub fn Buffer::view(Self) -> ArrayView[Byte]
 #deprecated

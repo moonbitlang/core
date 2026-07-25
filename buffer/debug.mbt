@@ -18,12 +18,6 @@ pub impl @debug.Debug for Buffer with fn to_repr(self) {
 }
 
 ///|
-#deprecated("use `Repr(a)` instead", skip_current_package=true)
-pub fn Buffer::to_repr(self : Buffer) -> @debug.Repr {
-  Repr(self)
-}
-
-///|
 test "Debug for Buffer" {
   let buf = Buffer()
   buf.write_bytes(b"ab")
