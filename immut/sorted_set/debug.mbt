@@ -21,12 +21,6 @@ pub impl[K : @debug.Debug] @debug.Debug for SortedSet[K] with fn to_repr(self) {
 }
 
 ///|
-#deprecated("use `Repr(a)` instead", skip_current_package=true)
-pub fn[K : @debug.Debug] SortedSet::to_repr(self : SortedSet[K]) -> @debug.Repr {
-  Repr(self)
-}
-
-///|
 test "Debug for SortedSet" {
   let ss : SortedSet[Int] = SortedSet([3, 1, 2])
   @debug.debug_inspect(ss, content="<SortedSet: [1, 2, 3]>")

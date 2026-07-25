@@ -21,14 +21,6 @@ pub impl[A : @debug.Debug + Compare] @debug.Debug for PriorityQueue[A] with fn t
 }
 
 ///|
-#deprecated("use `Repr(a)` instead", skip_current_package=true)
-pub fn[A : @debug.Debug + Compare] PriorityQueue::to_repr(
-  self : PriorityQueue[A],
-) -> @debug.Repr {
-  Repr(self)
-}
-
-///|
 test "Debug for PriorityQueue" {
   let pq : PriorityQueue[Int] = from_array([3, 1, 2])
   @debug.debug_inspect(pq, content="<PriorityQueue: [3, 2, 1]>")

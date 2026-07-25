@@ -26,6 +26,11 @@ pub extend PriorityQueue with Hash::{hash}
 // --- deprecated: hidden from the generated interface ---
 
 ///|
+#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
+#doc(hidden)
+pub extend PriorityQueue with @debug.Debug::{to_repr}
+
+///|
 #deprecated("Use `@quickcheck.Arbitrary::arbitrary` instead", skip_current_package=true)
 #doc(hidden)
 pub extend PriorityQueue with @quickcheck.Arbitrary::{arbitrary}
