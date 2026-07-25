@@ -18,12 +18,6 @@ pub impl[T : @debug.Debug] @debug.Debug for Ref[T] with fn to_repr(self) {
 }
 
 ///|
-#deprecated("use `Repr(a)` instead", skip_current_package=true)
-pub fn[T : @debug.Debug] Ref::to_repr(self : Ref[T]) -> @debug.Repr {
-  Repr(self)
-}
-
-///|
 test "Debug for Ref" {
   let r : Ref[Int] = new(1)
   @debug.debug_inspect(r, content="<Ref: 1>")
