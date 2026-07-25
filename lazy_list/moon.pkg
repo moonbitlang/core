@@ -9,4 +9,3 @@ import {
   "moonbitlang/core/list",
 } for "test"
 
-warnings = "+implicit_impl_as_method"

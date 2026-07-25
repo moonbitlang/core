@@ -6,4 +6,3 @@ import {
   "moonbitlang/core/ref",
 }
 
-warnings = "+implicit_impl_as_method"

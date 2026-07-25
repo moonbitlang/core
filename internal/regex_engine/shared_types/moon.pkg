@@ -4,4 +4,3 @@ import {
   "moonbitlang/core/internal/regex_engine/shared_types/rechar_set",
 }
 
-warnings = "+implicit_impl_as_method"
