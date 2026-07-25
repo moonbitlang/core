@@ -21,12 +21,6 @@ pub impl[A : @debug.Debug] @debug.Debug for T[A] with fn to_repr(self) {
 }
 
 ///|
-#deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
-pub fn[A : @debug.Debug] T::to_repr(self : T[A]) -> @debug.Repr {
-  Repr(self)
-}
-
-///|
 test "Debug for Array" {
   let xs : T[Int] = T::from_array([1, 2, 3])
   @debug.debug_inspect(xs, content="<Array: [1, 2, 3]>")

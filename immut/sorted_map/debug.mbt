@@ -23,14 +23,6 @@ pub impl[K : @debug.Debug, V : @debug.Debug] @debug.Debug for SortedMap[K, V] wi
 }
 
 ///|
-#deprecated("use `Repr(a)` instead", skip_current_package=true)
-pub fn[K : @debug.Debug, V : @debug.Debug] SortedMap::to_repr(
-  self : SortedMap[K, V],
-) -> @debug.Repr {
-  Repr(self)
-}
-
-///|
 test "Debug for SortedMap" {
   let sm : SortedMap[Int, String] = SortedMap([(1, "a"), (2, "b")])
   @debug.debug_inspect(

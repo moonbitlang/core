@@ -29,6 +29,11 @@ pub extend T with Hash::{hash}
 // --- deprecated: hidden from the generated interface ---
 
 ///|
+#deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
+#doc(hidden)
+pub extend T with @debug.Debug::{to_repr}
+
+///|
 #deprecated("Use `@quickcheck.Arbitrary::arbitrary` instead", skip_current_package=true)
 #doc(hidden)
 pub extend T with @quickcheck.Arbitrary::{arbitrary}

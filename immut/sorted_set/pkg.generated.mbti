@@ -66,8 +66,6 @@ pub fn[A : Compare] SortedSet::subset(Self[A], Self[A]) -> Bool
 pub fn[A : Compare] SortedSet::symmetric_difference(Self[A], Self[A]) -> Self[A]
 pub fn[A] SortedSet::to_array(Self[A]) -> Array[A]
 pub fn[A : ToJson] SortedSet::to_json(Self[A]) -> Json
-#deprecated
-pub fn[K : @debug.Debug] SortedSet::to_repr(Self[K]) -> @debug.Repr
 pub fn[A : Compare] SortedSet::union(Self[A], Self[A]) -> Self[A]
 pub impl[A : Compare] Add for SortedSet[A]
 pub impl[A : Compare] Compare for SortedSet[A]

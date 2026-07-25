@@ -65,8 +65,6 @@ pub fn[A] Vector::slice(Self[A], Int, Int) -> Self[A]
 pub fn[A] Vector::split(Self[A], Int) -> (Self[A], Self[A])
 pub fn[A] Vector::take(Self[A], Int) -> Self[A]
 pub fn[A] Vector::to_array(Self[A]) -> Array[A]
-#deprecated
-pub fn[A : @debug.Debug] Vector::to_repr(Self[A]) -> @debug.Repr
 pub impl[A] Add for Vector[A]
 pub impl[A : Compare] Compare for Vector[A]
 pub impl[A : Eq] Eq for Vector[A]

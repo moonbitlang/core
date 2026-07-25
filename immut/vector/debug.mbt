@@ -21,12 +21,6 @@ pub impl[A : @debug.Debug] @debug.Debug for Vector[A] with fn to_repr(self) {
 }
 
 ///|
-#deprecated("use `Repr(a)` instead", skip_current_package=true)
-pub fn[A : @debug.Debug] Vector::to_repr(self : Vector[A]) -> @debug.Repr {
-  Repr(self)
-}
-
-///|
 test "Debug for Vector" {
   let xs : Vector[Int] = from_array([1, 2, 3])
   @debug.debug_inspect(xs, content="<Vector: [1, 2, 3]>")
