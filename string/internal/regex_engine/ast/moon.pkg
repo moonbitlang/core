@@ -4,4 +4,3 @@ import {
   "moonbitlang/core/internal/regex_engine/shared_types",
 }
 
-warnings = "+implicit_impl_as_method"

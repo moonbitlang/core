@@ -7,7 +7,6 @@ import {
   "moonbitlang/core/buffer",
 } for "test"
 
-warnings = "+implicit_impl_as_method"
 
 options(
   targets: {

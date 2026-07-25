@@ -9,7 +9,7 @@ import {
   "moonbitlang/core/ref",
 } for "wbtest"
 
-warnings = "-deprecated+implicit_impl_as_method"
+warnings = "-deprecated"
 
 import {
   "moonbitlang/core/test",
