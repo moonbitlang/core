@@ -11,8 +11,6 @@ import {
 
 // Types and methods
 pub fn Error::to_json(Self) -> Json
-#deprecated
-pub fn Error::to_repr(Self) -> @debug.Repr
 pub fn Error::to_string(Self) -> String
 pub impl Show for Error
 pub impl ToJson for Error
