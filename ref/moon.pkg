@@ -7,4 +7,3 @@ import {
 import {
   "moonbitlang/core/test",
 } for "test"
-

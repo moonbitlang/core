@@ -13,7 +13,6 @@ import {
   "moonbitlang/core/test",
 } for "test"
 
-
 options(
   targets: { "panic_wbtest.mbt": [ "not", "native", "llvm" ] },
 )

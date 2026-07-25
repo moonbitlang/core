@@ -15,4 +15,3 @@ import {
   "moonbitlang/core/option",
   "moonbitlang/core/test",
 } for "test"
-

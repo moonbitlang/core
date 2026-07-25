@@ -7,4 +7,3 @@ import {
   "moonbitlang/core/uint16",
   "moonbitlang/core/json",
 } for "test"
-
