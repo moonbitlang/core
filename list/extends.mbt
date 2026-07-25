@@ -26,6 +26,11 @@ pub extend List with Hash::{hash}
 // --- deprecated: hidden from the generated interface ---
 
 ///|
+#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
+#doc(hidden)
+pub extend List with @debug.Debug::{to_repr}
+
+///|
 #deprecated("Use `@quickcheck.Arbitrary::arbitrary` instead", skip_current_package=true)
 #doc(hidden)
 pub extend List with @quickcheck.Arbitrary::{arbitrary}

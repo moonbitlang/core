@@ -21,12 +21,6 @@ pub impl[A : @debug.Debug] @debug.Debug for Deque[A] with fn to_repr(self) {
 }
 
 ///|
-#deprecated("use `Repr(a)` instead", skip_current_package=true)
-pub fn[A : @debug.Debug] Deque::to_repr(self : Deque[A]) -> @debug.Repr {
-  Repr(self)
-}
-
-///|
 test "Debug for Deque" {
   let dq : Deque[Int] = from_array([1, 2, 3])
   @debug.debug_inspect(dq, content="<Deque: [1, 2, 3]>")

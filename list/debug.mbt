@@ -21,12 +21,6 @@ pub impl[A : @debug.Debug] @debug.Debug for List[A] with fn to_repr(self) {
 }
 
 ///|
-#deprecated("use `Repr(a)` instead", skip_current_package=true)
-pub fn[A : @debug.Debug] List::to_repr(self : List[A]) -> @debug.Repr {
-  Repr(self)
-}
-
-///|
 test "Debug for List" {
   let xs : List[Int] = List([1, 2, 3])
   @debug.debug_inspect(xs, content="<List: [1, 2, 3]>")

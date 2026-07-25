@@ -23,14 +23,6 @@ pub impl[K : @debug.Debug, V : @debug.Debug] @debug.Debug for HashMap[K, V] with
 }
 
 ///|
-#deprecated("use `Repr(a)` instead", skip_current_package=true)
-pub fn[K : @debug.Debug, V : @debug.Debug] HashMap::to_repr(
-  self : HashMap[K, V],
-) -> @debug.Repr {
-  Repr(self)
-}
-
-///|
 test "Debug for HashMap" {
   let hm : HashMap[Int, String] = from_array([(2, "b")])
   @debug.debug_inspect(

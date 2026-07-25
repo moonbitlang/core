@@ -21,12 +21,6 @@ pub impl[K : @debug.Debug] @debug.Debug for HashSet[K] with fn to_repr(self) {
 }
 
 ///|
-#deprecated("use `Repr(a)` instead", skip_current_package=true)
-pub fn[K : @debug.Debug] HashSet::to_repr(self : HashSet[K]) -> @debug.Repr {
-  Repr(self)
-}
-
-///|
 test "Debug for HashSet" {
   let hs : HashSet[Int] = from_array([1])
   @debug.debug_inspect(hs, content="<HashSet: [1]>")
