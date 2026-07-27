@@ -133,5 +133,20 @@ pub fn Double::floor(self : Double) -> Double {
 /// }
 /// ```
 pub fn Double::round(self : Double) -> Double {
-  (self + 0.5).floor()
+  // `(self + 0.5).floor()` alone drops the sign of zero, crosses the half
+  // boundary for `nextDown(0.5)`, and perturbs integers in `[2^52, 2^53)`.
+  if self != self || self.abs() >= 4503599627370496.0 {
+    return self
+  }
+  if self > 0.0 {
+    if self < 0.5 {
+      0.0
+    } else {
+      (self + 0.5).floor()
+    }
+  } else if self >= -0.5 {
+    -0.0
+  } else {
+    (self + 0.5).floor()
+  }
 }
