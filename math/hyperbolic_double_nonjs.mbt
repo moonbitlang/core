@@ -201,11 +201,14 @@ pub fn tanh(x : Double) -> Double {
     return -1.0
   }
   let ix = get_high_word(x).reinterpret_as_int() & 0x7fffffff
+  // |x| < 2^-55: tanh(x) == x to working precision, and this already carries
+  // the sign, so it must not go through the |x|-based sign fixup below.
+  if ix < 0x3c800000 {
+    return x * (1.0 + x)
+  }
   let tiny = 1.0e-300
   let z = if ix < 0x40360000 {
-    if ix < 0x3c800000 {
-      x * (1.0 + x)
-    } else if ix >= 0x3ff00000 {
+    if ix >= 0x3ff00000 {
       let t = (2.0 * x.abs()) |> expm1
       1.0 - 2.0 / (t + 2.0)
     } else {
