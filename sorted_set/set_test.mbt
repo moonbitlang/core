@@ -512,3 +512,18 @@ test "@sorted_set.symmetric_difference/identical" {
     ),
   )
 }
+
+///|
+test "union size is exact for overlapping, disjoint and identical sets" {
+  let a = @sorted_set.from_array([1, 2, 3, 4, 5])
+  let b = @sorted_set.from_array([4, 5, 6, 7])
+  inspect(a.union(b).length(), content="7")
+  inspect(b.union(a).length(), content="7")
+  inspect(a.union(@sorted_set.from_array([10, 11])).length(), content="7")
+  inspect(a.union(a).length(), content="5")
+  // size must agree with an actual element count
+  let u = a.union(b)
+  let mut n = 0
+  u.each(_x => n = n + 1)
+  inspect(u.length() == n, content="true")
+}
