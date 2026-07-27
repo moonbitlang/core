@@ -15,29 +15,30 @@
 ///|
 /// One step in an edit script that transforms `old` into `new`.
 ///
-/// Every constructor stores the start positions of the affected range in both
-/// sequences. Length fields then describe how many elements are deleted,
-/// inserted, or shared. Storing both coordinates on every step keeps the edit
-/// self-contained, which simplifies deriving hunk headers and grouping edits
-/// into hunks.
+/// Every edit stores the positions in *both* original sequences at the moment
+/// it applies: `old_index` and `new_index` are monotone cursors into `old` and
+/// `new` — `Delete` advances only the old cursor (by `old_len`), `Insert` only
+/// the new cursor (by `new_len`), and `Equal` advances both (by `len`). A
+/// replacement is always emitted as a `Delete` followed by an `Insert` at the
+/// same point; edits never have zero length, and adjacent edits of the same
+/// kind are coalesced. Storing both coordinates keeps each edit
+/// self-contained, so a slice of the script (a hunk) still knows its absolute
+/// positions.
 pub enum Edit {
-  /// Delete `len` elements starting at `old_index` from `old`.
+  /// Delete `old_len` elements starting at `old_index` from `old`.
   ///
-  /// `new_index` is the aligned position in `new` where this deletion occurs.
-  /// Although a deletion contributes an empty range on the `new` side, storing
-  /// it directly simplifies hunk-header generation and edit grouping.
-  Delete(old_index~ : Int, new_index~ : Int, len~ : Int)
-  /// Insert `len` elements starting at `new_index` from `new`.
+  /// `new_index` is the cursor position in `new` when this deletion applies;
+  /// a deletion covers an empty range on the `new` side.
+  Delete(old_index~ : Int, old_len~ : Int, new_index~ : Int)
+  /// Insert `new_len` elements starting at `new_index` from `new`.
   ///
-  /// `old_index` is the aligned position in `old` immediately before this
-  /// insertion point. Although an insertion contributes an empty range on the
-  /// `old` side, storing it directly simplifies hunk-header generation and
-  /// edit grouping.
-  Insert(old_index~ : Int, new_index~ : Int, len~ : Int)
+  /// `old_index` is the cursor position in `old` when this insertion applies;
+  /// an insertion covers an empty range on the `old` side.
+  Insert(old_index~ : Int, new_index~ : Int, new_len~ : Int)
   /// Keep `len` equal elements starting at `old_index` in `old` and `new_index`
   /// in `new`.
   Equal(old_index~ : Int, new_index~ : Int, len~ : Int)
-} derive(@debug.Debug)
+} derive(Eq, @debug.Debug)
 
 ///|
 /// Return the half-open range `[start, end)` covered by this edit in `old`.
@@ -46,7 +47,7 @@ pub enum Edit {
 fn Edit::old_range(self : Edit) -> (Int, Int) {
   match self {
     Insert(old_index~, ..) => (old_index, old_index)
-    Delete(old_index~, len~, ..) => (old_index, old_index + len)
+    Delete(old_index~, old_len~, ..) => (old_index, old_index + old_len)
     Equal(old_index~, len~, ..) => (old_index, old_index + len)
   }
 }
@@ -57,7 +58,7 @@ fn Edit::old_range(self : Edit) -> (Int, Int) {
 /// Deletions consume no elements from `new`, so they map to an empty range.
 fn Edit::new_range(self : Edit) -> (Int, Int) {
   match self {
-    Insert(new_index~, len~, ..) => (new_index, new_index + len)
+    Insert(new_index~, new_len~, ..) => (new_index, new_index + new_len)
     Delete(new_index~, ..) => (new_index, new_index)
     Equal(new_index~, len~, ..) => (new_index, new_index + len)
   }
@@ -70,10 +71,10 @@ fn[T] Edit::view_from(
   new~ : ArrayView[T],
 ) -> ArrayView[T] {
   match self {
-    Insert(new_index~, len~, ..) =>
-      new.view(start=new_index, end=new_index + len)
-    Delete(old_index~, len~, ..) =>
-      old.view(start=old_index, end=old_index + len)
+    Insert(new_index~, new_len~, ..) =>
+      new.view(start=new_index, end=new_index + new_len)
+    Delete(old_index~, old_len~, ..) =>
+      old.view(start=old_index, end=old_index + old_len)
     Equal(old_index~, len~, ..) =>
       old.view(start=old_index, end=old_index + len)
   }
@@ -86,11 +87,11 @@ fn[T] Edit::view_from(
 /// you can build things like unified diffs.
 fn[T] group_edits(
   edits : Array[Edit],
-  radius? : Int = 3,
+  context? : Int = 3,
   old~ : ArrayView[T],
   new~ : ArrayView[T],
 ) -> Array[Hunk[T]] {
-  guard radius >= 0 else { abort("radius must be non-negative") }
+  guard context >= 0 else { abort("context must be non-negative") }
   if edits.is_empty() {
     return []
   }
@@ -102,22 +103,22 @@ fn[T] group_edits(
       Equal(old_index~, new_index~, len~) => {
         // Trim leading context for first edit
         let (old_index, new_index, len) = if i == 0 {
-          let offset = len.saturating_sub(radius)
+          let offset = len.saturating_sub(context)
           (old_index + offset, new_index + offset, len - offset)
         } else {
           (old_index, new_index, len)
         }
         // Trim trailing context for last edit
         let len = if i == n - 1 {
-          len - len.saturating_sub(radius)
+          len - len.saturating_sub(context)
         } else {
           len
         }
         // Split if this equal range is large enough
-        if len > radius * 2 {
-          pending.push(Equal(old_index~, new_index~, len=radius))
+        if len > context * 2 {
+          pending.push(Equal(old_index~, new_index~, len=context))
           result.push({ edits: pending, old, new })
-          let offset = len.saturating_sub(radius)
+          let offset = len.saturating_sub(context)
           pending = [
             Equal(
               old_index=old_index + offset,

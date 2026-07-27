@@ -22,9 +22,9 @@ test "group_edit handles empty edits" {
 ///|
 test "group_edit splits long equal blocks into multiple hunks" {
   let edits : Array[Edit] = [
-    Delete(old_index=0, new_index=0, len=1),
+    Delete(old_index=0, old_len=1, new_index=0),
     Equal(old_index=1, new_index=0, len=10),
-    Insert(old_index=11, new_index=10, len=2),
+    Insert(old_index=11, new_index=10, new_len=2),
   ]
   let groups = group_edits(
     edits,
@@ -35,7 +35,7 @@ test "group_edit splits long equal blocks into multiple hunks" {
   assert_true(
     groups[0].edits
     is [
-      Delete(old_index=0, new_index=0, len=1),
+      Delete(old_index=0, old_len=1, new_index=0),
       Equal(old_index=1, new_index=0, len=3),
     ],
   )
@@ -43,7 +43,7 @@ test "group_edit splits long equal blocks into multiple hunks" {
     groups[1].edits
     is [
       Equal(old_index=8, new_index=7, len=3),
-      Insert(old_index=11, new_index=10, len=2),
+      Insert(old_index=11, new_index=10, new_len=2),
     ],
   )
 }
@@ -55,7 +55,9 @@ test "range display for single and empty span" {
     content="@@ -5 +3 @@",
   )
   inspect(
-    Show::to_string(HunkHeader::new([Insert(old_index=4, new_index=2, len=1)])),
+    Show::to_string(
+      HunkHeader::new([Insert(old_index=4, new_index=2, new_len=1)]),
+    ),
     content="@@ -4,0 +3 @@",
   )
 }
@@ -65,8 +67,8 @@ test "range display spans replacement ending with insert" {
   inspect(
     Show::to_string(
       HunkHeader::new([
-        Delete(old_index=1, new_index=1, len=1),
-        Insert(old_index=1, new_index=1, len=1),
+        Delete(old_index=1, old_len=1, new_index=1),
+        Insert(old_index=2, new_index=1, new_len=1),
       ]),
     ),
     content="@@ -2 +2 @@",
