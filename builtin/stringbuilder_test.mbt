@@ -48,6 +48,18 @@ test "reset does not mutate returned string" {
 }
 
 ///|
+test "StringBuilder size_hint zero grows" {
+  let buf = StringBuilder(size_hint=0)
+  buf.write_string("hello")
+  inspect(buf.to_string(), content="hello")
+}
+
+///|
+test "panic StringBuilder constructor negative size_hint" {
+  ignore(StringBuilder(size_hint=-1))
+}
+
+///|
 test {
   let data = ["a", "b", "c", "hello world"]
   @json.json_inspect(
