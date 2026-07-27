@@ -34,6 +34,7 @@ pub struct Hunk[T] {
   old : ArrayView[T]
   new : ArrayView[T]
 }
+pub fn[T : Show] Hunk::to_string(Self[T]) -> String
 pub impl[T : Show] Show for Hunk[T]
 
 // Type aliases
