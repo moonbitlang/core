@@ -37,7 +37,7 @@ fn[T : Show] hunks_to_string(hunks : Array[@diff.Hunk[T]]) -> String {
 }
 
 ///|
-struct User {
+priv struct User {
   id : Int
   name : String
 } derive(Hash, Eq)
@@ -50,7 +50,7 @@ impl Show for User with fn output(self, logger) {
 }
 
 ///|
-enum Token {
+priv enum Token {
   Start
   Stop
   Num(Int)

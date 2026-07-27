@@ -491,33 +491,33 @@ fn[T : Eq + Hash] iter_matches(
   let (d1, d2) = diff_(cutoff, old, new)
   let mut i1 = 0
   let mut i2 = 0
+  // Iterative rather than recursive: a run of consecutive changed elements
+  // would otherwise recurse once per element, and MoonBit does not guarantee
+  // tail-call optimization for local functions.
   fn go() {
     // traverse two arrays, find unchanged element pairs
-    if i1 >= d1.length() || i2 >= d2.length() {
-      return None // reached end of arrays
-    } else if !d1[i1] {
-      // old[i1] unchanged
-      if !d2[i2] {
-        // new[i2] also unchanged - found matching pair
-        let matching_pair = (i1, i2)
-        i1 += 1
-        i2 += 1
-        return Some(matching_pair)
-      } else {
+    while i1 < d1.length() && i2 < d2.length() {
+      if !d1[i1] {
+        // old[i1] unchanged
+        if !d2[i2] {
+          // new[i2] also unchanged - found matching pair
+          let matching_pair = (i1, i2)
+          i1 += 1
+          i2 += 1
+          return Some(matching_pair)
+        }
         // new[i2] changed (insertion) - skip element in new
         i2 += 1
-        go()
+      } else if !d2[i2] {
+        // old[i1] changed but new[i2] didn't (deletion) - skip element in old
+        i1 += 1
+      } else {
+        // both elements changed - skip both and find next possible match
+        i1 += 1
+        i2 += 1
       }
-    } else if !d2[i2] {
-      // old[i1] changed but new[i2] didn't (deletion) - skip element in old  
-      i1 += 1
-      go()
-    } else {
-      // both elements changed - skip both and find next possible match
-      i1 += 1
-      i2 += 1
-      go()
     }
+    None // reached end of arrays
   }
 
   Iter2::new(go)

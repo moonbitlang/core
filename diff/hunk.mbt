@@ -80,7 +80,7 @@ pub struct Hunk[T] {
 
 ///|
 pub impl[T : Show] Show for Hunk[T] with fn output(self, logger) {
-  let header = HunkHeader::new(self.edits).to_string()
+  let header = Show::to_string(HunkHeader::new(self.edits))
   logger.write_string(header)
   logger.write_char('\n')
   for edit in self.edits {
