@@ -16,7 +16,7 @@
 pub impl @debug.Debug for Bench with fn to_repr(self) {
   @debug.Repr::opaque_(
     "Bench",
-    @debug.Repr::array(self.summaries.map(s => @debug.to_repr(s))),
+    @debug.Repr::array(self.summaries.map(s => Repr(s))),
   )
 }
 

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-struct NestedJsonValue {
+priv struct NestedJsonValue {
   w : Int
 } derive(ToJson)
 

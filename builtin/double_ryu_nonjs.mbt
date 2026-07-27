@@ -51,7 +51,7 @@ fn log10Pow2(e : Int) -> Int {
 ///|
 fn string_from_bytes(bytes : FixedArray[Byte], from : Int, to : Int) -> String {
   let len = to - from
-  let buffer = FixedArray::make(len, UInt16::default())
+  let buffer = FixedArray::make(len, (Default::default() : UInt16))
   for i in 0..<len {
     buffer[i] = bytes[from + i].to_uint16()
   }
@@ -529,7 +529,7 @@ fn d2d(ieeeMantissa : UInt64, ieeeExponent : UInt) -> FloatingDecimal64 {
 ///|
 fn to_chars(v : FloatingDecimal64, sign : Bool) -> String {
   // Step 5: Print the decimal representation.
-  let result = FixedArray::make(25, Byte::default())
+  let result = FixedArray::make(25, b'\x00')
   let mut index : Int = 0
   if sign {
     result[index] = b'-'

@@ -195,6 +195,32 @@ pub fn Json::object(object : Map[String, Json]) -> Json {
 }
 
 ///|
+/// Converts any value implementing `ToJson` into a `Json`.
+///
+/// This is the constructor of `Json`, so it is written `Json(value)`, and it is
+/// re-exported by the prelude — no import is needed. Prefer it over calling
+/// `ToJson::to_json` directly.
+///
+/// Parameters:
+///
+/// * `value` : The value to convert.
+///
+/// Returns the `Json` representation of `value`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   @debug.debug_inspect(Json(42), content="Number(42)")
+///   @debug.debug_inspect(Json("hello"), content="String(\"hello\")")
+///   @debug.debug_inspect(Json([1, 2]), content="Array([Number(1), Number(2)])")
+/// }
+/// ```
+pub fn[T : ToJson] Json::Json(value : T) -> Json {
+  ToJson::to_json(value)
+}
+
+///|
 /// Trait for types that can be converted to `Json`
 pub(open) trait ToJson {
   fn to_json(Self) -> Json

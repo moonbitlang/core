@@ -32,6 +32,8 @@ pub(all) enum FlagAction {
   Help
   Version
 } derive(Eq, Show, @debug.Debug)
+pub fn FlagAction::equal(Self, Self) -> Bool
+pub fn FlagAction::to_string(Self) -> String
 
 pub struct FlagArg {
   // private fields
@@ -52,6 +54,8 @@ pub(all) enum OptionAction {
   Set
   Append
 } derive(Eq, Show, @debug.Debug)
+pub fn OptionAction::equal(Self, Self) -> Bool
+pub fn OptionAction::to_string(Self) -> String
 
 pub struct OptionArg {
   // private fields
@@ -70,13 +74,17 @@ pub struct ValueRange {
 } derive(Eq, Show, @debug.Debug)
 #alias(new, deprecated)
 pub fn ValueRange::ValueRange(lower? : Int, upper? : Int) -> Self
+pub fn ValueRange::equal(Self, Self) -> Bool
 pub fn ValueRange::single() -> Self
+pub fn ValueRange::to_string(Self) -> String
 
 pub enum ValueSource {
   Argv
   Env
   Default
 } derive(Eq, Show, @debug.Debug)
+pub fn ValueSource::equal(Self, Self) -> Bool
+pub fn ValueSource::to_string(Self) -> String
 
 // Type aliases
 

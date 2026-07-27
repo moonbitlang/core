@@ -13,10 +13,10 @@
 // limitations under the License.
 
 ///|
-struct RangeImpl[T] {
+priv struct RangeImpl[T] {
   lo : T
   hi : T
-} derive(Debug, ToJson)
+} derive(ToJson)
 
 // pub
 // priv
@@ -61,7 +61,7 @@ fn labeld_break(xss : Array[Array[Double]]) -> Double? {
       }
       continue threshold
     } nobreak {
-      continue threshold
+      continue mylabel~ threshold
     }
   } nobreak {
     None

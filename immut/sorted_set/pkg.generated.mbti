@@ -20,11 +20,11 @@ pub fn[A] SortedSet::all(Self[A], (A) -> Bool raise?) -> Bool raise?
 pub fn[A] SortedSet::any(Self[A], (A) -> Bool raise?) -> Bool raise?
 pub fn[A : Compare] SortedSet::compare(Self[A], Self[A]) -> Int
 pub fn[A : Compare] SortedSet::contains(Self[A], A) -> Bool
-pub fn[A] SortedSet::default() -> Self[A]
 #alias(diff, deprecated)
 pub fn[A : Compare] SortedSet::difference(Self[A], Self[A]) -> Self[A]
 pub fn[A : Compare] SortedSet::disjoint(Self[A], Self[A]) -> Bool
 pub fn[A] SortedSet::each(Self[A], (A) -> Unit raise?) -> Unit raise?
+pub fn[A : Eq] SortedSet::equal(Self[A], Self[A]) -> Bool
 pub fn[A] SortedSet::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 pub fn[A, B] SortedSet::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 #alias(of, deprecated)
@@ -38,6 +38,7 @@ pub fn[A : Compare] SortedSet::from_array(ArrayView[A]) -> Self[A]
 pub fn[A : Compare] SortedSet::from_iter(Iter[A]) -> Self[A]
 #as_free_fn
 pub fn[A : @json.FromJson + Compare] SortedSet::from_json(Json) -> Self[A] raise @json.JsonDecodeError
+pub fn[A : Hash] SortedSet::hash(Self[A]) -> Int
 #alias(inter, deprecated)
 pub fn[A : Compare] SortedSet::intersection(Self[A], Self[A]) -> Self[A]
 pub fn[A] SortedSet::is_empty(Self[A]) -> Bool
@@ -65,8 +66,6 @@ pub fn[A : Compare] SortedSet::subset(Self[A], Self[A]) -> Bool
 pub fn[A : Compare] SortedSet::symmetric_difference(Self[A], Self[A]) -> Self[A]
 pub fn[A] SortedSet::to_array(Self[A]) -> Array[A]
 pub fn[A : ToJson] SortedSet::to_json(Self[A]) -> Json
-#deprecated
-pub fn[K : @debug.Debug] SortedSet::to_repr(Self[K]) -> @debug.Repr
 pub fn[A : Compare] SortedSet::union(Self[A], Self[A]) -> Self[A]
 pub impl[A : Compare] Add for SortedSet[A]
 pub impl[A : Compare] Compare for SortedSet[A]

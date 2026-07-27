@@ -814,16 +814,16 @@ test "char show hex digits" {
   // inspect('\x01', content="\x01")
   // FIXME: inspect('\x0b') will not work with update test
   // inspect('\x0b', content="\x0b")
-  inspect('\u{01}' |> to_repr, content="'\\u{01}'")
-  inspect('\u{0b}' |> to_repr, content="'\\u{0b}'")
+  inspect(Repr('\u{01}'), content="'\\u{01}'")
+  inspect(Repr('\u{0b}'), content="'\\u{0b}'")
 }
 
 ///|
 test "char show hex digits extended" {
-  inspect('\u{0605}' |> to_repr, content="'\\u{0605}'")
-  inspect('\u{FDD0}' |> to_repr, content="'\\u{fdd0}'")
-  inspect('\u{1FFFE}' |> to_repr, content="'\\u{01fffe}'")
-  inspect('\u{10FFFE}' |> to_repr, content="'\\u{10fffe}'")
+  inspect(Repr('\u{0605}'), content="'\\u{0605}'")
+  inspect(Repr('\u{FDD0}'), content="'\\u{fdd0}'")
+  inspect(Repr('\u{1FFFE}'), content="'\\u{01fffe}'")
+  inspect(Repr('\u{10FFFE}'), content="'\\u{10fffe}'")
 }
 
 ///|
@@ -850,30 +850,30 @@ test "Show for Char special cases" {
 
   // Test various special character outputs
   let quote_buf = StringBuilder()
-  '\''.output(quote_buf)
+  Show::output('\'', quote_buf)
   @test.assert_eq(quote_buf.to_string(), "'")
   let backslash_buf = StringBuilder()
-  '\\'.output(backslash_buf)
+  Show::output('\\', backslash_buf)
   @test.assert_eq(backslash_buf.to_string(), "\\")
   let cr_buf = StringBuilder()
-  '\r'.output(cr_buf)
+  Show::output('\r', cr_buf)
   @test.assert_eq(cr_buf.to_string(), "\r")
   let backspace_buf = StringBuilder()
-  '\b'.output(backspace_buf)
+  Show::output('\b', backspace_buf)
   @test.assert_eq(backspace_buf.to_string(), "\b")
   let tab_buf = StringBuilder()
-  '\t'.output(tab_buf)
+  Show::output('\t', tab_buf)
   @test.assert_eq(tab_buf.to_string(), "\t")
 
   // Test hex output for control characters
   let ctrl1_buf = StringBuilder()
-  '\u{01}'.output(ctrl1_buf)
+  Show::output('\u{01}', ctrl1_buf)
   @test.assert_eq(ctrl1_buf.to_string(), "\u{01}")
   let ctrl_f_buf = StringBuilder()
-  '\u{0F}'.output(ctrl_f_buf)
+  Show::output('\u{0F}', ctrl_f_buf)
   @test.assert_eq(ctrl_f_buf.to_string(), "\u{0f}")
   let ctrl_1f_buf = StringBuilder()
-  '\u{1F}'.output(ctrl_1f_buf)
+  Show::output('\u{1F}', ctrl_1f_buf)
   @test.assert_eq(ctrl_1f_buf.to_string(), "\u{1f}")
 }
 

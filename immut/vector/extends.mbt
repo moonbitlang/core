@@ -20,7 +20,23 @@ pub extend Vector with Add::{add}
 ///|
 pub extend Vector with Compare::{compare}
 
+///|
+pub extend Vector with Eq::{equal}
+
+///|
+pub extend Vector with Hash::{hash}
+
 // --- deprecated: hidden from the generated interface ---
+
+///|
+#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Vector with @debug.Debug::{to_repr}
+
+///|
+#deprecated("Use `@json.from_json` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Vector with @json.FromJson::{from_json}
 
 ///|
 #deprecated("Use `@quickcheck.Arbitrary::arbitrary` instead", skip_current_package=true)
@@ -33,19 +49,14 @@ pub extend Vector with @quickcheck.Arbitrary::{arbitrary}
 pub extend Vector with Compare::{op_ge, op_gt, op_le, op_lt}
 
 ///|
-#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+#deprecated("Use `!=` instead", skip_current_package=true)
 #doc(hidden)
-pub extend Vector with Eq::{equal, not_equal}
+pub extend Vector with Eq::{not_equal}
 
 ///|
-#deprecated("Use `@json.from_json` instead", skip_current_package=true)
+#deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
 #doc(hidden)
-pub extend Vector with @json.FromJson::{from_json}
-
-///|
-#deprecated("Use `Hash::hash` / `Hash::hash_combine` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Vector with Hash::{hash, hash_combine}
+pub extend Vector with Hash::{hash_combine}
 
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)

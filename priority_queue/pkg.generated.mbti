@@ -21,7 +21,6 @@ pub fn[A : Compare] PriorityQueue::PriorityQueue(ArrayView[A]) -> Self[A]
 pub fn[A] PriorityQueue::clear(Self[A]) -> Unit
 #alias(clone, deprecated)
 pub fn[A] PriorityQueue::copy(Self[A]) -> Self[A]
-pub fn[K] PriorityQueue::default() -> Self[K]
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
 #as_free_fn
@@ -37,8 +36,6 @@ pub fn[A] PriorityQueue::peek(Self[A]) -> A?
 pub fn[A : Compare] PriorityQueue::pop(Self[A]) -> A?
 pub fn[A : Compare] PriorityQueue::push(Self[A], A) -> Unit
 pub fn[A : Compare] PriorityQueue::to_array(Self[A]) -> Array[A]
-#deprecated
-pub fn[A : @debug.Debug + Compare] PriorityQueue::to_repr(Self[A]) -> @debug.Repr
 pub impl[K] Default for PriorityQueue[K]
 #deprecated
 pub impl[A : Show + Compare] Show for PriorityQueue[A]

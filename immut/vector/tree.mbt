@@ -592,7 +592,7 @@ fn[A] redis(
   if shift == 0 {
     // Handle Leaf case
 
-    let mut old_leaf_elems = FixedArray::default()
+    let mut old_leaf_elems = ([] : FixedArray[_])
     let mut old_leaf_len = 0
     for i in 0..<node_nums {
 
@@ -634,7 +634,7 @@ fn[A] redis(
   } else {
     // Handle Node case, pretty much the same as the Leaf case
 
-    let mut old_node_chldrn = FixedArray::default()
+    let mut old_node_chldrn = ([] : FixedArray[_])
     let mut old_node_len = 0
     for i in 0..<node_nums {
       old_node_chldrn = old_t[j].node_children()

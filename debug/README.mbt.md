@@ -20,7 +20,7 @@ output. Some common cases:
   textual formats such as JSON, XML, or domain-specific display text.
 - Use `debug_inspect(value, content=...)` instead of `inspect(value, content=...)`.
 - Use `@debug.assert_eq(a, b)` instead of `@test.assert_eq(a, b)`.
-- Use `\{to_repr(value)}` in string interpolation instead of `\{value}` for composed values.
+- Use `\{Repr(value)}` in string interpolation instead of `\{value}` for composed values.
 - Use `@debug.to_string(value)` instead of `value.to_string()` for composed values,
   when the string is only used for debugging.
 
@@ -58,7 +58,7 @@ Use `to_repr` in string interpolation:
 test "string interpolation" {
   let arr = [1, 2, 3]
   inspect(
-    "arr: \{to_repr(arr)}",
+    "arr: \{Repr(arr)}",
     content=(
       #|arr: [1, 2, 3]
     ),

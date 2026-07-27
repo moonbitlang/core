@@ -13,58 +13,6 @@
 // limitations under the License.
 
 ///|
-/// Arithmetic right shift for bigint values.
-///
-/// Deprecated: use the infix operator `>>` instead.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let x = @bigint.BigInt::from_int(16)
-///   inspect((x >> 2).to_int(), content="4")
-/// }
-/// ```
-#deprecated("Use infix bitwise operator `>>` instead")
-#coverage.skip
-pub fn BigInt::asr(self : BigInt, n : Int) -> BigInt {
-  self >> n
-}
-
-///|
-/// Left shift a bigint
-/// The sign of the result is the same as the sign of the input.
-/// Only the absolute value is shifted.
-///
-#deprecated("Use infix bitwise operator `<<` instead")
-#coverage.skip
-pub fn BigInt::shl(self : BigInt, n : Int) -> BigInt {
-  self << n
-}
-
-///|
-/// Left shift a bigint
-/// The sign of the result is the same as the sign of the input.
-/// Only the absolute value is shifted.
-///
-#deprecated("Use infix bitwise operator `<<` instead")
-#coverage.skip
-pub fn BigInt::lsl(self : BigInt, n : Int) -> BigInt {
-  self << n
-}
-
-///|
-/// Right shift a bigint
-/// The sign of the result is the same as the sign of the input.
-/// Only the absolute value is shifted.
-///
-#deprecated("Use infix bitwise operator `>>` instead")
-#coverage.skip
-pub fn BigInt::shr(self : BigInt, n : Int) -> BigInt {
-  self >> n
-}
-
-///|
 /// Deprecated: use `to_string(radix=16)` instead.
 #deprecated("Use `to_string(radix=16)` instead")
 #coverage.skip

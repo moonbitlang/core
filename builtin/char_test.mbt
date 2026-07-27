@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-enum H {
+priv enum H {
   A(Char)
 } derive(Debug)
 

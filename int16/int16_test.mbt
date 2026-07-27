@@ -198,6 +198,7 @@ test "Int16::hash" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Int16::equal" {
   inspect(Int16::equal(1, 2), content="false")
   inspect(Int16::equal(2, 1), content="false")
@@ -446,6 +447,7 @@ test "Int16::abs" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Int16::to_json" {
   @debug.debug_inspect(Int16::to_json(0), content="Number(0)")
   @debug.debug_inspect(Int16::to_json(1), content="Number(1)")

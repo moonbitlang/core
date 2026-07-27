@@ -12,9 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// HashSet has no promoted trait methods; every promotion below is deprecated.
+// --- promoted: kept as regular methods ---
+
+///|
+pub extend HashSet with Eq::{equal}
+
+///|
+pub extend HashSet with Hash::{hash}
 
 // --- deprecated: hidden from the generated interface ---
+
+///|
+#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
+#doc(hidden)
+pub extend HashSet with @debug.Debug::{to_repr}
 
 ///|
 #deprecated("Use `@quickcheck.Arbitrary::arbitrary` instead", skip_current_package=true)
@@ -22,14 +33,14 @@
 pub extend HashSet with @quickcheck.Arbitrary::{arbitrary}
 
 ///|
-#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+#deprecated("Use `!=` instead", skip_current_package=true)
 #doc(hidden)
-pub extend HashSet with Eq::{equal, not_equal}
+pub extend HashSet with Eq::{not_equal}
 
 ///|
-#deprecated("Use `Hash::hash` / `Hash::hash_combine` instead", skip_current_package=true)
+#deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
 #doc(hidden)
-pub extend HashSet with Hash::{hash, hash_combine}
+pub extend HashSet with Hash::{hash_combine}
 
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)

@@ -491,7 +491,7 @@ pub fn StringView::to_array(self : StringView) -> Array[Char] {
 #deprecated("Check `@encoding/utf8.encode`")
 #coverage.skip
 pub fn StringView::to_bytes(self : StringView) -> Bytes {
-  let array = FixedArray::make(self.length() * 2, Byte::default())
+  let array = FixedArray::make(self.length() * 2, b'\x00')
   array.blit_from_string(0, self.data(), self.start_offset(), self.length())
   array |> unsafe_to_bytes
 }

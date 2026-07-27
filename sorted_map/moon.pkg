@@ -11,5 +11,3 @@ import {
   "moonbitlang/core/array",
   "moonbitlang/core/test",
 } for "test"
-
-warnings = "+implicit_impl_as_method"

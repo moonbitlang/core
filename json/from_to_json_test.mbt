@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-enum Expr {
+priv enum Expr {
   Add(Expr, Expr)
   Sub(Expr, Expr)
   Mul(Expr, Expr)
@@ -24,7 +24,7 @@ enum Expr {
 ///|
 test {
   let e = Expr::Add(Val("x"), Val("y"))
-  let ej = e.to_json()
+  let ej = ToJson::to_json(e)
   inspect(
     ej.stringify(),
     content=(

@@ -273,7 +273,7 @@ pub fn[T : Debug] debug(x : T) -> Unit {
 
 ///|
 /// Convert a value to its debug string representation. Equivalent to
-/// `@debug.to_repr(x).to_string()`, but spelled in one step.
+/// `Repr(x).to_string()`, but spelled in one step.
 ///
 /// Also exported under the shorter name `repr` (re-exported from prelude,
 /// so it is callable without import). The two names refer to the same
