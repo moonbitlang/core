@@ -13,27 +13,32 @@
 // limitations under the License.
 
 ///|
-fn[T : Show] edits_to_string(d : @diff.Diff[T]) -> String {
+fn[T] edits_to_string(d : @diff.Diff[T], show~ : (T) -> String) -> String {
+  let old = d.old_view()
+  let new = d.new_view()
   let lines = Array::new()
-  for edit in d.edits {
+  for edit in d.edits() {
     let (prefix, slice) = match edit {
-      Insert(new_index~, len~, ..) =>
-        ("+", d.new.view(start=new_index, end=new_index + len))
-      Delete(old_index~, len~, ..) =>
-        ("-", d.old.view(start=old_index, end=old_index + len))
+      Insert(new_index~, new_len~, ..) =>
+        ("+", new.view(start=new_index, end=new_index + new_len))
+      Delete(old_index~, old_len~, ..) =>
+        ("-", old.view(start=old_index, end=old_index + old_len))
       Equal(old_index~, len~, ..) =>
-        (" ", d.old.view(start=old_index, end=old_index + len))
+        (" ", old.view(start=old_index, end=old_index + len))
     }
     for s in slice {
-      lines.push("\{prefix} \{s}")
+      lines.push("\{prefix} \{show(s)}")
     }
   }
   lines.join("\n")
 }
 
 ///|
-fn[T : Show] hunks_to_string(hunks : Array[@diff.Hunk[T]]) -> String {
-  hunks.map(fn(h) { h.to_string() }).join("\n")
+fn[T] hunks_to_string(
+  hunks : Array[@diff.Hunk[T]],
+  show~ : (T) -> String,
+) -> String {
+  hunks.map(fn(h) { h.render(show~) }).join("\n")
 }
 
 ///|
@@ -43,10 +48,8 @@ priv struct User {
 } derive(Hash, Eq)
 
 ///|
-impl Show for User with fn output(self, logger) {
-  logger.write_string(
-    "User { id: " + self.id.to_string() + ", name: " + self.name + " }",
-  )
+fn show_user(u : User) -> String {
+  "User { id: " + u.id.to_string() + ", name: " + u.name + " }"
 }
 
 ///|
@@ -58,12 +61,12 @@ priv enum Token {
 } derive(Hash, Eq)
 
 ///|
-impl Show for Token with fn output(self, logger) {
-  match self {
-    Start => logger.write_string("Start")
-    Stop => logger.write_string("Stop")
-    Num(n) => logger.write_string("Num(" + n.to_string() + ")")
-    Word(s) => logger.write_string("Word(\"" + s + "\")")
+fn show_token(t : Token) -> String {
+  match t {
+    Start => "Start"
+    Stop => "Stop"
+    Num(n) => "Num(" + n.to_string() + ")"
+    Word(w) => "Word(\"" + w + "\")"
   }
 }
 
@@ -79,7 +82,7 @@ test "condense into one equal" {
   let d = @diff.Diff(old~, new~)
   let patience = @diff.Diff(old~, new~, algorithm=Patience)
   inspect(
-    edits_to_string(d),
+    edits_to_string(d, show=s => s),
     content=(
       #|  apple
       #|  pineapple
@@ -92,7 +95,7 @@ test "condense into one equal" {
     ),
   )
   inspect(
-    edits_to_string(patience),
+    edits_to_string(patience, show=s => s),
     content=(
       #|  apple
       #|  pineapple
@@ -113,7 +116,7 @@ test "mixed" {
   let d = @diff.Diff(old~, new~)
   let patience = @diff.Diff(old~, new~, algorithm=Patience)
   inspect(
-    edits_to_string(d),
+    edits_to_string(d, show=s => s),
     content=(
       #|- carrot
       #|+ apple
@@ -125,7 +128,7 @@ test "mixed" {
     ),
   )
   inspect(
-    edits_to_string(patience),
+    edits_to_string(patience, show=s => s),
     content=(
       #|- carrot
       #|+ apple
@@ -145,7 +148,7 @@ test "delete then insert to hunks" {
   let d = @diff.Diff(old~, new~)
   let patience = @diff.Diff(old~, new~, algorithm=Patience)
   inspect(
-    edits_to_string(d),
+    edits_to_string(d, show=s => s),
     content=(
       #|  fn main() {
       #|-   println("foo")
@@ -154,7 +157,7 @@ test "delete then insert to hunks" {
     ),
   )
   inspect(
-    edits_to_string(patience),
+    edits_to_string(patience, show=s => s),
     content=(
       #|  fn main() {
       #|-   println("foo")
@@ -163,7 +166,7 @@ test "delete then insert to hunks" {
     ),
   )
   inspect(
-    hunks_to_string(d.group()),
+    hunks_to_string(d.group(), show=s => s),
     content=(
       #|@@ -1,3 +1,3 @@
       #| fn main() {
@@ -182,7 +185,7 @@ test "delete then insert to hunks without context" {
   let d = @diff.Diff(old~, new~)
   let patience = @diff.Diff(old~, new~, algorithm=Patience)
   inspect(
-    hunks_to_string(d.group(radius=0)),
+    hunks_to_string(d.group(context=0), show=s => s),
     content=(
       #|@@ -2 +2 @@
       #|-  println("foo")
@@ -191,7 +194,7 @@ test "delete then insert to hunks without context" {
     ),
   )
   inspect(
-    hunks_to_string(patience.group(radius=0)),
+    hunks_to_string(patience.group(context=0), show=s => s),
     content=(
       #|@@ -2 +2 @@
       #|-  println("foo")
@@ -207,20 +210,20 @@ test "replacement insert uses post-delete old cursor" {
   let new = ["y", "z", "a"][:]
   let d = @diff.Diff(old~, new~)
   assert_true(
-    d.edits[:]
+    d.edits()
     is [
-      Delete(old_index=0, new_index=0, len=1),
-      Insert(old_index=1, new_index=0, len=2),
+      Delete(old_index=0, old_len=1, new_index=0),
+      Insert(old_index=1, new_index=0, new_len=2),
       Equal(old_index=1, new_index=2, len=1),
     ],
   )
 }
 
 ///|
-test "panic group with negative radius" {
+test "panic group with negative context" {
   let old = ["fn main() {", "}"][:]
   let new = old
-  ignore(@diff.Diff(old~, new~).group(radius=-1))
+  ignore(@diff.Diff(old~, new~).group(context=-1))
 }
 
 ///|
@@ -236,7 +239,7 @@ test "large text to hunks" {
   let d = @diff.Diff(old~, new~)
   let patience = @diff.Diff(old~, new~, algorithm=Patience)
   inspect(
-    edits_to_string(d),
+    edits_to_string(d, show=s => s),
     content=(
       #|  alert
       #|  chop
@@ -254,7 +257,7 @@ test "large text to hunks" {
     ),
   )
   inspect(
-    edits_to_string(patience),
+    edits_to_string(patience, show=s => s),
     content=(
       #|  alert
       #|  chop
@@ -272,7 +275,7 @@ test "large text to hunks" {
     ),
   )
   inspect(
-    hunks_to_string(d.group()),
+    hunks_to_string(d.group(), show=s => s),
     content=(
       #|@@ -3,7 +3,7 @@
       #| brave
@@ -287,7 +290,7 @@ test "large text to hunks" {
     ),
   )
   inspect(
-    hunks_to_string(d.group(radius=2)),
+    hunks_to_string(d.group(context=2), show=s => s),
     content=(
       #|@@ -4,5 +4,5 @@
       #| arise
@@ -308,7 +311,7 @@ test "diff with Int elements" {
   let d = @diff.Diff(old~, new~)
   let patience = @diff.Diff(old~, new~, algorithm=Patience)
   inspect(
-    edits_to_string(d),
+    edits_to_string(d, show=n => n.to_string()),
     content=(
       #|  1
       #|  2
@@ -318,7 +321,7 @@ test "diff with Int elements" {
     ),
   )
   inspect(
-    edits_to_string(patience),
+    edits_to_string(patience, show=n => n.to_string()),
     content=(
       #|  1
       #|  2
@@ -336,7 +339,7 @@ test "diff with Bool elements" {
   let d = @diff.Diff(old~, new~)
   let patience = @diff.Diff(old~, new~, algorithm=Patience)
   inspect(
-    edits_to_string(d),
+    edits_to_string(d, show=b => b.to_string()),
     content=(
       #|  true
       #|  false
@@ -345,7 +348,7 @@ test "diff with Bool elements" {
     ),
   )
   inspect(
-    edits_to_string(patience),
+    edits_to_string(patience, show=b => b.to_string()),
     content=(
       #|  true
       #|  false
@@ -370,7 +373,7 @@ test "diff with struct elements" {
   let d = @diff.Diff(old~, new~)
   let patience = @diff.Diff(old~, new~, algorithm=Patience)
   inspect(
-    edits_to_string(d),
+    edits_to_string(d, show=show_user),
     content=(
       #|  User { id: 1, name: alice }
       #|- User { id: 2, name: bob }
@@ -379,7 +382,7 @@ test "diff with struct elements" {
     ),
   )
   inspect(
-    edits_to_string(patience),
+    edits_to_string(patience, show=show_user),
     content=(
       #|  User { id: 1, name: alice }
       #|- User { id: 2, name: bob }
@@ -396,7 +399,7 @@ test "diff with enum elements" {
   let d = @diff.Diff(old~, new~)
   let patience = @diff.Diff(old~, new~, algorithm=Patience)
   inspect(
-    edits_to_string(d),
+    edits_to_string(d, show=show_token),
     content=(
       #|  Start
       #|- Word("alpha")
@@ -406,7 +409,7 @@ test "diff with enum elements" {
     ),
   )
   inspect(
-    edits_to_string(patience),
+    edits_to_string(patience, show=show_token),
     content=(
       #|  Start
       #|- Word("alpha")
@@ -424,7 +427,7 @@ test "patience diff prefers unique anchors" {
   let myers = @diff.Diff(old~, new~)
   let patience = @diff.Diff(old~, new~, algorithm=Patience)
   inspect(
-    edits_to_string(myers),
+    edits_to_string(myers, show=s => s),
     content=(
       #|- unique
       #|  dup
@@ -433,7 +436,7 @@ test "patience diff prefers unique anchors" {
     ),
   )
   inspect(
-    edits_to_string(patience),
+    edits_to_string(patience, show=s => s),
     content=(
       #|+ dup
       #|  unique
@@ -441,4 +444,77 @@ test "patience diff prefers unique anchors" {
       #|- dup
     ),
   )
+}
+
+///|
+/// Replay an edit script over `old` and check it reconstructs `new` exactly,
+/// with monotone cursors and no zero-length edits. This holds for *any* valid
+/// script, so it verifies the algorithms independently of which minimal diff
+/// they deterministically choose — including the non-minimal results produced
+/// when `cutoff` is exceeded.
+fn check_reconstruct(
+  d : @diff.Diff[Int],
+  old : ArrayView[Int],
+  new : ArrayView[Int],
+) -> Unit raise {
+  let rebuilt = Array::new()
+  let mut oi = 0
+  let mut ni = 0
+  for edit in d.edits() {
+    match edit {
+      Equal(old_index~, new_index~, len~) => {
+        assert_eq(old_index, oi)
+        assert_eq(new_index, ni)
+        assert_true(len > 0)
+        for k in 0..<len {
+          assert_eq(old[old_index + k], new[new_index + k])
+          rebuilt.push(old[old_index + k])
+        }
+        oi += len
+        ni += len
+      }
+      Delete(old_index~, old_len~, new_index~) => {
+        assert_eq(old_index, oi)
+        assert_eq(new_index, ni)
+        assert_true(old_len > 0)
+        oi += old_len
+      }
+      Insert(old_index~, new_index~, new_len~) => {
+        assert_eq(old_index, oi)
+        assert_eq(new_index, ni)
+        assert_true(new_len > 0)
+        for k in 0..<new_len {
+          rebuilt.push(new[new_index + k])
+        }
+        ni += new_len
+      }
+    }
+  }
+  assert_eq(oi, old.length())
+  assert_eq(ni, new.length())
+  @debug.assert_eq(rebuilt, new.to_owned())
+}
+
+///|
+test "property: edit scripts reconstruct new from old" {
+  // Exhaustive over all pairs of {0,1}-sequences of length 0..4, both
+  // algorithms, with the default cutoff and a tiny one (heuristic path).
+  let seqs : Array[Array[Int]] = []
+  for len in 0..<5 {
+    for bits in 0..<(1 << len) {
+      let a = Array::new(capacity=len)
+      for i in 0..<len {
+        a.push((bits >> i) & 1)
+      }
+      seqs.push(a)
+    }
+  }
+  for a in seqs {
+    for b in seqs {
+      for alg in ([Myers, Patience] : Array[@diff.DiffAlgorithm]) {
+        check_reconstruct(Diff(old=a, new=b, algorithm=alg), a, b)
+        check_reconstruct(Diff(old=a, new=b, algorithm=alg, cutoff=1), a, b)
+      }
+    }
+  }
 }

@@ -11,7 +11,7 @@ unified-diff-style output.
 ## Compute A Diff
 
 `Diff(old~, new~)` computes the full sequence of `Delete`, `Insert`, and
-`Equal` operations, accessible via the `edits` field.
+`Equal` operations, accessible via `edits()`.
 
 ```mbt check
 ///|
@@ -21,14 +21,14 @@ test "Diff computes deletes inserts and equals" {
 
   let d = @diff.Diff(old~, new~)
 
-  assert_eq(d.edits.length(), 4)
+  assert_eq(d.edits().length(), 4)
   assert_true(
-    d.edits[:]
+    d.edits()
     is [
       Equal(old_index=0, new_index=0, len=1),
-      Delete(old_index=1, new_index=1, len=1),
+      Delete(old_index=1, old_len=1, new_index=1),
       Equal(old_index=2, new_index=1, len=1),
-      Insert(old_index=3, new_index=2, len=1),
+      Insert(old_index=3, new_index=2, new_len=1),
     ],
   )
 }
@@ -52,20 +52,20 @@ test "patience diff keeps unique anchors in place" {
   let patience = @diff.Diff(old~, new~, algorithm=Patience)
 
   assert_true(
-    myers.edits[:]
+    myers.edits()
     is [
-      Delete(old_index=0, new_index=0, len=1),
+      Delete(old_index=0, old_len=1, new_index=0),
       Equal(old_index=1, new_index=0, len=1),
-      Insert(old_index=2, new_index=1, len=1),
+      Insert(old_index=2, new_index=1, new_len=1),
       Equal(old_index=2, new_index=2, len=1),
     ],
   )
   assert_true(
-    patience.edits[:]
+    patience.edits()
     is [
-      Insert(old_index=0, new_index=0, len=1),
+      Insert(old_index=0, new_index=0, new_len=1),
       Equal(old_index=0, new_index=1, len=2),
-      Delete(old_index=2, new_index=3, len=1),
+      Delete(old_index=2, old_len=1, new_index=3),
     ],
   )
 }
@@ -73,10 +73,10 @@ test "patience diff keeps unique anchors in place" {
 
 ## Group Into Hunks And Render
 
-`group` splits the edit script into `Hunk[T]` values, keeping `radius` lines
-of surrounding context (default 3). `radius` must be non-negative, and
-`radius=0` emits hunks without surrounding context. Each `Hunk[T]` implements
-`Show`, so you can print it directly as unified-diff output.
+`group` splits the edit script into `Hunk[T]` values, keeping `context` lines
+of surrounding context (default 3). `context` must be non-negative, and
+`context=0` emits hunks without surrounding context. Render each `Hunk[T]` as unified-diff
+text with `render`, passing a callback that turns one element into its line.
 
 ```mbt check
 ///|
@@ -90,11 +90,11 @@ test "group splits distant changes into separate hunks" {
       " ffffffffff", " yyyyyyyyyy", " hhhhhhhhhh",
     ][:]
 
-  let hunks = @diff.Diff(old~, new~).group(radius=1)
+  let hunks = @diff.Diff(old~, new~).group(context=1)
 
   assert_eq(hunks.length(), 2)
   assert_eq(
-    hunks[0].to_string(),
+    hunks[0].render(show=line => line),
     (
       #|@@ -1,3 +1,3 @@
       #|  aaaaaaaaaa
@@ -105,7 +105,7 @@ test "group splits distant changes into separate hunks" {
     ),
   )
   assert_eq(
-    hunks[1].to_string(),
+    hunks[1].render(show=line => line),
     (
       #|@@ -6,3 +6,3 @@
       #|  ffffffffff

@@ -589,10 +589,13 @@ fn[T : Eq + Hash] append_patience_matches(
 /// `Myers` computes a shortest edit script directly. `Patience` first uses
 /// unique matching elements as anchors, then applies Myers to the ranges
 /// between adjacent anchors.
+///
+/// This set may grow (e.g. a histogram variant); treat it as a configuration
+/// input to construct rather than a type to match exhaustively.
 pub(all) enum DiffAlgorithm {
   Myers
   Patience
-}
+} derive(Eq, @debug.Debug)
 
 ///|
 fn[T : Eq + Hash] collect_matches(
@@ -612,10 +615,32 @@ fn[T : Eq + Hash] collect_matches(
 ///|
 /// A diff result containing the compared inputs and the edit script between
 /// them.
-pub struct Diff[T] {
+///
+/// The type is abstract: the edit script maintains invariants (edit ranges are
+/// in bounds, monotone, and cover both inputs) that `group` relies on, so it is
+/// only exposed as a read-only view via `edits`.
+struct Diff[T] {
   old : ArrayView[T]
   new : ArrayView[T]
   edits : Array[Edit]
+}
+
+///|
+/// The edit script that transforms `old` into `new`, as a read-only view.
+pub fn[T] Diff::edits(self : Diff[T]) -> ArrayView[Edit] {
+  self.edits
+}
+
+///|
+/// The original input sequence, as passed to the constructor.
+pub fn[T] Diff::old_view(self : Diff[T]) -> ArrayView[T] {
+  self.old
+}
+
+///|
+/// The updated input sequence, as passed to the constructor.
+pub fn[T] Diff::new_view(self : Diff[T]) -> ArrayView[T] {
+  self.new
 }
 
 ///|
@@ -624,9 +649,13 @@ pub struct Diff[T] {
 /// and returns a `Diff[T]` bundling the source arrays with the edit script
 /// that transforms `old` into `new`.
 ///
-/// The `cutoff` is an upper bound on the minimum edit distance between `old~` and `new~`. When
-/// `cutoff` is exceeded, the result is a correct, but not necessarily minimal
-/// diff. It defaults to about `sqrt(old.length() + new.length())`.
+/// The `cutoff` is a budget in *edit-distance units*: as long as the minimum
+/// edit distance stays within it, the result is minimal; beyond it the search
+/// falls back to heuristics and the result is correct but not necessarily
+/// minimal. The default is about the square root of the compacted input sizes
+/// (elements present in both sequences), floored at 4096 so small inputs are
+/// always minimal; values `<= 0` make the search rely on heuristics
+/// immediately (still correct).
 ///
 /// The `algorithm` selects the diff strategy. `Myers` (the default) uses the
 /// classic Myers O(ND) algorithm. `Patience` first finds elements unique to
@@ -662,8 +691,8 @@ pub fn[T : Hash + Eq] Diff::Diff(
       result.push(
         Delete(
           old_index=prev_old_idx,
+          old_len=old_idx - prev_old_idx,
           new_index=prev_new_idx,
-          len=old_idx - prev_old_idx,
         ),
       )
       prev_old_idx = old_idx
@@ -684,7 +713,7 @@ pub fn[T : Hash + Eq] Diff::Diff(
         Insert(
           old_index=prev_old_idx,
           new_index=prev_new_idx,
-          len=new_idx - prev_new_idx,
+          new_len=new_idx - prev_new_idx,
         ),
       )
     }
@@ -714,8 +743,8 @@ pub fn[T : Hash + Eq] Diff::Diff(
       result.push(
         Delete(
           old_index=prev_old_idx,
+          old_len=old.length() - prev_old_idx,
           new_index=prev_new_idx,
-          len=old.length() - prev_old_idx,
         ),
       )
       // update prev_old_idx
@@ -729,7 +758,7 @@ pub fn[T : Hash + Eq] Diff::Diff(
         Insert(
           old_index=prev_old_idx,
           new_index=prev_new_idx,
-          len=new.length() - prev_new_idx,
+          new_len=new.length() - prev_new_idx,
         ),
       )
     }
@@ -738,7 +767,9 @@ pub fn[T : Hash + Eq] Diff::Diff(
 }
 
 ///|
-/// Group nearby edits into hunks with `radius` unchanged elements of context.
-pub fn[T] Diff::group(self : Diff[T], radius? : Int = 3) -> Array[Hunk[T]] {
-  group_edits(self.edits, radius~, old=self.old, new=self.new)
+/// Group nearby edits into hunks, keeping `context` unchanged elements around
+/// each change cluster (like `diff -U context`). `context` must be
+/// non-negative; `context=0` emits hunks without surrounding context.
+pub fn[T] Diff::group(self : Diff[T], context? : Int = 3) -> Array[Hunk[T]] {
+  group_edits(self.edits, context~, old=self.old, new=self.new)
 }

@@ -14,13 +14,23 @@
 
 // --- promoted: kept as regular methods ---
 
-// A hunk's canonical string form is its unified-diff text, so `to_string` is
-// promoted; `output` is not (use the trait or string interpolation).
+///|
+pub extend DiffAlgorithm with Eq::{equal}
 
 ///|
-pub extend Hunk with Show::{to_string}
+pub extend Edit with Eq::{equal}
 
 // --- deprecated: hidden from the generated interface ---
+
+///|
+#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
+#doc(hidden)
+pub extend DiffAlgorithm with @debug.Debug::{to_repr}
+
+///|
+#deprecated("Use `!=` instead", skip_current_package=true)
+#doc(hidden)
+pub extend DiffAlgorithm with Eq::{not_equal}
 
 ///|
 #deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
@@ -28,6 +38,6 @@ pub extend Hunk with Show::{to_string}
 pub extend Edit with @debug.Debug::{to_repr}
 
 ///|
-#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+#deprecated("Use `!=` instead", skip_current_package=true)
 #doc(hidden)
-pub extend Hunk with Show::{output}
+pub extend Edit with Eq::{not_equal}

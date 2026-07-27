@@ -72,17 +72,26 @@ impl Show for HunkHeader with fn output(self, logger) {
 
 ///|
 /// A contiguous diff hunk with its edit script and the matching source ranges.
-pub struct Hunk[T] {
+///
+/// The type is abstract; render it with `render`.
+struct Hunk[T] {
   edits : ArrayView[Edit]
   old : ArrayView[T]
   new : ArrayView[T]
 }
 
 ///|
-pub impl[T : Show] Show for Hunk[T] with fn output(self, logger) {
+/// Render the hunk as unified-diff text: an `@@ -a,b +c,d @@` header followed
+/// by `-`/`+`/` `-prefixed lines, each terminated by a newline.
+///
+/// `show` converts one element to its line text. It is a callback rather than
+/// a `Show` bound so that element types need no `Show` impl and callers
+/// control the rendering (e.g. a field of a record).
+pub fn[T] Hunk::render(self : Hunk[T], show~ : (T) -> String) -> String {
+  let buf = StringBuilder::new()
   let header = Show::to_string(HunkHeader::new(self.edits))
-  logger.write_string(header)
-  logger.write_char('\n')
+  buf.write_string(header)
+  buf.write_char('\n')
   for edit in self.edits {
     let (prefix, slice) = match edit {
       Insert(..) => ("+", edit.view_from(old=self.old, new=self.new))
@@ -90,7 +99,10 @@ pub impl[T : Show] Show for Hunk[T] with fn output(self, logger) {
       Equal(..) => (" ", edit.view_from(old=self.old, new=self.new))
     }
     for s in slice {
-      logger.write_string("\{prefix}\{s}\n")
+      buf.write_string(prefix)
+      buf.write_string(show(s))
+      buf.write_char('\n')
     }
   }
+  buf.to_string()
 }

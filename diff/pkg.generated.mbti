@@ -10,32 +10,28 @@ import {
 // Errors
 
 // Types and methods
-pub struct Diff[T] {
-  old : ArrayView[T]
-  new : ArrayView[T]
-  edits : Array[Edit]
-}
+type Diff[T]
 pub fn[T : Hash + Eq] Diff::Diff(old~ : ArrayView[T], new~ : ArrayView[T], cutoff? : Int, algorithm? : DiffAlgorithm) -> Self[T]
-pub fn[T] Diff::group(Self[T], radius? : Int) -> Array[Hunk[T]]
+pub fn[T] Diff::edits(Self[T]) -> ArrayView[Edit]
+pub fn[T] Diff::group(Self[T], context? : Int) -> Array[Hunk[T]]
+pub fn[T] Diff::new_view(Self[T]) -> ArrayView[T]
+pub fn[T] Diff::old_view(Self[T]) -> ArrayView[T]
 
 pub(all) enum DiffAlgorithm {
   Myers
   Patience
-}
+} derive(Eq, @debug.Debug)
+pub fn DiffAlgorithm::equal(Self, Self) -> Bool
 
 pub enum Edit {
-  Delete(old_index~ : Int, new_index~ : Int, len~ : Int)
-  Insert(old_index~ : Int, new_index~ : Int, len~ : Int)
+  Delete(old_index~ : Int, old_len~ : Int, new_index~ : Int)
+  Insert(old_index~ : Int, new_index~ : Int, new_len~ : Int)
   Equal(old_index~ : Int, new_index~ : Int, len~ : Int)
-} derive(@debug.Debug)
+} derive(Eq, @debug.Debug)
+pub fn Edit::equal(Self, Self) -> Bool
 
-pub struct Hunk[T] {
-  edits : ArrayView[Edit]
-  old : ArrayView[T]
-  new : ArrayView[T]
-}
-pub fn[T : Show] Hunk::to_string(Self[T]) -> String
-pub impl[T : Show] Show for Hunk[T]
+type Hunk[T]
+pub fn[T] Hunk::render(Self[T], show~ : (T) -> String) -> String
 
 // Type aliases
 
