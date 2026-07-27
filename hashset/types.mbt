@@ -21,6 +21,13 @@ let empty_psl : Int = -1
 /// Releases the key reference stored at `idx` so the collector can reclaim it.
 fn[K] set_null(keys : UninitializedArray[K], idx : Int) = "%fixedarray.set_null"
 
+///|
+/// Reads an initialized key slot without checking its index.
+///
+/// Callers must ensure that `idx` is within the backing array and refers to an
+/// occupied slot.
+fn[K] unsafe_get_initialized_key(keys : UninitializedArray[K], idx : Int) -> K = "%fixedarray.unsafe_get"
+
 /// A mutable hash set implemented with Robin Hood hashing.
 ///
 /// reference:

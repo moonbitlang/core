@@ -161,9 +161,14 @@ pub fn[K : Hash + Eq] HashSet::contains(self : HashSet[K], key : K) -> Bool {
   // inline lookup to avoid unnecessary allocations
   let hash = Hash::hash(key)
   for i = 0, idx = hash & self.capacity_mask {
-    let psl = self.psls[idx]
+    // SAFETY: `idx` is masked by `capacity_mask`; all backing arrays have
+    // length `capacity`, so the probe index is in bounds.
+    let psl = self.psls.unsafe_get(idx)
     guard psl != empty_psl else { break false }
-    if self.hashes[idx] == hash && self.keys[idx] == key {
+    // SAFETY: the same index invariant applies to `hashes`; a non-empty PSL
+    // also guarantees that `keys[idx]` was initialized by `set_slot`.
+    if self.hashes.unsafe_get(idx) == hash &&
+      unsafe_get_initialized_key(self.keys, idx) == key {
       break true
     }
     if i > psl {
@@ -557,6 +562,26 @@ impl Hash for MyString with fn hash(self) {
 impl Hash for MyString with fn hash_combine(self, hasher) {
   let MyString(self) = self
   hasher.combine_string(self)
+}
+
+///|
+test "contains handles collided slots across table wraparound" {
+  let m : HashSet[MyString] = new_hashset(8)
+  fn key(value) {
+    MyString::MyString(value)
+  }
+
+  // All keys hash to 7, so the probe sequence starts at the final slot and
+  // wraps around to the start of the table.
+  m.add("aaaaaaa" |> key)
+  m.add("bbbbbbb" |> key)
+  m.add("ccccccc" |> key)
+  m.add("ddddddd" |> key)
+  m.add("eeeeeee" |> key)
+
+  assert_true(m.contains("aaaaaaa" |> key))
+  assert_true(m.contains("eeeeeee" |> key))
+  assert_false(m.contains("fffffff" |> key))
 }
 
 ///|
