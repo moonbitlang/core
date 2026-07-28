@@ -404,8 +404,8 @@ test "iter2" {
   view
   .iter2()
   .each((i, x) => {
-    sum = sum + x
-    sum_keys = sum_keys + i
+    sum += x
+    sum_keys += i
   })
   inspect(sum, content="5")
   inspect(sum_keys, content="1")

@@ -102,7 +102,7 @@ test "fixed array iter with early termination" {
   let mut count = 0
   let iter = arr.iter()
   for x in iter {
-    count = count + 1
+    count += 1
     if x == 2 {
       break
     }

@@ -83,7 +83,7 @@ test "bench V128 i8x16_extract_lane_u n=10000" (it : @bench.T) {
   it.bench(fn() {
     let mut sum = 0
     for i = 0; i < v128_bench_size; i = i + 1 {
-      sum = sum + @v128.i8x16_extract_lane_u(value, i & 15).reinterpret_as_int()
+      sum += @v128.i8x16_extract_lane_u(value, i & 15).reinterpret_as_int()
     }
     it.keep(sum)
   })
@@ -110,7 +110,7 @@ test "bench V128 i8x16_bitmask n=10000" (it : @bench.T) {
   it.bench(fn() {
     let mut sum = 0
     for i = 0; i < v128_bench_size; i = i + 1 {
-      sum = sum + @v128.i8x16_bitmask(values.unsafe_get(i))
+      sum += @v128.i8x16_bitmask(values.unsafe_get(i))
     }
     it.keep(sum)
   })
@@ -317,16 +317,16 @@ test "bench V128 all_true n=10000" (it : @bench.T) {
     for i = 0; i < v128_bench_size; i = i + 1 {
       let value = values.unsafe_get(i)
       if @v128.i8x16_all_true(value) {
-        count = count + 1
+        count += 1
       }
       if @v128.i16x8_all_true(value) {
-        count = count + 1
+        count += 1
       }
       if @v128.i32x4_all_true(value) {
-        count = count + 1
+        count += 1
       }
       if @v128.i64x2_all_true(value) {
-        count = count + 1
+        count += 1
       }
     }
     it.keep(count)
@@ -340,10 +340,10 @@ test "bench V128 bitmask all widths n=10000" (it : @bench.T) {
     let mut sum = 0
     for i = 0; i < v128_bench_size; i = i + 1 {
       let value = values.unsafe_get(i)
-      sum = sum + @v128.i8x16_bitmask(value)
-      sum = sum + @v128.i16x8_bitmask(value)
-      sum = sum + @v128.i32x4_bitmask(value)
-      sum = sum + @v128.i64x2_bitmask(value)
+      sum += @v128.i8x16_bitmask(value)
+      sum += @v128.i16x8_bitmask(value)
+      sum += @v128.i32x4_bitmask(value)
+      sum += @v128.i64x2_bitmask(value)
     }
     it.keep(sum)
   })

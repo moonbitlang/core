@@ -17,7 +17,7 @@ test "bench single_bench minimal" {
   let summary = @bench.single_bench(
     () => {
       let mut x = 0
-      x = x + 1
+      x += 1
       ignore(x)
     },
     name="noop",

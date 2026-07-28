@@ -130,7 +130,7 @@ test "Map::iter" {
   let v = map.iter()
   let mut res = ""
   while v.next() is Some((k, v)) {
-    res = res + k + v.to_string()
+    res += k + v.to_string()
   }
   inspect(res, content="a1b2c3")
 }

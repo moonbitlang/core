@@ -286,8 +286,8 @@ test "iter break early" {
   .iter()
   .take(2)
   .each(x => {
-    count = count + 1
-    total = total + x.to_int()
+    count += 1
+    total += x.to_int()
   })
   inspect(count, content="2")
   inspect(total, content="3") // \x01 + \x02 = 3

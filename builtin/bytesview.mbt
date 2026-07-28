@@ -790,14 +790,14 @@ fn BytesView::bytesview_lexical_compare_impl(
         .unsafe_get(self_start + i + lane)
         .compare(other_bytes.unsafe_get(other_start + i + lane))
     }
-    i = i + 16
+    i += 16
   }
   while i < min_len {
     let cmp = self.unsafe_get(i).compare(other.unsafe_get(i))
     if cmp != 0 {
       return cmp
     }
-    i = i + 1
+    i += 1
   }
   self_len.compare(other_len)
 }

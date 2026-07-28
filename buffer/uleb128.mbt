@@ -23,12 +23,12 @@ pub impl Leb128 for UInt with fn output(self, buffer) {
     if value < 128U {
       // Single byte: no continuation bit (0xxxxxxx)
       data.unsafe_set(len, value.to_byte())
-      len = len + 1
+      len += 1
       break
     } else {
       // Multiple bytes: set continuation bit (1xxxxxxx) and continue
       data.unsafe_set(len, ((value & 127U) | 128U).to_byte())
-      len = len + 1
+      len += 1
       continue value >> 7
     }
   }
@@ -46,12 +46,12 @@ pub impl Leb128 for UInt64 with fn output(self, buffer) {
     if value < 128UL {
       // Single byte: no continuation bit (0xxxxxxx)
       data.unsafe_set(len, value.to_byte())
-      len = len + 1
+      len += 1
       break
     } else {
       // Multiple bytes: set continuation bit (1xxxxxxx) and continue
       data.unsafe_set(len, ((value & 127UL) | 128UL).to_byte())
-      len = len + 1
+      len += 1
       continue value >> 7
     }
   }

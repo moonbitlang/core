@@ -469,7 +469,7 @@ pub fn[K, V] HashMap::retain(self : HashMap[K, V], f : (K, V) -> Bool) -> Unit {
   let mut j = 0
   for i = 0; j < size; i = i + 1 {
     while self.entries[i] is Some(entry) {
-      j = j + 1
+      j += 1
       if f(entry.key, entry.value) {
         break
       } else {
