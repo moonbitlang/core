@@ -52,7 +52,7 @@ pub fn[T] FixedArray::get(self : FixedArray[T], idx : Int) -> T? {
 ///
 /// ```mbt check
 /// test {
-///   let arr : FixedArray[Int] = FixedArray::default()
+///   let arr : FixedArray[Int] = ([] : FixedArray[_])
 ///   inspect(arr.length(), content="0")
 ///   inspect(arr.is_empty(), content="true")
 /// }
@@ -508,7 +508,7 @@ pub fn[T, U] FixedArray::map(
 
 ///|
 test "map" {
-  let empty : FixedArray[Unit] = FixedArray::default().map(x => x)
+  let empty : FixedArray[Unit] = ([] : FixedArray[_]).map(x => x)
   assert_true(empty == [])
   let simple_arr : FixedArray[_] = [6]
   let simple_doubled = simple_arr.map(x => x * 2)
@@ -547,7 +547,7 @@ pub fn[T, U] FixedArray::mapi(
 
 ///|
 test "mapi" {
-  let empty : FixedArray[Int] = FixedArray::default().mapi((i, x) => x + i)
+  let empty : FixedArray[Int] = ([] : FixedArray[_]).mapi((i, x) => x + i)
   assert_true(empty == [])
   let simple_arr : FixedArray[_] = [6]
   let simple_doubled = simple_arr.mapi((i, x) => x * 2 + i)

@@ -28,6 +28,7 @@ pub fn[V : Compare] SortedSet::difference(Self[V], Self[V]) -> Self[V]
 pub fn[V : Compare] SortedSet::disjoint(Self[V], Self[V]) -> Bool
 pub fn[V] SortedSet::each(Self[V], (V) -> Unit raise?) -> Unit raise?
 pub fn[V] SortedSet::eachi(Self[V], (Int, V) -> Unit raise?) -> Unit raise?
+pub fn[V : Eq] SortedSet::equal(Self[V], Self[V]) -> Bool
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
 #as_free_fn

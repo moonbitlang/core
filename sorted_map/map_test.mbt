@@ -284,7 +284,7 @@ test "to_json with non-empty map" {
     (2, "two"),
     (0, "zero"),
   ])
-  @json.json_inspect(map.to_json(), content={
+  @json.json_inspect(@json.to_json(map), content={
     "0": "zero",
     "1": "one",
     "2": "two",
@@ -296,7 +296,7 @@ test "to_json with non-empty map" {
 ///|
 test "to_json with empty map" {
   let map : @sorted_map.SortedMap[Int, String] = SortedMap([])
-  @json.json_inspect(map.to_json(), content=Json::empty_object())
+  @json.json_inspect(@json.to_json(map), content=Json::empty_object())
 }
 
 ///|
@@ -309,7 +309,7 @@ test "default" {
 test "from_json" {
   for
     xs in (@quickcheck.samples(20) : Array[@sorted_map.SortedMap[String, Int]]) {
-    @debug.assert_eq(xs, @json.from_json(xs.to_json()))
+    @debug.assert_eq(xs, @json.from_json(@json.to_json(xs)))
   }
 }
 

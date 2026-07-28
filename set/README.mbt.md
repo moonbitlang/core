@@ -215,14 +215,14 @@ Sets can be serialized to JSON as arrays:
 ///|
 test "json serialization" {
   let set = @set.Set([1, 2, 3])
-  let json = set.to_json()
+  let json = @json.to_json(set)
 
   // JSON representation is an array
   @debug.debug_inspect(json, content="Array([Number(1), Number(2), Number(3)])")
 
   // String set
   let string_set = @set.Set(["a", "b", "c"])
-  let string_json = string_set.to_json()
+  let string_json = @json.to_json(string_set)
   @debug.debug_inspect(
     string_json,
     content="Array([String(\"a\"), String(\"b\"), String(\"c\")])",

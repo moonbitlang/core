@@ -771,13 +771,13 @@ test "array of bytes, new & push" {
 }
 
 ///|
-struct MX {
+priv struct MX {
   mm_num : Array[Int]
 } derive(Default, ToJson)
 
 ///|
 test {
-  @json.json_inspect(MX::default(), content={ "mm_num": [] })
+  @json.json_inspect((Default::default() : MX), content={ "mm_num": [] })
 }
 
 ///|

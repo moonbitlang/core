@@ -37,7 +37,7 @@ test "show output" {
 }
 
 ///|
-struct TestHash {
+priv struct TestHash {
   x : Char
 } derive(Hash, Eq, Debug)
 

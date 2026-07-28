@@ -37,7 +37,7 @@ fn make_bytes_equal_bench_aliases() -> Array[Bytes] {
 test "bench Bytes::equal n=100000 equal" (it : @bench.T) {
   let left = make_bytes_equal_bench_bytes()
   let right = make_bytes_equal_bench_bytes()
-  it.bench(fn() { it.keep(Bytes::equal(left, right)) })
+  it.bench(fn() { it.keep(left == right) })
 }
 
 ///|
@@ -46,7 +46,7 @@ test "bench Bytes::equal n=100000 aliased object" (it : @bench.T) {
   let mut index = 0
   it.bench(fn() {
     index = 1 - index
-    it.keep(Bytes::equal(aliases[index], aliases[1 - index]))
+    it.keep(aliases[index] == aliases[1 - index])
   })
 }
 
@@ -54,5 +54,5 @@ test "bench Bytes::equal n=100000 aliased object" (it : @bench.T) {
 test "bench Bytes::equal n=100000 mismatch at end" (it : @bench.T) {
   let left = make_bytes_equal_bench_bytes()
   let right = make_bytes_equal_bench_bytes(diff_at=bytes_equal_bench_size - 1)
-  it.bench(fn() { it.keep(Bytes::equal(left, right)) })
+  it.bench(fn() { it.keep(left == right) })
 }

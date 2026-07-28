@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-enum Expr {
+priv enum Expr {
   Add(Expr, Expr)
   Sub(Expr, Expr)
   Mul(Expr, Expr)

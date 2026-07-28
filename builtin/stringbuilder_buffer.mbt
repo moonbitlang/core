@@ -61,7 +61,7 @@ fn StringBuilder::grow_if_necessary(
   let new_data = FixedArray::make_and_blit(
     self.data,
     allocate_len=enough_space,
-    init=UInt16::default(),
+    init=(Default::default() : UInt16),
     len=self.len,
   )
   self.data = new_data
@@ -160,7 +160,7 @@ pub fn StringBuilder::to_string(self : StringBuilder) -> String {
     let data = FixedArray::make_and_blit(
       self.data,
       allocate_len=self.len,
-      init=UInt16::default(),
+      init=(Default::default() : UInt16),
       len=self.len,
     )
     unsafe_fixedarray_uint16_to_string(data)
@@ -181,6 +181,9 @@ pub impl Show for StringBuilder with fn to_string(self) {
 ///|
 /// Resets the string builder to an empty state.
 pub fn StringBuilder::reset(self : StringBuilder) -> Unit {
-  self.data = FixedArray::make(self.data.length(), UInt16::default())
+  self.data = FixedArray::make(
+    self.data.length(),
+    (Default::default() : UInt16),
+  )
   self.len = 0
 }

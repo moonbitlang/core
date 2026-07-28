@@ -415,7 +415,7 @@ test "iter2" {
 test "to_string" {
   let arr = [0, 1, 2, 3, 4]
   @json.json_inspect(arr[1:3], content=[1, 2])
-  @json.json_inspect("\{to_repr(arr[1:3])}!", content="<ArrayView: [1, 2]>!")
+  @json.json_inspect("\{Repr(arr[1:3])}!", content="<ArrayView: [1, 2]>!")
 }
 
 ///|
@@ -531,7 +531,7 @@ test "arrayview hash invariant" {
   let arr : Array[Array[Int]] = @quickcheck.samples(20)
   for v in arr {
     let view = v[:]
-    @test.assert_eq(v.hash(), view.hash())
+    @test.assert_eq(hash(v), hash(view))
   }
 }
 

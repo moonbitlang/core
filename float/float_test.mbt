@@ -22,7 +22,7 @@ test "show" {
 test {
   assert_eq(Float::abs(1.0), 1.0)
   assert_eq(Float::abs(-1.0), 1.0)
-  let f : Float = Float::default()
+  let f : Float = (Default::default() : Float)
   inspect(f.to_string(), content="0")
 }
 
@@ -66,7 +66,7 @@ test "Float::to_int" {
 }
 
 ///|
-struct FloatHashInput {
+priv struct FloatHashInput {
   a : Float
 } derive(Hash)
 
@@ -135,7 +135,7 @@ test "@float.Float::is_nan" {
 
 ///|
 test "Float::default()" {
-  inspect(Float::default(), content="0")
+  inspect((Default::default() : Float), content="0")
 }
 
 ///|

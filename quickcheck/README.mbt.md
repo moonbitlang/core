@@ -78,7 +78,7 @@ Implement `Arbitrary` trait for custom types:
 
 ```mbt check
 ///|
-struct Point {
+priv struct Point {
   x : Int
   y : Int
 } derive(Debug)

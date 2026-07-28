@@ -20,7 +20,23 @@ pub extend Deque with Add::{add}
 ///|
 pub extend Deque with Compare::{compare}
 
+///|
+pub extend Deque with Eq::{equal}
+
+///|
+pub extend Deque with Hash::{hash}
+
 // --- deprecated: hidden from the generated interface ---
+
+///|
+#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Deque with @debug.Debug::{to_repr}
+
+///|
+#deprecated("Use `@json.from_json` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Deque with @json.FromJson::{from_json}
 
 ///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
@@ -28,19 +44,14 @@ pub extend Deque with Compare::{compare}
 pub extend Deque with Compare::{op_ge, op_gt, op_le, op_lt}
 
 ///|
-#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+#deprecated("Use `!=` instead", skip_current_package=true)
 #doc(hidden)
-pub extend Deque with Eq::{equal, not_equal}
+pub extend Deque with Eq::{not_equal}
 
 ///|
-#deprecated("Use the `FromJson` trait instead", skip_current_package=true)
+#deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
 #doc(hidden)
-pub extend Deque with @json.FromJson::{from_json}
-
-///|
-#deprecated("Use the `Hash` trait instead", skip_current_package=true)
-#doc(hidden)
-pub extend Deque with Hash::{hash, hash_combine}
+pub extend Deque with Hash::{hash_combine}
 
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)

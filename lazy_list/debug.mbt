@@ -31,7 +31,7 @@ pub impl[A : @debug.Debug] @debug.Debug for LazyList[A] with fn to_repr(self) {
     match cur.cell {
       Empty => break
       Cons(x, tail~) => {
-        parts.push(@debug.to_repr(x))
+        parts.push(@debug.Repr(x))
         match tail.peek() {
           Some(next) => continue next
           None => {

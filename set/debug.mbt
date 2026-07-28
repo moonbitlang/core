@@ -16,7 +16,7 @@
 pub impl[K : @debug.Debug] @debug.Debug for Set[K] with fn to_repr(self) {
   @debug.Repr::opaque_(
     "Set",
-    @debug.Repr::array(self.to_array().map(x => @debug.to_repr(x))),
+    @debug.Repr::array(self.to_array().map(x => Repr(x))),
   )
 }
 

@@ -351,11 +351,11 @@ test "eq for random cases with different types" {
 test "hash" {
   let map1 = @hashmap.HashMap([("one", 1), ("two", 2)])
   let map2 = @hashmap.HashMap([("one", 1), ("two", 2)])
-  inspect(map1.hash() == map2.hash(), content="true")
+  inspect(Hash::hash(map1) == Hash::hash(map2), content="true")
   let map3 = @hashmap.HashMap([("two", 2), ("one", 1)])
-  inspect(map1.hash() == map3.hash(), content="true")
+  inspect(Hash::hash(map1) == Hash::hash(map3), content="true")
   let map4 = @hashmap.HashMap([("one", 1), ("two", 2), ("three", 3)])
-  inspect(map1.hash() == map4.hash(), content="false")
+  inspect(Hash::hash(map1) == Hash::hash(map4), content="false")
 }
 
 ///|
@@ -1045,7 +1045,7 @@ test "equal imply hash equal when collision" {
   let ma = @hashmap.new().add(s1, 1).add(s2, 2)
   let mb = @hashmap.new().add(s2, 2).add(s1, 1)
   inspect(ma == mb, content="true")
-  inspect(ma.hash() == mb.hash(), content="true")
+  inspect(Hash::hash(ma) == Hash::hash(mb), content="true")
 }
 
 ///|

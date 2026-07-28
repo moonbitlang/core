@@ -16,7 +16,7 @@
 pub impl[V : @debug.Debug] @debug.Debug for SortedSet[V] with fn to_repr(self) {
   @debug.Repr::opaque_(
     "SortedSet",
-    @debug.Repr::array([ for x in self => @debug.to_repr(x) ]),
+    @debug.Repr::array([ for x in self => Repr(x) ]),
   )
 }
 

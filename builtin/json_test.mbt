@@ -14,7 +14,7 @@
 
 ///|
 test "Json default value" {
-  let j = @builtin.Json::default()
+  let j = (Default::default() : Json)
   debug_inspect(j, content="False")
 }
 
@@ -158,7 +158,7 @@ test "Bool::to_json false" {
 
 ///|
 test "test UInt64::to_json" {
-  let num : UInt64 = UInt64::default()
+  let num : UInt64 = (Default::default() : UInt64)
   let json = num.to_json()
   debug_inspect(json, content="String(\"0\")")
 }
@@ -242,4 +242,26 @@ test "Byte::to_json" {
 test "Iter[X] to_json" {
   let v = "a b c d".split(" ")
   @json.json_inspect(v, content=["a", "b", "c", "d"])
+}
+
+///|
+test "Json constructor" {
+  // `Json(x)` converts any `ToJson` value; it is the constructor of `Json`,
+  // re-exported by the prelude so no import is needed.
+  debug_inspect(Json(42), content="Number(42)")
+  debug_inspect(Json("hello"), content="String(\"hello\")")
+  debug_inspect(Json(true), content="True")
+  debug_inspect(Json([1, 2]), content="Array([Number(1), Number(2)])")
+  debug_inspect(
+    Json({ "k": 1 }),
+    content=(
+      #|Object({ "k": Number(1) })
+    ),
+  )
+}
+
+///|
+test "Json constructor is idempotent" {
+  let j : Json = [1, 2]
+  debug_inspect(Json(j), content="Array([Number(1), Number(2)])")
 }
