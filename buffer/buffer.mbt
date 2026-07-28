@@ -64,7 +64,8 @@ fn buffer_growth_capacity(current : Int, len : Int, required : Int) -> Int {
 ///|
 /// Grow the buffer to at least `required`. Callers keep the capacity check on
 /// their fast path and enter here only when growth or overflow handling is
-/// needed.
+/// needed. The buffer invariant `0 <= len <= data.length()` lets fixed-size
+/// appends compare against the remaining capacity without overflowing.
 fn Buffer::grow(self : Buffer, required : Int) -> Unit {
   let new_capacity = buffer_growth_capacity(
     self.data.length(),
@@ -271,9 +272,8 @@ pub impl Logger for Buffer with fn write_string(self, value) {
 /// }
 /// ```
 pub fn Buffer::write_uint64_be(self : Buffer, value : UInt64) -> Unit {
-  let required = self.len + 8
-  if required > self.data.length() || required < self.len {
-    self.grow(required)
+  if self.data.length() - self.len < 8 {
+    self.grow(self.len + 8)
   }
   let offset = self.len
   self.data[offset] = (value >> 56).to_byte()
@@ -311,9 +311,8 @@ pub fn Buffer::write_uint64_be(self : Buffer, value : UInt64) -> Unit {
 /// }
 /// ```
 pub fn Buffer::write_uint64_le(self : Buffer, value : UInt64) -> Unit {
-  let required = self.len + 8
-  if required > self.data.length() || required < self.len {
-    self.grow(required)
+  if self.data.length() - self.len < 8 {
+    self.grow(self.len + 8)
   }
   let offset = self.len
   self.data[offset] = value.to_byte()
@@ -404,9 +403,8 @@ pub fn Buffer::write_int64_le(self : Buffer, value : Int64) -> Unit {
 /// }
 /// ```
 pub fn Buffer::write_uint_be(self : Buffer, value : UInt) -> Unit {
-  let required = self.len + 4
-  if required > self.data.length() || required < self.len {
-    self.grow(required)
+  if self.data.length() - self.len < 4 {
+    self.grow(self.len + 4)
   }
   let offset = self.len
   self.data[offset] = (value >> 24).to_byte()
@@ -441,9 +439,8 @@ pub fn Buffer::write_uint_be(self : Buffer, value : UInt) -> Unit {
 /// }
 /// ```
 pub fn Buffer::write_uint_le(self : Buffer, value : UInt) -> Unit {
-  let required = self.len + 4
-  if required > self.data.length() || required < self.len {
-    self.grow(required)
+  if self.data.length() - self.len < 4 {
+    self.grow(self.len + 4)
   }
   let offset = self.len
   self.data[offset] = value.to_byte()
@@ -527,9 +524,8 @@ pub fn Buffer::write_int_le(self : Buffer, value : Int) -> Unit {
 /// }
 /// ```
 pub fn Buffer::write_uint16_be(self : Buffer, value : UInt16) -> Unit {
-  let required = self.len + 2
-  if required > self.data.length() || required < self.len {
-    self.grow(required)
+  if self.data.length() - self.len < 2 {
+    self.grow(self.len + 2)
   }
   let offset = self.len
   self.data[offset] = (value.to_int() >> 8).to_byte()
@@ -562,9 +558,8 @@ pub fn Buffer::write_uint16_be(self : Buffer, value : UInt16) -> Unit {
 /// }
 /// ```
 pub fn Buffer::write_uint16_le(self : Buffer, value : UInt16) -> Unit {
-  let required = self.len + 2
-  if required > self.data.length() || required < self.len {
-    self.grow(required)
+  if self.data.length() - self.len < 2 {
+    self.grow(self.len + 2)
   }
   let offset = self.len
   self.data[offset] = value.to_byte()
@@ -596,9 +591,8 @@ pub fn Buffer::write_uint16_le(self : Buffer, value : UInt16) -> Unit {
 /// }
 /// ```
 pub fn Buffer::write_int16_be(self : Buffer, value : Int16) -> Unit {
-  let required = self.len + 2
-  if required > self.data.length() || required < self.len {
-    self.grow(required)
+  if self.data.length() - self.len < 2 {
+    self.grow(self.len + 2)
   }
   let offset = self.len
   self.data[offset] = (value.to_int() >> 8).to_byte()
@@ -630,9 +624,8 @@ pub fn Buffer::write_int16_be(self : Buffer, value : Int16) -> Unit {
 /// }
 /// ```
 pub fn Buffer::write_int16_le(self : Buffer, value : Int16) -> Unit {
-  let required = self.len + 2
-  if required > self.data.length() || required < self.len {
-    self.grow(required)
+  if self.data.length() - self.len < 2 {
+    self.grow(self.len + 2)
   }
   let offset = self.len
   self.data[offset] = value.to_byte()
@@ -865,26 +858,23 @@ pub fn Buffer::write_char_utf8(buf : Self, value : Char) -> Unit {
   let code = value.to_uint()
   match code {
     _..<0x80 => {
-      let required = buf.len + 1
-      if required > buf.data.length() || required < buf.len {
-        buf.grow(required)
+      if buf.len >= buf.data.length() {
+        buf.grow(buf.len + 1)
       }
       buf.data[buf.len] = ((code & 0x7F) | 0x00).to_byte()
       buf.len += 1
     }
     _..<0x0800 => {
-      let required = buf.len + 2
-      if required > buf.data.length() || required < buf.len {
-        buf.grow(required)
+      if buf.data.length() - buf.len < 2 {
+        buf.grow(buf.len + 2)
       }
       buf.data[buf.len] = (((code >> 6) & 0x1F) | 0xC0).to_byte()
       buf.data[buf.len + 1] = ((code & 0x3F) | 0x80).to_byte()
       buf.len += 2
     }
     _..<0x010000 => {
-      let required = buf.len + 3
-      if required > buf.data.length() || required < buf.len {
-        buf.grow(required)
+      if buf.data.length() - buf.len < 3 {
+        buf.grow(buf.len + 3)
       }
       buf.data[buf.len] = (((code >> 12) & 0x0F) | 0xE0).to_byte()
       buf.data[buf.len + 1] = (((code >> 6) & 0x3F) | 0x80).to_byte()
@@ -892,9 +882,8 @@ pub fn Buffer::write_char_utf8(buf : Self, value : Char) -> Unit {
       buf.len += 3
     }
     _..<0x110000 => {
-      let required = buf.len + 4
-      if required > buf.data.length() || required < buf.len {
-        buf.grow(required)
+      if buf.data.length() - buf.len < 4 {
+        buf.grow(buf.len + 4)
       }
       buf.data[buf.len] = (((code >> 18) & 0x07) | 0xF0).to_byte()
       buf.data[buf.len + 1] = (((code >> 12) & 0x3F) | 0x80).to_byte()
@@ -911,9 +900,8 @@ pub fn Buffer::write_char_utf8(buf : Self, value : Char) -> Unit {
 pub fn Buffer::write_char_utf16le(buf : Self, value : Char) -> Unit {
   let code = value.to_uint()
   if code < 0x10000 {
-    let required = buf.len + 2
-    if required > buf.data.length() || required < buf.len {
-      buf.grow(required)
+    if buf.data.length() - buf.len < 2 {
+      buf.grow(buf.len + 2)
     }
     buf.data[buf.len + 0] = (code & 0xFF).to_byte()
     buf.data[buf.len + 1] = (code >> 8).to_byte()
@@ -922,9 +910,8 @@ pub fn Buffer::write_char_utf16le(buf : Self, value : Char) -> Unit {
     let cp = code - 0x10000
     let high = (cp >> 10) | 0xD800
     let low = (cp & 0x3FF) | 0xDC00
-    let required = buf.len + 4
-    if required > buf.data.length() || required < buf.len {
-      buf.grow(required)
+    if buf.data.length() - buf.len < 4 {
+      buf.grow(buf.len + 4)
     }
     buf.data[buf.len + 0] = (high & 0xFF).to_byte()
     buf.data[buf.len + 1] = (high >> 8).to_byte()
@@ -941,17 +928,15 @@ pub fn Buffer::write_char_utf16le(buf : Self, value : Char) -> Unit {
 pub fn Buffer::write_char_utf16be(buf : Self, value : Char) -> Unit {
   let code = value.to_uint()
   if code < 0x10000 {
-    let required = buf.len + 2
-    if required > buf.data.length() || required < buf.len {
-      buf.grow(required)
+    if buf.data.length() - buf.len < 2 {
+      buf.grow(buf.len + 2)
     }
     buf.data[buf.len + 0] = (code >> 8).to_byte()
     buf.data[buf.len + 1] = (code & 0xFF).to_byte()
     buf.len += 2
   } else if code < 0x110000 {
-    let required = buf.len + 4
-    if required > buf.data.length() || required < buf.len {
-      buf.grow(required)
+    if buf.data.length() - buf.len < 4 {
+      buf.grow(buf.len + 4)
     }
     let cp = code - 0x10000
     let high = (cp >> 10) | 0xD800
@@ -1086,9 +1071,8 @@ pub impl Logger for Buffer with fn write_view(self : Buffer, value : StringView)
 /// * `buffer` : The buffer to write to.
 /// * `char` : The character to be written.
 pub impl Logger for Buffer with fn write_char(self : Buffer, value : Char) -> Unit {
-  let required = self.len + 4
-  if required > self.data.length() || required < self.len {
-    self.grow(required)
+  if self.data.length() - self.len < 4 {
+    self.grow(self.len + 4)
   }
   let inc = self.data.set_utf16le_char(self.len, value)
   self.len += inc
@@ -1118,9 +1102,8 @@ pub impl Logger for Buffer with fn write_char(self : Buffer, value : Char) -> Un
 /// }
 /// ```
 pub fn Buffer::write_byte(self : Buffer, value : Byte) -> Unit {
-  let required = self.len + 1
-  if required > self.data.length() || required < self.len {
-    self.grow(required)
+  if self.len >= self.data.length() {
+    self.grow(self.len + 1)
   }
   self.data[self.len] = value
   self.len += 1
