@@ -510,7 +510,7 @@ fn validate_command_policies(
   matches : Matches,
 ) -> Unit raise ArgParseError {
   if cmd.subcommand_required &&
-    cmd.subcommands.length() > 0 &&
+    !cmd.subcommands.is_empty() &&
     matches.parsed_subcommand is None {
     raise MissingRequired("subcommand", None)
   }

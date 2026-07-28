@@ -1218,7 +1218,7 @@ pub fn[A : Eq] Deque::contains(self : Deque[A], value : A) -> Bool {
 /// ```
 #locals(f)
 pub fn[A] Deque::extract_if(self : Deque[A], f : (A) -> Bool) -> Deque[A] {
-  guard self.length() != 0 else { from_array([]) }
+  guard !self.is_empty() else { from_array([]) }
   let removed = from_array([])
   let write = for read in 0..<self.length(); write = 0 {
     let elem = self[read]
@@ -1436,7 +1436,7 @@ pub fn[A] Deque::retain_map(self : Deque[A], f : (A) -> A?) -> Unit {
   } nobreak {
     (idx, kept_len)
   }
-  if back.length() == 0 {
+  if back.is_empty() {
     self.truncate(kept_len)
     return
   }
@@ -1499,7 +1499,7 @@ pub fn[A] Deque::retain(self : Deque[A], f : (A) -> Bool) -> Unit {
   } nobreak {
     (idx, kept_len)
   }
-  if back.length() == 0 {
+  if back.is_empty() {
     self.truncate(kept_len)
     return
   }

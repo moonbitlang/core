@@ -658,7 +658,7 @@ fn finalize_matches(
 
 ///|
 fn help_subcommand_enabled(cmd : Command) -> Bool {
-  !cmd.disable_help_subcommand && cmd.subcommands.length() > 0
+  !cmd.disable_help_subcommand && !cmd.subcommands.is_empty()
 }
 
 ///|

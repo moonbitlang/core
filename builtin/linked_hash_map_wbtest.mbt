@@ -43,7 +43,7 @@ test "empty constructor" {
 test "constructor capacity" {
   let empty : Map[String, Int] = Map([], capacity=16)
   assert_true(empty.capacity == 16)
-  assert_true(empty.length() == 0)
+  assert_true(empty.is_empty())
   let below_length = Map([("a", 1), ("b", 2), ("c", 3)], capacity=2)
   assert_true(below_length.capacity == 4)
   assert_true(below_length.length() == 3)
@@ -236,7 +236,7 @@ test "from_array" {
 ///|
 test "length" {
   let m : Map[String, Int] = Map([])
-  assert_true(m.length() == 0)
+  assert_true(m.is_empty())
   m.set("a", 1)
   assert_true(m.length() == 1)
 }

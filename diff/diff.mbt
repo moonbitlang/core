@@ -543,7 +543,7 @@ fn[T : Eq + Hash] append_patience_matches(
   new_offset : Int,
 ) -> Unit {
   let anchors = unique_lcs(old~, new~)
-  if anchors.length() == 0 {
+  if anchors.is_empty() {
     append_myers_matches(matches, cutoff, old, new, old_offset, new_offset)
     return
   }
