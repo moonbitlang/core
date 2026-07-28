@@ -225,7 +225,7 @@ fn double_computePow5(i : Int) -> Pow5Pair {
   let sum : UInt64 = high0 + low1
   let mut high1 = high1
   if sum < high0 {
-    high1 = high1 + 1UL
+    high1 += 1UL
   }
   let delta : Int = pow5bits(i) - pow5bits(base2)
   let a : UInt64 = shiftright128(low0, sum, delta) +
@@ -251,7 +251,7 @@ fn double_computeInvPow5(i : Int) -> Pow5Pair {
   let sum = high0 + low1
   let mut high1 = high1
   if sum < high0 {
-    high1 = high1 + 1UL
+    high1 += 1UL
   }
   let delta : Int = pow5bits(base2) - pow5bits(i)
   let a : UInt64 = shiftright128(low0, sum, delta) +
@@ -460,7 +460,7 @@ fn d2d(ieeeMantissa : UInt64, ieeeExponent : UInt) -> FloatingDecimal64 {
       vr = vrDiv10
       vp = vpDiv10
       vm = vmDiv10
-      removed = removed + 1
+      removed += 1
     }
     if vmIsTrailingZeros {
       while true {
@@ -477,7 +477,7 @@ fn d2d(ieeeMantissa : UInt64, ieeeExponent : UInt) -> FloatingDecimal64 {
         vr = vrDiv10
         vp = vpDiv10
         vm = vmDiv10
-        removed = removed + 1
+        removed += 1
       }
     }
     if vrIsTrailingZeros && lastRemovedDigit == 5 && vr % 2 == 0 {
@@ -499,7 +499,7 @@ fn d2d(ieeeMantissa : UInt64, ieeeExponent : UInt) -> FloatingDecimal64 {
       vr = vrDiv100
       vp = vpDiv100
       vm = vmDiv100
-      removed = removed + 2
+      removed += 2
     }
     // Loop iterations below (approximately), without optimization above:
     // 0: 0.03%, 1: 13.8%, 2: 70.6%, 3: 14.0%, 4: 1.40%, 5: 0.14%, 6+: 0.02%
@@ -517,7 +517,7 @@ fn d2d(ieeeMantissa : UInt64, ieeeExponent : UInt) -> FloatingDecimal64 {
       vr = vrDiv10
       vp = vpDiv10
       vm = vmDiv10
-      removed = removed + 1
+      removed += 1
     }
     output = vr + (vr == vm || roundUp).to_uint64()
   }
@@ -700,7 +700,7 @@ test "double/ryu.mbt:205" {
   let sum = high0 + low1
   let mut high1 = high1
   if sum < high0 {
-    high1 = high1 + 1
+    high1 += 1
   }
   inspect(high1, content="222222222")
 }
@@ -715,7 +715,7 @@ test "double/ryu.mbt:230" {
   let sum = high0 + low1
   let mut high1 = high1
   if sum < high0 {
-    high1 = high1 + 1UL
+    high1 += 1UL
   }
   assert_true(high1 == 222222222UL)
 }

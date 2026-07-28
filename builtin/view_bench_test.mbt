@@ -37,7 +37,7 @@ test "bench ArrayView::at Int n=100000" (it : @bench.T) {
   it.bench(fn() {
     let mut sum = 0
     for i = 0; i < view_bench_size; i = i + 1 {
-      sum = sum + view[i]
+      sum += view[i]
     }
     it.keep(sum)
   })
@@ -51,7 +51,7 @@ test "bench ArrayView::get Int n=100000" (it : @bench.T) {
     let mut sum = 0
     for i = 0; i < view_bench_size; i = i + 1 {
       if view.get(i) is Some(x) {
-        sum = sum + x
+        sum += x
       }
     }
     it.keep(sum)
@@ -65,7 +65,7 @@ test "bench ArrayView::unsafe_get Int n=100000" (it : @bench.T) {
   it.bench(fn() {
     let mut sum = 0
     for i = 0; i < view_bench_size; i = i + 1 {
-      sum = sum + view.unsafe_get(i)
+      sum += view.unsafe_get(i)
     }
     it.keep(sum)
   })
@@ -110,7 +110,7 @@ test "bench MutArrayView::at Int n=100000" (it : @bench.T) {
   it.bench(fn() {
     let mut sum = 0
     for i = 0; i < view_bench_size; i = i + 1 {
-      sum = sum + view[i]
+      sum += view[i]
     }
     it.keep(sum)
   })
@@ -123,7 +123,7 @@ test "bench MutArrayView::unsafe_get Int n=100000" (it : @bench.T) {
   it.bench(fn() {
     let mut sum = 0
     for i = 0; i < view_bench_size; i = i + 1 {
-      sum = sum + view.unsafe_get(i)
+      sum += view.unsafe_get(i)
     }
     it.keep(sum)
   })

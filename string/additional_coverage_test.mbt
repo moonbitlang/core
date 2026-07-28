@@ -32,7 +32,7 @@ test "String iter2 with surrogate pairs" {
     if i < 3 {
       result.push((idx, c))
     }
-    i = i + 1
+    i += 1
   })
   debug_inspect(result, content="[(0, 'H'), (1, 'e'), (2, 'l')]")
 

@@ -35,11 +35,11 @@ pub impl Leb128 for Int with fn output(self, buffer) {
     }
     if need_more {
       data.unsafe_set(len, (byte | 0x80).to_byte())
-      len = len + 1
+      len += 1
       continue next_value
     } else {
       data.unsafe_set(len, byte.to_byte())
-      len = len + 1
+      len += 1
       break
     }
   }
@@ -64,11 +64,11 @@ pub impl Leb128 for Int64 with fn output(self, buffer) {
     }
     if need_more {
       data.unsafe_set(len, (byte | 0x80).to_byte())
-      len = len + 1
+      len += 1
       continue next_value
     } else {
       data.unsafe_set(len, byte.to_byte())
-      len = len + 1
+      len += 1
       break
     }
   }

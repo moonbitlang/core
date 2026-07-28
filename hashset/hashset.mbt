@@ -493,7 +493,7 @@ pub fn[K] HashSet::retain(self : HashSet[K], f : (K) -> Bool) -> Unit {
   let mut j = 0
   for i = 0; j < size; i = i + 1 {
     while self.entries[i] is Some(entry) {
-      j = j + 1
+      j += 1
       if f(entry.key) {
         break
       } else {

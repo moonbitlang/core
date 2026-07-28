@@ -341,7 +341,7 @@ pub fn[A] Queue::transfer(self : Queue[A], dst : Queue[A]) -> Unit {
       }
       Some(last) => {
         last.next = self.first
-        dst.length = dst.length + self.length
+        dst.length += self.length
         dst.last = self.last
         self.clear()
       }

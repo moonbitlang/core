@@ -259,7 +259,7 @@ pub fn[K, V] SortedMap::eachi(
   let mut i = 0
   self.each((k, v) => {
     f(i, k, v)
-    i = i + 1
+    i += 1
   })
 }
 

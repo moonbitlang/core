@@ -284,7 +284,7 @@ test "each" {
     if elem != i + 1 {
       failed = true
     }
-    i = i + 1
+    i += 1
   }
   {
     i = 0
@@ -339,7 +339,7 @@ test "eachi" {
     if index != i || elem != i + 1 {
       failed = true
     }
-    i = i + 1
+    i += 1
   }
   {
     i = 0
@@ -452,7 +452,7 @@ test "rev_eachi" {
       failed = true
     }
     i = i - 1
-    j = j + 1
+    j += 1
   }
   {
     i = 1
@@ -1387,7 +1387,7 @@ test "iter" {
   iter.each(x => {
     exb.write_string(x.to_string())
     exb.write_char('\n')
-    i = i + 1
+    i += 1
   })
   assert_true(i == arr.length())
   inspect(

@@ -63,7 +63,7 @@ impl Eq for Wrapper with fn equal(self, other) {
 
 ///|
 impl Logger for TestLogger with fn write_view(self, value) {
-  self.output = self.output + value.to_owned()
+  self.output += value.to_owned()
 }
 
 ///|

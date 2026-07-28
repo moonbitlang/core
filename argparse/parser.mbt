@@ -452,7 +452,7 @@ fn parse_command_impl(
       ) {
       positional_values.push(arg)
       positional_arg_found = true
-      i = i + 1
+      i += 1
       continue
     }
     if arg.has_prefix("--") {
@@ -506,7 +506,7 @@ fn parse_command_impl(
                   short_index,
                 )
               if can_take_next {
-                i = i + 1
+                i += 1
                 assign_value(matches, spec, argv[i], Argv)
               } else {
                 raise ArgParseError::MissingValue("--\{name}")
@@ -529,7 +529,7 @@ fn parse_command_impl(
             }
           }
       }
-      i = i + 1
+      i += 1
       continue
     }
     if arg.has_prefix("-") && arg != "-" {
@@ -597,7 +597,7 @@ fn parse_command_impl(
           }
         }
       }
-      i = i + 1 + (if consumed_next { 1 } else { 0 })
+      i += 1 + (if consumed_next { 1 } else { 0 })
       continue
     }
     if help_subcommand_enabled(cmd) && arg == "help" {
@@ -623,7 +623,7 @@ fn parse_command_impl(
 
     positional_values.push(arg)
     positional_arg_found = true
-    i = i + 1
+    i += 1
   }
   if default_subcommand is Some(sub) {
     return dispatch_subcommand(sub, [])

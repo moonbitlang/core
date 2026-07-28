@@ -397,7 +397,7 @@ pub fn[V] SortedSet::eachi(
   let mut i = 0
   self.each(v => {
     f(i, v)
-    i = i + 1
+    i += 1
   })
 }
 
@@ -414,7 +414,7 @@ pub fn[V] SortedSet::to_array(self : SortedSet[V]) -> Array[V] {
       if root is Some(root) {
         dfs(root.left)
         arr[i] = root.value
-        i = i + 1
+        i += 1
         dfs(root.right)
       }
     }
