@@ -399,7 +399,7 @@ fn Decimal::right_shift(self : Decimal, s : Int) -> Unit {
       self.truncated = true
     }
     acc = acc & mask
-    acc = acc * 10
+    acc *= 10
   }
 
   // update and trim

@@ -407,7 +407,7 @@ fn d2d(ieeeMantissa : UInt64, ieeeExponent : UInt) -> FloatingDecimal64 {
           q,
         )
       } else {
-        vp = vp - multipleOfPowerOf5(mv + 2UL, q).to_uint64()
+        vp -= multipleOfPowerOf5(mv + 2UL, q).to_uint64()
       }
     }
   } else {
@@ -431,7 +431,7 @@ fn d2d(ieeeMantissa : UInt64, ieeeExponent : UInt) -> FloatingDecimal64 {
       if even {
         vmIsTrailingZeros = mmShift.to_int() == 1
       } else {
-        vp = vp - 1
+        vp -= 1
       }
     } else if q < 63 {
       vrIsTrailingZeros = multipleOfPowerOf2(mv, q)
