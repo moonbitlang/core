@@ -83,7 +83,9 @@ fn parse_decimal_from_view(str : StringView) -> Decimal raise StrConvError {
           d.digits[d.digits_num] = (digit.to_int() - '0').to_byte()
           d.digits_num += 1
         } else {
-          d.overflowed += 1
+          if !has_dp {
+            d.overflowed += 1
+          }
           if digit != '0' {
             d.truncated = true
           }
@@ -120,14 +122,15 @@ fn parse_decimal_from_view(str : StringView) -> Decimal raise StrConvError {
       //     floor, expressed as `decimal_point + 331` for the negative-exp arm.
       // Once `exp` reaches `exp_limit`, additional digits cannot change the
       // result, so we stop accumulating before `Int` can wrap.
+      let effective_dp = d.decimal_point + d.overflowed
       let exp_limit = if exp_sign > 0 {
-        if d.decimal_point < 311 {
-          311 - d.decimal_point
+        if effective_dp < 311 {
+          311 - effective_dp
         } else {
           0
         }
-      } else if d.decimal_point > -331 {
-        d.decimal_point + 331
+      } else if effective_dp > -331 {
+        effective_dp + 331
       } else {
         0
       }
@@ -719,4 +722,39 @@ test "corner cases" {
 test "parse_double mantissa normalization boundary" {
   inspect(parse_double("1.9999999999999999"), content="2")
   inspect(parse_double("9007199254740991.5"), content="9007199254740992")
+}
+
+///|
+test "parse_double large magnitude cancellation" {
+  let input = "1" + String::make(800, '0') + "e-800"
+  inspect(parse_double(input), content="1")
+
+  let input = "-1" + String::make(800, '0') + "e-800"
+  inspect(parse_double(input), content="-1")
+
+  let input = "1." + String::make(800, '0')
+  inspect(parse_double(input), content="1")
+
+  let input = "1" + String::make(1999, '0') + "e-1999"
+  inspect(parse_double(input), content="1")
+
+  let input = "1" + String::make(399, '0') + ".5"
+  try parse_double(input) catch {
+    e => inspect(e, content="value out of range")
+  } noraise {
+    _ => fail("expected parse_double to raise")
+  }
+
+  let input = "1" + String::make(800, '0') + ".5"
+  try parse_double(input) catch {
+    e => inspect(e, content="value out of range")
+  } noraise {
+    _ => fail("expected parse_double to raise")
+  }
+
+  let input = "1" + String::make(1499, '0') + "e-1499"
+  inspect(parse_double(input), content="1")
+
+  let input = "0." + String::make(1999, '0') + "1"
+  inspect(parse_double(input), content="0")
 }
