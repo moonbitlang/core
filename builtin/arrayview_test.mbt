@@ -299,7 +299,7 @@ test "each" {
   let v = [1, 2, 3, 4, 5]
   let s = v[2:5]
   let mut sum = 0
-  s.each(x => sum = sum + x)
+  s.each(x => sum += x)
   inspect(sum, content="12")
 }
 
@@ -307,7 +307,7 @@ test "each" {
 test "eachi" {
   let v = [3, 4, 5][:]
   let mut sum = 0
-  v.eachi((i, x) => sum = sum + x + i)
+  v.eachi((i, x) => sum += x + i)
   inspect(sum, content="15")
 }
 

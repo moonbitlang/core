@@ -705,7 +705,7 @@ pub fn[T] ArrayView::windows(
 ///   let arr = [1, 2, 3]
 ///   let view = arr[1:]
 ///   let mut sum = 0
-///   view.iter().each(x => sum = sum + x)
+///   view.iter().each(x => sum += x)
 ///   inspect(sum, content="5")
 /// }
 /// ```
@@ -765,8 +765,8 @@ pub fn[X] ArrayView::rev_iter(self : ArrayView[X]) -> Iter[X] {
 ///   view
 ///   .iter2()
 ///   .each((i, x) => {
-///     sum = sum + x
-///     sum_keys = sum_keys + i
+///     sum += x
+///     sum_keys += i
 ///   })
 ///   inspect(sum, content="5")
 ///   inspect(sum_keys, content="1")
@@ -802,7 +802,7 @@ pub fn[X] ArrayView::iter2(self : ArrayView[X]) -> Iter2[Int, X] {
 /// test {
 ///   let arr = [1, 2, 3][:]
 ///   let mut sum = 0
-///   arr.each(x => sum = sum + x)
+///   arr.each(x => sum += x)
 ///   inspect(sum, content="6")
 /// }
 /// ```
@@ -825,7 +825,7 @@ pub fn[T] ArrayView::each(
 /// test {
 ///   let v = [3, 4, 5][:]
 ///   let mut sum = 0
-///   v.eachi((i, x) => sum = sum + x + i)
+///   v.eachi((i, x) => sum += x + i)
 ///   inspect(sum, content="15")
 /// }
 /// ```

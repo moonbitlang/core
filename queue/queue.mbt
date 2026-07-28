@@ -224,7 +224,8 @@ pub fn[A] Queue::pop(self : Queue[A]) -> A? {
 /// test {
 ///   let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
 ///   let mut sum = 0
-///   queue.each(x => sum = sum + x)
+///   queue.each(x => sum += x)
+///   inspect(sum, content="10")
 /// }
 /// ```
 #locals(f)
@@ -248,7 +249,8 @@ pub fn[A] Queue::each(self : Queue[A], f : (A) -> Unit) -> Unit {
 /// test {
 ///   let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
 ///   let mut sum = 0
-///   queue.eachi((i, x) => sum = sum + i * x)
+///   queue.eachi((i, x) => sum += i * x)
+///   inspect(sum, content="20")
 /// }
 /// ```
 #locals(f)

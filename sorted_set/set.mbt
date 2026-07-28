@@ -173,7 +173,7 @@ pub fn[V : Compare] SortedSet::union(
       let mut ct = 0
       let ret = { root: t, size: 0 }
       // TODO: optimize this. Avoid counting the size of the set.
-      ret.each(_x => ct = ct + 1)
+      ret.each(_x => ct += 1)
       ret.size = ct
       ret
     }
