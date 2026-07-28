@@ -117,3 +117,50 @@ test "group splits distant changes into separate hunks" {
   )
 }
 ```
+
+## Custom Renderers
+
+`render` emits plain unified text. For anything else — terminal colors, HTML,
+side-by-side — build on the structural accessors: `header()`, `edits()`, and
+the `old_view()` / `new_view()` the edit indices refer to. Core ships no color
+or markup support on purpose; a renderer is a small loop:
+
+```mbt check
+///|
+test "git-style terminal colors from the public Hunk API" {
+  let old = ["a", "b", "c"][:]
+  let new = ["a", "x", "c"][:]
+  let buf = StringBuilder::new()
+  for h in @diff.Diff(old~, new~).group(context=1) {
+    buf <+ "\u{1b}[36m\{h.header()}\u{1b}[0m\n"
+    let o = h.old_view()
+    let n = h.new_view()
+    for edit in h.edits() {
+      match edit {
+        Equal(old_index~, len~, ..) =>
+          for e in o.view(start=old_index, end=old_index + len) {
+            buf <+ " \{e}\n"
+          }
+        Delete(old_index~, old_len~, ..) =>
+          for e in o.view(start=old_index, end=old_index + old_len) {
+            buf <+ "\u{1b}[31m-\{e}\u{1b}[0m\n"
+          }
+        Insert(new_index~, new_len~, ..) =>
+          for e in n.view(start=new_index, end=new_index + new_len) {
+            buf <+ "\u{1b}[32m+\{e}\u{1b}[0m\n"
+          }
+      }
+    }
+  }
+  inspect(
+    buf.to_string().escape(),
+    content=(
+      #|"\u{1b}[36m@@ -1,3 +1,3 @@\u{1b}[0m\n a\n\u{1b}[31m-b\u{1b}[0m\n\u{1b}[32m+x\u{1b}[0m\n c\n"
+    ),
+  )
+}
+```
+
+An HTML renderer works the same way; escaping and CSS are the renderer's own
+concern (see the blackbox tests for a complete example that snapshots a styled
+page to `__snapshot__/hunk.html`).

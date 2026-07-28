@@ -518,3 +518,140 @@ test "property: edit scripts reconstruct new from old" {
     }
   }
 }
+
+///|
+/// A terminal renderer written purely against the public API
+/// (`header` + `edits` + views), the way a third-party `diff-ansi` package
+/// would: cyan hunk header, red removals, green additions (git's default look).
+fn[T] ansi_render(h : @diff.Hunk[T], show~ : (T) -> String) -> String {
+  let buf = StringBuilder::new()
+  buf <+ "\u{1b}[36m\{h.header()}\u{1b}[0m\n"
+  let old = h.old_view()
+  let new = h.new_view()
+  for edit in h.edits() {
+    match edit {
+      Equal(old_index~, len~, ..) =>
+        for e in old.view(start=old_index, end=old_index + len) {
+          buf <+ " \{show(e)}\n"
+        }
+      Delete(old_index~, old_len~, ..) =>
+        for e in old.view(start=old_index, end=old_index + old_len) {
+          buf <+ "\u{1b}[31m-\{show(e)}\u{1b}[0m\n"
+        }
+      Insert(new_index~, new_len~, ..) =>
+        for e in new.view(start=new_index, end=new_index + new_len) {
+          buf <+ "\u{1b}[32m+\{show(e)}\u{1b}[0m\n"
+        }
+    }
+  }
+  buf.to_string()
+}
+
+///|
+/// An HTML renderer written purely against the public API, the way a
+/// third-party `diff-html` package would. Escaping is the renderer's own
+/// concern — exactly why HTML stays out of core.
+fn[T] html_render(h : @diff.Hunk[T], show~ : (T) -> String) -> String {
+  fn esc(s : String) -> String {
+    let buf = StringBuilder::new()
+    for c in s {
+      match c {
+        '&' => buf.write_string("&amp;")
+        '<' => buf.write_string("&lt;")
+        '>' => buf.write_string("&gt;")
+        _ => buf.write_char(c)
+      }
+    }
+    buf.to_string()
+  }
+
+  fn line(buf : StringBuilder, cls : String, prefix : String, text : String) {
+    buf <+ "<span class=\"\{cls}\">\{prefix}\{text}</span>\n"
+  }
+
+  let buf = StringBuilder::new()
+  buf <+ "<pre class=\"hunk\">\n"
+  buf <+ "<span class=\"hunk-header\">\{esc(h.header())}</span>\n"
+  let old = h.old_view()
+  let new = h.new_view()
+  for edit in h.edits() {
+    match edit {
+      Equal(old_index~, len~, ..) =>
+        for e in old.view(start=old_index, end=old_index + len) {
+          line(buf, "ctx", " ", esc(show(e)))
+        }
+      Delete(old_index~, old_len~, ..) =>
+        for e in old.view(start=old_index, end=old_index + old_len) {
+          line(buf, "del", "-", esc(show(e)))
+        }
+      Insert(new_index~, new_len~, ..) =>
+        for e in new.view(start=new_index, end=new_index + new_len) {
+          line(buf, "add", "+", esc(show(e)))
+        }
+    }
+  }
+  buf <+ "</pre>"
+  buf.to_string()
+}
+
+///|
+test "third-party ANSI renderer over the public Hunk API" {
+  let old = ["a", "b", "c"][:]
+  let new = ["a", "x", "c"][:]
+  let hunks = @diff.Diff(old~, new~).group(context=1)
+  inspect(
+    ansi_render(hunks[0], show=l => l).escape(),
+    content=(
+      #|"\u{1b}[36m@@ -1,3 +1,3 @@\u{1b}[0m\n a\n\u{1b}[31m-b\u{1b}[0m\n\u{1b}[32m+x\u{1b}[0m\n c\n"
+    ),
+  )
+}
+
+///|
+test "third-party HTML renderer over the public Hunk API" (t : @test.Test) {
+  // File-based snapshot: the result is a real page at
+  // diff/__snapshot__/hunk.html - open it in a browser.
+  let old = ["let x = 1", "if a < b {", "  go()", "}"][:]
+  let new = ["let x = 1", "if a & b < c {", "  stop()", "}"][:]
+  t.writeln("<!DOCTYPE html>")
+  t.writeln("<html><head><meta charset=\"utf-8\"><style>")
+  t.writeln("pre.hunk { font-family: monospace; }")
+  t.writeln(".hunk-header { color: #00a; }")
+  t.writeln(".del { background: #fdd; }")
+  t.writeln(".add { background: #dfd; }")
+  t.writeln("</style></head><body>")
+  for h in @diff.Diff(old~, new~).group() {
+    t.writeln(html_render(h, show=l => l))
+  }
+  t.writeln("</body></html>")
+  t.snapshot(filename="hunk.html")
+}
+
+///|
+test "edits() with the views agrees with render()" {
+  let old = ["a", "b", "c", "d"][:]
+  let new = ["a", "x", "c", "y"][:]
+  for h in @diff.Diff(old~, new~).group(context=1) {
+    let rebuilt = StringBuilder::new()
+    rebuilt <+ "\{h.header()}\n"
+    let o = h.old_view()
+    let n = h.new_view()
+    for edit in h.edits() {
+      match edit {
+        Equal(old_index~, len~, ..) =>
+          for e in o.view(start=old_index, end=old_index + len) {
+            rebuilt <+ " \{e}\n"
+          }
+        Delete(old_index~, old_len~, ..) =>
+          for e in o.view(start=old_index, end=old_index + old_len) {
+            rebuilt <+ "-\{e}\n"
+          }
+        Insert(new_index~, new_len~, ..) =>
+          for e in n.view(start=new_index, end=new_index + new_len) {
+            rebuilt <+ "+\{e}\n"
+          }
+      }
+    }
+    assert_eq(rebuilt.to_string(), h.render(show=l => l))
+  }
+}

@@ -31,6 +31,10 @@ pub enum Edit {
 pub fn Edit::equal(Self, Self) -> Bool
 
 type Hunk[T]
+pub fn[T] Hunk::edits(Self[T]) -> ArrayView[Edit]
+pub fn[T] Hunk::header(Self[T]) -> String
+pub fn[T] Hunk::new_view(Self[T]) -> ArrayView[T]
+pub fn[T] Hunk::old_view(Self[T]) -> ArrayView[T]
 pub fn[T] Hunk::render(Self[T], show~ : (T) -> String) -> String
 
 // Type aliases
