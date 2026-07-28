@@ -238,3 +238,58 @@ test "intraline word diff as a styled HTML page" (t : @test.Test) {
   t.writeln("</body></html>")
   t.snapshot(filename="word_diff.html")
 }
+
+///|
+/// Whitespace- and comment-insensitive diffing: run the diff on a *normalized
+/// key* while keeping the original text for rendering. `Diff[T]` only needs
+/// `Hash + Eq`, so the policy plugs in as a wrapper type — the algorithm,
+/// `group`, and `render` are untouched.
+priv struct Loose {
+  text : String
+  key : String
+}
+
+///|
+impl Eq for Loose with fn equal(a, b) {
+  a.key == b.key
+}
+
+///|
+impl Hash for Loose with fn hash_combine(self, hasher) {
+  Hash::hash_combine(self.key, hasher)
+}
+
+///|
+/// Normalized key: strip a trailing `//` comment (naive: not string-literal
+/// aware), then drop whitespace tokens and rejoin — so any respacing or
+/// comment rewrite compares equal.
+fn loose(line : String) -> Loose {
+  let code = lexscan line[:] with longest {
+    (re"^([^/]|/[^/])*" as code, after=_) => code.to_owned()
+    _ => line
+  }
+  let kept = tokenize(code).filter(t => !(t is [' ' | '\t', ..]))
+  { text: line, key: kept.join("\u{0}") }
+}
+
+///|
+test "whitespace- and comment-insensitive diff via a key wrapper" {
+  let old = ["fn f(a:Int)->Int{ // sum", "  a+1", "}"].map(loose)
+  let new = ["fn f( a : Int ) -> Int {   // add one", "  a+2", "}"].map(loose)
+  let hunks = @diff.Diff(old~, new~).group(context=1)
+  // Only the real change surfaces; the respaced line and rewritten comment
+  // compare Equal. Note: Equal spans may differ textually under a normalized
+  // key — `render` displays the old side's text by convention.
+  assert_eq(hunks.length(), 1)
+  inspect(
+    hunks[0].render(show=l => l.text),
+    content=(
+      #|@@ -1,3 +1,3 @@
+      #| fn f(a:Int)->Int{ // sum
+      #|-  a+1
+      #|+  a+2
+      #| }
+      #|
+    ),
+  )
+}
