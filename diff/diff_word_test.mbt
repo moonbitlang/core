@@ -21,6 +21,11 @@
 /// Split a text into lexical tokens: identifiers, number literals, whitespace
 /// runs, and single punctuation characters. Whitespace is kept as tokens so
 /// that concatenating the tokens reproduces the input exactly.
+///
+/// Deliberately limited: only ASCII identifiers, digit runs, spaces/tabs and
+/// newline get grouped treatment; Unicode identifiers, other whitespace and
+/// richer number syntax fall back to single-character tokens (still faithful,
+/// just finer-grained).
 fn tokenize(text : StringView) -> Array[String] {
   let tokens = []
   let mut rest = text
@@ -264,12 +269,20 @@ impl Hash for Loose with fn hash_combine(self, hasher) {
 /// aware), then drop whitespace tokens and rejoin — so any respacing or
 /// comment rewrite compares equal.
 fn loose(line : String) -> Loose {
-  let code = lexscan line[:] with longest {
-    (re"^([^/]|/[^/])*" as code, after=_) => code.to_owned()
-    _ => line
+  let code = match line.find("//") {
+    Some(i) => line.view(end_offset=i)
+    None => line.view()
   }
   let kept = tokenize(code).filter(t => !(t is [' ' | '\t', ..]))
   { text: line, key: kept.join("\u{0}") }
+}
+
+///|
+test "loose keeps a lone trailing slash significant" {
+  // regression: the previous regex-based stripper dropped a trailing `/`,
+  // making `a/` compare equal to `a`.
+  inspect(loose("a/").key == loose("a").key, content="false")
+  inspect(loose("x = a/b // c").key == loose("x=a/b").key, content="true")
 }
 
 ///|

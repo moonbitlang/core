@@ -63,20 +63,24 @@ fn side_by_side_html(
             right.length()
           }
           for k in 0..<rows {
-            let l = if k < left.length() { left[k] } else { "" }
-            let r = if k < right.length() { right[k] } else { "" }
+            // classify by row *presence*: a blank-but-present refined row is
+            // still a deletion/addition; only an absent excess row is empty.
+            let l_present = k < left.length()
+            let r_present = k < right.length()
+            let l = if l_present { left[k] } else { "" }
+            let r = if r_present { right[k] } else { "" }
             row(
               l,
-              if l == "" {
-                "empty"
-              } else {
+              if l_present {
                 "del"
+              } else {
+                "empty"
               },
               r,
-              if r == "" {
-                "empty"
-              } else {
+              if r_present {
                 "add"
+              } else {
+                "empty"
               },
             )
           }
@@ -105,6 +109,18 @@ fn side_by_side_html(
   }
   buf <+ "</table>\n"
   buf.to_string()
+}
+
+///|
+test "split view keeps blank-but-present rows classified" {
+  // old's blank middle line is part of the replacement: it must render as a
+  // (blank) deletion cell, while the genuinely absent excess row on the new
+  // side renders as an empty cell.
+  let html = side_by_side_html(old=["foo(1)", "", "bar(2)"], new=[
+    "foo(9)", "baz(3)",
+  ])
+  inspect(html.contains("<td class=\"del\"></td>"), content="true")
+  inspect(html.contains("<td class=\"empty\"></td>"), content="true")
 }
 
 ///|
