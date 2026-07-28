@@ -1395,10 +1395,10 @@ pub fn BigInt::pow(self : BigInt, exp : BigInt, modulus? : BigInt) -> BigInt {
       let mut exp = exp
       while exp > 0 {
         if exp % 2 == 1 {
-          result = result * base
+          result *= base
         }
-        base = base * base
-        exp = exp / 2
+        base *= base
+        exp /= 2
       }
       result
     }
@@ -1412,7 +1412,7 @@ pub fn BigInt::pow(self : BigInt, exp : BigInt, modulus? : BigInt) -> BigInt {
           result = result * base % modulus
         }
         base = base * base % modulus
-        exp = exp / 2
+        exp /= 2
       }
       result
     }

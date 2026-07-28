@@ -444,7 +444,7 @@ fn rem_pio2(x : Double, y : Array[Double]) -> Int {
         y[1] = z - y[0] - PIO2_1T
       } else {
         // Near pi/2, use 33+33+53 bit pi
-        z = z - PIO2_2
+        z -= PIO2_2
         y[0] = z - PIO2_2T
         y[1] = z - y[0] - PIO2_2T
       }
