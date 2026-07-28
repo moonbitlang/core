@@ -51,6 +51,6 @@ test "parse_double huge exponent" {
 
 ///|
 test "parse_double 801-digit integer coefficient" {
-  let input = "1" + String::make(801, '0') + "e-799"
-  inspect(@string.parse_double(input), content="100")
+  let input = "1" + String::make(800, '0') + "e-800"
+  inspect(@string.parse_double(input), content="1")
 }
