@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><style>
+body { font-family: monospace; white-space: pre; }
+.hunk-header { color: #00a; }
+.del { background: #ffecec; display: block; }
+.add { background: #eaffea; display: block; }
+.ctx { display: block; }
+b.wd { background: #f8b4b4; font-weight: normal; }
+b.wa { background: #97e0a0; font-weight: normal; }
+</style></head><body>
+<span class="hunk-header">@@ -1,5 +1,5 @@</span>
+<span class="del">-fn total(items : Array[Item]) -&gt; Int {</span>
+<span class="add">+fn total(items : Array[Item]<b class="wa">, tax~ : Int</b>) -&gt; Int {</span>
+<span class="ctx">   let mut sum = 0</span>
+<span class="ctx">   for item in items {</span>
+<span class="del">-    sum += item.price * item.count</span>
+<span class="add">+    sum += item.price * item.count<b class="wa"> + tax</b></span>
+<span class="ctx">   }</span>
+
+</body></html>
