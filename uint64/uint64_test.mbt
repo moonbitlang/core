@@ -192,3 +192,12 @@ test "grouped test for random cases: popcnt" {
   // 1011111011101111110111101010110110111110111011111101111010101101
   inspect(UInt64::popcnt(0xBEEFDEADBEEFDEADUL), content="48")
 }
+
+///|
+test "UInt64 constructor syntax" {
+  inspect(UInt64(3), content="3")
+  inspect(UInt64(0), content="0")
+  inspect(UInt64(18446744073709551615), content="18446744073709551615")
+  let x = 42UL
+  inspect(UInt64(x), content="42")
+}

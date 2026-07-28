@@ -79,7 +79,7 @@ const MAX_REPEAT_QUANTIFIER = 256
 
 ///|
 pub impl @debug.Debug for Regex with fn to_repr(self) {
-  @debug.Repr::opaque_("Regex", @debug.to_repr(self.pat))
+  @debug.Repr::opaque_("Regex", Repr(self.pat))
 }
 
 ///|

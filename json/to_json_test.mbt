@@ -197,10 +197,10 @@ test "Map::to_json" {
 }
 
 ///|
-struct Opt {
+priv struct Opt {
   x : Int?
   t : Int??
-} derive(ToJson, FromJson, Eq, Debug)
+} derive(ToJson, FromJson, Eq)
 
 ///|
 test "Option::to_json" {
@@ -221,7 +221,7 @@ test "optional field" {
     { x: None, t: Some(None) },
   ]
   inspect(
-    opt.to_json().stringify(),
+    ToJson::to_json(opt).stringify(),
     content=(
       #|[{"x":42,"t":[42]},{},{"t":null}]
     ),
@@ -231,11 +231,11 @@ test "optional field" {
 ///|
 test "optional field round trip" {
   let opt = { x: Some(42), t: Some(Some(42)) }
-  assert_true(@json.from_json(opt.to_json()) == opt)
+  assert_true(@json.from_json(ToJson::to_json(opt)) == opt)
   let opt = { x: None, t: None }
-  assert_true(@json.from_json(opt.to_json()) == opt)
+  assert_true(@json.from_json(ToJson::to_json(opt)) == opt)
   let opt = { x: None, t: Some(None) }
-  assert_true(@json.from_json(opt.to_json()) == opt)
+  assert_true(@json.from_json(ToJson::to_json(opt)) == opt)
 }
 
 ///|

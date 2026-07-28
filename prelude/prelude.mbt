@@ -26,9 +26,11 @@ pub using @builtin {
   abort,
   assert_true,
   assert_false,
+  compare,
   debug_assert,
   fail,
   ignore,
+  hash,
   inspect,
   panic,
   physical_equal,
@@ -74,7 +76,12 @@ pub using @builtin {
 pub using @builtin {not}
 
 ///|
-pub using @debug {debug, type Repr, trait Debug, debug_inspect, repr, to_repr}
+pub using @debug {debug, type Repr, trait Debug, debug_inspect, repr}
+
+///|
+#deprecated("Use `Repr(x)` instead")
+#warnings("-deprecated")
+pub using @debug {to_repr}
 
 ///|
 #deprecated("for debugging only, not for production")

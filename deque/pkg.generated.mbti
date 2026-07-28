@@ -17,6 +17,7 @@ type Deque[A]
 #as_free_fn(of, deprecated)
 #as_free_fn(from_array)
 pub fn[A] Deque::Deque(ArrayView[A], capacity? : Int) -> Self[A]
+pub fn[A] Deque::add(Self[A], Self[A]) -> Self[A]
 pub fn[A] Deque::append(Self[A], Self[A]) -> Unit
 pub fn[A] Deque::as_views(Self[A]) -> (ArrayView[A], ArrayView[A])
 #alias("_[_]")
@@ -29,12 +30,14 @@ pub fn[A] Deque::capacity(Self[A]) -> Int
 pub fn[A] Deque::chunk_by(Self[A], (A, A) -> Bool raise?) -> Self[Self[A]] raise?
 pub fn[A] Deque::chunks(Self[A], Int) -> Self[Self[A]]
 pub fn[A] Deque::clear(Self[A]) -> Unit
+pub fn[A : Compare] Deque::compare(Self[A], Self[A]) -> Int
 pub fn[A : Eq] Deque::contains(Self[A], A) -> Bool
 #alias(clone, deprecated)
 pub fn[A] Deque::copy(Self[A]) -> Self[A]
 pub fn[A] Deque::drain(Self[A], start~ : Int, len? : Int) -> Self[A]
 pub fn[A] Deque::each(Self[A], (A) -> Unit) -> Unit
 pub fn[A] Deque::eachi(Self[A], (Int, A) -> Unit) -> Unit
+pub fn[A : Eq] Deque::equal(Self[A], Self[A]) -> Bool
 pub fn[A] Deque::extract_if(Self[A], (A) -> Bool) -> Self[A]
 pub fn[A] Deque::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 pub fn[A] Deque::flatten(Self[Self[A]]) -> Self[A]
@@ -44,6 +47,7 @@ pub fn[A] Deque::flatten(Self[Self[A]]) -> Self[A]
 pub fn[A] Deque::from_iter(Iter[A]) -> Self[A]
 pub fn[A] Deque::front(Self[A]) -> A?
 pub fn[A] Deque::get(Self[A], Int) -> A?
+pub fn[A : Hash] Deque::hash(Self[A]) -> Int
 pub fn[A] Deque::insert(Self[A], Int, A) -> Unit
 pub fn[A] Deque::is_empty(Self[A]) -> Bool
 #alias(iterator, deprecated)
@@ -82,8 +86,6 @@ pub fn[A] Deque::shrink_to_fit(Self[A]) -> Unit
 pub fn[A] Deque::shuffle(Self[A], rand~ : (Int) -> Int) -> Self[A]
 pub fn[A] Deque::shuffle_in_place(Self[A], rand~ : (Int) -> Int) -> Unit
 pub fn[A] Deque::to_array(Self[A]) -> Array[A]
-#deprecated
-pub fn[A : @debug.Debug] Deque::to_repr(Self[A]) -> @debug.Repr
 pub fn[A] Deque::truncate(Self[A], Int) -> Unit
 pub impl[A] Add for Deque[A]
 pub impl[A : Compare] Compare for Deque[A]

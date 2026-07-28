@@ -76,3 +76,12 @@ test "popcnt random cases" {
   inspect(b'\x5F'.popcnt(), content="6")
   inspect(b'\xFF'.popcnt(), content="8")
 }
+
+///|
+test "Byte constructor syntax" {
+  inspect(Byte(3), content="b'\\x03'")
+  inspect(Byte(0), content="b'\\x00'")
+  inspect(Byte(255), content="b'\\xFF'")
+  let x = b'\x2A'
+  inspect(Byte(x), content="b'\\x2A'")
+}

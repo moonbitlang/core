@@ -23,21 +23,21 @@ test {
 }
 
 ///|
-struct P {
+priv struct P {
   x : Int
   y : Int
   color : Color
 } derive(ToJson)
 
 ///|
-enum Color {
+priv enum Color {
   Red
   Green
   Blue
 } derive(ToJson)
 
 ///|
-struct Line {
+priv struct Line {
   p1 : P
   p2 : P
   color : Color

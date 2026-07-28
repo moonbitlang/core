@@ -779,10 +779,10 @@ pub fn[A, B] List::flat_map(
             // continue looping on the `tail` of `self`
             loop_over_tail~: for d = dest1, t = tail {
               match (d, t) {
-                (_, Empty) => break
+                (_, Empty) => break loop_over_tail~
                 (More(_) as dest, More(t_hd, tail=Empty)) => {
                   dest.tail = f(t_hd)
-                  break
+                  break loop_over_tail~
                 }
                 (dest, More(t_hd, tail=t_tl)) =>
                   for d2 = dest, t2 = f(t_hd) {
@@ -1056,10 +1056,10 @@ pub fn[A] List::flatten(self : List[List[A]]) -> List[A] {
             // continue looping on the `tail` of `self`
             loop_over_tail~: for d = dest1, t = tail {
               match (d, t) {
-                (_, Empty) => break
+                (_, Empty) => break loop_over_tail~
                 (More(_) as dest, More(t_hd, tail=Empty)) => {
                   dest.tail = t_hd
-                  break
+                  break loop_over_tail~
                 }
                 (dest, More(t_hd, tail=t_tl)) =>
                   for d2 = dest, t2 = t_hd {

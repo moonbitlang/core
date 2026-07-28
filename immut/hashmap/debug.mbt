@@ -18,20 +18,8 @@ pub impl[K : @debug.Debug, V : @debug.Debug] @debug.Debug for HashMap[K, V] with
 ) {
   @debug.Repr::opaque_(
     "HashMap",
-    @debug.Repr::map(
-      [
-        for k, v in self => (@debug.to_repr(k), @debug.to_repr(v))
-      ],
-    ),
+    @debug.Repr::map([ for k, v in self => (Repr(k), Repr(v)) ]),
   )
-}
-
-///|
-#deprecated("use `to_repr(a)` instead", skip_current_package=true)
-pub fn[K : @debug.Debug, V : @debug.Debug] HashMap::to_repr(
-  self : HashMap[K, V],
-) -> @debug.Repr {
-  @debug.to_repr(self)
 }
 
 ///|

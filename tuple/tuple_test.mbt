@@ -106,26 +106,26 @@ test "eq" {
 
 ///|
 test "compare" {
-  assert_eq((1, 2).compare((2, 1)), -1)
-  assert_eq((1, 2).compare((1, 3)), -1)
-  assert_eq((1, 2, 3).compare((1, 2, 5)), -1)
-  assert_eq((1, 2, 3).compare((1, 3, 3)), -1)
-  assert_eq((1, 2, (3, 4)).compare((1, 2, (4, 4))), -1)
-  assert_eq((1, 2, (4, 6)).compare((1, 2, (4, 5))), 1)
-  assert_eq((1, 2, 4).compare((1, 2, 3)), 1)
-  assert_eq((1, 3, 3).compare((1, 2, 3)), 1)
+  assert_eq(compare((1, 2), (2, 1)), -1)
+  assert_eq(compare((1, 2), (1, 3)), -1)
+  assert_eq(compare((1, 2, 3), (1, 2, 5)), -1)
+  assert_eq(compare((1, 2, 3), (1, 3, 3)), -1)
+  assert_eq(compare((1, 2, (3, 4)), (1, 2, (4, 4))), -1)
+  assert_eq(compare((1, 2, (4, 6)), (1, 2, (4, 5))), 1)
+  assert_eq(compare((1, 2, 4), (1, 2, 3)), 1)
+  assert_eq(compare((1, 3, 3), (1, 2, 3)), 1)
 }
 
 ///|
 test "hash" {
   let tuple1 = (1, 2, 3, 4, 5)
   let tuple2 = (1, 2, 3, 4, 5)
-  inspect(tuple1.hash() == tuple2.hash(), content="true")
+  inspect(hash(tuple1) == hash(tuple2), content="true")
   let tuple3 = (5, 4, 3, 2, 1)
-  inspect(tuple1.hash() == tuple1.hash(), content="true")
-  inspect(tuple2.hash() == tuple2.hash(), content="true")
-  inspect(tuple3.hash() == tuple3.hash(), content="true")
-  inspect(tuple1.hash() == tuple3.hash(), content="false")
+  inspect(hash(tuple1) == hash(tuple1), content="true")
+  inspect(hash(tuple2) == hash(tuple2), content="true")
+  inspect(hash(tuple3) == hash(tuple3), content="true")
+  inspect(hash(tuple1) == hash(tuple3), content="false")
 }
 
 ///|

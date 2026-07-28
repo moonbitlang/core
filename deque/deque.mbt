@@ -79,8 +79,8 @@ pub impl[A : Show] Show for Deque[A] with fn output(self, logger) {
 ///   let dq1 = @deque.from_array([1, 2, 3])
 ///   let dq2 = @deque.from_array([1, 2, 3])
 ///   let dq3 = @deque.from_array([1, 2, 3, 4])
-///   @test.assert_eq(dq1.hash(), dq2.hash()) // same elements → same hash
-///   @test.assert_not_eq(dq1.hash(), dq3.hash()) // different elements → different hash
+///   @test.assert_eq(Hash::hash(dq1), Hash::hash(dq2)) // same elements → same hash
+///   @test.assert_not_eq(Hash::hash(dq1), Hash::hash(dq3)) // different elements → different hash
 /// }
 /// ```
 ///
@@ -1772,12 +1772,16 @@ pub fn Deque::join(self : Deque[String], separator : StringView) -> String {
 ///
 /// Returns a JSON array containing all elements from the deque converted to
 /// their JSON representations.
-/// test "T::to_json" {
-///   let dq = @deque.from_array([1, 2, 3])
-///   let json = dq.to_json()
-///   inspect(json, content="Array([Number(1), Number(2), Number(3)])")
-/// ```
 ///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let dq = @deque.from_array([1, 2, 3])
+///   let json = @json.to_json(dq)
+///   @debug.debug_inspect(json, content="Array([Number(1), Number(2), Number(3)])")
+/// }
+/// ```
 pub impl[A : ToJson] ToJson for Deque[A] with fn to_json(self : Deque[A]) -> Json {
   [
     for x in self => x

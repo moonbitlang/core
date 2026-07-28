@@ -181,7 +181,7 @@ pub impl Compare for Bool with fn compare(self, other) = "%bool_compare"
 ///
 /// ```mbt check
 /// test {
-///   let b : Bool = Bool::default()
+///   let b : Bool = false
 ///   inspect(b, content="false")
 /// }
 /// ```
@@ -795,7 +795,7 @@ pub fn Int::is_non_neg(self : Int) -> Bool = "%i32_is_non_neg"
 ///
 /// ```mbt check
 /// test {
-///   let x : Int = Int::default()
+///   let x : Int = 0
 ///   inspect(x, content="0")
 /// }
 /// ```
@@ -1177,7 +1177,7 @@ pub impl Compare for Double with fn op_ge(x, y) = "%f64.ge"
 ///
 /// ```mbt check
 /// test {
-///   inspect(Double::default(), content="0")
+///   inspect(0.0, content="0")
 /// }
 /// ```
 pub impl Default for Double with fn default() = "%f64_default"
@@ -1359,7 +1359,7 @@ pub impl Compare for Char with fn op_ge(x, y) = "%i32.ge"
 ///
 /// ```mbt check
 /// test {
-///   assert_true(Char::default().to_string() == "\u0000")
+///   assert_true((Default::default() : Char).to_string() == "\u0000")
 /// }
 /// ```
 pub impl Default for Char with fn default() = "%char_default"
@@ -2586,6 +2586,32 @@ pub fn Double::to_float(self : Double) -> Float = "%f64.to_f32"
 /// Convert to `float`.
 #deprecated("Use `Float::from_uint` instead")
 pub fn UInt::to_float(self : UInt) -> Float = "%u32.to_f32"
+
+///|
+/// The identity constructor for `Float`, allowing values to be written using
+/// constructor syntax, e.g. `Float(3.2)`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   ignore(Float(3.2))
+/// }
+/// ```
+pub fn Float::Float(self : Float) -> Float = "%identity"
+
+///|
+/// The identity constructor for `Int16`, allowing values to be written using
+/// constructor syntax, e.g. `Int16(3)`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(Int16(3), content="3")
+/// }
+/// ```
+pub fn Int16::Int16(self : Int16) -> Int16 = "%identity"
 
 ///|
 /// Convert `Int` to `Int16` (deprecated alias).

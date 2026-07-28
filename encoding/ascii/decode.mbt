@@ -26,7 +26,7 @@ fn finish_string(buffer : FixedArray[UInt16], len : Int) -> String {
   if len == buffer.length() {
     unsafe_fixedarray_uint16_to_string(buffer)
   } else {
-    let data = FixedArray::make(len, UInt16::default())
+    let data = FixedArray::make(len, (Default::default() : UInt16))
     data.unsafe_blit(0, buffer, 0, len)
     unsafe_fixedarray_uint16_to_string(data)
   }

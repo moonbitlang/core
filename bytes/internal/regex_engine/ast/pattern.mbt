@@ -45,7 +45,7 @@ pub struct Pattern {
 
 ///|
 pub impl @debug.Debug for Pattern with fn to_repr(self) {
-  @debug.to_repr(self.desc)
+  Repr(self.desc)
 }
 
 ///|

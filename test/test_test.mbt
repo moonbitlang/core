@@ -49,7 +49,7 @@ test "Test name" {
 }
 
 ///|
-suberror MyError {
+priv suberror MyError {
   NotFound(String)
   Invalid(reason~ : String)
 } derive(Debug)

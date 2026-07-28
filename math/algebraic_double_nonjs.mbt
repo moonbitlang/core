@@ -107,11 +107,11 @@ pub fn cbrt(x : Double) -> Double {
 /// }
 /// ```
 pub fn hypot(x : Double, y : Double) -> Double {
-  if x.is_nan() || y.is_nan() {
-    return @double.not_a_number
-  }
   if x.is_inf() || y.is_inf() {
     return @double.infinity
+  }
+  if x.is_nan() || y.is_nan() {
+    return @double.not_a_number
   }
   let x = x.abs()
   let y = y.abs()

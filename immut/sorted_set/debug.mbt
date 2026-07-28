@@ -16,14 +16,8 @@
 pub impl[K : @debug.Debug] @debug.Debug for SortedSet[K] with fn to_repr(self) {
   @debug.Repr::opaque_(
     "SortedSet",
-    @debug.Repr::array([ for x in self => @debug.to_repr(x) ]),
+    @debug.Repr::array([ for x in self => Repr(x) ]),
   )
-}
-
-///|
-#deprecated("use `to_repr(a)` instead", skip_current_package=true)
-pub fn[K : @debug.Debug] SortedSet::to_repr(self : SortedSet[K]) -> @debug.Repr {
-  @debug.to_repr(self)
 }
 
 ///|

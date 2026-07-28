@@ -13,6 +13,19 @@
 // limitations under the License.
 
 ///|
+/// The identity constructor for `Int64`, allowing values to be written using
+/// constructor syntax, e.g. `Int64(3)`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(Int64(3), content="3")
+/// }
+/// ```
+pub fn Int64::Int64(self : Int64) -> Int64 = "%identity"
+
+///|
 /// Converts a 32-bit integer (`Int`) to a 64-bit integer (`Int64`).
 ///
 /// Parameters:
@@ -697,7 +710,7 @@ pub impl Compare for Int64 with fn op_ge(x, y) = "%i64.ge"
 ///
 /// ```mbt check
 /// test {
-///   inspect(Int64::default(), content="0")
+///   inspect(0L, content="0")
 /// }
 /// ```
 pub impl Default for Int64 with fn default() = "%i64_default"

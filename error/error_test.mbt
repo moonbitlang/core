@@ -190,7 +190,7 @@ test "protect2 & finally raise error" {
 }
 
 ///|
-suberror ErrWithToJson {
+priv suberror ErrWithToJson {
   ErrWithToJson(Int)
 } derive(ToJson)
 

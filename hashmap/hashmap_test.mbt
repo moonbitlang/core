@@ -335,7 +335,7 @@ test "get_nonexistent_key_with_psl" {
 test "from_iter multiple elements iter" {
   let map = @hashmap.from_iter([(1, 1), (2, 2), (3, 3)].iter())
   guard map is { 1: 1, 2: 2, 3: 3, .. } else {
-    fail("Map is not expected: \{@debug.to_repr(map)}")
+    fail("Map is not expected: \{Repr(map)}")
   }
   inspect(map.length(), content="3")
 }
@@ -481,7 +481,7 @@ fn[K : Hash + Eq + Debug, V : Eq + Debug] verify_content(
     let (k, v) = entry
     assert_true(
       map.contains_kv(k, v),
-      msg="Key \{@debug.to_repr(k)} with value \{@debug.to_repr(v)} not found in map \{@debug.to_repr(map)}",
+      msg="Key \{Repr(k)} with value \{Repr(v)} not found in map \{Repr(map)}",
     )
   }
   @test.assert_eq(map.length(), expected.length())
@@ -491,7 +491,7 @@ fn[K : Hash + Eq + Debug, V : Eq + Debug] verify_content(
 test "hashmap.to_json" {
   let map = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
   let json : Json = { "1": "one", "2": "two", "3": "three" }
-  @test.assert_eq(map.to_json(), json)
+  @test.assert_eq(@json.to_json(map), json)
 }
 
 ///|

@@ -13,9 +13,11 @@ import {
 
 // Types and methods
 type T[A]
+pub fn[A] T::add(Self[A], Self[A]) -> Self[A]
 #alias("_[_]")
 #deprecated
 pub fn[A] T::at(Self[A], Int) -> A
+pub fn[A : Compare] T::compare(Self[A], Self[A]) -> Int
 #deprecated
 pub fn[A] T::concat(Self[A], Self[A]) -> Self[A]
 #alias(clone, deprecated)
@@ -25,6 +27,7 @@ pub fn[A] T::copy(Self[A]) -> Self[A]
 pub fn[A] T::each(Self[A], (A) -> Unit raise?) -> Unit raise?
 #deprecated
 pub fn[A] T::eachi(Self[A], (Int, A) -> Unit raise?) -> Unit raise?
+pub fn[A : Eq] T::equal(Self[A], Self[A]) -> Bool
 #alias(fold_left, deprecated)
 #deprecated
 pub fn[A, B] T::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
@@ -40,6 +43,7 @@ pub fn[A] T::from_array(ArrayView[A]) -> Self[A]
 pub fn[A] T::from_iter(Iter[A]) -> Self[A]
 #deprecated
 pub fn[A] T::get(Self[A], Int) -> A?
+pub fn[A : Hash] T::hash(Self[A]) -> Int
 #deprecated
 pub fn[A] T::is_empty(Self[A]) -> Bool
 #alias(iterator, deprecated)
@@ -67,8 +71,6 @@ pub fn[A, B] T::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 pub fn[A] T::set(Self[A], Int, A) -> Self[A]
 #deprecated
 pub fn[A] T::to_array(Self[A]) -> Array[A]
-#deprecated
-pub fn[A : @debug.Debug] T::to_repr(Self[A]) -> @debug.Repr
 pub impl[A] Add for T[A]
 pub impl[A : Compare] Compare for T[A]
 pub impl[A : Eq] Eq for T[A]

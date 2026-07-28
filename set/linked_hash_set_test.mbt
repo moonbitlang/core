@@ -16,7 +16,7 @@
 let default_init_capacity = 8
 
 ///|
-struct Key {
+priv struct Key {
   id : Int
   hash_value : Int
 } derive(Eq)

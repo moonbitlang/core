@@ -23,7 +23,7 @@ test "Bool hash function" {
 }
 
 ///|
-struct TestHash {
+priv struct TestHash {
   flag : Bool
   x : Int
 } derive(Hash, Eq, Debug)

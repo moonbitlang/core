@@ -25,6 +25,7 @@ pub fn RandomState::next_two_uint(Self) -> (UInt, UInt)
 pub fn RandomState::next_uint(Self) -> UInt
 pub fn RandomState::next_uint64(Self) -> UInt64
 pub fn RandomState::split(Self) -> Self
+pub fn RandomState::to_string(Self) -> String
 pub impl Default for RandomState
 
 // Type aliases

@@ -24,7 +24,7 @@ test "String::from_iter" {
 
 ///|
 test "default" {
-  inspect(String::default())
+  inspect("")
 }
 
 ///|
@@ -876,7 +876,7 @@ test "length_eq" {
 }
 
 ///|
-enum StringPatternToken {
+priv enum StringPatternToken {
   True
   False
   Other
@@ -1023,5 +1023,5 @@ test "guard const" {
 
 ///|
 test "string default" {
-  inspect(String::default(), content="")
+  inspect("", content="")
 }

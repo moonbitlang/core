@@ -15,7 +15,7 @@
 ///|
 /// Trait for types that can be converted to human-readable debugging info.
 pub(open) trait Debug {
-  #as_free_fn
+  #as_free_fn(deprecated="Use `Repr(x)` instead")
   fn to_repr(Self) -> Repr
 }
 
@@ -87,12 +87,12 @@ pub impl Debug for StringView with fn to_repr(self) {
 
 ///|
 pub impl Debug for Bytes with fn to_repr(self) {
-  Repr::opaque_("Bytes", Repr::array(self.to_array().map(x => to_repr(x))))
+  Repr::opaque_("Bytes", Repr::array(self.to_array().map(x => Repr(x))))
 }
 
 ///|
 pub impl Debug for BytesView with fn to_repr(self) {
-  Repr::opaque_("BytesView", Repr::array(self.to_array().map(x => to_repr(x))))
+  Repr::opaque_("BytesView", Repr::array(self.to_array().map(x => Repr(x))))
 }
 
 ///|
@@ -102,41 +102,41 @@ pub impl Debug for Unit with fn to_repr(_) {
 
 ///|
 pub impl[T : Debug] Debug for Array[T] with fn to_repr(self) {
-  Repr::array(self.map(x => to_repr(x)))
+  Repr::array(self.map(x => Repr(x)))
 }
 
 ///|
 pub impl[T : Debug] Debug for ArrayView[T] with fn to_repr(self) {
-  Repr::opaque_("ArrayView", Repr::array(self.map(x => to_repr(x))))
+  Repr::opaque_("ArrayView", Repr::array(self.map(x => Repr(x))))
 }
 
 ///|
 pub impl[T : Debug] Debug for FixedArray[T] with fn to_repr(self) {
   // `FixedArray` can be viewed as `ArrayView` via slicing.
   let view : ArrayView[T] = self
-  Repr::opaque_("FixedArray", Repr::array(view.map(x => to_repr(x))))
+  Repr::opaque_("FixedArray", Repr::array(view.map(x => Repr(x))))
 }
 
 ///|
 pub impl[T : Debug] Debug for ReadOnlyArray[T] with fn to_repr(self) {
   // `ReadOnlyArray` can be viewed as `ArrayView` via slicing.
   let view : ArrayView[T] = self
-  Repr::opaque_("ReadOnlyArray", Repr::array(view.map(x => to_repr(x))))
+  Repr::opaque_("ReadOnlyArray", Repr::array(view.map(x => Repr(x))))
 }
 
 ///|
 pub impl[T : Debug] Debug for T? with fn to_repr(self) {
   match self {
     None => Repr::ctor("None", [])
-    Some(x) => Repr::ctor("Some", [(None, to_repr(x))])
+    Some(x) => Repr::ctor("Some", [(None, Repr(x))])
   }
 }
 
 ///|
 pub impl[T : Debug, E : Debug] Debug for Result[T, E] with fn to_repr(self) {
   match self {
-    Ok(x) => Repr::ctor("Ok", [(None, to_repr(x))])
-    Err(e) => Repr::ctor("Err", [(None, to_repr(e))])
+    Ok(x) => Repr::ctor("Ok", [(None, Repr(x))])
+    Err(e) => Repr::ctor("Err", [(None, Repr(e))])
   }
 }
 
@@ -152,7 +152,7 @@ pub impl[A, B] Debug for Iter2[A, B] with fn to_repr(_) {
 
 ///|
 pub impl[T : Debug] Debug for MutArrayView[T] with fn to_repr(self) {
-  Repr::opaque_("MutArrayView", Repr::array(self[:].map(x => to_repr(x))))
+  Repr::opaque_("MutArrayView", Repr::array(self[:].map(x => Repr(x))))
 }
 
 ///|
@@ -162,7 +162,7 @@ pub impl Debug for StringBuilder with fn to_repr(self) {
 
 ///|
 pub impl[K : Debug, V : Debug] Debug for Map[K, V] with fn to_repr(self) {
-  Repr::map([ for k, v in self => (to_repr(k), to_repr(v)) ])
+  Repr::map([ for k, v in self => (Repr(k), Repr(v)) ])
 }
 
 ///|
@@ -173,16 +173,16 @@ pub impl Debug for Json with fn to_repr(self) {
     False => Repr::ctor("False", [])
     Number(number, repr~) =>
       match repr {
-        None => Repr::ctor("Number", [(None, to_repr(number))])
+        None => Repr::ctor("Number", [(None, Repr(number))])
         Some(_) =>
           Repr::ctor("Number", [
-            (None, to_repr(number)),
-            (Some("repr"), to_repr(repr)),
+            (None, Repr(number)),
+            (Some("repr"), Repr(repr)),
           ])
       }
-    String(string) => Repr::ctor("String", [(None, to_repr(string))])
-    Array(array) => Repr::ctor("Array", [(None, to_repr(array))])
-    Object(object) => Repr::ctor("Object", [(None, to_repr(object))])
+    String(string) => Repr::ctor("String", [(None, Repr(string))])
+    Array(array) => Repr::ctor("Array", [(None, Repr(array))])
+    Object(object) => Repr::ctor("Object", [(None, Repr(object))])
   }
 }
 
@@ -264,8 +264,8 @@ pub fn[T : Eq + Debug] assert_eq(
     let fail_msg = match msg {
       Some(msg) => msg
       None => {
-        let repr_a = to_repr(a)
-        let repr_b = to_repr(b)
+        let repr_a = Repr(a)
+        let repr_b = Repr(b)
         let diff = pretty_print_delta(diff_repr(repr_a, repr_b), use_ansi=false)
         (
           $|`\{render(repr_a)} != \{render(repr_b)}`
@@ -365,7 +365,7 @@ pub impl Debug for BenchError with fn to_repr(self) {
 ///|
 pub impl Debug for ArgsLoc with fn to_repr(self) {
   let ArgsLoc(arr) = self
-  Repr::opaque_("ArgsLoc", to_repr(arr))
+  Repr::opaque_("ArgsLoc", Repr(arr))
 }
 
 ///|

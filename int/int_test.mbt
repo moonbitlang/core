@@ -99,3 +99,13 @@ test "to_be_bytes" {
     ),
   )
 }
+
+///|
+test "Int constructor syntax" {
+  inspect(Int(3), content="3")
+  inspect(Int(-3), content="-3")
+  inspect(Int(2147483647), content="2147483647")
+  inspect(Int(-2147483648), content="-2147483648")
+  let x = 42
+  inspect(Int(x), content="42")
+}

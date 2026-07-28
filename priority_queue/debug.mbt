@@ -18,16 +18,8 @@ pub impl[A : @debug.Debug + Compare] @debug.Debug for PriorityQueue[A] with fn t
 ) {
   @debug.Repr::opaque_(
     "PriorityQueue",
-    @debug.Repr::array([ for x in self => @debug.to_repr(x) ]),
+    @debug.Repr::array([ for x in self => Repr(x) ]),
   )
-}
-
-///|
-#deprecated("use `to_repr(a)` instead", skip_current_package=true)
-pub fn[A : @debug.Debug + Compare] PriorityQueue::to_repr(
-  self : PriorityQueue[A],
-) -> @debug.Repr {
-  @debug.to_repr(self)
 }
 
 ///|

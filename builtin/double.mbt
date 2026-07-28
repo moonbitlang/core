@@ -13,6 +13,19 @@
 // limitations under the License.
 
 ///|
+/// The identity constructor for `Double`, allowing values to be written using
+/// constructor syntax, e.g. `Double(3.2)`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(Double(3.2), content="3.2")
+/// }
+/// ```
+pub fn Double::Double(self : Double) -> Double = "%identity"
+
+///|
 /// Converts an integer to a double-precision floating-point number.
 ///
 /// Parameters:

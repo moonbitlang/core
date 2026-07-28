@@ -198,6 +198,7 @@ test "Int16::hash" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Int16::equal" {
   inspect(Int16::equal(1, 2), content="false")
   inspect(Int16::equal(2, 1), content="false")
@@ -446,6 +447,7 @@ test "Int16::abs" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Int16::to_json" {
   @debug.debug_inspect(Int16::to_json(0), content="Number(0)")
   @debug.debug_inspect(Int16::to_json(1), content="Number(1)")
@@ -529,4 +531,14 @@ test "Int16 int64 conversions" {
   let as64 = val.to_int64()
   let back = Int16::from_int64(as64)
   inspect(back.to_int(), content="123")
+}
+
+///|
+test "Int16 constructor syntax" {
+  inspect(Int16(3), content="3")
+  inspect(Int16(-3), content="-3")
+  inspect(Int16(32767), content="32767")
+  inspect(Int16(-32768), content="-32768")
+  let x : Int16 = 42
+  inspect(Int16(x), content="42")
 }
