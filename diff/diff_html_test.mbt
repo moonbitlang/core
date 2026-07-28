@@ -48,17 +48,46 @@ fn side_by_side_html(
           guard edits[i + 1] is Insert(new_index~, new_len~, ..)
           let old_lines = o.view(start=old_index, end=old_index + old_len)
           let new_lines = n.view(start=new_index, end=new_index + new_len)
-          // tokenize each line once
-          let olds = old_lines.map(l => tokenize_line(l))
-          let news = new_lines.map(l => tokenize_line(l))
-          // DP work budget (cells), plus dimension guards
-          let mut work = 0
-          for ta in olds {
-            for tb in news {
-              work += (ta.length() + 1) * (tb.length() + 1)
+          // dimension guards FIRST, then tokenize once per line with a
+          // per-line token cap (which also bounds every budget term below
+          // 1025 * 1025, so the accumulating Int cannot overflow), then an
+          // early-exit cell budget for the scoring DPs.
+          let mut fallback = old_lines.length() > 64 || new_lines.length() > 64
+          let olds : Array[Array[Tok]] = []
+          let news : Array[Array[Tok]] = []
+          if !fallback {
+            line_cap~: for l in old_lines {
+              let t = tokenize_line(l)
+              if t.length() > 1024 {
+                fallback = true
+                break line_cap~
+              }
+              olds.push(t)
             }
           }
-          if olds.length() > 64 || news.length() > 64 || work > 2_000_000 {
+          if !fallback {
+            line_cap~: for l in new_lines {
+              let t = tokenize_line(l)
+              if t.length() > 1024 {
+                fallback = true
+                break line_cap~
+              }
+              news.push(t)
+            }
+          }
+          if !fallback {
+            let mut work = 0
+            budget~: for ta in olds {
+              for tb in news {
+                work += (ta.length() + 1) * (tb.length() + 1)
+                if work > 2_000_000 {
+                  fallback = true
+                  break budget~
+                }
+              }
+            }
+          }
+          if fallback {
             // safe fallback: plain unpaired rows, never highlighted zipping
             for l in old_lines {
               row(esc(l), "del", "", "empty")
@@ -69,10 +98,15 @@ fn side_by_side_html(
           } else {
             for pair in align(olds, news) {
               match pair {
-                (Some(ii), Some(jj)) => {
-                  let (lh, rh) = pair_row_html(pair_ops(olds[ii], news[jj]))
-                  row(lh, "del", rh, "add")
-                }
+                (Some(ii), Some(jj)) =>
+                  // the full traceback matrix is only built for selected
+                  // pairs, with its own per-pair cell guard
+                  if (olds[ii].length() + 1) * (news[jj].length() + 1) > 262144 {
+                    row(esc(old_lines[ii]), "del", esc(new_lines[jj]), "add")
+                  } else {
+                    let (lh, rh) = pair_row_html(pair_ops(olds[ii], news[jj]))
+                    row(lh, "del", rh, "add")
+                  }
                 (Some(ii), None) => row(esc(old_lines[ii]), "del", "", "empty")
                 (None, Some(jj)) => row("", "empty", esc(new_lines[jj]), "add")
                 (None, None) => ()
@@ -307,12 +341,30 @@ test "real-world HTML diff page" (t : @test.Test) {
 }
 
 ///|
-test "split view work budget falls back to plain rows" {
-  // one enormous line blows the DP cell budget: the fallback must render
-  // plain unpaired rows with no intraline highlights.
-  let big = "word ".repeat(800) + "end"
-  let html = side_by_side_html(old=[big], new=["tiny replacement"])
+test "per-line token cap falls back to plain rows" {
+  // two big lines that differ by one word WOULD align and highlight, but the
+  // per-line token cap (1024) forces the plain fallback: no <b> spans.
+  let big_old = "word ".repeat(600) + "same tail here"
+  let big_new = "word ".repeat(600) + "same tail CHANGED"
+  let html = side_by_side_html(old=[big_old], new=[big_new])
   inspect(html.contains("<b class="), content="false")
   inspect(html.contains("class=\"del\""), content="true")
   inspect(html.contains("class=\"add\""), content="true")
+}
+
+///|
+test "cell budget falls back to plain rows" {
+  // 50x50 alignable lines of ~30 tokens each: every pair is under the
+  // per-line cap, but the total scoring work (~2.4M cells) exceeds the 2M
+  // budget, so the block renders plain.
+  let old_lines : Array[String] = []
+  let new_lines : Array[String] = []
+  for i in 0..<50 {
+    let base = "alpha beta gamma delta epsilon zeta eta theta iota kappa lambda mu nu xi line\{i}"
+    old_lines.push(base)
+    new_lines.push(base + " tail")
+  }
+  let html = side_by_side_html(old=old_lines, new=new_lines)
+  inspect(html.contains("<b class="), content="false")
+  inspect(html.contains("class=\"del\""), content="true")
 }

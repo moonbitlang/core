@@ -82,6 +82,13 @@ fn push_comment_tokens(toks : Array[Tok], body : String) -> Unit {
 /// inside strings is never a comment.
 fn tokenize_line(line : String) -> Array[Tok] {
   let toks : Array[Tok] = []
+  // `///|` prefix must be handled before lexscan: under `longest` matching
+  // the comment rule would otherwise swallow `///| x` whole.
+  if line is ['/', '/', '/', '|', ..] {
+    toks.push({ kind: Marker, text: "///|" })
+    push_comment_tokens(toks, line.view(start_offset=4).to_owned())
+    return toks
+  }
   let mut rest = line.view()
   while rest is [_, ..] {
     rest = lexscan rest with longest {
@@ -188,6 +195,16 @@ fn wdist(a : ArrayView[Tok], b : ArrayView[Tok]) -> Int {
 fn sim_pm(a : ArrayView[Tok], b : ArrayView[Tok]) -> Int {
   let m = tok_mass(a) + tok_mass(b)
   if m == 0 {
+    // zero semantic mass (empty or filler-only lines): there is no evidence
+    // either way, so pair only textually identical lines.
+    if a.length() != b.length() {
+      return 0
+    }
+    for i in 0..<a.length() {
+      if a[i].kind != b[i].kind || a[i].text != b[i].text {
+        return 0
+      }
+    }
     return 1000
   }
   (m - wdist(a, b)) * 1000 / m
@@ -480,4 +497,40 @@ test "pair_ops reconstruction property" {
     assert_eq(left.to_string(), oa)
     assert_eq(right.to_string(), ob)
   }
+}
+
+///|
+test "zero-mass lines pair only when identical" {
+  fn sim(a : String, b : String) -> Int {
+    sim_pm(tokenize_line(a), tokenize_line(b))
+  }
+  inspect(sim("//", "") == 0, content="true")
+  inspect(sim("//", "//   ") == 0, content="true")
+  inspect(sim("", "") == 1000, content="true")
+  inspect(sim("//", "//") == 1000, content="true")
+}
+
+///|
+test "marker classification survives trailing content" {
+  @debug.debug_inspect(tokenize_line("///| x")[0].kind, content="Marker")
+  assert_eq(tokenize_line("///| x").map(t => t.text).join(""), "///| x")
+}
+
+///|
+test "alignment objective is positive margin, not raw similarity or pair count" {
+  // A ~ Y (one word changed, sim ~ 910): the strong pair.
+  // A ~ X and B ~ Y (four words changed each, sim ~ 640): two moderate pairs.
+  // Raw-similarity or pair-count maximization would take the two moderate
+  // diagonal pairs (~1280 total); the margin objective must take the single
+  // strong pair (margin ~ 510 beats ~ 240+240).
+  let a = "alpha beta gamma delta epsilon zeta eta theta"
+  let y = "alpha beta gamma delta epsilon zeta eta CHANGED"
+  let x = "alpha beta gamma delta ONE TWO THREE FOUR"
+  let b = "FIVE SIX SEVEN EIGHT epsilon zeta eta CHANGED"
+  let olds = [a, b].map(tokenize_line)
+  let news = [x, y].map(tokenize_line)
+  @debug.debug_inspect(
+    align(olds, news),
+    content="[(None, Some(0)), (Some(0), Some(1)), (Some(1), None)]",
+  )
 }
