@@ -81,6 +81,43 @@ struct Hunk[T] {
 }
 
 ///|
+/// The hunk's unified-diff header, e.g. `@@ -1,3 +1,3 @@`.
+///
+/// The numbering rules (1-based lines, single-line ranges shown without a
+/// length, empty ranges anchored to the previous line) are canonical and easy
+/// to get subtly wrong, so they live here rather than in each renderer.
+pub fn[T] Hunk::header(self : Hunk[T]) -> String {
+  Show::to_string(HunkHeader::new(self.edits))
+}
+
+///|
+/// The hunk's slice of the edit script.
+///
+/// Together with `old_view` / `new_view` this is the primitive for custom
+/// renderers (terminal colors, HTML, side-by-side, ...); `render` is the
+/// built-in unified-text one. Edit indices are absolute positions in
+/// `old_view()` / `new_view()`: slice `old_view()` with `old_index`/`old_len`
+/// for `Delete`, `new_view()` with `new_index`/`new_len` for `Insert`, and
+/// either view for `Equal`.
+pub fn[T] Hunk::edits(self : Hunk[T]) -> ArrayView[Edit] {
+  self.edits
+}
+
+///|
+/// The complete original input sequence that the hunk's `old_index` values
+/// refer to (not a hunk-local view), so a received `Hunk` is self-contained.
+pub fn[T] Hunk::old_view(self : Hunk[T]) -> ArrayView[T] {
+  self.old
+}
+
+///|
+/// The complete updated input sequence that the hunk's `new_index` values
+/// refer to (not a hunk-local view), so a received `Hunk` is self-contained.
+pub fn[T] Hunk::new_view(self : Hunk[T]) -> ArrayView[T] {
+  self.new
+}
+
+///|
 /// Render the hunk as unified-diff text: an `@@ -a,b +c,d @@` header followed
 /// by `-`/`+`/` `-prefixed lines, each terminated by a newline.
 ///
@@ -89,9 +126,7 @@ struct Hunk[T] {
 /// control the rendering (e.g. a field of a record).
 pub fn[T] Hunk::render(self : Hunk[T], show~ : (T) -> String) -> String {
   let buf = StringBuilder::new()
-  let header = Show::to_string(HunkHeader::new(self.edits))
-  buf.write_string(header)
-  buf.write_char('\n')
+  buf <+ "\{self.header()}\n"
   for edit in self.edits {
     let (prefix, slice) = match edit {
       Insert(..) => ("+", edit.view_from(old=self.old, new=self.new))
@@ -99,9 +134,7 @@ pub fn[T] Hunk::render(self : Hunk[T], show~ : (T) -> String) -> String {
       Equal(..) => (" ", edit.view_from(old=self.old, new=self.new))
     }
     for s in slice {
-      buf.write_string(prefix)
-      buf.write_string(show(s))
-      buf.write_char('\n')
+      buf <+ "\{prefix}\{show(s)}\n"
     }
   }
   buf.to_string()
