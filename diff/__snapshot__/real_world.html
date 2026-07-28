@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><style>
+body { font-family: monospace; }
+h3 { font-family: sans-serif; }
+.unified { white-space: pre; }
+.hunk-header { color: #00a; }
+.del { background: #ffecec; display: block; }
+.add { background: #eaffea; display: block; }
+.ctx { display: block; }
+b.wd { background: #f8b4b4; font-weight: normal; }
+b.wa { background: #97e0a0; font-weight: normal; }
+table.split { border-collapse: collapse; width: 100%; }
+table.split td { width: 50%; vertical-align: top;
+  white-space: pre-wrap; border: 1px solid #eee; display: table-cell; }
+td.empty { background: #fafafa; }
+</style></head><body>
+<h3>Verbatim git history: diff/extends.mbt across the API redesign (side-by-side)</h3>
+<table class="split">
+<tr><td class="hunk-header" colspan="2">@@ -14,13 +14,23 @@</td></tr>
+<tr><td class="ctx"></td><td class="ctx"></td></tr>
+<tr><td class="ctx">// --- promoted: kept as regular methods ---</td><td class="ctx">// --- promoted: kept as regular methods ---</td></tr>
+<tr><td class="ctx"></td><td class="ctx"></td></tr>
+<tr><td class="del">//<b class="wd"> A hunk's canonical string form is its unified-diff text, so `to_string` is</b></td><td class="add">///<b class="wa">|</b></td></tr>
+<tr><td class="del"><b class="wd">/</b>/<b class="wd"> promoted; `output` is not (use the</b> <b class="wd">trait</b> <b class="wd">or</b> <b class="wd">string</b> <b class="wd">interpolation).</b></td><td class="add"><b class="wa">pub</b> <b class="wa">extend</b> <b class="wa">DiffAlgorithm</b> <b class="wa">with</b> <b class="wa">Eq::{equal}</b></td></tr>
+<tr><td class="ctx"></td><td class="ctx"></td></tr>
+<tr><td class="ctx">///|</td><td class="ctx">///|</td></tr>
+<tr><td class="del">pub extend <b class="wd">Hunk</b> with <b class="wd">Show</b>::{<b class="wd">to_string</b>}</td><td class="add">pub extend <b class="wa">Edit</b> with <b class="wa">Eq</b>::{<b class="wa">equal</b>}</td></tr>
+<tr><td class="ctx"></td><td class="ctx"></td></tr>
+<tr><td class="ctx">// --- deprecated: hidden from the generated interface ---</td><td class="ctx">// --- deprecated: hidden from the generated interface ---</td></tr>
+<tr><td class="empty"></td><td class="add"></td></tr>
+<tr><td class="empty"></td><td class="add">///|</td></tr>
+<tr><td class="empty"></td><td class="add">#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)</td></tr>
+<tr><td class="empty"></td><td class="add">#doc(hidden)</td></tr>
+<tr><td class="empty"></td><td class="add">pub extend DiffAlgorithm with @debug.Debug::{to_repr}</td></tr>
+<tr><td class="empty"></td><td class="add"></td></tr>
+<tr><td class="empty"></td><td class="add">///|</td></tr>
+<tr><td class="empty"></td><td class="add">#deprecated("Use `!=` instead", skip_current_package=true)</td></tr>
+<tr><td class="empty"></td><td class="add">#doc(hidden)</td></tr>
+<tr><td class="empty"></td><td class="add">pub extend DiffAlgorithm with Eq::{not_equal}</td></tr>
+<tr><td class="ctx"></td><td class="ctx"></td></tr>
+<tr><td class="ctx">///|</td><td class="ctx">///|</td></tr>
+<tr><td class="ctx">#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)</td><td class="ctx">#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)</td></tr>
+<tr><td class="hunk-header" colspan="2">@@ -28,6 +38,6 @@</td></tr>
+<tr><td class="ctx">pub extend Edit with @debug.Debug::{to_repr}</td><td class="ctx">pub extend Edit with @debug.Debug::{to_repr}</td></tr>
+<tr><td class="ctx"></td><td class="ctx"></td></tr>
+<tr><td class="ctx">///|</td><td class="ctx">///|</td></tr>
+<tr><td class="del">#deprecated("Use `<b class="wd">Show::output` via the trait or `to_string</b>` instead", skip_current_package=true)</td><td class="add">#deprecated("Use `<b class="wa">!=</b>` instead", skip_current_package=true)</td></tr>
+<tr><td class="ctx">#doc(hidden)</td><td class="ctx">#doc(hidden)</td></tr>
+<tr><td class="del">pub extend <b class="wd">Hunk</b> with <b class="wd">Show</b>::{<b class="wd">output</b>}</td><td class="add">pub extend <b class="wa">Edit</b> with <b class="wa">Eq</b>::{<b class="wa">not_equal</b>}</td></tr>
+</table>
+
+<h3>Refactor from this package's history (side-by-side)</h3>
+<table class="split">
+<tr><td class="hunk-header" colspan="2">@@ -1,8 +1,7 @@</td></tr>
+<tr><td class="ctx">///|</td><td class="ctx">///|</td></tr>
+<tr><td class="del">pub <b class="wd">impl</b>[T<b class="wd"> : Show</b>] <b class="wd">Show</b> <b class="wd">for</b> Hunk[T] <b class="wd">with</b> <b class="wd">fn</b> <b class="wd">output</b>(<b class="wd">self,</b> <b class="wd">logger</b>) {</td><td class="add">pub <b class="wa">fn</b>[T] <b class="wa">Hunk::render(self</b> <b class="wa">:</b> Hunk[T]<b class="wa">,</b> <b class="wa">show~</b> <b class="wa">:</b> (<b class="wa">T)</b> <b class="wa">-&gt; String</b>)<b class="wa"> -&gt;</b> <b class="wa">String </b>{</td></tr>
+<tr><td class="del">  let <b class="wd">header</b> = <b class="wd">HunkHeader</b>::new<b class="wd">(self.edits).to_string</b>()</td><td class="add">  let <b class="wa">buf</b> = <b class="wa">StringBuilder</b>::new()</td></tr>
+<tr><td class="del">  <b class="wd">logger</b>.<b class="wd">write_string(</b>header<b class="wd">)</b></td><td class="add">  <b class="wa">buf &lt;+ "\{self</b>.header(<b class="wa">)}</b>\n<b class="wa">"</b></td></tr>
+<tr><td class="del"><b class="wd">  logger.write_char</b>(<b class="wd">'</b>\n<b class="wd">')</b></td><td class="empty"></td></tr>
+<tr><td class="ctx">  for edit in self.edits {</td><td class="ctx">  for edit in self.edits {</td></tr>
+<tr><td class="ctx">    let (prefix, slice) = match edit {</td><td class="ctx">    let (prefix, slice) = match edit {</td></tr>
+<tr><td class="ctx">      Insert(..) =&gt; ("+", edit.view_from(old=self.old, new=self.new))</td><td class="ctx">      Insert(..) =&gt; ("+", edit.view_from(old=self.old, new=self.new))</td></tr>
+<tr><td class="hunk-header" colspan="2">@@ -10,7 +9,8 @@</td></tr>
+<tr><td class="ctx">      Equal(..) =&gt; (" ", edit.view_from(old=self.old, new=self.new))</td><td class="ctx">      Equal(..) =&gt; (" ", edit.view_from(old=self.old, new=self.new))</td></tr>
+<tr><td class="ctx">    }</td><td class="ctx">    }</td></tr>
+<tr><td class="ctx">    for s in slice {</td><td class="ctx">    for s in slice {</td></tr>
+<tr><td class="del">      <b class="wd">logger.write_string(</b>"\{prefix}\{s}\n"<b class="wd">)</b></td><td class="add">      <b class="wa">buf &lt;+ </b>"\{prefix}\{<b class="wa">show(</b>s<b class="wa">)</b>}\n"</td></tr>
+<tr><td class="ctx">    }</td><td class="ctx">    }</td></tr>
+<tr><td class="ctx">  }</td><td class="ctx">  }</td></tr>
+<tr><td class="empty"></td><td class="add">  buf.to_string()</td></tr>
+<tr><td class="ctx">}</td><td class="ctx">}</td></tr>
+</table>
+
+<h3>Same refactor (unified, word highlights)</h3>
+<div class="unified">
+<span class="hunk-header">@@ -1,6 +1,5 @@</span>
+<span class="ctx"> ///|</span>
+<span class="del">-pub <b class="wd">impl</b>[T<b class="wd"> : Show</b>] <b class="wd">Show</b> <b class="wd">for</b> Hunk[T] <b class="wd">with</b> <b class="wd">fn</b> <b class="wd">output</b>(<b class="wd">self,</b> <b class="wd">logger</b>) {</span>
+<span class="del">-  let <b class="wd">header</b> = <b class="wd">HunkHeader</b>::new<b class="wd">(self.edits).to_string</b>()</span>
+<span class="del">-  <b class="wd">logger</b>.<b class="wd">write_string(</b>header<b class="wd">)</b></span>
+<span class="del">-<b class="wd">  logger.write_char</b>(<b class="wd">'</b>\n<b class="wd">')</b></span>
+<span class="add">+pub <b class="wa">fn</b>[T] <b class="wa">Hunk::render(self</b> <b class="wa">:</b> Hunk[T]<b class="wa">,</b> <b class="wa">show~</b> <b class="wa">:</b> (<b class="wa">T)</b> <b class="wa">-&gt; String</b>)<b class="wa"> -&gt;</b> <b class="wa">String </b>{</span>
+<span class="add">+  let <b class="wa">buf</b> = <b class="wa">StringBuilder</b>::new()</span>
+<span class="add">+  <b class="wa">buf &lt;+ "\{self</b>.header(<b class="wa">)}</b>\n<b class="wa">"</b></span>
+<span class="ctx">   for edit in self.edits {</span>
+<span class="hunk-header">@@ -12,5 +11,6 @@</span>
+<span class="ctx">     for s in slice {</span>
+<span class="del">-      <b class="wd">logger.write_string(</b>"\{prefix}\{s}\n"<b class="wd">)</b></span>
+<span class="add">+      <b class="wa">buf &lt;+ </b>"\{prefix}\{<b class="wa">show(</b>s<b class="wa">)</b>}\n"</span>
+<span class="ctx">     }</span>
+<span class="ctx">   }</span>
+<span class="add">+  buf.to_string()</span>
+<span class="ctx"> }</span>
+
+</div>
+<h3>Prose</h3>
+<div class="unified">
+<span class="hunk-header">@@ -1,3 +1,3 @@</span>
+<span class="del">-`group` splits the edit script into `Hunk[T]` values, keeping `<b class="wd">radius</b>` lines</span>
+<span class="del">-of surrounding context (default 3). `<b class="wd">radius</b>` must be non-negative, and</span>
+<span class="del">-`<b class="wd">radius</b>=0` emits hunks without surrounding context.</span>
+<span class="add">+`group` splits the edit script into `Hunk[T]` values, keeping `<b class="wa">context</b>` lines</span>
+<span class="add">+of surrounding context (default 3). `<b class="wa">context</b>` must be non-negative, and</span>
+<span class="add">+`<b class="wa">context</b>=0` emits hunks without surrounding context.</span>
+
+</div>
+<h3>HTML-special characters and Unicode</h3>
+<div class="unified">
+<span class="hunk-header">@@ -1,2 +1,2 @@</span>
+<span class="del">-if a &lt; b &amp;&amp; *p != '&amp;' { emit("&lt;<b class="wd">div</b>&gt;") }</span>
+<span class="del">-let 价格 = <b class="wd">10</b> // 单价</span>
+<span class="add">+if a &lt;<b class="wa">=</b> b &amp;&amp; *p != '&amp;' { emit("&lt;<b class="wa">span</b>&gt;") }</span>
+<span class="add">+let 价格 = <b class="wa">12</b> // <b class="wa">含税</b>单价</span>
+
+</div>
+</body></html>
