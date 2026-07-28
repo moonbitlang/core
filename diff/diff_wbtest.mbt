@@ -431,7 +431,7 @@ test "large array performance" {
   }
   let match_count = @ref.Ref(0)
   for _old_idx, _new_idx in iter_matches(old~, new~, cutoff=None) {
-    match_count.val = match_count.val + 1
+    match_count.val += 1
   }
 
   // Should find approximately half matches

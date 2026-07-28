@@ -82,7 +82,7 @@ fn trig_reduce(x : Float, switch_over : Float) -> (Float, Int) {
   phi = phi & 0x3fffffff
   if (phi & 0x2000_0000) != 0 {
     phi = phi - 0x4000_0000
-    q = q + 1
+    q += 1
   }
   let s : UInt = phi & 0x8000_0000
   if phi >= 0x8000_0000 {

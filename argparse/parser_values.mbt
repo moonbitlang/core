@@ -40,7 +40,7 @@ fn assign_positionals(
       let mut taken = 0
       while taken < take {
         add_value(matches, arg.name, values[cursor + taken], arg, Argv)
-        taken = taken + 1
+        taken += 1
       }
       continue cursor + taken
     }

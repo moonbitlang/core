@@ -685,7 +685,7 @@ fn BigInt::grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
       borrow = borrow >> RADIX_BIT_LEN
       carry = carry >> RADIX_BIT_LEN
     }
-    borrow = borrow + a[i + b_len].reinterpret_as_int64()
+    borrow += a[i + b_len].reinterpret_as_int64()
     borrow -= carry.reinterpret_as_int64()
     a[i + b_len] = (borrow & RADIX_MASK.reinterpret_as_int64()).reinterpret_as_uint64()
     borrow = borrow >> RADIX_BIT_LEN

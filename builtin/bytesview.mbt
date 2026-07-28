@@ -272,7 +272,7 @@ pub fn BytesView::view(
 /// test {
 ///   let bv = b"\x00\x01\x02\x03\x04\x05"[:]
 ///   let mut sum = 0
-///   bv.iter().each(x => sum = sum + x.to_int())
+///   bv.iter().each(x => sum += x.to_int())
 ///   inspect(sum, content="15")
 /// }
 /// ```
@@ -790,14 +790,14 @@ fn BytesView::bytesview_lexical_compare_impl(
         .unsafe_get(self_start + i + lane)
         .compare(other_bytes.unsafe_get(other_start + i + lane))
     }
-    i = i + 16
+    i += 16
   }
   while i < min_len {
     let cmp = self.unsafe_get(i).compare(other.unsafe_get(i))
     if cmp != 0 {
       return cmp
     }
-    i = i + 1
+    i += 1
   }
   self_len.compare(other_len)
 }

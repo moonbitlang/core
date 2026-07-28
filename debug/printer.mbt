@@ -275,7 +275,7 @@ fn bracket_seq_lines(
         let lines = indent_spaces(indent_by, { size: 0, lines: item }).lines
         if lines.length() > 0 {
           let last_i = lines.length() - 1
-          lines[last_i] = lines[last_i] + ","
+          lines[last_i] += ","
         }
         [open, ..lines, close]
       } else {

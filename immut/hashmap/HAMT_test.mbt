@@ -362,7 +362,7 @@ test "hash" {
 test "each on empty map" {
   let empty = @hashmap.new()
   let mut sum = 0
-  empty.each((k : Int, v : Int) => sum = sum + k + v)
+  empty.each((k : Int, v : Int) => sum += k + v)
   inspect(sum, content="0")
 }
 
@@ -1015,19 +1015,19 @@ test "HAMT::difference collision becomes empty" {
 test "HAMT::each" {
   let empty = @hashmap.new()
   let mut sum = 0
-  empty.each((k : Int, v : Int) => sum = sum + k + v)
+  empty.each((k : Int, v : Int) => sum += k + v)
   inspect(sum, content="0")
   let leaf = @hashmap.singleton(1, 10)
   let mut sum_leaf = 0
-  leaf.each((k, v) => sum_leaf = sum_leaf + k + v)
+  leaf.each((k, v) => sum_leaf += k + v)
   inspect(sum_leaf, content="11")
   let collision = @hashmap.HashMap([(MyString("a"), 1), (MyString("b"), 2)])
   let mut sum_collision = 0
-  collision.each((_k : MyString, v : Int) => sum_collision = sum_collision + v)
+  collision.each((_k : MyString, v : Int) => sum_collision += v)
   inspect(sum_collision, content="3")
   let branch = @hashmap.HashMap([(1, 1), (2, 2), (3, 3), (4, 4)])
   let mut sum_branch = 0
-  branch.each((_k, v) => sum_branch = sum_branch + v)
+  branch.each((_k, v) => sum_branch += v)
   inspect(sum_branch, content="10")
 }
 

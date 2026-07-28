@@ -196,7 +196,7 @@ test "from_iter matches forward add with duplicates" {
 test "each on empty set" {
   let s = @hashset.new()
   let mut count = 0
-  s.each((_x : Int) => count = count + 1)
+  s.each((_x : Int) => count += 1)
   inspect(count, content="0")
 }
 

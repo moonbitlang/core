@@ -32,13 +32,13 @@ test "String iter2 with surrogate pairs" {
     if i < 3 {
       result.push((idx, c))
     }
-    i = i + 1
+    i += 1
   })
   debug_inspect(result, content="[(0, 'H'), (1, 'e'), (2, 'l')]")
 
   // Count characters using iter2
   let mut count = 0
-  s.iter2().each((_, _) => count = count + 1)
+  s.iter2().each((_, _) => count += 1)
   inspect(count, content="11") // 5 chars + emoji + 5 chars
 }
 

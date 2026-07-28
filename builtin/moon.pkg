@@ -53,6 +53,7 @@ options(
     "panic_test.mbt": [ "not", "native", "llvm" ],
     "panic_wbtest.mbt": [ "not", "native", "llvm" ],
     "stringbuilder_buffer.mbt": [ "not", "js" ],
+    "stringbuilder_buffer_wbtest.mbt": [ "not", "js" ],
     "stringbuilder_concat.mbt": [ "js" ],
   },
 )

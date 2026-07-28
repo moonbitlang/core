@@ -130,7 +130,7 @@ test "Map::iter" {
   let v = map.iter()
   let mut res = ""
   while v.next() is Some((k, v)) {
-    res = res + k + v.to_string()
+    res += k + v.to_string()
   }
   inspect(res, content="a1b2c3")
 }
@@ -140,7 +140,7 @@ test "Map:: iter2" {
   let map = { "a": 1, "b": 2, "c": 3 }
   let v = map.iter2()
   let mut res = ""
-  v.each((k, v) => res = res + k + v.to_string())
+  v.each((k, v) => res += k + v.to_string())
   inspect(res, content="a1b2c3")
 }
 

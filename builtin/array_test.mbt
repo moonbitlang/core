@@ -221,7 +221,7 @@ test "array_sort_by_pred_skip_duplicates" {
 test "array_each" {
   let arr = [1, 2, 3]
   let mut sum = 0
-  arr.each(x => sum = sum + x)
+  arr.each(x => sum += x)
   @test.assert_eq(sum, 6)
 }
 
@@ -229,7 +229,7 @@ test "array_each" {
 test "array_rev_each" {
   let arr = [1, 2, 3]
   let mut sum = 0
-  arr.rev_each(x => sum = sum + x)
+  arr.rev_each(x => sum += x)
   inspect(sum, content="6")
 }
 
@@ -237,7 +237,7 @@ test "array_rev_each" {
 test "array_eachi" {
   let arr = [1, 2, 3]
   let mut sum = 0
-  arr.eachi((i, x) => sum = sum + i + x)
+  arr.eachi((i, x) => sum += i + x)
   @test.assert_eq(sum, 9)
 }
 

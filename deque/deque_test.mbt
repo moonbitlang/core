@@ -103,7 +103,7 @@ test "iter" {
   .each(x => {
     buf.write_string(x.to_string())
     buf.write_char('\n')
-    i = i + 1
+    i += 1
   })
   @test.assert_eq(i, dv.length())
   inspect(
@@ -186,7 +186,7 @@ test "rev_eachi" {
       failed = true
     }
     i = i - 1
-    j = j + 1
+    j += 1
   })
   assert_false(failed)
 }
@@ -199,7 +199,7 @@ test "iteri" {
     if index != i || elem != i + 1 {
       failed = true
     }
-    i = i + 1
+    i += 1
   })
   assert_false(failed)
 }
@@ -212,7 +212,7 @@ test "each" {
     if elem != i + 1 {
       failed = true
     }
-    i = i + 1
+    i += 1
   })
   assert_false(failed)
 }
