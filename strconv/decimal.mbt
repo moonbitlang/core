@@ -178,6 +178,12 @@ fn Decimal::to_double_priv(self : Decimal) -> Double raise StrConvError {
     range_err()
   }
 
+  // Incorporate overflowed digits into decimal_point for correct shift normalization.
+  // The overflowed digits are part of the coefficient's magnitude even though they
+  // were discarded from the internal buffer. This must be done before the shift
+  // loops so that the decimal point position reflects the true value.
+  self.decimal_point += self.overflowed
+
   // scale by powers of 2 until in range [0.5 .. 1]
   // right shift
   while self.decimal_point > 0 {
