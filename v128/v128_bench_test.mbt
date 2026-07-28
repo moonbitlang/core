@@ -33,7 +33,7 @@ test "bench V128 i64x2_add n=10000" (it : @bench.T) {
   let values = make_v128_bench_values()
   it.bench(fn() {
     let mut acc = @v128.i64x2_const(1UL, 2UL)
-    for i = 0; i < v128_bench_size; i = i + 1 {
+    for i in 0..<v128_bench_size {
       acc = @v128.i64x2_add(acc, values.unsafe_get(i))
     }
     it.keep(acc)
@@ -45,7 +45,7 @@ test "bench V128 i32x4_add n=10000" (it : @bench.T) {
   let values = make_v128_bench_values()
   it.bench(fn() {
     let mut acc = @v128.i32x4_const(1, 2, 3, 4)
-    for i = 0; i < v128_bench_size; i = i + 1 {
+    for i in 0..<v128_bench_size {
       acc = @v128.i32x4_add(acc, values.unsafe_get(i))
     }
     it.keep(acc)
@@ -57,7 +57,7 @@ test "bench V128 i8x16_add n=10000" (it : @bench.T) {
   let values = make_v128_bench_values()
   it.bench(fn() {
     let mut acc = @v128.i8x16_splat(1)
-    for i = 0; i < v128_bench_size; i = i + 1 {
+    for i in 0..<v128_bench_size {
       acc = @v128.i8x16_add(acc, values.unsafe_get(i))
     }
     it.keep(acc)
@@ -68,7 +68,7 @@ test "bench V128 i8x16_add n=10000" (it : @bench.T) {
 test "bench V128 i8x16_splat n=10000" (it : @bench.T) {
   it.bench(fn() {
     let mut acc = @v128.i8x16_splat(0)
-    for i = 0; i < v128_bench_size; i = i + 1 {
+    for i in 0..<v128_bench_size {
       acc = @v128.i8x16_add(acc, @v128.i8x16_splat((i & 0xff).to_byte()))
     }
     it.keep(acc)
@@ -82,7 +82,7 @@ test "bench V128 i8x16_extract_lane_u n=10000" (it : @bench.T) {
   )
   it.bench(fn() {
     let mut sum = 0
-    for i = 0; i < v128_bench_size; i = i + 1 {
+    for i in 0..<v128_bench_size {
       sum += @v128.i8x16_extract_lane_u(value, i & 15).reinterpret_as_int()
     }
     it.keep(sum)
@@ -93,7 +93,7 @@ test "bench V128 i8x16_extract_lane_u n=10000" (it : @bench.T) {
 test "bench V128 i8x16_replace_lane n=10000" (it : @bench.T) {
   it.bench(fn() {
     let mut acc = @v128.i8x16_splat(0)
-    for i = 0; i < v128_bench_size; i = i + 1 {
+    for i in 0..<v128_bench_size {
       acc = @v128.i8x16_replace_lane(
         acc,
         (i & 0xff).reinterpret_as_uint(),
@@ -109,7 +109,7 @@ test "bench V128 i8x16_bitmask n=10000" (it : @bench.T) {
   let values = make_v128_bench_values()
   it.bench(fn() {
     let mut sum = 0
-    for i = 0; i < v128_bench_size; i = i + 1 {
+    for i in 0..<v128_bench_size {
       sum += @v128.i8x16_bitmask(values.unsafe_get(i))
     }
     it.keep(sum)
@@ -121,7 +121,7 @@ test "bench V128 load/store n=10000" (it : @bench.T) {
   let bytes = make_v128_bench_bytes()
   it.bench(fn() {
     let mut acc = @v128.i64x2_const(0UL, 0UL)
-    for i = 0; i < v128_bench_size; i = i + 1 {
+    for i in 0..<v128_bench_size {
       let offset = i & 63
       let value = @v128.v128_load(bytes, offset)
       acc = @v128.i64x2_add(acc, value)
@@ -136,7 +136,7 @@ test "bench V128 load8x8_u n=10000" (it : @bench.T) {
   let bytes = make_v128_bench_bytes()
   it.bench(fn() {
     let mut acc = @v128.i64x2_const(0UL, 0UL)
-    for i = 0; i < v128_bench_size; i = i + 1 {
+    for i in 0..<v128_bench_size {
       acc = @v128.i64x2_add(acc, @v128.v128_load8x8_u(bytes, i & 63))
     }
     it.keep(acc)
@@ -148,7 +148,7 @@ test "bench V128 load8x8_s n=10000" (it : @bench.T) {
   let bytes = make_v128_bench_bytes()
   it.bench(fn() {
     let mut acc = @v128.i64x2_const(0UL, 0UL)
-    for i = 0; i < v128_bench_size; i = i + 1 {
+    for i in 0..<v128_bench_size {
       acc = @v128.i64x2_add(acc, @v128.v128_load8x8_s(bytes, i & 63))
     }
     it.keep(acc)
@@ -160,7 +160,7 @@ test "bench V128 load16x4_u n=10000" (it : @bench.T) {
   let bytes = make_v128_bench_bytes()
   it.bench(fn() {
     let mut acc = @v128.i64x2_const(0UL, 0UL)
-    for i = 0; i < v128_bench_size; i = i + 1 {
+    for i in 0..<v128_bench_size {
       acc = @v128.i64x2_add(acc, @v128.v128_load16x4_u(bytes, i & 63))
     }
     it.keep(acc)
@@ -172,7 +172,7 @@ test "bench V128 load16x4_s n=10000" (it : @bench.T) {
   let bytes = make_v128_bench_bytes()
   it.bench(fn() {
     let mut acc = @v128.i64x2_const(0UL, 0UL)
-    for i = 0; i < v128_bench_size; i = i + 1 {
+    for i in 0..<v128_bench_size {
       acc = @v128.i64x2_add(acc, @v128.v128_load16x4_s(bytes, i & 63))
     }
     it.keep(acc)
@@ -184,7 +184,7 @@ test "bench V128 load32x2_u n=10000" (it : @bench.T) {
   let bytes = make_v128_bench_bytes()
   it.bench(fn() {
     let mut acc = @v128.i64x2_const(0UL, 0UL)
-    for i = 0; i < v128_bench_size; i = i + 1 {
+    for i in 0..<v128_bench_size {
       acc = @v128.i64x2_add(acc, @v128.v128_load32x2_u(bytes, i & 63))
     }
     it.keep(acc)
@@ -196,7 +196,7 @@ test "bench V128 load32x2_s n=10000" (it : @bench.T) {
   let bytes = make_v128_bench_bytes()
   it.bench(fn() {
     let mut acc = @v128.i64x2_const(0UL, 0UL)
-    for i = 0; i < v128_bench_size; i = i + 1 {
+    for i in 0..<v128_bench_size {
       acc = @v128.i64x2_add(acc, @v128.v128_load32x2_s(bytes, i & 63))
     }
     it.keep(acc)
@@ -208,7 +208,7 @@ test "bench V128 load_splat n=10000" (it : @bench.T) {
   let bytes = make_v128_bench_bytes()
   it.bench(fn() {
     let mut acc = @v128.i64x2_const(0UL, 0UL)
-    for i = 0; i < v128_bench_size; i = i + 1 {
+    for i in 0..<v128_bench_size {
       let offset = i & 63
       acc = @v128.i64x2_add(acc, @v128.v128_load8_splat(bytes, offset))
       acc = @v128.i64x2_add(acc, @v128.v128_load16_splat(bytes, offset))
@@ -224,7 +224,7 @@ test "bench V128 load8_lane n=10000" (it : @bench.T) {
   let bytes = make_v128_bench_bytes()
   it.bench(fn() {
     let mut acc = @v128.i64x2_const(0UL, 0UL)
-    for i = 0; i < v128_bench_size; i = i + 1 {
+    for i in 0..<v128_bench_size {
       acc = @v128.v128_load8_lane(bytes, i & 63, acc, i & 15)
     }
     it.keep(acc)
@@ -236,7 +236,7 @@ test "bench V128 load16_lane n=10000" (it : @bench.T) {
   let bytes = make_v128_bench_bytes()
   it.bench(fn() {
     let mut acc = @v128.i64x2_const(0UL, 0UL)
-    for i = 0; i < v128_bench_size; i = i + 1 {
+    for i in 0..<v128_bench_size {
       acc = @v128.v128_load16_lane(bytes, i & 63, acc, i & 7)
     }
     it.keep(acc)
@@ -248,7 +248,7 @@ test "bench V128 load32_lane n=10000" (it : @bench.T) {
   let bytes = make_v128_bench_bytes()
   it.bench(fn() {
     let mut acc = @v128.i64x2_const(0UL, 0UL)
-    for i = 0; i < v128_bench_size; i = i + 1 {
+    for i in 0..<v128_bench_size {
       acc = @v128.v128_load32_lane(bytes, i & 63, acc, i & 3)
     }
     it.keep(acc)
@@ -260,7 +260,7 @@ test "bench V128 load64_lane n=10000" (it : @bench.T) {
   let bytes = make_v128_bench_bytes()
   it.bench(fn() {
     let mut acc = @v128.i64x2_const(0UL, 0UL)
-    for i = 0; i < v128_bench_size; i = i + 1 {
+    for i in 0..<v128_bench_size {
       acc = @v128.v128_load64_lane(bytes, i & 63, acc, i & 1)
     }
     it.keep(acc)
@@ -272,7 +272,7 @@ test "bench V128 extend i8x16 to i16x8 n=10000" (it : @bench.T) {
   let values = make_v128_bench_values()
   it.bench(fn() {
     let mut acc = @v128.i64x2_const(0UL, 0UL)
-    for i = 0; i < v128_bench_size; i = i + 1 {
+    for i in 0..<v128_bench_size {
       let value = values.unsafe_get(i)
       acc = @v128.i64x2_add(acc, @v128.i16x8_extend_low_i8x16_s(value))
       acc = @v128.i64x2_add(acc, @v128.i16x8_extend_high_i8x16_u(value))
@@ -286,7 +286,7 @@ test "bench V128 extend i16x8 to i32x4 n=10000" (it : @bench.T) {
   let values = make_v128_bench_values()
   it.bench(fn() {
     let mut acc = @v128.i64x2_const(0UL, 0UL)
-    for i = 0; i < v128_bench_size; i = i + 1 {
+    for i in 0..<v128_bench_size {
       let value = values.unsafe_get(i)
       acc = @v128.i64x2_add(acc, @v128.i32x4_extend_low_i16x8_s(value))
       acc = @v128.i64x2_add(acc, @v128.i32x4_extend_high_i16x8_u(value))
@@ -300,7 +300,7 @@ test "bench V128 extend i32x4 to i64x2 n=10000" (it : @bench.T) {
   let values = make_v128_bench_values()
   it.bench(fn() {
     let mut acc = @v128.i64x2_const(0UL, 0UL)
-    for i = 0; i < v128_bench_size; i = i + 1 {
+    for i in 0..<v128_bench_size {
       let value = values.unsafe_get(i)
       acc = @v128.i64x2_add(acc, @v128.i64x2_extend_low_i32x4_s(value))
       acc = @v128.i64x2_add(acc, @v128.i64x2_extend_high_i32x4_u(value))
@@ -314,7 +314,7 @@ test "bench V128 all_true n=10000" (it : @bench.T) {
   let values = make_v128_bench_values()
   it.bench(fn() {
     let mut count = 0
-    for i = 0; i < v128_bench_size; i = i + 1 {
+    for i in 0..<v128_bench_size {
       let value = values.unsafe_get(i)
       if @v128.i8x16_all_true(value) {
         count += 1
@@ -338,7 +338,7 @@ test "bench V128 bitmask all widths n=10000" (it : @bench.T) {
   let values = make_v128_bench_values()
   it.bench(fn() {
     let mut sum = 0
-    for i = 0; i < v128_bench_size; i = i + 1 {
+    for i in 0..<v128_bench_size {
       let value = values.unsafe_get(i)
       sum += @v128.i8x16_bitmask(value)
       sum += @v128.i16x8_bitmask(value)
@@ -357,7 +357,7 @@ test "bench V128 swizzle n=10000" (it : @bench.T) {
   )
   it.bench(fn() {
     let mut acc = @v128.i64x2_const(0UL, 0UL)
-    for i = 0; i < v128_bench_size; i = i + 1 {
+    for i in 0..<v128_bench_size {
       acc = @v128.i8x16_add(
         acc,
         @v128.i8x16_swizzle(values.unsafe_get(i), indices),
@@ -372,7 +372,7 @@ test "bench V128 shuffle n=10000" (it : @bench.T) {
   let values = make_v128_bench_values()
   it.bench(fn() {
     let mut acc = @v128.i64x2_const(0UL, 0UL)
-    for i = 0; i < v128_bench_size; i = i + 1 {
+    for i in 0..<v128_bench_size {
       let value = values.unsafe_get(i)
       acc = @v128.i8x16_add(
         acc,
