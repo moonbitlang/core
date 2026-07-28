@@ -102,7 +102,7 @@ pub impl Mod for Double with fn mod(self : Double, other : Double) -> Double {
   }
   // scale result
   if ex > 0 {
-    uint64_x = uint64_x - (1UL << 52)
+    uint64_x -= 1UL << 52
     uint64_x = uint64_x | (ex.to_uint64() << 52)
   } else {
     uint64_x = uint64_x >> (-ex + 1)

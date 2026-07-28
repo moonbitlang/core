@@ -250,7 +250,7 @@ pub fn expm1f(x : Float) -> Float {
     if k == 128 {
       y = y * 2.0 * (0x1.0p127 : Float)
     } else {
-      y = y * twopk
+      y *= twopk
     }
     return y - 1.0
   }

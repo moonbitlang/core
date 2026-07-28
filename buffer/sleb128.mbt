@@ -21,7 +21,10 @@ trait Leb128 {
 pub impl Leb128 for Int with fn output(self, buffer) {
   // A 32-bit LEB128 value needs at most 5 bytes. Reserving them before
   // caching `data` makes every unsafe write below stay within the buffer.
-  buffer.grow_if_necessary(buffer.len + 5)
+  let required = buffer.len + 5
+  if required > buffer.data.length() || required < buffer.len {
+    buffer.grow(required)
+  }
   let data = buffer.data
   let mut len = buffer.len
   for value = self {
@@ -50,7 +53,10 @@ pub impl Leb128 for Int with fn output(self, buffer) {
 pub impl Leb128 for Int64 with fn output(self, buffer) {
   // A 64-bit LEB128 value needs at most 10 bytes. Reserving them before
   // caching `data` makes every unsafe write below stay within the buffer.
-  buffer.grow_if_necessary(buffer.len + 10)
+  let required = buffer.len + 10
+  if required > buffer.data.length() || required < buffer.len {
+    buffer.grow(required)
+  }
   let data = buffer.data
   let mut len = buffer.len
   for value = self {

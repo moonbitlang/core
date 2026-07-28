@@ -43,24 +43,43 @@ pub fn StringBuilder::is_empty(self : StringBuilder) -> Bool {
 }
 
 ///|
-fn StringBuilder::grow_if_necessary(
-  self : StringBuilder,
+/// Compute the next capacity without allocating. Since appends never shrink the
+/// builder, `required < len` means the required-size calculation overflowed.
+#inline
+fn stringbuilder_growth_capacity(
+  current : Int,
+  len : Int,
   required : Int,
-) -> Unit {
-  let current_len = self.data.length()
-  if required <= current_len {
-    return
+) -> Int {
+  if required < len {
+    abort("StringBuilder capacity overflow")
   }
-  // current_len is at least 1
-  // double the enough_space until it larger than required
-  let enough_space = for enough_space = current_len; enough_space < required; {
-    continue enough_space * 2
+  let enough_space = for space = current; space < required; {
+    let next = space * 2
+    if next <= space {
+      break required
+    }
+    continue next
   } nobreak {
-    enough_space
+    space
   }
+  enough_space
+}
+
+///|
+/// Grow the builder to at least `required`. Callers keep the capacity check on
+/// their fast path and enter here only when growth or overflow handling is
+/// needed. The builder invariant `0 <= len <= data.length()` lets fixed-size
+/// appends compare against the remaining capacity without overflowing.
+fn StringBuilder::grow(self : StringBuilder, required : Int) -> Unit {
+  let new_capacity = stringbuilder_growth_capacity(
+    self.data.length(),
+    self.len,
+    required,
+  )
   let new_data = FixedArray::make_and_blit(
     self.data,
-    allocate_len=enough_space,
+    allocate_len=new_capacity,
     init=(Default::default() : UInt16),
     len=self.len,
   )
@@ -88,7 +107,10 @@ pub impl Logger for StringBuilder with fn write_string(self, str) {
   if str_len == 0 {
     return
   }
-  self.grow_if_necessary(self.len + str_len)
+  let required = self.len + str_len
+  if required > self.data.length() || required < self.len {
+    self.grow(required)
+  }
   self.data.unsafe_blit_from_string(self.len, str, 0, str_len)
   self.len += str_len
 }
@@ -98,11 +120,15 @@ pub impl Logger for StringBuilder with fn write_string(self, str) {
 pub impl Logger for StringBuilder with fn write_char(self, ch) {
   let code = ch.to_uint()
   if code <= 0xFFFFU {
-    self.grow_if_necessary(self.len + 1)
+    if self.len >= self.data.length() {
+      self.grow(self.len + 1)
+    }
     self.data[self.len] = code.to_uint16()
     self.len += 1
   } else if code <= 0x10FFFFU {
-    self.grow_if_necessary(self.len + 2)
+    if self.data.length() - self.len < 2 {
+      self.grow(self.len + 2)
+    }
     let code = code - 0x10000U
     self.data[self.len] = (0xD800U + (code >> 10)).to_uint16()
     self.data[self.len + 1] = (0xDC00U + code.land(0x3FFU)).to_uint16()
@@ -139,7 +165,10 @@ pub impl Logger for StringBuilder with fn write_view(
   if str_len == 0 {
     return
   }
-  self.grow_if_necessary(self.len + str_len)
+  let required = self.len + str_len
+  if required > self.data.length() || required < self.len {
+    self.grow(required)
+  }
   self.data.unsafe_blit_from_string(
     self.len,
     str.data(),
