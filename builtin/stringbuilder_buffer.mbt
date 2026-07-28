@@ -45,6 +45,7 @@ pub fn StringBuilder::is_empty(self : StringBuilder) -> Bool {
 ///|
 /// Compute the next capacity without allocating. Since appends never shrink the
 /// builder, `required < len` means the required-size calculation overflowed.
+#inline
 fn stringbuilder_growth_capacity(
   current : Int,
   len : Int,
