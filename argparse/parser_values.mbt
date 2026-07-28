@@ -206,14 +206,8 @@ fn apply_env(
     if matches_has_value_or_flag(matches, name) {
       continue
     }
-    let env_name = match arg.env {
-      Some(value) => value
-      None => continue
-    }
-    let value = match env.get(env_name) {
-      Some(v) => v
-      None => continue
-    }
+    guard arg.env is Some(env_name) else { continue }
+    guard env.get(env_name) is Some(value) else { continue }
     if arg.info is (OptionInfo(_) | PositionalInfo(_)) {
       assign_value(matches, arg, value, Env)
       continue

@@ -181,10 +181,7 @@ fn[T] Tree::push_end(self : Tree[T], shift : Int, value : T) -> (Tree[T], Int) {
   }
 
   fn push_sizes_last(sizes : FixedArray[Int]?) -> FixedArray[Int]? {
-    match sizes {
-      Some(sizes) => Some(immutable_push(sizes, 1 + sizes[sizes.length() - 1]))
-      None => None
-    }
+    sizes.map(sizes => immutable_push(sizes, 1 + sizes[sizes.length() - 1]))
   }
 
   fn worker(node : Tree[T], shift : Int) -> Tree[T]? {

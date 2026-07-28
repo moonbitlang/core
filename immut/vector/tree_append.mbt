@@ -28,11 +28,7 @@ fn append_sizes_last(sizes : FixedArray[Int]?, delta : Int) -> FixedArray[Int]? 
 
 ///|
 fn push_sizes_last(sizes : FixedArray[Int]?, delta : Int) -> FixedArray[Int]? {
-  match sizes {
-    Some(sizes) =>
-      Some(immutable_push(sizes, delta + sizes[sizes.length() - 1]))
-    None => None
-  }
+  sizes.map(sizes => immutable_push(sizes, delta + sizes[sizes.length() - 1]))
 }
 
 ///|

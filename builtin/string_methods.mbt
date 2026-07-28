@@ -1239,10 +1239,7 @@ pub fn StringView::before(
   self : StringView,
   needle : StringView,
 ) -> StringView? {
-  match self.find(needle) {
-    Some(index) => Some(self.view(end_offset=index))
-    None => None
-  }
+  self.find(needle).map(index => self.view(end_offset=index))
 }
 
 ///|
@@ -1262,10 +1259,9 @@ pub fn String::before(self : String, needle : StringView) -> StringView? {
 /// 
 /// If the separator is empty, it returns the full string.
 pub fn StringView::after(self : StringView, needle : StringView) -> StringView? {
-  match self.find(needle) {
-    Some(index) => Some(self.view(start_offset=index + needle.length()))
-    None => None
-  }
+  self
+  .find(needle)
+  .map(index => self.view(start_offset=index + needle.length()))
 }
 
 ///|
@@ -1342,10 +1338,7 @@ pub fn StringView::rev_before(
   self : StringView,
   needle : StringView,
 ) -> StringView? {
-  match self.rev_find(needle) {
-    Some(index) => Some(self.view(end_offset=index))
-    None => None
-  }
+  self.rev_find(needle).map(index => self.view(end_offset=index))
 }
 
 ///|
@@ -1380,10 +1373,9 @@ pub fn StringView::rev_after(
   self : StringView,
   needle : StringView,
 ) -> StringView? {
-  match self.rev_find(needle) {
-    Some(index) => Some(self.view(start_offset=index + needle.length()))
-    None => None
-  }
+  self
+  .rev_find(needle)
+  .map(index => self.view(start_offset=index + needle.length()))
 }
 
 ///|

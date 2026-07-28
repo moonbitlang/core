@@ -315,10 +315,7 @@ test "core builtin Debug implementations" {
 #callsite(autofill(loc))
 #deprecated("This function is for debugging only and should not be used in production", skip_current_package=true)
 pub fn[T : Debug] dump(t : T, name? : String, loc~ : SourceLoc) -> T {
-  let name = match name {
-    Some(name) => name
-    None => ""
-  }
+  let name = name.unwrap_or("")
   println("dump(\{name}@\{loc}) = \{to_string(t)}")
   t
 }

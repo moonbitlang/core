@@ -118,9 +118,8 @@ fn parse_number(s : StringView) -> Number? raise StrConvError {
   // handle scientific format
   let exp_number = 0L
   if s is ['e' | 'E', .. rest] {
-    let (new_s, exp_number) = match parse_scientific(rest) {
-      Some(res) => res
-      None => return None
+    guard parse_scientific(rest) is Some((new_s, exp_number)) else {
+      return None
     }
     s = new_s
     exponent += exp_number

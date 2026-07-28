@@ -129,10 +129,9 @@ fn Number::try_fast_path(self : Number) -> Double? {
     } else {
       // disguised fast path
       let shift = self.exponent - max_exponent_fast_path
-      let mantissa = match
-        checked_mul(self.mantissa, int_pow10[shift.to_int()]) {
-        Some(m) => m
-        None => return None
+      guard checked_mul(self.mantissa, int_pow10[shift.to_int()])
+        is Some(mantissa) else {
+        return None
       }
       if mantissa > max_mantissa_fast_path {
         return None

@@ -80,10 +80,7 @@ fn Json::prune_loc(self : Json) -> Json? {
 
 ///|
 fn Json::prune_loc_test(self : Json) -> Json {
-  match self.prune_loc() {
-    Some(pruned) => pruned
-    None => "Empty"
-  }
+  self.prune_loc().unwrap_or("Empty")
 }
 
 ///|

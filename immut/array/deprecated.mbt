@@ -28,10 +28,7 @@ pub fn[A] T::copy(self : T[A]) -> T[A] {
       Node(node, sizes) =>
         Node(
           FixedArray::makei(node.length(), i => copy(node[i])),
-          match sizes {
-            Some(sizes) => Some(FixedArray::copy(sizes))
-            None => None
-          },
+          sizes.map(sizes => FixedArray::copy(sizes)),
         )
     }
   }

@@ -109,10 +109,7 @@ fn get_branch_index(sizes : FixedArray[Int], index : Int) -> Int {
 ///|
 /// Copy the sizes array.
 fn copy_sizes(sizes : FixedArray[Int]?) -> FixedArray[Int]? {
-  match sizes {
-    Some(sizes) => Some(sizes.copy())
-    None => None
-  }
+  sizes.map(sizes => sizes.copy())
 }
 
 ///|

@@ -651,10 +651,9 @@ pub fn[K : Eq, V] HashMap::intersection(
           None => None
         }
       (Flat(key1, _, path1), _) =>
-        match node2.get_with_path(key1, path1) {
-          Some(value2) => Some(Flat(key1, value2, path1))
-          None => None
-        }
+        node2
+        .get_with_path(key1, path1)
+        .map(value2 => Flat(key1, value2, path1))
       (Branch(children1), Branch(children2)) =>
         match children1.intersection(children2, go) {
           None => None
@@ -692,15 +691,13 @@ pub fn[K : Eq, V] HashMap::intersection_with(
   fn go(node1 : Node[_], node2) raise? {
     match (node1, node2) {
       (_, Flat(key2, value2, path2)) =>
-        match node1.get_with_path(key2, path2) {
-          Some(value1) => Some(Flat(key2, f(key2, value1, value2), path2))
-          None => None
-        }
+        node1
+        .get_with_path(key2, path2)
+        .map(value1 => Flat(key2, f(key2, value1, value2), path2))
       (Flat(key1, value1, path1), _) =>
-        match node2.get_with_path(key1, path1) {
-          Some(value2) => Some(Flat(key1, f(key1, value1, value2), path1))
-          None => None
-        }
+        node2
+        .get_with_path(key1, path1)
+        .map(value2 => Flat(key1, f(key1, value1, value2), path1))
       (Branch(children1), Branch(children2)) =>
         match children1.intersection(children2, go) {
           None => None

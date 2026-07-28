@@ -358,15 +358,7 @@ pub fn[X] Iter::filter(self : Iter[X], f : (X) -> Bool) -> Iter[X] {
 /// # Note
 /// The old iterator `self` must not be used again after calling `map`.
 pub fn[X, Y] Iter::map(self : Iter[X], f : (X) -> Y) -> Iter[Y] {
-  {
-    f: fn() {
-      match self.next() {
-        Some(x) => Some(f(x))
-        None => None
-      }
-    },
-    size_hint: self.size_hint,
-  }
+  { f: fn() { self.next().map(x => f(x)) }, size_hint: self.size_hint }
 }
 
 ///|
