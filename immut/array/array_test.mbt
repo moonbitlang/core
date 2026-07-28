@@ -138,7 +138,7 @@ test "iteri" {
   v.eachi((_i, _e) => abort("never reach"))
   let v = @array.from_array([1, 2, 3, 4, 5])
   let mut s = 0
-  v.eachi((i, e) => s = s + i * e)
+  v.eachi((i, e) => s += i * e)
   inspect(s, content="40")
   let vec = []
   v.eachi((i, _e) => vec.push(i))

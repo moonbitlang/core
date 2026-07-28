@@ -197,11 +197,11 @@ test "pop" {
 test "each" {
   let queue : @queue.Queue[Int] = Queue([])
   let mut sum = 0
-  queue.each(x => sum = sum + x)
+  queue.each(x => sum += x)
   @test.assert_eq(sum, 0)
   @queue.from_array([1, 2, 3, 4]).transfer(queue)
   sum = 0
-  queue.each(x => sum = sum + x)
+  queue.each(x => sum += x)
   @test.assert_eq(sum, 10)
 }
 
@@ -215,11 +215,11 @@ test "iter_fold" {
 test "iteri" {
   let queue : @queue.Queue[Int] = Queue([])
   let mut sum = 0
-  queue.eachi((i, x) => sum = sum + i * x)
+  queue.eachi((i, x) => sum += i * x)
   @test.assert_eq(sum, 0)
   @queue.from_array([1, 2, 3, 4]).transfer(queue)
   sum = 0
-  queue.eachi((i, x) => sum = sum + i * x)
+  queue.eachi((i, x) => sum += i * x)
   @test.assert_eq(sum, 20)
 }
 

@@ -272,7 +272,7 @@ pub fn BytesView::view(
 /// test {
 ///   let bv = b"\x00\x01\x02\x03\x04\x05"[:]
 ///   let mut sum = 0
-///   bv.iter().each(x => sum = sum + x.to_int())
+///   bv.iter().each(x => sum += x.to_int())
 ///   inspect(sum, content="15")
 /// }
 /// ```
