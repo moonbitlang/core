@@ -46,43 +46,38 @@ fn side_by_side_html(
         Delete(old_index~, old_len~, ..) if i + 1 < edits.length() &&
           edits[i + 1] is Insert(..) => {
           guard edits[i + 1] is Insert(new_index~, new_len~, ..)
-          let removed = o
-            .view(start=old_index, end=old_index + old_len)
-            .map(l => l)
-            .join("\n")
-          let added = n
-            .view(start=new_index, end=new_index + new_len)
-            .map(l => l)
-            .join("\n")
-          let inner = @diff.Diff(old=tokenize(removed), new=tokenize(added))
-          let left = side_rows(inner, old_side=true)
-          let right = side_rows(inner, old_side=false)
-          let rows = if left.length() > right.length() {
-            left.length()
-          } else {
-            right.length()
+          let old_lines = o.view(start=old_index, end=old_index + old_len)
+          let new_lines = n.view(start=new_index, end=new_index + new_len)
+          // tokenize each line once
+          let olds = old_lines.map(l => tokenize_line(l))
+          let news = new_lines.map(l => tokenize_line(l))
+          // DP work budget (cells), plus dimension guards
+          let mut work = 0
+          for ta in olds {
+            for tb in news {
+              work += (ta.length() + 1) * (tb.length() + 1)
+            }
           }
-          for k in 0..<rows {
-            // classify by row *presence*: a blank-but-present refined row is
-            // still a deletion/addition; only an absent excess row is empty.
-            let l_present = k < left.length()
-            let r_present = k < right.length()
-            let l = if l_present { left[k] } else { "" }
-            let r = if r_present { right[k] } else { "" }
-            row(
-              l,
-              if l_present {
-                "del"
-              } else {
-                "empty"
-              },
-              r,
-              if r_present {
-                "add"
-              } else {
-                "empty"
-              },
-            )
+          if olds.length() > 64 || news.length() > 64 || work > 2_000_000 {
+            // safe fallback: plain unpaired rows, never highlighted zipping
+            for l in old_lines {
+              row(esc(l), "del", "", "empty")
+            }
+            for l in new_lines {
+              row("", "empty", esc(l), "add")
+            }
+          } else {
+            for pair in align(olds, news) {
+              match pair {
+                (Some(ii), Some(jj)) => {
+                  let (lh, rh) = pair_row_html(pair_ops(olds[ii], news[jj]))
+                  row(lh, "del", rh, "add")
+                }
+                (Some(ii), None) => row(esc(old_lines[ii]), "del", "", "empty")
+                (None, Some(jj)) => row("", "empty", esc(new_lines[jj]), "add")
+                (None, None) => ()
+              }
+            }
           }
           i += 2
         }
@@ -309,4 +304,15 @@ test "real-world HTML diff page" (t : @test.Test) {
   t.writeln("</div>")
   t.writeln("</body></html>")
   t.snapshot(filename="real_world.html")
+}
+
+///|
+test "split view work budget falls back to plain rows" {
+  // one enormous line blows the DP cell budget: the fallback must render
+  // plain unpaired rows with no intraline highlights.
+  let big = "word ".repeat(800) + "end"
+  let html = side_by_side_html(old=[big], new=["tiny replacement"])
+  inspect(html.contains("<b class="), content="false")
+  inspect(html.contains("class=\"del\""), content="true")
+  inspect(html.contains("class=\"add\""), content="true")
 }
