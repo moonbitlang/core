@@ -48,12 +48,3 @@ test "parse_double huge exponent" {
     content="0",
   )
 }
-<<<<<<< HEAD
-
-///|
-test "parse_double 801-digit integer coefficient" {
-  let input = "1" + String::make(800, '0') + "e-800"
-  inspect(@string.parse_double(input), content="1")
-}
-=======
->>>>>>> 132ec530606d361c828ef63a5d3511b5d87e1b0c
