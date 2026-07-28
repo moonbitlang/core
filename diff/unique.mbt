@@ -34,7 +34,7 @@ fn[T : Eq + Hash] find_unique(
     [],
     capacity=old.length().max(new.length()),
   )
-  for i = 0; i < old.length(); i = i + 1 {
+  for i in 0..<old.length() {
     if match_lines.get(old[i]) is Some(count_record) {
       count_record.old_count += 1
     } else {
@@ -46,7 +46,7 @@ fn[T : Eq + Hash] find_unique(
       }
     }
   }
-  for i = 0; i < new.length(); i = i + 1 {
+  for i in 0..<new.length() {
     if match_lines.get(new[i]) is Some(count_record) {
       count_record.new_count += 1
       if count_record.new_idx == -1 {
