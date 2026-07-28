@@ -203,7 +203,7 @@ test "decode_lossy with surrogate pairs" {
   // This is hard to construct but we can test the invalid surrogate path
   let invalid_surr = b"\x3d\xd8\x41\xdc"
   let result = @utf16.decode_lossy(invalid_surr)
-  assert_true(result.length() > 0)
+  assert_true(!result.is_empty())
 }
 
 ///|

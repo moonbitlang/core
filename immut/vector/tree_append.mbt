@@ -148,7 +148,7 @@ fn[T] Tree::concat_with_suffix(
   right_shift : Int,
   top : Bool,
 ) -> (Tree[T], Int) {
-  if suffix.length() == 0 {
+  if suffix.is_empty() {
     return Tree::concat(left, left_shift, right, right_shift, top)
   }
   if left_shift > right_shift {

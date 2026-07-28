@@ -415,7 +415,7 @@ test "string array edge cases" {
   }
 
   // Should find some matches (empty strings will match)
-  inspect(result.length() > 0, content="true")
+  inspect(!result.is_empty(), content="true")
 }
 
 ///|

@@ -354,7 +354,7 @@ fn arg_doc(arg : Arg) -> String {
   if arg.info
     is (OptionInfo(default_values~, ..) | PositionalInfo(default_values~, ..)) &&
     default_values is Some(values) {
-    if values.length() > 0 {
+    if !values.is_empty() {
       let defaults = values.join(", ")
       notes.push("[default: \{defaults}]")
     }
@@ -362,7 +362,7 @@ fn arg_doc(arg : Arg) -> String {
   let help = arg.about.unwrap_or("")
   if help == "" {
     notes.join(" ")
-  } else if notes.length() > 0 {
+  } else if !notes.is_empty() {
     let notes_text = notes.join(" ")
     "\{help} \{notes_text}"
   } else {

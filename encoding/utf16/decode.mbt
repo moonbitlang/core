@@ -72,7 +72,7 @@ fn utf16_needs_scalar_le_v128(bytes : BytesView) -> Bool {
     return true
   }
   let src = bytes.data()
-  if bytes.length() > 0 &&
+  if !bytes.is_empty() &&
     is_utf16_surrogate(src.unsafe_read_uint16_le(bytes.start_offset())) {
     return true
   }
@@ -101,7 +101,7 @@ fn utf16_needs_scalar_be_v128(bytes : BytesView) -> Bool {
     return true
   }
   let src = bytes.data()
-  if bytes.length() > 0 &&
+  if !bytes.is_empty() &&
     is_utf16_surrogate(src.unsafe_read_uint16_be(bytes.start_offset())) {
     return true
   }

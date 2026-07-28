@@ -407,7 +407,7 @@ pub fn[A] Vector::concat(self : Vector[A], other : Vector[A]) -> Vector[A] {
         size,
         self.shift,
       )
-    } else if self.tail.length() == 0 {
+    } else if self.tail.is_empty() {
       return make_t(self.tree, other.tail, size, self.shift)
     } else {
       let (tree, shift) = self.normalize_tree()
@@ -416,7 +416,7 @@ pub fn[A] Vector::concat(self : Vector[A], other : Vector[A]) -> Vector[A] {
   }
   let (tree, shift) = if self.tree is Empty {
     Tree::concat(Leaf(self.tail), 0, other.tree, other.shift, true)
-  } else if self.tail.length() == 0 {
+  } else if self.tail.is_empty() {
     Tree::concat(self.tree, self.shift, other.tree, other.shift, true)
   } else {
     Tree::concat_with_suffix(
@@ -862,7 +862,7 @@ fn tail_len_of_size(size : Int) -> Int {
 fn[A] Vector::normalize_tree(self : Vector[A]) -> (Tree[A], Int) {
   if self.size == 0 {
     (Tree::empty(), 0)
-  } else if self.tail.length() == 0 {
+  } else if self.tail.is_empty() {
     (self.tree, self.shift)
   } else if self.tail_offset() == 0 {
     (Leaf(self.tail), 0)
