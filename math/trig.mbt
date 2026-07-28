@@ -47,8 +47,8 @@ fn trig_reduce(x : Float, switch_over : Float) -> (Float, Int) {
       Float::reinterpret_from_int(0x4b40_0000)
     j = Float::from_int(j.reinterpret_as_int() - 0x4b40_0000)
     r = x - j * Float::reinterpret_from_int(0x3fc90f80)
-    r = r - j * Float::reinterpret_from_int(0x37354440)
-    r = r - j * Float::reinterpret_from_int(0x2c34611a)
+    r -= j * Float::reinterpret_from_int(0x37354440)
+    r -= j * Float::reinterpret_from_int(0x2c34611a)
     return (r, j.to_int())
   }
   let xispos = x > 0.0
@@ -81,7 +81,7 @@ fn trig_reduce(x : Float, switch_over : Float) -> (Float, Int) {
   let mut q : Int = (phi >> 30).reinterpret_as_int()
   phi = phi & 0x3fffffff
   if (phi & 0x2000_0000) != 0 {
-    phi = phi - 0x4000_0000
+    phi -= 0x4000_0000
     q += 1
   }
   let s : UInt = phi & 0x8000_0000
@@ -95,12 +95,12 @@ fn trig_reduce(x : Float, switch_over : Float) -> (Float, Int) {
   while phi < 0x8000_0000 {
     phi = (phi << 1) | (plo >> 31)
     plo = plo << 1
-    exp = exp - 1
+    exp -= 1
   }
   phi = mulh(phi, 0xc90f_daa2)
   if phi < 0x8000_0000 {
     phi = phi << 1
-    exp = exp - 1
+    exp -= 1
   }
   let mut r = s +
     ((exp + 128) << 23).reinterpret_as_uint() +

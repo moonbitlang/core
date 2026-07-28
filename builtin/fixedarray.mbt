@@ -394,7 +394,7 @@ test "rev_each" {
     if elem != i - 1 {
       failed = true
     }
-    i = i - 1
+    i -= 1
   }
   {
     i = 1
@@ -451,7 +451,7 @@ test "rev_eachi" {
     if index != j || elem != i - 1 {
       failed = true
     }
-    i = i - 1
+    i -= 1
     j += 1
   }
   {

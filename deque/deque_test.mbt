@@ -171,7 +171,7 @@ test "rev_each" {
     if elem != i - 1 {
       failed = true
     }
-    i = i - 1
+    i -= 1
   })
   assert_false(failed)
 }
@@ -185,7 +185,7 @@ test "rev_eachi" {
     if index != j || elem != i - 1 {
       failed = true
     }
-    i = i - 1
+    i -= 1
     j += 1
   })
   assert_false(failed)

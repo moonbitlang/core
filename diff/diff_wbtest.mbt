@@ -393,13 +393,13 @@ test "iter_matches callback verification" {
   }
 
   // Verify that matched elements are indeed equal
-  for i = 0; i < matches.length(); i = i + 1 {
+  for i in 0..<matches.length() {
     let (old_idx, new_idx) = matches[i]
     inspect(old[old_idx] == new[new_idx], content="true")
   }
 
   // Verify that indices are increasing
-  for i = 1; i < old_indices.length(); i = i + 1 {
+  for i in 1..<old_indices.length() {
     inspect(old_indices[i] > old_indices[i - 1], content="true")
     inspect(new_indices[i] > new_indices[i - 1], content="true")
   }
@@ -425,7 +425,7 @@ test "large array performance" {
   let new = Array::make(size, 0)
 
   // Create regular pattern data
-  for i = 0; i < size; i = i + 1 {
+  for i in 0..<size {
     old[i] = i
     new[i] = if i % 2 == 0 { i } else { i + 100 } // Half same, half different
   }
