@@ -18,67 +18,61 @@ trait Leb128 {
 }
 
 ///|
-fn Buffer::write_sleb128_int(self : Buffer, value : Int) -> Unit {
-  self.grow_if_necessary(self.len + 5)
-  let data = self.data
-  let mut len = self.len
-  for value = value {
-    let byte = value & 0x7f // Get the low 7 bits
-    let next_value = value >> 7 // Arithmetic right shift
-    let sign_bit_set = (byte & 0x40) != 0
-    let need_more = if value >= 0 {
-      next_value != 0 || sign_bit_set
-    } else {
-      next_value != -1 || !sign_bit_set
-    }
-    if need_more {
-      data.unsafe_set(len, (byte | 0x80).to_byte())
-      len = len + 1
-      continue next_value
-    } else {
-      data.unsafe_set(len, byte.to_byte())
-      len = len + 1
-      break
-    }
-  }
-  self.len = len
-}
-
-///|
-fn Buffer::write_sleb128_int64(self : Buffer, value : Int64) -> Unit {
-  self.grow_if_necessary(self.len + 10)
-  let data = self.data
-  let mut len = self.len
-  for value = value {
-    let byte = value & 0x7f // Get the low 7 bits
-    let next_value = value >> 7 // Arithmetic right shift
-    let sign_bit_set = (byte & 0x40) != 0
-    let need_more = if value >= 0 {
-      next_value != 0 || sign_bit_set
-    } else {
-      next_value != -1 || !sign_bit_set
-    }
-    if need_more {
-      data.unsafe_set(len, (byte | 0x80).to_byte())
-      len = len + 1
-      continue next_value
-    } else {
-      data.unsafe_set(len, byte.to_byte())
-      len = len + 1
-      break
-    }
-  }
-  self.len = len
-}
-
-///|
 pub impl Leb128 for Int with fn output(self, buffer) {
-  buffer.write_sleb128_int(self)
+  // A 32-bit LEB128 value needs at most 5 bytes. Reserving them before
+  // caching `data` makes every unsafe write below stay within the buffer.
+  buffer.grow_if_necessary(buffer.len + 5)
+  let data = buffer.data
+  let mut len = buffer.len
+  for value = self {
+    let byte = value & 0x7f // Get the low 7 bits
+    let next_value = value >> 7 // Arithmetic right shift
+    let sign_bit_set = (byte & 0x40) != 0
+    let need_more = if value >= 0 {
+      next_value != 0 || sign_bit_set
+    } else {
+      next_value != -1 || !sign_bit_set
+    }
+    if need_more {
+      data.unsafe_set(len, (byte | 0x80).to_byte())
+      len = len + 1
+      continue next_value
+    } else {
+      data.unsafe_set(len, byte.to_byte())
+      len = len + 1
+      break
+    }
+  }
+  buffer.len = len
 }
 
 ///|
 pub impl Leb128 for Int64 with fn output(self, buffer) {
-  buffer.write_sleb128_int64(self)
+  // A 64-bit LEB128 value needs at most 10 bytes. Reserving them before
+  // caching `data` makes every unsafe write below stay within the buffer.
+  buffer.grow_if_necessary(buffer.len + 10)
+  let data = buffer.data
+  let mut len = buffer.len
+  for value = self {
+    let byte = value & 0x7f // Get the low 7 bits
+    let next_value = value >> 7 // Arithmetic right shift
+    let sign_bit_set = (byte & 0x40) != 0
+    let need_more = if value >= 0 {
+      next_value != 0 || sign_bit_set
+    } else {
+      next_value != -1 || !sign_bit_set
+    }
+    if need_more {
+      data.unsafe_set(len, (byte | 0x80).to_byte())
+      len = len + 1
+      continue next_value
+    } else {
+      data.unsafe_set(len, byte.to_byte())
+      len = len + 1
+      break
+    }
+  }
+  buffer.len = len
 }
 
 ///|

@@ -13,11 +13,13 @@
 // limitations under the License.
 
 ///|
-fn Buffer::write_uleb128_uint(self : Buffer, value : UInt) -> Unit {
-  self.grow_if_necessary(self.len + 5)
-  let data = self.data
-  let mut len = self.len
-  for value = value {
+pub impl Leb128 for UInt with fn output(self, buffer) {
+  // A 32-bit LEB128 value needs at most 5 bytes. Reserving them before
+  // caching `data` makes every unsafe write below stay within the buffer.
+  buffer.grow_if_necessary(buffer.len + 5)
+  let data = buffer.data
+  let mut len = buffer.len
+  for value = self {
     if value < 128U {
       // Single byte: no continuation bit (0xxxxxxx)
       data.unsafe_set(len, value.to_byte())
@@ -30,15 +32,17 @@ fn Buffer::write_uleb128_uint(self : Buffer, value : UInt) -> Unit {
       continue value >> 7
     }
   }
-  self.len = len
+  buffer.len = len
 }
 
 ///|
-fn Buffer::write_uleb128_uint64(self : Buffer, value : UInt64) -> Unit {
-  self.grow_if_necessary(self.len + 10)
-  let data = self.data
-  let mut len = self.len
-  for value = value {
+pub impl Leb128 for UInt64 with fn output(self, buffer) {
+  // A 64-bit LEB128 value needs at most 10 bytes. Reserving them before
+  // caching `data` makes every unsafe write below stay within the buffer.
+  buffer.grow_if_necessary(buffer.len + 10)
+  let data = buffer.data
+  let mut len = buffer.len
+  for value = self {
     if value < 128UL {
       // Single byte: no continuation bit (0xxxxxxx)
       data.unsafe_set(len, value.to_byte())
@@ -51,15 +55,5 @@ fn Buffer::write_uleb128_uint64(self : Buffer, value : UInt64) -> Unit {
       continue value >> 7
     }
   }
-  self.len = len
-}
-
-///|
-pub impl Leb128 for UInt with fn output(self, buffer) {
-  buffer.write_uleb128_uint(self)
-}
-
-///|
-pub impl Leb128 for UInt64 with fn output(self, buffer) {
-  buffer.write_uleb128_uint64(self)
+  buffer.len = len
 }
