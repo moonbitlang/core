@@ -51,10 +51,8 @@ fn Json::prune_loc(self : Json) -> Json? {
     Array(arr) => {
       let pruned_arr = Array::new()
       for item in arr {
-        match item.prune_loc() {
-          Some(pruned_item) => pruned_arr.push(pruned_item)
-          None => () // drop this item
-        }
+        guard item.prune_loc() is Some(pruned_item) else { () } // drop this item
+        pruned_arr.push(pruned_item)
       }
       Some(Json::array(pruned_arr))
     }
@@ -65,10 +63,8 @@ fn Json::prune_loc(self : Json) -> Json? {
       // 2) iterate through all keys except "loc"
       for key, value in obj {
         if key != "loc" {
-          match value.prune_loc() {
-            Some(pruned_value) => new_obj.set(key, pruned_value)
-            None => () // drop this key-value pair
-          }
+          guard value.prune_loc() is Some(pruned_value) else { () } // drop this key-value pair
+          new_obj.set(key, pruned_value)
         }
       }
 

@@ -443,13 +443,9 @@ fn[T : Eq + Hash] make_indexer(
   let mut k = 0 // valid element count
 
   for i in 0..<n {
-    match present.get(a[i]) {
-      Some(_) => {
-        ai[k] = i // record original index of this element
-        k += 1
-      }
-      None => () // doesn't exist in b, skip
-    }
+    guard present.get(a[i]) is Some(_) else { () } // doesn't exist in b, skip
+    ai[k] = i // record original index of this element
+    k += 1
   }
   let result = FixedArray::make(k, 0)
   for i in 0..<k {
