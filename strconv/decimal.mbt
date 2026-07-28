@@ -32,6 +32,7 @@ fn Decimal::new_priv() -> Decimal {
     decimal_point: 0,
     negative: false,
     truncated: false,
+    overflowed: 0,
   }
 }
 
@@ -81,8 +82,13 @@ fn parse_decimal_from_view(str : StringView) -> Decimal raise StrConvError {
         if d.digits_num < d.digits.length() {
           d.digits[d.digits_num] = (digit.to_int() - '0').to_byte()
           d.digits_num += 1
-        } else if digit != '0' {
-          d.truncated = true
+        } else {
+          if !has_dp {
+            d.overflowed += 1
+          }
+          if digit != '0' {
+            d.truncated = true
+          }
         }
         continue rest
       }
@@ -116,14 +122,15 @@ fn parse_decimal_from_view(str : StringView) -> Decimal raise StrConvError {
       //     floor, expressed as `decimal_point + 331` for the negative-exp arm.
       // Once `exp` reaches `exp_limit`, additional digits cannot change the
       // result, so we stop accumulating before `Int` can wrap.
+      let effective_dp = d.decimal_point + d.overflowed
       let exp_limit = if exp_sign > 0 {
-        if d.decimal_point < 311 {
-          311 - d.decimal_point
+        if effective_dp < 311 {
+          311 - effective_dp
         } else {
           0
         }
-      } else if d.decimal_point > -331 {
-        d.decimal_point + 331
+      } else if effective_dp > -331 {
+        effective_dp + 331
       } else {
         0
       }
@@ -160,7 +167,9 @@ fn Decimal::to_double_priv(self : Decimal) -> Double raise StrConvError {
   let mut mantissa = 0L
   // check the underflow and overflow
   // Double: 1.79769e+308 (10^308) - 2.22507e-308 (10^-308)
-  if self.digits_num == 0 || self.decimal_point < -330 {
+  let effective_dp = self.decimal_point + self.overflowed
+
+  if self.digits_num == 0 || effective_dp < -330 {
     // zero
     mantissa = 0
     exponent = double_info.bias
@@ -171,6 +180,12 @@ fn Decimal::to_double_priv(self : Decimal) -> Double raise StrConvError {
     // overflow
     range_err()
   }
+
+  // Incorporate overflowed digits into decimal_point for correct shift normalization.
+  // The overflowed digits are part of the coefficient's magnitude even though they
+  // were discarded from the internal buffer. This must be done before the shift
+  // loops so that the decimal point position reflects the true value.
+  self.decimal_point += self.overflowed
 
   // scale by powers of 2 until in range [0.5 .. 1]
   // right shift
@@ -707,4 +722,39 @@ test "corner cases" {
 test "parse_double mantissa normalization boundary" {
   inspect(parse_double("1.9999999999999999"), content="2")
   inspect(parse_double("9007199254740991.5"), content="9007199254740992")
+}
+
+///|
+test "parse_double large magnitude cancellation" {
+  let input = "1" + String::make(800, '0') + "e-800"
+  inspect(parse_double(input), content="1")
+
+  let input = "-1" + String::make(800, '0') + "e-800"
+  inspect(parse_double(input), content="-1")
+
+  let input = "1." + String::make(800, '0')
+  inspect(parse_double(input), content="1")
+
+  let input = "1" + String::make(1999, '0') + "e-1999"
+  inspect(parse_double(input), content="1")
+
+  let input = "1" + String::make(399, '0') + ".5"
+  try parse_double(input) catch {
+    e => inspect(e, content="value out of range")
+  } noraise {
+    _ => fail("expected parse_double to raise")
+  }
+
+  let input = "1" + String::make(800, '0') + ".5"
+  try parse_double(input) catch {
+    e => inspect(e, content="value out of range")
+  } noraise {
+    _ => fail("expected parse_double to raise")
+  }
+
+  let input = "1" + String::make(1499, '0') + "e-1499"
+  inspect(parse_double(input), content="1")
+
+  let input = "0." + String::make(1999, '0') + "1"
+  inspect(parse_double(input), content="0")
 }
