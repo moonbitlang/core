@@ -33,7 +33,7 @@ fn[A] new_queue() -> Queue[A] {
 #alias(of, deprecated="Use from_array instead")
 #as_free_fn(of, deprecated="Use from_array instead")
 pub fn[A] Queue::Queue(arr : ArrayView[A]) -> Queue[A] {
-  guard arr.length() > 0 else { return new_queue() }
+  guard !arr.is_empty() else { return new_queue() }
   let length = arr.length()
   let last = { content: arr[length - 1], next: None }
   let first = for i = length - 2, x = last; i >= 0; {

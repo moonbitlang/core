@@ -888,7 +888,7 @@ pub fn[K : Eq + Hash, V] HashMap::from_iter(
     None => []
   }
   iter.each(e => entries.push({ key: e.0, value: e.1, path: @path.of(e.0) }))
-  if entries.length() == 0 {
+  if entries.is_empty() {
     new()
   } else {
     {

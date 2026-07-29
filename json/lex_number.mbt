@@ -150,7 +150,7 @@ fn ParseContext::scan_json_number(
   let mut mantissa = 0UL
   let mut significant_digits = 0
   let mut seen_nonzero = false
-  for i = (if negative { start + 1 } else { start }); i < end; i = i + 1 {
+  for i in (if negative { start + 1 } else { start })..<end {
     match ctx.input.unsafe_get(i) {
       '0'..='9' as c => {
         let digit = c.to_int() - '0'

@@ -15,7 +15,7 @@
 ///|
 fn[T] identity_compacted(source : Array[T]) -> CompactedElements[T] {
   let indices = FixedArray::make(source.length(), 0)
-  for i = 0; i < source.length(); i = i + 1 {
+  for i in 0..<source.length() {
     indices[i] = i
   }
   CompactedElements((source, indices))
@@ -80,7 +80,7 @@ fn run_diag(
 ///|
 fn patterned_array(length : Int, shift : Int, modulo : Int) -> Array[Int] {
   let result = Array::make(length, 0)
-  for i = 0; i < length; i = i + 1 {
+  for i in 0..<length {
     result[i] = (i + shift) % modulo
   }
   result
@@ -115,9 +115,9 @@ test "diag odd parity can return from forward search" {
 test "diag heuristic path can choose either side" {
   let saw_forward = @ref.Ref(false)
   let saw_backward = @ref.Ref(false)
-  for n = 3; n <= 8; n = n + 1 {
+  for n in 3..<=8 {
     for m = 3; m <= 8; m = m + 1 {
-      for old_shift = 0; old_shift < 5; old_shift = old_shift + 1 {
+      for old_shift in 0..<5 {
         for new_shift = 0; new_shift < 5; new_shift = new_shift + 1 {
           let old = patterned_array(n, old_shift, 5)
           let new = patterned_array(m, new_shift, 5)

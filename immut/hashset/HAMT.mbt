@@ -581,7 +581,7 @@ pub fn[A : Eq + Hash] HashSet::from_iter(iter : Iter[A]) -> HashSet[A] {
     None => []
   }
   iter.each(value => entries.push({ value, path: @path.of(value) }))
-  if entries.length() == 0 {
+  if entries.is_empty() {
     new()
   } else {
     {
