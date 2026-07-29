@@ -505,13 +505,6 @@ pub fn[K] HashSet::retain(self : HashSet[K], f : (K) -> Bool) -> Unit {
 }
 
 ///|
-pub impl[X : @quickcheck.Arbitrary + Eq + Hash] @quickcheck.Arbitrary for HashSet[
-  X,
-] with fn arbitrary(size, rs) {
-  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_iter
-}
-
-///|
 fn calc_grow_threshold(capacity : Int) -> Int {
   capacity * 13 / 16
 }

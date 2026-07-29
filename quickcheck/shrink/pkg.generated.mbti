@@ -1,6 +1,10 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/quickcheck/shrink"
 
+import {
+  "moonbitlang/core/list",
+}
+
 // Values
 
 // Errors
@@ -29,4 +33,12 @@ pub impl[T : Shrink, E : Shrink] Shrink for Result[T, E]
 pub impl Shrink for Bytes
 pub impl[X : Shrink] Shrink for Array[X]
 pub impl[X : Shrink] Shrink for Iter[X]
-
+pub impl[T : Shrink] Shrink for @list.List[T]
+pub impl[A : Shrink, B : Shrink] Shrink for (A, B)
+pub impl[A : Shrink, B : Shrink, C : Shrink] Shrink for (A, B, C)
+pub impl[A : Shrink, B : Shrink, C : Shrink, D : Shrink] Shrink for (A, B, C, D)
+pub impl[A : Shrink, B : Shrink, C : Shrink, D : Shrink, E : Shrink] Shrink for (A, B, C, D, E)
+pub impl[A : Shrink, B : Shrink, C : Shrink, D : Shrink, E : Shrink, F : Shrink] Shrink for (A, B, C, D, E, F)
+pub impl[A : Shrink, B : Shrink, C : Shrink, D : Shrink, E : Shrink, F : Shrink, G : Shrink] Shrink for (A, B, C, D, E, F, G)
+pub impl[A : Shrink, B : Shrink, C : Shrink, D : Shrink, E : Shrink, F : Shrink, G : Shrink, H : Shrink] Shrink for (A, B, C, D, E, F, G, H)
+pub impl[A : Shrink, B : Shrink, C : Shrink, D : Shrink, E : Shrink, F : Shrink, G : Shrink, H : Shrink, I : Shrink] Shrink for (A, B, C, D, E, F, G, H, I)

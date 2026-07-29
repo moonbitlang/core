@@ -3,6 +3,8 @@ import {
   "moonbitlang/core/int",
   "moonbitlang/core/debug",
   "moonbitlang/core/hashmap",
+  "moonbitlang/core/string",
+  "moonbitlang/core/internal/edit_distance",
 }
 
 import {

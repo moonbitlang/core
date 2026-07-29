@@ -683,14 +683,6 @@ pub fn[A] Vector::rev(self : Vector[A]) -> Vector[A] {
 //-----------------------------------------------------------------------------
 
 ///|
-pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Vector[X] with fn arbitrary(
-  size,
-  rs,
-) {
-  @quickcheck.Arbitrary::arbitrary(size, rs) |> Vector::from_array
-}
-
-///|
 pub impl[A : Hash] Hash for Vector[A] with fn hash_combine(self, hasher) {
   for e in self {
     hasher.combine(e)

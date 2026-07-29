@@ -1,12 +1,8 @@
 import {
   "moonbitlang/core/builtin",
-  "moonbitlang/core/quickcheck",
-  "moonbitlang/core/quickcheck/shrink",
-  "moonbitlang/core/quickcheck/splitmix",
 }
 
 import {
-  "moonbitlang/core/char",
   "moonbitlang/core/debug",
   "moonbitlang/core/test",
 } for "test"

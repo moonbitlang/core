@@ -32,6 +32,53 @@ test "current_dir returns reasonable directory" {
 }
 
 ///|
+test "rand returns requested length or none" {
+  match @env.rand(32) {
+    Some(bytes) => @test.assert_eq(bytes.length(), 32)
+    None => () // acceptable on platforms without entropy
+  }
+}
+
+///|
+test "rand non-positive length probes availability" {
+  for n in [0, -1] {
+    match @env.rand(n) {
+      Some(bytes) => @test.assert_eq(bytes.length(), 0)
+      None => () // acceptable on platforms without entropy
+    }
+  }
+}
+
+///|
+#cfg(target="wasm")
+test "wasm rand is always available" {
+  guard @env.rand(32) is Some(bytes) else {
+    fail("expected WASI random_get to be available")
+  }
+  @test.assert_eq(bytes.length(), 32)
+}
+
+///|
+#cfg(target="wasm-gc")
+test "wasm-gc rand empty request reports unsupported" {
+  assert_true(@env.rand(0) is None)
+}
+
+///|
+#cfg(target="js")
+test "js rand chunks large requests" {
+  match @env.rand(0) {
+    Some(_) =>
+      match @env.rand(65537) {
+        Some(bytes) => @test.assert_eq(bytes.length(), 65537)
+        None =>
+          fail("expected large request to succeed when crypto is available")
+      }
+    None => () // acceptable when the JS environment has no crypto API
+  }
+}
+
+///|
 test "env var round trip" {
   let key = "__MOONBIT_CORE_ENV_TEST_" + @env.now().to_string()
 

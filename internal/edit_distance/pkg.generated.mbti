@@ -1,0 +1,20 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/internal/edit_distance"
+
+// Values
+pub fn[T : Eq] edit_distance(ArrayView[T], ArrayView[T]) -> Int
+
+pub fn edit_distance_str(StringView, StringView) -> Int
+
+pub fn edit_distance_str_within(StringView, StringView, max_distance~ : Int) -> Int?
+
+pub fn[T : Eq] edit_distance_within(ArrayView[T], ArrayView[T], max_distance~ : Int) -> Int?
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+

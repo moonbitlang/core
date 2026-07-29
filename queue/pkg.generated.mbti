@@ -3,8 +3,6 @@ package "moonbitlang/core/queue"
 
 import {
   "moonbitlang/core/debug",
-  "moonbitlang/core/quickcheck",
-  "moonbitlang/core/quickcheck/splitmix",
 }
 
 // Values
@@ -42,7 +40,6 @@ pub fn[A] Queue::transfer(Self[A], Self[A]) -> Unit
 #deprecated
 pub impl[A : Show] Show for Queue[A]
 pub impl[A : @debug.Debug] @debug.Debug for Queue[A]
-pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Queue[X]
 
 // Type aliases
 

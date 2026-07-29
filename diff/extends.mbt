@@ -20,6 +20,9 @@ pub extend DiffAlgorithm with Eq::{equal}
 ///|
 pub extend Edit with Eq::{equal}
 
+///|
+pub extend LevenshteinEdit with Eq::{equal}
+
 // --- deprecated: hidden from the generated interface ---
 
 ///|
@@ -41,3 +44,13 @@ pub extend Edit with @debug.Debug::{to_repr}
 #deprecated("Use `!=` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Edit with Eq::{not_equal}
+
+///|
+#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
+#doc(hidden)
+pub extend LevenshteinEdit with @debug.Debug::{to_repr}
+
+///|
+#deprecated("Use `!=` instead", skip_current_package=true)
+#doc(hidden)
+pub extend LevenshteinEdit with Eq::{not_equal}

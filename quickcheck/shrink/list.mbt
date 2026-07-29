@@ -13,25 +13,25 @@
 // limitations under the License.
 
 ///|
-fn[T] removes(k : Int, n : Int, xs : List[T]) -> Iter[List[T]] {
+fn[T] removes_list(k : Int, n : Int, xs : @list.List[T]) -> Iter[@list.List[T]] {
   guard k <= n else { [||] }
   let xs_drop = xs.drop(k)
   if xs_drop.is_empty() {
-    [|Empty|]
+    [|List([])|]
   } else {
     let xs_take = xs.take(k)
-    removes(k, n - k, xs_drop).map(x => xs_take.concat(x)).add([|xs_drop|])
+    removes_list(k, n - k, xs_drop).map(x => xs_take.concat(x)).add([|xs_drop|])
   }
 }
 
 ///|
-pub impl[T : @shrink.Shrink] @shrink.Shrink for List[T] with fn shrink(xs) {
+pub impl[T : Shrink] Shrink for @list.List[T] with fn shrink(xs) {
   let n = xs.length()
-  fn shr_sub_terms(lst : List[T]) {
+  fn shr_sub_terms(lst : @list.List[T]) {
     match lst {
       Empty => Iter::empty()
       More(x, tail=xs) =>
-        @shrink.Shrink::shrink(x)
+        Shrink::shrink(x)
         .map(x_ => xs.add(x_))
         .concat(shr_sub_terms(xs).map(xs_ => xs_.add(x)))
     }
@@ -41,6 +41,6 @@ pub impl[T : @shrink.Shrink] @shrink.Shrink for List[T] with fn shrink(xs) {
     for k = n / 2; k > 0; k = k / 2 => k
   ]
   .rev_iter()
-  .flat_map(k => removes(k, n, xs))
+  .flat_map(k => removes_list(k, n, xs))
   .concat(shr_sub_terms(xs))
 }

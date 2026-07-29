@@ -372,14 +372,6 @@ pub fn[K : Compare, V] SortedMap::from_iter(
 }
 
 ///|
-pub impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for SortedMap[
-  K,
-  V,
-] with fn arbitrary(size, rs) {
-  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_iter
-}
-
-///|
 /// Returns a new array of key-value pairs that are within the specified range [low, high].
 pub fn[K : Compare, V] SortedMap::range(
   self : SortedMap[K, V],

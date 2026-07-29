@@ -952,14 +952,6 @@ pub fn[K, V] HashMap::to_array(self : HashMap[K, V]) -> Array[(K, V)] {
 }
 
 ///|
-pub impl[K : Eq + Hash + @quickcheck.Arbitrary, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for HashMap[
-  K,
-  V,
-] with fn arbitrary(size, rs) {
-  @quickcheck.Arbitrary::arbitrary(size, rs) |> HashMap
-}
-
-///|
 impl[K : Eq, V : Eq] Eq for Node[K, V] with fn equal(self, other) {
   if physical_equal(self, other) {
     return true

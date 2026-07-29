@@ -33,4 +33,3 @@ pub fn[T] Gen::samples(Self[T], count? : Int, size? : Int, seed? : UInt64) -> Ar
 pub using @splitmix {type RandomState}
 
 // Traits
-
