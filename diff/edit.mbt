@@ -96,7 +96,7 @@ fn[T] group_edits(
     return []
   }
   let n = edits.length()
-  let mut pending = Array::new()
+  let mut pending : Array[Edit] = Array::new()
   let result : Array[Hunk[T]] = Array::new()
   for i, edit in edits {
     match edit {

@@ -164,3 +164,52 @@ test "git-style terminal colors from the public Hunk API" {
 An HTML renderer works the same way; escaping and CSS are the renderer's own
 concern (see the blackbox tests for a complete example that snapshots a styled
 page to `__snapshot__/hunk.html`).
+
+## Edit Distance
+
+`edit_distance(a, b)` returns the classic Levenshtein edit distance — the
+minimum number of single-element insertions, deletions, and substitutions
+turning one input into the other, every operation costing exactly 1. Note
+the contrast with `Diff` above: its Myers machinery minimizes an
+insert/delete-only metric in which replacing an element costs 2, while here
+a substitution is a single edit. The distance is symmetric, so the two views
+are positional and unordered, and it needs only `Eq` (not `Hash`), so it
+works on any element type.
+
+For the most common case — strings — `edit_distance_str(a, b)` and
+`edit_distance_str_within(a, b, max_distance~)` take `String`/`StringView`
+directly with no conversion of the inputs, measuring in UTF-16 code units
+(so an astral character counts as its two units); for Unicode-scalar
+distance, use `edit_distance` over `to_array()` views. For threshold-based
+uses such as "did you mean" suggestions, the `_within` variants answer
+`Some(distance)` or `None` and abandon the search early, which is much
+cheaper when most candidates are far away.
+
+Where the `Edit` script of a `Diff` only deletes and inserts,
+`levenshtein_edits(old~, new~)` also pairs changed elements one-to-one as
+`Replace` runs — the natural input for character-level change highlighting.
+
+```mbt check
+///|
+test "levenshtein distance and edit script" {
+  let old = "kitten".to_array()
+  let new = "sitting".to_array()
+
+  inspect(@diff.edit_distance(old, new), content="3")
+  inspect(@diff.edit_distance_str("kitten", "sitting"), content="3")
+  debug_inspect(
+    @diff.edit_distance_within(old, new, max_distance=2),
+    content="None",
+  )
+  assert_true(
+    @diff.levenshtein_edits(old~, new~)
+    is [
+      Replace(old_index=0, new_index=0, len=1),
+      Equal(old_index=1, new_index=1, len=3),
+      Replace(old_index=4, new_index=4, len=1),
+      Equal(old_index=5, new_index=5, len=1),
+      Insert(old_index=6, new_index=6, new_len=1),
+    ],
+  )
+}
+```
