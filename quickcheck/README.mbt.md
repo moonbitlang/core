@@ -2,6 +2,85 @@
 
 MoonBit QuickCheck package provides property-based testing capabilities by generating random test inputs.
 
+## Checking Properties
+
+Use `quickcheck` for the common property shape `(A) -> Bool raise?`. The
+input type must implement `Arbitrary`, `Shrink`, and `Debug`.
+
+```mbt check
+///|
+test "adding zero is an identity" {
+  @quickcheck.quickcheck((x : Int) => x + 0 == x)
+}
+```
+
+Returning `true` passes a case; returning `false` reports a logical
+counterexample. A raised error is reported separately as an exceptional
+counterexample. The first failure is greedily shrunk while preserving that
+distinction: a `false` result cannot shrink into an error, and an error cannot
+shrink into `false`.
+
+The optional controls are deterministic:
+
+```mbt check
+///|
+test "configured property run" {
+  @quickcheck.quickcheck(
+    (xs : Array[Int]) => xs.length() >= 0,
+    count=200,
+    max_size=50,
+    max_shrinks=100,
+    seed=2026,
+  )
+}
+```
+
+`count`, `max_size`, and `max_shrinks` are unsigned. A zero `count` performs no
+tests. Generator size grows from zero to `max_size`; because `Arbitrary`
+receives an `Int` size, larger values saturate at `Int::MAX_VALUE`.
+`max_shrinks` counts every shrink candidate whose property is evaluated, so
+zero disables shrinking and even an infinite or cyclic shrink stream
+terminates at the limit. A failure report includes the final counterexample,
+error when applicable, size, and shrink counts.
+
+If a test needs to inspect an expected failure, use `quickcheck_report` instead
+of catching the `Failure` raised by `quickcheck`:
+
+```mbt check
+///|
+test "inspect a counterexample" {
+  let report = @quickcheck.quickcheck_report(
+    (_ : Int) => false,
+    count=1,
+    max_size=0,
+    max_shrinks=0,
+    seed=7,
+  )
+  debug_inspect(
+    report,
+    content=(
+      #|Falsified(
+      #|  counterexample=0,
+      #|  tests=1,
+      #|  size=0,
+      #|  shrinks=0,
+      #|  shrink_attempts=0,
+      #|)
+    ),
+  )
+}
+```
+
+`quickcheck_report` returns `Passed`, `Falsified`, or `Raised`. Every error from
+the property is a value in `Raised`; the driver does not distinguish errors
+used by `inspect` or snapshot tests. `QuickCheckReport[A]` implements `Debug`
+when `A` does, but unlike `quickcheck`, calling `quickcheck_report` itself does
+not raise and does not require the input type to implement `Debug`.
+
+Properties should be deterministic and should not mutate or consume their
+input. In particular, an `Iter` is single-use; generate an `Array` and create a
+fresh iterator inside the property when replayable sequence behavior matters.
+
 ## Basic Usage
 
 Generate random values of any type that implements the `Arbitrary` trait:

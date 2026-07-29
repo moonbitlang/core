@@ -3,10 +3,12 @@ package "moonbitlang/core/quickcheck"
 
 import {
   "moonbitlang/core/bigint",
+  "moonbitlang/core/debug",
   "moonbitlang/core/immut/vector",
   "moonbitlang/core/list",
   "moonbitlang/core/queue",
   "moonbitlang/core/quickcheck/gen",
+  "moonbitlang/core/quickcheck/shrink",
   "moonbitlang/core/quickcheck/splitmix",
   "moonbitlang/core/ref",
 }
@@ -16,11 +18,21 @@ pub fn[T : Arbitrary] arbitrary() -> @gen.Gen[T]
 
 pub fn[T : Arbitrary] gen(size? : Int, state? : @splitmix.RandomState) -> T
 
+#callsite(autofill(loc))
+pub fn[A : Arbitrary + @shrink.Shrink + @debug.Debug] quickcheck((A) -> Bool raise?, count? : UInt, max_size? : UInt, max_shrinks? : UInt, seed? : UInt64, loc~ : SourceLoc) -> Unit raise
+
+pub fn[A : Arbitrary + @shrink.Shrink] quickcheck_report((A) -> Bool raise?, count? : UInt, max_size? : UInt, max_shrinks? : UInt, seed? : UInt64) -> QuickCheckReport[A]
+
 pub fn[X : Arbitrary] samples(Int) -> Array[X]
 
 // Errors
 
 // Types and methods
+pub enum QuickCheckReport[A] {
+  Passed(tests~ : UInt)
+  Falsified(counterexample~ : A, tests~ : UInt, size~ : Int, shrinks~ : UInt, shrink_attempts~ : UInt)
+  Raised(counterexample~ : A, error~ : Error, tests~ : UInt, size~ : Int, shrinks~ : UInt, shrink_attempts~ : UInt)
+} derive(@debug.Debug)
 
 // Type aliases
 

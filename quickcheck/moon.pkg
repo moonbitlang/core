@@ -1,5 +1,8 @@
 import {
+  "moonbitlang/core/debug",
+  "moonbitlang/core/int",
   "moonbitlang/core/quickcheck/gen",
+  "moonbitlang/core/quickcheck/shrink",
   "moonbitlang/core/quickcheck/splitmix",
   "moonbitlang/core/builtin",
   "moonbitlang/core/char",
