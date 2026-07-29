@@ -5,6 +5,7 @@ import {
   "moonbitlang/core/string",
   "moonbitlang/core/set",
   "moonbitlang/core/debug",
+  "moonbitlang/core/internal/edit_distance",
 }
 
-warnings = "+unnecessary_annotation+implicit_impl_as_method"
+warnings = "+unnecessary_annotation"

@@ -36,8 +36,8 @@ test "bench ArrayView::at Int n=100000" (it : @bench.T) {
   let view = data[1:view_bench_size + 1]
   it.bench(fn() {
     let mut sum = 0
-    for i = 0; i < view_bench_size; i = i + 1 {
-      sum = sum + view[i]
+    for i in 0..<view_bench_size {
+      sum += view[i]
     }
     it.keep(sum)
   })
@@ -49,9 +49,9 @@ test "bench ArrayView::get Int n=100000" (it : @bench.T) {
   let view = data[1:view_bench_size + 1]
   it.bench(fn() {
     let mut sum = 0
-    for i = 0; i < view_bench_size; i = i + 1 {
+    for i in 0..<view_bench_size {
       if view.get(i) is Some(x) {
-        sum = sum + x
+        sum += x
       }
     }
     it.keep(sum)
@@ -64,8 +64,8 @@ test "bench ArrayView::unsafe_get Int n=100000" (it : @bench.T) {
   let view = data[1:view_bench_size + 1]
   it.bench(fn() {
     let mut sum = 0
-    for i = 0; i < view_bench_size; i = i + 1 {
-      sum = sum + view.unsafe_get(i)
+    for i in 0..<view_bench_size {
+      sum += view.unsafe_get(i)
     }
     it.keep(sum)
   })
@@ -109,8 +109,8 @@ test "bench MutArrayView::at Int n=100000" (it : @bench.T) {
   let view = data.mut_view(start=1, end=view_bench_size + 1)
   it.bench(fn() {
     let mut sum = 0
-    for i = 0; i < view_bench_size; i = i + 1 {
-      sum = sum + view[i]
+    for i in 0..<view_bench_size {
+      sum += view[i]
     }
     it.keep(sum)
   })
@@ -122,8 +122,8 @@ test "bench MutArrayView::unsafe_get Int n=100000" (it : @bench.T) {
   let view = data.mut_view(start=1, end=view_bench_size + 1)
   it.bench(fn() {
     let mut sum = 0
-    for i = 0; i < view_bench_size; i = i + 1 {
-      sum = sum + view.unsafe_get(i)
+    for i in 0..<view_bench_size {
+      sum += view.unsafe_get(i)
     }
     it.keep(sum)
   })
@@ -134,7 +134,7 @@ test "bench MutArrayView::set Int n=100000" (it : @bench.T) {
   let data = make_view_bench_array()
   let view = data.mut_view(start=1, end=view_bench_size + 1)
   it.bench(fn() {
-    for i = 0; i < view_bench_size; i = i + 1 {
+    for i in 0..<view_bench_size {
       view[i] = i % 1024
     }
     it.keep(view[0] + view[view_bench_size - 1])
@@ -146,7 +146,7 @@ test "bench MutArrayView::unsafe_set Int n=100000" (it : @bench.T) {
   let data = make_view_bench_array()
   let view = data.mut_view(start=1, end=view_bench_size + 1)
   it.bench(fn() {
-    for i = 0; i < view_bench_size; i = i + 1 {
+    for i in 0..<view_bench_size {
       view.unsafe_set(i, i % 1024)
     }
     it.keep(view.unsafe_get(0) + view.unsafe_get(view_bench_size - 1))
@@ -159,7 +159,7 @@ test "bench BytesView::at n=100000" (it : @bench.T) {
   let view = data[1:view_bench_size + 1]
   it.bench(fn() {
     let mut value = b'\x00'
-    for i = 0; i < view_bench_size; i = i + 1 {
+    for i in 0..<view_bench_size {
       value = view[i]
     }
     it.keep(value)
@@ -172,7 +172,7 @@ test "bench BytesView::unsafe_get n=100000" (it : @bench.T) {
   let view = data[1:view_bench_size + 1]
   it.bench(fn() {
     let mut value = b'\x00'
-    for i = 0; i < view_bench_size; i = i + 1 {
+    for i in 0..<view_bench_size {
       value = view.unsafe_get(i)
     }
     it.keep(value)

@@ -33,7 +33,7 @@ fn[A] new_queue() -> Queue[A] {
 #alias(of, deprecated="Use from_array instead")
 #as_free_fn(of, deprecated="Use from_array instead")
 pub fn[A] Queue::Queue(arr : ArrayView[A]) -> Queue[A] {
-  guard arr.length() > 0 else { return new_queue() }
+  guard !arr.is_empty() else { return new_queue() }
   let length = arr.length()
   let last = { content: arr[length - 1], next: None }
   let first = for i = length - 2, x = last; i >= 0; {
@@ -224,7 +224,8 @@ pub fn[A] Queue::pop(self : Queue[A]) -> A? {
 /// test {
 ///   let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
 ///   let mut sum = 0
-///   queue.each(x => sum = sum + x)
+///   queue.each(x => sum += x)
+///   inspect(sum, content="10")
 /// }
 /// ```
 #locals(f)
@@ -248,7 +249,8 @@ pub fn[A] Queue::each(self : Queue[A], f : (A) -> Unit) -> Unit {
 /// test {
 ///   let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
 ///   let mut sum = 0
-///   queue.eachi((i, x) => sum = sum + i * x)
+///   queue.eachi((i, x) => sum += i * x)
+///   inspect(sum, content="20")
 /// }
 /// ```
 #locals(f)
@@ -341,7 +343,7 @@ pub fn[A] Queue::transfer(self : Queue[A], dst : Queue[A]) -> Unit {
       }
       Some(last) => {
         last.next = self.first
-        dst.length = dst.length + self.length
+        dst.length += self.length
         dst.last = self.last
         self.clear()
       }

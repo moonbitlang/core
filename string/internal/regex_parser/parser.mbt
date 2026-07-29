@@ -96,7 +96,7 @@ fn Parser::class_contents(
   outer~: for rest = rest, char_set = @re.RecharSet::empty() {
     match rest {
       [] => raise ctx.error_at(rest, HINT_UNCLOSED_CHAR_CLASS)
-      [']', ..] => break (rest, char_set)
+      [']', ..] => break outer~ (rest, char_set)
       _ => {
         let (rest, left) = match rest {
           ['[', ':', ..] =>

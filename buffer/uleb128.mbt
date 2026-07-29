@@ -14,30 +14,52 @@
 
 ///|
 pub impl Leb128 for UInt with fn output(self, buffer) {
+  // A 32-bit LEB128 value needs at most 5 bytes. Reserving them before
+  // caching `data` makes every unsafe write below stay within the buffer.
+  let required = buffer.len + 5
+  if required > buffer.data.length() || required < buffer.len {
+    buffer.grow(required)
+  }
+  let data = buffer.data
+  let mut len = buffer.len
   for value = self {
-    if value < 128 {
+    if value < 128U {
       // Single byte: no continuation bit (0xxxxxxx)
-      buffer.write_byte(value.to_byte())
+      data.unsafe_set(len, value.to_byte())
+      len += 1
       break
     } else {
       // Multiple bytes: set continuation bit (1xxxxxxx) and continue
-      buffer.write_byte(((value % 128) | 128).to_byte())
-      continue value / 128
+      data.unsafe_set(len, ((value & 127U) | 128U).to_byte())
+      len += 1
+      continue value >> 7
     }
   }
+  buffer.len = len
 }
 
 ///|
 pub impl Leb128 for UInt64 with fn output(self, buffer) {
+  // A 64-bit LEB128 value needs at most 10 bytes. Reserving them before
+  // caching `data` makes every unsafe write below stay within the buffer.
+  let required = buffer.len + 10
+  if required > buffer.data.length() || required < buffer.len {
+    buffer.grow(required)
+  }
+  let data = buffer.data
+  let mut len = buffer.len
   for value = self {
-    if value < 128 {
+    if value < 128UL {
       // Single byte: no continuation bit (0xxxxxxx)
-      buffer.write_byte(value.to_byte())
+      data.unsafe_set(len, value.to_byte())
+      len += 1
       break
     } else {
       // Multiple bytes: set continuation bit (1xxxxxxx) and continue
-      buffer.write_byte(((value % 128) | 128).to_byte())
-      continue value / 128
+      data.unsafe_set(len, ((value & 127UL) | 128UL).to_byte())
+      len += 1
+      continue value >> 7
     }
   }
+  buffer.len = len
 }

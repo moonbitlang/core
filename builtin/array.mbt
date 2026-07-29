@@ -438,7 +438,7 @@ pub fn[T] Array::append(self : Array[T], other : ArrayView[T]) -> Unit {
 /// test {
 ///   let arr = [1, 2, 3]
 ///   let mut sum = 0
-///   arr.each(x => sum = sum + x)
+///   arr.each(x => sum += x)
 ///   inspect(sum, content="6")
 /// }
 /// ```
@@ -492,7 +492,7 @@ pub fn[T] Array::rev_each(
 /// test {
 ///   let v = [3, 4, 5]
 ///   let mut sum = 0
-///   v.rev_eachi((i, x) => sum = sum + x + i)
+///   v.rev_eachi((i, x) => sum += x + i)
 ///   @test.assert_eq(sum, 15)
 /// }
 /// ```
@@ -515,7 +515,7 @@ pub fn[T] Array::rev_eachi(
 /// test {
 ///   let v = [3, 4, 5]
 ///   let mut sum = 0
-///   v.eachi((i, x) => sum = sum + x + i)
+///   v.eachi((i, x) => sum += x + i)
 ///   inspect(sum, content="15")
 /// }
 /// ```
@@ -1772,7 +1772,7 @@ pub fn[T] Array::split(
 /// test {
 ///   let arr = [1, 2, 3]
 ///   let mut sum = 0
-///   arr.iter().each(x => sum = sum + x)
+///   arr.iter().each(x => sum += x)
 ///   inspect(sum, content="6")
 /// }
 /// ```
@@ -1824,7 +1824,7 @@ pub fn[T] Array::rev_iter(self : Array[T]) -> Iter[T] {
 /// test {
 ///   let arr = [10, 20, 30]
 ///   let mut sum = 0
-///   arr.iter2().each((i, x) => sum = sum + i + x)
+///   arr.iter2().each((i, x) => sum += i + x)
 ///   inspect(sum, content="63") // (0 + 10) + (1 + 20) + (2 + 30) = 63
 /// }
 /// ```
@@ -1842,7 +1842,7 @@ pub fn[A] Array::iter2(self : Array[A]) -> Iter2[Int, A] {
 ///
 /// ```mbt check
 /// test {
-///   let arr : Array[Int] = Array::default()
+///   let arr : Array[Int] = []
 ///   inspect(arr.length(), content="0")
 ///   inspect(arr.is_empty(), content="true")
 /// }

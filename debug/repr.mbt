@@ -161,6 +161,31 @@ pub fn Repr::traverse(self : Repr, f : (Repr) -> Repr) -> Repr {
 }
 
 ///|
+/// Converts any value implementing `Debug` into a `Repr`.
+///
+/// This is the constructor of `Repr`, so it is written `Repr(value)`, and it is
+/// re-exported by the prelude — no import is needed.
+///
+/// Parameters:
+///
+/// * `value` : The value to convert.
+///
+/// Returns the `Repr` representation of `value`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(Repr(42), content="42")
+///   inspect(Repr("hello"), content="\"hello\"")
+///   inspect(Repr([1, 2]), content="[1, 2]")
+/// }
+/// ```
+pub fn[T : Debug] Repr::Repr(value : T) -> Repr {
+  Debug::to_repr(value)
+}
+
+///|
 /// Construct a `Integer` leaf.
 #doc(hidden)
 pub fn Repr::integer(x : String) -> Repr {

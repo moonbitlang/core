@@ -57,7 +57,7 @@ pub fn monotonic_clock_start() -> Timestamp = "__moonbit_time_unstable" "instant
 ///   let start = @bench.monotonic_clock_start()
 ///   let mut x = 0
 ///   for _ in 0..<100 {
-///     x = x + 1
+///     x += 1
 ///   }
 ///   ignore(x)
 ///   let elapsed_us = @bench.monotonic_clock_end(start)

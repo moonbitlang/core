@@ -196,7 +196,7 @@ test "from_iter matches forward add with duplicates" {
 test "each on empty set" {
   let s = @hashset.new()
   let mut count = 0
-  s.each((_x : Int) => count = count + 1)
+  s.each((_x : Int) => count += 1)
   inspect(count, content="0")
 }
 
@@ -301,10 +301,7 @@ test "HAMT::union with branch" {
 }
 
 ///|
-struct MyString(String) derive(@debug.Debug)
-
-///|
-pub extend MyString with @debug.Debug::{to_repr}
+priv struct MyString(String) derive(@debug.Debug)
 
 ///|
 impl Hash for MyString with fn hash_combine(_self, hasher) {

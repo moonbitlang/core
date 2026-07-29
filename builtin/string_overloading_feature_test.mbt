@@ -18,7 +18,7 @@ trait FromString {
 }
 
 ///|
-struct MyInt(Int) derive(Debug)
+priv struct MyInt(Int) derive(Debug)
 
 // _ allow in names
 
@@ -28,7 +28,7 @@ impl FromString for MyInt with fn from_string(_s) {
 }
 
 ///|
-struct MyString(String) derive(Debug)
+priv struct MyString(String) derive(Debug)
 
 ///|
 impl FromString for MyString with fn from_string(_s) {
@@ -62,9 +62,3 @@ test {
   // let z0 = FromString::from_string("")
   // ...
 }
-
-///|
-pub extend MyInt with @debug.Debug::{to_repr}
-
-///|
-pub extend MyString with @debug.Debug::{to_repr}

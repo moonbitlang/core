@@ -52,7 +52,7 @@ pub fn[T] FixedArray::get(self : FixedArray[T], idx : Int) -> T? {
 ///
 /// ```mbt check
 /// test {
-///   let arr : FixedArray[Int] = FixedArray::default()
+///   let arr : FixedArray[Int] = ([] : FixedArray[_])
 ///   inspect(arr.length(), content="0")
 ///   inspect(arr.is_empty(), content="true")
 /// }
@@ -284,7 +284,7 @@ test "each" {
     if elem != i + 1 {
       failed = true
     }
-    i = i + 1
+    i += 1
   }
   {
     i = 0
@@ -339,7 +339,7 @@ test "eachi" {
     if index != i || elem != i + 1 {
       failed = true
     }
-    i = i + 1
+    i += 1
   }
   {
     i = 0
@@ -394,7 +394,7 @@ test "rev_each" {
     if elem != i - 1 {
       failed = true
     }
-    i = i - 1
+    i -= 1
   }
   {
     i = 1
@@ -451,8 +451,8 @@ test "rev_eachi" {
     if index != j || elem != i - 1 {
       failed = true
     }
-    i = i - 1
-    j = j + 1
+    i -= 1
+    j += 1
   }
   {
     i = 1
@@ -508,7 +508,7 @@ pub fn[T, U] FixedArray::map(
 
 ///|
 test "map" {
-  let empty : FixedArray[Unit] = FixedArray::default().map(x => x)
+  let empty : FixedArray[Unit] = ([] : FixedArray[_]).map(x => x)
   assert_true(empty == [])
   let simple_arr : FixedArray[_] = [6]
   let simple_doubled = simple_arr.map(x => x * 2)
@@ -547,7 +547,7 @@ pub fn[T, U] FixedArray::mapi(
 
 ///|
 test "mapi" {
-  let empty : FixedArray[Int] = FixedArray::default().mapi((i, x) => x + i)
+  let empty : FixedArray[Int] = ([] : FixedArray[_]).mapi((i, x) => x + i)
   assert_true(empty == [])
   let simple_arr : FixedArray[_] = [6]
   let simple_doubled = simple_arr.mapi((i, x) => x * 2 + i)
@@ -1387,7 +1387,7 @@ test "iter" {
   iter.each(x => {
     exb.write_string(x.to_string())
     exb.write_char('\n')
-    i = i + 1
+    i += 1
   })
   assert_true(i == arr.length())
   inspect(

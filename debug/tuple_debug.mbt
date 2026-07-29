@@ -15,7 +15,7 @@
 ///|
 pub impl[A : Debug, B : Debug] Debug for (A, B) with fn to_repr(self) {
   let (a, b) = self
-  Repr::tuple([to_repr(a), to_repr(b)])
+  Repr::tuple([Repr(a), Repr(b)])
 }
 
 ///|
@@ -23,7 +23,7 @@ pub impl[A : Debug, B : Debug, C : Debug] Debug for (A, B, C) with fn to_repr(
   self,
 ) {
   let (a, b, c) = self
-  Repr::tuple([to_repr(a), to_repr(b), to_repr(c)])
+  Repr::tuple([Repr(a), Repr(b), Repr(c)])
 }
 
 ///|
@@ -31,7 +31,7 @@ pub impl[A : Debug, B : Debug, C : Debug, D : Debug] Debug for (A, B, C, D) with
   self,
 ) {
   let (a, b, c, d) = self
-  Repr::tuple([to_repr(a), to_repr(b), to_repr(c), to_repr(d)])
+  Repr::tuple([Repr(a), Repr(b), Repr(c), Repr(d)])
 }
 
 ///|
@@ -43,7 +43,7 @@ pub impl[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug] Debug for (
   E,
 ) with fn to_repr(self) {
   let (a, b, c, d, e) = self
-  Repr::tuple([to_repr(a), to_repr(b), to_repr(c), to_repr(d), to_repr(e)])
+  Repr::tuple([Repr(a), Repr(b), Repr(c), Repr(d), Repr(e)])
 }
 
 ///|
@@ -56,14 +56,7 @@ pub impl[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug, F : Debug] Debug
   F,
 ) with fn to_repr(self) {
   let (a, b, c, d, e, f) = self
-  Repr::tuple([
-    to_repr(a),
-    to_repr(b),
-    to_repr(c),
-    to_repr(d),
-    to_repr(e),
-    to_repr(f),
-  ])
+  Repr::tuple([Repr(a), Repr(b), Repr(c), Repr(d), Repr(e), Repr(f)])
 }
 
 ///|
@@ -77,15 +70,7 @@ pub impl[
   G : Debug,
 ] Debug for (A, B, C, D, E, F, G) with fn to_repr(self) {
   let (a, b, c, d, e, f, g) = self
-  Repr::tuple([
-    to_repr(a),
-    to_repr(b),
-    to_repr(c),
-    to_repr(d),
-    to_repr(e),
-    to_repr(f),
-    to_repr(g),
-  ])
+  Repr::tuple([Repr(a), Repr(b), Repr(c), Repr(d), Repr(e), Repr(f), Repr(g)])
 }
 
 ///|
@@ -101,14 +86,14 @@ pub impl[
 ] Debug for (A, B, C, D, E, F, G, H) with fn to_repr(self) {
   let (a, b, c, d, e, f, g, h) = self
   Repr::tuple([
-    to_repr(a),
-    to_repr(b),
-    to_repr(c),
-    to_repr(d),
-    to_repr(e),
-    to_repr(f),
-    to_repr(g),
-    to_repr(h),
+    Repr(a),
+    Repr(b),
+    Repr(c),
+    Repr(d),
+    Repr(e),
+    Repr(f),
+    Repr(g),
+    Repr(h),
   ])
 }
 
@@ -126,15 +111,15 @@ pub impl[
 ] Debug for (A, B, C, D, E, F, G, H, I) with fn to_repr(self) {
   let (a, b, c, d, e, f, g, h, i) = self
   Repr::tuple([
-    to_repr(a),
-    to_repr(b),
-    to_repr(c),
-    to_repr(d),
-    to_repr(e),
-    to_repr(f),
-    to_repr(g),
-    to_repr(h),
-    to_repr(i),
+    Repr(a),
+    Repr(b),
+    Repr(c),
+    Repr(d),
+    Repr(e),
+    Repr(f),
+    Repr(g),
+    Repr(h),
+    Repr(i),
   ])
 }
 
@@ -153,16 +138,16 @@ pub impl[
 ] Debug for (A, B, C, D, E, F, G, H, I, J) with fn to_repr(self) {
   let (a, b, c, d, e, f, g, h, i, j) = self
   Repr::tuple([
-    to_repr(a),
-    to_repr(b),
-    to_repr(c),
-    to_repr(d),
-    to_repr(e),
-    to_repr(f),
-    to_repr(g),
-    to_repr(h),
-    to_repr(i),
-    to_repr(j),
+    Repr(a),
+    Repr(b),
+    Repr(c),
+    Repr(d),
+    Repr(e),
+    Repr(f),
+    Repr(g),
+    Repr(h),
+    Repr(i),
+    Repr(j),
   ])
 }
 
@@ -182,17 +167,17 @@ pub impl[
 ] Debug for (A, B, C, D, E, F, G, H, I, J, K) with fn to_repr(self) {
   let (a, b, c, d, e, f, g, h, i, j, k) = self
   Repr::tuple([
-    to_repr(a),
-    to_repr(b),
-    to_repr(c),
-    to_repr(d),
-    to_repr(e),
-    to_repr(f),
-    to_repr(g),
-    to_repr(h),
-    to_repr(i),
-    to_repr(j),
-    to_repr(k),
+    Repr(a),
+    Repr(b),
+    Repr(c),
+    Repr(d),
+    Repr(e),
+    Repr(f),
+    Repr(g),
+    Repr(h),
+    Repr(i),
+    Repr(j),
+    Repr(k),
   ])
 }
 
@@ -213,18 +198,18 @@ pub impl[
 ] Debug for (A, B, C, D, E, F, G, H, I, J, K, L) with fn to_repr(self) {
   let (a, b, c, d, e, f, g, h, i, j, k, l) = self
   Repr::tuple([
-    to_repr(a),
-    to_repr(b),
-    to_repr(c),
-    to_repr(d),
-    to_repr(e),
-    to_repr(f),
-    to_repr(g),
-    to_repr(h),
-    to_repr(i),
-    to_repr(j),
-    to_repr(k),
-    to_repr(l),
+    Repr(a),
+    Repr(b),
+    Repr(c),
+    Repr(d),
+    Repr(e),
+    Repr(f),
+    Repr(g),
+    Repr(h),
+    Repr(i),
+    Repr(j),
+    Repr(k),
+    Repr(l),
   ])
 }
 
@@ -246,19 +231,19 @@ pub impl[
 ] Debug for (A, B, C, D, E, F, G, H, I, J, K, L, M) with fn to_repr(self) {
   let (a, b, c, d, e, f, g, h, i, j, k, l, m) = self
   Repr::tuple([
-    to_repr(a),
-    to_repr(b),
-    to_repr(c),
-    to_repr(d),
-    to_repr(e),
-    to_repr(f),
-    to_repr(g),
-    to_repr(h),
-    to_repr(i),
-    to_repr(j),
-    to_repr(k),
-    to_repr(l),
-    to_repr(m),
+    Repr(a),
+    Repr(b),
+    Repr(c),
+    Repr(d),
+    Repr(e),
+    Repr(f),
+    Repr(g),
+    Repr(h),
+    Repr(i),
+    Repr(j),
+    Repr(k),
+    Repr(l),
+    Repr(m),
   ])
 }
 
@@ -281,20 +266,20 @@ pub impl[
 ] Debug for (A, B, C, D, E, F, G, H, I, J, K, L, M, N) with fn to_repr(self) {
   let (a, b, c, d, e, f, g, h, i, j, k, l, m, n) = self
   Repr::tuple([
-    to_repr(a),
-    to_repr(b),
-    to_repr(c),
-    to_repr(d),
-    to_repr(e),
-    to_repr(f),
-    to_repr(g),
-    to_repr(h),
-    to_repr(i),
-    to_repr(j),
-    to_repr(k),
-    to_repr(l),
-    to_repr(m),
-    to_repr(n),
+    Repr(a),
+    Repr(b),
+    Repr(c),
+    Repr(d),
+    Repr(e),
+    Repr(f),
+    Repr(g),
+    Repr(h),
+    Repr(i),
+    Repr(j),
+    Repr(k),
+    Repr(l),
+    Repr(m),
+    Repr(n),
   ])
 }
 
@@ -318,21 +303,21 @@ pub impl[
 ] Debug for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O) with fn to_repr(self) {
   let (a, b, c, d, e, f, g, h, i, j, k, l, m, n, o) = self
   Repr::tuple([
-    to_repr(a),
-    to_repr(b),
-    to_repr(c),
-    to_repr(d),
-    to_repr(e),
-    to_repr(f),
-    to_repr(g),
-    to_repr(h),
-    to_repr(i),
-    to_repr(j),
-    to_repr(k),
-    to_repr(l),
-    to_repr(m),
-    to_repr(n),
-    to_repr(o),
+    Repr(a),
+    Repr(b),
+    Repr(c),
+    Repr(d),
+    Repr(e),
+    Repr(f),
+    Repr(g),
+    Repr(h),
+    Repr(i),
+    Repr(j),
+    Repr(k),
+    Repr(l),
+    Repr(m),
+    Repr(n),
+    Repr(o),
   ])
 }
 
@@ -359,22 +344,22 @@ pub impl[
 ) {
   let (a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p) = self
   Repr::tuple([
-    to_repr(a),
-    to_repr(b),
-    to_repr(c),
-    to_repr(d),
-    to_repr(e),
-    to_repr(f),
-    to_repr(g),
-    to_repr(h),
-    to_repr(i),
-    to_repr(j),
-    to_repr(k),
-    to_repr(l),
-    to_repr(m),
-    to_repr(n),
-    to_repr(o),
-    to_repr(p),
+    Repr(a),
+    Repr(b),
+    Repr(c),
+    Repr(d),
+    Repr(e),
+    Repr(f),
+    Repr(g),
+    Repr(h),
+    Repr(i),
+    Repr(j),
+    Repr(k),
+    Repr(l),
+    Repr(m),
+    Repr(n),
+    Repr(o),
+    Repr(p),
   ])
 }
 
@@ -402,23 +387,23 @@ pub impl[
 ) {
   let (a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q) = self
   Repr::tuple([
-    to_repr(a),
-    to_repr(b),
-    to_repr(c),
-    to_repr(d),
-    to_repr(e),
-    to_repr(f),
-    to_repr(g),
-    to_repr(h),
-    to_repr(i),
-    to_repr(j),
-    to_repr(k),
-    to_repr(l),
-    to_repr(m),
-    to_repr(n),
-    to_repr(o),
-    to_repr(p),
-    to_repr(q),
+    Repr(a),
+    Repr(b),
+    Repr(c),
+    Repr(d),
+    Repr(e),
+    Repr(f),
+    Repr(g),
+    Repr(h),
+    Repr(i),
+    Repr(j),
+    Repr(k),
+    Repr(l),
+    Repr(m),
+    Repr(n),
+    Repr(o),
+    Repr(p),
+    Repr(q),
   ])
 }
 
@@ -447,24 +432,24 @@ pub impl[
 ) {
   let (a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r) = self
   Repr::tuple([
-    to_repr(a),
-    to_repr(b),
-    to_repr(c),
-    to_repr(d),
-    to_repr(e),
-    to_repr(f),
-    to_repr(g),
-    to_repr(h),
-    to_repr(i),
-    to_repr(j),
-    to_repr(k),
-    to_repr(l),
-    to_repr(m),
-    to_repr(n),
-    to_repr(o),
-    to_repr(p),
-    to_repr(q),
-    to_repr(r),
+    Repr(a),
+    Repr(b),
+    Repr(c),
+    Repr(d),
+    Repr(e),
+    Repr(f),
+    Repr(g),
+    Repr(h),
+    Repr(i),
+    Repr(j),
+    Repr(k),
+    Repr(l),
+    Repr(m),
+    Repr(n),
+    Repr(o),
+    Repr(p),
+    Repr(q),
+    Repr(r),
   ])
 }
 
@@ -494,25 +479,25 @@ pub impl[
 ) {
   let (a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s) = self
   Repr::tuple([
-    to_repr(a),
-    to_repr(b),
-    to_repr(c),
-    to_repr(d),
-    to_repr(e),
-    to_repr(f),
-    to_repr(g),
-    to_repr(h),
-    to_repr(i),
-    to_repr(j),
-    to_repr(k),
-    to_repr(l),
-    to_repr(m),
-    to_repr(n),
-    to_repr(o),
-    to_repr(p),
-    to_repr(q),
-    to_repr(r),
-    to_repr(s),
+    Repr(a),
+    Repr(b),
+    Repr(c),
+    Repr(d),
+    Repr(e),
+    Repr(f),
+    Repr(g),
+    Repr(h),
+    Repr(i),
+    Repr(j),
+    Repr(k),
+    Repr(l),
+    Repr(m),
+    Repr(n),
+    Repr(o),
+    Repr(p),
+    Repr(q),
+    Repr(r),
+    Repr(s),
   ])
 }
 
@@ -543,26 +528,26 @@ pub impl[
 ) {
   let (a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t) = self
   Repr::tuple([
-    to_repr(a),
-    to_repr(b),
-    to_repr(c),
-    to_repr(d),
-    to_repr(e),
-    to_repr(f),
-    to_repr(g),
-    to_repr(h),
-    to_repr(i),
-    to_repr(j),
-    to_repr(k),
-    to_repr(l),
-    to_repr(m),
-    to_repr(n),
-    to_repr(o),
-    to_repr(p),
-    to_repr(q),
-    to_repr(r),
-    to_repr(s),
-    to_repr(t),
+    Repr(a),
+    Repr(b),
+    Repr(c),
+    Repr(d),
+    Repr(e),
+    Repr(f),
+    Repr(g),
+    Repr(h),
+    Repr(i),
+    Repr(j),
+    Repr(k),
+    Repr(l),
+    Repr(m),
+    Repr(n),
+    Repr(o),
+    Repr(p),
+    Repr(q),
+    Repr(r),
+    Repr(s),
+    Repr(t),
   ])
 }
 
@@ -594,27 +579,27 @@ pub impl[
 ) {
   let (a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u) = self
   Repr::tuple([
-    to_repr(a),
-    to_repr(b),
-    to_repr(c),
-    to_repr(d),
-    to_repr(e),
-    to_repr(f),
-    to_repr(g),
-    to_repr(h),
-    to_repr(i),
-    to_repr(j),
-    to_repr(k),
-    to_repr(l),
-    to_repr(m),
-    to_repr(n),
-    to_repr(o),
-    to_repr(p),
-    to_repr(q),
-    to_repr(r),
-    to_repr(s),
-    to_repr(t),
-    to_repr(u),
+    Repr(a),
+    Repr(b),
+    Repr(c),
+    Repr(d),
+    Repr(e),
+    Repr(f),
+    Repr(g),
+    Repr(h),
+    Repr(i),
+    Repr(j),
+    Repr(k),
+    Repr(l),
+    Repr(m),
+    Repr(n),
+    Repr(o),
+    Repr(p),
+    Repr(q),
+    Repr(r),
+    Repr(s),
+    Repr(t),
+    Repr(u),
   ])
 }
 
@@ -647,27 +632,27 @@ pub impl[
 ) {
   let (a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v) = self
   Repr::tuple([
-    to_repr(a),
-    to_repr(b),
-    to_repr(c),
-    to_repr(d),
-    to_repr(e),
-    to_repr(f),
-    to_repr(g),
-    to_repr(h),
-    to_repr(i),
-    to_repr(j),
-    to_repr(k),
-    to_repr(l),
-    to_repr(m),
-    to_repr(n),
-    to_repr(o),
-    to_repr(p),
-    to_repr(q),
-    to_repr(r),
-    to_repr(s),
-    to_repr(t),
-    to_repr(u),
-    to_repr(v),
+    Repr(a),
+    Repr(b),
+    Repr(c),
+    Repr(d),
+    Repr(e),
+    Repr(f),
+    Repr(g),
+    Repr(h),
+    Repr(i),
+    Repr(j),
+    Repr(k),
+    Repr(l),
+    Repr(m),
+    Repr(n),
+    Repr(o),
+    Repr(p),
+    Repr(q),
+    Repr(r),
+    Repr(s),
+    Repr(t),
+    Repr(u),
+    Repr(v),
   ])
 }

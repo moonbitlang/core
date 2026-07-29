@@ -24,6 +24,7 @@ pub fn[T : Debug] to_string(T) -> String
 
 // Types and methods
 type Repr
+pub fn[T : Debug] Repr::Repr(T) -> Self
 pub fn Repr::to_string(Self) -> String
 pub impl Show for Repr
 pub impl Debug for Repr
@@ -32,7 +33,7 @@ pub impl Debug for Repr
 
 // Traits
 pub(open) trait Debug {
-  #as_free_fn
+  #as_free_fn(deprecated)
   fn to_repr(Self) -> Repr
 }
 pub impl Debug for Unit

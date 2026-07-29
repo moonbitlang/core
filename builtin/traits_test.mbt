@@ -22,7 +22,7 @@ test "write_iter with trailing" {
 }
 
 ///|
-struct Data {
+priv struct Data {
   x : Array[Int]
   y : FixedArray[Int]
 } derive(Hash, Eq, Debug)
@@ -46,10 +46,10 @@ struct TestLogger {
 }
 
 ///|
-struct Pair {
+priv struct Pair {
   left : Int
   right : Int
-} derive(Eq, Debug)
+} derive(Eq)
 
 ///|
 struct Wrapper {
@@ -63,7 +63,7 @@ impl Eq for Wrapper with fn equal(self, other) {
 
 ///|
 impl Logger for TestLogger with fn write_view(self, value) {
-  self.output = self.output + value.to_owned()
+  self.output += value.to_owned()
 }
 
 ///|
@@ -89,18 +89,3 @@ test "Logger defaults" {
   Logger::write_char(logger, '!')
   inspect(logger.output, content="hi!")
 }
-
-///|
-pub extend Pair with @debug.Debug::{to_repr}
-
-///|
-pub extend Pair with Eq::{equal, not_equal}
-
-///|
-pub extend Data with @debug.Debug::{to_repr}
-
-///|
-pub extend Data with Eq::{equal, not_equal}
-
-///|
-pub extend Data with Hash::{hash, hash_combine}

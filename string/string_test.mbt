@@ -24,7 +24,7 @@ test "String::from_iter" {
 
 ///|
 test "default" {
-  inspect(String::default())
+  inspect("")
 }
 
 ///|
@@ -262,9 +262,7 @@ test "to_array" {
 ///|
 test "chars" {
   let mut str = ""
-  "A😊𠮷BA😊𠮷B"
-  .iter()
-  .each(c => str = str + c.to_int().to_string() + "\n")
+  "A😊𠮷BA😊𠮷B".iter().each(c => str += c.to_int().to_string() + "\n")
   inspect(
     str,
     content=(
@@ -294,7 +292,7 @@ test "rev_iter" {
   let mut str = ""
   "A😊𠮷BA😊𠮷B"
   .rev_iter()
-  .each(c => str = str + c.to_int().to_string() + "\n")
+  .each(c => str += c.to_int().to_string() + "\n")
   inspect(
     str,
     content=(
@@ -322,9 +320,7 @@ test "rev_iter" {
 ///|
 test "iter2" {
   let mut str = ""
-  "A😊𠮷BA😊𠮷B"
-  .iter2()
-  .each((i, c) => str = str + "\{i}: \{c.to_int()} \n")
+  "A😊𠮷BA😊𠮷B".iter2().each((i, c) => str += "\{i}: \{c.to_int()} \n")
   inspect(
     str,
     content=(
@@ -876,7 +872,7 @@ test "length_eq" {
 }
 
 ///|
-enum StringPatternToken {
+priv enum StringPatternToken {
   True
   False
   Other
@@ -1023,8 +1019,5 @@ test "guard const" {
 
 ///|
 test "string default" {
-  inspect(String::default(), content="")
+  inspect("", content="")
 }
-
-///|
-pub extend StringPatternToken with Debug::{to_repr}

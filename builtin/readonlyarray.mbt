@@ -187,7 +187,7 @@ pub fn[T] ReadOnlyArray::last(self : ReadOnlyArray[T]) -> T? {
 /// test {
 ///   let arr : ReadOnlyArray[Int] = [1, 2, 3]
 ///   let mut sum = 0
-///   arr.iter().each(fn(x) { sum = sum + x })
+///   arr.iter().each(fn(x) { sum += x })
 ///   inspect(sum, content="6")
 /// }
 /// ```
@@ -204,7 +204,7 @@ pub fn[T] ReadOnlyArray::iter(self : ReadOnlyArray[T]) -> Iter[T] {
 /// test {
 ///   let arr : ReadOnlyArray[Int] = [10, 20, 30]
 ///   let mut sum = 0
-///   arr.iter2().each(fn(i, x) { sum = sum + i + x })
+///   arr.iter2().each(fn(i, x) { sum += i + x })
 ///   inspect(sum, content="63") // (0+10) + (1+20) + (2+30) = 63
 /// }
 /// ```
@@ -932,7 +932,7 @@ pub fn[A : ToStringView] ReadOnlyArray::join(
 ///|
 /// Default implementation for ReadOnlyArray - returns empty array.
 pub impl[T] Default for ReadOnlyArray[T] with fn default() {
-  unsafe_reinterpret_from_fixed_array(FixedArray::default())
+  unsafe_reinterpret_from_fixed_array(([] : FixedArray[_]))
 }
 
 ///|

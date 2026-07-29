@@ -137,7 +137,7 @@ test "iter" {
     buf.write_string("\n")
   }
   for k, v in map {
-    buf.write_string("(\{k}, \{@debug.to_repr(v)})")
+    buf.write_string("(\{k}, \{Repr(v)})")
     buf.write_string("\n")
   }
   inspect(

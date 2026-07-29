@@ -14,7 +14,7 @@
 
 ///|
 test "String::default implementation" {
-  let s : String = String::default()
+  let s : String = ""
   inspect(s, content="")
   inspect(s.length(), content="0")
 }
@@ -32,13 +32,13 @@ test "String iter2 with surrogate pairs" {
     if i < 3 {
       result.push((idx, c))
     }
-    i = i + 1
+    i += 1
   })
   debug_inspect(result, content="[(0, 'H'), (1, 'e'), (2, 'l')]")
 
   // Count characters using iter2
   let mut count = 0
-  s.iter2().each((_, _) => count = count + 1)
+  s.iter2().each((_, _) => count += 1)
   inspect(count, content="11") // 5 chars + emoji + 5 chars
 }
 
@@ -67,7 +67,7 @@ test "View::compare identical" {
 
 ///|
 test "View::default and hash" {
-  let v : StringView = StringView::default()
+  let v : StringView = (Default::default() : StringView)
   inspect(v, content="")
   let v1 = "abc".view()
   let v2 = "abc".view()

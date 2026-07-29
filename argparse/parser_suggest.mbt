@@ -34,20 +34,25 @@ fn suggest_short(short : Char, short_index : Map[Char, Arg]) -> String? {
 }
 
 ///|
+/// Pick the candidate closest to `input` in UTF-16 code-unit Levenshtein
+/// distance, keeping the first candidate on ties. The threshold is derived
+/// from the input length in the same code units; candidates beyond it are
+/// rejected by the banded search without computing their full distance.
 fn suggest_name(input : StringView, candidates : Array[String]) -> String? {
   let max_dist = suggestion_threshold(input.length())
   for cand in candidates; best = (None : String?), best_dist = 0 {
-    let dist = levenshtein(input, cand)
-    if best is None || dist < best_dist {
-      continue Some(cand), dist
-    } else {
-      continue best, best_dist
+    match
+      @edit_distance.edit_distance_str_within(
+        input,
+        cand,
+        max_distance=max_dist,
+      ) {
+      Some(dist) if best is None || dist < best_dist =>
+        continue Some(cand), dist
+      _ => continue best, best_dist
     }
   } nobreak {
-    match best {
-      Some(name) if best_dist <= max_dist => Some(name)
-      _ => None
-    }
+    best
   }
 }
 
@@ -60,44 +65,4 @@ fn suggestion_threshold(len : Int) -> Int {
   } else {
     3
   }
-}
-
-///|
-fn levenshtein(a : StringView, b : StringView) -> Int {
-  let aa = a.to_array()
-  let bb = b.to_array()
-  let m = aa.length()
-  let n = bb.length()
-  if m == 0 {
-    return n
-  }
-  if n == 0 {
-    return m
-  }
-  let mut prev = Array::makei(n + 1, j => j)
-  let mut curr = Array::make(n + 1, 0)
-  for i in 1..<(m + 1) {
-    curr[0] = i
-    for j2 in 1..<(n + 1) {
-      let cost = if aa[i - 1] == bb[j2 - 1] { 0 } else { 1 }
-      let del = prev[j2] + 1
-      let ins = curr[j2 - 1] + 1
-      let sub = prev[j2 - 1] + cost
-      curr[j2] = if del < ins {
-        if del < sub {
-          del
-        } else {
-          sub
-        }
-      } else if ins < sub {
-        ins
-      } else {
-        sub
-      }
-    }
-    let temp = prev
-    prev = curr
-    curr = temp
-  }
-  prev[n]
 }

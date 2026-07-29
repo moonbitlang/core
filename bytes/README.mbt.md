@@ -30,7 +30,7 @@ test "bytes creation" {
   )
 
   // Create empty bytes
-  let empty = Bytes::default()
+  let empty = (Default::default() : Bytes)
   inspect(
     empty,
     content=(

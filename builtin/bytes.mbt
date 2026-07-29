@@ -680,7 +680,7 @@ pub fn BytesView::to_array(self : BytesView) -> Array[Byte] {
 /// test {
 ///   let bytes = Bytes::from_array([b'h', b'i'])
 ///   let mut sum = 0
-///   bytes.iter().each(b => sum = sum + b.to_int())
+///   bytes.iter().each(b => sum += b.to_int())
 ///   inspect(sum, content="209") // ASCII values: 'h'(104) + 'i'(105) = 209
 /// }
 /// ```
@@ -742,7 +742,7 @@ pub fn Bytes::iter2(self : Bytes) -> Iter2[Int, Byte] {
 ///
 /// ```mbt check
 /// test {
-///   let bytes = Bytes::default()
+///   let bytes = (Default::default() : Bytes)
 ///   inspect(bytes, content="b\"\"")
 ///   inspect(bytes.length(), content="0")
 /// }

@@ -18,7 +18,7 @@ struct MyBigInt(BigInt)
 ///|
 impl Show for MyBigInt with fn output(self, logger) {
   logger.write_string(
-    "{limbs : \{@debug.to_repr(self.limbs)}, sign : \{@debug.to_repr(self.sign)}, len : \{self.len} }",
+    "{limbs : \{@debug.Repr(self.limbs)}, sign : \{@debug.Repr(self.sign)}, len : \{self.len} }",
   )
 }
 
@@ -67,13 +67,13 @@ fn check_invariant(a : BigInt) -> Unit raise {
   } else {
     guard a.len == 1 && a.limbs[0] == 0 else {
       fail(
-        "invariant (forall 0 <= i < len. limbs[i] == 0) => limbs[0] == 0 and len == 1 is broken: len = \{a.len}, limbs = \{@debug.to_repr(a.limbs)}",
+        "invariant (forall 0 <= i < len. limbs[i] == 0) => limbs[0] == 0 and len == 1 is broken: len = \{a.len}, limbs = \{@debug.Repr(a.limbs)}",
       )
     }
   }
   guard a.limbs.iter().drop(a.len).all(x => x == 0) else {
     fail(
-      "invariant forall len <= i < limbs.length(). limbs[i] == 0 is broken: len = \{a.len}, limbs = \{@debug.to_repr(a.limbs)}",
+      "invariant forall len <= i < limbs.length(). limbs[i] == 0 is broken: len = \{a.len}, limbs = \{@debug.Repr(a.limbs)}",
     )
   }
 }

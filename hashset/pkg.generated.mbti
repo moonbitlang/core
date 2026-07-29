@@ -26,7 +26,6 @@ pub fn[K] HashSet::clear(Self[K]) -> Unit
 pub fn[K : Hash + Eq] HashSet::contains(Self[K], K) -> Bool
 #alias(clone, deprecated)
 pub fn[K] HashSet::copy(Self[K]) -> Self[K]
-pub fn[K] HashSet::default() -> Self[K]
 pub fn[K : Hash + Eq] HashSet::difference(Self[K], Self[K]) -> Self[K]
 pub fn[K] HashSet::each(Self[K], (K) -> Unit raise?) -> Unit raise?
 pub fn[K] HashSet::eachi(Self[K], (Int, K) -> Unit raise?) -> Unit raise?
@@ -55,8 +54,6 @@ pub fn[K] HashSet::retain(Self[K], (K) -> Bool) -> Unit
 pub fn[K : Hash + Eq] HashSet::sub(Self[K], Self[K]) -> Self[K]
 pub fn[K : Hash + Eq] HashSet::symmetric_difference(Self[K], Self[K]) -> Self[K]
 pub fn[K] HashSet::to_array(Self[K]) -> Array[K]
-#deprecated
-pub fn[K : @debug.Debug] HashSet::to_repr(Self[K]) -> @debug.Repr
 pub fn[K : Hash + Eq] HashSet::union(Self[K], Self[K]) -> Self[K]
 pub impl[K : Hash + Eq] BitAnd for HashSet[K]
 pub impl[K : Hash + Eq] BitOr for HashSet[K]

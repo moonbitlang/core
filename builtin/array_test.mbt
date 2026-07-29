@@ -221,7 +221,7 @@ test "array_sort_by_pred_skip_duplicates" {
 test "array_each" {
   let arr = [1, 2, 3]
   let mut sum = 0
-  arr.each(x => sum = sum + x)
+  arr.each(x => sum += x)
   @test.assert_eq(sum, 6)
 }
 
@@ -229,7 +229,7 @@ test "array_each" {
 test "array_rev_each" {
   let arr = [1, 2, 3]
   let mut sum = 0
-  arr.rev_each(x => sum = sum + x)
+  arr.rev_each(x => sum += x)
   inspect(sum, content="6")
 }
 
@@ -237,7 +237,7 @@ test "array_rev_each" {
 test "array_eachi" {
   let arr = [1, 2, 3]
   let mut sum = 0
-  arr.eachi((i, x) => sum = sum + i + x)
+  arr.eachi((i, x) => sum += i + x)
   @test.assert_eq(sum, 9)
 }
 
@@ -771,13 +771,13 @@ test "array of bytes, new & push" {
 }
 
 ///|
-struct MX {
+priv struct MX {
   mm_num : Array[Int]
 } derive(Default, ToJson)
 
 ///|
 test {
-  @json.json_inspect(MX::default(), content={ "mm_num": [] })
+  @json.json_inspect((Default::default() : MX), content={ "mm_num": [] })
 }
 
 ///|
@@ -1599,9 +1599,3 @@ test "timsort_early_return_for_small_arrays" {
   // With the bug, we get at least 45 + 9 = 54 comparisons.
   inspect(count.val, content="45")
 }
-
-///|
-pub extend MX with Default::{default}
-
-///|
-pub extend MX with ToJson::{to_json}

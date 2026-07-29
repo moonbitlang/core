@@ -15,7 +15,7 @@
 ///|
 test {
   let args = @env.args()
-  assert_true(args.length() != 0)
+  assert_true(!args.is_empty())
 }
 
 ///|

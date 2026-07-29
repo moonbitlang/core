@@ -407,7 +407,7 @@ pub fn[A] Vector::concat(self : Vector[A], other : Vector[A]) -> Vector[A] {
         size,
         self.shift,
       )
-    } else if self.tail.length() == 0 {
+    } else if self.tail.is_empty() {
       return make_t(self.tree, other.tail, size, self.shift)
     } else {
       let (tree, shift) = self.normalize_tree()
@@ -416,7 +416,7 @@ pub fn[A] Vector::concat(self : Vector[A], other : Vector[A]) -> Vector[A] {
   }
   let (tree, shift) = if self.tree is Empty {
     Tree::concat(Leaf(self.tail), 0, other.tree, other.shift, true)
-  } else if self.tail.length() == 0 {
+  } else if self.tail.is_empty() {
     Tree::concat(self.tree, self.shift, other.tree, other.shift, true)
   } else {
     Tree::concat_with_suffix(
@@ -780,8 +780,8 @@ pub impl[A : @json.FromJson] @json.FromJson for Vector[A] with fn from_json(
 ///   let arr2 = @vector.from_array([1, 2, 4])
 ///   let arr3 = @vector.from_array([1, 2])
 ///   inspect(arr1.compare(arr2), content="-1") // arr1 < arr2
-///   inspect(arr1.compare(arr3), content="1") // arr2 > arr1
-///   inspect(arr3.compare(arr1), content="-1") // arr1 > arr3 (longer)
+///   inspect(arr1.compare(arr3), content="1") // arr1 > arr3 (longer)
+///   inspect(arr3.compare(arr1), content="-1") // arr3 < arr1 (shorter)
 ///   inspect(arr1.compare(arr1), content="0") // arr1 = arr1
 /// }
 /// ```
@@ -862,7 +862,7 @@ fn tail_len_of_size(size : Int) -> Int {
 fn[A] Vector::normalize_tree(self : Vector[A]) -> (Tree[A], Int) {
   if self.size == 0 {
     (Tree::empty(), 0)
-  } else if self.tail.length() == 0 {
+  } else if self.tail.is_empty() {
     (self.tree, self.shift)
   } else if self.tail_offset() == 0 {
     (Leaf(self.tail), 0)

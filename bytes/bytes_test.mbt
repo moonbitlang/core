@@ -192,7 +192,7 @@ test "to_fixedarray with no length specified" {
 
 ///|
 test "test empty bytes" {
-  let empty = Bytes::default()
+  let empty = (Default::default() : Bytes)
   inspect(empty.length(), content="0")
 }
 
@@ -211,7 +211,7 @@ test "to_fixedarray with Some length" {
 
 ///|
 test "default_empty_bytes" {
-  let empty = Bytes::default()
+  let empty = (Default::default() : Bytes)
   inspect(empty, content="b\"\"")
   inspect(empty.length(), content="0")
 }

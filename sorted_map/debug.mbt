@@ -18,11 +18,7 @@ pub impl[K : @debug.Debug, V : @debug.Debug] @debug.Debug for SortedMap[K, V] wi
 ) {
   @debug.Repr::opaque_(
     "SortedMap",
-    @debug.Repr::map(
-      [
-        for k, v in self => (@debug.to_repr(k), @debug.to_repr(v))
-      ],
-    ),
+    @debug.Repr::map([ for k, v in self => (Repr(k), Repr(v)) ]),
   )
 }
 

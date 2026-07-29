@@ -154,7 +154,7 @@ test "String::code_units" {
 
 ///|
 test "String default and to_array" {
-  inspect(String::default(), content="")
+  inspect("", content="")
   let chars = "Hi".to_array()
   inspect(chars.length(), content="2")
   inspect(String::from_array(chars), content="Hi")

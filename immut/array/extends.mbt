@@ -20,7 +20,18 @@ pub extend T with Add::{add}
 ///|
 pub extend T with Compare::{compare}
 
+///|
+pub extend T with Eq::{equal}
+
+///|
+pub extend T with Hash::{hash}
+
 // --- deprecated: hidden from the generated interface ---
+
+///|
+#deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
+#doc(hidden)
+pub extend T with @debug.Debug::{to_repr}
 
 ///|
 #deprecated("Use `@quickcheck.Arbitrary::arbitrary` instead", skip_current_package=true)
@@ -33,14 +44,14 @@ pub extend T with @quickcheck.Arbitrary::{arbitrary}
 pub extend T with Compare::{op_ge, op_gt, op_le, op_lt}
 
 ///|
-#deprecated("Use `==` / `!=` instead", skip_current_package=true)
+#deprecated("Use `!=` instead", skip_current_package=true)
 #doc(hidden)
-pub extend T with Eq::{equal, not_equal}
+pub extend T with Eq::{not_equal}
 
 ///|
-#deprecated("Use `Hash::hash` / `Hash::hash_combine` instead", skip_current_package=true)
+#deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
 #doc(hidden)
-pub extend T with Hash::{hash, hash_combine}
+pub extend T with Hash::{hash_combine}
 
 ///|
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)

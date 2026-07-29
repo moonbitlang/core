@@ -15,7 +15,7 @@
 ///|
 #warnings("-deprecated")
 test "to_string with empty FixedArray" {
-  let emptyArray : FixedArray[Int] = FixedArray::default()
+  let emptyArray : FixedArray[Int] = ([] : FixedArray[_])
   @test.assert_eq(emptyArray.to_string(), "[]")
 }
 
@@ -102,7 +102,7 @@ test "fixed array iter with early termination" {
   let mut count = 0
   let iter = arr.iter()
   for x in iter {
-    count = count + 1
+    count += 1
     if x == 2 {
       break
     }
@@ -114,7 +114,7 @@ test "fixed array iter with early termination" {
 test "FixedArray::iter2 with empty array" {
   let arr : FixedArray[Int] = []
   let mut count = 0
-  arr.iter2().each((_, _) => count = count + 1)
+  arr.iter2().each((_, _) => count += 1)
   inspect(count, content="0")
 }
 

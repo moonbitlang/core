@@ -29,7 +29,8 @@
 ///   let x = 42
 ///   ignore(x) // Explicitly ignore the value
 ///   let mut sum = 0
-///   ignore([1, 2, 3].iter().each(x => sum = sum + x)) // Ignore the Unit return value of each()
+///   ignore([1, 2, 3].iter().each(x => sum += x)) // Ignore the Unit return value of each()
+///   inspect(sum, content="6")
 /// }
 /// ```
 pub fn[T] ignore(t : T) -> Unit = "%ignore"
@@ -181,7 +182,7 @@ pub impl Compare for Bool with fn compare(self, other) = "%bool_compare"
 ///
 /// ```mbt check
 /// test {
-///   let b : Bool = Bool::default()
+///   let b : Bool = false
 ///   inspect(b, content="false")
 /// }
 /// ```
@@ -795,7 +796,7 @@ pub fn Int::is_non_neg(self : Int) -> Bool = "%i32_is_non_neg"
 ///
 /// ```mbt check
 /// test {
-///   let x : Int = Int::default()
+///   let x : Int = 0
 ///   inspect(x, content="0")
 /// }
 /// ```
@@ -1177,7 +1178,7 @@ pub impl Compare for Double with fn op_ge(x, y) = "%f64.ge"
 ///
 /// ```mbt check
 /// test {
-///   inspect(Double::default(), content="0")
+///   inspect(0.0, content="0")
 /// }
 /// ```
 pub impl Default for Double with fn default() = "%f64_default"
@@ -1359,7 +1360,7 @@ pub impl Compare for Char with fn op_ge(x, y) = "%i32.ge"
 ///
 /// ```mbt check
 /// test {
-///   assert_true(Char::default().to_string() == "\u0000")
+///   assert_true((Default::default() : Char).to_string() == "\u0000")
 /// }
 /// ```
 pub impl Default for Char with fn default() = "%char_default"

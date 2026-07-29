@@ -321,7 +321,7 @@ test "double/ryu.mbt:403" {
   if acceptBounds {
     vmIsTrailingZeros = mmShift.to_int() == 1
   } else {
-    vp = vp - 1L
+    vp -= 1L
   }
   inspect(vrIsTrailingZeros, content="true")
   inspect(vmIsTrailingZeros, content="true")
