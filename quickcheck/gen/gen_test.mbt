@@ -28,6 +28,12 @@ test "size control" {
 }
 
 ///|
+test "scale transforms the input size" {
+  let generator = @gen.Gen::new((size, _) => size)
+  inspect(generator.scale(size => size * 2 + 1).sample(size=4), content="9")
+}
+
+///|
 test "range and choices" {
   for value in @gen.int_range(-4, 7).samples(count=64) {
     guard value >= -4 && value < 7 else {
@@ -47,6 +53,37 @@ test "range and choices" {
       fail("frequency generated a value outside its inputs")
     }
   }
+}
+
+///|
+test "elements selects only supplied values" {
+  debug_inspect(
+    @gen.elements(["red", "green", "blue"]).samples(count=20),
+    content=(
+      #|[
+      #|  "red",
+      #|  "red",
+      #|  "red",
+      #|  "green",
+      #|  "blue",
+      #|  "red",
+      #|  "red",
+      #|  "red",
+      #|  "blue",
+      #|  "green",
+      #|  "blue",
+      #|  "blue",
+      #|  "red",
+      #|  "red",
+      #|  "blue",
+      #|  "green",
+      #|  "green",
+      #|  "green",
+      #|  "green",
+      #|  "green",
+      #|]
+    ),
+  )
 }
 
 ///|

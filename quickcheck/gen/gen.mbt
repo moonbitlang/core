@@ -83,9 +83,15 @@ pub fn[T] sized(create : (Int) -> Gen[T]) -> Gen[T] {
 }
 
 ///|
+/// Transforms the size supplied to a generator.
+pub fn[T] Gen::scale(self : Gen[T], transform : (Int) -> Int) -> Gen[T] {
+  Gen::new((size, state) => self.run(transform(size), state))
+}
+
+///|
 /// Runs a generator with a fixed size.
 pub fn[T] Gen::resize(self : Gen[T], size : Int) -> Gen[T] {
-  Gen::new((_, state) => self.run(size, state))
+  self.scale(_ => size)
 }
 
 ///|
@@ -108,6 +114,14 @@ pub fn int_range(lower : Int, upper : Int) -> Gen[Int] {
 pub fn[T] one_of(generators : Array[Gen[T]]) -> Gen[T] {
   guard !generators.is_empty() else { abort("one_of: empty array") }
   int_range(0, generators.length()).flat_map(index => generators[index])
+}
+
+///|
+/// Randomly selects one of the supplied values.
+/// @alert unsafe "Panics if `values` is empty."
+pub fn[T] elements(values : Array[T]) -> Gen[T] {
+  guard !values.is_empty() else { abort("elements: empty array") }
+  int_range(0, values.length()).map(index => values[index])
 }
 
 ///|

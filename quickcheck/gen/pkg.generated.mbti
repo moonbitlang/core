@@ -6,6 +6,8 @@ import {
 }
 
 // Values
+pub fn[T] elements(Array[T]) -> Gen[T]
+
 pub fn[T] frequency(Array[(UInt, Gen[T])]) -> Gen[T]
 
 pub fn int_range(Int, Int) -> Gen[Int]
@@ -28,6 +30,7 @@ pub fn[T] Gen::resize(Self[T], Int) -> Self[T]
 pub fn[T] Gen::run(Self[T], Int, @splitmix.RandomState) -> T
 pub fn[T] Gen::sample(Self[T], size? : Int, seed? : UInt64) -> T
 pub fn[T] Gen::samples(Self[T], count? : Int, size? : Int, seed? : UInt64) -> Array[T]
+pub fn[T] Gen::scale(Self[T], (Int) -> Int) -> Self[T]
 
 // Type aliases
 pub using @splitmix {type RandomState}
