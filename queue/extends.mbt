@@ -22,11 +22,6 @@
 pub extend Queue with @debug.Debug::{to_repr}
 
 ///|
-#deprecated("Use `@quickcheck.Arbitrary::arbitrary` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Queue with @quickcheck.Arbitrary::{arbitrary}
-
-///|
 #deprecated("Use `@debug.Debug` instead of `Show` for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md", skip_current_package=true)
 #doc(hidden)
 pub extend Queue with Show::{output, to_string}

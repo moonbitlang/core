@@ -284,23 +284,6 @@ test "from_iter empty iter" {
 }
 
 ///|
-test "queue arbitrary" {
-  let samples : Array[@queue.Queue[Int]] = @quickcheck.samples(20)
-  debug_inspect(
-    samples[1:5],
-    content=(
-      #|<ArrayView: [<Queue: []>, <Queue: []>, <Queue: [0]>, <Queue: [0]>]>
-    ),
-  )
-  debug_inspect(
-    samples[15],
-    content=(
-      #|<Queue: []>
-    ),
-  )
-}
-
-///|
 test "transfer_self" {
   // Test self-transfer: q.transfer(q) should be a no-op
   let q : @queue.Queue[Int] = @queue.from_array([1, 2, 3])

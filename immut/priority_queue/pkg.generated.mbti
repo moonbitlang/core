@@ -3,8 +3,6 @@ package "moonbitlang/core/immut/priority_queue"
 
 import {
   "moonbitlang/core/debug",
-  "moonbitlang/core/quickcheck",
-  "moonbitlang/core/quickcheck/splitmix",
 }
 
 // Values
@@ -43,7 +41,6 @@ pub impl[A : Hash + Compare] Hash for PriorityQueue[A]
 pub impl[A : Show + Compare] Show for PriorityQueue[A]
 pub impl[A : ToJson + Compare] ToJson for PriorityQueue[A]
 pub impl[A : @debug.Debug + Compare] @debug.Debug for PriorityQueue[A]
-pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for PriorityQueue[X]
 
 // Type aliases
 

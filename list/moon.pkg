@@ -2,11 +2,11 @@ import {
   "moonbitlang/core/builtin",
   "moonbitlang/core/array",
   "moonbitlang/core/debug",
-  "moonbitlang/core/quickcheck",
   "moonbitlang/core/json",
 }
 
 import {
+  "moonbitlang/core/quickcheck",
   "moonbitlang/core/test",
 } for "test"
 

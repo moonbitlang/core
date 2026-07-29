@@ -75,11 +75,6 @@ pub extend BigInt with @debug.Debug::{to_repr}
 pub extend BigInt with @json.FromJson::{from_json}
 
 ///|
-#deprecated("Use `@quickcheck.Arbitrary::arbitrary` instead", skip_current_package=true)
-#doc(hidden)
-pub extend BigInt with @quickcheck.Arbitrary::{arbitrary}
-
-///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
 #doc(hidden)
 pub extend BigInt with Compare::{op_lt, op_le, op_ge, op_gt}

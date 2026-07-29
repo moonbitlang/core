@@ -848,13 +848,6 @@ pub fn[A : @json.FromJson + Compare] SortedSet::from_json(
   @json.from_json(json)
 }
 
-///|
-pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for SortedSet[
-  X,
-] with fn arbitrary(size, rs) {
-  @quickcheck.Arbitrary::arbitrary(size, rs) |> SortedSet
-}
-
 // The following are the helper functions or types used by the internal implementation of ImmutableSet
 
 ///|

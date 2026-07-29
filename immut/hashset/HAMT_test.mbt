@@ -247,16 +247,6 @@ test "hashset equality" {
 }
 
 ///|
-test "arbitrary implementation for hashset" {
-  // Use @quickcheck.gen to generate an arbitrary hashset of Int
-  let set : @hashset.HashSet[Int] = @quickcheck.gen()
-  // Make sure the generated set is valid by converting it to array and back
-  let arr = set.iter().to_array()
-  let set2 = @hashset.HashSet(arr)
-  @test.assert_eq(set, set2)
-}
-
-///|
 test "equal between different constructors" {
   let set1 = @hashset.HashSet([])
   let set2 = @hashset.HashSet(["a"])

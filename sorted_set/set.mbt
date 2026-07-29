@@ -479,13 +479,6 @@ pub impl[V : Show] Show for SortedSet[V] with fn output(self, logger) {
 }
 
 ///|
-pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for SortedSet[
-  X,
-] with fn arbitrary(size, rs) {
-  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_iter
-}
-
-///|
 #deprecated("Use @debug.Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 impl[T : Show] Show for Node[T]
 

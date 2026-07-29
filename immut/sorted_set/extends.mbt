@@ -34,11 +34,6 @@ pub extend SortedSet with Sub::{sub}
 pub extend SortedSet with @debug.Debug::{to_repr}
 
 ///|
-#deprecated("Use `@quickcheck.Arbitrary::arbitrary` instead", skip_current_package=true)
-#doc(hidden)
-pub extend SortedSet with @quickcheck.Arbitrary::{arbitrary}
-
-///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
 #doc(hidden)
 pub extend SortedSet with Compare::{op_ge, op_gt, op_le, op_lt}

@@ -656,13 +656,6 @@ impl[A : Eq] Eq for Node[A] with fn equal(self, other) {
 }
 
 ///|
-pub impl[K : Eq + Hash + @quickcheck.Arbitrary] @quickcheck.Arbitrary for HashSet[
-  K,
-] with fn arbitrary(size, rs) {
-  @quickcheck.Arbitrary::arbitrary(size, rs) |> HashSet
-}
-
-///|
 test "hash" {
   @test.assert_eq(
     Hash::hash(HashSet([1, 2, 3, 4])),
