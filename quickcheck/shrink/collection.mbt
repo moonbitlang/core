@@ -13,18 +13,6 @@
 // limitations under the License.
 
 ///|
-fn[T] removes_list(k : Int, n : Int, xs : @list.List[T]) -> Iter[@list.List[T]] {
-  guard k <= n else { [||] }
-  let xs_drop = xs.drop(k)
-  if xs_drop.is_empty() {
-    [|List([])|]
-  } else {
-    let xs_take = xs.take(k)
-    removes_list(k, n - k, xs_drop).map(x => xs_take.concat(x)).add([|xs_drop|])
-  }
-}
-
-///|
 pub impl[T : Shrink] Shrink for @list.List[T] with fn shrink(xs) {
   let n = xs.length()
   fn shr_sub_terms(lst : @list.List[T]) {

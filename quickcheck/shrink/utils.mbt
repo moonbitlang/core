@@ -13,17 +13,26 @@
 // limitations under the License.
 
 ///|
-fn[T] removes_array(k : Int, n : Int, xs : Array[T]) -> Array[Array[T]] {
-  if k > n {
-    []
+fn[T] removes_array(k : Int, n : Int, xs : Array[T]) -> Iter[Array[T]] {
+  guard k <= n else { [||] }
+  let xs2 = xs[:k].to_owned()
+  let xs1 = xs[k:].to_owned()
+  if xs1.is_empty() {
+    [|[]|]
   } else {
-    let xs2 = xs[:k].to_owned()
-    let xs1 = xs[k:].to_owned()
-    if xs1.is_empty() {
-      []
-    } else {
-      [xs1, ..removes_array(k, n - k, xs1).map(x => xs2 + x)]
-    }
+    [xs1].iter().add(removes_array(k, n - k, xs1).map(x => xs2 + x))
+  }
+}
+
+///|
+fn[T] removes_list(k : Int, n : Int, xs : @list.List[T]) -> Iter[@list.List[T]] {
+  guard k <= n else { [||] }
+  let xs_drop = xs.drop(k)
+  if xs_drop.is_empty() {
+    [|List([])|]
+  } else {
+    let xs_take = xs.take(k)
+    removes_list(k, n - k, xs_drop).map(x => xs_take.concat(x)).add([|xs_drop|])
   }
 }
 
