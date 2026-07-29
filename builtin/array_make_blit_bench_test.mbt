@@ -57,6 +57,56 @@ test "bench ArrayView::add Ref n=500000+500000" (it : @bench.T) {
 }
 
 ///|
+test "bench Array::blit_to Ref n=1000000 overwrite" (it : @bench.T) {
+  let src = make_blit_ref_array(make_blit_ref_bench_size)
+  let dst = Array::make(make_blit_ref_bench_size, "dst")
+  it.bench(fn() {
+    src.blit_to(dst)
+    it.keep(dst)
+  })
+}
+
+///|
+test "bench Array::blit_to Ref n=1000000 grow" (it : @bench.T) {
+  let src = make_blit_ref_array(make_blit_ref_bench_size)
+  it.bench(fn() {
+    let dst : Array[String] = []
+    src.blit_to(dst)
+    it.keep(dst)
+  })
+}
+
+///|
+test "bench ArrayView::blit_to Ref n=1000000 overwrite" (it : @bench.T) {
+  let src = make_blit_ref_array(make_blit_ref_bench_size)[:]
+  let dst = Array::make(make_blit_ref_bench_size, "dst")
+  it.bench(fn() {
+    src.blit_to(dst)
+    it.keep(dst)
+  })
+}
+
+///|
+test "bench ArrayView::blit_to Ref n=1000000 grow" (it : @bench.T) {
+  let src = make_blit_ref_array(make_blit_ref_bench_size)[:]
+  it.bench(fn() {
+    let dst : Array[String] = []
+    src.blit_to(dst)
+    it.keep(dst)
+  })
+}
+
+///|
+test "bench Array::append Ref n=1000000 grow" (it : @bench.T) {
+  let src = make_blit_ref_array(make_blit_ref_bench_size)[:]
+  it.bench(fn() {
+    let dst : Array[String] = []
+    dst.append(src)
+    it.keep(dst)
+  })
+}
+
+///|
 test "bench Array::push Ref n=1000000 resize" (it : @bench.T) {
   it.bench(fn() {
     let data : Array[String] = []
