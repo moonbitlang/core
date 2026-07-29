@@ -174,3 +174,25 @@ fn unset_env_var_internal(key : String) -> Unit {
 
 ///|
 fn unset_env_var_ffi(key : XExternString) = "__moonbit_fs_unstable" "unset_env_var"
+
+///|
+#cfg(target="wasm")
+fn rand_internal(to_be_filled : FixedArray[Byte]) -> Bool {
+  // WASI is part of the linear Wasm runtime contract, so entropy availability
+  // is unconditional for this target.
+  ignore(wasi_random_get(to_be_filled, to_be_filled.length()))
+  true
+}
+
+///|
+/// WASI treats the fixed array as a linear-memory address.
+#cfg(target="wasm")
+#unsafe_skip_stub_check
+#borrow(to_be_filled)
+fn wasi_random_get(to_be_filled : FixedArray[Byte], length : Int) -> Int = "wasi_snapshot_preview1" "random_get"
+
+///|
+#cfg(target="wasm-gc")
+fn rand_internal(_to_be_filled : FixedArray[Byte]) -> Bool {
+  false
+}
