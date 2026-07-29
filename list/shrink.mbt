@@ -17,7 +17,7 @@ fn[T] removes(k : Int, n : Int, xs : List[T]) -> Iter[List[T]] {
   guard k <= n else { [||] }
   let xs_drop = xs.drop(k)
   if xs_drop.is_empty() {
-    [||]
+    [|Empty|]
   } else {
     let xs_take = xs.take(k)
     removes(k, n - k, xs_drop).map(x => xs_take.concat(x)).add([|xs_drop|])

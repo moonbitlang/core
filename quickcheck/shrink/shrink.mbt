@@ -106,13 +106,32 @@ pub impl Shrink for Byte with fn shrink(x) {
 
 ///|
 pub impl Shrink for Char with fn shrink(c) {
-  let ci = c.to_int()
-  if ci == 0 {
-    return Iter::empty()
-  } else {
-    let (cl, ch) = (Int::unsafe_to_char(ci - 1), Int::unsafe_to_char(ci + 1))
-    [|cl, ch, 'a', 'A', '1', '\n', '\t', '\b', '\\', '\'', '\r', ' '|]
+  let candidates = [
+    'a',
+    'b',
+    'c',
+    ..if c.is_ascii_uppercase() {
+      [c.to_ascii_lowercase()]
+    },
+    'A',
+    'B',
+    'C',
+    '1',
+    '2',
+    '3',
+    ' ',
+    '\n',
+  ]
+  candidates.sort()
+  candidates.dedup()
+  let char_stamp = (c : Char) => {
+    (
+      (!c.is_ascii_lowercase(), !c.is_ascii_uppercase(), !c.is_ascii_digit()),
+      (c != ' ', !c.is_whitespace(), c),
+    )
   }
+  let stamp = char_stamp(c)
+  candidates.iter().filter(candidate => char_stamp(candidate) < stamp)
 }
 
 ///|

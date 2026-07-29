@@ -145,7 +145,43 @@ test "shrink char" {
   debug_inspect(
     @shrink.Shrink::shrink('测').collect(),
     content=(
-      #|['浊', '浌', 'a', 'A', '1', '\n', '\t', '\b', '\\', '\'', '\r', ' ']
+      #|['\n', ' ', '1', '2', '3', 'A', 'B', 'C', 'a', 'b', 'c']
+    ),
+  )
+}
+
+///|
+test "shrink uppercase char lowercases and removes duplicates" {
+  debug_inspect(
+    @shrink.Shrink::shrink('C').collect(),
+    content=(
+      #|['A', 'B', 'a', 'b', 'c']
+    ),
+  )
+}
+
+///|
+test "shrink char respects character class order" {
+  debug_inspect(
+    @shrink.Shrink::shrink('d').collect(),
+    content=(
+      #|['a', 'b', 'c']
+    ),
+  )
+  debug_inspect(
+    @shrink.Shrink::shrink('4').collect(),
+    content=(
+      #|['1', '2', '3', 'A', 'B', 'C', 'a', 'b', 'c']
+    ),
+  )
+}
+
+///|
+test "shrink whitespace char prefers space" {
+  debug_inspect(
+    @shrink.Shrink::shrink('\n').collect(),
+    content=(
+      #|[' ', '1', '2', '3', 'A', 'B', 'C', 'a', 'b', 'c']
     ),
   )
 }
