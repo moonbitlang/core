@@ -1,0 +1,11 @@
+import {
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/array",
+  "moonbitlang/core/float",
+}
+
+import {
+  "moonbitlang/core/debug",
+} for "test"
+
+warnings = "+unnecessary_annotation+missing_doc-test_unqualified_package"

@@ -1,0 +1,39 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/quickcheck/gen"
+
+import {
+  "moonbitlang/core/quickcheck",
+  "moonbitlang/core/quickcheck/splitmix",
+}
+
+// Values
+pub fn[T : @quickcheck.Arbitrary] arbitrary() -> Gen[T]
+
+pub fn[T] frequency(Array[(UInt, Gen[T])]) -> Gen[T]
+
+pub fn int_range(Int, Int) -> Gen[Int]
+
+pub fn[T] one_of(Array[Gen[T]]) -> Gen[T]
+
+pub fn[T] pure(T) -> Gen[T]
+
+pub fn[T] sized((Int) -> Gen[T]) -> Gen[T]
+
+// Errors
+
+// Types and methods
+type Gen[T]
+pub fn[T] Gen::array_with_size(Self[T], Int) -> Self[Array[T]]
+pub fn[T, U] Gen::flat_map(Self[T], (T) -> Self[U]) -> Self[U]
+pub fn[T, U] Gen::map(Self[T], (T) -> U) -> Self[U]
+pub fn[T] Gen::new((Int, @splitmix.RandomState) -> T) -> Self[T]
+pub fn[T] Gen::resize(Self[T], Int) -> Self[T]
+pub fn[T] Gen::run(Self[T], Int, @splitmix.RandomState) -> T
+pub fn[T] Gen::sample(Self[T], size? : Int, seed? : UInt64) -> T
+pub fn[T] Gen::samples(Self[T], count? : Int, size? : Int, seed? : UInt64) -> Array[T]
+
+// Type aliases
+pub using @splitmix {type RandomState}
+
+// Traits
+

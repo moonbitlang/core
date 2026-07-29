@@ -5,6 +5,7 @@ import {
   "moonbitlang/core/debug",
   "moonbitlang/core/json",
   "moonbitlang/core/quickcheck",
+  "moonbitlang/core/quickcheck/shrink",
   "moonbitlang/core/quickcheck/splitmix",
 }
 
@@ -122,6 +123,7 @@ pub impl[A : ToJson] ToJson for List[A]
 pub impl[A : @debug.Debug] @debug.Debug for List[A]
 pub impl[A : @json.FromJson] @json.FromJson for List[A]
 pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for List[X]
+pub impl[T : @shrink.Shrink] @shrink.Shrink for List[T]
 
 // Type aliases
 

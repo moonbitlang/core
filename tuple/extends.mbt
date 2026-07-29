@@ -191,6 +191,11 @@ pub extend Tuple16 with Default::{default}
 pub extend Tuple2 with @quickcheck.Arbitrary::{arbitrary}
 
 ///|
+#deprecated("Use `@shrink.Shrink::shrink` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Tuple2 with @shrink.Shrink::{shrink}
+
+///|
 #deprecated("Use `Default::default` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Tuple2 with Default::{default}
@@ -199,6 +204,11 @@ pub extend Tuple2 with Default::{default}
 #deprecated("Use `@quickcheck.Arbitrary::arbitrary` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Tuple3 with @quickcheck.Arbitrary::{arbitrary}
+
+///|
+#deprecated("Use `@shrink.Shrink::shrink` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Tuple3 with @shrink.Shrink::{shrink}
 
 ///|
 #deprecated("Use `Default::default` instead", skip_current_package=true)
@@ -211,6 +221,11 @@ pub extend Tuple3 with Default::{default}
 pub extend Tuple4 with @quickcheck.Arbitrary::{arbitrary}
 
 ///|
+#deprecated("Use `@shrink.Shrink::shrink` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Tuple4 with @shrink.Shrink::{shrink}
+
+///|
 #deprecated("Use `Default::default` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Tuple4 with Default::{default}
@@ -219,6 +234,11 @@ pub extend Tuple4 with Default::{default}
 #deprecated("Use `@quickcheck.Arbitrary::arbitrary` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Tuple5 with @quickcheck.Arbitrary::{arbitrary}
+
+///|
+#deprecated("Use `@shrink.Shrink::shrink` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Tuple5 with @shrink.Shrink::{shrink}
 
 ///|
 #deprecated("Use `Default::default` instead", skip_current_package=true)
@@ -231,6 +251,11 @@ pub extend Tuple5 with Default::{default}
 pub extend Tuple6 with @quickcheck.Arbitrary::{arbitrary}
 
 ///|
+#deprecated("Use `@shrink.Shrink::shrink` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Tuple6 with @shrink.Shrink::{shrink}
+
+///|
 #deprecated("Use `Default::default` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Tuple6 with Default::{default}
@@ -241,14 +266,39 @@ pub extend Tuple6 with Default::{default}
 pub extend Tuple7 with @quickcheck.Arbitrary::{arbitrary}
 
 ///|
+#deprecated("Use `@shrink.Shrink::shrink` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Tuple7 with @shrink.Shrink::{shrink}
+
+///|
 #deprecated("Use `Default::default` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Tuple7 with Default::{default}
 
 ///|
+#deprecated("Use `@quickcheck.Arbitrary::arbitrary` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Tuple8 with @quickcheck.Arbitrary::{arbitrary}
+
+///|
+#deprecated("Use `@shrink.Shrink::shrink` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Tuple8 with @shrink.Shrink::{shrink}
+
+///|
 #deprecated("Use `Default::default` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Tuple8 with Default::{default}
+
+///|
+#deprecated("Use `@quickcheck.Arbitrary::arbitrary` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Tuple9 with @quickcheck.Arbitrary::{arbitrary}
+
+///|
+#deprecated("Use `@shrink.Shrink::shrink` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Tuple9 with @shrink.Shrink::{shrink}
 
 ///|
 #deprecated("Use `Default::default` instead", skip_current_package=true)
