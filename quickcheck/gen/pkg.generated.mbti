@@ -2,13 +2,10 @@
 package "moonbitlang/core/quickcheck/gen"
 
 import {
-  "moonbitlang/core/quickcheck",
   "moonbitlang/core/quickcheck/splitmix",
 }
 
 // Values
-pub fn[T : @quickcheck.Arbitrary] arbitrary() -> Gen[T]
-
 pub fn[T] frequency(Array[(UInt, Gen[T])]) -> Gen[T]
 
 pub fn int_range(Int, Int) -> Gen[Int]

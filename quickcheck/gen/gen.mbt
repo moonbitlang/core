@@ -89,12 +89,6 @@ pub fn[T] Gen::resize(self : Gen[T], size : Int) -> Gen[T] {
 }
 
 ///|
-/// Creates a generator from an `Arbitrary` implementation.
-pub fn[T : @quickcheck.Arbitrary] arbitrary() -> Gen[T] {
-  Gen::new((size, state) => @quickcheck.Arbitrary::arbitrary(size, state))
-}
-
-///|
 /// Generates an integer in the half-open interval `[lower, upper)`.
 pub fn int_range(lower : Int, upper : Int) -> Gen[Int] {
   guard lower < upper else {

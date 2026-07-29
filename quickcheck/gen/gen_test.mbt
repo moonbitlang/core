@@ -28,12 +28,6 @@ test "size control" {
 }
 
 ///|
-test "arbitrary generator" {
-  let value : Unit = @gen.arbitrary().sample()
-  inspect(value, content="()")
-}
-
-///|
 test "range and choices" {
   for value in @gen.int_range(-4, 7).samples(count=64) {
     guard value >= -4 && value < 7 else {
