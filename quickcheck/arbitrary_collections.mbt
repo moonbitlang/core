@@ -77,16 +77,6 @@ pub impl[X : Arbitrary + Compare] Arbitrary for @priority_queue.PriorityQueue[X]
 }
 
 ///|
-#warnings("-deprecated")
-pub impl[X : Arbitrary] Arbitrary for @immut_array.T[X] with fn arbitrary(
-  size,
-  rs,
-) {
-  let values : Array[X] = Arbitrary::arbitrary(size, rs)
-  @immut_array.T::from_array(values)
-}
-
-///|
 pub impl[X : Arbitrary] Arbitrary for @immut_vector.Vector[X] with fn arbitrary(
   size,
   rs,

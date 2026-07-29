@@ -3,7 +3,6 @@ package "moonbitlang/core/quickcheck"
 
 import {
   "moonbitlang/core/bigint",
-  "moonbitlang/core/immut/array",
   "moonbitlang/core/immut/vector",
   "moonbitlang/core/list",
   "moonbitlang/core/queue",
@@ -47,7 +46,6 @@ pub impl[A : Arbitrary] Arbitrary for ArrayView[A]
 pub impl[X : Arbitrary] Arbitrary for Iter[X]
 pub impl[K : Arbitrary + Hash + Eq, V : Arbitrary] Arbitrary for @moonbitlang/core/hashmap.HashMap[K, V]
 pub impl[X : Arbitrary + Eq + Hash] Arbitrary for @moonbitlang/core/hashset.HashSet[X]
-pub impl[X : Arbitrary] Arbitrary for @array.T[X]
 pub impl[K : Eq + Hash + Arbitrary, V : Arbitrary] Arbitrary for @moonbitlang/core/immut/hashmap.HashMap[K, V]
 pub impl[K : Eq + Hash + Arbitrary] Arbitrary for @moonbitlang/core/immut/hashset.HashSet[K]
 pub impl[X : Arbitrary + Compare] Arbitrary for @moonbitlang/core/immut/priority_queue.PriorityQueue[X]

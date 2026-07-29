@@ -303,12 +303,6 @@ test "Option arbitrary" {
 }
 
 ///|
-test "Arbitrary for immutable array" {
-  let samples : Array[@immut_array.T[Int]] = @quickcheck.samples(3)
-  inspect(samples.length(), content="3")
-}
-
-///|
 test "Arbitrary for immutable vector" {
   let samples = (@quickcheck.samples(3) : Array[@immut_vector.Vector[Int]])
   inspect(samples.length(), content="3")
