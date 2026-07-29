@@ -395,33 +395,6 @@ pub impl[T] Add for Array[T] with fn add(self, other) {
 }
 
 ///|
-/// Appends all elements from one array to the end of another array. The elements
-/// are added in-place, modifying the original array.
-///
-/// Parameters:
-///
-/// * `self` : The array to append to.
-/// * `other` : The array whose elements will be appended.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let v1 = [1, 2, 3]
-///   let v2 : ReadOnlyArray[Int] = [4, 5, 6]
-///   v1.append(v2)
-///   debug_inspect(v1, content="[1, 2, 3, 4, 5, 6]")
-///   let v1 = [1, 2, 3]
-///   let v2 : ReadOnlyArray[Int] = []
-///   v1.append(v2)
-///   debug_inspect(v1, content="[1, 2, 3]")
-/// }
-/// ```
-pub fn[T] Array::append(self : Array[T], other : ArrayView[T]) -> Unit {
-  other.blit_to(self, dst_offset=self.length())
-}
-
-///|
 /// Iterates through each element of the array in order, applying the given
 /// function to each element.
 ///

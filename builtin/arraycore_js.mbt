@@ -51,6 +51,19 @@ extern "js" fn JSArray::push(self : JSArray, value : JSValue) -> Unit =
   #| (arr, val) => { arr.push(val); }
 
 ///|
+extern "js" fn JSArray::append_view(
+  self : JSArray,
+  src : JSArray,
+  src_offset : Int,
+  len : Int,
+) -> Unit =
+  #| (dst, src, src_offset, len) => {
+  #|   for (let i = 0; i < len; i++) {
+  #|     dst.push(src[src_offset + i]);
+  #|   }
+  #| }
+
+///|
 extern "js" fn JSArray::pop(self : JSArray) -> JSValue =
   #| (arr) => arr.pop()
 
@@ -249,6 +262,91 @@ pub fn[T] Array::push(self : Array[T], value : T) -> Unit {
 }
 
 ///|
+/// Appends all elements from one array to the end of another array. The elements
+/// are added in-place, modifying the original array.
+///
+/// Parameters:
+///
+/// * `self` : The array to append to.
+/// * `other` : The array whose elements will be appended.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let v1 = [1, 2, 3]
+///   let v2 : ReadOnlyArray[Int] = [4, 5, 6]
+///   v1.append(v2)
+///   debug_inspect(v1, content="[1, 2, 3, 4, 5, 6]")
+///   let v1 = [1, 2, 3]
+///   let v2 : ReadOnlyArray[Int] = []
+///   v1.append(v2)
+///   debug_inspect(v1, content="[1, 2, 3]")
+/// }
+/// ```
+pub fn[T] Array::append(self : Array[T], other : ArrayView[T]) -> Unit {
+  let old_len = self.length()
+  let append_len = other.len()
+  guard old_len + append_len >= old_len
+  JSArray::ofAnyArray(self).append_view(
+    JSArray::ofAnyFixedArray(other.buf().0),
+    other.start(),
+    append_len,
+  )
+}
+
+///|
+/// JavaScript arrays use their native length as the writable extent, so extend
+/// it before blitting into the new range.
+#label_migration(src_offset, fill=false, msg="Use ArrayView::blit_to instead")
+#label_migration(len, fill=false, msg="Use ArrayView::blit_to instead")
+pub fn[A] Array::blit_to(
+  self : Array[A],
+  dst : Array[A],
+  len? : Int = self.length(),
+  src_offset? : Int = 0,
+  dst_offset? : Int = 0,
+) -> Unit {
+  let old_len = dst.length()
+  guard len >= 0 &&
+    dst_offset >= 0 &&
+    src_offset >= 0 &&
+    dst_offset <= old_len &&
+    len <= self.length() - src_offset
+  let new_len = dst_offset + len
+  guard new_len >= 0
+  if new_len > old_len {
+    JSArray::ofAnyArray(dst).set_length(new_len)
+  }
+  Array::unsafe_blit(dst, dst_offset, self, src_offset, len)
+}
+
+///|
+/// JavaScript arrays use their native length as the writable extent, so extend
+/// it before blitting into the new range.
+pub fn[A] ArrayView::blit_to(
+  self : ArrayView[A],
+  dst : Array[A],
+  dst_offset? : Int = 0,
+) -> Unit {
+  let len = self.len()
+  let old_len = dst.length()
+  guard dst_offset >= 0 && dst_offset <= old_len
+  let new_len = dst_offset + len
+  guard new_len >= 0
+  if new_len > old_len {
+    JSArray::ofAnyArray(dst).set_length(new_len)
+  }
+  UninitializedArray::unsafe_blit(
+    dst.buffer(),
+    dst_offset,
+    self.buf(),
+    self.start(),
+    len,
+  )
+}
+
+///|
 /// Removes the last element from an array and returns it, or `None` if it is empty.
 ///
 /// # Example
@@ -352,18 +450,6 @@ pub fn[T] Array::insert(self : Array[T], index : Int, value : T) -> Unit {
     )
   }
   let _ = JSArray::ofAnyArray(self).splice1(index, 0, JSValue::ofAny(value))
-}
-
-///|
-/// Resize the array in-place so that `len` is equal to `new_len`.
-///
-/// If `new_len` is greater than `len`, the array will be extended by the
-/// difference, and the values in the new slots are left uninitilized.
-///  If `new_len` is less than `len`, it will panic
-///
-fn[T] Array::unsafe_grow_to_length(self : Array[T], new_len : Int) -> Unit {
-  guard new_len >= self.length()
-  JSArray::ofAnyArray(self).set_length(new_len)
 }
 
 ///|
