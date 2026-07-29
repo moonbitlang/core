@@ -1938,17 +1938,6 @@ pub fn[A] List::from_iter_rev(iter : Iter[A]) -> List[A] {
 /// ```
 
 ///|
-/// Arbitrary implementation for quickcheck testing.
-/// 
-/// Generates random lists for property-based testing with quickcheck.
-pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for List[X] with fn arbitrary(
-  size,
-  rs,
-) {
-  @quickcheck.Arbitrary::arbitrary(size, rs) |> List
-}
-
-///|
 /// Create a list with a single element.
 /// 
 /// Returns a list containing only the given element.

@@ -464,11 +464,3 @@ test "transfer" {
 test "cell_equal" {
   assert_false(from_array([]).first == from_array([1]).first)
 }
-
-///|
-pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Queue[X] with fn arbitrary(
-  size,
-  rs,
-) {
-  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_iter
-}

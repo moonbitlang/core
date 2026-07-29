@@ -419,36 +419,6 @@ test "from_iter empty iter" {
 }
 
 ///|
-test "hashset arbitrary" {
-  let samples : Array[@hashset.HashSet[Int]] = @quickcheck.samples(20)
-  let cases : ReadOnlyArray[@hashset.HashSet[Int]] = [
-    @hashset.from_array([]),
-    @hashset.from_array([]),
-    @hashset.from_array([]),
-    @hashset.from_array([0]),
-    @hashset.from_array([0]),
-    @hashset.from_array([]),
-    @hashset.from_array([]),
-    @hashset.from_array([0]),
-    @hashset.from_array([0]),
-    @hashset.from_array([0, 3, 1, 2]),
-    @hashset.from_array([0, 1, -2]),
-    @hashset.from_array([-2, 0, -1]),
-    @hashset.from_array([-5, 0, 8, 4, -2]),
-    @hashset.from_array([0, 2, -1]),
-    @hashset.from_array([0]),
-    @hashset.from_array([]),
-    @hashset.from_array([-2, 0, -3, -1]),
-    @hashset.from_array([-1, 0, 3, 1, -6, 2]),
-    @hashset.from_array([0]),
-    @hashset.from_array([-5, -1, 6, 0, 2, -2]),
-  ]
-  for i in 0..<20 {
-    assert_true(samples[i].symmetric_difference(cases[i]).is_empty())
-  }
-}
-
-///|
 test "@hashset.to_array/empty" {
   let set : @hashset.HashSet[Int] = HashSet([])
   debug_inspect(set.to_array(), content="[]")

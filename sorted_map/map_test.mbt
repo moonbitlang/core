@@ -207,36 +207,6 @@ test "from_iter empty iter" {
 }
 
 ///|
-test "arbitrary" {
-  let map : Array[@sorted_map.SortedMap[Int, UInt]] = @quickcheck.samples(20)
-  debug_inspect(
-    map[5:10],
-    content=(
-      #|<ArrayView:
-      #|  [
-      #|    <SortedMap: {}>,
-      #|    <SortedMap: {}>,
-      #|    <SortedMap: { 0: 0 }>,
-      #|    <SortedMap: { 0: 0 }>,
-      #|    <SortedMap: { 0: 0 }>,
-      #|  ]>
-    ),
-  )
-  debug_inspect(
-    map[11:15],
-    content=(
-      #|<ArrayView:
-      #|  [
-      #|    <SortedMap: { -3: 2, -1: 1, 0: 0, 2: 1 }>,
-      #|    <SortedMap: { 0: 0 }>,
-      #|    <SortedMap: { -8: 1, -2: 5, 0: 3, 3: 6, 7: 6 }>,
-      #|    <SortedMap: { 0: 0 }>,
-      #|  ]>
-    ),
-  )
-}
-
-///|
 test "iter2" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
   let buf = StringBuilder()

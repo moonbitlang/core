@@ -395,14 +395,6 @@ pub fn[A, B] T::map(self : T[A], f : (A) -> B raise?) -> T[B] raise? {
 //-----------------------------------------------------------------------------
 
 ///|
-pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X] with fn arbitrary(
-  size,
-  rs,
-) {
-  @quickcheck.Arbitrary::arbitrary(size, rs) |> T::from_array
-}
-
-///|
 pub impl[A : Hash] Hash for T[A] with fn hash_combine(self, hasher) {
   for e in self {
     hasher.combine(e)

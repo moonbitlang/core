@@ -2,7 +2,13 @@
 package "moonbitlang/core/quickcheck"
 
 import {
+  "moonbitlang/core/bigint",
+  "moonbitlang/core/immut/array",
+  "moonbitlang/core/immut/vector",
+  "moonbitlang/core/list",
+  "moonbitlang/core/queue",
   "moonbitlang/core/quickcheck/splitmix",
+  "moonbitlang/core/ref",
 }
 
 // Values
@@ -35,7 +41,29 @@ pub impl[X : Arbitrary] Arbitrary for X?
 pub impl[T : Arbitrary, E : Arbitrary] Arbitrary for Result[T, E]
 pub impl[X : Arbitrary] Arbitrary for FixedArray[X]
 pub impl Arbitrary for Bytes
+pub impl Arbitrary for @bigint.BigInt
 pub impl[X : Arbitrary] Arbitrary for Array[X]
 pub impl[A : Arbitrary] Arbitrary for ArrayView[A]
 pub impl[X : Arbitrary] Arbitrary for Iter[X]
+pub impl[K : Arbitrary + Hash + Eq, V : Arbitrary] Arbitrary for @moonbitlang/core/hashmap.HashMap[K, V]
+pub impl[X : Arbitrary + Eq + Hash] Arbitrary for @moonbitlang/core/hashset.HashSet[X]
+pub impl[X : Arbitrary] Arbitrary for @array.T[X]
+pub impl[K : Eq + Hash + Arbitrary, V : Arbitrary] Arbitrary for @moonbitlang/core/immut/hashmap.HashMap[K, V]
+pub impl[K : Eq + Hash + Arbitrary] Arbitrary for @moonbitlang/core/immut/hashset.HashSet[K]
+pub impl[X : Arbitrary + Compare] Arbitrary for @moonbitlang/core/immut/priority_queue.PriorityQueue[X]
+pub impl[K : Arbitrary + Compare, V : Arbitrary] Arbitrary for @moonbitlang/core/immut/sorted_map.SortedMap[K, V]
+pub impl[X : Arbitrary + Compare] Arbitrary for @moonbitlang/core/immut/sorted_set.SortedSet[X]
+pub impl[X : Arbitrary] Arbitrary for @vector.Vector[X]
+pub impl[X : Arbitrary] Arbitrary for @list.List[X]
+pub impl[X : Arbitrary + Compare] Arbitrary for @moonbitlang/core/priority_queue.PriorityQueue[X]
+pub impl[X : Arbitrary] Arbitrary for @queue.Queue[X]
+pub impl[X : Arbitrary] Arbitrary for @ref.Ref[X]
+pub impl[K : Arbitrary + Compare, V : Arbitrary] Arbitrary for @moonbitlang/core/sorted_map.SortedMap[K, V]
+pub impl[X : Arbitrary + Compare] Arbitrary for @moonbitlang/core/sorted_set.SortedSet[X]
+pub impl[A : Arbitrary, B : Arbitrary] Arbitrary for (A, B)
+pub impl[A : Arbitrary, B : Arbitrary, C : Arbitrary] Arbitrary for (A, B, C)
+pub impl[A : Arbitrary, B : Arbitrary, C : Arbitrary, D : Arbitrary] Arbitrary for (A, B, C, D)
+pub impl[A : Arbitrary, B : Arbitrary, C : Arbitrary, D : Arbitrary, E : Arbitrary] Arbitrary for (A, B, C, D, E)
+pub impl[A : Arbitrary, B : Arbitrary, C : Arbitrary, D : Arbitrary, E : Arbitrary, F : Arbitrary] Arbitrary for (A, B, C, D, E, F)
+pub impl[A : Arbitrary, B : Arbitrary, C : Arbitrary, D : Arbitrary, E : Arbitrary, F : Arbitrary, G : Arbitrary] Arbitrary for (A, B, C, D, E, F, G)
 

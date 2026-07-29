@@ -1032,12 +1032,6 @@ test "HAMT::each" {
 }
 
 ///|
-test "arbitrary" {
-  let m : Array[@hashmap.HashMap[Int, Int]] = @quickcheck.samples(10)
-  inspect(m.length(), content="10")
-}
-
-///|
 test "equal imply hash equal when collision" {
   let s1 = MyString("1")
   let s2 = MyString("2")

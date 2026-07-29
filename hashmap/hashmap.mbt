@@ -779,37 +779,6 @@ test "of" {
 }
 
 ///|
-/// Implements random generation of hashmaps for property-based testing through
-/// the `Arbitrary` trait.
-///
-/// Parameters:
-///
-/// * `size` : The size hint for generating random key-value pairs. Larger values
-/// typically result in larger hashmaps.
-/// * `random_state` : The random state used for generating key-value pairs.
-///
-/// Returns a randomly generated hashmap containing arbitrary key-value pairs.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let samples : Array[@hashmap.HashMap[Int, String]] = @quickcheck.samples(5)
-///   inspect(samples.length(), content="5")
-/// }
-/// ```
-pub impl[K : @quickcheck.Arbitrary + Hash + Eq, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for HashMap[
-  K,
-  V,
-] with fn arbitrary(size, rs) {
-  let m = new_hashmap(default_init_capacity)
-  (@quickcheck.Arbitrary::arbitrary(size, rs) : Iter[(K, V)]).each(kv => {
-    m.set(kv.0, kv.1)
-  })
-  m
-}
-
-///|
 pub impl[K, V] Default for HashMap[K, V] with fn default() {
   new_hashmap(default_init_capacity)
 }
@@ -946,75 +915,6 @@ impl Hash for MyString with fn hash(self) {
 #coverage.skip
 impl Hash for MyString with fn hash_combine(self, hasher) {
   hasher.combine_string(self.0)
-}
-
-///|
-fn[K : Hash + Eq, V : Eq] verify_content(
-  map : HashMap[K, V],
-  expected : Array[(K, V)],
-) -> Unit raise {
-  for entry in expected {
-    let (k, v) = entry
-    assert_true(map.contains_kv(k, v))
-  }
-  assert_true(map.length() == expected.length())
-}
-
-///|
-test "arbitrary" {
-  let samples : Array[HashMap[String, Int]] = @quickcheck.samples(20)
-  let data : ReadOnlyArray[Array[(String, Int)]] = [
-    [],
-    [],
-    [],
-    [("", 0)],
-    [("", 0)],
-    [],
-    [],
-    [("", 0)],
-    [("", 0)],
-    [("", 0)],
-    [("}\u{11}e", -1), ("", 0), ("0f", -1), ("k", -2)],
-    [("Q", 1), ("", 0), ("\u{1e}", 0)],
-    [("", 0)],
-    [("F:", 0), ("A&", 2), ("v\b", 0), ("", 0), ("#", 0)],
-    [("p(", -2), ("^\u{1e}", 3), ("2x", 1), ("", 3)],
-    [("A", -3), ("", 0), ("/w", 0), ("lD", 0), ("jlF0", 3)],
-    [
-      ("zd", 2),
-      ("[z\r]j", 4),
-      ("\u{1d}r", -3),
-      ("", 0),
-      ("p=61s\u{14}", -7),
-      ("t|,7X4\"\u{14}", -10),
-      ("HeH\b\u{15}d", 1),
-      ("LC\u{19}", 1),
-      ("\u{0b}", 0),
-      ("\n", 0),
-      ("3", -9),
-      ("v", -1),
-    ],
-    [
-      ("", -1),
-      ("&\b", -4),
-      ("ob%>j\bD?xboR5", 0),
-      (";:B", -3),
-      ("`", 1),
-      ("OwQCP+@", -1),
-      ("O]k", -3),
-      ("\n^", -3),
-      ("U_-*\u{1c}x\u{18}", -11),
-      ("shU^\u{1d}hd8\u{1d}", 0),
-      ("!\u{1b}63p", 3),
-      ("q", 1),
-      ("R@", 4),
-    ],
-    [("", -4), ("v", -2), (")xh", 1), ("C\u{10}\u{0e}", -3), ("|", 0)],
-    [("", 1), ("b", -1)],
-  ]
-  for i, sample in samples {
-    verify_content(sample, data[i])
-  }
 }
 
 ///|
