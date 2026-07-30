@@ -3,6 +3,16 @@ import {
   "moonbitlang/core/array",
   "moonbitlang/core/float",
   "moonbitlang/core/list",
+  "moonbitlang/core/queue",
+  "moonbitlang/core/hashmap",
+  "moonbitlang/core/hashset",
+  "moonbitlang/core/sorted_map",
+  "moonbitlang/core/sorted_set",
+  "moonbitlang/core/immut/vector" @immut_vector,
+  "moonbitlang/core/immut/hashmap" @immut_hashmap,
+  "moonbitlang/core/immut/hashset" @immut_hashset,
+  "moonbitlang/core/immut/sorted_map" @immut_sorted_map,
+  "moonbitlang/core/immut/sorted_set" @immut_sorted_set,
 }
 
 import {

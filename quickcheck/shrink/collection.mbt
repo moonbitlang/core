@@ -32,3 +32,72 @@ pub impl[T : Shrink] Shrink for @list.List[T] with fn shrink(xs) {
   .flat_map(k => removes_list(k, n, xs))
   .concat(shr_sub_terms(xs))
 }
+
+///|
+pub impl[T : Shrink] Shrink for @queue.Queue[T] with fn shrink(xs) {
+  Shrink::shrink(xs.iter().collect()).map(candidate => Queue(candidate))
+}
+
+///|
+pub impl[T : Shrink] Shrink for @immut_vector.Vector[T] with fn shrink(xs) {
+  Shrink::shrink(xs.to_array()).map(candidate => Vector(candidate))
+}
+
+///|
+pub impl[T : Shrink + Eq + Hash] Shrink for @hashset.HashSet[T] with fn shrink(
+  xs,
+) {
+  Shrink::shrink(xs.to_array()).map(candidate => HashSet(candidate))
+}
+
+///|
+pub impl[T : Shrink + Compare] Shrink for @sorted_set.SortedSet[T] with fn shrink(
+  xs,
+) {
+  Shrink::shrink(xs.to_array()).map(candidate => SortedSet(candidate))
+}
+
+///|
+pub impl[T : Shrink + Eq + Hash] Shrink for @immut_hashset.HashSet[T] with fn shrink(
+  xs,
+) {
+  Shrink::shrink(xs.iter().collect()).map(candidate => HashSet(candidate))
+}
+
+///|
+pub impl[T : Shrink + Compare] Shrink for @immut_sorted_set.SortedSet[T] with fn shrink(
+  xs,
+) {
+  Shrink::shrink(xs.to_array()).map(candidate => SortedSet(candidate))
+}
+
+///|
+pub impl[K : Shrink + Hash + Eq, V : Shrink] Shrink for @hashmap.HashMap[K, V] with fn shrink(
+  xs,
+) {
+  Shrink::shrink(xs.to_array()).map(candidate => HashMap(candidate))
+}
+
+///|
+pub impl[K : Shrink + Compare, V : Shrink] Shrink for @sorted_map.SortedMap[
+  K,
+  V,
+] with fn shrink(xs) {
+  Shrink::shrink(xs.to_array()).map(candidate => SortedMap(candidate))
+}
+
+///|
+pub impl[K : Shrink + Eq + Hash, V : Shrink] Shrink for @immut_hashmap.HashMap[
+  K,
+  V,
+] with fn shrink(xs) {
+  Shrink::shrink(xs.to_array()).map(candidate => HashMap(candidate))
+}
+
+///|
+pub impl[K : Shrink + Compare, V : Shrink] Shrink for @immut_sorted_map.SortedMap[
+  K,
+  V,
+] with fn shrink(xs) {
+  Shrink::shrink(xs.to_array()).map(candidate => SortedMap(candidate))
+}

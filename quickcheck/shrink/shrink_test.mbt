@@ -187,6 +187,43 @@ test "shrink whitespace char prefers space" {
 }
 
 ///|
+test "shrink bytes through byte array" {
+  debug_inspect(
+    @shrink.Shrink::shrink(b"\x67\x37").collect(),
+    content=(
+      #|[
+      #|  <Bytes: []>,
+      #|  <Bytes: [0x37]>,
+      #|  <Bytes: [0x67]>,
+      #|  <Bytes: [0x66, 0x37]>,
+      #|  <Bytes: [0x64, 0x37]>,
+      #|  <Bytes: [0x61, 0x37]>,
+      #|  <Bytes: [0x5b, 0x37]>,
+      #|  <Bytes: [0x4e, 0x37]>,
+      #|  <Bytes: [0x34, 0x37]>,
+      #|  <Bytes: [0x00, 0x37]>,
+      #|  <Bytes: [0x67, 0x36]>,
+      #|  <Bytes: [0x67, 0x34]>,
+      #|  <Bytes: [0x67, 0x31]>,
+      #|  <Bytes: [0x67, 0x2a]>,
+      #|  <Bytes: [0x67, 0x1c]>,
+      #|  <Bytes: [0x67, 0x00]>,
+      #|]
+    ),
+  )
+}
+
+///|
+test "shrink string by Unicode characters" {
+  debug_inspect(
+    @shrink.Shrink::shrink("🤣").collect(),
+    content=(
+      #|["", "\n", " ", "1", "2", "3", "A", "B", "C", "a", "b", "c"]
+    ),
+  )
+}
+
+///|
 test "shrink double: pi" {
   let s = @shrink.Shrink::shrink(3.14159).collect()
   assert_true(s.contains(3.0))

@@ -65,14 +65,15 @@ test "shrink array" {
     @shrink.Shrink::shrink(ar).collect(),
     content=(
       #|[
+      #|  [],
+      #|  [4, 5, 6],
+      #|  [1, 2, 3],
       #|  [2, 3, 4, 5, 6],
       #|  [1, 3, 4, 5, 6],
       #|  [1, 2, 4, 5, 6],
       #|  [1, 2, 3, 5, 6],
       #|  [1, 2, 3, 4, 6],
       #|  [1, 2, 3, 4, 5],
-      #|  [4, 5, 6],
-      #|  [1, 2, 3],
       #|  [0, 2, 3, 4, 5, 6],
       #|  [1, 1, 3, 4, 5, 6],
       #|  [1, 0, 3, 4, 5, 6],
@@ -93,32 +94,37 @@ test "shrink array" {
 }
 
 ///|
-test "shrink iter" {
-  let it = [|1, 2, 3, 4, 5, 6|]
+test "shrink fixed array" {
+  let input : FixedArray[Int] = [2, 1]
   debug_inspect(
-    @shrink.Shrink::shrink(it).map(candidate => candidate.collect()).collect(),
+    @shrink.Shrink::shrink(input).collect(),
     content=(
       #|[
-      #|  [2, 3, 4, 5, 6],
-      #|  [1, 3, 4, 5, 6],
-      #|  [1, 2, 4, 5, 6],
-      #|  [1, 2, 3, 5, 6],
-      #|  [1, 2, 3, 4, 6],
-      #|  [1, 2, 3, 4, 5],
-      #|  [0, 2, 3, 4, 5, 6],
-      #|  [1, 1, 3, 4, 5, 6],
-      #|  [1, 0, 3, 4, 5, 6],
-      #|  [1, 2, 2, 4, 5, 6],
-      #|  [1, 2, 0, 4, 5, 6],
-      #|  [1, 2, 3, 3, 5, 6],
-      #|  [1, 2, 3, 2, 5, 6],
-      #|  [1, 2, 3, 0, 5, 6],
-      #|  [1, 2, 3, 4, 4, 6],
-      #|  [1, 2, 3, 4, 3, 6],
-      #|  [1, 2, 3, 4, 0, 6],
-      #|  [1, 2, 3, 4, 5, 5],
-      #|  [1, 2, 3, 4, 5, 3],
-      #|  [1, 2, 3, 4, 5, 0],
+      #|  <FixedArray: []>,
+      #|  <FixedArray: [1]>,
+      #|  <FixedArray: [2]>,
+      #|  <FixedArray: [1, 1]>,
+      #|  <FixedArray: [0, 1]>,
+      #|  <FixedArray: [2, 0]>,
+      #|]
+    ),
+  )
+}
+
+///|
+test "shrink array view" {
+  let source = [9, 3, 1, 9]
+  let input = source[1:3]
+  debug_inspect(
+    @shrink.Shrink::shrink(input).collect(),
+    content=(
+      #|[
+      #|  <ArrayView: []>,
+      #|  <ArrayView: [1]>,
+      #|  <ArrayView: [3]>,
+      #|  <ArrayView: [2, 1]>,
+      #|  <ArrayView: [0, 1]>,
+      #|  <ArrayView: [3, 0]>,
       #|]
     ),
   )

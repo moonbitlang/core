@@ -44,31 +44,24 @@ pub impl[X : Shrink] Shrink for Array[X] with fn shrink(xs) {
   }
 
   [
-    for k = n / 2; k > 0; k = k / 2 => k
+    for k = n; k > 0; k = k / 2 => k
   ]
-  .rev_iter()
+  .iter()
   .flat_map(k => removes_array(k, n, xs))
   .concat(shr_sub_terms(view))
 }
 
 ///|
-pub impl[X : Shrink] Shrink for Iter[X] with fn shrink(xs) {
-  let arr = xs.to_array()
-  let its : Array[_] = Array::makei(arr.length(), x => {
-    X::shrink(arr[x])
-    .map(y => {
-      let cp = arr.copy()
-      cp[x] = y
-      cp.iter()
-    })
-    .to_array()
-  }).flatten()
-  let rms : Array[Iter[X]] = arr.mapi((i, _) => {
-    let a = arr.copy()
-    a.remove(i) |> ignore
-    a.iter()
+pub impl[X : Shrink] Shrink for FixedArray[X] with fn shrink(xs) {
+  Shrink::shrink(xs[:].to_owned()).map(candidate => {
+    FixedArray::from_array(candidate)
   })
-  rms.iter().concat(its.iter())
+}
+
+///|
+pub impl[X : Shrink] Shrink for ArrayView[X] with fn shrink(xs) {
+  let candidates : Iter[Array[X]] = Shrink::shrink(xs.to_owned())
+  candidates.map(candidate => candidate)
 }
 
 ///|

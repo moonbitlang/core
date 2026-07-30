@@ -145,10 +145,14 @@ pub impl Shrink for Float with fn shrink(x) {
 }
 
 ///|
-pub impl Shrink for String
+pub impl Shrink for String with fn shrink(s) {
+  Shrink::shrink(s.to_array()).map(chars => String::from_array(chars))
+}
 
 ///|
-pub impl Shrink for Bytes
+pub impl Shrink for Bytes with fn shrink(bytes) {
+  Shrink::shrink(bytes.to_array()).map(xs => Bytes::from_array(xs))
+}
 
 ///|
 pub impl Shrink for Unit

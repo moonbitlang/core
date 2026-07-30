@@ -2,7 +2,9 @@
 package "moonbitlang/core/quickcheck/shrink"
 
 import {
+  "moonbitlang/core/immut/vector",
   "moonbitlang/core/list",
+  "moonbitlang/core/queue",
 }
 
 // Values
@@ -30,10 +32,21 @@ pub impl Shrink for Double
 pub impl Shrink for String
 pub impl[T : Shrink] Shrink for T?
 pub impl[T : Shrink, E : Shrink] Shrink for Result[T, E]
+pub impl[X : Shrink] Shrink for FixedArray[X]
 pub impl Shrink for Bytes
 pub impl[X : Shrink] Shrink for Array[X]
-pub impl[X : Shrink] Shrink for Iter[X]
+pub impl[X : Shrink] Shrink for ArrayView[X]
+pub impl[K : Shrink + Hash + Eq, V : Shrink] Shrink for @moonbitlang/core/hashmap.HashMap[K, V]
+pub impl[T : Shrink + Eq + Hash] Shrink for @moonbitlang/core/hashset.HashSet[T]
+pub impl[K : Shrink + Eq + Hash, V : Shrink] Shrink for @moonbitlang/core/immut/hashmap.HashMap[K, V]
+pub impl[T : Shrink + Eq + Hash] Shrink for @moonbitlang/core/immut/hashset.HashSet[T]
+pub impl[K : Shrink + Compare, V : Shrink] Shrink for @moonbitlang/core/immut/sorted_map.SortedMap[K, V]
+pub impl[T : Shrink + Compare] Shrink for @moonbitlang/core/immut/sorted_set.SortedSet[T]
+pub impl[T : Shrink] Shrink for @vector.Vector[T]
 pub impl[T : Shrink] Shrink for @list.List[T]
+pub impl[T : Shrink] Shrink for @queue.Queue[T]
+pub impl[K : Shrink + Compare, V : Shrink] Shrink for @moonbitlang/core/sorted_map.SortedMap[K, V]
+pub impl[T : Shrink + Compare] Shrink for @moonbitlang/core/sorted_set.SortedSet[T]
 pub impl[A : Shrink, B : Shrink] Shrink for (A, B)
 pub impl[A : Shrink, B : Shrink, C : Shrink] Shrink for (A, B, C)
 pub impl[A : Shrink, B : Shrink, C : Shrink, D : Shrink] Shrink for (A, B, C, D)

@@ -45,3 +45,209 @@ test "shrink int list" {
     ),
   )
 }
+
+///|
+test "shrink queue" {
+  let input = @queue.Queue([true, false, true])
+  debug_inspect(
+    @shrink.Shrink::shrink(input).collect(),
+    content=(
+      #|[
+      #|  <Queue: []>,
+      #|  <Queue: [false, true]>,
+      #|  <Queue: [true, true]>,
+      #|  <Queue: [true, false]>,
+      #|  <Queue: [false, false, true]>,
+      #|  <Queue: [true, false, false]>,
+      #|]
+    ),
+  )
+}
+
+///|
+test "shrink immutable vector" {
+  let input = @immut_vector.Vector([2, 4])
+  debug_inspect(
+    @shrink.Shrink::shrink(input).collect(),
+    content=(
+      #|[
+      #|  <Vector: []>,
+      #|  <Vector: [4]>,
+      #|  <Vector: [2]>,
+      #|  <Vector: [1, 4]>,
+      #|  <Vector: [0, 4]>,
+      #|  <Vector: [2, 3]>,
+      #|  <Vector: [2, 2]>,
+      #|  <Vector: [2, 0]>,
+      #|]
+    ),
+  )
+}
+
+///|
+test "shrink mutable hash set" {
+  let input = @hashset.HashSet([4, 10])
+  let table = @shrink.Shrink::shrink(input).collect()
+  debug_inspect(
+    table,
+    content=(
+      #|[
+      #|  <HashSet: []>,
+      #|  <HashSet: [10]>,
+      #|  <HashSet: [4]>,
+      #|  <HashSet: [10, 3]>,
+      #|  <HashSet: [10, 2]>,
+      #|  <HashSet: [0, 10]>,
+      #|  <HashSet: [4, 9]>,
+      #|  <HashSet: [4, 8]>,
+      #|  <HashSet: [4, 5]>,
+      #|  <HashSet: [0, 4]>,
+      #|]
+    ),
+  )
+}
+
+///|
+test "shrink mutable sorted set" {
+  let input = @sorted_set.SortedSet([2, 4])
+  debug_inspect(
+    @shrink.Shrink::shrink(input).collect(),
+    content=(
+      #|[
+      #|  <SortedSet: []>,
+      #|  <SortedSet: [4]>,
+      #|  <SortedSet: [2]>,
+      #|  <SortedSet: [1, 4]>,
+      #|  <SortedSet: [0, 4]>,
+      #|  <SortedSet: [2, 3]>,
+      #|  <SortedSet: [2]>,
+      #|  <SortedSet: [0, 2]>,
+      #|]
+    ),
+  )
+}
+
+///|
+test "shrink immutable hash set" {
+  let input = @immut_hashset.HashSet([3, 7])
+  let table = @shrink.Shrink::shrink(input).collect()
+  debug_inspect(
+    table,
+    content=(
+      #|[
+      #|  <HashSet: []>,
+      #|  <HashSet: [7]>,
+      #|  <HashSet: [3]>,
+      #|  <HashSet: [2, 7]>,
+      #|  <HashSet: [0, 7]>,
+      #|  <HashSet: [6, 3]>,
+      #|  <HashSet: [4, 3]>,
+      #|  <HashSet: [0, 3]>,
+      #|]
+    ),
+  )
+}
+
+///|
+test "shrink immutable sorted set" {
+  let input = @immut_sorted_set.SortedSet([2, 5])
+  debug_inspect(
+    @shrink.Shrink::shrink(input).collect(),
+    content=(
+      #|[
+      #|  <SortedSet: []>,
+      #|  <SortedSet: [5]>,
+      #|  <SortedSet: [2]>,
+      #|  <SortedSet: [1, 5]>,
+      #|  <SortedSet: [0, 5]>,
+      #|  <SortedSet: [2, 4]>,
+      #|  <SortedSet: [2, 3]>,
+      #|  <SortedSet: [0, 2]>,
+      #|]
+    ),
+  )
+}
+
+///|
+test "shrink mutable hash map" {
+  let input = @hashmap.HashMap([(2, true), (1, false)])
+  let table = @shrink.Shrink::shrink(input).collect()
+  debug_inspect(
+    table,
+    content=(
+      #|[
+      #|  <HashMap: {}>,
+      #|  <HashMap: { 1: false }>,
+      #|  <HashMap: { 2: true }>,
+      #|  <HashMap: { 1: false }>,
+      #|  <HashMap: { 0: true, 1: false }>,
+      #|  <HashMap: { 2: false, 1: false }>,
+      #|  <HashMap: { 0: false, 2: true }>,
+      #|]
+    ),
+  )
+}
+
+///|
+test "shrink mutable sorted map" {
+  let input = @sorted_map.SortedMap([(false, 2), (true, 1)])
+  debug_inspect(
+    @shrink.Shrink::shrink(input).collect(),
+    content=(
+      #|[
+      #|  <SortedMap: {}>,
+      #|  <SortedMap: { true: 1 }>,
+      #|  <SortedMap: { false: 2 }>,
+      #|  <SortedMap: { false: 1, true: 1 }>,
+      #|  <SortedMap: { false: 0, true: 1 }>,
+      #|  <SortedMap: { false: 1 }>,
+      #|  <SortedMap: { false: 2, true: 0 }>,
+      #|]
+    ),
+  )
+}
+
+///|
+test "shrink immutable hash map" {
+  let input = @immut_hashmap.HashMap([(4, 2), (3, 7)])
+  let table = @shrink.Shrink::shrink(input).collect()
+  debug_inspect(
+    table,
+    content=(
+      #|[
+      #|  <HashMap: {}>,
+      #|  <HashMap: { 3: 7 }>,
+      #|  <HashMap: { 4: 2 }>,
+      #|  <HashMap: { 3: 2 }>,
+      #|  <HashMap: { 2: 2, 3: 7 }>,
+      #|  <HashMap: { 0: 2, 3: 7 }>,
+      #|  <HashMap: { 4: 1, 3: 7 }>,
+      #|  <HashMap: { 4: 0, 3: 7 }>,
+      #|  <HashMap: { 4: 2, 2: 7 }>,
+      #|  <HashMap: { 4: 2, 0: 7 }>,
+      #|  <HashMap: { 4: 2, 3: 6 }>,
+      #|  <HashMap: { 4: 2, 3: 4 }>,
+      #|  <HashMap: { 4: 2, 3: 0 }>,
+      #|]
+    ),
+  )
+}
+
+///|
+test "shrink immutable sorted map" {
+  let input = @immut_sorted_map.SortedMap([(1, false), (3, true)])
+  debug_inspect(
+    @shrink.Shrink::shrink(input).collect(),
+    content=(
+      #|[
+      #|  <SortedMap: {}>,
+      #|  <SortedMap: { 3: true }>,
+      #|  <SortedMap: { 1: false }>,
+      #|  <SortedMap: { 0: false, 3: true }>,
+      #|  <SortedMap: { 1: false, 2: true }>,
+      #|  <SortedMap: { 0: true, 1: false }>,
+      #|  <SortedMap: { 1: false, 3: false }>,
+      #|]
+    ),
+  )
+}
