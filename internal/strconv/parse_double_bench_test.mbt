@@ -28,6 +28,12 @@ let parse_double_underscore_bench_inputs : FixedArray[String] = [
 ]
 
 ///|
+let parse_double_long_mantissa_bench_inputs : FixedArray[String] = [
+  "-65.613616999999977", "43.420273000000009", "-65.619720000000029", "43.418052999999986",
+  "-65.625000000000000", "43.412101000000000", "-65.630279999999994", "43.406101000000010",
+]
+
+///|
 fn parse_double_bench_sum(inputs : FixedArray[String]) -> Double {
   let mut sum = 0.0
   for _ in 0..<parse_double_bench_repeats {
@@ -49,5 +55,12 @@ test "bench parse_double fast digits n=4096" (it : @bench.T) {
 test "bench parse_double underscores n=4096" (it : @bench.T) {
   it.bench(fn() {
     it.keep(parse_double_bench_sum(parse_double_underscore_bench_inputs))
+  })
+}
+
+///|
+test "bench parse_double long mantissa n=4096" (it : @bench.T) {
+  it.bench(fn() {
+    it.keep(parse_double_bench_sum(parse_double_long_mantissa_bench_inputs))
   })
 }
