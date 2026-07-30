@@ -1779,14 +1779,14 @@ fn StringBuilder::write_ascii_lowered_substring(
     let code_unit = data.unsafe_get(i).to_int()
     if is_ascii_uppercase_code_unit(code_unit) {
       if segment_start < i {
-        self.write_substring(data, segment_start, i - segment_start)
+        self.write_view(StringView::make_view(data, segment_start, i))
       }
       self.write_ascii_lowercase_code_unit(code_unit)
       segment_start = i + 1
     }
   }
   if segment_start < end {
-    self.write_substring(data, segment_start, end - segment_start)
+    self.write_view(StringView::make_view(data, segment_start, end))
   }
 }
 
@@ -1801,7 +1801,7 @@ pub fn StringView::to_lower(self : StringView) -> StringView {
     return self
   }
   let buf = StringBuilder(size_hint=len)
-  buf.write_substring(data, start, idx)
+  buf.write_view(StringView::make_view(data, start, start + idx))
   buf.write_ascii_lowered_substring(data, start + idx, len - idx)
   buf.to_string()
 }
@@ -1815,7 +1815,7 @@ pub fn String::to_lower(self : String) -> String {
     return self
   }
   let buf = StringBuilder(size_hint=len)
-  buf.write_substring(self, 0, idx)
+  buf.write_view(StringView::make_view(self, 0, idx))
   buf.write_ascii_lowered_substring(self, idx, len - idx)
   buf.to_string()
 }
@@ -1837,7 +1837,9 @@ test "View::to_lower" {
   assert_true("Hello"[:].to_lower() == "hello")
   assert_true("HELLO"[:].to_lower() == "hello")
   assert_true("Hello, World!"[:].to_lower() == "hello, world!")
-  assert_true("x🤣ABy"[1:-1].to_lower() == "🤣ab")
+  assert_true(
+    "x🤣ABy".view(start_offset=1, end_offset=5).to_lower() == "🤣ab",
+  )
   let unpaired = String::from_array([(0xD800).unsafe_to_char(), 'A'])
   let lowered_unpaired = String::from_array([(0xD800).unsafe_to_char(), 'a'])
   assert_true(unpaired[:].to_lower() == lowered_unpaired)
