@@ -13,6 +13,29 @@
 // limitations under the License.
 
 ///|
+priv struct StableInt(Int) derive(Eq)
+
+///|
+impl Hash for StableInt with fn hash_combine(self, hasher) {
+  hasher.combine_int(self.0)
+}
+
+///|
+impl Hash for StableInt with fn hash(self) {
+  self.0
+}
+
+///|
+impl @debug.Debug for StableInt with fn to_repr(self) {
+  Repr(self.0)
+}
+
+///|
+impl @shrink.Shrink for StableInt with fn shrink(self) {
+  @shrink.Shrink::shrink(self.0).map(value => StableInt(value))
+}
+
+///|
 test "shrink int list" {
   let il : @list.List[Int] = List([1, 2, 3, 4, 5, 6])
   debug_inspect(
@@ -86,22 +109,22 @@ test "shrink immutable vector" {
 
 ///|
 test "shrink mutable hash set" {
-  let input = @hashset.HashSet([4, 10])
+  let input = @hashset.HashSet([StableInt(4), StableInt(10)])
   let table = @shrink.Shrink::shrink(input).collect()
   debug_inspect(
     table,
     content=(
       #|[
       #|  <HashSet: []>,
-      #|  <HashSet: [10]>,
       #|  <HashSet: [4]>,
+      #|  <HashSet: [10]>,
+      #|  <HashSet: [9, 4]>,
+      #|  <HashSet: [8, 4]>,
+      #|  <HashSet: [4, 5]>,
+      #|  <HashSet: [0, 4]>,
       #|  <HashSet: [10, 3]>,
       #|  <HashSet: [10, 2]>,
       #|  <HashSet: [0, 10]>,
-      #|  <HashSet: [4, 9]>,
-      #|  <HashSet: [4, 8]>,
-      #|  <HashSet: [4, 5]>,
-      #|  <HashSet: [0, 4]>,
       #|]
     ),
   )
@@ -129,7 +152,7 @@ test "shrink mutable sorted set" {
 
 ///|
 test "shrink immutable hash set" {
-  let input = @immut_hashset.HashSet([3, 7])
+  let input = @immut_hashset.HashSet([StableInt(3), StableInt(7)])
   let table = @shrink.Shrink::shrink(input).collect()
   debug_inspect(
     table,
@@ -140,8 +163,8 @@ test "shrink immutable hash set" {
       #|  <HashSet: [3]>,
       #|  <HashSet: [2, 7]>,
       #|  <HashSet: [0, 7]>,
-      #|  <HashSet: [6, 3]>,
-      #|  <HashSet: [4, 3]>,
+      #|  <HashSet: [3, 6]>,
+      #|  <HashSet: [3, 4]>,
       #|  <HashSet: [0, 3]>,
       #|]
     ),
@@ -170,19 +193,19 @@ test "shrink immutable sorted set" {
 
 ///|
 test "shrink mutable hash map" {
-  let input = @hashmap.HashMap([(2, true), (1, false)])
+  let input = @hashmap.HashMap([(StableInt(2), true), (StableInt(1), false)])
   let table = @shrink.Shrink::shrink(input).collect()
   debug_inspect(
     table,
     content=(
       #|[
       #|  <HashMap: {}>,
-      #|  <HashMap: { 1: false }>,
       #|  <HashMap: { 2: true }>,
       #|  <HashMap: { 1: false }>,
-      #|  <HashMap: { 0: true, 1: false }>,
-      #|  <HashMap: { 2: false, 1: false }>,
       #|  <HashMap: { 0: false, 2: true }>,
+      #|  <HashMap: { 1: true }>,
+      #|  <HashMap: { 0: true, 1: false }>,
+      #|  <HashMap: { 1: false, 2: false }>,
       #|]
     ),
   )
@@ -209,25 +232,25 @@ test "shrink mutable sorted map" {
 
 ///|
 test "shrink immutable hash map" {
-  let input = @immut_hashmap.HashMap([(4, 2), (3, 7)])
+  let input = @immut_hashmap.HashMap([(StableInt(4), 2), (StableInt(3), 7)])
   let table = @shrink.Shrink::shrink(input).collect()
   debug_inspect(
     table,
     content=(
       #|[
       #|  <HashMap: {}>,
-      #|  <HashMap: { 3: 7 }>,
       #|  <HashMap: { 4: 2 }>,
-      #|  <HashMap: { 3: 2 }>,
+      #|  <HashMap: { 3: 7 }>,
+      #|  <HashMap: { 2: 7, 4: 2 }>,
+      #|  <HashMap: { 0: 7, 4: 2 }>,
+      #|  <HashMap: { 3: 6, 4: 2 }>,
+      #|  <HashMap: { 3: 4, 4: 2 }>,
+      #|  <HashMap: { 3: 0, 4: 2 }>,
+      #|  <HashMap: { 3: 7 }>,
       #|  <HashMap: { 2: 2, 3: 7 }>,
       #|  <HashMap: { 0: 2, 3: 7 }>,
-      #|  <HashMap: { 4: 1, 3: 7 }>,
-      #|  <HashMap: { 4: 0, 3: 7 }>,
-      #|  <HashMap: { 4: 2, 2: 7 }>,
-      #|  <HashMap: { 4: 2, 0: 7 }>,
-      #|  <HashMap: { 4: 2, 3: 6 }>,
-      #|  <HashMap: { 4: 2, 3: 4 }>,
-      #|  <HashMap: { 4: 2, 3: 0 }>,
+      #|  <HashMap: { 3: 7, 4: 1 }>,
+      #|  <HashMap: { 3: 7, 4: 0 }>,
       #|]
     ),
   )
