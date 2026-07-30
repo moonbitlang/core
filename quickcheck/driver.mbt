@@ -13,24 +13,34 @@
 // limitations under the License.
 
 ///|
-fn size_at(index : UInt, count : UInt, max_size : UInt) -> Int {
-  if count <= 1 {
-    0
+fn size_at(
+  index : UInt,
+  count : UInt,
+  max_size : UInt,
+  recent_discards : UInt,
+) -> Int {
+  let base_size = if count <= 1 {
+    0UL
   } else {
-    let size = index.to_uint64() *
-      max_size.to_uint64() /
-      (count - 1).to_uint64()
-    if size > @int.MAX_VALUE.to_uint64() {
-      @int.MAX_VALUE
-    } else {
-      size.to_int()
-    }
+    index.to_uint64() * max_size.to_uint64() / (count - 1).to_uint64()
+  }
+  let size = base_size + recent_discards.to_uint64()
+  let limit = if max_size.to_uint64() > @int.MAX_VALUE.to_uint64() {
+    @int.MAX_VALUE.to_uint64()
+  } else {
+    max_size.to_uint64()
+  }
+  if size > limit {
+    limit.to_int()
+  } else {
+    size.to_int()
   }
 }
 
 ///|
 priv enum CaseOutcome {
   Passed
+  Discarded
   Falsified
   Raised(Error)
 }
@@ -39,10 +49,12 @@ priv enum CaseOutcome {
 /// Structured result of a property check.
 ///
 /// `tests` includes the failing test case. `shrinks` counts accepted shrink
-/// steps, while `shrink_attempts` counts every shrink candidate whose property
-/// was evaluated.
+/// steps, while `shrink_attempts` counts every shrink candidate examined,
+/// including candidates rejected by `filter`.
 pub enum QuickCheckReport[A] {
   Passed(tests~ : UInt)
+  /// The configured discard budget was exhausted before `count` tests completed.
+  GaveUp(tests~ : UInt, discarded~ : UInt)
   Falsified(
     counterexample~ : A,
     tests~ : UInt,
@@ -66,10 +78,12 @@ pub enum QuickCheckReport[A] {
 pub extend QuickCheckReport with @debug.Debug::{to_repr}
 
 ///|
-fn[A] evaluate_property(
+fn[A] evaluate_case(
   property : (A) -> Bool raise?,
+  filter : (A) -> Bool,
   input : A,
 ) -> CaseOutcome {
+  guard filter(input) else { Discarded }
   let invoke : (A) -> Bool raise = a => property(a)
   try invoke(input) catch {
     err => Raised(err)
@@ -90,6 +104,7 @@ impl Eq for CaseOutcome with fn equal(expected, actual) {
 ///|
 fn[A : @shrink.Shrink] shrink_failure(
   property : (A) -> Bool raise?,
+  filter : (A) -> Bool,
   input : A,
   initial : CaseOutcome,
   max_shrinks : UInt,
@@ -104,7 +119,7 @@ fn[A : @shrink.Shrink] shrink_failure(
     let candidates = @shrink.Shrink::shrink(current)
     while attempted < max_shrinks && candidates.next() is Some(candidate) {
       attempted = attempted + 1
-      let outcome = evaluate_property(property, candidate)
+      let outcome = evaluate_case(property, filter, candidate)
       if initial == outcome {
         current = candidate
         current_outcome = outcome
@@ -121,6 +136,11 @@ fn[A : @shrink.Shrink] shrink_failure(
 fn[A : @debug.Debug] failure_report(report : QuickCheckReport[A]) -> String {
   match report {
     Passed(..) => abort("quickcheck internal error: a passed property reported")
+    GaveUp(tests~, discarded~) =>
+      (
+        $|QuickCheck gave up after \{tests} test(s)
+        $|discarded: \{discarded}
+      )
     Falsified(counterexample~, tests~, size~, shrinks~, shrink_attempts~) =>
       (
         $|QuickCheck falsified after \{tests} test(s)
@@ -144,33 +164,43 @@ fn[A : @debug.Debug] failure_report(report : QuickCheckReport[A]) -> String {
 ///
 /// Returning `false` produces `QuickCheckReport::Falsified`; every error raised
 /// by the property produces `QuickCheckReport::Raised`. Unlike `quickcheck`,
-/// this function does not turn either report into a test failure, does not
-/// raise property errors, and does not require the input type to implement
-/// `Debug`.
+/// this function does not turn either report into a test failure, does not raise
+/// property errors, and does not require the input type to implement `Debug`.
+/// Cases rejected by the pure `filter` do not count as tests. The run gives up
+/// after `discard_ratio` discarded cases per requested test.
 pub fn[A : Arbitrary + @shrink.Shrink] quickcheck_report(
   property : (A) -> Bool raise?,
+  filter? : (A) -> Bool = _ => true,
   count? : UInt = 100,
   max_size? : UInt = 100,
   max_shrinks? : UInt = 100,
+  discard_ratio? : UInt = 10,
   seed? : UInt64 = 37,
 ) -> QuickCheckReport[A] {
   let state = @splitmix.new(seed~)
-  for index = 0U; index < count; index = index + 1 {
-    let size = size_at(index, count, max_size)
+  for tests = 0U, discarded = 0U, recent_discards = 0U; tests < count; {
+    let size = size_at(tests, count, max_size, recent_discards)
     let input : A = Arbitrary::arbitrary(size, state.split())
-    let outcome = evaluate_property(property, input)
+    let outcome = evaluate_case(property, filter, input)
     match outcome {
-      Passed => ()
+      Passed => continue tests + 1, discarded, 0U
+      Discarded => {
+        let next_discarded = discarded + 1
+        if discard_ratio == 0 || next_discarded / discard_ratio >= count {
+          return GaveUp(tests~, discarded=next_discarded)
+        }
+        continue tests, next_discarded, recent_discards + 1
+      }
       _ => {
-        let tests = index + 1
+        let completed_tests = tests + 1
         let (counterexample, outcome, shrinks, shrink_attempts) = shrink_failure(
-          property, input, outcome, max_shrinks,
+          property, filter, input, outcome, max_shrinks,
         )
         return match outcome {
           Falsified =>
             Falsified(
               counterexample~,
-              tests~,
+              tests=completed_tests,
               size~,
               shrinks~,
               shrink_attempts~,
@@ -179,20 +209,21 @@ pub fn[A : Arbitrary + @shrink.Shrink] quickcheck_report(
             Raised(
               counterexample~,
               error~,
-              tests~,
+              tests=completed_tests,
               size~,
               shrinks~,
               shrink_attempts~,
             )
-          Passed =>
+          Passed | Discarded =>
             abort(
-              "quickcheck internal error: unexpected passed outcome after shrinking",
+              "quickcheck internal error: unexpected non-failure after shrinking",
             )
         }
       }
     }
+  } nobreak {
+    Passed(tests=count)
   }
-  Passed(tests=count)
 }
 
 ///|
@@ -200,22 +231,29 @@ pub fn[A : Arbitrary + @shrink.Shrink] quickcheck_report(
 ///
 /// Returning `false` falsifies the property. Raising an error records an
 /// exceptional counterexample instead; these two failure classes are shrunk
-/// independently.
+/// independently. `filter` is evaluated first; returning `false` discards the
+/// case without evaluating the property.
 ///
-/// The generator size grows linearly from zero to `max_size`. Each test case
-/// receives an independent random stream derived from `seed`. If a case fails,
-/// the driver greedily keeps the first smaller candidate with the same failure
-/// class until there are no such candidates or `max_shrinks` property
-/// evaluations have been attempted.
+/// The generator size follows a linear schedule from zero to `max_size`.
+/// Consecutive discarded cases temporarily increase the requested size, up to
+/// `max_size`. Each generated case receives an independent random stream
+/// derived from `seed`. If a case fails, the driver greedily keeps the first
+/// smaller candidate with the same failure class until there are no such
+/// candidates or `max_shrinks` candidates have been examined. A filtered
+/// shrink candidate consumes an attempt, skips that candidate's subtree, and
+/// does not count toward the run's discard budget.
 ///
 /// Parameters:
 ///
 /// * `property`: A deterministic function returning `true` on success.
-/// * `count`: Number of generated cases. Zero performs no tests.
+/// * `filter`: A pure precondition returning `true` for cases to test.
+/// * `count`: Number of non-discarded cases to test. Zero performs no tests.
 /// * `max_size`: Largest requested generator size. Values above the `Int`
 ///   range accepted by `Arbitrary` are saturated at `Int::MAX_VALUE`.
-/// * `max_shrinks`: Maximum number of shrink candidates evaluated. Zero
+/// * `max_shrinks`: Maximum number of shrink candidates examined. Zero
 ///   disables shrinking.
+/// * `discard_ratio`: Maximum discarded cases per requested test. Zero gives
+///   up on the first discarded case.
 /// * `seed`: Seed used to derive each test case's random stream.
 ///
 /// On falsification or a raised error, this function raises a
@@ -230,21 +268,26 @@ pub fn[A : Arbitrary + @shrink.Shrink] quickcheck_report(
 #callsite(autofill(loc))
 pub fn[A : Arbitrary + @shrink.Shrink + @debug.Debug] quickcheck(
   property : (A) -> Bool raise?,
+  filter? : (A) -> Bool = _ => true,
   count? : UInt = 100,
   max_size? : UInt = 100,
   max_shrinks? : UInt = 100,
+  discard_ratio? : UInt = 10,
   seed? : UInt64 = 37,
   loc~ : SourceLoc,
 ) -> Unit raise {
   let report = quickcheck_report(
     property,
+    filter~,
     count~,
     max_size~,
     max_shrinks~,
+    discard_ratio~,
     seed~,
   )
   match report {
     Passed(..) => ()
-    Falsified(..) | Raised(..) => fail(failure_report(report), loc~)
+    GaveUp(..) | Falsified(..) | Raised(..) =>
+      fail(failure_report(report), loc~)
   }
 }

@@ -33,11 +33,10 @@ impl @quickcheck.Arbitrary for ShrinkInput with fn arbitrary(_, _) {
 
 ///|
 impl @shrink.Shrink for ShrinkInput with fn shrink(input) {
-  let ShrinkInput(value) = input
-  if value <= 0 {
+  if input.0 <= 0 {
     Iter::empty()
   } else {
-    [ShrinkInput(value - 1), ShrinkInput(0)].iter()
+    [ShrinkInput(input.0 - 1), ShrinkInput(0)].iter()
   }
 }
 
@@ -59,11 +58,27 @@ impl @quickcheck.Arbitrary for DriftInput with fn arbitrary(_, _) {
 
 ///|
 impl @shrink.Shrink for DriftInput with fn shrink(input) {
-  let DriftInput(value) = input
-  if value == 10 {
+  if input.0 == 10 {
     [DriftInput(9), DriftInput(8)].iter()
   } else {
     Iter::empty()
+  }
+}
+
+///|
+priv struct FilteredShrinkInput(Int) derive(Debug)
+
+///|
+impl @quickcheck.Arbitrary for FilteredShrinkInput with fn arbitrary(_, _) {
+  FilteredShrinkInput(10)
+}
+
+///|
+impl @shrink.Shrink for FilteredShrinkInput with fn shrink(input) {
+  match input.0 {
+    10 => [FilteredShrinkInput(9), FilteredShrinkInput(7)].iter()
+    9 => [FilteredShrinkInput(8)].iter()
+    _ => Iter::empty()
   }
 }
 
@@ -140,8 +155,7 @@ test "quickcheck runs the requested count with increasing sizes" {
   let seen = []
   @quickcheck.quickcheck(
     (input : SizedProbe) => {
-      let SizedProbe(size) = input
-      seen.push(size)
+      seen.push(input.0)
       true
     },
     count=5,
@@ -156,12 +170,27 @@ test "quickcheck runs the requested count with increasing sizes" {
 }
 
 ///|
+test "discard ratio controls the give-up budget" {
+  let report = @quickcheck.quickcheck_report(
+    (_ : Int) => true,
+    filter=_ => false,
+    count=4,
+    discard_ratio=2,
+  )
+  debug_inspect(
+    report,
+    content=(
+      #|GaveUp(tests=0, discarded=8)
+    ),
+  )
+}
+
+///|
 test "quickcheck size progression does not overflow" {
   let seen = []
   @quickcheck.quickcheck(
     (input : SizedProbe) => {
-      let SizedProbe(size) = input
-      seen.push(size)
+      seen.push(input.0)
       true
     },
     count=3,
@@ -181,8 +210,7 @@ test "quickcheck clamps maximum size to the Arbitrary Int range" {
   let seen = []
   @quickcheck.quickcheck(
     (input : SizedProbe) => {
-      let SizedProbe(size) = input
-      seen.push(size)
+      seen.push(input.0)
       true
     },
     count=2,
@@ -194,10 +222,7 @@ test "quickcheck clamps maximum size to the Arbitrary Int range" {
 ///|
 test "quickcheck_report greedily shrinks a falsified property" {
   let report = @quickcheck.quickcheck_report(
-    (input : ShrinkInput) => {
-      let ShrinkInput(value) = input
-      value < 3
-    },
+    (input : ShrinkInput) => input.0 < 3,
     count=1,
     max_shrinks=100,
   )
@@ -264,14 +289,33 @@ test "quickcheck_report counts rejected shrink candidates toward the limit" {
 }
 
 ///|
+test "quickcheck_report skips a discarded shrink subtree" {
+  let report = @quickcheck.quickcheck_report(
+    (_ : FilteredShrinkInput) => false,
+    filter=input => input.0 != 9,
+    count=1,
+    max_shrinks=10,
+  )
+  debug_inspect(
+    report,
+    content=(
+      #|Falsified(
+      #|  counterexample=FilteredShrinkInput(7),
+      #|  tests=1,
+      #|  size=0,
+      #|  shrinks=1,
+      #|  shrink_attempts=2,
+      #|)
+    ),
+  )
+}
+
+///|
 test "quickcheck_report keeps falsification separate from raised errors" {
   let report = @quickcheck.quickcheck_report(
     (input : DriftInput) => {
-      let DriftInput(value) = input
-      if value == 9 {
-        raise InitialRaised
-      }
-      value != 10 && value != 8
+      guard input.0 != 9 else { raise InitialRaised }
+      input.0 != 10 && input.0 != 8
     },
     count=1,
     max_shrinks=10,
@@ -294,8 +338,7 @@ test "quickcheck_report keeps falsification separate from raised errors" {
 test "quickcheck_report keeps raised errors separate from falsification" {
   let report = @quickcheck.quickcheck_report(
     (input : DriftInput) => {
-      let DriftInput(value) = input
-      match value {
+      match input.0 {
         10 => raise InitialRaised
         9 => false
         8 => raise ShrunkRaised
@@ -354,8 +397,7 @@ test "quickcheck_report returns Failure as a raised property" {
 test "quickcheck_report accepts InspectError while shrinking Raised" {
   let report = @quickcheck.quickcheck_report(
     (input : DriftInput) => {
-      let DriftInput(value) = input
-      match value {
+      match input.0 {
         10 => raise InitialRaised
         9 => raise InspectError("shrink sentinel")
         _ => true

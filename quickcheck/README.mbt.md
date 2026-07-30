@@ -20,6 +20,20 @@ counterexample. The first failure is greedily shrunk while preserving that
 distinction: a `false` result cannot shrink into an error, and an error cannot
 shrink into `false`.
 
+Use the pure `filter` function for a precondition:
+
+```mbt check
+///|
+test "division identity" {
+  @quickcheck.quickcheck((x : Int) => x / x == 1, filter=x => x != 0)
+}
+```
+
+Filtered cases do not count toward `count`. The driver gives up after ten
+discarded cases per requested test by default. During shrinking, a filtered candidate
+consumes one shrink attempt, its subtree is skipped, and shrinking continues
+with the next candidate.
+
 The optional controls are deterministic:
 
 ```mbt check
@@ -30,18 +44,22 @@ test "configured property run" {
     count=200,
     max_size=50,
     max_shrinks=100,
+    discard_ratio=10,
     seed=2026,
   )
 }
 ```
 
-`count`, `max_size`, and `max_shrinks` are unsigned. A zero `count` performs no
-tests. Generator size grows from zero to `max_size`; because `Arbitrary`
-receives an `Int` size, larger values saturate at `Int::MAX_VALUE`.
-`max_shrinks` counts every shrink candidate whose property is evaluated, so
-zero disables shrinking and even an infinite or cyclic shrink stream
-terminates at the limit. A failure report includes the final counterexample,
-error when applicable, size, and shrink counts.
+`count`, `max_size`, `max_shrinks`, and `discard_ratio` are unsigned. A zero
+`count` performs no tests. `discard_ratio` defaults to ten discarded cases per
+requested test; zero gives up on the first discarded case. Generator size grows
+from zero to `max_size`; consecutive discards temporarily increase the
+requested size so filtering cannot leave the run stuck at size zero. Because
+`Arbitrary` receives an `Int` size, larger values saturate at `Int::MAX_VALUE`.
+`max_shrinks` counts every shrink candidate examined, including filtered
+candidates, so zero disables shrinking and even an infinite or cyclic shrink
+stream terminates at the limit. A failure report includes the final
+counterexample, error when applicable, size, and shrink counts.
 
 If a test needs to inspect an expected failure, use `quickcheck_report` instead
 of catching the `Failure` raised by `quickcheck`:
@@ -71,11 +89,11 @@ test "inspect a counterexample" {
 }
 ```
 
-`quickcheck_report` returns `Passed`, `Falsified`, or `Raised`. Every error from
-the property is a value in `Raised`; the driver does not distinguish errors
-used by `inspect` or snapshot tests. `QuickCheckReport[A]` implements `Debug`
-when `A` does, but unlike `quickcheck`, calling `quickcheck_report` itself does
-not raise and does not require the input type to implement `Debug`.
+`quickcheck_report` returns `Passed`, `GaveUp`, `Falsified`, or `Raised`. Every
+error from the property is a value in `Raised`; the driver does not distinguish
+errors used by `inspect` or snapshot tests. `QuickCheckReport[A]` implements
+`Debug` when `A` does, but unlike `quickcheck`, calling `quickcheck_report`
+itself does not raise and does not require the input type to implement `Debug`.
 
 Properties should be deterministic and should not mutate or consume their
 input. In particular, an `Iter` is single-use; generate an `Array` and create a
