@@ -28,17 +28,8 @@ jobs:
         timeout-minutes: 10
         run: moon check --deny-warn --target all
 
-      - name: moon info
-        timeout-minutes: 10
-        run: |
-          moon info --target wasm,wasm-gc,js,native
-          git diff --exit-code
-
-      - name: format diff
-        timeout-minutes: 10
-        run: |
-          moon fmt
-          git diff --exit-code
+      # interface (moon info) and formatting reproducibility are gated by
+      # the interface-check workflow, which accepts stable OR nightly output
 
       - name: run tests
         timeout-minutes: 10
