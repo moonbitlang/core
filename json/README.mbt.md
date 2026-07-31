@@ -4,6 +4,19 @@ The `json` package provides comprehensive JSON handling capabilities, including
 parsing, stringifying, and type-safe conversion between JSON and other MoonBit
 data types.
 
+Everything revolves around the builtin `Json` enum
+(`Null · True · False · Number · String · Array · Object`), which can also be
+written as a literal in MoonBit source:
+
+```mermaid
+flowchart LR
+  S["text : StringView"] -->|"@json.parse<br/>raise ParseError"| J["Json (builtin enum)"]
+  L["Json literal in source<br/>{ #quot;name#quot;: #quot;Alice#quot;, #quot;tags#quot;: [1, 2] }"] --> J
+  J -->|"@json.from_json (T : FromJson)<br/>raise JsonDecodeError, reports a JsonPath"| T["typed value T"]
+  T -->|"@json.to_json (T : ToJson)"| J
+  J -->|"stringify(escape_slash?, indent?, replacer?)"| O["String"]
+```
+
 ## Basic JSON Operations
 
 ### Parsing and Validating JSON

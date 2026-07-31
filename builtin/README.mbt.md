@@ -181,6 +181,48 @@ test "fixed arrays" {
 }
 ```
 
+## Views (Zero-Copy Slices)
+
+Each owning container has a matching view type created with the `a[start:end]`
+slice syntax. A view is a small record holding a reference to the shared
+storage plus its window bounds, so slicing never copies the elements:
+
+```d2
+direction: right
+owners: "Owning containers" {
+  arr: "Array[T] / FixedArray[T] / ReadOnlyArray[T]"
+  bytes: "Bytes"
+  str: "String"
+}
+views: "Zero-copy views (shared storage + window bounds)" {
+  arrview: "ArrayView[T]"
+  bytesview: "BytesView"
+  strview: "StringView"
+}
+owners.arr -> views.arrview: "a[start:end]"
+owners.bytes -> views.bytesview: "b[start:end]"
+owners.str -> views.strview: "s[start:end]"
+```
+
+Views are ideal for rest patterns (`[first, .. rest]`) and for passing
+sub-sequences without allocation; functions taking a view also accept the
+owning container through implicit conversion. Note that the `s[start:end]`
+slice syntax on `String` panics when a boundary would split a UTF-16
+surrogate pair:
+
+```mbt check
+///|
+test "views are zero copy" {
+  let arr = [1, 2, 3, 4, 5]
+  let view = arr[1:4]
+  @test.assert_eq(view.length(), 3)
+  @test.assert_eq(view[0], 2)
+  guard! view is [first, .. rest]
+  @test.assert_eq(first, 2)
+  @test.assert_eq(rest.length(), 2)
+}
+```
+
 ## String Operations
 
 Basic string functionality:
