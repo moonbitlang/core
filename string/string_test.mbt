@@ -1007,7 +1007,7 @@ test "string chars array" {
 ///|
 test "gard tail position" {
   let s = "abc"
-  guard s is [.., ch]
+  guard! s is [.., ch]
   @test.assert_eq(ch, 'c') // failed
 }
 

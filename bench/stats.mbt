@@ -159,8 +159,8 @@ fn iqr(quartiles~ : (Double, Double, Double)) -> Double {
 
 ///|
 fn percentile(sorted_data~ : Array[Double], pct~ : Double) -> Double {
-  guard !sorted_data.is_empty()
-  guard pct >= 0.0 && pct <= 100.0
+  guard! !sorted_data.is_empty()
+  guard! pct >= 0.0 && pct <= 100.0
   if sorted_data.length() == 1 {
     return sorted_data[0]
   }

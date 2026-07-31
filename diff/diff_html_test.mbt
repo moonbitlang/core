@@ -45,7 +45,7 @@ fn side_by_side_html(
       match edits[i] {
         Delete(old_index~, old_len~, ..) if i + 1 < edits.length() &&
           edits[i + 1] is Insert(..) => {
-          guard edits[i + 1] is Insert(new_index~, new_len~, ..)
+          guard! edits[i + 1] is Insert(new_index~, new_len~, ..)
           let old_lines = o.view(start=old_index, end=old_index + old_len)
           let new_lines = n.view(start=new_index, end=new_index + new_len)
           // dimension guards FIRST, then tokenize once per line with a

@@ -31,7 +31,7 @@ test "get" {
   debug_inspect(m.get("d"), content="None")
 
   // pattern
-  guard m is { "a": 1, "b": 2, "c": 3, "d"? : None, .. }
+  guard! m is { "a": 1, "b": 2, "c": 3, "d"? : None, .. }
 }
 
 ///|

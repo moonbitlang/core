@@ -582,7 +582,7 @@ pub fn[K] Set::copy(self : Set[K]) -> Set[K] {
   if self.size == 0 {
     return other
   }
-  guard self.entries[self.tail] is Some(last)
+  guard! self.entries[self.tail] is Some(last)
   for entry = last, idx = self.tail, next = (None : Entry[K]?) {
     match (entry, idx, next) {
       ({ prev, psl, hash, key, .. }, idx, next) => {

@@ -79,7 +79,7 @@ test "json object navigation" {
   debug_inspect(array_opt, content="Some([Number(1), Number(2), Number(3)])")
 
   // Handle missing keys gracefully
-  guard json is { "value"? : value, .. }
+  guard! json is { "value"? : value, .. }
   debug_inspect(value, content="None")
 }
 ```
@@ -100,7 +100,7 @@ test "json array navigation" {
   debug_inspect(missing, content="None")
 
   // Iterate through array
-  guard array is Array(values)
+  guard! array is Array(values)
   debug_inspect(
     values.iter().to_array(),
     content=(

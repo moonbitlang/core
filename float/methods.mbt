@@ -262,7 +262,7 @@ pub fn Float::max(self : Float, other : Float) -> Float {
 /// }
 /// ```
 pub fn Float::clamp(self : Float, min~ : Float, max~ : Float) -> Float {
-  guard min <= max
+  guard! min <= max
   if self < min {
     min
   } else if self > max {

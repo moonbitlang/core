@@ -80,7 +80,7 @@ pub fn[K : Eq + Hash, V] HashMap::get(self : HashMap[K, V], key : K) -> V? {
 /// Get value with `at` access semantics.
 #alias("_[_]")
 pub fn[K : Eq + Hash, V] HashMap::at(self : HashMap[K, V], key : K) -> V {
-  guard self.data is Some(node)
+  guard! self.data is Some(node)
   node.get_with_path(key, @path.of(key)).unwrap()
 }
 
@@ -633,7 +633,7 @@ fn[K : Eq, V] @list.List::union_with(
       res.push(kv2)
     }
   }
-  guard @list.List(res) is More((k, v), tail~)
+  guard! @list.List(res) is More((k, v), tail~)
   Leaf(k, v, tail)
 }
 

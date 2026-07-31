@@ -182,7 +182,7 @@ pub fn[T] Array::unsafe_get(self : Array[T], idx : Int) -> T {
 #alias("_[_]")
 pub fn[T] Array::at(self : Array[T], index : Int) -> T {
   let len = self.length()
-  guard index >= 0 && index < len
+  guard! index >= 0 && index < len
   self.buffer().unsafe_get(index)
 }
 
@@ -259,7 +259,7 @@ pub fn[T] Array::unsafe_set(self : Array[T], idx : Int, val : T) -> Unit {
 #alias("_[_]=_")
 pub fn[T] Array::set(self : Array[T], index : Int, value : T) -> Unit {
   let len = self.length()
-  guard index >= 0 && index < len
+  guard! index >= 0 && index < len
   self.buffer().unsafe_set(index, value)
 }
 
@@ -1534,7 +1534,7 @@ pub fn[T] Array::extract_if(
 /// }
 /// ```
 pub fn[T] Array::chunks(self : Array[T], size : Int) -> Array[ArrayView[T]] {
-  guard size > 0
+  guard! size > 0
   let len = self.length()
   if len == 0 {
     return []
@@ -1637,7 +1637,7 @@ pub fn[T] Array::chunk_by(
 /// }
 /// ```
 pub fn[T] Array::windows(self : Array[T], size : Int) -> Array[ArrayView[T]] {
-  guard size > 0
+  guard! size > 0
   let len = self.length() - size + 1
   if len < 1 {
     return []

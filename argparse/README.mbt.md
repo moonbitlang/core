@@ -128,7 +128,7 @@ test "global count flag success snapshot" {
       #|{ "verbose": 2 }
     ),
   )
-  guard parsed.subcommand is Some(("run", child))
+  guard! parsed.subcommand is Some(("run", child))
   @debug.debug_inspect(
     child.flag_counts,
     content=(

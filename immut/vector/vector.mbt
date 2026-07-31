@@ -200,7 +200,7 @@ fn[A] Vector::tail_offset(self : Vector[A]) -> Int {
 /// ```
 #alias("_[_]")
 pub fn[A] Vector::at(self : Vector[A], index : Int) -> A {
-  guard index >= 0 && index < self.size
+  guard! index >= 0 && index < self.size
   let tail_offset = self.tail_offset()
   if index >= tail_offset {
     self.tail[index - tail_offset]
@@ -279,7 +279,7 @@ pub fn[A : Eq] Vector::contains(self : Vector[A], value : A) -> Bool {
 /// }
 /// ```
 pub fn[A] Vector::set(self : Vector[A], index : Int, value : A) -> Vector[A] {
-  guard index >= 0 && index < self.size
+  guard! index >= 0 && index < self.size
   let tail_len = self.tail.length()
   if tail_len == 0 {
     make_t(
