@@ -61,4 +61,3 @@ pub impl ToJson for Int16
 // Type aliases
 
 // Traits
-

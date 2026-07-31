@@ -44,4 +44,3 @@ pub impl[A : @debug.Debug] @debug.Debug for Queue[A]
 // Type aliases
 
 // Traits
-

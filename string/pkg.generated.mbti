@@ -69,4 +69,3 @@ pub impl FromStr for UInt
 pub impl FromStr for UInt64
 pub impl FromStr for Double
 pub impl FromStr for @bigint.BigInt
-

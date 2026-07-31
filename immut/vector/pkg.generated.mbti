@@ -76,4 +76,3 @@ pub impl[A : @json.FromJson] @json.FromJson for Vector[A]
 // Type aliases
 
 // Traits
-

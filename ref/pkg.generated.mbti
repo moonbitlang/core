@@ -28,4 +28,3 @@ pub impl[T : @debug.Debug] @debug.Debug for Ref[T]
 // Type aliases
 
 // Traits
-
