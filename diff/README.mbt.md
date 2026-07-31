@@ -8,6 +8,24 @@ default, or patience diff when you pass `algorithm=Patience`.
 result to split far-apart changes into separate `Hunk[T]` values for
 unified-diff-style output.
 
+```mermaid
+flowchart LR
+  old["old : ArrayView[T]"] --> D["Diff(old~, new~,<br/>cutoff?, algorithm?)"]
+  new["new : ArrayView[T]"] --> D
+  D -->|"Myers (default)"| M["Myers O((N+M)·D)<br/>divide and conquer, linear space"]
+  D -->|"Patience"| P["anchors = LCS of elements unique<br/>to both sides, Myers in the gaps"]
+  M --> E["edit script:<br/>Equal / Delete / Insert"]
+  P --> E
+  E -->|"group(context?)"| H["Array[Hunk[T]]"]
+  H --> R["render: unified text,<br/>HTML, word diff, …"]
+```
+
+The separate Levenshtein functions live outside this pipeline:
+`edit_distance` / `edit_distance_within` answer only "how many edits" with a
+two-row dynamic program (banded when you give `max_distance`), and
+`levenshtein_edits` produces a run-length script that, unlike `Edit`, also
+has a `Replace` operation for substitutions.
+
 ## Compute A Diff
 
 `Diff(old~, new~)` computes the full sequence of `Delete`, `Insert`, and
