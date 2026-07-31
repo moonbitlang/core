@@ -81,7 +81,7 @@ pub fn Bytes::to_unchecked_string(
 ) -> String {
   let len = self.length()
   let length = if length is Some(l) { l } else { len - offset }
-  guard offset >= 0 && length >= 0 && offset + length <= len
+  guard! offset >= 0 && length >= 0 && offset + length <= len
   unsafe_sub_string(self, offset, length)
 }
 
@@ -135,7 +135,7 @@ pub fn FixedArray::blit_from_string(
   let e2 = str_offset + length - 1
   let len1 = self.length()
   let len2 = str.length()
-  guard length >= 0 && s1 >= 0 && e1 < len1 && s2 >= 0 && e2 < len2
+  guard! length >= 0 && s1 >= 0 && e1 < len1 && s2 >= 0 && e2 < len2
   let end_str_offset = str_offset + length
   for i = str_offset, j = bytes_offset; i < end_str_offset; i = i + 1, j = j + 2 {
     let c = str.unsafe_get(i).to_int().reinterpret_as_uint()
@@ -164,7 +164,7 @@ pub fn FixedArray::blit_from_bytes(
   let e2 = src_offset + length - 1
   let len1 = self.length()
   let len2 = src.length()
-  guard length >= 0 && s1 >= 0 && e1 < len1 && s2 >= 0 && e2 < len2
+  guard! length >= 0 && s1 >= 0 && e1 < len1 && s2 >= 0 && e2 < len2
   FixedArray::unsafe_blit(
     self,
     bytes_offset,
@@ -494,7 +494,7 @@ pub fn Bytes::from_fixedarray(arr : FixedArray[Byte], len? : Int) -> Bytes {
   let len = match len {
     None => arr.length()
     Some(x) => {
-      guard 0 <= x && x <= arr.length()
+      guard! 0 <= x && x <= arr.length()
       x
     }
   }
@@ -544,7 +544,7 @@ pub fn Bytes::to_fixedarray(self : Bytes, len? : Int) -> FixedArray[Byte] {
   let len = match len {
     None => self.length()
     Some(x) => {
-      guard 0 <= x && x <= self.length()
+      guard! 0 <= x && x <= self.length()
       x
     }
   }

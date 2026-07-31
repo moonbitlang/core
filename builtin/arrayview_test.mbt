@@ -1238,7 +1238,7 @@ test "ArrayView::strip_prefix on sliced view" {
 ///|
 test "ArrayView::strip_prefix shares backing" {
   let arr : FixedArray[Int] = [1, 2, 3, 4, 5]
-  guard arr[:].strip_prefix([1, 2]) is Some(rest)
+  guard! arr[:].strip_prefix([1, 2]) is Some(rest)
   arr[2] = 99
   debug_inspect(
     rest,

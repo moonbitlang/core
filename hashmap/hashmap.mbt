@@ -311,11 +311,11 @@ pub fn[V] HashMap::get_from_string(
 pub fn[K : Hash + Eq, V] HashMap::at(self : HashMap[K, V], key : K) -> V {
   let hash = Hash::hash(key)
   for i = 0, idx = hash & self.capacity_mask {
-    guard self.entries[idx] is Some(entry)
+    guard! self.entries[idx] is Some(entry)
     if entry.hash == hash && entry.key == key {
       break entry.value
     }
-    guard i <= entry.psl
+    guard! i <= entry.psl
     continue i + 1, (idx + 1) & self.capacity_mask
   }
 }

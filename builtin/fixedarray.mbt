@@ -121,11 +121,11 @@ pub fn[T] FixedArray::fill(
 ) -> Unit {
   let array_length = self.length()
   guard array_length > 0 else { return }
-  guard start >= 0 && start < array_length
+  guard! start >= 0 && start < array_length
   let length = match end {
     None => array_length - start
     Some(e) => {
-      guard e >= start && e <= array_length
+      guard! e >= start && e <= array_length
       e - start
     }
   }

@@ -168,14 +168,14 @@ test "View::get out_of_bounds" {
 ///|
 test "to_uint_be with b'\\xFF\\xFF\\xFF\\xFF'" {
   let bytes = b"\xFF\xFF\xFF\xFF"[:]
-  guard bytes is [u32be(x), ..]
+  guard! bytes is [u32be(x), ..]
   inspect(x, content="4294967295")
 }
 
 ///|
 test "View::to_uint_le with non-zero bytes" {
   let bytes = b"\x01\x02\x03\x04"
-  guard bytes is [u32le(x), ..]
+  guard! bytes is [u32le(x), ..]
   inspect(x, content="67305985") // 67305985 = 0x04030201
 }
 
@@ -191,7 +191,7 @@ test "panic View::to_uint_le/out_of_bounds" {
 ///|
 test "View::to_uint64_be/first_byte_operation" {
   let bytes = b"\xFF\x00\x00\x00\x00\x00\x00\x00" // First byte is all 1s
-  guard bytes is [u64be(result), ..]
+  guard! bytes is [u64be(result), ..]
   // First byte shifted left by 56 bits should give us: 0xFF00000000000000
   inspect(result, content="18374686479671623680")
 }
@@ -199,22 +199,22 @@ test "View::to_uint64_be/first_byte_operation" {
 ///|
 test "test View::to_uint64_le with binary pattern" {
   let bytes = b"\x01\x00\x00\x00\x00\x00\x00\x00"
-  guard bytes is [u64le(x), ..]
+  guard! bytes is [u64le(x), ..]
   inspect(x, content="1")
   let bytes2 = b"\x00\x01\x00\x00\x00\x00\x00\x00"
-  guard bytes2 is [u64le(x2), ..]
+  guard! bytes2 is [u64le(x2), ..]
   inspect(x2, content="256")
 
   // Test all bytes set to non-zero values
   let bytes3 = b"\x01\x02\x03\x04\x05\x06\x07\x08"
-  guard bytes3 is [u64le(x3), ..]
+  guard! bytes3 is [u64le(x3), ..]
   inspect(x3, content="578437695752307201")
 }
 
 ///|
 test "test View::to_int_le with a non-zero 32-bit number" {
   let bytes = b"\x78\x56\x34\x12"
-  guard bytes is [i32le(x), ..]
+  guard! bytes is [i32le(x), ..]
   inspect(x, content="305419896")
 }
 
@@ -251,13 +251,13 @@ test "panic to_float_be/short_input" {
 test "View::to_float_le with different values" {
   // Test with value 0.0
   let bytes = b"\x00\x00\x00\x00"
-  guard bytes is [u32le(bits), ..]
+  guard! bytes is [u32le(bits), ..]
   let f = Float::reinterpret_from_uint(bits)
   inspect(f.to_double(), content="0")
 
   // Test with value -1.0
   let bytes2 = b"\x00\x00\x80\xBF"
-  guard bytes2 is [u32le(bits2), ..]
+  guard! bytes2 is [u32le(bits2), ..]
   let f2 = Float::reinterpret_from_uint(bits2)
   inspect(f2.to_double(), content="-1")
 }
@@ -265,7 +265,7 @@ test "View::to_float_le with different values" {
 ///|
 test "View::to_double_be/zero" {
   let bytes = b"\x00\x00\x00\x00\x00\x00\x00\x00"
-  guard bytes is [u64be(bits), ..]
+  guard! bytes is [u64be(bits), ..]
   inspect(bits.reinterpret_as_double(), content="0")
 }
 
@@ -273,7 +273,7 @@ test "View::to_double_be/zero" {
 test "test to_double_le with normal float" {
   // 3.14 in little-endian IEEE 754 double format
   let bytes = b"\x1F\x85\xEB\x51\xB8\x1E\x09\x40"
-  guard bytes is [u64le(bits), ..]
+  guard! bytes is [u64le(bits), ..]
   inspect(bits.reinterpret_as_double(), content="3.14")
 }
 
@@ -296,7 +296,7 @@ test "iter break early" {
 ///|
 test "View::to_int_be with positive value" {
   let bytes = b"\x00\x00\x00\x01"[:] // Represents 1 in big-endian
-  guard bytes is [i32be(x), ..]
+  guard! bytes is [i32be(x), ..]
   inspect(x, content="1")
 }
 

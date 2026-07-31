@@ -1403,7 +1403,7 @@ pub fn BigInt::pow(self : BigInt, exp : BigInt, modulus? : BigInt) -> BigInt {
       result
     }
     Some(modulus) => {
-      guard !(modulus.is_zero() || modulus.sign == Negative)
+      guard! !(modulus.is_zero() || modulus.sign == Negative)
       let mut result = 1N % modulus
       let mut base = (self % modulus + modulus) % modulus
       let mut exp = exp

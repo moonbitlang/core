@@ -177,7 +177,7 @@ pub impl[X : FromJson] FromJson for Array[X] with fn from_json(json, path) {
   guard json is Array(a) else {
     decode_error(path, "Array::from_json: expected array")
   }
-  guard JsonPath::Index(path, index=0) is (Index(_) as new_path)
+  guard! JsonPath::Index(path, index=0) is (Index(_) as new_path)
   a.mapi((i, x) => {
     new_path.index = i
     FromJson::from_json(x, new_path)
@@ -189,7 +189,7 @@ pub impl[X : FromJson] FromJson for ArrayView[X] with fn from_json(json, path) {
   guard json is Array(a) else {
     decode_error(path, "ArrayView::from_json: expected array")
   }
-  guard JsonPath::Index(path, index=0) is (Index(_) as new_path)
+  guard! JsonPath::Index(path, index=0) is (Index(_) as new_path)
   a.mapi((i, x) => {
     new_path.index = i
     FromJson::from_json(x, new_path)
@@ -205,7 +205,7 @@ pub impl[X : FromJson] FromJson for FixedArray[X] with fn from_json(json, path) 
   if len == 0 {
     return []
   }
-  guard JsonPath::Index(path, index=0) is (Index(_) as new_path)
+  guard! JsonPath::Index(path, index=0) is (Index(_) as new_path)
   let res = FixedArray::make(
     len,
     FromJson::from_json(a.unsafe_get(0), new_path),
@@ -228,7 +228,7 @@ pub impl[V : FromJson] FromJson for Map[String, V] with fn from_json(json, path)
     decode_error(path, "Map::from_json: expected object")
   }
   let res = Map([])
-  guard JsonPath::Key(path, key="") is (Key(_) as new_path)
+  guard! JsonPath::Key(path, key="") is (Key(_) as new_path)
   // Map::map_with_key
   for k, v in obj {
     new_path.key = k

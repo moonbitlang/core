@@ -258,7 +258,7 @@ pub fn[A] Deque::blit_to(
   src_offset? : Int = 0,
   dst_offset? : Int = 0,
 ) -> Unit {
-  guard len >= 0 &&
+  guard! len >= 0 &&
     dst_offset >= 0 &&
     src_offset >= 0 &&
     dst_offset <= dst.length() &&
@@ -1865,7 +1865,7 @@ pub impl[A : @json.FromJson] @json.FromJson for Deque[A] with fn from_json(
 /// 
 /// * `size` is not positive
 pub fn[A] Deque::chunks(self : Deque[A], size : Int) -> Deque[Deque[A]] {
-  guard size > 0
+  guard! size > 0
   let chunks = from_array([])
   for i = 0; i < self.length(); {
     let chunk = Deque([], capacity=size)

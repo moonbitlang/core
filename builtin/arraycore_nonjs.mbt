@@ -71,7 +71,7 @@ fn[T] Array::unsafe_resize_with_default(
   value : T,
 ) -> Unit {
   let len = self.length()
-  guard new_len >= len
+  guard! new_len >= len
   if new_len <= self.capacity() {
     self.buf.unchecked_fill(len, value, new_len - len)
   } else {
@@ -166,7 +166,7 @@ pub fn[T] Array::length(self : Array[T]) -> Int {
 /// TODO: this can be optimized by using the intrinsic to null out the range
 fn[T] Array::unsafe_truncate_to_length(self : Array[T], new_len : Int) -> Unit {
   let len = self.length()
-  guard new_len <= len
+  guard! new_len <= len
   for i in new_len..<len {
     self.buf.set_null(i)
   }
@@ -387,7 +387,7 @@ pub fn[T] Array::append(self : Array[T], other : ArrayView[T]) -> Unit {
   let append_len = other.len()
   let old_len = self.len
   let new_len = old_len + append_len
-  guard new_len >= old_len
+  guard! new_len >= old_len
   if new_len > self.buf.0.length() {
     self.realloc(new_len)
   }
@@ -444,13 +444,13 @@ pub fn[A] Array::blit_to(
   dst_offset? : Int = 0,
 ) -> Unit {
   let old_len = dst.length()
-  guard len >= 0 &&
+  guard! len >= 0 &&
     dst_offset >= 0 &&
     src_offset >= 0 &&
     dst_offset <= old_len &&
     len <= self.length() - src_offset
   let new_len = dst_offset + len
-  guard new_len >= 0
+  guard! new_len >= 0
   if new_len > dst.capacity() {
     dst.realloc(new_len)
   }
@@ -500,9 +500,9 @@ pub fn[A] ArrayView::blit_to(
 ) -> Unit {
   let len = self.len()
   let old_len = dst.length()
-  guard dst_offset >= 0 && dst_offset <= old_len
+  guard! dst_offset >= 0 && dst_offset <= old_len
   let new_len = dst_offset + len
-  guard new_len >= 0
+  guard! new_len >= 0
   if new_len > dst.capacity() {
     dst.realloc(new_len)
   }
@@ -566,7 +566,7 @@ pub fn[T] Array::pop(self : Array[T]) -> T? {
 #alias(pop_exn, deprecated)
 pub fn[T] Array::unsafe_pop(self : Array[T]) -> T {
   let len = self.length()
-  guard len != 0
+  guard! len != 0
   let index = len - 1
   let v = self.unsafe_get(index)
   self.buf.set_null(index)
@@ -623,7 +623,7 @@ pub fn[T] Array::remove(self : Array[T], index : Int) -> T {
 /// }
 /// ```
 pub fn[T] Array::drain(self : Array[T], begin : Int, end : Int) -> Array[T] {
-  guard begin >= 0 && end <= self.length() && begin <= end
+  guard! begin >= 0 && end <= self.length() && begin <= end
   let num = end - begin
   let v = {
     buf: UninitializedArray::make_and_blit(
@@ -734,11 +734,11 @@ pub fn[A] Array::fill(
 ) -> Unit {
   let array_length = self.length()
   guard array_length > 0 else { return }
-  guard start >= 0 && start < array_length
+  guard! start >= 0 && start < array_length
   let length = match end {
     None => array_length
     Some(e) => {
-      guard e >= start && e <= array_length
+      guard! e >= start && e <= array_length
       e
     }
   }

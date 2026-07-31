@@ -175,7 +175,7 @@ fn word_diff_html(old~ : ArrayView[String], new~ : ArrayView[String]) -> String 
       match edits[i] {
         Delete(old_index~, old_len~, ..) if i + 1 < edits.length() &&
           edits[i + 1] is Insert(..) => {
-          guard edits[i + 1] is Insert(new_index~, new_len~, ..)
+          guard! edits[i + 1] is Insert(new_index~, new_len~, ..)
           let removed = o
             .view(start=old_index, end=old_index + old_len)
             .map(l => l)
