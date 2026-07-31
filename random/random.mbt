@@ -157,7 +157,8 @@ pub fn Rand::uint64(self : Rand, limit? : UInt64 = 0) -> UInt64 {
   if r.lo >= limit {
     return r.hi
   }
-  let thresh = limit.lnot() % limit
+  // In wrapping UInt64 arithmetic, ~limit + 1 is -limit modulo 2^64.
+  let thresh = (limit.lnot() + 1) % limit
   for r = r; r.lo < thresh; {
     continue umul128(self.next(), limit)
   } nobreak {
