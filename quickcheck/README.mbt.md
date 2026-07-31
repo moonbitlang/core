@@ -4,13 +4,13 @@ MoonBit QuickCheck package provides property-based testing capabilities by gener
 
 ## Checking Properties
 
-Use `quickcheck` for the common property shape `(A) -> Bool raise?`. The
+Use `check` for the common property shape `(A) -> Bool raise?`. The
 input type must implement `Arbitrary`, `Shrink`, and `Debug`.
 
 ```mbt check
 ///|
 test "adding zero is an identity" {
-  @quickcheck.quickcheck((x : Int) => x + 0 == x)
+  @quickcheck.check((x : Int) => x + 0 == x)
 }
 ```
 
@@ -25,7 +25,7 @@ Use the pure `filter` function for a precondition:
 ```mbt check
 ///|
 test "division identity" {
-  @quickcheck.quickcheck((x : Int) => x / x == 1, filter=x => x != 0)
+  @quickcheck.check((x : Int) => x / x == 1, filter=x => x != 0)
 }
 ```
 
@@ -39,7 +39,7 @@ The optional controls are deterministic:
 ```mbt check
 ///|
 test "configured property run" {
-  @quickcheck.quickcheck(
+  @quickcheck.check(
     (xs : Array[Int]) => xs.length() >= 0,
     count=200,
     max_size=50,
@@ -61,13 +61,13 @@ candidates, so zero disables shrinking and even an infinite or cyclic shrink
 stream terminates at the limit. A failure report includes the final
 counterexample, error when applicable, size, and shrink counts.
 
-If a test needs to inspect an expected failure, use `quickcheck_report` instead
-of catching the `Failure` raised by `quickcheck`:
+If a test needs to inspect an expected failure, use `report` instead of
+catching the `Failure` raised by `check`:
 
 ```mbt check
 ///|
 test "inspect a counterexample" {
-  let report = @quickcheck.quickcheck_report(
+  let report = @quickcheck.report(
     (_ : Int) => false,
     count=1,
     max_size=0,
@@ -89,11 +89,11 @@ test "inspect a counterexample" {
 }
 ```
 
-`quickcheck_report` returns `Passed`, `GaveUp`, `Falsified`, or `Raised`. Every
-error from the property is a value in `Raised`; the driver does not distinguish
-errors used by `inspect` or snapshot tests. `QuickCheckReport[A]` implements
-`Debug` when `A` does, but unlike `quickcheck`, calling `quickcheck_report`
-itself does not raise and does not require the input type to implement `Debug`.
+`report` returns an abstract `QuickCheckReport[A]` whose `Debug`
+representation distinguishes `Passed`, `GaveUp`, `Falsified`, and `Raised`.
+Every error from the property is represented by `Raised`; the driver does not
+distinguish errors used by `inspect` or snapshot tests. Calling `report` itself
+does not raise and does not require the input type to implement `Debug`.
 
 Properties should be deterministic and should not mutate or consume their
 input. In particular, an `Iter` is single-use; generate an `Array` and create a

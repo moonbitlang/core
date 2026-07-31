@@ -89,18 +89,14 @@ priv suberror QcError {
 } derive(Debug)
 
 ///|
-test "quickcheck_report returns a structured passing report" {
-  let report = @quickcheck.quickcheck_report(
-    (x : Int) => x == x,
-    count=2,
-    seed=7,
-  )
+test "report returns a structured passing report" {
+  let report = @quickcheck.report((x : Int) => x == x, count=2, seed=7)
   debug_inspect(report, content="Passed(tests=2)")
 }
 
 ///|
-test "quickcheck_report returns a structured falsification" {
-  let report = @quickcheck.quickcheck_report(
+test "report returns a structured falsification" {
+  let report = @quickcheck.report(
     (_ : Int) => false,
     count=1,
     max_size=0,
@@ -122,8 +118,8 @@ test "quickcheck_report returns a structured falsification" {
 }
 
 ///|
-test "quickcheck_report returns a structured raised error" {
-  let report = @quickcheck.quickcheck_report(
+test "report returns a structured raised error" {
+  let report = @quickcheck.report(
     (_ : Int) => raise InitialRaised,
     count=1,
     max_size=0,
@@ -146,14 +142,14 @@ test "quickcheck_report returns a structured raised error" {
 }
 
 ///|
-test "quickcheck accepts a passing boolean property" {
-  @quickcheck.quickcheck((x : Int) => x == x, count=5, seed=0)
+test "check accepts a passing boolean property" {
+  @quickcheck.check((x : Int) => x == x, count=5, seed=0)
 }
 
 ///|
-test "quickcheck runs the requested count with increasing sizes" {
+test "check runs the requested count with increasing sizes" {
   let seen = []
-  @quickcheck.quickcheck(
+  @quickcheck.check(
     (input : SizedProbe) => {
       seen.push(input.0)
       true
@@ -171,7 +167,7 @@ test "quickcheck runs the requested count with increasing sizes" {
 
 ///|
 test "discard ratio controls the give-up budget" {
-  let report = @quickcheck.quickcheck_report(
+  let report = @quickcheck.report(
     (_ : Int) => true,
     filter=_ => false,
     count=4,
@@ -186,9 +182,9 @@ test "discard ratio controls the give-up budget" {
 }
 
 ///|
-test "quickcheck size progression does not overflow" {
+test "check size progression does not overflow" {
   let seen = []
-  @quickcheck.quickcheck(
+  @quickcheck.check(
     (input : SizedProbe) => {
       seen.push(input.0)
       true
@@ -201,14 +197,14 @@ test "quickcheck size progression does not overflow" {
 }
 
 ///|
-test "quickcheck accepts zero count without running any tests" {
-  @quickcheck.quickcheck((_ : Unit) => false, count=0U)
+test "check accepts zero count without running any tests" {
+  @quickcheck.check((_ : Unit) => false, count=0U)
 }
 
 ///|
-test "quickcheck clamps maximum size to the Arbitrary Int range" {
+test "check clamps maximum size to the Arbitrary Int range" {
   let seen = []
-  @quickcheck.quickcheck(
+  @quickcheck.check(
     (input : SizedProbe) => {
       seen.push(input.0)
       true
@@ -220,8 +216,8 @@ test "quickcheck clamps maximum size to the Arbitrary Int range" {
 }
 
 ///|
-test "quickcheck_report greedily shrinks a falsified property" {
-  let report = @quickcheck.quickcheck_report(
+test "report greedily shrinks a falsified property" {
+  let report = @quickcheck.report(
     (input : ShrinkInput) => input.0 < 3,
     count=1,
     max_shrinks=100,
@@ -241,8 +237,8 @@ test "quickcheck_report greedily shrinks a falsified property" {
 }
 
 ///|
-test "quickcheck_report bounds a repeating shrink stream by attempts" {
-  let report = @quickcheck.quickcheck_report(
+test "report bounds a repeating shrink stream by attempts" {
+  let report = @quickcheck.report(
     (_ : RepeatingInput) => false,
     count=1,
     max_shrinks=10,
@@ -262,8 +258,8 @@ test "quickcheck_report bounds a repeating shrink stream by attempts" {
 }
 
 ///|
-test "quickcheck_report counts rejected shrink candidates toward the limit" {
-  let report = @quickcheck.quickcheck_report(
+test "report counts rejected shrink candidates toward the limit" {
+  let report = @quickcheck.report(
     (input : DriftInput) => {
       let DriftInput(value) = input
       if value == 9 {
@@ -289,8 +285,8 @@ test "quickcheck_report counts rejected shrink candidates toward the limit" {
 }
 
 ///|
-test "quickcheck_report skips a discarded shrink subtree" {
-  let report = @quickcheck.quickcheck_report(
+test "report skips a discarded shrink subtree" {
+  let report = @quickcheck.report(
     (_ : FilteredShrinkInput) => false,
     filter=input => input.0 != 9,
     count=1,
@@ -311,8 +307,8 @@ test "quickcheck_report skips a discarded shrink subtree" {
 }
 
 ///|
-test "quickcheck_report keeps falsification separate from raised errors" {
-  let report = @quickcheck.quickcheck_report(
+test "report keeps falsification separate from raised errors" {
+  let report = @quickcheck.report(
     (input : DriftInput) => {
       guard input.0 != 9 else { raise InitialRaised }
       input.0 != 10 && input.0 != 8
@@ -335,8 +331,8 @@ test "quickcheck_report keeps falsification separate from raised errors" {
 }
 
 ///|
-test "quickcheck_report keeps raised errors separate from falsification" {
-  let report = @quickcheck.quickcheck_report(
+test "report keeps raised errors separate from falsification" {
+  let report = @quickcheck.report(
     (input : DriftInput) => {
       match input.0 {
         10 => raise InitialRaised
@@ -364,9 +360,9 @@ test "quickcheck_report keeps raised errors separate from falsification" {
 }
 
 ///|
-test "quickcheck_report stops at the first failing case" {
+test "report stops at the first failing case" {
   let mut calls = 0
-  let report = @quickcheck.quickcheck_report(
+  let result = @quickcheck.report(
     (_ : Int) => {
       calls = calls + 1
       calls < 4
@@ -374,28 +370,34 @@ test "quickcheck_report stops at the first failing case" {
     count=10,
     max_shrinks=0,
   )
-  guard report is Falsified(tests=4, ..) else {
-    fail("expected the fourth case to falsify")
-  }
+  debug_inspect(
+    result,
+    content=(
+      #|Falsified(
+      #|  counterexample=13,
+      #|  tests=4,
+      #|  size=33,
+      #|  shrinks=0,
+      #|  shrink_attempts=0,
+      #|)
+    ),
+  )
   inspect(calls, content="4")
 }
 
 ///|
-test "quickcheck_report returns Failure as a raised property" {
-  let report = @quickcheck.quickcheck_report(
+test "report returns Failure as a raised property" {
+  let result = @quickcheck.report(
     (_ : Int) => fail("property boom"),
     count=1,
     max_shrinks=0,
   )
-  guard report is Raised(error=Failure(msg), tests=1, ..) else {
-    fail("expected the property to raise Failure")
-  }
-  inspect(msg.contains("property boom"), content="true")
+  inspect(@debug.to_string(result).contains("property boom"), content="true")
 }
 
 ///|
-test "quickcheck_report accepts InspectError while shrinking Raised" {
-  let report = @quickcheck.quickcheck_report(
+test "report accepts InspectError while shrinking Raised" {
+  let report = @quickcheck.report(
     (input : DriftInput) => {
       match input.0 {
         10 => raise InitialRaised

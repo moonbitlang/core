@@ -51,7 +51,7 @@ priv enum CaseOutcome {
 /// `tests` includes the failing test case. `shrinks` counts accepted shrink
 /// steps, while `shrink_attempts` counts every shrink candidate examined,
 /// including candidates rejected by `filter`.
-pub enum QuickCheckReport[A] {
+enum QuickCheckReport[A] {
   Passed(tests~ : UInt)
   /// The configured discard budget was exhausted before `count` tests completed.
   GaveUp(tests~ : UInt, discarded~ : UInt)
@@ -162,13 +162,13 @@ fn[A : @debug.Debug] failure_report(report : QuickCheckReport[A]) -> String {
 ///|
 /// Checks `property` and returns a structured report.
 ///
-/// Returning `false` produces `QuickCheckReport::Falsified`; every error raised
-/// by the property produces `QuickCheckReport::Raised`. Unlike `quickcheck`,
-/// this function does not turn either report into a test failure, does not raise
-/// property errors, and does not require the input type to implement `Debug`.
-/// Cases rejected by the pure `filter` do not count as tests. The run gives up
-/// after `discard_ratio` discarded cases per requested test.
-pub fn[A : Arbitrary + @shrink.Shrink] quickcheck_report(
+/// Returning `false` records a falsification; every error raised by the
+/// property is recorded separately. Unlike `check`, this function does not
+/// turn either result into a test failure, does not raise property errors, and
+/// does not require the input type to implement `Debug`. Cases rejected by the
+/// pure `filter` do not count as tests. The run gives up after `discard_ratio`
+/// discarded cases per requested test.
+pub fn[A : Arbitrary + @shrink.Shrink] report(
   property : (A) -> Bool raise?,
   filter? : (A) -> Bool = _ => true,
   count? : UInt = 100,
@@ -262,11 +262,11 @@ pub fn[A : Arbitrary + @shrink.Shrink] quickcheck_report(
 ///
 /// ```mbt check
 /// test "adding zero is an identity" {
-///   @quickcheck.quickcheck((x : Int) => x + 0 == x)
+///   @quickcheck.check((x : Int) => x + 0 == x)
 /// }
 /// ```
 #callsite(autofill(loc))
-pub fn[A : Arbitrary + @shrink.Shrink + @debug.Debug] quickcheck(
+pub fn[A : Arbitrary + @shrink.Shrink + @debug.Debug] check(
   property : (A) -> Bool raise?,
   filter? : (A) -> Bool = _ => true,
   count? : UInt = 100,
@@ -276,7 +276,7 @@ pub fn[A : Arbitrary + @shrink.Shrink + @debug.Debug] quickcheck(
   seed? : UInt64 = 37,
   loc~ : SourceLoc,
 ) -> Unit raise {
-  let report = quickcheck_report(
+  let result = report(
     property,
     filter~,
     count~,
@@ -285,9 +285,9 @@ pub fn[A : Arbitrary + @shrink.Shrink + @debug.Debug] quickcheck(
     discard_ratio~,
     seed~,
   )
-  match report {
+  match result {
     Passed(..) => ()
     GaveUp(..) | Falsified(..) | Raised(..) =>
-      fail(failure_report(report), loc~)
+      fail(failure_report(result), loc~)
   }
 }

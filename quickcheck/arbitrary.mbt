@@ -23,8 +23,8 @@ pub(open) trait Arbitrary {
 
 ///|
 /// Creates a generator from an `Arbitrary` implementation.
-pub fn[T : Arbitrary] arbitrary() -> @gen.Gen[T] {
-  @gen.Gen::new((size, state) => Arbitrary::arbitrary(size, state))
+pub fn[T : Arbitrary] arbitrary() -> Generator[T] {
+  Generator(Arbitrary::arbitrary)
 }
 
 ///|

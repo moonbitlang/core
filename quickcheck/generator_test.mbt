@@ -14,41 +14,47 @@
 
 ///|
 test "construct, map, and flat_map" {
-  let from_size = @gen.Gen::new((size, _) => size)
+  let from_size = @quickcheck.Generator((size, _) => size)
   inspect(from_size.sample(size=12), content="12")
-  let value = @gen.pure(20).map(x => x + 1).flat_map(x => @gen.pure(x * 2))
+  let value = @quickcheck.pure(20)
+    .map(x => x + 1)
+    .flat_map(x => @quickcheck.pure(x * 2))
   inspect(value.sample(), content="42")
 }
 
 ///|
 test "size control" {
-  let generator = @gen.sized(size => @gen.pure(size))
+  let generator = @quickcheck.sized(size => @quickcheck.pure(size))
   inspect(generator.sample(size=9), content="9")
   inspect(generator.resize(3).sample(size=9), content="3")
 }
 
 ///|
 test "scale transforms the input size" {
-  let generator = @gen.Gen::new((size, _) => size)
+  let generator = @quickcheck.Generator((size, _) => size)
   inspect(generator.scale(size => size * 2 + 1).sample(size=4), content="9")
 }
 
 ///|
 test "range and choices" {
-  for value in @gen.int_range(-4, 7).samples(count=64) {
+  for value in @quickcheck.int_range(-4, 7).samples(count=64) {
     guard value >= -4 && value < 7 else {
       fail("int_range generated an out-of-range value")
     }
   }
-  for value in @gen.one_of([@gen.pure(1), @gen.pure(2)]).samples(count=32) {
+  for
+    value in @quickcheck.one_of([@quickcheck.pure(1), @quickcheck.pure(2)]).samples(
+      count=32,
+    ) {
     guard value == 1 || value == 2 else {
       fail("one_of generated a value outside its inputs")
     }
   }
   for
-    value in @gen.frequency([(1U, @gen.pure("a")), (3U, @gen.pure("b"))]).samples(
-      count=32,
-    ) {
+    value in @quickcheck.frequency([
+      (1U, @quickcheck.pure("a")),
+      (3U, @quickcheck.pure("b")),
+    ]).samples(count=32) {
     guard value == "a" || value == "b" else {
       fail("frequency generated a value outside its inputs")
     }
@@ -58,7 +64,7 @@ test "range and choices" {
 ///|
 test "elements selects only supplied values" {
   debug_inspect(
-    @gen.elements(["red", "green", "blue"]).samples(count=20),
+    @quickcheck.elements(["red", "green", "blue"]).samples(count=20),
     content=(
       #|[
       #|  "red",
@@ -88,7 +94,7 @@ test "elements selects only supplied values" {
 
 ///|
 test "fixed-size array" {
-  let values = @gen.pure(7).array_with_size(3).sample()
+  let values = @quickcheck.pure(7).array_with_size(3).sample()
   inspect(values.length(), content="3")
   inspect(values.all(value => value == 7), content="true")
 }
