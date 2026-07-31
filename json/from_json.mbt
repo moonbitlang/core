@@ -177,11 +177,19 @@ pub impl[X : FromJson] FromJson for Array[X] with fn from_json(json, path) {
   guard json is Array(a) else {
     decode_error(path, "Array::from_json: expected array")
   }
+  // The test cannot fail; it only narrows the binding so that `index` becomes
+  // assignable, letting every element share one path node. See `JsonPath`.
   guard! JsonPath::Index(path, index=0) is (Index(_) as new_path)
-  a.mapi((i, x) => {
-    new_path.index = i
-    FromJson::from_json(x, new_path)
-  })
+  // TODO: the comprehension grows the result by pushing, while the `mapi` this
+  // replaced presized it to `a.length()`. That costs ~33% on nested arrays
+  // (native/release, `Array[Array[Int]]` 500x50: 86.1us -> 114.5us). Revisit
+  // once comprehensions presize from a known-length iterable.
+  [
+    for i, x in a => {
+      new_path.index = i
+      FromJson::from_json(x, new_path)
+    }
+  ]
 }
 
 ///|
@@ -189,11 +197,15 @@ pub impl[X : FromJson] FromJson for ArrayView[X] with fn from_json(json, path) {
   guard json is Array(a) else {
     decode_error(path, "ArrayView::from_json: expected array")
   }
+  // As above: the test cannot fail, it just makes `index` assignable.
   guard! JsonPath::Index(path, index=0) is (Index(_) as new_path)
-  a.mapi((i, x) => {
-    new_path.index = i
-    FromJson::from_json(x, new_path)
-  })
+  // As above: pending the comprehension presizing fix.
+  [
+    for i, x in a => {
+      new_path.index = i
+      FromJson::from_json(x, new_path)
+    }
+  ]
 }
 
 ///|
@@ -205,6 +217,7 @@ pub impl[X : FromJson] FromJson for FixedArray[X] with fn from_json(json, path) 
   if len == 0 {
     return []
   }
+  // As above: the test cannot fail, it just makes `index` assignable.
   guard! JsonPath::Index(path, index=0) is (Index(_) as new_path)
   let res = FixedArray::make(
     len,
@@ -228,6 +241,7 @@ pub impl[V : FromJson] FromJson for Map[String, V] with fn from_json(json, path)
     decode_error(path, "Map::from_json: expected object")
   }
   let res = Map([])
+  // As above: the test cannot fail, it just makes `key` assignable.
   guard! JsonPath::Key(path, key="") is (Key(_) as new_path)
   // Map::map_with_key
   for k, v in obj {
