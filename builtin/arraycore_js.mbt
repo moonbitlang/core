@@ -153,7 +153,7 @@ fn[T] Array::unsafe_resize_with_default(
   value : T,
 ) -> Unit {
   let len = self.length()
-  guard new_len >= len
+  guard! new_len >= len
   JSArray::ofAnyArray(self).set_length(new_len)
   for i in len..<new_len {
     self.unsafe_set(i, value)
@@ -287,7 +287,7 @@ pub fn[T] Array::push(self : Array[T], value : T) -> Unit {
 pub fn[T] Array::append(self : Array[T], other : ArrayView[T]) -> Unit {
   let old_len = self.length()
   let append_len = other.len()
-  guard old_len + append_len >= old_len
+  guard! old_len + append_len >= old_len
   JSArray::ofAnyArray(self).append_view(
     JSArray::ofAnyFixedArray(other.buf().0),
     other.start(),
@@ -308,13 +308,13 @@ pub fn[A] Array::blit_to(
   dst_offset? : Int = 0,
 ) -> Unit {
   let old_len = dst.length()
-  guard len >= 0 &&
+  guard! len >= 0 &&
     dst_offset >= 0 &&
     src_offset >= 0 &&
     dst_offset <= old_len &&
     len <= self.length() - src_offset
   let new_len = dst_offset + len
-  guard new_len >= 0
+  guard! new_len >= 0
   if new_len > old_len {
     JSArray::ofAnyArray(dst).set_length(new_len)
   }
@@ -331,9 +331,9 @@ pub fn[A] ArrayView::blit_to(
 ) -> Unit {
   let len = self.len()
   let old_len = dst.length()
-  guard dst_offset >= 0 && dst_offset <= old_len
+  guard! dst_offset >= 0 && dst_offset <= old_len
   let new_len = dst_offset + len
-  guard new_len >= 0
+  guard! new_len >= 0
   if new_len > old_len {
     JSArray::ofAnyArray(dst).set_length(new_len)
   }
@@ -502,11 +502,11 @@ pub fn[A] Array::fill(
 ) -> Unit {
   let array_length = self.length()
   guard array_length > 0 else { return }
-  guard start >= 0 && start < array_length
+  guard! start >= 0 && start < array_length
   let end = match end {
     None => array_length
     Some(e) => {
-      guard e >= 0 && e <= array_length
+      guard! e >= 0 && e <= array_length
       e
     }
   }

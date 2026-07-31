@@ -357,7 +357,7 @@ test "StringView::get_view" {
   // Splitting a surrogate pair.
   debug_inspect(view.get_view(end=5), content="None")
   // Pattern-match composition: the optional form is matchable.
-  guard s.get_view(end=5) is Some("Hello")
+  guard! s.get_view(end=5) is Some("Hello")
 }
 
 ///|

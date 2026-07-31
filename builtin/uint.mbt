@@ -48,7 +48,7 @@ pub fn UInt::max(self : UInt, other : UInt) -> UInt {
 ///|
 /// Clamps the value `self` between `min` and `max`.
 pub fn UInt::clamp(self : UInt, min~ : UInt, max~ : UInt) -> UInt {
-  guard min <= max
+  guard! min <= max
   if self < min {
     min
   } else if self > max {

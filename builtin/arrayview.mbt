@@ -587,7 +587,7 @@ pub fn[T] ArrayView::chunks(
   self : ArrayView[T],
   size : Int,
 ) -> Array[ArrayView[T]] {
-  guard size > 0
+  guard! size > 0
   let len = self.length()
   if len == 0 {
     return []
@@ -673,7 +673,7 @@ pub fn[T] ArrayView::windows(
   self : ArrayView[T],
   size : Int,
 ) -> Array[ArrayView[T]] {
-  guard size > 0
+  guard! size > 0
   let len = self.length() - size + 1
   if len < 1 {
     return []

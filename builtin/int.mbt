@@ -44,7 +44,7 @@ pub fn Int::Int(self : Int) -> Int = "%identity"
 /// }
 /// ```
 pub fn Int::next_power_of_two(self : Int) -> Int {
-  guard self >= 0
+  guard! self >= 0
   if self <= 1 {
     return 1
   }
@@ -106,7 +106,7 @@ pub fn Int::max(self : Int, other : Int) -> Int {
 /// }
 /// ```
 pub fn Int::clamp(self : Int, min~ : Int, max~ : Int) -> Int {
-  guard min <= max
+  guard! min <= max
   if self < min {
     min
   } else if self > max {

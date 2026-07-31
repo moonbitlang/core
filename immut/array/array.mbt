@@ -184,7 +184,7 @@ pub fn[A] T::length(self : T[A]) -> Int {
 #deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
 #alias("_[_]")
 pub fn[A] T::at(self : T[A], index : Int) -> A {
-  guard index >= 0 && index < self.size
+  guard! index >= 0 && index < self.size
   if index == 0 {
     self.tree.get_first()
   } else if index == self.size - 1 {
@@ -238,7 +238,7 @@ pub fn[A] T::get(self : T[A], index : Int) -> A? {
 /// ```
 #deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
 pub fn[A] T::set(self : T[A], index : Int, value : A) -> T[A] {
-  guard index >= 0 && index < self.size
+  guard! index >= 0 && index < self.size
   {
     tree: self.tree.set(index, self.shift, value),
     size: self.size,

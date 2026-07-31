@@ -81,7 +81,7 @@ test "get" {
   assert_true(m.get("d") == None)
 
   // pattern
-  guard m is { "a": 1, "b": 2, "c": 3, "d"? : None, .. }
+  guard! m is { "a": 1, "b": 2, "c": 3, "d"? : None, .. }
 }
 
 ///|
@@ -582,7 +582,7 @@ test "remove_entry_head" {
   map.remove(1)
   // This should ensure the head is updated correctly
   assert_false(map.head is None)
-  guard map.head is Some(head)
+  guard! map.head is Some(head)
   assert_true(head.prev == -1)
   assert_true(head.next is None)
   assert_true(head.psl == 0)
@@ -600,7 +600,7 @@ test "remove_entry_tail" {
   // This should ensure the tail is updated correctly
   assert_false(map.tail is -1)
   assert_false(map.entries[map.tail] is None)
-  guard map.entries[map.tail] is Some(tail)
+  guard! map.entries[map.tail] is Some(tail)
   assert_true(tail.prev == -1)
   assert_true(tail.next is None)
   assert_true(tail.psl == 0)
