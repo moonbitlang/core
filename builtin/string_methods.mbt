@@ -1974,29 +1974,29 @@ pub fn StringView::get(self : StringView, idx : Int) -> UInt16? {
 ///|
 test "String::get supports emoji (surrogate pair)" {
   let s = "hello"
-  assert_true(s.get(0) == Some(104))
-  assert_true(s.get(4) == Some(111))
-  assert_true(s.get(5) == None)
-  assert_true(s.get(-1) == None)
+  assert_true(s.get(0) is Some(104))
+  assert_true(s.get(4) is Some(111))
+  assert_true(s.get(5) is None)
+  assert_true(s.get(-1) is None)
   let s = "a🤣b"
-  assert_true(s.get(0) == Some(97))
-  assert_true(s.get(1) == Some(55358))
-  assert_true(s.get(2) == Some(56611))
-  assert_true(s.get(3) == Some(98))
-  assert_true(s.get(4) == None)
+  assert_true(s.get(0) is Some(97))
+  assert_true(s.get(1) is Some(55358))
+  assert_true(s.get(2) is Some(56611))
+  assert_true(s.get(3) is Some(98))
+  assert_true(s.get(4) is None)
 }
 
 ///|
 test "View::get basic cases" {
   let v = "hello"[1:4]
-  assert_true(v.get(0) == Some(101))
-  assert_true(v.get(2) == Some(108))
-  assert_true(v.get(3) == None)
-  assert_true(v.get(-1) == None)
+  assert_true(v.get(0) is Some(101))
+  assert_true(v.get(2) is Some(108))
+  assert_true(v.get(3) is None)
+  assert_true(v.get(-1) is None)
   let v = "ab🤣cd"[1:5]
-  assert_true(v.get(0) == Some(98))
-  assert_true(v.get(1) == Some(55358))
-  assert_true(v.get(2) == Some(56611))
+  assert_true(v.get(0) is Some(98))
+  assert_true(v.get(1) is Some(55358))
+  assert_true(v.get(2) is Some(56611))
 }
 
 ///|
