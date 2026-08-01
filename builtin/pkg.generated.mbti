@@ -867,8 +867,7 @@ pub fn[A] String::fold(String, init~ : A, (A, Char) -> A raise?) -> A raise?
 pub fn String::from_array(ArrayView[Char]) -> String
 #alias(from_iterator, deprecated)
 pub fn String::from_iter(Iter[Char]) -> String
-#deprecated
-pub fn String::get(String, Int) -> Int?
+pub fn String::get(String, Int) -> UInt16?
 pub fn String::get_char(String, Int) -> Char?
 pub fn String::get_view(String, start? : Int, end? : Int) -> StringView?
 #alias(starts_with, deprecated)
@@ -1226,8 +1225,7 @@ pub fn[A] StringView::fold(Self, init~ : A, (A, Char) -> A raise?) -> A raise?
 pub fn StringView::from_array(ArrayView[Char]) -> Self
 #alias(from_iterator, deprecated)
 pub fn StringView::from_iter(Iter[Char]) -> Self
-#deprecated
-pub fn StringView::get(Self, Int) -> Int?
+pub fn StringView::get(Self, Int) -> UInt16?
 pub fn StringView::get_char(Self, Int) -> Char?
 pub fn StringView::get_view(Self, start? : Int, end? : Int) -> Self?
 #alias(starts_with, deprecated)
