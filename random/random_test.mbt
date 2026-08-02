@@ -61,6 +61,39 @@ test "Rand::new with generator" {
 }
 
 ///|
+priv struct ScriptedSource {
+  values : FixedArray[UInt64]
+  mut index : Int
+}
+
+///|
+impl @random.Source for ScriptedSource with fn next(self) -> UInt64 {
+  let value = self.values[self.index]
+  self.index += 1
+  value
+}
+
+///|
+test "Rand::uint64 applies Lemire rejection for limit 3" {
+  let source : ScriptedSource = {
+    // 3 * 0x5555555555555556 = 2^64 + 2, so the retry maps to 1.
+    values: [0UL, 0x5555555555555556UL],
+    index: 0,
+  }
+  let rand = @random.Rand::new(generator=source as &@random.Source)
+  let result = rand.uint64(limit=3)
+  @debug.debug_inspect((result, source.index), content="(1, 2)")
+}
+
+///|
+test "Rand::uint64 applies Lemire rejection at the maximum limit" {
+  let source : ScriptedSource = { values: [0UL, 2UL], index: 0 }
+  let rand = @random.Rand::new(generator=source as &@random.Source)
+  let result = rand.uint64(limit=0xffffffffffffffffUL)
+  @debug.debug_inspect((result, source.index), content="(1, 2)")
+}
+
+///|
 test {
   let random = @random.Rand::chacha8(seed=fixed_test_seed)
   inspect(random.float(), content="0.27378302812576294")
