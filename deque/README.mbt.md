@@ -2,6 +2,25 @@
 
 A double-ended queue backed by a growable ring buffer. Supports O(1) amortized push/pop at both ends and O(1) random access, similar to C++ `std::deque` and Rust `VecDeque`.
 
+## Layout
+
+Following the Rust `VecDeque` design, only `head` and `len` are stored; the
+back position is computed as `(head + len - 1) % cap`. When the logical
+sequence reaches the end of the buffer it simply wraps around, so neither
+`push_front` nor `push_back` ever shifts elements:
+
+```mermaid
+flowchart LR
+  subgraph buf["buf, cap = 8 — logical order 1·2·3·4·5, head = 5, len = 5"]
+    direction LR
+    c0["0: 4"] --- c1["1: 5 ⟵ back"] --- c2["2: ·"] --- c3["3: ·"] --- c4["4: ·"] --- c5["5: 1 ⟵ head"] --- c6["6: 2"] --- c7["7: 3"]
+  end
+  c7 -. wraps to index 0 .-> c0
+```
+
+Growing allocates a larger buffer and re-linearizes the elements; iteration
+and indexing translate logical positions through `head` the same way.
+
 # Usage
 
 ## Create

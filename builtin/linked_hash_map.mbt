@@ -175,6 +175,7 @@ fn[K : Eq, V] Map::set_with_hash(
 }
 
 ///|
+#owned(entry)
 fn[K, V] Map::push_away(
   self : Map[K, V],
   idx : Int,
@@ -513,6 +514,7 @@ fn[K : Eq, V] Map::remove_with_hash(
 }
 
 ///|
+#owned(entry)
 fn[K, V] Map::add_entry_to_tail(
   self : Map[K, V],
   idx : Int,
@@ -582,6 +584,7 @@ fn[K, V] Map::grow(self : Map[K, V]) -> Unit {
 }
 
 ///|
+#owned(outer)
 fn[K, V] Map::rehash_place_entry(self : Map[K, V], outer : Entry[K, V]) -> Unit {
   let hash = outer.hash
   for psl = 0, idx = hash & self.capacity_mask {
