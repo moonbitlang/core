@@ -23,6 +23,7 @@ struct SortedSet[V] {
 }
 
 ///|
+#unsafe_cycle_free
 priv struct Node[V] {
   mut value : V
   mut left : Node[V]?

@@ -14,6 +14,7 @@
 
 ///|
 /// Type `List` used by this package APIs.
+#unsafe_cycle_free
 pub enum List[A] {
   Empty
   More(A, mut tail~ : List[A])
