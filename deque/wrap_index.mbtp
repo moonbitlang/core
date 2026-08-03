@@ -1,0 +1,309 @@
+// Copyright 2026 International Digital Economy Academy
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+///|
+/// `offset` may reach `capacity` for the next free slot, but never exceeds it.
+predicate wrap_index_pre(head : Int, offset : Int, capacity : Int) {
+  capacity > 0 &&
+  head >= 0 &&
+  head < capacity &&
+  offset >= 0 &&
+  offset <= capacity
+}
+
+///|
+/// The branch form is also the machine-integer safety argument: every
+/// subtraction is non-negative, and the addition branch stays below capacity.
+predicate wrap_index_post(
+  head : Int,
+  offset : Int,
+  capacity : Int,
+  result : Int,
+) {
+  result >= 0 &&
+  result < capacity &&
+  (if offset < capacity - head {
+    result == head + offset
+  } else {
+    result == offset - (capacity - head)
+  })
+}
+
+///|
+/// In the mathematical-integer proof model, the branch form is exactly the
+/// remainder expression it replaces.
+predicate wrap_index_mod_equiv(
+  head : Int,
+  offset : Int,
+  capacity : Int,
+  result : Int,
+) {
+  result == (head + offset) % capacity
+}
+
+///|
+predicate decrement_index_pre(index : Int, capacity : Int) {
+  capacity > 0 && index >= 0 && index < capacity
+}
+
+///|
+predicate decrement_index_post(
+  index : Int,
+  capacity : Int,
+  result : Int,
+) {
+  result >= 0 &&
+  result < capacity &&
+  (if index == 0 { result == capacity - 1 } else { result == index - 1 })
+}
+
+///|
+predicate decrement_index_mod_equiv(
+  index : Int,
+  capacity : Int,
+  result : Int,
+) {
+  result == (index + capacity - 1) % capacity
+}
+
+///|
+/// The arithmetic part of the private `Deque` representation invariant.
+predicate deque_index_inv(capacity : Int, head : Int, len : Int) {
+  (capacity == 0 && head == 0 && len == 0) ||
+  (capacity > 0 &&
+    head >= 0 &&
+    head < capacity &&
+    len >= 0 &&
+    len <= capacity)
+}
+
+///|
+predicate buffer_index_in_bounds(index : Int, capacity : Int) {
+  index >= 0 && index < capacity
+}
+
+///|
+/// Any valid physical base plus an offset no larger than the capacity is in the
+/// domain of the branch-based wrap. This is the common rule used by shifts and
+/// blits, whose offsets are constrained by their public bounds checks.
+lemma valid_buffer_offset_pre(
+  capacity : Int,
+  base : Int,
+  offset : Int,
+) where {
+  proof_require: decrement_index_pre(base, capacity),
+  proof_require: offset >= 0,
+  proof_require: offset <= capacity,
+  proof_ensure: wrap_index_pre(base, offset, capacity),
+} {
+}
+
+///|
+/// Every occupied logical offset can use `wrap_index` and the result is safe
+/// for unchecked buffer access.
+lemma deque_element_index_pre(
+  capacity : Int,
+  head : Int,
+  len : Int,
+  offset : Int,
+) where {
+  proof_require: deque_index_inv(capacity, head, len),
+  proof_require: offset >= 0,
+  proof_require: offset < len,
+  proof_ensure: wrap_index_pre(head, offset, capacity),
+} {
+}
+
+///|
+/// Both branch helpers produce a physical index suitable for unchecked access.
+lemma wrap_result_in_bounds(
+  head : Int,
+  offset : Int,
+  capacity : Int,
+  physical_index : Int,
+) where {
+  proof_require: wrap_index_post(head, offset, capacity, physical_index),
+  proof_ensure: buffer_index_in_bounds(physical_index, capacity),
+} {
+}
+
+///|
+lemma decrement_result_in_bounds(
+  index : Int,
+  capacity : Int,
+  physical_index : Int,
+) where {
+  proof_require: decrement_index_post(index, capacity, physical_index),
+  proof_ensure: buffer_index_in_bounds(physical_index, capacity),
+} {
+}
+
+///|
+/// A conventional loop index is safe for an equally sized linear buffer.
+lemma linear_index_in_bounds(index : Int, capacity : Int) where {
+  proof_require: index >= 0,
+  proof_require: index < capacity,
+  proof_ensure: buffer_index_in_bounds(index, capacity),
+} {
+}
+
+///|
+/// Before insertion, every offset through the next free slot is in the single-
+/// wrap range.
+lemma deque_spare_index_pre(
+  capacity : Int,
+  head : Int,
+  len : Int,
+  offset : Int,
+) where {
+  proof_require: deque_index_inv(capacity, head, len),
+  proof_require: len < capacity,
+  proof_require: offset >= 0,
+  proof_require: offset <= len,
+  proof_ensure: wrap_index_pre(head, offset, capacity),
+} {
+}
+
+///|
+/// Moving a valid physical cursor one slot forward needs at most one wrap.
+lemma deque_next_cursor_pre(index : Int, capacity : Int) where {
+  proof_require: decrement_index_pre(index, capacity),
+  proof_ensure: wrap_index_pre(index, 1, capacity),
+} {
+}
+
+///|
+/// A non-empty deque has a valid head and tail offset.
+lemma deque_nonempty_access_pre(
+  capacity : Int,
+  head : Int,
+  len : Int,
+) where {
+  proof_require: deque_index_inv(capacity, head, len),
+  proof_require: len > 0,
+  proof_ensure: decrement_index_pre(head, capacity),
+  proof_ensure: wrap_index_pre(head, len - 1, capacity),
+  proof_ensure: wrap_index_pre(head, 1, capacity),
+} {
+}
+
+///|
+/// Increasing the length without moving the head preserves the invariant.
+/// This covers `push_back` and the back half of `insert`.
+lemma deque_push_back_preserves_inv(
+  capacity : Int,
+  head : Int,
+  len : Int,
+) where {
+  proof_require: deque_index_inv(capacity, head, len),
+  proof_require: len < capacity,
+  proof_ensure: deque_index_inv(capacity, head, len + 1),
+} {
+}
+
+///|
+/// Moving the head backward and increasing the length preserves the invariant.
+/// This covers `push_front` and the front half of `insert`.
+lemma deque_push_front_preserves_inv(
+  capacity : Int,
+  head : Int,
+  len : Int,
+  new_head : Int,
+) where {
+  proof_require: deque_index_inv(capacity, head, len),
+  proof_require: len < capacity,
+  proof_require: decrement_index_post(head, capacity, new_head),
+  proof_ensure: deque_index_inv(capacity, new_head, len + 1),
+} {
+}
+
+///|
+/// Removing the back element changes only the length.
+lemma deque_pop_back_preserves_inv(
+  capacity : Int,
+  head : Int,
+  len : Int,
+) where {
+  proof_require: deque_index_inv(capacity, head, len),
+  proof_require: len > 0,
+  proof_ensure: deque_index_inv(capacity, head, len - 1),
+} {
+}
+
+///|
+/// Removing the front element advances the head and decreases the length.
+lemma deque_pop_front_preserves_inv(
+  capacity : Int,
+  head : Int,
+  len : Int,
+  new_head : Int,
+) where {
+  proof_require: deque_index_inv(capacity, head, len),
+  proof_require: len > 0,
+  proof_require: wrap_index_post(head, 1, capacity, new_head),
+  proof_ensure: deque_index_inv(capacity, new_head, len - 1),
+} {
+}
+
+///|
+/// Reallocation linearizes the buffer at head zero while retaining the length.
+lemma deque_reallocate_preserves_inv(
+  capacity : Int,
+  head : Int,
+  len : Int,
+  new_capacity : Int,
+) where {
+  proof_require: deque_index_inv(capacity, head, len),
+  proof_require: new_capacity > capacity,
+  proof_ensure: deque_index_inv(new_capacity, 0, len),
+} {
+}
+
+///|
+/// Reserve, shrink, and copy all linearize the deque into a buffer large enough
+/// for its current length.
+lemma deque_linearize_preserves_inv(
+  capacity : Int,
+  head : Int,
+  len : Int,
+  new_capacity : Int,
+) where {
+  proof_require: deque_index_inv(capacity, head, len),
+  proof_require: new_capacity >= len,
+  proof_ensure: deque_index_inv(new_capacity, 0, len),
+} {
+}
+
+///|
+/// Truncate, retain, extract, and drain only shorten the logical length.
+lemma deque_shorten_preserves_inv(
+  capacity : Int,
+  head : Int,
+  len : Int,
+  new_len : Int,
+) where {
+  proof_require: deque_index_inv(capacity, head, len),
+  proof_require: new_len >= 0,
+  proof_require: new_len <= len,
+  proof_ensure: deque_index_inv(capacity, head, new_len),
+} {
+}
+
+///|
+/// Clearing resets the only special zero-capacity representation as well.
+lemma deque_clear_preserves_inv(capacity : Int, head : Int, len : Int) where {
+  proof_require: deque_index_inv(capacity, head, len),
+  proof_ensure: deque_index_inv(capacity, 0, 0),
+} {
+}
