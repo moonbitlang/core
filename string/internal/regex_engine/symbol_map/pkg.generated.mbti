@@ -22,4 +22,3 @@ pub fn Table::map_set(Self, @rechar_set.RecharSet) -> @rechar_set.RecharSet
 // Type aliases
 
 // Traits
-

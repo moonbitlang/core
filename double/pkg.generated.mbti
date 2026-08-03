@@ -47,4 +47,3 @@ pub fn Double::nan() -> Double
 // Type aliases
 
 // Traits
-

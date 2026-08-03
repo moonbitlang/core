@@ -80,4 +80,3 @@ pub impl[A : @json.FromJson + Compare] @json.FromJson for SortedSet[A]
 // Type aliases
 
 // Traits
-

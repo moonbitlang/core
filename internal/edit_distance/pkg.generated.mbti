@@ -17,4 +17,3 @@ pub fn[T : Eq] edit_distance_within(ArrayView[T], ArrayView[T], max_distance~ : 
 // Type aliases
 
 // Traits
-

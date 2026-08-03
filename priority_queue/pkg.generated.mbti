@@ -43,4 +43,3 @@ pub impl[A : @debug.Debug + Compare] @debug.Debug for PriorityQueue[A]
 // Type aliases
 
 // Traits
-

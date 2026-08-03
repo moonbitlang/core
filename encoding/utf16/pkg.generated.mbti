@@ -26,4 +26,3 @@ pub(all) enum Endian {
 // Type aliases
 
 // Traits
-

@@ -19,4 +19,3 @@ pub impl @debug.Debug for V128
 // Type aliases
 
 // Traits
-

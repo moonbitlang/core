@@ -57,4 +57,3 @@ pub fn LevenshteinEdit::equal(Self, Self) -> Bool
 // Type aliases
 
 // Traits
-
