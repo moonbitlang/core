@@ -22,12 +22,6 @@ pub(open) trait Arbitrary {
 }
 
 ///|
-/// Creates a generator from an `Arbitrary` implementation.
-pub fn[T : Arbitrary] arbitrary() -> Generator[T] {
-  Generator(Arbitrary::arbitrary)
-}
-
-///|
 pub impl Arbitrary for Unit with fn arbitrary(_, _) {
   ()
 }

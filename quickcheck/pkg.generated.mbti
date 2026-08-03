@@ -13,8 +13,6 @@ import {
 }
 
 // Values
-pub fn[T : Arbitrary] arbitrary() -> Generator[T]
-
 #callsite(autofill(loc))
 pub fn[A : Arbitrary + @shrink.Shrink + @debug.Debug] check((A) -> Bool raise?, filter? : (A) -> Bool, count? : UInt, max_size? : UInt, max_shrinks? : UInt, discard_ratio? : UInt, seed? : UInt64, loc~ : SourceLoc) -> Unit raise
 

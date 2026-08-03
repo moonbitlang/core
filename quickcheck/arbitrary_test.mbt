@@ -19,12 +19,6 @@ priv struct H {
 } derive(@quickcheck.Arbitrary, Debug)
 
 ///|
-test "arbitrary generator" {
-  let value : Unit = @quickcheck.arbitrary().sample()
-  inspect(value, content="()")
-}
-
-///|
 test {
   let state = (Default::default() : @splitmix.RandomState)
   let size = 10
