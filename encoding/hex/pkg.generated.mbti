@@ -1,0 +1,27 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/encoding/hex"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn decode(StringView) -> Bytes raise Malformed
+
+pub fn decoded_len(Int) -> Int
+
+pub fn encode(BytesView) -> String
+
+pub fn encoded_len(Int) -> Int
+
+// Errors
+pub suberror Malformed {
+  Malformed(StringView)
+} derive(@debug.Debug)
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+
