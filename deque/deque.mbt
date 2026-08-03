@@ -491,7 +491,7 @@ pub fn[A] Deque::insert(self : Deque[A], index : Int, value : A) -> Unit {
 pub fn[A] Deque::remove(self : Deque[A], index : Int) -> A {
   guard index >= 0 && index < self.length() else {
     abort(
-      "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
+      "index out of bounds: the len is \{self.length()} but the index is \{index}",
     )
   }
   let res = self[index]

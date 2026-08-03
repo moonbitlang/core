@@ -353,8 +353,7 @@ fn[A : Compare] Node::push(self : Node[A], value : A, path : Path) -> Node[A] {
 pub fn[A] PriorityQueue::peek(self : PriorityQueue[A]) -> A? {
   match self.node {
     Empty => None
-    Leaf(a) => Some(a)
-    Branch(a, ..) => Some(a)
+    Leaf(a) | Branch(a, ..) => Some(a)
   }
 }
 

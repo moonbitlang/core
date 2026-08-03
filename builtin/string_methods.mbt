@@ -932,8 +932,12 @@ test "is_blank" {
 
 ///|
 /// Returns a new string with `padding_char`s prefixed to `self` if
-/// `self.char_length() < total_width`. The number of unicode characters in
-/// the returned string is `total_width` if padding is added.
+/// `self.length() < total_width`. The threshold and the pad count are
+/// measured in UTF-16 code units: `total_width - self.length()` copies of
+/// `padding_char` are prefixed. Characters outside the BMP count as two
+/// code units, so with such characters in `self` the result has fewer than
+/// `total_width` characters, and with a non-BMP `padding_char` the result's
+/// UTF-16 length exceeds `total_width`.
 pub fn StringView::pad_start(
   self : StringView,
   total_width : Int,
@@ -947,8 +951,12 @@ pub fn StringView::pad_start(
 
 ///|
 /// Returns a new string with `padding_char`s prefixed to `self` if
-/// `self.char_length() < total_width`. The number of unicode characters in
-/// the returned string is `total_width` if padding is added.
+/// `self.length() < total_width`. The threshold and the pad count are
+/// measured in UTF-16 code units: `total_width - self.length()` copies of
+/// `padding_char` are prefixed. Characters outside the BMP count as two
+/// code units, so with such characters in `self` the result has fewer than
+/// `total_width` characters, and with a non-BMP `padding_char` the result's
+/// UTF-16 length exceeds `total_width`.
 pub fn String::pad_start(
   self : String,
   total_width : Int,
@@ -987,8 +995,12 @@ test "pad_start" {
 
 ///|
 /// Returns a new string with `padding_char`s appended to `self` if
-/// `self.length() < total_width`. The number of unicode characters in
-/// the returned string is `total_width` if padding is added.
+/// `self.length() < total_width`. The threshold and the pad count are
+/// measured in UTF-16 code units: `total_width - self.length()` copies of
+/// `padding_char` are appended. Characters outside the BMP count as two
+/// code units, so with such characters in `self` the result has fewer than
+/// `total_width` characters, and with a non-BMP `padding_char` the result's
+/// UTF-16 length exceeds `total_width`.
 pub fn StringView::pad_end(
   self : StringView,
   total_width : Int,
@@ -1002,8 +1014,12 @@ pub fn StringView::pad_end(
 
 ///|
 /// Returns a new string with `padding_char`s appended to `self` if
-/// `self.length() < total_width`. The number of unicode characters in
-/// the returned string is `total_width` if padding is added.
+/// `self.length() < total_width`. The threshold and the pad count are
+/// measured in UTF-16 code units: `total_width - self.length()` copies of
+/// `padding_char` are appended. Characters outside the BMP count as two
+/// code units, so with such characters in `self` the result has fewer than
+/// `total_width` characters, and with a non-BMP `padding_char` the result's
+/// UTF-16 length exceeds `total_width`.
 pub fn String::pad_end(
   self : String,
   total_width : Int,

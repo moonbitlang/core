@@ -82,24 +82,24 @@ fn Repr::info_adds_depth(info : Repr) -> Bool {
 /// Heuristic "size" of a node for compact-vs-multiline decisions.
 fn info_size(info : Repr) -> Int {
   match info {
-    UnitLit => 1
-    Integer(_) => 1
-    DoubleLit(_) => 1
-    FloatLit(_) => 1
-    BoolLit(_) => 1
-    CharLit(_) => 1
-    StringLit(s) => if s.length() <= 15 { 1 } else { 2 }
-    Tuple(_) => 1
-    Array(_) => 1
-    Record(_) => 2
-    RecordField(name, _) => if name.length() <= 15 { 0 } else { 1 }
-    EnumLabeledArg(name, _) => if name.length() <= 15 { 0 } else { 1 }
-    Enum(name, _) => if name.length() <= 15 { 1 } else { 2 }
-    Opaque(name, _) => if name.length() <= 15 { 1 } else { 2 }
-    Literal(s) => if s.length() <= 15 { 1 } else { 2 }
-    Map(_) => 2
-    MapEntry(_, _) => 0
-    Omitted => 0
+    UnitLit
+    | Integer(_)
+    | DoubleLit(_)
+    | FloatLit(_)
+    | BoolLit(_)
+    | CharLit(_)
+    | Tuple(_)
+    | Array(_) => 1
+    StringLit(s) | Literal(s) => if s.length() <= 15 { 1 } else { 2 }
+    Record(_) | Map(_) => 2
+    RecordField(name, _) | EnumLabeledArg(name, _) =>
+      if name.length() <= 15 {
+        0
+      } else {
+        1
+      }
+    Enum(name, _) | Opaque(name, _) => if name.length() <= 15 { 1 } else { 2 }
+    MapEntry(_, _) | Omitted => 0
   }
 }
 
