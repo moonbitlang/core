@@ -15,6 +15,7 @@
 // Types
 
 ///|
+#unsafe_cycle_free
 priv struct Entry[K, V] {
   mut prev : Int
   mut next : Entry[K, V]?
