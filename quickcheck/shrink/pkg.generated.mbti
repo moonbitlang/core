@@ -55,4 +55,3 @@ pub impl[A : Shrink, B : Shrink, C : Shrink, D : Shrink, E : Shrink, F : Shrink]
 pub impl[A : Shrink, B : Shrink, C : Shrink, D : Shrink, E : Shrink, F : Shrink, G : Shrink] Shrink for (A, B, C, D, E, F, G)
 pub impl[A : Shrink, B : Shrink, C : Shrink, D : Shrink, E : Shrink, F : Shrink, G : Shrink, H : Shrink] Shrink for (A, B, C, D, E, F, G, H)
 pub impl[A : Shrink, B : Shrink, C : Shrink, D : Shrink, E : Shrink, F : Shrink, G : Shrink, H : Shrink, I : Shrink] Shrink for (A, B, C, D, E, F, G, H, I)
-

@@ -14,4 +14,3 @@ pub fn ChaCha8::refill(Self) -> Unit
 // Type aliases
 
 // Traits
-

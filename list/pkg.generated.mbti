@@ -123,4 +123,3 @@ pub impl[A : @json.FromJson] @json.FromJson for List[A]
 // Type aliases
 
 // Traits
-

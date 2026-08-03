@@ -39,4 +39,3 @@ pub impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : De
 // Type aliases
 
 // Traits
-

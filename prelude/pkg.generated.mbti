@@ -172,4 +172,3 @@ pub using @builtin {trait Sub}
 pub using @builtin {trait ToJson}
 
 // Traits
-

@@ -80,4 +80,3 @@ pub impl[A : @debug.Debug] @debug.Debug for T[A]
 // Type aliases
 
 // Traits
-

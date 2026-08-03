@@ -21,4 +21,3 @@ pub fn UInt16::reinterpret_as_int16(UInt16) -> Int16
 // Type aliases
 
 // Traits
-

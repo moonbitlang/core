@@ -67,4 +67,3 @@ pub impl[V : @json.FromJson] @json.FromJson for SortedMap[String, V]
 // Type aliases
 
 // Traits
-
