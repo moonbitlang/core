@@ -581,7 +581,7 @@ pub fn[A : Eq + Hash] HashSet::from_iter(iter : Iter[A]) -> HashSet[A] {
     None => []
   }
   iter.each(value => entries.push({ value, path: @path.of(value) }))
-  if entries.length() == 0 {
+  if entries.is_empty() {
     new()
   } else {
     {
@@ -653,13 +653,6 @@ impl[A : Eq] Eq for Node[A] with fn equal(self, other) {
     (Branch(xs), Branch(ys)) => xs == ys
     _ => false
   }
-}
-
-///|
-pub impl[K : Eq + Hash + @quickcheck.Arbitrary] @quickcheck.Arbitrary for HashSet[
-  K,
-] with fn arbitrary(size, rs) {
-  @quickcheck.Arbitrary::arbitrary(size, rs) |> HashSet
 }
 
 ///|

@@ -272,7 +272,7 @@ pub fn BytesView::view(
 /// test {
 ///   let bv = b"\x00\x01\x02\x03\x04\x05"[:]
 ///   let mut sum = 0
-///   bv.iter().each(x => sum = sum + x.to_int())
+///   bv.iter().each(x => sum += x.to_int())
 ///   inspect(sum, content="15")
 /// }
 /// ```
@@ -340,7 +340,7 @@ pub fn BytesView::iter2(self : BytesView) -> Iter2[Int, Byte] {
 /// ```mbt check
 /// test {
 ///   let bytes = b"\x12\x34\x56\x78"
-///   guard bytes is [u32be(x), ..]
+///   guard! bytes is [u32be(x), ..]
 ///   inspect(x, content="305419896") // 0x12345678
 /// }
 /// ```
@@ -373,7 +373,7 @@ pub fn BytesView::to_uint_be(self : BytesView) -> UInt {
 /// ```mbt check
 /// test {
 ///   let bytes = b"\x01\x02\x03\x04"
-///   guard bytes is [u32le(x), ..]
+///   guard! bytes is [u32le(x), ..]
 ///   inspect(x, content="67305985") // 0x04030201
 /// }
 /// ```
@@ -408,7 +408,7 @@ pub fn BytesView::to_uint_le(self : BytesView) -> UInt {
 /// ```mbt check
 /// test {
 ///   let bytes = b"\x01\x23\x45\x67\x89\xAB\xCD\xEF"
-///   guard bytes is [u64be(x), ..]
+///   guard! bytes is [u64be(x), ..]
 ///   inspect(x, content="81985529216486895")
 /// }
 /// ```
@@ -448,7 +448,7 @@ pub fn BytesView::to_uint64_be(self : BytesView) -> UInt64 {
 /// ```mbt check
 /// test {
 ///   let bytes = b"\x01\x02\x03\x04\x05\x06\x07\x08"
-///   guard bytes is [u64le(x), ..]
+///   guard! bytes is [u64le(x), ..]
 ///   inspect(x, content="578437695752307201")
 /// }
 /// ```
@@ -475,14 +475,14 @@ pub fn BytesView::to_uint64_le(self : BytesView) -> UInt64 {
 /// ```mbt check
 /// test {
 ///   let bytes = b"\x00\x00\x00\x2A"
-///   guard bytes is [u32be(u), ..]
+///   guard! bytes is [u32be(u), ..]
 ///   inspect(u.reinterpret_as_int(), content="42")
 /// }
 /// ```
 #deprecated
 #doc(hidden)
 pub fn BytesView::to_int_be(self : BytesView) -> Int {
-  guard self is [u32be(u32), ..]
+  guard! self is [u32be(u32), ..]
   u32.reinterpret_as_int()
 }
 
@@ -496,14 +496,14 @@ pub fn BytesView::to_int_be(self : BytesView) -> Int {
 /// ```mbt check
 /// test {
 ///   let bytes = b"\x2A\x00\x00\x00"
-///   guard bytes is [u32le(u), ..]
+///   guard! bytes is [u32le(u), ..]
 ///   inspect(u.reinterpret_as_int(), content="42")
 /// }
 /// ```
 #deprecated
 #doc(hidden)
 pub fn BytesView::to_int_le(self : BytesView) -> Int {
-  guard self is [u32le(u32), ..]
+  guard! self is [u32le(u32), ..]
   u32.reinterpret_as_int()
 }
 
@@ -517,14 +517,14 @@ pub fn BytesView::to_int_le(self : BytesView) -> Int {
 /// ```mbt check
 /// test {
 ///   let bytes = b"\x00\x00\x00\x00\x00\x00\x00\x2A"
-///   guard bytes is [u64be(u), ..]
+///   guard! bytes is [u64be(u), ..]
 ///   inspect(u.reinterpret_as_int64(), content="42")
 /// }
 /// ```
 #deprecated
 #doc(hidden)
 pub fn BytesView::to_int64_be(self : BytesView) -> Int64 {
-  guard self is [u64be(u64), ..]
+  guard! self is [u64be(u64), ..]
   u64.reinterpret_as_int64()
 }
 
@@ -538,14 +538,14 @@ pub fn BytesView::to_int64_be(self : BytesView) -> Int64 {
 /// ```mbt check
 /// test {
 ///   let bytes = b"\x2A\x00\x00\x00\x00\x00\x00\x00"
-///   guard bytes is [u64le(u), ..]
+///   guard! bytes is [u64le(u), ..]
 ///   inspect(u.reinterpret_as_int64(), content="42")
 /// }
 /// ```
 #deprecated
 #doc(hidden)
 pub fn BytesView::to_int64_le(self : BytesView) -> Int64 {
-  guard self is [u64le(u64), ..]
+  guard! self is [u64le(u64), ..]
   u64.reinterpret_as_int64()
 }
 
@@ -568,14 +568,14 @@ pub fn BytesView::to_int64_le(self : BytesView) -> Int64 {
 /// test {
 ///   // Bytes representing 1.0 in IEEE 754 double-precision format (big-endian)
 ///   let bytes = b"\x3F\xF0\x00\x00\x00\x00\x00\x00"
-///   guard bytes is [u64be(bits), ..]
+///   guard! bytes is [u64be(bits), ..]
 ///   inspect(bits.reinterpret_as_double(), content="1")
 /// }
 /// ```
 #deprecated("Use bits pattern directly")
 #doc(hidden)
 pub fn BytesView::to_double_be(self : BytesView) -> Double {
-  guard self is [u64be(u64), ..]
+  guard! self is [u64be(u64), ..]
   u64.reinterpret_as_double()
 }
 
@@ -596,14 +596,14 @@ pub fn BytesView::to_double_be(self : BytesView) -> Double {
 /// ```mbt check
 /// test {
 ///   let bytes = b"\x00\x00\x00\x00\x00\x00\xF0\x3F" // represents 1.0 in little-endian
-///   guard bytes is [u64le(bits), ..]
+///   guard! bytes is [u64le(bits), ..]
 ///   inspect(bits.reinterpret_as_double(), content="1")
 /// }
 /// ```
 #deprecated("Use bits pattern directly")
 #doc(hidden)
 pub fn BytesView::to_double_le(self : BytesView) -> Double {
-  guard self is [u64le(u64), ..]
+  guard! self is [u64le(u64), ..]
   u64.reinterpret_as_double()
 }
 
@@ -790,14 +790,14 @@ fn BytesView::bytesview_lexical_compare_impl(
         .unsafe_get(self_start + i + lane)
         .compare(other_bytes.unsafe_get(other_start + i + lane))
     }
-    i = i + 16
+    i += 16
   }
   while i < min_len {
     let cmp = self.unsafe_get(i).compare(other.unsafe_get(i))
     if cmp != 0 {
       return cmp
     }
-    i = i + 1
+    i += 1
   }
   self_len.compare(other_len)
 }

@@ -18,4 +18,3 @@ pub impl Show for CoverageCounter
 // Type aliases
 
 // Traits
-

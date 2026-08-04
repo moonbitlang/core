@@ -72,7 +72,7 @@ fn utf16_needs_scalar_le_v128(bytes : BytesView) -> Bool {
     return true
   }
   let src = bytes.data()
-  if bytes.length() > 0 &&
+  if !bytes.is_empty() &&
     is_utf16_surrogate(src.unsafe_read_uint16_le(bytes.start_offset())) {
     return true
   }
@@ -83,13 +83,13 @@ fn utf16_needs_scalar_le_v128(bytes : BytesView) -> Bool {
     if utf16_v128_has_surrogate(@v128.v128_load(src_bytes, index)) {
       return true
     }
-    index = index + 16
+    index += 16
   }
   while index < end {
     if is_utf16_surrogate(src.unsafe_read_uint16_le(index)) {
       return true
     }
-    index = index + 2
+    index += 2
   }
   false
 }
@@ -101,7 +101,7 @@ fn utf16_needs_scalar_be_v128(bytes : BytesView) -> Bool {
     return true
   }
   let src = bytes.data()
-  if bytes.length() > 0 &&
+  if !bytes.is_empty() &&
     is_utf16_surrogate(src.unsafe_read_uint16_be(bytes.start_offset())) {
     return true
   }
@@ -113,13 +113,13 @@ fn utf16_needs_scalar_be_v128(bytes : BytesView) -> Bool {
     if utf16_v128_has_surrogate(swapped) {
       return true
     }
-    index = index + 16
+    index += 16
   }
   while index < end {
     if is_utf16_surrogate(src.unsafe_read_uint16_be(index)) {
       return true
     }
-    index = index + 2
+    index += 2
   }
   false
 }
@@ -137,15 +137,15 @@ fn utf16_decode_be_no_surrogate_v128(bytes : BytesView) -> String {
   while index + 16 <= end {
     let swapped = utf16_swap_u16x8(@v128.v128_load(src_bytes, index))
     @v128.v128_store(string_bytes, written, swapped)
-    index = index + 16
-    written = written + 16
+    index += 16
+    written += 16
   }
   while index < end {
     let code_unit = src.unsafe_read_uint16_be(index)
     string_bytes[written] = (code_unit & 0xFF).to_byte()
     string_bytes[written + 1] = (code_unit >> 8).to_byte()
-    index = index + 2
-    written = written + 2
+    index += 2
+    written += 2
   }
   string_bytes.unsafe_reinterpret_as_bytes().to_unchecked_string()
 }

@@ -2,19 +2,56 @@
 package "moonbitlang/core/quickcheck"
 
 import {
+  "moonbitlang/core/bigint",
+  "moonbitlang/core/debug",
+  "moonbitlang/core/immut/vector",
+  "moonbitlang/core/list",
+  "moonbitlang/core/queue",
+  "moonbitlang/core/quickcheck/shrink",
   "moonbitlang/core/quickcheck/splitmix",
+  "moonbitlang/core/ref",
 }
 
 // Values
+#callsite(autofill(loc))
+pub fn[A : Arbitrary + @shrink.Shrink + @debug.Debug] check((A) -> Bool raise?, filter? : (A) -> Bool, count? : UInt, max_size? : UInt, max_shrinks? : UInt, discard_ratio? : UInt, seed? : UInt64, loc~ : SourceLoc) -> Unit raise
+
+pub fn[T] elements(Array[T]) -> Generator[T]
+
+pub fn[T] frequency(Array[(UInt, Generator[T])]) -> Generator[T]
+
 pub fn[T : Arbitrary] gen(size? : Int, state? : @splitmix.RandomState) -> T
 
+pub fn int_range(Int, Int) -> Generator[Int]
+
+pub fn[T] one_of(Array[Generator[T]]) -> Generator[T]
+
+pub fn[T] pure(T) -> Generator[T]
+
+pub fn[A : Arbitrary + @shrink.Shrink] report((A) -> Bool raise?, filter? : (A) -> Bool, count? : UInt, max_size? : UInt, max_shrinks? : UInt, discard_ratio? : UInt, seed? : UInt64) -> QuickCheckReport[A]
+
 pub fn[X : Arbitrary] samples(Int) -> Array[X]
+
+pub fn[T] sized((Int) -> Generator[T]) -> Generator[T]
 
 // Errors
 
 // Types and methods
+type Generator[T]
+pub fn[T] Generator::Generator((Int, @splitmix.RandomState) -> T) -> Self[T]
+pub fn[T] Generator::array_with_size(Self[T], Int) -> Self[Array[T]]
+pub fn[T, U] Generator::flat_map(Self[T], (T) -> Self[U]) -> Self[U]
+pub fn[T, U] Generator::map(Self[T], (T) -> U) -> Self[U]
+pub fn[T] Generator::resize(Self[T], Int) -> Self[T]
+pub fn[T] Generator::run(Self[T], Int, @splitmix.RandomState) -> T
+pub fn[T] Generator::sample(Self[T], size? : Int, seed? : UInt64) -> T
+pub fn[T] Generator::samples(Self[T], count? : Int, size? : Int, seed? : UInt64) -> Array[T]
+pub fn[T] Generator::scale(Self[T], (Int) -> Int) -> Self[T]
+
+type QuickCheckReport[A] derive(@debug.Debug)
 
 // Type aliases
+pub using @splitmix {type RandomState}
 
 // Traits
 pub(open) trait Arbitrary {
@@ -35,7 +72,27 @@ pub impl[X : Arbitrary] Arbitrary for X?
 pub impl[T : Arbitrary, E : Arbitrary] Arbitrary for Result[T, E]
 pub impl[X : Arbitrary] Arbitrary for FixedArray[X]
 pub impl Arbitrary for Bytes
+pub impl Arbitrary for @bigint.BigInt
 pub impl[X : Arbitrary] Arbitrary for Array[X]
 pub impl[A : Arbitrary] Arbitrary for ArrayView[A]
 pub impl[X : Arbitrary] Arbitrary for Iter[X]
-
+pub impl[K : Arbitrary + Hash + Eq, V : Arbitrary] Arbitrary for @moonbitlang/core/hashmap.HashMap[K, V]
+pub impl[X : Arbitrary + Eq + Hash] Arbitrary for @moonbitlang/core/hashset.HashSet[X]
+pub impl[K : Eq + Hash + Arbitrary, V : Arbitrary] Arbitrary for @moonbitlang/core/immut/hashmap.HashMap[K, V]
+pub impl[K : Eq + Hash + Arbitrary] Arbitrary for @moonbitlang/core/immut/hashset.HashSet[K]
+pub impl[X : Arbitrary + Compare] Arbitrary for @moonbitlang/core/immut/priority_queue.PriorityQueue[X]
+pub impl[K : Arbitrary + Compare, V : Arbitrary] Arbitrary for @moonbitlang/core/immut/sorted_map.SortedMap[K, V]
+pub impl[X : Arbitrary + Compare] Arbitrary for @moonbitlang/core/immut/sorted_set.SortedSet[X]
+pub impl[X : Arbitrary] Arbitrary for @vector.Vector[X]
+pub impl[X : Arbitrary] Arbitrary for @list.List[X]
+pub impl[X : Arbitrary + Compare] Arbitrary for @moonbitlang/core/priority_queue.PriorityQueue[X]
+pub impl[X : Arbitrary] Arbitrary for @queue.Queue[X]
+pub impl[X : Arbitrary] Arbitrary for @ref.Ref[X]
+pub impl[K : Arbitrary + Compare, V : Arbitrary] Arbitrary for @moonbitlang/core/sorted_map.SortedMap[K, V]
+pub impl[X : Arbitrary + Compare] Arbitrary for @moonbitlang/core/sorted_set.SortedSet[X]
+pub impl[A : Arbitrary, B : Arbitrary] Arbitrary for (A, B)
+pub impl[A : Arbitrary, B : Arbitrary, C : Arbitrary] Arbitrary for (A, B, C)
+pub impl[A : Arbitrary, B : Arbitrary, C : Arbitrary, D : Arbitrary] Arbitrary for (A, B, C, D)
+pub impl[A : Arbitrary, B : Arbitrary, C : Arbitrary, D : Arbitrary, E : Arbitrary] Arbitrary for (A, B, C, D, E)
+pub impl[A : Arbitrary, B : Arbitrary, C : Arbitrary, D : Arbitrary, E : Arbitrary, F : Arbitrary] Arbitrary for (A, B, C, D, E, F)
+pub impl[A : Arbitrary, B : Arbitrary, C : Arbitrary, D : Arbitrary, E : Arbitrary, F : Arbitrary, G : Arbitrary] Arbitrary for (A, B, C, D, E, F, G)

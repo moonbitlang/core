@@ -1,33 +1,22 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/tuple"
 
-import {
-  "moonbitlang/core/quickcheck",
-  "moonbitlang/core/quickcheck/splitmix",
-}
-
 // Values
 
 // Errors
 
 // Types and methods
 pub impl[A : Default, B : Default] Default for (A, B)
-pub impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (A, B)
 
 pub impl[A : Default, B : Default, C : Default] Default for (A, B, C)
-pub impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (A, B, C)
 
 pub impl[A : Default, B : Default, C : Default, D : Default] Default for (A, B, C, D)
-pub impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary, D : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (A, B, C, D)
 
 pub impl[A : Default, B : Default, C : Default, D : Default, E : Default] Default for (A, B, C, D, E)
-pub impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary, D : @quickcheck.Arbitrary, E : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (A, B, C, D, E)
 
 pub impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default] Default for (A, B, C, D, E, F)
-pub impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary, D : @quickcheck.Arbitrary, E : @quickcheck.Arbitrary, F : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (A, B, C, D, E, F)
 
 pub impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default] Default for (A, B, C, D, E, F, G)
-pub impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary, D : @quickcheck.Arbitrary, E : @quickcheck.Arbitrary, F : @quickcheck.Arbitrary, G : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (A, B, C, D, E, F, G)
 
 pub impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default] Default for (A, B, C, D, E, F, G, H)
 
@@ -50,4 +39,3 @@ pub impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : De
 // Type aliases
 
 // Traits
-

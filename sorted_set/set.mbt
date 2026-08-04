@@ -173,7 +173,7 @@ pub fn[V : Compare] SortedSet::union(
       let mut ct = 0
       let ret = { root: t, size: 0 }
       // TODO: optimize this. Avoid counting the size of the set.
-      ret.each(_x => ct = ct + 1)
+      ret.each(_x => ct += 1)
       ret.size = ct
       ret
     }
@@ -397,7 +397,7 @@ pub fn[V] SortedSet::eachi(
   let mut i = 0
   self.each(v => {
     f(i, v)
-    i = i + 1
+    i += 1
   })
 }
 
@@ -414,7 +414,7 @@ pub fn[V] SortedSet::to_array(self : SortedSet[V]) -> Array[V] {
       if root is Some(root) {
         dfs(root.left)
         arr[i] = root.value
-        i = i + 1
+        i += 1
         dfs(root.right)
       }
     }
@@ -476,13 +476,6 @@ pub impl[V : Show] Show for SortedSet[V]
 /// Outputs the set's string representation to a logger.
 pub impl[V : Show] Show for SortedSet[V] with fn output(self, logger) {
   logger.write_iter(self.iter(), prefix="@sorted_set.from_array([", suffix="])")
-}
-
-///|
-pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for SortedSet[
-  X,
-] with fn arbitrary(size, rs) {
-  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_iter
 }
 
 ///|

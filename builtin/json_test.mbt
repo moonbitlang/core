@@ -220,7 +220,7 @@ test "Bool::to_json true" {
 ///|
 test "to_hex_digit" {
   let str = "\n\r\b\t\u{0C}\u{00}"
-  guard Json::string(str) is String(escaped)
+  guard! Json::string(str) is String(escaped)
   @test.assert_eq(escaped, "\n\r\b\t\u{0c}\u{00}")
 }
 

@@ -69,3 +69,28 @@ test "@math.hypot small ratio" {
   let small = @math.hypot(1.0, ys[0])
   assert_true(small.is_close(1.0))
 }
+
+///|
+test "@math.hypot nan and infinity" {
+  // an infinite argument yields +Infinity even when the other is NaN
+  inspect(
+    @math.hypot(@double.not_a_number, @double.infinity),
+    content="Infinity",
+  )
+  inspect(
+    @math.hypot(@double.infinity, @double.not_a_number),
+    content="Infinity",
+  )
+  inspect(
+    @math.hypot(@double.not_a_number, @double.neg_infinity),
+    content="Infinity",
+  )
+  inspect(
+    @math.hypot(@double.neg_infinity, @double.not_a_number),
+    content="Infinity",
+  )
+  inspect(@math.hypot(@double.not_a_number, 1.0), content="NaN")
+  inspect(@math.hypot(1.0, @double.not_a_number), content="NaN")
+  inspect(@math.hypot(@double.infinity, 1.0), content="Infinity")
+  inspect(@math.hypot(1.0, @double.neg_infinity), content="Infinity")
+}

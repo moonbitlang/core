@@ -452,7 +452,7 @@ test "iter via for-comprehension into array" {
 test "iter is lazy" {
   let mut count = 0
   for i in @range.iter(from=0, to=100) {
-    count = count + 1
+    count += 1
     if i == 4 {
       break
     }

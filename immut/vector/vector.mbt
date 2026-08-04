@@ -200,7 +200,7 @@ fn[A] Vector::tail_offset(self : Vector[A]) -> Int {
 /// ```
 #alias("_[_]")
 pub fn[A] Vector::at(self : Vector[A], index : Int) -> A {
-  guard index >= 0 && index < self.size
+  guard! index >= 0 && index < self.size
   let tail_offset = self.tail_offset()
   if index >= tail_offset {
     self.tail[index - tail_offset]
@@ -279,7 +279,7 @@ pub fn[A : Eq] Vector::contains(self : Vector[A], value : A) -> Bool {
 /// }
 /// ```
 pub fn[A] Vector::set(self : Vector[A], index : Int, value : A) -> Vector[A] {
-  guard index >= 0 && index < self.size
+  guard! index >= 0 && index < self.size
   let tail_len = self.tail.length()
   if tail_len == 0 {
     make_t(
@@ -407,7 +407,7 @@ pub fn[A] Vector::concat(self : Vector[A], other : Vector[A]) -> Vector[A] {
         size,
         self.shift,
       )
-    } else if self.tail.length() == 0 {
+    } else if self.tail.is_empty() {
       return make_t(self.tree, other.tail, size, self.shift)
     } else {
       let (tree, shift) = self.normalize_tree()
@@ -416,7 +416,7 @@ pub fn[A] Vector::concat(self : Vector[A], other : Vector[A]) -> Vector[A] {
   }
   let (tree, shift) = if self.tree is Empty {
     Tree::concat(Leaf(self.tail), 0, other.tree, other.shift, true)
-  } else if self.tail.length() == 0 {
+  } else if self.tail.is_empty() {
     Tree::concat(self.tree, self.shift, other.tree, other.shift, true)
   } else {
     Tree::concat_with_suffix(
@@ -683,14 +683,6 @@ pub fn[A] Vector::rev(self : Vector[A]) -> Vector[A] {
 //-----------------------------------------------------------------------------
 
 ///|
-pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Vector[X] with fn arbitrary(
-  size,
-  rs,
-) {
-  @quickcheck.Arbitrary::arbitrary(size, rs) |> Vector::from_array
-}
-
-///|
 pub impl[A : Hash] Hash for Vector[A] with fn hash_combine(self, hasher) {
   for e in self {
     hasher.combine(e)
@@ -862,7 +854,7 @@ fn tail_len_of_size(size : Int) -> Int {
 fn[A] Vector::normalize_tree(self : Vector[A]) -> (Tree[A], Int) {
   if self.size == 0 {
     (Tree::empty(), 0)
-  } else if self.tail.length() == 0 {
+  } else if self.tail.is_empty() {
     (self.tree, self.shift)
   } else if self.tail_offset() == 0 {
     (Leaf(self.tail), 0)

@@ -25,11 +25,6 @@ pub extend SortedSet with Eq::{equal}
 pub extend SortedSet with @debug.Debug::{to_repr}
 
 ///|
-#deprecated("Use `@quickcheck.Arbitrary::arbitrary` instead", skip_current_package=true)
-#doc(hidden)
-pub extend SortedSet with @quickcheck.Arbitrary::{arbitrary}
-
-///|
 #deprecated("Use `Default::default` instead", skip_current_package=true)
 #doc(hidden)
 pub extend SortedSet with Default::{default}

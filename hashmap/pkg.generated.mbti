@@ -3,8 +3,6 @@ package "moonbitlang/core/hashmap"
 
 import {
   "moonbitlang/core/debug",
-  "moonbitlang/core/quickcheck",
-  "moonbitlang/core/quickcheck/splitmix",
 }
 
 // Values
@@ -66,9 +64,7 @@ pub impl[K : Hash + Eq, V : Eq] Eq for HashMap[K, V]
 pub impl[K : Show, V : Show] Show for HashMap[K, V]
 pub impl[K : Show, V : ToJson] ToJson for HashMap[K, V]
 pub impl[K : @debug.Debug, V : @debug.Debug] @debug.Debug for HashMap[K, V]
-pub impl[K : @quickcheck.Arbitrary + Hash + Eq, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for HashMap[K, V]
 
 // Type aliases
 
 // Traits
-

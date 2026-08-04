@@ -58,4 +58,3 @@ pub type Rechar = Int
 pub using @rechar_set {type RecharSet}
 
 // Traits
-

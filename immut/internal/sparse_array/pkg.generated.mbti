@@ -38,4 +38,3 @@ pub fn[X] SparseArray::union(Self[X], Self[X], (X, X) -> X raise?) -> Self[X] ra
 // Type aliases
 
 // Traits
-

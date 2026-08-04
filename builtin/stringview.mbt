@@ -930,12 +930,12 @@ pub fn String::sub(self : String, start? : Int = 0, end? : Int) -> StringView {
   let end = match end {
     Some(end) | (None with end = len) => end
   }
-  guard start >= 0 && start <= end && end <= len
+  guard! start >= 0 && start <= end && end <= len
   if start < len {
-    guard !self.unsafe_get(start).is_trailing_surrogate()
+    guard! !self.unsafe_get(start).is_trailing_surrogate()
   }
   if end < len {
-    guard !self.unsafe_get(end).is_trailing_surrogate()
+    guard! !self.unsafe_get(end).is_trailing_surrogate()
   }
   StringView::make_view(self, start, end)
 }
@@ -995,16 +995,16 @@ pub fn StringView::sub(
   let abs_start = self.start() + start
 
   // Validate bounds against the original string
-  guard abs_start >= self.start() &&
+  guard! abs_start >= self.start() &&
     abs_start <= abs_end &&
     abs_end <= self.end()
 
   // Check for surrogate pair boundaries
   if abs_start < str_len {
-    guard !self.str().unsafe_get(abs_start).is_trailing_surrogate()
+    guard! !self.str().unsafe_get(abs_start).is_trailing_surrogate()
   }
   if abs_end < str_len {
-    guard !self.str().unsafe_get(abs_end).is_trailing_surrogate()
+    guard! !self.str().unsafe_get(abs_end).is_trailing_surrogate()
   }
   StringView::make_view(self.str(), abs_start, abs_end)
 }

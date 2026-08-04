@@ -382,7 +382,7 @@ fn[A] Tree::concat(
       right_shift,
       false,
     )
-    guard c_shift == left_shift
+    guard! c_shift == left_shift
     return rebalance(left, c, Empty, left_shift, top)
   } else if right_shift > left_shift {
     let (c, c_shift) = Tree::concat(
@@ -392,7 +392,7 @@ fn[A] Tree::concat(
       right_shift - NUM_BITS,
       false,
     )
-    guard c_shift == right_shift
+    guard! c_shift == right_shift
     return rebalance(Empty, c, right, right_shift, top)
   } else if left_shift == 0 {
     // Handle Leaf case
@@ -432,8 +432,8 @@ fn[A] Tree::concat(
       right_shift - NUM_BITS,
       false,
     )
-    guard c_shift == left_shift
-    guard c_shift == right_shift
+    guard! c_shift == left_shift
+    guard! c_shift == right_shift
     return rebalance(left, c, right, left_shift, top)
   }
 }
@@ -453,7 +453,7 @@ fn[A] rebalance(
   let t = tri_merge(left, center, right) // t is a list of trees of (H-1) height
   let (nc, nc_len) = redis_plan(t)
   let new_t = redis(t, nc, nc_len, shift - NUM_BITS) // new_t is a list of trees of (H-1) height
-  guard new_t.length() == nc_len
+  guard! new_t.length() == nc_len
   if nc_len <= BRANCHING_FACTOR {
     // All nodes can be accommodated in a single node
     let node = Node(new_t, compute_sizes(new_t, shift - NUM_BITS)) // node of H height
@@ -613,7 +613,7 @@ fn[A] redis(
         while new_offset < new_leaf_len {
           old_leaf_elems = old_t[j].leaf_elements()
           old_leaf_len = old_leaf_elems.length()
-          guard j < old_len  // This shouldn't be triggered if the plan was correctly generated
+          guard! j < old_len  // This shouldn't be triggered if the plan was correctly generated
           let remaining = min(
             new_leaf_len - new_offset,
             old_leaf_len - old_offset,
@@ -649,7 +649,7 @@ fn[A] redis(
         while new_offset < new_node_len {
           old_node_chldrn = old_t[j].node_children()
           old_node_len = old_node_chldrn.length()
-          guard j < old_len
+          guard! j < old_len
           let remaining = min(
             new_node_len - new_offset,
             old_node_len - old_offset,

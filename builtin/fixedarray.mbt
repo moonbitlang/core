@@ -121,11 +121,11 @@ pub fn[T] FixedArray::fill(
 ) -> Unit {
   let array_length = self.length()
   guard array_length > 0 else { return }
-  guard start >= 0 && start < array_length
+  guard! start >= 0 && start < array_length
   let length = match end {
     None => array_length - start
     Some(e) => {
-      guard e >= start && e <= array_length
+      guard! e >= start && e <= array_length
       e - start
     }
   }
@@ -284,7 +284,7 @@ test "each" {
     if elem != i + 1 {
       failed = true
     }
-    i = i + 1
+    i += 1
   }
   {
     i = 0
@@ -339,7 +339,7 @@ test "eachi" {
     if index != i || elem != i + 1 {
       failed = true
     }
-    i = i + 1
+    i += 1
   }
   {
     i = 0
@@ -394,7 +394,7 @@ test "rev_each" {
     if elem != i - 1 {
       failed = true
     }
-    i = i - 1
+    i -= 1
   }
   {
     i = 1
@@ -451,8 +451,8 @@ test "rev_eachi" {
     if index != j || elem != i - 1 {
       failed = true
     }
-    i = i - 1
-    j = j + 1
+    i -= 1
+    j += 1
   }
   {
     i = 1
@@ -1387,7 +1387,7 @@ test "iter" {
   iter.each(x => {
     exb.write_string(x.to_string())
     exb.write_char('\n')
-    i = i + 1
+    i += 1
   })
   assert_true(i == arr.length())
   inspect(

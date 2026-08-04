@@ -86,4 +86,3 @@ pub impl ToJson for Float
 // Type aliases
 
 // Traits
-

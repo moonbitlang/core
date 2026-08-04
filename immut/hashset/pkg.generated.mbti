@@ -3,8 +3,6 @@ package "moonbitlang/core/immut/hashset"
 
 import {
   "moonbitlang/core/debug",
-  "moonbitlang/core/quickcheck",
-  "moonbitlang/core/quickcheck/splitmix",
 }
 
 // Values
@@ -43,9 +41,7 @@ pub impl[A : Hash] Hash for HashSet[A]
 #deprecated
 pub impl[A : Show] Show for HashSet[A]
 pub impl[K : @debug.Debug] @debug.Debug for HashSet[K]
-pub impl[K : Eq + Hash + @quickcheck.Arbitrary] @quickcheck.Arbitrary for HashSet[K]
 
 // Type aliases
 
 // Traits
-

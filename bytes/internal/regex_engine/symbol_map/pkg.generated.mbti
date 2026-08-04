@@ -22,4 +22,3 @@ pub trait Table {
   fn map(Self, Int) -> Int
   fn map_set(Self, @rechar_set.RecharSet) -> @rechar_set.RecharSet
 }
-

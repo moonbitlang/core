@@ -196,7 +196,7 @@ test "from_iter matches forward add with duplicates" {
 test "each on empty set" {
   let s = @hashset.new()
   let mut count = 0
-  s.each((_x : Int) => count = count + 1)
+  s.each((_x : Int) => count += 1)
   inspect(count, content="0")
 }
 
@@ -244,16 +244,6 @@ test "hashset equality" {
   let empty1 : @hashset.HashSet[Unit] = @hashset.new()
   let empty2 : @hashset.HashSet[Unit] = @hashset.new()
   inspect(empty1 == empty2, content="true")
-}
-
-///|
-test "arbitrary implementation for hashset" {
-  // Use @quickcheck.gen to generate an arbitrary hashset of Int
-  let set : @hashset.HashSet[Int] = @quickcheck.gen()
-  // Make sure the generated set is valid by converting it to array and back
-  let arr = set.iter().to_array()
-  let set2 = @hashset.HashSet(arr)
-  @test.assert_eq(set, set2)
 }
 
 ///|
