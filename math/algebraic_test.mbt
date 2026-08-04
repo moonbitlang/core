@@ -33,6 +33,16 @@ test "@math.cbrtf" {
 }
 
 ///|
+test "@math.cbrt large negative normal" {
+  // a negative normal must not be classified as subnormal (issue #3909)
+  let x = 0xfca0000000000000UL.reinterpret_as_double() // -2^971
+  assert_eq(@math.cbrt(x).reinterpret_as_uint64(), 0xd42965fea53d6e3dUL)
+  // odd symmetry: cbrt(-x) == -cbrt(x)
+  assert_eq(@math.cbrt(-8.0), -2.0)
+  assert_eq(@math.cbrt(-1.0e300), -@math.cbrt(1.0e300))
+}
+
+///|
 test "@math.hypotf" {
   inspect(@math.hypotf(3, 4), content="5")
   inspect(@math.hypotf(5, 12.0), content="13")
