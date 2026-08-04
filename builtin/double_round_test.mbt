@@ -150,6 +150,8 @@ test "round" {
   @test.assert_eq((-4503599627370496.0).round(), -4503599627370496.0)
   @test.assert_eq((-9007199254740992.0).round(), -9007199254740992.0)
   // issue #3912: value equality hides these, so check the bits.
+  // positive zero stays positive zero (early return preserves the sign)
+  @test.assert_eq((0.0).round().reinterpret_as_uint64(), 0x0000000000000000)
   // negative zero survives (round toward +inf keeps the sign of the zero)
   @test.assert_eq((-0.0).round().reinterpret_as_uint64(), 0x8000000000000000)
   @test.assert_eq((-0.25).round().reinterpret_as_uint64(), 0x8000000000000000)
