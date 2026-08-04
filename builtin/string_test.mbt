@@ -254,6 +254,22 @@ test "String::rev_find partial mismatch" {
 }
 
 ///|
+test "StringView find dense fallback cases" {
+  let data = String::make(80, 'a')
+  debug_inspect(data[:].find("aaaaZ"), content="None")
+  let forward = data + "Zabcd"
+  debug_inspect(forward[:].find("Zabcd"), content="Some(80)")
+  let wrapped_forward = "prefix-" + forward + "-suffix"
+  let forward_view = wrapped_forward[7:7 + forward.length()]
+  debug_inspect(forward_view.find("Zabcd"), content="Some(80)")
+  let reverse = "Zabcd" + data
+  debug_inspect(reverse[:].rev_find("Zabcd"), content="Some(0)")
+  let wrapped_reverse = "prefix-" + reverse + "-suffix"
+  let reverse_view = wrapped_reverse[7:7 + reverse.length()]
+  debug_inspect(reverse_view.rev_find("Zabcd"), content="Some(0)")
+}
+
+///|
 test "panic StringView repeat negative" {
   let view = "hi"[:]
   let mut n = 1
