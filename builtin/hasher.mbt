@@ -522,7 +522,7 @@ pub impl Hash for String with fn hash_combine(self, hasher) {
 pub impl Hash for String with fn hash(self : String) -> Int {
   let mut acc = seed.reinterpret_as_uint() + GPRIME5
   for i in 0..<self.length() {
-    acc = acc + 4U
+    acc += 4U
     let v = self.unsafe_get(i).to_int().reinterpret_as_uint()
     acc = consume4_acc(acc, v)
   }
@@ -547,7 +547,7 @@ pub impl Hash for StringView with fn hash(self : StringView) -> Int {
   let str = self.str()
   let mut acc = seed.reinterpret_as_uint() + GPRIME5
   for i in self.start()..<self.end() {
-    acc = acc + 4U
+    acc += 4U
     let v = str.unsafe_get(i).to_int().reinterpret_as_uint()
     acc = consume4_acc(acc, v)
   }

@@ -122,7 +122,7 @@ pub fn Double::max(self : Double, other : Double) -> Double {
 /// }
 /// ```
 pub fn Double::clamp(self : Double, min~ : Double, max~ : Double) -> Double {
-  guard min <= max
+  guard! min <= max
   if self < min {
     min
   } else if self > max {

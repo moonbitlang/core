@@ -57,7 +57,7 @@ test "get" {
   debug_inspect(map.get(4), content="None")
 
   // pattern
-  guard map is { 1: "a", 2: "b", 3: "c", 4? : None, .. }
+  guard! map is { 1: "a", 2: "b", 3: "c", 4? : None, .. }
 }
 
 ///|
@@ -202,36 +202,6 @@ test "from_iter empty iter" {
     pq,
     content=(
       #|<SortedMap: {}>
-    ),
-  )
-}
-
-///|
-test "arbitrary" {
-  let map : Array[@sorted_map.SortedMap[Int, UInt]] = @quickcheck.samples(20)
-  debug_inspect(
-    map[5:10],
-    content=(
-      #|<ArrayView:
-      #|  [
-      #|    <SortedMap: {}>,
-      #|    <SortedMap: {}>,
-      #|    <SortedMap: { 0: 0 }>,
-      #|    <SortedMap: { 0: 0 }>,
-      #|    <SortedMap: { 0: 0 }>,
-      #|  ]>
-    ),
-  )
-  debug_inspect(
-    map[11:15],
-    content=(
-      #|<ArrayView:
-      #|  [
-      #|    <SortedMap: { -3: 2, -1: 1, 0: 0, 2: 1 }>,
-      #|    <SortedMap: { 0: 0 }>,
-      #|    <SortedMap: { -8: 1, -2: 5, 0: 3, 3: 6, 7: 6 }>,
-      #|    <SortedMap: { 0: 0 }>,
-      #|  ]>
     ),
   )
 }

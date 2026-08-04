@@ -281,7 +281,7 @@ fn validate_flag_arg(
   ctx : ValidationCtx,
 ) -> Unit raise ArgBuildError {
   validate_named_option_arg(arg)
-  guard arg.info is FlagInfo(action~, negatable~, ..)
+  guard! arg.info is FlagInfo(action~, negatable~, ..)
   if action is (Help | Version) {
     guard !negatable else {
       raise Unsupported("help/version actions do not support negatable")
@@ -323,7 +323,7 @@ fn validate_positional_arg(
 
 ///|
 fn validate_named_option_arg(arg : Arg) -> Unit raise ArgBuildError {
-  guard arg.info
+  guard! arg.info
     is (FlagInfo(long~, short~, ..) | OptionInfo(long~, short~, ..))
   guard long is Some(_) || short is Some(_) || arg.env is Some(_) else {
     raise Unsupported("flag/option args require short/long/env")
@@ -510,7 +510,7 @@ fn validate_command_policies(
   matches : Matches,
 ) -> Unit raise ArgParseError {
   if cmd.subcommand_required &&
-    cmd.subcommands.length() > 0 &&
+    !cmd.subcommands.is_empty() &&
     matches.parsed_subcommand is None {
     raise MissingRequired("subcommand", None)
   }

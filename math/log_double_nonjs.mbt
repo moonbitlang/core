@@ -103,9 +103,10 @@ pub fn ln(x : Double) -> Double {
 /// ```
 pub fn log2(x : Double) -> Double {
   let (f, e) = frexp(x)
-  if f == 0.5 {
-    return e.to_double() - 1.0
-  }
+  // frexp puts f in [0.5, 1); for x just above a power of two `ln(f)/LN2` sits
+  // near -1 and the later `+ e` cancels catastrophically. Centre the mantissa
+  // around 1 so the fractional term stays small.
+  let (f, e) = if f < 0.7071067811865476 { (f * 2.0, e - 1) } else { (f, e) }
   ln(f) / LN2 + e.to_double()
 }
 

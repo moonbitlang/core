@@ -26,5 +26,5 @@
 ///
 /// Panic in debug mode when `x()` returns `false`.
 pub fn debug_assert(x : () -> Bool) -> Unit {
-  guard x()
+  guard! x()
 }

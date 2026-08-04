@@ -85,4 +85,3 @@ pub(all) struct Quantifier {
 // Type aliases
 
 // Traits
-

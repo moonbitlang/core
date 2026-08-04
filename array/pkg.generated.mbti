@@ -17,4 +17,3 @@ pub fn[A, B, C] zip_with(Array[A], Array[B], (A, B) -> C raise?) -> Array[C] rai
 pub using @builtin {type ArrayView as View}
 
 // Traits
-

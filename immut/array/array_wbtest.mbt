@@ -34,9 +34,9 @@ test "mix" {
     v2
   }
   let mut ct = 0
-  v.each(e => ct = ct + e)
+  v.each(e => ct += e)
   inspect(ct, content="4950")
-  v2.each(e => ct = ct + e)
+  v2.each(e => ct += e)
   inspect(ct, content="14850")
   let v2 = v2.map(e => e * 2)
   let ct1 = v2.fold((a, b) => a + b, init=0)

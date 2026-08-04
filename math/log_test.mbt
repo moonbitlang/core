@@ -144,3 +144,18 @@ test "ln_1p mid-range branches" {
 test "log2 zero input" {
   assert_true(@math.log2(0.0).is_neg_inf())
 }
+
+///|
+test "log2 stays accurate just above a power of two" {
+  // issue #3911: `ln(f)/LN2 + e` cancelled catastrophically for x just above
+  // a power of two. Powers of two stay exact and the worst case is now <= 1 ULP
+  // (it used to be off by ~4%).
+  for k = -60; k <= 60; k = k + 1 {
+    assert_eq(@math.log2(@math.pow(2.0, k.to_double())), k.to_double())
+  }
+  let got = @math.log2(0x3ff0000000000001UL.reinterpret_as_double()) // nextUp(1.0)
+  let want = 0x3cb71547652b82fdUL
+  let bits = got.reinterpret_as_uint64()
+  let ulp = if bits > want { bits - want } else { want - bits }
+  assert_true(ulp <= 1UL)
+}

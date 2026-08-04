@@ -28,7 +28,7 @@ pub fn parse_bigint(str : StringView, base? : Int = 10) -> BigInt raise {
   if base < 2 || base > 36 {
     base_err()
   }
-  if str.length() == 0 {
+  if str.is_empty() {
     syntax_err()
   }
   match str.unsafe_get(str.length() - 1) {
@@ -212,7 +212,7 @@ pub fn BigInt::from_octets(octets : BytesView, signum? : Int = 1) -> BigInt {
   if signum == 0 {
     return 0N
   }
-  if octets.length() == 0 {
+  if octets.is_empty() {
     abort("empty octet string")
   }
   let str = StringBuilder()

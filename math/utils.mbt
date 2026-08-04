@@ -14,11 +14,9 @@
 
 ///|
 fn abs(x : Double) -> Double {
-  if x < 0.0 {
-    -x
-  } else {
-    x
-  }
+  // `-0.0 < 0.0` is false, so the naive branch would leak a negative zero
+  // through unchanged; defer to the builtin, which clears the sign bit.
+  x.abs()
 }
 
 ///|

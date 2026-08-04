@@ -40,7 +40,7 @@ fn assign_positionals(
       let mut taken = 0
       while taken < take {
         add_value(matches, arg.name, values[cursor + taken], arg, Argv)
-        taken = taken + 1
+        taken += 1
       }
       continue cursor + taken
     }
@@ -54,7 +54,7 @@ fn assign_positionals(
     cursor
   }
   if cursor < values.length() {
-    let overflow_label = if positionals.length() > 0 {
+    let overflow_label = if !positionals.is_empty() {
       let last = positionals[positionals.length() - 1]
       if last.multiple {
         Some("<\{last.name}...>")
@@ -160,7 +160,7 @@ fn check_duplicate_set_occurrence(
   guard arg.info is (OptionInfo(action=Set, ..) | PositionalInfo(_)) else {
     return
   }
-  if matches.values.get(arg.name) is Some(values) && values.length() > 0 {
+  if matches.values.get(arg.name) is Some(values) && !values.is_empty() {
     raise InvalidArgument(
       "argument '\{option_conflict_label(arg)}' cannot be used multiple times",
     )
@@ -253,7 +253,7 @@ fn apply_defaults(matches : Matches, args : Array[Arg]) -> Unit {
       continue
     }
     match default_values {
-      Some(values) if values.length() > 0 =>
+      Some(values) if !values.is_empty() =>
         for value in values {
           let _ = add_value(matches, arg.name, value, arg, Default)
         }

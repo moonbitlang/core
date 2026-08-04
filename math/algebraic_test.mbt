@@ -33,6 +33,16 @@ test "@math.cbrtf" {
 }
 
 ///|
+test "@math.cbrt large negative normal" {
+  // a negative normal must not be classified as subnormal (issue #3909)
+  let x = 0xfca0000000000000UL.reinterpret_as_double() // -2^971
+  assert_eq(@math.cbrt(x).reinterpret_as_uint64(), 0xd42965fea53d6e3dUL)
+  // odd symmetry: cbrt(-x) == -cbrt(x)
+  assert_eq(@math.cbrt(-8.0), -2.0)
+  assert_eq(@math.cbrt(-1.0e300), -@math.cbrt(1.0e300))
+}
+
+///|
 test "@math.hypotf" {
   inspect(@math.hypotf(3, 4), content="5")
   inspect(@math.hypotf(5, 12.0), content="13")
@@ -58,4 +68,29 @@ test "@math.hypot small ratio" {
   let ys : ReadOnlyArray[Double] = [0.0]
   let small = @math.hypot(1.0, ys[0])
   assert_true(small.is_close(1.0))
+}
+
+///|
+test "@math.hypot nan and infinity" {
+  // an infinite argument yields +Infinity even when the other is NaN
+  inspect(
+    @math.hypot(@double.not_a_number, @double.infinity),
+    content="Infinity",
+  )
+  inspect(
+    @math.hypot(@double.infinity, @double.not_a_number),
+    content="Infinity",
+  )
+  inspect(
+    @math.hypot(@double.not_a_number, @double.neg_infinity),
+    content="Infinity",
+  )
+  inspect(
+    @math.hypot(@double.neg_infinity, @double.not_a_number),
+    content="Infinity",
+  )
+  inspect(@math.hypot(@double.not_a_number, 1.0), content="NaN")
+  inspect(@math.hypot(1.0, @double.not_a_number), content="NaN")
+  inspect(@math.hypot(@double.infinity, 1.0), content="Infinity")
+  inspect(@math.hypot(1.0, @double.neg_infinity), content="Infinity")
 }

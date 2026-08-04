@@ -125,7 +125,26 @@ test "string comparison" {
 
 ## String Views
 
-String views provide efficient substring operations without copying:
+String views provide efficient substring operations without copying. A
+`String` stores UTF-16 code units, and a view is just a `{str, start, end}`
+window into those units. A character outside the Basic Multilingual Plane is
+stored as a surrogate pair, and the `s[start:end]` slice syntax panics
+rather than split one:
+
+```d2
+direction: right
+str: "String \"a😀b\" — UTF-16 code units" {
+  u0: "[0] 'a'"
+  u1: "[1] 0xD83D high surrogate"
+  u2: "[2] 0xDE00 low surrogate"
+  u3: "[3] 'b'"
+}
+view: "StringView {str, start, end}\ns[1:3] is the full 😀 (ok)\ns[2:4] starts inside 😀 → panics"
+view -> str: "zero copy, indices are code units"
+```
+
+`s[i]` returns the code unit at `i`, `s.get_char(i)` decodes a full `Char`,
+and `for c in s` iterates characters (decoding surrogate pairs):
 
 ```mbt check
 ///|

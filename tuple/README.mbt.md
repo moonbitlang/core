@@ -1,6 +1,6 @@
 # Tuple
 
-Tuples are fixed-size collections of elements of different types. This package provides `Default` and `Arbitrary` trait implementations for tuples of up to 16 elements.
+Tuples are fixed-size collections of elements of different types. This package provides `Default` trait implementations for tuples of up to 16 elements.
 
 ## Create
 

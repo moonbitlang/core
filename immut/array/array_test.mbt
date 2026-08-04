@@ -21,12 +21,6 @@ test "is_empty" {
 }
 
 ///|
-test "arbitrary samples" {
-  let samples = (@quickcheck.samples(3) : Array[@array.T[Int]])
-  inspect(samples.length(), content="3")
-}
-
-///|
 test "set with valid index" {
   let v = @array.from_array([1, 2, 3, 4, 5])
   let v1 = v.set(2, 10) // This should not trigger the panic
@@ -138,7 +132,7 @@ test "iteri" {
   v.eachi((_i, _e) => abort("never reach"))
   let v = @array.from_array([1, 2, 3, 4, 5])
   let mut s = 0
-  v.eachi((i, e) => s = s + i * e)
+  v.eachi((i, e) => s += i * e)
   inspect(s, content="40")
   let vec = []
   v.eachi((i, _e) => vec.push(i))

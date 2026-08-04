@@ -1,0 +1,100 @@
+// Copyright 2026 International Digital Economy Academy
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+///|
+test "construct, map, and flat_map" {
+  let from_size = @quickcheck.Generator((size, _) => size)
+  inspect(from_size.sample(size=12), content="12")
+  let value = @quickcheck.pure(20)
+    .map(x => x + 1)
+    .flat_map(x => @quickcheck.pure(x * 2))
+  inspect(value.sample(), content="42")
+}
+
+///|
+test "size control" {
+  let generator = @quickcheck.sized(size => @quickcheck.pure(size))
+  inspect(generator.sample(size=9), content="9")
+  inspect(generator.resize(3).sample(size=9), content="3")
+}
+
+///|
+test "scale transforms the input size" {
+  let generator = @quickcheck.Generator((size, _) => size)
+  inspect(generator.scale(size => size * 2 + 1).sample(size=4), content="9")
+}
+
+///|
+test "range and choices" {
+  for value in @quickcheck.int_range(-4, 7).samples(count=64) {
+    guard value >= -4 && value < 7 else {
+      fail("int_range generated an out-of-range value")
+    }
+  }
+  for
+    value in @quickcheck.one_of([@quickcheck.pure(1), @quickcheck.pure(2)]).samples(
+      count=32,
+    ) {
+    guard value == 1 || value == 2 else {
+      fail("one_of generated a value outside its inputs")
+    }
+  }
+  for
+    value in @quickcheck.frequency([
+      (1U, @quickcheck.pure("a")),
+      (3U, @quickcheck.pure("b")),
+    ]).samples(count=32) {
+    guard value == "a" || value == "b" else {
+      fail("frequency generated a value outside its inputs")
+    }
+  }
+}
+
+///|
+test "elements selects only supplied values" {
+  debug_inspect(
+    @quickcheck.elements(["red", "green", "blue"]).samples(count=20),
+    content=(
+      #|[
+      #|  "red",
+      #|  "red",
+      #|  "red",
+      #|  "green",
+      #|  "blue",
+      #|  "red",
+      #|  "red",
+      #|  "red",
+      #|  "blue",
+      #|  "green",
+      #|  "blue",
+      #|  "blue",
+      #|  "red",
+      #|  "red",
+      #|  "blue",
+      #|  "green",
+      #|  "green",
+      #|  "green",
+      #|  "green",
+      #|  "green",
+      #|]
+    ),
+  )
+}
+
+///|
+test "fixed-size array" {
+  let values = @quickcheck.pure(7).array_with_size(3).sample()
+  inspect(values.length(), content="3")
+  inspect(values.all(value => value == 7), content="true")
+}

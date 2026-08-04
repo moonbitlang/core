@@ -94,7 +94,7 @@ pub fn Int64::max(self : Int64, other : Int64) -> Int64 {
 ///|
 /// Clamps the value `self` between `min` and `max`.
 pub fn Int64::clamp(self : Int64, min~ : Int64, max~ : Int64) -> Int64 {
-  guard min <= max
+  guard! min <= max
   if self < min {
     min
   } else if self > max {

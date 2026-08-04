@@ -1958,47 +1958,45 @@ test "rev_fold with raise" {
 ///|
 /// Returns the UTF-16 code unit at the given index. Returns `None` if the index
 /// is out of bounds.
-#deprecated("The return type is about to change to `UInt16?` in a future release. Please check boundaries manually and use `String::code_unit_at` instead.", skip_current_package=true)
-pub fn String::get(self : String, idx : Int) -> Int? {
+pub fn String::get(self : String, idx : Int) -> UInt16? {
   guard idx >= 0 && idx < self.length() else { return None }
-  Some(self.unsafe_get(idx).to_int())
+  Some(self.unsafe_get(idx))
 }
 
 ///|
 /// Returns the UTF-16 code unit at the given index. Returns `None` if the index
 /// is out of bounds.
-#deprecated("The return type is about to change to `UInt16?` in a future release. Please check boundaries manually and use `StringView::code_unit_at` instead.", skip_current_package=true)
-pub fn StringView::get(self : StringView, idx : Int) -> Int? {
+pub fn StringView::get(self : StringView, idx : Int) -> UInt16? {
   guard idx >= 0 && idx < self.length() else { return None }
-  Some(self.unsafe_get(idx).to_int())
+  Some(self.unsafe_get(idx))
 }
 
 ///|
 test "String::get supports emoji (surrogate pair)" {
   let s = "hello"
-  assert_true(s.get(0) == Some(104))
-  assert_true(s.get(4) == Some(111))
-  assert_true(s.get(5) == None)
-  assert_true(s.get(-1) == None)
+  assert_true(s.get(0) is Some(104))
+  assert_true(s.get(4) is Some(111))
+  assert_true(s.get(5) is None)
+  assert_true(s.get(-1) is None)
   let s = "a🤣b"
-  assert_true(s.get(0) == Some(97))
-  assert_true(s.get(1) == Some(55358))
-  assert_true(s.get(2) == Some(56611))
-  assert_true(s.get(3) == Some(98))
-  assert_true(s.get(4) == None)
+  assert_true(s.get(0) is Some(97))
+  assert_true(s.get(1) is Some(55358))
+  assert_true(s.get(2) is Some(56611))
+  assert_true(s.get(3) is Some(98))
+  assert_true(s.get(4) is None)
 }
 
 ///|
 test "View::get basic cases" {
   let v = "hello"[1:4]
-  assert_true(v.get(0) == Some(101))
-  assert_true(v.get(2) == Some(108))
-  assert_true(v.get(3) == None)
-  assert_true(v.get(-1) == None)
+  assert_true(v.get(0) is Some(101))
+  assert_true(v.get(2) is Some(108))
+  assert_true(v.get(3) is None)
+  assert_true(v.get(-1) is None)
   let v = "ab🤣cd"[1:5]
-  assert_true(v.get(0) == Some(98))
-  assert_true(v.get(1) == Some(55358))
-  assert_true(v.get(2) == Some(56611))
+  assert_true(v.get(0) is Some(98))
+  assert_true(v.get(1) is Some(55358))
+  assert_true(v.get(2) is Some(56611))
 }
 
 ///|

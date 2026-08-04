@@ -80,4 +80,3 @@ pub enum Status {
 // Type aliases
 
 // Traits
-

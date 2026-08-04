@@ -258,7 +258,7 @@ pub fn[A] Deque::blit_to(
   src_offset? : Int = 0,
   dst_offset? : Int = 0,
 ) -> Unit {
-  guard len >= 0 &&
+  guard! len >= 0 &&
     dst_offset >= 0 &&
     src_offset >= 0 &&
     dst_offset <= dst.length() &&
@@ -968,7 +968,7 @@ pub impl[A : Eq] Eq for Deque[A] with fn equal(self, other) {
 /// test {
 ///   let dv = @deque.from_array([1, 2, 3, 4, 5])
 ///   let mut sum = 0
-///   dv.each(x => sum = sum + x)
+///   dv.each(x => sum += x)
 ///   inspect(sum, content="15")
 /// }
 /// ```
@@ -987,7 +987,7 @@ pub fn[A] Deque::each(self : Deque[A], f : (A) -> Unit) -> Unit {
 /// test {
 ///   let dv = @deque.from_array([1, 2, 3, 4, 5])
 ///   let mut idx_sum = 0
-///   dv.eachi((i, _x) => idx_sum = idx_sum + i)
+///   dv.eachi((i, _x) => idx_sum += i)
 ///   inspect(idx_sum, content="10")
 /// }
 /// ```
@@ -1006,7 +1006,7 @@ pub fn[A] Deque::eachi(self : Deque[A], f : (Int, A) -> Unit) -> Unit {
 /// test {
 ///   let dv = @deque.from_array([1, 2, 3, 4, 5])
 ///   let mut sum = 0
-///   dv.rev_each(x => sum = sum + x)
+///   dv.rev_each(x => sum += x)
 ///   inspect(sum, content="15")
 /// }
 /// ```
@@ -1025,7 +1025,7 @@ pub fn[A] Deque::rev_each(self : Deque[A], f : (A) -> Unit) -> Unit {
 /// test {
 ///   let dv = @deque.from_array([1, 2, 3, 4, 5])
 ///   let mut idx_sum = 0
-///   dv.rev_eachi((i, _x) => idx_sum = idx_sum + i)
+///   dv.rev_eachi((i, _x) => idx_sum += i)
 ///   inspect(idx_sum, content="10")
 /// }
 /// ```
@@ -1218,7 +1218,7 @@ pub fn[A : Eq] Deque::contains(self : Deque[A], value : A) -> Bool {
 /// ```
 #locals(f)
 pub fn[A] Deque::extract_if(self : Deque[A], f : (A) -> Bool) -> Deque[A] {
-  guard self.length() != 0 else { from_array([]) }
+  guard !self.is_empty() else { from_array([]) }
   let removed = from_array([])
   let write = for read in 0..<self.length(); write = 0 {
     let elem = self[read]
@@ -1436,7 +1436,7 @@ pub fn[A] Deque::retain_map(self : Deque[A], f : (A) -> A?) -> Unit {
   } nobreak {
     (idx, kept_len)
   }
-  if back.length() == 0 {
+  if back.is_empty() {
     self.truncate(kept_len)
     return
   }
@@ -1499,7 +1499,7 @@ pub fn[A] Deque::retain(self : Deque[A], f : (A) -> Bool) -> Unit {
   } nobreak {
     (idx, kept_len)
   }
-  if back.length() == 0 {
+  if back.is_empty() {
     self.truncate(kept_len)
     return
   }
@@ -1532,7 +1532,7 @@ pub fn[A] Deque::retain(self : Deque[A], f : (A) -> Bool) -> Unit {
 /// test {
 ///   let dq = @deque.from_array([1, 2, 3, 4, 5])
 ///   let mut sum = 0
-///   dq.iter().each(x => sum = sum + x)
+///   dq.iter().each(x => sum += x)
 ///   inspect(sum, content="15")
 /// }
 /// ```
@@ -1571,7 +1571,7 @@ pub fn[A] Deque::iter(self : Deque[A]) -> Iter[A] {
 ///   let mut sum = 0
 ///   let it = dq.iter2()
 ///   while it.next() is Some((i, x)) {
-///     sum = sum + i * x
+///     sum += i * x
 ///   }
 ///   inspect(sum, content="80") // 0*10 + 1*20 + 2*30 = 80
 /// }
@@ -1645,7 +1645,7 @@ pub fn[A] Deque::rev_iter(self : Deque[A]) -> Iter[A] {
 ///   let mut s = ""
 ///   let it = dq.rev_iter2()
 ///   while it.next() is Some((i, x)) {
-///     s = s + "\{i}:\{x} "
+///     s += "\{i}:\{x} "
 ///   }
 ///   inspect(s, content="0:3 1:2 2:1 ")
 /// }
@@ -1865,7 +1865,7 @@ pub impl[A : @json.FromJson] @json.FromJson for Deque[A] with fn from_json(
 /// 
 /// * `size` is not positive
 pub fn[A] Deque::chunks(self : Deque[A], size : Int) -> Deque[Deque[A]] {
-  guard size > 0
+  guard! size > 0
   let chunks = from_array([])
   for i = 0; i < self.length(); {
     let chunk = Deque([], capacity=size)

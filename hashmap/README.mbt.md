@@ -2,6 +2,28 @@
 
 A mutable hash map based on a Robin Hood hash table.
 
+## How It Works
+
+Entries live in one flat power-of-two array of `{psl, hash, key, value}`
+slots, where `psl` (probe sequence length) is how far the entry sits from its
+ideal slot `hash & (capacity - 1)`. Insertion keeps probe distances short by
+letting a "poor" entry (large `psl`) evict a "rich" one (smaller `psl`),
+which then continues looking for a home — that is the Robin Hood part.
+Lookups can stop as soon as they meet a slot whose `psl` is smaller than the
+distance probed so far, so misses are cheap too.
+
+```mermaid
+flowchart TD
+  S["set(k, v)"] --> H["idx = hash & mask, psl = 0"]
+  H --> C{"entries[idx]?"}
+  C -->|"same hash and key"| U["update value in place"]
+  C -->|"occupied, psl ≤ slot's psl"| N["idx = (idx + 1) & mask, psl += 1"] --> C
+  C -->|"empty, or occupied with psl > slot's psl"| G{"size ≥ capacity / 2?"}
+  G -->|"yes"| R["double capacity, rehash all, restart"] --> H
+  G -->|"no, slot was empty"| P["store {psl, hash, k, v}"]
+  G -->|"no, stealing"| E["swap: evict the richer entry,<br/>keep probing to re-place it"] --> N
+```
+
 # Usage
 
 ## Create

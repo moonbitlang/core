@@ -2,6 +2,28 @@
 
 Immutable array is a persistent data structure that provides random access and update operations. Based on Clojure's [persistent vector](https://hypirion.com/musings/understanding-persistent-vector-pt-1).
 
+## How It Works
+
+The elements live in a 32-way tree: internal `Node`s hold up to 32 children
+and `Leaf`s hold up to 32 elements. Indexing walks the tree using 5 bits of
+the index per level (`(i >> shift) & 0x1F`), so random access and point
+updates are O(log32 n) — effectively constant for practical sizes. For
+example, 70 elements need just one internal node above three leaves:
+
+```mermaid
+graph TD
+  T["{ tree, size = 70, shift = 5 }"] --> N["Node — children indexed by bits i >> 5"]
+  N --> L0["Leaf: elements 0‥31<br/>(bits i & 0x1F)"]
+  N --> L1["Leaf: elements 32‥63"]
+  N --> L2["Leaf: elements 64‥69"]
+```
+
+`set` copies only the path from the root to the affected leaf (at most
+log32 n nodes) and shares every other subtree with the original array, which
+is why updates are cheap and old versions remain valid. Nodes produced by
+`concat` may be "relaxed" — not all subtrees completely full — and carry a
+per-child size table that indexing consults instead of the pure 5-bit path.
+
 # Usage
 
 ## Create

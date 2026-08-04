@@ -182,7 +182,7 @@ pub fn[T] Array::unsafe_get(self : Array[T], idx : Int) -> T {
 #alias("_[_]")
 pub fn[T] Array::at(self : Array[T], index : Int) -> T {
   let len = self.length()
-  guard index >= 0 && index < len
+  guard! index >= 0 && index < len
   self.buffer().unsafe_get(index)
 }
 
@@ -259,7 +259,7 @@ pub fn[T] Array::unsafe_set(self : Array[T], idx : Int, val : T) -> Unit {
 #alias("_[_]=_")
 pub fn[T] Array::set(self : Array[T], index : Int, value : T) -> Unit {
   let len = self.length()
-  guard index >= 0 && index < len
+  guard! index >= 0 && index < len
   self.buffer().unsafe_set(index, value)
 }
 
@@ -395,33 +395,6 @@ pub impl[T] Add for Array[T] with fn add(self, other) {
 }
 
 ///|
-/// Appends all elements from one array to the end of another array. The elements
-/// are added in-place, modifying the original array.
-///
-/// Parameters:
-///
-/// * `self` : The array to append to.
-/// * `other` : The array whose elements will be appended.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let v1 = [1, 2, 3]
-///   let v2 : ReadOnlyArray[Int] = [4, 5, 6]
-///   v1.append(v2)
-///   debug_inspect(v1, content="[1, 2, 3, 4, 5, 6]")
-///   let v1 = [1, 2, 3]
-///   let v2 : ReadOnlyArray[Int] = []
-///   v1.append(v2)
-///   debug_inspect(v1, content="[1, 2, 3]")
-/// }
-/// ```
-pub fn[T] Array::append(self : Array[T], other : ArrayView[T]) -> Unit {
-  other.blit_to(self, dst_offset=self.length())
-}
-
-///|
 /// Iterates through each element of the array in order, applying the given
 /// function to each element.
 ///
@@ -438,7 +411,7 @@ pub fn[T] Array::append(self : Array[T], other : ArrayView[T]) -> Unit {
 /// test {
 ///   let arr = [1, 2, 3]
 ///   let mut sum = 0
-///   arr.each(x => sum = sum + x)
+///   arr.each(x => sum += x)
 ///   inspect(sum, content="6")
 /// }
 /// ```
@@ -492,7 +465,7 @@ pub fn[T] Array::rev_each(
 /// test {
 ///   let v = [3, 4, 5]
 ///   let mut sum = 0
-///   v.rev_eachi((i, x) => sum = sum + x + i)
+///   v.rev_eachi((i, x) => sum += x + i)
 ///   @test.assert_eq(sum, 15)
 /// }
 /// ```
@@ -515,7 +488,7 @@ pub fn[T] Array::rev_eachi(
 /// test {
 ///   let v = [3, 4, 5]
 ///   let mut sum = 0
-///   v.eachi((i, x) => sum = sum + x + i)
+///   v.eachi((i, x) => sum += x + i)
 ///   inspect(sum, content="15")
 /// }
 /// ```
@@ -1561,7 +1534,7 @@ pub fn[T] Array::extract_if(
 /// }
 /// ```
 pub fn[T] Array::chunks(self : Array[T], size : Int) -> Array[ArrayView[T]] {
-  guard size > 0
+  guard! size > 0
   let len = self.length()
   if len == 0 {
     return []
@@ -1664,7 +1637,7 @@ pub fn[T] Array::chunk_by(
 /// }
 /// ```
 pub fn[T] Array::windows(self : Array[T], size : Int) -> Array[ArrayView[T]] {
-  guard size > 0
+  guard! size > 0
   let len = self.length() - size + 1
   if len < 1 {
     return []
@@ -1772,7 +1745,7 @@ pub fn[T] Array::split(
 /// test {
 ///   let arr = [1, 2, 3]
 ///   let mut sum = 0
-///   arr.iter().each(x => sum = sum + x)
+///   arr.iter().each(x => sum += x)
 ///   inspect(sum, content="6")
 /// }
 /// ```
@@ -1824,7 +1797,7 @@ pub fn[T] Array::rev_iter(self : Array[T]) -> Iter[T] {
 /// test {
 ///   let arr = [10, 20, 30]
 ///   let mut sum = 0
-///   arr.iter2().each((i, x) => sum = sum + i + x)
+///   arr.iter2().each((i, x) => sum += i + x)
 ///   inspect(sum, content="63") // (0 + 10) + (1 + 20) + (2 + 30) = 63
 /// }
 /// ```

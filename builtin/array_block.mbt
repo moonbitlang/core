@@ -108,106 +108,6 @@ pub fn[A] Array::unsafe_blit_fixed(
 }
 
 ///|
-/// Copies elements from one array to another array, with support for growing the
-/// destination array if needed. The arrays may overlap, in which case the copy
-/// is performed in a way that preserves the data.
-///
-/// Parameters:
-///
-/// * `self` : The array to copy elements from.
-/// * `dst` : The array to copy elements to. Will be automatically grown
-/// if needed to accommodate the copied elements.
-/// * `len` : The number of elements to copy.
-/// * `src_offset` : Starting index in the source array. Defaults to 0.
-/// * `dst_offset` : Starting index in the destination array. Defaults to
-/// 0.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let src = [1, 2, 3, 4, 5]
-///   let dst = [0, 0]
-///   src[:3].blit_to(dst, dst_offset=1)
-///   @debug.debug_inspect(dst, content="[0, 1, 2, 3]")
-/// }
-/// ```
-///
-/// Panics if:
-///
-/// * `len` is negative
-/// * `src_offset` is negative
-/// * `dst_offset` is negative
-/// * `dst_offset` exceeds the length of destination array
-/// * `src_offset + len` exceeds the length of source array
-// TODO: make len optional and deprecate it
-#label_migration(src_offset, fill=false, msg="Use ArrayView::blit_to instead")
-#label_migration(len, fill=false, msg="Use ArrayView::blit_to instead")
-pub fn[A] Array::blit_to(
-  self : Array[A],
-  dst : Array[A],
-  len? : Int = self.length(),
-  src_offset? : Int = 0,
-  dst_offset? : Int = 0,
-) -> Unit {
-  guard len >= 0 &&
-    dst_offset >= 0 &&
-    src_offset >= 0 &&
-    dst_offset <= dst.length() &&
-    src_offset + len <= self.length()
-  if dst_offset + len > dst.length() {
-    dst.unsafe_grow_to_length(dst_offset + len)
-  }
-  Array::unsafe_blit(dst, dst_offset, self, src_offset, len)
-}
-
-///|
-/// Copies all elements from an array view to a destination array, with support
-/// for growing the destination array if needed.
-///
-/// Parameters:
-///
-/// * `self` : The array view to copy elements from.
-/// * `dst` : The array to copy elements to. Will be automatically grown
-/// if needed to accommodate the copied elements.
-/// * `dst_offset` : Starting index in the destination array. Defaults to 0.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let src = [1, 2, 3, 4, 5]
-///   let view = src[1:4] // view = [2, 3, 4]
-///   let dst = [0, 0]
-///   view.blit_to(dst, dst_offset=1)
-///   @debug.debug_inspect(dst, content="[0, 2, 3, 4]")
-/// }
-/// ```
-///
-/// Panics if:
-///
-/// * `dst_offset` is negative
-/// * `dst_offset` exceeds the length of destination array
-pub fn[A] ArrayView::blit_to(
-  self : ArrayView[A],
-  dst : Array[A],
-  dst_offset? : Int = 0,
-) -> Unit {
-  let len = self.len()
-  guard dst_offset >= 0 && dst_offset <= dst.length()
-  if dst_offset + len > dst.length() {
-    dst.unsafe_grow_to_length(dst_offset + len)
-  }
-  UninitializedArray::unsafe_blit(
-    dst.buffer(),
-    dst_offset,
-    self.buf(),
-    self.start(),
-    len,
-  )
-}
-
-///|
 test "Array::blit_to/basic" {
   let src = [1, 2, 3, 4, 5]
   let dst = [0, 0, 0, 0, 0]
@@ -233,6 +133,18 @@ test "Array::blit_to/grow_destination" {
   let dst = [0, 0]
   src[0:3].blit_to(dst, dst_offset=1)
   assert_true(dst == [0, 1, 2, 3])
+}
+
+///|
+#warnings("-deprecated")
+test "Array::blit_to/grow_destination_directly" {
+  let src = [1, 2, 3, 4]
+  let dst = [0]
+  Array::blit_to(src, dst, len=2, src_offset=1, dst_offset=1)
+  assert_true(dst == [0, 2, 3])
+  let self = [1, 2, 3]
+  Array::blit_to(self, self, len=2, dst_offset=3)
+  assert_true(self == [1, 2, 3, 1, 2])
 }
 
 ///|
@@ -287,6 +199,14 @@ test "panic Array::blit_to/boundary_cases4" {
   let dst = [0, 0, 0, 0, 0]
   // dst offset exceeding dst length
   ignore(src[0:5].blit_to(dst, dst_offset=6))
+}
+
+///|
+#warnings("-deprecated")
+test "panic Array::blit_to/reject_overflowed_source_range" {
+  let src = [1]
+  let dst = [0]
+  Array::blit_to(src, dst, len=0x7fffffff, src_offset=1)
 }
 
 ///|

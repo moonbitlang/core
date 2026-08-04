@@ -34,4 +34,3 @@ pub impl @debug.Debug for Timestamp
 // Type aliases
 
 // Traits
-
