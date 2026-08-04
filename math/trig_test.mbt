@@ -446,6 +446,15 @@ test "atan2 double - zero and axis cases" {
 }
 
 ///|
+test "atan2 keeps negative zero when the result underflows" {
+  // y/x underflows to -0.0, so the magnitude must stay +0.0 and the sign
+  // rides on the quadrant; the result is -0.0, not +0.0
+  let y = 0x8000000000000001UL.reinterpret_as_double() // -min subnormal
+  let x = 0x7fefffffffffffffUL.reinterpret_as_double() // max finite
+  assert_eq(@math.atan2(y, x).reinterpret_as_uint64(), 0x8000000000000000UL)
+}
+
+///|
 test "atan2 double - infinity combinations" {
   // Test x is inf, y is inf (line 369-375)
   inspect(
