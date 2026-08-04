@@ -685,7 +685,7 @@ fn BigInt::grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
       borrow = borrow >> RADIX_BIT_LEN
       carry = carry >> RADIX_BIT_LEN
     }
-    borrow = borrow + a[i + b_len].reinterpret_as_int64()
+    borrow += a[i + b_len].reinterpret_as_int64()
     borrow -= carry.reinterpret_as_int64()
     a[i + b_len] = (borrow & RADIX_MASK.reinterpret_as_int64()).reinterpret_as_uint64()
     borrow = borrow >> RADIX_BIT_LEN
@@ -1395,15 +1395,15 @@ pub fn BigInt::pow(self : BigInt, exp : BigInt, modulus? : BigInt) -> BigInt {
       let mut exp = exp
       while exp > 0 {
         if exp % 2 == 1 {
-          result = result * base
+          result *= base
         }
-        base = base * base
-        exp = exp / 2
+        base *= base
+        exp /= 2
       }
       result
     }
     Some(modulus) => {
-      guard !(modulus.is_zero() || modulus.sign == Negative)
+      guard! !(modulus.is_zero() || modulus.sign == Negative)
       let mut result = 1N % modulus
       let mut base = (self % modulus + modulus) % modulus
       let mut exp = exp
@@ -1412,7 +1412,7 @@ pub fn BigInt::pow(self : BigInt, exp : BigInt, modulus? : BigInt) -> BigInt {
           result = result * base % modulus
         }
         base = base * base % modulus
-        exp = exp / 2
+        exp /= 2
       }
       result
     }

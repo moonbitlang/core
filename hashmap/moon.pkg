@@ -3,8 +3,6 @@ import {
   "moonbitlang/core/array",
   "moonbitlang/core/debug",
   "moonbitlang/core/test",
-  "moonbitlang/core/tuple",
-  "moonbitlang/core/quickcheck",
   "moonbitlang/core/int",
 }
 

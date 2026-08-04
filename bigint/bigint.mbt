@@ -66,15 +66,6 @@ pub impl @json.FromJson for BigInt with fn from_json(json, path) {
 }
 
 ///|
-pub impl @quickcheck.Arbitrary for BigInt with fn arbitrary(size, rs) {
-  if size == 0 {
-    0
-  } else {
-    rs.next_int64() |> BigInt::from_int64
-  }
-}
-
-///|
 /// Returns the default value `0` for `BigInt`
 pub impl Default for BigInt with fn default() {
   zero

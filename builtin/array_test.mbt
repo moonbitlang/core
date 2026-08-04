@@ -221,7 +221,7 @@ test "array_sort_by_pred_skip_duplicates" {
 test "array_each" {
   let arr = [1, 2, 3]
   let mut sum = 0
-  arr.each(x => sum = sum + x)
+  arr.each(x => sum += x)
   @test.assert_eq(sum, 6)
 }
 
@@ -229,7 +229,7 @@ test "array_each" {
 test "array_rev_each" {
   let arr = [1, 2, 3]
   let mut sum = 0
-  arr.rev_each(x => sum = sum + x)
+  arr.rev_each(x => sum += x)
   inspect(sum, content="6")
 }
 
@@ -237,7 +237,7 @@ test "array_rev_each" {
 test "array_eachi" {
   let arr = [1, 2, 3]
   let mut sum = 0
-  arr.eachi((i, x) => sum = sum + i + x)
+  arr.eachi((i, x) => sum += i + x)
   @test.assert_eq(sum, 9)
 }
 
@@ -1231,13 +1231,17 @@ test "push_iter" {
 ///|
 test "shuffle_in_place" {
   let arr : Array[Int] = [1, 2, 3, 4, 5, 6, 7]
-  fn rand(upper : Int) -> Int {
-    let rng = @random.Rand::new()
+  fn rand1(upper : Int) -> Int {
+    let rng = @random.Rand::chacha8(seed=b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456")
+    rng.int() % upper
+  }
+  fn rand2(upper : Int) -> Int {
+    let rng = @random.Rand::chacha8(seed=b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456")
     rng.int() % upper
   }
 
-  let shuffled = Array::shuffle(arr, rand~)
-  Array::shuffle_in_place(arr, rand~)
+  let shuffled = Array::shuffle(arr, rand=rand1)
+  Array::shuffle_in_place(arr, rand=rand2)
   @test.assert_eq(shuffled, arr)
   debug_inspect(arr, content="[3, 2, 1, 5, 6, 7, 4]")
 }

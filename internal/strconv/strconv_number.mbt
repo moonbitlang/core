@@ -116,13 +116,14 @@ fn parse_number(s : StringView) -> Number? raise {
   }
 
   // handle scientific format
-  let exp_number = 0L
+  let mut exp_number = 0L
   if s is ['e' | 'E', .. rest] {
-    let (new_s, exp_number) = match parse_scientific(rest) {
+    let (new_s, exp_number_val) = match parse_scientific(rest) {
       Some(res) => res
       None => return None
     }
     s = new_s
+    exp_number = exp_number_val
     exponent += exp_number
   }
   guard s is "" else { syntax_err() }

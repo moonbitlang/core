@@ -3,11 +3,11 @@ import {
   "moonbitlang/core/debug",
   "moonbitlang/core/option",
   "moonbitlang/core/tuple",
-  "moonbitlang/core/quickcheck",
   "moonbitlang/core/json",
 }
 
 import {
   "moonbitlang/core/array",
+  "moonbitlang/core/quickcheck",
   "moonbitlang/core/test",
 } for "test"

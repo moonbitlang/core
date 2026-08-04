@@ -328,60 +328,6 @@ pub impl[A : Show + Compare] Show for PriorityQueue[A] with fn output(
 }
 
 ///|
-pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for PriorityQueue[
-  X,
-] with fn arbitrary(size, rs) {
-  let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
-  guard len > 0 else { return new_priority_queue() }
-  for i = 1, acc = {
-          content: @quickcheck.Arbitrary::arbitrary(0, rs),
-          sibling: None,
-          child: None,
-        } {
-    if i < len {
-      continue i + 1,
-        meld(acc, {
-          content: @quickcheck.Arbitrary::arbitrary(i, rs),
-          sibling: None,
-          child: None,
-        })
-    } else {
-      break { len, top: Some(acc) }
-    }
-  }
-}
-
-///|
-test "priority queue arbitrary" {
-  let samples : Array[PriorityQueue[Int]] = @quickcheck.samples(20)
-  @debug.debug_inspect(
-    samples[5:10],
-    content=(
-      #|<ArrayView:
-      #|  [
-      #|    <PriorityQueue: []>,
-      #|    <PriorityQueue: []>,
-      #|    <PriorityQueue: [0]>,
-      #|    <PriorityQueue: [0, 0]>,
-      #|    <PriorityQueue: [3, 2, 1, 0, 0, 0, 0]>,
-      #|  ]>
-    ),
-  )
-  @debug.debug_inspect(
-    samples[11:15],
-    content=(
-      #|<ArrayView:
-      #|  [
-      #|    <PriorityQueue: [0, 0, 0, -1, -2]>,
-      #|    <PriorityQueue: [8, 4, 0, 0, 0, 0, 0, 0, -2, -5]>,
-      #|    <PriorityQueue: [2, 0, 0, -1]>,
-      #|    <PriorityQueue: [0, 0]>,
-      #|  ]>
-    ),
-  )
-}
-
-///|
 pub impl[K] Default for PriorityQueue[K] with fn default() {
   new_priority_queue()
 }

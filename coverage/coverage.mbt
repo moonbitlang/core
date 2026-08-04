@@ -132,7 +132,7 @@ pub fn end() -> Unit {
     }
   }
   let trailing_line = line_buf.to_string()
-  if trailing_line.length() > 0 {
+  if !trailing_line.is_empty() {
     println(trailing_line)
   }
   println("----- END MOONBIT COVERAGE -----")

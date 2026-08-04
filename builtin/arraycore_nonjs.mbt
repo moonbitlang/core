@@ -71,7 +71,7 @@ fn[T] Array::unsafe_resize_with_default(
   value : T,
 ) -> Unit {
   let len = self.length()
-  guard new_len >= len
+  guard! new_len >= len
   if new_len <= self.capacity() {
     self.buf.unchecked_fill(len, value, new_len - len)
   } else {
@@ -166,7 +166,7 @@ pub fn[T] Array::length(self : Array[T]) -> Int {
 /// TODO: this can be optimized by using the intrinsic to null out the range
 fn[T] Array::unsafe_truncate_to_length(self : Array[T], new_len : Int) -> Unit {
   let len = self.length()
-  guard new_len <= len
+  guard! new_len <= len
   for i in new_len..<len {
     self.buf.set_null(i)
   }
@@ -183,6 +183,51 @@ test "unsafe_truncate_to_length" {
 ///|
 fn[T] Array::buffer(self : Array[T]) -> UninitializedArray[T] {
   self.buf
+}
+
+///|
+/// Compute the next capacity without allocating. Since arrays never shrink
+/// while growing, `required < len` means the required-size calculation
+/// overflowed.
+#inline
+fn array_growth_capacity(current : Int, len : Int, required : Int) -> Int {
+  if required < len {
+    abort("Array capacity overflow")
+  }
+  let start = if current == 0 { 8 } else { current }
+  let enough_space = for space = start; space < required; {
+    let next = space * 2
+    if next <= space {
+      break required
+    }
+    continue next
+  } nobreak {
+    space
+  }
+  enough_space
+}
+
+///|
+test "Array growth capacity doubles while representable" {
+  inspect(array_growth_capacity(8, 8, 9), content="16")
+  inspect(array_growth_capacity(8, 8, 33), content="64")
+}
+
+///|
+test "Array growth capacity falls back to the exact requirement" {
+  inspect(
+    array_growth_capacity(0x40000000, 0x40000000, 0x40000001),
+    content="1073741825",
+  )
+  inspect(
+    array_growth_capacity(0x20000000, 0x20000000, 0x40000001),
+    content="1073741825",
+  )
+}
+
+///|
+test "panic Array growth rejects a wrapped required size" {
+  ignore(array_growth_capacity(16, 16, -1))
 }
 
 ///|
@@ -241,10 +286,12 @@ test "Array::resize_buffer" {
 }
 
 ///|
-/// Reallocate the array with a new capacity.
-fn[T] Array::realloc(self : Array[T]) -> Unit {
-  let old_cap = self.length()
-  let new_cap = if old_cap == 0 { 8 } else { old_cap * 2 }
+/// Reallocate the array to fit `required`. Callers keep the capacity check on
+/// their fast path and only call this when allocation is necessary.
+#inline(never)
+fn[T] Array::realloc(self : Array[T], required : Int) -> Unit {
+  let old_cap = self.capacity()
+  let new_cap = array_growth_capacity(old_cap, self.length(), required)
   self.resize_buffer(new_cap)
 }
 
@@ -304,11 +351,171 @@ pub fn[T] Array::shrink_to_fit(self : Array[T]) -> Unit {
 /// ```
 pub fn[T] Array::push(self : Array[T], value : T) -> Unit {
   if self.length() == self.buffer().0.length() {
-    self.realloc()
+    self.realloc(self.length() + 1)
   }
   let length = self.length()
   self.unsafe_set(length, value)
   self.len = length + 1
+}
+
+///|
+/// Appends all elements from one array to the end of another array. The elements
+/// are added in-place, modifying the original array.
+///
+/// Parameters:
+///
+/// * `self` : The array to append to.
+/// * `other` : The array whose elements will be appended.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let v1 = [1, 2, 3]
+///   let v2 : ReadOnlyArray[Int] = [4, 5, 6]
+///   v1.append(v2)
+///   debug_inspect(v1, content="[1, 2, 3, 4, 5, 6]")
+///   let v1 = [1, 2, 3]
+///   let v2 : ReadOnlyArray[Int] = []
+///   v1.append(v2)
+///   debug_inspect(v1, content="[1, 2, 3]")
+/// }
+/// ```
+pub fn[T] Array::append(self : Array[T], other : ArrayView[T]) -> Unit {
+  let src = other.buf()
+  let src_offset = other.start()
+  let append_len = other.len()
+  let old_len = self.len
+  let new_len = old_len + append_len
+  guard! new_len >= old_len
+  if new_len > self.buf.0.length() {
+    self.realloc(new_len)
+  }
+  self.len = new_len
+  UninitializedArray::unsafe_blit(
+    self.buf,
+    old_len,
+    src,
+    src_offset,
+    append_len,
+  )
+}
+
+///|
+/// Copies elements from one array to another array, with support for growing the
+/// destination array if needed. The arrays may overlap, in which case the copy
+/// is performed in a way that preserves the data.
+///
+/// Parameters:
+///
+/// * `self` : The array to copy elements from.
+/// * `dst` : The array to copy elements to. Will be automatically grown
+/// if needed to accommodate the copied elements.
+/// * `len` : The number of elements to copy.
+/// * `src_offset` : Starting index in the source array. Defaults to 0.
+/// * `dst_offset` : Starting index in the destination array. Defaults to
+/// 0.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let src = [1, 2, 3, 4, 5]
+///   let dst = [0, 0]
+///   src[:3].blit_to(dst, dst_offset=1)
+///   @debug.debug_inspect(dst, content="[0, 1, 2, 3]")
+/// }
+/// ```
+///
+/// Panics if:
+///
+/// * `len` is negative
+/// * `src_offset` is negative
+/// * `dst_offset` is negative
+/// * `dst_offset` exceeds the length of destination array
+/// * `src_offset + len` exceeds the length of source array
+#label_migration(src_offset, fill=false, msg="Use ArrayView::blit_to instead")
+#label_migration(len, fill=false, msg="Use ArrayView::blit_to instead")
+pub fn[A] Array::blit_to(
+  self : Array[A],
+  dst : Array[A],
+  len? : Int = self.length(),
+  src_offset? : Int = 0,
+  dst_offset? : Int = 0,
+) -> Unit {
+  let old_len = dst.length()
+  guard! len >= 0 &&
+    dst_offset >= 0 &&
+    src_offset >= 0 &&
+    dst_offset <= old_len &&
+    len <= self.length() - src_offset
+  let new_len = dst_offset + len
+  guard! new_len >= 0
+  if new_len > dst.capacity() {
+    dst.realloc(new_len)
+  }
+  UninitializedArray::unsafe_blit(
+    dst.buffer(),
+    dst_offset,
+    self.buffer(),
+    src_offset,
+    len,
+  )
+  if new_len > old_len {
+    dst.len = new_len
+  }
+}
+
+///|
+/// Copies all elements from an array view to a destination array, with support
+/// for growing the destination array if needed.
+///
+/// Parameters:
+///
+/// * `self` : The array view to copy elements from.
+/// * `dst` : The array to copy elements to. Will be automatically grown
+/// if needed to accommodate the copied elements.
+/// * `dst_offset` : Starting index in the destination array. Defaults to 0.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let src = [1, 2, 3, 4, 5]
+///   let view = src[1:4] // view = [2, 3, 4]
+///   let dst = [0, 0]
+///   view.blit_to(dst, dst_offset=1)
+///   @debug.debug_inspect(dst, content="[0, 2, 3, 4]")
+/// }
+/// ```
+///
+/// Panics if:
+///
+/// * `dst_offset` is negative
+/// * `dst_offset` exceeds the length of destination array
+pub fn[A] ArrayView::blit_to(
+  self : ArrayView[A],
+  dst : Array[A],
+  dst_offset? : Int = 0,
+) -> Unit {
+  let len = self.len()
+  let old_len = dst.length()
+  guard! dst_offset >= 0 && dst_offset <= old_len
+  let new_len = dst_offset + len
+  guard! new_len >= 0
+  if new_len > dst.capacity() {
+    dst.realloc(new_len)
+  }
+  UninitializedArray::unsafe_blit(
+    dst.buffer(),
+    dst_offset,
+    self.buf(),
+    self.start(),
+    len,
+  )
+  if new_len > old_len {
+    dst.len = new_len
+  }
 }
 
 ///|
@@ -359,7 +566,7 @@ pub fn[T] Array::pop(self : Array[T]) -> T? {
 #alias(pop_exn, deprecated)
 pub fn[T] Array::unsafe_pop(self : Array[T]) -> T {
   let len = self.length()
-  guard len != 0
+  guard! len != 0
   let index = len - 1
   let v = self.unsafe_get(index)
   self.buf.set_null(index)
@@ -416,7 +623,7 @@ pub fn[T] Array::remove(self : Array[T], index : Int) -> T {
 /// }
 /// ```
 pub fn[T] Array::drain(self : Array[T], begin : Int, end : Int) -> Array[T] {
-  guard begin >= 0 && end <= self.length() && begin <= end
+  guard! begin >= 0 && end <= self.length() && begin <= end
   let num = end - begin
   let v = {
     buf: UninitializedArray::make_and_blit(
@@ -463,7 +670,7 @@ pub fn[T] Array::insert(self : Array[T], index : Int, value : T) -> Unit {
     )
   }
   if self.length() == self.buffer().0.length() {
-    self.realloc()
+    self.realloc(self.length() + 1)
   }
   UninitializedArray::unsafe_blit(
     self.buffer(),
@@ -475,24 +682,6 @@ pub fn[T] Array::insert(self : Array[T], index : Int, value : T) -> Unit {
   let length = self.length()
   self.unsafe_set(index, value)
   self.len = length + 1
-}
-
-///|
-/// Resize the array in-place so that `len` is equal to `new_len`.
-///
-/// If `new_len` is greater than `len`, the array will be extended by the
-/// difference, and the values in the new slots are left uninitialized.
-///  If `new_len` is less than `len`, it will panic
-///
-fn[T] Array::unsafe_grow_to_length(self : Array[T], new_len : Int) -> Unit {
-  guard new_len >= self.length()
-  let new_buf = UninitializedArray::make_and_blit(
-    self.buf,
-    allocate_len=new_len,
-    len=self.len,
-  )
-  self.len = new_len
-  self.buf = new_buf
 }
 
 ///|
@@ -545,11 +734,11 @@ pub fn[A] Array::fill(
 ) -> Unit {
   let array_length = self.length()
   guard array_length > 0 else { return }
-  guard start >= 0 && start < array_length
+  guard! start >= 0 && start < array_length
   let length = match end {
     None => array_length
     Some(e) => {
-      guard e >= start && e <= array_length
+      guard! e >= start && e <= array_length
       e
     }
   }

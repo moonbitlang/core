@@ -175,6 +175,7 @@ fn[K : Eq, V] Map::set_with_hash(
 }
 
 ///|
+#owned(entry)
 fn[K, V] Map::push_away(
   self : Map[K, V],
   idx : Int,
@@ -253,11 +254,11 @@ pub fn[K : Hash + Eq, V] Map::get(self : Map[K, V], key : K) -> V? {
 pub fn[K : Hash + Eq, V] Map::at(self : Map[K, V], key : K) -> V {
   let hash = Hash::hash(key)
   for i = 0, idx = hash & self.capacity_mask {
-    guard self.entries[idx] is Some(entry)
+    guard! self.entries[idx] is Some(entry)
     if entry.hash == hash && entry.key == key {
       return entry.value
     }
-    guard i <= entry.psl
+    guard! i <= entry.psl
     continue i + 1, (idx + 1) & self.capacity_mask
   }
 }
@@ -513,6 +514,7 @@ fn[K : Eq, V] Map::remove_with_hash(
 }
 
 ///|
+#owned(entry)
 fn[K, V] Map::add_entry_to_tail(
   self : Map[K, V],
   idx : Int,
@@ -582,6 +584,7 @@ fn[K, V] Map::grow(self : Map[K, V]) -> Unit {
 }
 
 ///|
+#owned(outer)
 fn[K, V] Map::rehash_place_entry(self : Map[K, V], outer : Entry[K, V]) -> Unit {
   let hash = outer.hash
   for psl = 0, idx = hash & self.capacity_mask {
@@ -839,7 +842,7 @@ pub fn[K, V, V2] Map::map(self : Map[K, V], f : (K, V) -> V2) -> Map[K, V2] {
   if self.size == 0 {
     return other
   }
-  guard self.entries[self.tail] is Some(last)
+  guard! self.entries[self.tail] is Some(last)
   for entry = last, idx = self.tail, next = (None : Entry[K, V2]?) {
     let { prev, psl, hash, key, value, .. } = entry
     let new_value = f(key, value)
@@ -872,7 +875,7 @@ pub fn[K, V] Map::copy(self : Map[K, V]) -> Map[K, V] {
   if self.size == 0 {
     return other
   }
-  guard self.entries[self.tail] is Some(last)
+  guard! self.entries[self.tail] is Some(last)
   for entry = last, idx = self.tail, next = (None : Entry[K, V]?) {
     let { prev, psl, hash, key, value, .. } = entry
     let new_entry = { prev, next, psl, hash, key, value }
@@ -991,7 +994,7 @@ pub fn[K, V] Map::retain(self : Map[K, V], f : (K, V) -> Bool) -> Unit {
     match (x, y) {
       (Some({ key, value, next, prev: idx, .. }), remove_prev) => {
         if remove_prev {
-          guard self.entries[idx] is Some(entry)
+          guard! self.entries[idx] is Some(entry)
           self.remove_entry(entry)
           self.shift_back(idx)
           self.size -= 1
@@ -1001,7 +1004,7 @@ pub fn[K, V] Map::retain(self : Map[K, V], f : (K, V) -> Bool) -> Unit {
       (None, remove_prev) => {
         if remove_prev {
           let idx = self.tail
-          guard self.entries[idx] is Some(entry)
+          guard! self.entries[idx] is Some(entry)
           self.remove_entry(entry)
           self.shift_back(idx)
           self.size -= 1

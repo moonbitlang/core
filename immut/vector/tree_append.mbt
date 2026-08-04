@@ -148,7 +148,7 @@ fn[T] Tree::concat_with_suffix(
   right_shift : Int,
   top : Bool,
 ) -> (Tree[T], Int) {
-  if suffix.length() == 0 {
+  if suffix.is_empty() {
     return Tree::concat(left, left_shift, right, right_shift, top)
   }
   if left_shift > right_shift {
@@ -160,7 +160,7 @@ fn[T] Tree::concat_with_suffix(
       right_shift,
       false,
     )
-    guard c_shift == left_shift
+    guard! c_shift == left_shift
     rebalance(left, c, Empty, left_shift, top)
   } else if right_shift > left_shift {
     let (c, c_shift) = Tree::concat_with_suffix(
@@ -171,7 +171,7 @@ fn[T] Tree::concat_with_suffix(
       right_shift - NUM_BITS,
       false,
     )
-    guard c_shift == right_shift
+    guard! c_shift == right_shift
     rebalance(Empty, c, right, right_shift, top)
   } else if left_shift == 0 {
     let leaves = FixedArray::from_array([left, Leaf(suffix), right])
@@ -192,8 +192,8 @@ fn[T] Tree::concat_with_suffix(
       right_shift - NUM_BITS,
       false,
     )
-    guard c_shift == left_shift
-    guard c_shift == right_shift
+    guard! c_shift == left_shift
+    guard! c_shift == right_shift
     rebalance(left, c, right, left_shift, top)
   }
 }

@@ -85,4 +85,3 @@ pub trait Input {
 }
 pub impl Input for BytesView
 pub impl Input for StringView
-

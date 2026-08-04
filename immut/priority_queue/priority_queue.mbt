@@ -405,13 +405,6 @@ pub impl[A : Show + Compare] Show for PriorityQueue[A] with fn output(
 }
 
 ///|
-pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for PriorityQueue[
-  X,
-] with fn arbitrary(size, rs) {
-  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
-}
-
-///|
 pub impl[A : Compare] Eq for PriorityQueue[A] with fn equal(self, other) {
   physical_equal(self, other) ||
   (self.length() == other.length() && self.to_array() == other.to_array())

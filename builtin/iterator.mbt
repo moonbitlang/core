@@ -413,10 +413,8 @@ pub fn[X, Y] Iter::mapi(self : Iter[X], f : (Int, X) -> Y) -> Iter[Y] {
 pub fn[X, Y] Iter::filter_map(self : Iter[X], f : (X) -> Y?) -> Iter[Y] {
   Iter::new(fn() {
     while self.next() is Some(x) {
-      match f(x) {
-        Some(_) as y => break y
-        None => ()
-      }
+      guard f(x) is (Some(_) as y) else { () }
+      break y
     } nobreak {
       None
     }

@@ -51,14 +51,6 @@ pub impl[K : Compare, V : Compare] Compare for SortedMap[K, V] with fn compare(
 }
 
 ///|
-pub impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for SortedMap[
-  K,
-  V,
-] with fn arbitrary(size, rs) {
-  @quickcheck.Arbitrary::arbitrary(size, rs) |> SortedMap
-}
-
-///|
 pub impl[K : Hash, V : Hash] Hash for SortedMap[K, V] with fn hash_combine(
   self,
   hasher,

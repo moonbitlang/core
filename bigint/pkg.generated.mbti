@@ -4,8 +4,6 @@ package "moonbitlang/core/bigint"
 import {
   "moonbitlang/core/debug",
   "moonbitlang/core/json",
-  "moonbitlang/core/quickcheck",
-  "moonbitlang/core/quickcheck/splitmix",
 }
 
 // Values
@@ -78,9 +76,7 @@ pub impl Sub for BigInt
 pub impl ToJson for BigInt
 pub impl @debug.Debug for BigInt
 pub impl @json.FromJson for BigInt
-pub impl @quickcheck.Arbitrary for BigInt
 
 // Type aliases
 
 // Traits
-

@@ -60,7 +60,7 @@ test "iter with early termination on left subtree" {
   let mut count = 0
   let iter = set.iter()
   for _ in iter {
-    count = count + 1
+    count += 1
     if count == 1 {
       break
     }
