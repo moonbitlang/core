@@ -53,22 +53,16 @@ fn of_json(jv : Json) -> AllThree raise DecodeError {
       let floats_result = []
       let strings_result = []
       for n in ints {
-        match n {
-          Number(n, ..) => ints_result.push(n.to_int())
-          _ => () // error handling here
-        }
+        guard n is Number(n, ..) else { () } // error handling here
+        ints_result.push(n.to_int())
       }
       for n in floats {
-        match n {
-          Number(n, ..) => floats_result.push(n)
-          _ => () // error handling here
-        }
+        guard n is Number(n, ..) else { () } // error handling here
+        floats_result.push(n)
       }
       for s in strings {
-        match s {
-          String(s) => strings_result.push(s)
-          _ => () // error handling here
-        }
+        guard s is String(s) else { () } // error handling here
+        strings_result.push(s)
       }
       { ints: ints_result, floats: floats_result, strings: strings_result }
     }

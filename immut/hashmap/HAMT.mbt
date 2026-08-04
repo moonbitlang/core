@@ -80,7 +80,7 @@ pub fn[K : Eq + Hash, V] HashMap::get(self : HashMap[K, V], key : K) -> V? {
 /// Get value with `at` access semantics.
 #alias("_[_]")
 pub fn[K : Eq + Hash, V] HashMap::at(self : HashMap[K, V], key : K) -> V {
-  guard self.data is Some(node)
+  guard! self.data is Some(node)
   node.get_with_path(key, @path.of(key)).unwrap()
 }
 
@@ -633,7 +633,7 @@ fn[K : Eq, V] @list.List::union_with(
       res.push(kv2)
     }
   }
-  guard @list.List(res) is More((k, v), tail~)
+  guard! @list.List(res) is More((k, v), tail~)
   Leaf(k, v, tail)
 }
 
@@ -888,7 +888,7 @@ pub fn[K : Eq + Hash, V] HashMap::from_iter(
     None => []
   }
   iter.each(e => entries.push({ key: e.0, value: e.1, path: @path.of(e.0) }))
-  if entries.length() == 0 {
+  if entries.is_empty() {
     new()
   } else {
     {
@@ -949,14 +949,6 @@ pub fn[K, V] HashMap::to_array(self : HashMap[K, V]) -> Array[(K, V)] {
   [
     for k, v in self => (k, v)
   ]
-}
-
-///|
-pub impl[K : Eq + Hash + @quickcheck.Arbitrary, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for HashMap[
-  K,
-  V,
-] with fn arbitrary(size, rs) {
-  @quickcheck.Arbitrary::arbitrary(size, rs) |> HashMap
 }
 
 ///|

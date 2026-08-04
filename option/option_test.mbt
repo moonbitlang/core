@@ -227,28 +227,6 @@ test "or error" {
 }
 
 ///|
-test "arbitrary" {
-  let samples : Array[Int?] = @quickcheck.samples(10)
-  debug_inspect(
-    samples,
-    content=(
-      #|[
-      #|  None,
-      #|  None,
-      #|  Some(-1),
-      #|  Some(0),
-      #|  None,
-      #|  Some(0),
-      #|  Some(-5),
-      #|  Some(2),
-      #|  None,
-      #|  Some(4),
-      #|]
-    ),
-  )
-}
-
-///|
 test "optional interpolation" {
   let some_value : Int? = Some(10)
   let none_value : Int? = None

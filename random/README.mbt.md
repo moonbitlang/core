@@ -4,7 +4,7 @@ Pseudo-random number generation based on the ChaCha8 stream cipher. Provides unb
 
 ## Overview
 
-The `Rand` type wraps a `Source` trait object that produces 64-bit random values. The default source is a ChaCha8 cipher seeded with a fixed 32-byte key. For reproducible results, use the same seed; for distinct streams, supply different seeds via `Rand::chacha8(seed~)`.
+The `Rand` type wraps a `Source` trait object that produces 64-bit random values. By default, `Rand::new()` uses a ChaCha8 cipher seeded from platform entropy when available, and falls back to the default fixed seed on unsupported targets. For reproducible results, use `Rand::chacha8(seed~)` with the same 32-byte seed; for distinct reproducible streams, supply different seeds.
 
 ## Create
 

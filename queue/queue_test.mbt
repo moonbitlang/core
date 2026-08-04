@@ -197,11 +197,11 @@ test "pop" {
 test "each" {
   let queue : @queue.Queue[Int] = Queue([])
   let mut sum = 0
-  queue.each(x => sum = sum + x)
+  queue.each(x => sum += x)
   @test.assert_eq(sum, 0)
   @queue.from_array([1, 2, 3, 4]).transfer(queue)
   sum = 0
-  queue.each(x => sum = sum + x)
+  queue.each(x => sum += x)
   @test.assert_eq(sum, 10)
 }
 
@@ -215,11 +215,11 @@ test "iter_fold" {
 test "iteri" {
   let queue : @queue.Queue[Int] = Queue([])
   let mut sum = 0
-  queue.eachi((i, x) => sum = sum + i * x)
+  queue.eachi((i, x) => sum += i * x)
   @test.assert_eq(sum, 0)
   @queue.from_array([1, 2, 3, 4]).transfer(queue)
   sum = 0
-  queue.eachi((i, x) => sum = sum + i * x)
+  queue.eachi((i, x) => sum += i * x)
   @test.assert_eq(sum, 20)
 }
 
@@ -277,23 +277,6 @@ test "from_iter empty iter" {
   let pq : @queue.Queue[Int] = @queue.from_iter(Iter::empty())
   debug_inspect(
     pq,
-    content=(
-      #|<Queue: []>
-    ),
-  )
-}
-
-///|
-test "queue arbitrary" {
-  let samples : Array[@queue.Queue[Int]] = @quickcheck.samples(20)
-  debug_inspect(
-    samples[1:5],
-    content=(
-      #|<ArrayView: [<Queue: []>, <Queue: []>, <Queue: [0]>, <Queue: [0]>]>
-    ),
-  )
-  debug_inspect(
-    samples[15],
     content=(
       #|<Queue: []>
     ),

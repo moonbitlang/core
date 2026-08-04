@@ -31,11 +31,6 @@ pub extend SortedMap with Hash::{hash}
 pub extend SortedMap with @debug.Debug::{to_repr}
 
 ///|
-#deprecated("Use `@quickcheck.Arbitrary::arbitrary` instead", skip_current_package=true)
-#doc(hidden)
-pub extend SortedMap with @quickcheck.Arbitrary::{arbitrary}
-
-///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
 #doc(hidden)
 pub extend SortedMap with Compare::{op_ge, op_gt, op_le, op_lt}

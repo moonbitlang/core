@@ -13,8 +13,11 @@
 // limitations under the License.
 
 ///|
+let fixed_test_seed : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456"
+
+///|
 test "prng" {
-  let r = @random.Rand::new()
+  let r = @random.Rand::chacha8(seed=fixed_test_seed)
   @test.assert_eq(r.uint(limit=10), 7)
   @test.assert_eq(r.uint(limit=10), 0)
   @test.assert_eq(r.uint(limit=10), 5)
@@ -58,8 +61,41 @@ test "Rand::new with generator" {
 }
 
 ///|
+priv struct ScriptedSource {
+  values : FixedArray[UInt64]
+  mut index : Int
+}
+
+///|
+impl @random.Source for ScriptedSource with fn next(self) -> UInt64 {
+  let value = self.values[self.index]
+  self.index += 1
+  value
+}
+
+///|
+test "Rand::uint64 applies Lemire rejection for limit 3" {
+  let source : ScriptedSource = {
+    // 3 * 0x5555555555555556 = 2^64 + 2, so the retry maps to 1.
+    values: [0UL, 0x5555555555555556UL],
+    index: 0,
+  }
+  let rand = @random.Rand::new(generator=source as &@random.Source)
+  let result = rand.uint64(limit=3)
+  @debug.debug_inspect((result, source.index), content="(1, 2)")
+}
+
+///|
+test "Rand::uint64 applies Lemire rejection at the maximum limit" {
+  let source : ScriptedSource = { values: [0UL, 2UL], index: 0 }
+  let rand = @random.Rand::new(generator=source as &@random.Source)
+  let result = rand.uint64(limit=0xffffffffffffffffUL)
+  @debug.debug_inspect((result, source.index), content="(1, 2)")
+}
+
+///|
 test {
-  let random = @random.Rand::new()
+  let random = @random.Rand::chacha8(seed=fixed_test_seed)
   inspect(random.float(), content="0.27378302812576294")
   inspect(random.float(), content="0.4169347286224365")
   inspect(random.float(), content="0.5513989925384521")
@@ -116,6 +152,34 @@ test "bench random" (b : @bench.T) {
 
 ///|
 test "boolean" {
-  let result = @random.Rand::new()
+  let result = @random.Rand::chacha8(seed=fixed_test_seed)
   inspect(result.boolean(), content="true")
+}
+
+///|
+test "Rand::new uses entropy when available" {
+  match @env.rand(0) {
+    Some(_) => {
+      let r1 = @random.Rand::new()
+      let r2 = @random.Rand::new()
+      @test.assert_not_eq(
+        [r1.uint64(), r1.uint64(), r1.uint64(), r1.uint64()],
+        [r2.uint64(), r2.uint64(), r2.uint64(), r2.uint64()],
+      )
+    }
+    None => ()
+  }
+}
+
+///|
+#cfg(target="wasm-gc")
+test "Rand::new fallback is deterministic without entropy" {
+  let r1 = @random.Rand::new()
+  let r2 = @random.Rand::new()
+  @test.assert_eq([r1.uint64(), r1.uint64(), r1.uint64(), r1.uint64()], [
+    r2.uint64(),
+    r2.uint64(),
+    r2.uint64(),
+    r2.uint64(),
+  ])
 }

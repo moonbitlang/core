@@ -100,7 +100,7 @@ test "arbitrary_iter_break" {
   // An Iter with a length greater than 0 is required here
   let mut i = 0
   for _ in iter {
-    i = i + 1
+    i += 1
     break
   } nobreak {
     panic()

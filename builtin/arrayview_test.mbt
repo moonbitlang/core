@@ -299,7 +299,7 @@ test "each" {
   let v = [1, 2, 3, 4, 5]
   let s = v[2:5]
   let mut sum = 0
-  s.each(x => sum = sum + x)
+  s.each(x => sum += x)
   inspect(sum, content="12")
 }
 
@@ -307,7 +307,7 @@ test "each" {
 test "eachi" {
   let v = [3, 4, 5][:]
   let mut sum = 0
-  v.eachi((i, x) => sum = sum + x + i)
+  v.eachi((i, x) => sum += x + i)
   inspect(sum, content="15")
 }
 
@@ -404,8 +404,8 @@ test "iter2" {
   view
   .iter2()
   .each((i, x) => {
-    sum = sum + x
-    sum_keys = sum_keys + i
+    sum += x
+    sum_keys += i
   })
   inspect(sum, content="5")
   inspect(sum_keys, content="1")
@@ -1238,7 +1238,7 @@ test "ArrayView::strip_prefix on sliced view" {
 ///|
 test "ArrayView::strip_prefix shares backing" {
   let arr : FixedArray[Int] = [1, 2, 3, 4, 5]
-  guard arr[:].strip_prefix([1, 2]) is Some(rest)
+  guard! arr[:].strip_prefix([1, 2]) is Some(rest)
   arr[2] = 99
   debug_inspect(
     rest,

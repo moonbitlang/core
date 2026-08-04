@@ -34,11 +34,6 @@ pub extend HashSet with Sub::{sub}
 pub extend HashSet with @debug.Debug::{to_repr}
 
 ///|
-#deprecated("Use `@quickcheck.Arbitrary::arbitrary` instead", skip_current_package=true)
-#doc(hidden)
-pub extend HashSet with @quickcheck.Arbitrary::{arbitrary}
-
-///|
 #deprecated("Use `Default::default` instead", skip_current_package=true)
 #doc(hidden)
 pub extend HashSet with Default::{default}

@@ -235,12 +235,12 @@ fn[K, V] balance(
   //        / \             / \
   //       y   z           x   y
   fn single_l(k1, v1, x, r) {
-    guard r is Tree(k2, value=v2, y, z, ..)
+    guard! r is Tree(k2, value=v2, y, z, ..)
     make_tree(k2, v2, make_tree(k1, v1, x, y), z)
   }
 
   fn single_r(k2, v2, l, z) {
-    guard l is Tree(k1, value=v1, x, y, ..)
+    guard! l is Tree(k1, value=v1, x, y, ..)
     make_tree(k1, v1, x, make_tree(k2, v2, y, z))
   }
 
@@ -252,7 +252,7 @@ fn[K, V] balance(
   //     / \
   //    y1 y2
   fn double_l(k1, v1, x, r) {
-    guard r is Tree(k3, value=v3, Tree(k2, value=v2, y1, y2, ..), z, ..)
+    guard! r is Tree(k3, value=v3, Tree(k2, value=v2, y1, y2, ..), z, ..)
     make_tree(k2, v2, make_tree(k1, v1, x, y1), make_tree(k3, v3, y2, z))
   }
 
@@ -264,7 +264,7 @@ fn[K, V] balance(
   //    / \
   //   y1 y2
   fn double_r(k3, v3, l, z) {
-    guard l is Tree(k1, value=v1, x, Tree(k2, value=v2, y1, y2, ..), ..)
+    guard! l is Tree(k1, value=v1, x, Tree(k2, value=v2, y1, y2, ..), ..)
     make_tree(k2, v2, make_tree(k1, v1, x, y1), make_tree(k3, v3, y2, z))
   }
 
@@ -274,7 +274,7 @@ fn[K, V] balance(
     make_tree(key, value, l, r)
   } else if rn > ratio * ln {
     // right is too big
-    guard r is Tree(_, rl, rr, ..)
+    guard! r is Tree(_, rl, rr, ..)
     let rln = rl.length()
     let rrn = rr.length()
     if rln < rrn {
@@ -284,7 +284,7 @@ fn[K, V] balance(
     }
   } else if ln > ratio * rn {
     // left is too big
-    guard l is Tree(_, ll, lr, ..)
+    guard! l is Tree(_, ll, lr, ..)
     let lln = ll.length()
     let lrn = lr.length()
     if lrn < lln {

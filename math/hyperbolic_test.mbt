@@ -167,6 +167,21 @@ test "hyperbolic double branch coverage" {
 }
 
 ///|
+test "tanh preserves the sign of tiny inputs" {
+  // |x| < 2^-55: tanh(x) == x, so the sign must survive
+  let neg = 0x8000000000000001UL
+  let pos = 0x0000000000000001UL
+  assert_eq(
+    @math.tanh(neg.reinterpret_as_double()).reinterpret_as_uint64(),
+    neg,
+  )
+  assert_eq(
+    @math.tanh(pos.reinterpret_as_double()).reinterpret_as_uint64(),
+    pos,
+  )
+}
+
+///|
 test "cosh large-arg coverage" {
   inspect(@math.cosh(22.0), content="1792456423.065796")
   inspect(@math.cosh(100.0), content="1.3440585709080678e+43")

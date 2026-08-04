@@ -72,7 +72,7 @@ let max_mantissa_fast_path : UInt64 = 2UL << mantissa_explicit_bits
 /// For example, "1.23e2" represents 1.23 × 10² = 123.
 #deprecated("use `@string.parse_double` instead", skip_current_package=true)
 pub fn parse_double(str : StringView) -> Double raise StrConvError {
-  guard str.length() > 0 else { syntax_err() }
+  guard !str.is_empty() else { syntax_err() }
   guard check_underscore(str) else { syntax_err() }
   // validate its a number
   match parse_number(str) {

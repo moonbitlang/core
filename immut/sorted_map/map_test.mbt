@@ -58,7 +58,7 @@ test "iter" {
     (0, "zero"),
   ])
   let mut s = ""
-  m.each((k, v) => s = s + "(\{k},\{v})")
+  m.each((k, v) => s += "(\{k},\{v})")
   inspect(s, content="(0,zero)(1,one)(2,two)(3,three)(8,eight)")
 }
 
@@ -72,7 +72,7 @@ test "iteri" {
     (0, "zero"),
   ])
   let mut s = ""
-  m.eachi((i, k, v) => s = s + "(\{i},\{k},\{v})")
+  m.eachi((i, k, v) => s += "(\{i},\{k},\{v})")
   inspect(s, content="(0,0,zero)(1,1,one)(2,2,two)(3,3,three)(4,8,eight)")
 }
 

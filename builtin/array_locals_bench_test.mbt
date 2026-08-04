@@ -59,7 +59,7 @@ test "bench FixedArray::each n=100000" (it : @bench.T) {
   let data = make_array_locals_bench_fixedarray()
   it.bench(fn() {
     let mut sum = 0
-    data.each(x => sum = sum + x)
+    data.each(x => sum += x)
     it.keep(sum)
   })
 }
@@ -69,7 +69,7 @@ test "bench FixedArray::eachi n=100000" (it : @bench.T) {
   let data = make_array_locals_bench_fixedarray()
   it.bench(fn() {
     let mut sum = 0
-    data.eachi((i, x) => sum = sum + i + x)
+    data.eachi((i, x) => sum += i + x)
     it.keep(sum)
   })
 }
@@ -79,7 +79,7 @@ test "bench FixedArray::rev_each n=100000" (it : @bench.T) {
   let data = make_array_locals_bench_fixedarray()
   it.bench(fn() {
     let mut sum = 0
-    data.rev_each(x => sum = sum + x)
+    data.rev_each(x => sum += x)
     it.keep(sum)
   })
 }
@@ -89,7 +89,7 @@ test "bench FixedArray::rev_eachi n=100000" (it : @bench.T) {
   let data = make_array_locals_bench_fixedarray()
   it.bench(fn() {
     let mut sum = 0
-    data.rev_eachi((i, x) => sum = sum + i + x)
+    data.rev_eachi((i, x) => sum += i + x)
     it.keep(sum)
   })
 }
@@ -148,7 +148,7 @@ test "bench ArrayView::each n=100000" (it : @bench.T) {
   let view = data[:]
   it.bench(fn() {
     let mut sum = 0
-    view.each(x => sum = sum + x)
+    view.each(x => sum += x)
     it.keep(sum)
   })
 }
@@ -159,7 +159,7 @@ test "bench ArrayView::eachi n=100000" (it : @bench.T) {
   let view = data[:]
   it.bench(fn() {
     let mut sum = 0
-    view.eachi((i, x) => sum = sum + i + x)
+    view.eachi((i, x) => sum += i + x)
     it.keep(sum)
   })
 }
@@ -170,7 +170,7 @@ test "bench ArrayView::rev_each n=100000" (it : @bench.T) {
   let view = data[:]
   it.bench(fn() {
     let mut sum = 0
-    view.rev_each(x => sum = sum + x)
+    view.rev_each(x => sum += x)
     it.keep(sum)
   })
 }
@@ -181,7 +181,7 @@ test "bench ArrayView::rev_eachi n=100000" (it : @bench.T) {
   let view = data[:]
   it.bench(fn() {
     let mut sum = 0
-    view.rev_eachi((i, x) => sum = sum + i + x)
+    view.rev_eachi((i, x) => sum += i + x)
     it.keep(sum)
   })
 }

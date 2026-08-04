@@ -1322,9 +1322,7 @@ test "default" {
 }
 
 ///|
-test "BigInt bit ops and arbitrary" {
-  let rs = @splitmix.new(seed=1)
-  let _ : @bigint.BigInt = @quickcheck.Arbitrary::arbitrary(1, rs)
+test "BigInt bit ops" {
   let small = @bigint.BigInt::from_int(1)
   let big = @bigint.BigInt::from_string("123456789012345678901234567891")
   inspect(small.land(big).to_string(), content="1")

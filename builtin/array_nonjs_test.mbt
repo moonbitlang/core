@@ -19,6 +19,34 @@ test "array_capacity" {
 }
 
 ///|
+test "array_append_reuses_capacity" {
+  let arr = Array::new(capacity=4)
+  arr.push(1)
+  arr.append([2, 3])
+  inspect(arr.capacity(), content="4")
+  debug_inspect(arr, content="[1, 2, 3]")
+}
+
+///|
+test "array_append_grows_geometrically" {
+  let arr = Array::new(capacity=4)
+  arr.append([1, 2, 3, 4, 5])
+  inspect(arr.capacity(), content="8")
+  debug_inspect(arr, content="[1, 2, 3, 4, 5]")
+}
+
+///|
+test "array_blit_to_reuses_and_grows_capacity" {
+  let dst = Array::new(capacity=4)
+  dst.push(0)
+  [1, 2][:].blit_to(dst, dst_offset=1)
+  inspect(dst.capacity(), content="4")
+  [3, 4][:].blit_to(dst, dst_offset=3)
+  inspect(dst.capacity(), content="8")
+  debug_inspect(dst, content="[0, 1, 2, 3, 4]")
+}
+
+///|
 test "array_retain" {
   let arr = [1, 2, 3, 4, 5]
   @test.assert_eq(arr.capacity(), 5)

@@ -63,8 +63,8 @@ fn merge_global_value_from_child(
   let child_vals = child.values.get(name)
   let parent_source = parent.value_sources.get(name)
   let child_source = child.value_sources.get(name)
-  let has_parent = parent_vals is Some(pv) && pv.length() > 0
-  let has_child = child_vals is Some(cv) && cv.length() > 0
+  let has_parent = parent_vals is Some(pv) && !pv.is_empty()
+  let has_child = child_vals is Some(cv) && !cv.is_empty()
   if !has_parent && !has_child {
     return
   }
@@ -82,7 +82,7 @@ fn merge_global_value_from_child(
           merged.push(v)
         }
       }
-      if merged.length() > 0 {
+      if !merged.is_empty() {
         parent.values[name] = merged
         parent.value_sources[name] = Argv
       }
@@ -90,13 +90,13 @@ fn merge_global_value_from_child(
       let choose_child = has_child &&
         (!has_parent || prefer_child_source(parent_source, child_source))
       if choose_child {
-        if child_vals is Some(cv) && cv.length() > 0 {
+        if child_vals is Some(cv) && !cv.is_empty() {
           parent.values[name] = cv.copy()
         }
         if child_source is Some(src) {
           parent.value_sources[name] = src
         }
-      } else if parent_vals is Some(pv) && pv.length() > 0 {
+      } else if parent_vals is Some(pv) && !pv.is_empty() {
         parent.values[name] = pv.copy()
         if parent_source is Some(src) {
           parent.value_sources[name] = src
@@ -116,13 +116,13 @@ fn merge_global_value_from_child(
     let choose_child = has_child &&
       (!has_parent || prefer_child_source(parent_source, child_source))
     if choose_child {
-      if child_vals is Some(cv) && cv.length() > 0 {
+      if child_vals is Some(cv) && !cv.is_empty() {
         parent.values[name] = cv.copy()
       }
       if child_source is Some(src) {
         parent.value_sources[name] = src
       }
-    } else if parent_vals is Some(pv) && pv.length() > 0 {
+    } else if parent_vals is Some(pv) && !pv.is_empty() {
       parent.values[name] = pv.copy()
       if parent_source is Some(src) {
         parent.value_sources[name] = src

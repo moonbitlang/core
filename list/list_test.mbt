@@ -59,7 +59,7 @@ test "iteri" {
     if x != i + 1 || i != v {
       failed = true
     }
-    v = v + 1
+    v += 1
   }
   debug_inspect(failed, content="false")
 }

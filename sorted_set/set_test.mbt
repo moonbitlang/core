@@ -32,12 +32,6 @@ test "SortedSet constructor" {
 }
 
 ///|
-test "arbitrary samples" {
-  let samples = (@quickcheck.samples(3) : Array[@sorted_set.SortedSet[Int]])
-  inspect(samples.length(), content="3")
-}
-
-///|
 test "disjoint" {
   inspect(
     @sorted_set.from_array([1, 2, 3]).disjoint(

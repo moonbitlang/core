@@ -37,4 +37,3 @@ pub impl @debug.Debug for RecharSet
 pub type Rechar = Int
 
 // Traits
-

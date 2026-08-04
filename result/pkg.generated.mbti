@@ -21,4 +21,3 @@ pub fn[T, E] Result::is_ok(Self[T, E]) -> Bool
 // Type aliases
 
 // Traits
-

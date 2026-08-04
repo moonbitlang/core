@@ -259,7 +259,7 @@ pub fn[K, V] SortedMap::eachi(
   let mut i = 0
   self.each((k, v) => {
     f(i, k, v)
-    i = i + 1
+    i += 1
   })
 }
 
@@ -369,14 +369,6 @@ pub fn[K : Compare, V] SortedMap::from_iter(
     m[k] = v
   }
   m
-}
-
-///|
-pub impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for SortedMap[
-  K,
-  V,
-] with fn arbitrary(size, rs) {
-  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_iter
 }
 
 ///|

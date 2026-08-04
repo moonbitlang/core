@@ -169,7 +169,7 @@ test "depth-limited render replaces deep subtrees with ellipsis" {
   assert_true(@debug.render(Repr(nested), max_depth=1).contains("..."))
   // a depth-limited record still renders its (pruned) fields
   let p : CovPoint = { x: 7, y: 8.0 }
-  assert_true(@debug.render(Repr(p), max_depth=1).length() > 0)
+  assert_true(!@debug.render(Repr(p), max_depth=1).is_empty())
   // depth <= 0 is treated as 1, so max_depth=0 renders identically to max_depth=1
   let r = Repr(nested)
   @debug.assert_eq(@debug.render(r, max_depth=0), @debug.render(r, max_depth=1))

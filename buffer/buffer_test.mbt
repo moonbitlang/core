@@ -63,7 +63,7 @@ test "expect method with matching content" {
 }
 
 ///|
-test "grow_if_necessary method" {
+test "buffer grows beyond its initial capacity" {
   let buf = Buffer(size_hint=10)
   buf.write_string_utf16le(
     "This is a test string that is longer than the initial capacity",

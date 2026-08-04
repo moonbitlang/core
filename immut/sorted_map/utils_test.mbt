@@ -57,7 +57,7 @@ test "get with pattern" {
     (2, "two"),
     (0, "zero"),
   ])
-  guard map
+  guard! map
     is { 3: "three", 8: "eight", 1: "one", 2: "two", 0: "zero", 4? : None, .. }
 }
 

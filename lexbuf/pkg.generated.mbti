@@ -20,4 +20,3 @@ pub fn Lexbuf::from_string(String) -> Self
 // Type aliases
 
 // Traits
-
