@@ -10,9 +10,7 @@ import {
 // Errors
 
 // Types and methods
-pub struct ArgGroup {
-  // private fields
-} derive(@debug.Debug)
+type ArgGroup derive(@debug.Debug)
 #alias(new, deprecated)
 pub fn ArgGroup::ArgGroup(StringView, required? : Bool, multiple? : Bool, args? : ArrayView[String], requires? : ArrayView[String], conflicts_with? : ArrayView[String]) -> Self
 
