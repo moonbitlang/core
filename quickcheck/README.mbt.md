@@ -99,6 +99,43 @@ Properties should be deterministic and should not mutate or consume their
 input. In particular, an `Iter` is single-use; generate an `Array` and create a
 fresh iterator inside the property when replayable sequence behavior matters.
 
+## Observing Generated Data
+
+Use the pure `observe` function to inspect the distribution of successful
+generated cases. `label` adds a string, `collect` adds a value's `Debug`
+representation, and `classify` counts a named condition:
+
+```mbt check
+///|
+test "observe generated cases" {
+  let report = @quickcheck.report(
+    (_ : Unit) => true,
+    observe=_ => {
+      [@quickcheck.label("unit"), @quickcheck.classify(true, "generated")]
+    },
+    count=2,
+  )
+  debug_inspect(
+    report,
+    content=(
+      #|Passed(
+      #|  tests=2,
+      #|  observations={ labels: { <List: ["unit"]>: 2 }, classes: { "generated": 2 } },
+      #|)
+    ),
+  )
+}
+```
+
+Labels produced by one case form one joint bucket; classes are counted
+independently. Only successful top-level cases run `observe`; filtered and
+failing cases, including shrink candidates, do not contribute observations.
+
+`check` prints the test count and an aligned observation table after a
+successful run. On failure, the aggregate from preceding successful cases is
+included in the failure message. Use `report` when the structured result
+should be handled without printing or raising.
+
 ## Basic Usage
 
 Generate random values of any type that implements the `Arbitrary` trait:
