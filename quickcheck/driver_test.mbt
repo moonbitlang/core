@@ -95,6 +95,53 @@ test "report returns a structured passing report" {
 }
 
 ///|
+test "report aggregates passing observations" {
+  let report = @quickcheck.report(
+    (_ : SizedProbe) => true,
+    observe=input => {
+      [
+        @quickcheck.label(if input.0 % 2 == 0 { "even" } else { "odd" }),
+        @quickcheck.classify(input.0 > 0, "positive"),
+      ]
+    },
+    count=4,
+    max_size=3,
+  )
+  debug_inspect(
+    report,
+    content=(
+      #|Passed(
+      #|  tests=4,
+      #|  observations={
+      #|    labels: { <List: ["even"]>: 2, <List: ["odd"]>: 2 },
+      #|    classes: { "positive": 3 },
+      #|  },
+      #|)
+    ),
+  )
+}
+
+///|
+test "discarded cases do not contribute observations" {
+  let report = @quickcheck.report(
+    (_ : SizedProbe) => true,
+    filter=input => input.0 > 0,
+    observe=input => [@quickcheck.collect(input.0)],
+    count=2,
+    max_size=2,
+  )
+  debug_inspect(
+    report,
+    content=(
+      #|Passed(
+      #|  tests=2,
+      #|  observations={ labels: { <List: ["1"]>: 1, <List: ["2"]>: 1 }, classes: {} },
+      #|)
+    ),
+  )
+}
+
+///|
 test "report returns a structured falsification" {
   let report = @quickcheck.report(
     (_ : Int) => false,

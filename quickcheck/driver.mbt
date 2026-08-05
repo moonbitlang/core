@@ -50,17 +50,19 @@ priv enum CaseOutcome {
 ///
 /// `tests` includes the failing test case. `shrinks` counts accepted shrink
 /// steps, while `shrink_attempts` counts every shrink candidate examined,
-/// including candidates rejected by `filter`.
+/// including candidates rejected by `filter`. `observations` contains only
+/// successful top-level cases.
 enum QuickCheckReport[A] {
-  Passed(tests~ : UInt)
+  Passed(tests~ : UInt, observations~ : ObservationSummary)
   /// The configured discard budget was exhausted before `count` tests completed.
-  GaveUp(tests~ : UInt, discarded~ : UInt)
+  GaveUp(tests~ : UInt, discarded~ : UInt, observations~ : ObservationSummary)
   Falsified(
     counterexample~ : A,
     tests~ : UInt,
     size~ : Int,
     shrinks~ : UInt,
-    shrink_attempts~ : UInt
+    shrink_attempts~ : UInt,
+    observations~ : ObservationSummary
   )
   Raised(
     counterexample~ : A,
@@ -68,9 +70,83 @@ enum QuickCheckReport[A] {
     tests~ : UInt,
     size~ : Int,
     shrinks~ : UInt,
-    shrink_attempts~ : UInt
+    shrink_attempts~ : UInt,
+    observations~ : ObservationSummary
   )
-} derive(@debug.Debug)
+}
+
+///|
+pub impl[A : @debug.Debug] @debug.Debug for QuickCheckReport[A] with fn to_repr(
+  self,
+) {
+  match self {
+    Passed(tests~, observations~) =>
+      @debug.Repr::ctor(
+        "Passed",
+        [
+          (Some("tests"), Repr(tests)),
+          ..if !observations.is_empty() {
+            [(Some("observations"), @debug.Repr(observations))]
+          },
+        ],
+      )
+    GaveUp(tests~, discarded~, observations~) =>
+      @debug.Repr::ctor(
+        "GaveUp",
+        [
+          (Some("tests"), Repr(tests)),
+          (Some("discarded"), Repr(discarded)),
+          ..if !observations.is_empty() {
+            [(Some("observations"), @debug.Repr(observations))]
+          },
+        ],
+      )
+    Falsified(
+      counterexample~,
+      tests~,
+      size~,
+      shrinks~,
+      shrink_attempts~,
+      observations~
+    ) =>
+      @debug.Repr::ctor(
+        "Falsified",
+        [
+          (Some("counterexample"), Repr(counterexample)),
+          (Some("tests"), Repr(tests)),
+          (Some("size"), Repr(size)),
+          (Some("shrinks"), Repr(shrinks)),
+          (Some("shrink_attempts"), Repr(shrink_attempts)),
+          ..if !observations.is_empty() {
+            [(Some("observations"), @debug.Repr(observations))]
+          },
+        ],
+      )
+    Raised(
+      counterexample~,
+      error~,
+      tests~,
+      size~,
+      shrinks~,
+      shrink_attempts~,
+      observations~
+    ) =>
+      @debug.Repr::ctor(
+        "Raised",
+        [
+          (Some("counterexample"), Repr(counterexample)),
+          (Some("error"), Repr(error)),
+          (Some("tests"), Repr(tests)),
+          (Some("size"), Repr(size)),
+          (Some("shrinks"), Repr(shrinks)),
+          (Some("shrink_attempts"), Repr(shrink_attempts)),
+          ..if !observations.is_empty() {
+            [(Some("observations"), @debug.Repr(observations))]
+          },
+        ],
+      )
+  }
+}
 
 ///|
 #deprecated("Use `@debug.Debug::to_repr` instead")
@@ -136,25 +212,40 @@ fn[A : @shrink.Shrink] shrink_failure(
 fn[A : @debug.Debug] failure_report(report : QuickCheckReport[A]) -> String {
   match report {
     Passed(..) => abort("quickcheck internal error: a passed property reported")
-    GaveUp(tests~, discarded~) =>
+    GaveUp(tests~, discarded~, observations~) =>
       (
         $|QuickCheck gave up after \{tests} test(s)
-        $|discarded: \{discarded}
+        $|discarded: \{discarded}\{observations.report(tests)}
       )
-    Falsified(counterexample~, tests~, size~, shrinks~, shrink_attempts~) =>
+    Falsified(
+      counterexample~,
+      tests~,
+      size~,
+      shrinks~,
+      shrink_attempts~,
+      observations~
+    ) =>
       (
         $|QuickCheck falsified after \{tests} test(s)
         $|counterexample: \{@debug.to_string(counterexample)}
         $|size: \{size}
-        $|shrinks: \{shrinks} successful, \{shrink_attempts} attempted
+        $|shrinks: \{shrinks} successful, \{shrink_attempts} attempted\{observations.report(tests - 1U)}
       )
-    Raised(counterexample~, error~, tests~, size~, shrinks~, shrink_attempts~) =>
+    Raised(
+      counterexample~,
+      error~,
+      tests~,
+      size~,
+      shrinks~,
+      shrink_attempts~,
+      observations~
+    ) =>
       (
         $|QuickCheck property raised after \{tests} test(s)
         $|counterexample: \{@debug.to_string(counterexample)}
         $|error: \{@debug.to_string(error)}
         $|size: \{size}
-        $|shrinks: \{shrinks} successful, \{shrink_attempts} attempted
+        $|shrinks: \{shrinks} successful, \{shrink_attempts} attempted\{observations.report(tests - 1U)}
       )
   }
 }
@@ -167,10 +258,12 @@ fn[A : @debug.Debug] failure_report(report : QuickCheckReport[A]) -> String {
 /// turn either result into a test failure, does not raise property errors, and
 /// does not require the input type to implement `Debug`. Cases rejected by the
 /// pure `filter` do not count as tests. The run gives up after `discard_ratio`
-/// discarded cases per requested test.
+/// discarded cases per requested test. The pure `observe` function is
+/// evaluated and aggregated only after a top-level case succeeds.
 pub fn[A : Arbitrary + @shrink.Shrink] report(
   property : (A) -> Bool raise?,
   filter? : (A) -> Bool = _ => true,
+  observe? : (A) -> Observations = _ => [],
   count? : UInt = 100,
   max_size? : UInt = 100,
   max_shrinks? : UInt = 100,
@@ -178,16 +271,20 @@ pub fn[A : Arbitrary + @shrink.Shrink] report(
   seed? : UInt64 = 37,
 ) -> QuickCheckReport[A] {
   let state = @splitmix.new(seed~)
+  let observations = ObservationSummary::empty()
   for tests = 0U, discarded = 0U, recent_discards = 0U; tests < count; {
     let size = size_at(tests, count, max_size, recent_discards)
     let input : A = Arbitrary::arbitrary(size, state.split())
     let outcome = evaluate_case(property, filter, input)
     match outcome {
-      Passed => continue tests + 1, discarded, 0U
+      Passed => {
+        observations.add(observe(input))
+        continue tests + 1, discarded, 0U
+      }
       Discarded => {
         let next_discarded = discarded + 1
         if discard_ratio == 0 || next_discarded / discard_ratio >= count {
-          return GaveUp(tests~, discarded=next_discarded)
+          return GaveUp(tests~, discarded=next_discarded, observations~)
         }
         continue tests, next_discarded, recent_discards + 1
       }
@@ -204,6 +301,7 @@ pub fn[A : Arbitrary + @shrink.Shrink] report(
               size~,
               shrinks~,
               shrink_attempts~,
+              observations~,
             )
           Raised(error) =>
             Raised(
@@ -213,6 +311,7 @@ pub fn[A : Arbitrary + @shrink.Shrink] report(
               size~,
               shrinks~,
               shrink_attempts~,
+              observations~,
             )
           Passed | Discarded =>
             abort(
@@ -222,7 +321,7 @@ pub fn[A : Arbitrary + @shrink.Shrink] report(
       }
     }
   } nobreak {
-    Passed(tests=count)
+    Passed(tests=count, observations~)
   }
 }
 
@@ -247,6 +346,8 @@ pub fn[A : Arbitrary + @shrink.Shrink] report(
 ///
 /// * `property`: A deterministic function returning `true` on success.
 /// * `filter`: A pure precondition returning `true` for cases to test.
+/// * `observe`: A pure function classifying cases with `label`, `classify`, or
+///   `collect`.
 /// * `count`: Number of non-discarded cases to test. Zero performs no tests.
 /// * `max_size`: Largest requested generator size. Values above the `Int`
 ///   range accepted by `Arbitrary` are saturated at `Int::MAX_VALUE`.
@@ -258,7 +359,8 @@ pub fn[A : Arbitrary + @shrink.Shrink] report(
 ///
 /// On falsification or a raised error, this function raises a
 /// `Failure` containing the smallest counterexample found, its corresponding
-/// error when applicable, and shrink information.
+/// error when applicable, shrink information, and any collected observations.
+/// A successful run prints its test count and observation statistics.
 ///
 /// ```mbt check
 /// test "adding zero is an identity" {
@@ -269,6 +371,7 @@ pub fn[A : Arbitrary + @shrink.Shrink] report(
 pub fn[A : Arbitrary + @shrink.Shrink + @debug.Debug] check(
   property : (A) -> Bool raise?,
   filter? : (A) -> Bool = _ => true,
+  observe? : (A) -> Observations = _ => [],
   count? : UInt = 100,
   max_size? : UInt = 100,
   max_shrinks? : UInt = 100,
@@ -279,6 +382,7 @@ pub fn[A : Arbitrary + @shrink.Shrink + @debug.Debug] check(
   let result = report(
     property,
     filter~,
+    observe~,
     count~,
     max_size~,
     max_shrinks~,
@@ -286,7 +390,8 @@ pub fn[A : Arbitrary + @shrink.Shrink + @debug.Debug] check(
     seed~,
   )
   match result {
-    Passed(..) => ()
+    Passed(observations~, ..) if observations.is_empty() => ()
+    Passed(tests~, observations~) => println(observations.report(tests))
     GaveUp(..) | Falsified(..) | Raised(..) =>
       fail(failure_report(result), loc~)
   }
