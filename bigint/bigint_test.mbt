@@ -863,6 +863,24 @@ test "lxor_result_zero_normalization" {
 }
 
 ///|
+test "bitwise ops depend on value, not construction history" {
+  let from_hex = @bigint.BigInt::from_string("80000000", radix=16)
+  let literal = 2147483648N
+
+  assert_eq(from_hex, literal)
+
+  // x & -x = lowest set bit = 2^31
+  assert_eq(from_hex & -from_hex, literal & -literal)
+  assert_eq(from_hex & -from_hex, 2147483648N)
+  // x | -x = -2^31 = -2147483648
+  assert_eq(from_hex | -from_hex, literal | -literal)
+  assert_eq(from_hex | -from_hex, -2147483648N)
+  // x ^ -x = -(2^31 + 2^31) = -2^32 = -4294967296
+  assert_eq(from_hex ^ -from_hex, literal ^ -literal)
+  assert_eq(from_hex ^ -from_hex, -4294967296N)
+}
+
+///|
 test "to_int" {
   let a = @bigint.BigInt::from_int(1234567899)
   inspect(a.to_int(), content="1234567899")

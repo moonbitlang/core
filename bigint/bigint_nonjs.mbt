@@ -1567,16 +1567,16 @@ pub fn BigInt::to_octets(self : BigInt, length? : Int) -> Bytes {
 /// }
 /// ```
 pub impl BitAnd for BigInt with fn land(self : BigInt, other : BigInt) -> BigInt {
-  let max_length = if self.limbs.length() < other.limbs.length() {
-    other.limbs.length() + 1
+  let max_length = if self.len < other.len {
+    other.len + 1
   } else {
-    self.limbs.length() + 1
+    self.len + 1
   }
   // Extend the limbs to store the sign bits
   let x_limbs = FixedArray::make(max_length, 0U)
-  x_limbs.unsafe_blit(0, self.limbs, 0, self.limbs.length())
+  x_limbs.unsafe_blit(0, self.limbs, 0, self.len)
   let y_limbs = FixedArray::make(max_length, 0U)
-  y_limbs.unsafe_blit(0, other.limbs, 0, other.limbs.length())
+  y_limbs.unsafe_blit(0, other.limbs, 0, other.len)
 
   // Calculate the complement code per 2
   if self.sign == Negative {
@@ -1628,9 +1628,9 @@ pub impl BitAnd for BigInt with fn land(self : BigInt, other : BigInt) -> BigInt
   }
 
   // return the result
-  let limbs = FixedArray::make(max_length - 1, 0U)
-  limbs.unsafe_blit(0, x_limbs, 0, max_length - 1)
-  { limbs, sign: new_sign, len: normalize_len(limbs, max_length - 1) }
+  let limbs = FixedArray::make(max_length, 0U)
+  limbs.unsafe_blit(0, x_limbs, 0, max_length)
+  { limbs, sign: new_sign, len: normalize_len(limbs, max_length) }
 }
 
 ///|
@@ -1657,16 +1657,16 @@ pub impl BitAnd for BigInt with fn land(self : BigInt, other : BigInt) -> BigInt
 /// }
 /// ```
 pub impl BitOr for BigInt with fn lor(self : BigInt, other : BigInt) -> BigInt {
-  let max_length = if self.limbs.length() < other.limbs.length() {
-    other.limbs.length() + 1
+  let max_length = if self.len < other.len {
+    other.len + 1
   } else {
-    self.limbs.length() + 1
+    self.len + 1
   }
   // Extend the limbs to store the sign bits
   let x_limbs = FixedArray::make(max_length, 0U)
-  x_limbs.unsafe_blit(0, self.limbs, 0, self.limbs.length())
+  x_limbs.unsafe_blit(0, self.limbs, 0, self.len)
   let y_limbs = FixedArray::make(max_length, 0U)
-  y_limbs.unsafe_blit(0, other.limbs, 0, other.limbs.length())
+  y_limbs.unsafe_blit(0, other.limbs, 0, other.len)
 
   // Calculate the complement code per 2
   if self.sign == Negative {
@@ -1718,9 +1718,9 @@ pub impl BitOr for BigInt with fn lor(self : BigInt, other : BigInt) -> BigInt {
   }
 
   // return the result
-  let limbs = FixedArray::make(max_length - 1, 0U)
-  limbs.unsafe_blit(0, x_limbs, 0, max_length - 1)
-  { limbs, sign: new_sign, len: normalize_len(limbs, max_length - 1) }
+  let limbs = FixedArray::make(max_length, 0U)
+  limbs.unsafe_blit(0, x_limbs, 0, max_length)
+  { limbs, sign: new_sign, len: normalize_len(limbs, max_length) }
 }
 
 ///|
@@ -1747,16 +1747,16 @@ pub impl BitOr for BigInt with fn lor(self : BigInt, other : BigInt) -> BigInt {
 /// }
 /// ```
 pub impl BitXOr for BigInt with fn lxor(self : BigInt, other : BigInt) -> BigInt {
-  let max_length = if self.limbs.length() < other.limbs.length() {
-    other.limbs.length() + 1
+  let max_length = if self.len < other.len {
+    other.len + 1
   } else {
-    self.limbs.length() + 1
+    self.len + 1
   }
   // Extend the limbs to store the sign bits
   let x_limbs = FixedArray::make(max_length, 0U)
-  x_limbs.unsafe_blit(0, self.limbs, 0, self.limbs.length())
+  x_limbs.unsafe_blit(0, self.limbs, 0, self.len)
   let y_limbs = FixedArray::make(max_length, 0U)
-  y_limbs.unsafe_blit(0, other.limbs, 0, other.limbs.length())
+  y_limbs.unsafe_blit(0, other.limbs, 0, other.len)
 
   // Calculate the complement code per 2
   if self.sign == Negative {
@@ -1808,9 +1808,9 @@ pub impl BitXOr for BigInt with fn lxor(self : BigInt, other : BigInt) -> BigInt
   }
 
   // return the result
-  let limbs = FixedArray::make(max_length - 1, 0U)
-  limbs.unsafe_blit(0, x_limbs, 0, max_length - 1)
-  { limbs, sign: new_sign, len: normalize_len(limbs, max_length - 1) }
+  let limbs = FixedArray::make(max_length, 0U)
+  limbs.unsafe_blit(0, x_limbs, 0, max_length)
+  { limbs, sign: new_sign, len: normalize_len(limbs, max_length) }
 }
 
 ///|
