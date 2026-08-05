@@ -89,6 +89,36 @@ pub fn[T, U] Generator::flat_map(
 }
 
 ///|
+/// Combines two generators into one producing pairs.
+pub fn[T, U] Generator::zip(
+  self : Generator[T],
+  other : Generator[U],
+) -> Generator[(T, U)] {
+  self.zip_with(other, (first, second) => (first, second))
+}
+
+///|
+/// Combines the outputs of two generators with `combine`.
+pub fn[T, U, V] Generator::zip_with(
+  self : Generator[T],
+  other : Generator[U],
+  combine : (T, U) -> V,
+) -> Generator[V] {
+  self.flat_map(first => other.map(second => combine(first, second)))
+}
+
+///|
+/// Combines the outputs of three generators with `combine`.
+pub fn[T, U, V, W] Generator::zip_with3(
+  self : Generator[T],
+  second : Generator[U],
+  third : Generator[V],
+  combine : (T, U, V) -> W,
+) -> Generator[W] {
+  self.flat_map(a => second.flat_map(b => third.map(c => combine(a, b, c))))
+}
+
+///|
 /// Creates a generator that can inspect the current size.
 pub fn[T] sized(create : (Int) -> Generator[T]) -> Generator[T] {
   Generator((size, state) => create(size).run(size, state))
@@ -121,6 +151,24 @@ pub fn int_range(lower : Int, upper : Int) -> Generator[Int] {
   let width = (upper - lower).reinterpret_as_uint()
   Generator((_, state) => {
     (state.next_uint() % width).reinterpret_as_int() + lower
+  })
+}
+
+///|
+/// Generates a character in the inclusive range `[lower, upper]`.
+///
+/// The bounds must form a non-empty range of Unicode scalar values: this
+/// function aborts if `lower` exceeds `upper` or if the range contains
+/// surrogate code points, so every generated code point is a valid `Char`.
+pub fn char_range(lower : Char, upper : Char) -> Generator[Char] {
+  guard lower <= upper else {
+    abort("char_range: lower bound exceeds upper bound")
+  }
+  guard upper.to_int() < 0xD800 || lower.to_int() > 0xDFFF else {
+    abort("char_range: range contains surrogate code points")
+  }
+  int_range(lower.to_int(), upper.to_int() + 1).map(code => {
+    code.to_char().unwrap()
   })
 }
 

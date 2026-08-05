@@ -98,3 +98,57 @@ test "fixed-size array" {
   inspect(values.length(), content="3")
   inspect(values.all(value => value == 7), content="true")
 }
+
+///|
+test "char_range stays within bounds" {
+  for value in @quickcheck.char_range('a', 'z').samples(count=64) {
+    guard value is ('a'..='z') else {
+      fail("char_range generated an out-of-range character")
+    }
+  }
+  inspect(@quickcheck.char_range('x', 'x').sample(), content="x")
+}
+
+///|
+test "panic char_range rejects surrogate code points" {
+  ignore(@quickcheck.char_range(' ', (0xD800 : Int).unsafe_to_char()))
+}
+
+///|
+test "zip pairs two generators" {
+  let pairs = @quickcheck.int_range(0, 10)
+    .zip(@quickcheck.char_range('a', 'f'))
+    .samples(count=4)
+  debug_inspect(
+    pairs,
+    content=(
+      #|[(0, 'f'), (2, 'b'), (5, 'b'), (6, 'b')]
+    ),
+  )
+}
+
+///|
+test "zip_with and zip_with3 combine generator outputs" {
+  let sums = @quickcheck.int_range(0, 10)
+    .zip_with(@quickcheck.int_range(0, 10), (a, b) => a + b)
+    .samples(count=6)
+  debug_inspect(
+    sums,
+    content=(
+      #|[9, 7, 8, 7, 10, 15]
+    ),
+  )
+  let dates = @quickcheck.int_range(2000, 2002)
+    .zip_with3(@quickcheck.int_range(1, 13), @quickcheck.int_range(1, 29), (
+      year,
+      month,
+      day,
+    ) => "\{year}-\{month}-\{day}")
+    .samples(count=3)
+  debug_inspect(
+    dates,
+    content=(
+      #|["2000-7-6", "2000-10-4", "2001-5-5"]
+    ),
+  )
+}
