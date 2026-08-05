@@ -194,7 +194,14 @@ pub fn[A : Arbitrary + @shrink.Shrink] report(
   discard_ratio? : UInt = 10,
   seed? : UInt64 = 37,
 ) -> QuickCheckReport[A] {
-  let labels : Map[String, UInt] = Map(classify.map(entry => (entry.0, 0U)))
+  let labels : Map[String, UInt] = Map([])
+  for entry in classify {
+    let (label, _) = entry
+    guard !labels.contains(label) else {
+      abort("report: duplicate classify label `\{label}`")
+    }
+    labels[label] = 0U
+  }
   let state = @splitmix.new(seed~)
   for tests = 0U, discarded = 0U, recent_discards = 0U; tests < count; {
     let size = size_at(tests, count, max_size, recent_discards)

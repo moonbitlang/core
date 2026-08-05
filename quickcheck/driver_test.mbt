@@ -461,3 +461,13 @@ test "classification only counts accepted cases" {
   inspect(tests, content="50")
   debug_inspect(labels.get("even"), content="Some(50)")
 }
+
+///|
+test "panic report rejects duplicate classify labels" {
+  ignore(
+    @quickcheck.report((_ : Int) => true, classify=[
+      ("dup", _ => true),
+      ("dup", _ => false),
+    ]),
+  )
+}
