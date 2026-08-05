@@ -39,7 +39,8 @@ pub impl[T : Show] Show for Reverse[T]
 
 ///|
 pub impl[T : Show] Show for Reverse[T] with fn output(self, logger) {
-  logger <+ $|Reverse(\{self.0})|
+  logger <+
+    $|Reverse(\{self.0})|
 }
 
 ///|
