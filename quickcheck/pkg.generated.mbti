@@ -28,7 +28,7 @@ pub fn[T] one_of(Array[Generator[T]]) -> Generator[T]
 
 pub fn[T] pure(T) -> Generator[T]
 
-pub fn[A : Arbitrary + @shrink.Shrink] report((A) -> Bool raise?, filter? : (A) -> Bool, count? : UInt, max_size? : UInt, max_shrinks? : UInt, discard_ratio? : UInt, seed? : UInt64) -> QuickCheckReport[A]
+pub fn[A : Arbitrary + @shrink.Shrink] report((A) -> Bool raise?, filter? : (A) -> Bool, classify? : Array[(String, (A) -> Bool)], count? : UInt, max_size? : UInt, max_shrinks? : UInt, discard_ratio? : UInt, seed? : UInt64) -> QuickCheckReport[A]
 
 pub fn[X : Arbitrary] samples(Int) -> Array[X]
 
@@ -48,7 +48,12 @@ pub fn[T] Generator::sample(Self[T], size? : Int, seed? : UInt64) -> T
 pub fn[T] Generator::samples(Self[T], count? : Int, size? : Int, seed? : UInt64) -> Array[T]
 pub fn[T] Generator::scale(Self[T], (Int) -> Int) -> Self[T]
 
-type QuickCheckReport[A] derive(@debug.Debug)
+pub enum QuickCheckReport[A] {
+  Passed(tests~ : UInt, labels~ : Map[String, UInt])
+  GaveUp(tests~ : UInt, discarded~ : UInt)
+  Falsified(counterexample~ : A, tests~ : UInt, size~ : Int, shrinks~ : UInt, shrink_attempts~ : UInt)
+  Raised(counterexample~ : A, error~ : Error, tests~ : UInt, size~ : Int, shrinks~ : UInt, shrink_attempts~ : UInt)
+} derive(@debug.Debug)
 
 // Type aliases
 pub using @splitmix {type RandomState}

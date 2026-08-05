@@ -91,7 +91,12 @@ priv suberror QcError {
 ///|
 test "report returns a structured passing report" {
   let report = @quickcheck.report((x : Int) => x == x, count=2, seed=7)
-  debug_inspect(report, content="Passed(tests=2)")
+  debug_inspect(
+    report,
+    content=(
+      #|Passed(tests=2, labels={})
+    ),
+  )
 }
 
 ///|
@@ -421,4 +426,38 @@ test "report accepts InspectError while shrinking Raised" {
       #|)
     ),
   )
+}
+
+///|
+test "report tallies classification labels" {
+  let result = @quickcheck.report(
+    (_ : Int) => true,
+    classify=[
+      ("negative", x => x < 0),
+      ("even", x => x % 2 == 0),
+      ("huge", x => x > 1000000),
+    ],
+    count=100,
+    seed=11,
+  )
+  debug_inspect(
+    result,
+    content=(
+      #|Passed(tests=100, labels={ "negative": 46, "even": 55, "huge": 0 })
+    ),
+  )
+}
+
+///|
+test "classification only counts accepted cases" {
+  let result = @quickcheck.report(
+    (_ : Int) => true,
+    filter=x => x % 2 == 0,
+    classify=[("even", x => x % 2 == 0)],
+    count=50,
+    seed=3,
+  )
+  guard result is Passed(tests~, labels~) else { fail("expected pass") }
+  inspect(tests, content="50")
+  debug_inspect(labels.get("even"), content="Some(50)")
 }

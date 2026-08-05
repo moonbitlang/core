@@ -89,15 +89,41 @@ test "inspect a counterexample" {
 }
 ```
 
-`report` returns an abstract `QuickCheckReport[A]` whose `Debug`
-representation distinguishes `Passed`, `GaveUp`, `Falsified`, and `Raised`.
-Every error from the property is represented by `Raised`; the driver does not
-distinguish errors used by `inspect` or snapshot tests. Calling `report` itself
-does not raise and does not require the input type to implement `Debug`.
+`report` returns a `QuickCheckReport[A]` that can be pattern matched on
+`Passed`, `GaveUp`, `Falsified`, and `Raised` (its `Debug` representation
+shows the same structure). Every error from the property is represented by
+`Raised`; the driver does not distinguish errors used by `inspect` or snapshot
+tests. Calling `report` itself does not raise and does not require the input
+type to implement `Debug`.
 
 Properties should be deterministic and should not mutate or consume their
 input. In particular, an `Iter` is single-use; generate an `Array` and create a
 fresh iterator inside the property when replayable sequence behavior matters.
+
+## Coverage Classification
+
+`report` accepts `classify` labels — `(name, predicate)` pairs tallied over
+every accepted test case — so a test can assert that the generator keeps
+exercising the interesting regions of the input space. Counts come back in
+`Passed(labels~)` in declaration order, including labels that never matched:
+
+```mbt check
+///|
+test "classification labels" {
+  let result = @quickcheck.report(
+    (_ : Int) => true,
+    classify=[("negative", x => x < 0), ("even", x => x % 2 == 0)],
+    seed=11,
+  )
+  guard result is Passed(tests=100, labels~) else { fail("expected pass") }
+  debug_inspect(
+    labels,
+    content=(
+      #|{ "negative": 46, "even": 55 }
+    ),
+  )
+}
+```
 
 ## Basic Usage
 
