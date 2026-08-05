@@ -94,8 +94,16 @@ pub impl Arbitrary for Double with fn arbitrary(_, rs) {
 
 ///|
 pub impl Arbitrary for Char with fn arbitrary(_, rs) {
-  // Choose only ASCII characters
-  ((rs.next_uint() % 128) |> UInt::reinterpret_as_int).unsafe_to_char()
+  // Bias toward ASCII, but regularly produce arbitrary Unicode scalar
+  // values so consumers also see multi-byte and non-BMP characters.
+  if rs.next_uint() % 4 < 3 {
+    (rs.next_uint() % 128).reinterpret_as_int().to_char().unwrap()
+  } else {
+    // Unicode scalar values: [0x0, 0xD7FF] and [0xE000, 0x10FFFF].
+    let index = (rs.next_uint() % (0x110000 - 0x800)).reinterpret_as_int()
+    let code = if index < 0xD800 { index } else { index + 0x800 }
+    code.to_char().unwrap()
+  }
 }
 
 ///|
