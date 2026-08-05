@@ -31,7 +31,7 @@ pub(all) enum FlagAction {
   Count
   Help
   Version
-} derive(Eq, Show, @debug.Debug)
+} derive(Eq, @debug.Debug)
 pub fn FlagAction::equal(Self, Self) -> Bool
 pub fn FlagAction::to_string(Self) -> String
 
@@ -53,7 +53,7 @@ pub struct Matches {
 pub(all) enum OptionAction {
   Set
   Append
-} derive(Eq, Show, @debug.Debug)
+} derive(Eq, @debug.Debug)
 pub fn OptionAction::equal(Self, Self) -> Bool
 pub fn OptionAction::to_string(Self) -> String
 
