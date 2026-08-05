@@ -110,8 +110,29 @@ test "char_range stays within bounds" {
 }
 
 ///|
-test "panic char_range rejects surrogate code points" {
+test "panic char_range rejects surrogate bounds" {
   ignore(@quickcheck.char_range(' ', (0xD800 : Int).unsafe_to_char()))
+}
+
+///|
+test "char_range skips the surrogate block" {
+  let mut below = 0
+  let mut above = 0
+  for value in @quickcheck.char_range('\u{D000}', '\u{E800}').samples(count=64) {
+    let code = value.to_int()
+    guard code >= 0xD000 && code <= 0xE800 else {
+      fail("char_range generated an out-of-range character")
+    }
+    guard !(code >= 0xD800 && code <= 0xDFFF) else {
+      fail("char_range generated a surrogate code point")
+    }
+    if code < 0xD800 {
+      below += 1
+    } else {
+      above += 1
+    }
+  }
+  assert_true(below > 0 && above > 0)
 }
 
 ///|

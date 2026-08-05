@@ -157,17 +157,27 @@ pub fn int_range(lower : Int, upper : Int) -> Generator[Int] {
 ///|
 /// Generates a character in the inclusive range `[lower, upper]`.
 ///
-/// The bounds must form a non-empty range of Unicode scalar values: this
-/// function aborts if `lower` exceeds `upper` or if the range contains
-/// surrogate code points, so every generated code point is a valid `Char`.
+/// A range spanning the surrogate block skips it, so every generated code
+/// point is a valid Unicode scalar value. The bounds themselves must be
+/// valid scalar values (aborts on a surrogate or out-of-range bound, which
+/// can only be produced with `unsafe_to_char`) and must form a non-empty
+/// range.
 pub fn char_range(lower : Char, upper : Char) -> Generator[Char] {
-  guard lower <= upper else {
-    abort("char_range: lower bound exceeds upper bound")
+  let lo = lower.to_int()
+  let hi = upper.to_int()
+  fn is_surrogate(code : Int) -> Bool {
+    code >= 0xD800 && code <= 0xDFFF
   }
-  guard upper.to_int() < 0xD800 || lower.to_int() > 0xDFFF else {
-    abort("char_range: range contains surrogate code points")
+
+  guard lo <= hi else { abort("char_range: lower bound exceeds upper bound") }
+  guard lo >= 0 && hi <= 0x10FFFF && !is_surrogate(lo) && !is_surrogate(hi) else {
+    abort("char_range: bounds must be Unicode scalar values")
   }
-  int_range(lower.to_int(), upper.to_int() + 1).map(code => {
+  // When the range spans the surrogate block, draw from a contiguous index
+  // space of the valid scalars and shift past the block.
+  let gap = if lo < 0xD800 && hi > 0xDFFF { 0x800 } else { 0 }
+  int_range(lo, hi + 1 - gap).map(code => {
+    let code = if code >= 0xD800 { code + gap } else { code }
     code.to_char().unwrap()
   })
 }
