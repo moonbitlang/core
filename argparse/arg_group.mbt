@@ -14,13 +14,13 @@
 
 ///|
 /// Declarative argument group constructor.
-pub struct ArgGroup {
-  priv name : String
-  priv required : Bool
-  priv multiple : Bool
-  priv args : Array[String]
-  priv requires : Array[String]
-  priv conflicts_with : Array[String]
+struct ArgGroup {
+  name : String
+  required : Bool
+  multiple : Bool
+  args : Array[String]
+  requires : Array[String]
+  conflicts_with : Array[String]
 } derive(@debug.Debug)
 
 ///|
