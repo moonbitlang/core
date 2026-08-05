@@ -21,12 +21,12 @@ let obs_sample : ObservationSummary = {
 ///|
 test "passed report aligns observation statistics" {
   inspect(
-    obs_sample.report(100U),
+    obs_sample.report(105U),
     content=(
       #|
       #|observations:
       #|  labels:
-      #|    100  100%  common
+      #|    100   95%  common
       #|      5    5%  rare
       #|  classes:
       #|     10   10%  edge
@@ -38,7 +38,7 @@ test "passed report aligns observation statistics" {
 test "failure report includes aggregate statistics" {
   let report : QuickCheckReport[Int] = Falsified(
     counterexample=3,
-    tests=101U,
+    tests=106U,
     size=10,
     shrinks=1U,
     shrink_attempts=2U,
@@ -47,13 +47,13 @@ test "failure report includes aggregate statistics" {
   inspect(
     failure_report(report),
     content=(
-      #|QuickCheck falsified after 101 test(s)
+      #|QuickCheck falsified after 106 test(s)
       #|counterexample: 3
       #|size: 10
       #|shrinks: 1 successful, 2 attempted
       #|observations:
       #|  labels:
-      #|    100  100%  common
+      #|    100   95%  common
       #|      5    5%  rare
       #|  classes:
       #|     10   10%  edge
