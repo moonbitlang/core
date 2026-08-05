@@ -19,12 +19,15 @@ fn[T] set_null(buffer : UninitializedArray[T], index : Int) = "%fixedarray.set_n
 /// The deque representation invariant guarantees these indices are in bounds.
 /// Keep these private so callers cannot bypass bounds checks.
 #inline
-fn[T] unsafe_buffer_get(buffer : UninitializedArray[T], index : Int) -> T = "%fixedarray.unsafe_get"
+fn[T] UninitializedArray::unsafe_get(
+  self : UninitializedArray[T],
+  index : Int,
+) -> T = "%fixedarray.unsafe_get"
 
 ///|
 #inline
-fn[T] unsafe_buffer_set(
-  buffer : UninitializedArray[T],
+fn[T] UninitializedArray::unsafe_set(
+  self : UninitializedArray[T],
   index : Int,
   value : T,
 ) -> Unit = "%fixedarray.unsafe_set"
@@ -345,13 +348,13 @@ pub fn[A] Deque::blit_to(
     for i in len>..0 {
       let dst_idx = wrap_index(dst.head, dst_offset + i, dst.buf.length())
       let src_idx = wrap_index(self.head, src_offset + i, self.buf.length())
-      unsafe_buffer_set(dst.buf, dst_idx, unsafe_buffer_get(self.buf, src_idx))
+      dst.buf.unsafe_set(dst_idx, self.buf.unsafe_get(src_idx))
     }
   } else {
     for i in 0..<len {
       let dst_idx = wrap_index(dst.head, dst_offset + i, dst.buf.length())
       let src_idx = wrap_index(self.head, src_offset + i, self.buf.length())
-      unsafe_buffer_set(dst.buf, dst_idx, unsafe_buffer_get(self.buf, src_idx))
+      dst.buf.unsafe_set(dst_idx, self.buf.unsafe_get(src_idx))
       if dst_offset + i >= dst_len {
         dst.len += 1
       }
@@ -418,11 +421,7 @@ pub fn[A] Deque::append(self : Deque[A], other : Deque[A]) -> Unit {
   for i in 0..<other_len {
     let read_idx = wrap_index(other_head, i, other_buf_len)
     let write_idx = wrap_index(self.head, self.len, cap)
-    unsafe_buffer_set(
-      self.buf,
-      write_idx,
-      unsafe_buffer_get(other_buf, read_idx),
-    )
+    self.buf.unsafe_set(write_idx, other_buf.unsafe_get(read_idx))
     self.len += 1
   }
 }
@@ -487,7 +486,7 @@ pub fn[A] Deque::insert(self : Deque[A], index : Int, value : A) -> Unit {
     for i in 0..<index {
       let to = wrap_index(new_head, i, cap)
       let from = wrap_index(self.head, i, cap)
-      unsafe_buffer_set(self.buf, to, unsafe_buffer_get(self.buf, from))
+      self.buf.unsafe_set(to, self.buf.unsafe_get(from))
     }
     self.head = new_head
   } else {
@@ -495,10 +494,10 @@ pub fn[A] Deque::insert(self : Deque[A], index : Int, value : A) -> Unit {
     for i = self.len; i > index; i = i - 1 {
       let from = wrap_index(self.head, i - 1, cap)
       let to = wrap_index(self.head, i, cap)
-      unsafe_buffer_set(self.buf, to, unsafe_buffer_get(self.buf, from))
+      self.buf.unsafe_set(to, self.buf.unsafe_get(from))
     }
   }
-  unsafe_buffer_set(self.buf, wrap_index(self.head, index, cap), value)
+  self.buf.unsafe_set(wrap_index(self.head, index, cap), value)
   self.len += 1
 }
 
@@ -563,7 +562,7 @@ pub fn[A] Deque::remove(self : Deque[A], index : Int) -> A {
     for i in index>..0 {
       let to = wrap_index(self.head, i + 1, cap)
       let from = wrap_index(self.head, i, cap)
-      unsafe_buffer_set(self.buf, to, unsafe_buffer_get(self.buf, from))
+      self.buf.unsafe_set(to, self.buf.unsafe_get(from))
     }
     set_null(self.buf, self.head)
     self.head = new_head
@@ -573,7 +572,7 @@ pub fn[A] Deque::remove(self : Deque[A], index : Int) -> A {
     for i in (index + 1)..<self.len {
       let to = wrap_index(self.head, i - 1, cap)
       let from = wrap_index(self.head, i, cap)
-      unsafe_buffer_set(self.buf, to, unsafe_buffer_get(self.buf, from))
+      self.buf.unsafe_set(to, self.buf.unsafe_get(from))
     }
     set_null(self.buf, tail_idx)
   }
@@ -657,7 +656,7 @@ pub fn[A] Deque::front(self : Deque[A]) -> A? {
   if self.len == 0 {
     None
   } else {
-    Some(unsafe_buffer_get(self.buf, self.head))
+    Some(self.buf.unsafe_get(self.head))
   }
 }
 
@@ -675,7 +674,7 @@ pub fn[A] Deque::back(self : Deque[A]) -> A? {
   if self.len == 0 {
     None
   } else {
-    Some(unsafe_buffer_get(self.buf, self.tail_index()))
+    Some(self.buf.unsafe_get(self.tail_index()))
   }
 }
 
@@ -698,7 +697,7 @@ pub fn[A] Deque::push_front(self : Deque[A], value : A) -> Unit {
   }
   let cap = self.buf.length()
   self.head = decrement_index(self.head, cap)
-  unsafe_buffer_set(self.buf, self.head, value)
+  self.buf.unsafe_set(self.head, value)
   self.len += 1
 }
 
@@ -721,7 +720,7 @@ pub fn[A] Deque::push_back(self : Deque[A], value : A) -> Unit {
   }
   let cap = self.buf.length()
   let write_idx = wrap_index(self.head, self.len, cap)
-  unsafe_buffer_set(self.buf, write_idx, value)
+  self.buf.unsafe_set(write_idx, value)
   self.len += 1
 }
 
@@ -832,7 +831,7 @@ pub fn[A] Deque::unsafe_pop_back(self : Deque[A]) -> Unit {
 /// ```
 pub fn[A] Deque::pop_front(self : Deque[A]) -> A? {
   guard self.len > 0 else { return None }
-  let value = unsafe_buffer_get(self.buf, self.head)
+  let value = self.buf.unsafe_get(self.head)
   set_null(self.buf, self.head)
   let cap = self.buf.length()
   self.head = wrap_index(self.head, 1, cap)
@@ -853,7 +852,7 @@ pub fn[A] Deque::pop_front(self : Deque[A]) -> A? {
 pub fn[A] Deque::pop_back(self : Deque[A]) -> A? {
   guard self.len > 0 else { return None }
   let tail_idx = self.tail_index()
-  let value = unsafe_buffer_get(self.buf, tail_idx)
+  let value = self.buf.unsafe_get(tail_idx)
   set_null(self.buf, tail_idx)
   self.len -= 1
   Some(value)
@@ -877,7 +876,7 @@ pub fn[A] Deque::at(self : Deque[A], index : Int) -> A {
     index_out_of_bounds(self.len, index)
   }
   let physical_index = wrap_index(self.head, index, self.buf.length())
-  unsafe_buffer_get(self.buf, physical_index)
+  self.buf.unsafe_get(physical_index)
 }
 
 ///|
@@ -899,7 +898,7 @@ pub fn[A] Deque::set(self : Deque[A], index : Int, value : A) -> Unit {
     index_out_of_bounds(self.len, index)
   }
   let physical_index = wrap_index(self.head, index, self.buf.length())
-  unsafe_buffer_set(self.buf, physical_index, value)
+  self.buf.unsafe_set(physical_index, value)
 }
 
 ///|
@@ -2368,7 +2367,7 @@ pub fn[A] Deque::binary_search_by(
 pub fn[A] Deque::get(self : Deque[A], index : Int) -> A? {
   if index >= 0 && index < self.len {
     let physical_index = wrap_index(self.head, index, self.buf.length())
-    Some(unsafe_buffer_get(self.buf, physical_index))
+    Some(self.buf.unsafe_get(physical_index))
   } else {
     None
   }
@@ -2490,9 +2489,9 @@ pub fn[A] Deque::rev_in_place(self : Deque[A]) -> Unit {
   guard self.len > 0 else { return }
   let cap = self.buf.length()
   for _ in 0..<(self.len / 2); left = self.head, right = self.tail_index() {
-    let temp = unsafe_buffer_get(self.buf, left)
-    unsafe_buffer_set(self.buf, left, unsafe_buffer_get(self.buf, right))
-    unsafe_buffer_set(self.buf, right, temp)
+    let temp = self.buf.unsafe_get(left)
+    self.buf.unsafe_set(left, self.buf.unsafe_get(right))
+    self.buf.unsafe_set(right, temp)
     let left = wrap_index(left, 1, cap)
     let right = decrement_index(right, cap)
     continue left, right
@@ -2534,7 +2533,7 @@ pub fn[A] Deque::rev(self : Deque[A]) -> Deque[A] {
   // Copy elements in reverse order
   for i in 0..<len {
     let src_idx = wrap_index(self.head, len - i - 1, self.buf.length())
-    unsafe_buffer_set(new_buf, i, unsafe_buffer_get(self.buf, src_idx))
+    new_buf.unsafe_set(i, self.buf.unsafe_get(src_idx))
   }
   // Create new deque with reversed elements
   { buf: new_buf, len, head: 0 }
