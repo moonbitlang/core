@@ -31,7 +31,6 @@
 ///   @debug.debug_inspect(a, content="Reverse(1)") // Shows wrapped value
 /// }
 /// ```
-#warnings("-deprecated_syntax")
 pub(all) struct Reverse[T](T) derive(Eq, Hash, @debug.Debug)
 
 ///|
@@ -40,9 +39,8 @@ pub impl[T : Show] Show for Reverse[T]
 
 ///|
 pub impl[T : Show] Show for Reverse[T] with fn output(self, logger) {
-  logger.write_string("Reverse(")
-  Show::output(self.0, logger)
-  logger.write_string(")")
+  logger <+
+    $|Reverse(\{self.0})|
 }
 
 ///|

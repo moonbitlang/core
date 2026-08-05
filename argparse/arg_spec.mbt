@@ -18,25 +18,23 @@
 /// - `SetTrue` / `SetFalse` set a boolean value.
 /// - `Count` increments `Matches.flag_counts`.
 /// - `Help` / `Version` display output and exit successfully when triggered.
-#warnings("-deprecated_syntax")
 pub(all) enum FlagAction {
   SetTrue
   SetFalse
   Count
   Help
   Version
-} derive(Eq, Show, @debug.Debug)
+} derive(Eq, @debug.Debug)
 
 ///|
 /// Behavior for option args.
 ///
 /// - `Set` keeps the last provided value.
 /// - `Append` keeps all provided values in order.
-#warnings("-deprecated_syntax")
 pub(all) enum OptionAction {
   Set
   Append
-} derive(Eq, Show, @debug.Debug)
+} derive(Eq, @debug.Debug)
 
 ///|
 /// Unified argument model used by the parser internals.
@@ -254,4 +252,23 @@ fn range_allows_multiple(range : ValueRange?) -> Bool {
     Some(upper) => upper > 1
     None => true
   })
+}
+
+///|
+impl Show for FlagAction with fn to_string(self) {
+  match self {
+    SetTrue => "SetTrue"
+    SetFalse => "SetFalse"
+    Count => "Count"
+    Help => "Help"
+    Version => "Version"
+  }
+}
+
+///|
+impl Show for OptionAction with fn to_string(self) {
+  match self {
+    Set => "Set"
+    Append => "Append"
+  }
 }

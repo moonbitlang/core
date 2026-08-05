@@ -16,83 +16,31 @@
 /// Returns the offset (charcode index) of the first occurrence of the given
 /// substring. If the substring is not found, it returns None.
 pub fn StringView::find(self : StringView, str : StringView) -> Int? {
-  if str.length() <= 4 {
-    brute_force_find(self, str)
-  } else {
-    boyer_moore_horspool_find(self, str)
+  let pattern_len = str.length()
+  match pattern_len {
+    0 => Some(0)
+    1 => {
+      let found = find_code_unit_from_view(
+        self,
+        0,
+        self.length(),
+        str.unsafe_get(0),
+      )
+      if found < 0 {
+        None
+      } else {
+        Some(found)
+      }
+    }
+    _ =>
+      if pattern_len > self.length() {
+        None
+      } else {
+        find_by_two_anchors(self, str)
+      }
   }
   // TODO: When the pattern string is long (>= 256),
   // consider using Two-Way algorithm to ensure linear time complexity.
-}
-
-///|
-/// Simple brute force string search algorithm
-/// Scans the haystack left to right, matching the needle at each position
-fn brute_force_find(haystack : StringView, needle : StringView) -> Int? {
-  let haystack_len = haystack.length()
-  let needle_len = needle.length()
-  guard needle_len > 0 else { return Some(0) }
-  guard haystack_len >= needle_len else { return None }
-  let needle_first = needle.unsafe_get(0)
-  let forward_len = haystack_len - needle_len
-  for i in 0..<=forward_len {
-    if haystack.unsafe_get(i) != needle_first {
-      continue
-    }
-    // Check remaining charcodes for full match
-    for j in 1..<needle_len {
-      if haystack.unsafe_get(i + j) != needle.unsafe_get(j) {
-        break
-      }
-    } nobreak {
-      return Some(i)
-    }
-  }
-  None
-}
-
-///|
-/// Boyer-Moore-Horspool algorithm for string search (left to right)
-/// More efficient than brute force for longer patterns by using bad char heuristic
-fn boyer_moore_horspool_find(
-  haystack : StringView,
-  needle : StringView,
-) -> Int? {
-  let haystack_len = haystack.length()
-  let needle_len = needle.length()
-  guard needle_len > 0 else { return Some(0) }
-  guard haystack_len >= needle_len else { return None }
-  // Build skip table
-  let skip_table = FixedArray::make(1 << 8, needle_len)
-  for i in 0..<(needle_len - 1) {
-    skip_table[needle.unsafe_get(i).to_int() & 0xFF] = needle_len - 1 - i
-  }
-  for i = 0
-      i <= haystack_len - needle_len
-      i = i +
-        skip_table[haystack.unsafe_get(i + needle_len - 1).to_int() & 0xFF] {
-    // Check all charcodes for match at current position
-    for j in 0..<=(needle_len - 1) {
-      if haystack.unsafe_get(i + j) != needle.unsafe_get(j) {
-        break
-      }
-    } nobreak {
-      return Some(i)
-    }
-  }
-  None
-}
-
-///|
-test "boyer_moore_horspool_find edge cases" {
-  assert_true(boyer_moore_horspool_find("abc", "") == Some(0))
-  assert_true(boyer_moore_horspool_find("ab", "abcd") == None)
-}
-
-///|
-test "boyer_moore_horspool_rev_find edge cases" {
-  assert_true(boyer_moore_horspool_rev_find("abc", "") == Some(3))
-  assert_true(boyer_moore_horspool_rev_find("ab", "abcd") == None)
 }
 
 ///|
@@ -163,68 +111,31 @@ test "find_by" {
 /// Returns the offset of the last occurrence of the given substring. If the
 /// substring is not found, it returns None.
 pub fn StringView::rev_find(self : StringView, str : StringView) -> Int? {
-  if str.length() <= 4 {
-    brute_force_rev_find(self, str)
-  } else {
-    boyer_moore_horspool_rev_find(self, str)
+  let pattern_len = str.length()
+  match pattern_len {
+    0 => Some(self.length())
+    1 => {
+      let found = rev_find_code_unit_from_view(
+        self,
+        0,
+        self.length(),
+        str.unsafe_get(0),
+      )
+      if found < 0 {
+        None
+      } else {
+        Some(found)
+      }
+    }
+    _ =>
+      if pattern_len > self.length() {
+        None
+      } else {
+        rev_find_by_two_anchors(self, str)
+      }
   }
   // TODO: When the pattern string is long (>= 256),
   // consider using Two-Way algorithm to ensure linear time complexity.
-}
-
-///|
-/// Simple brute force string search algorithm
-/// Scans the haystack right to left, matching the needle at each position
-fn brute_force_rev_find(haystack : StringView, needle : StringView) -> Int? {
-  let haystack_len = haystack.length()
-  let needle_len = needle.length()
-  guard needle_len > 0 else { return Some(haystack_len) }
-  guard haystack_len >= needle_len else { return None }
-  let needle_first = needle.unsafe_get(0)
-  for i in (haystack_len - needle_len)>=..0 {
-    if haystack.unsafe_get(i) != needle_first {
-      continue
-    }
-    // Check remaining charcodes for full match
-    for j in 1..<needle_len {
-      if haystack.unsafe_get(i + j) != needle.unsafe_get(j) {
-        break
-      }
-    } nobreak {
-      return Some(i)
-    }
-  }
-  None
-}
-
-///|
-/// Boyer-Moore-Horspool algorithm for reverse string search (right to left)
-/// More efficient than brute force for longer patterns by using bad char heuristic
-fn boyer_moore_horspool_rev_find(
-  haystack : StringView,
-  needle : StringView,
-) -> Int? {
-  let haystack_len = haystack.length()
-  let needle_len = needle.length()
-  guard needle_len > 0 else { return Some(haystack_len) }
-  guard haystack_len >= needle_len else { return None }
-  let skip_table = FixedArray::make(1 << 8, needle_len)
-  for i in needle_len>..1 {
-    skip_table[needle.unsafe_get(i).to_int() & 0xFF] = i
-  }
-  for i = haystack_len - needle_len
-      i >= 0
-      i = i - skip_table[haystack.unsafe_get(i).to_int() & 0xFF] {
-    // Check all charcodes for match at current position
-    for j in 0..<needle_len {
-      if haystack.unsafe_get(i + j) != needle.unsafe_get(j) {
-        break
-      }
-    } nobreak {
-      return Some(i)
-    }
-  }
-  None
 }
 
 ///|
@@ -545,12 +456,60 @@ test "View::to_array" {
 /// This searches raw UTF-16 code units and does not combine surrogate pairs.
 /// Use `contains_char` when searching for a Unicode character.
 pub fn StringView::contains_code_unit(self : StringView, code : UInt16) -> Bool {
-  for i in 0..<self.length() {
-    if self.unsafe_get(i) == code {
+  string_contains_code_unit(self.str(), self.start(), self.end(), code)
+}
+
+///|
+// The caller must ensure `0 <= start <= end <= str.length()`.
+#inline
+fn string_contains_code_unit_scalar(
+  str : String,
+  start : Int,
+  end : Int,
+  code : UInt16,
+) -> Bool {
+  for i in start..<end {
+    if str.unsafe_get(i) == code {
       return true
     }
   }
   false
+}
+
+///|
+#cfg(not(any(target="native", target="wasm")))
+fn string_contains_code_unit(
+  str : String,
+  start : Int,
+  end : Int,
+  code : UInt16,
+) -> Bool {
+  string_contains_code_unit_scalar(str, start, end, code)
+}
+
+///|
+// Scan eight UTF-16 code units at a time on linear-memory backends, then scan
+// the remaining tail one code unit at a time.
+#cfg(any(target="native", target="wasm"))
+fn string_contains_code_unit(
+  str : String,
+  start : Int,
+  end : Int,
+  code : UInt16,
+) -> Bool {
+  guard start + 8 <= end else {
+    return string_contains_code_unit_scalar(str, start, end, code)
+  }
+  let needle = i16x8_splat(code)
+  let tail_start = for pos = start; pos + 8 <= end; {
+    if v128_any_true(i16x8_eq(v128_load_i16x8(str, pos), needle)) {
+      return true
+    }
+    continue pos + 8
+  } nobreak {
+    pos
+  }
+  string_contains_code_unit_scalar(str, tail_start, end, code)
 }
 
 ///|
@@ -575,7 +534,7 @@ pub fn String::contains(self : String, str : StringView) -> Bool {
 /// This searches raw UTF-16 code units and does not combine surrogate pairs.
 /// Use `contains_char` when searching for a Unicode character.
 pub fn String::contains_code_unit(self : String, code : UInt16) -> Bool {
-  self[:].contains_code_unit(code)
+  string_contains_code_unit(self, 0, self.length(), code)
 }
 
 ///|
@@ -628,6 +587,25 @@ test "contains_code_unit" {
   inspect("😀".contains_code_unit(0xDE00), content="true")
   let leading_surrogate = String::from_array([(0xD800).unsafe_to_char()])
   inspect(leading_surrogate.contains_code_unit(0xD800), content="true")
+}
+
+///|
+test "contains_code_unit SIMD blocks and view bounds" {
+  let str = "01234567abcdefghZ"
+  inspect(str.contains_code_unit(('0' : UInt16)), content="true")
+  inspect(str.contains_code_unit(('7' : UInt16)), content="true")
+  inspect(str.contains_code_unit(('a' : UInt16)), content="true")
+  inspect(str.contains_code_unit(('h' : UInt16)), content="true")
+  inspect(str.contains_code_unit(('Z' : UInt16)), content="true")
+  inspect(str.contains_code_unit(('x' : UInt16)), content="false")
+  let view = ("x" + str + "y")[1:18]
+  inspect(view.contains_code_unit(('x' : UInt16)), content="false")
+  inspect(view.contains_code_unit(('a' : UInt16)), content="true")
+  inspect(view.contains_code_unit(('Z' : UInt16)), content="true")
+  inspect(view.contains_code_unit(('y' : UInt16)), content="false")
+  let wide = "01234567abcd😀efgh"
+  inspect(wide.contains_code_unit(0xD83D), content="true")
+  inspect(wide.contains_code_unit(0xDE00), content="true")
 }
 
 ///|

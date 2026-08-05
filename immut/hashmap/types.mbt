@@ -14,6 +14,7 @@
 
 ///|
 /// An non-empty immutable hash set data structure
+#unsafe_cycle_free
 priv enum Node[K, V] {
   Flat(K, V, @path.Path)
   Leaf(K, V, @list.List[(K, V)]) // use a list of buckets to resolve collision

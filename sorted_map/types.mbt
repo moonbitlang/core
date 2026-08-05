@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+#unsafe_cycle_free
 priv struct Node[K, V] {
   mut key : K
   mut value : V

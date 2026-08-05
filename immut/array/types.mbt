@@ -26,6 +26,7 @@ struct T[A] {
 ///|
 /// Invariants:
 /// - For `Node`, the sizes array is `None` if the tree is full, i.e., we can use radix indexing.
+#unsafe_cycle_free
 priv enum Tree[A] {
   Empty
   Node(FixedArray[Tree[A]], FixedArray[Int]?) // (Subtrees, Sizes of subtrees)
