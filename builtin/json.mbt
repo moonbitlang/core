@@ -96,6 +96,7 @@ pub fn Json::empty_object() -> Json {
 ///   )
 /// }
 /// ```
+#owned(repr)
 pub fn Json::number(number : Double, repr? : String) -> Json {
   return Number(number, repr~)
 }
@@ -116,6 +117,7 @@ pub fn Json::number(number : Double, repr? : String) -> Json {
 ///   @debug.debug_inspect(Json::string("hello"), content="String(\"hello\")")
 /// }
 /// ```
+#owned(string)
 pub fn Json::string(string : String) -> Json {
   return String(string)
 }
@@ -165,6 +167,7 @@ pub fn Json::boolean(boolean : Bool) -> Json {
 ///   )
 /// }
 /// ```
+#owned(array)
 pub fn Json::array(array : Array[Json]) -> Json {
   return Array(array)
 }
@@ -190,6 +193,7 @@ pub fn Json::array(array : Array[Json]) -> Json {
 ///   )
 /// }
 /// ```
+#owned(object)
 pub fn Json::object(object : Map[String, Json]) -> Json {
   return Object(object)
 }
