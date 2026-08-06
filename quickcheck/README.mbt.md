@@ -167,7 +167,7 @@ test "multiple samples" {
   debug_inspect(
     strings[5:10],
     content=(
-      #|<ArrayView: ["E\b\u{0f} ", "", "K\u{1f}[", "!@", "xvLxb"]>
+      #|<ArrayView: ["(K񁁛!", "", "vx2\b", "", "𶏱Hp9\u{18}Rx"]>
     ),
   )
 }
@@ -185,7 +185,7 @@ test "builtin types" {
   debug_inspect(
     v,
     content=(
-      #|(false, '\u{02}', 0x4d)
+      #|(false, '~', 0x4d)
     ),
   )
   // Numeric types

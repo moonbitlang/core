@@ -13,6 +13,8 @@ import {
 }
 
 // Values
+pub fn char_range(Char, Char) -> Generator[Char]
+
 #callsite(autofill(loc))
 pub fn[A : Arbitrary + @shrink.Shrink + @debug.Debug] check((A) -> Bool raise?, filter? : (A) -> Bool, observe? : (A) -> Array[Observation], count? : UInt, max_size? : UInt, max_shrinks? : UInt, discard_ratio? : UInt, seed? : UInt64, loc~ : SourceLoc) -> Unit raise
 
@@ -53,6 +55,9 @@ pub fn[T] Generator::run(Self[T], Int, @splitmix.RandomState) -> T
 pub fn[T] Generator::sample(Self[T], size? : Int, seed? : UInt64) -> T
 pub fn[T] Generator::samples(Self[T], count? : Int, size? : Int, seed? : UInt64) -> Array[T]
 pub fn[T] Generator::scale(Self[T], (Int) -> Int) -> Self[T]
+pub fn[T, U] Generator::zip(Self[T], Self[U]) -> Self[(T, U)]
+pub fn[T, U, V] Generator::zip_with(Self[T], Self[U], (T, U) -> V) -> Self[V]
+pub fn[T, U, V, W] Generator::zip_with3(Self[T], Self[U], Self[V], (T, U, V) -> W) -> Self[W]
 
 type Observation derive(@debug.Debug)
 pub fn Observation::to_string(Self) -> String
