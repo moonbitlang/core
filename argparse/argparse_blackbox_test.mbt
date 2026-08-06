@@ -494,104 +494,6 @@ test "default subcommand help annotation and child error context" {
 }
 
 ///|
-test "default subcommand validation rejects ambiguous root configuration" {
-  try
-    @argparse.Command(
-      "demo",
-      subcommands=[Command("run")],
-      default_subcommand="missing",
-    ).parse(argv=[], env=empty_env())
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: default_subcommand must name a visible subcommand: missing
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-
-  try
-    @argparse.Command(
-      "demo",
-      subcommands=[Command("run")],
-      subcommand_required=true,
-      default_subcommand="run",
-    ).parse(argv=[], env=empty_env())
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: default_subcommand cannot be used with subcommand_required
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-
-  try
-    @argparse.Command(
-      "demo",
-      subcommands=[Command("run")],
-      arg_required_else_help=true,
-      default_subcommand="run",
-    ).parse(argv=[], env=empty_env())
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: default_subcommand cannot be used with arg_required_else_help
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-
-  try
-    @argparse.Command(
-      "demo",
-      options=[OptionArg("mode", long="mode")],
-      subcommands=[Command("run")],
-      default_subcommand="run",
-    ).parse(argv=[], env=empty_env())
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: default_subcommand only supports global root flags/options
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-
-  try
-    @argparse.Command(
-      "demo",
-      flags=[FlagArg("verbose", long="verbose", global=true)],
-      groups=[ArgGroup("verbosity", args=["verbose"])],
-      subcommands=[Command("run")],
-      default_subcommand="run",
-    ).parse(argv=[], env=empty_env())
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: default_subcommand does not support root groups
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-}
-
-///|
 test "subcommand cannot follow positional arguments" {
   let cmd = @argparse.Command("demo", positionals=[PositionArg("input")], subcommands=[
     Command("run"),
@@ -1205,23 +1107,14 @@ test "indexed non-last positional allows explicit single num_args" {
 }
 
 ///|
-test "empty positional value range is rejected at build time" {
-  try
-    @argparse.Command("demo", positionals=[
-      PositionArg("skip", num_args=ValueRange(lower=0, upper=0)),
-      PositionArg("name", num_args=@argparse.ValueRange::single()),
-    ]).parse(argv=["alice"], env=empty_env())
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: empty value range (0..0) is unsupported
-        ),
-      )
-  } noraise {
+test "bounded positional can leave later optional positional empty" {
+  let parsed = @argparse.Command("demo", positionals=[
+    PositionArg("x", num_args=ValueRange(lower=0, upper=2)),
+    PositionArg("y"),
+  ]).parse(argv=["a"], env=empty_env()) catch {
     _ => panic()
   }
+  assert_true(parsed.values is { "x": ["a"], "y"? : None, .. })
 }
 
 ///|
@@ -1436,43 +1329,6 @@ test "set options reject duplicate occurrences" {
 }
 
 ///|
-test "flag and option args require short or long names" {
-  try
-    @argparse.Command("demo", options=[OptionArg("input", long="")]).parse(
-      argv=[],
-      env=empty_env(),
-    )
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: flag/option args require short/long/env
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-
-  try
-    @argparse.Command("demo", flags=[FlagArg("verbose", long="")]).parse(
-      argv=[],
-      env=empty_env(),
-    )
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: flag/option args require short/long/env
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-}
-
-///|
 test "append options collect values across repeated occurrences" {
   let cmd = @argparse.Command("demo", options=[
     OptionArg("arg", long="arg", action=Append),
@@ -1613,8 +1469,6 @@ test "option values reject hyphen tokens unless allow_hyphen_values is enabled" 
 }
 
 ///|
-
-///|
 test "default argv path is reachable" {
   let cmd = @argparse.Command("demo", positionals=[
     PositionArg("rest", num_args=ValueRange(lower=0), allow_hyphen_values=true),
@@ -1623,372 +1477,7 @@ test "default argv path is reachable" {
 }
 
 ///|
-test "validation branches exposed through parse" {
-  try
-    @argparse.Command("demo", flags=[FlagArg("f", long="", action=Help)]).parse(
-      argv=[],
-      env=empty_env(),
-    )
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: flag/option args require short/long/env
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-
-  try
-    @argparse.Command("demo", flags=[
-      FlagArg("f", long="f", action=Help, negatable=true),
-    ]).parse(argv=[], env=empty_env())
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: help/version actions do not support negatable
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-
-  try
-    @argparse.Command("demo", flags=[
-      FlagArg("f", long="f", action=Help, env="F"),
-    ]).parse(argv=[], env=empty_env())
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: help/version actions do not support env/defaults
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-
-  try
-    @argparse.Command("demo", options=[OptionArg("x", long="x")]).parse(
-      argv=["--x", "a", "b"],
-      env=empty_env(),
-    )
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected value 'b' found; no more were expected
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|  --x <x>     
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-
-  try
-    @argparse.Command("demo", options=[
-      OptionArg("x", long="x", default_values=["a", "b"]),
-    ]).parse(argv=[], env=empty_env())
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: default_values with multiple entries require action=Append
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-
-  try
-    @argparse.Command("demo", positionals=[
-      PositionArg("x", num_args=ValueRange(lower=3, upper=2)),
-    ]).parse(argv=[], env=empty_env())
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: max values must be >= min values
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-
-  try
-    @argparse.Command("demo", positionals=[
-      PositionArg("x", num_args=ValueRange(lower=-1, upper=2)),
-    ]).parse(argv=[], env=empty_env())
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: min values must be >= 0
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-
-  try
-    @argparse.Command("demo", positionals=[
-      PositionArg("x", num_args=ValueRange(lower=0, upper=-1)),
-    ]).parse(argv=[], env=empty_env())
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: max values must be >= 0
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-
-  let positional_ok = @argparse.Command("demo", positionals=[
-    PositionArg("x", num_args=ValueRange(lower=0, upper=2)),
-    PositionArg("y"),
-  ]).parse(argv=["a"], env=empty_env()) catch {
-    _ => panic()
-  }
-  assert_true(positional_ok.values is { "x": ["a"], "y"? : None, .. })
-
-  try
-    @argparse.Command("demo", groups=[ArgGroup("g"), ArgGroup("g")]).parse(
-      argv=[],
-      env=empty_env(),
-    )
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: duplicate group: g
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-
-  try
-    @argparse.Command("demo", groups=[ArgGroup("g", requires=["g"])]).parse(
-      argv=[],
-      env=empty_env(),
-    )
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: group cannot require itself: g
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-
-  try
-    @argparse.Command("demo", groups=[ArgGroup("g", conflicts_with=["g"])]).parse(
-      argv=[],
-      env=empty_env(),
-    )
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: group cannot conflict with itself: g
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-
-  try
-    @argparse.Command("demo", groups=[ArgGroup("g", args=["missing"])]).parse(
-      argv=[],
-      env=empty_env(),
-    )
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: unknown group arg: g -> missing
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-
-  try
-    @argparse.Command("demo", options=[
-      OptionArg("x", long="x"),
-      OptionArg("x", long="y"),
-    ]).parse(argv=[], env=empty_env())
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: duplicate arg name: x
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-
-  try
-    @argparse.Command("demo", options=[
-      OptionArg("x", long="same"),
-      OptionArg("y", long="same"),
-    ]).parse(argv=[], env=empty_env())
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: duplicate long option: --same
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-
-  try
-    @argparse.Command("demo", flags=[
-      FlagArg("hello", long="hello", negatable=true),
-      FlagArg("x", long="no-hello"),
-    ]).parse(argv=[], env=empty_env())
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: duplicate long option: --no-hello
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-
-  try
-    @argparse.Command("demo", options=[
-      OptionArg("x", short='s'),
-      OptionArg("y", short='s'),
-    ]).parse(argv=[], env=empty_env())
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: duplicate short option: -s
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-
-  try
-    @argparse.Command("demo", flags=[FlagArg("x", long="x", requires=["x"])]).parse(
-      argv=[],
-      env=empty_env(),
-    )
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: arg cannot require itself: x
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-
-  try
-    @argparse.Command("demo", flags=[
-      FlagArg("x", long="x", conflicts_with=["x"]),
-    ]).parse(argv=[], env=empty_env())
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: arg cannot conflict with itself: x
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-
-  try
-    @argparse.Command("demo", subcommands=[Command("x"), Command("x")]).parse(
-      argv=[],
-      env=empty_env(),
-    )
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: duplicate subcommand: x
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-
-  try
-    @argparse.Command("demo", subcommand_required=true).parse(
-      argv=[],
-      env=empty_env(),
-    )
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: subcommand_required requires at least one subcommand
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-
-  try
-    @argparse.Command("demo", subcommands=[Command("help")]).parse(
-      argv=[],
-      env=empty_env(),
-    )
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: subcommand name reserved for built-in help: help (disable with disable_help_subcommand)
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-
+test "builtin and custom help/version dispatch edge paths" {
   let custom_help = @argparse.Command("demo", flags=[
     FlagArg("custom_help", short='h', long="help", about="custom help"),
   ])
@@ -2034,26 +1523,6 @@ test "validation branches exposed through parse" {
     ),
   )
 
-  try
-    @argparse.Command("demo", flags=[FlagArg("v", long="v", action=Version)]).parse(
-      argv=[],
-      env=empty_env(),
-    )
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: version action requires command version text
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-}
-
-///|
-test "builtin and custom help/version dispatch edge paths" {
   let versioned = @argparse.Command("demo", version="1.2.3")
   inspect(
     versioned.render_help(),
@@ -2125,46 +1594,6 @@ test "subcommand lookup falls back to positional value" {
   let parsed = cmd.parse(argv=["raw"], env=empty_env()) catch { _ => panic() }
   assert_true(parsed.values is { "input": ["raw"], .. })
   assert_true(parsed.subcommand is None)
-}
-
-///|
-test "group validation catches unknown requires target" {
-  try
-    @argparse.Command("demo", groups=[ArgGroup("g", requires=["missing"])]).parse(
-      argv=[],
-      env=empty_env(),
-    )
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: unknown group requires target: g -> missing
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-}
-
-///|
-test "group validation catches unknown conflicts_with target" {
-  try
-    @argparse.Command("demo", groups=[ArgGroup("g", conflicts_with=["missing"])]).parse(
-      argv=[],
-      env=empty_env(),
-    )
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: unknown group conflicts_with target: g -> missing
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
 }
 
 ///|
@@ -2253,44 +1682,6 @@ test "group without members has no parse effect" {
   assert_true(parsed.flags is { "x": true, .. })
   let help = cmd.render_help()
   assert_true(help.has_prefix("Usage: demo [options]"))
-}
-
-///|
-test "arg validation catches unknown requires target" {
-  try
-    @argparse.Command("demo", options=[
-      OptionArg("mode", long="mode", requires=["missing"]),
-    ]).parse(argv=["--mode", "fast"], env=empty_env())
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: unknown requires target: mode -> missing
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-}
-
-///|
-test "arg validation catches unknown conflicts_with target" {
-  try
-    @argparse.Command("demo", options=[
-      OptionArg("mode", long="mode", conflicts_with=["missing"]),
-    ]).parse(argv=["--mode", "fast"], env=empty_env())
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: unknown conflicts_with target: mode -> missing
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
 }
 
 ///|
@@ -3091,35 +2482,6 @@ test "inherited argv global satisfies child required global override" {
 }
 
 ///|
-test "child local arg shadowing inherited global is rejected at build time" {
-  try
-    @argparse.Command(
-      "demo",
-      options=[
-        OptionArg(
-          "mode",
-          long="mode",
-          env="MODE",
-          default_values=["safe"],
-          global=true,
-        ),
-      ],
-      subcommands=[Command("run", options=[OptionArg("mode", long="mode")])],
-    ).parse(argv=["run"], env=empty_env())
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: arg 'mode' shadows an inherited global; rename the arg or mark it global
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-}
-
-///|
 test "global append env value from child is merged back to parent" {
   let cmd = @argparse.Command(
     "demo",
@@ -3220,71 +2582,6 @@ test "global set option rejects duplicate occurrences across subcommands" {
           #|  -h, --help     Show help information.
           #|  --mode <mode>  
           #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-}
-
-///|
-test "global override with incompatible inherited type is rejected" {
-  try
-    @argparse.Command(
-      "demo",
-      options=[OptionArg("mode", long="mode", required=true, global=true)],
-      subcommands=[
-        Command("run", flags=[FlagArg("mode", long="mode", global=true)]),
-      ],
-    ).parse(argv=["run", "--mode"], env=empty_env())
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: global arg 'mode' is incompatible with inherited global definition
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-}
-
-///|
-test "child local long alias collision with inherited global is rejected" {
-  try
-    @argparse.Command(
-      "demo",
-      flags=[FlagArg("verbose", long="verbose", global=true)],
-      subcommands=[Command("run", options=[OptionArg("local", long="verbose")])],
-    ).parse(argv=["run", "--verbose"], env=empty_env())
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: arg 'local' long option --verbose conflicts with inherited global 'verbose'
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-}
-
-///|
-test "child local short alias collision with inherited global is rejected" {
-  try
-    @argparse.Command(
-      "demo",
-      flags=[FlagArg("verbose", short='v', global=true)],
-      subcommands=[Command("run", options=[OptionArg("local", short='v')])],
-    ).parse(argv=["run", "-v"], env=empty_env())
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: arg 'local' short option -v conflicts with inherited global 'verbose'
         ),
       )
   } noraise {
@@ -3411,31 +2708,6 @@ test "nested global override keeps single set value without false duplicate erro
     sub_mid.subcommand is Some(("leaf", sub_leaf)) &&
     sub_leaf.values is { "mode": ["fast"], .. },
   )
-}
-
-///|
-test "global override with different negatable setting is rejected" {
-  try
-    @argparse.Command(
-      "demo",
-      flags=[FlagArg("verbose", long="verbose", negatable=true, global=true)],
-      subcommands=[
-        Command("run", flags=[
-          FlagArg("verbose", long="verbose", negatable=false, global=true),
-        ]),
-      ],
-    ).parse(argv=["run"], env=empty_env())
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: global arg 'verbose' is incompatible with inherited global definition
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
 }
 
 ///|

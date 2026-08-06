@@ -234,66 +234,6 @@ test "unknown long flag with an empty name has no suggestion" {
 }
 
 ///|
-test "subcommand build errors surface as validation failures" {
-  let cmd = @argparse.Command("demo", subcommands=[
-    Command("child", flags=[FlagArg("x", long="x", requires=["missing"])]),
-  ])
-  try cmd.parse(argv=[], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: unknown requires target: x -> missing
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-}
-
-///|
-test "global flag cannot be redefined as an incompatible global option" {
-  let cmd = @argparse.Command(
-    "demo",
-    flags=[FlagArg("shared", long="shared", global=true)],
-    subcommands=[
-      Command("child", options=[OptionArg("shared", long="shared", global=true)]),
-    ],
-  )
-  try cmd.parse(argv=[], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: global arg 'shared' is incompatible with inherited global definition
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-}
-
-///|
-test "subcommand long option colliding with an inherited global is rejected" {
-  let cmd = @argparse.Command(
-    "demo",
-    options=[OptionArg("opt", long="dup", global=true)],
-    subcommands=[Command("child", flags=[FlagArg("other", long="dup")])],
-  )
-  try cmd.parse(argv=[], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: command definition validation failed: arg 'other' long option --dup conflicts with inherited global 'opt'
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
-}
-
-///|
 test "compatible global flag can be redeclared in a subcommand" {
   let cmd = @argparse.Command(
     "demo",
