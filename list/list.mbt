@@ -50,6 +50,7 @@ pub fn[A] List::new() -> List[A] {
 /// ```
 #as_free_fn
 #as_free_fn(construct, deprecated="Use cons instead")
+#owned(head, tail)
 pub fn[A] List::cons(head : A, tail : List[A]) -> List[A] {
   More(head, tail~)
 }
@@ -68,6 +69,7 @@ pub fn[A] List::cons(head : A, tail : List[A]) -> List[A] {
 /// }
 /// ```
 #alias(add)
+#owned(head)
 pub fn[A] List::prepend(self : List[A], head : A) -> List[A] {
   More(head, tail=self)
 }
@@ -595,6 +597,7 @@ pub fn[A] List::last(self : List[A]) -> A? {
 ///   @debug.assert_eq(ls, List([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]))
 /// }
 /// ```
+#owned(other)
 pub fn[A] List::concat(self : List[A], other : List[A]) -> List[A] {
   match self {
     Empty => other
@@ -631,6 +634,7 @@ pub fn[A] List::concat(self : List[A], other : List[A]) -> List[A] {
 ///   @debug.assert_eq(ls, List([5, 4, 3, 2, 1, 6, 7, 8, 9, 10]))
 /// }
 /// ```
+#owned(other)
 pub fn[A] List::rev_concat(self : List[A], other : List[A]) -> List[A] {
   for a = self, b = other {
     match (a, b) {
@@ -1952,6 +1956,7 @@ pub fn[A] List::from_iter_rev(iter : Iter[A]) -> List[A] {
 /// }
 /// ```
 #as_free_fn
+#owned(x)
 pub fn[A] List::singleton(x : A) -> List[A] {
   More(x, tail=Empty)
 }
