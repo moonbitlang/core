@@ -74,21 +74,25 @@ test "find" {
 }
 
 ///|
-/// Returns the offset of the first character that satisfies the given predicate.
-/// If no such character is found, it returns None.
+/// Returns the UTF-16 code-unit offset, relative to the beginning of this view,
+/// of the first character that satisfies the given predicate. If no such
+/// character is found, it returns None.
 #locals(pred)
 pub fn StringView::find_by(self : StringView, pred : (Char) -> Bool) -> Int? {
-  for i, c in self {
+  let mut offset = 0
+  for c in self {
     if pred(c) {
-      return Some(i)
+      return Some(offset)
     }
+    offset += c.utf16_len()
   }
   None
 }
 
 ///|
-/// Returns the offset of the first character that satisfies the given predicate.
-/// If no such character is found, it returns None.
+/// Returns the UTF-16 code-unit offset, relative to the beginning of this
+/// string, of the first character that satisfies the given predicate. If no
+/// such character is found, it returns None.
 pub fn String::find_by(self : String, pred : (Char) -> Bool) -> Int? {
   self[:].find_by(pred)
 }
@@ -104,7 +108,14 @@ test "find_by" {
   assert_true("hello".find_by(c => c is ('A'..='Z')) == None)
   assert_true("Hello".find_by(c => c is ('A'..='Z')) == Some(0))
   assert_true("αβγ".find_by(c => c == 'β') == Some(1))
-  assert_true("😀😁😂".find_by(c => c == '😂') == Some(2))
+}
+
+///|
+test "find_by returns UTF-16 code-unit offsets" {
+  assert_true("😀X".find_by(c => c == 'X') == Some(2))
+  assert_true("😀😁😂".find_by(c => c == '😂') == Some(4))
+  let view = "a😀Xz"[1:4]
+  assert_true(view.find_by(c => c == 'X') == Some(2))
 }
 
 ///|
@@ -1757,6 +1768,12 @@ test "to_lower" {
 }
 
 ///|
+test "to_lower after a non-BMP character" {
+  inspect("😀X".to_lower(), content="😀x")
+  inspect("a😀Xz"[1:4].to_lower(), content="😀x")
+}
+
+///|
 test "View::to_lower" {
   assert_true("Hello"[:].to_lower() == "hello")
   assert_true("HELLO"[:].to_lower() == "hello")
@@ -1808,6 +1825,12 @@ test "to_upper" {
   assert_true("hello".to_upper() == "HELLO")
   assert_true("HELLO".to_upper() == "HELLO")
   assert_true("Hello, World!".to_upper() == "HELLO, WORLD!")
+}
+
+///|
+test "to_upper after a non-BMP character" {
+  inspect("😀x".to_upper(), content="😀X")
+  inspect("a😀xz"[1:4].to_upper(), content="😀X")
 }
 
 ///|
