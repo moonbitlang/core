@@ -612,8 +612,11 @@ fn[V] balance(root : Node[V]) -> Node[V] {
 fn[V] rotate_l(n : Node[V]) -> Node[V] {
   let r = n.right.unwrap()
   n.right = r.left
-  r.left = Some(n)
+  // Update n's height before storing it: the store consumes the owned `n`
+  // reference, and touching `n` afterwards would force an extra
+  // incref/decref pair to keep it alive across the store.
   n.update_height()
+  r.left = Some(n)
   r.update_height()
   r
 }
@@ -623,8 +626,9 @@ fn[V] rotate_l(n : Node[V]) -> Node[V] {
 fn[V] rotate_r(n : Node[V]) -> Node[V] {
   let l = n.left.unwrap()
   n.left = l.right
-  l.right = Some(n)
+  // See rotate_l: keep the consuming store as the last use of `n`.
   n.update_height()
+  l.right = Some(n)
   l.update_height()
   l
 }
