@@ -101,6 +101,7 @@ pub fn[K : Hash + Eq, V] HashMap::HashMap(
 /// }
 /// ```
 #alias("_[_]=_")
+#owned(value)
 pub fn[K : Hash + Eq, V] HashMap::set(
   self : HashMap[K, V],
   key : K,
@@ -110,6 +111,7 @@ pub fn[K : Hash + Eq, V] HashMap::set(
 }
 
 ///|
+#owned(value)
 fn[K : Eq, V] HashMap::set_with_hash(
   self : HashMap[K, V],
   key : K,
@@ -157,6 +159,7 @@ fn[K : Eq, V] HashMap::set_with_hash(
 }
 
 ///|
+#owned(entry)
 fn[K, V] HashMap::push_away(
   self : HashMap[K, V],
   idx : Int,
@@ -733,6 +736,7 @@ fn[K, V] HashMap::grow(self : HashMap[K, V]) -> Unit {
 }
 
 ///|
+#owned(entry)
 fn[K, V] HashMap::rehash_place_entry(
   self : HashMap[K, V],
   entry : Entry[K, V],

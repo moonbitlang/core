@@ -156,6 +156,7 @@ fn[K : Eq] Set::add_with_hash(self : Set[K], key : K, hash : Int) -> Unit {
 }
 
 ///|
+#owned(entry)
 fn[K] Set::push_away(self : Set[K], idx : Int, entry : Entry[K]) -> Unit {
   for psl = entry.psl + 1, idx = (idx + 1) & self.capacity_mask, entry = entry {
     match self.entries[idx] {
@@ -179,6 +180,7 @@ fn[K] Set::push_away(self : Set[K], idx : Int, entry : Entry[K]) -> Unit {
 }
 
 ///|
+#owned(entry)
 fn[K] Set::set_entry(self : Set[K], entry : Entry[K], new_idx : Int) -> Unit {
   self.entries[new_idx] = Some(entry)
   match entry.next {
@@ -329,6 +331,7 @@ pub fn[K : Hash + Eq] Set::remove_and_check(self : Set[K], key : K) -> Bool {
 }
 
 ///|
+#owned(entry)
 fn[K] Set::add_entry_to_tail(
   self : Set[K],
   idx : Int,
@@ -398,6 +401,7 @@ fn[K] Set::grow(self : Set[K]) -> Unit {
 }
 
 ///|
+#owned(outer)
 fn[K] Set::rehash_place_entry(self : Set[K], outer : Entry[K]) -> Unit {
   let hash = outer.hash
   for psl = 0, idx = hash & self.capacity_mask {
