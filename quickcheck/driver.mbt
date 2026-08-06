@@ -215,7 +215,7 @@ fn[A : @debug.Debug] failure_report(report : QuickCheckReport[A]) -> String {
     GaveUp(tests~, discarded~, observations~) =>
       (
         $|QuickCheck gave up after \{tests} test(s)
-        $|discarded: \{discarded}\{observations.report(tests)}
+        $|discarded: \{discarded}\{observations.report(tests, prefix="\n")}
       )
     Falsified(
       counterexample~,
@@ -229,7 +229,7 @@ fn[A : @debug.Debug] failure_report(report : QuickCheckReport[A]) -> String {
         $|QuickCheck falsified after \{tests} test(s)
         $|counterexample: \{@debug.to_string(counterexample)}
         $|size: \{size}
-        $|shrinks: \{shrinks} successful, \{shrink_attempts} attempted\{observations.report(tests - 1U)}
+        $|shrinks: \{shrinks} successful, \{shrink_attempts} attempted\{observations.report(tests - 1U, prefix="\n")}
       )
     Raised(
       counterexample~,
@@ -245,7 +245,7 @@ fn[A : @debug.Debug] failure_report(report : QuickCheckReport[A]) -> String {
         $|counterexample: \{@debug.to_string(counterexample)}
         $|error: \{@debug.to_string(error)}
         $|size: \{size}
-        $|shrinks: \{shrinks} successful, \{shrink_attempts} attempted\{observations.report(tests - 1U)}
+        $|shrinks: \{shrinks} successful, \{shrink_attempts} attempted\{observations.report(tests - 1U, prefix="\n")}
       )
   }
 }
@@ -360,7 +360,8 @@ pub fn[A : Arbitrary + @shrink.Shrink] report(
 /// On falsification or a raised error, this function raises a
 /// `Failure` containing the smallest counterexample found, its corresponding
 /// error when applicable, shrink information, and any collected observations.
-/// A successful run prints its test count and observation statistics.
+/// A successful run prints observation statistics when any were collected;
+/// otherwise it prints nothing.
 ///
 /// ```mbt check
 /// test "adding zero is an identity" {

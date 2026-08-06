@@ -131,10 +131,11 @@ Labels produced by one case form one joint bucket; classes are counted
 independently. Only successful top-level cases run `observe`; filtered and
 failing cases, including shrink candidates, do not contribute observations.
 
-`check` prints the test count and an aligned observation table after a
-successful run. On failure, the aggregate from preceding successful cases is
-included in the failure message. Use `report` when the structured result
-should be handled without printing or raising.
+After a successful run, `check` prints an aligned observation table when any
+observations were collected; otherwise it prints nothing. On failure, the
+aggregate from preceding successful cases is included in the failure message.
+Use `report` when the structured result should be handled without printing or
+raising.
 
 ## Basic Usage
 

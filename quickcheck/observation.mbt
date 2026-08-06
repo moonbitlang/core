@@ -85,13 +85,14 @@ fn ObservationSummary::add(
   let classes : Map[String, Bool] = Map([])
   for observation in observations {
     match observation {
-      Label(value) => if !labels.contains(value) { labels.push(value) }
+      Label(value) => labels.push(value)
       Class(label~, hit~) =>
         classes[label] = classes.get_or_default(label, false) || hit
     }
   }
+  labels.sort()
+  labels.dedup()
   if !labels.is_empty() {
-    labels.sort()
     let key = @list.List(labels)
     self.labels[key] = self.labels.get_or_default(key, 0U) + 1U
   }
@@ -112,21 +113,9 @@ impl Compare for ObservationRow with fn compare(
   left : ObservationRow,
   right : ObservationRow,
 ) {
-  if left.count > right.count {
-    -1
-  } else if left.count < right.count {
-    1
-  } else {
-    Compare::compare(left.name, right.name)
-  }
-}
-
-///|
-fn uint_digits(value : UInt) -> Int {
-  for remaining = value, digits = 1; remaining >= 10U; {
-    continue remaining / 10U, digits + 1
-  } nobreak {
-    digits
+  match Compare::compare(right.count, left.count) {
+    0 => Compare::compare(left.name, right.name)
+    order => order
   }
 }
 
@@ -147,19 +136,11 @@ fn write_observation_rows(
 ) -> Unit {
   guard !rows.is_empty() else { return }
   rows.sort_by(Compare::compare)
-  builder <+ "\n  "
-  builder.write_string(heading)
-  builder <+ ":"
+  builder <+ "\n  \{heading}:"
   for row in rows {
-    let percent = percentage(row.count, total)
-    builder <+ "\n    "
-    builder.write_string(" ".repeat(count_width - uint_digits(row.count)))
-    builder.write_object(row.count)
-    builder <+ "  "
-    builder.write_string(" ".repeat(3 - uint_digits(percent)))
-    builder.write_object(percent)
-    builder <+ "%  "
-    builder.write_string(row.name)
+    let count = "\{row.count}".pad_start(count_width, ' ')
+    let percent = "\{percentage(row.count, total)}".pad_start(3, ' ')
+    builder <+ "\n    \{count}  \{percent}%  \{row.name}"
   }
 }
 
@@ -167,6 +148,7 @@ fn write_observation_rows(
 fn ObservationSummary::report(
   self : ObservationSummary,
   total : UInt,
+  prefix? : String = "",
 ) -> String {
   guard !self.is_empty() else { return "" }
   let label_rows = [
@@ -176,8 +158,8 @@ fn ObservationSummary::report(
   ]
   let class_rows = [ for name, count in self.classes => { count, name } ]
   let builder = StringBuilder()
-  builder <+ "\nobservations:"
-  let count_width = uint_digits(total)
+  builder <+ "\{prefix}observations:"
+  let count_width = "\{total}".length()
   write_observation_rows(builder, "labels", label_rows, total, count_width)
   write_observation_rows(builder, "classes", class_rows, total, count_width)
   builder.to_string()
