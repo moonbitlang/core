@@ -17,6 +17,7 @@
 
 ///|
 /// Set the value at the given index. This operation is O(n).
+#owned(v)
 fn[T] immutable_set(arr : FixedArray[T], i : Int, v : T) -> FixedArray[T] {
   let arr = arr.copy()
   arr[i] = v
@@ -25,6 +26,7 @@ fn[T] immutable_set(arr : FixedArray[T], i : Int, v : T) -> FixedArray[T] {
 
 ///|
 /// Add an element to the end of the array. This operation is O(n).
+#owned(val)
 fn[T] immutable_push(arr : FixedArray[T], val : T) -> FixedArray[T] {
   let len = arr.length()
   let new_arr = FixedArray::make_and_blit(

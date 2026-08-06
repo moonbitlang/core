@@ -33,6 +33,7 @@ pub impl[A] Default for SortedSet[A] with fn default() {
 ///|
 /// Returns the one-value ImmutableSet containing only `value`.
 #as_free_fn
+#owned(value)
 pub fn[A] SortedSet::singleton(value : A) -> SortedSet[A] {
   Node(left=Empty, value~, right=Empty, size=1)
 }
@@ -909,6 +910,7 @@ pub fn[A] SortedSet::length(self : SortedSet[A]) -> Int {
 ///|
 /// Creates a new node.
 #inline
+#owned(left, value, right)
 fn[A] create(
   left : SortedSet[A],
   value : A,
@@ -964,6 +966,7 @@ fn[A] balance(
 }
 
 ///|
+#owned(value)
 fn[A] SortedSet::add_min_value(self : SortedSet[A], value : A) -> SortedSet[A] {
   match self {
     Empty => singleton(value)
@@ -973,6 +976,7 @@ fn[A] SortedSet::add_min_value(self : SortedSet[A], value : A) -> SortedSet[A] {
 }
 
 ///|
+#owned(value)
 fn[A] SortedSet::add_max_value(self : SortedSet[A], value : A) -> SortedSet[A] {
   match self {
     Empty => singleton(value)

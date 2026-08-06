@@ -28,6 +28,7 @@ pub fn[A] T::new() -> T[A] {
 /// Create a persistent array with a given length and value.
 #deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
 #as_free_fn(deprecated="Use the corresponding function in `immut/vector` instead")
+#owned(value)
 pub fn[A] T::make(len : Int, value : A) -> T[A] {
   let quot = len / BRANCHING_FACTOR
   let rem = len % BRANCHING_FACTOR
@@ -237,6 +238,7 @@ pub fn[A] T::get(self : T[A], index : Int) -> A? {
 /// }
 /// ```
 #deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
+#owned(value)
 pub fn[A] T::set(self : T[A], index : Int, value : A) -> T[A] {
   guard! index >= 0 && index < self.size
   {
@@ -257,6 +259,7 @@ pub fn[A] T::set(self : T[A], index : Int, value : A) -> T[A] {
 /// }
 /// ```
 #deprecated("Use the corresponding function in `immut/vector` instead", skip_current_package=true)
+#owned(value)
 pub fn[A] T::push(self : T[A], value : A) -> T[A] {
   let (tree, shift) = self.tree.push_end(self.shift, value)
   { tree, size: self.size + 1, shift }

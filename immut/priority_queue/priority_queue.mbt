@@ -246,6 +246,7 @@ fn[A] Node::remove_last_leaf(self : Node[A], path : Path) -> (A, Node[A]) {
 
 ///|
 /// require: self is not empty
+#owned(value)
 fn[A : Compare] Node::change_and_down(self : Node[A], value : A) -> Node[A] {
   match self {
     Empty => abort("unreachable")
@@ -308,6 +309,7 @@ pub fn[A : Compare] PriorityQueue::unsafe_pop(
 ///   @test.assert_eq(queue.push(1).length(), 1)
 /// }
 /// ```
+#owned(value)
 pub fn[A : Compare] PriorityQueue::push(
   self : PriorityQueue[A],
   value : A,
@@ -322,6 +324,7 @@ pub fn[A : Compare] PriorityQueue::push(
 }
 
 ///|
+#owned(value)
 fn[A : Compare] Node::push(self : Node[A], value : A, path : Path) -> Node[A] {
   match self {
     Empty => Leaf(value)
