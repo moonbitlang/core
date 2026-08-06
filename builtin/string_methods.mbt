@@ -79,14 +79,14 @@ test "find" {
 /// character is found, it returns None.
 #locals(pred)
 pub fn StringView::find_by(self : StringView, pred : (Char) -> Bool) -> Int? {
-  let mut offset = 0
-  for c in self {
+  for c in self; offset = 0 {
     if pred(c) {
-      return Some(offset)
+      break Some(offset)
     }
-    offset += c.utf16_len()
+    continue offset + c.utf16_len()
+  } nobreak {
+    None
   }
-  None
 }
 
 ///|
