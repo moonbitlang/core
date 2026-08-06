@@ -182,11 +182,14 @@ fn[K] Set::push_away(self : Set[K], idx : Int, entry : Entry[K]) -> Unit {
 ///|
 #owned(entry)
 fn[K] Set::set_entry(self : Set[K], entry : Entry[K], new_idx : Int) -> Unit {
-  self.entries[new_idx] = Some(entry)
+  // Fix up the neighbor links before the store: the store consumes the owned
+  // `entry` reference, and touching `entry` after it would force the compiler
+  // to keep `entry` alive across the store with an extra incref/decref pair.
   match entry.next {
     None => self.tail = new_idx
     Some(next) => next.prev = new_idx
   }
+  self.entries[new_idx] = Some(entry)
 }
 
 ///|
