@@ -84,6 +84,7 @@ struct Lazy[A] {
 ///   @test.assert_eq(runs, 1)
 /// }
 /// ```
+#owned(thunk)
 pub fn[A] Lazy::Lazy(thunk : () -> A) -> Lazy[A] {
   { state: Unforced(thunk) }
 }
@@ -98,6 +99,7 @@ pub fn[A] Lazy::Lazy(thunk : () -> A) -> Lazy[A] {
 ///   @test.assert_eq(cell.force(), 7)
 /// }
 /// ```
+#owned(value)
 pub fn[A] Lazy::ready(value : A) -> Lazy[A] {
   { state: Forced(value) }
 }
