@@ -50,7 +50,7 @@ test "stringview subview" {
 }
 
 ///|
-test "stringview op_get" {
+test "stringview access" {
   let str = "Hello🤣🤣🤣"
   let view = str.view(start_offset=1, end_offset=7)
   inspect(view.iter().nth(4).unwrap(), content="🤣")
@@ -58,7 +58,7 @@ test "stringview op_get" {
 }
 
 ///|
-test "stringview op_get iter" {
+test "stringview access iter" {
   let str = "Hello🤣🤣🤣"
   let view = str.view(start_offset=1, end_offset=7)
   inspect(view.iter().nth(4).unwrap(), content="🤣")
@@ -1018,12 +1018,12 @@ test "StringView add" {
   inspect(view7 + view8, content="Hello🤣World")
 }
 
-// Added test to ensure StringView::op_get abort is covered
+// Added test to ensure StringView::at abort is covered
 // Accessing an index beyond the view length should panic
-// and cover the "Index out of bounds" branch in StringView::op_get.
+// and cover the "Index out of bounds" branch in StringView::at.
 
 ///|
-test "panic view op_get out of bounds" {
+test "panic view access out of bounds" {
   let str = "Hello"
   let view = str.view(start_offset=0, end_offset=5)
   view.code_unit_at(5) |> ignore
