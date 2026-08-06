@@ -1,0 +1,81 @@
+name: interface-check
+
+# The committed pkg.generated.mbti files and formatting must be reproducible
+# by ONE moon toolchain repo-wide — stable or nightly. Gating on "either leg
+# passes" lets the repo track nightly output formats before they are promoted
+# to stable (and vice versa) without blocking every PR during the transition.
+#
+# If BOTH legs fail, the tree is format-mixed (e.g. some interfaces were
+# regenerated with a different toolchain than the rest): regenerate with one
+# toolchain repo-wide via `moon info --target wasm,wasm-gc,js,native` and
+# `moon fmt`.
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  merge_group:
+
+env:
+  MOONC_RC_CONVENTION: borrow
+
+jobs:
+  interface-stable:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install
+        uses: ./.github/actions/setup
+
+      - name: moon info
+        timeout-minutes: 10
+        run: |
+          moon info --target wasm,wasm-gc,js,native
+          git diff --exit-code
+
+      - name: format diff
+        timeout-minutes: 10
+        run: |
+          moon fmt
+          git diff --exit-code
+
+  interface-nightly:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install
+        uses: ./.github/actions/setup
+        with:
+          version: nightly
+
+      - name: moon info
+        timeout-minutes: 10
+        run: |
+          moon info --target wasm,wasm-gc,js,native
+          git diff --exit-code
+
+      - name: format diff
+        timeout-minutes: 10
+        run: |
+          moon fmt
+          git diff --exit-code
+
+  interface-gate:
+    needs: [interface-stable, interface-nightly]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: require one toolchain to reproduce the committed interfaces
+        run: |
+          echo "stable:  ${{ needs.interface-stable.result }}"
+          echo "nightly: ${{ needs.interface-nightly.result }}"
+          if [ "${{ needs.interface-stable.result }}" = "success" ] || [ "${{ needs.interface-nightly.result }}" = "success" ]; then
+            exit 0
+          fi
+          echo "Neither stable nor nightly moon reproduces the committed"
+          echo ".mbti files / formatting. Regenerate with ONE toolchain"
+          echo "repo-wide: moon info --target wasm,wasm-gc,js,native && moon fmt"
+          exit 1
