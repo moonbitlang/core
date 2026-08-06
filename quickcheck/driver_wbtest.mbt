@@ -23,7 +23,6 @@ test "passed report aligns observation statistics" {
   inspect(
     obs_sample.report(105U),
     content=(
-      #|
       #|observations:
       #|  labels:
       #|    100   95%  common
