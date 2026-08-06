@@ -114,6 +114,7 @@ fn[K : Eq] HashSet::add_with_hash(
 }
 
 ///|
+#owned(entry)
 fn[K] HashSet::push_away(
   self : HashSet[K],
   idx : Int,
@@ -142,6 +143,7 @@ fn[K] HashSet::push_away(
 
 ///|
 #inline
+#owned(entry)
 fn[K] HashSet::set_entry(
   self : HashSet[K],
   entry : Entry[K],
@@ -247,6 +249,7 @@ fn[K] HashSet::grow(self : HashSet[K]) -> Unit {
 }
 
 ///|
+#owned(entry)
 fn[K] HashSet::rehash_place_entry(self : HashSet[K], entry : Entry[K]) -> Unit {
   let hash = entry.hash
   for psl = 0, idx = hash & self.capacity_mask {
