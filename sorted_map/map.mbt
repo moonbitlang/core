@@ -67,6 +67,7 @@ pub fn[K : Compare, V] SortedMap::SortedMap(
 /// ```
 #alias("_[_]=_")
 #alias(add, deprecated="Use set instead")
+#owned(value)
 pub fn[K : Compare, V] SortedMap::set(
   self : SortedMap[K, V],
   key : K,
@@ -567,6 +568,7 @@ fn[K, V] height_ge(x1 : Node[K, V]?, x2 : Node[K, V]?) -> Bool {
 }
 
 ///|
+#owned(root)
 fn[K, V] balance(root : Node[K, V]) -> Node[K, V] {
   let (l, r) = (root.left, root.right)
   let (hl, hr) = (height(l), height(r))
@@ -592,6 +594,7 @@ fn[K, V] balance(root : Node[K, V]) -> Node[K, V] {
 }
 
 ///|
+#owned(n)
 fn[K, V] rotate_l(n : Node[K, V]) -> Node[K, V] {
   let r = n.right.unwrap()
   n.right = r.left
@@ -602,6 +605,7 @@ fn[K, V] rotate_l(n : Node[K, V]) -> Node[K, V] {
 }
 
 ///|
+#owned(n)
 fn[K, V] rotate_r(n : Node[K, V]) -> Node[K, V] {
   let l = n.left.unwrap()
   n.left = l.right
@@ -612,6 +616,7 @@ fn[K, V] rotate_r(n : Node[K, V]) -> Node[K, V] {
 }
 
 ///|
+#owned(n)
 fn[K, V] rotate_lr(n : Node[K, V]) -> Node[K, V] {
   let l = n.left.unwrap()
   let v = rotate_l(l)
@@ -620,6 +625,7 @@ fn[K, V] rotate_lr(n : Node[K, V]) -> Node[K, V] {
 }
 
 ///|
+#owned(n)
 fn[K, V] rotate_rl(n : Node[K, V]) -> Node[K, V] {
   let r = n.right.unwrap()
   let v = rotate_r(r)
@@ -628,6 +634,7 @@ fn[K, V] rotate_rl(n : Node[K, V]) -> Node[K, V] {
 }
 
 ///|
+#owned(value)
 fn[K : Compare, V] add_node(
   root : Node[K, V]?,
   key : K,
