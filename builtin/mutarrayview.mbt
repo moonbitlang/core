@@ -174,6 +174,7 @@ pub fn[T] MutArrayView::unsafe_get(self : MutArrayView[T], index : Int) -> T {
 /// ```
 #intrinsic("%mutarrayview.set")
 #alias("_[_]=_")
+#owned(value)
 pub fn[T] MutArrayView::set(
   self : MutArrayView[T],
   index : Int,
@@ -207,6 +208,7 @@ pub fn[T] MutArrayView::set(
 /// ```
 #intrinsic("%mutarrayview.unsafe_set")
 #internal(unsafe, "Panic if index is out of bounds")
+#owned(value)
 pub fn[T] MutArrayView::unsafe_set(
   self : MutArrayView[T],
   index : Int,

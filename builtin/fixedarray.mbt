@@ -113,6 +113,7 @@ pub impl[X] Default for FixedArray[X] with fn default() {
 ///   )
 /// }
 /// ```
+#owned(value)
 pub fn[T] FixedArray::fill(
   self : FixedArray[T],
   value : T,
@@ -135,6 +136,7 @@ pub fn[T] FixedArray::fill(
 ///|
 #coverage.skip
 #intrinsic("%fixedarray.fill")
+#owned(value)
 fn[T] FixedArray::unchecked_fill(
   self : FixedArray[T],
   start : Int,
