@@ -23,6 +23,7 @@ pub fn[K, V] SortedMap::new() -> SortedMap[K, V] {
 ///|
 /// Create a map with a single key-value pair.
 #as_free_fn
+#owned(key, value)
 pub fn[K, V] SortedMap::singleton(key : K, value : V) -> SortedMap[K, V] {
   Tree(key, value~, size=1, Empty, Empty)
 }
@@ -70,6 +71,7 @@ pub fn[K, V] SortedMap::is_empty(self : SortedMap[K, V]) -> Bool {
 
 ///|
 #inline
+#owned(key, value, l, r)
 fn[K, V] make_tree(
   key : K,
   value : V,

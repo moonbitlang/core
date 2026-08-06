@@ -53,6 +53,7 @@ fn[T] Tree::empty() -> Tree[T] {
 
 ///|
 /// Create a new tree with a single leaf. Note that the resulting tree is a left-skewed tree.
+#owned(leaf)
 fn[T] new_branch_left(leaf : FixedArray[T], shift : Int) -> Tree[T] {
   match shift {
     0 => Leaf(leaf)
@@ -132,6 +133,7 @@ fn[T] Tree::get(self : Tree[T], index : Int, shift : Int) -> T {
 /// 
 /// Precondition:
 /// - `self` is of height `shift / NUM_BITS`.
+#owned(value)
 fn[T] Tree::set(self : Tree[T], index : Int, shift : Int, value : T) -> Tree[T] {
   // TODO: optimize this as loop
   fn set_radix(node : Tree[T], shift : Int) -> Tree[T] {
@@ -183,6 +185,7 @@ fn[T] Tree::set(self : Tree[T], index : Int, shift : Int, value : T) -> Tree[T] 
 /// Precondition:
 /// - The height of `self` = `shift` / `NUM_BITS` (the height starts from 0).
 /// - `length` is the number of elements in the tree.
+#owned(value)
 fn[T] Tree::push_end(self : Tree[T], shift : Int, value : T) -> (Tree[T], Int) {
   fn update_sizes_last(sizes : FixedArray[Int]?) -> FixedArray[Int]? {
     match sizes {
