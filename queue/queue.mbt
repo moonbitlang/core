@@ -103,6 +103,7 @@ pub fn[A] Queue::is_empty(self : Queue[A]) -> Bool {
 ///   queue.push(1)
 /// }
 /// ```
+#owned(x)
 pub fn[A] Queue::push(self : Queue[A], x : A) -> Unit {
   self.inner.push_back(x)
 }
