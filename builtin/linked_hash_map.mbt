@@ -126,11 +126,13 @@ pub fn[K : Hash + Eq, V] Map::Map(
 /// }
 /// ```
 #alias("_[_]=_")
+#owned(value)
 pub fn[K : Hash + Eq, V] Map::set(self : Map[K, V], key : K, value : V) -> Unit {
   self.set_with_hash(key, value, Hash::hash(key))
 }
 
 ///|
+#owned(value)
 fn[K : Eq, V] Map::set_with_hash(
   self : Map[K, V],
   key : K,
@@ -204,6 +206,7 @@ fn[K, V] Map::push_away(
 }
 
 ///|
+#owned(entry)
 fn[K, V] Map::set_entry(
   self : Map[K, V],
   entry : Entry[K, V],
