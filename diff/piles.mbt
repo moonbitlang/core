@@ -37,7 +37,8 @@ fn Piles::last(self : Piles) -> Pile? {
 }
 
 ///|
-fn Piles::op_get(self : Piles, i : Int) -> Pile {
+#alias("_[_]")
+fn Piles::at(self : Piles, i : Int) -> Pile {
   self.0[i]
 }
 

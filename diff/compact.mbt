@@ -22,7 +22,8 @@ priv struct CompactedElements[T]((ArrayView[T], FixedArray[Int]))
 
 ///|
 /// Read the `index`th retained element.
-fn[T] CompactedElements::op_get(self : CompactedElements[T], index : Int) -> T {
+#alias("_[_]")
+fn[T] CompactedElements::at(self : CompactedElements[T], index : Int) -> T {
   let (source, indices) = self.0
   source[indices[index]]
 }
