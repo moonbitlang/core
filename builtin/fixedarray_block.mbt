@@ -94,6 +94,7 @@ fn[T] FixedArray::unsafe_make_and_blit(
 ///|
 /// Creates a fixed array initialized with `init`, then blits `len` elements
 /// from `src` into it.
+#owned(src, init)
 pub fn[T] FixedArray::make_and_blit(
   src : FixedArray[T],
   allocate_len~ : Int,
