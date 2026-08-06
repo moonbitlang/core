@@ -154,6 +154,7 @@ pub fn[K : Compare] PriorityQueue::from_iter(
 }
 
 ///|
+#owned(x, y)
 fn[A : Compare] meld(x : Node[A], y : Node[A]) -> Node[A] {
   if x.content > y.content {
     y.sibling = x.child
@@ -167,6 +168,7 @@ fn[A : Compare] meld(x : Node[A], y : Node[A]) -> Node[A] {
 }
 
 ///|
+#owned(x)
 fn[A : Compare] merges(x : Node[A]?) -> Node[A]? {
   let (x, acc) = match x {
     None => return None
@@ -251,6 +253,7 @@ pub fn[A : Compare] PriorityQueue::pop(self : PriorityQueue[A]) -> A? {
 ///   @test.assert_eq(queue.length(), 1)
 /// }
 /// ```
+#owned(value)
 pub fn[A : Compare] PriorityQueue::push(
   self : PriorityQueue[A],
   value : A,
