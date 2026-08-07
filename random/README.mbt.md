@@ -67,6 +67,33 @@ test {
 }
 ```
 
+For an arbitrary half-open interval, use `double_range()` or `float_range()`.
+These methods implement the Goualard's gamma-section algorithm: they select
+uniformly from a fixed grid whose step is the larger endpoint spacing. Grid
+values are one step apart, except for a possible shorter gap at the included
+lower bound. In contrast, scaling a value from `[0.0, 1.0)` with
+`min + (max - min) * x` can bias the result or return the open upper bound
+because of intermediate rounding.
+
+```mbt check
+///|
+test {
+  let r = @random.Rand::new()
+  let d = r.double_range(min=-10.0, max=10.0)
+  inspect(d >= -10.0 && d < 10.0, content="true")
+  let f = r.float_range(min=-10.0F, max=10.0F)
+  inspect(f >= -10.0F && f < 10.0F, content="true")
+}
+```
+
+To prevent quarter-scaling a bound into the subnormal range, the range methods
+reject non-zero bounds whose magnitude is below four times the smallest
+positive normal value for the corresponding type. Zero remains a valid bound.
+The selected grid step may still be subnormal, where IEEE 754 gradual
+underflow preserves it exactly. `double_range()` additionally rejects an
+interval if scaling either bound by that step would underflow;
+`float_range()` performs the setup calculation exactly in `Double` precision.
+
 ## Boolean
 
 `boolean()` returns `true` or `false` with equal probability.
