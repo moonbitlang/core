@@ -33,7 +33,26 @@ type Observations = Array[Observation]
 priv struct ObservationSummary {
   labels : Map[@list.List[String], UInt]
   classes : Map[String, UInt]
-} derive(@debug.Debug)
+}
+
+///|
+/// Snapshot-friendly rendering: empty categories are omitted, so a
+/// classes-only summary renders as `{ classes: {...} }` without a noisy
+/// `labels: {}` field (and vice versa).
+impl @debug.Debug for ObservationSummary with fn to_repr(self) {
+  @debug.Repr::record(
+    Map(
+      [
+        ..if !self.labels.is_empty() {
+          [("labels", @debug.Repr(self.labels))]
+        },
+        ..if !self.classes.is_empty() {
+          [("classes", @debug.Repr(self.classes))]
+        },
+      ],
+    ),
+  )
+}
 
 ///|
 pub impl Show for Observation with fn output(self, logger) {
