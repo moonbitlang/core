@@ -43,36 +43,14 @@ impl @shrink.Shrink for FiniteDouble with fn shrink(self) {
 }
 
 ///|
-/// Whether the double's shortest representation is an integer literal above
-/// 2^53 - 1. Parsing such text takes the documented infinity+repr sentinel
-/// path (see the "number texts" test below), so the value itself does not
-/// survive a parse.
-fn hits_integer_sentinel(value : Double) -> Bool {
-  let text = value.to_string()
-  value.abs() > 9007199254740991.0 &&
-  !text.contains(".") &&
-  !text.contains("e") &&
-  !text.contains("E")
-}
-
-///|
 /// Numbers mix small integers (the common case in real documents) with
-/// adversarial bit-pattern doubles. Doubles in the integer-sentinel window
-/// are scaled by an exact power of two so tree-level properties stay
-/// value-faithful; the sentinel window itself has a dedicated test.
+/// adversarial bit-pattern doubles.
 fn number_gen() -> @quickcheck.Generator[Json] {
   let small_int = @quickcheck.int_range(-1000, 1001).map(i => {
     Json::number(i.to_double())
   })
   let finite_double : @quickcheck.Generator[FiniteDouble] = @quickcheck.spawn()
-  let bit_pattern = finite_double.map(d => {
-    let value = if hits_integer_sentinel(d.0) {
-      d.0 / 4294967296.0
-    } else {
-      d.0
-    }
-    Json::number(value)
-  })
+  let bit_pattern = finite_double.map(d => Json::number(d.0))
   @quickcheck.frequency([(2, small_int), (1, bit_pattern)])
 }
 
@@ -303,27 +281,14 @@ test "roundtrip is unaffected by formatting options" {
 }
 
 ///|
-/// Number texts follow a documented two-regime contract:
-///
-/// - integer-shaped text above 2^53 - 1 parses to a `+-infinity` value
-///   sentinel carrying the exact source text in `repr`, so the text (but
-///   not the value) survives the round trip;
-/// - everything else parses back to the exact same double.
-test "number texts roundtrip according to the documented contract" {
+/// Every finite double survives printing and re-parsing bit-exactly,
+/// including subnormals, -0.0, and integers beyond 2^53 (which parse to the
+/// correctly rounded value with the source text preserved in `repr`).
+test "every finite double roundtrips through JSON text" {
   @quickcheck.check((d : FiniteDouble) => {
-    let value = d.0
-    let number = Json::number(value)
-    let text = number.stringify()
-    let back = @json.parse(text)
-    if hits_integer_sentinel(value) {
-      back is Number(sentinel, repr=Some(repr)) &&
-      sentinel.is_inf() &&
-      (sentinel < 0.0) == (value < 0.0) &&
-      repr == text &&
-      back.stringify() == text
-    } else {
-      back == number
-    }
+    let number = Json::number(d.0)
+    let back = @json.parse(number.stringify())
+    back == number && back.stringify() == number.stringify()
   })
 }
 
