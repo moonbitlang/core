@@ -474,14 +474,14 @@ test "report accepts InspectError while shrinking Raised" {
 test "classes-only summary omits the empty labels field" {
   let report = @quickcheck.report(
     (_ : Int) => true,
-    observe=input => [@quickcheck.classify(input >= 0, "non-negative")],
+    observe=_ => [@quickcheck.classify(true, "observed")],
     count=3,
     max_size=2,
   )
   debug_inspect(
     report,
     content=(
-      #|Passed(tests=3, observations={ classes: { "non-negative": 3 } })
+      #|Passed(tests=3, observations={ classes: { "observed": 3 } })
     ),
   )
 }
