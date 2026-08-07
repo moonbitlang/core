@@ -119,7 +119,6 @@ test "context describes the shrunk counterexample" {
       #|  shrinks=0,
       #|  shrink_attempts=2,
       #|)
-
     ),
   )
 }
