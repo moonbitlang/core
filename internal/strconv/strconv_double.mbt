@@ -69,7 +69,7 @@ let max_mantissa_fast_path : UInt64 = 2UL << mantissa_explicit_bits
 ///
 /// An exponent value exp scales the mantissa (significand) by 10^exp.
 /// For example, "1.23e2" represents 1.23 × 10² = 123.
-pub fn parse_double(str : StringView) -> Double raise {
+pub fn parse_double(str : StringView) -> Double raise StrConvError {
   guard !str.is_empty() else { syntax_err() }
   guard check_underscore(str) else { syntax_err() }
   // validate its a number
@@ -149,13 +149,13 @@ fn Number::try_fast_path(self : Number) -> Double? {
 
 ///|
 test "parse_double" {
-  let tests : Array[(String, Result[Double, String])] = [
-    ("", Err(syntax_err_str)),
-    ("1x", Err(syntax_err_str)),
-    ("1.1.", Err(syntax_err_str)),
-    ("1e", Err(syntax_err_str)),
-    ("1e-", Err(syntax_err_str)),
-    (".e-1", Err(syntax_err_str)),
+  let tests : Array[(String, Result[Double, StrConvError])] = [
+    ("", Err(SyntaxError)),
+    ("1x", Err(SyntaxError)),
+    ("1.1.", Err(SyntaxError)),
+    ("1e", Err(SyntaxError)),
+    ("1e-", Err(SyntaxError)),
+    (".e-1", Err(SyntaxError)),
     ("1", Ok(1.0)),
     ("+1", Ok(1.0)),
     ("1e23", Ok(1.0e23)),
@@ -202,26 +202,14 @@ test "parse_double" {
     ("1.7976931348623158e308", Ok(1.7976931348623157e308)),
     ("-1.7976931348623158e308", Ok(-1.7976931348623157e308)),
     ("1e308", Ok(1.0e308)),
-    (
-      "1.7976931348623159e308",
-      Err(
-        // zeros
-        // large double
-        range_err_str,
-      ),
-    ),
-    (
-      "-1.7976931348623159e308",
-      Err(
-        // overflow
-        range_err_str,
-      ),
-    ),
-    ("2e308", Err(range_err_str)),
-    ("1e309", Err(range_err_str)),
-    ("1e310", Err(range_err_str)),
-    ("1e400", Err(range_err_str)),
-    ("1e40000", Err(range_err_str)),
+    // zeros / large double overflow
+    ("1.7976931348623159e308", Err(RangeError)),
+    ("-1.7976931348623159e308", Err(RangeError)),
+    ("2e308", Err(RangeError)),
+    ("1e309", Err(RangeError)),
+    ("1e310", Err(RangeError)),
+    ("1e400", Err(RangeError)),
+    ("1e40000", Err(RangeError)),
     // denormalized
     ("1e-305", Ok(1.0e-305)),
     ("1e-306", Ok(1.0e-306)),
@@ -240,26 +228,25 @@ test "parse_double" {
     ("1e-400000", Ok(0.0)),
     // underscores
     ("1_23.50_0_0e+1_2", Ok(1.235e+14)),
-    ("-_123.5e+12", Err(syntax_err_str)),
-    ("+_123.5e+12", Err(syntax_err_str)),
-    ("_123.5e+12", Err(syntax_err_str)),
-    ("1__23.5e+12", Err(syntax_err_str)),
-    ("123_.5e+12", Err(syntax_err_str)),
-    ("123._5e+12", Err(syntax_err_str)),
-    ("123.5_e+12", Err(syntax_err_str)),
-    ("123.5__0e+12", Err(syntax_err_str)),
-    ("123.5e_+12", Err(syntax_err_str)),
-    ("123.5e+_12", Err(syntax_err_str)),
-    ("123.5e_-12", Err(syntax_err_str)),
-    ("123.5e-_12", Err(syntax_err_str)),
-    ("123.5e+1__2", Err(syntax_err_str)),
-    ("123.5e+12_", Err(syntax_err_str)),
+    ("-_123.5e+12", Err(SyntaxError)),
+    ("+_123.5e+12", Err(SyntaxError)),
+    ("_123.5e+12", Err(SyntaxError)),
+    ("1__23.5e+12", Err(SyntaxError)),
+    ("123_.5e+12", Err(SyntaxError)),
+    ("123._5e+12", Err(SyntaxError)),
+    ("123.5_e+12", Err(SyntaxError)),
+    ("123.5__0e+12", Err(SyntaxError)),
+    ("123.5e_+12", Err(SyntaxError)),
+    ("123.5e+_12", Err(SyntaxError)),
+    ("123.5e_-12", Err(SyntaxError)),
+    ("123.5e-_12", Err(SyntaxError)),
+    ("123.5e+1__2", Err(SyntaxError)),
+    ("123.5e+12_", Err(SyntaxError)),
   ]
   for t in tests {
     @test.assert_eq(
       Result::Ok(parse_double(t.0)) catch {
-        Failure::Failure(err) => Err(err)
-        err => Err(err.to_string())
+        err => Err(err)
       },
       t.1,
     )

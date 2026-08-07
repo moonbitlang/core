@@ -1,20 +1,33 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/internal/strconv"
 
+import {
+  "moonbitlang/core/debug",
+}
+
 // Values
-pub fn parse_bool(StringView) -> Bool raise
+pub fn parse_bool(StringView) -> Bool raise StrConvError
 
-pub fn parse_double(StringView) -> Double raise
+pub fn parse_double(StringView) -> Double raise StrConvError
 
-pub fn parse_int(StringView, base? : Int) -> Int raise
+pub fn parse_int(StringView, base? : Int) -> Int raise StrConvError
 
-pub fn parse_int64(StringView, base? : Int) -> Int64 raise
+pub fn parse_int64(StringView, base? : Int) -> Int64 raise StrConvError
 
-pub fn parse_uint(StringView, base? : Int) -> UInt raise
+pub fn parse_uint(StringView, base? : Int) -> UInt raise StrConvError
 
-pub fn parse_uint64(StringView, base? : Int) -> UInt64 raise
+pub fn parse_uint64(StringView, base? : Int) -> UInt64 raise StrConvError
 
 // Errors
+pub(all) suberror StrConvError {
+  RangeError
+  SyntaxError
+  InvalidBase
+} derive(Eq, @debug.Debug)
+pub fn StrConvError::equal(Self, Self) -> Bool
+pub fn StrConvError::message(Self) -> String
+pub fn StrConvError::not_equal(Self, Self) -> Bool
+pub fn StrConvError::to_repr(Self) -> @debug.Repr
 
 // Types and methods
 

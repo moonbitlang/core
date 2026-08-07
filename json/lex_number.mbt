@@ -246,12 +246,14 @@ fn ParseContext::lex_integer_end(
         let value = @internal/strconv.parse_double(s)
         return { value, repr: Some(s) }
       } catch {
-        _ =>
+        RangeError =>
           return if negative {
             { value: @double.neg_infinity, repr: Some(s) }
           } else {
             { value: @double.infinity, repr: Some(s) }
           }
+        // The lexer has already validated the number grammar.
+        SyntaxError | InvalidBase => abort("unreachable")
       }
     }
     continue i + 1, acc * 10L + digit
@@ -418,12 +420,14 @@ fn ParseContext::lex_number_end(
     // For normal values, return without string representation
     { value: d, repr: None }
   } catch {
-    // If parsing fails as a double, treat it as infinity and preserve the string
-    _ =>
+    // Values beyond double range become infinity and preserve the string
+    RangeError =>
       if scan.negative {
         { value: @double.neg_infinity, repr: Some(s) }
       } else {
         { value: @double.infinity, repr: Some(s) }
       }
+    // The lexer has already validated the number grammar.
+    SyntaxError | InvalidBase => abort("unreachable")
   }
 }

@@ -13,25 +13,46 @@
 // limitations under the License.
 
 ///|
-let range_err_str = "value out of range"
+/// Structured parse errors for the internal strconv helpers.
+///
+/// In-module callers (e.g. the JSON number lexer) match on the variants to
+/// distinguish out-of-range values from syntax problems instead of comparing
+/// failure message strings. The public wrappers in `moonbitlang/core/string`
+/// translate these back into `Failure` with the historical message strings,
+/// so externally observable behavior is unchanged.
+pub(all) suberror StrConvError {
+  RangeError
+  SyntaxError
+  InvalidBase
+} derive(Eq, @debug.Debug)
 
 ///|
-let syntax_err_str = "invalid syntax"
+pub extend StrConvError with Eq::{equal, not_equal}
 
 ///|
-let base_err_str = "invalid base"
+pub extend StrConvError with @debug.Debug::{to_repr}
 
 ///|
-fn[T] range_err() -> T raise {
-  raise Failure::Failure(range_err_str)
+/// The historical human-readable message for this error.
+pub fn StrConvError::message(self : Self) -> String {
+  match self {
+    RangeError => "value out of range"
+    SyntaxError => "invalid syntax"
+    InvalidBase => "invalid base"
+  }
 }
 
 ///|
-fn[T] syntax_err() -> T raise {
-  raise Failure::Failure(syntax_err_str)
+fn[T] range_err() -> T raise StrConvError {
+  raise RangeError
 }
 
 ///|
-fn[T] base_err() -> T raise {
-  raise Failure::Failure(base_err_str)
+fn[T] syntax_err() -> T raise StrConvError {
+  raise SyntaxError
+}
+
+///|
+fn[T] base_err() -> T raise StrConvError {
+  raise InvalidBase
 }

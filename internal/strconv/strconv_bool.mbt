@@ -14,7 +14,7 @@
 
 ///|
 /// Parse a string and return the represented boolean value or an error.
-pub fn parse_bool(str : StringView) -> Bool raise {
+pub fn parse_bool(str : StringView) -> Bool raise StrConvError {
   lexscan str with longest {
     re"^(true|TRUE|True|t|T|1)$" => true
     re"^(false|FALSE|False|f|F|0)$" => false
@@ -24,9 +24,9 @@ pub fn parse_bool(str : StringView) -> Bool raise {
 
 ///|
 test "parse_bool" {
-  let tests : Array[(String, Result[Bool, String])] = [
-    ("", Err(syntax_err_str)),
-    ("zutomayo", Err(syntax_err_str)),
+  let tests : Array[(String, Result[Bool, StrConvError])] = [
+    ("", Err(SyntaxError)),
+    ("zutomayo", Err(SyntaxError)),
     ("0", Ok(false)),
     ("f", Ok(false)),
     ("F", Ok(false)),
@@ -41,12 +41,6 @@ test "parse_bool" {
     ("True", Ok(true)),
   ]
   for t in tests {
-    @test.assert_eq(
-      Result::Ok(parse_bool(t.0)) catch {
-        Failure::Failure(err) => Err(err)
-        err => Err(err.to_string())
-      },
-      t.1,
-    )
+    @test.assert_eq(Result::Ok(parse_bool(t.0)) catch { err => Err(err) }, t.1)
   }
 }

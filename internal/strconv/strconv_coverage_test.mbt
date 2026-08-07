@@ -18,38 +18,35 @@
 
 ///|
 /// Whether parsing `s` as an Int64 (in the given base) raises the expected
-/// `Failure` (any other error propagates so it is not masked as a parse error).
-fn int64_raises(s : String, base : Int) -> Bool raise {
+/// `StrConvError`.
+fn int64_raises(s : String, base : Int) -> Bool {
   try {
     @strconv.parse_int64(s, base~) |> ignore
     false
   } catch {
-    Failure::Failure(_) => true
-    err => raise err
+    RangeError | SyntaxError | InvalidBase => true
   }
 }
 
 ///|
-/// Whether parsing `s` as a Double raises the expected `Failure`.
-fn double_raises(s : String) -> Bool raise {
+/// Whether parsing `s` as a Double raises the expected `StrConvError`.
+fn double_raises(s : String) -> Bool {
   try {
     @strconv.parse_double(s) |> ignore
     false
   } catch {
-    Failure::Failure(_) => true
-    err => raise err
+    RangeError | SyntaxError | InvalidBase => true
   }
 }
 
 ///|
-/// Whether parsing `s` as an Int (32-bit) raises the expected `Failure`.
-fn int_raises(s : String) -> Bool raise {
+/// Whether parsing `s` as an Int (32-bit) raises the expected `StrConvError`.
+fn int_raises(s : String) -> Bool {
   try {
     @strconv.parse_int(s) |> ignore
     false
   } catch {
-    Failure::Failure(_) => true
-    err => raise err
+    RangeError | SyntaxError | InvalidBase => true
   }
 }
 
