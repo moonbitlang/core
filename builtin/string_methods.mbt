@@ -187,10 +187,19 @@ pub fn StringView::has_suffix(self : StringView, str : StringView) -> Bool {
   let str_len = str.length()
   guard str_len <= self_len else { return false }
   let start = self_len - str_len
-  for i in 0..<str_len {
-    guard self.unsafe_get(start + i) == str.unsafe_get(i) else { return false }
+  // Compare the anchor code unit inline: a mismatch there is the common case
+  // and is cheaper to reject than to pay the range-compare call overhead.
+  guard str_len == 0 || self.unsafe_get(start) == str.unsafe_get(0) else {
+    return false
   }
-  true
+  self
+  .str()
+  .unsafe_range_equal(
+    str.str(),
+    self_off=self.start() + start,
+    other_off=str.start(),
+    len=str_len,
+  )
 }
 
 ///|
@@ -220,10 +229,19 @@ test "has_suffix" {
 pub fn StringView::has_prefix(self : StringView, str : StringView) -> Bool {
   let str_len = str.length()
   guard str_len <= self.length() else { return false }
-  for i in 0..<str_len {
-    guard self.unsafe_get(i) == str.unsafe_get(i) else { return false }
+  // Compare the anchor code unit inline: a mismatch there is the common case
+  // and is cheaper to reject than to pay the range-compare call overhead.
+  guard str_len == 0 || self.unsafe_get(0) == str.unsafe_get(0) else {
+    return false
   }
-  true
+  self
+  .str()
+  .unsafe_range_equal(
+    str.str(),
+    self_off=self.start(),
+    other_off=str.start(),
+    len=str_len,
+  )
 }
 
 ///|
