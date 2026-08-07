@@ -37,7 +37,7 @@ pub fn[T] Generator::Generator(
 /// ```mbt check
 /// test "spawn draws from Arbitrary" {
 ///   let strings : @quickcheck.Generator[String] = @quickcheck.Generator::spawn()
-///   let lengths = strings.samples(count=3, size=4).map(s => s.length())
+///   let lengths = strings.samples(count=3, size=4, seed=37).map(s => s.length())
 ///   debug_inspect(
 ///     lengths,
 ///     content=(
