@@ -40,14 +40,18 @@ priv struct ObservationSummary {
 /// classes-only summary renders as `{ classes: {...} }` without a noisy
 /// `labels: {}` field (and vice versa).
 impl @debug.Debug for ObservationSummary with fn to_repr(self) {
-  let fields : Map[String, @debug.Repr] = Map([])
-  if !self.labels.is_empty() {
-    fields["labels"] = Repr(self.labels)
-  }
-  if !self.classes.is_empty() {
-    fields["classes"] = Repr(self.classes)
-  }
-  @debug.Repr::record(fields)
+  @debug.Repr::record(
+    Map(
+      [
+        ..if !self.labels.is_empty() {
+          [("labels", Repr(self.labels))]
+        },
+        ..if !self.classes.is_empty() {
+          [("classes", Repr(self.classes))]
+        },
+      ],
+    ),
+  )
 }
 
 ///|
