@@ -410,6 +410,7 @@ pub fn[A] Deque::append(self : Deque[A], other : Deque[A]) -> Unit {
 ///   )
 /// }
 /// ```
+#owned(value)
 pub fn[A] Deque::insert(self : Deque[A], index : Int, value : A) -> Unit {
   guard index >= 0 && index <= self.length() else {
     abort(
@@ -631,6 +632,7 @@ pub fn[A] Deque::back(self : Deque[A]) -> A? {
 ///   @test.assert_eq(dv.front(), Some(0))
 /// }
 /// ```
+#owned(value)
 pub fn[A] Deque::push_front(self : Deque[A], value : A) -> Unit {
   if self.len == self.buf.length() {
     self.realloc()
@@ -654,6 +656,7 @@ pub fn[A] Deque::push_front(self : Deque[A], value : A) -> Unit {
 ///   @test.assert_eq(dv.back(), Some(6))
 /// }
 /// ```
+#owned(value)
 pub fn[A] Deque::push_back(self : Deque[A], value : A) -> Unit {
   if self.len == self.buf.length() {
     self.realloc()
@@ -836,6 +839,7 @@ pub fn[A] Deque::at(self : Deque[A], index : Int) -> A {
 /// }
 /// ```
 #alias("_[_]=_")
+#owned(value)
 pub fn[A] Deque::set(self : Deque[A], index : Int, value : A) -> Unit {
   if index < 0 || index >= self.len {
     index_out_of_bounds(self.len, index)

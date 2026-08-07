@@ -53,6 +53,7 @@ pub fn[K, V] HashMap::new() -> HashMap[K, V] {
 ///|
 /// Create a map with a single key-value pair.
 #as_free_fn
+#owned(key, value)
 pub fn[K : Hash, V] HashMap::singleton(key : K, value : V) -> HashMap[K, V] {
   { data: Some(Flat(key, value, @path.of(key))) }
 }
@@ -109,6 +110,7 @@ fn[K : Eq, V] Node::get_with_path(
 
 ///|
 /// require: key1 != key2, path1 and path2 has the same length
+#owned(key1, value1, key2, value2)
 fn[K, V] join_2(
   key1 : K,
   value1 : V,
@@ -137,6 +139,7 @@ fn[K, V] join_2(
 }
 
 ///|
+#owned(value)
 fn[K : Eq, V] Node::add_with_path(
   self : Node[K, V],
   key : K,
@@ -433,6 +436,7 @@ pub fn[K, V, A] HashMap::map(
 /// Add a key-value pair to the hashmap.
 ///
 /// If a pair with the same key already exists, the old one is replaced
+#owned(value)
 pub fn[K : Eq + Hash, V] HashMap::add(
   self : HashMap[K, V],
   key : K,

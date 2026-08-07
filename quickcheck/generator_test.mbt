@@ -173,3 +173,16 @@ test "zip_with and zip_with3 combine generator outputs" {
     ),
   )
 }
+
+///|
+test "spawn composes with generator combinators" {
+  let entries = (@quickcheck.spawn() : @quickcheck.Generator[String])
+    .zip((@quickcheck.spawn() : @quickcheck.Generator[Int]))
+    .samples(count=3, size=4, seed=37)
+  debug_inspect(
+    entries,
+    content=(
+      #|[("", 3), ("Z\b", 3), ("", 0)]
+    ),
+  )
+}

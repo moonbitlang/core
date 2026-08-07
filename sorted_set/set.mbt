@@ -22,6 +22,7 @@ fn[V] new_sorted_set() -> SortedSet[V] {
 ///|
 /// Returns the one-value set containing only `value`.
 #as_free_fn
+#owned(value)
 pub fn[V] SortedSet::singleton(value : V) -> SortedSet[V] {
   { root: Some({ value, left: None, right: None, height: 1 }), size: 1 }
 }
@@ -76,6 +77,7 @@ fn[V] copy_tree(node : Node[V]?) -> Node[V]? {
 }
 
 ///|
+#owned(value, left, right)
 fn[V] new_node(
   value : V,
   left? : Node[V]? = None,
@@ -86,6 +88,7 @@ fn[V] new_node(
 }
 
 ///|
+#owned(value, left, right)
 fn[V] new_node_update_height(
   value : V,
   left~ : Node[V]?,
@@ -98,6 +101,7 @@ fn[V] new_node_update_height(
 
 ///|
 /// Adds a value to the set. If the value already exists, it is replaced.
+#owned(value)
 pub fn[V : Compare] SortedSet::add(self : SortedSet[V], value : V) -> Unit {
   let (new_root, inserted) = add_node(self.root, value)
   if self.root != new_root {
@@ -203,6 +207,7 @@ fn[V : Compare] split(root : Node[V]?, value : V) -> (Node[V]?, Node[V]?) {
 }
 
 ///|
+#owned(left, value, right)
 fn[V] join(left : Node[V]?, value : V, right : Node[V]?) -> Node[V] {
   let (hl, hr) = (height(left), height(right))
   if hl > hr + 1 {
@@ -215,6 +220,7 @@ fn[V] join(left : Node[V]?, value : V, right : Node[V]?) -> Node[V] {
 }
 
 ///|
+#owned(l, v)
 fn[V] join_left(l : Node[V]?, v : V, r : Node[V]?) -> Node[V] {
   let { value: rv, left: rl, right: rr, .. } = r.unwrap()
   let node = if height(rl) <= height(l) + 1 {
@@ -240,6 +246,7 @@ fn[V] join_left(l : Node[V]?, v : V, r : Node[V]?) -> Node[V] {
 }
 
 ///|
+#owned(v, r)
 fn[V] join_right(l : Node[V]?, v : V, r : Node[V]?) -> Node[V] {
   let { value: lv, left: ll, right: lr, .. } = l.unwrap()
   let node = if height(lr) <= height(r) + 1 {
@@ -575,6 +582,7 @@ fn[V] height_ge(x1 : Node[V]?, x2 : Node[V]?) -> Bool {
 }
 
 ///|
+#owned(root)
 fn[V] balance(root : Node[V]) -> Node[V] {
   let (l, r) = (root.left, root.right)
   let (hl, hr) = (height(l), height(r))
@@ -600,26 +608,33 @@ fn[V] balance(root : Node[V]) -> Node[V] {
 }
 
 ///|
+#owned(n)
 fn[V] rotate_l(n : Node[V]) -> Node[V] {
   let r = n.right.unwrap()
   n.right = r.left
-  r.left = Some(n)
+  // Update n's height before storing it: the store consumes the owned `n`
+  // reference, and touching `n` afterwards would force an extra
+  // incref/decref pair to keep it alive across the store.
   n.update_height()
+  r.left = Some(n)
   r.update_height()
   r
 }
 
 ///|
+#owned(n)
 fn[V] rotate_r(n : Node[V]) -> Node[V] {
   let l = n.left.unwrap()
   n.left = l.right
-  l.right = Some(n)
+  // See rotate_l: keep the consuming store as the last use of `n`.
   n.update_height()
+  l.right = Some(n)
   l.update_height()
   l
 }
 
 ///|
+#owned(n)
 fn[V] rotate_lr(n : Node[V]) -> Node[V] {
   let l = n.left.unwrap()
   let v = rotate_l(l)
@@ -628,6 +643,7 @@ fn[V] rotate_lr(n : Node[V]) -> Node[V] {
 }
 
 ///|
+#owned(n)
 fn[V] rotate_rl(n : Node[V]) -> Node[V] {
   let r = n.right.unwrap()
   let v = rotate_r(r)
@@ -636,6 +652,7 @@ fn[V] rotate_rl(n : Node[V]) -> Node[V] {
 }
 
 ///|
+#owned(value)
 fn[V : Compare] add_node(root : Node[V]?, value : V) -> (Node[V]?, Bool) {
   match root {
     None => (Some(new_node(value)), true)

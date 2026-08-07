@@ -40,6 +40,7 @@ pub impl[X : Show] Show for Ref[X] with fn output(self, logger) {
 ///|
 /// create a reference from value
 #alias(new, deprecated)
+#owned(x)
 pub fn[T] Ref::Ref(x : T) -> Ref[T] {
   { val: x }
 }
@@ -56,6 +57,7 @@ test "to_string" {
 
 ///|
 /// Same as the `Ref` constructor.
+#owned(x)
 pub fn[T] new(x : T) -> Ref[T] {
   { val: x }
 }

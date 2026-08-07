@@ -135,7 +135,7 @@ test "discarded cases do not contribute observations" {
     content=(
       #|Passed(
       #|  tests=2,
-      #|  observations={ labels: { <List: ["1"]>: 1, <List: ["2"]>: 1 }, classes: {} },
+      #|  observations={ labels: { <List: ["1"]>: 1, <List: ["2"]>: 1 } },
       #|)
     ),
   )
@@ -466,6 +466,22 @@ test "report accepts InspectError while shrinking Raised" {
       #|  shrinks=1,
       #|  shrink_attempts=1,
       #|)
+    ),
+  )
+}
+
+///|
+test "classes-only summary omits the empty labels field" {
+  let report = @quickcheck.report(
+    (_ : Int) => true,
+    observe=_ => [@quickcheck.classify(true, "observed")],
+    count=3,
+    max_size=2,
+  )
+  debug_inspect(
+    report,
+    content=(
+      #|Passed(tests=3, observations={ classes: { "observed": 3 } })
     ),
   )
 }

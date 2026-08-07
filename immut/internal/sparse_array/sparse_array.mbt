@@ -29,6 +29,7 @@ pub fn[X] empty() -> SparseArray[X] {
 
 ///|
 /// Create a singleton value.
+#owned(value)
 pub fn[X] singleton(idx : Int, value : X) -> SparseArray[X] {
   { elem_info: empty_bitset.add(idx), data: [value] }
 }
@@ -50,6 +51,7 @@ fn[X] SparseArray::unsafe_get(self : SparseArray[X], idx : Int) -> X {
 
 ///|
 /// Create a two-element value.
+#owned(value1, value2)
 pub fn[X] doubleton(
   idx1 : Int,
   value1 : X,
@@ -71,6 +73,7 @@ pub fn[X] doubleton(
 ///
 /// The caller must ensure that `indices` are sorted, unique, and have the same
 /// length as `data`.
+#owned(data)
 pub fn[X] from_sorted_fixed_array(
   indices : FixedArray[Int],
   data : FixedArray[X],
@@ -85,6 +88,7 @@ pub fn[X] from_sorted_fixed_array(
 ///|
 /// Add a new element into the sparse array.
 /// `idx` must be absent from `self`
+#owned(value)
 pub fn[X] SparseArray::add(
   self : SparseArray[X],
   idx : Int,
@@ -278,6 +282,7 @@ pub fn[X] SparseArray::filter(
 
 ///|
 /// Function `replace`.
+#owned(value)
 pub fn[X] SparseArray::replace(
   self : SparseArray[X],
   idx : Int,

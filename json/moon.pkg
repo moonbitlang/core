@@ -15,4 +15,9 @@ import {
   "moonbitlang/core/unit",
   "moonbitlang/core/bigint",
   "moonbitlang/core/bench",
+  "moonbitlang/core/debug",
+  "moonbitlang/core/double",
+  "moonbitlang/core/quickcheck",
+  "moonbitlang/core/quickcheck/shrink",
+  "moonbitlang/core/quickcheck/splitmix",
 } for "test"

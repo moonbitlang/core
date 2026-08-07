@@ -29,6 +29,7 @@ fn[T] Array::make_uninit(len : Int) -> Array[T] {
 }
 
 ///|
+#owned(src)
 fn[T] Array::unsafe_make_and_blit(
   src : UninitializedArray[T],
   allocate_len~ : Int,
@@ -49,6 +50,7 @@ fn[T] Array::unsafe_make_and_blit(
 }
 
 ///|
+#owned(src)
 fn[T] Array::unsafe_make_and_blit_from_fixed(
   src : FixedArray[T],
   allocate_len~ : Int,
@@ -65,6 +67,7 @@ fn[T] Array::unsafe_make_and_blit_from_fixed(
 }
 
 ///|
+#owned(value)
 fn[T] Array::unsafe_resize_with_default(
   self : Array[T],
   new_len : Int,
@@ -349,6 +352,7 @@ pub fn[T] Array::shrink_to_fit(self : Array[T]) -> Unit {
 ///   v.push(3)
 /// }
 /// ```
+#owned(value)
 pub fn[T] Array::push(self : Array[T], value : T) -> Unit {
   if self.length() == self.buffer().0.length() {
     self.realloc(self.length() + 1)
@@ -663,6 +667,7 @@ pub fn[T] Array::drain(self : Array[T], begin : Int, end : Int) -> Array[T] {
 ///   @debug.debug_inspect(c, content="[1, 2, 3, 6]")
 /// }
 /// ```
+#owned(value)
 pub fn[T] Array::insert(self : Array[T], index : Int, value : T) -> Unit {
   guard index >= 0 && index <= self.length() else {
     abort(
@@ -726,6 +731,7 @@ pub fn[T] Array::insert(self : Array[T], index : Int, value : T) -> Unit {
 ///   )
 /// }
 /// ```
+#owned(value)
 pub fn[A] Array::fill(
   self : Array[A],
   value : A,

@@ -68,6 +68,7 @@ fn[A : Eq] Node::contains(self : Node[A], key : A, path : @path.Path) -> Bool {
 
 ///|
 /// require: key1 != key2, path1 and path2 has the same length
+#owned(key1, key2)
 fn[A] join_2(
   key1 : A,
   path1 : @path.Path,

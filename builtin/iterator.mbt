@@ -238,6 +238,7 @@ pub fn[X] Iter::count_if(self : Iter[X], f : (X) -> Bool) -> Int {
 ///
 /// This function is intended for use by data structure authors,
 /// and should not be called by end users in general.
+#owned(f)
 pub fn[X] Iter::new(f : () -> X?, size_hint? : Int) -> Iter[X] {
   let size_hint = match size_hint {
     Some(n) if n > 0 => Some(n)
@@ -1036,6 +1037,7 @@ pub(all) struct Iter2[X, Y](Iter[(X, Y)])
 ///|
 /// Construct an `Iter2` from a pair-producing function.
 /// If the number of remaining pairs is known, pass it as `size_hint`.
+#owned(f)
 pub fn[X, Y] Iter2::new(f : () -> (X, Y)?, size_hint? : Int) -> Iter2[X, Y] {
   let size_hint = match size_hint {
     Some(n) if n > 0 => Some(n)

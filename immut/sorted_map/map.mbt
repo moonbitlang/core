@@ -17,6 +17,7 @@
 /// O(log n).
 ///
 #alias(insert, deprecated)
+#owned(value)
 pub fn[K : Compare, V] SortedMap::add(
   self : SortedMap[K, V],
   key : K,

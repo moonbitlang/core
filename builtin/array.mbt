@@ -32,6 +32,7 @@
 ///   debug_inspect(dynamic, content="[42, 42, 42]")
 /// }
 /// ```
+#owned(arr)
 pub fn[T] Array::from_fixed_array(arr : FixedArray[T]) -> Array[T] {
   let len = arr.length()
   Array::unsafe_make_and_blit_from_fixed(arr, allocate_len=len, len~)
@@ -71,6 +72,7 @@ pub fn[T] Array::from_fixed_array(arr : FixedArray[T]) -> Array[T] {
 /// ```
 /// This is because all the cells reference to the same object (the Array[Int] in this case).
 /// One should use makei() instead which creates an object for each index.
+#owned(elem)
 pub fn[T] Array::make(len : Int, elem : T) -> Array[T] {
   let arr = Array::make_uninit(len)
   for i in 0..<len {
@@ -228,6 +230,7 @@ pub fn[T] Array::get(self : Array[T], index : Int) -> T? {
 /// }
 /// ```
 #intrinsic("%array.unsafe_set")
+#owned(val)
 pub fn[T] Array::unsafe_set(self : Array[T], idx : Int, val : T) -> Unit {
   self.buffer().unsafe_set(idx, val)
 }
@@ -257,6 +260,7 @@ pub fn[T] Array::unsafe_set(self : Array[T], idx : Int, val : T) -> Unit {
 ///
 #intrinsic("%array.set")
 #alias("_[_]=_")
+#owned(value)
 pub fn[T] Array::set(self : Array[T], index : Int, value : T) -> Unit {
   let len = self.length()
   guard! index >= 0 && index < len

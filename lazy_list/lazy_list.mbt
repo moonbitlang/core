@@ -19,6 +19,7 @@
 ///|
 /// Strict-tail cons. Private — exposed indirectly through `lazy_cons`
 /// and as the building block for the transform combinators.
+#owned(head, tail)
 fn[A] cons(head : A, tail : LazyList[A]) -> LazyList[A] {
   { cell: Cons(head, tail=@lazy.Lazy::ready(tail)) }
 }
@@ -60,6 +61,7 @@ pub fn[A] LazyList::empty() -> LazyList[A] {
 /// }
 /// ```
 #as_free_fn
+#owned(head, tail)
 pub fn[A] LazyList::lazy_cons(
   head : A,
   tail : () -> LazyList[A],
@@ -226,6 +228,7 @@ pub fn[A] LazyList::drop_while(
 ///|
 /// Concatenates two lazy lists. The right-hand side is not forced until
 /// the left-hand side has been fully consumed.
+#owned(other)
 pub fn[A] LazyList::concat(
   self : LazyList[A],
   other : LazyList[A],

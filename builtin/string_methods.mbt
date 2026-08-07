@@ -74,21 +74,25 @@ test "find" {
 }
 
 ///|
-/// Returns the offset of the first character that satisfies the given predicate.
-/// If no such character is found, it returns None.
+/// Returns the UTF-16 code-unit offset, relative to the beginning of this view,
+/// of the first character that satisfies the given predicate. If no such
+/// character is found, it returns None.
 #locals(pred)
 pub fn StringView::find_by(self : StringView, pred : (Char) -> Bool) -> Int? {
-  for i, c in self {
+  for c in self; offset = 0 {
     if pred(c) {
-      return Some(i)
+      break Some(offset)
     }
+    continue offset + c.utf16_len()
+  } nobreak {
+    None
   }
-  None
 }
 
 ///|
-/// Returns the offset of the first character that satisfies the given predicate.
-/// If no such character is found, it returns None.
+/// Returns the UTF-16 code-unit offset, relative to the beginning of this
+/// string, of the first character that satisfies the given predicate. If no
+/// such character is found, it returns None.
 pub fn String::find_by(self : String, pred : (Char) -> Bool) -> Int? {
   self[:].find_by(pred)
 }
@@ -104,7 +108,14 @@ test "find_by" {
   assert_true("hello".find_by(c => c is ('A'..='Z')) == None)
   assert_true("Hello".find_by(c => c is ('A'..='Z')) == Some(0))
   assert_true("αβγ".find_by(c => c == 'β') == Some(1))
-  assert_true("😀😁😂".find_by(c => c == '😂') == Some(2))
+}
+
+///|
+test "find_by returns UTF-16 code-unit offsets" {
+  assert_true("😀X".find_by(c => c == 'X') == Some(2))
+  assert_true("😀😁😂".find_by(c => c == '😂') == Some(4))
+  let view = "a😀Xz"[1:4]
+  assert_true(view.find_by(c => c == 'X') == Some(2))
 }
 
 ///|
@@ -176,10 +187,19 @@ pub fn StringView::has_suffix(self : StringView, str : StringView) -> Bool {
   let str_len = str.length()
   guard str_len <= self_len else { return false }
   let start = self_len - str_len
-  for i in 0..<str_len {
-    guard self.unsafe_get(start + i) == str.unsafe_get(i) else { return false }
+  // Compare the anchor code unit inline: a mismatch there is the common case
+  // and is cheaper to reject than to pay the range-compare call overhead.
+  guard str_len == 0 || self.unsafe_get(start) == str.unsafe_get(0) else {
+    return false
   }
-  true
+  self
+  .str()
+  .unsafe_range_equal(
+    str.str(),
+    self_off=self.start() + start,
+    other_off=str.start(),
+    len=str_len,
+  )
 }
 
 ///|
@@ -209,10 +229,19 @@ test "has_suffix" {
 pub fn StringView::has_prefix(self : StringView, str : StringView) -> Bool {
   let str_len = str.length()
   guard str_len <= self.length() else { return false }
-  for i in 0..<str_len {
-    guard self.unsafe_get(i) == str.unsafe_get(i) else { return false }
+  // Compare the anchor code unit inline: a mismatch there is the common case
+  // and is cheaper to reject than to pay the range-compare call overhead.
+  guard str_len == 0 || self.unsafe_get(0) == str.unsafe_get(0) else {
+    return false
   }
-  true
+  self
+  .str()
+  .unsafe_range_equal(
+    str.str(),
+    self_off=self.start(),
+    other_off=str.start(),
+    len=str_len,
+  )
 }
 
 ///|
@@ -1757,6 +1786,12 @@ test "to_lower" {
 }
 
 ///|
+test "to_lower after a non-BMP character" {
+  inspect("😀X".to_lower(), content="😀x")
+  inspect("a😀Xz"[1:4].to_lower(), content="😀x")
+}
+
+///|
 test "View::to_lower" {
   assert_true("Hello"[:].to_lower() == "hello")
   assert_true("HELLO"[:].to_lower() == "hello")
@@ -1808,6 +1843,12 @@ test "to_upper" {
   assert_true("hello".to_upper() == "HELLO")
   assert_true("HELLO".to_upper() == "HELLO")
   assert_true("Hello, World!".to_upper() == "HELLO, WORLD!")
+}
+
+///|
+test "to_upper after a non-BMP character" {
+  inspect("😀x".to_upper(), content="😀X")
+  inspect("a😀xz"[1:4].to_upper(), content="😀X")
 }
 
 ///|

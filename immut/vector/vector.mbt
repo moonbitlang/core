@@ -35,6 +35,7 @@ pub fn[A] Vector::new() -> Vector[A] {
 /// }
 /// ```
 #as_free_fn
+#owned(value)
 pub fn[A] Vector::singleton(value : A) -> Vector[A] {
   make_t(Tree::empty(), [value], 1, 0)
 }
@@ -42,6 +43,7 @@ pub fn[A] Vector::singleton(value : A) -> Vector[A] {
 ///|
 /// Create a persistent vector with a given length and value.
 #as_free_fn
+#owned(value)
 pub fn[A] Vector::make(len : Int, value : A) -> Vector[A] {
   guard len > 0 else { new() }
   let tail_len = tail_len_of_size(len)
@@ -278,6 +280,7 @@ pub fn[A : Eq] Vector::contains(self : Vector[A], value : A) -> Bool {
 ///   @debug.assert_eq(v.set(1, 10), @vector.from_array([1, 10, 3, 4, 5]))
 /// }
 /// ```
+#owned(value)
 pub fn[A] Vector::set(self : Vector[A], index : Int, value : A) -> Vector[A] {
   guard! index >= 0 && index < self.size
   let tail_len = self.tail.length()
@@ -318,6 +321,7 @@ pub fn[A] Vector::set(self : Vector[A], index : Int, value : A) -> Vector[A] {
 ///   @debug.assert_eq(v.push(4), @vector.from_array([1, 2, 3, 4]))
 /// }
 /// ```
+#owned(value)
 pub fn[A] Vector::push(self : Vector[A], value : A) -> Vector[A] {
   if self.tail.length() < BRANCHING_FACTOR {
     make_t(
@@ -795,6 +799,7 @@ pub impl[A : Compare] Compare for Vector[A] with fn compare(self, other) {
 //-----------------------------------------------------------------------------
 
 ///|
+#owned(tree, tail)
 fn[A] make_t(
   tree : Tree[A],
   tail : FixedArray[A],
