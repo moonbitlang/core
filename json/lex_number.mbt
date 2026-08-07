@@ -383,8 +383,9 @@ fn ParseContext::lex_number_end(
 ) -> LexedNumber {
   // Fast path for JSON numbers: the lexer has already validated the grammar,
   // so scan raw UTF-16 digits once and bypass the general strconv parser for
-  // safe integers and Clinger-style fast-path doubles. Fall back to strconv for
-  // large or precision-sensitive numbers so existing rounding behavior is kept.
+  // safe integers, Clinger-style exact doubles, and Eisel-Lemire conversions.
+  // Fall back to strconv for truncated or ambiguous numbers so the exact
+  // Decimal converter preserves existing rounding behavior.
   let scan = ctx.scan_json_number(start, end)
   if scan.is_integer {
     // `is_integer` is set by `scan_json_number` only when no `.` and no `e/E`
@@ -411,6 +412,16 @@ fn ParseContext::lex_number_end(
   let fast = scan.try_fast_double()
   if !fast.is_nan() {
     return { value: fast, repr: None }
+  }
+  if !scan.many_digits {
+    let fast = @internal/strconv.try_eisel_lemire64(
+      scan.mantissa,
+      scan.exponent,
+      scan.negative,
+    )
+    if !fast.is_nan() {
+      return { value: fast, repr: None }
+    }
   }
   let s = ctx.input.view(start_offset=start, end_offset=end)
   try {

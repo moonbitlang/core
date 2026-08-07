@@ -75,6 +75,24 @@ test "parse negative huge exponent" {
 }
 
 ///|
+test "parse_number 17-19 digit mantissas" {
+  let cases : FixedArray[(String, UInt64)] = [
+    ("-65.613616999999977", 13857689601620889920UL),
+    ("43.420273000000009", 4631307677475222056UL),
+    ("-65.619720000000029", 13857690031081335640UL),
+    ("43.418052999999986", 4631307365037997904UL),
+    ("9.999999999999999999", 4621819117588971520UL),
+  ]
+  for case in cases {
+    let (input, expected_bits) = case
+    guard @json.parse(input) is Number(value, ..) else {
+      fail("expected JSON number")
+    }
+    assert_eq(value.reinterpret_as_uint64(), expected_bits)
+  }
+}
+
+///|
 test "parse and stringify large integers" {
   // Test integers at Int boundaries
   let min_int = "-2147483648" // Int.min_value
