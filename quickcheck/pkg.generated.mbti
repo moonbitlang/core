@@ -55,6 +55,7 @@ pub fn[T] Generator::run(Self[T], Int, @splitmix.RandomState) -> T
 pub fn[T] Generator::sample(Self[T], size? : Int, seed? : UInt64) -> T
 pub fn[T] Generator::samples(Self[T], count? : Int, size? : Int, seed? : UInt64) -> Array[T]
 pub fn[T] Generator::scale(Self[T], (Int) -> Int) -> Self[T]
+pub fn[T : Arbitrary] Generator::spawn() -> Self[T]
 pub fn[T, U] Generator::zip(Self[T], Self[U]) -> Self[(T, U)]
 pub fn[T, U, V] Generator::zip_with(Self[T], Self[U], (T, U) -> V) -> Self[V]
 pub fn[T, U, V, W] Generator::zip_with3(Self[T], Self[U], Self[V], (T, U, V) -> W) -> Self[W]
