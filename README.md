@@ -25,7 +25,7 @@ graph BT
   numbers["<b>numerics</b><br/>int · uint · int16 · uint16 · int64 · uint64<br/>double · float · bigint · v128 · math"] --> builtin
   text["<b>text & binary</b><br/>string · bytes · buffer · encoding/*<br/>strconv · lexbuf"] --> builtin
   mut["<b>mutable collections</b><br/>array · hashmap · hashset · deque · queue<br/>priority_queue · set · sorted_map · sorted_set"] --> builtin
-  imm["<b>immutable collections</b><br/>list · lazy_list · immut/array<br/>immut/hashmap · immut/sorted_map · …"] --> builtin
+  imm["<b>immutable collections</b><br/>list · lazy_list · immut/vector<br/>immut/hashmap · immut/sorted_map · …"] --> builtin
   tools["<b>algorithms & tooling</b><br/>json · diff · random · quickcheck · argparse<br/>bench · test · debug · env"] --> builtin
 ```
 

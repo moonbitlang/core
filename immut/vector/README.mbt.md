@@ -2,7 +2,7 @@
 
 An immutable (persistent) vector providing efficient random access, update, and append operations. Similar to Clojure's persistent vector, it uses a wide branching tree (branching factor 32) with a tail buffer to achieve near-constant-time operations on the right end.
 
-This package replaces the deprecated `immut/array` package with a more efficient tail-backed layout.
+This package replaces the removed `immut/array` package with a more efficient tail-backed layout.
 
 ## Overview
 
