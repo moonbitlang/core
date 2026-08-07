@@ -15,4 +15,5 @@ import {
   "moonbitlang/core/unit",
   "moonbitlang/core/bigint",
   "moonbitlang/core/bench",
+  "moonbitlang/core/double",
 } for "test"
