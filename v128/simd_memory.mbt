@@ -156,6 +156,29 @@ pub fn v128_load(bytes : FixedArray[Byte], offset : Int) -> V128 {
 }
 
 ///|
+/// Loads eight consecutive UTF-16 code units from `str` beginning at `offset`.
+///
+/// The offset is measured in UTF-16 code units. The caller must ensure
+/// `offset + 8 <= str.length()`.
+#intrinsic("%v128.v128_load_i16x8")
+#borrow(str)
+#cfg(any(target="native", target="wasm"))
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+pub fn v128_load_i16x8(str : String, offset : Int) -> V128 {
+  i16x8_const(
+    str.unsafe_get(offset),
+    str.unsafe_get(offset + 1),
+    str.unsafe_get(offset + 2),
+    str.unsafe_get(offset + 3),
+    str.unsafe_get(offset + 4),
+    str.unsafe_get(offset + 5),
+    str.unsafe_get(offset + 6),
+    str.unsafe_get(offset + 7),
+  )
+}
+
+///|
 /// Loads packed elements from `bytes` and sign-extends them into the vector.
 #intrinsic("%v128.v128_load8x8_s")
 #borrow(bytes)

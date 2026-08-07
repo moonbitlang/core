@@ -383,33 +383,102 @@ pub fn Json::stringify(
 }
 
 ///|
+#inline
+fn need_escape_scalar(
+  str : String,
+  escape_slash : Bool,
+  start : Int,
+  end : Int,
+) -> Bool {
+  for i in start..<end {
+    let code = str.unsafe_get(i)
+    if code == ('"' : UInt16) ||
+      code == ('\\' : UInt16) ||
+      code < (' ' : UInt16) ||
+      (escape_slash && code == ('/' : UInt16)) {
+      return true
+    }
+  }
+  false
+}
+
+///|
+#cfg(not(any(target="native", target="wasm")))
+#warnings("-unused_value")
+fn suppress_unused_v128_import_on_scalar_targets() -> Unit {
+  ignore(@v128.i16x8_splat(0))
+}
+
+///|
+#cfg(not(any(target="native", target="wasm")))
+fn need_escape(str : String, escape_slash : Bool) -> Bool {
+  need_escape_scalar(str, escape_slash, 0, str.length())
+}
+
+///|
+// Scan eight UTF-16 code units at a time on linear-memory backends, then scan
+// the remaining tail one code unit at a time.
+#cfg(any(target="native", target="wasm"))
+fn need_escape(str : String, escape_slash : Bool) -> Bool {
+  let len = str.length()
+  guard len >= 8 else { return need_escape_scalar(str, escape_slash, 0, len) }
+  let control_limit = @v128.i16x8_splat((' ' : UInt16))
+  let quote = @v128.i16x8_splat(('"' : UInt16))
+  let backslash = @v128.i16x8_splat(('\\' : UInt16))
+  let slash = @v128.i16x8_splat(('/' : UInt16))
+  let tail_start = for pos = 0; pos + 8 <= len; {
+    let block = @v128.v128_load_i16x8(str, pos)
+    let escaped = @v128.v128_or_(
+      @v128.i16x8_lt_u(block, control_limit),
+      @v128.v128_or_(
+        @v128.i16x8_eq(block, quote),
+        @v128.i16x8_eq(block, backslash),
+      ),
+    )
+    let escaped = if escape_slash {
+      @v128.v128_or_(escaped, @v128.i16x8_eq(block, slash))
+    } else {
+      escaped
+    }
+    if @v128.v128_any_true(escaped) {
+      return true
+    }
+    continue pos + 8
+  } nobreak {
+    pos
+  }
+  need_escape_scalar(str, escape_slash, tail_start, len)
+}
+
+///|
 fn escape(str : String, escape_slash~ : Bool) -> String {
-  let buf = StringBuilder(size_hint=str.length())
-  for c in str {
-    match c {
-      '"' => buf.write_string("\\\"")
-      '\\' => buf.write_string("\\\\")
-      '/' =>
+  let len = str.length()
+  if !need_escape(str, escape_slash) {
+    return str
+  }
+  let buf = StringBuilder(size_hint=len)
+  for code in str.code_units() {
+    match code {
+      ('"' : UInt16) => buf.write_string("\\\"")
+      ('\\' : UInt16) => buf.write_string("\\\\")
+      ('/' : UInt16) =>
         if escape_slash {
           buf.write_string("\\/")
         } else {
-          buf.write_char(c)
+          buf.write_char('/')
         }
-      '\n' => buf.write_string("\\n")
-      '\r' => buf.write_string("\\r")
-      '\b' => buf.write_string("\\b")
-      '\t' => buf.write_string("\\t")
-      _ => {
-        let code = c.to_int()
-        if code == 0x0C {
-          buf.write_string("\\f")
-        } else if code < ' ' {
+      ('\n' : UInt16) => buf.write_string("\\n")
+      ('\r' : UInt16) => buf.write_string("\\r")
+      ('\b' : UInt16) => buf.write_string("\\b")
+      ('\t' : UInt16) => buf.write_string("\\t")
+      (0x0C : UInt16) => buf.write_string("\\f")
+      _ =>
+        if code < (' ' : UInt16) {
           buf.write_string("\\u00")
           buf.write_string(code.to_byte().to_hex())
         } else {
-          buf.write_char(c)
+          buf.write_char(code.unsafe_to_char())
         }
-      }
     }
   }
   buf.to_string()
