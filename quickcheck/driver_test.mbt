@@ -485,3 +485,52 @@ test "classes-only summary omits the empty labels field" {
     ),
   )
 }
+
+///|
+test "context renders the shrunk counterexample" {
+  let report = @quickcheck.report(
+    (x : Int) => x < 3,
+    context=x => "rendered input <\{x}>",
+    count=100,
+    max_shrinks=100,
+    seed=7,
+  )
+  debug_inspect(
+    report,
+    content=(
+      #|Falsified(
+      #|  counterexample=3,
+      #|  context="rendered input <3>",
+      #|  tests=5,
+      #|  size=4,
+      #|  shrinks=0,
+      #|  shrink_attempts=2,
+      #|)
+    ),
+  )
+}
+
+///|
+test "context is attached to raised failures too" {
+  let report = @quickcheck.report(
+    (x : Int) => if x >= 3 { fail("boom") } else { true },
+    context=x => "rendered input <\{x}>",
+    count=100,
+    max_shrinks=100,
+    seed=7,
+  )
+  debug_inspect(
+    report,
+    content=(
+      #|Raised(
+      #|  counterexample=3,
+      #|  context="rendered input <3>",
+      #|  error=Failure("quickcheck/driver_test.mbt:500:30-500:42@moonbitlang/core FAILED: boom"),
+      #|  tests=5,
+      #|  size=4,
+      #|  shrinks=0,
+      #|  shrink_attempts=2,
+      #|)
+    ),
+  )
+}
