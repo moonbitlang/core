@@ -107,74 +107,107 @@ impl @quickcheck.Arbitrary for ArbJson with fn arbitrary(size, state) {
 /// Structural shrinker: a container shrinks to null, to any of its children,
 /// to itself with one child removed, and to itself with one child shrunk, so
 /// a failing document minimizes to the smallest structure that still fails.
-fn shrink_json(json : Json) -> Array[Json] {
+///
+/// Candidates are produced lazily: each copy is only materialized when the
+/// driver actually pulls it, so `max_shrinks` bounds the work even for large
+/// counterexamples.
+fn shrink_json(json : Json) -> Iter[Json] {
   match json {
-    Null => []
-    True | False => [Json::null()]
+    Null => Iter::empty()
+    True | False => Iter::singleton(Json::null())
     Number(n, ..) =>
       if n == 0.0 {
-        [Json::null()]
+        Iter::singleton(Json::null())
       } else {
-        [Json::null(), Json::number(0.0)]
+        [Json::null(), Json::number(0.0)].iter()
       }
-    String(s) => {
-      let out = [Json::null()]
-      for smaller in @shrink.Shrink::shrink(s) {
-        out.push(Json::string(smaller))
-      }
-      out
-    }
+    String(s) =>
+      Iter::singleton(Json::null()).concat(
+        @shrink.Shrink::shrink(s).map(smaller => Json::string(smaller)),
+      )
     Array(elements) => {
-      let out = [Json::null()]
-      for element in elements {
-        out.push(element)
-      }
-      for i in 0..<elements.length() {
-        let dropped = elements.copy()
-        ignore(dropped.remove(i))
-        out.push(Json::array(dropped))
-      }
-      for i in 0..<elements.length() {
-        for smaller in shrink_json(elements[i]) {
-          let replaced = elements.copy()
-          replaced[i] = smaller
-          out.push(Json::array(replaced))
-        }
-      }
-      out
+      let n = elements.length()
+      let dropped = (0)
+        .until(n)
+        .map(i => {
+          let smaller = elements.copy()
+          ignore(smaller.remove(i))
+          Json::array(smaller)
+        })
+      let replaced = (0)
+        .until(n)
+        .flat_map(i => {
+          shrink_json(elements[i]).map(smaller => {
+            let copy = elements.copy()
+            copy[i] = smaller
+            Json::array(copy)
+          })
+        })
+      Iter::singleton(Json::null())
+      .concat(elements.iter())
+      .concat(dropped)
+      .concat(replaced)
     }
     Object(members) => {
-      let out = [Json::null()]
       let pairs = members.to_array()
-      for pair in pairs {
-        out.push(pair.1)
-      }
-      for i in 0..<pairs.length() {
-        let smaller_members : Map[String, Json] = Map([])
-        for j, pair in pairs {
-          if i != j {
-            smaller_members[pair.0] = pair.1
-          }
-        }
-        out.push(Json::object(smaller_members))
-      }
-      for i in 0..<pairs.length() {
-        for smaller in shrink_json(pairs[i].1) {
-          let replaced : Map[String, Json] = Map([])
+      let n = pairs.length()
+      let dropped = (0)
+        .until(n)
+        .map(i => {
+          let smaller : Map[String, Json] = Map([])
           for j, pair in pairs {
-            replaced[pair.0] = if i == j { smaller } else { pair.1 }
+            if i != j {
+              smaller[pair.0] = pair.1
+            }
           }
-          out.push(Json::object(replaced))
-        }
-      }
-      out
+          Json::object(smaller)
+        })
+      let replaced = (0)
+        .until(n)
+        .flat_map(i => {
+          shrink_json(pairs[i].1).map(smaller => {
+            let copy : Map[String, Json] = Map([])
+            for j, pair in pairs {
+              copy[pair.0] = if i == j { smaller } else { pair.1 }
+            }
+            Json::object(copy)
+          })
+        })
+      Iter::singleton(Json::null())
+      .concat(pairs.iter().map(pair => pair.1))
+      .concat(dropped)
+      .concat(replaced)
     }
   }
 }
 
 ///|
 impl @shrink.Shrink for ArbJson with fn shrink(self) {
-  shrink_json(self.0).iter().map(json => ArbJson(json))
+  shrink_json(self.0).map(json => ArbJson(json))
+}
+
+///|
+/// The shrinker itself only runs when a property fails, so pin its candidate
+/// stream on a small document: null first, then each child, then one-child
+/// dropped, then one-child shrunk.
+test "shrink_json candidate stream" {
+  let doc = Json::array([Json::number(5.0), Json::string("a")])
+  debug_inspect(
+    shrink_json(doc).to_array(),
+    content=(
+      #|[
+      #|  Null,
+      #|  Number(5),
+      #|  String("a"),
+      #|  Array([String("a")]),
+      #|  Array([Number(5)]),
+      #|  Array([Null, String("a")]),
+      #|  Array([Number(0), String("a")]),
+      #|  Array([Number(5), Null]),
+      #|  Array([Number(5), String("")]),
+      #|]
+    ),
+  )
 }
 
 ///|
@@ -431,6 +464,9 @@ test "generated Json distribution stays healthy" {
       ]
     },
     count=200,
+    // Explicit seed: the snapshot below documents the distribution for this
+    // exact deterministic run and must not churn if the default seed changes.
+    seed=37,
   )
   debug_inspect(
     report,
