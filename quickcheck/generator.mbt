@@ -30,6 +30,27 @@ pub fn[T] Generator::Generator(
 }
 
 ///|
+/// Creates a generator that draws values from the type's `Arbitrary`
+/// instance, for mixing `Arbitrary`-based generation into hand-written
+/// generators.
+///
+/// ```mbt check
+/// test "spawn draws from Arbitrary" {
+///   let strings : @quickcheck.Generator[String] = @quickcheck.spawn()
+///   let lengths = strings.samples(count=3, size=4, seed=37).map(s => s.length())
+///   debug_inspect(
+///     lengths,
+///     content=(
+///       #|[3, 2, 1]
+///     ),
+///   )
+/// }
+/// ```
+pub fn[T : Arbitrary] spawn() -> Generator[T] {
+  Generator(Arbitrary::arbitrary)
+}
+
+///|
 /// Runs a generator with an explicit size and random state.
 pub fn[T] Generator::run(
   self : Generator[T],

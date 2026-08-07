@@ -42,6 +42,8 @@ pub fn[X : Arbitrary] samples(Int) -> Array[X]
 
 pub fn[T] sized((Int) -> Generator[T]) -> Generator[T]
 
+pub fn[T : Arbitrary] spawn() -> Generator[T]
+
 // Errors
 
 // Types and methods
