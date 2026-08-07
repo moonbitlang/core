@@ -44,10 +44,10 @@ impl @debug.Debug for ObservationSummary with fn to_repr(self) {
     Map(
       [
         ..if !self.labels.is_empty() {
-          [("labels", Repr(self.labels))]
+          [("labels", @debug.Repr(self.labels))]
         },
         ..if !self.classes.is_empty() {
-          [("classes", Repr(self.classes))]
+          [("classes", @debug.Repr(self.classes))]
         },
       ],
     ),
