@@ -17,6 +17,17 @@
 // All operations over sets are purely applicative (no side-effects).
 
 ///|
+priv struct SameRankValue {
+  rank : Int
+  label : String
+} derive(Eq)
+
+///|
+impl Compare for SameRankValue with fn compare(self, other) {
+  self.rank.compare(other.rank)
+}
+
+///|
 test "new" {
   let empty : @sorted_set.SortedSet[Int] = @sorted_set.new()
   debug_inspect(
@@ -339,6 +350,55 @@ test "SortedSet constructor" {
       #|<SortedSet: [1, 2, 3, 4, 5, 6, 7, 8, 9]>
     ),
   )
+}
+
+///|
+test "SortedSet ordered inputs" {
+  @test.assert_eq(@sorted_set.SortedSet([1, 2, 3]).to_array(), [1, 2, 3])
+  @test.assert_eq(@sorted_set.SortedSet([3, 2, 1]).to_array(), [1, 2, 3])
+}
+
+///|
+test "SortedSet ordered duplicates" {
+  @test.assert_eq(@sorted_set.SortedSet([1, 1, 2, 3]).to_array(), [1, 2, 3])
+}
+
+///|
+test "SortedSet ordered duplicates keep reverse insertion representative" {
+  let set = @sorted_set.SortedSet([
+    { rank: 1, label: "first" },
+    { rank: 1, label: "second" },
+    { rank: 2, label: "third" },
+  ])
+  @test.assert_eq(set.to_array().map(v => v.label), ["second", "third"])
+}
+
+///|
+test "SortedSet large unordered duplicates keep reverse insertion representative" {
+  let values = Array::makei(70, i => {
+    if i == 5 {
+      { rank: 10, label: "first" }
+    } else if i == 50 {
+      { rank: 10, label: "second" }
+    } else {
+      { rank: 1000 - i, label: "other-\{i}" }
+    }
+  })
+  let set = @sorted_set.SortedSet(values)
+  let matched = []
+  for value in set {
+    if value.rank == 10 {
+      matched.push(value.label)
+    }
+  }
+  @test.assert_eq(matched, ["second"])
+}
+
+///|
+test "from_sorted_array" {
+  let set = @sorted_set.from_sorted_array([1, 2, 3])
+  @test.assert_eq(set.to_array(), [1, 2, 3])
+  @test.assert_eq(set.contains(2), true)
 }
 
 ///|
@@ -736,6 +796,39 @@ test "from_iter multiple elements iter" {
       #|<SortedSet: [1, 2, 3]>
     ),
   )
+}
+
+///|
+test "from_iter ordered duplicates keep first representative" {
+  let set = @sorted_set.from_iter(
+    [
+      { rank: 1, label: "first" },
+      { rank: 1, label: "second" },
+      { rank: 2, label: "third" },
+    ].iter(),
+  )
+  @test.assert_eq(set.to_array().map(v => v.label), ["first", "third"])
+}
+
+///|
+test "from_iter large unordered duplicates keep first representative" {
+  let values = Array::makei(70, i => {
+    if i == 5 {
+      { rank: 10, label: "first" }
+    } else if i == 50 {
+      { rank: 10, label: "second" }
+    } else {
+      { rank: 1000 - i, label: "other-\{i}" }
+    }
+  })
+  let set = @sorted_set.from_iter(values.iter())
+  let matched = []
+  for value in set {
+    if value.rank == 10 {
+      matched.push(value.label)
+    }
+  }
+  @test.assert_eq(matched, ["first"])
 }
 
 ///|

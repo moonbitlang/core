@@ -13,6 +13,17 @@
 // limitations under the License.
 
 ///|
+priv struct SameRankKey {
+  rank : Int
+  label : String
+} derive(Eq)
+
+///|
+impl Compare for SameRankKey with fn compare(self, other) {
+  self.rank.compare(other.rank)
+}
+
+///|
 test "lookup" {
   let m = @sorted_map.SortedMap([
     (3, "three"),
@@ -46,6 +57,61 @@ test "is_empty" {
   inspect(m.is_empty(), content="true")
   let m = m.add(1, 1)
   inspect(m.is_empty(), content="false")
+}
+
+///|
+test "SortedMap ordered inputs" {
+  let ascending = @sorted_map.SortedMap([(1, "a"), (2, "b"), (3, "c")])
+  let descending = @sorted_map.SortedMap([(3, "c"), (2, "b"), (1, "a")])
+  @test.assert_eq(ascending.to_array(), [(1, "a"), (2, "b"), (3, "c")])
+  @test.assert_eq(descending.to_array(), [(1, "a"), (2, "b"), (3, "c")])
+}
+
+///|
+test "SortedMap ordered duplicate keeps last value" {
+  let m = @sorted_map.SortedMap([(1, "a"), (1, "b"), (2, "c")])
+  @test.assert_eq(m.to_array(), [(1, "b"), (2, "c")])
+}
+
+///|
+test "SortedMap ordered duplicate keeps first key and last value" {
+  let m = @sorted_map.SortedMap([
+    ({ rank: 1, label: "first" }, "a"),
+    ({ rank: 1, label: "second" }, "b"),
+    ({ rank: 2, label: "third" }, "c"),
+  ])
+  @test.assert_eq(m.to_array().map(kv => (kv.0.label, kv.1)), [
+    ("first", "b"),
+    ("third", "c"),
+  ])
+}
+
+///|
+test "SortedMap large unordered duplicate keeps first key and last value" {
+  let items = Array::makei(70, i => {
+    if i == 5 {
+      ({ rank: 10, label: "first" }, "a")
+    } else if i == 50 {
+      ({ rank: 10, label: "second" }, "b")
+    } else {
+      ({ rank: 1000 - i, label: "other-\{i}" }, "other")
+    }
+  })
+  let m = @sorted_map.SortedMap(items)
+  let matched = []
+  for k, v in m {
+    if k.rank == 10 {
+      matched.push((k.label, v))
+    }
+  }
+  @test.assert_eq(matched, [("first", "b")])
+}
+
+///|
+test "from_sorted_array" {
+  let m = @sorted_map.from_sorted_array([(1, "a"), (2, "b"), (3, "c")])
+  @test.assert_eq(m.to_array(), [(1, "a"), (2, "b"), (3, "c")])
+  @test.assert_eq(m.get(2), Some("b"))
 }
 
 ///|
@@ -244,6 +310,42 @@ test "from_iter multiple elements iter" {
 }
 
 ///|
+test "from_iter duplicate keeps first key and last value" {
+  let m = @sorted_map.from_iter(
+    [
+      ({ rank: 1, label: "first" }, "a"),
+      ({ rank: 1, label: "second" }, "b"),
+      ({ rank: 2, label: "third" }, "c"),
+    ].iter(),
+  )
+  @test.assert_eq(m.to_array().map(kv => (kv.0.label, kv.1)), [
+    ("first", "b"),
+    ("third", "c"),
+  ])
+}
+
+///|
+test "from_iter large unordered duplicate keeps first key and last value" {
+  let items = Array::makei(70, i => {
+    if i == 5 {
+      ({ rank: 10, label: "first" }, "a")
+    } else if i == 50 {
+      ({ rank: 10, label: "second" }, "b")
+    } else {
+      ({ rank: 1000 - i, label: "other-\{i}" }, "other")
+    }
+  })
+  let m = @sorted_map.from_iter(items.iter())
+  let matched = []
+  for k, v in m {
+    if k.rank == 10 {
+      matched.push((k.label, v))
+    }
+  }
+  @test.assert_eq(matched, [("first", "b")])
+}
+
+///|
 test "from_iter single element iter" {
   debug_inspect(
     @sorted_map.from_iter([(1, 1)].iter()),
@@ -264,6 +366,37 @@ test "from_iter empty iter" {
       #|<SortedMap: {}>
     ),
   )
+}
+
+///|
+test "from_iter descending keys build ascending" {
+  debug_inspect(
+    @sorted_map.from_iter([(3, 3), (2, 2), (1, 1)].iter()),
+    content=(
+      #|<SortedMap: { 1: 1, 2: 2, 3: 3 }>
+    ),
+  )
+}
+
+///|
+test "from_iter descending duplicate keeps first key and last value" {
+  let m = @sorted_map.from_iter(
+    [
+      ({ rank: 2, label: "top" }, "a"),
+      ({ rank: 1, label: "first" }, "b"),
+      ({ rank: 1, label: "second" }, "c"),
+    ].iter(),
+  )
+  @test.assert_eq(m.to_array().map(kv => (kv.0.label, kv.1)), [
+    ("first", "c"),
+    ("top", "a"),
+  ])
+}
+
+///|
+test "from_iter small unsorted duplicate keeps last value" {
+  let m = @sorted_map.from_iter([(3, "a"), (1, "b"), (3, "c"), (2, "d")].iter())
+  @test.assert_eq(m.to_array(), [(1, "b"), (2, "d"), (3, "c")])
 }
 
 ///|
