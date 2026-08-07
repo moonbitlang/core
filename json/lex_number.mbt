@@ -236,11 +236,22 @@ fn ParseContext::lex_integer_end(
     }
     let digit = (ctx.input.unsafe_get(i).to_int() - '0').to_int64()
     if acc > (SAFE_INTEGER_LIMIT - digit) / 10L {
+      // The literal exceeds the exact-integer range of a double (2^53 - 1).
+      // Fall back to strconv for the correctly rounded value, preserving the
+      // exact source text in `repr` so `stringify` stays lossless. Only a
+      // literal strconv itself rejects (beyond double range) keeps the
+      // infinity sentinel.
       let s = ctx.input.view(start_offset=start, end_offset=end)
-      return if negative {
-        { value: @double.neg_infinity, repr: Some(s) }
-      } else {
-        { value: @double.infinity, repr: Some(s) }
+      try {
+        let value = @internal/strconv.parse_double(s)
+        return { value, repr: Some(s) }
+      } catch {
+        _ =>
+          return if negative {
+            { value: @double.neg_infinity, repr: Some(s) }
+          } else {
+            { value: @double.infinity, repr: Some(s) }
+          }
       }
     }
     continue i + 1, acc * 10L + digit

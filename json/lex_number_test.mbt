@@ -86,24 +86,30 @@ test "parse and stringify large integers" {
   debug_inspect(parsed_max, content="Number(2147483647)")
   @builtin.inspect(parsed_max.stringify(), content="2147483647")
 
-  // Test integers beyond safe JavaScript integer precision (±2^53)
-  let beyond_js_safe = "9007199254740993" // 2^53 + 1
+  // Integers beyond exact double precision (±2^53) parse to the correctly
+  // rounded value, with the exact source text preserved in `repr` so
+  // stringify stays lossless.
+  let beyond_js_safe = "9007199254740993" // 2^53 + 1, rounds to 2^53
   let parsed_beyond = @json.parse(beyond_js_safe)
   debug_inspect(
     parsed_beyond,
     content=(
-      #|Number(Infinity, repr=Some("9007199254740993"))
+      #|Number(9007199254740992, repr=Some("9007199254740993"))
     ),
   )
   @builtin.inspect(parsed_beyond.stringify(), content="9007199254740993")
 
-  // Test very large integers
+  // Very large integers still within double range round to the nearest
+  // double while keeping the exact text.
   let very_large = "12345678901234567890123456789"
   let parsed_large = @json.parse(very_large)
   debug_inspect(
     parsed_large,
     content=(
-      #|Number(Infinity, repr=Some("12345678901234567890123456789"))
+      #|Number(
+      #|  1.2345678901234568e+28,
+      #|  repr=Some("12345678901234567890123456789"),
+      #|)
     ),
   )
   @builtin.inspect(
