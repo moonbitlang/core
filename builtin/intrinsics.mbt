@@ -1619,6 +1619,11 @@ pub fn[T] FixedArray::at(self : FixedArray[T], idx : Int) -> T = "%fixedarray.ge
 #doc(hidden)
 pub fn[T] FixedArray::unsafe_get(self : FixedArray[T], idx : Int) -> T = "%fixedarray.unsafe_get"
 
+// The bare-primitive store and make definitions below (`= "%fixedarray.set"`
+// etc.) intentionally carry no `#owned` annotation: calls lower inline to the
+// primitive, whose value operand already consumes the reference, so the
+// generated code is optimal without one (verified against native C output).
+
 ///|
 /// Set fixed-array element without safe bounds checks.
 /// Unsafe variant of `set`.

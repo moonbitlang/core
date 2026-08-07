@@ -1241,6 +1241,7 @@ pub fn[T] Array::retain(self : Array[T], f : (T) -> Bool raise?) -> Unit raise? 
 /// }
 /// ```
 ///
+#owned(f)
 pub fn[T] Array::resize(self : Array[T], new_len : Int, f : T) -> Unit {
   if new_len < 0 {
     abort("negative new length")

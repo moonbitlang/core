@@ -47,6 +47,10 @@ fn[T] UninitializedArray::unsafe_get(
   index : Int,
 ) -> T = "%fixedarray.unsafe_get"
 
+// `set`/`unsafe_set` are bare primitives and need no `#owned` annotation:
+// calls lower inline to `%fixedarray.set`/`%fixedarray.unsafe_set`, whose
+// value operand already consumes the reference (verified against native C).
+
 ///|
 /// Sets the value at the specified index in an uninitialized array.
 ///
