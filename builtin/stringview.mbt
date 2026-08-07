@@ -351,13 +351,14 @@ pub impl Eq for StringView with fn equal(self, other) {
   if physical_equal(self.str(), other.str()) && self.start() == other.start() {
     return true
   }
-  for i in 0..<len {
-    guard self.str().unsafe_get(self.start() + i) ==
-      other.str().unsafe_get(other.start() + i) else {
-      return false
-    }
-  }
-  true
+  self
+  .str()
+  .unsafe_range_equal(
+    other.str(),
+    self_off=self.start(),
+    other_off=other.start(),
+    len~,
+  )
 }
 
 ///|
@@ -391,12 +392,7 @@ pub fn StringView::equal_to_string(self : StringView, other : String) -> Bool {
   if physical_equal(self.str(), other) && self.start() == 0 {
     return true
   }
-  for i in 0..<len {
-    guard self.str().unsafe_get(self.start() + i) == other.unsafe_get(i) else {
-      return false
-    }
-  }
-  true
+  self.str().unsafe_range_equal(other, self_off=self.start(), other_off=0, len~)
 }
 
 ///|

@@ -104,6 +104,43 @@ pub fn String::unsafe_substring(
 }
 
 ///|
+/// **UNSAFE**: Compares two UTF-16 code unit ranges for equality without bounds
+/// checking.
+///
+/// ⚠️ **Warning: This function is unsafe and can cause undefined behavior!**
+///
+/// # Safety
+/// - **No bounds checking**: caller must ensure both ranges
+///   `[self_off, self_off + len)` and `[other_off, other_off + len)` are fully
+///   within their respective strings.
+///
+/// # Parameters
+/// - `self`, `other`: the two strings
+/// - `self_off`, `other_off`: starting code unit offsets
+/// - `len`: number of code units to compare
+///
+/// This is the shared intrinsic-backed primitive for view/owned equality
+/// comparisons (e.g. `StringView == StringView`, `StringView::has_prefix`).
+/// The function body is the fallback implementation for targets without the
+/// intrinsic.
+#borrow(self, other)
+#intrinsic("%string.unsafe_range_equal")
+fn String::unsafe_range_equal(
+  self : String,
+  self_off~ : Int,
+  other : String,
+  other_off~ : Int,
+  len~ : Int,
+) -> Bool {
+  for i in 0..<len {
+    guard self.unsafe_get(self_off + i) == other.unsafe_get(other_off + i) else {
+      return false
+    }
+  }
+  true
+}
+
+///|
 /// Returns a new string containing characters from the original string starting
 /// at `start` index up to (but not including) `end` index.
 ///
