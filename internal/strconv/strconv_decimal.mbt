@@ -54,12 +54,12 @@ fn Decimal::from_int64_priv(v : Int64) -> Decimal {
 }
 
 ///|
-fn parse_decimal_priv(str : StringView) -> Decimal raise {
+fn parse_decimal_priv(str : StringView) -> Decimal raise StrConvError {
   parse_decimal_from_view(str)
 }
 
 ///|
-fn parse_decimal_from_view(str : StringView) -> Decimal raise {
+fn parse_decimal_from_view(str : StringView) -> Decimal raise StrConvError {
   let d = Decimal::new_priv()
   let mut has_dp = false
   let mut has_digits = false
@@ -172,7 +172,7 @@ fn parse_decimal_from_view(str : StringView) -> Decimal raise {
 }
 
 ///|
-fn Decimal::to_double_priv(self : Decimal) -> Double raise {
+fn Decimal::to_double_priv(self : Decimal) -> Double raise StrConvError {
   let mut exponent = 0
   let mut mantissa = 0L
   // check the underflow and overflow
@@ -679,25 +679,18 @@ test "parse decimal with underscore" {
 
 ///|
 test "parse decimal error" {
+  assert_true(@test.expect_error(() => parse_decimal_priv("1e")) is SyntaxError)
   assert_true(
-    @test.expect_error(() => parse_decimal_priv("1e"))
-    is Failure("invalid syntax"),
+    @test.expect_error(() => parse_decimal_priv("1e+")) is SyntaxError,
   )
   assert_true(
-    @test.expect_error(() => parse_decimal_priv("1e+"))
-    is Failure("invalid syntax"),
+    @test.expect_error(() => parse_decimal_priv("1e_")) is SyntaxError,
   )
   assert_true(
-    @test.expect_error(() => parse_decimal_priv("1e_"))
-    is Failure("invalid syntax"),
+    @test.expect_error(() => parse_decimal_priv("1-23")) is SyntaxError,
   )
   assert_true(
-    @test.expect_error(() => parse_decimal_priv("1-23"))
-    is Failure("invalid syntax"),
-  )
-  assert_true(
-    @test.expect_error(() => parse_decimal_priv("1.2.3"))
-    is Failure("invalid syntax"),
+    @test.expect_error(() => parse_decimal_priv("1.2.3")) is SyntaxError,
   )
 }
 
@@ -744,14 +737,8 @@ test "rounded_integer overflow when decimal_point > 20" {
 ///|
 test "corner cases" {
   let _ = parse_decimal_priv(".123")
-  assert_true(
-    @test.expect_error(() => parse_decimal_priv("."))
-    is Failure("invalid syntax"),
-  )
-  assert_true(
-    @test.expect_error(() => parse_decimal_priv("-"))
-    is Failure("invalid syntax"),
-  )
+  assert_true(@test.expect_error(() => parse_decimal_priv(".")) is SyntaxError)
+  assert_true(@test.expect_error(() => parse_decimal_priv("-")) is SyntaxError)
 }
 
 ///|
@@ -776,14 +763,14 @@ test "parse_double large magnitude cancellation" {
 
   let input = "1" + String::make(399, '0') + ".5"
   try parse_double(input) catch {
-    e => inspect(e, content="Failure(value out of range)")
+    e => @debug.debug_inspect(e, content="RangeError")
   } noraise {
     _ => fail("expected parse_double to raise")
   }
 
   let input = "1" + String::make(800, '0') + ".5"
   try parse_double(input) catch {
-    e => inspect(e, content="Failure(value out of range)")
+    e => @debug.debug_inspect(e, content="RangeError")
   } noraise {
     _ => fail("expected parse_double to raise")
   }

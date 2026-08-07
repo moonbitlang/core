@@ -1,7 +1,7 @@
 import {
   "moonbitlang/core/builtin",
+  "moonbitlang/core/debug",
   "moonbitlang/core/double",
-  "moonbitlang/core/error",
   "moonbitlang/core/uint64",
   "moonbitlang/core/char",
   "moonbitlang/core/array",

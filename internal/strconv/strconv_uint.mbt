@@ -41,7 +41,10 @@ const UINT64_MAX : UInt64 = 0xffffffffffffffffUL
 /// }
 /// ```
 ///
-pub fn parse_uint64(str : StringView, base? : Int = 0) -> UInt64 raise {
+pub fn parse_uint64(
+  str : StringView,
+  base? : Int = 0,
+) -> UInt64 raise StrConvError {
   guard str != "" else { syntax_err() }
   if str is ['+' | '-', ..] {
     syntax_err()
@@ -89,7 +92,7 @@ pub fn parse_uint64(str : StringView, base? : Int = 0) -> UInt64 raise {
 ///|
 /// Parse a string in the given base (0, 2 to 36), return an UInt number or an error.
 /// If the `base` argument is 0, the base will be inferred by the prefix.
-pub fn parse_uint(str : StringView, base? : Int = 0) -> UInt raise {
+pub fn parse_uint(str : StringView, base? : Int = 0) -> UInt raise StrConvError {
   let n = parse_uint64(str, base~)
   if n > UINT_MAX.to_uint64() {
     range_err()
@@ -99,30 +102,29 @@ pub fn parse_uint(str : StringView, base? : Int = 0) -> UInt raise {
 
 ///|
 test "parse_uint64" {
-  let tests : Array[(String, Result[UInt64, String])] = [
-    ("", Err(syntax_err_str)),
+  let tests : Array[(String, Result[UInt64, StrConvError])] = [
+    ("", Err(SyntaxError)),
     ("0", Ok(0UL)),
-    ("-0", Err(syntax_err_str)),
-    ("+0", Err(syntax_err_str)),
+    ("-0", Err(SyntaxError)),
+    ("+0", Err(SyntaxError)),
     ("1", Ok(1UL)),
-    ("-1", Err(syntax_err_str)),
+    ("-1", Err(SyntaxError)),
     ("12345", Ok(12345UL)),
-    ("-12345", Err(syntax_err_str)),
+    ("-12345", Err(SyntaxError)),
     ("012345", Ok(12345UL)),
     ("9876543210", Ok(9876543210UL)),
     ("18446744073709551615", Ok(18446744073709551615UL)),
-    ("18446744073709551616", Err(range_err_str)),
+    ("18446744073709551616", Err(RangeError)),
     ("1_2_3_4_5", Ok(12345UL)),
-    ("_12345", Err(syntax_err_str)),
-    ("1__2345", Err(syntax_err_str)),
-    ("12345_", Err(syntax_err_str)),
-    ("12345%", Err(syntax_err_str)),
+    ("_12345", Err(SyntaxError)),
+    ("1__2345", Err(SyntaxError)),
+    ("12345_", Err(SyntaxError)),
+    ("12345%", Err(SyntaxError)),
   ]
   for t in tests {
     @test.assert_eq(
       Result::Ok(parse_uint64(t.0)) catch {
-        Failure::Failure(err) => Err(err)
-        err => Err(err.to_string())
+        err => Err(err)
       },
       t.1,
     )
@@ -131,8 +133,8 @@ test "parse_uint64" {
 
 ///|
 test "parse_uint64_base" {
-  let tests : Array[(String, Int, Result[UInt64, String])] = [
-    ("", 0, Err(syntax_err_str)),
+  let tests : Array[(String, Int, Result[UInt64, StrConvError])] = [
+    ("", 0, Err(SyntaxError)),
     ("0", 0, Ok(0UL)),
     ("1", 0, Ok(1UL)),
     ("12345", 0, Ok(12345UL)),
@@ -141,9 +143,9 @@ test "parse_uint64_base" {
     ("9876543210", 0, Ok(9876543210UL)),
     ("18446744073709551615", 0, Ok(UINT64_MAX)),
     ("0xffffffffffffffff", 0, Ok(UINT64_MAX)),
-    ("18446744073709551616", 0, Err(range_err_str)),
-    ("12345x", 0, Err(syntax_err_str)),
-    ("-12345x", 0, Err(syntax_err_str)),
+    ("18446744073709551616", 0, Err(RangeError)),
+    ("12345x", 0, Err(SyntaxError)),
+    ("-12345x", 0, Err(SyntaxError)),
     // other bases
     ("h", 18, Ok(17UL)),
     ("10", 25, Ok(25UL)),
@@ -175,7 +177,7 @@ test "parse_uint64_base" {
     ),
     // base 2
     ("0", 2, Ok(0UL)),
-    ("-1", 2, Err(syntax_err_str)),
+    ("-1", 2, Err(SyntaxError)),
     ("1010", 2, Ok(10UL)),
     ("1000000000000000", 2, Ok(1UL << 15)),
     (
@@ -197,30 +199,29 @@ test "parse_uint64_base" {
     ("ffffffffffffffff", 16, Ok(UINT64_MAX)),
     // underscores
     ("0x_1_2_3_4_5", 0, Ok(0x12345UL)),
-    ("-_0x12345", 0, Err(syntax_err_str)),
-    ("_-0x12345", 0, Err(syntax_err_str)),
-    ("_0x12345", 0, Err(syntax_err_str)),
-    ("0x__12345", 0, Err(syntax_err_str)),
-    ("0x1__2345", 0, Err(syntax_err_str)),
-    ("0x1234__5", 0, Err(syntax_err_str)),
-    ("0x12345_", 0, Err(syntax_err_str)),
+    ("-_0x12345", 0, Err(SyntaxError)),
+    ("_-0x12345", 0, Err(SyntaxError)),
+    ("_0x12345", 0, Err(SyntaxError)),
+    ("0x__12345", 0, Err(SyntaxError)),
+    ("0x1__2345", 0, Err(SyntaxError)),
+    ("0x1234__5", 0, Err(SyntaxError)),
+    ("0x12345_", 0, Err(SyntaxError)),
     ("0_1_2_3_4_5", 0, Ok(12345UL)),
-    ("-_012345", 0, Err(syntax_err_str)),
-    ("_-012345", 0, Err(syntax_err_str)),
-    ("_012345", 0, Err(syntax_err_str)),
-    ("0__12345", 0, Err(syntax_err_str)),
-    ("01234__5", 0, Err(syntax_err_str)),
-    ("012345_", 0, Err(syntax_err_str)),
+    ("-_012345", 0, Err(SyntaxError)),
+    ("_-012345", 0, Err(SyntaxError)),
+    ("_012345", 0, Err(SyntaxError)),
+    ("0__12345", 0, Err(SyntaxError)),
+    ("01234__5", 0, Err(SyntaxError)),
+    ("012345_", 0, Err(SyntaxError)),
     ("0xf", 0, Ok(0xfUL)),
-    ("-0xf", 0, Err(syntax_err_str)),
-    ("0x+f", 0, Err(syntax_err_str)),
-    ("0x-f", 0, Err(syntax_err_str)),
+    ("-0xf", 0, Err(SyntaxError)),
+    ("0x+f", 0, Err(SyntaxError)),
+    ("0x-f", 0, Err(SyntaxError)),
   ]
   for t in tests {
     @test.assert_eq(
       Result::Ok(parse_uint64(t.0, base=t.1)) catch {
-        Failure::Failure(err) => Err(err)
-        err => Err(err.to_string())
+        err => Err(err)
       },
       t.2,
     )
@@ -229,36 +230,30 @@ test "parse_uint64_base" {
 
 ///|
 test "parse_uint" {
-  let tests : Array[(String, Result[UInt, String])] = [
-    ("", Err(syntax_err_str)),
+  let tests : Array[(String, Result[UInt, StrConvError])] = [
+    ("", Err(SyntaxError)),
     ("0", Ok(0)),
-    ("-0", Err(syntax_err_str)),
-    ("+0", Err(syntax_err_str)),
+    ("-0", Err(SyntaxError)),
+    ("+0", Err(SyntaxError)),
     ("1", Ok(1)),
-    ("-1", Err(syntax_err_str)),
+    ("-1", Err(SyntaxError)),
     ("12345", Ok(12345)),
     ("012345", Ok(12345)),
-    ("12345x", Err(syntax_err_str)),
-    ("-12345x", Err(syntax_err_str)),
+    ("12345x", Err(SyntaxError)),
+    ("-12345x", Err(SyntaxError)),
     ("987654321", Ok(987654321)),
     ("4294967295", Ok(UINT_MAX)),
     ("0xffffffff", Ok(UINT_MAX)),
-    ("4294967296", Err(range_err_str)),
+    ("4294967296", Err(RangeError)),
     ("1_2_3_4_5", Ok(12345)),
-    ("-_12345", Err(syntax_err_str)),
-    ("_12345", Err(syntax_err_str)),
-    ("1__2345", Err(syntax_err_str)),
-    ("12345_", Err(syntax_err_str)),
-    ("123%45", Err(syntax_err_str)),
+    ("-_12345", Err(SyntaxError)),
+    ("_12345", Err(SyntaxError)),
+    ("1__2345", Err(SyntaxError)),
+    ("12345_", Err(SyntaxError)),
+    ("123%45", Err(SyntaxError)),
   ]
   for t in tests {
-    @test.assert_eq(
-      Result::Ok(parse_uint(t.0)) catch {
-        Failure::Failure(err) => Err(err)
-        err => Err(err.to_string())
-      },
-      t.1,
-    )
+    @test.assert_eq(Result::Ok(parse_uint(t.0)) catch { err => Err(err) }, t.1)
   }
 }
 
@@ -266,7 +261,6 @@ test "parse_uint" {
 test "parse_uint64 uppercase hex and invalid base" {
   @test.assert_eq(parse_uint64("ABCD", base=16), 43981)
   assert_true(
-    @test.expect_error(() => parse_uint64("1234", base=37))
-    is Failure("invalid base"),
+    @test.expect_error(() => parse_uint64("1234", base=37)) is InvalidBase,
   )
 }

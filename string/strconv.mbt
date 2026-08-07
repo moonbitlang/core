@@ -12,12 +12,63 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Thin wrappers over the internal strconv helpers. The internal package
+// raises a structured `StrConvError` so in-module callers can match on the
+// failure kind; these wrappers translate it back into `Failure` with the
+// historical message strings ("value out of range", "invalid syntax",
+// "invalid base"), keeping the public error contract unchanged.
+
 ///|
-pub using @internal/strconv {
-  parse_int64,
-  parse_int,
-  parse_uint64,
-  parse_uint,
-  parse_bool,
-  parse_double,
+fn[T] with_legacy_failure(
+  run : () -> T raise @internal/strconv.StrConvError,
+) -> T raise {
+  run() catch {
+    err => raise Failure::Failure(err.message())
+  }
+}
+
+///|
+/// Parses a string as an `Int64` in the given base (0 infers the base from
+/// a `0x`/`0o`/`0b` prefix). Raises `Failure` on invalid syntax, invalid
+/// base, or out-of-range values.
+pub fn parse_int64(str : StringView, base? : Int = 0) -> Int64 raise {
+  with_legacy_failure(() => @internal/strconv.parse_int64(str, base~))
+}
+
+///|
+/// Parses a string as an `Int` in the given base (0 infers the base from
+/// a `0x`/`0o`/`0b` prefix). Raises `Failure` on invalid syntax, invalid
+/// base, or out-of-range values.
+pub fn parse_int(str : StringView, base? : Int = 0) -> Int raise {
+  with_legacy_failure(() => @internal/strconv.parse_int(str, base~))
+}
+
+///|
+/// Parses a string as a `UInt64` in the given base (0 infers the base from
+/// a `0x`/`0o`/`0b` prefix). Raises `Failure` on invalid syntax, invalid
+/// base, or out-of-range values.
+pub fn parse_uint64(str : StringView, base? : Int = 0) -> UInt64 raise {
+  with_legacy_failure(() => @internal/strconv.parse_uint64(str, base~))
+}
+
+///|
+/// Parses a string as a `UInt` in the given base (0 infers the base from
+/// a `0x`/`0o`/`0b` prefix). Raises `Failure` on invalid syntax, invalid
+/// base, or out-of-range values.
+pub fn parse_uint(str : StringView, base? : Int = 0) -> UInt raise {
+  with_legacy_failure(() => @internal/strconv.parse_uint(str, base~))
+}
+
+///|
+/// Parses `"true"` or `"false"` as a `Bool`. Raises `Failure` on any other
+/// input.
+pub fn parse_bool(str : StringView) -> Bool raise {
+  with_legacy_failure(() => @internal/strconv.parse_bool(str))
+}
+
+///|
+/// Parses a string as a `Double` with correct rounding. Raises `Failure` on
+/// invalid syntax or values beyond double range.
+pub fn parse_double(str : StringView) -> Double raise {
+  with_legacy_failure(() => @internal/strconv.parse_double(str))
 }
