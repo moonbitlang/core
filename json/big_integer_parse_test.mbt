@@ -33,12 +33,16 @@ test "big integer literals parse to correctly rounded doubles" {
 
   // 2^53 + 1 rounds (ties to even) down to 2^53; the text is preserved.
   let parsed = @json.parse("9007199254740993")
-  assert_true(parsed is Number(9007199254740992.0, repr=Some("9007199254740993")))
+  assert_true(
+    parsed is Number(9007199254740992.0, repr=Some("9007199254740993")),
+  )
   inspect(parsed.stringify(), content="9007199254740993")
 
   // 2^53 itself is exactly representable.
   let parsed = @json.parse("9007199254740992")
-  assert_true(parsed is Number(9007199254740992.0, repr=Some("9007199254740992")))
+  assert_true(
+    parsed is Number(9007199254740992.0, repr=Some("9007199254740992")),
+  )
 
   // A 29-digit literal rounds to the nearest double.
   let parsed = @json.parse("12345678901234567890123456789")
