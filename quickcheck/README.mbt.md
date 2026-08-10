@@ -95,7 +95,7 @@ Every error from the property is represented by `Raised`; the driver does not
 distinguish errors used by `inspect` or snapshot tests. Calling `report` itself
 does not raise and does not require the input type to implement `Debug`.
 
-`context` attaches a human-readable rendering of the shrunk counterexample
+`counterexample_context` attaches a human-readable rendering of the shrunk counterexample
 to a failure — useful when the generated value's `Debug` form is not the
 most readable description of what failed (for example, a rendered document
 rather than its AST):
@@ -105,7 +105,7 @@ rather than its AST):
 test "context describes the shrunk counterexample" {
   let report = @quickcheck.report(
     (x : Int) => x < 3,
-    context=x => "rendered input <\{x}>",
+    counterexample_context=x => "rendered input <\{x}>",
     seed=7,
   )
   debug_inspect(

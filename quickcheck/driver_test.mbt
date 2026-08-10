@@ -490,7 +490,7 @@ test "classes-only summary omits the empty labels field" {
 test "context renders the shrunk counterexample" {
   let report = @quickcheck.report(
     (x : Int) => x < 3,
-    context=x => "rendered input <\{x}>",
+    counterexample_context=x => "rendered input <\{x}>",
     count=100,
     max_shrinks=100,
     seed=7,
@@ -514,7 +514,7 @@ test "context renders the shrunk counterexample" {
 test "context is attached to raised failures too" {
   let report = @quickcheck.report(
     (x : Int) => if x >= 3 { fail("boom") } else { true },
-    context=x => "rendered input <\{x}>",
+    counterexample_context=x => "rendered input <\{x}>",
     count=100,
     max_shrinks=100,
     seed=7,

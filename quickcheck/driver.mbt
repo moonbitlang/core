@@ -281,7 +281,7 @@ fn[A : @debug.Debug] failure_report(report : QuickCheckReport[A]) -> String {
 /// discarded cases per requested test. The pure `observe` function is
 /// evaluated and aggregated only after a top-level case succeeds.
 ///
-/// `context` attaches a human-readable description of the shrunk
+/// `counterexample_context` attaches a human-readable description of the shrunk
 /// counterexample to a failure — for example the rendered form of a
 /// generated document — without conflating it with errors raised by the
 /// property itself.
@@ -289,7 +289,7 @@ pub fn[A : Arbitrary + @shrink.Shrink] report(
   property : (A) -> Bool raise?,
   filter? : (A) -> Bool = _ => true,
   observe? : (A) -> Observations = _ => [],
-  context? : (A) -> String,
+  counterexample_context? : (A) -> String,
   count? : UInt = 100,
   max_size? : UInt = 100,
   max_shrinks? : UInt = 100,
@@ -319,7 +319,9 @@ pub fn[A : Arbitrary + @shrink.Shrink] report(
         let (counterexample, outcome, shrinks, shrink_attempts) = shrink_failure(
           property, filter, input, outcome, max_shrinks,
         )
-        let context = context.map(render => render(counterexample))
+        let context = counterexample_context.map(render => {
+          render(counterexample)
+        })
         return match outcome {
           Falsified =>
             Falsified(
@@ -377,8 +379,8 @@ pub fn[A : Arbitrary + @shrink.Shrink] report(
 /// * `filter`: A pure precondition returning `true` for cases to test.
 /// * `observe`: A pure function classifying cases with `label`, `classify`, or
 ///   `collect`.
-/// * `context`: A pure function rendering the shrunk counterexample as a
-///   human-readable string included in the failure report.
+/// * `counterexample_context`: A pure function rendering the shrunk
+///   counterexample as a human-readable string included in the failure report.
 /// * `count`: Number of non-discarded cases to test. Zero performs no tests.
 /// * `max_size`: Largest requested generator size. Values above the `Int`
 ///   range accepted by `Arbitrary` are saturated at `Int::MAX_VALUE`.
@@ -404,7 +406,7 @@ pub fn[A : Arbitrary + @shrink.Shrink + @debug.Debug] check(
   property : (A) -> Bool raise?,
   filter? : (A) -> Bool = _ => true,
   observe? : (A) -> Observations = _ => [],
-  context? : (A) -> String,
+  counterexample_context? : (A) -> String,
   count? : UInt = 100,
   max_size? : UInt = 100,
   max_shrinks? : UInt = 100,
@@ -416,7 +418,7 @@ pub fn[A : Arbitrary + @shrink.Shrink + @debug.Debug] check(
     property,
     filter~,
     observe~,
-    context?,
+    counterexample_context?,
     count~,
     max_size~,
     max_shrinks~,
