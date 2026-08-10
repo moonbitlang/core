@@ -154,6 +154,7 @@ pub fn parse_int(str : StringView, base? : Int = 0) -> Int raise StrConvError {
 // Underscores must appear only between digits or between a base prefix and a digit.
 
 ///|
+#warnings("-deprecated_syntax")
 fn check_underscore(str : StringView) -> Bool {
   // skip the sign
   let rest = match str {

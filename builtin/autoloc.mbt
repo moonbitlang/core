@@ -59,8 +59,9 @@ priv struct SourceLocRepr {
 }
 
 ///|
+#warnings("-deprecated_syntax")
 fn SourceLocRepr::parse(repr : String) -> SourceLocRepr {
-  lexscan repr[:] with longest {
+  lexscan repr with longest {
     (re"^.+" as filename) +
     re":" +
     (re"[[:digit:]]+" as start_line) +

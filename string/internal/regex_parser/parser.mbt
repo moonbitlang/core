@@ -25,6 +25,7 @@ priv enum CharOrClass {
 const MAX_QUANT = 256
 
 ///|
+#warnings("-deprecated_syntax")
 fn Parser::class_atom(
   rest : StringView,
   ctx~ : ParserContext,
@@ -178,6 +179,7 @@ fn Parser::character_class(
 }
 
 ///|
+#warnings("-deprecated_syntax")
 fn Parser::quantifier_opt(
   rest : StringView,
   ctx~ : ParserContext,
@@ -245,6 +247,7 @@ fn Parser::quant_bound(
 }
 
 ///|
+#warnings("-deprecated_syntax")
 fn Parser::term(
   rest : StringView,
   ctx~ : ParserContext,
