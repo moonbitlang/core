@@ -17,7 +17,7 @@
 #deprecated("use `@string.parse_bool` instead", skip_current_package=true)
 #warnings("-deprecated_syntax")
 pub fn parse_bool(str : StringView) -> Bool raise StrConvError {
-  lexscan str with longest {
+  lexmatch str with longest {
     re"^(true|TRUE|True|t|T|1)$" => true
     re"^(false|FALSE|False|f|F|0)$" => false
     _ => syntax_err()

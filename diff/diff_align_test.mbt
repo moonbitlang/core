@@ -54,7 +54,7 @@ fn weight(k : TokKind) -> Int {
 fn push_comment_tokens(toks : Array[Tok], body : String) -> Unit {
   let mut rest = body.view()
   while rest is [_, ..] {
-    rest = lexscan rest with longest {
+    rest = lexmatch rest with longest {
       (re"^//+" as t, after=next) => {
         toks.push({ kind: Filler, text: t.to_owned() })
         next
@@ -84,7 +84,7 @@ fn push_comment_tokens(toks : Array[Tok], body : String) -> Unit {
 #warnings("-deprecated_syntax")
 fn tokenize_line(line : String) -> Array[Tok] {
   let toks : Array[Tok] = []
-  // `///|` prefix must be handled before lexscan: under `longest` matching
+  // `///|` prefix must be handled before lexmatch: under `longest` matching
   // the comment rule would otherwise swallow `///| x` whole.
   if line is ['/', '/', '/', '|', ..] {
     toks.push({ kind: Marker, text: "///|" })
@@ -93,7 +93,7 @@ fn tokenize_line(line : String) -> Array[Tok] {
   }
   let mut rest = line.view()
   while rest is [_, ..] {
-    rest = lexscan rest with longest {
+    rest = lexmatch rest with longest {
       (re"^///\|" as t, after=next) => {
         toks.push({ kind: Marker, text: t.to_owned() })
         next
