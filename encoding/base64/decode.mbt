@@ -47,9 +47,35 @@ fn base64_value(code_unit : Int) -> Int {
 /// When `ignore_whitespace` is true, ASCII whitespace is ignored.
 /// Padding may only appear at the end. Both padded and unpadded input are
 /// accepted, but malformed padding raises `Malformed`.
+#cfg(not(any(target="native", target="wasm")))
 pub fn decode(
   text : StringView,
   ignore_whitespace? : Bool = false,
+) -> Bytes raise Malformed {
+  decode_scalar(text, ignore_whitespace)
+}
+
+///|
+/// Decodes a Base64 string into a byte array.
+///
+/// When `ignore_whitespace` is true, ASCII whitespace is ignored.
+/// Padding may only appear at the end. Both padded and unpadded input are
+/// accepted, but malformed padding raises `Malformed`.
+#cfg(any(target="native", target="wasm"))
+pub fn decode(
+  text : StringView,
+  ignore_whitespace? : Bool = false,
+) -> Bytes raise Malformed {
+  if !ignore_whitespace && decode_v128(text) is Some(bytes) {
+    return bytes
+  }
+  decode_scalar(text, ignore_whitespace)
+}
+
+///|
+fn decode_scalar(
+  text : StringView,
+  ignore_whitespace : Bool,
 ) -> Bytes raise Malformed {
   let buffer = @buffer.Buffer(size_hint=text.length() / 4 * 3)
   let quartet = FixedArray::make(4, 0)
