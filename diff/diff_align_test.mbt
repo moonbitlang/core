@@ -50,6 +50,7 @@ fn weight(k : TokKind) -> Int {
 /// Tokenize the body of a `//` comment: same shapes as code tokens, but all
 /// carry the low `Comment` weight, so similar comments pair while unrelated
 /// ones do not — a whole comment is never one opaque cheap token.
+#warnings("-deprecated_syntax")
 fn push_comment_tokens(toks : Array[Tok], body : String) -> Unit {
   let mut rest = body.view()
   while rest is [_, ..] {
@@ -80,6 +81,7 @@ fn push_comment_tokens(toks : Array[Tok], body : String) -> Unit {
 /// reproduces the line. Rule order matters: `///|`, raw-string lines and
 /// string literals are recognized before the `//` comment rule, so `//`
 /// inside strings is never a comment.
+#warnings("-deprecated_syntax")
 fn tokenize_line(line : String) -> Array[Tok] {
   let toks : Array[Tok] = []
   // `///|` prefix must be handled before lexscan: under `longest` matching
