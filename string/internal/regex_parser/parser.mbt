@@ -30,7 +30,7 @@ fn Parser::class_atom(
   rest : StringView,
   ctx~ : ParserContext,
 ) -> (StringView, CharOrClass) raise ParserError {
-  lexscan rest with longest {
+  lexmatch rest with longest {
     (re"^\\[dDsSwW]", after=_) =>
       raise ctx.error_at(rest, HINT_USE_POSIX_CHARACTER_CLASS)
     (re"^\\b", after=rest) => (rest, Char('\b'))
@@ -184,7 +184,7 @@ fn Parser::quantifier_opt(
   rest : StringView,
   ctx~ : ParserContext,
 ) -> (StringView, @re.Quantifier?) raise ParserError {
-  let (rest, range) = lexscan rest with longest {
+  let (rest, range) = lexmatch rest with longest {
     (re"^\*", after=rest) => (rest, Some((0, None)))
     (re"^\+", after=rest) => (rest, Some((1, None)))
     (re"^\?", after=rest) => (rest, Some((0, Some(1))))
@@ -252,7 +252,7 @@ fn Parser::term(
   rest : StringView,
   ctx~ : ParserContext,
 ) -> (StringView, @re.Pattern) raise ParserError {
-  let (rest, pat, is_assertion) = lexscan rest with longest {
+  let (rest, pat, is_assertion) = lexmatch rest with longest {
     (re"^\^", after=rest) => (rest, @re.start_of_input, true)
     (re"^\$", after=rest) => (rest, @re.end_of_input, true)
     (re"^\\b", after=rest) =>
