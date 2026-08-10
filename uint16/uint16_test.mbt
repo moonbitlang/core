@@ -400,19 +400,19 @@ test "UInt16 char literal overloading" {
 ///|
 test "UInt16::to_char" {
   // Valid characters in BMP (Basic Multilingual Plane)
-  debug_inspect((0x41 : UInt16).to_char(), content="Some('A')")
-  debug_inspect((0x61 : UInt16).to_char(), content="Some('a')")
-  debug_inspect((0x30 : UInt16).to_char(), content="Some('0')")
-  debug_inspect((0 : UInt16).to_char(), content="Some('\\u{00}')")
-  debug_inspect((0xD7FF : UInt16).to_char(), content="Some('퟿')")
+  debug_inspect(UInt16(0x41).to_char(), content="Some('A')")
+  debug_inspect(UInt16(0x61).to_char(), content="Some('a')")
+  debug_inspect(UInt16(0x30).to_char(), content="Some('0')")
+  debug_inspect(UInt16(0).to_char(), content="Some('\\u{00}')")
+  debug_inspect(UInt16(0xD7FF).to_char(), content="Some('퟿')")
   // Surrogate range - should return None
-  debug_inspect((0xD800 : UInt16).to_char(), content="None")
-  debug_inspect((0xDBFF : UInt16).to_char(), content="None")
-  debug_inspect((0xDC00 : UInt16).to_char(), content="None")
-  debug_inspect((0xDFFF : UInt16).to_char(), content="None")
+  debug_inspect(UInt16(0xD800).to_char(), content="None")
+  debug_inspect(UInt16(0xDBFF).to_char(), content="None")
+  debug_inspect(UInt16(0xDC00).to_char(), content="None")
+  debug_inspect(UInt16(0xDFFF).to_char(), content="None")
   // Valid characters after surrogate range
-  debug_inspect((0xE000 : UInt16).to_char(), content="Some('\\u{e000}')")
-  debug_inspect((0xFFFF : UInt16).to_char(), content="Some('\\u{ffff}')")
+  debug_inspect(UInt16(0xE000).to_char(), content="Some('\\u{e000}')")
+  debug_inspect(UInt16(0xFFFF).to_char(), content="Some('\\u{ffff}')")
 }
 
 ///|

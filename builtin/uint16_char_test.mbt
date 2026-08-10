@@ -14,9 +14,9 @@
 
 ///|
 test "UInt16 surrogate checks" {
-  let leading = (0xD800 : UInt16)
-  let trailing = (0xDFFF : UInt16)
-  let normal = (0x0041 : UInt16)
+  let leading = UInt16(0xD800)
+  let trailing = UInt16(0xDFFF)
+  let normal = UInt16(0x0041)
   inspect(leading.is_leading_surrogate(), content="true")
   inspect(trailing.is_trailing_surrogate(), content="true")
   inspect(leading.is_surrogate(), content="true")
@@ -29,13 +29,13 @@ test "UInt16 to_char" {
   let a = ('A' : UInt16)
   assert_true(a.to_char() is Some('A'))
   inspect(a.to_char().unwrap(), content="A")
-  assert_true((0xD800 : UInt16).to_char() is None)
+  assert_true(UInt16(0xD800).to_char() is None)
 }
 
 ///|
 test "UInt16 arithmetic and bit ops" {
-  let a = (0x0010 : UInt16)
-  let b = (0x0003 : UInt16)
+  let a = UInt16(0x0010)
+  let b = UInt16(0x0003)
   inspect((a + b).to_int(), content="19")
   inspect((a - b).to_int(), content="13")
   inspect((a * b).to_int(), content="48")
@@ -47,8 +47,8 @@ test "UInt16 arithmetic and bit ops" {
   inspect((a & b).to_int(), content="0")
   inspect((a ^ b).to_int(), content="19")
   inspect(a.lnot().to_int(), content="65519")
-  inspect((0x0000 : UInt16).lnot().to_int(), content="65535")
-  inspect((0xFFFF : UInt16).lnot().to_int(), content="0")
+  inspect(UInt16(0x0000).lnot().to_int(), content="65535")
+  inspect(UInt16(0xFFFF).lnot().to_int(), content="0")
   inspect(a.lnot().lnot().to_int(), content="16")
   inspect(a == b, content="false")
   inspect(a != b, content="true")
@@ -56,8 +56,8 @@ test "UInt16 arithmetic and bit ops" {
 
 ///|
 test "UInt16 compare and conversions" {
-  let a = (0x0010 : UInt16)
-  let b = (0x000F : UInt16)
+  let a = UInt16(0x0010)
+  let b = UInt16(0x000F)
   inspect(a.compare(b), content="1")
   inspect(b.compare(a), content="-1")
   inspect(a.to_uint(), content="16")
@@ -69,11 +69,11 @@ test "UInt16 compare and conversions" {
 ///|
 test "UInt16 hash combine" {
   let hasher = Hasher(seed=0)
-  hasher.combine((0x00FF : UInt16))
+  hasher.combine(UInt16(0x00FF))
   inspect(hasher.finalize() != 0, content="true")
 }
 
 ///|
 test "UInt16 not_equal" {
-  inspect(Eq::not_equal((0x0001 : UInt16), (0x0002 : UInt16)), content="true")
+  inspect(Eq::not_equal(UInt16(0x0001), UInt16(0x0002)), content="true")
 }

@@ -19,10 +19,10 @@
 /// Example:
 /// ```mbt check
 /// test {
-///   inspect((0xD800 : UInt16).is_leading_surrogate(), content="true")
-///   inspect((0xDBFF : UInt16).is_leading_surrogate(), content="true")
-///   inspect((0xDC00 : UInt16).is_leading_surrogate(), content="false")
-///   inspect((0x41 : UInt16).is_leading_surrogate(), content="false") // 'A'
+///   inspect(UInt16(0xD800).is_leading_surrogate(), content="true")
+///   inspect(UInt16(0xDBFF).is_leading_surrogate(), content="true")
+///   inspect(UInt16(0xDC00).is_leading_surrogate(), content="false")
+///   inspect(UInt16(0x41).is_leading_surrogate(), content="false") // 'A'
 /// }
 /// ```
 pub fn UInt16::is_leading_surrogate(self : Self) -> Bool {
@@ -49,10 +49,10 @@ pub fn UInt16::UInt16(self : UInt16) -> UInt16 = "%identity"
 /// Example:
 /// ```mbt check
 /// test {
-///   inspect((0xDC00 : UInt16).is_trailing_surrogate(), content="true")
-///   inspect((0xDFFF : UInt16).is_trailing_surrogate(), content="true")
-///   inspect((0xD800 : UInt16).is_trailing_surrogate(), content="false")
-///   inspect((0x41 : UInt16).is_trailing_surrogate(), content="false") // 'A'
+///   inspect(UInt16(0xDC00).is_trailing_surrogate(), content="true")
+///   inspect(UInt16(0xDFFF).is_trailing_surrogate(), content="true")
+///   inspect(UInt16(0xD800).is_trailing_surrogate(), content="false")
+///   inspect(UInt16(0x41).is_trailing_surrogate(), content="false") // 'A'
 /// }
 /// ```
 pub fn UInt16::is_trailing_surrogate(self : Self) -> Bool {
@@ -66,10 +66,10 @@ pub fn UInt16::is_trailing_surrogate(self : Self) -> Bool {
 /// Example:
 /// ```mbt check
 /// test {
-///   inspect((0xD800 : UInt16).is_surrogate(), content="true") // leading surrogate
-///   inspect((0xDC00 : UInt16).is_surrogate(), content="true") // trailing surrogate
-///   inspect((0xDFFF : UInt16).is_surrogate(), content="true") // trailing surrogate
-///   inspect((0x41 : UInt16).is_surrogate(), content="false") // 'A'
+///   inspect(UInt16(0xD800).is_surrogate(), content="true") // leading surrogate
+///   inspect(UInt16(0xDC00).is_surrogate(), content="true") // trailing surrogate
+///   inspect(UInt16(0xDFFF).is_surrogate(), content="true") // trailing surrogate
+///   inspect(UInt16(0x41).is_surrogate(), content="false") // 'A'
 /// }
 /// ```
 pub fn UInt16::is_surrogate(self : Self) -> Bool {
@@ -177,8 +177,8 @@ pub impl BitXOr for UInt16 with fn lxor(self : UInt16, that : UInt16) -> UInt16 
 ///
 /// ```mbt check
 /// test {
-///   inspect((0x0000 : UInt16).lnot().to_int(), content="65535")
-///   inspect((0xFFFF : UInt16).lnot().to_int(), content="0")
+///   inspect(UInt16(0x0000).lnot().to_int(), content="65535")
+///   inspect(UInt16(0xFFFF).lnot().to_int(), content="0")
 /// }
 /// ```
 pub fn UInt16::lnot(self : UInt16) -> UInt16 {

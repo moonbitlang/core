@@ -124,7 +124,7 @@ test "unsafe_write_uint32_be basic functionality" {
 test "unsafe_write_uint16_le basic functionality" {
   // Test with known value
   let buffer : FixedArray[Byte] = FixedArray::make(2, 0)
-  FixedArray::unsafe_write_uint16_le(buffer, 0, (0x0102 : UInt16))
+  FixedArray::unsafe_write_uint16_le(buffer, 0, UInt16(0x0102))
 
   // Check each byte individually (little-endian order)
   inspect(buffer[0], content="b'\\x02'") // 0x02
@@ -132,13 +132,13 @@ test "unsafe_write_uint16_le basic functionality" {
 
   // Test with zero
   let zero_buffer : FixedArray[Byte] = FixedArray::make(2, 255)
-  FixedArray::unsafe_write_uint16_le(zero_buffer, 0, (0 : UInt16))
+  FixedArray::unsafe_write_uint16_le(zero_buffer, 0, UInt16(0))
   inspect(zero_buffer[0], content="b'\\x00'")
   inspect(zero_buffer[1], content="b'\\x00'")
 
   // Test with maximum value
   let max_buffer : FixedArray[Byte] = FixedArray::make(2, 0)
-  FixedArray::unsafe_write_uint16_le(max_buffer, 0, (0xFFFF : UInt16))
+  FixedArray::unsafe_write_uint16_le(max_buffer, 0, UInt16(0xFFFF))
   inspect(max_buffer[0], content="b'\\xFF'")
   inspect(max_buffer[1], content="b'\\xFF'")
 }
@@ -147,7 +147,7 @@ test "unsafe_write_uint16_le basic functionality" {
 test "unsafe_write_uint16_be basic functionality" {
   // Test with known value
   let buffer : FixedArray[Byte] = FixedArray::make(2, 0)
-  FixedArray::unsafe_write_uint16_be(buffer, 0, (0x0102 : UInt16))
+  FixedArray::unsafe_write_uint16_be(buffer, 0, UInt16(0x0102))
 
   // Check each byte individually (big-endian order)
   inspect(buffer[0], content="b'\\x01'") // 0x01
@@ -155,7 +155,7 @@ test "unsafe_write_uint16_be basic functionality" {
 
   // Test with alternating pattern
   let alt_buffer : FixedArray[Byte] = FixedArray::make(2, 0)
-  FixedArray::unsafe_write_uint16_be(alt_buffer, 0, (0xFF00 : UInt16))
+  FixedArray::unsafe_write_uint16_be(alt_buffer, 0, UInt16(0xFF00))
   inspect(alt_buffer[0], content="b'\\xFF'") // 0xFF
   inspect(alt_buffer[1], content="b'\\x00'") // 0x00
 }
@@ -172,7 +172,7 @@ test "unsafe write functions with different offsets" {
   FixedArray::unsafe_write_uint32_le(buffer, 8, 0x22222222U)
 
   // Write UInt16 at position 12
-  FixedArray::unsafe_write_uint16_le(buffer, 12, (0x3333 : UInt16))
+  FixedArray::unsafe_write_uint16_le(buffer, 12, UInt16(0x3333))
 
   // Check the results
   // UInt64 at 0-7 (little-endian)
@@ -231,8 +231,8 @@ test "round-trip test: UInt16" {
 
   // Temporarily avoiding direct UInt16 comparison due to compiler bug
   // Write a known pattern
-  FixedArray::unsafe_write_uint16_le(buffer, 0, (0x1234 : UInt16))
-  FixedArray::unsafe_write_uint16_be(buffer, 2, (0x1234 : UInt16))
+  FixedArray::unsafe_write_uint16_le(buffer, 0, UInt16(0x1234))
+  FixedArray::unsafe_write_uint16_be(buffer, 2, UInt16(0x1234))
 
   // Verify by checking individual bytes
   inspect(buffer[0], content="b'\\x34'") // 0x34 (little-endian)
