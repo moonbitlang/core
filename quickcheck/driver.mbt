@@ -116,9 +116,8 @@ pub impl[A : @debug.Debug] @debug.Debug for QuickCheckReport[A] with fn to_repr(
         "Falsified",
         [
           (Some("counterexample"), Repr(counterexample)),
-          ..match context {
-            Some(text) => [(Some("context"), @debug.Repr(text))]
-            None => []
+          ..if context is Some(text) {
+            [(Some("context"), @debug.Repr(text))]
           },
           (Some("tests"), Repr(tests)),
           (Some("size"), Repr(size)),
@@ -143,9 +142,8 @@ pub impl[A : @debug.Debug] @debug.Debug for QuickCheckReport[A] with fn to_repr(
         "Raised",
         [
           (Some("counterexample"), Repr(counterexample)),
-          ..match context {
-            Some(text) => [(Some("context"), @debug.Repr(text))]
-            None => []
+          ..if context is Some(text) {
+            [(Some("context"), @debug.Repr(text))]
           },
           (Some("error"), Repr(error)),
           (Some("tests"), Repr(tests)),
