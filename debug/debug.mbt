@@ -355,6 +355,7 @@ pub impl Debug for SnapshotError with fn to_repr(self) {
 }
 
 ///|
+#warnings("-deprecated")
 pub impl Debug for BenchError with fn to_repr(self) {
   match self {
     BenchError(msg) => Repr::ctor("BenchError", [(None, Repr::string(msg))])
