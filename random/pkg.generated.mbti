@@ -21,9 +21,9 @@ pub fn Rand::bigint(Self, Int) -> @bigint.BigInt
 pub fn Rand::boolean(Self) -> Bool
 pub fn Rand::chacha8(seed? : Bytes) -> Self
 pub fn Rand::double(Self) -> Double
-pub fn Rand::double_range(Self, min~ : Double, max~ : Double) -> Double
+pub fn Rand::double_range(Self, min? : Double, max? : Double) -> Double
 pub fn Rand::float(Self) -> Float
-pub fn Rand::float_range(Self, min~ : Float, max~ : Float) -> Float
+pub fn Rand::float_range(Self, min? : Float, max? : Float) -> Float
 pub fn Rand::int(Self, limit? : Int) -> Int
 pub fn Rand::int64(Self, limit? : Int64) -> Int64
 pub fn Rand::new(generator? : &Source) -> Self
