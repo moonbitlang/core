@@ -111,7 +111,7 @@ test "char_range stays within bounds" {
 
 ///|
 test "panic char_range rejects surrogate bounds" {
-  ignore(@quickcheck.char_range(' ', (0xD800 : Int).unsafe_to_char()))
+  ignore(@quickcheck.char_range(' ', Int(0xD800).unsafe_to_char()))
 }
 
 ///|

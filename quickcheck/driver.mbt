@@ -58,6 +58,7 @@ enum QuickCheckReport[A] {
   GaveUp(tests~ : UInt, discarded~ : UInt, observations~ : ObservationSummary)
   Falsified(
     counterexample~ : A,
+    context~ : String?,
     tests~ : UInt,
     size~ : Int,
     shrinks~ : UInt,
@@ -67,6 +68,7 @@ enum QuickCheckReport[A] {
   Raised(
     counterexample~ : A,
     error~ : Error,
+    context~ : String?,
     tests~ : UInt,
     size~ : Int,
     shrinks~ : UInt,
@@ -103,6 +105,7 @@ pub impl[A : @debug.Debug] @debug.Debug for QuickCheckReport[A] with fn to_repr(
       )
     Falsified(
       counterexample~,
+      context~,
       tests~,
       size~,
       shrinks~,
@@ -113,6 +116,9 @@ pub impl[A : @debug.Debug] @debug.Debug for QuickCheckReport[A] with fn to_repr(
         "Falsified",
         [
           (Some("counterexample"), Repr(counterexample)),
+          ..if context is Some(text) {
+            [(Some("context"), @debug.Repr(text))]
+          },
           (Some("tests"), Repr(tests)),
           (Some("size"), Repr(size)),
           (Some("shrinks"), Repr(shrinks)),
@@ -125,6 +131,7 @@ pub impl[A : @debug.Debug] @debug.Debug for QuickCheckReport[A] with fn to_repr(
     Raised(
       counterexample~,
       error~,
+      context~,
       tests~,
       size~,
       shrinks~,
@@ -135,6 +142,9 @@ pub impl[A : @debug.Debug] @debug.Debug for QuickCheckReport[A] with fn to_repr(
         "Raised",
         [
           (Some("counterexample"), Repr(counterexample)),
+          ..if context is Some(text) {
+            [(Some("context"), @debug.Repr(text))]
+          },
           (Some("error"), Repr(error)),
           (Some("tests"), Repr(tests)),
           (Some("size"), Repr(size)),
@@ -209,6 +219,14 @@ fn[A : @shrink.Shrink] shrink_failure(
 }
 
 ///|
+fn context_line(context : String?) -> String {
+  match context {
+    Some(text) => "\ncontext: \{text}"
+    None => ""
+  }
+}
+
+///|
 fn[A : @debug.Debug] failure_report(report : QuickCheckReport[A]) -> String {
   match report {
     Passed(..) => abort("quickcheck internal error: a passed property reported")
@@ -219,6 +237,7 @@ fn[A : @debug.Debug] failure_report(report : QuickCheckReport[A]) -> String {
       )
     Falsified(
       counterexample~,
+      context~,
       tests~,
       size~,
       shrinks~,
@@ -227,13 +246,14 @@ fn[A : @debug.Debug] failure_report(report : QuickCheckReport[A]) -> String {
     ) =>
       (
         $|QuickCheck falsified after \{tests} test(s)
-        $|counterexample: \{@debug.to_string(counterexample)}
+        $|counterexample: \{@debug.to_string(counterexample)}\{context_line(context)}
         $|size: \{size}
         $|shrinks: \{shrinks} successful, \{shrink_attempts} attempted\{observations.report(tests - 1U, prefix="\n")}
       )
     Raised(
       counterexample~,
       error~,
+      context~,
       tests~,
       size~,
       shrinks~,
@@ -242,7 +262,7 @@ fn[A : @debug.Debug] failure_report(report : QuickCheckReport[A]) -> String {
     ) =>
       (
         $|QuickCheck property raised after \{tests} test(s)
-        $|counterexample: \{@debug.to_string(counterexample)}
+        $|counterexample: \{@debug.to_string(counterexample)}\{context_line(context)}
         $|error: \{@debug.to_string(error)}
         $|size: \{size}
         $|shrinks: \{shrinks} successful, \{shrink_attempts} attempted\{observations.report(tests - 1U, prefix="\n")}
@@ -260,10 +280,16 @@ fn[A : @debug.Debug] failure_report(report : QuickCheckReport[A]) -> String {
 /// pure `filter` do not count as tests. The run gives up after `discard_ratio`
 /// discarded cases per requested test. The pure `observe` function is
 /// evaluated and aggregated only after a top-level case succeeds.
+///
+/// `counterexample_context` attaches a human-readable description of the shrunk
+/// counterexample to a failure — for example the rendered form of a
+/// generated document — without conflating it with errors raised by the
+/// property itself.
 pub fn[A : Arbitrary + @shrink.Shrink] report(
   property : (A) -> Bool raise?,
   filter? : (A) -> Bool = _ => true,
   observe? : (A) -> Observations = _ => [],
+  counterexample_context? : (A) -> String,
   count? : UInt = 100,
   max_size? : UInt = 100,
   max_shrinks? : UInt = 100,
@@ -293,10 +319,14 @@ pub fn[A : Arbitrary + @shrink.Shrink] report(
         let (counterexample, outcome, shrinks, shrink_attempts) = shrink_failure(
           property, filter, input, outcome, max_shrinks,
         )
+        let context = counterexample_context.map(render => {
+          render(counterexample)
+        })
         return match outcome {
           Falsified =>
             Falsified(
               counterexample~,
+              context~,
               tests=completed_tests,
               size~,
               shrinks~,
@@ -307,6 +337,7 @@ pub fn[A : Arbitrary + @shrink.Shrink] report(
             Raised(
               counterexample~,
               error~,
+              context~,
               tests=completed_tests,
               size~,
               shrinks~,
@@ -348,6 +379,8 @@ pub fn[A : Arbitrary + @shrink.Shrink] report(
 /// * `filter`: A pure precondition returning `true` for cases to test.
 /// * `observe`: A pure function classifying cases with `label`, `classify`, or
 ///   `collect`.
+/// * `counterexample_context`: A pure function rendering the shrunk
+///   counterexample as a human-readable string included in the failure report.
 /// * `count`: Number of non-discarded cases to test. Zero performs no tests.
 /// * `max_size`: Largest requested generator size. Values above the `Int`
 ///   range accepted by `Arbitrary` are saturated at `Int::MAX_VALUE`.
@@ -373,6 +406,7 @@ pub fn[A : Arbitrary + @shrink.Shrink + @debug.Debug] check(
   property : (A) -> Bool raise?,
   filter? : (A) -> Bool = _ => true,
   observe? : (A) -> Observations = _ => [],
+  counterexample_context? : (A) -> String,
   count? : UInt = 100,
   max_size? : UInt = 100,
   max_shrinks? : UInt = 100,
@@ -384,6 +418,7 @@ pub fn[A : Arbitrary + @shrink.Shrink + @debug.Debug] check(
     property,
     filter~,
     observe~,
+    counterexample_context?,
     count~,
     max_size~,
     max_shrinks~,

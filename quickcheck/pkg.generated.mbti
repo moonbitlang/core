@@ -16,7 +16,7 @@ import {
 pub fn char_range(Char, Char) -> Generator[Char]
 
 #callsite(autofill(loc))
-pub fn[A : Arbitrary + @shrink.Shrink + @debug.Debug] check((A) -> Bool raise?, filter? : (A) -> Bool, observe? : (A) -> Array[Observation], count? : UInt, max_size? : UInt, max_shrinks? : UInt, discard_ratio? : UInt, seed? : UInt64, loc~ : SourceLoc) -> Unit raise
+pub fn[A : Arbitrary + @shrink.Shrink + @debug.Debug] check((A) -> Bool raise?, filter? : (A) -> Bool, observe? : (A) -> Array[Observation], counterexample_context? : (A) -> String, count? : UInt, max_size? : UInt, max_shrinks? : UInt, discard_ratio? : UInt, seed? : UInt64, loc~ : SourceLoc) -> Unit raise
 
 pub fn classify(Bool, String) -> Observation
 
@@ -36,7 +36,7 @@ pub fn[T] one_of(Array[Generator[T]]) -> Generator[T]
 
 pub fn[T] pure(T) -> Generator[T]
 
-pub fn[A : Arbitrary + @shrink.Shrink] report((A) -> Bool raise?, filter? : (A) -> Bool, observe? : (A) -> Array[Observation], count? : UInt, max_size? : UInt, max_shrinks? : UInt, discard_ratio? : UInt, seed? : UInt64) -> QuickCheckReport[A]
+pub fn[A : Arbitrary + @shrink.Shrink] report((A) -> Bool raise?, filter? : (A) -> Bool, observe? : (A) -> Array[Observation], counterexample_context? : (A) -> String, count? : UInt, max_size? : UInt, max_shrinks? : UInt, discard_ratio? : UInt, seed? : UInt64) -> QuickCheckReport[A]
 
 pub fn[X : Arbitrary] samples(Int) -> Array[X]
 

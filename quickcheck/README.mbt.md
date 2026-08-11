@@ -95,6 +95,35 @@ Every error from the property is represented by `Raised`; the driver does not
 distinguish errors used by `inspect` or snapshot tests. Calling `report` itself
 does not raise and does not require the input type to implement `Debug`.
 
+`counterexample_context` attaches a human-readable rendering of the shrunk counterexample
+to a failure — useful when the generated value's `Debug` form is not the
+most readable description of what failed (for example, a rendered document
+rather than its AST):
+
+```mbt check
+///|
+test "context describes the shrunk counterexample" {
+  let report = @quickcheck.report(
+    (x : Int) => x < 3,
+    counterexample_context=x => "rendered input <\{x}>",
+    seed=7,
+  )
+  debug_inspect(
+    report,
+    content=(
+      #|Falsified(
+      #|  counterexample=3,
+      #|  context="rendered input <3>",
+      #|  tests=5,
+      #|  size=4,
+      #|  shrinks=0,
+      #|  shrink_attempts=2,
+      #|)
+    ),
+  )
+}
+```
+
 Properties should be deterministic and should not mutate or consume their
 input. In particular, an `Iter` is single-use; generate an `Array` and create a
 fresh iterator inside the property when replayable sequence behavior matters.

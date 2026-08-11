@@ -166,6 +166,7 @@ fn parse_number(s : StringView) -> Number? raise StrConvError {
 
 ///|
 /// Parse the number from the string, raising `StrConvError` if invalid.
+#warnings("-deprecated_syntax")
 fn parse_inf_nan(rest : StringView) -> Double raise StrConvError {
   let (pos, rest) = match rest {
     ['-', .. rest] => (false, rest)

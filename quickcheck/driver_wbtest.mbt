@@ -37,6 +37,7 @@ test "passed report aligns observation statistics" {
 test "failure report includes aggregate statistics" {
   let report : QuickCheckReport[Int] = Falsified(
     counterexample=3,
+    context=None,
     tests=106U,
     size=10,
     shrinks=1U,
@@ -74,4 +75,27 @@ test "failed cases do not run the observer" {
     max_shrinks=0,
   )
   assert_true(observed.is_empty())
+}
+
+///|
+test "failure report includes the counterexample context" {
+  let report : QuickCheckReport[Int] = Falsified(
+    counterexample=3,
+    context=Some("rendered input <3>"),
+    tests=106U,
+    size=10,
+    shrinks=1U,
+    shrink_attempts=2U,
+    observations=ObservationSummary::empty(),
+  )
+  inspect(
+    failure_report(report),
+    content=(
+      #|QuickCheck falsified after 106 test(s)
+      #|counterexample: 3
+      #|context: rendered input <3>
+      #|size: 10
+      #|shrinks: 1 successful, 2 attempted
+    ),
+  )
 }

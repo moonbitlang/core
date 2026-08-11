@@ -26,6 +26,7 @@
 /// newline get grouped treatment; Unicode identifiers, other whitespace and
 /// richer number syntax fall back to single-character tokens (still faithful,
 /// just finer-grained).
+#warnings("-deprecated_syntax")
 fn tokenize(text : StringView) -> Array[String] {
   let tokens = []
   let mut rest = text
