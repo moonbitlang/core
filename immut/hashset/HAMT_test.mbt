@@ -104,7 +104,6 @@ test "@hashset.iter" {
 }
 
 ///|
-#warnings("-deprecated")
 test "@hashset.to_string" {
   let set = @hashset.new().add(1).add(3).add(0x0f_ff_ff_ff).add(42)
   let content = set.iter().collect()

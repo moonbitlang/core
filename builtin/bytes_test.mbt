@@ -32,7 +32,6 @@ test "to_string" {
 }
 
 ///|
-#warnings("-deprecated")
 test "to_fixedarray with len" {
   let bytes = b"abcd"
   let arr = bytes.to_fixedarray(len=3)

@@ -23,7 +23,6 @@
 ///
 /// `max_nesting_depth` is (deprecated) plumbing used only to exercise the
 /// depth-limit guard cheaply; see the depth-limit test for why.
-#warnings("-deprecated")
 fn parse_raises(s : String, max_nesting_depth? : Int = 1024) -> Bool {
   try {
     @json.parse(s, max_nesting_depth~) |> ignore
@@ -136,7 +135,6 @@ test "Int64 and UInt64 from_json reject non-numeric strings" {
 
 ///|
 /// Render a `Json` through its (deprecated) `Show` instance.
-#warnings("-deprecated")
 fn show_json(j : Json) -> String {
   j.to_string()
 }

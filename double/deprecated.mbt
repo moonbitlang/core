@@ -69,7 +69,6 @@ pub fn Double::min_normal() -> Double {
 ///|
 /// Function `pow`.
 #deprecated("Use `@math.pow` instead")
-#warnings("-deprecated")
 pub fn pow(m : Double, n : Double) -> Double {
   m.pow(n)
 }

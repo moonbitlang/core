@@ -159,7 +159,6 @@ test "array_append" {
 }
 
 ///|
-#warnings("-deprecated")
 test "array_blit_to_grows_dst" {
   let src = [1, 2, 3, 4]
   let dst = [9]

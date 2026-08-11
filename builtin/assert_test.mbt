@@ -13,7 +13,6 @@
 // limitations under the License.
 
 ///|
-#warnings("-deprecated")
 test "panic @test.assert_not_eq with equal values" {
   let str = "test"
   ignore(@test.assert_not_eq(str, str))
@@ -25,7 +24,6 @@ test "panic assert_false with true" {
 }
 
 ///|
-#warnings("-deprecated")
 test "panic @test.assert_eq with unequal values" {
   ignore(@test.assert_eq(1, 2))
 }

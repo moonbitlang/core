@@ -34,7 +34,6 @@
 /// ```
 #deprecated("Use `@math.powf` instead")
 #as_free_fn(deprecated="Use `@math.powf` instead")
-#warnings("-deprecated")
 pub fn Float::pow(self : Float, other : Float) -> Float {
   Float::from_double(self.to_double().pow(other.to_double()))
 }

@@ -13,7 +13,6 @@
 // limitations under the License.
 
 ///|
-#warnings("-deprecated")
 test "parse_uint64 overflow check" {
   let largest_uint64 = "18446744073709551615" // Maximum UInt64 value
   let result = @strconv.parse_uint64(largest_uint64)
@@ -41,28 +40,24 @@ test "parse_uint64 overflow check" {
 }
 
 ///|
-#warnings("-deprecated")
 test "from_string forwarding" {
   let value : Int = @strconv.FromStr::from_str("42")
   inspect(value, content="42")
 }
 
 ///|
-#warnings("-deprecated")
 test "from_string deprecated bridge" {
   let value : Int = @strconv.FromStr::from_string("7")
   inspect(value, content="7")
 }
 
 ///|
-#warnings("-deprecated")
 test "parse_double slow path with plus and underscores" {
   let value = @strconv.parse_double("+0_0000_0000_0000_0000_0000_12345")
   assert_eq(value, 12345.0)
 }
 
 ///|
-#warnings("-deprecated")
 test "parse_double many digits with leading zero" {
   let value = @strconv.parse_double("0.00000000000000000000012345")
   assert_true(value > 0.0)
@@ -70,7 +65,6 @@ test "parse_double many digits with leading zero" {
 }
 
 ///|
-#warnings("-deprecated")
 test "decimal shift truncation path" {
   let prefix = "1" + String::make(299, '0')
   let suffix = String::make(521, '9')

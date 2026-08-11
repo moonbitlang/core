@@ -70,7 +70,6 @@ test {
 /// These underscores do not affect the value.
 /// Examples:
 /// ```mbt check
-/// #warnings("-deprecated")
 /// test {
 ///   inspect(@strconv.parse_int64("123"), content="123")
 ///   inspect(@strconv.parse_int64("0xff", base=0), content="255")

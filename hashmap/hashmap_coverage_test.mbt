@@ -105,7 +105,6 @@ test "update_or_default inserts and modifies through the probe chain" {
 ///|
 /// Encode a `String` as `Bytes` (the direct conversion is deprecated, but is
 /// the simplest way to build many distinct byte keys here).
-#warnings("-deprecated")
 fn bytes_of(s : String) -> Bytes {
   s.to_bytes()
 }
@@ -133,7 +132,6 @@ test "get_from_bytes and get_from_string miss after probing" {
 
 ///|
 /// Render a hashmap through its (deprecated) `Show` instance.
-#warnings("-deprecated")
 fn show_map(m : @hashmap.HashMap[Int, Int]) -> String {
   m.to_string()
 }

@@ -65,7 +65,6 @@ fn[K : Show, V : Show] SortedMap::debug_tree(self : SortedMap[K, V]) -> String {
 pub impl[K : Show, V : Show] Show for SortedMap[K, V]
 
 ///|
-#warnings("-deprecated")
 pub impl[K : Show, V : Show] Show for SortedMap[K, V] with fn output(
   self,
   logger,
