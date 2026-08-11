@@ -54,6 +54,7 @@ pub impl Show for ParseError with fn output(self, logger) {
 pub impl Show for Json
 
 ///|
+#warnings("-deprecated")
 pub impl Show for Json with fn output(self, logger) {
   match self {
     Null => logger.write_string("Null")

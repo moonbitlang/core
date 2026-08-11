@@ -915,6 +915,7 @@ pub fn[K : Eq + Hash, V] HashMap::from_iter(
 pub impl[K : Show, V : Show] Show for HashMap[K, V]
 
 ///|
+#warnings("-deprecated")
 pub impl[K : Show, V : Show] Show for HashMap[K, V] with fn output(self, logger) {
   logger.write_iter(
     self.iter(),

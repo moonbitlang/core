@@ -13,12 +13,14 @@
 // limitations under the License.
 
 ///|
+#warnings("-deprecated")
 test " same_object call with the same object" {
   let s = "Hello"
   @test.same_object(s, s)
 }
 
 ///|
+#warnings("-deprecated")
 test "panic same_object call with different objects" {
   let a = "1"
   let b = "2"
@@ -26,6 +28,7 @@ test "panic same_object call with different objects" {
 }
 
 ///|
+#warnings("-deprecated")
 test "is_not called with the different objects" {
   let a = "1"
   let b = "2"
@@ -33,6 +36,7 @@ test "is_not called with the different objects" {
 }
 
 ///|
+#warnings("-deprecated")
 test "panic is_not called with the same object" {
   let s = "Hello"
   @test.not_same_object(s, s)

@@ -639,6 +639,7 @@ test "iter_map_fold" {
 }
 
 ///|
+#warnings("-deprecated")
 test "List::output with non-empty list" {
   let buf = StringBuilder(size_hint=100)
   let list = @list.List([1, 2, 3, 4, 5])
@@ -652,6 +653,7 @@ test "List::output with non-empty list" {
 }
 
 ///|
+#warnings("-deprecated")
 test "List::output with empty list" {
   let buf = StringBuilder(size_hint=100)
   let list : @list.List[Int] = @list.empty()

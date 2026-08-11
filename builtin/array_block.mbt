@@ -136,6 +136,7 @@ test "Array::blit_to/grow_destination" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Array::blit_to/grow_destination_directly" {
   let src = [1, 2, 3, 4]
   let dst = [0]
@@ -201,6 +202,7 @@ test "panic Array::blit_to/boundary_cases4" {
 }
 
 ///|
+#warnings("-deprecated")
 test "panic Array::blit_to/reject_overflowed_source_range" {
   let src = [1]
   let dst = [0]

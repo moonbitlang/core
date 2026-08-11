@@ -230,6 +230,7 @@ test "HAMT::from_iter duplicate keeps last value" {
 }
 
 ///|
+#warnings("-deprecated")
 test "HAMT::to_string" {
   let map = @hashmap.new()
     .add(1, 1)
