@@ -72,6 +72,7 @@ pub using @builtin {
 
 ///|
 #deprecated("Use !expr instead")
+#warnings("-deprecated")
 pub using @builtin {not}
 
 ///|
@@ -79,10 +80,12 @@ pub using @debug {debug, type Repr, trait Debug, debug_inspect, repr}
 
 ///|
 #deprecated("Use `Repr(x)` instead")
+#warnings("-deprecated")
 pub using @debug {to_repr}
 
 ///|
 #deprecated("for debugging only, not for production")
+#warnings("-deprecated")
 pub using @debug {dump}
 
 ///|
