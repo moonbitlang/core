@@ -292,7 +292,11 @@ fn split_uint64_for_float(value : UInt64) -> (Float, Float) {
 /// quarter-scaling a bound into the subnormal range; the gamma step itself may
 /// still be subnormal. It also panics if dividing either bound by the selected
 /// step would underflow.
-pub fn Rand::double_range(self : Rand, min~ : Double, max~ : Double) -> Double {
+pub fn Rand::double_range(
+  self : Rand,
+  min? : Double = 0.0,
+  max? : Double = 1.0,
+) -> Double {
   guard !(min.is_nan() || min.is_inf() || max.is_nan() || max.is_inf()) else {
     abort("Rand::double_range: bounds must be finite")
   }
@@ -353,7 +357,11 @@ pub fn Rand::double_range(self : Rand, min~ : Double, max~ : Double) -> Double {
 /// bound has magnitude below `4 * @float.min_positive`. This guard prevents
 /// quarter-scaling a bound into the subnormal range; the gamma step itself may
 /// still be subnormal.
-pub fn Rand::float_range(self : Rand, min~ : Float, max~ : Float) -> Float {
+pub fn Rand::float_range(
+  self : Rand,
+  min? : Float = 0.0,
+  max? : Float = 1.0,
+) -> Float {
   guard !(min.is_nan() || min.is_inf() || max.is_nan() || max.is_inf()) else {
     abort("Rand::float_range: bounds must be finite")
   }
