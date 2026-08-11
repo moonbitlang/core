@@ -36,21 +36,15 @@ impl Hash for CollidingElem with fn hash_combine(self, hasher) {
 
 ///|
 test "removing a colliding element restores the canonical structure" {
-  let original : @hashset.HashSet[CollidingElem] = HashSet([
-    CollidingElem(0),
-  ])
+  let original : @hashset.HashSet[CollidingElem] = HashSet([CollidingElem(0)])
   let round_trip = original.add(CollidingElem(24)).remove(CollidingElem(24))
   assert_true(round_trip == original)
 }
 
 ///|
 test "difference removing a colliding element yields the canonical set" {
-  let original : @hashset.HashSet[CollidingElem] = HashSet([
-    CollidingElem(0),
-  ])
+  let original : @hashset.HashSet[CollidingElem] = HashSet([CollidingElem(0)])
   let both = original.add(CollidingElem(24))
-  let only_other : @hashset.HashSet[CollidingElem] = HashSet([
-    CollidingElem(24),
-  ])
+  let only_other : @hashset.HashSet[CollidingElem] = HashSet([CollidingElem(24)])
   assert_true(both.difference(only_other) == original)
 }

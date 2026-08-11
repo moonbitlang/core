@@ -206,7 +206,7 @@ test "panic Array::blit_to/boundary_cases4" {
 test "panic Array::blit_to/reject_overflowed_source_range" {
   let src = [1]
   let dst = [0]
-  src[1:1+0x7fffffff].blit_to(dst)
+  src[1:1 + 0x7fffffff].blit_to(dst)
 }
 
 ///|
