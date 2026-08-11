@@ -21,6 +21,7 @@ pub extend Buffer with Show::{to_string}
 
 ///|
 #deprecated
+#warnings("-deprecated")
 pub extend Buffer with Logger::{
   write_view,
   write_string,
