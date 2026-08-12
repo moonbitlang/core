@@ -524,3 +524,12 @@ test "Case conversion with non-letters" {
   assert_eq('a'.to_ascii_uppercase(), 'A')
   assert_eq('z'.to_ascii_uppercase(), 'Z')
 }
+
+///|
+#warnings("-deprecated")
+test "length is an alias of utf16_len" {
+  inspect('A'.length(), content="1")
+  inspect('🌟'.length(), content="2")
+  assert_eq('\u{FFFF}'.length(), '\u{FFFF}'.utf16_len())
+  assert_eq('\u{10000}'.length(), '\u{10000}'.utf16_len())
+}
