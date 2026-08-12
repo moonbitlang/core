@@ -157,7 +157,6 @@ pub fn parse_int(str : StringView, base? : Int = 0) -> Int raise {
 // Underscores must appear only between digits or between a base prefix and a digit.
 
 ///|
-#warnings("-deprecated_syntax")
 fn check_underscore(str : StringView) -> Bool {
   // Fast path: underscores are rare in practice. Without any underscore the
   // per-character scan below can never reach a `break false` arm (those all
