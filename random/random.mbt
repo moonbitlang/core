@@ -239,8 +239,10 @@ fn ceil_sections(
 }
 
 ///|
-/// Goualard v5 splits `value = 4 * high + low`. Both parts then fit exactly in the
-/// 53-bit significand, even when the original section index does not.
+/// Goualard v5 proves that the binary64 gamma-section count is less than
+/// 2^55. Callers pass either k < sections or k - 1 < sections, so
+/// `value < 2^55`. Splitting `value = 4 * high + low` therefore gives
+/// `high < 2^53` and `low < 4`, making both UInt64-to-Double conversions exact.
 fn split_uint64_for_double(value : UInt64) -> (Double, Double) {
   (Double::convert_uint64(value >> 2), Double::convert_uint64(value & 0x3))
 }
