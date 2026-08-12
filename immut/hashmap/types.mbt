@@ -16,8 +16,13 @@
 /// An non-empty immutable hash set data structure
 #unsafe_cycle_free
 priv enum Node[K, V] {
+  /// a subtree holding exactly one entry, at any depth; carries the
+  /// not-yet-consumed remainder of the key's path (only the head tag
+  /// once every segment is consumed)
   Flat(K, V, @path.Path)
-  Leaf(K, V, @list.List[(K, V)]) // use a list of buckets to resolve collision
+  /// full-hash collision bucket at maximum depth; always holds at least
+  /// two entries — a lone entry must be represented as `Flat`
+  Leaf(K, V, @list.List[(K, V)])
   /// number of all its leaf > 1. If equals 1, it should be represented as `Flat`
   Branch(@sparse_array.SparseArray[Node[K, V]])
 }
