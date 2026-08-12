@@ -2,6 +2,8 @@
 package "moonbitlang/core/immut/internal/path"
 
 // Values
+pub let exhausted : Path
+
 pub fn[A : Hash] of(A) -> Path
 
 // Errors
@@ -10,7 +12,6 @@ pub fn[A : Hash] of(A) -> Path
 pub struct Path(UInt) derive(Eq)
 pub fn Path::advance(Self, Int) -> Self
 pub fn Path::equal(Self, Self) -> Bool
-pub fn Path::exhausted() -> Self
 pub fn Path::idx(Self) -> Int
 pub fn Path::idx_at(Self, Int) -> Int
 pub fn Path::is_last(Self) -> Bool

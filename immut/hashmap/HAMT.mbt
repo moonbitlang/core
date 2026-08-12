@@ -119,9 +119,9 @@ fn[K, V] join_2(
   value2 : V,
   path2 : @path.Path,
 ) -> Node[K, V] {
-  if path1 == @path.Path::exhausted() {
-    // Both paths are fully consumed: the keys collide on the full hash,
-    // so they can only share the maximum-depth collision bucket.
+  if path1 == @path.exhausted {
+    // Both paths are fully consumed: the keys collide on every path
+    // segment, so they can only share the maximum-depth collision bucket.
     return Leaf(key2, value2, @list.singleton((key1, value1)))
   }
   let idx1 = path1.idx()
@@ -351,14 +351,13 @@ pub fn[K, V] HashMap::filter(
         let new_bucket = bucket.filter(kv => pred(kv.0, kv.1))
         if pred(key1, value1) {
           match new_bucket {
-            Empty => Some(Flat(key1, value1, @path.Path::exhausted()))
+            Empty => Some(Flat(key1, value1, @path.exhausted))
             _ => Some(Leaf(key1, value1, new_bucket))
           }
         } else {
           match new_bucket {
             Empty => None
-            More((k1, v1), tail=Empty) =>
-              Some(Flat(k1, v1, @path.Path::exhausted()))
+            More((k1, v1), tail=Empty) => Some(Flat(k1, v1, @path.exhausted))
             More((k1, v1), tail~) => Some(Leaf(k1, v1, tail))
           }
         }
@@ -458,8 +457,8 @@ pub fn[K : Eq + Hash, V] HashMap::add(
 /// invariant that a subtree holding a single entry is represented as
 /// `Flat` (structural `Eq` relies on shapes being canonical). A lone
 /// `Leaf` child needs no collapsing: a `Leaf` always holds at least two
-/// colliding entries, and the singleton branch chain above it is exactly
-/// the shape a fresh construction of that collision builds.
+/// path-colliding entries, and the singleton branch chain above it is
+/// exactly the shape a fresh construction of that collision builds.
 fn[K, V] collapse_branch(
   children : @sparse_array.SparseArray[Node[K, V]],
 ) -> Node[K, V] {
@@ -685,8 +684,7 @@ pub fn[K : Eq, V] HashMap::intersection(
         let kvs2 = bucket2.add((key2, value2))
         match kvs2.filter(kv => kvs1.lookup(kv.0) is Some(_)) {
           Empty => None
-          More(head, tail=Empty) =>
-            Some(Flat(head.0, head.1, @path.Path::exhausted()))
+          More(head, tail=Empty) => Some(Flat(head.0, head.1, @path.exhausted))
           More(head, tail~) => Some(Leaf(head.0, head.1, tail))
         }
       }
@@ -760,7 +758,7 @@ fn[K : Eq, V] @list.List::intersection_with(
   }
   match @list.List(res) {
     Empty => None
-    More((k, v), tail=Empty) => Some(Flat(k, v, @path.Path::exhausted()))
+    More((k, v), tail=Empty) => Some(Flat(k, v, @path.exhausted))
     More((k, v), tail~) => Some(Leaf(k, v, tail))
   }
 }
@@ -789,8 +787,7 @@ pub fn[K : Eq, V] HashMap::difference(
         let kvs2 = bucket2.add((key2, value2))
         match kvs1.filter(kv => !(kvs2.lookup(kv.0) is Some(_))) {
           Empty => None
-          More(head, tail=Empty) =>
-            Some(Flat(head.0, head.1, @path.Path::exhausted()))
+          More(head, tail=Empty) => Some(Flat(head.0, head.1, @path.exhausted))
           More(head, tail~) => Some(Leaf(head.0, head.1, tail))
         }
       }
