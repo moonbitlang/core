@@ -110,23 +110,41 @@ fn[K : Eq + Hash] canonical_after_ops(
         let other = @hashmap.from_iter(
           other_model.iter().map(kv => (mk(kv.0), kv.1)),
         )
+        // The key's parity picks between the plain and the `_with`
+        // flavor of the merge, so both trie walks get exercised.
+        let merge = (x : Int, y : Int) => x * 2 + y
         match op_code {
-          5 => {
-            // union: the right-hand side's value wins
-            hm = hm.union(other)
-            for kv in other_model {
-              model_add(model, kv.0, kv.1)
+          5 =>
+            if key % 2 == 0 {
+              // union: the right-hand side's value wins
+              hm = hm.union(other)
+              for kv in other_model {
+                model_add(model, kv.0, kv.1)
+              }
+            } else {
+              // union_with: merge values of keys present on both sides
+              hm = hm.union_with(other, (_, x, y) => merge(x, y))
+              for kv in other_model {
+                match model_lookup(model, kv.0) {
+                  Some(v0) => model_add(model, kv.0, merge(v0, kv.1))
+                  None => model_add(model, kv.0, kv.1)
+                }
+              }
             }
-          }
           6 => {
-            // intersection: keys in both, values from the right-hand side
-            hm = hm.intersection(other)
+            // intersection keeps keys in both; the plain flavor takes the
+            // right-hand side's value, `_with` merges both
+            if key % 2 == 0 {
+              hm = hm.intersection(other)
+            } else {
+              hm = hm.intersection_with(other, (_, x, y) => merge(x, y))
+            }
             model.retain(kv => model_lookup(other_model, kv.0) is Some(_))
             for i, kv in model {
               guard model_lookup(other_model, kv.0) is Some(v) else {
                 return false
               }
-              model[i] = (kv.0, v)
+              model[i] = (kv.0, if key % 2 == 0 { v } else { merge(kv.1, v) })
             }
           }
           _ => {

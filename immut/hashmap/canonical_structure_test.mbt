@@ -167,6 +167,33 @@ test "full-hash collision arriving at a maximum-depth Flat stays canonical" {
 }
 
 ///|
+test "bulk construction agrees with incremental adds at maximum depth" {
+  // 80 entries exceed the bulk-build threshold (64), so the constructor
+  // and a sized `from_iter` take the range-partitioning bulk builder,
+  // whose bottom-level handoff must produce the same canonical shapes as
+  // plain `add` — here four maximum-depth collision buckets of 20 keys.
+  let pairs : Array[(DeepKey, Int)] = []
+  for i in 0..<80 {
+    pairs.push((DeepKey(i), i))
+  }
+  let bulk : @hashmap.HashMap[DeepKey, Int] = HashMap(pairs)
+  let via_iter = @hashmap.from_iter(pairs.iter())
+  let mut added : @hashmap.HashMap[DeepKey, Int] = @hashmap.new()
+  for kv in pairs {
+    added = added.add(kv.0, kv.1)
+  }
+  let mut reversed : @hashmap.HashMap[DeepKey, Int] = @hashmap.new()
+  for i in 0..<pairs.length() {
+    let kv = pairs[pairs.length() - 1 - i]
+    reversed = reversed.add(kv.0, kv.1)
+  }
+  assert_eq(bulk.length(), 80)
+  assert_true(bulk == added)
+  assert_true(via_iter == added)
+  assert_true(reversed == added)
+}
+
+///|
 test "intersection dropping a colliding key yields the canonical map" {
   // Pins the `intersection`/`intersection_with` call sites that collapse
   // shrunken branches (values come from the right-hand side).
