@@ -98,7 +98,7 @@ fn get_env_var_internal(key : String) -> String? {
 extern "c" fn get_env_var_ffi(
   key : OsString,
   exists : @ref.Ref[Bool],
-) -> OsString = "moonbit_rt_get_env_var2"
+) -> OsString = "moonbit_rt_get_env_var"
 
 ///|
 fn get_env_vars_internal() -> Map[String, String] {
@@ -111,7 +111,7 @@ fn get_env_vars_internal() -> Map[String, String] {
 }
 
 ///|
-extern "c" fn get_env_vars_ffi() -> FixedArray[OsString] = "moonbit_rt_get_env_vars2"
+extern "c" fn get_env_vars_ffi() -> FixedArray[OsString] = "moonbit_rt_get_env_vars"
 
 ///|
 fn set_env_var_internal(key : String, value : String) -> Unit {
@@ -120,7 +120,7 @@ fn set_env_var_internal(key : String, value : String) -> Unit {
 
 ///|
 #borrow(key, value)
-extern "c" fn set_env_var_ffi(key : OsString, value : OsString) -> Unit = "moonbit_rt_set_env_var2"
+extern "c" fn set_env_var_ffi(key : OsString, value : OsString) -> Unit = "moonbit_rt_set_env_var"
 
 ///|
 fn unset_env_var_internal(key : String) -> Unit {
@@ -129,7 +129,7 @@ fn unset_env_var_internal(key : String) -> Unit {
 
 ///|
 #borrow(key)
-extern "c" fn unset_env_var_ffi(key : OsString) -> Unit = "moonbit_rt_unset_env_var2"
+extern "c" fn unset_env_var_ffi(key : OsString) -> Unit = "moonbit_rt_unset_env_var"
 
 ///|
 fn rand_internal(to_be_filled : FixedArray[Byte]) -> Bool {
