@@ -21,8 +21,9 @@
 /// - The highest 2 bits are reserved as a head tag (0b11)
 /// - The remaining bits are divided into segments of 5 bits each
 ///
-/// For example, `Path::of(x) = 0b11_10000_10101_00100_11111_01010`
-/// represents segments as [0b_10000, 0b_10101, 0b_00100, 0b_11111, 0b_01010]
+/// For example, `Path::of(x) = 0b11_10000_10101_00100_11111_01010_00110`
+/// represents segments as
+/// [0b_10000, 0b_10101, 0b_00100, 0b_11111, 0b_01010, 0b_00110]
 pub struct Path(UInt) derive(Eq)
 
 ///|
