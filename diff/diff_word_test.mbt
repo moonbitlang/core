@@ -14,7 +14,7 @@
 
 // A word-based diff with intraline refinement, written purely against the
 // public `@diff` API — a prototype of what a third-party `diff-words`
-// package would look like. Tokenization uses `lexscan`; rendering targets
+// package would look like. Tokenization uses `lexmatch`; rendering targets
 // HTML with word-level highlights inside changed lines.
 
 ///|
@@ -26,12 +26,11 @@
 /// newline get grouped treatment; Unicode identifiers, other whitespace and
 /// richer number syntax fall back to single-character tokens (still faithful,
 /// just finer-grained).
-#warnings("-deprecated_syntax")
 fn tokenize(text : StringView) -> Array[String] {
   let tokens = []
   let mut rest = text
   while rest is [_, ..] {
-    rest = lexscan rest with longest {
+    rest = lexmatch rest with longest {
       (re"^[A-Za-z_][A-Za-z0-9_]*" as tok, after=next) => {
         tokens.push(tok.to_owned())
         next
@@ -163,7 +162,7 @@ fn side_rows(inner : @diff.Diff[String], old_side~ : Bool) -> Array[String] {
 /// Render a whole diff as an HTML page with intraline word refinement:
 /// line-level rows via `group()` + `Hunk` accessors, and for each
 /// Delete+Insert replacement pair, word-level highlights via a second
-/// `@diff.Diff` over `lexscan` tokens.
+/// `@diff.Diff` over `lexmatch` tokens.
 fn word_diff_html(old~ : ArrayView[String], new~ : ArrayView[String]) -> String {
   let buf = StringBuilder::new()
   for h in @diff.Diff(old~, new~).group(context=1) {

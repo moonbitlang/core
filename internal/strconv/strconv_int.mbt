@@ -157,7 +157,6 @@ pub fn parse_int(str : StringView, base? : Int = 0) -> Int raise {
 // Underscores must appear only between digits or between a base prefix and a digit.
 
 ///|
-#warnings("-deprecated_syntax")
 fn check_underscore(str : StringView) -> Bool {
   // Fast path: underscores are rare in practice. Without any underscore the
   // per-character scan below can never reach a `break false` arm (those all
@@ -172,7 +171,7 @@ fn check_underscore(str : StringView) -> Bool {
   }
 
   // base prefix
-  let (rest, allow_underscore, hex) = lexscan rest with longest {
+  let (rest, allow_underscore, hex) = lexmatch rest with longest {
     (re"^0[xX]", after=rest) => (rest, true, true)
     (re"^0[oO]", after=rest) => (rest, true, false)
     (re"^0[bB]", after=rest) => (rest, true, false)

@@ -50,11 +50,10 @@ fn weight(k : TokKind) -> Int {
 /// Tokenize the body of a `//` comment: same shapes as code tokens, but all
 /// carry the low `Comment` weight, so similar comments pair while unrelated
 /// ones do not — a whole comment is never one opaque cheap token.
-#warnings("-deprecated_syntax")
 fn push_comment_tokens(toks : Array[Tok], body : String) -> Unit {
   let mut rest = body.view()
   while rest is [_, ..] {
-    rest = lexscan rest with longest {
+    rest = lexmatch rest with longest {
       (re"^//+" as t, after=next) => {
         toks.push({ kind: Filler, text: t.to_owned() })
         next
@@ -81,10 +80,9 @@ fn push_comment_tokens(toks : Array[Tok], body : String) -> Unit {
 /// reproduces the line. Rule order matters: `///|`, raw-string lines and
 /// string literals are recognized before the `//` comment rule, so `//`
 /// inside strings is never a comment.
-#warnings("-deprecated_syntax")
 fn tokenize_line(line : String) -> Array[Tok] {
   let toks : Array[Tok] = []
-  // `///|` prefix must be handled before lexscan: under `longest` matching
+  // `///|` prefix must be handled before lexmatch: under `longest` matching
   // the comment rule would otherwise swallow `///| x` whole.
   if line is ['/', '/', '/', '|', ..] {
     toks.push({ kind: Marker, text: "///|" })
@@ -93,7 +91,7 @@ fn tokenize_line(line : String) -> Array[Tok] {
   }
   let mut rest = line.view()
   while rest is [_, ..] {
-    rest = lexscan rest with longest {
+    rest = lexmatch rest with longest {
       (re"^///\|" as t, after=next) => {
         toks.push({ kind: Marker, text: t.to_owned() })
         next
