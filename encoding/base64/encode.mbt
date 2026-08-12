@@ -19,7 +19,25 @@ const BASE64_STD : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxy
 /// Encodes a byte array into a Base64 string (RFC 4648).
 ///
 /// When `padding` is true, the output is padded with `=` to a multiple of 4.
+#cfg(not(any(target="native", target="wasm")))
 pub fn encode(bytes : BytesView, padding? : Bool = true) -> String {
+  encode_scalar(bytes, padding~)
+}
+
+///|
+/// Encodes a byte array into a Base64 string (RFC 4648).
+///
+/// When `padding` is true, the output is padded with `=` to a multiple of 4.
+#cfg(any(target="native", target="wasm"))
+pub fn encode(bytes : BytesView, padding? : Bool = true) -> String {
+  encode_v128(bytes, padding)
+}
+
+///|
+/// Retained on every backend: the linear-memory backends reach it only from
+/// the differential tests, but it is the implementation everywhere else.
+#warnings("-unused_value")
+fn encode_scalar(bytes : BytesView, padding? : Bool = true) -> String {
   let full_groups = bytes.length() / 3
   let remainder = bytes.length() % 3
   let mut size_hint = full_groups * 4

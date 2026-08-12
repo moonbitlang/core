@@ -11,21 +11,3 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-///|
-
-///|
-let re_profile : @re.Profile = Profile(
-  valid=@re.RecharSet::char_range(0, 255),
-  word=@re.RecharSet::char_range('a', 'z') +
-    @re.RecharSet::char_range('A', 'Z') +
-    @re.RecharSet::char_range('0', '9') +
-    @re.RecharSet::char('_'),
-  category=c => {
-    match c {
-      'a'..='z' | 'A'..='Z' | '0'..='9' | '_' => @re.Category::word()
-      '\n' => @re.Category::newline()
-      _ => @re.Category::not_word()
-    }
-  },
-)
