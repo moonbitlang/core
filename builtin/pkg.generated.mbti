@@ -572,6 +572,7 @@ pub fn Char::to_int(Char) -> Int
 pub fn Char::to_json(Char) -> Json
 pub fn Char::to_string(Char) -> String
 pub fn Char::to_uint(Char) -> UInt
+#alias(length)
 pub fn Char::utf16_len(Char) -> Int
 
 pub fn Int::Int(Int) -> Int
