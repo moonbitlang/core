@@ -165,3 +165,29 @@ test "bulk construction agrees with incremental adds at maximum depth" {
   assert_true(via_iter == added)
   assert_true(reversed == added)
 }
+
+///|
+test "bulk construction eliminates duplicates canonically" {
+  // 96 entries over 12 distinct elements exceed the bulk threshold while
+  // forcing duplicate elimination inside the bulk builder, through both
+  // of its traversal directions (constructor and sized `from_iter`).
+  let elems : Array[DeepElem] = []
+  for i in 0..<96 {
+    elems.push(DeepElem(i % 12))
+  }
+  let distinct_elems : Array[DeepElem] = []
+  for i in 0..<12 {
+    distinct_elems.push(DeepElem(i))
+  }
+  let bulk : @hashset.HashSet[DeepElem] = HashSet(elems)
+  let via_iter = @hashset.from_iter(elems.iter())
+  let mut added : @hashset.HashSet[DeepElem] = @hashset.new()
+  for e in elems {
+    added = added.add(e)
+  }
+  let distinct : @hashset.HashSet[DeepElem] = HashSet(distinct_elems)
+  assert_eq(bulk.length(), 12)
+  assert_true(bulk == added)
+  assert_true(via_iter == added)
+  assert_true(bulk == distinct)
+}
