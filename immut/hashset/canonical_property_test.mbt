@@ -19,9 +19,26 @@
 // set is `==` to a fresh `from_iter` of its content — and, at the end, to
 // a rebuild by `add` in reverse order. Each regime below picks a hash
 // quotient that stresses a different part of the trie: distinct hashes
-// (plain `Int`), first-segment collisions (`CollidingElem`), maximum-depth
-// divergence and collisions (`DeepElem`), and a single all-elements bucket
-// (`ZeroHashElem`).
+// (plain `Int`), segment-1 divergence with full collisions
+// (`CollidingElem`), mid-trie segment-3 divergence (`MidDepthElem`),
+// maximum-depth divergence and collisions (`DeepElem`), and a single
+// all-elements bucket (`ZeroHashElem`).
+
+///|
+/// Elements whose hash lives only in path segment 3 (bits 10..=14): all
+/// elements share segments 1-2 and diverge — or fully collide — at
+/// mid-trie depth.
+priv struct MidDepthElem(Int) derive(Eq)
+
+///|
+impl Hash for MidDepthElem with fn hash(self) {
+  (self.0 & 3) << 10
+}
+
+///|
+impl Hash for MidDepthElem with fn hash_combine(self, hasher) {
+  hasher.combine_int((self.0 & 3) << 10)
+}
 
 ///|
 /// Elements that all share the one and only collision bucket.
@@ -138,6 +155,13 @@ test "quickcheck: canonical after every op (distinct hashes)" {
 test "quickcheck: canonical after every op (first-segment collisions)" {
   @quickcheck.check((ops : Array[Int]) => {
     canonical_after_ops(n => CollidingElem(n), ops)
+  })
+}
+
+///|
+test "quickcheck: canonical after every op (mid-depth collisions)" {
+  @quickcheck.check((ops : Array[Int]) => {
+    canonical_after_ops(n => MidDepthElem(n), ops)
   })
 }
 
