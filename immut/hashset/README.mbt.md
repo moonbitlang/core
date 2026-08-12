@@ -82,6 +82,79 @@ test "set operations" {
 }
 ```
 
+## Equality and Hashing
+
+`==` is **content equality**: two sets are equal exactly when they hold the
+same elements, no matter which sequence of operations produced them.
+`Hash` agrees with `==`, so equal sets always hash equally.
+
+```mbt check
+///|
+test "equality is content equality" {
+  // Insertion order never matters
+  let a = @hashset.new().add("x").add("y").add("z")
+  let b = @hashset.new().add("z").add("y").add("x")
+  assert_true(a == b)
+  // Bulk construction and incremental adds agree
+  let c : @hashset.HashSet[String] = HashSet(["x", "y", "z"])
+  assert_true(c == a)
+  // Operation history is invisible: add/remove round-trips restore
+  // equality
+  assert_true(a.add("w").remove("w") == a)
+  // Equal sets hash equally
+  let h1 = Hasher()
+  h1.combine(a)
+  let h2 = Hasher()
+  h2.combine(b)
+  assert_eq(h1.finalize(), h2.finalize())
+}
+```
+
+This holds even for elements whose hashes collide:
+
+```mbt check
+///|
+/// Every element hashes to the same value: all of them share one bucket.
+priv struct OneBucketElem(Int) derive(Eq)
+
+///|
+impl Hash for OneBucketElem with fn hash(_) {
+  7
+}
+
+///|
+impl Hash for OneBucketElem with fn hash_combine(_, hasher) {
+  hasher.combine_int(7)
+}
+
+///|
+test "collisions preserve content equality" {
+  let a = @hashset.new().add(OneBucketElem(1)).add(OneBucketElem(2))
+  let b = @hashset.new().add(OneBucketElem(2)).add(OneBucketElem(1))
+  assert_true(a == b)
+  // Shrinking a bucket back to one element restores the exact
+  // single-element shape
+  assert_true(a.remove(OneBucketElem(2)) == HashSet([OneBucketElem(1)]))
+}
+```
+
+One boundary to be aware of: **iteration order is unspecified**. `==` and
+`Hash` are order-blind by design, but `iter`/`each` visit elements in an
+internal order that is not part of the contract — in particular, the
+relative order of elements sharing a collision bucket reflects insertion
+history. Sort the elements if you need a deterministic order.
+
+`HashSet` shares its HAMT representation — and the *canonical form*
+invariant that makes structural equality a correct implementation of
+content equality — with `immut/hashmap`: a subtree holding one element is
+always a `Flat` node, collision buckets exist only at maximum trie depth
+with at least two elements, and every shrinking operation collapses back
+to the shape a fresh construction would build. See
+[`immut/hashmap/README.mbt.md`](../hashmap/README.mbt.md) for the full
+internals story (path bit layout, node shapes, and collapse diagrams);
+this package's canonical-structure and QuickCheck property tests pin the
+same invariant for sets.
+
 ## Membership and Queries
 
 Test membership and query the set:
