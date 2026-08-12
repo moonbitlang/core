@@ -14,7 +14,6 @@
 
 ///|
 /// Parse a string and return the represented boolean value or an error.
-#warnings("-deprecated_syntax")
 pub fn parse_bool(str : StringView) -> Bool raise {
   lexmatch str with longest {
     re"^(true|TRUE|True|t|T|1)$" => true
