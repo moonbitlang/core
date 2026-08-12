@@ -12,5 +12,6 @@ import {
   "moonbitlang/core/bench",
   "moonbitlang/core/int",
   "moonbitlang/core/option",
+  "moonbitlang/core/quickcheck",
   "moonbitlang/core/test",
 } for "test"

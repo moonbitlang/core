@@ -96,3 +96,92 @@ test "chained removals from a collision bucket collapse in any order" {
   assert_true(one_way == @hashmap.singleton(CollidingKey(0), 0))
   assert_true(one_way == other_way)
 }
+
+// The tests below pin canonicity at the maximum trie depth, where a single
+// entry historically had two representations: `add` into an existing
+// bottom-level branch stored `Flat(k, v, exhausted-path)` while `join_2`
+// splitting a `Flat` stored `Leaf(k, v, Empty)`. Content-equal maps built
+// through different histories then compared unequal.
+
+///|
+/// Keys whose hash lives only in the top path segment (bits 25..=29): all
+/// keys share path segments 1-5, so they diverge — or fully collide — only
+/// at the maximum trie depth.
+priv struct DeepKey(Int) derive(Eq)
+
+///|
+impl Hash for DeepKey with fn hash(self) {
+  (self.0 & 3) << 25
+}
+
+///|
+impl Hash for DeepKey with fn hash_combine(self, hasher) {
+  hasher.combine_int((self.0 & 3) << 25)
+}
+
+///|
+test "insertion order cannot affect the structure at maximum depth" {
+  let one_way : @hashmap.HashMap[DeepKey, Int] = @hashmap.new()
+    .add(DeepKey(0), 0)
+    .add(DeepKey(1), 1)
+    .add(DeepKey(2), 2)
+  let other_way : @hashmap.HashMap[DeepKey, Int] = @hashmap.new()
+    .add(DeepKey(2), 2)
+    .add(DeepKey(1), 1)
+    .add(DeepKey(0), 0)
+  assert_true(one_way == other_way)
+}
+
+///|
+test "removing a maximum-depth sibling leaves the canonical structure" {
+  let removed = @hashmap.new()
+    .add(DeepKey(0), 0)
+    .add(DeepKey(1), 1)
+    .add(DeepKey(2), 2)
+    .remove(DeepKey(1))
+  let fresh : @hashmap.HashMap[DeepKey, Int] = @hashmap.new()
+    .add(DeepKey(0), 0)
+    .add(DeepKey(2), 2)
+  assert_true(removed == fresh)
+}
+
+///|
+test "full-hash collision arriving at a maximum-depth Flat stays canonical" {
+  // 2 and 6 collide on the full hash. Adding 0 and 1 first forces the
+  // maximum-depth branch into existence, so DeepKey(2) is stored there as
+  // a single entry with a fully consumed path when DeepKey(6) arrives.
+  let one_way : @hashmap.HashMap[DeepKey, Int] = @hashmap.new()
+    .add(DeepKey(0), 0)
+    .add(DeepKey(1), 1)
+    .add(DeepKey(2), 2)
+    .add(DeepKey(6), 6)
+  let other_way : @hashmap.HashMap[DeepKey, Int] = @hashmap.new()
+    .add(DeepKey(2), 2)
+    .add(DeepKey(6), 6)
+    .add(DeepKey(0), 0)
+    .add(DeepKey(1), 1)
+  assert_eq(one_way.get(DeepKey(2)), Some(2))
+  assert_eq(one_way.get(DeepKey(6)), Some(6))
+  assert_eq(one_way.length(), 4)
+  assert_true(one_way == other_way)
+}
+
+///|
+test "intersection dropping a colliding key yields the canonical map" {
+  // Pins the `intersection`/`intersection_with` call sites that collapse
+  // shrunken branches (values come from the right-hand side).
+  let left : @hashmap.HashMap[CollidingKey, Int] = @hashmap.singleton(
+    CollidingKey(0),
+    0,
+  ).add(CollidingKey(24), 1)
+  let right : @hashmap.HashMap[CollidingKey, Int] = @hashmap.singleton(
+    CollidingKey(0),
+    0,
+  ).add(CollidingKey(8), 2)
+  let expected : @hashmap.HashMap[CollidingKey, Int] = @hashmap.singleton(
+    CollidingKey(0),
+    0,
+  )
+  assert_true(left.intersection(right) == expected)
+  assert_true(left.intersection_with(right, (_, x, y) => x + y) == expected)
+}
