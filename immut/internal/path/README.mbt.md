@@ -86,19 +86,19 @@ test "path construction" {
 ## Exhausted Paths
 
 A path carries six 5-bit segments under a two-bit head tag. Consuming all
-six segments leaves only the head tag — the *exhausted* path,
-`Path::exhausted()`. It is the remaining path stored by a HAMT node at
-maximum depth, and the seed for rebuilding a path with `push` when a
-canonicalizing collapse hoists a node upward:
+six segments leaves only the head tag — the *exhausted* path, exposed as
+the constant `@path.exhausted`. It is the remaining path stored by a HAMT
+node at maximum depth, and the seed for rebuilding a path with `push` when
+a canonicalizing collapse hoists a node upward:
 
 ```mbt check
 ///|
 test "exhausted path" {
   let path = @path.of(42)
   // Consuming all six segments leaves only the head tag
-  assert_true(path.advance(6) == @path.Path::exhausted())
+  assert_true(path.advance(6) == @path.exhausted)
   // Pushing the consumed segments back (deepest first) rebuilds the path
-  let rebuilt = for depth = 5, acc = @path.Path::exhausted(); depth >= 0; {
+  let rebuilt = for depth = 5, acc = @path.exhausted; depth >= 0; {
     continue depth - 1, acc.push(path.idx_at(depth))
   } nobreak {
     acc
