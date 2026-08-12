@@ -182,10 +182,36 @@ test "UInt64" {
 }
 
 ///|
-/// [double] returns a pseudo-random 64-bit Double in the range [0.0, 1.0)
-pub fn Rand::double(self : Rand) -> Double {
-  Double::convert_uint64(self.next() << 11 >> 11) /
-  Double::convert_uint64(1UL << 53)
+/// Returns a pseudo-random `Double` in the half-open interval `[min, max)`.
+/// The bounds default to `0.0` and `1.0`; that interval uses the original
+/// direct 53-bit construction. Other intervals use Goualard's corrected
+/// gamma-section algorithm.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let rand = @random.Rand::chacha8()
+///   let value = rand.double(min=-2.0, max=3.0)
+///   inspect(value >= -2.0 && value < 3.0, content="true")
+/// }
+/// ```
+///
+/// # Panics
+///
+/// Panics if either bound is not finite, if `min >= max`, or if a non-zero
+/// bound has magnitude below `4 * @double.min_positive`. It also panics if
+/// dividing either bound by the selected gamma step would underflow.
+pub fn Rand::double(
+  self : Rand,
+  min? : Double = 0.0,
+  max? : Double = 1.0,
+) -> Double {
+  if min == 0.0 && max == 1.0 {
+    Double::convert_uint64(self.next() << 11 >> 11) /
+    Double::convert_uint64(1UL << 53)
+  } else {
+    self.double_in_range(min~, max~)
+  }
 }
 
 ///|
@@ -196,9 +222,180 @@ test "double" {
 }
 
 ///|
-/// [float] returns a pseudo-random 32-bit Float in the range [0.0, 1.0)
-pub fn Rand::float(self : Rand) -> Float {
-  Float::from_uint(self.uint() << 8 >> 8) / Float::from_uint(1U << 24)
+/// Returns a pseudo-random `Float` in the half-open interval `[min, max)`.
+/// The bounds default to `0.0F` and `1.0F`; that interval uses the original
+/// direct 24-bit construction. Other intervals use Goualard's corrected
+/// gamma-section algorithm.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let rand = @random.Rand::chacha8()
+///   let value = rand.float(min=-2.0F, max=3.0F)
+///   inspect(value >= -2.0F && value < 3.0F, content="true")
+/// }
+/// ```
+///
+/// # Panics
+///
+/// Panics if either bound is not finite, if `min >= max`, or if a non-zero
+/// bound has magnitude below `4 * @float.min_positive`.
+pub fn Rand::float(
+  self : Rand,
+  min? : Float = 0.0F,
+  max? : Float = 1.0F,
+) -> Float {
+  if min == 0.0F && max == 1.0F {
+    Float::from_uint(self.uint() << 8 >> 8) / Float::from_uint(1U << 24)
+  } else {
+    self.float_in_range(min~, max~)
+  }
+}
+
+///|
+/// Returns the spacing from `anchor` to the adjacent value toward zero.
+fn double_gamma(anchor : Double) -> Double {
+  if anchor == 0.0 {
+    1UL.reinterpret_as_double()
+  } else {
+    let toward_zero = (anchor.reinterpret_as_uint64() - 1).reinterpret_as_double()
+    (anchor - toward_zero).abs()
+  }
+}
+
+///|
+/// Computes `ceil(scaled_max - scaled_min)` with Dekker's exact-sum residual.
+/// When the rounded distance is an integer, the residual distinguishes it
+/// from an exact value immediately above or below that integer.
+fn ceil_sections(
+  scaled_min : Double,
+  scaled_max : Double,
+  anchor_is_max~ : Bool,
+) -> UInt64 {
+  let distance = scaled_max - scaled_min
+  let error = if anchor_is_max {
+    -scaled_min - (distance - scaled_max)
+  } else {
+    scaled_max - (distance + scaled_min)
+  }
+  let ceiling = distance.ceil()
+  let sections = ceiling.to_uint64()
+  if distance != ceiling {
+    sections
+  } else if error > 0.0 {
+    sections + error.ceil().to_uint64()
+  } else {
+    sections - (-error).floor().to_uint64()
+  }
+}
+
+///|
+/// Goualard v5 proves that the binary64 gamma-section count is less than
+/// 2^55. Callers pass either k < sections or k - 1 < sections, so
+/// `value < 2^55`. Splitting `value = 4 * high + low` therefore gives
+/// `high < 2^53` and `low < 4`, making both UInt64-to-Double conversions exact.
+fn split_uint64_for_double(value : UInt64) -> (Double, Double) {
+  (Double::convert_uint64(value >> 2), Double::convert_uint64(value & 0x3))
+}
+
+///|
+/// Returns the spacing from `anchor` to the adjacent value toward zero.
+fn float_gamma(anchor : Float) -> Float {
+  if anchor == 0.0F {
+    Float::reinterpret_from_uint(1U)
+  } else {
+    let toward_zero = Float::reinterpret_from_uint(
+      anchor.reinterpret_as_uint() - 1,
+    )
+    (anchor - toward_zero).abs()
+  }
+}
+
+///|
+/// Splitting by four leaves `high` below 2^24 for every binary32 interval, so
+/// conversion to `Float` is exact.
+fn split_uint64_for_float(value : UInt64) -> (Float, Float) {
+  (Float::from_uint64(value >> 2), Float::from_uint64(value & 0x3))
+}
+
+///|
+/// Implements the non-unit `Double` interval path.
+fn Rand::double_in_range(self : Rand, min~ : Double, max~ : Double) -> Double {
+  guard !(min.is_nan() || min.is_inf() || max.is_nan() || max.is_inf()) else {
+    abort("Rand::double: bounds must be finite")
+  }
+  let underflow_threshold = 4.0 * @double.min_positive
+  guard (min == 0.0 || min.abs() >= underflow_threshold) &&
+    (max == 0.0 || max.abs() >= underflow_threshold) else {
+    abort("Rand::double: bounds must be outside the underflow region")
+  }
+  guard min < max else { abort("Rand::double: min must be less than max") }
+  let anchor_is_max = min.abs() <= max.abs()
+  let gamma = double_gamma(if anchor_is_max { max } else { min })
+  let scaled_min = min / gamma
+  let scaled_max = max / gamma
+  guard (min == 0.0 || scaled_min.abs() >= @double.min_positive) &&
+    (max == 0.0 || scaled_max.abs() >= @double.min_positive) else {
+    abort("Rand::double: scaling a bound would underflow")
+  }
+  let sections = ceil_sections(scaled_min, scaled_max, anchor_is_max~)
+  let k = self.uint64(limit=sections) + 1
+  if anchor_is_max {
+    if k == sections {
+      min
+    } else {
+      let (k_high, k_low) = split_uint64_for_double(k)
+      4.0 * (max * 0.25 - k_high * gamma) - k_low * gamma
+    }
+  } else {
+    let (k_high, k_low) = split_uint64_for_double(k - 1)
+    4.0 * (min * 0.25 + k_high * gamma) + k_low * gamma
+  }
+}
+
+///|
+/// Implements the non-unit `Float` interval path.
+fn Rand::float_in_range(self : Rand, min~ : Float, max~ : Float) -> Float {
+  guard !(min.is_nan() || min.is_inf() || max.is_nan() || max.is_inf()) else {
+    abort("Rand::float: bounds must be finite")
+  }
+  let underflow_threshold = 4.0F * @float.min_positive
+  guard (min == 0.0F || min.abs() >= underflow_threshold) &&
+    (max == 0.0F || max.abs() >= underflow_threshold) else {
+    abort("Rand::float: bounds must be outside the underflow region")
+  }
+  guard min < max else { abort("Rand::float: min must be less than max") }
+  let anchor_is_max = min.abs() <= max.abs()
+  let gamma = float_gamma(if anchor_is_max { max } else { min })
+  // Every Float and its power-of-two gamma convert exactly to Double. The
+  // widened quotients and subtraction therefore compute the section count
+  // without binary32 underflow or rounding.
+  let sections = ceil_sections(
+    min.to_double() / gamma.to_double(),
+    max.to_double() / gamma.to_double(),
+    anchor_is_max~,
+  )
+  let k = self.uint64(limit=sections) + 1
+  if anchor_is_max {
+    if k == sections {
+      min
+    } else {
+      let (k_high, k_low) = split_uint64_for_float(k)
+      4.0F * (max * 0.25F - k_high * gamma) - k_low * gamma
+    }
+  } else {
+    let (k_high, k_low) = split_uint64_for_float(k - 1)
+    4.0F * (min * 0.25F + k_high * gamma) + k_low * gamma
+  }
+}
+
+///|
+test "ceil_sections corrects a negative Dekker residual" {
+  let min = 0xffefffffffffffffUL.reinterpret_as_double()
+  let max = 0x7fe0000000000000UL.reinterpret_as_double()
+  let gamma = double_gamma(min)
+  let sections = ceil_sections(min / gamma, max / gamma, anchor_is_max=false)
+  @test.assert_eq(sections, 0x2fffffffffffffUL)
 }
 
 ///|
