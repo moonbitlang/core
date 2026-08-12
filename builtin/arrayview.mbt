@@ -254,12 +254,9 @@ pub fn[T] ArrayView::unsafe_get(self : ArrayView[T], index : Int) -> T {
 pub fn[T] Array::view(
   self : Array[T],
   start? : Int = 0,
-  end? : Int,
+  end? : Int = self.length(),
 ) -> ArrayView[T] {
   let len = self.length()
-  let end = match end {
-    Some(end) | (None with end = len) => end
-  }
   guard start >= 0 && start <= end && end <= len else {
     abort("View index out of bounds")
   }
@@ -301,12 +298,9 @@ pub fn[T] Array::view(
 pub fn[T] Array::get_view(
   self : Array[T],
   start? : Int = 0,
-  end? : Int,
+  end? : Int = self.length(),
 ) -> ArrayView[T]? {
   let len = self.length()
-  let end = match end {
-    Some(end) | (None with end = len) => end
-  }
   guard start >= 0 && start <= end && end <= len else { None }
   Some(ArrayView::make(self.buffer(), start, end - start))
 }
@@ -347,12 +341,9 @@ pub fn[T] Array::get_view(
 pub fn[T] ArrayView::view(
   self : ArrayView[T],
   start? : Int = 0,
-  end? : Int,
+  end? : Int = self.length(),
 ) -> ArrayView[T] {
   let len = self.length()
-  let end = match end {
-    Some(end) | (None with end = len) => end
-  }
   guard start >= 0 && start <= end && end <= len else {
     abort("View index out of bounds")
   }
@@ -396,12 +387,9 @@ pub fn[T] ArrayView::view(
 pub fn[T] ArrayView::get_view(
   self : ArrayView[T],
   start? : Int = 0,
-  end? : Int,
+  end? : Int = self.length(),
 ) -> ArrayView[T]? {
   let len = self.length()
-  let end = match end {
-    Some(end) | (None with end = len) => end
-  }
   guard start >= 0 && start <= end && end <= len else { None }
   Some(ArrayView::make(self.buf(), self.start() + start, end - start))
 }
@@ -444,12 +432,9 @@ fn[T] unsafe_cast_fixedarray_to_uninitializedarray(
 pub fn[T] FixedArray::view(
   self : FixedArray[T],
   start? : Int = 0,
-  end? : Int,
+  end? : Int = self.length(),
 ) -> ArrayView[T] {
   let len = self.length()
-  let end = match end {
-    Some(end) | (None with end = len) => end
-  }
   guard start >= 0 && start <= end && end <= len else {
     abort("View index out of bounds")
   }
@@ -495,12 +480,9 @@ pub fn[T] FixedArray::view(
 pub fn[T] FixedArray::get_view(
   self : FixedArray[T],
   start? : Int = 0,
-  end? : Int,
+  end? : Int = self.length(),
 ) -> ArrayView[T]? {
   let len = self.length()
-  let end = match end {
-    Some(end) | (None with end = len) => end
-  }
   guard start >= 0 && start <= end && end <= len else { None }
   Some(
     ArrayView::make(

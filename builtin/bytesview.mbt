@@ -175,11 +175,12 @@ pub fn BytesView::unsafe_get(self : BytesView, index : Int) -> Byte {
 /// ```
 #alias("_[_:_]")
 #alias(sub, deprecated="Use _[_:_ instead")
-pub fn Bytes::view(self : Bytes, start? : Int = 0, end? : Int) -> BytesView {
+pub fn Bytes::view(
+  self : Bytes,
+  start? : Int = 0,
+  end? : Int = self.length(),
+) -> BytesView {
   let len = self.length()
-  let end = match end {
-    Some(end) | (None with end = len) => end
-  }
   guard start >= 0 && start <= end && end <= len else {
     abort("Invalid index for View")
   }
@@ -206,12 +207,9 @@ pub fn Bytes::view(self : Bytes, start? : Int = 0, end? : Int) -> BytesView {
 pub fn Bytes::get_view(
   self : Bytes,
   start? : Int = 0,
-  end? : Int,
+  end? : Int = self.length(),
 ) -> BytesView? {
   let len = self.length()
-  let end = match end {
-    Some(end) | (None with end = len) => end
-  }
   guard start >= 0 && start <= end && end <= len else { None }
   Some(BytesView::make(self, start, end - start))
 }
@@ -223,12 +221,9 @@ pub fn Bytes::get_view(
 pub fn BytesView::get_view(
   self : BytesView,
   start? : Int = 0,
-  end? : Int,
+  end? : Int = self.length(),
 ) -> BytesView? {
   let len = self.length()
-  let end = match end {
-    Some(end) | (None with end = len) => end
-  }
   guard start >= 0 && start <= end && end <= len else { None }
   Some(BytesView::make(self.bytes(), self.start() + start, end - start))
 }
@@ -251,12 +246,9 @@ pub fn BytesView::get_view(
 pub fn BytesView::view(
   self : BytesView,
   start? : Int = 0,
-  end? : Int,
+  end? : Int = self.length(),
 ) -> BytesView {
   let len = self.length()
-  let end = match end {
-    Some(end) | (None with end = len) => end
-  }
   guard start >= 0 && start <= end && end <= len else {
     abort("Invalid index for View")
   }

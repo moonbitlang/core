@@ -154,11 +154,12 @@ fn String::unsafe_range_equal(
 /// Returns a new string containing the specified substring.
 ///
 #deprecated("Use `str[:]` or `str[:].to_string()` instead", skip_current_package=true)
-pub fn String::substring(self : String, start? : Int = 0, end? : Int) -> String {
+pub fn String::substring(
+  self : String,
+  start? : Int = 0,
+  end? : Int = self.length(),
+) -> String {
   let len = self.length()
-  let end = match end {
-    Some(end) | (None with end = len) => end
-  }
   guard! start >= 0 && start <= end && end <= len
   self.unsafe_substring(start~, end~)
 }

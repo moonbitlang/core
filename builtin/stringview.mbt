@@ -105,9 +105,8 @@ pub fn StringView::start_offset(self : StringView) -> Int {
 pub fn StringView::view(
   self : StringView,
   start_offset? : Int = 0,
-  end_offset? : Int,
+  end_offset? : Int = self.length(),
 ) -> StringView {
-  let end_offset = if end_offset is Some(o) { o } else { self.length() }
   guard start_offset >= 0 &&
     start_offset <= end_offset &&
     end_offset <= self.length() else {
@@ -616,9 +615,8 @@ pub fn StringView::equal_ignore_ascii_case(
 pub fn String::view(
   self : String,
   start_offset? : Int = 0,
-  end_offset? : Int,
+  end_offset? : Int = self.length(),
 ) -> StringView {
-  let end_offset = if end_offset is Some(o) { o } else { self.length() }
   guard start_offset >= 0 &&
     start_offset <= end_offset &&
     end_offset <= self.length() else {
@@ -661,12 +659,9 @@ pub fn StringView::from_iter(iter : Iter[Char]) -> StringView {
 pub fn String::get_view(
   self : String,
   start? : Int = 0,
-  end? : Int,
+  end? : Int = self.length(),
 ) -> StringView? {
   let len = self.length()
-  let end = match end {
-    Some(end) | (None with end = len) => end
-  }
   guard start >= 0 && start <= end && end <= len else { None }
   if start < len && self.unsafe_get(start).is_trailing_surrogate() {
     return None
@@ -684,13 +679,10 @@ pub fn String::get_view(
 pub fn StringView::get_view(
   self : StringView,
   start? : Int = 0,
-  end? : Int,
+  end? : Int = self.length(),
 ) -> StringView? {
   let str_len = self.str().length()
-  let abs_end = match end {
-    None => self.end()
-    Some(end) => self.start() + end
-  }
+  let abs_end = self.start() + end
   let abs_start = self.start() + start
   guard abs_start >= self.start() &&
     abs_start <= abs_end &&
@@ -736,14 +728,11 @@ pub fn StringView::get_view(
 pub fn String::clamped_view(
   self : String,
   start? : Int = 0,
-  end? : Int,
+  end? : Int = self.length(),
 ) -> StringView {
   let len = self.length()
   let mut lo = if start < 0 { 0 } else if start > len { len } else { start }
-  let mut hi = match end {
-    None => len
-    Some(e) => if e < 0 { 0 } else if e > len { len } else { e }
-  }
+  let mut hi = if end < 0 { 0 } else if end > len { len } else { end }
   if lo > 0 &&
     lo < len &&
     self.unsafe_get(lo).is_trailing_surrogate() &&
@@ -782,14 +771,11 @@ pub fn String::clamped_view(
 pub fn StringView::clamped_view(
   self : StringView,
   start? : Int = 0,
-  end? : Int,
+  end? : Int = self.length(),
 ) -> StringView {
   let len = self.length()
   let mut lo = if start < 0 { 0 } else if start > len { len } else { start }
-  let mut hi = match end {
-    None => len
-    Some(e) => if e < 0 { 0 } else if e > len { len } else { e }
-  }
+  let mut hi = if end < 0 { 0 } else if end > len { len } else { end }
   let str = self.str()
   let base = self.start()
   if lo > 0 &&
@@ -921,11 +907,12 @@ pub fn StringView::split_at(
 /// }
 /// ```
 #alias("_[_:_]")
-pub fn String::sub(self : String, start? : Int = 0, end? : Int) -> StringView {
+pub fn String::sub(
+  self : String,
+  start? : Int = 0,
+  end? : Int = self.length(),
+) -> StringView {
   let len = self.length()
-  let end = match end {
-    Some(end) | (None with end = len) => end
-  }
   guard! start >= 0 && start <= end && end <= len
   if start < len {
     guard! !self.unsafe_get(start).is_trailing_surrogate()
@@ -979,15 +966,12 @@ pub fn String::sub(self : String, start? : Int = 0, end? : Int) -> StringView {
 pub fn StringView::sub(
   self : StringView,
   start? : Int = 0,
-  end? : Int,
+  end? : Int = self.length(),
 ) -> StringView {
   let str_len = self.str().length()
 
   // Calculate absolute positions in the original string
-  let abs_end = match end {
-    None => self.end()
-    Some(end) => self.start() + end
-  }
+  let abs_end = self.start() + end
   let abs_start = self.start() + start
 
   // Validate bounds against the original string
