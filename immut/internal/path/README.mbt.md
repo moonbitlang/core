@@ -83,6 +83,30 @@ test "path construction" {
 }
 ```
 
+## Exhausted Paths
+
+A path carries six 5-bit segments under a two-bit head tag. Consuming all
+six segments leaves only the head tag — the *exhausted* path,
+`Path::exhausted()`. It is the remaining path stored by a HAMT node at
+maximum depth, and the seed for rebuilding a path with `push` when a
+canonicalizing collapse hoists a node upward:
+
+```mbt check
+///|
+test "exhausted path" {
+  let path = @path.of(42)
+  // Consuming all six segments leaves only the head tag
+  assert_true(path.advance(6) == @path.Path::exhausted())
+  // Pushing the consumed segments back (deepest first) rebuilds the path
+  let rebuilt = for depth = 5, acc = @path.Path::exhausted(); depth >= 0; {
+    continue depth - 1, acc.push(path.idx_at(depth))
+  } nobreak {
+    acc
+  }
+  assert_true(rebuilt == path)
+}
+```
+
 ## Internal Usage
 
 This package is used internally by:
@@ -97,7 +121,8 @@ This package is used internally by:
 The Path type:
 - Encodes tree navigation information compactly
 - Uses bit manipulation for efficient path operations
-- Supports up to 32 levels of tree depth
+- Supports six levels of 32-way branching (five bits per level), under a
+  two-bit head tag that makes the remaining length self-describing
 - Provides O(1) path operations
 
 ## Performance Characteristics
