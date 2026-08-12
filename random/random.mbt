@@ -182,10 +182,36 @@ test "UInt64" {
 }
 
 ///|
-/// [double] returns a pseudo-random 64-bit Double in the range [0.0, 1.0)
-pub fn Rand::double(self : Rand) -> Double {
-  Double::convert_uint64(self.next() << 11 >> 11) /
-  Double::convert_uint64(1UL << 53)
+/// Returns a pseudo-random `Double` in the half-open interval `[min, max)`.
+/// The bounds default to `0.0` and `1.0`; that interval uses the original
+/// direct 53-bit construction. Other intervals use Goualard's corrected
+/// gamma-section algorithm.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let rand = @random.Rand::chacha8()
+///   let value = rand.double(min=-2.0, max=3.0)
+///   inspect(value >= -2.0 && value < 3.0, content="true")
+/// }
+/// ```
+///
+/// # Panics
+///
+/// Panics if either bound is not finite, if `min >= max`, or if a non-zero
+/// bound has magnitude below `4 * @double.min_positive`. It also panics if
+/// dividing either bound by the selected gamma step would underflow.
+pub fn Rand::double(
+  self : Rand,
+  min? : Double = 0.0,
+  max? : Double = 1.0,
+) -> Double {
+  if min == 0.0 && max == 1.0 {
+    Double::convert_uint64(self.next() << 11 >> 11) /
+    Double::convert_uint64(1UL << 53)
+  } else {
+    self.double_in_range(min~, max~)
+  }
 }
 
 ///|
@@ -196,9 +222,34 @@ test "double" {
 }
 
 ///|
-/// [float] returns a pseudo-random 32-bit Float in the range [0.0, 1.0)
-pub fn Rand::float(self : Rand) -> Float {
-  Float::from_uint(self.uint() << 8 >> 8) / Float::from_uint(1U << 24)
+/// Returns a pseudo-random `Float` in the half-open interval `[min, max)`.
+/// The bounds default to `0.0F` and `1.0F`; that interval uses the original
+/// direct 24-bit construction. Other intervals use Goualard's corrected
+/// gamma-section algorithm.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let rand = @random.Rand::chacha8()
+///   let value = rand.float(min=-2.0F, max=3.0F)
+///   inspect(value >= -2.0F && value < 3.0F, content="true")
+/// }
+/// ```
+///
+/// # Panics
+///
+/// Panics if either bound is not finite, if `min >= max`, or if a non-zero
+/// bound has magnitude below `4 * @float.min_positive`.
+pub fn Rand::float(
+  self : Rand,
+  min? : Float = 0.0F,
+  max? : Float = 1.0F,
+) -> Float {
+  if min == 0.0F && max == 1.0F {
+    Float::from_uint(self.uint() << 8 >> 8) / Float::from_uint(1U << 24)
+  } else {
+    self.float_in_range(min~, max~)
+  }
 }
 
 ///|
@@ -268,55 +319,24 @@ fn split_uint64_for_float(value : UInt64) -> (Float, Float) {
 }
 
 ///|
-/// Uniformly selects a `Double` from a gamma-section grid in the half-open
-/// interval `[min, max)`. Consecutive grid values are one gamma apart, except
-/// for a possible shorter gap at the included lower bound.
-///
-/// This implements the corrected gamma-section algorithm from Goualard,
-/// "Drawing Random Floating-point Numbers from an Interval". The correction
-/// splits the random integer before converting it to `Double`, avoiding
-/// rounding and overflow when the integer is wider than the 53-bit
-/// significand.
-///
-/// # Example
-/// ```mbt check
-/// test {
-///   let rand = @random.Rand::chacha8()
-///   let value = rand.double_range(min=-2.0, max=3.0)
-///   inspect(value >= -2.0 && value < 3.0, content="true")
-/// }
-/// ```
-///
-/// # Panics
-///
-/// Panics if either bound is not finite, if `min >= max`, or if a non-zero
-/// bound has magnitude below `4 * @double.min_positive`. This guard prevents
-/// quarter-scaling a bound into the subnormal range; the gamma step itself may
-/// still be subnormal. It also panics if dividing either bound by the selected
-/// step would underflow.
-pub fn Rand::double_range(
-  self : Rand,
-  min? : Double = 0.0,
-  max? : Double = 1.0,
-) -> Double {
+/// Implements the non-unit `Double` interval path.
+fn Rand::double_in_range(self : Rand, min~ : Double, max~ : Double) -> Double {
   guard !(min.is_nan() || min.is_inf() || max.is_nan() || max.is_inf()) else {
-    abort("Rand::double_range: bounds must be finite")
+    abort("Rand::double: bounds must be finite")
   }
   let underflow_threshold = 4.0 * @double.min_positive
   guard (min == 0.0 || min.abs() >= underflow_threshold) &&
     (max == 0.0 || max.abs() >= underflow_threshold) else {
-    abort("Rand::double_range: bounds must be outside the underflow region")
+    abort("Rand::double: bounds must be outside the underflow region")
   }
-  guard min < max else {
-    abort("Rand::double_range: min must be less than max")
-  }
+  guard min < max else { abort("Rand::double: min must be less than max") }
   let anchor_is_max = min.abs() <= max.abs()
   let gamma = double_gamma(if anchor_is_max { max } else { min })
   let scaled_min = min / gamma
   let scaled_max = max / gamma
   guard (min == 0.0 || scaled_min.abs() >= @double.min_positive) &&
     (max == 0.0 || scaled_max.abs() >= @double.min_positive) else {
-    abort("Rand::double_range: scaling a bound would underflow")
+    abort("Rand::double: scaling a bound would underflow")
   }
   let sections = ceil_sections(scaled_min, scaled_max, anchor_is_max~)
   let k = self.uint64(limit=sections) + 1
@@ -334,45 +354,17 @@ pub fn Rand::double_range(
 }
 
 ///|
-/// Uniformly selects a `Float` from a gamma-section grid in the half-open
-/// interval `[min, max)`. Consecutive grid values are one gamma apart, except
-/// for a possible shorter gap at the included lower bound.
-///
-/// This implements the corrected gamma-section algorithm from Goualard,
-/// "Drawing Random Floating-point Numbers from an Interval". The correction
-/// splits the random integer before converting it to `Float`, avoiding
-/// rounding and overflow when the integer is wider than the 24-bit
-/// significand.
-///
-/// # Example
-/// ```mbt check
-/// test {
-///   let rand = @random.Rand::chacha8()
-///   let value = rand.float_range(min=-2.0F, max=3.0F)
-///   inspect(value >= -2.0F && value < 3.0F, content="true")
-/// }
-/// ```
-///
-/// # Panics
-///
-/// Panics if either bound is not finite, if `min >= max`, or if a non-zero
-/// bound has magnitude below `4 * @float.min_positive`. This guard prevents
-/// quarter-scaling a bound into the subnormal range; the gamma step itself may
-/// still be subnormal.
-pub fn Rand::float_range(
-  self : Rand,
-  min? : Float = 0.0,
-  max? : Float = 1.0,
-) -> Float {
+/// Implements the non-unit `Float` interval path.
+fn Rand::float_in_range(self : Rand, min~ : Float, max~ : Float) -> Float {
   guard !(min.is_nan() || min.is_inf() || max.is_nan() || max.is_inf()) else {
-    abort("Rand::float_range: bounds must be finite")
+    abort("Rand::float: bounds must be finite")
   }
   let underflow_threshold = 4.0F * @float.min_positive
   guard (min == 0.0F || min.abs() >= underflow_threshold) &&
     (max == 0.0F || max.abs() >= underflow_threshold) else {
-    abort("Rand::float_range: bounds must be outside the underflow region")
+    abort("Rand::float: bounds must be outside the underflow region")
   }
-  guard min < max else { abort("Rand::float_range: min must be less than max") }
+  guard min < max else { abort("Rand::float: min must be less than max") }
   let anchor_is_max = min.abs() <= max.abs()
   let gamma = float_gamma(if anchor_is_max { max } else { min })
   // Every Float and its power-of-two gamma convert exactly to Double. The
