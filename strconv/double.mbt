@@ -57,7 +57,6 @@ let max_mantissa_fast_path : UInt64 = 2UL << mantissa_explicit_bits
 ///
 /// Examples:
 /// ```mbt check
-/// #warnings("-deprecated")
 /// test {
 ///   inspect(@strconv.parse_double("123"), content="123")
 ///   inspect(@strconv.parse_double("12.34"), content="12.34")

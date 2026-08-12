@@ -89,3 +89,11 @@ pub fn Path::advance(self : Path, depth : Int) -> Path {
   let Path(self) = self
   self >> (SEGMENT_LENGTH * depth)
 }
+
+///|
+/// The path that remains once every index segment has been consumed: just
+/// the head tag bits. This is the remaining path of a terminal collision
+/// node, and the starting point for rebuilding a full path with `push`.
+pub fn Path::exhausted() -> Path {
+  Path(HEAD_TAG >> (SEGMENT_LENGTH * SEGMENT_NUM))
+}

@@ -369,7 +369,7 @@ pub fn[K, V] HashMap::filter(
       Branch(children) =>
         match children.filter(go) {
           None => None
-          Some(new_children) => Some(Branch(new_children))
+          Some(new_children) => Some(collapse_branch(new_children))
         }
     }
   }
@@ -451,6 +451,29 @@ pub fn[K : Eq + Hash, V] HashMap::add(
 }
 
 ///|
+/// Rebuild a branch whose children may have shrunk, restoring the `Node`
+/// invariant that a subtree holding a single entry is represented as
+/// `Flat` (structural `Eq` relies on shapes being canonical). A lone
+/// `Leaf` can only be a terminal collision node whose bucket emptied; its
+/// remaining path is fully consumed, so the `Flat` path is rebuilt from
+/// the slot index alone.
+fn[K, V] collapse_branch(
+  children : @sparse_array.SparseArray[Node[K, V]],
+) -> Node[K, V] {
+  match children.data {
+    [Flat(key, value, path)] =>
+      Flat(key, value, path.push(children.elem_info.first_idx()))
+    [Leaf(key, value, Empty)] =>
+      Flat(
+        key,
+        value,
+        @path.Path::exhausted().push(children.elem_info.first_idx()),
+      )
+    _ => Branch(children)
+  }
+}
+
+///|
 /// Remove an element from a map
 pub fn[K : Eq + Hash, V] HashMap::remove(
   self : HashMap[K, V],
@@ -499,17 +522,7 @@ fn[K : Eq, V] Node::remove_with_path(
             (_, None) => children.remove(idx)
             (_, Some(new_child)) => children.replace(idx, new_child)
           }
-          match new_children.data {
-            [Flat(key1, value1, path1)] =>
-              Some(
-                Flat(
-                  key1,
-                  value1,
-                  path1.push(new_children.elem_info.first_idx()),
-                ),
-              )
-            _ => Some(Branch(new_children))
-          }
+          Some(collapse_branch(new_children))
         }
       }
     }
@@ -662,9 +675,7 @@ pub fn[K : Eq, V] HashMap::intersection(
       (Branch(children1), Branch(children2)) =>
         match children1.intersection(children2, go) {
           None => None
-          Some({ data: [Flat(key, value, path)], elem_info }) =>
-            Some(Flat(key, value, path.push(elem_info.first_idx())))
-          Some(children) => Some(Branch(children))
+          Some(children) => Some(collapse_branch(children))
         }
       (Leaf(key1, value1, bucket1), Leaf(key2, value2, bucket2)) => {
         let kvs1 = bucket1.add((key1, value1))
@@ -708,9 +719,7 @@ pub fn[K : Eq, V] HashMap::intersection_with(
       (Branch(children1), Branch(children2)) =>
         match children1.intersection(children2, go) {
           None => None
-          Some({ data: [Flat(key, value, path)], elem_info }) =>
-            Some(Flat(key, value, path.push(elem_info.first_idx())))
-          Some(children) => Some(Branch(children))
+          Some(children) => Some(collapse_branch(children))
         }
       (Leaf(key1, value1, bucket1), Leaf(key2, value2, bucket2)) => {
         let kvs1 = bucket1.add((key1, value1))
@@ -767,9 +776,7 @@ pub fn[K : Eq, V] HashMap::difference(
       (Branch(children1), Branch(children2)) =>
         match children1.difference(children2, go) {
           None => None
-          Some({ data: [Flat(key, value, path)], elem_info }) =>
-            Some(Flat(key, value, path.push(elem_info.first_idx())))
-          Some(children) => Some(Branch(children))
+          Some(children) => Some(collapse_branch(children))
         }
       (Leaf(key1, value1, bucket1), Leaf(key2, value2, bucket2)) => {
         let kvs1 = bucket1.add((key1, value1))

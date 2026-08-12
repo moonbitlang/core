@@ -140,10 +140,10 @@ test "Array::blit_to/grow_destination" {
 test "Array::blit_to/grow_destination_directly" {
   let src = [1, 2, 3, 4]
   let dst = [0]
-  Array::blit_to(src, dst, len=2, src_offset=1, dst_offset=1)
+  src[1:3].blit_to(dst, dst_offset=1)
   assert_true(dst == [0, 2, 3])
   let self = [1, 2, 3]
-  Array::blit_to(self, self, len=2, dst_offset=3)
+  self[0:2].blit_to(self, dst_offset=3)
   assert_true(self == [1, 2, 3, 1, 2])
 }
 
@@ -206,7 +206,7 @@ test "panic Array::blit_to/boundary_cases4" {
 test "panic Array::blit_to/reject_overflowed_source_range" {
   let src = [1]
   let dst = [0]
-  Array::blit_to(src, dst, len=0x7fffffff, src_offset=1)
+  src[1:1 + 0x7fffffff].blit_to(dst)
 }
 
 ///|

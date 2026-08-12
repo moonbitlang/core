@@ -306,6 +306,24 @@ pub fn[A : Eq + Hash] HashSet::remove(self : HashSet[A], key : A) -> HashSet[A] 
 }
 
 ///|
+
+///|
+/// Rebuild a branch whose children may have shrunk, restoring the `Node`
+/// invariant that a subtree holding a single element is represented as
+/// `Flat` (structural `Eq` relies on shapes being canonical). A lone
+/// `Leaf` can only be a terminal collision node whose bucket emptied; its
+/// remaining path is fully consumed, so the `Flat` path is rebuilt from
+/// the slot index alone.
+fn[A] collapse_branch(children : @sparse_array.SparseArray[Node[A]]) -> Node[A] {
+  match children.data {
+    [Flat(key, path)] => Flat(key, path.push(children.elem_info.first_idx()))
+    [Leaf(key, Empty)] =>
+      Flat(key, @path.Path::exhausted().push(children.elem_info.first_idx()))
+    _ => Branch(children)
+  }
+}
+
+///|
 fn[A : Eq] Node::remove_with_path(
   self : Node[A],
   key : A,
@@ -340,11 +358,7 @@ fn[A : Eq] Node::remove_with_path(
             (_, None) => children.remove(idx)
             (_, Some(new_child)) => children.replace(idx, new_child)
           }
-          match new_children.data {
-            [Flat(key1, path1)] =>
-              Some(Flat(key1, path1.push(new_children.elem_info.first_idx())))
-            _ => Some(Branch(new_children))
-          }
+          Some(collapse_branch(new_children))
         }
       }
     }
@@ -425,9 +439,7 @@ pub fn[K : Eq] HashSet::intersection(
       (Branch(children1), Branch(children2)) =>
         match children1.intersection(children2, go) {
           None => None
-          Some({ data: [Flat(key, path)], elem_info }) =>
-            Some(Flat(key, path.push(elem_info.first_idx())))
-          Some(children) => Some(Branch(children))
+          Some(children) => Some(collapse_branch(children))
         }
       (Leaf(key1, bucket1), Leaf(key2, bucket2)) => {
         let keys1 = bucket1.add(key1)
@@ -467,9 +479,7 @@ pub fn[K : Eq] HashSet::difference(
       (Branch(children1), Branch(children2)) =>
         match children1.difference(children2, go) {
           None => None
-          Some({ data: [Flat(key, path)], elem_info }) =>
-            Some(Flat(key, path.push(elem_info.first_idx())))
-          Some(children) => Some(Branch(children))
+          Some(children) => Some(collapse_branch(children))
         }
       (Leaf(key1, bucket1), Leaf(key2, bucket2)) => {
         let keys1 = bucket1.add(key1)
