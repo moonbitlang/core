@@ -20,8 +20,9 @@ priv enum Node[K, V] {
   /// not-yet-consumed remainder of the key's path (only the head tag
   /// once every segment is consumed)
   Flat(K, V, @path.Path)
-  /// full-hash collision bucket at maximum depth; always holds at least
-  /// two entries — a lone entry must be represented as `Flat`
+  /// collision bucket at maximum depth (all six path segments equal);
+  /// always holds at least two entries — a lone entry must be
+  /// represented as `Flat`
   Leaf(K, V, @list.List[(K, V)])
   /// number of all its leaf > 1. If equals 1, it should be represented as `Flat`
   Branch(@sparse_array.SparseArray[Node[K, V]])

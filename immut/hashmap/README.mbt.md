@@ -141,9 +141,9 @@ test "equality is content equality" {
 One boundary to be aware of: **iteration order is unspecified**. `==` and
 `Hash` are order-blind by design, but `iter`/`each`/`to_array`/`fold` visit
 entries in an internal order that is not part of the contract — in
-particular, the relative order of keys whose hashes fully collide reflects
-insertion history. Two equal maps can therefore iterate differently; sort
-the entries if you need a deterministic order.
+particular, the relative order of keys whose hashes land in the same
+collision bucket reflects insertion history. Two equal maps can therefore
+iterate differently; sort the entries if you need a deterministic order.
 
 ## Internal Structure and Canonical Form
 
@@ -174,7 +174,7 @@ graph TD
     B0 -->|"segment = 17"| B1["Branch (depth 1)"]
     B1 -->|"segment = 4"| F2["Flat(k2, v2, remaining path)"]
     B1 -->|"segment = 9"| DOT["… deeper levels …"]
-    DOT --> L["Leaf(k3, v3, [(k4, v4)])<br/>full-hash collision bucket (depth 6)"]
+    DOT --> L["Leaf(k3, v3, [(k4, v4)])<br/>collision bucket (depth 6)"]
 ```
 
 - `Flat(key, value, remaining-path)` — a subtree holding exactly **one**
@@ -183,31 +183,41 @@ graph TD
 - `Branch(sparse-array)` — an interior node holding at least **two**
   entries beneath it.
 - `Leaf(key, value, bucket)` — a maximum-depth collision bucket holding at
-  least **two** entries whose full hashes are equal.
+  least **two** entries whose hashes agree on all thirty path bits. (The
+  trie consumes only the low 30 bits of the 32-bit hash — `@path.of`
+  replaces the top two bits with the head tag — so keys differing solely
+  in those two bits share a bucket too.)
 
 ### The canonical-form invariant
 
-`HashMap` derives *structural* `Eq`: maps are compared shape by shape (with
-pointer-equality short-circuiting on shared subtrees, which makes comparing
-derived maps cheap). Structural comparison implements content equality only
-because every operation maintains **one shape per content**:
+`HashMap` compares maps shape by shape: the derived outer `Eq` delegates to
+a hand-written `Node` equality that recurses on structure, short-circuits
+on pointer-equal shared subtrees (which makes comparing derived maps
+cheap), and compares collision buckets as unordered key-value sets.
+Structural comparison implements content equality because every operation
+maintains **one trie topology per content** — the entry order inside a
+collision bucket is the single remaining history trace, and bucket
+comparison deliberately ignores it (see below):
 
 1. a subtree that shrinks to a single entry is rebuilt as `Flat` — never a
    one-child `Branch`, never a one-entry `Leaf`;
-2. `Leaf` appears only at maximum depth with ≥ 2 fully-colliding entries;
+2. `Leaf` appears only at maximum depth with ≥ 2 path-colliding entries;
 3. positions are fixed by the hash bits, so insertion order cannot leave a
-   trace in the shape.
+   trace in the topology.
 
 Shrinking operations (`remove`, `filter`, `intersection`,
 `intersection_with`, `difference`) restore the invariant with two collapse
 mechanisms — a bucket that drops to one entry becomes a `Flat` in place,
 and a branch left with a lone `Flat` child hoists it one level up,
-re-extending its path with the vacated slot index:
+re-extending its path with the vacated slot index. The diagram below shows
+the *local* rewrite of the maximum-depth subtree; while the removal
+unwinds, every ancestor branch repeats the hoist, so a lone surviving
+entry ends up as a single `Flat` carrying its fully rebuilt path:
 
 ```mermaid
 graph TD
-    subgraph step2["after also removing k5: lone Flat hoisted"]
-        C0["Flat(k3, v3, exhausted + segment s)"]
+    subgraph step2["after also removing k5: lone Flat hoisted one level"]
+        C0["Flat(k3, v3, exhausted + segment s)<br/>(ancestors repeat the hoist while unwinding)"]
     end
     subgraph step1["after removing k4: bucket became Flat in place"]
         B0["Branch"] -->|"segment s"| B1["Flat(k3, v3, exhausted)"]
@@ -219,7 +229,7 @@ graph TD
     end
 ```
 
-The invariant holds even under engineered full-hash collisions:
+The invariant holds even under engineered collisions:
 
 ```mbt check
 ///|
