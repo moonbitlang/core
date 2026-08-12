@@ -75,21 +75,19 @@ fn[A] join_2(
   key2 : A,
   path2 : @path.Path,
 ) -> Node[A] {
+  if path1 == @path.exhausted {
+    // Both paths are fully consumed: the keys collide on every path
+    // segment, so they can only share the maximum-depth collision bucket.
+    return Leaf(key2, @list.singleton(key1))
+  }
   let idx1 = path1.idx()
   let idx2 = path2.idx()
   if idx1 == idx2 {
-    let node = if path1.is_last() {
-      Leaf(key2, @list.singleton(key1))
-    } else {
-      join_2(key1, path1.next(), key2, path2.next())
-    }
+    let node = join_2(key1, path1.next(), key2, path2.next())
     Branch(@sparse_array.singleton(idx1, node))
   } else {
-    let (node1, node2) = if path1.is_last() {
-      (Leaf(key1, @list.empty()), Leaf(key2, @list.empty()))
-    } else {
-      (Flat(key1, path1.next()), Flat(key2, path2.next()))
-    }
+    let node1 = Flat(key1, path1.next())
+    let node2 = Flat(key2, path2.next())
     Branch(@sparse_array.doubleton(idx1, node1, idx2, node2))
   }
 }
@@ -306,6 +304,20 @@ pub fn[A : Eq + Hash] HashSet::remove(self : HashSet[A], key : A) -> HashSet[A] 
 }
 
 ///|
+/// Rebuild a branch whose children may have shrunk, restoring the `Node`
+/// invariant that a subtree holding a single element is represented as
+/// `Flat` (structural `Eq` relies on shapes being canonical). A lone
+/// `Leaf` child needs no collapsing: a `Leaf` always holds at least two
+/// path-colliding elements, and the singleton branch chain above it is
+/// exactly the shape a fresh construction of that collision builds.
+fn[A] collapse_branch(children : @sparse_array.SparseArray[Node[A]]) -> Node[A] {
+  match children.data {
+    [Flat(key, path)] => Flat(key, path.push(children.elem_info.first_idx()))
+    _ => Branch(children)
+  }
+}
+
+///|
 fn[A : Eq] Node::remove_with_path(
   self : Node[A],
   key : A,
@@ -313,13 +325,19 @@ fn[A : Eq] Node::remove_with_path(
 ) -> Node[A]? {
   match self {
     Leaf(key1, bucket) =>
+      // a `Leaf` sits at maximum depth, so `path` is fully consumed here
+      // and a single surviving element becomes a `Flat` carrying it
       if key1 == key {
         match bucket {
           Empty => None
+          More(key2, tail=Empty) => Some(Flat(key2, path))
           More(key2, tail=xs) => Some(Leaf(key2, xs))
         }
       } else if bucket.find_index(x => key.equal(x)) is Some(index) {
-        Some(Leaf(key1, bucket.remove_at(index)))
+        match bucket.remove_at(index) {
+          Empty => Some(Flat(key1, path))
+          new_bucket => Some(Leaf(key1, new_bucket))
+        }
       } else {
         Some(self)
       }
@@ -340,11 +358,7 @@ fn[A : Eq] Node::remove_with_path(
             (_, None) => children.remove(idx)
             (_, Some(new_child)) => children.replace(idx, new_child)
           }
-          match new_children.data {
-            [Flat(key1, path1)] =>
-              Some(Flat(key1, path1.push(new_children.elem_info.first_idx())))
-            _ => Some(Branch(new_children))
-          }
+          Some(collapse_branch(new_children))
         }
       }
     }
@@ -425,15 +439,14 @@ pub fn[K : Eq] HashSet::intersection(
       (Branch(children1), Branch(children2)) =>
         match children1.intersection(children2, go) {
           None => None
-          Some({ data: [Flat(key, path)], elem_info }) =>
-            Some(Flat(key, path.push(elem_info.first_idx())))
-          Some(children) => Some(Branch(children))
+          Some(children) => Some(collapse_branch(children))
         }
       (Leaf(key1, bucket1), Leaf(key2, bucket2)) => {
         let keys1 = bucket1.add(key1)
         let keys2 = bucket2.add(key2)
         match keys1.filter(k => keys2.contains(k)) {
           Empty => None
+          More(head, tail=Empty) => Some(Flat(head, @path.exhausted))
           More(head, tail~) => Some(Leaf(head, tail))
         }
       }
@@ -467,15 +480,14 @@ pub fn[K : Eq] HashSet::difference(
       (Branch(children1), Branch(children2)) =>
         match children1.difference(children2, go) {
           None => None
-          Some({ data: [Flat(key, path)], elem_info }) =>
-            Some(Flat(key, path.push(elem_info.first_idx())))
-          Some(children) => Some(Branch(children))
+          Some(children) => Some(collapse_branch(children))
         }
       (Leaf(key1, bucket1), Leaf(key2, bucket2)) => {
         let keys1 = bucket1.add(key1)
         let keys2 = bucket2.add(key2)
         match keys1.filter(k => !keys2.contains(k)) {
           Empty => None
+          More(head, tail=Empty) => Some(Flat(head, @path.exhausted))
           More(head, tail~) => Some(Leaf(head, tail))
         }
       }

@@ -16,8 +16,14 @@
 /// An non-empty immutable hash set data structure
 #unsafe_cycle_free
 priv enum Node[A] {
+  /// a subtree holding exactly one element, at any depth; carries the
+  /// not-yet-consumed remainder of the element's path (only the head tag
+  /// once every segment is consumed)
   Flat(A, @path.Path)
-  Leaf(A, @list.List[A]) // use a list of buckets to resolve collision
+  /// collision bucket at maximum depth (all six path segments equal);
+  /// always holds at least two elements — a lone element must be
+  /// represented as `Flat`
+  Leaf(A, @list.List[A])
   /// number of all its leaf > 1. If equals 1, it should be represented as `Flat`
   Branch(@sparse_array.SparseArray[Node[A]])
 }
