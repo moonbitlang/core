@@ -526,6 +526,7 @@ test "Case conversion with non-letters" {
 }
 
 ///|
+#warnings("-deprecated")
 test "length is an alias of utf16_len" {
   inspect('A'.length(), content="1")
   inspect('🌟'.length(), content="2")

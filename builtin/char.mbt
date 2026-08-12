@@ -535,7 +535,7 @@ pub impl ToJson for Char with fn to_json(self : Char) -> Json {
 /// }
 /// ```
 ///
-#alias(length)
+#alias(length, deprecated="Use `utf16_len` instead")
 pub fn Char::utf16_len(self : Self) -> Int {
   let code = self.to_int()
   if code <= 0xFFFF {
