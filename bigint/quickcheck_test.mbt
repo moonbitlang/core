@@ -38,7 +38,7 @@ fn hex_of(seeds : ArrayView[Int]) -> String {
 
 ///|
 /// A value built through the exactly-allocating hex path.
-fn via_hex(seeds : ArrayView[Int], negative : Bool) -> @bigint.BigInt raise {
+fn via_hex(seeds : ArrayView[Int], negative : Bool) -> @bigint.BigInt {
   let magnitude = @bigint.BigInt::from_string(hex_of(seeds), radix=16)
   if negative {
     -magnitude
@@ -49,7 +49,7 @@ fn via_hex(seeds : ArrayView[Int], negative : Bool) -> @bigint.BigInt raise {
 
 ///|
 /// The same value rebuilt through the decimal string path.
-fn via_decimal(v : @bigint.BigInt) -> @bigint.BigInt raise {
+fn via_decimal(v : @bigint.BigInt) -> @bigint.BigInt {
   @bigint.BigInt::from_string(v.to_string())
 }
 
