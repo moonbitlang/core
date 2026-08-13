@@ -31,18 +31,6 @@ pub fn Lexbuf::from_fn(source : () -> String?) -> Lexbuf {
 }
 
 ///|
-/// Creates a lexbuf whose complete input is already available.
-pub fn Lexbuf::from_string(content : String) -> Lexbuf {
-  {
-    source: () => None,
-    storage: LexbufStorage::from_string(content),
-    cursor: 0,
-    retained_from: -1,
-    eof: true,
-  }
-}
-
-///|
 /// Compiler protocol: returns the absolute offset of the next code unit.
 /// The cursor must stay in the buffered range. Generated `lexscan` code calls
 /// this when starting a scan and when recording or comparing scan positions.

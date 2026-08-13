@@ -45,6 +45,7 @@ test "Lexbuf discards consumed input without retention" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Lexbuf reports source EOF while buffered input remains" {
   let lexbuf = @lexbuf.Lexbuf::from_string("a")
   inspect(lexbuf.__eof_reached(), content="true")
@@ -122,6 +123,7 @@ test "Lexbuf reads multiple chunks after compaction" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Lexbuf returns an empty retained view" {
   let lexbuf = @lexbuf.Lexbuf::from_string("abc")
   lexbuf.__retain_from_cursor()
