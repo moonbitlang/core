@@ -1,0 +1,18 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/internal/os_string"
+
+// Values
+
+// Errors
+
+// Types and methods
+type OsString
+pub fn OsString::from_string(StringView) -> Self
+#deprecated
+pub fn OsString::output(Self, &Logger) -> Unit
+pub fn OsString::to_string(Self) -> String
+pub impl Show for OsString
+
+// Type aliases
+
+// Traits

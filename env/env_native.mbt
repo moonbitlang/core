@@ -13,48 +13,7 @@
 // limitations under the License.
 
 ///|
-/// On Windows, we use native `W` series unicode API,
-/// which return string in UTF-16 directly,
-/// so no need for extra encoding phase here.
-///
-/// Note: technically path etc. may not be invalid UTF-16 on Windows,
-///   but this should be extremely rare in practice.
-///   If we need to fix this case, a validation or encoding phase can be added.
-#cfg(platform="windows")
-priv struct OsString(String)
-
-///|
-/// On non-Windows platforms, path etc. are essentially binary data,
-/// and we assume they contain UTF-8 encoded text here.
-#cfg(not(platform="windows"))
-priv struct OsString(Bytes)
-
-///|
-#cfg(platform="windows")
-fn OsString::to_string(self : OsString) -> String {
-  self.0
-}
-
-///|
-#cfg(not(platform="windows"))
-fn OsString::to_string(self : OsString) -> String {
-  @utf8.decode_lossy(self.0)
-}
-
-///|
-#cfg(platform="windows")
-fn OsString::from_string(str : String) -> OsString {
-  OsString(str)
-}
-
-///|
-#cfg(not(platform="windows"))
-fn OsString::from_string(str : String) -> OsString {
-  OsString(@utf8.encode(str))
-}
-
-///|
-extern "C" fn get_cli_args_ffi() -> FixedArray[OsString] = "moonbit_rt_get_cli_args"
+extern "C" fn get_cli_args_ffi() -> FixedArray[@os_string.OsString] = "moonbit_rt_get_cli_args"
 
 ///|
 fn get_cli_args_internal() -> Array[String] {
@@ -67,7 +26,7 @@ fn get_cli_args_internal() -> Array[String] {
 extern "c" fn now_internal() -> UInt64 = "moonbit_get_ms_since_epoch"
 
 ///|
-extern "c" fn getcwd() -> OsString = "moonbit_rt_get_current_dir"
+extern "c" fn getcwd() -> @os_string.OsString = "moonbit_rt_get_current_dir"
 
 ///|
 fn current_dir_internal() -> String? {
@@ -83,7 +42,7 @@ fn current_dir_internal() -> String? {
 
 ///|
 fn get_env_var_internal(key : String) -> String? {
-  let key = OsString::from_string(key)
+  let key = @os_string.OsString::from_string(key)
   let exists = @ref.Ref(false)
   let value = get_env_var_ffi(key, exists)
   if exists.val {
@@ -96,9 +55,9 @@ fn get_env_var_internal(key : String) -> String? {
 ///|
 #borrow(key, exists)
 extern "c" fn get_env_var_ffi(
-  key : OsString,
+  key : @os_string.OsString,
   exists : @ref.Ref[Bool],
-) -> OsString = "moonbit_rt_get_env_var"
+) -> @os_string.OsString = "moonbit_rt_get_env_var"
 
 ///|
 fn get_env_vars_internal() -> Map[String, String] {
@@ -111,25 +70,31 @@ fn get_env_vars_internal() -> Map[String, String] {
 }
 
 ///|
-extern "c" fn get_env_vars_ffi() -> FixedArray[OsString] = "moonbit_rt_get_env_vars"
+extern "c" fn get_env_vars_ffi() -> FixedArray[@os_string.OsString] = "moonbit_rt_get_env_vars"
 
 ///|
 fn set_env_var_internal(key : String, value : String) -> Unit {
-  set_env_var_ffi(OsString::from_string(key), OsString::from_string(value))
+  set_env_var_ffi(
+    @os_string.OsString::from_string(key),
+    @os_string.OsString::from_string(value),
+  )
 }
 
 ///|
 #borrow(key, value)
-extern "c" fn set_env_var_ffi(key : OsString, value : OsString) -> Unit = "moonbit_rt_set_env_var"
+extern "c" fn set_env_var_ffi(
+  key : @os_string.OsString,
+  value : @os_string.OsString,
+) -> Unit = "moonbit_rt_set_env_var"
 
 ///|
 fn unset_env_var_internal(key : String) -> Unit {
-  unset_env_var_ffi(OsString::from_string(key))
+  unset_env_var_ffi(@os_string.OsString::from_string(key))
 }
 
 ///|
 #borrow(key)
-extern "c" fn unset_env_var_ffi(key : OsString) -> Unit = "moonbit_rt_unset_env_var"
+extern "c" fn unset_env_var_ffi(key : @os_string.OsString) -> Unit = "moonbit_rt_unset_env_var"
 
 ///|
 fn rand_internal(to_be_filled : FixedArray[Byte]) -> Bool {
@@ -139,7 +104,3 @@ fn rand_internal(to_be_filled : FixedArray[Byte]) -> Bool {
 ///|
 #borrow(to_be_filled)
 extern "c" fn moonbit_rt_get_random(to_be_filled : FixedArray[Byte]) -> Int = "moonbit_rt_get_random"
-
-///|
-#cfg(platform="windows")
-let _supressed_unused_warning_windows : Unit = ignore(@utf8.encode(""))
