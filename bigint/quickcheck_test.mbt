@@ -95,27 +95,50 @@ test "negation identities for every single-bit value" {
 }
 
 ///|
+/// Spread a small generated value across the full 64-bit range while
+/// keeping it a deterministic function of the input.
+fn spread(v : Int64) -> Int64 {
+  v * 6364136223846793005L + 1442695040888963407L
+}
+
+///|
 test "quickcheck: Int64 oracle for every operation" {
   @quickcheck.check((pair : (Int64, Int64)) => {
-    let (x, y) = pair
-    let a = @bigint.BigInt::from_int64(x)
-    let b = @bigint.BigInt::from_int64(y)
-    guard (a == b) == (x == y) else { return false }
-    guard a.compare(b) == x.compare(y) else { return false }
-    guard (a & b) == @bigint.BigInt::from_int64(x & y) else { return false }
-    guard (a | b) == @bigint.BigInt::from_int64(x | y) else { return false }
-    guard (a ^ b) == @bigint.BigInt::from_int64(x ^ y) else { return false }
-    // widen through Int to keep +, -, * overflow-free
-    let sx = @bigint.BigInt::from_int64((x >> 33).to_int().to_int64())
-    let sy = @bigint.BigInt::from_int64((y >> 33).to_int().to_int64())
-    let ix = (x >> 33).to_int().to_int64()
-    let iy = (y >> 33).to_int().to_int64()
-    guard sx + sy == @bigint.BigInt::from_int64(ix + iy) else { return false }
-    guard sx - sy == @bigint.BigInt::from_int64(ix - iy) else { return false }
-    guard sx * sy == @bigint.BigInt::from_int64(ix * iy) else { return false }
-    if iy != 0 {
-      guard sx / sy == @bigint.BigInt::from_int64(ix / iy) else { return false }
-      guard sx % sy == @bigint.BigInt::from_int64(ix % iy) else { return false }
+    // The generator only produces tiny magnitudes (|v| < size), so check
+    // both the raw pair (boundary-ish values around zero) and a spread
+    // pair covering the full 64-bit range.
+    let (x0, y0) = pair
+    let cases : Array[(Int64, Int64)] = [
+      (x0, y0),
+      (spread(x0), spread(y0)),
+      (spread(x0), y0),
+    ]
+    for c in cases {
+      let (x, y) = c
+      let a = @bigint.BigInt::from_int64(x)
+      let b = @bigint.BigInt::from_int64(y)
+      guard (a == b) == (x == y) else { return false }
+      guard a.compare(b) == x.compare(y) else { return false }
+      guard (a & b) == @bigint.BigInt::from_int64(x & y) else { return false }
+      guard (a | b) == @bigint.BigInt::from_int64(x | y) else { return false }
+      guard (a ^ b) == @bigint.BigInt::from_int64(x ^ y) else { return false }
+      // widen the top halves to keep +, -, *, /, % overflow-free while
+      // still spanning the full +/- 2^31 range
+      let ix = (x >> 32).to_int().to_int64()
+      let iy = (y >> 32).to_int().to_int64()
+      let sx = @bigint.BigInt::from_int64(ix)
+      let sy = @bigint.BigInt::from_int64(iy)
+      guard sx + sy == @bigint.BigInt::from_int64(ix + iy) else { return false }
+      guard sx - sy == @bigint.BigInt::from_int64(ix - iy) else { return false }
+      guard sx * sy == @bigint.BigInt::from_int64(ix * iy) else { return false }
+      if iy != 0 {
+        guard sx / sy == @bigint.BigInt::from_int64(ix / iy) else {
+          return false
+        }
+        guard sx % sy == @bigint.BigInt::from_int64(ix % iy) else {
+          return false
+        }
+      }
     }
     true
   })
@@ -155,9 +178,13 @@ test "quickcheck: every operation is construction-path invariant" {
       guard a1 / b1 == a2 / b2 else { return false }
       guard a1 % b1 == a2 % b2 else { return false }
     }
-    let n = (xs[0] & 0x7fffffff) % 100
-    guard a1 << n == a2 << n else { return false }
-    guard a1 >> n == a2 >> n else { return false }
+    // deterministic shift amounts crossing every limb boundary — the
+    // generated xs[0] is structurally always zero (element i is drawn
+    // with size i), so shift counts must not come from the generator
+    for n in ([0, 1, 31, 32, 33, 63, 64, 100] : Array[Int]) {
+      guard a1 << n == a2 << n else { return false }
+      guard a1 >> n == a2 >> n else { return false }
+    }
     // representation-independent renderings
     guard a1.to_string() == a2.to_string() else { return false }
     guard a1.to_string(radix=16) == a2.to_string(radix=16) else { return false }
@@ -222,13 +249,19 @@ test "quickcheck: algebraic and two's-complement laws" {
       guard (a | -a) == -l else { return false }
       guard (a ^ -a) == -2N * l else { return false }
     }
-    // shifts: compose, cancel, and floor decomposition
-    let m = (xs[0] & 0x7fffffff) % 80
-    let n = (ys[0] & 0x7fffffff) % 80
-    guard a << m << n == a << (m + n) else { return false }
-    guard a << n >> n == a else { return false }
-    let mask = (1N << n) - 1N
-    guard (a >> n << n) + (a & mask) == a else { return false }
+    // shifts: compose, cancel, and floor decomposition — deterministic
+    // amounts crossing limb boundaries (the generated heads are
+    // structurally always zero, so shift counts must not come from them)
+    for m in ([0, 1, 31, 32, 33] : Array[Int]) {
+      for n in ([0, 1, 31, 32, 33, 64] : Array[Int]) {
+        guard a << m << n == a << (m + n) else { return false }
+      }
+    }
+    for n in ([0, 1, 5, 31, 32, 33, 63, 64, 100] : Array[Int]) {
+      guard a << n >> n == a else { return false }
+      let mask = (1N << n) - 1N
+      guard (a >> n << n) + (a & mask) == a else { return false }
+    }
     // round trips
     guard @bigint.BigInt::from_string(a.to_string(radix=16), radix=16) == a else {
       return false
