@@ -13,12 +13,14 @@
 // limitations under the License.
 
 ///|
+#warnings("-deprecated")
 test "panic Lexbuf rejects an unretained view" {
   let lexbuf = @lexbuf.Lexbuf::from_string("a")
   lexbuf.__get_stringview(0, 1) |> ignore
 }
 
 ///|
+#warnings("-deprecated")
 test "panic Lexbuf rejects a commit without retention" {
   let lexbuf = @lexbuf.Lexbuf::from_string("a")
   lexbuf.__commit_to(0)

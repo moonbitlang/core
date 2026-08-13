@@ -15,6 +15,7 @@ pub struct Lexbuf {
   // private fields
 }
 pub fn Lexbuf::from_fn(() -> String?) -> Self
+#deprecated
 pub fn Lexbuf::from_string(String) -> Self
 
 pub(all) struct StringScanner {
