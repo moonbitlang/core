@@ -79,5 +79,5 @@ pub fn rand(n : Int) -> Bytes? {
 #warnings("-unused_value")
 fn unused_function() -> Unit {
   ignore(@ref.Ref(42))
-  ignore(@utf8.encode(""))
+  let _ : (@os_string.OsString) -> Unit = ignore
 }
