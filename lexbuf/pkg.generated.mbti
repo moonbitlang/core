@@ -17,6 +17,11 @@ pub struct Lexbuf {
 pub fn Lexbuf::from_fn(() -> String?) -> Self
 pub fn Lexbuf::from_string(String) -> Self
 
+pub(all) struct StringScanner {
+  data : StringView
+  mut cursor : Int
+}
+
 // Type aliases
 
 // Traits
