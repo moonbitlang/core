@@ -17,6 +17,7 @@
 ///
 /// `push` appends to the back of the deque and `peek`/`pop` operate on the
 /// front, so all queue operations are O(1) (amortized for `push`).
+#valtype
 struct Queue[A] {
   inner : @deque.Deque[A]
 }
