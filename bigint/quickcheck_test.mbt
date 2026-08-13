@@ -54,6 +54,21 @@ fn via_decimal(v : @bigint.BigInt) -> @bigint.BigInt {
 }
 
 ///|
+/// The same value rebuilt through zero-padded big-endian octets — the
+/// fixed-width buffer shape crypto-style callers pass.
+fn via_octets(v : @bigint.BigInt, pad : Int) -> @bigint.BigInt {
+  let magnitude = if v < 0N { -v } else { v }
+  let octets = magnitude.to_octets()
+  let padded = magnitude.to_octets(length=octets.length() + pad)
+  let rebuilt = @bigint.BigInt::from_octets(padded)
+  if v < 0N {
+    -rebuilt
+  } else {
+    rebuilt
+  }
+}
+
+///|
 /// Deterministic sweep: single-bit values through the exactly-allocating
 /// hex path, at every bit position 0..=199 (crossing six limb
 /// boundaries). The negation identities pin the sign-extension limb —
@@ -119,6 +134,16 @@ test "quickcheck: every operation is construction-path invariant" {
     guard a1 == a2 && b1 == b2 else { return false }
     guard Hash::hash(a1) == Hash::hash(a2) else { return false }
     guard a1.compare(b1) == a2.compare(b2) else { return false }
+    // a third path: zero-padded octets must yield the very same value,
+    // at every padding amount up to four extra limbs
+    for pad in 0..<17 {
+      let a3 = via_octets(a1, pad)
+      guard a3 == a1 else { return false }
+      guard Hash::hash(a3) == Hash::hash(a1) else { return false }
+      guard a3.is_zero() == a1.is_zero() else { return false }
+      guard (a3 ^ b1) == (a1 ^ b1) else { return false }
+      guard a3 + b1 == a1 + b1 else { return false }
+    }
     // and every operation must give the same result through both paths
     guard (a1 & b1) == (a2 & b2) else { return false }
     guard (a1 | b1) == (a2 | b2) else { return false }
