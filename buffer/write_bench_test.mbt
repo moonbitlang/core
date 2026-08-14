@@ -13,8 +13,10 @@
 // limitations under the License.
 
 ///|
-/// Append-path benchmarks. Every buffer is created with an exact `size_hint` so
-/// the measured loop stays on the fast path and does not pay for growth.
+/// Append-path benchmarks. The buffer is allocated once outside the timed
+/// closure and rewound with `reset()`, so each run measures only the append
+/// loop: `Buffer(size_hint=n)` would otherwise charge every run a malloc plus
+/// a zero-fill of the whole capacity, on freshly handed-back memory.
 let buffer_bench_repeats = 4096
 
 ///|
@@ -22,8 +24,9 @@ let buffer_bench_piece = "abcdefghijklmnop"
 
 ///|
 test "bench Buffer::write_byte n=4096" (it : @bench.T) {
+  let buf = Buffer(size_hint=buffer_bench_repeats)
   it.bench(fn() {
-    let buf = Buffer(size_hint=buffer_bench_repeats)
+    buf.reset()
     for i in 0..<buffer_bench_repeats {
       buf.write_byte(i.to_byte())
     }
@@ -33,8 +36,9 @@ test "bench Buffer::write_byte n=4096" (it : @bench.T) {
 
 ///|
 test "bench Buffer::write_uint16_be n=4096" (it : @bench.T) {
+  let buf = Buffer(size_hint=buffer_bench_repeats * 2)
   it.bench(fn() {
-    let buf = Buffer(size_hint=buffer_bench_repeats * 2)
+    buf.reset()
     for i in 0..<buffer_bench_repeats {
       buf.write_uint16_be(i.to_uint16())
     }
@@ -44,8 +48,9 @@ test "bench Buffer::write_uint16_be n=4096" (it : @bench.T) {
 
 ///|
 test "bench Buffer::write_uint_le n=4096" (it : @bench.T) {
+  let buf = Buffer(size_hint=buffer_bench_repeats * 4)
   it.bench(fn() {
-    let buf = Buffer(size_hint=buffer_bench_repeats * 4)
+    buf.reset()
     for i in 0..<buffer_bench_repeats {
       buf.write_uint_le(i.reinterpret_as_uint())
     }
@@ -55,8 +60,9 @@ test "bench Buffer::write_uint_le n=4096" (it : @bench.T) {
 
 ///|
 test "bench Buffer::write_uint64_be n=4096" (it : @bench.T) {
+  let buf = Buffer(size_hint=buffer_bench_repeats * 8)
   it.bench(fn() {
-    let buf = Buffer(size_hint=buffer_bench_repeats * 8)
+    buf.reset()
     for i in 0..<buffer_bench_repeats {
       buf.write_uint64_be(i.to_uint64())
     }
@@ -66,8 +72,9 @@ test "bench Buffer::write_uint64_be n=4096" (it : @bench.T) {
 
 ///|
 test "bench Buffer::write_char_utf8 ASCII n=4096" (it : @bench.T) {
+  let buf = Buffer(size_hint=buffer_bench_repeats)
   it.bench(fn() {
-    let buf = Buffer(size_hint=buffer_bench_repeats)
+    buf.reset()
     for _ in 0..<buffer_bench_repeats {
       buf.write_char_utf8('x')
     }
@@ -78,8 +85,9 @@ test "bench Buffer::write_char_utf8 ASCII n=4096" (it : @bench.T) {
 ///|
 test "bench Buffer::write_char_utf8 non-BMP n=4096" (it : @bench.T) {
   let ch = (0x1F923).unsafe_to_char()
+  let buf = Buffer(size_hint=buffer_bench_repeats * 4)
   it.bench(fn() {
-    let buf = Buffer(size_hint=buffer_bench_repeats * 4)
+    buf.reset()
     for _ in 0..<buffer_bench_repeats {
       buf.write_char_utf8(ch)
     }
@@ -89,8 +97,9 @@ test "bench Buffer::write_char_utf8 non-BMP n=4096" (it : @bench.T) {
 
 ///|
 test "bench Buffer::write_char_utf16le BMP n=4096" (it : @bench.T) {
+  let buf = Buffer(size_hint=buffer_bench_repeats * 2)
   it.bench(fn() {
-    let buf = Buffer(size_hint=buffer_bench_repeats * 2)
+    buf.reset()
     for _ in 0..<buffer_bench_repeats {
       buf.write_char_utf16le('x')
     }
@@ -101,9 +110,9 @@ test "bench Buffer::write_char_utf16le BMP n=4096" (it : @bench.T) {
 ///|
 test "bench Buffer::write_string_utf16le chunks n=4096" (it : @bench.T) {
   let piece = buffer_bench_piece
-  let size_hint = piece.length() * buffer_bench_repeats * 2
+  let buf = Buffer(size_hint=piece.length() * buffer_bench_repeats * 2)
   it.bench(fn() {
-    let buf = Buffer(size_hint~)
+    buf.reset()
     for _ in 0..<buffer_bench_repeats {
       buf.write_string_utf16le(piece)
     }
@@ -112,6 +121,8 @@ test "bench Buffer::write_string_utf16le chunks n=4096" (it : @bench.T) {
 }
 
 ///|
+/// Unlike the benchmarks above this one necessarily includes the allocation:
+/// allocating and filling the buffer is what `from_array` does.
 test "bench @buffer.from_array n=4096" (it : @bench.T) {
   let arr = Array::makei(buffer_bench_repeats, i => i.to_byte())
   it.bench(fn() {
