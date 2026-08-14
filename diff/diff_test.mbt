@@ -655,3 +655,28 @@ test "edits() with the views agrees with render()" {
     assert_eq(rebuilt.to_string(), h.render(show=l => l))
   }
 }
+
+///|
+test "group without context splits on every equal run and emits no empty edits" {
+  // Regression: `group(context=0)` used to emit zero-length `Equal` edits
+  // around each split of an interior equal run, violating the documented
+  // "edits never have zero length" invariant of `Edit`.
+  let old = [1, 9, 2, 2, 2, 3, 9, 4][:]
+  let new = [1, 8, 2, 2, 2, 3, 7, 4][:]
+  let hunks = @diff.Diff(old~, new~).group(context=0)
+  assert_eq(hunks.length(), 2)
+  assert_true(
+    hunks[0].edits()
+    is [
+      Delete(old_index=1, old_len=1, new_index=1),
+      Insert(old_index=2, new_index=1, new_len=1),
+    ],
+  )
+  assert_true(
+    hunks[1].edits()
+    is [
+      Delete(old_index=6, old_len=1, new_index=6),
+      Insert(old_index=7, new_index=6, new_len=1),
+    ],
+  )
+}
