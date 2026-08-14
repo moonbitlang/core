@@ -7,5 +7,6 @@ import {
 
 import {
   "moonbitlang/core/array",
+  "moonbitlang/core/quickcheck",
   "moonbitlang/core/test",
 } for "test"
