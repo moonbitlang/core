@@ -19,7 +19,7 @@
 /// which return string in UTF-16 directly,
 /// so no need for extra encoding phase here.
 ///
-/// Note: technically path etc. may not be invalid UTF-16 on Windows,
+/// Note: technically path etc. may be invalid UTF-16 on Windows,
 ///   but this should be extremely rare in practice.
 ///   If we need to fix this case, a validation or encoding phase can be added.
 #cfg(any(not(target="native"), platform="windows"))
