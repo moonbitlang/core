@@ -8,4 +8,7 @@ import {
 
 import {
   "moonbitlang/core/bench",
+  "moonbitlang/core/double",
+  "moonbitlang/core/float",
+  "moonbitlang/core/quickcheck",
 } for "test"
