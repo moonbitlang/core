@@ -9,6 +9,7 @@ import {
   "moonbitlang/core/cmp",
   "moonbitlang/core/test",
   "moonbitlang/core/json",
+  "moonbitlang/core/quickcheck",
 } for "test"
 
 options(
