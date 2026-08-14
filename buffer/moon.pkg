@@ -10,4 +10,5 @@ import {
 import {
   "moonbitlang/core/int",
   "moonbitlang/core/test",
+  "moonbitlang/core/quickcheck",
 } for "test"
