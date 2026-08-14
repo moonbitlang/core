@@ -173,6 +173,18 @@ test "Int16::compare" {
 }
 
 ///|
+test "Int16 relational operators" {
+  inspect((-32768 : Int16) < 32767, content="true")
+  inspect((32767 : Int16) < -32768, content="false")
+  inspect((-1 : Int16) <= -1, content="true")
+  inspect((0 : Int16) <= -1, content="false")
+  inspect((32767 : Int16) > -32768, content="true")
+  inspect((-32768 : Int16) > 32767, content="false")
+  inspect((0 : Int16) >= -1, content="true")
+  inspect((-1 : Int16) >= 0, content="false")
+}
+
+///|
 test "Int16::hash" {
   let h1 = Hasher(seed=0)
   h1.combine(1)
