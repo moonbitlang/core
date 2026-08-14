@@ -1740,10 +1740,9 @@ test "View::replace_all boundary cases" {
 /// Helpers for ASCII-only lowercase conversion over UTF-16 code units.
 /// Non-ASCII code units, including surrogate halves, are copied unchanged and
 /// are never converted through `Char`.
-/// Keep the comparison on `Int`: `UInt16` range checks currently introduce
-/// narrowing operations in generated native and Wasm code.
+#inline
 #cfg(not(target="js"))
-fn is_ascii_uppercase_code_unit(code_unit : Int) -> Bool {
+fn is_ascii_uppercase_code_unit(code_unit : UInt16) -> Bool {
   code_unit >= 0x41 && code_unit <= 0x5A
 }
 
@@ -1757,7 +1756,7 @@ fn find_ascii_uppercase_code_unit(
   let end = start + len
   for i in start..<end {
     // SAFETY: i stays within the caller-provided UTF-16 slice bounds.
-    let code_unit = data.unsafe_get(i).to_int()
+    let code_unit = data.unsafe_get(i)
     if is_ascii_uppercase_code_unit(code_unit) {
       return Some(i - start)
     }
@@ -1776,7 +1775,7 @@ fn find_ascii_uppercase_code_unit_simd(
   len : Int,
 ) -> Int? {
   let end = start + len
-  if is_ascii_uppercase_code_unit(data.unsafe_get(start).to_int()) {
+  if is_ascii_uppercase_code_unit(data.unsafe_get(start)) {
     return Some(0)
   }
   let ascii_a = i16x8_splat(0x41)
@@ -1786,7 +1785,7 @@ fn find_ascii_uppercase_code_unit_simd(
     let uppercase_mask = i16x8_le_u(i16x8_sub(code_units, ascii_a), ascii_range)
     if v128_any_true(uppercase_mask) {
       for i in pos..<(pos + 8) {
-        if is_ascii_uppercase_code_unit(data.unsafe_get(i).to_int()) {
+        if is_ascii_uppercase_code_unit(data.unsafe_get(i)) {
           return Some(i - start)
         }
       }
@@ -1796,7 +1795,7 @@ fn find_ascii_uppercase_code_unit_simd(
     pos
   }
   for i in tail_start..<end {
-    if is_ascii_uppercase_code_unit(data.unsafe_get(i).to_int()) {
+    if is_ascii_uppercase_code_unit(data.unsafe_get(i)) {
       return Some(i - start)
     }
   }
@@ -1817,7 +1816,7 @@ fn find_ascii_uppercase_code_unit(
     let end = start + len
     for i in start..<end {
       // SAFETY: i stays within the caller-provided UTF-16 slice bounds.
-      let code_unit = data.unsafe_get(i).to_int()
+      let code_unit = data.unsafe_get(i)
       if is_ascii_uppercase_code_unit(code_unit) {
         return Some(i - start)
       }
@@ -1857,9 +1856,9 @@ fn ascii_lowercase_copy(view : StringView, first_uppercase : Int) -> String {
     pos
   }
   for i in tail_start..<len {
-    let code_unit = output.unsafe_get(i).to_int()
+    let code_unit = output.unsafe_get(i)
     if is_ascii_uppercase_code_unit(code_unit) {
-      output.unsafe_set(i, (code_unit + 32).to_uint16())
+      output.unsafe_set(i, (code_unit.to_int() + 32).to_uint16())
     }
   }
   unsafe_fixedarray_uint16_to_string(output)
@@ -1878,9 +1877,8 @@ fn ascii_lowercase_copy(view : StringView, first_uppercase : Int) -> String {
   // Keep `tail.code_units()` directly in the loop so compiler backends can
   // recognize and lower the zero-copy traversal at the use site.
   for i, u in tail.code_units() {
-    let code_unit = u.to_int()
-    if is_ascii_uppercase_code_unit(code_unit) {
-      output.unsafe_set(first_uppercase + i, (code_unit + 32).to_uint16())
+    if is_ascii_uppercase_code_unit(u) {
+      output.unsafe_set(first_uppercase + i, (u.to_int() + 32).to_uint16())
     }
   }
   unsafe_fixedarray_uint16_to_string(output)
