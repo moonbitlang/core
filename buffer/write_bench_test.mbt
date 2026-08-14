@@ -17,6 +17,10 @@
 /// closure and rewound with `reset()`, so each run measures only the append
 /// loop: `Buffer(size_hint=n)` would otherwise charge every run a malloc plus
 /// a zero-fill of the whole capacity, on freshly handed-back memory.
+///
+/// Each run keeps the buffer itself rather than `buf.length()`: the length is
+/// derivable from the fixed loop bounds, so keeping only that would let the
+/// backend prove the byte stores unobservable and drop the loop under test.
 let buffer_bench_repeats = 4096
 
 ///|
@@ -30,7 +34,7 @@ test "bench Buffer::write_byte n=4096" (it : @bench.T) {
     for i in 0..<buffer_bench_repeats {
       buf.write_byte(i.to_byte())
     }
-    it.keep(buf.length())
+    it.keep(buf)
   })
 }
 
@@ -42,7 +46,7 @@ test "bench Buffer::write_uint16_be n=4096" (it : @bench.T) {
     for i in 0..<buffer_bench_repeats {
       buf.write_uint16_be(i.to_uint16())
     }
-    it.keep(buf.length())
+    it.keep(buf)
   })
 }
 
@@ -54,7 +58,7 @@ test "bench Buffer::write_uint_le n=4096" (it : @bench.T) {
     for i in 0..<buffer_bench_repeats {
       buf.write_uint_le(i.reinterpret_as_uint())
     }
-    it.keep(buf.length())
+    it.keep(buf)
   })
 }
 
@@ -66,7 +70,7 @@ test "bench Buffer::write_uint64_be n=4096" (it : @bench.T) {
     for i in 0..<buffer_bench_repeats {
       buf.write_uint64_be(i.to_uint64())
     }
-    it.keep(buf.length())
+    it.keep(buf)
   })
 }
 
@@ -78,7 +82,7 @@ test "bench Buffer::write_char_utf8 ASCII n=4096" (it : @bench.T) {
     for _ in 0..<buffer_bench_repeats {
       buf.write_char_utf8('x')
     }
-    it.keep(buf.length())
+    it.keep(buf)
   })
 }
 
@@ -91,7 +95,7 @@ test "bench Buffer::write_char_utf8 non-BMP n=4096" (it : @bench.T) {
     for _ in 0..<buffer_bench_repeats {
       buf.write_char_utf8(ch)
     }
-    it.keep(buf.length())
+    it.keep(buf)
   })
 }
 
@@ -103,7 +107,7 @@ test "bench Buffer::write_char_utf16le BMP n=4096" (it : @bench.T) {
     for _ in 0..<buffer_bench_repeats {
       buf.write_char_utf16le('x')
     }
-    it.keep(buf.length())
+    it.keep(buf)
   })
 }
 
@@ -116,7 +120,7 @@ test "bench Buffer::write_string_utf16le chunks n=4096" (it : @bench.T) {
     for _ in 0..<buffer_bench_repeats {
       buf.write_string_utf16le(piece)
     }
-    it.keep(buf.length())
+    it.keep(buf)
   })
 }
 
@@ -126,8 +130,6 @@ test "bench Buffer::write_string_utf16le chunks n=4096" (it : @bench.T) {
 test "bench @buffer.from_array n=4096" (it : @bench.T) {
   let arr = Array::makei(buffer_bench_repeats, i => i.to_byte())
   it.bench(fn() {
-    // Keep the buffer itself: keeping only `length()` lets the backend prove
-    // the copied bytes are dead and drop the loop entirely.
     let buf = @buffer.from_array(arr)
     it.keep(buf)
   })
