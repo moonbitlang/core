@@ -1740,12 +1740,15 @@ test "View::replace_all boundary cases" {
 /// Helpers for ASCII-only lowercase conversion over UTF-16 code units.
 /// Non-ASCII code units, including surrogate halves, are copied unchanged and
 /// are never converted through `Char`.
+/// Keep the comparison on `Int`: `UInt16` range checks currently introduce
+/// narrowing operations in generated native and Wasm code.
+#cfg(not(target="js"))
 fn is_ascii_uppercase_code_unit(code_unit : Int) -> Bool {
   code_unit >= 0x41 && code_unit <= 0x5A
 }
 
 ///|
-#cfg(not(any(target="native", target="wasm")))
+#cfg(not(any(target="js", target="native", target="wasm")))
 fn find_ascii_uppercase_code_unit(
   data : String,
   start : Int,
@@ -1884,35 +1887,8 @@ fn ascii_lowercase_copy(view : StringView, first_uppercase : Int) -> String {
 }
 
 ///|
-/// JavaScript strings cannot be patched in place, so its scalar fallback
-/// preserves chunked writes while using the non-deprecated `write_view` API.
-#cfg(target="js")
-fn ascii_lowercase_copy(view : StringView, first_uppercase : Int) -> String {
-  let buf = StringBuilder(size_hint=view.length())
-  if first_uppercase > 0 {
-    buf.write_view(view.view(end_offset=first_uppercase))
-  }
-  let tail = view.view(start_offset=first_uppercase)
-  let n = tail.length()
-  let mut seg = 0
-  for i, u in tail.code_units() {
-    let code_unit = u.to_int()
-    if is_ascii_uppercase_code_unit(code_unit) {
-      if seg < i {
-        buf.write_view(tail.view(start_offset=seg, end_offset=i))
-      }
-      buf.write_char((code_unit + 32).unsafe_to_char())
-      seg = i + 1
-    }
-  }
-  if seg < n {
-    buf.write_view(tail.view(start_offset=seg))
-  }
-  buf.to_string()
-}
-
-///|
 /// Converts this string to lowercase.
+#cfg(not(target="js"))
 pub fn StringView::to_lower(self : StringView) -> StringView {
   // TODO: deal with non-ascii characters
   let data = self.data()
@@ -1926,6 +1902,7 @@ pub fn StringView::to_lower(self : StringView) -> StringView {
 
 ///|
 /// Converts this string to lowercase.
+#cfg(not(target="js"))
 pub fn String::to_lower(self : String) -> String {
   // TODO: deal with non-ascii characters
   let len = self.length()
@@ -1933,6 +1910,49 @@ pub fn String::to_lower(self : String) -> String {
     return self
   }
   ascii_lowercase_copy(self, idx)
+}
+
+///|
+/// JavaScript strings cannot be patched in place, so retain the character-loop
+/// fallback instead of allocating an intermediate substring per unchanged run.
+#cfg(target="js")
+pub fn StringView::to_lower(self : StringView) -> StringView {
+  // TODO: deal with non-ascii characters
+  guard self.find_by(c => c.is_ascii_uppercase()) is Some(idx) else {
+    return self
+  }
+  let buf = StringBuilder(size_hint=self.length())
+  let head = self.view(end_offset=idx)
+  buf.write_substring(head.data(), head.start_offset(), head.length())
+  for c in self.view(start_offset=idx) {
+    if c.is_ascii_uppercase() {
+      buf.write_char((c.to_int() + 32).unsafe_to_char())
+    } else {
+      buf.write_char(c)
+    }
+  }
+  buf.to_string()
+}
+
+///|
+/// Converts this string to lowercase.
+#cfg(target="js")
+pub fn String::to_lower(self : String) -> String {
+  // TODO: deal with non-ascii characters
+  guard self.find_by(c => c.is_ascii_uppercase()) is Some(idx) else {
+    return self
+  }
+  let buf = StringBuilder(size_hint=self.length())
+  let head = self.view(end_offset=idx)
+  buf.write_substring(head.data(), head.start_offset(), head.length())
+  for c in self.view(start_offset=idx) {
+    if c.is_ascii_uppercase() {
+      buf.write_char((c.to_int() + 32).unsafe_to_char())
+    } else {
+      buf.write_char(c)
+    }
+  }
+  buf.to_string()
 }
 
 ///|
