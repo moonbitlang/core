@@ -13,6 +13,33 @@
 // limitations under the License.
 
 ///|
+/// Central QuickCheck knobs, shared by every property in this file so the
+/// suite's CI cost is tunable in one place. With these settings the whole
+/// diff package tests in well under a second per target.
+const QC_COUNT : UInt = 200
+
+///|
+const QC_MAX_SIZE : UInt = 100
+
+///|
+/// The repetitive two-symbol property deliberately uses longer sequences,
+/// since repetition is what stresses the Myers diagonal bookkeeping.
+const QC_LONG_MAX_SIZE : UInt = 200
+
+///|
+/// The kind of the edit preceding the current one while scanning a script.
+/// Used to enforce the documented adjacency rules: adjacent edits of the
+/// same kind must be coalesced, and a replacement is emitted as `Delete`
+/// before `Insert`, so a delete may never directly follow an insert.
+enum PrevEdit {
+  ScriptStart
+  DeleteRun
+  InsertRun
+  EqualRun
+  ReplaceRun
+}
+
+///|
 /// Clamp every element into a small alphabet (`mask` must be `2^k - 1`).
 /// A small alphabet forces repeated elements, which is where diff algorithms
 /// actually have to work; unrelated random arrays share almost nothing.
@@ -97,7 +124,7 @@ fn script_ok(
   let out : Array[Int] = []
   let mut oi = 0
   let mut ni = 0
-  let mut prev = 0 // 0 start, 1 delete, 2 insert, 3 equal
+  let mut prev : PrevEdit = ScriptStart
   for e in edits {
     match e {
       Delete(old_index~, old_len~, new_index~) => {
@@ -109,11 +136,11 @@ fn script_ok(
         }
         // adjacent deletes are coalesced; a replacement is Delete then
         // Insert, so a delete directly after an insert must not appear
-        if prev == 1 || prev == 2 {
+        if prev is (DeleteRun | InsertRun) {
           return false
         }
         oi += old_len
-        prev = 1
+        prev = DeleteRun
       }
       Insert(old_index~, new_index~, new_len~) => {
         if old_index != oi || new_index != ni || new_len <= 0 {
@@ -122,14 +149,14 @@ fn script_ok(
         if ni + new_len > new.length() {
           return false
         }
-        if prev == 2 {
+        if prev is InsertRun {
           return false
         }
         for k in ni..<(ni + new_len) {
           out.push(new[k])
         }
         ni += new_len
-        prev = 2
+        prev = InsertRun
       }
       Equal(old_index~, new_index~, len~) => {
         if old_index != oi || new_index != ni || len <= 0 {
@@ -138,7 +165,7 @@ fn script_ok(
         if oi + len > old.length() || ni + len > new.length() {
           return false
         }
-        if prev == 3 {
+        if prev is EqualRun {
           return false
         }
         for k in 0..<len {
@@ -149,7 +176,7 @@ fn script_ok(
         }
         oi += len
         ni += len
-        prev = 3
+        prev = EqualRun
       }
     }
   }
@@ -184,7 +211,7 @@ fn lev_ok(
   let out : Array[Int] = []
   let mut oi = 0
   let mut ni = 0
-  let mut prev = 0 // 0 start, 1 delete, 2 insert, 3 equal, 4 replace
+  let mut prev : PrevEdit = ScriptStart
   for e in edits {
     match e {
       Delete(old_index~, old_len~, new_index~) => {
@@ -194,11 +221,11 @@ fn lev_ok(
         if oi + old_len > old.length() {
           return false
         }
-        if prev == 1 || prev == 2 {
+        if prev is (DeleteRun | InsertRun) {
           return false
         }
         oi += old_len
-        prev = 1
+        prev = DeleteRun
       }
       Insert(old_index~, new_index~, new_len~) => {
         if old_index != oi || new_index != ni || new_len <= 0 {
@@ -207,14 +234,14 @@ fn lev_ok(
         if ni + new_len > new.length() {
           return false
         }
-        if prev == 2 {
+        if prev is InsertRun {
           return false
         }
         for k in ni..<(ni + new_len) {
           out.push(new[k])
         }
         ni += new_len
-        prev = 2
+        prev = InsertRun
       }
       Equal(old_index~, new_index~, len~) => {
         if old_index != oi || new_index != ni || len <= 0 {
@@ -223,7 +250,7 @@ fn lev_ok(
         if oi + len > old.length() || ni + len > new.length() {
           return false
         }
-        if prev == 3 {
+        if prev is EqualRun {
           return false
         }
         for k in 0..<len {
@@ -234,7 +261,7 @@ fn lev_ok(
         }
         oi += len
         ni += len
-        prev = 3
+        prev = EqualRun
       }
       Replace(old_index~, new_index~, len~) => {
         if old_index != oi || new_index != ni || len <= 0 {
@@ -243,7 +270,7 @@ fn lev_ok(
         if oi + len > old.length() || ni + len > new.length() {
           return false
         }
-        if prev == 4 {
+        if prev is ReplaceRun {
           return false
         }
         for k in 0..<len {
@@ -254,7 +281,7 @@ fn lev_ok(
         }
         oi += len
         ni += len
-        prev = 4
+        prev = ReplaceRun
       }
     }
   }
@@ -296,9 +323,12 @@ fn new_span(e : @diff.Edit) -> (Int, Int) {
 }
 
 ///|
-/// The unified-diff range text documented for hunk headers: 1-based lines,
-/// single-line ranges without a length, empty ranges anchored to the
-/// previous line.
+/// The unified-diff range text documented for hunk headers. Non-empty
+/// ranges use 1-based line numbers, and single-line ranges omit the
+/// length. An empty range is anchored to the line *before* the range, so
+/// its rendered anchor is that previous line's 1-based number — legally
+/// `0` when the range sits before the first line, as in `@@ -0,0 +1 @@`
+/// for an insertion at the start of a file.
 fn range_text(start : Int, len : Int) -> String {
   if len == 1 {
     (start + 1).to_string()
@@ -451,7 +481,8 @@ test "quickcheck: myers scripts are well-formed and replay old into new" {
       script_ok(old, new, forward.edits()) &&
       script_ok(new, old, backward.edits())
     },
-    count=200,
+    count=QC_COUNT,
+    max_size=QC_MAX_SIZE,
   )
 }
 
@@ -466,7 +497,8 @@ test "quickcheck: patience scripts are well-formed and replay old into new" {
       script_ok(old, new, forward.edits()) &&
       script_ok(new, old, backward.edits())
     },
-    count=200,
+    count=QC_COUNT,
+    max_size=QC_MAX_SIZE,
   )
 }
 
@@ -484,7 +516,8 @@ test "quickcheck: tiny cutoffs force heuristics but stay sound" {
         @diff.Diff(old~, new~, cutoff~, algorithm=Patience).edits(),
       )
     },
-    count=200,
+    count=QC_COUNT,
+    max_size=QC_MAX_SIZE,
   )
 }
 
@@ -497,8 +530,8 @@ test "quickcheck: repetitive two-symbol inputs stress the diagonal bookkeeping" 
       script_ok(old, new, @diff.Diff(old~, new~).edits()) &&
       script_ok(old, new, @diff.Diff(old~, new~, algorithm=Patience).edits())
     },
-    count=200,
-    max_size=200,
+    count=QC_COUNT,
+    max_size=QC_LONG_MAX_SIZE,
   )
 }
 
@@ -529,7 +562,8 @@ test "quickcheck: degenerate pairs produce canonical scripts" {
       script_ok(a, ab, @diff.Diff(old=a, new=ab).edits()) &&
       script_ok(ab, b, @diff.Diff(old=ab, new=b).edits())
     },
-    count=200,
+    count=QC_COUNT,
+    max_size=QC_MAX_SIZE,
   )
 }
 
@@ -546,7 +580,8 @@ test "quickcheck: minimal myers cost brackets the levenshtein distance" {
       let lev = @diff.edit_distance(old, new)
       lev <= cost && cost <= 2 * lev && (cost == 0) == (old == new)
     },
-    count=200,
+    count=QC_COUNT,
+    max_size=QC_MAX_SIZE,
   )
 }
 
@@ -560,7 +595,8 @@ test "quickcheck: levenshtein scripts replay and cost exactly the distance" {
       lev_ok(old, new, edits) &&
       lev_cost(edits) == @diff.edit_distance(old, new)
     },
-    count=200,
+    count=QC_COUNT,
+    max_size=QC_MAX_SIZE,
   )
 }
 
@@ -574,7 +610,8 @@ test "quickcheck: levenshtein degenerate scripts match their contract" {
       @diff.levenshtein_edits(old=a, new=empty) is ([] | [Delete(..)]) &&
       @diff.levenshtein_edits(old=empty, new=a) is ([] | [Insert(..)])
     },
-    count=200,
+    count=QC_COUNT,
+    max_size=QC_MAX_SIZE,
   )
 }
 
@@ -594,7 +631,8 @@ test "quickcheck: edit distance is a metric on correlated triples" {
       dab <= high &&
       @diff.edit_distance(a, c) <= dab + @diff.edit_distance(b, c)
     },
-    count=200,
+    count=QC_COUNT,
+    max_size=QC_MAX_SIZE,
   )
 }
 
@@ -611,7 +649,8 @@ test "quickcheck: banded distance agrees with the full distance" {
       @diff.edit_distance_within(a, b, max_distance=d) == Some(d) &&
       (d == 0 || @diff.edit_distance_within(a, b, max_distance=d - 1) is None)
     },
-    count=200,
+    count=QC_COUNT,
+    max_size=QC_MAX_SIZE,
   )
 }
 
@@ -629,7 +668,8 @@ test "quickcheck: string distance matches the generic distance on ascii" {
       @diff.edit_distance_str(sa, sb) == d &&
       @diff.edit_distance_str_within(sa, sb, max_distance=max) == expected
     },
-    count=200,
+    count=QC_COUNT,
+    max_size=QC_MAX_SIZE,
   )
 }
 
@@ -656,6 +696,7 @@ test "quickcheck: grouped hunks apply as a patch and keep every change" {
         hunk_changes == changes(d.edits())
       })
     },
-    count=200,
+    count=QC_COUNT,
+    max_size=QC_MAX_SIZE,
   )
 }
