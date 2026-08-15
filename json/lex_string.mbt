@@ -63,7 +63,38 @@ fn ParseContext::lex_string_slow(ctx : ParseContext) -> String raise ParseError 
           Some('/') => buf.write_char('/')
           Some('u') => {
             let c = ctx.lex_hex_digits(4)
-            buf.write_char(c.unsafe_to_char())
+            if c is (0xD800..=0xDBFF) {
+              // A leading-surrogate escape is only meaningful as the first
+              // half of an escaped surrogate pair; combine it with the
+              // immediately following trailing-surrogate escape into one
+              // Unicode scalar value. Anything else would manufacture a
+              // string containing an unpaired surrogate, which MoonBit
+              // strings disallow (RFC 8259 calls the behavior for such
+              // escapes unpredictable; I-JSON forbids them).
+              match ctx.read_char() {
+                Some('\\') => ()
+                Some(_) => ctx.invalid_char(shift=-1)
+                None => raise InvalidEof
+              }
+              match ctx.read_char() {
+                Some('u') => ()
+                Some(_) => ctx.invalid_char(shift=-1)
+                None => raise InvalidEof
+              }
+              let c2 = ctx.lex_hex_digits(4)
+              if c2 is (0xDC00..=0xDFFF) {
+                let combined = (c << 10) + c2 - 0x35fdc00
+                buf.write_char(combined.unsafe_to_char())
+              } else {
+                ctx.invalid_char(shift=-1)
+              }
+            } else if c is (0xDC00..=0xDFFF) {
+              // A bare trailing-surrogate escape can never form a scalar
+              // value.
+              ctx.invalid_char(shift=-1)
+            } else {
+              buf.write_char(c.unsafe_to_char())
+            }
           }
           Some(_) => ctx.invalid_char(shift=-1)
           None => raise InvalidEof
