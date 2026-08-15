@@ -15,10 +15,13 @@
 // Adversarial property-based tests for the json package, complementing
 // `quickcheck_test.mbt`:
 //
-// - strings built from hostile UTF-16 code units (every control character,
-//   JSON syntax characters, astral pairs, and *lone surrogates*), used both
-//   as values and as object keys;
+// - strings built from hostile UTF-16 sequences (every control character,
+//   JSON syntax characters, astral pairs), used both as values and as
+//   object keys;
 // - the fully `\uXXXX`-escaped spelling of those strings;
+// - *lone surrogates* injected into any position of such strings — raw or
+//   as `\uXXXX` escapes — which the parser must always reject with a clean
+//   parse error (strings stay Unicode well-formed) and never abort on;
 // - textual zero literals (`-0`, `-0.0e7`, ...) which must preserve the
 //   IEEE-754 sign of zero;
 // - integer literals across the full Int64/UInt64 range, whose text must be
@@ -32,9 +35,10 @@
 ///|
 /// Characters drawn from pools that stress every branch of the escaper and
 /// the string lexer: control characters (escaped as `\uXXXX` or short
-/// escapes), JSON syntax characters, BMP boundary values, astral code points
-/// (surrogate pairs in UTF-16), and lone surrogates, which MoonBit strings
-/// can represent and the parser passes through.
+/// escapes), JSON syntax characters, BMP boundary values, and astral code
+/// points (surrogate pairs in UTF-16). Only Unicode scalar values appear
+/// here — MoonBit strings stay Unicode well-formed, so unpaired surrogates
+/// are generated separately and asserted to be *rejected* by the parser.
 fn adversarial_char_gen() -> @quickcheck.Generator[Char] {
   @quickcheck.frequency([
     // Every control character U+0000..U+001F.
@@ -52,9 +56,6 @@ fn adversarial_char_gen() -> @quickcheck.Generator[Char] {
         '\u{FFFF}', '\u{10000}', '\u{1F600}', '\u{10FFFF}',
       ]),
     ),
-    // Lone surrogates: representable in UTF-16 strings, and the classic
-    // way to corrupt a JSON stringifier or parser.
-    (2, @quickcheck.int_range(0xD800, 0xE000).map(i => i.unsafe_to_char())),
     // Ordinary ASCII so escapes sit inside unescaped runs.
     (3, @quickcheck.char_range('a', 'z')),
   ])
@@ -76,12 +77,13 @@ impl @quickcheck.Arbitrary for AdvString with fn arbitrary(size, state) {
 }
 
 ///|
-/// Shrinks at the UTF-16 code-unit level (dropping one unit at a time), so a
-/// counterexample can minimize to half of a surrogate pair if that is what
-/// triggers a failure.
+/// Shrinks by dropping one character at a time. Working at the `Char` level
+/// keeps every candidate Unicode well-formed, so a shrunk counterexample
+/// fails for the same reason as the original instead of tripping the
+/// parser's unpaired-surrogate rejection.
 impl @shrink.Shrink for AdvString with fn shrink(self) {
-  let units = self.0.code_units()
-  let n = units.length()
+  let chars = self.0.to_array()
+  let n = chars.length()
   if n == 0 {
     return Iter::empty()
   }
@@ -89,15 +91,33 @@ impl @shrink.Shrink for AdvString with fn shrink(self) {
     (0)
     .until(n)
     .map(i => {
-      let buf = StringBuilder(size_hint=n - 1)
-      for j in 0..<n {
-        if j != i {
-          buf.write_char(units[j].to_int().unsafe_to_char())
-        }
-      }
-      AdvString(buf.to_string())
+      let copy = chars.copy()
+      ignore(copy.remove(i))
+      AdvString(String::from_array(copy))
     }),
   )
+}
+
+///|
+/// The fully `\uXXXX`-escaped spelling of a string: every UTF-16 code unit
+/// as a hex escape, with the digit case alternating per position.
+fn fully_escaped(s : String) -> String {
+  let hex_lower = "0123456789abcdef".to_array()
+  let hex_upper = "0123456789ABCDEF".to_array()
+  let buf = StringBuilder()
+  buf.write_char('"')
+  for i, unit in s.code_units() {
+    let code = unit.to_int()
+    let hex = if i % 2 == 0 { hex_lower } else { hex_upper }
+    buf.write_char('\\')
+    buf.write_char('u')
+    buf.write_char(hex[(code >> 12) & 0xF])
+    buf.write_char(hex[(code >> 8) & 0xF])
+    buf.write_char(hex[(code >> 4) & 0xF])
+    buf.write_char(hex[code & 0xF])
+  }
+  buf.write_char('"')
+  buf.to_string()
 }
 
 ///|
@@ -113,26 +133,35 @@ test "adversarial strings roundtrip as values and as object keys" {
 ///|
 /// Spells every UTF-16 code unit of the string as a `\uXXXX` escape
 /// (alternating hex-digit case) and checks the parser reassembles the exact
-/// original string — including surrogate pairs split across two escapes and
-/// lone surrogates.
+/// original string — including surrogate pairs split across two escapes.
 test "fully \\uXXXX-escaped strings parse back to the original" {
-  let hex_lower = "0123456789abcdef".to_array()
-  let hex_upper = "0123456789ABCDEF".to_array()
   @quickcheck.check((s : AdvString) => {
-    let buf = StringBuilder()
-    buf.write_char('"')
-    for i, unit in s.0.code_units() {
-      let code = unit.to_int()
-      let hex = if i % 2 == 0 { hex_lower } else { hex_upper }
-      buf.write_char('\\')
-      buf.write_char('u')
-      buf.write_char(hex[(code >> 12) & 0xF])
-      buf.write_char(hex[(code >> 8) & 0xF])
-      buf.write_char(hex[(code >> 4) & 0xF])
-      buf.write_char(hex[code & 0xF])
+    @json.parse(fully_escaped(s.0)) == Json::string(s.0)
+  })
+}
+
+///|
+/// A lone surrogate — raw or spelled as a `\uXXXX` escape — injected at any
+/// position of an otherwise hostile string must always be rejected with a
+/// clean parse error (`parse` raises, `valid` is false, nothing aborts):
+/// parsed strings stay Unicode well-formed. The surrounding prefix/suffix
+/// supply nearby escapes, astral pairs, and control characters, exercising
+/// both the escape-free fast path and the slow path of the string lexer.
+test "lone surrogates are rejected in every position" {
+  @quickcheck.check((input : (AdvString, AdvString, Int, Bool)) => {
+    let (prefix, suffix, raw_unit, escape_spelling) = input
+    let unit = 0xD800 + wrap_index(raw_unit, 0x800)
+    let lone = String::from_array([unit.unsafe_to_char()])
+    let content = prefix.0 + lone + suffix.0
+    let text = if escape_spelling {
+      fully_escaped(content)
+    } else {
+      // `stringify` writes the lone surrogate raw; prefix/suffix contribute
+      // short escapes and `\uXXXX` escapes when they contain control or
+      // quote characters.
+      Json::string(content).stringify()
     }
-    buf.write_char('"')
-    @json.parse(buf.to_string()) == Json::string(s.0)
+    parse_succeeds(text) == false && @json.valid(text) == false
   })
 }
 
@@ -322,31 +351,30 @@ test "default nesting limit boundary at depth 1024" {
 
 ///|
 /// Deterministic pins for the surrogate cases the properties above explore
-/// randomly, so a regression shows up with a readable diff.
+/// randomly, so a regression shows up with a readable diff. Parsed strings
+/// stay Unicode well-formed: every unpaired surrogate — raw or escaped — is
+/// a clean parse error, never an abort and never an ill-formed string.
 test "surrogate handling pins" {
-  // A lone high surrogate roundtrips raw.
-  let lone = String::from_array([(0xD800).unsafe_to_char()])
-  let json = Json::string(lone)
-  assert_true(@json.parse(json.stringify()) == json)
-  // Its escaped spelling parses to the same string.
-  assert_true(@json.parse("\"\\uD800\"") == json)
-  // An escaped surrogate pair reassembles to the astral character.
-  assert_true(@json.parse("\"\\uD83D\\uDE00\"") == Json::string("\u{1F600}"))
-  // A reversed pair (low then high) roundtrips as two lone surrogates.
-  let reversed = String::from_array([
-    (0xDC00).unsafe_to_char(),
-    (0xD800).unsafe_to_char(),
-  ])
-  let reversed_json = Json::string(reversed)
-  assert_true(@json.parse(reversed_json.stringify()) == reversed_json)
-  // A raw lone trailing surrogate combined with an escape used to abort the
-  // slow-path string lexer: `flush` sliced with the checked `[start:end]`,
-  // which panics when the code unit at a boundary is a trailing surrogate.
+  let lone_high = String::from_array([(0xD800).unsafe_to_char()])
   let lone_low = String::from_array([(0xDC00).unsafe_to_char()])
-  assert_true(
-    @json.parse("\"" + lone_low + "\\n\"") == Json::string(lone_low + "\n"),
-  )
-  assert_true(
-    @json.parse("\"\\n" + lone_low + "\"") == Json::string("\n" + lone_low),
-  )
+  // Raw lone surrogates, escape-free (fast path).
+  assert_false(@json.valid("\"" + lone_high + "\""))
+  assert_false(@json.valid("\"" + lone_low + "\""))
+  // A reversed pair (low then high) is two unpaired surrogates.
+  assert_false(@json.valid("\"" + lone_low + lone_high + "\""))
+  // Raw lone surrogates next to escapes (slow path; used to abort the
+  // process via checked slicing in `flush`).
+  assert_false(@json.valid("\"" + lone_low + "\\n\""))
+  assert_false(@json.valid("\"\\n" + lone_low + "\""))
+  assert_false(@json.valid("\"" + lone_high + "\\t\""))
+  // Escaped lone surrogates.
+  assert_false(@json.valid("\"\\uD800\""))
+  assert_false(@json.valid("\"\\uDC00\""))
+  assert_false(@json.valid("\"\\uD800\\uD800\""))
+  // Mixed raw/escaped halves do not pair up.
+  assert_false(@json.valid("\"\\uD800" + lone_low + "\""))
+  assert_false(@json.valid("\"" + lone_high + "\\uDC00\""))
+  // Well-formed pairs still parse, raw or escaped.
+  assert_true(@json.parse("\"\\uD83D\\uDE00\"") == Json::string("\u{1F600}"))
+  assert_true(@json.parse("\"\u{1F600}\"") == Json::string("\u{1F600}"))
 }
