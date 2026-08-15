@@ -1,9 +1,9 @@
 # LazyList
 
-A persistent, re-traversable linked list with memoized lazy tails. Built on
-top of `@lazy.Lazy`. Use it when you have a pull-based source (`Iter`,
-generator, recursive definition) that you want to consume *more than once*
-without re-running the underlying computation.
+A persistent, re-traversable linked list with memoized lazy tails. Use it
+when you have a pull-based source (`Iter`, generator, recursive definition)
+that you want to consume *more than once* without re-running the underlying
+computation.
 
 ## Table of Contents
 
@@ -44,6 +44,10 @@ so a second traversal walks the cached cells instead of re-evaluating.
 
 This shape mirrors Haskell's lazy lists / Scala's `LazyList` and is sometimes
 called "odd-style" laziness.
+
+Caching in place is a mutation, so a `LazyList` is not thread-safe even though
+it is persistent: traversing one from two threads needs external
+synchronization, the same contract `@lazy.Lazy` documents.
 
 ---
 
@@ -286,6 +290,52 @@ and never trigger user-supplied thunks. The alternative, even-style
 emptiness check itself a forcing operation. Odd-style is what Haskell's `[]`
 and Scala's `LazyList` use, and it's simpler to reason about.
 
+### Why `concat` is stack-safe at any nesting
+
+How a chain of `concat`s is associated is the caller's choice, and the most
+natural way to write one is also the hardest case:
+
+```mbt check
+///|
+test {
+  let mut acc : @lazy_list.LazyList[Int] = @lazy_list.empty()
+  for i in 0..<10000 {
+    acc = acc.concat(@lazy_list.from_iter([i].iter()))
+  }
+  debug_inspect(acc.take(3).to_array(), content="[0, 1, 2]")
+  inspect(acc.iter().count(), content="10000")
+}
+```
+
+Every step nests the previous result inside the *left* argument of the next
+`concat`, so the value is `((([] ++ a) ++ b) ++ c) ++ …`. The obvious
+implementation — `lazy_cons(x, () => tail.force().concat(other))` — builds
+that in O(1) per step but cannot force it: the outermost tail thunk forces
+the one below it, which forces the one below that, one stack frame per `++`.
+It also re-nests the chain to the same depth after every element, which makes
+a full traversal quadratic.
+
+So the pending right-hand sides live on the cell's tail as *data* instead of
+being closed over by a thunk. Forcing walks down to the innermost tail in a
+loop, collecting what is still owed, and hands the remainder to the cell it
+produces. Stack use is constant in the nesting depth, and a full traversal is
+linear — including when you append and consume at the same time, since
+joining two pending sequences is O(1). `flat_map` suspends its inner lists
+through the same representation.
+
+What this does *not* cover is composing arbitrarily many lazy transforms:
+`xs.map(f).map(f)...` ten thousand deep nests ten thousand thunks, and so
+does `flat_map`, so forcing one cell walks all of them. That is a property of
+composed transforms rather than of `concat`'s associativity, and it is
+unchanged here.
+
+That suspended-append state is the one reason a cell's tail is not simply a
+`@lazy.Lazy`. It is otherwise the same thing — the same states, the same
+at-most-once guarantee, the same reentrancy check — and the state lives
+*inside* the memoized cell rather than wrapping one because a `LazyList`
+allocates a tail per element, so an extra box per cell would cost every
+traversal, not just the ones that go through `concat`.
+
 ### Why is `drop_while` eager but `take_while` lazy?
 
 ```mbt check
@@ -324,11 +374,12 @@ dropWhile p xs@(x:_) | p x = dropWhile p xs'    -- eager recursion
 
 ### Why doesn't `map` / `filter` / `take_while` / `flat_map` accept `raise?`?
 
-Because their callbacks fire from inside `@lazy.Lazy` thunks. Thunks are
-non-raising by design (see `@lazy/lazy.mbt`): a raising thunk would force
-every consumer of every lazy cell to handle the effect, and memoizing
-failure forces an awkward choice between "cache the error and re-raise on
-every retry" and "retry on every force."
+Because their callbacks fire from inside the memoized tail thunks. Those are
+non-raising by design, for the reasons `@lazy` sets out (see
+`@lazy/lazy.mbt`): a raising thunk would force every consumer of every lazy
+cell to handle the effect, and memoizing failure forces an awkward choice
+between "cache the error and re-raise on every retry" and "retry on every
+force."
 
 If you need a fallible transform, wrap the result yourself:
 

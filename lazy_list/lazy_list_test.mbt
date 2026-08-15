@@ -161,8 +161,8 @@ suberror NegativeFound
 test "drop_while accepts a raising predicate" {
   // Strict skip phase: a raising predicate propagates immediately. The
   // lazy combinators (map / filter / take_while / flat_map) cannot
-  // accept raise? because they run the callback inside `@lazy.Lazy`
-  // thunks, which are non-raising by design.
+  // accept raise? because they run the callback inside the memoized
+  // tail thunks, which are non-raising by design.
   fn pred(x : Int) -> Bool raise NegativeFound {
     if x < 0 {
       raise NegativeFound
@@ -261,4 +261,111 @@ test "Debug walks only the forced prefix" {
   // Empty list has no prefix and no unforced marker.
   let empty : @lazy_list.LazyList[Int] = @lazy_list.empty()
   @debug.debug_inspect(empty, content="<LazyList: []>")
+}
+
+// =====================================================================
+// Stack safety of `concat`.
+// =====================================================================
+
+///|
+/// `((([] ++ [from]) ++ [from + 1]) ++ ...) ++ [until - 1]` — every
+/// `concat` ends up inside the left argument of the next one, which is
+/// what the accumulator idiom `acc = acc.concat(...)` builds.
+fn left_nested_concat(from : Int, until : Int) -> @lazy_list.LazyList[Int] {
+  let mut acc : @lazy_list.LazyList[Int] = @lazy_list.empty()
+  for i in from..<until {
+    acc = acc.concat(@lazy_list.from_iter([i].iter()))
+  }
+  acc
+}
+
+///|
+/// The mirror image: `[from] ++ ([from + 1] ++ (... ++ [until - 1]))`.
+fn right_nested_concat(from : Int, until : Int) -> @lazy_list.LazyList[Int] {
+  let mut acc : @lazy_list.LazyList[Int] = @lazy_list.empty()
+  for i = until - 1; i >= from; i = i - 1 {
+    acc = @lazy_list.from_iter([i].iter()).concat(acc)
+  }
+  acc
+}
+
+///|
+test "concat: a left-nested chain forces without recursing" {
+  // Reaching the *second* element is already the whole problem: it is
+  // the first tail force, and it is the one that has to see through
+  // every pending append at once.
+  let xs = left_nested_concat(0, 50000)
+  debug_inspect(xs.take(3).to_array(), content="[0, 1, 2]")
+  // ...and the rest of the traversal has to stay linear: a forcing path
+  // that re-nests the chain after every step would not finish here.
+  inspect(xs.fold(init=0, (acc, x) => acc + x), content="1249975000")
+}
+
+///|
+test "concat: a right-nested chain forces without recursing" {
+  let xs = right_nested_concat(0, 50000)
+  debug_inspect(xs.take(3).to_array(), content="[0, 1, 2]")
+  inspect(xs.fold(init=0, (acc, x) => acc + x), content="1249975000")
+}
+
+///|
+test "concat: appending empty lists neither accumulates nor diverges" {
+  let mut acc = @lazy_list.from_iter([1, 2, 3].iter())
+  for _ in 0..<50000 {
+    acc = acc.concat(@lazy_list.empty())
+  }
+  debug_inspect(acc.to_array(), content="[1, 2, 3]")
+}
+
+///|
+test "flat_map over a deeply nested concat is stack safe" {
+  // `flat_map` chains through `concat_lazy`, which shares `concat`'s
+  // representation, so it has to survive the same shape.
+  let xs = left_nested_concat(0, 20000).flat_map(x => {
+    @lazy_list.from_iter([x, x].iter())
+  })
+  inspect(xs.iter().count(), content="40000")
+}
+
+///|
+test "concat leaves the right-hand side untouched until the left ends" {
+  let pulls : Ref[Int] = Ref(0)
+  let left = @lazy_list.from_iter([1, 2].iter())
+  let right = @lazy_list.lazy_cons(3, () => {
+    pulls.val += 1
+    @lazy_list.empty()
+  })
+  let both = left.concat(right)
+  debug_inspect(both.take(3).to_array(), content="[1, 2, 3]")
+  // Only the right-hand *head* has been observed; its tail thunk has
+  // not run.
+  inspect(pulls.val, content="0")
+  debug_inspect(both.to_array(), content="[1, 2, 3]")
+  inspect(pulls.val, content="1")
+}
+
+///|
+test "concat keeps both sides memoized across traversals" {
+  let pulls : Ref[Int] = Ref(0)
+  fn counted(source : Array[Int]) -> @lazy_list.LazyList[Int] {
+    let underlying = source.iter()
+    @lazy_list.from_iter(
+      Iter::new(() => {
+        match underlying.next() {
+          None => None
+          Some(x) => {
+            pulls.val += 1
+            Some(x)
+          }
+        }
+      }),
+    )
+  }
+
+  let both = counted([1, 2]).concat(counted([3, 4]))
+  debug_inspect(both.to_array(), content="[1, 2, 3, 4]")
+  inspect(pulls.val, content="4")
+  // Second traversal walks cached cells only — no further pulls.
+  debug_inspect(both.to_array(), content="[1, 2, 3, 4]")
+  inspect(pulls.val, content="4")
 }

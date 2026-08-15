@@ -595,6 +595,94 @@ test "quickcheck: flat_map skips runs of empty inner lists without recursing" {
   )
 }
 
+///|
+/// Concatenates the singletons `[0], [1], ..., [depth - 1]` in order,
+/// associating them into a binary tree whose shape is driven by `seed`.
+///
+/// The segments are combined through a stack, merging the top two
+/// whenever the pseudo-random bit stream says so and draining what is
+/// left at the end. A run of merge bits builds a left-nested comb, a run
+/// without them a right-nested one, and a realistic seed gives a mixture
+/// of both at every scale.
+///
+/// This covers *ordering* across the association shapes the generator
+/// reaches, which is the caller's choice and not the package's. It is
+/// not the stack-safety case: the trees it draws nest far more shallowly
+/// than the 50000-deep combs in `lazy_list_test.mbt`, which are what pin
+/// that down.
+fn shaped_concat(depth : Int, seed : Int) -> @lazy_list.LazyList[Int] {
+  let stack : Array[@lazy_list.LazyList[Int]] = []
+  let mut bits = seed
+  fn next_bit() -> Bool {
+    // A plain LCG: the shape only has to vary, not be well distributed.
+    bits = bits * 1103515245 + 12345
+    (bits >> 16) % 2 == 0
+  }
+
+  fn merge_top() -> Unit {
+    let right = stack.pop().unwrap()
+    let left = stack.pop().unwrap()
+    stack.push(left.concat(right))
+  }
+
+  for i in 0..<depth {
+    stack.push(@lazy_list.from_iter([i].iter()))
+    while stack.length() >= 2 && next_bit() {
+      merge_top()
+    }
+  }
+  while stack.length() >= 2 {
+    merge_top()
+  }
+  match stack.pop() {
+    Some(xs) => xs
+    None => @lazy_list.empty()
+  }
+}
+
+///|
+test "quickcheck: a chain of concats forces at generated nesting shapes" {
+  @quickcheck.check(
+    (seed : Int) => {
+      let depth = 20000
+      let xs = shaped_concat(depth, seed)
+      // Reaching the second element is what walks the whole nesting: it
+      // is the first tail force, so it is the one that has to see
+      // through every pending append at once.
+      xs.take(2).to_array() == [0, 1] &&
+      // ...and the rest of the traversal has to come out in order.
+      xs.to_array() == Array::makei(depth, i => i)
+    },
+    count=20,
+  )
+}
+
+///|
+test "quickcheck: appending while consuming keeps the order" {
+  // Growing a list at the end while walking it from the front is the
+  // shape that a flat pending sequence makes quadratic — every step
+  // would copy everything already owed — and that the recursive
+  // implementation overflows outright. What is asserted here is the
+  // order; the quadratic variant still produces it, and shows up only
+  // as runtime.
+  @quickcheck.check(
+    (value : Int) => {
+      let steps = 20000
+      let start = wrap_index(value, 100)
+      let mut cur = @lazy_list.from_iter(Array::makei(steps + 1, i => i).iter())
+      let seen = []
+      for i in 0..<steps {
+        cur = cur.concat(@lazy_list.from_iter([start + i].iter()))
+        seen.push(cur.head().unwrap())
+        cur = cur.tail().unwrap()
+      }
+      seen == Array::makei(steps, i => i) &&
+      cur.to_array() == [steps] + Array::makei(steps, i => start + i)
+    },
+    count=5,
+  )
+}
+
 // =====================================================================
 // Infinite sources.
 // =====================================================================
