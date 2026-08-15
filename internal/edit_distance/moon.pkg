@@ -3,3 +3,8 @@ import {
   "moonbitlang/core/int",
   "moonbitlang/core/string",
 }
+
+import {
+  "moonbitlang/core/cmp",
+  "moonbitlang/core/quickcheck",
+} for "test"
