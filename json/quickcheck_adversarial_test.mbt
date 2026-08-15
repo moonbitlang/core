@@ -253,21 +253,32 @@ test "duplicate object keys: last occurrence wins" {
 }
 
 ///|
-/// Deleting or replacing one code unit of a valid document must keep the
-/// parser total: it either succeeds or raises a parse error (`valid` agrees
-/// with `parse`), and when the mutant still parses, the parsed value is a
-/// fixed point of restringify-and-reparse.
+/// Deleting or replacing one UTF-16 code unit of a valid document must keep
+/// the parser total: it either succeeds or raises a parse error (`valid`
+/// agrees with `parse`), and when the mutant still parses, the parsed value
+/// is a fixed point of restringify-and-reparse.
+///
+/// Mutating at the code-unit level (not the `Char` level) means an astral
+/// character can lose half of its surrogate pair, and the replacement unit —
+/// drawn from the full 16-bit range — can itself be a lone surrogate.
 test "parse stays total under single code-unit deletion and replacement" {
-  @quickcheck.check((input : (ArbJson, Int, Char)) => {
-    let (json, position, replacement) = input
-    let chars = json.0.stringify().to_array()
-    guard chars.length() > 0 else { return true }
-    let idx = wrap_index(position, chars.length())
-    let deleted = chars.copy()
-    ignore(deleted.remove(idx))
-    let replaced = chars.copy()
-    replaced[idx] = replacement
-    for mutant in [String::from_array(deleted), String::from_array(replaced)] {
+  @quickcheck.check((input : (ArbJson, Int, Int)) => {
+    let (json, position, raw_replacement) = input
+    let units = json.0.stringify().code_units()
+    guard units.length() > 0 else { return true }
+    let idx = wrap_index(position, units.length())
+    let replacement = wrap_index(raw_replacement, 0x10000)
+    let deleted = StringBuilder(size_hint=units.length())
+    let replaced = StringBuilder(size_hint=units.length())
+    for i, unit in units {
+      if i != idx {
+        deleted.write_char(unit.to_int().unsafe_to_char())
+        replaced.write_char(unit.to_int().unsafe_to_char())
+      } else {
+        replaced.write_char(replacement.unsafe_to_char())
+      }
+    }
+    for mutant in [deleted.to_string(), replaced.to_string()] {
       guard parse_succeeds(mutant) == @json.valid(mutant) else { return false }
       if @json.valid(mutant) {
         let value = @json.parse(mutant)
@@ -284,8 +295,6 @@ test "parse stays total under single code-unit deletion and replacement" {
 /// both arrays and objects. Also pins that `stringify` itself is iterative
 /// and survives a 1024-deep tree on every backend.
 test "default nesting limit boundary at depth 1024" {
-  let deep_array = "[".repeat(1024) + "0" + "]".repeat(1024)
-  assert_true(@json.valid(deep_array))
   fn outcome(text : String) -> String {
     try {
       ignore(@json.parse(text))
@@ -296,10 +305,14 @@ test "default nesting limit boundary at depth 1024" {
     }
   }
 
-  let deeper_array = "[".repeat(1025) + "0" + "]".repeat(1025)
-  assert_eq(outcome(deeper_array), "depth limit")
-  let deep_object = "{\"k\":".repeat(1025) + "0" + "}".repeat(1025)
-  assert_eq(outcome(deep_object), "depth limit")
+  let deep_array = "[".repeat(1024) + "0" + "]".repeat(1024)
+  assert_eq(outcome(deep_array), "parsed")
+  let too_deep_array = "[".repeat(1025) + "0" + "]".repeat(1025)
+  assert_eq(outcome(too_deep_array), "depth limit")
+  let deep_object = "{\"k\":".repeat(1024) + "0" + "}".repeat(1024)
+  assert_eq(outcome(deep_object), "parsed")
+  let too_deep_object = "{\"k\":".repeat(1025) + "0" + "}".repeat(1025)
+  assert_eq(outcome(too_deep_object), "depth limit")
   let mut tree : Json = Json::number(0.0)
   for _ in 0..<1024 {
     tree = Json::array([tree])
