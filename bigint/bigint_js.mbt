@@ -239,14 +239,21 @@ pub fn BigInt::from_octets(octets : BytesView, signum? : Int = 1) -> BigInt {
 /// Returns a byte sequence representing the number in big-endian order.
 ///
 /// Throws a panic if the input number is negative, or if `length` is zero or
-/// negative for a non-zero input.
+/// negative.
 pub fn BigInt::to_octets(self : BigInt, length? : Int) -> Bytes {
   if self < 0 {
     abort("negative BigInt")
   }
   if self == 0 {
     return match length {
-      Some(len) => Bytes::make(len, 0)
+      Some(len) =>
+        // keep the documented contract (and the non-js behavior): a
+        // non-positive requested length panics even for zero
+        if len <= 0 {
+          abort("negative length")
+        } else {
+          Bytes::make(len, 0)
+        }
       None => [0]
     }
   }
