@@ -7,4 +7,6 @@ import {
 
 import {
   "moonbitlang/core/list",
+  "moonbitlang/core/cmp",
+  "moonbitlang/core/quickcheck",
 } for "test"
