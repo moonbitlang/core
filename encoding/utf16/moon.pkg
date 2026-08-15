@@ -6,4 +6,5 @@ import {
 
 import {
   "moonbitlang/core/bench",
+  "moonbitlang/core/quickcheck",
 } for "test"
