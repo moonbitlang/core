@@ -8,6 +8,7 @@ import {
 import {
   "moonbitlang/core/array",
   "moonbitlang/core/test",
+  "moonbitlang/core/quickcheck",
 } for "test"
 
 options(
