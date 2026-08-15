@@ -239,3 +239,37 @@ test "escaped and raw surrogate halves do not pair up" {
   let lone_low = String::from_array([(0xDC00).unsafe_to_char()])
   assert_false(@json.valid("\"\\uD800" + lone_low + "\""))
 }
+
+///|
+/// Regression for #4049. MoonBit strings must stay Unicode well-formed, so
+/// the string lexer rejects raw unpaired surrogates with a ParseError.
+/// Previously the escape-free fast path silently accepted them (producing
+/// ill-formed strings), and combining one with an escape sequence aborted
+/// the process: the slow path's `flush` sliced with the checked
+/// `[start:end]`, which panics when a slice boundary lands on a trailing
+/// surrogate. Well-formed input cannot contain raw lone surrogates, but
+/// unsafe code can manufacture such a String; a clean error beats an abort.
+test "raw unpaired surrogates are rejected with a clean parse error" {
+  let lone_high = String::from_array([(0xD800).unsafe_to_char()])
+  let lone_low = String::from_array([(0xDC00).unsafe_to_char()])
+  // Escape-free strings (fast path; used to be silently accepted).
+  assert_false(@json.valid("\"" + lone_high + "\""))
+  assert_false(@json.valid("\"" + lone_low + "\""))
+  // A reversed pair (low then high) is two unpaired surrogates.
+  assert_false(@json.valid("\"" + lone_low + lone_high + "\""))
+  // Next to escapes (slow path; used to abort the process).
+  assert_false(@json.valid("\"" + lone_low + "\\n\""))
+  assert_false(@json.valid("\"\\n" + lone_low + "\""))
+  assert_false(@json.valid("\"" + lone_high + "\\t\""))
+  // The failure is the documented ParseError, not an abort.
+  debug_inspect(
+    expect_parse_error("\"" + lone_low + "\"", "expected InvalidChar"),
+    content=(
+      #|InvalidChar({ line: 1, column: 1 }, '�')
+    ),
+  )
+  // Well-formed surrogate pairs still parse, raw or next to escapes.
+  assert_true(@json.parse("\"\u{1F600}\"") == Json::string("\u{1F600}"))
+  let json = Json::string("\u{10FFFF}\\\u{1F600}\n")
+  assert_true(@json.parse(json.stringify()) == json)
+}
