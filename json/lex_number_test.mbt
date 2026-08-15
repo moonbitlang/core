@@ -170,3 +170,27 @@ test "parse number with huge exponent" {
     ),
   )
 }
+
+///|
+/// Every spelling of a negative zero — including values that underflow to
+/// zero — must keep the IEEE-754 sign bit. The integer spelling `-0` used to
+/// lose it: the integer fast path negated an `Int64` (where `-0 == 0`)
+/// before converting to `Double`.
+test "parse preserves the sign of negative zero" {
+  fn is_negative(text : String) -> Bool raise {
+    guard @json.parse(text) is Number(n, ..) else { fail("not a number") }
+    n.reinterpret_as_int64() < 0L
+  }
+
+  // Zero literals.
+  assert_true(is_negative("-0"))
+  assert_true(is_negative("-0.0"))
+  assert_true(is_negative("-0e0"))
+  assert_true(is_negative("-0.00E-7"))
+  assert_false(is_negative("0"))
+  assert_false(is_negative("0.0"))
+  // Negative values that underflow to zero.
+  assert_true(is_negative("-1e-400"))
+  assert_true(is_negative("-4.9e-325"))
+  assert_true(is_negative("-1e-999999999999999999999999999999999999"))
+}
