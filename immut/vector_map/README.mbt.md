@@ -188,7 +188,7 @@ Entries live in a persistent vector — the *spine* — in insertion order, and 
 | --- | --- |
 | `contains` | one trie descent |
 | `get` | one trie descent, then one vector descent |
-| `add` on an existing key | one trie descent, then one vector path copied |
+| `add` on an existing key | one trie descent, one vector descent to recover the stored key, then one vector path copied |
 | `add` on a new key | one trie descent, one trie insertion, and usually only the vector's tail rewritten |
 | `remove` | one trie descent, one trie removal, one vector write — plus the trimming or rebuild described below |
 | `length`, `is_empty` | `O(1)` |
