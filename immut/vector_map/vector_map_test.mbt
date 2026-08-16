@@ -472,11 +472,20 @@ test "removals past the compaction threshold keep every promise" {
     sparse.keys().to_array()[:5].to_owned(),
     content="[0, 5, 10, 15, 20]",
   )
-  // every survivor still resolves, and to the value it was given
-  for k, v in sparse {
-    assert_eq(v, k * k)
+  // Every survivor still resolves THROUGH THE INDEX, and to the value it was
+  // given. Iterating would only read the spine, so it would not notice an index
+  // left pointing at the pre-rebuild slots; `get` and `contains` are the only
+  // black-box operations that go through it.
+  for i in 0..<200 {
+    if i % 5 == 0 {
+      assert_true(sparse.contains(i))
+      assert_eq(sparse.get(i), Some(i * i))
+    } else {
+      assert_false(sparse.contains(i))
+      assert_eq(sparse.get(i), None)
+    }
   }
-  // and the rebuilt index agrees with a map built dense from the start
+  // and the surviving order matches a map built dense from the start
   assert_true(sparse == @vector_map.from_iter(sparse.iter()))
   // the original is untouched by all of it
   inspect(m.length(), content="200")

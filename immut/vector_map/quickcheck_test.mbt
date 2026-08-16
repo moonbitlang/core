@@ -54,8 +54,10 @@ fn agrees_with_model(
   guard map.is_empty() == model.is_empty() else { return false }
   // Order and content, as seen through the array conversion…
   guard map.to_array() == model else { return false }
-  // …and independently through each other traversal, since they walk the
-  // spine by different routes.
+  // …and through the traversals that reach the spine by a different route:
+  // `each` walks it directly, `iter` filters its iterator, `fold` folds it.
+  // (`to_array` is `each` underneath, and `keys`/`values`/`iter2` are all
+  // `iter`, so those are checked for agreement rather than independence.)
   let via_each = []
   map.each((k, v) => via_each.push((k, v)))
   guard via_each == model else { return false }
@@ -66,6 +68,11 @@ fn agrees_with_model(
   guard via_fold == model else { return false }
   guard map.keys().to_array() == model.map(kv => kv.0) else { return false }
   guard map.values().to_array() == model.map(kv => kv.1) else { return false }
+  let via_iter2 = []
+  for k, v in map {
+    via_iter2.push((k, v))
+  }
+  guard via_iter2 == model else { return false }
   // `eachi` must number the live entries densely, whatever the spine holds.
   let ranks = []
   map.eachi((i, _, _) => ranks.push(i))
@@ -83,7 +90,9 @@ fn agrees_with_model(
     guard map.contains(key) == (expected is Some(_)) else { return false }
   }
   // Same content reached by any history is the same value: equal, and equally
-  // hashed. This is what catches a stale index or an unreclaimed slot.
+  // hashed. Both read live spine entries only — it is the lookup sweep above
+  // that catches a stale index — so what this adds is that an unreclaimed slot
+  // or a reordering never leaks into either.
   let rebuilt = @vector_map.from_iter(model.iter())
   guard map == rebuilt else { return false }
   let h1 = Hasher()
@@ -97,11 +106,12 @@ fn agrees_with_model(
 /// Interpret `ops` as a stream of operations over a 32-key universe, mirroring
 /// each on the model and demanding agreement after every single step.
 ///
-/// `remove_bias` skews the operation mix towards deletion AND starts from a map
-/// already holding the whole key universe. Both are needed to reach the regime
-/// where trimming and compaction run at all: a stream that starts empty and
-/// removes more than it adds simply stays empty, and a spine under 32 slots is
-/// never rebuilt however holey it gets.
+/// `remove_bias` skews the operation mix towards deletion and starts from a map
+/// already holding the whole key universe. Neither is strictly necessary —
+/// adding and removing from empty reaches trimming immediately, and enough
+/// churn eventually reaches a rebuild — but together they make both reliable
+/// within the op counts the generator produces, rather than leaving them to
+/// chance on a stream that spends its length near empty.
 fn ops_agree(ops : Array[Int], remove_bias~ : Bool) -> Bool {
   let model : Array[(Int, Int)] = []
   let mut map : @vector_map.VectorMap[Int, Int] = @vector_map.new()
