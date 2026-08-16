@@ -160,9 +160,7 @@ JSON is an array of `[key, value]` pairs rather than an object, so that the orde
 test "json" {
   let m = @vector_map.VectorMap([(30, "c"), (10, "a")])
   json_inspect(m, content=[[30, "c"], [10, "a"]])
-  let back : @vector_map.VectorMap[Int, String] = @json.from_json(
-    @json.to_json(m),
-  )
+  let back : @vector_map.VectorMap[Int, String] = @json.from_json(Json(m))
   inspect(back == m, content="true")
 }
 ```

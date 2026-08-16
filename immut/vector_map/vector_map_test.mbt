@@ -368,9 +368,7 @@ test "Debug for VectorMap" {
 test "json round trip keeps the order and the key type" {
   let m = @vector_map.VectorMap([(30, "c"), (10, "a"), (20, "b")])
   json_inspect(m, content=[[30, "c"], [10, "a"], [20, "b"]])
-  let back : @vector_map.VectorMap[Int, String] = @json.from_json(
-    @json.to_json(m),
-  )
+  let back : @vector_map.VectorMap[Int, String] = @json.from_json(Json(m))
   assert_true(back == m)
 }
 

@@ -43,15 +43,20 @@
 /// # Complexity
 ///
 /// Each operation carries its own cost below. Two conventions run through them:
-/// `n` is the number of live entries, and a *descent* — of the hash trie or of
-/// the spine — is `O(log n)` for keys whose hashes are reasonably distributed.
-/// Keys that collide on the whole hash share a bucket searched linearly, so a
-/// bad `Hash` degrades every keyed operation towards `O(n)`; that is inherited
-/// from `@immut/hashmap` rather than added here.
+/// `n` is the number of live entries — never the number of pairs an operation
+/// consumes, which is written `m` where the two differ — and a *descent*, of
+/// the hash trie or of the spine, is `O(log n)` for keys whose hashes are
+/// reasonably distributed. Keys that collide on the whole hash share a bucket
+/// searched linearly, so a bad `Hash` degrades every keyed operation towards
+/// `O(n)`; that is inherited from `@immut/hashmap` rather than added here.
 ///
-/// Traversals are linear in the *spine*, which the reclamation rules keep below
-/// twice the entry count, so they are `O(n)` with a constant factor that rises
-/// as holes accumulate.
+/// Traversals are linear in the *spine*, whose length the reclamation rules
+/// bound at `max(MIN_COMPACT_LENGTH - 1, 2n)`: a spine too short to be worth
+/// rebuilding is left alone however holey it gets, and above that length the
+/// trigger is a strict majority of holes, so an even split survives. Traversals
+/// are therefore `O(n)`, with a constant factor that rises as holes accumulate
+/// and, for a map that has shrunk to almost nothing, a floor set by the
+/// exemption rather than by the entry count.
 struct VectorMap[K, V] {
   index : @hashmap.HashMap[K, Int]
   spine : @vector.Vector[(K, V)?]
