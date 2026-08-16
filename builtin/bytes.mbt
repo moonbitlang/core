@@ -596,7 +596,7 @@ pub fn BytesView::to_fixedarray(self : BytesView) -> FixedArray[Byte] {
 ///
 /// ```mbt check
 /// test {
-///   let iter = Iter::singleton(b'h')
+///   let iter = [|b'h'|]
 ///   let bytes = Bytes::from_iter(iter)
 ///   inspect(
 ///     bytes,

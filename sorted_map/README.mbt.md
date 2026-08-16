@@ -230,7 +230,7 @@ The SortedMap supports several iterator patterns. Create a map from an iterator:
 ```mbt check
 ///|
 test {
-  let pairs = [(1, "one"), (2, "two"), (3, "three")].iter()
+  let pairs = [|(1, "one"), (2, "two"), (3, "three")|]
   let map = @sorted_map.from_iter(pairs)
   @test.assert_eq(map.length(), 3)
 }

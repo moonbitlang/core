@@ -19,13 +19,7 @@ test "logger trait object calls" {
   Logger::write_string(logger, "Hello, ")
   Logger::write_char(logger, 'w')
   &Logger::write_string(logger, "orld!")
-  &Logger::write_iter(
-    logger,
-    [1, 2, 3].iter(),
-    prefix="[",
-    suffix="]",
-    sep="; ",
-  )
+  &Logger::write_iter(logger, [|1, 2, 3|], prefix="[", suffix="]", sep="; ")
   inspect(
     sb,
     content=(

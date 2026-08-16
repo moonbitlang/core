@@ -114,7 +114,7 @@ test "StringView core operations" {
   inspect(buf.to_string(), content="0:b;1:😀;2:c;")
   let from_arr = StringView::from_array(['x', 'y'])
   inspect(from_arr.to_owned(), content="xy")
-  let from_iter = StringView::from_iter(['m', 'n'].iter())
+  let from_iter = StringView::from_iter([|'m', 'n'|])
   inspect(from_iter.to_owned(), content="mn")
   let make_view = StringView::make(3, 'a')
   inspect(make_view.to_owned(), content="aaa")

@@ -23,7 +23,7 @@ test "creating immutable sets" {
   inspect(from_fixed.length(), content="3")
 
   // From iterator
-  let from_iter = @hashset.from_iter([40, 50, 60].iter())
+  let from_iter = @hashset.from_iter([|40, 50, 60|])
   inspect(from_iter.length(), content="3")
 }
 ```

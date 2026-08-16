@@ -126,7 +126,7 @@ test {
 ```mbt check
 ///|
 test {
-  let pq = @priority_queue.from_iter([3, 1, 2].iter())
+  let pq = @priority_queue.from_iter([|3, 1, 2|])
   @test.assert_eq(pq.peek(), Some(3))
 }
 ```

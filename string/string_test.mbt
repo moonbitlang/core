@@ -19,7 +19,7 @@ test "String::from_array" {
 
 ///|
 test "String::from_iter" {
-  inspect(String::from_iter(['1', '2', '3', '4', '5'].iter()), content="12345")
+  inspect(String::from_iter([|'1', '2', '3', '4', '5'|]), content="12345")
 }
 
 ///|

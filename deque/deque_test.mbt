@@ -507,7 +507,7 @@ test "reserve_and_push" {
 ///|
 test "from_iter multiple elements iter" {
   debug_inspect(
-    @deque.from_iter([1, 2, 3].iter()),
+    @deque.from_iter([|1, 2, 3|]),
     content=(
       #|<Deque: [1, 2, 3]>
     ),
@@ -517,7 +517,7 @@ test "from_iter multiple elements iter" {
 ///|
 test "from_iter single element iter" {
   debug_inspect(
-    @deque.from_iter([1].iter()),
+    @deque.from_iter([|1|]),
     content=(
       #|<Deque: [1]>
     ),
@@ -526,7 +526,7 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let dq : @deque.Deque[Int] = @deque.from_iter(Iter::empty())
+  let dq : @deque.Deque[Int] = @deque.from_iter([||])
   debug_inspect(
     dq,
     content=(

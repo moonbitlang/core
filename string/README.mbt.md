@@ -16,7 +16,7 @@ test "string creation" {
   inspect(str1, content="Hello")
 
   // From character iterator
-  let str2 = String::from_iter(['W', 'o', 'r', 'l', 'd'].iter())
+  let str2 = String::from_iter([|'W', 'o', 'r', 'l', 'd'|])
   inspect(str2, content="World")
 
   // Default empty string

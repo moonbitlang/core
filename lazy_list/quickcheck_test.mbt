@@ -300,7 +300,7 @@ test "quickcheck: functor and monad laws" {
       xs().map(f).map(g).to_array() == xs().map(x => g(f(x))).to_array() &&
       // flat_map with a singleton is map (the monad's right identity
       // composed with map)
-      xs().flat_map(x => @lazy_list.from_iter([f(x)].iter())).to_array() ==
+      xs().flat_map(x => @lazy_list.from_iter([|f(x)|])).to_array() ==
       xs().map(f).to_array() &&
       // ...and with the empty list it annihilates
       xs().flat_map(_ => @lazy_list.empty()).to_array() == ([] : Array[Int])
@@ -586,7 +586,7 @@ test "quickcheck: flat_map skips runs of empty inner lists without recursing" {
         if x < threshold {
           @lazy_list.empty()
         } else {
-          @lazy_list.from_iter([x].iter())
+          @lazy_list.from_iter([|x|])
         }
       })
       mapped.head() == Some(threshold)
@@ -626,7 +626,7 @@ fn shaped_concat(depth : Int, seed : Int) -> @lazy_list.LazyList[Int] {
   }
 
   for i in 0..<depth {
-    stack.push(@lazy_list.from_iter([i].iter()))
+    stack.push(@lazy_list.from_iter([|i|]))
     while stack.length() >= 2 && next_bit() {
       merge_top()
     }
@@ -672,7 +672,7 @@ test "quickcheck: appending while consuming keeps the order" {
       let mut cur = @lazy_list.from_iter(Array::makei(steps + 1, i => i).iter())
       let seen = []
       for i in 0..<steps {
-        cur = cur.concat(@lazy_list.from_iter([start + i].iter()))
+        cur = cur.concat(@lazy_list.from_iter([|start + i|]))
         seen.push(cur.head().unwrap())
         cur = cur.tail().unwrap()
       }
@@ -707,7 +707,7 @@ test "quickcheck: the lazy combinators stay total on an infinite list" {
       expected.map(i => (i, i)) &&
       nats(counter).concat(nats(counter)).take(n).to_array() == expected &&
       nats(counter)
-      .flat_map(x => @lazy_list.from_iter([x].iter()))
+      .flat_map(x => @lazy_list.from_iter([|x|]))
       .take(n)
       .to_array() ==
       expected &&

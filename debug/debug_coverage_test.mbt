@@ -187,7 +187,7 @@ test "debug runs over representative values (smoke)" {
 
 ///|
 test "Debug instance for Iter renders an omitted body" {
-  let it : Iter[Int] = [1, 2, 3].iter()
+  let it : Iter[Int] = [|1, 2, 3|]
   inspect(
     @debug.to_string(it),
     content=(

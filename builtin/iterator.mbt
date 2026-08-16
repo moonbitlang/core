@@ -251,6 +251,8 @@ pub fn[X] Iter::new(f : () -> X?, size_hint? : Int) -> Iter[X] {
 ///|
 /// Creates an empty iterator.
 ///
+/// Prefer the iterator literal `[||]`, which is equivalent and shorter.
+///
 /// # Type Parameters
 ///
 /// - `X`: The type of the elements in the iterator.
@@ -264,6 +266,8 @@ pub fn[X] Iter::empty() -> Iter[X] {
 
 ///|
 /// Creates an iterator that contains a single element.
+///
+/// Prefer the iterator literal `[|elem|]`, which is equivalent and shorter.
 ///
 /// # Type Parameters
 ///
@@ -443,7 +447,7 @@ pub fn[X, Y] Iter::filter_map(self : Iter[X], f : (X) -> Y?) -> Iter[Y] {
 /// The old iterator `self` and the iterators returned by `f`
 /// must not be used again after calling `flat_map`.
 pub fn[X, Y] Iter::flat_map(self : Iter[X], f : (X) -> Iter[Y]) -> Iter[Y] {
-  let mut current_iter = Some(Iter::empty())
+  let mut current_iter = Some([||])
   Iter::new(fn() {
     guard current_iter is Some(iter) else { None }
     for x = iter.next() {
@@ -771,7 +775,7 @@ pub fn[X] Iter::concat(self : Iter[X], other : Iter[X]) -> Iter[X] {
 /// ```mbt check
 /// test {
 ///   let numbers = (1).until(5)
-///   let letters = ["a", "b", "c"].iter()
+///   let letters = [|"a", "b", "c"|]
 ///   debug_inspect(
 ///     numbers.zip(letters).collect(),
 ///     content="[(1, \"a\"), (2, \"b\"), (3, \"c\")]",
@@ -868,7 +872,7 @@ pub fn[X] Iter::last(self : Iter[X]) -> X? {
 /// ```mbt check
 /// test {
 ///   let arr = []
-///   [1, 2, 3].iter().intersperse(0).each(i => arr.push(i))
+///   [|1, 2, 3|].intersperse(0).each(i => arr.push(i))
 ///   @test.assert_eq(arr, [1, 0, 2, 0, 3])
 /// }
 /// ```
@@ -968,10 +972,10 @@ pub fn[X] Iter::view(self : Iter[X], start? : Int = 0, end? : Int) -> Iter[X] {
 ///
 /// ```mbt check
 /// test {
-///   let iter = [1, 2, 3, 4, 5].iter()
+///   let iter = [|1, 2, 3, 4, 5|]
 ///   inspect(iter.contains(3), content="true")
 ///   inspect(iter.contains(6), content="false")
-///   let iter = Iter::empty()
+///   let iter = [||]
 ///   inspect(iter.contains(1), content="false")
 /// }
 /// ```

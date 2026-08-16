@@ -166,7 +166,7 @@ test {
   // to_array
   @test.assert_eq(set.to_array(), [1, 2, 3])
   // from_iter
-  let set2 = @sorted_set.from_iter([4, 5, 6].iter())
+  let set2 = @sorted_set.from_iter([|4, 5, 6|])
   @test.assert_eq(set2.to_array(), [4, 5, 6])
 }
 ```

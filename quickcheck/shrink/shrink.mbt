@@ -41,7 +41,7 @@ pub(open) trait Shrink {
 
 ///|
 impl Shrink with fn shrink(_a) {
-  Iter::empty()
+  [||]
 }
 
 ///|
@@ -87,9 +87,9 @@ pub impl Shrink for UInt64 with fn shrink(x) {
 ///|
 pub impl Shrink for Bool with fn shrink(b) {
   if !b {
-    Iter::empty()
+    [||]
   } else {
-    Iter::singleton(false)
+    [|false|]
   }
 }
 

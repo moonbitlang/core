@@ -99,7 +99,7 @@ without re-running the source.
 ```mbt check
 ///|
 test {
-  let xs = @lazy_list.from_iter([1, 2, 3].iter())
+  let xs = @lazy_list.from_iter([|1, 2, 3|])
   // First traversal computes and caches cells.
   debug_inspect(xs.to_array(), content="[1, 2, 3]")
   // Second traversal walks the cache — no further pulls from the iter.
@@ -114,7 +114,7 @@ list, an array, an unfolding generator. We deliberately don't provide
 ```mbt check
 ///|
 test {
-  let from_arr = @lazy_list.from_iter([1, 2, 3].iter())
+  let from_arr = @lazy_list.from_iter([|1, 2, 3|])
   let from_list = @lazy_list.from_iter(@list.List([4, 5, 6]).iter())
   debug_inspect(from_arr.to_array(), content="[1, 2, 3]")
   debug_inspect(from_list.to_array(), content="[4, 5, 6]")
@@ -132,7 +132,7 @@ cell.
 ```mbt check
 ///|
 test {
-  let xs = @lazy_list.from_iter([1, 2, 3].iter())
+  let xs = @lazy_list.from_iter([|1, 2, 3|])
   inspect(xs.is_empty(), content="false")
   debug_inspect(xs.head(), content="Some(1)")
   debug_inspect(xs.tail().unwrap().head(), content="Some(2)")
@@ -145,7 +145,7 @@ fresh traversal — the underlying `LazyList` is not consumed.
 ```mbt check
 ///|
 test {
-  let xs = @lazy_list.from_iter([1, 2, 3].iter())
+  let xs = @lazy_list.from_iter([|1, 2, 3|])
   let i1 = xs.iter()
   let i2 = xs.iter()
   debug_inspect(i1.next(), content="Some(1)")
@@ -165,7 +165,7 @@ structure.
 ```mbt check
 ///|
 test {
-  let xs = @lazy_list.from_iter([1, 2, 3, 4, 5].iter())
+  let xs = @lazy_list.from_iter([|1, 2, 3, 4, 5|])
   debug_inspect(xs.map(x => x * x).to_array(), content="[1, 4, 9, 16, 25]")
   debug_inspect(xs.filter(x => x % 2 == 0).to_array(), content="[2, 4]")
   debug_inspect(xs.take(3).to_array(), content="[1, 2, 3]")
@@ -195,10 +195,10 @@ test {
 ```mbt check
 ///|
 test {
-  let xs = @lazy_list.from_iter([1, 2, 3].iter())
-  let ys = @lazy_list.from_iter(["a", "b", "c"].iter())
+  let xs = @lazy_list.from_iter([|1, 2, 3|])
+  let ys = @lazy_list.from_iter([|"a", "b", "c"|])
   debug_inspect(
-    xs.flat_map(x => @lazy_list.from_iter([x, x * 10].iter())).to_array(),
+    xs.flat_map(x => @lazy_list.from_iter([|x, x * 10|])).to_array(),
     content="[1, 10, 2, 20, 3, 30]",
   )
   debug_inspect(
@@ -221,7 +221,7 @@ through `@list.from_iter`:
 ```mbt check
 ///|
 test {
-  let xs = @lazy_list.from_iter([1, 2, 3].iter())
+  let xs = @lazy_list.from_iter([|1, 2, 3|])
   let strict : @list.List[Int] = @list.from_iter(xs.iter())
   @debug.debug_inspect(strict, content="<List: [1, 2, 3]>")
 }
@@ -230,7 +230,7 @@ test {
 ```mbt check
 ///|
 test {
-  let xs = @lazy_list.from_iter([1, 2, 3, 4].iter())
+  let xs = @lazy_list.from_iter([|1, 2, 3, 4|])
   inspect(xs.fold(init=0, (acc, x) => acc + x), content="10")
   let total : Ref[Int] = Ref(0)
   xs.each(x => total.val = total.val + x)
@@ -245,7 +245,7 @@ full `Iter` combinator set:
 ```mbt check
 ///|
 test {
-  let xs = @lazy_list.from_iter([1, 2, 3, 4, 5].iter())
+  let xs = @lazy_list.from_iter([|1, 2, 3, 4, 5|])
   inspect(xs.iter().count(), content="5")
   debug_inspect(xs.iter().nth(2), content="Some(3)")
 }
@@ -300,7 +300,7 @@ natural way to write one is also the hardest case:
 test {
   let mut acc : @lazy_list.LazyList[Int] = @lazy_list.empty()
   for i in 0..<10000 {
-    acc = acc.concat(@lazy_list.from_iter([i].iter()))
+    acc = acc.concat(@lazy_list.from_iter([|i|]))
   }
   debug_inspect(acc.take(3).to_array(), content="[0, 1, 2]")
   inspect(acc.iter().count(), content="10000")
@@ -394,7 +394,7 @@ test {
     }
   }
 
-  let xs = @lazy_list.from_iter([1, 2, -1, 3].iter()).map(maybe_double)
+  let xs = @lazy_list.from_iter([|1, 2, -1, 3|]).map(maybe_double)
   let results = xs.to_array()
   debug_inspect(
     results,

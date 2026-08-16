@@ -586,7 +586,7 @@ test "new_with" {
 ///|
 test "from_iter multiple elements iter" {
   debug_inspect(
-    @vector.from_iter([1, 2, 3].iter()),
+    @vector.from_iter([|1, 2, 3|]),
     content=(
       #|<Vector: [1, 2, 3]>
     ),
@@ -677,7 +677,7 @@ test "from_iter multiple elements iter" {
 ///|
 test "from_iter single element iter" {
   debug_inspect(
-    @vector.from_iter([1].iter()),
+    @vector.from_iter([|1|]),
     content=(
       #|<Vector: [1]>
     ),
@@ -686,7 +686,7 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let pq : @vector.Vector[Int] = @vector.from_iter(Iter::empty())
+  let pq : @vector.Vector[Int] = @vector.from_iter([||])
   debug_inspect(
     pq,
     content=(

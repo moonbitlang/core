@@ -151,7 +151,7 @@ test "length" {
 ///|
 test "from_iter multiple elements iter" {
   debug_inspect(
-    @priority_queue.PriorityQueue::from_iter([1, 2, 3].iter()),
+    @priority_queue.PriorityQueue::from_iter([|1, 2, 3|]),
     content=(
       #|<PriorityQueue: [3, 2, 1]>
     ),
@@ -161,7 +161,7 @@ test "from_iter multiple elements iter" {
 ///|
 test "from_iter single element iter" {
   debug_inspect(
-    @priority_queue.PriorityQueue::from_iter([1].iter()),
+    @priority_queue.PriorityQueue::from_iter([|1|]),
     content=(
       #|<PriorityQueue: [1]>
     ),
@@ -170,9 +170,7 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.PriorityQueue::from_iter(
-    Iter::empty(),
-  )
+  let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.from_iter([||])
   debug_inspect(
     pq,
     content=(
