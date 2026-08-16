@@ -54,10 +54,11 @@ test "parse and validate jsons" {
 #### What may appear inside a string
 
 Every string in a parsed document is well-formed Unicode, so each `\uXXXX`
-escape has to denote a Unicode scalar value. An escaped leading surrogate
-must be followed immediately by an escaped trailing surrogate, and the pair
-decodes to the single character it stands for; an escape that cannot pair up
-is a parse error.
+escape must denote a Unicode scalar value on its own or be one half of a
+correctly ordered surrogate pair. An escaped leading surrogate must be
+followed immediately by an escaped trailing surrogate, and the pair decodes
+to the single character it stands for; an escape that cannot pair up is a
+parse error, reported at the backslash that opens it.
 
 ```mbt check
 ///|
@@ -76,7 +77,8 @@ so the alternatives would be to hand one back that is not, or to substitute
 U+FFFD and lose the difference between two distinct keys. Note that
 `JSON.stringify` in JavaScript does emit lone surrogates this way, so a
 document JavaScript and Python accept can be rejected here — as it is by
-Rust's serde_json; Go substitutes U+FFFD instead.
+Rust's serde_json when parsing into `String` or `Value`; Go's
+`encoding/json` substitutes U+FFFD instead.
 
 ### Object Navigation
 
