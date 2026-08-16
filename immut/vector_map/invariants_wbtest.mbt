@@ -53,7 +53,7 @@ fn[K : Eq + Hash + Show, V] check_invariants(map : VectorMap[K, V]) -> String? {
   let mut failure = None
   map.spine.eachi((slot, entry) => {
     if entry is Some((key, _)) {
-      if map.index.get(key) != Some(slot) {
+      if map.index.get(key) != Some(slot) && failure is None {
         failure = Some(
           "slot \{slot} holds \{key}, which the index sends elsewhere",
         )

@@ -24,7 +24,10 @@
 ///
 /// Removal punches a hole in the spine rather than shifting the entries after
 /// it, since shifting would invalidate every index entry to their right. Those
-/// holes are reclaimed by `compact` once they outnumber the live entries.
+/// holes are reclaimed by `compact` once the spine is both at least
+/// `MIN_COMPACT_LENGTH` slots long and holding more holes than live entries —
+/// a spine too short to be worth rebuilding is left alone however holey it
+/// gets.
 ///
 /// # Invariants
 ///
