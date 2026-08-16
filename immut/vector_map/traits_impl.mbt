@@ -59,6 +59,8 @@ pub impl[K : Hash, V : Hash] Hash for VectorMap[K, V] with fn hash_combine(
 }
 
 ///|
+/// Render the entries in insertion order. `O(n)`, plus whatever rendering each
+/// key and value costs.
 pub impl[K : @debug.Debug, V : @debug.Debug] @debug.Debug for VectorMap[K, V] with fn to_repr(
   self,
 ) {
