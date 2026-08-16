@@ -2,7 +2,7 @@
 
 A persistent map that iterates in **insertion order** — the immutable counterpart of the built-in insertion-ordered `Map`. Operations return a map and never disturb the receiver.
 
-Reach for it over `@immut/hashmap` when the order entries were added is part of what you are storing: rendering a list, replaying a log, or anything whose output a reader would notice being shuffled. Reach for `@immut/sorted_map` instead when you want entries in *key* order, and for `@immut/hashmap` when order does not matter at all — it is the leaner structure.
+Reach for it over `@immut/hashmap` when the order in which entries were added is part of what you are storing: rendering a list, replaying a log, or anything whose output a reader would notice being shuffled. Reach for `@immut/sorted_map` instead when you want entries in *key* order, and for `@immut/hashmap` when order does not matter at all — it is the leaner structure.
 
 ## Create
 

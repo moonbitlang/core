@@ -75,7 +75,9 @@ pub impl[K : @debug.Debug, V : @debug.Debug] @debug.Debug for VectorMap[K, V] wi
 pub impl[K : ToJson, V : ToJson] ToJson for VectorMap[K, V] with fn to_json(
   self,
 ) {
-  Json::array([ for k, v in self => [k.to_json(), v.to_json()] ])
+  [
+    for k, v in self => ([k, v] : Json)
+  ]
 }
 
 ///|
