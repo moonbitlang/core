@@ -31,7 +31,7 @@ test "construction" {
       #|[("b", 2), ("a", 1), ("c", 3)]
     ),
   )
-  let from_it = @vector_map.from_iter([("b", 2), ("a", 1)].iter())
+  let from_it = @vector_map.from_iter([|("b", 2), ("a", 1)|])
   debug_inspect(
     from_it.to_array(),
     content=(
