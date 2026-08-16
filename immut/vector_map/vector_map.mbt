@@ -284,9 +284,10 @@ fn[K, V] trim_trailing(
 /// Rebuilding once the holes outnumber the live entries keeps the wasted slots
 /// at or below half — the comparison is strict, so an even split stands — and
 /// makes each rebuild pay for the `Omega(n)` removals that caused it. Note that
-/// the threshold has to compare `holes > size` rather than `size < length / 2`:
-/// integer division would never fire on the small spines where every slot is a
-/// hole.
+/// the threshold compares `holes > size` rather than `size < length / 2`: the
+/// two disagree on odd spines carrying exactly one hole more than they carry
+/// entries, where integer division rounds the majority away — at length 33 with
+/// 16 entries and 17 holes, `size < length / 2` is `16 < 16` and never fires.
 fn[K, V] VectorMap::should_compact(self : VectorMap[K, V]) -> Bool {
   let length = self.spine.length()
   length >= MIN_COMPACT_LENGTH && length - self.size > self.size

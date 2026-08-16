@@ -119,9 +119,11 @@ fn ops_agree(ops : Array[Int], remove_bias~ : Bool) -> Bool {
     // being replenished — which is what keeps appending fresh slots past the
     // holes left behind.
     let choice = if remove_bias {
-      // Only adds and removes: `filter` and `map` rebuild the spine dense, and
-      // mixing them in here would keep resetting the very hole accumulation
-      // this variant exists to produce.
+      // Only adds and removes, the two operations that create and reclaim
+      // holes. `filter` is kept out because a rejecting predicate rebuilds the
+      // spine dense, which would keep resetting the very accumulation this
+      // variant exists to produce; `map` is kept out merely because it moves
+      // neither the spine's length nor its holes, so it would add nothing here.
       match n % 6 {
         0 | 1 => 0
         _ => 3
