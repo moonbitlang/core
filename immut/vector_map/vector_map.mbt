@@ -36,7 +36,8 @@ pub fn[K : Hash, V] VectorMap::singleton(key : K, value : V) -> VectorMap[K, V] 
 /// A repeated key keeps the position of its **first** occurrence and the value
 /// of its **last**, matching what repeated `add`s would produce.
 ///
-/// Two descents per pair, so `O(n log n)`.
+/// One trie descent per input pair, plus a second for each pair that introduces
+/// a key, so `O(m log n)` for `m` pairs — repeated keys cost the lookup only.
 ///
 /// # Example
 ///
@@ -61,7 +62,8 @@ pub fn[K : Eq + Hash, V] VectorMap::VectorMap(
 /// Create a map from an iterator of key-value pairs, in the iterator's order.
 ///
 /// A repeated key keeps the position of its first occurrence and the value of
-/// its last. Two descents per pair, so `O(n log n)`.
+/// its last. One trie descent per pair, plus a second for each pair that
+/// introduces a key, so `O(m log n)` for `m` pairs.
 #as_free_fn
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
@@ -208,10 +210,11 @@ pub fn[K : Eq + Hash, V] VectorMap::add(
 /// Remove a key, returning a new map. A key that is absent returns the receiver
 /// itself.
 ///
-/// `O(log n)` amortised, but `O(n)` on a call that trims a long run of holes or
-/// rebuilds the spine. The amortisation holds along one line of descent only —
-/// repeatedly removing from a version taken just before a rebuild pays for it
-/// each time.
+/// `O(log n)` amortised. The worst case is a call that reclaims: trimming `k`
+/// uncovered holes costs `k` spine pops, each of which may copy a path, so
+/// `O(k log n)`; a rebuild costs `O(n)`. The amortisation holds along one line
+/// of descent only — repeatedly removing from a version taken just before a
+/// trim or a rebuild pays for it each time.
 pub fn[K : Eq + Hash, V] VectorMap::remove(
   self : VectorMap[K, V],
   key : K,
@@ -237,8 +240,8 @@ pub fn[K : Eq + Hash, V] VectorMap::remove(
 /// current value if there is one, and its result becomes the new value, or
 /// removes the key when it is `None`.
 ///
-/// A lookup followed by an `add` or a `remove`, so `O(log n)` amortised with
-/// their worst cases.
+/// A lookup followed by an `add` or a `remove`, so `O(log n)` amortised, with
+/// the reclamation worst cases those two carry.
 ///
 /// # Example
 ///

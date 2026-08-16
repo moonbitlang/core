@@ -44,8 +44,10 @@ pub impl[K : Eq, V : Eq] Eq for VectorMap[K, V] with fn equal(self, other) {
 /// hash equally and two orderings of the same entries generally do not.
 ///
 /// The length is not folded in separately: the hasher is fed one key and one
-/// value per entry in sequence, so a map and a proper prefix of it already
-/// diverge without help. `O(n)`.
+/// value per entry in sequence, so a map and a proper prefix of it already feed
+/// it different sequences. That is not a guarantee of different hashes — only
+/// equal maps hashing equally is promised, and unequal ones may always collide.
+/// `O(n)`.
 pub impl[K : Hash, V : Hash] Hash for VectorMap[K, V] with fn hash_combine(
   self,
   hasher,
@@ -82,7 +84,7 @@ pub impl[K : ToJson, V : ToJson] ToJson for VectorMap[K, V] with fn to_json(
 
 ///|
 /// Decode an array of `[key, value]` pairs, applying the same duplicate-key rule
-/// as the array constructor. Two descents per pair, so `O(n log n)`.
+/// as the array constructor, at the same `O(m log n)` for `m` pairs.
 pub impl[K : @json.FromJson + Eq + Hash, V : @json.FromJson] @json.FromJson for VectorMap[
   K,
   V,

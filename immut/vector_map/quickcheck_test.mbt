@@ -290,7 +290,7 @@ test "quickcheck: json survives a round trip, order included" {
     (entries : Array[(Int, Int)]) => {
       let (map, _) = build(entries)
       let decoded : @vector_map.VectorMap[Int, Int]? = Some(
-        @json.from_json(@json.to_json(map)),
+        @json.from_json(Json(map)),
       ) catch {
         _ => None
       }
