@@ -170,9 +170,9 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.from_iter([||])
+  let empty : Iter[Int] = [||]
   debug_inspect(
-    pq,
+    @priority_queue.PriorityQueue::from_iter(empty),
     content=(
       #|<PriorityQueue: []>
     ),
