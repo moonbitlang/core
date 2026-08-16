@@ -442,7 +442,10 @@ fn[A] Tree::concat(
 }
 
 ///|
-/// Given three `Node`s of the same height (`shift` / `NUM_BITS`), rebalance them into two.
+/// Given three `Node`s of the same height (`shift` / `NUM_BITS`), rebalance
+/// them into as few nodes as their children need: one, or - once the merge is
+/// wider than `BRANCHING_FACTOR` - two, or three at the 65-wide maximum
+/// `Tree::concat_with_suffix` can reach.
 /// `top` is `true` if the resulting node has no upper node.
 /// Returns the new node and its shift.
 fn[A] rebalance(
