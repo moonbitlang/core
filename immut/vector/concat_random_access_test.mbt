@@ -63,13 +63,40 @@ test "concat random access matches iteration for many chunkings (issue #3721)" {
 /// `Tree::concat_with_suffix` splices the left vector's tail in as a third
 /// leaf, so the merge behind `rebalance` can hand it `31 + 3 + 31 = 65`
 /// children. Splitting those into a fixed *two* nodes left the second one 33
-/// wide, and radix indexing masks the child index with `BRANCHING_FACTOR - 1`
-/// - so `at` wrapped index 32 of that node back to 0 while iteration, which
-/// walks in order rather than by index, stayed correct.
+/// wide, past `BRANCHING_FACTOR`.
 ///
-/// The chunkings above are all far too small to reach a 65-wide merge; these
-/// operands cross it.
-test "concat keeps nodes within the branching factor (issue #4086)" {
+/// A 33-wide node only misreads once it is also classified radix, because that
+/// is what makes indexing mask the child index with `BRANCHING_FACTOR - 1` and
+/// wrap child 32 back to 0. That needs every one of the 65 leaves full, which
+/// in turn needs the left vector's tail to be a full chunk - so the operand has
+/// to be push-built, at a length whose tree is exactly 32 full leaves and whose
+/// tail is exactly full (1024 + 32). Iteration walks in order rather than by
+/// index, so it stayed correct throughout.
+test "concat of a push-built vector keeps random access (issue #4086)" {
+  for left_len in [1056, 1057, 2080] {
+    let mut left : @vector.Vector[Int] = @vector.new()
+    for i in 0..<left_len {
+      left = left.push(i)
+    }
+    for right_len in [1024, 1056] {
+      let joined = left.concat(@vector.makei(right_len, i => left_len + i))
+      let total = left_len + right_len
+      let expected = Array::makei(total, i => i)
+      @debug.assert_eq(joined.length(), total)
+      @debug.assert_eq(joined.iter().to_array(), expected)
+      @debug.assert_eq(Array::makei(total, j => joined[j]), expected)
+    }
+  }
+}
+
+///|
+/// The same 65-wide merge reached with bulk-built operands. These do *not*
+/// misread even with the old `rebalance`: the resulting 33-wide node holds a
+/// partial leaf, so it keeps its sizes array and indexing goes through the
+/// search path rather than the masking one. Kept as a wider guard - the shape
+/// is one reclassification away from breaking - with the structural check
+/// living in `invariants_wbtest.mbt`, which does fail on the 33-wide node.
+test "concat random access across large operands (issue #4086)" {
   for left_len in [1025, 1056, 1057, 1088, 2049, 2080] {
     for right_len in [992, 1024, 1056] {
       let left = @vector.makei(left_len, i => i)
@@ -78,27 +105,8 @@ test "concat keeps nodes within the branching factor (issue #4086)" {
       let total = left_len + right_len
       let expected = Array::makei(total, i => i)
       @debug.assert_eq(joined.length(), total)
-      // iteration was correct even when the tree was malformed ...
       @debug.assert_eq(joined.iter().to_array(), expected)
-      // ... only indexing noticed
       @debug.assert_eq(Array::makei(total, j => joined[j]), expected)
     }
-  }
-}
-
-///|
-/// The same, with a left operand built by `push` - the shape that leaves a
-/// full tail behind for `concat_with_suffix` to splice in.
-test "concat of a push-built vector keeps random access (issue #4086)" {
-  for left_len in [1056, 1057, 2080] {
-    let mut left : @vector.Vector[Int] = @vector.new()
-    for i in 0..<left_len {
-      left = left.push(i)
-    }
-    let joined = left.concat(@vector.makei(1024, i => left_len + i))
-    let total = left_len + 1024
-    let expected = Array::makei(total, i => i)
-    @debug.assert_eq(joined.iter().to_array(), expected)
-    @debug.assert_eq(Array::makei(total, j => joined[j]), expected)
   }
 }
