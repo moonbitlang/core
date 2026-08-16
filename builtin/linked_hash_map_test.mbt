@@ -102,7 +102,7 @@ test "Map constructor" {
 
 ///|
 test "Map::from_iter" {
-  let iter = [("a", 1), ("b", 2), ("c", 3)].iter()
+  let iter = [|("a", 1), ("b", 2), ("c", 3)|]
   let map = Map::from_iter(iter)
   debug_inspect(
     map,

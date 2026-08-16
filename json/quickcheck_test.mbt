@@ -113,16 +113,16 @@ impl @quickcheck.Arbitrary for ArbJson with fn arbitrary(size, state) {
 /// counterexamples.
 fn shrink_json(json : Json) -> Iter[Json] {
   match json {
-    Null => Iter::empty()
-    True | False => Iter::singleton(Json::null())
+    Null => [||]
+    True | False => [|Json::null()|]
     Number(n, ..) =>
       if n == 0.0 {
-        Iter::singleton(Json::null())
+        [|Json::null()|]
       } else {
-        [Json::null(), Json::number(0.0)].iter()
+        [|Json::null(), Json::number(0.0)|]
       }
     String(s) =>
-      Iter::singleton(Json::null()).concat(
+      [|Json::null()|].concat(
         @shrink.Shrink::shrink(s).map(smaller => Json::string(smaller)),
       )
     Array(elements) => {
@@ -143,10 +143,7 @@ fn shrink_json(json : Json) -> Iter[Json] {
             Json::array(copy)
           })
         })
-      Iter::singleton(Json::null())
-      .concat(elements.iter())
-      .concat(dropped)
-      .concat(replaced)
+      [|Json::null()|].concat(elements.iter()).concat(dropped).concat(replaced)
     }
     Object(members) => {
       let pairs = members.to_array()
@@ -173,7 +170,7 @@ fn shrink_json(json : Json) -> Iter[Json] {
             Json::object(copy)
           })
         })
-      Iter::singleton(Json::null())
+      [|Json::null()|]
       .concat(pairs.iter().map(pair => pair.1))
       .concat(dropped)
       .concat(replaced)

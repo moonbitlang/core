@@ -131,7 +131,7 @@ test "to_array" {
 ///|
 test "from_iter multiple elements" {
   debug_inspect(
-    Bytes::from_iter([b'\x00', b'\x01', b'\x02'].iter()).to_array(),
+    Bytes::from_iter([|b'\x00', b'\x01', b'\x02'|]).to_array(),
     content=(
       #|[0x00, 0x01, 0x02]
     ),
@@ -141,7 +141,7 @@ test "from_iter multiple elements" {
 ///|
 test "from_iter single element" {
   debug_inspect(
-    Bytes::from_iter([b'\x00'].iter()).to_array(),
+    Bytes::from_iter([|b'\x00'|]).to_array(),
     content=(
       #|[0x00]
     ),
@@ -150,7 +150,7 @@ test "from_iter single element" {
 
 ///|
 test "from_iter empty iterator" {
-  debug_inspect(Bytes::from_iter(Iter::empty()).to_array(), content="[]")
+  debug_inspect(Bytes::from_iter([||]).to_array(), content="[]")
 }
 
 ///|
@@ -230,7 +230,7 @@ test "Bytes::of with different byte values" {
 
 ///|
 test "Bytes::from_iter with multiple elements" {
-  let iter = [b'a', b'b', b'c'].iter()
+  let iter = [|b'a', b'b', b'c'|]
   let bytes = Bytes::from_iter(iter)
   inspect(
     bytes,

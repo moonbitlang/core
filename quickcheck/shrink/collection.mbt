@@ -17,7 +17,7 @@ pub impl[T : Shrink] Shrink for @list.List[T] with fn shrink(xs) {
   let n = xs.length()
   fn shr_sub_terms(lst : @list.List[T]) {
     match lst {
-      Empty => Iter::empty()
+      Empty => [||]
       More(x, tail=xs) =>
         Shrink::shrink(x)
         .map(x_ => xs.add(x_))

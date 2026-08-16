@@ -79,7 +79,7 @@ pub fn[A] LazyList::lazy_cons(
 ///
 /// ```mbt check
 /// test {
-///   let xs = @lazy_list.from_iter([1, 2, 3].iter())
+///   let xs = @lazy_list.from_iter([|1, 2, 3|])
 ///   debug_inspect(xs.to_array(), content="[1, 2, 3]")
 ///   // The lazy list is re-traversable.
 ///   debug_inspect(xs.to_array(), content="[1, 2, 3]")

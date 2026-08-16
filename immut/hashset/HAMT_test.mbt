@@ -140,7 +140,7 @@ test "from_iter multiple elements iter" {
 ///|
 test "from_iter single element iter" {
   debug_inspect(
-    @hashset.from_iter([1].iter()),
+    @hashset.from_iter([|1|]),
     content=(
       #|<HashSet: [1]>
     ),
@@ -149,7 +149,7 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let pq : @hashset.HashSet[Int] = @hashset.from_iter(Iter::empty())
+  let pq : @hashset.HashSet[Int] = @hashset.from_iter([||])
   debug_inspect(
     pq,
     content=(
@@ -347,9 +347,7 @@ test "from_array duplicate keeps last representative" {
 
 ///|
 test "from_iter duplicate keeps first representative" {
-  let set = @hashset.from_iter(
-    [SameKey(1, "first"), SameKey(1, "second")].iter(),
-  )
+  let set = @hashset.from_iter([|SameKey(1, "first"), SameKey(1, "second")|])
   let values = set.iter().to_array()
   @test.assert_eq(values.length(), 1)
   let SameKey(_, label) = values[0]

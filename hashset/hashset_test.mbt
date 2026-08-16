@@ -392,7 +392,7 @@ test "clear_and_reinsert" {
 
 ///|
 test "from_iter multiple elements iter" {
-  let array = @hashset.from_iter([1, 2, 3].iter()).to_array()
+  let array = @hashset.from_iter([|1, 2, 3|]).to_array()
   array.sort()
   debug_inspect(array, content="[1, 2, 3]")
 }
@@ -400,7 +400,7 @@ test "from_iter multiple elements iter" {
 ///|
 test "from_iter single element iter" {
   debug_inspect(
-    @hashset.from_iter([1].iter()),
+    @hashset.from_iter([|1|]),
     content=(
       #|<HashSet: [1]>
     ),
@@ -409,7 +409,7 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let map : @hashset.HashSet[Int] = @hashset.from_iter(Iter::empty())
+  let map : @hashset.HashSet[Int] = @hashset.from_iter([||])
   debug_inspect(
     map,
     content=(

@@ -1924,7 +1924,7 @@ pub fn[A] Array::retain_map(
 ///
 /// ```mbt check
 /// test {
-///   let iter = Iter::singleton(42)
+///   let iter = [|42|]
 ///   let arr = Array::from_iter(iter)
 ///   debug_inspect(arr, content="[42]")
 /// }

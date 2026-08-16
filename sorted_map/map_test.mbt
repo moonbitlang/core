@@ -176,7 +176,7 @@ test "iter_collect" {
 ///|
 test "from_iter multiple elements iter" {
   debug_inspect(
-    @sorted_map.from_iter([(1, 1), (2, 2), (3, 3)].iter()),
+    @sorted_map.from_iter([|(1, 1), (2, 2), (3, 3)|]),
     content=(
       #|<SortedMap: { 1: 1, 2: 2, 3: 3 }>
     ),
@@ -186,7 +186,7 @@ test "from_iter multiple elements iter" {
 ///|
 test "from_iter single element iter" {
   debug_inspect(
-    @sorted_map.from_iter([(1, 1)].iter()),
+    @sorted_map.from_iter([|(1, 1)|]),
     content=(
       #|<SortedMap: { 1: 1 }>
     ),
@@ -195,9 +195,7 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let pq : @sorted_map.SortedMap[Int, Int] = @sorted_map.from_iter(
-    Iter::empty(),
-  )
+  let pq : @sorted_map.SortedMap[Int, Int] = @sorted_map.from_iter([||])
   debug_inspect(
     pq,
     content=(

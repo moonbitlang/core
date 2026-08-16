@@ -109,8 +109,8 @@ pub impl[X] Default for X? with fn default() {
 #alias(iterator, deprecated)
 pub fn[T] Option::iter(self : T?) -> Iter[T] {
   match self {
-    Some(v) => Iter::singleton(v)
-    None => Iter::empty()
+    Some(v) => [|v|]
+    None => [||]
   }
 }
 

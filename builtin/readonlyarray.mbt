@@ -61,7 +61,7 @@ pub fn[T] ReadOnlyArray::from_array(array : ArrayView[T]) -> ReadOnlyArray[T] {
 /// # Example
 /// ```mbt check
 /// test {
-///   let iter = [1, 2, 3].iter()
+///   let iter = [|1, 2, 3|]
 ///   let immut_array = ReadOnlyArray::from_iter(iter)
 ///   inspect(immut_array[0], content="1")
 /// }

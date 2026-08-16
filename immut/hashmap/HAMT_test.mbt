@@ -163,7 +163,7 @@ test "HAMT::iter2 with early break" {
 
 ///|
 test "HAMT::from_iter" {
-  let iter = [(1, "one"), (2, "two"), (3, "three")].iter()
+  let iter = [|(1, "one"), (2, "two"), (3, "three")|]
   let map = @hashmap.from_iter(iter)
   @test.assert_eq(map.get(1), Some("one"))
   @test.assert_eq(map.get(2), Some("two"))
@@ -172,7 +172,7 @@ test "HAMT::from_iter" {
 
 ///|
 test "HAMT::from_iter empty" {
-  let map : @hashmap.HashMap[Int, Int] = @hashmap.from_iter(Iter::empty())
+  let map : @hashmap.HashMap[Int, Int] = @hashmap.from_iter([||])
   assert_eq(map.length(), 0)
 }
 
@@ -225,7 +225,7 @@ test "HAMT::from_array duplicate keeps first value" {
 
 ///|
 test "HAMT::from_iter duplicate keeps last value" {
-  let map = @hashmap.from_iter([(1, "first"), (1, "second")].iter())
+  let map = @hashmap.from_iter([|(1, "first"), (1, "second")|])
   @test.assert_eq(map.get(1), Some("second"))
 }
 

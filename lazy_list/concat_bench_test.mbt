@@ -31,7 +31,7 @@ let concat_bench_len : Int = 2048
 fn bench_left_nested(depth : Int) -> @lazy_list.LazyList[Int] {
   let mut acc : @lazy_list.LazyList[Int] = @lazy_list.empty()
   for i in 0..<depth {
-    acc = acc.concat(@lazy_list.from_iter([i].iter()))
+    acc = acc.concat(@lazy_list.from_iter([|i|]))
   }
   acc
 }
@@ -71,7 +71,7 @@ test "bench LazyList concat while consuming n=2048" (it : @bench.T) {
   it.bench(fn() {
     let mut cur = @lazy_list.from_iter(source.iter())
     for i in 0..<concat_bench_len {
-      cur = cur.concat(@lazy_list.from_iter([i].iter()))
+      cur = cur.concat(@lazy_list.from_iter([|i|]))
       cur = cur.tail().unwrap()
     }
     it.keep(cur.head())

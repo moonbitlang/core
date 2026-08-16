@@ -24,7 +24,7 @@ fn[T : Add + Compare + Default] until_impl(
 ) -> Iter[T] {
   let zero = Default::default()
   if step == zero {
-    return Iter::empty()
+    return [||]
   }
   let mut i = start
   let mut done = false

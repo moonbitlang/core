@@ -15,9 +15,8 @@
 ///|
 pub impl[T : Shrink] Shrink for T? with fn shrink(x) {
   match x {
-    None => Iter::empty()
-    Some(v) =>
-      Shrink::shrink(v).map(v1 => Some(v1)).concat(Iter::singleton(None))
+    None => [||]
+    Some(v) => Shrink::shrink(v).map(v1 => Some(v1)).concat([|None|])
   }
 }
 
@@ -35,7 +34,7 @@ pub impl[X : Shrink] Shrink for Array[X] with fn shrink(xs) {
   let n = view.length()
   fn shr_sub_terms(arr : ArrayView[X]) {
     match arr {
-      [] => Iter::empty()
+      [] => [||]
       [x, .. xs] =>
         X::shrink(x)
         .map(x_ => [x_, ..xs])

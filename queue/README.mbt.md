@@ -62,7 +62,7 @@ test {
 ```mbt check
 ///|
 test {
-  let queue = @queue.from_iter([1, 2, 3].iter())
+  let queue = @queue.from_iter([|1, 2, 3|])
   @test.assert_eq(queue.length(), 3)
 }
 ```

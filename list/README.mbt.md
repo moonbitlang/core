@@ -411,7 +411,7 @@ test {
 test {
   let list = @list.List([1, 2, 3])
   debug_inspect(list.iter().to_array(), content="[1, 2, 3]")
-  let list2 = @list.from_iter([4, 5, 6].iter())
+  let list2 = @list.from_iter([|4, 5, 6|])
   @debug.assert_eq(list2, List([4, 5, 6]))
 }
 ```

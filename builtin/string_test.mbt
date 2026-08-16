@@ -162,7 +162,7 @@ test "String default and to_array" {
 
 ///|
 test "String from_iter" {
-  let iter = ['a', 'b', 'c'].iter()
+  let iter = [|'a', 'b', 'c'|]
   inspect(String::from_iter(iter), content="abc")
 }
 

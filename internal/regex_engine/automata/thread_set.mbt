@@ -289,7 +289,7 @@ fn ThreadSet::iter_marks(self : ThreadSet) -> Iter[MarkSlotMap] {
   .iter()
   .flat_map(thread => {
     match thread {
-      End(marks) | Exp(marks, _) => Iter::singleton(marks)
+      End(marks) | Exp(marks, _) => [|marks|]
       Seq(_pref, first, _next) => first.iter_marks()
     }
   })

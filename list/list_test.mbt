@@ -787,25 +787,22 @@ test "add" {
 
 ///|
 test "from_iter multiple elements iter" {
-  debug_inspect(@list.from_iter([1, 2, 3].iter()), content="<List: [1, 2, 3]>")
+  debug_inspect(@list.from_iter([|1, 2, 3|]), content="<List: [1, 2, 3]>")
 }
 
 ///|
 test "from_iter_rev multiple elements iter" {
-  debug_inspect(
-    @list.from_iter_rev([1, 2, 3].iter()),
-    content="<List: [3, 2, 1]>",
-  )
+  debug_inspect(@list.from_iter_rev([|1, 2, 3|]), content="<List: [3, 2, 1]>")
 }
 
 ///|
 test "from_iter single element iter" {
-  debug_inspect(@list.from_iter([1].iter()), content="<List: [1]>")
+  debug_inspect(@list.from_iter([|1|]), content="<List: [1]>")
 }
 
 ///|
 test "from_iter empty iter" {
-  let pq : @list.List[Int] = @list.from_iter(Iter::empty())
+  let pq : @list.List[Int] = @list.from_iter([||])
   debug_inspect(pq, content="<List: []>")
 }
 

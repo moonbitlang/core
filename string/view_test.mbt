@@ -635,7 +635,7 @@ test "from_array" {
 
 ///|
 test "from_iter" {
-  let v = StringView::from_iter(['a', '😭', 'b', '😂', 'c'].iter())
+  let v = StringView::from_iter([|'a', '😭', 'b', '😂', 'c'|])
   inspect(v, content="a😭b😂c")
 }
 

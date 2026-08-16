@@ -29,7 +29,7 @@ test "panic reentrant force through a suspended concat aborts" {
   // than on a thunk.
   let slot : Array[@lazy_list.LazyList[Int]] = []
   let left = @lazy_list.lazy_cons(1, () => slot[0].tail().unwrap())
-  let both = left.concat(@lazy_list.from_iter([2].iter()))
+  let both = left.concat(@lazy_list.from_iter([|2|]))
   slot.push(both)
   ignore(both.tail())
 }
