@@ -32,11 +32,17 @@ pub fn valid(input : StringView) -> Bool {
 /// ## What strings may contain
 ///
 /// Every string in the result is well-formed Unicode: each `\uXXXX` escape
-/// has to denote a Unicode scalar value. An escaped leading surrogate
+/// must denote a Unicode scalar value on its own, or be one half of a
+/// correctly ordered surrogate pair. An escaped leading surrogate
 /// (`\uD800`–`\uDBFF`) must therefore be followed immediately by an escaped
 /// trailing surrogate (`\uDC00`–`\uDFFF`), and the pair is decoded as the
-/// one character it stands for; an escape that cannot pair up raises
-/// `InvalidChar`, positioned at the backslash that opens it.
+/// one character it stands for.
+///
+/// An escape that cannot pair up raises `InvalidChar` positioned at the
+/// backslash that opens it — that one position, whatever the scan actually
+/// stopped on. Input that simply runs out still raises `InvalidEof`, and a
+/// second escape that is itself malformed is reported as the hex-digit
+/// error it is, at the offending digit.
 ///
 /// This is a limit on what a string may *contain*, which RFC 8259 §9 leaves
 /// to the implementation — not a claim about which documents are
@@ -50,7 +56,9 @@ pub fn valid(input : StringView) -> Bool {
 ///
 /// The cost is real: `JSON.stringify` in JavaScript emits lone surrogates as
 /// `\uXXXX`, so some JSON that JavaScript and Python accept is rejected
-/// here. Rust's serde_json rejects it too; Go substitutes U+FFFD.
+/// here. Rust's serde_json rejects it too when parsing into `String` or
+/// `Value`, though its byte-oriented mode admits WTF-8; Go's `encoding/json`
+/// substitutes U+FFFD, while its experimental v2 parser is stricter.
 #label_migration(max_nesting_depth, fill=false)
 pub fn parse(
   input : StringView,
