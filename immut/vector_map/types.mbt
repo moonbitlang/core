@@ -34,7 +34,7 @@
 /// - The last slot of a non-empty `spine` is never a tombstone, so an empty
 ///   map always has an empty spine.
 /// - Tombstones never outnumber live entries once the spine reaches
-///   `min_compact_length`.
+///   `MIN_COMPACT_LENGTH`.
 ///
 /// Note that the representation is deliberately *not* canonical: two equal maps
 /// may hold different tombstone layouts, so `Eq` compares the live entry
