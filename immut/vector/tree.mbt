@@ -474,19 +474,20 @@ fn[A] rebalance(
       // return H height node, no upper node so no need to add another layer on top of it
     }
   } else {
-    let new_child_1 = FixedArray::makei(BRANCHING_FACTOR, i => new_t[i])
-    let new_child_2 = FixedArray::makei(new_t.length() - BRANCHING_FACTOR, i => {
-      new_t[i + BRANCHING_FACTOR]
+    // Pack the redistributed children into as many nodes as they need.
+    //
+    // Two is not always enough: `Tree::concat`'s leaf case hands us a center of
+    // at most 2 children, so `tri_merge` yields at most 31 + 2 + 31 = 64 - but
+    // `Tree::concat_with_suffix` splices the left vector's tail in as a third
+    // leaf, and 31 + 3 + 31 = 65 leaves a 33rd child over. A node that wide
+    // breaks radix indexing, which masks the child index with `BITMASK`.
+    let count = (new_t.length() + BRANCHING_FACTOR - 1) / BRANCHING_FACTOR
+    let new_children = FixedArray::makei(count, i => {
+      let lo = i * BRANCHING_FACTOR
+      let hi = min(lo + BRANCHING_FACTOR, new_t.length())
+      let chunk = FixedArray::makei(hi - lo, j => new_t[lo + j])
+      Node(chunk, compute_sizes(chunk, shift - NUM_BITS)) // height H
     })
-    let new_node_1 = Node(
-      new_child_1,
-      compute_sizes(new_child_1, shift - NUM_BITS),
-    ) // height H
-    let new_node_2 = Node(
-      new_child_2,
-      compute_sizes(new_child_2, shift - NUM_BITS),
-    ) // height H
-    let new_children = FixedArray::from_array([new_node_1, new_node_2])
     return (
       Node(new_children, compute_sizes(new_children, shift)),
       shift + NUM_BITS,
