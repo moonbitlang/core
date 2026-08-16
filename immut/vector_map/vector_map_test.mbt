@@ -188,8 +188,10 @@ test "update" {
       #|[("b", 2)]
     ),
   )
-  // removing something absent is a no-op
+  // removing something absent is a no-op, down to the identity of the result:
+  // `update` reaches `remove`, which hands the receiver back untouched
   assert_true(m.update("z", _ => None) == m)
+  assert_true(physical_equal(m.update("z", _ => None), m))
 }
 
 ///|
@@ -474,8 +476,10 @@ test "removals past the compaction threshold keep every promise" {
   )
   // Every survivor still resolves THROUGH THE INDEX, and to the value it was
   // given. Iterating would only read the spine, so it would not notice an index
-  // left pointing at the pre-rebuild slots; `get` and `contains` are the only
-  // black-box operations that go through it.
+  // left pointing at the pre-rebuild slots; `get` and `contains` are the direct
+  // read-only probes of it, which is what makes them the ones to sweep with
+  // here. (`add`, `remove` and `update` consult it too, but by changing the map
+  // rather than reporting on it.)
   for i in 0..<200 {
     if i % 5 == 0 {
       assert_true(sparse.contains(i))

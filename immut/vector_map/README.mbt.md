@@ -1,6 +1,6 @@
 # Immutable VectorMap
 
-A persistent map that iterates in **insertion order** — the immutable counterpart of the built-in insertion-ordered `Map`. Every update returns a new map and never disturbs the receiver.
+A persistent map that iterates in **insertion order** — the immutable counterpart of the built-in insertion-ordered `Map`. Updates return a map and never disturb the receiver: a new one when anything changed, and the receiver itself for a handful of no-ops spelled out below.
 
 Reach for it over `@immut/hashmap` when the order in which entries were added is part of what you are storing: rendering a list, replaying a log, or anything whose output a reader would notice being shuffled. Reach for `@immut/sorted_map` instead when you want entries in *key* order, and for `@immut/hashmap` when order does not matter at all — it is the leaner structure.
 
