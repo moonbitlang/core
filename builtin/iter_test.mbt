@@ -14,7 +14,9 @@
 
 ///|
 test "empty" {
-  let iter = [||]
+  // the `[||]` literal is preferred at call sites, but `Iter::empty` is still
+  // public API and needs its own coverage
+  let iter : Iter[Char] = Iter::empty()
   let exb = StringBuilder(size_hint=0)
   iter.each(x => exb.write_char(x))
   inspect(exb)
@@ -22,7 +24,8 @@ test "empty" {
 
 ///|
 test "singleton" {
-  let iter = [|'1'|]
+  // likewise `Iter::singleton`, the constructor behind `[|x|]`
+  let iter = Iter::singleton('1')
   let exb = StringBuilder(size_hint=0)
   iter.each(x => exb.write_char(x))
   inspect(exb, content="1")
@@ -340,10 +343,7 @@ test "size_hint" {
   )
   debug_inspect([|1, 2, 3|].filter(x => x > 1).size_hint(), content="None")
   debug_inspect(
-    [1, 2, 3]
-    .iter()
-    .filter_map(x => if x > 1 { Some(x) } else { None })
-    .size_hint(),
+    [|1, 2, 3|].filter_map(x => if x > 1 { Some(x) } else { None }).size_hint(),
     content="None",
   )
   debug_inspect([|1, 2, 3|].take_while(x => x < 3).size_hint(), content="None")
@@ -395,16 +395,18 @@ test "filter_map" {
   let r3 : Array[Unit] = [||].filter_map(x => Some(x)).collect()
   debug_inspect(r3, content="[]")
   // Test using next() directly to ensure the closure is executed
-  let it1 = [1, 2, 3, 4, 5]
-    .iter()
-    .filter_map(x => if x % 2 == 0 { Some(x * 10) } else { None })
+  let it1 = [|1, 2, 3, 4, 5|].filter_map(x => {
+    if x % 2 == 0 {
+      Some(x * 10)
+    } else {
+      None
+    }
+  })
   debug_inspect(it1.next(), content="Some(20)")
   debug_inspect(it1.next(), content="Some(40)")
   debug_inspect(it1.next(), content="None")
   // Test None branch inside while loop
-  let it2 = [1, 2, 3]
-    .iter()
-    .filter_map(x => if x == 2 { None } else { Some(x) })
+  let it2 = [|1, 2, 3|].filter_map(x => if x == 2 { None } else { Some(x) })
   debug_inspect(it2.next(), content="Some(1)")
   debug_inspect(it2.next(), content="Some(3)")
   debug_inspect(it2.next(), content="None")

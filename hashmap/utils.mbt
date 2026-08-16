@@ -122,7 +122,7 @@ pub fn[K, V] HashMap::iter2(self : HashMap[K, V]) -> Iter2[K, V] {
 ///
 /// ```mbt check
 /// test {
-///   let iter = [|(1, "one")|] + [|(2, "two")|]
+///   let iter = [|(1, "one"), (2, "two")|]
 ///   let map = @hashmap.from_iter(iter)
 ///   debug_inspect(map.get(1), content="Some(\"one\")")
 ///   debug_inspect(map.get(2), content="Some(\"two\")")
