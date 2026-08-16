@@ -296,8 +296,9 @@ fn[K, V] VectorMap::should_compact(self : VectorMap[K, V]) -> Bool {
 ///|
 /// Rebuild the spine dense and renumber the index onto the new slots.
 ///
-/// No key is hashed again: `HashMap::map` walks the existing trie and replaces
-/// values in place, preserving its shape.
+/// No key is hashed again: `HashMap::map` walks the existing trie and rebuilds
+/// it around the new values, node for node, so the shape is carried over
+/// without a single hash being recomputed.
 fn[K, V] VectorMap::compact(self : VectorMap[K, V]) -> VectorMap[K, V] {
   let remap = FixedArray::make(self.spine.length(), 0)
   let kept : Array[(K, V)?] = Array::new(capacity=self.size)

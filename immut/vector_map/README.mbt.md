@@ -1,6 +1,6 @@
 # Immutable VectorMap
 
-A persistent map that iterates in **insertion order** — the immutable counterpart of the built-in insertion-ordered `Map`. Operations return a map and never disturb the receiver.
+A persistent map that iterates in **insertion order** — the immutable counterpart of the built-in insertion-ordered `Map`. Every update returns a new map and never disturbs the receiver.
 
 Reach for it over `@immut/hashmap` when the order in which entries were added is part of what you are storing: rendering a list, replaying a log, or anything whose output a reader would notice being shuffled. Reach for `@immut/sorted_map` instead when you want entries in *key* order, and for `@immut/hashmap` when order does not matter at all — it is the leaner structure.
 
@@ -167,7 +167,7 @@ test "json" {
 
 ## Skipping work on an unchanged map
 
-Two operations are guaranteed to hand back the receiver itself rather than an equal copy: removing a key that is not there, and filtering with a predicate that rejects nothing. A caller that memoises on physical identity — re-rendering only when the map is a different object — is therefore not woken by either.
+Two operations are guaranteed to hand back the receiver itself rather than an equal copy: removing a key that is not there, and filtering with a predicate that rejects nothing. `update` inherits the first, since returning `None` for a key that is absent goes through `remove`. A caller that memoises on physical identity — re-rendering only when the map is a different object — is therefore not woken by any of them.
 
 ```mbt check
 ///|
@@ -178,7 +178,7 @@ test "no_op" {
 }
 ```
 
-No such promise is made anywhere else, and in particular `add` always builds a new map even when the value it stores equals the one already there. Deciding otherwise would mean comparing values, and the only generic way to do that cheaply — `physical_equal` — is explicitly not something to hang semantics on. Check `get` yourself first if you need to skip a redundant write.
+No such promise is made beyond those, and in particular `add` always builds a new map even when the value it stores equals the one already there. Deciding otherwise would mean comparing values, and the only generic way to do that cheaply — `physical_equal` — is explicitly not something to hang semantics on. Check `get` yourself first if you need to skip a redundant write.
 
 ## How it works, and what it costs
 
