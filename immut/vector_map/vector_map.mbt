@@ -13,14 +13,14 @@
 // limitations under the License.
 
 ///|
-/// Create an empty map.
+/// Create an empty map. `O(1)`.
 #as_free_fn
 pub fn[K, V] VectorMap::new() -> VectorMap[K, V] {
   { index: @hashmap.new(), spine: @vector.new(), size: 0 }
 }
 
 ///|
-/// Create a map holding a single entry.
+/// Create a map holding a single entry. `O(1)`.
 #as_free_fn
 pub fn[K : Hash, V] VectorMap::singleton(key : K, value : V) -> VectorMap[K, V] {
   {
@@ -35,6 +35,8 @@ pub fn[K : Hash, V] VectorMap::singleton(key : K, value : V) -> VectorMap[K, V] 
 ///
 /// A repeated key keeps the position of its **first** occurrence and the value
 /// of its **last**, matching what repeated `add`s would produce.
+///
+/// Two descents per pair, so `O(n log n)`.
 ///
 /// # Example
 ///
@@ -59,7 +61,7 @@ pub fn[K : Eq + Hash, V] VectorMap::VectorMap(
 /// Create a map from an iterator of key-value pairs, in the iterator's order.
 ///
 /// A repeated key keeps the position of its first occurrence and the value of
-/// its last.
+/// its last. Two descents per pair, so `O(n log n)`.
 #as_free_fn
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
@@ -95,20 +97,21 @@ fn[K : Eq + Hash, V] from_pairs(iter : Iter[(K, V)]) -> VectorMap[K, V] {
 }
 
 ///|
-/// The number of entries in the map. This is `O(1)`.
+/// The number of entries in the map. `O(1)` — the count is stored, unlike
+/// `@immut/hashmap.HashMap::length` which walks the whole trie.
 #alias(size, deprecated)
 pub fn[K, V] VectorMap::length(self : VectorMap[K, V]) -> Int {
   self.size
 }
 
 ///|
-/// Whether the map holds no entries.
+/// Whether the map holds no entries. `O(1)`.
 pub fn[K, V] VectorMap::is_empty(self : VectorMap[K, V]) -> Bool {
   self.size == 0
 }
 
 ///|
-/// Look up a key.
+/// Look up a key. One trie descent and one spine descent, so `O(log n)`.
 #alias(find, deprecated)
 pub fn[K : Eq + Hash, V] VectorMap::get(self : VectorMap[K, V], key : K) -> V? {
   guard self.index.get(key) is Some(slot) else { return None }
@@ -117,7 +120,7 @@ pub fn[K : Eq + Hash, V] VectorMap::get(self : VectorMap[K, V], key : K) -> V? {
 }
 
 ///|
-/// Look up a key, aborting when it is absent.
+/// Look up a key, aborting when it is absent. `O(log n)`, as for `get`.
 #alias("_[_]")
 pub fn[K : Eq + Hash, V] VectorMap::at(self : VectorMap[K, V], key : K) -> V {
   guard! self.get(key) is Some(value)
@@ -125,7 +128,8 @@ pub fn[K : Eq + Hash, V] VectorMap::at(self : VectorMap[K, V], key : K) -> V {
 }
 
 ///|
-/// Whether the map holds an entry for `key`.
+/// Whether the map holds an entry for `key`. One trie descent and no spine
+/// access at all, so `O(log n)` and cheaper than `get`.
 pub fn[K : Eq + Hash, V] VectorMap::contains(
   self : VectorMap[K, V],
   key : K,
@@ -139,6 +143,9 @@ pub fn[K : Eq + Hash, V] VectorMap::contains(
 /// A key already present keeps its position and only its value is replaced; a
 /// new key is appended after every existing entry. Removing a key and adding it
 /// back therefore moves it to the end.
+///
+/// `O(log n)` for a key already present. For a new key `O(log n)` amortised,
+/// but `O(n)` on the call that carries the spine over the rebuild threshold.
 ///
 /// # Example
 ///
@@ -200,6 +207,11 @@ pub fn[K : Eq + Hash, V] VectorMap::add(
 ///|
 /// Remove a key, returning a new map. A key that is absent returns the receiver
 /// itself.
+///
+/// `O(log n)` amortised, but `O(n)` on a call that trims a long run of holes or
+/// rebuilds the spine. The amortisation holds along one line of descent only —
+/// repeatedly removing from a version taken just before a rebuild pays for it
+/// each time.
 pub fn[K : Eq + Hash, V] VectorMap::remove(
   self : VectorMap[K, V],
   key : K,
@@ -224,6 +236,9 @@ pub fn[K : Eq + Hash, V] VectorMap::remove(
 /// Replace, insert, or remove the entry for `key` in one step: `f` sees the
 /// current value if there is one, and its result becomes the new value, or
 /// removes the key when it is `None`.
+///
+/// A lookup followed by an `add` or a `remove`, so `O(log n)` amortised with
+/// their worst cases.
 ///
 /// # Example
 ///

@@ -39,6 +39,19 @@
 /// Note that the representation is deliberately *not* canonical: two equal maps
 /// may hold different tombstone layouts, so `Eq` compares the live entry
 /// sequence rather than the underlying structure.
+///
+/// # Complexity
+///
+/// Each operation carries its own cost below. Two conventions run through them:
+/// `n` is the number of live entries, and a *descent* — of the hash trie or of
+/// the spine — is `O(log n)` for keys whose hashes are reasonably distributed.
+/// Keys that collide on the whole hash share a bucket searched linearly, so a
+/// bad `Hash` degrades every keyed operation towards `O(n)`; that is inherited
+/// from `@immut/hashmap` rather than added here.
+///
+/// Traversals are linear in the *spine*, which the reclamation rules keep below
+/// twice the entry count, so they are `O(n)` with a constant factor that rises
+/// as holes accumulate.
 struct VectorMap[K, V] {
   index : @hashmap.HashMap[K, Int]
   spine : @vector.Vector[(K, V)?]
