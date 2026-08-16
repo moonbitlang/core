@@ -90,44 +90,107 @@ test "lex_hex_digits accepts all hex digit ranges" {
   )
 }
 
+// Regression for #4062. The parser used to decode every `\uXXXX` escape by
+// writing the hex value into the result unchecked, manufacturing an
+// ill-formed lone-surrogate string out of valid ASCII JSON input. MoonBit
+// strings stay well-formed Unicode, so an escaped leading surrogate must be
+// followed immediately by an escaped trailing surrogate — the pair decodes
+// to the one character it denotes — and every unpaired spelling is a
+// `ParseError`.
+//
+// The cases are split by shape so that one failing assertion cannot mask the
+// rest; the old parser accepted all of the rejections below, and aborted
+// outright on the escaped-leading + raw-trailing one.
+
 ///|
-/// Regression for #4062. The parser used to decode every `\uXXXX` escape by
-/// writing the hex value into the result unchecked, manufacturing an
-/// ill-formed lone-surrogate string out of valid ASCII JSON input. MoonBit
-/// strings stay Unicode well-formed, so an escaped leading surrogate must be
-/// immediately followed by an escaped trailing surrogate (the pair combines
-/// into one scalar value); every unpaired spelling is now a ParseError.
-/// RFC 8259 calls the behavior for unpaired surrogate escapes unpredictable
-/// and RFC 7493 (I-JSON) forbids them; rejecting matches serde_json.
-test "unpaired surrogate escapes are rejected with a clean parse error" {
-  // An unpaired leading-surrogate escape.
+test "unpaired leading-surrogate escape is rejected" {
+  // Nothing after it at all, and a closing quote after it.
+  assert_false(@json.valid("\"\\uD800"))
   assert_false(@json.valid("\"\\uD800\""))
+  // A character that is not the start of an escape.
   assert_false(@json.valid("\"\\uD800x\""))
+  // An escape that is not `\u`.
   assert_false(@json.valid("\"\\uD800\\n\""))
-  // A bare trailing-surrogate escape.
-  assert_false(@json.valid("\"\\uDC00\""))
-  assert_false(@json.valid("\"a\\uDFFF b\""))
   // Two leading-surrogate escapes in a row.
   assert_false(@json.valid("\"\\uD800\\uD800\""))
-  // An escaped pair in reverse order.
+  // A second escape that is present but malformed or cut short.
+  assert_false(@json.valid("\"\\uD800\\uZZZZ\""))
+  assert_false(@json.valid("\"\\uD800\\u00\""))
+  assert_false(@json.valid("\"\\uD800\\u\""))
+  assert_false(@json.valid("\"\\uD800\\u"))
+}
+
+///|
+test "bare trailing-surrogate escape is rejected" {
+  assert_false(@json.valid("\"\\uDC00\""))
+  assert_false(@json.valid("\"a\\uDFFF b\""))
+  // An escaped pair in reverse order: the trailing half is bare.
   assert_false(@json.valid("\"\\uDE00\\uD83D\""))
-  // Mixed escaped/raw halves do not pair up.
+}
+
+///|
+test "escaped and raw surrogate halves do not pair up" {
   let lone_low = String::from_array([(0xDC00).unsafe_to_char()])
   assert_false(@json.valid("\"\\uD800" + lone_low + "\""))
-  // The failure is the documented ParseError, not an ill-formed string.
+}
+
+///|
+test "unpaired surrogate escapes are rejected in object keys too" {
+  assert_false(@json.valid("{\"\\uD800\": 1}"))
+  assert_false(@json.valid("{\"a\": 1, \"\\uDC00\": 2}"))
+  // ...and a valid pair in a key still works.
+  assert_true(@json.valid("{\"\\uD83D\\uDE00\": 1}"))
+}
+
+///|
+test "the surrogate error names the escape that could not pair up" {
+  // The position is the backslash opening the offending escape, not
+  // whichever character the scan stopped on — that would blame the last,
+  // perfectly valid, hex digit. Columns count code units from zero, so the
+  // backslash after the opening quote is column 1.
   debug_inspect(
     expect_parse_error("\"\\uDC00\"", "expected InvalidChar"),
     content=(
-      #|InvalidChar({ line: 1, column: 6 }, '0')
+      #|InvalidChar({ line: 1, column: 1 }, '\\')
     ),
   )
-  // Valid escaped pairs still combine into one scalar value, with any hex
-  // digit case, in any position.
-  assert_true(@json.parse("\"\\uD83D\\uDE00\"") == Json::string("\u{1F600}"))
+  debug_inspect(
+    expect_parse_error("\"ab\\uD800x\"", "expected InvalidChar"),
+    content=(
+      #|InvalidChar({ line: 1, column: 3 }, '\\')
+    ),
+  )
+  // A non-BMP character after the escape occupies two code units; the
+  // reported column must not land inside it.
+  debug_inspect(
+    expect_parse_error("\"\\uD800\u{1F600}\"", "expected InvalidChar"),
+    content=(
+      #|InvalidChar({ line: 1, column: 1 }, '\\')
+    ),
+  )
+  // Running out of input is still an EOF error rather than a character one.
+  debug_inspect(
+    expect_parse_error("\"\\uD800", "expected InvalidEof"),
+    content="InvalidEof",
+  )
+}
+
+///|
+test "valid surrogate pairs decode to one scalar value" {
+  // Both ends of the supplementary range.
+  assert_true(@json.parse("\"\\uD800\\uDC00\"") == Json::string("\u{10000}"))
   assert_true(@json.parse("\"\\udbff\\udfff\"") == Json::string("\u{10FFFF}"))
+  // Any hex digit case, and in any position within the string.
+  assert_true(@json.parse("\"\\uD83D\\uDE00\"") == Json::string("\u{1F600}"))
   assert_true(
     @json.parse("\"a\\uD83D\\uDE00b\\n\"") == Json::string("a\u{1F600}b\n"),
   )
-  // Non-surrogate escapes are unaffected.
+  // Two pairs running together are decoded independently.
+  assert_true(
+    @json.parse("\"\\uD83D\\uDE00\\uD83D\\uDE01\"") ==
+    Json::string("\u{1F600}\u{1F601}"),
+  )
+  // Non-surrogate escapes are unaffected, including the replacement
+  // character, which is a scalar value like any other.
   assert_true(@json.parse("\"\\u0041\\uFFFD\"") == Json::string("A\u{FFFD}"))
 }

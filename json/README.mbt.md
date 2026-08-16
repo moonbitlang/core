@@ -51,6 +51,33 @@ test "parse and validate jsons" {
 }
 ```
 
+#### What may appear inside a string
+
+Every string in a parsed document is well-formed Unicode, so each `\uXXXX`
+escape has to denote a Unicode scalar value. An escaped leading surrogate
+must be followed immediately by an escaped trailing surrogate, and the pair
+decodes to the single character it stands for; an escape that cannot pair up
+is a parse error.
+
+```mbt check
+///|
+test "surrogate escapes" {
+  // A surrogate pair decodes to the one character it denotes.
+  assert_true(@json.parse("\"\\uD83D\\uDE00\"") == Json::string("😀"))
+  // An escape that cannot pair up is rejected rather than producing a
+  // string that is not well-formed Unicode.
+  assert_false(@json.valid("\"\\uD800\""))
+}
+```
+
+RFC 8259 §9 leaves what a string may contain to the implementation, and this
+is where MoonBit draws that line: a `String` is required to be well-formed,
+so the alternatives would be to hand one back that is not, or to substitute
+U+FFFD and lose the difference between two distinct keys. Note that
+`JSON.stringify` in JavaScript does emit lone surrogates this way, so a
+document JavaScript and Python accept can be rejected here — as it is by
+Rust's serde_json; Go substitutes U+FFFD instead.
+
 ### Object Navigation
 
 ```mbt check
