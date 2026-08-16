@@ -322,6 +322,27 @@ test "bulk constructors put every leaf at the bottom" {
 }
 
 //-----------------------------------------------------------------------------
+// Regression: a node wider than the branching factor
+//-----------------------------------------------------------------------------
+
+///|
+/// `rebalance` used to split a wide redistribution result into exactly two
+/// nodes, which holds for `Tree::concat` (its leaf case hands over a center of
+/// at most 2 children, so the merge is at most `31 + 2 + 31 = 64`) but not for
+/// `Tree::concat_with_suffix`, whose center can be three leaves. At `65` the
+/// second node came out 33 wide, and `radix_indexing` masks the child index
+/// with `BITMASK`, so index 32 of that node wrapped back to 0.
+test "concat never builds a node wider than the branching factor" {
+  for l in [1025, 1056, 1057, 1088, 2049, 2080, 2081] {
+    for r in [992, 1024, 1056] {
+      let joined = makei(l, i => i).concat(makei(r, i => l + i))
+      check_invariants(joined, "l=\{l} r=\{r}")
+      check_contents(joined, Array::makei(l + r, i => i), "l=\{l} r=\{r}")
+    }
+  }
+}
+
+//-----------------------------------------------------------------------------
 // Randomized structural sweep
 //-----------------------------------------------------------------------------
 
