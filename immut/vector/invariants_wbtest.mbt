@@ -281,6 +281,47 @@ test "radix classification survives a full-but-relaxed node" {
 }
 
 //-----------------------------------------------------------------------------
+// Regression: a short remainder attached one level too high
+//-----------------------------------------------------------------------------
+
+///|
+/// `makei`, `make` and `from_iter` all build their tree with `from_leaves`,
+/// whose height is fixed by the capacity it is given. It used to take a
+/// shortcut whenever at most `BRANCHING_FACTOR` leaves were left, building a
+/// height-1 node no matter how tall the subtree should have been. From three
+/// levels up (> 32768 elements) with a remainder of at most 1024 elements,
+/// that attached a leaf above shift 0: radix descent then read the wrong
+/// element and `Tree::size` reported garbage — `makei(32832, i => i)[32800]`
+/// returned 32768.
+test "bulk constructors put every leaf at the bottom" {
+  let level3 = BRANCHING_FACTOR * BRANCHING_FACTOR * BRANCHING_FACTOR
+  for
+    n in [
+      level3,
+      level3 + BRANCHING_FACTOR,
+      level3 + 2 * BRANCHING_FACTOR,
+      level3 + 1024,
+      level3 + 1032,
+      level3 + 2048,
+      2 * level3 + BRANCHING_FACTOR,
+    ] {
+    for mode in 0..<3 {
+      let v = match mode {
+        0 => makei(n, i => i)
+        1 => from_iter(Array::makei(n, i => i).iter())
+        _ => make(n, 7)
+      }
+      let label = "n=\{n} mode=\{mode}"
+      check_invariants(v, label)
+      ensure(v.length() == n, "\{label}: length \{v.length()}")
+      if mode != 2 {
+        check_contents(v, Array::makei(n, i => i), label)
+      }
+    }
+  }
+}
+
+//-----------------------------------------------------------------------------
 // Randomized structural sweep
 //-----------------------------------------------------------------------------
 
