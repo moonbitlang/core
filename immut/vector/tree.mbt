@@ -461,6 +461,12 @@ fn[A] rebalance(
     // All nodes can be accommodated in a single node
     let node = Node(new_t, compute_sizes(new_t, shift - NUM_BITS)) // node of H height
     if !top {
+      // This wrapper is the one place that puts `None` over a child without
+      // checking it, so it would break radix descent if it ever reached a
+      // finished tree. It cannot: `!top` means the caller is another
+      // `Tree::concat`/`concat_with_suffix` frame, whose `rebalance` feeds it
+      // straight to `tri_merge` and keeps only the child. The layer exists
+      // solely to match the height the caller asserts on.
       return (Node(FixedArray::from_array([node]), None), shift + NUM_BITS)
       // return (H+1) height node, add another layer to align with the case at the end of the thisfunction
     } else {
@@ -678,6 +684,27 @@ fn[A] redis(
 }
 
 ///|
+/// Can `self` be descended by radix indexing, i.e. without consulting a sizes
+/// array?
+///
+/// This is a *shallow* test, and that is enough: a node is only ever built
+/// with `None` when its whole subtree is radix-indexable, so `None` here
+/// implies `None` all the way down.
+///
+/// Note that being exactly full is **not** sufficient. `append_right_leaf`
+/// and `push_end` grow a relaxed node by patching its sizes array, so a node
+/// can reach its full size while still carrying one; `get_radix` aborts the
+/// moment it meets such a node.
+fn[A] Tree::is_radix(self : Tree[A]) -> Bool {
+  match self {
+    Leaf(_) => true
+    Node(_, None) => true
+    Node(_, Some(_)) => false
+    Empty => false
+  }
+}
+
+///|
 /// Given a list of trees as `children` with heights of (`shift` / `NUM_BITS`), compute the sizes array of the subtrees.
 fn[A] compute_sizes(
   children : FixedArray[Tree[A]],
@@ -689,8 +716,11 @@ fn[A] compute_sizes(
   let mut flag = true
   let full_subtree_size = BRANCHING_FACTOR << shift
   for i in 0..<len {
-    let sz = children[i].size(shift)
-    flag = flag && sz == full_subtree_size
+    let child = children[i]
+    let sz = child.size(shift)
+    // Dropping the sizes array commits every reader to radix descent, so the
+    // children must be full *and* radix themselves.
+    flag = flag && sz == full_subtree_size && child.is_radix()
     sum += sz
     sizes[i] = sum
   }
