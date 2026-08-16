@@ -20,21 +20,21 @@
 /// entries needs, since a reordering is a visible change. The comparison reads
 /// the live entries only: tombstone layout is representation, and two equal
 /// maps reached by different histories may well have different spines.
+///
+/// `O(1)` when the two are physically identical or differ in length, `O(n)`
+/// otherwise — and it stops at the first entry that differs.
 pub impl[K : Eq, V : Eq] Eq for VectorMap[K, V] with fn equal(self, other) {
   if physical_equal(self, other) {
     return true
   }
+  // Comparing lengths first is not just a shortcut: the walk below stops after
+  // `self.size` entries, so without it a map would compare equal to any longer
+  // map it is a prefix of — and `Eq` would not even be symmetric.
   guard self.size == other.size else { return false }
   let left = self.iter()
   let right = other.iter()
   for _ in 0..<self.size {
-    match (left.next(), right.next()) {
-      (Some((k1, v1)), Some((k2, v2))) =>
-        if k1 != k2 || v1 != v2 {
-          return false
-        }
-      _ => return false
-    }
+    guard left.next() == right.next() else { return false }
   }
   true
 }
@@ -45,7 +45,7 @@ pub impl[K : Eq, V : Eq] Eq for VectorMap[K, V] with fn equal(self, other) {
 ///
 /// The length is not folded in separately: the hasher is fed one key and one
 /// value per entry in sequence, so a map and a proper prefix of it already
-/// diverge without help.
+/// diverge without help. `O(n)`.
 pub impl[K : Hash, V : Hash] Hash for VectorMap[K, V] with fn hash_combine(
   self,
   hasher,
@@ -71,7 +71,7 @@ pub impl[K : @debug.Debug, V : @debug.Debug] @debug.Debug for VectorMap[K, V] wi
 ///
 /// An array rather than an object, because the point of this type is the order
 /// of its entries and JSON object member order is not something a reader is
-/// obliged to preserve. It also keeps non-string keys intact.
+/// obliged to preserve. It also keeps non-string keys intact. `O(n)`.
 pub impl[K : ToJson, V : ToJson] ToJson for VectorMap[K, V] with fn to_json(
   self,
 ) {
@@ -81,6 +81,8 @@ pub impl[K : ToJson, V : ToJson] ToJson for VectorMap[K, V] with fn to_json(
 }
 
 ///|
+/// Decode an array of `[key, value]` pairs, applying the same duplicate-key rule
+/// as the array constructor. Two descents per pair, so `O(n log n)`.
 pub impl[K : @json.FromJson + Eq + Hash, V : @json.FromJson] @json.FromJson for VectorMap[
   K,
   V,

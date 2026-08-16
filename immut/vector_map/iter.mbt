@@ -16,7 +16,7 @@
 // yield entries in insertion order and none of them touches the hash trie.
 
 ///|
-/// Apply `f` to every entry, in insertion order.
+/// Apply `f` to every entry, in insertion order. `O(n)`.
 pub fn[K, V] VectorMap::each(
   self : VectorMap[K, V],
   f : (K, V) -> Unit raise?,
@@ -29,7 +29,7 @@ pub fn[K, V] VectorMap::each(
 ///
 /// The position is the entry's rank among the live entries, so it always runs
 /// from `0` to `length() - 1` with no gaps, whatever the spine looks like
-/// underneath.
+/// underneath. `O(n)`.
 pub fn[K, V] VectorMap::eachi(
   self : VectorMap[K, V],
   f : (Int, K, V) -> Unit raise?,
@@ -44,34 +44,37 @@ pub fn[K, V] VectorMap::eachi(
 }
 
 ///|
-/// Iterate over the entries, in insertion order.
+/// Iterate over the entries, in insertion order. `O(1)` to build, `O(n)` to
+/// drain.
 #alias(iterator, deprecated)
 pub fn[K, V] VectorMap::iter(self : VectorMap[K, V]) -> Iter[(K, V)] {
   self.spine.iter().filter_map(entry => entry)
 }
 
 ///|
-/// Iterate over the entries as key/value pairs, in insertion order.
+/// Iterate over the entries as key/value pairs, in insertion order. `O(1)` to
+/// build, `O(n)` to drain.
 #alias(iterator2, deprecated)
 pub fn[K, V] VectorMap::iter2(self : VectorMap[K, V]) -> Iter2[K, V] {
   self.iter()
 }
 
 ///|
-/// Iterate over the keys, in insertion order.
+/// Iterate over the keys, in insertion order. `O(1)` to build, `O(n)` to drain.
 pub fn[K, V] VectorMap::keys(self : VectorMap[K, V]) -> Iter[K] {
   self.iter().map(kv => kv.0)
 }
 
 ///|
-/// Iterate over the values, in insertion order.
+/// Iterate over the values, in insertion order. `O(1)` to build, `O(n)` to
+/// drain.
 #alias(elems, deprecated)
 pub fn[K, V] VectorMap::values(self : VectorMap[K, V]) -> Iter[V] {
   self.iter().map(kv => kv.1)
 }
 
 ///|
-/// Fold over the entries, in insertion order.
+/// Fold over the entries, in insertion order. `O(n)`.
 pub fn[K, V, A] VectorMap::fold(
   self : VectorMap[K, V],
   init~ : A,
@@ -86,7 +89,7 @@ pub fn[K, V, A] VectorMap::fold(
 }
 
 ///|
-/// Collect the entries into an array, in insertion order.
+/// Collect the entries into an array, in insertion order. `O(n)`.
 pub fn[K, V] VectorMap::to_array(self : VectorMap[K, V]) -> Array[(K, V)] {
   let result : Array[(K, V)] = Array::new(capacity=self.size)
   self.each((k, v) => result.push((k, v)))
@@ -97,7 +100,8 @@ pub fn[K, V] VectorMap::to_array(self : VectorMap[K, V]) -> Array[(K, V)] {
 /// Transform every value, keeping the keys and their order.
 ///
 /// The index is shared with the receiver rather than rebuilt: no slot moves, so
-/// the mapping from keys to positions is unchanged.
+/// the mapping from keys to positions is unchanged. `O(n)`, and no key is
+/// hashed.
 #alias(map_with_key, deprecated)
 pub fn[K, V, A] VectorMap::map(
   self : VectorMap[K, V],
@@ -120,6 +124,9 @@ pub fn[K, V, A] VectorMap::map(
 ///
 /// A predicate that rejects nothing returns the receiver itself, holes and all;
 /// any other result is rebuilt dense, so filtering never *introduces* a hole.
+///
+/// `O(n)`: one spine pass, then the index is filtered and renumbered in place
+/// of being rebuilt from the keys, so again nothing is hashed.
 #alias(filter_with_key, deprecated)
 pub fn[K, V] VectorMap::filter(
   self : VectorMap[K, V],
