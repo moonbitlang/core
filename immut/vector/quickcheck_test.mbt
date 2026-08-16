@@ -361,6 +361,57 @@ test "quickcheck: random access survives slice/concat/push/pop pipelines" {
 }
 
 ///|
+/// `makei`, `make` and `from_iter` share one bulk tree builder whose height
+/// comes from the capacity it is handed, not from how many leaves are left to
+/// place. A short remainder at the top of a tall tree used to be attached one
+/// level too high, so reads past the last full child silently returned the
+/// wrong element. The sizes that trip it are offsets from a level boundary, so
+/// generate them that way.
+test "quickcheck: bulk constructors round-trip at level boundaries" {
+  let chunk = 32
+  let level = chunk * chunk * chunk
+  let offsets : ReadOnlyArray[Int] = [
+    0,
+    1,
+    chunk,
+    chunk + 1,
+    2 * chunk,
+    level / chunk,
+    level / chunk + chunk,
+  ]
+  @quickcheck.check(
+    (seed : (Int, Int)) => {
+      let (s0, s1) = seed
+      let n = level * (1 + (s0 & 0x7fffffff) % 2) +
+        offsets[(s1 & 0x7fffffff) % offsets.length()]
+      let model = Array::makei(n, i => i)
+      let built = [
+        @vector.makei(n, i => i),
+        @vector.from_iter(model.iter()),
+        @vector.from_array(model),
+      ]
+      for v in built {
+        guard v.length() == n else { return false }
+        guard v.to_array() == model else { return false }
+        // `to_array` walks the tree in order, so it stays right even when the
+        // shape is wrong; indexing is what actually descends by radix
+        for i = 0, step = 1; i < n; {
+          guard v.at(i) == i else { return false }
+          continue i + step, step + 1
+        }
+        // the boundary itself, and every index of the short remainder
+        let remainder_start = n - n % level
+        for i in remainder_start..<n {
+          guard v.at(i) == i else { return false }
+        }
+      }
+      true
+    },
+    count=20,
+  )
+}
+
+///|
 test "quickcheck: Eq and Compare agree with the array model" {
   @quickcheck.check((pair : (@vector.Vector[Int], @vector.Vector[Int])) => {
     let (a, b) = pair

@@ -810,35 +810,32 @@ fn[A] make_t(
 }
 
 ///|
+/// Build a radix tree of capacity `cap` over `leaves`, which must be non-empty
+/// and hold `BRANCHING_FACTOR` elements each except possibly the last.
+///
+/// `cap` alone fixes the height (`cap` = `BRANCHING_FACTOR` ^ (height + 1)), so
+/// every level has to recurse even when few leaves are left: a short remainder
+/// still belongs at the bottom, not one level down from wherever it is. Getting
+/// that wrong yields a leaf above shift 0, which throws off both radix descent
+/// and `Tree::size`.
 fn[A] from_leaves(leaves : ArrayView[FixedArray[A]], cap : Int) -> Tree[A] {
-  if cap == BRANCHING_FACTOR {
-    Leaf(leaves[0])
-  } else if leaves.length() <= BRANCHING_FACTOR {
-    let arr = FixedArray::make(leaves.length(), Empty)
-    for i, leaf in leaves {
-      arr[i] = Leaf(leaf)
-    }
-    Node(arr, None)
+  guard cap > BRANCHING_FACTOR else { return Leaf(leaves[0]) }
+  let child_cap = cap / BRANCHING_FACTOR
+  // Count in leaves rather than elements: `leaves.length() * BRANCHING_FACTOR`
+  // is the element count and is only meaningful while it fits in an `Int`.
+  let leaves_per_child = child_cap / BRANCHING_FACTOR
+  let full = leaves.length() / leaves_per_child
+  let len = if leaves.length() % leaves_per_child == 0 {
+    full
   } else {
-    let len = leaves.length() * BRANCHING_FACTOR
-    let child_cap = cap / BRANCHING_FACTOR
-    let quot = len / child_cap
-    let rem = len % child_cap
-    let times = child_cap / BRANCHING_FACTOR
-    let arr = if rem == 0 {
-      FixedArray::makei(quot, i => {
-        from_leaves(leaves[i * times:(i + 1) * times], child_cap)
-      })
-    } else {
-      let arr = FixedArray::make(quot + 1, Tree::Empty)
-      for i in 0..<quot {
-        arr[i] = from_leaves(leaves[i * times:(i + 1) * times], child_cap)
-      }
-      arr[quot] = from_leaves(leaves[times * quot:], child_cap)
-      arr
-    }
-    Node(arr, None)
+    full + 1
   }
+  let arr = FixedArray::makei(len, i => {
+    let lo = i * leaves_per_child
+    let hi = min(lo + leaves_per_child, leaves.length())
+    from_leaves(leaves[lo:hi], child_cap)
+  })
+  Node(arr, None)
 }
 
 ///|
