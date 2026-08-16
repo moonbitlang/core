@@ -196,12 +196,14 @@ Entries live in a persistent vector — the *spine* — in insertion order, and 
 
 A trie descent is `O(log n)` for keys whose hashes are reasonably distributed. Keys that collide on the full hash share a bucket that is searched linearly, so an adversarial or badly written `Hash` degrades lookup, `add` and `remove` towards `O(n)` — this map inherits that from `@immut/hashmap` and does nothing to make it worse.
 
-Removal punches a hole in the spine rather than shifting the entries after it, since shifting would invalidate the index entry for every one of them. Holes are then reclaimed two ways:
+Removal punches a hole in the spine rather than shifting the entries after it, since shifting would invalidate the index entry for every one of them. Under continued removal, holes are reclaimed two ways:
 
 - **Trimming.** A hole at the end of the spine is dropped at once, and dropping it can uncover more. Trimming `k` holes costs `k` vector pops, each of which may copy a tree path, so a single `remove` can cost `O(k log n)`.
 - **Rebuilding.** Holes in the middle accumulate until the spine is **both** at least 32 slots long **and** holding more holes than live entries. Below that length the ratio is not worth acting on, so a small map really can sit on nine holes and one entry. When it does fire, the spine is rebuilt dense and the index renumbered onto the new slots, at `O(n)`.
 
-Both are amortised only along a single line of descent. Every hole trimmed or reclaimed was paid for by the removal that made it, but a program that repeatedly returns to a version from just before a trim or a rebuild and removes again will pay the same cost each time. This is a good trade when a map's history moves mostly forward — state that is updated, occasionally rewound — and a poor one under heavy branching with heavy deletion in each branch.
+Outside that cycle, a `filter` that rejects anything rebuilds the spine dense whatever its length, clearing every hole as a side effect; a `filter` that rejects nothing returns the receiver untouched, holes included.
+
+Both reclamation paths above are amortised only along a single line of descent. Every hole trimmed or reclaimed was paid for by the removal that made it, but a program that repeatedly returns to a version from just before a trim or a rebuild and removes again will pay the same cost each time. This is a good trade when a map's history moves mostly forward — state that is updated, occasionally rewound — and a poor one under heavy branching with heavy deletion in each branch.
 
 There is deliberately no positional lookup by rank. A slot is a physical position, holes and all, so exposing one would be either misleading or `O(n)`; iterate instead.
 

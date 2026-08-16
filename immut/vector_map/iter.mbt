@@ -13,7 +13,8 @@
 // limitations under the License.
 
 // Every traversal below walks the spine and skips tombstones, so all of them
-// yield entries in insertion order and none of them touches the hash trie.
+// yield entries in insertion order. Reading one never touches the hash trie;
+// only `filter` does, and only to carry the index over to the result.
 
 ///|
 /// Apply `f` to every entry, in insertion order. `O(n)`.
