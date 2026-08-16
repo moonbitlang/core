@@ -295,6 +295,72 @@ test "quickcheck: pop walks back through every push boundary" {
 }
 
 ///|
+/// `slice`, tail-overflowing `concat`, `push` and `pop` each rebuild the tree
+/// a different way, and only their *combination* reaches some node shapes: a
+/// slice leaves a partial right-most leaf, a tail-overflowing concat folds the
+/// tail into it, pushes fill the level up, and a pop then rebuilds the root
+/// from what is left. Random access after that pipeline is the cheapest way to
+/// notice from outside the package that the tree came out malformed — a
+/// mis-rebuilt node shows up as a wrong element or an abort, not as a wrong
+/// length.
+test "quickcheck: random access survives slice/concat/push/pop pipelines" {
+  // A chunk is one leaf, a node is one full level of the trie. Which rebuild
+  // path each step takes is decided by alignment to these, so the seeds below
+  // become offsets *from* them rather than free lengths - a uniformly random
+  // length almost never lands on a transition.
+  let chunk = 32
+  let node = chunk * chunk
+  let offsets : ReadOnlyArray[Int] = [0, 1, chunk, chunk + 1, 2 * chunk]
+  @quickcheck.check(
+    (seeds : (Int, Int, Int, Int)) => {
+      let (s0, s1, s2, s3) = seeds
+      // `gap` leaves the tree's right-most leaf `chunk - gap` long...
+      let gap = 1 + (s1 & 0x7fffffff) % (chunk - 1)
+      let base = node * (1 + (s0 & 0x7fffffff) % 2)
+      // ...so a concat of `gap` parks exactly that many elements in the tail,
+      // and a second one that overflows the tail makes `normalize_tree` fold
+      // the first back in, topping the partial leaf up to a full `chunk`.
+      let second = chunk - gap + 1 + (s2 & 0x7fffffff) % gap
+      let model : Array[Int] = []
+      let mut v = @vector.makei(base, i => i).slice(0, base - gap)
+      for i in 0..<(base - gap) {
+        model.push(i)
+      }
+      for len in [gap, second] {
+        let start = 1000000 + model.length()
+        v = v.concat(@vector.makei(len, i => start + i))
+        for i in 0..<len {
+          model.push(start + i)
+        }
+      }
+      // Grow to a size that sits on a level boundary, so the following `pop`
+      // empties the root's last child and rebuilds the root from the rest.
+      let m = s3 & 0x7fffffff
+      let target = node * (2 + m % 2) + offsets[m / 2 % offsets.length()]
+      for k in 0..<(target - model.length()) {
+        v = v.push(2000000 + k)
+        model.push(2000000 + k)
+      }
+      v = v.pop().unwrap()
+      let _ = model.pop()
+      guard v.length() == model.length() else { return false }
+      // Read every index. A radix/relaxed mix-up shows up here as a wrong
+      // element or an abort - never as a wrong length.
+      for i in 0..<model.length() {
+        guard v.at(i) == model[i] else { return false }
+      }
+      guard v.to_array() == model else { return false }
+      // the vector must still be usable afterwards
+      let grown = v.push(-1)
+      guard grown.at(model.length()) == -1 else { return false }
+      let updated = v.set(0, -2)
+      updated.at(0) == -2 && v.at(0) == model[0]
+    },
+    count=40,
+  )
+}
+
+///|
 test "quickcheck: Eq and Compare agree with the array model" {
   @quickcheck.check((pair : (@vector.Vector[Int], @vector.Vector[Int])) => {
     let (a, b) = pair
