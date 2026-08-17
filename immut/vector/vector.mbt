@@ -398,7 +398,7 @@ pub fn[A] Vector::pop(self : Vector[A]) -> Vector[A]? {
 /// The result always takes `other`'s tail, so the work is deciding what
 /// happens to `self`'s. In order of cost:
 ///
-/// 1. `other` is tree-only-empty and the two tails fit in one chunk — splice
+/// 1. `other.tree` is `Empty` and the two tails fit in one chunk — splice
 ///    the tails, leave `self.tree` alone. No tree work at all.
 /// 2. Same, but the tails overflow — `normalize_tree` folds `self`'s tail into
 ///    its tree, then `other`'s tail becomes the new tail.
