@@ -14,8 +14,109 @@
 
 ///|
 test "Arbitrary for BigInt" {
-  let rs = @splitmix.new(seed=1)
-  let _ : @bigint.BigInt = @quickcheck.Arbitrary::arbitrary(1, rs)
+  let samples : Array[@bigint.BigInt] = @quickcheck.samples(10)
+  debug_inspect(
+    samples,
+    content=(
+      #|[
+      #|  0,
+      #|  2236702871533800590,
+      #|  4899806414470401660,
+      #|  -5076203457455444144,
+      #|  -3206590268553584789,
+      #|  -8738668918601119554,
+      #|  -5822442221117384418,
+      #|  4293417177517987002,
+      #|  -174397816515637542,
+      #|  -7574984457386592187,
+      #|]
+    ),
+  )
+}
+
+///|
+test "Arbitrary for builtin Map" {
+  let samples : Array[Map[Int, Bool]] = @quickcheck.samples(20)
+  debug_inspect(
+    [samples[0], samples[10], samples[16], samples[19]],
+    content=(
+      #|[
+      #|  {},
+      #|  { 0: true, -1: true, -2: false, -3: false },
+      #|  {
+      #|    0: false,
+      #|    1: false,
+      #|    2: false,
+      #|    -2: false,
+      #|    5: false,
+      #|    -7: false,
+      #|    -1: false,
+      #|    8: false,
+      #|  },
+      #|  { 0: true, 1: false, -3: false, 2: false, 4: true },
+      #|]
+    ),
+  )
+}
+
+///|
+test "Arbitrary for linked Set" {
+  let samples : Array[@set.Set[Int]] = @quickcheck.samples(20)
+  debug_inspect(
+    [samples[0], samples[9], samples[12], samples[17]],
+    content=(
+      #|[
+      #|  <Set: []>,
+      #|  <Set: [0, 2, 3, 1]>,
+      #|  <Set: [0, -2, -5, 4, 8]>,
+      #|  <Set: [0, -1, 3, 1, 2, -6]>,
+      #|]
+    ),
+  )
+}
+
+///|
+test "Arbitrary for Deque" {
+  let samples : Array[@deque.Deque[Int]] = @quickcheck.samples(20)
+  debug_inspect(
+    [samples[0], samples[9], samples[12], samples[17]],
+    content=(
+      #|[
+      #|  <Deque: []>,
+      #|  <Deque: [0, 0, 0, 0, 2, 3, 1]>,
+      #|  <Deque: [0, 0, 0, 0, 0, -2, -5, 4, 0, 8]>,
+      #|  <Deque: [0, 0, -1, -1, 3, 1, 2, -6]>,
+      #|]
+    ),
+  )
+}
+
+///|
+test "Arbitrary for ReadOnlyArray" {
+  let samples : Array[ReadOnlyArray[Int]] = @quickcheck.samples(20)
+  debug_inspect(
+    [samples[0], samples[9], samples[12], samples[17]],
+    content=(
+      #|[
+      #|  <ReadOnlyArray: []>,
+      #|  <ReadOnlyArray: [0, 0, 0, 0, 2, 3, 1]>,
+      #|  <ReadOnlyArray: [0, 0, 0, 0, 0, -2, -5, 4, 0, 8]>,
+      #|  <ReadOnlyArray: [0, 0, -1, -1, 3, 1, 2, -6]>,
+      #|]
+    ),
+  )
+}
+
+///|
+test "Arbitrary for 16-bit integers" {
+  let signed_samples : Array[Int16] = @quickcheck.samples(10)
+  let unsigned_samples : Array[UInt16] = @quickcheck.samples(10)
+  debug_inspect(
+    (signed_samples, unsigned_samples),
+    content=(
+      #|([0, 0, 0, -1, -1, 0, 0, -1, 2, 5], [0, 0, 0, 0, 3, 0, 0, 3, 2, 5])
+    ),
+  )
 }
 
 ///|
@@ -231,9 +332,52 @@ test "Arbitrary for tuples" {
 }
 
 ///|
+test "Arbitrary for 8-tuple" {
+  let samples : Array[(Int, String, UInt, Byte, Char, Bool, Unit, Int16)] = @quickcheck.samples(
+    5,
+  )
+  debug_inspect(
+    samples,
+    content=(
+      #|[
+      #|  (0, "", 0, 0x89, '񁌝', false, (), 0),
+      #|  (0, "", 0, 0x3b, '\n', true, (), 0),
+      #|  (0, "", 1, 0x08, 'A', true, (), -1),
+      #|  (-2, ">s", 1, 0x23, ';', true, (), 1),
+      #|  (2, "\u{11}", 0, 0xb7, 'D', true, (), -2),
+      #|]
+    ),
+  )
+}
+
+///|
+test "Arbitrary for 9-tuple" {
+  let samples : Array[(Int, String, UInt, Byte, Char, Bool, Unit, Int16, Byte)] = @quickcheck.samples(
+    5,
+  )
+  debug_inspect(
+    samples,
+    content=(
+      #|[
+      #|  (0, "", 0, 0x89, '񁌝', false, (), 0, 0x6c),
+      #|  (0, "", 0, 0x3b, '\n', true, (), 0, 0x1c),
+      #|  (0, "", 1, 0x08, 'A', true, (), -1, 0xd2),
+      #|  (-2, ">s", 1, 0x23, ';', true, (), -2, 0x62),
+      #|  (2, "\u{11}", 0, 0xb7, 'D', true, (), 3, 0xc0),
+      #|]
+    ),
+  )
+}
+
+///|
 test "Arbitrary for Ref" {
-  let samples = (@quickcheck.samples(3) : Array[@ref.Ref[Int]])
-  inspect(samples.length(), content="3")
+  let samples = (@quickcheck.samples(5) : Array[@ref.Ref[Int]])
+  debug_inspect(
+    samples,
+    content=(
+      #|[<Ref: 0>, <Ref: 0>, <Ref: 0>, <Ref: -1>, <Ref: -1>]
+    ),
+  )
 }
 
 ///|

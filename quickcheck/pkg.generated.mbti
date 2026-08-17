@@ -4,12 +4,14 @@ package "moonbitlang/core/quickcheck"
 import {
   "moonbitlang/core/bigint",
   "moonbitlang/core/debug",
+  "moonbitlang/core/deque",
   "moonbitlang/core/immut/vector",
   "moonbitlang/core/list",
   "moonbitlang/core/queue",
   "moonbitlang/core/quickcheck/shrink",
   "moonbitlang/core/quickcheck/splitmix",
   "moonbitlang/core/ref",
+  "moonbitlang/core/set",
 }
 
 // Values
@@ -80,8 +82,10 @@ pub impl Arbitrary for Bool
 pub impl Arbitrary for Byte
 pub impl Arbitrary for Char
 pub impl Arbitrary for Int
+pub impl Arbitrary for Int16
 pub impl Arbitrary for Int64
 pub impl Arbitrary for UInt
+pub impl Arbitrary for UInt16
 pub impl Arbitrary for UInt64
 pub impl Arbitrary for Float
 pub impl Arbitrary for Double
@@ -89,11 +93,14 @@ pub impl Arbitrary for String
 pub impl[X : Arbitrary] Arbitrary for X?
 pub impl[T : Arbitrary, E : Arbitrary] Arbitrary for Result[T, E]
 pub impl[X : Arbitrary] Arbitrary for FixedArray[X]
+pub impl[X : Arbitrary] Arbitrary for ReadOnlyArray[X]
 pub impl Arbitrary for Bytes
 pub impl Arbitrary for @bigint.BigInt
 pub impl[X : Arbitrary] Arbitrary for Array[X]
 pub impl[A : Arbitrary] Arbitrary for ArrayView[A]
 pub impl[X : Arbitrary] Arbitrary for Iter[X]
+pub impl[K : Arbitrary + Hash + Eq, V : Arbitrary] Arbitrary for Map[K, V]
+pub impl[X : Arbitrary] Arbitrary for @deque.Deque[X]
 pub impl[K : Arbitrary + Hash + Eq, V : Arbitrary] Arbitrary for @moonbitlang/core/hashmap.HashMap[K, V]
 pub impl[X : Arbitrary + Eq + Hash] Arbitrary for @moonbitlang/core/hashset.HashSet[X]
 pub impl[K : Eq + Hash + Arbitrary, V : Arbitrary] Arbitrary for @moonbitlang/core/immut/hashmap.HashMap[K, V]
@@ -106,6 +113,7 @@ pub impl[X : Arbitrary] Arbitrary for @list.List[X]
 pub impl[X : Arbitrary + Compare] Arbitrary for @moonbitlang/core/priority_queue.PriorityQueue[X]
 pub impl[X : Arbitrary] Arbitrary for @queue.Queue[X]
 pub impl[X : Arbitrary] Arbitrary for @ref.Ref[X]
+pub impl[X : Arbitrary + Eq + Hash] Arbitrary for @set.Set[X]
 pub impl[K : Arbitrary + Compare, V : Arbitrary] Arbitrary for @moonbitlang/core/sorted_map.SortedMap[K, V]
 pub impl[X : Arbitrary + Compare] Arbitrary for @moonbitlang/core/sorted_set.SortedSet[X]
 pub impl[A : Arbitrary, B : Arbitrary] Arbitrary for (A, B)
@@ -114,3 +122,5 @@ pub impl[A : Arbitrary, B : Arbitrary, C : Arbitrary, D : Arbitrary] Arbitrary f
 pub impl[A : Arbitrary, B : Arbitrary, C : Arbitrary, D : Arbitrary, E : Arbitrary] Arbitrary for (A, B, C, D, E)
 pub impl[A : Arbitrary, B : Arbitrary, C : Arbitrary, D : Arbitrary, E : Arbitrary, F : Arbitrary] Arbitrary for (A, B, C, D, E, F)
 pub impl[A : Arbitrary, B : Arbitrary, C : Arbitrary, D : Arbitrary, E : Arbitrary, F : Arbitrary, G : Arbitrary] Arbitrary for (A, B, C, D, E, F, G)
+pub impl[A : Arbitrary, B : Arbitrary, C : Arbitrary, D : Arbitrary, E : Arbitrary, F : Arbitrary, G : Arbitrary, H : Arbitrary] Arbitrary for (A, B, C, D, E, F, G, H)
+pub impl[A : Arbitrary, B : Arbitrary, C : Arbitrary, D : Arbitrary, E : Arbitrary, F : Arbitrary, G : Arbitrary, H : Arbitrary, I : Arbitrary] Arbitrary for (A, B, C, D, E, F, G, H, I)

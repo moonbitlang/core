@@ -54,6 +54,97 @@ test "shrink int64" {
 }
 
 ///|
+test "shrink int16" {
+  debug_inspect(
+    @shrink.Shrink::shrink((100 : Int16)).collect(),
+    content=(
+      #|[99, 97, 94, 88, 75, 50, 0]
+    ),
+  )
+}
+
+///|
+test "shrink uint16" {
+  debug_inspect(
+    @shrink.Shrink::shrink((100 : UInt16)).collect(),
+    content=(
+      #|[99, 97, 94, 88, 75, 50, 0]
+    ),
+  )
+}
+
+///|
+test "shrink arbitrary-precision bigint" {
+  let input = @bigint.BigInt::from_string("100000000000000000000")
+  let zero = @bigint.BigInt::from_int(0)
+  let candidates = @shrink.Shrink::shrink(input).collect()
+  let tail = candidates.length() - 3
+  debug_inspect(
+    (candidates.length(), candidates[:4], candidates[tail:]),
+    content=(
+      #|(
+      #|  67,
+      #|  <ArrayView:
+      #|    [
+      #|      99999999999999999999,
+      #|      99999999999999999998,
+      #|      99999999999999999995,
+      #|      99999999999999999990,
+      #|    ]>,
+      #|  <ArrayView: [75000000000000000000, 50000000000000000000, 0]>,
+      #|)
+    ),
+  )
+  assert_true(
+    candidates.all(candidate => candidate >= zero && candidate < input),
+  )
+}
+
+///|
+test "shrink negative arbitrary-precision bigint" {
+  let input = @bigint.BigInt::from_string("-100000000000000000000")
+  let zero = @bigint.BigInt::from_int(0)
+  let candidates = @shrink.Shrink::shrink(input).collect()
+  let tail = candidates.length() - 3
+  debug_inspect(
+    (candidates.length(), candidates[:4], candidates[tail:]),
+    content=(
+      #|(
+      #|  67,
+      #|  <ArrayView:
+      #|    [
+      #|      -99999999999999999999,
+      #|      -99999999999999999998,
+      #|      -99999999999999999995,
+      #|      -99999999999999999990,
+      #|    ]>,
+      #|  <ArrayView: [-75000000000000000000, -50000000000000000000, 0]>,
+      #|)
+    ),
+  )
+  assert_true(
+    candidates.all(candidate => candidate > input && candidate <= zero),
+  )
+}
+
+///|
+test "shrink bigint boundary values" {
+  let negative_one = @bigint.BigInt::from_int(-1)
+  let zero = @bigint.BigInt::from_int(0)
+  let one = @bigint.BigInt::from_int(1)
+  debug_inspect(
+    (
+      @shrink.Shrink::shrink(negative_one).collect(),
+      @shrink.Shrink::shrink(zero).collect(),
+      @shrink.Shrink::shrink(one).collect(),
+    ),
+    content=(
+      #|([0], [], [0])
+    ),
+  )
+}
+
+///|
 test "shrink uint" {
   debug_inspect(
     @shrink.Shrink::shrink(37000U).collect(),

@@ -28,6 +28,33 @@ pub impl[X : Arbitrary] Arbitrary for @queue.Queue[X] with fn arbitrary(
 }
 
 ///|
+pub impl[X : Arbitrary] Arbitrary for @deque.Deque[X] with fn arbitrary(
+  size,
+  rs,
+) {
+  let values : Array[X] = Arbitrary::arbitrary(size, rs)
+  Deque(values)
+}
+
+///|
+pub impl[K : Arbitrary + Hash + Eq, V : Arbitrary] Arbitrary for Map[K, V] with fn arbitrary(
+  size,
+  rs,
+) {
+  let values : Iter[(K, V)] = Arbitrary::arbitrary(size, rs)
+  Map::from_iter(values)
+}
+
+///|
+pub impl[X : Arbitrary + Eq + Hash] Arbitrary for @set.Set[X] with fn arbitrary(
+  size,
+  rs,
+) {
+  let values : Iter[X] = Arbitrary::arbitrary(size, rs)
+  @set.Set::from_iter(values)
+}
+
+///|
 pub impl[K : Arbitrary + Hash + Eq, V : Arbitrary] Arbitrary for @hashmap.HashMap[
   K,
   V,

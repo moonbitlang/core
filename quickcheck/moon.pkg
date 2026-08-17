@@ -1,6 +1,7 @@
 import {
   "moonbitlang/core/debug",
   "moonbitlang/core/int",
+  "moonbitlang/core/int16",
   "moonbitlang/core/quickcheck/shrink",
   "moonbitlang/core/quickcheck/splitmix",
   "moonbitlang/core/builtin",
@@ -10,6 +11,8 @@ import {
   "moonbitlang/core/ref",
   "moonbitlang/core/list",
   "moonbitlang/core/queue",
+  "moonbitlang/core/deque",
+  "moonbitlang/core/set",
   "moonbitlang/core/priority_queue",
   "moonbitlang/core/hashmap",
   "moonbitlang/core/hashset",

@@ -58,9 +58,21 @@ pub impl[X : Shrink] Shrink for FixedArray[X] with fn shrink(xs) {
 }
 
 ///|
+pub impl[X : Shrink] Shrink for ReadOnlyArray[X] with fn shrink(xs) {
+  Shrink::shrink(xs[:].to_owned()).map(candidate => {
+    ReadOnlyArray::from_array(candidate)
+  })
+}
+
+///|
 pub impl[X : Shrink] Shrink for ArrayView[X] with fn shrink(xs) {
   let candidates : Iter[Array[X]] = Shrink::shrink(xs.to_owned())
   candidates.map(candidate => candidate)
+}
+
+///|
+pub impl[X : Shrink] Shrink for @ref.Ref[X] with fn shrink(x) {
+  Shrink::shrink(x.val).map(value => Ref(value))
 }
 
 ///|
