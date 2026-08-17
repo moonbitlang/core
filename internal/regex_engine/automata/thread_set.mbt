@@ -234,8 +234,23 @@ fn ThreadSet::split_at_first_match(self : ThreadSet) -> (ThreadSet, ThreadSet) {
 /// again — so the continuation would be matched twice over. Keeping the
 /// thread at `Eps` also leaves `ts_seq` able to collapse a sequence whose
 /// first part has come down to a single finished thread.
+///
+/// One `seen` set is shared across the whole nested thread tree. Equivalent
+/// futures can occur under different `Seq` wrappers when a repeated body
+/// consumes a variable number of characters; limiting deduplication to each
+/// wrapper separately retains one thread per partition of the input and
+/// makes the set grow exponentially.
 fn ThreadSet::remove_duplicates(self : ThreadSet, next : Expr) -> ThreadSet {
   let seen = @hashset.HashSet([])
+  self.remove_duplicates_with_seen(next, seen)
+}
+
+///|
+fn ThreadSet::remove_duplicates_with_seen(
+  self : ThreadSet,
+  next : Expr,
+  seen : @hashset.HashSet[ExprId],
+) -> ThreadSet {
   for thread in self; result = ts_empty {
     match thread {
       End(_) => break result + ts_one(thread)
@@ -254,7 +269,7 @@ fn ThreadSet::remove_duplicates(self : ThreadSet, next : Expr) -> ThreadSet {
           continue result
         }
       Seq(pref, first, next) => {
-        let first_dedup = first.remove_duplicates(next)
+        let first_dedup = first.remove_duplicates_with_seen(next, seen)
         continue result + ts_seq(pref, first_dedup, next)
       }
     }
