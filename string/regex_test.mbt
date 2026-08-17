@@ -847,6 +847,28 @@ test "execute/overlapping alternation keeps anchors and preference" {
   debug_inspect(m.group(2), content="None")
 }
 
+// Each character can finish the current iteration or leave its optional
+// suffix pending. Those paths converge to the same future under differently
+// nested `Seq` wrappers; without global deduplication the engine retains one
+// thread per partition of the input and grows exponentially.
+
+///|
+test "execute/variable-length repetition keeps a bounded thread set" {
+  let subject = "a".repeat(1000)
+  for
+    regex in [
+      @string.Regex("^(?:.a?)*$"),
+      re"^(?:.a?)*$",
+      Regex("^(?:.a?b?)*$"),
+      Regex("^(?:.a?)+$"),
+      Regex("^(?:.a?){2,}$"),
+      Regex("^(?:.a?){2,}?$"),
+    ] {
+    guard regex.execute(subject) is Some(m) else { fail("expected a match") }
+    assert_eq(m.content().length(), subject.length())
+  }
+}
+
 ///|
 test "capture/multiple_captures_same_pattern" {
   let word = re"[[:alpha:]]+"
