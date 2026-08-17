@@ -393,7 +393,20 @@ pub fn[A] Vector::pop(self : Vector[A]) -> Vector[A]? {
 }
 
 ///|
-/// Given two trees, concatenate them into a new tree.
+/// Concatenate two vectors.
+///
+/// The result always takes `other`'s tail, so the work is deciding what
+/// happens to `self`'s. In order of cost:
+///
+/// 1. `other` is tree-only-empty and the two tails fit in one chunk — splice
+///    the tails, leave `self.tree` alone. No tree work at all.
+/// 2. Same, but the tails overflow — `normalize_tree` folds `self`'s tail into
+///    its tree, then `other`'s tail becomes the new tail.
+/// 3. `other` has a tree and `self` has no tail — a plain `Tree::concat`.
+/// 4. Both have substance — `Tree::concat_with_suffix` threads `self`'s tail
+///    through the splice as an extra leaf, rather than normalizing first and
+///    concatenating in two passes. This is the case that can widen a merge to
+///    65 children; see `rebalance`.
 pub fn[A] Vector::concat(self : Vector[A], other : Vector[A]) -> Vector[A] {
   if self.is_empty() {
     return other
@@ -853,6 +866,21 @@ fn tail_len_of_size(size : Int) -> Int {
 }
 
 ///|
+/// Fold the tail into the tree and return the combined tree with its shift, so
+/// the caller can treat the vector as tree-only.
+///
+/// This is the only route by which a *partial* leaf reaches
+/// `append_right_leaf`: `push` always flushes a tail that is exactly
+/// `BRANCHING_FACTOR` long, whereas here the delta is whatever the tail happens
+/// to hold. That is what lets a partial right-most leaf be topped up in place —
+/// and, because the top-up patches the parent's sizes array rather than
+/// re-deriving it, what can leave a node exactly full while still relaxed
+/// (see the representation contract in `tree.mbt`).
+///
+/// A single-element tail goes through `push_end` instead, which is otherwise
+/// unreachable: `Vector::concat` only calls this when the two tails overflow
+/// `BRANCHING_FACTOR` together, so a 1-element left tail forces the right
+/// operand to be exactly one full chunk.
 fn[A] Vector::normalize_tree(self : Vector[A]) -> (Tree[A], Int) {
   if self.size == 0 {
     (Tree::empty(), 0)
