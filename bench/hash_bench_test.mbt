@@ -50,3 +50,33 @@ test "bench Hash for BytesView (large)" (it : @bench.T) {
   let view = data.view()
   it.bench(fn() { it.keep(Hash::hash(view)) })
 }
+
+///|
+test "bench Hasher::combine_bytes (small)" (it : @bench.T) {
+  let data = Bytes::make(16, 0xAB)
+  it.bench(fn() {
+    let hasher = Hasher(seed=0)
+    hasher.combine_bytes(data)
+    it.keep(hasher.finalize())
+  })
+}
+
+///|
+test "bench Hasher::combine_bytes (medium)" (it : @bench.T) {
+  let data = Bytes::make(256, 0xAB)
+  it.bench(fn() {
+    let hasher = Hasher(seed=0)
+    hasher.combine_bytes(data)
+    it.keep(hasher.finalize())
+  })
+}
+
+///|
+test "bench Hasher::combine_bytes (large)" (it : @bench.T) {
+  let data = Bytes::make(4096, 0xAB)
+  it.bench(fn() {
+    let hasher = Hasher(seed=0)
+    hasher.combine_bytes(data)
+    it.keep(hasher.finalize())
+  })
+}
