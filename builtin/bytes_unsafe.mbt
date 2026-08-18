@@ -43,9 +43,14 @@ pub fn FixedArray::unsafe_write_uint64_le(
   index : Int,
   value : UInt64,
 ) -> Unit {
-  for i in 0..<=7 {
-    bytes.unsafe_set(i + index, (value >> (8 * i)).to_byte())
-  }
+  bytes.unsafe_set(index, value.to_byte())
+  bytes.unsafe_set(index + 1, (value >> 8).to_byte())
+  bytes.unsafe_set(index + 2, (value >> 16).to_byte())
+  bytes.unsafe_set(index + 3, (value >> 24).to_byte())
+  bytes.unsafe_set(index + 4, (value >> 32).to_byte())
+  bytes.unsafe_set(index + 5, (value >> 40).to_byte())
+  bytes.unsafe_set(index + 6, (value >> 48).to_byte())
+  bytes.unsafe_set(index + 7, (value >> 56).to_byte())
 }
 
 ///|
@@ -77,9 +82,14 @@ pub fn FixedArray::unsafe_write_uint64_be(
   index : Int,
   value : UInt64,
 ) -> Unit {
-  for i in 0..<=7 {
-    bytes.unsafe_set(i + index, (value >> (8 * (7 - i))).to_byte())
-  }
+  bytes.unsafe_set(index, (value >> 56).to_byte())
+  bytes.unsafe_set(index + 1, (value >> 48).to_byte())
+  bytes.unsafe_set(index + 2, (value >> 40).to_byte())
+  bytes.unsafe_set(index + 3, (value >> 32).to_byte())
+  bytes.unsafe_set(index + 4, (value >> 24).to_byte())
+  bytes.unsafe_set(index + 5, (value >> 16).to_byte())
+  bytes.unsafe_set(index + 6, (value >> 8).to_byte())
+  bytes.unsafe_set(index + 7, value.to_byte())
 }
 
 ///|
@@ -111,9 +121,10 @@ pub fn FixedArray::unsafe_write_uint32_le(
   index : Int,
   value : UInt,
 ) -> Unit {
-  for i in 0..<=3 {
-    bytes.unsafe_set(i + index, (value >> (8 * i)).to_byte())
-  }
+  bytes.unsafe_set(index, value.to_byte())
+  bytes.unsafe_set(index + 1, (value >> 8).to_byte())
+  bytes.unsafe_set(index + 2, (value >> 16).to_byte())
+  bytes.unsafe_set(index + 3, (value >> 24).to_byte())
 }
 
 ///|
@@ -145,9 +156,10 @@ pub fn FixedArray::unsafe_write_uint32_be(
   index : Int,
   value : UInt,
 ) -> Unit {
-  for i in 0..<=3 {
-    bytes.unsafe_set(i + index, (value >> (8 * (3 - i))).to_byte())
-  }
+  bytes.unsafe_set(index, (value >> 24).to_byte())
+  bytes.unsafe_set(index + 1, (value >> 16).to_byte())
+  bytes.unsafe_set(index + 2, (value >> 8).to_byte())
+  bytes.unsafe_set(index + 3, value.to_byte())
 }
 
 ///|
@@ -177,9 +189,8 @@ pub fn FixedArray::unsafe_write_uint16_le(
   index : Int,
   value : UInt16,
 ) -> Unit {
-  for i in 0..<=1 {
-    bytes.unsafe_set(i + index, (value >> (8 * i)).to_byte())
-  }
+  bytes.unsafe_set(index, value.to_byte())
+  bytes.unsafe_set(index + 1, (value >> 8).to_byte())
 }
 
 ///|
@@ -209,9 +220,8 @@ pub fn FixedArray::unsafe_write_uint16_be(
   index : Int,
   value : UInt16,
 ) -> Unit {
-  for i in 0..<=1 {
-    bytes.unsafe_set(i + index, (value >> (8 * (1 - i))).to_byte())
-  }
+  bytes.unsafe_set(index, (value >> 8).to_byte())
+  bytes.unsafe_set(index + 1, value.to_byte())
 }
 
 // #endregion
@@ -242,11 +252,14 @@ pub fn FixedArray::unsafe_write_uint16_be(
 #intrinsic("%bytes.unsafe_read_uint64_le")
 #doc(hidden)
 pub fn Bytes::unsafe_read_uint64_le(bytes : Bytes, index : Int) -> UInt64 {
-  for i in 0..<=7; result = (0 : UInt64) {
-    continue result | (bytes.unsafe_get(i + index).to_uint64() << (8 * i))
-  } nobreak {
-    result
-  }
+  bytes.unsafe_get(index).to_uint64() |
+  (bytes.unsafe_get(index + 1).to_uint64() << 8) |
+  (bytes.unsafe_get(index + 2).to_uint64() << 16) |
+  (bytes.unsafe_get(index + 3).to_uint64() << 24) |
+  (bytes.unsafe_get(index + 4).to_uint64() << 32) |
+  (bytes.unsafe_get(index + 5).to_uint64() << 40) |
+  (bytes.unsafe_get(index + 6).to_uint64() << 48) |
+  (bytes.unsafe_get(index + 7).to_uint64() << 56)
 }
 
 ///|
@@ -274,11 +287,14 @@ pub fn Bytes::unsafe_read_uint64_le(bytes : Bytes, index : Int) -> UInt64 {
 #intrinsic("%bytes.unsafe_read_uint64_be")
 #doc(hidden)
 pub fn Bytes::unsafe_read_uint64_be(bytes : Bytes, index : Int) -> UInt64 {
-  for i in 0..<=7; result = (0 : UInt64) {
-    continue result | (bytes.unsafe_get(i + index).to_uint64() << (8 * (7 - i)))
-  } nobreak {
-    result
-  }
+  (bytes.unsafe_get(index).to_uint64() << 56) |
+  (bytes.unsafe_get(index + 1).to_uint64() << 48) |
+  (bytes.unsafe_get(index + 2).to_uint64() << 40) |
+  (bytes.unsafe_get(index + 3).to_uint64() << 32) |
+  (bytes.unsafe_get(index + 4).to_uint64() << 24) |
+  (bytes.unsafe_get(index + 5).to_uint64() << 16) |
+  (bytes.unsafe_get(index + 6).to_uint64() << 8) |
+  bytes.unsafe_get(index + 7).to_uint64()
 }
 
 ///|
@@ -306,11 +322,10 @@ pub fn Bytes::unsafe_read_uint64_be(bytes : Bytes, index : Int) -> UInt64 {
 #intrinsic("%bytes.unsafe_read_uint32_le")
 #doc(hidden)
 pub fn Bytes::unsafe_read_uint32_le(bytes : Bytes, index : Int) -> UInt {
-  for i in 0..<=3; result = (0 : UInt) {
-    continue result | (bytes.unsafe_get(i + index).to_uint() << (8 * i))
-  } nobreak {
-    result
-  }
+  bytes.unsafe_get(index).to_uint() |
+  (bytes.unsafe_get(index + 1).to_uint() << 8) |
+  (bytes.unsafe_get(index + 2).to_uint() << 16) |
+  (bytes.unsafe_get(index + 3).to_uint() << 24)
 }
 
 ///|
@@ -338,11 +353,10 @@ pub fn Bytes::unsafe_read_uint32_le(bytes : Bytes, index : Int) -> UInt {
 #intrinsic("%bytes.unsafe_read_uint32_be")
 #doc(hidden)
 pub fn Bytes::unsafe_read_uint32_be(bytes : Bytes, index : Int) -> UInt {
-  for i in 0..<=3; result = (0 : UInt) {
-    continue result | (bytes.unsafe_get(i + index).to_uint() << (8 * (3 - i)))
-  } nobreak {
-    result
-  }
+  (bytes.unsafe_get(index).to_uint() << 24) |
+  (bytes.unsafe_get(index + 1).to_uint() << 16) |
+  (bytes.unsafe_get(index + 2).to_uint() << 8) |
+  bytes.unsafe_get(index + 3).to_uint()
 }
 
 ///|
@@ -368,11 +382,8 @@ pub fn Bytes::unsafe_read_uint32_be(bytes : Bytes, index : Int) -> UInt {
 #intrinsic("%bytes.unsafe_read_uint16_le")
 #doc(hidden)
 pub fn Bytes::unsafe_read_uint16_le(bytes : Bytes, index : Int) -> UInt16 {
-  for i in 0..<=1; result = (0 : UInt16) {
-    continue result | (bytes.unsafe_get(i + index).to_uint16() << (8 * i))
-  } nobreak {
-    result
-  }
+  bytes.unsafe_get(index).to_uint16() |
+  (bytes.unsafe_get(index + 1).to_uint16() << 8)
 }
 
 ///|
@@ -398,11 +409,8 @@ pub fn Bytes::unsafe_read_uint16_le(bytes : Bytes, index : Int) -> UInt16 {
 #intrinsic("%bytes.unsafe_read_uint16_be")
 #doc(hidden)
 pub fn Bytes::unsafe_read_uint16_be(bytes : Bytes, index : Int) -> UInt16 {
-  for i in 0..<=1; result = (0 : UInt16) {
-    continue result | (bytes.unsafe_get(i + index).to_uint16() << (8 * (1 - i)))
-  } nobreak {
-    result
-  }
+  (bytes.unsafe_get(index).to_uint16() << 8) |
+  bytes.unsafe_get(index + 1).to_uint16()
 }
 
 ///|
@@ -596,66 +604,64 @@ fn buffer_to_fixedarray(buf : UninitializedArray[Byte]) -> FixedArray[Byte] = "%
 #borrow(bytes)
 #intrinsic("%bytes.unsafe_read_uint16_le")
 fn fixedarray_read_uint16_le(bytes : FixedArray[Byte], index : Int) -> UInt16 {
-  for i in 0..<=1; result = (0 : UInt16) {
-    continue result | (bytes.unsafe_get(i + index).to_uint16() << (8 * i))
-  } nobreak {
-    result
-  }
+  bytes.unsafe_get(index).to_uint16() |
+  (bytes.unsafe_get(index + 1).to_uint16() << 8)
 }
 
 ///|
 #borrow(bytes)
 #intrinsic("%bytes.unsafe_read_uint16_be")
 fn fixedarray_read_uint16_be(bytes : FixedArray[Byte], index : Int) -> UInt16 {
-  for i in 0..<=1; result = (0 : UInt16) {
-    continue result | (bytes.unsafe_get(i + index).to_uint16() << (8 * (1 - i)))
-  } nobreak {
-    result
-  }
+  (bytes.unsafe_get(index).to_uint16() << 8) |
+  bytes.unsafe_get(index + 1).to_uint16()
 }
 
 ///|
 #borrow(bytes)
 #intrinsic("%bytes.unsafe_read_uint32_le")
 fn fixedarray_read_uint32_le(bytes : FixedArray[Byte], index : Int) -> UInt {
-  for i in 0..<=3; result = (0 : UInt) {
-    continue result | (bytes.unsafe_get(i + index).to_uint() << (8 * i))
-  } nobreak {
-    result
-  }
+  bytes.unsafe_get(index).to_uint() |
+  (bytes.unsafe_get(index + 1).to_uint() << 8) |
+  (bytes.unsafe_get(index + 2).to_uint() << 16) |
+  (bytes.unsafe_get(index + 3).to_uint() << 24)
 }
 
 ///|
 #borrow(bytes)
 #intrinsic("%bytes.unsafe_read_uint32_be")
 fn fixedarray_read_uint32_be(bytes : FixedArray[Byte], index : Int) -> UInt {
-  for i in 0..<=3; result = (0 : UInt) {
-    continue result | (bytes.unsafe_get(i + index).to_uint() << (8 * (3 - i)))
-  } nobreak {
-    result
-  }
+  (bytes.unsafe_get(index).to_uint() << 24) |
+  (bytes.unsafe_get(index + 1).to_uint() << 16) |
+  (bytes.unsafe_get(index + 2).to_uint() << 8) |
+  bytes.unsafe_get(index + 3).to_uint()
 }
 
 ///|
 #borrow(bytes)
 #intrinsic("%bytes.unsafe_read_uint64_le")
 fn fixedarray_read_uint64_le(bytes : FixedArray[Byte], index : Int) -> UInt64 {
-  for i in 0..<=7; result = (0 : UInt64) {
-    continue result | (bytes.unsafe_get(i + index).to_uint64() << (8 * i))
-  } nobreak {
-    result
-  }
+  bytes.unsafe_get(index).to_uint64() |
+  (bytes.unsafe_get(index + 1).to_uint64() << 8) |
+  (bytes.unsafe_get(index + 2).to_uint64() << 16) |
+  (bytes.unsafe_get(index + 3).to_uint64() << 24) |
+  (bytes.unsafe_get(index + 4).to_uint64() << 32) |
+  (bytes.unsafe_get(index + 5).to_uint64() << 40) |
+  (bytes.unsafe_get(index + 6).to_uint64() << 48) |
+  (bytes.unsafe_get(index + 7).to_uint64() << 56)
 }
 
 ///|
 #borrow(bytes)
 #intrinsic("%bytes.unsafe_read_uint64_be")
 fn fixedarray_read_uint64_be(bytes : FixedArray[Byte], index : Int) -> UInt64 {
-  for i in 0..<=7; result = (0 : UInt64) {
-    continue result | (bytes.unsafe_get(i + index).to_uint64() << (8 * (7 - i)))
-  } nobreak {
-    result
-  }
+  (bytes.unsafe_get(index).to_uint64() << 56) |
+  (bytes.unsafe_get(index + 1).to_uint64() << 48) |
+  (bytes.unsafe_get(index + 2).to_uint64() << 40) |
+  (bytes.unsafe_get(index + 3).to_uint64() << 32) |
+  (bytes.unsafe_get(index + 4).to_uint64() << 24) |
+  (bytes.unsafe_get(index + 5).to_uint64() << 16) |
+  (bytes.unsafe_get(index + 6).to_uint64() << 8) |
+  bytes.unsafe_get(index + 7).to_uint64()
 }
 
 // #endregion
