@@ -37,25 +37,31 @@ fn pick_len(seed : Int) -> Int {
 
 ///|
 /// Build a vector holding `offset, offset + 1, ..., offset + len - 1` by one
-/// of six construction paths.
+/// of seven construction paths.
 ///
 /// This is what stands between these properties and the `Arbitrary` instance,
-/// which builds every vector with `from_array` and so only ever produces a
-/// dense radix tree with a fresh tail. The three bugs this package has had
-/// (#4083, #4084, #4086) all lived in shapes `from_array` cannot reach:
-/// relaxed (`Some(sizes)`) nodes, empty tails over a non-empty tree, and the
-/// trees `concat`'s rebalancing leaves behind. Each mode below reaches a shape
-/// the others do not:
+/// which builds every vector with `from_array` and so only ever produces the
+/// bulk-constructor shape, at sizes far below the level boundaries. The three
+/// bugs this package has had (#4083, #4084, #4086) all sat outside that reach
+/// — #4083 and #4086 in relaxed and trimmed shapes `from_array` cannot build,
+/// #4084 in a `from_array` shape the generator's sizes never got near. The
+/// modes:
 ///
-/// - 0: bulk `makei` — dense radix tree, the `Arbitrary` shape;
+/// - 0: bulk `makei` — the `Arbitrary` shape;
 /// - 1: element-wise `push` — tail-flush spine growth;
 /// - 2: `slice` out of a larger vector — partial leaves at both edges;
-/// - 3: `concat` of uneven chunks — the only path here that produces relaxed
-///   interior nodes, and it drives the rebalancing planner as it goes;
-/// - 4: `take` from a larger vector — empty tail over a trimmed tree;
-/// - 5: `pop` back down from a larger vector — tail refilled out of the tree.
+/// - 3: `concat` of uneven chunks, so the seams fall on no particular
+///   boundary and the rebalancing planner runs as the tree grows;
+/// - 4: `take` from a larger vector — an empty tail at *unaligned* lengths
+///   (`from_array` leaves one too, but only at multiples of 32);
+/// - 5: `pop` back down from a larger vector — tail refilled out of the tree;
+/// - 6: a push-built prefix ending on a full tail, joined to the rest by one
+///   `concat` — the operand pair that drives `concat_with_suffix`'s widest
+///   merges (65 children at `cut = 1056`, the #4086 family).
+///
+/// Modes 2, 3, 4 and 6 all leave relaxed (`Some(sizes)`) nodes behind.
 fn build_vec(len : Int, offset : Int, mode : Int) -> @vector.Vector[Int] {
-  match (mode & 0x7fffffff) % 6 {
+  match (mode & 0x7fffffff) % 7 {
     0 => @vector.makei(len, i => offset + i)
     1 => {
       let mut v : @vector.Vector[Int] = @vector.new()
@@ -68,8 +74,6 @@ fn build_vec(len : Int, offset : Int, mode : Int) -> @vector.Vector[Int] {
     3 => {
       let mut v : @vector.Vector[Int] = @vector.new()
       for lo = 0; lo < len; {
-        // uneven chunk widths, so the chunk seams fall on no particular
-        // boundary and the resulting tree keeps genuinely relaxed nodes
         let step = 1 + (lo * 7 + 13) % 47
         let hi = if lo + step > len { len } else { lo + step }
         v = v.concat(@vector.makei(hi - lo, i => offset + lo + i))
@@ -78,12 +82,25 @@ fn build_vec(len : Int, offset : Int, mode : Int) -> @vector.Vector[Int] {
       v
     }
     4 => @vector.makei(len + 97, i => offset + i).take(len)
-    _ => {
+    5 => {
       let mut v = @vector.makei(len + 40, i => offset + i)
       for _ in 0..<40 {
         v = v.pop().unwrap()
       }
       v
+    }
+    _ => {
+      // A push-built vector whose length is a multiple of 32 carries a full
+      // tail, which `concat_with_suffix` splices in as a third centre leaf.
+      // At `cut = 1056` (a full 1024-tree plus a full tail) against a right
+      // operand of 1024+, that merge is 31 + 3 + 31 = 65 children wide — the
+      // widest the splice can produce, and the one #4086 mishandled.
+      let cut = if len >= 2080 { 1056 } else { len / 32 * 32 }
+      let mut v : @vector.Vector[Int] = @vector.new()
+      for i in 0..<cut {
+        v = v.push(offset + i)
+      }
+      v.concat(@vector.makei(len - cut, i => offset + cut + i))
     }
   }
 }
@@ -462,12 +479,18 @@ test "quickcheck: Eq and Compare agree with the array model" {
 }
 
 ///|
-/// One content, six construction paths: whatever shape the tree took, the
-/// vector must be indistinguishable through the public API. This is the
-/// property all three historical bugs violated — a malformed tree keeps
-/// iterating correctly (iteration walks in order) while `at`/`get` descend by
-/// radix and return another slot's element. `contains` is here too, since no
-/// other property exercises it.
+/// One content, seven construction paths: whatever shape the tree took, the
+/// vector must be indistinguishable through the public API. The per-index
+/// reads are the point — this package's bugs have all been trees that kept
+/// iterating correctly (iteration walks in order) while `at`/`get` descended
+/// by radix into the wrong slot.
+///
+/// This property sweeps that observable across random shapes; it is not the
+/// deterministic guard for the known bugs. Those live elsewhere: the #4083
+/// pipeline and the #4084 level boundary have dedicated properties above, and
+/// the #4086 merge has its regression in `concat_random_access_test.mbt`
+/// (mode 6 can reproduce that operand pair, but only when the seeds line up).
+/// `contains` is here too, since no other property exercises it.
 test "quickcheck: the same content is one vector, whatever built it" {
   @quickcheck.check(
     (seeds : (Int, Int, Int)) => {
@@ -566,10 +589,11 @@ test "quickcheck: rev is an involution and reverses concat" {
 
 ///|
 /// `Vector::iter` is a hand-written external iterator that keeps its own
-/// descent stack. `Iter` is single-pass, so draining `take(k)` must consume
-/// exactly the first `k` elements and leave the same iterator positioned on
-/// element `k` — mid-leaf, mid-node, or in the tail, depending on where `k`
-/// falls in the shape at hand.
+/// descent stack. `Iter` is single-pass, so `next()` must hand out the
+/// elements one at a time and leave the iterator positioned on element `k` —
+/// mid-leaf, mid-node, or in the tail, depending on where `k` falls in the
+/// shape at hand. (`next()` is the resumption primitive here; the adapter
+/// methods like `take` document that the source must not be reused.)
 test "quickcheck: the iterator resumes where it stopped" {
   @quickcheck.check(
     (seeds : (Int, Int, Int)) => {
@@ -580,7 +604,9 @@ test "quickcheck: the iterator resumes where it stopped" {
       let k = if n == 0 { 0 } else { (sk & 0x7fffffff) % (n + 1) }
       let it = v.iter()
       guard it.size_hint() == Some(n) else { return false }
-      guard it.take(k).to_array() == model[0:k].to_owned() else { return false }
+      for i in 0..<k {
+        guard it.next() == Some(model[i]) else { return false }
+      }
       it.to_array() == model[k:].to_owned()
     },
     count=60,
