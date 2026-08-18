@@ -50,6 +50,8 @@ options(
     "double_to_uint.mbt": [ "not", "wasm", "wasm-gc" ],
     "double_to_uint_wasm.mbt": [ "wasm", "wasm-gc" ],
     "panic_nonjs_test.mbt": [ "wasm", "wasm-gc" ],
+    "physical_equal_valtype_boxed_test.mbt": [ "js", "wasm-gc" ],
+    "physical_equal_valtype_unboxed_test.mbt": [ "native", "llvm", "wasm" ],
     "panic_test.mbt": [ "not", "native", "llvm" ],
     "panic_wbtest.mbt": [ "not", "native", "llvm" ],
     "stringbuilder_buffer.mbt": [ "not", "js" ],
