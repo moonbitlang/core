@@ -182,29 +182,31 @@ test "unrolled writes round-trip through the loop-form readers" {
 
 ///|
 /// A write must touch exactly its own bytes and leave the neighbours alone.
+/// All six writers are covered, since each carries its own unrolled body.
 test "unrolled writes do not disturb neighbouring bytes" {
   let len = 32
   let fill = b'\x3C'
-  for i in 0..<(len - 7) {
-    let fa = FixedArray::make(len, fill)
-    fa.unsafe_write_uint64_le(i, 0xFFFF_FFFF_FFFF_FFFF)
-    for j in 0..<len {
-      if j < i || j > i + 7 {
-        check(fa[j], fill)
-      } else {
-        check(fa[j], b'\xFF')
+  fn check_span(
+    width : Int,
+    write : (FixedArray[Byte], Int) -> Unit,
+  ) -> Unit raise {
+    for i in 0..<(len - width + 1) {
+      let fa = FixedArray::make(len, fill)
+      write(fa, i)
+      for j in 0..<len {
+        if j < i || j >= i + width {
+          check(fa[j], fill)
+        } else {
+          check(fa[j], b'\xFF')
+        }
       }
     }
   }
-  for i in 0..<(len - 1) {
-    let fa = FixedArray::make(len, fill)
-    fa.unsafe_write_uint16_be(i, 0xFFFF)
-    for j in 0..<len {
-      if j < i || j > i + 1 {
-        check(fa[j], fill)
-      } else {
-        check(fa[j], b'\xFF')
-      }
-    }
-  }
+
+  check_span(8, (fa, i) => fa.unsafe_write_uint64_le(i, 0xFFFF_FFFF_FFFF_FFFF))
+  check_span(8, (fa, i) => fa.unsafe_write_uint64_be(i, 0xFFFF_FFFF_FFFF_FFFF))
+  check_span(4, (fa, i) => fa.unsafe_write_uint32_le(i, 0xFFFF_FFFF))
+  check_span(4, (fa, i) => fa.unsafe_write_uint32_be(i, 0xFFFF_FFFF))
+  check_span(2, (fa, i) => fa.unsafe_write_uint16_le(i, 0xFFFF))
+  check_span(2, (fa, i) => fa.unsafe_write_uint16_be(i, 0xFFFF))
 }
