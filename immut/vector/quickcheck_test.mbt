@@ -21,26 +21,41 @@
 ///|
 /// Map a random seed to a length, biased toward the tree-shape boundaries:
 /// an empty vector, a tail-only vector, one full leaf plus/minus one, two
-/// leaves, and the depth-two transition around 1024.
+/// leaves, the depth-two transition around 1024, and the merge widths around
+/// 1056 and 2080 that `concat` rebalancing is sensitive to.
 fn pick_len(seed : Int) -> Int {
   let n = seed & 0x7fffffff
   let boundaries : ReadOnlyArray[Int] = [
-    0, 1, 2, 31, 32, 33, 63, 64, 65, 1023, 1024, 1025,
+    0, 1, 2, 31, 32, 33, 63, 64, 65, 1023, 1024, 1025, 1055, 1056, 1057, 2048, 2080,
   ]
   if n % 3 != 0 {
     boundaries[n / 3 % boundaries.length()]
   } else {
-    n / 3 % 1200
+    n / 3 % 2200
   }
 }
 
 ///|
 /// Build a vector holding `offset, offset + 1, ..., offset + len - 1` by one
-/// of three construction paths: bulk `makei`, element-wise `push`, or slicing
-/// out of a larger vector — the last one leaves behind the irregular tree
-/// shapes that stress `concat`'s rebalancing.
+/// of six construction paths.
+///
+/// This is what stands between these properties and the `Arbitrary` instance,
+/// which builds every vector with `from_array` and so only ever produces a
+/// dense radix tree with a fresh tail. The three bugs this package has had
+/// (#4083, #4084, #4086) all lived in shapes `from_array` cannot reach:
+/// relaxed (`Some(sizes)`) nodes, empty tails over a non-empty tree, and the
+/// trees `concat`'s rebalancing leaves behind. Each mode below reaches a shape
+/// the others do not:
+///
+/// - 0: bulk `makei` — dense radix tree, the `Arbitrary` shape;
+/// - 1: element-wise `push` — tail-flush spine growth;
+/// - 2: `slice` out of a larger vector — partial leaves at both edges;
+/// - 3: `concat` of uneven chunks — the only path here that produces relaxed
+///   interior nodes, and it drives the rebalancing planner as it goes;
+/// - 4: `take` from a larger vector — empty tail over a trimmed tree;
+/// - 5: `pop` back down from a larger vector — tail refilled out of the tree.
 fn build_vec(len : Int, offset : Int, mode : Int) -> @vector.Vector[Int] {
-  match (mode & 0x7fffffff) % 3 {
+  match (mode & 0x7fffffff) % 6 {
     0 => @vector.makei(len, i => offset + i)
     1 => {
       let mut v : @vector.Vector[Int] = @vector.new()
@@ -49,7 +64,27 @@ fn build_vec(len : Int, offset : Int, mode : Int) -> @vector.Vector[Int] {
       }
       v
     }
-    _ => @vector.makei(len + 50, i => offset + i - 33).slice(33, 33 + len)
+    2 => @vector.makei(len + 50, i => offset + i - 33).slice(33, 33 + len)
+    3 => {
+      let mut v : @vector.Vector[Int] = @vector.new()
+      for lo = 0; lo < len; {
+        // uneven chunk widths, so the chunk seams fall on no particular
+        // boundary and the resulting tree keeps genuinely relaxed nodes
+        let step = 1 + (lo * 7 + 13) % 47
+        let hi = if lo + step > len { len } else { lo + step }
+        v = v.concat(@vector.makei(hi - lo, i => offset + lo + i))
+        continue hi
+      }
+      v
+    }
+    4 => @vector.makei(len + 97, i => offset + i).take(len)
+    _ => {
+      let mut v = @vector.makei(len + 40, i => offset + i)
+      for _ in 0..<40 {
+        v = v.pop().unwrap()
+      }
+      v
+    }
   }
 }
 
@@ -424,4 +459,145 @@ test "quickcheck: Eq and Compare agree with the array model" {
     let rebuilt = @vector.from_array(ax)
     a == a && a.compare(a) == 0 && a == rebuilt && a.compare(rebuilt) == 0
   })
+}
+
+///|
+/// One content, six construction paths: whatever shape the tree took, the
+/// vector must be indistinguishable through the public API. This is the
+/// property all three historical bugs violated — a malformed tree keeps
+/// iterating correctly (iteration walks in order) while `at`/`get` descend by
+/// radix and return another slot's element. `contains` is here too, since no
+/// other property exercises it.
+test "quickcheck: the same content is one vector, whatever built it" {
+  @quickcheck.check(
+    (seeds : (Int, Int, Int)) => {
+      let (sl, sa, sb) = seeds
+      let n = pick_len(sl)
+      let a = build_vec(n, 7, sa)
+      let b = build_vec(n, 7, sb)
+      let model = Array::makei(n, i => 7 + i)
+      guard a == b && a.compare(b) == 0 && a.hash() == b.hash() else {
+        return false
+      }
+      guard a.to_array() == model && a.iter().to_array() == model else {
+        return false
+      }
+      for i in 0..<n {
+        guard a.at(i) == model[i] && a.get(i) == Some(model[i]) else {
+          return false
+        }
+      }
+      guard a.get(-1) is None && a.get(n) is None else { return false }
+      if n > 0 {
+        guard a.contains(7) && a.contains(7 + n - 1) else { return false }
+      }
+      guard !a.contains(6) && !a.contains(7 + n) else { return false }
+      a.peek() == (if n == 0 { None } else { Some(7 + n - 1) })
+    },
+    count=60,
+  )
+}
+
+///|
+/// `set` has a radix branch and a search branch, and the existing set
+/// property only ever feeds it `from_array` vectors — dense trees whose
+/// search branch never runs. Irregular shapes exercise both.
+test "quickcheck: set agrees with the array model on relaxed trees" {
+  @quickcheck.check(
+    (input : (Int, Int, Array[(Int, Int)])) => {
+      let (sl, sm, updates) = input
+      let n = pick_len(sl)
+      guard n > 0 else { return true }
+      let v = build_vec(n, 0, sm)
+      let model = Array::makei(n, i => i)
+      let mut cur = v
+      for u in updates {
+        let (i_raw, x) = u
+        let i = (i_raw & 0x7fffffff) % n
+        cur = cur.set(i, x)
+        model[i] = x
+        guard cur.at(i) == x else { return false }
+      }
+      guard cur.to_array() == model else { return false }
+      // path copying must not have touched the original
+      v.to_array() == Array::makei(n, i => i)
+    },
+    count=40,
+  )
+}
+
+///|
+/// Taking a slice of a slice is the same as taking the composed slice
+/// directly. Slicing a slice re-runs `slice_left`/`slice_right` over the
+/// truncated, size-carrying nodes the first slice produced — arithmetic no
+/// single slice reaches.
+test "quickcheck: slicing composes" {
+  @quickcheck.check(
+    (seeds : (Int, Int, (Int, Int), (Int, Int))) => {
+      let (sl, sm, outer, inner) = seeds
+      let n = pick_len(sl)
+      let v = build_vec(n, 0, sm)
+      let a = (outer.0 & 0x7fffffff) % (n + 1)
+      let b = a + (outer.1 & 0x7fffffff) % (n - a + 1)
+      let c = (inner.0 & 0x7fffffff) % (b - a + 1)
+      let d = c + (inner.1 & 0x7fffffff) % (b - a - c + 1)
+      let twice = v.slice(a, b).slice(c, d)
+      guard twice == v.slice(a + c, a + d) else { return false }
+      twice.to_array() == Array::makei(d - c, i => a + c + i)
+    },
+    count=60,
+  )
+}
+
+///|
+/// `rev` is an involution, and it turns `concat` around.
+test "quickcheck: rev is an involution and reverses concat" {
+  @quickcheck.check(
+    (seeds : (Int, Int, Int, Int)) => {
+      let (sa, ma, sb, mb) = seeds
+      let a = build_vec(pick_len(sa), 0, ma)
+      let b = build_vec(pick_len(sb), 1000000, mb)
+      guard a.rev().rev() == a else { return false }
+      a.concat(b).rev() == b.rev().concat(a.rev())
+    },
+    count=40,
+  )
+}
+
+///|
+/// `Vector::iter` is a hand-written external iterator that keeps its own
+/// descent stack. `Iter` is single-pass, so draining `take(k)` must consume
+/// exactly the first `k` elements and leave the same iterator positioned on
+/// element `k` — mid-leaf, mid-node, or in the tail, depending on where `k`
+/// falls in the shape at hand.
+test "quickcheck: the iterator resumes where it stopped" {
+  @quickcheck.check(
+    (seeds : (Int, Int, Int)) => {
+      let (sl, sm, sk) = seeds
+      let n = pick_len(sl)
+      let v = build_vec(n, 0, sm)
+      let model = Array::makei(n, i => i)
+      let k = if n == 0 { 0 } else { (sk & 0x7fffffff) % (n + 1) }
+      let it = v.iter()
+      guard it.size_hint() == Some(n) else { return false }
+      guard it.take(k).to_array() == model[0:k].to_owned() else { return false }
+      it.to_array() == model[k:].to_owned()
+    },
+    count=60,
+  )
+}
+
+///|
+/// Serialisation must not leak the tree shape: every construction path
+/// round-trips through JSON to an equal vector.
+test "quickcheck: json round-trips whatever the tree shape" {
+  @quickcheck.check(
+    (seeds : (Int, Int)) => {
+      let (sl, sm) = seeds
+      let v = build_vec(pick_len(sl), 0, sm)
+      let back : @vector.Vector[Int] = @json.from_json(Json(v))
+      back == v
+    },
+    count=40,
+  )
 }
