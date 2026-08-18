@@ -13,21 +13,23 @@
 // limitations under the License.
 
 ///|
-fn ParseContext::lex_string(ctx : ParseContext) -> String raise ParseError {
-  let string_start = ctx.offset
+fn @lexbuf.StringScanner::lex_string(
+  ctx : @lexbuf.StringScanner,
+) -> String raise ParseError {
+  let string_start = ctx.cursor
   // Fast path for ordinary strings: scan raw UTF-16 code units and materialize
   // the slice directly when there are no escapes or control characters.
-  for i in string_start..<ctx.end_offset {
-    let c = ctx.input.unsafe_get(i)
+  for i in string_start..<ctx.data.length() {
+    let c = ctx.data.unsafe_get(i)
     if c == '"' {
-      ctx.offset = i + 1
-      return ctx.input.view(start_offset=string_start, end_offset=i).to_owned()
+      ctx.cursor = i + 1
+      return ctx.data.view(start_offset=string_start, end_offset=i).to_owned()
     } else if c == '\\' {
       return ctx.lex_string_slow()
     } else if c < ' ' {
       // Unescaped control characters (U+0000..U+001F, including \n, \r,
       // \t) are invalid inside a JSON string.
-      ctx.offset = i + 1
+      ctx.cursor = i + 1
       ctx.invalid_char(shift=-1)
     }
   }
@@ -35,23 +37,25 @@ fn ParseContext::lex_string(ctx : ParseContext) -> String raise ParseError {
 }
 
 ///|
-fn ParseContext::lex_string_slow(ctx : ParseContext) -> String raise ParseError {
+fn @lexbuf.StringScanner::lex_string_slow(
+  ctx : @lexbuf.StringScanner,
+) -> String raise ParseError {
   let buf = StringBuilder()
-  let mut start = ctx.offset
+  let mut start = ctx.cursor
   fn flush(end : Int) {
     if start > 0 && end > start {
-      buf.write_view(ctx.input[start:end])
+      buf.write_view(ctx.data[start:end])
     }
   }
 
   for ;; {
     match ctx.read_char() {
       Some('"') => {
-        flush(ctx.offset - 1)
+        flush(ctx.cursor - 1)
         break
       }
       Some('\\') => {
-        flush(ctx.offset - 1)
+        flush(ctx.cursor - 1)
         match ctx.read_char() {
           Some('b') => buf.write_char('\b')
           Some('f') => buf.write_char('\u{0C}')
@@ -62,9 +66,9 @@ fn ParseContext::lex_string_slow(ctx : ParseContext) -> String raise ParseError 
           Some('\\') => buf.write_char('\\')
           Some('/') => buf.write_char('/')
           Some('u') => {
-            // The backslash that opened this escape. `ctx.offset` is just
+            // The backslash that opened this escape. `ctx.cursor` is just
             // past the `u`, and `\` and `u` are one code unit each.
-            let escape_start = ctx.offset - 2
+            let escape_start = ctx.cursor - 2
             let c = ctx.lex_hex_digits(4)
             if c is (0xD800..=0xDBFF) {
               // A leading-surrogate escape is only meaningful as the first
@@ -102,7 +106,7 @@ fn ParseContext::lex_string_slow(ctx : ParseContext) -> String raise ParseError 
           Some(c) => ctx.invalid_char(shift=-c.utf16_len())
           None => raise InvalidEof
         }
-        start = ctx.offset
+        start = ctx.cursor
       }
       Some(ch) =>
         if ch.to_int() < 32 {
@@ -125,16 +129,16 @@ fn ParseContext::lex_string_slow(ctx : ParseContext) -> String raise ParseError 
 /// perfectly valid hex digit for `"\uDC00"`, and for a leading surrogate
 /// followed by a non-BMP character it would name a position inside that
 /// character.
-fn[T] ParseContext::unpaired_surrogate(
-  ctx : ParseContext,
+fn[T] @lexbuf.StringScanner::unpaired_surrogate(
+  ctx : @lexbuf.StringScanner,
   escape_start : Int,
 ) -> T raise ParseError {
-  ctx.invalid_char(shift=escape_start - ctx.offset)
+  ctx.invalid_char(shift=escape_start - ctx.cursor)
 }
 
 ///|
-fn ParseContext::lex_hex_digits(
-  ctx : ParseContext,
+fn @lexbuf.StringScanner::lex_hex_digits(
+  ctx : @lexbuf.StringScanner,
   n : Int,
 ) -> Int raise ParseError {
   for _ in 0..<n; r = 0 {

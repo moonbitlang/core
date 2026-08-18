@@ -12,17 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-///|
-priv struct ParseContext {
-  mut offset : Int
-  input : StringView
-  end_offset : Int
-}
-
-///|
-fn ParseContext::make(input : StringView) -> ParseContext {
-  { offset: 0, input, end_offset: input.length() }
-}
+// The parser's state is `@lexbuf.StringScanner`, the non-streaming scanner
+// target shared with `lexscan`, rather than a private equivalent: `data` is
+// the input view and `cursor` is the relative offset of the next code unit,
+// both in UTF-16 code units. The lexer methods on it live in this package;
+// a scanner mid-parse can therefore be handed to `lexscan` directly if parts
+// of the lexer move there later.
 
 ///|
 priv enum Token {

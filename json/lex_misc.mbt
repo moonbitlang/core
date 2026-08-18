@@ -13,15 +13,15 @@
 // limitations under the License.
 
 ///|
-fn ParseContext::read_char(ctx : ParseContext) -> Char? {
-  if ctx.offset < ctx.end_offset {
-    let c1 = ctx.input.unsafe_get(ctx.offset).to_int()
-    ctx.offset += 1
+fn @lexbuf.StringScanner::read_char(ctx : @lexbuf.StringScanner) -> Char? {
+  if ctx.cursor < ctx.data.length() {
+    let c1 = ctx.data.unsafe_get(ctx.cursor).to_int()
+    ctx.cursor += 1
     if c1 >= 0xD800 && c1 <= 0xDBFF {
-      if ctx.offset < ctx.end_offset {
-        let c2 = ctx.input.unsafe_get(ctx.offset).to_int()
+      if ctx.cursor < ctx.data.length() {
+        let c2 = ctx.data.unsafe_get(ctx.cursor).to_int()
         if c2 >= 0xDC00 && c2 <= 0xDFFF {
-          ctx.offset += 1
+          ctx.cursor += 1
           let c3 = (c1 << 10) + c2 - 0x35fdc00
           return Some(c3.unsafe_to_char())
         }
@@ -45,13 +45,13 @@ const SURROGATE_HIGH_CHAR = 0xDFFF
 /// `ctx.expect_char(c)` check the current context is c,
 /// if it is, consume the character and return `()`,
 /// otherwise raise an error, when it is an error, the position is unspecified.
-fn ParseContext::expect_char(
-  ctx : ParseContext,
+fn @lexbuf.StringScanner::expect_char(
+  ctx : @lexbuf.StringScanner,
   c : Char,
 ) -> Unit raise ParseError {
-  guard ctx.offset < ctx.end_offset else { raise InvalidEof }
-  let c1 = ctx.input.unsafe_get(ctx.offset).to_int()
-  ctx.offset += 1
+  guard ctx.cursor < ctx.data.length() else { raise InvalidEof }
+  let c1 = ctx.data.unsafe_get(ctx.cursor).to_int()
+  ctx.cursor += 1
   let c0 = c.to_int()
   if c0 < 0xFFFF {
     // c0 < SURROGATE_LOW_CHAR || c0 is (0xE000..=0XFFFF)  
@@ -63,15 +63,15 @@ fn ParseContext::expect_char(
     // c0 is not bmp code point
     // c1 has to be surrogate pair otherwise it is invalid
     guard c1 is (SURROGATE_LOW_CHAR..=SURROGATE_HIGH_CHAR) &&
-      ctx.offset < ctx.end_offset else {
+      ctx.cursor < ctx.data.length() else {
       ctx.invalid_char(shift=-1)
     }
-    let c2 = ctx.input.unsafe_get(ctx.offset).to_int()
+    let c2 = ctx.data.unsafe_get(ctx.cursor).to_int()
     let c3 = (c1 << 10) + c2 - 0x35fdc00
     if c3 != c0 {
       ctx.invalid_char(shift=-1)
     } else {
-      ctx.offset += 1 // consume and move forward
+      ctx.cursor += 1 // consume and move forward
     }
   }
 }
@@ -79,13 +79,13 @@ fn ParseContext::expect_char(
 ///|
 /// `ctx.expect_ascii_char(c)` check the current context is c,
 /// 
-fn ParseContext::expect_ascii_char(
-  ctx : ParseContext,
+fn @lexbuf.StringScanner::expect_ascii_char(
+  ctx : @lexbuf.StringScanner,
   c : Byte,
 ) -> Unit raise ParseError {
-  guard ctx.offset < ctx.end_offset else { raise InvalidEof }
-  let c1 = ctx.input.unsafe_get(ctx.offset).to_int()
-  ctx.offset += 1
+  guard ctx.cursor < ctx.data.length() else { raise InvalidEof }
+  let c1 = ctx.data.unsafe_get(ctx.cursor).to_int()
+  ctx.cursor += 1
   if c.to_int() != c1 {
     ctx.invalid_char(shift=-1)
   }
@@ -93,7 +93,7 @@ fn ParseContext::expect_ascii_char(
 
 ///|
 test "expect_char" {
-  let ctx = ParseContext::make("abc")
+  let ctx = @lexbuf.StringScanner::{ data: "abc", cursor: 0 }
   ctx.expect_char('a')
   ctx.expect_char('b')
   ctx.expect_char('c')
@@ -107,7 +107,7 @@ test "expect_char" {
 ///|
 test "expect_char with surrogate pair" {
   // "\uD83D\uDE00" // todo: shall we allow this?
-  let ctx = ParseContext::make("a\u{1F600}bc\u{1F600}c")
+  let ctx = @lexbuf.StringScanner::{ data: "a\u{1F600}bc\u{1F600}c", cursor: 0 }
   ctx.expect_char('a')
   ctx.expect_char((0x1F600).unsafe_to_char())
   ctx.expect_char('b')
@@ -129,18 +129,20 @@ test "expect_char with surrogate pair" {
 // JSON whitespace is ASCII-only, so we can scan UTF-16 code units
 // directly on the existing input view with the same semantics.
 //
-// `offset` is held in a local for the duration of the scan so each
+// The cursor is held in a local for the duration of the scan so each
 // consumed whitespace character is one `local.set` instead of a
 // `struct.set` against `ctx`.
-fn ParseContext::lex_skip_whitespace(ctx : ParseContext) -> Unit {
-  let end = ctx.end_offset
-  ctx.offset = for offset = ctx.offset {
-    if offset >= end {
-      break offset
+fn @lexbuf.StringScanner::lex_skip_whitespace(
+  ctx : @lexbuf.StringScanner,
+) -> Unit {
+  let end = ctx.data.length()
+  ctx.cursor = for cursor = ctx.cursor {
+    if cursor >= end {
+      break cursor
     }
-    match ctx.input.unsafe_get(offset) {
-      ' ' | '\t' | '\r' | '\n' => continue offset + 1
-      _ => break offset
+    match ctx.data.unsafe_get(cursor) {
+      ' ' | '\t' | '\r' | '\n' => continue cursor + 1
+      _ => break cursor
     }
   }
 }
@@ -148,32 +150,32 @@ fn ParseContext::lex_skip_whitespace(ctx : ParseContext) -> Unit {
 ///|
 test "lex_skip_whitespace" {
   // Empty input: nothing to skip.
-  let ctx = ParseContext::make("")
+  let ctx = @lexbuf.StringScanner::{ data: "", cursor: 0 }
   ctx.lex_skip_whitespace()
-  json_inspect(ctx.offset, content=0)
+  json_inspect(ctx.cursor, content=0)
   // Only whitespace: offset advances to end.
-  let ctx = ParseContext::make("   \t\r\n")
+  let ctx = @lexbuf.StringScanner::{ data: "   \t\r\n", cursor: 0 }
   ctx.lex_skip_whitespace()
-  json_inspect(ctx.offset, content=6)
+  json_inspect(ctx.cursor, content=6)
   // Mixed whitespace before a token: stops at the first non-ws byte.
-  let ctx = ParseContext::make(" \t\r\n{")
+  let ctx = @lexbuf.StringScanner::{ data: " \t\r\n{", cursor: 0 }
   ctx.lex_skip_whitespace()
-  json_inspect(ctx.offset, content=4)
+  json_inspect(ctx.cursor, content=4)
   // No leading whitespace: offset unchanged.
-  let ctx = ParseContext::make("{}")
+  let ctx = @lexbuf.StringScanner::{ data: "{}", cursor: 0 }
   ctx.lex_skip_whitespace()
-  json_inspect(ctx.offset, content=0)
+  json_inspect(ctx.cursor, content=0)
   // Non-ASCII / Unicode whitespace (e.g. U+00A0 NBSP) must NOT be
   // treated as JSON whitespace — RFC 8259 limits the set to the four
   // ASCII chars handled above.
-  let ctx = ParseContext::make("\u{00A0}x")
+  let ctx = @lexbuf.StringScanner::{ data: "\u{00A0}x", cursor: 0 }
   ctx.lex_skip_whitespace()
-  json_inspect(ctx.offset, content=0)
+  json_inspect(ctx.cursor, content=0)
 }
 
 ///|
-fn ParseContext::lex_after_array_value(
-  ctx : ParseContext,
+fn @lexbuf.StringScanner::lex_after_array_value(
+  ctx : @lexbuf.StringScanner,
 ) -> Token raise ParseError {
   ctx.lex_skip_whitespace()
   match ctx.read_char() {
@@ -185,8 +187,8 @@ fn ParseContext::lex_after_array_value(
 }
 
 ///|
-fn ParseContext::lex_after_property_name(
-  ctx : ParseContext,
+fn @lexbuf.StringScanner::lex_after_property_name(
+  ctx : @lexbuf.StringScanner,
 ) -> Unit raise ParseError {
   ctx.lex_skip_whitespace()
   match ctx.read_char() {
@@ -197,8 +199,8 @@ fn ParseContext::lex_after_property_name(
 }
 
 ///|
-fn ParseContext::lex_after_object_value(
-  ctx : ParseContext,
+fn @lexbuf.StringScanner::lex_after_object_value(
+  ctx : @lexbuf.StringScanner,
 ) -> Token raise ParseError {
   ctx.lex_skip_whitespace()
   match ctx.read_char() {
@@ -212,8 +214,8 @@ fn ParseContext::lex_after_object_value(
 ///|
 /// In the context of `{`, try to lex token `}` or a property name,
 /// otherwise raise an error.
-fn ParseContext::lex_property_name(
-  ctx : ParseContext,
+fn @lexbuf.StringScanner::lex_property_name(
+  ctx : @lexbuf.StringScanner,
 ) -> Token raise ParseError {
   ctx.lex_skip_whitespace()
   match ctx.read_char() {
@@ -231,8 +233,8 @@ fn ParseContext::lex_property_name(
 /// In the context of `{ ...,` try to lex a property name,
 /// otherwise raise an error.
 /// since it is in comma context, `}` is not allowed.
-fn ParseContext::lex_property_name2(
-  ctx : ParseContext,
+fn @lexbuf.StringScanner::lex_property_name2(
+  ctx : @lexbuf.StringScanner,
 ) -> Token raise ParseError {
   ctx.lex_skip_whitespace()
   match ctx.read_char() {
