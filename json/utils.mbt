@@ -26,14 +26,14 @@ fn offset_to_position(input : StringView, offset : Int) -> Position {
 }
 
 ///|
-fn[T] ParseContext::invalid_char(
-  ctx : ParseContext,
+fn[T] @lexbuf.StringScanner::invalid_char(
+  ctx : @lexbuf.StringScanner,
   shift? : Int = 0,
 ) -> T raise ParseError {
-  let offset = ctx.offset + shift
+  let offset = ctx.cursor + shift
   let replacement_char : Char = '\u{fffd}'
   raise InvalidChar(
-    offset_to_position(ctx.input, offset),
-    ctx.input.get_char(offset).unwrap_or(replacement_char),
+    offset_to_position(ctx.data, offset),
+    ctx.data.get_char(offset).unwrap_or(replacement_char),
   )
 }

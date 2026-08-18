@@ -136,12 +136,12 @@ fn JsonNumberScan::try_fast_double(self : JsonNumberScan) -> Double {
 }
 
 ///|
-fn ParseContext::scan_json_number(
-  ctx : ParseContext,
+fn @lexbuf.StringScanner::scan_json_number(
+  ctx : @lexbuf.StringScanner,
   start : Int,
   end : Int,
 ) -> JsonNumberScan {
-  let negative = ctx.input.unsafe_get(start) == '-'
+  let negative = ctx.data.unsafe_get(start) == '-'
   let mut has_decimal = false
   let mut has_exponent = false
   let mut exponent_negative = false
@@ -151,7 +151,7 @@ fn ParseContext::scan_json_number(
   let mut significant_digits = 0
   let mut seen_nonzero = false
   for i in (if negative { start + 1 } else { start })..<end {
-    match ctx.input.unsafe_get(i) {
+    match ctx.data.unsafe_get(i) {
       '0'..='9' as c => {
         let digit = c.to_int() - '0'
         if has_exponent {
@@ -181,7 +181,7 @@ fn ParseContext::scan_json_number(
       'e' | 'E' => {
         has_exponent = true
         if i + 1 < end {
-          let next = ctx.input.unsafe_get(i + 1)
+          let next = ctx.data.unsafe_get(i + 1)
           if next == '-' {
             exponent_negative = true
           }
@@ -222,26 +222,26 @@ priv struct LexedNumber {
 }
 
 ///|
-fn ParseContext::lex_integer_end(
-  ctx : ParseContext,
+fn @lexbuf.StringScanner::lex_integer_end(
+  ctx : @lexbuf.StringScanner,
   start : Int,
   end : Int,
 ) -> LexedNumber {
-  let negative = ctx.input.unsafe_get(start) == '-'
+  let negative = ctx.data.unsafe_get(start) == '-'
   let number_start = if negative { start + 1 } else { start }
   for i = number_start, acc = 0L {
     if i >= end {
       let value = if negative { -acc } else { acc }
       break { value: value.to_double(), repr: None }
     }
-    let digit = (ctx.input.unsafe_get(i).to_int() - '0').to_int64()
+    let digit = (ctx.data.unsafe_get(i).to_int() - '0').to_int64()
     if acc > (SAFE_INTEGER_LIMIT - digit) / 10L {
       // The literal exceeds the exact-integer range of a double (2^53 - 1).
       // Fall back to strconv for the correctly rounded value, preserving the
       // exact source text in `repr` so `stringify` stays lossless. Only a
       // literal strconv itself rejects (beyond double range) keeps the
       // infinity sentinel.
-      let s = ctx.input.view(start_offset=start, end_offset=end)
+      let s = ctx.data.view(start_offset=start, end_offset=end)
       try {
         let value = @internal/strconv.parse_double(s)
         return { value, repr: Some(s) }
@@ -259,8 +259,8 @@ fn ParseContext::lex_integer_end(
 }
 
 ///|
-fn ParseContext::lex_decimal_integer(
-  ctx : ParseContext,
+fn @lexbuf.StringScanner::lex_decimal_integer(
+  ctx : @lexbuf.StringScanner,
   start~ : Int,
 ) -> LexedNumber raise ParseError {
   for ;; {
@@ -269,17 +269,17 @@ fn ParseContext::lex_decimal_integer(
       Some('e' | 'E') => return ctx.lex_decimal_exponent(start~)
       Some('0'..='9') => continue
       Some(_) => {
-        ctx.offset -= 1
-        return ctx.lex_number_end(start, ctx.offset)
+        ctx.cursor -= 1
+        return ctx.lex_number_end(start, ctx.cursor)
       }
-      None => return ctx.lex_number_end(start, ctx.offset)
+      None => return ctx.lex_number_end(start, ctx.cursor)
     }
   }
 }
 
 ///|
-fn ParseContext::lex_decimal_point(
-  ctx : ParseContext,
+fn @lexbuf.StringScanner::lex_decimal_point(
+  ctx : @lexbuf.StringScanner,
   start~ : Int,
 ) -> LexedNumber raise ParseError {
   match ctx.read_char() {
@@ -290,8 +290,8 @@ fn ParseContext::lex_decimal_point(
 }
 
 ///|
-fn ParseContext::lex_decimal_fraction(
-  ctx : ParseContext,
+fn @lexbuf.StringScanner::lex_decimal_fraction(
+  ctx : @lexbuf.StringScanner,
   start~ : Int,
 ) -> LexedNumber raise ParseError {
   for ;; {
@@ -299,24 +299,24 @@ fn ParseContext::lex_decimal_fraction(
       Some('e' | 'E') => return ctx.lex_decimal_exponent(start~)
       Some('0'..='9') => continue
       Some(_) => {
-        ctx.offset -= 1
-        return ctx.lex_number_end(start, ctx.offset)
+        ctx.cursor -= 1
+        return ctx.lex_number_end(start, ctx.cursor)
       }
-      None => return ctx.lex_number_end(start, ctx.offset)
+      None => return ctx.lex_number_end(start, ctx.cursor)
     }
   }
 }
 
 ///|
-fn ParseContext::lex_decimal_exponent(
-  ctx : ParseContext,
+fn @lexbuf.StringScanner::lex_decimal_exponent(
+  ctx : @lexbuf.StringScanner,
   start~ : Int,
 ) -> LexedNumber raise ParseError {
   match ctx.read_char() {
     Some('+' | '-') => return ctx.lex_decimal_exponent_sign(start~)
     Some('0'..='9') => return ctx.lex_decimal_exponent_integer(start~)
     Some(_) => {
-      ctx.offset -= 1
+      ctx.cursor -= 1
       ctx.invalid_char()
     }
     None => raise InvalidEof
@@ -324,14 +324,14 @@ fn ParseContext::lex_decimal_exponent(
 }
 
 ///|
-fn ParseContext::lex_decimal_exponent_sign(
-  ctx : ParseContext,
+fn @lexbuf.StringScanner::lex_decimal_exponent_sign(
+  ctx : @lexbuf.StringScanner,
   start~ : Int,
 ) -> LexedNumber raise ParseError {
   match ctx.read_char() {
     Some('0'..='9') => return ctx.lex_decimal_exponent_integer(start~)
     Some(_) => {
-      ctx.offset -= 1
+      ctx.cursor -= 1
       ctx.invalid_char()
     }
     None => raise InvalidEof
@@ -339,45 +339,45 @@ fn ParseContext::lex_decimal_exponent_sign(
 }
 
 ///|
-fn ParseContext::lex_decimal_exponent_integer(
-  ctx : ParseContext,
+fn @lexbuf.StringScanner::lex_decimal_exponent_integer(
+  ctx : @lexbuf.StringScanner,
   start~ : Int,
 ) -> LexedNumber {
   for ;; {
     match ctx.read_char() {
       Some('0'..='9') => continue
       Some(_) => {
-        ctx.offset -= 1
-        return ctx.lex_number_end(start, ctx.offset)
+        ctx.cursor -= 1
+        return ctx.lex_number_end(start, ctx.cursor)
       }
-      None => return ctx.lex_number_end(start, ctx.offset)
+      None => return ctx.lex_number_end(start, ctx.cursor)
     }
   }
 }
 
 ///|
-fn ParseContext::lex_zero(
-  ctx : ParseContext,
+fn @lexbuf.StringScanner::lex_zero(
+  ctx : @lexbuf.StringScanner,
   start~ : Int,
 ) -> LexedNumber raise ParseError {
   match ctx.read_char() {
     Some('.') => ctx.lex_decimal_point(start~)
     Some('e' | 'E') => ctx.lex_decimal_exponent(start~)
     Some('0'..='9') => {
-      ctx.offset -= 1
+      ctx.cursor -= 1
       ctx.invalid_char()
     }
     Some(_) => {
-      ctx.offset -= 1
-      return ctx.lex_number_end(start, ctx.offset)
+      ctx.cursor -= 1
+      return ctx.lex_number_end(start, ctx.cursor)
     }
-    None => return ctx.lex_number_end(start, ctx.offset)
+    None => return ctx.lex_number_end(start, ctx.cursor)
   }
 }
 
 ///|
-fn ParseContext::lex_number_end(
-  ctx : ParseContext,
+fn @lexbuf.StringScanner::lex_number_end(
+  ctx : @lexbuf.StringScanner,
   start : Int,
   end : Int,
 ) -> LexedNumber {
@@ -416,7 +416,7 @@ fn ParseContext::lex_number_end(
   if !fast.is_nan() {
     return { value: fast, repr: None }
   }
-  let s = ctx.input.view(start_offset=start, end_offset=end)
+  let s = ctx.data.view(start_offset=start, end_offset=end)
   try {
     let d = @internal/strconv.parse_double(s)
     // For normal values, return without string representation

@@ -13,8 +13,8 @@
 // limitations under the License.
 
 ///|
-fn ParseContext::lex_value(
-  ctx : ParseContext,
+fn @lexbuf.StringScanner::lex_value(
+  ctx : @lexbuf.StringScanner,
   allow_rbracket~ : Bool,
 ) -> Token raise ParseError {
   ctx.lex_skip_whitespace()
@@ -49,22 +49,22 @@ fn ParseContext::lex_value(
     Some('-') =>
       match ctx.read_char() {
         Some('0') => {
-          let { value: n, repr } = ctx.lex_zero(start=ctx.offset - 2)
+          let { value: n, repr } = ctx.lex_zero(start=ctx.cursor - 2)
           return Number(n, repr.map(repr => repr.to_owned()))
         }
         Some('1'..='9') => {
-          let { value: n, repr } = ctx.lex_decimal_integer(start=ctx.offset - 2)
+          let { value: n, repr } = ctx.lex_decimal_integer(start=ctx.cursor - 2)
           return Number(n, repr.map(repr => repr.to_owned()))
         }
         Some(_) => ctx.invalid_char(shift=-1)
         None => raise InvalidEof
       }
     Some('0') => {
-      let { value: n, repr } = ctx.lex_zero(start=ctx.offset - 1)
+      let { value: n, repr } = ctx.lex_zero(start=ctx.cursor - 1)
       return Number(n, repr.map(repr => repr.to_owned()))
     }
     Some('1'..='9') => {
-      let { value: n, repr } = ctx.lex_decimal_integer(start=ctx.offset - 1)
+      let { value: n, repr } = ctx.lex_decimal_integer(start=ctx.cursor - 1)
       return Number(n, repr.map(repr => repr.to_owned()))
     }
     Some('"') => {

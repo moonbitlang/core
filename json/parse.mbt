@@ -64,10 +64,10 @@ pub fn parse(
   input : StringView,
   max_nesting_depth? : Int = 1024,
 ) -> Json raise ParseError {
-  let ctx = ParseContext::make(input)
+  let ctx = @lexbuf.StringScanner::{ data: input, cursor: 0 }
   let val = ctx.parse_value(remaining_available_depth=max_nesting_depth)
   ctx.lex_skip_whitespace()
-  if ctx.offset >= ctx.end_offset {
+  if ctx.cursor >= ctx.data.length() {
     val
   } else {
     ctx.invalid_char()
@@ -75,8 +75,8 @@ pub fn parse(
 }
 
 ///|
-fn ParseContext::parse_value(
-  ctx : ParseContext,
+fn @lexbuf.StringScanner::parse_value(
+  ctx : @lexbuf.StringScanner,
   remaining_available_depth~ : Int,
 ) -> Json raise ParseError {
   let tok = ctx.lex_value(allow_rbracket=false)
@@ -84,8 +84,8 @@ fn ParseContext::parse_value(
 }
 
 ///|
-fn ParseContext::parse_value2(
-  ctx : ParseContext,
+fn @lexbuf.StringScanner::parse_value2(
+  ctx : @lexbuf.StringScanner,
   tok : Token,
   remaining_available_depth~ : Int,
 ) -> Json raise ParseError {
@@ -102,8 +102,8 @@ fn ParseContext::parse_value2(
 }
 
 ///|
-fn ParseContext::parse_object(
-  ctx : ParseContext,
+fn @lexbuf.StringScanner::parse_object(
+  ctx : @lexbuf.StringScanner,
   remaining_available_depth~ : Int,
 ) -> Json raise ParseError {
   if remaining_available_depth <= 0 {
@@ -131,8 +131,8 @@ fn ParseContext::parse_object(
 }
 
 ///|
-fn ParseContext::parse_array(
-  ctx : ParseContext,
+fn @lexbuf.StringScanner::parse_array(
+  ctx : @lexbuf.StringScanner,
   remaining_available_depth~ : Int,
 ) -> Json raise ParseError {
   if remaining_available_depth <= 0 {
