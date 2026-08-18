@@ -460,6 +460,25 @@ test "loads and stores" {
 }
 
 ///|
+test "load eight code units from a string" {
+  // The offset counts code units, not bytes, and a code unit above 0xFF is
+  // loaded into its lane whole.
+  let str = "AB\u{4E2D}\u{6587}CDEFGH"
+  assert_eq(
+    @v128.v128_load_i16x8(str, 0),
+    @v128.i16x8_const(
+      0x0041, 0x0042, 0x4E2D, 0x6587, 0x0043, 0x0044, 0x0045, 0x0046,
+    ),
+  )
+  assert_eq(
+    @v128.v128_load_i16x8(str, 2),
+    @v128.i16x8_const(
+      0x4E2D, 0x6587, 0x0043, 0x0044, 0x0045, 0x0046, 0x0047, 0x0048,
+    ),
+  )
+}
+
+///|
 test "integer widening narrowing and dot products" {
   let bytes = @v128.i8x16_const(
     0x80, 0xff, 1, 2, 3, 4, 5, 6, 0x7f, 0, 0xfe, 0xfd, 8, 9, 10, 11,

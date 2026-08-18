@@ -19,6 +19,15 @@ fn load_u16_le(bytes : FixedArray[Byte], offset : Int) -> UInt16 {
 }
 
 ///|
+fn load_u16x4_le(str : String, offset : Int) -> UInt64 {
+  for i in 0..<4; word = (0 : UInt64) {
+    continue word | (str.unsafe_get(offset + i).to_uint64() << (16 * i))
+  } nobreak {
+    word
+  }
+}
+
+///|
 fn load_u32_le(bytes : FixedArray[Byte], offset : Int) -> UInt {
   bytes.unsafe_get(offset).to_uint() |
   (bytes.unsafe_get(offset + 1).to_uint() << 8) |
@@ -153,6 +162,18 @@ pub fn i8x16_shuffle(
 #doc(hidden)
 pub fn v128_load(bytes : FixedArray[Byte], offset : Int) -> V128 {
   make(load_u64_le(bytes, offset), load_u64_le(bytes, offset + 8))
+}
+
+///|
+/// Loads eight consecutive UTF-16 code units of `str` starting at code unit
+/// `offset` into the eight 16-bit lanes of the vector. The caller must ensure
+/// `offset + 8 <= str.length()`.
+#intrinsic("%v128.v128_load_i16x8")
+#borrow(str)
+#internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
+pub fn v128_load_i16x8(str : String, offset : Int) -> V128 {
+  make(load_u16x4_le(str, offset), load_u16x4_le(str, offset + 4))
 }
 
 ///|
