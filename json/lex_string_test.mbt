@@ -232,6 +232,22 @@ test "valid surrogate pairs decode to one scalar value" {
 }
 
 ///|
+test "slow path copies astral characters in plain runs" {
+  // The escapes force the slow path; the runs around them contain characters
+  // outside the BMP, which the scan must traverse as surrogate pairs rather
+  // than stopping at (or splitting) either half.
+  assert_true(
+    @json.parse("\"\u{1F600}a\\n\u{1D11E}b\u{1F600}\"") ==
+    Json::string("\u{1F600}a\n\u{1D11E}b\u{1F600}"),
+  )
+  // A run that is nothing but astral characters, delimited by escapes.
+  assert_true(
+    @json.parse("\"\\t\u{1F600}\u{1F601}\\t\"") ==
+    Json::string("\t\u{1F600}\u{1F601}\t"),
+  )
+}
+
+///|
 test "escaped and raw surrogate halves do not pair up" {
   // Kept last: before the surrogate rule this input aborted the process
   // rather than raising, so a regression here would take the whole test

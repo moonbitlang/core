@@ -37,87 +37,124 @@ fn @lexbuf.StringScanner::lex_string(
 }
 
 ///|
+/// Slow path for strings that contain escapes: re-scans from the start of the
+/// string contents, copying ordinary runs and decoding one escape at a time.
+/// Each `lexscan` case is one form from RFC 8259 §7; anything else falls to
+/// the wildcard, which leaves the cursor at the failure point and raises with
+/// the same positions as the per-character lexer this replaced.
 fn @lexbuf.StringScanner::lex_string_slow(
   ctx : @lexbuf.StringScanner,
 ) -> String raise ParseError {
   let buf = StringBuilder()
-  let mut start = ctx.cursor
-  fn flush(end : Int) {
-    if start > 0 && end > start {
-      buf.write_view(ctx.data[start:end])
-    }
-  }
-
   for ;; {
-    match ctx.read_char() {
-      Some('"') => {
-        flush(ctx.cursor - 1)
-        break
+    lexscan ctx {
+      re"^\"" => break
+      // The longest run of ordinary characters: anything but the closing
+      // quote, a backslash, or an unescaped control character. Lone
+      // surrogates in the input pass through here unchanged, as they did
+      // with the per-character scan.
+      re"^[^\"\\\x00-\x1f]+" as run => buf.write_view(run)
+      re"^\\\"" => buf.write_char('"')
+      re"^\\\\" => buf.write_char('\\')
+      re"^\\/" => buf.write_char('/')
+      re"^\\b" => buf.write_char('\b')
+      re"^\\f" => buf.write_char('\u{0C}')
+      re"^\\n" => buf.write_char('\n')
+      re"^\\r" => buf.write_char('\r')
+      re"^\\t" => buf.write_char('\t')
+      // A `\uXXXX` escape denoting a BMP scalar value: the first digit rules
+      // out the surrogate range D800–DFFF.
+      re"^\\u([0-9A-Ca-cE-Fe-f][0-9A-Fa-f]{3}|[Dd][0-7][0-9A-Fa-f]{2})" as esc =>
+        buf.write_char(hex_quad_value(esc[2:]).unsafe_to_char())
+      // An escaped surrogate pair — a leading half immediately followed by a
+      // trailing half — decodes to the one character it stands for. An
+      // escaped half that cannot pair up this way matches no case and is
+      // rejected by the wildcard, because decoding it would manufacture a
+      // string containing an unpaired surrogate, which MoonBit strings
+      // disallow (RFC 8259 calls the behavior for such escapes
+      // unpredictable; I-JSON forbids them).
+      re"^\\u[Dd][89ABab][0-9A-Fa-f]{2}\\u[Dd][C-Fc-f][0-9A-Fa-f]{2}" as esc => {
+        let lead = hex_quad_value(esc[2:6])
+        let trail = hex_quad_value(esc[8:12])
+        buf.write_char(((lead << 10) + trail - 0x35fdc00).unsafe_to_char())
       }
-      Some('\\') => {
-        flush(ctx.cursor - 1)
-        match ctx.read_char() {
-          Some('b') => buf.write_char('\b')
-          Some('f') => buf.write_char('\u{0C}')
-          Some('n') => buf.write_char('\n')
-          Some('r') => buf.write_char('\r')
-          Some('t') => buf.write_char('\t')
-          Some('"') => buf.write_char('"')
-          Some('\\') => buf.write_char('\\')
-          Some('/') => buf.write_char('/')
-          Some('u') => {
-            // The backslash that opened this escape. `ctx.cursor` is just
-            // past the `u`, and `\` and `u` are one code unit each.
-            let escape_start = ctx.cursor - 2
-            let c = ctx.lex_hex_digits(4)
-            if c is (0xD800..=0xDBFF) {
-              // A leading-surrogate escape is only meaningful as the first
-              // half of an escaped surrogate pair; combine it with the
-              // immediately following trailing-surrogate escape into one
-              // Unicode scalar value. Anything else would manufacture a
-              // string containing an unpaired surrogate, which MoonBit
-              // strings disallow (RFC 8259 calls the behavior for such
-              // escapes unpredictable; I-JSON forbids them).
-              match ctx.read_char() {
-                Some('\\') => ()
-                Some(_) => ctx.unpaired_surrogate(escape_start)
-                None => raise InvalidEof
-              }
-              match ctx.read_char() {
-                Some('u') => ()
-                Some(_) => ctx.unpaired_surrogate(escape_start)
-                None => raise InvalidEof
-              }
-              let c2 = ctx.lex_hex_digits(4)
-              if c2 is (0xDC00..=0xDFFF) {
-                let combined = (c << 10) + c2 - 0x35fdc00
-                buf.write_char(combined.unsafe_to_char())
-              } else {
-                ctx.unpaired_surrogate(escape_start)
-              }
-            } else if c is (0xDC00..=0xDFFF) {
-              // A bare trailing-surrogate escape can never form a scalar
-              // value.
-              ctx.unpaired_surrogate(escape_start)
-            } else {
-              buf.write_char(c.unsafe_to_char())
-            }
-          }
-          Some(c) => ctx.invalid_char(shift=-c.utf16_len())
-          None => raise InvalidEof
-        }
-        start = ctx.cursor
-      }
-      Some(ch) =>
-        if ch.to_int() < 32 {
-          ctx.invalid_char(shift=-1)
-        } else {
-          continue
-        }
-      None => raise InvalidEof
+      _ => ctx.lex_string_failure()
     }
   }
   buf.to_string()
+}
+
+///|
+/// Decodes exactly four UTF-16 code units of hex digits. The regexes in
+/// `lex_string_slow` guarantee the digits, so this cannot fail.
+fn hex_quad_value(quad : StringView) -> Int {
+  for c in quad; r = 0 {
+    let d = match c {
+      '0'..='9' => c.to_int() - '0'
+      'A'..='F' => c.to_int() - 'A' + 10
+      'a'..='f' => c.to_int() - 'a' + 10
+      _ => abort("hex_quad_value: caller guarantees hex digits")
+    }
+    continue (r << 4) | d
+  } nobreak {
+    r
+  }
+}
+
+///|
+/// Diagnoses the point where `lex_string_slow`'s scan stopped and raises the
+/// matching error. The regex cases cover every valid form, so the cursor can
+/// only be at the end of input, at an unescaped control character, or at a
+/// malformed escape. Re-reading with the same per-character primitives as the
+/// old lexer keeps every error position unchanged: a bad escape character or
+/// hex digit is blamed itself, while an escape rejected as an unpaired
+/// surrogate is blamed at its opening backslash (see `unpaired_surrogate`).
+fn[T] @lexbuf.StringScanner::lex_string_failure(
+  ctx : @lexbuf.StringScanner,
+) -> T raise ParseError {
+  let escape_start = ctx.cursor
+  match ctx.read_char() {
+    Some('\\') =>
+      match ctx.read_char() {
+        Some('u') => {
+          let c = ctx.lex_hex_digits(4)
+          if c is (0xD800..=0xDBFF) {
+            // A leading half whose pair failed to close. Whatever follows
+            // cannot complete it — the pair case would have matched — but
+            // scanning it finds where things went wrong: a malformed second
+            // escape is still reported as its own error, anything else as
+            // the unpaired surrogate it leaves behind.
+            match ctx.read_char() {
+              Some('\\') => ()
+              Some(_) => ctx.unpaired_surrogate(escape_start)
+              None => raise InvalidEof
+            }
+            match ctx.read_char() {
+              Some('u') => ()
+              Some(_) => ctx.unpaired_surrogate(escape_start)
+              None => raise InvalidEof
+            }
+            ctx.lex_hex_digits(4) |> ignore
+            ctx.unpaired_surrogate(escape_start)
+          } else if c is (0xDC00..=0xDFFF) {
+            // A bare trailing-surrogate escape can never form a scalar
+            // value.
+            ctx.unpaired_surrogate(escape_start)
+          } else {
+            abort("unreachable: the BMP escape case matches this")
+          }
+        }
+        Some(c) => ctx.invalid_char(shift=-c.utf16_len())
+        None => raise InvalidEof
+      }
+    Some(ch) =>
+      if ch.to_int() < 32 {
+        ctx.invalid_char(shift=-1)
+      } else {
+        abort("unreachable: ordinary characters match the run case")
+      }
+    None => raise InvalidEof
+  }
 }
 
 ///|

@@ -46,3 +46,21 @@ test "bench json parse mixed object array n=1000" (it : @bench.T) {
   let input = repeat_parse_bench_item(1000)
   it.bench(fn() { it.keep(try! @json.parse(input)) })
 }
+
+///|
+/// Exercises the string slow path: every string carries escapes, so none of
+/// them can be returned as a plain slice of the input.
+test "bench json parse escape-heavy strings n=2000" (it : @bench.T) {
+  let item = "\"plain prefix \\n\\t\\\"quoted\\\" \\u0041\\u00e9 pair \\uD83D\\uDE00 tail\""
+  let buf = StringBuilder(size_hint=2000 * (item.length() + 1) + 2)
+  buf.write_char('[')
+  for i in 0..<2000 {
+    if i > 0 {
+      buf.write_char(',')
+    }
+    buf.write_string(item)
+  }
+  buf.write_char(']')
+  let input = buf.to_string()
+  it.bench(fn() { it.keep(try! @json.parse(input)) })
+}
