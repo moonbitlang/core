@@ -16,19 +16,13 @@
 // classification uses the perfect hash on the high nibble described in
 // https://mcyoung.xyz/2023/11/27/simd-base64/.
 //
-// A MoonBit `String` is UTF-16, so a block reads thirty-two bytes to obtain
-// sixteen characters, which yield twelve decoded bytes.
+// A MoonBit `String` is UTF-16, so a block loads two vectors of eight code
+// units to obtain sixteen characters, which yield twelve decoded bytes.
 //
 // The fast path only handles canonical input: no whitespace, a length that is
 // a multiple of four, and characters drawn from the Base64 alphabet. Anything
 // else defers to `decode_scalar`, which remains the single definition of the
 // padding and trailing-bit rules.
-
-///|
-/// V128 loads address memory by byte; a `String` is UTF-16, so code unit `i`
-/// lives at byte offset `i * 2`.
-#cfg(any(target="native", target="wasm"))
-fn unsafe_fixedarray_from_string(str : String) -> FixedArray[Byte] = "%identity"
 
 ///|
 /// Offsets added to a Base64 character to reach its sextet, indexed by the
@@ -129,7 +123,7 @@ fn decode_v128(text : StringView) -> Bytes? {
     2
   }
   let out = FixedArray::make(length / 4 * 3 - padding, b'\x00')
-  let src = unsafe_fixedarray_from_string(text.data())
+  let src = text.data()
   // The final group may carry padding, so it is always left to the scalar
   // decoder; everything before it must be plain alphabet.
   let body = length - 4
@@ -137,10 +131,10 @@ fn decode_v128(text : StringView) -> Bytes? {
   let mut index = 0
   let mut written = 0
   while index + 16 <= body && written + 16 <= out.length() {
-    let offset = (base + index) * 2
+    let offset = base + index
     let ascii = @v128.i8x16_narrow_i16x8_u(
-      @v128.v128_load(src, offset),
-      @v128.v128_load(src, offset + 16),
+      @v128.v128_load_i16x8(src, offset),
+      @v128.v128_load_i16x8(src, offset + 8),
     )
     guard decode_valid_v128(ascii) else { return None }
     @v128.v128_store(out, written, decode_block_v128(ascii))
