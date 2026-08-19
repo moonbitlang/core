@@ -63,6 +63,7 @@ fn Parser::class_atom(
       }
       (rest, Char(c))
     }
+    (re"^\\u", after=_) => raise ctx.error_at(rest, HINT_INVALID_ESCAPE)
     (re"^\\" + (re"[\^$\\.*+?()\[\]{}|/\"\-:&]" as c), after=rest) =>
       (rest, Char(c.to_int()))
     (re"^\[:ascii:\]", after=rest) => (rest, Class(posix_cset_ascii))
@@ -289,6 +290,7 @@ fn Parser::term(
       }
       (rest, @re.char(@re.RecharSet::char(c)), false)
     }
+    (re"^\\u", after=_) => raise ctx.error_at(rest, HINT_INVALID_ESCAPE)
     (re"^\\" + (re"[\^$\\.*+?()\[\]{}|/\"]" as c), after=rest) =>
       (rest, @re.char(@re.RecharSet::char(c.to_int())), false)
     (re"^\\.", after=_) => raise ctx.error_at(rest, HINT_INVALID_ESCAPE)

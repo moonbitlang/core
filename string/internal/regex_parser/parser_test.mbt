@@ -895,6 +895,18 @@ test "parse/error_invalid_escape" {
 }
 
 ///|
+test "parse/error_empty_unicode_brace_escape" {
+  debug_inspect(
+    Ok(parse(profile=profile_unicode(), mode=String, "[\\u{}]")) catch {
+      e => Err(e)
+    },
+    content=(
+      #|Err(ParserError(at=1, hint="Invalid escape sequence"))
+    ),
+  )
+}
+
+///|
 test "parse/error_unicode_out_of_range" {
   debug_inspect(
     Ok(parse(profile=profile_bytes(), mode=String, "[\\u{FFFFFF}]")) catch {
