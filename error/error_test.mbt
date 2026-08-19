@@ -60,21 +60,8 @@ fn[A, E : Error] protect(
   finalize~ : () -> Unit raise?,
   work : () -> A raise E,
 ) -> A raise E {
-  try work() catch {
-    e => {
-      finalize() catch {
-        _ => ()
-      }
-      raise e
-    }
-  } noraise {
-    x => {
-      finalize() catch {
-        _ => ()
-      }
-      x
-    }
-  }
+  defer (finalize() catch { _ => () })
+  work()
 }
 
 ///|
@@ -84,16 +71,11 @@ fn[A, E : Error] protect(
 /// it is hard to track which error is the original one
 /// in the type system
 fn[A] protect2(finalize~ : () -> Unit raise?, work : () -> A raise) -> A raise {
-  try work() catch {
-    e => {
-      finalize()
-      raise e
-    }
-  } noraise {
-    x => {
-      finalize()
-      x
-    }
+  let result = Ok(work()) catch { e => Err(e) }
+  finalize()
+  match result {
+    Ok(x) => x
+    Err(e) => raise e
   }
 }
 
