@@ -343,8 +343,6 @@ pub fn[X, Y] Iter2::iter2(Self[X, Y]) -> Self[X, Y]
 pub fn[X, Y] Iter2::new(() -> (X, Y)?, size_hint? : Int) -> Self[X, Y]
 pub fn[X, Y] Iter2::next(Self[X, Y]) -> (X, Y)?
 pub fn[X, Y] Iter2::to_array(Self[X, Y]) -> Array[(X, Y)]
-#deprecated
-pub impl[X : Show, Y : Show] Show for Iter2[X, Y]
 
 pub enum Json {
   Null
