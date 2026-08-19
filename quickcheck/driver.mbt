@@ -188,9 +188,10 @@ impl Eq for CaseOutcome with fn equal(expected, actual) {
 }
 
 ///|
-fn[A : @shrink.Shrink] shrink_failure(
+fn[A] shrink_failure(
   property : (A) -> Bool raise?,
   filter : (A) -> Bool,
+  shrinker : (A) -> Iter[A],
   input : A,
   initial : CaseOutcome,
   max_shrinks : UInt,
@@ -202,7 +203,7 @@ fn[A : @shrink.Shrink] shrink_failure(
   let mut found = true
   while attempted < max_shrinks && found {
     found = false
-    let candidates = @shrink.Shrink::shrink(current)
+    let candidates = shrinker(current)
     while attempted < max_shrinks && candidates.next() is Some(candidate) {
       attempted = attempted + 1
       let outcome = evaluate_case(property, filter, candidate)
@@ -271,21 +272,11 @@ fn[A : @debug.Debug] failure_report(report : QuickCheckReport[A]) -> String {
 }
 
 ///|
-/// Checks `property` and returns a structured report.
-///
-/// Returning `false` records a falsification; every error raised by the
-/// property is recorded separately. Unlike `check`, this function does not
-/// turn either result into a test failure, does not raise property errors, and
-/// does not require the input type to implement `Debug`. Cases rejected by the
-/// pure `filter` do not count as tests. The run gives up after `discard_ratio`
-/// discarded cases per requested test. The pure `observe` function is
-/// evaluated and aggregated only after a top-level case succeeds.
-///
-/// `counterexample_context` attaches a human-readable description of the shrunk
-/// counterexample to a failure — for example the rendered form of a
-/// generated document — without conflating it with errors raised by the
-/// property itself.
-pub fn[A : Arbitrary + @shrink.Shrink] report(
+/// Internal implementation shared by the `Arbitrary`- and
+/// `Generator`-based entry points.
+fn[A] report_with(
+  generator : Generator[A],
+  shrinker : (A) -> Iter[A],
   property : (A) -> Bool raise?,
   filter? : (A) -> Bool = _ => true,
   observe? : (A) -> Observations = _ => [],
@@ -300,7 +291,7 @@ pub fn[A : Arbitrary + @shrink.Shrink] report(
   let observations = ObservationSummary::empty()
   for tests = 0U, discarded = 0U, recent_discards = 0U; tests < count; {
     let size = size_at(tests, count, max_size, recent_discards)
-    let input : A = Arbitrary::arbitrary(size, state.split())
+    let input : A = generator.run(size, state.split())
     let outcome = evaluate_case(property, filter, input)
     match outcome {
       Passed => {
@@ -317,7 +308,7 @@ pub fn[A : Arbitrary + @shrink.Shrink] report(
       _ => {
         let completed_tests = tests + 1
         let (counterexample, outcome, shrinks, shrink_attempts) = shrink_failure(
-          property, filter, input, outcome, max_shrinks,
+          property, filter, shrinker, input, outcome, max_shrinks,
         )
         let context = counterexample_context.map(render => {
           render(counterexample)
@@ -354,6 +345,114 @@ pub fn[A : Arbitrary + @shrink.Shrink] report(
   } nobreak {
     Passed(tests=count, observations~)
   }
+}
+
+///|
+/// Checks `property` and returns a structured report using the input type's
+/// `Arbitrary` and `Shrink` instances.
+///
+/// Returning `false` records a falsification; every error raised by the
+/// property is recorded separately. Unlike `check`, this function does not
+/// turn either result into a test failure, does not raise property errors, and
+/// does not require the input type to implement `Debug`. Cases rejected by the
+/// pure `filter` do not count as tests. The run gives up after `discard_ratio`
+/// discarded cases per requested test. The pure `observe` function is
+/// evaluated and aggregated only after a top-level case succeeds.
+///
+/// `counterexample_context` attaches a human-readable description of the shrunk
+/// counterexample to a failure — for example the rendered form of a
+/// generated document — without conflating it with errors raised by the
+/// property itself.
+pub fn[A : Arbitrary + @shrink.Shrink] report(
+  property : (A) -> Bool raise?,
+  filter? : (A) -> Bool = _ => true,
+  observe? : (A) -> Observations = _ => [],
+  counterexample_context? : (A) -> String,
+  count? : UInt = 100,
+  max_size? : UInt = 100,
+  max_shrinks? : UInt = 100,
+  discard_ratio? : UInt = 10,
+  seed? : UInt64 = 37,
+) -> QuickCheckReport[A] {
+  report_with(
+    Generator((size, state) => Arbitrary::arbitrary(size, state)),
+    @shrink.Shrink::shrink,
+    property,
+    filter~,
+    observe~,
+    counterexample_context?,
+    count~,
+    max_size~,
+    max_shrinks~,
+    discard_ratio~,
+    seed~,
+  )
+}
+
+///|
+/// Checks a property using an explicit generator.
+///
+/// Unlike `report`, this function does not require `Arbitrary` or `Shrink`.
+/// Generated values are not shrunk, which keeps values inside a generator's
+/// domain when that domain has constraints that a general-purpose shrinker
+/// cannot preserve. Use `report_forall_shrink` when the generator has a
+/// domain-preserving shrinker.
+pub fn[A] report_forall(
+  generator : Generator[A],
+  property : (A) -> Bool raise?,
+  filter? : (A) -> Bool = _ => true,
+  observe? : (A) -> Observations = _ => [],
+  counterexample_context? : (A) -> String,
+  count? : UInt = 100,
+  max_size? : UInt = 100,
+  discard_ratio? : UInt = 10,
+  seed? : UInt64 = 37,
+) -> QuickCheckReport[A] {
+  report_with(
+    generator,
+    _ => Iter::empty(),
+    property,
+    filter~,
+    observe~,
+    counterexample_context?,
+    count~,
+    max_size~,
+    discard_ratio~,
+    seed~,
+  )
+}
+
+///|
+/// Checks a property using an explicit generator and a custom shrinker.
+///
+/// The shrinker is used only after a generated case fails. It is responsible
+/// for preserving any invariants enforced by `generator`.
+pub fn[A] report_forall_shrink(
+  generator : Generator[A],
+  shrinker : (A) -> Iter[A],
+  property : (A) -> Bool raise?,
+  filter? : (A) -> Bool = _ => true,
+  observe? : (A) -> Observations = _ => [],
+  counterexample_context? : (A) -> String,
+  count? : UInt = 100,
+  max_size? : UInt = 100,
+  max_shrinks? : UInt = 100,
+  discard_ratio? : UInt = 10,
+  seed? : UInt64 = 37,
+) -> QuickCheckReport[A] {
+  report_with(
+    generator,
+    shrinker,
+    property,
+    filter~,
+    observe~,
+    counterexample_context?,
+    count~,
+    max_size~,
+    max_shrinks~,
+    discard_ratio~,
+    seed~,
+  )
 }
 
 ///|
@@ -425,10 +524,83 @@ pub fn[A : Arbitrary + @shrink.Shrink + @debug.Debug] check(
     discard_ratio~,
     seed~,
   )
+  finish_check(result, loc)
+}
+
+///|
+fn[A : @debug.Debug] finish_check(
+  result : QuickCheckReport[A],
+  loc : SourceLoc,
+) -> Unit raise {
   match result {
     Passed(observations~, ..) if observations.is_empty() => ()
     Passed(tests~, observations~) => println(observations.report(tests))
     GaveUp(..) | Falsified(..) | Raised(..) =>
       fail(failure_report(result), loc~)
   }
+}
+
+///|
+/// Checks a property using an explicit generator. Generated values are not
+/// shrunk, and the input type does not need an `Arbitrary` or `Shrink`
+/// instance. Use `forall_shrink` when a custom shrinker is available.
+#callsite(autofill(loc))
+pub fn[A : @debug.Debug] forall(
+  generator : Generator[A],
+  property : (A) -> Bool raise?,
+  filter? : (A) -> Bool = _ => true,
+  observe? : (A) -> Observations = _ => [],
+  counterexample_context? : (A) -> String,
+  count? : UInt = 100,
+  max_size? : UInt = 100,
+  discard_ratio? : UInt = 10,
+  seed? : UInt64 = 37,
+  loc~ : SourceLoc,
+) -> Unit raise {
+  let result = report_forall(
+    generator,
+    property,
+    filter~,
+    observe~,
+    counterexample_context?,
+    count~,
+    max_size~,
+    discard_ratio~,
+    seed~,
+  )
+  finish_check(result, loc)
+}
+
+///|
+/// Checks a property using an explicit generator and custom shrinker. The
+/// input type does not need an `Arbitrary` or `Shrink` instance.
+#callsite(autofill(loc))
+pub fn[A : @debug.Debug] forall_shrink(
+  generator : Generator[A],
+  shrinker : (A) -> Iter[A],
+  property : (A) -> Bool raise?,
+  filter? : (A) -> Bool = _ => true,
+  observe? : (A) -> Observations = _ => [],
+  counterexample_context? : (A) -> String,
+  count? : UInt = 100,
+  max_size? : UInt = 100,
+  max_shrinks? : UInt = 100,
+  discard_ratio? : UInt = 10,
+  seed? : UInt64 = 37,
+  loc~ : SourceLoc,
+) -> Unit raise {
+  let result = report_forall_shrink(
+    generator,
+    shrinker,
+    property,
+    filter~,
+    observe~,
+    counterexample_context?,
+    count~,
+    max_size~,
+    max_shrinks~,
+    discard_ratio~,
+    seed~,
+  )
+  finish_check(result, loc)
 }

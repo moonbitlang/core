@@ -83,6 +83,111 @@ impl @shrink.Shrink for FilteredShrinkInput with fn shrink(input) {
 }
 
 ///|
+priv struct ForAllInput(Int) derive(Debug)
+
+///|
+priv struct CustomForAllInput(Int) derive(Debug)
+
+///|
+test "report_forall uses an explicit generator without Arbitrary" {
+  let report = @quickcheck.report_forall(
+    Generator((size, _) => ForAllInput(size)),
+    (input : ForAllInput) => input.0 < 3,
+    count=3,
+    max_size=4,
+    seed=1,
+  )
+  debug_inspect(
+    report,
+    content=(
+      #|Falsified(
+      #|  counterexample=ForAllInput(4),
+      #|  tests=3,
+      #|  size=4,
+      #|  shrinks=0,
+      #|  shrink_attempts=0,
+      #|)
+    ),
+  )
+}
+
+///|
+test "report_forall does not shrink outside a generator domain" {
+  let report = @quickcheck.report_forall(
+    @quickcheck.int_range(10, 11),
+    (input : Int) => input < 10,
+    count=1,
+    max_size=0,
+    seed=1,
+  )
+  debug_inspect(
+    report,
+    content=(
+      #|Falsified(
+      #|  counterexample=10,
+      #|  tests=1,
+      #|  size=0,
+      #|  shrinks=0,
+      #|  shrink_attempts=0,
+      #|)
+    ),
+  )
+}
+
+///|
+test "report_forall_shrink uses a custom shrinker without Shrink" {
+  let report = @quickcheck.report_forall_shrink(
+    @quickcheck.pure(CustomForAllInput(4)),
+    (input : CustomForAllInput) => {
+      if input.0 == 4 {
+        [|CustomForAllInput(3)|]
+      } else {
+        [||]
+      }
+    },
+    (input : CustomForAllInput) => input.0 < 3,
+    count=1,
+    max_size=0,
+    seed=1,
+  )
+  debug_inspect(
+    report,
+    content=(
+      #|Falsified(
+      #|  counterexample=CustomForAllInput(3),
+      #|  tests=1,
+      #|  size=0,
+      #|  shrinks=1,
+      #|  shrink_attempts=1,
+      #|)
+    ),
+  )
+}
+
+///|
+test "forall drives a passing property without Arbitrary or Shrink" {
+  @quickcheck.forall(
+    Generator((_, _) => ForAllInput(1)),
+    (input : ForAllInput) => input.0 == 1,
+    count=3,
+    max_size=0,
+    seed=1,
+  )
+}
+
+///|
+test "forall_shrink drives a passing property with a custom shrinker" {
+  @quickcheck.forall_shrink(
+    @quickcheck.pure(CustomForAllInput(1)),
+    (_ : CustomForAllInput) => [||],
+    (input : CustomForAllInput) => input.0 == 1,
+    count=1,
+    max_size=0,
+    seed=1,
+  )
+}
+
+///|
 priv suberror QcError {
   InitialRaised
   ShrunkRaised
@@ -525,7 +630,7 @@ test "context is attached to raised failures too" {
       #|Raised(
       #|  counterexample=3,
       #|  context="rendered input <3>",
-      #|  error=Failure("quickcheck/driver_test.mbt:516:30-516:42@moonbitlang/core FAILED: boom"),
+      #|  error=Failure("quickcheck/driver_test.mbt:621:30-621:42@moonbitlang/core FAILED: boom"),
       #|  tests=5,
       #|  size=4,
       #|  shrinks=0,

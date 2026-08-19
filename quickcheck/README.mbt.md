@@ -124,6 +124,57 @@ test "context describes the shrunk counterexample" {
 }
 ```
 
+## Explicit Generators
+
+Use `forall` when the input must come from a hand-written `Generator` rather
+than an `Arbitrary` instance. The generator receives the same size schedule as
+`check`, and its values are not shrunk. This is useful for constrained domains,
+where a general-purpose shrinker could produce values outside the domain:
+
+```mbt check
+///|
+test "explicit generator" {
+  @quickcheck.forall(
+    @quickcheck.int_range(1, 100),
+    (x : Int) => x > 0,
+    count=20,
+  )
+}
+```
+
+`forall_shrink` and `report_forall_shrink` accept a shrinker explicitly when
+the generated type has a domain-preserving shrinking strategy.
+The `report_*` variants return `QuickCheckReport` instead of raising or
+failing the test; `report_forall` is the no-shrink counterpart of `report`.
+
+For example, a report can use a shrinker that keeps a failing value inside a
+restricted domain:
+
+```mbt check
+///|
+test "explicit shrinker" {
+  let report = @quickcheck.report_forall_shrink(
+    @quickcheck.pure(4),
+    (x : Int) => if x == 4 { [|3|] } else { [||] },
+    (x : Int) => x < 3,
+    count=1,
+    max_size=0,
+  )
+  debug_inspect(
+    report,
+    content=(
+      #|Falsified(
+      #|  counterexample=3,
+      #|  tests=1,
+      #|  size=0,
+      #|  shrinks=1,
+      #|  shrink_attempts=1,
+      #|)
+    ),
+  )
+}
+```
+
 Properties should be deterministic and should not mutate or consume their
 input. In particular, an `Iter` is single-use; generate an `Array` and create a
 fresh iterator inside the property when replayable sequence behavior matters.
