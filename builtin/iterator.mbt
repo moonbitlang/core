@@ -1074,16 +1074,6 @@ pub fn[X, Y] Iter2::next(self : Iter2[X, Y]) -> (X, Y)? {
 }
 
 ///|
-#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
-pub impl[X : Show, Y : Show] Show for Iter2[X, Y]
-
-///|
-#warnings("-deprecated")
-pub impl[X : Show, Y : Show] Show for Iter2[X, Y] with fn output(self, logger) {
-  self.0.output(logger)
-}
-
-///|
 /// Apply callback to each pair.
 pub fn[X, Y] Iter2::each(self : Iter2[X, Y], f : (X, Y) -> Unit) -> Unit {
   self.0.each(pair => f(pair.0, pair.1))
