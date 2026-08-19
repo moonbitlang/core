@@ -73,6 +73,8 @@ pub impl[A : @debug.Debug] @debug.Debug for QuickCheckReport[A]
 // Type aliases
 pub using @splitmix {type RandomState}
 
+pub using @shrink {trait Shrink}
+
 // Traits
 pub(open) trait Arbitrary {
   fn arbitrary(Int, @splitmix.RandomState) -> Self

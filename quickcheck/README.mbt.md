@@ -238,7 +238,9 @@ test "builtin types" {
 
 ## Custom Types
 
-Implement `Arbitrary` trait for custom types:
+Implement the `Arbitrary` and `Shrink` traits for custom types. Both traits are
+available from the `quickcheck` facade; no separate `quickcheck/shrink` import
+is needed:
 
 ```mbt check
 ///|
@@ -248,10 +250,18 @@ priv struct Point {
 } derive(Debug)
 
 ///|
-impl Arbitrary for Point with fn arbitrary(size, r0) {
+impl @quickcheck.Arbitrary for Point with fn arbitrary(size, r0) {
   let r1 = r0.split()
   let y = @quickcheck.Arbitrary::arbitrary(size, r1)
   { x: @quickcheck.Arbitrary::arbitrary(size, r0), y }
+}
+
+///|
+impl @quickcheck.Shrink for Point with fn shrink(self) {
+  @quickcheck.Shrink::shrink((self.x, self.y)).map(pair => {
+    x: pair.0,
+    y: pair.1,
+  })
 }
 
 ///|
@@ -269,6 +279,17 @@ test "custom type generation" {
     content=(
       #|<ArrayView:
       #|  [{ x: 0, y: 1 }, { x: -1, y: -5 }, { x: -6, y: -6 }, { x: -1, y: 7 }]>
+    ),
+  )
+}
+
+///|
+test "custom type shrinking" {
+  let point : Point = { x: 2, y: 1 }
+  debug_inspect(
+    @quickcheck.Shrink::shrink(point).collect(),
+    content=(
+      #|[{ x: 1, y: 1 }, { x: 0, y: 1 }, { x: 2, y: 0 }]
     ),
   )
 }
