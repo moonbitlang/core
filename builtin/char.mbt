@@ -498,9 +498,7 @@ fn Char::escape_to(self : Char, logger : &Logger, quote? : Bool = true) -> Unit 
     ' '..='~' => logger.write_char(self)
     _ =>
       if !self.is_printable() {
-        logger.write_string("\\u{")
-        logger.write_string(self.to_hex())
-        logger.write_char('}')
+        logger <+ "\\u{\{l => l.write_string(self.to_hex())}}"
       } else {
         logger.write_char(self)
       }

@@ -437,13 +437,13 @@ pub impl[K : Show] Show for Set[K]
 
 ///|
 pub impl[K : Show] Show for Set[K] with fn output(self, logger) {
-  logger.write_string("{")
+  logger <+ "{"
   for i = 0, curr = self.head {
     match (i, curr) {
-      (_, None) => break logger.write_string("}")
+      (_, None) => break logger <+ "}"
       (i, Some({ key, next, .. })) => {
         if i > 0 {
-          logger.write_string(", ")
+          logger <+ ", "
         }
         logger.write_object(key)
         continue i + 1, next

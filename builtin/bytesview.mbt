@@ -325,17 +325,25 @@ pub fn BytesView::iter2(self : BytesView) -> Iter2[Int, Byte] {
 }
 
 ///|
-pub impl Show for BytesView with fn output(self, logger) {
-  logger.write_string("b\"")
+/// Writes the bytes with printable ASCII kept as-is and everything else
+/// rendered as `\xHH`, without the surrounding `b"`/`"`. Shared by `Show`,
+/// which adds the quotes, and `ToJson`, which does not.
+///
+/// Generic over the logger rather than taking `&Logger` so that `ToJson`'s
+/// concrete `StringBuilder` keeps direct dispatch.
+fn[L : Logger] BytesView::escape_to(self : BytesView, logger : L) -> Unit {
   for byte in self {
     if byte is (b' '..=b'~') && byte != b'"' && byte != b'\\' {
       logger.write_char(byte.to_char())
     } else {
-      logger.write_string("\\x")
-      logger.write_string(byte.to_hex())
+      logger <+ "\\x\{l => l.write_string(byte.to_hex())}"
     }
   }
-  logger.write_string("\"")
+}
+
+///|
+pub impl Show for BytesView with fn output(self, logger) {
+  logger <+ "b\"\{l => self.escape_to(l)}\""
 }
 
 ///|
@@ -577,14 +585,7 @@ pub fn BytesView::to_owned(self : BytesView) -> Bytes {
 ///|
 pub impl ToJson for BytesView with fn to_json(self) -> Json {
   let sb = StringBuilder()
-  for byte in self {
-    if byte is (b' '..=b'~') && byte != b'"' && byte != b'\\' {
-      sb.write_char(byte.to_char())
-    } else {
-      sb.write_string("\\x")
-      sb.write_string(byte.to_hex())
-    }
-  }
+  self.escape_to(sb)
   Json::string(sb.to_string())
 }
 
