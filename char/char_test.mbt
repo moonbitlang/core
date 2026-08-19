@@ -526,10 +526,9 @@ test "Case conversion with non-letters" {
 }
 
 ///|
-#warnings("-deprecated")
-test "length is an alias of utf16_len" {
-  inspect('A'.length(), content="1")
-  inspect('🌟'.length(), content="2")
-  assert_eq('\u{FFFF}'.length(), '\u{FFFF}'.utf16_len())
-  assert_eq('\u{10000}'.length(), '\u{10000}'.utf16_len())
+test "utf16_len counts UTF-16 code units" {
+  inspect('A'.utf16_len(), content="1")
+  inspect('🌟'.utf16_len(), content="2")
+  assert_eq('\u{FFFF}'.utf16_len(), 1)
+  assert_eq('\u{10000}'.utf16_len(), 2)
 }
