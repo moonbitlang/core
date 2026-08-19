@@ -54,13 +54,15 @@ pub fn[A] List::from_iter(Iter[A]) -> Self[A]
 pub fn[A] List::from_iter_rev(Iter[A]) -> Self[A]
 #as_free_fn
 pub fn[A : @json.FromJson] List::from_json(Json) -> Self[A] raise @json.JsonDecodeError
+#alias(is_prefix, deprecated)
+pub fn[A : Eq] List::has_prefix(Self[A], Self[A]) -> Bool
+#alias(is_suffix, deprecated)
+pub fn[A : Eq] List::has_suffix(Self[A], Self[A]) -> Bool
 pub fn[A : Hash] List::hash(Self[A]) -> Int
 pub fn[A] List::head(Self[A]) -> A?
 pub fn[A] List::intercalate(Self[Self[A]], Self[A]) -> Self[A]
 pub fn[A] List::intersperse(Self[A], A) -> Self[A]
 pub fn[A] List::is_empty(Self[A]) -> Bool
-pub fn[A : Eq] List::is_prefix(Self[A], Self[A]) -> Bool
-pub fn[A : Eq] List::is_suffix(Self[A], Self[A]) -> Bool
 #alias(iterator, deprecated)
 pub fn[A] List::iter(Self[A]) -> Iter[A]
 #alias(iterator2, deprecated)

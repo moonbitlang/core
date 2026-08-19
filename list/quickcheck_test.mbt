@@ -246,6 +246,26 @@ test "quickcheck: intersperse matches an Array reference" {
 }
 
 ///|
+test "quickcheck: has_suffix agrees with the Array reference" {
+  @quickcheck.check(
+    (input : (@list.List[Int], @list.List[Int], Int)) => {
+      let (xs, ys, k) = input
+      let a = xs.to_array()
+      let b = ys.to_array()
+      let expected = a.length() >= b.length() &&
+        a[a.length() - b.length():].to_owned() == b
+      guard xs.has_suffix(ys) == expected else { return false }
+      // Every drop of a list is one of its suffixes, both as the physically
+      // shared tail and as a structurally equal unshared copy.
+      let len = xs.length()
+      let clamped = if k < 0 { 0 } else if k > len { len } else { k }
+      xs.has_suffix(xs.drop(clamped)) && xs.has_suffix(List(a[clamped:]))
+    },
+    count=300,
+  )
+}
+
+///|
 test "quickcheck: element queries agree with the Array reference" {
   @quickcheck.check(
     (input : (@list.List[Int], Int)) => {
