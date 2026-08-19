@@ -307,19 +307,15 @@ pub fn Json::stringify(
               buf.write_string(indent_str(depth, indent))
               stack.push(Array(arr, i=0))
             }
-          String(s) => {
-            buf.write_char('\"')
-            buf.write_string(escape(s, escape_slash~))
-            buf.write_char('\"')
-          }
+          String(s) => buf <+ "\"\{b => escape_to(b, s, escape_slash~)}\""
           Number(n, repr~) =>
             match repr {
               None => buf.write_object(n)
               Some(r) => buf.write_string(r)
             }
-          True => buf.write_string("true")
-          False => buf.write_string("false")
-          Null => buf.write_string("null")
+          True => buf <+ "true"
+          False => buf <+ "false"
+          Null => buf <+ "null"
         }
         continue None
       }
@@ -358,10 +354,7 @@ pub fn Json::stringify(
                   buf.write_char(',')
                   buf.write_string(indent_str(depth, indent))
                 }
-                buf.write_char('\"')
-                buf.write_string(escape(k, escape_slash~))
-                buf.write_char('\"')
-                buf.write_char(':')
+                buf <+ "\"\{b => escape_to(b, k, escape_slash~)}\":"
                 if indent > 0 {
                   buf.write_char(' ')
                 }
@@ -383,36 +376,30 @@ pub fn Json::stringify(
 }
 
 ///|
-fn escape(str : String, escape_slash~ : Bool) -> String {
-  let buf = StringBuilder(size_hint=str.length())
+/// Writes `str` with JSON escaping applied directly to `buf`, so that callers
+/// never materialize the escaped string.
+fn escape_to(buf : &Logger, str : String, escape_slash~ : Bool) -> Unit {
   for c in str {
     match c {
-      '"' => buf.write_string("\\\"")
-      '\\' => buf.write_string("\\\\")
-      '/' =>
-        if escape_slash {
-          buf.write_string("\\/")
-        } else {
-          buf.write_char(c)
-        }
-      '\n' => buf.write_string("\\n")
-      '\r' => buf.write_string("\\r")
-      '\b' => buf.write_string("\\b")
-      '\t' => buf.write_string("\\t")
+      '"' => buf <+ "\\\""
+      '\\' => buf <+ "\\\\"
+      '/' => if escape_slash { buf <+ "\\/" } else { buf.write_char(c) }
+      '\n' => buf <+ "\\n"
+      '\r' => buf <+ "\\r"
+      '\b' => buf <+ "\\b"
+      '\t' => buf <+ "\\t"
       _ => {
         let code = c.to_int()
         if code == 0x0C {
-          buf.write_string("\\f")
+          buf <+ "\\f"
         } else if code < ' ' {
-          buf.write_string("\\u00")
-          buf.write_string(code.to_byte().to_hex())
+          buf <+ "\\u00\{b => b.write_string(code.to_byte().to_hex())}"
         } else {
           buf.write_char(c)
         }
       }
     }
   }
-  buf.to_string()
 }
 
 ///|

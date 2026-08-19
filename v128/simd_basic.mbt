@@ -29,14 +29,19 @@ pub impl Eq for V128 with fn not_equal(self : V128, other : V128) -> Bool {
 }
 
 ///|
-fn u64_hex(value : UInt64) -> String {
+fn u64_hex_to(logger : &Logger, value : UInt64) -> Unit {
   let digits = value.to_string(radix=16)
-  let buf = StringBuilder::new()
-  buf.write_string("0x")
+  logger <+ "0x"
   for _ in digits.length()..<16 {
-    buf.write_char('0')
+    logger.write_char('0')
   }
-  buf.write_string(digits)
+  logger.write_string(digits)
+}
+
+///|
+fn u64_hex(value : UInt64) -> String {
+  let buf = StringBuilder::new()
+  u64_hex_to(buf, value)
   buf.to_string()
 }
 
@@ -46,11 +51,8 @@ fn u64_hex(value : UInt64) -> String {
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub impl Show for V128 with fn output(self : V128, logger) {
-  logger.write_string("V128(")
-  logger.write_string(u64_hex(lo(self)))
-  logger.write_string(", ")
-  logger.write_string(u64_hex(hi(self)))
-  logger.write_string(")")
+  logger <+
+    "V128(\{l => u64_hex_to(l, lo(self))}, \{l => u64_hex_to(l, hi(self))})"
 }
 
 ///|
