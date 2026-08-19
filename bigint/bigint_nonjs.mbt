@@ -1470,7 +1470,10 @@ pub fn BigInt::from_octets(input : BytesView, signum? : Int = 1) -> BigInt {
     limbs[limbs_len - 1] = (limbs[limbs_len - 1] << 8) | input[i].to_uint()
   }
   let byte_per_limb = RADIX_BIT_LEN / 8
-  // tail; each limb is exactly one big-endian RADIX_BIT_LEN-bit word
+  // tail: at RADIX_BIT_LEN == 32 a limb is exactly one big-endian 32-bit word,
+  // so the shift-accumulate loop collapses to a single u32be read. That
+  // constant is pinned by a test in bigint_nonjs_wbtest.mbt, so narrowing it
+  // fails there rather than silently mis-decoding here.
   for i in 0..<div {
     guard! input[len - byte_per_limb - i * byte_per_limb:] is [u32be(word), ..]
     limbs[i] = word
