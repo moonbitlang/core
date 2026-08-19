@@ -1733,10 +1733,11 @@ pub fn[A : Eq] List::remove(self : List[A], elem : A) -> List[A] {
 ///
 /// ```mbt check
 /// test {
-///   @test.assert_eq(@list.List([1, 2, 3, 4, 5]).is_prefix(List([1, 2, 3])), true)
+///   @test.assert_eq(@list.List([1, 2, 3, 4, 5]).has_prefix(List([1, 2, 3])), true)
 /// }
 /// ```
-pub fn[A : Eq] List::is_prefix(self : List[A], prefix : List[A]) -> Bool {
+#alias(is_prefix, deprecated)
+pub fn[A : Eq] List::has_prefix(self : List[A], prefix : List[A]) -> Bool {
   for a = self, b = prefix {
     match (a, b) {
       (_, Empty) => break true
@@ -1758,11 +1759,41 @@ pub fn[A : Eq] List::is_prefix(self : List[A], prefix : List[A]) -> Bool {
 ///
 /// ```mbt check
 /// test {
-///   @test.assert_eq(@list.List([1, 2, 3, 4, 5]).is_suffix(List([3, 4, 5])), true)
+///   @test.assert_eq(@list.List([1, 2, 3, 4, 5]).has_suffix(List([3, 4, 5])), true)
 /// }
 /// ```
-pub fn[A : Eq] List::is_suffix(self : List[A], suffix : List[A]) -> Bool {
-  self.rev().is_prefix(suffix.rev())
+#alias(is_suffix, deprecated)
+pub fn[A : Eq] List::has_suffix(self : List[A], suffix : List[A]) -> Bool {
+  guard suffix is More(_) else { return true }
+  // One pass, no allocation. First advance `lead` one node per `suffix`
+  // node, so `lead` ends up `suffix.length()` nodes into `self` (or proves
+  // the suffix is longer than the list). Then slide `lag` (from the start)
+  // and `lead` together: when `lead` falls off the end, `lag` is exactly
+  // `suffix.length()` nodes from the end — the only window where the suffix
+  // can match — and an element-wise comparison of that equal-length window
+  // decides. List `==` is deliberately not used for the window: its
+  // physical-equality shortcut would declare a NaN-carrying list a suffix
+  // of itself, changing the observable element-wise behavior.
+  for lead = self, probe = suffix {
+    match (lead, probe) {
+      (_, Empty) =>
+        break for lag = self, ahead = lead {
+          match (lag, ahead) {
+            (_, Empty) => break lag.has_prefix(suffix)
+            (More(_, tail=lag_tail), More(_, tail=ahead_tail)) =>
+              continue lag_tail, ahead_tail
+            (Empty, More(_)) =>
+              // `ahead` starts deeper in the same list than `lag` and both
+              // advance together, so `ahead` empties first; this arm only
+              // satisfies exhaustiveness.
+              break false
+          }
+        }
+      (Empty, More(_)) => break false
+      (More(_, tail=lead_tail), More(_, tail=probe_tail)) =>
+        continue lead_tail, probe_tail
+    }
+  }
 }
 
 ///|

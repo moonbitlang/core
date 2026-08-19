@@ -581,16 +581,16 @@ test "remove" {
 }
 
 ///|
-test "is_prefix" {
+test "has_prefix" {
   debug_inspect(
-    @list.List([1, 2, 3, 4, 5]).is_prefix(List([1, 2, 3])),
+    @list.List([1, 2, 3, 4, 5]).has_prefix(List([1, 2, 3])),
     content="true",
   )
   debug_inspect(
-    @list.List([1, 2, 3, 4, 5]).is_prefix(List([3, 2, 3])),
+    @list.List([1, 2, 3, 4, 5]).has_prefix(List([3, 2, 3])),
     content="false",
   )
-  debug_inspect(@list.empty().is_prefix(List([1, 2, 3])), content="false")
+  debug_inspect(@list.empty().has_prefix(List([1, 2, 3])), content="false")
 }
 
 ///|
@@ -601,13 +601,13 @@ test "equal" {
 }
 
 ///|
-test "is_suffix" {
+test "has_suffix" {
   debug_inspect(
-    @list.List([1, 2, 3, 4, 5]).is_suffix(List([3, 4, 5])),
+    @list.List([1, 2, 3, 4, 5]).has_suffix(List([3, 4, 5])),
     content="true",
   )
   debug_inspect(
-    @list.List([1, 2, 3, 4, 5]).is_suffix(List([3, 4, 6])),
+    @list.List([1, 2, 3, 4, 5]).has_suffix(List([3, 4, 6])),
     content="false",
   )
 }
@@ -1087,29 +1087,29 @@ test "complex list recursion safety" {
 }
 
 ///|
-test "is_prefix and is_suffix complex cases" {
+test "has_prefix and has_suffix complex cases" {
   let l = @list.List([1, 2, 3, 4, 5])
 
-  // Test is_prefix with various scenarios
-  assert_true(l.is_prefix(List([1])))
-  assert_true(l.is_prefix(List([1, 2])))
-  assert_true(l.is_prefix(List([1, 2, 3])))
-  assert_false(l.is_prefix(List([2, 3])))
-  assert_false(l.is_prefix(List([0, 1, 2])))
+  // Test has_prefix with various scenarios
+  assert_true(l.has_prefix(List([1])))
+  assert_true(l.has_prefix(List([1, 2])))
+  assert_true(l.has_prefix(List([1, 2, 3])))
+  assert_false(l.has_prefix(List([2, 3])))
+  assert_false(l.has_prefix(List([0, 1, 2])))
 
-  // Test is_suffix with various scenarios
-  assert_true(l.is_suffix(List([5])))
-  assert_true(l.is_suffix(List([4, 5])))
-  assert_true(l.is_suffix(List([3, 4, 5])))
-  assert_false(l.is_suffix(List([2, 5])))
-  assert_false(l.is_suffix(List([3, 4, 6])))
+  // Test has_suffix with various scenarios
+  assert_true(l.has_suffix(List([5])))
+  assert_true(l.has_suffix(List([4, 5])))
+  assert_true(l.has_suffix(List([3, 4, 5])))
+  assert_false(l.has_suffix(List([2, 5])))
+  assert_false(l.has_suffix(List([3, 4, 6])))
 
   // Test with empty list
   let empty : @list.List[Int] = @list.empty()
-  assert_true(empty.is_prefix(List([])))
-  assert_true(empty.is_suffix(List([])))
-  assert_true(l.is_prefix(List([])))
-  assert_true(l.is_suffix(List([])))
+  assert_true(empty.has_prefix(List([])))
+  assert_true(empty.has_suffix(List([])))
+  assert_true(l.has_prefix(List([])))
+  assert_true(l.has_suffix(List([])))
 }
 
 ///|
@@ -1200,4 +1200,41 @@ test "remove empty and head" {
 test "List default trait" {
   let ls : @list.List[Int] = Default::default()
   debug_inspect(ls, content="<List: []>")
+}
+
+///|
+test "has_suffix boundaries" {
+  let l = @list.List([1, 2, 3, 4, 5])
+  let empty : @list.List[Int] = @list.empty()
+  // empty suffixes
+  assert_true(l.has_suffix(empty))
+  assert_true(empty.has_suffix(empty))
+  // empty list, non-empty suffix
+  assert_false(empty.has_suffix(l))
+  // the whole list, and a physically shared tail
+  assert_true(l.has_suffix(l))
+  assert_true(l.has_suffix(l.drop(2)))
+  // longer than the list
+  assert_false(l.has_suffix(List([0, 1, 2, 3, 4, 5])))
+  // same length, different content
+  assert_false(l.has_suffix(List([1, 2, 3, 4, 6])))
+  assert_false(l.has_suffix(List([0, 2, 3, 4, 5])))
+  // mismatch only at the window's first element
+  assert_false(l.has_suffix(List([0, 4, 5])))
+  // single element
+  assert_true(l.has_suffix(List([5])))
+  assert_false(l.has_suffix(List([1])))
+}
+
+///|
+test "has_suffix window comparison is element-wise" {
+  // List `==` short-circuits on physical equality, but the suffix window
+  // comparison is element-wise, so a NaN-carrying list is not even its own
+  // suffix — matching the previous rev-based implementation and
+  // has_prefix's behavior.
+  let nan = 0.0 / 0.0
+  let xs = @list.List([nan])
+  assert_true(xs == xs)
+  assert_false(xs.has_suffix(xs))
+  assert_false(xs.has_prefix(xs))
 }
