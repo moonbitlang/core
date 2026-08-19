@@ -34,8 +34,7 @@ fn make_float_array_json(count : Int) -> String {
     if i > 0 {
       buf.write_char(',')
     }
-    buf.write_string((i * 2654435).to_string())
-    buf.write_string(".125e-2")
+    buf <+ "\{i * 2654435}.125e-2"
   }
   buf.write_char(']')
   buf.to_string()

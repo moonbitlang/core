@@ -84,7 +84,7 @@ test "iter_take_each" {
   .iter()
   .each(e => {
     let (k, v) = e
-    buf.write_string("[\{k}-\{v}]")
+    buf <+ "[\{k}-\{v}]"
   })
   inspect(buf, content="[1-one][2-two][3-three]")
   buf.reset()
@@ -93,7 +93,7 @@ test "iter_take_each" {
   .take(2)
   .each(e => {
     let (k, v) = e
-    buf.write_string("[\{k}-\{v}]")
+    buf <+ "[\{k}-\{v}]"
   })
   inspect(buf, content="[1-one][2-two]")
 }
@@ -208,7 +208,7 @@ test "iterator" {
   .iter()
   .each(e => {
     let (k, v) = e
-    buf.write_string("[\{k}-\{v}]")
+    buf <+ "[\{k}-\{v}]"
   })
   inspect(buf, content="[1-one][2-two][3-three]")
   buf.reset()
@@ -217,7 +217,7 @@ test "iterator" {
   .take(2)
   .each(e => {
     let (k, v) = e
-    buf.write_string("[\{k}-\{v}]")
+    buf <+ "[\{k}-\{v}]"
   })
   inspect(buf, content="[1-one][2-two]")
 }

@@ -150,7 +150,7 @@ test "map_while1" {
   let exb = StringBuilder(size_hint=0)
   iter
   .map_while(x => if x != 4 { Some(x) } else { None })
-  .each(x => exb.write_string("\{x}\n"))
+  .each(x => exb <+ "\{x}\n")
   inspect(
     exb,
     content=(
@@ -169,7 +169,7 @@ test "map_while2" {
   iter
   .map_while(x => if x != 4 { Some(x) } else { None })
   .concat([|6|])
-  .each(x => exb.write_string("\{x}\n"))
+  .each(x => exb <+ "\{x}\n")
   inspect(
     exb,
     content=(

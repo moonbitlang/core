@@ -186,12 +186,7 @@ test "compare" {
 test "iter" {
   let x = Option::Some(42)
   let exb = StringBuilder(size_hint=0)
-  x
-  .iter()
-  .each(x => {
-    exb.write_string(x.to_string())
-    exb.write_char('\n')
-  })
+  x.iter().each(x => exb <+ "\{x}\n")
   inspect(
     exb,
     content=(
@@ -201,12 +196,7 @@ test "iter" {
   )
   exb.reset()
   let y : Int? = None
-  y
-  .iter()
-  .each(x => {
-    exb.write_string(x.to_string())
-    exb.write_char('\n')
-  })
+  y.iter().each(x => exb <+ "\{x}\n")
   inspect(exb, content="")
 }
 
