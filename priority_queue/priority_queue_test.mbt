@@ -67,12 +67,12 @@ test "iter" {
   let buf = StringBuilder(size_hint=20)
   let v = @priority_queue.from_array([1, 2, 3])
   for e in v {
-    buf.write_string("[\{e}]")
+    buf <+ "[\{e}]"
   }
   inspect(buf, content="[3][2][1]")
   buf.reset()
   for e in v.iter().take(2) {
-    buf.write_string("[\{e}]")
+    buf <+ "[\{e}]"
   }
   inspect(buf, content="[3][2]")
 }

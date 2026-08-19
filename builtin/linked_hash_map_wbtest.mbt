@@ -328,7 +328,7 @@ test "iter" {
   .iter()
   .each(e => {
     let (k, v) = e
-    buf.write_string("[\{k}-\{v}]")
+    buf <+ "[\{k}-\{v}]"
   })
   inspect(buf, content="[1-one][2-two][3-three]")
   buf.reset()
@@ -337,7 +337,7 @@ test "iter" {
   .take(2)
   .each(e => {
     let (k, v) = e
-    buf.write_string("[\{k}-\{v}]")
+    buf <+ "[\{k}-\{v}]"
   })
   inspect(buf, content="[1-one][2-two]")
 }
@@ -348,7 +348,7 @@ test "iter order" {
   m["three"] = 3
   m["two"] = 2
   let buf = StringBuilder(size_hint=0)
-  m.each((k, v) => buf.write_string("[\{k}-\{v}]"))
+  m.each((k, v) => buf <+ "[\{k}-\{v}]")
   inspect(buf.to_string(), content="[one-1][three-3][two-2]")
 }
 
@@ -641,8 +641,7 @@ fn[K : Show, V : Show] Map::_debug_entries(self : Map[K, V]) -> String {
     }
     match entry {
       None => buf.write_char('_')
-      Some({ psl, key, value, .. }) =>
-        buf.write_string("(\{psl},\{key},\{value})")
+      Some({ psl, key, value, .. }) => buf <+ "(\{psl},\{key},\{value})"
     }
   }
   buf.to_string()

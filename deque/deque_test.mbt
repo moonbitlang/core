@@ -101,8 +101,7 @@ test "iter" {
   dv
   .iter()
   .each(x => {
-    buf.write_string(x.to_string())
-    buf.write_char('\n')
+    buf <+ "\{x}\n"
     i += 1
   })
   @test.assert_eq(i, dv.length())

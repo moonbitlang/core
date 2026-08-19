@@ -222,14 +222,12 @@ test "quickcheck: structured numeric strings parse to a printing fixed point" {
       if neg {
         sb.write_char('-')
       }
-      sb.write_string(int_part.to_string())
+      sb <+ "\{int_part}"
       if with_frac {
-        sb.write_char('.')
-        sb.write_string(frac_part.to_string())
+        sb <+ ".\{frac_part}"
       }
       if with_exp {
-        sb.write_char('e')
-        sb.write_string(exp.to_string())
+        sb <+ "e\{exp}"
       }
       let s = sb.to_string()
       match (try? @strconv.parse_double(s)) {

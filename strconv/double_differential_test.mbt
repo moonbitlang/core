@@ -85,10 +85,7 @@ fn print_probe(bits : UInt64) -> String {
 fn batch(inputs : Array[String]) -> String {
   let b = StringBuilder::new()
   for s in inputs {
-    b.write_string(s)
-    b.write_string(" => ")
-    b.write_string(parse_probe(s))
-    b.write_char('\n')
+    b <+ "\{s} => \{parse_probe(s)}\n"
   }
   b.to_string()
 }
@@ -336,10 +333,7 @@ test "print: positional vs exponent notation thresholds" {
 test "parse: long digit strings (slow path)" {
   let b = StringBuilder::new()
   for c in long_digit_cases() {
-    b.write_string(c.0)
-    b.write_string(" => ")
-    b.write_string(parse_probe(c.1))
-    b.write_char('\n')
+    b <+ "\{c.0} => \{parse_probe(c.1)}\n"
   }
   inspect(
     b.to_string(),
@@ -380,8 +374,8 @@ test "parse: random 16/17-digit significands with extreme exponents" {
     let e = (rng.next() % 601UL).to_int() - 300
     let s1 = m2.to_string() + "e" + e.to_string()
     let s2 = (m * 10UL + 5UL).to_string() + "e" + (e - 1).to_string()
-    b.write_string(s1 + " => " + parse_probe(s1) + "\n")
-    b.write_string(s2 + " => " + parse_probe(s2) + "\n")
+    b <+ "\{s1} => \{parse_probe(s1)}\n"
+    b <+ "\{s2} => \{parse_probe(s2)}\n"
   }
   inspect(
     b.to_string(),
@@ -483,7 +477,7 @@ test "parse: exact halfway fractions in [2^52, 2^53)" {
     let base = m.to_string()
     for suffix in [".5", ".49999999999999999999", ".50000000000000000001"] {
       let s = base + suffix
-      b.write_string(s + " => " + parse_probe(s) + "\n")
+      b <+ "\{s} => \{parse_probe(s)}\n"
     }
   }
   inspect(
@@ -568,8 +562,7 @@ test "print: structured bit patterns" {
   let b = StringBuilder::new()
   for e in exp_fields {
     for m in sig_fields {
-      b.write_string(print_probe((e << 52) | m))
-      b.write_char('\n')
+      b <+ "\{print_probe((e << 52) | m)}\n"
     }
   }
   // A few negative representatives.
@@ -581,8 +574,7 @@ test "print: structured bit patterns" {
        0xFFEFFFFFFFFFFFFFUL, // -max finite
        0xFFF0000000000000UL, // -inf
     ] {
-    b.write_string(print_probe(bits))
-    b.write_char('\n')
+    b <+ "\{print_probe(bits)}\n"
   }
   inspect(
     b.to_string(),
@@ -683,7 +675,7 @@ test "print: random doubles, snapshot and parse-print roundtrip" {
     }
     let d = bits.reinterpret_as_double()
     let s = d.to_string()
-    b.write_string(hex16(bits) + " => " + s + "\n")
+    b <+ "\{hex16(bits)} => \{s}\n"
     // Shortest-representation guarantee: parsing the printed string must give
     // back the exact same bits (carving out -0, which prints as "0").
     if bits != 0x8000000000000000UL {

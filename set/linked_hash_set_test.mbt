@@ -165,10 +165,10 @@ test "each" {
 test "iter" {
   let buf = StringBuilder(size_hint=20)
   let map = @set.Set(["a", "b", "c"])
-  map.iter().each(e => buf.write_string("[\{e}]"))
+  map.iter().each(e => buf <+ "[\{e}]")
   inspect(buf, content="[a][b][c]")
   buf.reset()
-  map.iter().take(2).each(e => buf.write_string("[\{e}]"))
+  map.iter().take(2).each(e => buf <+ "[\{e}]")
   inspect(buf, content="[a][b]")
 }
 

@@ -109,7 +109,7 @@ test "StringView core operations" {
   let buf = StringBuilder()
   let it = view.iter2()
   while it.next() is Some((i, ch)) {
-    buf.write_string("\{i}:\{ch};")
+    buf <+ "\{i}:\{ch};"
   }
   inspect(buf.to_string(), content="0:b;1:😀;2:c;")
   let from_arr = StringView::from_array(['x', 'y'])
