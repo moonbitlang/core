@@ -1468,12 +1468,10 @@ pub fn BigInt::from_octets(input : BytesView, signum? : Int = 1) -> BigInt {
     limbs[limbs_len - 1] = (limbs[limbs_len - 1] << 8) | input[i].to_uint()
   }
   let byte_per_limb = RADIX_BIT_LEN / 8
-  // tail
+  // tail; each limb is exactly one big-endian RADIX_BIT_LEN-bit word
   for i in 0..<div {
-    for j in 0..<byte_per_limb {
-      let bytes_idx = len - byte_per_limb - i * byte_per_limb + j
-      limbs[i] = (limbs[i] << 8) | input[bytes_idx].to_uint()
-    }
+    guard! input[len - byte_per_limb - i * byte_per_limb:] is [u32be(word), ..]
+    limbs[i] = word
   }
   { limbs, sign: Positive, len: normalize_len(limbs, limbs_len) }
 }
