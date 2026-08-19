@@ -65,6 +65,38 @@ test "quickcheck: symmetric_difference matches the filter model" {
 }
 
 ///|
+test "quickcheck: strongly asymmetric sizes match the filter model" {
+  // Forces the O(n log m) probe fallback in difference/intersection
+  // (taken when one side is under 1/16 of the other) and checks it against
+  // the same filter model as the split-based path.
+  @quickcheck.check((input : (Array[Int], Array[Int])) => {
+    let (xs, ys) = input
+    let k = if xs.length() < 10 { xs.length() } else { 10 }
+    let small = @sorted_set.from_array(xs[0:k])
+    let big = @sorted_set.from_array(ys)
+    for i in 0..<600 {
+      big.add(10000 + i)
+    }
+    let d_small_big = small.difference(big)
+    let e_d_small_big = small.to_array().filter(x => !big.contains(x))
+    let d_big_small = big.difference(small)
+    let e_d_big_small = big.to_array().filter(x => !small.contains(x))
+    let i_small_big = small.intersection(big)
+    let e_i_small_big = small.to_array().filter(x => big.contains(x))
+    let i_big_small = big.intersection(small)
+    let e_i_big_small = big.to_array().filter(x => small.contains(x))
+    d_small_big.to_array() == e_d_small_big &&
+    d_small_big.length() == e_d_small_big.length() &&
+    d_big_small.to_array() == e_d_big_small &&
+    d_big_small.length() == e_d_big_small.length() &&
+    i_small_big.to_array() == e_i_small_big &&
+    i_small_big.length() == e_i_small_big.length() &&
+    i_big_small.to_array() == e_i_big_small &&
+    i_big_small.length() == e_i_big_small.length()
+  })
+}
+
+///|
 test "quickcheck: set algebra laws relate the operations" {
   @quickcheck.check((input : (Array[Int], Array[Int])) => {
     let (xs, ys) = input

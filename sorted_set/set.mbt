@@ -152,6 +152,26 @@ pub fn[V : Compare] SortedSet::contains(self : SortedSet[V], value : V) -> Bool 
 }
 
 ///|
+/// Returns the stored value that compares equal to `value`, if any.
+fn[V : Compare] lookup(root : Node[V]?, value : V) -> V? {
+  for node = root {
+    match node {
+      None => break None
+      Some(n) => {
+        let compare_result = value.compare(n.value)
+        if compare_result == 0 {
+          break Some(n.value)
+        } else if compare_result < 0 {
+          continue n.left
+        } else {
+          continue n.right
+        }
+      }
+    }
+  }
+}
+
+///|
 /// Returns a new set containing all elements from both sets.
 pub fn[V : Compare] SortedSet::union(
   self : SortedSet[V],
@@ -330,6 +350,16 @@ pub fn[V : Compare] SortedSet::difference(
     (None, _) => new_sorted_set()
     (_, None) => { root: copy_tree(self.root), size: self.size }
     (Some(_), Some(_)) => {
+      // The split-based merge below copies both trees, a Theta(n + m) floor
+      // that dwarfs the O(n log m) probe loop when `self` is far smaller
+      // than `src` (the result then also has at most `self.size` elements).
+      // The 1/16 cutoff keeps the probe loop ahead of the merge even in its
+      // worst case, where every probed element is inserted into the result.
+      if self.size < src.size / 16 {
+        let ret = new_sorted_set()
+        self.each(x => if !src.contains(x) { ret.add(x) })
+        return ret
+      }
       // `found_count` ends up as the number of elements shared by both sets:
       // `aux` takes every node of `a` as a split pivot, except in subtrees
       // whose matching `b` fragment is empty and therefore shares no elements.
@@ -420,6 +450,24 @@ pub fn[V : Compare] SortedSet::intersection(
   match (self.root, src.root) {
     (None, _) | (_, None) => new_sorted_set()
     (Some(_), Some(_)) => {
+      // The intersection's key set is symmetric and fits in the smaller
+      // side, so when one side is far smaller, probing with it is
+      // O(min log max) and beats the Theta(n + m) tree copies of the
+      // split-based merge (see the analogous cutoff in `difference`).
+      // The result must still carry `self`'s stored representative of each
+      // shared value (`add` replaces compare-equal values, and the split
+      // path below emits `va` from `self`), so when the probing side is
+      // `src`, each match inserts the value looked up in `self`.
+      if self.size < src.size / 16 {
+        let ret = new_sorted_set()
+        self.each(x => if src.contains(x) { ret.add(x) })
+        return ret
+      }
+      if src.size < self.size / 16 {
+        let ret = new_sorted_set()
+        src.each(x => if lookup(self.root, x) is Some(v) { ret.add(v) })
+        return ret
+      }
       // See `difference` for why `found_count` counts each shared element
       // once.
       let mut found_count = 0

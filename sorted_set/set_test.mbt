@@ -506,3 +506,61 @@ test "@sorted_set.symmetric_difference/identical" {
     ),
   )
 }
+
+///|
+/// Compare/Eq on `Keyed` look only at `key`; `payload` records which set a
+/// stored representative came from.
+priv struct Keyed {
+  key : Int
+  payload : Int
+}
+
+///|
+impl Eq for Keyed with fn equal(self, other) {
+  self.key == other.key
+}
+
+///|
+impl Compare for Keyed with fn compare(self, other) {
+  self.key.compare(other.key)
+}
+
+///|
+fn keyed_set(keys : Array[Int], payload : Int) -> @sorted_set.SortedSet[Keyed] {
+  let s : @sorted_set.SortedSet[Keyed] = SortedSet([])
+  for k in keys {
+    s.add({ key: k, payload })
+  }
+  s
+}
+
+///|
+test "intersection and difference preserve self's stored representatives" {
+  // src far smaller (probe fallback runs over src): the result must still
+  // carry self's stored values
+  let big_self = keyed_set(Array::makei(40, i => i), 1)
+  let small_src = keyed_set([5], 2)
+  let out = big_self.intersection(small_src).to_array()
+  assert_true(out.length() == 1 && out[0].key == 5 && out[0].payload == 1)
+
+  // self far smaller (probe fallback runs over self)
+  let small_self = keyed_set([5], 1)
+  let big_src = keyed_set(Array::makei(40, i => i), 2)
+  let out2 = small_self.intersection(big_src).to_array()
+  assert_true(out2.length() == 1 && out2[0].payload == 1)
+
+  // comparable sizes (split-based merge)
+  let a = keyed_set(Array::makei(20, i => i), 1)
+  let b = keyed_set(Array::makei(20, i => i + 10), 2)
+  let shared = a.intersection(b).to_array()
+  assert_true(shared.length() == 10)
+  for v in shared {
+    assert_true(v.payload == 1)
+  }
+
+  // difference probe fallback keeps self's values
+  let lone = keyed_set([5], 1)
+  let far = keyed_set(Array::makei(40, i => i + 100), 2)
+  let out3 = lone.difference(far).to_array()
+  assert_true(out3.length() == 1 && out3[0].payload == 1)
+}

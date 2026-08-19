@@ -182,6 +182,16 @@ test "set operations keep invariants (asymmetric sizes)" {
 }
 
 ///|
+test "set operations keep invariants (extreme asymmetry, probe fallback)" {
+  // One side far below 1/16 of the other: difference and intersection take
+  // the O(n log m) probe fallback instead of the split-based merge.
+  for seed in 1..<=3 {
+    set_ops_scenario(0xACE1UL + seed.to_uint64(), 3000, 30, 5000)
+    set_ops_scenario(0xACE2UL + seed.to_uint64(), 30, 3000, 5000)
+  }
+}
+
+///|
 test "set operations with self and empty keep invariants" {
   let rng = Rand::{ state: 77UL }
   let a : SortedSet[Int] = new_sorted_set()
