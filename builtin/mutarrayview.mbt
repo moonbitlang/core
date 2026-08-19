@@ -247,12 +247,9 @@ pub fn[T] MutArrayView::unsafe_set(
 pub fn[T] Array::mut_view(
   self : Array[T],
   start? : Int = 0,
-  end? : Int,
+  end? : Int = self.length(),
 ) -> MutArrayView[T] {
   let len = self.length()
-  let end = match end {
-    Some(end) | (None with end = len) => end
-  }
   guard start >= 0 && start <= end && end <= len else {
     abort("View index out of bounds")
   }
@@ -294,12 +291,9 @@ pub fn[T] Array::mut_view(
 pub fn[T] MutArrayView::mut_view(
   self : MutArrayView[T],
   start? : Int = 0,
-  end? : Int,
+  end? : Int = self.length(),
 ) -> MutArrayView[T] {
   let len = self.length()
-  let end = match end {
-    Some(end) | (None with end = len) => end
-  }
   guard start >= 0 && start <= end && end <= len else {
     abort("View index out of bounds")
   }
@@ -337,12 +331,9 @@ pub fn[T] MutArrayView::mut_view(
 pub fn[T] FixedArray::mut_view(
   self : FixedArray[T],
   start? : Int = 0,
-  end? : Int,
+  end? : Int = self.length(),
 ) -> MutArrayView[T] {
   let len = self.length()
-  let end = match end {
-    Some(end) | (None with end = len) => end
-  }
   guard start >= 0 && start <= end && end <= len else {
     abort("View index out of bounds")
   }
@@ -367,12 +358,9 @@ pub fn[T] FixedArray::mut_view(
 pub fn[T] MutArrayView::view(
   self : MutArrayView[T],
   start? : Int = 0,
-  end? : Int,
+  end? : Int = self.length(),
 ) -> ArrayView[T] {
   let len = self.length()
-  let end = match end {
-    Some(end) | (None with end = len) => end
-  }
   guard start >= 0 && start <= end && end <= len else {
     abort("View index out of bounds")
   }

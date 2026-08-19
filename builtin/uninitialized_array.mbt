@@ -89,12 +89,9 @@ fn[T] UninitializedArray::unsafe_set(
 pub fn[T] UninitializedArray::sub(
   self : UninitializedArray[T],
   start? : Int = 0,
-  end? : Int,
+  end? : Int = self.length(),
 ) -> ArrayView[T] {
   let len = self.length()
-  let end = match end {
-    Some(end) | (None with end = len) => end
-  }
   guard start >= 0 && start <= end && end <= len else {
     abort("View start index out of bounds")
   }

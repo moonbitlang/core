@@ -871,12 +871,9 @@ pub fn[T : Compare] ReadOnlyArray::lexical_compare(
 pub fn[T] ReadOnlyArray::view(
   self : ReadOnlyArray[T],
   start? : Int = 0,
-  end? : Int,
+  end? : Int = self.length(),
 ) -> ArrayView[T] {
-  match end {
-    None => self.unsafe_reinterpret_to_fixed_array()[start:]
-    Some(e) => self.unsafe_reinterpret_to_fixed_array()[start:e]
-  }
+  self.unsafe_reinterpret_to_fixed_array()[start:end]
 }
 
 ///|
@@ -902,13 +899,10 @@ pub fn[T] ReadOnlyArray::view(
 pub fn[T] ReadOnlyArray::get_view(
   self : ReadOnlyArray[T],
   start? : Int = 0,
-  end? : Int,
+  end? : Int = self.length(),
 ) -> ArrayView[T]? {
   let fixed = self.unsafe_reinterpret_to_fixed_array()
-  match end {
-    None => fixed.get_view(start~)
-    Some(end) => fixed.get_view(start~, end~)
-  }
+  fixed.get_view(start~, end~)
 }
 
 ///|
