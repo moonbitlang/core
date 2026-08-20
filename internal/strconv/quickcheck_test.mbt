@@ -261,7 +261,7 @@ fn render(magnitude : UInt64, base : Int, flags : Int) -> String {
   }
   digits.rev_in_place()
   let upper = flags / 2 % 2 == 0
-  let out = StringBuilder::new()
+  let out = StringBuilder()
   match flags % 4 {
     1 => out.write_char('+')
     2 => out.write_char('-')

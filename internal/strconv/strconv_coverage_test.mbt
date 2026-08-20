@@ -157,7 +157,7 @@ test "double slow path: signs, subnormals and buffer-filling fractions" {
   inspect(@strconv.parse_double("4.9e-324") > 0.0, content="true")
   // a fraction with more than the 800-digit buffer overflows it and forces
   // left-shift truncation/trimming during the binary conversion
-  let frac = StringBuilder::new()
+  let frac = StringBuilder()
   frac.write_string("0.")
   for _ in 0..<90 {
     frac.write_string("1234567890")
@@ -165,14 +165,14 @@ test "double slow path: signs, subnormals and buffer-filling fractions" {
   frac.write_string("5")
   inspect(@strconv.parse_double(frac.to_string()) > 0.0, content="true")
   // the same digit count at magnitude ~1.5 drives right-shift truncation
-  let mid = StringBuilder::new()
+  let mid = StringBuilder()
   mid.write_string("1.5")
   for _ in 0..<90 {
     mid.write_string("1234567890")
   }
   inspect(@strconv.parse_double(mid.to_string()) > 1.0, content="true")
   // a huge integer part runs through the slow path and overflows the range
-  let big = StringBuilder::new()
+  let big = StringBuilder()
   for _ in 0..<40 {
     big.write_string("1234567890")
   }
@@ -183,7 +183,7 @@ test "double slow path: signs, subnormals and buffer-filling fractions" {
 test "double slow path: exponents past the digit-position limits" {
   // a large positive exponent with a long integer part pushes the decimal
   // point past the upper accumulation limit
-  let hi = StringBuilder::new()
+  let hi = StringBuilder()
   for _ in 0..<320 {
     hi.write_string("9")
   }
@@ -191,7 +191,7 @@ test "double slow path: exponents past the digit-position limits" {
   inspect(double_raises(hi.to_string()), content="true")
   // a long leading-zero fraction with a negative exponent pushes the decimal
   // point past the lower limit, underflowing to zero
-  let lo = StringBuilder::new()
+  let lo = StringBuilder()
   lo.write_string("0.")
   for _ in 0..<340 {
     lo.write_string("0")

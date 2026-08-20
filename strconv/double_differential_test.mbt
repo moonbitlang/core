@@ -45,7 +45,7 @@ fn Rng::next(self : Rng) -> UInt64 {
 ///|
 fn hex16(bits : UInt64) -> String {
   let s = bits.to_string(radix=16)
-  let b = StringBuilder::new()
+  let b = StringBuilder()
   b.write_string("0x")
   for _ in 0..<(16 - s.length()) {
     b.write_char('0')
@@ -83,7 +83,7 @@ fn print_probe(bits : UInt64) -> String {
 
 ///|
 fn batch(inputs : Array[String]) -> String {
-  let b = StringBuilder::new()
+  let b = StringBuilder()
   for s in inputs {
     b <+ "\{s} => \{parse_probe(s)}\n"
   }
@@ -331,7 +331,7 @@ test "print: positional vs exponent notation thresholds" {
 
 ///|
 test "parse: long digit strings (slow path)" {
-  let b = StringBuilder::new()
+  let b = StringBuilder()
   for c in long_digit_cases() {
     b <+ "\{c.0} => \{parse_probe(c.1)}\n"
   }
@@ -366,7 +366,7 @@ test "parse: long digit strings (slow path)" {
 ///|
 test "parse: random 16/17-digit significands with extreme exponents" {
   let rng = { s: 0xDEADBEEFCAFEF00DUL }
-  let b = StringBuilder::new()
+  let b = StringBuilder()
   for _ in 0..<40 {
     let m = 4503599627370496UL + rng.next() % 4503599627370496UL
     let delta = (rng.next() % 5UL).to_int64() - 2L
@@ -471,7 +471,7 @@ test "parse: exact halfway fractions in [2^52, 2^53)" {
   // perfect tie (round-half-to-even), and the 20-digit neighbours force the
   // slow path to decide the tie from truncated digits.
   let rng = { s: 0x0123456789ABCDEFUL }
-  let b = StringBuilder::new()
+  let b = StringBuilder()
   for _ in 0..<20 {
     let m = 4503599627370496UL + rng.next() % 4503599627370496UL
     let base = m.to_string()
@@ -559,7 +559,7 @@ test "print: structured bit patterns" {
     0x0000000000000UL, 0x0000000000001UL, 0x0000000000002UL, 0x8000000000000UL, 0xFFFFFFFFFFFFFUL,
     0xFFFFFFFFFFFFEUL, 0x5555555555555UL, 0xAAAAAAAAAAAAAUL,
   ]
-  let b = StringBuilder::new()
+  let b = StringBuilder()
   for e in exp_fields {
     for m in sig_fields {
       b <+ "\{print_probe((e << 52) | m)}\n"
@@ -664,7 +664,7 @@ test "print: structured bit patterns" {
 ///|
 test "print: random doubles, snapshot and parse-print roundtrip" {
   let rng = { s: 0xF00DF00DF00DF00DUL }
-  let b = StringBuilder::new()
+  let b = StringBuilder()
   for i in 0..<100 {
     let mut bits = rng.next()
     if ((bits >> 52) & 0x7FFUL) == 0x7FFUL {

@@ -87,7 +87,7 @@ test "tokenize is faithful and lexical" {
 
 ///|
 fn esc(s : String) -> String {
-  let buf = StringBuilder::new()
+  let buf = StringBuilder()
   for c in s {
     match c {
       '&' => buf <+ "&amp;"
@@ -107,8 +107,8 @@ fn esc(s : String) -> String {
 /// rows, so unequal line counts fall out naturally.
 fn side_rows(inner : @diff.Diff[String], old_side~ : Bool) -> Array[String] {
   let rows = []
-  let buf = StringBuilder::new()
-  let run = StringBuilder::new()
+  let buf = StringBuilder()
+  let run = StringBuilder()
   fn flush_run() {
     if run.is_empty() {
       return
@@ -164,7 +164,7 @@ fn side_rows(inner : @diff.Diff[String], old_side~ : Bool) -> Array[String] {
 /// Delete+Insert replacement pair, word-level highlights via a second
 /// `@diff.Diff` over `lexmatch` tokens.
 fn word_diff_html(old~ : ArrayView[String], new~ : ArrayView[String]) -> String {
-  let buf = StringBuilder::new()
+  let buf = StringBuilder()
   for h in @diff.Diff(old~, new~).group(context=1) {
     buf <+ "<span class=\"hunk-header\">\{esc(h.header())}</span>\n"
     let edits = h.edits()

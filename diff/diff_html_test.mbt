@@ -27,7 +27,7 @@ fn side_by_side_html(
   old~ : ArrayView[String],
   new~ : ArrayView[String],
 ) -> String {
-  let buf = StringBuilder::new()
+  let buf = StringBuilder()
   fn row(l : String, lc : String, r : String, rc : String) {
     buf <+
       "<tr><td class=\"\{lc}\">\{l}</td><td class=\"\{rc}\">\{r}</td></tr>\n"
