@@ -456,7 +456,7 @@ fn changes(edits : ArrayView[@diff.Edit]) -> Array[@diff.Edit] {
 
 ///|
 fn to_text(a : Array[Int]) -> String {
-  let buf = StringBuilder::new()
+  let buf = StringBuilder()
   for x in a {
     buf.write_char(
       match x & 3 {

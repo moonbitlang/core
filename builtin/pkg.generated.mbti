@@ -457,7 +457,7 @@ pub fn SourceLoc::to_string(Self) -> String
 pub impl Show for SourceLoc
 
 type StringBuilder
-#alias(new)
+#alias(new, deprecated)
 pub fn StringBuilder::StringBuilder(size_hint? : Int) -> Self
 pub fn StringBuilder::is_empty(Self) -> Bool
 pub fn StringBuilder::reset(Self) -> Unit

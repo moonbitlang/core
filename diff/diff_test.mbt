@@ -524,7 +524,7 @@ test "property: edit scripts reconstruct new from old" {
 /// (`header` + `edits` + views), the way a third-party `diff-ansi` package
 /// would: cyan hunk header, red removals, green additions (git's default look).
 fn[T] ansi_render(h : @diff.Hunk[T], show~ : (T) -> String) -> String {
-  let buf = StringBuilder::new()
+  let buf = StringBuilder()
   buf <+ "\u{1b}[36m\{h.header()}\u{1b}[0m\n"
   let old = h.old_view()
   let new = h.new_view()
@@ -553,7 +553,7 @@ fn[T] ansi_render(h : @diff.Hunk[T], show~ : (T) -> String) -> String {
 /// concern — exactly why HTML stays out of core.
 fn[T] html_render(h : @diff.Hunk[T], show~ : (T) -> String) -> String {
   fn esc(s : String) -> String {
-    let buf = StringBuilder::new()
+    let buf = StringBuilder()
     for c in s {
       match c {
         '&' => buf.write_string("&amp;")
@@ -569,7 +569,7 @@ fn[T] html_render(h : @diff.Hunk[T], show~ : (T) -> String) -> String {
     buf <+ "<span class=\"\{cls}\">\{prefix}\{text}</span>\n"
   }
 
-  let buf = StringBuilder::new()
+  let buf = StringBuilder()
   buf <+ "<pre class=\"hunk\">\n"
   buf <+ "<span class=\"hunk-header\">\{esc(h.header())}</span>\n"
   let old = h.old_view()
@@ -632,7 +632,7 @@ test "edits() with the views agrees with render()" {
   let old = ["a", "b", "c", "d"][:]
   let new = ["a", "x", "c", "y"][:]
   for h in @diff.Diff(old~, new~).group(context=1) {
-    let rebuilt = StringBuilder::new()
+    let rebuilt = StringBuilder()
     rebuilt <+ "\{h.header()}\n"
     let o = h.old_view()
     let n = h.new_view()
