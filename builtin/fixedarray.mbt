@@ -774,9 +774,8 @@ pub fn[A, B] FixedArray::rev_foldi(
   init~ : B,
   f : (Int, B, A) -> B raise?,
 ) -> B raise? {
-  let len = self.length()
-  for i in len>..0; acc = init {
-    continue f(len - i - 1, acc, self.unsafe_get(i))
+  for i in self.length()>..0; index = 0, acc = init {
+    continue index + 1, f(index, acc, self.unsafe_get(i))
   } nobreak {
     acc
   }
@@ -795,6 +794,16 @@ test "rev_foldi" {
   }
   let sum = ([1, 2, 3, 4, 5] : FixedArray[_]).rev_foldi(init=0, f)
   inspect(sum, content="25")
+}
+
+///|
+test "rev_foldi preserves reversed index element pairs" {
+  let trace = ([10, 20, 30] : FixedArray[_]).rev_foldi(init=0, (
+    index,
+    acc,
+    elem,
+  ) => acc * 1000 + index * 100 + elem)
+  inspect(trace, content="30120210")
 }
 
 ///|
