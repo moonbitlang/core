@@ -19,25 +19,22 @@ test "relationships and num args" {
     OptionArg("config", long="config"),
   ])
 
-  try requires_cmd.parse(argv=["--mode", "fast"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: the following required argument was not provided: 'config' (required by 'mode')
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help         Show help information.
-          #|  --mode <mode>      
-          #|  --config <config>  
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => {
+      requires_cmd.parse(argv=["--mode", "fast"], env=empty_env())
+    }),
+    content=(
+      #|error: the following required argument was not provided: 'config' (required by 'mode')
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help         Show help information.
+      #|  --mode <mode>      
+      #|  --config <config>  
+      #|
+    ),
+  )
 
   let appended = @argparse.Command("demo", options=[
     OptionArg("tag", long="tag", action=Append),
@@ -57,52 +54,44 @@ test "arg groups required and multiple" {
     flags=[FlagArg("fast", long="fast"), FlagArg("slow", long="slow")],
   )
 
-  try cmd.parse(argv=[], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: the following required arguments were not provided:
-          #|  <--fast|--slow>
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|  --fast      
-          #|  --slow      
-          #|
-          #|Groups:
-          #|  mode [required] [exclusive]  --fast, --slow
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=[], env=empty_env())),
+    content=(
+      #|error: the following required arguments were not provided:
+      #|  <--fast|--slow>
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help  Show help information.
+      #|  --fast      
+      #|  --slow      
+      #|
+      #|Groups:
+      #|  mode [required] [exclusive]  --fast, --slow
+      #|
+    ),
+  )
 
-  try cmd.parse(argv=["--fast", "--slow"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: group conflict mode
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|  --fast      
-          #|  --slow      
-          #|
-          #|Groups:
-          #|  mode [required] [exclusive]  --fast, --slow
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => {
+      cmd.parse(argv=["--fast", "--slow"], env=empty_env())
+    }),
+    content=(
+      #|error: group conflict mode
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help  Show help information.
+      #|  --fast      
+      #|  --slow      
+      #|
+      #|Groups:
+      #|  mode [required] [exclusive]  --fast, --slow
+      #|
+    ),
+  )
 }
 
 ///|
@@ -116,30 +105,27 @@ test "arg groups requires and conflicts" {
     flags=[FlagArg("fast", long="fast"), FlagArg("json", long="json")],
   )
 
-  try requires_cmd.parse(argv=["--fast"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: the following required arguments were not provided:
-          #|  <--json>
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|  --fast      
-          #|  --json      
-          #|
-          #|Groups:
-          #|  mode    --fast
-          #|  output  --json
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => {
+      requires_cmd.parse(argv=["--fast"], env=empty_env())
+    }),
+    content=(
+      #|error: the following required arguments were not provided:
+      #|  <--json>
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help  Show help information.
+      #|  --fast      
+      #|  --json      
+      #|
+      #|Groups:
+      #|  mode    --fast
+      #|  output  --json
+      #|
+    ),
+  )
 
   let conflict_cmd = @argparse.Command(
     "demo",
@@ -150,29 +136,26 @@ test "arg groups requires and conflicts" {
     flags=[FlagArg("fast", long="fast"), FlagArg("json", long="json")],
   )
 
-  try conflict_cmd.parse(argv=["--fast", "--json"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: group conflict mode conflicts with output
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|  --fast      
-          #|  --json      
-          #|
-          #|Groups:
-          #|  mode    --fast
-          #|  output  --json
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => {
+      conflict_cmd.parse(argv=["--fast", "--json"], env=empty_env())
+    }),
+    content=(
+      #|error: group conflict mode conflicts with output
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help  Show help information.
+      #|  --fast      
+      #|  --json      
+      #|
+      #|Groups:
+      #|  mode    --fast
+      #|  output  --json
+      #|
+    ),
+  )
 }
 
 ///|
@@ -195,27 +178,24 @@ test "negatable and conflicts" {
   }
   assert_true(no_failfast.flags is { "failfast": true, .. })
 
-  try cmd.parse(argv=["--verbose", "--quiet"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: conflicting arguments: verbose and quiet
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help       Show help information.
-          #|  --[no-]cache     
-          #|  --[no-]failfast  
-          #|  --verbose        
-          #|  --quiet          
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => {
+      cmd.parse(argv=["--verbose", "--quiet"], env=empty_env())
+    }),
+    content=(
+      #|error: conflicting arguments: verbose and quiet
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help       Show help information.
+      #|  --[no-]cache     
+      #|  --[no-]failfast  
+      #|  --verbose        
+      #|  --quiet          
+      #|
+    ),
+  )
 }
 
 ///|
@@ -236,28 +216,25 @@ test "group requires/conflicts can target argument names" {
   assert_true(ok.flags is { "fast": true, .. })
   assert_true(ok.values is { "config": ["cfg.toml"], .. })
 
-  try requires_cmd.parse(argv=["--fast"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: the following required argument was not provided: 'config'
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help         Show help information.
-          #|  --fast             
-          #|  --config <config>  
-          #|
-          #|Groups:
-          #|  mode  --fast
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => {
+      requires_cmd.parse(argv=["--fast"], env=empty_env())
+    }),
+    content=(
+      #|error: the following required argument was not provided: 'config'
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help         Show help information.
+      #|  --fast             
+      #|  --config <config>  
+      #|
+      #|Groups:
+      #|  mode  --fast
+      #|
+    ),
+  )
 
   let conflicts_cmd = @argparse.Command(
     "demo",
@@ -266,33 +243,28 @@ test "group requires/conflicts can target argument names" {
     options=[OptionArg("config", long="config")],
   )
 
-  try
-    conflicts_cmd.parse(
-      argv=["--fast", "--config", "cfg.toml"],
-      env=empty_env(),
-    )
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: group conflict mode conflicts with config
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help         Show help information.
-          #|  --fast             
-          #|  --config <config>  
-          #|
-          #|Groups:
-          #|  mode  --fast
-          #|
-        ),
+  inspect(
+    @test.expect_error(() => {
+      conflicts_cmd.parse(
+        argv=["--fast", "--config", "cfg.toml"],
+        env=empty_env(),
       )
-  } noraise {
-    _ => panic()
-  }
+    }),
+    content=(
+      #|error: group conflict mode conflicts with config
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help         Show help information.
+      #|  --fast             
+      #|  --config <config>  
+      #|
+      #|Groups:
+      #|  mode  --fast
+      #|
+    ),
+  )
 }
 
 ///|
@@ -324,24 +296,19 @@ test "required and env-fed ranged values validate after parsing" {
   let required_cmd = @argparse.Command("demo", options=[
     OptionArg("input", long="input", required=true),
   ])
-  try required_cmd.parse(argv=[], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: the following required argument was not provided: 'input'
-          #|
-          #|Usage: demo --input <input>
-          #|
-          #|Options:
-          #|  -h, --help       Show help information.
-          #|  --input <input>  
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => required_cmd.parse(argv=[], env=empty_env())),
+    content=(
+      #|error: the following required argument was not provided: 'input'
+      #|
+      #|Usage: demo --input <input>
+      #|
+      #|Options:
+      #|  -h, --help       Show help information.
+      #|  --input <input>  
+      #|
+    ),
+  )
 
   let env_min_cmd = @argparse.Command("demo", options=[
     OptionArg("pair", long="pair", env="PAIR"),
@@ -360,21 +327,16 @@ test "required group with only hidden members reports a plain message" {
     groups=[ArgGroup("mode", required=true, args=["fast"])],
     flags=[FlagArg("fast", long="fast", hidden=true)],
   )
-  try cmd.parse(argv=[], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: the following required argument group was not provided: 'mode'
-          #|
-          #|Usage: demo
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=[], env=empty_env())),
+    content=(
+      #|error: the following required argument group was not provided: 'mode'
+      #|
+      #|Usage: demo
+      #|
+      #|Options:
+      #|  -h, --help  Show help information.
+      #|
+    ),
+  )
 }

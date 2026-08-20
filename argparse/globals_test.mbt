@@ -455,30 +455,25 @@ test "global set option rejects duplicate occurrences across subcommands" {
     options=[OptionArg("mode", long="mode", global=true)],
     subcommands=[Command("run")],
   )
-  try
-    cmd.parse(argv=["--mode", "a", "run", "--mode", "b"], env=empty_env())
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: argument '--mode' cannot be used multiple times
-          #|
-          #|Usage: demo [options] [command]
-          #|
-          #|Commands:
-          #|  run   
-          #|  help  Print help for the subcommand(s).
-          #|
-          #|Options:
-          #|  -h, --help     Show help information.
-          #|  --mode <mode>  
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => {
+      cmd.parse(argv=["--mode", "a", "run", "--mode", "b"], env=empty_env())
+    }),
+    content=(
+      #|error: argument '--mode' cannot be used multiple times
+      #|
+      #|Usage: demo [options] [command]
+      #|
+      #|Commands:
+      #|  run   
+      #|  help  Print help for the subcommand(s).
+      #|
+      #|Options:
+      #|  -h, --help     Show help information.
+      #|  --mode <mode>  
+      #|
+    ),
+  )
 }
 
 ///|
@@ -584,26 +579,23 @@ test "global set option used in both parent and child argv conflicts" {
     options=[OptionArg("mode", short='m', long="", global=true)],
     subcommands=[Command("run")],
   )
-  try cmd.parse(argv=["-m", "a", "run", "-m", "b"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: argument '-m' cannot be used multiple times
-          #|
-          #|Usage: demo [options] [command]
-          #|
-          #|Commands:
-          #|  run   
-          #|  help  Print help for the subcommand(s).
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|  -m <mode>   
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => {
+      cmd.parse(argv=["-m", "a", "run", "-m", "b"], env=empty_env())
+    }),
+    content=(
+      #|error: argument '-m' cannot be used multiple times
+      #|
+      #|Usage: demo [options] [command]
+      #|
+      #|Commands:
+      #|  run   
+      #|  help  Print help for the subcommand(s).
+      #|
+      #|Options:
+      #|  -h, --help  Show help information.
+      #|  -m <mode>   
+      #|
+    ),
+  )
 }

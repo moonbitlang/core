@@ -16,26 +16,21 @@
 test "unknown argument keeps suggestion in final message" {
   let cmd = @argparse.Command("demo", flags=[FlagArg("verbose", long="verbose")])
 
-  try cmd.parse(argv=["--verbse"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected argument '--verbse' found
-          #|
-          #|  tip: a similar argument exists: '--verbose'
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|  --verbose   
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["--verbse"], env=empty_env())),
+    content=(
+      #|error: unexpected argument '--verbse' found
+      #|
+      #|  tip: a similar argument exists: '--verbose'
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help  Show help information.
+      #|  --verbose   
+      #|
+    ),
+  )
 }
 
 ///|
@@ -46,51 +41,41 @@ test "parse error show is readable" {
     positionals=[PositionArg("name")],
   )
 
-  try cmd.parse(argv=["--verbse"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected argument '--verbse' found
-          #|
-          #|  tip: a similar argument exists: '--verbose'
-          #|
-          #|Usage: demo [options] [name]
-          #|
-          #|Arguments:
-          #|  name  
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|  --verbose   
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["--verbse"], env=empty_env())),
+    content=(
+      #|error: unexpected argument '--verbse' found
+      #|
+      #|  tip: a similar argument exists: '--verbose'
+      #|
+      #|Usage: demo [options] [name]
+      #|
+      #|Arguments:
+      #|  name  
+      #|
+      #|Options:
+      #|  -h, --help  Show help information.
+      #|  --verbose   
+      #|
+    ),
+  )
 
-  try cmd.parse(argv=["alice", "bob"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected value 'bob' for '<name>' found; no more were expected
-          #|
-          #|Usage: demo [options] [name]
-          #|
-          #|Arguments:
-          #|  name  
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|  --verbose   
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["alice", "bob"], env=empty_env())),
+    content=(
+      #|error: unexpected value 'bob' for '<name>' found; no more were expected
+      #|
+      #|Usage: demo [options] [name]
+      #|
+      #|Arguments:
+      #|  name  
+      #|
+      #|Options:
+      #|  -h, --help  Show help information.
+      #|  --verbose   
+      #|
+    ),
+  )
 }
 
 ///|
@@ -99,109 +84,84 @@ test "unknown argument suggestions are exposed" {
     FlagArg("verbose", short='v', long="verbose"),
   ])
 
-  try cmd.parse(argv=["--verbse"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected argument '--verbse' found
-          #|
-          #|  tip: a similar argument exists: '--verbose'
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help     Show help information.
-          #|  -v, --verbose  
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["--verbse"], env=empty_env())),
+    content=(
+      #|error: unexpected argument '--verbse' found
+      #|
+      #|  tip: a similar argument exists: '--verbose'
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help     Show help information.
+      #|  -v, --verbose  
+      #|
+    ),
+  )
 
-  try cmd.parse(argv=["-x"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected argument '-x' found
-          #|
-          #|  tip: a similar argument exists: '-v'
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help     Show help information.
-          #|  -v, --verbose  
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["-x"], env=empty_env())),
+    content=(
+      #|error: unexpected argument '-x' found
+      #|
+      #|  tip: a similar argument exists: '-v'
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help     Show help information.
+      #|  -v, --verbose  
+      #|
+    ),
+  )
 
-  try cmd.parse(argv=["--zzzzzzzzzz"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected argument '--zzzzzzzzzz' found
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help     Show help information.
-          #|  -v, --verbose  
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["--zzzzzzzzzz"], env=empty_env())),
+    content=(
+      #|error: unexpected argument '--zzzzzzzzzz' found
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help     Show help information.
+      #|  -v, --verbose  
+      #|
+    ),
+  )
 }
 
 ///|
 test "unified error message formatting remains stable" {
   let cmd = @argparse.Command("demo", options=[OptionArg("tag", long="tag")])
 
-  try cmd.parse(argv=["--oops"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected argument '--oops' found
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help   Show help information.
-          #|  --tag <tag>  
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["--oops"], env=empty_env())),
+    content=(
+      #|error: unexpected argument '--oops' found
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help   Show help information.
+      #|  --tag <tag>  
+      #|
+    ),
+  )
 
-  try cmd.parse(argv=["--tag"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: a value is required for '--tag' but none was supplied
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help   Show help information.
-          #|  --tag <tag>  
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["--tag"], env=empty_env())),
+    content=(
+      #|error: a value is required for '--tag' but none was supplied
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help   Show help information.
+      #|  --tag <tag>  
+      #|
+    ),
+  )
 }
 
 ///|
@@ -210,23 +170,18 @@ test "unknown short suggestion can be absent" {
     OptionArg("name", long="name"),
   ])
 
-  try cmd.parse(argv=["-x"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected argument '-x' found
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  --name <name>  
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["-x"], env=empty_env())),
+    content=(
+      #|error: unexpected argument '-x' found
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  --name <name>  
+      #|
+    ),
+  )
 }
 
 ///|

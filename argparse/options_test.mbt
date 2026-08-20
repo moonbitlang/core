@@ -104,67 +104,52 @@ test "options and multiple values" {
 ///|
 test "flag does not accept inline value" {
   let cmd = @argparse.Command("demo", flags=[FlagArg("verbose", long="verbose")])
-  try cmd.parse(argv=["--verbose=true"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected argument '--verbose=true' found
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|  --verbose   
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["--verbose=true"], env=empty_env())),
+    content=(
+      #|error: unexpected argument '--verbose=true' found
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help  Show help information.
+      #|  --verbose   
+      #|
+    ),
+  )
 }
 
 ///|
 test "built-in long flags do not accept inline value" {
   let cmd = @argparse.Command("demo", version="1.2.3")
 
-  try cmd.parse(argv=["--help=1"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected argument '--help=1' found
-          #|
-          #|Usage: demo
-          #|
-          #|Options:
-          #|  -h, --help     Show help information.
-          #|  -V, --version  Show version information.
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["--help=1"], env=empty_env())),
+    content=(
+      #|error: unexpected argument '--help=1' found
+      #|
+      #|Usage: demo
+      #|
+      #|Options:
+      #|  -h, --help     Show help information.
+      #|  -V, --version  Show version information.
+      #|
+    ),
+  )
 
-  try cmd.parse(argv=["--version=1"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected argument '--version=1' found
-          #|
-          #|Usage: demo
-          #|
-          #|Options:
-          #|  -h, --help     Show help information.
-          #|  -V, --version  Show version information.
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["--version=1"], env=empty_env())),
+    content=(
+      #|error: unexpected argument '--version=1' found
+      #|
+      #|Usage: demo
+      #|
+      #|Options:
+      #|  -h, --help     Show help information.
+      #|  -V, --version  Show version information.
+      #|
+    ),
+  )
 }
 
 ///|
@@ -206,65 +191,50 @@ test "negation parsing and invalid negation forms" {
   assert_true(off.flags is { "cache": false, .. })
   assert_true(off.sources is { "cache": Argv, .. })
 
-  try cmd.parse(argv=["--no-path"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected argument '--no-path' found
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help     Show help information.
-          #|  --[no-]cache   
-          #|  --path <path>  
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["--no-path"], env=empty_env())),
+    content=(
+      #|error: unexpected argument '--no-path' found
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help     Show help information.
+      #|  --[no-]cache   
+      #|  --path <path>  
+      #|
+    ),
+  )
 
-  try cmd.parse(argv=["--no-missing"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected argument '--no-missing' found
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help     Show help information.
-          #|  --[no-]cache   
-          #|  --path <path>  
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["--no-missing"], env=empty_env())),
+    content=(
+      #|error: unexpected argument '--no-missing' found
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help     Show help information.
+      #|  --[no-]cache   
+      #|  --path <path>  
+      #|
+    ),
+  )
 
-  try cmd.parse(argv=["--no-cache=1"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected argument '--no-cache=1' found
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help     Show help information.
-          #|  --[no-]cache   
-          #|  --path <path>  
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["--no-cache=1"], env=empty_env())),
+    content=(
+      #|error: unexpected argument '--no-cache=1' found
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help     Show help information.
+      #|  --[no-]cache   
+      #|  --path <path>  
+      #|
+    ),
+  )
 
   let count_cmd = @argparse.Command("demo", flags=[
     FlagArg("verbose", long="verbose", action=Count, negatable=true),
@@ -295,89 +265,69 @@ test "env parsing for settrue setfalse count and invalid values" {
   assert_true(parsed.flag_counts is { "v": 3, .. })
   assert_true(parsed.sources is { "on": Env, "off": Env, "v": Env, .. })
 
-  try cmd.parse(argv=[], env={ "ON": "bad" }) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: invalid value 'bad' for boolean flag; expected one of: 1, 0, true, false, yes, no, on, off
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|  --on        [env: ON]
-          #|  --off       [env: OFF]
-          #|  --v         [env: V]
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=[], env={ "ON": "bad" })),
+    content=(
+      #|error: invalid value 'bad' for boolean flag; expected one of: 1, 0, true, false, yes, no, on, off
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help  Show help information.
+      #|  --on        [env: ON]
+      #|  --off       [env: OFF]
+      #|  --v         [env: V]
+      #|
+    ),
+  )
 
-  try cmd.parse(argv=[], env={ "OFF": "bad" }) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: invalid value 'bad' for boolean flag; expected one of: 1, 0, true, false, yes, no, on, off
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|  --on        [env: ON]
-          #|  --off       [env: OFF]
-          #|  --v         [env: V]
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=[], env={ "OFF": "bad" })),
+    content=(
+      #|error: invalid value 'bad' for boolean flag; expected one of: 1, 0, true, false, yes, no, on, off
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help  Show help information.
+      #|  --on        [env: ON]
+      #|  --off       [env: OFF]
+      #|  --v         [env: V]
+      #|
+    ),
+  )
 
-  try cmd.parse(argv=[], env={ "V": "bad" }) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: invalid value 'bad' for count; expected a non-negative integer
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|  --on        [env: ON]
-          #|  --off       [env: OFF]
-          #|  --v         [env: V]
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=[], env={ "V": "bad" })),
+    content=(
+      #|error: invalid value 'bad' for count; expected a non-negative integer
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help  Show help information.
+      #|  --on        [env: ON]
+      #|  --off       [env: OFF]
+      #|  --v         [env: V]
+      #|
+    ),
+  )
 
-  try cmd.parse(argv=[], env={ "V": "-1" }) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: invalid value '-1' for count; expected a non-negative integer
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|  --on        [env: ON]
-          #|  --off       [env: OFF]
-          #|  --v         [env: V]
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=[], env={ "V": "-1" })),
+    content=(
+      #|error: invalid value '-1' for count; expected a non-negative integer
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help  Show help information.
+      #|  --on        [env: ON]
+      #|  --off       [env: OFF]
+      #|  --v         [env: V]
+      #|
+    ),
+  )
 }
 
 ///|
@@ -389,47 +339,41 @@ test "options consume exactly one value per occurrence" {
   assert_true(parsed.values is { "tag": ["a"], .. })
   assert_true(parsed.sources is { "tag": Argv, .. })
 
-  try cmd.parse(argv=["--tag", "a", "b"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected value 'b' found; no more were expected
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help   Show help information.
-          #|  --tag <tag>  
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => {
+      cmd.parse(argv=["--tag", "a", "b"], env=empty_env())
+    }),
+    content=(
+      #|error: unexpected value 'b' found; no more were expected
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help   Show help information.
+      #|  --tag <tag>  
+      #|
+    ),
+  )
 }
 
 ///|
 test "set options reject duplicate occurrences" {
   let cmd = @argparse.Command("demo", options=[OptionArg("mode", long="mode")])
-  try cmd.parse(argv=["--mode", "a", "--mode", "b"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: argument '--mode' cannot be used multiple times
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help     Show help information.
-          #|  --mode <mode>  
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => {
+      cmd.parse(argv=["--mode", "a", "--mode", "b"], env=empty_env())
+    }),
+    content=(
+      #|error: argument '--mode' cannot be used multiple times
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help     Show help information.
+      #|  --mode <mode>  
+      #|
+    ),
+  )
 }
 
 ///|
@@ -458,45 +402,39 @@ test "option parsing stops at the next option token" {
   assert_true(stopped.values is { "arg": ["x"], .. })
   assert_true(stopped.flags is { "verbose": true, .. })
 
-  try cmd.parse(argv=["--arg=x", "y", "--verbose"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected value 'y' found; no more were expected
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help       Show help information.
-          #|  --verbose        
-          #|  -a, --arg <arg>  
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => {
+      cmd.parse(argv=["--arg=x", "y", "--verbose"], env=empty_env())
+    }),
+    content=(
+      #|error: unexpected value 'y' found; no more were expected
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help       Show help information.
+      #|  --verbose        
+      #|  -a, --arg <arg>  
+      #|
+    ),
+  )
 
-  try cmd.parse(argv=["-ax", "y", "--verbose"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected value 'y' found; no more were expected
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help       Show help information.
-          #|  --verbose        
-          #|  -a, --arg <arg>  
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => {
+      cmd.parse(argv=["-ax", "y", "--verbose"], env=empty_env())
+    }),
+    content=(
+      #|error: unexpected value 'y' found; no more were expected
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help       Show help information.
+      #|  --verbose        
+      #|  -a, --arg <arg>  
+      #|
+    ),
+  )
 }
 
 ///|
@@ -506,25 +444,22 @@ test "options always require a value" {
     flags=[FlagArg("verbose", long="verbose")],
     options=[OptionArg("opt", long="opt")],
   )
-  try cmd.parse(argv=["--opt", "--verbose"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: a value is required for '--opt' but none was supplied
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help   Show help information.
-          #|  --verbose    
-          #|  --opt <opt>  
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => {
+      cmd.parse(argv=["--opt", "--verbose"], env=empty_env())
+    }),
+    content=(
+      #|error: a value is required for '--opt' but none was supplied
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help   Show help information.
+      #|  --verbose    
+      #|  --opt <opt>  
+      #|
+    ),
+  )
 
   let zero_value_required = @argparse.Command("demo", options=[
     OptionArg("opt", long="opt", required=true),
@@ -551,29 +486,24 @@ test "options require one value per occurrence" {
   }
   assert_true(with_value.values is { "tag": ["x"], .. })
 
-  try
-    @argparse.Command("demo", options=[OptionArg("tag", long="tag")]).parse(
-      argv=["--tag"],
-      env=empty_env(),
-    )
-  catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: a value is required for '--tag' but none was supplied
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help   Show help information.
-          #|  --tag <tag>  
-          #|
-        ),
+  inspect(
+    @test.expect_error(() => {
+      @argparse.Command("demo", options=[OptionArg("tag", long="tag")]).parse(
+        argv=["--tag"],
+        env=empty_env(),
       )
-  } noraise {
-    _ => panic()
-  }
+    }),
+    content=(
+      #|error: a value is required for '--tag' but none was supplied
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help   Show help information.
+      #|  --tag <tag>  
+      #|
+    ),
+  )
 }
 
 ///|
@@ -587,25 +517,20 @@ test "short options require one value before next option token" {
   assert_true(ok.values is { "x": ["a"], .. })
   assert_true(ok.flags is { "verbose": true, .. })
 
-  try cmd.parse(argv=["-x", "-v"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: a value is required for '-x' but none was supplied
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help     Show help information.
-          #|  -v, --verbose  
-          #|  -x, --x <x>    
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["-x", "-v"], env=empty_env())),
+    content=(
+      #|error: a value is required for '-x' but none was supplied
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help     Show help information.
+      #|  -v, --verbose  
+      #|  -x, --x <x>    
+      #|
+    ),
+  )
 }
 
 ///|
@@ -637,48 +562,42 @@ test "missing option values are reported when next token is another option" {
   assert_true(ok.values is { "arg": ["x"], .. })
   assert_true(ok.flags is { "verbose": true, .. })
 
-  try cmd.parse(argv=["--arg", "--verbose"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: a value is required for '--arg' but none was supplied
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help   Show help information.
-          #|  --verbose    
-          #|  --arg <arg>  
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => {
+      cmd.parse(argv=["--arg", "--verbose"], env=empty_env())
+    }),
+    content=(
+      #|error: a value is required for '--arg' but none was supplied
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help   Show help information.
+      #|  --verbose    
+      #|  --arg <arg>  
+      #|
+    ),
+  )
 }
 
 ///|
 test "short-only set options use short label in duplicate errors" {
   let cmd = @argparse.Command("demo", options=[OptionArg("mode", short='m')])
-  try cmd.parse(argv=["-m", "a", "-m", "b"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: argument '--mode' cannot be used multiple times
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help         Show help information.
-          #|  -m, --mode <mode>  
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => {
+      cmd.parse(argv=["-m", "a", "-m", "b"], env=empty_env())
+    }),
+    content=(
+      #|error: argument '--mode' cannot be used multiple times
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help         Show help information.
+      #|  -m, --mode <mode>  
+      #|
+    ),
+  )
 }
 
 ///|
@@ -716,24 +635,21 @@ test "duplicate short-only set option reports the short flag label" {
   let cmd = @argparse.Command("demo", options=[
     OptionArg("mode", short='m', long=""),
   ])
-  try cmd.parse(argv=["-m", "a", "-m", "b"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: argument '-m' cannot be used multiple times
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|  -m <mode>   
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => {
+      cmd.parse(argv=["-m", "a", "-m", "b"], env=empty_env())
+    }),
+    content=(
+      #|error: argument '-m' cannot be used multiple times
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help  Show help information.
+      #|  -m <mode>   
+      #|
+    ),
+  )
 }
 
 ///|
@@ -752,24 +668,19 @@ test "boolean env flags accept falsy values" {
 ///|
 test "unknown long flag with an empty name has no suggestion" {
   let cmd = @argparse.Command("demo", flags=[FlagArg("verbose", long="verbose")])
-  try cmd.parse(argv=["--=value"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected argument '--' found
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|  --verbose   
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["--=value"], env=empty_env())),
+    content=(
+      #|error: unexpected argument '--' found
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help  Show help information.
+      #|  --verbose   
+      #|
+    ),
+  )
 }
 
 ///|
@@ -786,45 +697,35 @@ test "long empty string disables long alias" {
   assert_true(matches.flags is { "verbose": true, .. })
   assert_true(matches.values is { "count": ["3"], .. })
 
-  try cmd.parse(argv=["--verbose"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected argument '--verbose' found
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|  -v          
-          #|  -c <count>  
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["--verbose"], env=empty_env())),
+    content=(
+      #|error: unexpected argument '--verbose' found
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help  Show help information.
+      #|  -v          
+      #|  -c <count>  
+      #|
+    ),
+  )
 
-  try cmd.parse(argv=["--count", "3"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected argument '--count' found
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|  -v          
-          #|  -c <count>  
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["--count", "3"], env=empty_env())),
+    content=(
+      #|error: unexpected argument '--count' found
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help  Show help information.
+      #|  -v          
+      #|  -c <count>  
+      #|
+    ),
+  )
 }
 
 ///|
@@ -848,43 +749,33 @@ test "long and short value parsing branches" {
   }
   assert_true(short_attached.values is { "count": ["4"], .. })
 
-  try cmd.parse(argv=["--count"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: a value is required for '--count' but none was supplied
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help           Show help information.
-          #|  -c, --count <count>  
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["--count"], env=empty_env())),
+    content=(
+      #|error: a value is required for '--count' but none was supplied
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help           Show help information.
+      #|  -c, --count <count>  
+      #|
+    ),
+  )
 
-  try cmd.parse(argv=["-c"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: a value is required for '-c' but none was supplied
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help           Show help information.
-          #|  -c, --count <count>  
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["-c"], env=empty_env())),
+    content=(
+      #|error: a value is required for '-c' but none was supplied
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help           Show help information.
+      #|  -c, --count <count>  
+      #|
+    ),
+  )
 }
 
 ///|
@@ -892,28 +783,21 @@ test "option values reject hyphen tokens unless allow_hyphen_values is enabled" 
   let strict = @argparse.Command("demo", options=[
     OptionArg("pattern", long="pattern"),
   ])
-  let mut rejected = false
-  try strict.parse(argv=["--pattern", "-file"], env=empty_env()) catch {
-    err => {
-      inspect(
-        err,
-        content=(
-          #|error: a value is required for '--pattern' but none was supplied
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help           Show help information.
-          #|  --pattern <pattern>  
-          #|
-        ),
-      )
-      rejected = true
-    }
-  } noraise {
-    _ => rejected = true
-  }
-  assert_true(rejected)
+  inspect(
+    @test.expect_error(() => {
+      strict.parse(argv=["--pattern", "-file"], env=empty_env())
+    }),
+    content=(
+      #|error: a value is required for '--pattern' but none was supplied
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help           Show help information.
+      #|  --pattern <pattern>  
+      #|
+    ),
+  )
 
   let permissive = @argparse.Command("demo", options=[
     OptionArg("pattern", long="pattern", allow_hyphen_values=true),
@@ -1014,24 +898,19 @@ test "defaults and value range helpers through public API" {
   }
   assert_true(lower_absent.values is { "tag"? : None, .. })
 
-  try lower_only.parse(argv=["--tag"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: a value is required for '--tag' but none was supplied
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help   Show help information.
-          #|  --tag <tag>  
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => lower_only.parse(argv=["--tag"], env=empty_env())),
+    content=(
+      #|error: a value is required for '--tag' but none was supplied
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help   Show help information.
+      #|  --tag <tag>  
+      #|
+    ),
+  )
 
   let single_range = @argparse.ValueRange::single()
   inspect(

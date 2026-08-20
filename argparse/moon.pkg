@@ -8,4 +8,8 @@ import {
   "moonbitlang/core/internal/edit_distance",
 }
 
+import {
+  "moonbitlang/core/test",
+} for "test"
+
 warnings = "+unnecessary_annotation"

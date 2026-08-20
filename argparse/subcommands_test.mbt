@@ -140,30 +140,25 @@ test "subcommand cannot follow positional arguments" {
   let cmd = @argparse.Command("demo", positionals=[PositionArg("input")], subcommands=[
     Command("run"),
   ])
-  try cmd.parse(argv=["raw", "run"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: subcommand 'run' cannot be used with positional arguments
-          #|
-          #|Usage: demo [input] [command]
-          #|
-          #|Commands:
-          #|  run   
-          #|  help  Print help for the subcommand(s).
-          #|
-          #|Arguments:
-          #|  input  
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["raw", "run"], env=empty_env())),
+    content=(
+      #|error: subcommand 'run' cannot be used with positional arguments
+      #|
+      #|Usage: demo [input] [command]
+      #|
+      #|Commands:
+      #|  run   
+      #|  help  Print help for the subcommand(s).
+      #|
+      #|Arguments:
+      #|  input  
+      #|
+      #|Options:
+      #|  -h, --help  Show help information.
+      #|
+    ),
+  )
 }
 
 ///|
@@ -179,86 +174,73 @@ test "subcommand suggestions are only reported for parse failures" {
   assert_true(positional.values is { "input": ["serv"], .. })
   assert_true(positional.subcommand is None)
 
-  try cmd.parse(argv=["input.txt", "serv"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected value 'serv' for '<input>' found; no more were expected
-          #|
-          #|  tip: a similar subcommand exists: 'serve'
-          #|
-          #|Usage: demo [input] [command]
-          #|
-          #|Commands:
-          #|  serve  serve
-          #|  help   Print help for the subcommand(s).
-          #|
-          #|Arguments:
-          #|  input  input file
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => {
+      cmd.parse(argv=["input.txt", "serv"], env=empty_env())
+    }),
+    content=(
+      #|error: unexpected value 'serv' for '<input>' found; no more were expected
+      #|
+      #|  tip: a similar subcommand exists: 'serve'
+      #|
+      #|Usage: demo [input] [command]
+      #|
+      #|Commands:
+      #|  serve  serve
+      #|  help   Print help for the subcommand(s).
+      #|
+      #|Arguments:
+      #|  input  input file
+      #|
+      #|Options:
+      #|  -h, --help  Show help information.
+      #|
+    ),
+  )
 
   let no_positionals = @argparse.Command("demo", subcommands=[
     Command("serve", about="serve"),
   ])
-  try no_positionals.parse(argv=["hel"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected value 'hel' found; no more were expected
-          #|
-          #|  tip: a similar subcommand exists: 'help'
-          #|
-          #|Usage: demo [command]
-          #|
-          #|Commands:
-          #|  serve  serve
-          #|  help   Print help for the subcommand(s).
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => no_positionals.parse(argv=["hel"], env=empty_env())),
+    content=(
+      #|error: unexpected value 'hel' found; no more were expected
+      #|
+      #|  tip: a similar subcommand exists: 'help'
+      #|
+      #|Usage: demo [command]
+      #|
+      #|Commands:
+      #|  serve  serve
+      #|  help   Print help for the subcommand(s).
+      #|
+      #|Options:
+      #|  -h, --help  Show help information.
+      #|
+    ),
+  )
 
-  try cmd.parse(argv=["help", "serv"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unknown subcommand: serv
-          #|
-          #|  tip: a similar subcommand exists: 'serve'
-          #|
-          #|Usage: demo [input] [command]
-          #|
-          #|Commands:
-          #|  serve  serve
-          #|  help   Print help for the subcommand(s).
-          #|
-          #|Arguments:
-          #|  input  input file
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["help", "serv"], env=empty_env())),
+    content=(
+      #|error: unknown subcommand: serv
+      #|
+      #|  tip: a similar subcommand exists: 'serve'
+      #|
+      #|Usage: demo [input] [command]
+      #|
+      #|Commands:
+      #|  serve  serve
+      #|  help   Print help for the subcommand(s).
+      #|
+      #|Arguments:
+      #|  input  input file
+      #|
+      #|Options:
+      #|  -h, --help  Show help information.
+      #|
+    ),
+  )
 }
 
 ///|
