@@ -22,3 +22,7 @@ import {
   "moonbitlang/core/quickcheck/shrink",
   "moonbitlang/core/quickcheck/splitmix",
 } for "test"
+
+import {
+  "moonbitlang/core/quickcheck",
+} for "wbtest"
