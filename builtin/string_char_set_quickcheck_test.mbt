@@ -130,10 +130,13 @@ test "quickcheck: contains_any agrees with the character model" {
     let (hay_seeds, set_seeds) = input
     let hay = chars_to_string(hay_seeds.map(haystack_char))
     let set = chars_to_string(set_seeds.map(set_char))
+    // The set is passed as a view with non-zero offsets, so a scan that read
+    // beyond the set view would see the sentinel characters instead.
+    let set_view = embedded_view("Q", set, "Q")
     let expected = model_contains_any(hay, set)
-    guard hay.contains_any(chars=set) == expected else { return false }
-    // The same scan through a view with non-zero offsets.
-    embedded_view("ab", hay, "yz").contains_any(chars=set) == expected
+    guard hay.contains_any(chars=set_view) == expected else { return false }
+    // The same scan through a haystack view with non-zero offsets.
+    embedded_view("ab", hay, "yz").contains_any(chars=set_view) == expected
   })
 }
 
@@ -144,14 +147,16 @@ test "quickcheck: trims agree with the character model" {
     let hay = chars_to_string(hay_seeds.map(haystack_char))
     let set = chars_to_string(set_seeds.map(set_char))
     let view = embedded_view(" 😀", hay, "😀 ")
-    guard view.trim_start(chars=set).to_owned() == model_trim_start(hay, set) else {
+    let set_view = embedded_view("Q", set, "Q")
+    guard view.trim_start(chars=set_view).to_owned() ==
+      model_trim_start(hay, set) else {
       return false
     }
-    guard view.trim_end(chars=set).to_owned() == model_trim_end(hay, set) else {
+    guard view.trim_end(chars=set_view).to_owned() == model_trim_end(hay, set) else {
       return false
     }
     // The fused trim must agree with composing the two one-sided trims.
-    view.trim(chars=set).to_owned() ==
+    view.trim(chars=set_view).to_owned() ==
     model_trim_end(model_trim_start(hay, set), set)
   })
 }
@@ -188,6 +193,23 @@ test "char set boundary sweep" {
   for n in 0..<=20 {
     assert_eq(" \t".repeat(n).trim().to_owned(), "")
   }
+}
+
+///|
+/// An empty set trims and matches nothing — including an empty view whose
+/// backing string continues past the view, where an out-of-view read would
+/// wrongly treat the backing character as a set member.
+test "char set empty set" {
+  let empty_view = "b"[0:0]
+  let bs = "b".repeat(8) + "x"
+  let sb = "x" + "b".repeat(8)
+  assert_eq(bs.trim_start(chars=empty_view).to_owned(), bs)
+  assert_eq(sb.trim_end(chars=empty_view).to_owned(), sb)
+  assert_eq(bs.trim(chars=empty_view).to_owned(), bs)
+  assert_false(bs.contains_any(chars=empty_view))
+  assert_eq(bs.trim_start(chars="").to_owned(), bs)
+  assert_eq(sb.trim_end(chars="").to_owned(), sb)
+  assert_eq(bs.trim(chars="").to_owned(), bs)
 }
 
 ///|
