@@ -128,6 +128,13 @@ fn v128_and(a : V128, b : V128) -> V128 {
 
 ///|
 #cfg(any(target="native", target="wasm"))
+#intrinsic("%v128.v128_or")
+fn v128_or(a : V128, b : V128) -> V128 {
+  v128_make(v128_lo(a) | v128_lo(b), v128_hi(a) | v128_hi(b))
+}
+
+///|
+#cfg(any(target="native", target="wasm"))
 #intrinsic("%v128.v128_any_true")
 fn v128_any_true(value : V128) -> Bool {
   v128_lo(value) != 0 || v128_hi(value) != 0
