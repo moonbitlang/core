@@ -39,8 +39,9 @@ pub fn StringView::find(self : StringView, str : StringView) -> Int? {
         find_by_two_anchors(self, str)
       }
   }
-  // TODO: When the pattern string is long (>= 256),
-  // consider using Two-Way algorithm to ensure linear time complexity.
+  // Worst-case linearity: after dense false-anchor candidates the search
+  // cuts over to a KMP fallback (see the two-anchor search internals), so
+  // the total cost stays O(self + str) even on adversarial inputs.
 }
 
 ///|
@@ -145,8 +146,9 @@ pub fn StringView::rev_find(self : StringView, str : StringView) -> Int? {
         rev_find_by_two_anchors(self, str)
       }
   }
-  // TODO: When the pattern string is long (>= 256),
-  // consider using Two-Way algorithm to ensure linear time complexity.
+  // Worst-case linearity: after dense false-anchor candidates the search
+  // cuts over to a KMP fallback (see the two-anchor search internals), so
+  // the total cost stays O(self + str) even on adversarial inputs.
 }
 
 ///|
