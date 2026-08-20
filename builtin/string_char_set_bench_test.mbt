@@ -81,3 +81,37 @@ test "bench StringView::trim ASCII n=100000" (it : @bench.T) {
     " ".repeat(string_char_set_bench_size)
   it.bench(fn() { it.keep(input.trim().length()) })
 }
+
+///|
+let string_char_set_short_trim_inputs : Array[String] = [
+  "  hello  ", "x", "", "   ", "no_trim_needed", "\t indented line \n",
+]
+
+///|
+let string_char_set_short_contains_inputs : Array[String] = [
+  "hello,world", "a=b&c=d", "plain", "",
+]
+
+///|
+test "bench StringView::trim short inputs" (it : @bench.T) {
+  it.bench(fn() {
+    let mut total = 0
+    for s in string_char_set_short_trim_inputs {
+      total += s.trim().length()
+    }
+    it.keep(total)
+  })
+}
+
+///|
+test "bench StringView::contains_any short inputs" (it : @bench.T) {
+  it.bench(fn() {
+    let mut hits = 0
+    for s in string_char_set_short_contains_inputs {
+      if s.contains_any(chars=",&= ") {
+        hits += 1
+      }
+    }
+    it.keep(hits)
+  })
+}
