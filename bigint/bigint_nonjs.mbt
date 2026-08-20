@@ -1427,17 +1427,17 @@ pub fn BigInt::pow(self : BigInt, exp : BigInt, modulus? : BigInt) -> BigInt {
 ///
 /// Parameters:
 ///
-/// * `bytes` : A sequence of bytes representing the magnitude of the number in
+/// * `input` : A sequence of bytes representing the magnitude of the number in
 /// big-endian order. An empty sequence represents a zero magnitude.
-/// * `sign` : An integer specifying the sign of the resulting number (default:
-/// 1). A value of 1 creates a positive number, -1 creates a negative number, and
-/// 0 returns zero regardless of the input bytes.
+/// * `signum` : An integer specifying the sign of the resulting number
+/// (default: 1). A positive value creates a positive number, a negative value
+/// creates a negative number, and 0 returns zero regardless of the input bytes.
 ///
 /// Returns a `BigInt` value representing the number encoded in the byte sequence
 /// with the specified sign.
 ///
-/// An empty byte sequence yields zero for any `sign`, matching the behavior of
-/// Java's `BigInteger`, Python's `int.from_bytes`, and Rust's `num-bigint`.
+/// An empty byte sequence yields zero for any `signum`, matching the behavior
+/// of Java's `BigInteger`, Python's `int.from_bytes`, and Rust's `num-bigint`.
 ///
 /// Example:
 ///
