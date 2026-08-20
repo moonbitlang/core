@@ -29,7 +29,7 @@ struct StringBuilder {
 ///
 /// Returns a new `StringBuilder` instance with the specified initial capacity.
 ///
-#alias(new)
+#alias(new, deprecated="Use `StringBuilder()` instead")
 pub fn StringBuilder::StringBuilder(size_hint? : Int = 0) -> StringBuilder {
   let initial = if size_hint < 1 { 1 } else { (size_hint + 1) / 2 }
   let data : FixedArray[UInt16] = FixedArray::make(initial, 0)

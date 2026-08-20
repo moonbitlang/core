@@ -349,10 +349,10 @@ fn pair_ops(a : Array[Tok], b : Array[Tok]) -> Array[Op] {
 /// Render one aligned pair's ops as the two row bodies (left = old side,
 /// right = new side), merging adjacent highlighted tokens into single runs.
 fn pair_row_html(ops : Array[Op]) -> (String, String) {
-  let l = StringBuilder::new()
-  let r = StringBuilder::new()
-  let lrun = StringBuilder::new()
-  let rrun = StringBuilder::new()
+  let l = StringBuilder()
+  let r = StringBuilder()
+  let lrun = StringBuilder()
+  let rrun = StringBuilder()
   fn flushes() {
     if !lrun.is_empty() {
       l <+ "<b class=\"wd\">\{lrun.to_string()}</b>"
@@ -478,8 +478,8 @@ test "pair_ops reconstruction property" {
     let (oa, ob) = pair
     let ta = tokenize_line(oa)
     let tb = tokenize_line(ob)
-    let left = StringBuilder::new()
-    let right = StringBuilder::new()
+    let left = StringBuilder()
+    let right = StringBuilder()
     for op in pair_ops(ta, tb) {
       match op {
         OEq(t) => {

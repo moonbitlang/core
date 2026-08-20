@@ -148,7 +148,7 @@ or markup support on purpose; a renderer is a small loop:
 test "git-style terminal colors from the public Hunk API" {
   let old = ["a", "b", "c"][:]
   let new = ["a", "x", "c"][:]
-  let buf = StringBuilder::new()
+  let buf = StringBuilder()
   for h in @diff.Diff(old~, new~).group(context=1) {
     buf <+ "\u{1b}[36m\{h.header()}\u{1b}[0m\n"
     let o = h.old_view()

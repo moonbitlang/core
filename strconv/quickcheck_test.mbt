@@ -43,7 +43,7 @@ fn u32_of_bytes(q : (Byte, Byte, Byte, Byte)) -> UInt {
 
 ///|
 fn insert_char(s : String, pos : Int, inserted : Char) -> String {
-  let sb = StringBuilder::new()
+  let sb = StringBuilder()
   let mut i = 0
   for c in s {
     if i == pos {
@@ -218,7 +218,7 @@ test "quickcheck: structured numeric strings parse to a printing fixed point" {
     (parts : (UInt, UInt, Int, (Bool, Bool, Bool))) => {
       let (int_part, frac_part, e, (neg, with_frac, with_exp)) = parts
       let exp = e * 4
-      let sb = StringBuilder::new()
+      let sb = StringBuilder()
       if neg {
         sb.write_char('-')
       }

@@ -125,7 +125,7 @@ pub fn[T] Hunk::new_view(self : Hunk[T]) -> ArrayView[T] {
 /// a `Show` bound so that element types need no `Show` impl and callers
 /// control the rendering (e.g. a field of a record).
 pub fn[T] Hunk::render(self : Hunk[T], show~ : (T) -> String) -> String {
-  let buf = StringBuilder::new()
+  let buf = StringBuilder()
   buf <+ "\{self.header()}\n"
   for edit in self.edits {
     let (prefix, slice) = match edit {
