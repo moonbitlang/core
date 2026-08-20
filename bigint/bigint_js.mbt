@@ -199,12 +199,15 @@ extern "js" fn hex2(b : Byte) -> String =
 /// Parameters:
 ///
 /// * `octets` : A sequence of bytes representing the magnitude of the number in
-/// big-endian order. It must not be empty unless `signum` is 0.
+/// big-endian order. An empty sequence represents a zero magnitude.
 /// * `signum` : The sign of the resulting number. A negative value creates a
 /// negative number, zero returns zero, and a positive value creates a positive
 /// number. Defaults to 1.
 ///
 /// Returns a `BigInt` value represented by the byte sequence and sign.
+///
+/// An empty byte sequence yields zero for any `signum`, matching the behavior
+/// of Java's `BigInteger`, Python's `int.from_bytes`, and Rust's `num-bigint`.
 pub fn BigInt::from_octets(octets : BytesView, signum? : Int = 1) -> BigInt {
   if signum < 0 {
     return -1N * BigInt::from_octets(octets, signum=1)
@@ -213,7 +216,7 @@ pub fn BigInt::from_octets(octets : BytesView, signum? : Int = 1) -> BigInt {
     return 0N
   }
   if octets.is_empty() {
-    abort("empty octet string")
+    return 0N
   }
   let str = StringBuilder()
   for octet in octets {

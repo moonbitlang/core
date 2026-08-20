@@ -86,16 +86,6 @@ test "panic pow negative exponent" {
 }
 
 ///|
-test "panic from_octets empty" {
-  @bigint.BigInt::from_octets(Bytes::new(0)) |> ignore
-}
-
-///|
-test "panic from_octets empty negative signum" {
-  @bigint.BigInt::from_octets(Bytes::new(0), signum=-1) |> ignore
-}
-
-///|
 test "panic to_octets negative" {
   (-1N).to_octets() |> ignore
 }

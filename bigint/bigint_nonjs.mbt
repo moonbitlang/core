@@ -1428,7 +1428,7 @@ pub fn BigInt::pow(self : BigInt, exp : BigInt, modulus? : BigInt) -> BigInt {
 /// Parameters:
 ///
 /// * `bytes` : A sequence of bytes representing the magnitude of the number in
-/// big-endian order. The sequence must not be empty unless `sign` is 0.
+/// big-endian order. An empty sequence represents a zero magnitude.
 /// * `sign` : An integer specifying the sign of the resulting number (default:
 /// 1). A value of 1 creates a positive number, -1 creates a negative number, and
 /// 0 returns zero regardless of the input bytes.
@@ -1436,7 +1436,8 @@ pub fn BigInt::pow(self : BigInt, exp : BigInt, modulus? : BigInt) -> BigInt {
 /// Returns a `BigInt` value representing the number encoded in the byte sequence
 /// with the specified sign.
 ///
-/// Throws a panic if the input byte sequence is empty and the sign is not 0.
+/// An empty byte sequence yields zero for any `sign`, matching the behavior of
+/// Java's `BigInteger`, Python's `int.from_bytes`, and Rust's `num-bigint`.
 ///
 /// Example:
 ///
@@ -1447,6 +1448,7 @@ pub fn BigInt::pow(self : BigInt, exp : BigInt, modulus? : BigInt) -> BigInt {
 ///   let negative = @bigint.BigInt::from_octets(bytes, signum=-1)
 ///   inspect(positive, content="66051")
 ///   inspect(negative, content="-66051")
+///   inspect(@bigint.BigInt::from_octets(b""), content="0")
 /// }
 /// ```
 pub fn BigInt::from_octets(input : BytesView, signum? : Int = 1) -> BigInt {
@@ -1457,7 +1459,7 @@ pub fn BigInt::from_octets(input : BytesView, signum? : Int = 1) -> BigInt {
     return -BigInt::from_octets(input)
   }
   if len == 0 {
-    abort("empty octet string")
+    return zero
   }
   let div = len * 8 / RADIX_BIT_LEN
   let mod = len * 8 % RADIX_BIT_LEN // number of bits in the first limb
