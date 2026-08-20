@@ -211,7 +211,7 @@ fn find_by_two_anchors(target : StringView, pattern : StringView) -> Int? {
     let failures = failures + 1
     let scanned = found - target_start
     if two_anchor_should_fallback(failures, scanned) {
-      break find_pattern_scalar_from(target, pattern, scanned + 1)
+      break find_pattern_kmp_from(target, pattern, scanned + 1)
     }
     continue found + 1, failures
   } nobreak {
@@ -259,7 +259,7 @@ fn rev_find_by_two_anchors(target : StringView, pattern : StringView) -> Int? {
     let failures = failures + 1
     let scanned = last_candidate - candidate
     if two_anchor_should_fallback(failures, scanned) {
-      break rev_find_pattern_scalar_before(target, pattern, candidate)
+      break rev_find_pattern_kmp_before(target, pattern, candidate)
     }
     continue found, failures
   } nobreak {
@@ -269,78 +269,131 @@ fn rev_find_by_two_anchors(target : StringView, pattern : StringView) -> Int? {
 
 ///|
 // Dense first/last-anchor matches make repeated SIMD candidate scans more
-// expensive than direct comparison. Cut over after enough false candidates,
-// following the guarded-scanner strategy used by Bytes search.
+// expensive than direct comparison. Cut over to the guaranteed-linear KMP
+// fallback either early, when failures pile up relative to progress
+// (`failures > 4 + scanned / 8` — as soon as the 5th failure for
+// candidates packed near the scan start), or at the hard cap
+// (`failures > 64`, i.e. the 65th failed verification). Either way the
+// failure count at cutover is at most 65, keeping pre-cutover
+// verification work at O(pattern), so find/rev_find stay
+// O(target + pattern) even on adversarial inputs.
 #inline
 fn two_anchor_should_fallback(failures : Int, scanned : Int) -> Bool {
   failures > 64 || failures > 4 + scanned / 8
 }
 
 ///|
-// Direct forward fallback used after the two-anchor filter encounters dense
-// false positives. It checks the middle first because the cutover has already
-// established that first/last matches are not selective. `start` is relative
-// to `target`.
-fn find_pattern_scalar_from(
+// Longest-proper-border table for the KMP fallbacks: `table[i]` is the
+// length of the longest proper prefix of `pattern[0..=i]` that is also a
+// suffix of it. Only built after the two-anchor filter cuts over, so the
+// O(pattern) allocation is paid exclusively on pathological inputs.
+fn kmp_failure_table(pattern : StringView) -> FixedArray[Int] {
+  let m = pattern.length()
+  let table = FixedArray::make(m, 0)
+  let mut k = 0
+  for i in 1..<m {
+    let c = pattern.unsafe_get(i)
+    while k > 0 && c != pattern.unsafe_get(k) {
+      k = table[k - 1]
+    }
+    if c == pattern.unsafe_get(k) {
+      k += 1
+    }
+    table[i] = k
+  }
+  table
+}
+
+///|
+// Guaranteed-linear forward fallback used after the two-anchor filter
+// encounters dense false positives: KMP over the remaining candidates, so
+// the whole search stays O(target + pattern) even when both anchors and
+// long pattern prefixes recur throughout the target. Returns the first
+// occurrence starting at a target-relative position >= `start`.
+fn find_pattern_kmp_from(
   target : StringView,
   pattern : StringView,
   start : Int,
 ) -> Int? {
-  let pattern_len = pattern.length()
-  let last_offset = pattern_len - 1
-  let first = pattern.unsafe_get(0)
-  let last = pattern.unsafe_get(last_offset)
-  let last_candidate = target.length() - pattern_len
-  for candidate in start..<=last_candidate {
-    let middle_matches = for i in 1..<last_offset {
-      if target.unsafe_get(candidate + i) != pattern.unsafe_get(i) {
-        break false
-      }
-    } nobreak {
-      true
+  let n = target.length()
+  let m = pattern.length()
+  let table = kmp_failure_table(pattern)
+  let mut k = 0
+  for i in start..<n {
+    let c = target.unsafe_get(i)
+    while k > 0 && c != pattern.unsafe_get(k) {
+      k = table[k - 1]
     }
-    if middle_matches &&
-      target.unsafe_get(candidate) == first &&
-      target.unsafe_get(candidate + last_offset) == last {
-      break Some(candidate)
+    if c == pattern.unsafe_get(k) {
+      k += 1
     }
-  } nobreak {
-    None
+    if k == m {
+      return Some(i - m + 1)
+    }
   }
+  None
 }
 
 ///|
-// Direct reverse fallback used after the two-anchor filter encounters dense
-// false positives. It checks the middle first because the cutover has already
-// established that first/last matches are not selective. `candidate_end` is
-// target-relative and exclusive.
-fn rev_find_pattern_scalar_before(
+// Guaranteed-linear reverse fallback used after the two-anchor filter
+// encounters dense false positives: forward KMP over the prefix that can
+// still contain a hit, keeping the rightmost match, so the whole search
+// stays O(target + pattern). Returns the last occurrence starting at a
+// target-relative position strictly below `candidate_end` (exclusive).
+// The caller must ensure
+// `candidate_end <= target.length() - pattern.length() + 1`, so that the
+// scan below stays in bounds.
+fn rev_find_pattern_kmp_before(
   target : StringView,
   pattern : StringView,
   candidate_end : Int,
 ) -> Int? {
   guard candidate_end > 0 else { return None }
-  let pattern_len = pattern.length()
-  let last_offset = pattern_len - 1
-  let first = pattern.unsafe_get(0)
-  let last = pattern.unsafe_get(last_offset)
-  for candidate = candidate_end - 1; candidate >= 0; {
-    let middle_matches = for i in 1..<last_offset {
-      if target.unsafe_get(candidate + i) != pattern.unsafe_get(i) {
-        break false
-      }
-    } nobreak {
-      true
+  let m = pattern.length()
+  let table = kmp_failure_table(pattern)
+  // an occurrence starting at candidate_end - 1 ends at index
+  // candidate_end + m - 2, so that is the last index the scan must visit
+  let scan_end = candidate_end + m - 1
+  let mut k = 0
+  let mut best = -1
+  for i in 0..<scan_end {
+    let c = target.unsafe_get(i)
+    while k > 0 && c != pattern.unsafe_get(k) {
+      k = table[k - 1]
     }
-    if middle_matches &&
-      target.unsafe_get(candidate) == first &&
-      target.unsafe_get(candidate + last_offset) == last {
-      break Some(candidate)
+    if c == pattern.unsafe_get(k) {
+      k += 1
     }
-    continue candidate - 1
-  } nobreak {
+    if k == m {
+      best = i - m + 1
+      // keep scanning: a later (more rightward) overlapping match wins
+      k = table[k - 1]
+    }
+  }
+  if best >= 0 {
+    Some(best)
+  } else {
     None
   }
+}
+
+///|
+test "kmp fallbacks handle periodic and overlapping patterns" {
+  // failure table borders matter for periodic patterns
+  let t : StringView = "aaaaaa"
+  assert_true(find_pattern_kmp_from(t, "aaa", 0) is Some(0))
+  assert_true(find_pattern_kmp_from(t, "aaa", 2) is Some(2))
+  assert_true(find_pattern_kmp_from(t, "aaa", 4) is None)
+  assert_true(rev_find_pattern_kmp_before(t, "aaa", 4) is Some(3))
+  assert_true(rev_find_pattern_kmp_before(t, "aaa", 1) is Some(0))
+  let u : StringView = "ababcababab"
+  assert_true(find_pattern_kmp_from(u, "abab", 0) is Some(0))
+  assert_true(find_pattern_kmp_from(u, "abab", 1) is Some(5))
+  assert_true(rev_find_pattern_kmp_before(u, "abab", 8) is Some(7))
+  assert_true(rev_find_pattern_kmp_before(u, "ababc", 7) is Some(0))
+  assert_true(find_pattern_kmp_from(u, "abcabc", 0) is None)
+  // start beyond any match and empty prefix bound
+  assert_true(rev_find_pattern_kmp_before(u, "abab", 0) is None)
 }
 
 ///|
