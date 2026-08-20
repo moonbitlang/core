@@ -392,10 +392,10 @@ fn need_escape_scalar(
 ) -> Bool {
   for i in start..<end {
     let code = str.unsafe_get(i)
-    if code == ('"' : UInt16) ||
-      code == ('\\' : UInt16) ||
-      code < (' ' : UInt16) ||
-      (escape_slash && code == ('/' : UInt16)) {
+    if code == '"' ||
+      code == '\\' ||
+      code < ' ' ||
+      (escape_slash && code == '/') {
       return true
     }
   }
@@ -422,10 +422,10 @@ fn need_escape(str : String, escape_slash : Bool) -> Bool {
 fn need_escape(str : String, escape_slash : Bool) -> Bool {
   let len = str.length()
   guard len >= 8 else { return need_escape_scalar(str, escape_slash, 0, len) }
-  let control_limit = @v128.i16x8_splat((' ' : UInt16))
-  let quote = @v128.i16x8_splat(('"' : UInt16))
-  let backslash = @v128.i16x8_splat(('\\' : UInt16))
-  let slash = @v128.i16x8_splat(('/' : UInt16))
+  let control_limit = @v128.i16x8_splat(' ')
+  let quote = @v128.i16x8_splat('"')
+  let backslash = @v128.i16x8_splat('\\')
+  let slash = @v128.i16x8_splat('/')
   let tail_start = for pos = 0; pos + 8 <= len; {
     let block = @v128.v128_load_i16x8(str, pos)
     let escaped = @v128.v128_or_(
@@ -459,21 +459,21 @@ fn escape(str : String, escape_slash~ : Bool) -> String {
   let buf = StringBuilder(size_hint=len)
   for code in str.code_units() {
     match code {
-      ('"' : UInt16) => buf.write_string("\\\"")
-      ('\\' : UInt16) => buf.write_string("\\\\")
-      ('/' : UInt16) =>
+      '"' => buf.write_string("\\\"")
+      '\\' => buf.write_string("\\\\")
+      '/' =>
         if escape_slash {
           buf.write_string("\\/")
         } else {
           buf.write_char('/')
         }
-      ('\n' : UInt16) => buf.write_string("\\n")
-      ('\r' : UInt16) => buf.write_string("\\r")
-      ('\b' : UInt16) => buf.write_string("\\b")
-      ('\t' : UInt16) => buf.write_string("\\t")
-      (0x0C : UInt16) => buf.write_string("\\f")
+      '\n' => buf.write_string("\\n")
+      '\r' => buf.write_string("\\r")
+      '\b' => buf.write_string("\\b")
+      '\t' => buf.write_string("\\t")
+      0x0C => buf.write_string("\\f")
       _ =>
-        if code < (' ' : UInt16) {
+        if code < ' ' {
           buf.write_string("\\u00")
           buf.write_string(code.to_byte().to_hex())
         } else {
