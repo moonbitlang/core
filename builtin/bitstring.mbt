@@ -108,8 +108,26 @@ pub fn ArrayView::unsafe_extract_uint_le(
   offset : Int,
   len : Int,
 ) -> UInt {
+  if (offset & 7) == 0 {
+    if len == 32 {
+      return bs.unsafe_extract_uint_le_aligned(offset >> 3)
+    }
+    if len == 16 {
+      return bs.unsafe_extract_uint16_le_aligned(offset >> 3)
+    }
+  }
+  bs.unsafe_extract_uint_le_slow(offset, len)
+}
+
+///|
+/// Outlined slow path of `unsafe_extract_uint_le`, kept out of the entry
+/// function so the aligned fast paths above stay small enough to inline.
+fn ArrayView::unsafe_extract_uint_le_slow(
+  bs : ArrayView[Byte],
+  offset : Int,
+  len : Int,
+) -> UInt {
   let bytes_needed = (len + 7) / 8
-  // TODO: add fast path for aligned case
   // non-aligned case: extract bytes using unsafe_extract_byte
   let b0 = bs.unsafe_extract_byte(offset, 8)
   match bytes_needed {
@@ -146,8 +164,26 @@ pub fn ArrayView::unsafe_extract_uint_be(
   offset : Int,
   len : Int,
 ) -> UInt {
+  if (offset & 7) == 0 {
+    if len == 32 {
+      return bs.unsafe_extract_uint_be_aligned(offset >> 3)
+    }
+    if len == 16 {
+      return bs.unsafe_extract_uint16_be_aligned(offset >> 3)
+    }
+  }
+  bs.unsafe_extract_uint_be_slow(offset, len)
+}
+
+///|
+/// Outlined slow path of `unsafe_extract_uint_be`, kept out of the entry
+/// function so the aligned fast paths above stay small enough to inline.
+fn ArrayView::unsafe_extract_uint_be_slow(
+  bs : ArrayView[Byte],
+  offset : Int,
+  len : Int,
+) -> UInt {
   let bytes_needed = (len + 7) / 8
-  // TODO: add fast path for aligned case
   // non-aligned case: extract bytes using unsafe_extract_byte
   let b0 = bs.unsafe_extract_byte(offset, 8)
   match bytes_needed {
@@ -191,8 +227,21 @@ pub fn ArrayView::unsafe_extract_uint64_le(
   offset : Int,
   len : Int,
 ) -> UInt64 {
+  if len == 64 && (offset & 7) == 0 {
+    return bs.unsafe_extract_uint64_le_aligned(offset >> 3)
+  }
+  bs.unsafe_extract_uint64_le_slow(offset, len)
+}
+
+///|
+/// Outlined slow path of `unsafe_extract_uint64_le`, kept out of the entry
+/// function so the aligned fast paths above stay small enough to inline.
+fn ArrayView::unsafe_extract_uint64_le_slow(
+  bs : ArrayView[Byte],
+  offset : Int,
+  len : Int,
+) -> UInt64 {
   let bytes_needed = (len + 7) / 8
-  // TODO: add fast path for aligned case
   // non-aligned case: extract bytes using unsafe_extract_byte
   let b0 = bs.unsafe_extract_byte(offset, 8).to_uint64()
   let b1 = bs.unsafe_extract_byte(offset + 8, 8).to_uint64()
@@ -253,8 +302,21 @@ pub fn ArrayView::unsafe_extract_uint64_be(
   offset : Int,
   len : Int,
 ) -> UInt64 {
+  if len == 64 && (offset & 7) == 0 {
+    return bs.unsafe_extract_uint64_be_aligned(offset >> 3)
+  }
+  bs.unsafe_extract_uint64_be_slow(offset, len)
+}
+
+///|
+/// Outlined slow path of `unsafe_extract_uint64_be`, kept out of the entry
+/// function so the aligned fast paths above stay small enough to inline.
+fn ArrayView::unsafe_extract_uint64_be_slow(
+  bs : ArrayView[Byte],
+  offset : Int,
+  len : Int,
+) -> UInt64 {
   let bytes_needed = (len + 7) / 8
-  // TODO: add fast path for aligned case
   // non-aligned case: extract bytes using unsafe_extract_byte
   let b0 = bs.unsafe_extract_byte(offset, 8).to_uint64()
   let b1 = bs.unsafe_extract_byte(offset + 8, 8).to_uint64()
@@ -984,8 +1046,26 @@ pub fn BytesView::unsafe_extract_uint_le(
   offset : Int,
   len : Int,
 ) -> UInt {
+  if (offset & 7) == 0 {
+    if len == 32 {
+      return bs.unsafe_extract_uint_le_aligned(offset >> 3)
+    }
+    if len == 16 {
+      return bs.unsafe_extract_uint16_le_aligned(offset >> 3)
+    }
+  }
+  bs.unsafe_extract_uint_le_slow(offset, len)
+}
+
+///|
+/// Outlined slow path of `unsafe_extract_uint_le`, kept out of the entry
+/// function so the aligned fast paths above stay small enough to inline.
+fn BytesView::unsafe_extract_uint_le_slow(
+  bs : BytesView,
+  offset : Int,
+  len : Int,
+) -> UInt {
   let bytes_needed = (len + 7) / 8
-  // TODO: add fast path for aligned case
   // non-aligned case: extract bytes using unsafe_extract_byte
   let b0 = bs.unsafe_extract_byte(offset, 8)
   match bytes_needed {
@@ -1022,8 +1102,26 @@ pub fn BytesView::unsafe_extract_uint_be(
   offset : Int,
   len : Int,
 ) -> UInt {
+  if (offset & 7) == 0 {
+    if len == 32 {
+      return bs.unsafe_extract_uint_be_aligned(offset >> 3)
+    }
+    if len == 16 {
+      return bs.unsafe_extract_uint16_be_aligned(offset >> 3)
+    }
+  }
+  bs.unsafe_extract_uint_be_slow(offset, len)
+}
+
+///|
+/// Outlined slow path of `unsafe_extract_uint_be`, kept out of the entry
+/// function so the aligned fast paths above stay small enough to inline.
+fn BytesView::unsafe_extract_uint_be_slow(
+  bs : BytesView,
+  offset : Int,
+  len : Int,
+) -> UInt {
   let bytes_needed = (len + 7) / 8
-  // TODO: add fast path for aligned case
   // non-aligned case: extract bytes using unsafe_extract_byte
   let b0 = bs.unsafe_extract_byte(offset, 8)
   match bytes_needed {
@@ -1067,8 +1165,21 @@ pub fn BytesView::unsafe_extract_uint64_le(
   offset : Int,
   len : Int,
 ) -> UInt64 {
+  if len == 64 && (offset & 7) == 0 {
+    return bs.unsafe_extract_uint64_le_aligned(offset >> 3)
+  }
+  bs.unsafe_extract_uint64_le_slow(offset, len)
+}
+
+///|
+/// Outlined slow path of `unsafe_extract_uint64_le`, kept out of the entry
+/// function so the aligned fast paths above stay small enough to inline.
+fn BytesView::unsafe_extract_uint64_le_slow(
+  bs : BytesView,
+  offset : Int,
+  len : Int,
+) -> UInt64 {
   let bytes_needed = (len + 7) / 8
-  // TODO: add fast path for aligned case
   // non-aligned case: extract bytes using unsafe_extract_byte
   let b0 = bs.unsafe_extract_byte(offset, 8).to_uint64()
   let b1 = bs.unsafe_extract_byte(offset + 8, 8).to_uint64()
@@ -1129,8 +1240,21 @@ pub fn BytesView::unsafe_extract_uint64_be(
   offset : Int,
   len : Int,
 ) -> UInt64 {
+  if len == 64 && (offset & 7) == 0 {
+    return bs.unsafe_extract_uint64_be_aligned(offset >> 3)
+  }
+  bs.unsafe_extract_uint64_be_slow(offset, len)
+}
+
+///|
+/// Outlined slow path of `unsafe_extract_uint64_be`, kept out of the entry
+/// function so the aligned fast paths above stay small enough to inline.
+fn BytesView::unsafe_extract_uint64_be_slow(
+  bs : BytesView,
+  offset : Int,
+  len : Int,
+) -> UInt64 {
   let bytes_needed = (len + 7) / 8
-  // TODO: add fast path for aligned case
   // non-aligned case: extract bytes using unsafe_extract_byte
   let b0 = bs.unsafe_extract_byte(offset, 8).to_uint64()
   let b1 = bs.unsafe_extract_byte(offset + 8, 8).to_uint64()
