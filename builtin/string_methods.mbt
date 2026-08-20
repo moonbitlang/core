@@ -818,7 +818,7 @@ fn string_contains_any_ascii(
   bits3 : UInt,
 ) -> Bool {
   let count = chars.length()
-  guard count <= ASCII_CHAR_SET_SIMD_MAX_CHARS && start + 8 <= end else {
+  guard count >= 1 && count <= ASCII_CHAR_SET_SIMD_MAX_CHARS && start + 8 <= end else {
     return string_contains_any_ascii_scalar(
       str, start, end, bits0, bits1, bits2, bits3,
     )
@@ -878,7 +878,7 @@ fn string_trim_start_ascii(
   bits3 : UInt,
 ) -> Int {
   let count = chars.length()
-  guard count <= ASCII_CHAR_SET_SIMD_MAX_CHARS && start + 8 <= end else {
+  guard count >= 1 && count <= ASCII_CHAR_SET_SIMD_MAX_CHARS && start + 8 <= end else {
     return string_trim_start_ascii_scalar(
       str, start, end, bits0, bits1, bits2, bits3,
     )
@@ -933,7 +933,7 @@ fn string_trim_end_ascii(
   bits3 : UInt,
 ) -> Int {
   let count = chars.length()
-  guard count <= ASCII_CHAR_SET_SIMD_MAX_CHARS && start + 8 <= end else {
+  guard count >= 1 && count <= ASCII_CHAR_SET_SIMD_MAX_CHARS && start + 8 <= end else {
     return string_trim_end_ascii_scalar(
       str, start, end, bits0, bits1, bits2, bits3,
     )
