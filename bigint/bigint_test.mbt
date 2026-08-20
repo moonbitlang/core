@@ -67,8 +67,10 @@ test "to_octets pads larger length" {
 }
 
 ///|
-test "from_octets accepts empty input with zero signum" {
+test "from_octets treats empty input as zero" {
+  inspect(@bigint.BigInt::from_octets(b""), content="0")
   inspect(@bigint.BigInt::from_octets(b"", signum=0), content="0")
+  inspect(@bigint.BigInt::from_octets(b"", signum=-1), content="0")
 }
 
 ///|
