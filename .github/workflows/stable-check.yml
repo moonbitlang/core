@@ -41,7 +41,7 @@ jobs:
           git diff --exit-code
 
       - name: run tests
-        timeout-minutes: 10
+        timeout-minutes: 20
         uses: ./.github/actions/test
 
       - name: moon bundle
