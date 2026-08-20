@@ -66,25 +66,20 @@ test "command policies" {
       #|
     ),
   )
-  try sub_cmd.parse(argv=[], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: the following required argument was not provided: 'subcommand'
-          #|
-          #|Usage: demo <command>
-          #|
-          #|Commands:
-          #|  echo  
-          #|  help  Print help for the subcommand(s).
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => sub_cmd.parse(argv=[], env=empty_env())),
+    content=(
+      #|error: the following required argument was not provided: 'subcommand'
+      #|
+      #|Usage: demo <command>
+      #|
+      #|Commands:
+      #|  echo  
+      #|  help  Print help for the subcommand(s).
+      #|
+      #|Options:
+      #|  -h, --help  Show help information.
+      #|
+    ),
+  )
 }

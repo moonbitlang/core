@@ -18,24 +18,19 @@ test "parse failure message contains error and contextual help" {
     OptionArg("count", long="count", about="repeat count"),
   ])
 
-  try cmd.parse(argv=["--bad"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected argument '--bad' found
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help       Show help information.
-          #|  --count <count>  repeat count
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["--bad"], env=empty_env())),
+    content=(
+      #|error: unexpected argument '--bad' found
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help       Show help information.
+      #|  --count <count>  repeat count
+      #|
+    ),
+  )
 }
 
 ///|
@@ -44,24 +39,19 @@ test "subcommand parse errors include subcommand help" {
     Command("echo", options=[OptionArg("times", long="times")]),
   ])
 
-  try cmd.parse(argv=["echo", "--bad"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected argument '--bad' found
-          #|
-          #|Usage: demo echo [options]
-          #|
-          #|Options:
-          #|  -h, --help       Show help information.
-          #|  --times <times>  
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["echo", "--bad"], env=empty_env())),
+    content=(
+      #|error: unexpected argument '--bad' found
+      #|
+      #|Usage: demo echo [options]
+      #|
+      #|Options:
+      #|  -h, --help       Show help information.
+      #|  --times <times>  
+      #|
+    ),
+  )
 }
 
 ///|
@@ -99,26 +89,21 @@ test "display help and version" {
     ),
   )
 
-  try cmd.parse(argv=["--oops"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected argument '--oops' found
-          #|
-          #|Usage: demo
-          #|
-          #|demo app
-          #|
-          #|Options:
-          #|  -h, --help     Show help information.
-          #|  -V, --version  Show version information.
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["--oops"], env=empty_env())),
+    content=(
+      #|error: unexpected argument '--oops' found
+      #|
+      #|Usage: demo
+      #|
+      #|demo app
+      #|
+      #|Options:
+      #|  -h, --help     Show help information.
+      #|  -V, --version  Show version information.
+      #|
+    ),
+  )
 }
 
 ///|
@@ -308,27 +293,22 @@ test "default subcommand help annotation and child error context" {
     ),
   )
 
-  try cmd.parse(argv=["--unknown"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected argument '--unknown' found
-          #|
-          #|Usage: openseek tui [options]
-          #|
-          #|Start interactive UI
-          #|
-          #|Options:
-          #|  -h, --help         Show help information.
-          #|  --config <config>  config
-          #|  --theme <theme>    theme
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["--unknown"], env=empty_env())),
+    content=(
+      #|error: unexpected argument '--unknown' found
+      #|
+      #|Usage: openseek tui [options]
+      #|
+      #|Start interactive UI
+      #|
+      #|Options:
+      #|  -h, --help         Show help information.
+      #|  --config <config>  config
+      #|  --theme <theme>    theme
+      #|
+    ),
+  )
 }
 
 ///|
@@ -363,49 +343,41 @@ test "help subcommand styles and errors" {
     ),
   )
 
-  try cmd.parse(argv=["help", "--bad"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected help argument: --bad
-          #|
-          #|Usage: demo [command]
-          #|
-          #|Commands:
-          #|  echo  echo
-          #|  help  Print help for the subcommand(s).
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["help", "--bad"], env=empty_env())),
+    content=(
+      #|error: unexpected help argument: --bad
+      #|
+      #|Usage: demo [command]
+      #|
+      #|Commands:
+      #|  echo  echo
+      #|  help  Print help for the subcommand(s).
+      #|
+      #|Options:
+      #|  -h, --help  Show help information.
+      #|
+    ),
+  )
 
-  try cmd.parse(argv=["help", "missing"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unknown subcommand: missing
-          #|
-          #|Usage: demo [command]
-          #|
-          #|Commands:
-          #|  echo  echo
-          #|  help  Print help for the subcommand(s).
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => {
+      cmd.parse(argv=["help", "missing"], env=empty_env())
+    }),
+    content=(
+      #|error: unknown subcommand: missing
+      #|
+      #|Usage: demo [command]
+      #|
+      #|Commands:
+      #|  echo  echo
+      #|  help  Print help for the subcommand(s).
+      #|
+      #|Options:
+      #|  -h, --help  Show help information.
+      #|
+    ),
+  )
 }
 
 ///|
@@ -425,26 +397,21 @@ test "subcommand help includes inherited global options" {
     subcommands=[leaf],
   )
 
-  try cmd.parse(argv=["echo", "--bad"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected argument '--bad' found
-          #|
-          #|Usage: demo echo [options]
-          #|
-          #|echo
-          #|
-          #|Options:
-          #|  -h, --help     Show help information.
-          #|  -v, --verbose  Enable verbose mode
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["echo", "--bad"], env=empty_env())),
+    content=(
+      #|error: unexpected argument '--bad' found
+      #|
+      #|Usage: demo echo [options]
+      #|
+      #|echo
+      #|
+      #|Options:
+      #|  -h, --help     Show help information.
+      #|  -v, --verbose  Enable verbose mode
+      #|
+    ),
+  )
 }
 
 ///|
@@ -453,27 +420,22 @@ test "help subcommand suggestions exclude hidden commands" {
     Command("serve", about="serve"),
     Command("secret", about="secret", hidden=true),
   ])
-  try cmd.parse(argv=["help", "secrt"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unknown subcommand: secrt
-          #|
-          #|Usage: demo [command]
-          #|
-          #|Commands:
-          #|  serve  serve
-          #|  help   Print help for the subcommand(s).
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["help", "secrt"], env=empty_env())),
+    content=(
+      #|error: unknown subcommand: secrt
+      #|
+      #|Usage: demo [command]
+      #|
+      #|Commands:
+      #|  serve  serve
+      #|  help   Print help for the subcommand(s).
+      #|
+      #|Options:
+      #|  -h, --help  Show help information.
+      #|
+    ),
+  )
 }
 
 ///|
@@ -536,24 +498,19 @@ test "builtin and custom help/version dispatch edge paths" {
     ),
   )
 
-  try versioned.parse(argv=["--oops"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected argument '--oops' found
-          #|
-          #|Usage: demo
-          #|
-          #|Options:
-          #|  -h, --help     Show help information.
-          #|  -V, --version  Show version information.
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => versioned.parse(argv=["--oops"], env=empty_env())),
+    content=(
+      #|error: unexpected argument '--oops' found
+      #|
+      #|Usage: demo
+      #|
+      #|Options:
+      #|  -h, --help     Show help information.
+      #|  -V, --version  Show version information.
+      #|
+    ),
+  )
 
   let long_help = @argparse.Command("demo", flags=[
     FlagArg("assist", long="assist", action=Help),
@@ -599,24 +556,21 @@ test "help rendering edge paths stay stable" {
   ])
   let short_only_text = short_only_builtin.render_help()
   assert_true(short_only_text.has_prefix("Usage: demo"))
-  try short_only_builtin.parse(argv=["--help"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: a value is required for '--help' but none was supplied
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h                Show help information.
-          #|  --help <helpopt>  
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => {
+      short_only_builtin.parse(argv=["--help"], env=empty_env())
+    }),
+    content=(
+      #|error: a value is required for '--help' but none was supplied
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h                Show help information.
+      #|  --help <helpopt>  
+      #|
+    ),
+  )
 
   let long_only_builtin = @argparse.Command("demo", flags=[
     FlagArg("custom_h", short='h'),
@@ -670,26 +624,21 @@ test "version action dispatches on custom long and short flags" {
     ),
   )
 
-  try cmd.parse(argv=["--oops"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected argument '--oops' found
-          #|
-          #|Usage: demo [options]
-          #|
-          #|Options:
-          #|  -h, --help        Show help information.
-          #|  -V, --version     Show version information.
-          #|  --show-version    
-          #|  -S, --show_short  
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["--oops"], env=empty_env())),
+    content=(
+      #|error: unexpected argument '--oops' found
+      #|
+      #|Usage: demo [options]
+      #|
+      #|Options:
+      #|  -h, --help        Show help information.
+      #|  -V, --version     Show version information.
+      #|  --show-version    
+      #|  -S, --show_short  
+      #|
+    ),
+  )
 }
 
 ///|
@@ -709,48 +658,38 @@ test "global version action keeps parent version text in subcommand context" {
     subcommands=[Command("run")],
   )
 
-  try cmd.parse(argv=["--oops"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected argument '--oops' found
-          #|
-          #|Usage: demo [options] [command]
-          #|
-          #|Commands:
-          #|  run   
-          #|  help  Print help for the subcommand(s).
-          #|
-          #|Options:
-          #|  -h, --help          Show help information.
-          #|  -V, --version       Show version information.
-          #|  -S, --show-version  
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["--oops"], env=empty_env())),
+    content=(
+      #|error: unexpected argument '--oops' found
+      #|
+      #|Usage: demo [options] [command]
+      #|
+      #|Commands:
+      #|  run   
+      #|  help  Print help for the subcommand(s).
+      #|
+      #|Options:
+      #|  -h, --help          Show help information.
+      #|  -V, --version       Show version information.
+      #|  -S, --show-version  
+      #|
+    ),
+  )
 
-  try cmd.parse(argv=["run", "--oops"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected argument '--oops' found
-          #|
-          #|Usage: demo run [options]
-          #|
-          #|Options:
-          #|  -h, --help          Show help information.
-          #|  -S, --show-version  
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["run", "--oops"], env=empty_env())),
+    content=(
+      #|error: unexpected argument '--oops' found
+      #|
+      #|Usage: demo run [options]
+      #|
+      #|Options:
+      #|  -h, --help          Show help information.
+      #|  -S, --show-version  
+      #|
+    ),
+  )
 }
 
 ///|
@@ -764,29 +703,24 @@ test "subcommand help puts required options in usage" {
     ),
   ])
 
-  try cmd.parse(argv=["run", "--oops"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected argument '--oops' found
-          #|
-          #|Usage: demo run --mode <mode> <file>
-          #|
-          #|Run a file
-          #|
-          #|Arguments:
-          #|  file  
-          #|
-          #|Options:
-          #|  -h, --help         Show help information.
-          #|  -m, --mode <mode>  
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["run", "--oops"], env=empty_env())),
+    content=(
+      #|error: unexpected argument '--oops' found
+      #|
+      #|Usage: demo run --mode <mode> <file>
+      #|
+      #|Run a file
+      #|
+      #|Arguments:
+      #|  file  
+      #|
+      #|Options:
+      #|  -h, --help         Show help information.
+      #|  -m, --mode <mode>  
+      #|
+    ),
+  )
 }
 
 ///|
@@ -859,33 +793,28 @@ test "required group usage lists every member shape" {
       PositionArg("poss", num_args=ValueRange(lower=0, upper=1)),
     ],
   )
-  try cmd.parse(argv=[], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: the following required arguments were not provided:
-          #|  <--opt <opt>|<posm...>|<poss>|-s|ef>
-          #|
-          #|Usage: demo [options] [posm...] [poss]
-          #|
-          #|Arguments:
-          #|  posm...  
-          #|  poss     
-          #|
-          #|Options:
-          #|  -h, --help   Show help information.
-          #|  -s           
-          #|  --opt <opt>  
-          #|
-          #|Groups:
-          #|  g [required]  -s, ef, --opt <opt>, posm, poss
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=[], env=empty_env())),
+    content=(
+      #|error: the following required arguments were not provided:
+      #|  <--opt <opt>|<posm...>|<poss>|-s|ef>
+      #|
+      #|Usage: demo [options] [posm...] [poss]
+      #|
+      #|Arguments:
+      #|  posm...  
+      #|  poss     
+      #|
+      #|Options:
+      #|  -h, --help   Show help information.
+      #|  -s           
+      #|  --opt <opt>  
+      #|
+      #|Groups:
+      #|  g [required]  -s, ef, --opt <opt>, posm, poss
+      #|
+    ),
+  )
 }
 
 ///|
@@ -893,30 +822,25 @@ test "help subcommand cannot follow positional arguments" {
   let cmd = @argparse.Command("demo", positionals=[PositionArg("input")], subcommands=[
     Command("run"),
   ])
-  try cmd.parse(argv=["raw", "help"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: subcommand 'help' cannot be used with positional arguments
-          #|
-          #|Usage: demo [input] [command]
-          #|
-          #|Commands:
-          #|  run   
-          #|  help  Print help for the subcommand(s).
-          #|
-          #|Arguments:
-          #|  input  
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["raw", "help"], env=empty_env())),
+    content=(
+      #|error: subcommand 'help' cannot be used with positional arguments
+      #|
+      #|Usage: demo [input] [command]
+      #|
+      #|Commands:
+      #|  run   
+      #|  help  Print help for the subcommand(s).
+      #|
+      #|Arguments:
+      #|  input  
+      #|
+      #|Options:
+      #|  -h, --help  Show help information.
+      #|
+    ),
+  )
 }
 
 ///|

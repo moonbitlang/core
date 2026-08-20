@@ -62,26 +62,23 @@ test "positionals dash handling and separator" {
   }
   assert_true(negative.values is { "n": ["-9"], .. })
 
-  try negative_cmd.parse(argv=["x", "y"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected value 'y' for '<n>' found; no more were expected
-          #|
-          #|Usage: demo [n]
-          #|
-          #|Arguments:
-          #|  n  
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => {
+      negative_cmd.parse(argv=["x", "y"], env=empty_env())
+    }),
+    content=(
+      #|error: unexpected value 'y' for '<n>' found; no more were expected
+      #|
+      #|Usage: demo [n]
+      #|
+      #|Arguments:
+      #|  n  
+      #|
+      #|Options:
+      #|  -h, --help  Show help information.
+      #|
+    ),
+  )
 }
 
 ///|
@@ -181,26 +178,21 @@ test "positional num_args lower bound rejects missing argv values" {
     PositionArg("first", num_args=ValueRange(lower=2, upper=3)),
   ])
 
-  try cmd.parse(argv=[], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: 'first' requires at least 2 values but only 0 were provided
-          #|
-          #|Usage: demo <first...>
-          #|
-          #|Arguments:
-          #|  first...  
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=[], env=empty_env())),
+    content=(
+      #|error: 'first' requires at least 2 values but only 0 were provided
+      #|
+      #|Usage: demo <first...>
+      #|
+      #|Arguments:
+      #|  first...  
+      #|
+      #|Options:
+      #|  -h, --help  Show help information.
+      #|
+    ),
+  )
 }
 
 ///|
@@ -230,26 +222,21 @@ test "allow_hyphen positional treats unknown long token as value" {
 ///|
 test "non-bmp hyphen token reports unknown argument without panic" {
   let cmd = @argparse.Command("demo", positionals=[PositionArg("value")])
-  try cmd.parse(argv=["-🎉"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected argument '-🎉' found
-          #|
-          #|Usage: demo [value]
-          #|
-          #|Arguments:
-          #|  value  
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["-🎉"], env=empty_env())),
+    content=(
+      #|error: unexpected argument '-🎉' found
+      #|
+      #|Usage: demo [value]
+      #|
+      #|Arguments:
+      #|  value  
+      #|
+      #|Options:
+      #|  -h, --help  Show help information.
+      #|
+    ),
+  )
 }
 
 ///|
@@ -259,26 +246,21 @@ test "positional default values exceeding num_args upper bound are rejected" {
       "a", "b", "c",
     ]),
   ])
-  try cmd.parse(argv=[], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: 'tags' allows at most 2 values but 3 were provided
-          #|
-          #|Usage: demo [tags...]
-          #|
-          #|Arguments:
-          #|  tags...  [default: a, b, c]
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=[], env=empty_env())),
+    content=(
+      #|error: 'tags' allows at most 2 values but 3 were provided
+      #|
+      #|Usage: demo [tags...]
+      #|
+      #|Arguments:
+      #|  tags...  [default: a, b, c]
+      #|
+      #|Options:
+      #|  -h, --help  Show help information.
+      #|
+    ),
+  )
 }
 
 ///|
@@ -287,27 +269,22 @@ test "earlier variadic positional reserves values for a later required one" {
     PositionArg("head", num_args=ValueRange(lower=0)),
     PositionArg("tail", num_args=ValueRange(lower=2)),
   ])
-  try cmd.parse(argv=["only"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: 'tail' requires at least 2 values but only 1 were provided
-          #|
-          #|Usage: demo [head...] <tail...>
-          #|
-          #|Arguments:
-          #|  head...  
-          #|  tail...  
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["only"], env=empty_env())),
+    content=(
+      #|error: 'tail' requires at least 2 values but only 1 were provided
+      #|
+      #|Usage: demo [head...] <tail...>
+      #|
+      #|Arguments:
+      #|  head...  
+      #|  tail...  
+      #|
+      #|Options:
+      #|  -h, --help  Show help information.
+      #|
+    ),
+  )
 }
 
 ///|
@@ -317,26 +294,21 @@ test "extra values past a bounded variadic positional report the variadic label"
   ])
   let ok = cmd.parse(argv=["a", "b"], env=empty_env()) catch { _ => panic() }
   assert_true(ok.values is { "items": ["a", "b"], .. })
-  try cmd.parse(argv=["a", "b", "c"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected value 'c' for '<items...>' found; no more were expected
-          #|
-          #|Usage: demo [items...]
-          #|
-          #|Arguments:
-          #|  items...  
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["a", "b", "c"], env=empty_env())),
+    content=(
+      #|error: unexpected value 'c' for '<items...>' found; no more were expected
+      #|
+      #|Usage: demo [items...]
+      #|
+      #|Arguments:
+      #|  items...  
+      #|
+      #|Options:
+      #|  -h, --help  Show help information.
+      #|
+    ),
+  )
 }
 
 ///|
@@ -348,26 +320,21 @@ test "bounded variadic positional stops accepting hyphen tokens once full" {
       allow_hyphen_values=true,
     ),
   ])
-  try cmd.parse(argv=["a", "b", "-c"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected argument '-c' found
-          #|
-          #|Usage: demo [items...]
-          #|
-          #|Arguments:
-          #|  items...  
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["a", "b", "-c"], env=empty_env())),
+    content=(
+      #|error: unexpected argument '-c' found
+      #|
+      #|Usage: demo [items...]
+      #|
+      #|Arguments:
+      #|  items...  
+      #|
+      #|Options:
+      #|  -h, --help  Show help information.
+      #|
+    ),
+  )
 }
 
 ///|
@@ -379,25 +346,20 @@ test "hyphen token is rejected while a later positional still needs values" {
     PositionArg("head", num_args=ValueRange(lower=0), allow_hyphen_values=true),
     PositionArg("tail", num_args=ValueRange(lower=2)),
   ])
-  try cmd.parse(argv=["-x"], env=empty_env()) catch {
-    err =>
-      inspect(
-        err,
-        content=(
-          #|error: unexpected argument '-x' found
-          #|
-          #|Usage: demo [head...] <tail...>
-          #|
-          #|Arguments:
-          #|  head...  
-          #|  tail...  
-          #|
-          #|Options:
-          #|  -h, --help  Show help information.
-          #|
-        ),
-      )
-  } noraise {
-    _ => panic()
-  }
+  inspect(
+    @test.expect_error(() => cmd.parse(argv=["-x"], env=empty_env())),
+    content=(
+      #|error: unexpected argument '-x' found
+      #|
+      #|Usage: demo [head...] <tail...>
+      #|
+      #|Arguments:
+      #|  head...  
+      #|  tail...  
+      #|
+      #|Options:
+      #|  -h, --help  Show help information.
+      #|
+    ),
+  )
 }
