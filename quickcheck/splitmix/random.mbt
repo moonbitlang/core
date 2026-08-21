@@ -47,58 +47,57 @@ pub fn RandomState::next(self : RandomState) -> Unit {
 }
 
 ///|
-/// Get the next random number as a 64-bit unsigned integer.
-pub fn RandomState::next_uint64(self : RandomState) -> UInt64 {
+fn RandomState::next_uint64_raw(self : RandomState) -> UInt64 {
   let { seed, gamma } = self
   self.seed = seed + gamma
   mix64(self.seed)
 }
 
 ///|
-/// Returns an unbiased random `UInt64` in the half-open interval `[0, upper)`.
+/// Returns a random `UInt64`.
 ///
-/// Uses bitmask rejection so every result has the same probability. Rejected
-/// words consume additional values from this random state.
+/// With no `limit`, values span the complete `UInt64` range. With `limit`,
+/// this method uses bitmask rejection to return an unbiased value in the
+/// half-open interval `[0, limit)`. Rejected words consume additional values
+/// from this random state.
 ///
 /// # Panics
 ///
-/// Panics if `upper` is zero.
-pub fn RandomState::next_uint64_below(
-  self : RandomState,
-  upper : UInt64,
-) -> UInt64 {
-  guard upper > 0UL else {
-    abort("RandomState::next_uint64_below: upper must be positive")
-  }
-  let mask = if upper == 1UL {
-    0UL
-  } else {
-    0xffff_ffff_ffff_ffffUL >> (upper - 1UL).clz()
-  }
-  for candidate = self.next_uint64() & mask; candidate >= upper; {
-    continue self.next_uint64() & mask
-  } nobreak {
-    candidate
+/// Panics if `limit` is explicitly set to zero.
+pub fn RandomState::next_uint64(self : RandomState, limit? : UInt64) -> UInt64 {
+  match limit {
+    None => self.next_uint64_raw()
+    Some(0UL) => abort("RandomState::next_uint64: limit must be positive")
+    Some(limit) => {
+      let mask = if limit == 1UL {
+        0UL
+      } else {
+        0xffff_ffff_ffff_ffffUL >> (limit - 1UL).clz()
+      }
+      for candidate = self.next_uint64_raw() & mask; candidate >= limit; {
+        continue self.next_uint64_raw() & mask
+      } nobreak {
+        candidate
+      }
+    }
   }
 }
 
 ///|
-/// Get the next random number as a 32-bit unsigned integer.
-pub fn RandomState::next_uint(self : RandomState) -> UInt {
-  self.next_uint64().to_uint()
-}
-
-///|
-/// Returns an unbiased random `UInt` in the half-open interval `[0, upper)`.
+/// Returns a random `UInt`.
+///
+/// With no `limit`, values span the complete `UInt` range. With `limit`, this
+/// method returns an unbiased value in the half-open interval `[0, limit)`.
 ///
 /// # Panics
 ///
-/// Panics if `upper` is zero.
-pub fn RandomState::next_uint_below(self : RandomState, upper : UInt) -> UInt {
-  guard upper > 0U else {
-    abort("RandomState::next_uint_below: upper must be positive")
+/// Panics if `limit` is explicitly set to zero.
+pub fn RandomState::next_uint(self : RandomState, limit? : UInt) -> UInt {
+  match limit {
+    None => self.next_uint64_raw().to_uint()
+    Some(0U) => abort("RandomState::next_uint: limit must be positive")
+    Some(limit) => self.next_uint64(limit=limit.to_uint64()).to_uint()
   }
-  self.next_uint64_below(upper.to_uint64()).to_uint()
 }
 
 ///|

@@ -54,25 +54,25 @@ test "mix_gamma else branch seed" {
 }
 
 ///|
-test "next_uint64_below skips masked values outside the bound" {
+test "next_uint64 with a limit skips masked values outside the bound" {
   let state = @splitmix.new(seed=7UL)
-  let value = state.next_uint64_below(3UL)
+  let value = state.next_uint64(limit=3UL)
   debug_inspect((value, state.next_uint64()), content="(2, 622236291405445593)")
 }
 
 ///|
-test "next_uint_below skips masked values outside the bound" {
+test "next_uint with a limit skips masked values outside the bound" {
   let state = @splitmix.new(seed=7UL)
-  let value = state.next_uint_below(3U)
+  let value = state.next_uint(limit=3U)
   debug_inspect((value, state.next_uint64()), content="(2, 622236291405445593)")
 }
 
 ///|
-test "next_uint64_below handles unit and power-of-two bounds" {
+test "next_uint64 handles unit and power-of-two limits" {
   let unit = @splitmix.new(seed=1UL)
-  let unit_value = unit.next_uint64_below(1UL)
+  let unit_value = unit.next_uint64(limit=1UL)
   let power = @splitmix.new(seed=1UL)
-  let power_value = power.next_uint64_below(8UL)
+  let power_value = power.next_uint64(limit=8UL)
   debug_inspect(
     (unit_value, unit.next_uint64(), power_value, power.next_uint64()),
     content="(0, 9482272708574442377, 1, 9482272708574442377)",
@@ -80,13 +80,13 @@ test "next_uint64_below handles unit and power-of-two bounds" {
 }
 
 ///|
-test "panic next_uint64_below rejects a zero bound" {
+test "panic next_uint64 rejects a zero limit" {
   let state = @splitmix.new(seed=1UL)
-  ignore(state.next_uint64_below(0UL))
+  ignore(state.next_uint64(limit=0UL))
 }
 
 ///|
-test "panic next_uint_below rejects a zero bound" {
+test "panic next_uint rejects a zero limit" {
   let state = @splitmix.new(seed=1UL)
-  ignore(state.next_uint_below(0U))
+  ignore(state.next_uint(limit=0U))
 }
