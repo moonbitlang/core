@@ -2797,3 +2797,40 @@ test "Deque::append/self_alias" {
   dq.append(dq)
   debug_inspect(dq.to_array(), content="[1, 2, 3, 1, 2, 3]")
 }
+
+///|
+test "deque operations match array model across wrap boundaries" {
+  for initial_capacity in [0, 1, 3, 5, 15] {
+    let deque = @deque.Deque([], capacity=initial_capacity)
+    let model : Array[Int] = []
+    for step in 0..<1300 {
+      let cycle = step / 13
+      match step % 13 {
+        0 | 1 | 4 => {
+          deque.push_back(step)
+          model.push(step)
+        }
+        2 | 5 => {
+          deque.push_front(step)
+          model.insert(0, step)
+        }
+        3 => {
+          let index = (cycle + initial_capacity) % (model.length() + 1)
+          deque.insert(index, step)
+          model.insert(index, step)
+        }
+        6 | 10 => @test.assert_eq(deque.pop_front(), Some(model.remove(0)))
+        7 | 12 => @test.assert_eq(deque.pop_back(), model.pop())
+        8 | 11 => {
+          let index = (cycle + initial_capacity) % model.length()
+          @test.assert_eq(deque.remove(index), model.remove(index))
+        }
+        _ => {
+          deque.rev_in_place()
+          model.rev_in_place()
+        }
+      }
+      @test.assert_eq(deque.to_array(), model)
+    }
+  }
+}
