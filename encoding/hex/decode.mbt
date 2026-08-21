@@ -37,7 +37,33 @@ fn hex_value(code_unit : Int) -> Int {
 /// Both lowercase and uppercase hexadecimal characters are accepted. Raises
 /// `Malformed` if the input length is odd or any character is not a
 /// hexadecimal digit.
+#cfg(not(any(target="native", target="wasm")))
 pub fn decode(text : StringView) -> Bytes raise Malformed {
+  decode_scalar(text)
+}
+
+///|
+/// Decodes a hexadecimal string into bytes.
+///
+/// Both lowercase and uppercase hexadecimal characters are accepted. Raises
+/// `Malformed` if the input length is odd or any character is not a
+/// hexadecimal digit.
+#cfg(any(target="native", target="wasm"))
+pub fn decode(text : StringView) -> Bytes raise Malformed {
+  match decode_v128(text) {
+    Some(bytes) => bytes
+    // Not handled by the fast path: short, odd-length, or invalid input.
+    // The scalar decoder is the single source of the `Malformed` rules.
+    None => decode_scalar(text)
+  }
+}
+
+///|
+/// Retained on every backend: the linear-memory backends reach it only from
+/// the differential tests and the fast path's rejections, but it is the
+/// implementation everywhere else.
+#warnings("-unused_value")
+fn decode_scalar(text : StringView) -> Bytes raise Malformed {
   if text.length() % 2 != 0 {
     raise Malformed(text)
   }

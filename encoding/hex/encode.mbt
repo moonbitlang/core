@@ -19,7 +19,25 @@ const HEX_DIGITS : Bytes = b"0123456789abcdef"
 /// Encodes bytes as a lowercase hexadecimal string.
 ///
 /// The returned string has length `2 * bytes.length()`.
+#cfg(not(any(target="native", target="wasm")))
 pub fn encode(bytes : BytesView) -> String {
+  encode_scalar(bytes)
+}
+
+///|
+/// Encodes bytes as a lowercase hexadecimal string.
+///
+/// The returned string has length `2 * bytes.length()`.
+#cfg(any(target="native", target="wasm"))
+pub fn encode(bytes : BytesView) -> String {
+  encode_v128(bytes)
+}
+
+///|
+/// Retained on every backend: the linear-memory backends reach it only from
+/// the differential tests, but it is the implementation everywhere else.
+#warnings("-unused_value")
+fn encode_scalar(bytes : BytesView) -> String {
   // size_hint is measured in bytes, and each of the 2n output code units
   // occupies two bytes in the builder's UTF-16 buffer
   let builder = StringBuilder(size_hint=4 * bytes.length())
