@@ -54,6 +54,29 @@ test "random number generation" {
 }
 ```
 
+## Bounded Unsigned Integers
+
+Use `next_uint_below` and `next_uint64_below` for unbiased values below an
+exclusive upper bound. Unlike `% upper`, these methods reject excess source
+words so every result in the requested interval has the same probability.
+
+```mbt check
+///|
+test "bounded unsigned generation" {
+  let rng = @splitmix.new(seed=42UL)
+  debug_inspect(
+    (
+      rng.next_uint_below(10U),
+      rng.next_uint64_below(3UL),
+      rng.next_uint_below(16U),
+    ),
+    content=(
+      #|(0, 1, 9)
+    ),
+  )
+}
+```
+
 ## Floating-Point Random Numbers
 
 Generate random floating-point values:
