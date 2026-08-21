@@ -22,10 +22,8 @@ pub fn RandomState::next_int(Self) -> Int
 pub fn RandomState::next_int64(Self) -> Int64
 pub fn RandomState::next_positive_int(Self) -> Int
 pub fn RandomState::next_two_uint(Self) -> (UInt, UInt)
-pub fn RandomState::next_uint(Self) -> UInt
-pub fn RandomState::next_uint64(Self) -> UInt64
-pub fn RandomState::next_uint64_below(Self, UInt64) -> UInt64
-pub fn RandomState::next_uint_below(Self, UInt) -> UInt
+pub fn RandomState::next_uint(Self, limit? : UInt) -> UInt
+pub fn RandomState::next_uint64(Self, limit? : UInt64) -> UInt64
 pub fn RandomState::split(Self) -> Self
 pub fn RandomState::to_string(Self) -> String
 pub impl Default for RandomState
