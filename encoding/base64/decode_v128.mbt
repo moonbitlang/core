@@ -130,7 +130,7 @@ fn decode_v128(text : StringView) -> Bytes? {
   let base = text.start_offset()
   let mut index = 0
   let mut written = 0
-  while index + 16 <= body && written + 16 <= out.length() {
+  while body - index >= 16 && out.length() - written >= 16 {
     let offset = base + index
     let ascii = @v128.i8x16_narrow_i16x8_u(
       @v128.v128_load_i16x8(src, offset),

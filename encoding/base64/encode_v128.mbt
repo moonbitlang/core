@@ -105,6 +105,13 @@ fn write_code_unit(out : FixedArray[Byte], offset : Int, code : Byte) -> Unit {
 #cfg(any(target="native", target="wasm"))
 fn encode_v128(bytes : BytesView, padding : Bool) -> String {
   let length = bytes.length()
+  // Three source bytes become four code units and so eight buffer bytes.
+  // The vector stores below are not bounds checked, so an input whose
+  // buffer size would wrap has to be refused before the allocation; the
+  // scalar encoder builds the string without ever materializing that
+  // buffer. The bound is a round number well inside the true ceiling,
+  // since no caller is near it either way.
+  guard length <= 0x2000_0000 else { return encode_scalar(bytes, padding~) }
   let full_groups = length / 3
   let remainder = length % 3
   let mut char_count = full_groups * 4
@@ -118,14 +125,14 @@ fn encode_v128(bytes : BytesView, padding : Bool) -> String {
   let mut written = 0
   // The load reads sixteen bytes but only twelve are consumed, so the loop
   // stops four bytes short of the end and the tail is encoded scalar.
-  while index + 16 <= end {
+  while end - index >= 16 {
     let chars = encode_block_v128(@v128.v128_load(src, index))
     @v128.v128_store(out, written, @v128.i16x8_extend_low_i8x16_u(chars))
     @v128.v128_store(out, written + 16, @v128.i16x8_extend_high_i8x16_u(chars))
     index += 12
     written += 32
   }
-  while index + 3 <= end {
+  while end - index >= 3 {
     let n = (src[index].to_int() << 16) |
       (src[index + 1].to_int() << 8) |
       src[index + 2].to_int()
