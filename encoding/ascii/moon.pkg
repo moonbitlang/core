@@ -6,7 +6,12 @@ import {
 
 import {
   "moonbitlang/core/bench",
+  "moonbitlang/core/quickcheck",
 } for "test"
+
+import {
+  "moonbitlang/core/quickcheck",
+} for "wbtest"
 
 options(
   targets: { "decode_v128_wbtest.mbt": [ "not", "js" ] },
