@@ -55,9 +55,50 @@ pub fn RandomState::next_uint64(self : RandomState) -> UInt64 {
 }
 
 ///|
+/// Returns an unbiased random `UInt64` in the half-open interval `[0, upper)`.
+///
+/// Uses bitmask rejection so every result has the same probability. Rejected
+/// words consume additional values from this random state.
+///
+/// # Panics
+///
+/// Panics if `upper` is zero.
+pub fn RandomState::next_uint64_below(
+  self : RandomState,
+  upper : UInt64,
+) -> UInt64 {
+  guard upper > 0UL else {
+    abort("RandomState::next_uint64_below: upper must be positive")
+  }
+  let mask = if upper == 1UL {
+    0UL
+  } else {
+    0xffff_ffff_ffff_ffffUL >> (upper - 1UL).clz()
+  }
+  for candidate = self.next_uint64() & mask; candidate >= upper; {
+    continue self.next_uint64() & mask
+  } nobreak {
+    candidate
+  }
+}
+
+///|
 /// Get the next random number as a 32-bit unsigned integer.
 pub fn RandomState::next_uint(self : RandomState) -> UInt {
   self.next_uint64().to_uint()
+}
+
+///|
+/// Returns an unbiased random `UInt` in the half-open interval `[0, upper)`.
+///
+/// # Panics
+///
+/// Panics if `upper` is zero.
+pub fn RandomState::next_uint_below(self : RandomState, upper : UInt) -> UInt {
+  guard upper > 0U else {
+    abort("RandomState::next_uint_below: upper must be positive")
+  }
+  self.next_uint64_below(upper.to_uint64()).to_uint()
 }
 
 ///|
