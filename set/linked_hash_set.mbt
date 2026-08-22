@@ -50,6 +50,25 @@ struct Set[K] {
 
 // Implementations
 
+// SAFETY NOTE for the unchecked probe accesses in this file.
+//
+// `capacity` is always a power of two and at least 1, `capacity_mask` is
+// `capacity - 1`, and `entries.length()` is `capacity`. A probe index is
+// therefore always in bounds: it starts as `hash & capacity_mask` and each
+// step re-masks with `(idx + 1) & capacity_mask`. `grow` installs the new
+// array, capacity and mask together before any rehash probe runs.
+//
+// Only those probe indices use `unsafe_get` / `unsafe_set`. `Set` also
+// stores slot indices in the list itself -- `prev` on each entry and `tail`
+// on the set -- and `copy` walks the whole list through them, from
+// `entries[self.tail]` back along each `entries[prev]`. Every access through
+// a stored index keeps the checked form. They are in bounds too, being
+// former probe indices in a table that never shrinks, but that argument
+// depends on the list being maintained correctly rather than on arithmetic
+// alone, so it is not one to build unchecked access on. `shift_back` is
+// unchecked, but on a local caller-based proof rather than on that
+// invariant: both of its callers pass masked probe indices.
+
 ///|
 let default_init_capacity = 8
 
@@ -136,8 +155,9 @@ fn[K : Eq] Set::add_with_hash(self : Set[K], key : K, hash : Int) -> Unit {
   if self.size >= self.grow_at {
     self.grow()
   }
+  // SAFETY: masked probe index; see the note at the top of this file.
   let (idx, psl) = for psl = 0, idx = hash & self.capacity_mask {
-    match self.entries[idx] {
+    match self.entries.unsafe_get(idx) {
       None => break (idx, psl)
       Some(curr_entry) => {
         if curr_entry.hash == hash && curr_entry.key == key {
@@ -158,8 +178,9 @@ fn[K : Eq] Set::add_with_hash(self : Set[K], key : K, hash : Int) -> Unit {
 ///|
 #owned(entry)
 fn[K] Set::push_away(self : Set[K], idx : Int, entry : Entry[K]) -> Unit {
+  // SAFETY: masked probe index; see the note at the top of this file.
   for psl = entry.psl + 1, idx = (idx + 1) & self.capacity_mask, entry = entry {
-    match self.entries[idx] {
+    match self.entries.unsafe_get(idx) {
       None => {
         entry.psl = psl
         self.set_entry(entry, idx)
@@ -189,7 +210,7 @@ fn[K] Set::set_entry(self : Set[K], entry : Entry[K], new_idx : Int) -> Unit {
     None => self.tail = new_idx
     Some(next) => next.prev = new_idx
   }
-  self.entries[new_idx] = Some(entry)
+  self.entries.unsafe_set(new_idx, Some(entry))
 }
 
 ///|
@@ -218,8 +239,9 @@ pub fn[K : Hash + Eq] Set::add_and_check(self : Set[K], key : K) -> Bool {
     self.grow()
   }
   let hash = Hash::hash(key)
+  // SAFETY: masked probe index; see the note at the top of this file.
   let (idx, psl, added) = for psl = 0, idx = hash & self.capacity_mask {
-    match self.entries[idx] {
+    match self.entries.unsafe_get(idx) {
       None => break (idx, psl, true)
       Some(curr_entry) => {
         if curr_entry.hash == hash && curr_entry.key == key {
@@ -245,8 +267,9 @@ pub fn[K : Hash + Eq] Set::add_and_check(self : Set[K], key : K) -> Bool {
 pub fn[K : Hash + Eq] Set::contains(self : Set[K], key : K) -> Bool {
   // inline lookup to avoid unnecessary allocations
   let hash = Hash::hash(key)
+  // SAFETY: masked probe index; see the note at the top of this file.
   for i = 0, idx = hash & self.capacity_mask {
-    guard self.entries[idx] is Some(entry) else { break false }
+    guard self.entries.unsafe_get(idx) is Some(entry) else { break false }
     if entry.hash == hash && entry.key == key {
       break true
     }
@@ -280,8 +303,9 @@ pub fn[K : Hash + Eq] Set::contains(self : Set[K], key : K) -> Bool {
 /// ```
 pub fn[K : Hash + Eq] Set::remove(self : Set[K], key : K) -> Unit {
   let hash = Hash::hash(key)
+  // SAFETY: masked probe index; see the note at the top of this file.
   for i = 0, idx = hash & self.capacity_mask {
-    guard self.entries[idx] is Some(entry) else { break }
+    guard self.entries.unsafe_get(idx) is Some(entry) else { break }
     if entry.hash == hash && entry.key == key {
       self.remove_entry(entry)
       self.shift_back(idx)
@@ -318,8 +342,9 @@ pub fn[K : Hash + Eq] Set::remove(self : Set[K], key : K) -> Unit {
 /// ```
 pub fn[K : Hash + Eq] Set::remove_and_check(self : Set[K], key : K) -> Bool {
   let hash = Hash::hash(key)
+  // SAFETY: masked probe index; see the note at the top of this file.
   for i = 0, idx = hash & self.capacity_mask {
-    guard self.entries[idx] is Some(entry) else { break false }
+    guard self.entries.unsafe_get(idx) is Some(entry) else { break false }
     if entry.hash == hash && entry.key == key {
       self.remove_entry(entry)
       self.shift_back(idx)
@@ -345,7 +370,7 @@ fn[K] Set::add_entry_to_tail(
     tail => self.entries[tail].unwrap().next = Some(entry)
   }
   self.tail = idx
-  self.entries[idx] = Some(entry)
+  self.entries.unsafe_set(idx, Some(entry))
   self.size += 1
 }
 
@@ -363,11 +388,16 @@ fn[K] Set::remove_entry(self : Set[K], entry : Entry[K]) -> Unit {
 
 ///|
 fn[K] Set::shift_back(self : Set[K], idx : Int) -> Unit {
+  // SAFETY: both callers -- `remove` and `remove_and_check` -- pass a masked
+  // probe index. Unlike `Map`, no route reaches here carrying a stored list
+  // index, because `Set` has no `retain`. `next` is re-masked each step and
+  // later `cur` values are previous `next` values. This is also what makes
+  // the `set_entry` call below sound.
   for cur = idx {
     let next = (cur + 1) & self.capacity_mask
-    match self.entries[next] {
+    match self.entries.unsafe_get(next) {
       None | Some({ psl: 0, .. }) => {
-        self.entries[cur] = None
+        self.entries.unsafe_set(cur, None)
         break
       }
       Some(entry) => {
@@ -407,8 +437,9 @@ fn[K] Set::grow(self : Set[K]) -> Unit {
 #owned(outer)
 fn[K] Set::rehash_place_entry(self : Set[K], outer : Entry[K]) -> Unit {
   let hash = outer.hash
+  // SAFETY: masked probe index; see the note at the top of this file.
   for psl = 0, idx = hash & self.capacity_mask {
-    match self.entries[idx] {
+    match self.entries.unsafe_get(idx) {
       None => {
         outer.psl = psl
         outer.prev = self.tail
