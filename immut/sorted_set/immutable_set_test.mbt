@@ -395,13 +395,6 @@ test "SortedSet large unordered duplicates keep reverse insertion representative
 }
 
 ///|
-test "from_sorted_array" {
-  let set = @sorted_set.from_sorted_array([1, 2, 3])
-  @test.assert_eq(set.to_array(), [1, 2, 3])
-  @test.assert_eq(set.contains(2), true)
-}
-
-///|
 test "remove_min" {
   debug_inspect(
     @sorted_set.SortedSet([3, 4, 5]).remove_min(),

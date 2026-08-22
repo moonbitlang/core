@@ -441,28 +441,6 @@ fn[K : Compare, V] sorted_map_compact_ordered_array(
 }
 
 ///|
-/// Build a map from key-value pairs that are already strictly sorted by key.
-///
-/// The input must be in ascending key order and must not contain duplicate keys.
-/// This function does not validate that precondition.
-/// O(n).
-///
-/// # Example
-/// ```mbt check
-/// test {
-///   let map = @sorted_map.from_sorted_array([(1, "a"), (2, "b")])
-///   @test.assert_eq(map.to_array(), [(1, "a"), (2, "b")])
-/// }
-/// ```
-#warnings("-unused_trait_bound")
-#as_free_fn
-pub fn[K : Compare, V] SortedMap::from_sorted_array(
-  array : ArrayView[(K, V)],
-) -> SortedMap[K, V] {
-  sorted_map_from_ascending_array(array, 0, array.length())
-}
-
-///|
 /// Build a balanced tree from a slice sorted in ascending key order.
 /// The ascending case of a monotonic array is exactly this construction.
 fn[K, V] sorted_map_from_ascending_array(

@@ -51,12 +51,6 @@ fn make_sorted_map_random_pairs() -> Array[(Int, Int)] {
 }
 
 ///|
-test "bench SortedMap::from_sorted_array n=10000" (it : @bench.T) {
-  let pairs = make_sorted_map_ordered_pairs()
-  it.bench(fn() { it.keep(@sorted_map.from_sorted_array(pairs)) })
-}
-
-///|
 test "bench SortedMap constructor reverse n=10000" (it : @bench.T) {
   let pairs = make_sorted_map_reverse_pairs()
   it.bench(fn() { it.keep(@sorted_map.SortedMap(pairs)) })
