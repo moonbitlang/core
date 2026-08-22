@@ -16,7 +16,16 @@
 priv struct SameRankKey {
   rank : Int
   label : String
-} derive(Eq)
+}
+
+///|
+/// `Compare` orders on `rank` alone, so `Eq` has to agree with it: `compare`
+/// returning zero must mean equal, or the `Compare : Eq` contract is broken.
+/// Tests read `label` directly rather than through `==`, so it stays
+/// observable.
+impl Eq for SameRankKey with fn equal(self, other) {
+  self.rank == other.rank
+}
 
 ///|
 impl Compare for SameRankKey with fn compare(self, other) {
