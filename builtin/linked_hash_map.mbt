@@ -51,6 +51,29 @@ struct Map[K, V] {
 
 // Implementations
 
+// SAFETY NOTE for the unchecked probe accesses in this file.
+//
+// `capacity` is always a power of two and at least 1, `capacity_mask` is
+// `capacity - 1`, and `entries.length()` is `capacity`. A probe index is
+// therefore always in bounds: it starts as `hash & capacity_mask` and each
+// step re-masks with `(idx + 1) & capacity_mask`. `grow` installs the new
+// array, capacity and mask together before any rehash probe runs, and
+// `set_with_hash` re-masks from scratch after growing.
+//
+// Only those probe indices use `unsafe_get` / `unsafe_set`. `Map` also
+// stores slot indices in the list itself -- `prev`, `tail`, and the index
+// `retain` destructures out of an entry -- and every access through one of
+// those keeps the checked form. They are in bounds too, being former probe
+// indices in a table that never shrinks, but that argument depends on the
+// list being maintained correctly rather than on arithmetic alone, so it is
+// not one to build unchecked access on.
+//
+// `shift_back` is the exception, and deliberately so: it is reachable from
+// `retain` with a stored index, but `retain` performs its own checked read
+// immediately before calling, so `shift_back` has a local caller-based proof
+// that does not depend on the list invariant. It carries that proof at its
+// definition, and it is what makes its `set_entry` call sound.
+
 ///|
 let default_init_capacity = 8
 
@@ -140,8 +163,9 @@ fn[K : Eq, V] Map::set_with_hash(
   hash : Int,
 ) -> Unit {
   // Only grow when actually inserting a new entry, not when updating existing
+  // SAFETY: masked probe index; see the note at the top of this file.
   for psl = 0, idx = hash & self.capacity_mask {
-    match self.entries[idx] {
+    match self.entries.unsafe_get(idx) {
       None => {
         // Need to insert new entry - check if grow is needed first
         if self.size >= self.grow_at {
@@ -184,8 +208,9 @@ fn[K, V] Map::push_away(
   idx : Int,
   entry : Entry[K, V],
 ) -> Unit {
+  // SAFETY: masked probe index; see the note at the top of this file.
   for psl = entry.psl + 1, idx = (idx + 1) & self.capacity_mask, entry = entry {
-    match self.entries[idx] {
+    match self.entries.unsafe_get(idx) {
       None => {
         entry.psl = psl
         self.set_entry(entry, idx)
@@ -219,7 +244,7 @@ fn[K, V] Map::set_entry(
     None => self.tail = new_idx
     Some(next) => next.prev = new_idx
   }
-  self.entries[new_idx] = Some(entry)
+  self.entries.unsafe_set(new_idx, Some(entry))
 }
 
 ///|
@@ -243,8 +268,9 @@ fn[K, V] Map::set_entry(
 /// ```
 pub fn[K : Hash + Eq, V] Map::get(self : Map[K, V], key : K) -> V? {
   let hash = Hash::hash(key)
+  // SAFETY: masked probe index; see the note at the top of this file.
   for i = 0, idx = hash & self.capacity_mask {
-    guard self.entries[idx] is Some(entry) else { break None }
+    guard self.entries.unsafe_get(idx) is Some(entry) else { break None }
     if entry.hash == hash && entry.key == key {
       break Some(entry.value)
     }
@@ -260,8 +286,9 @@ pub fn[K : Hash + Eq, V] Map::get(self : Map[K, V], key : K) -> V? {
 #alias("_[_]")
 pub fn[K : Hash + Eq, V] Map::at(self : Map[K, V], key : K) -> V {
   let hash = Hash::hash(key)
+  // SAFETY: masked probe index; see the note at the top of this file.
   for i = 0, idx = hash & self.capacity_mask {
-    guard! self.entries[idx] is Some(entry)
+    guard! self.entries.unsafe_get(idx) is Some(entry)
     if entry.hash == hash && entry.key == key {
       return entry.value
     }
@@ -299,8 +326,9 @@ pub fn[K : Hash + Eq, V] Map::get_or_default(
   default : V,
 ) -> V {
   let hash = Hash::hash(key)
+  // SAFETY: masked probe index; see the note at the top of this file.
   for i = 0, idx = hash & self.capacity_mask {
-    match self.entries[idx] {
+    match self.entries.unsafe_get(idx) {
       Some(entry) => {
         if entry.hash == hash && entry.key == key {
           break entry.value
@@ -323,9 +351,10 @@ pub fn[K : Hash + Eq, V] Map::get_or_init(
   default : () -> V,
 ) -> V {
   let hash = Hash::hash(key)
+  // SAFETY: masked probe index; see the note at the top of this file.
   let (idx, psl, new_value, push_away) = for psl = 0, idx = hash &
                                                self.capacity_mask {
-    match self.entries[idx] {
+    match self.entries.unsafe_get(idx) {
       Some(entry) => {
         if entry.hash == hash && entry.key == key {
           return entry.value
@@ -389,8 +418,9 @@ pub fn[K : Hash + Eq, V] Map::update_or_default(
   f : (V) -> V,
 ) -> Unit {
   let hash = Hash::hash(key)
+  // SAFETY: masked probe index; see the note at the top of this file.
   let (idx, psl, push_away) = for psl = 0, idx = hash & self.capacity_mask {
-    match self.entries[idx] {
+    match self.entries.unsafe_get(idx) {
       Some(entry) => {
         if entry.hash == hash && entry.key == key {
           entry.value = f(entry.value)
@@ -421,8 +451,9 @@ pub fn[K : Hash + Eq, V] Map::update_or_default(
 pub fn[K : Hash + Eq, V] Map::contains(self : Map[K, V], key : K) -> Bool {
   // inline Map::get to avoid boxing
   let hash = Hash::hash(key)
+  // SAFETY: masked probe index; see the note at the top of this file.
   for i = 0, idx = hash & self.capacity_mask {
-    guard self.entries[idx] is Some(entry) else { break false }
+    guard self.entries.unsafe_get(idx) is Some(entry) else { break false }
     if entry.hash == hash && entry.key == key {
       break true
     }
@@ -462,8 +493,9 @@ pub fn[K : Hash + Eq, V : Eq] Map::contains_kv(
 ) -> Bool {
   // inline Map::get to avoid boxing
   let hash = Hash::hash(key)
+  // SAFETY: masked probe index; see the note at the top of this file.
   for i = 0, idx = hash & self.capacity_mask {
-    guard self.entries[idx] is Some(entry) else { break false }
+    guard self.entries.unsafe_get(idx) is Some(entry) else { break false }
     if entry.hash == hash && entry.key == key && entry.value == value {
       break true
     }
@@ -505,8 +537,9 @@ fn[K : Eq, V] Map::remove_with_hash(
   key : K,
   hash : Int,
 ) -> Unit {
+  // SAFETY: masked probe index; see the note at the top of this file.
   for i = 0, idx = hash & self.capacity_mask {
-    guard self.entries[idx] is Some(entry) else { break }
+    guard self.entries.unsafe_get(idx) is Some(entry) else { break }
     if entry.hash == hash && entry.key == key {
       self.remove_entry(entry)
       self.shift_back(idx)
@@ -532,7 +565,7 @@ fn[K, V] Map::add_entry_to_tail(
     tail => self.entries[tail].unwrap().next = Some(entry)
   }
   self.tail = idx
-  self.entries[idx] = Some(entry)
+  self.entries.unsafe_set(idx, Some(entry))
   self.size += 1
 }
 
@@ -550,11 +583,17 @@ fn[K, V] Map::remove_entry(self : Map[K, V], entry : Entry[K, V]) -> Unit {
 
 ///|
 fn[K, V] Map::shift_back(self : Map[K, V], idx : Int) -> Unit {
+  // SAFETY: the initial `cur` is in bounds by every route its callers take,
+  // and none of them requires trusting the list invariant: `remove` and
+  // `update` pass a masked probe index, and `retain` performs its own
+  // checked `entries[idx]` read immediately before calling. `next` is
+  // re-masked each step and later `cur` values are previous `next` values.
+  // This is also what makes the `set_entry` call below sound.
   for cur = idx {
     let next = (cur + 1) & self.capacity_mask
-    match self.entries[next] {
+    match self.entries.unsafe_get(next) {
       None | Some({ psl: 0, .. }) => {
-        self.entries[cur] = None
+        self.entries.unsafe_set(cur, None)
         break
       }
       Some(entry) => {
@@ -594,8 +633,9 @@ fn[K, V] Map::grow(self : Map[K, V]) -> Unit {
 #owned(outer)
 fn[K, V] Map::rehash_place_entry(self : Map[K, V], outer : Entry[K, V]) -> Unit {
   let hash = outer.hash
+  // SAFETY: masked probe index; see the note at the top of this file.
   for psl = 0, idx = hash & self.capacity_mask {
-    match self.entries[idx] {
+    match self.entries.unsafe_get(idx) {
       None => {
         outer.psl = psl
         outer.prev = self.tail
@@ -1094,9 +1134,10 @@ pub fn[K : Hash + Eq, V] Map::update(
   f : (V?) -> V?,
 ) -> Unit {
   let hash = Hash::hash(key)
+  // SAFETY: masked probe index; see the note at the top of this file.
   let (idx, psl, new_value, push_away) = for psl = 0, idx = hash &
                                                self.capacity_mask {
-    match self.entries[idx] {
+    match self.entries.unsafe_get(idx) {
       Some(entry) => {
         if entry.hash == hash && entry.key == key {
           // Found the entry, update its value
@@ -1169,8 +1210,9 @@ pub fn[K : Hash + Eq, V] Map::update(
 /// ```
 pub fn[V] Map::get_from_bytes(map : Self[Bytes, V], key : BytesView) -> V? {
   let hash = key.hash()
+  // SAFETY: masked probe index; see the note at the top of this file.
   for i = 0, idx = hash & map.capacity_mask {
-    guard map.entries[idx] is Some(entry) else { break None }
+    guard map.entries.unsafe_get(idx) is Some(entry) else { break None }
     if entry.hash == hash && key.equal_to_bytes(entry.key) {
       break Some(entry.value)
     }
@@ -1206,8 +1248,9 @@ pub fn[V] Map::get_from_bytes(map : Self[Bytes, V], key : BytesView) -> V? {
 /// ```
 pub fn[V] Map::get_from_string(map : Self[String, V], key : StringView) -> V? {
   let hash = key.hash()
+  // SAFETY: masked probe index; see the note at the top of this file.
   for i = 0, idx = hash & map.capacity_mask {
-    guard map.entries[idx] is Some(entry) else { break None }
+    guard map.entries.unsafe_get(idx) is Some(entry) else { break None }
     if entry.hash == hash && key.equal_to_string(entry.key) {
       break Some(entry.value)
     }
