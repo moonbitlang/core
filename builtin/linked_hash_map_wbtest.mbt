@@ -585,7 +585,10 @@ test "remove_entry_head" {
   guard! map.head is Some(head)
   assert_true(head.prev == -1)
   assert_true(head.next is None)
-  assert_true(head.psl == 0)
+  // The slot itself, not the ideal slot -- passing the ideal index would
+  // make this assertion vacuous, since `psl_at` returns 0 there by
+  // construction.
+  assert_true(map.psl_at(map.tail, head) == 0)
   assert_true(head.hash == (2).hash())
   assert_true(head.key == 2)
   assert_true(head.value == 2)
@@ -603,7 +606,7 @@ test "remove_entry_tail" {
   guard! map.entries[map.tail] is Some(tail)
   assert_true(tail.prev == -1)
   assert_true(tail.next is None)
-  assert_true(tail.psl == 0)
+  assert_true(map.psl_at(map.tail, tail) == 0)
   assert_true(tail.hash == (1).hash())
   assert_true(tail.key == 1)
   assert_true(tail.value == 1)
@@ -641,7 +644,8 @@ fn[K : Show, V : Show] Map::_debug_entries(self : Map[K, V]) -> String {
     }
     match entry {
       None => buf.write_char('_')
-      Some({ psl, key, value, .. }) => buf <+ "(\{psl},\{key},\{value})"
+      Some(entry) =>
+        buf <+ "(\{self.psl_at(i, entry)},\{entry.key},\{entry.value})"
     }
   }
   buf.to_string()
