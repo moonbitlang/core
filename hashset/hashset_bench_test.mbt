@@ -42,3 +42,71 @@ test "bench HashSet::contains n=50000" (it : @bench.T) {
     it.keep(hits)
   })
 }
+
+///|
+/// Removal isolated as far as the harness allows: `@bench.T` has no
+/// per-iteration setup hook, so a prebuilt set is copied inside the timed
+/// closure rather than rebuilt with 50000 `add` calls. The companion "copy
+/// only" benchmark below measures the residue attributable to the copy.
+///
+/// This exists because the removal path had no coverage at all: the
+/// struct-of-arrays conversion silently reverted `remove`/`shift_back` to
+/// checked access and no benchmark noticed.
+test "bench HashSet::copy+remove n=50000" (it : @bench.T) {
+  let template = @hashset.HashSet([])
+  for i in 0..<hashset_bench_n {
+    template.add(i * 1103515245)
+  }
+  it.bench(fn() {
+    let s = template.copy()
+    for i in 0..<hashset_bench_n {
+      s.remove(i * 1103515245)
+    }
+    it.keep(s.length())
+  })
+}
+
+///|
+test "bench HashSet::copy n=50000" (it : @bench.T) {
+  let template = @hashset.HashSet([])
+  for i in 0..<hashset_bench_n {
+    template.add(i * 1103515245)
+  }
+  it.bench(fn() { it.keep(template.copy().length()) })
+}
+
+///|
+/// Reference-type keys, where the boxed layout stores a pointer in its entry
+/// and this one stores it directly in the key array. The integer benchmarks
+/// cannot show that difference.
+let hashset_bench_strings : Array[String] = Array::makei(50000, i => {
+  "key-\{i * 7}"
+})
+
+///|
+test "bench HashSet::add string n=50000" (it : @bench.T) {
+  it.bench(fn() {
+    let s = @hashset.HashSet([])
+    for k in hashset_bench_strings {
+      s.add(k)
+    }
+    it.keep(s.length())
+  })
+}
+
+///|
+test "bench HashSet::contains string n=50000" (it : @bench.T) {
+  let s = @hashset.HashSet([])
+  for k in hashset_bench_strings {
+    s.add(k)
+  }
+  it.bench(fn() {
+    let mut hits = 0
+    for k in hashset_bench_strings {
+      if s.contains(k) {
+        hits += 1
+      }
+    }
+    it.keep(hits)
+  })
+}
