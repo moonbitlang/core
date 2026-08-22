@@ -717,7 +717,14 @@ pub fn[K] HashSet::copy(self : HashSet[K]) -> HashSet[K] {
     capacity_mask: self.capacity_mask,
     grow_at: self.grow_at,
   }
-  self.entries.blit_to(other.entries, len=self.capacity)
+  // Rebuild each entry rather than blitting the references: `Entry::psl` is
+  // mutable and `shift_back` decrements it, so sharing entries would let a
+  // removal on one set corrupt the probe sequences of the other.
+  for i in 0..<self.capacity {
+    if self.entries[i] is Some({ psl, hash, key }) {
+      other.entries[i] = Some({ psl, hash, key })
+    }
+  }
   other
 }
 
