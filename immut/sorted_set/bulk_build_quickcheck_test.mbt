@@ -12,18 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// The bulk builders behind `SortedSet(..)` and `from_iter` dispatch on the
-// shape of their input: strictly ascending, ascending with duplicates,
-// strictly descending, descending with duplicates, or unordered — and
-// unordered splits again at a length threshold, taking the bulk-sort path at
-// or above it and the `add` fold below. Every one of those paths must produce
-// the same set, so `bulk_set_shapes` names one input per path and the
-// properties drive them all from a single model.
+// The bulk builder behind `SortedSet(..)` dispatches on the shape of its
+// input: strictly ascending, ascending with duplicates, strictly descending,
+// descending with duplicates, or unordered — and unordered splits again at a
+// length threshold, taking the bulk-sort path at or above it and the `add`
+// fold below. Every one of those paths must produce the same set, so
+// `bulk_set_shapes` names one input per path and the properties drive them all
+// from a single model.
 //
-// The two builders deliberately disagree about which of several equal elements
-// survives: the constructor keeps the LAST, `from_iter` keeps the FIRST. With
-// `Int` elements that difference is invisible, so `BElem` compares on `id`
-// only and carries a `tag` that makes the survivor observable.
+// `from_iter` deliberately does NOT bulk-build: it folds `add`, so its live
+// memory stays proportional to the distinct elements rather than to the length
+// of the iterator. It is checked here anyway, because the two entry points
+// disagree about which of several equal elements survives — the constructor
+// keeps the LAST, `from_iter` the FIRST — and that difference is exactly what a
+// future attempt to share their implementations would break. With `Int`
+// elements it is invisible, so `BElem` compares on `id` only and carries a
+// `tag` that makes the survivor observable.
 //
 // Note that quickcheck's generated arrays cannot reach the duplicate-free
 // paths on their own — it sizes element `i` by `i`, so an `Array[Int]` of
