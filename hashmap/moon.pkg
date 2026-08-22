@@ -11,4 +11,5 @@ import {
   "moonbitlang/core/test",
   "moonbitlang/core/json",
   "moonbitlang/core/quickcheck",
+  "moonbitlang/core/bench",
 } for "test"
