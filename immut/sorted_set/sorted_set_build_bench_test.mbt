@@ -48,12 +48,6 @@ fn make_sorted_set_random_values() -> Array[Int] {
 }
 
 ///|
-test "bench SortedSet::from_sorted_array n=10000" (it : @bench.T) {
-  let values = make_sorted_set_ordered_values()
-  it.bench(fn() { it.keep(@sorted_set.from_sorted_array(values)) })
-}
-
-///|
 test "bench SortedSet constructor reverse n=10000" (it : @bench.T) {
   let values = make_sorted_set_reverse_values()
   it.bench(fn() { it.keep(@sorted_set.SortedSet(values)) })

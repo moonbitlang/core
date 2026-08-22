@@ -240,28 +240,6 @@ fn[A : Compare] sorted_set_compact_ordered_array(
 }
 
 ///|
-/// Build a set from values that are already strictly sorted.
-///
-/// The input must be in ascending order and must not contain duplicates.
-/// This function does not validate that precondition.
-/// O(n).
-///
-/// # Example
-/// ```mbt check
-/// test {
-///   let set = @sorted_set.from_sorted_array([1, 2, 3])
-///   @test.assert_eq(set.to_array(), [1, 2, 3])
-/// }
-/// ```
-#warnings("-unused_trait_bound")
-#as_free_fn
-pub fn[A : Compare] SortedSet::from_sorted_array(
-  array : ArrayView[A],
-) -> SortedSet[A] {
-  sorted_set_from_ascending_array(array, 0, array.length())
-}
-
-///|
 /// Build a balanced tree from a slice sorted in ascending order.
 /// The ascending case of a monotonic array is exactly this construction.
 fn[A] sorted_set_from_ascending_array(

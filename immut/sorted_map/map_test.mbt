@@ -108,13 +108,6 @@ test "SortedMap large unordered duplicate keeps first key and last value" {
 }
 
 ///|
-test "from_sorted_array" {
-  let m = @sorted_map.from_sorted_array([(1, "a"), (2, "b"), (3, "c")])
-  @test.assert_eq(m.to_array(), [(1, "a"), (2, "b"), (3, "c")])
-  @test.assert_eq(m.get(2), Some("b"))
-}
-
-///|
 test "iter" {
   let m = @sorted_map.SortedMap([
     (3, "three"),
