@@ -19,7 +19,6 @@
 priv struct Entry[K, V] {
   mut prev : Int
   mut next : Entry[K, V]?
-  mut psl : Int
   hash : Int
   key : K
   mut value : V
@@ -73,6 +72,16 @@ struct Map[K, V] {
 // immediately before calling, so `shift_back` has a local caller-based proof
 // that does not depend on the list invariant. It carries that proof at its
 // definition, and it is what makes its `set_entry` call sound.
+
+///|
+/// The probe-sequence length of the entry occupying slot `idx`: how far it
+/// sits from the slot its hash asked for. Derived rather than stored, since
+/// an entry's PSL is fully determined by where it ended up -- every write to
+/// it happened as the entry landed in a slot, always equal to this value.
+#inline
+fn[K, V] Map::psl_at(self : Map[K, V], idx : Int, entry : Entry[K, V]) -> Int {
+  (idx - (entry.hash & self.capacity_mask)) & self.capacity_mask
+}
 
 ///|
 let default_init_capacity = 8
@@ -173,7 +182,7 @@ fn[K : Eq, V] Map::set_with_hash(
           // Restart search with new capacity_mask
           continue 0, hash & self.capacity_mask
         }
-        let entry = { prev: self.tail, next: None, psl, key, value, hash }
+        let entry = { prev: self.tail, next: None, key, value, hash }
         self.add_entry_to_tail(idx, entry)
         return
       }
@@ -183,7 +192,7 @@ fn[K : Eq, V] Map::set_with_hash(
           curr_entry.value = value
           return
         }
-        if psl > curr_entry.psl {
+        if psl > self.psl_at(idx, curr_entry) {
           // Need to insert and push away - check if grow is needed first
           if self.size >= self.grow_at {
             self.grow()
@@ -191,7 +200,7 @@ fn[K : Eq, V] Map::set_with_hash(
             continue 0, hash & self.capacity_mask
           }
           self.push_away(idx, curr_entry)
-          let entry = { prev: self.tail, next: None, psl, key, value, hash }
+          let entry = { prev: self.tail, next: None, key, value, hash }
           self.add_entry_to_tail(idx, entry)
           return
         }
@@ -209,20 +218,17 @@ fn[K, V] Map::push_away(
   entry : Entry[K, V],
 ) -> Unit {
   // SAFETY: masked probe index; see the note at the top of this file.
-  for psl = entry.psl + 1, idx = (idx + 1) & self.capacity_mask, entry = entry {
+  for psl = self.psl_at(idx, entry) + 1, idx = (idx + 1) & self.capacity_mask, entry = entry {
     match self.entries.unsafe_get(idx) {
       None => {
-        entry.psl = psl
         self.set_entry(entry, idx)
         break
       }
       Some(curr_entry) =>
-        if psl > curr_entry.psl {
-          entry.psl = psl
+        if psl > self.psl_at(idx, curr_entry) {
+          let displaced_psl = self.psl_at(idx, curr_entry) + 1
           self.set_entry(entry, idx)
-          continue curr_entry.psl + 1,
-            (idx + 1) & self.capacity_mask,
-            curr_entry
+          continue displaced_psl, (idx + 1) & self.capacity_mask, curr_entry
         } else {
           continue psl + 1, (idx + 1) & self.capacity_mask, entry
         }
@@ -268,16 +274,19 @@ fn[K, V] Map::set_entry(
 /// ```
 pub fn[K : Hash + Eq, V] Map::get(self : Map[K, V], key : K) -> V? {
   let hash = Hash::hash(key)
+  // The mask is hoisted because deriving each probed entry's PSL reads it
+  // twice more per step than the stored field did.
+  let mask = self.capacity_mask
   // SAFETY: masked probe index; see the note at the top of this file.
-  for i = 0, idx = hash & self.capacity_mask {
+  for i = 0, idx = hash & mask {
     guard self.entries.unsafe_get(idx) is Some(entry) else { break None }
     if entry.hash == hash && entry.key == key {
       break Some(entry.value)
     }
-    if i > entry.psl {
+    if i > ((idx - (entry.hash & mask)) & mask) {
       break None
     }
-    continue i + 1, (idx + 1) & self.capacity_mask
+    continue i + 1, (idx + 1) & mask
   }
 }
 
@@ -292,7 +301,7 @@ pub fn[K : Hash + Eq, V] Map::at(self : Map[K, V], key : K) -> V {
     if entry.hash == hash && entry.key == key {
       return entry.value
     }
-    guard! i <= entry.psl
+    guard! i <= self.psl_at(idx, entry)
     continue i + 1, (idx + 1) & self.capacity_mask
   }
 }
@@ -333,7 +342,7 @@ pub fn[K : Hash + Eq, V] Map::get_or_default(
         if entry.hash == hash && entry.key == key {
           break entry.value
         }
-        if i > entry.psl {
+        if i > self.psl_at(idx, entry) {
           break default
         }
         continue i + 1, (idx + 1) & self.capacity_mask
@@ -352,14 +361,14 @@ pub fn[K : Hash + Eq, V] Map::get_or_init(
 ) -> V {
   let hash = Hash::hash(key)
   // SAFETY: masked probe index; see the note at the top of this file.
-  let (idx, psl, new_value, push_away) = for psl = 0, idx = hash &
-                                               self.capacity_mask {
+  let (idx, _, new_value, push_away) = for psl = 0, idx = hash &
+                                             self.capacity_mask {
     match self.entries.unsafe_get(idx) {
       Some(entry) => {
         if entry.hash == hash && entry.key == key {
           return entry.value
         }
-        if psl > entry.psl {
+        if psl > self.psl_at(idx, entry) {
           let new_value = default()
           break (idx, psl, new_value, Some(entry))
         }
@@ -379,14 +388,7 @@ pub fn[K : Hash + Eq, V] Map::get_or_init(
     if push_away is Some(entry) {
       self.push_away(idx, entry)
     }
-    let entry = {
-      prev: self.tail,
-      next: None,
-      psl,
-      hash,
-      key,
-      value: new_value,
-    }
+    let entry = { prev: self.tail, next: None, hash, key, value: new_value }
     self.add_entry_to_tail(idx, entry)
   }
   new_value
@@ -419,14 +421,14 @@ pub fn[K : Hash + Eq, V] Map::update_or_default(
 ) -> Unit {
   let hash = Hash::hash(key)
   // SAFETY: masked probe index; see the note at the top of this file.
-  let (idx, psl, push_away) = for psl = 0, idx = hash & self.capacity_mask {
+  let (idx, _, push_away) = for psl = 0, idx = hash & self.capacity_mask {
     match self.entries.unsafe_get(idx) {
       Some(entry) => {
         if entry.hash == hash && entry.key == key {
           entry.value = f(entry.value)
           return
         }
-        if psl > entry.psl {
+        if psl > self.psl_at(idx, entry) {
           break (idx, psl, Some(entry))
         }
         continue psl + 1, (idx + 1) & self.capacity_mask
@@ -441,7 +443,7 @@ pub fn[K : Hash + Eq, V] Map::update_or_default(
     if push_away is Some(entry) {
       self.push_away(idx, entry)
     }
-    let entry = { prev: self.tail, next: None, psl, hash, key, value: default }
+    let entry = { prev: self.tail, next: None, hash, key, value: default }
     self.add_entry_to_tail(idx, entry)
   }
 }
@@ -457,7 +459,7 @@ pub fn[K : Hash + Eq, V] Map::contains(self : Map[K, V], key : K) -> Bool {
     if entry.hash == hash && entry.key == key {
       break true
     }
-    if i > entry.psl {
+    if i > self.psl_at(idx, entry) {
       break false
     }
     continue i + 1, (idx + 1) & self.capacity_mask
@@ -499,7 +501,7 @@ pub fn[K : Hash + Eq, V : Eq] Map::contains_kv(
     if entry.hash == hash && entry.key == key && entry.value == value {
       break true
     }
-    if i > entry.psl {
+    if i > self.psl_at(idx, entry) {
       break false
     }
     continue i + 1, (idx + 1) & self.capacity_mask
@@ -546,7 +548,7 @@ fn[K : Eq, V] Map::remove_with_hash(
       self.size -= 1
       break
     }
-    if i > entry.psl {
+    if i > self.psl_at(idx, entry) {
       break
     }
     continue i + 1, (idx + 1) & self.capacity_mask
@@ -592,15 +594,20 @@ fn[K, V] Map::shift_back(self : Map[K, V], idx : Int) -> Unit {
   for cur = idx {
     let next = (cur + 1) & self.capacity_mask
     match self.entries.unsafe_get(next) {
-      None | Some({ psl: 0, .. }) => {
+      None => {
         self.entries.unsafe_set(cur, None)
         break
       }
-      Some(entry) => {
-        entry.psl -= 1
-        self.set_entry(entry, cur)
-        continue next
-      }
+      Some(entry) =>
+        if self.psl_at(next, entry) == 0 {
+          self.entries.unsafe_set(cur, None)
+          break
+        } else {
+          // Moving the entry one slot back drops its derived PSL by one, so
+          // nothing has to be written for it.
+          self.set_entry(entry, cur)
+          continue next
+        }
     }
   }
 }
@@ -637,15 +644,13 @@ fn[K, V] Map::rehash_place_entry(self : Map[K, V], outer : Entry[K, V]) -> Unit 
   for psl = 0, idx = hash & self.capacity_mask {
     match self.entries.unsafe_get(idx) {
       None => {
-        outer.psl = psl
         outer.prev = self.tail
         self.add_entry_to_tail(idx, outer)
         return
       }
       Some(curr) =>
-        if psl > curr.psl {
+        if psl > self.psl_at(idx, curr) {
           self.push_away(idx, curr)
-          outer.psl = psl
           outer.prev = self.tail
           self.add_entry_to_tail(idx, outer)
           return
@@ -891,9 +896,9 @@ pub fn[K, V, V2] Map::map(self : Map[K, V], f : (K, V) -> V2) -> Map[K, V2] {
   }
   guard! self.entries[self.tail] is Some(last)
   for entry = last, idx = self.tail, next = (None : Entry[K, V2]?) {
-    let { prev, psl, hash, key, value, .. } = entry
+    let { prev, hash, key, value, .. } = entry
     let new_value = f(key, value)
-    let new_entry = { prev, next, psl, hash, key, value: new_value }
+    let new_entry = { prev, next, hash, key, value: new_value }
     other.entries[idx] = Some(new_entry)
     if prev != -1 {
       continue self.entries[prev].unwrap(), prev, Some(new_entry)
@@ -924,8 +929,8 @@ pub fn[K, V] Map::copy(self : Map[K, V]) -> Map[K, V] {
   }
   guard! self.entries[self.tail] is Some(last)
   for entry = last, idx = self.tail, next = (None : Entry[K, V]?) {
-    let { prev, psl, hash, key, value, .. } = entry
-    let new_entry = { prev, next, psl, hash, key, value }
+    let { prev, hash, key, value, .. } = entry
+    let new_entry = { prev, next, hash, key, value }
     other.entries[idx] = Some(new_entry)
     if prev != -1 {
       continue self.entries[prev].unwrap(), prev, Some(new_entry)
@@ -1135,8 +1140,8 @@ pub fn[K : Hash + Eq, V] Map::update(
 ) -> Unit {
   let hash = Hash::hash(key)
   // SAFETY: masked probe index; see the note at the top of this file.
-  let (idx, psl, new_value, push_away) = for psl = 0, idx = hash &
-                                               self.capacity_mask {
+  let (idx, _, new_value, push_away) = for psl = 0, idx = hash &
+                                             self.capacity_mask {
     match self.entries.unsafe_get(idx) {
       Some(entry) => {
         if entry.hash == hash && entry.key == key {
@@ -1151,7 +1156,7 @@ pub fn[K : Hash + Eq, V] Map::update(
           }
           return
         }
-        if psl > entry.psl {
+        if psl > self.psl_at(idx, entry) {
           guard f(None) is Some(new_value) else { return }
           break (idx, psl, new_value, Some(entry))
         }
@@ -1171,14 +1176,7 @@ pub fn[K : Hash + Eq, V] Map::update(
     if push_away is Some(entry) {
       self.push_away(idx, entry)
     }
-    let entry = {
-      prev: self.tail,
-      next: None,
-      psl,
-      hash,
-      key,
-      value: new_value,
-    }
+    let entry = { prev: self.tail, next: None, hash, key, value: new_value }
     self.add_entry_to_tail(idx, entry)
   }
 }
@@ -1216,7 +1214,7 @@ pub fn[V] Map::get_from_bytes(map : Self[Bytes, V], key : BytesView) -> V? {
     if entry.hash == hash && key.equal_to_bytes(entry.key) {
       break Some(entry.value)
     }
-    if i > entry.psl {
+    if i > map.psl_at(idx, entry) {
       break None
     }
     continue i + 1, (idx + 1) & map.capacity_mask
@@ -1254,7 +1252,7 @@ pub fn[V] Map::get_from_string(map : Self[String, V], key : StringView) -> V? {
     if entry.hash == hash && key.equal_to_string(entry.key) {
       break Some(entry.value)
     }
-    if i > entry.psl {
+    if i > map.psl_at(idx, entry) {
       break None
     }
     continue i + 1, (idx + 1) & map.capacity_mask
