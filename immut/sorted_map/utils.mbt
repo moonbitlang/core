@@ -311,7 +311,7 @@ fn[K : Compare, V] sorted_map_from_unsorted_array(
 ///|
 /// Sort a `SortEntry` buffer in place, drop duplicate keys, and build the tree
 /// from its unique prefix. The caller owns the backing buffer, which is permuted
-/// in place. Shared by the array and iterator entry points.
+/// in place.
 fn[K : Compare, V] sorted_map_from_unsorted_entries(
   entries : MutArrayView[SortEntry[K, V]],
 ) -> SortedMap[K, V] {
@@ -628,10 +628,11 @@ pub fn[K : Compare, V] SortedMap::range(
 pub fn[K : Compare, V] SortedMap::from_iter(
   iter : Iter[(K, V)],
 ) -> SortedMap[K, V] {
-  // Materialize into a `(K, V)` buffer and detect order there: monotonic input
-  // (the common case) builds in O(n) without ever tagging elements with an
-  // index, and only the genuinely-unsorted branch pays for the `SortEntry` sort.
-  sorted_map_from_array(iter.to_array())
+  // Folded rather than collected on purpose: bulk-building would have to
+  // materialize the whole iterator, so live memory would grow with the input
+  // length instead of the number of distinct keys. Callers who want the bulk
+  // path and can afford the buffer can write `SortedMap(iter.to_array())`.
+  iter.fold(init=new(), (m, e) => m.add(e.0, e.1))
 }
 
 ///|
