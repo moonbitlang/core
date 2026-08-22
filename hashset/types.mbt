@@ -28,6 +28,9 @@ fn[K] set_null(keys : UninitializedArray[K], idx : Int) = "%fixedarray.set_null"
 /// occupied slot.
 fn[K] unsafe_get_initialized_key(keys : UninitializedArray[K], idx : Int) -> K = "%fixedarray.unsafe_get"
 
+///|
+fn[K] unsafe_set_key(keys : UninitializedArray[K], idx : Int, key : K) -> Unit = "%fixedarray.unsafe_set"
+
 /// A mutable hash set implemented with Robin Hood hashing.
 ///
 /// reference:

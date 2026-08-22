@@ -96,16 +96,26 @@ fn[K : Eq] HashSet::add_with_hash(
     self.grow()
   }
   let (idx, psl) = for psl = 0, idx = hash & self.capacity_mask {
-    let curr_psl = self.psls[idx]
+    // SAFETY: `idx` starts masked by `capacity_mask` and every step re-masks
+    // it, so it indexes all three backing arrays -- each of length
+    // `capacity` -- in bounds. A non-empty PSL further guarantees that
+    // `keys[idx]` was initialized by `set_slot`.
+    let curr_psl = self.psls.unsafe_get(idx)
     if curr_psl == empty_psl {
       break (idx, psl)
     }
-    if self.hashes[idx] == hash && self.keys[idx] == key {
+    if self.hashes.unsafe_get(idx) == hash &&
+      unsafe_get_initialized_key(self.keys, idx) == key {
       return
     }
     if psl > curr_psl {
       // Displace the richer occupant of `idx`, then write the new key here.
-      self.push_away(idx, curr_psl, self.hashes[idx], self.keys[idx])
+      self.push_away(
+        idx,
+        curr_psl,
+        self.hashes.unsafe_get(idx),
+        unsafe_get_initialized_key(self.keys, idx),
+      )
       break (idx, psl)
     }
     continue psl + 1, (idx + 1) & self.capacity_mask
@@ -126,13 +136,14 @@ fn[K] HashSet::push_away(
   key : K,
 ) -> Unit {
   for psl = psl + 1, idx = (idx + 1) & self.capacity_mask, hash = hash, key = key {
-    let curr_psl = self.psls[idx]
+    // SAFETY: same masked-index and initialized-key invariants as `add_with_hash`.
+    let curr_psl = self.psls.unsafe_get(idx)
     if curr_psl == empty_psl {
       self.set_slot(idx, psl, hash, key)
       break
     } else if psl > curr_psl {
-      let curr_hash = self.hashes[idx]
-      let curr_key = self.keys[idx]
+      let curr_hash = self.hashes.unsafe_get(idx)
+      let curr_key = unsafe_get_initialized_key(self.keys, idx)
       self.set_slot(idx, psl, hash, key)
       continue curr_psl + 1, (idx + 1) & self.capacity_mask, curr_hash, curr_key
     } else {
@@ -150,9 +161,11 @@ fn[K] HashSet::set_slot(
   hash : Int,
   key : K,
 ) -> Unit {
-  self.psls[idx] = psl
-  self.hashes[idx] = hash
-  self.keys[idx] = key
+  // SAFETY: every caller derives `idx` from a `capacity_mask` probe, so it is
+  // in bounds for all three arrays.
+  self.psls.unsafe_set(idx, psl)
+  self.hashes.unsafe_set(idx, hash)
+  unsafe_set_key(self.keys, idx, key)
 }
 
 ///|
@@ -257,8 +270,13 @@ fn[K] HashSet::grow(self : HashSet[K]) -> Unit {
   self.capacity_mask = new_capacity - 1
   self.grow_at = calc_grow_threshold(self.capacity)
   for i in 0..<old_capacity {
-    if old_psls[i] != empty_psl {
-      self.rehash_place_entry(old_hashes[i], old_keys[i])
+    // SAFETY: `i < old_capacity`, the length of all three old arrays, and a
+    // non-empty PSL means the old key slot was initialized.
+    if old_psls.unsafe_get(i) != empty_psl {
+      self.rehash_place_entry(
+        old_hashes.unsafe_get(i),
+        unsafe_get_initialized_key(old_keys, i),
+      )
     }
   }
 }
@@ -270,12 +288,18 @@ fn[K] HashSet::rehash_place_entry(
   key : K,
 ) -> Unit {
   for psl = 0, idx = hash & self.capacity_mask {
-    let curr_psl = self.psls[idx]
+    // SAFETY: same masked-index and initialized-key invariants as `add_with_hash`.
+    let curr_psl = self.psls.unsafe_get(idx)
     if curr_psl == empty_psl {
       self.set_slot(idx, psl, hash, key)
       return
     } else if psl > curr_psl {
-      self.push_away(idx, curr_psl, self.hashes[idx], self.keys[idx])
+      self.push_away(
+        idx,
+        curr_psl,
+        self.hashes.unsafe_get(idx),
+        unsafe_get_initialized_key(self.keys, idx),
+      )
       self.set_slot(idx, psl, hash, key)
       return
     } else {
