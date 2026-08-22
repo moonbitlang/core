@@ -18,18 +18,28 @@
 let empty_psl : Int = -1
 
 ///|
+/// Package-local unchecked accessors for the key storage. These are kept
+/// private here rather than exposed from `builtin`: `set_null` and
+/// `unsafe_set` can corrupt memory, so the fewer packages that can name them
+/// the better.
+fn[K] UninitializedArray::unsafe_get(
+  self : UninitializedArray[K],
+  idx : Int,
+) -> K = "%fixedarray.unsafe_get"
+
+///|
+fn[K] UninitializedArray::unsafe_set(
+  self : UninitializedArray[K],
+  idx : Int,
+  key : K,
+) -> Unit = "%fixedarray.unsafe_set"
+
+///|
 /// Releases the key reference stored at `idx` so the collector can reclaim it.
-fn[K] set_null(keys : UninitializedArray[K], idx : Int) = "%fixedarray.set_null"
-
-///|
-/// Reads an initialized key slot without checking its index.
-///
-/// Callers must ensure that `idx` is within the backing array and refers to an
-/// occupied slot.
-fn[K] unsafe_get_initialized_key(keys : UninitializedArray[K], idx : Int) -> K = "%fixedarray.unsafe_get"
-
-///|
-fn[K] unsafe_set_key(keys : UninitializedArray[K], idx : Int, key : K) -> Unit = "%fixedarray.unsafe_set"
+fn[K] UninitializedArray::set_null(
+  self : UninitializedArray[K],
+  idx : Int,
+) -> Unit = "%fixedarray.set_null"
 
 /// A mutable hash set implemented with Robin Hood hashing.
 ///

@@ -104,8 +104,7 @@ fn[K : Eq] HashSet::add_with_hash(
     if curr_psl == empty_psl {
       break (idx, psl)
     }
-    if self.hashes.unsafe_get(idx) == hash &&
-      unsafe_get_initialized_key(self.keys, idx) == key {
+    if self.hashes.unsafe_get(idx) == hash && self.keys.unsafe_get(idx) == key {
       return
     }
     if psl > curr_psl {
@@ -114,7 +113,7 @@ fn[K : Eq] HashSet::add_with_hash(
         idx,
         curr_psl,
         self.hashes.unsafe_get(idx),
-        unsafe_get_initialized_key(self.keys, idx),
+        self.keys.unsafe_get(idx),
       )
       break (idx, psl)
     }
@@ -143,7 +142,7 @@ fn[K] HashSet::push_away(
       break
     } else if psl > curr_psl {
       let curr_hash = self.hashes.unsafe_get(idx)
-      let curr_key = unsafe_get_initialized_key(self.keys, idx)
+      let curr_key = self.keys.unsafe_get(idx)
       self.set_slot(idx, psl, hash, key)
       continue curr_psl + 1, (idx + 1) & self.capacity_mask, curr_hash, curr_key
     } else {
@@ -165,7 +164,7 @@ fn[K] HashSet::set_slot(
   // in bounds for all three arrays.
   self.psls.unsafe_set(idx, psl)
   self.hashes.unsafe_set(idx, hash)
-  unsafe_set_key(self.keys, idx, key)
+  self.keys.unsafe_set(idx, key)
 }
 
 ///|
@@ -180,8 +179,7 @@ pub fn[K : Hash + Eq] HashSet::contains(self : HashSet[K], key : K) -> Bool {
     guard psl != empty_psl else { break false }
     // SAFETY: the same index invariant applies to `hashes`; a non-empty PSL
     // also guarantees that `keys[idx]` was initialized by `set_slot`.
-    if self.hashes.unsafe_get(idx) == hash &&
-      unsafe_get_initialized_key(self.keys, idx) == key {
+    if self.hashes.unsafe_get(idx) == hash && self.keys.unsafe_get(idx) == key {
       break true
     }
     if i > psl {
@@ -236,7 +234,10 @@ fn[K] HashSet::shift_back(self : HashSet[K], idx : Int) -> Unit {
     let next_psl = self.psls[next]
     if next_psl == empty_psl || next_psl == 0 {
       self.psls[cur] = empty_psl
-      set_null(self.keys, cur)
+      // Not redundant with the line above: the PSL marks the slot free, but
+      // the key slot would still hold the removed key alive until something
+      // overwrites it, retaining up to one dead key per vacated slot.
+      self.keys.set_null(cur)
       break
     } else {
       self.set_slot(cur, next_psl - 1, self.hashes[next], self.keys[next])
@@ -273,10 +274,7 @@ fn[K] HashSet::grow(self : HashSet[K]) -> Unit {
     // SAFETY: `i < old_capacity`, the length of all three old arrays, and a
     // non-empty PSL means the old key slot was initialized.
     if old_psls.unsafe_get(i) != empty_psl {
-      self.rehash_place_entry(
-        old_hashes.unsafe_get(i),
-        unsafe_get_initialized_key(old_keys, i),
-      )
+      self.rehash_place_entry(old_hashes.unsafe_get(i), old_keys.unsafe_get(i))
     }
   }
 }
@@ -298,7 +296,7 @@ fn[K] HashSet::rehash_place_entry(
         idx,
         curr_psl,
         self.hashes.unsafe_get(idx),
-        unsafe_get_initialized_key(self.keys, idx),
+        self.keys.unsafe_get(idx),
       )
       self.set_slot(idx, psl, hash, key)
       return
@@ -377,7 +375,7 @@ pub fn[K] HashSet::clear(self : HashSet[K]) -> Unit {
   for i in 0..<self.capacity {
     if self.psls[i] != empty_psl {
       self.psls[i] = empty_psl
-      set_null(self.keys, i)
+      self.keys.set_null(i)
     }
   }
   self.size = 0
