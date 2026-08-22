@@ -74,3 +74,39 @@ test "bench HashSet::copy n=50000" (it : @bench.T) {
   }
   it.bench(fn() { it.keep(template.copy().length()) })
 }
+
+///|
+/// Reference-type keys, where the boxed layout stores a pointer in its entry
+/// and this one stores it directly in the key array. The integer benchmarks
+/// cannot show that difference.
+let hashset_bench_strings : Array[String] = Array::makei(50000, i => {
+  "key-\{i * 7}"
+})
+
+///|
+test "bench HashSet::add string n=50000" (it : @bench.T) {
+  it.bench(fn() {
+    let s = @hashset.HashSet([])
+    for k in hashset_bench_strings {
+      s.add(k)
+    }
+    it.keep(s.length())
+  })
+}
+
+///|
+test "bench HashSet::contains string n=50000" (it : @bench.T) {
+  let s = @hashset.HashSet([])
+  for k in hashset_bench_strings {
+    s.add(k)
+  }
+  it.bench(fn() {
+    let mut hits = 0
+    for k in hashset_bench_strings {
+      if s.contains(k) {
+        hits += 1
+      }
+    }
+    it.keep(hits)
+  })
+}

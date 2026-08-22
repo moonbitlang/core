@@ -13,9 +13,27 @@
 // limitations under the License.
 
 ///|
-/// `psls[i] == empty_psl` marks an empty slot. A real probe-sequence length is
-/// always `>= 0`, so `-1` is a safe sentinel.
-let empty_psl : Int = -1
+/// `hashes[i] == empty_hash` marks an empty slot. Any `Int` can legitimately
+/// be a hash, so `store_hash` remaps this one value onto another; the two then
+/// share a bucket, which costs an occasional extra key comparison and nothing
+/// else, since lookups compare keys as well as hashes.
+let empty_hash : Int = 0
+
+///|
+/// The value real hashes equal to `empty_hash` are stored as.
+let remapped_hash : Int = 1
+
+///|
+/// Maps a key's hash onto the value stored in `hashes`, keeping the sentinel
+/// unambiguous.
+#inline
+fn store_hash(hash : Int) -> Int {
+  if hash == empty_hash {
+    remapped_hash
+  } else {
+    hash
+  }
+}
 
 ///|
 /// Package-local unchecked accessors for the key storage. These are kept
@@ -50,11 +68,17 @@ fn[K] UninitializedArray::set_null(
 ///|
 /// Mutable hash set, not thread safe.
 ///
-/// The table is stored as a struct-of-arrays (`psls` / `hashes` / `keys`)
-/// rather than an array of boxed entries, so inserting a key does not allocate
-/// a per-entry object. For an occupied slot `i`, `hashes[i]` caches the key's
-/// hash and `keys[i]` holds the key; for an empty slot `psls[i] == empty_psl`
-/// and `keys[i]` is unused.
+/// The table is stored as two parallel arrays rather than an array of boxed
+/// entries, so inserting a key does not allocate a per-entry object. For an
+/// occupied slot `i`, `hashes[i]` caches the key's stored hash and `keys[i]`
+/// holds the key; for an empty slot `hashes[i] == empty_hash` and `keys[i]` is
+/// unused.
+///
+/// There is no probe-sequence-length array. A slot's PSL is implied by where
+/// it sits relative to where its hash wanted it, so `psl_at` derives it with
+/// two arithmetic operations instead of a third random memory access. That
+/// identity holds because every write to a slot happens as the key lands in
+/// it, and the derivation follows the key whenever displacement moves it.
 ///
 /// # Example
 ///
@@ -66,8 +90,7 @@ fn[K] UninitializedArray::set_null(
 /// }
 /// ```
 struct HashSet[K] {
-  mut psls : FixedArray[Int] // probe sequence length, or empty_psl when empty
-  mut hashes : FixedArray[Int] // cached key hash for occupied slots
+  mut hashes : FixedArray[Int] // stored key hash, or empty_hash when empty
   mut keys : UninitializedArray[K] // key storage for occupied slots
   mut size : Int // active key count
   mut capacity : Int // current capacity
