@@ -419,10 +419,13 @@ pub impl[T] Add for Array[T] with fn add(self, other) {
 ///   inspect(sum, content="6")
 /// }
 /// ```
-/// This method uses the array iterator. Structural mutations during traversal
-/// are unsupported: appended elements are not visited, and shrinking the array
-/// with operations such as `remove`, `truncate`, `clear`, or `drain` may cause
-/// later iterator steps to fail.
+/// This method traverses the array via `for .. in`, whose current compiler
+/// lowering fixes the traversal bounds when iteration starts. Structural
+/// mutations during traversal are therefore unsupported here (unlike
+/// `Array::iter`, which has live semantics): appended elements are not
+/// visited, and shrinking the array with operations such as `remove`,
+/// `truncate`, `clear`, or `drain` may cause later steps to read invalid
+/// slots. Use `retain()` or `retain_map()` to delete elements by predicate.
 #locals(f)
 pub fn[T] Array::each(self : Array[T], f : (T) -> Unit raise?) -> Unit raise? {
   for v in self {
@@ -1310,13 +1313,12 @@ pub fn[T] Array::repeat(self : Array[T], times : Int) -> Array[T] {
 
 ///|
 /// Fold out values from an array according to certain rules.
-/// This method traverses the array through `self.iter()`, so the traversal
-/// bounds are fixed when folding starts.
-///
-/// Structural mutations to `self` inside `f` are unsupported. Appended
-/// elements are not visited, and shrinking the array with operations such as
-/// `remove`, `truncate`, `clear`, or `drain` may cause later fold steps to
-/// fail.
+/// This method traverses the array via `for .. in`, whose current compiler
+/// lowering fixes the traversal bounds when folding starts. Structural
+/// mutations to `self` inside `f` are therefore unsupported here (unlike
+/// `Array::iter`, which has live semantics): appended elements are not
+/// visited, and shrinking the array may cause later steps to read invalid
+/// slots.
 ///
 /// Example:
 ///
@@ -1734,14 +1736,25 @@ pub fn[T] Array::split(
 /// * `array` : The array to create an iterator from.
 ///
 /// Returns an iterator that yields each element of the array in order.
-/// This iterator is created from `self[:]`, so the traversal bounds are fixed
-/// when iteration starts.
 ///
-/// Structural mutations after the iterator is created are unsupported.
-/// Appended elements are not visited, and shrinking the array with operations
-/// such as `remove`, `truncate`, `clear`, or `drain` may cause later iterator
-/// steps to fail. The same caveat applies to `rev_iter()`, `iter2()`, and
-/// helpers built on top of them such as `each()`, `eachi()`, and `fold()`.
+/// The iterator reads the array's length and buffer afresh at every step
+/// (live semantics), so it stays type- and memory-safe even if the array is
+/// structurally mutated during iteration:
+///
+/// * elements appended during iteration are visited (so appending on every
+///   step never terminates);
+/// * removing an already-visited or current element shifts its successors one
+///   slot left, so the element moving into the current position is skipped;
+/// * once the array shrinks to at most the current position, iteration stops.
+///
+/// Prefer not to mutate the array while iterating: use `retain()` or
+/// `retain_map()` to delete elements by predicate, or iterate a view
+/// (`xs[:].iter()`) to traverse a snapshot whose bounds are fixed up front.
+/// `rev_iter()` and `iter2()` have the same live semantics. Note that
+/// `for x in xs` and helpers written with it (`each()`, `eachi()`, `fold()`)
+/// currently use the compiler's specialized lowering, which still fixes the
+/// traversal bounds up front; they do not get live semantics until the
+/// compiler lowering is updated to match.
 ///
 /// Example:
 ///
@@ -1755,7 +1768,16 @@ pub fn[T] Array::split(
 /// ```
 #alias(iterator, deprecated)
 pub fn[T] Array::iter(self : Array[T]) -> Iter[T] {
-  self[:].iter()
+  let mut i = 0
+  Iter::new(
+    fn() {
+      guard i < self.length() else { None }
+      let elem = self.unsafe_get(i)
+      i += 1
+      Some(elem)
+    },
+    size_hint=self.length(),
+  )
 }
 
 ///|
@@ -1769,6 +1791,13 @@ pub fn[T] Array::iter(self : Array[T]) -> Iter[T] {
 /// Returns an iterator that yields each element of the array, starting from the
 /// last element and moving towards the first.
 ///
+/// Like `iter()`, the iterator re-reads the array's length and buffer at every
+/// step (live semantics), so it stays type- and memory-safe under structural
+/// mutation: if the array shrinks below the cursor, the cursor is clamped to
+/// the new length; removing a not-yet-visited element shifts its successors
+/// left, causing an already-visited element to be revisited. Prefer not to
+/// mutate the array while iterating.
+///
 /// Example:
 ///
 /// ```mbt check
@@ -1781,7 +1810,19 @@ pub fn[T] Array::iter(self : Array[T]) -> Iter[T] {
 /// ```
 #alias(rev_iterator, deprecated)
 pub fn[T] Array::rev_iter(self : Array[T]) -> Iter[T] {
-  self[:].rev_iter()
+  let mut i = self.length()
+  Iter::new(
+    fn() {
+      let len = self.length()
+      if i > len {
+        i = len
+      }
+      guard i > 0 else { None }
+      i -= 1
+      Some(self.unsafe_get(i))
+    },
+    size_hint=self.length(),
+  )
 }
 
 ///|
@@ -1795,6 +1836,10 @@ pub fn[T] Array::rev_iter(self : Array[T]) -> Iter[T] {
 /// Returns an iterator that yields tuples of index and value pairs, where
 /// indices start from 0.
 ///
+/// Like `iter()`, the iterator re-reads the array's length and buffer at every
+/// step (live semantics), so it stays type- and memory-safe under structural
+/// mutation. Prefer not to mutate the array while iterating.
+///
 /// Example:
 ///
 /// ```mbt check
@@ -1807,7 +1852,16 @@ pub fn[T] Array::rev_iter(self : Array[T]) -> Iter[T] {
 /// ```
 #alias(iterator2, deprecated)
 pub fn[A] Array::iter2(self : Array[A]) -> Iter2[Int, A] {
-  self[:].iter2()
+  let mut i = 0
+  Iter2::new(
+    fn() {
+      guard i < self.length() else { None }
+      let result = Some((i, self.unsafe_get(i)))
+      i += 1
+      result
+    },
+    size_hint=self.length(),
+  )
 }
 
 ///|
