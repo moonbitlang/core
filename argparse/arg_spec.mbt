@@ -241,11 +241,6 @@ pub fn PositionArg::PositionArg(
 }
 
 ///|
-fn arg_name(arg : Arg) -> String {
-  arg.name
-}
-
-///|
 fn range_allows_multiple(range : ValueRange?) -> Bool {
   range is Some(r) &&
   (match r.upper {

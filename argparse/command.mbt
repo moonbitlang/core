@@ -138,7 +138,7 @@ fn build_matches(
   let specs = inherited_globals + cmd.args
 
   for spec in specs {
-    let name = arg_name(spec)
+    let name = spec.name
     if raw.values.get(name) is Some(vs) {
       values[name] = vs.copy()
     }
