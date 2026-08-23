@@ -95,6 +95,7 @@ pub fn[T : Eq] Array::ends_with(Self[T], ArrayView[T]) -> Bool
 pub fn[T : Eq] Array::equal(Self[T], Self[T]) -> Bool
 pub fn[T] Array::extract_if(Self[T], (T) -> Bool raise?) -> Self[T] raise?
 pub fn[A] Array::fill(Self[A], A, start? : Int, end? : Int) -> Unit
+pub fn[T] Array::fill_unused(Self[T], T) -> Unit
 pub fn[T] Array::filter(Self[T], (T) -> Bool raise?) -> Self[T] raise?
 pub fn[A, B] Array::filter_map(Self[A], (A) -> B? raise?) -> Self[B] raise?
 pub fn[T] Array::flatten(Self[Self[T]]) -> Self[T]

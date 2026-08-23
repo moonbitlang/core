@@ -20,6 +20,25 @@
 /// over a view keeps using those bounds even if the underlying array is later
 /// structurally modified.
 ///
+/// Mutating an array while a view of it is alive is a program error. Because a
+/// view keeps its original bounds and does not track the array, after such a
+/// mutation it may observe elements that have since been removed, a value
+/// handed to `Array::fill_unused`, or the contents of a buffer the array has
+/// stopped using. What it yields is always a valid value of `T` -- never
+/// uninitialized memory -- but is otherwise unspecified.
+///
+/// No removal writes to the slots it vacates, so the removed elements stay
+/// reachable, and so unreleased, until a later push reuses the slot, until the
+/// buffer grows, or until the buffer itself is dropped. That holds uniformly:
+/// `clear` empties an array the same way `pop` shortens it. Two operations
+/// release those elements on demand -- `Array::fill_unused` overwrites the
+/// unused capacity in place, and `Array::shrink_to_fit` moves the survivors
+/// into an exact-size buffer and lets the old one go. `Deque` mirrors both.
+///
+/// On the JavaScript backend this guarantee does not yet hold: operations such
+/// as `Array::pop` shrink the underlying JavaScript array, so a view reaching
+/// past the array's current length observes `undefined`.
+///
 /// # Example
 ///
 /// ```mbt check

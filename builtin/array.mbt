@@ -559,6 +559,12 @@ pub fn[T] Array::any(self : Array[T], f : (T) -> Bool raise?) -> Bool raise? {
 ///
 /// This method has no effect on the allocated capacity of the array, only setting the length to 0.
 ///
+/// Emptying an array is a removal like any other: the buffer keeps referring to
+/// the elements that were in it, and they are released once later pushes reuse
+/// those slots, the buffer grows, or the array is dropped. Call
+/// `Array::fill_unused` to overwrite them at once, or `Array::shrink_to_fit`
+/// to hand the buffer back entirely.
+///
 /// # Example
 /// ```mbt check
 /// test {
@@ -1860,6 +1866,12 @@ pub fn[A] Array::unsafe_pop_back(self : Array[A]) -> Unit {
 /// Important:
 ///   - If `len` is negative, the function does nothing.
 ///   - If `len` exceeds current length, the array remains unchanged.
+///
+/// Elements beyond `len` are removed from the array, but the backing buffer
+/// keeps referring to them: they are released once those slots are reused by
+/// later pushes, once the buffer grows, or once the array is dropped. Call
+/// `Array::fill_unused` to overwrite them at once, or `Array::shrink_to_fit`
+/// to move the survivors into an exact-size buffer.
 ///
 /// Example:
 ///
