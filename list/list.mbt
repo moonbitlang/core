@@ -1105,17 +1105,8 @@ pub fn[A] List::flatten(self : List[List[A]]) -> List[A] {
 #internal(unsafe, "Panic if the list is empty")
 #doc(hidden)
 pub fn[A : Compare] List::unsafe_maximum(self : List[A]) -> A {
-  match self {
-    Empty => abort("maximum: empty list")
-    More(head, tail~) =>
-      for a = tail, b = head {
-        match (a, b) {
-          (Empty, curr_max) => break curr_max
-          (More(item, tail~), curr_max) =>
-            continue tail, if item > curr_max { item } else { curr_max }
-        }
-      }
-  }
+  guard self.maximum() is Some(max) else { abort("maximum: empty list") }
+  max
 }
 
 ///|
@@ -1135,16 +1126,13 @@ pub fn[A : Compare] List::unsafe_maximum(self : List[A]) -> A {
 /// }
 /// ```
 pub fn[A : Compare] List::maximum(self : List[A]) -> A? {
-  match self {
-    Empty => None
-    More(head, tail~) =>
-      for a = tail, b = head {
-        match (a, b) {
-          (Empty, curr_max) => break Some(curr_max)
-          (More(item, tail~), curr_max) =>
-            continue tail, if item > curr_max { item } else { curr_max }
-        }
-      }
+  guard self is More(head, tail~) else { return None }
+  for rest = tail, curr_max = head {
+    match rest {
+      Empty => break Some(curr_max)
+      More(item, tail~) =>
+        continue tail, if item > curr_max { item } else { curr_max }
+    }
   }
 }
 
@@ -1169,17 +1157,8 @@ pub fn[A : Compare] List::maximum(self : List[A]) -> A? {
 #internal(unsafe, "Panic if the list is empty")
 #doc(hidden)
 pub fn[A : Compare] List::unsafe_minimum(self : List[A]) -> A {
-  match self {
-    Empty => abort("minimum: empty list")
-    More(head, tail~) =>
-      for a = tail, b = head {
-        match (a, b) {
-          (Empty, curr_min) => break curr_min
-          (More(item, tail~), curr_min) =>
-            continue tail, if item < curr_min { item } else { curr_min }
-        }
-      }
-  }
+  guard self.minimum() is Some(min) else { abort("minimum: empty list") }
+  min
 }
 
 ///|
@@ -1199,16 +1178,13 @@ pub fn[A : Compare] List::unsafe_minimum(self : List[A]) -> A {
 /// }
 /// ```
 pub fn[A : Compare] List::minimum(self : List[A]) -> A? {
-  match self {
-    Empty => None
-    More(head, tail~) =>
-      for a = tail, b = head {
-        match (a, b) {
-          (Empty, curr_min) => break Some(curr_min)
-          (More(item, tail~), curr_min) =>
-            continue tail, if item < curr_min { item } else { curr_min }
-        }
-      }
+  guard self is More(head, tail~) else { return None }
+  for rest = tail, curr_min = head {
+    match rest {
+      Empty => break Some(curr_min)
+      More(item, tail~) =>
+        continue tail, if item < curr_min { item } else { curr_min }
+    }
   }
 }
 
