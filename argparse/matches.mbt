@@ -14,6 +14,8 @@
 
 ///|
 /// Where a value/flag came from.
+// TODO(future): `derive(Show)` is deprecated syntax — switch to `derive(Debug)`
+// or a manual `Show` implementation, then remove this annotation.
 #warnings("-deprecated_syntax")
 pub enum ValueSource {
   Argv

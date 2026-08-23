@@ -13,6 +13,8 @@
 // limitations under the License.
 
 ///|
+// TODO(future): `derive(Show)` is deprecated syntax — switch to `derive(Debug)`
+// or a manual `Show` implementation, then remove this annotation.
 #warnings("-deprecated_syntax")
 struct RandomState {
   mut seed : UInt64

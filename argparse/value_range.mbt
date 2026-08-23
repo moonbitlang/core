@@ -14,6 +14,8 @@
 
 ///|
 /// Number-of-values constraint for an argument.
+// TODO(future): `derive(Show)` is deprecated syntax — switch to `derive(Debug)`
+// or a manual `Show` implementation, then remove `-deprecated_syntax` here.
 #warnings("-deprecated_syntax-deprecated")
 pub struct ValueRange {
   priv lower : Int
