@@ -118,10 +118,9 @@ fn JsonNumberScan::try_fast_double(self : JsonNumberScan) -> Double {
     }
   } else {
     let shift = self.exponent - MAX_EXPONENT_FAST_PATH
-    let mantissa = match
-      checked_mul(self.mantissa, int_pow10_table[shift.to_int()]) {
-      Some(m) => m
-      None => return @double.not_a_number
+    guard checked_mul(self.mantissa, int_pow10_table[shift.to_int()])
+      is Some(mantissa) else {
+      return @double.not_a_number
     }
     if mantissa > MAX_MANTISSA_FAST_PATH {
       return @double.not_a_number
