@@ -92,10 +92,8 @@ pub fn[T, Err : Error] Option::unwrap_or_error(
   self : T?,
   err : Err,
 ) -> T raise Err {
-  match self {
-    Some(v) => v
-    None => raise err
-  }
+  guard self is Some(v) else { raise err }
+  v
 }
 
 ///|
