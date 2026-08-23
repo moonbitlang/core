@@ -34,6 +34,8 @@
 ///   @json.json_inspect(err, content=["Failure", "Test assertion failed"])
 /// }
 /// ```
+// TODO(future): `derive(Show)` is deprecated syntax — switch to `derive(Debug)`
+// or a manual `Show` implementation, then remove this annotation.
 #warnings("-deprecated_syntax")
 pub(all) suberror Failure {
   Failure(String)
