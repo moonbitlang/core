@@ -23,9 +23,12 @@ warnings = "-29"
 
 options(
   targets: {
+    "arith_wide.mbt": [ "native", "wasm" ],
     "bigint_js.mbt": [ "js" ],
     "bigint_js_wbtest.mbt": [ "js" ],
-    "bigint_nonjs.mbt": [ "not", "js" ],
-    "bigint_nonjs_wbtest.mbt": [ "not", "js" ],
+    "bigint_default.mbt": [ "not", "js", "wasm", "native" ],
+    "bigint_default_wbtest.mbt": [ "not", "js", "wasm", "native" ],
+    "bigint_wide.mbt": [ "native", "wasm" ],
+    "bigint_wide_wbtest.mbt": [ "native", "wasm" ],
   },
 )
