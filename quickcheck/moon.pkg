@@ -27,6 +27,7 @@ import {
 }
 
 import {
+  "moonbitlang/core/bench",
   "moonbitlang/core/float",
   "moonbitlang/core/double",
 } for "test"
