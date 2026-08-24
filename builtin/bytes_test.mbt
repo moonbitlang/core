@@ -27,6 +27,13 @@ test "json repr" {
 }
 
 ///|
+test "Bytes output writes lowercase hex digits directly" {
+  let bytes = b"\x00\x09\x0a\x0f\x10\x7f\x80\xff"
+  inspect(bytes, content="b\"\\x00\\x09\\x0a\\x0f\\x10\\x7f\\x80\\xff\"")
+  @json.json_inspect(bytes, content="\\x00\\x09\\x0a\\x0f\\x10\\x7f\\x80\\xff")
+}
+
+///|
 test "to_string" {
   @test.assert_eq(HELLO_WORLD.to_unchecked_string(), "Hello, World!")
 }
