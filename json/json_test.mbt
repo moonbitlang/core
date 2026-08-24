@@ -613,6 +613,11 @@ test "transformer with array" {
 }
 
 ///|
+// Kept for testing purposes: the `FromJson` bound is unused in the body (hence
+// the suppression), but it is asserted at the call site in the test below —
+// `test_json_export(42)` type-checks only because `Int` implements `FromJson`.
+// Do not remove the bound or the suppression: that would silently weaken the
+// test into a plain identity check.
 #warnings("-unused_trait_bound")
 fn[A : FromJson] test_json_export(x : A) -> A {
   x

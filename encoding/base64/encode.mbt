@@ -36,7 +36,6 @@ pub fn encode(bytes : BytesView, padding? : Bool = true) -> String {
 ///|
 /// Retained on every backend: the linear-memory backends reach it only from
 /// the differential tests, but it is the implementation everywhere else.
-#warnings("-unused_value")
 fn encode_scalar(bytes : BytesView, padding? : Bool = true) -> String {
   let full_groups = bytes.length() / 3
   let remainder = bytes.length() % 3
