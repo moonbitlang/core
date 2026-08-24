@@ -26,7 +26,7 @@ priv struct LexbufStorage {
 }
 
 ///|
-const LEXBUF_MERGED_CHUNK_LIMIT : Int = 512
+const LEXBUF_MERGED_CHUNK_LIMIT : Int = 64
 
 ///|
 fn LexbufStorage::LexbufStorage() -> LexbufStorage {
