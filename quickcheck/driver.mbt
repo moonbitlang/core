@@ -191,7 +191,7 @@ impl Eq for CaseOutcome with fn equal(expected, actual) {
 fn[A : @shrink.Shrink] shrink_failure(
   property : (A) -> Bool raise?,
   filter : (A) -> Bool,
-  shrink_equal : (A, A) -> Bool,
+  shrink_equal : ((A, A) -> Bool)?,
   input : A,
   initial : CaseOutcome,
   max_shrinks : UInt,
@@ -201,16 +201,18 @@ fn[A : @shrink.Shrink] shrink_failure(
   let mut successful = 0U
   let mut attempted = 0U
   let mut found = true
-  let seen = [input]
+  let seen = shrink_equal.map(_ => [input])
   while attempted < max_shrinks && found {
     found = false
     let candidates = @shrink.Shrink::shrink(current)
     while attempted < max_shrinks && candidates.next() is Some(candidate) {
       attempted = attempted + 1
-      if seen.any(previous => shrink_equal(previous, candidate)) {
-        continue
+      if (shrink_equal, seen) is (Some(equal), Some(seen)) {
+        if seen.any(previous => equal(previous, candidate)) {
+          continue
+        }
+        seen.push(candidate)
       }
-      seen.push(candidate)
       let outcome = evaluate_case(property, filter, candidate)
       if initial == outcome {
         current = candidate
@@ -294,7 +296,7 @@ fn[A : @debug.Debug] failure_report(report : QuickCheckReport[A]) -> String {
 pub fn[A : Arbitrary + @shrink.Shrink] report(
   property : (A) -> Bool raise?,
   filter? : (A) -> Bool = _ => true,
-  shrink_equal? : (A, A) -> Bool = (_, _) => false,
+  shrink_equal? : (A, A) -> Bool,
   observe? : (A) -> Observations = _ => [],
   counterexample_context? : (A) -> String,
   count? : UInt = 100,
@@ -415,7 +417,7 @@ pub fn[A : Arbitrary + @shrink.Shrink] report(
 pub fn[A : Arbitrary + @shrink.Shrink + @debug.Debug] check(
   property : (A) -> Bool raise?,
   filter? : (A) -> Bool = _ => true,
-  shrink_equal? : (A, A) -> Bool = (_, _) => false,
+  shrink_equal? : (A, A) -> Bool,
   observe? : (A) -> Observations = _ => [],
   counterexample_context? : (A) -> String,
   count? : UInt = 100,
@@ -428,7 +430,7 @@ pub fn[A : Arbitrary + @shrink.Shrink + @debug.Debug] check(
   let result = report(
     property,
     filter~,
-    shrink_equal~,
+    shrink_equal?,
     observe~,
     counterexample_context?,
     count~,
