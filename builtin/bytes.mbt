@@ -799,6 +799,34 @@ pub fn Bytes::get(self : Bytes, index : Int) -> Byte? {
 /// * `other` : The second bytes sequence.
 /// TODO: marked as intrinsic, inline if it is constant
 pub impl Add for Bytes with fn add(self : Bytes, other : Bytes) -> Bytes {
+  self.bytes_add_impl(other)
+}
+
+///|
+#cfg(not(target="js"))
+fn Bytes::bytes_add_impl(self : Bytes, other : Bytes) -> Bytes {
+  let len_self = self.length()
+  let len_other = other.length()
+  let rv = UninitializedArray::unsafe_make_and_blit_from_fixed(
+    unsafe_from_bytes(self),
+    len_self + len_other,
+    0,
+    0,
+    len_self,
+  )
+  UninitializedArray::unsafe_blit_fixed(
+    rv,
+    len_self,
+    unsafe_from_bytes(other),
+    0,
+    len_other,
+  )
+  unsafe_to_bytes(buffer_to_fixedarray(rv))
+}
+
+///|
+#cfg(target="js")
+fn Bytes::bytes_add_impl(self : Bytes, other : Bytes) -> Bytes {
   let len_self = self.length()
   let len_other = other.length()
   let rv : FixedArray[Byte] = FixedArray::make(len_self + len_other, 0)
