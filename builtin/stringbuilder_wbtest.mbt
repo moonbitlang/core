@@ -26,3 +26,22 @@ test "StringBuilder::reset reuses an unshared buffer" {
   assert_true(backing[1] == ('y' : UInt16))
   assert_true(backing[2] == ('e' : UInt16))
 }
+
+///|
+#cfg(not(target="js"))
+test "StringBuilder keeps initialized prefix valid across grow and reset" {
+  let builder = StringBuilder(size_hint=2)
+  builder.write_string("ab")
+  builder.write_string("cd")
+  inspect(builder.to_string(), content="abcd")
+
+  // The full-capacity conversion may share the backing buffer. Reset must
+  // detach before the next write, while a partial conversion must only expose
+  // the initialized prefix.
+  builder.reset()
+  builder.write_char('x')
+  inspect(builder.to_string(), content="x")
+  builder.reset()
+  builder.write_char('🤣')
+  inspect(builder.to_string(), content="🤣")
+}

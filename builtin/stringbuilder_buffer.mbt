@@ -14,7 +14,7 @@
 
 ///|
 struct StringBuilder {
-  mut data : FixedArray[UInt16]
+  mut data : UninitializedArray[UInt16]
   mut len : Int
   mut buffer_is_shared : Bool
 }
@@ -33,7 +33,7 @@ struct StringBuilder {
 #alias(new, deprecated="Use `StringBuilder()` instead")
 pub fn StringBuilder::StringBuilder(size_hint? : Int = 0) -> StringBuilder {
   let initial = if size_hint < 1 { 1 } else { (size_hint + 1) / 2 }
-  let data : FixedArray[UInt16] = FixedArray::make(initial, 0)
+  let data : UninitializedArray[UInt16] = UninitializedArray::make(initial)
   { data, len: 0, buffer_is_shared: false }
 }
 
@@ -78,14 +78,26 @@ fn StringBuilder::grow(self : StringBuilder, required : Int) -> Unit {
     self.len,
     required,
   )
-  let new_data = FixedArray::make_and_blit(
+  let new_data = UninitializedArray::make_and_blit(
     self.data,
     allocate_len=new_capacity,
-    init=(Default::default() : UInt16),
     len=self.len,
   )
   self.data = new_data
   self.buffer_is_shared = false
+}
+
+///|
+fn UninitializedArray::unsafe_blit_from_string_uninit(
+  self : UninitializedArray[UInt16],
+  dst_offset : Int,
+  str : String,
+  str_offset : Int,
+  len : Int,
+) -> Unit {
+  unsafe_uint16_buffer_as_fixedarray(self).unsafe_blit_from_string(
+    dst_offset, str, str_offset, len,
+  )
 }
 
 ///|
@@ -103,6 +115,12 @@ fn FixedArray::unsafe_blit_from_string(
 }
 
 ///|
+/// Reinterpret the backing storage. Callers must only read initialized slots.
+fn unsafe_uint16_buffer_as_fixedarray(
+  buffer : UninitializedArray[UInt16],
+) -> FixedArray[UInt16] = "%identity"
+
+///|
 /// Writes a string to the StringBuilder.
 pub impl Logger for StringBuilder with fn write_string(self, str) {
   let str_len = str.length()
@@ -113,7 +131,7 @@ pub impl Logger for StringBuilder with fn write_string(self, str) {
   if required > self.data.length() || required < self.len {
     self.grow(required)
   }
-  self.data.unsafe_blit_from_string(self.len, str, 0, str_len)
+  self.data.unsafe_blit_from_string_uninit(self.len, str, 0, str_len)
   self.len += str_len
 }
 
@@ -125,15 +143,18 @@ pub impl Logger for StringBuilder with fn write_char(self, ch) {
     if self.len >= self.data.length() {
       self.grow(self.len + 1)
     }
-    self.data[self.len] = code.to_uint16()
+    self.data.unsafe_set(self.len, code.to_uint16())
     self.len += 1
   } else if code <= 0x10FFFFU {
     if self.data.length() - self.len < 2 {
       self.grow(self.len + 2)
     }
     let code = code - 0x10000U
-    self.data[self.len] = (0xD800U + (code >> 10)).to_uint16()
-    self.data[self.len + 1] = (0xDC00U + code.land(0x3FFU)).to_uint16()
+    self.data.unsafe_set(self.len, (0xD800U + (code >> 10)).to_uint16())
+    self.data.unsafe_set(
+      self.len + 1,
+      (0xDC00U + code.land(0x3FFU)).to_uint16(),
+    )
     self.len += 2
   } else {
     abort("invalid code point")
@@ -171,7 +192,7 @@ pub impl Logger for StringBuilder with fn write_view(
   if required > self.data.length() || required < self.len {
     self.grow(required)
   }
-  self.data.unsafe_blit_from_string(
+  self.data.unsafe_blit_from_string_uninit(
     self.len,
     str.data(),
     str.start_offset(),
@@ -189,15 +210,16 @@ pub fn StringBuilder::to_string(self : StringBuilder) -> String {
     // This conversion can reuse `data` without copying, so future resets must
     // detach before the buffer is written again.
     self.buffer_is_shared = true
-    unsafe_fixedarray_uint16_to_string(self.data)
+    unsafe_fixedarray_uint16_to_string(
+      unsafe_uint16_buffer_as_fixedarray(self.data),
+    )
   } else {
-    let data = FixedArray::make_and_blit(
+    let data = UninitializedArray::make_and_blit(
       self.data,
       allocate_len=self.len,
-      init=(Default::default() : UInt16),
       len=self.len,
     )
-    unsafe_fixedarray_uint16_to_string(data)
+    unsafe_fixedarray_uint16_to_string(unsafe_uint16_buffer_as_fixedarray(data))
   }
 }
 
@@ -218,10 +240,7 @@ pub fn StringBuilder::reset(self : StringBuilder) -> Unit {
   // A full buffer may have been returned directly from `to_string`. Retain the
   // backing storage in every other case, since it only contains value types.
   if self.buffer_is_shared {
-    self.data = FixedArray::make(
-      self.data.length(),
-      (Default::default() : UInt16),
-    )
+    self.data = UninitializedArray::make(self.data.length())
     self.buffer_is_shared = false
   }
   self.len = 0
