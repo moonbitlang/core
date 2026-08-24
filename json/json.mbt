@@ -86,24 +86,17 @@ pub fn Json::value(self : Json, key : String) -> Json? {
 }
 
 ///|
-fn indent_str(level : Int, indent : Int) -> String {
-  if indent == 0 {
-    ""
-  } else {
-    let spaces = indent * level
-    match spaces {
-      0 => "\n"
-      1 => "\n "
-      2 => "\n  "
-      3 => "\n   "
-      4 => "\n    "
-      5 => "\n     "
-      6 => "\n      "
-      7 => "\n       "
-      8 => "\n        "
-      _ => "\n" + " ".repeat(spaces)
-    }
+#inline
+fn write_indent(
+  buf : StringBuilder,
+  cache : Array[String],
+  level : Int,
+  indent : Int,
+) -> Unit {
+  while cache.length() <= level {
+    cache.push("\n" + " ".repeat(indent * cache.length()))
   }
+  buf.write_string(cache[level])
 }
 
 ///|
@@ -280,6 +273,7 @@ pub fn Json::stringify(
   replacer? : Replacer,
 ) -> String {
   let buf = StringBuilder(size_hint=0)
+  let indent_cache : Array[String] = []
 
   // Explicit stack to replace recursive calls
   let stack : Array[WriteFrame] = []
@@ -294,7 +288,9 @@ pub fn Json::stringify(
             } else {
               depth += 1
               buf.write_char('{')
-              buf.write_string(indent_str(depth, indent))
+              if indent > 0 {
+                write_indent(buf, indent_cache, depth, indent)
+              }
               // After child value printed, we resume from this frame
               stack.push(Object(members.iter(), first=true))
             }
@@ -304,7 +300,9 @@ pub fn Json::stringify(
             } else {
               depth += 1
               buf.write_char('[')
-              buf.write_string(indent_str(depth, indent))
+              if indent > 0 {
+                write_indent(buf, indent_cache, depth, indent)
+              }
               stack.push(Array(arr, i=0))
             }
           String(s) => {
@@ -333,13 +331,17 @@ pub fn Json::stringify(
               frame.i = i + 1
               if i > 0 {
                 buf.write_char(',')
-                buf.write_string(indent_str(depth, indent))
+                if indent > 0 {
+                  write_indent(buf, indent_cache, depth, indent)
+                }
               }
               continue Some(element)
             } else {
               depth -= 1
               ignore(stack.pop())
-              buf.write_string(indent_str(depth, indent))
+              if indent > 0 {
+                write_indent(buf, indent_cache, depth, indent)
+              }
               buf.write_char(']')
               continue None
             }
@@ -356,7 +358,9 @@ pub fn Json::stringify(
                 }
                 if !first {
                   buf.write_char(',')
-                  buf.write_string(indent_str(depth, indent))
+                  if indent > 0 {
+                    write_indent(buf, indent_cache, depth, indent)
+                  }
                 }
                 buf.write_char('\"')
                 buf.write_string(escape(k, escape_slash~))
@@ -371,7 +375,9 @@ pub fn Json::stringify(
               None => {
                 depth -= 1
                 ignore(stack.pop())
-                buf.write_string(indent_str(depth, indent))
+                if indent > 0 {
+                  write_indent(buf, indent_cache, depth, indent)
+                }
                 buf.write_char('}')
                 continue None
               }
