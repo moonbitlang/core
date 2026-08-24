@@ -290,11 +290,16 @@ pub fn decode_lossy(bytes : BytesView, ignore_bom? : Bool = false) -> String {
   let input = bytes.data()
   let src_offset = bytes.start_offset()
   let src_length = bytes.length()
-  let dst = FixedArray::make(src_length * 2, (0 : UInt16))
+  // A UTF-8 byte can produce at most one UTF-16 code unit. Invalid input also
+  // emits at most one replacement character per byte.
+  let dst = FixedArray::make(src_length, (0 : UInt16))
   let written = match
     utf8_decode_into_utf16(input, src_offset, src_length, dst, 0) {
     ok if ok >= 0 => ok
     _ => utf8_decode_lossy_into_utf16(input, src_offset, src_length, dst, 0)
+  }
+  if written == src_length {
+    return unsafe_fixedarray_uint16_to_string(dst)
   }
   let result = FixedArray::make(written, (0 : UInt16))
   result.unsafe_blit(0, dst, 0, written)
