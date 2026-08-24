@@ -15,6 +15,7 @@
 ///|
 fn[T] removes_array(k : Int, n : Int, xs : Array[T]) -> Iter[Array[T]] {
   guard k <= n else { [||] }
+  guard k < n else { [|[]|] }
   let xs2 = xs[:k].to_owned()
   let xs1 = xs[k:].to_owned()
   if xs1.is_empty() {

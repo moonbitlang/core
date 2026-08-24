@@ -14,7 +14,7 @@
 
 ///|
 pub impl[T : Shrink] Shrink for @list.List[T] with fn shrink(xs) {
-  let n = xs.length()
+  guard !xs.is_empty() else { return [||] }
   fn shr_sub_terms(lst : @list.List[T]) {
     match lst {
       Empty => [||]
@@ -25,12 +25,17 @@ pub impl[T : Shrink] Shrink for @list.List[T] with fn shrink(xs) {
     }
   }
 
-  [
-    for k = n; k > 0; k = k / 2 => k
-  ]
-  .iter()
-  .flat_map(k => removes_list(k, n, xs))
-  .concat(shr_sub_terms(xs))
+  [|xs.take(0)|].concat(
+    [|()|].flat_map(_ => {
+      let n = xs.length()
+      [
+        for k = n / 2; k > 0; k = k / 2 => k
+      ]
+      .iter()
+      .flat_map(k => removes_list(k, n, xs))
+      .concat([|()|].flat_map(_ => shr_sub_terms(xs)))
+    }),
+  )
 }
 
 ///|
