@@ -534,3 +534,70 @@ test "context is attached to raised failures too" {
     ),
   )
 }
+
+///|
+test "report does not reevaluate equivalent shrink candidates" {
+  let mut property_calls = 0
+  let report = @quickcheck.report(
+    (_ : RepeatingInput) => {
+      property_calls = property_calls + 1
+      false
+    },
+    shrink_equal=(a, b) => a.0 == b.0,
+    count=1,
+    max_shrinks=10,
+  )
+  debug_inspect(
+    report,
+    content=(
+      #|Falsified(
+      #|  counterexample=RepeatingInput(0),
+      #|  tests=1,
+      #|  size=0,
+      #|  shrinks=0,
+      #|  shrink_attempts=10,
+      #|)
+    ),
+  )
+  inspect(property_calls, content="1")
+}
+
+///|
+priv struct CyclicShrinkInput(Int) derive(Debug)
+
+///|
+impl @quickcheck.Arbitrary for CyclicShrinkInput with fn arbitrary(_, _) {
+  CyclicShrinkInput(2)
+}
+
+///|
+impl @shrink.Shrink for CyclicShrinkInput with fn shrink(input) {
+  [|CyclicShrinkInput(if input.0 == 2 { 1 } else { 2 })|]
+}
+
+///|
+test "report does not revisit earlier shrink candidates" {
+  let mut property_calls = 0
+  let report = @quickcheck.report(
+    (_ : CyclicShrinkInput) => {
+      property_calls = property_calls + 1
+      false
+    },
+    shrink_equal=(a, b) => a.0 == b.0,
+    count=1,
+    max_shrinks=10,
+  )
+  debug_inspect(
+    report,
+    content=(
+      #|Falsified(
+      #|  counterexample=CyclicShrinkInput(1),
+      #|  tests=1,
+      #|  size=0,
+      #|  shrinks=1,
+      #|  shrink_attempts=2,
+      #|)
+    ),
+  )
+  inspect(property_calls, content="2")
+}

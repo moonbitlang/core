@@ -191,6 +191,7 @@ impl Eq for CaseOutcome with fn equal(expected, actual) {
 fn[A : @shrink.Shrink] shrink_failure(
   property : (A) -> Bool raise?,
   filter : (A) -> Bool,
+  shrink_equal : (A, A) -> Bool,
   input : A,
   initial : CaseOutcome,
   max_shrinks : UInt,
@@ -200,11 +201,16 @@ fn[A : @shrink.Shrink] shrink_failure(
   let mut successful = 0U
   let mut attempted = 0U
   let mut found = true
+  let seen = [input]
   while attempted < max_shrinks && found {
     found = false
     let candidates = @shrink.Shrink::shrink(current)
     while attempted < max_shrinks && candidates.next() is Some(candidate) {
       attempted = attempted + 1
+      if seen.any(previous => shrink_equal(previous, candidate)) {
+        continue
+      }
+      seen.push(candidate)
       let outcome = evaluate_case(property, filter, candidate)
       if initial == outcome {
         current = candidate
@@ -288,6 +294,7 @@ fn[A : @debug.Debug] failure_report(report : QuickCheckReport[A]) -> String {
 pub fn[A : Arbitrary + @shrink.Shrink] report(
   property : (A) -> Bool raise?,
   filter? : (A) -> Bool = _ => true,
+  shrink_equal? : (A, A) -> Bool = (_, _) => false,
   observe? : (A) -> Observations = _ => [],
   counterexample_context? : (A) -> String,
   count? : UInt = 100,
@@ -317,7 +324,7 @@ pub fn[A : Arbitrary + @shrink.Shrink] report(
       _ => {
         let completed_tests = tests + 1
         let (counterexample, outcome, shrinks, shrink_attempts) = shrink_failure(
-          property, filter, input, outcome, max_shrinks,
+          property, filter, shrink_equal, input, outcome, max_shrinks,
         )
         let context = counterexample_context.map(render => {
           render(counterexample)
@@ -377,6 +384,9 @@ pub fn[A : Arbitrary + @shrink.Shrink] report(
 ///
 /// * `property`: A deterministic function returning `true` on success.
 /// * `filter`: A pure precondition returning `true` for cases to test.
+/// * `shrink_equal`: An optional equivalence relation used to avoid evaluating
+///   duplicate shrink candidates. Duplicate candidates still consume a shrink
+///   attempt, so infinite shrink streams remain bounded by `max_shrinks`.
 /// * `observe`: A pure function classifying cases with `label`, `classify`, or
 ///   `collect`.
 /// * `counterexample_context`: A pure function rendering the shrunk
@@ -405,6 +415,7 @@ pub fn[A : Arbitrary + @shrink.Shrink] report(
 pub fn[A : Arbitrary + @shrink.Shrink + @debug.Debug] check(
   property : (A) -> Bool raise?,
   filter? : (A) -> Bool = _ => true,
+  shrink_equal? : (A, A) -> Bool = (_, _) => false,
   observe? : (A) -> Observations = _ => [],
   counterexample_context? : (A) -> String,
   count? : UInt = 100,
@@ -417,6 +428,7 @@ pub fn[A : Arbitrary + @shrink.Shrink + @debug.Debug] check(
   let result = report(
     property,
     filter~,
+    shrink_equal~,
     observe~,
     counterexample_context?,
     count~,
