@@ -13,12 +13,8 @@
 // limitations under the License.
 
 ///|
-let bytes_add_left : Bytes = Bytes::make(500000, b'a')
-
-///|
-let bytes_add_right : Bytes = Bytes::make(500000, b'b')
-
-///|
 test "bench Bytes add total=1000000" (it : @bench.T) {
+  let bytes_add_left : Bytes = Bytes::make(500000, b'a')
+  let bytes_add_right : Bytes = Bytes::make(500000, b'b')
   it.bench(fn() { it.keep(bytes_add_left + bytes_add_right) })
 }
