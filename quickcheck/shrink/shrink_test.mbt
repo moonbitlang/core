@@ -29,6 +29,16 @@ test "shrink int" {
 }
 
 ///|
+test "shrink minimum int without overflowing" {
+  let minimum = -2147483647 - 1
+  let candidates = @shrink.Shrink::shrink(minimum).collect()
+  debug_inspect(
+    (candidates[0], candidates[1], candidates[candidates.length() - 1]),
+    content="(-2147483647, -2147483646, 0)",
+  )
+}
+
+///|
 test "shrink int64" {
   debug_inspect(
     @shrink.Shrink::shrink(10000L).collect(),
@@ -50,6 +60,16 @@ test "shrink int64" {
       #|  0,
       #|]
     ),
+  )
+}
+
+///|
+test "shrink minimum int64 without overflowing" {
+  let minimum = -9223372036854775807L - 1L
+  let candidates = @shrink.Shrink::shrink(minimum).collect()
+  debug_inspect(
+    (candidates[0], candidates[1], candidates[candidates.length() - 1]),
+    content="(-9223372036854775807, -9223372036854775806, 0)",
   )
 }
 

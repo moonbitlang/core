@@ -47,7 +47,7 @@ impl Shrink with fn shrink(_a) {
 ///|
 pub impl Shrink for Int with fn shrink(x) {
   [|
-    ..[ for z = x / 2; (x - z).abs() < x.abs(); z = z / 2 => x - z ].rev_iter(),
+    ..[ for z = x / 2; z != 0; z = z / 2 => x - z ].rev_iter(),
     ..if x != 0 {
       [0]
     },
@@ -57,7 +57,7 @@ pub impl Shrink for Int with fn shrink(x) {
 ///|
 pub impl Shrink for Int64 with fn shrink(x) {
   [|
-    ..[ for z = x / 2; (x - z).abs() < x.abs(); z = z / 2 => x - z ].rev_iter(),
+    ..[ for z = x / 2; z != 0L; z = z / 2 => x - z ].rev_iter(),
     ..if x != 0 {
       [(0 : Int64)]
     },
