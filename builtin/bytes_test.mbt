@@ -417,6 +417,25 @@ test "BytesView::lexical_compare/basic" {
 }
 
 ///|
+test "Bytes and BytesView Compare preserve shortlex ordering" {
+  let equal_left = Bytes::makei(64, i => i.to_byte())
+  let equal_right = Bytes::makei(64, i => i.to_byte())
+  inspect(equal_left.compare(equal_right), content="0")
+
+  let lower = Bytes::makei(64, i => if i == 63 { b'\x01' } else { b'\x00' })
+  let higher = Bytes::makei(64, i => if i == 63 { b'\x02' } else { b'\x00' })
+  inspect(lower.compare(higher), content="-1")
+  inspect(higher.compare(lower), content="1")
+
+  let padded_lower = b"x" + lower + b"y"
+  let padded_higher = b"z" + higher + b"w"
+  inspect(padded_lower[1:65].compare(padded_higher[1:65]), content="-1")
+
+  // Shortlex compares length before contents.
+  inspect(b"\xff".compare(b"\x00\x00"), content="-1")
+}
+
+///|
 test "Bytes find and rev_find" {
   let target = b"abcabc"
   let pattern = b"abc"
