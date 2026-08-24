@@ -435,12 +435,7 @@ pub impl Compare for BytesView with fn compare(self, other) -> Int {
   let other_len = other.length()
   let cmp = self_len.compare(other_len)
   guard cmp == 0 else { return cmp }
-  for i, b1 in self {
-    let b2 = other.unsafe_get(i)
-    let cmp = b1.compare(b2)
-    guard cmp == 0 else { return cmp }
-  }
-  0
+  self.lexical_compare(other)
 }
 
 ///|
