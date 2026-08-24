@@ -307,7 +307,7 @@ pub fn Json::stringify(
             }
           String(s) => {
             buf.write_char('\"')
-            buf.write_string(escape(s, escape_slash~))
+            write_escaped(buf, s, escape_slash~)
             buf.write_char('\"')
           }
           Number(n, repr~) =>
@@ -363,7 +363,7 @@ pub fn Json::stringify(
                   }
                 }
                 buf.write_char('\"')
-                buf.write_string(escape(k, escape_slash~))
+                write_escaped(buf, k, escape_slash~)
                 buf.write_char('\"')
                 buf.write_char(':')
                 if indent > 0 {
@@ -457,12 +457,15 @@ fn need_escape(str : String, escape_slash : Bool) -> Bool {
 }
 
 ///|
-fn escape(str : String, escape_slash~ : Bool) -> String {
-  let len = str.length()
+fn write_escaped(
+  buf : StringBuilder,
+  str : String,
+  escape_slash~ : Bool,
+) -> Unit {
   if !need_escape(str, escape_slash) {
-    return str
+    buf.write_string(str)
+    return
   }
-  let buf = StringBuilder(size_hint=len)
   for code in str.code_units() {
     match code {
       '"' => buf.write_string("\\\"")
@@ -487,7 +490,6 @@ fn escape(str : String, escape_slash~ : Bool) -> String {
         }
     }
   }
-  buf.to_string()
 }
 
 ///|
