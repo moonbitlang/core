@@ -54,11 +54,12 @@ pub fn Position::equal(Self, Self) -> Bool
 
 pub struct Replacer {
   // private fields
-} derive(@debug.Debug)
+}
 #alias(new, deprecated)
 pub fn Replacer::Replacer((String, Json) -> Json?) -> Self
 pub fn Replacer::exclude(ArrayView[StringView]) -> Self
 pub fn Replacer::keep(ArrayView[StringView]) -> Self
+pub impl @debug.Debug for Replacer
 
 #deprecated
 pub fn Json::as_array(Self) -> Array[Self]?

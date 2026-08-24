@@ -122,8 +122,20 @@ priv enum WriteFrame {
 /// 
 /// Only applies to object properties, not array elements.
 pub struct Replacer {
-  priv f : (String, Json) -> Json?
-} derive(@debug.Debug)
+  priv kind : ReplacerKind
+}
+
+///|
+priv enum ReplacerKind {
+  Custom((String, Json) -> Json?)
+  Keep(ArrayView[StringView])
+  Exclude(ArrayView[StringView])
+}
+
+///|
+pub impl @debug.Debug for Replacer with fn to_repr(_) {
+  @debug.Repr::record(Map([("f", @debug.Repr::literal("<function: ...>"))]))
+}
 
 ///|
 /// Create a new Replacer with a custom function.
@@ -153,7 +165,7 @@ pub struct Replacer {
 /// ```
 #alias(new, deprecated="Use `Replacer()` instead")
 pub fn Replacer::Replacer(f : (String, Json) -> Json?) -> Replacer {
-  { f, }
+  { kind: Custom(f) }
 }
 
 ///|
@@ -175,7 +187,7 @@ pub fn Replacer::Replacer(f : (String, Json) -> Json?) -> Replacer {
 /// }
 /// ```
 pub fn Replacer::keep(array : ArrayView[StringView]) -> Replacer {
-  { f: (idx, value) => if array.contains(idx) { Some(value) } else { None } }
+  { kind: Keep(array) }
 }
 
 ///|
@@ -197,7 +209,34 @@ pub fn Replacer::keep(array : ArrayView[StringView]) -> Replacer {
 /// }
 /// ```
 pub fn Replacer::exclude(array : ArrayView[StringView]) -> Replacer {
-  { f: (idx, value) => if array.contains(idx) { None } else { Some(value) } }
+  { kind: Exclude(array) }
+}
+
+///|
+fn Replacer::prepare(self : Replacer) -> (String, Json) -> Json? {
+  match self.kind {
+    Custom(f) => f
+    Keep(array) =>
+      if array.length() <= 8 {
+        (idx, value) => if array.contains(idx) { Some(value) } else { None }
+      } else {
+        let keys : Map[String, Unit] = Map([])
+        for key in array {
+          keys[key.to_owned()] = ()
+        }
+        (idx, value) => if keys.contains(idx) { Some(value) } else { None }
+      }
+    Exclude(array) =>
+      if array.length() <= 8 {
+        (idx, value) => if array.contains(idx) { None } else { Some(value) }
+      } else {
+        let keys : Map[String, Unit] = Map([])
+        for key in array {
+          keys[key.to_owned()] = ()
+        }
+        (idx, value) => if keys.contains(idx) { None } else { Some(value) }
+      }
+  }
 }
 
 ///|
@@ -280,6 +319,7 @@ pub fn Json::stringify(
   replacer? : Replacer,
 ) -> String {
   let buf = StringBuilder(size_hint=0)
+  let prepared_replacer = replacer.map(replacer => replacer.prepare())
 
   // Explicit stack to replace recursive calls
   let stack : Array[WriteFrame] = []
@@ -347,8 +387,8 @@ pub fn Json::stringify(
             match iterator.next() {
               Some((k, v)) => {
                 let mut v2 = v
-                if replacer is Some(replacer) {
-                  if (replacer.f)(k, v) is Some(v) {
+                if prepared_replacer is Some(replacer) {
+                  if replacer(k, v) is Some(v) {
                     v2 = v
                   } else {
                     continue None
@@ -527,21 +567,29 @@ fn escape(str : String, escape_slash~ : Bool) -> String {
 /// - Non-object values (arrays, strings, numbers, etc.) are returned unchanged
 /// - The original JSON value is not modified; a new value is returned
 pub fn Json::transform(self : Self, replacer : Replacer) -> Json {
+  self.transform_with(replacer.prepare())
+}
+
+///|
+fn Json::transform_with(
+  self : Self,
+  replacer : (String, Json) -> Json?,
+) -> Json {
   match self {
     Object(members) =>
       members
       .iter()
       .filter_map(pair => {
         let (k, v) = pair
-        if (replacer.f)(k, v) is Some(v2) {
-          Some((k, v2.transform(replacer)))
+        if replacer(k, v) is Some(v2) {
+          Some((k, v2.transform_with(replacer)))
         } else {
           None
         }
       })
       |> Map::from_iter()
       |> Object
-    Array(members) => Array(members.map(m => m.transform(replacer)))
+    Array(members) => Array(members.map(m => m.transform_with(replacer)))
     value => value
   }
 }
