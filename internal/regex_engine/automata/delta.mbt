@@ -44,8 +44,6 @@
 /// - `delta_expr`: Computes derivative of expression, handling all expression types
 /// - `delta_threads`: Applies derivative to a collection of threads
 /// - `find_slot`: Allocates a slot for the new state to track positions
-#warnings("-3")
-priv struct Delta {}
 
 ///|
 #valtype
