@@ -11,15 +11,30 @@ Create and initialize random number generators:
 test "random state creation" {
   // Create with default seed
   let rng1 = @splitmix.new()
-  inspect(rng1.to_string().length() > 0, content="true")
+  debug_inspect(
+    rng1,
+    content=(
+      #|{ seed: 6185074585042305769, gamma: 16934044424796929712 }
+    ),
+  )
 
   // Create with specific seed
   let rng2 = @splitmix.new(seed=12345UL)
-  inspect(rng2.to_string().length() > 0, content="true")
+  debug_inspect(
+    rng2,
+    content=(
+      #|{ seed: 1716623506685013753, gamma: 14663218685290508263 }
+    ),
+  )
 
   // Clone existing state
   let rng3 = rng2.clone()
-  inspect(rng3.to_string().length() > 0, content="true")
+  debug_inspect(
+    rng3,
+    content=(
+      #|{ seed: 1716623506685013753, gamma: 14663218685290508263 }
+    ),
+  )
 }
 ```
 
@@ -34,7 +49,12 @@ test "random number generation" {
 
   // Generate random integers
   let int_val = rng.next_int()
-  inspect(int_val.to_string().length() > 0, content="true")
+  debug_inspect(
+    int_val,
+    content=(
+      #|-1716621765
+    ),
+  )
 
   // Generate positive integers only
   let pos_int = rng.next_positive_int()
@@ -42,15 +62,30 @@ test "random number generation" {
 
   // Generate UInt values
   let uint_val = rng.next_uint()
-  inspect(uint_val.to_string().length() > 0, content="true")
+  debug_inspect(
+    uint_val,
+    content=(
+      #|40636561
+    ),
+  )
 
   // Generate Int64 values
   let int64_val = rng.next_int64()
-  inspect(int64_val.to_string().length() > 0, content="true")
+  debug_inspect(
+    int64_val,
+    content=(
+      #|640680877524568329
+    ),
+  )
 
   // Generate UInt64 values
   let uint64_val = rng.next_uint64()
-  inspect(uint64_val.to_string().length() > 0, content="true")
+  debug_inspect(
+    uint64_val,
+    content=(
+      #|11629490981681548516
+    ),
+  )
 }
 ```
 
@@ -117,8 +152,18 @@ test "advanced operations" {
 
   // Generate two UInt values at once
   let (uint1, uint2) = rng.next_two_uint()
-  inspect(uint1.to_string().length() > 0, content="true")
-  inspect(uint2.to_string().length() > 0, content="true")
+  debug_inspect(
+    uint1,
+    content=(
+      #|3306273023
+    ),
+  )
+  debug_inspect(
+    uint2,
+    content=(
+      #|472035372
+    ),
+  )
 
   // Split the generator (for parallel use)
   let split_rng = rng.split()
@@ -126,8 +171,18 @@ test "advanced operations" {
   // Both generators should work independently
   let original_val = rng.next_int()
   let split_val = split_rng.next_int()
-  inspect(original_val.to_string().length() > 0, content="true")
-  inspect(split_val.to_string().length() > 0, content="true")
+  debug_inspect(
+    original_val,
+    content=(
+      #|2115132817
+    ),
+  )
+  debug_inspect(
+    split_val,
+    content=(
+      #|400628363
+    ),
+  )
 }
 ```
 
@@ -145,7 +200,12 @@ test "state management" {
 
   // Generate value after advancing
   let after_advance = rng.next_int()
-  inspect(after_advance.to_string().length() > 0, content="true")
+  debug_inspect(
+    after_advance,
+    content=(
+      #|817660368
+    ),
+  )
 
   // Create independent copy
   let independent = rng.clone()

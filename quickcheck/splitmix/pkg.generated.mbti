@@ -11,7 +11,7 @@ pub fn new(seed? : UInt64) -> RandomState
 // Errors
 
 // Types and methods
-type RandomState derive(Show, @debug.Debug)
+type RandomState derive(@debug.Debug)
 pub fn RandomState::clone(Self) -> Self
 #deprecated
 pub fn RandomState::new(seed? : UInt64) -> Self
@@ -25,7 +25,6 @@ pub fn RandomState::next_two_uint(Self) -> (UInt, UInt)
 pub fn RandomState::next_uint(Self, limit? : UInt) -> UInt
 pub fn RandomState::next_uint64(Self, limit? : UInt64) -> UInt64
 pub fn RandomState::split(Self) -> Self
-pub fn RandomState::to_string(Self) -> String
 pub impl Default for RandomState
 
 // Type aliases
