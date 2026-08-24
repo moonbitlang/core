@@ -16,7 +16,7 @@
 pub impl[T : Shrink] Shrink for T? with fn shrink(x) {
   match x {
     None => [||]
-    Some(v) => Shrink::shrink(v).map(v1 => Some(v1)).concat([|None|])
+    Some(v) => [|None|].concat(Shrink::shrink(v).map(v1 => Some(v1)))
   }
 }
 
