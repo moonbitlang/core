@@ -13,13 +13,10 @@
 // limitations under the License.
 
 ///|
-// TODO(future): `derive(Show)` is deprecated syntax — switch to `derive(Debug)`
-// or a manual `Show` implementation, then remove this annotation.
-#warnings("-deprecated_syntax")
 struct RandomState {
   mut seed : UInt64
   gamma : UInt64
-} derive(Show, @debug.Debug)
+} derive(@debug.Debug)
 
 ///|
 let golden_gamma : UInt64 = 0x9e3779b97f4a7c15
