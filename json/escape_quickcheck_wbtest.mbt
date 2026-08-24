@@ -95,20 +95,24 @@ test "quickcheck: need_escape agrees with the scalar reference" {
 }
 
 ///|
-test "quickcheck: escape matches the per-code-unit model" {
+test "quickcheck: write_escaped matches the per-code-unit model" {
+  fn actual(str : String, escape_slash : Bool) -> String {
+    let buf = StringBuilder()
+    write_escaped(buf, str, escape_slash~)
+    buf.to_string()
+  }
   @quickcheck.check(count=300, (input : (Array[Int], Bool)) => {
     let (seeds, escape_slash) = input
     let str = adversarial_string(seeds, allow_surrogates=true)
-    guard escape(str, escape_slash~) == model_escape(str, escape_slash) else {
+    guard actual(str, escape_slash) == model_escape(str, escape_slash) else {
       return false
     }
-    // The no-copy fast path must fire exactly when nothing is escapable.
-    (escape(str, escape_slash~) == str) ==
+    (actual(str, escape_slash) == str) ==
     !need_escape_scalar(str, escape_slash, 0, str.length())
   })
   @quickcheck.check(count=300, (input : (String, Bool)) => {
     let (str, escape_slash) = input
-    escape(str, escape_slash~) == model_escape(str, escape_slash)
+    actual(str, escape_slash) == model_escape(str, escape_slash)
   })
 }
 
