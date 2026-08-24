@@ -62,7 +62,6 @@ pub fn decode(text : StringView) -> Bytes raise Malformed {
 /// Retained on every backend: the linear-memory backends reach it only from
 /// the differential tests and the fast path's rejections, but it is the
 /// implementation everywhere else.
-#warnings("-unused_value")
 fn decode_scalar(text : StringView) -> Bytes raise Malformed {
   if text.length() % 2 != 0 {
     raise Malformed(text)

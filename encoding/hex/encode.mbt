@@ -36,7 +36,6 @@ pub fn encode(bytes : BytesView) -> String {
 ///|
 /// Retained on every backend: the linear-memory backends reach it only from
 /// the differential tests, but it is the implementation everywhere else.
-#warnings("-unused_value")
 fn encode_scalar(bytes : BytesView) -> String {
   // size_hint is measured in bytes, and each of the 2n output code units
   // occupies two bytes in the builder's UTF-16 buffer
