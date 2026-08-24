@@ -242,7 +242,7 @@ pub impl[V : FromJson] FromJson for Map[String, V] with fn from_json(json, path)
   guard json is Object(obj) else {
     decode_error(path, "Map::from_json: expected object")
   }
-  let res = Map([], capacity=obj.length())
+  let res = Map([], capacity=obj.capacity())
   // As above: the test cannot fail, it just makes `key` assignable.
   guard! JsonPath::Key(path, key="") is (Key(_) as new_path)
   // Map::map_with_key
