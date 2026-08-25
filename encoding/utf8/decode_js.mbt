@@ -18,7 +18,7 @@ extern "js" fn decode_utf8_js(
   start : Int,
   len : Int,
   preserve_bom : Bool,
-) -> Array[String] =
+) -> FixedArray[String] =
   #| ((preserveBOMDecoder, dropBOMDecoder) => function(bytes, start, len, preserveBOM) {
   #|   try {
   #|     const end = start + len;
