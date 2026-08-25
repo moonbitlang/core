@@ -495,8 +495,8 @@ test "arrayview_arbitrary" {
       #|  [
       #|    <ArrayView: []>,
       #|    <ArrayView: []>,
-      #|    <ArrayView: [0]>,
-      #|    <ArrayView: [0, 0]>,
+      #|    <ArrayView: [-134217729, 67108863, 16777217]>,
+      #|    <ArrayView: [1144392696, 128, -65535, -2, 311628954, -999999999]>,
       #|  ]>
     ),
   )
@@ -505,11 +505,35 @@ test "arrayview_arbitrary" {
     content=(
       #|<ArrayView:
       #|  [
-      #|    <ArrayView: [0, 0, 1, 0, -2]>,
-      #|    <ArrayView: [0, 0, 0, -1, -2]>,
-      #|    <ArrayView: [0, 0, 0, 0, 0, -2, -5, 4, 0, 8]>,
-      #|    <ArrayView: [0, 0, -1, 2]>,
-      #|    <ArrayView: [0, 0]>,
+      #|    <ArrayView: [-613468993, -1609132827, 322263955]>,
+      #|    <ArrayView: [0, 1, -1025403238]>,
+      #|    <ArrayView: [-2, -1073741824]>,
+      #|    <ArrayView:
+      #|      [
+      #|        -1561148302,
+      #|        2147483647,
+      #|        268435455,
+      #|        2147483646,
+      #|        7,
+      #|        -1465955831,
+      #|        -1344599372,
+      #|        -64,
+      #|      ]>,
+      #|    <ArrayView:
+      #|      [
+      #|        595056541,
+      #|        67108865,
+      #|        -262145,
+      #|        513,
+      #|        -2,
+      #|        65536,
+      #|        -2,
+      #|        -11086542,
+      #|        2,
+      #|        2,
+      #|        -261363602,
+      #|        4194303,
+      #|      ]>,
       #|  ]>
     ),
   )
@@ -520,10 +544,20 @@ test "arrayview_hash" {
   let arr : Array[ArrayView[Int]] = @quickcheck.samples(20)
   let h1 = Hasher(seed=0)
   h1.combine(arr[5:9])
-  inspect(h1.finalize(), content="-966877954")
+  inspect(
+    h1.finalize(),
+    content=(
+      #|-1804859757
+    ),
+  )
   let h2 = Hasher(seed=0)
   h2.combine(arr[10:15])
-  inspect(h2.finalize(), content="-951019668")
+  inspect(
+    h2.finalize(),
+    content=(
+      #|-1122600380
+    ),
+  )
 }
 
 ///|

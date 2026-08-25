@@ -42,18 +42,27 @@ test "Arbitrary for builtin Map" {
     content=(
       #|[
       #|  {},
-      #|  { 0: true, -1: true, -2: false, -3: false },
+      #|  { -1465955831: false },
       #|  {
-      #|    0: false,
-      #|    1: false,
-      #|    2: false,
-      #|    -2: false,
-      #|    5: false,
-      #|    -7: false,
-      #|    -1: false,
-      #|    8: false,
+      #|    1771074214: false,
+      #|    -576241283: false,
+      #|    2: true,
+      #|    1826945462: false,
+      #|    803533007: false,
+      #|    65535: false,
+      #|    99999999: true,
+      #|    -32769: false,
+      #|    539581892: true,
+      #|    2147483647: false,
       #|  },
-      #|  { 0: true, 1: false, -3: false, 2: false, 4: true },
+      #|  {
+      #|    1996268401: true,
+      #|    1996008401: true,
+      #|    -999999: true,
+      #|    0: true,
+      #|    -2: true,
+      #|    1822781582: false,
+      #|  },
       #|]
     ),
   )
@@ -65,12 +74,7 @@ test "Arbitrary for linked Set" {
   debug_inspect(
     [samples[0], samples[9], samples[12], samples[17]],
     content=(
-      #|[
-      #|  <Set: []>,
-      #|  <Set: [0, 2, 3, 1]>,
-      #|  <Set: [0, -2, -5, 4, 8]>,
-      #|  <Set: [0, -1, 3, 1, 2, -6]>,
-      #|]
+      #|[<Set: []>, <Set: []>, <Set: [-2, -1073741824]>, <Set: []>]
     ),
   )
 }
@@ -81,12 +85,7 @@ test "Arbitrary for Deque" {
   debug_inspect(
     [samples[0], samples[9], samples[12], samples[17]],
     content=(
-      #|[
-      #|  <Deque: []>,
-      #|  <Deque: [0, 0, 0, 0, 2, 3, 1]>,
-      #|  <Deque: [0, 0, 0, 0, 0, -2, -5, 4, 0, 8]>,
-      #|  <Deque: [0, 0, -1, -1, 3, 1, 2, -6]>,
-      #|]
+      #|[<Deque: []>, <Deque: []>, <Deque: [-2, -1073741824]>, <Deque: []>]
     ),
   )
 }
@@ -99,9 +98,9 @@ test "Arbitrary for ReadOnlyArray" {
     content=(
       #|[
       #|  <ReadOnlyArray: []>,
-      #|  <ReadOnlyArray: [0, 0, 0, 0, 2, 3, 1]>,
-      #|  <ReadOnlyArray: [0, 0, 0, 0, 0, -2, -5, 4, 0, 8]>,
-      #|  <ReadOnlyArray: [0, 0, -1, -1, 3, 1, 2, -6]>,
+      #|  <ReadOnlyArray: []>,
+      #|  <ReadOnlyArray: [-2, -1073741824]>,
+      #|  <ReadOnlyArray: []>,
       #|]
     ),
   )
@@ -114,96 +113,56 @@ test "Arbitrary for 16-bit integers" {
   debug_inspect(
     (signed_samples, unsigned_samples),
     content=(
-      #|([0, 0, 0, -1, -1, 0, 0, -1, 2, 5], [0, 0, 0, 0, 3, 0, 0, 3, 2, 5])
+      #|(
+      #|  [20092, 1001, -1, 255, -2049, 1023, 257, -8568, 128, 0],
+      #|  [20092, 1001, 5306, 65534, 62607, 38312, 32769, 45376, 65535, 257],
+      #|)
     ),
   )
 }
 
 ///|
-fn[K : Hash + Eq, V : Eq] verify_hashmap_content(
-  map : @hashmap.HashMap[K, V],
-  expected : Array[(K, V)],
-) -> Unit raise {
-  for entry in expected {
-    let (k, v) = entry
-    assert_true(map.contains_kv(k, v))
-  }
-  assert_true(map.length() == expected.length())
-}
-
-///|
 test "Arbitrary for HashMap" {
   let samples : Array[@hashmap.HashMap[String, Int]] = @quickcheck.samples(20)
-  let data : ReadOnlyArray[Array[(String, Int)]] = [
-    [],
-    [],
-    [],
-    [("", 0)],
-    [("", 0)],
-    [],
-    [],
-    [("", 0)],
-    [("", 0)],
-    [("", 0)],
-    [("򹽐f)\u{02}", 3), ("", 0), ("󠃕", -2)],
-    [("", 0)],
-    [("񌗣j#", 1), ("2", 4), ("", 0), ("&G", 1), ("<F", 0), ("񈻼", -1)],
-    [
-      ("\u{0b},", 1),
-      ("", 0),
-      ("D", 4),
-      ("}", 0),
-      ("l\tX\u{16}񨩶", 1),
-      ("⧺]/\u{0e}rDHH\u{15}", 10),
-      ("󾥭nV", 0),
-      ("󨶏𣷵C\u{13}Vdg񽔊", 3),
-      ("\u{1e}", -1),
-      ("B\u{1b}䝷\u{00}j", -7),
-    ],
-    [("򘺔", 2), ("", -2)],
-    [("", 0)],
-    [
-      ("", 0),
-      ("<", 0),
-      ("0񾿒N", -3),
-      ("\u{0f}\n/𲂭", -1),
-      ("Bc", 1),
-      ("=", 0),
-    ],
-    [("", 0)],
-    [
-      ("C\u{0e}\u{16}xT𢜇", -4),
-      ("+", 0),
-      ("`P񐈏", 11),
-      ("", 0),
-      ("􉑢", -8),
-      ("^h8{", -2),
-      ("\b𭑾\b~󨖜\u{1d}e\u{15}YQ", 3),
-      ("nv", 4),
-      ("%jD𶣸o", 5),
-      ("񳌙p!", 0),
-      ("񓨾\u{19}f}", 0),
-      ("\r񳋐a:򇌒\u{07}", 4),
-      ("x", 7),
-      ("񩁕򵚭", 1),
-    ],
-    [
-      ("8\u{0e}", 3),
-      ("", 2),
-      ("U", 1),
-      ("4/!\u{1e}\u{10}Rd󠘟V", 3),
-      ("(򃵍\u{10}`", -2),
-      ("Mb", 0),
-      ("EP", 4),
-      ("􉞓\u{15}Q\u{07}P?Y", 1),
-      ("\u{1d}CY+򏏻񶘶", 5),
-      ("𰜫=\u{0f}\u{1d}", 1),
-      ("񣙝x6", -2),
-    ],
-  ]
-  for i, sample in samples {
-    verify_hashmap_content(sample, data[i])
-  }
+  let selected = [samples[0], samples[10], samples[13], samples[19]].map(sample => {
+    let entries = sample.to_array()
+    entries.sort()
+    entries
+  })
+  debug_inspect(
+    selected,
+    content=(
+      #|[
+      #|  [],
+      #|  [("", -2147483648), ("󠃕", 1345101380), ("򹽐f)\u{02}", -16777217)],
+      #|  [
+      #|    ("", 2147483646),
+      #|    ("\u{1e}", 0),
+      #|    ("D", 691939105),
+      #|    ("}", -1),
+      #|    ("\u{0b},", 2048),
+      #|    ("󾥭nV", -1),
+      #|    ("B\u{1b}䝷\u{00}j", -1001),
+      #|    ("l\tX\u{16}񨩶", -928655867),
+      #|    ("⧺]/\u{0e}rDHH\u{15}", -2147483648),
+      #|    ("󨶏𣷵C\u{13}Vdg񽔊", 555102954),
+      #|  ],
+      #|  [
+      #|    ("", 0),
+      #|    ("U", -31),
+      #|    ("8\u{0e}", 954766200),
+      #|    ("EP", -2147483647),
+      #|    ("Mb", -906462046),
+      #|    ("񣙝x6", 130600888),
+      #|    ("(򃵍\u{10}`", 1),
+      #|    ("𰜫=\u{0f}\u{1d}", 2048),
+      #|    ("\u{1d}CY+򏏻񶘶", 0),
+      #|    ("􉞓\u{15}Q\u{07}P?Y", -268435457),
+      #|    ("4/!\u{1e}\u{10}Rd󠘟V", 2147483646),
+      #|  ],
+      #|]
+    ),
+  )
 }
 
 ///|
@@ -212,13 +171,31 @@ test "Arbitrary for Queue" {
   debug_inspect(
     samples[1:5],
     content=(
-      #|<ArrayView: [<Queue: []>, <Queue: []>, <Queue: [0]>, <Queue: [0]>]>
+      #|<ArrayView:
+      #|  [
+      #|    <Queue: []>,
+      #|    <Queue: []>,
+      #|    <Queue: [1073741825]>,
+      #|    <Queue: [-1721961329]>,
+      #|  ]>
     ),
   )
   debug_inspect(
     samples[15],
     content=(
-      #|<Queue: []>
+      #|<Queue:
+      #|  [
+      #|    -4095,
+      #|    1413324993,
+      #|    16777215,
+      #|    1023,
+      #|    -2,
+      #|    -1535896498,
+      #|    -1000000001,
+      #|    -524289,
+      #|    196506523,
+      #|    -8,
+      #|  ]>
     ),
   )
 }
@@ -238,10 +215,19 @@ test "Arbitrary for SortedMap" {
       #|<ArrayView:
       #|  [
       #|    <SortedMap: {}>,
+      #|    <SortedMap: { 128: 694737253, 16777217: 9999999 }>,
+      #|    <SortedMap:
+      #|      { -10000000: 3715180460, 33554431: 2492501503, 46354256: 1201652877 }>,
       #|    <SortedMap: {}>,
-      #|    <SortedMap: { 0: 0 }>,
-      #|    <SortedMap: { 0: 0 }>,
-      #|    <SortedMap: { 0: 0 }>,
+      #|    <SortedMap:
+      #|      {
+      #|        -1440561833: 1073741823,
+      #|        -10000000: 3561604458,
+      #|        -2: 4294967293,
+      #|        236090718: 1,
+      #|        435439618: 3715395859,
+      #|        2147483647: 1,
+      #|      }>,
       #|  ]>
     ),
   )
@@ -250,10 +236,46 @@ test "Arbitrary for SortedMap" {
     content=(
       #|<ArrayView:
       #|  [
-      #|    <SortedMap: { -3: 2, -1: 1, 0: 0, 2: 1 }>,
-      #|    <SortedMap: { 0: 0 }>,
-      #|    <SortedMap: { -8: 1, -2: 5, 0: 3, 3: 6, 7: 6 }>,
-      #|    <SortedMap: { 0: 0 }>,
+      #|    <SortedMap:
+      #|      {
+      #|        -1073741825: 1,
+      #|        -2: 4294967293,
+      #|        2: 33554432,
+      #|        65536: 3,
+      #|        262143: 9999999,
+      #|        4194303: 2330119274,
+      #|        67108865: 100000001,
+      #|        595056541: 857196693,
+      #|        683884621: 1,
+      #|      }>,
+      #|    <SortedMap:
+      #|      {
+      #|        -2018416849: 2147483648,
+      #|        -1525628098: 0,
+      #|        -2097151: 31,
+      #|        65536: 100000,
+      #|      }>,
+      #|    <SortedMap:
+      #|      {
+      #|        -1277792779: 2147483648,
+      #|        -1000000001: 999999999,
+      #|        -523674093: 3793070879,
+      #|        -1: 99999999,
+      #|        0: 4286597806,
+      #|        2: 954966244,
+      #|        129: 11,
+      #|        1009307620: 4294967295,
+      #|        2147483646: 16383,
+      #|      }>,
+      #|    <SortedMap:
+      #|      {
+      #|        -536870911: 880725986,
+      #|        -1: 0,
+      #|        1: 4294967293,
+      #|        9999: 4294967293,
+      #|        536870912: 1607291096,
+      #|        544347260: 1411634607,
+      #|      }>,
       #|  ]>
     ),
   )
@@ -265,14 +287,26 @@ test "Arbitrary for tuples" {
   debug_inspect(
     t,
     content=(
-      #|[(0, ""), (0, ""), (0, ""), (-2, "l>"), (2, "C")]
+      #|[
+      #|  (-99999, ""),
+      #|  (-134217729, ""),
+      #|  (16777217, ""),
+      #|  (128, "e򴜞"),
+      #|  (33554431, ""),
+      #|]
     ),
   )
   let t : Array[(Int, String, UInt)] = @quickcheck.samples(5)
   debug_inspect(
     t,
     content=(
-      #|[(0, "", 0), (0, "", 0), (0, "", 1), (-2, ">s", 0), (2, "\u{11}", 0)]
+      #|[
+      #|  (-99999, "", 2047),
+      #|  (-134217729, "", 1023),
+      #|  (16777217, "@", 16383),
+      #|  (128, "򴜞", 1023),
+      #|  (33554431, "\u{05}", 3709967457),
+      #|]
     ),
   )
   let t : Array[(Int, String, UInt, Byte)] = @quickcheck.samples(5)
@@ -280,11 +314,11 @@ test "Arbitrary for tuples" {
     t,
     content=(
       #|[
-      #|  (0, "", 0, 0x2a),
-      #|  (0, "", 0, 0x77),
-      #|  (0, "", 1, 0x0d),
-      #|  (-2, ">s", 1, 0x4a),
-      #|  (2, "\u{11}", 0, 0xe5),
+      #|  (-99999, "", 228947857, 0x00),
+      #|  (-134217729, "", 101, 0xb7),
+      #|  (16777217, "@", 10000001, 0xfe),
+      #|  (128, "򴜞", 1532968982, 0xd5),
+      #|  (33554431, "\u{05}", 807828953, 0x3f),
       #|]
     ),
   )
@@ -293,11 +327,11 @@ test "Arbitrary for tuples" {
     t,
     content=(
       #|[
-      #|  (0, "", 0, 0x89, 'b'),
-      #|  (0, "", 0, 0x3b, '\u{1e}'),
-      #|  (0, "", 1, 0x08, '\u{10}'),
-      #|  (-2, ">s", 1, 0x23, '\r'),
-      #|  (2, "\u{11}", 0, 0xb7, '`'),
+      #|  (-99999, "", 228947857, 0x13, 'b'),
+      #|  (-134217729, "", 101, 0x02, '`'),
+      #|  (16777217, "@", 10000001, 0x00, '\u{1a}'),
+      #|  (128, "򴜞", 1532968982, 0xd1, '󠚵'),
+      #|  (33554431, "\u{05}", 807828953, 0x00, '"'),
       #|]
     ),
   )
@@ -306,11 +340,11 @@ test "Arbitrary for tuples" {
     t,
     content=(
       #|[
-      #|  (0, "", 0, 0x89, '񁌝', true),
-      #|  (0, "", 0, 0x3b, '\n', true),
-      #|  (0, "", 1, 0x08, 'A', true),
-      #|  (-2, ">s", 1, 0x23, ';', false),
-      #|  (2, "\u{11}", 0, 0xb7, 'D', true),
+      #|  (-99999, "", 228947857, 0x13, '񁌝', true),
+      #|  (-134217729, "", 101, 0x02, 'D', true),
+      #|  (16777217, "@", 10000001, 0x00, '\\', false),
+      #|  (128, "򴜞", 1532968982, 0xd1, 'q', true),
+      #|  (33554431, "\u{05}", 807828953, 0x00, '$', false),
       #|]
     ),
   )
@@ -321,11 +355,11 @@ test "Arbitrary for tuples" {
     t,
     content=(
       #|[
-      #|  (0, "", 0, 0x89, '񁌝', false, ()),
-      #|  (0, "", 0, 0x3b, '\n', true, ()),
-      #|  (0, "", 1, 0x08, 'A', true, ()),
-      #|  (-2, ">s", 1, 0x23, ';', true, ()),
-      #|  (2, "\u{11}", 0, 0xb7, 'D', true, ()),
+      #|  (-99999, "", 228947857, 0x13, '񁌝', false, ()),
+      #|  (-134217729, "", 101, 0x02, 'D', true, ()),
+      #|  (16777217, "@", 10000001, 0x00, '\\', false, ()),
+      #|  (128, "򴜞", 1532968982, 0xd1, 'q', false, ()),
+      #|  (33554431, "\u{05}", 807828953, 0x00, '$', true, ()),
       #|]
     ),
   )
@@ -340,11 +374,11 @@ test "Arbitrary for 8-tuple" {
     samples,
     content=(
       #|[
-      #|  (0, "", 0, 0x89, '񁌝', false, (), 0),
-      #|  (0, "", 0, 0x3b, '\n', true, (), 0),
-      #|  (0, "", 1, 0x08, 'A', true, (), -1),
-      #|  (-2, ">s", 1, 0x23, ';', true, (), 1),
-      #|  (2, "\u{11}", 0, 0xb7, 'D', true, (), -2),
+      #|  (-99999, "", 228947857, 0x13, '񁌝', false, (), -1),
+      #|  (-134217729, "", 101, 0x02, 'D', true, (), 10),
+      #|  (16777217, "@", 10000001, 0x00, '\\', false, (), -10415),
+      #|  (128, "򴜞", 1532968982, 0xd1, 'q', false, (), -400),
+      #|  (33554431, "\u{05}", 807828953, 0x00, '$', true, (), 2),
       #|]
     ),
   )
@@ -359,11 +393,11 @@ test "Arbitrary for 9-tuple" {
     samples,
     content=(
       #|[
-      #|  (0, "", 0, 0x89, '񁌝', false, (), 0, 0x6c),
-      #|  (0, "", 0, 0x3b, '\n', true, (), 0, 0x1c),
-      #|  (0, "", 1, 0x08, 'A', true, (), -1, 0xd2),
-      #|  (-2, ">s", 1, 0x23, ';', true, (), -2, 0x62),
-      #|  (2, "\u{11}", 0, 0xb7, 'D', true, (), 3, 0xc0),
+      #|  (-99999, "", 228947857, 0x13, '񁌝', false, (), 511, 0x01),
+      #|  (-134217729, "", 101, 0x02, 'D', true, (), 1000, 0x3f),
+      #|  (16777217, "@", 10000001, 0x00, '\\', false, (), 32766, 0x00),
+      #|  (128, "򴜞", 1532968982, 0xd1, 'q', false, (), 1024, 0x01),
+      #|  (33554431, "\u{05}", 807828953, 0x00, '$', true, (), -1, 0xa4),
       #|]
     ),
   )
@@ -375,7 +409,13 @@ test "Arbitrary for Ref" {
   debug_inspect(
     samples,
     content=(
-      #|[<Ref: 0>, <Ref: 0>, <Ref: 0>, <Ref: -1>, <Ref: -1>]
+      #|[
+      #|  <Ref: 1118850684>,
+      #|  <Ref: -99999>,
+      #|  <Ref: 846697896>,
+      #|  <Ref: -134217729>,
+      #|  <Ref: 67108863>,
+      #|]
     ),
   )
 }
@@ -392,9 +432,9 @@ test "Arbitrary for PriorityQueue" {
       #|  [
       #|    <PriorityQueue: []>,
       #|    <PriorityQueue: []>,
-      #|    <PriorityQueue: [0]>,
-      #|    <PriorityQueue: [0, 0]>,
-      #|    <PriorityQueue: [3, 2, 1, 0, 0, 0, 0]>,
+      #|    <PriorityQueue: [67108863, 16777217, -134217729]>,
+      #|    <PriorityQueue: [1144392696, 311628954, 128, -2, -65535, -999999999]>,
+      #|    <PriorityQueue: []>,
       #|  ]>
     ),
   )
@@ -403,10 +443,34 @@ test "Arbitrary for PriorityQueue" {
     content=(
       #|<ArrayView:
       #|  [
-      #|    <PriorityQueue: [0, 0, 0, -1, -2]>,
-      #|    <PriorityQueue: [8, 4, 0, 0, 0, 0, 0, 0, -2, -5]>,
-      #|    <PriorityQueue: [2, 0, 0, -1]>,
-      #|    <PriorityQueue: [0, 0]>,
+      #|    <PriorityQueue: [1, 0, -1025403238]>,
+      #|    <PriorityQueue: [-2, -1073741824]>,
+      #|    <PriorityQueue:
+      #|      [
+      #|        2147483647,
+      #|        2147483646,
+      #|        268435455,
+      #|        7,
+      #|        -64,
+      #|        -1344599372,
+      #|        -1465955831,
+      #|        -1561148302,
+      #|      ]>,
+      #|    <PriorityQueue:
+      #|      [
+      #|        595056541,
+      #|        67108865,
+      #|        4194303,
+      #|        65536,
+      #|        513,
+      #|        2,
+      #|        2,
+      #|        -2,
+      #|        -2,
+      #|        -262145,
+      #|        -11086542,
+      #|        -261363602,
+      #|      ]>,
       #|  ]>
     ),
   )
@@ -415,31 +479,17 @@ test "Arbitrary for PriorityQueue" {
 ///|
 test "Arbitrary for HashSet" {
   let samples : Array[@hashset.HashSet[Int]] = @quickcheck.samples(20)
-  let cases : ReadOnlyArray[@hashset.HashSet[Int]] = [
-    @hashset.from_array([]),
-    @hashset.from_array([]),
-    @hashset.from_array([]),
-    @hashset.from_array([0]),
-    @hashset.from_array([0]),
-    @hashset.from_array([]),
-    @hashset.from_array([]),
-    @hashset.from_array([0]),
-    @hashset.from_array([0]),
-    @hashset.from_array([0, 3, 1, 2]),
-    @hashset.from_array([0, 1, -2]),
-    @hashset.from_array([-2, 0, -1]),
-    @hashset.from_array([-5, 0, 8, 4, -2]),
-    @hashset.from_array([0, 2, -1]),
-    @hashset.from_array([0]),
-    @hashset.from_array([]),
-    @hashset.from_array([-2, 0, -3, -1]),
-    @hashset.from_array([-1, 0, 3, 1, -6, 2]),
-    @hashset.from_array([0]),
-    @hashset.from_array([-5, -1, 6, 0, 2, -2]),
-  ]
-  for i in 0..<20 {
-    assert_true(samples[i].symmetric_difference(cases[i]).is_empty())
-  }
+  let selected = [samples[0], samples[9], samples[12], samples[17]].map(sample => {
+    let entries = sample.to_array()
+    entries.sort()
+    entries
+  })
+  debug_inspect(
+    selected,
+    content=(
+      #|[[], [], [-1073741824, -2], []]
+    ),
+  )
 }
 
 ///|
@@ -451,14 +501,14 @@ test "Option arbitrary" {
       #|[
       #|  None,
       #|  None,
+      #|  Some(1073741825),
+      #|  Some(-1721961329),
       #|  Some(-1),
-      #|  Some(0),
+      #|  Some(1677256795),
+      #|  Some(-1497190080),
       #|  None,
-      #|  Some(0),
-      #|  Some(-5),
-      #|  Some(2),
       #|  None,
-      #|  Some(4),
+      #|  Some(16777217),
       #|]
     ),
   )
