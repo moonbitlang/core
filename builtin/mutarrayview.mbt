@@ -244,6 +244,7 @@ pub fn[T] MutArrayView::unsafe_set(
 ///   inspect(view.length(), content="3") // View contains 3 elements
 /// }
 /// ```
+#intrinsic("%array.mut_view")
 pub fn[T] Array::mut_view(
   self : Array[T],
   start? : Int = 0,
@@ -291,6 +292,7 @@ pub fn[T] Array::mut_view(
 /// }
 /// ```
 // TODO: rename does not work with docstring test
+#intrinsic("%mutarrayview.mut_view")
 pub fn[T] MutArrayView::mut_view(
   self : MutArrayView[T],
   start? : Int = 0,
@@ -334,6 +336,7 @@ pub fn[T] MutArrayView::mut_view(
 ///   inspect(view[0], content="2")
 /// }
 /// ```
+#intrinsic("%fixedarray.mut_view")
 pub fn[T] FixedArray::mut_view(
   self : FixedArray[T],
   start? : Int = 0,
@@ -362,6 +365,7 @@ pub fn[T] FixedArray::mut_view(
 /// * `start` : The starting index in the array (inclusive). Defaults to 0.
 /// * `end` : The ending index in the array (exclusive). Defaults to the
 /// length of the array.
+#intrinsic("%mutarrayview.view")
 #alias("_[_:_]")
 #alias(sub, deprecated="Use _[_:_] instead")
 pub fn[T] MutArrayView::view(

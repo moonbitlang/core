@@ -121,6 +121,7 @@ pub fn BytesView::at(self : BytesView, index : Int) -> Byte {
 ///   debug_inspect(result, content="None")
 /// }
 /// ```
+#intrinsic("%bytesview.get_opt")
 pub fn BytesView::get(self : BytesView, index : Int) -> Byte? {
   guard index >= 0 && index < self.length() else { None }
   Some(self.bytes().unsafe_get(self.start() + index))
@@ -173,6 +174,7 @@ pub fn BytesView::unsafe_get(self : BytesView, index : Int) -> Byte {
 ///   @test.assert_eq(bv[2], b'\x03')
 /// }
 /// ```
+#intrinsic("%bytes.view")
 #alias("_[_:_]")
 #alias(sub, deprecated="Use _[_:_] instead")
 pub fn Bytes::view(self : Bytes, start? : Int = 0, end? : Int) -> BytesView {
@@ -246,6 +248,7 @@ pub fn BytesView::get_view(
 ///   @test.assert_eq(bv2[1], b'\x02')
 /// }
 /// ```
+#intrinsic("%bytesview.view")
 #alias("_[_:_]")
 #alias(sub, deprecated="Use _[_:_] instead")
 pub fn BytesView::view(
