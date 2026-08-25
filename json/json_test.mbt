@@ -194,6 +194,22 @@ test "stringify with replacer" {
 }
 
 ///|
+test "Replacer::keep observes key array changes between uses" {
+  let keys : Array[StringView] = Array::makei(9, i => {
+    if i == 0 {
+      "a"
+    } else {
+      "unused-" + i.to_string()
+    }
+  })
+  let replacer = @json.Replacer::keep(keys)
+  let json : Json = { "a": 1, "b": 2 }
+  inspect(json.stringify(replacer~), content="{\"a\":1}")
+  keys[0] = "b"
+  inspect(json.stringify(replacer~), content="{\"b\":2}")
+}
+
+///|
 test "stringify with replace recursively" {
   let json : Json = {
     "a": 1.0,
