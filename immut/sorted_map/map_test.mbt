@@ -263,7 +263,10 @@ test "compare" {
   let xss : Array[@sorted_map.SortedMap[Int, Int]] = @quickcheck.samples(5)
   for xs in xss {
     for ys in xss {
-      @test.assert_eq(xs.compare(ys), xs.to_array().compare(ys.to_array()))
+      @test.assert_eq(
+        xs.compare(ys).compare(0),
+        xs.to_array().compare(ys.to_array()).compare(0),
+      )
     }
   }
 }
