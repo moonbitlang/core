@@ -100,6 +100,7 @@ pub fn[T] ReadOnlyArray::makei(
 ///   debug_inspect(arr.get(5), content="None")
 /// }
 /// ```
+#intrinsic("%readonlyarray.get_opt")
 pub fn[T] ReadOnlyArray::get(self : ReadOnlyArray[T], index : Int) -> T? {
   self.unsafe_reinterpret_to_fixed_array().get(index)
 }
@@ -866,6 +867,7 @@ pub fn[T : Compare] ReadOnlyArray::lexical_compare(
 ///   inspect(view[2], content="4")
 /// }
 /// ```
+#intrinsic("%readonlyarray.view")
 #alias("_[_:_]")
 #alias(sub, deprecated="Use _[_:_] instead")
 pub fn[T] ReadOnlyArray::view(

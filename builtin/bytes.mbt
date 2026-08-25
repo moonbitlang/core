@@ -784,6 +784,7 @@ pub fn Bytes::is_empty(self : Bytes) -> Bool {
 ///   debug_inspect(byte, content="None")
 /// }
 /// ```
+#intrinsic("%bytes.get_opt")
 pub fn Bytes::get(self : Bytes, index : Int) -> Byte? {
   guard index >= 0 && index < self.length() else { None }
   Some(self[index])
