@@ -61,7 +61,7 @@ pub fn[T] ReadOnlyArray::from_array(array : ArrayView[T]) -> ReadOnlyArray[T] {
 /// # Example
 /// ```mbt check
 /// test {
-///   let iter = [1, 2, 3].iter()
+///   let iter = [|1, 2, 3|]
 ///   let immut_array = ReadOnlyArray::from_iter(iter)
 ///   inspect(immut_array[0], content="1")
 /// }
@@ -100,6 +100,7 @@ pub fn[T] ReadOnlyArray::makei(
 ///   debug_inspect(arr.get(5), content="None")
 /// }
 /// ```
+#intrinsic("%readonlyarray.get_opt")
 pub fn[T] ReadOnlyArray::get(self : ReadOnlyArray[T], index : Int) -> T? {
   self.unsafe_reinterpret_to_fixed_array().get(index)
 }
@@ -866,6 +867,7 @@ pub fn[T : Compare] ReadOnlyArray::lexical_compare(
 ///   inspect(view[2], content="4")
 /// }
 /// ```
+#intrinsic("%readonlyarray.view")
 #alias("_[_:_]")
 #alias(sub, deprecated="Use _[_:_] instead")
 pub fn[T] ReadOnlyArray::view(

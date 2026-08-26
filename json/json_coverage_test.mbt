@@ -102,7 +102,7 @@ test "nesting beyond the configured depth limit is rejected" {
   let deep_array = String::make(9, '[') + String::make(9, ']')
   inspect(parse_raises(deep_array, max_nesting_depth=8), content="true")
   // the same for deeply nested objects (a separate depth check)
-  let sb = StringBuilder::new()
+  let sb = StringBuilder()
   for _ in 0..<9 {
     sb.write_string("{\"a\":")
   }

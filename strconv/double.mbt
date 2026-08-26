@@ -57,7 +57,6 @@ let max_mantissa_fast_path : UInt64 = 2UL << mantissa_explicit_bits
 ///
 /// Examples:
 /// ```mbt check
-/// #warnings("-deprecated")
 /// test {
 ///   inspect(@strconv.parse_double("123"), content="123")
 ///   inspect(@strconv.parse_double("12.34"), content="12.34")
@@ -129,10 +128,9 @@ fn Number::try_fast_path(self : Number) -> Double? {
     } else {
       // disguised fast path
       let shift = self.exponent - max_exponent_fast_path
-      let mantissa = match
-        checked_mul(self.mantissa, int_pow10[shift.to_int()]) {
-        Some(m) => m
-        None => return None
+      guard checked_mul(self.mantissa, int_pow10[shift.to_int()])
+        is Some(mantissa) else {
+        return None
       }
       if mantissa > max_mantissa_fast_path {
         return None

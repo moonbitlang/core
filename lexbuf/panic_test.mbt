@@ -28,7 +28,7 @@ test "panic Lexbuf rejects a commit without retention" {
 
 ///|
 test "panic Lexbuf rejects refill with unread input" {
-  let chunks = ["a"].iter()
+  let chunks = [|"a"|]
   let lexbuf = @lexbuf.Lexbuf::from_fn(() => chunks.next())
   lexbuf.__refill()
   lexbuf.__refill()

@@ -94,7 +94,7 @@ fn[V] new_node_update_height(
   left~ : Node[V]?,
   right~ : Node[V]?,
 ) -> Node[V] {
-  { value, left, right, height: max(height(left), height(right)) + 1 }
+  { value, left, right, height: height(left).max(height(right)) + 1 }
 }
 
 // Manipulations
@@ -152,17 +152,44 @@ pub fn[V : Compare] SortedSet::contains(self : SortedSet[V], value : V) -> Bool 
 }
 
 ///|
+/// Returns the stored value that compares equal to `value`, if any.
+fn[V : Compare] lookup(root : Node[V]?, value : V) -> V? {
+  for node = root {
+    match node {
+      None => break None
+      Some(n) => {
+        let compare_result = value.compare(n.value)
+        if compare_result == 0 {
+          break Some(n.value)
+        } else if compare_result < 0 {
+          continue n.left
+        } else {
+          continue n.right
+        }
+      }
+    }
+  }
+}
+
+///|
 /// Returns a new set containing all elements from both sets.
 pub fn[V : Compare] SortedSet::union(
   self : SortedSet[V],
   src : SortedSet[V],
 ) -> SortedSet[V] {
+  // An element common to both sets is dropped exactly once, at the found
+  // pivot of `split_member`; counting those drops gives the result size
+  // arithmetically instead of re-traversing the merged tree.
+  let mut dups = 0
   fn aux(a : Node[V]?, b : Node[V]?) -> Node[V]? {
     match (a, b) {
       (Some(_), None) => a
       (None, Some(_)) => b
       (Some({ value: va, left: la, right: ra, .. }), Some(_)) => {
-        let (l, r) = split(b, va)
+        let { left: l, found, right: r } = split_member(b, va)
+        if found {
+          dups += 1
+        }
         Some(join(aux(la, l), va, aux(ra, r)))
       }
       (None, None) => None
@@ -171,15 +198,8 @@ pub fn[V : Compare] SortedSet::union(
 
   match (self.root, src.root) {
     (Some(_), Some(_)) => {
-      let t1 = copy_tree(self.root)
-      let t2 = copy_tree(src.root)
-      let t = aux(t1, t2)
-      let mut ct = 0
-      let ret = { root: t, size: 0 }
-      // TODO: optimize this. Avoid counting the size of the set.
-      ret.each(_x => ct += 1)
-      ret.size = ct
-      ret
+      let t = aux(copy_tree(self.root), copy_tree(src.root))
+      { root: t, size: self.size + src.size - dups }
     }
     (Some(_), None) => { root: copy_tree(self.root), size: self.size }
     (None, Some(_)) => { root: copy_tree(src.root), size: src.size }
@@ -188,20 +208,58 @@ pub fn[V : Compare] SortedSet::union(
 }
 
 ///|
-fn[V : Compare] split(root : Node[V]?, value : V) -> (Node[V]?, Node[V]?) {
+// `#valtype` keeps the split result stack-allocated on the native target:
+// `split_member` builds and returns one per visited node on every
+// set-operation pivot path.
+#valtype
+priv struct SplitResult[V] {
+  left : Node[V]?
+  found : Bool
+  right : Node[V]?
+}
+
+///|
+/// Splits a tree by a value into the elements less than it, a flag for
+/// whether it was present, and the elements greater than it.
+fn[V : Compare] split_member(root : Node[V]?, value : V) -> SplitResult[V] {
   match root {
-    None => (None, None)
+    None => { left: None, found: false, right: None }
     Some(node) => {
       let comp = value.compare(node.value)
       if comp == 0 {
-        (node.left, node.right)
+        { left: node.left, found: true, right: node.right }
       } else if comp < 0 {
-        let (l, r) = split(node.left, value)
-        (l, Some(join(r, node.value, node.right)))
+        let { left, found, right } = split_member(node.left, value)
+        { left, found, right: Some(join(right, node.value, node.right)) }
       } else {
-        let (l, r) = split(node.right, value)
-        (Some(join(node.left, node.value, l)), r)
+        let { left, found, right } = split_member(node.right, value)
+        { left: Some(join(node.left, node.value, left)), found, right }
       }
+    }
+  }
+}
+
+///|
+/// Concatenates two trees where all elements in left < all elements in right.
+fn[V] concat(left : Node[V]?, right : Node[V]?) -> Node[V]? {
+  match (left, right) {
+    (None, _) => right
+    (_, None) => left
+    (Some(_), Some(r)) => {
+      let (min_val, rest) = remove_min(r)
+      Some(join(left, min_val, rest))
+    }
+  }
+}
+
+///|
+/// Removes the minimum value from a tree, returning it and the remaining tree.
+fn[V] remove_min(node : Node[V]) -> (V, Node[V]?) {
+  match node.left {
+    None => (node.value, node.right)
+    Some(left) => {
+      let (min_val, new_left) = remove_min(left)
+      (min_val, Some(join(new_left, node.value, node.right)))
     }
   }
 }
@@ -278,9 +336,44 @@ pub fn[V : Compare] SortedSet::difference(
   self : SortedSet[V],
   src : SortedSet[V],
 ) -> SortedSet[V] {
-  let ret = new_sorted_set()
-  self.each(x => if !src.contains(x) { ret.add(x) })
-  ret
+  match (self.root, src.root) {
+    (None, _) => new_sorted_set()
+    (_, None) => { root: copy_tree(self.root), size: self.size }
+    (Some(_), Some(_)) => {
+      // The split-based merge below copies both trees, a Theta(n + m) floor
+      // that dwarfs the O(n log m) probe loop when `self` is far smaller
+      // than `src` (the result then also has at most `self.size` elements).
+      // The 1/16 cutoff keeps the probe loop ahead of the merge even in its
+      // worst case, where every probed element is inserted into the result.
+      if self.size < src.size / 16 {
+        let ret = new_sorted_set()
+        self.each(x => if !src.contains(x) { ret.add(x) })
+        return ret
+      }
+      // `found_count` ends up as the number of elements shared by both sets:
+      // `aux` takes every node of `a` as a split pivot, except in subtrees
+      // whose matching `b` fragment is empty and therefore shares no elements.
+      let mut found_count = 0
+      fn aux(a : Node[V]?, b : Node[V]?) -> Node[V]? {
+        match (a, b) {
+          (None, _) => None
+          (_, None) => a
+          (Some({ value: va, left: la, right: ra, .. }), _) => {
+            let { left: lb, found, right: rb } = split_member(b, va)
+            if found {
+              found_count += 1
+              concat(aux(la, lb), aux(ra, rb))
+            } else {
+              Some(join(aux(la, lb), va, aux(ra, rb)))
+            }
+          }
+        }
+      }
+
+      let t = aux(copy_tree(self.root), copy_tree(src.root))
+      { root: t, size: self.size - found_count }
+    }
+  }
 }
 
 ///|
@@ -315,10 +408,26 @@ pub fn[V : Compare] SortedSet::symmetric_difference(
   self : SortedSet[V],
   other : SortedSet[V],
 ) -> SortedSet[V] {
-  // TODO: Optimize this function to avoid creating two intermediate sets.
-  let set1 = self.difference(other)
-  let set2 = other.difference(self)
-  set1.union(set2)
+  // See `difference` for why `found_count` counts each shared element once.
+  let mut found_count = 0
+  fn aux(a : Node[V]?, b : Node[V]?) -> Node[V]? {
+    match (a, b) {
+      (None, _) => b
+      (_, None) => a
+      (Some({ value: va, left: la, right: ra, .. }), _) => {
+        let { left: lb, found, right: rb } = split_member(b, va)
+        if found {
+          found_count += 1
+          concat(aux(la, lb), aux(ra, rb))
+        } else {
+          Some(join(aux(la, lb), va, aux(ra, rb)))
+        }
+      }
+    }
+  }
+
+  let t = aux(copy_tree(self.root), copy_tree(other.root))
+  { root: t, size: self.size + other.size - 2 * found_count }
 }
 
 ///|
@@ -328,9 +437,49 @@ pub fn[V : Compare] SortedSet::intersection(
   self : SortedSet[V],
   src : SortedSet[V],
 ) -> SortedSet[V] {
-  let ret = new_sorted_set()
-  self.each(x => if src.contains(x) { ret.add(x) })
-  ret
+  match (self.root, src.root) {
+    (None, _) | (_, None) => new_sorted_set()
+    (Some(_), Some(_)) => {
+      // The intersection's key set is symmetric and fits in the smaller
+      // side, so when one side is far smaller, probing with it is
+      // O(min log max) and beats the Theta(n + m) tree copies of the
+      // split-based merge (see the analogous cutoff in `difference`).
+      // The result must still carry `self`'s stored representative of each
+      // shared value (`add` replaces compare-equal values, and the split
+      // path below emits `va` from `self`), so when the probing side is
+      // `src`, each match inserts the value looked up in `self`.
+      if self.size < src.size / 16 {
+        let ret = new_sorted_set()
+        self.each(x => if src.contains(x) { ret.add(x) })
+        return ret
+      }
+      if src.size < self.size / 16 {
+        let ret = new_sorted_set()
+        src.each(x => if lookup(self.root, x) is Some(v) { ret.add(v) })
+        return ret
+      }
+      // See `difference` for why `found_count` counts each shared element
+      // once.
+      let mut found_count = 0
+      fn aux(a : Node[V]?, b : Node[V]?) -> Node[V]? {
+        match (a, b) {
+          (None, _) | (_, None) => None
+          (Some({ value: va, left: la, right: ra, .. }), _) => {
+            let { left: lb, found, right: rb } = split_member(b, va)
+            if found {
+              found_count += 1
+              Some(join(aux(la, lb), va, aux(ra, rb)))
+            } else {
+              concat(aux(la, lb), aux(ra, rb))
+            }
+          }
+        }
+      }
+
+      let t = aux(copy_tree(self.root), copy_tree(src.root))
+      { root: t, size: found_count }
+    }
+  }
 }
 
 ///|
@@ -566,7 +715,7 @@ fn[V] replace_root_with_min(root : Node[V], node : Node[V]) -> Node[V]? {
 
 ///|
 fn[V] Node::update_height(self : Node[V]) -> Unit {
-  self.height = 1 + max(height(self.left), height(self.right))
+  self.height = 1 + height(self.left).max(height(self.right))
 }
 
 ///|
@@ -879,41 +1028,39 @@ test "union" {
 
 ///|
 #warnings("-deprecated")
-test "split" {
-  let (l, r) = split(from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).root, 5)
+test "split_member" {
+  let { left: l, found, right: r } = split_member(
+    from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).root,
+    5,
+  )
+  inspect(found, content="true")
   inspect(l, content="Some([1, 2, 3, 4])")
   inspect(r, content="Some([6, 7, 8, 9])")
-  let (l, r) = split(from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).root, 0)
+  let { left: l, found, right: r } = split_member(
+    from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).root,
+    0,
+  )
+  inspect(found, content="false")
   inspect(l, content="None")
   inspect(r, content="Some([1, 2, 3, 4, 5, 6, 7, 8, 9])")
-  let (l, r) = split(from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).root, 10)
+  let { left: l, found, right: r } = split_member(
+    from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).root,
+    10,
+  )
+  inspect(found, content="false")
   inspect(l, content="Some([1, 2, 3, 4, 5, 6, 7, 8, 9])")
   inspect(r, content="None")
-  let (l, r) = split(from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).root, 4)
+  let { left: l, found, right: r } = split_member(
+    from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).root,
+    4,
+  )
+  inspect(found, content="true")
   inspect(l, content="Some([1, 2, 3])")
   inspect(r, content="Some([5, 6, 7, 8, 9])")
-  let (l, r) = split(from_array([]).root, 7)
+  let { left: l, found, right: r } = split_member(from_array([]).root, 7)
+  inspect(found, content="false")
   inspect(l, content="None")
   inspect(r, content="None")
-  let (l, r) = split(
-    from_array([
-      0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
-      22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
-      41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
-      60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78,
-      79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97,
-      98, 99, 100,
-    ]).root,
-    50,
-  )
-  inspect(
-    l,
-    content="Some([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49])",
-  )
-  inspect(
-    r,
-    content="Some([51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100])",
-  )
 }
 
 ///|

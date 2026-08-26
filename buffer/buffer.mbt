@@ -195,12 +195,16 @@ pub fn from_bytes(bytes : BytesView) -> Buffer {
 /// Create a buffer from an array.
 pub fn from_array(arr : ArrayView[Byte]) -> Buffer {
   let buf = Buffer(size_hint=arr.length())
+  // Inline write_byte because the exact capacity is known.
+  // SAFETY: the buffer was sized for `arr.length()` bytes, so every index
+  // below stays within `data`.
+  let data = buf.data
+  let mut len = buf.len
   for byte in arr {
-    // Inline write_byte because the exact capacity is known.
-    // SAFETY: known array size
-    buf.data[buf.len] = byte
-    buf.len += 1
+    data.unsafe_set(len, byte)
+    len += 1
   }
+  buf.len = len
   buf
 }
 
@@ -216,7 +220,9 @@ pub fn from_iter(iter : Iter[Byte]) -> Buffer {
     } else {
       capacity
     }
-    buf.data[buf.len] = byte
+    // SAFETY: `capacity` tracks `data.length()` and the branch above ensures
+    // `len < capacity`.
+    buf.data.unsafe_set(buf.len, byte)
     buf.len += 1
     continue capacity
   }
@@ -275,15 +281,17 @@ pub fn Buffer::write_uint64_be(self : Buffer, value : UInt64) -> Unit {
   if self.data.length() - self.len < 8 {
     self.grow(self.len + 8)
   }
+  // SAFETY: the guard above reserves 8 bytes at `len`.
+  let data = self.data
   let offset = self.len
-  self.data[offset] = (value >> 56).to_byte()
-  self.data[offset + 1] = (value >> 48).to_byte()
-  self.data[offset + 2] = (value >> 40).to_byte()
-  self.data[offset + 3] = (value >> 32).to_byte()
-  self.data[offset + 4] = (value >> 24).to_byte()
-  self.data[offset + 5] = (value >> 16).to_byte()
-  self.data[offset + 6] = (value >> 8).to_byte()
-  self.data[offset + 7] = value.to_byte()
+  data.unsafe_set(offset, (value >> 56).to_byte())
+  data.unsafe_set(offset + 1, (value >> 48).to_byte())
+  data.unsafe_set(offset + 2, (value >> 40).to_byte())
+  data.unsafe_set(offset + 3, (value >> 32).to_byte())
+  data.unsafe_set(offset + 4, (value >> 24).to_byte())
+  data.unsafe_set(offset + 5, (value >> 16).to_byte())
+  data.unsafe_set(offset + 6, (value >> 8).to_byte())
+  data.unsafe_set(offset + 7, value.to_byte())
   self.len += 8
 }
 
@@ -314,15 +322,17 @@ pub fn Buffer::write_uint64_le(self : Buffer, value : UInt64) -> Unit {
   if self.data.length() - self.len < 8 {
     self.grow(self.len + 8)
   }
+  // SAFETY: the guard above reserves 8 bytes at `len`.
+  let data = self.data
   let offset = self.len
-  self.data[offset] = value.to_byte()
-  self.data[offset + 1] = (value >> 8).to_byte()
-  self.data[offset + 2] = (value >> 16).to_byte()
-  self.data[offset + 3] = (value >> 24).to_byte()
-  self.data[offset + 4] = (value >> 32).to_byte()
-  self.data[offset + 5] = (value >> 40).to_byte()
-  self.data[offset + 6] = (value >> 48).to_byte()
-  self.data[offset + 7] = (value >> 56).to_byte()
+  data.unsafe_set(offset, value.to_byte())
+  data.unsafe_set(offset + 1, (value >> 8).to_byte())
+  data.unsafe_set(offset + 2, (value >> 16).to_byte())
+  data.unsafe_set(offset + 3, (value >> 24).to_byte())
+  data.unsafe_set(offset + 4, (value >> 32).to_byte())
+  data.unsafe_set(offset + 5, (value >> 40).to_byte())
+  data.unsafe_set(offset + 6, (value >> 48).to_byte())
+  data.unsafe_set(offset + 7, (value >> 56).to_byte())
   self.len += 8
 }
 
@@ -406,11 +416,13 @@ pub fn Buffer::write_uint_be(self : Buffer, value : UInt) -> Unit {
   if self.data.length() - self.len < 4 {
     self.grow(self.len + 4)
   }
+  // SAFETY: the guard above reserves 4 bytes at `len`.
+  let data = self.data
   let offset = self.len
-  self.data[offset] = (value >> 24).to_byte()
-  self.data[offset + 1] = (value >> 16).to_byte()
-  self.data[offset + 2] = (value >> 8).to_byte()
-  self.data[offset + 3] = value.to_byte()
+  data.unsafe_set(offset, (value >> 24).to_byte())
+  data.unsafe_set(offset + 1, (value >> 16).to_byte())
+  data.unsafe_set(offset + 2, (value >> 8).to_byte())
+  data.unsafe_set(offset + 3, value.to_byte())
   self.len += 4
 }
 
@@ -442,11 +454,13 @@ pub fn Buffer::write_uint_le(self : Buffer, value : UInt) -> Unit {
   if self.data.length() - self.len < 4 {
     self.grow(self.len + 4)
   }
+  // SAFETY: the guard above reserves 4 bytes at `len`.
+  let data = self.data
   let offset = self.len
-  self.data[offset] = value.to_byte()
-  self.data[offset + 1] = (value >> 8).to_byte()
-  self.data[offset + 2] = (value >> 16).to_byte()
-  self.data[offset + 3] = (value >> 24).to_byte()
+  data.unsafe_set(offset, value.to_byte())
+  data.unsafe_set(offset + 1, (value >> 8).to_byte())
+  data.unsafe_set(offset + 2, (value >> 16).to_byte())
+  data.unsafe_set(offset + 3, (value >> 24).to_byte())
   self.len += 4
 }
 
@@ -527,9 +541,11 @@ pub fn Buffer::write_uint16_be(self : Buffer, value : UInt16) -> Unit {
   if self.data.length() - self.len < 2 {
     self.grow(self.len + 2)
   }
+  // SAFETY: the guard above reserves 2 bytes at `len`.
+  let data = self.data
   let offset = self.len
-  self.data[offset] = (value.to_int() >> 8).to_byte()
-  self.data[offset + 1] = value.to_byte()
+  data.unsafe_set(offset, (value.to_int() >> 8).to_byte())
+  data.unsafe_set(offset + 1, value.to_byte())
   self.len += 2
 }
 
@@ -561,9 +577,11 @@ pub fn Buffer::write_uint16_le(self : Buffer, value : UInt16) -> Unit {
   if self.data.length() - self.len < 2 {
     self.grow(self.len + 2)
   }
+  // SAFETY: the guard above reserves 2 bytes at `len`.
+  let data = self.data
   let offset = self.len
-  self.data[offset] = value.to_byte()
-  self.data[offset + 1] = (value.to_int() >> 8).to_byte()
+  data.unsafe_set(offset, value.to_byte())
+  data.unsafe_set(offset + 1, (value.to_int() >> 8).to_byte())
   self.len += 2
 }
 
@@ -594,9 +612,11 @@ pub fn Buffer::write_int16_be(self : Buffer, value : Int16) -> Unit {
   if self.data.length() - self.len < 2 {
     self.grow(self.len + 2)
   }
+  // SAFETY: the guard above reserves 2 bytes at `len`.
+  let data = self.data
   let offset = self.len
-  self.data[offset] = (value.to_int() >> 8).to_byte()
-  self.data[offset + 1] = value.to_byte()
+  data.unsafe_set(offset, (value.to_int() >> 8).to_byte())
+  data.unsafe_set(offset + 1, value.to_byte())
   self.len += 2
 }
 
@@ -627,9 +647,11 @@ pub fn Buffer::write_int16_le(self : Buffer, value : Int16) -> Unit {
   if self.data.length() - self.len < 2 {
     self.grow(self.len + 2)
   }
+  // SAFETY: the guard above reserves 2 bytes at `len`.
+  let data = self.data
   let offset = self.len
-  self.data[offset] = value.to_byte()
-  self.data[offset + 1] = (value.to_int() >> 8).to_byte()
+  data.unsafe_set(offset, value.to_byte())
+  data.unsafe_set(offset + 1, (value.to_int() >> 8).to_byte())
   self.len += 2
 }
 
@@ -861,34 +883,44 @@ pub fn Buffer::write_char_utf8(buf : Self, value : Char) -> Unit {
       if buf.len >= buf.data.length() {
         buf.grow(buf.len + 1)
       }
-      buf.data[buf.len] = ((code & 0x7F) | 0x00).to_byte()
+      // SAFETY: the guard above reserves 1 byte at `len`.
+      buf.data.unsafe_set(buf.len, ((code & 0x7F) | 0x00).to_byte())
       buf.len += 1
     }
     _..<0x0800 => {
       if buf.data.length() - buf.len < 2 {
         buf.grow(buf.len + 2)
       }
-      buf.data[buf.len] = (((code >> 6) & 0x1F) | 0xC0).to_byte()
-      buf.data[buf.len + 1] = ((code & 0x3F) | 0x80).to_byte()
+      // SAFETY: the guard above reserves 2 bytes at `len`.
+      let data = buf.data
+      let offset = buf.len
+      data.unsafe_set(offset, (((code >> 6) & 0x1F) | 0xC0).to_byte())
+      data.unsafe_set(offset + 1, ((code & 0x3F) | 0x80).to_byte())
       buf.len += 2
     }
     _..<0x010000 => {
       if buf.data.length() - buf.len < 3 {
         buf.grow(buf.len + 3)
       }
-      buf.data[buf.len] = (((code >> 12) & 0x0F) | 0xE0).to_byte()
-      buf.data[buf.len + 1] = (((code >> 6) & 0x3F) | 0x80).to_byte()
-      buf.data[buf.len + 2] = ((code & 0x3F) | 0x80).to_byte()
+      // SAFETY: the guard above reserves 3 bytes at `len`.
+      let data = buf.data
+      let offset = buf.len
+      data.unsafe_set(offset, (((code >> 12) & 0x0F) | 0xE0).to_byte())
+      data.unsafe_set(offset + 1, (((code >> 6) & 0x3F) | 0x80).to_byte())
+      data.unsafe_set(offset + 2, ((code & 0x3F) | 0x80).to_byte())
       buf.len += 3
     }
     _..<0x110000 => {
       if buf.data.length() - buf.len < 4 {
         buf.grow(buf.len + 4)
       }
-      buf.data[buf.len] = (((code >> 18) & 0x07) | 0xF0).to_byte()
-      buf.data[buf.len + 1] = (((code >> 12) & 0x3F) | 0x80).to_byte()
-      buf.data[buf.len + 2] = (((code >> 6) & 0x3F) | 0x80).to_byte()
-      buf.data[buf.len + 3] = ((code & 0x3F) | 0x80).to_byte()
+      // SAFETY: the guard above reserves 4 bytes at `len`.
+      let data = buf.data
+      let offset = buf.len
+      data.unsafe_set(offset, (((code >> 18) & 0x07) | 0xF0).to_byte())
+      data.unsafe_set(offset + 1, (((code >> 12) & 0x3F) | 0x80).to_byte())
+      data.unsafe_set(offset + 2, (((code >> 6) & 0x3F) | 0x80).to_byte())
+      data.unsafe_set(offset + 3, ((code & 0x3F) | 0x80).to_byte())
       buf.len += 4
     }
     _ => abort("Char out of range")
@@ -903,8 +935,11 @@ pub fn Buffer::write_char_utf16le(buf : Self, value : Char) -> Unit {
     if buf.data.length() - buf.len < 2 {
       buf.grow(buf.len + 2)
     }
-    buf.data[buf.len + 0] = (code & 0xFF).to_byte()
-    buf.data[buf.len + 1] = (code >> 8).to_byte()
+    // SAFETY: the guard above reserves 2 bytes at `len`.
+    let data = buf.data
+    let offset = buf.len
+    data.unsafe_set(offset, (code & 0xFF).to_byte())
+    data.unsafe_set(offset + 1, (code >> 8).to_byte())
     buf.len += 2
   } else if code < 0x110000 {
     let cp = code - 0x10000
@@ -913,10 +948,13 @@ pub fn Buffer::write_char_utf16le(buf : Self, value : Char) -> Unit {
     if buf.data.length() - buf.len < 4 {
       buf.grow(buf.len + 4)
     }
-    buf.data[buf.len + 0] = (high & 0xFF).to_byte()
-    buf.data[buf.len + 1] = (high >> 8).to_byte()
-    buf.data[buf.len + 2] = (low & 0xFF).to_byte()
-    buf.data[buf.len + 3] = (low >> 8).to_byte()
+    // SAFETY: the guard above reserves 4 bytes at `len`.
+    let data = buf.data
+    let offset = buf.len
+    data.unsafe_set(offset, (high & 0xFF).to_byte())
+    data.unsafe_set(offset + 1, (high >> 8).to_byte())
+    data.unsafe_set(offset + 2, (low & 0xFF).to_byte())
+    data.unsafe_set(offset + 3, (low >> 8).to_byte())
     buf.len += 4
   } else {
     abort("Char out of range")
@@ -931,8 +969,11 @@ pub fn Buffer::write_char_utf16be(buf : Self, value : Char) -> Unit {
     if buf.data.length() - buf.len < 2 {
       buf.grow(buf.len + 2)
     }
-    buf.data[buf.len + 0] = (code >> 8).to_byte()
-    buf.data[buf.len + 1] = (code & 0xFF).to_byte()
+    // SAFETY: the guard above reserves 2 bytes at `len`.
+    let data = buf.data
+    let offset = buf.len
+    data.unsafe_set(offset, (code >> 8).to_byte())
+    data.unsafe_set(offset + 1, (code & 0xFF).to_byte())
     buf.len += 2
   } else if code < 0x110000 {
     if buf.data.length() - buf.len < 4 {
@@ -941,10 +982,13 @@ pub fn Buffer::write_char_utf16be(buf : Self, value : Char) -> Unit {
     let cp = code - 0x10000
     let high = (cp >> 10) | 0xD800
     let low = (cp & 0x3FF) | 0xDC00
-    buf.data[buf.len + 0] = (high >> 8).to_byte()
-    buf.data[buf.len + 1] = (high & 0xFF).to_byte()
-    buf.data[buf.len + 2] = (low >> 8).to_byte()
-    buf.data[buf.len + 3] = (low & 0xFF).to_byte()
+    // SAFETY: the guard above reserves 4 bytes at `len`.
+    let data = buf.data
+    let offset = buf.len
+    data.unsafe_set(offset, (high >> 8).to_byte())
+    data.unsafe_set(offset + 1, (high & 0xFF).to_byte())
+    data.unsafe_set(offset + 2, (low >> 8).to_byte())
+    data.unsafe_set(offset + 3, (low & 0xFF).to_byte())
     buf.len += 4
   } else {
     abort("Char out of range")
@@ -998,10 +1042,13 @@ pub fn Buffer::write_string_utf16le(buf : Self, string : StringView) -> Unit {
   if required > buf.data.length() || required < buf.len {
     buf.grow(required)
   }
+  // SAFETY: the guard above reserves `len * 2` bytes at `buf.len`, and
+  // `code_units()` yields exactly `len` code units.
+  let data = buf.data
   for code_unit in string.code_units(); j = buf.len {
     let c = code_unit.to_int().reinterpret_as_uint()
-    buf.data[j] = (c & 0xff).to_byte()
-    buf.data[j + 1] = (c >> 8).to_byte()
+    data.unsafe_set(j, (c & 0xff).to_byte())
+    data.unsafe_set(j + 1, (c >> 8).to_byte())
     continue j + 2
   }
   buf.len += len * 2
@@ -1030,10 +1077,13 @@ pub fn Buffer::write_string_utf16be(buf : Self, string : StringView) -> Unit {
   if required > buf.data.length() || required < buf.len {
     buf.grow(required)
   }
+  // SAFETY: the guard above reserves `len * 2` bytes at `buf.len`, and
+  // `code_units()` yields exactly `len` code units.
+  let data = buf.data
   for code_unit in string.code_units(); j = buf.len {
     let c = code_unit.to_int().reinterpret_as_uint()
-    buf.data[j + 1] = (c & 0xff).to_byte()
-    buf.data[j] = (c >> 8).to_byte()
+    data.unsafe_set(j + 1, (c & 0xff).to_byte())
+    data.unsafe_set(j, (c >> 8).to_byte())
     continue j + 2
   }
   buf.len += len * 2
@@ -1105,7 +1155,9 @@ pub fn Buffer::write_byte(self : Buffer, value : Byte) -> Unit {
   if self.len >= self.data.length() {
     self.grow(self.len + 1)
   }
-  self.data[self.len] = value
+  // SAFETY: the guard above restores `len < data.length()`, and the buffer
+  // invariant keeps `len >= 0`.
+  self.data.unsafe_set(self.len, value)
   self.len += 1
 }
 

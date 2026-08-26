@@ -121,6 +121,7 @@ pub fn BytesView::at(self : BytesView, index : Int) -> Byte {
 ///   debug_inspect(result, content="None")
 /// }
 /// ```
+#intrinsic("%bytesview.get_opt")
 pub fn BytesView::get(self : BytesView, index : Int) -> Byte? {
   guard index >= 0 && index < self.length() else { None }
   Some(self.bytes().unsafe_get(self.start() + index))
@@ -173,8 +174,9 @@ pub fn BytesView::unsafe_get(self : BytesView, index : Int) -> Byte {
 ///   @test.assert_eq(bv[2], b'\x03')
 /// }
 /// ```
+#intrinsic("%bytes.view")
 #alias("_[_:_]")
-#alias(sub, deprecated="Use _[_:_ instead")
+#alias(sub, deprecated="Use _[_:_] instead")
 pub fn Bytes::view(self : Bytes, start? : Int = 0, end? : Int) -> BytesView {
   let len = self.length()
   let end = match end {
@@ -246,6 +248,7 @@ pub fn BytesView::get_view(
 ///   @test.assert_eq(bv2[1], b'\x02')
 /// }
 /// ```
+#intrinsic("%bytesview.view")
 #alias("_[_:_]")
 #alias(sub, deprecated="Use _[_:_] instead")
 pub fn BytesView::view(
@@ -322,289 +325,6 @@ pub fn BytesView::iter2(self : BytesView) -> Iter2[Int, Byte] {
     },
     size_hint=len,
   )
-}
-
-///|
-/// Converts a 4-byte sequence to an unsigned 32-bit integer using big-endian
-/// byte order. The first byte is treated as the most significant byte, and the
-/// last byte as the least significant byte.
-///
-/// Parameters:
-///
-/// * `self` : A byte view containing exactly 4 bytes to be converted.
-///
-/// Returns an unsigned 32-bit integer representing the byte sequence.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let bytes = b"\x12\x34\x56\x78"
-///   guard! bytes is [u32be(x), ..]
-///   inspect(x, content="305419896") // 0x12345678
-/// }
-/// ```
-#deprecated("Use bits pattern directly")
-#doc(hidden)
-pub fn BytesView::to_uint_be(self : BytesView) -> UInt {
-  (self[0].to_uint() << 24) +
-  (self[1].to_uint() << 16) +
-  (self[2].to_uint() << 8) +
-  self[3].to_uint()
-}
-
-///|
-/// Converts a sequence of 4 bytes into an unsigned 32-bit integer using
-/// little-endian byte order. Each byte in the view contributes 8 bits to the
-/// final integer, with the least significant byte at index 0.
-///
-/// Parameters:
-///
-/// * `view` : A `View` containing exactly 4 bytes to be interpreted as a
-/// little-endian unsigned integer.
-///
-/// Returns an unsigned 32-bit integer (`UInt`) formed by interpreting the bytes
-/// in little-endian order.
-///
-/// Throws a panic if the view does not contain exactly 4 bytes.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let bytes = b"\x01\x02\x03\x04"
-///   guard! bytes is [u32le(x), ..]
-///   inspect(x, content="67305985") // 0x04030201
-/// }
-/// ```
-#deprecated("Use bits pattern directly")
-#doc(hidden)
-pub fn BytesView::to_uint_le(self : BytesView) -> UInt {
-  self[0].to_uint() +
-  (self[1].to_uint() << 8) +
-  (self[2].to_uint() << 16) +
-  (self[3].to_uint() << 24)
-}
-
-///|
-/// Converts a sequence of 8 bytes into a 64-bit unsigned integer using
-/// big-endian byte order. The most significant byte is at index 0, and the least
-/// significant byte is at index 7.
-///
-/// Parameters:
-///
-/// * `bytes` : A view into a byte sequence that must be at least 8 bytes long.
-/// The bytes are interpreted in big-endian order, where the first byte is the
-/// most significant byte.
-///
-/// Returns a 64-bit unsigned integer constructed by concatenating the bytes in
-/// big-endian order.
-///
-/// Throws a runtime error if the byte sequence view is less than 8 bytes long or
-/// if attempting to access an index beyond the view's bounds.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let bytes = b"\x01\x23\x45\x67\x89\xAB\xCD\xEF"
-///   guard! bytes is [u64be(x), ..]
-///   inspect(x, content="81985529216486895")
-/// }
-/// ```
-#deprecated("Use bits pattern directly")
-#doc(hidden)
-pub fn BytesView::to_uint64_be(self : BytesView) -> UInt64 {
-  (self[0].to_uint().to_uint64() << 56) +
-  (self[1].to_uint().to_uint64() << 48) +
-  (self[2].to_uint().to_uint64() << 40) +
-  (self[3].to_uint().to_uint64() << 32) +
-  (self[4].to_uint().to_uint64() << 24) +
-  (self[5].to_uint().to_uint64() << 16) +
-  (self[6].to_uint().to_uint64() << 8) +
-  self[7].to_uint().to_uint64()
-}
-
-///|
-/// Converts an 8-byte sequence to an unsigned 64-bit integer using little-endian
-/// byte order. Each byte in the view is treated as an 8-bit unsigned integer and
-/// combined to form the final 64-bit value, with the least significant byte
-/// first.
-///
-/// Parameters:
-///
-/// * `bytes_view` : A view into a byte sequence that must be exactly 8 bytes
-/// long. Each byte represents one byte of the resulting 64-bit integer, with the
-/// first byte being the least significant.
-///
-/// Returns an unsigned 64-bit integer assembled from the bytes in little-endian
-/// order.
-///
-/// Throws a panic if the View is less than 8 bytes long or if trying to
-/// access a byte beyond the view's bounds.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let bytes = b"\x01\x02\x03\x04\x05\x06\x07\x08"
-///   guard! bytes is [u64le(x), ..]
-///   inspect(x, content="578437695752307201")
-/// }
-/// ```
-#deprecated("Use bits pattern directly")
-#doc(hidden)
-pub fn BytesView::to_uint64_le(self : BytesView) -> UInt64 {
-  self[0].to_uint().to_uint64() +
-  (self[1].to_uint().to_uint64() << 8) +
-  (self[2].to_uint().to_uint64() << 16) +
-  (self[3].to_uint().to_uint64() << 24) +
-  (self[4].to_uint().to_uint64() << 32) +
-  (self[5].to_uint().to_uint64() << 40) +
-  (self[6].to_uint().to_uint64() << 48) +
-  (self[7].to_uint().to_uint64() << 56)
-}
-
-///|
-/// Interpret the first 4 bytes as a big-endian signed `Int`.
-///
-/// Deprecated: prefer bit-pattern matching (`u32be`) directly.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let bytes = b"\x00\x00\x00\x2A"
-///   guard! bytes is [u32be(u), ..]
-///   inspect(u.reinterpret_as_int(), content="42")
-/// }
-/// ```
-#deprecated
-#doc(hidden)
-pub fn BytesView::to_int_be(self : BytesView) -> Int {
-  guard! self is [u32be(u32), ..]
-  u32.reinterpret_as_int()
-}
-
-///|
-/// Interpret the first 4 bytes as a little-endian signed `Int`.
-///
-/// Deprecated: prefer bit-pattern matching (`u32le`) directly.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let bytes = b"\x2A\x00\x00\x00"
-///   guard! bytes is [u32le(u), ..]
-///   inspect(u.reinterpret_as_int(), content="42")
-/// }
-/// ```
-#deprecated
-#doc(hidden)
-pub fn BytesView::to_int_le(self : BytesView) -> Int {
-  guard! self is [u32le(u32), ..]
-  u32.reinterpret_as_int()
-}
-
-///|
-/// Interpret the first 8 bytes as a big-endian signed `Int64`.
-///
-/// Deprecated: prefer bit-pattern matching (`u64be`) directly.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let bytes = b"\x00\x00\x00\x00\x00\x00\x00\x2A"
-///   guard! bytes is [u64be(u), ..]
-///   inspect(u.reinterpret_as_int64(), content="42")
-/// }
-/// ```
-#deprecated
-#doc(hidden)
-pub fn BytesView::to_int64_be(self : BytesView) -> Int64 {
-  guard! self is [u64be(u64), ..]
-  u64.reinterpret_as_int64()
-}
-
-///|
-/// Interpret the first 8 bytes as a little-endian signed `Int64`.
-///
-/// Deprecated: prefer bit-pattern matching (`u64le`) directly.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let bytes = b"\x2A\x00\x00\x00\x00\x00\x00\x00"
-///   guard! bytes is [u64le(u), ..]
-///   inspect(u.reinterpret_as_int64(), content="42")
-/// }
-/// ```
-#deprecated
-#doc(hidden)
-pub fn BytesView::to_int64_le(self : BytesView) -> Int64 {
-  guard! self is [u64le(u64), ..]
-  u64.reinterpret_as_int64()
-}
-
-///|
-/// Converts the bytes in a byte view to a double-precision floating-point number
-/// using big-endian byte order. The byte view must contain exactly 8 bytes,
-/// which represent the IEEE 754 double-precision format.
-///
-/// Parameters:
-///
-/// * `byte_view` : The byte view containing exactly 8 bytes to be interpreted as
-/// a double-precision floating-point number in big-endian order.
-///
-/// Returns a double-precision floating-point number reconstructed from the
-/// bytes.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   // Bytes representing 1.0 in IEEE 754 double-precision format (big-endian)
-///   let bytes = b"\x3F\xF0\x00\x00\x00\x00\x00\x00"
-///   guard! bytes is [u64be(bits), ..]
-///   inspect(bits.reinterpret_as_double(), content="1")
-/// }
-/// ```
-#deprecated("Use bits pattern directly")
-#doc(hidden)
-pub fn BytesView::to_double_be(self : BytesView) -> Double {
-  guard! self is [u64be(u64), ..]
-  u64.reinterpret_as_double()
-}
-
-///|
-/// Converts the bytes in the view to a double-precision floating-point number
-/// using little-endian byte order. Interprets the first 8 bytes as a IEEE 754
-/// double-precision binary floating-point format (binary64) value.
-///
-/// Parameters:
-///
-/// * `bytes` : The byte view to be converted. Must contain at least 8 bytes.
-///
-/// Returns a `Double` value representing the bytes interpreted in little-endian
-/// order.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let bytes = b"\x00\x00\x00\x00\x00\x00\xF0\x3F" // represents 1.0 in little-endian
-///   guard! bytes is [u64le(bits), ..]
-///   inspect(bits.reinterpret_as_double(), content="1")
-/// }
-/// ```
-#deprecated("Use bits pattern directly")
-#doc(hidden)
-pub fn BytesView::to_double_le(self : BytesView) -> Double {
-  guard! self is [u64le(u64), ..]
-  u64.reinterpret_as_double()
 }
 
 ///|
@@ -718,12 +438,7 @@ pub impl Compare for BytesView with fn compare(self, other) -> Int {
   let other_len = other.length()
   let cmp = self_len.compare(other_len)
   guard cmp == 0 else { return cmp }
-  for i, b1 in self {
-    let b2 = other.unsafe_get(i)
-    let cmp = b1.compare(b2)
-    guard cmp == 0 else { return cmp }
-  }
-  0
+  self.lexical_compare(other)
 }
 
 ///|

@@ -116,16 +116,22 @@ fn[T] group_edits(
         }
         // Split if this equal range is large enough
         if len > context * 2 {
-          pending.push(Equal(old_index~, new_index~, len=context))
+          if context > 0 {
+            pending.push(Equal(old_index~, new_index~, len=context))
+          }
           result.push({ edits: pending, old, new })
           let offset = len.saturating_sub(context)
-          pending = [
-            Equal(
-              old_index=old_index + offset,
-              new_index=new_index + offset,
-              len=len - offset,
-            ),
-          ]
+          pending = if context > 0 {
+            [
+              Equal(
+                old_index=old_index + offset,
+                new_index=new_index + offset,
+                len=len - offset,
+              ),
+            ]
+          } else {
+            []
+          }
         } else if len > 0 {
           pending.push(Equal(old_index~, new_index~, len~))
         }

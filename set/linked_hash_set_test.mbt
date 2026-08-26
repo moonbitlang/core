@@ -165,10 +165,10 @@ test "each" {
 test "iter" {
   let buf = StringBuilder(size_hint=20)
   let map = @set.Set(["a", "b", "c"])
-  map.iter().each(e => buf.write_string("[\{e}]"))
+  map.iter().each(e => buf <+ "[\{e}]")
   inspect(buf, content="[a][b][c]")
   buf.reset()
-  map.iter().take(2).each(e => buf.write_string("[\{e}]"))
+  map.iter().take(2).each(e => buf <+ "[\{e}]")
   inspect(buf, content="[a][b]")
 }
 
@@ -293,7 +293,7 @@ test "clear_and_reinsert" {
 ///|
 test "from_iter multiple elements iter" {
   debug_inspect(
-    @set.Set::from_iter([1, 2, 3].iter()),
+    @set.Set::from_iter([|1, 2, 3|]),
     content=(
       #|<Set: [1, 2, 3]>
     ),
@@ -303,7 +303,7 @@ test "from_iter multiple elements iter" {
 ///|
 test "from_iter single element iter" {
   debug_inspect(
-    @set.Set::from_iter([1].iter()),
+    @set.Set::from_iter([|1|]),
     content=(
       #|<Set: [1]>
     ),
@@ -312,7 +312,7 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let map : @set.Set[Int] = @set.Set::from_iter(Iter::empty())
+  let map : @set.Set[Int] = @set.Set::from_iter([||])
   debug_inspect(
     map,
     content=(

@@ -209,6 +209,7 @@ pub fn[T] Array::at(self : Array[T], index : Int) -> T {
 ///   debug_inspect(arr.get(3), content="None")
 /// }
 /// ```
+#intrinsic("%array.get_opt")
 pub fn[T] Array::get(self : Array[T], index : Int) -> T? {
   let len = self.length()
   guard index >= 0 && index < len else { None }
@@ -1924,7 +1925,7 @@ pub fn[A] Array::retain_map(
 ///
 /// ```mbt check
 /// test {
-///   let iter = Iter::singleton(42)
+///   let iter = [|42|]
 ///   let arr = Array::from_iter(iter)
 ///   debug_inspect(arr, content="[42]")
 /// }

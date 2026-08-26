@@ -7,4 +7,10 @@ import {
   "moonbitlang/core/debug",
 }
 
+import {
+  "moonbitlang/core/quickcheck",
+  "moonbitlang/core/json",
+  "moonbitlang/core/string",
+} for "test"
+
 warnings = "-deprecated"

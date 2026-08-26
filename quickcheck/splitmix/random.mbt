@@ -13,11 +13,10 @@
 // limitations under the License.
 
 ///|
-#warnings("-deprecated_syntax")
 struct RandomState {
   mut seed : UInt64
   gamma : UInt64
-} derive(Show, @debug.Debug)
+} derive(@debug.Debug)
 
 ///|
 let golden_gamma : UInt64 = 0x9e3779b97f4a7c15
@@ -47,17 +46,57 @@ pub fn RandomState::next(self : RandomState) -> Unit {
 }
 
 ///|
-/// Get the next random number as a 64-bit unsigned integer.
-pub fn RandomState::next_uint64(self : RandomState) -> UInt64 {
+fn RandomState::next_uint64_raw(self : RandomState) -> UInt64 {
   let { seed, gamma } = self
   self.seed = seed + gamma
   mix64(self.seed)
 }
 
 ///|
-/// Get the next random number as a 32-bit unsigned integer.
-pub fn RandomState::next_uint(self : RandomState) -> UInt {
-  self.next_uint64().to_uint()
+/// Returns a random `UInt64`.
+///
+/// With no `limit`, values span the complete `UInt64` range. With `limit`,
+/// this method uses bitmask rejection to return an unbiased value in the
+/// half-open interval `[0, limit)`. Rejected words consume additional values
+/// from this random state.
+///
+/// # Panics
+///
+/// Panics if `limit` is explicitly set to zero.
+pub fn RandomState::next_uint64(self : RandomState, limit? : UInt64) -> UInt64 {
+  match limit {
+    None => self.next_uint64_raw()
+    Some(0UL) => abort("RandomState::next_uint64: limit must be positive")
+    Some(limit) => {
+      let mask = if limit == 1UL {
+        0UL
+      } else {
+        0xffff_ffff_ffff_ffffUL >> (limit - 1UL).clz()
+      }
+      for candidate = self.next_uint64_raw() & mask; candidate >= limit; {
+        continue self.next_uint64_raw() & mask
+      } nobreak {
+        candidate
+      }
+    }
+  }
+}
+
+///|
+/// Returns a random `UInt`.
+///
+/// With no `limit`, values span the complete `UInt` range. With `limit`, this
+/// method returns an unbiased value in the half-open interval `[0, limit)`.
+///
+/// # Panics
+///
+/// Panics if `limit` is explicitly set to zero.
+pub fn RandomState::next_uint(self : RandomState, limit? : UInt) -> UInt {
+  match limit {
+    None => self.next_uint64_raw().to_uint()
+    Some(0U) => abort("RandomState::next_uint: limit must be positive")
+    Some(limit) => self.next_uint64(limit=limit.to_uint64()).to_uint()
+  }
 }
 
 ///|

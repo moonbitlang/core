@@ -39,8 +39,9 @@ pub fn StringView::find(self : StringView, str : StringView) -> Int? {
         find_by_two_anchors(self, str)
       }
   }
-  // TODO: When the pattern string is long (>= 256),
-  // consider using Two-Way algorithm to ensure linear time complexity.
+  // Worst-case linearity: after dense false-anchor candidates the search
+  // cuts over to a KMP fallback (see the two-anchor search internals), so
+  // the total cost stays O(self + str) even on adversarial inputs.
 }
 
 ///|
@@ -145,8 +146,9 @@ pub fn StringView::rev_find(self : StringView, str : StringView) -> Int? {
         rev_find_by_two_anchors(self, str)
       }
   }
-  // TODO: When the pattern string is long (>= 256),
-  // consider using Two-Way algorithm to ensure linear time complexity.
+  // Worst-case linearity: after dense false-anchor candidates the search
+  // cuts over to a KMP fallback (see the two-anchor search internals), so
+  // the total cost stays O(self + str) even on adversarial inputs.
 }
 
 ///|
@@ -567,18 +569,459 @@ pub fn String::contains_code_unit(self : String, code : UInt16) -> Bool {
 }
 
 ///|
+const ASCII_CHAR_SET_LIMIT : UInt = 128U
+
+///|
+const ASCII_CHAR_SET_WORD_MASK : UInt = 31U
+
+///|
+const ASCII_CHAR_SET_WORD_SHIFT = 5
+
+///|
+// At most this many set members are broadcast to vectors by the SIMD scan;
+// larger sets use the scalar bitmap scan.
+#cfg(any(target="native", target="wasm"))
+const ASCII_CHAR_SET_SIMD_MAX_CHARS = 8
+
+///|
+#inline
+fn build_ascii_char_set(chars : StringView) -> (UInt, UInt, UInt, UInt)? {
+  let mut bits0 = 0U
+  let mut bits1 = 0U
+  let mut bits2 = 0U
+  let mut bits3 = 0U
+  for c in chars {
+    let code = c.to_uint()
+    guard code < ASCII_CHAR_SET_LIMIT else { return None }
+    let bit = 1U << (code & ASCII_CHAR_SET_WORD_MASK).reinterpret_as_int()
+    match code >> ASCII_CHAR_SET_WORD_SHIFT {
+      0 => bits0 = bits0 | bit
+      1 => bits1 = bits1 | bit
+      2 => bits2 = bits2 | bit
+      _ => bits3 = bits3 | bit
+    }
+  }
+  Some((bits0, bits1, bits2, bits3))
+}
+
+///|
+/// Tests membership in a 128-bit ASCII character set represented by four
+/// scalar words, so callers do not need a temporary heap allocation. Code
+/// units outside the ASCII range are never members.
+///
+/// An ASCII code unit is never half of a surrogate pair, so for ASCII-only
+/// sets scanning raw code units is equivalent to scanning characters.
+#inline
+fn ascii_char_set_contains(
+  bits0 : UInt,
+  bits1 : UInt,
+  bits2 : UInt,
+  bits3 : UInt,
+  code : UInt,
+) -> Bool {
+  guard code < ASCII_CHAR_SET_LIMIT else { return false }
+  let bit = 1U << (code & ASCII_CHAR_SET_WORD_MASK).reinterpret_as_int()
+  match code >> ASCII_CHAR_SET_WORD_SHIFT {
+    0 => (bits0 & bit) != 0U
+    1 => (bits1 & bit) != 0U
+    2 => (bits2 & bit) != 0U
+    _ => (bits3 & bit) != 0U
+  }
+}
+
+///|
+// The caller must ensure `0 <= start <= end <= str.length()`.
+#cfg(not(target="js"))
+#inline
+fn string_contains_any_ascii_scalar(
+  str : String,
+  start : Int,
+  end : Int,
+  bits0 : UInt,
+  bits1 : UInt,
+  bits2 : UInt,
+  bits3 : UInt,
+) -> Bool {
+  for i in start..<end {
+    if ascii_char_set_contains(
+        bits0,
+        bits1,
+        bits2,
+        bits3,
+        str.unsafe_get(i).to_uint(),
+      ) {
+      return true
+    }
+  }
+  false
+}
+
+///|
+// Returns the first position in `start..<end` whose code unit is not in the
+// set. The caller must ensure `0 <= start <= end <= str.length()`.
+#inline
+fn string_trim_start_ascii_scalar(
+  str : String,
+  start : Int,
+  end : Int,
+  bits0 : UInt,
+  bits1 : UInt,
+  bits2 : UInt,
+  bits3 : UInt,
+) -> Int {
+  for pos = start {
+    if pos < end &&
+      ascii_char_set_contains(
+        bits0,
+        bits1,
+        bits2,
+        bits3,
+        str.unsafe_get(pos).to_uint(),
+      ) {
+      continue pos + 1
+    } else {
+      break pos
+    }
+  }
+}
+
+///|
+// Returns the position just past the last code unit in `start..<end` that is
+// not in the set. The caller must ensure `0 <= start <= end <= str.length()`.
+#inline
+fn string_trim_end_ascii_scalar(
+  str : String,
+  start : Int,
+  end : Int,
+  bits0 : UInt,
+  bits1 : UInt,
+  bits2 : UInt,
+  bits3 : UInt,
+) -> Int {
+  for pos = end {
+    if pos > start &&
+      ascii_char_set_contains(
+        bits0,
+        bits1,
+        bits2,
+        bits3,
+        str.unsafe_get(pos - 1).to_uint(),
+      ) {
+      continue pos - 1
+    } else {
+      break pos
+    }
+  }
+}
+
+///|
+// Broadcasts the set member at `index` (repeating the first member for unused
+// slots, so the compare tree stays branchless) for the SIMD scan.
+#cfg(any(target="native", target="wasm"))
+#inline
+fn ascii_char_set_splat(chars : StringView, count : Int, index : Int) -> V128 {
+  i16x8_splat(chars.unsafe_get(if index < count { index } else { 0 }))
+}
+
+///|
+// Per-lane mask of which of the eight code units in `block` are members of
+// the set broadcast across `s0..s7`.
+#cfg(any(target="native", target="wasm"))
+#inline
+fn ascii_char_set_block_mask(
+  block : V128,
+  s0 : V128,
+  s1 : V128,
+  s2 : V128,
+  s3 : V128,
+  s4 : V128,
+  s5 : V128,
+  s6 : V128,
+  s7 : V128,
+) -> V128 {
+  v128_or(
+    v128_or(
+      v128_or(i16x8_eq(block, s0), i16x8_eq(block, s1)),
+      v128_or(i16x8_eq(block, s2), i16x8_eq(block, s3)),
+    ),
+    v128_or(
+      v128_or(i16x8_eq(block, s4), i16x8_eq(block, s5)),
+      v128_or(i16x8_eq(block, s6), i16x8_eq(block, s7)),
+    ),
+  )
+}
+
+///|
+// On the JavaScript backend the character iterator compiles to a faster loop
+// than indexed code-unit reads, and for an ASCII set the two scans agree.
+#cfg(target="js")
+fn string_contains_any_ascii(
+  str : String,
+  start : Int,
+  end : Int,
+  _chars : StringView,
+  bits0 : UInt,
+  bits1 : UInt,
+  bits2 : UInt,
+  bits3 : UInt,
+) -> Bool {
+  StringView::make_view(str, start, end).contains_any_ascii_chars(
+    bits0, bits1, bits2, bits3,
+  )
+}
+
+///|
+#cfg(target="js")
+fn StringView::contains_any_ascii_chars(
+  self : StringView,
+  bits0 : UInt,
+  bits1 : UInt,
+  bits2 : UInt,
+  bits3 : UInt,
+) -> Bool {
+  for c in self {
+    if ascii_char_set_contains(bits0, bits1, bits2, bits3, c.to_uint()) {
+      return true
+    }
+  }
+  false
+}
+
+///|
+#cfg(not(any(target="native", target="wasm", target="js")))
+fn string_contains_any_ascii(
+  str : String,
+  start : Int,
+  end : Int,
+  _chars : StringView,
+  bits0 : UInt,
+  bits1 : UInt,
+  bits2 : UInt,
+  bits3 : UInt,
+) -> Bool {
+  string_contains_any_ascii_scalar(str, start, end, bits0, bits1, bits2, bits3)
+}
+
+///|
+// Scan eight UTF-16 code units at a time on linear-memory backends, comparing
+// each block against every set member at once, then scan the remaining tail
+// one code unit at a time.
+#cfg(any(target="native", target="wasm"))
+fn string_contains_any_ascii(
+  str : String,
+  start : Int,
+  end : Int,
+  chars : StringView,
+  bits0 : UInt,
+  bits1 : UInt,
+  bits2 : UInt,
+  bits3 : UInt,
+) -> Bool {
+  let count = chars.length()
+  guard count >= 1 && count <= ASCII_CHAR_SET_SIMD_MAX_CHARS && start + 8 <= end else {
+    return string_contains_any_ascii_scalar(
+      str, start, end, bits0, bits1, bits2, bits3,
+    )
+  }
+  let s0 = ascii_char_set_splat(chars, count, 0)
+  let s1 = ascii_char_set_splat(chars, count, 1)
+  let s2 = ascii_char_set_splat(chars, count, 2)
+  let s3 = ascii_char_set_splat(chars, count, 3)
+  let s4 = ascii_char_set_splat(chars, count, 4)
+  let s5 = ascii_char_set_splat(chars, count, 5)
+  let s6 = ascii_char_set_splat(chars, count, 6)
+  let s7 = ascii_char_set_splat(chars, count, 7)
+  let tail_start = for pos = start; pos + 8 <= end; {
+    let block = v128_load_i16x8(str, pos)
+    if v128_any_true(
+        ascii_char_set_block_mask(block, s0, s1, s2, s3, s4, s5, s6, s7),
+      ) {
+      return true
+    }
+    continue pos + 8
+  } nobreak {
+    pos
+  }
+  string_contains_any_ascii_scalar(
+    str, tail_start, end, bits0, bits1, bits2, bits3,
+  )
+}
+
+///|
+#cfg(not(any(target="native", target="wasm")))
+fn string_trim_start_ascii(
+  str : String,
+  start : Int,
+  end : Int,
+  _chars : StringView,
+  bits0 : UInt,
+  bits1 : UInt,
+  bits2 : UInt,
+  bits3 : UInt,
+) -> Int {
+  string_trim_start_ascii_scalar(str, start, end, bits0, bits1, bits2, bits3)
+}
+
+///|
+// Skip eight fully-trimmable code units at a time on linear-memory backends;
+// the first block containing a non-member (and the sub-8 tail) is finished by
+// the scalar scan.
+#cfg(any(target="native", target="wasm"))
+fn string_trim_start_ascii(
+  str : String,
+  start : Int,
+  end : Int,
+  chars : StringView,
+  bits0 : UInt,
+  bits1 : UInt,
+  bits2 : UInt,
+  bits3 : UInt,
+) -> Int {
+  let count = chars.length()
+  guard count >= 1 && count <= ASCII_CHAR_SET_SIMD_MAX_CHARS && start + 8 <= end else {
+    return string_trim_start_ascii_scalar(
+      str, start, end, bits0, bits1, bits2, bits3,
+    )
+  }
+  let s0 = ascii_char_set_splat(chars, count, 0)
+  let s1 = ascii_char_set_splat(chars, count, 1)
+  let s2 = ascii_char_set_splat(chars, count, 2)
+  let s3 = ascii_char_set_splat(chars, count, 3)
+  let s4 = ascii_char_set_splat(chars, count, 4)
+  let s5 = ascii_char_set_splat(chars, count, 5)
+  let s6 = ascii_char_set_splat(chars, count, 6)
+  let s7 = ascii_char_set_splat(chars, count, 7)
+  let boundary = for pos = start; pos + 8 <= end; {
+    let block = v128_load_i16x8(str, pos)
+    let mask = ascii_char_set_block_mask(block, s0, s1, s2, s3, s4, s5, s6, s7)
+    if i16x8_bitmask(mask) != 0xFF {
+      break pos
+    }
+    continue pos + 8
+  } nobreak {
+    pos
+  }
+  string_trim_start_ascii_scalar(str, boundary, end, bits0, bits1, bits2, bits3)
+}
+
+///|
+#cfg(not(any(target="native", target="wasm")))
+fn string_trim_end_ascii(
+  str : String,
+  start : Int,
+  end : Int,
+  _chars : StringView,
+  bits0 : UInt,
+  bits1 : UInt,
+  bits2 : UInt,
+  bits3 : UInt,
+) -> Int {
+  string_trim_end_ascii_scalar(str, start, end, bits0, bits1, bits2, bits3)
+}
+
+///|
+// Mirror of `string_trim_start_ascii`, scanning blocks backward from the end.
+#cfg(any(target="native", target="wasm"))
+fn string_trim_end_ascii(
+  str : String,
+  start : Int,
+  end : Int,
+  chars : StringView,
+  bits0 : UInt,
+  bits1 : UInt,
+  bits2 : UInt,
+  bits3 : UInt,
+) -> Int {
+  let count = chars.length()
+  guard count >= 1 && count <= ASCII_CHAR_SET_SIMD_MAX_CHARS && start + 8 <= end else {
+    return string_trim_end_ascii_scalar(
+      str, start, end, bits0, bits1, bits2, bits3,
+    )
+  }
+  let s0 = ascii_char_set_splat(chars, count, 0)
+  let s1 = ascii_char_set_splat(chars, count, 1)
+  let s2 = ascii_char_set_splat(chars, count, 2)
+  let s3 = ascii_char_set_splat(chars, count, 3)
+  let s4 = ascii_char_set_splat(chars, count, 4)
+  let s5 = ascii_char_set_splat(chars, count, 5)
+  let s6 = ascii_char_set_splat(chars, count, 6)
+  let s7 = ascii_char_set_splat(chars, count, 7)
+  let boundary = for pos = end; pos - 8 >= start; {
+    let block = v128_load_i16x8(str, pos - 8)
+    let mask = ascii_char_set_block_mask(block, s0, s1, s2, s3, s4, s5, s6, s7)
+    if i16x8_bitmask(mask) != 0xFF {
+      break pos
+    }
+    continue pos - 8
+  } nobreak {
+    pos
+  }
+  string_trim_end_ascii_scalar(str, start, boundary, bits0, bits1, bits2, bits3)
+}
+
+///|
+fn StringView::trim_start_with_chars(
+  self : StringView,
+  chars : StringView,
+) -> StringView {
+  for x = self {
+    match x {
+      [] as v => break v
+      [c, .. rest] as v =>
+        if chars.contains_char(c) {
+          continue rest
+        } else {
+          break v
+        }
+    }
+  }
+}
+
+///|
+fn StringView::trim_end_with_chars(
+  self : StringView,
+  chars : StringView,
+) -> StringView {
+  for x = self {
+    match x {
+      [] as v => break v
+      [.. rest, c] as v =>
+        if chars.contains_char(c) {
+          continue rest
+        } else {
+          break v
+        }
+    }
+  }
+}
+
+///|
 /// Returns true if this string contains any character from the given set.
 pub fn StringView::contains_any(self : StringView, chars~ : StringView) -> Bool {
   match chars {
     [] => false
     [c] => self.contains_char(c) // specialize for single character
     _ =>
-      for c in self {
-        if chars.contains_char(c) {
-          break true
-        }
-      } nobreak {
-        false
+      match build_ascii_char_set(chars) {
+        Some((bits0, bits1, bits2, bits3)) =>
+          string_contains_any_ascii(
+            self.str(),
+            self.start(),
+            self.end(),
+            chars,
+            bits0,
+            bits1,
+            bits2,
+            bits3,
+          )
+        None =>
+          for c in self {
+            if chars.contains_char(c) {
+              break true
+            }
+          } nobreak {
+            false
+          }
       }
   }
 }
@@ -645,6 +1088,37 @@ test "contains_any" {
   inspect("".contains_any(chars="abc"), content="false")
   inspect("😀😃".contains_any(chars="😄😀"), content="true")
   inspect("hello"[:].contains_any(chars="eo"), content="true")
+}
+
+///|
+test "contains_any and trim ASCII character sets" {
+  assert_true("😀a".contains_any(chars="az"))
+  assert_false("😀".contains_any(chars="az"))
+  assert_true("😀".contains_any(chars="a😀"))
+  let view = "x  hello \ty"[1:10]
+  assert_true(view.trim(chars=" \t") == "hello")
+}
+
+///|
+test "build ASCII character set" {
+  match build_ascii_char_set("a z") {
+    Some((bits0, bits1, bits2, bits3)) => {
+      assert_true(
+        ascii_char_set_contains(bits0, bits1, bits2, bits3, 'a'.to_uint()),
+      )
+      assert_true(
+        ascii_char_set_contains(bits0, bits1, bits2, bits3, 'z'.to_uint()),
+      )
+      assert_true(
+        ascii_char_set_contains(bits0, bits1, bits2, bits3, ' '.to_uint()),
+      )
+      assert_false(
+        ascii_char_set_contains(bits0, bits1, bits2, bits3, 'b'.to_uint()),
+      )
+    }
+    None => assert_false(true)
+  }
+  assert_true(build_ascii_char_set("a😀") is None)
 }
 
 ///|
@@ -718,16 +1192,21 @@ pub fn StringView::trim_start(
   self : StringView,
   chars? : StringView = "\t\n\r ",
 ) -> StringView {
-  for x = self {
-    match x {
-      [] as v => break v
-      [c, .. rest] as v =>
-        if chars.contains_char(c) {
-          continue rest
-        } else {
-          break v
-        }
+  match build_ascii_char_set(chars) {
+    Some((bits0, bits1, bits2, bits3)) => {
+      let start = string_trim_start_ascii(
+        self.str(),
+        self.start(),
+        self.end(),
+        chars,
+        bits0,
+        bits1,
+        bits2,
+        bits3,
+      )
+      StringView::make_view(self.str(), start, self.end())
     }
+    None => self.trim_start_with_chars(chars)
   }
 }
 
@@ -766,16 +1245,21 @@ pub fn StringView::trim_end(
   self : StringView,
   chars? : StringView = "\t\n\r ",
 ) -> StringView {
-  for x = self {
-    match x {
-      [] as v => break v
-      [.. rest, c] as v =>
-        if chars.contains_char(c) {
-          continue rest
-        } else {
-          break v
-        }
+  match build_ascii_char_set(chars) {
+    Some((bits0, bits1, bits2, bits3)) => {
+      let end = string_trim_end_ascii(
+        self.str(),
+        self.start(),
+        self.end(),
+        chars,
+        bits0,
+        bits1,
+        bits2,
+        bits3,
+      )
+      StringView::make_view(self.str(), self.start(), end)
     }
+    None => self.trim_end_with_chars(chars)
   }
 }
 
@@ -815,7 +1299,32 @@ pub fn StringView::trim(
   self : StringView,
   chars? : StringView = "\t\n\r ",
 ) -> StringView {
-  self.trim_start(chars~).trim_end(chars~)
+  match build_ascii_char_set(chars) {
+    Some((bits0, bits1, bits2, bits3)) => {
+      let start = string_trim_start_ascii(
+        self.str(),
+        self.start(),
+        self.end(),
+        chars,
+        bits0,
+        bits1,
+        bits2,
+        bits3,
+      )
+      let end = string_trim_end_ascii(
+        self.str(),
+        start,
+        self.end(),
+        chars,
+        bits0,
+        bits1,
+        bits2,
+        bits3,
+      )
+      StringView::make_view(self.str(), start, end)
+    }
+    None => self.trim_start_with_chars(chars).trim_end_with_chars(chars)
+  }
 }
 
 ///|
@@ -939,8 +1448,12 @@ test "is_blank" {
 
 ///|
 /// Returns a new string with `padding_char`s prefixed to `self` if
-/// `self.char_length() < total_width`. The number of unicode characters in
-/// the returned string is `total_width` if padding is added.
+/// `self.length() < total_width`. The threshold and the pad count are
+/// measured in UTF-16 code units: `total_width - self.length()` copies of
+/// `padding_char` are prefixed. Characters outside the BMP count as two
+/// code units, so with such characters in `self` the result has fewer than
+/// `total_width` characters, and with a non-BMP `padding_char` the result's
+/// UTF-16 length exceeds `total_width`.
 pub fn StringView::pad_start(
   self : StringView,
   total_width : Int,
@@ -954,8 +1467,12 @@ pub fn StringView::pad_start(
 
 ///|
 /// Returns a new string with `padding_char`s prefixed to `self` if
-/// `self.char_length() < total_width`. The number of unicode characters in
-/// the returned string is `total_width` if padding is added.
+/// `self.length() < total_width`. The threshold and the pad count are
+/// measured in UTF-16 code units: `total_width - self.length()` copies of
+/// `padding_char` are prefixed. Characters outside the BMP count as two
+/// code units, so with such characters in `self` the result has fewer than
+/// `total_width` characters, and with a non-BMP `padding_char` the result's
+/// UTF-16 length exceeds `total_width`.
 pub fn String::pad_start(
   self : String,
   total_width : Int,
@@ -994,8 +1511,12 @@ test "pad_start" {
 
 ///|
 /// Returns a new string with `padding_char`s appended to `self` if
-/// `self.length() < total_width`. The number of unicode characters in
-/// the returned string is `total_width` if padding is added.
+/// `self.length() < total_width`. The threshold and the pad count are
+/// measured in UTF-16 code units: `total_width - self.length()` copies of
+/// `padding_char` are appended. Characters outside the BMP count as two
+/// code units, so with such characters in `self` the result has fewer than
+/// `total_width` characters, and with a non-BMP `padding_char` the result's
+/// UTF-16 length exceeds `total_width`.
 pub fn StringView::pad_end(
   self : StringView,
   total_width : Int,
@@ -1009,8 +1530,12 @@ pub fn StringView::pad_end(
 
 ///|
 /// Returns a new string with `padding_char`s appended to `self` if
-/// `self.length() < total_width`. The number of unicode characters in
-/// the returned string is `total_width` if padding is added.
+/// `self.length() < total_width`. The threshold and the pad count are
+/// measured in UTF-16 code units: `total_width - self.length()` copies of
+/// `padding_char` are appended. Characters outside the BMP count as two
+/// code units, so with such characters in `self` the result has fewer than
+/// `total_width` characters, and with a non-BMP `padding_char` the result's
+/// UTF-16 length exceeds `total_width`.
 pub fn String::pad_end(
   self : String,
   total_width : Int,
@@ -2165,6 +2690,7 @@ test "rev_fold with raise" {
 ///|
 /// Returns the UTF-16 code unit at the given index. Returns `None` if the index
 /// is out of bounds.
+#intrinsic("%string.get_opt")
 pub fn String::get(self : String, idx : Int) -> UInt16? {
   guard idx >= 0 && idx < self.length() else { return None }
   Some(self.unsafe_get(idx))
@@ -2173,6 +2699,7 @@ pub fn String::get(self : String, idx : Int) -> UInt16? {
 ///|
 /// Returns the UTF-16 code unit at the given index. Returns `None` if the index
 /// is out of bounds.
+#intrinsic("%stringview.get_opt")
 pub fn StringView::get(self : StringView, idx : Int) -> UInt16? {
   guard idx >= 0 && idx < self.length() else { return None }
   Some(self.unsafe_get(idx))

@@ -94,7 +94,9 @@ fn[K : Eq] HashSet::add_with_hash(
     self.grow()
   }
   let (idx, psl) = for psl = 0, idx = hash & self.capacity_mask {
-    match self.entries[idx] {
+    // SAFETY: `idx` starts masked by `capacity_mask` and every step re-masks
+    // it, so it is in bounds for `entries`, whose length is `capacity`.
+    match self.entries.unsafe_get(idx) {
       None => break (idx, psl)
       Some(curr_entry) => {
         if curr_entry.hash == hash && curr_entry.key == key {
@@ -121,7 +123,8 @@ fn[K] HashSet::push_away(
   entry : Entry[K],
 ) -> Unit {
   for psl = entry.psl + 1, idx = (idx + 1) & self.capacity_mask, entry = entry {
-    match self.entries[idx] {
+    // SAFETY: same masked-index invariant as `add_with_hash`.
+    match self.entries.unsafe_get(idx) {
       None => {
         entry.psl = psl
         self.set_entry(entry, idx)
@@ -149,7 +152,9 @@ fn[K] HashSet::set_entry(
   entry : Entry[K],
   new_idx : Int,
 ) -> Unit {
-  self.entries[new_idx] = Some(entry)
+  // SAFETY: every caller supplies an index already proven in bounds -- from
+  // a masked probe, or from `shift_back`'s `cur`.
+  self.entries.unsafe_set(new_idx, Some(entry))
 }
 
 ///|
@@ -158,7 +163,8 @@ pub fn[K : Hash + Eq] HashSet::contains(self : HashSet[K], key : K) -> Bool {
   // inline lookup to avoid unnecessary allocations
   let hash = Hash::hash(key)
   for i = 0, idx = hash & self.capacity_mask {
-    guard self.entries[idx] is Some(entry) else { break false }
+    // SAFETY: same masked-index invariant as `add_with_hash`.
+    guard self.entries.unsafe_get(idx) is Some(entry) else { break false }
     if entry.hash == hash && entry.key == key {
       break true
     }
@@ -193,7 +199,8 @@ pub fn[K : Hash + Eq] HashSet::contains(self : HashSet[K], key : K) -> Bool {
 pub fn[K : Hash + Eq] HashSet::remove(self : HashSet[K], key : K) -> Unit {
   let hash = Hash::hash(key)
   for i = 0, idx = hash & self.capacity_mask {
-    guard self.entries[idx] is Some(entry) else { break }
+    // SAFETY: same masked-index invariant as `add_with_hash`.
+    guard self.entries.unsafe_get(idx) is Some(entry) else { break }
     if entry.hash == hash && entry.key == key {
       self.shift_back(idx)
       self.size -= 1
@@ -210,9 +217,13 @@ pub fn[K : Hash + Eq] HashSet::remove(self : HashSet[K], key : K) -> Unit {
 fn[K] HashSet::shift_back(self : HashSet[K], idx : Int) -> Unit {
   for cur = idx {
     let next = (cur + 1) & self.capacity_mask
-    match self.entries[next] {
+    // SAFETY: the initial `cur` is in bounds by either route its callers
+    // take -- `remove` derives it from a masked probe, and `retain` reaches
+    // here only after a checked `entries[i]` read succeeded. `next` is
+    // re-masked each step, and `cur` afterwards is a previous `next`.
+    match self.entries.unsafe_get(next) {
       None | Some({ psl: 0, .. }) => {
-        self.entries[cur] = None
+        self.entries.unsafe_set(cur, None)
         break
       }
       Some(entry) => {
@@ -253,7 +264,9 @@ fn[K] HashSet::grow(self : HashSet[K]) -> Unit {
 fn[K] HashSet::rehash_place_entry(self : HashSet[K], entry : Entry[K]) -> Unit {
   let hash = entry.hash
   for psl = 0, idx = hash & self.capacity_mask {
-    match self.entries[idx] {
+    // SAFETY: same masked-index invariant as `add_with_hash`; `grow` installs
+    // the new `entries` and `capacity_mask` together before rehashing.
+    match self.entries.unsafe_get(idx) {
       None => {
         entry.psl = psl
         self.set_entry(entry, idx)
@@ -704,7 +717,14 @@ pub fn[K] HashSet::copy(self : HashSet[K]) -> HashSet[K] {
     capacity_mask: self.capacity_mask,
     grow_at: self.grow_at,
   }
-  self.entries.blit_to(other.entries, len=self.capacity)
+  // Rebuild each entry rather than blitting the references: `Entry::psl` is
+  // mutable and `shift_back` decrements it, so sharing entries would let a
+  // removal on one set corrupt the probe sequences of the other.
+  for i in 0..<self.capacity {
+    if self.entries[i] is Some({ psl, hash, key }) {
+      other.entries[i] = Some({ psl, hash, key })
+    }
+  }
   other
 }
 

@@ -16,6 +16,7 @@ changelog should follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 #### Changed
 
+- **BREAKING**: `@json.parse` now rejects unpaired `\uXXXX` surrogate escapes in strings, raising `ParseError::InvalidChar` at the backslash that opens the offending escape; an escaped leading surrogate must be followed immediately by an escaped trailing surrogate, and the pair decodes to the character it denotes. Previously such escapes were decoded unchecked and produced a `String` that was not well-formed Unicode. `@json.valid` reports the same documents as invalid. JSON emitted by `JSON.stringify` in JavaScript can contain these escapes, so input that JavaScript and Python accept may now be rejected — as it is by Rust's serde_json
 - `@json.inspect` has been migrated to `json_inspect`
 - `String::sub` and `StringView::sub` now panic on invalid indices instead of raising `CreatingViewError`. The `CreatingViewError` type has been removed.
 

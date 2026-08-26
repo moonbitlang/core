@@ -12,6 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// SAFETY NOTE for the unchecked probe accesses in this file.
+//
+// `capacity` is always a power of two and at least 1, `capacity_mask` is
+// `capacity - 1`, and `entries.length()` is `capacity`. Every probe index is
+// therefore in bounds: it starts as `hash & capacity_mask` and each step
+// re-masks with `(idx + 1) & capacity_mask`. `grow` installs the new array,
+// capacity and mask together before any rehash probe runs, and `set_with_hash`
+// re-masks from scratch after growing. `shift_back` is the one entry point
+// that can be reached with an index which is not mask-derived -- `retain` in
+// utils.mbt passes a linear one -- so it carries its own proof at its
+// definition. On that basis the probe loops below use `unsafe_get` /
+// `unsafe_set`; the linear iteration sites keep the checked form.
+
 ///|
 let default_init_capacity = 8
 
@@ -119,8 +132,9 @@ fn[K : Eq, V] HashMap::set_with_hash(
   hash : Int,
 ) -> Unit {
   // Only grow when actually inserting a new entry, not when updating existing
+  // SAFETY: masked probe index; see the note at the top of this file.
   for psl = 0, idx = hash & self.capacity_mask {
-    match self.entries[idx] {
+    match self.entries.unsafe_get(idx) {
       None => {
         // Need to insert new entry - check if grow is needed first
         if self.size >= self.capacity / 2 {
@@ -129,7 +143,7 @@ fn[K : Eq, V] HashMap::set_with_hash(
           continue 0, hash & self.capacity_mask
         }
         let entry = { psl, key, value, hash }
-        self.entries[idx] = Some(entry)
+        self.entries.unsafe_set(idx, Some(entry))
         self.size += 1
         return
       }
@@ -148,7 +162,7 @@ fn[K : Eq, V] HashMap::set_with_hash(
           }
           self.push_away(idx, curr_entry)
           let entry = { psl, key, value, hash }
-          self.entries[idx] = Some(entry)
+          self.entries.unsafe_set(idx, Some(entry))
           self.size += 1
           return
         }
@@ -165,17 +179,18 @@ fn[K, V] HashMap::push_away(
   idx : Int,
   entry : Entry[K, V],
 ) -> Unit {
+  // SAFETY: masked probe index; see the note at the top of this file.
   for psl = entry.psl + 1, idx = (idx + 1) & self.capacity_mask, entry = entry {
-    match self.entries[idx] {
+    match self.entries.unsafe_get(idx) {
       None => {
         entry.psl = psl
-        self.entries[idx] = Some(entry)
+        self.entries.unsafe_set(idx, Some(entry))
         break
       }
       Some(curr_entry) =>
         if psl > curr_entry.psl {
           entry.psl = psl
-          self.entries[idx] = Some(entry)
+          self.entries.unsafe_set(idx, Some(entry))
           continue curr_entry.psl + 1,
             (idx + 1) & self.capacity_mask,
             curr_entry
@@ -208,8 +223,9 @@ fn[K, V] HashMap::push_away(
 pub fn[K : Hash + Eq, V] HashMap::get(self : HashMap[K, V], key : K) -> V? {
   // self.get_with_hash(key, key.hash())
   let hash = Hash::hash(key)
+  // SAFETY: masked probe index; see the note at the top of this file.
   for i = 0, idx = hash & self.capacity_mask {
-    guard self.entries[idx] is Some(entry) else { break None }
+    guard self.entries.unsafe_get(idx) is Some(entry) else { break None }
     if entry.hash == hash && entry.key == key {
       break Some(entry.value)
     }
@@ -244,8 +260,9 @@ pub fn[V] HashMap::get_from_bytes(
   key : BytesView,
 ) -> V? {
   let hash = Hash::hash(key)
+  // SAFETY: masked probe index; see the note at the top of this file.
   for i = 0, idx = hash & self.capacity_mask {
-    guard self.entries[idx] is Some(entry) else { break None }
+    guard self.entries.unsafe_get(idx) is Some(entry) else { break None }
     if entry.hash == hash && key.equal_to_bytes(entry.key) {
       break Some(entry.value)
     }
@@ -280,8 +297,9 @@ pub fn[V] HashMap::get_from_string(
   key : StringView,
 ) -> V? {
   let hash = Hash::hash(key)
+  // SAFETY: masked probe index; see the note at the top of this file.
   for i = 0, idx = hash & self.capacity_mask {
-    guard self.entries[idx] is Some(entry) else { break None }
+    guard self.entries.unsafe_get(idx) is Some(entry) else { break None }
     if entry.hash == hash && key.equal_to_string(entry.key) {
       break Some(entry.value)
     }
@@ -313,8 +331,9 @@ pub fn[V] HashMap::get_from_string(
 #alias("_[_]")
 pub fn[K : Hash + Eq, V] HashMap::at(self : HashMap[K, V], key : K) -> V {
   let hash = Hash::hash(key)
+  // SAFETY: masked probe index; see the note at the top of this file.
   for i = 0, idx = hash & self.capacity_mask {
-    guard! self.entries[idx] is Some(entry)
+    guard! self.entries.unsafe_get(idx) is Some(entry)
     if entry.hash == hash && entry.key == key {
       break entry.value
     }
@@ -354,9 +373,10 @@ pub fn[K : Hash + Eq, V] HashMap::get_or_init(
   init : () -> V,
 ) -> V {
   let hash = Hash::hash(key)
+  // SAFETY: masked probe index; see the note at the top of this file.
   let (idx, psl, new_value, push_away) = for psl = 0, idx = hash &
                                                self.capacity_mask {
-    match self.entries[idx] {
+    match self.entries.unsafe_get(idx) {
       Some(entry) => {
         if entry.hash == hash && entry.key == key {
           return entry.value
@@ -382,7 +402,7 @@ pub fn[K : Hash + Eq, V] HashMap::get_or_init(
       self.push_away(idx, entry)
     }
     let entry = { psl, hash, key, value: new_value }
-    self.entries[idx] = Some(entry)
+    self.entries.unsafe_set(idx, Some(entry))
     self.size += 1
   }
   new_value
@@ -445,9 +465,10 @@ pub fn[K : Hash + Eq, V] HashMap::update(
   f : (V?) -> V?,
 ) -> Unit {
   let hash = Hash::hash(key)
+  // SAFETY: masked probe index; see the note at the top of this file.
   let (idx, psl, new_value, push_away) = for psl = 0, idx = hash &
                                                self.capacity_mask {
-    match self.entries[idx] {
+    match self.entries.unsafe_get(idx) {
       Some(entry) => {
         if entry.hash == hash && entry.key == key {
           if f(Some(entry.value)) is Some(new_value) {
@@ -477,7 +498,7 @@ pub fn[K : Hash + Eq, V] HashMap::update(
     if push_away is Some(entry) {
       self.push_away(idx, entry)
     }
-    self.entries[idx] = Some({ psl, hash, key, value: new_value })
+    self.entries.unsafe_set(idx, Some({ psl, hash, key, value: new_value }))
     self.size += 1
   }
 }
@@ -508,8 +529,9 @@ pub fn[K : Hash + Eq, V] HashMap::update_or_default(
   f : (V) -> V,
 ) -> Unit {
   let hash = Hash::hash(key)
+  // SAFETY: masked probe index; see the note at the top of this file.
   let (idx, psl, push_away) = for psl = 0, idx = hash & self.capacity_mask {
-    match self.entries[idx] {
+    match self.entries.unsafe_get(idx) {
       Some(entry) => {
         if entry.hash == hash && entry.key == key {
           entry.value = f(entry.value)
@@ -531,7 +553,7 @@ pub fn[K : Hash + Eq, V] HashMap::update_or_default(
       self.push_away(idx, entry)
     }
     let entry = { psl, hash, key, value: default }
-    self.entries[idx] = Some(entry)
+    self.entries.unsafe_set(idx, Some(entry))
     self.size += 1
   }
 }
@@ -564,8 +586,9 @@ pub fn[K : Hash + Eq, V] HashMap::get_or_default(
   default : V,
 ) -> V {
   let hash = Hash::hash(key)
+  // SAFETY: masked probe index; see the note at the top of this file.
   for i = 0, idx = hash & self.capacity_mask {
-    guard self.entries[idx] is Some(entry) else { break default }
+    guard self.entries.unsafe_get(idx) is Some(entry) else { break default }
     if entry.hash == hash && entry.key == key {
       break entry.value
     }
@@ -600,8 +623,9 @@ pub fn[K : Hash + Eq, V] HashMap::contains(
   key : K,
 ) -> Bool {
   let hash = Hash::hash(key)
+  // SAFETY: masked probe index; see the note at the top of this file.
   for i = 0, idx = hash & self.capacity_mask {
-    guard self.entries[idx] is Some(entry) else { return false }
+    guard self.entries.unsafe_get(idx) is Some(entry) else { return false }
     if entry.hash == hash && entry.key == key {
       return true
     }
@@ -642,8 +666,9 @@ pub fn[K : Hash + Eq, V : Eq] HashMap::contains_kv(
   value : V,
 ) -> Bool {
   let hash = Hash::hash(key)
+  // SAFETY: masked probe index; see the note at the top of this file.
   for i = 0, idx = hash & self.capacity_mask {
-    guard self.entries[idx] is Some(entry) else { return false }
+    guard self.entries.unsafe_get(idx) is Some(entry) else { return false }
     if entry.hash == hash && entry.key == key && entry.value == value {
       return true
     }
@@ -685,8 +710,9 @@ fn[K : Eq, V] HashMap::remove_with_hash(
   key : K,
   hash : Int,
 ) -> Unit {
+  // SAFETY: masked probe index; see the note at the top of this file.
   for i = 0, idx = hash & self.capacity_mask {
-    match self.entries[idx] {
+    match self.entries.unsafe_get(idx) {
       Some(entry) => {
         if entry.hash == hash && entry.key == key {
           self.shift_back(idx)
@@ -705,16 +731,22 @@ fn[K : Eq, V] HashMap::remove_with_hash(
 
 ///|
 fn[K, V] HashMap::shift_back(self : HashMap[K, V], idx : Int) -> Unit {
+  // SAFETY: the initial `cur` is in bounds by any of the three routes its
+  // callers take -- `update` and `remove_with_hash` pass a masked probe
+  // index, and `retain` (in utils.mbt) reaches here only after its own
+  // checked `entries[i]` read succeeded, with capacity never shrinking.
+  // `next` is re-masked each step, and later `cur` values are previous
+  // `next` values.
   for cur = idx {
     let next = (cur + 1) & self.capacity_mask
-    match self.entries[next] {
+    match self.entries.unsafe_get(next) {
       None | Some({ psl: 0, .. }) => {
-        self.entries[cur] = None
+        self.entries.unsafe_set(cur, None)
         break
       }
       Some(entry) => {
         entry.psl -= 1
-        self.entries[cur] = Some(entry)
+        self.entries.unsafe_set(cur, Some(entry))
         continue next
       }
     }
@@ -742,18 +774,19 @@ fn[K, V] HashMap::rehash_place_entry(
   entry : Entry[K, V],
 ) -> Unit {
   let hash = entry.hash
+  // SAFETY: masked probe index; see the note at the top of this file.
   for psl = 0, idx = hash & self.capacity_mask {
-    match self.entries[idx] {
+    match self.entries.unsafe_get(idx) {
       None => {
         entry.psl = psl
-        self.entries[idx] = Some(entry)
+        self.entries.unsafe_set(idx, Some(entry))
         return
       }
       Some(curr) =>
         if psl > curr.psl {
           self.push_away(idx, curr)
           entry.psl = psl
-          self.entries[idx] = Some(entry)
+          self.entries.unsafe_set(idx, Some(entry))
           return
         } else {
           continue psl + 1, (idx + 1) & self.capacity_mask

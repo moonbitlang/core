@@ -149,7 +149,7 @@ test {
   arr.sort()
   @test.assert_eq(arr, [1, 2, 3])
   // from_iter
-  let set2 = @hashset.from_iter([4, 5, 6].iter())
+  let set2 = @hashset.from_iter([|4, 5, 6|])
   @test.assert_eq(set2.length(), 3)
 }
 ```

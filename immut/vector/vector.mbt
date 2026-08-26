@@ -393,7 +393,20 @@ pub fn[A] Vector::pop(self : Vector[A]) -> Vector[A]? {
 }
 
 ///|
-/// Given two trees, concatenate them into a new tree.
+/// Concatenate two vectors.
+///
+/// The result always takes `other`'s tail, so the work is deciding what
+/// happens to `self`'s. In order of cost:
+///
+/// 1. `other.tree` is `Empty` and the two tails fit in one chunk — splice
+///    the tails, leave `self.tree` alone. No tree work at all.
+/// 2. Same, but the tails overflow — `normalize_tree` folds `self`'s tail into
+///    its tree, then `other`'s tail becomes the new tail.
+/// 3. `other` has a tree and `self` has no tail — a plain `Tree::concat`.
+/// 4. Both have substance — `Tree::concat_with_suffix` threads `self`'s tail
+///    through the splice as an extra leaf, rather than normalizing first and
+///    concatenating in two passes. This is the case that can widen a merge to
+///    65 children; see `rebalance`.
 pub fn[A] Vector::concat(self : Vector[A], other : Vector[A]) -> Vector[A] {
   if self.is_empty() {
     return other
@@ -810,35 +823,32 @@ fn[A] make_t(
 }
 
 ///|
+/// Build a radix tree of capacity `cap` over `leaves`, which must be non-empty
+/// and hold `BRANCHING_FACTOR` elements each except possibly the last.
+///
+/// `cap` alone fixes the height (`cap` = `BRANCHING_FACTOR` ^ (height + 1)), so
+/// every level has to recurse even when few leaves are left: a short remainder
+/// still belongs at the bottom, not one level down from wherever it is. Getting
+/// that wrong yields a leaf above shift 0, which throws off both radix descent
+/// and `Tree::size`.
 fn[A] from_leaves(leaves : ArrayView[FixedArray[A]], cap : Int) -> Tree[A] {
-  if cap == BRANCHING_FACTOR {
-    Leaf(leaves[0])
-  } else if leaves.length() <= BRANCHING_FACTOR {
-    let arr = FixedArray::make(leaves.length(), Empty)
-    for i, leaf in leaves {
-      arr[i] = Leaf(leaf)
-    }
-    Node(arr, None)
+  guard cap > BRANCHING_FACTOR else { return Leaf(leaves[0]) }
+  let child_cap = cap / BRANCHING_FACTOR
+  // Count in leaves rather than elements: `leaves.length() * BRANCHING_FACTOR`
+  // is the element count and is only meaningful while it fits in an `Int`.
+  let leaves_per_child = child_cap / BRANCHING_FACTOR
+  let full = leaves.length() / leaves_per_child
+  let len = if leaves.length() % leaves_per_child == 0 {
+    full
   } else {
-    let len = leaves.length() * BRANCHING_FACTOR
-    let child_cap = cap / BRANCHING_FACTOR
-    let quot = len / child_cap
-    let rem = len % child_cap
-    let times = child_cap / BRANCHING_FACTOR
-    let arr = if rem == 0 {
-      FixedArray::makei(quot, i => {
-        from_leaves(leaves[i * times:(i + 1) * times], child_cap)
-      })
-    } else {
-      let arr = FixedArray::make(quot + 1, Tree::Empty)
-      for i in 0..<quot {
-        arr[i] = from_leaves(leaves[i * times:(i + 1) * times], child_cap)
-      }
-      arr[quot] = from_leaves(leaves[times * quot:], child_cap)
-      arr
-    }
-    Node(arr, None)
+    full + 1
   }
+  let arr = FixedArray::makei(len, i => {
+    let lo = i * leaves_per_child
+    let hi = min(lo + leaves_per_child, leaves.length())
+    from_leaves(leaves[lo:hi], child_cap)
+  })
+  Node(arr, None)
 }
 
 ///|
@@ -856,6 +866,21 @@ fn tail_len_of_size(size : Int) -> Int {
 }
 
 ///|
+/// Fold the tail into the tree and return the combined tree with its shift, so
+/// the caller can treat the vector as tree-only.
+///
+/// This is the only route by which a *partial* leaf reaches
+/// `append_right_leaf`: `push` always flushes a tail that is exactly
+/// `BRANCHING_FACTOR` long, whereas here the delta is whatever the tail happens
+/// to hold. That is what lets a partial right-most leaf be topped up in place —
+/// and, because the top-up patches the parent's sizes array rather than
+/// re-deriving it, what can leave a node exactly full while still relaxed
+/// (see the representation contract in `tree.mbt`).
+///
+/// A single-element tail goes through `push_end` instead, which is otherwise
+/// unreachable: `Vector::concat` only calls this when the two tails overflow
+/// `BRANCHING_FACTOR` together, so a 1-element left tail forces the right
+/// operand to be exactly one full chunk.
 fn[A] Vector::normalize_tree(self : Vector[A]) -> (Tree[A], Int) {
   if self.size == 0 {
     (Tree::empty(), 0)

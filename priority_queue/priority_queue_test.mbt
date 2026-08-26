@@ -67,12 +67,12 @@ test "iter" {
   let buf = StringBuilder(size_hint=20)
   let v = @priority_queue.from_array([1, 2, 3])
   for e in v {
-    buf.write_string("[\{e}]")
+    buf <+ "[\{e}]"
   }
   inspect(buf, content="[3][2][1]")
   buf.reset()
   for e in v.iter().take(2) {
-    buf.write_string("[\{e}]")
+    buf <+ "[\{e}]"
   }
   inspect(buf, content="[3][2]")
 }
@@ -112,7 +112,7 @@ test "pop" {
   let pq_ = @priority_queue.from_array([1])
   pq_.pop() |> ignore
   inspect(pq_.length(), content="0")
-  let p = @priority_queue.from_iter([0, 1, 4, 5, 6, 2, 3].iter())
+  let p = @priority_queue.from_iter([|0, 1, 4, 5, 6, 2, 3|])
   p.pop() |> ignore
   p.pop() |> ignore
   p.pop() |> ignore
@@ -166,7 +166,7 @@ test "is_empty" {
 ///|
 test "from_iter multiple elements iter" {
   debug_inspect(
-    @priority_queue.from_iter([1, 2, 3].iter()),
+    @priority_queue.from_iter([|1, 2, 3|]),
     content=(
       #|<PriorityQueue: [3, 2, 1]>
     ),
@@ -176,7 +176,7 @@ test "from_iter multiple elements iter" {
 ///|
 test "from_iter single element iter" {
   debug_inspect(
-    @priority_queue.from_iter([1].iter()),
+    @priority_queue.from_iter([|1|]),
     content=(
       #|<PriorityQueue: [1]>
     ),
@@ -185,9 +185,7 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.from_iter(
-    Iter::empty(),
-  )
+  let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.from_iter([||])
   debug_inspect(
     pq,
     content=(

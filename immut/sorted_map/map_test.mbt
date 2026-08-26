@@ -13,6 +13,26 @@
 // limitations under the License.
 
 ///|
+priv struct SameRankKey {
+  rank : Int
+  label : String
+}
+
+///|
+/// `Compare` orders on `rank` alone, so `Eq` has to agree with it: `compare`
+/// returning zero must mean equal, or the `Compare : Eq` contract is broken.
+/// Tests read `label` directly rather than through `==`, so it stays
+/// observable.
+impl Eq for SameRankKey with fn equal(self, other) {
+  self.rank == other.rank
+}
+
+///|
+impl Compare for SameRankKey with fn compare(self, other) {
+  self.rank.compare(other.rank)
+}
+
+///|
 test "lookup" {
   let m = @sorted_map.SortedMap([
     (3, "three"),
@@ -46,6 +66,54 @@ test "is_empty" {
   inspect(m.is_empty(), content="true")
   let m = m.add(1, 1)
   inspect(m.is_empty(), content="false")
+}
+
+///|
+test "SortedMap ordered inputs" {
+  let ascending = @sorted_map.SortedMap([(1, "a"), (2, "b"), (3, "c")])
+  let descending = @sorted_map.SortedMap([(3, "c"), (2, "b"), (1, "a")])
+  @test.assert_eq(ascending.to_array(), [(1, "a"), (2, "b"), (3, "c")])
+  @test.assert_eq(descending.to_array(), [(1, "a"), (2, "b"), (3, "c")])
+}
+
+///|
+test "SortedMap ordered duplicate keeps last value" {
+  let m = @sorted_map.SortedMap([(1, "a"), (1, "b"), (2, "c")])
+  @test.assert_eq(m.to_array(), [(1, "b"), (2, "c")])
+}
+
+///|
+test "SortedMap ordered duplicate keeps first key and last value" {
+  let m = @sorted_map.SortedMap([
+    ({ rank: 1, label: "first" }, "a"),
+    ({ rank: 1, label: "second" }, "b"),
+    ({ rank: 2, label: "third" }, "c"),
+  ])
+  @test.assert_eq(m.to_array().map(kv => (kv.0.label, kv.1)), [
+    ("first", "b"),
+    ("third", "c"),
+  ])
+}
+
+///|
+test "SortedMap large unordered duplicate keeps first key and last value" {
+  let items = Array::makei(70, i => {
+    if i == 5 {
+      ({ rank: 10, label: "first" }, "a")
+    } else if i == 50 {
+      ({ rank: 10, label: "second" }, "b")
+    } else {
+      ({ rank: 1000 - i, label: "other-\{i}" }, "other")
+    }
+  })
+  let m = @sorted_map.SortedMap(items)
+  let matched = []
+  for k, v in m {
+    if k.rank == 10 {
+      matched.push((k.label, v))
+    }
+  }
+  @test.assert_eq(matched, [("first", "b")])
 }
 
 ///|
@@ -84,7 +152,7 @@ test "iter_take_each" {
   .iter()
   .each(e => {
     let (k, v) = e
-    buf.write_string("[\{k}-\{v}]")
+    buf <+ "[\{k}-\{v}]"
   })
   inspect(buf, content="[1-one][2-two][3-three]")
   buf.reset()
@@ -93,7 +161,7 @@ test "iter_take_each" {
   .take(2)
   .each(e => {
     let (k, v) = e
-    buf.write_string("[\{k}-\{v}]")
+    buf <+ "[\{k}-\{v}]"
   })
   inspect(buf, content="[1-one][2-two]")
 }
@@ -208,7 +276,7 @@ test "iterator" {
   .iter()
   .each(e => {
     let (k, v) = e
-    buf.write_string("[\{k}-\{v}]")
+    buf <+ "[\{k}-\{v}]"
   })
   inspect(buf, content="[1-one][2-two][3-three]")
   buf.reset()
@@ -217,7 +285,7 @@ test "iterator" {
   .take(2)
   .each(e => {
     let (k, v) = e
-    buf.write_string("[\{k}-\{v}]")
+    buf <+ "[\{k}-\{v}]"
   })
   inspect(buf, content="[1-one][2-two]")
 }
@@ -236,7 +304,7 @@ test "show" {
 ///|
 test "from_iter multiple elements iter" {
   debug_inspect(
-    @sorted_map.from_iter([(1, 1), (2, 2), (3, 3)].iter()),
+    @sorted_map.from_iter([|(1, 1), (2, 2), (3, 3)|]),
     content=(
       #|<SortedMap: { 1: 1, 2: 2, 3: 3 }>
     ),
@@ -244,9 +312,45 @@ test "from_iter multiple elements iter" {
 }
 
 ///|
+test "from_iter duplicate keeps first key and last value" {
+  let m = @sorted_map.from_iter(
+    [
+      ({ rank: 1, label: "first" }, "a"),
+      ({ rank: 1, label: "second" }, "b"),
+      ({ rank: 2, label: "third" }, "c"),
+    ].iter(),
+  )
+  @test.assert_eq(m.to_array().map(kv => (kv.0.label, kv.1)), [
+    ("first", "b"),
+    ("third", "c"),
+  ])
+}
+
+///|
+test "from_iter large unordered duplicate keeps first key and last value" {
+  let items = Array::makei(70, i => {
+    if i == 5 {
+      ({ rank: 10, label: "first" }, "a")
+    } else if i == 50 {
+      ({ rank: 10, label: "second" }, "b")
+    } else {
+      ({ rank: 1000 - i, label: "other-\{i}" }, "other")
+    }
+  })
+  let m = @sorted_map.from_iter(items.iter())
+  let matched = []
+  for k, v in m {
+    if k.rank == 10 {
+      matched.push((k.label, v))
+    }
+  }
+  @test.assert_eq(matched, [("first", "b")])
+}
+
+///|
 test "from_iter single element iter" {
   debug_inspect(
-    @sorted_map.from_iter([(1, 1)].iter()),
+    @sorted_map.from_iter([|(1, 1)|]),
     content=(
       #|<SortedMap: { 1: 1 }>
     ),
@@ -255,15 +359,44 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let pq : @sorted_map.SortedMap[Int, Int] = @sorted_map.from_iter(
-    Iter::empty(),
-  )
+  let pq : @sorted_map.SortedMap[Int, Int] = @sorted_map.from_iter([||])
   debug_inspect(
     pq,
     content=(
       #|<SortedMap: {}>
     ),
   )
+}
+
+///|
+test "from_iter descending keys build ascending" {
+  debug_inspect(
+    @sorted_map.from_iter([(3, 3), (2, 2), (1, 1)].iter()),
+    content=(
+      #|<SortedMap: { 1: 1, 2: 2, 3: 3 }>
+    ),
+  )
+}
+
+///|
+test "from_iter descending duplicate keeps first key and last value" {
+  let m = @sorted_map.from_iter(
+    [
+      ({ rank: 2, label: "top" }, "a"),
+      ({ rank: 1, label: "first" }, "b"),
+      ({ rank: 1, label: "second" }, "c"),
+    ].iter(),
+  )
+  @test.assert_eq(m.to_array().map(kv => (kv.0.label, kv.1)), [
+    ("first", "c"),
+    ("top", "a"),
+  ])
+}
+
+///|
+test "from_iter small unsorted duplicate keeps last value" {
+  let m = @sorted_map.from_iter([(3, "a"), (1, "b"), (3, "c"), (2, "d")].iter())
+  @test.assert_eq(m.to_array(), [(1, "b"), (2, "d"), (3, "c")])
 }
 
 ///|

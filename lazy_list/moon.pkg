@@ -1,10 +1,16 @@
 import {
   "moonbitlang/core/builtin",
-  "moonbitlang/core/lazy",
   "moonbitlang/core/array",
   "moonbitlang/core/debug",
 }
 
 import {
   "moonbitlang/core/list",
+  "moonbitlang/core/cmp",
+  "moonbitlang/core/quickcheck",
+  "moonbitlang/core/bench",
 } for "test"
+
+options(
+  targets: { "panic_test.mbt": [ "not", "native", "llvm" ] },
+)

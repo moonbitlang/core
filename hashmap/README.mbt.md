@@ -221,7 +221,7 @@ test {
 ```mbt check
 ///|
 test {
-  let map = @hashmap.from_iter([("a", 1), ("b", 2)].iter())
+  let map = @hashmap.from_iter([|("a", 1), ("b", 2)|])
   @test.assert_eq(map.length(), 2)
 }
 ```

@@ -118,10 +118,9 @@ fn JsonNumberScan::try_fast_double(self : JsonNumberScan) -> Double {
     }
   } else {
     let shift = self.exponent - MAX_EXPONENT_FAST_PATH
-    let mantissa = match
-      checked_mul(self.mantissa, int_pow10_table[shift.to_int()]) {
-      Some(m) => m
-      None => return @double.not_a_number
+    guard checked_mul(self.mantissa, int_pow10_table[shift.to_int()])
+      is Some(mantissa) else {
+      return @double.not_a_number
     }
     if mantissa > MAX_MANTISSA_FAST_PATH {
       return @double.not_a_number
@@ -383,8 +382,9 @@ fn ParseContext::lex_number_end(
 ) -> LexedNumber {
   // Fast path for JSON numbers: the lexer has already validated the grammar,
   // so scan raw UTF-16 digits once and bypass the general strconv parser for
-  // safe integers and Clinger-style fast-path doubles. Fall back to strconv for
-  // large or precision-sensitive numbers so existing rounding behavior is kept.
+  // safe integers, Clinger-style exact doubles, and Eisel-Lemire conversions.
+  // Fall back to strconv for truncated or ambiguous numbers so the exact
+  // Decimal converter preserves existing rounding behavior.
   let scan = ctx.scan_json_number(start, end)
   if scan.is_integer {
     // `is_integer` is set by `scan_json_number` only when no `.` and no `e/E`
@@ -399,18 +399,32 @@ fn ParseContext::lex_number_end(
     // returned Double lossless. `reinterpret_as_uint64` / `reinterpret_as_int64`
     // are value-preserving here because both operands sit in [0, 2^53), well
     // inside the overlap of Int64+ and UInt64.
+    //
+    // The sign is applied after the Int64 -> Double conversion so that `-0`
+    // parses to the IEEE-754 negative zero (`-(0L)` is still `0L`, but
+    // `-(0.0)` is `-0.0`), matching the `-0.0` / `-0e0` paths below.
     if !scan.many_digits &&
       scan.exponent == 0L &&
       scan.mantissa <= SAFE_INTEGER_LIMIT.reinterpret_as_uint64() {
-      let v = scan.mantissa.reinterpret_as_int64()
-      let signed = if scan.negative { -v } else { v }
-      return { value: signed.to_double(), repr: None }
+      let v = scan.mantissa.reinterpret_as_int64().to_double()
+      let value = if scan.negative { -v } else { v }
+      return { value, repr: None }
     }
     return ctx.lex_integer_end(start, end)
   }
   let fast = scan.try_fast_double()
   if !fast.is_nan() {
     return { value: fast, repr: None }
+  }
+  if !scan.many_digits {
+    let fast = @internal/strconv.try_eisel_lemire64(
+      scan.mantissa,
+      scan.exponent,
+      scan.negative,
+    )
+    if !fast.is_nan() {
+      return { value: fast, repr: None }
+    }
   }
   let s = ctx.input.view(start_offset=start, end_offset=end)
   try {

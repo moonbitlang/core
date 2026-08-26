@@ -10,4 +10,6 @@ import {
 
 import {
   "moonbitlang/core/bench",
+  "moonbitlang/core/quickcheck",
+  "moonbitlang/core/bigint",
 } for "test"

@@ -62,10 +62,44 @@ fn ParseContext::lex_string_slow(ctx : ParseContext) -> String raise ParseError 
           Some('\\') => buf.write_char('\\')
           Some('/') => buf.write_char('/')
           Some('u') => {
+            // The backslash that opened this escape. `ctx.offset` is just
+            // past the `u`, and `\` and `u` are one code unit each.
+            let escape_start = ctx.offset - 2
             let c = ctx.lex_hex_digits(4)
-            buf.write_char(c.unsafe_to_char())
+            if c is (0xD800..=0xDBFF) {
+              // A leading-surrogate escape is only meaningful as the first
+              // half of an escaped surrogate pair; combine it with the
+              // immediately following trailing-surrogate escape into one
+              // Unicode scalar value. Anything else would manufacture a
+              // string containing an unpaired surrogate, which MoonBit
+              // strings disallow (RFC 8259 calls the behavior for such
+              // escapes unpredictable; I-JSON forbids them).
+              match ctx.read_char() {
+                Some('\\') => ()
+                Some(_) => ctx.unpaired_surrogate(escape_start)
+                None => raise InvalidEof
+              }
+              match ctx.read_char() {
+                Some('u') => ()
+                Some(_) => ctx.unpaired_surrogate(escape_start)
+                None => raise InvalidEof
+              }
+              let c2 = ctx.lex_hex_digits(4)
+              if c2 is (0xDC00..=0xDFFF) {
+                let combined = (c << 10) + c2 - 0x35fdc00
+                buf.write_char(combined.unsafe_to_char())
+              } else {
+                ctx.unpaired_surrogate(escape_start)
+              }
+            } else if c is (0xDC00..=0xDFFF) {
+              // A bare trailing-surrogate escape can never form a scalar
+              // value.
+              ctx.unpaired_surrogate(escape_start)
+            } else {
+              buf.write_char(c.unsafe_to_char())
+            }
           }
-          Some(_) => ctx.invalid_char(shift=-1)
+          Some(c) => ctx.invalid_char(shift=-c.utf16_len())
           None => raise InvalidEof
         }
         start = ctx.offset
@@ -83,6 +117,22 @@ fn ParseContext::lex_string_slow(ctx : ParseContext) -> String raise ParseError 
 }
 
 ///|
+/// Reports the `\uXXXX` escape that begins at `escape_start` as invalid.
+///
+/// Every rejection of an unpaired surrogate points here — at the backslash
+/// opening the offending escape — rather than at whichever character the
+/// scan happened to stop on. Blaming the stopping point would name a
+/// perfectly valid hex digit for `"\uDC00"`, and for a leading surrogate
+/// followed by a non-BMP character it would name a position inside that
+/// character.
+fn[T] ParseContext::unpaired_surrogate(
+  ctx : ParseContext,
+  escape_start : Int,
+) -> T raise ParseError {
+  ctx.invalid_char(shift=escape_start - ctx.offset)
+}
+
+///|
 fn ParseContext::lex_hex_digits(
   ctx : ParseContext,
   n : Int,
@@ -92,7 +142,9 @@ fn ParseContext::lex_hex_digits(
       Some('0'..='9' as c) => c.to_int() - '0'
       Some('A'..='F' as c) => c.to_int() - 'A' + 10
       Some('a'..='f' as c) => c.to_int() - 'a' + 10
-      Some(_) => ctx.invalid_char(shift=-1)
+      // `-1` would land inside the character when it is not in the BMP,
+      // reporting a broken half at the wrong column.
+      Some(c) => ctx.invalid_char(shift=-c.utf16_len())
       None => raise InvalidEof
     }
     continue (r << 4) | d

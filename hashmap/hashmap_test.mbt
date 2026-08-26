@@ -333,7 +333,7 @@ test "get_nonexistent_key_with_psl" {
 
 ///|
 test "from_iter multiple elements iter" {
-  let map = @hashmap.from_iter([(1, 1), (2, 2), (3, 3)].iter())
+  let map = @hashmap.from_iter([|(1, 1), (2, 2), (3, 3)|])
   guard map is { 1: 1, 2: 2, 3: 3, .. } else {
     fail("Map is not expected: \{Repr(map)}")
   }
@@ -343,7 +343,7 @@ test "from_iter multiple elements iter" {
 ///|
 test "from_iter single element iter" {
   debug_inspect(
-    @hashmap.from_iter([(1, 1)].iter()),
+    @hashmap.from_iter([|(1, 1)|]),
     content=(
       #|<HashMap: { 1: 1 }>
     ),
@@ -352,7 +352,7 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let map : @hashmap.HashMap[Int, Int] = @hashmap.from_iter(Iter::empty())
+  let map : @hashmap.HashMap[Int, Int] = @hashmap.from_iter([||])
   debug_inspect(
     map,
     content=(

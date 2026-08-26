@@ -27,7 +27,7 @@ test "creating sets" {
   inspect(from_fixed.length(), content="3")
 
   // From iterator
-  let from_iter = @set.Set::from_iter([1, 2, 3, 4, 5].iter())
+  let from_iter = @set.Set::from_iter([|1, 2, 3, 4, 5|])
   inspect(from_iter.length(), content="5")
 }
 ```

@@ -79,7 +79,18 @@ pub fn parse_double(str : StringView) -> Double raise {
       // Clinger's fast path (How to read floating point numbers accurately)[https://doi.org/10.1145/989393.989430]
       match num.try_fast_path() {
         Some(value) => value
-        None => parse_decimal_priv(str).to_double_priv() // fallback to slow path
+        None => {
+          let fast = if num.many_digits {
+            @double.not_a_number
+          } else {
+            try_eisel_lemire64(num.mantissa, num.exponent, num.negative)
+          }
+          if fast.is_nan() {
+            parse_decimal_priv(str).to_double_priv() // fallback to slow path
+          } else {
+            fast
+          }
+        }
       }
   }
 }
@@ -127,10 +138,9 @@ fn Number::try_fast_path(self : Number) -> Double? {
     } else {
       // disguised fast path
       let shift = self.exponent - max_exponent_fast_path
-      let mantissa = match
-        checked_mul(self.mantissa, int_pow10[shift.to_int()]) {
-        Some(m) => m
-        None => return None
+      guard checked_mul(self.mantissa, int_pow10[shift.to_int()])
+        is Some(mantissa) else {
+        return None
       }
       if mantissa > max_mantissa_fast_path {
         return None

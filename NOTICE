@@ -42,6 +42,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 File random/random.mbt is adapted from Golang's [`math/rand/v2`](https://pkg.go.dev/math/rand/v2) package.
 
+Files `internal/strconv/strconv_eisel_lemire.mbt` and
+`internal/strconv/strconv_eisel_lemire_table.mbt` are adapted from Go 1.26.2's
+`internal/strconv/atofeisel.go` and generated `internal/strconv/pow10tab.go`.
+
 License from Golang:
 Copyright 2009 The Go Authors.
 

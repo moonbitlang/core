@@ -135,10 +135,10 @@ test "from_json rejects invalid input" {
 test "iter" {
   let buf = StringBuilder(size_hint=20)
   let v = @vector.from_array([1, 2, 3])
-  v.iter().each(e => buf.write_string("[\{e}]"))
+  v.iter().each(e => buf <+ "[\{e}]")
   inspect(buf, content="[1][2][3]")
   buf.reset()
-  v.iter().take(2).each(e => buf.write_string("[\{e}]"))
+  v.iter().take(2).each(e => buf <+ "[\{e}]")
   inspect(buf, content="[1][2]")
 }
 
@@ -586,7 +586,7 @@ test "new_with" {
 ///|
 test "from_iter multiple elements iter" {
   debug_inspect(
-    @vector.from_iter([1, 2, 3].iter()),
+    @vector.from_iter([|1, 2, 3|]),
     content=(
       #|<Vector: [1, 2, 3]>
     ),
@@ -677,7 +677,7 @@ test "from_iter multiple elements iter" {
 ///|
 test "from_iter single element iter" {
   debug_inspect(
-    @vector.from_iter([1].iter()),
+    @vector.from_iter([|1|]),
     content=(
       #|<Vector: [1]>
     ),
@@ -686,7 +686,7 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let pq : @vector.Vector[Int] = @vector.from_iter(Iter::empty())
+  let pq : @vector.Vector[Int] = @vector.from_iter([||])
   debug_inspect(
     pq,
     content=(

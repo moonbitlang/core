@@ -255,7 +255,7 @@ test "iter" {
 ///|
 test "from_iter multiple elements iter" {
   debug_inspect(
-    @queue.from_iter([1, 2, 3].iter()),
+    @queue.from_iter([|1, 2, 3|]),
     content=(
       #|<Queue: [1, 2, 3]>
     ),
@@ -265,7 +265,7 @@ test "from_iter multiple elements iter" {
 ///|
 test "from_iter single element iter" {
   debug_inspect(
-    @queue.from_iter([1].iter()),
+    @queue.from_iter([|1|]),
     content=(
       #|<Queue: [1]>
     ),
@@ -274,7 +274,7 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let pq : @queue.Queue[Int] = @queue.from_iter(Iter::empty())
+  let pq : @queue.Queue[Int] = @queue.from_iter([||])
   debug_inspect(
     pq,
     content=(

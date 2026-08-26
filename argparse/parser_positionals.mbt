@@ -71,9 +71,8 @@ fn should_parse_as_positional(
   if !arg.has_prefix("-") || arg == "-" {
     return false
   }
-  let next = match next_positional(positionals, collected) {
-    Some(v) => v
-    None => return false
+  guard next_positional(positionals, collected) is Some(next) else {
+    return false
   }
   let next_allow = match next.info {
     FlagInfo(_) => false

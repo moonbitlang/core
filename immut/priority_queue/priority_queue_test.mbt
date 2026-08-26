@@ -62,10 +62,10 @@ test "to_array" {
 test "as_iter" {
   let buf = StringBuilder(size_hint=20)
   let v = @priority_queue.from_array([1, 2, 3])
-  v.iter().each(e => buf.write_string("[\{e}]"))
+  v.iter().each(e => buf <+ "[\{e}]")
   inspect(buf, content="[3][2][1]")
   buf.reset()
-  v.iter().take(2).each(e => buf.write_string("[\{e}]"))
+  v.iter().take(2).each(e => buf <+ "[\{e}]")
   inspect(buf, content="[3][2]")
 }
 
@@ -73,10 +73,10 @@ test "as_iter" {
 test "iter" {
   let buf = StringBuilder(size_hint=20)
   let v = @priority_queue.from_array([1, 2, 3])
-  v.iter().each(e => buf.write_string("[\{e}]"))
+  v.iter().each(e => buf <+ "[\{e}]")
   inspect(buf, content="[3][2][1]")
   buf.reset()
-  v.iter().take(2).each(e => buf.write_string("[\{e}]"))
+  v.iter().take(2).each(e => buf <+ "[\{e}]")
   inspect(buf, content="[3][2]")
 }
 
@@ -151,7 +151,7 @@ test "length" {
 ///|
 test "from_iter multiple elements iter" {
   debug_inspect(
-    @priority_queue.PriorityQueue::from_iter([1, 2, 3].iter()),
+    @priority_queue.PriorityQueue::from_iter([|1, 2, 3|]),
     content=(
       #|<PriorityQueue: [3, 2, 1]>
     ),
@@ -161,7 +161,7 @@ test "from_iter multiple elements iter" {
 ///|
 test "from_iter single element iter" {
   debug_inspect(
-    @priority_queue.PriorityQueue::from_iter([1].iter()),
+    @priority_queue.PriorityQueue::from_iter([|1|]),
     content=(
       #|<PriorityQueue: [1]>
     ),
@@ -170,11 +170,9 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.PriorityQueue::from_iter(
-    Iter::empty(),
-  )
+  let empty : Iter[Int] = [||]
   debug_inspect(
-    pq,
+    @priority_queue.PriorityQueue::from_iter(empty),
     content=(
       #|<PriorityQueue: []>
     ),

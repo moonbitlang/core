@@ -41,7 +41,7 @@ pub(open) trait Shrink {
 
 ///|
 impl Shrink with fn shrink(_a) {
-  Iter::empty()
+  [||]
 }
 
 ///|
@@ -62,6 +62,42 @@ pub impl Shrink for Int64 with fn shrink(x) {
       [(0 : Int64)]
     },
   |]
+}
+
+///|
+pub impl Shrink for Int16 with fn shrink(x) {
+  Shrink::shrink(x.to_int()).map(Int16::from_int)
+}
+
+///|
+pub impl Shrink for UInt16 with fn shrink(x) {
+  Shrink::shrink(x.to_uint()).map(UInt::to_uint16)
+}
+
+///|
+pub impl Shrink for @bigint.BigInt with fn shrink(x) {
+  let zero = @bigint.BigInt::from_int(0)
+  guard x != zero else { return Iter::empty() }
+  let magnitude = if x < zero { -x } else { x }
+  let bit_length = magnitude.bit_length()
+  let negative = x < zero
+  let mut shift = bit_length - 1
+  let mut emit_zero = true
+  Iter::new(
+    () => {
+      if shift > 0 {
+        let delta = magnitude >> shift
+        shift -= 1
+        Some(if negative { x + delta } else { x - delta })
+      } else if emit_zero {
+        emit_zero = false
+        Some(zero)
+      } else {
+        None
+      }
+    },
+    size_hint=bit_length,
+  )
 }
 
 ///|
@@ -87,9 +123,9 @@ pub impl Shrink for UInt64 with fn shrink(x) {
 ///|
 pub impl Shrink for Bool with fn shrink(b) {
   if !b {
-    Iter::empty()
+    [||]
   } else {
-    Iter::singleton(false)
+    [|false|]
   }
 }
 

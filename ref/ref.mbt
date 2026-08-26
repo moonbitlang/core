@@ -102,17 +102,10 @@ pub fn[T, R] Ref::map(self : Ref[T], f : (T) -> R raise?) -> Ref[R] raise? {
 pub fn[T, R] Ref::protect(self : Ref[T], a : T, f : () -> R raise?) -> R raise? {
   let old = self.val
   self.val = a
-  try f() catch {
-    err => {
-      self.val = old
-      raise err
-    }
-  } noraise {
-    r => {
-      self.val = old
-      r
-    }
+  defer {
+    self.val = old
   }
+  f()
 }
 
 ///|

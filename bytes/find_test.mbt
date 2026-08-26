@@ -124,8 +124,5 @@ test "BytesView rev_find long pattern offset view" {
 
 ///|
 test "Bytes::from_iter" {
-  inspect(
-    Bytes::from_iter(([97, 98, 99] : Array[Byte]).iter()),
-    content="b\"abc\"",
-  )
+  inspect(Bytes::from_iter([|97, 98, 99|]), content="b\"abc\"")
 }

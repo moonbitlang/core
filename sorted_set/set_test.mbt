@@ -99,7 +99,7 @@ test "each" {
 test "eachi" {
   let set = @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1])
   let result = StringBuilder(size_hint=10)
-  set.eachi((i, x) => result.write_string("[\{i}-\{x}]"))
+  set.eachi((i, x) => result <+ "[\{i}-\{x}]")
   inspect(
     result.to_string(),
     content="[0-1][1-2][2-3][3-4][4-5][5-6][6-7][7-8][8-9]",
@@ -380,13 +380,13 @@ test "equal" {
 ///|
 test "from_iter multiple elements iter" {
   debug_inspect(
-    @sorted_set.from_iter([1, 2, 3].iter()),
+    @sorted_set.from_iter([|1, 2, 3|]),
     content=(
       #|<SortedSet: [1, 2, 3]>
     ),
   )
   debug_inspect(
-    @sorted_set.from_iter([1, 1, 1].iter()),
+    @sorted_set.from_iter([|1, 1, 1|]),
     content=(
       #|<SortedSet: [1]>
     ),
@@ -396,7 +396,7 @@ test "from_iter multiple elements iter" {
 ///|
 test "from_iter single element iter" {
   debug_inspect(
-    @sorted_set.from_iter([1].iter()),
+    @sorted_set.from_iter([|1|]),
     content=(
       #|<SortedSet: [1]>
     ),
@@ -405,7 +405,7 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let pq : @sorted_set.SortedSet[Int] = @sorted_set.from_iter(Iter::empty())
+  let pq : @sorted_set.SortedSet[Int] = @sorted_set.from_iter([||])
   debug_inspect(
     pq,
     content=(
@@ -505,4 +505,77 @@ test "@sorted_set.symmetric_difference/identical" {
       #|<SortedSet: []>
     ),
   )
+}
+
+///|
+/// Compare/Eq on `Keyed` look only at `key`; `payload` records which set a
+/// stored representative came from.
+priv struct Keyed {
+  key : Int
+  payload : Int
+}
+
+///|
+impl Eq for Keyed with fn equal(self, other) {
+  self.key == other.key
+}
+
+///|
+impl Compare for Keyed with fn compare(self, other) {
+  self.key.compare(other.key)
+}
+
+///|
+fn keyed_set(keys : Array[Int], payload : Int) -> @sorted_set.SortedSet[Keyed] {
+  let s : @sorted_set.SortedSet[Keyed] = SortedSet([])
+  for k in keys {
+    s.add({ key: k, payload })
+  }
+  s
+}
+
+///|
+test "intersection and difference preserve self's stored representatives" {
+  // src far smaller (probe fallback runs over src): the result must still
+  // carry self's stored values
+  let big_self = keyed_set(Array::makei(40, i => i), 1)
+  let small_src = keyed_set([5], 2)
+  let out = big_self.intersection(small_src).to_array()
+  assert_true(out.length() == 1 && out[0].key == 5 && out[0].payload == 1)
+
+  // self far smaller (probe fallback runs over self)
+  let small_self = keyed_set([5], 1)
+  let big_src = keyed_set(Array::makei(40, i => i), 2)
+  let out2 = small_self.intersection(big_src).to_array()
+  assert_true(out2.length() == 1 && out2[0].payload == 1)
+
+  // comparable sizes (split-based merge)
+  let a = keyed_set(Array::makei(20, i => i), 1)
+  let b = keyed_set(Array::makei(20, i => i + 10), 2)
+  let shared = a.intersection(b).to_array()
+  assert_true(shared.length() == 10)
+  for v in shared {
+    assert_true(v.payload == 1)
+  }
+
+  // difference probe fallback keeps self's values
+  let lone = keyed_set([5], 1)
+  let far = keyed_set(Array::makei(40, i => i + 100), 2)
+  let out3 = lone.difference(far).to_array()
+  assert_true(out3.length() == 1 && out3[0].payload == 1)
+}
+
+///|
+test "union size is exact for overlapping, disjoint and identical sets" {
+  let a = @sorted_set.from_array([1, 2, 3, 4, 5])
+  let b = @sorted_set.from_array([4, 5, 6, 7])
+  inspect(a.union(b).length(), content="7")
+  inspect(b.union(a).length(), content="7")
+  inspect(a.union(@sorted_set.from_array([10, 11])).length(), content="7")
+  inspect(a.union(a).length(), content="5")
+  // size must agree with an actual element count
+  let u = a.union(b)
+  let mut n = 0
+  u.each(_x => n = n + 1)
+  inspect(u.length() == n, content="true")
 }

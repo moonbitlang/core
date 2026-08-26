@@ -159,11 +159,6 @@ test "panic to_octets coverage for negative number than required" {
 }
 
 ///|
-test "panic from_octets coverage for empty octets" {
-  BigInt::from_octets(b"") |> ignore
-}
-
-///|
 test "panic sub_string with invalid byte_length" {
   let bytes = b"Hello, World!"
   bytes.to_unchecked_string(offset=0, length=-1) |> ignore

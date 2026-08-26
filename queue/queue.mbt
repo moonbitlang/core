@@ -294,7 +294,7 @@ pub fn[A] Queue::iter(self : Queue[A]) -> Iter[A] {
 /// # Example
 /// ```mbt check
 /// test {
-///   let queue : @queue.Queue[Int] = @queue.from_iter(Iter::empty())
+///   let queue : @queue.Queue[Int] = @queue.from_iter([||])
 ///   @test.assert_eq(queue.length(), 0)
 /// }
 /// ```

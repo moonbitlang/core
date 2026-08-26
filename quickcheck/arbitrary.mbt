@@ -55,6 +55,18 @@ pub impl Arbitrary for Byte with fn arbitrary(_, rs) {
 }
 
 ///|
+pub impl Arbitrary for Int16 with fn arbitrary(size, rs) {
+  let value : Int = Arbitrary::arbitrary(size, rs)
+  Int16::from_int(value)
+}
+
+///|
+pub impl Arbitrary for UInt16 with fn arbitrary(size, rs) {
+  let value : UInt = Arbitrary::arbitrary(size, rs)
+  value.to_uint16()
+}
+
+///|
 pub impl Arbitrary for Bytes with fn arbitrary(size, rs) {
   if size == 0 {
     Bytes::new(0)
@@ -109,12 +121,12 @@ pub impl Arbitrary for Char with fn arbitrary(_, rs) {
 ///|
 pub impl Arbitrary for String with fn arbitrary(size, rs) {
   let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
-  for i in 0..<len; s = "" {
+  let buf = StringBuilder(size_hint=len * 2)
+  for i in 0..<len {
     let c : Char = Arbitrary::arbitrary(i, rs)
-    continue s + c.to_string()
-  } nobreak {
-    s
+    buf.write_char(c)
   }
+  buf.to_string()
 }
 
 ///|
@@ -164,6 +176,15 @@ pub impl[T : Arbitrary, E : Arbitrary] Arbitrary for Result[T, E] with fn arbitr
 pub impl[X : Arbitrary] Arbitrary for FixedArray[X] with fn arbitrary(size, rs) {
   let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
   FixedArray::makei(len, i => X::arbitrary(i, rs))
+}
+
+///|
+pub impl[X : Arbitrary] Arbitrary for ReadOnlyArray[X] with fn arbitrary(
+  size,
+  rs,
+) {
+  let values : Array[X] = Arbitrary::arbitrary(size, rs)
+  ReadOnlyArray::from_array(values)
 }
 
 ///|
@@ -264,4 +285,37 @@ pub impl[
   let r1 = r0.split()
   let (v1, v2, v3, v4, v5, v6) = Arbitrary::arbitrary(size, r1)
   (Arbitrary::arbitrary(size, r0), v1, v2, v3, v4, v5, v6)
+}
+
+///|
+pub impl[
+  A : Arbitrary,
+  B : Arbitrary,
+  C : Arbitrary,
+  D : Arbitrary,
+  E : Arbitrary,
+  F : Arbitrary,
+  G : Arbitrary,
+  H : Arbitrary,
+] Arbitrary for (A, B, C, D, E, F, G, H) with fn arbitrary(size, r0) {
+  let r1 = r0.split()
+  let (v1, v2, v3, v4, v5, v6, v7) = Arbitrary::arbitrary(size, r1)
+  (Arbitrary::arbitrary(size, r0), v1, v2, v3, v4, v5, v6, v7)
+}
+
+///|
+pub impl[
+  A : Arbitrary,
+  B : Arbitrary,
+  C : Arbitrary,
+  D : Arbitrary,
+  E : Arbitrary,
+  F : Arbitrary,
+  G : Arbitrary,
+  H : Arbitrary,
+  I : Arbitrary,
+] Arbitrary for (A, B, C, D, E, F, G, H, I) with fn arbitrary(size, r0) {
+  let r1 = r0.split()
+  let (v1, v2, v3, v4, v5, v6, v7, v8) = Arbitrary::arbitrary(size, r1)
+  (Arbitrary::arbitrary(size, r0), v1, v2, v3, v4, v5, v6, v7, v8)
 }

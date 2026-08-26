@@ -31,7 +31,7 @@ pub impl Eq for V128 with fn not_equal(self : V128, other : V128) -> Bool {
 ///|
 fn u64_hex(value : UInt64) -> String {
   let digits = value.to_string(radix=16)
-  let buf = StringBuilder::new()
+  let buf = StringBuilder()
   buf.write_string("0x")
   for _ in digits.length()..<16 {
     buf.write_char('0')

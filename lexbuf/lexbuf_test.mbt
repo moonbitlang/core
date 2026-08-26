@@ -14,7 +14,7 @@
 
 ///|
 test "Lexbuf retains captures across chunks and commits lookahead" {
-  let chunks = ["ab", "cd", "!"].iter()
+  let chunks = [|"ab", "cd", "!"|]
   let lexbuf = @lexbuf.Lexbuf::from_fn(() => chunks.next())
   lexbuf.__refill()
   lexbuf.__advance(1)
@@ -34,7 +34,7 @@ test "Lexbuf retains captures across chunks and commits lookahead" {
 
 ///|
 test "Lexbuf discards consumed input without retention" {
-  let chunks = ["ab", "", "cd"].iter()
+  let chunks = [|"ab", "", "cd"|]
   let lexbuf = @lexbuf.Lexbuf::from_fn(() => chunks.next())
   lexbuf.__refill()
   lexbuf.__advance(2)
@@ -55,7 +55,7 @@ test "Lexbuf reports source EOF while buffered input remains" {
 
 ///|
 test "Lexbuf can commit before a capture-only retention" {
-  let chunks = ["ab"].iter()
+  let chunks = [|"ab"|]
   let lexbuf = @lexbuf.Lexbuf::from_fn(() => chunks.next())
   lexbuf.__refill()
   lexbuf.__advance(1)
@@ -90,10 +90,10 @@ test "Lexbuf retains a token across many chunks" {
 ///|
 test "Lexbuf preserves UTF-16 chunk boundaries" {
   let input = "a😀b"
-  let chunks = [
+  let chunks = [|
     input.unsafe_substring(start=0, end=2),
     input.unsafe_substring(start=2, end=4),
-  ].iter()
+  |]
   let lexbuf = @lexbuf.Lexbuf::from_fn(() => chunks.next())
   lexbuf.__refill()
   lexbuf.__retain_from_cursor()
@@ -107,7 +107,7 @@ test "Lexbuf preserves UTF-16 chunk boundaries" {
 
 ///|
 test "Lexbuf reads multiple chunks after compaction" {
-  let chunks = ["ab", "cd", "ef"].iter()
+  let chunks = [|"ab", "cd", "ef"|]
   let lexbuf = @lexbuf.Lexbuf::from_fn(() => chunks.next())
   lexbuf.__refill()
   lexbuf.__retain_from_cursor()

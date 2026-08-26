@@ -18,7 +18,9 @@
 /// - `size` = the total number of elements in `tree` and `tail`.
 /// - `tail` stores the right-most chunk and has at most `BRANCHING_FACTOR` elements.
 /// - `tree` stores the prefix before `tail`.
-/// - `shift` is not used when `tree` is `Empty`.
+/// - `shift` is 0 when `tree` is `Empty`, and otherwise names the height of
+///   `tree` exactly: every operation that walks the tree is handed this `shift`
+///   and decrements it by `NUM_BITS` per level, so a `Leaf` must sit at shift 0.
 struct Vector[A] {
   tree : Tree[A]
   tail : FixedArray[A]
@@ -27,8 +29,26 @@ struct Vector[A] {
 }
 
 ///|
-/// Invariants:
-/// - For `Node`, the sizes array is `None` if the tree is full, i.e., we can use radix indexing.
+/// The RRB tree behind `Vector`.
+///
+/// Invariants (see the "Representation contract" block in `tree.mbt` for the
+/// reasoning, and `invariants_wbtest.mbt` for the executable version):
+///
+/// - `Empty` appears only as a whole tree, never as a child.
+/// - A `Leaf` holds 1..=`BRANCHING_FACTOR` elements and only ever sits at
+///   shift 0.
+/// - A `Node` has 1..=`BRANCHING_FACTOR` children, all of the same height.
+/// - `sizes` is `Some(cumulative)` — a running total, so the last entry is the
+///   subtree's element count — or `None` to mean **the whole subtree can be
+///   descended by radix indexing**: every child but the last is exactly full,
+///   *and* no descendant carries a sizes array of its own.
+///
+/// Note what `None` does **not** mean. It is not "this node is full": a radix
+/// node may have a partial last child (that is what a freshly built tree looks
+/// like), and conversely a node can be exactly full and still carry sizes,
+/// because `append_right_leaf` and `push_end` grow a relaxed node by patching
+/// its sizes array rather than re-deriving it. Treating full as equivalent to
+/// radix is what made `at` abort in #4083.
 #unsafe_cycle_free
 priv enum Tree[A] {
   Empty

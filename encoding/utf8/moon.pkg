@@ -5,6 +5,7 @@ import {
 
 import {
   "moonbitlang/core/buffer",
+  "moonbitlang/core/quickcheck",
 } for "test"
 
 options(

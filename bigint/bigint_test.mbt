@@ -67,6 +67,13 @@ test "to_octets pads larger length" {
 }
 
 ///|
+test "from_octets treats empty input as zero" {
+  inspect(@bigint.BigInt::from_octets(b""), content="0")
+  inspect(@bigint.BigInt::from_octets(b"", signum=0), content="0")
+  inspect(@bigint.BigInt::from_octets(b"", signum=-1), content="0")
+}
+
+///|
 test "add" {
   let a = @bigint.BigInt::from_int64(123456789012345678L)
   let b = @bigint.BigInt::from_int64(987654321098765432L)

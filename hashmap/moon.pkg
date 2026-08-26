@@ -4,10 +4,12 @@ import {
   "moonbitlang/core/debug",
   "moonbitlang/core/test",
   "moonbitlang/core/int",
+  "moonbitlang/core/json",
 }
 
 import {
   "moonbitlang/core/test",
   "moonbitlang/core/json",
   "moonbitlang/core/quickcheck",
+  "moonbitlang/core/bench",
 } for "test"

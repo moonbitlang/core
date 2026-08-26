@@ -90,6 +90,10 @@ pub fn[A] SortedSet::iter(self : SortedSet[A]) -> Iter[A] {
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
 pub fn[A : Compare] SortedSet::from_iter(iter : Iter[A]) -> SortedSet[A] {
+  // Folded rather than collected on purpose: bulk-building would have to
+  // materialize the whole iterator, so live memory would grow with the input
+  // length instead of the number of distinct elements. Callers who want the
+  // bulk path and can afford the buffer can write `SortedSet(iter.to_array())`.
   iter.fold(init=new(), (s, e) => s.add(e))
 }
 

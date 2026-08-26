@@ -75,6 +75,24 @@ test "parse negative huge exponent" {
 }
 
 ///|
+test "parse_number 17-19 digit mantissas" {
+  let cases : FixedArray[(String, UInt64)] = [
+    ("-65.613616999999977", 13857689601620889920UL),
+    ("43.420273000000009", 4631307677475222056UL),
+    ("-65.619720000000029", 13857690031081335640UL),
+    ("43.418052999999986", 4631307365037997904UL),
+    ("9.999999999999999999", 4621819117588971520UL),
+  ]
+  for case in cases {
+    let (input, expected_bits) = case
+    guard @json.parse(input) is Number(value, ..) else {
+      fail("expected JSON number")
+    }
+    assert_eq(value.reinterpret_as_uint64(), expected_bits)
+  }
+}
+
+///|
 test "parse and stringify large integers" {
   // Test integers at Int boundaries
   let min_int = "-2147483648" // Int.min_value
@@ -169,4 +187,28 @@ test "parse number with huge exponent" {
       #|Number(0)
     ),
   )
+}
+
+///|
+/// Every spelling of a negative zero — including values that underflow to
+/// zero — must keep the IEEE-754 sign bit. The integer spelling `-0` used to
+/// lose it: the integer fast path negated an `Int64` (where `-0 == 0`)
+/// before converting to `Double`.
+test "parse preserves the sign of negative zero" {
+  fn is_negative(text : String) -> Bool raise {
+    guard @json.parse(text) is Number(n, ..) else { fail("not a number") }
+    n.reinterpret_as_int64() < 0L
+  }
+
+  // Zero literals.
+  assert_true(is_negative("-0"))
+  assert_true(is_negative("-0.0"))
+  assert_true(is_negative("-0e0"))
+  assert_true(is_negative("-0.00E-7"))
+  assert_false(is_negative("0"))
+  assert_false(is_negative("0.0"))
+  // Negative values that underflow to zero.
+  assert_true(is_negative("-1e-400"))
+  assert_true(is_negative("-4.9e-325"))
+  assert_true(is_negative("-1e-999999999999999999999999999999999999"))
 }

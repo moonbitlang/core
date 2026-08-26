@@ -192,6 +192,71 @@ test "shrink immutable sorted set" {
 }
 
 ///|
+test "shrink builtin map" {
+  let input : Map[StableInt, Bool] = Map([
+    (StableInt(2), true),
+    (StableInt(1), false),
+  ])
+  let candidates = @shrink.Shrink::shrink(input).map(Map::to_array).collect()
+  debug_inspect(
+    candidates,
+    content=(
+      #|[
+      #|  [],
+      #|  [(1, false)],
+      #|  [(2, true)],
+      #|  [(1, false)],
+      #|  [(0, true), (1, false)],
+      #|  [(2, false), (1, false)],
+      #|  [(2, true), (0, false)],
+      #|]
+    ),
+  )
+}
+
+///|
+test "shrink linked set" {
+  let input = @set.Set([StableInt(2), StableInt(1)])
+  let candidates = @shrink.Shrink::shrink(input)
+    .map(@set.Set::to_array)
+    .collect()
+  debug_inspect(candidates, content="[[], [1], [2], [1], [0, 1], [2, 0]]")
+}
+
+///|
+test "shrink deque" {
+  let input = @deque.Deque([2, 1])
+  let candidates = @shrink.Shrink::shrink(input)
+    .map(@deque.Deque::to_array)
+    .collect()
+  debug_inspect(candidates, content="[[], [1], [2], [1, 1], [0, 1], [2, 0]]")
+}
+
+///|
+test "shrink mutable priority queue" {
+  let input = @priority_queue.PriorityQueue([2, 4])
+  let candidates = @shrink.Shrink::shrink(input)
+    .map(@priority_queue.PriorityQueue::to_array)
+    .collect()
+  debug_inspect(
+    candidates,
+    content="[[], [2], [4], [3, 2], [2, 2], [2, 0], [4, 1], [4, 0]]",
+  )
+}
+
+///|
+test "shrink immutable priority queue" {
+  let input = @immut_priority_queue.PriorityQueue([2, 4])
+  let candidates = @shrink.Shrink::shrink(input)
+    .map(@immut_priority_queue.PriorityQueue::to_array)
+    .collect()
+  debug_inspect(
+    candidates,
+    content="[[], [2], [4], [3, 2], [2, 2], [2, 0], [4, 1], [4, 0]]",
+  )
+}
+
+///|
 test "shrink mutable hash map" {
   let input = @hashmap.HashMap([(StableInt(2), true), (StableInt(1), false)])
   let table = @shrink.Shrink::shrink(input).collect()

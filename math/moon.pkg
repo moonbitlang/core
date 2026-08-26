@@ -8,6 +8,10 @@ import {
   "moonbitlang/core/array",
 }
 
+import {
+  "moonbitlang/core/quickcheck",
+} for "test"
+
 options(
   targets: {
     "algebraic_double_js.mbt": [ "js" ],

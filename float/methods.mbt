@@ -409,7 +409,7 @@ pub fn Float::until(
   inclusive? : Bool = false,
 ) -> Iter[Float] {
   if step == 0.0 {
-    return Iter::empty()
+    return [||]
   }
   let mut curr_value = Some(self)
   Iter::new(() => {

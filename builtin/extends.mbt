@@ -1084,11 +1084,6 @@ pub extend Int64 with Show::{output}
 pub extend Iter with Show::{to_string, output}
 
 ///|
-#deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
-#doc(hidden)
-pub extend Iter2 with Show::{to_string, output}
-
-///|
 #deprecated("Use `Default::default` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Json with Default::{default}

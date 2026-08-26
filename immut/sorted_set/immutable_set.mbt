@@ -40,11 +40,83 @@ pub fn[A] SortedSet::singleton(value : A) -> SortedSet[A] {
 
 ///|
 /// Initialize a `SortedSet[A]` from an array.
+/// O(n) when the input is already monotonic, otherwise O(n*log n).
 #as_free_fn(deprecated="Use @immut/sorted_set.SortedSet([...]) instead")
 #alias(of, deprecated="Use @immut/sorted_set.SortedSet([...]) instead")
 #as_free_fn(of, deprecated="Use @immut/sorted_set.SortedSet([...]) instead")
 #deprecated("Use @immut/sorted_set.SortedSet([...]) instead")
 pub fn[A : Compare] SortedSet::from_array(array : ArrayView[A]) -> SortedSet[A] {
+  sorted_set_from_array(array)
+}
+
+///|
+fn[A : Compare] sorted_set_from_array(array : ArrayView[A]) -> SortedSet[A] {
+  let (order, has_duplicates) = sorted_set_array_order(array)
+  if order == 1 {
+    if has_duplicates {
+      let compacted = sorted_set_compact_ordered_array(array, true)
+      return sorted_set_from_ascending_array(compacted, 0, compacted.length())
+    }
+    return sorted_set_from_ascending_array(array, 0, array.length())
+  } else if order == -1 {
+    if has_duplicates {
+      let compacted = sorted_set_compact_ordered_array(array, false)
+      return sorted_set_from_ascending_array(compacted, 0, compacted.length())
+    }
+    return sorted_set_from_descending_array(array, 0, array.length())
+  }
+  if array.length() >= sorted_set_sort_build_threshold {
+    // `array` is borrowed, so copy it into a buffer we own before sorting.
+    sorted_set_from_unsorted_buffer(array.to_owned().mut_view())
+  } else {
+    sorted_set_from_array_by_add(array)
+  }
+}
+
+///|
+let sorted_set_sort_build_threshold = 64
+
+///|
+/// Sort an owned buffer in place and build a set from it, keeping the LAST
+/// element of each equal run. `stable_sort` preserves the insertion order of
+/// equal elements, so that representative matches building the set by repeated
+/// `add` in reverse, which is what the array constructor does. The caller must
+/// own `buf` and not use it afterwards, since the elements are permuted in
+/// place.
+fn[A : Compare] sorted_set_from_unsorted_buffer(
+  buf : MutArrayView[A],
+) -> SortedSet[A] {
+  buf.stable_sort()
+  let len = sorted_set_dedupe_in_place(buf)
+  sorted_set_from_ascending_array(buf.view(start=0, end=len), 0, len)
+}
+
+///|
+// Drop duplicate runs from a sorted buffer in place, keeping the LAST element
+// of each run. The unique elements are packed at the front and their count is
+// returned; the tail is left untouched. Indices are monotonic
+// (write <= start <= end < len), so the unchecked accessors stay in bounds.
+fn[A : Compare] sorted_set_dedupe_in_place(buf : MutArrayView[A]) -> Int {
+  let len = buf.length()
+  let mut write = 0
+  for start = 0; start < len; {
+    let end = for end = start; end + 1 < len &&
+                 buf.unsafe_get(end).compare(buf.unsafe_get(end + 1)) == 0; {
+      continue end + 1
+    } nobreak {
+      end
+    }
+    buf.unsafe_set(write, buf.unsafe_get(end))
+    write += 1
+    continue end + 1
+  }
+  write
+}
+
+///|
+fn[A : Compare] sorted_set_from_array_by_add(
+  array : ArrayView[A],
+) -> SortedSet[A] {
   for i = array.length() - 1, set = Empty; i >= 0; {
     continue i - 1, set.add(array[i])
   } nobreak {
@@ -63,10 +135,100 @@ pub fn[A : Compare] SortedSet::from_array(array : ArrayView[A]) -> SortedSet[A] 
 /// }
 /// ```
 pub fn[A : Compare] SortedSet::SortedSet(array : ArrayView[A]) -> SortedSet[A] {
-  for i = array.length() - 1, set = Empty; i >= 0; {
-    continue i - 1, set.add(array[i])
-  } nobreak {
-    set
+  sorted_set_from_array(array)
+}
+
+///|
+fn[A : Compare] sorted_set_array_order(array : ArrayView[A]) -> (Int, Bool) {
+  let len = array.length()
+  guard len > 1 else { return (1, false) }
+  let mut order = 0
+  let mut has_duplicates = false
+  for i in 1..<len {
+    let cmp = array[i - 1].compare(array[i])
+    if cmp == 0 {
+      has_duplicates = true
+    } else {
+      let current = if cmp < 0 { 1 } else { -1 }
+      if order == 0 {
+        order = current
+      } else if order != current {
+        return (0, has_duplicates)
+      }
+    }
+  }
+  (if order == 0 { 1 } else { order }, has_duplicates)
+}
+
+///|
+fn[A : Compare] sorted_set_compact_ordered_array(
+  array : ArrayView[A],
+  ascending : Bool,
+) -> Array[A] {
+  let result = []
+  let len = array.length()
+  if ascending {
+    for start = 0; start < len; {
+      let end = for end = start; end + 1 < len &&
+                   array[end].compare(array[end + 1]) == 0; {
+        continue end + 1
+      } nobreak {
+        end
+      }
+      result.push(array[end])
+      continue end + 1
+    }
+  } else {
+    for end = len - 1; end >= 0; {
+      let start = for start = end; start > 0 &&
+                     array[start - 1].compare(array[start]) == 0; {
+        continue start - 1
+      } nobreak {
+        start
+      }
+      result.push(array[end])
+      continue start - 1
+    }
+  }
+  result
+}
+
+///|
+/// Build a balanced tree from a slice sorted in ascending order.
+/// The ascending case of a monotonic array is exactly this construction.
+fn[A] sorted_set_from_ascending_array(
+  array : ArrayView[A],
+  start : Int,
+  end : Int,
+) -> SortedSet[A] {
+  if start >= end {
+    Empty
+  } else {
+    let mid = (start + end) / 2
+    let value = array[mid]
+    let left = sorted_set_from_ascending_array(array, start, mid)
+    let right = sorted_set_from_ascending_array(array, mid + 1, end)
+    create(left, value, right)
+  }
+}
+
+///|
+/// Build a balanced tree from a slice sorted in descending order, without
+/// materializing a reversed copy: the middle element is still the subtree root,
+/// but the smaller values sit at the higher indices, so the halves are swapped.
+fn[A] sorted_set_from_descending_array(
+  array : ArrayView[A],
+  start : Int,
+  end : Int,
+) -> SortedSet[A] {
+  if start >= end {
+    Empty
+  } else {
+    let mid = (start + end) / 2
+    let value = array[mid]
+    let left = sorted_set_from_descending_array(array, mid + 1, end)
+    let right = sorted_set_from_descending_array(array, start, mid)
+    create(left, value, right)
   }
 }
 
@@ -898,7 +1060,7 @@ fn[A : Compare] SortedSet::split_bis(
 }
 
 ///|
-/// Get the height of set.
+/// Returns the number of elements in the set.
 #alias(size, deprecated)
 #inline
 pub fn[A] SortedSet::length(self : SortedSet[A]) -> Int {

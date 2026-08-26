@@ -131,14 +131,10 @@ test "iter" {
     |> @sorted_map.SortedMap
   let buf = StringBuilder()
   for k, v in map {
-    buf.write_object(k)
-    buf.write_string(": ")
-    buf.write_object(v)
-    buf.write_string("\n")
+    buf <+ "\{k}: \{v}\n"
   }
   for k, v in map {
-    buf.write_string("(\{k}, \{Repr(v)})")
-    buf.write_string("\n")
+    buf <+ "(\{k}, \{Repr(v)})\n"
   }
   inspect(
     buf,
@@ -367,7 +363,7 @@ test "range matching all elements" {
   let map = @sorted_map.SortedMap([(1, "a"), (2, "b"), (3, "c")])
   let buf = StringBuilder()
   for k, v in map.range(low=0, high=10) {
-    buf.write_string("[\{k},\{v}]")
+    buf <+ "[\{k},\{v}]"
   }
   inspect(buf, content="[1,a][2,b][3,c]")
 }
@@ -383,7 +379,7 @@ test "range partial match" {
   ])
   let buf = StringBuilder()
   for k, v in map.range(low=2, high=4) {
-    buf.write_string("[\{k},\{v}]")
+    buf <+ "[\{k},\{v}]"
   }
   inspect(buf, content="[2,b][3,c][4,d]")
 }
@@ -399,7 +395,7 @@ test "range with single element" {
   ])
   let buf = StringBuilder()
   for k, v in map.range(low=3, high=3) {
-    buf.write_string("[\{k},\{v}]")
+    buf <+ "[\{k},\{v}]"
   }
   inspect(buf, content="[3,c]")
 }
@@ -415,7 +411,7 @@ test "range at left boundary" {
   ])
   let buf = StringBuilder()
   for k, v in map.range(low=1, high=2) {
-    buf.write_string("[\{k},\{v}]")
+    buf <+ "[\{k},\{v}]"
   }
   inspect(buf, content="[1,a][2,b]")
 }
@@ -431,7 +427,7 @@ test "range at right boundary" {
   ])
   let buf = StringBuilder()
   for k, v in map.range(low=4, high=5) {
-    buf.write_string("[\{k},\{v}]")
+    buf <+ "[\{k},\{v}]"
   }
   inspect(buf, content="[4,d][5,e]")
 }
@@ -447,7 +443,7 @@ test "range with gaps in data" {
   ])
   let buf = StringBuilder()
   for k, v in map.range(low=2, high=8) {
-    buf.write_string("[\{k},\{v}]")
+    buf <+ "[\{k},\{v}]"
   }
   inspect(buf, content="[3,c][5,e][7,g]")
 }
@@ -507,7 +503,7 @@ test "range with non-existent boundaries" {
   let map = @sorted_map.SortedMap([(2, "b"), (4, "d"), (6, "f"), (8, "h")])
   let buf = StringBuilder()
   for k, v in map.range(low=3, high=7) {
-    buf.write_string("[\{k},\{v}]")
+    buf <+ "[\{k},\{v}]"
   }
   inspect(buf, content="[4,d][6,f]")
 }

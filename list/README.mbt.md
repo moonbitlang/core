@@ -364,8 +364,8 @@ test {
 ///|
 test {
   let list = @list.List([1, 2, 3, 4, 5])
-  @test.assert_eq(list.is_prefix(List([1, 2, 3])), true)
-  @test.assert_eq(list.is_suffix(List([4, 5])), true)
+  @test.assert_eq(list.has_prefix(List([1, 2, 3])), true)
+  @test.assert_eq(list.has_suffix(List([4, 5])), true)
 }
 ```
 
@@ -411,7 +411,7 @@ test {
 test {
   let list = @list.List([1, 2, 3])
   debug_inspect(list.iter().to_array(), content="[1, 2, 3]")
-  let list2 = @list.from_iter([4, 5, 6].iter())
+  let list2 = @list.from_iter([|4, 5, 6|])
   @debug.assert_eq(list2, List([4, 5, 6]))
 }
 ```

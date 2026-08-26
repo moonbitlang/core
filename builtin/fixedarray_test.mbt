@@ -423,21 +423,21 @@ test "FixedArray::from_array with array of different type" {
 
 ///|
 test "FixedArray::from_iter with multiple elements iterator" {
-  let iter = [1, 2, 3, 4, 5].iter()
+  let iter = [|1, 2, 3, 4, 5|]
   let result = FixedArray::from_iter(iter)
   @test.assert_eq(result, [1, 2, 3, 4, 5])
 }
 
 ///|
 test "FixedArray::from_iter with single element iterator" {
-  let iter = [1].iter()
+  let iter = [|1|]
   let result = FixedArray::from_iter(iter)
   @test.assert_eq(result, [1])
 }
 
 ///|
 test "FixedArray::from_iter with empty iterator" {
-  let iter : Iter[Int] = Iter::empty()
+  let iter : Iter[Int] = [||]
   let result = FixedArray::from_iter(iter)
   @test.assert_eq(result, [])
 }

@@ -34,7 +34,7 @@ test {
   @test.assert_eq(dv.is_empty(), true)
   let dv2 = @deque.from_array([1, 2, 3, 4, 5])
   @test.assert_eq(dv2.length(), 5)
-  let dv3 = @deque.from_iter([1, 2, 3].iter())
+  let dv3 = @deque.from_iter([|1, 2, 3|])
   @test.assert_eq(dv3.length(), 3)
 }
 ```

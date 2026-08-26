@@ -13,7 +13,10 @@
 // limitations under the License.
 
 ///|
-/// Validate input and return whether it is valid.
+/// Returns whether `input` parses. "Valid" here means exactly what `parse`
+/// accepts, so it includes the restriction on string contents described
+/// there: a document whose only defect is an unpaired surrogate escape is
+/// reported as invalid.
 pub fn valid(input : StringView) -> Bool {
   try {
     parse(input) |> ignore
@@ -25,6 +28,37 @@ pub fn valid(input : StringView) -> Bool {
 
 ///|
 /// Parse a JSON input string into a Json value, with an optional maximum nesting depth (default is 1024)
+///
+/// ## What strings may contain
+///
+/// Every string in the result is well-formed Unicode: each `\uXXXX` escape
+/// must denote a Unicode scalar value on its own, or be one half of a
+/// correctly ordered surrogate pair. An escaped leading surrogate
+/// (`\uD800`–`\uDBFF`) must therefore be followed immediately by an escaped
+/// trailing surrogate (`\uDC00`–`\uDFFF`), and the pair is decoded as the
+/// one character it stands for.
+///
+/// An escape that cannot pair up raises `InvalidChar` positioned at the
+/// backslash that opens it — that one position, whatever the scan actually
+/// stopped on. Input that simply runs out still raises `InvalidEof`, and a
+/// second escape that is itself malformed is reported as the hex-digit
+/// error it is, at the offending digit.
+///
+/// This is a limit on what a string may *contain*, which RFC 8259 §9 leaves
+/// to the implementation — not a claim about which documents are
+/// grammatically well formed, since §8.2 admits unpaired surrogate escapes,
+/// nor a claim of I-JSON (RFC 7493) conformance, which restricts more than
+/// this. It is chosen because MoonBit's `String` is required to be
+/// well-formed, so the alternatives are to hand back a string that violates
+/// that invariant, or to substitute U+FFFD and silently lose the
+/// distinction between two different keys. A parse error is the only one of
+/// the three a caller can see and act on.
+///
+/// The cost is real: `JSON.stringify` in JavaScript emits lone surrogates as
+/// `\uXXXX`, so some JSON that JavaScript and Python accept is rejected
+/// here. Rust's serde_json rejects it too when parsing into `String` or
+/// `Value`, though its byte-oriented mode admits WTF-8; Go's `encoding/json`
+/// substitutes U+FFFD, while its experimental v2 parser is stricter.
 #label_migration(max_nesting_depth, fill=false)
 pub fn parse(
   input : StringView,

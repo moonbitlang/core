@@ -34,9 +34,9 @@ impl @quickcheck.Arbitrary for ShrinkInput with fn arbitrary(_, _) {
 ///|
 impl @shrink.Shrink for ShrinkInput with fn shrink(input) {
   if input.0 <= 0 {
-    Iter::empty()
+    [||]
   } else {
-    [ShrinkInput(input.0 - 1), ShrinkInput(0)].iter()
+    [|ShrinkInput(input.0 - 1), ShrinkInput(0)|]
   }
 }
 
@@ -59,9 +59,9 @@ impl @quickcheck.Arbitrary for DriftInput with fn arbitrary(_, _) {
 ///|
 impl @shrink.Shrink for DriftInput with fn shrink(input) {
   if input.0 == 10 {
-    [DriftInput(9), DriftInput(8)].iter()
+    [|DriftInput(9), DriftInput(8)|]
   } else {
-    Iter::empty()
+    [||]
   }
 }
 
@@ -76,9 +76,9 @@ impl @quickcheck.Arbitrary for FilteredShrinkInput with fn arbitrary(_, _) {
 ///|
 impl @shrink.Shrink for FilteredShrinkInput with fn shrink(input) {
   match input.0 {
-    10 => [FilteredShrinkInput(9), FilteredShrinkInput(7)].iter()
-    9 => [FilteredShrinkInput(8)].iter()
-    _ => Iter::empty()
+    10 => [|FilteredShrinkInput(9), FilteredShrinkInput(7)|]
+    9 => [|FilteredShrinkInput(8)|]
+    _ => [||]
   }
 }
 

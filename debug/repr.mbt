@@ -315,24 +315,5 @@ pub fn Repr::ctor(name : String, args : Array[(String?, Repr)]) -> Repr {
 /// This is used by diff/pretty-print when the structure is preserved but
 /// children are rendered separately.
 fn Repr::shallow(self : Repr) -> Repr {
-  match self {
-    UnitLit
-    | Integer(_)
-    | DoubleLit(_)
-    | FloatLit(_)
-    | BoolLit(_)
-    | CharLit(_)
-    | StringLit(_)
-    | Literal(_)
-    | Omitted => self
-    Tuple(_) => Tuple([])
-    Array(_) => Array([])
-    Record(_) => Record([])
-    Enum(name, _) => Enum(name, [])
-    Opaque(name, _) => Opaque(name, Omitted)
-    Map(_) => Map([])
-    RecordField(name, _) => RecordField(name, Omitted)
-    EnumLabeledArg(label, _) => EnumLabeledArg(label, Omitted)
-    MapEntry(_, _) => MapEntry(Omitted, Omitted)
-  }
+  self.with_children([])
 }

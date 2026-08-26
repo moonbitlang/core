@@ -14,7 +14,9 @@
 
 ///|
 test "empty" {
-  let iter = Iter::empty()
+  // the `[||]` literal is preferred at call sites, but `Iter::empty` is still
+  // public API and needs its own coverage
+  let iter : Iter[Char] = Iter::empty()
   let exb = StringBuilder(size_hint=0)
   iter.each(x => exb.write_char(x))
   inspect(exb)
@@ -22,6 +24,7 @@ test "empty" {
 
 ///|
 test "singleton" {
+  // likewise `Iter::singleton`, the constructor behind `[|x|]`
   let iter = Iter::singleton('1')
   let exb = StringBuilder(size_hint=0)
   iter.each(x => exb.write_char(x))
@@ -52,7 +55,7 @@ test "count_if" {
   @test.assert_eq(iter.count_if(x => x % 2 == 0), 3)
   let iter = test_from_array([1, 2, 3])
   @test.assert_eq(iter.count_if(x => x > 99), 0)
-  let iter : Iter[Int] = Iter::empty()
+  let iter : Iter[Int] = [||]
   @test.assert_eq(iter.count_if(_ => true), 0)
 }
 
@@ -113,10 +116,7 @@ test "take_while" {
 test "take_while2" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = StringBuilder(size_hint=0)
-  iter
-  .take_while(x => x != '4')
-  .concat(Iter::singleton('6'))
-  .each(x => exb.write_char(x))
+  iter.take_while(x => x != '4').concat([|'6'|]).each(x => exb.write_char(x))
   inspect(exb, content="1236")
 }
 
@@ -125,7 +125,7 @@ test "take_while3" {
   let iter = test_from_array([1, 2, 3])
   let res = iter
     .take_while(x => x != 4)
-    .concat(Iter::singleton(4))
+    .concat([|4|])
     .find_first(x => x % 2 == 0)
   debug_inspect(res, content="Some(2)")
 }
@@ -150,7 +150,7 @@ test "map_while1" {
   let exb = StringBuilder(size_hint=0)
   iter
   .map_while(x => if x != 4 { Some(x) } else { None })
-  .each(x => exb.write_string("\{x}\n"))
+  .each(x => exb <+ "\{x}\n")
   inspect(
     exb,
     content=(
@@ -168,8 +168,8 @@ test "map_while2" {
   let exb = StringBuilder(size_hint=0)
   iter
   .map_while(x => if x != 4 { Some(x) } else { None })
-  .concat(Iter::singleton(6))
-  .each(x => exb.write_string("\{x}\n"))
+  .concat([|6|])
+  .each(x => exb <+ "\{x}\n")
   inspect(
     exb,
     content=(
@@ -187,7 +187,7 @@ test "map_while3" {
   let iter = test_from_array([1, 2, 3])
   let res = iter
     .map_while(x => if x != 4 { Some(x) } else { None })
-    .concat(Iter::singleton(4))
+    .concat([|4|])
     .find_first(x => x % 2 == 0)
   debug_inspect(res, content="Some(2)")
 }
@@ -240,7 +240,7 @@ test "drop_while2" {
   let iter = test_from_array([1, 2, 3, 4, 5])
   let res = iter
     .drop_while(x => x <= 3)
-    .concat(Iter::singleton(6))
+    .concat([|6|])
     .find_first(x => x % 3 == 0)
   debug_inspect(res, content="Some(6)")
 }
@@ -251,7 +251,7 @@ test "drop_while3" {
   let exb = StringBuilder(size_hint=0)
   let res = iter
     .drop_while(x => x < 3)
-    .concat(Iter::singleton(6))
+    .concat([|6|])
     .find_first(x => {
       exb.write_char('x')
       x % 3 == 0
@@ -266,7 +266,7 @@ test "drop_while4" {
   let iter = test_from_array([1, 2, 3, 4, 5])
   let res = iter
     .drop_while(x => x <= 3)
-    .concat(Iter::singleton(6))
+    .concat([|6|])
     .drop(3)
     .find_first(x => x % 3 == 0)
   debug_inspect(res, content="None")
@@ -292,57 +292,47 @@ test "map" {
 
 ///|
 test "size_hint" {
-  let iter = [1, 2, 3].iter()
+  // an `Iter` literal and `Array::iter` report the same hint
+  debug_inspect([1, 2, 3].iter().size_hint(), content="Some(3)")
+  let iter = [|1, 2, 3|]
   debug_inspect(iter.size_hint(), content="Some(3)")
   debug_inspect(iter.next(), content="Some(1)")
   debug_inspect(iter.size_hint(), content="Some(2)")
   debug_inspect(iter.collect(), content="[2, 3]")
   debug_inspect(iter.size_hint(), content="Some(0)")
-  debug_inspect([1, 2, 3].iter().map(x => x + 1).size_hint(), content="Some(3)")
+  debug_inspect([|1, 2, 3|].map(x => x + 1).size_hint(), content="Some(3)")
   debug_inspect(
-    [1, 2, 3].iter().mapi((i, x) => i + x).size_hint(),
+    [|1, 2, 3|].mapi((i, x) => i + x).size_hint(),
     content="Some(3)",
   )
-  debug_inspect([1, 2, 3].iter().tap(_ => ()).size_hint(), content="Some(3)")
-  debug_inspect([1, 2, 3].iter().take(2).size_hint(), content="Some(2)")
-  debug_inspect([1, 2, 3].iter().take(5).size_hint(), content="Some(3)")
-  debug_inspect([1, 2, 3].iter().take(0).size_hint(), content="Some(0)")
-  debug_inspect([1, 2, 3].iter().drop(0).size_hint(), content="Some(3)")
-  debug_inspect([1, 2, 3].iter().drop(1).size_hint(), content="Some(2)")
-  debug_inspect([1, 2, 3].iter().drop(5).size_hint(), content="Some(0)")
-  debug_inspect(
-    [1, 2, 3].iter().concat([4, 5].iter()).size_hint(),
-    content="Some(5)",
-  )
-  debug_inspect(
-    [1, 2].iter().zip([3, 4, 5].iter()).size_hint(),
-    content="Some(2)",
-  )
-  debug_inspect(
-    [1, 2, 3].iter().zip([4, 5].iter()).size_hint(),
-    content="Some(2)",
-  )
-  let empty_left : Iter[Int] = Iter::empty()
+  debug_inspect([|1, 2, 3|].tap(_ => ()).size_hint(), content="Some(3)")
+  debug_inspect([|1, 2, 3|].take(2).size_hint(), content="Some(2)")
+  debug_inspect([|1, 2, 3|].take(5).size_hint(), content="Some(3)")
+  debug_inspect([|1, 2, 3|].take(0).size_hint(), content="Some(0)")
+  debug_inspect([|1, 2, 3|].drop(0).size_hint(), content="Some(3)")
+  debug_inspect([|1, 2, 3|].drop(1).size_hint(), content="Some(2)")
+  debug_inspect([|1, 2, 3|].drop(5).size_hint(), content="Some(0)")
+  debug_inspect([|1, 2, 3|].concat([|4, 5|]).size_hint(), content="Some(5)")
+  debug_inspect([|1, 2|].zip([|3, 4, 5|]).size_hint(), content="Some(2)")
+  debug_inspect([|1, 2, 3|].zip([|4, 5|]).size_hint(), content="Some(2)")
+  let empty_left : Iter[Int] = [||]
   debug_inspect(
     empty_left.zip(Iter::new(() => Some(1))).size_hint(),
     content="Some(0)",
   )
-  let empty_right : Iter[Int] = Iter::empty()
+  let empty_right : Iter[Int] = [||]
   debug_inspect(
     Iter::new(() => Some(1)).zip(empty_right).size_hint(),
     content="Some(0)",
   )
-  debug_inspect(
-    Iter::new(() => Some(1)).zip([1].iter()).size_hint(),
-    content="None",
-  )
-  debug_inspect([1, 2, 3].iter().intersperse(0).size_hint(), content="Some(5)")
+  debug_inspect(Iter::new(() => Some(1)).zip([|1|]).size_hint(), content="None")
+  debug_inspect([|1, 2, 3|].intersperse(0).size_hint(), content="Some(5)")
   debug_inspect(
     Iter::new(() => Some(1)).intersperse(0).size_hint(),
     content="None",
   )
-  debug_inspect([1, 2, 3].iter()[1:3].size_hint(), content="Some(2)")
-  debug_inspect([1, 2, 3].iter()[3:5].size_hint(), content="Some(0)")
+  debug_inspect([|1, 2, 3|][1:3].size_hint(), content="Some(2)")
+  debug_inspect([|1, 2, 3|][3:5].size_hint(), content="Some(0)")
   debug_inspect(
     Iter::new(() => Some(1)).view(start=2, end=1).size_hint(),
     content="Some(0)",
@@ -351,18 +341,12 @@ test "size_hint" {
     Iter::new(() => Some(1)).view(start=1, end=3).size_hint(),
     content="None",
   )
-  debug_inspect([1, 2, 3].iter().filter(x => x > 1).size_hint(), content="None")
+  debug_inspect([|1, 2, 3|].filter(x => x > 1).size_hint(), content="None")
   debug_inspect(
-    [1, 2, 3]
-    .iter()
-    .filter_map(x => if x > 1 { Some(x) } else { None })
-    .size_hint(),
+    [|1, 2, 3|].filter_map(x => if x > 1 { Some(x) } else { None }).size_hint(),
     content="None",
   )
-  debug_inspect(
-    [1, 2, 3].iter().take_while(x => x < 3).size_hint(),
-    content="None",
-  )
+  debug_inspect([|1, 2, 3|].take_while(x => x < 3).size_hint(), content="None")
   let unknown : Iter[Int] = Iter::new(() => None)
   let known_empty : Iter[Int] = Iter::new(() => None, size_hint=0)
   debug_inspect(unknown.size_hint(), content="None")
@@ -408,24 +392,26 @@ test "filter_map" {
   debug_inspect(r1, content="[3, 4, 5]")
   let r2 : Array[Unit] = arr.iter().filter_map(_x => None).collect()
   debug_inspect(r2, content="[]")
-  let r3 : Array[Unit] = [].iter().filter_map(x => Some(x)).collect()
+  let r3 : Array[Unit] = [||].filter_map(x => Some(x)).collect()
   debug_inspect(r3, content="[]")
   // Test using next() directly to ensure the closure is executed
-  let it1 = [1, 2, 3, 4, 5]
-    .iter()
-    .filter_map(x => if x % 2 == 0 { Some(x * 10) } else { None })
+  let it1 = [|1, 2, 3, 4, 5|].filter_map(x => {
+    if x % 2 == 0 {
+      Some(x * 10)
+    } else {
+      None
+    }
+  })
   debug_inspect(it1.next(), content="Some(20)")
   debug_inspect(it1.next(), content="Some(40)")
   debug_inspect(it1.next(), content="None")
   // Test None branch inside while loop
-  let it2 = [1, 2, 3]
-    .iter()
-    .filter_map(x => if x == 2 { None } else { Some(x) })
+  let it2 = [|1, 2, 3|].filter_map(x => if x == 2 { None } else { Some(x) })
   debug_inspect(it2.next(), content="Some(1)")
   debug_inspect(it2.next(), content="Some(3)")
   debug_inspect(it2.next(), content="None")
   // Test iter exhaustion (else branch)
-  let it3 : Iter[Unit] = [1].iter().filter_map(_ => None)
+  let it3 : Iter[Unit] = [|1|].filter_map(_ => None)
   debug_inspect(it3.next(), content="None")
 }
 
@@ -441,7 +427,7 @@ test "flat_map" {
 test "flat_map2" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = StringBuilder(size_hint=0)
-  iter.flat_map(x => Iter::singleton(x)).each(x => exb.write_char(x))
+  iter.flat_map(x => [|x|]).each(x => exb.write_char(x))
   inspect(exb, content="12345")
 }
 
@@ -489,7 +475,7 @@ test "concat" {
 ///|
 test "zip" {
   let numbers = (1).until(6)
-  let letters = ["a", "b", "c"].iter()
+  let letters = [|"a", "b", "c"|]
   debug_inspect(
     numbers.zip(letters).collect(),
     content=(
@@ -501,7 +487,7 @@ test "zip" {
 ///|
 test "zip alias combine" {
   let numbers = (1).until(4)
-  let letters = ["x", "y", "z", "w"].iter()
+  let letters = [|"x", "y", "z", "w"|]
   debug_inspect(
     numbers.combine(letters).collect(),
     content=(
@@ -515,7 +501,7 @@ test "zip short-circuits when either side ends" {
   let lhs_evaluated = []
   let rhs_evaluated = []
   let lhs = (1).until(10).tap(x => lhs_evaluated.push(x))
-  let rhs = [10, 20].iter().tap(x => rhs_evaluated.push(x))
+  let rhs = [|10, 20|].tap(x => rhs_evaluated.push(x))
   debug_inspect(lhs.zip(rhs).collect(), content="[(1, 10), (2, 20)]")
   debug_inspect(lhs_evaluated, content="[1, 2, 3]")
   debug_inspect(rhs_evaluated, content="[10, 20]")
@@ -590,7 +576,7 @@ test "until" {
   debug_inspect(
     (@int.MAX_VALUE - 1)
     .until(@int.MAX_VALUE, inclusive=true)
-    .concat([0].iter())
+    .concat([|0|])
     .to_array(),
     content=(
       #|[2147483646, 2147483647, 0]
@@ -778,7 +764,7 @@ test "intersperse early end" {
 
 ///|
 test "intersperse stops on separator" {
-  let iter = [1, 2].iter().intersperse(0)
+  let iter = [|1, 2|].intersperse(0)
   let seen = []
   for x in iter {
     seen.push(x)
@@ -859,25 +845,25 @@ test "tree" {
 ///|
 test "Iter::intersperse" {
   debug_inspect(
-    [1, 2, 3].iter().intersperse(0).to_array(),
+    [|1, 2, 3|].intersperse(0).to_array(),
     content=(
       #|[1, 0, 2, 0, 3]
     ),
   )
   debug_inspect(
-    [1, 2, 3, 4, 5, 6, 7, 8, 9].iter().intersperse(0).to_array(),
+    [|1, 2, 3, 4, 5, 6, 7, 8, 9|].intersperse(0).to_array(),
     content=(
       #|[1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 7, 0, 8, 0, 9]
     ),
   )
   debug_inspect(
-    ([] : Array[Int]).iter().intersperse(0).to_array(),
+    ([||] : Iter[Int]).intersperse(0).to_array(),
     content=(
       #|[]
     ),
   )
   debug_inspect(
-    [1].iter().intersperse(0).to_array(),
+    [|1|].intersperse(0).to_array(),
     content=(
       #|[1]
     ),
@@ -886,40 +872,40 @@ test "Iter::intersperse" {
 
 ///|
 test "Iter::last" {
-  debug_inspect([1, 2, 3].iter().last(), content="Some(3)")
-  debug_inspect([1].iter().last(), content="Some(1)")
-  debug_inspect(([] : Array[Int]).iter().last(), content="None")
+  debug_inspect([|1, 2, 3|].last(), content="Some(3)")
+  debug_inspect([|1|].last(), content="Some(1)")
+  debug_inspect(([||] : Iter[Int]).last(), content="None")
 }
 
 ///|
 test "Iter::head" {
-  debug_inspect([1, 2, 3].iter().head(), content="Some(1)")
-  debug_inspect([1].iter().head(), content="Some(1)")
-  debug_inspect(([] : Array[Int]).iter().head(), content="None")
+  debug_inspect([|1, 2, 3|].head(), content="Some(1)")
+  debug_inspect([|1|].head(), content="Some(1)")
+  debug_inspect(([||] : Iter[Int]).head(), content="None")
 }
 
 ///|
 test "Iter::as_view" {
   debug_inspect(
-    [1, 2, 3].iter()[1:2].to_array(),
+    [|1, 2, 3|][1:2].to_array(),
     content=(
       #|[2]
     ),
   )
   debug_inspect(
-    [1, 2, 3].iter()[1:].to_array(),
+    [|1, 2, 3|][1:].to_array(),
     content=(
       #|[2, 3]
     ),
   )
   debug_inspect(
-    [1, 2, 3].iter()[1:].to_array(),
+    [|1, 2, 3|][1:].to_array(),
     content=(
       #|[2, 3]
     ),
   )
   debug_inspect(
-    [1, 2, 3].iter()[:].to_array(),
+    [|1, 2, 3|][:].to_array(),
     content=(
       #|[1, 2, 3]
     ),
@@ -938,69 +924,69 @@ test "Iter::enumerate" {
 
 ///|
 test "next function - basic functionality" {
-  let iter = Iter::singleton(42)
+  let iter = [|42|]
   debug_inspect(iter.next(), content="Some(42)")
 }
 
 ///|
 test "next function - empty iter" {
-  let iter : Iter[Int] = Iter::empty()
+  let iter : Iter[Int] = [||]
   debug_inspect(iter.next(), content="None")
 }
 
 ///|
 test "next function - multiple elements" {
-  let iter = [1, 2, 3].iter()
+  let iter = [|1, 2, 3|]
   debug_inspect(iter.next(), content="Some(1)")
 }
 
 ///|
 test "next function - random cases" {
-  let iter1 = [10, 20, 30].iter()
+  let iter1 = [|10, 20, 30|]
   debug_inspect(iter1.next(), content="Some(10)")
-  let iter2 = [-5, 0, 5].iter()
+  let iter2 = [|-5, 0, 5|]
   debug_inspect(iter2.next(), content="Some(-5)")
-  let iter3 = [100, 200, 300, 400].iter()
+  let iter3 = [|100, 200, 300, 400|]
   debug_inspect(iter3.next(), content="Some(100)")
-  let iter4 = [-10, -20, -30].iter()
+  let iter4 = [|-10, -20, -30|]
   debug_inspect(iter4.next(), content="Some(-10)")
-  let iter5 = [0, 0, 0].iter()
+  let iter5 = [|0, 0, 0|]
   debug_inspect(iter5.next(), content="Some(0)")
 }
 
 ///|
 test "@builtin.join/empty_iter" {
-  let empty_iter : Iter[String] = Iter::empty()
+  let empty_iter : Iter[String] = [||]
   inspect(empty_iter.join(""), content="")
 }
 
 ///|
 test "@builtin.join/single_element" {
-  let single_elem_iter : Iter[String] = Iter::singleton("Test")
+  let single_elem_iter : Iter[String] = [|"Test"|]
   inspect(single_elem_iter.join(""), content="Test")
 }
 
 ///|
 test "@builtin.join/multiple_elements_with_separator" {
-  let iter : Iter[String] = ["A", "B", "C"].iter()
+  let iter : Iter[String] = [|"A", "B", "C"|]
   inspect(iter.join(","), content="A,B,C")
 }
 
 ///|
 test "@builtin.join/multiple_elements_without_separator" {
-  let iter : Iter[String] = ["A", "B", "C"].iter()
+  let iter : Iter[String] = [|"A", "B", "C"|]
   inspect(iter.join(""), content="ABC")
 }
 
 ///|
 test "@builtin.join/any_to_string_view_element" {
-  let iter : Iter[StringView] = ["a"[:], "b", "c"].iter()
+  let iter : Iter[StringView] = [|"a", "b", "c"|]
   inspect(iter.join("-"), content="a-b-c")
 }
 
 ///|
 test "Iter::nth" {
-  let it = () => [1, 2, 3, 4, 5].iter()
+  let it = () => [|1, 2, 3, 4, 5|]
   debug_inspect(it().nth(2), content="Some(3)")
   debug_inspect(it().nth(4), content="Some(5)")
   debug_inspect(it().nth(5), content="None")
@@ -1016,63 +1002,63 @@ test "Iter::nth" {
 ///|
 test "@builtin.Iter::maximum" {
   // Basic functionality with integers
-  debug_inspect([1, 2, 3, 4, 5].iter().maximum(), content="Some(5)")
+  debug_inspect([|1, 2, 3, 4, 5|].maximum(), content="Some(5)")
   // With negative numbers
-  debug_inspect([-5, -3, -1, -10].iter().maximum(), content="Some(-1)")
+  debug_inspect([|-5, -3, -1, -10|].maximum(), content="Some(-1)")
   // Single element
-  debug_inspect([42].iter().maximum(), content="Some(42)")
+  debug_inspect([|42|].maximum(), content="Some(42)")
   // Empty iter should return None
-  let empty_iter : Iter[Int] = Iter::empty()
+  let empty_iter : Iter[Int] = [||]
   debug_inspect(empty_iter.maximum(), content="None")
 }
 
 ///|
 test "@builtin.Iter::minimum" {
   // Test with normal sequence
-  let arr = [3, 1, 4, 1, 5].iter()
+  let arr = [|3, 1, 4, 1, 5|]
   debug_inspect(arr.minimum(), content="Some(1)")
 
   // Test with single element
-  let single = [42].iter()
+  let single = [|42|]
   debug_inspect(single.minimum(), content="Some(42)")
 
   // Test with empty sequence
-  let empty : Iter[Int] = Iter::empty()
+  let empty : Iter[Int] = [||]
   debug_inspect(empty.minimum(), content="None")
 }
 
 ///|
 test "Iter::intersperse with early termination" {
-  let iter = [1, 2, 3].iter()
+  let iter = [|1, 2, 3|]
   let result = iter.intersperse(0).take(3).collect()
   debug_inspect(result, content="[1, 0, 2]")
 }
 
 ///|
 test "Iter::iter method" {
-  let original = [1, 2, 3].iter()
+  let original = [|1, 2, 3|]
   let result = original.iter().collect()
   debug_inspect(result, content="[1, 2, 3]")
 }
 
 ///|
 test "Iter::contains method" {
-  let iter = [1, 2, 3, 4, 5].iter()
+  let iter = [|1, 2, 3, 4, 5|]
   inspect(iter.contains(3), content="true")
   inspect(iter.contains(6), content="false")
 }
 
 ///|
 test "Iter::flatten method" {
-  let nested = [[1, 2], [3, 4], [5, 6]].iter().map(x => x.iter())
+  let nested = [|[1, 2], [3, 4], [5, 6]|].map(x => x.iter())
   let flattened = nested.flatten().collect()
   debug_inspect(flattened, content="[1, 2, 3, 4, 5, 6]")
 }
 
 ///|
 test "Iter::add operator" {
-  let iter1 = [1, 2, 3].iter()
-  let iter2 = [4, 5, 6].iter()
+  let iter1 = [|1, 2, 3|]
+  let iter2 = [|4, 5, 6|]
   let result = (iter1 + iter2).collect()
   debug_inspect(result, content="[1, 2, 3, 4, 5, 6]")
 }
@@ -1128,7 +1114,7 @@ test "Float::until negative step" {
 
 ///|
 // test "group_by with consecutive identical elements" {
-//   let iter = [1, 1, 2, 2, 3, 3].iter()
+//   let iter = [|1, 1, 2, 2, 3, 3|]
 //   let grouped = iter.group_by((x) => { x })
 //   @test.assert_eq(grouped.get(1), Some([1, 1]))
 //   @test.assert_eq(grouped.get(2), Some([2, 2]))
@@ -1137,7 +1123,7 @@ test "Float::until negative step" {
 
 ///|
 // test "group_by with non-consecutive identical elements" {
-//   let iter = [1, 2, 1, 3, 2, 1].iter()
+//   let iter = [|1, 2, 1, 3, 2, 1|]
 //   let grouped = iter.group_by((x) => { x })
 //   @test.assert_eq(grouped.get(1), Some([1, 1, 1]))
 //   @test.assert_eq(grouped.get(2), Some([2, 2]))
@@ -1146,21 +1132,21 @@ test "Float::until negative step" {
 
 ///|
 // test "group_by with empty input" {
-//   let iter : Iter[Int] = Iter::empty()
+//   let iter : Iter[Int] = [||]
 //   let grouped = iter.group_by((x) => { x })
 //   @test.assert_eq(grouped.length(), 0)
 // }
 
 ///|
 // test "group_by with single element input" {
-//   let iter = [42].iter()
+//   let iter = [|42|]
 //   let grouped = iter.group_by((x) => { x })
 //   @test.assert_eq(grouped.get(42), Some([42]))
 // }
 
 ///|
 // test "group_by with custom key function" {
-//   let iter = [1, 2, 3, 4].iter()
+//   let iter = [|1, 2, 3, 4|]
 //   let grouped = iter.group_by((x) => { x % 2 })
 //   @test.assert_eq(grouped.get(0), Some([2, 4]))
 //   @test.assert_eq(grouped.get(1), Some([1, 3]))
@@ -1168,7 +1154,7 @@ test "Float::until negative step" {
 
 ///|
 // test "group_by with strings" {
-//   let iter = ["apple", "avocado", "banana", "cherry", "blueberry"].iter()
+//   let iter = [|"apple", "avocado", "banana", "cherry", "blueberry"|]
 //   let grouped = iter.group_by((s) => { s.charcode_at(0) })
 //   @test.assert_eq(grouped.get('a'), Some(["apple", "avocado"]))
 //   @test.assert_eq(grouped.get('b'), Some(["banana", "blueberry"]))
@@ -1181,13 +1167,13 @@ test "Float::until negative step" {
 //     name : String
 //     age : Int
 //   }
-//   let people = [
+//   let people = [|
 //     Person::{ name: "Alice", age: 25 },
 //     Person::{ name: "Bob", age: 25 },
 //     Person::{ name: "Charlie", age: 30 },
 //     Person::{ name: "Dave", age: 35 },
 //     Person::{ name: "Eve", age: 30 },
-//   ].iter()
+//   |]
 //   let grouped = people.group_by((p) => { p.age })
 //   let groups = grouped.values().map((a) => { a.map((p) => { p.name }) }).collect()
 //   @test.assert_eq(groups, [["Alice", "Bob"], ["Charlie", "Eve"], ["Dave"]])
@@ -1195,15 +1181,15 @@ test "Float::until negative step" {
 
 ///|
 test "iter2" {
-  let iter : Iter[Int] = [].iter()
+  let iter : Iter[Int] = [||]
   for _, _ in iter.iter2() {
     assert_true(false)
   }
-  let iter = [0, 1, 2].iter().iter2()
+  let iter = [|0, 1, 2|].iter2()
   while iter.next() is Some((i, x)) {
     @test.assert_eq(i, x)
   }
-  let iter = [0, 1, 2].iter()
+  let iter = [|0, 1, 2|]
   for i, x in iter.iter2() {
     @test.assert_eq(i, x)
   }
@@ -1211,7 +1197,7 @@ test "iter2" {
 
 ///|
 test "Iter::iter2" {
-  let iter = [0, 1, 2].iter()
+  let iter = [|0, 1, 2|]
   for i, x in iter.iter2() {
     @test.assert_eq(i, x)
   }
@@ -1222,41 +1208,41 @@ test "Iter::iter2" {
 
 ///|
 test "Iter::to_json and any on empty" {
-  let iter = [1, 2, 3].iter()
+  let iter = [|1, 2, 3|]
   @json.json_inspect(ToJson::to_json(iter), content=[1, 2, 3])
-  let empty : Iter[Int] = Iter::empty()
+  let empty : Iter[Int] = [||]
   inspect(empty.any(_ => true), content="false")
 }
 
 ///|
 test "Iter::map_while empty and last" {
-  let empty : Iter[Int] = Iter::empty()
+  let empty : Iter[Int] = [||]
   debug_inspect(empty.map_while(_ => Some(1)).collect(), content="[]")
-  debug_inspect([1, 2, 3].iter().last(), content="Some(3)")
-  let empty_last : Iter[Int] = Iter::empty()
+  debug_inspect([|1, 2, 3|].last(), content="Some(3)")
+  let empty_last : Iter[Int] = [||]
   debug_inspect(empty_last.last(), content="None")
 }
 
 ///|
 test "Iter::maximum" {
-  debug_inspect([1, 3, 2].iter().maximum(), content="Some(3)")
-  let empty : Iter[Int] = Iter::empty()
+  debug_inspect([|1, 3, 2|].maximum(), content="Some(3)")
+  let empty : Iter[Int] = [||]
   debug_inspect(empty.maximum(), content="None")
 }
 
 ///|
 test "Iter::view variants" {
-  debug_inspect([1, 2, 3].iter().view(start=-1).collect(), content="[1, 2, 3]")
-  debug_inspect([1, 2, 3].iter()[:2].collect(), content="[1, 2]")
-  debug_inspect([1, 2, 3].iter()[1:].collect(), content="[2, 3]")
-  debug_inspect([1, 2, 3, 4].iter()[1:3].collect(), content="[2, 3]")
-  debug_inspect([1, 2, 3].iter()[2:2].collect(), content="[]")
-  debug_inspect([1, 2, 3].iter()[1:0].collect(), content="[]")
+  debug_inspect([|1, 2, 3|].view(start=-1).collect(), content="[1, 2, 3]")
+  debug_inspect([|1, 2, 3|][:2].collect(), content="[1, 2]")
+  debug_inspect([|1, 2, 3|][1:].collect(), content="[2, 3]")
+  debug_inspect([|1, 2, 3, 4|][1:3].collect(), content="[2, 3]")
+  debug_inspect([|1, 2, 3|][2:2].collect(), content="[]")
+  debug_inspect([|1, 2, 3|][1:0].collect(), content="[]")
 }
 
 ///|
 test "Iter::iter and Iter2 conversions" {
-  debug_inspect([1, 2].iter().iter().collect(), content="[1, 2]")
+  debug_inspect([|1, 2|].iter().collect(), content="[1, 2]")
   let pairs = ['a', 'b']
     .iter2()
     .iter()

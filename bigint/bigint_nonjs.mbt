@@ -1427,16 +1427,17 @@ pub fn BigInt::pow(self : BigInt, exp : BigInt, modulus? : BigInt) -> BigInt {
 ///
 /// Parameters:
 ///
-/// * `bytes` : A sequence of bytes representing the magnitude of the number in
-/// big-endian order. The sequence must not be empty unless `sign` is 0.
-/// * `sign` : An integer specifying the sign of the resulting number (default:
-/// 1). A value of 1 creates a positive number, -1 creates a negative number, and
-/// 0 returns zero regardless of the input bytes.
+/// * `input` : A sequence of bytes representing the magnitude of the number in
+/// big-endian order. An empty sequence represents a zero magnitude.
+/// * `signum` : An integer specifying the sign of the resulting number
+/// (default: 1). A positive value creates a positive number, a negative value
+/// creates a negative number, and 0 returns zero regardless of the input bytes.
 ///
 /// Returns a `BigInt` value representing the number encoded in the byte sequence
 /// with the specified sign.
 ///
-/// Throws a panic if the input byte sequence is empty and the sign is not 0.
+/// An empty byte sequence yields zero for any `signum`, matching the behavior
+/// of Java's `BigInteger`, Python's `int.from_bytes`, and Rust's `num-bigint`.
 ///
 /// Example:
 ///
@@ -1447,6 +1448,7 @@ pub fn BigInt::pow(self : BigInt, exp : BigInt, modulus? : BigInt) -> BigInt {
 ///   let negative = @bigint.BigInt::from_octets(bytes, signum=-1)
 ///   inspect(positive, content="66051")
 ///   inspect(negative, content="-66051")
+///   inspect(@bigint.BigInt::from_octets(b""), content="0")
 /// }
 /// ```
 pub fn BigInt::from_octets(input : BytesView, signum? : Int = 1) -> BigInt {
@@ -1457,7 +1459,7 @@ pub fn BigInt::from_octets(input : BytesView, signum? : Int = 1) -> BigInt {
     return -BigInt::from_octets(input)
   }
   if len == 0 {
-    abort("empty octet string")
+    return zero
   }
   let div = len * 8 / RADIX_BIT_LEN
   let mod = len * 8 % RADIX_BIT_LEN // number of bits in the first limb
@@ -1851,8 +1853,15 @@ pub fn BigInt::to_int(self : BigInt) -> Int {
 /// }
 /// ```
 pub fn BigInt::to_uint(self : BigInt) -> UInt {
-  let value = if self.sign == Negative { (1N << 32) + self } else { self }
-  value.limbs[0]
+  // Truncation to the low 32 bits is a ring homomorphism, so for a
+  // negative value it is the wrapping negation of the magnitude's low
+  // limb. (Adding one modulus and reading the limb would be wrong
+  // whenever the sum is still negative, i.e. whenever |self| > 2^32.)
+  if self.sign == Negative {
+    0U - self.limbs[0]
+  } else {
+    self.limbs[0]
+  }
 }
 
 ///|
@@ -1900,15 +1909,22 @@ pub fn BigInt::to_int64(self : BigInt) -> Int64 {
 /// }
 /// ```
 pub fn BigInt::to_uint64(self : BigInt) -> UInt64 {
-  let value = if self.sign == Negative { (1N << 64) + self } else { self }
   let len = 64 / RADIX_BIT_LEN
-  let len = if value.len < len { value.len } else { len }
+  let len = if self.len < len { self.len } else { len }
   let mut result = 0UL
   for i in len>..0 {
     result = result << RADIX_BIT_LEN
-    result = result | (value.limbs[i].to_uint64() & RADIX_MASK)
+    result = result | (self.limbs[i].to_uint64() & RADIX_MASK)
   }
-  result
+  // Truncation to the low 64 bits is a ring homomorphism, so for a
+  // negative value it is the wrapping negation of the magnitude's low
+  // bits. (Adding one modulus and reading the limbs would be wrong
+  // whenever the sum is still negative, i.e. whenever |self| > 2^64.)
+  if self.sign == Negative {
+    0UL - result
+  } else {
+    result
+  }
 }
 
 ///|

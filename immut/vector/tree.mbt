@@ -13,6 +13,69 @@
 // limitations under the License.
 
 /// A tree data structure that backs the `immut/vector`.
+///
+/// # Representation contract
+///
+/// The shape invariants live on `Tree` in `types.mbt`; this is why they are
+/// what they are. `invariants_wbtest.mbt` checks them mechanically, and is the
+/// place to extend if you add a shape.
+///
+/// ## Two ways down
+///
+/// Indexing has a fast path and a general one, and `sizes` selects between
+/// them:
+///
+/// - `None` — *radix descent* (`get_radix` / `set_radix`). The child index at
+///   each level is read straight out of the index's bits,
+///   `(index >> shift) & BITMASK`. No arithmetic on the way down, no search.
+/// - `Some(cumulative)` — *search descent*. `get_branch_index` looks the child
+///   up in the cumulative sizes, and the index is rebased for the recursion.
+///
+/// `get_radix` **aborts** the moment it meets a node carrying sizes: it has
+/// already consumed the bits for that level, so it cannot switch strategies.
+/// That is the whole reason `None` has to mean "this subtree is radix all the
+/// way down" and not merely "this node is radix" — the property is inherited
+/// by every reader, so it must hold transitively.
+///
+/// ## Full and radix are independent
+///
+/// Neither implies the other, and conflating them has bitten this file twice:
+///
+/// - *Radix does not imply full.* A radix node may have a partial **last**
+///   child; that is exactly what `from_leaves` builds for a vector whose size
+///   is not a power of 32. Radix indexing still works, because only the
+///   children to the left of the target need to be full.
+/// - *Full does not imply radix.* `append_right_leaf` and `push_end` grow a
+///   relaxed node by patching its sizes array (`append_sizes_last`,
+///   `push_sizes_last`, `update_sizes_last`) instead of re-deriving it, so a
+///   node can reach exactly its full size while still carrying sizes. Marking
+///   its parent radix on the strength of the child's *size* is what made `at`
+///   abort in #4083; `compute_sizes` now also requires `Tree::is_radix`.
+///
+/// ## Who may produce `None`
+///
+/// Keeping the transitive property true means every construction site has to
+/// earn it. There are only five:
+///
+/// - `compute_sizes` — the general case; requires every child full **and**
+///   radix.
+/// - `new_branch_left` — only for a full leaf, and it builds the whole spine.
+/// - `radix_append_sizes` — only when a full leaf was appended, and only from
+///   an already-radix node.
+/// - `from_leaves` — builds nothing but radix nodes, top to bottom.
+/// - `rebalance`'s non-`top` wrapper — the one unchecked site. It is safe only
+///   because the wrapper never escapes: the calling frame feeds it straight to
+///   `tri_merge`, which keeps the child and drops the wrapper. See the comment
+///   there.
+///
+/// ## Height comes from the caller
+///
+/// Nothing in a `Tree` records its own height; every walk is handed a `shift`
+/// and decrements it by `NUM_BITS` per level. So a subtree's height is fixed by
+/// where it is attached, and a builder has to place leaves at the depth the
+/// capacity implies rather than at the depth the remaining data suggests —
+/// attaching a short remainder one level too high is #4084. `Tree::size` makes
+/// the same assumption for radix nodes, so a misplaced leaf corrupts sizes too.
 
 //-----------------------------------------------------------------------------
 // Hyperparameters
@@ -442,7 +505,25 @@ fn[A] Tree::concat(
 }
 
 ///|
-/// Given three `Node`s of the same height (`shift` / `NUM_BITS`), rebalance them into two.
+/// Given three `Node`s of the same height (`shift` / `NUM_BITS`), rebalance
+/// them into as few nodes as their children need.
+///
+/// How wide can the merge get? `tri_merge` drops `left`'s last child and
+/// `right`'s first, so it yields
+/// `(left_arity - 1) + center_arity + (right_arity - 1)`, and `redis_plan` only
+/// ever shortens that. With `left_arity` and `right_arity` at most
+/// `BRANCHING_FACTOR`:
+///
+/// - from `Tree::concat`, whose leaf case hands over a two-child center, at
+///   most `31 + 2 + 31 = 64` — two nodes;
+/// - from `Tree::concat_with_suffix`, which splices the left vector's tail in
+///   as a third leaf, at most `31 + 3 + 31 = 65` — three.
+///
+/// So the result is one node, or `ceil(n / BRANCHING_FACTOR)` of them, which is
+/// never more than three. Assuming two was #4086: the leftover 33rd child made
+/// a node wider than the radix index can address, and `radix_indexing` masked
+/// child 32 back to 0.
+///
 /// `top` is `true` if the resulting node has no upper node.
 /// Returns the new node and its shift.
 fn[A] rebalance(
@@ -461,6 +542,12 @@ fn[A] rebalance(
     // All nodes can be accommodated in a single node
     let node = Node(new_t, compute_sizes(new_t, shift - NUM_BITS)) // node of H height
     if !top {
+      // This wrapper is the one place that puts `None` over a child without
+      // checking it, so it would break radix descent if it ever reached a
+      // finished tree. It cannot: `!top` means the caller is another
+      // `Tree::concat`/`concat_with_suffix` frame, whose `rebalance` feeds it
+      // straight to `tri_merge` and keeps only the child. The layer exists
+      // solely to match the height the caller asserts on.
       return (Node(FixedArray::from_array([node]), None), shift + NUM_BITS)
       // return (H+1) height node, add another layer to align with the case at the end of the thisfunction
     } else {
@@ -468,19 +555,20 @@ fn[A] rebalance(
       // return H height node, no upper node so no need to add another layer on top of it
     }
   } else {
-    let new_child_1 = FixedArray::makei(BRANCHING_FACTOR, i => new_t[i])
-    let new_child_2 = FixedArray::makei(new_t.length() - BRANCHING_FACTOR, i => {
-      new_t[i + BRANCHING_FACTOR]
+    // Pack the redistributed children into as many nodes as they need.
+    //
+    // Two is not always enough: `Tree::concat`'s leaf case hands us a center of
+    // at most 2 children, so `tri_merge` yields at most 31 + 2 + 31 = 64 - but
+    // `Tree::concat_with_suffix` splices the left vector's tail in as a third
+    // leaf, and 31 + 3 + 31 = 65 leaves a 33rd child over. A node that wide
+    // breaks radix indexing, which masks the child index with `BITMASK`.
+    let count = (new_t.length() + BRANCHING_FACTOR - 1) / BRANCHING_FACTOR
+    let new_children = FixedArray::makei(count, i => {
+      let lo = i * BRANCHING_FACTOR
+      let hi = min(lo + BRANCHING_FACTOR, new_t.length())
+      let chunk = FixedArray::makei(hi - lo, j => new_t[lo + j])
+      Node(chunk, compute_sizes(chunk, shift - NUM_BITS)) // height H
     })
-    let new_node_1 = Node(
-      new_child_1,
-      compute_sizes(new_child_1, shift - NUM_BITS),
-    ) // height H
-    let new_node_2 = Node(
-      new_child_2,
-      compute_sizes(new_child_2, shift - NUM_BITS),
-    ) // height H
-    let new_children = FixedArray::from_array([new_node_1, new_node_2])
     return (
       Node(new_children, compute_sizes(new_children, shift)),
       shift + NUM_BITS,
@@ -541,6 +629,29 @@ fn[A] tri_merge(
 
 ///|
 /// Create a redistribution plan for the tree.
+///
+/// Returns the per-node child counts and how many of them are live: the first
+/// `new_len` entries of the returned array describe the new nodes, and
+/// anything past that is scratch left over from the merge.
+///
+/// The plan preserves the total number of children and only ever shortens the
+/// list, merging short nodes rightwards until the length is within `e_max_2`
+/// of the optimum. Two things about the loop are worth spelling out, because
+/// both look out of bounds and are not:
+///
+/// - `node_counts[i + 1]` (the carry step) can name the slot just past the live
+///   prefix. It never does. The carry only advances while
+///   `remaining + node_counts[i + 1] > BRANCHING_FACTOR`, so reaching the last
+///   live slot with a carry would mean every slot before it holds a full
+///   `BRANCHING_FACTOR`, hence `opt_len >= new_len - 1` — which contradicts the
+///   `opt_len + e_max_2 < new_len` that let us into the loop at all.
+/// - the leading scan `while node_counts[i] > BRANCHING_FACTOR - e_max_2` is
+///   bounded for the same reason: if every live node were full there would be
+///   no slack and the outer loop would not have been entered.
+///
+/// Termination: each pass drops `new_len` by one and `new_len` is bounded
+/// below by `opt_len + e_max_2`. `i` is only rewound by one per pass, after
+/// having advanced by at least one, so it never goes negative.
 fn[A] redis_plan(t : FixedArray[Tree[A]]) -> (FixedArray[Int], Int) {
   let node_counts = FixedArray::makei(t.length(), i => t[i].local_size())
   let total_nodes = node_counts.fold(init=0, (acc, x) => acc + x)
@@ -582,6 +693,13 @@ fn[A] redis_plan(t : FixedArray[Tree[A]]) -> (FixedArray[Int], Int) {
 /// 
 /// Postcondition:
 /// - The resulting trees in `new_t` are of the same height as trees in `old_t`.
+///
+/// The `guard! j < old_len` in each branch is a leftover: `old_t[j]` is already
+/// indexed on the line above it, so a plan that overran would fault there
+/// first and the guard can never fire. It is harmless because the only plans
+/// that reach here come from `redis_plan`, which conserves the child total and
+/// emits positive counts, so the cursor is exhausted exactly when the source
+/// is. Do not read it as an active bounds check.
 fn[A] redis(
   old_t : FixedArray[Tree[A]],
   node_counts : FixedArray[Int],
@@ -678,6 +796,27 @@ fn[A] redis(
 }
 
 ///|
+/// Can `self` be descended by radix indexing, i.e. without consulting a sizes
+/// array?
+///
+/// This is a *shallow* test, and that is enough: a node is only ever built
+/// with `None` when its whole subtree is radix-indexable, so `None` here
+/// implies `None` all the way down.
+///
+/// Note that being exactly full is **not** sufficient. `append_right_leaf`
+/// and `push_end` grow a relaxed node by patching its sizes array, so a node
+/// can reach its full size while still carrying one; `get_radix` aborts the
+/// moment it meets such a node.
+fn[A] Tree::is_radix(self : Tree[A]) -> Bool {
+  match self {
+    Leaf(_) => true
+    Node(_, None) => true
+    Node(_, Some(_)) => false
+    Empty => false
+  }
+}
+
+///|
 /// Given a list of trees as `children` with heights of (`shift` / `NUM_BITS`), compute the sizes array of the subtrees.
 fn[A] compute_sizes(
   children : FixedArray[Tree[A]],
@@ -689,8 +828,11 @@ fn[A] compute_sizes(
   let mut flag = true
   let full_subtree_size = BRANCHING_FACTOR << shift
   for i in 0..<len {
-    let sz = children[i].size(shift)
-    flag = flag && sz == full_subtree_size
+    let child = children[i]
+    let sz = child.size(shift)
+    // Dropping the sizes array commits every reader to radix descent, so the
+    // children must be full *and* radix themselves.
+    flag = flag && sz == full_subtree_size && child.is_radix()
     sum += sz
     sizes[i] = sum
   }

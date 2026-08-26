@@ -21,7 +21,7 @@
 /// and as the building block for the transform combinators.
 #owned(head, tail)
 fn[A] cons(head : A, tail : LazyList[A]) -> LazyList[A] {
-  { cell: Cons(head, tail=@lazy.Lazy::ready(tail)) }
+  { cell: Cons(head, tail=Tail::ready(tail)) }
 }
 
 // =====================================================================
@@ -66,7 +66,7 @@ pub fn[A] LazyList::lazy_cons(
   head : A,
   tail : () -> LazyList[A],
 ) -> LazyList[A] {
-  { cell: Cons(head, tail=Lazy(tail)) }
+  { cell: Cons(head, tail=Tail::delay(tail)) }
 }
 
 ///|
@@ -79,7 +79,7 @@ pub fn[A] LazyList::lazy_cons(
 ///
 /// ```mbt check
 /// test {
-///   let xs = @lazy_list.from_iter([1, 2, 3].iter())
+///   let xs = @lazy_list.from_iter([|1, 2, 3|])
 ///   debug_inspect(xs.to_array(), content="[1, 2, 3]")
 ///   // The lazy list is re-traversable.
 ///   debug_inspect(xs.to_array(), content="[1, 2, 3]")
@@ -210,8 +210,8 @@ pub fn[A] LazyList::take_while(
 /// called eagerly during the skip; a raising `pred` propagates here.
 ///
 /// (Contrast with `map` / `filter` / `take_while` / `flat_map`, whose
-/// callbacks also run inside lazy thunks. `@lazy.Lazy` thunks are
-/// non-raising by design — see `@lazy`'s rationale — so those
+/// callbacks also run inside lazy thunks. Tail thunks are non-raising by
+/// design — the same rationale `@lazy` sets out — so those
 /// combinators cannot accept a raising callback. `drop_while` only runs
 /// `pred` during the strict skip phase, so it can.)
 pub fn[A] LazyList::drop_while(
@@ -228,6 +228,14 @@ pub fn[A] LazyList::drop_while(
 ///|
 /// Concatenates two lazy lists. The right-hand side is not forced until
 /// the left-hand side has been fully consumed.
+///
+/// Building and traversing a chain of `concat`s is stack-safe however the
+/// chain is associated, so the accumulator idiom `acc = acc.concat(xs)` is
+/// safe at any length. The pending right-hand sides are recorded in the
+/// resulting cell's tail as data rather than closed over by a recursive
+/// thunk, so forcing a left-nested chain `((a ++ b) ++ c) ++ d` flattens it
+/// with a loop instead of recursing once per `++`, and a full traversal
+/// stays linear. See `Tail::force`.
 #owned(other)
 pub fn[A] LazyList::concat(
   self : LazyList[A],
@@ -235,14 +243,21 @@ pub fn[A] LazyList::concat(
 ) -> LazyList[A] {
   match self.cell {
     Empty => other
-    Cons(x, tail~) => LazyList::lazy_cons(x, () => tail.force().concat(other))
+    Cons(x, tail~) =>
+      // Appending nothing is the identity; keeping empty segments out of
+      // the pending list keeps repeated `xs.concat(empty())` free.
+      if other.cell is Empty {
+        self
+      } else {
+        { cell: Cons(x, tail=tail.append(One(Tail::ready(other)))) }
+      }
   }
 }
 
 ///|
 /// Variant of `concat` whose second argument is itself a thunk; used
 /// internally by `flat_map` to chain lazy lists without forcing them
-/// prematurely.
+/// prematurely. Stack-safe under nesting for the same reason `concat` is.
 fn[A] LazyList::concat_lazy(
   self : LazyList[A],
   other_thunk : () -> LazyList[A],
@@ -250,7 +265,7 @@ fn[A] LazyList::concat_lazy(
   match self.cell {
     Empty => other_thunk()
     Cons(x, tail~) =>
-      LazyList::lazy_cons(x, () => tail.force().concat_lazy(other_thunk))
+      { cell: Cons(x, tail=tail.append(One(Tail::delay(other_thunk)))) }
   }
 }
 

@@ -17,7 +17,7 @@ pub impl[T : Shrink] Shrink for @list.List[T] with fn shrink(xs) {
   let n = xs.length()
   fn shr_sub_terms(lst : @list.List[T]) {
     match lst {
-      Empty => Iter::empty()
+      Empty => [||]
       More(x, tail=xs) =>
         Shrink::shrink(x)
         .map(x_ => xs.add(x_))
@@ -36,6 +36,11 @@ pub impl[T : Shrink] Shrink for @list.List[T] with fn shrink(xs) {
 ///|
 pub impl[T : Shrink] Shrink for @queue.Queue[T] with fn shrink(xs) {
   Shrink::shrink(xs.iter().collect()).map(candidate => Queue(candidate))
+}
+
+///|
+pub impl[T : Shrink] Shrink for @deque.Deque[T] with fn shrink(xs) {
+  Shrink::shrink(xs.to_array()).map(candidate => Deque(candidate))
 }
 
 ///|
@@ -69,6 +74,33 @@ pub impl[T : Shrink + Compare] Shrink for @immut_sorted_set.SortedSet[T] with fn
   xs,
 ) {
   Shrink::shrink(xs.to_array()).map(candidate => SortedSet(candidate))
+}
+
+///|
+pub impl[T : Shrink + Eq + Hash] Shrink for @set.Set[T] with fn shrink(xs) {
+  Shrink::shrink(xs.to_array()).map(candidate => Set(candidate))
+}
+
+///|
+pub impl[K : Shrink + Hash + Eq, V : Shrink] Shrink for Map[K, V] with fn shrink(
+  xs,
+) {
+  let entries = xs.to_array()
+  Shrink::shrink(entries).map(candidate => Map(candidate))
+}
+
+///|
+pub impl[T : Shrink + Compare] Shrink for @priority_queue.PriorityQueue[T] with fn shrink(
+  xs,
+) {
+  Shrink::shrink(xs.to_array()).map(candidate => PriorityQueue(candidate))
+}
+
+///|
+pub impl[T : Shrink + Compare] Shrink for @immut_priority_queue.PriorityQueue[T] with fn shrink(
+  xs,
+) {
+  Shrink::shrink(xs.to_array()).map(candidate => PriorityQueue(candidate))
 }
 
 ///|

@@ -732,8 +732,7 @@ pub fn[A, B] List::foldi(
 pub fn[A, B] List::zip(self : List[A], other : List[B]) -> List[(A, B)] {
   let res = for a = self, b = other, acc = Empty {
     match (a, b, acc) {
-      (Empty, _, acc) => break acc
-      (_, Empty, acc) => break acc
+      (Empty, _, acc) | (_, Empty, acc) => break acc
       (More(x, tail=xs), More(y, tail=ys), acc) =>
         continue xs, ys, More((x, y), tail=acc)
     }
@@ -1106,17 +1105,8 @@ pub fn[A] List::flatten(self : List[List[A]]) -> List[A] {
 #internal(unsafe, "Panic if the list is empty")
 #doc(hidden)
 pub fn[A : Compare] List::unsafe_maximum(self : List[A]) -> A {
-  match self {
-    Empty => abort("maximum: empty list")
-    More(head, tail~) =>
-      for a = tail, b = head {
-        match (a, b) {
-          (Empty, curr_max) => break curr_max
-          (More(item, tail~), curr_max) =>
-            continue tail, if item > curr_max { item } else { curr_max }
-        }
-      }
-  }
+  guard self.maximum() is Some(max) else { abort("maximum: empty list") }
+  max
 }
 
 ///|
@@ -1136,16 +1126,13 @@ pub fn[A : Compare] List::unsafe_maximum(self : List[A]) -> A {
 /// }
 /// ```
 pub fn[A : Compare] List::maximum(self : List[A]) -> A? {
-  match self {
-    Empty => None
-    More(head, tail~) =>
-      for a = tail, b = head {
-        match (a, b) {
-          (Empty, curr_max) => break Some(curr_max)
-          (More(item, tail~), curr_max) =>
-            continue tail, if item > curr_max { item } else { curr_max }
-        }
-      }
+  guard self is More(head, tail~) else { return None }
+  for rest = tail, curr_max = head {
+    match rest {
+      Empty => break Some(curr_max)
+      More(item, tail~) =>
+        continue tail, if item > curr_max { item } else { curr_max }
+    }
   }
 }
 
@@ -1170,17 +1157,8 @@ pub fn[A : Compare] List::maximum(self : List[A]) -> A? {
 #internal(unsafe, "Panic if the list is empty")
 #doc(hidden)
 pub fn[A : Compare] List::unsafe_minimum(self : List[A]) -> A {
-  match self {
-    Empty => abort("minimum: empty list")
-    More(head, tail~) =>
-      for a = tail, b = head {
-        match (a, b) {
-          (Empty, curr_min) => break curr_min
-          (More(item, tail~), curr_min) =>
-            continue tail, if item < curr_min { item } else { curr_min }
-        }
-      }
-  }
+  guard self.minimum() is Some(min) else { abort("minimum: empty list") }
+  min
 }
 
 ///|
@@ -1200,16 +1178,13 @@ pub fn[A : Compare] List::unsafe_minimum(self : List[A]) -> A {
 /// }
 /// ```
 pub fn[A : Compare] List::minimum(self : List[A]) -> A? {
-  match self {
-    Empty => None
-    More(head, tail~) =>
-      for a = tail, b = head {
-        match (a, b) {
-          (Empty, curr_min) => break Some(curr_min)
-          (More(item, tail~), curr_min) =>
-            continue tail, if item < curr_min { item } else { curr_min }
-        }
-      }
+  guard self is More(head, tail~) else { return None }
+  for rest = tail, curr_min = head {
+    match rest {
+      Empty => break Some(curr_min)
+      More(item, tail~) =>
+        continue tail, if item < curr_min { item } else { curr_min }
+    }
   }
 }
 
@@ -1365,8 +1340,7 @@ pub fn[A] List::take(self : List[A], n : Int) -> List[A] {
         let dest = More(head, tail=Empty)
         for d = dest, t = tail, i = n - 1 {
           match (d, t, i) {
-            (_, Empty, _) => break
-            (_, _, 0) => break
+            (_, Empty, _) | (_, _, 0) => break
             (More(_) as dest, More(x, tail=xs), n) => {
               dest.tail = More(x, tail=Empty)
               continue dest.tail, xs, n - 1
@@ -1733,10 +1707,11 @@ pub fn[A : Eq] List::remove(self : List[A], elem : A) -> List[A] {
 ///
 /// ```mbt check
 /// test {
-///   @test.assert_eq(@list.List([1, 2, 3, 4, 5]).is_prefix(List([1, 2, 3])), true)
+///   @test.assert_eq(@list.List([1, 2, 3, 4, 5]).has_prefix(List([1, 2, 3])), true)
 /// }
 /// ```
-pub fn[A : Eq] List::is_prefix(self : List[A], prefix : List[A]) -> Bool {
+#alias(is_prefix, deprecated)
+pub fn[A : Eq] List::has_prefix(self : List[A], prefix : List[A]) -> Bool {
   for a = self, b = prefix {
     match (a, b) {
       (_, Empty) => break true
@@ -1758,11 +1733,41 @@ pub fn[A : Eq] List::is_prefix(self : List[A], prefix : List[A]) -> Bool {
 ///
 /// ```mbt check
 /// test {
-///   @test.assert_eq(@list.List([1, 2, 3, 4, 5]).is_suffix(List([3, 4, 5])), true)
+///   @test.assert_eq(@list.List([1, 2, 3, 4, 5]).has_suffix(List([3, 4, 5])), true)
 /// }
 /// ```
-pub fn[A : Eq] List::is_suffix(self : List[A], suffix : List[A]) -> Bool {
-  self.rev().is_prefix(suffix.rev())
+#alias(is_suffix, deprecated)
+pub fn[A : Eq] List::has_suffix(self : List[A], suffix : List[A]) -> Bool {
+  guard suffix is More(_) else { return true }
+  // One pass, no allocation. First advance `lead` one node per `suffix`
+  // node, so `lead` ends up `suffix.length()` nodes into `self` (or proves
+  // the suffix is longer than the list). Then slide `lag` (from the start)
+  // and `lead` together: when `lead` falls off the end, `lag` is exactly
+  // `suffix.length()` nodes from the end — the only window where the suffix
+  // can match — and an element-wise comparison of that equal-length window
+  // decides. List `==` is deliberately not used for the window: its
+  // physical-equality shortcut would declare a NaN-carrying list a suffix
+  // of itself, changing the observable element-wise behavior.
+  for lead = self, probe = suffix {
+    match (lead, probe) {
+      (_, Empty) =>
+        break for lag = self, ahead = lead {
+          match (lag, ahead) {
+            (_, Empty) => break lag.has_prefix(suffix)
+            (More(_, tail=lag_tail), More(_, tail=ahead_tail)) =>
+              continue lag_tail, ahead_tail
+            (Empty, More(_)) =>
+              // `ahead` starts deeper in the same list than `lag` and both
+              // advance together, so `ahead` empties first; this arm only
+              // satisfies exhaustiveness.
+              break false
+          }
+        }
+      (Empty, More(_)) => break false
+      (More(_, tail=lead_tail), More(_, tail=probe_tail)) =>
+        continue lead_tail, probe_tail
+    }
+  }
 }
 
 ///|

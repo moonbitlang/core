@@ -34,8 +34,27 @@ fn make_float_array_json(count : Int) -> String {
     if i > 0 {
       buf.write_char(',')
     }
-    buf.write_string((i * 2654435).to_string())
-    buf.write_string(".125e-2")
+    buf <+ "\{i * 2654435}.125e-2"
+  }
+  buf.write_char(']')
+  buf.to_string()
+}
+
+///|
+let long_mantissa_json_numbers : FixedArray[String] = [
+  "-65.613616999999977", "43.420273000000009", "-65.619720000000029", "43.418052999999986",
+  "-65.625000000000000", "43.412101000000000", "-65.630279999999994", "43.406101000000010",
+]
+
+///|
+fn make_long_mantissa_array_json(count : Int) -> String {
+  let buf = StringBuilder(size_hint=count * 22)
+  buf.write_char('[')
+  for i in 0..<count {
+    if i > 0 {
+      buf.write_char(',')
+    }
+    buf.write_string(long_mantissa_json_numbers[i % 8])
   }
   buf.write_char(']')
   buf.to_string()
@@ -50,5 +69,11 @@ test "bench json parse int array n=10000" (it : @bench.T) {
 ///|
 test "bench json parse float array n=10000" (it : @bench.T) {
   let input = make_float_array_json(10000)
+  it.bench(fn() { it.keep(try! @json.parse(input)) })
+}
+
+///|
+test "bench json parse long mantissa array n=10000" (it : @bench.T) {
+  let input = make_long_mantissa_array_json(10000)
   it.bench(fn() { it.keep(try! @json.parse(input)) })
 }

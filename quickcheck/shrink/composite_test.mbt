@@ -131,6 +131,39 @@ test "shrink array view" {
 }
 
 ///|
+test "shrink readonly array" {
+  let input : ReadOnlyArray[Int] = ReadOnlyArray::from_array([2, 1])
+  let candidates = @shrink.Shrink::shrink(input)
+    .map(candidate => candidate[:].to_owned())
+    .collect()
+  debug_inspect(
+    candidates,
+    content=(
+      #|[[], [1], [2], [1, 1], [0, 1], [2, 0]]
+    ),
+  )
+}
+
+///|
+test "shrink ref into fresh refs" {
+  let input = @ref.Ref(4)
+  let candidates = @shrink.Shrink::shrink(input).collect()
+  debug_inspect(
+    candidates.map(candidate => candidate.val),
+    content=(
+      #|[3, 2, 0]
+    ),
+  )
+  candidates[0].val = 99
+  debug_inspect(
+    (input.val, candidates.map(candidate => candidate.val)),
+    content=(
+      #|(4, [99, 2, 0])
+    ),
+  )
+}
+
+///|
 test "shrink tuple" {
   let x = (120, true)
   debug_inspect(

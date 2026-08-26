@@ -8,4 +8,6 @@ import {
   "moonbitlang/core/json",
   "moonbitlang/core/array",
   "moonbitlang/core/test",
+  "moonbitlang/core/quickcheck",
+  "moonbitlang/core/bench",
 } for "test"
