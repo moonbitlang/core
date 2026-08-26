@@ -57,8 +57,9 @@ struct Hasher {
 /// Parameters:
 ///
 /// * `seed` : An integer value used to initialize the hasher's internal state.
-/// Defaults to 0 on every target except JavaScript, where the default is a
-/// randomly chosen per-process value.
+/// When omitted, a randomly chosen process-wide seed is used on native, LLVM,
+/// and JavaScript targets. Wasm targets default to 0. Pass `0` explicitly when
+/// deterministic output is required.
 ///
 /// Returns a new `Hasher` instance initialized with the given seed value.
 ///
@@ -82,7 +83,19 @@ pub fn Hasher::Hasher(seed? : Int = seed) -> Hasher {
 }
 
 ///|
-#cfg(not(target="js"))
+// `builtin` cannot depend on `env`, so bind the runtime entropy source here.
+#cfg(any(target="native", target="llvm"))
+let seed : Int = {
+  let bytes : FixedArray[Byte] = FixedArray::make(4, b'\x00')
+  if moonbit_rt_get_random_for_hash_seed(bytes) == 0 {
+    fixedarray_read_uint32_le(bytes, 0).reinterpret_as_int()
+  } else {
+    0
+  }
+}
+
+///|
+#cfg(any(target="wasm", target="wasm-gc"))
 let seed : Int = 0
 
 ///|
@@ -101,6 +114,13 @@ extern "js" fn random_seed() -> Int =
   #|    return Math.floor(Math.random() * 0x100000000) | 0; // Fallback to Math.random
   #|  }
   #|}
+
+///|
+#cfg(any(target="native", target="llvm"))
+#borrow(bytes)
+extern "c" fn moonbit_rt_get_random_for_hash_seed(
+  bytes : FixedArray[Byte],
+) -> Int = "moonbit_rt_get_random"
 
 ///|
 /// Combines a hashable value with the current state of the hasher. This is
