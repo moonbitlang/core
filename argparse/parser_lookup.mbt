@@ -105,11 +105,9 @@ fn resolve_help_target(
 
 ///|
 fn split_long(arg : String) -> (StringView, String?) {
-  let parts = [ for part in arg.split("=") => part ]
-  let name = parts[0].strip_prefix("--").unwrap_or(parts[0])
-  if parts.length() <= 1 {
-    (name, None)
-  } else {
-    (name, Some(parts[1:].join("=")))
+  let body = arg.strip_prefix("--").unwrap_or(arg)
+  match body.split_once("=") {
+    Some((name, value)) => (name, Some(value.to_owned()))
+    None => (body, None)
   }
 }
