@@ -55,7 +55,7 @@ test "Debug for Replacer" {
   @debug.debug_inspect(
     r,
     content=(
-      #|{ f: <function: ...> }
+      #|{ kind: Custom(<function: ...>) }
     ),
   )
 }
