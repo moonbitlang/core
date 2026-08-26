@@ -46,12 +46,12 @@ impl Shrink with fn shrink(_a) {
 
 ///|
 pub impl Shrink for Int with fn shrink(x) {
-  [|..if x != 0 { [0] }, ..[ for z = x / 2; z != 0; z = z / 2 => x - z ]|]
+  [|..[ for z = x / 2; z != 0; z = z / 2 => x - z ], ..if x != 0 { [0] }|]
 }
 
 ///|
 pub impl Shrink for Int64 with fn shrink(x) {
-  [|..if x != 0 { [0L] }, ..[ for z = x / 2; z != 0; z = z / 2 => x - z ]|]
+  [|..[ for z = x / 2; z != 0; z = z / 2 => x - z ], ..if x != 0 { [0L] }|]
 }
 
 ///|
@@ -92,12 +92,12 @@ pub impl Shrink for @bigint.BigInt with fn shrink(x) {
 
 ///|
 pub impl Shrink for UInt with fn shrink(x) {
-  [|..if x != 0 { [0U] }, ..[ for z = x / 2; z > 0; z = z / 2 => x - z ]|]
+  [|..[ for z = x / 2; z > 0; z = z / 2 => x - z ], ..if x != 0 { [0U] }|]
 }
 
 ///|
 pub impl Shrink for UInt64 with fn shrink(x) {
-  [|..if x != 0 { [0UL] }, ..[ for z = x / 2; z > 0; z = z / 2 => x - z ]|]
+  [|..[ for z = x / 2; z > 0; z = z / 2 => x - z ], ..if x != 0 { [0UL] }|]
 }
 
 ///|
@@ -113,12 +113,12 @@ pub impl Shrink for Bool with fn shrink(b) {
 pub impl Shrink for Byte with fn shrink(x) {
   let xi = x.to_int()
   [|
-    ..if xi != 0 {
-      [Byte(0)]
-    },
     ..[
       for z = xi / 2; z > 0; z = z / 2 => (xi - z).to_byte()
     ],
+    ..if xi != 0 {
+      [Byte(0)]
+    },
   |]
 }
 

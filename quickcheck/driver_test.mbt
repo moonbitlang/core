@@ -504,7 +504,7 @@ test "context renders the shrunk counterexample" {
       #|  tests=2,
       #|  size=1,
       #|  shrinks=30,
-      #|  shrink_attempts=63,
+      #|  shrink_attempts=33,
       #|)
     ),
   )
@@ -529,7 +529,7 @@ test "context is attached to raised failures too" {
       #|  tests=2,
       #|  size=1,
       #|  shrinks=30,
-      #|  shrink_attempts=63,
+      #|  shrink_attempts=33,
       #|)
     ),
   )

@@ -479,16 +479,20 @@ test "Arbitrary for PriorityQueue" {
 ///|
 test "Arbitrary for HashSet" {
   let samples : ArrayView[@hashset.HashSet[Int]] = @quickcheck.samples(20)[8:12]
+  let selected = samples.map(sample => {
+    let values = sample.to_array()
+    values.sort()
+    values
+  })
   debug_inspect(
-    samples,
+    selected,
     content=(
-      #|<ArrayView:
-      #|  [
-      #|    <HashSet: [-999999999, -2, 1144392696, -65535, 128, 311628954]>,
-      #|    <HashSet: []>,
-      #|    <HashSet: [322263955, -613468993, -1609132827]>,
-      #|    <HashSet: [0, -1025403238, 1]>,
-      #|  ]>
+      #|[
+      #|  [-999999999, -65535, -2, 128, 311628954, 1144392696],
+      #|  [],
+      #|  [-1609132827, -613468993, 322263955],
+      #|  [-1025403238, 0, 1],
+      #|]
     ),
   )
 }
