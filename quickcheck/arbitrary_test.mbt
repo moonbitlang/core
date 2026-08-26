@@ -117,18 +117,22 @@ test "gen with default parameters" {
 ///|
 test "iter arbitrary" {
   let samples : Array[Iter[Int]] = @quickcheck.samples(20)
-  inspect("[0, 0, 0, 1, 2, -2]", content="[0, 0, 0, 1, 2, -2]")
+  debug_inspect(
+    samples[9].to_array(),
+    content=(
+      #|[67108863, 16777217, -365961592, 128, -65535]
+    ),
+  )
   debug_inspect(
     samples[1:5].map(iter => iter.to_array()),
     content=(
-      #|[[], [], [67108863], [16777217]]
+      #|[[], [], [-2], [311628954]]
     ),
   )
-  // inspect(samples[9], content="[0, 0, 0, 1, 2, -2]") (Cause infinite loop?)
   debug_inspect(
     samples[10].to_array(),
     content=(
-      #|[-365961592, 128]
+      #|[-999999999, -10000000]
     ),
   )
 }
