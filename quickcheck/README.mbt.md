@@ -225,7 +225,7 @@ test "builtin types" {
   debug_inspect(
     v,
     content=(
-      #|(false, '~', 0x07)
+      #|(false, '~', 0x4d)
     ),
   )
   // Numeric types
@@ -256,13 +256,15 @@ test "builtin types" {
 }
 ```
 
-Fixed-width integer generation intentionally ignores the size hint. Its
-default distribution combines full-width random bit patterns, common small
-values, values next to powers of two and ten, and type extrema. This keeps the
-entire scalar domain reachable while regularly exercising overflow, bit-width,
-and formatting boundaries. Fixed-width integer shrinkers try zero first, then
-progressively approach the original value, so large failures converge without
-linearly walking the numeric range.
+Integer generation for `Int16`, `UInt16`, `Int`, `UInt`, `Int64`, and `UInt64`
+intentionally ignores the size hint. Its default distribution combines
+full-width random bit patterns, common small values, values next to powers of
+two and ten, and type extrema. This keeps the entire scalar domain reachable
+while regularly exercising overflow, bit-width, and formatting boundaries.
+`Byte` remains uniformly distributed across all 256 bit patterns so `Bytes`
+and other byte-oriented workloads retain broad payload coverage. Fixed-width
+integer shrinkers try zero first, then progressively approach the original
+value, so large failures converge without linearly walking the numeric range.
 
 ## Custom Types
 

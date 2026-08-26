@@ -15,7 +15,6 @@
 ///|
 fn decimal_power_count(bits : Int, signed : Bool) -> UInt {
   match (bits, signed) {
-    (8, _) => 3U
     (16, _) => 5U
     (32, _) => 10U
     (64, true) => 19U
@@ -140,11 +139,6 @@ fn gen_integer_bits(
     _ => extreme_integer_bits(bits, mask, signed, rs)
   }
   value & mask
-}
-
-///|
-pub impl Arbitrary for Byte with fn arbitrary(_, rs) {
-  gen_integer_bits(8, false, rs).to_byte()
 }
 
 ///|
