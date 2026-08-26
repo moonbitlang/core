@@ -96,17 +96,8 @@ fn should_parse_as_positional(
 
 ///|
 fn is_negative_number(arg : String) -> Bool {
-  if arg.length() < 2 {
-    return false
-  }
-  guard arg is ['-', .. rest] else { return false }
-  for ch in rest {
-    if ch is ('0'..='9') {
-      continue
-    } else {
-      break false
-    }
-  } nobreak {
-    true
+  match arg {
+    ['-', '0'..='9', .. rest] => rest.all(c => c is ('0'..='9'))
+    _ => false
   }
 }
