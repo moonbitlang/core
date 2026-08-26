@@ -17,7 +17,7 @@ test "shrink int" {
   debug_inspect(
     @shrink.Shrink::shrink(100).collect(),
     content=(
-      #|[0, 50, 75, 88, 94, 97, 99]
+      #|[50, 75, 88, 94, 97, 99, 0]
     ),
   )
   debug_inspect(
@@ -34,7 +34,6 @@ test "shrink int64" {
     @shrink.Shrink::shrink(10000L).collect(),
     content=(
       #|[
-      #|  0,
       #|  5000,
       #|  7500,
       #|  8750,
@@ -48,6 +47,7 @@ test "shrink int64" {
       #|  9996,
       #|  9998,
       #|  9999,
+      #|  0,
       #|]
     ),
   )
@@ -60,7 +60,7 @@ test "shrink signed integer minimum values toward zero without overflow" {
   debug_inspect(
     (ints.length(), ints[:3], ints.last()),
     content=(
-      #|(32, <ArrayView: [0, -1073741824, -1610612736]>, Some(-2147483647))
+      #|(32, <ArrayView: [-1073741824, -1610612736, -1879048192]>, Some(0))
     ),
   )
   debug_inspect(
@@ -68,8 +68,9 @@ test "shrink signed integer minimum values toward zero without overflow" {
     content=(
       #|(
       #|  64,
-      #|  <ArrayView: [0, -4611686018427387904, -6917529027641081856]>,
-      #|  Some(-9223372036854775807),
+      #|  <ArrayView:
+      #|    [-4611686018427387904, -6917529027641081856, -8070450532247928832]>,
+      #|  Some(0),
       #|)
     ),
   )
@@ -80,7 +81,7 @@ test "shrink int16" {
   debug_inspect(
     @shrink.Shrink::shrink((100 : Int16)).collect(),
     content=(
-      #|[0, 50, 75, 88, 94, 97, 99]
+      #|[50, 75, 88, 94, 97, 99, 0]
     ),
   )
 }
@@ -90,7 +91,7 @@ test "shrink uint16" {
   debug_inspect(
     @shrink.Shrink::shrink((100 : UInt16)).collect(),
     content=(
-      #|[0, 50, 75, 88, 94, 97, 99]
+      #|[50, 75, 88, 94, 97, 99, 0]
     ),
   )
 }
@@ -172,7 +173,6 @@ test "shrink uint" {
     @shrink.Shrink::shrink(37000U).collect(),
     content=(
       #|[
-      #|  0,
       #|  18500,
       #|  27750,
       #|  32375,
@@ -188,6 +188,7 @@ test "shrink uint" {
       #|  36996,
       #|  36998,
       #|  36999,
+      #|  0,
       #|]
     ),
   )
@@ -199,7 +200,6 @@ test "shrink uint64" {
     @shrink.Shrink::shrink((42000 : UInt64)).collect(),
     content=(
       #|[
-      #|  0,
       #|  21000,
       #|  31500,
       #|  36750,
@@ -215,6 +215,7 @@ test "shrink uint64" {
       #|  41995,
       #|  41998,
       #|  41999,
+      #|  0,
       #|]
     ),
   )
@@ -226,7 +227,7 @@ test "shrink byte" {
   debug_inspect(
     s,
     content=(
-      #|[0x00, 0x64, 0x96, 0xaf, 0xbc, 0xc2, 0xc5, 0xc7]
+      #|[0x64, 0x96, 0xaf, 0xbc, 0xc2, 0xc5, 0xc7, 0x00]
     ),
   )
   debug_inspect(
@@ -308,19 +309,19 @@ test "shrink bytes through byte array" {
       #|  <Bytes: []>,
       #|  <Bytes: [0x37]>,
       #|  <Bytes: [0x67]>,
-      #|  <Bytes: [0x00, 0x37]>,
       #|  <Bytes: [0x34, 0x37]>,
       #|  <Bytes: [0x4e, 0x37]>,
       #|  <Bytes: [0x5b, 0x37]>,
       #|  <Bytes: [0x61, 0x37]>,
       #|  <Bytes: [0x64, 0x37]>,
       #|  <Bytes: [0x66, 0x37]>,
-      #|  <Bytes: [0x67, 0x00]>,
+      #|  <Bytes: [0x00, 0x37]>,
       #|  <Bytes: [0x67, 0x1c]>,
       #|  <Bytes: [0x67, 0x2a]>,
       #|  <Bytes: [0x67, 0x31]>,
       #|  <Bytes: [0x67, 0x34]>,
       #|  <Bytes: [0x67, 0x36]>,
+      #|  <Bytes: [0x67, 0x00]>,
       #|]
     ),
   )
@@ -349,7 +350,7 @@ test "shrink double: exact output for 3.5" {
   debug_inspect(
     @shrink.Shrink::shrink(3.5).collect(),
     content=(
-      #|[0, 2, 3, 0, 1.8, 2.7, 3.1, 3.3, 3.4]
+      #|[2, 3, 0, 1.8, 2.7, 3.1, 3.3, 3.4, 0]
     ),
   )
 }
@@ -369,7 +370,7 @@ test "shrink double: negative" {
   debug_inspect(
     @shrink.Shrink::shrink(-5.5).collect(),
     content=(
-      #|[5.5, 0, -3, -5, 0, -2.8, -4.2, -4.9, -5.2, -5.4]
+      #|[5.5, -3, -5, 0, -2.8, -4.2, -4.9, -5.2, -5.4, 0]
     ),
   )
 }
