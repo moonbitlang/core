@@ -19,9 +19,9 @@ pub fn[A] Queue::Queue(ArrayView[A]) -> Self[A]
 pub fn[A] Queue::clear(Self[A]) -> Unit
 #alias(clone, deprecated)
 pub fn[A] Queue::copy(Self[A]) -> Self[A]
-pub fn[A] Queue::each(Self[A], (A) -> Unit) -> Unit
-pub fn[A] Queue::eachi(Self[A], (Int, A) -> Unit) -> Unit
-pub fn[A, B] Queue::fold(Self[A], init~ : B, (B, A) -> B) -> B
+pub fn[A] Queue::each(Self[A], (A) -> Unit raise?) -> Unit raise?
+pub fn[A] Queue::eachi(Self[A], (Int, A) -> Unit raise?) -> Unit raise?
+pub fn[A, B] Queue::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
 #as_free_fn
