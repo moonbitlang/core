@@ -189,7 +189,7 @@ pub fn[A] Queue::pop(self : Queue[A]) -> A? {
 /// }
 /// ```
 #locals(f)
-pub fn[A] Queue::each(self : Queue[A], f : (A) -> Unit) -> Unit {
+pub fn[A] Queue::each(self : Queue[A], f : (A) -> Unit raise?) -> Unit raise? {
   for x in self.inner {
     f(x)
   }
@@ -208,7 +208,7 @@ pub fn[A] Queue::each(self : Queue[A], f : (A) -> Unit) -> Unit {
 /// }
 /// ```
 #locals(f)
-pub fn[A] Queue::eachi(self : Queue[A], f : (Int, A) -> Unit) -> Unit {
+pub fn[A] Queue::eachi(self : Queue[A], f : (Int, A) -> Unit raise?) -> Unit raise? {
   for i, x in self.inner {
     f(i, x)
   }
@@ -226,7 +226,7 @@ pub fn[A] Queue::eachi(self : Queue[A], f : (Int, A) -> Unit) -> Unit {
 /// }
 /// ```
 #locals(f)
-pub fn[A, B] Queue::fold(self : Queue[A], init~ : B, f : (B, A) -> B) -> B {
+pub fn[A, B] Queue::fold(self : Queue[A], init~ : B, f : (B, A) -> B raise?) -> B raise? {
   let mut acc = init
   for x in self.inner {
     acc = f(acc, x)

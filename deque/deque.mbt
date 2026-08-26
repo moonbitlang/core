@@ -977,7 +977,7 @@ pub impl[A : Eq] Eq for Deque[A] with fn equal(self, other) {
 /// }
 /// ```
 #locals(f)
-pub fn[A] Deque::each(self : Deque[A], f : (A) -> Unit) -> Unit {
+pub fn[A] Deque::each(self : Deque[A], f : (A) -> Unit raise?) -> Unit raise? {
   for v in self {
     f(v)
   }
@@ -996,7 +996,7 @@ pub fn[A] Deque::each(self : Deque[A], f : (A) -> Unit) -> Unit {
 /// }
 /// ```
 #locals(f)
-pub fn[A] Deque::eachi(self : Deque[A], f : (Int, A) -> Unit) -> Unit {
+pub fn[A] Deque::eachi(self : Deque[A], f : (Int, A) -> Unit raise?) -> Unit raise? {
   for i, v in self {
     f(i, v)
   }
@@ -1015,7 +1015,7 @@ pub fn[A] Deque::eachi(self : Deque[A], f : (Int, A) -> Unit) -> Unit {
 /// }
 /// ```
 #locals(f)
-pub fn[A] Deque::rev_each(self : Deque[A], f : (A) -> Unit) -> Unit {
+pub fn[A] Deque::rev_each(self : Deque[A], f : (A) -> Unit raise?) -> Unit raise? {
   for v in self.rev_iter() {
     f(v)
   }
@@ -1034,7 +1034,7 @@ pub fn[A] Deque::rev_each(self : Deque[A], f : (A) -> Unit) -> Unit {
 /// }
 /// ```
 #locals(f)
-pub fn[A] Deque::rev_eachi(self : Deque[A], f : (Int, A) -> Unit) -> Unit {
+pub fn[A] Deque::rev_eachi(self : Deque[A], f : (Int, A) -> Unit raise?) -> Unit raise? {
   for i, v in self.rev_iter2() {
     f(i, v)
   }
@@ -1085,7 +1085,7 @@ pub fn[A] Deque::clear(self : Deque[A]) -> Unit {
 /// }
 /// ```
 #locals(f)
-pub fn[A, U] Deque::map(self : Deque[A], f : (A) -> U) -> Deque[U] {
+pub fn[A, U] Deque::map(self : Deque[A], f : (A) -> U raise?) -> Deque[U] raise? {
   let cap = self.buf.length()
   if self.len == 0 {
     new_deque(0)
@@ -1111,7 +1111,7 @@ pub fn[A, U] Deque::map(self : Deque[A], f : (A) -> U) -> Deque[U] {
 /// }
 /// ```
 #locals(f)
-pub fn[A, U] Deque::mapi(self : Deque[A], f : (Int, A) -> U) -> Deque[U] {
+pub fn[A, U] Deque::mapi(self : Deque[A], f : (Int, A) -> U raise?) -> Deque[U] raise? {
   let cap = self.buf.length()
   if self.len == 0 {
     new_deque(0)
