@@ -87,10 +87,9 @@ fn should_parse_as_positional(
     let (name, _) = split_long(arg)
     return long_index.get_from_string(name) is None
   }
-  let short = arg.get_char(1)
-  match short {
-    Some(ch) => short_index.get(ch) is None
-    None => true
+  match arg {
+    ['-', second, ..] => short_index.get(second) is None
+    _ => true
   }
 }
 
