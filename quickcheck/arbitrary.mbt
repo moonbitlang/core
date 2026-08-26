@@ -32,6 +32,11 @@ pub impl Arbitrary for Bool with fn arbitrary(_, rs) {
 }
 
 ///|
+pub impl Arbitrary for Byte with fn arbitrary(_, rs) {
+  rs.next_uint().to_byte()
+}
+
+///|
 pub impl Arbitrary for Bytes with fn arbitrary(size, rs) {
   if size == 0 {
     Bytes::new(0)

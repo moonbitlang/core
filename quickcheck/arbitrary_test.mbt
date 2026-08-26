@@ -30,14 +30,12 @@ test "fixed-width integer Arbitrary exercises its bug-finding portfolio at size 
   // Seeds select, in order: full-width, canonical, binary boundary,
   // decimal boundary, and type-extreme generation.
   let seeds = [1UL, 0UL, 22UL, 6UL, 7UL]
-  let bytes : Array[Byte] = scalar_samples_at_zero(seeds)
   let int16s : Array[Int16] = scalar_samples_at_zero(seeds)
   let uint16s : Array[UInt16] = scalar_samples_at_zero(seeds)
   let ints : Array[Int] = scalar_samples_at_zero(seeds)
   let uints : Array[UInt] = scalar_samples_at_zero(seeds)
   let int64s : Array[Int64] = scalar_samples_at_zero(seeds)
   let uint64s : Array[UInt64] = scalar_samples_at_zero(seeds)
-  debug_inspect(bytes, content="[0x89, 0x02, 0x07, 0x01, 0xfd]")
   debug_inspect(int16s, content="[-3191, -1, 2047, -10000, 32766]")
   debug_inspect(uint16s, content="[62345, 2, 2047, 10000, 65533]")
   debug_inspect(ints, content="[167113609, -1, 134217727, -10, 2147483646]")
@@ -66,6 +64,13 @@ test "fixed-width integer Arbitrary exercises its bug-finding portfolio at size 
       #|]
     ),
   )
+}
+
+///|
+test "Byte Arbitrary draws raw random bits" {
+  let seeds = [1UL, 0UL, 22UL, 6UL, 7UL]
+  let bytes : Array[Byte] = scalar_samples_at_zero(seeds)
+  debug_inspect(bytes, content="[0x89, 0x36, 0x3c, 0x56, 0x5f]")
 }
 
 ///|
@@ -177,7 +182,7 @@ test "arbitrary gen bytes" {
   inspect(
     bytes,
     content=(
-      #|b"\x10"
+      #|b"\xcb"
     ),
   )
 }
