@@ -41,7 +41,7 @@ fn List::debug(x : Self) -> Repr {
 
 ///|
 test "Nested List" {
-  let rcd = { answer: 1, xs: [1, 2, 3], tag: Ok("test string result") }
+  let rcd = { answer: 1, xs: [1, 2, 3], tag: Ok("test string result"), }
   fn repeat(n) {
     if n == 0 {
       Nil
@@ -103,7 +103,7 @@ fn example_repr(example : Example) -> Repr {
 
 ///|
 test "docs: custom type pretty_print" {
-  let sample : Example = { answer: 42, xs: [1, 2, 3], tag: Ok("done") }
+  let sample : Example = { answer: 42, xs: [1, 2, 3], tag: Ok("done"), }
   let r = example_repr(sample)
   @builtin.inspect(
     render(r),
@@ -160,7 +160,7 @@ fn numbers_repr(value : Numbers) -> Repr {
 
 ///|
 test "docs: threshold controls single-line vs multi-line" {
-  let sample : Numbers = { xs: [1, 2, 3] }
+  let sample : Numbers = { xs: [1, 2, 3], }
   let r = numbers_repr(sample)
   let compact = render(r)
   let expanded = render(r)
@@ -268,7 +268,7 @@ fn dict_repr(value : DictExample) -> Repr {
 
 ///|
 test "docs: dict prints as k: v pairs" {
-  let sample : DictExample = { entries: [("a", 1), ("b", 2)] }
+  let sample : DictExample = { entries: [("a", 1), ("b", 2)], }
   let r = dict_repr(sample)
   @builtin.inspect(
     render(r),
@@ -280,7 +280,7 @@ test "docs: dict prints as k: v pairs" {
 
 ///|
 test "docs: dict expands with quoted keys + trailing commas" {
-  let sample : DictExample = { entries: [("a", 1), ("b", 2)] }
+  let sample : DictExample = { entries: [("a", 1), ("b", 2)], }
   let r = dict_repr(sample)
   @builtin.inspect(
     render(r),
@@ -306,7 +306,7 @@ fn opaque_repr(value : OpaqueExample) -> Repr {
 
 ///|
 test "docs: opaque wrappers show tag and children" {
-  let sample : OpaqueExample = { label: "Vec", xs: [1, 2] }
+  let sample : OpaqueExample = { label: "Vec", xs: [1, 2], }
   let r = opaque_repr(sample)
   @builtin.inspect(render(r), content="<Vec: [1, 2]>")
 }

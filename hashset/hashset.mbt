@@ -110,7 +110,7 @@ fn[K : Eq] HashSet::add_with_hash(
       }
     }
   }
-  let entry = { psl, key, hash }
+  let entry = { psl, key, hash, }
   self.set_entry(entry, idx)
   self.size += 1
 }
@@ -721,8 +721,8 @@ pub fn[K] HashSet::copy(self : HashSet[K]) -> HashSet[K] {
   // mutable and `shift_back` decrements it, so sharing entries would let a
   // removal on one set corrupt the probe sequences of the other.
   for i in 0..<self.capacity {
-    if self.entries[i] is Some({ psl, hash, key }) {
-      other.entries[i] = Some({ psl, hash, key })
+    if self.entries[i] is Some({ psl, hash, key, }) {
+      other.entries[i] = Some({ psl, hash, key, })
     }
   }
   other

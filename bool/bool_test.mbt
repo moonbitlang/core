@@ -33,8 +33,8 @@ test "Bool hash function with struct" {
   // type MyInt Int derive(Show) this does not work
   // let m : Map[TestHash, Char] = {}
   let m = Map([])
-  m[{ flag: true, x: 1 }] = '3'
-  m[{ flag: false, x: 1 }] = '3'
+  m[{ flag: true, x: 1, }] = '3'
+  m[{ flag: false, x: 1, }] = '3'
   debug_inspect(
     m,
     content=(

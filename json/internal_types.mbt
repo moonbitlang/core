@@ -21,7 +21,7 @@ priv struct ParseContext {
 
 ///|
 fn ParseContext::make(input : StringView) -> ParseContext {
-  { offset: 0, input, end_offset: input.length() }
+  { offset: 0, input, end_offset: input.length(), }
 }
 
 ///|

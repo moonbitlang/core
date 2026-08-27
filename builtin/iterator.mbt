@@ -245,7 +245,7 @@ pub fn[X] Iter::new(f : () -> X?, size_hint? : Int) -> Iter[X] {
     Some(_) => Some(0)
     None => None
   }
-  { f, size_hint }
+  { f, size_hint, }
 }
 
 ///|
@@ -1048,7 +1048,7 @@ pub fn[X, Y] Iter2::new(f : () -> (X, Y)?, size_hint? : Int) -> Iter2[X, Y] {
     Some(_) => Some(0)
     None => None
   }
-  Iter2({ f, size_hint })
+  Iter2({ f, size_hint, })
 }
 
 ///|

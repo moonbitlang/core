@@ -24,14 +24,14 @@ pub struct SparseArray[X] {
 ///|
 /// Return an empty value.
 pub fn[X] empty() -> SparseArray[X] {
-  { elem_info: empty_bitset, data: [] }
+  { elem_info: empty_bitset, data: [], }
 }
 
 ///|
 /// Create a singleton value.
 #owned(value)
 pub fn[X] singleton(idx : Int, value : X) -> SparseArray[X] {
-  { elem_info: empty_bitset.add(idx), data: [value] }
+  { elem_info: empty_bitset.add(idx), data: [value], }
 }
 
 ///|
@@ -82,7 +82,7 @@ pub fn[X] from_sorted_fixed_array(
   for idx in indices {
     elem_info = elem_info.add(idx)
   }
-  { elem_info, data }
+  { elem_info, data, }
 }
 
 ///|
@@ -112,7 +112,7 @@ pub fn[X] SparseArray::add(
     pos_of_new_item,
     old_len - pos_of_new_item,
   )
-  { elem_info: self.elem_info.add(idx), data: new_data }
+  { elem_info: self.elem_info.add(idx), data: new_data, }
 }
 
 ///|
@@ -138,7 +138,7 @@ pub fn[X] SparseArray::remove(
     pos_of_removed_item + 1,
     old_len - pos_of_removed_item - 1,
   )
-  { elem_info: self.elem_info.remove(idx), data: new_data }
+  { elem_info: self.elem_info.remove(idx), data: new_data, }
 }
 
 ///|
@@ -162,7 +162,7 @@ pub fn[X] SparseArray::union(
     }
     continue rest.remove(idx), index + 1
   }
-  { elem_info: union_elem_info, data }
+  { elem_info: union_elem_info, data, }
 }
 
 ///|
@@ -196,9 +196,9 @@ pub fn[X] SparseArray::intersection(
     if elem_info == empty_bitset {
       None
     } else if elem_info == inter_elem_info {
-      Some({ elem_info, data })
+      Some({ elem_info, data, })
     } else {
-      Some({ elem_info, data: data.copy_prefix(len=index) })
+      Some({ elem_info, data: data.copy_prefix(len=index), })
     }
   }
 }
@@ -233,9 +233,9 @@ pub fn[X] SparseArray::difference(
     if elem_info == empty_bitset {
       None
     } else if elem_info == self_elem_info {
-      Some({ elem_info, data })
+      Some({ elem_info, data, })
     } else {
-      Some({ elem_info, data: data.copy_prefix(len=index) })
+      Some({ elem_info, data: data.copy_prefix(len=index), })
     }
   }
 }
@@ -246,7 +246,7 @@ pub fn[X, Y] SparseArray::map(
   self : SparseArray[X],
   f : (X) -> Y raise?,
 ) -> SparseArray[Y] raise? {
-  { elem_info: self.elem_info, data: self.data.map(f) }
+  { elem_info: self.elem_info, data: self.data.map(f), }
 }
 
 ///|
@@ -271,9 +271,9 @@ pub fn[X] SparseArray::filter(
     if elem_info == empty_bitset {
       None
     } else if elem_info == self_elem_info {
-      Some({ elem_info, data })
+      Some({ elem_info, data, })
     } else {
-      Some({ elem_info, data: data.copy_prefix(len=index) })
+      Some({ elem_info, data: data.copy_prefix(len=index), })
     }
   }
 }
@@ -290,7 +290,7 @@ pub fn[X] SparseArray::replace(
 ) -> SparseArray[X] {
   let new_data = self.data.copy()
   new_data[self.elem_info.index_of(idx)] = value
-  { elem_info: self.elem_info, data: new_data }
+  { elem_info: self.elem_info, data: new_data, }
 }
 
 ///|

@@ -36,7 +36,7 @@ priv struct AsciiCaseInsensitiveString {
 
 ///|
 fn AsciiCaseInsensitiveString::new(s : String) -> AsciiCaseInsensitiveString {
-  { raw: s }
+  { raw: s, }
 }
 
 ///|

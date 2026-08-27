@@ -32,7 +32,7 @@ pub struct ValueRange {
 /// - `ValueRange(lower=1, upper=3)` means `1..=3`.
 #alias(new, deprecated="Use `ValueRange()` instead")
 pub fn ValueRange::ValueRange(lower? : Int = 0, upper? : Int) -> ValueRange {
-  { lower, upper }
+  { lower, upper, }
 }
 
 ///|

@@ -176,7 +176,7 @@ pub fn new(size_hint? : Int = 0) -> Buffer {
 pub fn Buffer::Buffer(size_hint? : Int = 0) -> Buffer {
   let initial = if size_hint < 1 { 1 } else { size_hint }
   let data = FixedArray::make(initial, b'\x00')
-  { data, len: 0 }
+  { data, len: 0, }
 }
 
 ///|

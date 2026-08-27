@@ -14,7 +14,7 @@
 
 ///|
 fn[A] new_queue() -> Queue[A] {
-  { inner: Deque([]) }
+  { inner: Deque([]), }
 }
 
 ///|
@@ -33,7 +33,7 @@ fn[A] new_queue() -> Queue[A] {
 #alias(of, deprecated="Use from_array instead")
 #as_free_fn(of, deprecated="Use from_array instead")
 pub fn[A] Queue::Queue(arr : ArrayView[A]) -> Queue[A] {
-  { inner: Deque(arr) }
+  { inner: Deque(arr), }
 }
 
 ///|
@@ -254,7 +254,7 @@ pub fn[A, B] Queue::fold(
 /// ```
 #alias(clone, deprecated)
 pub fn[A] Queue::copy(self : Queue[A]) -> Queue[A] {
-  { inner: self.inner.copy() }
+  { inner: self.inner.copy(), }
 }
 
 ///|
@@ -309,7 +309,7 @@ pub fn[A] Queue::iter(self : Queue[A]) -> Iter[A] {
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
 pub fn[A] Queue::from_iter(iter : Iter[A]) -> Queue[A] {
-  { inner: @deque.from_iter(iter) }
+  { inner: @deque.from_iter(iter), }
 }
 
 ///|
