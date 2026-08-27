@@ -32,19 +32,6 @@ fn suppress_unused_v128_import_on_js() -> Unit {
 
 ///|
 #cfg(not(target="js"))
-// V128 loads require FixedArray[Byte]; these types share a representation on
-// non-JS backends.
-fn unsafe_fixedarray_from_bytes(bytes : Bytes) -> FixedArray[Byte] = "%identity"
-
-///|
-#cfg(not(target="js"))
-fn is_utf16_surrogate(code_unit : UInt16) -> Bool {
-  let code = code_unit.to_int()
-  code >= 0xD800 && code <= 0xDFFF
-}
-
-///|
-#cfg(not(target="js"))
 fn utf16_swap_u16x8(value : V128) -> V128 {
   @v128.i8x16_shuffle(
     value, value, 1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14,
@@ -71,27 +58,23 @@ fn utf16_needs_scalar_le_v128(bytes : BytesView) -> Bool {
   if bytes.length() % 2 != 0 {
     return true
   }
-  let src = bytes.data()
-  if !bytes.is_empty() &&
-    is_utf16_surrogate(src.unsafe_read_uint16_le(bytes.start_offset())) {
+  if bytes is [u16le(0xD800..=0xDFFF), ..] {
     return true
   }
-  let src_bytes = unsafe_fixedarray_from_bytes(src)
-  let end = bytes.start_offset() + bytes.length()
-  let mut index = bytes.start_offset()
-  while index + 16 <= end {
-    if utf16_v128_has_surrogate(@v128.v128_load(src_bytes, index)) {
-      return true
+  for rest = bytes {
+    match rest {
+      [v128le(block), .. tail] => {
+        if utf16_v128_has_surrogate(block) {
+          return true
+        }
+        continue tail
+      }
+      [u16le(0xD800..=0xDFFF), ..] => return true
+      [u16le(_), .. tail] => continue tail
+      [] => break false
+      _ => break true
     }
-    index += 16
   }
-  while index < end {
-    if is_utf16_surrogate(src.unsafe_read_uint16_le(index)) {
-      return true
-    }
-    index += 2
-  }
-  false
 }
 
 ///|
@@ -100,52 +83,44 @@ fn utf16_needs_scalar_be_v128(bytes : BytesView) -> Bool {
   if bytes.length() % 2 != 0 {
     return true
   }
-  let src = bytes.data()
-  if !bytes.is_empty() &&
-    is_utf16_surrogate(src.unsafe_read_uint16_be(bytes.start_offset())) {
+  if bytes is [u16be(0xD800..=0xDFFF), ..] {
     return true
   }
-  let src_bytes = unsafe_fixedarray_from_bytes(src)
-  let end = bytes.start_offset() + bytes.length()
-  let mut index = bytes.start_offset()
-  while index + 16 <= end {
-    let swapped = utf16_swap_u16x8(@v128.v128_load(src_bytes, index))
-    if utf16_v128_has_surrogate(swapped) {
-      return true
+  for rest = bytes {
+    match rest {
+      [v128le(block), .. tail] => {
+        if utf16_v128_has_surrogate(utf16_swap_u16x8(block)) {
+          return true
+        }
+        continue tail
+      }
+      [u16be(0xD800..=0xDFFF), ..] => return true
+      [u16be(_), .. tail] => continue tail
+      [] => break false
+      _ => break true
     }
-    index += 16
   }
-  while index < end {
-    if is_utf16_surrogate(src.unsafe_read_uint16_be(index)) {
-      return true
-    }
-    index += 2
-  }
-  false
 }
 
 ///|
 #cfg(not(target="js"))
 fn utf16_decode_be_no_surrogate_v128(bytes : BytesView) -> String {
   // The caller guarantees an even byte length with no surrogate code units.
-  let src = bytes.data()
-  let src_bytes = unsafe_fixedarray_from_bytes(src)
   let string_bytes = FixedArray::make(bytes.length(), b'\x00')
-  let end = bytes.start_offset() + bytes.length()
-  let mut index = bytes.start_offset()
-  let mut written = 0
-  while index + 16 <= end {
-    let swapped = utf16_swap_u16x8(@v128.v128_load(src_bytes, index))
-    @v128.v128_store(string_bytes, written, swapped)
-    index += 16
-    written += 16
-  }
-  while index < end {
-    let code_unit = src.unsafe_read_uint16_be(index)
-    string_bytes[written] = (code_unit & 0xFF).to_byte()
-    string_bytes[written + 1] = (code_unit >> 8).to_byte()
-    index += 2
-    written += 2
+  for rest = bytes, written = 0 {
+    match rest {
+      [v128le(block), .. tail] => {
+        @v128.v128_store(string_bytes, written, utf16_swap_u16x8(block))
+        continue tail, written + 16
+      }
+      [u16be(code_unit), .. tail] => {
+        string_bytes.unsafe_set(written, (code_unit & 0xFF).to_byte())
+        string_bytes.unsafe_set(written + 1, (code_unit >> 8).to_byte())
+        continue tail, written + 2
+      }
+      [] => break
+      _ => break
+    }
   }
   string_bytes.unsafe_reinterpret_as_bytes().to_unchecked_string()
 }
