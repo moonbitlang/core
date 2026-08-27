@@ -116,14 +116,48 @@ priv enum WriteFrame {
 ///|
 /// A Replacer provides a way to filter and transform JSON object properties during stringification.
 /// 
-/// Replacers contain a function that takes a property key and value, and returns:
+/// A replacer takes a property key and value, and returns:
 /// - `Some(value)` to include the property in the output (possibly transformed)
 /// - `None` to exclude the property from the output
 /// 
 /// Only applies to object properties, not array elements.
+///
+/// The replacer is consulted at every nesting level, including inside objects
+/// it has just kept, matching JavaScript's `JSON.stringify`. So a replacer that
+/// keeps only `"a"` turns `{"a": {"b": 1}}` into `{"a": {}}` — the nested
+/// `"b"` is filtered by the same rule.
 pub struct Replacer {
-  priv f : (String, Json) -> Json?
+  priv kind : ReplacerKind
 } derive(@debug.Debug)
+
+///|
+priv enum ReplacerKind {
+  Custom((String, Json) -> Json?)
+  Keep(ArrayView[StringView])
+  Exclude(ArrayView[StringView])
+  AdaptiveKeep(ReplacerKeyLookup)
+  AdaptiveExclude(ReplacerKeyLookup)
+} derive(@debug.Debug)
+
+///|
+/// Lookup state for a key set large enough to be worth indexing. The index is
+/// built on first heavy use and then reused for the lifetime of the `Replacer`.
+priv struct ReplacerKeyLookup {
+  keys : ArrayView[StringView]
+  mut linear_lookups : Int
+  mut index : Map[StringView, Unit]?
+} derive(@debug.Debug)
+
+///|
+// Linear scanning beats hashing for very small key sets, even when repeated
+// for every property of a large object.
+const REPLACER_INDEX_MIN_KEY_COUNT = 9
+
+///|
+// Building an index costs O(keys). Delaying it until the replacer has actually
+// been consulted this many times keeps one-shot uses allocation-free and bounds
+// the wasted work to REPLACER_INDEX_LOOKUP_THRESHOLD * keys.
+const REPLACER_INDEX_LOOKUP_THRESHOLD = 64
 
 ///|
 /// Create a new Replacer with a custom function.
@@ -153,12 +187,17 @@ pub struct Replacer {
 /// ```
 #alias(new, deprecated="Use `Replacer()` instead")
 pub fn Replacer::Replacer(f : (String, Json) -> Json?) -> Replacer {
-  { f, }
+  { kind: Custom(f) }
 }
 
 ///|
 /// Create a Replacer that only keeps the specified property keys.
-/// All other properties will be excluded from the output.
+/// All other properties will be excluded from the output, at every nesting
+/// level — `keep(["a"])` turns `{"a": {"b": 1}, "c": 2}` into `{"a": {}}`.
+///
+/// `array` is read while the replacer is in use, and a large key list is
+/// indexed on first heavy use, so mutating `array` afterwards is not
+/// guaranteed to be observed.
 /// 
 /// ## Example
 /// 
@@ -175,12 +214,21 @@ pub fn Replacer::Replacer(f : (String, Json) -> Json?) -> Replacer {
 /// }
 /// ```
 pub fn Replacer::keep(array : ArrayView[StringView]) -> Replacer {
-  { f: (idx, value) => if array.contains(idx) { Some(value) } else { None } }
+  if array.length() < REPLACER_INDEX_MIN_KEY_COUNT {
+    { kind: Keep(array) }
+  } else {
+    { kind: AdaptiveKeep({ keys: array, linear_lookups: 0, index: None }) }
+  }
 }
 
 ///|
 /// Create a Replacer that excludes the specified property keys.
-/// All other properties will be included in the output.
+/// All other properties will be included in the output. Keys are excluded at
+/// every nesting level, not just the top level.
+///
+/// `array` is read while the replacer is in use, and a large key list is
+/// indexed on first heavy use, so mutating `array` afterwards is not
+/// guaranteed to be observed.
 ///
 /// ## Example
 ///
@@ -197,7 +245,42 @@ pub fn Replacer::keep(array : ArrayView[StringView]) -> Replacer {
 /// }
 /// ```
 pub fn Replacer::exclude(array : ArrayView[StringView]) -> Replacer {
-  { f: (idx, value) => if array.contains(idx) { None } else { Some(value) } }
+  if array.length() < REPLACER_INDEX_MIN_KEY_COUNT {
+    { kind: Exclude(array) }
+  } else {
+    { kind: AdaptiveExclude({ keys: array, linear_lookups: 0, index: None }) }
+  }
+}
+
+///|
+fn ReplacerKeyLookup::contains(self : ReplacerKeyLookup, key : String) -> Bool {
+  match self.index {
+    Some(index) => index.contains(key)
+    None =>
+      if self.linear_lookups < REPLACER_INDEX_LOOKUP_THRESHOLD {
+        self.linear_lookups += 1
+        self.keys.contains(key)
+      } else {
+        let index : Map[StringView, Unit] = Map([], capacity=self.keys.length())
+        for indexed_key in self.keys {
+          index[indexed_key] = ()
+        }
+        self.index = Some(index)
+        index.contains(key)
+      }
+  }
+}
+
+///|
+#inline
+fn Replacer::apply(self : Replacer, key : String, value : Json) -> Json? {
+  match self.kind {
+    Custom(f) => f(key, value)
+    Keep(keys) => if keys.contains(key) { Some(value) } else { None }
+    Exclude(keys) => if keys.contains(key) { None } else { Some(value) }
+    AdaptiveKeep(keys) => if keys.contains(key) { Some(value) } else { None }
+    AdaptiveExclude(keys) => if keys.contains(key) { None } else { Some(value) }
+  }
 }
 
 ///|
@@ -348,7 +431,7 @@ pub fn Json::stringify(
               Some((k, v)) => {
                 let mut v2 = v
                 if replacer is Some(replacer) {
-                  if (replacer.f)(k, v) is Some(v) {
+                  if replacer.apply(k, v) is Some(v) {
                     v2 = v
                   } else {
                     continue None
@@ -533,7 +616,7 @@ pub fn Json::transform(self : Self, replacer : Replacer) -> Json {
       .iter()
       .filter_map(pair => {
         let (k, v) = pair
-        if (replacer.f)(k, v) is Some(v2) {
+        if replacer.apply(k, v) is Some(v2) {
           Some((k, v2.transform(replacer)))
         } else {
           None

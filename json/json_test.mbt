@@ -194,6 +194,93 @@ test "stringify with replacer" {
 }
 
 ///|
+/// A key set large enough to be indexed must behave exactly like the linear
+/// path it replaces, including for keys absent from the object.
+test "Replacer::keep and exclude agree across the indexing threshold" {
+  let object = Map([])
+  for i in 0..<40 {
+    object["k\{i}"] = Json::number(i.to_double())
+  }
+  let json = Json::object(object)
+  let small : Array[StringView] = ["k1", "k2", "k3"]
+  let large : Array[StringView] = Array::makei(40, i => "k\{i * 2}")
+  // Small sets scan linearly, large sets build an index; both must agree with
+  // an equivalent custom replacer.
+  for keys in [small, large] {
+    let members = Map(keys.map(k => (k.to_owned(), true)))
+    let kept_by_list = json.stringify(replacer=@json.Replacer::keep(keys))
+    let kept_by_fn = json.stringify(
+      replacer=Replacer((k, v) => {
+        if members.contains(k) {
+          Some(v)
+        } else {
+          None
+        }
+      }),
+    )
+    assert_eq(kept_by_list, kept_by_fn)
+    let dropped_by_list = json.stringify(replacer=@json.Replacer::exclude(keys))
+    let dropped_by_fn = json.stringify(
+      replacer=Replacer((k, v) => {
+        if members.contains(k) {
+          None
+        } else {
+          Some(v)
+        }
+      }),
+    )
+    assert_eq(dropped_by_list, dropped_by_fn)
+  }
+}
+
+///|
+/// A replacer is reusable: the key set it was built from must still be honoured
+/// after the index has been built, and `transform` must agree with `stringify`.
+test "Replacer with an indexed key set is stable across reuse" {
+  let keys : Array[StringView] = Array::makei(12, i => "k\{i}")
+  let keep = @json.Replacer::keep(keys)
+  let exclude = @json.Replacer::exclude(keys)
+  let object = Map([])
+  // Comfortably past the point where the index is built.
+  for i in 0..<200 {
+    object["k\{i}"] = Json::number(i.to_double())
+  }
+  let json = Json::object(object)
+  let expected_keep = "{" +
+    Array::makei(12, i => "\"k\{i}\":\{i}").join(",") +
+    "}"
+  for _ in 0..<3 {
+    assert_eq(json.stringify(replacer=keep), expected_keep)
+    assert_eq(json.transform(keep).stringify(), expected_keep)
+    let dropped = json.stringify(replacer=exclude)
+    assert_false(dropped.contains("\"k0\":"))
+    assert_false(dropped.contains("\"k11\":"))
+    assert_true(dropped.contains("\"k12\":12"))
+    assert_true(dropped.contains("\"k199\":199"))
+  }
+}
+
+///|
+/// `keep` and `exclude` filter every nesting level, like JavaScript's
+/// `JSON.stringify(value, keys)`.
+test "Replacer::keep filters nested objects too" {
+  let json : Json = { "a": { "b": 1, "c": 2 }, "d": 3 }
+  inspect(
+    json.stringify(replacer=@json.Replacer::keep(["a"])),
+    content="{\"a\":{}}",
+  )
+  inspect(
+    json.stringify(replacer=@json.Replacer::keep(["a", "b"])),
+    content="{\"a\":{\"b\":1}}",
+  )
+  let nested : Json = { "a": [{ "b": 1, "z": 9 }] }
+  inspect(
+    nested.stringify(replacer=@json.Replacer::keep(["a"])),
+    content="{\"a\":[{}]}",
+  )
+}
+
+///|
 test "stringify with replace recursively" {
   let json : Json = {
     "a": 1.0,
