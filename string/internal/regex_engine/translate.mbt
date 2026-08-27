@@ -25,7 +25,7 @@ fn TranslateContext::new(
   ctx : @automata.Context,
   symbol_table : @symbol_map.Table,
 ) -> TranslateContext {
-  { ctx, pref: First, groups: [], symbol_table }
+  { ctx, pref: First, groups: [], symbol_table, }
 }
 
 ///|
@@ -33,7 +33,7 @@ fn translate(
   tc : TranslateContext,
   ast : Pattern,
 ) -> (@automata.Expr, Preference) {
-  let { ctx, pref, groups, symbol_table } = tc
+  let { ctx, pref, groups, symbol_table, } = tc
   match ast.desc {
     Char(c) => (@automata.e_cset(ctx~, symbol_table.map_set(c)), pref)
     Sequence(exprs) => (transl_seq(tc, exprs), pref)
@@ -78,7 +78,7 @@ fn translate(
       (result, pref)
     }
     Preference(pref2, expr) => {
-      let (cr, pref3) = translate({ ..tc, pref: pref2 }, expr)
+      let (cr, pref3) = translate({ ..tc, pref: pref2, }, expr)
       (enforce_pref(ctx, pref2, pref3, cr), pref2)
     }
     Capture(name~, expr) => {

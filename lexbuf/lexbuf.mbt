@@ -27,7 +27,13 @@ pub struct Lexbuf {
 /// Creates an initially empty lexbuf. `source` returns the next chunk, or
 /// `None` at EOF. Empty chunks are ignored.
 pub fn Lexbuf::from_fn(source : () -> String?) -> Lexbuf {
-  { source, storage: LexbufStorage(), cursor: 0, retained_from: -1, eof: false }
+  {
+    source,
+    storage: LexbufStorage(),
+    cursor: 0,
+    retained_from: -1,
+    eof: false,
+  }
 }
 
 ///|

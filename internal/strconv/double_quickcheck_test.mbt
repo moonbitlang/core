@@ -68,7 +68,7 @@ fn Literal::make(
       (wrap_index(seed, 10) + '0').unsafe_to_char()
     }),
   )
-  { neg, digits, exponent }
+  { neg, digits, exponent, }
 }
 
 ///|

@@ -488,14 +488,14 @@ test "retain" {
     capacity_mask: 7,
     size: 4,
     entries: [
-      Some({ psl: 2, hash: 448974246, key: "c", value: 3 }),
-      Some({ psl: 2, hash: -136509641, key: "d", value: 4 }),
+      Some({ psl: 2, hash: 448974246, key: "c", value: 3, }),
+      Some({ psl: 2, hash: -136509641, key: "d", value: 4, }),
       None,
       None,
       None,
       None,
-      Some({ psl: 0, hash: 1614946358, key: "a", value: 1 }),
-      Some({ psl: 1, hash: -765931946, key: "b", value: 2 }),
+      Some({ psl: 0, hash: 1614946358, key: "a", value: 1, }),
+      Some({ psl: 1, hash: -765931946, key: "b", value: 2, }),
     ],
   }
   hashmap.retain((_k, v) => v % 2 == 0)

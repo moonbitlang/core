@@ -833,7 +833,7 @@ fn[A] make_t(
   size : Int,
   shift : Int,
 ) -> Vector[A] {
-  { tree, tail, size, shift }
+  { tree, tail, size, shift, }
 }
 
 ///|

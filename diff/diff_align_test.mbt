@@ -55,19 +55,19 @@ fn push_comment_tokens(toks : Array[Tok], body : String) -> Unit {
   while rest is [_, ..] {
     rest = lexmatch rest with longest {
       (re"^//+" as t, after=next) => {
-        toks.push({ kind: Filler, text: t.to_owned() })
+        toks.push({ kind: Filler, text: t.to_owned(), })
         next
       }
       (re"^[A-Za-z_][A-Za-z0-9_]*" as t, after=next) => {
-        toks.push({ kind: Comment, text: t.to_owned() })
+        toks.push({ kind: Comment, text: t.to_owned(), })
         next
       }
       (re"^[ \t]+" as t, after=next) => {
-        toks.push({ kind: Filler, text: t.to_owned() })
+        toks.push({ kind: Filler, text: t.to_owned(), })
         next
       }
       (re"^." as t, after=next) => {
-        toks.push({ kind: Comment, text: t.to_string() })
+        toks.push({ kind: Comment, text: t.to_string(), })
         next
       }
       _ => abort("unreachable")
@@ -85,7 +85,7 @@ fn tokenize_line(line : String) -> Array[Tok] {
   // `///|` prefix must be handled before lexmatch: under `longest` matching
   // the comment rule would otherwise swallow `///| x` whole.
   if line is ['/', '/', '/', '|', ..] {
-    toks.push({ kind: Marker, text: "///|" })
+    toks.push({ kind: Marker, text: "///|", })
     push_comment_tokens(toks, line.view(start_offset=4).to_owned())
     return toks
   }
@@ -93,19 +93,19 @@ fn tokenize_line(line : String) -> Array[Tok] {
   while rest is [_, ..] {
     rest = lexmatch rest with longest {
       (re"^///\|" as t, after=next) => {
-        toks.push({ kind: Marker, text: t.to_owned() })
+        toks.push({ kind: Marker, text: t.to_owned(), })
         next
       }
       (re"^#\|[^\n]*" as t, after=next) => {
-        toks.push({ kind: Str, text: t.to_owned() })
+        toks.push({ kind: Str, text: t.to_owned(), })
         next
       }
       (re"^\$\|[^\n]*" as t, after=next) => {
-        toks.push({ kind: Str, text: t.to_owned() })
+        toks.push({ kind: Str, text: t.to_owned(), })
         next
       }
       (re"^\"(\\.|[^\"\\])*\"" as t, after=next) => {
-        toks.push({ kind: Str, text: t.to_owned() })
+        toks.push({ kind: Str, text: t.to_owned(), })
         next
       }
       (re"^//[^\n]*" as t, after=next) => {
@@ -113,19 +113,19 @@ fn tokenize_line(line : String) -> Array[Tok] {
         next
       }
       (re"^[A-Za-z_][A-Za-z0-9_]*" as t, after=next) => {
-        toks.push({ kind: Word, text: t.to_owned() })
+        toks.push({ kind: Word, text: t.to_owned(), })
         next
       }
       (re"^[0-9]+" as t, after=next) => {
-        toks.push({ kind: Word, text: t.to_owned() })
+        toks.push({ kind: Word, text: t.to_owned(), })
         next
       }
       (re"^[ \t]+" as t, after=next) => {
-        toks.push({ kind: Space, text: t.to_owned() })
+        toks.push({ kind: Space, text: t.to_owned(), })
         next
       }
       (re"^." as t, after=next) => {
-        toks.push({ kind: Punct, text: t.to_string() })
+        toks.push({ kind: Punct, text: t.to_string(), })
         next
       }
       _ => abort("unreachable")

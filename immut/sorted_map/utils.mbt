@@ -303,7 +303,7 @@ fn[K : Compare, V] sorted_map_from_unsorted_array(
 ) -> SortedMap[K, V] {
   let entries : FixedArray[SortEntry[K, V]] = FixedArray::makei(
     array.length(),
-    i => { key: array[i].0, value: array[i].1, index: i },
+    i => { key: array[i].0, value: array[i].1, index: i, },
   )
   sorted_map_from_unsorted_entries(entries.mut_view())
 }

@@ -87,7 +87,7 @@ pub fn[T : @debug.Debug] collect(value : T) -> Observation {
 
 ///|
 fn ObservationSummary::empty() -> ObservationSummary {
-  { labels: {}, classes: {} }
+  { labels: {}, classes: {}, }
 }
 
 ///|
@@ -172,10 +172,10 @@ fn ObservationSummary::report(
   guard !self.is_empty() else { return "" }
   let label_rows = [
     for labels, count in self.labels => {
-      { count, name: labels.iter().join(", ") }
+      { count, name: labels.iter().join(", "), }
     }
   ]
-  let class_rows = [ for name, count in self.classes => { count, name } ]
+  let class_rows = [ for name, count in self.classes => { count, name, } ]
   let builder = StringBuilder()
   builder <+ "\{prefix}observations:"
   let count_width = "\{total}".length()

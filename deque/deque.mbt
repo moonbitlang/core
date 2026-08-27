@@ -17,7 +17,7 @@ fn[T] set_null(buffer : UninitializedArray[T], index : Int) = "%fixedarray.set_n
 
 ///|
 fn[A] new_deque(capacity : Int) -> Deque[A] {
-  { buf: UninitializedArray::make(capacity), len: 0, head: 0 }
+  { buf: UninitializedArray::make(capacity), len: 0, head: 0, }
 }
 
 ///|
@@ -121,7 +121,7 @@ pub impl[A] Add for Deque[A] with fn add(self, other) {
   let len = self.len + other.len
   let buf = self.unsafe_make_and_blit_to(len, 0)
   other.unsafe_blit_to(buf, self.len)
-  { buf, len, head: 0 }
+  { buf, len, head: 0, }
 }
 
 ///|
@@ -173,7 +173,7 @@ pub fn[A] Deque::Deque(arr : ArrayView[A], capacity? : Int) -> Deque[A] {
   for i, x in arr {
     buf[i] = x
   }
-  { buf, len, head: 0 }
+  { buf, len, head: 0, }
 }
 
 ///|
@@ -214,7 +214,7 @@ test "from_array_empty" {
 pub fn[A] Deque::copy(self : Deque[A]) -> Deque[A] {
   let len = self.len
   let buf = self.unsafe_make_and_blit_to(len, 0)
-  { buf, len, head: 0 }
+  { buf, len, head: 0, }
 }
 
 ///|
@@ -879,7 +879,7 @@ pub fn[A] Deque::set(self : Deque[A], index : Int, value : A) -> Unit {
 /// ```
 pub fn[A] Deque::as_views(self : Deque[A]) -> (ArrayView[A], ArrayView[A]) {
   guard self.len != 0 else { ([], []) }
-  let { buf, head, len } = self
+  let { buf, head, len, } = self
   let cap = buf.length()
   let head_len = cap - head
   if head_len >= len {
@@ -1063,7 +1063,7 @@ pub fn[A] Deque::rev_eachi(
 /// }
 /// ```
 pub fn[A] Deque::clear(self : Deque[A]) -> Unit {
-  let { head, buf, len } = self
+  let { head, buf, len, } = self
   let cap = buf.length()
   let head_len = cap - head
   if head_len >= len {
@@ -1107,7 +1107,7 @@ pub fn[A, U] Deque::map(
       let idx = (self.head + i) % cap
       buf[i] = f(self.buf[idx])
     }
-    { buf, len: self.len, head: 0 }
+    { buf, len: self.len, head: 0, }
   }
 }
 
@@ -1136,7 +1136,7 @@ pub fn[A, U] Deque::mapi(
       let idx = (self.head + i) % cap
       buf[i] = f(i, self.buf[idx])
     }
-    { buf, len: self.len, head: 0 }
+    { buf, len: self.len, head: 0, }
   }
 }
 
@@ -1849,7 +1849,7 @@ pub impl[A : @json.FromJson] @json.FromJson for Deque[A] with fn from_json(
   for i, x in arr {
     buf[i] = @json.FromJson::from_json(x, path.add_index(i))
   }
-  { len, buf, head: 0 }
+  { len, buf, head: 0, }
 }
 
 ///|
@@ -1999,7 +1999,7 @@ pub fn[A] Deque::flatten(self : Deque[Deque[A]]) -> Deque[A] {
   } nobreak {
     len
   }
-  let target = Deque::{ buf: UninitializedArray::make(len), len, head: 0 }
+  let target = Deque::{ buf: UninitializedArray::make(len), len, head: 0, }
   for deque in self; i = 0 {
     let (front, back) = deque.as_views()
     target.buf.unsafe_blit(i, deque.buf, front.start_offset(), front.length())
@@ -2072,7 +2072,7 @@ pub fn[A] Deque::drain(self : Deque[A], start~ : Int, len? : Int) -> Deque[A] {
     return new_deque(0)
   }
   // Prepare deque to return
-  let deque = Deque::{ buf: UninitializedArray::make(len), len, head: 0 }
+  let deque = Deque::{ buf: UninitializedArray::make(len), len, head: 0, }
   // Prepare slices
   let (front, back) = self.as_views()
   // We drain from front and back accordingly
@@ -2499,7 +2499,7 @@ pub fn[A] Deque::rev(self : Deque[A]) -> Deque[A] {
     new_buf[i] = self.buf[src_idx]
   }
   // Create new deque with reversed elements
-  { buf: new_buf, len, head: 0 }
+  { buf: new_buf, len, head: 0, }
 }
 
 ///|

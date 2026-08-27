@@ -274,7 +274,7 @@ fn loose(line : String) -> Loose {
     None => line.view()
   }
   let kept = tokenize(code).filter(t => !(t is [' ' | '\t', ..]))
-  { text: line, key: kept.join("\u{0}") }
+  { text: line, key: kept.join("\u{0}"), }
 }
 
 ///|

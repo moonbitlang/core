@@ -35,7 +35,7 @@ fn[T : Eq + Hash] unique_lcs(
     // and the position needed to recover the original `(old_idx, new_idx)`
     // pair after backtracking.
     if piles.is_empty() {
-      piles.put_back({ value: (new_idx, place), prev: None })
+      piles.put_back({ value: (new_idx, place), prev: None, })
     } else {
       piles.put_by_binary_search(new_idx~, place~)
     }

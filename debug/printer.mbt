@@ -36,31 +36,31 @@ priv struct ContentParens {
 
 ///|
 impl Add for ContentParens with fn add(self, other) {
-  { size: self.size + other.size, lines: self.lines + other.lines }
+  { size: self.size + other.size, lines: self.lines + other.lines, }
 }
 
 ///|
 /// Empty content value.
 fn empty_content() -> Content {
-  { size: 0, lines: [], needs_parens: false }
+  { size: 0, lines: [], needs_parens: false, }
 }
 
 ///|
 /// Single literal token as a `ContentParens`.
 fn verbatim(x : String) -> ContentParens {
-  { size: 1, lines: [x] }
+  { size: 1, lines: [x], }
 }
 
 ///|
 /// Build a `ContentParens` from explicit size and lines.
 fn content_parens(size : Int, lines : Array[String]) -> ContentParens {
-  { size, lines }
+  { size, lines, }
 }
 
 ///|
 /// Render any `Show` value as a leaf content node.
 fn leaf(x : String, needs_parens? : Bool = false) -> Content {
-  { size: 1, lines: [x], needs_parens }
+  { size: 1, lines: [x], needs_parens, }
 }
 
 ///|
@@ -72,7 +72,7 @@ fn with_lines(
   r : ContentParens,
   f : (Array[String]) -> Array[String],
 ) -> ContentParens {
-  { size: r.size, lines: f(r.lines) }
+  { size: r.size, lines: f(r.lines), }
 }
 
 ///|
@@ -81,7 +81,7 @@ fn Content::with_lines_content(
   r : Content,
   f : (Array[String]) -> Array[String],
 ) -> Content {
-  { size: r.size, lines: f(r.lines), needs_parens: r.needs_parens }
+  { size: r.size, lines: f(r.lines), needs_parens: r.needs_parens, }
 }
 
 ///|
@@ -111,19 +111,19 @@ fn surround(
 ///|
 /// Convert `Content` to `ContentParens` without adding parentheses.
 fn Content::no_wrap(c : Content) -> ContentParens {
-  { size: c.size, lines: c.lines }
+  { size: c.size, lines: c.lines, }
 }
 
 ///|
 /// Mark a content chunk as needing parentheses when embedded.
 fn parens(r : ContentParens) -> Content {
-  { size: r.size, lines: r.lines, needs_parens: true }
+  { size: r.size, lines: r.lines, needs_parens: true, }
 }
 
 ///|
 /// Mark a content chunk as not needing parentheses when embedded.
 fn no_parens(r : ContentParens) -> Content {
-  { size: r.size, lines: r.lines, needs_parens: false }
+  { size: r.size, lines: r.lines, needs_parens: false, }
 }
 
 ///|
@@ -266,7 +266,7 @@ fn bracket_seq_lines(
       // multi-line too (important for nested structures when threshold=0).
       // Also ensure the single element still gets a trailing comma in multi-line mode.
       if item.length() > 1 {
-        let lines = indent_spaces(indent_by, { size: 0, lines: item }).lines
+        let lines = indent_spaces(indent_by, { size: 0, lines: item, }).lines
         if !lines.is_empty() {
           let last_i = lines.length() - 1
           lines[last_i] += ","
@@ -291,7 +291,7 @@ fn bracket_seq_lines(
           _ =>
             [
               open,
-              ..indent_spaces(indent_by, { size: 0, lines: item }).lines,
+              ..indent_spaces(indent_by, { size: 0, lines: item, }).lines,
               close,
             ]
         }

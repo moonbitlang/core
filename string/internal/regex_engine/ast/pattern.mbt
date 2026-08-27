@@ -81,13 +81,13 @@ pub fn char(cs : @shared_types.RecharSet) -> Pattern {
   if cs.is_empty() {
     empty
   } else {
-    { desc: Char(cs), nullable: false }
+    { desc: Char(cs), nullable: false, }
   }
 }
 
 ///|
 /// Epsilon pattern that matches empty input.
-pub let epsilon : Pattern = { desc: Sequence([]), nullable: true }
+pub let epsilon : Pattern = { desc: Sequence([]), nullable: true, }
 
 ///|
 /// Concatenate patterns.
@@ -115,14 +115,14 @@ pub fn seq(exprs : ReadOnlyArray[Pattern]) -> Pattern {
 
 ///|
 /// Empty pattern that matches nothing.
-pub let empty : Pattern = { desc: Alternation([]), nullable: false }
+pub let empty : Pattern = { desc: Alternation([]), nullable: false, }
 
 ///|
 /// Build an alternation of patterns.
 pub fn alt(exprs : ReadOnlyArray[Pattern]) -> Pattern {
   match exprs {
     [expr] | ([] with expr = empty) => expr
-    exprs => { desc: Alternation(exprs), nullable: exprs.any(e => e.nullable) }
+    exprs => { desc: Alternation(exprs), nullable: exprs.any(e => e.nullable), }
   }
 }
 
@@ -133,7 +133,7 @@ pub fn alt(exprs : ReadOnlyArray[Pattern]) -> Pattern {
 pub fn quantifier(expr : Pattern, q : Quantifier) -> Pattern {
   guard q.min >= 0 else { panic() }
   guard q.max is None || (q.max is Some(max) && max >= q.min) else { panic() }
-  { desc: Quantifier(q, expr), nullable: expr.nullable || q.min == 0 }
+  { desc: Quantifier(q, expr), nullable: expr.nullable || q.min == 0, }
 }
 
 ///|
@@ -142,7 +142,7 @@ pub fn preference(pref : @shared_types.Preference, expr : Pattern) -> Pattern {
   if expr.desc is Char(_) {
     expr
   } else {
-    { desc: Preference(pref, expr), nullable: expr.nullable }
+    { desc: Preference(pref, expr), nullable: expr.nullable, }
   }
 }
 
@@ -167,13 +167,13 @@ pub fn first(expr : Pattern) -> Pattern {
 ///|
 /// Wrap a pattern in a capturing group.
 pub fn capture(name? : String, expr : Pattern) -> Pattern {
-  { desc: Capture(name~, expr), nullable: expr.nullable }
+  { desc: Capture(name~, expr), nullable: expr.nullable, }
 }
 
 ///|
 /// Create an assertion pattern node.
 pub fn assertion(a : Assertion) -> Pattern {
-  { desc: Assertion(a), nullable: true }
+  { desc: Assertion(a), nullable: true, }
 }
 
 ///|

@@ -375,9 +375,9 @@ test "SortedSet ordered duplicates" {
 ///|
 test "SortedSet ordered duplicates keep reverse insertion representative" {
   let set = @sorted_set.SortedSet([
-    { rank: 1, label: "first" },
-    { rank: 1, label: "second" },
-    { rank: 2, label: "third" },
+    { rank: 1, label: "first", },
+    { rank: 1, label: "second", },
+    { rank: 2, label: "third", },
   ])
   @test.assert_eq(set.to_array().map(v => v.label), ["second", "third"])
 }
@@ -386,11 +386,11 @@ test "SortedSet ordered duplicates keep reverse insertion representative" {
 test "SortedSet large unordered duplicates keep reverse insertion representative" {
   let values = Array::makei(70, i => {
     if i == 5 {
-      { rank: 10, label: "first" }
+      { rank: 10, label: "first", }
     } else if i == 50 {
-      { rank: 10, label: "second" }
+      { rank: 10, label: "second", }
     } else {
-      { rank: 1000 - i, label: "other-\{i}" }
+      { rank: 1000 - i, label: "other-\{i}", }
     }
   })
   let set = @sorted_set.SortedSet(values)
@@ -804,9 +804,9 @@ test "from_iter multiple elements iter" {
 test "from_iter ordered duplicates keep first representative" {
   let set = @sorted_set.from_iter(
     [
-      { rank: 1, label: "first" },
-      { rank: 1, label: "second" },
-      { rank: 2, label: "third" },
+      { rank: 1, label: "first", },
+      { rank: 1, label: "second", },
+      { rank: 2, label: "third", },
     ].iter(),
   )
   @test.assert_eq(set.to_array().map(v => v.label), ["first", "third"])
@@ -816,11 +816,11 @@ test "from_iter ordered duplicates keep first representative" {
 test "from_iter large unordered duplicates keep first representative" {
   let values = Array::makei(70, i => {
     if i == 5 {
-      { rank: 10, label: "first" }
+      { rank: 10, label: "first", }
     } else if i == 50 {
-      { rank: 10, label: "second" }
+      { rank: 10, label: "second", }
     } else {
-      { rank: 1000 - i, label: "other-\{i}" }
+      { rank: 1000 - i, label: "other-\{i}", }
     }
   })
   let set = @sorted_set.from_iter(values.iter())
