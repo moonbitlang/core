@@ -96,7 +96,7 @@ pub impl Leb128 for Int64 with fn output(self, buffer) {
 ///
 /// ```mbt check
 /// test {
-///   let buf = Buffer()
+///   let buf = @buffer.Buffer()
 ///   buf.write_leb128(127)
 ///   inspect(buf.contents().length() > 0, content="true")
 /// }
