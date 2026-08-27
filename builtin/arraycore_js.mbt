@@ -246,6 +246,28 @@ pub fn[T] Array::shrink_to_fit(self : Array[T]) -> Unit {
 }
 
 ///|
+/// Overwrites the array's unused capacity with `value`.
+///
+/// **NOTE**: This method does nothing on the js platform -- shrinking a
+/// JavaScript array releases the removed elements outright, so there is no
+/// unused capacity holding on to them.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let arr = ["a", "b", "c"]
+///   let _ = arr.pop()
+///   arr.fill_unused("")
+///   debug_inspect(arr, content="[\"a\", \"b\"]")
+/// }
+/// ```
+pub fn[T] Array::fill_unused(self : Array[T], value : T) -> Unit {
+  ignore(self)
+  ignore(value)
+}
+
+///|
 /// Adds an element to the end of the array.
 ///
 /// If the array is at capacity, it will be reallocated.
@@ -423,6 +445,8 @@ pub fn[T] Array::remove(self : Array[T], index : Int) -> T {
 ///   @test.assert_eq(v, [3, 5])
 /// }
 /// ```
+/// On this backend the underlying JavaScript array is spliced directly, which
+/// already releases the drained elements.
 pub fn[T] Array::drain(self : Array[T], begin : Int, end : Int) -> Array[T] {
   guard begin >= 0 && end <= self.length() && begin <= end else {
     abort(

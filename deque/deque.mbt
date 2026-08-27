@@ -13,7 +13,21 @@
 // limitations under the License.
 
 ///|
-fn[T] set_null(buffer : UninitializedArray[T], index : Int) = "%fixedarray.set_null"
+/// Overwrites `buf[start..<end]` with `value`, releasing whatever those slots
+/// referred to. Removal itself never writes to a vacated slot -- leaving it
+/// alone is what keeps an `ArrayView` handed out by `Deque::as_views` from
+/// observing uninitialized memory -- so this runs only where a caller has
+/// asked for the elements to be released. See `Deque::fill_unused`.
+fn[A] fill_slots(
+  buf : UninitializedArray[A],
+  start : Int,
+  end : Int,
+  value : A,
+) -> Unit {
+  for i in start..<end {
+    buf[i] = value
+  }
+}
 
 ///|
 fn[A] new_deque(capacity : Int) -> Deque[A] {
@@ -505,17 +519,14 @@ pub fn[A] Deque::remove(self : Deque[A], index : Int) -> A {
       let from = (self.head + i) % cap
       self.buf[to] = self.buf[from]
     }
-    set_null(self.buf, self.head)
     self.head = new_head
   } else {
     // Shift back elements left
-    let tail_idx = (self.head + self.len - 1) % cap
     for i in (index + 1)..<self.len {
       let to = (self.head + i - 1) % cap
       let from = (self.head + i) % cap
       self.buf[to] = self.buf[from]
     }
-    set_null(self.buf, tail_idx)
   }
   self.len -= 1
   res
@@ -670,6 +681,10 @@ pub fn[A] Deque::push_back(self : Deque[A], value : A) -> Unit {
 ///|
 /// Removes a front element from a deque.
 ///
+/// As with `Deque::pop_front`, the vacated slot goes on referring to the
+/// removed element until a later push reuses it, the buffer grows, the buffer
+/// is dropped, or `Deque::fill_unused` overwrites it.
+///
 /// # Example
 /// ```mbt check
 /// test {
@@ -683,7 +698,6 @@ pub fn[A] Deque::push_back(self : Deque[A], value : A) -> Unit {
 #alias(pop_front_exn, deprecated)
 pub fn[A] Deque::unsafe_pop_front(self : Deque[A]) -> Unit {
   guard self.len > 0 else { abort("The deque is empty!") }
-  set_null(self.buf, self.head)
   let cap = self.buf.length()
   self.head = (self.head + 1) % cap
   self.len -= 1
@@ -723,6 +737,10 @@ test "unsafe_pop_front after many push_front" {
 ///|
 /// Removes a back element from a deque.
 ///
+/// As with `Deque::pop_front`, the vacated slot goes on referring to the
+/// removed element until a later push reuses it, the buffer grows, the buffer
+/// is dropped, or `Deque::fill_unused` overwrites it.
+///
 /// # Example
 /// ```mbt check
 /// test {
@@ -736,8 +754,6 @@ test "unsafe_pop_front after many push_front" {
 #alias(pop_back_exn, deprecated)
 pub fn[A] Deque::unsafe_pop_back(self : Deque[A]) -> Unit {
   guard self.len > 0 else { abort("The deque is empty!") }
-  let tail_idx = self.tail_index()
-  set_null(self.buf, tail_idx)
   self.len -= 1
 }
 
@@ -765,6 +781,12 @@ pub fn[A] Deque::unsafe_pop_back(self : Deque[A]) -> Unit {
 ///|
 /// Removes a front element from a deque and returns it, or `None` if it is empty.
 ///
+/// The vacated slot goes on referring to the removed element, so an
+/// `ArrayView` obtained from `Deque::as_views` beforehand keeps observing it,
+/// and it is released only once a later push reuses the slot, the buffer
+/// grows, or the buffer is dropped. Call `Deque::fill_unused` to release it at
+/// once.
+///
 /// # Example
 /// ```mbt check
 /// test {
@@ -775,7 +797,6 @@ pub fn[A] Deque::unsafe_pop_back(self : Deque[A]) -> Unit {
 pub fn[A] Deque::pop_front(self : Deque[A]) -> A? {
   guard self.len > 0 else { return None }
   let value = self.buf[self.head]
-  set_null(self.buf, self.head)
   let cap = self.buf.length()
   self.head = (self.head + 1) % cap
   self.len -= 1
@@ -784,6 +805,12 @@ pub fn[A] Deque::pop_front(self : Deque[A]) -> A? {
 
 ///|
 /// Removes a back element from a deque and returns it, or `None` if it is empty.
+///
+/// The vacated slot goes on referring to the removed element, so an
+/// `ArrayView` obtained from `Deque::as_views` beforehand keeps observing it,
+/// and it is released only once a later push reuses the slot, the buffer
+/// grows, or the buffer is dropped. Call `Deque::fill_unused` to release it at
+/// once.
 ///
 /// # Example
 /// ```mbt check
@@ -796,7 +823,6 @@ pub fn[A] Deque::pop_back(self : Deque[A]) -> A? {
   guard self.len > 0 else { return None }
   let tail_idx = self.tail_index()
   let value = self.buf[tail_idx]
-  set_null(self.buf, tail_idx)
   self.len -= 1
   Some(value)
 }
@@ -1052,7 +1078,14 @@ pub fn[A] Deque::rev_eachi(
 ///|
 /// Clears the deque, removing all values.
 ///
-/// This method has no effect on the allocated capacity of the deque, only setting the length to 0.
+/// This method has no effect on the allocated capacity of the deque, only
+/// setting the length to 0.
+///
+/// Emptying a deque is a removal like any other: the buffer keeps referring to
+/// the elements that were in it, and they are released once later pushes reuse
+/// those slots, the buffer grows, or the deque is dropped. Call
+/// `Deque::fill_unused` to overwrite them at once, or `Deque::shrink_to_fit`
+/// to hand the buffer back entirely.
 ///
 /// # Example
 /// ```mbt check
@@ -1063,21 +1096,9 @@ pub fn[A] Deque::rev_eachi(
 /// }
 /// ```
 pub fn[A] Deque::clear(self : Deque[A]) -> Unit {
-  let { head, buf, len } = self
-  let cap = buf.length()
-  let head_len = cap - head
-  if head_len >= len {
-    for i in head..<(head + len) {
-      set_null(buf, i)
-    }
-  } else {
-    for i in head..<cap {
-      set_null(buf, i)
-    }
-    for i in 0..<(len - head_len) {
-      set_null(buf, i)
-    }
-  }
+  // The surviving elements are none, so nothing moves: an emptied deque
+  // restarts at offset zero, the invariant `Deque::truncate` and
+  // `Deque::drain` also maintain.
   self.len = 0
   self.head = 0
 }
@@ -1239,7 +1260,7 @@ pub fn[A : Eq] Deque::contains(self : Deque[A], value : A) -> Bool {
 pub fn[A] Deque::extract_if(self : Deque[A], f : (A) -> Bool) -> Deque[A] {
   guard !self.is_empty() else { from_array([]) }
   let removed = from_array([])
-  let write = for read in 0..<self.length(); write = 0 {
+  for read in 0..<self.length(); write = 0 {
     let elem = self[read]
     if f(elem) {
       removed.push_back(elem)
@@ -1250,12 +1271,6 @@ pub fn[A] Deque::extract_if(self : Deque[A], f : (A) -> Bool) -> Deque[A] {
       }
       continue write + 1
     }
-  } nobreak {
-    write
-  }
-  let total_len = self.length()
-  for i in write..<total_len {
-    set_null(self.buf, (self.head + i) % self.buf.length())
   }
   let removed_len = removed.length()
   self.len -= removed_len
@@ -1341,6 +1356,12 @@ pub fn[A] Deque::reserve_capacity(self : Deque[A], capacity : Int) -> Unit {
 ///   inspect(dv.capacity(), content="3")
 /// }
 /// ```
+///
+/// The survivors are copied into the new buffer and the old one is released
+/// with them, so this also releases whatever earlier removals left in the
+/// unused capacity. It pays an allocation plus a copy of every survivor to do
+/// so; `Deque::fill_unused` releases the same elements in one pass over the
+/// unused region and no allocation, at the cost of leaving the capacity alone.
 pub fn[A] Deque::shrink_to_fit(self : Deque[A]) -> Unit {
   if self.capacity() <= self.length() {
     return
@@ -1348,6 +1369,54 @@ pub fn[A] Deque::shrink_to_fit(self : Deque[A]) -> Unit {
   let new_buf = self.unsafe_make_and_blit_to(self.len, 0)
   self.buf = new_buf
   self.head = 0
+}
+
+///|
+/// Overwrites the deque's unused capacity -- every slot not currently holding
+/// an element -- with `value`.
+///
+/// Shrinking a deque never clears the slots it vacates, so the removed
+/// elements stay reachable from the buffer and unreleased until later pushes
+/// reuse those slots, the buffer grows, or the deque is dropped. This releases
+/// them on demand without reallocating, which is what `Deque::pop_front`,
+/// `Deque::pop_back`, `Deque::remove`, `Deque::retain` and the other
+/// operations that take no fill value leave outstanding.
+/// `Deque::shrink_to_fit` releases them too, but by allocating an exact-size
+/// buffer and copying every survivor into it; this costs one pass over the
+/// unused region and no allocation.
+///
+/// This only matters for element types holding references -- for types such as
+/// `Int` there is nothing to release and the call merely costs a pass over the
+/// buffer.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   let dq = @deque.from_array(["a", "b", "c"])
+///   let _ = dq.pop_back()
+///   dq.fill_unused("")
+///   @debug.debug_inspect(
+///     dq,
+///     content=(
+///       #|<Deque: ["a", "b"]>
+///     ),
+///   )
+/// }
+/// ```
+pub fn[A] Deque::fill_unused(self : Deque[A], value : A) -> Unit {
+  let cap = self.buf.length()
+  let head_len = cap - self.head
+  if self.len <= head_len {
+    // The elements sit in one run at `[head, head + len)`, so the unused
+    // capacity is everything before and after it.
+    fill_slots(self.buf, 0, self.head, value)
+    fill_slots(self.buf, self.head + self.len, cap, value)
+  } else {
+    // The elements wrap, occupying `[head, cap)` and `[0, len - head_len)`;
+    // what is left is the single run between them.
+    fill_slots(self.buf, self.len - head_len, self.head, value)
+  }
 }
 
 ///|
@@ -1376,34 +1445,20 @@ pub fn[A] Deque::shrink_to_fit(self : Deque[A]) -> Unit {
 ///   )
 /// }
 /// ```
+///
+/// Elements beyond `len` are removed from the deque, but the backing buffer
+/// keeps referring to them: they are released once those slots are reused,
+/// once the buffer grows, or once the deque is dropped. Call
+/// `Deque::fill_unused` to overwrite them at once, or `Deque::shrink_to_fit`
+/// to move the survivors into an exact-size buffer.
 pub fn[A] Deque::truncate(self : Deque[A], len : Int) -> Unit {
   guard len >= 0 && len < self.len else { return }
+  // The surviving elements keep their slots, so there is nothing to move: only
+  // the length changes. An emptied deque restarts at offset zero, matching the
+  // invariant `Deque::clear` and `Deque::drain` maintain.
+  self.len = len
   if len == 0 {
-    self.clear()
-    return
-  }
-  let { head, buf, .. } = self
-  let (front, back) = self.as_views()
-  if front.length() < len {
-    // `len` is wrapping around the end of the buffer.
-    // Thus, we need to drop the latter part of the back view.
-    self.len = len
-    let start = len - front.length()
-    for i in start..<back.length() {
-      set_null(buf, i)
-    }
-  } else {
-    // `len` is not wrapping around the end of the buffer. Thus, we need to drop:
-    // - The latter part of the front view;
-    // - The entire back view.
-    self.len = len
-    let start = head + len
-    for i in start..<self.buf.length() {
-      set_null(buf, i)
-    }
-    for i in 0..<back.length() {
-      set_null(buf, i)
-    }
+    self.head = 0
   }
 }
 
@@ -2049,6 +2104,11 @@ pub fn[A] Deque::flatten(self : Deque[Deque[A]]) -> Deque[A] {
 ///   )
 /// }
 /// ```
+///
+/// The slots vacated by the drain keep referring to the removed elements until
+/// they are reused, the buffer grows, or the deque is dropped. Call
+/// `Deque::fill_unused` to overwrite them at once, or `Deque::shrink_to_fit`
+/// to move the survivors into an exact-size buffer.
 pub fn[A] Deque::drain(self : Deque[A], start~ : Int, len? : Int) -> Deque[A] {
   // Validate start
   guard start >= 0 && start <= self.len else {
@@ -2084,19 +2144,11 @@ pub fn[A] Deque::drain(self : Deque[A], start~ : Int, len? : Int) -> Deque[A] {
       // copy to deque
       deque.buf.unsafe_blit(0, self.buf, front.start_offset() + start, len)
       if start == 0 && len == front_max_drain {
-        // just set_null
-        for i in front.start_offset()..<self.buf.length() {
-          set_null(self.buf, i)
-        }
         self.head = 0
       } else {
         // move back
         let new_head = front.start_offset() + len
         self.buf.unsafe_blit(new_head, self.buf, front.start_offset(), start)
-        // set_null
-        for i in front.start_offset()..<new_head {
-          set_null(self.buf, i)
-        }
         self.head = new_head
       }
     } else {
@@ -2114,35 +2166,15 @@ pub fn[A] Deque::drain(self : Deque[A], start~ : Int, len? : Int) -> Deque[A] {
         // front is not empty
         let back_remaining = len - front_max_drain
         let back_len = back.length() - back_remaining
-        if back_len == 0 {
-          // back is empty
-          for i in 0..<back.length() {
-            set_null(self.buf, i)
-          }
-          for i in (front.start_offset() + start)..<self.buf.length() {
-            set_null(self.buf, i)
-          }
-        } else {
-          // back is not empty
+        // When the back is emptied the front already sits where it belongs, so
+        // only the non-empty case has anything to move.
+        if back_len != 0 {
           let new_head = front.start_offset() + front_max_drain
           self.buf.unsafe_blit(new_head, self.buf, front.start_offset(), start)
-          for i in front.start_offset()..<new_head {
-            set_null(self.buf, i)
-          }
           self.head = new_head
           self.buf.unsafe_blit(0, self.buf, back_remaining, back_len)
-          for i in back_len..<back.length() {
-            set_null(self.buf, i)
-          }
         }
       } else {
-        // set_null
-        for i in (front.start_offset() + start)..<self.buf.length() {
-          set_null(self.buf, i)
-        }
-        for i in 0..<(len - front_max_drain) {
-          set_null(self.buf, i)
-        }
         self.head = len - front_max_drain
       }
     }
@@ -2158,10 +2190,6 @@ pub fn[A] Deque::drain(self : Deque[A], start~ : Int, len? : Int) -> Deque[A] {
       back_start + len,
       back.length() - back_start - len,
     )
-    // set_null
-    for i in (back.length() - len)..<back.length() {
-      set_null(self.buf, i)
-    }
   }
   self.len -= len
   if self.len == 0 {

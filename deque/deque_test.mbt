@@ -2862,3 +2862,214 @@ test "Deque::append/self_alias" {
   dq.append(dq)
   debug_inspect(dq.to_array(), content="[1, 2, 3, 1, 2, 3]")
 }
+
+///|
+/// Removing elements must never leave a slot a view could read as
+/// uninitialized memory, so nothing is written to the slots a removal vacates
+/// and views taken beforehand still see the original elements.
+test "deque clear leaves the emptied slots as they were" {
+  let dq = @deque.from_array(["a", "b", "c"])
+  let (front, back) = dq.as_views()
+  dq.clear()
+  inspect(dq.length(), content="0")
+  @debug.debug_inspect(
+    front,
+    content=(
+      #|<ArrayView: ["a", "b", "c"]>
+    ),
+  )
+  @debug.debug_inspect(
+    back,
+    content=(
+      #|<ArrayView: []>
+    ),
+  )
+}
+
+///|
+test "deque fill_unused after clear overwrites the whole buffer" {
+  let dq = @deque.from_array(["a", "b", "c"])
+  let (front, _) = dq.as_views()
+  dq.clear()
+  dq.fill_unused("-")
+  inspect(dq.length(), content="0")
+  @debug.debug_inspect(
+    front,
+    content=(
+      #|<ArrayView: ["-", "-", "-"]>
+    ),
+  )
+}
+
+///|
+test "deque fill_unused after clear covers the wrapped case" {
+  let dq = @deque.from_array([1, 2, 3, 4, 5])
+  // rotate so that the contents wrap around the end of the buffer
+  for _ in 0..<3 {
+    let v = dq.pop_front().unwrap()
+    dq.push_back(v)
+  }
+  let (front, back) = dq.as_views()
+  assert_true(back.length() > 0)
+  dq.clear()
+  dq.fill_unused(0)
+  @debug.debug_inspect(
+    front,
+    content=(
+      #|<ArrayView: [0, 0]>
+    ),
+  )
+  @debug.debug_inspect(
+    back,
+    content=(
+      #|<ArrayView: [0, 0, 0]>
+    ),
+  )
+}
+
+///|
+test "deque truncate keeps removed elements reachable unless filled" {
+  let kept = @deque.from_array(["a", "b", "c", "d"])
+  let (kept_view, _) = kept.as_views()
+  kept.truncate(2)
+  @debug.debug_inspect(
+    kept,
+    content=(
+      #|<Deque: ["a", "b"]>
+    ),
+  )
+  @debug.debug_inspect(
+    kept_view,
+    content=(
+      #|<ArrayView: ["a", "b", "c", "d"]>
+    ),
+  )
+  let filled = @deque.from_array(["a", "b", "c", "d"])
+  let (filled_view, _) = filled.as_views()
+  filled.truncate(2)
+  filled.fill_unused("-")
+  @debug.debug_inspect(
+    filled,
+    content=(
+      #|<Deque: ["a", "b"]>
+    ),
+  )
+  @debug.debug_inspect(
+    filled_view,
+    content=(
+      #|<ArrayView: ["a", "b", "-", "-"]>
+    ),
+  )
+}
+
+///|
+/// No shrinking operation replaces the buffer, so emptying a deque never costs
+/// an allocation -- `truncate(0)` and `clear` take the same path and both keep
+/// it. A later push makes that observable: it lands in the reused buffer, which
+/// a view taken beforehand still points at.
+test "no deque shrinking operation replaces the buffer" {
+  let truncated = @deque.from_array(["a", "b", "c"])
+  let (truncated_view, _) = truncated.as_views()
+  truncated.truncate(0)
+  inspect(truncated.length(), content="0")
+  truncated.push_back("x")
+  @debug.debug_inspect(
+    truncated_view,
+    content=(
+      #|<ArrayView: ["x", "b", "c"]>
+    ),
+  )
+  let cleared = @deque.from_array(["a", "b", "c"])
+  let (cleared_view, _) = cleared.as_views()
+  cleared.clear()
+  cleared.push_back("x")
+  @debug.debug_inspect(
+    cleared_view,
+    content=(
+      #|<ArrayView: ["x", "b", "c"]>
+    ),
+  )
+}
+
+///|
+test "deque fill_unused overwrites the slots a drain vacated" {
+  let dq = @deque.from_array(["a", "b", "c", "d"])
+  let (view, _) = dq.as_views()
+  let drained = dq.drain(start=1, len=2)
+  dq.fill_unused("-")
+  @debug.debug_inspect(
+    drained,
+    content=(
+      #|<Deque: ["b", "c"]>
+    ),
+  )
+  @debug.debug_inspect(
+    dq,
+    content=(
+      #|<Deque: ["a", "d"]>
+    ),
+  )
+  @debug.debug_inspect(
+    view,
+    content=(
+      #|<ArrayView: ["-", "-", "a", "d"]>
+    ),
+  )
+}
+
+///|
+/// The pops offer no fill value of their own, so what they remove stays in the
+/// buffer until something overwrites it. `fill_unused` is what releases it
+/// without reallocating.
+test "deque fill_unused releases what the pops leave behind" {
+  let dq = @deque.from_array(["a", "b", "c"])
+  let (view, _) = dq.as_views()
+  let _ = dq.pop_back()
+  @debug.debug_inspect(
+    view,
+    content=(
+      #|<ArrayView: ["a", "b", "c"]>
+    ),
+  )
+  dq.fill_unused("-")
+  @debug.debug_inspect(
+    view,
+    content=(
+      #|<ArrayView: ["a", "b", "-"]>
+    ),
+  )
+}
+
+///|
+/// The unused capacity of a deque can wrap, or straddle both ends of the
+/// buffer, so `fill_unused` has to cover the complement of the occupied run
+/// rather than a single tail.
+test "deque fill_unused covers the wrapped case" {
+  let dq = @deque.Deque([], capacity=4)
+  dq.push_back("c")
+  dq.push_back("d")
+  dq.push_front("b")
+  dq.push_front("a")
+  let (front, back) = dq.as_views()
+  let _ = dq.pop_front()
+  let _ = dq.pop_back()
+  dq.fill_unused("-")
+  @debug.debug_inspect(
+    dq,
+    content=(
+      #|<Deque: ["b", "c"]>
+    ),
+  )
+  @debug.debug_inspect(
+    front,
+    content=(
+      #|<ArrayView: ["-", "b"]>
+    ),
+  )
+  @debug.debug_inspect(
+    back,
+    content=(
+      #|<ArrayView: ["c", "-"]>
+    ),
+  )
+}

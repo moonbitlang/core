@@ -39,6 +39,7 @@ pub fn[A] Deque::each(Self[A], (A) -> Unit raise?) -> Unit raise?
 pub fn[A] Deque::eachi(Self[A], (Int, A) -> Unit raise?) -> Unit raise?
 pub fn[A : Eq] Deque::equal(Self[A], Self[A]) -> Bool
 pub fn[A] Deque::extract_if(Self[A], (A) -> Bool) -> Self[A]
+pub fn[A] Deque::fill_unused(Self[A], A) -> Unit
 pub fn[A] Deque::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 pub fn[A] Deque::flatten(Self[Self[A]]) -> Self[A]
 #alias(from_iterator, deprecated)
