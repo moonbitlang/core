@@ -534,3 +534,37 @@ test "context is attached to raised failures too" {
     ),
   )
 }
+
+///|
+priv struct LargeShrinkInput(Int) derive(Debug)
+
+///|
+impl @quickcheck.Arbitrary for LargeShrinkInput with fn arbitrary(_, _) {
+  LargeShrinkInput(10000)
+}
+
+///|
+impl @shrink.Shrink for LargeShrinkInput with fn shrink(input) {
+  @shrink.Shrink::shrink(input.0).map(value => LargeShrinkInput(value))
+}
+
+///|
+test "numeric shrinking reaches the boundary within the default budget" {
+  let report = @quickcheck.report(
+    (input : LargeShrinkInput) => input.0 < 5000,
+    count=1,
+    max_size=0,
+  )
+  debug_inspect(
+    report,
+    content=(
+      #|Falsified(
+      #|  counterexample=LargeShrinkInput(5000),
+      #|  tests=1,
+      #|  size=0,
+      #|  shrinks=1,
+      #|  shrink_attempts=15,
+      #|)
+    ),
+  )
+}

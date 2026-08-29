@@ -15,6 +15,7 @@
 ///|
 fn[T] removes_array(k : Int, n : Int, xs : Array[T]) -> Iter[Array[T]] {
   guard k <= n else { [||] }
+  guard k < n else { [|[]|] }
   let xs2 = xs[:k].to_owned()
   let xs1 = xs[k:].to_owned()
   if xs1.is_empty() {
@@ -50,6 +51,6 @@ fn shrink_decimal(x : Double) -> Iter[Double] {
     [|m|]
     .concat(Shrink::shrink(m))
     .map(n => n.to_double() / p)
-    .filter(y => y >= 0.0 && y < x)
+    .filter(y => y >= 0.0 && y < x && (p == 1.0 || y != 0.0))
   })
 }

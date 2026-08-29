@@ -16,7 +16,7 @@
 pub impl[T : Shrink] Shrink for T? with fn shrink(x) {
   match x {
     None => [||]
-    Some(v) => Shrink::shrink(v).map(v1 => Some(v1)).concat([|None|])
+    Some(v) => [|None|].concat(Shrink::shrink(v).map(v1 => Some(v1)))
   }
 }
 
@@ -47,7 +47,7 @@ pub impl[X : Shrink] Shrink for Array[X] with fn shrink(xs) {
   ]
   .iter()
   .flat_map(k => removes_array(k, n, xs))
-  .concat(shr_sub_terms(view))
+  .concat([|()|].flat_map(_ => shr_sub_terms(view)))
 }
 
 ///|
