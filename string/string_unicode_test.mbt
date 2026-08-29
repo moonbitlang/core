@@ -19,7 +19,7 @@ priv struct Data {
 
 ///|
 test {
-  let data = Data::{ val: "Hello, 世界\t\n!" }
+  let data = Data::{ val: "Hello, 世界\t\n!", }
   // TODO: the data type annotation is not needed
   debug_inspect(
     data,

@@ -2690,6 +2690,7 @@ test "rev_fold with raise" {
 ///|
 /// Returns the UTF-16 code unit at the given index. Returns `None` if the index
 /// is out of bounds.
+#intrinsic("%string.get_opt")
 pub fn String::get(self : String, idx : Int) -> UInt16? {
   guard idx >= 0 && idx < self.length() else { return None }
   Some(self.unsafe_get(idx))
@@ -2698,6 +2699,7 @@ pub fn String::get(self : String, idx : Int) -> UInt16? {
 ///|
 /// Returns the UTF-16 code unit at the given index. Returns `None` if the index
 /// is out of bounds.
+#intrinsic("%stringview.get_opt")
 pub fn StringView::get(self : StringView, idx : Int) -> UInt16? {
   guard idx >= 0 && idx < self.length() else { return None }
   Some(self.unsafe_get(idx))

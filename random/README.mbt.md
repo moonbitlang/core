@@ -156,7 +156,7 @@ impl @random.Source for MySource with fn next(self) -> UInt64 {
 
 ///|
 test {
-  let gen : MySource = { value: 42 }
+  let gen : MySource = { value: 42, }
   let r = @random.Rand::new(generator=gen as &@random.Source)
   let _ = r.uint64()
 }

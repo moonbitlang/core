@@ -13,28 +13,14 @@
 // limitations under the License.
 
 ///|
-priv struct ParseContext {
-  mut offset : Int
-  input : StringView
-  end_offset : Int
-}
-
-///|
-fn ParseContext::make(input : StringView) -> ParseContext {
-  { offset: 0, input, end_offset: input.length(), }
-}
-
-///|
-priv enum Token {
-  Null
-  True
-  False
-  Number(Double, String?)
-  String(String)
-  LBrace
-  RBrace
-  LBracket
-  RBracket
-  Comma
-  // Colon
+test "bench Arbitrary String size=10000 count=100" (it : @bench.T) {
+  it.bench(fn() {
+    let state = @splitmix.new()
+    let mut total = 0
+    for _ in 0..<100 {
+      let value : String = @quickcheck.Arbitrary::arbitrary(10000, state)
+      total += value.length()
+    }
+    it.keep(total)
+  })
 }

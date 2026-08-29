@@ -32,7 +32,7 @@ test "diff: empty containers stay Same" {
   guard delta is Same(Array([]), []) else {
     fail("expected Same(Array([]), [])")
   }
-  let empty = Empty::{  }
+  let empty = Empty::{ }
   let delta = diff_repr(Debug::to_repr(empty), Debug::to_repr(empty))
   guard delta is Same(Record([]), []) else {
     fail("expected Same(Array([]), [])")

@@ -83,7 +83,7 @@ pub fn ChaCha8::ChaCha8(seed : BytesView) -> ChaCha8 {
   })
   let buffer = FixedArray::make(BUFFER_CHUNK_NUM * 2, 0U)
   chacha_block(seed, buffer, 0)
-  { seed, buffer, counter: 0, i: 0, n: BUFFER_CHUNK_NUM.reinterpret_as_uint() }
+  { seed, buffer, counter: 0, i: 0, n: BUFFER_CHUNK_NUM.reinterpret_as_uint(), }
 }
 
 ///|

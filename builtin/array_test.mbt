@@ -741,15 +741,15 @@ struct TestStruct {
 
 ///|
 test "array_binary_search_by_test" {
-  let arr = [{ num: 10 }, { num: 22 }, { num: 35 }, { num: 48 }]
-  let mut target = { num: 22 }
+  let arr = [{ num: 10, }, { num: 22, }, { num: 35, }, { num: 48, }]
+  let mut target = { num: 22, }
   let cmp = (val : TestStruct) => val.num - target.num
   @test.assert_eq(arr.binary_search_by(cmp), Ok(1))
-  target = { num: 48 }
+  target = { num: 48, }
   @test.assert_eq(arr.binary_search_by(cmp), Ok(3))
-  target = { num: -8 }
+  target = { num: -8, }
   @test.assert_eq(arr.binary_search_by(cmp), Err(0))
-  target = { num: 49 }
+  target = { num: 49, }
   @test.assert_eq(arr.binary_search_by(cmp), Err(4))
 }
 
@@ -1583,7 +1583,7 @@ test "timsort_early_return_for_small_arrays" {
     counter: count,
   })
   for i in 0..<10 {
-    arr[i] = { value: 10 - i, counter: count }
+    arr[i] = { value: 10 - i, counter: count, }
   }
   arr.mut_view().stable_sort()
   // With insertion sort only: O(n^2/2) comparisons, roughly 45 for n=10

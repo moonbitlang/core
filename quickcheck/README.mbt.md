@@ -253,7 +253,7 @@ priv struct Point {
 impl @quickcheck.Arbitrary for Point with fn arbitrary(size, r0) {
   let r1 = r0.split()
   let y = @quickcheck.Arbitrary::arbitrary(size, r1)
-  { x: @quickcheck.Arbitrary::arbitrary(size, r0), y }
+  { x: @quickcheck.Arbitrary::arbitrary(size, r0), y, }
 }
 
 ///|
@@ -285,7 +285,7 @@ test "custom type generation" {
 
 ///|
 test "custom type shrinking" {
-  let point : Point = { x: 2, y: 1 }
+  let point : Point = { x: 2, y: 1, }
   debug_inspect(
     @quickcheck.Shrink::shrink(point).collect(),
     content=(

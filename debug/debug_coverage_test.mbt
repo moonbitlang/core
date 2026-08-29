@@ -64,8 +64,8 @@ test "assert_eq diff over primitives with mixed equal and differing fields" {
 
 ///|
 test "assert_eq diff over records, enums and maps" {
-  let p1 : CovPoint = { x: 1, y: 2.5 }
-  let p2 : CovPoint = { x: 1, y: 4.5 }
+  let p1 : CovPoint = { x: 1, y: 2.5, }
+  let p2 : CovPoint = { x: 1, y: 4.5, }
   assert_true(reports_diff(p1, p2))
   let c1 : CovShape = Circle(radius=1)
   let c2 : CovShape = Circle(radius=2)
@@ -168,7 +168,7 @@ test "depth-limited render replaces deep subtrees with ellipsis" {
   assert_true(@debug.render(Repr(nested)).contains("1"))
   assert_true(@debug.render(Repr(nested), max_depth=1).contains("..."))
   // a depth-limited record still renders its (pruned) fields
-  let p : CovPoint = { x: 7, y: 8.0 }
+  let p : CovPoint = { x: 7, y: 8.0, }
   assert_true(!@debug.render(Repr(p), max_depth=1).is_empty())
   // depth <= 0 is treated as 1, so max_depth=0 renders identically to max_depth=1
   let r = Repr(nested)
@@ -181,7 +181,7 @@ test "debug runs over representative values (smoke)" {
   // executes for primitive, collection and record values without raising.
   @debug.debug(42)
   @debug.debug([1, 2, 3])
-  let p : CovPoint = { x: 1, y: 2.0 }
+  let p : CovPoint = { x: 1, y: 2.0, }
   @debug.debug(p)
 }
 

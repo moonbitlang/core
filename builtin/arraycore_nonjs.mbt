@@ -25,7 +25,7 @@ struct Array[T] {
 
 ///|
 fn[T] Array::make_uninit(len : Int) -> Array[T] {
-  { buf: UninitializedArray::make(len), len }
+  { buf: UninitializedArray::make(len), len, }
 }
 
 ///|
@@ -117,7 +117,7 @@ pub fn[T] Array::new(capacity? : Int = 0) -> Array[T] {
   if capacity == 0 {
     []
   } else {
-    { buf: UninitializedArray::make(capacity), len: 0 }
+    { buf: UninitializedArray::make(capacity), len: 0, }
   }
 }
 

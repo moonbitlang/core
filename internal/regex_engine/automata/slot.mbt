@@ -49,7 +49,7 @@ pub fn Slot::from_index(index : Int) -> Slot {
 ///
 /// Note: This is the only slot value that is considered "unassigned".
 pub fn Slot::unassigned() -> Slot {
-  { index: 0 }
+  { index: 0, }
 }
 
 ///|

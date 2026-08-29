@@ -290,11 +290,11 @@ fn stable_sort_spec(keys : Array[Int]) -> Bool {
   // Stable-sorted output is unique, so sorting the same data through a view
   // with a non-zero start offset must reproduce `arr` exactly and leave the
   // sentinels on either side untouched.
-  let padded : Array[Tagged] = [{ key: 0, idx: -1 }]
+  let padded : Array[Tagged] = [{ key: 0, idx: -1, }]
   for i in 0..<n {
-    padded.push({ key: keys[i], idx: i })
+    padded.push({ key: keys[i], idx: i, })
   }
-  padded.push({ key: 0, idx: n })
+  padded.push({ key: 0, idx: n, })
   padded.mut_view(start=1, end=n + 1).stable_sort()
   for i in 0..<n {
     guard padded[i + 1].key == arr[i].key && padded[i + 1].idx == arr[i].idx else {

@@ -79,8 +79,8 @@ test "cmp_by_key" {
   inspect(longer, content="hello")
 
   // Compare structs by a specific field
-  let alice = { name: "Alice", age: 25 }
-  let bob = { name: "Bob", age: 30 }
+  let alice = { name: "Alice", age: 25, }
+  let bob = { name: "Bob", age: 30, }
   let younger = @cmp.minimum_by_key(alice, bob, p => p.age)
   debug_inspect(
     younger,

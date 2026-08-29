@@ -117,7 +117,7 @@ pub fn BigInt::from_hex(input : String) -> BigInt {
     b_len
   }
   let sign = if b_len == 1 && b[0] == 0 { Positive } else { sign }
-  { limbs: b, sign, len: b_len }
+  { limbs: b, sign, len: b_len, }
 }
 
 ///|

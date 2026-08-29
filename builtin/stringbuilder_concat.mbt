@@ -31,7 +31,7 @@ struct StringBuilder {
 #alias(new, deprecated="Use `StringBuilder()` instead")
 pub fn StringBuilder::StringBuilder(size_hint? : Int = 0) -> StringBuilder {
   ignore(size_hint)
-  { val: "" }
+  { val: "", }
 }
 
 ///|

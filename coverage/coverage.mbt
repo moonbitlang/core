@@ -61,7 +61,7 @@ priv struct CounterList {
 
 ///|
 /// The global list of counters currently tracking.
-let counters : CounterList = { val: MNil }
+let counters : CounterList = { val: MNil, }
 
 ///|
 /// Add the given counter along its ID to the tracking list.

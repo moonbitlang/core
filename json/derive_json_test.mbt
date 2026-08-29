@@ -21,7 +21,7 @@ priv struct Hello[A, B] {
 
 ///|
 test {
-  let v = Hello::{ fieldA: 3, fieldB: 2, data: { "a": 3 } }
+  let v = Hello::{ fieldA: 3, fieldB: 2, data: { "a": 3 }, }
   let vj = ToJson::to_json(v)
   let v0 : Hello[Int, Int] = @json.from_json(vj)
   debug_inspect(
@@ -49,7 +49,7 @@ priv struct Hello3[A, B] {
 
 ///|
 test {
-  let h = Hello::{ fieldA: 1, fieldB: "hello", data: { "a": 1, "b": 2 } }
+  let h = Hello::{ fieldA: 1, fieldB: "hello", data: { "a": 1, "b": 2 }, }
   let j = ToJson::to_json(h)
   debug_inspect(
     j,
@@ -63,7 +63,7 @@ test {
       #|)
     ),
   )
-  let h3 = Hello3::{ fieldAX: 1, fieldB: "hello", data: { 1: 1, 2: 2 } }
+  let h3 = Hello3::{ fieldAX: 1, fieldB: "hello", data: { 1: 1, 2: 2 }, }
   let j3 = ToJson::to_json(h3)
   debug_inspect(
     j3,

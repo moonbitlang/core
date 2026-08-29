@@ -216,7 +216,7 @@ pub fn delta(
   let prev_cat = state.cat
   let desc = delta_threads(
     state.desc,
-    { prev_cat, next_cat, c },
+    { prev_cat, next_cat, c, },
     MarkSlotMap::empty(),
   )
   let desc = desc.remove_duplicates(e_eps)

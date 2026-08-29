@@ -32,14 +32,14 @@ pub(all) suberror ParseError {
 ///|
 pub impl Show for ParseError with fn output(self, logger) {
   match self {
-    InvalidChar({ line, column }, c) =>
+    InvalidChar({ line, column, }, c) =>
       logger <+
         $|Invalid character \{c.escape()} at line \{line}, column \{column}
     InvalidEof => logger.write_string("Unexpected end of file")
-    InvalidNumber({ line, column }, s) =>
+    InvalidNumber({ line, column, }, s) =>
       logger <+
         $|Invalid number \{s} at line \{line}, column \{column}
-    InvalidIdentEscape({ line, column }) =>
+    InvalidIdentEscape({ line, column, }) =>
       logger <+
         $|Invalid escape sequence in identifier at line \{line}, column \{column}
     DepthLimitExceeded =>

@@ -166,6 +166,7 @@ pub fn[T] ArrayView::at(self : ArrayView[T], index : Int) -> T {
 ///   debug_inspect(view.get(5), content="None")
 /// }
 /// ```
+#intrinsic("%arrayview.get_opt")
 pub fn[T] ArrayView::get(self : ArrayView[T], index : Int) -> T? {
   let len = self.length()
   guard index >= 0 && index < len else { None }
@@ -249,6 +250,7 @@ pub fn[T] ArrayView::unsafe_get(self : ArrayView[T], index : Int) -> T {
 ///   inspect(view.length(), content="3") // View contains 3 elements
 /// }
 /// ```
+#intrinsic("%array.view")
 #alias("_[_:_]")
 #alias(sub, deprecated="Use _[_:_] instead")
 pub fn[T] Array::view(
@@ -342,6 +344,7 @@ pub fn[T] Array::get_view(
 ///   inspect(subview[0], content="3")
 /// }
 /// ```
+#intrinsic("%arrayview.view")
 #alias("_[_:_]")
 #alias(sub, deprecated="Use _[_:_] instead")
 pub fn[T] ArrayView::view(
@@ -439,6 +442,7 @@ fn[T] unsafe_cast_fixedarray_to_uninitializedarray(
 ///   inspect(view[0], content="2")
 /// }
 /// ```
+#intrinsic("%fixedarray.view")
 #alias("_[_:_]")
 #alias(sub, deprecated="Use _[_:_] instead")
 pub fn[T] FixedArray::view(

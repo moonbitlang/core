@@ -361,14 +361,14 @@ test "diff with Bool elements" {
 ///|
 test "diff with struct elements" {
   let old = [
-      { id: 1, name: "alice" },
-      { id: 2, name: "bob" },
-      { id: 3, name: "charlie" },
+      { id: 1, name: "alice", },
+      { id: 2, name: "bob", },
+      { id: 3, name: "charlie", },
     ][:]
   let new = [
-      { id: 1, name: "alice" },
-      { id: 3, name: "charlie" },
-      { id: 4, name: "david" },
+      { id: 1, name: "alice", },
+      { id: 3, name: "charlie", },
+      { id: 4, name: "david", },
     ][:]
   let d = @diff.Diff(old~, new~)
   let patience = @diff.Diff(old~, new~, algorithm=Patience)
