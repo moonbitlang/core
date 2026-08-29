@@ -111,7 +111,7 @@ fn set_ops_scenario(
   size_b : Int,
   key_space : Int,
 ) -> Unit raise {
-  let rng = Rand::{ state: seed }
+  let rng = Rand::{ state: seed, }
   let a : SortedSet[Int] = new_sorted_set()
   let b : SortedSet[Int] = new_sorted_set()
   for _ in 0..<size_a {
@@ -193,7 +193,7 @@ test "set operations keep invariants (extreme asymmetry, probe fallback)" {
 
 ///|
 test "set operations with self and empty keep invariants" {
-  let rng = Rand::{ state: 77UL }
+  let rng = Rand::{ state: 77UL, }
   let a : SortedSet[Int] = new_sorted_set()
   for _ in 0..<150 {
     a.add(rng.below(500))

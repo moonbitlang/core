@@ -13,28 +13,21 @@
 // limitations under the License.
 
 ///|
-priv struct ParseContext {
-  mut offset : Int
-  input : StringView
-  end_offset : Int
+test "bench BytesView Compare equal n=1000000" (it : @bench.T) {
+  let left = Bytes::makei(1000000, i => i.to_byte())[:]
+  let right = Bytes::makei(1000000, i => i.to_byte())[:]
+  it.bench(fn() { it.keep(left.compare(right)) })
 }
 
 ///|
-fn ParseContext::make(input : StringView) -> ParseContext {
-  { offset: 0, input, end_offset: input.length(), }
-}
-
-///|
-priv enum Token {
-  Null
-  True
-  False
-  Number(Double, String?)
-  String(String)
-  LBrace
-  RBrace
-  LBracket
-  RBracket
-  Comma
-  // Colon
+test "bench BytesView Compare last-diff n=1000000" (it : @bench.T) {
+  let left = Bytes::makei(1000000, i => i.to_byte())[:]
+  let right = Bytes::makei(1000000, i => {
+      if i == 999999 {
+        b'\xff'
+      } else {
+        i.to_byte()
+      }
+    })[:]
+  it.bench(fn() { it.keep(left.compare(right)) })
 }

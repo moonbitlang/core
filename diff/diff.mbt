@@ -758,7 +758,7 @@ pub fn[T : Hash + Eq] Diff::Diff(
         ),
       )
     }
-    return { old, new, edits: result }
+    return { old, new, edits: result, }
   }
 }
 

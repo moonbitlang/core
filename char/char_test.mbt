@@ -44,8 +44,8 @@ priv struct TestHash {
 ///|
 test "Char hash function with struct" {
   let m = Map([])
-  m[{ x: 'a' }] = '3'
-  m[{ x: 'b' }] = '3'
+  m[{ x: 'a', }] = '3'
+  m[{ x: 'b', }] = '3'
   debug_inspect(
     m,
     content=(

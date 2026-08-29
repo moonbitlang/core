@@ -15,7 +15,7 @@
 ///|
 #owned(key, value)
 fn[K, V] new_node(key : K, value : V) -> Node[K, V] {
-  { key, value, left: None, right: None, height: 1 }
+  { key, value, left: None, right: None, height: 1, }
 }
 
 ///|

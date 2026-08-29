@@ -144,7 +144,7 @@ struct LexbufTestScheduler {
 
 ///|
 fn LexbufTestScheduler::new() -> LexbufTestScheduler {
-  { continuations: [] }
+  { continuations: [], }
 }
 
 ///|

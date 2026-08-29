@@ -470,7 +470,7 @@ fn umul128(a : UInt64, b : UInt64) -> UInt128 {
   let y = aHi * bLo + (x >> 32)
   let z = aLo * bHi + (y & 0xffffffff)
   let w = aHi * bHi + (y >> 32) + (z >> 32)
-  { hi: w, lo: a * b }
+  { hi: w, lo: a * b, }
 }
 
 ///|

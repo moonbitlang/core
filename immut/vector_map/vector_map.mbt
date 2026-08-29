@@ -16,7 +16,7 @@
 /// Create an empty map. `O(1)`.
 #as_free_fn
 pub fn[K, V] VectorMap::new() -> VectorMap[K, V] {
-  { index: @hashmap.new(), spine: @vector.new(), size: 0 }
+  { index: @hashmap.new(), spine: @vector.new(), size: 0, }
 }
 
 ///|

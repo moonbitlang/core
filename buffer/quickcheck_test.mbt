@@ -97,7 +97,7 @@ let sample_strings : Array[String] = [
 test "quickcheck: op sequences agree with an Array[Byte] model" {
   @quickcheck.check(
     (ops : Array[(Int, Int)]) => {
-      let buf = Buffer()
+      let buf = @buffer.Buffer()
       let model : Array[Byte] = []
       for op in ops {
         let x = op.1
@@ -164,7 +164,7 @@ test "quickcheck: multi-width integer writes reconstruct the original value" {
   @quickcheck.check(
     (input : (Int, Int64, UInt, Double)) => {
       let (i, l, u, d) = input
-      let buf = Buffer()
+      let buf = @buffer.Buffer()
       buf.write_int_le(i)
       buf.write_int_be(i)
       buf.write_int64_le(l)
@@ -235,7 +235,7 @@ test "quickcheck: write_bytesview of any slice equals writing the sliced copy" {
       // slices at every position.
       let start = (a & 0x7FFFFFFF) % (n + 1)
       let len = (b & 0x7FFFFFFF) % (n - start + 1)
-      let buf = Buffer()
+      let buf = @buffer.Buffer()
       buf.write_bytesview(data[start:start + len])
       let model : Array[Byte] = []
       for i in start..<(start + len) {
@@ -252,7 +252,7 @@ test "quickcheck: utf16le string writes concatenate like their model" {
   @quickcheck.check(
     (input : (String, String)) => {
       let (s1, s2) = input
-      let buf = Buffer()
+      let buf = @buffer.Buffer()
       buf.write_string_utf16le(s1)
       guard buf.length() == s1.length() * 2 else { return false }
       buf.write_string_utf16le(s2)
@@ -271,7 +271,7 @@ test "quickcheck: reset makes the buffer behave as fresh" {
   @quickcheck.check(
     (input : (Bytes, Bytes)) => {
       let (pre, post) = input
-      let buf = Buffer()
+      let buf = @buffer.Buffer()
       buf.write_bytes(pre)
       buf.write_double_be(1.5)
       buf.reset()
@@ -296,7 +296,7 @@ test "quickcheck: size_hint never affects observable contents" {
       let hints = [0, 1, 7, 4096]
       let results : Array[Bytes] = []
       for hint in hints {
-        let buf = Buffer(size_hint=hint)
+        let buf = @buffer.Buffer(size_hint=hint)
         for chunk in chunks {
           buf.write_bytes(chunk)
           buf.write_byte(b'\xAB')
@@ -319,7 +319,7 @@ test "quickcheck: contents() is non-destructive and writes append after it" {
   @quickcheck.check(
     (input : (Bytes, Bytes)) => {
       let (first, second) = input
-      let buf = Buffer()
+      let buf = @buffer.Buffer()
       buf.write_bytes(first)
       let c1 = buf.contents()
       let c2 = buf.contents()

@@ -33,7 +33,7 @@ fn ParserContext::new(
   base~ : Int,
   mode~ : Mode,
 ) -> ParserContext {
-  { profile, base, ignore_case: false, mode }
+  { profile, base, ignore_case: false, mode, }
 }
 
 ///|

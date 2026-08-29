@@ -19,12 +19,12 @@ test "LexbufStorage merges input into the last small chunk" {
     storage.append("x")
   }
   inspect(storage.chunks.length(), content="1")
-  inspect(storage.chunks[0].length(), content="512")
+  inspect(storage.chunks[0].length(), content="64")
   inspect(storage.chunk_starts.length(), content="1")
   inspect(storage.chunk_starts[0], content="0")
   inspect(
     storage.get_stringview(0, LEXBUF_MERGED_CHUNK_LIMIT).length(),
-    content="512",
+    content="64",
   )
 }
 
@@ -35,13 +35,16 @@ test "LexbufStorage caps merged chunks" {
     storage.append("x")
   }
   inspect(storage.chunks.length(), content="2")
-  inspect(storage.chunks[0].length(), content="512")
-  inspect(storage.chunks[1].length(), content="512")
+  inspect(storage.chunks[0].length(), content="64")
+  inspect(storage.chunks[1].length(), content="64")
   inspect(storage.chunk_starts.length(), content="2")
   inspect(storage.chunk_starts[0], content="0")
-  inspect(storage.chunk_starts[1], content="512")
-  inspect(storage.unsafe_code_unit_at(511), content="120")
-  inspect(storage.unsafe_code_unit_at(512), content="120")
+  inspect(storage.chunk_starts[1], content="64")
+  inspect(
+    storage.unsafe_code_unit_at(LEXBUF_MERGED_CHUNK_LIMIT - 1),
+    content="120",
+  )
+  inspect(storage.unsafe_code_unit_at(LEXBUF_MERGED_CHUNK_LIMIT), content="120")
 }
 
 ///|
@@ -93,7 +96,7 @@ test "LexbufStorage discards complete chunks and preserves absolute offsets" {
   storage.append("z".repeat(LEXBUF_MERGED_CHUNK_LIMIT + 1))
   storage.discard_before(LEXBUF_MERGED_CHUNK_LIMIT + 1)
   inspect(storage.chunks.length(), content="2")
-  inspect(storage.buffer_start, content="513")
+  inspect(storage.buffer_start, content="65")
   inspect(
     storage.unsafe_code_unit_at(LEXBUF_MERGED_CHUNK_LIMIT + 1),
     content="121",
@@ -102,7 +105,7 @@ test "LexbufStorage discards complete chunks and preserves absolute offsets" {
     LEXBUF_MERGED_CHUNK_LIMIT + 1,
     2 * (LEXBUF_MERGED_CHUNK_LIMIT + 1) + 1,
   )
-  inspect(view.length(), content="514")
+  inspect(view.length(), content="66")
   inspect(view.unsafe_get(0).to_int(), content="121")
   inspect(view.unsafe_get(view.length() - 1).to_int(), content="122")
 }
