@@ -71,7 +71,7 @@ pub fn Regex::Regex(pattern : StringView) -> Regex raise {
     pattern,
     mode=String,
   )
-  { pat, re: None }
+  { pat, re: None, }
 }
 
 ///|
@@ -138,7 +138,7 @@ pub fn MatchResult::named_group(
 #doc(hidden)
 pub fn Regex::internal_compile_pattern(pat : Pattern) -> Regex {
   let lowered_pat = re_lower_to_utf16(pat.0)
-  { pat: pat.0, re: Some(@re.compile(profile=re_profile_utf16, lowered_pat)) }
+  { pat: pat.0, re: Some(@re.compile(profile=re_profile_utf16, lowered_pat)), }
 }
 
 ///|
@@ -205,7 +205,7 @@ pub fn Regex::string(str : StringView) -> Regex {
       str.to_array().map(b => @re.char(@re.RecharSet::char(b.to_int()))),
     ),
   )
-  { pat, re: None }
+  { pat, re: None, }
 }
 
 ///|
@@ -268,7 +268,7 @@ pub fn Regex::repeat(
 /// ```
 #intrinsic("%regex.seq")
 pub impl Add for Regex with fn add(self, other) -> Regex {
-  { pat: @re.seq([self.pat, other.pat]), re: None }
+  { pat: @re.seq([self.pat, other.pat]), re: None, }
 }
 
 ///|
@@ -285,7 +285,7 @@ pub impl Add for Regex with fn add(self, other) -> Regex {
 /// ```
 #intrinsic("%regex.alt")
 pub impl BitOr for Regex with fn lor(self, other) -> Regex {
-  { pat: @re.alt([self.pat, other.pat]), re: None }
+  { pat: @re.alt([self.pat, other.pat]), re: None, }
 }
 
 ///|
@@ -353,7 +353,7 @@ pub fn Regex::execute(
   match self.re().execute(input, last_index) {
     None => None
     Some(result) =>
-      Some({ input, group_names: self.re().group_names(), result })
+      Some({ input, group_names: self.re().group_names(), result, })
   }
 }
 
@@ -413,5 +413,5 @@ pub fn Regex::execute(
 /// }
 /// ```
 pub fn Regex::capture(self : Regex, group_name : String) -> Regex {
-  { pat: @re.capture(name=group_name, self.pat), re: None }
+  { pat: @re.capture(name=group_name, self.pat), re: None, }
 }

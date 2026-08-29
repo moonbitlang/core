@@ -69,12 +69,12 @@ fn Piles::put_by_binary_search(
     // Place the candidate on the next pile; appending a new pile means the
     // candidate extends the longest chain seen so far.
     if lo + 1 < self.0.length() {
-      self[lo + 1].push({ value: (new_idx, place), prev })
+      self[lo + 1].push({ value: (new_idx, place), prev, })
     } else {
-      self.put_back({ value: (new_idx, place), prev })
+      self.put_back({ value: (new_idx, place), prev, })
     }
   } else {
     // new_idx is smaller than all pile tops; place on pile 0 with no predecessor.
-    self[0].push({ value: (new_idx, place), prev: None })
+    self[0].push({ value: (new_idx, place), prev: None, })
   }
 }

@@ -27,7 +27,7 @@ fn[T] array_to_json(arr : Array[T], f~ : (T) -> Json) -> Json {
 
 ///|
 fn AllThree::to_json(self : AllThree) -> Json {
-  let { ints, floats, strings } = self
+  let { ints, floats, strings, } = self
   {
     "ints": ints |> array_to_json(f=x => Json::number(x.to_double())),
     "floats": floats |> array_to_json(f=x => Json::number(x)),
@@ -64,7 +64,7 @@ fn of_json(jv : Json) -> AllThree raise DecodeError {
         guard s is String(s) else { () } // error handling here
         strings_result.push(s)
       }
-      { ints: ints_result, floats: floats_result, strings: strings_result }
+      { ints: ints_result, floats: floats_result, strings: strings_result, }
     }
     _ => raise DecodeError("Expected an object of ints, floats, and strings")
   }

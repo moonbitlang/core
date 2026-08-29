@@ -21,7 +21,7 @@
 /// and as the building block for the transform combinators.
 #owned(head, tail)
 fn[A] cons(head : A, tail : LazyList[A]) -> LazyList[A] {
-  { cell: Cons(head, tail=Tail::ready(tail)) }
+  { cell: Cons(head, tail=Tail::ready(tail)), }
 }
 
 // =====================================================================
@@ -41,7 +41,7 @@ fn[A] cons(head : A, tail : LazyList[A]) -> LazyList[A] {
 /// ```
 #as_free_fn
 pub fn[A] LazyList::empty() -> LazyList[A] {
-  { cell: Empty }
+  { cell: Empty, }
 }
 
 ///|
@@ -66,7 +66,7 @@ pub fn[A] LazyList::lazy_cons(
   head : A,
   tail : () -> LazyList[A],
 ) -> LazyList[A] {
-  { cell: Cons(head, tail=Tail::delay(tail)) }
+  { cell: Cons(head, tail=Tail::delay(tail)), }
 }
 
 ///|
@@ -249,7 +249,7 @@ pub fn[A] LazyList::concat(
       if other.cell is Empty {
         self
       } else {
-        { cell: Cons(x, tail=tail.append(One(Tail::ready(other)))) }
+        { cell: Cons(x, tail=tail.append(One(Tail::ready(other)))), }
       }
   }
 }
@@ -265,7 +265,7 @@ fn[A] LazyList::concat_lazy(
   match self.cell {
     Empty => other_thunk()
     Cons(x, tail~) =>
-      { cell: Cons(x, tail=tail.append(One(Tail::delay(other_thunk)))) }
+      { cell: Cons(x, tail=tail.append(One(Tail::delay(other_thunk)))), }
   }
 }
 

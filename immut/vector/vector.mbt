@@ -56,8 +56,8 @@ pub fn[A] Vector::make(len : Int, value : A) -> Vector[A] {
       tree_len / BRANCHING_FACTOR,
       FixedArray::make(BRANCHING_FACTOR, value),
     )
-    let (shift, cap) = shift_cap_of_size(tree_len)
-    (from_leaves(leaves, cap), shift)
+    let shift = shift_of_leaf_count(leaves.length())
+    (from_leaves(leaves, shift), shift)
   }
   make_t(tree, tail, len, shift)
 }
@@ -80,8 +80,8 @@ pub fn[A] Vector::makei(len : Int, f : (Int) -> A raise?) -> Vector[A] raise? {
         f(k * BRANCHING_FACTOR + i)
       })
     }
-    let (shift, cap) = shift_cap_of_size(tree_len)
-    (from_leaves(leaves, cap), shift)
+    let shift = shift_of_leaf_count(leaves.length())
+    (from_leaves(leaves, shift), shift)
   }
   make_t(tree, tail, len, shift)
 }
@@ -106,6 +106,9 @@ pub fn[A] Vector::Vector(arr : ArrayView[A]) -> Vector[A] {
 
 ///|
 /// Creates an immutable vector from an iterator of values.
+///
+/// Aborts if the iterator yields more elements than a Vector length can
+/// represent with `Int`.
 #as_free_fn
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
@@ -139,14 +142,14 @@ pub fn[A] Vector::from_iter(iter : Iter[A]) -> Vector[A] {
   } else {
     FixedArray::make_and_blit(buf, allocate_len=index, init=buf[0], len=index)
   }
-  let tree_len = leaves.length() * BRANCHING_FACTOR
+  let tree_len = tree_len_of_leaf_count(leaves.length())
   let (tree, shift) = if tree_len == 0 {
     (Tree::empty(), 0)
   } else {
-    let (shift, cap) = shift_cap_of_size(tree_len)
-    (from_leaves(leaves, cap), shift)
+    let shift = shift_of_leaf_count(leaves.length())
+    (from_leaves(leaves, shift), shift)
   }
-  make_t(tree, tail, tree_len + tail.length(), shift)
+  make_t(tree, tail, checked_size_add(tree_len, tail.length()), shift)
 }
 
 //-----------------------------------------------------------------------------
@@ -314,6 +317,8 @@ pub fn[A] Vector::set(self : Vector[A], index : Int, value : A) -> Vector[A] {
 ///|
 /// Push a value to the end of the vector.
 ///
+/// Aborts if the resulting length cannot be represented by `Int`.
+///
 /// # Example
 /// ```mbt check
 /// test {
@@ -323,20 +328,16 @@ pub fn[A] Vector::set(self : Vector[A], index : Int, value : A) -> Vector[A] {
 /// ```
 #owned(value)
 pub fn[A] Vector::push(self : Vector[A], value : A) -> Vector[A] {
+  let size = checked_size_add(self.size, 1)
   if self.tail.length() < BRANCHING_FACTOR {
-    make_t(
-      self.tree,
-      immutable_push(self.tail, value),
-      self.size + 1,
-      self.shift,
-    )
+    make_t(self.tree, immutable_push(self.tail, value), size, self.shift)
   } else {
     let (tree, shift) = if self.tree is Empty {
       (Leaf(self.tail), 0)
     } else {
       self.tree.append_right_leaf(self.shift, self.tail)
     }
-    make_t(tree, [value], self.size + 1, shift)
+    make_t(tree, [value], size, shift)
   }
 }
 
@@ -395,6 +396,8 @@ pub fn[A] Vector::pop(self : Vector[A]) -> Vector[A]? {
 ///|
 /// Concatenate two vectors.
 ///
+/// Aborts if the resulting length cannot be represented by `Int`.
+///
 /// The result always takes `other`'s tail, so the work is deciding what
 /// happens to `self`'s. In order of cost:
 ///
@@ -414,7 +417,7 @@ pub fn[A] Vector::concat(self : Vector[A], other : Vector[A]) -> Vector[A] {
   if other.is_empty() {
     return self
   }
-  let size = self.size + other.size
+  let size = checked_size_add(self.size, other.size)
   if other.tree is Empty {
     let combined_tail_len = self.tail.length() + other.tail.length()
     if combined_tail_len <= BRANCHING_FACTOR {
@@ -812,6 +815,17 @@ pub impl[A : Compare] Compare for Vector[A] with fn compare(self, other) {
 //-----------------------------------------------------------------------------
 
 ///|
+/// Add a non-negative element count without allowing it to wrap. This mirrors
+/// `Array` growth: a collection operation aborts instead of returning a value
+/// whose stored length no longer describes its contents.
+#inline
+fn checked_size_add(size : Int, added : Int) -> Int {
+  let required = size + added
+  guard required >= size else { abort("Vector capacity overflow") }
+  required
+}
+
+///|
 #owned(tree, tail)
 fn[A] make_t(
   tree : Tree[A],
@@ -819,24 +833,26 @@ fn[A] make_t(
   size : Int,
   shift : Int,
 ) -> Vector[A] {
-  { tree, tail, size, shift }
+  { tree, tail, size, shift, }
 }
 
 ///|
-/// Build a radix tree of capacity `cap` over `leaves`, which must be non-empty
-/// and hold `BRANCHING_FACTOR` elements each except possibly the last.
+/// Build a radix tree of height `shift / NUM_BITS` over non-empty `leaves`.
+/// Each leaf holds `BRANCHING_FACTOR` elements except possibly the last.
 ///
-/// `cap` alone fixes the height (`cap` = `BRANCHING_FACTOR` ^ (height + 1)), so
-/// every level has to recurse even when few leaves are left: a short remainder
-/// still belongs at the bottom, not one level down from wherever it is. Getting
-/// that wrong yields a leaf above shift 0, which throws off both radix descent
-/// and `Tree::size`.
-fn[A] from_leaves(leaves : ArrayView[FixedArray[A]], cap : Int) -> Tree[A] {
-  guard cap > BRANCHING_FACTOR else { return Leaf(leaves[0]) }
-  let child_cap = cap / BRANCHING_FACTOR
-  // Count in leaves rather than elements: `leaves.length() * BRANCHING_FACTOR`
-  // is the element count and is only meaningful while it fits in an `Int`.
-  let leaves_per_child = child_cap / BRANCHING_FACTOR
+/// The caller fixes the height, so every level has to recurse even when few
+/// leaves are left: a short remainder still belongs at the bottom, not one
+/// level down from wherever it is. Getting that wrong yields a leaf above shift
+/// 0, which throws off both radix descent and `Tree::size`.
+///
+/// Keeping capacity in leaf units is also important at the upper boundary. A
+/// valid `Int`-sized vector may need a root with shift 30, whose element
+/// capacity is 2^35 and cannot itself be represented by `Int`; its leaf count
+/// and shift still can.
+fn[A] from_leaves(leaves : ArrayView[FixedArray[A]], shift : Int) -> Tree[A] {
+  guard shift > 0 else { return Leaf(leaves[0]) }
+  let child_shift = shift - NUM_BITS
+  let leaves_per_child = 1 << child_shift
   let full = leaves.length() / leaves_per_child
   let len = if leaves.length() % leaves_per_child == 0 {
     full
@@ -846,9 +862,35 @@ fn[A] from_leaves(leaves : ArrayView[FixedArray[A]], cap : Int) -> Tree[A] {
   let arr = FixedArray::makei(len, i => {
     let lo = i * leaves_per_child
     let hi = min(lo + leaves_per_child, leaves.length())
-    from_leaves(leaves[lo:hi], child_cap)
+    from_leaves(leaves[lo:hi], child_shift)
   })
   Node(arr, None)
+}
+
+///|
+/// Return the smallest tree shift whose capacity can hold `leaf_count` leaves.
+/// Capacity is intentionally measured in leaves: unlike the corresponding
+/// element capacity, it remains representable for every valid Vector length.
+fn shift_of_leaf_count(leaf_count : Int) -> Int {
+  guard leaf_count >= 0 else { abort("Vector capacity overflow") }
+  for capacity = 1, shift = 0; capacity < leaf_count; {
+    let next = capacity * BRANCHING_FACTOR
+    guard next > capacity else { abort("Vector capacity overflow") }
+    continue next, shift + NUM_BITS
+  } nobreak {
+    shift
+  }
+}
+
+///|
+/// Convert a number of full leaves to an element count without wrapping.
+fn tree_len_of_leaf_count(leaf_count : Int) -> Int {
+  guard leaf_count >= 0 else { abort("Vector capacity overflow") }
+  let len = leaf_count * BRANCHING_FACTOR
+  guard len / BRANCHING_FACTOR == leaf_count else {
+    abort("Vector capacity overflow")
+  }
+  len
 }
 
 ///|
@@ -935,14 +977,5 @@ fn[A] Vector::slice_unchecked(
       }
       make_t(tree, tail, len, shift)
     }
-  }
-}
-
-///|
-fn shift_cap_of_size(size : Int) -> (Int, Int) {
-  for cap = BRANCHING_FACTOR, depth = 0; cap < size; {
-    continue cap * BRANCHING_FACTOR, depth + 1
-  } nobreak {
-    (NUM_BITS * depth, cap)
   }
 }

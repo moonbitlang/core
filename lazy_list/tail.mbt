@@ -22,14 +22,14 @@
 /// A tail whose value is already known. No thunk is allocated.
 #owned(value)
 fn[A] Tail::ready(value : LazyList[A]) -> Tail[A] {
-  { state: Forced(value) }
+  { state: Forced(value), }
 }
 
 ///|
 /// A tail computed by `thunk`, which runs at most once.
 #owned(thunk)
 fn[A] Tail::delay(thunk : () -> LazyList[A]) -> Tail[A] {
-  { state: Unforced(thunk) }
+  { state: Unforced(thunk), }
 }
 
 ///|
@@ -41,7 +41,7 @@ fn[A] Tail::delay(thunk : () -> LazyList[A]) -> Tail[A] {
 /// rather than wrap it in an append that has nothing to append.
 #owned(pending)
 fn[A] Tail::append(self : Tail[A], pending : Pending[A]) -> Tail[A] {
-  { state: Append(self, pending) }
+  { state: Append(self, pending), }
 }
 
 ///|
@@ -120,7 +120,7 @@ fn[A] LazyList::append_pending(
         break if rest is Nil {
           cur
         } else {
-          { cell: Cons(x, tail=tail.append(rest)) }
+          { cell: Cons(x, tail=tail.append(rest)), }
         }
       // This segment contributed no head; move on to the next one.
       Empty =>

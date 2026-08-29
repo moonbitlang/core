@@ -121,6 +121,7 @@ pub fn BytesView::at(self : BytesView, index : Int) -> Byte {
 ///   debug_inspect(result, content="None")
 /// }
 /// ```
+#intrinsic("%bytesview.get_opt")
 pub fn BytesView::get(self : BytesView, index : Int) -> Byte? {
   guard index >= 0 && index < self.length() else { None }
   Some(self.bytes().unsafe_get(self.start() + index))
@@ -173,6 +174,7 @@ pub fn BytesView::unsafe_get(self : BytesView, index : Int) -> Byte {
 ///   @test.assert_eq(bv[2], b'\x03')
 /// }
 /// ```
+#intrinsic("%bytes.view")
 #alias("_[_:_]")
 #alias(sub, deprecated="Use _[_:_] instead")
 pub fn Bytes::view(self : Bytes, start? : Int = 0, end? : Int) -> BytesView {
@@ -246,6 +248,7 @@ pub fn BytesView::get_view(
 ///   @test.assert_eq(bv2[1], b'\x02')
 /// }
 /// ```
+#intrinsic("%bytesview.view")
 #alias("_[_:_]")
 #alias(sub, deprecated="Use _[_:_] instead")
 pub fn BytesView::view(
@@ -325,6 +328,21 @@ pub fn BytesView::iter2(self : BytesView) -> Iter2[Int, Byte] {
 }
 
 ///|
+fn write_byte_hex(logger : &Logger, byte : Byte) -> Unit {
+  fn hex_digit(value : Int) -> Char {
+    if value < 10 {
+      (value + '0'.to_int()).unsafe_to_char()
+    } else {
+      (value - 10 + 'a'.to_int()).unsafe_to_char()
+    }
+  }
+
+  let value = byte.to_int()
+  logger.write_char(hex_digit(value >> 4))
+  logger.write_char(hex_digit(value & 0x0f))
+}
+
+///|
 pub impl Show for BytesView with fn output(self, logger) {
   logger.write_string("b\"")
   for byte in self {
@@ -332,7 +350,7 @@ pub impl Show for BytesView with fn output(self, logger) {
       logger.write_char(byte.to_char())
     } else {
       logger.write_string("\\x")
-      logger.write_string(byte.to_hex())
+      write_byte_hex(logger, byte)
     }
   }
   logger.write_string("\"")
@@ -435,12 +453,7 @@ pub impl Compare for BytesView with fn compare(self, other) -> Int {
   let other_len = other.length()
   let cmp = self_len.compare(other_len)
   guard cmp == 0 else { return cmp }
-  for i, b1 in self {
-    let b2 = other.unsafe_get(i)
-    let cmp = b1.compare(b2)
-    guard cmp == 0 else { return cmp }
-  }
-  0
+  self.lexical_compare(other)
 }
 
 ///|
@@ -582,7 +595,7 @@ pub impl ToJson for BytesView with fn to_json(self) -> Json {
       sb.write_char(byte.to_char())
     } else {
       sb.write_string("\\x")
-      sb.write_string(byte.to_hex())
+      write_byte_hex(sb, byte)
     }
   }
   Json::string(sb.to_string())

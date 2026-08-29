@@ -77,7 +77,7 @@ struct Hasher {
 /// `Hasher::new` remains available as a deprecated alias.
 #alias(new, deprecated="Use `Hasher()` instead")
 pub fn Hasher::Hasher(seed? : Int = seed) -> Hasher {
-  { acc: seed.reinterpret_as_uint() + GPRIME5 }
+  { acc: seed.reinterpret_as_uint() + GPRIME5, }
 }
 
 ///|

@@ -50,3 +50,21 @@ test "panic at on empty vector" {
   let v : @vector.Vector[Int] = @vector.new()
   v[0] |> ignore
 }
+
+///|
+test "panic concat length overflow" {
+  let mut v = @vector.singleton(true)
+  for _ in 0..<30 {
+    v = v.concat(v)
+  }
+  v.concat(v) |> ignore
+}
+
+///|
+test "panic push length overflow" {
+  let mut v = @vector.singleton(true)
+  for _ in 0..<30 {
+    v = v.concat(v).push(true)
+  }
+  v.push(true) |> ignore
+}

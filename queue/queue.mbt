@@ -14,7 +14,7 @@
 
 ///|
 fn[A] new_queue() -> Queue[A] {
-  { inner: Deque([]) }
+  { inner: Deque([]), }
 }
 
 ///|
@@ -33,7 +33,7 @@ fn[A] new_queue() -> Queue[A] {
 #alias(of, deprecated="Use from_array instead")
 #as_free_fn(of, deprecated="Use from_array instead")
 pub fn[A] Queue::Queue(arr : ArrayView[A]) -> Queue[A] {
-  { inner: Deque(arr) }
+  { inner: Deque(arr), }
 }
 
 ///|
@@ -189,7 +189,7 @@ pub fn[A] Queue::pop(self : Queue[A]) -> A? {
 /// }
 /// ```
 #locals(f)
-pub fn[A] Queue::each(self : Queue[A], f : (A) -> Unit) -> Unit {
+pub fn[A] Queue::each(self : Queue[A], f : (A) -> Unit raise?) -> Unit raise? {
   for x in self.inner {
     f(x)
   }
@@ -208,7 +208,10 @@ pub fn[A] Queue::each(self : Queue[A], f : (A) -> Unit) -> Unit {
 /// }
 /// ```
 #locals(f)
-pub fn[A] Queue::eachi(self : Queue[A], f : (Int, A) -> Unit) -> Unit {
+pub fn[A] Queue::eachi(
+  self : Queue[A],
+  f : (Int, A) -> Unit raise?,
+) -> Unit raise? {
   for i, x in self.inner {
     f(i, x)
   }
@@ -226,7 +229,11 @@ pub fn[A] Queue::eachi(self : Queue[A], f : (Int, A) -> Unit) -> Unit {
 /// }
 /// ```
 #locals(f)
-pub fn[A, B] Queue::fold(self : Queue[A], init~ : B, f : (B, A) -> B) -> B {
+pub fn[A, B] Queue::fold(
+  self : Queue[A],
+  init~ : B,
+  f : (B, A) -> B raise?,
+) -> B raise? {
   let mut acc = init
   for x in self.inner {
     acc = f(acc, x)
@@ -247,7 +254,7 @@ pub fn[A, B] Queue::fold(self : Queue[A], init~ : B, f : (B, A) -> B) -> B {
 /// ```
 #alias(clone, deprecated)
 pub fn[A] Queue::copy(self : Queue[A]) -> Queue[A] {
-  { inner: self.inner.copy() }
+  { inner: self.inner.copy(), }
 }
 
 ///|
@@ -302,7 +309,7 @@ pub fn[A] Queue::iter(self : Queue[A]) -> Iter[A] {
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
 pub fn[A] Queue::from_iter(iter : Iter[A]) -> Queue[A] {
-  { inner: @deque.from_iter(iter) }
+  { inner: @deque.from_iter(iter), }
 }
 
 ///|

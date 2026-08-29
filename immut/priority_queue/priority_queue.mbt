@@ -67,9 +67,9 @@ pub fn[A : Compare] PriorityQueue::PriorityQueue(
 /// by `pop`/`peek`.
 fn[A : Compare] from_array_in_place(heap : MutArrayView[A]) -> PriorityQueue[A] {
   let len = heap.length()
-  guard len > 0 else { return { node: Empty, size: 0 } }
+  guard len > 0 else { return { node: Empty, size: 0, } }
   heapify(heap)
-  { node: priority_queue_node_from_heap(heap, 0, len), size: len }
+  { node: priority_queue_node_from_heap(heap, 0, len), size: len, }
 }
 
 ///|
@@ -219,10 +219,10 @@ pub fn[A : Compare] PriorityQueue::pop(
 ) -> PriorityQueue[A]? {
   match self.node {
     Empty => None
-    Leaf(_) => Some({ node: Empty, size: 0 })
+    Leaf(_) => Some({ node: Empty, size: 0, })
     Branch(_) => {
       let (value, temp) = self.node.remove_last_leaf(path(self.size))
-      Some({ node: temp.change_and_down(value), size: self.size - 1 })
+      Some({ node: temp.change_and_down(value), size: self.size - 1, })
     }
   }
 }
@@ -291,10 +291,10 @@ pub fn[A : Compare] PriorityQueue::unsafe_pop(
 ) -> PriorityQueue[A] {
   match self.node {
     Empty => abort("Priority queue is empty!")
-    Leaf(_) => { node: Empty, size: 0 }
+    Leaf(_) => { node: Empty, size: 0, }
     Branch(_) => {
       let (value, temp) = self.node.remove_last_leaf(path(self.size))
-      { node: temp.change_and_down(value), size: self.size - 1 }
+      { node: temp.change_and_down(value), size: self.size - 1, }
     }
   }
 }
@@ -315,10 +315,10 @@ pub fn[A : Compare] PriorityQueue::push(
   value : A,
 ) -> PriorityQueue[A] {
   match self.node {
-    Empty => { node: Leaf(value), size: 1 }
+    Empty => { node: Leaf(value), size: 1, }
     Leaf(_) | Branch(_) => {
       let size = self.size + 1
-      { node: self.node.push(value, path(size)), size }
+      { node: self.node.push(value, path(size)), size, }
     }
   }
 }

@@ -27,7 +27,13 @@ pub struct AsyncLexbuf {
 /// Creates an initially empty lexbuf. `source` asynchronously returns the next
 /// chunk, or `None` at EOF. Empty chunks are ignored.
 pub fn AsyncLexbuf::from_fn(source : async () -> String?) -> AsyncLexbuf {
-  { source, storage: LexbufStorage(), cursor: 0, retained_from: -1, eof: false }
+  {
+    source,
+    storage: LexbufStorage(),
+    cursor: 0,
+    retained_from: -1,
+    eof: false,
+  }
 }
 
 ///|

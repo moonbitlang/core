@@ -129,7 +129,7 @@ fn parse_number(s : StringView) -> Number? raise StrConvError {
 
   // handle uncommon case with many digits
   if n_digits <= 19 {
-    return Some({ exponent, mantissa, negative, many_digits: false })
+    return Some({ exponent, mantissa, negative, many_digits: false, })
   }
   n_digits -= 19
   let mut many_digits = false
@@ -161,7 +161,7 @@ fn parse_number(s : StringView) -> Number? raise StrConvError {
     }).to_int64()
     exponent += exp_number
   } // add back the explicit part
-  Some({ exponent, mantissa, negative, many_digits })
+  Some({ exponent, mantissa, negative, many_digits, })
 }
 
 ///|

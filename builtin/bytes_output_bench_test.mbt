@@ -13,28 +13,14 @@
 // limitations under the License.
 
 ///|
-priv struct ParseContext {
-  mut offset : Int
-  input : StringView
-  end_offset : Int
+let bytes_output_binary : Bytes = Bytes::makei(100000, i => i.to_byte())
+
+///|
+test "bench Bytes Show binary n=100000" (it : @bench.T) {
+  it.bench(fn() { it.keep(bytes_output_binary.to_string()) })
 }
 
 ///|
-fn ParseContext::make(input : StringView) -> ParseContext {
-  { offset: 0, input, end_offset: input.length(), }
-}
-
-///|
-priv enum Token {
-  Null
-  True
-  False
-  Number(Double, String?)
-  String(String)
-  LBrace
-  RBrace
-  LBracket
-  RBracket
-  Comma
-  // Colon
+test "bench Bytes ToJson binary n=100000" (it : @bench.T) {
+  it.bench(fn() { it.keep(@json.to_json(bytes_output_binary)) })
 }

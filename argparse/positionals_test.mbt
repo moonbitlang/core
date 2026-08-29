@@ -93,6 +93,20 @@ test "variadic positional keeps accepting hyphen values after first token" {
 }
 
 ///|
+test "allow_hyphen positional yields to a known short flag" {
+  let cmd = @argparse.Command("demo", flags=[FlagArg("quiet", short='q')], positionals=[
+    PositionArg("input", allow_hyphen_values=true),
+  ])
+  let flagged = cmd.parse(argv=["-q"], env=empty_env()) catch { _ => panic() }
+  assert_true(flagged.flags is { "quiet": true, .. })
+  assert_true(flagged.values is { "input"? : None, .. })
+
+  let unknown = cmd.parse(argv=["-z"], env=empty_env()) catch { _ => panic() }
+  assert_true(unknown.values is { "input": ["-z"], .. })
+  assert_true(unknown.flags is { "quiet"? : None, .. })
+}
+
+///|
 test "bounded positional does not greedily consume later required values" {
   let cmd = @argparse.Command("demo", positionals=[
     PositionArg("first", num_args=ValueRange(lower=1, upper=2)),
