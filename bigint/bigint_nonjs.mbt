@@ -201,7 +201,7 @@ pub fn BigInt::from_int64(n : Int64) -> BigInt {
 /// ```
 pub fn BigInt::from_uint64(n : UInt64) -> BigInt {
   if n == 0UL {
-    return { limbs: FixedArray::make(1, 0), sign: Positive, len: 1 }
+    return { limbs: FixedArray::make(1, 0), sign: Positive, len: 1, }
   }
   let limbs = FixedArray::make(64 / RADIX_BIT_LEN, 0U)
   let i = for m = n, i = 0; m > 0; {
@@ -210,7 +210,7 @@ pub fn BigInt::from_uint64(n : UInt64) -> BigInt {
   } nobreak {
     i
   }
-  { limbs, sign: Positive, len: i }
+  { limbs, sign: Positive, len: i, }
 }
 
 // Arithmetic Operations
@@ -239,7 +239,7 @@ pub impl Neg for BigInt with fn neg(self : BigInt) -> BigInt {
   if self.is_zero() {
     return zero
   }
-  { ..self, sign: if self.sign == Positive { Negative } else { Positive } }
+  { ..self, sign: if self.sign == Positive { Negative } else { Positive }, }
 }
 
 ///|
@@ -286,7 +286,7 @@ pub impl Add for BigInt with fn add(self : BigInt, other : BigInt) -> BigInt {
   } nobreak {
     i
   }
-  { limbs, sign: Positive, len: i }
+  { limbs, sign: Positive, len: i, }
 }
 
 ///|
@@ -351,7 +351,7 @@ pub impl Sub for BigInt with fn sub(self : BigInt, other : BigInt) -> BigInt {
   } nobreak {
     i
   }
-  { limbs, sign: Positive, len: i }
+  { limbs, sign: Positive, len: i, }
 }
 
 ///|
@@ -397,7 +397,7 @@ pub impl Mul for BigInt with fn mul(self : BigInt, other : BigInt) -> BigInt {
   } else {
     self.karatsuba_mul(other)
   }
-  { ..ret, sign: if self.sign == other.sign { Positive } else { Negative } }
+  { ..ret, sign: if self.sign == other.sign { Positive } else { Negative }, }
 }
 
 ///|
@@ -428,7 +428,7 @@ fn BigInt::mul_single_limb(self : BigInt, x : UInt) -> BigInt {
     limbs[n] = carry.to_uint()
     n + 1
   }
-  { limbs, sign: Positive, len }
+  { limbs, sign: Positive, len, }
 }
 
 // Simplest way to multiply two BigInts.
@@ -458,7 +458,7 @@ fn BigInt::grade_school_mul(self : BigInt, other : BigInt) -> BigInt {
   if limbs[self_len + other_len - 1] == 0 {
     len -= 1
   }
-  { limbs, sign: Positive, len }
+  { limbs, sign: Positive, len, }
 }
 
 // Karatsuba multiplication
@@ -481,7 +481,7 @@ fn BigInt::karatsuba_mul(self : BigInt, other : BigInt) -> BigInt {
 ///|
 fn BigInt::split(self : BigInt, half : Int) -> (BigInt, BigInt) {
   if self.len <= half {
-    return ({ ..self, sign: Positive }, zero)
+    return ({ ..self, sign: Positive, }, zero)
   }
   let lower_len = for i in half>..1 {
     if self.limbs[i] > 0 {
@@ -495,8 +495,8 @@ fn BigInt::split(self : BigInt, half : Int) -> (BigInt, BigInt) {
   let upper = FixedArray::make(self.len - half, 0U)
   upper.unsafe_blit(0, self.limbs, half, self.len - half)
   (
-    { limbs: lower, sign: Positive, len: lower_len },
-    { limbs: upper, sign: Positive, len: self.len - half },
+    { limbs: lower, sign: Positive, len: lower_len, },
+    { limbs: upper, sign: Positive, len: self.len - half, },
   )
 }
 
@@ -615,13 +615,13 @@ fn BigInt::grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
     }
     if ret.limbs[ret.len - 1] == 0 {
       return (
-        { ..ret, len: ret.len - 1 },
-        { limbs: FixedArray::make(1, y.to_uint()), sign: Positive, len: 1 },
+        { ..ret, len: ret.len - 1, },
+        { limbs: FixedArray::make(1, y.to_uint()), sign: Positive, len: 1, },
       )
     }
     return (
       ret,
-      { limbs: FixedArray::make(1, y.to_uint()), sign: Positive, len: 1 },
+      { limbs: FixedArray::make(1, y.to_uint()), sign: Positive, len: 1, },
     )
   }
 
@@ -721,8 +721,8 @@ fn BigInt::grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
   for j in 0..<i {
     modulo[j] = a[j].to_uint()
   }
-  let modulo = { limbs: modulo, sign: Positive, len: i }
-  ({ limbs: q, sign: Positive, len }, modulo >> lshift)
+  let modulo = { limbs: modulo, sign: Positive, len: i, }
+  ({ limbs: q, sign: Positive, len, }, modulo >> lshift)
 }
 
 // Bitwise Operations
@@ -779,7 +779,7 @@ pub impl Shl for BigInt with fn shl(self : BigInt, n : Int) -> BigInt {
     } else {
       new_limbs.unsafe_blit(lz, self.limbs, 0, self.len)
     }
-    { limbs: new_limbs, sign: self.sign, len }
+    { limbs: new_limbs, sign: self.sign, len, }
   } else {
     zero
   }
@@ -821,14 +821,14 @@ pub impl Shr for BigInt with fn shr(self : BigInt, n : Int) -> BigInt {
     match self.sign {
       Positive => return zero
       Negative =>
-        return { limbs: FixedArray::make(1, 1), sign: Negative, len: 1 }
+        return { limbs: FixedArray::make(1, 1), sign: Negative, len: 1, }
     }
   }
   let mut new_len = self.len - lz
   if r == 0 {
     let new_limbs = FixedArray::make(new_len, 0U)
     new_limbs.unsafe_blit(0, self.limbs, lz, new_len)
-    let result = { limbs: new_limbs, sign: self.sign, len: new_len }
+    let result = { limbs: new_limbs, sign: self.sign, len: new_len, }
     if self.sign == Negative {
       for i in 0..<lz {
         if self.limbs[i] != 0 {
@@ -861,10 +861,10 @@ pub impl Shr for BigInt with fn shr(self : BigInt, n : Int) -> BigInt {
         }
       }
       if has_remainder {
-        return { limbs: new_limbs, sign: self.sign, len: new_len } - 1
+        return { limbs: new_limbs, sign: self.sign, len: new_len, } - 1
       }
     }
-    { limbs: new_limbs, sign: self.sign, len: new_len }
+    { limbs: new_limbs, sign: self.sign, len: new_len, }
   }
 }
 
@@ -1252,7 +1252,7 @@ fn BigInt::from_string_radix_pow2(
   }
   let b_len = normalize_len(limbs, b_len)
   let sign = if b_len == 1 && limbs[0] == 0 { Positive } else { sign }
-  { limbs, sign, len: b_len }
+  { limbs, sign, len: b_len, }
 }
 
 ///|
@@ -1320,14 +1320,14 @@ fn BigInt::from_string_dec(input : StringView) -> BigInt raise {
     b_len -= 1
   }
   let sign = if b_len == 1 && b[0] == 0 { Positive } else { sign }
-  { limbs: b, sign, len: b_len }
+  { limbs: b, sign, len: b_len, }
 }
 
 ///|
 fn BigInt::copy(self : BigInt) -> BigInt {
   let new_limbs = FixedArray::make(self.len, 0U)
   new_limbs.unsafe_blit(0, self.limbs, 0, self.len)
-  { limbs: new_limbs, sign: self.sign, len: self.len }
+  { limbs: new_limbs, sign: self.sign, len: self.len, }
 }
 
 ///|
@@ -1477,7 +1477,7 @@ pub fn BigInt::from_octets(input : BytesView, signum? : Int = 1) -> BigInt {
       limbs[i] = (limbs[i] << 8) | input[bytes_idx].to_uint()
     }
   }
-  { limbs, sign: Positive, len: normalize_len(limbs, limbs_len) }
+  { limbs, sign: Positive, len: normalize_len(limbs, limbs_len), }
 }
 
 ///|
@@ -1628,7 +1628,7 @@ pub impl BitAnd for BigInt with fn land(self : BigInt, other : BigInt) -> BigInt
   // return the result
   let limbs = FixedArray::make(max_length, 0U)
   limbs.unsafe_blit(0, x_limbs, 0, max_length)
-  { limbs, sign: new_sign, len: normalize_len(limbs, max_length) }
+  { limbs, sign: new_sign, len: normalize_len(limbs, max_length), }
 }
 
 ///|
@@ -1718,7 +1718,7 @@ pub impl BitOr for BigInt with fn lor(self : BigInt, other : BigInt) -> BigInt {
   // return the result
   let limbs = FixedArray::make(max_length, 0U)
   limbs.unsafe_blit(0, x_limbs, 0, max_length)
-  { limbs, sign: new_sign, len: normalize_len(limbs, max_length) }
+  { limbs, sign: new_sign, len: normalize_len(limbs, max_length), }
 }
 
 ///|
@@ -1808,7 +1808,7 @@ pub impl BitXOr for BigInt with fn lxor(self : BigInt, other : BigInt) -> BigInt
   // return the result
   let limbs = FixedArray::make(max_length, 0U)
   limbs.unsafe_blit(0, x_limbs, 0, max_length)
-  { limbs, sign: new_sign, len: normalize_len(limbs, max_length) }
+  { limbs, sign: new_sign, len: normalize_len(limbs, max_length), }
 }
 
 ///|

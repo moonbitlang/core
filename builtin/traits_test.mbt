@@ -29,7 +29,7 @@ priv struct Data {
 
 ///|
 test "hash_data" {
-  let data = Data::{ x: [1, 2, 3], y: [4, 5, 6] }
+  let data = Data::{ x: [1, 2, 3], y: [4, 5, 6], }
   let map = Map([])
   map[data] = 1
   debug_inspect(
@@ -70,21 +70,21 @@ impl Logger for TestLogger with fn write_view(self, value) {
 test "Eq helpers" {
   inspect(Eq::not_equal(1, 2), content="true")
   inspect(Eq::equal(3, 3), content="true")
-  let a : Pair = { left: 1, right: 2 }
-  let b : Pair = { left: 1, right: 3 }
+  let a : Pair = { left: 1, right: 2, }
+  let b : Pair = { left: 1, right: 3, }
   inspect(Eq::not_equal(a, b), content="true")
 }
 
 ///|
 test "Eq::equal on custom impl" {
-  let a = Wrapper::{ value: 1 }
-  let b = Wrapper::{ value: 2 }
+  let a = Wrapper::{ value: 1, }
+  let b = Wrapper::{ value: 2, }
   inspect(Eq::equal(a, b), content="false")
 }
 
 ///|
 test "Logger defaults" {
-  let logger = TestLogger::{ output: "" }
+  let logger = TestLogger::{ output: "", }
   Logger::write_string(logger, "hi")
   Logger::write_char(logger, '!')
   inspect(logger.output, content="hi!")

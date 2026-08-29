@@ -27,6 +27,13 @@ test "json repr" {
 }
 
 ///|
+test "Bytes output writes lowercase hex digits directly" {
+  let bytes = b"\x00\x09\x0a\x0f\x10\x7f\x80\xff"
+  inspect(bytes, content="b\"\\x00\\x09\\x0a\\x0f\\x10\\x7f\\x80\\xff\"")
+  @json.json_inspect(bytes, content="\\x00\\x09\\x0a\\x0f\\x10\\x7f\\x80\\xff")
+}
+
+///|
 test "to_string" {
   @test.assert_eq(HELLO_WORLD.to_unchecked_string(), "Hello, World!")
 }
@@ -414,6 +421,25 @@ test "BytesView::lexical_compare/basic" {
   let long_lower = b"\x01\x02\x09"
   inspect(short_higher[:].lexical_compare(long_lower), content="1")
   inspect(long_lower[:].lexical_compare(short_higher), content="-1")
+}
+
+///|
+test "Bytes and BytesView Compare preserve shortlex ordering" {
+  let equal_left = Bytes::makei(64, i => i.to_byte())
+  let equal_right = Bytes::makei(64, i => i.to_byte())
+  inspect(equal_left.compare(equal_right), content="0")
+
+  let lower = Bytes::makei(64, i => if i == 63 { b'\x01' } else { b'\x00' })
+  let higher = Bytes::makei(64, i => if i == 63 { b'\x02' } else { b'\x00' })
+  inspect(lower.compare(higher), content="-1")
+  inspect(higher.compare(lower), content="1")
+
+  let padded_lower = b"x" + lower + b"y"
+  let padded_higher = b"z" + higher + b"w"
+  inspect(padded_lower[1:65].compare(padded_higher[1:65]), content="-1")
+
+  // Shortlex compares length before contents.
+  inspect(b"\xff".compare(b"\x00\x00"), content="-1")
 }
 
 ///|

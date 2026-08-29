@@ -529,7 +529,7 @@ impl Compare for Keyed with fn compare(self, other) {
 fn keyed_set(keys : Array[Int], payload : Int) -> @sorted_set.SortedSet[Keyed] {
   let s : @sorted_set.SortedSet[Keyed] = SortedSet([])
   for k in keys {
-    s.add({ key: k, payload })
+    s.add({ key: k, payload, })
   }
   s
 }

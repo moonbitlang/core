@@ -396,16 +396,7 @@ pub impl Compare for Bytes with fn compare(self, other) {
   if cmp != 0 {
     return cmp
   }
-  for i in 0..<self_len {
-    let b1 = self.unsafe_get(i)
-    let b2 = other.unsafe_get(i)
-    let cmp = b1.compare(b2)
-    if cmp != 0 {
-      break cmp
-    }
-  } nobreak {
-    0
-  }
+  self.lexical_compare(other)
 }
 
 ///|
@@ -793,6 +784,7 @@ pub fn Bytes::is_empty(self : Bytes) -> Bool {
 ///   debug_inspect(byte, content="None")
 /// }
 /// ```
+#intrinsic("%bytes.get_opt")
 pub fn Bytes::get(self : Bytes, index : Int) -> Byte? {
   guard index >= 0 && index < self.length() else { None }
   Some(self[index])

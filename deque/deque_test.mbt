@@ -385,6 +385,71 @@ test "map" {
 }
 
 ///|
+fn expect_callback_failure(action : () -> Unit raise) -> Unit raise {
+  try action() catch {
+    Failure(message) => inspect(message, content="callback failed")
+    _ => fail("unexpected error")
+  } noraise {
+    _ => fail("expected error")
+  }
+}
+
+///|
+fn fail_on_two(x : Int) -> Unit raise {
+  if x == 2 {
+    raise Failure::Failure("callback failed")
+  }
+}
+
+///|
+test "each with error callback" {
+  let dq = @deque.from_array([1, 2, 3])
+  expect_callback_failure(() => dq.each(fail_on_two))
+}
+
+///|
+test "eachi with error callback" {
+  let dq = @deque.from_array([1, 2, 3])
+  expect_callback_failure(() => dq.eachi((_i, x) => fail_on_two(x)))
+}
+
+///|
+test "rev_each with error callback" {
+  let dq = @deque.from_array([1, 2, 3])
+  expect_callback_failure(() => dq.rev_each(fail_on_two))
+}
+
+///|
+test "rev_eachi with error callback" {
+  let dq = @deque.from_array([1, 2, 3])
+  expect_callback_failure(() => dq.rev_eachi((_i, x) => fail_on_two(x)))
+}
+
+///|
+test "map with error callback" {
+  let dq = @deque.from_array([1, 2, 3])
+  expect_callback_failure(() => {
+    dq.map(x => {
+      fail_on_two(x)
+      x
+    })
+    |> ignore
+  })
+}
+
+///|
+test "mapi with error callback" {
+  let dq = @deque.from_array([1, 2, 3])
+  expect_callback_failure(() => {
+    dq.mapi((_i, x) => {
+      fail_on_two(x)
+      x
+    })
+    |> ignore
+  })
+}
+
+///|
 test "push_and_pop" {
   let dv = @deque.from_array([1, 2, 3, 4, 5])
   @test.assert_eq(dv.pop_back(), Some(5))

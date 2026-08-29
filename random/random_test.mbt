@@ -27,11 +27,11 @@ impl @random.Source for ArithmeticSource with fn next(self) -> UInt64 {
 
 ///|
 test "Rand::double and Rand::float accept interval bounds" {
-  let double_source : ArithmeticSource = { value: 0, step: 0 }
+  let double_source : ArithmeticSource = { value: 0, step: 0, }
   let double_rand = @random.Rand::new(
     generator=double_source as &@random.Source,
   )
-  let float_source : ArithmeticSource = { value: 0, step: 0 }
+  let float_source : ArithmeticSource = { value: 0, step: 0, }
   let float_rand = @random.Rand::new(generator=float_source as &@random.Source)
   inspect(double_rand.double(min=1.0, max=2.0), content="1.9999999999999998")
   inspect(float_rand.float(min=1.0F, max=2.0F), content="1.9999998807907104")
@@ -67,7 +67,7 @@ fn histogram(
 
 ///|
 test "Rand::double samples every gamma section exactly once" {
-  let source : ArithmeticSource = { value: 0, step: 1 }
+  let source : ArithmeticSource = { value: 0, step: 1, }
   let rand = @random.Rand::new(generator=source as &@random.Source)
   let min = 0x3ff0000000000000UL.reinterpret_as_double()
   let max = 0x3ff0000000000004UL.reinterpret_as_double()
@@ -81,7 +81,7 @@ test "Rand::double samples every gamma section exactly once" {
 
 ///|
 test "Rand::double includes the short boundary gap across an exponent" {
-  let source : ArithmeticSource = { value: 0, step: 1 }
+  let source : ArithmeticSource = { value: 0, step: 1, }
   let rand = @random.Rand::new(generator=source as &@random.Source)
   let min = 0x3fffffffffffffffUL.reinterpret_as_double()
   let max = 0x4000000000000001UL.reinterpret_as_double()
@@ -93,7 +93,7 @@ test "Rand::double includes the short boundary gap across an exponent" {
 
 ///|
 test "Rand::double steps from the larger-magnitude lower bound" {
-  let source : ArithmeticSource = { value: 0, step: 1 }
+  let source : ArithmeticSource = { value: 0, step: 1, }
   let rand = @random.Rand::new(generator=source as &@random.Source)
   let min = 0xbff0000000000004UL.reinterpret_as_double()
   let max = 0xbff0000000000000UL.reinterpret_as_double()
@@ -107,7 +107,7 @@ test "Rand::double steps from the larger-magnitude lower bound" {
 
 ///|
 test "Rand::double preserves k above 53 bits without overflow" {
-  let source : ArithmeticSource = { value: 0x8000000000000401UL, step: 0 }
+  let source : ArithmeticSource = { value: 0x8000000000000401UL, step: 0, }
   let rand = @random.Rand::new(generator=source as &@random.Source)
   let min = 0xffefffffffffffffUL.reinterpret_as_double()
   let max = 0x7fefffffffffffffUL.reinterpret_as_double()
@@ -117,7 +117,7 @@ test "Rand::double preserves k above 53 bits without overflow" {
 
 ///|
 test "Rand::double never returns the open upper bound after a negative residual" {
-  let source : ArithmeticSource = { value: 0xfffffffffffffaabUL, step: 0 }
+  let source : ArithmeticSource = { value: 0xfffffffffffffaabUL, step: 0, }
   let rand = @random.Rand::new(generator=source as &@random.Source)
   let min = 0xffefffffffffffffUL.reinterpret_as_double()
   let max = 0x7fe0000000000000UL.reinterpret_as_double()
@@ -127,7 +127,7 @@ test "Rand::double never returns the open upper bound after a negative residual"
 
 ///|
 test "Rand::double supports the underflow-guard boundary" {
-  let source : ArithmeticSource = { value: 0, step: 0 }
+  let source : ArithmeticSource = { value: 0, step: 0, }
   let rand = @random.Rand::new(generator=source as &@random.Source)
   let max = 4.0 * @double.min_positive
   let actual = rand.double(min=0.0, max~).reinterpret_as_uint64()
@@ -136,7 +136,7 @@ test "Rand::double supports the underflow-guard boundary" {
 
 ///|
 test "Rand::float samples every gamma section exactly once" {
-  let source : ArithmeticSource = { value: 0, step: 1 }
+  let source : ArithmeticSource = { value: 0, step: 1, }
   let rand = @random.Rand::new(generator=source as &@random.Source)
   let min = Float::reinterpret_from_uint(0x3f800000U)
   let max = Float::reinterpret_from_uint(0x3f800004U)
@@ -148,7 +148,7 @@ test "Rand::float samples every gamma section exactly once" {
 
 ///|
 test "Rand::float includes the short boundary gap across an exponent" {
-  let source : ArithmeticSource = { value: 0, step: 1 }
+  let source : ArithmeticSource = { value: 0, step: 1, }
   let rand = @random.Rand::new(generator=source as &@random.Source)
   let min = Float::reinterpret_from_uint(0x3fffffffU)
   let max = Float::reinterpret_from_uint(0x40000001U)
@@ -160,7 +160,7 @@ test "Rand::float includes the short boundary gap across an exponent" {
 
 ///|
 test "Rand::float steps from the larger-magnitude lower bound" {
-  let source : ArithmeticSource = { value: 0, step: 1 }
+  let source : ArithmeticSource = { value: 0, step: 1, }
   let rand = @random.Rand::new(generator=source as &@random.Source)
   let min = Float::reinterpret_from_uint(0xbf800004U)
   let max = Float::reinterpret_from_uint(0xbf800000U)
@@ -172,7 +172,7 @@ test "Rand::float steps from the larger-magnitude lower bound" {
 
 ///|
 test "Rand::float preserves k above 24 bits without overflow" {
-  let source : ArithmeticSource = { value: 0x8000008000008001UL, step: 0 }
+  let source : ArithmeticSource = { value: 0x8000008000008001UL, step: 0, }
   let rand = @random.Rand::new(generator=source as &@random.Source)
   let min = Float::reinterpret_from_uint(0xff7fffffU)
   let max = Float::reinterpret_from_uint(0x7f7fffffU)
@@ -182,7 +182,7 @@ test "Rand::float preserves k above 24 bits without overflow" {
 
 ///|
 test "Rand::float supports the underflow-guard boundary" {
-  let source : ArithmeticSource = { value: 0, step: 0 }
+  let source : ArithmeticSource = { value: 0, step: 0, }
   let rand = @random.Rand::new(generator=source as &@random.Source)
   let max = 4.0F * @float.min_positive
   let actual = rand.float(min=0.0F, max~).reinterpret_as_uint()
@@ -194,7 +194,7 @@ test "gamma-section avoids naive Double bias and the open upper bound" {
   let min_bits = 0x3ff0000000000000UL
   let min = min_bits.reinterpret_as_double()
   let max = 0x3ff0000000000004UL.reinterpret_as_double()
-  let naive_source : ArithmeticSource = { value: 0, step: 1UL << 49 }
+  let naive_source : ArithmeticSource = { value: 0, step: 1UL << 49, }
   let naive_rand = @random.Rand::new(generator=naive_source as &@random.Source)
   let naive = histogram(
     () => (min + (max - min) * naive_rand.double()).reinterpret_as_uint64(),
@@ -202,7 +202,7 @@ test "gamma-section avoids naive Double bias and the open upper bound" {
     5,
     16,
   )
-  let gamma_source : ArithmeticSource = { value: 0, step: 1 }
+  let gamma_source : ArithmeticSource = { value: 0, step: 1, }
   let gamma_rand = @random.Rand::new(generator=gamma_source as &@random.Source)
   let gamma = histogram(
     () => gamma_rand.double(min~, max~).reinterpret_as_uint64(),
@@ -221,7 +221,7 @@ test "gamma-section avoids naive Float bias and the open upper bound" {
   let min_bits = 0x3f800000U
   let min = Float::reinterpret_from_uint(min_bits)
   let max = Float::reinterpret_from_uint(0x3f800004U)
-  let naive_source : ArithmeticSource = { value: 0, step: 1UL << 20 }
+  let naive_source : ArithmeticSource = { value: 0, step: 1UL << 20, }
   let naive_rand = @random.Rand::new(generator=naive_source as &@random.Source)
   let naive = histogram(
     () => {
@@ -231,7 +231,7 @@ test "gamma-section avoids naive Float bias and the open upper bound" {
     5,
     16,
   )
-  let gamma_source : ArithmeticSource = { value: 0, step: 1 }
+  let gamma_source : ArithmeticSource = { value: 0, step: 1, }
   let gamma_rand = @random.Rand::new(generator=gamma_source as &@random.Source)
   let gamma = histogram(
     () => gamma_rand.float(min~, max~).reinterpret_as_uint().to_uint64(),
@@ -322,7 +322,7 @@ test "prng" {
 
 ///|
 test "Rand::new with generator" {
-  let gen : ArithmeticSource = { value: 1, step: 1 }
+  let gen : ArithmeticSource = { value: 1, step: 1, }
   let rand = @random.Rand::new(generator=gen as &@random.Source)
   inspect(rand.int(limit=10) < 10, content="true")
 }
@@ -354,7 +354,7 @@ test "Rand::uint64 applies Lemire rejection for limit 3" {
 
 ///|
 test "Rand::uint64 applies Lemire rejection at the maximum limit" {
-  let source : ScriptedSource = { values: [0UL, 2UL], index: 0 }
+  let source : ScriptedSource = { values: [0UL, 2UL], index: 0, }
   let rand = @random.Rand::new(generator=source as &@random.Source)
   let result = rand.uint64(limit=0xffffffffffffffffUL)
   @debug.debug_inspect((result, source.index), content="(1, 2)")

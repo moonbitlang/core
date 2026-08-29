@@ -235,7 +235,7 @@ fn[S : LevInput] lev_within(s : S, max_distance : Int) -> Int? {
 /// ```
 pub fn[T : Eq] edit_distance(a : ArrayView[T], b : ArrayView[T]) -> Int {
   let (a, b) = if a.length() >= b.length() { (a, b) } else { (b, a) }
-  let s : ViewPair[T] = { a, b }
+  let s : ViewPair[T] = { a, b, }
   lev_distance(s)
 }
 
@@ -278,7 +278,7 @@ pub fn[T : Eq] edit_distance_within(
     return None
   }
   let (a, b) = if a.length() >= b.length() { (a, b) } else { (b, a) }
-  let s : ViewPair[T] = { a, b }
+  let s : ViewPair[T] = { a, b, }
   lev_within(s, max_distance)
 }
 
@@ -309,7 +309,7 @@ pub fn[T : Eq] edit_distance_within(
 /// ```
 pub fn edit_distance_str(a : StringView, b : StringView) -> Int {
   let (a, b) = if a.length() >= b.length() { (a, b) } else { (b, a) }
-  let s : StrPair = { a, b }
+  let s : StrPair = { a, b, }
   lev_distance(s)
 }
 
@@ -341,6 +341,6 @@ pub fn edit_distance_str_within(
     return None
   }
   let (a, b) = if a.length() >= b.length() { (a, b) } else { (b, a) }
-  let s : StrPair = { a, b }
+  let s : StrPair = { a, b, }
   lev_within(s, max_distance)
 }

@@ -121,12 +121,12 @@ pub impl Arbitrary for Char with fn arbitrary(_, rs) {
 ///|
 pub impl Arbitrary for String with fn arbitrary(size, rs) {
   let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
-  for i in 0..<len; s = "" {
+  let buf = StringBuilder(size_hint=len * 2)
+  for i in 0..<len {
     let c : Char = Arbitrary::arbitrary(i, rs)
-    continue s + c.to_string()
-  } nobreak {
-    s
+    buf.write_char(c)
   }
+  buf.to_string()
 }
 
 ///|

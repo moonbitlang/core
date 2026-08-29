@@ -647,7 +647,29 @@ pub fn Int::shr(self : Int, other : Int) -> Int = "%i32_shr"
 pub fn Int::ctz(self : Int) -> Int = "%i32_ctz"
 
 ///|
-/// Count leading zero bits in a 32-bit integer.
+/// Counts the number of consecutive zero bits at the most significant end of
+/// the integer's binary representation.
+///
+/// Parameters:
+///
+/// * `self` : The integer value whose leading zeros are to be counted.
+///
+/// Returns the number of leading zero bits (0 to 32). For example, returns 0 if
+/// the value is negative (the sign bit is 1), returns 32 if the value is 0
+/// (all bits are zeros).
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let x = 0
+///   inspect(x.clz(), content="32") // All bits are zero
+///   let y = -1
+///   inspect(y.clz(), content="0") // The sign bit is set
+///   let z = 16
+///   inspect(z.clz(), content="27") // Binary: ...00010000
+/// }
+/// ```
 pub fn Int::clz(self : Int) -> Int = "%i32_clz"
 
 ///|
@@ -753,7 +775,26 @@ pub impl Compare for Int with fn op_gt(x, y) = "%i32.gt"
 pub impl Compare for Int with fn op_ge(x, y) = "%i32.ge"
 
 ///|
-/// Return `true` if integer is strictly positive.
+/// Tests whether an integer is strictly positive.
+///
+/// Parameters:
+///
+/// * `self` : The integer to test.
+///
+/// Returns `true` if the integer is strictly positive, `false` otherwise.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let neg = -42
+///   let zero = 0
+///   let pos = 42
+///   inspect(neg.is_pos(), content="false")
+///   inspect(zero.is_pos(), content="false")
+///   inspect(pos.is_pos(), content="true")
+/// }
+/// ```
 pub fn Int::is_pos(self : Int) -> Bool = "%i32_is_pos"
 
 ///|
@@ -780,11 +821,51 @@ pub fn Int::is_pos(self : Int) -> Bool = "%i32_is_pos"
 pub fn Int::is_neg(self : Int) -> Bool = "%i32_is_neg"
 
 ///|
-/// Return `true` if integer is non-positive (`<= 0`).
+/// Tests whether an integer is non-positive (less than or equal to zero).
+///
+/// Parameters:
+///
+/// * `self` : The integer to test.
+///
+/// Returns `true` if the integer is less than or equal to zero, `false`
+/// otherwise.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let neg = -42
+///   let zero = 0
+///   let pos = 42
+///   inspect(neg.is_non_pos(), content="true")
+///   inspect(zero.is_non_pos(), content="true")
+///   inspect(pos.is_non_pos(), content="false")
+/// }
+/// ```
 pub fn Int::is_non_pos(self : Int) -> Bool = "%i32_is_non_pos"
 
 ///|
-/// Return `true` if integer is non-negative (`>= 0`).
+/// Tests whether an integer is non-negative (greater than or equal to zero).
+///
+/// Parameters:
+///
+/// * `self` : The integer to test.
+///
+/// Returns `true` if the integer is greater than or equal to zero, `false`
+/// otherwise.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let neg = -42
+///   let zero = 0
+///   let pos = 42
+///   inspect(neg.is_non_neg(), content="false")
+///   inspect(zero.is_non_neg(), content="true")
+///   inspect(pos.is_non_neg(), content="true")
+/// }
+/// ```
 pub fn Int::is_non_neg(self : Int) -> Bool = "%i32_is_non_neg"
 
 ///|

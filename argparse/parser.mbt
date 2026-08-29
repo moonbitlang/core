@@ -54,7 +54,7 @@ fn help_context_command(
   command_path : String,
 ) -> Command {
   let help_name = if command_path == "" { cmd.name } else { command_path }
-  { ..cmd, args: inherited_globals + cmd.args, name: help_name }
+  { ..cmd, args: inherited_globals + cmd.args, name: help_name, }
 }
 
 ///|
