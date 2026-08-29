@@ -481,7 +481,7 @@ test "stringify with indent" {
 ///|
 test "nested json" {
   let u : Int = 3
-  let h = NestedJsonValue::{ w: 3 }
+  let h = NestedJsonValue::{ w: 3, }
   let v : Json = {
     "nestedmap": {
       "key1": u, // auto to json

@@ -522,7 +522,7 @@ fn d2d(ieeeMantissa : UInt64, ieeeExponent : UInt) -> FloatingDecimal64 {
     output = vr + (vr == vm || roundUp).to_uint64()
   }
   let exp : Int = e10 + removed
-  let fd : FloatingDecimal64 = { mantissa: output, exponent: exp }
+  let fd : FloatingDecimal64 = { mantissa: output, exponent: exp, }
   fd
 }
 
@@ -651,7 +651,7 @@ fn d2d_small_int(
   if fraction != 0UL {
     return None
   }
-  Some({ mantissa: m2 >> -e2, exponent: 0 })
+  Some({ mantissa: m2 >> -e2, exponent: 0, })
 }
 
 ///|
@@ -683,7 +683,7 @@ fn ryu_to_string(val : Double) -> String {
         if r != 0 {
           break x
         }
-        continue { mantissa: q, exponent: x.exponent + 1 }
+        continue { mantissa: q, exponent: x.exponent + 1, }
       }
     None => d2d(ieeeMantissa, ieeeExponent.reinterpret_as_uint())
   }

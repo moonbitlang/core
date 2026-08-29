@@ -30,13 +30,13 @@ let float_ulp : Float = 1.0F / Float::from_int64(1L << 24)
 ///|
 /// Create a new RandomState from an optional seed.
 pub fn new(seed? : UInt64 = 37) -> RandomState {
-  { seed: mix64(seed), gamma: mix_gamma(seed + golden_gamma) }
+  { seed: mix64(seed), gamma: mix_gamma(seed + golden_gamma), }
 }
 
 ///|
 /// Clone a RandomState.
 pub fn RandomState::clone(self : RandomState) -> RandomState {
-  { ..self }
+  { ..self, }
 }
 
 ///|
@@ -47,7 +47,7 @@ pub fn RandomState::next(self : RandomState) -> Unit {
 
 ///|
 fn RandomState::next_uint64_raw(self : RandomState) -> UInt64 {
-  let { seed, gamma } = self
+  let { seed, gamma, } = self
   self.seed = seed + gamma
   mix64(self.seed)
 }
@@ -149,7 +149,7 @@ pub fn RandomState::next_double(self : RandomState) -> Double {
 pub fn RandomState::split(self : RandomState) -> RandomState {
   let seed1 = self.seed + self.gamma
   self.seed = seed1 + self.gamma
-  { seed: mix64(seed1), gamma: mix_gamma(self.seed) }
+  { seed: mix64(seed1), gamma: mix_gamma(self.seed), }
 }
 
 ///|

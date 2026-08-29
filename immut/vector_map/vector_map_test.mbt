@@ -517,9 +517,9 @@ impl Hash for TaggedKey with fn hash_combine(self, hasher) {
 
 ///|
 test "a replaced entry keeps the key it was first inserted with" {
-  let first = { name: "k", tag: 1 }
-  let second = { name: "k", tag: 2 }
-  let third = { name: "k", tag: 3 }
+  let first = { name: "k", tag: 1, }
+  let second = { name: "k", tag: 2, }
+  let third = { name: "k", tag: 3, }
   // Bulk construction: last value wins, but the key stays the first one, so
   // that the retained key and the retained position come from one insertion.
   let built = @vector_map.VectorMap([(first, "x"), (second, "y")])

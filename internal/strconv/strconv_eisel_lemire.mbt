@@ -29,7 +29,7 @@ fn eisel_umul128(a : UInt64, b : UInt64) -> EiselProduct {
   let y = a_hi * b_lo + (x >> 32)
   let z = a_lo * b_hi + (y & 0xffffffffUL)
   let hi = a_hi * b_hi + (y >> 32) + (z >> 32)
-  { lo: a * b, hi }
+  { lo: a * b, hi, }
 }
 
 ///|

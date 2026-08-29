@@ -86,7 +86,7 @@ struct Lazy[A] {
 /// ```
 #owned(thunk)
 pub fn[A] Lazy::Lazy(thunk : () -> A) -> Lazy[A] {
-  { state: Unforced(thunk) }
+  { state: Unforced(thunk), }
 }
 
 ///|
@@ -101,7 +101,7 @@ pub fn[A] Lazy::Lazy(thunk : () -> A) -> Lazy[A] {
 /// ```
 #owned(value)
 pub fn[A] Lazy::ready(value : A) -> Lazy[A] {
-  { state: Forced(value) }
+  { state: Forced(value), }
 }
 
 ///|

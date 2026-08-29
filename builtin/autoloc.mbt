@@ -72,7 +72,7 @@ fn SourceLocRepr::parse(repr : String) -> SourceLocRepr {
     (re"[[:digit:]]+" as end_column) +
     re"@" +
     (re"[^:]*$" as _module) =>
-      { filename, start_line, start_column, end_line, end_column }
+      { filename, start_line, start_column, end_line, end_column, }
     _ => panic()
   }
 }

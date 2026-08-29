@@ -48,13 +48,13 @@ fn[T : Compare] timsort(arr : MutArrayView[T]) -> Unit {
     // Insert some more elements into the run if it's too short. Insertion sort is faster than
     // merge sort on short sequences, so this significantly improves performance.
     let end = provide_sorted_batch(arr, start, end)
-    runs.push({ start, len: end - start })
+    runs.push({ start, len: end - start, })
     while true {
       guard collapse(runs, len) is Some(r) else { break }
       let left = runs[r]
       let right = runs[r + 1]
       merge(arr.slice(left.start, right.start + right.len), left.len)
-      runs[r + 1] = { start: left.start, len: left.len + right.len }
+      runs[r + 1] = { start: left.start, len: left.len + right.len, }
       runs.remove(r) |> ignore
     }
     continue end, end

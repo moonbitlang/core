@@ -126,7 +126,7 @@ fn check_against_model(
 /// key space (lots of collisions and removes of absent keys), invariants
 /// checked after every single operation.
 fn random_ops_scenario(seed : UInt64, ops : Int, key_space : Int) -> Unit raise {
-  let rng = Rand::{ state: seed }
+  let rng = Rand::{ state: seed, }
   let map : SortedMap[Int, Int] = new_sorted_map()
   let model : Map[Int, Int] = Map([])
   for i in 0..<ops {
@@ -222,7 +222,7 @@ test "ascending inserts then ascending removals keep invariants" {
 ///|
 test "repeated root removal keeps invariants" {
   let map : SortedMap[Int, Int] = new_sorted_map()
-  let rng = Rand::{ state: 42UL }
+  let rng = Rand::{ state: 42UL, }
   for _ in 0..<300 {
     map.set(rng.below(100000), 0)
   }
@@ -236,7 +236,7 @@ test "repeated root removal keeps invariants" {
 
 ///|
 test "from_array and clear keep invariants" {
-  let rng = Rand::{ state: 7UL }
+  let rng = Rand::{ state: 7UL, }
   for round in 0..<20 {
     let n = round * 13 + 1
     let arr = Array::makei(n, _ => (rng.below(97), rng.below(1000)))
@@ -257,7 +257,7 @@ test "from_array and clear keep invariants" {
 
 ///|
 test "copy, merge and merge_in_place keep invariants" {
-  let rng = Rand::{ state: 99UL }
+  let rng = Rand::{ state: 99UL, }
   let a : SortedMap[Int, Int] = new_sorted_map()
   let b : SortedMap[Int, Int] = new_sorted_map()
   for _ in 0..<200 {
@@ -283,7 +283,7 @@ test "copy, merge and merge_in_place keep invariants" {
 
 ///|
 test "range agrees with model and leaves tree intact" {
-  let rng = Rand::{ state: 1234UL }
+  let rng = Rand::{ state: 1234UL, }
   let map : SortedMap[Int, Int] = new_sorted_map()
   for _ in 0..<300 {
     map.set(rng.below(1000), 1)

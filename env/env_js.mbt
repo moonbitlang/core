@@ -13,7 +13,12 @@
 // limitations under the License.
 
 ///|
-extern "js" fn get_cli_args_internal() -> Array[String] =
+fn get_cli_args_internal() -> Array[String] {
+  Array::from_fixed_array(get_cli_args_ffi())
+}
+
+///|
+extern "js" fn get_cli_args_ffi() -> FixedArray[String] =
   #| function() {
   #|  if (typeof process !== "undefined" && typeof process.argv !== "undefined") {
   #|    return process.argv;
@@ -78,7 +83,7 @@ fn get_env_vars_internal() -> Map[String, String] {
 }
 
 ///|
-extern "js" fn get_env_vars_array_internal() -> Array[String] =
+extern "js" fn get_env_vars_array_internal() -> FixedArray[String] =
   #| function() {
   #|   if (typeof process === "undefined" || typeof process.env === "undefined") {
   #|     return [];

@@ -40,7 +40,7 @@ let bulk_build_threshold = 64
 /// Create a new instance.
 #as_free_fn
 pub fn[A] HashSet::new() -> HashSet[A] {
-  { data: None }
+  { data: None, }
 }
 
 ///|
@@ -274,7 +274,7 @@ fn[A : Eq + Hash] hash_set_from_array(arr : ArrayView[A]) -> HashSet[A] {
   }
   let entries = Array::makei(arr.length(), i => {
     let value = arr[i]
-    { value, path: @path.of(value) }
+    { value, path: @path.of(value), }
   })
   {
     data: Some(build_hashset_node_range(entries, 0, entries.length(), 0, true)),
@@ -496,9 +496,9 @@ pub fn[K : Eq] HashSet::difference(
   }
 
   match (self.data, other.data) {
-    (None, _) => { data: None }
+    (None, _) => { data: None, }
     (_, None) => self
-    (Some(a), Some(b)) => { data: go(a, b) }
+    (Some(a), Some(b)) => { data: go(a, b), }
   }
 }
 
@@ -593,7 +593,7 @@ pub fn[A : Eq + Hash] HashSet::from_iter(iter : Iter[A]) -> HashSet[A] {
     Some(len) => Array::new(capacity=len)
     None => []
   }
-  iter.each(value => entries.push({ value, path: @path.of(value) }))
+  iter.each(value => entries.push({ value, path: @path.of(value), }))
   if entries.is_empty() {
     new()
   } else {

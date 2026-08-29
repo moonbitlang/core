@@ -222,7 +222,7 @@ fn Parser::quantifier_opt(
           raise ctx.error_at(rest0, HINT_UNSUPPORTED_POSSESSIVE_QUANTIFIER)
         _ => (rest, Greedy)
       }
-      (rest, Some({ min, max, mode }))
+      (rest, Some({ min, max, mode, }))
     }
     None => (rest, None)
   }
