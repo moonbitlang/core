@@ -1,3 +1,7 @@
 import {
   "moonbitlang/core/builtin",
 }
+
+import {
+  "moonbitlang/core/bench",
+} for "test"

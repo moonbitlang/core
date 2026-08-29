@@ -106,7 +106,7 @@ fn bulk_set_agrees(actual : Array[BElem], expect : Array[BElem]) -> Bool {
 fn bulk_set_values(raw : ArrayView[Int]) -> Array[BElem] {
   Array::makei(raw.length(), i => {
     let id = raw[i] % 37
-    { id: if id < 0 { id + 37 } else { id }, tag: i }
+    { id: if id < 0 { id + 37 } else { id }, tag: i, }
   })
 }
 
@@ -121,7 +121,7 @@ fn bulk_set_shapes(raw : ArrayView[Int]) -> Array[(String, Array[BElem])] {
   ascending_with_duplicates.sort_by((a, b) => a.id.compare(b.id))
   let descending_with_duplicates = ascending_with_duplicates.rev()
   let n = base.length()
-  let strict_ascending = Array::makei(80, i => { id: 100 + i, tag: n + i })
+  let strict_ascending = Array::makei(80, i => { id: 100 + i, tag: n + i, })
   let strict_descending = strict_ascending.rev()
   let long_ascending_duplicates = Array::makei(80, i => {
     id: 100 + i / 2,
@@ -134,7 +134,10 @@ fn bulk_set_shapes(raw : ArrayView[Int]) -> Array[(String, Array[BElem])] {
   })
   // Below the threshold, so this one takes the `add` fold rather than the
   // bulk sort.
-  let small_unordered = Array::makei(9, i => { id: (i * 5 + 3) % 7, tag: n + i })
+  let small_unordered = Array::makei(9, i => {
+    id: (i * 5 + 3) % 7,
+    tag: n + i,
+  })
   [
     ("as generated", base),
     ("ascending with duplicates", ascending_with_duplicates),

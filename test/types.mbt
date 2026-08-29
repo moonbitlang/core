@@ -24,5 +24,5 @@ struct Test {
 #as_free_fn
 #as_free_fn(new, deprecated="Use `Test()` instead")
 pub fn Test::Test(name : String) -> Test {
-  { name, buffer: StringBuilder() }
+  { name, buffer: StringBuilder(), }
 }

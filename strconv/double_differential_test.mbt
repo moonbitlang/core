@@ -365,7 +365,7 @@ test "parse: long digit strings (slow path)" {
 
 ///|
 test "parse: random 16/17-digit significands with extreme exponents" {
-  let rng = { s: 0xDEADBEEFCAFEF00DUL }
+  let rng = { s: 0xDEADBEEFCAFEF00DUL, }
   let b = StringBuilder()
   for _ in 0..<40 {
     let m = 4503599627370496UL + rng.next() % 4503599627370496UL
@@ -470,7 +470,7 @@ test "parse: exact halfway fractions in [2^52, 2^53)" {
   // Doubles in [2^52, 2^53) are exactly the integers, so `<int>.5` is a
   // perfect tie (round-half-to-even), and the 20-digit neighbours force the
   // slow path to decide the tie from truncated digits.
-  let rng = { s: 0x0123456789ABCDEFUL }
+  let rng = { s: 0x0123456789ABCDEFUL, }
   let b = StringBuilder()
   for _ in 0..<20 {
     let m = 4503599627370496UL + rng.next() % 4503599627370496UL
@@ -663,7 +663,7 @@ test "print: structured bit patterns" {
 
 ///|
 test "print: random doubles, snapshot and parse-print roundtrip" {
-  let rng = { s: 0xF00DF00DF00DF00DUL }
+  let rng = { s: 0xF00DF00DF00DF00DUL, }
   let b = StringBuilder()
   for i in 0..<100 {
     let mut bits = rng.next()
@@ -797,7 +797,7 @@ test "print: random doubles, snapshot and parse-print roundtrip" {
 /// any of the 20000 cases fails the snapshot.
 #warnings("-deprecated")
 test "digest: 20000 random parse/print cases" {
-  let rng = { s: 0xABCDEF0123456789UL }
+  let rng = { s: 0xABCDEF0123456789UL, }
   let fnv_prime = 0x100000001B3UL
   let mut parse_digest = 0xCBF29CE484222325UL
   let mut print_digest = 0xCBF29CE484222325UL
@@ -862,7 +862,7 @@ test "property: value-preserving syntactic transforms" {
   // Leading zeros, a leading '+', trailing fraction zeros, shifting the
   // decimal point while adjusting the exponent -- none of these may change
   // the parsed value (or the error).
-  let rng = { s: 0x5EEDBA5EBA115EEDUL }
+  let rng = { s: 0x5EEDBA5EBA115EEDUL, }
   for _ in 0..<120 {
     let m = rng.next() % 10000000000000000000UL
     let e = (rng.next() % 641UL).to_int() - 320
@@ -887,7 +887,7 @@ test "property: value-preserving syntactic transforms" {
 ///|
 #warnings("-deprecated")
 test "property: json number parsing agrees with strconv" {
-  let rng = { s: 0x1234ABCD5678EF90UL }
+  let rng = { s: 0x1234ABCD5678EF90UL, }
   let inputs : Array[String] = [
     "9007199254740993", "0.1", "1e308", "1e-324", "-2.2250738585072011e-308", "123456789012345678901234567890",
     "-0.000000000000000000000000000001",

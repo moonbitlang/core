@@ -33,6 +33,7 @@
 ///   debug_inspect(arr.get(3), content="None")
 /// }
 /// ```
+#intrinsic("%fixedarray.get_opt")
 pub fn[T] FixedArray::get(self : FixedArray[T], idx : Int) -> T? {
   let len = self.length()
   guard idx >= 0 && idx < len else { None }

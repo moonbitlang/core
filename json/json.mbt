@@ -175,7 +175,7 @@ pub fn Replacer::Replacer(f : (String, Json) -> Json?) -> Replacer {
 /// }
 /// ```
 pub fn Replacer::keep(array : ArrayView[StringView]) -> Replacer {
-  { f: (idx, value) => if array.contains(idx) { Some(value) } else { None } }
+  { f: (idx, value) => if array.contains(idx) { Some(value) } else { None }, }
 }
 
 ///|
@@ -197,7 +197,7 @@ pub fn Replacer::keep(array : ArrayView[StringView]) -> Replacer {
 /// }
 /// ```
 pub fn Replacer::exclude(array : ArrayView[StringView]) -> Replacer {
-  { f: (idx, value) => if array.contains(idx) { None } else { Some(value) } }
+  { f: (idx, value) => if array.contains(idx) { None } else { Some(value) }, }
 }
 
 ///|

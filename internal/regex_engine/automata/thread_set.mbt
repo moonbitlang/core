@@ -161,7 +161,7 @@ fn ThreadSet::flat_map(
 ///|
 fn ThreadSet::find_first_match(self : ThreadSet) -> MarkSlotMap? {
   match self {
-    Empty | Node(i={ no_match: true }, ..) => None
+    Empty | Node(i={ no_match: true, }, ..) => None
     Node(l=Empty, t=End(marks), ..) => Some(marks)
     Node(l~, t~, r~, ..) =>
       match l.find_first_match() {
@@ -179,7 +179,7 @@ fn ThreadSet::find_first_match(self : ThreadSet) -> MarkSlotMap? {
 fn ThreadSet::remove_matches(self : ThreadSet) -> ThreadSet {
   match self {
     Empty => Empty
-    Node(i={ no_match: true }, ..) => self
+    Node(i={ no_match: true, }, ..) => self
     Node(l~, t~, r~, p~, ..) =>
       match t {
         End(_) => l.remove_matches() + r.remove_matches()
@@ -193,12 +193,12 @@ fn ThreadSet::remove_matches(self : ThreadSet) -> ThreadSet {
 fn ThreadSet::split_at_first_match(self : ThreadSet) -> (ThreadSet, ThreadSet) {
   match self {
     Empty => (Empty, Empty)
-    Node(i={ no_match: true }, ..) => (self, Empty)
-    Node(l=Empty | Node(i={ no_match: true }, ..) as l, t=End(_), r~, ..) =>
+    Node(i={ no_match: true, }, ..) => (self, Empty)
+    Node(l=Empty | Node(i={ no_match: true, }, ..) as l, t=End(_), r~, ..) =>
       (l, r)
     Node(
       l=Empty
-      | Node(i={ no_match: true }, ..) as l,
+      | Node(i={ no_match: true, }, ..) as l,
       t=Exp(_)
       | Seq(_) as t,
       r~,
@@ -208,7 +208,7 @@ fn ThreadSet::split_at_first_match(self : ThreadSet) -> (ThreadSet, ThreadSet) {
       let (r1, r2) = r.split_at_first_match()
       (ThreadSet::make_node(l, t, r1, p~), r2)
     }
-    Node(l=Node(i={ no_match: false }, ..) as l, t~, r~, p~, ..) => {
+    Node(l=Node(i={ no_match: false, }, ..) as l, t~, r~, p~, ..) => {
       let (l1, l2) = l.split_at_first_match()
       (l1, ThreadSet::make_node(l2, t, r, p~))
     }

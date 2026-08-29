@@ -147,9 +147,9 @@ test "is_disjoint detects overlap in else branch" {
 ///|
 test "remove stops on shorter probe" {
   let set : @set.Set[Key] = Set([])
-  set.add({ id: 1, hash_value: 0 })
-  set.add({ id: 2, hash_value: 1 })
-  set.remove({ id: 3, hash_value: 0 })
+  set.add({ id: 1, hash_value: 0, })
+  set.add({ id: 2, hash_value: 1, })
+  set.remove({ id: 3, hash_value: 0, })
   inspect(set.length(), content="2")
 }
 
@@ -505,15 +505,15 @@ test "trigger grow" {
 test "grow rehashes collision cluster in insertion order" {
   let set : @set.Set[Key] = Set([], capacity=2)
   for i in 0..<12 {
-    set.add({ id: i, hash_value: i % 4 })
+    set.add({ id: i, hash_value: i % 4, })
   }
   inspect(set.length(), content="12")
   for i in 0..<12 {
-    assert_true(set.contains({ id: i, hash_value: i % 4 }))
+    assert_true(set.contains({ id: i, hash_value: i % 4, }))
   }
-  set.remove({ id: 5, hash_value: 1 })
-  assert_false(set.contains({ id: 5, hash_value: 1 }))
-  set.add({ id: 12, hash_value: 0 })
+  set.remove({ id: 5, hash_value: 1, })
+  assert_false(set.contains({ id: 5, hash_value: 1, }))
+  set.add({ id: 12, hash_value: 0, })
   let mut ids = ""
   set.each(key => ids += "\{key.id},")
   inspect(ids, content="0,1,2,3,4,6,7,8,9,10,11,12,")

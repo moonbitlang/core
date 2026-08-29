@@ -175,12 +175,12 @@ struct TestStruct2 {
 ///|
 test "fixedarray_binary_search_by_test" {
   let arr : FixedArray[TestStruct2] = [
-    { num2: 10 },
-    { num2: 22 },
-    { num2: 35 },
-    { num2: 48 },
+    { num2: 10, },
+    { num2: 22, },
+    { num2: 35, },
+    { num2: 48, },
   ]
-  let mut target : TestStruct2 = { num2: 22 }
+  let mut target : TestStruct2 = { num2: 22, }
   fn cmp(val : TestStruct2) {
     if val.num2 < target.num2 {
       -1
@@ -192,11 +192,11 @@ test "fixedarray_binary_search_by_test" {
   }
 
   @test.assert_eq(arr.binary_search_by(cmp), Ok(1))
-  target = { num2: 48 }
+  target = { num2: 48, }
   @test.assert_eq(arr.binary_search_by(cmp), Ok(3))
-  target = { num2: -8 }
+  target = { num2: -8, }
   @test.assert_eq(arr.binary_search_by(cmp), Err(0))
-  target = { num2: 49 }
+  target = { num2: 49, }
   @test.assert_eq(arr.binary_search_by(cmp), Err(4))
 }
 

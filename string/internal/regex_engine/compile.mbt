@@ -20,7 +20,7 @@ pub fn compile(profile~ : Profile, ast : Pattern) -> Regex {
   } else {
     seq([
       shortest(
-        quantifier(char(profile.valid), { min: 0, max: None, mode: Greedy }),
+        quantifier(char(profile.valid), { min: 0, max: None, mode: Greedy, }),
       ),
       capture(ast),
     ])

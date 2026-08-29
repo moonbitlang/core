@@ -42,7 +42,7 @@ pub impl[X : Show] Show for Ref[X] with fn output(self, logger) {
 #alias(new, deprecated)
 #owned(x)
 pub fn[T] Ref::Ref(x : T) -> Ref[T] {
-  { val: x }
+  { val: x, }
 }
 
 ///|
@@ -59,7 +59,7 @@ test "to_string" {
 /// Same as the `Ref` constructor.
 #owned(x)
 pub fn[T] new(x : T) -> Ref[T] {
-  { val: x }
+  { val: x, }
 }
 
 ///|
@@ -73,7 +73,7 @@ pub fn[T] new(x : T) -> Ref[T] {
 /// }
 /// ```
 pub fn[T, R] Ref::map(self : Ref[T], f : (T) -> R raise?) -> Ref[R] raise? {
-  { val: f(self.val) }
+  { val: f(self.val), }
 }
 
 ///|

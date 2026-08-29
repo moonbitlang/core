@@ -231,7 +231,7 @@ fn ParseContext::lex_integer_end(
   for i = number_start, acc = 0L {
     if i >= end {
       let value = if negative { -acc } else { acc }
-      break { value: value.to_double(), repr: None }
+      break { value: value.to_double(), repr: None, }
     }
     let digit = (ctx.input.unsafe_get(i).to_int() - '0').to_int64()
     if acc > (SAFE_INTEGER_LIMIT - digit) / 10L {
@@ -243,13 +243,13 @@ fn ParseContext::lex_integer_end(
       let s = ctx.input.view(start_offset=start, end_offset=end)
       try {
         let value = @internal/strconv.parse_double(s)
-        return { value, repr: Some(s) }
+        return { value, repr: Some(s), }
       } catch {
         _ =>
           return if negative {
-            { value: @double.neg_infinity, repr: Some(s) }
+            { value: @double.neg_infinity, repr: Some(s), }
           } else {
-            { value: @double.infinity, repr: Some(s) }
+            { value: @double.infinity, repr: Some(s), }
           }
       }
     }
@@ -408,13 +408,13 @@ fn ParseContext::lex_number_end(
       scan.mantissa <= SAFE_INTEGER_LIMIT.reinterpret_as_uint64() {
       let v = scan.mantissa.reinterpret_as_int64().to_double()
       let value = if scan.negative { -v } else { v }
-      return { value, repr: None }
+      return { value, repr: None, }
     }
     return ctx.lex_integer_end(start, end)
   }
   let fast = scan.try_fast_double()
   if !fast.is_nan() {
-    return { value: fast, repr: None }
+    return { value: fast, repr: None, }
   }
   if !scan.many_digits {
     let fast = @internal/strconv.try_eisel_lemire64(
@@ -423,21 +423,21 @@ fn ParseContext::lex_number_end(
       scan.negative,
     )
     if !fast.is_nan() {
-      return { value: fast, repr: None }
+      return { value: fast, repr: None, }
     }
   }
   let s = ctx.input.view(start_offset=start, end_offset=end)
   try {
     let d = @internal/strconv.parse_double(s)
     // For normal values, return without string representation
-    { value: d, repr: None }
+    { value: d, repr: None, }
   } catch {
     // If parsing fails as a double, treat it as infinity and preserve the string
     _ =>
       if scan.negative {
-        { value: @double.neg_infinity, repr: Some(s) }
+        { value: @double.neg_infinity, repr: Some(s), }
       } else {
-        { value: @double.infinity, repr: Some(s) }
+        { value: @double.infinity, repr: Some(s), }
       }
   }
 }
