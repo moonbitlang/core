@@ -72,7 +72,24 @@ pub fn Int64::abs(self : Int64) -> Int64 {
 }
 
 ///|
-/// Returns the minimum of two 64-bit signed integers.
+/// Returns the smaller of two 64-bit signed integers.
+///
+/// Parameters:
+///
+/// * `self` : The first integer to compare.
+/// * `other` : The second integer to compare.
+///
+/// Returns `self` if it is not greater than `other`, `other` otherwise.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(1L.min(2L), content="1")
+///   inspect(2L.min(1L), content="1")
+///   inspect((-1L).min(0L), content="-1")
+/// }
+/// ```
 pub fn Int64::min(self : Int64, other : Int64) -> Int64 {
   if self < other {
     self
@@ -82,7 +99,24 @@ pub fn Int64::min(self : Int64, other : Int64) -> Int64 {
 }
 
 ///|
-/// Returns the maximum of two 64-bit signed integers.
+/// Returns the larger of two 64-bit signed integers.
+///
+/// Parameters:
+///
+/// * `self` : The first integer to compare.
+/// * `other` : The second integer to compare.
+///
+/// Returns `self` if it is not less than `other`, `other` otherwise.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(1L.max(2L), content="2")
+///   inspect(2L.max(1L), content="2")
+///   inspect((-1L).max(0L), content="0")
+/// }
+/// ```
 pub fn Int64::max(self : Int64, other : Int64) -> Int64 {
   if self > other {
     self
@@ -92,7 +126,26 @@ pub fn Int64::max(self : Int64, other : Int64) -> Int64 {
 }
 
 ///|
-/// Clamps the value `self` between `min` and `max`.
+/// Clamps a 64-bit signed integer into the inclusive range [`min`, `max`].
+///
+/// Parameters:
+///
+/// * `self` : The value to clamp.
+/// * `min` : The lower bound of the range.
+/// * `max` : The upper bound of the range.
+///
+/// Returns `min` if `self` is less than `min`, `max` if `self` is greater
+/// than `max`, and `self` otherwise. Aborts if `min` is greater than `max`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(5L.clamp(min=0L, max=10L), content="5")
+///   inspect((-5L).clamp(min=0L, max=10L), content="0")
+///   inspect(15L.clamp(min=0L, max=10L), content="10")
+/// }
+/// ```
 pub fn Int64::clamp(self : Int64, min~ : Int64, max~ : Int64) -> Int64 {
   guard! min <= max
   if self < min {
