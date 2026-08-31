@@ -35,8 +35,8 @@ pub struct Regex {
 /// - Assertions and modifiers: `^`, `$`, `\b`, `\B`, `(?i: ... )`
 ///
 /// Escape sequences include `\n`, `\r`, `\t`, `\f`, `\v`, and escaped
-/// metacharacters. In `Regex::compile`, Unicode escapes are supported:
-/// `\uXXXX` and `\u{X...}`. `\xHH` is not supported in `Regex::compile`.
+/// metacharacters. In `Regex`, Unicode escapes are supported:
+/// `\uXXXX` and `\u{X...}`. `\xHH` is not supported in `Regex`.
 ///
 /// `^` and `$` are non-multiline anchors: they match only the beginning and
 /// end of the whole input, not per-line boundaries.
@@ -188,7 +188,8 @@ pub fn Regex::unsafe_from_string(pattern : StringView) -> Regex {
 ///|
 /// Builds a regex that matches `str` literally.
 ///
-/// This is equivalent to `Regex(Regex::escape(str))`.
+/// Every character of `str` is matched literally; regex metacharacters have no
+/// special meaning.
 ///
 /// Example:
 ///

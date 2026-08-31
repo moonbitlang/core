@@ -47,10 +47,12 @@ let max_mantissa_fast_path : UInt64 = 2UL << mantissa_explicit_bits
 
 ///|
 /// Parse a string into a double precision floating point number. The string
-/// must contain at least one of:
-/// - An integer part (decimal digits)
-/// - A decimal point followed by a fractional part (decimal digits)
-/// - An exponent part ('e' or 'E' followed by an optional sign and decimal digits)
+/// must contain at least one decimal digit, in:
+/// - An integer part (decimal digits), and/or
+/// - A fractional part (decimal digits) after a decimal point
+///
+/// An optional exponent part ('e' or 'E' followed by an optional sign and
+/// decimal digits) may follow those digits, but is not sufficient on its own.
 ///
 /// The string may optionally start with a sign ('+' or '-').
 /// For readability, underscores may appear between digits.
