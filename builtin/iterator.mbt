@@ -279,7 +279,7 @@ pub fn[X] Iter::empty() -> Iter[X] {
 ///
 /// # Returns
 ///
-/// Returns an iterator of type `Iter[X]` that contains the single element `a`.
+/// Returns an iterator of type `Iter[X]` that contains the single element `elem`.
 pub fn[X] Iter::singleton(elem : X) -> Iter[X] {
   let mut consumed = false
   Iter::new(
@@ -327,7 +327,7 @@ pub fn[X] Iter::repeat(x : X) -> Iter[X] {
 ///
 /// # Returns
 ///
-/// A new iterator that only contains the elements for which the predicate function returns `IterContinue`.
+/// A new iterator that only contains the elements for which the predicate function returns `true`.
 ///
 /// # Note
 /// The old iterator `self` must not be used again after calling `filter`.
@@ -725,7 +725,7 @@ pub fn[X] Iter::find_first(self : Iter[X], f : (X) -> Bool) -> X? {
 /// Returns a new iterator that contains the elements of `self` followed by the elements of `other`.
 ///
 /// # Note
-/// The old iterator `self` and `other` must not be used again after calling `tap`.
+/// The old iterators `self` and `other` must not be used again after calling `concat`.
 pub fn[X] Iter::concat(self : Iter[X], other : Iter[X]) -> Iter[X] {
   let mut in_first = true
   let size_hint = match (self.size_hint, other.size_hint) {
@@ -993,8 +993,8 @@ pub fn[X : Eq] Iter::contains(self : Iter[X], value : X) -> Bool {
 }
 
 ///|
-/// Returns the nth element of the iterator, or `None` if the iterator is
-/// shorter than `n` elements.
+/// Returns the `n`-th element of the iterator, counting from zero, or `None` if
+/// `n` is negative or the iterator has fewer than `n + 1` elements.
 /// The iterator `self` will advance past the returned element.
 pub fn[X] Iter::nth(self : Iter[X], n : Int) -> X? {
   guard n >= 0 else { None }

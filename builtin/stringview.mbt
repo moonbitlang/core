@@ -151,7 +151,7 @@ pub fn StringView::code_units(self : StringView) -> ArrayView[UInt16] {
 /// index is within bounds.
 /// 
 /// This method has O(1) complexity.
-/// #Example
+/// # Example
 /// 
 /// ```mbt check
 /// test {
