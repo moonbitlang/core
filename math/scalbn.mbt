@@ -60,7 +60,7 @@ pub fn scalbn(x : Double, exp : Int) -> Double {
 }
 
 ///|
-/// Calculcates x * 2 **n where x is a single-precision floating number and n is an integer.
+/// Calculates y * 2^exp where y is a single-precision floating number and exp is an integer.
 ///
 /// Parameters:
 ///

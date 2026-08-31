@@ -477,7 +477,8 @@ fn[T : Eq + Hash] diff_(
 ///
 /// The `cutoff` is an upper bound on the minimum edit distance between `old~` and `new~`. When
 /// `cutoff` is exceeded, `iter_matches` returns a correct, but not necessarily minimal
-/// diff. It defaults to about `sqrt(old.length() + new.length())`.
+/// diff. It defaults to about the square root of the compacted input sizes
+/// (elements present in both sequences), floored at 4096.
 fn[T : Eq + Hash] iter_matches(
   cutoff~ : Int?, // optional computation cost limit
   old~ : ArrayView[T], // original array

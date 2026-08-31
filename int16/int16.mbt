@@ -231,7 +231,7 @@ pub fn Int16::from_int(self : Int) -> Int16 = "%i32_to_i16"
 /// ```mbt check
 /// test {
 ///   let b = b'\xFF'
-///   inspect(Int16::from_byte(b), content="255") // Sign is preserved
+///   inspect(Int16::from_byte(b), content="255") // Zero-extended, not sign-extended
 ///   let p = b'\x7F'
 ///   inspect(Int16::from_byte(p), content="127")
 /// }
@@ -261,9 +261,7 @@ pub fn Int16::from_byte(self : Byte) -> Int16 = "%byte_to_i16"
 ///   inspect(Int16::from_int64(small), content="42") // 42 fits in Int16, remains unchanged
 /// }
 /// ```
-/// Create from `int64`.
 #cfg(not(target="js"))
-/// Convert `Int64` to `Int16`.
 pub fn Int16::from_int64(self : Int64) -> Int16 = "%i64_to_i16"
 
 ///|
