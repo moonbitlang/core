@@ -49,7 +49,7 @@ pub fn[T : Show] println(input : T) -> Unit {
 /// ```mbt check
 /// test {
 ///   let x : Int = 42
-///   inspect(x, content="42") // Raises InspectError with detailed failure message
+///   inspect(x, content="42") // A mismatch would raise InspectError with a detailed message
 /// }
 /// ```
 pub(all) suberror InspectError {
