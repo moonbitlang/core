@@ -110,3 +110,12 @@ pub fn String::unsafe_char_at(self : String, index : Int) -> Char {
     c1.unsafe_to_char()
   }
 }
+
+///|
+/// Creates a new empty array with an optional initial capacity.
+///
+/// Deprecated: use `Array(capacity=...)` instead.
+#deprecated("Use `Array(capacity=...)` instead")
+pub fn[T] Array::new(capacity? : Int = 0) -> Array[T] {
+  Array(capacity~)
+}

@@ -58,9 +58,9 @@ test "get_or_default" {
 ///|
 test "get_or_init" {
   let m : @hashmap.HashMap[String, Array[Int]] = HashMap([])
-  m.get_or_init("a", () => Array::new()).push(1)
-  m.get_or_init("b", () => Array::new()).push(2)
-  m.get_or_init("a", () => Array::new()).push(3)
+  m.get_or_init("a", () => Array()).push(1)
+  m.get_or_init("b", () => Array()).push(2)
+  m.get_or_init("a", () => Array()).push(3)
   @test.assert_eq(m.get("a"), Some([1, 3]))
   @test.assert_eq(m.get("b"), Some([2]))
   @test.assert_eq(m.length(), 2)

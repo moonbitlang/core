@@ -94,7 +94,7 @@ pub impl[K : @json.FromJson + Eq + Hash, V : @json.FromJson] @json.FromJson for 
   guard json is Array(pairs) else {
     raise JsonDecodeError((path, "@immut/vector_map.from_json: expected array"))
   }
-  let entries : Array[(K, V)] = Array::new(capacity=pairs.length())
+  let entries : Array[(K, V)] = Array(capacity=pairs.length())
   for i, pair in pairs {
     let entry_path = path.add_index(i)
     guard pair is Array([key, value]) else {

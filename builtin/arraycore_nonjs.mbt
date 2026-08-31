@@ -106,14 +106,14 @@ fn[T] Array::unsafe_resize_with_default(
 ///
 /// ```mbt check
 /// test {
-///   let arr : Array[Int] = Array::new(capacity=10)
+///   let arr : Array[Int] = Array(capacity=10)
 ///   inspect(arr.length(), content="0")
 ///   inspect(arr.capacity(), content="10")
-///   let arr : Array[Int] = Array::new()
+///   let arr : Array[Int] = Array()
 ///   inspect(arr.length(), content="0")
 /// }
 /// ```
-pub fn[T] Array::new(capacity? : Int = 0) -> Array[T] {
+pub fn[T] Array::Array(capacity? : Int = 0) -> Array[T] {
   if capacity == 0 {
     []
   } else {
@@ -273,7 +273,7 @@ test "UninitializedArray::unsafe_blit_fixed" {
 
 ///|
 test "Array::resize_buffer" {
-  let arr = Array::new(capacity=2)
+  let arr = Array::Array(capacity=2)
   arr.push(1)
   arr.push(2)
   arr.resize_buffer(4)
@@ -324,7 +324,7 @@ pub fn[T] Array::reserve_capacity(self : Array[T], capacity : Int) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let v = Array::new(capacity=10)
+///   let v = Array(capacity=10)
 ///   v.push(1)
 ///   v.push(2)
 ///   v.push(3)

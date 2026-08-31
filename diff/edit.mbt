@@ -96,8 +96,8 @@ fn[T] group_edits(
     return []
   }
   let n = edits.length()
-  let mut pending : Array[Edit] = Array::new()
-  let result : Array[Hunk[T]] = Array::new()
+  let mut pending : Array[Edit] = Array()
+  let result : Array[Hunk[T]] = Array()
   for i, edit in edits {
     match edit {
       Equal(old_index~, new_index~, len~) => {

@@ -673,7 +673,7 @@ pub fn[A] Vector::filter(
   self : Vector[A],
   f : (A) -> Bool raise?,
 ) -> Vector[A] raise? {
-  let arr : Array[A] = Array::new(capacity=self.size)
+  let arr : Array[A] = Array(capacity=self.size)
   self.each(value => if f(value) { arr.push(value) })
   from_array(arr)
 }
@@ -758,7 +758,7 @@ pub impl[A : @json.FromJson] @json.FromJson for Vector[A] with fn from_json(
   }
   let len = arr.length()
   guard len != 0 else { return new() }
-  let values : Array[A] = Array::new(capacity=len)
+  let values : Array[A] = Array(capacity=len)
   for i, value in arr {
     values.push(A::from_json(value, path.add_index(i)))
   }

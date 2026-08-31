@@ -101,7 +101,7 @@ pub impl[A : Show] Show for List[A] with fn output(xs, logger) {
 pub impl[A : ToJson] ToJson for List[A] with fn to_json(self) {
   let capacity = self.length()
   guard capacity != 0 else { return [] }
-  let jsons = Array::new(capacity~)
+  let jsons = Array(capacity~)
   for a in self {
     jsons.push(a.to_json())
   }
