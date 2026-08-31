@@ -1,0 +1,121 @@
+// Copyright 2026 International Digital Economy Academy
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+///|
+/// An index in the half-open range `[0, capacity)`.
+predicate index_in_bounds(index : Int, capacity : Int) {
+  index >= 0 && index < capacity
+}
+
+///|
+/// `physical_index` is `offset` slots after `start` in a circular buffer. Since
+/// a valid offset is smaller than the capacity, at most one wrap is needed.
+predicate circular_index_at_offset(
+  start : Int,
+  offset : Int,
+  capacity : Int,
+  physical_index : Int,
+) {
+  if offset < capacity - start {
+    physical_index == start + offset
+  } else {
+    physical_index == offset - (capacity - start)
+  }
+}
+
+///|
+/// The branch calculation above is in bounds and equivalent to wrapping with
+/// remainder for every valid start and offset.
+lemma circular_index_at_offset_correct(
+  start : Int,
+  offset : Int,
+  capacity : Int,
+  physical_index : Int,
+) where {
+  proof_require: index_in_bounds(start, capacity),
+  proof_require: index_in_bounds(offset, capacity),
+  proof_require: circular_index_at_offset(
+    start,
+    offset,
+    capacity,
+    physical_index,
+  ),
+  proof_ensure: index_in_bounds(physical_index, capacity),
+  proof_ensure: physical_index == (start + offset) % capacity,
+} {
+}
+
+///|
+/// `successor` is the physical index immediately after `index`, wrapping from
+/// the last buffer slot to zero.
+predicate circular_successor(
+  index : Int,
+  capacity : Int,
+  successor : Int,
+) {
+  if index == capacity - 1 { successor == 0 } else { successor == index + 1 }
+}
+
+///|
+/// The branch calculation above is in bounds and equivalent to adding one
+/// modulo the capacity.
+lemma circular_successor_correct(
+  index : Int,
+  capacity : Int,
+  successor : Int,
+) where {
+  proof_require: index_in_bounds(index, capacity),
+  proof_require: circular_successor(index, capacity, successor),
+  proof_ensure: index_in_bounds(successor, capacity),
+  proof_ensure: successor == (index + 1) % capacity,
+} {
+}
+
+///|
+/// `predecessor` is the physical index immediately before `index`.
+predicate circular_predecessor(
+  index : Int,
+  capacity : Int,
+  predecessor : Int,
+) {
+  if index == 0 {
+    predecessor == capacity - 1
+  } else {
+    predecessor == index - 1
+  }
+}
+
+///|
+/// The branch calculation above is in bounds and equivalent to subtracting one
+/// modulo the capacity.
+lemma circular_predecessor_correct(
+  index : Int,
+  capacity : Int,
+  predecessor : Int,
+) where {
+  proof_require: index_in_bounds(index, capacity),
+  proof_require: circular_predecessor(index, capacity, predecessor),
+  proof_ensure: index_in_bounds(predecessor, capacity),
+  proof_ensure: predecessor == (index + capacity - 1) % capacity,
+} {
+}
+
+///|
+/// The arithmetic part of the private `Deque` representation invariant.
+predicate deque_layout_inv(capacity : Int, head : Int, len : Int) {
+  (capacity == 0 && head == 0 && len == 0) ||
+  (index_in_bounds(head, capacity) &&
+    len >= 0 &&
+    len <= capacity)
+}
