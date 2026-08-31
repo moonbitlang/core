@@ -1,6 +1,6 @@
 # MoonBit Float Package Documentation
 
-This package provides operations on 32-bit floating-point numbers (`Float`). It includes basic arithmetic, trigonometric functions, exponential and logarithmic functions, as well as utility functions for rounding and conversion.
+This package provides operations on 32-bit floating-point numbers (`Float`). It includes basic arithmetic, special-value predicates, `sqrt`, as well as utility functions for rounding, comparison and conversion. Trigonometric, exponential and logarithmic functions live in `@math`.
 
 ## Special Values
 

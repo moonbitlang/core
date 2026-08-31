@@ -661,7 +661,7 @@ pub fn BigInt::to_uint64(self : BigInt) -> UInt64 {
 ///
 /// Parameters:
 ///
-/// * `value` : The `BigInt` value to be converted.
+/// * `self` : The `BigInt` value to be converted.
 ///
 /// Returns a 64-bit signed integer (`Int64`) representing the lower 64 bits of
 /// the input `BigInt`.
