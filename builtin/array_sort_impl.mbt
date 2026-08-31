@@ -199,7 +199,7 @@ fn collapse(runs : Array[TimSortRun], stop : Int) -> Int? {
 /// 
 /// ```mbt check
 /// test {
-///   let arr = [5, 4, 3, 2, 1]
+///   let arr : FixedArray[Int] = [5, 4, 3, 2, 1]
 ///   arr.sort()
 ///   @test.assert_eq(arr, [1, 2, 3, 4, 5])
 /// }
@@ -339,11 +339,9 @@ fn[T : Compare] fixed_try_bubble_sort(arr : MutArrayView[T]) -> Bool {
 }
 
 ///|
-/// Try to sort the array with bubble sort.
-/// 
-/// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
-/// 
-/// Returns whether the array is sorted.
+/// Sort the array with bubble sort.
+///
+/// It always sorts the whole array. The time complexity is O(n^2) in the worst case.
 fn[T : Compare] fixed_bubble_sort(arr : MutArrayView[T]) -> Unit {
   for i in 1..<arr.length() {
     for j = i; j > 0 && arr.unsafe_get(j - 1) > arr.unsafe_get(j); j = j - 1 {

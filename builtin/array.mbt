@@ -175,7 +175,7 @@ pub fn[T] Array::unsafe_get(self : Array[T], idx : Int) -> T {
 ///
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [1, 2, 3]
+///   let arr : Array[Int] = [1, 2, 3]
 ///   inspect(arr[1], content="2")
 /// }
 /// ```
@@ -1510,7 +1510,7 @@ pub fn[T] Array::extract_if(
 }
 
 ///|
-/// Divides an array into smaller arrays (chunks) of the specified size.
+/// Divides an array into chunks (views) of the specified size.
 ///
 /// Parameters:
 ///
@@ -1518,8 +1518,8 @@ pub fn[T] Array::extract_if(
 /// * `size` : The size of each chunk. Must be a positive integer, otherwise it will panic.
 ///
 ///
-/// Returns an array of arrays, where each inner array is a chunk containing
-/// elements from the original array. If the length of the original array is not
+/// Returns an array of views, where each view is a chunk containing consecutive
+/// elements of the original array. If the length of the original array is not
 /// divisible by the chunk size, the last chunk will contain fewer elements.
 ///
 /// Example:
@@ -1562,7 +1562,7 @@ pub fn[T] Array::chunks(self : Array[T], size : Int) -> Array[ArrayView[T]] {
 /// * `predicate` : A function that takes two adjacent elements and returns
 /// `true` if they should be in the same chunk, `false` otherwise.
 ///
-/// Returns an array of arrays, where each inner array is a chunk of consecutive
+/// Returns an array of views, where each view is a chunk of consecutive
 /// elements that satisfy the predicate with their adjacent elements.
 ///
 /// Example:
@@ -2019,15 +2019,20 @@ pub fn[T] Array::shuffle(self : Array[T], rand~ : (Int) -> Int) -> Array[T] {
 }
 
 ///|
-/// Returns a new array containing the elements of the original array that satisfy the given predicate.
+/// Applies a function to each element of the array and collects the results
+/// that are `Some`, discarding the elements for which the function returns
+/// `None`.
 ///
 /// # Arguments
 ///
-/// * `self` - The array to filter.
-/// * `f` - The predicate function.
+/// * `self` - The array to filter and map.
+/// * `f` - The function applied to each element, returning `Some(value)` to
+/// keep the mapped `value`, or `None` to drop the element.
 ///
 /// # Returns
 ///
+/// A new array containing the unwrapped `Some` results, in the order the
+/// corresponding elements appeared in the original array.
 #locals(f)
 pub fn[A, B] Array::filter_map(
   self : Array[A],

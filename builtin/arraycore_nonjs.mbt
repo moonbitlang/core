@@ -134,9 +134,9 @@ pub fn[T] Array::new(capacity? : Int = 0) -> Array[T] {
 ///
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [1, 2, 3]
+///   let arr : Array[Int] = [1, 2, 3]
 ///   inspect(arr.length(), content="3")
-///   let empty : ReadOnlyArray[Int] = []
+///   let empty : Array[Int] = []
 ///   inspect(empty.length(), content="0")
 /// }
 /// ```
@@ -162,9 +162,8 @@ pub fn[T] Array::length(self : Array[T]) -> Int {
 ///
 /// # Errors
 ///
-/// - This function does not explicitly raise errors, but improper use (e.g.,
-/// setting `new_len` greater than the current length) can lead to undefined
-/// behavior.
+/// - This function does not raise errors, but it panics if `new_len` is greater
+/// than the current length of the array.
 ///
 /// TODO: this can be optimized by using the intrinsic to null out the range
 fn[T] Array::unsafe_truncate_to_length(self : Array[T], new_len : Int) -> Unit {
