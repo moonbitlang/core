@@ -162,7 +162,7 @@ fn[T] Array::unsafe_resize_with_default(
 
 ///|
 /// Creates a new array.
-pub fn[T] Array::new(capacity? : Int = 0) -> Array[T] {
+pub fn[T] Array::Array(capacity? : Int = 0) -> Array[T] {
   ignore(capacity)
   []
 }
@@ -232,7 +232,7 @@ pub fn[T] Array::reserve_capacity(self : Array[T], capacity : Int) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let v = Array::new(capacity=10)
+///   let v = Array(capacity=10)
 ///   v.push(1)
 ///   v.push(2)
 ///   v.push(3)

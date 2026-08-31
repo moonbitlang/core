@@ -1302,7 +1302,7 @@ pub fn[T] Array::repeat(self : Array[T], times : Int) -> Array[T] {
   }
   let total = len * times
   guard total / times == len else { abort("repeat result too large") }
-  let v = Array::new(capacity=total)
+  let v = Array::Array(capacity=total)
   for _ in 0..<times {
     v.append(self)
   }
@@ -2117,8 +2117,8 @@ pub fn[A, B] Array::zip(self : Array[A], other : Array[B]) -> Array[(A, B)] {
 /// }
 /// ```
 pub fn[T1, T2] Array::unzip(self : Array[(T1, T2)]) -> (Array[T1], Array[T2]) {
-  let arr1 : Array[T1] = Array::new(capacity=self.length())
-  let arr2 : Array[T2] = Array::new(capacity=self.length())
+  let arr1 : Array[T1] = Array(capacity=self.length())
+  let arr2 : Array[T2] = Array(capacity=self.length())
   for pair in self {
     let (x, y) = pair
     arr1.push(x)

@@ -88,7 +88,7 @@ test "from_array_2" {
       #|<Queue: [1, 2, 3]>
     ),
   )
-  let q : @queue.Queue[Int] = @queue.from_array(Array::new(capacity=10))
+  let q : @queue.Queue[Int] = @queue.from_array(Array(capacity=10))
   debug_inspect(
     q,
     content=(

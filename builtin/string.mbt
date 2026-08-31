@@ -257,7 +257,7 @@ fn unsafe_to_bytes(array : FixedArray[Byte]) -> Bytes = "%identity"
 pub fn String::to_array(self : String) -> Array[Char] {
   self
   .iter()
-  .fold(init=Array::new(capacity=self.length()), (rv, c) => {
+  .fold(init=Array(capacity=self.length()), (rv, c) => {
     rv.push(c)
     rv
   })

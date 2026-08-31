@@ -590,7 +590,7 @@ pub fn[A : Eq + Hash] HashSet::from_iter(iter : Iter[A]) -> HashSet[A] {
     return hash_set_from_iter_by_add(iter)
   }
   let entries = match iter.size_hint() {
-    Some(len) => Array::new(capacity=len)
+    Some(len) => Array(capacity=len)
     None => []
   }
   iter.each(value => entries.push({ value, path: @path.of(value), }))

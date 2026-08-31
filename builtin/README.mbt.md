@@ -141,7 +141,7 @@ Built-in array types for storing collections:
 ///|
 test "arrays" {
   // Dynamic arrays
-  let arr1 = Array::new()
+  let arr1 = Array()
   arr1.push(1)
   arr1.push(2)
   arr1.push(3)

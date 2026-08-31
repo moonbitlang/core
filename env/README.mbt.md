@@ -241,7 +241,7 @@ test "argument validation" {
       (args[0], []) // Program name only, no arguments
     } else {
       let program = args[0]
-      let arguments = Array::new()
+      let arguments = Array()
       for i in 1..<args.length() {
         arguments.push(args[i])
       }

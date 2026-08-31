@@ -813,7 +813,7 @@ pub impl[T] Add for Iter[T] with fn add(self, other) {
 #alias(collect)
 pub fn[X] Iter::to_array(self : Iter[X]) -> Array[X] {
   let result = match self.size_hint {
-    Some(n) => Array::new(capacity=n)
+    Some(n) => Array::Array(capacity=n)
     None => []
   }
   while self.next() is Some(x) {

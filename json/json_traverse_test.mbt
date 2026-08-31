@@ -49,7 +49,7 @@ fn Json::prune_loc(self : Json) -> Json? {
   match self {
     Null | True | False | Number(_, ..) | String(_) => Some(self)
     Array(arr) => {
-      let pruned_arr = Array::new()
+      let pruned_arr = Array()
       for item in arr {
         guard item.prune_loc() is Some(pruned_item) else { () } // drop this item
         pruned_arr.push(pruned_item)

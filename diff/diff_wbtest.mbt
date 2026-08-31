@@ -20,7 +20,7 @@ fn print_edits(
 ) -> String {
   let mut prev_old_idx = 0
   let mut prev_new_idx = 0
-  let result = Array::new(capacity=old.length() + new.length())
+  let result = Array(capacity=old.length() + new.length())
   let callback = fn(old_idx, new_idx) {
     for i in prev_old_idx..<old_idx {
       result.push("-  " + old[i])
@@ -315,7 +315,7 @@ test "reverse order" {
 test "integer arrays diff" {
   let old = [1, 2, 3, 4, 5][:]
   let new = [1, 3, 5, 6, 7][:]
-  let result = Array::new()
+  let result = Array()
   for old_idx, new_idx in iter_matches(old~, new~, cutoff=None) {
     result.push((old_idx, new_idx))
   }
@@ -383,9 +383,9 @@ test "nested insertions and deletions" {
 test "iter_matches callback verification" {
   let old = ['a', 'b', 'c', 'd'].map(x => String::make(3, x))[:]
   let new = ['a', 'x', 'c', 'y'].map(x => String::make(3, x))[:]
-  let matches = Array::new()
-  let old_indices = Array::new()
-  let new_indices = Array::new()
+  let matches = Array()
+  let old_indices = Array()
+  let new_indices = Array()
   for old_idx, new_idx in iter_matches(old~, new~, cutoff=None) {
     matches.push((old_idx, new_idx))
     old_indices.push(old_idx)
@@ -409,7 +409,7 @@ test "iter_matches callback verification" {
 test "string array edge cases" {
   let old = ["", "a", "", "b", ""][:]
   let new = ["", "b", "", "a", ""][:]
-  let result = Array::new()
+  let result = Array()
   for old_idx, new_idx in iter_matches(old~, new~, cutoff=None) {
     result.push((old_idx, new_idx))
   }
@@ -489,7 +489,7 @@ test "partial overlap sequence" {
 test "iter_matches parameter order" {
   let old = ['a', 'b', 'c'].map(x => String::make(3, x))[:]
   let new = ['a', 'x', 'c'].map(x => String::make(3, x))[:]
-  let matches = Array::new()
+  let matches = Array()
   let all_equal = @ref.Ref(true)
   for old_idx, new_idx in iter_matches(old~, new~, cutoff=None) {
     // Verify parameter order: old_idx should correspond to old array, new_idx to new array
@@ -511,7 +511,7 @@ test "iter_matches parameter order" {
 test "repeated subsequence" {
   let old = ['a', 'b', 'a', 'b', 'c'].map(x => String::make(3, x))[:]
   let new = ['a', 'b', 'c', 'a', 'b'].map(x => String::make(3, x))[:]
-  let result = Array::new()
+  let result = Array()
   for old_idx, new_idx in iter_matches(old~, new~, cutoff=None) {
     result.push((old_idx, new_idx))
   }
@@ -526,13 +526,13 @@ test "diff symmetry test" {
   let arr2 = ['a', 'x', 'c'].map(x => String::make(3, x))[:]
 
   // Calculate diff from arr1 -> arr2
-  let matches1 = Array::new()
+  let matches1 = Array()
   for old_idx, new_idx in iter_matches(old=arr1, new=arr2, cutoff=None) {
     matches1.push((old_idx, new_idx))
   }
 
   // Calculate diff from arr2 -> arr1
-  let matches2 = Array::new()
+  let matches2 = Array()
   for old_idx, new_idx in iter_matches(old=arr2, new=arr1, cutoff=None) {
     matches2.push((old_idx, new_idx))
   }

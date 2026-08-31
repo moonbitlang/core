@@ -14,6 +14,6 @@
 
 ///|
 test "panic array_pop_exn_empty" {
-  let arr : Array[Int] = Array::new()
+  let arr : Array[Int] = Array()
   arr.unsafe_pop() |> ignore // This should panic
 }

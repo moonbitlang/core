@@ -92,7 +92,7 @@ pub fn[K, V, A] VectorMap::fold(
 ///|
 /// Collect the entries into an array, in insertion order. `O(n)`.
 pub fn[K, V] VectorMap::to_array(self : VectorMap[K, V]) -> Array[(K, V)] {
-  let result : Array[(K, V)] = Array::new(capacity=self.size)
+  let result : Array[(K, V)] = Array(capacity=self.size)
   self.each((k, v) => result.push((k, v)))
   result
 }

@@ -422,7 +422,7 @@ pub fn StringView::strip_suffix(
 pub fn StringView::to_array(self : StringView) -> Array[Char] {
   self
   .iter()
-  .fold(init=Array::new(capacity=self.length()), (rv, c) => {
+  .fold(init=Array(capacity=self.length()), (rv, c) => {
     rv.push(c)
     rv
   })

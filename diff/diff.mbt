@@ -601,7 +601,7 @@ fn[T : Eq + Hash] collect_matches(
   new : ArrayView[T],
   algorithm : DiffAlgorithm,
 ) -> Array[(Int, Int)] {
-  let matches = Array::new(capacity=old.length().min(new.length()))
+  let matches = Array(capacity=old.length().min(new.length()))
   match algorithm {
     Patience => append_patience_matches(matches, cutoff, old, new, 0, 0)
     Myers => append_myers_matches(matches, cutoff, old, new, 0, 0)
@@ -664,7 +664,7 @@ pub fn[T : Hash + Eq] Diff::Diff(
   cutoff? : Int,
   algorithm? : DiffAlgorithm = Myers,
 ) -> Diff[T] {
-  let result : Array[Edit] = Array::new(capacity=old.length() + new.length())
+  let result : Array[Edit] = Array(capacity=old.length() + new.length())
   let matches = collect_matches(cutoff, old, new, algorithm)
   let mut prev_old_idx = 0
   let mut prev_new_idx = 0

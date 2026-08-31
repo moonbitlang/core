@@ -125,7 +125,7 @@ fn required_option_token(arg : Arg) -> String? {
 
 ///|
 fn positional_usage(cmd : Command) -> String {
-  let parts = Array::new(capacity=cmd.args.length())
+  let parts = Array(capacity=cmd.args.length())
   for arg in positional_args(cmd.args) {
     if arg.hidden {
       continue
@@ -149,7 +149,7 @@ fn positional_usage(cmd : Command) -> String {
 ///|
 fn option_entries(cmd : Command) -> Array[String] {
   let args = cmd.args
-  let display = Array::new(capacity=args.length() + 2)
+  let display = Array(capacity=args.length() + 2)
   let builtin_help_short = help_flag_enabled(cmd) &&
     !has_short_option(args, 'h')
   let builtin_help_long = help_flag_enabled(cmd) &&
@@ -261,7 +261,7 @@ fn subcommand_entries(cmd : Command) -> Array[String] {
 
 ///|
 fn group_entries(cmd : Command) -> Array[String] {
-  let display = Array::new(capacity=cmd.groups.length())
+  let display = Array(capacity=cmd.groups.length())
   for group in cmd.groups {
     let members = group_members(cmd, group)
     if members == "" {
@@ -313,7 +313,7 @@ fn format_entries(display : Array[(String, String)]) -> Array[String] {
 
 ///|
 fn arg_display(arg : Arg) -> String {
-  let parts = Array::new(capacity=2)
+  let parts = Array(capacity=2)
   let (short, long) = match arg.info {
     OptionInfo(short~, long~, ..)
     | FlagInfo(short~, long~, ..)
