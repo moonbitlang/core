@@ -213,16 +213,15 @@ pub fn[K, V] HashMap::length(self : HashMap[K, V]) -> Int {
 }
 
 ///|
-/// Returns the current capacity of the hash map. The capacity is the number of
-/// key-value pairs the hash map can hold before it needs to reallocate its
-/// internal storage.
+/// Returns the current capacity of the hash map, that is, the length of its
+/// internal storage array. The map grows once it is half full, so it can hold
+/// at most `capacity / 2` key-value pairs before it reallocates.
 ///
 /// Parameters:
 ///
 /// * `map` : The hash map whose capacity is to be queried.
 ///
-/// Returns the number of key-value pairs that can be stored in the hash map
-/// before triggering a reallocation.
+/// Returns the length of the hash map's internal storage array.
 ///
 /// Example:
 ///

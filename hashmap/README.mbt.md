@@ -83,7 +83,7 @@ test {
 
 ## Size & Capacity
 
-You can use `size()` to get the number of key-value pairs in the map, or `capacity()` to get the current capacity.
+You can use `length()` to get the number of key-value pairs in the map, or `capacity()` to get the current capacity.
 
 ```mbt check
 ///|

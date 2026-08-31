@@ -6,7 +6,7 @@ A priority queue is a data structure capable of maintaining maximum/minimum valu
 
 ## Create
 
-You can use `PriorityQueue([])` or `of()` to create a priority queue.
+You can use `PriorityQueue([])` or `from_array()` to create a priority queue.
 
 ```mbt check
 ///|
@@ -147,7 +147,7 @@ test {
 
 ## Copy
 
-`copy()` creates a shallow clone.
+`copy()` returns a deep copy of the queue: the copy shares no heap nodes with the original, so modifying one does not affect the other.
 
 ```mbt check
 ///|
