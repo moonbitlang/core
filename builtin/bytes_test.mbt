@@ -279,6 +279,19 @@ test "Bytes::add and repeat" {
 }
 
 ///|
+test "Bytes add initializes the complete result" {
+  @test.assert_eq(b"" + b"", b"")
+  @test.assert_eq(b"left" + b"", b"left")
+  @test.assert_eq(b"" + b"right", b"right")
+  let left = Bytes::makei(257, i => i.to_byte())
+  let right = Bytes::makei(259, i => (255 - i).to_byte())
+  let joined = left + right
+  @test.assert_eq(joined.length(), 516)
+  @test.assert_eq(joined[0:257].to_owned(), left)
+  @test.assert_eq(joined[257:].to_owned(), right)
+}
+
+///|
 test "panic Bytes::repeat negative" {
   let _ = b"ab".repeat(-1)
 }

@@ -182,3 +182,16 @@ test {
     content="{limbs : <FixedArray: [2, 2147483648, 0]>, sign : Negative, len : 2 }",
   ) // Int64.min_value - 2
 }
+
+///|
+/// `BigInt::from_octets` reads each tail limb with a single `u32be` bits
+/// pattern, which agrees with the shift-accumulate loop it replaced only when a
+/// limb is exactly four bytes wide. Pin the constant here so narrowing it fails
+/// this test instead of silently mis-decoding octets.
+///
+/// Deliberately `assert_eq` rather than `inspect`: a snapshot would be rewritten
+/// by `moon test --update`, which would silently retire this guard at exactly
+/// the moment it is supposed to fire.
+test "from_octets assumes 32-bit limbs" {
+  @test.assert_eq(RADIX_BIT_LEN, 32)
+}
