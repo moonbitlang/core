@@ -321,7 +321,7 @@ pub fn[A : Compare] SortedSet::add(
 }
 
 ///|
-/// Remove n value from the ImmutableSet.
+/// Remove a value from the ImmutableSet.
 ///
 /// # Example
 ///

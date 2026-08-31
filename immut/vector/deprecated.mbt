@@ -13,9 +13,8 @@
 // limitations under the License.
 
 ///|
-/// Physically copy the vector.
-/// Since it is an immutable data structure,
-/// it is rarely the case that you would need this function.
+/// Returns the vector itself. Since it is an immutable data structure,
+/// nothing is copied and there is no reason to call this function.
 /// 
 #deprecated("We don't copy immutable vector")
 #coverage.skip

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-/// An non-empty immutable hash set data structure
+/// A non-empty immutable hash map data structure
 #unsafe_cycle_free
 priv enum Node[K, V] {
   /// a subtree holding exactly one entry, at any depth; carries the

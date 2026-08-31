@@ -204,7 +204,8 @@ pub fn[X] SparseArray::intersection(
 }
 
 ///|
-/// Keep indices and values only present in self but not in other.
+/// Keep every index of self: an index absent from other keeps its value, an
+/// index present in both keeps f's result, or is dropped when f returns None.
 pub fn[X] SparseArray::difference(
   self : SparseArray[X],
   other : SparseArray[X],
