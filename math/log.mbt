@@ -68,7 +68,7 @@ let logf_data : LogfData = {
 ///
 /// Parameters:
 ///
-/// * `value` : The floating-point number to calculate the natural logarithm of.
+/// * `x` : The floating-point number to calculate the natural logarithm of.
 ///
 /// Returns the natural logarithm of the input value. Special cases are handled
 /// as follows:

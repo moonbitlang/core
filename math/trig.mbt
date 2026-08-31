@@ -405,9 +405,9 @@ pub fn acosf(x : Float) -> Float {
 ///
 /// Returns the arctangent of the number `x`.
 ///
-/// Example:
-///
 /// * Returns NaN if the input is NaN.
+///
+/// Example:
 ///
 /// ```mbt check
 /// test {
