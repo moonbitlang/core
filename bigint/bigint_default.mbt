@@ -17,7 +17,7 @@
 // performance regression.
 
 ///|
-/// A big integer represented as an array of Int.
+/// A big integer represented as an array of UInt limbs.
 //
 // Design explained:
 // - Why use an FixedArray of Int with a len field instead of an Array[Int]?
@@ -93,7 +93,7 @@ const RADIX : UInt64 = 1UL << RADIX_BIT_LEN // TODO: This can be generalized onc
 const RADIX_MASK : UInt64 = RADIX - 1
 
 ///|
-/// The ratio of the number of decimal digits to the number of radix digits.
+/// The ratio of the number of decimal digits to the number of bits.
 const DECIMAL_RATIO : Double = 0.302 // log10(2)
 
 ///|
@@ -115,7 +115,7 @@ let one : BigInt = 1N
 ///
 /// Parameters:
 ///
-/// * `value` : The 32-bit signed integer (`Int`) to be converted.
+/// * `n` : The 32-bit signed integer (`Int`) to be converted.
 ///
 /// Returns a `BigInt` equivalent to the input integer.
 ///
@@ -138,7 +138,7 @@ pub fn BigInt::from_int(n : Int) -> BigInt {
 ///
 /// Parameters:
 ///
-/// * `value` : The unsigned 32-bit integer to be converted.
+/// * `n` : The unsigned 32-bit integer to be converted.
 ///
 /// Returns a `BigInt` representing the same numerical value as the input.
 ///
@@ -159,7 +159,7 @@ pub fn BigInt::from_uint(n : UInt) -> BigInt {
 ///
 /// Parameters:
 ///
-/// * `number` : A 64-bit signed integer (`Int64`) to be converted.
+/// * `n` : A 64-bit signed integer (`Int64`) to be converted.
 ///
 /// Returns a `BigInt` value that represents the same numerical value as the
 /// input.
@@ -187,7 +187,7 @@ pub fn BigInt::from_int64(n : Int64) -> BigInt {
 ///
 /// Parameters:
 ///
-/// * `value` : The unsigned 64-bit integer (`UInt64`) to be converted.
+/// * `n` : The unsigned 64-bit integer (`UInt64`) to be converted.
 ///
 /// Returns a new `BigInt` with the same value as the input. The resulting
 /// `BigInt` will always have a positive sign since the input is an unsigned
@@ -558,7 +558,7 @@ pub impl Div for BigInt with fn div(self : BigInt, other : BigInt) -> BigInt {
 ///
 /// Returns the remainder of the division operation.
 ///
-/// Throws an error if `other` is zero.
+/// Throws a panic if `other` is zero.
 ///
 /// Example:
 ///
@@ -1874,7 +1874,7 @@ pub fn BigInt::to_uint(self : BigInt) -> UInt {
 ///
 /// Parameters:
 ///
-/// * `value` : The `BigInt` value to be converted.
+/// * `self` : The `BigInt` value to be converted.
 ///
 /// Returns a 64-bit signed integer (`Int64`) representing the lower 64 bits of
 /// the input `BigInt`.

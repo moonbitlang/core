@@ -1,6 +1,6 @@
 # `double`
 
-This package provides comprehensive support for double-precision floating-point arithmetic, including basic operations, trigonometric functions, exponential and logarithmic functions, as well as utility functions for handling special values.
+This package provides the double-precision floating-point constants (infinity, NaN and the value limits) together with the rounding helpers `floor`, `ceil`, `round` and `trunc`. Trigonometric, exponential and logarithmic functions live in `@math`.
 
 ## Constants and Special Values
 
@@ -95,4 +95,4 @@ test "binary representation" {
 }
 ```
 
-Note: Most methods can be called either as a method (`d.to_be_bytes()`) or as a package function (`@double.to_be_bytes(d)`).
+Note: The rounding helpers can be called either as a method (`d.round()`) or as a package function (`@double.round(d)`).
