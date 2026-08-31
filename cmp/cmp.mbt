@@ -171,8 +171,8 @@ pub fn[T : Compare] minmax(x : T, y : T) -> (T, T) {
 }
 
 ///|
-/// Returns the minimum and maximum of two values based on a comparison
-/// function.
+/// Returns the minimum and maximum of two values based on a key extracted
+/// from each of them.
 ///
 /// Parameters:
 ///
