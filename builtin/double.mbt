@@ -55,8 +55,8 @@ pub fn Double::from_int(i : Int) -> Double {
 /// * `value` : The double-precision floating-point number to compute the
 /// absolute value of.
 ///
-/// Returns the absolute value of the input number. For any input `x`, the result
-/// is equivalent to `if x < 0.0 { -x } else { x }`.
+/// Returns the absolute value of the input number by clearing its sign bit, so
+/// the result is never negative. In particular, `(-0.0).abs()` is `0.0`.
 ///
 /// Example:
 ///
@@ -111,6 +111,7 @@ pub fn Double::max(self : Double, other : Double) -> Double {
 /// * `max` : The upper bound of the range.
 ///
 /// Returns `min` if `self < min`, `max` if `self > max`, and `self` otherwise.
+/// Aborts if `min` is greater than `max`.
 ///
 /// Example:
 ///
@@ -319,7 +320,8 @@ pub impl Show for Double with fn to_string(self) {
 ///
 /// Returns whether the two numbers are considered approximately equal. Returns
 /// `true` if the numbers are exactly equal or if they are within either the
-/// relative or absolute tolerance. Returns `false` if either number is infinite.
+/// relative or absolute tolerance. Returns `false` if the numbers are not
+/// exactly equal and either of them is infinite.
 ///
 /// Example:
 ///
