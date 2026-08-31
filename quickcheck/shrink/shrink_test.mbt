@@ -29,6 +29,23 @@ test "shrink int" {
 }
 
 ///|
+test "shrink minimum int without overflowing" {
+  let minimum = -2147483647 - 1
+  let candidates = @shrink.Shrink::shrink(minimum).collect()
+  let tail = candidates.length() - 3
+  debug_inspect(
+    (candidates.length(), candidates[:3], candidates[tail:]),
+    content=(
+      #|(
+      #|  32,
+      #|  <ArrayView: [-1073741824, -1610612736, -1879048192]>,
+      #|  <ArrayView: [-2147483646, -2147483647, 0]>,
+      #|)
+    ),
+  )
+}
+
+///|
 test "shrink int64" {
   debug_inspect(
     @shrink.Shrink::shrink(10000L).collect(),
@@ -54,23 +71,18 @@ test "shrink int64" {
 }
 
 ///|
-test "shrink signed integer minimum values toward zero without overflow" {
-  let ints = @shrink.Shrink::shrink((-2147483647 - 1 : Int)).collect()
-  let int64s = @shrink.Shrink::shrink((-9223372036854775807L - 1L : Int64)).collect()
+test "shrink minimum int64 without overflowing" {
+  let minimum = -9223372036854775807L - 1L
+  let candidates = @shrink.Shrink::shrink(minimum).collect()
+  let tail = candidates.length() - 3
   debug_inspect(
-    (ints.length(), ints[:3], ints.last()),
-    content=(
-      #|(32, <ArrayView: [-1073741824, -1610612736, -1879048192]>, Some(0))
-    ),
-  )
-  debug_inspect(
-    (int64s.length(), int64s[:3], int64s.last()),
+    (candidates.length(), candidates[:3], candidates[tail:]),
     content=(
       #|(
       #|  64,
       #|  <ArrayView:
       #|    [-4611686018427387904, -6917529027641081856, -8070450532247928832]>,
-      #|  Some(0),
+      #|  <ArrayView: [-9223372036854775806, -9223372036854775807, 0]>,
       #|)
     ),
   )
