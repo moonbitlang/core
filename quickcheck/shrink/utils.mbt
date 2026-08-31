@@ -50,6 +50,6 @@ fn shrink_decimal(x : Double) -> Iter[Double] {
     [|m|]
     .concat(Shrink::shrink(m))
     .map(n => n.to_double() / p)
-    .filter(y => y >= 0.0 && y < x)
+    .filter(y => y >= 0.0 && y < x && (p == 1.0 || y != 0.0))
   })
 }

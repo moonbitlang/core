@@ -24,17 +24,17 @@ test "shrink option" {
     @shrink.Shrink::shrink(Some(1000)).collect(),
     content=(
       #|[
-      #|  Some(999),
-      #|  Some(997),
-      #|  Some(993),
-      #|  Some(985),
-      #|  Some(969),
-      #|  Some(938),
-      #|  Some(875),
-      #|  Some(750),
-      #|  Some(500),
-      #|  Some(0),
       #|  None,
+      #|  Some(0),
+      #|  Some(500),
+      #|  Some(750),
+      #|  Some(875),
+      #|  Some(938),
+      #|  Some(969),
+      #|  Some(985),
+      #|  Some(993),
+      #|  Some(997),
+      #|  Some(999),
       #|]
     ),
   )
@@ -47,7 +47,7 @@ test "shrink result" {
   debug_inspect(
     @shrink.Shrink::shrink(b).collect(),
     content=(
-      #|[Err(99), Err(97), Err(94), Err(88), Err(75), Err(50), Err(0)]
+      #|[Err(0), Err(50), Err(75), Err(88), Err(94), Err(97), Err(99)]
     ),
   )
   debug_inspect(
@@ -75,19 +75,19 @@ test "shrink array" {
       #|  [1, 2, 3, 4, 6],
       #|  [1, 2, 3, 4, 5],
       #|  [0, 2, 3, 4, 5, 6],
-      #|  [1, 1, 3, 4, 5, 6],
       #|  [1, 0, 3, 4, 5, 6],
-      #|  [1, 2, 2, 4, 5, 6],
+      #|  [1, 1, 3, 4, 5, 6],
       #|  [1, 2, 0, 4, 5, 6],
-      #|  [1, 2, 3, 3, 5, 6],
-      #|  [1, 2, 3, 2, 5, 6],
+      #|  [1, 2, 2, 4, 5, 6],
       #|  [1, 2, 3, 0, 5, 6],
-      #|  [1, 2, 3, 4, 4, 6],
-      #|  [1, 2, 3, 4, 3, 6],
+      #|  [1, 2, 3, 2, 5, 6],
+      #|  [1, 2, 3, 3, 5, 6],
       #|  [1, 2, 3, 4, 0, 6],
-      #|  [1, 2, 3, 4, 5, 5],
-      #|  [1, 2, 3, 4, 5, 3],
+      #|  [1, 2, 3, 4, 3, 6],
+      #|  [1, 2, 3, 4, 4, 6],
       #|  [1, 2, 3, 4, 5, 0],
+      #|  [1, 2, 3, 4, 5, 3],
+      #|  [1, 2, 3, 4, 5, 5],
       #|]
     ),
   )
@@ -103,8 +103,8 @@ test "shrink fixed array" {
       #|  <FixedArray: []>,
       #|  <FixedArray: [1]>,
       #|  <FixedArray: [2]>,
-      #|  <FixedArray: [1, 1]>,
       #|  <FixedArray: [0, 1]>,
+      #|  <FixedArray: [1, 1]>,
       #|  <FixedArray: [2, 0]>,
       #|]
     ),
@@ -122,8 +122,8 @@ test "shrink array view" {
       #|  <ArrayView: []>,
       #|  <ArrayView: [1]>,
       #|  <ArrayView: [3]>,
-      #|  <ArrayView: [2, 1]>,
       #|  <ArrayView: [0, 1]>,
+      #|  <ArrayView: [2, 1]>,
       #|  <ArrayView: [3, 0]>,
       #|]
     ),
@@ -139,7 +139,7 @@ test "shrink readonly array" {
   debug_inspect(
     candidates,
     content=(
-      #|[[], [1], [2], [1, 1], [0, 1], [2, 0]]
+      #|[[], [1], [2], [0, 1], [1, 1], [2, 0]]
     ),
   )
 }
@@ -151,14 +151,14 @@ test "shrink ref into fresh refs" {
   debug_inspect(
     candidates.map(candidate => candidate.val),
     content=(
-      #|[3, 2, 0]
+      #|[0, 2, 3]
     ),
   )
   candidates[0].val = 99
   debug_inspect(
     (input.val, candidates.map(candidate => candidate.val)),
     content=(
-      #|(4, [99, 2, 0])
+      #|(4, [99, 2, 3])
     ),
   )
 }
@@ -170,13 +170,13 @@ test "shrink tuple" {
     @shrink.Shrink::shrink(x).collect(),
     content=(
       #|[
-      #|  (119, true),
-      #|  (117, true),
-      #|  (113, true),
-      #|  (105, true),
-      #|  (90, true),
-      #|  (60, true),
       #|  (0, true),
+      #|  (60, true),
+      #|  (90, true),
+      #|  (105, true),
+      #|  (113, true),
+      #|  (117, true),
+      #|  (119, true),
       #|  (120, false),
       #|]
     ),
@@ -190,19 +190,19 @@ test "shrink 6-tuple" {
     @shrink.Shrink::shrink(x).collect(),
     content=(
       #|[
-      #|  (19, 'A', 30, true, true, true),
-      #|  (18, 'A', 30, true, true, true),
-      #|  (15, 'A', 30, true, true, true),
-      #|  (10, 'A', 30, true, true, true),
       #|  (0, 'A', 30, true, true, true),
+      #|  (10, 'A', 30, true, true, true),
+      #|  (15, 'A', 30, true, true, true),
+      #|  (18, 'A', 30, true, true, true),
+      #|  (19, 'A', 30, true, true, true),
       #|  (20, 'a', 30, true, true, true),
       #|  (20, 'b', 30, true, true, true),
       #|  (20, 'c', 30, true, true, true),
-      #|  (20, 'A', 29, true, true, true),
-      #|  (20, 'A', 27, true, true, true),
-      #|  (20, 'A', 23, true, true, true),
-      #|  (20, 'A', 15, true, true, true),
       #|  (20, 'A', 0, true, true, true),
+      #|  (20, 'A', 15, true, true, true),
+      #|  (20, 'A', 23, true, true, true),
+      #|  (20, 'A', 27, true, true, true),
+      #|  (20, 'A', 29, true, true, true),
       #|  (20, 'A', 30, false, true, true),
       #|  (20, 'A', 30, true, false, true),
       #|  (20, 'A', 30, true, true, false),

@@ -26,9 +26,9 @@ pub impl[T : Shrink] Shrink for @list.List[T] with fn shrink(xs) {
   }
 
   [
-    for k = n / 2; k > 0; k = k / 2 => k
+    for k = n; k > 0; k = k / 2 => k
   ]
-  .rev_iter()
+  .iter()
   .flat_map(k => removes_list(k, n, xs))
   .concat(shr_sub_terms(xs))
 }

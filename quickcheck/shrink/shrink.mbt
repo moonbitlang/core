@@ -47,20 +47,24 @@ impl Shrink with fn shrink(_a) {
 ///|
 pub impl Shrink for Int with fn shrink(x) {
   [|
-    ..[ for z = x / 2; (x - z).abs() < x.abs(); z = z / 2 => x - z ].rev_iter(),
     ..if x != 0 {
       [0]
     },
+    ..[
+      for z = x / 2; (x - z).abs() < x.abs(); z = z / 2 => x - z
+    ],
   |]
 }
 
 ///|
 pub impl Shrink for Int64 with fn shrink(x) {
   [|
-    ..[ for z = x / 2; (x - z).abs() < x.abs(); z = z / 2 => x - z ].rev_iter(),
     ..if x != 0 {
       [(0 : Int64)]
     },
+    ..[
+      for z = x / 2; (x - z).abs() < x.abs(); z = z / 2 => x - z
+    ],
   |]
 }
 
@@ -81,17 +85,17 @@ pub impl Shrink for @bigint.BigInt with fn shrink(x) {
   let magnitude = if x < zero { -x } else { x }
   let bit_length = magnitude.bit_length()
   let negative = x < zero
-  let mut shift = bit_length - 1
+  let mut shift = 1
   let mut emit_zero = true
   Iter::new(
     () => {
-      if shift > 0 {
-        let delta = magnitude >> shift
-        shift -= 1
-        Some(if negative { x + delta } else { x - delta })
-      } else if emit_zero {
+      if emit_zero {
         emit_zero = false
         Some(zero)
+      } else if shift < bit_length {
+        let delta = magnitude >> shift
+        shift += 1
+        Some(if negative { x + delta } else { x - delta })
       } else {
         None
       }
@@ -103,20 +107,24 @@ pub impl Shrink for @bigint.BigInt with fn shrink(x) {
 ///|
 pub impl Shrink for UInt with fn shrink(x) {
   [|
-    ..[ for z = x / 2; z > 0; z = z / 2 => x - z ].rev_iter(),
     ..if x != 0 {
       [(0 : UInt)]
     },
+    ..[
+      for z = x / 2; z > 0; z = z / 2 => x - z
+    ],
   |]
 }
 
 ///|
 pub impl Shrink for UInt64 with fn shrink(x) {
   [|
-    ..[ for z = x / 2; z > 0; z = z / 2 => x - z ].rev_iter(),
     ..if x != 0 {
       [(0 : UInt64)]
     },
+    ..[
+      for z = x / 2; z > 0; z = z / 2 => x - z
+    ],
   |]
 }
 
@@ -133,10 +141,12 @@ pub impl Shrink for Bool with fn shrink(b) {
 pub impl Shrink for Byte with fn shrink(x) {
   let xi = x.to_int()
   [|
-    ..[ for z = xi / 2; z > 0; z = z / 2 => (xi - z).to_byte() ].rev_iter(),
     ..if xi != 0 {
       [Int::to_byte(0)]
     },
+    ..[
+      for z = xi / 2; z > 0; z = z / 2 => (xi - z).to_byte()
+    ],
   |]
 }
 
