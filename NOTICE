@@ -46,6 +46,11 @@ Files `internal/strconv/strconv_eisel_lemire.mbt` and
 `internal/strconv/strconv_eisel_lemire_table.mbt` are adapted from Go 1.26.2's
 `internal/strconv/atofeisel.go` and generated `internal/strconv/pow10tab.go`.
 
+Files `bigint/arith_wide.mbt` and `bigint/bigint_wide.mbt` are adapted from
+Go's `math/big` package, specifically `src/math/big/arith.go`,
+`src/math/big/nat.go`, `src/math/big/natmul.go`, and
+`src/math/big/natdiv.go`.
+
 License from Golang:
 Copyright 2009 The Go Authors.
 

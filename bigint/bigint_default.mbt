@@ -12,6 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// The default implementation retains 32-bit limbs. In particular, wasm-gc
+// cannot currently represent wide arithmetic's multi-value results without a
+// performance regression.
+
 ///|
 /// A big integer represented as an array of Int.
 //
@@ -1472,7 +1476,7 @@ pub fn BigInt::from_octets(input : BytesView, signum? : Int = 1) -> BigInt {
   let byte_per_limb = RADIX_BIT_LEN / 8
   // tail: at RADIX_BIT_LEN == 32 a limb is exactly one big-endian 32-bit word,
   // so the shift-accumulate loop collapses to a single u32be read. That
-  // constant is pinned by a test in bigint_nonjs_wbtest.mbt, so narrowing it
+  // constant is pinned by a test in bigint_default_wbtest.mbt, so narrowing it
   // fails there rather than silently mis-decoding here.
   for i in 0..<div {
     guard! input[len - byte_per_limb - i * byte_per_limb:] is [u32be(word), ..]
