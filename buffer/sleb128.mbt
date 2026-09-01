@@ -82,10 +82,11 @@ pub impl Leb128 for Int64 with fn output(self, buffer) {
 }
 
 ///|
-/// Encode a value as signed LEB128 and append it to the buffer.
+/// Encode a value as LEB128 and append it to the buffer.
 ///
-/// This works for types implementing `Leb128`, currently including `Int` and
-/// `Int64`.
+/// This works for types implementing `Leb128`: `Int` and `Int64` are encoded as
+/// signed LEB128 (SLEB128), while `UInt` and `UInt64` are encoded as unsigned
+/// LEB128 (ULEB128).
 ///
 /// Parameters:
 ///

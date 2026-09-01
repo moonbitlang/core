@@ -185,7 +185,7 @@ fn parse_inf_nan(rest : StringView) -> Double raise StrConvError {
 
 ///|
 /// Returns None if the multiplication might overflow (there are some false-negative corner cases).
-/// Otherwise, returns Some(m), where m = self * b.
+/// Otherwise, returns Some(m), where m = a * b.
 /// WARNING: Note this function is only used internally in the strconv module, 
 /// the current implementation is not completely safe against overflows.
 fn checked_mul(a : UInt64, b : UInt64) -> UInt64? {

@@ -1093,11 +1093,7 @@ pub fn Buffer::write_string_utf16be(buf : Self, string : StringView) -> Unit {
 /// Parameters:
 ///
 /// * `self` : The buffer to write to.
-/// * `str` : The source string from which the substring will be taken.
-/// * `offset` : The starting position in the source string (inclusive). Must be
-/// non-negative.
-/// * `count` : The number of characters to write. Must be non-negative and
-/// `offset + count` must not exceed the length of the source string.
+/// * `value` : The string view to be written, encoded as UTF-16LE bytes.
 pub impl Logger for Buffer with fn write_view(self : Buffer, value : StringView) -> Unit {
   let required = self.len + value.length() * 2
   if required > self.data.length() || required < self.len {

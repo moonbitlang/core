@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-/// Returns the accumulated value, the slice left, and the number of digits consumed.
+/// Returns the slice left, the accumulated value, and the number of digits consumed.
 /// It ignores underscore and stops when a non-digit character is found.
 fn[T] StringView::fold_digits(
   self : Self,
