@@ -199,9 +199,9 @@ pub impl Default for Bool with fn default() = "%bool_default"
 /// * `self` : The integer value to negate.
 ///
 /// Returns the negation of the input value. For all inputs except
-/// `Int::min_value()`, returns the value with opposite sign. When the input is
-/// `Int::min_value()`, returns `Int::min_value()` due to two's complement
-/// representation.
+/// `@int.min_value` (-2147483648), returns the value with opposite sign. When
+/// the input is `@int.min_value`, returns `@int.min_value` due to two's
+/// complement representation.
 ///
 /// Example:
 ///
@@ -209,7 +209,7 @@ pub impl Default for Bool with fn default() = "%bool_default"
 /// test {
 ///   inspect(-42, content="-42")
 ///   inspect(42, content="42")
-///   inspect(2147483647, content="2147483647") // negating near min value
+///   inspect(2147483647, content="2147483647") // Int maximum value
 /// }
 /// ```
 pub impl Neg for Int with fn neg(self) = "%i32_neg"
@@ -1147,9 +1147,8 @@ pub fn Double::sqrt(self : Double) -> Double = "%f64_sqrt"
 
 ///|
 /// Compares two double-precision floating-point numbers for equality following
-/// IEEE 754 rules. Returns `true` if both numbers are equal, including when both
-/// are `NaN`. Note that this differs from the standard IEEE 754 behavior where
-/// `NaN` is not equal to any value, including itself.
+/// IEEE 754 rules. Returns `true` if both numbers are equal. `NaN` is not equal
+/// to any value, including itself, so `nan == nan` evaluates to `false`.
 ///
 /// Parameters:
 ///
@@ -1530,7 +1529,8 @@ pub fn Bytes::length(self : Bytes) -> Int = "%bytes_length"
 ///
 /// Parameters:
 ///
-/// * `length` : The length of the byte sequence to create. Must be non-negative.
+/// * `length` : The length of the byte sequence to create. A negative value
+/// produces an empty byte sequence.
 /// * `initial_value` : The byte value used to initialize each position in the
 /// sequence.
 ///
@@ -2703,7 +2703,8 @@ pub fn Int::to_int16(self : Int) -> Int16 = "%i32_to_i16"
 
 ///|
 /// Converts a byte value to a 16-bit signed integer. The byte value is
-/// sign-extended to 16 bits during the conversion.
+/// zero-extended to 16 bits during the conversion, so the result is always in
+/// the range [0, 255].
 ///
 /// Parameters:
 ///

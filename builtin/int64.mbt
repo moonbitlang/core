@@ -52,7 +52,9 @@ pub fn Int64::from_int(i : Int) -> Int64 {
 ///
 /// * `self` : The 64-bit integer whose absolute value is to be computed.
 ///
-/// Returns the absolute value of the input integer.
+/// Returns the absolute value of the input integer. When the input is
+/// `@int64.MIN_VALUE` (-9223372036854775808), returns `@int64.MIN_VALUE`
+/// itself, since its absolute value is not representable as an `Int64`.
 ///
 /// Example:
 ///
@@ -654,7 +656,7 @@ pub fn Int64::clz(self : Int64) -> Int = "%i64_clz"
 ///
 /// ```mbt check
 /// test {
-///   let x = 0x7000_0001_1F00_100FL // 0111000000000000000000000001000111110000000100001111
+///   let x = 0x7000_0001_1F00_100FL // Binary: 0111 0000 ... 0001 1111 0000 0000 0001 0000 0000 1111
 ///   inspect(x.popcnt(), content="14")
 /// }
 /// ```
@@ -854,7 +856,7 @@ pub fn Int64::reinterpret_as_double(self : Int64) -> Double = "%i64_to_f64_reint
 ///
 /// ```mbt check
 /// test {
-///   // 0x4045000000000000 represents 42.0 in IEEE 754 double format
+///   // 0x4059000000000000 represents 100.0 in IEEE 754 double format
 ///   let n = 4636737291354636288UL
 ///   inspect(n.reinterpret_as_double(), content="100")
 /// }
