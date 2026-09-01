@@ -796,19 +796,6 @@ fn[K, V] HashMap::rehash_place_entry(
 }
 
 ///|
-/// Creates a new hash map from a fixed array of key-value pairs.
-///
-/// Parameters:
-///
-/// * `pairs` : A fixed array of tuples, where each tuple contains a key of type
-/// `K` and a value of type `V`. The key type must implement both `Eq` and `Hash`
-/// traits.
-///
-/// Returns a new hash map containing all the key-value pairs from the input
-/// array.
-///
-
-///|
 test "of" {
   let m = from_array([(1, 2), (3, 4)])
   @debug.debug_inspect(m.get(1), content="Some(2)")
