@@ -660,6 +660,15 @@ fn ryu_to_string(val : Double) -> String {
   if val == 0.0 {
     return "0"
   }
+  // Integral values in Int range have the same shortest decimal form as the
+  // corresponding integer, and Int formatting is far cheaper than the full
+  // shortest-representation search below.
+  if val >= -2147483648.0 && val <= 2147483647.0 {
+    let i = val.to_int()
+    if i.to_double() == val {
+      return i.to_string()
+    }
+  }
   // Step 1: Decode the floating-point number, and unify normalized and subnormal cases.
   let bits : UInt64 = val.reinterpret_as_uint64()
 
