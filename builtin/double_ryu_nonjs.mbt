@@ -655,10 +655,12 @@ fn d2d_small_int(
 }
 
 ///|
-/// The largest double whose integral values all round-trip exactly through
-/// Int64: 2^53. (JavaScript's MAX_SAFE_INTEGER is 2^53 - 1; the bound here
-/// includes 2^53 itself, which is exactly representable and renders
-/// identically either way.)
+/// The largest double below which EVERY integer is exactly representable as
+/// binary64: 2^53. Individual larger integers (2^62, say) still round-trip
+/// through Int64, but their shortest decimal form is no longer their exact
+/// digits, so they must not take the integer fast path. (JavaScript's
+/// MAX_SAFE_INTEGER is 2^53 - 1; the bound here includes 2^53 itself, which
+/// is exactly representable and renders identically either way.)
 const MAX_EXACTLY_REPRESENTABLE_INT : Double = 9_007_199_254_740_992
 
 ///|
