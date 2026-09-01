@@ -24,7 +24,14 @@ struct Array[T] {
 }
 
 ///|
-fn[T] Array::make_uninit(len : Int) -> Array[T] {
+/// Creates an array of `len` elements whose contents are unspecified. The
+/// array reports `length() == len` immediately, so every slot is observable
+/// and the caller must write all of them before the array is read or escapes.
+///
+/// Prefer `Array::makei` unless the initializing loop cannot be expressed as
+/// a function of the index.
+#doc(hidden)
+pub fn[T] Array::unsafe_make_uninit(len : Int) -> Array[T] {
   { buf: UninitializedArray::make(len), len, }
 }
 
