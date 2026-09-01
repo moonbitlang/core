@@ -106,3 +106,24 @@ test "bench HashMap::copy n=50000" (it : @bench.T) {
   }
   it.bench(fn() { it.keep(template.copy().length()) })
 }
+
+///|
+/// `to_array` walks the whole entry table and materializes the live pairs. The
+/// Int and Ref variants are both kept because the element type decides whether
+/// the per-element store carries reference-counting traffic.
+test "bench HashMap::to_array Int n=50000" (it : @bench.T) {
+  let m = @hashmap.HashMap([])
+  for i in 0..<hashmap_bench_n {
+    m.set(i * 1103515245, i)
+  }
+  it.bench(fn() { it.keep(m.to_array()) })
+}
+
+///|
+test "bench HashMap::to_array Ref n=50000" (it : @bench.T) {
+  let m = @hashmap.HashMap([])
+  for i in 0..<hashmap_bench_n {
+    m.set("key\{i}", "value\{i}")
+  }
+  it.bench(fn() { it.keep(m.to_array()) })
+}
