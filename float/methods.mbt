@@ -330,7 +330,8 @@ pub fn Float::signum(self : Float) -> Float {
 ///
 /// Returns whether the two numbers are considered approximately equal. Returns
 /// `true` if the numbers are exactly equal or if they are within either the
-/// relative or absolute tolerance. Returns `false` if either number is infinite.
+/// relative or absolute tolerance. Returns `false` if the two numbers are not
+/// exactly equal and either of them is infinite.
 ///
 /// Example:
 ///
@@ -394,14 +395,16 @@ pub impl Mod for Float with fn mod(self : Float, other : Float) -> Float {
 ///
 /// # Arguments
 ///
-/// * `start` - The starting value of the range (inclusive).
+/// * `self` - The starting value of the range (inclusive).
 /// * `end` - The ending value of the range (exclusive by default).
 /// * `step` - The step size of the range (default 1.0).
 /// * `inclusive` - Whether the ending value is inclusive (default false).
 ///
 /// # Returns
 ///
-/// Returns an iterator that iterates over the range of Float from `start` to `end - 1`.
+/// Returns an iterator yielding `self`, `self + step`, `self + 2 * step`, ...,
+/// stopping before `end` (or at `end` when `inclusive` is set). Returns an
+/// empty iterator when `step` is `0.0`.
 pub fn Float::until(
   self : Float,
   end : Float,
@@ -837,7 +840,7 @@ test "Float::reinterpret" {
 /// test {
 ///   let n = 42
 ///   let f = Float::from_int(n)
-///   // Convert back to double for comparison since Float doesn't implement Show
+///   // `Float` implements `Show`, so `f` could also be inspected directly
 ///   inspect(f.to_double(), content="42")
 /// }
 /// ```
@@ -860,7 +863,7 @@ pub fn Float::from_int(self : Int) -> Float = "%i32.to_f32"
 /// test {
 ///   let b = b'\xFF' // 255 in decimal
 ///   let f = Float::from_byte(b)
-///   // Convert to double for comparison since Float doesn't implement Show
+///   // `Float` implements `Show`, so `f` could also be inspected directly
 ///   inspect(f.to_double(), content="255")
 /// }
 /// ```
@@ -975,7 +978,7 @@ test "Float::from_uint64" {
 /// test {
 ///   let n = 42L
 ///   let f = Float::from_int64(n)
-///   // Convert to double for comparison since Float doesn't implement Show
+///   // `Float` implements `Show`, so `f` could also be inspected directly
 ///   inspect(f.to_double(), content="42")
 /// }
 /// ```

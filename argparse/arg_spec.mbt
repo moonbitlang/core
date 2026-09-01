@@ -29,7 +29,7 @@ pub(all) enum FlagAction {
 ///|
 /// Behavior for option args.
 ///
-/// - `Set` keeps the last provided value.
+/// - `Set` accepts the value once; a repeated occurrence is an error.
 /// - `Append` keeps all provided values in order.
 pub(all) enum OptionAction {
   Set
@@ -89,8 +89,10 @@ pub struct FlagArg {
 /// - At least one of `short`, `long`, or `env` must be available.
 /// - `global=true` makes the flag available in subcommands.
 /// - `negatable=true` accepts `--no-<long>` for long flags.
-/// - If `env` is set, accepted boolean values are:
-///   `1`, `0`, `true`, `false`, `yes`, `no`, `on`, `off`.
+/// - If `env` is set on a `SetTrue` / `SetFalse` flag, accepted boolean
+///   values are: `1`, `0`, `true`, `false`, `yes`, `no`, `on`, `off`.
+/// - If `env` is set on a `Count` flag, the value must be a non-negative
+///   integer.
 #alias(new, deprecated="Use `FlagArg()` instead")
 pub fn FlagArg::FlagArg(
   name : StringView,
