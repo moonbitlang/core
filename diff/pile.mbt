@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-/// `Pile[T]` models one pile in patience sorting.
+/// `Pile` models one pile in patience sorting.
 priv struct Pile(Array[BackPointer])
 
 ///|

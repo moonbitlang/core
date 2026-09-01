@@ -1,6 +1,6 @@
 # `uint`
 
-This package provides functionalities for handling 32-bit unsigned integers in MoonBit. To this end, it includes methods for converting between `UInt` and other number formats, as well as utilities for byte representation.
+This package provides functionalities for handling 32-bit unsigned integers in MoonBit. To this end, it includes `UInt`'s value-range constants, its default value, and conversion to `Int64`.
 
 ## Basic Properties
 

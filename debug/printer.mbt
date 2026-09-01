@@ -16,7 +16,7 @@
 /// Rendered content with line layout and paren preference.
 ///
 /// This is an internal implementation detail of `pretty_print`.
-/// Users should rely on `pretty_print_repr` / `pretty_print_delta`.
+/// Users should rely on `render` / `pretty_print_delta`.
 priv struct Content {
   size : Int
   lines : Array[String]

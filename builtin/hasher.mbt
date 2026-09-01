@@ -57,7 +57,8 @@ struct Hasher {
 /// Parameters:
 ///
 /// * `seed` : An integer value used to initialize the hasher's internal state.
-/// Defaults to 0.
+/// Defaults to 0 on every target except JavaScript, where the default is a
+/// randomly chosen per-process value.
 ///
 /// Returns a new `Hasher` instance initialized with the given seed value.
 ///
