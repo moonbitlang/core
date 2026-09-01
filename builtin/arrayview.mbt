@@ -1364,7 +1364,7 @@ pub fn[T, U] ArrayView::map(
   self : ArrayView[T],
   f : (T) -> U raise?,
 ) -> Array[U] raise? {
-  let arr = Array::make_uninit(self.length())
+  let arr = Array::unsafe_make_uninit(self.length())
   for i, x in self {
     arr.unsafe_set(i, f(x))
   }
@@ -1387,7 +1387,7 @@ pub fn[T, U] ArrayView::mapi(
   self : ArrayView[T],
   f : (Int, T) -> U raise?,
 ) -> Array[U] raise? {
-  let arr = Array::make_uninit(self.length())
+  let arr = Array::unsafe_make_uninit(self.length())
   for i, x in self {
     arr.unsafe_set(i, f(i, x))
   }
@@ -1584,7 +1584,7 @@ pub fn[T : Compare] ArrayView::lexical_compare(
 /// ```
 pub fn[T] ArrayView::rev(self : ArrayView[T]) -> Array[T] {
   let len = self.length()
-  let arr = Array::make_uninit(len)
+  let arr = Array::unsafe_make_uninit(len)
   for i in 0..<len {
     arr.unsafe_set(i, self.unsafe_get(len - i - 1))
   }

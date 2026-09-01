@@ -74,7 +74,7 @@ pub fn[T] Array::from_fixed_array(arr : FixedArray[T]) -> Array[T] {
 /// One should use makei() instead which creates an object for each index.
 #owned(elem)
 pub fn[T] Array::make(len : Int, elem : T) -> Array[T] {
-  let arr = Array::make_uninit(len)
+  let arr = Array::unsafe_make_uninit(len)
   for i in 0..<len {
     arr.unsafe_set(i, elem)
   }
@@ -109,7 +109,7 @@ pub fn[T] Array::makei(length : Int, f : (Int) -> T raise?) -> Array[T] raise? {
   if length <= 0 {
     []
   } else {
-    let array = Array::make_uninit(length)
+    let array = Array::unsafe_make_uninit(length)
     for i in 0..<length {
       array.unsafe_set(i, f(i))
     }
@@ -588,7 +588,7 @@ pub fn[T, U] Array::map(
   self : Array[T],
   f : (T) -> U raise?,
 ) -> Array[U] raise? {
-  let arr = Array::make_uninit(self.length())
+  let arr = Array::unsafe_make_uninit(self.length())
   for i, v in self {
     arr.unsafe_set(i, f(v))
   }
@@ -636,7 +636,7 @@ pub fn[T, U] Array::mapi(
   if self.is_empty() {
     return []
   }
-  let arr = Array::make_uninit(self.length())
+  let arr = Array::unsafe_make_uninit(self.length())
   for i, v in self {
     arr.unsafe_set(i, f(i, v))
   }
@@ -775,7 +775,7 @@ pub fn[T] Array::rev_in_place(self : Array[T]) -> Unit {
 /// ```
 pub fn[T] Array::rev(self : Array[T]) -> Array[T] {
   let len = self.length()
-  let arr = Array::make_uninit(len)
+  let arr = Array::unsafe_make_uninit(len)
   for i in 0..<len {
     arr.unsafe_set(i, self.unsafe_get(len - i - 1))
   }
@@ -818,7 +818,7 @@ pub fn[T] Array::split_at(self : Array[T], index : Int) -> (Array[T], Array[T]) 
       len=len2,
     )
   } else {
-    Array::make_uninit(0)
+    Array::unsafe_make_uninit(0)
   }
   (v1, v2)
 }
@@ -1271,7 +1271,7 @@ pub fn[T] Array::flatten(self : Array[Array[T]]) -> Array[T] {
   } nobreak {
     len
   }
-  let res = Array::make_uninit(len)
+  let res = Array::unsafe_make_uninit(len)
   for xs in self; i = 0 {
     res.unsafe_blit(i, xs, 0, xs.length())
     continue i + xs.length()
