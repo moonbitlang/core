@@ -149,7 +149,7 @@ pub fn FixedArray::blit_from_string(
 fn unsafe_from_bytes(bytes : Bytes) -> FixedArray[Byte] = "%identity"
 
 ///|
-/// Copy `length` chars from byte sequence `src`, starting at `src_offset`,
+/// Copy `length` bytes from byte sequence `src`, starting at `src_offset`,
 /// into byte sequence `self`, starting at `bytes_offset`.
 pub fn FixedArray::blit_from_bytes(
   self : FixedArray[Byte],
@@ -456,9 +456,9 @@ pub fn Bytes::from_array(arr : ArrayView[Byte]) -> Bytes {
 ///
 /// Parameters:
 ///
-/// * `array` : A fixed-size array of bytes to be converted into a bytes
+/// * `arr` : A fixed-size array of bytes to be converted into a bytes
 /// sequence.
-/// * `length` : (Optional) The length of the resulting bytes sequence. If not
+/// * `len` : (Optional) The length of the resulting bytes sequence. If not
 /// provided, uses the full length of the input array.
 ///
 /// Returns a new bytes sequence containing the bytes from the input array. If a
@@ -758,17 +758,18 @@ pub fn Bytes::is_empty(self : Bytes) -> Bool {
 }
 
 ///|
-/// Retrieves a byte from the view at the specified index.
+/// Retrieves a byte from the byte sequence at the specified index.
 ///
 /// Parameters:
 ///
-/// * `self` : The bytes view to retrieve the byte from.
-/// * `index` : The position in the view from which to retrieve the byte.
+/// * `self` : The byte sequence to retrieve the byte from.
+/// * `index` : The position in the byte sequence from which to retrieve the
+/// byte.
 ///
 /// Returns the byte at the specified index, or None if the index is out of bounds.
 ///
 /// Example:
-/// 
+///
 /// ```mbt check
 /// test {
 ///   let bytes = b"\x01\x02\x03"
@@ -797,7 +798,10 @@ pub fn Bytes::get(self : Bytes, index : Int) -> Byte? {
 ///
 /// * `self` : The first bytes sequence.
 /// * `other` : The second bytes sequence.
-/// TODO: marked as intrinsic, inline if it is constant
+///
+/// Returns a new bytes sequence containing the bytes of `self` followed by the
+/// bytes of `other`.
+// TODO: marked as intrinsic, inline if it is constant
 pub impl Add for Bytes with fn add(self : Bytes, other : Bytes) -> Bytes {
   self.bytes_add_impl(other)
 }
