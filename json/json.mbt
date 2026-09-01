@@ -93,8 +93,21 @@ fn write_indent(
   level : Int,
   indent : Int,
 ) -> Unit {
+  // Each level is the previous one plus a single indentation unit. Building a
+  // level is still O(indent * level) — concatenation copies `last` — but it
+  // replaces a fresh `repeat(indent * level)` with a `repeat(indent)`, roughly
+  // halving the bytes written per level. It also never computes the product
+  // `indent * level`, which overflows `Int` to a negative value for a large
+  // `indent` and is then rejected by `String::repeat`.
+  //
+  // The unit is built here rather than once per `stringify` call so that a
+  // document emitting no indentation at all never allocates it: callers reach
+  // this only when `indent > 0`, so `repeat` never sees a negative count.
   while cache.length() <= level {
-    cache.push("\n" + " ".repeat(indent * cache.length()))
+    match cache {
+      [.., last] => cache.push(last + " ".repeat(indent))
+      [] => cache.push("\n")
+    }
   }
   buf.write_string(cache[level])
 }

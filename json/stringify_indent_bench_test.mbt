@@ -22,7 +22,48 @@ fn make_deep_wide_json() -> Json {
 }
 
 ///|
+/// A document shaped like ordinary API/config output: a few hundred small
+/// objects nested four deep. Unlike `make_deep_wide_json`, this does not park
+/// every separator past the old 8-space lookup cutoff, so it reflects what
+/// pretty-printing actually costs on realistic input.
+fn make_shallow_wide_json() -> Json {
+  let rows = Array::makei(500, i => {
+    let row : Json = {
+      "id": Json::number(i.to_double()),
+      "name": Json::string("item-\{i}"),
+      "meta": {
+        "active": Json::boolean(i % 2 == 0),
+        "score": Json::number(1.5),
+      },
+    }
+    row
+  })
+  { "items": rows.to_json(), "total": Json::number(500.0) }
+}
+
+///|
 test "bench Json::stringify deep wide indent=2 n=10000" (it : @bench.T) {
   let json = make_deep_wide_json()
   it.bench(fn() { it.keep(json.stringify(indent=2).length()) })
+}
+
+///|
+/// The default, and by far the most common, path. The indentation cache is
+/// never consulted here, so this guards the compact path against regressions
+/// from indentation work.
+test "bench Json::stringify compact n=10000" (it : @bench.T) {
+  let json = make_deep_wide_json()
+  it.bench(fn() { it.keep(json.stringify().length()) })
+}
+
+///|
+test "bench Json::stringify shallow wide indent=2 n=500" (it : @bench.T) {
+  let json = make_shallow_wide_json()
+  it.bench(fn() { it.keep(json.stringify(indent=2).length()) })
+}
+
+///|
+test "bench Json::stringify shallow wide compact n=500" (it : @bench.T) {
+  let json = make_shallow_wide_json()
+  it.bench(fn() { it.keep(json.stringify().length()) })
 }
