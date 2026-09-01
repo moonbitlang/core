@@ -94,7 +94,8 @@ pub fn Int::max(self : Int, other : Int) -> Int {
 }
 
 ///|
-/// Clamps the value `self` between `min` and `max`.
+/// Clamps the value `self` between `min` and `max`. Aborts if `min` is greater
+/// than `max`.
 ///
 /// Example:
 /// ```mbt check
@@ -175,7 +176,9 @@ pub fn Int::is_surrogate(self : Int) -> Bool {
 ///
 /// * `self` : The integer whose absolute value is to be computed.
 ///
-/// Returns the absolute value of the integer.
+/// Returns the absolute value of the integer. When the input is
+/// `@int.min_value` (-2147483648), returns `@int.min_value` itself, since its
+/// absolute value is not representable as an `Int`.
 ///
 /// Example:
 ///

@@ -13,24 +13,16 @@
 // limitations under the License.
 
 ///|
-/// Returns the slice left, the accumulated value, and the number of digits consumed.
-/// It ignores underscore and stops when a non-digit character is found.
-fn[T] StringView::fold_digits(
-  self : Self,
-  init : T,
-  f : (Int, T) -> T,
-) -> (Self, T, Int) {
-  let mut ret = init
-  let mut len = 0
-  let mut str = self
-  while str is [ch, .. rest] {
-    if ch is ('0'..='9') {
-      len += 1
-      ret = f(ch.to_int() - '0', ret)
-    } else if ch != '_' {
-      break
-    }
-    str = rest
+fn make_deep_wide_json() -> Json {
+  let mut value = Array::makei(10000, i => Json::number(i.to_double())).to_json()
+  for _ in 0..<6 {
+    value = Json::array([value])
   }
-  (str, ret, len)
+  value
+}
+
+///|
+test "bench Json::stringify deep wide indent=2 n=10000" (it : @bench.T) {
+  let json = make_deep_wide_json()
+  it.bench(fn() { it.keep(json.stringify(indent=2).length()) })
 }

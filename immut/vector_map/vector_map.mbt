@@ -301,7 +301,7 @@ fn[K, V] VectorMap::should_compact(self : VectorMap[K, V]) -> Bool {
 /// without a single hash being recomputed.
 fn[K, V] VectorMap::compact(self : VectorMap[K, V]) -> VectorMap[K, V] {
   let remap = FixedArray::make(self.spine.length(), 0)
-  let kept : Array[(K, V)?] = Array::new(capacity=self.size)
+  let kept : Array[(K, V)?] = Array(capacity=self.size)
   self.spine.eachi((slot, entry) => {
     if entry is Some(_) {
       remap[slot] = kept.length()

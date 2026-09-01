@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Every trait-method promotion below is deprecated (none are kept as regular methods).
-
 // --- promoted: kept as regular methods ---
 
 ///|

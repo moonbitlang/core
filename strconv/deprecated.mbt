@@ -66,7 +66,8 @@ pub fn Decimal::to_double(self : Decimal) -> Double raise StrConvError {
 
 ///|
 /// Binary shift left (s > 0) or right (s < 0).
-/// The shift count must not larger than the max_shift to avoid overflow.
+/// Any shift count is accepted: counts larger than the internal per-pass
+/// limit are applied in several passes.
 #deprecated("use `@string.parse_double` instead", skip_current_package=true)
 pub fn Decimal::shift(self : Decimal, s : Int) -> Unit {
   self.shift_priv(s)

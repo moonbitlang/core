@@ -7,7 +7,7 @@
   represented using surrogate pairs - two 16-bit code units.
 
 * **Char vs Charcode**: MoonBit distinguishes between:
-  - `Charcode`: A UTF-16 code unit (type `Int`)
+  - `Charcode`: A UTF-16 code unit (type `UInt16`)
   - `Char`: A Unicode character (type `Char`)
 
 * **Indexing**: There are two ways to count or index elements in a string:
@@ -18,12 +18,13 @@
   have specific guidelines for string indexing:
   - The `s[i]` syntax is available but should be used with caution. It accesses
     the i-th UTF-16 code unit (charcode) for efficiency and consistency with
-    other APIs. The return type of `s[i]` is `Int`, which reminds you that it
+    other APIs. The return type of `s[i]` is `UInt16`, which reminds you that it
     returns the charcode.
-  - The slice operator `s[i:j]` is intentionally disallowed to prevent
-    accidental creation of invalid strings. Instead, use `s.charcodes(start = i,
-    end = j)` to get a view of the String. The API reminds you that it creates
-    a view based on charcode indices, not characters.
+  - The slice operator `s[i:j]` is available but should also be used with
+    caution: it slices on charcode indices, not character indices, and it
+    aborts when an endpoint is out of range or would split a surrogate pair.
+    Use `s.get_view(start = i, end = j)`, which returns `None` instead of
+    aborting, when the range may be invalid.
 
 * **Performance and Unicode Safety**:
   - Most APIs in this package operate on UTF-16 offsets rather than Unicode
@@ -31,9 +32,10 @@
     while character-based operations typically require O(n) scanning. However,
     direct offset manipulation is not unicode-safe as it may split surrogate
     pairs. For example,
-    * `char_at(i)` and `charcode_at(i)` reads the data at the i-th offset and
-      returns the corresponding character and charcode respectively. Both APIs
-      take O(1) time complexity.
+    * `get_char(i)` reads the data at the i-th offset and returns the
+      corresponding character (or `None` if that offset splits a surrogate
+      pair), while `at(i)` (a.k.a. `code_unit_at(i)`) returns the charcode at
+      that offset. Both APIs take O(1) time complexity.
     * `find` and `rev_find` will return the charcode index if the target is
       found. The index can be used to create a view of the string.
   - For unicode-safe operations, it's recommended to use:
@@ -43,9 +45,9 @@
 ```mbt check
 ///|
 test "unsafe vs safe" {
-  // Unsafe: May split surrogate pairs
+  // Unsafe: raw offsets may land in the middle of a surrogate pair
   let emoji = "🎉"
-  let _ = emoji.get_char(1) // Gets second half of surrogate pair
+  let _ = emoji.get_char(1) // None: offset 1 is the second half of the pair
   // Safe: Uses iterator
   for c in "Hello 🌍".iter() {
     // Properly handles both ASCII and Unicode chars
@@ -56,9 +58,9 @@ test "unsafe vs safe" {
 
 * **Validity**: The string APIs assume the validity of strings and that provided
   offsets don't fall between surrogate pairs. The APIs don't perform validity
-  checks for efficiency reasons. Creating invalid characters is possible (e.g.,
-  `"🍎".char_at(1)` accesses the second half of a surrogate pair). When
-  displaying invalid characters, a replacement character � will be shown.
+  checks for efficiency reasons. Creating invalid strings is possible (e.g.,
+  `"🍎".view(start_offset=1)` starts at the second half of a surrogate pair).
+  When displaying invalid characters, a replacement character � will be shown.
 
 * **View**: A `View` represents a view of a String that maintains proper Unicode
   character boundaries while providing efficient access to substrings. Views are

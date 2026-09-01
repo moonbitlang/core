@@ -285,7 +285,7 @@ pub fn[T : Compare] FixedArray::stable_sort(self : FixedArray[T]) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let arr = [5, 3, 2, 4, 1]
+///   let arr : FixedArray[Int] = [5, 3, 2, 4, 1]
 ///   arr.sort_by_key(x => -x)
 ///   @test.assert_eq(arr, [5, 4, 3, 2, 1])
 /// }
@@ -316,7 +316,7 @@ test "FixedArray::sort_by_key/basic" {
 ///
 /// ```mbt check
 /// test {
-///   let arr = [5, 3, 2, 4, 1]
+///   let arr : FixedArray[Int] = [5, 3, 2, 4, 1]
 ///   arr.sort_by((a, b) => a - b)
 ///   @test.assert_eq(arr, [1, 2, 3, 4, 5])
 /// }

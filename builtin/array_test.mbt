@@ -14,7 +14,7 @@
 
 ///|
 test "array_new" {
-  let arr : Array[Int] = Array::new()
+  let arr : Array[Int] = Array()
   @test.assert_eq(arr.length(), 0)
 }
 
@@ -39,7 +39,7 @@ test "array_make" {
 
 ///|
 test "array_realloc" {
-  let arr = Array::new(capacity=2)
+  let arr = Array(capacity=2)
   arr.push(1)
   arr.push(2)
   arr.push(3) // This should trigger a reallocation
@@ -149,7 +149,7 @@ test "array_append" {
   // @test.assert_eq(arr1.capacity(), 6)
   @test.assert_eq(arr1[3], 4)
   let cap = 20
-  let arr3 = Array::new(capacity=cap)
+  let arr3 = Array(capacity=cap)
   arr3.resize(cap, 10)
   arr1.append(arr3)
   @test.assert_eq(arr1.length(), 6 + cap)
@@ -303,7 +303,7 @@ test "array_filter" {
 
 ///|
 test "array_is_empty" {
-  let arr : Array[Int] = Array::new()
+  let arr : Array[Int] = Array()
   assert_true(arr.is_empty())
 }
 
@@ -662,7 +662,7 @@ test "array_reserve_capacity" {
 
 ///|
 test "array_shrink_to_fit" {
-  let arr = Array::new(capacity=10)
+  let arr = Array(capacity=10)
   arr.push(1)
   arr.push(2)
   arr.push(3)
@@ -755,7 +755,7 @@ test "array_binary_search_by_test" {
 
 ///|
 test "array of bytes, new & push" {
-  let bytes : Array[Byte] = Array::new(capacity=10)
+  let bytes : Array[Byte] = Array(capacity=10)
   bytes.push(b'a')
   debug_inspect(
     bytes,
@@ -1418,7 +1418,13 @@ test "arbitrary" {
   debug_inspect(
     arr[5:9],
     content=(
-      #|<ArrayView: [[], [], [0], [0, 0]]>
+      #|<ArrayView:
+      #|  [
+      #|    [],
+      #|    [],
+      #|    [-134217729, 67108863, 16777217],
+      #|    [1144392696, 128, -65535, -2, 311628954, -999999999],
+      #|  ]>
     ),
   )
   debug_inspect(
@@ -1426,11 +1432,33 @@ test "arbitrary" {
     content=(
       #|<ArrayView:
       #|  [
-      #|    [0, 0, 1, 0, -2],
-      #|    [0, 0, 0, -1, -2],
-      #|    [0, 0, 0, 0, 0, -2, -5, 4, 0, 8],
-      #|    [0, 0, -1, 2],
-      #|    [0, 0],
+      #|    [-613468993, -1609132827, 322263955],
+      #|    [0, 1, -1025403238],
+      #|    [-2, -1073741824],
+      #|    [
+      #|      -1561148302,
+      #|      2147483647,
+      #|      268435455,
+      #|      2147483646,
+      #|      7,
+      #|      -1465955831,
+      #|      -1344599372,
+      #|      -64,
+      #|    ],
+      #|    [
+      #|      595056541,
+      #|      67108865,
+      #|      -262145,
+      #|      513,
+      #|      -2,
+      #|      65536,
+      #|      -2,
+      #|      -11086542,
+      #|      2,
+      #|      2,
+      #|      -261363602,
+      #|      4194303,
+      #|    ],
       #|  ]>
     ),
   )
@@ -1534,7 +1562,7 @@ test "Array::unsafe_pop" {
 test "Array::append/self_alias" {
   // Test appending array to itself - this should double the array
   // Using small capacity to force reallocation during append
-  let arr = Array::new(capacity=3)
+  let arr = Array(capacity=3)
   arr.push(1)
   arr.push(2)
   arr.push(3)
@@ -1545,7 +1573,7 @@ test "Array::append/self_alias" {
 ///|
 test "Array::append/self_alias_partial" {
   // Test appending a partial view of array to itself
-  let arr = Array::new(capacity=4)
+  let arr = Array(capacity=4)
   arr.push(1)
   arr.push(2)
   arr.push(3)

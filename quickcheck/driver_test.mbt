@@ -154,7 +154,7 @@ test "report returns a structured falsification" {
     report,
     content=(
       #|Falsified(
-      #|  counterexample=0,
+      #|  counterexample=-1028290551,
       #|  tests=1,
       #|  size=0,
       #|  shrinks=0,
@@ -177,7 +177,7 @@ test "report returns a structured raised error" {
     report,
     content=(
       #|Raised(
-      #|  counterexample=0,
+      #|  counterexample=-1028290551,
       #|  error=InitialRaised,
       #|  tests=1,
       #|  size=0,
@@ -294,7 +294,7 @@ test "report bounds a repeating shrink stream by attempts" {
     report,
     content=(
       #|Falsified(
-      #|  counterexample=RepeatingInput(0),
+      #|  counterexample=RepeatingInput(2),
       #|  tests=1,
       #|  size=0,
       #|  shrinks=10,
@@ -421,7 +421,7 @@ test "report stops at the first failing case" {
     result,
     content=(
       #|Falsified(
-      #|  counterexample=13,
+      #|  counterexample=0,
       #|  tests=4,
       #|  size=33,
       #|  shrinks=0,
@@ -501,10 +501,10 @@ test "context renders the shrunk counterexample" {
       #|Falsified(
       #|  counterexample=3,
       #|  context="rendered input <3>",
-      #|  tests=5,
-      #|  size=4,
-      #|  shrinks=0,
-      #|  shrink_attempts=2,
+      #|  tests=2,
+      #|  size=1,
+      #|  shrinks=30,
+      #|  shrink_attempts=33,
       #|)
     ),
   )
@@ -526,10 +526,10 @@ test "context is attached to raised failures too" {
       #|  counterexample=3,
       #|  context="rendered input <3>",
       #|  error=Failure("quickcheck/driver_test.mbt:516:30-516:42@moonbitlang/core FAILED: boom"),
-      #|  tests=5,
-      #|  size=4,
-      #|  shrinks=0,
-      #|  shrink_attempts=2,
+      #|  tests=2,
+      #|  size=1,
+      #|  shrinks=30,
+      #|  shrink_attempts=33,
       #|)
     ),
   )

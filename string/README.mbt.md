@@ -78,7 +78,7 @@ test "string conversion" {
 
   // Convert to bytes (UTF-16 LE encoding)
   let bytes = @utf16.encode(text)
-  inspect(bytes.length(), content="16") // 5 chars * 2 bytes each
+  inspect(bytes.length(), content="16") // 8 code units * 2 bytes each
 }
 ```
 
@@ -109,7 +109,7 @@ test "unicode handling" {
 
 ## String Comparison
 
-Strings are ordered using shortlex order by Unicode code points:
+Strings are ordered using shortlex order by their UTF-16 code units:
 
 ```mbt check
 ///|
@@ -257,9 +257,9 @@ test "from_str" {
 ```
 
 The `FromStr` trait provides `from_str()` for `Bool`, `Int`, `Int64`, `UInt`,
-`UInt64`, and `Double`. Use concrete parsers when you need parser-specific
-options or an explicit parser name. For example, integer parsers accept an
-optional base:
+`UInt64`, `Double`, and `@bigint.BigInt`. Use concrete parsers when you need
+parser-specific options or an explicit parser name. For example, integer parsers
+accept an optional base:
 
 ```mbt check
 ///|
@@ -355,4 +355,4 @@ test "regex combinators" {
 - Unicode iteration handles surrogate pairs correctly but is slower than UTF-16
   code unit iteration
 - Character length operations (`char_length_eq`, `char_length_ge`) have O(n)
-  complexity where n is the character count
+  complexity where n is the length passed in, not the whole string's length

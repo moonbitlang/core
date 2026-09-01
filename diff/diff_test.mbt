@@ -16,7 +16,7 @@
 fn[T] edits_to_string(d : @diff.Diff[T], show~ : (T) -> String) -> String {
   let old = d.old_view()
   let new = d.new_view()
-  let lines = Array::new()
+  let lines = Array()
   for edit in d.edits() {
     let (prefix, slice) = match edit {
       Insert(new_index~, new_len~, ..) =>
@@ -457,7 +457,7 @@ fn check_reconstruct(
   old : ArrayView[Int],
   new : ArrayView[Int],
 ) -> Unit raise {
-  let rebuilt = Array::new()
+  let rebuilt = Array()
   let mut oi = 0
   let mut ni = 0
   for edit in d.edits() {
@@ -502,7 +502,7 @@ test "property: edit scripts reconstruct new from old" {
   let seqs : Array[Array[Int]] = []
   for len in 0..<5 {
     for bits in 0..<(1 << len) {
-      let a = Array::new(capacity=len)
+      let a = Array(capacity=len)
       for i in 0..<len {
         a.push((bits >> i) & 1)
       }

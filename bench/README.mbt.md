@@ -35,7 +35,7 @@ test "benchmark collection" {
 
   // Add multiple benchmarks to the collection
   bencher.bench(name="array_creation", fn() {
-    let arr = Array::new()
+    let arr = Array()
     for i in 0..<5 {
       arr.push(i)
     }
@@ -100,7 +100,7 @@ test "data structure benchmarks" {
 
   // Benchmark Array operations
   bencher.bench(name="array_append", fn() {
-    let arr = Array::new()
+    let arr = Array()
     for i in 0..<5 {
       arr.push(i)
     }
@@ -272,7 +272,7 @@ test "meaningful names" {
 
   // Good: Descriptive names that explain what's being measured
   bencher.bench(name="array_insert_10_items", fn() {
-    let arr = Array::new()
+    let arr = Array()
     for i in 0..<10 {
       arr.push(i * 2)
     }
@@ -310,7 +310,7 @@ test "performance regression test" {
   // Benchmark a critical path
   bencher.bench(name="critical_algorithm", fn() {
     let data = [5, 2, 8, 1, 9, 3, 7, 4, 6]
-    let sorted = Array::new()
+    let sorted = Array()
     for x in data {
       sorted.push(x)
     }

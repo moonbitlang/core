@@ -13,7 +13,7 @@ computation.
 4. [Observing](#observing)
 5. [Transforming](#transforming)
 6. [Consuming strictly](#consuming-strictly)
-7. [Inspecting with `@debug.Debug`](#inspecting-with-debug)
+7. [Inspecting with `@debug.Debug`](#inspecting-with-debugdebug)
 8. [Design trade-offs](#design-trade-offs)
 
 ---
@@ -369,7 +369,7 @@ This is the same shape as Haskell:
 
 ```
 takeWhile p (x:xs) | p x = x : takeWhile p xs   -- lazy cons
-dropWhile p xs@(x:_) | p x = dropWhile p xs'    -- eager recursion
+dropWhile p xs@(x:xs') | p x = dropWhile p xs'  -- eager recursion
 ```
 
 ### Why doesn't `map` / `filter` / `take_while` / `flat_map` accept `raise?`?

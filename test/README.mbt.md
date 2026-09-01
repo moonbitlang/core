@@ -283,7 +283,7 @@ Keep tests focused on a single concept:
 ///|
 ///  Good - tests one specific behavior
 test "array_push_increases_length" {
-  let arr = Array::new()
+  let arr = Array()
   let initial_length = arr.length()
   arr.push(42)
   let new_length = arr.length()
@@ -293,7 +293,7 @@ test "array_push_increases_length" {
 ///|
 ///  Good - tests another specific behavior
 test "array_push_adds_element_at_end" {
-  let arr = Array::new()
+  let arr = Array()
   arr.push(10)
   arr.push(20)
   inspect(arr[arr.length() - 1], content="20")
