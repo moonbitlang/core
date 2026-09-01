@@ -106,7 +106,7 @@ pub fn RandomState::next_int64(self : RandomState) -> Int64 {
 }
 
 ///|
-/// Get the next two random number as 32-bit signed integers.
+/// Get the next two random numbers as 32-bit unsigned integers.
 pub fn RandomState::next_two_uint(self : RandomState) -> (UInt, UInt) {
   let g = self.next_uint64()
   ((g >> 32).to_uint(), g.to_uint())
@@ -131,14 +131,14 @@ pub fn RandomState::next_positive_int(self : RandomState) -> Int {
 }
 
 ///|
-/// Get the next random number as a float in [0, 1]
+/// Get the next random number as a float in [0, 1)
 pub fn RandomState::next_float(self : RandomState) -> Float {
   let u = self.next_uint64()
   Float::from_uint64(u >> 40) * float_ulp
 }
 
 ///|
-/// Get the next random number as a double in [0, 1]
+/// Get the next random number as a double in [0, 1)
 pub fn RandomState::next_double(self : RandomState) -> Double {
   let u = self.next_uint64()
   (u >> 11).to_double() * double_ulp

@@ -21,7 +21,7 @@ test "basic int operations" {
 
 ## Byte Conversion
 
-The package provides methods to convert integers to their byte representation in both big-endian and little-endian formats:
+An integer's byte representation, in both big-endian and little-endian formats, is produced with a `Buffer`:
 
 ```mbt check
 ///|
