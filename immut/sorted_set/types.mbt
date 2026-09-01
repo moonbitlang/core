@@ -17,7 +17,10 @@
 // All operations over sets are purely applicative (no side-effects).
 
 ///|
-/// ImmutableSets are represented by size balanced binary trees (the size of one child is at most 5 times the size of the other).
+/// ImmutableSets are represented by size balanced binary trees: in every subtree
+/// of more than two elements, neither child's size exceeds 5 times the other's.
+/// Subtrees of one or two elements are exempt, so a two-element set may have
+/// children of size 1 and 0.
 enum SortedSet[A] {
   Empty
   Node(left~ : SortedSet[A], right~ : SortedSet[A], size~ : Int, value~ : A)
