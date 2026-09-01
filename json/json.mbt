@@ -312,7 +312,16 @@ pub fn Json::stringify(
           }
           Number(n, repr~) =>
             match repr {
-              None => buf.write_object(n)
+              None =>
+                // Integral values in Int range are the overwhelming majority of
+                // JSON numbers; formatting them as integers skips Ryu entirely.
+                if n >= -2147483648.0 &&
+                  n <= 2147483647.0 &&
+                  n.to_int().to_double() == n {
+                  buf.write_object(n.to_int())
+                } else {
+                  buf.write_object(n)
+                }
               Some(r) => buf.write_string(r)
             }
           True => buf.write_string("true")
