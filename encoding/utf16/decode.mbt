@@ -58,9 +58,6 @@ fn utf16_needs_scalar_le_v128(bytes : BytesView) -> Bool {
   if bytes.length() % 2 != 0 {
     return true
   }
-  if bytes is [u16le(0xD800..=0xDFFF), ..] {
-    return true
-  }
   for rest = bytes {
     match rest {
       [v128le(block), .. tail] => {
@@ -81,9 +78,6 @@ fn utf16_needs_scalar_le_v128(bytes : BytesView) -> Bool {
 #cfg(not(target="js"))
 fn utf16_needs_scalar_be_v128(bytes : BytesView) -> Bool {
   if bytes.length() % 2 != 0 {
-    return true
-  }
-  if bytes is [u16be(0xD800..=0xDFFF), ..] {
     return true
   }
   for rest = bytes {
