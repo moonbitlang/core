@@ -36,8 +36,6 @@ pub fn[A] List::new() -> List[A] {
 /// 
 /// This function constructs a new list with the given element as the head
 /// and the provided list as the tail.
-/// 
-/// A more familiar name of this function is `cons`.
 ///
 /// # Example
 ///
@@ -743,7 +741,8 @@ pub fn[A, B] List::zip(self : List[A], other : List[B]) -> List[(A, B)] {
 ///|
 /// map over the list and concat all results.
 ///
-/// `flat_map(f, ls)` equal to `ls.map(f).fold(Empty, (acc, x) => acc.concat(x))))`
+/// `ls.flat_map(f)` is equivalent to
+/// `ls.map(f).fold(init=Empty, (acc, x) => acc.concat(x))`
 ///
 /// # Example
 ///
@@ -1915,7 +1914,7 @@ pub fn[A] List::from_iter(iter : Iter[A]) -> List[A] {
 /// 
 /// Creates a list from an iterator, but the resulting list will have elements
 /// in reverse order compared to the iterator. This is more efficient than
-/// `from_iterator` when order doesn't matter.
+/// `from_iter` when order doesn't matter.
 ///
 /// # Example
 ///
@@ -1935,16 +1934,6 @@ pub fn[A] List::from_iter_rev(iter : Iter[A]) -> List[A] {
 }
 
 ///|
-/// Create a list from a FixedArray.
-/// 
-/// Converts a FixedArray into a list with the same elements in the same order.
-///
-/// # Example
-///
-/// ```mbt test
-/// let ls = @list.List([1, 2, 3, 4, 5])
-/// @debug.assert_eq(ls.to_array(), [1, 2, 3, 4, 5])
-/// ```
 
 ///|
 /// Create a list with a single element.

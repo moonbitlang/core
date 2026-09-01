@@ -96,7 +96,7 @@ test {
 }
 ```
 
-At the same time, you can use union and inter to take the union or intersection of two sets.
+At the same time, you can use `union` and `intersection` to take the union or intersection of two sets.
 
 ```mbt check
 ///|
@@ -108,7 +108,7 @@ test {
 }
 ```
 
-You can also use the `diff` function to obtain the difference between two sets.
+You can also use the `difference` function to obtain the difference between two sets.
 
 ```mbt check
 ///|
@@ -131,7 +131,7 @@ test {
 
 ## Subset & Disjoint
 
-You can use `subsets` and `disjoint` to determine the inclusion and separation relationship between two sets
+You can use `subset` and `disjoint` to determine the inclusion and separation relationship between two sets
 
 ```mbt check
 ///|

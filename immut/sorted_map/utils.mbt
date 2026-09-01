@@ -108,6 +108,8 @@ pub fn[K : Compare, V] SortedMap::get(self : SortedMap[K, V], key : K) -> V? {
 
 ///|
 /// Get the value associated with a key.
+/// Aborts if the key is not present; use `get` for the `Option`-returning
+/// version.
 /// O(log n).
 #alias("_[_]")
 pub fn[K : Compare, V] SortedMap::at(self : SortedMap[K, V], key : K) -> V {
@@ -179,7 +181,7 @@ pub fn[K, X, Y] SortedMap::map(
 }
 
 ///|
-/// Post-order fold.
+/// Fold over the key-value pairs in descending key order.
 /// O(n).
 #alias(foldr_with_key)
 pub fn[K, V, A] SortedMap::rev_fold(
@@ -198,7 +200,7 @@ pub fn[K, V, A] SortedMap::rev_fold(
 }
 
 ///|
-/// Pre-order fold.
+/// Fold over the key-value pairs in ascending key order.
 /// O(n).
 #alias(foldl_with_key, deprecated)
 pub fn[K, V, A] SortedMap::fold(

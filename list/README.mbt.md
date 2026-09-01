@@ -486,8 +486,8 @@ test {
 ### Additional Error Cases
 
 - **`nth()` on an empty list or out-of-bounds index**: Returns `None`.  
-- **`tail()` on an empty list**: Returns `Empty`.  
-- **`sort()` with non-comparable elements**: Throws a runtime error.  
+- **`unsafe_tail()` on an empty list**: Panics. Use pattern matching, or `drop(1)`, which returns `Empty`.  
+- **`sort()` on elements without a `Compare` implementation**: Rejected at compile time by the `A : Compare` bound; there is no runtime failure.  
 
 ---
 

@@ -79,6 +79,8 @@ pub fn[K : Eq + Hash, V] HashMap::get(self : HashMap[K, V], key : K) -> V? {
 
 ///|
 /// Get value with `at` access semantics.
+/// Aborts if the key is not present; use `get` for the `Option`-returning
+/// version.
 #alias("_[_]")
 pub fn[K : Eq + Hash, V] HashMap::at(self : HashMap[K, V], key : K) -> V {
   guard! self.data is Some(node)
