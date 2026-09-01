@@ -30,7 +30,7 @@ test "ryu integral fast path at the Int range boundary" {
   inspect(ryu_to_string(2147483647.0), content="2147483647")
   inspect(ryu_to_string(-2147483647.0), content="-2147483647")
   inspect(ryu_to_string(-2147483648.0), content="-2147483648")
-  // Just outside: must fall back to the full algorithm, same rendering.
+  // Just outside Int range: now served by the Int64 tier, same rendering.
   inspect(ryu_to_string(2147483648.0), content="2147483648")
   inspect(ryu_to_string(2147483649.0), content="2147483649")
   inspect(ryu_to_string(-2147483649.0), content="-2147483649")
