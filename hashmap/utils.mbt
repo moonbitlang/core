@@ -167,24 +167,19 @@ pub fn[K : Hash + Eq, V] HashMap::from_iter(
 /// }
 /// ```
 pub fn[K, V] HashMap::to_array(self : HashMap[K, V]) -> Array[(K, V)] {
-  let mut i = 0
-  let res = while i < self.capacity {
-    if self.entries[i] is Some({ key, value, .. }) {
-      i += 1
-      break Array::make(self.size, (key, value))
-    }
-    i += 1
-  } nobreak {
-    []
+  if self.size == 0 {
+    return []
   }
-  if !res.is_empty() {
-    let mut res_idx = 1
-    while res_idx < res.length() && i < self.capacity {
-      if self.entries[i] is Some({ key, value, .. }) {
-        res[res_idx] = (key, value)
-        res_idx += 1
+  let res = Array::unsafe_make_uninit(self.size)
+  let mut n = 0
+  for i in 0..<self.capacity {
+    if self.entries[i] is Some({ key, value, .. }) {
+      let pair = (key, value)
+      res.unsafe_set(n, pair)
+      n += 1
+      if n == self.size {
+        break
       }
-      i += 1
     }
   }
   res

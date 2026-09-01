@@ -1691,14 +1691,14 @@ pub fn[A] Deque::from_iter(iter : Iter[A]) -> Deque[A] {
 pub fn[A] Deque::to_array(self : Deque[A]) -> Array[A] {
   let len = self.length()
   if len == 0 {
-    []
-  } else {
-    let xs = Array::make(len, self[0])
-    for i in 0..<len {
-      xs[i] = self[i]
-    }
-    xs
+    return []
   }
+  let xs = Array::unsafe_make_uninit(len)
+  for i in 0..<len {
+    let v = self[i]
+    xs.unsafe_set(i, v)
+  }
+  xs
 }
 
 ///|

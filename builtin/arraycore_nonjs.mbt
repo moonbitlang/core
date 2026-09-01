@@ -781,10 +781,9 @@ pub fn[A] Array::fill(
 pub fn[T] Array::copy(self : Array[T]) -> Array[T] {
   let len = self.length()
   if len == 0 {
-    []
-  } else {
-    let arr = Array::make(len, self[0])
-    Array::unsafe_blit(arr, 0, self, 0, len)
-    arr
+    return []
   }
+  let arr = Array::unsafe_make_uninit(len)
+  Array::unsafe_blit(arr, 0, self, 0, len)
+  arr
 }
