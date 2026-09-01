@@ -53,8 +53,8 @@ pub fn Int64::from_int(i : Int) -> Int64 {
 /// * `self` : The 64-bit integer whose absolute value is to be computed.
 ///
 /// Returns the absolute value of the input integer. When the input is
-/// `Int64::min_value()`, returns `Int64::min_value()` itself, since its absolute
-/// value is not representable as an `Int64`.
+/// `@int64.MIN_VALUE` (-9223372036854775808), returns `@int64.MIN_VALUE`
+/// itself, since its absolute value is not representable as an `Int64`.
 ///
 /// Example:
 ///
