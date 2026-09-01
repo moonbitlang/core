@@ -1565,7 +1565,7 @@ test "FixedArray::join" {
 ///|
 /// Return an iterator over elements of the fixed array.
 ///
-/// Deprecated alias; prefer `iterator`.
+/// `iterator` is a deprecated alias for this function.
 ///
 /// Example:
 ///
@@ -1585,7 +1585,7 @@ pub fn[X] FixedArray::iter(self : FixedArray[X]) -> Iter[X] {
 ///|
 /// Return an index-value iterator over the fixed array.
 ///
-/// Deprecated alias; prefer `iterator2`.
+/// `iterator2` is a deprecated alias for this function.
 ///
 /// Example:
 ///

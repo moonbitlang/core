@@ -458,7 +458,7 @@ pub fn[A, B] ReadOnlyArray::foldi(
 /// test {
 ///   let arr : ReadOnlyArray[Int] = [2, 3]
 ///   let sum = arr.rev_foldi(init=0, fn(i, acc, x) { acc + i * x })
-///   inspect(sum, content="2") // 0 + (1*3) + (0*2) = 3
+///   inspect(sum, content="2") // 0 + (0*3) + (1*2) = 2
 /// }
 /// ```
 pub fn[A, B] ReadOnlyArray::rev_foldi(
