@@ -147,7 +147,7 @@ test {
 
 ## Copy
 
-`copy()` returns a deep copy of the queue: the copy shares no heap nodes with the original, so modifying one does not affect the other.
+`copy()` duplicates the heap structure: the copy gets its own nodes, so pushing to or popping from one queue does not affect the other. The stored elements themselves are not copied — both queues refer to the same values, so if the element type is mutable, mutating an element is observable through both queues.
 
 ```mbt check
 ///|
