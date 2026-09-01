@@ -339,7 +339,8 @@ fn[T : Compare] fixed_try_bubble_sort(arr : MutArrayView[T]) -> Bool {
 }
 
 ///|
-/// Sort the array with bubble sort.
+/// Sort the array with insertion sort (despite the name): it grows a sorted
+/// prefix, moving each new element left by adjacent swaps until it is in place.
 ///
 /// It always sorts the whole array. The time complexity is O(n^2) in the worst case.
 fn[T : Compare] fixed_bubble_sort(arr : MutArrayView[T]) -> Unit {
