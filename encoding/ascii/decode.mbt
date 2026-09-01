@@ -64,10 +64,10 @@ fn decode_v128(bytes : BytesView) -> String raise Malformed {
   let result = FixedArray::make(length * 2, b'\x00')
   for rest = bytes, result_offset = 0 {
     match rest {
-      [v128le(block), .. tail] => {
+      [v128le(block), .. tail] as current => {
         let non_ascii = @v128.i8x16_bitmask(block)
         if non_ascii != 0 {
-          raise Malformed(bytes[result_offset / 2 + non_ascii.ctz():])
+          raise Malformed(current[non_ascii.ctz():])
         }
         @v128.v128_store(
           result,
@@ -87,7 +87,7 @@ fn decode_v128(bytes : BytesView) -> String raise Malformed {
         continue tail, result_offset + 2
       }
       [] => break
-      _ => raise Malformed(bytes[result_offset / 2:])
+      _ as invalid => raise Malformed(invalid)
     }
   }
   result.unsafe_reinterpret_as_bytes().to_unchecked_string()
