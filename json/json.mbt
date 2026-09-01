@@ -91,15 +91,19 @@ fn write_indent(
   buf : StringBuilder,
   cache : Array[String],
   level : Int,
-  unit : String,
+  indent : Int,
 ) -> Unit {
   // Each level is the previous one plus a single indentation unit, so filling
   // the cache costs O(indent) per new level rather than O(indent * level), and
   // never computes `indent * level` — a product that overflows `Int` to a
   // negative value for a large `indent`, which `String::repeat` rejects.
+  //
+  // The unit is built here rather than once per `stringify` call so that a
+  // document emitting no indentation at all never allocates it: callers reach
+  // this only when `indent > 0`, so `repeat` never sees a negative count.
   while cache.length() <= level {
     match cache {
-      [.., last] => cache.push(last + unit)
+      [.., last] => cache.push(last + " ".repeat(indent))
       [] => cache.push("\n")
     }
   }
@@ -281,7 +285,6 @@ pub fn Json::stringify(
 ) -> String {
   let buf = StringBuilder(size_hint=0)
   let indent_cache : Array[String] = []
-  let indent_unit = " ".repeat(indent)
 
   // Explicit stack to replace recursive calls
   let stack : Array[WriteFrame] = []
@@ -297,7 +300,7 @@ pub fn Json::stringify(
               depth += 1
               buf.write_char('{')
               if indent > 0 {
-                write_indent(buf, indent_cache, depth, indent_unit)
+                write_indent(buf, indent_cache, depth, indent)
               }
               // After child value printed, we resume from this frame
               stack.push(Object(members.iter(), first=true))
@@ -309,7 +312,7 @@ pub fn Json::stringify(
               depth += 1
               buf.write_char('[')
               if indent > 0 {
-                write_indent(buf, indent_cache, depth, indent_unit)
+                write_indent(buf, indent_cache, depth, indent)
               }
               stack.push(Array(arr, i=0))
             }
@@ -340,7 +343,7 @@ pub fn Json::stringify(
               if i > 0 {
                 buf.write_char(',')
                 if indent > 0 {
-                  write_indent(buf, indent_cache, depth, indent_unit)
+                  write_indent(buf, indent_cache, depth, indent)
                 }
               }
               continue Some(element)
@@ -348,7 +351,7 @@ pub fn Json::stringify(
               depth -= 1
               ignore(stack.pop())
               if indent > 0 {
-                write_indent(buf, indent_cache, depth, indent_unit)
+                write_indent(buf, indent_cache, depth, indent)
               }
               buf.write_char(']')
               continue None
@@ -367,7 +370,7 @@ pub fn Json::stringify(
                 if !first {
                   buf.write_char(',')
                   if indent > 0 {
-                    write_indent(buf, indent_cache, depth, indent_unit)
+                    write_indent(buf, indent_cache, depth, indent)
                   }
                 }
                 buf.write_char('\"')
@@ -384,7 +387,7 @@ pub fn Json::stringify(
                 depth -= 1
                 ignore(stack.pop())
                 if indent > 0 {
-                  write_indent(buf, indent_cache, depth, indent_unit)
+                  write_indent(buf, indent_cache, depth, indent)
                 }
                 buf.write_char('}')
                 continue None

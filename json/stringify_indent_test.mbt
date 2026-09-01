@@ -80,3 +80,24 @@ test "stringify indentation is stable when depth decreases again" {
   }
   inspect(out.contains("\n                  "), content="true")
 }
+
+///|
+/// A non-positive `indent` selects the compact path. It must not reach
+/// `String::repeat`, which aborts on a negative count, and must not allocate an
+/// indentation unit that is never used.
+test "stringify with non-positive indent is compact and never aborts" {
+  let doc : Json = { "a": [Json::number(1.0), { "b": Json::number(2.0) }] }
+  let compact = doc.stringify()
+  assert_eq(doc.stringify(indent=0), compact)
+  assert_eq(doc.stringify(indent=-1), compact)
+  assert_eq(doc.stringify(indent=-1000000000), compact)
+}
+
+///|
+/// A document that emits no indentation must not pay for the indentation unit,
+/// however large `indent` is. This would abort or exhaust memory if the unit
+/// were built eagerly per call.
+test "stringify of a scalar ignores a huge indent" {
+  inspect(Json::number(1.0).stringify(indent=1000000000), content="1")
+  inspect((Json::array([]) : Json).stringify(indent=1000000000), content="[]")
+}
