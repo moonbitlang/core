@@ -218,7 +218,7 @@ fn ArrayView::unsafe_extract_uint_be_slow(
 /// # Invariants
 /// - It's guaranteed to have at least 5 bytes available for extraction
 /// - Only reads the necessary number of bytes based on the bit length (5-8 bytes)
-/// - For bit lengths < 33, use unsafe_extract_uint_le instead
+/// - For bit lengths [9..32], use unsafe_extract_uint_le instead
 ///
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
@@ -293,7 +293,7 @@ fn ArrayView::unsafe_extract_uint64_le_slow(
 /// # Invariants
 /// - It's guaranteed to have at least 5 bytes available for extraction
 /// - Only reads the necessary number of bytes based on the bit length (5-8 bytes)
-/// - For bit lengths < 33, use unsafe_extract_uint_be instead
+/// - For bit lengths [9..32], use unsafe_extract_uint_be instead
 ///
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
@@ -1156,7 +1156,7 @@ fn BytesView::unsafe_extract_uint_be_slow(
 /// # Invariants
 /// - It's guaranteed to have at least 5 bytes available for extraction
 /// - Only reads the necessary number of bytes based on the bit length (5-8 bytes)
-/// - For bit lengths < 33, use unsafe_extract_uint_le instead
+/// - For bit lengths [9..32], use unsafe_extract_uint_le instead
 ///
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
@@ -1231,7 +1231,7 @@ fn BytesView::unsafe_extract_uint64_le_slow(
 /// # Invariants
 /// - It's guaranteed to have at least 5 bytes available for extraction
 /// - Only reads the necessary number of bytes based on the bit length (5-8 bytes)
-/// - For bit lengths < 33, use unsafe_extract_uint_be instead
+/// - For bit lengths [9..32], use unsafe_extract_uint_be instead
 ///
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
