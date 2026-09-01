@@ -51,7 +51,7 @@ test "to_string" {
 }
 ```
 
-Use `to_repr` in string interpolation:
+Use `Repr(value)` in string interpolation:
 
 ```mbt check
 ///|

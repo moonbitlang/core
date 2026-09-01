@@ -61,7 +61,7 @@ test "reverse with arrays" {
 
 ## Comparison by Key
 
-With `@cmp.maximum_by_key()` and `@cmp.minimum_by_key()`, it is possible to compare values based on arbitrary keys derived from the them. This is particularly useful when you need to compare complex objects based on some specific aspect or field.
+With `@cmp.maximum_by_key()` and `@cmp.minimum_by_key()`, it is possible to compare values based on arbitrary keys derived from them. This is particularly useful when you need to compare complex objects based on some specific aspect or field.
 
 ```mbt check
 ///|

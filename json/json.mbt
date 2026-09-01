@@ -524,7 +524,9 @@ fn escape(str : String, escape_slash~ : Bool) -> String {
 /// ## Behavior
 /// 
 /// - Recursively applies the replacer to all nested objects
-/// - Non-object values (arrays, strings, numbers, etc.) are returned unchanged
+/// - Arrays are rebuilt element by element, so objects nested inside an array are
+///   transformed as well (the replacer itself is only applied to object members)
+/// - All other values (strings, numbers, booleans, null) are returned unchanged
 /// - The original JSON value is not modified; a new value is returned
 pub fn Json::transform(self : Self, replacer : Replacer) -> Json {
   match self {
