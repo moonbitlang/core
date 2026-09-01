@@ -21,7 +21,7 @@ pub impl Eq for V128 with fn equal(self : V128, other : V128) -> Bool {
 }
 
 ///|
-/// Compares two `V128` values for bitwise equality across both 64-bit words.
+/// Compares two `V128` values for bitwise inequality across both 64-bit words.
 #internal(experimental, "subject to breaking change without notice")
 #doc(hidden)
 pub impl Eq for V128 with fn not_equal(self : V128, other : V128) -> Bool {

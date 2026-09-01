@@ -46,7 +46,7 @@ pub fn Rand::chacha8(
 let fixed_test_seed : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456"
 
 ///|
-/// Create a new random number generator with a given [Gen] source.
+/// Create a new random number generator with a given [Source] generator.
 pub fn Rand::new(generator? : &Source) -> Rand {
   match generator {
     None =>
@@ -405,11 +405,11 @@ pub fn Rand::boolean(self : Rand) -> Bool {
 }
 
 ///|
-/// Generates a random positive `BigInt` with a specified number of bits.
+/// Generates a random non-negative `BigInt` with a specified number of bits.
 ///
 /// Parameters:
 ///
-/// * `rand` : A random number generator that implements the `Rand` trait.
+/// * `self` : The random number generator to draw the bits from.
 /// * `bits` : The desired number of bits in the generated number.
 ///
 /// Example:

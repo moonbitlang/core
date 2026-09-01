@@ -184,8 +184,7 @@ let small_primes : ReadOnlyArray[@bigint.BigInt] = [
 /// Parameters:
 ///
 /// * `number` : The `BigInt` value to be tested for primality.
-/// * `rand` : A random number generator implementing the `Rand` trait, used for
-/// generating test values.
+/// * `rand` : A random number generator used for generating test values.
 /// * `iters` : The number of iterations for the Miller-Rabin test (default:
 /// 64). Higher values provide greater certainty but take longer to compute.
 ///
@@ -233,9 +232,8 @@ pub fn is_probable_prime(
 ///
 /// Parameters:
 ///
-/// * `rand` : A random number generator implementing the `Rand` trait, used for
-/// generating random values.
 /// * `bits` : The desired bit length of the prime number to be generated.
+/// * `rand` : A random number generator used for generating random values.
 ///
 /// Returns a `BigInt` that is probably prime (with probability at least 1 -
 /// 2^(-128)).
