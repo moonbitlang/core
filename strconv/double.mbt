@@ -46,8 +46,9 @@ let max_exponent_disguised_fast_path : Int64 = 37L
 let max_mantissa_fast_path : UInt64 = 2UL << mantissa_explicit_bits
 
 ///|
-/// Parse a string into a double precision floating point number. The string
-/// must contain at least one decimal digit, in:
+/// Parse a string into a double precision floating point number. Except for
+/// the infinity and NaN spellings listed below, the string must contain at
+/// least one decimal digit, in:
 /// - An integer part (decimal digits), and/or
 /// - A fractional part (decimal digits) after a decimal point
 ///
@@ -56,6 +57,10 @@ let max_mantissa_fast_path : UInt64 = 2UL << mantissa_explicit_bits
 ///
 /// The string may optionally start with a sign ('+' or '-').
 /// For readability, underscores may appear between digits.
+///
+/// The digit-free forms "inf", "infinity" and "nan" are also accepted, in any
+/// letter case and with an optional leading sign, yielding the corresponding
+/// infinity or NaN value.
 ///
 /// Examples:
 /// ```mbt check
