@@ -98,9 +98,9 @@ fn write_indent(
   // never computes `indent * level` — a product that overflows `Int` to a
   // negative value for a large `indent`, which `String::repeat` rejects.
   while cache.length() <= level {
-    match cache.last() {
-      None => cache.push("\n")
-      Some(prev) => cache.push(prev + unit)
+    match cache {
+      [.., last] => cache.push(last + unit)
+      [] => cache.push("\n")
     }
   }
   buf.write_string(cache[level])
