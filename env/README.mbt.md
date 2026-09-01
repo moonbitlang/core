@@ -160,7 +160,7 @@ The env package behaves differently across platforms:
 
 ### JavaScript Environment
 - `args()` returns arguments from the JavaScript environment
-- `@env.now()` uses `Date.@env.now()` 
+- `@env.now()` uses `Date.now()` 
 - `@env.current_dir()` may return `None` in browser environments
 
 ### WebAssembly Environment  

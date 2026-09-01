@@ -24,14 +24,18 @@ test "basic operations" {
 
 ## Binary Representation
 
-The package provides functions to convert `Int64` values to their binary representation in both big-endian and little-endian byte order:
+`Int64` values can be written out in their binary representation, in either big-endian or little-endian byte order, using a `Buffer`:
 
 ```mbt check
 ///|
 test "binary conversion" {
   let x = 258L // Int64 value of 258
-  let be_bytes = x.to_be_bytes_local()
-  let le_bytes = x.to_le_bytes_local()
+  let be_buf = Buffer(size_hint=8)
+  be_buf.write_int64_be(x)
+  let be_bytes = be_buf.to_bytes()
+  let le_buf = Buffer(size_hint=8)
+  le_buf.write_int64_le(x)
+  let le_bytes = le_buf.to_bytes()
 
   // Convert to String for inspection
   inspect(
@@ -65,9 +69,11 @@ test "method style" {
   // Using method syntax for absolute value
   inspect(x.abs(), content="42")
 
-  // Binary conversions as methods
+  // Binary conversion via `Buffer`
+  let buf = Buffer(size_hint=8)
+  buf.write_int64_be(x)
   inspect(
-    x.to_be_bytes_local(),
+    buf.to_bytes(),
     content=(
       #|b"\xff\xff\xff\xff\xff\xff\xff\xd6"
     ),

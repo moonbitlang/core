@@ -223,11 +223,20 @@ pub impl Step for @bigint.BigInt with fn step_one() {
 ///
 /// ```mbt nocheck
 /// test {
-///   inspect(@range.iter(from=0, to=10), content="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]")
-///   inspect(@range.iter(from=0, to=10, step=3), content="[0, 3, 6, 9]")
-///   inspect(@range.iter(from=10, to=0, step=-3), content="[10, 7, 4, 1]")
-///   inspect(
-///     @range.iter(from=0, to=5, inclusive=true),
+///   debug_inspect(
+///     @range.iter(from=0, to=10).to_array(),
+///     content="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]",
+///   )
+///   debug_inspect(
+///     @range.iter(from=0, to=10, step=3).to_array(),
+///     content="[0, 3, 6, 9]",
+///   )
+///   debug_inspect(
+///     @range.iter(from=10, to=0, step=-3).to_array(),
+///     content="[10, 7, 4, 1]",
+///   )
+///   debug_inspect(
+///     @range.iter(from=0, to=5, inclusive=true).to_array(),
 ///     content="[0, 1, 2, 3, 4, 5]",
 ///   )
 /// }
