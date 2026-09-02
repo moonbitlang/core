@@ -162,6 +162,9 @@ pub fn[T] Generator::resize(self : Generator[T], size : Int) -> Generator[T] {
 
 ///|
 /// Generates an integer in the half-open interval `[lower, upper)`.
+///
+/// The degenerate range where `lower == upper` always yields `lower`. Aborts
+/// if `lower` is greater than `upper`.
 pub fn int_range(lower : Int, upper : Int) -> Generator[Int] {
   guard lower < upper else {
     if lower == upper {

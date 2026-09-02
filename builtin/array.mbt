@@ -74,7 +74,7 @@ pub fn[T] Array::from_fixed_array(arr : FixedArray[T]) -> Array[T] {
 /// One should use makei() instead which creates an object for each index.
 #owned(elem)
 pub fn[T] Array::make(len : Int, elem : T) -> Array[T] {
-  let arr = Array::make_uninit(len)
+  let arr = Array::unsafe_make_uninit(len)
   for i in 0..<len {
     arr.unsafe_set(i, elem)
   }
@@ -109,7 +109,7 @@ pub fn[T] Array::makei(length : Int, f : (Int) -> T raise?) -> Array[T] raise? {
   if length <= 0 {
     []
   } else {
-    let array = Array::make_uninit(length)
+    let array = Array::unsafe_make_uninit(length)
     for i in 0..<length {
       array.unsafe_set(i, f(i))
     }
@@ -175,7 +175,7 @@ pub fn[T] Array::unsafe_get(self : Array[T], idx : Int) -> T {
 ///
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [1, 2, 3]
+///   let arr : Array[Int] = [1, 2, 3]
 ///   inspect(arr[1], content="2")
 /// }
 /// ```
@@ -588,7 +588,7 @@ pub fn[T, U] Array::map(
   self : Array[T],
   f : (T) -> U raise?,
 ) -> Array[U] raise? {
-  let arr = Array::make_uninit(self.length())
+  let arr = Array::unsafe_make_uninit(self.length())
   for i, v in self {
     arr.unsafe_set(i, f(v))
   }
@@ -636,7 +636,7 @@ pub fn[T, U] Array::mapi(
   if self.is_empty() {
     return []
   }
-  let arr = Array::make_uninit(self.length())
+  let arr = Array::unsafe_make_uninit(self.length())
   for i, v in self {
     arr.unsafe_set(i, f(i, v))
   }
@@ -775,7 +775,7 @@ pub fn[T] Array::rev_in_place(self : Array[T]) -> Unit {
 /// ```
 pub fn[T] Array::rev(self : Array[T]) -> Array[T] {
   let len = self.length()
-  let arr = Array::make_uninit(len)
+  let arr = Array::unsafe_make_uninit(len)
   for i in 0..<len {
     arr.unsafe_set(i, self.unsafe_get(len - i - 1))
   }
@@ -818,7 +818,7 @@ pub fn[T] Array::split_at(self : Array[T], index : Int) -> (Array[T], Array[T]) 
       len=len2,
     )
   } else {
-    Array::make_uninit(0)
+    Array::unsafe_make_uninit(0)
   }
   (v1, v2)
 }
@@ -1271,7 +1271,7 @@ pub fn[T] Array::flatten(self : Array[Array[T]]) -> Array[T] {
   } nobreak {
     len
   }
-  let res = Array::make_uninit(len)
+  let res = Array::unsafe_make_uninit(len)
   for xs in self; i = 0 {
     res.unsafe_blit(i, xs, 0, xs.length())
     continue i + xs.length()
@@ -1302,7 +1302,7 @@ pub fn[T] Array::repeat(self : Array[T], times : Int) -> Array[T] {
   }
   let total = len * times
   guard total / times == len else { abort("repeat result too large") }
-  let v = Array::new(capacity=total)
+  let v = Array::Array(capacity=total)
   for _ in 0..<times {
     v.append(self)
   }
@@ -1510,7 +1510,7 @@ pub fn[T] Array::extract_if(
 }
 
 ///|
-/// Divides an array into smaller arrays (chunks) of the specified size.
+/// Divides an array into chunks (views) of the specified size.
 ///
 /// Parameters:
 ///
@@ -1518,8 +1518,8 @@ pub fn[T] Array::extract_if(
 /// * `size` : The size of each chunk. Must be a positive integer, otherwise it will panic.
 ///
 ///
-/// Returns an array of arrays, where each inner array is a chunk containing
-/// elements from the original array. If the length of the original array is not
+/// Returns an array of views, where each view is a chunk containing consecutive
+/// elements of the original array. If the length of the original array is not
 /// divisible by the chunk size, the last chunk will contain fewer elements.
 ///
 /// Example:
@@ -1562,7 +1562,7 @@ pub fn[T] Array::chunks(self : Array[T], size : Int) -> Array[ArrayView[T]] {
 /// * `predicate` : A function that takes two adjacent elements and returns
 /// `true` if they should be in the same chunk, `false` otherwise.
 ///
-/// Returns an array of arrays, where each inner array is a chunk of consecutive
+/// Returns an array of views, where each view is a chunk of consecutive
 /// elements that satisfy the predicate with their adjacent elements.
 ///
 /// Example:
@@ -2019,15 +2019,20 @@ pub fn[T] Array::shuffle(self : Array[T], rand~ : (Int) -> Int) -> Array[T] {
 }
 
 ///|
-/// Returns a new array containing the elements of the original array that satisfy the given predicate.
+/// Applies a function to each element of the array and collects the results
+/// that are `Some`, discarding the elements for which the function returns
+/// `None`.
 ///
 /// # Arguments
 ///
-/// * `self` - The array to filter.
-/// * `f` - The predicate function.
+/// * `self` - The array to filter and map.
+/// * `f` - The function applied to each element, returning `Some(value)` to
+/// keep the mapped `value`, or `None` to drop the element.
 ///
 /// # Returns
 ///
+/// A new array containing the unwrapped `Some` results, in the order the
+/// corresponding elements appeared in the original array.
 #locals(f)
 pub fn[A, B] Array::filter_map(
   self : Array[A],
@@ -2112,8 +2117,8 @@ pub fn[A, B] Array::zip(self : Array[A], other : Array[B]) -> Array[(A, B)] {
 /// }
 /// ```
 pub fn[T1, T2] Array::unzip(self : Array[(T1, T2)]) -> (Array[T1], Array[T2]) {
-  let arr1 : Array[T1] = Array::new(capacity=self.length())
-  let arr2 : Array[T2] = Array::new(capacity=self.length())
+  let arr1 : Array[T1] = Array(capacity=self.length())
+  let arr2 : Array[T2] = Array(capacity=self.length())
   for pair in self {
     let (x, y) = pair
     arr1.push(x)

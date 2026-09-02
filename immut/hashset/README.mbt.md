@@ -18,7 +18,7 @@ test "creating immutable sets" {
   let from_array_result = @hashset.HashSet([1, 2, 3, 2, 1]) // Duplicates removed
   inspect(from_array_result.length(), content="3")
 
-  // From fixed array
+  // From an array of distinct values
   let from_fixed = @hashset.HashSet([10, 20, 30])
   inspect(from_fixed.length(), content="3")
 

@@ -53,8 +53,8 @@ pub fn Double::to_int64(self : Double) -> Int64 = "%f64_to_i64_saturate"
 /// Returns an unsigned 64-bit integer value according to the following rules:
 ///
 /// * Returns 0 if the input is NaN
-/// * Returns `UInt64::max_value` (18446744073709551615UL) if the input is
-/// greater than or equal to `UInt64::max_value`
+/// * Returns `@uint64.MAX_VALUE` (18446744073709551615UL) if the input is
+/// greater than or equal to `@uint64.MAX_VALUE`
 /// * Returns 0UL if the input is less than or equal to 0
 /// * Otherwise returns the integer part of the input by truncating towards zero
 ///

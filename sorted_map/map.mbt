@@ -373,7 +373,8 @@ pub fn[K : Compare, V] SortedMap::from_iter(
 }
 
 ///|
-/// Returns a new array of key-value pairs that are within the specified range [low, high].
+/// Returns an iterator over the key-value pairs whose keys are within the
+/// specified range [low, high] (both bounds inclusive).
 pub fn[K : Compare, V] SortedMap::range(
   self : SortedMap[K, V],
   low : K,
@@ -417,7 +418,7 @@ pub fn[K : Compare, V] SortedMap::range(
 }
 
 ///|
-/// Creates a deep copy of the sorted map.
+/// Creates a shallow copy of the sorted map.
 ///
 /// This operation creates a new map with the same structure and contents as the
 /// original map. The copy is independent - modifications to the copy will not

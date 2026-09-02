@@ -160,7 +160,7 @@ The env package behaves differently across platforms:
 
 ### JavaScript Environment
 - `args()` returns arguments from the JavaScript environment
-- `@env.now()` uses `Date.@env.now()` 
+- `@env.now()` uses `Date.now()` 
 - `@env.current_dir()` may return `None` in browser environments
 
 ### WebAssembly Environment  
@@ -241,7 +241,7 @@ test "argument validation" {
       (args[0], []) // Program name only, no arguments
     } else {
       let program = args[0]
-      let arguments = Array::new()
+      let arguments = Array()
       for i in 1..<args.length() {
         arguments.push(args[i])
       }

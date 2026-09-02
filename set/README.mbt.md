@@ -22,7 +22,7 @@ test "creating sets" {
   let from_array = @set.Set([1, 2, 3, 2, 1]) // Duplicates are removed
   inspect(from_array.length(), content="3")
 
-  // From fixed array
+  // From an array literal
   let from_fixed = @set.Set([10, 20, 30])
   inspect(from_fixed.length(), content="3")
 
@@ -245,8 +245,8 @@ test "different types" {
   let string_set = @set.Set(["hello", "world", "moonbit"])
   inspect(string_set.contains("world"), content="true")
 
-  // Note: Char and Bool types don't implement Hash in this version
-  // So we use Int codes for demonstration
+  // Char and Bool implement Hash too, so they work as element types as well
+  // Here we use Int codes just for demonstration
   let char_codes = @set.Set([97, 98, 99]) // ASCII codes for 'a', 'b', 'c'
   inspect(char_codes.contains(98), content="true") // 'b' = 98
 

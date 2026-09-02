@@ -50,7 +50,8 @@ pub fn[A : Hash] of(key : A) -> Path {
 const MAX_TAIL : UInt = 0xffffffffU >> (SEGMENT_LENGTH * (SEGMENT_NUM - 1))
 
 ///|
-/// Returns if the path contains only a single segment.
+/// Returns if at most one index segment remains in the path. This also holds
+/// for the exhausted path, which has no segment left.
 pub fn Path::is_last(self : Path) -> Bool {
   let Path(self) = self
   self <= MAX_TAIL

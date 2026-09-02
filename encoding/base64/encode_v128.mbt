@@ -22,12 +22,6 @@
 // stored.
 
 ///|
-/// V128 loads require `FixedArray[Byte]`; these types share a representation
-/// on the linear-memory backends.
-#cfg(any(target="native", target="wasm"))
-fn unsafe_fixedarray_from_bytes(bytes : Bytes) -> FixedArray[Byte] = "%identity"
-
-///|
 /// Per-class offsets added to a sextet to reach its Base64 character, indexed
 /// by the class computed in `encode_block_v128`:
 /// 0 -> lowercase, 1..=10 -> digits, 11 -> `+`, 12 -> `/`, 13 -> uppercase.
@@ -119,46 +113,49 @@ fn encode_v128(bytes : BytesView, padding : Bool) -> String {
     char_count += if padding { 4 } else { remainder + 1 }
   }
   let out = FixedArray::make(char_count * 2, b'\x00')
-  let src = unsafe_fixedarray_from_bytes(bytes.data())
-  let end = bytes.start_offset() + length
-  let mut index = bytes.start_offset()
-  let mut written = 0
   // The load reads sixteen bytes but only twelve are consumed, so the loop
   // stops four bytes short of the end and the tail is encoded scalar.
-  while end - index >= 16 {
-    let chars = encode_block_v128(@v128.v128_load(src, index))
-    @v128.v128_store(out, written, @v128.i16x8_extend_low_i8x16_u(chars))
-    @v128.v128_store(out, written + 16, @v128.i16x8_extend_high_i8x16_u(chars))
-    index += 12
-    written += 32
-  }
-  while end - index >= 3 {
-    let n = (src[index].to_int() << 16) |
-      (src[index + 1].to_int() << 8) |
-      src[index + 2].to_int()
-    write_code_unit(out, written, BASE64_STD[(n >> 18) & 0x3F])
-    write_code_unit(out, written + 2, BASE64_STD[(n >> 12) & 0x3F])
-    write_code_unit(out, written + 4, BASE64_STD[(n >> 6) & 0x3F])
-    write_code_unit(out, written + 6, BASE64_STD[n & 0x3F])
-    index += 3
-    written += 8
-  }
-  let rest = end - index
-  if rest != 0 {
-    let mut n = src[index].to_int() << 16
-    if rest == 2 {
-      n = n | (src[index + 1].to_int() << 8)
-    }
-    write_code_unit(out, written, BASE64_STD[(n >> 18) & 0x3F])
-    write_code_unit(out, written + 2, BASE64_STD[(n >> 12) & 0x3F])
-    if rest == 2 {
-      write_code_unit(out, written + 4, BASE64_STD[(n >> 6) & 0x3F])
-      if padding {
-        write_code_unit(out, written + 6, b'=')
+  for rest = bytes, written = 0 {
+    match rest {
+      [v128le(block), ..] as current => {
+        let chars = encode_block_v128(block)
+        @v128.v128_store(out, written, @v128.i16x8_extend_low_i8x16_u(chars))
+        @v128.v128_store(
+          out,
+          written + 16,
+          @v128.i16x8_extend_high_i8x16_u(chars),
+        )
+        continue current[12:], written + 32
       }
-    } else if padding {
-      write_code_unit(out, written + 4, b'=')
-      write_code_unit(out, written + 6, b'=')
+      [b0, b1, b2, .. tail] => {
+        let n = (b0.to_int() << 16) | (b1.to_int() << 8) | b2.to_int()
+        write_code_unit(out, written, BASE64_STD[(n >> 18) & 0x3F])
+        write_code_unit(out, written + 2, BASE64_STD[(n >> 12) & 0x3F])
+        write_code_unit(out, written + 4, BASE64_STD[(n >> 6) & 0x3F])
+        write_code_unit(out, written + 6, BASE64_STD[n & 0x3F])
+        continue tail, written + 8
+      }
+      [b0, b1] => {
+        let n = (b0.to_int() << 16) | (b1.to_int() << 8)
+        write_code_unit(out, written, BASE64_STD[(n >> 18) & 0x3F])
+        write_code_unit(out, written + 2, BASE64_STD[(n >> 12) & 0x3F])
+        write_code_unit(out, written + 4, BASE64_STD[(n >> 6) & 0x3F])
+        if padding {
+          write_code_unit(out, written + 6, b'=')
+        }
+        break
+      }
+      [b0] => {
+        let n = b0.to_int() << 16
+        write_code_unit(out, written, BASE64_STD[(n >> 18) & 0x3F])
+        write_code_unit(out, written + 2, BASE64_STD[(n >> 12) & 0x3F])
+        if padding {
+          write_code_unit(out, written + 4, b'=')
+          write_code_unit(out, written + 6, b'=')
+        }
+        break
+      }
+      [] => break
     }
   }
   out.unsafe_reinterpret_as_bytes().to_unchecked_string()

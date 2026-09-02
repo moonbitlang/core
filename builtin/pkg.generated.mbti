@@ -64,6 +64,7 @@ pub fn ArgsLoc::to_string(Self) -> String
 pub impl Show for ArgsLoc
 
 type Array[T]
+pub fn[T] Array::Array(capacity? : Int) -> Self[T]
 pub fn[T] Array::add(Self[T], Self[T]) -> Self[T]
 #alias(every)
 pub fn[T] Array::all(Self[T], (T) -> Bool raise?) -> Bool raise?
@@ -128,6 +129,7 @@ pub fn[T, U] Array::mapi(Self[T], (Int, T) -> U raise?) -> Self[U] raise?
 #alias(mapi_inplace, deprecated)
 pub fn[T] Array::mapi_in_place(Self[T], (Int, T) -> T raise?) -> Unit raise?
 pub fn[T] Array::mut_view(Self[T], start? : Int, end? : Int) -> MutArrayView[T]
+#deprecated
 pub fn[T] Array::new(capacity? : Int) -> Self[T]
 pub fn[T] Array::pop(Self[T]) -> T?
 pub fn[T] Array::push(Self[T], T) -> Unit

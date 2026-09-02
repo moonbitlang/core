@@ -9,6 +9,7 @@ import {
 import {
   "moonbitlang/core/test",
   "moonbitlang/core/quickcheck",
+  "moonbitlang/core/bench",
 } for "test"
 
 options(

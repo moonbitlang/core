@@ -561,23 +561,22 @@ pub fn[V] SortedSet::eachi(
 /// Converts the set to an array.
 pub fn[V] SortedSet::to_array(self : SortedSet[V]) -> Array[V] {
   if self.size == 0 {
-    []
-  } else {
-    let padding = self.root.unwrap().value
-    let arr = Array::make(self.size, padding)
-    let mut i = 0
-    fn dfs(root : Node[V]?) -> Unit {
-      if root is Some(root) {
-        dfs(root.left)
-        arr[i] = root.value
-        i += 1
-        dfs(root.right)
-      }
-    }
-
-    dfs(self.root)
-    arr
+    return []
   }
+  let arr = Array::unsafe_make_uninit(self.size)
+  let mut n = 0
+  fn dfs(root : Node[V]?) -> Unit {
+    if root is Some(root) {
+      dfs(root.left)
+      let v = root.value
+      arr.unsafe_set(n, v)
+      n += 1
+      dfs(root.right)
+    }
+  }
+
+  dfs(self.root)
+  arr
 }
 
 ///|

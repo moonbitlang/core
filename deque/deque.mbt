@@ -522,11 +522,6 @@ pub fn[A] Deque::remove(self : Deque[A], index : Int) -> A {
 }
 
 ///|
-/// Creates a new deque from a fixed array, preserving the order of elements.
-///
-/// Parameters:
-
-///|
 /// Returns the number of elements in the deque.
 ///
 /// Parameters:
@@ -702,25 +697,6 @@ test "unsafe_pop_front after many push_front" {
 }
 
 ///|
-/// Removes and discards the first element from the deque. This function is a
-/// deprecated version of `unsafe_pop_front`.
-///
-/// Parameters:
-///
-/// * `self` : The deque to remove the first element from.
-///
-/// Throws a runtime error if the deque is empty.
-///
-/// Example:
-///
-/// ```mbt test
-///   let dq = @deque.from_array([1, 2, 3])
-///   dq.unsafe_pop_front()
-///   inspect(dq, content="@deque.from_array([2, 3])")
-/// ```
-///
-
-///|
 /// Removes a back element from a deque.
 ///
 /// # Example
@@ -740,27 +716,6 @@ pub fn[A] Deque::unsafe_pop_back(self : Deque[A]) -> Unit {
   set_null(self.buf, tail_idx)
   self.len -= 1
 }
-
-///|
-/// Removes and discards the last element from a deque.
-///
-/// Parameters:
-///
-/// * `deque` : The deque to remove the last element from.
-///
-/// Throws a runtime error if the deque is empty.
-///
-/// Example:
-///
-/// ```mbt test
-///   let dq = @deque.from_array([1, 2, 3])
-///   // Deprecated way:
-///   // dq.pop_back_exn()
-///   // Recommended way:
-///   dq.unsafe_pop_back()
-///   inspect(dq, content="@deque.from_array([1, 2])")
-/// ```
-///
 
 ///|
 /// Removes a front element from a deque and returns it, or `None` if it is empty.
@@ -1473,12 +1428,6 @@ pub fn[A] Deque::retain_map(self : Deque[A], f : (A) -> A?) -> Unit {
 }
 
 ///|
-/// Filters and maps elements in-place using a provided function. Modifies the
-/// deque to retain only elements for which the provided function returns `Some`,
-/// and updates those elements with the values inside the `Some` variant.
-///
-
-///|
 /// Filters elements in-place by retaining only the elements that satisfy the
 /// given predicate. Modifies the deque to keep only the elements for which the
 /// predicate function returns `true`.
@@ -1486,7 +1435,7 @@ pub fn[A] Deque::retain_map(self : Deque[A], f : (A) -> A?) -> Unit {
 /// Parameters:
 ///
 /// * `self` : The deque to be filtered.
-/// * `predicate` : A function that takes an element and returns `true` if the
+/// * `f` : A function that takes an element and returns `true` if the
 /// element should be kept, `false` if it should be removed.
 ///
 /// Example:
@@ -1742,14 +1691,14 @@ pub fn[A] Deque::from_iter(iter : Iter[A]) -> Deque[A] {
 pub fn[A] Deque::to_array(self : Deque[A]) -> Array[A] {
   let len = self.length()
   if len == 0 {
-    []
-  } else {
-    let xs = Array::make(len, self[0])
-    for i in 0..<len {
-      xs[i] = self[i]
-    }
-    xs
+    return []
   }
+  let xs = Array::unsafe_make_uninit(len)
+  for i in 0..<len {
+    let v = self[i]
+    xs.unsafe_set(i, v)
+  }
+  xs
 }
 
 ///|
@@ -1972,7 +1921,8 @@ pub fn[A] Deque::chunk_by(
 /// from inner deques in sequence.
 ///
 /// Note:
-///   - Uses the first inner deque as base and appends subsequent deques.
+///   - Allocates a new buffer of the combined length and copies every inner
+///     deque into it; none of the input deques are modified.
 ///   - Efficiently preserves element order across all inner deques.
 ///
 /// Example:
@@ -2261,7 +2211,7 @@ test "weird behavior after drain" {
 ///
 /// Parameters:
 ///
-/// * `comparator` : A function that compares each element with the target value,
+/// * `cmp` : A function that compares each element with the target value,
 /// returning:
 ///  * A negative integer if the element is less than the target
 ///  * Zero if the element equals the target

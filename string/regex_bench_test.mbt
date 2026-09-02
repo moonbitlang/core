@@ -45,7 +45,7 @@ test "bench regex large pattern" (it : @bench.T) {
     "\{i}".pad_start(3, '0')
   }
   fn make_large_pattern() -> String {
-    let parts = Array::new()
+    let parts = Array()
     for i in 0..<38 {
       let idx = padded3(i)
       parts.push(
@@ -55,7 +55,7 @@ test "bench regex large pattern" (it : @bench.T) {
     parts.join("|")
   }
   fn make_filenames() -> Array[String] {
-    let filenames = Array::new(capacity=20_000)
+    let filenames = Array(capacity=20_000)
     for i in 0..<20_000 {
       if i % 5 == 0 {
         let idx = padded3(i % 38)

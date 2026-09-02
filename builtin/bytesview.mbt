@@ -72,7 +72,10 @@ pub fn BytesView::is_empty(self : BytesView) -> Bool {
 /// * `self` : The bytes view to retrieve the byte from.
 /// * `index` : The position in the view from which to retrieve the byte.
 ///
-/// Returns the byte at the specified index if the index is valid.
+/// Returns the byte at the specified index.
+///
+/// Throws a runtime error if the index is out of bounds (less than 0 or greater
+/// than or equal to the length of the view).
 ///
 /// Example:
 ///

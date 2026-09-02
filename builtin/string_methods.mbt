@@ -422,7 +422,7 @@ pub fn StringView::strip_suffix(
 pub fn StringView::to_array(self : StringView) -> Array[Char] {
   self
   .iter()
-  .fold(init=Array::new(capacity=self.length()), (rv, c) => {
+  .fold(init=Array(capacity=self.length()), (rv, c) => {
     rv.push(c)
     rv
   })
@@ -2400,7 +2400,9 @@ fn ascii_lowercase_copy(view : StringView, first_uppercase : Int) -> String {
 }
 
 ///|
-/// Converts this string to lowercase.
+/// Converts the ASCII uppercase letters (`'A'` to `'Z'`) in this string to
+/// lowercase. All other characters, including non-ASCII letters, are left
+/// unchanged.
 #cfg(not(target="js"))
 pub fn StringView::to_lower(self : StringView) -> StringView {
   // TODO: deal with non-ascii characters
@@ -2414,7 +2416,9 @@ pub fn StringView::to_lower(self : StringView) -> StringView {
 }
 
 ///|
-/// Converts this string to lowercase.
+/// Converts the ASCII uppercase letters (`'A'` to `'Z'`) in this string to
+/// lowercase. All other characters, including non-ASCII letters, are left
+/// unchanged.
 #cfg(not(target="js"))
 pub fn String::to_lower(self : String) -> String {
   // TODO: deal with non-ascii characters
@@ -2448,7 +2452,9 @@ pub fn StringView::to_lower(self : StringView) -> StringView {
 }
 
 ///|
-/// Converts this string to lowercase.
+/// Converts the ASCII uppercase letters (`'A'` to `'Z'`) in this string to
+/// lowercase. All other characters, including non-ASCII letters, are left
+/// unchanged.
 #cfg(target="js")
 pub fn String::to_lower(self : String) -> String {
   // TODO: deal with non-ascii characters
@@ -2512,7 +2518,9 @@ test "View::to_lower" {
 }
 
 ///|
-/// Converts this string to uppercase.
+/// Converts the ASCII lowercase letters (`'a'` to `'z'`) in this string to
+/// uppercase. All other characters, including non-ASCII letters, are left
+/// unchanged.
 pub fn StringView::to_upper(self : StringView) -> StringView {
   // TODO: deal with non-ascii characters
   guard self.find_by(c => c.is_ascii_lowercase()) is Some(idx) else {
@@ -2532,7 +2540,9 @@ pub fn StringView::to_upper(self : StringView) -> StringView {
 }
 
 ///|
-/// Converts this string to uppercase.
+/// Converts the ASCII lowercase letters (`'a'` to `'z'`) in this string to
+/// uppercase. All other characters, including non-ASCII letters, are left
+/// unchanged.
 pub fn String::to_upper(self : String) -> String {
   // TODO: deal with non-ascii characters
   guard self.find_by(c => c.is_ascii_lowercase()) is Some(idx) else {

@@ -816,7 +816,7 @@ pub fn[K, V] Map::values(self : Map[K, V]) -> Iter[V] {
 ///|
 /// Converts the hash map to an array.
 pub fn[K, V] Map::to_array(self : Map[K, V]) -> Array[(K, V)] {
-  let arr = Array::make_uninit(self.size)
+  let arr = Array::unsafe_make_uninit(self.size)
   let mut i = 0
   for x = self.head {
     match x {

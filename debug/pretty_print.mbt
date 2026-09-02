@@ -235,12 +235,11 @@ fn Repr::render_repr(self : Repr, threshold : Int) -> Content {
 ///
 /// Optional parameters:
 /// - `max_depth?`: maximum expansion depth; deeper subtrees are replaced with `...`.
-///   Defaults to `4` when `None`. Values `<= 0` are treated as `1`.
-/// - `compact_threshold?`: compact-vs-multiline layout threshold.
-///   The printer uses a heuristic "size" for nodes; when the structure is deemed
-///   small enough under this threshold, it is kept on one line, otherwise it is
-///   broken into multiple lines.
-///   Larger values prefer single-line output. Defaults to `80` when `None`.
+///   Defaults to `16` when `None`. Values `<= 0` are treated as `1`.
+///
+/// The compact-vs-multiline layout threshold is not configurable here: `render`
+/// always uses the internal default of `70`, keeping a node on one line when
+/// every line of its compacted form fits within that many characters.
 pub fn render(r : Repr, max_depth? : Int) -> String {
   let max_depth : Int? = match max_depth {
     Some(_) => max_depth

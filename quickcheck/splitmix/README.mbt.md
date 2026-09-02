@@ -282,7 +282,7 @@ SplitMix provides:
 ## Performance Characteristics
 
 - **Generation speed**: Very fast (few CPU cycles per number)
-- **Memory usage**: Minimal state (single 64-bit value)
+- **Memory usage**: Minimal state (two 64-bit values: `seed` and `gamma`)
 - **Quality**: Good statistical properties for testing
 - **Splitting**: O(1) to create independent generators
 

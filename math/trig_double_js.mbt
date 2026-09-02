@@ -153,9 +153,9 @@ pub fn acos(x : Double) -> Double = "Math" "acos"
 ///
 /// Returns the arctangent of the number `x`.
 ///
-/// Example:
-///
 /// * Returns NaN if the input is NaN.
+///
+/// Example:
 ///
 /// ```mbt check
 /// test {

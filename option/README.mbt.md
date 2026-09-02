@@ -49,7 +49,7 @@ test {
 }
 ```
 
-A safer alternative to `unwrap` is the `or` method, which returns the value if it is `Some`, otherwise, it returns the default value.
+A safer alternative to `unwrap` is the `unwrap_or` method, which returns the value if it is `Some`, otherwise, it returns the default value.
 
 ```mbt check
 ///|
@@ -60,7 +60,7 @@ test {
 }
 ```
 
-There is also the `or_else` method, which returns the value if it is `Some`, otherwise, it returns the result of the provided function.
+There is also the `unwrap_or_else` method, which returns the value if it is `Some`, otherwise, it returns the result of the provided function.
 
 ```mbt check
 ///|
@@ -110,7 +110,7 @@ test {
 }
 ```
 
-Sometimes we want to reduce the nested `Option` values into a single `Option`, you can use the `flatten` method to achieve this. It transforms `Some(Some(value))` into `Some(value)`, and `None` otherwise.
+Sometimes we want to reduce the nested `Option` values into a single `Option`, you can use `bind(x => x)` to achieve this. It transforms `Some(Some(value))` into `Some(value)`, and `None` otherwise.
 
 ```mbt check
 ///|

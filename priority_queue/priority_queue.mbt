@@ -108,7 +108,7 @@ pub fn[A] PriorityQueue::copy(self : PriorityQueue[A]) -> PriorityQueue[A] {
 pub fn[A : Compare] PriorityQueue::to_array(
   self : PriorityQueue[A],
 ) -> Array[A] {
-  let arr = Array::new(capacity=self.len)
+  let arr = Array(capacity=self.len)
   let stack : Array[Node[A]?] = [self.top]
   while stack.pop() is Some(node) {
     match node {

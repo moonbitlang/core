@@ -28,7 +28,7 @@ fn[T : Eq + Hash] unique_lcs(
   new~ : ArrayView[T],
 ) -> ArrayView[(Int, Int)] {
   let matches = find_unique(old~, new~)
-  let piles = Piles(Array::new(capacity=matches.length()))
+  let piles = Piles(Array(capacity=matches.length()))
   for place in 0..<matches.length() {
     let (_, new_idx) = matches[place]
     // Each pile top stores `(new_idx, place)`: the candidate tail in `new~`

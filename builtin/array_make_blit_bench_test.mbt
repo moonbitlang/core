@@ -116,3 +116,23 @@ test "bench Array::push Ref n=1000000 resize" (it : @bench.T) {
     it.keep(data)
   })
 }
+
+///|
+fn make_blit_int_array(len : Int) -> Array[Int] {
+  Array::makei(len, i => i)
+}
+
+///|
+/// `Array::copy` allocates and fills in one shot. The Int and Ref variants are
+/// both kept because the element type decides whether the per-element store
+/// carries reference-counting traffic.
+test "bench Array::copy Int n=1000000" (it : @bench.T) {
+  let data = make_blit_int_array(make_blit_ref_bench_size)
+  it.bench(fn() { it.keep(data.copy()) })
+}
+
+///|
+test "bench Array::copy Ref n=1000000" (it : @bench.T) {
+  let data = make_blit_ref_array(make_blit_ref_bench_size)
+  it.bench(fn() { it.keep(data.copy()) })
+}

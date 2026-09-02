@@ -14,6 +14,6 @@
 
 ///|
 test {
-  let empty : Array[Unit] = Array::make_uninit(0)
+  let empty : Array[Unit] = Array::unsafe_make_uninit(0)
   assert_true(empty == [])
 }

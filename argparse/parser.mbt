@@ -548,7 +548,7 @@ fn parse_command_impl(
           Some(v) => v
           None =>
             if default_subcommand is Some(sub) {
-              let remaining = Array::new(capacity=argv.length() - i)
+              let remaining = Array(capacity=argv.length() - i)
               remaining.push("-\{short}\{String::from_iter(chars)}")
               for rest in argv[i + 1:] {
                 remaining.push(rest)

@@ -6,7 +6,7 @@ A priority queue is a data structure capable of maintaining maximum/minimum valu
 
 ## Create
 
-You can use `PriorityQueue([])` or `of()` to create an immutable priority queue.
+You can use `PriorityQueue([])` or `from_array()` to create an immutable priority queue.
 
 ```mbt check
 ///|

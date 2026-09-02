@@ -1,6 +1,6 @@
 # `bytes`
 
-This package provides utilities for working with sequences of bytes, offering both mutable (`Bytes`) and immutable (`View`) representations.
+This package provides utilities for working with sequences of bytes, offering both an owned representation (`Bytes`) and a slice representation (`BytesView`); both are immutable.
 
 ## Creating Bytes
 

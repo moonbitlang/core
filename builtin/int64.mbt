@@ -52,7 +52,9 @@ pub fn Int64::from_int(i : Int) -> Int64 {
 ///
 /// * `self` : The 64-bit integer whose absolute value is to be computed.
 ///
-/// Returns the absolute value of the input integer.
+/// Returns the absolute value of the input integer. When the input is
+/// `@int64.MIN_VALUE` (-9223372036854775808), returns `@int64.MIN_VALUE`
+/// itself, since its absolute value is not representable as an `Int64`.
 ///
 /// Example:
 ///
@@ -72,7 +74,24 @@ pub fn Int64::abs(self : Int64) -> Int64 {
 }
 
 ///|
-/// Returns the minimum of two 64-bit signed integers.
+/// Returns the smaller of two 64-bit signed integers.
+///
+/// Parameters:
+///
+/// * `self` : The first integer to compare.
+/// * `other` : The second integer to compare.
+///
+/// Returns `self` if it is not greater than `other`, `other` otherwise.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(1L.min(2L), content="1")
+///   inspect(2L.min(1L), content="1")
+///   inspect((-1L).min(0L), content="-1")
+/// }
+/// ```
 pub fn Int64::min(self : Int64, other : Int64) -> Int64 {
   if self < other {
     self
@@ -82,7 +101,24 @@ pub fn Int64::min(self : Int64, other : Int64) -> Int64 {
 }
 
 ///|
-/// Returns the maximum of two 64-bit signed integers.
+/// Returns the larger of two 64-bit signed integers.
+///
+/// Parameters:
+///
+/// * `self` : The first integer to compare.
+/// * `other` : The second integer to compare.
+///
+/// Returns `self` if it is not less than `other`, `other` otherwise.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(1L.max(2L), content="2")
+///   inspect(2L.max(1L), content="2")
+///   inspect((-1L).max(0L), content="0")
+/// }
+/// ```
 pub fn Int64::max(self : Int64, other : Int64) -> Int64 {
   if self > other {
     self
@@ -92,7 +128,26 @@ pub fn Int64::max(self : Int64, other : Int64) -> Int64 {
 }
 
 ///|
-/// Clamps the value `self` between `min` and `max`.
+/// Clamps a 64-bit signed integer into the inclusive range [`min`, `max`].
+///
+/// Parameters:
+///
+/// * `self` : The value to clamp.
+/// * `min` : The lower bound of the range.
+/// * `max` : The upper bound of the range.
+///
+/// Returns `min` if `self` is less than `min`, `max` if `self` is greater
+/// than `max`, and `self` otherwise. Aborts if `min` is greater than `max`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(5L.clamp(min=0L, max=10L), content="5")
+///   inspect((-5L).clamp(min=0L, max=10L), content="0")
+///   inspect(15L.clamp(min=0L, max=10L), content="10")
+/// }
+/// ```
 pub fn Int64::clamp(self : Int64, min~ : Int64, max~ : Int64) -> Int64 {
   guard! min <= max
   if self < min {
@@ -601,7 +656,7 @@ pub fn Int64::clz(self : Int64) -> Int = "%i64_clz"
 ///
 /// ```mbt check
 /// test {
-///   let x = 0x7000_0001_1F00_100FL // 0111000000000000000000000001000111110000000100001111
+///   let x = 0x7000_0001_1F00_100FL // Binary: 0111 0000 ... 0001 1111 0000 0000 0001 0000 0000 1111
 ///   inspect(x.popcnt(), content="14")
 /// }
 /// ```
@@ -801,7 +856,7 @@ pub fn Int64::reinterpret_as_double(self : Int64) -> Double = "%i64_to_f64_reint
 ///
 /// ```mbt check
 /// test {
-///   // 0x4045000000000000 represents 42.0 in IEEE 754 double format
+///   // 0x4059000000000000 represents 100.0 in IEEE 754 double format
 ///   let n = 4636737291354636288UL
 ///   inspect(n.reinterpret_as_double(), content="100")
 /// }

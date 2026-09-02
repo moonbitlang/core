@@ -18,7 +18,7 @@ test {
 
 ## Insert & Contain
 
-You can use `insert()` to add a key to the set, and `contains()` to check whether a key exists.
+You can use `add()` to add a key to the set, and `contains()` to check whether a key exists.
 
 ```mbt check
 ///|
@@ -44,7 +44,7 @@ test {
 
 ## Size & Capacity
 
-You can use `size()` to get the number of keys in the set, or `capacity()` to get the current capacity.
+You can use `length()` to get the number of keys in the set, or `capacity()` to get the current capacity.
 
 ```mbt check
 ///|

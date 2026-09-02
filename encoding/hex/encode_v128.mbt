@@ -22,12 +22,6 @@
 // before being stored.
 
 ///|
-/// V128 loads require `FixedArray[Byte]`; these types share a representation
-/// on the linear-memory backends.
-#cfg(any(target="native", target="wasm"))
-fn unsafe_fixedarray_from_bytes(bytes : Bytes) -> FixedArray[Byte] = "%identity"
-
-///|
 /// The sixteen hex digits as swizzle-table lanes: lane `n` holds the ASCII
 /// code of the lowercase digit for nibble value `n`.
 #cfg(any(target="native", target="wasm"))
@@ -58,41 +52,36 @@ fn encode_v128(bytes : BytesView) -> String {
   guard length <= 0x1FFF_FFFF else { return encode_scalar(bytes) } // Int::MAX / 4
   // 2 output code units per byte, 2 bytes per UTF-16 code unit
   let out = FixedArray::make(length * 4, b'\x00')
-  let src = unsafe_fixedarray_from_bytes(bytes.data())
-  let base = bytes.start_offset()
-  let end = base + length
   let table = hex_digits_v128()
-  let mut index = base
-  let mut written = 0
-  // written as a subtraction so that a view sitting at the very end of a
-  // large buffer cannot wrap the bound into accepting a short block
-  while end - index >= 16 {
-    let data = @v128.v128_load(src, index)
-    let hi = @v128.i8x16_shr_u(data, 4)
-    let lo = @v128.v128_and_(data, @v128.i8x16_splat(0x0F))
-    // interleave: source byte k produces digits at output positions 2k
-    // (high nibble) and 2k + 1 (low nibble)
-    let first = @v128.i8x16_shuffle(
-      hi, lo, 0, 16, 1, 17, 2, 18, 3, 19, 4, 20, 5, 21, 6, 22, 7, 23,
-    )
-    let second = @v128.i8x16_shuffle(
-      hi, lo, 8, 24, 9, 25, 10, 26, 11, 27, 12, 28, 13, 29, 14, 30, 15, 31,
-    )
-    let d0 = @v128.i8x16_swizzle(table, first)
-    let d1 = @v128.i8x16_swizzle(table, second)
-    @v128.v128_store(out, written, @v128.i16x8_extend_low_i8x16_u(d0))
-    @v128.v128_store(out, written + 16, @v128.i16x8_extend_high_i8x16_u(d0))
-    @v128.v128_store(out, written + 32, @v128.i16x8_extend_low_i8x16_u(d1))
-    @v128.v128_store(out, written + 48, @v128.i16x8_extend_high_i8x16_u(d1))
-    index += 16
-    written += 64
-  }
-  while index < end {
-    let n = src[index].to_int()
-    write_code_unit(out, written, HEX_DIGITS[(n >> 4) & 0x0F])
-    write_code_unit(out, written + 2, HEX_DIGITS[n & 0x0F])
-    index += 1
-    written += 4
+  for rest = bytes, written = 0 {
+    match rest {
+      [v128le(data), .. tail] => {
+        let hi = @v128.i8x16_shr_u(data, 4)
+        let lo = @v128.v128_and_(data, @v128.i8x16_splat(0x0F))
+        // interleave: source byte k produces digits at output positions 2k
+        // (high nibble) and 2k + 1 (low nibble)
+        let first = @v128.i8x16_shuffle(
+          hi, lo, 0, 16, 1, 17, 2, 18, 3, 19, 4, 20, 5, 21, 6, 22, 7, 23,
+        )
+        let second = @v128.i8x16_shuffle(
+          hi, lo, 8, 24, 9, 25, 10, 26, 11, 27, 12, 28, 13, 29, 14, 30, 15, 31,
+        )
+        let d0 = @v128.i8x16_swizzle(table, first)
+        let d1 = @v128.i8x16_swizzle(table, second)
+        @v128.v128_store(out, written, @v128.i16x8_extend_low_i8x16_u(d0))
+        @v128.v128_store(out, written + 16, @v128.i16x8_extend_high_i8x16_u(d0))
+        @v128.v128_store(out, written + 32, @v128.i16x8_extend_low_i8x16_u(d1))
+        @v128.v128_store(out, written + 48, @v128.i16x8_extend_high_i8x16_u(d1))
+        continue tail, written + 64
+      }
+      [byte, .. tail] => {
+        let n = byte.to_int()
+        write_code_unit(out, written, HEX_DIGITS[(n >> 4) & 0x0F])
+        write_code_unit(out, written + 2, HEX_DIGITS[n & 0x0F])
+        continue tail, written + 4
+      }
+      [] => break
+    }
   }
   out.unsafe_reinterpret_as_bytes().to_unchecked_string()
 }

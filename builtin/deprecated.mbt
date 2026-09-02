@@ -65,13 +65,13 @@ pub fn[K, V] Map::new(capacity? : Int = default_init_capacity) -> Map[K, V] {
 }
 
 ///|
+/// Shifts the bits of a `Byte` value to the left by the given number of bit
 /// positions.
 ///
 /// Parameters:
 ///
-/// - `byte_value` : The `Byte` value whose bits are to be shifted.
-/// - `shift_count` : The number of bit positions to shift the `byte_value` to
-///   the left.
+/// - `self` : The `Byte` value whose bits are to be shifted.
+/// - `count` : The number of bit positions to shift `self` to the left.
 ///
 /// Returns the resulting `Byte` value after the bitwise left shift operation.
 ///
@@ -82,12 +82,13 @@ pub fn Byte::lsl(self : Byte, count : Int) -> Byte {
 }
 
 ///|
-/// bits.
+/// Performs a logical (zero-filling) right shift of a `Byte` value by the
+/// given number of bits.
 ///
 /// Parameters:
 ///
-/// - `value` : The `Byte` value to be shifted.
-/// - `count` : The number of bits to shift the `value` to the right.
+/// - `self` : The `Byte` value to be shifted.
+/// - `count` : The number of bits to shift `self` to the right.
 ///
 /// Returns the result of the logical shift right operation as a `Byte`.
 ///
@@ -108,4 +109,13 @@ pub fn String::unsafe_char_at(self : String, index : Int) -> Char {
   } else {
     c1.unsafe_to_char()
   }
+}
+
+///|
+/// Creates a new empty array with an optional initial capacity.
+///
+/// Deprecated: use `Array(capacity=...)` instead.
+#deprecated("Use `Array(capacity=...)` instead")
+pub fn[T] Array::new(capacity? : Int = 0) -> Array[T] {
+  Array(capacity~)
 }

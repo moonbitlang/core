@@ -79,6 +79,8 @@ pub fn[K : Eq + Hash, V] HashMap::get(self : HashMap[K, V], key : K) -> V? {
 
 ///|
 /// Get value with `at` access semantics.
+/// Aborts if the key is not present; use `get` for the `Option`-returning
+/// version.
 #alias("_[_]")
 pub fn[K : Eq + Hash, V] HashMap::at(self : HashMap[K, V], key : K) -> V {
   guard! self.data is Some(node)
@@ -900,7 +902,7 @@ pub fn[K : Eq + Hash, V] HashMap::from_iter(
     return hash_map_from_iter_by_add(iter)
   }
   let entries = match iter.size_hint() {
-    Some(len) => Array::new(capacity=len)
+    Some(len) => Array(capacity=len)
     None => []
   }
   iter.each(e => entries.push({ key: e.0, value: e.1, path: @path.of(e.0), }))

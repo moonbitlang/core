@@ -562,7 +562,7 @@ pub fn[K] Set::iter(self : Set[K]) -> Iter[K] {
 ///|
 /// Converts the hash set to an array.
 pub fn[K] Set::to_array(self : Set[K]) -> Array[K] {
-  let arr = Array::new(capacity=self.size)
+  let arr = Array(capacity=self.size)
   for x = self.head {
     match x {
       Some({ key, next, .. }) => {
@@ -680,7 +680,7 @@ pub fn[K : Hash + Eq] Set::intersection(
 
 ///|
 pub impl[X : ToJson] ToJson for Set[X] with fn to_json(self) {
-  let res = Array::new(capacity=self.size)
+  let res = Array(capacity=self.size)
   for v in self {
     res.push(v.to_json())
   }

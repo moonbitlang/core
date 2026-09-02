@@ -427,8 +427,8 @@ pub impl[A : Hash + Compare] Hash for PriorityQueue[A] with fn hash_combine(
 ///
 /// Parameters:
 ///
-/// * `self` : The first list to compare.
-/// * `other` : The second list to compare.
+/// * `self` : The first priority queue to compare.
+/// * `other` : The second priority queue to compare.
 ///
 /// Returns an integer that indicates the relative order:
 ///
