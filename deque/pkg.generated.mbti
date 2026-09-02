@@ -65,6 +65,7 @@ pub fn[A] Deque::pop_back(Self[A]) -> A?
 pub fn[A] Deque::pop_front(Self[A]) -> A?
 pub fn[A] Deque::push_back(Self[A], A) -> Unit
 pub fn[A] Deque::push_front(Self[A], A) -> Unit
+pub fn[A] Deque::release_unused(Self[A], placeholder~ : A) -> Unit
 pub fn[A] Deque::remove(Self[A], Int) -> A
 pub fn[A] Deque::reserve_capacity(Self[A], Int) -> Unit
 pub fn[A] Deque::retain(Self[A], (A) -> Bool) -> Unit
