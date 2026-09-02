@@ -89,6 +89,18 @@ test "bench StringBuilder::write_char non-BMP n=4096" (it : @bench.T) {
 }
 
 ///|
+test "bench StringBuilder growth from minimum capacity n=4096" (it : @bench.T) {
+  let piece = stringbuilder_bench_piece
+  it.bench(fn() {
+    let builder = StringBuilder(size_hint=1)
+    for _ in 0..<stringbuilder_bench_repeats {
+      builder.write_string(piece)
+    }
+    it.keep(builder.to_string().length())
+  })
+}
+
+///|
 test "bench StringBuilder::reset reuse spare capacity n=4096" (it : @bench.T) {
   let piece = stringbuilder_bench_piece
   let size_hint = piece.length() * 4

@@ -55,5 +55,6 @@ options(
     "stringbuilder_buffer.mbt": [ "not", "js" ],
     "stringbuilder_buffer_wbtest.mbt": [ "not", "js" ],
     "stringbuilder_concat.mbt": [ "js" ],
+    "stringbuilder_grow_wbtest.mbt": [ "not", "js" ],
   },
 )
