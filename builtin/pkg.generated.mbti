@@ -134,6 +134,7 @@ pub fn[T] Array::new(capacity? : Int) -> Self[T]
 pub fn[T] Array::pop(Self[T]) -> T?
 pub fn[T] Array::push(Self[T], T) -> Unit
 pub fn[T] Array::push_iter(Self[T], Iter[T]) -> Unit
+pub fn[T] Array::release_unused(Self[T], placeholder~ : T) -> Unit
 pub fn[T] Array::remove(Self[T], Int) -> T
 pub fn[T] Array::repeat(Self[T], Int) -> Self[T]
 pub fn[T] Array::reserve_capacity(Self[T], Int) -> Unit

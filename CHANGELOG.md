@@ -13,9 +13,11 @@ changelog should follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 - Core commit: `bd827dc85`
 - Added `Debug` trait with `derive(Debug)` support, including `ignore=[..]` configuration for non-debuggable nested types
 - Added new `moonbitlang/async` APIs including `@process.spawn`, advisory file locking, `@fs.tmpdir`, `@async.all`, and `@async.any`
+- Added `Array::release_unused(placeholder~)`, which overwrites the unused capacity of an array in place with a placeholder, releasing the elements that earlier removals left there
 
 #### Changed
 
+- `Array` shrinking operations no longer null out the slots they vacate, so an `ArrayView` created before the mutation can no longer read uninitialized memory (previously a segfault on native and `null` on wasm-gc; the JavaScript backend is unchanged, and such a view still observes `undefined` past the array's current length there). Mutating an array while a view of it is alive remains a program error, but it now yields unspecified *valid* values rather than undefined behavior. The removed elements stay reachable from the buffer until later pushes reuse those slots, the buffer grows, or the array is dropped -- uniformly, `clear` included, which no longer releases them. `Array::release_unused(placeholder~)` overwrites the unused capacity in place with a placeholder to release them on demand, while `shrink_to_fit`, which already reallocated, lets them go with the old buffer. No existing signature changes
 - **BREAKING**: `@json.parse` now rejects unpaired `\uXXXX` surrogate escapes in strings, raising `ParseError::InvalidChar` at the backslash that opens the offending escape; an escaped leading surrogate must be followed immediately by an escaped trailing surrogate, and the pair decodes to the character it denotes. Previously such escapes were decoded unchecked and produced a `String` that was not well-formed Unicode. `@json.valid` reports the same documents as invalid. JSON emitted by `JSON.stringify` in JavaScript can contain these escapes, so input that JavaScript and Python accept may now be rejected — as it is by Rust's serde_json
 - `@json.inspect` has been migrated to `json_inspect`
 - `String::sub` and `StringView::sub` now panic on invalid indices instead of raising `CreatingViewError`. The `CreatingViewError` type has been removed.
