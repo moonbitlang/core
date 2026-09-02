@@ -553,6 +553,11 @@ const DECIMAL_CHUNK : UInt64 = 10_000_000_000_000_000_000UL
 const DECIMAL_CHUNK_DIGITS = 19
 
 ///|
+/// `DECIMAL_CHUNK` already has its top bit set, so it is normalized with a
+/// shift of zero. Cache its expensive software reciprocal at module startup.
+let decimal_chunk_reciprocal : UInt64 = reciprocal_word(DECIMAL_CHUNK)
+
+///|
 /// Decimal rendering by repeated division by 10^19, so each division peels off
 /// 19 digits at a time.
 fn BigInt::to_string_dec(self : BigInt) -> String {
@@ -564,13 +569,10 @@ fn BigInt::to_string_dec(self : BigInt) -> String {
   work.unsafe_blit(0, self.limbs, 0, n)
   let mut len = n
   let chunks = []
-  // The reciprocal depends only on the divisor, so it is computed once for the
-  // whole conversion rather than once per 19-digit chunk.
-  let s = nlz(DECIMAL_CHUNK)
-  let dn = DECIMAL_CHUNK << s
-  let rec = reciprocal_word(dn)
   while len > 1 || work.unsafe_get(0) != 0 {
-    chunks.push(div_w(work, work, len, dn, rec, s))
+    chunks.push(
+      div_w(work, work, len, DECIMAL_CHUNK, decimal_chunk_reciprocal, 0),
+    )
     len = normalize_len(work, len)
   }
   let buf = StringBuilder()
