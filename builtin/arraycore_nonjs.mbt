@@ -13,9 +13,6 @@
 // limitations under the License.
 
 ///|
-fn[T] UninitializedArray::set_null(self : UninitializedArray[T], index : Int) = "%fixedarray.set_null"
-
-///|
 /// An `Array` is a collection of values that supports random access and can
 /// grow in size.
 struct Array[T] {
@@ -172,13 +169,15 @@ pub fn[T] Array::length(self : Array[T]) -> Int {
 /// - This function does not raise errors, but it panics if `new_len` is greater
 /// than the current length of the array.
 ///
-/// TODO: this can be optimized by using the intrinsic to null out the range
+/// # Retention
+///
+/// The slots beyond `new_len` are left as they are rather than nulled out, so
+/// that an `ArrayView` created before the call can never observe uninitialized
+/// memory. The removed elements stay reachable from the buffer until those
+/// slots are reused by later pushes, until the buffer grows, or until the
+/// array is dropped; `Array::release_unused` overwrites them on demand.
 fn[T] Array::unsafe_truncate_to_length(self : Array[T], new_len : Int) -> Unit {
-  let len = self.length()
-  guard! new_len <= len
-  for i in new_len..<len {
-    self.buf.set_null(i)
-  }
+  guard! new_len <= self.length()
   self.len = new_len
 }
 
@@ -242,8 +241,11 @@ test "panic Array growth rejects a wrapped required size" {
 ///|
 fn[T] Array::resize_buffer(self : Array[T], new_capacity : Int) -> Unit {
   let old_buf = self.buf
-  let old_cap = old_buf.0.length()
-  let copy_len = if old_cap < new_capacity { old_cap } else { new_capacity }
+  // Only the live prefix is worth carrying over. The slots beyond `len` hold
+  // either NULL or the elements earlier removals left behind, and leaving them
+  // with the old buffer is what releases the latter when that buffer dies.
+  let len = self.len
+  let copy_len = if len < new_capacity { len } else { new_capacity }
   let new_buf = UninitializedArray::make_and_blit(
     old_buf,
     allocate_len=new_capacity,
@@ -339,11 +341,54 @@ pub fn[T] Array::reserve_capacity(self : Array[T], capacity : Int) -> Unit {
 ///   @test.assert_eq(v.capacity(), 3)
 /// }
 /// ```
+///
+/// The survivors are copied into the new buffer and the old one is released
+/// with them, so this also releases whatever earlier removals left in the
+/// unused capacity. It pays an allocation plus a copy of every survivor to do
+/// so; `Array::release_unused` releases the same elements in one pass over the
+/// unused region and no allocation, at the cost of leaving the capacity alone.
 pub fn[T] Array::shrink_to_fit(self : Array[T]) -> Unit {
   if self.capacity() <= self.length() {
     return
   }
   self.resize_buffer(self.length())
+}
+
+///|
+/// Overwrites the array's unused capacity -- every slot from `length()` up to
+/// `capacity()` -- with `placeholder`, releasing whatever those slots held.
+///
+/// Shrinking an array never clears the slots it vacates, so whatever they held
+/// -- a removed element, or a duplicate reference to a survivor that was
+/// shifted over it -- stays reachable from the buffer and unreleased until
+/// later pushes reuse those slots, the buffer grows, or the array is dropped.
+/// This releases them on demand without reallocating, which is what
+/// `Array::pop`, `Array::remove`, `Array::retain` and the other operations
+/// that take no placeholder leave outstanding. `Array::shrink_to_fit` releases
+/// them too, but by allocating an exact-size buffer and copying every survivor
+/// into it; this costs one pass over the unused region and no allocation.
+///
+/// An `ArrayView` created before the call observes `placeholder` in that region
+/// afterwards, in place of whatever it held.
+///
+/// This only matters for element types holding references -- for types such as
+/// `Int` there is nothing to release and the call merely costs a pass over the
+/// buffer.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let arr = ["a", "b", "c"]
+///   let _ = arr.pop()
+///   arr.release_unused(placeholder="")
+///   debug_inspect(arr, content="[\"a\", \"b\"]")
+/// }
+/// ```
+#owned(placeholder)
+pub fn[T] Array::release_unused(self : Array[T], placeholder~ : T) -> Unit {
+  let len = self.len
+  self.buf.unchecked_fill(len, placeholder, self.capacity() - len)
 }
 
 ///|
@@ -531,6 +576,11 @@ pub fn[A] ArrayView::blit_to(
 ///|
 /// Removes the last element from an array and returns it, or `None` if it is empty.
 ///
+/// The vacated slot goes on referring to the returned element, so an
+/// `ArrayView` created beforehand keeps observing that element, and it is
+/// released only once a later push reuses the slot, the buffer grows, or the
+/// buffer is dropped. Call `Array::release_unused` to release it at once.
+///
 /// # Example
 /// ```mbt check
 /// test {
@@ -546,7 +596,8 @@ pub fn[T] Array::pop(self : Array[T]) -> T? {
   } else {
     let index = len - 1
     let v = self.unsafe_get(index)
-    self.buf.set_null(index)
+    // The slot keeps referring to `v` until it is reused or the buffer dies;
+    // see `unsafe_truncate_to_length` for why it is not nulled out.
     self.len = index
     Some(v)
   }
@@ -560,6 +611,10 @@ pub fn[T] Array::pop(self : Array[T]) -> T? {
 /// * `array` : The array from which to remove and return the last element.
 ///
 /// Returns the last element of the array before removal.
+///
+/// As with `Array::pop`, the vacated slot goes on referring to the returned
+/// element until a later push reuses it, the buffer grows, the buffer is
+/// dropped, or `Array::release_unused` overwrites it.
 ///
 /// Example:
 ///
@@ -579,7 +634,6 @@ pub fn[T] Array::unsafe_pop(self : Array[T]) -> T {
   guard! len != 0
   let index = len - 1
   let v = self.unsafe_get(index)
-  self.buf.set_null(index)
   self.len = index
   v
 }
@@ -632,6 +686,14 @@ pub fn[T] Array::remove(self : Array[T], index : Int) -> T {
 ///   @test.assert_eq(v, [3, 5])
 /// }
 /// ```
+///
+/// The `end - begin` slots vacated at the end of the array are not cleared:
+/// each keeps whatever it held before the survivors were shifted down, so a
+/// drained element or a duplicate reference to a survivor stays reachable
+/// there until the slot is reused, the buffer grows, or the array is dropped.
+/// Call `Array::release_unused` to overwrite them at once, or
+/// `Array::shrink_to_fit` to move the survivors into an exact-size buffer.
+///
 pub fn[T] Array::drain(self : Array[T], begin : Int, end : Int) -> Array[T] {
   guard! begin >= 0 && end <= self.length() && begin <= end
   let num = end - begin
