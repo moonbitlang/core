@@ -15,9 +15,9 @@
 ///|
 /// Trait for types that can be randomly generated
 pub(open) trait Arbitrary {
-  // `arbitrary` function takes a random number generator and a number that 
-  // determines the size of the generated value as arguments, and returns a
-  // randomly generated value of certain type.
+  // `arbitrary` takes a size hint and a random number generator, and returns a
+  // generated value. Types whose complexity is independent of size may ignore
+  // the hint.
   fn arbitrary(Int, @splitmix.RandomState) -> Self
 }
 
@@ -32,38 +32,8 @@ pub impl Arbitrary for Bool with fn arbitrary(_, rs) {
 }
 
 ///|
-pub impl Arbitrary for Int with fn arbitrary(size, rs) {
-  if size == 0 {
-    0
-  } else {
-    rs.next_int() % size
-  }
-}
-
-///|
-pub impl Arbitrary for UInt with fn arbitrary(size, rs) {
-  if size == 0 {
-    0
-  } else {
-    rs.next_uint() % size.reinterpret_as_uint()
-  }
-}
-
-///|
 pub impl Arbitrary for Byte with fn arbitrary(_, rs) {
   rs.next_uint().to_byte()
-}
-
-///|
-pub impl Arbitrary for Int16 with fn arbitrary(size, rs) {
-  let value : Int = Arbitrary::arbitrary(size, rs)
-  Int16::from_int(value)
-}
-
-///|
-pub impl Arbitrary for UInt16 with fn arbitrary(size, rs) {
-  let value : UInt = Arbitrary::arbitrary(size, rs)
-  value.to_uint16()
 }
 
 ///|
@@ -73,24 +43,6 @@ pub impl Arbitrary for Bytes with fn arbitrary(size, rs) {
   } else {
     let sz = rs.next_positive_int() % size
     Bytes::makei(sz, _ => Arbitrary::arbitrary(size, rs))
-  }
-}
-
-///|
-pub impl Arbitrary for Int64 with fn arbitrary(size, rs) {
-  if size == 0 {
-    0
-  } else {
-    rs.next_int64() % size.to_int64()
-  }
-}
-
-///|
-pub impl Arbitrary for UInt64 with fn arbitrary(size, rs) {
-  if size == 0 {
-    0
-  } else {
-    rs.next_uint64() % size.to_uint64()
   }
 }
 

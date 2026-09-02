@@ -110,7 +110,7 @@ test "panic UInt::to_string invalid radix" {
 
 ///|
 test "to_string runtime zero paths" {
-  let arr = Array::new()
+  let arr = Array()
   arr.push(1)
   ignore(arr.pop())
   let zero = arr.length()
@@ -122,7 +122,7 @@ test "to_string runtime zero paths" {
 
 ///|
 test "panic UInt64::to_string invalid radix" {
-  let arr = Array::new()
+  let arr = Array()
   arr.push(1)
   ignore(arr.pop())
   let zero = arr.length().to_uint64()

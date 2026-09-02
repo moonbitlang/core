@@ -173,7 +173,7 @@ fn[K : Eq, V] Map::set_with_hash(
           // Restart search with new capacity_mask
           continue 0, hash & self.capacity_mask
         }
-        let entry = { prev: self.tail, next: None, psl, key, value, hash }
+        let entry = { prev: self.tail, next: None, psl, key, value, hash, }
         self.add_entry_to_tail(idx, entry)
         return
       }
@@ -191,7 +191,7 @@ fn[K : Eq, V] Map::set_with_hash(
             continue 0, hash & self.capacity_mask
           }
           self.push_away(idx, curr_entry)
-          let entry = { prev: self.tail, next: None, psl, key, value, hash }
+          let entry = { prev: self.tail, next: None, psl, key, value, hash, }
           self.add_entry_to_tail(idx, entry)
           return
         }
@@ -441,7 +441,7 @@ pub fn[K : Hash + Eq, V] Map::update_or_default(
     if push_away is Some(entry) {
       self.push_away(idx, entry)
     }
-    let entry = { prev: self.tail, next: None, psl, hash, key, value: default }
+    let entry = { prev: self.tail, next: None, psl, hash, key, value: default, }
     self.add_entry_to_tail(idx, entry)
   }
 }
@@ -816,7 +816,7 @@ pub fn[K, V] Map::values(self : Map[K, V]) -> Iter[V] {
 ///|
 /// Converts the hash map to an array.
 pub fn[K, V] Map::to_array(self : Map[K, V]) -> Array[(K, V)] {
-  let arr = Array::make_uninit(self.size)
+  let arr = Array::unsafe_make_uninit(self.size)
   let mut i = 0
   for x = self.head {
     match x {
@@ -893,7 +893,7 @@ pub fn[K, V, V2] Map::map(self : Map[K, V], f : (K, V) -> V2) -> Map[K, V2] {
   for entry = last, idx = self.tail, next = (None : Entry[K, V2]?) {
     let { prev, psl, hash, key, value, .. } = entry
     let new_value = f(key, value)
-    let new_entry = { prev, next, psl, hash, key, value: new_value }
+    let new_entry = { prev, next, psl, hash, key, value: new_value, }
     other.entries[idx] = Some(new_entry)
     if prev != -1 {
       continue self.entries[prev].unwrap(), prev, Some(new_entry)
@@ -925,7 +925,7 @@ pub fn[K, V] Map::copy(self : Map[K, V]) -> Map[K, V] {
   guard! self.entries[self.tail] is Some(last)
   for entry = last, idx = self.tail, next = (None : Entry[K, V]?) {
     let { prev, psl, hash, key, value, .. } = entry
-    let new_entry = { prev, next, psl, hash, key, value }
+    let new_entry = { prev, next, psl, hash, key, value, }
     other.entries[idx] = Some(new_entry)
     if prev != -1 {
       continue self.entries[prev].unwrap(), prev, Some(new_entry)

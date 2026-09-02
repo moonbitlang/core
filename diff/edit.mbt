@@ -96,8 +96,8 @@ fn[T] group_edits(
     return []
   }
   let n = edits.length()
-  let mut pending : Array[Edit] = Array::new()
-  let result : Array[Hunk[T]] = Array::new()
+  let mut pending : Array[Edit] = Array()
+  let result : Array[Hunk[T]] = Array()
   for i, edit in edits {
     match edit {
       Equal(old_index~, new_index~, len~) => {
@@ -119,7 +119,7 @@ fn[T] group_edits(
           if context > 0 {
             pending.push(Equal(old_index~, new_index~, len=context))
           }
-          result.push({ edits: pending, old, new })
+          result.push({ edits: pending, old, new, })
           let offset = len.saturating_sub(context)
           pending = if context > 0 {
             [
@@ -140,7 +140,7 @@ fn[T] group_edits(
     }
   }
   if !(pending is [] || pending is [Equal(_)]) {
-    result.push({ edits: pending, old, new })
+    result.push({ edits: pending, old, new, })
   }
   result
 }

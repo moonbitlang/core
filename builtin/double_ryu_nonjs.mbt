@@ -522,7 +522,7 @@ fn d2d(ieeeMantissa : UInt64, ieeeExponent : UInt) -> FloatingDecimal64 {
     output = vr + (vr == vm || roundUp).to_uint64()
   }
   let exp : Int = e10 + removed
-  let fd : FloatingDecimal64 = { mantissa: output, exponent: exp }
+  let fd : FloatingDecimal64 = { mantissa: output, exponent: exp, }
   fd
 }
 
@@ -651,14 +651,45 @@ fn d2d_small_int(
   if fraction != 0UL {
     return None
   }
-  Some({ mantissa: m2 >> -e2, exponent: 0 })
+  Some({ mantissa: m2 >> -e2, exponent: 0, })
 }
+
+///|
+/// The largest double below which EVERY integer is exactly representable as
+/// binary64: 2^53. Individual larger integers (2^62, say) still round-trip
+/// through Int64, but their shortest decimal form is no longer their exact
+/// digits, so they must not take the integer fast path. (JavaScript's
+/// MAX_SAFE_INTEGER is 2^53 - 1; the bound here includes 2^53 itself, which
+/// is exactly representable and renders identically either way.)
+const MAX_EXACTLY_REPRESENTABLE_INT : Double = 9_007_199_254_740_992
 
 ///|
 /// TODO: ryu_to_logger[T:Logger](Double/Float, T) -> Unit
 fn ryu_to_string(val : Double) -> String {
   if val == 0.0 {
     return "0"
+  }
+  // Integral values up to 2^53 have the same shortest decimal form as the
+  // corresponding integer (every integer in this range is exactly
+  // representable, so no shorter decimal can round-trip to it), and integer
+  // formatting is far cheaper than the full shortest-representation search
+  // below. NaN and the infinities fail the range comparisons; -0.0 is handled
+  // by the zero check above; fractional values fail the round-trip check.
+  if val >= -MAX_EXACTLY_REPRESENTABLE_INT &&
+    val <= MAX_EXACTLY_REPRESENTABLE_INT {
+    // Two tiers: Int formatting beats Int64 formatting for the values that
+    // dominate real workloads, so take it when the value fits.
+    if val >= -2147483648.0 && val <= 2147483647.0 {
+      let i = val.to_int()
+      if i.to_double() == val {
+        return i.to_string()
+      }
+    } else {
+      let i = val.to_int64()
+      if i.to_double() == val {
+        return i.to_string()
+      }
+    }
   }
   // Step 1: Decode the floating-point number, and unify normalized and subnormal cases.
   let bits : UInt64 = val.reinterpret_as_uint64()
@@ -683,7 +714,7 @@ fn ryu_to_string(val : Double) -> String {
         if r != 0 {
           break x
         }
-        continue { mantissa: q, exponent: x.exponent + 1 }
+        continue { mantissa: q, exponent: x.exponent + 1, }
       }
     None => d2d(ieeeMantissa, ieeeExponent.reinterpret_as_uint())
   }

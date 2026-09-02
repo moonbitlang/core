@@ -61,7 +61,7 @@ test "reverse with arrays" {
 
 ## Comparison by Key
 
-With `@cmp.maximum_by_key()` and `@cmp.minimum_by_key()`, it is possible to compare values based on arbitrary keys derived from the them. This is particularly useful when you need to compare complex objects based on some specific aspect or field.
+With `@cmp.maximum_by_key()` and `@cmp.minimum_by_key()`, it is possible to compare values based on arbitrary keys derived from them. This is particularly useful when you need to compare complex objects based on some specific aspect or field.
 
 ```mbt check
 ///|
@@ -79,8 +79,8 @@ test "cmp_by_key" {
   inspect(longer, content="hello")
 
   // Compare structs by a specific field
-  let alice = { name: "Alice", age: 25 }
-  let bob = { name: "Bob", age: 30 }
+  let alice = { name: "Alice", age: 25, }
+  let bob = { name: "Bob", age: 30, }
   let younger = @cmp.minimum_by_key(alice, bob, p => p.age)
   debug_inspect(
     younger,

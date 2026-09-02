@@ -26,7 +26,7 @@ pub impl[K : Eq, V : Eq] Eq for SortedMap[K, V] with fn equal(self, other) {
 
 ///|
 fn[K, V] new_sorted_map() -> SortedMap[K, V] {
-  { root: None, size: 0 }
+  { root: None, size: 0, }
 }
 
 ///|
@@ -274,7 +274,7 @@ pub fn[K, V] SortedMap::keys(self : SortedMap[K, V]) -> Iter[K] {
     fn() {
       for x = next_node {
         match x {
-          Some({ left, key, value: _, right, height: _ }) => {
+          Some({ left, key, value: _, right, height: _, }) => {
             todo_list.push((key, right))
             continue left
           }
@@ -300,7 +300,7 @@ pub fn[K, V] SortedMap::values(self : SortedMap[K, V]) -> Iter[V] {
     fn() {
       for x = next_node {
         match x {
-          Some({ left, key: _, value, right, height: _ }) => {
+          Some({ left, key: _, value, right, height: _, }) => {
             todo_list.push((value, right))
             continue left
           }
@@ -334,7 +334,7 @@ pub fn[K, V] SortedMap::iter(self : SortedMap[K, V]) -> Iter[(K, V)] {
     fn() {
       for x = next_node {
         match x {
-          Some({ left, key, value, right, height: _ }) => {
+          Some({ left, key, value, right, height: _, }) => {
             todo_list.push((key, value, right))
             continue left
           }
@@ -373,7 +373,8 @@ pub fn[K : Compare, V] SortedMap::from_iter(
 }
 
 ///|
-/// Returns a new array of key-value pairs that are within the specified range [low, high].
+/// Returns an iterator over the key-value pairs whose keys are within the
+/// specified range [low, high] (both bounds inclusive).
 pub fn[K : Compare, V] SortedMap::range(
   self : SortedMap[K, V],
   low : K,
@@ -384,7 +385,7 @@ pub fn[K : Compare, V] SortedMap::range(
   Iter2::new(fn() {
     for x = next_node {
       match x {
-        Some({ left, key, value, right, height: _ }) => {
+        Some({ left, key, value, right, height: _, }) => {
           let cmp_key_low = key.compare(low)
           let cmp_key_high = key.compare(high)
           if cmp_key_low < 0 {
@@ -417,7 +418,7 @@ pub fn[K : Compare, V] SortedMap::range(
 }
 
 ///|
-/// Creates a deep copy of the sorted map.
+/// Creates a shallow copy of the sorted map.
 ///
 /// This operation creates a new map with the same structure and contents as the
 /// original map. The copy is independent - modifications to the copy will not
@@ -448,7 +449,7 @@ pub fn[K, V] SortedMap::copy(self : SortedMap[K, V]) -> SortedMap[K, V] {
   fn copy_node(node : Node[K, V]?) -> Node[K, V]? {
     match node {
       None => None
-      Some({ key, value, left, right, height }) =>
+      Some({ key, value, left, right, height, }) =>
         Some({
           key,
           value,
@@ -459,7 +460,7 @@ pub fn[K, V] SortedMap::copy(self : SortedMap[K, V]) -> SortedMap[K, V] {
     }
   }
 
-  { root: copy_node(self.root), size: self.size }
+  { root: copy_node(self.root), size: self.size, }
 }
 
 ///|

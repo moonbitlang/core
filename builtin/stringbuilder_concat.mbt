@@ -31,7 +31,7 @@ struct StringBuilder {
 #alias(new, deprecated="Use `StringBuilder()` instead")
 pub fn StringBuilder::StringBuilder(size_hint? : Int = 0) -> StringBuilder {
   ignore(size_hint)
-  { val: "" }
+  { val: "", }
 }
 
 ///|
@@ -53,14 +53,12 @@ pub impl Logger for StringBuilder with fn write_char(self, ch) {
 }
 
 ///|
-/// Writes a part of the given string to the StringBuilder.
-/// 
+/// Writes a string view to the StringBuilder.
+///
 /// Parameters:
 ///
 /// * `self` : The StringBuilder to write to.
-/// * `str` : The given string.
-/// * `start` : The start index of the substring to write.
-/// * `len` : The length of the substring to write.
+/// * `str` : The view of the string to write.
 ///
 /// Example:
 ///

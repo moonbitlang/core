@@ -72,7 +72,7 @@ priv struct FloatHashInput {
 
 ///|
 test "Hash" {
-  let a = FloatHashInput::{ a: 1.0 }
+  let a = FloatHashInput::{ a: 1.0, }
   let h1 = Hasher(seed=0)
   h1.combine(a)
   inspect(h1.finalize(), content="1986884538")

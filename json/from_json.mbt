@@ -299,7 +299,8 @@ pub impl FromJson for Json with fn from_json(json, _path) {
 /// Converts a JSON string to `Bytes`.
 /// 
 /// The expected string format consists of:
-/// - Hexadecimal byte sequences represented as `\xNN`, where `NN` are two hex digits.
+/// - Hexadecimal byte sequences represented as `\xNN`, where `NN` are two lowercase
+///   hex digits (`0`-`9`, `a`-`f`); uppercase `A`-`F` is rejected.
 /// - Printable ASCII characters (except `\` and `"`), which are directly converted to their byte values.
 /// - Any invalid escape sequence or character will result in a `JsonDecodeError`.
 /// 

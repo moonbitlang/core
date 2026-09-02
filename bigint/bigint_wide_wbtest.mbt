@@ -13,12 +13,16 @@
 // limitations under the License.
 
 ///|
-struct MyBigInt(BigInt)
+priv struct MyBigInt(BigInt)
 
 ///|
 impl Show for MyBigInt with fn output(self, logger) {
+  let sign = match self.sign {
+    Positive => "Positive"
+    Negative => "Negative"
+  }
   logger <+
-    "{limbs : \{@debug.Repr(self.limbs)}, sign : \{@debug.Repr(self.sign)}, len : \{self.len} }"
+    "{limbs : \{@debug.Repr(self.limbs)}, sign : \{sign}, len : \{self.len} }"
 }
 
 ///|
@@ -50,13 +54,6 @@ test "debug_string" {
 ///|
 fn check_invariant(a : BigInt) -> Unit raise {
   guard a.len > 0 else { fail("invariant len > 0 is broken: len = \{a.len}") }
-  for i in 0..<a.len {
-    guard a.limbs[i].to_uint64() < RADIX else {
-      fail(
-        "invariant forall 0 <= i < len. 0 <= limbs[i] < radix is broken: a.limbs[\{i}] = \{a.limbs[i]}",
-      )
-    }
-  }
   if a.limbs.iter().take(a.len).any(x => x > 0) {
     guard a.limbs[a.len - 1] > 0 else {
       fail(
@@ -86,10 +83,8 @@ test "shr" {
   let c = a >> 64
   check_invariant(c)
   inspect(c, content="0")
-  // 2^63 spans two 32-bit limbs; shifting right by 2 * RADIX_BIT_LEN bits
-  // (64) drops both limbs to 0. Built as a BigInt because 2^63 overflows the
-  // UInt64 product RADIX * RADIX (= 2^64, wraps to 0) and Int64's range.
-  let a = 1N << 63
+  // 2^127 spans two UInt64 limbs; shifting by two complete limbs drops it.
+  let a = 1N << 127
   let b = a >> (RADIX_BIT_LEN * 2)
   check_invariant(b)
   inspect(b, content="0")
@@ -97,32 +92,60 @@ test "shr" {
 
 ///|
 test "mul_single_limb boundaries" {
-  // 1-limb x 1-limb with maximal carry-out: (2^32 - 1)^2
-  let max_limb = 4294967295N
+  // One-limb by one-limb with maximal carry-out: (2^64 - 1)^2.
+  let max_limb = 18446744073709551615N
   let p = max_limb * max_limb
   check_invariant(p)
-  inspect(p, content="18446744065119617025")
-  // all-max limbs: (2^96 - 1) * (2^32 - 1), carry grows len to n + 1
-  let a = (1N << 96) - 1N
+  @test.assert_eq(p, (1N << 128) - (1N << 65) + 1N)
+  // Three all-max limbs times one max limb; carry grows len to n + 1.
+  let a = (1N << 192) - 1N
+  let expected = (1N << 256) - (1N << 192) - (1N << 64) + 1N
   let p = a * max_limb
   check_invariant(p)
-  inspect(p, content="340282366841710300949110269833929293825")
+  @test.assert_eq(p, expected)
   // commuted operand order takes the same fast path
   let p = max_limb * a
   check_invariant(p)
-  inspect(p, content="340282366841710300949110269833929293825")
+  @test.assert_eq(p, expected)
   // no carry-out: len stays at self.len, the spare limb beyond len stays zero
-  let p = (1N << 64) * 2N
+  let p = (1N << 128) * 2N
   check_invariant(p)
-  inspect(p, content="36893488147419103232")
+  @test.assert_eq(p, 1N << 129)
   // the dispatch applies the sign on top of the magnitude-only helper
-  inspect(a * -max_limb, content="-340282366841710300949110269833929293825")
-  inspect(-a * max_limb, content="-340282366841710300949110269833929293825")
-  inspect(-a * -max_limb, content="340282366841710300949110269833929293825")
+  @test.assert_eq(a * -max_limb, -expected)
+  @test.assert_eq(-a * max_limb, -expected)
+  @test.assert_eq(-a * -max_limb, expected)
   // fast path agrees with the general routine on the same magnitudes
-  let fast = a.mul_single_limb(4294967295U)
+  let fast = a.mul_single_limb(0xffff_ffff_ffff_ffffUL)
   check_invariant(fast)
   @test.assert_eq(fast, a.grade_school_mul(max_limb))
+}
+
+///|
+test "multiplication around the wide Karatsuba threshold" {
+  let cases : Array[(Int, Int)] = [
+    (63, 63), // schoolbook on both sides of the last pre-threshold case
+    (63, 64), // asymmetric input still dispatches on the shorter operand
+    (64, 64), // first exact Karatsuba case
+    (64, 65), // Karatsuba with one high tail limb
+    (65, 65),
+  ]
+  for case in cases {
+    let (limbs_a, limbs_b) = case
+    let bits_a = limbs_a * RADIX_BIT_LEN
+    let bits_b = limbs_b * RADIX_BIT_LEN
+    let a = (1N << bits_a) - 1N
+    let b = (1N << bits_b) - 1N
+    let expected = (1N << (bits_a + bits_b)) -
+      (1N << bits_a) -
+      (1N << bits_b) +
+      1N
+    @test.assert_eq(a.len, limbs_a)
+    @test.assert_eq(b.len, limbs_b)
+    let product = a * b
+    check_invariant(product)
+    @test.assert_eq(product, expected)
+  }
 }
 
 ///|
@@ -175,10 +198,10 @@ test "BigInt::ctz" {
 test {
   inspect(
     MyBigInt(-9223372036854775809N),
-    content="{limbs : <FixedArray: [1, 2147483648, 0]>, sign : Negative, len : 2 }",
+    content="{limbs : <FixedArray: [9223372036854775809, 0]>, sign : Negative, len : 1 }",
   ) // Int64.min_value - 1
   inspect(
     MyBigInt(-9223372036854775810N),
-    content="{limbs : <FixedArray: [2, 2147483648, 0]>, sign : Negative, len : 2 }",
+    content="{limbs : <FixedArray: [9223372036854775810, 0]>, sign : Negative, len : 1 }",
   ) // Int64.min_value - 2
 }

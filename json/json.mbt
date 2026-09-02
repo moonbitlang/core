@@ -86,24 +86,30 @@ pub fn Json::value(self : Json, key : String) -> Json? {
 }
 
 ///|
-fn indent_str(level : Int, indent : Int) -> String {
-  if indent == 0 {
-    ""
-  } else {
-    let spaces = indent * level
-    match spaces {
-      0 => "\n"
-      1 => "\n "
-      2 => "\n  "
-      3 => "\n   "
-      4 => "\n    "
-      5 => "\n     "
-      6 => "\n      "
-      7 => "\n       "
-      8 => "\n        "
-      _ => "\n" + " ".repeat(spaces)
+#inline
+fn write_indent(
+  buf : StringBuilder,
+  cache : Array[String],
+  level : Int,
+  indent : Int,
+) -> Unit {
+  // Each level is the previous one plus a single indentation unit. Building a
+  // level is still O(indent * level) — concatenation copies `last` — but it
+  // replaces a fresh `repeat(indent * level)` with a `repeat(indent)`, roughly
+  // halving the bytes written per level. It also never computes the product
+  // `indent * level`, which overflows `Int` to a negative value for a large
+  // `indent` and is then rejected by `String::repeat`.
+  //
+  // The unit is built here rather than once per `stringify` call so that a
+  // document emitting no indentation at all never allocates it: callers reach
+  // this only when `indent > 0`, so `repeat` never sees a negative count.
+  while cache.length() <= level {
+    match cache {
+      [.., last] => cache.push(last + " ".repeat(indent))
+      [] => cache.push("\n")
     }
   }
+  buf.write_string(cache[level])
 }
 
 ///|
@@ -175,7 +181,7 @@ pub fn Replacer::Replacer(f : (String, Json) -> Json?) -> Replacer {
 /// }
 /// ```
 pub fn Replacer::keep(array : ArrayView[StringView]) -> Replacer {
-  { f: (idx, value) => if array.contains(idx) { Some(value) } else { None } }
+  { f: (idx, value) => if array.contains(idx) { Some(value) } else { None }, }
 }
 
 ///|
@@ -197,7 +203,7 @@ pub fn Replacer::keep(array : ArrayView[StringView]) -> Replacer {
 /// }
 /// ```
 pub fn Replacer::exclude(array : ArrayView[StringView]) -> Replacer {
-  { f: (idx, value) => if array.contains(idx) { None } else { Some(value) } }
+  { f: (idx, value) => if array.contains(idx) { None } else { Some(value) }, }
 }
 
 ///|
@@ -280,6 +286,7 @@ pub fn Json::stringify(
   replacer? : Replacer,
 ) -> String {
   let buf = StringBuilder(size_hint=0)
+  let indent_cache : Array[String] = []
 
   // Explicit stack to replace recursive calls
   let stack : Array[WriteFrame] = []
@@ -294,7 +301,9 @@ pub fn Json::stringify(
             } else {
               depth += 1
               buf.write_char('{')
-              buf.write_string(indent_str(depth, indent))
+              if indent > 0 {
+                write_indent(buf, indent_cache, depth, indent)
+              }
               // After child value printed, we resume from this frame
               stack.push(Object(members.iter(), first=true))
             }
@@ -304,12 +313,14 @@ pub fn Json::stringify(
             } else {
               depth += 1
               buf.write_char('[')
-              buf.write_string(indent_str(depth, indent))
+              if indent > 0 {
+                write_indent(buf, indent_cache, depth, indent)
+              }
               stack.push(Array(arr, i=0))
             }
           String(s) => {
             buf.write_char('\"')
-            buf.write_string(escape(s, escape_slash~))
+            write_escaped(buf, s, escape_slash~)
             buf.write_char('\"')
           }
           Number(n, repr~) =>
@@ -333,13 +344,17 @@ pub fn Json::stringify(
               frame.i = i + 1
               if i > 0 {
                 buf.write_char(',')
-                buf.write_string(indent_str(depth, indent))
+                if indent > 0 {
+                  write_indent(buf, indent_cache, depth, indent)
+                }
               }
               continue Some(element)
             } else {
               depth -= 1
               ignore(stack.pop())
-              buf.write_string(indent_str(depth, indent))
+              if indent > 0 {
+                write_indent(buf, indent_cache, depth, indent)
+              }
               buf.write_char(']')
               continue None
             }
@@ -356,10 +371,12 @@ pub fn Json::stringify(
                 }
                 if !first {
                   buf.write_char(',')
-                  buf.write_string(indent_str(depth, indent))
+                  if indent > 0 {
+                    write_indent(buf, indent_cache, depth, indent)
+                  }
                 }
                 buf.write_char('\"')
-                buf.write_string(escape(k, escape_slash~))
+                write_escaped(buf, k, escape_slash~)
                 buf.write_char('\"')
                 buf.write_char(':')
                 if indent > 0 {
@@ -371,7 +388,9 @@ pub fn Json::stringify(
               None => {
                 depth -= 1
                 ignore(stack.pop())
-                buf.write_string(indent_str(depth, indent))
+                if indent > 0 {
+                  write_indent(buf, indent_cache, depth, indent)
+                }
                 buf.write_char('}')
                 continue None
               }
@@ -451,12 +470,15 @@ fn need_escape(str : String, escape_slash : Bool) -> Bool {
 }
 
 ///|
-fn escape(str : String, escape_slash~ : Bool) -> String {
-  let len = str.length()
+fn write_escaped(
+  buf : StringBuilder,
+  str : String,
+  escape_slash~ : Bool,
+) -> Unit {
   if !need_escape(str, escape_slash) {
-    return str
+    buf.write_string(str)
+    return
   }
-  let buf = StringBuilder(size_hint=len)
   for code in str.code_units() {
     match code {
       '"' => buf.write_string("\\\"")
@@ -481,7 +503,6 @@ fn escape(str : String, escape_slash~ : Bool) -> String {
         }
     }
   }
-  buf.to_string()
 }
 
 ///|
@@ -524,7 +545,9 @@ fn escape(str : String, escape_slash~ : Bool) -> String {
 /// ## Behavior
 /// 
 /// - Recursively applies the replacer to all nested objects
-/// - Non-object values (arrays, strings, numbers, etc.) are returned unchanged
+/// - Arrays are rebuilt element by element, so objects nested inside an array are
+///   transformed as well (the replacer itself is only applied to object members)
+/// - All other values (strings, numbers, booleans, null) are returned unchanged
 /// - The original JSON value is not modified; a new value is returned
 pub fn Json::transform(self : Self, replacer : Replacer) -> Json {
   match self {

@@ -175,12 +175,12 @@ struct TestStruct2 {
 ///|
 test "fixedarray_binary_search_by_test" {
   let arr : FixedArray[TestStruct2] = [
-    { num2: 10 },
-    { num2: 22 },
-    { num2: 35 },
-    { num2: 48 },
+    { num2: 10, },
+    { num2: 22, },
+    { num2: 35, },
+    { num2: 48, },
   ]
-  let mut target : TestStruct2 = { num2: 22 }
+  let mut target : TestStruct2 = { num2: 22, }
   fn cmp(val : TestStruct2) {
     if val.num2 < target.num2 {
       -1
@@ -192,11 +192,11 @@ test "fixedarray_binary_search_by_test" {
   }
 
   @test.assert_eq(arr.binary_search_by(cmp), Ok(1))
-  target = { num2: 48 }
+  target = { num2: 48, }
   @test.assert_eq(arr.binary_search_by(cmp), Ok(3))
-  target = { num2: -8 }
+  target = { num2: -8, }
   @test.assert_eq(arr.binary_search_by(cmp), Err(0))
-  target = { num2: 49 }
+  target = { num2: 49, }
   @test.assert_eq(arr.binary_search_by(cmp), Err(4))
 }
 
@@ -471,13 +471,13 @@ test "FixedArray::arbitrary" {
       #|    <FixedArray: []>,
       #|    <FixedArray: []>,
       #|    <FixedArray: []>,
-      #|    <FixedArray: [0]>,
-      #|    <FixedArray: [0]>,
+      #|    <FixedArray: [1073741825]>,
+      #|    <FixedArray: [-1721961329]>,
       #|    <FixedArray: []>,
       #|    <FixedArray: []>,
-      #|    <FixedArray: [0]>,
-      #|    <FixedArray: [0, 0]>,
-      #|    <FixedArray: [0, 0, 0, 0, 2, 3, 1]>,
+      #|    <FixedArray: [-134217729, 67108863, 16777217]>,
+      #|    <FixedArray: [1144392696, 128, -65535, -2, 311628954, -999999999]>,
+      #|    <FixedArray: []>,
       #|  ]>
     ),
   )
@@ -486,11 +486,35 @@ test "FixedArray::arbitrary" {
     content=(
       #|<ArrayView:
       #|  [
-      #|    <FixedArray: [0, 0, 1, 0, -2]>,
-      #|    <FixedArray: [0, 0, 0, -1, -2]>,
-      #|    <FixedArray: [0, 0, 0, 0, 0, -2, -5, 4, 0, 8]>,
-      #|    <FixedArray: [0, 0, -1, 2]>,
-      #|    <FixedArray: [0, 0]>,
+      #|    <FixedArray: [-613468993, -1609132827, 322263955]>,
+      #|    <FixedArray: [0, 1, -1025403238]>,
+      #|    <FixedArray: [-2, -1073741824]>,
+      #|    <FixedArray:
+      #|      [
+      #|        -1561148302,
+      #|        2147483647,
+      #|        268435455,
+      #|        2147483646,
+      #|        7,
+      #|        -1465955831,
+      #|        -1344599372,
+      #|        -64,
+      #|      ]>,
+      #|    <FixedArray:
+      #|      [
+      #|        595056541,
+      #|        67108865,
+      #|        -262145,
+      #|        513,
+      #|        -2,
+      #|        65536,
+      #|        -2,
+      #|        -11086542,
+      #|        2,
+      #|        2,
+      #|        -261363602,
+      #|        4194303,
+      #|      ]>,
       #|  ]>
     ),
   )

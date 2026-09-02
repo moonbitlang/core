@@ -19,6 +19,61 @@ priv struct H {
 } derive(@quickcheck.Arbitrary, Debug)
 
 ///|
+fn[T : @quickcheck.Arbitrary] scalar_samples_at_zero(
+  seeds : Array[UInt64],
+) -> Array[T] {
+  seeds.map(seed => @quickcheck.Arbitrary::arbitrary(0, @splitmix.new(seed~)))
+}
+
+///|
+test "fixed-width integer Arbitrary exercises its bug-finding portfolio at size zero" {
+  // Seeds select, in order: full-width, canonical, binary boundary,
+  // decimal boundary, and type-extreme generation.
+  let seeds = [1UL, 0UL, 22UL, 6UL, 7UL]
+  let int16s : Array[Int16] = scalar_samples_at_zero(seeds)
+  let uint16s : Array[UInt16] = scalar_samples_at_zero(seeds)
+  let ints : Array[Int] = scalar_samples_at_zero(seeds)
+  let uints : Array[UInt] = scalar_samples_at_zero(seeds)
+  let int64s : Array[Int64] = scalar_samples_at_zero(seeds)
+  let uint64s : Array[UInt64] = scalar_samples_at_zero(seeds)
+  debug_inspect(int16s, content="[-3191, -1, 2047, -10000, 32766]")
+  debug_inspect(uint16s, content="[62345, 2, 2047, 10000, 65533]")
+  debug_inspect(ints, content="[167113609, -1, 134217727, -10, 2147483646]")
+  debug_inspect(uints, content="[167113609, 2, 134217727, 10, 4294967293]")
+  debug_inspect(
+    int64s,
+    content=(
+      #|[
+      #|  -8964471365135109239,
+      #|  -1,
+      #|  134217727,
+      #|  -100000000000000000,
+      #|  9223372036854775806,
+      #|]
+    ),
+  )
+  debug_inspect(
+    uint64s,
+    content=(
+      #|[
+      #|  9482272708574442377,
+      #|  2,
+      #|  134217727,
+      #|  100000000000000000,
+      #|  18446744073709551613,
+      #|]
+    ),
+  )
+}
+
+///|
+test "Byte Arbitrary draws raw random bits" {
+  let seeds = [1UL, 0UL, 22UL, 6UL, 7UL]
+  let bytes : Array[Byte] = scalar_samples_at_zero(seeds)
+  debug_inspect(bytes, content="[0x89, 0x36, 0x3c, 0x56, 0x5f]")
+}
+
+///|
 test {
   let state = (Default::default() : @splitmix.RandomState)
   let size = 10
@@ -26,7 +81,7 @@ test {
   debug_inspect(
     v,
     content=(
-      #|{ x: 6, y: 4 }
+      #|{ x: 1118850684, y: -99999 }
     ),
   )
   let state = state.split()
@@ -34,7 +89,7 @@ test {
   debug_inspect(
     v,
     content=(
-      #|{ x: 1, y: -6 }
+      #|{ x: -1001, y: -115158677 }
     ),
   )
   let state = state.split()
@@ -42,7 +97,7 @@ test {
   debug_inspect(
     v,
     content=(
-      #|{ x: -9, y: 1 }
+      #|{ x: 10000, y: 515456824 }
     ),
   )
 }
@@ -67,13 +122,24 @@ test "gen with default parameters" {
 ///|
 test "iter arbitrary" {
   let samples : Array[Iter[Int]] = @quickcheck.samples(20)
-  inspect("[0, 0, 0, 1, 2, -2]", content="[0, 0, 0, 1, 2, -2]")
+  debug_inspect(
+    samples[9].to_array(),
+    content=(
+      #|[67108863, 16777217, -365961592, 128, -65535]
+    ),
+  )
   debug_inspect(
     samples[1:5].map(iter => iter.to_array()),
-    content="[[], [], [0], [0]]",
+    content=(
+      #|[[], [], [-2], [311628954]]
+    ),
   )
-  // inspect(samples[9], content="[0, 0, 0, 1, 2, -2]") (Cause infinite loop?)
-  debug_inspect(samples[10].to_array(), content="[0, 0]")
+  debug_inspect(
+    samples[10].to_array(),
+    content=(
+      #|[-999999999, -10000000]
+    ),
+  )
 }
 
 ///|

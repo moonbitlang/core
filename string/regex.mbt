@@ -35,8 +35,8 @@ pub struct Regex {
 /// - Assertions and modifiers: `^`, `$`, `\b`, `\B`, `(?i: ... )`
 ///
 /// Escape sequences include `\n`, `\r`, `\t`, `\f`, `\v`, and escaped
-/// metacharacters. In `Regex::compile`, Unicode escapes are supported:
-/// `\uXXXX` and `\u{X...}`. `\xHH` is not supported in `Regex::compile`.
+/// metacharacters. In `Regex`, Unicode escapes are supported:
+/// `\uXXXX` and `\u{X...}`. `\xHH` is not supported in `Regex`.
 ///
 /// `^` and `$` are non-multiline anchors: they match only the beginning and
 /// end of the whole input, not per-line boundaries.
@@ -71,7 +71,7 @@ pub fn Regex::Regex(pattern : StringView) -> Regex raise {
     pattern,
     mode=String,
   )
-  { pat, re: None }
+  { pat, re: None, }
 }
 
 ///|
@@ -138,7 +138,7 @@ pub fn MatchResult::named_group(
 #doc(hidden)
 pub fn Regex::internal_compile_pattern(pat : Pattern) -> Regex {
   let lowered_pat = re_lower_to_utf16(pat.0)
-  { pat: pat.0, re: Some(@re.compile(profile=re_profile_utf16, lowered_pat)) }
+  { pat: pat.0, re: Some(@re.compile(profile=re_profile_utf16, lowered_pat)), }
 }
 
 ///|
@@ -188,7 +188,8 @@ pub fn Regex::unsafe_from_string(pattern : StringView) -> Regex {
 ///|
 /// Builds a regex that matches `str` literally.
 ///
-/// This is equivalent to `Regex(Regex::escape(str))`.
+/// Every character of `str` is matched literally; regex metacharacters have no
+/// special meaning.
 ///
 /// Example:
 ///
@@ -205,7 +206,7 @@ pub fn Regex::string(str : StringView) -> Regex {
       str.to_array().map(b => @re.char(@re.RecharSet::char(b.to_int()))),
     ),
   )
-  { pat, re: None }
+  { pat, re: None, }
 }
 
 ///|
@@ -268,7 +269,7 @@ pub fn Regex::repeat(
 /// ```
 #intrinsic("%regex.seq")
 pub impl Add for Regex with fn add(self, other) -> Regex {
-  { pat: @re.seq([self.pat, other.pat]), re: None }
+  { pat: @re.seq([self.pat, other.pat]), re: None, }
 }
 
 ///|
@@ -285,7 +286,7 @@ pub impl Add for Regex with fn add(self, other) -> Regex {
 /// ```
 #intrinsic("%regex.alt")
 pub impl BitOr for Regex with fn lor(self, other) -> Regex {
-  { pat: @re.alt([self.pat, other.pat]), re: None }
+  { pat: @re.alt([self.pat, other.pat]), re: None, }
 }
 
 ///|
@@ -353,7 +354,7 @@ pub fn Regex::execute(
   match self.re().execute(input, last_index) {
     None => None
     Some(result) =>
-      Some({ input, group_names: self.re().group_names(), result })
+      Some({ input, group_names: self.re().group_names(), result, })
   }
 }
 
@@ -413,5 +414,5 @@ pub fn Regex::execute(
 /// }
 /// ```
 pub fn Regex::capture(self : Regex, group_name : String) -> Regex {
-  { pat: @re.capture(name=group_name, self.pat), re: None }
+  { pat: @re.capture(name=group_name, self.pat), re: None, }
 }

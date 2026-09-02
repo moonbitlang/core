@@ -55,7 +55,7 @@
 /// ## Who may produce `None`
 ///
 /// Keeping the transitive property true means every construction site has to
-/// earn it. There are only five:
+/// earn it. There are only six:
 ///
 /// - `compute_sizes` — the general case; requires every child full **and**
 ///   radix.
@@ -63,6 +63,9 @@
 /// - `radix_append_sizes` — only when a full leaf was appended, and only from
 ///   an already-radix node.
 /// - `from_leaves` — builds nothing but radix nodes, top to bottom.
+/// - `append_right_leaf`'s fresh root — only when `self` is already radix and
+///   the appended leaf is full; it checks both inline instead of going through
+///   `radix_append_sizes`.
 /// - `rebalance`'s non-`top` wrapper — the one unchecked site. It is safe only
 ///   because the wrapper never escapes: the calling frame feeds it straight to
 ///   `tri_merge`, which keeps the child and drops the wrapper. See the comment
@@ -232,7 +235,6 @@ fn[T] Tree::set(self : Tree[T], index : Int, shift : Int, value : T) -> Tree[T] 
 /// 
 /// Precondition:
 /// - The height of `self` = `shift` / `NUM_BITS` (the height starts from 0).
-/// - `length` is the number of elements in the tree.
 #owned(value)
 fn[T] Tree::push_end(self : Tree[T], shift : Int, value : T) -> (Tree[T], Int) {
   fn update_sizes_last(sizes : FixedArray[Int]?) -> FixedArray[Int]? {
@@ -689,7 +691,8 @@ fn[A] redis_plan(t : FixedArray[Tree[A]]) -> (FixedArray[Int], Int) {
 /// - forall i in 0..node_nums, old_t[i] != Empty.
 /// - `old_t` contains a list of trees, each of (`shift` / `NUM_BITS`) height.
 /// - `node_counts` contains the number of children of each node in `new_t` (the redistributed version of `old_t`).
-/// - `node_nums` is the length of `node_counts`.
+/// - `node_nums` is the number of live entries at the front of `node_counts` (`redis_plan`'s `new_len`);
+///   `node_counts` itself may be longer, with scratch left over from the merge past that prefix.
 /// 
 /// Postcondition:
 /// - The resulting trees in `new_t` are of the same height as trees in `old_t`.

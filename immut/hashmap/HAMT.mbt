@@ -47,7 +47,7 @@ let bulk_build_threshold = 64
 /// Create a new instance.
 #as_free_fn
 pub fn[K, V] HashMap::new() -> HashMap[K, V] {
-  { data: None }
+  { data: None, }
 }
 
 ///|
@@ -55,7 +55,7 @@ pub fn[K, V] HashMap::new() -> HashMap[K, V] {
 #as_free_fn
 #owned(key, value)
 pub fn[K : Hash, V] HashMap::singleton(key : K, value : V) -> HashMap[K, V] {
-  { data: Some(Flat(key, value, @path.of(key))) }
+  { data: Some(Flat(key, value, @path.of(key))), }
 }
 
 ///|
@@ -79,6 +79,8 @@ pub fn[K : Eq + Hash, V] HashMap::get(self : HashMap[K, V], key : K) -> V? {
 
 ///|
 /// Get value with `at` access semantics.
+/// Aborts if the key is not present; use `get` for the `Option`-returning
+/// version.
 #alias("_[_]")
 pub fn[K : Eq + Hash, V] HashMap::at(self : HashMap[K, V], key : K) -> V {
   guard! self.data is Some(node)
@@ -331,7 +333,7 @@ fn[K : Eq + Hash, V] hash_map_from_array(
   let entries = Array::makei(arr.length(), i => {
     let kv = arr[i]
     let (k, v) = kv
-    { key: k, value: v, path: @path.of(k) }
+    { key: k, value: v, path: @path.of(k), }
   })
   {
     data: Some(build_hashmap_node_range(entries, 0, entries.length(), 0, true)),
@@ -796,9 +798,9 @@ pub fn[K : Eq, V] HashMap::difference(
   }
 
   match (self.data, other.data) {
-    (None, _) => { data: None }
+    (None, _) => { data: None, }
     (_, None) => self
-    (Some(a), Some(b)) => { data: go(a, b) }
+    (Some(a), Some(b)) => { data: go(a, b), }
   }
 }
 
@@ -900,10 +902,10 @@ pub fn[K : Eq + Hash, V] HashMap::from_iter(
     return hash_map_from_iter_by_add(iter)
   }
   let entries = match iter.size_hint() {
-    Some(len) => Array::new(capacity=len)
+    Some(len) => Array(capacity=len)
     None => []
   }
-  iter.each(e => entries.push({ key: e.0, value: e.1, path: @path.of(e.0) }))
+  iter.each(e => entries.push({ key: e.0, value: e.1, path: @path.of(e.0), }))
   if entries.is_empty() {
     new()
   } else {

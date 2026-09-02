@@ -106,7 +106,14 @@ extern "js" fn JSArray::copy(self : JSArray) -> JSArray =
 type Array[T]
 
 ///|
-fn[T] Array::make_uninit(len : Int) -> Array[T] = "%fixedarray.make_uninit"
+/// Creates an array of `len` elements whose contents are unspecified. The
+/// array reports `length() == len` immediately, so every slot is observable
+/// and the caller must write all of them before the array is read or escapes.
+///
+/// Prefer `Array::makei` unless the initializing loop cannot be expressed as
+/// a function of the index.
+#doc(hidden)
+pub fn[T] Array::unsafe_make_uninit(len : Int) -> Array[T] = "%fixedarray.make_uninit"
 
 ///|
 fn[T] Array::unsafe_make_and_blit(
@@ -116,7 +123,7 @@ fn[T] Array::unsafe_make_and_blit(
   src_offset? : Int = 0,
   dst_offset? : Int = 0,
 ) -> Array[T] {
-  let dst = Array::make_uninit(allocate_len)
+  let dst = Array::unsafe_make_uninit(allocate_len)
   UninitializedArray::unsafe_blit(
     dst.buffer(),
     dst_offset,
@@ -135,7 +142,7 @@ fn[T] Array::unsafe_make_and_blit_from_fixed(
   src_offset? : Int = 0,
   dst_offset? : Int = 0,
 ) -> Array[T] {
-  let dst = Array::make_uninit(allocate_len)
+  let dst = Array::unsafe_make_uninit(allocate_len)
   UninitializedArray::unsafe_blit_fixed(
     dst.buffer(),
     dst_offset,
@@ -162,7 +169,7 @@ fn[T] Array::unsafe_resize_with_default(
 
 ///|
 /// Creates a new array.
-pub fn[T] Array::new(capacity? : Int = 0) -> Array[T] {
+pub fn[T] Array::Array(capacity? : Int = 0) -> Array[T] {
   ignore(capacity)
   []
 }
@@ -232,7 +239,7 @@ pub fn[T] Array::reserve_capacity(self : Array[T], capacity : Int) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let v = Array::new(capacity=10)
+///   let v = Array(capacity=10)
 ///   v.push(1)
 ///   v.push(2)
 ///   v.push(3)

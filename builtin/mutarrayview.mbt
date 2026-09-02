@@ -362,9 +362,10 @@ pub fn[T] FixedArray::mut_view(
 /// Parameters:
 ///
 /// * `self` : The mutable array view to create a new view from.
-/// * `start` : The starting index in the array (inclusive). Defaults to 0.
-/// * `end` : The ending index in the array (exclusive). Defaults to the
-/// length of the array.
+/// * `start` : The starting index in the current view (inclusive). Defaults to
+/// 0.
+/// * `end` : The ending index in the current view (exclusive). Defaults to the
+/// length of the current view.
 #intrinsic("%mutarrayview.view")
 #alias("_[_:_]")
 #alias(sub, deprecated="Use _[_:_] instead")

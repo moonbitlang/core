@@ -85,9 +85,9 @@ test "SortedMap ordered duplicate keeps last value" {
 ///|
 test "SortedMap ordered duplicate keeps first key and last value" {
   let m = @sorted_map.SortedMap([
-    ({ rank: 1, label: "first" }, "a"),
-    ({ rank: 1, label: "second" }, "b"),
-    ({ rank: 2, label: "third" }, "c"),
+    ({ rank: 1, label: "first", }, "a"),
+    ({ rank: 1, label: "second", }, "b"),
+    ({ rank: 2, label: "third", }, "c"),
   ])
   @test.assert_eq(m.to_array().map(kv => (kv.0.label, kv.1)), [
     ("first", "b"),
@@ -99,11 +99,11 @@ test "SortedMap ordered duplicate keeps first key and last value" {
 test "SortedMap large unordered duplicate keeps first key and last value" {
   let items = Array::makei(70, i => {
     if i == 5 {
-      ({ rank: 10, label: "first" }, "a")
+      ({ rank: 10, label: "first", }, "a")
     } else if i == 50 {
-      ({ rank: 10, label: "second" }, "b")
+      ({ rank: 10, label: "second", }, "b")
     } else {
-      ({ rank: 1000 - i, label: "other-\{i}" }, "other")
+      ({ rank: 1000 - i, label: "other-\{i}", }, "other")
     }
   })
   let m = @sorted_map.SortedMap(items)
@@ -263,7 +263,10 @@ test "compare" {
   let xss : Array[@sorted_map.SortedMap[Int, Int]] = @quickcheck.samples(5)
   for xs in xss {
     for ys in xss {
-      @test.assert_eq(xs.compare(ys), xs.to_array().compare(ys.to_array()))
+      @test.assert_eq(
+        xs.compare(ys).compare(0),
+        xs.to_array().compare(ys.to_array()).compare(0),
+      )
     }
   }
 }
@@ -315,9 +318,9 @@ test "from_iter multiple elements iter" {
 test "from_iter duplicate keeps first key and last value" {
   let m = @sorted_map.from_iter(
     [
-      ({ rank: 1, label: "first" }, "a"),
-      ({ rank: 1, label: "second" }, "b"),
-      ({ rank: 2, label: "third" }, "c"),
+      ({ rank: 1, label: "first", }, "a"),
+      ({ rank: 1, label: "second", }, "b"),
+      ({ rank: 2, label: "third", }, "c"),
     ].iter(),
   )
   @test.assert_eq(m.to_array().map(kv => (kv.0.label, kv.1)), [
@@ -330,11 +333,11 @@ test "from_iter duplicate keeps first key and last value" {
 test "from_iter large unordered duplicate keeps first key and last value" {
   let items = Array::makei(70, i => {
     if i == 5 {
-      ({ rank: 10, label: "first" }, "a")
+      ({ rank: 10, label: "first", }, "a")
     } else if i == 50 {
-      ({ rank: 10, label: "second" }, "b")
+      ({ rank: 10, label: "second", }, "b")
     } else {
-      ({ rank: 1000 - i, label: "other-\{i}" }, "other")
+      ({ rank: 1000 - i, label: "other-\{i}", }, "other")
     }
   })
   let m = @sorted_map.from_iter(items.iter())
@@ -382,9 +385,9 @@ test "from_iter descending keys build ascending" {
 test "from_iter descending duplicate keeps first key and last value" {
   let m = @sorted_map.from_iter(
     [
-      ({ rank: 2, label: "top" }, "a"),
-      ({ rank: 1, label: "first" }, "b"),
-      ({ rank: 1, label: "second" }, "c"),
+      ({ rank: 2, label: "top", }, "a"),
+      ({ rank: 1, label: "first", }, "b"),
+      ({ rank: 1, label: "second", }, "c"),
     ].iter(),
   )
   @test.assert_eq(m.to_array().map(kv => (kv.0.label, kv.1)), [

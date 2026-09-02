@@ -182,7 +182,7 @@ test "spawn composes with generator combinators" {
   debug_inspect(
     entries,
     content=(
-      #|[("", 3), ("Z\b", 3), ("", 0)]
+      #|[("", 2), ("Z\b", 1000), ("", 2097152)]
     ),
   )
 }

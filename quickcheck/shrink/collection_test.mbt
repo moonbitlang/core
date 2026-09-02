@@ -55,14 +55,14 @@ test "shrink int list" {
       #|  <List: [1, 0, 3, 4, 5, 6]>,
       #|  <List: [1, 2, 2, 4, 5, 6]>,
       #|  <List: [1, 2, 0, 4, 5, 6]>,
-      #|  <List: [1, 2, 3, 3, 5, 6]>,
       #|  <List: [1, 2, 3, 2, 5, 6]>,
+      #|  <List: [1, 2, 3, 3, 5, 6]>,
       #|  <List: [1, 2, 3, 0, 5, 6]>,
-      #|  <List: [1, 2, 3, 4, 4, 6]>,
       #|  <List: [1, 2, 3, 4, 3, 6]>,
+      #|  <List: [1, 2, 3, 4, 4, 6]>,
       #|  <List: [1, 2, 3, 4, 0, 6]>,
-      #|  <List: [1, 2, 3, 4, 5, 5]>,
       #|  <List: [1, 2, 3, 4, 5, 3]>,
+      #|  <List: [1, 2, 3, 4, 5, 5]>,
       #|  <List: [1, 2, 3, 4, 5, 0]>,
       #|]
     ),
@@ -99,8 +99,8 @@ test "shrink immutable vector" {
       #|  <Vector: [2]>,
       #|  <Vector: [1, 4]>,
       #|  <Vector: [0, 4]>,
-      #|  <Vector: [2, 3]>,
       #|  <Vector: [2, 2]>,
+      #|  <Vector: [2, 3]>,
       #|  <Vector: [2, 0]>,
       #|]
     ),
@@ -118,12 +118,12 @@ test "shrink mutable hash set" {
       #|  <HashSet: []>,
       #|  <HashSet: [4]>,
       #|  <HashSet: [10]>,
-      #|  <HashSet: [9, 4]>,
-      #|  <HashSet: [8, 4]>,
       #|  <HashSet: [4, 5]>,
+      #|  <HashSet: [8, 4]>,
+      #|  <HashSet: [9, 4]>,
       #|  <HashSet: [0, 4]>,
-      #|  <HashSet: [10, 3]>,
       #|  <HashSet: [10, 2]>,
+      #|  <HashSet: [10, 3]>,
       #|  <HashSet: [0, 10]>,
       #|]
     ),
@@ -142,8 +142,8 @@ test "shrink mutable sorted set" {
       #|  <SortedSet: [2]>,
       #|  <SortedSet: [1, 4]>,
       #|  <SortedSet: [0, 4]>,
-      #|  <SortedSet: [2, 3]>,
       #|  <SortedSet: [2]>,
+      #|  <SortedSet: [2, 3]>,
       #|  <SortedSet: [0, 2]>,
       #|]
     ),
@@ -163,8 +163,8 @@ test "shrink immutable hash set" {
       #|  <HashSet: [3]>,
       #|  <HashSet: [2, 7]>,
       #|  <HashSet: [0, 7]>,
-      #|  <HashSet: [3, 6]>,
       #|  <HashSet: [3, 4]>,
+      #|  <HashSet: [3, 6]>,
       #|  <HashSet: [0, 3]>,
       #|]
     ),
@@ -183,8 +183,8 @@ test "shrink immutable sorted set" {
       #|  <SortedSet: [2]>,
       #|  <SortedSet: [1, 5]>,
       #|  <SortedSet: [0, 5]>,
-      #|  <SortedSet: [2, 4]>,
       #|  <SortedSet: [2, 3]>,
+      #|  <SortedSet: [2, 4]>,
       #|  <SortedSet: [0, 2]>,
       #|]
     ),
@@ -220,7 +220,12 @@ test "shrink linked set" {
   let candidates = @shrink.Shrink::shrink(input)
     .map(@set.Set::to_array)
     .collect()
-  debug_inspect(candidates, content="[[], [1], [2], [1], [0, 1], [2, 0]]")
+  debug_inspect(
+    candidates,
+    content=(
+      #|[[], [1], [2], [1], [0, 1], [2, 0]]
+    ),
+  )
 }
 
 ///|
@@ -229,7 +234,12 @@ test "shrink deque" {
   let candidates = @shrink.Shrink::shrink(input)
     .map(@deque.Deque::to_array)
     .collect()
-  debug_inspect(candidates, content="[[], [1], [2], [1, 1], [0, 1], [2, 0]]")
+  debug_inspect(
+    candidates,
+    content=(
+      #|[[], [1], [2], [1, 1], [0, 1], [2, 0]]
+    ),
+  )
 }
 
 ///|
@@ -240,7 +250,9 @@ test "shrink mutable priority queue" {
     .collect()
   debug_inspect(
     candidates,
-    content="[[], [2], [4], [3, 2], [2, 2], [2, 0], [4, 1], [4, 0]]",
+    content=(
+      #|[[], [2], [4], [2, 2], [3, 2], [2, 0], [4, 1], [4, 0]]
+    ),
   )
 }
 
@@ -252,7 +264,9 @@ test "shrink immutable priority queue" {
     .collect()
   debug_inspect(
     candidates,
-    content="[[], [2], [4], [3, 2], [2, 2], [2, 0], [4, 1], [4, 0]]",
+    content=(
+      #|[[], [2], [4], [2, 2], [3, 2], [2, 0], [4, 1], [4, 0]]
+    ),
   )
 }
 
@@ -308,11 +322,11 @@ test "shrink immutable hash map" {
       #|  <HashMap: { 3: 7 }>,
       #|  <HashMap: { 2: 7, 4: 2 }>,
       #|  <HashMap: { 0: 7, 4: 2 }>,
-      #|  <HashMap: { 3: 6, 4: 2 }>,
       #|  <HashMap: { 3: 4, 4: 2 }>,
+      #|  <HashMap: { 3: 6, 4: 2 }>,
       #|  <HashMap: { 3: 0, 4: 2 }>,
-      #|  <HashMap: { 3: 7 }>,
       #|  <HashMap: { 2: 2, 3: 7 }>,
+      #|  <HashMap: { 3: 7 }>,
       #|  <HashMap: { 0: 2, 3: 7 }>,
       #|  <HashMap: { 3: 7, 4: 1 }>,
       #|  <HashMap: { 3: 7, 4: 0 }>,

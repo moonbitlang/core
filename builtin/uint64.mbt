@@ -36,7 +36,29 @@ test {
 }
 
 ///|
-/// Converts the UInt64 to a Bytes in big-endian byte order.
+/// Converts the `UInt64` to a `Bytes` of 8 bytes in big-endian byte order
+/// (most significant byte first).
+///
+/// Parameters:
+///
+/// * `self` : The 64-bit unsigned integer to convert.
+///
+/// Returns a `Bytes` of length 8 whose first element is the most significant
+/// byte of `self` and whose last element is the least significant byte.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   // 0x41..0x48 are the ASCII codes for 'A'..'H'
+///   inspect(
+///     0x4142_4344_4546_4748UL.to_be_bytes(),
+///     content=(
+///       #|b"ABCDEFGH"
+///     ),
+///   )
+/// }
+/// ```
 pub fn UInt64::to_be_bytes(self : UInt64) -> Bytes {
   [
     (self >> 56).to_byte(),
@@ -51,7 +73,29 @@ pub fn UInt64::to_be_bytes(self : UInt64) -> Bytes {
 }
 
 ///|
-/// Converts the UInt64 to a Bytes in little-endian byte order.
+/// Converts the `UInt64` to a `Bytes` of 8 bytes in little-endian byte order
+/// (least significant byte first).
+///
+/// Parameters:
+///
+/// * `self` : The 64-bit unsigned integer to convert.
+///
+/// Returns a `Bytes` of length 8 whose first element is the least significant
+/// byte of `self` and whose last element is the most significant byte.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   // The same value as `to_be_bytes`, with the byte order reversed
+///   inspect(
+///     0x4142_4344_4546_4748UL.to_le_bytes(),
+///     content=(
+///       #|b"HGFEDCBA"
+///     ),
+///   )
+/// }
+/// ```
 pub fn UInt64::to_le_bytes(self : UInt64) -> Bytes {
   [
     self.to_byte(),

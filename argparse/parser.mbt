@@ -54,7 +54,7 @@ fn help_context_command(
   command_path : String,
 ) -> Command {
   let help_name = if command_path == "" { cmd.name } else { command_path }
-  { ..cmd, args: inherited_globals + cmd.args, name: help_name }
+  { ..cmd, args: inherited_globals + cmd.args, name: help_name, }
 }
 
 ///|
@@ -548,7 +548,7 @@ fn parse_command_impl(
           Some(v) => v
           None =>
             if default_subcommand is Some(sub) {
-              let remaining = Array::new(capacity=argv.length() - i)
+              let remaining = Array(capacity=argv.length() - i)
               remaining.push("-\{short}\{String::from_iter(chars)}")
               for rest in argv[i + 1:] {
                 remaining.push(rest)

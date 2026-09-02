@@ -17,3 +17,8 @@ test "panic get on empty tree should panic" {
   let tree : Tree[Int] = Empty
   tree.get(0, 5) |> ignore
 }
+
+///|
+test "panic leaf count whose element count overflows" {
+  tree_len_of_leaf_count(67_108_864) |> ignore
+}

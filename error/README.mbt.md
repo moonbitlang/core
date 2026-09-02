@@ -152,7 +152,7 @@ test "error propagation" {
 
 ## Resource Management with Finally
 
-Use `protect` functions for resource cleanup:
+Perform cleanup in a `catch` handler before re-raising (or use `defer` for unconditional cleanup):
 
 ```mbt check
 ///|

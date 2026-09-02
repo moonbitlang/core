@@ -16,7 +16,7 @@ test {
 }
 ```
 
-Or use the `ok` and `err` functions to create a `Result` value.
+The `Ok` and `Err` constructors work for any combination of value and error types.
 ```mbt check
 ///|
 test {
@@ -26,7 +26,7 @@ test {
 ```
 
 ### Querying variant
-You can check the variant of a `Result` using the `is_ok` and `is_err` methods.
+You can check the variant of a `Result` using the `is Ok(_)` and `is Err(_)` patterns.
 ```mbt check
 ///|
 test {

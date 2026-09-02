@@ -72,7 +72,10 @@ pub fn BytesView::is_empty(self : BytesView) -> Bool {
 /// * `self` : The bytes view to retrieve the byte from.
 /// * `index` : The position in the view from which to retrieve the byte.
 ///
-/// Returns the byte at the specified index if the index is valid.
+/// Returns the byte at the specified index.
+///
+/// Throws a runtime error if the index is out of bounds (less than 0 or greater
+/// than or equal to the length of the view).
 ///
 /// Example:
 ///
@@ -328,6 +331,21 @@ pub fn BytesView::iter2(self : BytesView) -> Iter2[Int, Byte] {
 }
 
 ///|
+fn write_byte_hex(logger : &Logger, byte : Byte) -> Unit {
+  fn hex_digit(value : Int) -> Char {
+    if value < 10 {
+      (value + '0'.to_int()).unsafe_to_char()
+    } else {
+      (value - 10 + 'a'.to_int()).unsafe_to_char()
+    }
+  }
+
+  let value = byte.to_int()
+  logger.write_char(hex_digit(value >> 4))
+  logger.write_char(hex_digit(value & 0x0f))
+}
+
+///|
 pub impl Show for BytesView with fn output(self, logger) {
   logger.write_string("b\"")
   for byte in self {
@@ -335,7 +353,7 @@ pub impl Show for BytesView with fn output(self, logger) {
       logger.write_char(byte.to_char())
     } else {
       logger.write_string("\\x")
-      logger.write_string(byte.to_hex())
+      write_byte_hex(logger, byte)
     }
   }
   logger.write_string("\"")
@@ -580,7 +598,7 @@ pub impl ToJson for BytesView with fn to_json(self) -> Json {
       sb.write_char(byte.to_char())
     } else {
       sb.write_string("\\x")
-      sb.write_string(byte.to_hex())
+      write_byte_hex(sb, byte)
     }
   }
   Json::string(sb.to_string())

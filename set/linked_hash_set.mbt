@@ -171,7 +171,7 @@ fn[K : Eq] Set::add_with_hash(self : Set[K], key : K, hash : Int) -> Unit {
       }
     }
   }
-  let entry = { prev: self.tail, next: None, psl, key, hash }
+  let entry = { prev: self.tail, next: None, psl, key, hash, }
   self.add_entry_to_tail(idx, entry)
 }
 
@@ -256,7 +256,7 @@ pub fn[K : Hash + Eq] Set::add_and_check(self : Set[K], key : K) -> Bool {
     }
   }
   if added {
-    let entry = { prev: self.tail, next: None, psl, key, hash }
+    let entry = { prev: self.tail, next: None, psl, key, hash, }
     self.add_entry_to_tail(idx, entry)
   }
   added
@@ -562,7 +562,7 @@ pub fn[K] Set::iter(self : Set[K]) -> Iter[K] {
 ///|
 /// Converts the hash set to an array.
 pub fn[K] Set::to_array(self : Set[K]) -> Array[K] {
-  let arr = Array::new(capacity=self.size)
+  let arr = Array(capacity=self.size)
   for x = self.head {
     match x {
       Some({ key, next, .. }) => {
@@ -624,7 +624,7 @@ pub fn[K] Set::copy(self : Set[K]) -> Set[K] {
   for entry = last, idx = self.tail, next = (None : Entry[K]?) {
     match (entry, idx, next) {
       ({ prev, psl, hash, key, .. }, idx, next) => {
-        let new_entry = { prev, next, psl, hash, key }
+        let new_entry = { prev, next, psl, hash, key, }
         other.entries[idx] = Some(new_entry)
         if prev != -1 {
           continue self.entries[prev].unwrap(), prev, Some(new_entry)
@@ -680,7 +680,7 @@ pub fn[K : Hash + Eq] Set::intersection(
 
 ///|
 pub impl[X : ToJson] ToJson for Set[X] with fn to_json(self) {
-  let res = Array::new(capacity=self.size)
+  let res = Array(capacity=self.size)
   for v in self {
     res.push(v.to_json())
   }

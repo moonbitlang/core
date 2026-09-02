@@ -27,6 +27,13 @@ test "json repr" {
 }
 
 ///|
+test "Bytes output writes lowercase hex digits directly" {
+  let bytes = b"\x00\x09\x0a\x0f\x10\x7f\x80\xff"
+  inspect(bytes, content="b\"\\x00\\x09\\x0a\\x0f\\x10\\x7f\\x80\\xff\"")
+  @json.json_inspect(bytes, content="\\x00\\x09\\x0a\\x0f\\x10\\x7f\\x80\\xff")
+}
+
+///|
 test "to_string" {
   @test.assert_eq(HELLO_WORLD.to_unchecked_string(), "Hello, World!")
 }
@@ -269,6 +276,19 @@ test "Bytes::add and repeat" {
       #|b""
     ),
   )
+}
+
+///|
+test "Bytes add initializes the complete result" {
+  @test.assert_eq(b"" + b"", b"")
+  @test.assert_eq(b"left" + b"", b"left")
+  @test.assert_eq(b"" + b"right", b"right")
+  let left = Bytes::makei(257, i => i.to_byte())
+  let right = Bytes::makei(259, i => (255 - i).to_byte())
+  let joined = left + right
+  @test.assert_eq(joined.length(), 516)
+  @test.assert_eq(joined[0:257].to_owned(), left)
+  @test.assert_eq(joined[257:].to_owned(), right)
 }
 
 ///|

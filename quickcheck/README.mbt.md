@@ -78,7 +78,7 @@ test "inspect a counterexample" {
     report,
     content=(
       #|Falsified(
-      #|  counterexample=0,
+      #|  counterexample=-1028290551,
       #|  tests=1,
       #|  size=0,
       #|  shrinks=0,
@@ -114,10 +114,10 @@ test "context describes the shrunk counterexample" {
       #|Falsified(
       #|  counterexample=3,
       #|  context="rendered input <3>",
-      #|  tests=5,
-      #|  size=4,
-      #|  shrinks=0,
-      #|  shrink_attempts=2,
+      #|  tests=2,
+      #|  size=1,
+      #|  shrinks=30,
+      #|  shrink_attempts=33,
       #|)
     ),
   )
@@ -176,7 +176,12 @@ test "basic generation" {
   let b : Bool = @quickcheck.gen()
   inspect(b, content="true")
   let x : Int = @quickcheck.gen()
-  inspect(x, content="0")
+  inspect(
+    x,
+    content=(
+      #|1118850684
+    ),
+  )
 
   // Generate with size parameter
   let sized : Array[Int] = @quickcheck.gen(size=5)
@@ -192,7 +197,12 @@ Generate multiple test cases using the `samples` function:
 ///|
 test "multiple samples" {
   let ints : Array[Int] = @quickcheck.samples(5)
-  debug_inspect(ints, content="[0, 0, 0, -1, -1]")
+  debug_inspect(
+    ints,
+    content=(
+      #|[1118850684, -99999, 846697896, -134217729, 67108863]
+    ),
+  )
   let strings : Array[String] = @quickcheck.samples(12)
   debug_inspect(
     strings[5:10],
@@ -222,7 +232,17 @@ test "builtin types" {
   let v : (Int, Int64, UInt, UInt64, Float, Double, BigInt) = @quickcheck.gen()
   debug_inspect(
     v,
-    content="(0, 0, 0, 0, 0.23986786603927612, 0.7917029935679342, 0)",
+    content=(
+      #|(
+      #|  -99999,
+      #|  5259998046134461054,
+      #|  228947857,
+      #|  8766027650639656979,
+      #|  0.23986786603927612,
+      #|  0.7917029935679342,
+      #|  0,
+      #|)
+    ),
   )
   // Collections
   let v : (String, Bytes, Iter[Int]) = @quickcheck.gen()
@@ -235,6 +255,18 @@ test "builtin types" {
   )
 }
 ```
+
+Integer generation for `Int16`, `UInt16`, `Int`, `UInt`, `Int64`, and `UInt64`
+intentionally ignores the size hint. Its default distribution combines
+full-width random bit patterns, common small values, values next to powers of
+two and ten, and type extrema. This keeps the entire scalar domain reachable
+while regularly exercising overflow, bit-width, and formatting boundaries.
+`Byte` remains uniformly distributed across all 256 bit patterns so `Bytes`
+and other byte-oriented workloads retain broad payload coverage. Fixed-width
+integer shrinkers try a midpoint first, then progressively finer candidates
+approaching the original value, with zero as the final fallback. With the
+greedy shrink driver, large failures still converge without linearly walking
+the numeric range while avoiding a likely rejected zero at every level.
 
 ## Custom Types
 
@@ -253,7 +285,7 @@ priv struct Point {
 impl @quickcheck.Arbitrary for Point with fn arbitrary(size, r0) {
   let r1 = r0.split()
   let y = @quickcheck.Arbitrary::arbitrary(size, r1)
-  { x: @quickcheck.Arbitrary::arbitrary(size, r0), y }
+  { x: @quickcheck.Arbitrary::arbitrary(size, r0), y, }
 }
 
 ///|
@@ -270,7 +302,7 @@ test "custom type generation" {
   debug_inspect(
     point,
     content=(
-      #|{ x: 0, y: 0 }
+      #|{ x: -99999, y: 2 }
     ),
   )
   let points : Array[Point] = @quickcheck.samples(10)
@@ -278,14 +310,19 @@ test "custom type generation" {
     points[6:],
     content=(
       #|<ArrayView:
-      #|  [{ x: 0, y: 1 }, { x: -1, y: -5 }, { x: -6, y: -6 }, { x: -1, y: 7 }]>
+      #|  [
+      #|    { x: 46354256, y: 1201652877 },
+      #|    { x: 1, y: 2147483646 },
+      #|    { x: 108552206, y: -1 },
+      #|    { x: -1073741824, y: 2147483647 },
+      #|  ]>
     ),
   )
 }
 
 ///|
 test "custom type shrinking" {
-  let point : Point = { x: 2, y: 1 }
+  let point : Point = { x: 2, y: 1, }
   debug_inspect(
     @quickcheck.Shrink::shrink(point).collect(),
     content=(

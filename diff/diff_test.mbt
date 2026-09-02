@@ -16,7 +16,7 @@
 fn[T] edits_to_string(d : @diff.Diff[T], show~ : (T) -> String) -> String {
   let old = d.old_view()
   let new = d.new_view()
-  let lines = Array::new()
+  let lines = Array()
   for edit in d.edits() {
     let (prefix, slice) = match edit {
       Insert(new_index~, new_len~, ..) =>
@@ -361,14 +361,14 @@ test "diff with Bool elements" {
 ///|
 test "diff with struct elements" {
   let old = [
-      { id: 1, name: "alice" },
-      { id: 2, name: "bob" },
-      { id: 3, name: "charlie" },
+      { id: 1, name: "alice", },
+      { id: 2, name: "bob", },
+      { id: 3, name: "charlie", },
     ][:]
   let new = [
-      { id: 1, name: "alice" },
-      { id: 3, name: "charlie" },
-      { id: 4, name: "david" },
+      { id: 1, name: "alice", },
+      { id: 3, name: "charlie", },
+      { id: 4, name: "david", },
     ][:]
   let d = @diff.Diff(old~, new~)
   let patience = @diff.Diff(old~, new~, algorithm=Patience)
@@ -457,7 +457,7 @@ fn check_reconstruct(
   old : ArrayView[Int],
   new : ArrayView[Int],
 ) -> Unit raise {
-  let rebuilt = Array::new()
+  let rebuilt = Array()
   let mut oi = 0
   let mut ni = 0
   for edit in d.edits() {
@@ -502,7 +502,7 @@ test "property: edit scripts reconstruct new from old" {
   let seqs : Array[Array[Int]] = []
   for len in 0..<5 {
     for bits in 0..<(1 << len) {
-      let a = Array::new(capacity=len)
+      let a = Array(capacity=len)
       for i in 0..<len {
         a.push((bits >> i) & 1)
       }

@@ -167,24 +167,19 @@ pub fn[K : Hash + Eq, V] HashMap::from_iter(
 /// }
 /// ```
 pub fn[K, V] HashMap::to_array(self : HashMap[K, V]) -> Array[(K, V)] {
-  let mut i = 0
-  let res = while i < self.capacity {
-    if self.entries[i] is Some({ key, value, .. }) {
-      i += 1
-      break Array::make(self.size, (key, value))
-    }
-    i += 1
-  } nobreak {
-    []
+  if self.size == 0 {
+    return []
   }
-  if !res.is_empty() {
-    let mut res_idx = 1
-    while res_idx < res.length() && i < self.capacity {
-      if self.entries[i] is Some({ key, value, .. }) {
-        res[res_idx] = (key, value)
-        res_idx += 1
+  let res = Array::unsafe_make_uninit(self.size)
+  let mut n = 0
+  for i in 0..<self.capacity {
+    if self.entries[i] is Some({ key, value, .. }) {
+      let pair = (key, value)
+      res.unsafe_set(n, pair)
+      n += 1
+      if n == self.size {
+        break
       }
-      i += 1
     }
   }
   res
@@ -213,16 +208,15 @@ pub fn[K, V] HashMap::length(self : HashMap[K, V]) -> Int {
 }
 
 ///|
-/// Returns the current capacity of the hash map. The capacity is the number of
-/// key-value pairs the hash map can hold before it needs to reallocate its
-/// internal storage.
+/// Returns the current capacity of the hash map, that is, the length of its
+/// internal storage array. The map grows once it is half full, so it can hold
+/// at most `capacity / 2` key-value pairs before it reallocates.
 ///
 /// Parameters:
 ///
 /// * `map` : The hash map whose capacity is to be queried.
 ///
-/// Returns the number of key-value pairs that can be stored in the hash map
-/// before triggering a reallocation.
+/// Returns the length of the hash map's internal storage array.
 ///
 /// Example:
 ///
@@ -488,14 +482,14 @@ test "retain" {
     capacity_mask: 7,
     size: 4,
     entries: [
-      Some({ psl: 2, hash: 448974246, key: "c", value: 3 }),
-      Some({ psl: 2, hash: -136509641, key: "d", value: 4 }),
+      Some({ psl: 2, hash: 448974246, key: "c", value: 3, }),
+      Some({ psl: 2, hash: -136509641, key: "d", value: 4, }),
       None,
       None,
       None,
       None,
-      Some({ psl: 0, hash: 1614946358, key: "a", value: 1 }),
-      Some({ psl: 1, hash: -765931946, key: "b", value: 2 }),
+      Some({ psl: 0, hash: 1614946358, key: "a", value: 1, }),
+      Some({ psl: 1, hash: -765931946, key: "b", value: 2, }),
     ],
   }
   hashmap.retain((_k, v) => v % 2 == 0)

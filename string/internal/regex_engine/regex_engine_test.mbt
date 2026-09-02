@@ -74,7 +74,7 @@ test "execute with last_index and cached failure transitions" {
 ///|
 test "nested stars execute repeatedly" {
   let a = @regex_engine.char(@regex_engine.RecharSet::char('a'))
-  let inner = @regex_engine.quantifier(a, { min: 0, max: None, mode: Greedy })
+  let inner = @regex_engine.quantifier(a, { min: 0, max: None, mode: Greedy, })
   let outer = @regex_engine.quantifier(inner, {
     min: 0,
     max: None,
@@ -129,7 +129,7 @@ test "nested sequence vs flattened sequence preserve effective-tail preference" 
   let dot = @regex_engine.char(@regex_engine.RecharSet::char('.'))
   let space = @regex_engine.char(@regex_engine.RecharSet::char(' '))
   let reluctant_any = @regex_engine.shortest(
-    @regex_engine.quantifier(any, { min: 0, max: None, mode: Greedy }),
+    @regex_engine.quantifier(any, { min: 0, max: None, mode: Greedy, }),
   )
   let nested_pat = @regex_engine.seq([
     @regex_engine.seq([reluctant_any, dot]),
@@ -209,7 +209,7 @@ test "quantifier min > 0 uses iter step" {
   let a = @regex_engine.char(@regex_engine.RecharSet::char('a'))
   let pat = @regex_engine.seq([
     @regex_engine.start_of_input,
-    @regex_engine.quantifier(a, { min: 2, max: Some(3), mode: Greedy }),
+    @regex_engine.quantifier(a, { min: 2, max: Some(3), mode: Greedy, }),
     @regex_engine.end_of_input,
   ])
   let re = @regex_engine.compile(profile~, pat)

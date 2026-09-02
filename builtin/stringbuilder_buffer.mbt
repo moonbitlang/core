@@ -33,7 +33,7 @@ struct StringBuilder {
 pub fn StringBuilder::StringBuilder(size_hint? : Int = 0) -> StringBuilder {
   let initial = if size_hint < 1 { 1 } else { (size_hint + 1) / 2 }
   let data : FixedArray[UInt16] = FixedArray::make(initial, 0)
-  { data, len: 0 }
+  { data, len: 0, }
 }
 
 ///|
@@ -139,14 +139,12 @@ pub impl Logger for StringBuilder with fn write_char(self, ch) {
 }
 
 ///|
-/// Writes a part of the given string to the StringBuilder.
-/// 
+/// Writes a string view to the StringBuilder.
+///
 /// Parameters:
 ///
 /// * `self` : The StringBuilder to write to.
-/// * `str` : The given string.
-/// * `start` : The start index of the substring to write.
-/// * `len` : The length of the substring to write.
+/// * `str` : The view of the string to write.
 ///
 /// Example:
 ///

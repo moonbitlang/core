@@ -39,7 +39,8 @@ extern "js" fn encode_utf8_js(
 ///|
 /// Encodes a string into a UTF-8 byte array.
 ///
-/// Panics if the string contains an invalid surrogate pair.
+/// Unpaired surrogates are replaced with U+FFFD, matching `TextEncoder`.
+/// The other backends panic on them instead.
 pub fn encode(str : StringView, bom? : Bool = false) -> Bytes {
   encode_utf8_js(str.data(), str.start_offset(), str.length(), bom)
 }

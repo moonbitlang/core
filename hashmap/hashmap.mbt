@@ -142,7 +142,7 @@ fn[K : Eq, V] HashMap::set_with_hash(
           // Restart search with new capacity_mask
           continue 0, hash & self.capacity_mask
         }
-        let entry = { psl, key, value, hash }
+        let entry = { psl, key, value, hash, }
         self.entries.unsafe_set(idx, Some(entry))
         self.size += 1
         return
@@ -161,7 +161,7 @@ fn[K : Eq, V] HashMap::set_with_hash(
             continue 0, hash & self.capacity_mask
           }
           self.push_away(idx, curr_entry)
-          let entry = { psl, key, value, hash }
+          let entry = { psl, key, value, hash, }
           self.entries.unsafe_set(idx, Some(entry))
           self.size += 1
           return
@@ -401,7 +401,7 @@ pub fn[K : Hash + Eq, V] HashMap::get_or_init(
     if push_away is Some(entry) {
       self.push_away(idx, entry)
     }
-    let entry = { psl, hash, key, value: new_value }
+    let entry = { psl, hash, key, value: new_value, }
     self.entries.unsafe_set(idx, Some(entry))
     self.size += 1
   }
@@ -498,7 +498,7 @@ pub fn[K : Hash + Eq, V] HashMap::update(
     if push_away is Some(entry) {
       self.push_away(idx, entry)
     }
-    self.entries.unsafe_set(idx, Some({ psl, hash, key, value: new_value }))
+    self.entries.unsafe_set(idx, Some({ psl, hash, key, value: new_value, }))
     self.size += 1
   }
 }
@@ -552,7 +552,7 @@ pub fn[K : Hash + Eq, V] HashMap::update_or_default(
     if push_away is Some(entry) {
       self.push_away(idx, entry)
     }
-    let entry = { psl, hash, key, value: default }
+    let entry = { psl, hash, key, value: default, }
     self.entries.unsafe_set(idx, Some(entry))
     self.size += 1
   }
@@ -796,19 +796,6 @@ fn[K, V] HashMap::rehash_place_entry(
 }
 
 ///|
-/// Creates a new hash map from a fixed array of key-value pairs.
-///
-/// Parameters:
-///
-/// * `pairs` : A fixed array of tuples, where each tuple contains a key of type
-/// `K` and a value of type `V`. The key type must implement both `Eq` and `Hash`
-/// traits.
-///
-/// Returns a new hash map containing all the key-value pairs from the input
-/// array.
-///
-
-///|
 test "of" {
   let m = from_array([(1, 2), (3, 4)])
   @debug.debug_inspect(m.get(1), content="Some(2)")
@@ -837,8 +824,8 @@ pub fn[K, V, V2] HashMap::map(
     return other
   }
   for i in 0..<self.capacity {
-    if self.entries[i] is Some({ key, value, hash, psl }) {
-      other.entries[i] = Some({ psl, key, value: f(key, value), hash })
+    if self.entries[i] is Some({ key, value, hash, psl, }) {
+      other.entries[i] = Some({ psl, key, value: f(key, value), hash, })
     }
   }
   other
@@ -858,8 +845,8 @@ pub fn[K, V] HashMap::copy(self : HashMap[K, V]) -> HashMap[K, V] {
     return other
   }
   for i in 0..<self.capacity {
-    if self.entries[i] is Some({ key, value, hash, psl }) {
-      other.entries[i] = Some({ psl, key, value, hash })
+    if self.entries[i] is Some({ key, value, hash, psl, }) {
+      other.entries[i] = Some({ psl, key, value, hash, })
     }
   }
   other

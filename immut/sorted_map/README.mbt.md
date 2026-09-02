@@ -19,7 +19,7 @@ test {
 }
 ```
 
-Also, you can construct it from an array using `of()` or `from_array()`.
+Also, you can construct it from an array using `SortedMap([...])`.
 
 ```mbt check
 ///|
@@ -33,7 +33,7 @@ test {
 ## Insert & Lookup
 
 You can use `add()` to add a key-value pair to the map and create a new map. Or
-use `lookup()` to get the value associated with a key.
+use `get()` to get the value associated with a key.
 
 ```mbt check
 ///|
@@ -72,7 +72,7 @@ test {
 
 ## Size
 
-You can use `size()` to get the number of key-value pairs in the map.
+You can use `length()` to get the number of key-value pairs in the map.
 
 ```mbt check
 ///|
@@ -125,7 +125,7 @@ test {
 ```
 
 Use `fold()` to fold over the key-value pairs of the map. The default order is
-Pre-order; use `rev_fold()` for a Post-order fold.
+ascending by key; use `rev_fold()` to fold in descending key order.
 
 ```mbt check
 ///|
@@ -171,7 +171,7 @@ test {
 }
 ```
 
-Use `keys()` to get all keys of the map in ascending order.
+Use `keys_as_iter()` to get all keys of the map in ascending order.
 
 ```mbt check
 ///|

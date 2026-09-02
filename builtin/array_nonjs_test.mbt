@@ -14,13 +14,13 @@
 
 ///|
 test "array_capacity" {
-  let arr : Array[Int] = Array::new(capacity=10)
+  let arr : Array[Int] = Array(capacity=10)
   assert_true(arr.capacity() >= 10)
 }
 
 ///|
 test "array_append_reuses_capacity" {
-  let arr = Array::new(capacity=4)
+  let arr = Array(capacity=4)
   arr.push(1)
   arr.append([2, 3])
   inspect(arr.capacity(), content="4")
@@ -29,7 +29,7 @@ test "array_append_reuses_capacity" {
 
 ///|
 test "array_append_grows_geometrically" {
-  let arr = Array::new(capacity=4)
+  let arr = Array(capacity=4)
   arr.append([1, 2, 3, 4, 5])
   inspect(arr.capacity(), content="8")
   debug_inspect(arr, content="[1, 2, 3, 4, 5]")
@@ -37,7 +37,7 @@ test "array_append_grows_geometrically" {
 
 ///|
 test "array_blit_to_reuses_and_grows_capacity" {
-  let dst = Array::new(capacity=4)
+  let dst = Array(capacity=4)
   dst.push(0)
   [1, 2][:].blit_to(dst, dst_offset=1)
   inspect(dst.capacity(), content="4")
@@ -59,7 +59,7 @@ test "array_retain" {
 
 ///|
 test "shrink_to_fit" {
-  let v = Array::new(capacity=10)
+  let v = Array(capacity=10)
   v.push(1)
   v.push(2)
   v.push(3)

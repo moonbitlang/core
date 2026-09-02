@@ -16,7 +16,7 @@
 /// Error type for malformed hexadecimal input.
 ///
 /// `Malformed(input)` reports that `input` has odd length or contains a
-/// non-hexadecimal ASCII character.
+/// character that is not a hexadecimal digit.
 pub suberror Malformed {
   Malformed(StringView)
 } derive(@debug.Debug)

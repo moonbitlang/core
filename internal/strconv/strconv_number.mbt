@@ -130,7 +130,7 @@ fn parse_number(s : StringView) -> Number? raise {
 
   // handle uncommon case with many digits
   if n_digits <= 19 {
-    return Some({ exponent, mantissa, negative, many_digits: false })
+    return Some({ exponent, mantissa, negative, many_digits: false, })
   }
   n_digits -= 19
   let mut many_digits = false
@@ -162,7 +162,7 @@ fn parse_number(s : StringView) -> Number? raise {
     }).to_int64()
     exponent += exp_number
   } // add back the explicit part
-  Some({ exponent, mantissa, negative, many_digits })
+  Some({ exponent, mantissa, negative, many_digits, })
 }
 
 ///|
@@ -186,7 +186,7 @@ fn parse_inf_nan(rest : StringView) -> Double raise {
 
 ///|
 /// Returns None if the multiplication might overflow (there are some false-negative corner cases).
-/// Otherwise, returns Some(m), where m = self * b.
+/// Otherwise, returns Some(m), where m = a * b.
 /// WARNING: Note this function is only used internally in the strconv module,
 /// the current implementation is not completely safe against overflows.
 fn checked_mul(a : UInt64, b : UInt64) -> UInt64? {

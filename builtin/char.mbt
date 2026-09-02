@@ -348,7 +348,7 @@ pub fn Char::is_numeric(self : Self) -> Bool {
 /// - Format characters (Cf)
 /// - Line/paragraph separators (Zl, Zp)
 /// - Private use (Co)
-/// - Unassigned (Cn)
+/// - Noncharacters (U+FDD0-U+FDEF and the U+nFFFE/U+nFFFF pairs)
 /// - Surrogates (Cs)
 pub fn Char::is_printable(self : Self) -> Bool {
   // Check for control characters (Cc)

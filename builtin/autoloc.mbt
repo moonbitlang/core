@@ -31,8 +31,8 @@ pub(all) type SourceLoc
 /// * `source_location` : A source code location containing information about the
 /// file path, line number, and column number.
 ///
-/// Returns a string representation of the source location, typically in the
-/// format "@package:file:start_line:start_column-end_line:end_column".
+/// Returns a string representation of the source location, in the format
+/// "file:start_line:start_column-end_line:end_column@module".
 ///
 /// Note: This function is primarily used internally by the compiler for error
 /// reporting and debugging purposes. Source locations are automatically created
@@ -72,7 +72,7 @@ fn SourceLocRepr::parse(repr : String) -> SourceLocRepr {
     (re"[[:digit:]]+" as end_column) +
     re"@" +
     (re"[^:]*$" as _module) =>
-      { filename, start_line, start_column, end_line, end_column }
+      { filename, start_line, start_column, end_line, end_column, }
     _ => panic()
   }
 }
@@ -106,15 +106,16 @@ pub impl Show for ArgsLoc with fn output(self, logger) {
 
 ///|
 /// Converts an array of optional source locations to its JSON string
-/// representation. Each location in the array is either represented as a string
-/// if present, or "null" if absent.
+/// representation. Each location in the array is either represented as a JSON
+/// object with `filename`, `start_line`, `start_column`, `end_line` and
+/// `end_column` fields if present, or "null" if absent.
 ///
 /// Parameters:
 ///
 /// * `self` : The array of optional source locations to be converted.
 ///
-/// Returns a JSON array string where each element is either a string
-/// representation of a source location or "null".
+/// Returns a JSON array string where each element is either a JSON object
+/// describing a source location or "null".
 pub fn ArgsLoc::to_json(self : ArgsLoc) -> String {
   let buf = StringBuilder(size_hint=10)
   let ArgsLoc(self) = self

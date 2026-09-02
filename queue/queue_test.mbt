@@ -88,7 +88,7 @@ test "from_array_2" {
       #|<Queue: [1, 2, 3]>
     ),
   )
-  let q : @queue.Queue[Int] = @queue.from_array(Array::new(capacity=10))
+  let q : @queue.Queue[Int] = @queue.from_array(Array(capacity=10))
   debug_inspect(
     q,
     content=(
@@ -237,6 +237,47 @@ test "fold" {
     @queue.from_array([1, 2, 3, 4]).fold(init=0L, (acc, x) => acc + x.to_int64()),
     content="10",
   )
+}
+
+///|
+fn expect_callback_failure(action : () -> Unit raise) -> Unit raise {
+  try action() catch {
+    Failure(message) => inspect(message, content="callback failed")
+    _ => fail("unexpected error")
+  } noraise {
+    _ => fail("expected error")
+  }
+}
+
+///|
+fn fail_on_two(x : Int) -> Unit raise {
+  if x == 2 {
+    raise Failure::Failure("callback failed")
+  }
+}
+
+///|
+test "each with error callback" {
+  let queue = @queue.from_array([1, 2, 3])
+  expect_callback_failure(() => queue.each(fail_on_two))
+}
+
+///|
+test "eachi with error callback" {
+  let queue = @queue.from_array([1, 2, 3])
+  expect_callback_failure(() => queue.eachi((_i, x) => fail_on_two(x)))
+}
+
+///|
+test "fold with error callback" {
+  let queue = @queue.from_array([1, 2, 3])
+  expect_callback_failure(() => {
+    queue.fold(init=0, (acc, x) => {
+      fail_on_two(x)
+      acc + x
+    })
+    |> ignore
+  })
 }
 
 ///|

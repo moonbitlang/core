@@ -55,7 +55,7 @@ fn code_point_of_surrogate_pair(leading : Int, trailing : Int) -> Char {
 ///   let s = "Hello🤣"
 ///   inspect(s.char_length(), content="6") // 6 actual characters
 ///   inspect(s.length(), content="7")
-/// } // 5 ASCII chars + 2 surrogate pairs
+/// } // 5 ASCII chars + 1 surrogate pair (2 code units)
 /// ```
 #alias(codepoint_length, deprecated)
 pub fn String::char_length(
@@ -257,7 +257,7 @@ fn unsafe_to_bytes(array : FixedArray[Byte]) -> Bytes = "%identity"
 pub fn String::to_array(self : String) -> Array[Char] {
   self
   .iter()
-  .fold(init=Array::new(capacity=self.length()), (rv, c) => {
+  .fold(init=Array(capacity=self.length()), (rv, c) => {
     rv.push(c)
     rv
   })
@@ -277,7 +277,7 @@ pub fn String::code_units(self : String) -> ArrayView[UInt16] {
 /// Returns an iterator over the Unicode characters in the string.
 ///
 /// Note: This iterator yields Unicode characters, not Utf16 code units.
-/// As a result, the count of characters returned by `iterator().count()` may not be equal to the length of the string returned by `length()`.
+/// As a result, the count of characters returned by `iter().count()` may not be equal to the length of the string returned by `length()`.
 ///
 /// ```mbt check
 /// test {
@@ -375,7 +375,7 @@ pub fn String::any(self : String, f : (Char) -> Bool raise?) -> Bool raise? {
 /// - The function iterates over the string in reverse order.
 /// - If a trailing surrogate is encountered, it checks for a preceding leading surrogate to form a complete Unicode code point.
 /// - Yields each character or combined code point to the iterator.
-/// - Stops iteration if the `yield_` function returns `IterEnd`.
+/// - Stops once the beginning of the string is reached, after which the iterator yields `None`.
 ///
 /// # Examples
 ///

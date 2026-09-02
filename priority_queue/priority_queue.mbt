@@ -14,7 +14,7 @@
 
 ///|
 fn[A] new_priority_queue() -> PriorityQueue[A] {
-  { len: 0, top: None }
+  { len: 0, top: None, }
 }
 
 ///|
@@ -36,11 +36,12 @@ pub fn[A : Compare] PriorityQueue::PriorityQueue(
 ) -> PriorityQueue[A] {
   guard arr is [a0, ..] else { return new_priority_queue() }
   let len = arr.length()
-  for i = 1, acc = { content: a0, sibling: None, child: None } {
+  for i = 1, acc = { content: a0, sibling: None, child: None, } {
     if i < len {
-      continue i + 1, meld(acc, { content: arr[i], sibling: None, child: None })
+      continue i + 1,
+        meld(acc, { content: arr[i], sibling: None, child: None, })
     } else {
-      break { len, top: Some(acc) }
+      break { len, top: Some(acc), }
     }
   }
 }
@@ -99,7 +100,7 @@ fn[A] copy_node(x : Node[A]?) -> Node[A]? {
 /// ```
 #alias(clone, deprecated)
 pub fn[A] PriorityQueue::copy(self : PriorityQueue[A]) -> PriorityQueue[A] {
-  { len: self.len, top: copy_node(self.top) }
+  { len: self.len, top: copy_node(self.top), }
 }
 
 ///|
@@ -107,12 +108,12 @@ pub fn[A] PriorityQueue::copy(self : PriorityQueue[A]) -> PriorityQueue[A] {
 pub fn[A : Compare] PriorityQueue::to_array(
   self : PriorityQueue[A],
 ) -> Array[A] {
-  let arr = Array::new(capacity=self.len)
+  let arr = Array(capacity=self.len)
   let stack : Array[Node[A]?] = [self.top]
   while stack.pop() is Some(node) {
     match node {
       None => ()
-      Some({ content, sibling, child }) => {
+      Some({ content, sibling, child, }) => {
         arr.push(content)
         stack.push(sibling)
         stack.push(child)
@@ -258,7 +259,7 @@ pub fn[A : Compare] PriorityQueue::push(
   self : PriorityQueue[A],
   value : A,
 ) -> Unit {
-  let x = { content: value, sibling: None, child: None }
+  let x = { content: value, sibling: None, child: None, }
   self.top = match self.top {
     None => Some(x)
     Some(top) => Some(meld(top, x))

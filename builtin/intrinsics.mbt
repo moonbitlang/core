@@ -199,9 +199,9 @@ pub impl Default for Bool with fn default() = "%bool_default"
 /// * `self` : The integer value to negate.
 ///
 /// Returns the negation of the input value. For all inputs except
-/// `Int::min_value()`, returns the value with opposite sign. When the input is
-/// `Int::min_value()`, returns `Int::min_value()` due to two's complement
-/// representation.
+/// `@int.min_value` (-2147483648), returns the value with opposite sign. When
+/// the input is `@int.min_value`, returns `@int.min_value` due to two's
+/// complement representation.
 ///
 /// Example:
 ///
@@ -209,7 +209,7 @@ pub impl Default for Bool with fn default() = "%bool_default"
 /// test {
 ///   inspect(-42, content="-42")
 ///   inspect(42, content="42")
-///   inspect(2147483647, content="2147483647") // negating near min value
+///   inspect(2147483647, content="2147483647") // Int maximum value
 /// }
 /// ```
 pub impl Neg for Int with fn neg(self) = "%i32_neg"
@@ -647,7 +647,29 @@ pub fn Int::shr(self : Int, other : Int) -> Int = "%i32_shr"
 pub fn Int::ctz(self : Int) -> Int = "%i32_ctz"
 
 ///|
-/// Count leading zero bits in a 32-bit integer.
+/// Counts the number of consecutive zero bits at the most significant end of
+/// the integer's binary representation.
+///
+/// Parameters:
+///
+/// * `self` : The integer value whose leading zeros are to be counted.
+///
+/// Returns the number of leading zero bits (0 to 32). For example, returns 0 if
+/// the value is negative (the sign bit is 1), returns 32 if the value is 0
+/// (all bits are zeros).
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let x = 0
+///   inspect(x.clz(), content="32") // All bits are zero
+///   let y = -1
+///   inspect(y.clz(), content="0") // The sign bit is set
+///   let z = 16
+///   inspect(z.clz(), content="27") // Binary: ...00010000
+/// }
+/// ```
 pub fn Int::clz(self : Int) -> Int = "%i32_clz"
 
 ///|
@@ -753,7 +775,26 @@ pub impl Compare for Int with fn op_gt(x, y) = "%i32.gt"
 pub impl Compare for Int with fn op_ge(x, y) = "%i32.ge"
 
 ///|
-/// Return `true` if integer is strictly positive.
+/// Tests whether an integer is strictly positive.
+///
+/// Parameters:
+///
+/// * `self` : The integer to test.
+///
+/// Returns `true` if the integer is strictly positive, `false` otherwise.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let neg = -42
+///   let zero = 0
+///   let pos = 42
+///   inspect(neg.is_pos(), content="false")
+///   inspect(zero.is_pos(), content="false")
+///   inspect(pos.is_pos(), content="true")
+/// }
+/// ```
 pub fn Int::is_pos(self : Int) -> Bool = "%i32_is_pos"
 
 ///|
@@ -780,11 +821,51 @@ pub fn Int::is_pos(self : Int) -> Bool = "%i32_is_pos"
 pub fn Int::is_neg(self : Int) -> Bool = "%i32_is_neg"
 
 ///|
-/// Return `true` if integer is non-positive (`<= 0`).
+/// Tests whether an integer is non-positive (less than or equal to zero).
+///
+/// Parameters:
+///
+/// * `self` : The integer to test.
+///
+/// Returns `true` if the integer is less than or equal to zero, `false`
+/// otherwise.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let neg = -42
+///   let zero = 0
+///   let pos = 42
+///   inspect(neg.is_non_pos(), content="true")
+///   inspect(zero.is_non_pos(), content="true")
+///   inspect(pos.is_non_pos(), content="false")
+/// }
+/// ```
 pub fn Int::is_non_pos(self : Int) -> Bool = "%i32_is_non_pos"
 
 ///|
-/// Return `true` if integer is non-negative (`>= 0`).
+/// Tests whether an integer is non-negative (greater than or equal to zero).
+///
+/// Parameters:
+///
+/// * `self` : The integer to test.
+///
+/// Returns `true` if the integer is greater than or equal to zero, `false`
+/// otherwise.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let neg = -42
+///   let zero = 0
+///   let pos = 42
+///   inspect(neg.is_non_neg(), content="false")
+///   inspect(zero.is_non_neg(), content="true")
+///   inspect(pos.is_non_neg(), content="true")
+/// }
+/// ```
 pub fn Int::is_non_neg(self : Int) -> Bool = "%i32_is_non_neg"
 
 ///|
@@ -1066,9 +1147,8 @@ pub fn Double::sqrt(self : Double) -> Double = "%f64_sqrt"
 
 ///|
 /// Compares two double-precision floating-point numbers for equality following
-/// IEEE 754 rules. Returns `true` if both numbers are equal, including when both
-/// are `NaN`. Note that this differs from the standard IEEE 754 behavior where
-/// `NaN` is not equal to any value, including itself.
+/// IEEE 754 rules. Returns `true` if both numbers are equal. `NaN` is not equal
+/// to any value, including itself, so `nan == nan` evaluates to `false`.
 ///
 /// Parameters:
 ///
@@ -1449,7 +1529,8 @@ pub fn Bytes::length(self : Bytes) -> Int = "%bytes_length"
 ///
 /// Parameters:
 ///
-/// * `length` : The length of the byte sequence to create. Must be non-negative.
+/// * `length` : The length of the byte sequence to create. A negative value
+/// produces an empty byte sequence.
 /// * `initial_value` : The byte value used to initialize each position in the
 /// sequence.
 ///
@@ -2622,7 +2703,8 @@ pub fn Int::to_int16(self : Int) -> Int16 = "%i32_to_i16"
 
 ///|
 /// Converts a byte value to a 16-bit signed integer. The byte value is
-/// sign-extended to 16 bits during the conversion.
+/// zero-extended to 16 bits during the conversion, so the result is always in
+/// the range [0, 255].
 ///
 /// Parameters:
 ///

@@ -152,9 +152,10 @@ fn diff_repr(
 ///
 /// Optional parameters:
 /// - `max_depth?`: maximum expansion depth; deeper subtrees are folded.
-///   Defaults to `4` when omitted. Values `<= 0` are treated as `1`.
-/// - `compact_threshold?`: compact-vs-multiline layout threshold (heuristic one-line vs multiline).
-///   Larger values prefer single-line output. Defaults to `30` when omitted.
+///   Defaults to `16` when omitted. Values `<= 0` are treated as `1`.
+/// - `compact_threshold?`: compact-vs-multiline layout threshold (maximum line
+///   width for keeping a node on one line).
+///   Larger values prefer single-line output. Defaults to `70` when omitted.
 /// - `use_ansi?`: whether to emit ANSI color escape codes (for +/- markers).
 ///   Defaults to `true` when omitted.
 fn pretty_print_delta(

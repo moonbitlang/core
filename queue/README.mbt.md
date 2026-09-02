@@ -5,7 +5,7 @@ Queue is a first in first out (FIFO) data structure, allowing to process their e
 # Usage
 
 ## Create and Clear
-You can create a queue manually by using the `new` or construct it using the `from_array`.
+You can create an empty queue with `Queue([])`, or construct one from an array with `from_array`.
 ```mbt check
 ///|
 test {

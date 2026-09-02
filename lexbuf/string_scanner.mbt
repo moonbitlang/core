@@ -25,8 +25,8 @@
 /// `0..=data.length()`. A `StringView` slice is therefore a valid input, and
 /// scanning it does not read outside the slice.
 ///
-/// ```moonbit nocheck
-/// let scanner = @lexbuf.StringScanner::{ data: "hello 42"[:], cursor: 0 }
+/// ```mbt nocheck
+/// let scanner = @lexbuf.StringScanner::{ data: "hello 42"[:], cursor: 0, }
 ///
 /// let token = lexscan scanner {
 ///   re"^[a-z]+" as word => word

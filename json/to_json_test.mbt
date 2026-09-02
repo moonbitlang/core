@@ -216,9 +216,9 @@ test "Option::to_json" {
 ///|
 test "optional field" {
   let opt = [
-    { x: Some(42), t: Some(Some(42)) },
-    { x: None, t: None },
-    { x: None, t: Some(None) },
+    { x: Some(42), t: Some(Some(42)), },
+    { x: None, t: None, },
+    { x: None, t: Some(None), },
   ]
   inspect(
     ToJson::to_json(opt).stringify(),
@@ -230,11 +230,11 @@ test "optional field" {
 
 ///|
 test "optional field round trip" {
-  let opt = { x: Some(42), t: Some(Some(42)) }
+  let opt = { x: Some(42), t: Some(Some(42)), }
   assert_true(@json.from_json(ToJson::to_json(opt)) == opt)
-  let opt = { x: None, t: None }
+  let opt = { x: None, t: None, }
   assert_true(@json.from_json(ToJson::to_json(opt)) == opt)
-  let opt = { x: None, t: Some(None) }
+  let opt = { x: None, t: Some(None), }
   assert_true(@json.from_json(ToJson::to_json(opt)) == opt)
 }
 

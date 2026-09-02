@@ -24,8 +24,15 @@ struct Array[T] {
 }
 
 ///|
-fn[T] Array::make_uninit(len : Int) -> Array[T] {
-  { buf: UninitializedArray::make(len), len }
+/// Creates an array of `len` elements whose contents are unspecified. The
+/// array reports `length() == len` immediately, so every slot is observable
+/// and the caller must write all of them before the array is read or escapes.
+///
+/// Prefer `Array::makei` unless the initializing loop cannot be expressed as
+/// a function of the index.
+#doc(hidden)
+pub fn[T] Array::unsafe_make_uninit(len : Int) -> Array[T] {
+  { buf: UninitializedArray::make(len), len, }
 }
 
 ///|
@@ -106,18 +113,18 @@ fn[T] Array::unsafe_resize_with_default(
 ///
 /// ```mbt check
 /// test {
-///   let arr : Array[Int] = Array::new(capacity=10)
+///   let arr : Array[Int] = Array(capacity=10)
 ///   inspect(arr.length(), content="0")
 ///   inspect(arr.capacity(), content="10")
-///   let arr : Array[Int] = Array::new()
+///   let arr : Array[Int] = Array()
 ///   inspect(arr.length(), content="0")
 /// }
 /// ```
-pub fn[T] Array::new(capacity? : Int = 0) -> Array[T] {
+pub fn[T] Array::Array(capacity? : Int = 0) -> Array[T] {
   if capacity == 0 {
     []
   } else {
-    { buf: UninitializedArray::make(capacity), len: 0 }
+    { buf: UninitializedArray::make(capacity), len: 0, }
   }
 }
 
@@ -134,9 +141,9 @@ pub fn[T] Array::new(capacity? : Int = 0) -> Array[T] {
 ///
 /// ```mbt check
 /// test {
-///   let arr : ReadOnlyArray[Int] = [1, 2, 3]
+///   let arr : Array[Int] = [1, 2, 3]
 ///   inspect(arr.length(), content="3")
-///   let empty : ReadOnlyArray[Int] = []
+///   let empty : Array[Int] = []
 ///   inspect(empty.length(), content="0")
 /// }
 /// ```
@@ -162,9 +169,8 @@ pub fn[T] Array::length(self : Array[T]) -> Int {
 ///
 /// # Errors
 ///
-/// - This function does not explicitly raise errors, but improper use (e.g.,
-/// setting `new_len` greater than the current length) can lead to undefined
-/// behavior.
+/// - This function does not raise errors, but it panics if `new_len` is greater
+/// than the current length of the array.
 ///
 /// TODO: this can be optimized by using the intrinsic to null out the range
 fn[T] Array::unsafe_truncate_to_length(self : Array[T], new_len : Int) -> Unit {
@@ -274,7 +280,7 @@ test "UninitializedArray::unsafe_blit_fixed" {
 
 ///|
 test "Array::resize_buffer" {
-  let arr = Array::new(capacity=2)
+  let arr = Array::Array(capacity=2)
   arr.push(1)
   arr.push(2)
   arr.resize_buffer(4)
@@ -325,7 +331,7 @@ pub fn[T] Array::reserve_capacity(self : Array[T], capacity : Int) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let v = Array::new(capacity=10)
+///   let v = Array(capacity=10)
 ///   v.push(1)
 ///   v.push(2)
 ///   v.push(3)
@@ -775,10 +781,9 @@ pub fn[A] Array::fill(
 pub fn[T] Array::copy(self : Array[T]) -> Array[T] {
   let len = self.length()
   if len == 0 {
-    []
-  } else {
-    let arr = Array::make(len, self[0])
-    Array::unsafe_blit(arr, 0, self, 0, len)
-    arr
+    return []
   }
+  let arr = Array::unsafe_make_uninit(len)
+  Array::unsafe_blit(arr, 0, self, 0, len)
+  arr
 }

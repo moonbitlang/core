@@ -16,7 +16,7 @@
 
 ///|
 fn[V] new_sorted_set() -> SortedSet[V] {
-  { root: None, size: 0 }
+  { root: None, size: 0, }
 }
 
 ///|
@@ -24,7 +24,7 @@ fn[V] new_sorted_set() -> SortedSet[V] {
 #as_free_fn
 #owned(value)
 pub fn[V] SortedSet::singleton(value : V) -> SortedSet[V] {
-  { root: Some({ value, left: None, right: None, height: 1 }), size: 1 }
+  { root: Some({ value, left: None, right: None, height: 1, }), size: 1, }
 }
 
 ///|
@@ -59,7 +59,7 @@ pub fn[V : Compare] SortedSet::SortedSet(array : ArrayView[V]) -> SortedSet[V] {
 pub fn[V] SortedSet::copy(self : SortedSet[V]) -> SortedSet[V] {
   match self.root {
     None => new_sorted_set()
-    Some(_) => { root: copy_tree(self.root), size: self.size }
+    Some(_) => { root: copy_tree(self.root), size: self.size, }
   }
 }
 
@@ -84,7 +84,7 @@ fn[V] new_node(
   right? : Node[V]? = None,
   height? : Int = 1,
 ) -> Node[V] {
-  { value, left, right, height }
+  { value, left, right, height, }
 }
 
 ///|
@@ -94,7 +94,7 @@ fn[V] new_node_update_height(
   left~ : Node[V]?,
   right~ : Node[V]?,
 ) -> Node[V] {
-  { value, left, right, height: height(left).max(height(right)) + 1 }
+  { value, left, right, height: height(left).max(height(right)) + 1, }
 }
 
 // Manipulations
@@ -186,7 +186,7 @@ pub fn[V : Compare] SortedSet::union(
       (Some(_), None) => a
       (None, Some(_)) => b
       (Some({ value: va, left: la, right: ra, .. }), Some(_)) => {
-        let { left: l, found, right: r } = split_member(b, va)
+        let { left: l, found, right: r, } = split_member(b, va)
         if found {
           dups += 1
         }
@@ -199,10 +199,10 @@ pub fn[V : Compare] SortedSet::union(
   match (self.root, src.root) {
     (Some(_), Some(_)) => {
       let t = aux(copy_tree(self.root), copy_tree(src.root))
-      { root: t, size: self.size + src.size - dups }
+      { root: t, size: self.size + src.size - dups, }
     }
-    (Some(_), None) => { root: copy_tree(self.root), size: self.size }
-    (None, Some(_)) => { root: copy_tree(src.root), size: src.size }
+    (Some(_), None) => { root: copy_tree(self.root), size: self.size, }
+    (None, Some(_)) => { root: copy_tree(src.root), size: src.size, }
     (None, None) => new_sorted_set()
   }
 }
@@ -223,17 +223,17 @@ priv struct SplitResult[V] {
 /// whether it was present, and the elements greater than it.
 fn[V : Compare] split_member(root : Node[V]?, value : V) -> SplitResult[V] {
   match root {
-    None => { left: None, found: false, right: None }
+    None => { left: None, found: false, right: None, }
     Some(node) => {
       let comp = value.compare(node.value)
       if comp == 0 {
-        { left: node.left, found: true, right: node.right }
+        { left: node.left, found: true, right: node.right, }
       } else if comp < 0 {
-        let { left, found, right } = split_member(node.left, value)
-        { left, found, right: Some(join(right, node.value, node.right)) }
+        let { left, found, right, } = split_member(node.left, value)
+        { left, found, right: Some(join(right, node.value, node.right)), }
       } else {
-        let { left, found, right } = split_member(node.right, value)
-        { left: Some(join(node.left, node.value, left)), found, right }
+        let { left, found, right, } = split_member(node.right, value)
+        { left: Some(join(node.left, node.value, left)), found, right, }
       }
     }
   }
@@ -338,7 +338,7 @@ pub fn[V : Compare] SortedSet::difference(
 ) -> SortedSet[V] {
   match (self.root, src.root) {
     (None, _) => new_sorted_set()
-    (_, None) => { root: copy_tree(self.root), size: self.size }
+    (_, None) => { root: copy_tree(self.root), size: self.size, }
     (Some(_), Some(_)) => {
       // The split-based merge below copies both trees, a Theta(n + m) floor
       // that dwarfs the O(n log m) probe loop when `self` is far smaller
@@ -359,7 +359,7 @@ pub fn[V : Compare] SortedSet::difference(
           (None, _) => None
           (_, None) => a
           (Some({ value: va, left: la, right: ra, .. }), _) => {
-            let { left: lb, found, right: rb } = split_member(b, va)
+            let { left: lb, found, right: rb, } = split_member(b, va)
             if found {
               found_count += 1
               concat(aux(la, lb), aux(ra, rb))
@@ -371,7 +371,7 @@ pub fn[V : Compare] SortedSet::difference(
       }
 
       let t = aux(copy_tree(self.root), copy_tree(src.root))
-      { root: t, size: self.size - found_count }
+      { root: t, size: self.size - found_count, }
     }
   }
 }
@@ -415,7 +415,7 @@ pub fn[V : Compare] SortedSet::symmetric_difference(
       (None, _) => b
       (_, None) => a
       (Some({ value: va, left: la, right: ra, .. }), _) => {
-        let { left: lb, found, right: rb } = split_member(b, va)
+        let { left: lb, found, right: rb, } = split_member(b, va)
         if found {
           found_count += 1
           concat(aux(la, lb), aux(ra, rb))
@@ -427,7 +427,7 @@ pub fn[V : Compare] SortedSet::symmetric_difference(
   }
 
   let t = aux(copy_tree(self.root), copy_tree(other.root))
-  { root: t, size: self.size + other.size - 2 * found_count }
+  { root: t, size: self.size + other.size - 2 * found_count, }
 }
 
 ///|
@@ -465,7 +465,7 @@ pub fn[V : Compare] SortedSet::intersection(
         match (a, b) {
           (None, _) | (_, None) => None
           (Some({ value: va, left: la, right: ra, .. }), _) => {
-            let { left: lb, found, right: rb } = split_member(b, va)
+            let { left: lb, found, right: rb, } = split_member(b, va)
             if found {
               found_count += 1
               Some(join(aux(la, lb), va, aux(ra, rb)))
@@ -477,7 +477,7 @@ pub fn[V : Compare] SortedSet::intersection(
       }
 
       let t = aux(copy_tree(self.root), copy_tree(src.root))
-      { root: t, size: found_count }
+      { root: t, size: found_count, }
     }
   }
 }
@@ -561,23 +561,22 @@ pub fn[V] SortedSet::eachi(
 /// Converts the set to an array.
 pub fn[V] SortedSet::to_array(self : SortedSet[V]) -> Array[V] {
   if self.size == 0 {
-    []
-  } else {
-    let padding = self.root.unwrap().value
-    let arr = Array::make(self.size, padding)
-    let mut i = 0
-    fn dfs(root : Node[V]?) -> Unit {
-      if root is Some(root) {
-        dfs(root.left)
-        arr[i] = root.value
-        i += 1
-        dfs(root.right)
-      }
-    }
-
-    dfs(self.root)
-    arr
+    return []
   }
+  let arr = Array::unsafe_make_uninit(self.size)
+  let mut n = 0
+  fn dfs(root : Node[V]?) -> Unit {
+    if root is Some(root) {
+      dfs(root.left)
+      let v = root.value
+      arr.unsafe_set(n, v)
+      n += 1
+      dfs(root.right)
+    }
+  }
+
+  dfs(self.root)
+  arr
 }
 
 ///|
@@ -590,11 +589,11 @@ pub fn[V] SortedSet::iter(self : SortedSet[V]) -> Iter[V] {
     fn() {
       for x = curr_node {
         match x {
-          Some({ left: None, value, right, height: _ }) => {
+          Some({ left: None, value, right, height: _, }) => {
             curr_node = right
             break Some(value)
           }
-          Some({ left, value, right, height: _ }) => {
+          Some({ left, value, right, height: _, }) => {
             parents.push((value, right))
             continue left
           }
@@ -647,7 +646,7 @@ impl[T : Show] Show for Node[T] with fn output(self, logger) {
     }
   }
 
-  let x = { root: Some(self), size: count(Some(self)) }
+  let x = { root: Some(self), size: count(Some(self)), }
   logger.write_iter(x.iter())
 }
 
@@ -663,7 +662,7 @@ pub fn[V : Compare] SortedSet::range(
   let iter = Iter::new(() => {
     for x = curr_node {
       match x {
-        Some({ value, left, right, height: _ }) => {
+        Some({ value, left, right, height: _, }) => {
           let cmp_key_low = value.compare(low)
           let cmp_key_high = value.compare(high)
           if cmp_key_low < 0 {
@@ -1029,35 +1028,35 @@ test "union" {
 ///|
 #warnings("-deprecated")
 test "split_member" {
-  let { left: l, found, right: r } = split_member(
+  let { left: l, found, right: r, } = split_member(
     from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).root,
     5,
   )
   inspect(found, content="true")
   inspect(l, content="Some([1, 2, 3, 4])")
   inspect(r, content="Some([6, 7, 8, 9])")
-  let { left: l, found, right: r } = split_member(
+  let { left: l, found, right: r, } = split_member(
     from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).root,
     0,
   )
   inspect(found, content="false")
   inspect(l, content="None")
   inspect(r, content="Some([1, 2, 3, 4, 5, 6, 7, 8, 9])")
-  let { left: l, found, right: r } = split_member(
+  let { left: l, found, right: r, } = split_member(
     from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).root,
     10,
   )
   inspect(found, content="false")
   inspect(l, content="Some([1, 2, 3, 4, 5, 6, 7, 8, 9])")
   inspect(r, content="None")
-  let { left: l, found, right: r } = split_member(
+  let { left: l, found, right: r, } = split_member(
     from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).root,
     4,
   )
   inspect(found, content="true")
   inspect(l, content="Some([1, 2, 3])")
   inspect(r, content="Some([5, 6, 7, 8, 9])")
-  let { left: l, found, right: r } = split_member(from_array([]).root, 7)
+  let { left: l, found, right: r, } = split_member(from_array([]).root, 7)
   inspect(found, content="false")
   inspect(l, content="None")
   inspect(r, content="None")
@@ -1071,7 +1070,7 @@ test "join" {
     r : SortedSet[Int],
   ) -> Array[Int] {
     let root = join(l.root, value, r.root)
-    ({ root: Some(root), size: l.size + r.size + 1 } : SortedSet[Int]).to_array()
+    ({ root: Some(root), size: l.size + r.size + 1, } : SortedSet[Int]).to_array()
   }
 
   let l = from_array([13, 8, 17, 1, 11, 15, 25, 6])
