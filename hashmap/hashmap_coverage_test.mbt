@@ -130,25 +130,3 @@ test "get_from_bytes and get_from_string miss after probing" {
     @debug.assert_eq(str_map.get_from_string("missing\{i}"), None)
   }
 }
-
-///|
-/// Render a hashmap through its (deprecated) `Show` instance.
-#warnings("-deprecated")
-fn show_map(m : @hashmap.HashMap[Int, Int]) -> String {
-  m.to_string()
-}
-
-///|
-test "Show renders a hashmap as a from_array expression" {
-  let m : @hashmap.HashMap[Int, Int] = HashMap([])
-  m.set(1, 10)
-  m.set(2, 20)
-  let shown = show_map(m)
-  assert_true(shown.has_prefix("HashMap::from_array(["))
-  assert_true(shown.has_suffix("])"))
-  // two entries are separated by a comma
-  assert_true(shown.contains(", "))
-  // an empty map still renders the wrapper
-  let e : @hashmap.HashMap[Int, Int] = HashMap([])
-  inspect(show_map(e), content="HashMap::from_array([])")
-}

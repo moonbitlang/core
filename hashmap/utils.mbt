@@ -324,34 +324,6 @@ pub fn[K, V] HashMap::eachi(
 }
 
 ///|
-/// Provides string representation for hash maps.
-/// 
-/// Notice that the order of key-value pairs in the output string is not guaranteed
-///
-/// Parameters:
-///
-/// * `self` : The hash map to be converted to string.
-/// * `logger` : The buffer to write the string representation to.
-#deprecated("Use @debug.Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
-pub impl[K : Show, V : Show] Show for HashMap[K, V]
-
-///|
-pub impl[K : Show, V : Show] Show for HashMap[K, V] with fn output(self, logger) {
-  logger.write_string("HashMap::from_array([")
-  self.eachi((i, k, v) => {
-    if i > 0 {
-      logger.write_string(", ")
-    }
-    logger.write_string("(")
-    logger.write_object(k)
-    logger.write_string(", ")
-    logger.write_object(v)
-    logger.write_string(")")
-  })
-  logger.write_string("])")
-}
-
-///|
 /// Returns an iterator over all keys in the hash map.
 ///
 /// Parameters:
