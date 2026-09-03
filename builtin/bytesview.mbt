@@ -346,8 +346,10 @@ fn write_byte_hex(logger : &Logger, byte : Byte) -> Unit {
 }
 
 ///|
-pub impl Show for BytesView with fn output(self, logger) {
-  logger.write_string("b\"")
+/// Writes the bytes with printable ASCII kept as-is and everything else
+/// rendered as `\xHH`, without the surrounding `b"`/`"`. Shared by `Show`,
+/// which adds the quotes, and `ToJson`, which does not.
+pub fn BytesView::escape_to(self : BytesView, logger : &Logger) -> Unit {
   for byte in self {
     if byte is (b' '..=b'~') && byte != b'"' && byte != b'\\' {
       logger.write_char(byte.to_char())
@@ -356,7 +358,11 @@ pub impl Show for BytesView with fn output(self, logger) {
       write_byte_hex(logger, byte)
     }
   }
-  logger.write_string("\"")
+}
+
+///|
+pub impl Show for BytesView with fn output(self, logger) {
+  logger <+ "b\"\{cb => self.escape_to(cb)}\""
 }
 
 ///|
@@ -593,14 +599,7 @@ pub fn BytesView::to_owned(self : BytesView) -> Bytes {
 ///|
 pub impl ToJson for BytesView with fn to_json(self) -> Json {
   let sb = StringBuilder()
-  for byte in self {
-    if byte is (b' '..=b'~') && byte != b'"' && byte != b'\\' {
-      sb.write_char(byte.to_char())
-    } else {
-      sb.write_string("\\x")
-      write_byte_hex(sb, byte)
-    }
-  }
+  self.escape_to(sb)
   Json::string(sb.to_string())
 }
 

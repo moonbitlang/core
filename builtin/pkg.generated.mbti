@@ -1170,6 +1170,7 @@ pub fn BytesView::compare(Self, Self) -> Int
 pub fn BytesView::data(Self) -> Bytes
 pub fn BytesView::equal(Self, Self) -> Bool
 pub fn BytesView::equal_to_bytes(Self, Bytes) -> Bool
+pub fn BytesView::escape_to(Self, &Logger) -> Unit
 pub fn BytesView::find(Self, Self) -> Int?
 pub fn BytesView::get(Self, Int) -> Byte?
 pub fn BytesView::get_view(Self, start? : Int, end? : Int) -> Self?
