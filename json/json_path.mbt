@@ -63,8 +63,7 @@ pub impl Show for JsonPath with fn output(self, logger) {
       Key(parent, key~) =>
         logger <+ "\{l => build_path(parent, l)}/\{l => write_token(l, key)}"
       Index(parent, index~) =>
-        logger <+
-          "\{l => build_path(parent, l)}/\{l => l.write_object(index)}"
+        logger <+ "\{l => build_path(parent, l)}/\{l => l.write_object(index)}"
     }
   }
 
