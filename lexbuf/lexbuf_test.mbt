@@ -132,10 +132,12 @@ test "Lexbuf returns an empty retained view" {
 }
 
 ///|
-async fn[T] lexbuf_test_suspend(register : ((T) -> Unit) -> Unit) -> T noraise = "%async.suspend"
+async fn[T] lexbuf_test_suspend(
+  register : ((T) -> Unit) -> Unit,
+) -> T noraise + nocancel = "%async.suspend"
 
 ///|
-fn lexbuf_test_run_async(work : async () -> Unit noraise) -> Unit = "%async.run"
+fn lexbuf_test_run_async(work : async () -> Unit noraise + nocancel) -> Unit = "%async.run"
 
 ///|
 struct LexbufTestScheduler {
