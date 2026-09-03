@@ -47,11 +47,6 @@ pub extend Set with Default::{default}
 pub extend Set with Eq::{not_equal}
 
 ///|
-#deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
-#doc(hidden)
-pub extend Set with Show::{output, to_string}
-
-///|
 #deprecated("Use `@json.to_json` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Set with ToJson::{to_json}

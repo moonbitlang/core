@@ -463,27 +463,6 @@ fn[K] Set::rehash_place_entry(self : Set[K], outer : Entry[K]) -> Unit {
 // Utils
 
 ///|
-#deprecated("Use @debug.Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
-pub impl[K : Show] Show for Set[K]
-
-///|
-pub impl[K : Show] Show for Set[K] with fn output(self, logger) {
-  logger.write_string("{")
-  for i = 0, curr = self.head {
-    match (i, curr) {
-      (_, None) => break logger.write_string("}")
-      (i, Some({ key, next, .. })) => {
-        if i > 0 {
-          logger.write_string(", ")
-        }
-        logger.write_object(key)
-        continue i + 1, next
-      }
-    }
-  }
-}
-
-///|
 /// Get the number of keys in the set.
 #alias(size, deprecated)
 pub fn[K] Set::length(self : Set[K]) -> Int {
