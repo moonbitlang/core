@@ -1622,3 +1622,82 @@ test "timsort_early_return_for_small_arrays" {
   // With the bug, we get at least 45 + 9 = 54 comparisons.
   inspect(count.val, content="45")
 }
+
+///|
+test "Array::iter/live_clear_during_iteration" {
+  let xs = [1, 2, 3]
+  let visited = []
+  let iter = xs.iter()
+  while iter.next() is Some(x) {
+    visited.push(x)
+    xs.clear()
+  }
+  debug_inspect(visited, content="[1]")
+  debug_inspect(xs, content="[]")
+}
+
+///|
+test "Array::iter/live_remove_skips_successor" {
+  let xs = [1, 2, 3, 4]
+  let visited = []
+  let iter = xs.iter()
+  while iter.next() is Some(x) {
+    visited.push(x)
+    if x == 2 {
+      ignore(xs.remove(1))
+    }
+  }
+  // removing the current element shifts 3 into the visited slot, so it is
+  // skipped; iteration continues safely with the live length
+  debug_inspect(visited, content="[1, 2, 4]")
+  debug_inspect(xs, content="[1, 3, 4]")
+}
+
+///|
+test "Array::iter/live_push_visits_appended" {
+  let xs = Array::new(capacity=2)
+  xs.push(1)
+  xs.push(2)
+  let visited = []
+  let iter = xs.iter()
+  while iter.next() is Some(x) {
+    if x == 1 {
+      // forces a reallocation: the iterator must re-read the live buffer
+      xs.push(3)
+    }
+    visited.push(x)
+  }
+  debug_inspect(visited, content="[1, 2, 3]")
+}
+
+///|
+test "Array::rev_iter/live_shrink_clamps_cursor" {
+  let xs = [1, 2, 3, 4]
+  let visited = []
+  xs
+  .rev_iter()
+  .each(x => {
+    visited.push(x)
+    ignore(xs.pop())
+    ignore(xs.pop())
+  })
+  // after yielding 4 the array shrinks to [1, 2]; the cursor clamps to the
+  // new length and yields 2, then the array empties and iteration stops
+  debug_inspect(visited, content="[4, 2]")
+  debug_inspect(xs, content="[]")
+}
+
+///|
+test "Array::iter2/live_remove_during_iteration" {
+  let xs = [10, 20, 30, 40]
+  let visited = []
+  xs
+  .iter2()
+  .each((i, x) => {
+    visited.push((i, x))
+    if x == 20 {
+      ignore(xs.remove(1))
+    }
+  })
+  debug_inspect(visited, content="[(0, 10), (1, 20), (2, 40)]")
+}
