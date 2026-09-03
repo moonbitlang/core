@@ -137,7 +137,7 @@ async fn[T] lexbuf_test_suspend(
 ) -> T noraise + nocancel = "%async.suspend"
 
 ///|
-fn lexbuf_test_run_async(work : async () -> Unit noraise + nocancel) -> Unit = "%async.run"
+fn lexbuf_test_run_async(work : async () -> Unit noraise) -> Unit = "%async.run"
 
 ///|
 struct LexbufTestScheduler {
