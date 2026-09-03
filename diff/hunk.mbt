@@ -20,15 +20,14 @@ impl Show for Range with fn output(self, logger) {
   let mut beginning = self.0 + 1 // from array index to line number
   let len = self.1 - self.0
   if len == 1 {
-    logger.write_string(beginning.to_string())
+    logger.write_object(beginning)
   } else {
     if len == 0 {
       // empty ranges begin at line just before the range
       beginning -= 1
     }
-    logger.write_string(beginning.to_string())
-    logger.write_char(',')
-    logger.write_string(len.to_string())
+    logger <+
+      "\{cb => cb.write_object(beginning)},\{cb => cb.write_object(len)}"
   }
 }
 
@@ -67,7 +66,7 @@ fn HunkHeader::new(edits : ArrayView[Edit]) -> Self {
 
 ///|
 impl Show for HunkHeader with fn output(self, logger) {
-  logger.write_string("@@ -\{self.0} +\{self.1} @@")
+  logger <+ "@@ -\{self.0} +\{self.1} @@"
 }
 
 ///|
