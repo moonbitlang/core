@@ -345,11 +345,9 @@ fn BigInt::div_mod(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
   if cmp == 0 {
     return (one.with_sign(q_sign), zero)
   }
-  let (q, r) = if other.len == 1 {
-    self.div_mod_single_limb(other.limbs.unsafe_get(0))
-  } else {
-    self.knuth_div(other)
-  }
+  let a = { ..self, sign: Positive, }
+  let b = { ..other, sign: Positive, }
+  let (q, r) = a.div_mod_mag(b)
   (q.with_sign(q_sign), r.with_sign(self.sign))
 }
 
@@ -558,36 +556,10 @@ const DECIMAL_CHUNK_DIGITS = 19
 let decimal_chunk_reciprocal : UInt64 = reciprocal_word(DECIMAL_CHUNK)
 
 ///|
-/// Decimal rendering by repeated division by 10^19, so each division peels off
-/// 19 digits at a time.
+/// Decimal rendering uses recursively tabulated powers of ten for large values
+/// and repeated division by 10^19 only at the leaves.
 fn BigInt::to_string_dec(self : BigInt) -> String {
-  if self.is_zero() {
-    return "0"
-  }
-  let n = self.len
-  let work = make(n)
-  work.unsafe_blit(0, self.limbs, 0, n)
-  let mut len = n
-  let chunks = []
-  while len > 1 || work.unsafe_get(0) != 0 {
-    chunks.push(
-      div_w(work, work, len, DECIMAL_CHUNK, decimal_chunk_reciprocal, 0),
-    )
-    len = normalize_len(work, len)
-  }
-  let buf = StringBuilder()
-  if self.sign == Negative {
-    buf.write_char('-')
-  }
-  buf.write_string(chunks[chunks.length() - 1].to_string())
-  for i = chunks.length() - 2; i >= 0; i = i - 1 {
-    let s = chunks[i].to_string()
-    for _ in 0..<(DECIMAL_CHUNK_DIGITS - s.length()) {
-      buf.write_char('0')
-    }
-    buf.write_string(s)
-  }
-  buf.to_string()
+  format_decimal(self)
 }
 
 ///|
