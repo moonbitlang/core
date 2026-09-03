@@ -49,8 +49,8 @@ pub impl Show for JsonPath with fn output(self, logger) {
     }
     for ch in token.iter() {
       match ch {
-        '~' => logger.write_string("~0")
-        '/' => logger.write_string("~1")
+        '~' => logger <+ "~0"
+        '/' => logger <+ "~1"
         _ => logger.write_char(ch)
       }
     }
@@ -60,16 +60,12 @@ pub impl Show for JsonPath with fn output(self, logger) {
   fn build_path(path : JsonPath, logger : &Logger) -> Unit {
     match path {
       Root => ()
-      Key(parent, key~) => {
-        build_path(parent, logger)
-        logger.write_char('/')
-        write_token(logger, key)
-      }
-      Index(parent, index~) => {
-        build_path(parent, logger)
-        logger.write_char('/')
-        logger.write_object(index)
-      }
+      Key(parent, key~) =>
+        logger <+
+          "\{cb => build_path(parent, cb)}/\{cb => write_token(cb, key)}"
+      Index(parent, index~) =>
+        logger <+
+          "\{cb => build_path(parent, cb)}/\{cb => cb.write_object(index)}"
     }
   }
 
