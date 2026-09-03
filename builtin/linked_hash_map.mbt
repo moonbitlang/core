@@ -669,17 +669,15 @@ pub impl[K : Show, V : Show] Show for Map[K, V]
 
 ///|
 pub impl[K : Show, V : Show] Show for Map[K, V] with fn output(self, logger) {
-  logger.write_string("{")
+  logger <+ "{"
   for x = 0, y = self.head {
     match (x, y) {
-      (_, None) => break logger.write_string("}")
+      (_, None) => break logger <+ "}"
       (i, Some({ key, value, next, .. })) => {
         if i > 0 {
-          logger.write_string(", ")
+          logger <+ ", "
         }
-        logger.write_object(key)
-        logger.write_string(": ")
-        logger.write_object(value)
+        logger <+ "\{l => l.write_object(key)}: \{l => l.write_object(value)}"
         continue i + 1, next
       }
     }

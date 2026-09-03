@@ -337,18 +337,14 @@ pub impl[K : Show, V : Show] Show for HashMap[K, V]
 
 ///|
 pub impl[K : Show, V : Show] Show for HashMap[K, V] with fn output(self, logger) {
-  logger.write_string("HashMap::from_array([")
+  logger <+ "HashMap::from_array(["
   self.eachi((i, k, v) => {
     if i > 0 {
-      logger.write_string(", ")
+      logger <+ ", "
     }
-    logger.write_string("(")
-    logger.write_object(k)
-    logger.write_string(", ")
-    logger.write_object(v)
-    logger.write_string(")")
+    logger <+ "(\{l => l.write_object(k)}, \{l => l.write_object(v)})"
   })
-  logger.write_string("])")
+  logger <+ "])"
 }
 
 ///|

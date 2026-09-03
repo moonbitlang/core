@@ -35,7 +35,7 @@ pub impl Show for ParseError with fn output(self, logger) {
     InvalidChar({ line, column, }, c) =>
       logger <+
         $|Invalid character \{c.escape()} at line \{line}, column \{column}
-    InvalidEof => logger.write_string("Unexpected end of file")
+    InvalidEof => logger <+ "Unexpected end of file"
     InvalidNumber({ line, column, }, s) =>
       logger <+
         $|Invalid number \{s} at line \{line}, column \{column}
@@ -43,9 +43,8 @@ pub impl Show for ParseError with fn output(self, logger) {
       logger <+
         $|Invalid escape sequence in identifier at line \{line}, column \{column}
     DepthLimitExceeded =>
-      logger.write_string(
-        "Depth limit exceeded, please increase the max_nesting_depth parameter",
-      )
+      logger <+
+        $|Depth limit exceeded, please increase the max_nesting_depth parameter
   }
 }
 
@@ -57,34 +56,18 @@ pub impl Show for Json
 #warnings("-deprecated")
 pub impl Show for Json with fn output(self, logger) {
   match self {
-    Null => logger.write_string("Null")
-    True => logger.write_string("True")
-    False => logger.write_string("False")
+    Null => logger <+ "Null"
+    True => logger <+ "True"
+    False => logger <+ "False"
     Number(n, repr~) => {
-      logger.write_string("Number(")
-      Show::output(n, logger)
+      logger <+ "Number(\{l => Show::output(n, l)}"
       if repr is Some(repr) {
-        logger.write_string(", repr=")
-        logger.write_string("Some(")
-        Show::output(repr, logger)
-        logger.write_string(")")
+        logger <+ ", repr=Some(\{l => Show::output(repr, l)})"
       }
-      logger.write_string(")")
+      logger <+ ")"
     }
-    String(s) => {
-      logger.write_string("String(")
-      Show::output(s, logger)
-      logger.write_string(")")
-    }
-    Array(a) => {
-      logger.write_string("Array(")
-      Show::output(a, logger)
-      logger.write_string(")")
-    }
-    Object(o) => {
-      logger.write_string("Object(")
-      Show::output(o, logger)
-      logger.write_string(")")
-    }
+    String(s) => logger <+ "String(\{l => Show::output(s, l)})"
+    Array(a) => logger <+ "Array(\{l => Show::output(a, l)})"
+    Object(o) => logger <+ "Object(\{l => Show::output(o, l)})"
   }
 }
