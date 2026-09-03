@@ -43,3 +43,15 @@ test "bench BigInt::to_string n=4000 digits" (it : @bench.T) {
   let n = make_decimal(4000)
   it.bench(fn() { it.keep(n.to_string()) })
 }
+
+///|
+test "bench BigInt::to_string n=40000 digits" (it : @bench.T) {
+  let n = make_decimal(40000)
+  it.bench(fn() { it.keep(n.to_string()) })
+}
+
+///|
+test "bench BigInt::to_string n=250000 digits" (it : @bench.T) {
+  let n = make_decimal(250000)
+  it.bench(fn() { it.keep(n.to_string()) })
+}
