@@ -191,9 +191,7 @@ fn StringView::escape_to(
       code =>
         if code < ' ' {
           flush_segment(seg, i)
-          logger.write_string("\\u{")
-          logger.write_string(code.to_byte().to_hex())
-          logger.write_char('}')
+          logger <+ "\\u{\{cb => cb.write_string(code.to_byte().to_hex())}}"
           continue i + 1, i + 1
         } else {
           continue i + 1, seg
