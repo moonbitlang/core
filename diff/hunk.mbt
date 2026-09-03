@@ -26,8 +26,7 @@ impl Show for Range with fn output(self, logger) {
       // empty ranges begin at line just before the range
       beginning -= 1
     }
-    logger <+
-      "\{cb => cb.write_object(beginning)},\{cb => cb.write_object(len)}"
+    logger <+ "\{beginning},\{len}"
   }
 }
 
