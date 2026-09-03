@@ -13,118 +13,133 @@
 // limitations under the License.
 
 ///|
-#warnings("-deprecated")
-test "2-tuple to_json" {
+test "2-tuple Debug" {
   let pair = (42, "hello")
-  @json.json_inspect(pair.to_string(), content="(42, hello)")
+  debug_inspect(pair, content="(42, \"hello\")")
 }
 
 ///|
-#warnings("-deprecated")
-test "3-tuple to_json" {
+test "3-tuple Debug" {
   let triple = (42, "hello", true)
-  @json.json_inspect(triple.to_string(), content="(42, hello, true)")
+  debug_inspect(triple, content="(42, \"hello\", true)")
 }
 
 ///|
-#warnings("-deprecated")
-test "4-tuple to_json" {
+test "4-tuple Debug" {
   let tuple = (42, "hello", true, 3.14)
-  @json.json_inspect(tuple.to_string(), content="(42, hello, true, 3.14)")
+  debug_inspect(tuple, content="(42, \"hello\", true, 3.14)")
 }
 
 ///|
-#warnings("-deprecated")
-test "5-tuple to_json" {
+test "5-tuple Debug" {
   let tuple = (42, "hello", true, 3.14, 'a')
-  @json.json_inspect(tuple.to_string(), content="(42, hello, true, 3.14, a)")
+  debug_inspect(tuple, content="(42, \"hello\", true, 3.14, 'a')")
 }
 
 ///|
-#warnings("-deprecated")
-test "6-tuple to_json" {
+test "6-tuple Debug" {
   let tuple = (42, "hello", true, 3.14, 'a', 1)
-  @json.json_inspect(tuple.to_string(), content="(42, hello, true, 3.14, a, 1)")
+  debug_inspect(tuple, content="(42, \"hello\", true, 3.14, 'a', 1)")
 }
 
 ///|
-#warnings("-deprecated")
-test "7-tuple to_json" {
+test "7-tuple Debug" {
   let tuple = (42, "hello", true, 3.14, 'a', 1, "world")
-  @json.json_inspect(
-    tuple.to_string(),
-    content="(42, hello, true, 3.14, a, 1, world)",
-  )
+  debug_inspect(tuple, content="(42, \"hello\", true, 3.14, 'a', 1, \"world\")")
 }
 
 ///|
-#warnings("-deprecated")
-test "8-tuple to_json" {
+test "8-tuple Debug" {
   let tuple = (42, "hello", true, 3.14, 'a', 1, "world", false)
-  @json.json_inspect(
-    tuple.to_string(),
-    content="(42, hello, true, 3.14, a, 1, world, false)",
+  debug_inspect(
+    tuple,
+    content="(42, \"hello\", true, 3.14, 'a', 1, \"world\", false)",
   )
 }
 
 ///|
-#warnings("-deprecated")
-test "9-tuple to_json" {
+test "9-tuple Debug" {
   let tuple = (42, "hello", true, 3.14, 'a', 1, "world", false, 2.71)
-  @json.json_inspect(
-    tuple.to_string(),
-    content="(42, hello, true, 3.14, a, 1, world, false, 2.71)",
+  debug_inspect(
+    tuple,
+    content="(42, \"hello\", true, 3.14, 'a', 1, \"world\", false, 2.71)",
   )
 }
 
 ///|
-#warnings("-deprecated")
-test "10-tuple to_json" {
+test "10-tuple Debug" {
   let tuple = (42, "hello", true, 3.14, 'a', 1, "world", false, 2.71, 'b')
-  @json.json_inspect(
-    tuple.to_string(),
-    content="(42, hello, true, 3.14, a, 1, world, false, 2.71, b)",
+  debug_inspect(
+    tuple,
+    content="(42, \"hello\", true, 3.14, 'a', 1, \"world\", false, 2.71, 'b')",
   )
 }
 
 ///|
-#warnings("-deprecated")
-test "11-tuple to_json" {
+test "11-tuple Debug" {
   let tuple = (42, "hello", true, 3.14, 'a', 1, "world", false, 2.71, 'b', 43UL)
-  @json.json_inspect(
-    tuple.to_string(),
-    content="(42, hello, true, 3.14, a, 1, world, false, 2.71, b, 43)",
+  debug_inspect(
+    tuple,
+    content="(42, \"hello\", true, 3.14, 'a', 1, \"world\", false, 2.71, 'b', 43)",
   )
 }
 
 ///|
-#warnings("-deprecated")
-test "12-tuple to_json" {
+test "12-tuple Debug" {
   let tuple = (
     42, "hello", true, 3.14, 'a', 1, "world", false, 2.71, 'b', 43UL, 0x12345678U,
   )
-  @json.json_inspect(
-    tuple.to_string(),
-    content="(42, hello, true, 3.14, a, 1, world, false, 2.71, b, 43, 305419896)",
+  debug_inspect(
+    tuple,
+    content=(
+      #|(
+      #|  42,
+      #|  "hello",
+      #|  true,
+      #|  3.14,
+      #|  'a',
+      #|  1,
+      #|  "world",
+      #|  false,
+      #|  2.71,
+      #|  'b',
+      #|  43,
+      #|  305419896,
+      #|)
+    ),
   )
 }
 
 ///|
-#warnings("-deprecated")
-test "13-tuple to_json" {
+test "13-tuple Debug" {
   let tuple = (
     42, "hello", true, 3.14, 'a', 1, "world", false, 2.71, 'b', 43UL, 0x12345678U,
     0x87654321L,
   )
-  @json.json_inspect(
-    tuple.to_string(),
-    content="(42, hello, true, 3.14, a, 1, world, false, 2.71, b, 43, 305419896, 2271560481)",
+  debug_inspect(
+    tuple,
+    content=(
+      #|(
+      #|  42,
+      #|  "hello",
+      #|  true,
+      #|  3.14,
+      #|  'a',
+      #|  1,
+      #|  "world",
+      #|  false,
+      #|  2.71,
+      #|  'b',
+      #|  43,
+      #|  305419896,
+      #|  2271560481,
+      #|)
+    ),
   )
 }
 
 ///|
-#warnings("-deprecated")
-test "14-tuple to_json" {
+test "14-tuple Debug" {
   let tuple = (
     42,
     "hello",
@@ -141,15 +156,31 @@ test "14-tuple to_json" {
     0x87654321L,
     (0xabcdef, 1234567890UL),
   )
-  @json.json_inspect(
-    tuple.to_string(),
-    content="(42, hello, true, 3.14, a, 1, world, false, 2.71, b, 43, 305419896, 2271560481, (11259375, 1234567890))",
+  debug_inspect(
+    tuple,
+    content=(
+      #|(
+      #|  42,
+      #|  "hello",
+      #|  true,
+      #|  3.14,
+      #|  'a',
+      #|  1,
+      #|  "world",
+      #|  false,
+      #|  2.71,
+      #|  'b',
+      #|  43,
+      #|  305419896,
+      #|  2271560481,
+      #|  (11259375, 1234567890),
+      #|)
+    ),
   )
 }
 
 ///|
-#warnings("-deprecated")
-test "15-tuple to_json" {
+test "15-tuple Debug" {
   let tuple = (
     42,
     "hello",
@@ -167,15 +198,32 @@ test "15-tuple to_json" {
     (0xabcdef, 1234567890UL),
     (0x12345678UL, 0x87654321UL, 0xabcdefUL),
   )
-  @json.json_inspect(
-    tuple.to_string(),
-    content="(42, hello, true, 3.14, a, 1, world, false, 2.71, b, 43, 305419896, 2271560481, (11259375, 1234567890), (305419896, 2271560481, 11259375))",
+  debug_inspect(
+    tuple,
+    content=(
+      #|(
+      #|  42,
+      #|  "hello",
+      #|  true,
+      #|  3.14,
+      #|  'a',
+      #|  1,
+      #|  "world",
+      #|  false,
+      #|  2.71,
+      #|  'b',
+      #|  43,
+      #|  305419896,
+      #|  2271560481,
+      #|  (11259375, 1234567890),
+      #|  (305419896, 2271560481, 11259375),
+      #|)
+    ),
   )
 }
 
 ///|
-#warnings("-deprecated")
-test "16-tuple to_json" {
+test "16-tuple Debug" {
   let tuple = (
     42,
     "hello",
@@ -194,8 +242,27 @@ test "16-tuple to_json" {
     (0x12345678UL, 0x87654321UL, 0xabcdefUL),
     ("wow", [0x87654321UL, 1234567890UL]),
   )
-  @json.json_inspect(
-    tuple.to_string(),
-    content="(42, hello, true, 3.14, a, 1, world, false, 2.71, b, 43, 305419896, 2271560481, (11259375, 1234567890), (305419896, 2271560481, 11259375), (wow, [2271560481, 1234567890]))",
+  debug_inspect(
+    tuple,
+    content=(
+      #|(
+      #|  42,
+      #|  "hello",
+      #|  true,
+      #|  3.14,
+      #|  'a',
+      #|  1,
+      #|  "world",
+      #|  false,
+      #|  2.71,
+      #|  'b',
+      #|  43,
+      #|  305419896,
+      #|  2271560481,
+      #|  (11259375, 1234567890),
+      #|  (305419896, 2271560481, 11259375),
+      #|  ("wow", [2271560481, 1234567890]),
+      #|)
+    ),
   )
 }
