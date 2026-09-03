@@ -3044,6 +3044,63 @@ test "deque release_unused releases what the pops leave behind" {
 /// The unused capacity of a deque can wrap, or straddle both ends of the
 /// buffer, so `release_unused` has to cover the complement of the occupied run
 /// rather than a single tail.
+test "deque release_unused covers both sides of an unwrapped run" {
+  let dq = @deque.from_array(["a", "b", "c", "d"])
+  let (view, _) = dq.as_views()
+  let _ = dq.pop_front()
+  let _ = dq.pop_back()
+  // The elements now sit at `[1, 3)`, leaving unused slots on both sides.
+  dq.release_unused(placeholder="-")
+  @debug.debug_inspect(
+    dq,
+    content=(
+      #|<Deque: ["b", "c"]>
+    ),
+  )
+  @debug.debug_inspect(
+    view,
+    content=(
+      #|<ArrayView: ["-", "b", "c", "-"]>
+    ),
+  )
+}
+
+///|
+/// Draining the tail of an unwrapped deque leaves the survivors where they
+/// are. A view taken beforehand makes that observable: the survivors are
+/// still at their original offsets and the drained slot keeps its occupant,
+/// rather than the survivors having been shifted right by the drained length.
+test "deque tail drain leaves the survivors in place" {
+  let dq = @deque.Deque([], capacity=4)
+  dq.push_back("x")
+  dq.push_back("a")
+  dq.push_back("b")
+  dq.push_back("c")
+  let _ = dq.pop_front()
+  let (front, back) = dq.as_views()
+  inspect(back.length(), content="0")
+  let drained = dq.drain(start=2)
+  @debug.debug_inspect(
+    drained,
+    content=(
+      #|<Deque: ["c"]>
+    ),
+  )
+  @debug.debug_inspect(
+    dq,
+    content=(
+      #|<Deque: ["a", "b"]>
+    ),
+  )
+  @debug.debug_inspect(
+    front,
+    content=(
+      #|<ArrayView: ["a", "b", "c"]>
+    ),
+  )
+}
+
+///|
 test "deque release_unused covers the wrapped case" {
   let dq = @deque.Deque([], capacity=4)
   dq.push_back("c")

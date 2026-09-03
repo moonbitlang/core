@@ -1052,8 +1052,8 @@ pub fn[A] Deque::rev_eachi(
 /// ```
 pub fn[A] Deque::clear(self : Deque[A]) -> Unit {
   // The surviving elements are none, so nothing moves: an emptied deque
-  // restarts at offset zero, the invariant `Deque::truncate` and
-  // `Deque::drain` also maintain.
+  // restarts at offset zero, as `Deque::truncate` and `Deque::drain` also
+  // arrange.
   self.len = 0
   self.head = 0
 }
@@ -1410,8 +1410,8 @@ pub fn[A] Deque::release_unused(self : Deque[A], placeholder~ : A) -> Unit {
 pub fn[A] Deque::truncate(self : Deque[A], len : Int) -> Unit {
   guard len >= 0 && len < self.len else { return }
   // The surviving elements keep their slots, so there is nothing to move: only
-  // the length changes. An emptied deque restarts at offset zero, matching the
-  // invariant `Deque::clear` and `Deque::drain` maintain.
+  // the length changes. An emptied deque restarts at offset zero, as
+  // `Deque::clear` and `Deque::drain` also arrange.
   self.len = len
   if len == 0 {
     self.head = 0
@@ -2098,12 +2098,16 @@ pub fn[A] Deque::drain(self : Deque[A], start~ : Int, len? : Int) -> Deque[A] {
       deque.buf.unsafe_blit(0, self.buf, front.start_offset() + start, len)
       if start == 0 && len == front_max_drain {
         self.head = 0
-      } else {
-        // move back
+      } else if len < front_max_drain || back.length() != 0 {
+        // Something survives after the drained range -- the rest of the front,
+        // or the back run -- so the front survivors move right to stay
+        // contiguous with it.
         let new_head = front.start_offset() + len
         self.buf.unsafe_blit(new_head, self.buf, front.start_offset(), start)
         self.head = new_head
       }
+      // Otherwise the drain took the tail of an unwrapped deque, and the
+      // survivors already sit at `[head, head + start)`.
     } else {
       // draining front and back
       // copy to deque
