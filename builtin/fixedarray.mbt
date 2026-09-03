@@ -1397,8 +1397,7 @@ test "iter" {
   let exb = StringBuilder()
   let mut i = 0
   iter.each(x => {
-    exb.write_string(x.to_string())
-    exb.write_char('\n')
+    exb <+ "\{x}\n"
     i += 1
   })
   assert_true(i == arr.length())

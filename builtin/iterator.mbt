@@ -63,15 +63,14 @@ pub impl[X : Show] Show for Iter[X]
 
 ///|
 pub impl[X : Show] Show for Iter[X] with fn output(self, logger) {
-  logger.write_string("[")
+  logger <+ "["
   if self.next() is Some(x) {
     logger.write_object(x)
     while self.next() is Some(x) {
-      logger.write_string(", ")
-      logger.write_object(x)
+      logger <+ ", \{cb => cb.write_object(x)}"
     }
   }
-  logger.write_string("]")
+  logger <+ "]"
 }
 
 ///|
