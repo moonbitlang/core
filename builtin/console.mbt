@@ -81,8 +81,7 @@ fn base64_encode(data : FixedArray[Byte]) -> String {
     let x1 = base64[(b0 & 0x03) << 4]
     buf.write_char(x0.to_char())
     buf.write_char(x1.to_char())
-    buf.write_char('=')
-    buf.write_char('=')
+    buf <+ "=="
   } else if rem == 2 {
     let b0 = data[len - 2].to_int()
     let b1 = data[len - 1].to_int()
