@@ -52,6 +52,17 @@ fn make_unbalanced_division(
 }
 
 ///|
+/// Builds the large-divisor, single-limb-quotient shape used by pidigits.
+fn make_narrow_division(
+  quotient : Int,
+  divisor_limbs : Int,
+) -> (@bigint.BigInt, @bigint.BigInt) {
+  let divisor = division_bench_dense(divisor_limbs * 8, 0x8796a5b4c3d2e1f0UL)
+  let quotient = @bigint.BigInt::from_int(quotient)
+  (quotient * divisor + divisor - 1N, divisor)
+}
+
+///|
 test "bench BigInt balanced division n=4000 digits" (it : @bench.T) {
   let (dividend, divisor) = make_balanced_division(4000)
   it.bench(fn() { it.keep(dividend / divisor) })
@@ -72,5 +83,11 @@ test "bench BigInt balanced division n=250000 digits" (it : @bench.T) {
 ///|
 test "bench BigInt unbalanced division q=65536 d=64 limbs" (it : @bench.T) {
   let (dividend, divisor) = make_unbalanced_division(65536, 64)
+  it.bench(fn() { it.keep(dividend / divisor) })
+}
+
+///|
+test "bench BigInt narrow division q=9 d=64 limbs" (it : @bench.T) {
+  let (dividend, divisor) = make_narrow_division(9, 64)
   it.bench(fn() { it.keep(dividend / divisor) })
 }

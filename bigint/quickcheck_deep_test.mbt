@@ -246,6 +246,29 @@ test "recursive division with highly unbalanced operands" {
 }
 
 ///|
+test "large divisors with narrow quotients" {
+  // On native/wasm these sizes straddle and exceed the 64-limb recursive
+  // divisor threshold. Their single-limb quotients must stay on Knuth D.
+  let divisor_sizes : Array[Int] = [126, 128, 130, 256]
+  let quotients : Array[@bigint.BigInt] = [
+    2N,
+    9N,
+    (1N << 63) - 1N,
+    (1N << 64) - 1N,
+  ]
+  for size in divisor_sizes {
+    let divisor = mag_of_limbs(seed_u64(size) + 0x51a11UL, size)
+    for quotient in quotients {
+      for remainder in ([0N, 1N, divisor >> 1, divisor - 1N] : Array[_]) {
+        let dividend = quotient * divisor + remainder
+        assert_eq(dividend / divisor, quotient)
+        assert_eq(dividend % divisor, remainder)
+      }
+    }
+  }
+}
+
+///|
 test "division with adversarial divisor top limbs" {
   // Knuth 4.3.1 quotient-digit estimation is most fragile when the
   // normalized divisor's top limb is minimal (0x80000000) or maximal
