@@ -31,17 +31,39 @@ const DECIMAL_LEAF_CHUNKS = 16
 const DECIMAL_RECURSIVE_THRESHOLD = 32
 
 ///|
-/// A slight upper bound for the decimal digits in a nonzero value with `bits`
-/// significant bits. Splitting quotient and remainder keeps both products in
-/// range even when `bits * 1234` would overflow `Int`.
-fn decimal_digit_hint(bits : Int) -> Int {
-  bits / 4096 * 1234 + bits % 4096 * 1234 / 4096 + 1
+/// Bit length of a normalized magnitude represented by `limbs` limbs and its
+/// most significant limb. This stays wide enough even when the result exceeds
+/// `Int::max_value`.
+fn decimal_bit_length_from_parts(limbs : Int, top_limb : UInt64) -> Int64 {
+  if limbs == 0 {
+    return 0L
+  }
+  limbs.to_int64() * 64L - nlz(top_limb).to_int64()
 }
 
 ///|
-/// Ceiling division by two without overflowing at `Int::max_value`.
-fn decimal_half_bits(bits : Int) -> Int {
-  bits / 2 + bits % 2
+fn decimal_bit_length(value : BigInt) -> Int64 {
+  if value.is_zero() {
+    return 0L
+  }
+  decimal_bit_length_from_parts(
+    value.len,
+    value.limbs.unsafe_get(value.len - 1),
+  )
+}
+
+///|
+/// A slight upper bound for the decimal digits in a nonzero value with `bits`
+/// significant bits. All arithmetic remains wide because a native/wasm BigInt
+/// can have more than `Int::max_value` significant bits.
+fn decimal_digit_hint(bits : Int64) -> Int64 {
+  bits / 4096L * 1234L + bits % 4096L * 1234L / 4096L + 1L
+}
+
+///|
+/// Ceiling division by two without overflowing.
+fn decimal_half_bits(bits : Int64) -> Int64 {
+  bits / 2L + bits % 2L
 }
 
 ///|
@@ -50,9 +72,12 @@ fn format_decimal(value : BigInt) -> String {
     return "0"
   }
   let magnitude = { ..value, sign: Positive, }
-  let digit_hint = decimal_digit_hint(magnitude.bit_length())
+  let digit_hint = decimal_digit_hint(decimal_bit_length(magnitude)) +
+    (if value.sign == Negative { 1L } else { 0L })
   let builder = StringBuilder(
-    size_hint=digit_hint + (if value.sign == Negative { 1 } else { 0 }),
+    // An oversized result cannot be preallocated through the Int-sized API;
+    // let the builder grow instead of truncating the hint to a negative value.
+    size_hint=if digit_hint <= 2147483647L { digit_hint.to_int() } else { 0 },
   )
   if value.sign == Negative {
     builder.write_char('-')
@@ -77,10 +102,10 @@ fn decimal_divisor_table(value : BigInt) -> Array[DecimalDivisor] {
     divisor = divisor.mul_single_limb(DECIMAL_CHUNK)
   }
   let mut digits = DECIMAL_CHUNK_DIGITS * DECIMAL_LEAF_CHUNKS
-  let half_bits = decimal_half_bits(value.bit_length())
+  let half_bits = decimal_half_bits(decimal_bit_length(value))
   while true {
     table.push({ value: divisor, digits, })
-    if divisor.bit_length() >= half_bits {
+    if decimal_bit_length(divisor) >= half_bits {
       break
     }
     divisor = divisor * divisor
