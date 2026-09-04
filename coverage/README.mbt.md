@@ -317,7 +317,7 @@ test "coverage driven testing" {
 
 Coverage tracking integrates with MoonBit's build tools:
 
-- Use `moon test` to run tests with coverage tracking
+- Use `moon test --enable-coverage` to run tests with coverage tracking
 - Use `moon coverage analyze` to generate coverage reports
 - Coverage data helps identify untested code paths
 - Supports both line coverage and branch coverage analysis

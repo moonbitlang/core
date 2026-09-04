@@ -1,6 +1,8 @@
 # Abort
 
-Terminates program execution with an error message. The `abort` function always panics and never returns.
+Terminates program execution by raising a panic; the `abort` function never
+returns. The message is printed only on the native backend — the
+wasm/js implementation discards it.
 
 ## Usage
 
