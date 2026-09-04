@@ -31,13 +31,20 @@ const DECIMAL_LEAF_CHUNKS = 16
 const DECIMAL_RECURSIVE_THRESHOLD = 32
 
 ///|
+/// A slight upper bound for the decimal digits in a nonzero value with `bits`
+/// significant bits. Splitting quotient and remainder keeps both products in
+/// range even when `bits * 1234` would overflow `Int`.
+fn decimal_digit_hint(bits : Int) -> Int {
+  bits / 4096 * 1234 + bits % 4096 * 1234 / 4096 + 1
+}
+
+///|
 fn format_decimal(value : BigInt) -> String {
   if value.is_zero() {
     return "0"
   }
   let magnitude = { ..value, sign: Positive, }
-  // 1234/4096 is a slight upper bound for log10(2).
-  let digit_hint = magnitude.bit_length() * 1234 / 4096 + 1
+  let digit_hint = decimal_digit_hint(magnitude.bit_length())
   let builder = StringBuilder(
     size_hint=digit_hint + (if value.sign == Negative { 1 } else { 0 }),
   )
