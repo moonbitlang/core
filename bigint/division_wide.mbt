@@ -25,14 +25,23 @@
 const DIV_RECURSIVE_THRESHOLD = 64
 
 ///|
+/// Recursive division only pays off when both the divisor and quotient are
+/// wide. With at most two quotient-limb passes, Knuth D is linear in the large
+/// divisor and avoids recursive splitting, multiplication, and allocation.
+/// Requires `dividend_len >= divisor_len`.
+fn use_recursive_division(dividend_len : Int, divisor_len : Int) -> Bool {
+  divisor_len >= DIV_RECURSIVE_THRESHOLD && dividend_len - divisor_len > 1
+}
+
+///|
 /// Magnitude-only division. Both operands must be positive and `self > other`.
 fn BigInt::div_mod_mag(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
   if other.len == 1 {
     self.div_mod_single_limb(other.limbs.unsafe_get(0))
-  } else if other.len < DIV_RECURSIVE_THRESHOLD {
-    self.knuth_div(other)
-  } else {
+  } else if use_recursive_division(self.len, other.len) {
     self.div_mod_recursive(other)
+  } else {
+    self.knuth_div(other)
   }
 }
 
@@ -60,10 +69,10 @@ fn div_mod_normalized(u : BigInt, v : BigInt) -> (BigInt, BigInt) {
   if v.len == 1 {
     return u.div_mod_single_limb(v.limbs.unsafe_get(0))
   }
-  if v.len < DIV_RECURSIVE_THRESHOLD {
-    return u.knuth_div(v)
+  if use_recursive_division(u.len, v.len) {
+    return div_mod_recursive_steps(u, v)
   }
-  div_mod_recursive_steps(u, v)
+  u.knuth_div(v)
 }
 
 ///|

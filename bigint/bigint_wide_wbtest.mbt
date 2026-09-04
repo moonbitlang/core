@@ -184,6 +184,21 @@ test "BigInt::bit_length" {
 }
 
 ///|
+test "recursive division dispatch accounts for quotient width" {
+  @debug.debug_inspect(
+    [
+      use_recursive_division(64, 64),
+      use_recursive_division(65, 64),
+      use_recursive_division(66, 64),
+      use_recursive_division(128, 63),
+      use_recursive_division(129, 128),
+      use_recursive_division(130, 128),
+    ],
+    content="[false, false, true, false, false, true]",
+  )
+}
+
+///|
 test "decimal sizing avoids Int overflow" {
   let cases : Array[Int64] = [
     0L, 1L, 4095L, 4096L, 1740261L, 1740262L, 2147483647L, 2147483648L, 2147483649L,
