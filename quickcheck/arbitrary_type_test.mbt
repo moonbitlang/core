@@ -13,24 +13,62 @@
 // limitations under the License.
 
 ///|
+fn is_power_of_two_bigint(value : @bigint.BigInt) -> Bool {
+  value > 0N && (value & (value - 1N)) == 0N
+}
+
+///|
+fn is_noncanonical_binary_boundary_bigint(value : @bigint.BigInt) -> Bool {
+  let magnitude = if value < 0N { -value } else { value }
+  magnitude > 10N &&
+  [-1N, 0N, 1N].any(offset => is_power_of_two_bigint(magnitude + offset))
+}
+
+///|
 test "Arbitrary for BigInt" {
   let samples : Array[@bigint.BigInt] = @quickcheck.samples(10)
   debug_inspect(
     samples,
     content=(
       #|[
+      #|  8957778123143436869,
+      #|  224568372937935354752176555220923494950,
+      #|  4294967296,
       #|  0,
-      #|  2236702871533800590,
-      #|  4899806414470401660,
-      #|  -5076203457455444144,
-      #|  -3206590268553584789,
-      #|  -8738668918601119554,
-      #|  -5822442221117384418,
-      #|  4293417177517987002,
-      #|  -174397816515637542,
-      #|  -7574984457386592187,
+      #|  9007199254740991,
+      #|  -330974765789023695575794723562474317865,
+      #|  1321161328954558061203775241612665678662169762445949217122616206433285005712430002148382207261259,
+      #|  -14497849068316585071,
+      #|  1000,
+      #|  -2,
       #|]
     ),
+  )
+}
+
+///|
+test "Arbitrary for BigInt favors boundaries across multiple limbs" {
+  let samples : Array[@bigint.BigInt] = @quickcheck.samples(256)
+  let canonical : Array[@bigint.BigInt] = [0N, 1N, -1N, 2N, -2N, 10N, -10N]
+  let count : ((@bigint.BigInt) -> Bool) -> Int = predicate => {
+    samples.iter().filter(predicate).count()
+  }
+  let is_wide : (@bigint.BigInt) -> Bool = value => value.bit_length() > 64
+  let canonical_count = count(value => canonical.contains(value))
+  let binary_boundary_count = count(is_noncanonical_binary_boundary_bigint)
+  let wide_count = count(is_wide)
+  let positive_wide_count = count(value => value > 0N && is_wide(value))
+  let negative_wide_count = count(value => value < 0N && is_wide(value))
+  let max_bit_length = samples.fold(init=0, (maximum, value) => {
+    maximum.max(value.bit_length())
+  })
+  // canonical, binary boundary, wide, positive wide, negative wide, maximum bits
+  debug_inspect(
+    (
+      canonical_count, binary_boundary_count, wide_count, positive_wide_count, negative_wide_count,
+      max_bit_length,
+    ),
+    content="(73, 56, 64, 34, 30, 445)",
   )
 }
 
