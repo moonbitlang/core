@@ -184,6 +184,15 @@ test "BigInt::bit_length" {
 }
 
 ///|
+test "decimal digit hint avoids Int overflow" {
+  let cases : Array[Int] = [0, 1, 4095, 4096, 1740261, 1740262, 2147483647]
+  for bits in cases {
+    let expected = (bits.to_int64() * 1234L / 4096L + 1L).to_int()
+    @test.assert_eq(decimal_digit_hint(bits), expected)
+  }
+}
+
+///|
 test "BigInt::ctz" {
   inspect(0N.ctz(), content="0")
   inspect(1N.ctz(), content="0")
