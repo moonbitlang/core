@@ -184,6 +184,49 @@ test "BigInt::bit_length" {
 }
 
 ///|
+test "recursive division dispatch accounts for quotient width" {
+  @debug.debug_inspect(
+    [
+      use_recursive_division(64, 64),
+      use_recursive_division(65, 64),
+      use_recursive_division(66, 64),
+      use_recursive_division(128, 63),
+      use_recursive_division(129, 128),
+      use_recursive_division(130, 128),
+    ],
+    content="[false, false, true, false, false, true]",
+  )
+}
+
+///|
+test "decimal sizing avoids Int overflow" {
+  let cases : Array[Int64] = [
+    0L, 1L, 4095L, 4096L, 1740261L, 1740262L, 2147483647L, 2147483648L, 2147483649L,
+  ]
+  for bits in cases {
+    let expected_hint = bits * 1234L / 4096L + 1L
+    let expected_half = (bits + 1L) / 2L
+    @test.assert_eq(decimal_digit_hint(bits), expected_hint)
+    @test.assert_eq(decimal_half_bits(bits), expected_half)
+  }
+}
+
+///|
+test "decimal bit length avoids Int overflow" {
+  @test.assert_eq(decimal_bit_length_from_parts(0, 0UL), 0L)
+  @test.assert_eq(decimal_bit_length_from_parts(1, 1UL), 1L)
+  @test.assert_eq(
+    decimal_bit_length_from_parts(33554432, 0x4000000000000000UL),
+    2147483647L,
+  )
+  @test.assert_eq(
+    decimal_bit_length_from_parts(33554432, 0x8000000000000000UL),
+    2147483648L,
+  )
+  @test.assert_eq(decimal_bit_length_from_parts(33554433, 1UL), 2147483649L)
+}
+
+///|
 test "BigInt::ctz" {
   inspect(0N.ctz(), content="0")
   inspect(1N.ctz(), content="0")

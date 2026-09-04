@@ -20,8 +20,8 @@
 // * multiplication straddling the Karatsuba threshold (50 limbs),
 //   cross-checked against products reassembled from sub-threshold chunks
 //   and against closed forms with maximal carry chains;
-// * Knuth division (TAOCP 4.3.1) with adversarial divisor top limbs,
-//   where quotient-digit estimation is famously fragile;
+// * Knuth and recursive wide-digit division with adversarial divisor top
+//   limbs, where quotient-digit estimation is famously fragile;
 // * shifts, radix round-trips, pow/modpow, octet round-trips, and
 //   fixed-width truncation, at sizes crossing many limb boundaries.
 //
@@ -176,8 +176,10 @@ test "quickcheck: truncated division law across mixed size classes" {
   @quickcheck.check(
     (input : (Int, Int, Int, Bool, Bool)) => {
       let (s, i, j, na, nb) = input
-      let la = 1 + (i & 63) // 1..64 limbs
-      let lb = 1 + (j & 63)
+      // `mag_of_limbs` counts 32-bit chunks. Extending through 256 chunks
+      // crosses the native/wasm recursive-division threshold at 128 chunks.
+      let la = 1 + (i & 255)
+      let lb = 1 + (j & 255)
       let seed = seed_u64(s) * 0xDEADBEEFUL + 12345UL
       let a0 = mag_of_limbs(seed, la)
       let b0 = mag_of_limbs(seed + 424242UL, lb)
@@ -199,6 +201,71 @@ test "quickcheck: truncated division law across mixed size classes" {
     },
     count=120,
   )
+}
+
+///|
+test "recursive division across threshold and block boundaries" {
+  // Exact bit lengths put divisors immediately below, at, and above the
+  // 64-limb native/wasm threshold, with both normalized and heavily shifted
+  // top limbs. Quotients range from a partial block through several blocks.
+  let sizes : Array[(Int, Int)] = [
+    (4032, 4109),
+    (4033, 8197),
+    (4096, 12293),
+    (4097, 8203),
+    (8192, 16391),
+    (8209, 24631),
+  ]
+  for size in sizes {
+    let (divisor_bits, quotient_bits) = size
+    let divisor = (1N << (divisor_bits - 1)) +
+      (1N << (divisor_bits / 2)) +
+      0xfedcba987654321N
+    let quotient = (1N << quotient_bits) - 1N
+    for remainder in ([0N, 1N, divisor >> 1, divisor - 1N] : Array[_]) {
+      let dividend = quotient * divisor + remainder
+      assert_eq(dividend / divisor, quotient)
+      assert_eq(dividend % divisor, remainder)
+    }
+  }
+}
+
+///|
+test "recursive division with highly unbalanced operands" {
+  // On native/wasm the divisor is exactly at the 64-limb recursive threshold
+  // while the quotient spans 64 recursive blocks. This exercises repeated
+  // in-place replacement of the bounded high window without copying the long
+  // unprocessed low prefix.
+  let divisor = mag_of_limbs(0x64d1a150UL, 128)
+  let quotient = mag_of_limbs(0x4000b10cUL, 4096)
+  for remainder in ([0N, 1N, divisor >> 1, divisor - 1N] : Array[_]) {
+    let dividend = quotient * divisor + remainder
+    assert_eq(dividend / divisor, quotient)
+    assert_eq(dividend % divisor, remainder)
+  }
+}
+
+///|
+test "large divisors with narrow quotients" {
+  // On native/wasm these sizes straddle and exceed the 64-limb recursive
+  // divisor threshold. Their single-limb quotients must stay on Knuth D.
+  let divisor_sizes : Array[Int] = [126, 128, 130, 256]
+  let quotients : Array[@bigint.BigInt] = [
+    2N,
+    9N,
+    (1N << 63) - 1N,
+    (1N << 64) - 1N,
+  ]
+  for size in divisor_sizes {
+    let divisor = mag_of_limbs(seed_u64(size) + 0x51a11UL, size)
+    for quotient in quotients {
+      for remainder in ([0N, 1N, divisor >> 1, divisor - 1N] : Array[_]) {
+        let dividend = quotient * divisor + remainder
+        assert_eq(dividend / divisor, quotient)
+        assert_eq(dividend % divisor, remainder)
+      }
+    }
+  }
 }
 
 ///|
@@ -338,6 +405,36 @@ test "huge decimal roundtrip anchored to a hex literal" {
   let big = mag_of_limbs(0xC0FFEEUL, 500)
   assert_eq(@bigint.BigInt::from_string(big.to_string()), big)
   assert_eq(@bigint.BigInt::from_string((-big).to_string()), -big)
+}
+
+///|
+test "recursive decimal conversion at power-table boundaries" {
+  // The conversion table starts at 10^(19*16) and squares from there. Values
+  // around twice and four times that exponent exercise exact divisors and the
+  // zero padding on either side of every recursive split.
+  for digits in ([607, 608, 609, 1215, 1216, 1217, 2432] : Array[_]) {
+    let power = 10N.pow(@bigint.BigInt::from_int(digits))
+    let exact = StringBuilder(size_hint=digits + 1)
+    exact.write_char('1')
+    for _ in 0..<digits {
+      exact.write_char('0')
+    }
+    assert_eq(power.to_string(), exact.to_string())
+
+    let below = StringBuilder(size_hint=digits)
+    for _ in 0..<digits {
+      below.write_char('9')
+    }
+    assert_eq((power - 1N).to_string(), below.to_string())
+
+    let above = StringBuilder(size_hint=digits + 1)
+    above.write_char('1')
+    for _ in 1..<digits {
+      above.write_char('0')
+    }
+    above.write_char('1')
+    assert_eq((power + 1N).to_string(), above.to_string())
+  }
 }
 
 ///|
