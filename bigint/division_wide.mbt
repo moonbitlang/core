@@ -68,24 +68,36 @@ fn div_mod_normalized(u : BigInt, v : BigInt) -> (BigInt, BigInt) {
 
 ///|
 /// Long division in base 2^(64*block), where `block = floor(v.len/2)`.
+///
+/// `work` is cloned once and then updated in place. `work_end` excludes stale
+/// processed limbs, so each step copies only its at-most-three-digit window
+/// instead of rebuilding the entire unprocessed low prefix.
 fn div_mod_recursive_steps(u : BigInt, v : BigInt) -> (BigInt, BigInt) {
   let n = v.len
   let block = n / 2
   let m = u.len - n
   let qlimbs = make(m + 1)
-  let mut work = u
+  let work = make(u.len)
+  work.unsafe_blit(0, u.limbs, 0, u.len)
+  let mut work_end = u.len
   let mut j = m
   while j > block {
     let offset = j - block
-    let window = work.high_mag(offset)
+    let window = slice_mag(work, offset, work_end - offset)
     let (qhat, remainder) = div_recursive_step(window, v, block)
     if !qhat.is_zero() {
       add_at(qlimbs, m + 1, qhat.limbs, qhat.len, offset)
     }
-    work = work.replace_high_mag(offset, remainder)
+    if remainder.is_zero() {
+      work_end = offset
+    } else {
+      work.unsafe_blit(offset, remainder.limbs, 0, remainder.len)
+      work_end = offset + remainder.len
+    }
     j -= block
   }
-  let (qhat, remainder) = div_recursive_step(work, v, block)
+  let remaining = slice_mag(work, 0, work_end)
+  let (qhat, remainder) = div_recursive_step(remaining, v, block)
   if !qhat.is_zero() {
     add_at(qlimbs, m + 1, qhat.limbs, qhat.len, 0)
   }
@@ -162,25 +174,6 @@ fn join_mag(low : BigInt, high : BigInt, split : Int) -> BigInt {
   }
   if !high.is_zero() {
     limbs.unsafe_blit(split, high.limbs, 0, high.len)
-  }
-  { limbs, sign: Positive, len: normalize_len(limbs, len), }
-}
-
-///|
-/// Keep `self` below `offset` and replace its entire high part with `high`.
-fn BigInt::replace_high_mag(
-  self : BigInt,
-  offset : Int,
-  high : BigInt,
-) -> BigInt {
-  let low_len = minimum_int(offset, self.len)
-  let len = maximum_int(low_len, offset + high.len)
-  let limbs = make(len)
-  if low_len > 0 {
-    limbs.unsafe_blit(0, self.limbs, 0, low_len)
-  }
-  if !high.is_zero() {
-    limbs.unsafe_blit(offset, high.limbs, 0, high.len)
   }
   { limbs, sign: Positive, len: normalize_len(limbs, len), }
 }

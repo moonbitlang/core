@@ -231,6 +231,21 @@ test "recursive division across threshold and block boundaries" {
 }
 
 ///|
+test "recursive division with highly unbalanced operands" {
+  // On native/wasm the divisor is exactly at the 64-limb recursive threshold
+  // while the quotient spans 64 recursive blocks. This exercises repeated
+  // in-place replacement of the bounded high window without copying the long
+  // unprocessed low prefix.
+  let divisor = mag_of_limbs(0x64d1a150UL, 128)
+  let quotient = mag_of_limbs(0x4000b10cUL, 4096)
+  for remainder in ([0N, 1N, divisor >> 1, divisor - 1N] : Array[_]) {
+    let dividend = quotient * divisor + remainder
+    assert_eq(dividend / divisor, quotient)
+    assert_eq(dividend % divisor, remainder)
+  }
+}
+
+///|
 test "division with adversarial divisor top limbs" {
   // Knuth 4.3.1 quotient-digit estimation is most fragile when the
   // normalized divisor's top limb is minimal (0x80000000) or maximal
