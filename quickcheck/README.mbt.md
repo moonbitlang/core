@@ -240,7 +240,7 @@ test "builtin types" {
       #|  8766027650639656979,
       #|  0.23986786603927612,
       #|  0.7917029935679342,
-      #|  0,
+      #|  -2,
       #|)
     ),
   )
@@ -262,11 +262,16 @@ full-width random bit patterns, common small values, values next to powers of
 two and ten, and type extrema. This keeps the entire scalar domain reachable
 while regularly exercising overflow, bit-width, and formatting boundaries.
 `Byte` remains uniformly distributed across all 256 bit patterns so `Bytes`
-and other byte-oriented workloads retain broad payload coverage. Fixed-width
-integer shrinkers try a midpoint first, then progressively finer candidates
-approaching the original value, with zero as the final fallback. With the
-greedy shrink driver, large failures still converge without linearly walking
-the numeric range while avoiding a likely rejected zero at every level.
+and other byte-oriented workloads retain broad payload coverage. `BigInt`
+uses a separate portfolio: 35% arbitrary bit patterns, 25% canonical small
+values, 25% neighbors of common powers of two, and 15% neighbors of common
+powers of ten. Its random branch grows with the size hint up to 32 64-bit
+chunks, while boundary branches regularly cover important widths regardless
+of size. Fixed-width integer shrinkers try a midpoint first, then progressively
+finer candidates approaching the original value, with zero as the final
+fallback. With the greedy shrink driver, large failures still converge without
+linearly walking the numeric range while avoiding a likely rejected zero at
+every level.
 
 ## Custom Types
 

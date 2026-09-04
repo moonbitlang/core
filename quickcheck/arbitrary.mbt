@@ -153,15 +153,6 @@ pub impl[X : Arbitrary] Arbitrary for Array[X] with fn arbitrary(size, rs) {
 }
 
 ///|
-pub impl Arbitrary for @bigint.BigInt with fn arbitrary(size, rs) {
-  if size == 0 {
-    0
-  } else {
-    rs.next_int64() |> @bigint.BigInt::from_int64
-  }
-}
-
-///|
 pub impl[X : Arbitrary] Arbitrary for @ref.Ref[X] with fn arbitrary(size, rs) {
   @ref.new(X::arbitrary(size, rs))
 }
