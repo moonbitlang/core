@@ -39,6 +39,12 @@ fn decimal_digit_hint(bits : Int) -> Int {
 }
 
 ///|
+/// Ceiling division by two without overflowing at `Int::max_value`.
+fn decimal_half_bits(bits : Int) -> Int {
+  bits / 2 + bits % 2
+}
+
+///|
 fn format_decimal(value : BigInt) -> String {
   if value.is_zero() {
     return "0"
@@ -71,7 +77,7 @@ fn decimal_divisor_table(value : BigInt) -> Array[DecimalDivisor] {
     divisor = divisor.mul_single_limb(DECIMAL_CHUNK)
   }
   let mut digits = DECIMAL_CHUNK_DIGITS * DECIMAL_LEAF_CHUNKS
-  let half_bits = (value.bit_length() + 1) / 2
+  let half_bits = decimal_half_bits(value.bit_length())
   while true {
     table.push({ value: divisor, digits, })
     if divisor.bit_length() >= half_bits {

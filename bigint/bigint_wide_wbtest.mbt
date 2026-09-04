@@ -184,11 +184,14 @@ test "BigInt::bit_length" {
 }
 
 ///|
-test "decimal digit hint avoids Int overflow" {
+test "decimal sizing avoids Int overflow" {
   let cases : Array[Int] = [0, 1, 4095, 4096, 1740261, 1740262, 2147483647]
   for bits in cases {
-    let expected = (bits.to_int64() * 1234L / 4096L + 1L).to_int()
-    @test.assert_eq(decimal_digit_hint(bits), expected)
+    let wide = bits.to_int64()
+    let expected_hint = (wide * 1234L / 4096L + 1L).to_int()
+    let expected_half = ((wide + 1L) / 2L).to_int()
+    @test.assert_eq(decimal_digit_hint(bits), expected_hint)
+    @test.assert_eq(decimal_half_bits(bits), expected_half)
   }
 }
 
