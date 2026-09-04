@@ -4,6 +4,9 @@
 
 MoonBit's `Array::sort` is a sophisticated hybrid sorting algorithm that combines multiple strategies to achieve optimal performance across different scenarios. It's an **in-place, unstable sort** with guaranteed **O(n log n)** worst-case time complexity.
 
+The implementation lives in `builtin/array_sort_impl.mbt`, where every
+helper carries a `fixed_` prefix; the snippets below are abridged from it.
+
 ## Core Strategy: Adaptive QuickSort
 
 The main algorithm is an adaptive QuickSort implementation with several optimizations and fallback strategies to handle edge cases efficiently.
@@ -13,8 +16,8 @@ The main algorithm is an adaptive QuickSort implementation with several optimiza
 ```
 Array::sort(arr)
     ├── Calculate recursion limit based on array length
-    └── quick_sort(arr, start=0, end=len, pred=None, limit)
-        ├── If len ≤ 16: Use Insertion Sort
+    └── fixed_quick_sort(arr, pred=None, limit)
+        ├── If len ≤ 16: Use Bubble Sort
         ├── If limit == 0: Use Heap Sort (fallback)
         ├── Choose pivot intelligently
         ├── If likely sorted: Try Bubble Sort
@@ -29,18 +32,21 @@ Array::sort(arr)
 ### 1. Size-Based Strategy Selection
 
 ```mbt
-let insertion_sort_len = 16
-if len <= insertion_sort_len {
-    arr.insertion_sort(start, end)  // Small arrays: O(n²) but cache-friendly
+let bubble_sort_len = 16
+if len <= bubble_sort_len {
+    if len >= 2 {
+        fixed_bubble_sort(arr)  // Small arrays: O(n²) but cache-friendly
+    }
+    return
 }
 ```
 
-**Small Arrays (≤16 elements)**: Uses insertion sort for its excellent cache locality and low overhead on small datasets.
+**Small Arrays (≤16 elements)**: Uses `fixed_bubble_sort` for its excellent cache locality and low overhead on small datasets.
 
 ### 2. Recursion Depth Limiting
 
 ```mbt
-fn get_limit(len: Int) -> Int {
+fn fixed_get_limit(len: Int) -> Int {
     // Returns log₂(len) - the maximum balanced recursion depth
     let mut limit = 0
     while len > 0 {
@@ -119,10 +125,11 @@ When consecutive equal pivots are detected, the algorithm skips over all equal e
 
 ```mbt
 // Recurse on smaller partition, iterate on larger
-if left_end - left_start < right_end - right_start {
-    arr.quick_sort(left_start, left_end, pred, limit)  // Recurse on smaller
-    current_start = right_start                         // Iterate on larger
-    current_end = right_end
+let left = arr.slice(0, pivot)
+let right = arr.slice(pivot + 1, len)
+if left.length() < right.length() {
+    fixed_quick_sort(left, pred, limit)  // Recurse on smaller
+    continue limit, right, Some(arr.unsafe_get(pivot)), ..  // Iterate on larger
 }
 ```
 
