@@ -23,9 +23,14 @@ chmod +x .githooks/*
 
 Runs before each commit to ensure code quality:
 
-- ✅ **moon check** - Validates code syntax, types, and formatting
-- ❌ **Blocks commit** if any issues are found
-- 💡 **Suggests fixes** like running `moon fmt`
+- ✅ **moon fmt** - Formats the staged MoonBit sources in place
+- ❌ **Blocks commit** if formatting changed any file, so the formatted
+  version is what gets committed
+- 💡 **Suggests the fix** - `git add . && git commit`
+
+> The `moon check` step is present in `pre-commit` but commented out, so
+> syntax and type errors are **not** caught at commit time — CI is what
+> catches them today.
 
 ### Usage
 
@@ -33,7 +38,7 @@ The hooks run automatically when you commit:
 
 ```bash
 git commit -m "your message"
-# → Runs moon check automatically
+# → Runs moon fmt automatically, and blocks the commit if it reformatted anything
 ```
 
 To bypass hooks temporarily (not recommended for production):
@@ -58,9 +63,11 @@ Run the auto-formatter:
 moon fmt
 ```
 
-### Hook fails due to type errors
+### The commit succeeded but CI reports type errors
 
-Fix the reported type errors and try committing again. The hook output will show specific error locations.
+The hook does not run `moon check` (that step is commented out in
+`pre-commit`), so type errors reach CI. Run `moon check` yourself before
+pushing.
 
 ## Contributing
 

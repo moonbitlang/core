@@ -36,8 +36,8 @@ For the latest stable release and installation instructions, contributors can vi
   cd hello
   echo """fn main {
     println([1, 2, 3].rev())
-  }""" > src/main/main.mbt
-  moon run src/main
+  }""" > cmd/main/main.mbt
+  moon run cmd/main
   # Output: [3, 2, 1]
   ```
 
@@ -89,7 +89,7 @@ After submitting your pull request, request a review from the project maintainer
 - Testing guidelines
 
   We encourage you to use `inspect` over `assert` in tests, as `inspect` provides more information about the values being tested and can
-  be updated easily. For testing in the loop, you may use `assert_` since snapshot testing does not work well in the loop.
+  be updated easily. For testing in the loop, you may use `assert_eq`/`assert_true` since snapshot testing does not work well in the loop.
 
 - New APIs with real meat
 
