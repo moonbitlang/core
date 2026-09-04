@@ -15,8 +15,8 @@
 // Divide-and-conquer decimal conversion for native/wasm BigInts.
 
 ///|
-/// Stored inline in the divisor table to avoid a heap object per entry.
-#valtype
+/// Kept boxed because `BigInt` is already a value type and stable native
+/// backends cannot yet flatten nested value types.
 priv struct DecimalDivisor {
   value : BigInt
   digits : Int
