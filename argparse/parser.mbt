@@ -79,10 +79,9 @@ fn raise_context_help(
 ///|
 fn default_argv() -> ArrayView[String] {
   let args = @env.args()
-  if args.length() > 1 {
-    args[1:]
-  } else {
-    []
+  match args {
+    [_, .. rest] => rest
+    [] => []
   }
 }
 
