@@ -214,21 +214,19 @@ test "an escape naming a non-BMP character reports it whole" {
 ///|
 test "valid surrogate pairs decode to one scalar value" {
   // Both ends of the supplementary range.
-  assert_true(@json.parse("\"\\uD800\\uDC00\"") == Json::string("\u{10000}"))
-  assert_true(@json.parse("\"\\udbff\\udfff\"") == Json::string("\u{10FFFF}"))
+  assert_true(@json.parse("\"\\uD800\\uDC00\"") == Json("\u{10000}"))
+  assert_true(@json.parse("\"\\udbff\\udfff\"") == Json("\u{10FFFF}"))
   // Any hex digit case, and in any position within the string.
-  assert_true(@json.parse("\"\\uD83D\\uDE00\"") == Json::string("\u{1F600}"))
-  assert_true(
-    @json.parse("\"a\\uD83D\\uDE00b\\n\"") == Json::string("a\u{1F600}b\n"),
-  )
+  assert_true(@json.parse("\"\\uD83D\\uDE00\"") == Json("\u{1F600}"))
+  assert_true(@json.parse("\"a\\uD83D\\uDE00b\\n\"") == Json("a\u{1F600}b\n"))
   // Two pairs running together are decoded independently.
   assert_true(
     @json.parse("\"\\uD83D\\uDE00\\uD83D\\uDE01\"") ==
-    Json::string("\u{1F600}\u{1F601}"),
+    Json("\u{1F600}\u{1F601}"),
   )
   // Non-surrogate escapes are unaffected, including the replacement
   // character, which is a scalar value like any other.
-  assert_true(@json.parse("\"\\u0041\\uFFFD\"") == Json::string("A\u{FFFD}"))
+  assert_true(@json.parse("\"\\u0041\\uFFFD\"") == Json("A\u{FFFD}"))
 }
 
 ///|

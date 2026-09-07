@@ -123,7 +123,7 @@ test "quickcheck: write_escaped matches the per-code-unit model" {
 test "quickcheck: stringify/parse roundtrip on adversarial strings" {
   @quickcheck.check(count=300, (input : (Array[Int], Bool)) => {
     let (seeds, escape_slash) = input
-    let json = Json::string(adversarial_string(seeds, allow_surrogates=false))
+    let json = Json(adversarial_string(seeds, allow_surrogates=false))
     parse(json.stringify(escape_slash~)) == json
   })
 }

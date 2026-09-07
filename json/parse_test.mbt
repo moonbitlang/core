@@ -202,7 +202,7 @@ test "parses +1.23e100" {
 ///|
 test "parses string" {
   let json = test_parse("\"abc\"")
-  @debug.assert_eq(json, Json::string("abc"))
+  @debug.assert_eq(json, Json("abc"))
 }
 
 ///|
@@ -212,7 +212,7 @@ test "parses quotes in string" {
       #|["\"","'"]
     ),
   )
-  @debug.assert_eq(json, Json::array([Json::string("\""), Json::string("'")]))
+  @debug.assert_eq(json, Json::array([Json("\""), Json("'")]))
 }
 
 ///|
@@ -222,7 +222,7 @@ test "parses escaped characters" {
       #|"\b\f\n\r\t\u01fF\""
     ),
   )
-  @debug.assert_eq(json, Json::string("\u0008\u000C\n\r\t\u01FF\""))
+  @debug.assert_eq(json, Json("\u0008\u000C\n\r\t\u01FF\""))
 }
 //endregion
 
@@ -247,7 +247,7 @@ test "parses whitespace around separators" {
     json,
     Json::object({
       "a": Json::number(1.0),
-      "b": Json::array([Json::boolean(true), Json::boolean(false)]),
+      "b": Json::array([Json(true), Json(false)]),
     }),
   )
 }

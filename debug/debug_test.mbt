@@ -31,7 +31,7 @@ test "inspect" {
 ///|
 test "debug repr for json" {
   @debug.debug_inspect(Json::null(), content="Null")
-  @debug.debug_inspect(Json::boolean(true), content="True")
+  @debug.debug_inspect(Json(true), content="True")
   @debug.debug_inspect(
     Json::number(@double.infinity, repr="1e999999999"),
     content=(
