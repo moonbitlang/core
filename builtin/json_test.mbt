@@ -38,17 +38,17 @@ test "Json number equality" {
 
 ///|
 test "Json string equality" {
-  let a = Json::string("hi")
-  let b = Json::string("hi")
-  let c = Json::string("bye")
+  let a = Json("hi")
+  let b = Json("hi")
+  let c = Json("bye")
   debug_inspect(a == b, content="true")
   debug_inspect(a == c, content="false")
 }
 
 ///|
 test "Json array equality" {
-  let a = Json::array([Json::number(1), Json::string("x")])
-  let b = Json::array([Json::number(1), Json::string("x")])
+  let a = Json::array([Json::number(1), Json("x")])
+  let b = Json::array([Json::number(1), Json("x")])
   let c = Json::array([Json::number(2)])
   debug_inspect(a == b, content="true")
   debug_inspect(a == c, content="false")
@@ -56,8 +56,8 @@ test "Json array equality" {
 
 ///|
 test "Json object equality" {
-  let a = Json::object({ "x": Json::number(1), "y": Json::string("a") })
-  let b = Json::object({ "x": Json::number(1), "y": Json::string("a") })
+  let a = Json::object({ "x": Json::number(1), "y": Json("a") })
+  let b = Json::object({ "x": Json::number(1), "y": Json("a") })
   let c = Json::object({ "x": Json::number(2) })
   debug_inspect(a == b, content="true")
   debug_inspect(a == c, content="false")
@@ -66,7 +66,7 @@ test "Json object equality" {
 ///|
 test "Json equality mismatch" {
   let a = Json::null()
-  let b = Json::string("x")
+  let b = Json("x")
   debug_inspect(a == b, content="false")
 }
 
@@ -214,13 +214,13 @@ test "Result to_json with Err value" {
 ///|
 test "Bool::to_json true" {
   let result = true.to_json()
-  @test.assert_eq(result, Json::boolean(true))
+  @test.assert_eq(result, Json(true))
 }
 
 ///|
 test "to_hex_digit" {
   let str = "\n\r\b\t\u{0C}\u{00}"
-  guard! Json::string(str) is String(escaped)
+  guard! Json(str) is String(escaped)
   @test.assert_eq(escaped, "\n\r\b\t\u{0c}\u{00}")
 }
 

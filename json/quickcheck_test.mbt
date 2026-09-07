@@ -188,7 +188,7 @@ impl @shrink.Shrink for ArbJson with fn shrink(self) {
 /// stream on a small document: null first, then each child, then one-child
 /// dropped, then one-child shrunk.
 test "shrink_json candidate stream" {
-  let doc = Json::array([Json::number(5.0), Json::string("a")])
+  let doc = Json::array([Json::number(5.0), Json("a")])
   debug_inspect(
     shrink_json(doc).to_array(),
     content=(

@@ -90,13 +90,10 @@ fn Json::prune_loc_test(self : Json) -> Json {
 test "prune_loc - primitive values" {
   // Null, True, False, Number, String should be preserved as-is
   debug_inspect(null.prune_loc(), content="Some(Null)")
-  debug_inspect(Json::boolean(true).prune_loc(), content="Some(True)")
-  debug_inspect(Json::boolean(false).prune_loc(), content="Some(False)")
+  debug_inspect(Json(true).prune_loc(), content="Some(True)")
+  debug_inspect(Json(false).prune_loc(), content="Some(False)")
   debug_inspect(Json::number(42.0).prune_loc(), content="Some(Number(42))")
-  debug_inspect(
-    Json::string("hello").prune_loc(),
-    content="Some(String(\"hello\"))",
-  )
+  debug_inspect(Json("hello").prune_loc(), content="Some(String(\"hello\"))")
 }
 
 ///|
@@ -105,12 +102,7 @@ test "prune_loc - arrays" {
   debug_inspect(Json::array([]).prune_loc(), content="Some(Array([]))")
 
   // Array with primitives
-  let arr1 = Json::array([
-    null,
-    Json::boolean(true),
-    Json::number(123.0),
-    Json::string("test"),
-  ])
+  let arr1 = Json::array([null, Json(true), Json::number(123.0), Json("test")])
   @json.json_inspect(
     arr1.prune_loc_test(),
     content=[null, true, 123, "test"], // FIXME: support null
@@ -127,7 +119,7 @@ test "prune_loc - objects without loc" {
   debug_inspect(Json::object(Map([])).prune_loc(), content="None")
 
   // Object with no "loc" key
-  let obj1 : Json = { "name": Json::string("John"), "age": Json::number(30.0) }
+  let obj1 : Json = { "name": Json("John"), "age": Json::number(30.0) }
   @json.json_inspect(obj1.prune_loc(), content=[{ "name": "John", "age": 30 }])
 }
 
@@ -144,8 +136,8 @@ test "prune_loc - objects with loc key" {
 
   // Object with "loc" and other keys - "loc" should be removed
   let obj_with_loc : Json = {
-    "type": Json::string("function"),
-    "name": Json::string("myFunc"),
+    "type": Json("function"),
+    "name": Json("myFunc"),
     "loc": Json::object({
       "line": Json::number(10.0),
       "column": Json::number(5.0),
@@ -160,15 +152,13 @@ test "prune_loc - objects with loc key" {
 test "prune_loc - nested objects" {
   // Nested object where inner object becomes empty after pruning
   let nested1 : Json = {
-    "outer": Json::object({ "loc": Json::string("should be removed") }),
+    "outer": Json::object({ "loc": Json("should be removed") }),
     "value": Json::number(42.0),
   }
   @json.json_inspect(nested1.prune_loc(), content=[{ "value": 42 }])
 
   // Nested object where all objects are pruned
-  let nested2 : Json = {
-    "inner": Json::object({ "loc": Json::string("remove me") }),
-  }
+  let nested2 : Json = { "inner": Json::object({ "loc": Json("remove me") }) }
   @json.json_inspect(
     nested2.prune_loc(),
     content=null, // FIXME: None -> Null

@@ -30,7 +30,7 @@ test {
 
 ///|
 test {
-  let u = Json::array([Json::number(1), Json::string("str")])
+  let u = Json::array([Json::number(1), Json("str")])
   let err = expect_json_decode_error(
     () => ignore((@json.from_json(u) : Array[Int])),
     "expected Array[Int] decode failure",
@@ -47,7 +47,7 @@ test {
 test {
   let u = Json::object({
     "x": Json::object({ "xx": Json::number(1) }),
-    "y": Json::object({ "yy": Json::string("str") }),
+    "y": Json::object({ "yy": Json("str") }),
   })
   let err = expect_json_decode_error(
     () => ignore((@json.from_json(u) : Map[String, Map[String, Double]])),
@@ -393,22 +393,22 @@ test "bigint" {
 
 ///|
 test "jsonvalue" {
-  let u = Json::string("str")
+  let u = Json("str")
   let v : Json = @json.from_json(u)
   debug_inspect(v, content="String(\"str\")")
   let u = Json::number(123)
   let v : Json = @json.from_json(u)
   debug_inspect(v, content="Number(123)")
-  let u = Json::boolean(true)
+  let u = Json(true)
   let v : Json = @json.from_json(u)
   debug_inspect(v, content="True")
-  let u = Json::boolean(false)
+  let u = Json(false)
   let v : Json = @json.from_json(u)
   debug_inspect(v, content="False")
   let u = null
   let v : Json = @json.from_json(u)
   debug_inspect(v, content="Null")
-  let u = Json::array([Json::number(1), Json::string("str")])
+  let u = Json::array([Json::number(1), Json("str")])
   let v : Json = @json.from_json(u)
   debug_inspect(
     v,
@@ -636,7 +636,7 @@ test "Bool from_json error handling" {
       #|JsonDecodeError((Root, "Bool::from_json: expected boolean"))
     ),
   )
-  let json_string = Json::string("true")
+  let json_string = Json("true")
   let err = expect_json_decode_error(
     () => ignore((@json.from_json(json_string) : Bool)),
     "expected Bool decode failure",
@@ -662,7 +662,7 @@ test "Int64 from_json error handling" {
       #|JsonDecodeError((Root, "Int64::from_json: expected number in string representation"))
     ),
   )
-  let json_invalid_string = Json::string("not a number")
+  let json_invalid_string = Json("not a number")
   let err = expect_json_decode_error(
     () => ignore((@json.from_json(json_invalid_string) : Int64)),
     "expected Int64 parse failure",
@@ -677,7 +677,7 @@ test "Int64 from_json error handling" {
 
 ///|
 test "UInt from_json error handling" {
-  let json_string = Json::string("123")
+  let json_string = Json("123")
   let err = expect_json_decode_error(
     () => ignore((@json.from_json(json_string) : UInt)),
     "expected UInt decode failure",
@@ -703,7 +703,7 @@ test "UInt64 from_json error handling" {
       #|JsonDecodeError((Root, "UInt64::from_json: expected number in string representation"))
     ),
   )
-  let json_invalid_string = Json::string("not a number")
+  let json_invalid_string = Json("not a number")
   let err = expect_json_decode_error(
     () => ignore((@json.from_json(json_invalid_string) : UInt64)),
     "expected UInt64 parse failure",
@@ -759,7 +759,7 @@ test "Char from_json error handling" {
       #|JsonDecodeError((Root, "Char::from_json: expected string"))
     ),
   )
-  let json_empty_string = Json::string("")
+  let json_empty_string = Json("")
   let err = expect_json_decode_error(
     () => ignore((@json.from_json(json_empty_string) : Char)),
     "expected Char decode failure",
@@ -770,7 +770,7 @@ test "Char from_json error handling" {
       #|JsonDecodeError((Root, "Char::from_json: expected single character"))
     ),
   )
-  let json_long_string = Json::string("abc")
+  let json_long_string = Json("abc")
   let err = expect_json_decode_error(
     () => ignore((@json.from_json(json_long_string) : Char)),
     "expected Char decode failure",
@@ -796,7 +796,7 @@ test "BigInt from_json error handling" {
       #|JsonDecodeError((Root, "BigInt::from_json: expected number in string representation"))
     ),
   )
-  let json_invalid_number = Json::string("not-a-number")
+  let json_invalid_number = Json("not-a-number")
   let err = expect_json_decode_error(
     () => ignore((@json.from_json(json_invalid_number) : BigInt)),
     "expected invalid BigInt decode failure",
@@ -811,7 +811,7 @@ test "BigInt from_json error handling" {
 
 ///|
 test "Array from_json error handling" {
-  let json_string = Json::string("not an array")
+  let json_string = Json("not an array")
   let err = expect_json_decode_error(
     () => ignore((@json.from_json(json_string) : Array[Int])),
     "expected Array decode failure",
@@ -826,7 +826,7 @@ test "Array from_json error handling" {
 
 ///|
 test "FixedArray from_json error handling" {
-  let json_string = Json::string("not an array")
+  let json_string = Json("not an array")
   let err = expect_json_decode_error(
     () => ignore((@json.from_json(json_string) : FixedArray[Int])),
     "expected FixedArray decode failure",
@@ -856,7 +856,7 @@ test "Map from_json error handling" {
 
 ///|
 test "Option from_json error handling" {
-  let json_string = Json::string("not an option")
+  let json_string = Json("not an option")
   let err = expect_json_decode_error(
     () => ignore((@json.from_json(json_string) : Int?)),
     "expected Option decode failure",
@@ -871,7 +871,7 @@ test "Option from_json error handling" {
 
 ///|
 test "Result from_json error handling" {
-  let json_string = Json::string("not a result")
+  let json_string = Json("not a result")
   let err = expect_json_decode_error(
     () => ignore((@json.from_json(json_string) : Result[Int, String])),
     "expected Result decode failure",
@@ -908,7 +908,7 @@ test "Result from_json error handling" {
 
 ///|
 test "Unit from_json error handling" {
-  let json_string = Json::string("not null")
+  let json_string = Json("not null")
   let err = expect_json_decode_error(
     () => ignore((@json.from_json(json_string) : Unit)),
     "expected Unit decode failure",
@@ -950,17 +950,17 @@ test "float roundtrip" {
 ///|
 test "float special values" {
   // Test NaN
-  let u = Json::string("NaN")
+  let u = Json("NaN")
   let v : Float = @json.from_json(u)
   inspect(v, content="NaN")
 
   // Test Infinity
-  let u = Json::string("Infinity")
+  let u = Json("Infinity")
   let v : Float = @json.from_json(u)
   inspect(v, content="Infinity")
 
   // Test -Infinity
-  let u = Json::string("-Infinity")
+  let u = Json("-Infinity")
   let v : Float = @json.from_json(u)
   inspect(v, content="-Infinity")
 
@@ -972,7 +972,7 @@ test "float special values" {
 
 ///|
 test "Float from_json error handling" {
-  let json_string = Json::string("not a number")
+  let json_string = Json("not a number")
   let err = expect_json_decode_error(
     () => ignore((@json.from_json(json_string) : Float)),
     "expected Float decode failure",
@@ -1032,14 +1032,14 @@ test "ArrayView::from_json" {
 
 ///|
 test "from_json special cases" {
-  let nan_value : Double = @json.from_json(Json::string("NaN"))
+  let nan_value : Double = @json.from_json(Json("NaN"))
   @json.json_inspect(nan_value, content="NaN")
-  let inf_value : Double = @json.from_json(Json::string("Infinity"))
+  let inf_value : Double = @json.from_json(Json("Infinity"))
   @json.json_inspect(inf_value, content="Infinity")
-  let neg_inf_value : Double = @json.from_json(Json::string("-Infinity"))
+  let neg_inf_value : Double = @json.from_json(Json("-Infinity"))
   @json.json_inspect(neg_inf_value, content="-Infinity")
   let array_view_err = expect_json_decode_error(
-    () => ignore((@json.from_json(Json::string("oops")) : ArrayView[Int])),
+    () => ignore((@json.from_json(Json("oops")) : ArrayView[Int])),
     "expected ArrayView::from_json error",
   )
   guard array_view_err
@@ -1055,7 +1055,7 @@ test "from_json special cases" {
     fail("expected Bytes::from_json type error")
   }
   let bytes_escape_err = expect_json_decode_error(
-    () => ignore((@json.from_json(Json::string("bad\\\\")) : Bytes)),
+    () => ignore((@json.from_json(Json("bad\\\\")) : Bytes)),
     "expected Bytes::from_json escape error",
   )
   guard bytes_escape_err
@@ -1063,7 +1063,7 @@ test "from_json special cases" {
     fail("expected Bytes::from_json escape error")
   }
   let bytes_invalid_err = expect_json_decode_error(
-    () => ignore((@json.from_json(Json::string("\u{0}")) : Bytes)),
+    () => ignore((@json.from_json(Json("\u{0}")) : Bytes)),
     "expected Bytes::from_json byte error",
   )
   guard bytes_invalid_err

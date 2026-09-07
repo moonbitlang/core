@@ -315,13 +315,13 @@ test "string from and to json round trip" {
 test "escape" {
   let s = "http://example.com/"
   inspect(
-    Json::string(s).stringify(escape_slash=true),
+    Json(s).stringify(escape_slash=true),
     content=(
       #|"http:\/\/example.com\/"
     ),
   )
   inspect(
-    Json::string(s).stringify(),
+    Json(s).stringify(),
     content=(
       #|"http://example.com/"
     ),
