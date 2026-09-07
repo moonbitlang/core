@@ -331,7 +331,7 @@ pub fn BytesView::iter2(self : BytesView) -> Iter2[Int, Byte] {
 }
 
 ///|
-fn write_byte_hex(logger : &Logger, byte : Byte) -> Unit {
+fn[T : Logger] write_byte_hex(logger : T, byte : Byte) -> Unit {
   fn hex_digit(value : Int) -> Char {
     if value < 10 {
       (value + '0'.to_int()).unsafe_to_char()
@@ -349,7 +349,7 @@ fn write_byte_hex(logger : &Logger, byte : Byte) -> Unit {
 /// Writes the bytes with printable ASCII kept as-is and everything else
 /// rendered as `\xHH`, without the surrounding `b"`/`"`. Shared by `Show`,
 /// which adds the quotes, and `ToJson`, which does not.
-pub fn BytesView::escape_to(self : BytesView, logger : &Logger) -> Unit {
+fn[T : Logger] BytesView::escape_to(self : BytesView, logger : T) -> Unit {
   for byte in self {
     if byte is (b' '..=b'~') && byte != b'"' && byte != b'\\' {
       logger.write_char(byte.to_char())
