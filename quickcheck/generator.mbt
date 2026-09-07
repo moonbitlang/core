@@ -125,7 +125,10 @@ pub fn[T, U, V] Generator::zip_with(
   other : Generator[U],
   combine : (T, U) -> V,
 ) -> Generator[V] {
-  self.flat_map(first => other.map(second => combine(first, second)))
+  Generator((size, state) => {
+    let other_state = state.split()
+    combine(self.run(size, state), other.run(size, other_state))
+  })
 }
 
 ///|
@@ -136,7 +139,15 @@ pub fn[T, U, V, W] Generator::zip_with3(
   third : Generator[V],
   combine : (T, U, V) -> W,
 ) -> Generator[W] {
-  self.flat_map(a => second.flat_map(b => third.map(c => combine(a, b, c))))
+  Generator((size, state) => {
+    let second_state = state.split()
+    let third_state = second_state.split()
+    combine(
+      self.run(size, state),
+      second.run(size, second_state),
+      third.run(size, third_state),
+    )
+  })
 }
 
 ///|
