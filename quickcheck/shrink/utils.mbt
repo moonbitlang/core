@@ -13,15 +13,29 @@
 // limitations under the License.
 
 ///|
+/// Builds an iterator whose underlying chain is only constructed once the first
+/// element is demanded.
+///
+/// The collection shrink instances append a per-element candidate chain that
+/// costs `O(n)` to build. Structural candidates come first and usually settle
+/// the shrink, so building that chain up front is wasted work.
+fn[T] deferred(f : () -> Iter[T]) -> Iter[T] {
+  let cell = @lazy.Lazy(f)
+  Iter::new(fn() { cell.force().next() })
+}
+
+///|
+/// `n` must be `xs.length()`; the recursive call maintains that, and both
+/// guards below rely on it.
 fn[T] removes_array(k : Int, n : Int, xs : Array[T]) -> Iter[Array[T]] {
   guard k <= n else { [||] }
+  // Dropping every element leaves the empty array; taking the `k`-element
+  // prefix first would copy the whole array only to discard it. Past this
+  // guard `xs[k:]` is non-empty.
+  guard k < n else { [|[]|] }
   let xs2 = xs[:k].to_owned()
   let xs1 = xs[k:].to_owned()
-  if xs1.is_empty() {
-    [|[]|]
-  } else {
-    [|xs1|].add(removes_array(k, n - k, xs1).map(x => xs2 + x))
-  }
+  [|xs1|].add(removes_array(k, n - k, xs1).map(x => xs2 + x))
 }
 
 ///|
