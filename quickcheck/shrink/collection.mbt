@@ -30,7 +30,7 @@ pub impl[T : Shrink] Shrink for @list.List[T] with fn shrink(xs) {
   ]
   .rev_iter()
   .flat_map(k => removes_list(k, n, xs))
-  .concat(shr_sub_terms(xs))
+  .concat(deferred(() => shr_sub_terms(xs)))
 }
 
 ///|

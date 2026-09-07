@@ -47,7 +47,7 @@ pub impl[X : Shrink] Shrink for Array[X] with fn shrink(xs) {
   ]
   .iter()
   .flat_map(k => removes_array(k, n, xs))
-  .concat(shr_sub_terms(view))
+  .concat(deferred(() => shr_sub_terms(view)))
 }
 
 ///|

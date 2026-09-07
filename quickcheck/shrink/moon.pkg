@@ -5,6 +5,7 @@ import {
   "moonbitlang/core/float",
   "moonbitlang/core/int16",
   "moonbitlang/core/uint16",
+  "moonbitlang/core/lazy",
   "moonbitlang/core/ref",
   "moonbitlang/core/list",
   "moonbitlang/core/queue",
