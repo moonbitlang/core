@@ -51,17 +51,109 @@ pub impl Show for BigInt with fn to_string(self) {
 }
 
 ///|
+/// Decodes a `BigInt` from JSON.
+///
+/// Accepts the string form `BigInt::to_json` produces, and also a JSON number
+/// that denotes an integer. The parser keeps the source text of every integer
+/// literal that runs past the exact-integer range of a `Double`, so a document
+/// written by some other producer decodes without losing digits:
+///
+/// ```mbt check
+/// test {
+///   let big : @bigint.BigInt = @json.from_json(
+///     @json.parse("12345678901234567890123"),
+///   )
+///   inspect(big, content="12345678901234567890123")
+///   let small : @bigint.BigInt = @json.from_json(Json::number(42))
+///   inspect(small, content="42")
+/// }
+/// ```
+///
+/// Where that text is present it is authoritative and must spell a plain
+/// integer, so an exponent-form literal such as `1e400` is rejected rather
+/// than decoded from the infinity it rounds to. A number carrying no text
+/// decodes to the exact integer its `Double` holds, and so must be finite and
+/// integral: `1.5` and `NaN` are errors, while `1e300` names the 301-digit
+/// integer that double actually is.
 pub impl @json.FromJson for BigInt with fn from_json(json, path) {
-  guard json is String(s) else {
-    raise JsonDecodeError(
-      (path, "BigInt::from_json: expected number in string representation"),
-    )
-  }
-  parse_bigint(s.view()) catch {
+  match json {
+    String(s) =>
+      parse_bigint(s.view()) catch {
+        _ =>
+          raise JsonDecodeError(
+            (path, "BigInt::from_json: invalid number in string representation"),
+          )
+      }
+    Number(value, repr~) => bigint_of_json_number(value, repr, path)
     _ =>
       raise JsonDecodeError(
-        (path, "BigInt::from_json: invalid number in string representation"),
+        (
+          path, "BigInt::from_json: expected a number or its string representation",
+        ),
       )
+  }
+}
+
+///|
+/// Decodes the payload of a JSON `Number` into the exact integer it denotes.
+///
+/// A `Number` holds the value as a `Double` and, for the literals the parser
+/// singles out — integers past the exact-integer range, and anything
+/// overflowing to an infinity — the source text as well. The text wins where
+/// it exists: `12345678901234567890123` only reaches the double after rounding
+/// to `1.2345678901234568e22`, and decoding that would silently change the
+/// last six digits.
+fn bigint_of_json_number(
+  value : Double,
+  repr : String?,
+  path : @json.JsonPath,
+) -> BigInt raise @json.JsonDecodeError {
+  if repr is Some(text) {
+    return parse_bigint(text.view()) catch {
+      _ =>
+        raise JsonDecodeError(
+          (path, "BigInt::from_json: `\{text}` is not a plain integer literal"),
+        )
+    }
+  }
+  guard !value.is_nan() && !value.is_inf() else {
+    raise JsonDecodeError((path, "BigInt::from_json: number is not finite"))
+  }
+  guard value.trunc() == value else {
+    raise JsonDecodeError((path, "BigInt::from_json: number is not an integer"))
+  }
+  bigint_of_integral_double(value)
+}
+
+///|
+/// Converts a `Double` already known to be finite and integral into that exact
+/// integer.
+///
+/// A finite double is `significand * 2^exponent` with a 53-bit significand, so
+/// the integer it names is that product and no rounding is involved — going
+/// through `Int64` instead would cap the range at 2^63, well short of the
+/// integers a double can hold.
+fn bigint_of_integral_double(value : Double) -> BigInt {
+  if value == 0.0 {
+    return zero
+  }
+  let bits = value.reinterpret_as_uint64()
+  let biased_exponent = ((bits >> 52) & 0x7FFUL).to_int()
+  // The leading significand bit is implicit for a normal double. A subnormal
+  // has none, but every non-zero subnormal is a proper fraction, so the only
+  // integral one is the zero already returned above.
+  let significand = (bits & 0xF_FFFF_FFFF_FFFFUL) | (1UL << 52)
+  let exponent = biased_exponent - 1075
+  let magnitude = if exponent >= 0 {
+    BigInt::from_uint64(significand) << exponent
+  } else {
+    // `value` is integral, so every bit dropped here is already zero.
+    BigInt::from_uint64(significand >> -exponent)
+  }
+  if bits >> 63 != 0 {
+    -magnitude
+  } else {
+    magnitude
   }
 }
 
