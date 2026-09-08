@@ -76,3 +76,130 @@ test "StringView::clamped_view uses view-relative offsets" {
   // nested truncation
   inspect(v.clamped_view(start=1).clamped_view(end=2), content="b")
 }
+
+///|
+test "Array::clamped_view clamps out-of-range and inverted offsets" {
+  let arr = [1, 2, 3, 4, 5]
+  json_inspect(arr.clamped_view().to_owned(), content=[1, 2, 3, 4, 5])
+  json_inspect(arr.clamped_view(start=1, end=4).to_owned(), content=[2, 3, 4])
+  json_inspect(arr.clamped_view(end=100).to_owned(), content=[1, 2, 3, 4, 5])
+  json_inspect(arr.clamped_view(start=-5).to_owned(), content=[1, 2, 3, 4, 5])
+  json_inspect(arr.clamped_view(start=100).to_owned(), content=[])
+  json_inspect(arr.clamped_view(start=4, end=1).to_owned(), content=[])
+  json_inspect(arr.clamped_view(start=-9, end=-3).to_owned(), content=[])
+  json_inspect(([] : Array[Int]).clamped_view(end=10).to_owned(), content=[])
+}
+
+///|
+test "Array::clamped_view agrees with get_view on valid ranges" {
+  let arr = [1, 2, 3, 4, 5]
+  for start in -1..<=6 {
+    for end in -1..<=6 {
+      // get_view rejects out-of-range and inverted ranges; clamped_view
+      // answers the same on every range get_view accepts.
+      guard arr.get_view(start~, end~) is Some(v) else { continue }
+      json_inspect(
+        arr.clamped_view(start~, end~).to_owned(),
+        content=v.to_owned().to_json(),
+      )
+    }
+  }
+}
+
+///|
+test "ArrayView::clamped_view uses view-relative offsets" {
+  let view = [1, 2, 3, 4, 5][1:4] // [2, 3, 4]
+  json_inspect(view.clamped_view().to_owned(), content=[2, 3, 4])
+  json_inspect(view.clamped_view(start=1, end=100).to_owned(), content=[3, 4])
+  json_inspect(view.clamped_view(start=-3, end=2).to_owned(), content=[2, 3])
+  json_inspect(view.clamped_view(start=3, end=1).to_owned(), content=[])
+  // nested truncation stays inside the original view
+  json_inspect(view.clamped_view(start=1).clamped_view(end=100).to_owned(), content=[
+    3, 4,
+  ])
+}
+
+///|
+test "Array::clamped_view aliases the backing array" {
+  let arr = [1, 2, 3, 4, 5]
+  let v = arr.clamped_view(start=1, end=100)
+  arr[1] = 20
+  json_inspect(v.to_owned(), content=[20, 3, 4, 5])
+}
+
+///|
+test "Bytes::clamped_view clamps out-of-range and inverted offsets" {
+  let bs = b"\x00\x01\x02\x03\x04\x05"
+  inspect(bs.clamped_view() == bs, content="true")
+  inspect(bs.clamped_view(start=4, end=100) == b"\x04\x05", content="true")
+  inspect(bs.clamped_view(start=-5, end=2) == b"\x00\x01", content="true")
+  inspect(bs.clamped_view(start=100).length(), content="0")
+  inspect(bs.clamped_view(start=4, end=1).length(), content="0")
+  inspect(bs.clamped_view(start=-9, end=-3).length(), content="0")
+  inspect(b"".clamped_view(end=10).length(), content="0")
+}
+
+///|
+test "Bytes::clamped_view agrees with get_view on valid ranges" {
+  let bs = b"\x00\x01\x02\x03\x04\x05"
+  for start in -1..<=7 {
+    for end in -1..<=7 {
+      guard bs.get_view(start~, end~) is Some(v) else { continue }
+      inspect(bs.clamped_view(start~, end~) == v, content="true")
+    }
+  }
+}
+
+///|
+test "BytesView::clamped_view uses view-relative offsets" {
+  let bv = b"\x00\x01\x02\x03\x04\x05"[1:4] // 0x01 0x02 0x03
+  inspect(bv.clamped_view() == bv, content="true")
+  inspect(bv.clamped_view(start=1, end=100) == b"\x02\x03", content="true")
+  inspect(bv.clamped_view(start=-3, end=2) == b"\x01\x02", content="true")
+  inspect(bv.clamped_view(start=3, end=1).length(), content="0")
+  // nested truncation stays inside the original view
+  inspect(
+    bv.clamped_view(start=1).clamped_view(end=100) == b"\x02\x03",
+    content="true",
+  )
+}
+
+///|
+test "clamped_view positions an empty result at the clamped start" {
+  let arr = [1, 2, 3, 4, 5]
+  inspect(arr.clamped_view(start=4, end=1).start_offset(), content="4")
+  inspect(arr.clamped_view(start=100).start_offset(), content="5")
+  inspect(arr.clamped_view(start=-9, end=-3).start_offset(), content="0")
+  let view = arr[1:4] // [2, 3, 4]
+  // view-relative offsets, but start_offset() is absolute in the array
+  inspect(view.clamped_view(start=2, end=1).start_offset(), content="3")
+  inspect(view.clamped_view(start=100).start_offset(), content="4")
+  let bs = b"\x00\x01\x02\x03\x04\x05"
+  inspect(bs.clamped_view(start=4, end=1).start_offset(), content="4")
+  inspect(bs.clamped_view(start=100).start_offset(), content="6")
+  let bv = bs[1:4] // 0x01 0x02 0x03
+  inspect(bv.clamped_view(start=2, end=1).start_offset(), content="3")
+  inspect(bv.clamped_view(start=100).start_offset(), content="4")
+}
+
+///|
+test "clamped_view saturates at the extremes of Int" {
+  let lo = @int.MIN_VALUE
+  let hi = @int.MAX_VALUE
+  let arr = [1, 2, 3, 4, 5]
+  json_inspect(arr.clamped_view(start=lo, end=hi).to_owned(), content=[
+    1, 2, 3, 4, 5,
+  ])
+  json_inspect(arr.clamped_view(start=hi, end=lo).to_owned(), content=[])
+  json_inspect(arr.clamped_view(start=lo, end=lo).to_owned(), content=[])
+  json_inspect(arr.clamped_view(start=hi, end=hi).to_owned(), content=[])
+  let view = arr[1:4]
+  json_inspect(view.clamped_view(start=lo, end=hi).to_owned(), content=[2, 3, 4])
+  inspect(view.clamped_view(start=hi, end=lo).start_offset(), content="4")
+  let bs = b"\x00\x01\x02\x03\x04\x05"
+  inspect(bs.clamped_view(start=lo, end=hi) == bs, content="true")
+  inspect(bs.clamped_view(start=hi, end=lo).length(), content="0")
+  let bv = bs[1:4]
+  inspect(bv.clamped_view(start=lo, end=hi) == bv, content="true")
+  inspect(bv.clamped_view(start=hi, end=lo).start_offset(), content="4")
+}

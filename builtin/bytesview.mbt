@@ -270,6 +270,73 @@ pub fn BytesView::view(
 }
 
 ///|
+/// Returns a view of the bytes between `start` and `end`, clamping the
+/// requested range instead of rejecting it.
+///
+/// Total: `start` and `end` are each pulled into `[0, length()]`, and an
+/// inverted range yields an empty view at the clamped `start`, so this
+/// function never aborts and never rejects a range. Intended for windowing
+/// where the caller already knows the range may overrun, such as framing a
+/// byte stream.
+///
+/// See `bs[start:end]` for the aborting variant and `Bytes::get_view` for the
+/// exact `Option`-returning variant.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   let bs = b"\x00\x01\x02\x03\x04\x05"
+///   inspect(bs.clamped_view(start=4, end=100).length(), content="2")
+///   inspect(bs.clamped_view(start=-2, end=2).length(), content="2")
+///   inspect(bs.clamped_view(start=4, end=1).length(), content="0")
+/// }
+/// ```
+pub fn Bytes::clamped_view(
+  self : Bytes,
+  start? : Int = 0,
+  end? : Int,
+) -> BytesView {
+  let len = self.length()
+  let lo = clamp_offset(start, len)
+  let hi = match end {
+    None => len
+    Some(end) => clamp_offset(end, len)
+  }
+  let count = if hi > lo { hi - lo } else { 0 }
+  BytesView::make(self, lo, count)
+}
+
+///|
+/// Returns a sub-view of the view between `start` and `end`, clamping the
+/// requested range instead of rejecting it. Offsets are relative to the view;
+/// same contract as `Bytes::clamped_view`.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   let bv = b"\x00\x01\x02\x03\x04\x05"[1:4]
+///   inspect(bv.clamped_view(start=1, end=100).length(), content="2")
+///   inspect(bv.clamped_view(start=3, end=1).length(), content="0")
+/// }
+/// ```
+pub fn BytesView::clamped_view(
+  self : BytesView,
+  start? : Int = 0,
+  end? : Int,
+) -> BytesView {
+  let len = self.length()
+  let lo = clamp_offset(start, len)
+  let hi = match end {
+    None => len
+    Some(end) => clamp_offset(end, len)
+  }
+  let count = if hi > lo { hi - lo } else { 0 }
+  BytesView::make(self.bytes(), self.start() + lo, count)
+}
+
+///|
 /// Returns an iterator over the `View`.
 /// 
 /// # Example

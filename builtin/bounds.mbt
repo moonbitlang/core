@@ -38,3 +38,18 @@ fn[T] index_out_of_bounds2(len : Int, i : Int, j : Int) -> T {
     "index out of bounds: the len is from 0 to \{len} but the index is (\{i}, \{j})",
   )
 }
+
+///|
+/// Clamps a view offset into `[0, len]`.
+///
+/// Shared by the `clamped_view` family, whose contract is to never abort:
+/// offsets outside the container are pulled to the nearest end instead.
+fn clamp_offset(offset : Int, len : Int) -> Int {
+  if offset < 0 {
+    0
+  } else if offset > len {
+    len
+  } else {
+    offset
+  }
+}
