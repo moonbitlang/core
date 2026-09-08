@@ -998,6 +998,7 @@ pub fn FixedArray::blit_from_bytes(Self[Byte], Int, Bytes, Int, Int) -> Unit
 pub fn FixedArray::blit_from_bytesview(Self[Byte], Int, BytesView) -> Unit
 pub fn FixedArray::blit_from_string(Self[Byte], Int, String, Int, Int) -> Unit
 pub fn[A] FixedArray::blit_to(Self[A], Self[A], len~ : Int, src_offset? : Int, dst_offset? : Int) -> Unit
+pub fn[T] FixedArray::clamped_view(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 pub fn[T : Compare] FixedArray::compare(Self[T], Self[T]) -> Int
 pub fn[T : Eq] FixedArray::contains(Self[T], T) -> Bool
 #alias(clone, deprecated)
@@ -1072,6 +1073,7 @@ pub fn[T : Compare] ReadOnlyArray::binary_search(Self[T], T) -> Result[Int, Int]
 pub fn[T] ReadOnlyArray::binary_search_by(Self[T], (T) -> Int raise?) -> Result[Int, Int] raise?
 pub fn[T] ReadOnlyArray::chunk_by(Self[T], (T, T) -> Bool raise?) -> Array[ArrayView[T]] raise?
 pub fn[T] ReadOnlyArray::chunks(Self[T], Int) -> Array[ArrayView[T]]
+pub fn[T] ReadOnlyArray::clamped_view(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 pub fn[T : Compare] ReadOnlyArray::compare(Self[T], Self[T]) -> Int
 pub fn[T : Eq] ReadOnlyArray::contains(Self[T], T) -> Bool
 pub fn[T] ReadOnlyArray::each(Self[T], (T) -> Unit raise?) -> Unit raise?

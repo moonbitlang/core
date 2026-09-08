@@ -203,3 +203,115 @@ test "clamped_view saturates at the extremes of Int" {
   inspect(bv.clamped_view(start=lo, end=hi) == bv, content="true")
   inspect(bv.clamped_view(start=hi, end=lo).start_offset(), content="4")
 }
+
+///|
+test "FixedArray::clamped_view clamps out-of-range and inverted offsets" {
+  let arr : FixedArray[Int] = [1, 2, 3, 4, 5]
+  json_inspect(arr.clamped_view().to_owned(), content=[1, 2, 3, 4, 5])
+  json_inspect(arr.clamped_view(start=1, end=4).to_owned(), content=[2, 3, 4])
+  json_inspect(arr.clamped_view(end=100).to_owned(), content=[1, 2, 3, 4, 5])
+  json_inspect(arr.clamped_view(start=-5).to_owned(), content=[1, 2, 3, 4, 5])
+  json_inspect(arr.clamped_view(start=100).to_owned(), content=[])
+  json_inspect(arr.clamped_view(start=4, end=1).to_owned(), content=[])
+  json_inspect(arr.clamped_view(start=-9, end=-3).to_owned(), content=[])
+  json_inspect(
+    arr.clamped_view(start=@int.MIN_VALUE, end=@int.MAX_VALUE).to_owned(),
+    content=[1, 2, 3, 4, 5],
+  )
+  json_inspect(
+    arr.clamped_view(start=@int.MAX_VALUE, end=@int.MIN_VALUE).to_owned(),
+    content=[],
+  )
+  json_inspect(([] : FixedArray[Int]).clamped_view(end=10).to_owned(), content=[])
+  // empty results sit at the clamped start
+  inspect(arr.clamped_view(start=4, end=1).start_offset(), content="4")
+  inspect(arr.clamped_view(start=100).start_offset(), content="5")
+  inspect(arr.clamped_view(start=-9, end=-3).start_offset(), content="0")
+}
+
+///|
+test "FixedArray::clamped_view aliases the backing array" {
+  let arr : FixedArray[Int] = [1, 2, 3, 4, 5]
+  let v = arr.clamped_view(start=1, end=100)
+  arr[1] = 20
+  json_inspect(v.to_owned(), content=[20, 3, 4, 5])
+}
+
+///|
+test "ReadOnlyArray::clamped_view clamps out-of-range and inverted offsets" {
+  let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
+  json_inspect(arr.clamped_view().to_owned(), content=[1, 2, 3, 4, 5])
+  json_inspect(arr.clamped_view(start=1, end=4).to_owned(), content=[2, 3, 4])
+  json_inspect(arr.clamped_view(end=100).to_owned(), content=[1, 2, 3, 4, 5])
+  json_inspect(arr.clamped_view(start=-5).to_owned(), content=[1, 2, 3, 4, 5])
+  json_inspect(arr.clamped_view(start=100).to_owned(), content=[])
+  json_inspect(arr.clamped_view(start=4, end=1).to_owned(), content=[])
+  json_inspect(arr.clamped_view(start=-9, end=-3).to_owned(), content=[])
+  json_inspect(
+    arr.clamped_view(start=@int.MIN_VALUE, end=@int.MAX_VALUE).to_owned(),
+    content=[1, 2, 3, 4, 5],
+  )
+  json_inspect(
+    arr.clamped_view(start=@int.MAX_VALUE, end=@int.MIN_VALUE).to_owned(),
+    content=[],
+  )
+  json_inspect(([] : ReadOnlyArray[Int]).clamped_view(end=10).to_owned(), content=[])
+  // the `end=None` arm delegates separately; it must clamp `start` too
+  inspect(arr.clamped_view(start=100).start_offset(), content="5")
+  inspect(arr.clamped_view(start=4, end=1).start_offset(), content="4")
+}
+
+///|
+test "clamped_view with `end` omitted forwards `start` unchanged" {
+  // `ReadOnlyArray::clamped_view` handles `end=None` in a separate arm, so an
+  // interior start is what catches a mangled `start` there: 0 / negative /
+  // past-the-end starts all survive a doubled `start`.
+  let ro : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
+  let fixed : FixedArray[Int] = [1, 2, 3, 4, 5]
+  json_inspect(ro.clamped_view(start=1).to_owned(), content=[2, 3, 4, 5])
+  json_inspect(fixed.clamped_view(start=1).to_owned(), content=[2, 3, 4, 5])
+  for start in -1..<=6 {
+    // omitting `end` must equal passing the full length explicitly
+    let ro_omitted = ro.clamped_view(start~)
+    let ro_explicit = ro.clamped_view(start~, end=5)
+    json_inspect(
+      ro_omitted.to_owned(),
+      content=ro_explicit.to_owned().to_json(),
+    )
+    inspect(
+      ro_omitted.start_offset() == ro_explicit.start_offset(),
+      content="true",
+    )
+    let fixed_omitted = fixed.clamped_view(start~)
+    let fixed_explicit = fixed.clamped_view(start~, end=5)
+    json_inspect(
+      fixed_omitted.to_owned(),
+      content=fixed_explicit.to_owned().to_json(),
+    )
+    inspect(
+      fixed_omitted.start_offset() == fixed_explicit.start_offset(),
+      content="true",
+    )
+  }
+}
+
+///|
+test "FixedArray/ReadOnlyArray clamped_view agree with get_view" {
+  let fixed : FixedArray[Int] = [1, 2, 3, 4, 5]
+  let ro : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
+  for start in -1..<=6 {
+    for end in -1..<=6 {
+      // get_view rejects out-of-range and inverted ranges; clamped_view
+      // answers the same on every range get_view accepts.
+      guard fixed.get_view(start~, end~) is Some(v) else { continue }
+      json_inspect(
+        fixed.clamped_view(start~, end~).to_owned(),
+        content=v.to_owned().to_json(),
+      )
+      json_inspect(
+        ro.clamped_view(start~, end~).to_owned(),
+        content=v.to_owned().to_json(),
+      )
+    }
+  }
+}
