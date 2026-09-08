@@ -637,6 +637,44 @@ pub fn[T] FixedArray::get_view(
 }
 
 ///|
+/// Creates a view of a portion of the fixed array, clamping the requested
+/// range instead of rejecting it. Same contract as `Array::clamped_view`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let arr : FixedArray[Int] = [1, 2, 3, 4, 5]
+///   debug_inspect(
+///     arr.clamped_view(start=3, end=10),
+///     content=(
+///       #|<ArrayView: [4, 5]>
+///     ),
+///   )
+///   debug_inspect(
+///     arr.clamped_view(start=4, end=1),
+///     content=(
+///       #|<ArrayView: []>
+///     ),
+///   )
+/// }
+/// ```
+pub fn[T] FixedArray::clamped_view(
+  self : FixedArray[T],
+  start? : Int = 0,
+  end? : Int,
+) -> ArrayView[T] {
+  let len = self.length()
+  let lo = clamp_offset(start, len)
+  let hi = match end {
+    None => len
+    Some(end) => clamp_offset(end, len)
+  }
+  let count = if hi > lo { hi - lo } else { 0 }
+  ArrayView::make(unsafe_cast_fixedarray_to_uninitializedarray(self), lo, count)
+}
+
+///|
 /// Return an iterator over suffix views of this array view.
 ///
 /// Set `include_empty=true` to include the empty suffix at the end.

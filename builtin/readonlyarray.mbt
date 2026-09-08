@@ -914,6 +914,40 @@ pub fn[T] ReadOnlyArray::get_view(
 }
 
 ///|
+/// Creates a view of a subarray, clamping the requested range instead of
+/// rejecting it. Same contract as `Array::clamped_view`.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
+///   debug_inspect(
+///     arr.clamped_view(start=3, end=10),
+///     content=(
+///       #|<ArrayView: [4, 5]>
+///     ),
+///   )
+///   debug_inspect(
+///     arr.clamped_view(start=4, end=1),
+///     content=(
+///       #|<ArrayView: []>
+///     ),
+///   )
+/// }
+/// ```
+pub fn[T] ReadOnlyArray::clamped_view(
+  self : ReadOnlyArray[T],
+  start? : Int = 0,
+  end? : Int,
+) -> ArrayView[T] {
+  let fixed = self.unsafe_reinterpret_to_fixed_array()
+  match end {
+    None => fixed.clamped_view(start~)
+    Some(end) => fixed.clamped_view(start~, end~)
+  }
+}
+
+///|
 /// Joins the string-renderable elements with a separator.
 ///
 /// # Example
