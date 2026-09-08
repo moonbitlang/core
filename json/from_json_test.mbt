@@ -785,15 +785,31 @@ test "Char from_json error handling" {
 
 ///|
 test "BigInt from_json error handling" {
-  let json_number = Json::number(123)
+  let json_bool : Json = true
   let err = expect_json_decode_error(
-    () => ignore((@json.from_json(json_number) : BigInt)),
+    () => ignore((@json.from_json(json_bool) : BigInt)),
     "expected BigInt decode failure",
   )
   debug_inspect(
     err,
     content=(
-      #|JsonDecodeError((Root, "BigInt::from_json: expected number in string representation"))
+      #|JsonDecodeError(
+      #|  (
+      #|    Root,
+      #|    "BigInt::from_json: expected a number or its string representation",
+      #|  ),
+      #|)
+    ),
+  )
+  let json_fraction = Json::number(1.5)
+  let err = expect_json_decode_error(
+    () => ignore((@json.from_json(json_fraction) : BigInt)),
+    "expected BigInt decode failure on a fraction",
+  )
+  debug_inspect(
+    err,
+    content=(
+      #|JsonDecodeError((Root, "BigInt::from_json: number is not an integer"))
     ),
   )
   let json_invalid_number = Json("not-a-number")
