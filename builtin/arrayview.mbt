@@ -429,6 +429,108 @@ pub fn[T] ArrayView::get_view(
 }
 
 ///|
+/// Creates a view of a portion of the array, clamping the requested range
+/// instead of rejecting it.
+///
+/// Total: `start` and `end` are each pulled into `[0, length()]`, and an
+/// inverted range yields an empty view at the clamped `start`, so this
+/// function never aborts and never rejects a range. Intended for windowing
+/// where the caller already knows the range may overrun, such as paging or
+/// chunking.
+///
+/// Parameters:
+///
+/// * `self` : The array to create a view from.
+/// * `start` : The starting index of the view (inclusive), clamped. Defaults
+/// to 0.
+/// * `end` : The ending index of the view (exclusive), clamped. Defaults to
+/// the length of the array.
+///
+/// Returns an `ArrayView` over the clamped range.
+///
+/// See `arr[start:end]` for the aborting variant and `Array::get_view` for the
+/// exact `Option`-returning variant.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let arr = [1, 2, 3, 4, 5]
+///   debug_inspect(
+///     arr.clamped_view(start=3, end=10),
+///     content=(
+///       #|<ArrayView: [4, 5]>
+///     ),
+///   )
+///   debug_inspect(
+///     arr.clamped_view(start=-2, end=2),
+///     content=(
+///       #|<ArrayView: [1, 2]>
+///     ),
+///   )
+///   debug_inspect(
+///     arr.clamped_view(start=4, end=1),
+///     content=(
+///       #|<ArrayView: []>
+///     ),
+///   )
+/// }
+/// ```
+pub fn[T] Array::clamped_view(
+  self : Array[T],
+  start? : Int = 0,
+  end? : Int,
+) -> ArrayView[T] {
+  let len = self.length()
+  let lo = clamp_offset(start, len)
+  let hi = match end {
+    None => len
+    Some(end) => clamp_offset(end, len)
+  }
+  let count = if hi > lo { hi - lo } else { 0 }
+  ArrayView::make(self.buffer(), lo, count)
+}
+
+///|
+/// Creates a new view into a portion of the array view, clamping the requested
+/// range instead of rejecting it. The indices are relative to the start of the
+/// current view; same contract as `Array::clamped_view`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let view = [1, 2, 3, 4, 5][1:4] // [2, 3, 4]
+///   debug_inspect(
+///     view.clamped_view(start=1, end=10),
+///     content=(
+///       #|<ArrayView: [3, 4]>
+///     ),
+///   )
+///   debug_inspect(
+///     view.clamped_view(start=3, end=1),
+///     content=(
+///       #|<ArrayView: []>
+///     ),
+///   )
+/// }
+/// ```
+pub fn[T] ArrayView::clamped_view(
+  self : ArrayView[T],
+  start? : Int = 0,
+  end? : Int,
+) -> ArrayView[T] {
+  let len = self.length()
+  let lo = clamp_offset(start, len)
+  let hi = match end {
+    None => len
+    Some(end) => clamp_offset(end, len)
+  }
+  let count = if hi > lo { hi - lo } else { 0 }
+  ArrayView::make(self.buf(), self.start() + lo, count)
+}
+
+///|
 fn[T] unsafe_cast_fixedarray_to_uninitializedarray(
   arr : FixedArray[T],
 ) -> UninitializedArray[T] = "%identity"

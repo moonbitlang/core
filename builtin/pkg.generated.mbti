@@ -81,6 +81,7 @@ pub fn[A] Array::blit_to(Self[A], Self[A], len? : Int, src_offset? : Int, dst_of
 pub fn[T] Array::capacity(Self[T]) -> Int
 pub fn[T] Array::chunk_by(Self[T], (T, T) -> Bool raise?) -> Self[ArrayView[T]] raise?
 pub fn[T] Array::chunks(Self[T], Int) -> Self[ArrayView[T]]
+pub fn[T] Array::clamped_view(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 pub fn[T] Array::clear(Self[T]) -> Unit
 pub fn[T : Compare] Array::compare(Self[T], Self[T]) -> Int
 pub fn[T : Eq] Array::contains(Self[T], T) -> Bool
@@ -203,6 +204,7 @@ pub fn[T] ArrayView::binary_search_by(Self[T], (T) -> Int raise?) -> Result[Int,
 pub fn[A] ArrayView::blit_to(Self[A], Array[A], dst_offset? : Int) -> Unit
 pub fn[T] ArrayView::chunk_by(Self[T], (T, T) -> Bool raise?) -> Array[Self[T]] raise?
 pub fn[T] ArrayView::chunks(Self[T], Int) -> Array[Self[T]]
+pub fn[T] ArrayView::clamped_view(Self[T], start? : Int, end? : Int) -> Self[T]
 pub fn[T : Compare] ArrayView::compare(Self[T], Self[T]) -> Int
 pub fn[T : Eq] ArrayView::contains(Self[T], T) -> Bool
 pub fn[T : Eq] ArrayView::count(Self[T], T) -> Int
@@ -1121,6 +1123,7 @@ pub fn Bytes::add(Bytes, Bytes) -> Bytes
 pub fn Bytes::at(Bytes, Int) -> Byte
 pub fn Bytes::chop_prefix(Bytes, BytesView) -> BytesView?
 pub fn Bytes::chop_suffix(Bytes, BytesView) -> BytesView?
+pub fn Bytes::clamped_view(Bytes, start? : Int, end? : Int) -> BytesView
 pub fn Bytes::compare(Bytes, Bytes) -> Int
 #alias(clone, deprecated)
 #deprecated
@@ -1166,6 +1169,7 @@ pub fn Bytes::view(Bytes, start? : Int, end? : Int) -> BytesView
 pub fn BytesView::at(Self, Int) -> Byte
 pub fn BytesView::chop_prefix(Self, Self) -> Self?
 pub fn BytesView::chop_suffix(Self, Self) -> Self?
+pub fn BytesView::clamped_view(Self, start? : Int, end? : Int) -> Self
 pub fn BytesView::compare(Self, Self) -> Int
 pub fn BytesView::data(Self) -> Bytes
 pub fn BytesView::equal(Self, Self) -> Bool
