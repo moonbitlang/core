@@ -25,29 +25,42 @@ fn[T] deferred(f : () -> Iter[T]) -> Iter[T] {
 }
 
 ///|
-/// `n` must be `xs.length()`; the recursive call maintains that, and both
-/// guards below rely on it.
+/// Yields `xs` with one block of `k` consecutive elements removed: one
+/// candidate per block offset `0, k, 2k, ..`, up to the last offset that still
+/// leaves a whole block, in ascending order.
+///
+/// `n` must be `xs.length()`.
 fn[T] removes_array(k : Int, n : Int, xs : Array[T]) -> Iter[Array[T]] {
   guard k <= n else { [||] }
-  // Dropping every element leaves the empty array; taking the `k`-element
-  // prefix first would copy the whole array only to discard it. Past this
-  // guard `xs[k:]` is non-empty.
-  guard k < n else { [|[]|] }
-  let xs2 = xs[:k].to_owned()
-  let xs1 = xs[k:].to_owned()
-  [|xs1|].add(removes_array(k, n - k, xs1).map(x => xs2 + x))
+  let mut start = 0
+  Iter::new(
+    fn() {
+      guard start + k <= n else { None }
+      let candidate = [..xs[:start], ..xs[start + k:]]
+      start += k
+      Some(candidate)
+    },
+    size_hint=(n - k) / k + 1,
+  )
 }
 
 ///|
+/// The `@list.List` counterpart of `removes_array`, except that the offsets
+/// descend: the block nearest the end is removed first.
+///
+/// `n` must be `xs.length()`.
 fn[T] removes_list(k : Int, n : Int, xs : @list.List[T]) -> Iter[@list.List[T]] {
   guard k <= n else { [||] }
-  let xs_drop = xs.drop(k)
-  if xs_drop.is_empty() {
-    [|List([])|]
-  } else {
-    let xs_take = xs.take(k)
-    removes_list(k, n - k, xs_drop).map(x => xs_take.concat(x)).add([|xs_drop|])
-  }
+  let mut start = (n - k) / k * k
+  Iter::new(
+    fn() {
+      guard start >= 0 else { None }
+      let candidate = xs.take(start).concat(xs.drop(start + k))
+      start -= k
+      Some(candidate)
+    },
+    size_hint=(n - k) / k + 1,
+  )
 }
 
 ///|

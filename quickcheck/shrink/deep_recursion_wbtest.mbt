@@ -19,10 +19,11 @@
 const DEEP : Int = 20000
 
 ///|
-/// `removes_list` recurses once per removed block, and the recursive call sits
-/// in argument position, so the whole descent runs while the iterator is being
-/// built -- before it can yield anything. With `k = 1` that is one frame per
-/// element.
+/// `removes_list` used to recurse once per removed block, with the recursive
+/// call in argument position, so the whole descent ran while the iterator was
+/// being built -- before it could yield anything. With `k = 1` that was one
+/// stack frame per element, and this test overflowed the stack on js, wasm and
+/// wasm-gc.
 test "removes_list builds its candidates without recursing per element" {
   let xs : @list.List[Int] = List(Array::makei(DEEP, i => i))
   guard removes_list(1, DEEP, xs).next() is Some(candidate) else {
@@ -34,9 +35,10 @@ test "removes_list builds its candidates without recursing per element" {
 }
 
 ///|
-/// `removes_array` has the same shape. Its candidate order reaches `k = 1`
-/// only at the end of the sequence, so a property test hits this later than it
-/// hits the `List` case, but the recursion depth is the same.
+/// `removes_array` had the same shape and overflowed the same way. Its
+/// candidate order reaches `k = 1` only at the end of the sequence, so a
+/// property test would have hit this later than it hits the `List` case, but
+/// the depth was the same.
 test "removes_array builds its candidates without recursing per element" {
   let xs = Array::makei(DEEP, i => i)
   guard removes_array(1, DEEP, xs).next() is Some(candidate) else {
@@ -48,8 +50,9 @@ test "removes_array builds its candidates without recursing per element" {
 }
 
 ///|
-/// The user-visible symptom: a property test whose counterexample is a large
-/// list crashes while shrinking instead of reporting the counterexample.
+/// The user-visible symptom this guards against: a property test whose
+/// counterexample was a large list crashed while shrinking instead of
+/// reporting the counterexample.
 test "shrinking a large list yields a candidate" {
   let xs : @list.List[Int] = List(Array::makei(DEEP, i => i))
   guard Shrink::shrink(xs).next() is Some(candidate) else {
