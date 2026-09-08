@@ -15,6 +15,34 @@
 ///|
 /// JSON value type used by core serialization APIs.
 ///
+/// `Number` carries the numeric value as a `Double` together with an optional
+/// `repr`, the exact source text of the literal. `stringify` writes `repr` out
+/// verbatim in place of the double, so it must be valid JSON number syntax and
+/// must denote the accompanying `Double`: text that is not a JSON number makes
+/// the output invalid JSON, or turns the value into a different JSON type
+/// altogether (`repr="null"` emits `null`), and text denoting some other value
+/// silently changes what the document says.
+///
+/// The parser attaches a `repr` to every integer literal whose digits run past
+/// the exact-integer range of a `Double` — whether or not the value happens to
+/// land on one, so `9007199254740992` keeps its text too — and to every literal
+/// that overflows to an infinity. It leaves `repr` as `None` everywhere else,
+/// including decimals that round (`0.1`) and those that underflow to zero
+/// (`1e-400`).
+///
+/// Equality compares numeric values and ignores `repr`, so two equal `Json`
+/// values may stringify differently:
+///
+/// ```mbt check
+/// test {
+///   let one : Json = Json::number(1)
+///   let padded : Json = Json::number(1, repr="1.000")
+///   inspect(one == padded, content="true")
+///   inspect(one.stringify(), content="1")
+///   inspect(padded.stringify(), content="1.000")
+/// }
+/// ```
+///
 /// Example:
 ///
 /// ```mbt check
@@ -27,7 +55,7 @@ pub enum Json {
   Null
   True
   False
-  Number(Double, repr~ : String?) // 1.0000000000000000000e100 
+  Number(Double, repr~ : String?) // 1.0000000000000000000e100
   String(String)
   Array(Array[Json])
   Object(Map[String, Json])
@@ -80,8 +108,21 @@ pub fn Json::empty_object() -> Json {
 ///
 /// * `value` : A double-precision floating-point number to be converted to a
 /// JSON number.
+/// * `repr` : The exact source text of the literal, if it is worth preserving.
+/// `stringify` writes it verbatim in place of `value`, so it must be valid JSON
+/// number syntax and must denote `value` itself: text that is not a JSON number
+/// makes the output invalid JSON or gives it a different JSON type, and text
+/// denoting some other value makes the document disagree with the `Double`
+/// every consumer reads. Supply it only for literals a `Double` cannot render
+/// back as written, such as integers beyond the exact-integer range or
+/// magnitudes beyond the range of a `Double` altogether.
 ///
 /// Returns a JSON value representing the given number.
+///
+/// `NaN` and the infinities have no JSON syntax. Passing one without a `repr`
+/// is accepted and stringifies to the strings `"NaN"`, `"Infinity"` and
+/// `"-Infinity"`, matching how `Double::to_json` encodes them and what
+/// `Double::from_json` accepts back.
 ///
 /// Example:
 ///
@@ -92,6 +133,7 @@ pub fn Json::empty_object() -> Json {
 ///     Json::number(@double.infinity, repr="1e9999999999999999999999999999999").stringify(),
 ///     content="1e9999999999999999999999999999999",
 ///   )
+///   inspect(Json::number(@double.infinity).stringify(), content="\"Infinity\"")
 /// }
 /// ```
 #owned(repr)
