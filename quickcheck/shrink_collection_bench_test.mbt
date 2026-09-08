@@ -13,13 +13,13 @@
 // limitations under the License.
 
 ///|
-test "bench shrink Array first candidate size=1000" (it : @bench.T) {
-  let input = Array::make(1000, ())
+test "bench shrink Array first candidate size=10000" (it : @bench.T) {
+  let input = Array::make(10000, ())
   it.bench(fn() { it.keep(@shrink.Shrink::shrink(input).next()) })
 }
 
 ///|
-test "bench shrink List first candidate size=1000" (it : @bench.T) {
-  let input : @list.List[Unit] = List(Array::make(1000, ()))
+test "bench shrink List first candidate size=10000" (it : @bench.T) {
+  let input : @list.List[Unit] = List(Array::make(10000, ()))
   it.bench(fn() { it.keep(@shrink.Shrink::shrink(input).next()) })
 }
