@@ -1,0 +1,24 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/encoding/percent"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn decode(StringView) -> String raise Malformed
+
+pub fn decode_lossy(StringView) -> String
+
+pub fn encode(StringView) -> String
+
+// Errors
+pub suberror Malformed {
+  Malformed(StringView)
+} derive(@debug.Debug)
+
+// Types and methods
+
+// Type aliases
+
+// Traits
