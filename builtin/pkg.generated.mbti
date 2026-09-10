@@ -1483,6 +1483,7 @@ pub impl[A : Hash, B : Hash, C : Hash, D : Hash, E : Hash, F : Hash, G : Hash] H
 pub impl Hash for BytesView
 pub impl Hash for StringView
 
+#must_implement_one(write_view, write_substring)
 pub(open) trait Logger {
   fn write_string(Self, String) -> Unit = _
   #deprecated

@@ -93,6 +93,12 @@ pub(open) trait Default {
 ///
 /// A logger receives formatted output without requiring callers to allocate a
 /// complete `String` first.
+///
+/// `write_view` and `write_substring` are mutually defaulted: implement at
+/// least one of them (`write_view` preferred). Without this requirement a type
+/// implementing only `write_string`/`write_char` would hit infinite mutual
+/// recursion between the two defaults at runtime.
+#must_implement_one(write_view, write_substring)
 pub(open) trait Logger {
   /// Writes a string to the logger.
   fn write_string(Self, String) -> Unit = _
