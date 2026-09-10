@@ -128,3 +128,32 @@ test "text operations retain raw UTF-16 behavior" {
   inspect(stripped.code_unit_at(0) == low.code_unit_at(0), content="true")
   inspect(text.replace(old="a", new="x").length(), content="3")
 }
+
+///|
+test "raw_view retains split UTF-16 pairs and relative offsets" {
+  let text = "ab😀cd"
+  let nested = "xxab😀cdyy".raw_view(start_offset=2, end_offset=8)
+  inspect(text.raw_view(), content="ab😀cd")
+  inspect(nested.raw_view(), content="ab😀cd")
+  for head in [text.raw_view(end_offset=3), nested.raw_view(end_offset=3)] {
+    assert_eq(head.length(), 3)
+    assert_eq(head.code_unit_at(2).to_int(), 0xD83D)
+  }
+  for tail in [text.raw_view(start_offset=3), nested.raw_view(start_offset=3)] {
+    assert_eq(tail.length(), 3)
+    assert_eq(tail.code_unit_at(0).to_int(), 0xDE00)
+    assert_eq(tail.raw_view(start_offset=1).to_owned(), "cd")
+  }
+  inspect(text.raw_view(start_offset=3, end_offset=3).length(), content="0")
+  inspect(nested.raw_view(start_offset=3, end_offset=3).length(), content="0")
+}
+
+///|
+test "panic raw_view rejects negative string bounds" {
+  ignore("abc".raw_view(start_offset=-1))
+}
+
+///|
+test "panic raw_view checks bounds against the nested view" {
+  ignore("xabcx".raw_view(start_offset=1, end_offset=4).raw_view(end_offset=4))
+}

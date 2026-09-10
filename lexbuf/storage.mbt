@@ -130,22 +130,22 @@ fn LexbufStorage::get_stringview(
   let first_chunk = self.chunks.unsafe_get(first)
   let first_start = self.chunk_starts.unsafe_get(first)
   let first_end = first_start + first_chunk.length()
-  // Use views rather than `s[a:b]`: lexbuf offsets and chunk boundaries are raw
-  // UTF-16 code-unit positions, so they may fall inside a surrogate pair.
+  // Lexbuf offsets and chunk boundaries are raw UTF-16 code-unit positions,
+  // so raw_view must preserve boundaries inside surrogate pairs.
   if end <= first_end {
-    return first_chunk.view(
+    return first_chunk.raw_view(
       start_offset=start - first_start,
       end_offset=end - first_start,
     )
   }
   let builder = StringBuilder(size_hint=(end - start) * 2)
-  builder.write_view(first_chunk.view(start_offset=start - first_start))
+  builder.write_view(first_chunk.raw_view(start_offset=start - first_start))
   for index in (first + 1)..<self.chunks.length() {
     let chunk = self.chunks.unsafe_get(index)
     let chunk_start = self.chunk_starts.unsafe_get(index)
     let chunk_end = chunk_start + chunk.length()
     if end <= chunk_end {
-      builder.write_view(chunk.view(end_offset=end - chunk_start))
+      builder.write_view(chunk.raw_view(end_offset=end - chunk_start))
       break
     }
     builder.write_string(chunk)

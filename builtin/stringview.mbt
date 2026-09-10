@@ -1028,8 +1028,15 @@ pub impl Add for StringView with fn add(self, other) {
 }
 
 ///|
-// Bounds-checked UTF-16 slicing for code-unit operations that may split pairs.
-fn StringView::raw_view(
+/// Creates a view using raw UTF-16 code-unit offsets relative to this view.
+///
+/// Requires `0 <= start_offset <= end_offset <= self.length()`; panics otherwise.
+/// Omitted bounds default to the start and end of this view. Surrogate pairs
+/// may be split. Use `exact_view(start~, end~)` to validate text boundaries.
+// The compiler generates calls to `view` for lexmatch/lexscan. Deprecate the
+// alias after compiler lowering uses `raw_view`, so --deny-warn stays usable.
+#alias(view)
+pub fn StringView::raw_view(
   self : StringView,
   start_offset? : Int = 0,
   end_offset? : Int,
@@ -1048,8 +1055,15 @@ fn StringView::raw_view(
 }
 
 ///|
-// Bounds-checked UTF-16 slicing for code-unit operations that may split pairs.
-fn String::raw_view(
+/// Creates a view using raw UTF-16 code-unit offsets.
+///
+/// Requires `0 <= start_offset <= end_offset <= self.length()`; panics otherwise.
+/// Omitted bounds default to the start and end of this string. Surrogate pairs
+/// may be split. Use `exact_view(start~, end~)` to validate text boundaries.
+// The compiler generates calls to `view` for lexmatch/lexscan. Deprecate the
+// alias after compiler lowering uses `raw_view`, so --deny-warn stays usable.
+#alias(view)
+pub fn String::raw_view(
   self : String,
   start_offset? : Int = 0,
   end_offset? : Int,

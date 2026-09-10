@@ -902,6 +902,8 @@ pub fn String::make(Int, Char) -> String
 pub fn String::offset_of_nth_char(String, Int, start_offset? : Int, end_offset? : Int) -> Int?
 pub fn String::pad_end(String, Int, Char) -> String
 pub fn String::pad_start(String, Int, Char) -> String
+#alias(view)
+pub fn String::raw_view(String, start_offset? : Int, end_offset? : Int) -> StringView
 pub fn String::repeat(String, Int) -> String
 pub fn String::replace(String, old~ : StringView, new~ : StringView) -> String
 pub fn String::replace_all(String, old~ : StringView, new~ : StringView) -> String
@@ -942,8 +944,6 @@ pub fn String::trim_start(String, chars? : StringView) -> StringView
 #deprecated
 pub fn String::unsafe_char_at(String, Int) -> Char
 pub fn String::unsafe_substring(String, start~ : Int, end~ : Int) -> String
-#deprecated
-pub fn String::view(String, start_offset? : Int, end_offset? : Int) -> StringView
 
 pub fn[T, U] Option::bind(T?, (T) -> U? raise?) -> U? raise?
 pub fn[X : Compare] Option::compare(X?, X?) -> Int
@@ -1269,6 +1269,8 @@ pub fn StringView::make(Int, Char) -> Self
 pub fn StringView::offset_of_nth_char(Self, Int) -> Int?
 pub fn StringView::pad_end(Self, Int, Char) -> String
 pub fn StringView::pad_start(Self, Int, Char) -> String
+#alias(view)
+pub fn StringView::raw_view(Self, start_offset? : Int, end_offset? : Int) -> Self
 pub fn StringView::repeat(Self, Int) -> Self
 pub fn StringView::replace(Self, old~ : Self, new~ : Self) -> Self
 pub fn StringView::replace_all(Self, old~ : Self, new~ : Self) -> Self
@@ -1309,8 +1311,6 @@ pub fn StringView::trim_start(Self, chars? : Self) -> Self
 #deprecated
 pub fn StringView::unsafe_charcode_at(Self, Int) -> Int
 pub fn StringView::unsafe_get(Self, Int) -> UInt16
-#deprecated
-pub fn StringView::view(Self, start_offset? : Int, end_offset? : Int) -> Self
 
 // Type aliases
 
