@@ -51,7 +51,7 @@ fn weight(k : TokKind) -> Int {
 /// carry the low `Comment` weight, so similar comments pair while unrelated
 /// ones do not — a whole comment is never one opaque cheap token.
 fn push_comment_tokens(toks : Array[Tok], body : String) -> Unit {
-  let mut rest = body.view()
+  let mut rest = body.exact_view()
   while rest is [_, ..] {
     rest = lexmatch rest with longest {
       (re"^//+" as t, after=next) => {
@@ -86,10 +86,10 @@ fn tokenize_line(line : String) -> Array[Tok] {
   // the comment rule would otherwise swallow `///| x` whole.
   if line is ['/', '/', '/', '|', ..] {
     toks.push({ kind: Marker, text: "///|", })
-    push_comment_tokens(toks, line.view(start_offset=4).to_owned())
+    push_comment_tokens(toks, line.exact_view(start=4).to_owned())
     return toks
   }
-  let mut rest = line.view()
+  let mut rest = line.exact_view()
   while rest is [_, ..] {
     rest = lexmatch rest with longest {
       (re"^///\|" as t, after=next) => {

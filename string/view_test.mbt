@@ -17,10 +17,13 @@ test "stringview basic" {
   let str = "Hello🤣🤣🤣"
   let start_offset = 1
   let end_offset = str.offset_of_nth_char(6).unwrap()
-  inspect(str.view(start_offset~), content="ello🤣🤣🤣")
-  inspect(str.view(end_offset~), content="Hello🤣")
-  inspect(str.view(start_offset~, end_offset~), content="ello🤣")
-  inspect(str.view(), content="Hello🤣🤣🤣")
+  inspect(str.exact_view(start=start_offset), content="ello🤣🤣🤣")
+  inspect(str.exact_view(end=end_offset), content="Hello🤣")
+  inspect(
+    str.exact_view(start=start_offset, end=end_offset),
+    content="ello🤣",
+  )
+  inspect(str.exact_view(), content="Hello🤣🤣🤣")
 }
 
 ///|
@@ -28,13 +31,10 @@ test "stringview basic2" {
   let str = "He🤣🤣🤣llo"
   let start = 1
   let end = 10
-  inspect(str.view(start_offset=start), content="e🤣🤣🤣llo")
-  inspect(str.view(end_offset=end), content="He🤣🤣🤣ll")
-  inspect(
-    str.view(start_offset=start, end_offset=end),
-    content="e🤣🤣🤣ll",
-  )
-  inspect(str.view(), content="He🤣🤣🤣llo")
+  inspect(str.exact_view(start~), content="e🤣🤣🤣llo")
+  inspect(str.exact_view(end~), content="He🤣🤣🤣ll")
+  inspect(str.exact_view(start~, end~), content="e🤣🤣🤣ll")
+  inspect(str.exact_view(), content="He🤣🤣🤣llo")
 }
 
 ///|
@@ -42,17 +42,17 @@ test "stringview subview" {
   let str = "Hello🤣🤣🤣"
   let start = 1
   let end = 7
-  let view = str.view(start_offset=start, end_offset=end)
-  inspect(view.view(start_offset=1), content="llo🤣")
-  inspect(view.view(start_offset=1, end_offset=4), content="llo")
-  inspect(view.view(end_offset=4), content="ello")
-  inspect(view.view(), content="ello🤣")
+  let view = str.exact_view(start~, end~)
+  inspect(view.exact_view(start=1), content="llo🤣")
+  inspect(view.exact_view(start=1, end=4), content="llo")
+  inspect(view.exact_view(end=4), content="ello")
+  inspect(view.exact_view(), content="ello🤣")
 }
 
 ///|
 test "stringview access" {
   let str = "Hello🤣🤣🤣"
-  let view = str.view(start_offset=1, end_offset=7)
+  let view = str.exact_view(start=1, end=7)
   inspect(view.iter().nth(4).unwrap(), content="🤣")
   inspect(view.iter().nth(4).unwrap(), content="🤣")
 }
@@ -60,7 +60,7 @@ test "stringview access" {
 ///|
 test "stringview access iter" {
   let str = "Hello🤣🤣🤣"
-  let view = str.view(start_offset=1, end_offset=7)
+  let view = str.exact_view(start=1, end=7)
   inspect(view.iter().nth(4).unwrap(), content="🤣")
   inspect(view.iter().nth(4).unwrap(), content="🤣")
 }
@@ -68,7 +68,7 @@ test "stringview access iter" {
 ///|
 test "stringview rev_get" {
   let str = "Hello🤣🤣🤣"
-  let view = str.view(start_offset=1, end_offset=7)
+  let view = str.exact_view(start=1, end=7)
   inspect(view.rev_iter().nth(0).unwrap(), content="🤣")
   inspect(view.rev_iter().nth(4).unwrap(), content="e")
 }
@@ -76,7 +76,7 @@ test "stringview rev_get" {
 ///|
 test "stringview rev_get rev_iter" {
   let str = "Hello🤣🤣🤣"
-  let view = str.view(start_offset=1, end_offset=7)
+  let view = str.exact_view(start=1, end=7)
   inspect(view.rev_iter().nth(0).unwrap(), content="🤣")
   inspect(view.rev_iter().nth(4).unwrap(), content="e")
 }
@@ -84,28 +84,28 @@ test "stringview rev_get rev_iter" {
 ///|
 test "stringview data" {
   let str = "Hello🤣🤣🤣"
-  let view = str.view(start_offset=1, end_offset=7)
+  let view = str.exact_view(start=1, end=7)
   inspect(view.data(), content="Hello🤣🤣🤣")
 }
 
 ///|
 test "stringview start_offset" {
   let str = "Hello🤣🤣🤣"
-  let view = str.view(start_offset=1, end_offset=7)
+  let view = str.exact_view(start=1, end=7)
   inspect(view.start_offset(), content="1")
 }
 
 ///|
 test "stringview length" {
   let str = "Hello🤣🤣🤣"
-  let view = str.view(start_offset=1, end_offset=7)
+  let view = str.exact_view(start=1, end=7)
   inspect(view.length(), content="6")
 }
 
 ///|
 test "stingview length_eq" {
   let str = "hello"
-  let view = str.view(start_offset=1, end_offset=4)
+  let view = str.exact_view(start=1, end=4)
   inspect(view.char_length_eq(0), content="false")
   inspect(view.char_length_eq(1), content="false")
   inspect(view.char_length_eq(2), content="false")
@@ -117,7 +117,7 @@ test "stingview length_eq" {
 ///|
 test "stingview length_ge" {
   let str = "hello"
-  let view = str.view(start_offset=1, end_offset=4)
+  let view = str.exact_view(start=1, end=4)
   inspect(view.char_length_ge(0), content="true")
   inspect(view.char_length_ge(1), content="true")
   inspect(view.char_length_ge(2), content="true")
@@ -129,35 +129,35 @@ test "stingview length_ge" {
 ///|
 test "stringview empty" {
   let str = "hello"
-  let view = str.view(start_offset=0, end_offset=0)
+  let view = str.exact_view(start=0, end=0)
   inspect(view.length(), content="0")
 }
 
 ///|
 test "panic out of bounds1" {
   let str = "Hello🤣🤣🤣"
-  let view = str.view(start_offset=1, end_offset=7)
+  let view = str.exact_view(start=1, end=7)
   let _ = view.iter().nth(5).unwrap()
 }
 
 ///|
 test "panic out of bounds2" {
   let str = "Hello🤣🤣🤣"
-  let view = str.view(start_offset=1, end_offset=7)
-  let _ = view.view(start_offset=7)
+  let view = str.exact_view(start=1, end=7)
+  let _ = view.exact_view(start=7)
 }
 
 ///|
 test "panic out of bounds3" {
   let str = "Hello🤣🤣🤣"
-  let view = str.view(start_offset=1, end_offset=7)
-  let _ = view.view(end_offset=7)
+  let view = str.exact_view(start=1, end=7)
+  let _ = view.exact_view(end=7)
 }
 
 ///|
 test "panic out of bounds4" {
   let str = "hello"
-  let view = str.view(start_offset=0, end_offset=0)
+  let view = str.exact_view(start=0, end=0)
   let _ = view.iter().nth(0).unwrap()
 }
 
@@ -218,71 +218,71 @@ test "panic negative index 1" {
   // index_at_rev fails
   let str = "hello"
   let str_view = str[:]
-  let _ = str_view.view(start_offset=-6)
+  let _ = str_view.exact_view(start=-6)
 }
 
 ///|
 test "panic negative index 2" {
   // index_at_rev fails
   let str = "hello"
-  let str_view = str.view()
-  let _ = str_view.view(end_offset=-6)
+  let str_view = str.exact_view()
+  let _ = str_view.exact_view(end=-6)
 }
 
 ///|
 test "panic negative index 3" {
   // index_at_rev returns an index not in bounds of the view
   let str = "hello"
-  let str_view = str.view(start_offset=1, end_offset=4)
-  let _ = str_view.view(start_offset=-4)
+  let str_view = str.exact_view(start=1, end=4)
+  let _ = str_view.exact_view(start=-4)
 }
 
 ///|
 test "panic negative index 4" {
   // index_at_rev returns an index not in bounds of the view
   let str = "hello"
-  let str_view = str.view(start_offset=1, end_offset=4)
-  let _ = str_view.view(end_offset=4)
+  let str_view = str.exact_view(start=1, end=4)
+  let _ = str_view.exact_view(end=4)
 }
 
 ///|
 test "panic negative index 5" {
   // index_at_rev returns an index not in bounds of the view
   let str = "hello"
-  let str_view = str.view(start_offset=1, end_offset=4)
-  let _ = str_view.view(start_offset=4)
+  let str_view = str.exact_view(start=1, end=4)
+  let _ = str_view.exact_view(start=4)
 }
 
 ///|
 test "panic negative index 6" {
   // index_at_rev returns an index not in bounds of the view
   let str = "hello"
-  let str_view = str.view(start_offset=1, end_offset=4)
-  let _ = str_view.view(end_offset=4)
+  let str_view = str.exact_view(start=1, end=4)
+  let _ = str_view.exact_view(end=4)
 }
 
 ///|
 test "panic negative index 7" {
   // start > end
   let str = "hello"
-  let str_view = str.view(start_offset=1, end_offset=4)
-  let _ = str_view.view(start_offset=-1, end_offset=-2)
+  let str_view = str.exact_view(start=1, end=4)
+  let _ = str_view.exact_view(start=-1, end=-2)
 }
 
 ///|
 test "panic negative index 8" {
   // start > end
   let str = "hello"
-  let str_view = str.view(start_offset=1, end_offset=4)
-  let _ = str_view.view(start_offset=-1, end_offset=1)
+  let str_view = str.exact_view(start=1, end=4)
+  let _ = str_view.exact_view(start=-1, end=1)
 }
 
 ///|
 test "panic negative index 9" {
   // start > end
   let str = "hello"
-  let str_view = str.view(start_offset=1, end_offset=4)
-  let _ = str_view.view(start_offset=2, end_offset=-2)
+  let str_view = str.exact_view(start=1, end=4)
+  let _ = str_view.exact_view(start=2, end=-2)
 }
 
 ///|
@@ -296,7 +296,7 @@ test "panic negative index 9" {
 ///|
 test "stringview iter" {
   let str = "hello🤣🤣🤣"
-  let view = str.view(start_offset=1, end_offset=7)
+  let view = str.exact_view(start=1, end=7)
   inspect(view.iter().count(), content="5")
   debug_inspect(
     view.iter().to_array(),
@@ -309,7 +309,7 @@ test "stringview iter" {
 ///|
 test "stringview rev_iter" {
   let str = "hello🤣🤣🤣"
-  let view = str.view(start_offset=1, end_offset=7)
+  let view = str.exact_view(start=1, end=7)
   inspect(view.rev_iter().count(), content="5")
   debug_inspect(
     view.rev_iter().to_array(),
@@ -322,25 +322,25 @@ test "stringview rev_iter" {
 ///|
 test "panic stringview negative index1" {
   let str = "hello🤣😭😂"
-  let _ = str.view(start_offset=-9)
+  let _ = str.exact_view(start=-9)
 }
 
 ///|
 test "panic stringview negative index2" {
   let str = "hello🤣😭😂"
-  let _ = str.view(end_offset=-9)
+  let _ = str.exact_view(end=-9)
 }
 
 ///|
 test "panic stringview negative index3" {
   let str = "hello🤣😭😂"
-  let _ = str.view(start_offset=-1, end_offset=-2)
+  let _ = str.exact_view(start=-1, end=-2)
 }
 
 ///|
 test "to_string" {
   let s = "Hello World"
-  let view = s.view(start_offset=0, end_offset=5)
+  let view = s.exact_view(start=0, end=5)
   let ss = "\{view} Moonbit"
   inspect(ss, content="Hello Moonbit")
 }
@@ -356,7 +356,7 @@ test "length_eq test with surrogate pair" {
 ///|
 test "length_ge with high surrogate" {
   let str = "🐰" // This emoji is represented using a surrogate pair
-  let view = str.view(start_offset=0)
+  let view = str.exact_view(start=0)
   @test.assert_eq(view.char_length_ge(1), true)
   @test.assert_eq(view.char_length_ge(2), false)
 }
@@ -364,27 +364,27 @@ test "length_ge with high surrogate" {
 ///|
 test "panic op_as_view with invalid positive start index" {
   let str = "Hello🤣🤣🤣"
-  let view = str.view()
-  ignore(view.view(start_offset=100))
+  let view = str.exact_view()
+  ignore(view.exact_view(start=100))
 }
 
 ///|
 test "panic on accessing negative index" {
   let str = "Hello🤣🤣🤣"
-  let view = str.view()
-  ignore(view.view(start_offset=-1)) // This should panic due to invalid index
+  let view = str.exact_view()
+  ignore(view.exact_view(start=-1)) // This should panic due to invalid index
 }
 
 ///|
 test "panic on invalid start index" {
   let str = "Hello"
-  ignore(str.view(start_offset=10))
+  ignore(str.exact_view(start=10))
 }
 
 ///|
 test "panic on invalid end index" {
   let str = "Hello"
-  ignore(str.view(start_offset=0, end_offset=10))
+  ignore(str.exact_view(start=0, end=10))
 }
 
 ///|
@@ -411,7 +411,7 @@ test "panic_length_ge invalid surrogate pair" {
 ///|
 test "take first character from surrogate pairs" {
   let str = "Hello😀😃"
-  let view = str.view()
+  let view = str.exact_view()
   let result = view.iter().take(6).collect().length()
   // 6 characters total: 5 ASCII + 1 emoji
   inspect(result, content="6")
@@ -420,7 +420,7 @@ test "take first character from surrogate pairs" {
 ///|
 test "index_of_nth_char" {
   let str = "aa😭b😂cc"
-  let view = str.view(start_offset=1, end_offset=8)
+  let view = str.exact_view(start=1, end=8)
   inspect(view, content="a😭b😂c")
   debug_inspect(view.offset_of_nth_char(0), content="Some(0)")
   debug_inspect(view.offset_of_nth_char(1), content="Some(1)")
@@ -439,35 +439,35 @@ test "index_of_nth_char" {
 ///|
 test "char_length" {
   let str = "aa😭b😂cc"
-  let view = str.view(start_offset=1, end_offset=8)
+  let view = str.exact_view(start=1, end=8)
   inspect(view.char_length(), content="5")
 }
 
 ///|
 test "utf16 indexed view" {
   let str = "aa😭b😂cc"
-  let v0 = str.view()
+  let v0 = str.exact_view()
   inspect(v0, content="aa😭b😂cc")
   inspect(v0.char_length(), content="7")
-  let v1 = str.view(start_offset=1, end_offset=8)
+  let v1 = str.exact_view(start=1, end=8)
   inspect(v1, content="a😭b😂c")
   inspect(v1.char_length(), content="5")
-  let v2 = str.view(start_offset=1)
+  let v2 = str.exact_view(start=1)
   inspect(v2, content="a😭b😂cc")
   inspect(v2.char_length(), content="6")
-  let v3 = str.view(end_offset=4)
+  let v3 = str.exact_view(end=4)
   inspect(v3, content="aa😭")
   inspect(v3.char_length(), content="3")
-  let v4 = str.view(start_offset=1, end_offset=1)
+  let v4 = str.exact_view(start=1, end=1)
   inspect(v4, content="")
   inspect(v4.char_length(), content="0")
-  let v5 = str.view(end_offset=0)
+  let v5 = str.exact_view(end=0)
   inspect(v5, content="")
   inspect(v5.char_length(), content="0")
-  let v6 = str.view(start_offset=str.length())
+  let v6 = str.exact_view(start=str.length())
   inspect(v6, content="")
   inspect(v6.char_length(), content="0")
-  let v7 = str.view(start_offset=str.length(), end_offset=str.length())
+  let v7 = str.exact_view(start=str.length(), end=str.length())
   inspect(v7, content="")
   inspect(v7.char_length(), content="0")
 }
@@ -475,64 +475,57 @@ test "utf16 indexed view" {
 ///|
 test "op_equal" {
   let str = "012301230123"
-  inspect(str.view() == str.view(), content="true")
-  inspect(str.view() == str.view(start_offset=1), content="false")
+  inspect(str.exact_view() == str.exact_view(), content="true")
+  inspect(str.exact_view() == str.exact_view(start=1), content="false")
   inspect(
-    str.view(start_offset=0, end_offset=4) ==
-    str.view(start_offset=4, end_offset=8),
+    str.exact_view(start=0, end=4) == str.exact_view(start=4, end=8),
     content="true",
   )
   inspect(
-    str.view(start_offset=0, end_offset=4) ==
-    str.view(start_offset=8, end_offset=12),
+    str.exact_view(start=0, end=4) == str.exact_view(start=8, end=12),
     content="true",
   )
   inspect(
-    str.view(start_offset=0, end_offset=3) ==
-    str.view(start_offset=4, end_offset=7),
+    str.exact_view(start=0, end=3) == str.exact_view(start=4, end=7),
     content="true",
   )
   inspect(
-    str.view(start_offset=0, end_offset=3) ==
-    str.view(start_offset=0, end_offset=4),
+    str.exact_view(start=0, end=3) == str.exact_view(start=0, end=4),
     content="false",
   )
 
   // Test with surrogate pairs
   let emoji_str = "🤣abc🤣def"
   inspect(
-    emoji_str.view(start_offset=0, end_offset=2) ==
-    emoji_str.view(start_offset=5, end_offset=7),
+    emoji_str.exact_view(start=0, end=2) == emoji_str.exact_view(start=5, end=7),
     content="true",
   )
   inspect(
-    emoji_str.view(start_offset=2, end_offset=5) ==
-    emoji_str.view(start_offset=7, end_offset=10),
+    emoji_str.exact_view(start=2, end=5) ==
+    emoji_str.exact_view(start=7, end=10),
     content="false",
   )
   inspect(
-    emoji_str.view(start_offset=0, end_offset=5) ==
-    emoji_str.view(start_offset=5, end_offset=10),
+    emoji_str.exact_view(start=0, end=5) ==
+    emoji_str.exact_view(start=5, end=10),
     content="false",
   )
 
   // Test empty views
   inspect(
-    str.view(start_offset=0, end_offset=0) ==
-    str.view(start_offset=4, end_offset=4),
+    str.exact_view(start=0, end=0) == str.exact_view(start=4, end=4),
     content="true",
   )
   inspect(
-    str.view(start_offset=0, end_offset=0) ==
-    str.view(start_offset=0, end_offset=1),
+    str.exact_view(start=0, end=0) == str.exact_view(start=0, end=1),
     content="false",
   )
 
   // Test views from different strings
   let str1 = "bcabc"
   let str2 = "abcabc"
-  inspect(str1.view() == str2.view(), content="false")
-  inspect(str1.view() == str2.view(start_offset=1), content="true")
+  inspect(str1.exact_view() == str2.exact_view(), content="false")
+  inspect(str1.exact_view() == str2.exact_view(start=1), content="true")
 }
 
 ///|
@@ -541,39 +534,29 @@ test "stringview compare" {
 
   // Test equal views
   inspect(
-    str
-    .view(start_offset=0, end_offset=3)
-    .compare(str.view(start_offset=3, end_offset=6)),
+    str.exact_view(start=0, end=3).compare(str.exact_view(start=3, end=6)),
     content="0",
   )
 
   // Test lexicographically smaller view
   inspect(
-    str
-    .view(start_offset=0, end_offset=3)
-    .compare(str.view(start_offset=2, end_offset=5)),
+    str.exact_view(start=0, end=3).compare(str.exact_view(start=2, end=5)),
     content="-1",
   )
 
   // Test lexicographically larger view
   inspect(
-    str
-    .view(start_offset=1, end_offset=4)
-    .compare(str.view(start_offset=3, end_offset=6)),
+    str.exact_view(start=1, end=4).compare(str.exact_view(start=3, end=6)),
     content="1",
   )
 
   // Test different length views
   inspect(
-    str
-    .view(start_offset=0, end_offset=3)
-    .compare(str.view(start_offset=0, end_offset=4)),
+    str.exact_view(start=0, end=3).compare(str.exact_view(start=0, end=4)),
     content="-1",
   )
   inspect(
-    str
-    .view(start_offset=1, end_offset=5)
-    .compare(str.view(start_offset=2, end_offset=5)),
+    str.exact_view(start=1, end=5).compare(str.exact_view(start=2, end=5)),
     content="1",
   )
 
@@ -581,46 +564,44 @@ test "stringview compare" {
   let emoji_str = "🤣abc🤣def"
   inspect(
     emoji_str
-    .view(start_offset=0, end_offset=5)
-    .compare(emoji_str.view(start_offset=5, end_offset=10)),
+    .exact_view(start=0, end=5)
+    .compare(emoji_str.exact_view(start=5, end=10)),
     content="-1",
   )
 
   // Test empty views
   inspect(
-    str
-    .view(start_offset=0, end_offset=0)
-    .compare(str.view(start_offset=4, end_offset=4)),
+    str.exact_view(start=0, end=0).compare(str.exact_view(start=4, end=4)),
     content="0",
   )
 
   // Test views from different strings with same content
   let str1 = "bcabc"
   let str2 = "abcabc"
-  inspect(str1.view().compare(str2.view(start_offset=1)), content="0")
+  inspect(str1.exact_view().compare(str2.exact_view(start=1)), content="0")
 }
 
 ///|
 test "view of view" {
-  let v1 = "00abc😭def😂ghi11".view(start_offset=2, end_offset=15)
-  let v2 = v1.view(start_offset=3, end_offset=6)
+  let v1 = "00abc😭def😂ghi11".exact_view(start=2, end=15)
+  let v2 = v1.exact_view(start=3, end=6)
   inspect(v2, content="😭d")
-  let v3 = v2.view(start_offset=2, end_offset=3)
+  let v3 = v2.exact_view(start=2, end=3)
   inspect(v3, content="d")
-  let v4 = v1.view(start_offset=2, end_offset=6)
+  let v4 = v1.exact_view(start=2, end=6)
   inspect(v4, content="c😭d")
-  let v6 = v1.view(start_offset=5, end_offset=5)
+  let v6 = v1.exact_view(start=5, end=5)
   inspect(v6, content="")
-  let v7 = v1.view()
+  let v7 = v1.exact_view()
   inspect(v7, content="abc😭def😂ghi")
-  let v8 = v1.view(start_offset=3, end_offset=10)
+  let v8 = v1.exact_view(start=3, end=10)
   inspect(v8, content="😭def😂")
 }
 
 ///|
 test "iter2" {
   let str = "aa😭b😂cc"
-  let view = str.view(start_offset=1, end_offset=8)
+  let view = str.exact_view(start=1, end=8)
   debug_inspect(
     view.iter2().iter().collect(),
     content="[(0, 'a'), (1, '😭'), (2, 'b'), (3, '😂'), (4, 'c')]",
@@ -647,7 +628,7 @@ test "make" {
 
 ///|
 test "to_json" {
-  let v = "hello".view(start_offset=1, end_offset=4)
+  let v = "hello".exact_view(start=1, end=4)
   debug_inspect(
     v.to_json(),
     content=(
@@ -1025,7 +1006,7 @@ test "StringView add" {
 ///|
 test "panic view access out of bounds" {
   let str = "Hello"
-  let view = str.view(start_offset=0, end_offset=5)
+  let view = str.exact_view(start=0, end=5)
   view.code_unit_at(5) |> ignore
 }
 
@@ -1042,114 +1023,147 @@ test "stringview lexical_compare" {
   let str = "abc"
   inspect(
     str
-    .view(start_offset=0, end_offset=3)
-    .lexical_compare(str.view(start_offset=0, end_offset=3)),
+    .exact_view(start=0, end=3)
+    .lexical_compare(str.exact_view(start=0, end=3)),
     content="0",
   )
 
   // Test identical views from different strings
   let str1 = "abc"
   let str2 = "abc"
-  inspect(str1.view().lexical_compare(str2.view()), content="0")
+  inspect(str1.exact_view().lexical_compare(str2.exact_view()), content="0")
 
   // Test lexicographically less than
   inspect(
-    str.view(start_offset=0, end_offset=3).lexical_compare("abd".view()),
+    str.exact_view(start=0, end=3).lexical_compare("abd".exact_view()),
     content="-1",
   )
-  inspect("ab".view().lexical_compare("abc".view()), content="-1")
-  inspect("".view().lexical_compare("a".view()), content="-1")
+  inspect("ab".exact_view().lexical_compare("abc".exact_view()), content="-1")
+  inspect("".exact_view().lexical_compare("a".exact_view()), content="-1")
 
   // Test lexicographically greater than
-  inspect("abd".view().lexical_compare(str.view()), content="1")
-  inspect("abc".view().lexical_compare("ab".view()), content="1")
-  inspect("a".view().lexical_compare("".view()), content="1")
+  inspect("abd".exact_view().lexical_compare(str.exact_view()), content="1")
+  inspect("abc".exact_view().lexical_compare("ab".exact_view()), content="1")
+  inspect("a".exact_view().lexical_compare("".exact_view()), content="1")
 
   // Test different lengths with same prefix - Java behavior
   // In lexicographical comparison, "ab" < "abc" (shorter string is less when it's a prefix)
-  inspect("ab".view().lexical_compare("abc".view()), content="-1")
-  inspect("abc".view().lexical_compare("ab".view()), content="1")
+  inspect("ab".exact_view().lexical_compare("abc".exact_view()), content="-1")
+  inspect("abc".exact_view().lexical_compare("ab".exact_view()), content="1")
 
   // Test case sensitivity
-  inspect("ABC".view().lexical_compare("abc".view()), content="-1") // uppercase letters have lower code points
+  inspect("ABC".exact_view().lexical_compare("abc".exact_view()), content="-1") // uppercase letters have lower code points
 
   // Test with numbers
-  inspect("123".view().lexical_compare("124".view()), content="-1")
-  inspect("124".view().lexical_compare("123".view()), content="1")
+  inspect("123".exact_view().lexical_compare("124".exact_view()), content="-1")
+  inspect("124".exact_view().lexical_compare("123".exact_view()), content="1")
 
   // Test with surrogate pairs (emoji)
   let emoji1 = "🤣"
   let emoji2 = "😭"
   // Different emojis have different UTF-16 code units
-  inspect(emoji1.view().lexical_compare(emoji2.view()), content="1")
-  inspect(emoji2.view().lexical_compare(emoji1.view()), content="-1")
-  inspect(emoji1.view().lexical_compare(emoji1.view()), content="0")
+  inspect(emoji1.exact_view().lexical_compare(emoji2.exact_view()), content="1")
+  inspect(
+    emoji2.exact_view().lexical_compare(emoji1.exact_view()),
+    content="-1",
+  )
+  inspect(emoji1.exact_view().lexical_compare(emoji1.exact_view()), content="0")
 
   // Test mixed ASCII and emoji
-  inspect("a🤣".view().lexical_compare("a😭".view()), content="1")
-  inspect("abc🤣".view().lexical_compare("abc".view()), content="1")
-  inspect("abc".view().lexical_compare("abc🤣".view()), content="-1")
+  inspect(
+    "a🤣".exact_view().lexical_compare("a😭".exact_view()),
+    content="1",
+  )
+  inspect(
+    "abc🤣".exact_view().lexical_compare("abc".exact_view()),
+    content="1",
+  )
+  inspect(
+    "abc".exact_view().lexical_compare("abc🤣".exact_view()),
+    content="-1",
+  )
 
   // Test with views that have offsets
   let long_str = "xyzabcdefghijkl"
   inspect(
     long_str
-    .view(start_offset=3, end_offset=6)
-    .lexical_compare(long_str.view(start_offset=3, end_offset=9)),
+    .exact_view(start=3, end=6)
+    .lexical_compare(long_str.exact_view(start=3, end=9)),
     content="-1",
   )
   inspect(
     long_str
-    .view(start_offset=3, end_offset=9)
-    .lexical_compare(long_str.view(start_offset=3, end_offset=6)),
+    .exact_view(start=3, end=9)
+    .lexical_compare(long_str.exact_view(start=3, end=6)),
     content="1",
   )
 
   // Test views from different positions but same content
   inspect(
     long_str
-    .view(start_offset=3, end_offset=6)
-    .lexical_compare(long_str.view(start_offset=10, end_offset=13)),
+    .exact_view(start=3, end=6)
+    .lexical_compare(long_str.exact_view(start=10, end=13)),
     content="-1",
   ) // "abc" vs "jkl"
 
   // Test empty views
-  inspect("".view().lexical_compare("".view()), content="0")
+  inspect("".exact_view().lexical_compare("".exact_view()), content="0")
 
   // Test comparing common prefixes with different suffixes
   let str_a = "testing"
   let str_b = "tested"
-  inspect(str_b.view().lexical_compare(str_a.view()), content="-1") // "tested" < "testing"
+  inspect(str_b.exact_view().lexical_compare(str_a.exact_view()), content="-1") // "tested" < "testing"
 
   // Test comparison with special characters
-  inspect("hello!".view().lexical_compare("hello?".view()), content="-1") // '!' < '?'
+  inspect(
+    "hello!".exact_view().lexical_compare("hello?".exact_view()),
+    content="-1",
+  ) // '!' < '?'
 }
 
 ///|
 test "stringview compare_ignore_ascii_case" {
   // Equal under ASCII folding
-  inspect("".view().compare_ignore_ascii_case("".view()), content="0")
-  inspect("abc".view().compare_ignore_ascii_case("ABC".view()), content="0")
   inspect(
-    "MoonBit".view().compare_ignore_ascii_case("MOONBIT".view()),
+    "".exact_view().compare_ignore_ascii_case("".exact_view()),
+    content="0",
+  )
+  inspect(
+    "abc".exact_view().compare_ignore_ascii_case("ABC".exact_view()),
+    content="0",
+  )
+  inspect(
+    "MoonBit".exact_view().compare_ignore_ascii_case("MOONBIT".exact_view()),
     content="0",
   )
 
   // Less / greater after folding
-  inspect("ABC".view().compare_ignore_ascii_case("abd".view()), content="-1")
-  inspect("abd".view().compare_ignore_ascii_case("ABC".view()), content="1")
+  inspect(
+    "ABC".exact_view().compare_ignore_ascii_case("abd".exact_view()),
+    content="-1",
+  )
+  inspect(
+    "abd".exact_view().compare_ignore_ascii_case("ABC".exact_view()),
+    content="1",
+  )
 
   // Prefix relationship
-  inspect("ab".view().compare_ignore_ascii_case("ABC".view()), content="-1")
-  inspect("ABC".view().compare_ignore_ascii_case("ab".view()), content="1")
+  inspect(
+    "ab".exact_view().compare_ignore_ascii_case("ABC".exact_view()),
+    content="-1",
+  )
+  inspect(
+    "ABC".exact_view().compare_ignore_ascii_case("ab".exact_view()),
+    content="1",
+  )
 
   // Sub-views with different start offsets but equal-under-fold contents
   let long_a = "xyzHELLOxyz"
   let long_b = "qqhelloqq"
   inspect(
     long_a
-    .view(start_offset=3, end_offset=8)
-    .compare_ignore_ascii_case(long_b.view(start_offset=2, end_offset=7)),
+    .exact_view(start=3, end=8)
+    .compare_ignore_ascii_case(long_b.exact_view(start=2, end=7)),
     content="0",
   )
 
@@ -1159,43 +1173,65 @@ test "stringview compare_ignore_ascii_case" {
   let t = "XXXbbbDDD"
   inspect(
     s
-    .view(start_offset=3, end_offset=6)
-    .compare_ignore_ascii_case(t.view(start_offset=3, end_offset=6)),
+    .exact_view(start=3, end=6)
+    .compare_ignore_ascii_case(t.exact_view(start=3, end=6)),
     content="0",
   )
 
   // Non-ASCII letters are NOT folded
-  assert_true("Ä".view().compare_ignore_ascii_case("ä".view()) != 0)
+  assert_true(
+    "Ä".exact_view().compare_ignore_ascii_case("ä".exact_view()) != 0,
+  )
 
   // Surrogate pairs
-  inspect("A🤣".view().compare_ignore_ascii_case("a🤣".view()), content="0")
-  assert_true("a🤣".view().compare_ignore_ascii_case("a😭".view()) != 0)
+  inspect(
+    "A🤣".exact_view().compare_ignore_ascii_case("a🤣".exact_view()),
+    content="0",
+  )
+  assert_true(
+    "a🤣".exact_view().compare_ignore_ascii_case("a😭".exact_view()) != 0,
+  )
 }
 
 ///|
 test "stringview equal_ignore_ascii_case" {
   // Equal under ASCII folding
-  inspect("".view().equal_ignore_ascii_case("".view()), content="true")
-  inspect("abc".view().equal_ignore_ascii_case("ABC".view()), content="true")
   inspect(
-    "MoonBit".view().equal_ignore_ascii_case("MOONBIT".view()),
+    "".exact_view().equal_ignore_ascii_case("".exact_view()),
+    content="true",
+  )
+  inspect(
+    "abc".exact_view().equal_ignore_ascii_case("ABC".exact_view()),
+    content="true",
+  )
+  inspect(
+    "MoonBit".exact_view().equal_ignore_ascii_case("MOONBIT".exact_view()),
     content="true",
   )
 
   // Length mismatch fast path
-  inspect("ab".view().equal_ignore_ascii_case("ABC".view()), content="false")
-  inspect("ABC".view().equal_ignore_ascii_case("ab".view()), content="false")
+  inspect(
+    "ab".exact_view().equal_ignore_ascii_case("ABC".exact_view()),
+    content="false",
+  )
+  inspect(
+    "ABC".exact_view().equal_ignore_ascii_case("ab".exact_view()),
+    content="false",
+  )
 
   // Same length but different content
-  inspect("abc".view().equal_ignore_ascii_case("abd".view()), content="false")
+  inspect(
+    "abc".exact_view().equal_ignore_ascii_case("abd".exact_view()),
+    content="false",
+  )
 
   // Sub-views with different start offsets but equal-under-fold contents
   let long_a = "xyzHELLOxyz"
   let long_b = "qqhelloqq"
   inspect(
     long_a
-    .view(start_offset=3, end_offset=8)
-    .equal_ignore_ascii_case(long_b.view(start_offset=2, end_offset=7)),
+    .exact_view(start=3, end=8)
+    .equal_ignore_ascii_case(long_b.exact_view(start=2, end=7)),
     content="true",
   )
 
@@ -1205,21 +1241,24 @@ test "stringview equal_ignore_ascii_case" {
   let t = "XXXbbbDDD"
   inspect(
     s
-    .view(start_offset=3, end_offset=6)
-    .equal_ignore_ascii_case(t.view(start_offset=3, end_offset=6)),
+    .exact_view(start=3, end=6)
+    .equal_ignore_ascii_case(t.exact_view(start=3, end=6)),
     content="true",
   )
 
   // Non-ASCII letters are NOT folded
-  inspect("Ä".view().equal_ignore_ascii_case("ä".view()), content="false")
+  inspect(
+    "Ä".exact_view().equal_ignore_ascii_case("ä".exact_view()),
+    content="false",
+  )
 
   // Surrogate pairs
   inspect(
-    "A🤣".view().equal_ignore_ascii_case("a🤣".view()),
+    "A🤣".exact_view().equal_ignore_ascii_case("a🤣".exact_view()),
     content="true",
   )
   inspect(
-    "a🤣".view().equal_ignore_ascii_case("a😭".view()),
+    "a🤣".exact_view().equal_ignore_ascii_case("a😭".exact_view()),
     content="false",
   )
 
@@ -1228,8 +1267,8 @@ test "stringview equal_ignore_ascii_case" {
   for c in cases {
     let (x, y) = c
     @test.assert_eq(
-      x.view().equal_ignore_ascii_case(y.view()),
-      x.view().compare_ignore_ascii_case(y.view()) == 0,
+      x.exact_view().equal_ignore_ascii_case(y.exact_view()),
+      x.exact_view().compare_ignore_ascii_case(y.exact_view()) == 0,
     )
   }
 }

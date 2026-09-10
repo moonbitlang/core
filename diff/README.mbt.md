@@ -156,15 +156,15 @@ test "git-style terminal colors from the public Hunk API" {
     for edit in h.edits() {
       match edit {
         Equal(old_index~, len~, ..) =>
-          for e in o.view(start=old_index, end=old_index + len) {
+          for e in o.exact_view(start=old_index, end=old_index + len) {
             buf <+ " \{e}\n"
           }
         Delete(old_index~, old_len~, ..) =>
-          for e in o.view(start=old_index, end=old_index + old_len) {
+          for e in o.exact_view(start=old_index, end=old_index + old_len) {
             buf <+ "\u{1b}[31m-\{e}\u{1b}[0m\n"
           }
         Insert(new_index~, new_len~, ..) =>
-          for e in n.view(start=new_index, end=new_index + new_len) {
+          for e in n.exact_view(start=new_index, end=new_index + new_len) {
             buf <+ "\u{1b}[32m+\{e}\u{1b}[0m\n"
           }
       }

@@ -56,10 +56,10 @@ test "unsafe vs safe" {
 }
 ```
 
-* **Validity**: The string APIs assume the validity of strings and that provided
-  offsets don't fall between surrogate pairs. The APIs don't perform validity
-  checks for efficiency reasons. Creating invalid strings is possible (e.g.,
-  `"🍎".view(start_offset=1)` starts at the second half of a surrogate pair).
+* **Validity**: Strings store UTF-16 code units. `exact_view` validates bounds and
+  surrogate boundaries, while `clamped_view` trims split pairs inward. Creating
+  invalid strings is possible (e.g., `"🍎".unsafe_substring(start=1, end=2)`
+  starts at the second half of a surrogate pair).
   When displaying invalid characters, a replacement character � will be shown.
 
 * **View**: A `View` represents a view of a String that maintains proper Unicode
@@ -91,7 +91,7 @@ test "view conversion" {
   }
 
   let str = "Hello World"
-  let view = str.view(start_offset=0, end_offset=5)
+  let view = str.exact_view(start=0, end=5)
 
   // Both work due to implicit conversion
   let _ = process_text(str) // String implicitly converts to View

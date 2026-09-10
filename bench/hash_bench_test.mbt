@@ -33,21 +33,21 @@ test "bench Hash for Bytes (large)" (it : @bench.T) {
 ///|
 test "bench Hash for BytesView (small)" (it : @bench.T) {
   let data = Bytes::make(16, 0xAB)
-  let view = data.view()
+  let view = data.exact_view()
   it.bench(fn() { it.keep(Hash::hash(view)) })
 }
 
 ///|
 test "bench Hash for BytesView (medium)" (it : @bench.T) {
   let data = Bytes::make(256, 0xAB)
-  let view = data.view()
+  let view = data.exact_view()
   it.bench(fn() { it.keep(Hash::hash(view)) })
 }
 
 ///|
 test "bench Hash for BytesView (large)" (it : @bench.T) {
   let data = Bytes::make(4096, 0xAB)
-  let view = data.view()
+  let view = data.exact_view()
   it.bench(fn() { it.keep(Hash::hash(view)) })
 }
 

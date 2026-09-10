@@ -368,8 +368,9 @@ pub fn StringView::strip_prefix(
   prefix : StringView,
 ) -> StringView? {
   let prefix_len = prefix.length()
-  if self.length() >= prefix_len && self.view(end_offset=prefix_len) == prefix {
-    Some(self.view(start_offset=prefix_len))
+  if self.length() >= prefix_len &&
+    self.raw_view(end_offset=prefix_len) == prefix {
+    Some(self.raw_view(start_offset=prefix_len))
   } else {
     None
   }
@@ -400,8 +401,8 @@ pub fn StringView::strip_suffix(
   let self_len = self.length()
   let suffix_len = suffix.length()
   if self_len >= suffix_len &&
-    self.view(start_offset=self_len - suffix_len) == suffix {
-    Some(self.view(end_offset=self_len - suffix_len))
+    self.raw_view(start_offset=self_len - suffix_len) == suffix {
+    Some(self.raw_view(end_offset=self_len - suffix_len))
   } else {
     None
   }
@@ -1697,7 +1698,7 @@ pub fn StringView::split(
 ) -> Iter[StringView] {
   let sep_len = sep.length()
   if sep_len == 0 {
-    return self.iter().map(c => c.to_string().view())
+    return self.iter().map(c => c.to_string().raw_view())
   }
   let mut remaining = Some(self)
   Iter::new(() => {
@@ -1706,8 +1707,8 @@ pub fn StringView::split(
       remaining = None
       Some(view)
     }
-    remaining = Some(view.view(start_offset=end + sep_len))
-    Some(view.view(end_offset=end))
+    remaining = Some(view.raw_view(start_offset=end + sep_len))
+    Some(view.raw_view(end_offset=end))
   })
 }
 
@@ -1739,8 +1740,8 @@ pub fn StringView::split_once(
     Some(index) =>
       Some(
         (
-          self.view(end_offset=index),
-          self.view(start_offset=index + needle.length()),
+          self.raw_view(end_offset=index),
+          self.raw_view(start_offset=index + needle.length()),
         ),
       )
     None => None
@@ -1772,7 +1773,7 @@ pub fn StringView::before(
   needle : StringView,
 ) -> StringView? {
   match self.find(needle) {
-    Some(index) => Some(self.view(end_offset=index))
+    Some(index) => Some(self.raw_view(end_offset=index))
     None => None
   }
 }
@@ -1795,7 +1796,7 @@ pub fn String::before(self : String, needle : StringView) -> StringView? {
 /// If the separator is empty, it returns the full string.
 pub fn StringView::after(self : StringView, needle : StringView) -> StringView? {
   match self.find(needle) {
-    Some(index) => Some(self.view(start_offset=index + needle.length()))
+    Some(index) => Some(self.raw_view(start_offset=index + needle.length()))
     None => None
   }
 }
@@ -1831,8 +1832,8 @@ pub fn StringView::rev_split_once(
     Some(index) =>
       Some(
         (
-          self.view(end_offset=index),
-          self.view(start_offset=index + needle.length()),
+          self.raw_view(end_offset=index),
+          self.raw_view(start_offset=index + needle.length()),
         ),
       )
     None => None
@@ -1875,7 +1876,7 @@ pub fn StringView::rev_before(
   needle : StringView,
 ) -> StringView? {
   match self.rev_find(needle) {
-    Some(index) => Some(self.view(end_offset=index))
+    Some(index) => Some(self.raw_view(end_offset=index))
     None => None
   }
 }
@@ -1913,7 +1914,7 @@ pub fn StringView::rev_after(
   needle : StringView,
 ) -> StringView? {
   match self.rev_find(needle) {
-    Some(index) => Some(self.view(start_offset=index + needle.length()))
+    Some(index) => Some(self.raw_view(start_offset=index + needle.length()))
     None => None
   }
 }
@@ -2019,9 +2020,9 @@ pub fn StringView::replace(
   match self.find(old) {
     Some(end) =>
       [
-        ..self.view(end_offset=end),
+        ..self.raw_view(end_offset=end),
         ..new,
-        ..self.view(start_offset=end + old.length()),
+        ..self.raw_view(start_offset=end + old.length()),
       ]
     None => self
   }
@@ -2040,9 +2041,9 @@ pub fn String::replace(
   match self.find(old) {
     Some(end) =>
       [
-        ..self.view(end_offset=end),
+        ..self.raw_view(end_offset=end),
         ..new,
-        ..self.view(start_offset=end + old.length()),
+        ..self.raw_view(start_offset=end + old.length()),
       ]
     None => self
   }
@@ -2086,12 +2087,12 @@ pub fn StringView::replace_all(
     let first_end = self.find(old)
     if first_end is Some(end) {
       for view = self, end = end {
-        let seg = view.view(end_offset=end)
+        let seg = view.raw_view(end_offset=end)
         buf.write_substring(seg.data(), seg.start_offset(), seg.length())
         buf.write_string(new)
         // check if there is no more characters after the last occurrence of `old`
         guard end + old_len <= len else { break }
-        let next_view = view.view(start_offset=end + old_len)
+        let next_view = view.raw_view(start_offset=end + old_len)
         guard next_view.find(old) is Some(next_end) else {
           buf.write_substring(
             next_view.data(),
@@ -2136,12 +2137,12 @@ pub fn String::replace_all(
     let first_end = self.find(old)
     if first_end is Some(end) {
       for view = self[:], end = end {
-        let seg = view.view(end_offset=end)
+        let seg = view.raw_view(end_offset=end)
         buf.write_substring(seg.data(), seg.start_offset(), seg.length())
         buf.write_string(new)
         // check if there is no more characters after the last occurrence of `old`
         guard end + old_len <= len else { break }
-        let next_view = view.view(start_offset=end + old_len)
+        let next_view = view.raw_view(start_offset=end + old_len)
         guard next_view.find(old) is Some(next_end) else {
           buf.write_substring(
             next_view.data(),
@@ -2388,7 +2389,7 @@ fn ascii_lowercase_copy(view : StringView, first_uppercase : Int) -> String {
   let len = view.length()
   let output : FixedArray[UInt16] = FixedArray::make(len, 0)
   output.unsafe_blit_from_string(0, view.data(), view.start_offset(), len)
-  let tail = view.view(start_offset=first_uppercase)
+  let tail = view.raw_view(start_offset=first_uppercase)
   // Keep `tail.code_units()` directly in the loop so compiler backends can
   // recognize and lower the zero-copy traversal at the use site.
   for i, u in tail.code_units() {
@@ -2439,9 +2440,9 @@ pub fn StringView::to_lower(self : StringView) -> StringView {
     return self
   }
   let buf = StringBuilder(size_hint=self.length())
-  let head = self.view(end_offset=idx)
+  let head = self.raw_view(end_offset=idx)
   buf.write_substring(head.data(), head.start_offset(), head.length())
-  for c in self.view(start_offset=idx) {
+  for c in self.raw_view(start_offset=idx) {
     if c.is_ascii_uppercase() {
       buf.write_char((c.to_int() + 32).unsafe_to_char())
     } else {
@@ -2462,9 +2463,9 @@ pub fn String::to_lower(self : String) -> String {
     return self
   }
   let buf = StringBuilder(size_hint=self.length())
-  let head = self.view(end_offset=idx)
+  let head = self.raw_view(end_offset=idx)
   buf.write_substring(head.data(), head.start_offset(), head.length())
-  for c in self.view(start_offset=idx) {
+  for c in self.raw_view(start_offset=idx) {
     if c.is_ascii_uppercase() {
       buf.write_char((c.to_int() + 32).unsafe_to_char())
     } else {
@@ -2527,9 +2528,9 @@ pub fn StringView::to_upper(self : StringView) -> StringView {
     return self
   }
   let buf = StringBuilder(size_hint=self.length())
-  let head = self.view(end_offset=idx)
+  let head = self.raw_view(end_offset=idx)
   buf.write_substring(head.data(), head.start_offset(), head.length())
-  for c in self.view(start_offset=idx) {
+  for c in self.raw_view(start_offset=idx) {
     if c.is_ascii_lowercase() {
       buf.write_char((c.to_int() - 32).unsafe_to_char())
     } else {
@@ -2549,9 +2550,9 @@ pub fn String::to_upper(self : String) -> String {
     return self
   }
   let buf = StringBuilder(size_hint=self.length())
-  let head = self.view(end_offset=idx)
+  let head = self.raw_view(end_offset=idx)
   buf.write_substring(head.data(), head.start_offset(), head.length())
-  for c in self.view(start_offset=idx) {
+  for c in self.raw_view(start_offset=idx) {
     if c.is_ascii_lowercase() {
       buf.write_char((c.to_int() - 32).unsafe_to_char())
     } else {

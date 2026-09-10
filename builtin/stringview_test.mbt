@@ -16,7 +16,7 @@
 test "StringView::suffixes" {
   let str = "za🤣b"
   let start = str.offset_of_nth_char(1).unwrap()
-  let view = str.view(start_offset=start)
+  let view = str.exact_view(start~)
   let suffixes = view.suffixes().map(v => v.to_owned()).collect()
   @json.json_inspect(suffixes, content=["a🤣b", "🤣b", "b"])
   let suffixes_with_empty = view
@@ -102,7 +102,7 @@ test "StringView::code_units start offset" {
 
 ///|
 test "StringView core operations" {
-  let view = "ab😀c".view(start_offset=1)
+  let view = "ab😀c".exact_view(start=1)
   inspect(view.char_length(), content="3")
   inspect(view.char_length_eq(3), content="true")
   inspect(view.char_length_ge(4), content="false")
@@ -183,24 +183,24 @@ test "StringView sub valid cases" {
 }
 
 ///|
-test "panic String::sub invalid index" {
+test "panic String::exact_view invalid index" {
   ignore("A😀B"[0:2])
 }
 
 ///|
-test "panic String::sub index out of bounds" {
+test "panic String::exact_view index out of bounds" {
   ignore("A😀B"[0:10])
 }
 
 ///|
-test "panic StringView::sub invalid index" {
+test "panic StringView::exact_view invalid index" {
   let s = "A😀B"
   let view = s[1:3]
   ignore(view[:1])
 }
 
 ///|
-test "panic StringView::sub index out of bounds" {
+test "panic StringView::exact_view index out of bounds" {
   let s = "A😀B"
   let view = s[1:3]
   ignore(view[0:10])
@@ -212,13 +212,13 @@ test "panic StringView::at out of bounds" {
 }
 
 ///|
-test "panic StringView::view invalid range" {
-  ignore("abc"[:].view(start_offset=2, end_offset=1))
+test "panic StringView::exact_view invalid range" {
+  ignore("abc"[:].exact_view(start=2, end=1))
 }
 
 ///|
-test "panic String::view invalid range" {
-  ignore("abc".view(start_offset=2, end_offset=1))
+test "panic String::exact_view invalid range" {
+  ignore("abc".exact_view(start=2, end=1))
 }
 
 ///|
@@ -242,13 +242,13 @@ test "StringView compare physical equal" {
 }
 
 ///|
-test "panic String::sub invalid start index" {
+test "panic String::exact_view invalid start index" {
   let s = "\u{1F600}A"
   ignore(s[1:])
 }
 
 ///|
-test "panic StringView::sub invalid start index" {
+test "panic StringView::exact_view invalid start index" {
   let view = "\u{1F600}A"[:]
   ignore(view[1:])
 }
@@ -364,22 +364,16 @@ test "StringView::get_view" {
 test "StringView::equal_to_string" {
   let s = "say hello to everyone"
   // Sub-view of "hello" matches the owned string.
-  inspect(
-    s.view(start_offset=4, end_offset=9).equal_to_string("hello"),
-    content="true",
-  )
+  inspect(s.exact_view(start=4, end=9).equal_to_string("hello"), content="true")
   // Same length, different content.
   inspect(
-    s.view(start_offset=4, end_offset=9).equal_to_string("world"),
+    s.exact_view(start=4, end=9).equal_to_string("world"),
     content="false",
   )
   // Length mismatch short-circuits.
+  inspect(s.exact_view(start=4, end=9).equal_to_string("hell"), content="false")
   inspect(
-    s.view(start_offset=4, end_offset=9).equal_to_string("hell"),
-    content="false",
-  )
-  inspect(
-    s.view(start_offset=4, end_offset=9).equal_to_string("hello!"),
+    s.exact_view(start=4, end=9).equal_to_string("hello!"),
     content="false",
   )
   // Empty view vs empty string.

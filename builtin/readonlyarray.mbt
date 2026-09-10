@@ -869,15 +869,17 @@ pub fn[T : Compare] ReadOnlyArray::lexical_compare(
 /// ```
 #intrinsic("%readonlyarray.view")
 #alias("_[_:_]")
-#alias(sub, deprecated="Use _[_:_] instead")
-pub fn[T] ReadOnlyArray::view(
+#alias(view, deprecated="Use `exact_view` instead")
+#alias(sub, deprecated="Use `exact_view` instead")
+pub fn[T] ReadOnlyArray::exact_view(
   self : ReadOnlyArray[T],
   start? : Int = 0,
   end? : Int,
 ) -> ArrayView[T] {
+  let fixed = self.unsafe_reinterpret_to_fixed_array()
   match end {
-    None => self.unsafe_reinterpret_to_fixed_array()[start:]
-    Some(e) => self.unsafe_reinterpret_to_fixed_array()[start:e]
+    None => fixed.exact_view(start~)
+    Some(end) => fixed.exact_view(start~, end~)
   }
 }
 

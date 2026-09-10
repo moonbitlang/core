@@ -68,7 +68,7 @@ test "clamped_view chunking loop reassembles the original" {
 
 ///|
 test "StringView::clamped_view uses view-relative offsets" {
-  let v = "xx ab😀cd".view(start_offset=3) // "ab😀cd", 😀 at units 2-3
+  let v = "xx ab😀cd".exact_view(start=3) // "ab😀cd", 😀 at units 2-3
   inspect(v.clamped_view(end=3), content="ab")
   inspect(v.clamped_view(start=3), content="cd")
   inspect(v.clamped_view(start=3, end=3), content="")

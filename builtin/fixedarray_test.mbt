@@ -369,7 +369,7 @@ test "fixedarray_fill - existing documentation example" {
 }
 
 ///|
-test "FixedArray::sub" {
+test "FixedArray::exact_view" {
   let arr = FixedArray::makei(10, i => i * i)
   let sub = arr[:]
   debug_inspect(
@@ -389,7 +389,7 @@ fn sum(xs : ArrayView[Int]) -> Int {
 ///|
 // TODO: fix(upstream) later
 #cfg(false)
-test "FixedArray::sub - sum" {
+test "FixedArray::exact_view - sum" {
   let arr = FixedArray::makei(10, i => i * i)
   inspect(sum(arr), content="385")
 }

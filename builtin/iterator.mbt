@@ -930,8 +930,8 @@ pub fn[X] Iter::intersperse(self : Iter[X], sep : X) -> Iter[X] {
 /// }
 /// ```
 #alias("_[_:_]")
-#alias(view)
-#alias(sub, deprecated="Use _[_:_] instead")
+#alias(view, deprecated="Use `clamped_view` instead")
+#alias(sub, deprecated="Use `clamped_view` instead")
 pub fn[X] Iter::clamped_view(
   self : Iter[X],
   start? : Int = 0,

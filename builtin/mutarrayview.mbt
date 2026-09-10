@@ -368,8 +368,9 @@ pub fn[T] FixedArray::mut_view(
 /// length of the current view.
 #intrinsic("%mutarrayview.view")
 #alias("_[_:_]")
-#alias(sub, deprecated="Use _[_:_] instead")
-pub fn[T] MutArrayView::view(
+#alias(view, deprecated="Use `exact_view` instead")
+#alias(sub, deprecated="Use `exact_view` instead")
+pub fn[T] MutArrayView::exact_view(
   self : MutArrayView[T],
   start? : Int = 0,
   end? : Int,

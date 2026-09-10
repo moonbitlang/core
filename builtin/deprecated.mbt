@@ -119,3 +119,31 @@ pub fn String::unsafe_char_at(self : String, index : Int) -> Char {
 pub fn[T] Array::new(capacity? : Int = 0) -> Array[T] {
   Array(capacity~)
 }
+
+///|
+/// Creates a view using raw UTF-16 code-unit offsets.
+/// Numeric bounds are checked; surrogate pairs may be split.
+/// Use `StringView::exact_view(start~, end~)` for validated text boundaries.
+#deprecated("Use `exact_view` with `start` and `end` instead; it also validates surrogate boundaries")
+pub fn StringView::view(
+  self : StringView,
+  start_offset? : Int = 0,
+  end_offset? : Int,
+) -> StringView {
+  let end_offset = if end_offset is Some(o) { o } else { self.length() }
+  self.raw_view(start_offset~, end_offset~)
+}
+
+///|
+/// Creates a view using raw UTF-16 code-unit offsets.
+/// Numeric bounds are checked; surrogate pairs may be split.
+/// Use `String::exact_view(start~, end~)` for validated text boundaries.
+#deprecated("Use `exact_view` with `start` and `end` instead; it also validates surrogate boundaries")
+pub fn String::view(
+  self : String,
+  start_offset? : Int = 0,
+  end_offset? : Int,
+) -> StringView {
+  let end_offset = if end_offset is Some(o) { o } else { self.length() }
+  self.raw_view(start_offset~, end_offset~)
+}
