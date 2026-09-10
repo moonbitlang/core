@@ -93,7 +93,7 @@ test {
 ///
 pub fn parse_int64(str : StringView, base? : Int = 0) -> Int64 raise {
   guard str != "" else { syntax_err() }
-  let (neg, rest) = match str.view() {
+  let (neg, rest) = match str {
     ['+', .. rest] => (false, rest)
     ['-', .. rest] => (true, rest)
     rest => (false, rest)

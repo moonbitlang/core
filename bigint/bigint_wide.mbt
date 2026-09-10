@@ -945,7 +945,7 @@ pub fn parse_bigint(str : StringView, base? : Int = 10) -> BigInt raise {
 /// Panics if the input is malformed. Use `@string.parse_bigint` to handle
 /// errors.
 pub fn BigInt::from_string(input : String, radix? : Int = 10) -> BigInt {
-  parse_bigint(input.view(), base=radix) catch {
+  parse_bigint(input, base=radix) catch {
     Failure(msg) => abort(msg)
     _ => abort("invalid syntax")
   }
