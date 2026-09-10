@@ -27,3 +27,26 @@ test "logger trait object calls" {
     ),
   )
 }
+
+///|
+/// Implementing only `write_view` must make every other method route through
+/// it instead of recursing between the mutual defaults (#3805).
+priv struct ViewOnlyLogger {
+  mut buf : String
+}
+
+///|
+impl Logger for ViewOnlyLogger with fn write_view(self, value) {
+  for ch in value {
+    self.buf = self.buf + ch.to_string()
+  }
+}
+
+///|
+test "logger defaults route to the implemented write method" {
+  let v = ViewOnlyLogger::{ buf: "", }
+  Logger::write_string(v, "ab")
+  Logger::write_view(v, "cd"[0:2])
+  Logger::write_char(v, 'e')
+  inspect(v.buf, content="abcde")
+}
