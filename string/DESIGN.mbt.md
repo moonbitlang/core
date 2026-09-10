@@ -20,11 +20,13 @@
     the i-th UTF-16 code unit (charcode) for efficiency and consistency with
     other APIs. The return type of `s[i]` is `UInt16`, which reminds you that it
     returns the charcode.
-  - The slice operator `s[i:j]` is available but should also be used with
-    caution: it slices on charcode indices, not character indices, and it
-    aborts when an endpoint is out of range or would split a surrogate pair.
-    Use `s.get_view(start = i, end = j)`, which returns `None` instead of
-    aborting, when the range may be invalid.
+  - The slice operator `s[i:j]` uses UTF-16 code-unit indices. It clamps both
+    bounds to `[0, s.length()]`, trims split surrogate pairs inward, and
+    returns an empty view for an inverted range. Negative bounds clamp to
+    zero. Use `s.exact_view(start=i, end=j)` to require valid bounds and surrogate
+    boundaries, or `s.get_view(start=i, end=j)` to return `None` when they are
+    invalid. Use `s.split_at(i)` for a lossless split; two slices `s[:i]` and
+    `s[i:]` both omit a character split by `i`.
 
 * **Performance and Unicode Safety**:
   - Most APIs in this package operate on UTF-16 offsets rather than Unicode

@@ -72,37 +72,37 @@ test "basic3" {
 ///|
 test "panic invalid index1" {
   let bs = b"\x00\x01\x02\x03\x04\x05"
-  let _ = bs[-7:]
+  let _ = bs.exact_view(start=-7)
 }
 
 ///|
 test "panic invalid index2" {
   let bs = b"\x00\x01\x02\x03\x04\x05"
-  let _ = bs[:7]
+  let _ = bs.exact_view(end=7)
 }
 
 ///|
 test "panic invalid index3" {
   let bs = b"\x00\x01\x02\x03\x04\x05"
-  let _ = bs[3:2]
+  let _ = bs.exact_view(start=3, end=2)
 }
 
 ///|
 test "panic invalid index4" {
   let bs = b"\x00\x01\x02\x03\x04\x05"[:]
-  let _ = bs[:-7]
+  let _ = bs.exact_view(end=-7)
 }
 
 ///|
 test "panic invalid index5" {
   let bs = b"\x00\x01\x02\x03\x04\x05"[:]
-  let _ = bs[7:]
+  let _ = bs.exact_view(start=7)
 }
 
 ///|
 test "panic invalid index6" {
   let bs = b"\x00\x01\x02\x03\x04\x05"[:1]
-  let _ = bs[:2]
+  let _ = bs.exact_view(end=2)
 }
 
 ///|
@@ -132,13 +132,13 @@ test "iter2" {
 ///|
 test "panic negative index1" {
   let bs = b"\x01\x02\x03"
-  let _ = bs[-1:-2]
+  let _ = bs.exact_view(start=-1, end=-2)
 }
 
 ///|
 test "panic negative index2" {
   let bs = b"\x01\x02\x03"[:]
-  let _ = bs[-1:-2]
+  let _ = bs.exact_view(start=-1, end=-2)
 }
 
 ///|

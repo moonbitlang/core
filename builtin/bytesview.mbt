@@ -164,13 +164,14 @@ pub fn BytesView::unsafe_get(self : BytesView, index : Int) -> Byte {
 
 ///|
 /// Creates a new `View` from the given `Bytes`.
+/// Panics unless `0 <= start <= end <= length()`.
 /// 
 /// # Example
 /// 
 /// ```mbt check
 /// test {
 ///   let bs = b"\x00\x01\x02\x03\x04\x05"
-///   let bv = bs[1:4]
+///   let bv = bs.exact_view(start=1, end=4)
 ///   inspect(bv.length(), content="3")
 ///   @test.assert_eq(bv[0], b'\x01')
 ///   @test.assert_eq(bv[1], b'\x02')
@@ -178,7 +179,6 @@ pub fn BytesView::unsafe_get(self : BytesView, index : Int) -> Byte {
 /// }
 /// ```
 #intrinsic("%bytes.view")
-#alias("_[_:_]")
 #alias(view, deprecated="Use `exact_view` instead")
 #alias(sub, deprecated="Use `exact_view` instead")
 pub fn Bytes::exact_view(
@@ -198,7 +198,7 @@ pub fn Bytes::exact_view(
 
 ///|
 /// Returns a view of the bytes between `start` and `end`, or `None` if the range
-/// is invalid. Unlike `Bytes::exact_view` (a.k.a. `b[start:end]`), this variant does
+/// is invalid. Unlike `Bytes::exact_view`, this variant does
 /// not abort on out-of-bounds indices, making it suitable for composition with
 /// pattern matching:
 ///
@@ -228,8 +228,7 @@ pub fn Bytes::get_view(
 
 ///|
 /// Returns a sub-view of the view between `start` and `end`, or `None` if the
-/// range is invalid. The optional variant of `BytesView::exact_view` (a.k.a.
-/// `bv[start:end]`).
+/// range is invalid. The optional variant of `BytesView::exact_view`.
 pub fn BytesView::get_view(
   self : BytesView,
   start? : Int = 0,
@@ -245,19 +244,19 @@ pub fn BytesView::get_view(
 
 ///|
 /// Creates a new `View` from the given `View`.
+/// Panics unless `0 <= start <= end <= length()` within the current view.
 ///
 /// # Example
 ///
 /// ```mbt check
 /// test {
 ///   let bv = b"\x00\x01\x02\x03\x04\x05"[:]
-///   let bv2 = bv[1:4]
+///   let bv2 = bv.exact_view(start=1, end=4)
 ///   inspect(bv2.length(), content="3")
 ///   @test.assert_eq(bv2[1], b'\x02')
 /// }
 /// ```
 #intrinsic("%bytesview.view")
-#alias("_[_:_]")
 #alias(view, deprecated="Use `exact_view` instead")
 #alias(sub, deprecated="Use `exact_view` instead")
 pub fn BytesView::exact_view(
@@ -285,8 +284,8 @@ pub fn BytesView::exact_view(
 /// where the caller already knows the range may overrun, such as framing a
 /// byte stream.
 ///
-/// See `bs[start:end]` for the aborting variant and `Bytes::get_view` for the
-/// exact `Option`-returning variant.
+/// Also available as `bs[start:end]`. See `Bytes::exact_view` for the aborting
+/// variant and `Bytes::get_view` for the exact `Option`-returning variant.
 ///
 /// # Example
 ///
@@ -298,6 +297,7 @@ pub fn BytesView::exact_view(
 ///   inspect(bs.clamped_view(start=4, end=1).length(), content="0")
 /// }
 /// ```
+#alias("_[_:_]")
 pub fn Bytes::clamped_view(
   self : Bytes,
   start? : Int = 0,
@@ -317,6 +317,7 @@ pub fn Bytes::clamped_view(
 /// Returns a sub-view of the view between `start` and `end`, clamping the
 /// requested range instead of rejecting it. Offsets are relative to the view;
 /// same contract as `Bytes::clamped_view`.
+/// Also available as `view[start:end]`. Use `BytesView::exact_view` to validate bounds.
 ///
 /// # Example
 ///
@@ -327,6 +328,7 @@ pub fn Bytes::clamped_view(
 ///   inspect(bv.clamped_view(start=3, end=1).length(), content="0")
 /// }
 /// ```
+#alias("_[_:_]")
 pub fn BytesView::clamped_view(
   self : BytesView,
   start? : Int = 0,

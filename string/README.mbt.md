@@ -128,9 +128,17 @@ test "string comparison" {
 String views provide efficient substring operations without copying. A
 `String` stores UTF-16 code units, and a view is just a `{str, start, end}`
 window into those units. A character outside the Basic Multilingual Plane is
-stored as a surrogate pair, and the `s[start:end]` slice syntax panics
-rather than split one. `s.exact_view(start~, end~)` provides the same validation;
-`s.clamped_view(start~, end~)` clamps bounds and trims split pairs inward.
+stored as a surrogate pair. The `s[start:end]` slice syntax clamps both bounds
+to `[0, s.length()]` and trims split surrogate pairs inward: the start moves
+forward and the end moves backward. Negative offsets clamp to zero, and an
+inverted range produces an empty view. `StringView` uses the same rules with
+offsets relative to the view.
+
+Use `s.exact_view(start~, end~)` when invalid bounds or split surrogate pairs should
+panic, or `s.get_view(start~, end~)` to receive `None` for an invalid range.
+For a lossless split, use `s.split_at(i)`; `s[:i]` and `s[i:]` both exclude a
+character when `i` falls inside its surrogate pair.
+
 The old `sub` name is deprecated in favor of `exact_view`. The legacy `view`
 method is also deprecated; it retains its `start_offset`/`end_offset` labels and
 raw UTF-16 behavior for compatibility.
@@ -143,7 +151,7 @@ str: "String \"a😀b\" — UTF-16 code units" {
   u2: "[2] 0xDE00 low surrogate"
   u3: "[3] 'b'"
 }
-view: "StringView {str, start, end}\ns[1:3] is the full 😀 (ok)\ns[2:4] starts inside 😀 → panics"
+view: "StringView {str, start, end}\ns[1:3] is the full 😀\ns[2:4] trims the split pair → b"
 view -> str: "zero copy, indices are code units"
 ```
 
@@ -163,6 +171,19 @@ test "string views" {
   // Convert view back to string
   let substring = view.to_owned()
   inspect(substring, content="World")
+}
+```
+
+```mbt check
+///|
+test "clamped string slices" {
+  let text = "ab😀cd"
+  inspect(text[:3], content="ab")
+  inspect(text[3:], content="cd")
+  inspect(text[-5:100], content="ab😀cd")
+  inspect(text[4:2], content="")
+  let (left, right) = text.split_at(3)
+  inspect(left + right, content="ab😀cd")
 }
 ```
 

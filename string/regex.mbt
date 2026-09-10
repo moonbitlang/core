@@ -302,8 +302,9 @@ pub impl BitOr for Regex with fn lor(self, other) -> Regex {
 /// unit of a surrogate pair).
 ///
 /// Passing a `last_index` in the middle of a surrogate pair may produce match
-/// offsets that later cause `MatchResult::before`, `MatchResult::content`, or
-/// `MatchResult::after` to panic when slicing.
+/// offsets that split a character. `MatchResult::before`, `MatchResult::content`,
+/// and `MatchResult::after` trim such boundaries inward when slicing, so their
+/// views may omit that character.
 ///
 /// `last_index` only controls where searching starts. It does **not** change
 /// anchor semantics:

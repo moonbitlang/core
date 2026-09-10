@@ -184,26 +184,26 @@ test "StringView sub valid cases" {
 
 ///|
 test "panic String::exact_view invalid index" {
-  ignore("A😀B"[0:2])
+  ignore("A😀B".exact_view(start=0, end=2))
 }
 
 ///|
 test "panic String::exact_view index out of bounds" {
-  ignore("A😀B"[0:10])
+  ignore("A😀B".exact_view(start=0, end=10))
 }
 
 ///|
 test "panic StringView::exact_view invalid index" {
   let s = "A😀B"
   let view = s[1:3]
-  ignore(view[:1])
+  ignore(view.exact_view(end=1))
 }
 
 ///|
 test "panic StringView::exact_view index out of bounds" {
   let s = "A😀B"
   let view = s[1:3]
-  ignore(view[0:10])
+  ignore(view.exact_view(start=0, end=10))
 }
 
 ///|
@@ -244,13 +244,13 @@ test "StringView compare physical equal" {
 ///|
 test "panic String::exact_view invalid start index" {
   let s = "\u{1F600}A"
-  ignore(s[1:])
+  ignore(s.exact_view(start=1))
 }
 
 ///|
 test "panic StringView::exact_view invalid start index" {
   let view = "\u{1F600}A"[:]
-  ignore(view[1:])
+  ignore(view.exact_view(start=1))
 }
 
 ///|

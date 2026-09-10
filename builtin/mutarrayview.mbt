@@ -358,6 +358,7 @@ pub fn[T] FixedArray::mut_view(
 
 ///|
 /// Creates a new `ArrayView` from a `MutArrayView`.
+/// Panics unless `0 <= start <= end <= length()` within the current view.
 ///
 /// Parameters:
 ///
@@ -367,7 +368,6 @@ pub fn[T] FixedArray::mut_view(
 /// * `end` : The ending index in the current view (exclusive). Defaults to the
 /// length of the current view.
 #intrinsic("%mutarrayview.view")
-#alias("_[_:_]")
 #alias(view, deprecated="Use `exact_view` instead")
 #alias(sub, deprecated="Use `exact_view` instead")
 pub fn[T] MutArrayView::exact_view(
@@ -391,6 +391,8 @@ pub fn[T] MutArrayView::exact_view(
 /// `[0, length()]`; an inverted range yields an empty view at the clamped
 /// `start`. Defaults to the full view when both bounds are omitted.
 ///
+/// Also available as `view[start:end]`. Use `MutArrayView::exact_view` to validate bounds.
+///
 /// ```mbt check
 /// test {
 ///   let arr = [1, 2, 3, 4, 5]
@@ -398,6 +400,7 @@ pub fn[T] MutArrayView::exact_view(
 ///   json_inspect(view.clamped_view(start=1, end=10).to_owned(), content=[3, 4])
 /// }
 /// ```
+#alias("_[_:_]")
 pub fn[T] MutArrayView::clamped_view(
   self : MutArrayView[T],
   start? : Int = 0,

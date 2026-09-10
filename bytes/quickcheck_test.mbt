@@ -193,7 +193,7 @@ test "quickcheck: views agree with array-model slices" {
       bs[:] == bs[0:len] else {
       return false
     }
-    // get_view mirrors the aborting slice on valid input and rejects invalid
+    // get_view agrees with bracket slicing on valid input and rejects invalid
     // ranges instead of aborting.
     guard bs.get_view(start~, end~) == Some(v) else { return false }
     guard bs.get_view(start=-1) is None else { return false }

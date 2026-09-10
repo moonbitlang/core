@@ -713,28 +713,28 @@ test "String::op_as_view basic usage" {
 }
 
 ///|
-test "panic String::op_as_view splits surrogate pair end" {
-  ignore("Hello🤣World"[:6])
+test "panic String::exact_view splits surrogate pair end" {
+  ignore("Hello🤣World".exact_view(end=6))
 }
 
 ///|
-test "panic String::op_as_view beyond string length" {
-  ignore("Hello🤣World"[0:20])
+test "panic String::exact_view beyond string length" {
+  ignore("Hello🤣World".exact_view(start=0, end=20))
 }
 
 ///|
-test "panic String::op_as_view negative index too large" {
-  ignore("Hello🤣World"[-20:])
+test "panic String::exact_view negative index too large" {
+  ignore("Hello🤣World".exact_view(start=-20))
 }
 
 ///|
-test "panic String::op_as_view start > end" {
-  ignore("Hello🤣World"[5:3])
+test "panic String::exact_view start > end" {
+  ignore("Hello🤣World".exact_view(start=5, end=3))
 }
 
 ///|
-test "panic String::op_as_view start on trailing surrogate" {
-  ignore("Hello🤣World"[6:8])
+test "panic String::exact_view start on trailing surrogate" {
+  ignore("Hello🤣World".exact_view(start=6, end=8))
 }
 
 ///|
@@ -755,13 +755,13 @@ test "String::op_as_view with surrogate pairs" {
 }
 
 ///|
-test "panic String::op_as_view splits first emoji" {
-  ignore("Hello🤣😭😂World"[5:6])
+test "panic String::exact_view splits first emoji" {
+  ignore("Hello🤣😭😂World".exact_view(start=5, end=6))
 }
 
 ///|
-test "panic String::op_as_view splits second emoji" {
-  ignore("Hello🤣😭😂World"[7:8])
+test "panic String::exact_view splits second emoji" {
+  ignore("Hello🤣😭😂World".exact_view(start=7, end=8))
 }
 
 ///|
@@ -790,28 +790,28 @@ test "StringView::op_as_view basic usage" {
 }
 
 ///|
-test "panic StringView::op_as_view beyond view range" {
-  ignore("Hello🤣World"[1:11][0:15])
+test "panic StringView::exact_view beyond view range" {
+  ignore("Hello🤣World"[1:11].exact_view(start=0, end=15))
 }
 
 ///|
-test "panic StringView::op_as_view negative index too large" {
-  ignore("Hello🤣World"[1:11][-20:])
+test "panic StringView::exact_view negative index too large" {
+  ignore("Hello🤣World"[1:11].exact_view(start=-20))
 }
 
 ///|
-test "panic StringView::op_as_view start > end" {
-  ignore("Hello🤣World"[1:11][5:3])
+test "panic StringView::exact_view start > end" {
+  ignore("Hello🤣World"[1:11].exact_view(start=5, end=3))
 }
 
 ///|
-test "panic StringView::op_as_view splits surrogate pair" {
-  ignore("Hello🤣World"[1:11][:5])
+test "panic StringView::exact_view splits surrogate pair" {
+  ignore("Hello🤣World"[1:11].exact_view(end=5))
 }
 
 ///|
-test "panic StringView::op_as_view start beyond view" {
-  ignore("Hello🤣World"[1:11][11:])
+test "panic StringView::exact_view start beyond view" {
+  ignore("Hello🤣World"[1:11].exact_view(start=11))
 }
 
 ///|
@@ -832,13 +832,13 @@ test "StringView::op_as_view with surrogate pairs" {
 }
 
 ///|
-test "panic StringView::op_as_view splits first emoji in view" {
-  ignore("Hello🤣😭😂World"[1:15][4:5])
+test "panic StringView::exact_view splits first emoji in view" {
+  ignore("Hello🤣😭😂World"[1:15].exact_view(start=4, end=5))
 }
 
 ///|
-test "panic StringView::op_as_view splits second emoji in view" {
-  ignore("Hello🤣😭😂World"[1:15][6:7])
+test "panic StringView::exact_view splits second emoji in view" {
+  ignore("Hello🤣😭😂World"[1:15].exact_view(start=6, end=7))
 }
 
 ///|
@@ -909,8 +909,8 @@ test "StringView::op_as_view with complex Unicode" {
 }
 
 ///|
-test "panic String::op_as_view splits emoji in complex Unicode" {
-  ignore("Hello🤣😭😂🌍World"[5:6])
+test "panic String::exact_view splits emoji in complex Unicode" {
+  ignore("Hello🤣😭😂🌍World".exact_view(start=5, end=6))
 }
 
 ///|
@@ -969,15 +969,15 @@ test "StringView::op_as_view boundary validation" {
 }
 
 ///|
-test "panic String::op_as_view boundary beyond length" {
+test "panic String::exact_view boundary beyond length" {
   let str = "Hello🤣World"
-  ignore(str[str.length() + 1:])
+  ignore(str.exact_view(start=str.length() + 1))
 }
 
 ///|
-test "panic String::op_as_view boundary negative too large" {
+test "panic String::exact_view boundary negative too large" {
   let str = "Hello🤣World"
-  ignore(str[-str.length() - 1:])
+  ignore(str.exact_view(start=-str.length() - 1))
 }
 
 ///|
@@ -1011,10 +1011,10 @@ test "panic view access out of bounds" {
 }
 
 ///|
-test "panic StringView::op_as_view start on trailing surrogate" {
+test "panic StringView::exact_view start on trailing surrogate" {
   let base = "Hello🤣😭😂World"
   let view = base[1:15] // "ello🤣😭😂Worl"
-  ignore(view[5:])
+  ignore(view.exact_view(start=5))
 }
 
 ///|
