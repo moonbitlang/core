@@ -315,3 +315,161 @@ test "FixedArray/ReadOnlyArray clamped_view agree with get_view" {
     }
   }
 }
+
+///|
+test "MutArrayView/UninitializedArray clamped_view bounds and offsets" {
+  let lo = @int.MIN_VALUE
+  let hi = @int.MAX_VALUE
+  let cases : ReadOnlyArray[(Int, Int, Int, Array[Int])] = [
+    (-5, 100, 0, [1, 2, 3, 4, 5]),
+    (-2, 2, 0, [1, 2]),
+    (1, 4, 1, [2, 3, 4]),
+    (3, 100, 3, [4, 5]),
+    (4, 1, 4, []),
+    (-9, -3, 0, []),
+    (100, 100, 5, []),
+    (lo, hi, 0, [1, 2, 3, 4, 5]),
+    (hi, lo, 5, []),
+    (lo, lo, 0, []),
+    (hi, hi, 5, []),
+  ]
+  let raw = @builtin.UninitializedArray::make(5)
+  for i in 0..<5 {
+    raw[i] = i + 1
+  }
+  let view = [0, 1, 2, 3, 4, 5, 6].mut_view(start=1, end=6)
+  for (start, end, offset, expected) in cases {
+    let raw_slice = raw.clamped_view(start~, end~)
+    let view_slice = view.clamped_view(start~, end~)
+    assert_eq(raw_slice.to_owned(), expected)
+    assert_eq(raw_slice.start_offset(), offset)
+    assert_eq(view_slice.to_owned(), expected)
+    assert_eq(view_slice.start_offset(), 1 + offset)
+  }
+}
+
+///|
+test "MutArrayView/UninitializedArray clamped_view omitted bounds" {
+  let raw = @builtin.UninitializedArray::make(3)
+  for i in 0..<3 {
+    raw[i] = i + 1
+  }
+  let view = [0, 1, 2, 3, 4].mut_view(start=1, end=4)
+  for result in [raw.clamped_view(), view.clamped_view()] {
+    assert_eq(result.to_owned(), [1, 2, 3])
+  }
+  for result in [raw.clamped_view(start=1), view.clamped_view(start=1)] {
+    assert_eq(result.to_owned(), [2, 3])
+  }
+  for result in [raw.clamped_view(end=2), view.clamped_view(end=2)] {
+    assert_eq(result.to_owned(), [1, 2])
+  }
+  for result in [raw.clamped_view(start=-1), view.clamped_view(start=-1)] {
+    assert_eq(result.to_owned(), [1, 2, 3])
+  }
+  for result in [raw.clamped_view(start=10), view.clamped_view(start=10)] {
+    assert_eq(result.length(), 0)
+  }
+}
+
+///|
+test "MutArrayView/UninitializedArray clamped_view nested views share storage" {
+  let arr = [0, 1, 2, 3, 4]
+  let mutable = arr.mut_view(start=1, end=4)
+  let view = mutable.clamped_view(start=-5, end=100)
+  let nested = view.clamped_view(start=1, end=100)
+  mutable[1] = 20
+  arr[3] = 30
+  json_inspect(view.to_owned(), content=[1, 20, 30])
+  json_inspect(nested.to_owned(), content=[20, 30])
+  inspect(nested.start_offset(), content="2")
+  let raw = @builtin.UninitializedArray::make(3)
+  for i in 0..<3 {
+    raw[i] = i + 1
+  }
+  let view = raw.clamped_view(start=1, end=100)
+  let nested = view.clamped_view(start=1, end=100)
+  raw[2] = 30
+  json_inspect(view.to_owned(), content=[2, 30])
+  json_inspect(nested.to_owned(), content=[30])
+  inspect(nested.start_offset(), content="2")
+}
+
+///|
+test "MutArrayView/UninitializedArray clamped_view empty arrays" {
+  let raw : @builtin.UninitializedArray[Int] = @builtin.UninitializedArray::make(
+    0,
+  )
+  let view = ([] : Array[Int]).mut_view()
+  for
+    (start, end) in [
+      (@int.MIN_VALUE, @int.MAX_VALUE),
+      (@int.MAX_VALUE, @int.MIN_VALUE),
+    ] {
+    for
+      result in [
+        raw.clamped_view(start~, end~),
+        view.clamped_view(start~, end~),
+      ] {
+      assert_eq(result.length(), 0)
+      assert_eq(result.start_offset(), 0)
+    }
+  }
+  let view = [0, 1, 2].mut_view(start=1, end=1)
+  inspect(view.clamped_view(start=-1, end=100).start_offset(), content="1")
+}
+
+///|
+test "Iter::clamped_view clamps finite iterator bounds" {
+  let arr = [1, 2, 3]
+  let cases : ReadOnlyArray[(Int, Int, Array[Int])] = [
+    (-5, 100, [1, 2, 3]),
+    (-2, 2, [1, 2]),
+    (1, 3, [2, 3]),
+    (2, 100, [3]),
+    (2, 1, []),
+    (-9, -3, []),
+    (100, 100, []),
+    (@int.MIN_VALUE, @int.MAX_VALUE, [1, 2, 3]),
+    (@int.MAX_VALUE, @int.MIN_VALUE, []),
+    (@int.MIN_VALUE, @int.MIN_VALUE, []),
+    (@int.MAX_VALUE, @int.MAX_VALUE, []),
+  ]
+  for (start, end, expected) in cases {
+    let result = arr.iter().clamped_view(start~, end~)
+    assert_eq(result.size_hint(), Some(expected.length()))
+    assert_eq(result.collect(), expected)
+    // Iter::new has no size hint, so it also exercises the streaming path.
+    let source = arr.iter()
+    assert_eq(
+      Iter::new(() => source.next()).clamped_view(start~, end~).collect(),
+      expected,
+    )
+  }
+  debug_inspect(arr.iter().clamped_view().collect(), content="[1, 2, 3]")
+  debug_inspect(arr.iter().clamped_view(start=1).collect(), content="[2, 3]")
+  debug_inspect(arr.iter().clamped_view(end=2).collect(), content="[1, 2]")
+  debug_inspect(
+    arr.iter().clamped_view(start=-1).collect(),
+    content="[1, 2, 3]",
+  )
+  debug_inspect(arr.iter().clamped_view(start=100).collect(), content="[]")
+  let empty : Iter[Int] = Iter::empty()
+  debug_inspect(
+    empty.clamped_view(start=@int.MIN_VALUE, end=@int.MAX_VALUE).collect(),
+    content="[]",
+  )
+}
+
+///|
+test "Iter::clamped_view stays lazy and composes" {
+  let mut reads = 0
+  let source = Iter::new(fn() {
+    reads += 1
+    Some(reads)
+  })
+  let view = source.clamped_view(start=1, end=5).clamped_view(start=1, end=3)
+  inspect(reads, content="0")
+  debug_inspect(view.collect(), content="[3, 4]")
+  inspect(reads, content="4")
+}

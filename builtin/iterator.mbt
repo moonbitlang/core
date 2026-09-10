@@ -913,11 +913,30 @@ pub fn[X] Iter::intersperse(self : Iter[X], sep : X) -> Iter[X] {
 }
 
 ///|
-/// Return a sliced iterator view in range `[start, end)`.
-/// Function `view`.
+/// Returns a lazy iterator over the range `[start, end)`.
+/// Negative bounds are treated as zero, an inverted range yields no elements,
+/// and iteration stops when the source is exhausted even if `end` is larger.
+/// Omitting both bounds returns the full iterator.
+///
+/// Also available as `iter[start:end]`. The source iterator must not be used
+/// again after calling this method.
+///
+/// ```mbt check
+/// test {
+///   debug_inspect(
+///     [1, 2, 3].iter().clamped_view(start=1, end=10).collect(),
+///     content="[2, 3]",
+///   )
+/// }
+/// ```
 #alias("_[_:_]")
+#alias(view)
 #alias(sub, deprecated="Use _[_:_] instead")
-pub fn[X] Iter::view(self : Iter[X], start? : Int = 0, end? : Int) -> Iter[X] {
+pub fn[X] Iter::clamped_view(
+  self : Iter[X],
+  start? : Int = 0,
+  end? : Int,
+) -> Iter[X] {
   match (start, end) {
     (_..=0, None) => self
     (_..=0, Some(end)) => self.take(end)

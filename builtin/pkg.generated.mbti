@@ -285,6 +285,10 @@ type Iter[X]
 pub fn[T] Iter::add(Self[T], Self[T]) -> Self[T]
 pub fn[X] Iter::all(Self[X], (X) -> Bool) -> Bool
 pub fn[X] Iter::any(Self[X], (X) -> Bool) -> Bool
+#alias("_[_:_]")
+#alias(sub, deprecated)
+#alias(view)
+pub fn[X] Iter::clamped_view(Self[X], start? : Int, end? : Int) -> Self[X]
 pub fn[X] Iter::concat(Self[X], Self[X]) -> Self[X]
 pub fn[X : Eq] Iter::contains(Self[X], X) -> Bool
 #alias(length)
@@ -327,9 +331,6 @@ pub fn[X] Iter::tap(Self[X], (X) -> Unit) -> Self[X]
 #alias(collect)
 pub fn[X] Iter::to_array(Self[X]) -> Array[X]
 pub fn[X : ToJson] Iter::to_json(Self[X]) -> Json
-#alias("_[_:_]")
-#alias(sub, deprecated)
-pub fn[X] Iter::view(Self[X], start? : Int, end? : Int) -> Self[X]
 #alias(combine)
 pub fn[X, Y] Iter::zip(Self[X], Self[Y]) -> Self[(X, Y)]
 pub impl[T] Add for Iter[T]
@@ -424,6 +425,7 @@ pub impl[K : Show, V : ToJson] ToJson for Map[K, V]
 type MutArrayView[T]
 #alias("_[_]")
 pub fn[T] MutArrayView::at(Self[T], Int) -> T
+pub fn[T] MutArrayView::clamped_view(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 pub fn[T : Compare] MutArrayView::compare(Self[T], Self[T]) -> Int
 pub fn[T : Eq] MutArrayView::equal(Self[T], Self[T]) -> Bool
 pub fn[A : Hash] MutArrayView::hash(Self[A]) -> Int
@@ -482,6 +484,7 @@ pub impl Show for StringBuilder
 type UninitializedArray[T]
 #alias("_[_]")
 pub fn[T] UninitializedArray::at(Self[T], Int) -> T
+pub fn[T] UninitializedArray::clamped_view(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 pub fn[A] UninitializedArray::length(Self[A]) -> Int
 pub fn[T] UninitializedArray::make(Int) -> Self[T]
 pub fn[T] UninitializedArray::make_and_blit(Self[T], allocate_len~ : Int, len~ : Int, src_offset? : Int, dst_offset? : Int) -> Self[T]
