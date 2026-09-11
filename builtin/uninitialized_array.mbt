@@ -102,6 +102,37 @@ pub fn[T] UninitializedArray::sub(
 }
 
 ///|
+/// Creates a view of a portion of the uninitialized array without copying.
+/// Each bound is clamped to `[0, length()]`; an inverted range yields an empty
+/// view at the clamped `start`. Defaults to the full array when both bounds
+/// are omitted. Elements must be initialized before they are read through the
+/// returned view.
+///
+/// ```mbt check
+/// test {
+///   let arr = @builtin.UninitializedArray::make(3)
+///   for i in 0..<3 {
+///     arr[i] = i + 1
+///   }
+///   json_inspect(arr.clamped_view(start=1, end=10).to_owned(), content=[2, 3])
+/// }
+/// ```
+pub fn[T] UninitializedArray::clamped_view(
+  self : UninitializedArray[T],
+  start? : Int = 0,
+  end? : Int,
+) -> ArrayView[T] {
+  let len = self.length()
+  let lo = clamp_offset(start, len)
+  let hi = match end {
+    None => len
+    Some(end) => clamp_offset(end, len)
+  }
+  let count = if hi > lo { hi - lo } else { 0 }
+  ArrayView::make(self, lo, count)
+}
+
+///|
 /// Returns the length of an uninitialized array.
 ///
 /// Parameters:

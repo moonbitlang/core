@@ -385,6 +385,34 @@ pub fn[T] MutArrayView::view(
 }
 
 ///|
+/// Creates a read-only view of a portion of the mutable view without copying.
+/// The indices are relative to the current view. Each bound is clamped to
+/// `[0, length()]`; an inverted range yields an empty view at the clamped
+/// `start`. Defaults to the full view when both bounds are omitted.
+///
+/// ```mbt check
+/// test {
+///   let arr = [1, 2, 3, 4, 5]
+///   let view = arr.mut_view(start=1, end=4)
+///   json_inspect(view.clamped_view(start=1, end=10).to_owned(), content=[3, 4])
+/// }
+/// ```
+pub fn[T] MutArrayView::clamped_view(
+  self : MutArrayView[T],
+  start? : Int = 0,
+  end? : Int,
+) -> ArrayView[T] {
+  let len = self.length()
+  let lo = clamp_offset(start, len)
+  let hi = match end {
+    None => len
+    Some(end) => clamp_offset(end, len)
+  }
+  let count = if hi > lo { hi - lo } else { 0 }
+  ArrayView::make(self.buf(), self.start() + lo, count)
+}
+
+///|
 /// Copies the elements of the mutable array view into a newly allocated `Array`.
 #alias(to_array, deprecated)
 pub fn[T] MutArrayView::to_owned(self : MutArrayView[T]) -> Array[T] {
