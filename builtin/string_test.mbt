@@ -315,6 +315,6 @@ test "String get_char invalid surrogate pair" {
 
 ///|
 test "StringView repeat single" {
-  let view = "repeat".view()
+  let view = "repeat".exact_view()
   inspect(view.repeat(1), content="repeat")
 }

@@ -129,7 +129,11 @@ String views provide efficient substring operations without copying. A
 `String` stores UTF-16 code units, and a view is just a `{str, start, end}`
 window into those units. A character outside the Basic Multilingual Plane is
 stored as a surrogate pair, and the `s[start:end]` slice syntax panics
-rather than split one:
+rather than split one. `s.exact_view(start~, end~)` provides the same validation;
+`s.clamped_view(start~, end~)` clamps bounds and trims split pairs inward.
+The old `sub` name is deprecated in favor of `exact_view`. The legacy `view`
+method is also deprecated; it retains its `start_offset`/`end_offset` labels and
+raw UTF-16 behavior for compatibility.
 
 ```d2
 direction: right

@@ -47,7 +47,7 @@ test {
   // Using get_from_string with StringView
   let string_map = { "hello": 1, "world": 2 }
   let full_string = "say hello to everyone"
-  let hello_view = full_string.view(start_offset=4, end_offset=9)
+  let hello_view = full_string.exact_view(start=4, end=9)
   debug_inspect(string_map.get_from_string(hello_view), content="Some(1)")
 
   // Using get_from_bytes with BytesView

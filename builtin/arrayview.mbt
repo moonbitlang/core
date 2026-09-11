@@ -271,8 +271,9 @@ pub fn[T] ArrayView::unsafe_get(self : ArrayView[T], index : Int) -> T {
 /// ```
 #intrinsic("%array.view")
 #alias("_[_:_]")
-#alias(sub, deprecated="Use _[_:_] instead")
-pub fn[T] Array::view(
+#alias(view, deprecated="Use `exact_view` instead")
+#alias(sub, deprecated="Use `exact_view` instead")
+pub fn[T] Array::exact_view(
   self : Array[T],
   start? : Int = 0,
   end? : Int,
@@ -365,8 +366,9 @@ pub fn[T] Array::get_view(
 /// ```
 #intrinsic("%arrayview.view")
 #alias("_[_:_]")
-#alias(sub, deprecated="Use _[_:_] instead")
-pub fn[T] ArrayView::view(
+#alias(view, deprecated="Use `exact_view` instead")
+#alias(sub, deprecated="Use `exact_view` instead")
+pub fn[T] ArrayView::exact_view(
   self : ArrayView[T],
   start? : Int = 0,
   end? : Int,
@@ -565,8 +567,9 @@ fn[T] unsafe_cast_fixedarray_to_uninitializedarray(
 /// ```
 #intrinsic("%fixedarray.view")
 #alias("_[_:_]")
-#alias(sub, deprecated="Use _[_:_] instead")
-pub fn[T] FixedArray::view(
+#alias(view, deprecated="Use `exact_view` instead")
+#alias(sub, deprecated="Use `exact_view` instead")
+pub fn[T] FixedArray::exact_view(
   self : FixedArray[T],
   start? : Int = 0,
   end? : Int,

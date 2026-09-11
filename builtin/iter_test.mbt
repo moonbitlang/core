@@ -334,11 +334,11 @@ test "size_hint" {
   debug_inspect([|1, 2, 3|][1:3].size_hint(), content="Some(2)")
   debug_inspect([|1, 2, 3|][3:5].size_hint(), content="Some(0)")
   debug_inspect(
-    Iter::new(() => Some(1)).view(start=2, end=1).size_hint(),
+    Iter::new(() => Some(1)).clamped_view(start=2, end=1).size_hint(),
     content="Some(0)",
   )
   debug_inspect(
-    Iter::new(() => Some(1)).view(start=1, end=3).size_hint(),
+    Iter::new(() => Some(1)).clamped_view(start=1, end=3).size_hint(),
     content="None",
   )
   debug_inspect([|1, 2, 3|].filter(x => x > 1).size_hint(), content="None")
@@ -1231,8 +1231,11 @@ test "Iter::maximum" {
 }
 
 ///|
-test "Iter::view variants" {
-  debug_inspect([|1, 2, 3|].view(start=-1).collect(), content="[1, 2, 3]")
+test "Iter::clamped_view variants" {
+  debug_inspect(
+    [|1, 2, 3|].clamped_view(start=-1).collect(),
+    content="[1, 2, 3]",
+  )
   debug_inspect([|1, 2, 3|][:2].collect(), content="[1, 2]")
   debug_inspect([|1, 2, 3|][1:].collect(), content="[2, 3]")
   debug_inspect([|1, 2, 3, 4|][1:3].collect(), content="[2, 3]")

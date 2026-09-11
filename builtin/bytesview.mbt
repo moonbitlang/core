@@ -179,8 +179,13 @@ pub fn BytesView::unsafe_get(self : BytesView, index : Int) -> Byte {
 /// ```
 #intrinsic("%bytes.view")
 #alias("_[_:_]")
-#alias(sub, deprecated="Use _[_:_] instead")
-pub fn Bytes::view(self : Bytes, start? : Int = 0, end? : Int) -> BytesView {
+#alias(view, deprecated="Use `exact_view` instead")
+#alias(sub, deprecated="Use `exact_view` instead")
+pub fn Bytes::exact_view(
+  self : Bytes,
+  start? : Int = 0,
+  end? : Int,
+) -> BytesView {
   let len = self.length()
   let end = match end {
     Some(end) | (None with end = len) => end
@@ -193,7 +198,7 @@ pub fn Bytes::view(self : Bytes, start? : Int = 0, end? : Int) -> BytesView {
 
 ///|
 /// Returns a view of the bytes between `start` and `end`, or `None` if the range
-/// is invalid. Unlike `Bytes::view` (a.k.a. `b[start:end]`), this variant does
+/// is invalid. Unlike `Bytes::exact_view` (a.k.a. `b[start:end]`), this variant does
 /// not abort on out-of-bounds indices, making it suitable for composition with
 /// pattern matching:
 ///
@@ -223,7 +228,7 @@ pub fn Bytes::get_view(
 
 ///|
 /// Returns a sub-view of the view between `start` and `end`, or `None` if the
-/// range is invalid. The optional variant of `BytesView::view` (a.k.a.
+/// range is invalid. The optional variant of `BytesView::exact_view` (a.k.a.
 /// `bv[start:end]`).
 pub fn BytesView::get_view(
   self : BytesView,
@@ -253,8 +258,9 @@ pub fn BytesView::get_view(
 /// ```
 #intrinsic("%bytesview.view")
 #alias("_[_:_]")
-#alias(sub, deprecated="Use _[_:_] instead")
-pub fn BytesView::view(
+#alias(view, deprecated="Use `exact_view` instead")
+#alias(sub, deprecated="Use `exact_view` instead")
+pub fn BytesView::exact_view(
   self : BytesView,
   start? : Int = 0,
   end? : Int,

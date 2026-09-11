@@ -86,7 +86,8 @@ fn[T] UninitializedArray::unsafe_set(
 /// Throws an error if the indices are out of bounds or if `start` is greater
 /// than `end`.
 #alias("_[_:_]")
-pub fn[T] UninitializedArray::sub(
+#alias(sub, deprecated="Use `exact_view` instead")
+pub fn[T] UninitializedArray::exact_view(
   self : UninitializedArray[T],
   start? : Int = 0,
   end? : Int,

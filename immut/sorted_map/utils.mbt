@@ -319,7 +319,7 @@ fn[K : Compare, V] sorted_map_from_unsorted_entries(
 ) -> SortedMap[K, V] {
   entries.sort()
   let len = sorted_map_compact_entries_in_place(entries)
-  sorted_map_from_sorted_entries(entries.view(), 0, len)
+  sorted_map_from_sorted_entries(entries.exact_view(), 0, len)
 }
 
 ///|

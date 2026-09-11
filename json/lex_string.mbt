@@ -21,7 +21,12 @@ fn ParseContext::lex_string(ctx : ParseContext) -> String raise ParseError {
     let c = ctx.input.unsafe_get(i)
     if c == '"' {
       ctx.offset = i + 1
-      return ctx.input.view(start_offset=string_start, end_offset=i).to_owned()
+      // The scan bounds guarantee these offsets are inside the input. Preserve
+      // raw code units, including unmatched surrogates, when copying the text.
+      let base = ctx.input.start_offset()
+      return ctx.input
+        .data()
+        .unsafe_substring(start=base + string_start, end=base + i)
     } else if c == '\\' {
       return ctx.lex_string_slow()
     } else if c < ' ' {

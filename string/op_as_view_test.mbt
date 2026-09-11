@@ -99,11 +99,11 @@ test "View::op_as_view with positive indices" {
 ///|
 test "View::op_as_view with nested views" {
   let s = "hello world"
-  let view1 = s.view(start_offset=0, end_offset=11)
+  let view1 = s.exact_view(start=0, end=11)
   inspect(view1, content="hello world")
-  let view2 = view1.view(start_offset=0, end_offset=5)
+  let view2 = view1.exact_view(start=0, end=5)
   inspect(view2, content="hello")
-  let view3 = view2.view(start_offset=1, end_offset=4)
+  let view3 = view2.exact_view(start=1, end=4)
   inspect(view3, content="ell")
 
   // Test with negative indices in nested views

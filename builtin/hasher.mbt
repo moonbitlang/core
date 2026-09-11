@@ -379,7 +379,7 @@ pub fn Hasher::combine_byte(self : Hasher, value : Byte) -> Unit {
 /// }
 /// ```
 pub fn Hasher::combine_bytes(self : Hasher, value : Bytes) -> Unit {
-  for data = value.view() {
+  for data = value.exact_view() {
     if data is [u32le(x), .. rest] {
       self.consume4(x)
       continue rest

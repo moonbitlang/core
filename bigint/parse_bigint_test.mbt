@@ -26,7 +26,7 @@ test "parse_bigint valid" {
 test "parse_bigint StringView" {
   let input = "prefix-ffsuffix"
   inspect(
-    @bigint.parse_bigint(input.view(start_offset=6, end_offset=9), base=16),
+    @bigint.parse_bigint(input.exact_view(start=6, end=9), base=16),
     content="-255",
   )
 }

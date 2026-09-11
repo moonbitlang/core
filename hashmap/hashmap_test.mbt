@@ -654,7 +654,7 @@ test "HashMap::get_from_string" {
 
   // String view from substring
   let full_str = "prefix_world_suffix"
-  let view2 = full_str.view(start_offset=7, end_offset=12)
+  let view2 = full_str.exact_view(start=7, end=12)
   debug_inspect(map.get_from_string(view2), content="Some(2)")
 
   // Non-existent key
@@ -676,7 +676,7 @@ test "HashMap::get_from_string" {
 
   // Substring of a longer string
   let longer = "this is a test string"
-  let test_view = longer.view(start_offset=10, end_offset=14)
+  let test_view = longer.exact_view(start=10, end=14)
   debug_inspect(map.get_from_string(test_view), content="Some(3)")
 }
 

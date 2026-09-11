@@ -136,18 +136,18 @@ fn side_rows(inner : @diff.Diff[String], old_side~ : Bool) -> Array[String] {
   for edit in inner.edits() {
     match edit {
       Equal(old_index~, len~, ..) =>
-        for t in o.view(start=old_index, end=old_index + len) {
+        for t in o.exact_view(start=old_index, end=old_index + len) {
           emit(t, false)
         }
       Delete(old_index~, old_len~, ..) =>
         if old_side {
-          for t in o.view(start=old_index, end=old_index + old_len) {
+          for t in o.exact_view(start=old_index, end=old_index + old_len) {
             emit(t, true)
           }
         }
       Insert(new_index~, new_len~, ..) =>
         if !old_side {
-          for t in n.view(start=new_index, end=new_index + new_len) {
+          for t in n.exact_view(start=new_index, end=new_index + new_len) {
             emit(t, true)
           }
         }
@@ -177,11 +177,11 @@ fn word_diff_html(old~ : ArrayView[String], new~ : ArrayView[String]) -> String 
           edits[i + 1] is Insert(..) => {
           guard! edits[i + 1] is Insert(new_index~, new_len~, ..)
           let removed = o
-            .view(start=old_index, end=old_index + old_len)
+            .exact_view(start=old_index, end=old_index + old_len)
             .map(l => l)
             .join("\n")
           let added = n
-            .view(start=new_index, end=new_index + new_len)
+            .exact_view(start=new_index, end=new_index + new_len)
             .map(l => l)
             .join("\n")
           let inner = @diff.Diff(old=tokenize(removed), new=tokenize(added))
@@ -194,19 +194,19 @@ fn word_diff_html(old~ : ArrayView[String], new~ : ArrayView[String]) -> String 
           i += 2
         }
         Equal(old_index~, len~, ..) => {
-          for l in o.view(start=old_index, end=old_index + len) {
+          for l in o.exact_view(start=old_index, end=old_index + len) {
             buf <+ "<span class=\"ctx\"> \{esc(l)}</span>\n"
           }
           i += 1
         }
         Delete(old_index~, old_len~, ..) => {
-          for l in o.view(start=old_index, end=old_index + old_len) {
+          for l in o.exact_view(start=old_index, end=old_index + old_len) {
             buf <+ "<span class=\"del\">-\{esc(l)}</span>\n"
           }
           i += 1
         }
         Insert(new_index~, new_len~, ..) => {
-          for l in n.view(start=new_index, end=new_index + new_len) {
+          for l in n.exact_view(start=new_index, end=new_index + new_len) {
             buf <+ "<span class=\"add\">+\{esc(l)}</span>\n"
           }
           i += 1
@@ -270,8 +270,8 @@ impl Hash for Loose with fn hash_combine(self, hasher) {
 /// comment rewrite compares equal.
 fn loose(line : String) -> Loose {
   let code = match line.find("//") {
-    Some(i) => line.view(end_offset=i)
-    None => line.view()
+    Some(i) => line.exact_view(end=i)
+    None => line.exact_view()
   }
   let kept = tokenize(code).filter(t => !(t is [' ' | '\t', ..]))
   { text: line, key: kept.join("\u{0}"), }

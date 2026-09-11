@@ -86,7 +86,10 @@ test "sorting" {
 
 ## Array Views
 
-Array views provide a lightweight way to work with array slices:
+Array views provide a lightweight way to work with array slices.
+Use `arr.exact_view(start~, end~)` to validate bounds, `arr.get_view(start~, end~)`
+to return `None` for invalid bounds, or `arr.clamped_view(start~, end~)` to clamp
+them. The old `view` and `sub` names are deprecated in favor of `exact_view`.
 
 ```mbt check
 ///|
