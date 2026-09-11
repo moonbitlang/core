@@ -1,7 +1,6 @@
 import {
   "moonbitlang/core/builtin",
   "moonbitlang/core/json",
-  "moonbitlang/core/array",
   "moonbitlang/core/debug",
   "moonbitlang/core/test",
 }

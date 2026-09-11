@@ -3,14 +3,8 @@ import {
 }
 
 import {
-  "moonbitlang/core/array",
   "moonbitlang/core/bench",
-  "moonbitlang/core/double",
-  "moonbitlang/core/uint",
-  "moonbitlang/core/uint64",
   "moonbitlang/core/test",
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/json",
-  "moonbitlang/core/float",
-  "moonbitlang/core/debug",
 } for "test"
