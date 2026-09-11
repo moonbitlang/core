@@ -1,17 +1,12 @@
 import {
   "moonbitlang/core/builtin",
-  "moonbitlang/core/double",
   "moonbitlang/core/float",
   "moonbitlang/core/int16",
-  "moonbitlang/core/int64",
-  "moonbitlang/core/uint",
-  "moonbitlang/core/uint16",
-  "moonbitlang/core/uint64",
 }
 
 import {
   "moonbitlang/core/deque",
-  "moonbitlang/core/error",
+  "moonbitlang/core/double",
   "moonbitlang/core/queue",
   "moonbitlang/core/test",
 } for "test"

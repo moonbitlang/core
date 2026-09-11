@@ -1,9 +1,6 @@
 import {
   "moonbitlang/core/builtin",
-  "moonbitlang/core/uint",
-  "moonbitlang/core/float",
   "moonbitlang/core/bigint",
-  "moonbitlang/core/int16",
 }
 
 import {

@@ -2,10 +2,6 @@ import {
   "moonbitlang/core/builtin",
 }
 
-import {
-  "moonbitlang/core/buffer",
-} for "test"
-
 options(
   targets: {
     "cbrt_js.mbt": [ "js" ],

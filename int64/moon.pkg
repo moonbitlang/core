@@ -1,9 +1,4 @@
 import {
   "moonbitlang/core/builtin",
-  "moonbitlang/core/uint64",
   "moonbitlang/core/int16",
 }
-
-import {
-  "moonbitlang/core/buffer",
-} for "test"
