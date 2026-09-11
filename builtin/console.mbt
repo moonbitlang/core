@@ -38,6 +38,33 @@ pub fn[T : Show] println(input : T) -> Unit {
 }
 
 ///|
+fn eprintln_mono(s : String) -> Unit = "%eprintln"
+
+///|
+/// Prints any value that implements the `Show` trait to the standard error channel,
+/// followed by a newline.
+///
+/// Currently not supported on Wasm-gc backend, will fallback to standard output.
+///
+/// Parameters:
+///
+/// * `value` : The value to be printed. Must implement the `Show` trait.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   if false {
+///     eprintln(42)
+///     eprintln("Hello, World!")
+///   }
+/// }
+/// ```
+pub fn[T : Show] eprintln(input : T) -> Unit {
+  eprintln_mono(input.to_string())
+}
+
+///|
 /// Represents an error type used by the `inspect` function to indicate failures
 /// in value inspection. Contains a string message describing the nature of the
 /// inspection failure.
