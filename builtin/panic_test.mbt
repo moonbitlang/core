@@ -53,33 +53,33 @@ test "panic array_resize_negative" {
 }
 
 ///|
-test "panic array_as_view_start_index_error" {
-  [1, 2, 3][-1:0] |> ignore
+test "panic array_view_start_index_error" {
+  [1, 2, 3].exact_view(start=-1, end=0) |> ignore
 }
 
 ///|
-test "panic array_as_view_end_index_error" {
-  [1, 2, 3][0:-4] |> ignore
+test "panic array_view_end_index_error" {
+  [1, 2, 3].exact_view(start=0, end=-4) |> ignore
 }
 
 ///|
-test "panic array_as_view_length_index_error" {
-  [1, 2, 3][0:4] |> ignore
+test "panic array_view_length_index_error" {
+  [1, 2, 3].exact_view(start=0, end=4) |> ignore
 }
 
 ///|
-test "panic view_as_view_start_index_error" {
-  [1, 2, 3][:][-1:0] |> ignore
+test "panic arrayview_view_start_index_error" {
+  [1, 2, 3][:].exact_view(start=-1, end=0) |> ignore
 }
 
 ///|
-test "panic view_as_view_end_index_error" {
-  [1, 2, 3][:][0:-4] |> ignore
+test "panic arrayview_view_end_index_error" {
+  [1, 2, 3][:].exact_view(start=0, end=-4) |> ignore
 }
 
 ///|
-test "panic view_as_view_length_index_error" {
-  [1, 2, 3][:][0:4] |> ignore
+test "panic arrayview_view_length_index_error" {
+  [1, 2, 3][:].exact_view(start=0, end=4) |> ignore
 }
 
 ///|

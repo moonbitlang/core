@@ -797,12 +797,12 @@ pub fn[T] Array::rev(self : Array[T]) -> Array[T] {
 /// ```mbt check
 /// test {
 ///   let v = [3, 4, 5]
-///   let (v1, v2) = (v[:1], v[1:])
+///   let (v1, v2) = (v.exact_view(end=1), v.exact_view(start=1))
 ///   @test.assert_eq(v1, [3])
 ///   @test.assert_eq(v2, [4, 5])
 /// }
 /// ```
-#deprecated("Use ArrayView instead, e.g, (a[:index], a[index:])")
+#deprecated("Use ArrayView instead, e.g, (a.exact_view(end=index), a.exact_view(start=index))")
 #doc(hidden)
 pub fn[T] Array::split_at(self : Array[T], index : Int) -> (Array[T], Array[T]) {
   if index < 0 || index > self.length() {

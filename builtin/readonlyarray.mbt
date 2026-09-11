@@ -857,18 +857,18 @@ pub fn[T : Compare] ReadOnlyArray::lexical_compare(
 
 ///|
 /// Creates a view of a subarray.
+/// Panics unless `0 <= start <= end <= length()`.
 ///
 /// # Example
 /// ```mbt check
 /// test {
 ///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
-///   let view = arr[1:4]
+///   let view = arr.exact_view(start=1, end=4)
 ///   inspect(view[0], content="2")
 ///   inspect(view[2], content="4")
 /// }
 /// ```
 #intrinsic("%readonlyarray.view")
-#alias("_[_:_]")
 #alias(view, deprecated="Use `exact_view` instead")
 #alias(sub, deprecated="Use `exact_view` instead")
 pub fn[T] ReadOnlyArray::exact_view(
@@ -918,6 +918,7 @@ pub fn[T] ReadOnlyArray::get_view(
 ///|
 /// Creates a view of a subarray, clamping the requested range instead of
 /// rejecting it. Same contract as `Array::clamped_view`.
+/// Also available as `arr[start:end]`. Use `ReadOnlyArray::exact_view` to validate bounds.
 ///
 /// # Example
 /// ```mbt check
@@ -937,6 +938,7 @@ pub fn[T] ReadOnlyArray::get_view(
 ///   )
 /// }
 /// ```
+#alias("_[_:_]")
 pub fn[T] ReadOnlyArray::clamped_view(
   self : ReadOnlyArray[T],
   start? : Int = 0,

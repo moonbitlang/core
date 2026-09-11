@@ -81,6 +81,7 @@ pub fn[A] Array::blit_to(Self[A], Self[A], len? : Int, src_offset? : Int, dst_of
 pub fn[T] Array::capacity(Self[T]) -> Int
 pub fn[T] Array::chunk_by(Self[T], (T, T) -> Bool raise?) -> Self[ArrayView[T]] raise?
 pub fn[T] Array::chunks(Self[T], Int) -> Self[ArrayView[T]]
+#alias("_[_:_]")
 pub fn[T] Array::clamped_view(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 pub fn[T] Array::clear(Self[T]) -> Unit
 pub fn[T : Compare] Array::compare(Self[T], Self[T]) -> Int
@@ -95,7 +96,6 @@ pub fn[T] Array::each(Self[T], (T) -> Unit raise?) -> Unit raise?
 pub fn[T] Array::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
 pub fn[T : Eq] Array::ends_with(Self[T], ArrayView[T]) -> Bool
 pub fn[T : Eq] Array::equal(Self[T], Self[T]) -> Bool
-#alias("_[_:_]")
 #alias(sub, deprecated)
 #alias(view, deprecated)
 pub fn[T] Array::exact_view(Self[T], start? : Int, end? : Int) -> ArrayView[T]
@@ -205,6 +205,7 @@ pub fn[T] ArrayView::binary_search_by(Self[T], (T) -> Int raise?) -> Result[Int,
 pub fn[A] ArrayView::blit_to(Self[A], Array[A], dst_offset? : Int) -> Unit
 pub fn[T] ArrayView::chunk_by(Self[T], (T, T) -> Bool raise?) -> Array[Self[T]] raise?
 pub fn[T] ArrayView::chunks(Self[T], Int) -> Array[Self[T]]
+#alias("_[_:_]")
 pub fn[T] ArrayView::clamped_view(Self[T], start? : Int, end? : Int) -> Self[T]
 pub fn[T : Compare] ArrayView::compare(Self[T], Self[T]) -> Int
 pub fn[T : Eq] ArrayView::contains(Self[T], T) -> Bool
@@ -214,7 +215,6 @@ pub fn[T] ArrayView::each(Self[T], (T) -> Unit raise?) -> Unit raise?
 pub fn[T] ArrayView::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
 pub fn[T : Eq] ArrayView::ends_with(Self[T], Self[T]) -> Bool
 pub fn[T : Eq] ArrayView::equal(Self[T], Self[T]) -> Bool
-#alias("_[_:_]")
 #alias(sub, deprecated)
 #alias(view, deprecated)
 pub fn[T] ArrayView::exact_view(Self[T], start? : Int, end? : Int) -> Self[T]
@@ -427,10 +427,10 @@ pub impl[K : Show, V : ToJson] ToJson for Map[K, V]
 type MutArrayView[T]
 #alias("_[_]")
 pub fn[T] MutArrayView::at(Self[T], Int) -> T
+#alias("_[_:_]")
 pub fn[T] MutArrayView::clamped_view(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 pub fn[T : Compare] MutArrayView::compare(Self[T], Self[T]) -> Int
 pub fn[T : Eq] MutArrayView::equal(Self[T], Self[T]) -> Bool
-#alias("_[_:_]")
 #alias(sub, deprecated)
 #alias(view, deprecated)
 pub fn[T] MutArrayView::exact_view(Self[T], start? : Int, end? : Int) -> ArrayView[T]
@@ -487,8 +487,8 @@ pub impl Show for StringBuilder
 type UninitializedArray[T]
 #alias("_[_]")
 pub fn[T] UninitializedArray::at(Self[T], Int) -> T
-pub fn[T] UninitializedArray::clamped_view(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 #alias("_[_:_]")
+pub fn[T] UninitializedArray::clamped_view(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 #alias(sub, deprecated)
 pub fn[T] UninitializedArray::exact_view(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 pub fn[A] UninitializedArray::length(Self[A]) -> Int
@@ -861,6 +861,7 @@ pub fn String::before(String, StringView) -> StringView?
 pub fn String::char_length(String, start_offset? : Int, end_offset? : Int) -> Int
 pub fn String::char_length_eq(String, Int, start_offset? : Int, end_offset? : Int) -> Bool
 pub fn String::char_length_ge(String, Int, start_offset? : Int, end_offset? : Int) -> Bool
+#alias("_[_:_]")
 pub fn String::clamped_view(String, start? : Int, end? : Int) -> StringView
 pub fn String::code_units(String) -> ArrayView[UInt16]
 pub fn String::compare(String, String) -> Int
@@ -872,7 +873,6 @@ pub fn String::contains_code_unit(String, UInt16) -> Bool
 pub fn String::equal(String, String) -> Bool
 pub fn String::equal_ignore_ascii_case(String, String) -> Bool
 pub fn String::escape(String, quote? : Bool) -> String
-#alias("_[_:_]")
 #alias(sub, deprecated)
 pub fn String::exact_view(String, start? : Int, end? : Int) -> StringView
 pub fn String::find(String, StringView) -> Int?
@@ -1006,6 +1006,7 @@ pub fn FixedArray::blit_from_bytes(Self[Byte], Int, Bytes, Int, Int) -> Unit
 pub fn FixedArray::blit_from_bytesview(Self[Byte], Int, BytesView) -> Unit
 pub fn FixedArray::blit_from_string(Self[Byte], Int, String, Int, Int) -> Unit
 pub fn[A] FixedArray::blit_to(Self[A], Self[A], len~ : Int, src_offset? : Int, dst_offset? : Int) -> Unit
+#alias("_[_:_]")
 pub fn[T] FixedArray::clamped_view(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 pub fn[T : Compare] FixedArray::compare(Self[T], Self[T]) -> Int
 pub fn[T : Eq] FixedArray::contains(Self[T], T) -> Bool
@@ -1015,7 +1016,6 @@ pub fn[T] FixedArray::each(Self[T], (T) -> Unit raise?) -> Unit raise?
 pub fn[T] FixedArray::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
 pub fn[T : Eq] FixedArray::ends_with(Self[T], ArrayView[T]) -> Bool
 pub fn[T : Eq] FixedArray::equal(Self[T], Self[T]) -> Bool
-#alias("_[_:_]")
 #alias(sub, deprecated)
 #alias(view, deprecated)
 pub fn[T] FixedArray::exact_view(Self[T], start? : Int, end? : Int) -> ArrayView[T]
@@ -1082,6 +1082,7 @@ pub fn[T : Compare] ReadOnlyArray::binary_search(Self[T], T) -> Result[Int, Int]
 pub fn[T] ReadOnlyArray::binary_search_by(Self[T], (T) -> Int raise?) -> Result[Int, Int] raise?
 pub fn[T] ReadOnlyArray::chunk_by(Self[T], (T, T) -> Bool raise?) -> Array[ArrayView[T]] raise?
 pub fn[T] ReadOnlyArray::chunks(Self[T], Int) -> Array[ArrayView[T]]
+#alias("_[_:_]")
 pub fn[T] ReadOnlyArray::clamped_view(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 pub fn[T : Compare] ReadOnlyArray::compare(Self[T], Self[T]) -> Int
 pub fn[T : Eq] ReadOnlyArray::contains(Self[T], T) -> Bool
@@ -1089,7 +1090,6 @@ pub fn[T] ReadOnlyArray::each(Self[T], (T) -> Unit raise?) -> Unit raise?
 pub fn[T] ReadOnlyArray::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
 pub fn[T : Eq] ReadOnlyArray::ends_with(Self[T], ArrayView[T]) -> Bool
 pub fn[T : Eq] ReadOnlyArray::equal(Self[T], Self[T]) -> Bool
-#alias("_[_:_]")
 #alias(sub, deprecated)
 #alias(view, deprecated)
 pub fn[T] ReadOnlyArray::exact_view(Self[T], start? : Int, end? : Int) -> ArrayView[T]
@@ -1135,13 +1135,13 @@ pub fn Bytes::add(Bytes, Bytes) -> Bytes
 pub fn Bytes::at(Bytes, Int) -> Byte
 pub fn Bytes::chop_prefix(Bytes, BytesView) -> BytesView?
 pub fn Bytes::chop_suffix(Bytes, BytesView) -> BytesView?
+#alias("_[_:_]")
 pub fn Bytes::clamped_view(Bytes, start? : Int, end? : Int) -> BytesView
 pub fn Bytes::compare(Bytes, Bytes) -> Int
 #alias(clone, deprecated)
 #deprecated
 pub fn Bytes::copy(Bytes) -> Bytes
 pub fn Bytes::equal(Bytes, Bytes) -> Bool
-#alias("_[_:_]")
 #alias(sub, deprecated)
 #alias(view, deprecated)
 pub fn Bytes::exact_view(Bytes, start? : Int, end? : Int) -> BytesView
@@ -1182,12 +1182,12 @@ pub fn Bytes::to_unchecked_string(Bytes, offset? : Int, length? : Int) -> String
 pub fn BytesView::at(Self, Int) -> Byte
 pub fn BytesView::chop_prefix(Self, Self) -> Self?
 pub fn BytesView::chop_suffix(Self, Self) -> Self?
+#alias("_[_:_]")
 pub fn BytesView::clamped_view(Self, start? : Int, end? : Int) -> Self
 pub fn BytesView::compare(Self, Self) -> Int
 pub fn BytesView::data(Self) -> Bytes
 pub fn BytesView::equal(Self, Self) -> Bool
 pub fn BytesView::equal_to_bytes(Self, Bytes) -> Bool
-#alias("_[_:_]")
 #alias(sub, deprecated)
 #alias(view, deprecated)
 pub fn BytesView::exact_view(Self, start? : Int, end? : Int) -> Self
@@ -1226,6 +1226,7 @@ pub fn StringView::before(Self, Self) -> Self?
 pub fn StringView::char_length(Self) -> Int
 pub fn StringView::char_length_eq(Self, Int) -> Bool
 pub fn StringView::char_length_ge(Self, Int) -> Bool
+#alias("_[_:_]")
 pub fn StringView::clamped_view(Self, start? : Int, end? : Int) -> Self
 pub fn StringView::code_units(Self) -> ArrayView[UInt16]
 pub fn StringView::compare(Self, Self) -> Int
@@ -1239,7 +1240,6 @@ pub fn StringView::equal(Self, Self) -> Bool
 pub fn StringView::equal_ignore_ascii_case(Self, Self) -> Bool
 pub fn StringView::equal_to_string(Self, String) -> Bool
 pub fn StringView::escape(Self, quote? : Bool) -> Self
-#alias("_[_:_]")
 #alias(sub, deprecated)
 pub fn StringView::exact_view(Self, start? : Int, end? : Int) -> Self
 pub fn StringView::find(Self, Self) -> Int?

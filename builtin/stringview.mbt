@@ -602,7 +602,7 @@ pub fn StringView::from_iter(iter : Iter[Char]) -> StringView {
 ///|
 /// Returns a view of the string between `start` and `end`, or `None` if the
 /// range is invalid — either out of bounds or splitting a UTF-16 surrogate
-/// pair. Unlike `String::exact_view` (a.k.a. `s[start:end]`), this variant does not
+/// pair. Unlike `String::exact_view`, this variant does not
 /// abort, making it suitable for composition with pattern matching:
 ///
 /// ```mbt check
@@ -639,7 +639,7 @@ pub fn String::get_view(
 ///|
 /// Returns a sub-view of the view between `start` and `end`, or `None` if the
 /// range is invalid — either out of bounds or splitting a UTF-16 surrogate
-/// pair. The optional variant of `StringView::exact_view` (a.k.a. `sv[start:end]`).
+/// pair. The optional variant of `StringView::exact_view`.
 pub fn StringView::get_view(
   self : StringView,
   start? : Int = 0,
@@ -678,8 +678,11 @@ pub fn StringView::get_view(
 /// requested range on each side. Unpaired surrogates already present in the
 /// input are treated as boundaries and pass through unchanged.
 ///
-/// See `s[start:end]` for the aborting variant and `String::get_view` for
-/// the exact `Option`-returning variant.
+/// Also available as `s[start:end]`, with UTF-16 code-unit offsets. Negative
+/// offsets clamp to zero. See `String::exact_view` for the aborting variant and
+/// `String::get_view` for the exact `Option`-returning variant. Use
+/// `String::split_at` for a lossless split: `s[:i]` and `s[i:]` both exclude a
+/// character whose surrogate pair contains `i`.
 ///
 /// # Example
 ///
@@ -692,6 +695,7 @@ pub fn StringView::get_view(
 ///   inspect(s.clamped_view(start=3, end=3), content="") // inside the pair
 /// }
 /// ```
+#alias("_[_:_]")
 pub fn String::clamped_view(
   self : String,
   start? : Int = 0,
@@ -728,6 +732,9 @@ pub fn String::clamped_view(
 /// `String::clamped_view`: clamps out-of-range offsets, snaps
 /// surrogate-splitting offsets inward, and yields an empty view for an
 /// inverted range.
+/// Also available as `view[start:end]`, with UTF-16 code-unit offsets relative
+/// to the view. Use `StringView::exact_view` to validate bounds and surrogate
+/// boundaries, or `StringView::split_at` for a lossless split.
 ///
 /// # Example
 ///
@@ -738,6 +745,7 @@ pub fn String::clamped_view(
 ///   inspect(v.clamped_view(start=3), content="cd")
 /// }
 /// ```
+#alias("_[_:_]")
 pub fn StringView::clamped_view(
   self : StringView,
   start? : Int = 0,
@@ -879,7 +887,6 @@ pub fn StringView::split_at(
 ///   inspect(view2, content="World")
 /// }
 /// ```
-#alias("_[_:_]")
 #alias(sub, deprecated="Use `exact_view` instead")
 pub fn String::exact_view(
   self : String,
@@ -939,7 +946,6 @@ pub fn String::exact_view(
 ///   inspect(view2, content="rl")
 /// }
 /// ```
-#alias("_[_:_]")
 #alias(sub, deprecated="Use `exact_view` instead")
 pub fn StringView::exact_view(
   self : StringView,

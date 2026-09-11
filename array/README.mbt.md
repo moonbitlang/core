@@ -86,10 +86,15 @@ test "sorting" {
 
 ## Array Views
 
-Array views provide a lightweight way to work with array slices.
-Use `arr.exact_view(start~, end~)` to validate bounds, `arr.get_view(start~, end~)`
-to return `None` for invalid bounds, or `arr.clamped_view(start~, end~)` to clamp
-them. The old `view` and `sub` names are deprecated in favor of `exact_view`.
+Array views provide a lightweight way to work with array slices. The
+`arr[start:end]` syntax clamps each bound to `[0, arr.length()]`; negative
+bounds clamp to zero and inverted ranges produce empty views. Omitting either
+bound uses the corresponding end of the array. These rules also apply to
+`FixedArray`, `ReadOnlyArray`, `ArrayView`, and `MutArrayView`, with offsets
+relative to the current view. Use `arr.exact_view(start~, end~)` to require valid
+bounds, or `arr.get_view(start~, end~)` to return `None` for invalid bounds on
+types that provide it. The old `view` and `sub` names are deprecated in favor
+of `exact_view`.
 
 ```mbt check
 ///|

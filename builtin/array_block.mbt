@@ -174,7 +174,7 @@ test "panic Array::blit_to/boundary_cases1" {
   let dst = [0, 0, 0, 0, 0]
 
   // Invalid range (start > end will panic)
-  ignore(src[3:1].blit_to(dst))
+  ignore(src.exact_view(start=3, end=1).blit_to(dst))
 }
 
 ///|
@@ -182,7 +182,7 @@ test "panic Array::blit_to/boundary_cases2" {
   let src = [1, 2, 3, 4, 5]
   let dst = [0, 0, 0, 0, 0]
   // Invalid src_offset (negative index in view creation will panic)
-  ignore(src[-1:1].blit_to(dst))
+  ignore(src.exact_view(start=-1, end=1).blit_to(dst))
 }
 
 ///|
@@ -190,7 +190,7 @@ test "panic Array::blit_to/boundary_cases3" {
   let src = [1, 2, 3, 4, 5]
   let dst = [0, 0, 0, 0, 0]
   // len exceeding src length
-  ignore(src[0:6].blit_to(dst))
+  ignore(src.exact_view(start=0, end=6).blit_to(dst))
 }
 
 ///|

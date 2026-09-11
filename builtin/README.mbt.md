@@ -206,9 +206,11 @@ owners.str -> views.strview: "s[start:end]"
 
 Views are ideal for rest patterns (`[first, .. rest]`) and for passing
 sub-sequences without allocation; functions taking a view also accept the
-owning container through implicit conversion. Note that the `s[start:end]`
-slice syntax on `String` panics when a boundary would split a UTF-16
-surrogate pair:
+owning container through implicit conversion. Bracket slices clamp bounds to
+the container or view, with negative bounds clamped to zero and inverted
+ranges producing empty views. String slices use UTF-16 code-unit offsets and
+trim split surrogate pairs inward. Use the named `exact_view` methods to require
+valid bounds; `split_at` provides a lossless string split.
 
 ```mbt check
 ///|
