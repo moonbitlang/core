@@ -242,7 +242,7 @@ fn ParseContext::lex_integer_end(
       // infinity sentinel.
       // Malformed tokens may end inside a surrogate pair. Keep raw slicing
       // here and in lex_number_end so parsing reports an error without aborting.
-      let s = ctx.input.raw_view(start_offset=start, end_offset=end)
+      let s = ctx.input.view(start_offset=start, end_offset=end)
       try {
         let value = @internal/strconv.parse_double(s)
         return { value, repr: Some(s), }
@@ -428,7 +428,7 @@ fn ParseContext::lex_number_end(
       return { value: fast, repr: None, }
     }
   }
-  let s = ctx.input.raw_view(start_offset=start, end_offset=end)
+  let s = ctx.input.view(start_offset=start, end_offset=end)
   try {
     let d = @internal/strconv.parse_double(s)
     // For normal values, return without string representation

@@ -1033,10 +1033,9 @@ pub impl Add for StringView with fn add(self, other) {
 /// Requires `0 <= start_offset <= end_offset <= self.length()`; panics otherwise.
 /// Omitted bounds default to the start and end of this view. Surrogate pairs
 /// may be split. Use `exact_view(start~, end~)` to validate text boundaries.
-// The compiler generates calls to `view` for lexmatch/lexscan. Deprecate the
-// alias after compiler lowering uses `raw_view`, so --deny-warn stays usable.
-#alias(view)
-pub fn StringView::raw_view(
+// The compiler generates calls to `view` for lexmatch/lexscan. Keep this
+// method without deprecation until compiler lowering changes.
+pub fn StringView::view(
   self : StringView,
   start_offset? : Int = 0,
   end_offset? : Int,
@@ -1060,10 +1059,9 @@ pub fn StringView::raw_view(
 /// Requires `0 <= start_offset <= end_offset <= self.length()`; panics otherwise.
 /// Omitted bounds default to the start and end of this string. Surrogate pairs
 /// may be split. Use `exact_view(start~, end~)` to validate text boundaries.
-// The compiler generates calls to `view` for lexmatch/lexscan. Deprecate the
-// alias after compiler lowering uses `raw_view`, so --deny-warn stays usable.
-#alias(view)
-pub fn String::raw_view(
+// The compiler generates calls to `view` for lexmatch/lexscan. Keep this
+// method without deprecation until compiler lowering changes.
+pub fn String::view(
   self : String,
   start_offset? : Int = 0,
   end_offset? : Int,
