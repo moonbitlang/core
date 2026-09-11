@@ -14,6 +14,8 @@ pub fn[A : Compare] compare(A, A) -> Int
 
 pub fn debug_assert(() -> Bool) -> Unit
 
+pub fn[T : Show] eprintln(T) -> Unit
+
 #callsite(autofill(loc))
 pub fn[T] fail(StringView, loc~ : SourceLoc) -> T raise Failure
 
