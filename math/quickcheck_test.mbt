@@ -1081,6 +1081,14 @@ test "special values: pow and scalbn" {
   assert_true(same_bits(@math.pow(0.5, inf), 0.0))
   assert_eq(@math.pow(0.5, @double.neg_infinity), inf)
   assert_true(@math.pow(-2.0, 0.5).is_nan())
+  // IEEE 754-2019 section 9.2.1: pow(1, y) = 1 even when y is NaN, and
+  // pow(-1, +-inf) = 1; pow(-1, NaN) stays NaN.
+  assert_eq(@math.pow(1.0, nan), 1.0)
+  assert_eq(@math.pow(1.0, inf), 1.0)
+  assert_eq(@math.pow(1.0, @double.neg_infinity), 1.0)
+  assert_eq(@math.pow(-1.0, inf), 1.0)
+  assert_eq(@math.pow(-1.0, @double.neg_infinity), 1.0)
+  assert_true(@math.pow(-1.0, nan).is_nan())
   assert_true(same_bits(@math.scalbn(0.0, 100), 0.0))
   assert_true(same_bits(@math.scalbn(-0.0, 100), -0.0))
   assert_eq(@math.scalbn(1.0, 2000), inf)

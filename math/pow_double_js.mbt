@@ -37,4 +37,18 @@
 ///   inspect(@math.pow(@double.infinity, -1.0), content="0")
 /// }
 /// ```
-pub fn pow(base : Double, exponent : Double) -> Double = "Math" "pow"
+pub fn pow(base : Double, exponent : Double) -> Double {
+  // ECMAScript's Math.pow returns NaN for pow(1, NaN) and pow(+-1, +-inf);
+  // align with IEEE 754-2019 section 9.2.1 as the other backends do.
+  if base == 1.0 {
+    return 1.0
+  }
+  if base == -1.0 &&
+    (exponent == @double.infinity || exponent == @double.neg_infinity) {
+    return 1.0
+  }
+  math_pow_js(base, exponent)
+}
+
+///|
+fn math_pow_js(base : Double, exponent : Double) -> Double = "Math" "pow"

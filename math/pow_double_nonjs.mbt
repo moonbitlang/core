@@ -205,6 +205,13 @@ pub fn pow(x : Double, y : Double) -> Double {
   if (iy.reinterpret_as_uint() | ly) == 0 {
     return ONE
   }
+  // |x|==1: pow(1,y) = 1 even if y is NaN, pow(-1,+-inf) = 1
+  // (IEEE 754-2019 section 9.2.1, same as powf)
+  if ix == 0x3ff00000 && lx == 0 {
+    if hx > 0 || (iy == 0x7ff00000 && ly == 0) {
+      return ONE
+    }
+  }
   // +-NaN return x+y
   if ix > 0x7FF00000 ||
     (ix == 0x7FF00000 && lx != 0) ||
@@ -237,9 +244,7 @@ pub fn pow(x : Double, y : Double) -> Double {
   // special value of y
   if ly == 0 {
     if iy == 0x7ff00000 { // y is +-inf
-      if ((ix.reinterpret_as_uint() - 0x3ff00000) | lx) == 0 {
-        return y - y // inf**+-1 is NaN
-      } else if ix >= 0x3ff00000 { // (|x|>1)**+-inf = inf,0
+      if ix >= 0x3ff00000 { // (|x|>1)**+-inf = inf,0
         return if hy >= 0 { y } else { ZERO }
       } else { // (|x|<1)**-,+inf = inf,0
         return if hy < 0 { -y } else { ZERO }

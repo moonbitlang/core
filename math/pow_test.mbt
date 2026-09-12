@@ -1242,8 +1242,26 @@ test "powf huge even exponent negative base" {
 
 ///|
 test "pow double infinity exponent branch" {
-  assert_true(@math.pow(1.0, @double.infinity).is_nan())
+  // IEEE 754-2019 section 9.2.1: pow(1, y) = 1 even when y is infinite.
+  assert_eq(@math.pow(1.0, @double.infinity), 1.0)
   assert_eq(@math.pow(2.0, 1.0), 2.0)
+}
+
+///|
+test "pow unit-base special cases" {
+  // IEEE 754-2019 section 9.2.1 / C99 F.9.4.4: pow(1, y) = 1 for any y,
+  // even a NaN, and pow(-1, +-inf) = 1; pow(-1, NaN) is unspecified and
+  // stays NaN. Matches powf and keeps every backend consistent.
+  inspect(@math.pow(1.0, @double.not_a_number), content="1")
+  inspect(@math.pow(1.0, @double.infinity), content="1")
+  inspect(@math.pow(1.0, @double.neg_infinity), content="1")
+  inspect(@math.pow(-1.0, @double.infinity), content="1")
+  inspect(@math.pow(-1.0, @double.neg_infinity), content="1")
+  inspect(@math.pow(-1.0, @double.not_a_number), content="NaN")
+  // Finite exponents keep their ordinary results.
+  inspect(@math.pow(-1.0, 3.0), content="-1")
+  inspect(@math.pow(-1.0, 2.0), content="1")
+  inspect(@math.pow(-1.0, 0.5), content="NaN")
 }
 
 ///|
