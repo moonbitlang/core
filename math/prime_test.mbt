@@ -236,3 +236,29 @@ test "comprehensive primality tests" {
     assert_false(is_probable_prime(composite, r))
   }
 }
+
+///|
+test "probable_prime returns the requested bit length" {
+  let rand = @random.Rand::chacha8()
+  for bits in [2, 3, 8, 16, 32] {
+    for _ in 0..<8 {
+      let prime = @math.probable_prime(bits, rand)
+      assert_eq(prime.bit_length(), bits)
+    }
+  }
+}
+
+///|
+test "panic probable_prime zero bits" {
+  ignore(@math.probable_prime(0, @random.Rand::chacha8()))
+}
+
+///|
+test "panic probable_prime one bit" {
+  ignore(@math.probable_prime(1, @random.Rand::chacha8()))
+}
+
+///|
+test "panic probable_prime negative bits" {
+  ignore(@math.probable_prime(-1, @random.Rand::chacha8()))
+}
