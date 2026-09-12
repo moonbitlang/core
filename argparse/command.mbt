@@ -104,6 +104,11 @@ pub fn Command::render_help(self : Command) -> String {
 /// - Command-definition validation failures raise display-ready validation
 ///   text (without appended help).
 ///
+/// Explicit `argv` contains only arguments, without the program name. By default,
+/// the runtime command line is used with its executable prefix removed (including
+/// the script path on JavaScript/Node).
+/// Environment values are read only from the supplied `env` map, which defaults
+/// to empty; pass `@env.get_env_vars()` to use the process environment.
 /// Value precedence is `argv > env > default_values`.
 #as_free_fn
 pub fn Command::parse(
