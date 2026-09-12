@@ -98,25 +98,6 @@ pub fn BigInt::from_string(str : String, radix? : Int = 10) -> BigInt {
 }
 
 ///|
-fn digit_from_char(x : Int) -> Int {
-  match x {
-    '0'..='9' => x - '0'
-    'A'..='Z' => x + (10 - 'A')
-    'a'..='z' => x + (10 - 'a')
-    _ => -1
-  }
-}
-
-///|
-fn pow2_shift(radix : Int) -> Int? {
-  if radix >= 2 && (radix & (radix - 1)) == 0 {
-    Some(radix.ctz())
-  } else {
-    None
-  }
-}
-
-///|
 fn BigInt::from_string_radix(str : StringView, radix : Int) -> BigInt raise {
   let len = str.length()
   let sign = if str.unsafe_get(0) == '-' { -1 } else { 1 }
@@ -128,8 +109,8 @@ fn BigInt::from_string_radix(str : StringView, radix : Int) -> BigInt raise {
   match pow2_shift(radix) {
     Some(shift) =>
       for i in start..<len {
-        let digit = digit_from_char(str.unsafe_get(i).to_int())
-        if digit < 0 || digit >= radix {
+        guard digit_from_char(str.unsafe_get(i).to_int()) is Some(digit) &&
+          digit < radix else {
           syntax_err()
         }
         acc = (acc << shift) | BigInt::from_int(digit)
@@ -137,8 +118,8 @@ fn BigInt::from_string_radix(str : StringView, radix : Int) -> BigInt raise {
     None => {
       let base = BigInt::from_int(radix)
       for i in start..<len {
-        let digit = digit_from_char(str.unsafe_get(i).to_int())
-        if digit < 0 || digit >= radix {
+        guard digit_from_char(str.unsafe_get(i).to_int()) is Some(digit) &&
+          digit < radix else {
           syntax_err()
         }
         acc = acc * base + BigInt::from_int(digit)

@@ -715,34 +715,6 @@ fn maximum_int(a : Int, b : Int) -> Int {
 }
 
 ///|
-fn digit_from_char(x : Int) -> Int {
-  match x {
-    '0'..='9' => x - '0'
-    'A'..='Z' => x + (10 - 'A')
-    'a'..='z' => x + (10 - 'a')
-    _ => -1
-  }
-}
-
-///|
-fn char_from_digit(d : Int) -> Char {
-  if d < 10 {
-    (d + '0').unsafe_to_char()
-  } else {
-    (d - 10 + 'a').unsafe_to_char()
-  }
-}
-
-///|
-fn pow2_shift(radix : Int) -> Int? {
-  if radix >= 2 && (radix & (radix - 1)) == 0 {
-    Some(radix.ctz())
-  } else {
-    None
-  }
-}
-
-///|
 /// Converts this integer to a string in a radix between 2 and 36.
 pub fn BigInt::to_string(self : BigInt, radix? : Int = 10) -> String {
   if radix < 2 || radix > 36 {
@@ -829,8 +801,8 @@ fn BigInt::from_string_radix(input : StringView, radix : Int) -> BigInt raise {
       }
       let base = BigInt::from_int(radix)
       let acc = for i in start..<len; acc = zero {
-        let digit = digit_from_char(input.unsafe_get(i).to_int())
-        if digit < 0 || digit >= radix {
+        guard digit_from_char(input.unsafe_get(i).to_int()) is Some(digit) &&
+          digit < radix else {
           syntax_err()
         }
         continue acc * base + BigInt::from_int(digit)
@@ -859,8 +831,8 @@ fn BigInt::from_string_radix_pow2(
   }
   let mut first = start
   while first < len {
-    let digit = digit_from_char(input.unsafe_get(first).to_int())
-    if digit < 0 || digit >= radix {
+    guard digit_from_char(input.unsafe_get(first).to_int()) is Some(digit) &&
+      digit < radix else {
       syntax_err()
     }
     if digit != 0 {
@@ -875,8 +847,8 @@ fn BigInt::from_string_radix_pow2(
   let limbs_len = (total_bits + RADIX_BIT_LEN - 1) / RADIX_BIT_LEN
   let limbs = FixedArray::make(limbs_len, 0UL)
   for i in len>..first; bit_pos = 0 {
-    let digit = digit_from_char(input.unsafe_get(i).to_int())
-    if digit < 0 || digit >= radix {
+    guard digit_from_char(input.unsafe_get(i).to_int()) is Some(digit) &&
+      digit < radix else {
       syntax_err()
     }
     let limb_index = bit_pos / RADIX_BIT_LEN
@@ -910,8 +882,9 @@ fn BigInt::from_string_dec(input : StringView) -> BigInt raise {
   while i < len {
     let take = minimum_int(DECIMAL_CHUNK_DIGITS, len - i)
     let (chunk, scale) = for offset in 0..<take; chunk = 0UL, scale = 1UL {
-      let digit = digit_from_char(input.unsafe_get(i + offset).to_int())
-      if digit < 0 || digit > 9 {
+      guard digit_from_char(input.unsafe_get(i + offset).to_int())
+        is Some(digit) &&
+        digit <= 9 else {
         syntax_err()
       }
       continue chunk * 10 + digit.to_uint64(), scale * 10
