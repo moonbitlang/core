@@ -436,8 +436,7 @@ pub fn[K : Hash + Eq] HashSet::symmetric_difference(
   self : HashSet[K],
   other : HashSet[K],
 ) -> HashSet[K] {
-  let m = new_hashset(default_init_capacity)
-  self.each(k => if !other.contains(k) { m.add(k) })
+  let m = self.difference(other)
   other.each(k => if !self.contains(k) { m.add(k) })
   m
 }
