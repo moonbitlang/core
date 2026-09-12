@@ -1546,17 +1546,7 @@ pub fn[T] Array::extract_if(
 /// }
 /// ```
 pub fn[T] Array::chunks(self : Array[T], size : Int) -> Array[ArrayView[T]] {
-  guard! size > 0
-  let len = self.length()
-  if len == 0 {
-    return []
-  }
-  let num_chunks = (len + size - 1) / size
-  Array::makei(num_chunks, i => {
-    let start = i * size
-    let end = Int::min(start + size, len)
-    self[start:end]
-  })
+  self[:].chunks(size)
 }
 
 ///|
@@ -1649,12 +1639,7 @@ pub fn[T] Array::chunk_by(
 /// }
 /// ```
 pub fn[T] Array::windows(self : Array[T], size : Int) -> Array[ArrayView[T]] {
-  guard! size > 0
-  let len = self.length() - size + 1
-  if len < 1 {
-    return []
-  }
-  Array::makei(len, i => self[i:i + size])
+  self[:].windows(size)
 }
 
 ///|

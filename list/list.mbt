@@ -168,11 +168,7 @@ pub fn[A : @json.FromJson] List::from_json(
 #as_free_fn(of, deprecated="Use @list.List([...]) instead")
 #deprecated("Use @list.List([...]) instead")
 pub fn[A] List::from_array(arr : ArrayView[A]) -> List[A] {
-  for i = arr.length() - 1, list = Empty; i >= 0; {
-    continue i - 1, More(arr[i], tail=list)
-  } nobreak {
-    list
-  }
+  List(arr)
 }
 
 ///|
