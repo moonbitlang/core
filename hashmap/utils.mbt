@@ -347,7 +347,7 @@ pub fn[K, V] HashMap::eachi(
 /// ```
 pub fn[K, V] HashMap::keys(self : HashMap[K, V]) -> Iter[K] {
   let mut i = 0
-  let iter = Iter::new(
+  Iter::new(
     () => {
       while i < self.entries.length() {
         let entry = self.entries[i]
@@ -361,7 +361,6 @@ pub fn[K, V] HashMap::keys(self : HashMap[K, V]) -> Iter[K] {
     },
     size_hint=self.size,
   )
-  iter.iter()
 }
 
 ///|
@@ -388,7 +387,7 @@ pub fn[K, V] HashMap::keys(self : HashMap[K, V]) -> Iter[K] {
 /// ```
 pub fn[K, V] HashMap::values(self : HashMap[K, V]) -> Iter[V] {
   let mut i = 0
-  let iter = Iter::new(
+  Iter::new(
     () => {
       while i < self.entries.length() {
         let entry = self.entries[i]
@@ -402,7 +401,6 @@ pub fn[K, V] HashMap::values(self : HashMap[K, V]) -> Iter[V] {
     },
     size_hint=self.size,
   )
-  iter.iter()
 }
 
 ///|
