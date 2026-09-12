@@ -265,6 +265,7 @@ pub fn[A] Deque::copy(self : Deque[A]) -> Deque[A] {
 /// * `dst_offset` is negative
 /// * `dst_offset` exceeds the length of the destination deque
 /// * `src_offset + len` exceeds the length of the source deque
+/// * `dst_offset + len` exceeds the maximum representable `Int`
 pub fn[A] Deque::blit_to(
   self : Deque[A],
   dst : Deque[A],
@@ -276,7 +277,9 @@ pub fn[A] Deque::blit_to(
     dst_offset >= 0 &&
     src_offset >= 0 &&
     dst_offset <= dst.length() &&
-    src_offset + len <= self.length()
+    src_offset <= self.length() &&
+    len <= self.length() - src_offset &&
+    len <= 0x7fffffff - dst_offset
   if dst_offset + len > dst.buf.length() {
     dst.reserve_capacity(dst_offset + len)
     dst.head = 0
@@ -2072,7 +2075,7 @@ pub fn[A] Deque::drain(self : Deque[A], start~ : Int, len? : Int) -> Deque[A] {
   // Calculate and validate len
   let len = match len {
     Some(l) => {
-      guard l >= 0 && start + l <= self.len else {
+      guard l >= 0 && l <= self.len - start else {
         abort(
           "Deque::drain: len out of bounds (start=\{start}, len=\{l}, deque.length()=\{self.len})",
         )
