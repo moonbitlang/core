@@ -477,3 +477,23 @@ test "retain/empty_set" {
   set.retain(_x => true)
   @test.assert_eq(set.length(), 0)
 }
+
+///|
+test "retain visits wrapped collision entries once" {
+  let set = @hashset.HashSet(
+    [HashSetKey(0, 7), HashSetKey(1, 7), HashSetKey(2, 7), HashSetKey(3, 7)],
+    capacity=8,
+  )
+  let visits = []
+  set.retain(key => {
+    let HashSetKey(id, _) = key
+    visits.push(id)
+    id != 0
+  })
+  visits.sort()
+  debug_inspect(visits, content="[0, 1, 2, 3]")
+  inspect(set.length(), content="3")
+  for id in 1..<4 {
+    assert_true(set.contains(HashSetKey(id, 7)))
+  }
+}

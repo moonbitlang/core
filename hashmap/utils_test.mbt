@@ -176,3 +176,40 @@ test "T::retain - preserve map integrity after retain" {
   inspect(map.length(), content="0")
   inspect(map.is_empty(), content="true")
 }
+
+///|
+priv struct RetainCollisionKey(Int) derive(Eq)
+
+///|
+impl Hash for RetainCollisionKey with fn hash(_) {
+  7
+}
+
+///|
+impl Hash for RetainCollisionKey with fn hash_combine(_, hasher) {
+  hasher.combine_int(7)
+}
+
+///|
+test "retain visits wrapped collision entries once" {
+  let map = @hashmap.HashMap(
+    [
+      (RetainCollisionKey(0), 0),
+      (RetainCollisionKey(1), 1),
+      (RetainCollisionKey(2), 2),
+      (RetainCollisionKey(3), 3),
+    ],
+    capacity=8,
+  )
+  let visits = []
+  map.retain((_, value) => {
+    visits.push(value)
+    value != 0
+  })
+  visits.sort()
+  debug_inspect(visits, content="[0, 1, 2, 3]")
+  inspect(map.length(), content="3")
+  for id in 1..<4 {
+    assert_eq(map.get(RetainCollisionKey(id)), Some(id))
+  }
+}
