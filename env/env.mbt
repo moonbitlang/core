@@ -13,7 +13,10 @@
 // limitations under the License.
 
 ///|
-/// Get the command line arguments passed to the program.
+/// Get the runtime command line, including its executable prefix.
+/// On JavaScript/Node this is `process.argv`, including both the Node executable
+/// and the script path. JavaScript environments without `process.argv` return
+/// an empty array. Other targets use the host-provided argument list.
 pub fn args() -> Array[String] {
   get_cli_args_internal()
 }
@@ -57,7 +60,8 @@ pub fn unset_env_var(key : String) -> Unit {
 ///|
 /// Get `n` random bytes from a platform entropy source.
 /// Returns `Some(bytes)` when the platform can provide secure random bytes,
-/// and `None` on targets/environments that do not support entropy.
+/// and `None` when entropy is unsupported or the host reports a failure.
+/// For `n <= 0`, probes availability and returns `Some(b"")` on success.
 pub fn rand(n : Int) -> Bytes? {
   if n <= 0 {
     let probe : FixedArray[Byte] = FixedArray::make(1, b'\x00')
