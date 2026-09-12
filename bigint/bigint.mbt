@@ -381,3 +381,32 @@ pub fn BigInt::to_int16(self : BigInt) -> Int16 {
 pub impl @debug.Debug for BigInt with fn to_repr(self) {
   @debug.Repr::integer(self.to_string())
 }
+
+///|
+fn digit_from_char(x : Int) -> Int? {
+  match x {
+    '0'..='9' => Some(x - '0')
+    'A'..='Z' => Some(x + (10 - 'A'))
+    'a'..='z' => Some(x + (10 - 'a'))
+    _ => None
+  }
+}
+
+///|
+#cfg(not(target="js"))
+fn char_from_digit(d : Int) -> Char {
+  if d < 10 {
+    (d + '0').unsafe_to_char()
+  } else {
+    (d - 10 + 'a').unsafe_to_char()
+  }
+}
+
+///|
+fn pow2_shift(radix : Int) -> Int? {
+  if radix >= 2 && (radix & (radix - 1)) == 0 {
+    Some(radix.ctz())
+  } else {
+    None
+  }
+}
