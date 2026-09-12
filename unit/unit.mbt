@@ -13,8 +13,8 @@
 // limitations under the License.
 
 ///|
-/// same as `Unit::default`
-#deprecated("Use `Unit::default` instead")
+/// Returns the unit value `()`.
+#deprecated("Use `()` instead")
 pub fn default() -> Unit {
   ()
 }

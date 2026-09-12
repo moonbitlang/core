@@ -9,37 +9,25 @@ For the latest stable release and installation instructions, contributors can vi
 
 ## Step 1: Clone the repository
 
-- To start working on the project, you need a local copy of the repository. Currently, `moon` looks for moonbitlang/core at `~/.moon/lib/core`. So, remove it if it exists:
+Clone the repository into a separate working directory and run the tools from its root:
 
-  ```bash
-  rm -rf ~/.moon/lib/core
-  ```
+```bash
+git clone https://github.com/moonbitlang/core.git
+cd core
+moon check
+moon test
+```
 
-- Then, use the following command to get the latest version of moonbitlang/core:
+These commands use the core sources in this checkout. There is no need to remove
+or replace the standard library installed with your toolchain in `~/.moon/lib/core`.
+Package dependencies are declared in `moon.pkg`; module metadata is in `moon.mod`.
+Generated build artifacts go under `_build/` by default.
 
-  ```bash
-  git clone https://github.com/moonbitlang/core ~/.moon/lib/core
-  ```
+To verify that the core can be bundled for all supported targets, run:
 
-- Run the following command to bundle moonbitlang/core:
-
-  ```bash
-  moon bundle --source-dir ~/.moon/lib/core
-  ```
-
-- If everything goes well, it will generate a bundled core file at `~/.moon/lib/core/target/bundle/core.core`.
-
-- Now, you can create a new project and run it to check if everything is working as expected:
-
-  ```bash
-  moon new hello
-  cd hello
-  echo """fn main {
-    println([1, 2, 3].rev())
-  }""" > cmd/main/main.mbt
-  moon run cmd/main
-  # Output: [3, 2, 1]
-  ```
+```bash
+moon bundle --all
+```
 
 ## Step 2: Make your change
 
@@ -59,10 +47,14 @@ After making your changes, it's important to test them to ensure they work as ex
   ```bash
   moon check
   moon test
+  moon bundle --all
+  moon info # Regenerate tracked package interfaces (.mbti)
   moon fmt
-  moon bundle
-  moon info // Generate mbti files, these files should be tracked by git
   ```
+
+Review the `.mbti` diff to confirm that public API changes are intentional. For
+changes that depend on backend behavior, also run `moon test --target all` and
+the relevant release-mode tests, as CI does.
 
 ## Step 4: Submit a pull request and request a review
 
@@ -94,7 +86,7 @@ After submitting your pull request, request a review from the project maintainer
 - New APIs with real meat
 
   We encourage you to add new APIs that are useful and have real meat, rather than just adding APIs for the sake of completeness.
-  If the new API can be composed with existing APIs without loosing efficiency, it is better to use the existing APIs instead of adding new ones, this is due to our current limited bandwidth of the core library.
+  If the new API can be composed with existing APIs without losing efficiency, it is better to use the existing APIs instead of adding new ones, this is due to our current limited bandwidth of the core library.
 
 # Naming conventions
 

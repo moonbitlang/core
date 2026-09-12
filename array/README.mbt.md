@@ -116,7 +116,8 @@ test "array views" {
 
 ## Fixed Arrays
 
-Fixed arrays provide immutable array operations:
+Fixed arrays have a fixed length, but their elements are mutable. Use
+`ReadOnlyArray` when element assignment should be unavailable:
 
 ```mbt check
 ///|

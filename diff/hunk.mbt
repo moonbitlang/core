@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-priv struct Range(Int, Int) // line number, length
+priv struct Range(Int, Int) // zero-based start and exclusive end
 
 ///|
 impl Show for Range with fn output(self, logger) {

@@ -6,6 +6,10 @@ Encoding and decoding between strings and UTF-8 byte sequences.
 
 Use `encode` to convert a string to UTF-8 bytes. Set `bom=true` to prepend the UTF-8 BOM (U+FEFF).
 
+For unpaired UTF-16 surrogates, the JavaScript backend replaces each one with
+U+FFFD, following `TextEncoder`; other backends panic. Well-formed strings
+encode identically on all backends.
+
 ```mbt check
 ///|
 test "encode" {

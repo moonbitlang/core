@@ -35,10 +35,6 @@ It is experimental and under active development. At this early stage, our primar
 
 ⚠️**The API is subject to change.**
 
-### Timeline
-
-The core is making large changes in the last few months, we are expected to reach beta-preview status in mid-August.
-
 ## Contributing
 
 We are actively developing moonbitlang/core and appreciate your help!

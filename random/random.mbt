@@ -46,7 +46,9 @@ pub fn Rand::chacha8(
 let fixed_test_seed : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456"
 
 ///|
-/// Create a new random number generator with a given [Source] generator.
+/// Create a random number generator with the supplied [Source].
+/// Without a source, seeds ChaCha8 from platform entropy when available,
+/// falling back to the fixed default seed if entropy is unavailable.
 pub fn Rand::new(generator? : &Source) -> Rand {
   match generator {
     None =>
@@ -405,7 +407,8 @@ pub fn Rand::boolean(self : Rand) -> Bool {
 }
 
 ///|
-/// Generates a random non-negative `BigInt` with a specified number of bits.
+/// Generates a random non-negative `BigInt` with at most `bits` bits.
+/// Leading zero bits are allowed; `bits = 0` returns zero.
 ///
 /// Parameters:
 ///

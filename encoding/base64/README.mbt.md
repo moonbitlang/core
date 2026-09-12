@@ -36,7 +36,7 @@ test "decode" {
 }
 ```
 
-Set `ignore_whitespace=true` to skip ASCII whitespace in the input:
+Set `ignore_whitespace=true` to skip spaces, tabs, CR, and LF in the input:
 
 ```mbt check
 ///|
@@ -48,7 +48,9 @@ test "decode_ignore_whitespace" {
 
 ## Lossy Decoding
 
-Use `decode_lossy` to decode Base64 while skipping invalid characters instead of raising an error.
+Use `decode_lossy` to decode Base64 while skipping invalid characters instead of
+raising an error. Padding ends decoding. Spaces, tabs, CR, and LF also end
+decoding by default; set `ignore_whitespace=true` to skip them.
 
 ```mbt check
 ///|

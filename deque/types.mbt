@@ -42,15 +42,16 @@
 ///
 /// Invariants:
 /// - `0 <= len <= buf.length()`
-/// - `0 <= head < buf.length()`
+/// - If the buffer is non-empty: `0 <= head < buf.length()`
+/// - If the buffer is empty: `head == 0` and `len == 0`
 /// - Element at index `i` is at `buf[(head + i) % buf.length()]`
 /// - When `len > 0`: front is `buf[head]`, back is `buf[(head + len - 1) % cap]`
-/// - When `len == 0`: no valid element, `head` can be any valid index
+/// - When `len == 0`: no valid element; `head` is zero or a valid buffer index
 struct Deque[A] {
   /// Circular buffer storing elements. May contain uninitialized slots.
   mut buf : UninitializedArray[A]
   /// Number of elements currently in the deque.
   mut len : Int
-  /// Index of the first element (front). Valid range: 0 <= head < buf.length().
+  /// Index of the first element (front), or zero when the buffer is empty.
   mut head : Int
 }

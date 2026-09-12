@@ -1485,7 +1485,8 @@ pub fn[A, E] List::scan_left(
 ///|
 /// Fold a list and return a list of successive reduced values from the right
 ///
-/// Note that the order of parameters on the accumulating function are reversed.
+/// Visits elements from right to left. As in `scan_left`, the callback receives
+/// the accumulator first and the element second.
 ///
 /// # Example
 /// ```mbt check

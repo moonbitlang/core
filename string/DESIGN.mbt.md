@@ -64,8 +64,9 @@ test "unsafe vs safe" {
   starts at the second half of a surrogate pair).
   When displaying invalid characters, a replacement character � will be shown.
 
-* **View**: A `View` represents a view of a String that maintains proper Unicode
-  character boundaries while providing efficient access to substrings. Views are
+* **View**: A `StringView` represents a window into a string. Slice syntax and
+  `exact_view` preserve character boundaries, while the deprecated `view` method
+  permits raw UTF-16 boundaries. Views are
   designed to be more performant than creating new String instances when working
   with substrings.
 
@@ -114,9 +115,7 @@ test "view conversion" {
       `String`, returns `String`. This preserves type consistency and user
       intent.
 
-  - **Unicode Safety and Validity**: Views maintain the same Unicode safety
-    guarantees as Strings, properly handling surrogate pairs and UTF-16 encoding
-    boundaries when iterating or accessing characters. When creating views, it
-    is required to provide valid String with valid offsets. Violating this will
-    result in the replacement character � being displayed when inspecting the
-    view.
+  - **Unicode Safety and Validity**: Use slice syntax or `exact_view` to avoid
+    splitting surrogate pairs. These operations validate the boundaries, not
+    every code unit inside the input. A view can still contain invalid UTF-16
+    inherited from an unchecked string or a raw `view` call.

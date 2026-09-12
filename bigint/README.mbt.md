@@ -1,6 +1,6 @@
 # BigInt Package Documentation
 
-This package provides arbitrary-precision integer arithmetic through the `BigInt` type. BigInt allows you to work with integers of unlimited size, making it perfect for cryptographic operations, mathematical computations, and any scenario where standard integer types are insufficient.
+This package provides arbitrary-precision integer arithmetic through the `BigInt` type. BigInt supports integers whose size is limited by available memory, for computations where fixed-width integer types are insufficient.
 
 ## Creating BigInt Values
 
@@ -255,12 +255,12 @@ test "json serialization" {
   let big = 12345678901234567890N
 
   // Convert to JSON (as string to preserve precision)
-  let json = big.to_json()
+  let json = Json(big)
   @debug.debug_inspect(json, content="String(\"12345678901234567890\")")
 
   // Large numbers that exceed JavaScript's safe integer range
   let very_big = @bigint.BigInt::from_string("123456789012345678901234567890")
-  let big_json = very_big.to_json()
+  let big_json = Json(very_big)
   @debug.debug_inspect(
     big_json,
     content="String(\"123456789012345678901234567890\")",
@@ -294,7 +294,7 @@ test "utility functions" {
 
 BigInt is particularly useful for:
 
-1. **Cryptography**: RSA encryption, digital signatures, and key generation
+1. **Number theory**: Modular arithmetic and prime number calculations
 2. **Mathematical computations**: Factorial calculations, Fibonacci sequences, prime number testing
 3. **Financial calculations**: High-precision monetary computations
 4. **Scientific computing**: Large integer calculations in physics and chemistry
@@ -305,13 +305,14 @@ BigInt is particularly useful for:
 - BigInt operations are slower than regular integer operations due to arbitrary precision
 - Addition and subtraction are generally fast
 - Multiplication and division become slower with larger numbers
-- Modular exponentiation is optimized for cryptographic use cases
+- Modular exponentiation reduces intermediate values modulo the supplied modulus
+- Arithmetic is variable-time; the package does not provide constant-time operations for secret values
 - String conversions can be expensive for very large numbers
 
 ## Best Practices
 
 1. **Use regular integers when possible**: Only use BigInt when you need arbitrary precision
 2. **Cache string representations**: If you need to display the same BigInt multiple times
-3. **Use modular arithmetic**: For cryptographic applications, always use modular exponentiation
+3. **Use modular arithmetic**: Supply a modulus when only the modular result is needed
 4. **Be careful with conversions**: Converting very large BigInt to regular integers will truncate
 5. **Consider memory usage**: Very large BigInt values consume more memory

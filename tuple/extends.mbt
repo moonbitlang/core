@@ -148,7 +148,8 @@ type Tuple16[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P] = (
 
 // --- deprecated: hidden from the generated interface ---
 
-// Tuples have no promoted trait methods; every promotion below is deprecated.
+// Primary compare/equal/hash promotions above are hidden but remain supported.
+// Every promotion below is deprecated.
 
 ///|
 #deprecated("Use `Default::default` instead", skip_current_package=true)

@@ -28,6 +28,8 @@ pub fn CoverageCounter::new(size : Int) -> CoverageCounter {
 
 ///|
 /// Increment the specified tracking index.
+/// The compiler-generated caller must ensure `0 <= idx < size`, where `size`
+/// is the length supplied to `new`. This hot path uses unchecked array access.
 ///
 #coverage.skip
 pub fn CoverageCounter::incr(self : CoverageCounter, idx : Int) -> Unit {

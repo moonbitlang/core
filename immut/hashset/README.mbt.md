@@ -343,7 +343,7 @@ test "performance benefits" {
 Immutable sets are particularly useful for:
 
 1. **Functional programming**: Pure functions that don't modify data
-2. **Concurrent programming**: Safe sharing between threads
+2. **Shared state**: Keep multiple versions without copying every element
 3. **Undo/redo systems**: Keep history of set states
 4. **Caching**: Cache intermediate results without fear of modification
 5. **Configuration management**: Immutable configuration sets
@@ -355,12 +355,8 @@ Immutable sets are particularly useful for:
 ```mbt check
 ///|
 test "functional programming style" {
-  fn process_numbers(
-    _numbers : @hashset.HashSet[Int],
-  ) -> @hashset.HashSet[Int] {
-    // Manually create processed set (no built-in filter/map)
-    let positive_squares = @hashset.HashSet([1, 4, 9]) // Squares of 1, 2, 3
-    positive_squares.add(1) // Add the number 1 (though 1 already exists)
+  fn process_numbers(numbers : @hashset.HashSet[Int]) -> @hashset.HashSet[Int] {
+    @hashset.from_iter(numbers.iter().filter(x => x > 0).map(x => x * x))
   }
 
   let input = @hashset.HashSet([-2, -1, 0, 1, 2, 3])
@@ -407,9 +403,11 @@ test "configuration usage" {
 
 The HAMT structure provides:
 
-- **Logarithmic depth**: O(log n) operations
+- **Logarithmic depth**: O(log n) lookup, insertion, and removal for well-distributed hashes; a full-hash collision bucket is searched linearly
 - **Structural sharing**: Common subtrees shared between versions
 - **Compact representation**: Efficient memory usage
 - **Cache-friendly access patterns**: Good locality of reference
 
-The immutable hashset package provides efficient, thread-safe, and functionally pure set operations for MoonBit applications requiring persistent data structures.
+Updates preserve the set structure of earlier versions. Elements themselves are
+shared, so structural immutability does not make mutable elements thread-safe.
+An element's hash and equality must remain unchanged while it belongs to a set.

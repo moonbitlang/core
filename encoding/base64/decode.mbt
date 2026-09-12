@@ -44,7 +44,7 @@ fn base64_value(code_unit : Int) -> Int {
 ///|
 /// Decodes a Base64 string into a byte array.
 ///
-/// When `ignore_whitespace` is true, ASCII whitespace is ignored.
+/// When `ignore_whitespace` is true, spaces, tabs, CR, and LF are ignored.
 /// Padding may only appear at the end. Both padded and unpadded input are
 /// accepted, but malformed padding raises `Malformed`.
 #cfg(not(any(target="native", target="wasm")))
@@ -58,7 +58,7 @@ pub fn decode(
 ///|
 /// Decodes a Base64 string into a byte array.
 ///
-/// When `ignore_whitespace` is true, ASCII whitespace is ignored.
+/// When `ignore_whitespace` is true, spaces, tabs, CR, and LF are ignored.
 /// Padding may only appear at the end. Both padded and unpadded input are
 /// accepted, but malformed padding raises `Malformed`.
 #cfg(any(target="native", target="wasm"))
@@ -161,8 +161,9 @@ fn decode_scalar(
 ///|
 /// Decodes a Base64 string into a byte array, skipping invalid characters.
 ///
-/// When `ignore_whitespace` is true, ASCII whitespace is ignored. Invalid
-/// characters are skipped, and decoding stops once padding is encountered.
+/// Other invalid characters are skipped. Spaces, tabs, CR, and LF stop
+/// decoding unless `ignore_whitespace` is true, in which case they are skipped.
+/// Decoding always stops once padding is encountered.
 pub fn decode_lossy(
   text : StringView,
   ignore_whitespace? : Bool = false,

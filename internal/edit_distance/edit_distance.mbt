@@ -250,7 +250,9 @@ pub fn[T : Eq] edit_distance(a : ArrayView[T], b : ArrayView[T]) -> Int {
 /// Unlike `edit_distance`, the search is banded: it only explores alignments
 /// within `max_distance` of the diagonal and bails out as soon as the bound
 /// is exceeded, so it runs in
-/// `O(min(max_distance, max(m, n)) * min(m, n))` time. This makes it the
+/// `O(m + n + min(max_distance + 1, n) * m)` time for `m >= n`,
+/// including input trimming and scratch-row initialization. It uses `O(n)`
+/// space. This makes it the
 /// right choice for threshold-based uses such as "did you mean" suggestions,
 /// where most candidates are far away.
 ///
