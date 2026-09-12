@@ -61,3 +61,15 @@ test "panic drain with negative len" {
 test "panic drain with len exceeding bounds" {
   @deque.from_array([5, 6]).drain(start=1, len=100) |> ignore
 }
+
+///|
+test "panic blit_to with overflowing source range" {
+  let source = @deque.from_array([1, 2, 3])
+  let destination = @deque.from_array([0])
+  source.blit_to(destination, src_offset=0x7fffffff, len=1)
+}
+
+///|
+test "panic drain with overflowing range" {
+  @deque.from_array([1, 2, 3]).drain(start=1, len=0x7fffffff) |> ignore
+}
