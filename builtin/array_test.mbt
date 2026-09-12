@@ -1622,3 +1622,10 @@ test "timsort_early_return_for_small_arrays" {
   // With the bug, we get at least 45 + 9 = 54 comparisons.
   inspect(count.val, content="45")
 }
+
+///|
+test "chunks accepts large positive sizes" {
+  let arr = [1, 2]
+  inspect(arr.chunks(2147483647).length(), content="1")
+  inspect(arr[:].chunks(2147483647).length(), content="1")
+}

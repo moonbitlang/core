@@ -760,10 +760,10 @@ pub fn[T] ArrayView::chunks(
   if len == 0 {
     return []
   }
-  let num_chunks = (len + size - 1) / size
+  let num_chunks = (len - 1) / size + 1
   Array::makei(num_chunks, i => {
     let start = i * size
-    let end = Int::min(start + size, len)
+    let end = start + Int::min(size, len - start)
     self[start:end]
   })
 }

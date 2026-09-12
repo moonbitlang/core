@@ -37,6 +37,8 @@ fn category_from_symbol(
 ///|
 /// Access capture `group` information.
 pub fn MatchResult::group(self : MatchResult, index : Int) -> (Int, Int)? {
+  // Validate before multiplying so large indices cannot wrap into a group.
+  guard index >= 0 && index < self.0.length() / 2 else { None }
   let start_pos = self.0.get(index * 2)
   guard start_pos is Some(start_pos) && start_pos >= 0 else { None }
   let end_pos = self.0[index * 2 + 1]

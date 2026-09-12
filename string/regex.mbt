@@ -112,7 +112,8 @@ pub fn MatchResult::content(self : MatchResult) -> StringView {
 }
 
 ///|
-/// Access capture `group` information.
+/// Returns a capture group; group `0` is the entire match.
+/// Returns `None` for an out-of-range index or a group that did not participate.
 pub fn MatchResult::group(self : MatchResult, group_index : Int) -> StringView? {
   match self.result.group(group_index) {
     None => None
