@@ -212,3 +212,10 @@ test "Double::min and Double::max with NaN" {
   assert_true(@double.not_a_number.min(@double.not_a_number).is_nan())
   assert_true(@double.not_a_number.max(@double.not_a_number).is_nan())
 }
+
+///|
+test "equal double signed zero values hash equally" {
+  inspect(Hash::hash(0.0) == Hash::hash(-0.0), content="true")
+  let map : Map[Double, Int] = { 0.0: 42 }
+  inspect(map.get(-0.0) == Some(42), content="true")
+}

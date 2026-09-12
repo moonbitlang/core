@@ -251,3 +251,10 @@ test "Float constructor syntax" {
   let x : Float = 42
   inspect(Float(x), content="42")
 }
+
+///|
+test "equal signed zero values hash equally" {
+  inspect(Hash::hash(0.0F) == Hash::hash(-0.0F), content="true")
+  let map : Map[Float, Int] = { 0.0F: 42 }
+  inspect(map.get(-0.0F) == Some(42), content="true")
+}
