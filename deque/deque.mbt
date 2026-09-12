@@ -1783,8 +1783,7 @@ pub fn[A] Deque::to_array(self : Deque[A]) -> Array[A] {
 /// }
 /// ```
 pub fn Deque::join(self : Deque[String], separator : StringView) -> String {
-  let str = separator.to_owned()
-  self.iter().join(str)
+  self.iter().join(separator)
 }
 
 ///|
