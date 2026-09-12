@@ -409,6 +409,7 @@ pub fn[K, V] HashMap::values(self : HashMap[K, V]) -> Iter[V] {
 /// Retains only the key-value pairs that satisfy the given predicate function.
 /// This method modifies the hash map in-place, removing all entries for which
 /// the predicate returns `false`.
+/// Calls the predicate once per entry, in unspecified order.
 ///
 /// Parameters:
 ///
@@ -432,8 +433,15 @@ pub fn[K, V] HashMap::values(self : HashMap[K, V]) -> Iter[V] {
 #locals(f)
 pub fn[K, V] HashMap::retain(self : HashMap[K, V], f : (K, V) -> Bool) -> Unit {
   let size = self.size
+  guard size > 0 else { return }
+  // Begin at an empty slot so a wrapped collision chain is visited together.
+  // Starting at zero could revisit retained entries shifted across that boundary.
+  let mut start = 0
+  while self.entries[start] is Some(_) {
+    start += 1
+  }
   let mut j = 0
-  for i = 0; j < size; i = i + 1 {
+  for i = start; j < size; i = (i + 1) & self.capacity_mask {
     while self.entries[i] is Some(entry) {
       j += 1
       if f(entry.key, entry.value) {

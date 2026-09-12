@@ -503,11 +503,19 @@ pub impl[K : Hash + Eq] Sub for HashSet[K] with fn sub(self, other) {
 
 ///|
 /// Removes all elements for which the predicate returns `false`.
+/// Calls the predicate once per element, in unspecified order.
 #locals(f)
 pub fn[K] HashSet::retain(self : HashSet[K], f : (K) -> Bool) -> Unit {
   let size = self.size
+  guard size > 0 else { return }
+  // Begin at an empty slot so a wrapped collision chain is visited together.
+  // Starting at zero could revisit retained entries shifted across that boundary.
+  let mut start = 0
+  while self.entries[start] is Some(_) {
+    start += 1
+  }
   let mut j = 0
-  for i = 0; j < size; i = i + 1 {
+  for i = start; j < size; i = (i + 1) & self.capacity_mask {
     while self.entries[i] is Some(entry) {
       j += 1
       if f(entry.key) {
