@@ -51,7 +51,7 @@ test "rand non-positive length probes availability" {
 
 ///|
 #cfg(target="wasm")
-test "wasm rand is always available" {
+test "wasm rand succeeds on the test host" {
   guard @env.rand(32) is Some(bytes) else {
     fail("expected WASI random_get to be available")
   }
