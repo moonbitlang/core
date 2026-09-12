@@ -40,7 +40,6 @@ fn finish_string(buffer : FixedArray[UInt16], len : Int) -> String {
 }
 
 ///|
-#cfg(not(target="js"))
 #inline
 fn decode_scalar(bytes : BytesView) -> String raise Malformed {
   let t : FixedArray[UInt16] = FixedArray::make(bytes.length(), 0)
@@ -114,18 +113,7 @@ pub fn decode(bytes : BytesView) -> String raise Malformed {
 /// Raises `Malformed` if any byte is outside the ASCII range.
 #cfg(target="js")
 pub fn decode(bytes : BytesView) -> String raise Malformed {
-  let t : FixedArray[UInt16] = FixedArray::make(bytes.length(), 0)
-  let tlen = for tlen = 0, bs = bytes {
-    match (tlen, bs) {
-      (tlen, []) => break tlen
-      (tlen, [0..=0x7F as b, .. rest]) => {
-        t.unsafe_set(tlen, b.to_uint16())
-        continue tlen + 1, rest
-      }
-      (_, _ as bytes) => raise Malformed(bytes)
-    }
-  }
-  finish_string(t, tlen)
+  decode_scalar(bytes)
 }
 
 ///|
