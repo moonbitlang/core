@@ -88,7 +88,7 @@ fn[A : Compare] sorted_set_from_unsorted_buffer(
 ) -> SortedSet[A] {
   buf.stable_sort()
   let len = sorted_set_dedupe_in_place(buf)
-  sorted_set_from_ascending_array(buf.view(start=0, end=len), 0, len)
+  sorted_set_from_ascending_array(buf.exact_view(start=0, end=len), 0, len)
 }
 
 ///|

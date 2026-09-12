@@ -101,26 +101,6 @@ pub fn StringView::start_offset(self : StringView) -> Int {
 }
 
 ///|
-/// Returns a new view of the view with the given start and end offsets.
-pub fn StringView::view(
-  self : StringView,
-  start_offset? : Int = 0,
-  end_offset? : Int,
-) -> StringView {
-  let end_offset = if end_offset is Some(o) { o } else { self.length() }
-  guard start_offset >= 0 &&
-    start_offset <= end_offset &&
-    end_offset <= self.length() else {
-    abort("Invalid index for View")
-  }
-  StringView::make_view(
-    self.str(),
-    self.start() + start_offset,
-    self.start() + end_offset,
-  )
-}
-
-///|
 /// Returns the UTF-16 code unit at the given index without checking if the
 /// index is within bounds.
 ///
@@ -192,9 +172,9 @@ pub fn StringView::char_length(self : StringView) -> Int {
 /// ```mbt check
 /// test {
 ///   let str = "Hello World"
-///   let view = str.view(
-///     start_offset=str.offset_of_nth_char(0).unwrap(),
-///     end_offset=str.offset_of_nth_char(5).unwrap(),
+///   let view = str.exact_view(
+///     start=str.offset_of_nth_char(0).unwrap(),
+///     end=str.offset_of_nth_char(5).unwrap(),
 ///   ) // "Hello"
 ///   inspect(view.to_owned(), content="Hello")
 /// }
@@ -376,12 +356,9 @@ pub impl Eq for StringView with fn equal(self, other) {
 /// ```mbt check
 /// test {
 ///   let s = "say hello to everyone"
+///   inspect(s.exact_view(start=4, end=9).equal_to_string("hello"), content="true")
 ///   inspect(
-///     s.view(start_offset=4, end_offset=9).equal_to_string("hello"),
-///     content="true",
-///   )
-///   inspect(
-///     s.view(start_offset=4, end_offset=9).equal_to_string("world"),
+///     s.exact_view(start=4, end=9).equal_to_string("world"),
 ///     content="false",
 ///   )
 /// }
@@ -439,20 +416,20 @@ pub impl Compare for StringView with fn compare(self, other) {
 ///   let str = "abc"
 ///   inspect(
 ///     str
-///     .view(start_offset=0, end_offset=2)
-///     .lexical_compare(str.view(start_offset=0, end_offset=3)),
+///     .exact_view(start=0, end=2)
+///     .lexical_compare(str.exact_view(start=0, end=3)),
 ///     content="-1",
 ///   )
 ///   inspect(
 ///     str
-///     .view(start_offset=0, end_offset=3)
-///     .lexical_compare(str.view(start_offset=0, end_offset=2)),
+///     .exact_view(start=0, end=3)
+///     .lexical_compare(str.exact_view(start=0, end=2)),
 ///     content="1",
 ///   )
 ///   inspect(
 ///     str
-///     .view(start_offset=0, end_offset=2)
-///     .lexical_compare(str.view(start_offset=1, end_offset=3)),
+///     .exact_view(start=0, end=2)
+///     .lexical_compare(str.exact_view(start=1, end=3)),
 ///     content="-1",
 ///   )
 /// }
@@ -523,9 +500,18 @@ fn ascii_fold_lower_u16(c : UInt16) -> UInt16 {
 ///
 /// ```mbt check
 /// test {
-///   inspect("Hello".view().compare_ignore_ascii_case("hello".view()), content="0")
-///   inspect("ABC".view().compare_ignore_ascii_case("abd".view()), content="-1")
-///   inspect("abc".view().compare_ignore_ascii_case("AB".view()), content="1")
+///   inspect(
+///     "Hello".exact_view().compare_ignore_ascii_case("hello".exact_view()),
+///     content="0",
+///   )
+///   inspect(
+///     "ABC".exact_view().compare_ignore_ascii_case("abd".exact_view()),
+///     content="-1",
+///   )
+///   inspect(
+///     "abc".exact_view().compare_ignore_ascii_case("AB".exact_view()),
+///     content="1",
+///   )
 /// }
 /// ```
 pub fn StringView::compare_ignore_ascii_case(
@@ -565,14 +551,17 @@ pub fn StringView::compare_ignore_ascii_case(
 /// ```mbt check
 /// test {
 ///   inspect(
-///     "Hello".view().equal_ignore_ascii_case("hello".view()),
+///     "Hello".exact_view().equal_ignore_ascii_case("hello".exact_view()),
 ///     content="true",
 ///   )
 ///   inspect(
-///     "Hello".view().equal_ignore_ascii_case("world".view()),
+///     "Hello".exact_view().equal_ignore_ascii_case("world".exact_view()),
 ///     content="false",
 ///   )
-///   inspect("abc".view().equal_ignore_ascii_case("ab".view()), content="false")
+///   inspect(
+///     "abc".exact_view().equal_ignore_ascii_case("ab".exact_view()),
+///     content="false",
+///   )
 /// }
 /// ```
 pub fn StringView::equal_ignore_ascii_case(
@@ -598,36 +587,6 @@ pub fn StringView::equal_ignore_ascii_case(
 }
 
 ///|
-/// Creates a `View` into a `String`.
-/// 
-/// # Example
-/// 
-/// ```mbt check
-/// test {
-///   let str = "Hello🤣🤣🤣"
-///   let view1 = str.view()
-///   inspect(view1, content="Hello🤣🤣🤣")
-///   let start_offset = str.offset_of_nth_char(1).unwrap()
-///   let end_offset = str.offset_of_nth_char(6).unwrap() // the second emoji
-///   let view2 = str.view(start_offset~, end_offset~)
-///   inspect(view2, content="ello🤣")
-/// }
-/// ```
-pub fn String::view(
-  self : String,
-  start_offset? : Int = 0,
-  end_offset? : Int,
-) -> StringView {
-  let end_offset = if end_offset is Some(o) { o } else { self.length() }
-  guard start_offset >= 0 &&
-    start_offset <= end_offset &&
-    end_offset <= self.length() else {
-    abort("Invalid index for View")
-  }
-  StringView::make_view(self, start_offset, end_offset)
-}
-
-///|
 /// Convert char array to string view.
 pub fn StringView::from_array(chars : ArrayView[Char]) -> StringView {
   String::from_array(chars)
@@ -643,7 +602,7 @@ pub fn StringView::from_iter(iter : Iter[Char]) -> StringView {
 ///|
 /// Returns a view of the string between `start` and `end`, or `None` if the
 /// range is invalid — either out of bounds or splitting a UTF-16 surrogate
-/// pair. Unlike `String::sub` (a.k.a. `s[start:end]`), this variant does not
+/// pair. Unlike `String::exact_view`, this variant does not
 /// abort, making it suitable for composition with pattern matching:
 ///
 /// ```mbt check
@@ -680,7 +639,7 @@ pub fn String::get_view(
 ///|
 /// Returns a sub-view of the view between `start` and `end`, or `None` if the
 /// range is invalid — either out of bounds or splitting a UTF-16 surrogate
-/// pair. The optional variant of `StringView::sub` (a.k.a. `sv[start:end]`).
+/// pair. The optional variant of `StringView::exact_view`.
 pub fn StringView::get_view(
   self : StringView,
   start? : Int = 0,
@@ -719,8 +678,11 @@ pub fn StringView::get_view(
 /// requested range on each side. Unpaired surrogates already present in the
 /// input are treated as boundaries and pass through unchanged.
 ///
-/// See `s[start:end]` for the aborting variant and `String::get_view` for
-/// the exact `Option`-returning variant.
+/// Also available as `s[start:end]`, with UTF-16 code-unit offsets. Negative
+/// offsets clamp to zero. See `String::exact_view` for the aborting variant and
+/// `String::get_view` for the exact `Option`-returning variant. Use
+/// `String::split_at` for a lossless split: `s[:i]` and `s[i:]` both exclude a
+/// character whose surrogate pair contains `i`.
 ///
 /// # Example
 ///
@@ -733,6 +695,7 @@ pub fn StringView::get_view(
 ///   inspect(s.clamped_view(start=3, end=3), content="") // inside the pair
 /// }
 /// ```
+#alias("_[_:_]")
 pub fn String::clamped_view(
   self : String,
   start? : Int = 0,
@@ -769,16 +732,20 @@ pub fn String::clamped_view(
 /// `String::clamped_view`: clamps out-of-range offsets, snaps
 /// surrogate-splitting offsets inward, and yields an empty view for an
 /// inverted range.
+/// Also available as `view[start:end]`, with UTF-16 code-unit offsets relative
+/// to the view. Use `StringView::exact_view` to validate bounds and surrogate
+/// boundaries, or `StringView::split_at` for a lossless split.
 ///
 /// # Example
 ///
 /// ```mbt check
 /// test {
-///   let v = "xx ab😀cd".view(start_offset=3)
+///   let v = "xx ab😀cd".exact_view(start=3)
 ///   inspect(v.clamped_view(end=3), content="ab")
 ///   inspect(v.clamped_view(start=3), content="cd")
 /// }
 /// ```
+#alias("_[_:_]")
 pub fn StringView::clamped_view(
   self : StringView,
   start? : Int = 0,
@@ -855,7 +822,7 @@ pub fn String::split_at(self : String, at : Int) -> (StringView, StringView) {
 ///
 /// ```mbt check
 /// test {
-///   let v = "xx ab😀cd".view(start_offset=3)
+///   let v = "xx ab😀cd".exact_view(start=3)
 ///   let (p, q) = v.split_at(3)
 ///   inspect(p, content="ab")
 ///   inspect(q, content="😀cd")
@@ -914,14 +881,18 @@ pub fn StringView::split_at(
 /// ```mbt check
 /// test {
 ///   let str = "Hello🤣World"
-///   let view1 = str[0:5]
+///   let view1 = str.exact_view(start=0, end=5)
 ///   inspect(view1, content="Hello")
-///   let view2 = str[7:]
+///   let view2 = str.exact_view(start=7)
 ///   inspect(view2, content="World")
 /// }
 /// ```
-#alias("_[_:_]")
-pub fn String::sub(self : String, start? : Int = 0, end? : Int) -> StringView {
+#alias(sub, deprecated="Use `exact_view` instead")
+pub fn String::exact_view(
+  self : String,
+  start? : Int = 0,
+  end? : Int,
+) -> StringView {
   let len = self.length()
   let end = match end {
     Some(end) | (None with end = len) => end
@@ -969,14 +940,14 @@ pub fn String::sub(self : String, start? : Int = 0, end? : Int) -> StringView {
 /// ```mbt check
 /// test {
 ///   let str = "Hello🤣World"[1:11] // "ello🤣Worl"
-///   let view1 = str[0:6]
+///   let view1 = str.exact_view(start=0, end=6)
 ///   inspect(view1, content="ello🤣")
-///   let view2 = str[8:]
+///   let view2 = str.exact_view(start=8)
 ///   inspect(view2, content="rl")
 /// }
 /// ```
-#alias("_[_:_]")
-pub fn StringView::sub(
+#alias(sub, deprecated="Use `exact_view` instead")
+pub fn StringView::exact_view(
   self : StringView,
   start? : Int = 0,
   end? : Int,
@@ -1060,4 +1031,52 @@ pub impl ToJson for StringView with fn to_json(self) {
 ///|
 pub impl Add for StringView with fn add(self, other) {
   [..self, ..other]
+}
+
+///|
+/// Creates a view using raw UTF-16 code-unit offsets relative to this view.
+///
+/// Requires `0 <= start_offset <= end_offset <= self.length()`; panics otherwise.
+/// Omitted bounds default to the start and end of this view. Surrogate pairs
+/// may be split. Use `exact_view(start~, end~)` to validate text boundaries.
+// The compiler generates calls to `view` for lexmatch/lexscan. Keep this
+// method without deprecation until compiler lowering changes.
+pub fn StringView::view(
+  self : StringView,
+  start_offset? : Int = 0,
+  end_offset? : Int,
+) -> StringView {
+  let end_offset = if end_offset is Some(o) { o } else { self.length() }
+  guard start_offset >= 0 &&
+    start_offset <= end_offset &&
+    end_offset <= self.length() else {
+    abort("Invalid index for View")
+  }
+  StringView::make_view(
+    self.str(),
+    self.start() + start_offset,
+    self.start() + end_offset,
+  )
+}
+
+///|
+/// Creates a view using raw UTF-16 code-unit offsets.
+///
+/// Requires `0 <= start_offset <= end_offset <= self.length()`; panics otherwise.
+/// Omitted bounds default to the start and end of this string. Surrogate pairs
+/// may be split. Use `exact_view(start~, end~)` to validate text boundaries.
+// The compiler generates calls to `view` for lexmatch/lexscan. Keep this
+// method without deprecation until compiler lowering changes.
+pub fn String::view(
+  self : String,
+  start_offset? : Int = 0,
+  end_offset? : Int,
+) -> StringView {
+  let end_offset = if end_offset is Some(o) { o } else { self.length() }
+  guard start_offset >= 0 &&
+    start_offset <= end_offset &&
+    end_offset <= self.length() else {
+    abort("Invalid index for View")
+  }
+  StringView::make_view(self, start_offset, end_offset)
 }

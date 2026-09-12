@@ -41,6 +41,8 @@ pub fn debug_inspect(&@debug.Debug, content? : String, loc~ : @builtin.SourceLoc
 #callsite(autofill(loc))
 pub fn[T : @debug.Debug] dump(T, name? : String, loc~ : @builtin.SourceLoc) -> T
 
+pub fn[T : @builtin.Show] eprintln(T) -> Unit
+
 #callsite(autofill(loc))
 pub fn[T] fail(StringView, loc~ : @builtin.SourceLoc) -> T raise @builtin.Failure
 

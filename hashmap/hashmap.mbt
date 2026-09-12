@@ -288,7 +288,7 @@ pub fn[V] HashMap::get_from_bytes(
 /// test {
 ///   let map = @hashmap.from_array([("hello", 1), ("world", 2)])
 ///   let str = "say hello to everyone"
-///   let view = str.view(start_offset=4, end_offset=9) // view of "hello"
+///   let view = str.exact_view(start=4, end=9) // view of "hello"
 ///   @debug.debug_inspect(map.get_from_string(view), content="Some(1)")
 /// }
 /// ```

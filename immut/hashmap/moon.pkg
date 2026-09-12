@@ -1,8 +1,6 @@
 import {
   "moonbitlang/core/builtin",
-  "moonbitlang/core/array",
   "moonbitlang/core/debug",
-  "moonbitlang/core/tuple",
   "moonbitlang/core/immut/internal/sparse_array",
   "moonbitlang/core/immut/internal/path",
   "moonbitlang/core/list",
@@ -10,8 +8,6 @@ import {
 
 import {
   "moonbitlang/core/bench",
-  "moonbitlang/core/int",
-  "moonbitlang/core/option",
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/test",
 } for "test"

@@ -212,3 +212,13 @@ test "parse preserves the sign of negative zero" {
   assert_true(is_negative("-4.9e-325"))
   assert_true(is_negative("-1e-999999999999999999999999999999999999"))
 }
+
+///|
+test "invalid integer followed by non-BMP text returns an error" {
+  inspect(@json.valid("9007199254740992😀"), content="false")
+}
+
+///|
+test "invalid decimal followed by non-BMP text returns an error" {
+  inspect(@json.valid("1.234567890123456789😀"), content="false")
+}

@@ -41,21 +41,11 @@ test "String::op_as_view with positive indices" {
 
 ///|
 test "String::op_as_view with negative indices" {
-  // let s = "hello world"
-
-  // Test negative indices from end
-  // let view1 =   s.charcodes(start=-5)
-  // inspect(view1, content="world")
-  // let view2 = s.charcodes(end=-6)
-  // inspect(view2, content="hello")
-  // let view3 = s.charcodes(start=-5,end=-1)
-  // inspect(view3, content="worl")
-
-  // Test combining positive and negative indices
-  // let view4 = s.charcodes(start=0,end=-6)
-  // inspect(view4, content="hello")
-  // let view5 = s.charcodes(start=6,end=-1)
-  // inspect(view5, content="worl")
+  let s = "hello world"
+  inspect(s[-5:], content="hello world")
+  inspect(s[:-6], content="")
+  inspect(s[-5:-1], content="")
+  inspect(s[6:-1], content="")
 }
 
 ///|
@@ -83,30 +73,22 @@ test "View::op_as_view with positive indices" {
 }
 
 ///|
-// test "View::op_as_view with negative indices" {
-//   let s = "hello world"
-//   let view = s[:]
-
-//   // Test negative indices from end
-//   let subview1 = view[-5:]
-//   inspect(subview1, content="world")
-//   let subview2 = view[:-6]
-//   inspect(subview2, content="hello")
-//   let subview3 = view[-5:-1]
-//   inspect(subview3, content="worl")
-// }
+test "View::op_as_view with negative indices" {
+  let view = "hello world"[1:5]
+  inspect(view[-5:], content="ello")
+  inspect(view[:-6], content="")
+  inspect(view[-5:-1], content="")
+}
 
 ///|
 test "View::op_as_view with nested views" {
   let s = "hello world"
-  let view1 = s.view(start_offset=0, end_offset=11)
+  let view1 = s.exact_view(start=0, end=11)
   inspect(view1, content="hello world")
-  let view2 = view1.view(start_offset=0, end_offset=5)
+  let view2 = view1.exact_view(start=0, end=5)
   inspect(view2, content="hello")
-  let view3 = view2.view(start_offset=1, end_offset=4)
+  let view3 = view2.exact_view(start=1, end=4)
   inspect(view3, content="ell")
 
-  // Test with negative indices in nested views
-  // let view4 = view2.charcodes(start=-3)
-  // inspect(view4, content="llo")
+  inspect(view3[-3:100], content="ell")
 }

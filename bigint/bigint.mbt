@@ -57,7 +57,7 @@ pub impl @json.FromJson for BigInt with fn from_json(json, path) {
       (path, "BigInt::from_json: expected number in string representation"),
     )
   }
-  parse_bigint(s.view()) catch {
+  parse_bigint(s) catch {
     _ =>
       raise JsonDecodeError(
         (path, "BigInt::from_json: invalid number in string representation"),

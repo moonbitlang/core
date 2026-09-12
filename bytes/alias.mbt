@@ -25,7 +25,7 @@ pub fn default() -> Bytes {
 #deprecated("Use `Bytes::from_array` instead")
 #doc(hidden)
 pub fn from_fixedarray(arr : FixedArray[Byte], len? : Int) -> Bytes {
-  Bytes::from_array(arr[:len.unwrap_or(arr.length())])
+  Bytes::from_array(arr.exact_view(end=len.unwrap_or(arr.length())))
 }
 
 ///|

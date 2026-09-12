@@ -46,8 +46,8 @@ fn side_by_side_html(
         Delete(old_index~, old_len~, ..) if i + 1 < edits.length() &&
           edits[i + 1] is Insert(..) => {
           guard! edits[i + 1] is Insert(new_index~, new_len~, ..)
-          let old_lines = o.view(start=old_index, end=old_index + old_len)
-          let new_lines = n.view(start=new_index, end=new_index + new_len)
+          let old_lines = o.exact_view(start=old_index, end=old_index + old_len)
+          let new_lines = n.exact_view(start=new_index, end=new_index + new_len)
           // dimension guards FIRST, then tokenize once per line with a
           // per-line token cap (which also bounds every budget term below
           // 1025 * 1025, so the accumulating Int cannot overflow), then an
@@ -116,19 +116,19 @@ fn side_by_side_html(
           i += 2
         }
         Equal(old_index~, len~, ..) => {
-          for l in o.view(start=old_index, end=old_index + len) {
+          for l in o.exact_view(start=old_index, end=old_index + len) {
             row(esc(l), "ctx", esc(l), "ctx")
           }
           i += 1
         }
         Delete(old_index~, old_len~, ..) => {
-          for l in o.view(start=old_index, end=old_index + old_len) {
+          for l in o.exact_view(start=old_index, end=old_index + old_len) {
             row(esc(l), "del", "", "empty")
           }
           i += 1
         }
         Insert(new_index~, new_len~, ..) => {
-          for l in n.view(start=new_index, end=new_index + new_len) {
+          for l in n.exact_view(start=new_index, end=new_index + new_len) {
             row("", "empty", esc(l), "add")
           }
           i += 1

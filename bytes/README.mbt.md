@@ -90,7 +90,18 @@ test "bytes conversion" {
 
 ## Working with Views
 
+Use `bytes.exact_view(start~, end~)` to validate bounds, `bytes.get_view(start~, end~)`
+to return `None` for invalid bounds, or `bytes.clamped_view(start~, end~)` to clamp
+them. These methods are also available on `BytesView`. The old `view` and `sub`
+names are deprecated in favor of `exact_view`.
+
 Views provide a way to work with portions of bytes and interpret them as various numeric types:
+
+For `Bytes` and `BytesView`, `bytes[start:end]` clamps each bound to the current
+length, treats negative bounds as zero, and returns an empty view for an
+inverted range. Omitted bounds select the corresponding end of the bytes or
+view. Use `bytes.exact_view(start~, end~)` to require valid bounds, or
+`bytes.get_view(start~, end~)` to return `None` for an invalid range.
 
 ```mbt check
 ///|

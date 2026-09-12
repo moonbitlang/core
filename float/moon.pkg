@@ -1,12 +1,10 @@
 import {
   "moonbitlang/core/builtin",
-  "moonbitlang/core/double",
-  "moonbitlang/core/uint",
 }
 
 import {
+  "moonbitlang/core/double",
   "moonbitlang/core/math",
-  "moonbitlang/core/debug",
 } for "test"
 
 options(

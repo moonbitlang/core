@@ -130,8 +130,8 @@ fn LexbufStorage::get_stringview(
   let first_chunk = self.chunks.unsafe_get(first)
   let first_start = self.chunk_starts.unsafe_get(first)
   let first_end = first_start + first_chunk.length()
-  // Use views rather than `s[a:b]`: lexbuf offsets and chunk boundaries are raw
-  // UTF-16 code-unit positions, so they may fall inside a surrogate pair.
+  // Lexbuf offsets and chunk boundaries are raw UTF-16 code-unit positions,
+  // so view must preserve boundaries inside surrogate pairs.
   if end <= first_end {
     return first_chunk.view(
       start_offset=start - first_start,

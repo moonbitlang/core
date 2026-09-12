@@ -63,7 +63,7 @@ test "split_at treats unpaired surrogates as boundaries" {
 
 ///|
 test "StringView::split_at uses view-relative offsets and stays in window" {
-  let v = "xx ab😀cd yy".view(start_offset=3, end_offset=9) // "ab😀cd"
+  let v = "xx ab😀cd yy".exact_view(start=3, end=9) // "ab😀cd"
   let (p, q) = v.split_at(3)
   inspect(p, content="ab")
   inspect(q, content="😀cd")

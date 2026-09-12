@@ -321,10 +321,10 @@ test "panic FixedArray mut_view invalid range" {
 }
 
 ///|
-test "panic MutArrayView sub invalid range" {
+test "panic MutArrayView view invalid range" {
   let arr = [1, 2, 3]
   let view = arr.mut_view()
-  let _ = view[2:1]
+  let _ = view.exact_view(start=2, end=1)
 }
 
 ///|

@@ -560,8 +560,8 @@ fn[T : Eq + Hash] append_patience_matches(
     append_myers_matches(
       matches,
       cutoff,
-      old.view(start=prev_old_idx, end=old_idx),
-      new.view(start=prev_new_idx, end=new_idx),
+      old.exact_view(start=prev_old_idx, end=old_idx),
+      new.exact_view(start=prev_new_idx, end=new_idx),
       old_offset + prev_old_idx,
       new_offset + prev_new_idx,
     )
@@ -573,8 +573,8 @@ fn[T : Eq + Hash] append_patience_matches(
   append_myers_matches(
     matches,
     cutoff,
-    old.view(start=prev_old_idx, end=old.length()),
-    new.view(start=prev_new_idx, end=new.length()),
+    old.exact_view(start=prev_old_idx, end=old.length()),
+    new.exact_view(start=prev_new_idx, end=new.length()),
     old_offset + prev_old_idx,
     new_offset + prev_new_idx,
   )

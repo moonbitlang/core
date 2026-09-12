@@ -83,10 +83,10 @@ fn[T] UninitializedArray::unsafe_set(
 /// Returns an `ArrayView` that provides a window into the specified portion of
 /// the array.
 ///
-/// Throws an error if the indices are out of bounds or if `start` is greater
+/// Panics if the indices are out of bounds or if `start` is greater
 /// than `end`.
-#alias("_[_:_]")
-pub fn[T] UninitializedArray::sub(
+#alias(sub, deprecated="Use `exact_view` instead")
+pub fn[T] UninitializedArray::exact_view(
   self : UninitializedArray[T],
   start? : Int = 0,
   end? : Int,
@@ -99,6 +99,40 @@ pub fn[T] UninitializedArray::sub(
     abort("View index out of bounds")
   }
   ArrayView::make(self, start, end - start)
+}
+
+///|
+/// Creates a view of a portion of the uninitialized array without copying.
+/// Each bound is clamped to `[0, length()]`; an inverted range yields an empty
+/// view at the clamped `start`. Defaults to the full array when both bounds
+/// are omitted. Elements must be initialized before they are read through the
+/// returned view.
+///
+/// Also available as `arr[start:end]`. Use `UninitializedArray::exact_view` to validate bounds.
+///
+/// ```mbt check
+/// test {
+///   let arr = @builtin.UninitializedArray::make(3)
+///   for i in 0..<3 {
+///     arr[i] = i + 1
+///   }
+///   json_inspect(arr.clamped_view(start=1, end=10).to_owned(), content=[2, 3])
+/// }
+/// ```
+#alias("_[_:_]")
+pub fn[T] UninitializedArray::clamped_view(
+  self : UninitializedArray[T],
+  start? : Int = 0,
+  end? : Int,
+) -> ArrayView[T] {
+  let len = self.length()
+  let lo = clamp_offset(start, len)
+  let hi = match end {
+    None => len
+    Some(end) => clamp_offset(end, len)
+  }
+  let count = if hi > lo { hi - lo } else { 0 }
+  ArrayView::make(self, lo, count)
 }
 
 ///|
@@ -217,13 +251,13 @@ test "as_view with valid_range" {
 ///|
 test "panic as_view with invalid_start" {
   let arr : UninitializedArray[Int] = UninitializedArray::make(5)
-  ignore(arr[-1:])
+  ignore(arr.exact_view(start=-1))
 }
 
 ///|
 test "panic as_view with invalid_end" {
   let arr : UninitializedArray[Int] = UninitializedArray::make(5)
-  ignore(arr[2:10])
+  ignore(arr.exact_view(start=2, end=10))
 }
 
 ///|

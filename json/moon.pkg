@@ -1,26 +1,19 @@
 import {
-  "moonbitlang/core/array",
   "moonbitlang/core/builtin",
-  "moonbitlang/core/char",
   "moonbitlang/core/debug",
   "moonbitlang/core/double",
   "moonbitlang/core/float",
   "moonbitlang/core/internal/strconv" @internal/strconv,
-  "moonbitlang/core/option",
   "moonbitlang/core/buffer",
   "moonbitlang/core/v128", // Used only by the native and wasm SIMD implementation.
 }
 
 import {
-  "moonbitlang/core/result",
-  "moonbitlang/core/unit",
-  "moonbitlang/core/bigint",
   "moonbitlang/core/bench",
   "moonbitlang/core/debug",
   "moonbitlang/core/double",
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/quickcheck/shrink",
-  "moonbitlang/core/quickcheck/splitmix",
 } for "test"
 
 import {
