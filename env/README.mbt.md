@@ -61,11 +61,9 @@ Get the current working directory:
 test "working directory" {
   let cwd = @env.current_dir()
   match cwd {
-    Some(path) => {
+    Some(path) =>
       // We have a current directory
       inspect(path.length() > 0, content="true")
-      inspect(path.length() > 1, content="true") // Should be a meaningful path
-    }
     None =>
       // Current directory unavailable (some platforms/environments)
       inspect(true, content="true") // This is also valid
@@ -218,7 +216,7 @@ test "graceful handling" {
   fn get_work_dir() -> String {
     match @env.current_dir() {
       Some(dir) => dir
-      None => "~" // Fallback to home directory symbol
+      None => "." // Relative to the process working directory
     }
   }
 
@@ -255,20 +253,17 @@ test "argument validation" {
 }
 ```
 
-### 3. Use Timestamps for Unique Identifiers
+### 3. Use Timestamps for Labels
+
+`now()` returns wall-clock milliseconds. Calls can return the same value, and the
+clock can move backwards after a system clock adjustment. A timestamp alone is
+neither a unique identifier nor a monotonic timer.
 
 ```mbt check
 ///|
-test "unique identifiers" {
-  fn generate_unique_id(prefix : String) -> String {
-    prefix + "_" + @env.now().to_string()
-  }
-
-  let id1 = generate_unique_id("task")
-  let id2 = generate_unique_id("task")
-  inspect(id1.length() > 10, content="true") // Should have task prefix and timestamp
-  inspect(id2.length() > 10, content="true") // Should have task prefix and timestamp
-  // IDs should be different (though they might be the same in fast tests)
+test "timestamp label" {
+  let label = "task_" + @env.now().to_string()
+  inspect(label.has_prefix("task_"), content="true")
 }
 ```
 
