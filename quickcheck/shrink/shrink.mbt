@@ -159,7 +159,8 @@ pub impl Shrink for Double with fn shrink(x) {
 
 ///|
 pub impl Shrink for Float with fn shrink(x) {
-  shrink_decimal(x.to_double()).map(Float::from_double)
+  // Narrowing a smaller Double can round back to the original Float.
+  shrink_decimal(x.to_double()).map(Float::from_double).filter(y => y != x)
 }
 
 ///|

@@ -423,3 +423,12 @@ test "shrink float: basic" {
   assert_true(s.contains(3.0))
   assert_true(s.contains(0.0))
 }
+
+///|
+test "shrink float never returns the original value" {
+  for x in [3.14F, -3.14F, 0.1F, -0.1F] {
+    for candidate in @shrink.Shrink::shrink(x) {
+      assert_true(candidate != x)
+    }
+  }
+}
