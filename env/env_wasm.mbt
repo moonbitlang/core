@@ -178,10 +178,9 @@ fn unset_env_var_ffi(key : XExternString) = "__moonbit_fs_unstable" "unset_env_v
 ///|
 #cfg(target="wasm")
 fn rand_internal(to_be_filled : FixedArray[Byte]) -> Bool {
-  // WASI is part of the linear Wasm runtime contract, so entropy availability
-  // is unconditional for this target.
-  ignore(wasi_random_get(to_be_filled, to_be_filled.length()))
-  true
+  // A WASI host can report an error even when random_get is available.
+  // Only expose the buffer when the host successfully filled it.
+  wasi_random_get(to_be_filled, to_be_filled.length()) == 0
 }
 
 ///|
