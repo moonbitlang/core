@@ -34,11 +34,11 @@ fn ParseContext::read_char(ctx : ParseContext) -> Char? {
 }
 
 ///|
-/// low surrogate
+/// Lower bound of the UTF-16 surrogate range.
 const SURROGATE_LOW_CHAR = 0xD800
 
 ///|
-/// high surrogate
+/// Upper bound of the UTF-16 surrogate range.
 const SURROGATE_HIGH_CHAR = 0xDFFF
 
 ///|
@@ -53,9 +53,8 @@ fn ParseContext::expect_char(
   let c1 = ctx.input.unsafe_get(ctx.offset).to_int()
   ctx.offset += 1
   let c0 = c.to_int()
-  if c0 < 0xFFFF {
-    // c0 < SURROGATE_LOW_CHAR || c0 is (0xE000..=0XFFFF)  
-    // c0 is a valid char so only need check if c0<0xFFFF is BMP code point
+  if c0 <= 0xFFFF {
+    // c0 is a valid character in the BMP.
     if c0 != c1 {
       ctx.invalid_char(shift=-1)
     }
@@ -106,7 +105,6 @@ test "expect_char" {
 
 ///|
 test "expect_char with surrogate pair" {
-  // "\uD83D\uDE00" // todo: shall we allow this?
   let ctx = ParseContext::make("a\u{1F600}bc\u{1F600}c")
   ctx.expect_char('a')
   ctx.expect_char((0x1F600).unsafe_to_char())
@@ -179,7 +177,7 @@ fn ParseContext::lex_after_array_value(
   match ctx.read_char() {
     Some(']') => RBracket
     Some(',') => Comma
-    Some(_) => ctx.invalid_char(shift=-1)
+    Some(c) => ctx.invalid_char(shift=-c.utf16_len())
     None => raise InvalidEof
   }
 }
@@ -191,7 +189,7 @@ fn ParseContext::lex_after_property_name(
   ctx.lex_skip_whitespace()
   match ctx.read_char() {
     Some(':') => ()
-    Some(_) => ctx.invalid_char(shift=-1)
+    Some(c) => ctx.invalid_char(shift=-c.utf16_len())
     None => raise InvalidEof
   }
 }
@@ -204,7 +202,7 @@ fn ParseContext::lex_after_object_value(
   match ctx.read_char() {
     Some('}') => RBrace
     Some(',') => Comma
-    Some(_) => ctx.invalid_char(shift=-1)
+    Some(c) => ctx.invalid_char(shift=-c.utf16_len())
     None => raise InvalidEof
   }
 }
@@ -222,7 +220,7 @@ fn ParseContext::lex_property_name(
       let s = ctx.lex_string()
       String(s)
     }
-    Some(_) => ctx.invalid_char(shift=-1)
+    Some(c) => ctx.invalid_char(shift=-c.utf16_len())
     None => raise InvalidEof
   }
 }
@@ -240,7 +238,15 @@ fn ParseContext::lex_property_name2(
       let s = ctx.lex_string()
       String(s)
     }
-    Some(_) => ctx.invalid_char(shift=-1)
+    Some(c) => ctx.invalid_char(shift=-c.utf16_len())
     None => raise InvalidEof
   }
+}
+
+///|
+test "expect_char at the upper BMP boundary" {
+  let ctx = ParseContext::make("\u{FFFF}😀")
+  ctx.expect_char('\u{FFFF}')
+  ctx.expect_char('😀')
+  json_inspect(ctx.offset, content=3)
 }
