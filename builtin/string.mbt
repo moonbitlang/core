@@ -390,21 +390,7 @@ pub fn String::any(self : String, f : (Char) -> Bool raise?) -> Bool raise? {
 /// ```
 #alias(rev_iterator, deprecated)
 pub fn String::rev_iter(self : String) -> Iter[Char] {
-  let len = self.length()
-  let mut index = len
-  Iter::new(fn() {
-    guard index > 0 else { None }
-    index -= 1
-    let c1 = self.unsafe_get(index)
-    if c1.is_trailing_surrogate() && index - 1 >= 0 {
-      let c2 = self.unsafe_get(index - 1)
-      if c2.is_leading_surrogate() {
-        index -= 1
-        return Some(code_point_of_surrogate_pair(c2.to_int(), c1.to_int()))
-      }
-    }
-    Some(c1.unsafe_to_char())
-  })
+  self[:].rev_iter()
 }
 
 ///|
