@@ -240,6 +240,8 @@ fn ParseContext::lex_integer_end(
       // exact source text in `repr` so `stringify` stays lossless. Only a
       // literal strconv itself rejects (beyond double range) keeps the
       // infinity sentinel.
+      // Malformed tokens may end inside a surrogate pair. Keep raw slicing
+      // here and in lex_number_end so parsing reports an error without aborting.
       let s = ctx.input.view(start_offset=start, end_offset=end)
       try {
         let value = @internal/strconv.parse_double(s)

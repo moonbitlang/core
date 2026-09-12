@@ -1,12 +1,10 @@
 import {
   "moonbitlang/core/builtin",
   "moonbitlang/core/debug",
-  "moonbitlang/core/int",
 }
 
 import {
   "moonbitlang/core/json",
-  "moonbitlang/core/array",
   "moonbitlang/core/test",
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/bench",

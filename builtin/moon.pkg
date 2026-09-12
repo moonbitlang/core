@@ -3,7 +3,6 @@ import {
 }
 
 import {
-  "moonbitlang/core/char",
   "moonbitlang/core/int",
   "moonbitlang/core/double",
   "moonbitlang/core/uint64",
@@ -11,13 +10,11 @@ import {
   "moonbitlang/core/int64",
   "moonbitlang/core/uint",
   "moonbitlang/core/json",
-  "moonbitlang/core/bigint",
   "moonbitlang/core/float",
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/test",
   "moonbitlang/core/random",
   "moonbitlang/core/math", // FIXME: IDE false alarm unused package
-  "moonbitlang/core/buffer",
   "moonbitlang/core/bench",
   "moonbitlang/core/debug",
 } for "test"

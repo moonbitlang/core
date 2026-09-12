@@ -1,12 +1,9 @@
 import {
   "moonbitlang/core/debug",
   "moonbitlang/core/int",
-  "moonbitlang/core/int16",
   "moonbitlang/core/quickcheck/shrink",
   "moonbitlang/core/quickcheck/splitmix",
   "moonbitlang/core/builtin",
-  "moonbitlang/core/char",
-  "moonbitlang/core/array",
   "moonbitlang/core/bigint",
   "moonbitlang/core/ref",
   "moonbitlang/core/list",
@@ -28,6 +25,4 @@ import {
 
 import {
   "moonbitlang/core/bench",
-  "moonbitlang/core/float",
-  "moonbitlang/core/double",
 } for "test"

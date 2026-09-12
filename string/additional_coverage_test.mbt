@@ -61,7 +61,7 @@ test "View::pad_start and pad_end no padding" {
 ///|
 test "View::compare identical" {
   let str = "abcdef"
-  let v = str.view(start_offset=2, end_offset=4)
+  let v = str.exact_view(start=2, end=4)
   inspect(v.compare(v), content="0")
 }
 
@@ -69,8 +69,8 @@ test "View::compare identical" {
 test "View::default and hash" {
   let v : StringView = (Default::default() : StringView)
   inspect(v, content="")
-  let v1 = "abc".view()
-  let v2 = "abc".view()
+  let v1 = "abc".exact_view()
+  let v2 = "abc".exact_view()
   @test.assert_eq(hash(v1), hash(v2))
 }
 

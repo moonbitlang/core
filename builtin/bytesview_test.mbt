@@ -40,14 +40,14 @@ test "panic BytesView out of bounds" {
 }
 
 ///|
-test "panic Bytes sub invalid index" {
-  let _ = b"\x01\x02"[2:1]
+test "panic Bytes view invalid index" {
+  let _ = b"\x01\x02".exact_view(start=2, end=1)
 }
 
 ///|
-test "panic BytesView sub invalid index" {
+test "panic BytesView view invalid index" {
   let view = b"\x01\x02"[:]
-  let _ = view[2:1]
+  let _ = view.exact_view(start=2, end=1)
 }
 
 ///|

@@ -124,8 +124,8 @@ pub fn[T : Eq] levenshtein_edits(
   new~ : ArrayView[T],
 ) -> Array[LevenshteinEdit] {
   let prefix = common_prefix_len(old, new)
-  let a = old.view(start=prefix)
-  let b = new.view(start=prefix)
+  let a = old.exact_view(start=prefix)
+  let b = new.exact_view(start=prefix)
   let m = a.length()
   let n = b.length()
   // widen before any arithmetic so the guard itself cannot overflow

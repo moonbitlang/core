@@ -20,11 +20,11 @@ fn[T] edits_to_string(d : @diff.Diff[T], show~ : (T) -> String) -> String {
   for edit in d.edits() {
     let (prefix, slice) = match edit {
       Insert(new_index~, new_len~, ..) =>
-        ("+", new.view(start=new_index, end=new_index + new_len))
+        ("+", new.exact_view(start=new_index, end=new_index + new_len))
       Delete(old_index~, old_len~, ..) =>
-        ("-", old.view(start=old_index, end=old_index + old_len))
+        ("-", old.exact_view(start=old_index, end=old_index + old_len))
       Equal(old_index~, len~, ..) =>
-        (" ", old.view(start=old_index, end=old_index + len))
+        (" ", old.exact_view(start=old_index, end=old_index + len))
     }
     for s in slice {
       lines.push("\{prefix} \{show(s)}")
@@ -531,15 +531,15 @@ fn[T] ansi_render(h : @diff.Hunk[T], show~ : (T) -> String) -> String {
   for edit in h.edits() {
     match edit {
       Equal(old_index~, len~, ..) =>
-        for e in old.view(start=old_index, end=old_index + len) {
+        for e in old.exact_view(start=old_index, end=old_index + len) {
           buf <+ " \{show(e)}\n"
         }
       Delete(old_index~, old_len~, ..) =>
-        for e in old.view(start=old_index, end=old_index + old_len) {
+        for e in old.exact_view(start=old_index, end=old_index + old_len) {
           buf <+ "\u{1b}[31m-\{show(e)}\u{1b}[0m\n"
         }
       Insert(new_index~, new_len~, ..) =>
-        for e in new.view(start=new_index, end=new_index + new_len) {
+        for e in new.exact_view(start=new_index, end=new_index + new_len) {
           buf <+ "\u{1b}[32m+\{show(e)}\u{1b}[0m\n"
         }
     }
@@ -577,15 +577,15 @@ fn[T] html_render(h : @diff.Hunk[T], show~ : (T) -> String) -> String {
   for edit in h.edits() {
     match edit {
       Equal(old_index~, len~, ..) =>
-        for e in old.view(start=old_index, end=old_index + len) {
+        for e in old.exact_view(start=old_index, end=old_index + len) {
           line(buf, "ctx", " ", esc(show(e)))
         }
       Delete(old_index~, old_len~, ..) =>
-        for e in old.view(start=old_index, end=old_index + old_len) {
+        for e in old.exact_view(start=old_index, end=old_index + old_len) {
           line(buf, "del", "-", esc(show(e)))
         }
       Insert(new_index~, new_len~, ..) =>
-        for e in new.view(start=new_index, end=new_index + new_len) {
+        for e in new.exact_view(start=new_index, end=new_index + new_len) {
           line(buf, "add", "+", esc(show(e)))
         }
     }
@@ -639,15 +639,15 @@ test "edits() with the views agrees with render()" {
     for edit in h.edits() {
       match edit {
         Equal(old_index~, len~, ..) =>
-          for e in o.view(start=old_index, end=old_index + len) {
+          for e in o.exact_view(start=old_index, end=old_index + len) {
             rebuilt <+ " \{e}\n"
           }
         Delete(old_index~, old_len~, ..) =>
-          for e in o.view(start=old_index, end=old_index + old_len) {
+          for e in o.exact_view(start=old_index, end=old_index + old_len) {
             rebuilt <+ "-\{e}\n"
           }
         Insert(new_index~, new_len~, ..) =>
-          for e in n.view(start=new_index, end=new_index + new_len) {
+          for e in n.exact_view(start=new_index, end=new_index + new_len) {
             rebuilt <+ "+\{e}\n"
           }
       }

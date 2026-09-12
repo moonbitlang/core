@@ -15,6 +15,7 @@ changelog should follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 - Added new `moonbitlang/async` APIs including `@process.spawn`, advisory file locking, `@fs.tmpdir`, `@async.all`, and `@async.any`
 - Added `Array::release_unused(placeholder~)`, which overwrites the unused capacity of an array in place with a placeholder, releasing the elements that earlier removals left there
 - Added `Deque::release_unused(placeholder~)`, which overwrites the unused capacity of a deque in place with a placeholder, releasing the elements that earlier removals left there
+- Added the `encoding/percent` package: RFC 3986 percent-encoding of URI components. `encode` escapes every UTF-8 byte outside the unreserved set as uppercase `%XX` (stricter than JavaScript's `encodeURIComponent`, which keeps `!*'()`), `decode` reverses it and raises `Malformed` on a bad escape or invalid escaped UTF-8, and `decode_lossy` keeps a malformed `%` literally and replaces invalid UTF-8 with U+FFFD
 
 #### Changed
 

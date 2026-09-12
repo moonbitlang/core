@@ -72,11 +72,11 @@ fn[T] Edit::view_from(
 ) -> ArrayView[T] {
   match self {
     Insert(new_index~, new_len~, ..) =>
-      new.view(start=new_index, end=new_index + new_len)
+      new.exact_view(start=new_index, end=new_index + new_len)
     Delete(old_index~, old_len~, ..) =>
-      old.view(start=old_index, end=old_index + old_len)
+      old.exact_view(start=old_index, end=old_index + old_len)
     Equal(old_index~, len~, ..) =>
-      old.view(start=old_index, end=old_index + len)
+      old.exact_view(start=old_index, end=old_index + len)
   }
 }
 

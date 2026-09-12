@@ -35,6 +35,7 @@ pub using @builtin {
   panic,
   physical_equal,
   println,
+  eprintln,
   trait Eq,
   trait Compare,
   trait Hash,
