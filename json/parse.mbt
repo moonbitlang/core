@@ -51,11 +51,10 @@ pub fn valid(input : StringView) -> Bool {
 ///
 /// ## What strings may contain
 ///
-/// Every string in the result is well-formed Unicode: each `\uXXXX` escape
-/// must denote a Unicode scalar value on its own, or be one half of a
-/// correctly ordered surrogate pair. An escaped leading surrogate
-/// (`\uD800`–`\uDBFF`) must therefore be followed immediately by an escaped
-/// trailing surrogate (`\uDC00`–`\uDFFF`), and the pair is decoded as the
+/// Each `\uXXXX` escape must denote a Unicode scalar value on its own,
+/// or be one half of a correctly ordered surrogate pair. A leading-surrogate
+/// escape (`\uD800`–`\uDBFF`) must therefore be followed immediately by an
+/// escaped trailing surrogate (`\uDC00`–`\uDFFF`), and the pair is decoded as the
 /// one character it stands for.
 ///
 /// An escape that cannot pair up raises `InvalidChar` positioned at the
@@ -68,11 +67,12 @@ pub fn valid(input : StringView) -> Bool {
 /// to the implementation — not a claim about which documents are
 /// grammatically well formed, since §8.2 admits unpaired surrogate escapes,
 /// nor a claim of I-JSON (RFC 7493) conformance, which restricts more than
-/// this. It is chosen because MoonBit's `String` is required to be
-/// well-formed, so the alternatives are to hand back a string that violates
-/// that invariant, or to substitute U+FFFD and silently lose the
-/// distinction between two different keys. A parse error is the only one of
-/// the three a caller can see and act on.
+/// this. It avoids manufacturing unpaired surrogates from escapes or
+/// substituting U+FFFD and silently losing the distinction between two
+/// different keys. A parse error lets the caller see and act on an invalid
+/// escape. This check applies to escapes; raw UTF-16 code units in the input
+/// are not validated. Callers constructing strings through unchecked APIs
+/// must ensure that input is well-formed before parsing.
 ///
 /// The cost is real: `JSON.stringify` in JavaScript emits lone surrogates as
 /// `\uXXXX`, so some JSON that JavaScript and Python accept is rejected
