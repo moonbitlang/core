@@ -244,9 +244,7 @@ pub fn pow(x : Double, y : Double) -> Double {
   // special value of y
   if ly == 0 {
     if iy == 0x7ff00000 { // y is +-inf
-      if ((ix.reinterpret_as_uint() - 0x3ff00000) | lx) == 0 {
-        return y - y // inf**+-1 is NaN
-      } else if ix >= 0x3ff00000 { // (|x|>1)**+-inf = inf,0
+      if ix >= 0x3ff00000 { // (|x|>1)**+-inf = inf,0
         return if hy >= 0 { y } else { ZERO }
       } else { // (|x|<1)**-,+inf = inf,0
         return if hy < 0 { -y } else { ZERO }
