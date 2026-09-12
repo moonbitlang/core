@@ -52,7 +52,13 @@ pub impl Default for Float with fn default() {
 /// }
 /// ```
 pub impl Hash for Float with fn hash_combine(self, hasher) {
-  hasher.combine_uint(self.reinterpret_as_uint())
+  hasher.combine_uint(
+    if self == 0.0F {
+      0U
+    } else {
+      self.reinterpret_as_uint()
+    },
+  )
 }
 
 ///|

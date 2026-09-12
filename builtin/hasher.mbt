@@ -288,8 +288,8 @@ pub fn Hasher::combine_uint64(self : Hasher, value : UInt64) -> Unit {
 
 ///|
 /// Combines a double-precision floating-point number into the hasher's internal
-/// state by reinterpreting its bits as a 64-bit integer. Maintains consistent
-/// hashing behavior regardless of the floating-point value's representation.
+/// state by reinterpreting its bits as a 64-bit integer. Positive and negative
+/// zero have the same hash, consistently with floating-point equality.
 ///
 /// Parameters:
 ///
@@ -307,13 +307,19 @@ pub fn Hasher::combine_uint64(self : Hasher, value : UInt64) -> Unit {
 /// }
 /// ```
 pub fn Hasher::combine_double(self : Hasher, value : Double) -> Unit {
-  self.combine_int64(value.reinterpret_as_int64())
+  self.combine_int64(
+    if value == 0.0 {
+      0L
+    } else {
+      value.reinterpret_as_int64()
+    },
+  )
 }
 
 ///|
 /// Combines a 32-bit floating-point value into the hasher by reinterpreting its
-/// bit pattern as a 32-bit integer. The operation maintains the same hash result
-/// regardless of the floating-point value's representation.
+/// bit pattern as a 32-bit integer. Positive and negative zero have the same
+/// hash, consistently with floating-point equality.
 ///
 /// Parameters:
 ///
@@ -332,7 +338,8 @@ pub fn Hasher::combine_double(self : Hasher, value : Double) -> Unit {
 /// ```
 #deprecated
 pub fn Hasher::combine_float(self : Hasher, value : Float) -> Unit {
-  self.combine_uint(value.reinterpret_as_uint())
+  let bits = value.reinterpret_as_uint()
+  self.combine_uint(if bits == 0x80000000U { 0U } else { bits })
 }
 
 ///|
