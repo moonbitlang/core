@@ -77,7 +77,7 @@ fn ParseContext::lex_string_slow(ctx : ParseContext) -> String raise ParseError 
               // immediately following trailing-surrogate escape into one
               // Unicode scalar value. Anything else would manufacture a
               // string containing an unpaired surrogate, which MoonBit
-              // strings disallow (RFC 8259 calls the behavior for such
+              // strings should avoid (RFC 8259 calls the behavior for such
               // escapes unpredictable; I-JSON forbids them).
               match ctx.read_char() {
                 Some('\\') => ()
