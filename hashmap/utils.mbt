@@ -392,6 +392,7 @@ pub fn[K, V] HashMap::values(self : HashMap[K, V]) -> Iter[V] {
 ///|
 /// Keeps only the key-value pairs for which `f` returns `true`, removing the
 /// rest in place.
+/// Calls the predicate once per entry, in unspecified order.
 ///
 /// `true` means *keep*, as with `HashMap::filter`, which returns a new map
 /// and leaves `self` unchanged; use `retain` when the original is no longer

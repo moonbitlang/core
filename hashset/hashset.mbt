@@ -599,6 +599,7 @@ pub impl[K : Eq] Sub for HashSet[K] with fn sub(self, other) {
 ///|
 /// Keeps only the elements for which `f` returns `true`, removing the rest in
 /// place.
+/// Calls the predicate once per element, in unspecified order.
 ///
 /// `true` means *keep*, as with `HashSet::filter`, which returns a new set
 /// and leaves `self` unchanged; use `retain` when the original is no longer

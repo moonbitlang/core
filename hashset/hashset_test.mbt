@@ -719,3 +719,23 @@ test "retain on a full cluster run keeps exactly the accepted elements" {
   inspect(s.length(), content="334")
   inspect(s.iter().all(x => x % 3 == 0), content="true")
 }
+
+///|
+test "retain visits wrapped collision entries once" {
+  let set = @hashset.HashSet(
+    [HashSetKey(0, 7), HashSetKey(1, 7), HashSetKey(2, 7), HashSetKey(3, 7)],
+    capacity=8,
+  )
+  let visits = []
+  set.retain(key => {
+    let HashSetKey(id, _) = key
+    visits.push(id)
+    id != 0
+  })
+  visits.sort()
+  debug_inspect(visits, content="[0, 1, 2, 3]")
+  inspect(set.length(), content="3")
+  for id in 1..<4 {
+    assert_true(set.contains(HashSetKey(id, 7)))
+  }
+}
