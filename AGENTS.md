@@ -1,4 +1,4 @@
-This is the standard library for [MoonBit](docs.moonbitlang.com).
+This is the standard library for [MoonBit](https://docs.moonbitlang.com).
 
 # Refactoring tips
 
@@ -23,15 +23,13 @@ your changes indeed change the behavior of the code, you should run `moon test -
 
 - You can run `moon check` to check the code is linted correctly.
 
-- MoonBit packages are organized per directory, for each directory, there is a `package.json` file listing its dependencies.
+- MoonBit packages are organized per directory, for each directory, there is a `moon.pkg` file listing its dependencies.
 Each package has its files and blackbox test files (common, ending in `_test.mbt`) and whitebox test files (ending in `_wbtest.mbt`).
 
-- In the toplevel directory, this is a `moon.mod.json` file listing about the module and some meta information.
+- In the toplevel directory, this is a `moon.mod` file listing about the module and some meta information.
 
 - When writing tests, you are encouraged to use `inspect` and run `moon test --update` to update the snapshots, only use assertions
   like `assert_eq` when you are in some loops where each snapshot may vary. You can use `moon coverage analyze > uncovered.log` to see which parts of your code are not covered by tests.
-
-- agent-todo.md has some small tasks that are easy for AI to pick up, agent is welcome to finish the tasks and check the box when you are done
 
 # Trait-method promotion (`extend`)
 

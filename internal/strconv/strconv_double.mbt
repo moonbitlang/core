@@ -27,19 +27,19 @@ let double_info : FloatInfo = {
 }
 
 ///|
-/// TODO: For `f32` it is 23, but we don't have `f32` yet.
+/// Number of explicitly stored significand bits in binary64.
 let mantissa_explicit_bits = 52
 
 ///|
-/// TODO: For `f32` it is -10, but we don't have `f32` yet.
+/// Minimum decimal exponent for the binary64 fast path.
 let min_exponent_fast_path : Int64 = -22L
 
 ///|
-/// TODO: For `f32` it is 10, but we don't have `f32` yet.
+/// Maximum decimal exponent for the binary64 fast path.
 let max_exponent_fast_path : Int64 = 22L
 
 ///|
-/// TODO: For `f32` it is 17, but we don't have `f32` yet.
+/// Maximum decimal exponent after moving digits into the binary64 mantissa.
 let max_exponent_disguised_fast_path : Int64 = 37L
 
 ///|

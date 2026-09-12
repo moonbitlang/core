@@ -10,7 +10,7 @@ This package provides functionalities for handling 32-bit unsigned integers in M
 ///|
 test "uint basics" {
   // Default value is 0
-  inspect(@uint.default(), content="0")
+  inspect((0 : UInt), content="0")
 
   // Maximum and minimum values
   inspect(@uint.MAX_VALUE, content="4294967295")

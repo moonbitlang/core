@@ -24,7 +24,7 @@
 ///
 /// Do not convert large data to `Array[Char]` and build a string with `String::from_array`.
 ///
-/// For efficiency considerations, it's recommended to use `Buffer` instead.
+/// For incremental string construction, use `StringBuilder`.
 #deprecated
 #doc(hidden)
 pub fn from_array(chars : ArrayView[Char]) -> String {

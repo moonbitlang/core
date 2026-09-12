@@ -127,7 +127,8 @@ test {
 
 ## BigInt
 
-Generate a random non-negative `BigInt` with a given number of bits:
+Generate a random non-negative `BigInt` with at most the given number of bits
+(leading zero bits are allowed):
 
 ```mbt check
 ///|

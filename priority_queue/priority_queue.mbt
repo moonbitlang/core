@@ -49,8 +49,7 @@ pub fn[A : Compare] PriorityQueue::PriorityQueue(
 ///|
 fn[A] copy_node(x : Node[A]?) -> Node[A]? {
   // Use an explicit work stack to avoid stack overflow on deep sibling chains.
-  // Each stack entry is (original_node, cloned_parent, relation) where relation
-  // indicates whether original_node is the child or sibling of cloned_parent.
+  // Each stack entry pairs an original node with its cloned node to fill.
   match x {
     None => None
     Some(root) => {
@@ -88,7 +87,8 @@ fn[A] copy_node(x : Node[A]?) -> Node[A]? {
 }
 
 ///|
-/// Returns a deep copy of the queue.
+/// Copies the heap structure into independent nodes. Stored elements are shared,
+/// so mutations to an element are visible through both queues.
 ///
 /// # Example
 /// ```mbt check
