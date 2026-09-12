@@ -311,3 +311,22 @@ test "hash_combine for UInt" {
   Hash::hash_combine(value, hasher)
   inspect(hasher.finalize(), content="1161967057")
 }
+
+///|
+#warnings("-deprecated")
+test "combine_float normalizes signed zero and preserves nonzero bits" {
+  for
+    (value, bits) in [
+      (0.0F, 0U),
+      (-0.0F, 0U),
+      (1.0F, 0x3F800000U),
+      (-1.0F, 0xBF800000U),
+      (@float.infinity, 0x7F800000U),
+    ] {
+    let actual = Hasher(seed=0)
+    actual.combine_float(value)
+    let expected = Hasher(seed=0)
+    expected.combine_uint(bits)
+    assert_eq(actual.finalize(), expected.finalize())
+  }
+}

@@ -307,13 +307,7 @@ pub fn Hasher::combine_uint64(self : Hasher, value : UInt64) -> Unit {
 /// }
 /// ```
 pub fn Hasher::combine_double(self : Hasher, value : Double) -> Unit {
-  self.combine_int64(
-    if value == 0.0 {
-      0L
-    } else {
-      value.reinterpret_as_int64()
-    },
-  )
+  self.combine_int64(if value is 0 { 0L } else { value.reinterpret_as_int64() })
 }
 
 ///|
@@ -338,8 +332,7 @@ pub fn Hasher::combine_double(self : Hasher, value : Double) -> Unit {
 /// ```
 #deprecated
 pub fn Hasher::combine_float(self : Hasher, value : Float) -> Unit {
-  let bits = value.reinterpret_as_uint()
-  self.combine_uint(if bits == 0x80000000U { 0U } else { bits })
+  self.combine_uint(if value is 0 { 0U } else { value.reinterpret_as_uint() })
 }
 
 ///|
