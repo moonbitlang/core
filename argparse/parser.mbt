@@ -77,6 +77,17 @@ fn raise_context_help(
 }
 
 ///|
+#cfg(target="js")
+fn default_argv() -> ArrayView[String] {
+  // Node's process.argv starts with the runtime executable and script path.
+  match @env.args() {
+    [_, _, .. rest] => rest
+    _ => []
+  }
+}
+
+///|
+#cfg(not(target="js"))
 fn default_argv() -> ArrayView[String] {
   let args = @env.args()
   match args {
