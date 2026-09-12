@@ -13,7 +13,8 @@
 // limitations under the License.
 
 ///|
-/// False positive rate: 2^-128.
+/// Composite acceptance probability is at most 2^-128 for independent,
+/// uniformly sampled Miller-Rabin bases.
 const DEFAULT_PRIME_TEST_ITERS = 64
 
 ///|
@@ -188,8 +189,9 @@ let small_primes : ReadOnlyArray[@bigint.BigInt] = [
 /// * `iters` : The number of iterations for the Miller-Rabin test (default:
 /// 64). Higher values provide greater certainty but take longer to compute.
 ///
-/// Returns `true` if the number is probably prime (with probability at least 1 -
-/// 2^(-2 \* iters)), `false` if the number is definitely composite.
+/// Returns `true` if the number is probably prime, or `false` if it is not
+/// prime. For a composite input and independent uniformly sampled bases,
+/// the probability of returning `true` is at most 2^(-2 * iters).
 ///
 /// Throws a panic if the number of iterations is not positive.
 ///
@@ -220,7 +222,7 @@ pub fn is_probable_prime(
     return true
   }
   if number % 2N == 0 {
-    // odd number
+    // Even numbers greater than two are composite.
     return false
   }
   trial_divisions(number) && miller_rabin_test(number, iters, rand)
@@ -235,8 +237,9 @@ pub fn is_probable_prime(
 /// * `bits` : The desired bit length of the prime number to be generated.
 /// * `rand` : A random number generator used for generating random values.
 ///
-/// Returns a `BigInt` that is probably prime (with probability at least 1 -
-/// 2^(-128)).
+/// Returns a `BigInt` that passes `is_probable_prime` with 64 Miller-Rabin
+/// iterations.
+/// The result has exactly `bits` bits. Panics if `bits` is less than two.
 ///
 /// Example:
 ///
@@ -248,8 +251,10 @@ pub fn is_probable_prime(
 /// }
 /// ```
 pub fn probable_prime(bits : Int, rand : @random.Rand) -> @bigint.BigInt {
+  guard bits >= 2 else { abort("probable_prime: bits must be at least two") }
+  let high_bit = 1N << (bits - 1)
   for ;; {
-    let b = rand.bigint(bits)
+    let b = rand.bigint(bits) | high_bit
     if is_probable_prime(b, rand) {
       break b
     }
