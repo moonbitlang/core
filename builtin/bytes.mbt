@@ -81,13 +81,13 @@ pub fn Bytes::to_unchecked_string(
 ) -> String {
   let len = self.length()
   let length = if length is Some(l) { l } else { len - offset }
-  guard! offset >= 0 && length >= 0 && offset + length <= len
+  guard! offset >= 0 && offset <= len && length >= 0 && length <= len - offset
   unsafe_sub_string(self, offset, length)
 }
 
 ///|
-/// Copies characters from a string to a byte sequence in UTF-16LE encoding. Each
-/// character is converted into two bytes, with the lower byte stored first.
+/// Copies UTF-16 code units from a string to a byte sequence in UTF-16LE
+/// encoding. Each code unit becomes two bytes, with the lower byte first.
 ///
 /// Parameters:
 ///
@@ -97,7 +97,7 @@ pub fn Bytes::to_unchecked_string(
 /// * `str` : The source string containing the characters to copy.
 /// * `str_offset` : The starting position in the source string from which
 /// characters will be read.
-/// * `length` : The number of characters to copy.
+/// * `length` : The number of UTF-16 code units to copy.
 ///
 /// Throws a runtime error if:
 ///
@@ -129,13 +129,15 @@ pub fn FixedArray::blit_from_string(
   str_offset : Int,
   length : Int,
 ) -> Unit {
-  let s1 = bytes_offset
-  let s2 = str_offset
-  let e1 = bytes_offset + length * 2 - 1
-  let e2 = str_offset + length - 1
   let len1 = self.length()
   let len2 = str.length()
-  guard! length >= 0 && s1 >= 0 && e1 < len1 && s2 >= 0 && e2 < len2
+  guard! length >= 0 &&
+    bytes_offset >= 0 &&
+    bytes_offset <= len1 &&
+    length <= (len1 - bytes_offset) / 2 &&
+    str_offset >= 0 &&
+    str_offset <= len2 &&
+    length <= len2 - str_offset
   let end_str_offset = str_offset + length
   for i = str_offset, j = bytes_offset; i < end_str_offset; i = i + 1, j = j + 2 {
     let c = str.unsafe_get(i).to_int().reinterpret_as_uint()
@@ -158,13 +160,15 @@ pub fn FixedArray::blit_from_bytes(
   src_offset : Int,
   length : Int,
 ) -> Unit {
-  let s1 = bytes_offset
-  let s2 = src_offset
-  let e1 = bytes_offset + length - 1
-  let e2 = src_offset + length - 1
   let len1 = self.length()
   let len2 = src.length()
-  guard! length >= 0 && s1 >= 0 && e1 < len1 && s2 >= 0 && e2 < len2
+  guard! length >= 0 &&
+    bytes_offset >= 0 &&
+    bytes_offset <= len1 &&
+    length <= len1 - bytes_offset &&
+    src_offset >= 0 &&
+    src_offset <= len2 &&
+    length <= len2 - src_offset
   FixedArray::unsafe_blit(
     self,
     bytes_offset,

@@ -386,3 +386,12 @@ test "find/empty_pattern_progress_and_empty_input" {
   debug_inspect(surrogate_positions, content="[0, 1, 3, 4]")
   debug_inspect(empty_positions, content="[0]")
 }
+
+///|
+test "capture group indices cannot wrap around" {
+  let regex = re"(a)"
+  guard regex.execute("a") is Some(matched) else { fail("expected match") }
+  for index in [-2147483648, -1073741824, -1, 2, 1073741824, 2147483647] {
+    assert_eq(matched.group(index) is None, true)
+  }
+}

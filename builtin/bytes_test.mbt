@@ -517,3 +517,40 @@ test "BytesView::to_array" {
     ),
   )
 }
+
+///|
+test "panic blit_from_string rejects overflowing source range" {
+  let bytes = FixedArray::make(4, b'\x00')
+  bytes.blit_from_string(0, "", 2147483647, 2)
+}
+
+///|
+test "panic unchecked string rejects overflowing byte range" {
+  ignore(b"".to_unchecked_string(offset=2147483647, length=1))
+}
+
+///|
+test "panic blit_from_bytes rejects overflowing source range" {
+  let bytes = FixedArray::make(4, b'\x00')
+  bytes.blit_from_bytes(0, b"", 2147483647, 2)
+}
+
+///|
+test "panic blit_from_bytes rejects overflowing destination range" {
+  let bytes = FixedArray::make(4, b'\x00')
+  bytes.blit_from_bytes(2147483647, b"ab", 0, 2)
+}
+
+///|
+test "panic blit_from_string rejects overflowing destination length" {
+  let bytes = FixedArray::make(4, b'\x00')
+  bytes.blit_from_string(0, "", 0, 1073741824)
+}
+
+///|
+test "byte copies accept empty ranges at the end" {
+  let bytes = FixedArray::make(4, b'\x00')
+  bytes.blit_from_bytes(4, b"ab", 2, 0)
+  bytes.blit_from_string(4, "ab", 2, 0)
+  inspect(b"ab".to_unchecked_string(offset=2, length=0), content="")
+}
