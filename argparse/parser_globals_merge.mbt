@@ -86,47 +86,30 @@ fn merge_global_value_from_child(
         parent.values[name] = merged
         parent.value_sources[name] = Argv
       }
-    } else {
-      let choose_child = has_child &&
-        (!has_parent || prefer_child_source(parent_source, child_source))
-      if choose_child {
-        if child_vals is Some(cv) && !cv.is_empty() {
-          parent.values[name] = cv.copy()
-        }
-        if child_source is Some(src) {
-          parent.value_sources[name] = src
-        }
-      } else if parent_vals is Some(pv) && !pv.is_empty() {
-        parent.values[name] = pv.copy()
-        if parent_source is Some(src) {
-          parent.value_sources[name] = src
-        }
-      }
+      return
     }
-  } else {
-    if has_parent &&
-      has_child &&
-      parent_source is Some(Argv) &&
-      child_source is Some(Argv) &&
-      arg.info is OptionInfo(action=Set, ..) {
-      raise InvalidArgument(
-        "argument '\{global_option_conflict_label(arg)}' cannot be used multiple times",
-      )
+  } else if has_parent &&
+    has_child &&
+    parent_source is Some(Argv) &&
+    child_source is Some(Argv) &&
+    arg.info is OptionInfo(action=Set, ..) {
+    raise InvalidArgument(
+      "argument '\{option_conflict_label(arg)}' cannot be used multiple times",
+    )
+  }
+  let choose_child = has_child &&
+    (!has_parent || prefer_child_source(parent_source, child_source))
+  if choose_child {
+    if child_vals is Some(cv) && !cv.is_empty() {
+      parent.values[name] = cv.copy()
     }
-    let choose_child = has_child &&
-      (!has_parent || prefer_child_source(parent_source, child_source))
-    if choose_child {
-      if child_vals is Some(cv) && !cv.is_empty() {
-        parent.values[name] = cv.copy()
-      }
-      if child_source is Some(src) {
-        parent.value_sources[name] = src
-      }
-    } else if parent_vals is Some(pv) && !pv.is_empty() {
-      parent.values[name] = pv.copy()
-      if parent_source is Some(src) {
-        parent.value_sources[name] = src
-      }
+    if child_source is Some(src) {
+      parent.value_sources[name] = src
+    }
+  } else if parent_vals is Some(pv) && !pv.is_empty() {
+    parent.values[name] = pv.copy()
+    if parent_source is Some(src) {
+      parent.value_sources[name] = src
     }
   }
 }
@@ -238,17 +221,6 @@ fn merge_globals_from_child(
         merge_global_value_from_child(parent, child, arg, name)
       FlagInfo(_) => merge_global_flag_from_child(parent, child, arg, name)
     }
-  }
-}
-
-///|
-fn global_option_conflict_label(arg : Arg) -> String {
-  match arg.info {
-    FlagInfo(long=Some(name), ..) | OptionInfo(long=Some(name), ..) =>
-      "--\{name}"
-    FlagInfo(short=Some(short), ..) | OptionInfo(short=Some(short), ..) =>
-      "-\{short}"
-    _ => arg.name
   }
 }
 
