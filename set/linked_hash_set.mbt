@@ -147,21 +147,23 @@ pub fn[K : Hash + Eq] Set::Set(arr : ArrayView[K], capacity? : Int) -> Set[K] {
 /// ```
 #alias(insert, deprecated)
 pub fn[K : Hash + Eq] Set::add(self : Set[K], key : K) -> Unit {
-  self.add_with_hash(key, Hash::hash(key))
-}
-
-///|
-fn[K : Eq] Set::add_with_hash(self : Set[K], key : K, hash : Int) -> Unit {
+  let hash = Hash::hash(key)
   if self.size >= self.grow_at {
     self.grow()
   }
+  ignore(self.add_with_hash(key, hash))
+}
+
+///|
+// Call after reserving capacity; each caller preserves its hash/grow order.
+fn[K : Eq] Set::add_with_hash(self : Set[K], key : K, hash : Int) -> Bool {
   // SAFETY: masked probe index; see the note at the top of this file.
   let (idx, psl) = for psl = 0, idx = hash & self.capacity_mask {
     match self.entries.unsafe_get(idx) {
       None => break (idx, psl)
       Some(curr_entry) => {
         if curr_entry.hash == hash && curr_entry.key == key {
-          return
+          return false
         }
         if psl > curr_entry.psl {
           self.push_away(idx, curr_entry)
@@ -173,6 +175,7 @@ fn[K : Eq] Set::add_with_hash(self : Set[K], key : K, hash : Int) -> Unit {
   }
   let entry = { prev: self.tail, next: None, psl, key, hash, }
   self.add_entry_to_tail(idx, entry)
+  true
 }
 
 ///|
@@ -238,28 +241,7 @@ pub fn[K : Hash + Eq] Set::add_and_check(self : Set[K], key : K) -> Bool {
   if self.size >= self.grow_at {
     self.grow()
   }
-  let hash = Hash::hash(key)
-  // SAFETY: masked probe index; see the note at the top of this file.
-  let (idx, psl, added) = for psl = 0, idx = hash & self.capacity_mask {
-    match self.entries.unsafe_get(idx) {
-      None => break (idx, psl, true)
-      Some(curr_entry) => {
-        if curr_entry.hash == hash && curr_entry.key == key {
-          break (idx, psl, false)
-        }
-        if psl > curr_entry.psl {
-          self.push_away(idx, curr_entry)
-          break (idx, psl, true)
-        }
-        continue psl + 1, (idx + 1) & self.capacity_mask
-      }
-    }
-  }
-  if added {
-    let entry = { prev: self.tail, next: None, psl, key, hash, }
-    self.add_entry_to_tail(idx, entry)
-  }
-  added
+  self.add_with_hash(key, Hash::hash(key))
 }
 
 ///|
@@ -302,21 +284,7 @@ pub fn[K : Hash + Eq] Set::contains(self : Set[K], key : K) -> Bool {
 /// }
 /// ```
 pub fn[K : Hash + Eq] Set::remove(self : Set[K], key : K) -> Unit {
-  let hash = Hash::hash(key)
-  // SAFETY: masked probe index; see the note at the top of this file.
-  for i = 0, idx = hash & self.capacity_mask {
-    guard self.entries.unsafe_get(idx) is Some(entry) else { break }
-    if entry.hash == hash && entry.key == key {
-      self.remove_entry(entry)
-      self.shift_back(idx)
-      self.size -= 1
-      break
-    }
-    if i > entry.psl {
-      break
-    }
-    continue i + 1, (idx + 1) & self.capacity_mask
-  }
+  ignore(self.remove_and_check(key))
 }
 
 ///|
