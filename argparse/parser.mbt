@@ -498,12 +498,7 @@ fn parse_command_impl(
               assign_value(matches, spec, v, Argv)
             } else {
               let can_take_next = i + 1 < argv.length() &&
-                !should_stop_option_value(
-                  argv[i + 1],
-                  spec,
-                  long_index,
-                  short_index,
-                )
+                !should_stop_option_value(argv[i + 1], spec)
               if can_take_next {
                 i += 1
                 assign_value(matches, spec, argv[i], Argv)
@@ -568,12 +563,7 @@ fn parse_command_impl(
             assign_value(matches, spec, inline, Argv)
           } else {
             let can_take_next = i + 1 < argv.length() &&
-              !should_stop_option_value(
-                argv[i + 1],
-                spec,
-                long_index,
-                short_index,
-              )
+              !should_stop_option_value(argv[i + 1], spec)
             if can_take_next {
               consumed_next = true
               assign_value(matches, spec, argv[i + 1], Argv)

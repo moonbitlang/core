@@ -168,12 +168,7 @@ fn check_duplicate_set_occurrence(
 }
 
 ///|
-fn should_stop_option_value(
-  value : String,
-  arg : Arg,
-  _long_index : Map[String, Arg],
-  _short_index : Map[Char, Arg],
-) -> Bool {
+fn should_stop_option_value(value : String, arg : Arg) -> Bool {
   if !value.has_prefix("-") || value == "-" {
     return false
   }
@@ -208,29 +203,9 @@ fn apply_env(
     }
     guard arg.env is Some(env_name) else { continue }
     guard env.get(env_name) is Some(value) else { continue }
-    if arg.info is (OptionInfo(_) | PositionalInfo(_)) {
-      assign_value(matches, arg, value, Env)
-      continue
-    }
     match arg.info {
-      FlagInfo(action=Count, ..) => {
-        let count = parse_count(value)
-        matches.counts[name] = count
-        matches.flags[name] = count > 0
-        matches.flag_sources[name] = Env
-      }
-      FlagInfo(action=SetFalse, ..) => {
-        let flag = parse_bool(value)
-        matches.flags[name] = !flag
-        matches.flag_sources[name] = Env
-      }
-      FlagInfo(action=SetTrue, ..) => {
-        let flag = parse_bool(value)
-        matches.flags[name] = flag
-        matches.flag_sources[name] = Env
-      }
-      OptionInfo(_) | PositionalInfo(_) => ()
       FlagInfo(action=Help | Version, ..) => ()
+      _ => assign_value(matches, arg, value, Env)
     }
   }
 }
