@@ -127,6 +127,23 @@ fn no_parens(r : ContentParens) -> Content {
 }
 
 ///|
+fn compact_middle(middle : ArrayView[String]) -> StringView {
+  let parts : Array[StringView] = []
+  for m in middle {
+    let t = m.trim()
+    if t != "" {
+      parts.push(t)
+    }
+  }
+  let joined0 = parts.join(" ")
+  let joined : StringView = match joined0.strip_suffix(",") {
+    Some(sv) => sv
+    None => joined0
+  }
+  joined
+}
+
+///|
 /// Compact multi-line output into a single line when possible.
 ///
 /// Note: we special-case common layouts (brackets/braces/paren-calls)
@@ -152,18 +169,7 @@ fn compact_lines(lines : Array[String]) -> Array[String] {
       // Special-case bracket/brace blocks: "[ ... ]" and "{ ... }"
       // produced by `bracket_seq_lines`.
       if (first == "[" && last == "]") || (first == "{" && last == "}") {
-        let parts : Array[StringView] = []
-        for m in middle {
-          let t = m.trim()
-          if t != "" {
-            parts.push(t)
-          }
-        }
-        let joined0 = parts.join(" ")
-        let joined : StringView = match joined0.strip_suffix(",") {
-          Some(sv) => sv
-          None => joined0
-        }
+        let joined = compact_middle(middle)
 
         // Match expected style:
         // - arrays: [a, b]
@@ -194,18 +200,7 @@ fn compact_lines(lines : Array[String]) -> Array[String] {
         // Enum(a, b)
         // ```
       } else if first.has_suffix("(") && last == ")" {
-        let parts : Array[StringView] = []
-        for m in middle {
-          let t = m.trim()
-          if t != "" {
-            parts.push(t)
-          }
-        }
-        let joined0 = parts.join(" ")
-        let joined : StringView = match joined0.strip_suffix(",") {
-          Some(sv) => sv
-          None => joined0
-        }
+        let joined = compact_middle(middle)
         ["\{first}\{joined}\{last}"]
       } else {
         let parts : Array[StringView] = [first]
