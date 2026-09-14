@@ -609,15 +609,7 @@ pub fn Buffer::write_uint16_le(self : Buffer, value : UInt16) -> Unit {
 /// }
 /// ```
 pub fn Buffer::write_int16_be(self : Buffer, value : Int16) -> Unit {
-  if self.data.length() - self.len < 2 {
-    self.grow(self.len + 2)
-  }
-  // SAFETY: the guard above reserves 2 bytes at `len`.
-  let data = self.data
-  let offset = self.len
-  data.unsafe_set(offset, (value.to_int() >> 8).to_byte())
-  data.unsafe_set(offset + 1, value.to_byte())
-  self.len += 2
+  self.write_uint16_be(value.reinterpret_as_uint16())
 }
 
 ///|
@@ -644,15 +636,7 @@ pub fn Buffer::write_int16_be(self : Buffer, value : Int16) -> Unit {
 /// }
 /// ```
 pub fn Buffer::write_int16_le(self : Buffer, value : Int16) -> Unit {
-  if self.data.length() - self.len < 2 {
-    self.grow(self.len + 2)
-  }
-  // SAFETY: the guard above reserves 2 bytes at `len`.
-  let data = self.data
-  let offset = self.len
-  data.unsafe_set(offset, value.to_byte())
-  data.unsafe_set(offset + 1, (value.to_int() >> 8).to_byte())
-  self.len += 2
+  self.write_uint16_le(value.reinterpret_as_uint16())
 }
 
 ///|
