@@ -85,3 +85,16 @@ test "Byte constructor syntax" {
   let x = b'\x2A'
   inspect(Byte(x), content="b'\\x2A'")
 }
+
+///|
+test "popcnt covers every byte value" {
+  for value in 0..<256 {
+    let mut remaining = value
+    let mut expected = 0
+    while remaining != 0 {
+      expected += remaining % 2
+      remaining /= 2
+    }
+    assert_eq(value.to_byte().popcnt(), expected)
+  }
+}

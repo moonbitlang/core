@@ -331,7 +331,7 @@ pub fn Byte::to_uint64(self : Byte) -> UInt64 {
 }
 
 ///|
-/// Counts the number of 1-bits (population count) in the byte using bitwise operations.
+/// Counts the number of 1-bits (population count) in the byte.
 ///
 /// Parameters:
 ///
@@ -348,11 +348,7 @@ pub fn Byte::to_uint64(self : Byte) -> UInt64 {
 /// }
 /// ```
 pub fn Byte::popcnt(self : Byte) -> Int {
-  let mut n = self
-  n = (n & 0x55) + ((n >> 1) & 0x55)
-  n = (n & 0x33) + ((n >> 2) & 0x33)
-  n = (n & 0x0F) + ((n >> 4) & 0x0F)
-  n.to_int()
+  self.to_uint().popcnt()
 }
 
 ///|

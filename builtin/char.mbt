@@ -165,7 +165,7 @@ pub fn Char::is_digit(self : Self, radix : UInt) -> Bool {
 /// Returns true if this char has the White_Space property.
 pub fn Char::is_whitespace(self : Self) -> Bool {
   if self <= '\u{20}' {
-    return self is ('\u{09}'..='\u{0D}' | ' ')
+    return self.is_ascii_whitespace()
   }
   self
   is ('\u0085'
