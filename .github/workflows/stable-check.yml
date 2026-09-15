@@ -9,6 +9,8 @@ on:
 
 env:
   MOONC_RC_CONVENTION: borrow
+  MOON_COVE_REPORT_ENABLED: "1"
+  MOON_WASM_NEW_ALLOCATOR: "1"
 
 jobs:
   stable-check:
