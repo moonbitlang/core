@@ -15,6 +15,7 @@ jobs:
       HAWKEYE_VERSION: v5.8.1
       FORCE_COLOR: 1
       MOON_COVE_REPORT_ENABLED: "1"
+      MOON_WASM_NEW_ALLOCATOR: "1"
     steps:
       - uses: actions/checkout@v4
         with:

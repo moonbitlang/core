@@ -8,6 +8,8 @@ on:
 
 env:
   MOONC_RC_CONVENTION: borrow
+  MOON_COVE_REPORT_ENABLED: "1"
+  MOON_WASM_NEW_ALLOCATOR: "1"
 
 jobs:
   nightly-check:
@@ -28,14 +30,6 @@ jobs:
       - name: run tests
         timeout-minutes: 20
         uses: ./.github/actions/test
-
-      - name: Test new allocator
-        timeout-minutes: 10
-        run: |
-          moon clean
-          moon test --target wasm
-        env:
-          MOONC_INTERNAL_PARAMS: allocator = tlsf-mbt |
 
       - name: check
         timeout-minutes: 10
