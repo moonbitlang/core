@@ -77,6 +77,14 @@ pub using @builtin {
 pub using @builtin {not}
 
 ///|
+/// `print` is an alias of `println`, kept only so that `print(x)` — a habit
+/// carried over from other languages — resolves to a deprecation warning
+/// pointing at `println` instead of an "unbound value" error.
+#deprecated("Use `println` instead")
+#warnings("-deprecated")
+pub using @builtin {print}
+
+///|
 pub using @debug {debug, type Repr, trait Debug, debug_inspect, repr}
 
 ///|

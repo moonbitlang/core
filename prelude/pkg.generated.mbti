@@ -65,6 +65,9 @@ pub fn[T] panic() -> T
 
 pub fn[T] physical_equal(T, T) -> Bool
 
+#deprecated
+pub fn[T : @builtin.Show] print(T) -> Unit
+
 pub fn[T : @builtin.Show] println(T) -> Unit
 
 pub fn[T : @debug.Debug] repr(T) -> String

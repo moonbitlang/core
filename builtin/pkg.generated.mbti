@@ -37,6 +37,7 @@ pub fn[T] panic() -> T
 
 pub fn[T] physical_equal(T, T) -> Bool
 
+#alias(print, deprecated)
 pub fn[T : Show] println(T) -> Unit
 
 // Errors

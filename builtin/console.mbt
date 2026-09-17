@@ -33,6 +33,7 @@ fn println_mono(s : String) -> Unit = "%println"
 ///   }
 /// }
 /// ```
+#alias(print, deprecated="Use `println` instead")
 pub fn[T : Show] println(input : T) -> Unit {
   println_mono(input.to_string())
 }
