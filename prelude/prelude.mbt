@@ -82,6 +82,7 @@ pub using @builtin {not}
 /// pointing at `println` instead of an "unbound value" error.
 #deprecated("Use `println` instead")
 #warnings("-deprecated")
+#doc(hidden)
 pub using @builtin {print}
 
 ///|
