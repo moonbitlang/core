@@ -7,6 +7,7 @@
 #### Added
 
 - Added `eprintln` for writing a line to standard error (#4222).
+- Added `print` as a deprecated alias of `println`, so `print(x)` reports "Use `println` instead" rather than an unbound-identifier error (#4246).
 - Added the `encoding/percent` package for RFC 3986 URI-component encoding, strict decoding, and lossy decoding (#4214).
 
 #### Fixed
