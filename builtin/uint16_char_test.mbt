@@ -63,7 +63,7 @@ test "UInt16 compare and conversions" {
   inspect(a.to_uint(), content="16")
   inspect(a.to_uint64(), content="16")
   inspect((Default::default() : UInt16).to_int(), content="0")
-  @json.json_inspect(ToJson::to_json(a), content=16)
+  @json.json_inspect(@json.ToJson::to_json(a), content=16)
 }
 
 ///|

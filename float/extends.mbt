@@ -44,14 +44,13 @@ pub extend Float with Show::{to_string}
 ///|
 pub extend Float with Sub::{sub}
 
-// `Float::to_json` is promoted (not deprecated) because it has cross-package
-// method-syntax callers (json/builtin tests); deprecating it would break the
-// `--deny-warn` workspace build. It can be deprecated in a coordinated follow-up.
+// --- deprecated: compatibility methods ---
 
 ///|
-pub extend Float with ToJson::{to_json}
-
-// --- deprecated: hidden from the generated interface ---
+#deprecated("Use `Json(value)` instead", skip_current_package=true)
+// Bootstrap: json depends on this package, so use the builtin trait here.
+#warnings("-deprecated")
+pub extend Float with @builtin.ToJson::{to_json}
 
 ///|
 #deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)

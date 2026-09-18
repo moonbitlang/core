@@ -98,7 +98,7 @@ pub impl[A : Show] Show for List[A] with fn output(xs, logger) {
 ///|
 /// ToJson implementation for List.
 /// Converts a list to a JSON array.
-pub impl[A : ToJson] ToJson for List[A] with fn to_json(self) {
+pub impl[A : @json.ToJson] @json.ToJson for List[A] with fn to_json(self) {
   let capacity = self.length()
   guard capacity != 0 else { return [] }
   let jsons = Array(capacity~)
@@ -120,8 +120,8 @@ pub impl[A : ToJson] ToJson for List[A] with fn to_json(self) {
 ///   @debug.debug_inspect(json, content="Array([Number(1), Number(2), Number(3)])")
 /// }
 /// ```
-pub fn[A : ToJson] List::to_json(self : List[A]) -> Json {
-  ToJson::to_json(self)
+pub fn[A : @json.ToJson] List::to_json(self : List[A]) -> Json {
+  @json.ToJson::to_json(self)
 }
 
 ///|

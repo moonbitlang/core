@@ -424,13 +424,13 @@ test "to ascii lowercase" {
 ///|
 test "ToJson implementation" {
   // Test that to_json works without crashing for various characters
-  let json_a = 'a'.to_json()
-  let json_quote = '"'.to_json()
+  let json_a = Json('a')
+  let json_quote = Json('"')
   // let json_backslash = '\\'.to_json()
-  let json_newline = '\n'.to_json()
-  let json_tab = '\t'.to_json()
-  let json_null = '\u{0000}'.to_json()
-  let json_unicode = '🚀'.to_json()
+  let json_newline = Json('\n')
+  let json_tab = Json('\t')
+  let json_null = Json('\u{0000}')
+  let json_unicode = Json('🚀')
 
   // Basic validation that JSON objects were created
   assert_true(json_a != json_quote) // Different characters produce different JSON

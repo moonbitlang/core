@@ -41,7 +41,7 @@
 /// }
 /// ```
 ///
-pub impl ToJson for BigInt with fn to_json(self : BigInt) -> Json {
+pub impl @json.ToJson for BigInt with fn to_json(self : BigInt) -> Json {
   Json::string(self.to_string())
 }
 

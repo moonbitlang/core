@@ -742,7 +742,7 @@ pub impl[A : Show] Show for Vector[A] with fn output(self, logger) {
 }
 
 ///|
-pub impl[A : ToJson] ToJson for Vector[A] with fn to_json(self) {
+pub impl[A : @json.ToJson] @json.ToJson for Vector[A] with fn to_json(self) {
   [
     for value in self => value
   ]

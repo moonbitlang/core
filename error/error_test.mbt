@@ -168,6 +168,8 @@ test "protect2 & finally raise error" {
 }
 
 ///|
+// derive(ToJson) currently emits a deprecated String::to_json call.
+#warnings("-deprecated")
 priv suberror ErrWithToJson {
   ErrWithToJson(Int)
 } derive(ToJson)
@@ -187,7 +189,7 @@ test "error to json" {
   // we may auto-derive `ToJson` and `Show` for suberror automatically
   // to enhance the user experience
   fn j(err : Error) {
-    err.to_json()
+    Json(err)
   }
 
   debug_inspect(
