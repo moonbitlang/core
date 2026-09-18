@@ -727,6 +727,8 @@ pub fn[K, V] SortedMap::rev_values(self : SortedMap[K, V]) -> Iter[V] {
 
 ///|
 /// Convert to `json`.
-pub fn[K : Show, V : ToJson] SortedMap::to_json(self : SortedMap[K, V]) -> Json {
-  ToJson::to_json(self)
+pub fn[K : Show, V : @json.ToJson] SortedMap::to_json(
+  self : SortedMap[K, V],
+) -> Json {
+  @json.ToJson::to_json(self)
 }

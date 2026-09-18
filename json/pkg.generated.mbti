@@ -2,6 +2,7 @@
 package "moonbitlang/core/json"
 
 import {
+  "moonbitlang/core/builtin",
   "moonbitlang/core/debug",
 }
 
@@ -10,19 +11,19 @@ pub fn[T : FromJson] from_json(Json, path? : JsonPath) -> T raise JsonDecodeErro
 
 #alias(inspect, deprecated)
 #callsite(autofill(args_loc, loc))
-pub fn json_inspect(&ToJson, content? : Json, loc~ : SourceLoc, args_loc~ : ArgsLoc) -> Unit raise InspectError
+pub fn json_inspect(&@builtin.ToJson, content? : Json, loc~ : SourceLoc, args_loc~ : ArgsLoc) -> Unit raise InspectError
 
 #label_migration(max_nesting_depth, fill=false)
 pub fn parse(StringView, max_nesting_depth? : Int) -> Json raise ParseError
 
-pub fn[T : ToJson] to_json(T) -> Json
+pub fn[T : @builtin.ToJson] to_json(T) -> Json
 
 pub fn valid(StringView) -> Bool
 
 // Errors
 pub(all) suberror JsonDecodeError {
   JsonDecodeError((JsonPath, String))
-} derive(Eq, Show, ToJson, @debug.Debug)
+} derive(Eq, Show, @builtin.ToJson, @debug.Debug)
 pub fn JsonDecodeError::equal(Self, Self) -> Bool
 pub fn JsonDecodeError::to_string(Self) -> String
 
@@ -32,7 +33,7 @@ pub(all) suberror ParseError {
   InvalidNumber(Position, String)
   InvalidIdentEscape(Position)
   DepthLimitExceeded
-} derive(Eq, ToJson, @debug.Debug)
+} derive(Eq, @builtin.ToJson, @debug.Debug)
 pub fn ParseError::equal(Self, Self) -> Bool
 pub fn ParseError::to_string(Self) -> String
 pub impl Show for ParseError
@@ -44,12 +45,12 @@ pub fn JsonPath::add_key(Self, String) -> Self
 pub fn JsonPath::equal(Self, Self) -> Bool
 pub fn JsonPath::to_string(Self) -> String
 pub impl Show for JsonPath
-pub impl ToJson for JsonPath
+pub impl @builtin.ToJson for JsonPath
 
 pub(all) struct Position {
   line : Int
   column : Int
-} derive(Eq, ToJson, @debug.Debug)
+} derive(Eq, @builtin.ToJson, @debug.Debug)
 pub fn Position::equal(Self, Self) -> Bool
 
 pub struct Replacer {
@@ -80,9 +81,10 @@ pub fn Json::transform(Self, Replacer) -> Self
 pub fn Json::value(Self, String) -> Self?
 #deprecated
 pub impl Show for Json
-pub impl ToJson for Json
+pub impl @builtin.ToJson for Json
 
 // Type aliases
+pub using @builtin {trait ToJson}
 
 // Traits
 pub(open) trait FromJson {

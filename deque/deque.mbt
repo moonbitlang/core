@@ -1805,7 +1805,9 @@ pub fn Deque::join(self : Deque[String], separator : StringView) -> String {
 ///   @debug.debug_inspect(json, content="Array([Number(1), Number(2), Number(3)])")
 /// }
 /// ```
-pub impl[A : ToJson] ToJson for Deque[A] with fn to_json(self : Deque[A]) -> Json {
+pub impl[A : @json.ToJson] @json.ToJson for Deque[A] with fn to_json(
+  self : Deque[A],
+) -> Json {
   [
     for x in self => x
   ]

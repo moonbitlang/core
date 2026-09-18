@@ -61,4 +61,4 @@ pub extend Vector with Show::{output, to_string}
 ///|
 #deprecated("Use `@json.to_json` instead", skip_current_package=true)
 #doc(hidden)
-pub extend Vector with ToJson::{to_json}
+pub extend Vector with @json.ToJson::{to_json}

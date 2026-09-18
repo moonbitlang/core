@@ -10,6 +10,7 @@ import {
 // Errors
 
 // Types and methods
+#deprecated
 pub fn Error::to_json(Self) -> Json
 pub fn Error::to_string(Self) -> String
 pub impl Show for Error

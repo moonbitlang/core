@@ -87,7 +87,7 @@ test "to_json" {
   let json = @json.to_json(set)
   guard json is Array(array) else { fail("Expected JSON array") }
   for item in data {
-    assert_true(array.contains(item.to_json()))
+    assert_true(array.contains(Json(item)))
   }
   @test.assert_eq(array.length(), 3)
 }

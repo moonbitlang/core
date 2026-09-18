@@ -32,4 +32,4 @@ pub extend PriorityQueue with Show::{output, to_string}
 ///|
 #deprecated("Use `@json.to_json` instead", skip_current_package=true)
 #doc(hidden)
-pub extend PriorityQueue with ToJson::{to_json}
+pub extend PriorityQueue with @json.ToJson::{to_json}

@@ -165,7 +165,9 @@ pub impl Default for Int16 with fn default() {
 }
 
 ///|
-pub impl ToJson for Int16 with fn to_json(self : Int16) -> Json {
+// Bootstrap: json depends on this package, so use the builtin trait here.
+#warnings("-deprecated")
+pub impl @builtin.ToJson for Int16 with fn to_json(self : Int16) -> Json {
   Json::number(self.to_int().to_double())
 }
 

@@ -13,6 +13,11 @@
 // limitations under the License.
 
 ///|
+// Preserve the builtin trait identity for compiler-supported JSON derivation.
+#warnings("-deprecated")
+pub using @builtin {trait ToJson}
+
+///|
 /// Convert `value` to `Json`.
 ///
 /// This is the free-function form of the `ToJson` trait method, symmetric with

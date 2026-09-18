@@ -76,7 +76,7 @@ pub impl[K : @debug.Debug, V : @debug.Debug] @debug.Debug for VectorMap[K, V] wi
 /// An array rather than an object, because the point of this type is the order
 /// of its entries and JSON object member order is not something a reader is
 /// obliged to preserve. It also keeps non-string keys intact. `O(n)`.
-pub impl[K : ToJson, V : ToJson] ToJson for VectorMap[K, V] with fn to_json(
+pub impl[K : @json.ToJson, V : @json.ToJson] @json.ToJson for VectorMap[K, V] with fn to_json(
   self,
 ) {
   [

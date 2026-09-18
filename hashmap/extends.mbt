@@ -42,4 +42,4 @@ pub extend HashMap with Eq::{not_equal}
 ///|
 #deprecated("Use `@json.to_json` instead", skip_current_package=true)
 #doc(hidden)
-pub extend HashMap with ToJson::{to_json}
+pub extend HashMap with @json.ToJson::{to_json}
