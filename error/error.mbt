@@ -23,12 +23,6 @@ pub impl Show for Error with fn to_string(self) {
 
 ///|
 /// Returns the JSON representation of this error.
-#deprecated("Use `Json(value)` instead", skip_current_package=true)
-pub fn Error::to_json(self : Error) -> Json = "%error.to_json"
-
-///|
 // Bootstrap: json depends on this package, so use the builtin trait here.
 #warnings("-deprecated")
-pub impl @builtin.ToJson for Error with fn to_json(self) {
-  self.to_json()
-}
+pub impl @builtin.ToJson for Error with fn to_json(self) = "%error.to_json"
