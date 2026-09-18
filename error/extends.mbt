@@ -14,7 +14,13 @@
 
 ///|
 
-// --- deprecated: hidden from the generated interface ---
+// --- deprecated: compatibility methods ---
+
+///|
+#deprecated("Use `Json(value)` instead", skip_current_package=true)
+// Bootstrap: json depends on this package, so use the builtin trait here.
+#warnings("-deprecated")
+pub extend Error with @builtin.ToJson::{to_json}
 
 ///|
 #deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
