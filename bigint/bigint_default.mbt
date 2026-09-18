@@ -1074,34 +1074,6 @@ pub fn BigInt::to_string(self : BigInt, radix? : Int = 10) -> String {
 }
 
 ///|
-fn digit_from_char(x : Int) -> Int {
-  match x {
-    '0'..='9' => x - '0'
-    'A'..='Z' => x + (10 - 'A')
-    'a'..='z' => x + (10 - 'a')
-    _ => -1
-  }
-}
-
-///|
-fn char_from_digit(d : Int) -> Char {
-  if d < 10 {
-    (d + '0').unsafe_to_char()
-  } else {
-    (d - 10 + 'a').unsafe_to_char()
-  }
-}
-
-///|
-fn pow2_shift(radix : Int) -> Int? {
-  if radix >= 2 && (radix & (radix - 1)) == 0 {
-    Some(radix.ctz())
-  } else {
-    None
-  }
-}
-
-///|
 fn BigInt::to_string_radix(self : BigInt, radix : Int) -> String {
   if self.is_zero() {
     return "0"
@@ -1216,8 +1188,8 @@ fn BigInt::from_string_radix(input : StringView, radix : Int) -> BigInt raise {
       }
       let base = BigInt::from_int(radix)
       let acc = for i in start..<len; acc = zero {
-        let digit = digit_from_char(input.unsafe_get(i).to_int())
-        if digit < 0 || digit >= radix {
+        guard digit_from_char(input.unsafe_get(i).to_int()) is Some(digit) &&
+          digit < radix else {
           syntax_err()
         }
         continue acc * base + BigInt::from_int(digit)
@@ -1255,8 +1227,8 @@ fn BigInt::from_string_radix_pow2(
     if first >= len {
       break first
     }
-    let digit = digit_from_char(input.unsafe_get(first).to_int())
-    if digit < 0 || digit >= radix {
+    guard digit_from_char(input.unsafe_get(first).to_int()) is Some(digit) &&
+      digit < radix else {
       syntax_err()
     }
     if digit != 0 {
@@ -1272,8 +1244,8 @@ fn BigInt::from_string_radix_pow2(
   let b_len = (total_bits + RADIX_BIT_LEN - 1) / RADIX_BIT_LEN
   let limbs = FixedArray::make(b_len, 0U)
   for i in len>..first; bit_pos = 0 {
-    let digit = digit_from_char(input.unsafe_get(i).to_int())
-    if digit < 0 || digit >= radix {
+    guard digit_from_char(input.unsafe_get(i).to_int()) is Some(digit) &&
+      digit < radix else {
       syntax_err()
     }
     let limb_index = bit_pos / RADIX_BIT_LEN
