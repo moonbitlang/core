@@ -229,6 +229,12 @@ pub(open) trait ToJson {
 }
 
 ///|
+/// Useful for json interpolation
+pub impl ToJson for Json with fn to_json(self) {
+  self
+}
+
+///|
 pub impl ToJson for Bool with fn to_json(self : Bool) -> Json {
   if self {
     true

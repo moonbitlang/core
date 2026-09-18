@@ -84,12 +84,18 @@ test "need_escape SIMD agrees with scalar across all code units" {
 }
 
 ///|
-test "Json stringify and transform are available inside builtin" {
+test "Json methods and conversion are available inside builtin" {
   let value : Json = {
     "name": "hello",
     "secret": true,
     "items": [{ "secret": false, "n": 2 }],
   }
+  inspect(
+    Json(value).stringify(),
+    content=(
+      #|{"name":"hello","secret":true,"items":[{"secret":false,"n":2}]}
+    ),
+  )
   let replacer = Replacer::exclude(["secret"])
   inspect(
     value.stringify(replacer~),

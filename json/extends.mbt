@@ -43,16 +43,6 @@ pub extend Position with Eq::{equal}
 pub extend Json with FromJson::{from_json}
 
 ///|
-#deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
-#doc(hidden)
-pub extend Json with Show::{to_string, output}
-
-///|
-#deprecated("Use `@json.to_json` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Json with ToJson::{to_json}
-
-///|
 #deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
 #doc(hidden)
 pub extend JsonDecodeError with @debug.Debug::{to_repr}

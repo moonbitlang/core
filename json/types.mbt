@@ -47,31 +47,3 @@ pub impl Show for ParseError with fn output(self, logger) {
         $|Depth limit exceeded, please increase the max_nesting_depth parameter
   }
 }
-
-///|
-#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
-pub impl Show for Json
-
-///|
-#warnings("-deprecated")
-pub impl Show for Json with fn output(self, logger) {
-  match self {
-    Null => logger <+ "Null"
-    True => logger <+ "True"
-    False => logger <+ "False"
-    Number(n, repr~) => {
-      fn write_contents(cb : &Logger) -> Unit {
-        Show::output(n, cb)
-        if repr is Some(repr) {
-          cb.write_string(", repr=Some(")
-          Show::output(repr, cb)
-          cb.write_string(")")
-        }
-      }
-      logger <+ "Number(\{cb => write_contents(cb)})"
-    }
-    String(s) => logger <+ "String(\{cb => Show::output(s, cb)})"
-    Array(a) => logger <+ "Array(\{cb => Show::output(a, cb)})"
-    Object(o) => logger <+ "Object(\{cb => Show::output(o, cb)})"
-  }
-}

@@ -14,7 +14,7 @@
 
 // Black-box tests covering json paths the existing suites miss: zero / negative
 // integer lexing, the "disguised" fast-path for large exponents, unterminated
-// escapes, nesting-depth limits, and the `Show` instance for `Json`.
+// escapes, and nesting-depth limits.
 
 ///|
 /// Whether parsing `s` raises a `ParseError`. The match is exhaustive over the
@@ -132,30 +132,4 @@ test "Int64 and UInt64 from_json reject non-numeric strings" {
     JsonDecodeError(_) => true
   }
   inspect(u64, content="true")
-}
-
-///|
-/// Render a `Json` through its (deprecated) `Show` instance.
-#warnings("-deprecated")
-fn show_json(j : Json) -> String {
-  j.to_string()
-}
-
-///|
-test "Show instance renders every Json shape" {
-  inspect(show_json(@json.parse("null")), content="Null")
-  inspect(show_json(@json.parse("true")), content="True")
-  inspect(show_json(@json.parse("false")), content="False")
-  inspect(show_json(@json.parse("\"hi\"")), content="String(hi)")
-  inspect(
-    show_json(@json.parse("[1, 2]")),
-    content="Array([Number(1), Number(2)])",
-  )
-  inspect(
-    show_json(@json.parse("{\"a\": 1}")),
-    content="Object({a: Number(1)})",
-  )
-  // a Number carrying a repr renders the repr too
-  let big = @json.parse("123456789012345678901234567890")
-  inspect(show_json(big).contains("repr="), content="true")
 }

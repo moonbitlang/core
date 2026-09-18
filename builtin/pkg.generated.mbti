@@ -376,6 +376,7 @@ pub fn Json::stringify(Self, escape_slash? : Bool, indent? : Int, replacer? : Re
 pub fn Json::transform(Self, Replacer) -> Self
 pub impl Default for Json
 pub impl Eq for Json
+pub impl ToJson for Json
 
 type Map[K, V]
 #alias(from_array)

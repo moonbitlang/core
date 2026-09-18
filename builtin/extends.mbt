@@ -1094,6 +1094,11 @@ pub extend Json with Default::{default}
 pub extend Json with Eq::{not_equal}
 
 ///|
+#deprecated("Use `@json.to_json` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Json with ToJson::{to_json}
+
+///|
 #deprecated("Use `Default::default` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Map with Default::{default}
