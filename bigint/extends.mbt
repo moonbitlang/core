@@ -60,7 +60,7 @@ pub extend BigInt with Sub::{sub}
 // callers (builtin/json tests); deprecating it would break `--deny-warn`.
 
 ///|
-pub extend BigInt with ToJson::{to_json}
+pub extend BigInt with @json.ToJson::{to_json}
 
 // --- deprecated: hidden from the generated interface ---
 

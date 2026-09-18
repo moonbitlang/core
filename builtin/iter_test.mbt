@@ -1209,7 +1209,7 @@ test "Iter::iter2" {
 ///|
 test "Iter::to_json and any on empty" {
   let iter = [|1, 2, 3|]
-  @json.json_inspect(ToJson::to_json(iter), content=[1, 2, 3])
+  @json.json_inspect(@json.ToJson::to_json(iter), content=[1, 2, 3])
   let empty : Iter[Int] = [||]
   inspect(empty.any(_ => true), content="false")
 }

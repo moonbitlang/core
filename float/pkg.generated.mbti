@@ -64,7 +64,6 @@ pub fn Float::sub(Float, Float) -> Float
 pub fn Float::to_be_bytes(Float) -> Bytes
 pub fn Float::to_double(Float) -> Double
 pub fn Float::to_int(Float) -> Int
-pub fn Float::to_json(Float) -> Json
 pub fn Float::to_le_bytes(Float) -> Bytes
 pub fn Float::to_string(Float) -> String
 #as_free_fn

@@ -13,18 +13,20 @@
 // limitations under the License.
 
 ///|
+// derive(ToJson) currently emits a deprecated String::to_json call.
+#warnings("-deprecated")
 priv enum Expr {
   Add(Expr, Expr)
   Sub(Expr, Expr)
   Mul(Expr, Expr)
   Div(Expr, Expr)
   Val(String)
-} derive(ToJson, FromJson, Debug, Eq)
+} derive(@json.ToJson, @json.FromJson, Debug, Eq)
 
 ///|
 test {
   let e = Expr::Add(Val("x"), Val("y"))
-  let ej = ToJson::to_json(e)
+  let ej = @json.ToJson::to_json(e)
   inspect(
     ej.stringify(),
     content=(

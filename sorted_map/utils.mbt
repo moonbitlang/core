@@ -65,7 +65,9 @@ pub impl[K : Show, V : Show] Show for SortedMap[K, V] with fn output(
 }
 
 ///|
-pub impl[K : Show, V : ToJson] ToJson for SortedMap[K, V] with fn to_json(self) {
+pub impl[K : Show, V : @json.ToJson] @json.ToJson for SortedMap[K, V] with fn to_json(
+  self,
+) {
   Json::object(
     Map(
       capacity=self.length(),

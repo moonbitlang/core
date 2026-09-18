@@ -17,7 +17,7 @@ let stringify_escape_bench_count = 2048
 
 ///|
 fn make_stringify_escape_bench_array(value : String) -> Json {
-  Array::makei(stringify_escape_bench_count, i => value + i.to_string()).to_json()
+  Json(Array::makei(stringify_escape_bench_count, i => value + i.to_string()))
 }
 
 ///|

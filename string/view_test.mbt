@@ -630,7 +630,7 @@ test "make" {
 test "to_json" {
   let v = "hello".exact_view(start=1, end=4)
   debug_inspect(
-    v.to_json(),
+    Json(v),
     content=(
       #|String("ell")
     ),

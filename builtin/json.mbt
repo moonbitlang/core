@@ -224,6 +224,7 @@ pub fn[T : ToJson] Json::Json(value : T) -> Json {
 
 ///|
 /// Trait for types that can be converted to `Json`
+#deprecated("Use `@json.ToJson` instead", skip_current_package=true)
 pub(open) trait ToJson {
   fn to_json(Self) -> Json
 }

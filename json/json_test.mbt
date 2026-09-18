@@ -15,7 +15,7 @@
 ///|
 priv struct NestedJsonValue {
   w : Int
-} derive(ToJson)
+} derive(@json.ToJson)
 
 ///|
 test "deep access" {
@@ -308,7 +308,7 @@ test "string from and to json round trip" {
     #|  / __  /  __/ / / /_/ /  / /  / / /_/ / /_/ / / / / /_/ / / /_
     #| /_/ /_/\___/_/_/\____/  /_/  /_/\____/\____/_/ /_/_____/_/\__/
     #|
-  assert_eq(@json.from_json(greeting.to_json()), greeting)
+  assert_eq(@json.from_json(Json(greeting)), greeting)
 }
 
 ///|
@@ -339,11 +339,11 @@ test "stringify number" {
     9223372036854775807,
     9223372036854775808,
     999999999999223372036854775808,
-    @double.min_value.to_json(),
-    @double.max_value.to_json(),
-    @double.not_a_number.to_json(),
-    @double.infinity.to_json(),
-    @double.neg_infinity.to_json(),
+    Json(@double.min_value),
+    Json(@double.max_value),
+    Json(@double.not_a_number),
+    Json(@double.infinity),
+    Json(@double.neg_infinity),
   ]
   inspect(nums[0].stringify(), content="0")
   inspect(nums[1].stringify(), content="0")
@@ -619,7 +619,7 @@ test "transformer with array" {
 // Do not remove the bound or the suppression: that would silently weaken the
 // test into a plain identity check.
 #warnings("-unused_trait_bound")
-fn[A : FromJson] test_json_export(x : A) -> A {
+fn[A : @json.FromJson] test_json_export(x : A) -> A {
   x
 }
 

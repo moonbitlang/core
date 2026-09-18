@@ -658,7 +658,7 @@ pub fn[K : Hash + Eq] Set::intersection(
 }
 
 ///|
-pub impl[X : ToJson] ToJson for Set[X] with fn to_json(self) {
+pub impl[X : @json.ToJson] @json.ToJson for Set[X] with fn to_json(self) {
   let res = Array(capacity=self.size)
   for v in self {
     res.push(v.to_json())
