@@ -25,7 +25,7 @@ test "basic benchmarking" {
 
 ## Benchmark Collection
 
-Use the `T` type to collect multiple benchmarks:
+Use the `Bench` type to collect multiple benchmarks:
 
 ```mbt check
 ///|

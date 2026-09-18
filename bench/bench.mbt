@@ -24,7 +24,8 @@ fn iter_n_microseconds(inner : () -> Unit, k : Int) -> Double {
 
 ///|
 fn iter_count(name? : String, inner : () -> Unit, count : UInt) -> Summary {
-  let count = count.land(0x7FFFFFFF).reinterpret_as_int()
+  guard! count > 0 && count <= 0x7FFFFFFFU
+  let count = count.reinterpret_as_int()
   let threshold = 100000.0 // 100 ms
   let target_batch_size = for trial = 1 {
     let single_us = iter_n_microseconds(inner, trial) / trial.to_double()
@@ -49,7 +50,9 @@ fn iter_count(name? : String, inner : () -> Unit, count : UInt) -> Summary {
 }
 
 ///|
-/// Run a benchmark in batch mode
+/// Run a benchmark in batch mode.
+/// `count` must be between 1 and 2147483647 inclusive; otherwise panics
+/// before invoking the benchmark callback.
 pub fn Bench::bench(
   self : Bench,
   name? : String,
@@ -65,7 +68,9 @@ pub fn Bench::bench(
 }
 
 ///|
-/// Run a benchmark and return its summary
+/// Run a benchmark and return its summary.
+/// `count` must be between 1 and 2147483647 inclusive; otherwise panics
+/// before invoking the benchmark callback.
 pub fn single_bench(
   name? : String,
   f : () -> Unit,
