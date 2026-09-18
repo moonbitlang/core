@@ -18,6 +18,7 @@
 
 ///|
 #deprecated("Use `Json(value)` instead", skip_current_package=true)
+#doc(hidden)
 // Bootstrap: json depends on this package, so use the builtin trait here.
 #warnings("-deprecated")
 pub extend Error with @builtin.ToJson::{to_json}
