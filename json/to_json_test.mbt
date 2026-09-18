@@ -213,7 +213,7 @@ test "Json constructor converts maps" {
 priv struct Opt {
   x : Int?
   t : Int??
-} derive(ToJson, @json.FromJson, Eq)
+} derive(@json.ToJson, @json.FromJson, Eq)
 
 ///|
 test "Option::to_json" {
@@ -234,7 +234,7 @@ test "optional field" {
     { x: None, t: Some(None), },
   ]
   inspect(
-    ToJson::to_json(opt).stringify(),
+    @json.ToJson::to_json(opt).stringify(),
     content=(
       #|[{"x":42,"t":[42]},{},{"t":null}]
     ),
@@ -244,40 +244,43 @@ test "optional field" {
 ///|
 test "optional field round trip" {
   let opt = { x: Some(42), t: Some(Some(42)), }
-  assert_true(@json.from_json(ToJson::to_json(opt)) == opt)
+  assert_true(@json.from_json(@json.ToJson::to_json(opt)) == opt)
   let opt = { x: None, t: None, }
-  assert_true(@json.from_json(ToJson::to_json(opt)) == opt)
+  assert_true(@json.from_json(@json.ToJson::to_json(opt)) == opt)
   let opt = { x: None, t: Some(None), }
-  assert_true(@json.from_json(ToJson::to_json(opt)) == opt)
+  assert_true(@json.from_json(@json.ToJson::to_json(opt)) == opt)
 }
 
 ///|
 test "Tuple::to_json" {
   let tuple = (0, 1)
-  debug_inspect(ToJson::to_json(tuple), content="Array([Number(0), Number(1)])")
+  debug_inspect(
+    @json.ToJson::to_json(tuple),
+    content="Array([Number(0), Number(1)])",
+  )
   let tuple = (0, 1, 2)
   debug_inspect(
-    ToJson::to_json(tuple),
+    @json.ToJson::to_json(tuple),
     content="Array([Number(0), Number(1), Number(2)])",
   )
   let tuple = (0, 1, 2, 3)
   debug_inspect(
-    ToJson::to_json(tuple),
+    @json.ToJson::to_json(tuple),
     content="Array([Number(0), Number(1), Number(2), Number(3)])",
   )
   let tuple = (0, 1, 2, 3, 4)
   debug_inspect(
-    ToJson::to_json(tuple),
+    @json.ToJson::to_json(tuple),
     content="Array([Number(0), Number(1), Number(2), Number(3), Number(4)])",
   )
   let tuple = (0, 1, 2, 3, 4, 5)
   debug_inspect(
-    ToJson::to_json(tuple),
+    @json.ToJson::to_json(tuple),
     content="Array([Number(0), Number(1), Number(2), Number(3), Number(4), Number(5)])",
   )
   let tuple = (0, 1, 2, 3, 4, 5, 6)
   debug_inspect(
-    ToJson::to_json(tuple),
+    @json.ToJson::to_json(tuple),
     content=(
       #|Array(
       #|  [
@@ -294,7 +297,7 @@ test "Tuple::to_json" {
   )
   let tuple = (0, 1, 2, 3, 4, 5, 6, 7)
   debug_inspect(
-    ToJson::to_json(tuple),
+    @json.ToJson::to_json(tuple),
     content=(
       #|Array(
       #|  [
@@ -312,7 +315,7 @@ test "Tuple::to_json" {
   )
   let tuple = (0, 1, 2, 3, 4, 5, 6, 7, 8)
   debug_inspect(
-    ToJson::to_json(tuple),
+    @json.ToJson::to_json(tuple),
     content=(
       #|Array(
       #|  [
@@ -331,7 +334,7 @@ test "Tuple::to_json" {
   )
   let tuple = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
   debug_inspect(
-    ToJson::to_json(tuple),
+    @json.ToJson::to_json(tuple),
     content=(
       #|Array(
       #|  [
@@ -351,7 +354,7 @@ test "Tuple::to_json" {
   )
   let tuple = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
   debug_inspect(
-    ToJson::to_json(tuple),
+    @json.ToJson::to_json(tuple),
     content=(
       #|Array(
       #|  [
@@ -372,7 +375,7 @@ test "Tuple::to_json" {
   )
   let tuple = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
   debug_inspect(
-    ToJson::to_json(tuple),
+    @json.ToJson::to_json(tuple),
     content=(
       #|Array(
       #|  [
@@ -394,7 +397,7 @@ test "Tuple::to_json" {
   )
   let tuple = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
   debug_inspect(
-    ToJson::to_json(tuple),
+    @json.ToJson::to_json(tuple),
     content=(
       #|Array(
       #|  [
@@ -417,7 +420,7 @@ test "Tuple::to_json" {
   )
   let tuple = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13)
   debug_inspect(
-    ToJson::to_json(tuple),
+    @json.ToJson::to_json(tuple),
     content=(
       #|Array(
       #|  [
@@ -441,7 +444,7 @@ test "Tuple::to_json" {
   )
   let tuple = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14)
   debug_inspect(
-    ToJson::to_json(tuple),
+    @json.ToJson::to_json(tuple),
     content=(
       #|Array(
       #|  [
@@ -466,7 +469,7 @@ test "Tuple::to_json" {
   )
   let tuple = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
   debug_inspect(
-    ToJson::to_json(tuple),
+    @json.ToJson::to_json(tuple),
     content=(
       #|Array(
       #|  [

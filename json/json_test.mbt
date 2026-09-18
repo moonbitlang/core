@@ -15,7 +15,7 @@
 ///|
 priv struct NestedJsonValue {
   w : Int
-} derive(ToJson)
+} derive(@json.ToJson)
 
 ///|
 test "deep access" {
@@ -619,7 +619,7 @@ test "transformer with array" {
 // Do not remove the bound or the suppression: that would silently weaken the
 // test into a plain identity check.
 #warnings("-unused_trait_bound")
-fn[A : FromJson] test_json_export(x : A) -> A {
+fn[A : @json.FromJson] test_json_export(x : A) -> A {
   x
 }
 
