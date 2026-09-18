@@ -2,6 +2,7 @@
 package "moonbitlang/core/json"
 
 import {
+  "moonbitlang/core/builtin",
   "moonbitlang/core/debug",
 }
 
@@ -52,14 +53,6 @@ pub(all) struct Position {
 } derive(Eq, ToJson, @debug.Debug)
 pub fn Position::equal(Self, Self) -> Bool
 
-pub struct Replacer {
-  // private fields
-} derive(@debug.Debug)
-#alias(new, deprecated)
-pub fn Replacer::Replacer((String, Json) -> Json?) -> Self
-pub fn Replacer::exclude(ArrayView[StringView]) -> Self
-pub fn Replacer::keep(ArrayView[StringView]) -> Self
-
 #deprecated
 pub fn Json::as_array(Self) -> Array[Self]?
 #deprecated
@@ -74,8 +67,6 @@ pub fn Json::as_object(Self) -> Map[String, Self]?
 pub fn Json::as_string(Self) -> String?
 #deprecated
 pub fn Json::item(Self, Int) -> Self?
-pub fn Json::stringify(Self, escape_slash? : Bool, indent? : Int, replacer? : Replacer) -> String
-pub fn Json::transform(Self, Replacer) -> Self
 #deprecated
 pub fn Json::value(Self, String) -> Self?
 #deprecated
@@ -83,6 +74,7 @@ pub impl Show for Json
 pub impl ToJson for Json
 
 // Type aliases
+pub using @builtin {type Replacer}
 
 // Traits
 pub(open) trait FromJson {

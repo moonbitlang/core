@@ -372,6 +372,8 @@ pub fn Json::null() -> Self
 pub fn Json::number(Double, repr? : String) -> Self
 pub fn Json::object(Map[String, Self]) -> Self
 pub fn Json::string(String) -> Self
+pub fn Json::stringify(Self, escape_slash? : Bool, indent? : Int, replacer? : Replacer) -> String
+pub fn Json::transform(Self, Replacer) -> Self
 pub impl Default for Json
 pub impl Eq for Json
 
@@ -462,6 +464,14 @@ pub impl[T : Eq] Eq for MutArrayView[T]
 pub impl[A : Hash] Hash for MutArrayView[A]
 #deprecated
 pub impl[X : Show] Show for MutArrayView[X]
+
+pub struct Replacer {
+  // private fields
+}
+#alias(new, deprecated)
+pub fn Replacer::Replacer((String, Json) -> Json?) -> Self
+pub fn Replacer::exclude(ArrayView[StringView]) -> Self
+pub fn Replacer::keep(ArrayView[StringView]) -> Self
 
 pub(all) type SourceLoc
 pub fn SourceLoc::to_json_string(Self) -> String

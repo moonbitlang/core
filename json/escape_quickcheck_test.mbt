@@ -12,8 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Property-based tests for the `Json::stringify` escape fast path: the SIMD
-// `need_escape` must agree with the scalar reference, and `escape` must agree
+// Property-based tests for `Json::stringify`: string escaping must agree
 // with a straightforward per-code-unit model and with the real parser,
 // including at SIMD block boundaries and on surrogate halves.
 
@@ -51,7 +50,7 @@ fn adversarial_string(seeds : Array[Int], allow_surrogates~ : Bool) -> String {
 }
 
 ///|
-/// Per-code-unit model of `escape`, written directly from the JSON string
+/// Per-code-unit model of escaping, written directly from the JSON string
 /// grammar with no fast path and no SIMD.
 fn model_escape(str : String, escape_slash : Bool) -> String {
   let buf = StringBuilder(size_hint=str.length())
@@ -78,37 +77,15 @@ fn model_escape(str : String, escape_slash : Bool) -> String {
 }
 
 ///|
-test "quickcheck: need_escape agrees with the scalar reference" {
-  @quickcheck.check(count=300, (input : (Array[Int], Bool)) => {
-    let (seeds, escape_slash) = input
-    let str = adversarial_string(seeds, allow_surrogates=true)
-    need_escape(str, escape_slash) ==
-    need_escape_scalar(str, escape_slash, 0, str.length())
-  })
-  // Also over ordinary ASCII-biased Unicode strings, which cover other
-  // lengths and multi-code-unit characters.
-  @quickcheck.check(count=300, (input : (String, Bool)) => {
-    let (str, escape_slash) = input
-    need_escape(str, escape_slash) ==
-    need_escape_scalar(str, escape_slash, 0, str.length())
-  })
-}
-
-///|
-test "quickcheck: write_escaped matches the per-code-unit model" {
+test "quickcheck: stringify escaping matches the per-code-unit model" {
   fn actual(str : String, escape_slash : Bool) -> String {
-    let buf = StringBuilder()
-    write_escaped(buf, str, escape_slash~)
-    buf.to_string()
+    let quoted = Json::string(str).stringify(escape_slash~)
+    quoted[1:quoted.length() - 1].to_owned()
   }
   @quickcheck.check(count=300, (input : (Array[Int], Bool)) => {
     let (seeds, escape_slash) = input
     let str = adversarial_string(seeds, allow_surrogates=true)
-    guard actual(str, escape_slash) == model_escape(str, escape_slash) else {
-      return false
-    }
-    (actual(str, escape_slash) == str) ==
-    !need_escape_scalar(str, escape_slash, 0, str.length())
+    actual(str, escape_slash) == model_escape(str, escape_slash)
   })
   @quickcheck.check(count=300, (input : (String, Bool)) => {
     let (str, escape_slash) = input
@@ -124,41 +101,6 @@ test "quickcheck: stringify/parse roundtrip on adversarial strings" {
   @quickcheck.check(count=300, (input : (Array[Int], Bool)) => {
     let (seeds, escape_slash) = input
     let json = Json(adversarial_string(seeds, allow_surrogates=false))
-    parse(json.stringify(escape_slash~)) == json
+    @json.parse(json.stringify(escape_slash~)) == json
   })
-}
-
-///|
-/// Exhaustively places each escapable code unit at every position of an
-/// otherwise clean string, for every length spanning several 8-unit SIMD
-/// blocks, so block starts, block interiors, and the scalar tail are all
-/// covered for both `escape_slash` values.
-test "need_escape boundary sweep" {
-  let specials : Array[UInt16] = ['"', '\\', '\n', 0x00, 0x1F]
-  fn place(len : Int, pos : Int, special : UInt16) -> String {
-    let buf = StringBuilder(size_hint=len)
-    for i in 0..<len {
-      if i == pos {
-        buf.write_char(special.unsafe_to_char())
-      } else {
-        buf.write_char('a')
-      }
-    }
-    buf.to_string()
-  }
-
-  for len in 0..<=24 {
-    let clean = "a".repeat(len)
-    assert_false(need_escape(clean, false))
-    assert_false(need_escape(clean, true))
-    for pos in 0..<len {
-      for special in specials {
-        assert_true(need_escape(place(len, pos, special), false))
-        assert_true(need_escape(place(len, pos, special), true))
-      }
-      let with_slash = place(len, pos, '/')
-      assert_false(need_escape(with_slash, false))
-      assert_true(need_escape(with_slash, true))
-    }
-  }
 }

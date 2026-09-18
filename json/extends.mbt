@@ -126,8 +126,3 @@ pub extend Position with Eq::{not_equal}
 #deprecated("Use `@json.to_json` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Position with ToJson::{to_json}
-
-///|
-#deprecated("Use `Debug::to_repr` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Replacer with @debug.Debug::{to_repr}

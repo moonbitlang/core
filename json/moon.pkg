@@ -5,7 +5,6 @@ import {
   "moonbitlang/core/float",
   "moonbitlang/core/internal/strconv" @internal/strconv,
   "moonbitlang/core/buffer",
-  "moonbitlang/core/v128", // Used only by the native and wasm SIMD implementation.
 }
 
 import {
@@ -15,7 +14,3 @@ import {
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/quickcheck/shrink",
 } for "test"
-
-import {
-  "moonbitlang/core/quickcheck",
-} for "wbtest"

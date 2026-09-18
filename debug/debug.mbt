@@ -187,6 +187,12 @@ pub impl Debug for Json with fn to_repr(self) {
 }
 
 ///|
+pub impl Debug for @builtin.Replacer with fn to_repr(_) {
+  // Preserve the derived representation without exposing the private callback.
+  Repr::record({ "f": Repr::opaque_("function", Repr::omitted()) })
+}
+
+///|
 pub impl Debug for SourceLoc with fn to_repr(self) {
   Repr::opaque_("SourceLoc", Repr::string(self.to_string()))
 }
