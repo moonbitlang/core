@@ -302,7 +302,9 @@ test "tuple failure" {
   )
   let u = ((1, 2), (3, 4))
   let err = expect_json_decode_error(
-    () => ignore((@json.from_json(ToJson::to_json(u)) : ((Int, Int), Int))),
+    () => {
+      ignore((@json.from_json(@json.ToJson::to_json(u)) : ((Int, Int), Int)))
+    },
     "expected tuple element error",
   )
   inspect(
