@@ -771,6 +771,7 @@ pub extend Array with Show::{to_string, output}
 
 ///|
 #deprecated("Use `Json(value)` instead", skip_current_package=true)
+#doc(hidden)
 pub extend Array with ToJson::{to_json}
 
 ///|
@@ -795,6 +796,7 @@ pub extend ArrayView with Show::{to_string, output}
 
 ///|
 #deprecated("Use `Json(value)` instead", skip_current_package=true)
+#doc(hidden)
 pub extend ArrayView with ToJson::{to_json}
 
 ///|
@@ -824,6 +826,7 @@ pub extend Bool with Show::{output}
 
 ///|
 #deprecated("Use `Json(value)` instead", skip_current_package=true)
+#doc(hidden)
 pub extend Bool with ToJson::{to_json}
 
 ///|
@@ -848,6 +851,7 @@ pub extend Byte with Show::{output}
 
 ///|
 #deprecated("Use `Json(value)` instead", skip_current_package=true)
+#doc(hidden)
 pub extend Byte with ToJson::{to_json}
 
 ///|
@@ -877,6 +881,7 @@ pub extend Bytes with Show::{output}
 
 ///|
 #deprecated("Use `Json(value)` instead", skip_current_package=true)
+#doc(hidden)
 pub extend Bytes with ToJson::{to_json}
 
 ///|
@@ -901,6 +906,7 @@ pub extend BytesView with Show::{output}
 
 ///|
 #deprecated("Use `Json(value)` instead", skip_current_package=true)
+#doc(hidden)
 pub extend BytesView with ToJson::{to_json}
 
 ///|
@@ -930,6 +936,7 @@ pub extend Char with Show::{output}
 
 ///|
 #deprecated("Use `Json(value)` instead", skip_current_package=true)
+#doc(hidden)
 pub extend Char with ToJson::{to_json}
 
 ///|
@@ -959,6 +966,7 @@ pub extend Double with Show::{output}
 
 ///|
 #deprecated("Use `Json(value)` instead", skip_current_package=true)
+#doc(hidden)
 pub extend Double with ToJson::{to_json}
 
 ///|
@@ -968,6 +976,7 @@ pub extend Failure with Show::{output}
 
 ///|
 #deprecated("Use `Json(value)` instead", skip_current_package=true)
+#doc(hidden)
 pub extend Failure with ToJson::{to_json}
 
 ///|
@@ -997,6 +1006,7 @@ pub extend FixedArray with Show::{to_string, output}
 
 ///|
 #deprecated("Use `Json(value)` instead", skip_current_package=true)
+#doc(hidden)
 pub extend FixedArray with ToJson::{to_json}
 
 ///|
@@ -1026,6 +1036,7 @@ pub extend Int with Show::{output}
 
 ///|
 #deprecated("Use `Json(value)` instead", skip_current_package=true)
+#doc(hidden)
 pub extend Int with ToJson::{to_json}
 
 ///|
@@ -1055,6 +1066,7 @@ pub extend Int64 with Show::{output}
 
 ///|
 #deprecated("Use `Json(value)` instead", skip_current_package=true)
+#doc(hidden)
 pub extend Int64 with ToJson::{to_json}
 
 ///|
@@ -1064,6 +1076,7 @@ pub extend Iter with Show::{to_string, output}
 
 ///|
 #deprecated("Use `Json(value)` instead", skip_current_package=true)
+#doc(hidden)
 pub extend Iter with ToJson::{to_json}
 
 ///|
@@ -1093,6 +1106,7 @@ pub extend Map with Show::{to_string, output}
 
 ///|
 #deprecated("Use `Json(value)` instead", skip_current_package=true)
+#doc(hidden)
 pub extend Map with ToJson::{to_json}
 
 ///|
@@ -1142,6 +1156,7 @@ pub extend Option with Show::{output}
 
 ///|
 #deprecated("Use `Json(value)` instead", skip_current_package=true)
+#doc(hidden)
 pub extend Option with ToJson::{to_json}
 
 ///|
@@ -1171,6 +1186,7 @@ pub extend ReadOnlyArray with Show::{to_string, output}
 
 ///|
 #deprecated("Use `Json(value)` instead", skip_current_package=true)
+#doc(hidden)
 pub extend ReadOnlyArray with ToJson::{to_json}
 
 ///|
@@ -1195,6 +1211,7 @@ pub extend Result with Show::{to_string, output}
 
 ///|
 #deprecated("Use `Json(value)` instead", skip_current_package=true)
+#doc(hidden)
 pub extend Result with ToJson::{to_json}
 
 ///|
@@ -1229,6 +1246,7 @@ pub extend String with Show::{output}
 
 ///|
 #deprecated("Use `Json(value)` instead", skip_current_package=true)
+#doc(hidden)
 pub extend String with ToJson::{to_json}
 
 ///|
@@ -1263,6 +1281,7 @@ pub extend StringView with Show::{output}
 
 ///|
 #deprecated("Use `Json(value)` instead", skip_current_package=true)
+#doc(hidden)
 pub extend StringView with ToJson::{to_json}
 
 ///|
@@ -1617,6 +1636,7 @@ pub extend UInt with Show::{output}
 
 ///|
 #deprecated("Use `Json(value)` instead", skip_current_package=true)
+#doc(hidden)
 pub extend UInt with ToJson::{to_json}
 
 ///|
@@ -1646,6 +1666,7 @@ pub extend UInt16 with Show::{output}
 
 ///|
 #deprecated("Use `Json(value)` instead", skip_current_package=true)
+#doc(hidden)
 pub extend UInt16 with ToJson::{to_json}
 
 ///|
@@ -1675,6 +1696,7 @@ pub extend UInt64 with Show::{output}
 
 ///|
 #deprecated("Use `Json(value)` instead", skip_current_package=true)
+#doc(hidden)
 pub extend UInt64 with ToJson::{to_json}
 
 ///|
@@ -1704,4 +1726,5 @@ pub extend Unit with Show::{output}
 
 ///|
 #deprecated("Use `Json(value)` instead", skip_current_package=true)
+#doc(hidden)
 pub extend Unit with ToJson::{to_json}
