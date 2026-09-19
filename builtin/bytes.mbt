@@ -407,6 +407,9 @@ pub impl Compare for Bytes with fn compare(self, other) {
 /// * `array` : An array of bytes to be converted.
 ///
 /// Returns a new bytes sequence containing the same bytes as the input array.
+/// Subsequent mutations to the input do not affect the returned bytes.
+/// On native and linear-memory Wasm, the backing storage may be reused when it
+/// is exclusively owned and the view covers the entire buffer.
 ///
 /// Example:
 ///
@@ -434,6 +437,64 @@ pub impl Compare for Bytes with fn compare(self, other) {
 /// }
 /// ```
 // TODO: marked as intrinsic, inline if it is constant
+#cfg(any(target="native", target="wasm"))
+#alias(of, deprecated)
+#owned(arr)
+pub fn Bytes::from_array(arr : ArrayView[Byte]) -> Bytes {
+  let len = arr.length()
+  if len == 0 {
+    return []
+  }
+  let start = arr.start()
+  let buf = arr.buf()
+  // Consume the view before checking its buffer, so it does not keep an extra
+  // reference alive. Any surviving array or view must still force a copy.
+  if start == 0 && len == buf.length() && unsafe_is_unique_ref(buf) {
+    return buffer_to_fixedarray(buf).unsafe_reinterpret_as_bytes()
+  }
+  let result = UninitializedArray::unsafe_make_and_blit(buf, len, start, 0, len)
+  buffer_to_fixedarray(result).unsafe_reinterpret_as_bytes()
+}
+
+///|
+/// Creates a new bytes sequence from a byte array.
+///
+/// Parameters:
+///
+/// * `array` : An array of bytes to be converted.
+///
+/// Returns a new bytes sequence containing the same bytes as the input array.
+/// Subsequent mutations to the input do not affect the returned bytes.
+/// On native and linear-memory Wasm, the backing storage may be reused when it
+/// is exclusively owned and the view covers the entire buffer.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let arr : ReadOnlyArray[Byte] = [b'h', b'i']
+///   let bytes = Bytes::from_array(arr)
+///   inspect(
+///     bytes,
+///     content=(
+///       #|b"hi"
+///     ),
+///   )
+/// }
+///
+/// test {
+///   let arr : FixedArray[Byte] = [b'h', b'e', b'l', b'l', b'o']
+///   let bytes = Bytes::from_array(arr)
+///   inspect(
+///     bytes,
+///     content=(
+///       #|b"hello"
+///     ),
+///   )
+/// }
+/// ```
+// TODO: marked as intrinsic, inline if it is constant
+#cfg(not(any(target="native", target="wasm")))
 #alias(of, deprecated)
 pub fn Bytes::from_array(arr : ArrayView[Byte]) -> Bytes {
   let len = arr.length()
