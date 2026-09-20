@@ -19,7 +19,7 @@ priv enum Expr {
   Mul(Expr, Expr)
   Div(Expr, Expr)
   Val(String)
-} derive(ToJson, FromJson, Debug, Eq)
+} derive(ToJson, @json.FromJson, Debug, Eq)
 
 ///|
 test {

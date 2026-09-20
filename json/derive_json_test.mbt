@@ -17,7 +17,7 @@ priv struct Hello[A, B] {
   fieldA : A
   fieldB : B
   data : Map[String, A]
-} derive(ToJson, FromJson, Debug, Eq)
+} derive(ToJson, @json.FromJson, Debug, Eq)
 
 ///|
 test {
