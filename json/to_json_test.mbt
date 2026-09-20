@@ -200,7 +200,7 @@ test "Map::to_json" {
 priv struct Opt {
   x : Int?
   t : Int??
-} derive(ToJson, FromJson, Eq)
+} derive(ToJson, @json.FromJson, Eq)
 
 ///|
 test "Option::to_json" {
