@@ -99,3 +99,25 @@ test "parse_bigint rejects trailing whitespace" {
     )
   }
 }
+
+///|
+test "parse_bigint rejects digits in shared radix loops" {
+  for
+    (input, base) in [
+      ("3", 3),
+      ("a", 3),
+      ("?", 3),
+      ("10?", 3),
+      ("?0", 3),
+      ("1?0", 3),
+      ("4", 4),
+      ("?", 4),
+      ("?0", 4),
+      ("1?0", 4),
+    ] {
+    assert_true(
+      @test.expect_error(() => @bigint.parse_bigint(input, base~))
+      is Failure::Failure("invalid syntax"),
+    )
+  }
+}
