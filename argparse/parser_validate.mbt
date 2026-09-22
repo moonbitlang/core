@@ -105,7 +105,7 @@ fn validate_command(
   validate_default_subcommand_policy(cmd)
   validate_help_subcommand(cmd)
   validate_version_actions(cmd)
-  let child_inherited_globals = merge_inherited_globals(
+  let child_inherited_globals = merge_global_defs(
     inherited_globals,
     collect_globals(args),
   )
@@ -164,21 +164,6 @@ fn validate_inherited_global_shadowing(
       PositionalInfo(_) => ()
     }
   }
-}
-
-///|
-fn merge_inherited_globals(
-  inherited_globals : Array[Arg],
-  globals_here : Array[Arg],
-) -> Array[Arg] {
-  let merged = inherited_globals.copy()
-  for global in globals_here {
-    match merged.search_by(arg => arg.name == global.name) {
-      Some(idx) => merged[idx] = global
-      None => merged.push(global)
-    }
-  }
-  merged
 }
 
 ///|
