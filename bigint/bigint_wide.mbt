@@ -801,7 +801,7 @@ fn BigInt::from_string_radix(input : StringView, radix : Int) -> BigInt raise {
       }
       let base = BigInt::from_int(radix)
       let acc = for i in start..<len; acc = zero {
-        guard digit_from_char(input.unsafe_get(i).to_int()) is Some(digit) &&
+        guard digit_from_char(input.unsafe_get(i)) is Some(digit) &&
           digit < radix else {
           syntax_err()
         }
@@ -831,7 +831,7 @@ fn BigInt::from_string_radix_pow2(
   }
   let mut first = start
   while first < len {
-    guard digit_from_char(input.unsafe_get(first).to_int()) is Some(digit) &&
+    guard digit_from_char(input.unsafe_get(first)) is Some(digit) &&
       digit < radix else {
       syntax_err()
     }
@@ -847,8 +847,7 @@ fn BigInt::from_string_radix_pow2(
   let limbs_len = (total_bits + RADIX_BIT_LEN - 1) / RADIX_BIT_LEN
   let limbs = FixedArray::make(limbs_len, 0UL)
   for i in len>..first; bit_pos = 0 {
-    guard digit_from_char(input.unsafe_get(i).to_int()) is Some(digit) &&
-      digit < radix else {
+    guard digit_from_char(input.unsafe_get(i)) is Some(digit) && digit < radix else {
       syntax_err()
     }
     let limb_index = bit_pos / RADIX_BIT_LEN
@@ -882,8 +881,7 @@ fn BigInt::from_string_dec(input : StringView) -> BigInt raise {
   while i < len {
     let take = minimum_int(DECIMAL_CHUNK_DIGITS, len - i)
     let (chunk, scale) = for offset in 0..<take; chunk = 0UL, scale = 1UL {
-      guard digit_from_char(input.unsafe_get(i + offset).to_int())
-        is Some(digit) &&
+      guard digit_from_char(input.unsafe_get(i + offset)) is Some(digit) &&
         digit <= 9 else {
         syntax_err()
       }

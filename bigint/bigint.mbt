@@ -383,11 +383,11 @@ pub impl @debug.Debug for BigInt with fn to_repr(self) {
 }
 
 ///|
-fn digit_from_char(x : Int) -> Int? {
+fn digit_from_char(x : UInt16) -> Int? {
   match x {
-    '0'..='9' => Some(x - '0')
-    'A'..='Z' => Some(x + (10 - 'A'))
-    'a'..='z' => Some(x + (10 - 'a'))
+    '0'..='9' => Some(x.to_int() - '0')
+    'A'..='Z' => Some(x.to_int() + (10 - 'A'))
+    'a'..='z' => Some(x.to_int() + (10 - 'a'))
     _ => None
   }
 }

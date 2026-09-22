@@ -109,8 +109,7 @@ fn BigInt::from_string_radix(str : StringView, radix : Int) -> BigInt raise {
   match pow2_shift(radix) {
     Some(shift) =>
       for i in start..<len {
-        guard digit_from_char(str.unsafe_get(i).to_int()) is Some(digit) &&
-          digit < radix else {
+        guard digit_from_char(str.unsafe_get(i)) is Some(digit) && digit < radix else {
           syntax_err()
         }
         acc = (acc << shift) | BigInt::from_int(digit)
@@ -118,8 +117,7 @@ fn BigInt::from_string_radix(str : StringView, radix : Int) -> BigInt raise {
     None => {
       let base = BigInt::from_int(radix)
       for i in start..<len {
-        guard digit_from_char(str.unsafe_get(i).to_int()) is Some(digit) &&
-          digit < radix else {
+        guard digit_from_char(str.unsafe_get(i)) is Some(digit) && digit < radix else {
           syntax_err()
         }
         acc = acc * base + BigInt::from_int(digit)
