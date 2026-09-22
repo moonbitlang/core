@@ -54,3 +54,8 @@ pub extend SortedMap with Hash::{hash_combine}
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
 pub extend SortedMap with Show::{output, to_string}
+
+///|
+#deprecated("Use `Json(value)` instead", skip_current_package=true)
+#doc(hidden)
+pub extend SortedMap with @json.ToJson::{to_json}

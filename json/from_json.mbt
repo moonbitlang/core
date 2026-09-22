@@ -14,7 +14,7 @@
 
 ///|
 /// Error type `JsonDecodeError`.
-// derive(ToJson) currently emits a deprecated String::to_json call.
+// Older compilers expand this derive through deprecated String::to_json.
 // TODO(future): `derive(Show)` is deprecated syntax — switch to `derive(Debug)`
 // or a manual `Show` implementation, then remove the deprecated_syntax suppression.
 #warnings("-deprecated_syntax-deprecated")

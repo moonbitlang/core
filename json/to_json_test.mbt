@@ -166,7 +166,7 @@ test "Char::to_json" {
 ///|
 test "BigInt::to_json" {
   debug_inspect(
-    BigInt::from_string("123456789012345678901234567890").to_json(),
+    Json(BigInt::from_string("123456789012345678901234567890")),
     content="String(\"123456789012345678901234567890\")",
   )
 }

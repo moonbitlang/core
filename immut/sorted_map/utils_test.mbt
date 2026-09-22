@@ -170,7 +170,7 @@ test "panic get with empty map" {
 test "to_json with non-empty map" {
   let map = [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
     |> @sorted_map.SortedMap
-  @json.json_inspect(map.to_json(), content={
+  @json.json_inspect(Json(map), content={
     "0": "zero",
     "1": "one",
     "2": "two",
@@ -182,14 +182,14 @@ test "to_json with non-empty map" {
 ///|
 test "to_json with empty map" {
   let map : @sorted_map.SortedMap[Int, String] = @sorted_map.new()
-  @json.json_inspect(map.to_json(), content=Json::empty_object())
+  @json.json_inspect(Json(map), content=Json::empty_object())
 }
 
 ///|
 test "from_json" {
   for
     xs in (@quickcheck.samples(20) : Array[@sorted_map.SortedMap[String, Int]]) {
-    @test.assert_eq(xs, @json.from_json(xs.to_json()))
+    @test.assert_eq(xs, @json.from_json(Json(xs)))
   }
 }
 
@@ -512,7 +512,7 @@ test "range with non-existent boundaries" {
 test "from_json free function" {
   let json : Json = { "a": 1, "b": 2 }
   let map : @sorted_map.SortedMap[String, Int] = @sorted_map.from_json(json)
-  @json.json_inspect(map.to_json(), content={ "a": 1, "b": 2 })
+  @json.json_inspect(Json(map), content={ "a": 1, "b": 2 })
 }
 
 ///|

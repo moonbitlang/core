@@ -21,7 +21,7 @@ pub(all) struct Position {
 
 ///|
 /// Error type `ParseError`.
-// derive(ToJson) currently emits a deprecated String::to_json call.
+// Older compilers expand this derive through deprecated String::to_json.
 #warnings("-deprecated")
 pub(all) suberror ParseError {
   InvalidChar(Position, Char)

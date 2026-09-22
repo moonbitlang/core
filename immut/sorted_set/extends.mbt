@@ -57,3 +57,8 @@ pub extend SortedSet with Hash::{hash_combine}
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
 pub extend SortedSet with Show::{output, to_string}
+
+///|
+#deprecated("Use `Json(value)` instead", skip_current_package=true)
+#doc(hidden)
+pub extend SortedSet with @json.ToJson::{to_json}

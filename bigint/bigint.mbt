@@ -31,7 +31,7 @@
 /// ```mbt check
 /// test {
 ///   let big = 12345678901234567890N
-///   let json = big.to_json()
+///   let json = Json(big)
 ///   @debug.debug_inspect(
 ///     json,
 ///     content=(

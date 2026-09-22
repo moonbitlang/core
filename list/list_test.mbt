@@ -681,7 +681,7 @@ test "List::to_json with empty list" {
 ///|
 test "List::from_json" {
   for xs in (@quickcheck.samples(20) : Array[@list.List[Int]]) {
-    @debug.assert_eq(xs, @json.from_json(xs.to_json()))
+    @debug.assert_eq(xs, @json.from_json(Json(xs)))
   }
 }
 

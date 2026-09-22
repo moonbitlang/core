@@ -85,7 +85,7 @@ The error package provides `Show` and `ToJson` implementations:
 
 ```mbt check
 ///|
-// derive(ToJson) currently emits a deprecated String::to_json call.
+// Older compilers expand this derive through deprecated String::to_json.
 #warnings("-deprecated")
 priv suberror MyError {
   MyError(Int)

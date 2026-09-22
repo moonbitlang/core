@@ -54,3 +54,8 @@ pub extend List with Hash::{hash_combine}
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
 pub extend List with Show::{output, to_string}
+
+///|
+#deprecated("Use `Json(value)` instead", skip_current_package=true)
+#doc(hidden)
+pub extend List with @json.ToJson::{to_json}

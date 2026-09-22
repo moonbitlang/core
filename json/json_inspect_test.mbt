@@ -30,7 +30,7 @@ priv struct P {
 } derive(@json.ToJson)
 
 ///|
-// derive(ToJson) currently emits a deprecated String::to_json call.
+// Older compilers expand this derive through deprecated String::to_json.
 #warnings("-deprecated")
 priv enum Color {
   Red

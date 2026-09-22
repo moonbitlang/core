@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-// derive(@json.ToJson) currently emits a deprecated String::to_json call.
+// Older compilers expand this derive through deprecated String::to_json.
 #warnings("-deprecated")
 priv enum Expr {
   Add(Expr, Expr)

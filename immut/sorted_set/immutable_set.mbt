@@ -982,12 +982,6 @@ pub impl[A : @json.ToJson] @json.ToJson for SortedSet[A] with fn to_json(self) {
 }
 
 ///|
-/// Convert to `json`.
-pub fn[A : @json.ToJson] SortedSet::to_json(self : SortedSet[A]) -> Json {
-  @json.ToJson::to_json(self)
-}
-
-///|
 pub impl[A : @json.FromJson + Compare] @json.FromJson for SortedSet[A] with fn from_json(
   json,
   path,

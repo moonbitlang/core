@@ -104,7 +104,6 @@ pub fn[A] List::tail(Self[A]) -> Self[A]
 pub fn[A] List::take(Self[A], Int) -> Self[A]
 pub fn[A] List::take_while(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 pub fn[A] List::to_array(Self[A]) -> Array[A]
-pub fn[A : ToJson] List::to_json(Self[A]) -> Json
 #as_free_fn
 pub fn[A, S] List::unfold((S) -> (A, S)? raise?, init~ : S) -> Self[A] raise?
 pub fn[A] List::unsafe_tail(Self[A]) -> Self[A]

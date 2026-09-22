@@ -188,7 +188,7 @@ test "quickcheck: every operation is construction-path invariant" {
     // representation-independent renderings
     guard a1.to_string() == a2.to_string() else { return false }
     guard a1.to_string(radix=16) == a2.to_string(radix=16) else { return false }
-    guard a1.to_json() == a2.to_json() else { return false }
+    guard Json(a1) == Json(a2) else { return false }
     true
   })
 }
@@ -267,7 +267,7 @@ test "quickcheck: algebraic and two's-complement laws" {
       return false
     }
     guard @bigint.BigInt::from_string(a.to_string()) == a else { return false }
-    guard @json.from_json(a.to_json()) == a else { return false }
+    guard @json.from_json(Json(a)) == a else { return false }
     true
   })
 }
