@@ -13,20 +13,6 @@
 // limitations under the License.
 
 ///|
-fn[K : Show, V : Show] HashMap::_debug_entries(self : HashMap[K, V]) -> String {
-  for s = "", i = 0; i < self.entries.length(); {
-    let s = if i > 0 { s + "," } else { s }
-    match self.entries[i] {
-      None => continue s + "_", i + 1
-      Some({ psl, key, value, .. }) =>
-        continue s + "(\{psl},\{key},\{value})", i + 1
-    }
-  } nobreak {
-    s
-  }
-}
-
-///|
 /// Removes all key-value pairs from the map while retaining the allocated
 /// capacity. After calling this method, the size of the map will be zero but the
 /// capacity remains unchanged.
