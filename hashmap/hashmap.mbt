@@ -952,10 +952,6 @@ test "set" {
   m.set("c", 1)
   m.set("d", 1)
   inspect(m.length(), content="7")
-  // inspect(
-  //   m._debug_entries(),
-  //   content="_,(0,a,1),(1,b,1),(2,c,1),(3,d,1),(3,bc,2),(4,cd,2),(4,abc,3),_,_,_,_,_,_,_,_",
-  // )
 }
 
 ///|
@@ -969,10 +965,6 @@ test "remove" {
   m.set("abcdef", 6)
   m.remove("ab")
   inspect(m.length(), content="5")
-  // inspect(
-  //   m._debug_entries(),
-  //   content="_,(0,a,1),(0,bc,2),(1,cd,2),(1,abc,3),_,(0,abcdef,6),_,_,_,_,_,_,_,_,_",
-  // )
 }
 
 ///|
@@ -983,7 +975,6 @@ test "remove_unexist_key" {
   m.set("abc", 3)
   m.remove("d")
   inspect(m.length(), content="3")
-  // inspect(m._debug_entries(), content="_,(0,a,1),(0,ab,2),(0,abc,3),_,_,_,_")
 }
 
 ///|
@@ -1026,11 +1017,6 @@ test "grow" {
   @debug.debug_inspect(m.get("Python"), content="Some(6)")
   @debug.debug_inspect(m.get("Haskell"), content="Some(7)")
   @debug.debug_inspect(m.get("Rescript"), content="Some(8)")
-  // Only for debugging
-  // inspect(
-  //   m._debug_entries(),
-  //   content="_,(0,C,1),(0,Go,2),(0,C++,3),(0,Java,4),(0,Scala,5),(1,Julia,5),(2,Cobol,5),(2,Python,6),(2,Haskell,7),(2,Rescript,8),_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_",
-  // )
 }
 
 ///|
@@ -1042,7 +1028,6 @@ test "_[_]" {
   inspect(m["a"], content="1")
   inspect(m["b"], content="1")
   inspect(m["cc"], content="2")
-  // inspect(m._debug_entries(), content="_,(0,a,1),(1,b,1),(1,cc,2),_,_,_,_")
 }
 
 ///|

@@ -525,19 +525,6 @@ fn calc_grow_threshold(capacity : Int) -> Int {
 }
 
 ///|
-fn[K : Show] HashSet::_debug_entries(self : HashSet[K]) -> String {
-  for i in 0..<self.entries.length(); s = "" {
-    let s = if i > 0 { s + "," } else { s }
-    continue match self.entries[i] {
-        None => s + "_"
-        Some({ psl, key, .. }) => s + "(\{psl},\{key})"
-      }
-  } nobreak {
-    s
-  }
-}
-
-///|
 priv struct MyString(String) derive(Eq, @debug.Debug)
 
 ///|
@@ -563,10 +550,6 @@ test "set" {
   m.add("c")
   m.add("d")
   inspect(m.size, content="7")
-  // assert_eq(
-  //   m._debug_entries(),
-  //   "_,(0,a),(1,b),(2,c),(3,d),(3,bc),(4,cd),(4,abc),_,_,_,_,_,_,_,_",
-  // )
 }
 
 ///|
@@ -584,10 +567,6 @@ test "remove" {
   m.add("abcdef" |> i)
   m.remove("ab" |> i)
   inspect(m.length(), content="5")
-  // inspect(
-  //   m._debug_entries(),
-  //   content="_,(0,a),(0,bc),(1,cd),(1,abc),_,(0,abcdef),_",
-  // )
 }
 
 ///|
@@ -602,7 +581,6 @@ test "remove_unexist_key" {
   m.add("abc" |> i)
   m.remove("d" |> i)
   inspect(m.length(), content="3")
-  // inspect(m._debug_entries(), content="_,(0,a),(0,ab),(0,abc),_,_,_,_")
 }
 
 ///|
@@ -628,10 +606,6 @@ test "grow" {
   m.add("Rescript" |> i)
   inspect(m.size, content="10")
   inspect(m.capacity, content="16")
-  // assert_eq(
-  //   m._debug_entries(),
-  //   "_,(0,C),(0,Go),(0,C++),(0,Java),(0,Scala),(1,Julia),(2,Cobol),(2,Python),(2,Haskell),(2,Rescript),_,_,_,_,_",
-  // )
 }
 
 ///|
