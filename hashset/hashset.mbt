@@ -729,7 +729,7 @@ pub fn[K] HashSet::copy(self : HashSet[K]) -> HashSet[K] {
 
 ///|
 /// ToJson implementation for hashset
-pub impl[X : ToJson] ToJson for HashSet[X] with fn to_json(self) {
+pub impl[X : @json.ToJson] @json.ToJson for HashSet[X] with fn to_json(self) {
   [
     for entry in self.entries if entry is Some({ key, .. }) => key
   ]

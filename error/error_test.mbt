@@ -168,6 +168,8 @@ test "protect2 & finally raise error" {
 }
 
 ///|
+// Older compilers expand this derive through deprecated String::to_json.
+#warnings("-deprecated")
 priv suberror ErrWithToJson {
   ErrWithToJson(Int)
 } derive(ToJson)
@@ -187,7 +189,7 @@ test "error to json" {
   // we may auto-derive `ToJson` and `Show` for suberror automatically
   // to enhance the user experience
   fn j(err : Error) {
-    err.to_json()
+    Json(err)
   }
 
   debug_inspect(

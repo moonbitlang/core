@@ -975,16 +975,10 @@ pub impl[A : Show] Show for SortedSet[A] with fn output(self, logger) {
 }
 
 ///|
-pub impl[A : ToJson] ToJson for SortedSet[A] with fn to_json(self) {
+pub impl[A : @json.ToJson] @json.ToJson for SortedSet[A] with fn to_json(self) {
   [
     for a in self => a
   ]
-}
-
-///|
-/// Convert to `json`.
-pub fn[A : ToJson] SortedSet::to_json(self : SortedSet[A]) -> Json {
-  ToJson::to_json(self)
 }
 
 ///|

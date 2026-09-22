@@ -47,7 +47,6 @@ pub fn BigInt::sub(Self, Self) -> Self
 pub fn BigInt::to_int(Self) -> Int
 pub fn BigInt::to_int16(Self) -> Int16
 pub fn BigInt::to_int64(Self) -> Int64
-pub fn BigInt::to_json(Self) -> Json
 pub fn BigInt::to_octets(Self, length? : Int) -> Bytes
 pub fn BigInt::to_string(Self, radix? : Int) -> String
 pub fn BigInt::to_uint(Self) -> UInt

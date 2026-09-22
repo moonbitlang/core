@@ -623,7 +623,7 @@ test "to_json" {
 ///|
 test "from_json" {
   for xs in (@quickcheck.samples(20) : Array[@sorted_set.SortedSet[Int]]) {
-    @test.assert_eq(xs, @json.from_json(xs.to_json()))
+    @test.assert_eq(xs, @json.from_json(Json(xs)))
   }
 }
 

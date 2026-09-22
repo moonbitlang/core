@@ -41,7 +41,6 @@ pub using @builtin {
   trait Hash,
   trait Logger,
   trait Show,
-  trait ToJson,
   trait Default,
   trait Add,
   trait Sub,
@@ -148,7 +147,7 @@ pub fn[T, R] then(value : T, f : (T) -> R raise?) -> R raise? {
 pub let null : Json = @builtin.null
 
 ///|
-pub using @json {trait FromJson, json_inspect}
+pub using @json {trait ToJson, trait FromJson, json_inspect}
 
 ///|
 /// Type `Iterator`.

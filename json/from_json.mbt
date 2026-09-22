@@ -14,9 +14,10 @@
 
 ///|
 /// Error type `JsonDecodeError`.
+// Older compilers expand this derive through deprecated String::to_json.
 // TODO(future): `derive(Show)` is deprecated syntax — switch to `derive(Debug)`
-// or a manual `Show` implementation, then remove this annotation.
-#warnings("-deprecated_syntax")
+// or a manual `Show` implementation, then remove the deprecated_syntax suppression.
+#warnings("-deprecated_syntax-deprecated")
 pub(all) suberror JsonDecodeError {
   JsonDecodeError((JsonPath, String))
 } derive(Eq, Show, ToJson, @debug.Debug)

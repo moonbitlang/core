@@ -56,13 +56,12 @@ pub extend BigInt with Shr::{shr}
 ///|
 pub extend BigInt with Sub::{sub}
 
-// `BigInt::to_json` is promoted (not deprecated): it has cross-package method-syntax
-// callers (builtin/json tests); deprecating it would break `--deny-warn`.
+// --- deprecated: hidden from the generated interface ---
 
 ///|
-pub extend BigInt with ToJson::{to_json}
-
-// --- deprecated: hidden from the generated interface ---
+#deprecated("Use `Json(value)` instead", skip_current_package=true)
+#doc(hidden)
+pub extend BigInt with @json.ToJson::{to_json}
 
 ///|
 #deprecated("Use `Debug::to_repr` instead", skip_current_package=true)

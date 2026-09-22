@@ -27,21 +27,23 @@ priv struct P {
   x : Int
   y : Int
   color : Color
-} derive(ToJson)
+} derive(@json.ToJson)
 
 ///|
+// Older compilers expand this derive through deprecated String::to_json.
+#warnings("-deprecated")
 priv enum Color {
   Red
   Green
   Blue
-} derive(ToJson)
+} derive(@json.ToJson)
 
 ///|
 priv struct Line {
   p1 : P
   p2 : P
   color : Color
-} derive(ToJson)
+} derive(@json.ToJson)
 
 ///|
 test "json inspect" {

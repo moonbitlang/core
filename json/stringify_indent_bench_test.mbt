@@ -14,7 +14,7 @@
 
 ///|
 fn make_deep_wide_json() -> Json {
-  let mut value = Array::makei(10000, i => Json::number(i.to_double())).to_json()
+  let mut value = Json(Array::makei(10000, i => Json::number(i.to_double())))
   for _ in 0..<6 {
     value = Json::array([value])
   }
@@ -38,7 +38,7 @@ fn make_shallow_wide_json() -> Json {
     }
     row
   })
-  { "items": rows.to_json(), "total": Json::number(500.0) }
+  { "items": Json(rows), "total": Json::number(500.0) }
 }
 
 ///|

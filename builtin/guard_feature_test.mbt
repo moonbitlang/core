@@ -13,6 +13,8 @@
 // limitations under the License.
 
 ///|
+// Older compilers expand this derive through deprecated String::to_json.
+#warnings("-deprecated")
 priv enum Expr {
   Add(Expr, Expr)
   Sub(Expr, Expr)
@@ -20,7 +22,7 @@ priv enum Expr {
   Div(Expr, Expr)
   Lit(Int)
   Var(String)
-} derive(Debug, ToJson, Eq)
+} derive(Debug, @json.ToJson, Eq)
 
 ///|
 fn simplify(e : Expr) -> Expr {

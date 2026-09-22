@@ -31,7 +31,7 @@
 /// ```mbt check
 /// test {
 ///   let big = 12345678901234567890N
-///   let json = big.to_json()
+///   let json = Json(big)
 ///   @debug.debug_inspect(
 ///     json,
 ///     content=(
@@ -41,7 +41,7 @@
 /// }
 /// ```
 ///
-pub impl ToJson for BigInt with fn to_json(self : BigInt) -> Json {
+pub impl @json.ToJson for BigInt with fn to_json(self : BigInt) -> Json {
   Json::string(self.to_string())
 }
 

@@ -29,7 +29,7 @@ pub extend Summary with @debug.Debug::{to_repr}
 ///|
 #deprecated("Use `@json.to_json` instead", skip_current_package=true)
 #doc(hidden)
-pub extend Summary with ToJson::{to_json}
+pub extend Summary with @json.ToJson::{to_json}
 
 ///|
 #deprecated("Use `Debug::to_repr` instead", skip_current_package=true)

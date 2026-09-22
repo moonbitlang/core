@@ -768,7 +768,7 @@ test "array of bytes, new & push" {
 ///|
 priv struct MX {
   mm_num : Array[Int]
-} derive(Default, ToJson)
+} derive(Default, @json.ToJson)
 
 ///|
 test {

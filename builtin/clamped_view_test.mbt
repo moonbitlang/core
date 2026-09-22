@@ -100,7 +100,7 @@ test "Array::clamped_view agrees with get_view on valid ranges" {
       guard arr.get_view(start~, end~) is Some(v) else { continue }
       json_inspect(
         arr.clamped_view(start~, end~).to_owned(),
-        content=v.to_owned().to_json(),
+        content=Json(v.to_owned()),
       )
     }
   }
@@ -274,10 +274,7 @@ test "clamped_view with `end` omitted forwards `start` unchanged" {
     // omitting `end` must equal passing the full length explicitly
     let ro_omitted = ro.clamped_view(start~)
     let ro_explicit = ro.clamped_view(start~, end=5)
-    json_inspect(
-      ro_omitted.to_owned(),
-      content=ro_explicit.to_owned().to_json(),
-    )
+    json_inspect(ro_omitted.to_owned(), content=Json(ro_explicit.to_owned()))
     inspect(
       ro_omitted.start_offset() == ro_explicit.start_offset(),
       content="true",
@@ -286,7 +283,7 @@ test "clamped_view with `end` omitted forwards `start` unchanged" {
     let fixed_explicit = fixed.clamped_view(start~, end=5)
     json_inspect(
       fixed_omitted.to_owned(),
-      content=fixed_explicit.to_owned().to_json(),
+      content=Json(fixed_explicit.to_owned()),
     )
     inspect(
       fixed_omitted.start_offset() == fixed_explicit.start_offset(),
@@ -306,11 +303,11 @@ test "FixedArray/ReadOnlyArray clamped_view agree with get_view" {
       guard fixed.get_view(start~, end~) is Some(v) else { continue }
       json_inspect(
         fixed.clamped_view(start~, end~).to_owned(),
-        content=v.to_owned().to_json(),
+        content=Json(v.to_owned()),
       )
       json_inspect(
         ro.clamped_view(start~, end~).to_owned(),
-        content=v.to_owned().to_json(),
+        content=Json(v.to_owned()),
       )
     }
   }

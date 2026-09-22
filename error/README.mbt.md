@@ -85,6 +85,8 @@ The error package provides `Show` and `ToJson` implementations:
 
 ```mbt check
 ///|
+// Older compilers expand this derive through deprecated String::to_json.
+#warnings("-deprecated")
 priv suberror MyError {
   MyError(Int)
 } derive(ToJson)
@@ -98,7 +100,7 @@ test "error display and json" {
   inspect(error_string.length() > 0, content="true")
 
   // Error can be converted to JSON
-  let error_json = error.to_json()
+  let error_json = Json(error)
   @debug.debug_inspect(
     error_json,
     content="Array([String(\"MyError\"), Number(42)])",

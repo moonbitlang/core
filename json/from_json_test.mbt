@@ -18,7 +18,7 @@ type TestX = Map[String, Int]
 ///|
 test {
   let u = { "x": 3, "y": 4 }
-  let j = u.to_json()
+  let j = Json(u)
   let h : TestX = @json.from_json(j)
   debug_inspect(
     (j, h),
@@ -167,83 +167,81 @@ test "tuple" {
 ///|
 test "tuple roundtrip" {
   let u = [1, 2]
-  debug_inspect((@json.from_json(u.to_json()) : (Int, Int)), content="(1, 2)")
+  debug_inspect((@json.from_json(Json(u)) : (Int, Int)), content="(1, 2)")
   let u = [1, 2, 3]
   debug_inspect(
-    (@json.from_json(u.to_json()) : (Int, Int, Int)),
+    (@json.from_json(Json(u)) : (Int, Int, Int)),
     content="(1, 2, 3)",
   )
   let u = [1, 2, 3, 4]
   debug_inspect(
-    (@json.from_json(u.to_json()) : (Int, Int, Int, Int)),
+    (@json.from_json(Json(u)) : (Int, Int, Int, Int)),
     content="(1, 2, 3, 4)",
   )
   let u = [1, 2, 3, 4, 5]
   debug_inspect(
-    (@json.from_json(u.to_json()) : (Int, Int, Int, Int, Int)),
+    (@json.from_json(Json(u)) : (Int, Int, Int, Int, Int)),
     content="(1, 2, 3, 4, 5)",
   )
   let u = [1, 2, 3, 4, 5, 6]
   debug_inspect(
-    (@json.from_json(u.to_json()) : (Int, Int, Int, Int, Int, Int)),
+    (@json.from_json(Json(u)) : (Int, Int, Int, Int, Int, Int)),
     content="(1, 2, 3, 4, 5, 6)",
   )
   let u = [1, 2, 3, 4, 5, 6, 7]
   debug_inspect(
-    (@json.from_json(u.to_json()) : (Int, Int, Int, Int, Int, Int, Int)),
+    (@json.from_json(Json(u)) : (Int, Int, Int, Int, Int, Int, Int)),
     content="(1, 2, 3, 4, 5, 6, 7)",
   )
   let u = [1, 2, 3, 4, 5, 6, 7, 8]
   debug_inspect(
-    (@json.from_json(u.to_json()) : (Int, Int, Int, Int, Int, Int, Int, Int)),
+    (@json.from_json(Json(u)) : (Int, Int, Int, Int, Int, Int, Int, Int)),
     content="(1, 2, 3, 4, 5, 6, 7, 8)",
   )
   let u = [1, 2, 3, 4, 5, 6, 7, 8, 9]
   debug_inspect(
-    (
-      @json.from_json(u.to_json()) :
-      (Int, Int, Int, Int, Int, Int, Int, Int, Int)),
+    (@json.from_json(Json(u)) : (Int, Int, Int, Int, Int, Int, Int, Int, Int)),
     content="(1, 2, 3, 4, 5, 6, 7, 8, 9)",
   )
   let u = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
   debug_inspect(
     (
-      @json.from_json(u.to_json()) :
+      @json.from_json(Json(u)) :
       (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int)),
     content="(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)",
   )
   let u = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
   debug_inspect(
     (
-      @json.from_json(u.to_json()) :
+      @json.from_json(Json(u)) :
       (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int)),
     content="(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)",
   )
   let u = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
   debug_inspect(
     (
-      @json.from_json(u.to_json()) :
+      @json.from_json(Json(u)) :
       (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int)),
     content="(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)",
   )
   let u = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
   debug_inspect(
     (
-      @json.from_json(u.to_json()) :
+      @json.from_json(Json(u)) :
       (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int)),
     content="(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13)",
   )
   let u = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
   debug_inspect(
     (
-      @json.from_json(u.to_json()) :
+      @json.from_json(Json(u)) :
       (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int)),
     content="(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14)",
   )
   let u = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
   debug_inspect(
     (
-      @json.from_json(u.to_json()) :
+      @json.from_json(Json(u)) :
       (
         Int,
         Int,
@@ -266,7 +264,7 @@ test "tuple roundtrip" {
   let u = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
   debug_inspect(
     (
-      @json.from_json(u.to_json()) :
+      @json.from_json(Json(u)) :
       (
         Int,
         Int,
@@ -293,7 +291,7 @@ test "tuple roundtrip" {
 test "tuple failure" {
   let u = [1, 2]
   let err = expect_json_decode_error(
-    () => ignore((@json.from_json(u.to_json()) : (Int, Int, Int))),
+    () => ignore((@json.from_json(Json(u)) : (Int, Int, Int))),
     "expected tuple size error",
   )
   inspect(
@@ -304,7 +302,9 @@ test "tuple failure" {
   )
   let u = ((1, 2), (3, 4))
   let err = expect_json_decode_error(
-    () => ignore((@json.from_json(ToJson::to_json(u)) : ((Int, Int), Int))),
+    () => {
+      ignore((@json.from_json(@json.ToJson::to_json(u)) : ((Int, Int), Int)))
+    },
     "expected tuple element error",
   )
   inspect(
@@ -318,7 +318,7 @@ test "tuple failure" {
 ///|
 test "fixedarray" {
   let u = ([1, 2] : FixedArray[_])
-  let v : FixedArray[Int] = @json.from_json(u.to_json())
+  let v : FixedArray[Int] = @json.from_json(Json(u))
   debug_inspect(
     v,
     content=(
@@ -326,7 +326,7 @@ test "fixedarray" {
     ),
   )
   let u = (["123", "456"] : FixedArray[_])
-  let v : FixedArray[String] = @json.from_json(u.to_json())
+  let v : FixedArray[String] = @json.from_json(Json(u))
   debug_inspect(
     v,
     content=(
@@ -334,7 +334,7 @@ test "fixedarray" {
     ),
   )
   let u = ([(), ()] : FixedArray[Unit])
-  let v : FixedArray[Unit] = @json.from_json(u.to_json())
+  let v : FixedArray[Unit] = @json.from_json(Json(u))
   debug_inspect(
     v,
     content=(
@@ -342,7 +342,7 @@ test "fixedarray" {
     ),
   )
   let u = ([] : FixedArray[Unit])
-  let v : FixedArray[Unit] = @json.from_json(u.to_json())
+  let v : FixedArray[Unit] = @json.from_json(Json(u))
   debug_inspect(
     v,
     content=(
@@ -353,40 +353,40 @@ test "fixedarray" {
 
 ///|
 test "Option" {
-  let u : Json = (None : Int?).to_json()
+  let u : Json = Json((None : Int?))
   let v : Int? = @json.from_json(u)
   debug_inspect(v, content="None")
-  let u = Some(1).to_json()
+  let u = Json(Some(1))
   let v : Int? = @json.from_json(u)
   debug_inspect(v, content="Some(1)")
-  let nested : Json = (Some(None) : Unit??).to_json()
+  let nested : Json = Json((Some(None) : Unit??))
   let v : Unit?? = @json.from_json(nested)
   debug_inspect(v, content="Some(None)")
-  let nested : Json = (Some(Some(None)) : Unit???).to_json()
+  let nested : Json = Json((Some(Some(None)) : Unit???))
   let v : Unit??? = @json.from_json(nested)
   debug_inspect(v, content="Some(Some(None))")
 }
 
 ///|
 test "Result" {
-  let u : Json = (Ok(1) : Result[Int, String]).to_json()
+  let u : Json = Json((Ok(1) : Result[Int, String]))
   let v : Result[Int, String] = @json.from_json(u)
   debug_inspect(v, content="Ok(1)")
-  let u = (Err("error") : Result[Int, String]).to_json()
+  let u = Json((Err("error") : Result[Int, String]))
   let v : Result[Int, String] = @json.from_json(u)
   inspect(v.unwrap_err(), content="error")
 }
 
 ///|
 test "Unit" {
-  let u = ().to_json()
+  let u = Json(())
   let v : Unit = @json.from_json(u)
   inspect(v, content="()")
 }
 
 ///|
 test "bigint" {
-  let u = BigInt::from_string("10238490123489120893478175871203124819").to_json()
+  let u = Json(BigInt::from_string("10238490123489120893478175871203124819"))
   let v : BigInt = @json.from_json(u)
   inspect(v, content="10238490123489120893478175871203124819")
 }
@@ -428,30 +428,30 @@ test "jsonvalue" {
 
 ///|
 test "bool roundtrip" {
-  let u = true.to_json()
+  let u = Json(true)
   let v : Bool = @json.from_json(u)
   inspect(v, content="true")
-  let u = false.to_json()
+  let u = Json(false)
   let v : Bool = @json.from_json(u)
   inspect(v, content="false")
 }
 
 ///|
 test "int roundtrip" {
-  let u = (123).to_json()
+  let u = Json(123)
   let v : Int = @json.from_json(u)
   inspect(v, content="123")
-  let u = (-123).to_json()
+  let u = Json(-123)
   let v : Int = @json.from_json(u)
   inspect(v, content="-123")
 }
 
 ///|
 test "uint roundtrip" {
-  let u = 123U.to_json()
+  let u = Json(123U)
   let v : UInt = @json.from_json(u)
   inspect(v, content="123")
-  let u = 4294967295U.to_json()
+  let u = Json(4294967295U)
   let v : UInt = @json.from_json(u)
   inspect(v, content="4294967295")
 }
@@ -520,30 +520,30 @@ test "UInt from_json overflow should error" {
 
 ///|
 test "int64 roundtrip" {
-  let u = 123L.to_json()
+  let u = Json(123L)
   let v : Int64 = @json.from_json(u)
   inspect(v, content="123")
-  let u = 9223372036854775807L.to_json()
+  let u = Json(9223372036854775807L)
   let v : Int64 = @json.from_json(u)
   inspect(v, content="9223372036854775807")
-  let u = (-9223372036854775808L).to_json()
+  let u = Json(-9223372036854775808L)
   let v : Int64 = @json.from_json(u)
   inspect(v, content="-9223372036854775808")
 }
 
 ///|
 test "uint64 roundtrip" {
-  let u = 123UL.to_json()
+  let u = Json(123UL)
   let v : UInt64 = @json.from_json(u)
   inspect(v, content="123")
-  let u = 18446744073709551615UL.to_json()
+  let u = Json(18446744073709551615UL)
   let v : UInt64 = @json.from_json(u)
   inspect(v, content="18446744073709551615")
 }
 
 ///|
 test "unicode" {
-  let u = "\u{1F600}".to_json()
+  let u = Json("\u{1F600}")
   debug_inspect(
     u,
     content=(
@@ -553,11 +553,11 @@ test "unicode" {
   let v : Char = @json.from_json(u)
   inspect(v, content="\u{1F600}")
   let bs : Bytes = [0x3D, 0xD8, 0x00, 0xDE]
-  let u = bs.to_unchecked_string().to_json()
+  let u = Json(bs.to_unchecked_string())
   let v : Char = @json.from_json(u)
   inspect(v, content="\u{1F600}")
   let bs1 : Bytes = [0xD8, 0x3D, 0xDE, 0x00]
-  let u = bs1.to_unchecked_string().to_json()
+  let u = Json(bs1.to_unchecked_string())
   let err = expect_json_decode_error(
     () => ignore((@json.from_json(u) : Char)),
     "expected Char decode failure",
@@ -572,7 +572,7 @@ test "unicode" {
 
 ///|
 test "char to/from json roundtrip" {
-  let u = 'a'.to_json()
+  let u = Json('a')
   debug_inspect(
     u,
     content=(
@@ -583,7 +583,7 @@ test "char to/from json roundtrip" {
   inspect(v, content="a")
 
   // emoji char roundtrip
-  let u = '😀'.to_json()
+  let u = Json('😀')
   debug_inspect(
     u,
     content=(
@@ -594,7 +594,7 @@ test "char to/from json roundtrip" {
   inspect(v, content="😀")
 
   // jdk char roundtrip
-  let u = '中'.to_json()
+  let u = Json('中')
   debug_inspect(
     u,
     content=(
@@ -607,7 +607,7 @@ test "char to/from json roundtrip" {
 
 ///|
 test "string view from json" {
-  let u = "hello".to_json()
+  let u = Json("hello")
   let v : StringView = @json.from_json(u)
   inspect(v, content="hello")
 }
@@ -924,7 +924,7 @@ test "Unit from_json error handling" {
 ///|
 test "Bytes from_json" {
   let bytes = b"\x00\x01abcd\"\\"
-  let json = bytes.to_json()
+  let json = Json(bytes)
   let bytes : Bytes = @json.from_json(json)
   debug_inspect(
     bytes,
@@ -936,13 +936,13 @@ test "Bytes from_json" {
 
 ///|
 test "float roundtrip" {
-  let u = (3.14 : Float).to_json()
+  let u = Json((3.14 : Float))
   let v : Float = @json.from_json(u)
   inspect(v, content="3.140000104904175")
-  let u = (0.0 : Float).to_json()
+  let u = Json((0.0 : Float))
   let v : Float = @json.from_json(u)
   inspect(v, content="0")
-  let u = (-1.5 : Float).to_json()
+  let u = Json((-1.5 : Float))
   let v : Float = @json.from_json(u)
   inspect(v, content="-1.5")
 }
@@ -1074,7 +1074,7 @@ test "from_json special cases" {
 
 ///|
 test "tuple size mismatch" {
-  let wrong = [1].to_json()
+  let wrong = Json([1])
   let err2 = expect_json_decode_error(
     () => ignore((@json.from_json(wrong) : (Int, Int))),
     "expected size 2 error",
