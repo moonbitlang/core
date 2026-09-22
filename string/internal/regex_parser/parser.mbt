@@ -32,6 +32,10 @@ fn Parser::class_atom(
   lexmatch rest with longest {
     (re"^\\[dDsSwW]", after=_) =>
       raise ctx.error_at(rest, HINT_USE_POSIX_CHARACTER_CLASS)
+    (re"^\\p[{]" + (re"[A-Za-z0-9_=]+" as name) + re"[}]", after=rest2) =>
+      (rest2, Class(property_set(rest, name, false, ctx)))
+    (re"^\\P[{]" + (re"[A-Za-z0-9_=]+" as name) + re"[}]", after=rest2) =>
+      (rest2, Class(property_set(rest, name, true, ctx)))
     (re"^\\b", after=rest) => (rest, Char('\b'))
     (re"^\\f", after=rest) => (rest, Char('\f'))
     (re"^\\n", after=rest) => (rest, Char('\n'))
@@ -258,6 +262,10 @@ fn Parser::term(
     (re"^\\B", after=rest) => (rest, @re.not_word_boundary, true)
     (re"^\\[dDsSwW]", after=_) =>
       raise ctx.error_at(rest, HINT_USE_POSIX_CHARACTER_CLASS)
+    (re"^\\p[{]" + (re"[A-Za-z0-9_=]+" as name) + re"[}]", after=rest2) =>
+      (rest2, @re.char(property_set(rest, name, false, ctx)), false)
+    (re"^\\P[{]" + (re"[A-Za-z0-9_=]+" as name) + re"[}]", after=rest2) =>
+      (rest2, @re.char(property_set(rest, name, true, ctx)), false)
     (re"^\\f", after=rest) => (rest, @re.char(@re.RecharSet::char('\f')), false)
     (re"^\\n", after=rest) => (rest, @re.char(@re.RecharSet::char('\n')), false)
     (re"^\\r", after=rest) => (rest, @re.char(@re.RecharSet::char('\r')), false)

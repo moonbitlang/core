@@ -1343,3 +1343,42 @@ test "parse/error_non_ascii_in_bytes_mode_char_class" {
     ),
   )
 }
+
+///|
+test "parse/unicode_property" {
+  // Zl holds one code point, so the whole set is readable here.
+  let pat = parse(profile=profile_unicode(), mode=String, "\\p{Zl}")
+  debug_inspect(pat, content="Char([(8232, 8232)])")
+}
+
+///|
+test "parse/unicode_property_unknown" {
+  let err = try {
+    parse(profile=profile_unicode(), mode=String, "\\p{Nope}") |> ignore
+    ""
+  } catch {
+    e => e.to_string()
+  }
+  inspect(
+    err,
+    content=(
+      #|ParserError at position 0: Unknown Unicode property
+    ),
+  )
+}
+
+///|
+test "parse/unicode_property_not_on_bytes" {
+  let err = try {
+    parse(profile=profile_bytes(), mode=Bytes, "\\p{Lu}") |> ignore
+    ""
+  } catch {
+    e => e.to_string()
+  }
+  inspect(
+    err,
+    content=(
+      #|ParserError at position 0: Unicode escape sequences are not allowed
+    ),
+  )
+}

@@ -889,3 +889,52 @@ test "capture/multiple_captures_same_pattern" {
     ),
   )
 }
+
+///|
+/// `\p{...}` is parsed at run time; the `re"..."` literal goes through the
+/// compiler's own parser, which does not know it yet.
+fn property_matches(pattern : String, text : String) -> Bool raise {
+  @string.Regex::Regex(pattern).execute(text) is Some(_)
+}
+
+///|
+test "execute/unicode_property" {
+  // A category reaches beyond ASCII, where the POSIX classes stop.
+  assert_true(property_matches("^\\p{Lu}\\p{Ll}+$", "Ωmega"))
+  assert_true(property_matches("^\\p{Letter}+$", "héllo"))
+  assert_true(property_matches("^\\p{Nd}+$", "١٢٣"))
+  assert_false(property_matches("^\\p{Lu}+$", "abc"))
+  // A supplementary-plane letter is one code point, not two.
+  assert_true(property_matches("^\\p{L}$", "𝐀"))
+}
+
+///|
+test "execute/unicode_property_spellings" {
+  for name in ["Lu", "Uppercase_Letter", "General_Category=Lu", "gc=Lu"] {
+    assert_true(property_matches("^\\p{" + name + "}$", "A"))
+  }
+}
+
+///|
+test "execute/unicode_property_negated" {
+  assert_true(property_matches("^\\P{L}+$", "123"))
+  assert_false(property_matches("^\\P{L}+$", "abc"))
+  assert_true(property_matches("^[\\p{Nd}-]+$", "1-2"))
+  assert_true(property_matches("^[^\\p{L}]+$", "42"))
+}
+
+///|
+test "execute/unicode_property_unknown_is_refused" {
+  let refused = try {
+    @string.Regex::Regex("\\p{Script=Han}") |> ignore
+    ""
+  } catch {
+    e => e.to_string()
+  }
+  inspect(
+    refused,
+    content=(
+      #|ParserError at position 0: Unknown Unicode property
+    ),
+  )
+}

@@ -44,7 +44,11 @@ pub struct Regex {
 /// `\d`, `\D`, `\s`, `\S`, `\w`, and `\W` are not supported; use POSIX
 /// character classes instead.
 ///
-/// POSIX character classes are ASCII-based.
+/// POSIX character classes are ASCII-based. For Unicode, use the property
+/// escapes `\p{...}` and `\P{...}`: a General_Category by its short name
+/// (`Lu`), its long name (`Uppercase_Letter`), a one-letter family (`L`), or
+/// either spelled `gc=Lu` / `General_Category=Lu`. `Regex` parses them; the
+/// `re"..."` literal does not, and they are not available on bytes.
 ///
 /// In character classes, the dash `-` is used to specify ranges (e.g., `[a-z]`).
 /// To match a literal dash, it must be escaped as `\-`. Placing a dash at the
