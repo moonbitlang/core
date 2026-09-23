@@ -1011,14 +1011,17 @@ pub fn[K : Eq, V] Map::merge_in_place(
 }
 
 ///|
-/// Retains only the key-value pairs that satisfy the given predicate function.
-/// This method modifies the map in-place, removing all entries for which
-/// the predicate returns `false`. The order of remaining elements is preserved.
+/// Keeps only the key-value pairs for which `f` returns `true`, removing the
+/// rest in place. The order of the remaining entries is preserved.
+///
+/// `true` means *keep*, as with `Map::filter`, which returns a new map and
+/// leaves `self` unchanged; use `retain` when the original is no longer
+/// needed. `f` must not modify the map.
 ///
 /// Parameters:
 ///
 /// * `self` : The map to be filtered.
-/// * `predicate` : A function that takes a key and value as arguments and returns
+/// * `f` : A function that takes a key and value as arguments and returns
 /// `true` if the key-value pair should be kept, `false` if it should be removed.
 ///
 /// Example:
@@ -1056,6 +1059,83 @@ pub fn[K, V] Map::retain(self : Map[K, V], f : (K, V) -> Bool) -> Unit {
           self.size -= 1
         }
         break
+      }
+    }
+  }
+}
+
+///|
+/// Returns a new map holding the key-value pairs for which `f` returns
+/// `true`, in their original insertion order. `self` is unchanged.
+///
+/// `true` means *keep*, as with `Array::filter`. To filter in place instead,
+/// use `Map::retain`.
+///
+/// This is faster than rebuilding a map from a comprehension such as
+/// `Map([for k, v in m if f(k, v) => (k, v)])`: keys are not hashed again
+/// and no intermediate array is built.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let map = { "a": 1, "b": 2, "c": 3, "d": 4 }
+///   let even = map.filter((_k, v) => v % 2 == 0)
+///   debug_inspect(
+///     even.to_array(),
+///     content=(
+///       #|[("b", 2), ("d", 4)]
+///     ),
+///   )
+///   inspect(map.length(), content="4")
+/// }
+/// ```
+pub fn[K, V] Map::filter(
+  self : Map[K, V],
+  f : (K, V) -> Bool raise?,
+) -> Map[K, V] raise? {
+  // Sized like `self`, so the kept entries never trigger a grow.
+  let other = new_map(self.capacity)
+  for x = self.head {
+    match x {
+      Some({ key, value, hash, next, .. }) => {
+        if f(key, value) {
+          other.add_unique_with_hash(key, value, hash)
+        }
+        continue next
+      }
+      None => break
+    }
+  }
+  other
+}
+
+///|
+/// Inserts a key known to be absent and a table known not to need growing:
+/// the probe skips key comparisons and the grow check.
+#owned(value)
+fn[K, V] Map::add_unique_with_hash(
+  self : Map[K, V],
+  key : K,
+  value : V,
+  hash : Int,
+) -> Unit {
+  // SAFETY: masked probe index; see the note at the top of this file.
+  for psl = 0, idx = hash & self.capacity_mask {
+    match self.entries.unsafe_get(idx) {
+      None => {
+        let entry = { prev: self.tail, next: None, psl, key, value, hash, }
+        self.add_entry_to_tail(idx, entry)
+        return
+      }
+      Some(curr_entry) => {
+        if psl > curr_entry.psl {
+          self.push_away(idx, curr_entry)
+          let entry = { prev: self.tail, next: None, psl, key, value, hash, }
+          self.add_entry_to_tail(idx, entry)
+          return
+        }
+        continue psl + 1, (idx + 1) & self.capacity_mask
       }
     }
   }
