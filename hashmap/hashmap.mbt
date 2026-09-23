@@ -730,11 +730,47 @@ fn[K : Eq, V] HashMap::remove_with_hash(
 }
 
 ///|
+/// Removes the entry for `key` and returns its value, or returns `None` and
+/// leaves the map unchanged if `key` is absent. The key is looked up once,
+/// unlike a `get` followed by a `remove`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let map = @hashmap.from_array([("a", 1), ("b", 2)])
+///   debug_inspect(map.remove_and_get("a"), content="Some(1)")
+///   debug_inspect(map.remove_and_get("a"), content="None")
+///   inspect(map.length(), content="1")
+/// }
+/// ```
+pub fn[K : Hash + Eq, V] HashMap::remove_and_get(
+  self : HashMap[K, V],
+  key : K,
+) -> V? {
+  let hash = Hash::hash(key)
+  // SAFETY: masked probe index; see the note at the top of this file.
+  for i = 0, idx = hash & self.capacity_mask {
+    guard self.entries.unsafe_get(idx) is Some(entry) else { break None }
+    if entry.hash == hash && entry.key == key {
+      self.shift_back(idx)
+      self.size -= 1
+      break Some(entry.value)
+    }
+    if i > entry.psl {
+      break None
+    }
+    continue i + 1, (idx + 1) & self.capacity_mask
+  }
+}
+
+///|
 fn[K, V] HashMap::shift_back(self : HashMap[K, V], idx : Int) -> Unit {
-  // SAFETY: the initial `cur` is in bounds by any of the three routes its
-  // callers take -- `update` and `remove_with_hash` pass a masked probe
-  // index, and `retain` (in utils.mbt) reaches here only after its own
-  // checked `entries[i]` read succeeded, with capacity never shrinking.
+  // SAFETY: the initial `cur` is in bounds by any of the four routes its
+  // callers take -- `update`, `remove_with_hash` and `remove_and_get` pass a
+  // masked probe index, and `retain` (in utils.mbt) reaches here only after
+  // its own checked `entries[i]` read succeeded, with capacity never
+  // shrinking.
   // `next` is re-masked each step, and later `cur` values are previous
   // `next` values.
   for cur = idx {
