@@ -748,6 +748,36 @@ pub fn[K : Hash + Eq] Set::union(self : Set[K], other : Set[K]) -> Set[K] {
 }
 
 ///|
+/// Adds every element of `other` to `self`, in place: the mutating
+/// counterpart of `union`, as `Map::merge_in_place` is of `Map::merge`.
+/// Elements already in `self` keep their position; new ones are appended in
+/// `other`'s order. Elements are not hashed again, so only `Eq` is needed.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let set = @set.Set([3, 1])
+///   set.union_in_place(Set([2, 3, 4]))
+///   debug_inspect(set.to_array(), content="[3, 1, 2, 4]")
+/// }
+/// ```
+pub fn[K : Eq] Set::union_in_place(self : Set[K], other : Set[K]) -> Unit {
+  if physical_equal(self, other) {
+    return
+  }
+  for x = other.head {
+    match x {
+      Some({ key, hash, next, .. }) => {
+        self.add_with_hash(key, hash)
+        continue next
+      }
+      None => break
+    }
+  }
+}
+
+///|
 /// Returns a new set containing only elements present in both sets.
 pub fn[K : Hash + Eq] Set::intersection(
   self : Set[K],

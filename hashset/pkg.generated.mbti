@@ -56,6 +56,7 @@ pub fn[K : Hash + Eq] HashSet::sub(Self[K], Self[K]) -> Self[K]
 pub fn[K : Hash + Eq] HashSet::symmetric_difference(Self[K], Self[K]) -> Self[K]
 pub fn[K] HashSet::to_array(Self[K]) -> Array[K]
 pub fn[K : Hash + Eq] HashSet::union(Self[K], Self[K]) -> Self[K]
+pub fn[K : Eq] HashSet::union_in_place(Self[K], Self[K]) -> Unit
 pub impl[K : Hash + Eq] BitAnd for HashSet[K]
 pub impl[K : Hash + Eq] BitOr for HashSet[K]
 pub impl[K : Hash + Eq] BitXOr for HashSet[K]
