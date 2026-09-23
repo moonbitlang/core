@@ -385,6 +385,7 @@ pub fn[K, V] Map::copy(Self[K, V]) -> Self[K, V]
 pub fn[K, V] Map::each(Self[K, V], (K, V) -> Unit raise?) -> Unit raise?
 pub fn[K, V] Map::eachi(Self[K, V], (Int, K, V) -> Unit raise?) -> Unit raise?
 pub fn[K : Hash + Eq, V : Eq] Map::equal(Self[K, V], Self[K, V]) -> Bool
+pub fn[K, V] Map::filter(Self[K, V], (K, V) -> Bool raise?) -> Self[K, V] raise?
 #alias(from_iterator, deprecated)
 pub fn[K : Hash + Eq, V] Map::from_iter(Iter[(K, V)]) -> Self[K, V]
 pub fn[K : Hash + Eq, V] Map::get(Self[K, V], K) -> V?

@@ -728,3 +728,43 @@ test "Map::set updating existing key should not grow" {
     @test.assert_eq(map.get(i.to_string()), Some(i * 10))
   }
 }
+
+///|
+test "filter keeps lookups working after removals and collisions" {
+  // Small table, colliding hashes, and entries removed before filtering.
+  let m : Map[Int, Int] = Map([], capacity=2)
+  for i in 0..<200 {
+    m.set(i * 64, i)
+  }
+  for i in 0..<200 {
+    if i % 7 == 0 {
+      m.remove(i * 64)
+    }
+  }
+  let kept = m.filter((k, _) => k % 3 == 0)
+  for i in 0..<200 {
+    let expected = if i % 7 != 0 && i * 64 % 3 == 0 { Some(i) } else { None }
+    assert_eq(kept.get(i * 64), expected)
+  }
+  assert_eq(kept.to_array(), [ for k, v in m if k % 3 == 0 => (k, v) ])
+  // The result is an independent, growable map.
+  kept.set(-1, -1)
+  assert_eq(kept.get(-1), Some(-1))
+  assert_eq(m.get(-1), None)
+  let empty : Map[Int, Int] = Map([])
+  assert_eq(empty.filter((_, _) => true).length(), 0)
+}
+
+///|
+test "filter propagates errors" {
+  let m = { "a": 1, "b": 2 }
+  let raised = try {
+    ignore(
+      m.filter((k, _) => if k == "b" { raise Failure("no") } else { true }),
+    )
+    false
+  } catch {
+    _ => true
+  }
+  assert_true(raised)
+}
