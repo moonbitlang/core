@@ -762,6 +762,36 @@ pub impl[X : @json.ToJson] @json.ToJson for HashSet[X] with fn to_json(self) {
 }
 
 ///|
+/// Decodes a hash set from a JSON array, the form `to_json` produces. A
+/// repeated element is kept once, as in `@hashset.from_array`.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   let set : @hashset.HashSet[Int] = @json.from_json([3, 1, 3, 2])
+///   inspect(set.length(), content="3")
+///   inspect(set.contains(3), content="true")
+/// }
+/// ```
+pub impl[X : @json.FromJson + Hash + Eq] @json.FromJson for HashSet[X] with fn from_json(
+  json,
+  path,
+) {
+  guard json is Array(arr) else {
+    raise JsonDecodeError((path, "@hashset.from_json: expected array"))
+  }
+  // Sized the way `@hashset.from_array` sizes itself for this many elements.
+  let res : HashSet[X] = new_hashset(
+    default_init_capacity.max(capacity_for_length(arr.length())),
+  )
+  for i, x in arr {
+    res.add(@json.FromJson::from_json(x, path.add_index(i)))
+  }
+  res
+}
+
+///|
 /// Default implementation for hashset
 pub impl[K] Default for HashSet[K] with fn default() {
   new_hashset(default_init_capacity)
