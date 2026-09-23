@@ -768,6 +768,39 @@ pub impl[X : @json.ToJson] @json.ToJson for Set[X] with fn to_json(self) {
 }
 
 ///|
+/// Decodes a set from a JSON array, the form `to_json` produces. Elements
+/// keep their array order; a repeated element is kept once, as in `Set([...])`.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   let set : @set.Set[Int] = @json.from_json([3, 1, 3, 2])
+///   debug_inspect(set.to_array(), content="[3, 1, 2]")
+/// }
+/// ```
+pub impl[X : @json.FromJson + Hash + Eq] @json.FromJson for Set[X] with fn from_json(
+  json,
+  path,
+) {
+  guard json is Array(arr) else {
+    raise JsonDecodeError((path, "@set.from_json: expected array"))
+  }
+  // Sized the way `Set([...])` sizes itself for this many elements.
+  let res : Set[X] = new_set(
+    if arr.is_empty() {
+      default_init_capacity
+    } else {
+      capacity_for_length(arr.length())
+    },
+  )
+  for i, x in arr {
+    res.add(@json.FromJson::from_json(x, path.add_index(i)))
+  }
+  res
+}
+
+///|
 /// Returns `true` if the two sets have no elements in common.
 pub fn[K : Hash + Eq] Set::is_disjoint(self : Set[K], other : Set[K]) -> Bool {
   if self.length() <= other.length() {

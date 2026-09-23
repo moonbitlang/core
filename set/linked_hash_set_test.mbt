@@ -658,3 +658,58 @@ test "retain matches filter, keeps order, and leaves a usable set" {
     assert_eq(s.to_array(), [..expected, -2])
   }
 }
+
+///|
+test "from_json round-trips whatever to_json produced, in order" {
+  for set in (@quickcheck.samples(50) : Array[@set.Set[Int]]) {
+    let restored : @set.Set[Int] = @json.from_json(@json.to_json(set))
+    assert_eq(restored.to_array(), set.to_array())
+  }
+}
+
+///|
+test "from_json keeps array order and drops repeated elements" {
+  let set : @set.Set[String] = @json.from_json(["b", "a", "b", "c", "a"])
+  assert_eq(set.to_array(), ["b", "a", "c"])
+  let empty : @set.Set[Int] = @json.from_json([])
+  assert_eq(empty.length(), 0)
+  assert_eq(empty.capacity(), (Set([]) : @set.Set[Int]).capacity())
+  let nested : @set.Set[Array[Int]] = @json.from_json([[1, 2], [], [1, 2]])
+  assert_eq(nested.to_array(), [[1, 2], []])
+}
+
+///|
+test "from_json sizes the set like the constructor" {
+  for n in [1, 2, 13, 100, 1000] {
+    let set : @set.Set[Int] = @json.from_json([ for i in 0..<n => Json(i) ])
+    assert_eq(set.capacity(), @set.Set([ for i in 0..<n => i ]).capacity())
+  }
+}
+
+///|
+test "from_json rejects a non-array" {
+  let bad : Json = { "a": 1 }
+  try (@json.from_json(bad) : @set.Set[Int]) catch {
+    err =>
+      inspect(
+        err,
+        content="JsonDecodeError((, @set.from_json: expected array))",
+      )
+  } noraise {
+    _ => fail("expected JsonDecodeError")
+  }
+}
+
+///|
+test "from_json reports the index of the element that failed" {
+  let bad : Json = [1, "two", 3]
+  try (@json.from_json(bad) : @set.Set[Int]) catch {
+    err =>
+      inspect(
+        err,
+        content="JsonDecodeError((/1, Int::from_json: expected number))",
+      )
+  } noraise {
+    _ => fail("expected JsonDecodeError")
+  }
+}

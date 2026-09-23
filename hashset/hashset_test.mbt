@@ -565,3 +565,72 @@ test "equal detects a different element or size" {
   assert_false(a == empty)
   assert_false(empty == a)
 }
+
+///|
+fn sorted_elements(set : @hashset.HashSet[Int]) -> Array[Int] {
+  let elements = set.to_array()
+  elements.sort()
+  elements
+}
+
+///|
+test "from_json round-trips whatever to_json produced" {
+  for set in (@quickcheck.samples(50) : Array[@hashset.HashSet[Int]]) {
+    let restored : @hashset.HashSet[Int] = @json.from_json(@json.to_json(set))
+    assert_eq(sorted_elements(restored), sorted_elements(set))
+  }
+}
+
+///|
+test "from_json drops repeated elements" {
+  let set : @hashset.HashSet[Int] = @json.from_json([3, 1, 3, 2, 1])
+  assert_eq(sorted_elements(set), [1, 2, 3])
+  let empty : @hashset.HashSet[Int] = @json.from_json([])
+  assert_eq(empty.length(), 0)
+  let nested : @hashset.HashSet[Array[Int]] = @json.from_json([[1], [], [1]])
+  assert_eq(nested.length(), 2)
+  assert_true(nested.contains([1]) && nested.contains([]))
+}
+
+///|
+test "from_json sizes the set like the constructor" {
+  for n in [0, 1, 2, 13, 100, 1000] {
+    let set : @hashset.HashSet[Int] = @json.from_json(
+      [
+        for i in 0..<n => Json(i)
+      ],
+    )
+    assert_eq(
+      set.capacity(),
+      @hashset.HashSet([ for i in 0..<n => i ]).capacity(),
+    )
+  }
+}
+
+///|
+test "from_json rejects a non-array" {
+  let bad : Json = { "a": 1 }
+  try (@json.from_json(bad) : @hashset.HashSet[Int]) catch {
+    err =>
+      inspect(
+        err,
+        content="JsonDecodeError((, @hashset.from_json: expected array))",
+      )
+  } noraise {
+    _ => fail("expected JsonDecodeError")
+  }
+}
+
+///|
+test "from_json reports the index of the element that failed" {
+  let bad : Json = [1, "two", 3]
+  try (@json.from_json(bad) : @hashset.HashSet[Int]) catch {
+    err =>
+      inspect(
+        err,
+        content="JsonDecodeError((/1, Int::from_json: expected number))",
+      )
+  } noraise {
+    _ => fail("expected JsonDecodeError")
+  }
+}

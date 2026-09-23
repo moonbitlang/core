@@ -47,6 +47,11 @@ pub extend Set with Default::{default}
 pub extend Set with Eq::{not_equal}
 
 ///|
+#deprecated("Use `@json.from_json` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Set with @json.FromJson::{from_json}
+
+///|
 #deprecated("Use `@json.to_json` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Set with @json.ToJson::{to_json}
