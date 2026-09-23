@@ -772,18 +772,38 @@ test "filter propagates errors" {
 ///|
 test "map propagates errors and leaves the source unchanged" {
   let m = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
+  // Raise on the second call, after part of the result has been built;
+  // which key that is depends on the hash order.
+  let mut calls = 0
   let raised = try {
-    ignore(m.map((k, v) => if k == "b" { raise Failure("no") } else { v * 10 }))
+    ignore(
+      m.map((_, v) => {
+        calls += 1
+        if calls == 2 {
+          raise Failure("no")
+        }
+        v * 10
+      }),
+    )
     false
   } catch {
     _ => true
   }
   assert_true(raised)
+  assert_eq(calls, 2)
   let pairs = m.to_array()
   pairs.sort()
   assert_eq(pairs, [("a", 1), ("b", 2), ("c", 3)])
-  // A non-raising function still needs no `try`.
-  let mapped = m.map((_, v) => v * 10).to_array()
+  let mapped = map_times_ten(m).to_array()
   mapped.sort()
   assert_eq(mapped, [("a", 10), ("b", 20), ("c", 30)])
+}
+
+///|
+/// Not declared `raise`, so this compiles only if `map` with a non-raising
+/// function is itself non-raising.
+fn map_times_ten(
+  m : @hashmap.HashMap[String, Int],
+) -> @hashmap.HashMap[String, Int] {
+  m.map((_, v) => v * 10)
 }
