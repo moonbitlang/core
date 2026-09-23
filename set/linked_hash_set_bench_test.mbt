@@ -76,3 +76,22 @@ test "bench Set::add+remove n=50000" (it : @bench.T) {
     it.keep(s.length())
   })
 }
+
+///|
+fn filter_bench_set() -> @set.Set[String] {
+  Set([ for i in 0..<set_bench_n => "key-number-\{i}-with-some-length" ])
+}
+
+///|
+test "bench Set::filter n=50000" (it : @bench.T) {
+  let s = filter_bench_set()
+  it.bench(fn() { it.keep(s.filter(k => k.length() % 2 == 0).length()) })
+}
+
+///|
+test "bench Set comprehension filter n=50000" (it : @bench.T) {
+  let s = filter_bench_set()
+  it.bench(fn() {
+    it.keep(@set.Set([ for k in s if k.length() % 2 == 0 => k ]).length())
+  })
+}

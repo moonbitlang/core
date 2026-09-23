@@ -576,3 +576,85 @@ test "bitwise_operations" {
   inspect(sym_diff.contains("a"), content="true")
   inspect(sym_diff.contains("d"), content="true")
 }
+
+///|
+/// A set with colliding hashes and some elements already removed.
+fn filter_fixture() -> @set.Set[Int] {
+  let s : @set.Set[Int] = Set([], capacity=2)
+  for i in 0..<200 {
+    s.add(i * 64)
+  }
+  for i in 0..<200 {
+    if i % 7 == 0 {
+      s.remove(i * 64)
+    }
+  }
+  s
+}
+
+///|
+test "filter keeps order and lookups after removals and collisions" {
+  let s = filter_fixture()
+  let kept = s.filter(k => k % 3 == 0)
+  for i in 0..<200 {
+    assert_eq(kept.contains(i * 64), i % 7 != 0 && i * 64 % 3 == 0)
+  }
+  assert_eq(kept.to_array(), [ for k in s if k % 3 == 0 => k ])
+  // The result is an independent, growable set.
+  kept.add(-1)
+  assert_true(kept.contains(-1))
+  assert_false(s.contains(-1))
+  assert_eq(kept.to_array().last(), Some(-1))
+}
+
+///|
+test "filter sizes the result for the kept elements" {
+  let s : @set.Set[Int] = Set([ for i in 0..<10000 => i ])
+  for keep in [0, 1, 10, 5000, 10000] {
+    let kept = s.filter(k => k < keep)
+    let rebuilt = @set.Set([ for k in s if k < keep => k ])
+    assert_eq(kept.length(), keep)
+    assert_eq(kept.capacity(), rebuilt.capacity())
+  }
+}
+
+///|
+test "filter propagates errors" {
+  let s = @set.Set(["a", "b"])
+  let raised = try {
+    ignore(s.filter(k => if k == "b" { raise Failure("no") } else { true }))
+    false
+  } catch {
+    _ => true
+  }
+  assert_true(raised)
+}
+
+///|
+test "retain matches filter, keeps order, and leaves a usable set" {
+  let predicates : Array[(Int) -> Bool] = [
+    k => k % 3 == 0,
+    _ => true,
+    _ => false,
+    k => k != 64, // the first element
+    k => k != 199 * 64, // the last element
+    k => k % 128 != 64, // every other element
+    k => k > 100 * 64, // a leading run
+    k => k < 100 * 64, // a trailing run
+  ]
+  for keep in predicates {
+    let s = filter_fixture()
+    let expected = s.filter(keep).to_array()
+    s.retain(keep)
+    assert_eq(s.to_array(), expected)
+    assert_eq(s.length(), expected.length())
+    for i in 0..<200 {
+      assert_eq(s.contains(i * 64), expected.contains(i * 64))
+    }
+    // The linked list stays consistent for later edits.
+    s.add(-1)
+    s.remove(-1)
+    s.add(-2)
+    assert_eq(s.to_array(), [..expected, -2])
+  }
+}

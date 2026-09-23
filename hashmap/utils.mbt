@@ -390,14 +390,17 @@ pub fn[K, V] HashMap::values(self : HashMap[K, V]) -> Iter[V] {
 }
 
 ///|
-/// Retains only the key-value pairs that satisfy the given predicate function.
-/// This method modifies the hash map in-place, removing all entries for which
-/// the predicate returns `false`.
+/// Keeps only the key-value pairs for which `f` returns `true`, removing the
+/// rest in place.
+///
+/// `true` means *keep*, as with `HashMap::filter`, which returns a new map
+/// and leaves `self` unchanged; use `retain` when the original is no longer
+/// needed. `f` must not modify the map.
 ///
 /// Parameters:
 ///
 /// * `self` : The hash map to be filtered.
-/// * `predicate` : A function that takes a key and value as arguments and returns
+/// * `f` : A function that takes a key and value as arguments and returns
 /// `true` if the key-value pair should be kept, `false` if it should be removed.
 ///
 /// Example:
@@ -428,6 +431,58 @@ pub fn[K, V] HashMap::retain(self : HashMap[K, V], f : (K, V) -> Bool) -> Unit {
       }
     }
   }
+}
+
+///|
+/// Returns a new hash map holding the key-value pairs for which `f` returns
+/// `true`. `self` is unchanged.
+///
+/// `true` means *keep*, as with `Array::filter`. To filter in place instead,
+/// use `HashMap::retain`.
+///
+/// The result is sized for the entries kept, like `@hashmap.from_array`. It is
+/// faster than rebuilding from a comprehension such as
+/// `@hashmap.from_array([for k, v in m if f(k, v) => (k, v)])` because each
+/// entry's stored hash is reused: keys are never hashed again and no tuples
+/// are allocated.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3), ("d", 4)])
+///   let even = map.filter((_k, v) => v % 2 == 0)
+///   inspect(even.length(), content="2")
+///   debug_inspect(even.get("b"), content="Some(2)")
+///   debug_inspect(even.get("c"), content="None")
+///   inspect(map.length(), content="4")
+/// }
+/// ```
+pub fn[K, V] HashMap::filter(
+  self : HashMap[K, V],
+  f : (K, V) -> Bool raise?,
+) -> HashMap[K, V] raise? {
+  // Collect first so the result can be sized for exactly the kept entries:
+  // a stored hash fits a table of any size. The entries are fresh because
+  // `psl` belongs to the table an entry sits in.
+  let kept : Array[Entry[K, V]] = []
+  for entry in self.entries {
+    if entry is Some({ key, value, hash, .. }) && f(key, value) {
+      kept.push({ psl: 0, key, value, hash, })
+    }
+  }
+  let other = new_hashmap(
+    if kept.is_empty() {
+      default_init_capacity
+    } else {
+      capacity_for_length(kept.length())
+    },
+  )
+  for entry in kept {
+    other.rehash_place_entry(entry)
+  }
+  other.size = kept.length()
+  other
 }
 
 ///|

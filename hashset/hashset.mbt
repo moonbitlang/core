@@ -501,7 +501,12 @@ pub impl[K : Hash + Eq] Sub for HashSet[K] with fn sub(self, other) {
 }
 
 ///|
-/// Removes all elements for which the predicate returns `false`.
+/// Keeps only the elements for which `f` returns `true`, removing the rest in
+/// place.
+///
+/// `true` means *keep*, as with `HashSet::filter`, which returns a new set
+/// and leaves `self` unchanged; use `retain` when the original is no longer
+/// needed. `f` must not modify the set.
 #locals(f)
 pub fn[K] HashSet::retain(self : HashSet[K], f : (K) -> Bool) -> Unit {
   let size = self.size
@@ -517,6 +522,53 @@ pub fn[K] HashSet::retain(self : HashSet[K], f : (K) -> Bool) -> Unit {
       }
     }
   }
+}
+
+///|
+/// Returns a new hash set holding the elements for which `f` returns `true`.
+/// `self` is unchanged.
+///
+/// `true` means *keep*, as with `Array::filter`. To filter in place instead,
+/// use `HashSet::retain`.
+///
+/// The result is sized for the elements kept, like `@hashset.from_array`. It
+/// is faster than rebuilding from a comprehension such as
+/// `@hashset.from_array([for k in s if f(k) => k])` because each element's
+/// stored hash is reused: elements are never hashed again.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let set = @hashset.from_array([1, 2, 3, 4])
+///   let even = set.filter(x => x % 2 == 0)
+///   inspect(even.length(), content="2")
+///   inspect(even.contains(2), content="true")
+///   inspect(even.contains(3), content="false")
+///   inspect(set.length(), content="4")
+/// }
+/// ```
+pub fn[K] HashSet::filter(
+  self : HashSet[K],
+  f : (K) -> Bool raise?,
+) -> HashSet[K] raise? {
+  // Collect first so the result can be sized for exactly the kept elements:
+  // a stored hash fits a table of any size. The entries are fresh because
+  // `psl` belongs to the table an entry sits in.
+  let kept : Array[Entry[K]] = []
+  for entry in self.entries {
+    if entry is Some({ key, hash, .. }) && f(key) {
+      kept.push({ psl: 0, key, hash, })
+    }
+  }
+  let other = new_hashset(
+    default_init_capacity.max(capacity_for_length(kept.length())),
+  )
+  for entry in kept {
+    other.rehash_place_entry(entry)
+  }
+  other.size = kept.length()
+  other
 }
 
 ///|

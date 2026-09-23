@@ -127,3 +127,28 @@ test "bench HashMap::to_array Ref n=50000" (it : @bench.T) {
   }
   it.bench(fn() { it.keep(m.to_array()) })
 }
+
+///|
+fn filter_bench_map() -> @hashmap.HashMap[String, Int] {
+  HashMap(
+    [
+      for i in 0..<hashmap_bench_n => ("key-number-\{i}-with-some-length", i)
+    ],
+  )
+}
+
+///|
+test "bench HashMap::filter n=50000" (it : @bench.T) {
+  let m = filter_bench_map()
+  it.bench(fn() { it.keep(m.filter((_, v) => v % 2 == 0).length()) })
+}
+
+///|
+test "bench HashMap comprehension filter n=50000" (it : @bench.T) {
+  let m = filter_bench_map()
+  it.bench(fn() {
+    it.keep(
+      @hashmap.HashMap([ for k, v in m if v % 2 == 0 => (k, v) ]).length(),
+    )
+  })
+}
