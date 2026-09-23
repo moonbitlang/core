@@ -808,12 +808,14 @@ pub impl[K, V] Default for HashMap[K, V] with fn default() {
 }
 
 ///|
-/// Applies a function to each key-value pair in the map and 
+/// Applies a function to each key-value pair in the map and
 /// returns a new map with the results, using the original keys.
+///
+/// `f` may raise; the error propagates and `self` is left unchanged.
 pub fn[K, V, V2] HashMap::map(
   self : HashMap[K, V],
-  f : (K, V) -> V2,
-) -> HashMap[K, V2] {
+  f : (K, V) -> V2 raise?,
+) -> HashMap[K, V2] raise? {
   let other = {
     capacity: self.capacity,
     entries: FixedArray::make(self.capacity, None),

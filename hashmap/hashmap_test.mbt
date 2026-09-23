@@ -768,3 +768,22 @@ test "filter propagates errors" {
   }
   assert_true(raised)
 }
+
+///|
+test "map propagates errors and leaves the source unchanged" {
+  let m = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
+  let raised = try {
+    ignore(m.map((k, v) => if k == "b" { raise Failure("no") } else { v * 10 }))
+    false
+  } catch {
+    _ => true
+  }
+  assert_true(raised)
+  let pairs = m.to_array()
+  pairs.sort()
+  assert_eq(pairs, [("a", 1), ("b", 2), ("c", 3)])
+  // A non-raising function still needs no `try`.
+  let mapped = m.map((_, v) => v * 10).to_array()
+  mapped.sort()
+  assert_eq(mapped, [("a", 10), ("b", 20), ("c", 30)])
+}

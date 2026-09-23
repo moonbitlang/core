@@ -874,7 +874,12 @@ pub impl[K, V] Default for Map[K, V] with fn default() {
 
 ///|
 /// Applies a function to each key-value pair in the map and returns a new map with the results, using the original keys.
-pub fn[K, V, V2] Map::map(self : Map[K, V], f : (K, V) -> V2) -> Map[K, V2] {
+///
+/// `f` may raise; the error propagates and `self` is left unchanged.
+pub fn[K, V, V2] Map::map(
+  self : Map[K, V],
+  f : (K, V) -> V2 raise?,
+) -> Map[K, V2] raise? {
   // copy structure
   let other = {
     capacity: self.capacity,
