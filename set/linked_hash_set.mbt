@@ -67,7 +67,9 @@ struct Set[K] {
 // depends on the list being maintained correctly rather than on arithmetic
 // alone, so it is not one to build unchecked access on. `shift_back` is
 // unchecked, but on a local caller-based proof rather than on that
-// invariant: both of its callers pass masked probe indices.
+// invariant: `remove` and `remove_and_check` pass masked probe indices, and
+// `retain`, which passes a stored index, performs its own checked read of
+// that slot immediately before calling.
 
 ///|
 let default_init_capacity = 8
@@ -388,11 +390,12 @@ fn[K] Set::remove_entry(self : Set[K], entry : Entry[K]) -> Unit {
 
 ///|
 fn[K] Set::shift_back(self : Set[K], idx : Int) -> Unit {
-  // SAFETY: both callers -- `remove` and `remove_and_check` -- pass a masked
-  // probe index. Unlike `Map`, no route reaches here carrying a stored list
-  // index, because `Set` has no `retain`. `next` is re-masked each step and
-  // later `cur` values are previous `next` values. This is also what makes
-  // the `set_entry` call below sound.
+  // SAFETY: the initial `cur` is in bounds by every route its callers take,
+  // and none of them requires trusting the list invariant: `remove` and
+  // `remove_and_check` pass a masked probe index, and `retain` performs its
+  // own checked `entries[idx]` read immediately before calling. `next` is
+  // re-masked each step and later `cur` values are previous `next` values.
+  // This is also what makes the `set_entry` call below sound.
   for cur = idx {
     let next = (cur + 1) & self.capacity_mask
     match self.entries.unsafe_get(next) {
@@ -613,6 +616,104 @@ pub fn[K] Set::copy(self : Set[K]) -> Set[K] {
         }
       }
     }
+  }
+  other
+}
+
+///|
+/// Keeps only the elements for which `f` returns `true`, removing the rest in
+/// place. The order of the remaining elements is preserved.
+///
+/// `true` means *keep*, as with `Set::filter`, which returns a new set and
+/// leaves `self` unchanged; use `retain` when the original is no longer
+/// needed. `f` must not modify the set.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let set = @set.Set([1, 2, 3, 4])
+///   set.retain(x => x % 2 == 0)
+///   debug_inspect(set.to_array(), content="[2, 4]")
+/// }
+/// ```
+#locals(f)
+pub fn[K] Set::retain(self : Set[K], f : (K) -> Bool) -> Unit {
+  // An entry does not store its own slot, only its predecessor's, so a
+  // rejected entry is removed one step later, through its successor's `prev`
+  // (or `tail`, at the end). Removing it cannot disturb the successor: `next`
+  // links are references, not slots.
+  for x = self.head, remove_prev = false {
+    match x {
+      Some({ key, next, prev: idx, .. }) => {
+        if remove_prev {
+          guard! self.entries[idx] is Some(entry)
+          self.remove_entry(entry)
+          self.shift_back(idx)
+          self.size -= 1
+        }
+        continue next, !f(key)
+      }
+      None => {
+        if remove_prev {
+          let idx = self.tail
+          guard! self.entries[idx] is Some(entry)
+          self.remove_entry(entry)
+          self.shift_back(idx)
+          self.size -= 1
+        }
+        break
+      }
+    }
+  }
+}
+
+///|
+/// Returns a new set holding the elements for which `f` returns `true`, in
+/// their original insertion order. `self` is unchanged.
+///
+/// `true` means *keep*, as with `Array::filter`. To filter in place instead,
+/// use `Set::retain`.
+///
+/// The result is sized for the elements kept, like `Set([...])`. It is faster
+/// than rebuilding from a comprehension such as `Set([for k in s if f(k) => k])`
+/// because each element's stored hash is reused: elements are never hashed
+/// again.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let set = @set.Set([1, 2, 3, 4])
+///   let even = set.filter(x => x % 2 == 0)
+///   debug_inspect(even.to_array(), content="[2, 4]")
+///   inspect(set.length(), content="4")
+/// }
+/// ```
+pub fn[K] Set::filter(self : Set[K], f : (K) -> Bool raise?) -> Set[K] raise? {
+  // Collect first so the result can be sized for exactly the kept elements:
+  // a stored hash fits a table of any size.
+  let kept : Array[Entry[K]] = []
+  for x = self.head {
+    match x {
+      Some({ key, hash, next, .. }) => {
+        if f(key) {
+          kept.push({ prev: -1, next: None, psl: 0, key, hash, })
+        }
+        continue next
+      }
+      None => break
+    }
+  }
+  let other = new_set(
+    if kept.is_empty() {
+      default_init_capacity
+    } else {
+      capacity_for_length(kept.length())
+    },
+  )
+  for entry in kept {
+    other.rehash_place_entry(entry)
   }
   other
 }

@@ -477,3 +477,53 @@ test "retain/empty_set" {
   set.retain(_x => true)
   @test.assert_eq(set.length(), 0)
 }
+
+///|
+test "filter keeps lookups working after removals and collisions" {
+  // Small table, colliding hashes, and elements removed before filtering.
+  let s : @hashset.HashSet[Int] = HashSet([], capacity=2)
+  for i in 0..<200 {
+    s.add(i * 64)
+  }
+  for i in 0..<200 {
+    if i % 7 == 0 {
+      s.remove(i * 64)
+    }
+  }
+  let kept = s.filter(k => k % 3 == 0)
+  for i in 0..<200 {
+    assert_eq(kept.contains(i * 64), i % 7 != 0 && i * 64 % 3 == 0)
+  }
+  let actual = kept.to_array()
+  actual.sort()
+  let expected = [ for k in s if k % 3 == 0 => k ]
+  expected.sort()
+  assert_eq(actual, expected)
+  // The result is an independent, growable set.
+  kept.add(-1)
+  assert_true(kept.contains(-1))
+  assert_false(s.contains(-1))
+}
+
+///|
+test "filter sizes the result for the kept elements" {
+  let s : @hashset.HashSet[Int] = HashSet([ for i in 0..<10000 => i ])
+  for keep in [0, 1, 10, 5000, 10000] {
+    let kept = s.filter(k => k < keep)
+    let rebuilt = @hashset.HashSet([ for k in s if k < keep => k ])
+    assert_eq(kept.length(), keep)
+    assert_eq(kept.capacity(), rebuilt.capacity())
+  }
+}
+
+///|
+test "filter propagates errors" {
+  let s = @hashset.HashSet(["a", "b"])
+  let raised = try {
+    ignore(s.filter(k => if k == "b" { raise Failure("no") } else { true }))
+    false
+  } catch {
+    _ => true
+  }
+  assert_true(raised)
+}

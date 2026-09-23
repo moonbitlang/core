@@ -715,3 +715,56 @@ test "HashMap::get_from_bytes" {
   let test_view = longer[10:14]
   debug_inspect(map.get_from_bytes(test_view), content="Some(3)")
 }
+
+///|
+test "filter keeps lookups working after removals and collisions" {
+  // Small table, colliding hashes, and entries removed before filtering.
+  let m : @hashmap.HashMap[Int, Int] = HashMap([], capacity=2)
+  for i in 0..<200 {
+    m.set(i * 64, i)
+  }
+  for i in 0..<200 {
+    if i % 7 == 0 {
+      m.remove(i * 64)
+    }
+  }
+  let kept = m.filter((k, _) => k % 3 == 0)
+  for i in 0..<200 {
+    let expected = if i % 7 != 0 && i * 64 % 3 == 0 { Some(i) } else { None }
+    assert_eq(kept.get(i * 64), expected)
+  }
+  let actual = kept.to_array()
+  actual.sort()
+  let expected = [ for k, v in m if k % 3 == 0 => (k, v) ]
+  expected.sort()
+  assert_eq(actual, expected)
+  // The result is an independent, growable map.
+  kept.set(-1, -1)
+  assert_eq(kept.get(-1), Some(-1))
+  assert_eq(m.get(-1), None)
+}
+
+///|
+test "filter sizes the result for the kept entries" {
+  let m : @hashmap.HashMap[Int, Int] = HashMap([ for i in 0..<10000 => (i, i) ])
+  for keep in [0, 1, 10, 5000, 10000] {
+    let kept = m.filter((k, _) => k < keep)
+    let rebuilt = @hashmap.HashMap([ for k, v in m if k < keep => (k, v) ])
+    assert_eq(kept.length(), keep)
+    assert_eq(kept.capacity(), rebuilt.capacity())
+  }
+}
+
+///|
+test "filter propagates errors" {
+  let m = @hashmap.HashMap([("a", 1), ("b", 2)])
+  let raised = try {
+    ignore(
+      m.filter((k, _) => if k == "b" { raise Failure("no") } else { true }),
+    )
+    false
+  } catch {
+    _ => true
+  }
+  assert_true(raised)
+}

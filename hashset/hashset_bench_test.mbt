@@ -42,3 +42,28 @@ test "bench HashSet::contains n=50000" (it : @bench.T) {
     it.keep(hits)
   })
 }
+
+///|
+fn filter_bench_set() -> @hashset.HashSet[String] {
+  HashSet(
+    [
+      for i in 0..<hashset_bench_n => "key-number-\{i}-with-some-length"
+    ],
+  )
+}
+
+///|
+test "bench HashSet::filter n=50000" (it : @bench.T) {
+  let s = filter_bench_set()
+  it.bench(fn() { it.keep(s.filter(k => k.length() % 2 == 0).length()) })
+}
+
+///|
+test "bench HashSet comprehension filter n=50000" (it : @bench.T) {
+  let s = filter_bench_set()
+  it.bench(fn() {
+    it.keep(
+      @hashset.HashSet([ for k in s if k.length() % 2 == 0 => k ]).length(),
+    )
+  })
+}
