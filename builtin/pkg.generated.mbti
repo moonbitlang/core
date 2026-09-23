@@ -401,7 +401,7 @@ pub fn[K, V] Map::iter2(Self[K, V]) -> Iter2[K, V]
 pub fn[K, V] Map::keys(Self[K, V]) -> Iter[K]
 #alias(size, deprecated)
 pub fn[K, V] Map::length(Self[K, V]) -> Int
-pub fn[K, V, V2] Map::map(Self[K, V], (K, V) -> V2) -> Self[K, V2]
+pub fn[K, V, V2] Map::map(Self[K, V], (K, V) -> V2 raise?) -> Self[K, V2] raise?
 pub fn[K : Eq, V] Map::merge(Self[K, V], Self[K, V]) -> Self[K, V]
 pub fn[K : Eq, V] Map::merge_in_place(Self[K, V], Self[K, V]) -> Unit
 #deprecated
