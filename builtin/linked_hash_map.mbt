@@ -1071,9 +1071,10 @@ pub fn[K, V] Map::retain(self : Map[K, V], f : (K, V) -> Bool) -> Unit {
 /// `true` means *keep*, as with `Array::filter`. To filter in place instead,
 /// use `Map::retain`.
 ///
-/// This is faster than rebuilding a map from a comprehension such as
-/// `Map([for k, v in m if f(k, v) => (k, v)])`: keys are not hashed again
-/// and no intermediate array is built.
+/// The result is sized for the entries kept, like `Map([...])`. It is faster
+/// than rebuilding from a comprehension such as
+/// `Map([for k, v in m if f(k, v) => (k, v)])` because each entry's stored
+/// hash is reused: keys are never hashed again and no tuples are allocated.
 ///
 /// Example:
 ///
@@ -1094,18 +1095,29 @@ pub fn[K, V] Map::filter(
   self : Map[K, V],
   f : (K, V) -> Bool raise?,
 ) -> Map[K, V] raise? {
-  // Sized like `self`, so the kept entries never trigger a grow.
-  let other = new_map(self.capacity)
+  // Collect the kept entries first so the result can be sized for exactly
+  // them: a stored hash fits a table of any size, and the table never grows.
+  let kept : Array[Entry[K, V]] = []
   for x = self.head {
     match x {
-      Some({ key, value, hash, next, .. }) => {
+      Some({ key, value, next, .. } as entry) => {
         if f(key, value) {
-          other.add_unique_with_hash(key, value, hash)
+          kept.push(entry)
         }
         continue next
       }
       None => break
     }
+  }
+  let other = new_map(
+    if kept.is_empty() {
+      default_init_capacity
+    } else {
+      capacity_for_length(kept.length())
+    },
+  )
+  for entry in kept {
+    other.add_unique_with_hash(entry.key, entry.value, entry.hash)
   }
   other
 }

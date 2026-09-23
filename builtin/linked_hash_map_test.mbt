@@ -730,6 +730,17 @@ test "Map::set updating existing key should not grow" {
 }
 
 ///|
+test "filter sizes the result for the kept entries" {
+  let m : Map[Int, Int] = Map([ for i in 0..<10000 => (i, i) ])
+  for keep in [0, 1, 10, 5000, 10000] {
+    let kept = m.filter((k, _) => k < keep)
+    let rebuilt = Map([ for k, v in m if k < keep => (k, v) ])
+    assert_eq(kept.length(), keep)
+    assert_eq(kept.capacity(), rebuilt.capacity())
+  }
+}
+
+///|
 test "filter keeps lookups working after removals and collisions" {
   // Small table, colliding hashes, and entries removed before filtering.
   let m : Map[Int, Int] = Map([], capacity=2)
