@@ -811,3 +811,29 @@ test "map propagates errors and leaves the source unchanged" {
 fn map_times_ten(m : Map[String, Int]) -> Map[String, Int] {
   m.map((_, v) => v * 10)
 }
+
+///|
+test "remove_and_get returns the removed value and keeps the rest intact" {
+  // Small table and colliding hashes, so removals shift probe chains.
+  let m : Map[Int, Int] = Map([], capacity=2)
+  for i in 0..<200 {
+    m.set(i * 64, i)
+  }
+  for i in 0..<200 {
+    if i % 3 == 0 {
+      assert_eq(m.remove_and_get(i * 64), Some(i))
+      assert_eq(m.remove_and_get(i * 64), None)
+    }
+  }
+  assert_eq(m.remove_and_get(-1), None)
+  assert_eq(m.length(), [ for i in 0..<200 if i % 3 != 0 => i ].length())
+  for i in 0..<200 {
+    assert_eq(m.get(i * 64), if i % 3 == 0 { None } else { Some(i) })
+  }
+  // Insertion order of the survivors is preserved, and the map stays usable.
+  assert_eq(m.to_array(), [ for i in 0..<200 if i % 3 != 0 => (i * 64, i) ])
+  m.set(0, -1)
+  assert_eq(m.to_array().last(), Some((0, -1)))
+  let empty : Map[String, Int] = Map([])
+  assert_eq(empty.remove_and_get("x"), None)
+}

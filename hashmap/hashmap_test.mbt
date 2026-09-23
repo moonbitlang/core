@@ -807,3 +807,28 @@ fn map_times_ten(
 ) -> @hashmap.HashMap[String, Int] {
   m.map((_, v) => v * 10)
 }
+
+///|
+test "remove_and_get returns the removed value and keeps the rest intact" {
+  // Small table and colliding hashes, so removals shift probe chains.
+  let m : @hashmap.HashMap[Int, Int] = HashMap([], capacity=2)
+  for i in 0..<200 {
+    m.set(i * 64, i)
+  }
+  for i in 0..<200 {
+    if i % 3 == 0 {
+      assert_eq(m.remove_and_get(i * 64), Some(i))
+      assert_eq(m.remove_and_get(i * 64), None)
+    }
+  }
+  assert_eq(m.remove_and_get(-1), None)
+  assert_eq(m.length(), [ for i in 0..<200 if i % 3 != 0 => i ].length())
+  for i in 0..<200 {
+    assert_eq(m.get(i * 64), if i % 3 == 0 { None } else { Some(i) })
+  }
+  // The map stays usable.
+  m.set(0, -1)
+  assert_eq(m.get(0), Some(-1))
+  let empty : @hashmap.HashMap[String, Int] = HashMap([])
+  assert_eq(empty.remove_and_get("x"), None)
+}

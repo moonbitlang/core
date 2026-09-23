@@ -409,6 +409,7 @@ pub fn[K, V] Map::new(capacity? : Int) -> Self[K, V]
 #deprecated
 pub fn[K : Hash + Eq, V] Map::of(FixedArray[(K, V)]) -> Self[K, V]
 pub fn[K : Hash + Eq, V] Map::remove(Self[K, V], K) -> Unit
+pub fn[K : Hash + Eq, V] Map::remove_and_get(Self[K, V], K) -> V?
 pub fn[K, V] Map::retain(Self[K, V], (K, V) -> Bool) -> Unit
 #alias("_[_]=_")
 pub fn[K : Hash + Eq, V] Map::set(Self[K, V], K, V) -> Unit

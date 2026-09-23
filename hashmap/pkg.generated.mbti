@@ -53,6 +53,7 @@ pub fn[K : Eq, V] HashMap::merge_in_place(Self[K, V], Self[K, V]) -> Unit
 #deprecated
 pub fn[K, V] HashMap::new(capacity? : Int) -> Self[K, V]
 pub fn[K : Hash + Eq, V] HashMap::remove(Self[K, V], K) -> Unit
+pub fn[K : Hash + Eq, V] HashMap::remove_and_get(Self[K, V], K) -> V?
 pub fn[K, V] HashMap::retain(Self[K, V], (K, V) -> Bool) -> Unit
 #alias("_[_]=_")
 pub fn[K : Hash + Eq, V] HashMap::set(Self[K, V], K, V) -> Unit

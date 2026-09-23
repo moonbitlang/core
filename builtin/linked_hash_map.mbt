@@ -554,6 +554,39 @@ fn[K : Eq, V] Map::remove_with_hash(
 }
 
 ///|
+/// Removes the entry for `key` and returns its value, or returns `None` and
+/// leaves the map unchanged if `key` is absent. The key is looked up once,
+/// unlike a `get` followed by a `remove`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let map = { "a": 1, "b": 2 }
+///   debug_inspect(map.remove_and_get("a"), content="Some(1)")
+///   debug_inspect(map.remove_and_get("a"), content="None")
+///   inspect(map.length(), content="1")
+/// }
+/// ```
+pub fn[K : Hash + Eq, V] Map::remove_and_get(self : Map[K, V], key : K) -> V? {
+  let hash = Hash::hash(key)
+  // SAFETY: masked probe index; see the note at the top of this file.
+  for i = 0, idx = hash & self.capacity_mask {
+    guard self.entries.unsafe_get(idx) is Some(entry) else { break None }
+    if entry.hash == hash && entry.key == key {
+      self.remove_entry(entry)
+      self.shift_back(idx)
+      self.size -= 1
+      break Some(entry.value)
+    }
+    if i > entry.psl {
+      break None
+    }
+    continue i + 1, (idx + 1) & self.capacity_mask
+  }
+}
+
+///|
 #owned(entry)
 fn[K, V] Map::add_entry_to_tail(
   self : Map[K, V],
@@ -584,11 +617,11 @@ fn[K, V] Map::remove_entry(self : Map[K, V], entry : Entry[K, V]) -> Unit {
 ///|
 fn[K, V] Map::shift_back(self : Map[K, V], idx : Int) -> Unit {
   // SAFETY: the initial `cur` is in bounds by every route its callers take,
-  // and none of them requires trusting the list invariant: `remove` and
-  // `update` pass a masked probe index, and `retain` performs its own
-  // checked `entries[idx]` read immediately before calling. `next` is
-  // re-masked each step and later `cur` values are previous `next` values.
-  // This is also what makes the `set_entry` call below sound.
+  // and none of them requires trusting the list invariant: `remove`,
+  // `remove_and_get` and `update` pass a masked probe index, and `retain`
+  // performs its own checked `entries[idx]` read immediately before calling.
+  // `next` is re-masked each step and later `cur` values are previous `next`
+  // values. This is also what makes the `set_entry` call below sound.
   for cur = idx {
     let next = (cur + 1) & self.capacity_mask
     match self.entries.unsafe_get(next) {
