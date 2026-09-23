@@ -713,3 +713,44 @@ test "from_json reports the index of the element that failed" {
     _ => fail("expected JsonDecodeError")
   }
 }
+
+///|
+test "union_in_place matches union, in order, and leaves other unchanged" {
+  // `self` starts small, so absorbing `other` forces several grows.
+  let cases : Array[(Array[Int], Array[Int])] = [
+    ([3, 1], [2, 3, 4]),
+    ([], [1, 2]),
+    ([1, 2], []),
+    ([], []),
+    ([ for i in 0..<10 => i * 64 ], [ for i in 5..<300 => i * 64 ]),
+  ]
+  for case in cases {
+    let (a, b) = case
+    let expected = @set.Set(a).union(Set(b)).to_array()
+    let s = @set.Set(a)
+    let other = @set.Set(b)
+    s.union_in_place(other)
+    assert_eq(s.to_array(), expected)
+    assert_eq(s.length(), expected.length())
+    for x in expected {
+      assert_true(s.contains(x))
+    }
+    assert_eq(other.to_array(), b)
+    // Still usable afterwards.
+    s.add(-1)
+    s.remove(-1)
+    assert_eq(s.to_array(), expected)
+  }
+}
+
+///|
+test "union_in_place with itself is a no-op" {
+  // Six elements fill a capacity-8 set exactly to its grow threshold, so one
+  // more insertion attempt would grow it: without the self check, absorbing
+  // itself would resize the set while walking its own list.
+  let s = @set.Set([ for i in 0..<6 => i ])
+  let capacity = s.capacity()
+  s.union_in_place(s)
+  assert_eq(s.to_array(), [0, 1, 2, 3, 4, 5])
+  assert_eq(s.capacity(), capacity)
+}

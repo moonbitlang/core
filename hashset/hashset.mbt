@@ -409,6 +409,35 @@ pub fn[K : Hash + Eq] HashSet::union(
 }
 
 ///|
+/// Adds every element of `other` to `self`, in place: the mutating
+/// counterpart of `union`, as `HashMap::merge_in_place` is of
+/// `HashMap::merge`. Elements are not hashed again, so only `Eq` is needed.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let set = @hashset.from_array([3, 1])
+///   set.union_in_place(@hashset.from_array([2, 3, 4]))
+///   inspect(set.length(), content="4")
+///   inspect(set.contains(4), content="true")
+/// }
+/// ```
+pub fn[K : Eq] HashSet::union_in_place(
+  self : HashSet[K],
+  other : HashSet[K],
+) -> Unit {
+  if physical_equal(self, other) {
+    return
+  }
+  for entry in other.entries {
+    if entry is Some({ key, hash, .. }) {
+      self.add_with_hash(key, hash)
+    }
+  }
+}
+
+///|
 /// Returns a new set containing only elements present in both sets.
 pub fn[K : Hash + Eq] HashSet::intersection(
   self : HashSet[K],
