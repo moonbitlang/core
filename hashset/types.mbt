@@ -44,3 +44,27 @@ struct HashSet[K] {
   mut capacity_mask : Int // capacity_mask = capacity - 1, used to find idx
   mut grow_at : Int // threshold that triggers grow
 }
+
+///|
+/// Two hash sets are equal when they contain the same elements, regardless
+/// of insertion order or capacity.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   let a = @hashset.from_array([1, 2, 3])
+///   let b = @hashset.from_array([3, 2, 1])
+///   inspect(a == b, content="true")
+///   b.remove(3)
+///   inspect(a == b, content="false")
+/// }
+/// ```
+pub impl[K : Hash + Eq] Eq for HashSet[K] with fn equal(self, other) {
+  guard self.size == other.size else { return false }
+  for k in self {
+    guard other.contains(k) else { return false }
+  } nobreak {
+    true
+  }
+}

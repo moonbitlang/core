@@ -24,6 +24,9 @@ pub extend HashSet with BitOr::{lor}
 pub extend HashSet with BitXOr::{lxor}
 
 ///|
+pub extend HashSet with Eq::{equal}
+
+///|
 pub extend HashSet with Sub::{sub}
 
 // --- deprecated: hidden from the generated interface ---
@@ -42,6 +45,11 @@ pub extend HashSet with Default::{default}
 #deprecated("Use `@debug.Debug` instead of `Show` for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md", skip_current_package=true)
 #doc(hidden)
 pub extend HashSet with Show::{output, to_string}
+
+///|
+#deprecated("Use `!=` instead", skip_current_package=true)
+#doc(hidden)
+pub extend HashSet with Eq::{not_equal}
 
 ///|
 #deprecated("Use `@json.to_json` instead", skip_current_package=true)

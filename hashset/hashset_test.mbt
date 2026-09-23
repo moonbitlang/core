@@ -527,3 +527,41 @@ test "filter propagates errors" {
   }
   assert_true(raised)
 }
+
+///|
+test "equal ignores order, capacity and removal history" {
+  let a : @hashset.HashSet[Int] = HashSet([], capacity=2)
+  for i in 0..<100 {
+    a.add(i)
+  }
+  for i in 0..<100 {
+    if i % 3 == 0 {
+      a.remove(i)
+    }
+  }
+  let b : @hashset.HashSet[Int] = HashSet(
+    [
+      for i in 0..<100 if i % 3 != 0 => 99 - i
+    ],
+    capacity=1024,
+  )
+  assert_true(a == b)
+  assert_true(b == a)
+  assert_true(a == a)
+  let empty1 : @hashset.HashSet[Int] = HashSet([])
+  let empty2 : @hashset.HashSet[Int] = HashSet([], capacity=64)
+  assert_true(empty1 == empty2)
+}
+
+///|
+test "equal detects a different element or size" {
+  let a = @hashset.from_array(["x", "y", "z"])
+  // Same size, one element differs.
+  assert_false(a == @hashset.from_array(["x", "y", "w"]))
+  // Subset and superset.
+  assert_false(a == @hashset.from_array(["x", "y"]))
+  assert_false(a == @hashset.from_array(["x", "y", "z", "w"]))
+  let empty : @hashset.HashSet[String] = HashSet([])
+  assert_false(a == empty)
+  assert_false(empty == a)
+}
