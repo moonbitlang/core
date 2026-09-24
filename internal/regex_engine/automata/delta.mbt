@@ -80,7 +80,7 @@ fn delta_rep(
 ///|
 fn delta_expr(expr : Expr, c : DeltaContext, marks : MarkSlotMap) -> ThreadSet {
   match expr.def {
-    Chr(cs) => if cs.contains(c.c) { ts_exp(marks, e_eps) } else { ts_empty }
+    Chr(s) => if s.contains(c.c) { ts_exp(marks, e_eps) } else { ts_empty }
     Alt(exprs) =>
       exprs.fold(init=ts_empty, (acc, expr) => acc + delta_expr(expr, c, marks))
     Seq(pref, first, next) => {

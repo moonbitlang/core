@@ -44,7 +44,7 @@
 ///
 /// # Expression Types (ExprDef)
 ///
-/// - `Chr(RecharSet)`: Matches a character from the set
+/// - `Chr(SymbolSet)`: Matches a symbol from the set
 /// - `Alt(Array[Expr])`: Alternation - matches any of the alternatives
 /// - `Seq(Preference, Expr, Expr)`: Sequence - matches first then second
 /// - `Rep(QuantifierMode, Preference, Expr)`: Repetition (*, +, {n,m})
@@ -71,7 +71,7 @@ const EXPR_ID_RESERVED : ExprId = 1
 
 ///|
 priv enum ExprDef {
-  Chr(@shared_types.RecharSet)
+  Chr(SymbolSet)
   Alt(Array[Expr])
   Seq(@shared_types.Preference, Expr, Expr)
   Rep(@shared_types.QuantifierMode, @shared_types.Preference, Expr)
@@ -97,7 +97,7 @@ impl Hash for Expr with fn hash_combine(self, hasher) {
 /// The copied expression reuses semantic structure but receives fresh node ids.
 pub fn e_copy(ctx~ : Context, e : Expr) -> Expr {
   match e.def {
-    Chr(c) => e_cset(ctx~, c)
+    Chr(s) => { id: ctx.new_expr_id(), def: Chr(s), }
     Alt(xs) => e_alt(ctx~, xs.map(x => e_copy(ctx~, x)))
     Seq(_) => {
       // original: e_seq(ctx~, pref, e_copy(ctx~, x), e_copy(ctx~, y))
@@ -149,8 +149,41 @@ pub fn e_cset(ctx~ : Context, c : @shared_types.RecharSet) -> Expr {
   if c.is_empty() {
     e_empty
   } else {
-    { id: ctx.new_expr_id(), def: Chr(c), }
+    { id: ctx.new_expr_id(), def: Chr(SymbolSet::of(c)), }
   }
+}
+
+///|
+/// Membership table for a `Chr` node.
+///
+/// Character sets reach the automaton after symbolization, so their elements
+/// are dense small symbol ids; a flat table indexed by symbol answers
+/// `contains` with one load instead of a walk of the interval tree, and it
+/// is consulted once per `Chr` node per thread on every transition.
+priv struct SymbolSet(FixedArray[Bool])
+
+///|
+fn SymbolSet::of(c : @shared_types.RecharSet) -> SymbolSet {
+  guard c.last_interval() is Some((_, hi)) else { panic() }
+  guard c.first_interval() is Some((lo, _)) && lo >= 0 && hi <= 0x10FFFF else {
+    panic()
+  }
+  let table = FixedArray::make(hi + 1, false)
+  for interval in c.intervals() {
+    let (lo, hi) = interval
+    for s in lo..<=hi {
+      table[s] = true
+    }
+  }
+  SymbolSet(table)
+}
+
+///|
+/// Symbols outside the table (including the `-1` end-of-input marker used
+/// for the final transition) are never members.
+fn SymbolSet::contains(self : SymbolSet, c : @shared_types.Rechar) -> Bool {
+  c.reinterpret_as_uint() < self.0.length().reinterpret_as_uint() &&
+  self.0.unsafe_get(c)
 }
 
 ///|
