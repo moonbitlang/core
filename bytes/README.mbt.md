@@ -194,13 +194,13 @@ test "bytes prefix/suffix" {
   inspect(bytes.has_prefix(b"he"), content="true")
   inspect(bytes.has_suffix(b"lo"), content="true")
   debug_inspect(
-    bytes.chop_prefix(b"he"),
+    bytes.strip_prefix(b"he"),
     content="Some(<BytesView: [0x6c, 0x6c, 0x6f]>)",
   )
   debug_inspect(
-    bytes.chop_suffix(b"lo"),
+    bytes.strip_suffix(b"lo"),
     content="Some(<BytesView: [0x68, 0x65, 0x6c]>)",
   )
-  debug_inspect(bytes.chop_prefix(b"zz"), content="None")
+  debug_inspect(bytes.strip_prefix(b"zz"), content="None")
 }
 ```

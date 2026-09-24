@@ -382,9 +382,9 @@ test "quickcheck: prefix/suffix predicates and chops agree with the model" {
     let pb = Bytes::from_array(prefix)
     let sb = Bytes::from_array(suffix)
     guard bs.has_prefix(pb) && bs.has_suffix(sb) else { return false }
-    guard bs.chop_prefix(pb) == Some(bs[pre_len:]) else { return false }
-    guard bs.chop_suffix(sb) == Some(bs[:len - suf_len]) else { return false }
-    guard bs.chop_prefix(pb).unwrap().to_array() ==
+    guard bs.strip_prefix(pb) == Some(bs[pre_len:]) else { return false }
+    guard bs.strip_suffix(sb) == Some(bs[:len - suf_len]) else { return false }
+    guard bs.strip_prefix(pb).unwrap().to_array() ==
       model_slice(arr, pre_len, len) else {
       return false
     }
@@ -398,16 +398,16 @@ test "quickcheck: prefix/suffix predicates and chops agree with the model" {
       matches_at(arr, cand, len - cand.length())
     guard bs.has_prefix(cb) == model_is_prefix else { return false }
     guard bs.has_suffix(cb) == model_is_suffix else { return false }
-    guard (bs.chop_prefix(cb) is Some(_)) == model_is_prefix else {
+    guard (bs.strip_prefix(cb) is Some(_)) == model_is_prefix else {
       return false
     }
-    guard (bs.chop_suffix(cb) is Some(_)) == model_is_suffix else {
+    guard (bs.strip_suffix(cb) is Some(_)) == model_is_suffix else {
       return false
     }
     // The same predicates through a view with a nonzero offset.
     let shifted = (b"\xaa" + bs)[1:]
     guard shifted.has_prefix(pb) && shifted.has_suffix(sb) else { return false }
-    guard shifted.chop_prefix(pb).unwrap().to_array() ==
+    guard shifted.strip_prefix(pb).unwrap().to_array() ==
       model_slice(arr, pre_len, len) else {
       return false
     }

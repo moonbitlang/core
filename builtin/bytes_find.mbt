@@ -769,7 +769,8 @@ pub fn Bytes::has_suffix(self : Bytes, suffix : BytesView) -> Bool {
 ///
 /// Returns `Some(suffix)` if the view starts with the given prefix.
 /// Returns `None` otherwise.
-pub fn BytesView::chop_prefix(
+#alias(chop_prefix, deprecated="Use `strip_prefix` instead")
+pub fn BytesView::strip_prefix(
   self : BytesView,
   prefix : BytesView,
 ) -> BytesView? {
@@ -783,8 +784,9 @@ pub fn BytesView::chop_prefix(
 
 ///|
 /// Removes the given prefix from the bytes if it exists.
-pub fn Bytes::chop_prefix(self : Bytes, prefix : BytesView) -> BytesView? {
-  self[:].chop_prefix(prefix)
+#alias(chop_prefix, deprecated="Use `strip_prefix` instead")
+pub fn Bytes::strip_prefix(self : Bytes, prefix : BytesView) -> BytesView? {
+  self[:].strip_prefix(prefix)
 }
 
 ///|
@@ -792,7 +794,8 @@ pub fn Bytes::chop_prefix(self : Bytes, prefix : BytesView) -> BytesView? {
 ///
 /// Returns `Some(prefix)` if the view ends with the given suffix.
 /// Returns `None` otherwise.
-pub fn BytesView::chop_suffix(
+#alias(chop_suffix, deprecated="Use `strip_suffix` instead")
+pub fn BytesView::strip_suffix(
   self : BytesView,
   suffix : BytesView,
 ) -> BytesView? {
@@ -807,6 +810,7 @@ pub fn BytesView::chop_suffix(
 
 ///|
 /// Removes the given suffix from the bytes if it exists.
-pub fn Bytes::chop_suffix(self : Bytes, suffix : BytesView) -> BytesView? {
-  self[:].chop_suffix(suffix)
+#alias(chop_suffix, deprecated="Use `strip_suffix` instead")
+pub fn Bytes::strip_suffix(self : Bytes, suffix : BytesView) -> BytesView? {
+  self[:].strip_suffix(suffix)
 }

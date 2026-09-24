@@ -905,9 +905,9 @@ pub fn String::rev_split_once(String, StringView) -> (StringView, StringView)?
 pub fn String::split(String, StringView) -> Iter[StringView]
 pub fn String::split_at(String, Int) -> (StringView, StringView)
 pub fn String::split_once(String, StringView) -> (StringView, StringView)?
-#alias(chop_prefix)
+#alias(chop_prefix, deprecated)
 pub fn String::strip_prefix(String, StringView) -> StringView?
-#alias(chop_suffix)
+#alias(chop_suffix, deprecated)
 pub fn String::strip_suffix(String, StringView) -> StringView?
 #deprecated
 pub fn String::substring(String, start? : Int, end? : Int) -> String
@@ -1117,8 +1117,6 @@ pub fn[T] ReadOnlyArray::windows(Self[T], Int) -> Array[ArrayView[T]]
 pub fn Bytes::add(Bytes, Bytes) -> Bytes
 #alias("_[_]")
 pub fn Bytes::at(Bytes, Int) -> Byte
-pub fn Bytes::chop_prefix(Bytes, BytesView) -> BytesView?
-pub fn Bytes::chop_suffix(Bytes, BytesView) -> BytesView?
 #alias("_[_:_]")
 pub fn Bytes::clamped_view(Bytes, start? : Int, end? : Int) -> BytesView
 pub fn Bytes::compare(Bytes, Bytes) -> Int
@@ -1155,6 +1153,10 @@ pub fn Bytes::new(Int) -> Bytes
 pub fn Bytes::of_string(String) -> Bytes
 pub fn Bytes::repeat(Bytes, Int) -> Bytes
 pub fn Bytes::rev_find(Bytes, BytesView) -> Int?
+#alias(chop_prefix, deprecated)
+pub fn Bytes::strip_prefix(Bytes, BytesView) -> BytesView?
+#alias(chop_suffix, deprecated)
+pub fn Bytes::strip_suffix(Bytes, BytesView) -> BytesView?
 pub fn Bytes::to_array(Bytes) -> Array[Byte]
 #label_migration(len, fill=false)
 pub fn Bytes::to_fixedarray(Bytes, len? : Int) -> FixedArray[Byte]
@@ -1163,8 +1165,6 @@ pub fn Bytes::to_unchecked_string(Bytes, offset? : Int, length? : Int) -> String
 
 #alias("_[_]")
 pub fn BytesView::at(Self, Int) -> Byte
-pub fn BytesView::chop_prefix(Self, Self) -> Self?
-pub fn BytesView::chop_suffix(Self, Self) -> Self?
 #alias("_[_:_]")
 pub fn BytesView::clamped_view(Self, start? : Int, end? : Int) -> Self
 pub fn BytesView::compare(Self, Self) -> Int
@@ -1189,6 +1189,10 @@ pub fn BytesView::length(Self) -> Int
 pub fn BytesView::lexical_compare(Self, Self) -> Int
 pub fn BytesView::rev_find(Self, Self) -> Int?
 pub fn BytesView::start_offset(Self) -> Int
+#alias(chop_prefix, deprecated)
+pub fn BytesView::strip_prefix(Self, Self) -> Self?
+#alias(chop_suffix, deprecated)
+pub fn BytesView::strip_suffix(Self, Self) -> Self?
 pub fn BytesView::to_array(Self) -> Array[Byte]
 pub fn BytesView::to_fixedarray(Self) -> FixedArray[Byte]
 #alias(to_bytes, deprecated)
@@ -1265,9 +1269,9 @@ pub fn StringView::split(Self, Self) -> Iter[Self]
 pub fn StringView::split_at(Self, Int) -> (Self, Self)
 pub fn StringView::split_once(Self, Self) -> (Self, Self)?
 pub fn StringView::start_offset(Self) -> Int
-#alias(chop_prefix)
+#alias(chop_prefix, deprecated)
 pub fn StringView::strip_prefix(Self, Self) -> Self?
-#alias(chop_suffix)
+#alias(chop_suffix, deprecated)
 pub fn StringView::strip_suffix(Self, Self) -> Self?
 pub fn StringView::suffixes(Self, include_empty? : Bool) -> Iter[Self]
 pub fn StringView::to_array(Self) -> Array[Char]
