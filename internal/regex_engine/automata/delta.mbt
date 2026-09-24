@@ -95,7 +95,7 @@ fn delta_expr(
   rem : Array[Thread],
 ) -> Unit {
   match expr.def {
-    Chr(cs) => if cs.contains(c.c) { rem.push(Exp(marks, e_eps)) }
+    Chr(s) => if s.contains(c.c) { rem.push(Exp(marks, e_eps)) }
     Alt(exprs) =>
       for expr in exprs {
         delta_expr(expr, c, marks, rem)

@@ -44,7 +44,7 @@
 ///
 /// # Expression Types (ExprDef)
 ///
-/// - `Chr(RecharSet)`: Matches a character from the set
+/// - `Chr(SymbolSet)`: Matches a symbol from the set
 /// - `Alt(Array[Expr])`: Alternation - matches any of the alternatives
 /// - `Seq(Preference, Expr, Expr)`: Sequence - matches first then second
 /// - `Rep(QuantifierMode, Preference, Expr)`: Repetition (*, +, {n,m})
@@ -71,7 +71,7 @@ const EXPR_ID_RESERVED : ExprId = 1
 
 ///|
 priv enum ExprDef {
-  Chr(@shared_types.RecharSet)
+  Chr(SymbolSet)
   Alt(Array[Expr])
   Seq(@shared_types.Preference, Expr, Expr)
   Rep(@shared_types.QuantifierMode, @shared_types.Preference, Expr)
@@ -97,7 +97,7 @@ impl Hash for Expr with fn hash_combine(self, hasher) {
 /// The copied expression reuses semantic structure but receives fresh node ids.
 pub fn e_copy(ctx~ : Context, e : Expr) -> Expr {
   match e.def {
-    Chr(c) => e_cset(ctx~, c)
+    Chr(s) => { id: ctx.new_expr_id(), def: Chr(s), }
     Alt(xs) => e_alt(ctx~, xs.map(x => e_copy(ctx~, x)))
     Seq(_) => {
       // original: e_seq(ctx~, pref, e_copy(ctx~, x), e_copy(ctx~, y))
@@ -149,8 +149,54 @@ pub fn e_cset(ctx~ : Context, c : @shared_types.RecharSet) -> Expr {
   if c.is_empty() {
     e_empty
   } else {
-    { id: ctx.new_expr_id(), def: Chr(c), }
+    { id: ctx.new_expr_id(), def: Chr(SymbolSet::of(c)), }
   }
+}
+
+///|
+/// Membership table for a `Chr` node.
+///
+/// Character sets reach the automaton after symbolization, so their elements
+/// are dense small symbol ids. Pack 32 symbols per word to reduce space while
+/// retaining constant-time membership with one load, instead of walking the
+/// interval tree once per `Chr` node per thread on every transition.
+priv struct SymbolSet(FixedArray[UInt])
+
+///|
+fn SymbolSet::of(c : @shared_types.RecharSet) -> SymbolSet {
+  guard c.last_interval() is Some((_, hi)) else { panic() }
+  guard c.first_interval() is Some((lo, _)) && lo >= 0 && hi <= 0x10FFFF else {
+    panic()
+  }
+  let table = FixedArray::make((hi >> 5) + 1, 0U)
+  for interval in c.intervals() {
+    let (lo, hi) = interval
+    let first = lo >> 5
+    let last = hi >> 5
+    // Neither shift reaches 32, including intervals ending on a word boundary.
+    let first_mask = 0xFFFFFFFFU << (lo & 31)
+    let last_mask = 0xFFFFFFFFU >> (31 - (hi & 31))
+    if first == last {
+      table[first] = table[first] | (first_mask & last_mask)
+    } else {
+      table[first] = table[first] | first_mask
+      for word in (first + 1)..<last {
+        table[word] = 0xFFFFFFFFU
+      }
+      table[last] = table[last] | last_mask
+    }
+  }
+  SymbolSet(table)
+}
+
+///|
+/// Symbols outside the table (including the `-1` end-of-input marker used
+/// for the final transition) are never members. Unused bits in the last word
+/// remain zero, so no separate upper-symbol bound is needed.
+fn SymbolSet::contains(self : SymbolSet, c : @shared_types.Rechar) -> Bool {
+  let word = c.reinterpret_as_uint() >> 5
+  word < self.0.length().reinterpret_as_uint() &&
+  (self.0.unsafe_get(word.reinterpret_as_int()) & (1U << (c & 31))) != 0
 }
 
 ///|
