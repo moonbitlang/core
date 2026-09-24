@@ -537,7 +537,10 @@ pub impl[K : Hash + Eq] Sub for HashSet[K] with fn sub(self, other) {
 /// and leaves `self` unchanged; use `retain` when the original is no longer
 /// needed. `f` must not modify the set.
 #locals(f)
-pub fn[K] HashSet::retain(self : HashSet[K], f : (K) -> Bool) -> Unit {
+pub fn[K] HashSet::retain(
+  self : HashSet[K],
+  f : (K) -> Bool raise?,
+) -> Unit raise? {
   let size = self.size
   let mut j = 0
   for i = 0; j < size; i = i + 1 {

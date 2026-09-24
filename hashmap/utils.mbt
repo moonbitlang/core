@@ -417,7 +417,10 @@ pub fn[K, V] HashMap::values(self : HashMap[K, V]) -> Iter[V] {
 /// }
 /// ```
 #locals(f)
-pub fn[K, V] HashMap::retain(self : HashMap[K, V], f : (K, V) -> Bool) -> Unit {
+pub fn[K, V] HashMap::retain(
+  self : HashMap[K, V],
+  f : (K, V) -> Bool raise?,
+) -> Unit raise? {
   let size = self.size
   let mut j = 0
   for i = 0; j < size; i = i + 1 {

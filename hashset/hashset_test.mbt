@@ -686,3 +686,30 @@ test "union_in_place with itself is a no-op" {
   assert_eq(sorted_union_elements(s), [0, 1, 2, 3, 4, 5])
   assert_eq(s.capacity(), capacity)
 }
+
+///|
+test "HashSet::retain propagates callback errors and leaves the set consistent" {
+  let s = @hashset.HashSet([ for i in 0..<20 => i ])
+  let mut calls = 0
+  let r = try
+    s.retain(x => {
+      calls += 1
+      if calls == 10 {
+        fail("stop")
+      }
+      x % 2 == 0
+    })
+  catch {
+    _ => true
+  } noraise {
+    _ => false
+  }
+  inspect(r, content="true")
+  let left = s.to_array()
+  inspect(s.length() == left.length(), content="true")
+  for x in left {
+    inspect(s.contains(x), content="true")
+  }
+  s.add(100)
+  inspect(s.contains(100), content="true")
+}

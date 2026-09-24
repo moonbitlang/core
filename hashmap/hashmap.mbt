@@ -370,8 +370,8 @@ pub fn[K : Hash + Eq, V] HashMap::at(self : HashMap[K, V], key : K) -> V {
 pub fn[K : Hash + Eq, V] HashMap::get_or_init(
   self : HashMap[K, V],
   key : K,
-  init : () -> V,
-) -> V {
+  init : () -> V raise?,
+) -> V raise? {
   let hash = Hash::hash(key)
   // SAFETY: masked probe index; see the note at the top of this file.
   let (idx, psl, new_value, push_away) = for psl = 0, idx = hash &
@@ -462,8 +462,8 @@ pub fn[K : Hash + Eq, V] HashMap::get_or_init(
 pub fn[K : Hash + Eq, V] HashMap::update(
   self : HashMap[K, V],
   key : K,
-  f : (V?) -> V?,
-) -> Unit {
+  f : (V?) -> V? raise?,
+) -> Unit raise? {
   let hash = Hash::hash(key)
   // SAFETY: masked probe index; see the note at the top of this file.
   let (idx, psl, new_value, push_away) = for psl = 0, idx = hash &
@@ -526,8 +526,8 @@ pub fn[K : Hash + Eq, V] HashMap::update_or_default(
   self : HashMap[K, V],
   key : K,
   default : V,
-  f : (V) -> V,
-) -> Unit {
+  f : (V) -> V raise?,
+) -> Unit raise? {
   let hash = Hash::hash(key)
   // SAFETY: masked probe index; see the note at the top of this file.
   let (idx, psl, push_away) = for psl = 0, idx = hash & self.capacity_mask {

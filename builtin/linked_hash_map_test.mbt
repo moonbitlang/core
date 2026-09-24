@@ -837,3 +837,48 @@ test "remove_and_get returns the removed value and keeps the rest intact" {
   let empty : Map[String, Int] = Map([])
   assert_eq(empty.remove_and_get("x"), None)
 }
+
+///|
+fn raised(f : () -> Unit raise) -> Bool {
+  try f() catch {
+    _ => true
+  } noraise {
+    _ => false
+  }
+}
+
+///|
+test "Map mutators propagate callback errors and leave the map consistent" {
+  let m = { "a": 1, "b": 2, "c": 3, "d": 4 }
+  // retain: "a" is dropped before the callback raises on "c".
+  inspect(
+    raised(() => {
+      m.retain((k, _) => {
+        if k == "c" {
+          fail("stop")
+        }
+        k != "a"
+      })
+    }),
+    content="true",
+  )
+  debug_inspect(m, content="{ \"b\": 2, \"c\": 3, \"d\": 4 }")
+  inspect(m.length(), content="3")
+  // update / get_or_init / update_or_default: nothing changes when the
+  // callback raises, for present and absent keys alike.
+  inspect(raised(() => m.update("b", _ => fail("stop"))), content="true")
+  inspect(raised(() => m.update("z", _ => fail("stop"))), content="true")
+  inspect(
+    raised(() => ignore(m.get_or_init("z", () => fail("stop")))),
+    content="true",
+  )
+  inspect(
+    raised(() => m.update_or_default("b", 0, _ => fail("stop"))),
+    content="true",
+  )
+  debug_inspect(m, content="{ \"b\": 2, \"c\": 3, \"d\": 4 }")
+  // The map is still fully usable.
+  m.set("e", 5)
+  m.remove("c")
+  debug_inspect(m, content="{ \"b\": 2, \"d\": 4, \"e\": 5 }")
+}
