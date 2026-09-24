@@ -350,3 +350,59 @@ test "transfer_self_empty" {
     ),
   )
 }
+
+///|
+test "Eq compares elements in order" {
+  let a = @queue.Queue([1, 2, 3])
+  let b = @queue.Queue([0, 1, 2, 3])
+  ignore(b.pop())
+  inspect(a == b, content="true")
+  inspect(a.equal(b), content="true")
+  b.push(4)
+  inspect(a == b, content="false")
+  inspect(a != Queue([3, 2, 1]), content="true")
+}
+
+///|
+test "Default is the empty queue" {
+  let q : @queue.Queue[Int] = Default::default()
+  inspect(q.is_empty(), content="true")
+}
+
+///|
+test "to_array is front first" {
+  let q = @queue.Queue([1, 2])
+  q.push(3)
+  ignore(q.pop())
+  @debug.debug_inspect(q.to_array(), content="[2, 3]")
+  @debug.debug_inspect((Queue([]) : @queue.Queue[Int]).to_array(), content="[]")
+}
+
+///|
+test "JSON round-trip" {
+  let q = @queue.Queue([1, 2, 3])
+  ignore(q.pop())
+  q.push(4)
+  @json.json_inspect(q, content=[2, 3, 4])
+  let back : @queue.Queue[Int] = @json.from_json(Json(q))
+  inspect(back == q, content="true")
+  @debug.debug_inspect(back.pop(), content="Some(2)")
+  let bad : Json = { "a": 1 }
+  try (@json.from_json(bad) : @queue.Queue[Int]) |> ignore catch {
+    e =>
+      inspect(
+        e,
+        content=(
+          #|JsonDecodeError((, @queue.from_json: expected array))
+        ),
+      )
+  } noraise {
+    _ => fail("expected JsonDecodeError")
+  }
+  let bad_elem : Json = [1, "x"]
+  try (@json.from_json(bad_elem) : @queue.Queue[Int]) |> ignore catch {
+    _ => ()
+  } noraise {
+    _ => fail("expected JsonDecodeError")
+  }
+}

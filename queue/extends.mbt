@@ -12,7 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Queue has no promoted trait methods; every promotion below is deprecated.
+// --- promoted: kept as regular methods ---
+
+///|
+pub extend Queue with Eq::{equal}
 
 // --- deprecated: hidden from the generated interface ---
 
@@ -25,3 +28,23 @@ pub extend Queue with @debug.Debug::{to_repr}
 #deprecated("Use `@debug.Debug` instead of `Show` for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md", skip_current_package=true)
 #doc(hidden)
 pub extend Queue with Show::{output, to_string}
+
+///|
+#deprecated("Use `Default::default` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Queue with Default::{default}
+
+///|
+#deprecated("Use `!=` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Queue with Eq::{not_equal}
+
+///|
+#deprecated("Use `@json.from_json` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Queue with @json.FromJson::{from_json}
+
+///|
+#deprecated("Use `Json(value)` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Queue with @json.ToJson::{to_json}

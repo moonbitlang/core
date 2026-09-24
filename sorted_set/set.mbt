@@ -1482,3 +1482,54 @@ test "add_and_remove" {
 pub impl[K] Default for SortedSet[K] with fn default() {
   new_sorted_set()
 }
+
+///|
+/// Removes all elements from the set.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   let set = @sorted_set.SortedSet([3, 1, 2])
+///   set.clear()
+///   inspect(set.is_empty(), content="true")
+/// }
+/// ```
+pub fn[V] SortedSet::clear(self : SortedSet[V]) -> Unit {
+  self.root = None
+  self.size = 0
+}
+
+///|
+/// Encodes the set as a JSON array of its elements in ascending order.
+pub impl[V : @json.ToJson] @json.ToJson for SortedSet[V] with fn to_json(self) {
+  [
+    for x in self => x
+  ]
+}
+
+///|
+/// Decodes a sorted set from a JSON array, the form `to_json` produces. A
+/// repeated element is kept once, as in `@sorted_set.from_array`.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   let set : @sorted_set.SortedSet[Int] = @json.from_json([3, 1, 3, 2])
+///   @debug.debug_inspect(set.to_array(), content="[1, 2, 3]")
+/// }
+/// ```
+pub impl[V : @json.FromJson + Compare] @json.FromJson for SortedSet[V] with fn from_json(
+  json,
+  path,
+) {
+  guard json is Array(arr) else {
+    raise JsonDecodeError((path, "@sorted_set.from_json: expected array"))
+  }
+  let set = new_sorted_set()
+  for i, x in arr {
+    set.add(@json.FromJson::from_json(x, path.add_index(i)))
+  }
+  set
+}
