@@ -12,6 +12,7 @@
 #### Fixed
 
 - `@string.Regex` no longer loses matches (or panics in debug builds) once a pattern needs more than 2047 live capture slots, as long literal runs such as `(a)(?:a{256}){9}` do (#4264).
+- The regex engine's character sets now merge touching intervals on union, so patterns no longer produce redundant symbol classes (#4265).
 - `Float` and `Double` now hash positive and negative zero identically, keeping hashing consistent with equality (#4224).
 - `@math.pow` now returns `1` for `pow(1, NaN)` and `pow(±1, ±Infinity)` (#4219).
 - QuickCheck's `Float` shrinker no longer yields candidates equal to the input after conversion to `Float` (#4227).

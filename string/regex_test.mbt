@@ -907,3 +907,15 @@ test "matches that need more than 2047 live capture slots are found" {
     ),
   )
 }
+
+///|
+test "character classes are stored with merged intervals" {
+  // Regression: union of `a`, `d`, then `b` used to leave `a` and `b` as two
+  // touching intervals, `[(97, 97), (98, 98), (100, 100)]`, which the
+  // compiler then turned into redundant symbol classes. (Only runtime-parsed
+  // patterns reach this path; `re"..."` literals are lowered at compile time.)
+  let regex = @string.Regex::unsafe_from_string("[adb]")
+  debug_inspect(regex, content="<Regex: Char([(97, 98), (100, 100)])>")
+  let ranges = @string.Regex::unsafe_from_string("[x-zu-wa-c]")
+  debug_inspect(ranges, content="<Regex: Char([(97, 99), (117, 122)])>")
+}
