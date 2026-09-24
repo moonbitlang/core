@@ -109,9 +109,9 @@ Determine the inclusion and separation relationship between two sets.
 test {
   let set1 = @sorted_set.from_array([1, 2, 3])
   let set2 = @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1])
-  @test.assert_eq(set1.subset(set2), true)
+  @test.assert_eq(set1.is_subset(set2), true)
   let set3 = @sorted_set.from_array([4, 5, 6])
-  @test.assert_eq(set1.disjoint(set3), true)
+  @test.assert_eq(set1.is_disjoint(set3), true)
 }
 ```
 

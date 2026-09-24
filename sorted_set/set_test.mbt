@@ -34,13 +34,15 @@ test "SortedSet constructor" {
 ///|
 test "disjoint" {
   inspect(
-    @sorted_set.from_array([1, 2, 3]).disjoint(
+    @sorted_set.from_array([1, 2, 3]).is_disjoint(
       @sorted_set.from_array([4, 5, 6]),
     ),
     content="true",
   )
   inspect(
-    @sorted_set.from_array([1, 2, 3]).subset(@sorted_set.from_array([3, 4, 5])),
+    @sorted_set.from_array([1, 2, 3]).is_subset(
+      @sorted_set.from_array([3, 4, 5]),
+    ),
     content="false",
   )
 }
@@ -48,13 +50,13 @@ test "disjoint" {
 ///|
 test "subset" {
   inspect(
-    @sorted_set.from_array([1, 2, 3]).subset(
+    @sorted_set.from_array([1, 2, 3]).is_subset(
       @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]),
     ),
     content="true",
   )
   inspect(
-    @sorted_set.from_array([1, 2, 3]).subset(
+    @sorted_set.from_array([1, 2, 3]).is_subset(
       @sorted_set.from_array([10, 11, 12, 13, 14]),
     ),
     content="false",
@@ -268,7 +270,7 @@ test "mix_everything" {
       #|<SortedSet: [4, 5]>
     ),
   )
-  inspect(set1.subset(set3), content="true")
+  inspect(set1.is_subset(set3), content="true")
   set3.remove(3)
   debug_inspect(
     set3,
@@ -280,7 +282,7 @@ test "mix_everything" {
   inspect(set3.is_empty(), content="false")
   inspect(set3.contains(1), content="true")
   inspect(set3.contains(3), content="false")
-  inspect(set3.disjoint(set1), content="false")
+  inspect(set3.is_disjoint(set1), content="false")
   let set6 = set3.union(@sorted_set.from_array([]))
   debug_inspect(
     set6,
@@ -578,4 +580,13 @@ test "union size is exact for overlapping, disjoint and identical sets" {
   let mut n = 0
   u.each(_x => n = n + 1)
   inspect(u.length() == n, content="true")
+}
+
+///|
+test "is_superset" {
+  let set = @sorted_set.from_array([1, 2, 3, 4])
+  inspect(set.is_superset(@sorted_set.from_array([2, 4])), content="true")
+  inspect(set.is_superset(@sorted_set.from_array([2, 5])), content="false")
+  inspect(set.is_superset(@sorted_set.from_array([])), content="true")
+  inspect(@sorted_set.from_array([]).is_superset(set), content="false")
 }

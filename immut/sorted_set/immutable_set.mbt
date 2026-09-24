@@ -747,14 +747,15 @@ pub fn[A : Compare] SortedSet::symmetric_difference(
 /// ```mbt check
 /// test {
 ///   @test.assert_eq(
-///     @sorted_set.SortedSet([1, 2, 3]).subset(
+///     @sorted_set.SortedSet([1, 2, 3]).is_subset(
 ///       SortedSet([7, 2, 9, 4, 5, 6, 3, 8, 1]),
 ///     ),
 ///     true,
 ///   )
 /// }
 /// ```
-pub fn[A : Compare] SortedSet::subset(
+#alias(subset, deprecated="Use `is_subset` instead")
+pub fn[A : Compare] SortedSet::is_subset(
   self : SortedSet[A],
   other : SortedSet[A],
 ) -> Bool {
@@ -767,16 +768,36 @@ pub fn[A : Compare] SortedSet::subset(
     ) => {
       let compare_result = v1.compare(v2)
       if compare_result == 0 {
-        l1.subset(l2) && r1.subset(r2)
+        l1.is_subset(l2) && r1.is_subset(r2)
       } else if compare_result < 0 {
-        Node(left=l1, value=v1, right=Empty, size=1).subset(l2) &&
-        r1.subset(other)
+        Node(left=l1, value=v1, right=Empty, size=1).is_subset(l2) &&
+        r1.is_subset(other)
       } else {
-        Node(left=Empty, value=v1, right=r1, size=1).subset(r2) &&
-        l1.subset(other)
+        Node(left=Empty, value=v1, right=r1, size=1).is_subset(r2) &&
+        l1.is_subset(other)
       }
     }
   }
+}
+
+///|
+/// Returns true if every element of `other` is also in `self`.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   @test.assert_eq(
+///     @sorted_set.SortedSet([1, 2, 3, 4]).is_superset(SortedSet([2, 4])),
+///     true,
+///   )
+/// }
+/// ```
+pub fn[A : Compare] SortedSet::is_superset(
+  self : SortedSet[A],
+  other : SortedSet[A],
+) -> Bool {
+  other.is_subset(self)
 }
 
 ///|
@@ -787,12 +808,13 @@ pub fn[A : Compare] SortedSet::subset(
 /// ```mbt check
 /// test {
 ///   @test.assert_eq(
-///     @sorted_set.SortedSet([1, 2, 3]).disjoint(SortedSet([4, 5, 6])),
+///     @sorted_set.SortedSet([1, 2, 3]).is_disjoint(SortedSet([4, 5, 6])),
 ///     true,
 ///   )
 /// }
 /// ```
-pub fn[A : Compare] SortedSet::disjoint(
+#alias(disjoint, deprecated="Use `is_disjoint` instead")
+pub fn[A : Compare] SortedSet::is_disjoint(
   self : SortedSet[A],
   other : SortedSet[A],
 ) -> Bool {
@@ -803,7 +825,7 @@ pub fn[A : Compare] SortedSet::disjoint(
         false
       } else {
         match other.split_bis(v1) {
-          NotFound(l2, r2) => l1.disjoint(l2) && r1.disjoint(r2())
+          NotFound(l2, r2) => l1.is_disjoint(l2) && r1.is_disjoint(r2())
           Found => false
         }
       }

@@ -131,19 +131,19 @@ test {
 
 ## Subset & Disjoint
 
-You can use `subset` and `disjoint` to determine the inclusion and separation relationship between two sets
+You can use `is_subset` and `is_disjoint` to determine the inclusion and separation relationship between two sets
 
 ```mbt check
 ///|
 test {
   @test.assert_eq(
-    @sorted_set.SortedSet([1, 2, 3]).subset(
+    @sorted_set.SortedSet([1, 2, 3]).is_subset(
       SortedSet([7, 2, 9, 4, 5, 6, 3, 8, 1]),
     ),
     true,
   )
   @test.assert_eq(
-    @sorted_set.SortedSet([1, 2, 3]).disjoint(SortedSet([4, 5, 6])),
+    @sorted_set.SortedSet([1, 2, 3]).is_disjoint(SortedSet([4, 5, 6])),
     true,
   )
 }

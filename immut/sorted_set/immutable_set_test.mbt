@@ -61,19 +61,19 @@ test "default" {
 ///|
 test "disjoint" {
   inspect(
-    @sorted_set.SortedSet([1]).disjoint(SortedSet([1, 2, 3])),
+    @sorted_set.SortedSet([1]).is_disjoint(SortedSet([1, 2, 3])),
     content="false",
   )
   inspect(
-    @sorted_set.SortedSet([1, 2, 3]).disjoint(SortedSet([1, 2, 3])),
+    @sorted_set.SortedSet([1, 2, 3]).is_disjoint(SortedSet([1, 2, 3])),
     content="false",
   )
   inspect(
-    @sorted_set.SortedSet([1, 2, 3]).disjoint(SortedSet([4, 5, 6])),
+    @sorted_set.SortedSet([1, 2, 3]).is_disjoint(SortedSet([4, 5, 6])),
     content="true",
   )
   inspect(
-    @sorted_set.SortedSet([1, 2, 3]).subset(SortedSet([3, 4, 5])),
+    @sorted_set.SortedSet([1, 2, 3]).is_subset(SortedSet([3, 4, 5])),
     content="false",
   )
 }
@@ -81,39 +81,42 @@ test "disjoint" {
 ///|
 test "disjoint same instance" {
   let set = @sorted_set.SortedSet([1, 2, 3])
-  inspect(set.disjoint(set), content="false")
+  inspect(set.is_disjoint(set), content="false")
 }
 
 ///|
 test "subset" {
   inspect(
-    @sorted_set.SortedSet([1, 2, 3]).subset(
+    @sorted_set.SortedSet([1, 2, 3]).is_subset(
       SortedSet([7, 2, 9, 4, 5, 6, 3, 8, 1]),
     ),
     content="true",
   )
   inspect(
-    @sorted_set.SortedSet([1, 2, 3]).subset(SortedSet([10, 11, 12, 13, 14])),
+    @sorted_set.SortedSet([1, 2, 3]).is_subset(SortedSet([10, 11, 12, 13, 14])),
     content="false",
   )
   // element not in other but previously missed by buggy self-reference
   inspect(
-    @sorted_set.SortedSet([1, 2, 5]).subset(SortedSet([1, 2, 3, 4])),
+    @sorted_set.SortedSet([1, 2, 5]).is_subset(SortedSet([1, 2, 3, 4])),
     content="false",
   )
   inspect(
-    @sorted_set.SortedSet([0, 3, 4]).subset(SortedSet([1, 2, 3, 4])),
+    @sorted_set.SortedSet([0, 3, 4]).is_subset(SortedSet([1, 2, 3, 4])),
     content="false",
   )
   // exact match
   inspect(
-    @sorted_set.SortedSet([1, 2, 3]).subset(SortedSet([1, 2, 3])),
+    @sorted_set.SortedSet([1, 2, 3]).is_subset(SortedSet([1, 2, 3])),
     content="true",
   )
   // empty is subset of anything
-  inspect(@sorted_set.new().subset(SortedSet([1, 2, 3])), content="true")
+  inspect(@sorted_set.new().is_subset(SortedSet([1, 2, 3])), content="true")
   // nothing is subset of empty (except empty)
-  inspect(@sorted_set.SortedSet([1]).subset(@sorted_set.new()), content="false")
+  inspect(
+    @sorted_set.SortedSet([1]).is_subset(@sorted_set.new()),
+    content="false",
+  )
 }
 
 ///|
@@ -789,7 +792,7 @@ test "union with different heights" {
 test "disjoint with different sets" {
   let set1 = @sorted_set.SortedSet([1, 2, 3])
   let set2 = @sorted_set.SortedSet([4, 5, 6])
-  let disjoint = set1.disjoint(set2)
+  let disjoint = set1.is_disjoint(set2)
   inspect(disjoint, content="true")
 }
 
