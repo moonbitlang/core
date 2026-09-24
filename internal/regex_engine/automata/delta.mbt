@@ -54,6 +54,9 @@ priv struct DeltaContext {
 }
 
 ///|
+/// Every `delta_*` producer appends the threads it derives to `rem`, in
+/// priority order, instead of returning a set; concatenation is then free
+/// and nested sets are only allocated where a `Seq` thread needs one.
 fn delta_rep(
   outer : Expr,
   mode : @shared_types.QuantifierMode,
@@ -61,46 +64,57 @@ fn delta_rep(
   inner : Expr,
   c : DeltaContext,
   marks : MarkSlotMap,
-) -> ThreadSet {
-  let inner_delta = delta_expr(inner, c, marks)
-  let first_match_marks = inner_delta.find_first_match()
+  rem : Array[Thread],
+) -> Unit {
+  let inner_delta = []
+  delta_expr(inner, c, marks, inner_delta)
+  let marks_after = match first_match(inner_delta) {
+    None => marks
+    Some(marks) => {
+      remove_matches(inner_delta)
+      marks
+    }
+  }
   match mode {
     Greedy => {
-      let (marks, inner_delta) = match first_match_marks {
-        None => (marks, inner_delta)
-        Some(marks) => (marks, inner_delta.remove_matches())
-      }
-      ts_seq(pref, inner_delta, outer) + ts_end(marks)
+      ts_seq(pref, inner_delta, outer, rem)
+      rem.push(End(marks_after))
     }
-    NonGreedy =>
-      ts_end(marks) + ts_seq(pref, inner_delta.remove_matches(), outer)
+    NonGreedy => {
+      rem.push(End(marks))
+      ts_seq(pref, inner_delta, outer, rem)
+    }
   }
 }
 
 ///|
-fn delta_expr(expr : Expr, c : DeltaContext, marks : MarkSlotMap) -> ThreadSet {
+fn delta_expr(
+  expr : Expr,
+  c : DeltaContext,
+  marks : MarkSlotMap,
+  rem : Array[Thread],
+) -> Unit {
   match expr.def {
-    Chr(s) => if s.contains(c.c) { ts_exp(marks, e_eps) } else { ts_empty }
+    Chr(s) => if s.contains(c.c) { rem.push(Exp(marks, e_eps)) }
     Alt(exprs) =>
-      exprs.fold(init=ts_empty, (acc, expr) => acc + delta_expr(expr, c, marks))
+      for expr in exprs {
+        delta_expr(expr, c, marks, rem)
+      }
     Seq(pref, first, next) => {
-      let first_delta = delta_expr(first, c, marks)
-      delta_seq(pref, first_delta, next, c)
+      let first_delta = []
+      delta_expr(first, c, marks, first_delta)
+      delta_seq(pref, first_delta, next, c, rem)
     }
-    Rep(mode, pref, body) => delta_rep(expr, mode, pref, body, c, marks)
-    Eps => ts_end(marks)
-    Mark(mark) => ts_end(marks.add_mark(mark))
+    Rep(mode, pref, body) => delta_rep(expr, mode, pref, body, c, marks, rem)
+    Eps => rem.push(End(marks))
+    Mark(mark) => rem.push(End(marks.add_mark(mark)))
     Before(cat) =>
       if @shared_types.Category::intersects(c.next_cat, cat) {
-        ts_end(marks)
-      } else {
-        ts_empty
+        rem.push(End(marks))
       }
     After(cat) =>
       if @shared_types.Category::intersects(c.prev_cat, cat) {
-        ts_end(marks)
-      } else {
-        ts_empty
+        rem.push(End(marks))
       }
   }
 }
@@ -108,42 +122,44 @@ fn delta_expr(expr : Expr, c : DeltaContext, marks : MarkSlotMap) -> ThreadSet {
 ///|
 fn delta_seq(
   pref : @shared_types.Preference,
-  first : ThreadSet,
+  first : Array[Thread],
   next : Expr,
   c : DeltaContext,
-) -> ThreadSet {
-  match first.find_first_match() {
-    None => ts_seq(pref, first, next)
+  rem : Array[Thread],
+) -> Unit {
+  match first_match(first) {
+    None => ts_seq(pref, first, next, rem)
     Some(marks) =>
       match pref {
-        Longest =>
-          ts_seq(pref, first.remove_matches(), next) +
-          delta_expr(next, c, marks)
-        Shortest =>
-          delta_expr(next, c, marks) +
-          ts_seq(pref, first.remove_matches(), next)
+        Longest => {
+          remove_matches(first)
+          ts_seq(pref, first, next, rem)
+          delta_expr(next, c, marks, rem)
+        }
+        Shortest => {
+          delta_expr(next, c, marks, rem)
+          remove_matches(first)
+          ts_seq(pref, first, next, rem)
+        }
         First => {
-          let (until_first_match, after_first_match) = first.split_at_first_match()
-          ts_seq(pref, until_first_match, next) +
-          delta_expr(next, c, marks) +
-          ts_seq(pref, after_first_match.remove_matches(), next)
+          let after_first_match = split_at_first_match(first)
+          ts_seq(pref, first, next, rem)
+          delta_expr(next, c, marks, rem)
+          ts_seq(pref, after_first_match, next, rem)
         }
       }
   }
 }
 
 ///|
-fn delta_thread(
-  thread : Thread,
-  c : DeltaContext,
-  marks : MarkSlotMap,
-) -> ThreadSet {
+fn delta_thread(thread : Thread, c : DeltaContext, rem : Array[Thread]) -> Unit {
   match thread {
-    End(_) => ts_one(thread)
-    Exp(marks, expr) => delta_expr(expr, c, marks)
+    End(_) => rem.push(thread)
+    Exp(marks, expr) => delta_expr(expr, c, marks, rem)
     Seq(pref, first, next) => {
-      let first_delta = delta_threads(first, c, marks)
-      delta_seq(pref, first_delta, next, c)
+      let first_delta = []
+      delta_threads(first, c, first_delta)
+      delta_seq(pref, first_delta, next, c, rem)
     }
   }
 }
@@ -152,9 +168,11 @@ fn delta_thread(
 fn delta_threads(
   curr : ThreadSet,
   c : DeltaContext,
-  marks : MarkSlotMap,
-) -> ThreadSet {
-  curr.flat_map(thread => delta_thread(thread, c, marks))
+  rem : Array[Thread],
+) -> Unit {
+  for thread in curr.0 {
+    delta_thread(thread, c, rem)
+  }
 }
 
 ///|
@@ -167,22 +185,19 @@ fn find_slot(ctx~ : Context, desc : ThreadSet) -> Slot {
   if ctx.book_dirty {
     ctx.book.clear()
   }
-  let has_unassigned_slots = for
-    marks in desc.iter_marks()
-    has_unassigned_slots = false {
-    for _mark, slot in marks; has_unassigned_slots = has_unassigned_slots {
+  let mut has_unassigned_slots = false
+  desc.each_marks(marks => {
+    for _mark, slot in marks {
       if slot.is_assigned() {
         ctx.book.mark_used(slot)
-        continue has_unassigned_slots
       } else {
-        continue true
+        has_unassigned_slots = true
       }
-    } nobreak {
-      continue has_unassigned_slots
     }
-  } nobreak {
-    has_unassigned_slots
-  }
+  })
+  // The loop above may have marked slots even when nothing needs one, so the
+  // book must be cleared before its next use either way.
+  ctx.book_dirty = true
   if !has_unassigned_slots {
     Slot::unassigned()
   } else {
@@ -190,8 +205,6 @@ fn find_slot(ctx~ : Context, desc : ThreadSet) -> Slot {
     if ctx.book.need_grow(slot) {
       ctx.book = ctx.book.grow()
       ctx.book_dirty = false
-    } else {
-      ctx.book_dirty = true
     }
     slot
   }
@@ -214,13 +227,14 @@ pub fn delta(
   next_cat~ : @shared_types.Category,
 ) -> State {
   let prev_cat = state.cat
-  let desc = delta_threads(
-    state.desc,
-    { prev_cat, next_cat, c, },
-    MarkSlotMap::empty(),
-  )
-  let desc = desc.remove_duplicates(e_eps)
+  let rem = []
+  delta_threads(state.desc, { prev_cat, next_cat, c, }, rem)
+  ctx.seen.clear()
+  remove_duplicates(rem, e_eps, ctx.seen)
+  let desc = ThreadSet(rem)
   let slot = find_slot(ctx~, desc)
-  let desc = if slot.is_assigned() { desc.assign_slot(slot) } else { desc }
+  if slot.is_assigned() {
+    desc.assign_slot_in_place(slot)
+  }
   State::new(slot, next_cat, desc)
 }

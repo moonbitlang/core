@@ -13,214 +13,109 @@
 // limitations under the License.
 
 ///|
-/// A collection of execution threads stored in a Treap-based rope structure.
+/// The ordered collection of execution threads of a state.
 ///
-/// `ThreadSet` maintains an ordered set of `Thread` instances representing all active
-/// execution paths in the automaton. The order matters because it encodes matching
-/// priorities - the first thread to reach an `End` state produces the match result.
+/// Threads are kept in an array in priority order: the first thread to reach
+/// `End` wins, so producers append in the order the semantics dictate and
+/// nothing ever inserts in the middle. Sets are built append-only through an
+/// accumulator (`rem` in `delta_*`, the same shape as ocaml-re's list
+/// accumulator), scanned a few times while the new state is finalized, and
+/// then frozen inside a `State`.
 ///
-/// # Data Structure
-///
-/// Uses a Treap (randomized binary search tree) to efficiently:
-/// - Maintain thread ordering while allowing efficient insertion/merging
-/// - Track metadata (`ThreadSetNodeInfo`) to optimize operations
-/// - Support efficient operations like `flat_map`, `merge`, and iteration
-///
-/// Each node tracks `no_match`: true if no thread in the subtree has reached `End` state.
-/// This allows quick pruning of subtrees that cannot contribute to matches.
-///
-/// # Key Operations
-///
-/// - `merge`/`+`: Combines two thread sets while preserving order
-/// - `flat_map`: Applies a function that may expand each thread to multiple threads
-/// - `find_first_match`: Finds the first successful match (if any)
-/// - `remove_matches`: Removes all threads in `End` state from the collection
-/// - `remove_duplicates`: Eliminates redundant threads with same state
-/// - `split_at_first_match`: Separates threads before/after first match
-///
-/// # Usage in Automaton
-///
-/// During execution, each `State` contains a `ThreadSet` collection representing all
-/// possible execution paths from that state. When computing the derivative with
-/// respect to input, threads are transformed and may split into multiple threads.
-priv enum ThreadSet {
-  Empty
-  Node(
-    i~ : ThreadSetNodeInfo,
-    l~ : ThreadSet,
-    t~ : Thread,
-    r~ : ThreadSet,
-    p~ : Int
-  )
+/// Ownership: every array reachable from a set under construction was
+/// allocated by the current `delta` call (producers build new arrays for
+/// nested `Seq` threads and `remove_duplicates` rebuilds every level), so
+/// `assign_slot_in_place` may mutate them. Once a set is stored in a
+/// `State` it is never mutated again.
+priv struct ThreadSet(Array[Thread])
+
+///|
+impl Eq for ThreadSet with fn equal(self, other) {
+  self.0 == other.0
 }
 
 ///|
-#valtype
-priv struct ThreadSetNodeInfo {
-  // No match inside this subtree
-  no_match : Bool
+impl Hash for ThreadSet with fn hash_combine(self, hasher) {
+  for thread in self.0 {
+    hasher.combine(thread)
+  }
 }
 
 ///|
-fn ThreadSet::is_empty(self : ThreadSet) -> Bool {
-  self is Empty
-}
-
-///|
-fn ThreadSet::is_singleton(self : ThreadSet) -> Bool {
-  self is Node(l=Empty, r=Empty, ..)
-}
+let ts_empty : ThreadSet = ThreadSet([])
 
 ///|
 fn ThreadSet::first(self : ThreadSet) -> Thread? {
-  match self {
-    Empty => None
-    Node(l=Empty, t~, ..) => Some(t)
-    Node(l~, ..) => l.first()
-  }
+  self.0.get(0)
 }
 
 ///|
-fn ThreadSet::choose(self : ThreadSet) -> Thread {
-  match self {
-    Node(l=Empty, t~, r=Empty, ..) => t
-    _ => panic()
-  }
-}
-
-///|
-fn ThreadSet::no_match(self : ThreadSet) -> Bool {
-  match self {
-    Empty => true
-    Node(i~, ..) => i.no_match
-  }
-}
-
-///|
-fn ThreadSet::make_node(
-  l : ThreadSet,
-  t : Thread,
-  r : ThreadSet,
-  p~ : Int,
-) -> ThreadSet {
-  let i = ThreadSetNodeInfo::{
-    no_match: !(t is End(_)) && l.no_match() && r.no_match(),
-  }
-  Node(i~, t~, l~, r~, p~)
-}
-
-///|
-let rand_state : @ref.Ref[Int] = Ref(0)
-
-///|
-fn rand_int() -> Int {
-  rand_state.val = rand_state.val * 1664525 + 1013904223
-  rand_state.val
-}
-
-///|
-fn ThreadSet::singleton(t : Thread) -> ThreadSet {
-  ThreadSet::make_node(Empty, t, Empty, p=rand_int())
-}
-
-///|
-fn ThreadSet::merge(l : ThreadSet, r : ThreadSet) -> ThreadSet {
-  match (l, r) {
-    (Empty, r) => r
-    (l, Empty) => l
-    (Node(..) as l, Node(..) as r) =>
-      if l.p > r.p {
-        ThreadSet::make_node(l.l, l.t, ThreadSet::merge(l.r, r), p=l.p)
-      } else {
-        ThreadSet::make_node(ThreadSet::merge(l, r.l), r.t, r.r, p=r.p)
-      }
-  }
-}
-
-///|
-impl Add for ThreadSet with fn add(self, other) {
-  ThreadSet::merge(self, other)
-}
-
-///|
-fn ThreadSet::flat_map(
-  self : ThreadSet,
-  f : (Thread) -> ThreadSet,
-) -> ThreadSet {
-  match self {
-    Empty => Empty
-    Node(l~, t~, r~, ..) => {
-      let l2 = l.flat_map(f)
-      let t2 = f(t)
-      let r2 = r.flat_map(f)
-      l2 + t2 + r2
+/// Marks of the first `End` thread, if any (nested `Seq` threads never
+/// contain `End`: their matches were consumed by `delta_seq`).
+fn first_match(threads : Array[Thread]) -> MarkSlotMap? {
+  for thread in threads {
+    if thread is End(marks) {
+      return Some(marks)
     }
   }
+  None
 }
 
 ///|
-fn ThreadSet::find_first_match(self : ThreadSet) -> MarkSlotMap? {
-  match self {
-    Empty | Node(i={ no_match: true, }, ..) => None
-    Node(l=Empty, t=End(marks), ..) => Some(marks)
-    Node(l~, t~, r~, ..) =>
-      match l.find_first_match() {
-        Some(marks) => Some(marks)
-        None =>
-          match t {
-            End(marks) => Some(marks)
-            Exp(_) | Seq(_) => r.find_first_match()
-          }
-      }
+/// Drop every `End` thread, in place (the array is owned by this delta).
+fn remove_matches(threads : Array[Thread]) -> Unit {
+  threads.retain(thread => !(thread is End(_)))
+}
+
+///|
+/// Shrink an owned array to its first `len` elements.
+fn truncate(threads : Array[Thread], len : Int) -> Unit {
+  while threads.length() > len {
+    threads.unsafe_pop() |> ignore
   }
 }
 
 ///|
-fn ThreadSet::remove_matches(self : ThreadSet) -> ThreadSet {
-  match self {
-    Empty => Empty
-    Node(i={ no_match: true, }, ..) => self
-    Node(l~, t~, r~, p~, ..) =>
-      match t {
-        End(_) => l.remove_matches() + r.remove_matches()
-        Exp(_) | Seq(_) =>
-          ThreadSet::make_node(l.remove_matches(), t, r.remove_matches(), p~)
-      }
+/// Split at the first `End`: `threads` keeps what came before it, and the
+/// threads after it (with any further `End` removed) are returned. The
+/// caller has checked an `End` exists.
+fn split_at_first_match(threads : Array[Thread]) -> Array[Thread] {
+  for i, thread in threads {
+    if thread is End(_) {
+      let after = threads.drain(i + 1, threads.length())
+      threads.unsafe_pop() |> ignore
+      remove_matches(after)
+      return after
+    }
   }
+  panic()
 }
 
 ///|
-fn ThreadSet::split_at_first_match(self : ThreadSet) -> (ThreadSet, ThreadSet) {
-  match self {
-    Empty => (Empty, Empty)
-    Node(i={ no_match: true, }, ..) => (self, Empty)
-    Node(l=Empty | Node(i={ no_match: true, }, ..) as l, t=End(_), r~, ..) =>
-      (l, r)
-    Node(
-      l=Empty
-      | Node(i={ no_match: true, }, ..) as l,
-      t=Exp(_)
-      | Seq(_) as t,
-      r~,
-      p~,
-      ..
-    ) => {
-      let (r1, r2) = r.split_at_first_match()
-      (ThreadSet::make_node(l, t, r1, p~), r2)
-    }
-    Node(l=Node(i={ no_match: false, }, ..) as l, t~, r~, p~, ..) => {
-      let (l1, l2) = l.split_at_first_match()
-      (l1, ThreadSet::make_node(l2, t, r, p~))
-    }
+/// Append a `Seq` thread for `first` followed by `next`, collapsing the two
+/// shapes that must not become a `Seq`: an empty `first` (nothing to run) and
+/// a single finished thread (which is exactly a thread sitting at `next`).
+fn ts_seq(
+  pref : @shared_types.Preference,
+  first : Array[Thread],
+  next : Expr,
+  rem : Array[Thread],
+) -> Unit {
+  match first {
+    [] => ()
+    [Exp(marks, { def: Eps, .. })] => rem.push(Exp(marks, next))
+    _ => rem.push(Seq(pref, ThreadSet(first), next))
   }
 }
 
 ///|
 /// Drops threads that cannot contribute anything an earlier thread does not
 /// already cover: two threads with the same future differ only in priority,
-/// so the later one can go.
+/// so the later one can go. Everything after the first `End` at a level is
+/// dropped too, since that match has the highest remaining priority. Works
+/// in place: every array in the set is owned by the current delta.
 ///
-/// Threads in `self` all continue with `next` once they finish, which is
+/// Threads in `threads` all continue with `next` once they finish, which is
 /// what makes a thread that has *already* finished — one sitting at `Eps` —
 /// equivalent to a thread sitting at `next` itself. Both are keyed by
 /// `next.id` so that the pair collapses to one; without that, a sequence
@@ -239,161 +134,70 @@ fn ThreadSet::split_at_first_match(self : ThreadSet) -> (ThreadSet, ThreadSet) {
 /// consumes a variable number of characters; limiting deduplication to each
 /// wrapper separately retains one thread per partition of the input and
 /// makes the set grow exponentially.
-fn ThreadSet::remove_duplicates(self : ThreadSet, next : Expr) -> ThreadSet {
-  let seen = @hashset.HashSet([])
-  self.remove_duplicates_with_seen(next, seen)
-}
-
-///|
-fn ThreadSet::remove_duplicates_with_seen(
-  self : ThreadSet,
+fn remove_duplicates(
+  threads : Array[Thread],
   next : Expr,
   seen : @hashset.HashSet[ExprId],
-) -> ThreadSet {
-  for thread in self; result = ts_empty {
+) -> Unit {
+  let mut w = 0
+  for thread in threads {
     match thread {
-      End(_) => break result + ts_one(thread)
+      End(_) => {
+        threads[w] = thread
+        w += 1
+        break
+      }
       Exp(_, { def: Eps, .. }) =>
-        if !seen.contains(next.id) {
-          seen.add(next.id)
-          continue result + ts_one(thread)
-        } else {
-          continue result
+        if seen.add_and_check(next.id) {
+          threads[w] = thread
+          w += 1
         }
       Exp(_, { id, .. }) =>
-        if !seen.contains(id) {
-          seen.add(id)
-          continue result + ts_one(thread)
-        } else {
-          continue result
+        if seen.add_and_check(id) {
+          threads[w] = thread
+          w += 1
         }
-      Seq(pref, first, next) => {
-        let first_dedup = first.remove_duplicates_with_seen(next, seen)
-        continue result + ts_seq(pref, first_dedup, next)
+      Seq(_, first, next2) => {
+        remove_duplicates(first.0, next2, seen)
+        // Same collapse rules as `ts_seq`, applied to the surviving threads.
+        match first.0 {
+          [] => ()
+          [Exp(marks, { def: Eps, .. })] => {
+            threads[w] = Exp(marks, next2)
+            w += 1
+          }
+          _ => {
+            threads[w] = thread
+            w += 1
+          }
+        }
       }
     }
-  } nobreak {
-    result
   }
+  truncate(threads, w)
 }
 
 ///|
-fn ThreadSet::assign_slot(desc : ThreadSet, slot : Slot) -> ThreadSet {
+/// Give every unassigned mark in the set the state's slot. Mutates the
+/// arrays in place; see the ownership note on `ThreadSet`.
+fn ThreadSet::assign_slot_in_place(self : ThreadSet, slot : Slot) -> Unit {
   guard slot.is_assigned() else { panic() }
-  desc.map(thread => {
+  for i, thread in self.0 {
     match thread {
-      End(marks) => End(marks.assign_slot(slot))
-      Exp(marks, expr) => Exp(marks.assign_slot(slot), expr)
-      Seq(pref, first, next) => Seq(pref, first.assign_slot(slot), next)
+      End(marks) => self.0[i] = End(marks.assign_slot(slot))
+      Exp(marks, expr) => self.0[i] = Exp(marks.assign_slot(slot), expr)
+      Seq(_, first, _) => first.assign_slot_in_place(slot)
     }
-  })
+  }
 }
 
 ///|
-fn ThreadSet::iter(self : ThreadSet) -> Iter[Thread] {
-  let mut node = self
-  let parents = []
-  Iter::new(() => {
-    for curr = node {
-      match curr {
-        Node(t=thread, l=Empty, r=right, ..) => {
-          node = right
-          break Some(thread)
-        }
-        Node(t=thread, l=left, r=right, ..) => {
-          parents.push((thread, right))
-          continue left
-        }
-        Empty if parents.pop() is Some((thread, right)) => {
-          node = right
-          break Some(thread)
-        }
-        Empty => break None
-      }
-    }
-  })
-}
-
-///|
-fn ThreadSet::iter_marks(self : ThreadSet) -> Iter[MarkSlotMap] {
-  self
-  .iter()
-  .flat_map(thread => {
+/// Visit the marks of every thread, including those nested in `Seq` threads.
+fn ThreadSet::each_marks(self : ThreadSet, f : (MarkSlotMap) -> Unit) -> Unit {
+  for thread in self.0 {
     match thread {
-      End(marks) | Exp(marks, _) => [|marks|]
-      Seq(_pref, first, _next) => first.iter_marks()
+      End(marks) | Exp(marks, _) => f(marks)
+      Seq(_, first, _) => first.each_marks(f)
     }
-  })
-}
-
-///|
-fn ThreadSet::map(self : ThreadSet, f : (Thread) -> Thread) -> ThreadSet {
-  match self {
-    Empty => Empty
-    Node(l~, t~, r~, p~, ..) => {
-      let l2 = l.map(f)
-      let b2 = f(t)
-      let r2 = r.map(f)
-      ThreadSet::make_node(l2, b2, r2, p~)
-    }
-  }
-}
-
-///|
-let ts_empty : ThreadSet = Empty
-
-///|
-fn ts_one(t : Thread) -> ThreadSet {
-  ThreadSet::singleton(t)
-}
-
-///|
-fn ts_end(marks : MarkSlotMap) -> ThreadSet {
-  ts_one(End(marks))
-}
-
-///|
-fn ts_exp(marks : MarkSlotMap, expr : Expr) -> ThreadSet {
-  ts_one(Exp(marks, expr))
-}
-
-///|
-fn ts_seq(
-  pref : @shared_types.Preference,
-  first : ThreadSet,
-  next : Expr,
-) -> ThreadSet {
-  if first.is_empty() {
-    ts_empty
-  } else if first.is_singleton() &&
-    first.choose() is Exp(marks, { def: Eps, .. }) {
-    ts_exp(marks, next)
-  } else {
-    ts_one(Seq(pref, first, next))
-  }
-}
-
-///|
-impl Eq for ThreadSet with fn equal(self, other) {
-  let it1 = self.iter()
-  let it2 = other.iter()
-  for v1 = it1.next(), v2 = it2.next() {
-    match (v1, v2) {
-      (None, None) => break true
-      (None, Some(_)) | (Some(_), None) => break false
-      (Some(b1), Some(b2)) =>
-        if b1 == b2 {
-          continue it1.next(), it2.next()
-        } else {
-          break false
-        }
-    }
-  }
-}
-
-///|
-impl Hash for ThreadSet with fn hash_combine(self, hasher) {
-  for thread in self {
-    hasher.combine(thread)
   }
 }

@@ -13,35 +13,37 @@
 // limitations under the License.
 
 ///|
-struct Table(FixedArray[@shared_types.Rechar])
+/// Maps input code units to symbols through a two-level table.
+///
+/// `index` has one entry per 256-code-unit block and holds the offset of that
+/// block's 256 symbols inside `blocks`. Blocks whose 256 code units all map to
+/// the same symbol (the vast majority) share one physical block, so the table
+/// stays small while every lookup is two dependent loads with no search.
+struct Table {
+  index : FixedArray[@shared_types.Rechar]
+  blocks : FixedArray[@shared_types.Rechar]
+  /// Largest code unit the table was built for; `map` panics above it.
+  ub : @shared_types.Rechar
+  /// `min(256, ub + 1)`: code units below it are served by block 0 alone.
+  fast_limit : @shared_types.Rechar
+}
 
 ///|
-/// Map a single `Rechar` through the symbol table. ASCII codepoints are
-/// looked up directly; higher codepoints are resolved via a binary search
-/// over `(lo, hi, target)` triples stored after the ASCII region.
+/// Map a single `Rechar` through the symbol table.
+///
+/// Panics when `c` lies above the `ub` the table was built for; `c` must not
+/// be negative.
 pub fn Table::map(
   self : Table,
   c : @shared_types.Rechar,
 ) -> @shared_types.Rechar {
-  if c < 128 {
-    self.0.unsafe_get(c)
+  if c < self.fast_limit {
+    // Block 0 is always the first physical block, so Latin-1 (and in
+    // particular ASCII) input needs a single load.
+    self.blocks.unsafe_get(c)
   } else {
-    let arr = self.0
-    let mut left = 0
-    let mut right = (arr.length() - 128) / 3 - 1
-    while left <= right {
-      let mid = left + (right - left) / 2
-      let entry_base = 128 + mid * 3
-      if c < arr[entry_base] {
-        right = mid - 1
-      } else if c > arr[entry_base + 1] {
-        left = mid + 1
-      } else {
-        // c is within [lo, hi]
-        return arr[entry_base + 2]
-      }
-    }
-    panic()
+    guard c <= self.ub else { panic() }
+    self.blocks.unsafe_get(self.index.unsafe_get(c >> 8) + (c & 0xFF))
   }
 }
 

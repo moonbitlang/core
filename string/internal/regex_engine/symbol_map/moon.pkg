@@ -3,3 +3,7 @@ import {
   "moonbitlang/core/sorted_set",
   "moonbitlang/core/internal/regex_engine/shared_types",
 }
+
+import {
+  "moonbitlang/core/internal/regex_engine/shared_types/rechar_set",
+} for "test"
