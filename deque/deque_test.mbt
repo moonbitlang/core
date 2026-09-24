@@ -3130,3 +3130,19 @@ test "deque release_unused covers the wrapped case" {
     ),
   )
 }
+
+///|
+test "binary_search_by propagates comparator errors" {
+  let dq = @deque.Deque([1, 3, 5, 7])
+  let r : Result[Int, Int] = dq.binary_search_by(x => x.compare(5))
+  debug_inspect(r, content="Ok(2)")
+  let raised = try
+    dq.binary_search_by(x => if x == 5 { fail("stop") } else { x.compare(5) })
+    |> ignore
+  catch {
+    _ => true
+  } noraise {
+    _ => false
+  }
+  inspect(raised, content="true")
+}

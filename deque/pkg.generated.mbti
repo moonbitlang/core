@@ -24,7 +24,7 @@ pub fn[A] Deque::as_views(Self[A]) -> (ArrayView[A], ArrayView[A])
 pub fn[A] Deque::at(Self[A], Int) -> A
 pub fn[A] Deque::back(Self[A]) -> A?
 pub fn[A : Compare] Deque::binary_search(Self[A], A) -> Result[Int, Int]
-pub fn[A] Deque::binary_search_by(Self[A], (A) -> Int) -> Result[Int, Int]
+pub fn[A] Deque::binary_search_by(Self[A], (A) -> Int raise?) -> Result[Int, Int] raise?
 pub fn[A] Deque::blit_to(Self[A], Self[A], len~ : Int, src_offset? : Int, dst_offset? : Int) -> Unit
 pub fn[A] Deque::capacity(Self[A]) -> Int
 pub fn[A] Deque::chunk_by(Self[A], (A, A) -> Bool raise?) -> Self[Self[A]] raise?

@@ -102,7 +102,7 @@ pub fn[X] Iter::each(self : Iter[X], f : (X) -> Unit raise?) -> Unit raise? {
 /// Return `true` if any element satisfies predicate `f`.
 /// Function `any`.
 #locals(f)
-pub fn[X] Iter::any(self : Iter[X], f : (X) -> Bool) -> Bool {
+pub fn[X] Iter::any(self : Iter[X], f : (X) -> Bool raise?) -> Bool raise? {
   while self.next() is Some(x) {
     if f(x) {
       break true
@@ -116,7 +116,7 @@ pub fn[X] Iter::any(self : Iter[X], f : (X) -> Bool) -> Bool {
 /// Return `true` if all elements satisfy predicate `f`.
 /// Function `all`.
 #locals(f)
-pub fn[X] Iter::all(self : Iter[X], f : (X) -> Bool) -> Bool {
+pub fn[X] Iter::all(self : Iter[X], f : (X) -> Bool raise?) -> Bool raise? {
   while self.next() is Some(x) {
     guard f(x) else { break false }
   } nobreak {
@@ -216,7 +216,7 @@ pub fn[X] Iter::count(self : Iter[X]) -> Int {
 ///
 /// Returns the number of elements for which `f` returns `true`.
 #locals(f)
-pub fn[X] Iter::count_if(self : Iter[X], f : (X) -> Bool) -> Int {
+pub fn[X] Iter::count_if(self : Iter[X], f : (X) -> Bool raise?) -> Int raise? {
   for x in self; count = 0 {
     if f(x) {
       continue count + 1
@@ -697,7 +697,7 @@ pub fn[X] Iter::drop_while(self : Iter[X], f : (X) -> Bool) -> Iter[X] {
 ///
 /// # Note
 /// The iterator `self` will advance past the returned element.
-pub fn[X] Iter::find_first(self : Iter[X], f : (X) -> Bool) -> X? {
+pub fn[X] Iter::find_first(self : Iter[X], f : (X) -> Bool raise?) -> X? raise? {
   while self.next() is Some(x) {
     if f(x) {
       break Some(x)
@@ -1093,7 +1093,10 @@ pub fn[X, Y] Iter2::next(self : Iter2[X, Y]) -> (X, Y)? {
 
 ///|
 /// Apply callback to each pair.
-pub fn[X, Y] Iter2::each(self : Iter2[X, Y], f : (X, Y) -> Unit) -> Unit {
+pub fn[X, Y] Iter2::each(
+  self : Iter2[X, Y],
+  f : (X, Y) -> Unit raise?,
+) -> Unit raise? {
   self.0.each(pair => f(pair.0, pair.1))
 }
 

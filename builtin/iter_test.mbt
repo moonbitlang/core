@@ -1262,3 +1262,70 @@ test "Iter::iter and Iter2 conversions" {
   }
   inspect(buf.to_string(), content="xy")
 }
+
+///|
+fn raises_at(f : () -> Unit raise) -> String {
+  try f() catch {
+    Failure(msg) => if msg.contains("stop") { "raised" } else { "other" }
+    _ => "other"
+  } noraise {
+    _ => "no error"
+  }
+}
+
+///|
+test "eager Iter consumers propagate callback errors" {
+  let xs = [1, 2, 3, 4]
+  let seen = []
+  let stop_at_3 = (x : Int) => {
+    seen.push(x)
+    if x == 3 {
+      fail("stop")
+    }
+    false
+  }
+  inspect(raises_at(() => ignore(xs.iter().any(stop_at_3))), content="raised")
+  debug_inspect(seen, content="[1, 2, 3]")
+  seen.clear()
+  inspect(
+    raises_at(() => ignore(xs.iter().all(x => !stop_at_3(x)))),
+    content="raised",
+  )
+  debug_inspect(seen, content="[1, 2, 3]")
+  seen.clear()
+  inspect(
+    raises_at(() => ignore(xs.iter().count_if(stop_at_3))),
+    content="raised",
+  )
+  debug_inspect(seen, content="[1, 2, 3]")
+  seen.clear()
+  inspect(
+    raises_at(() => ignore(xs.iter().find_first(stop_at_3))),
+    content="raised",
+  )
+  debug_inspect(seen, content="[1, 2, 3]")
+  inspect(
+    raises_at(() => xs.iter2().each((i, _) => if i == 1 { fail("stop") })),
+    content="raised",
+  )
+  // Non-raising callbacks keep working without `try`.
+  inspect(xs.iter().count_if(x => x % 2 == 0), content="2")
+  debug_inspect(xs.iter().find_first(x => x > 2), content="Some(3)")
+}
+
+///|
+test "find_by propagates callback errors" {
+  inspect(
+    raises_at(() => {
+      ignore("abc".find_by(c => if c == 'b' { fail("stop") } else { false }))
+    }),
+    content="raised",
+  )
+  inspect(
+    raises_at(() => {
+      ignore("abc"[:].find_by(c => if c == 'c' { fail("stop") } else { false }))
+    }),
+    content="raised",
+  )
+  debug_inspect("abc".find_by(c => c == 'c'), content="Some(2)")
+}
