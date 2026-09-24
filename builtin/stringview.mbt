@@ -448,17 +448,17 @@ pub fn StringView::lexical_compare(
   let other_len = other.length()
   let min_len = if self_len < other_len { self_len } else { other_len }
 
-  // Compare character by character up to the minimum length
+  // Compare code unit by code unit up to the minimum length; direct operators
+  // instead of the `Compare` impl keep the loop free of per-unit call overhead
   for i in 0..<min_len {
-    let self_char = self.str().unsafe_get(self.start() + i)
-    let other_char = other.str().unsafe_get(other.start() + i)
-    let cmp = self_char.compare(other_char)
-    if cmp != 0 {
-      return cmp
+    let x = self.unsafe_get(i)
+    let y = other.unsafe_get(i)
+    if x != y {
+      return if x < y { -1 } else { 1 }
     }
   }
 
-  // If all characters match up to min_len, the shorter one is lexicographically smaller
+  // If all code units match up to min_len, the shorter one is lexicographically smaller
   self_len.compare(other_len)
 }
 
