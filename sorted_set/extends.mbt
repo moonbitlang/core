@@ -38,3 +38,13 @@ pub extend SortedSet with Eq::{not_equal}
 #deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
 #doc(hidden)
 pub extend SortedSet with Show::{output, to_string}
+
+///|
+#deprecated("Use `@json.from_json` instead", skip_current_package=true)
+#doc(hidden)
+pub extend SortedSet with @json.FromJson::{from_json}
+
+///|
+#deprecated("Use `Json(value)` instead", skip_current_package=true)
+#doc(hidden)
+pub extend SortedSet with @json.ToJson::{to_json}

@@ -2546,3 +2546,9 @@ pub fn[A] Deque::shuffle(self : Deque[A], rand~ : (Int) -> Int) -> Deque[A] {
   // Return the shuffled copy
   new_deque
 }
+
+///|
+/// The empty deque.
+pub impl[A] Default for Deque[A] with fn default() {
+  Deque([])
+}
