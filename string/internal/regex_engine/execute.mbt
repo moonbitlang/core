@@ -66,8 +66,8 @@ pub fn Regex::execute(
     },
   )
   let start_state_id = self.stablize_start_state(prev_cat)
-  let positions = Positions::new()
-  let mut buf = positions.buf
+  let positions = self.positions
+  let mut buf = positions.ensure(self.max_slot)
   let mut transition_table = self.transition_table
   let mut slot_table = self.slot_table
   let data = input.data()
@@ -92,14 +92,12 @@ pub fn Regex::execute(
       next = next_id.0
       transition_table[transition_index] = next
       slot_table[transition_index] = self.get_state(next_id).slot().index
+      buf = positions.ensure(self.max_slot)
     }
-    let slot = slot_table.unsafe_get(transition_index)
-    // `Positions::set` inlined by hand: the length check is the bounds check.
+    // Every slot in `slot_table` is <= `max_slot` and `buf` covers it.
     // Slot::unassigned() is index 0, so writing it is harmless and keeps this
     // path branchless.
-    if slot >= buf.length() {
-      buf = positions.grow(slot)
-    }
+    let slot = slot_table.unsafe_get(transition_index)
     buf.unsafe_set(slot, pos)
     if next < 0 {
       state_id = StateId(next)

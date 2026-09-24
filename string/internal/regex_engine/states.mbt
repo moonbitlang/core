@@ -69,6 +69,7 @@ fn Regex::stablize_state(self : Regex, state : @automata.State) -> StateId {
       self.final_table = new_final_table
     }
     self.states[index] = state
+    self.max_slot = Int::max(self.max_slot, state.slot().index)
     StateId::new(
       base=index * num_symbols,
       is_break=state.status() is (Match(_) | Failed),
@@ -111,6 +112,7 @@ fn Regex::stablize_final(
         )
         let slot = next_state.slot()
         let status = next_state.status()
+        self.max_slot = Int::max(self.max_slot, slot.index)
         self.final_table[state_index] = @list.cons(
           (next_cat, slot, status),
           self.final_table[state_index],

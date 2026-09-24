@@ -13,8 +13,14 @@
 // limitations under the License.
 
 ///|
-/// For every slot, the input offset recorded the last time a state owning
-/// that slot was entered.
+/// Scratch buffer holding, for every slot, the input offset recorded the last
+/// time a state owning that slot was entered.
+///
+/// The buffer lives on the `Regex` and is reused across `execute` calls:
+/// `execute` runs no caller code (the profile's `category` callback is the
+/// only hook, and the profiles are fixed by this package's users), so it
+/// cannot be re-entered, and every slot that a match result reads was
+/// written during the same call.
 priv struct Positions {
   mut buf : FixedArray[Int]
 }
@@ -25,21 +31,22 @@ fn Positions::new() -> Positions {
 }
 
 ///|
-/// Grow `buf` so that `slot` is in range and return it.
-fn Positions::grow(self : Positions, slot : Int) -> FixedArray[Int] {
-  let buf = FixedArray::make(Int::max(slot + 8, self.buf.length() * 2), -1)
-  self.buf.blit_to(buf, len=self.buf.length())
-  self.buf = buf
-  buf
+/// Make sure `buf` can hold slot indices up to and including `max_slot`.
+fn Positions::ensure(self : Positions, max_slot : Int) -> FixedArray[Int] {
+  if max_slot >= self.buf.length() {
+    let buf = FixedArray::make(
+      Int::max(max_slot + 8, self.buf.length() * 2),
+      -1,
+    )
+    self.buf.blit_to(buf, len=self.buf.length())
+    self.buf = buf
+  }
+  self.buf
 }
 
 ///|
 fn Positions::set(self : Positions, slot : @automata.Slot, pos : Int) -> Unit {
-  let buf = if slot.index >= self.buf.length() {
-    self.grow(slot.index)
-  } else {
-    self.buf
-  }
+  let buf = self.ensure(slot.index)
   buf[slot.index] = pos
 }
 
