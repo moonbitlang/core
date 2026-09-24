@@ -579,3 +579,36 @@ test "union size is exact for overlapping, disjoint and identical sets" {
   u.each(_x => n = n + 1)
   inspect(u.length() == n, content="true")
 }
+
+///|
+test "clear" {
+  let set = @sorted_set.from_array([3, 1, 2])
+  set.clear()
+  inspect(set.is_empty(), content="true")
+  inspect(set.length(), content="0")
+  inspect(set.contains(1), content="false")
+  set.add(5)
+  @debug.debug_inspect(set.to_array(), content="[5]")
+}
+
+///|
+test "JSON round-trip" {
+  let set = @sorted_set.from_array([3, 1, 2, 3])
+  @json.json_inspect(set, content=[1, 2, 3])
+  let back : @sorted_set.SortedSet[Int] = @json.from_json([2, 3, 1, 3])
+  inspect(back == set, content="true")
+  let empty : @sorted_set.SortedSet[Int] = @json.from_json([])
+  inspect(empty.is_empty(), content="true")
+  let bad : Json = { "a": 1 }
+  try (@json.from_json(bad) : @sorted_set.SortedSet[Int]) |> ignore catch {
+    e =>
+      inspect(
+        e,
+        content=(
+          #|JsonDecodeError((, @sorted_set.from_json: expected array))
+        ),
+      )
+  } noraise {
+    _ => fail("expected JsonDecodeError")
+  }
+}

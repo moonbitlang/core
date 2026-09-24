@@ -46,8 +46,8 @@ pub impl[A : Show] Show for Queue[A] with fn output(self, logger) {
 }
 
 ///|
-/// Tests if two queues are equal.
-impl[A : Eq] Eq for Queue[A] with fn equal(self, other) {
+/// Tests if two queues hold the same elements in the same order.
+pub impl[A : Eq] Eq for Queue[A] with fn equal(self, other) {
   self.inner == other.inner
 }
 
@@ -372,4 +372,55 @@ test "transfer" {
   @test.assert_eq(queue.length(), 0)
   @test.assert_eq(queue2.length(), 8)
   @test.assert_eq(queue2, from_array([5, 6, 7, 8, 1, 2, 3, 4]))
+}
+
+///|
+/// The empty queue.
+pub impl[A] Default for Queue[A] with fn default() {
+  new_queue()
+}
+
+///|
+/// Returns the elements of the queue as an array, front first.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   let queue = @queue.Queue([1, 2, 3])
+///   queue.push(4)
+///   ignore(queue.pop())
+///   @debug.debug_inspect(queue.to_array(), content="[2, 3, 4]")
+/// }
+/// ```
+pub fn[A] Queue::to_array(self : Queue[A]) -> Array[A] {
+  self.inner.to_array()
+}
+
+///|
+/// Encodes the queue as a JSON array, front first.
+pub impl[A : @json.ToJson] @json.ToJson for Queue[A] with fn to_json(self) {
+  @json.ToJson::to_json(self.inner)
+}
+
+///|
+/// Decodes a queue from a JSON array, the form `to_json` produces; the first
+/// array element becomes the front of the queue.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   let queue : @queue.Queue[Int] = @json.from_json([1, 2, 3])
+///   @debug.debug_inspect(queue.peek(), content="Some(1)")
+/// }
+/// ```
+pub impl[A : @json.FromJson] @json.FromJson for Queue[A] with fn from_json(
+  json,
+  path,
+) {
+  guard json is Array(_) else {
+    raise JsonDecodeError((path, "@queue.from_json: expected array"))
+  }
+  { inner: @json.FromJson::from_json(json, path), }
 }

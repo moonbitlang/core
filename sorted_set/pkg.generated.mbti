@@ -3,6 +3,7 @@ package "moonbitlang/core/sorted_set"
 
 import {
   "moonbitlang/core/debug",
+  "moonbitlang/core/json",
 }
 
 // Values
@@ -17,6 +18,7 @@ type SortedSet[V]
 #as_free_fn(from_array)
 pub fn[V : Compare] SortedSet::SortedSet(ArrayView[V]) -> Self[V]
 pub fn[V : Compare] SortedSet::add(Self[V], V) -> Unit
+pub fn[V] SortedSet::clear(Self[V]) -> Unit
 pub fn[V : Compare] SortedSet::contains(Self[V], V) -> Bool
 #alias(clone, deprecated)
 #alias(deep_clone, deprecated)
@@ -53,7 +55,9 @@ pub impl[K] Default for SortedSet[K]
 pub impl[V : Eq] Eq for SortedSet[V]
 #deprecated
 pub impl[V : Show] Show for SortedSet[V]
+pub impl[V : ToJson] ToJson for SortedSet[V]
 pub impl[V : @debug.Debug] @debug.Debug for SortedSet[V]
+pub impl[V : @json.FromJson + Compare] @json.FromJson for SortedSet[V]
 
 // Type aliases
 

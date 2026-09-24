@@ -90,6 +90,7 @@ pub fn[A] Deque::to_array(Self[A]) -> Array[A]
 pub fn[A] Deque::truncate(Self[A], Int) -> Unit
 pub impl[A] Add for Deque[A]
 pub impl[A : Compare] Compare for Deque[A]
+pub impl[A] Default for Deque[A]
 pub impl[A : Eq] Eq for Deque[A]
 pub impl[A : Hash] Hash for Deque[A]
 #deprecated
