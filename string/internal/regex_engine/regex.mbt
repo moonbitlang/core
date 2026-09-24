@@ -27,6 +27,9 @@ struct Regex {
   /// Parallel to `transition_table`; holds the slot of the next state so the
   /// scan loop needs no per-state lookup.
   mut slot_table : FixedArray[Int]
+  /// Largest slot index of any stabilized state (bounds the scratch buffer).
+  mut max_slot : Int
+  positions : Positions
   mut final_table : FixedArray[
     @list.List[(Category, @automata.Slot, @automata.Status)],
   ]
@@ -60,6 +63,8 @@ fn Regex::new(
     state_table: HashMap([]),
     transition_table: [],
     slot_table: [],
+    max_slot: 0,
+    positions: Positions::new(),
     final_table: [],
     states: [],
     num_states: 0,
