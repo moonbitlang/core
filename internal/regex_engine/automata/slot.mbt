@@ -23,6 +23,8 @@
 ///
 /// A slot with index = 0 represents an "unassigned" slot, indicating that a slot
 /// has not been assigned. This is checked via `is_assigned()`.
+/// The internal `-1` value is reserved as a missing-mark sentinel in
+/// `MarkSlotMap`; it is never passed to position storage.
 ///
 /// # How It Works
 ///
@@ -50,6 +52,18 @@ pub fn Slot::from_index(index : Int) -> Slot {
 /// Note: This is the only slot value that is considered "unassigned".
 pub fn Slot::unassigned() -> Slot {
   { index: 0, }
+}
+
+///|
+/// Return the internal sentinel used for a mark that has not been recorded.
+fn Slot::absent() -> Slot {
+  { index: -1, }
+}
+
+///|
+/// Return whether this is the internal missing-mark sentinel.
+fn Slot::is_absent(self : Slot) -> Bool {
+  self.index < 0
 }
 
 ///|

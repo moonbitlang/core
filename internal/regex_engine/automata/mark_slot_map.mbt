@@ -37,42 +37,85 @@
 /// - `add_mark`: Records that a mark was encountered (initially unassigned)
 /// - `assign_slot`: Assigns a slot to all previously unassigned marks
 /// - `get_slot`: Retrieves the slot associated with a mark
-struct MarkSlotMap(@immut/sorted_map.SortedMap[Mark, Slot]) derive(Eq, Hash)
+///
+/// Indexed by mark. `Slot::absent()` means the mark was never recorded,
+/// `Slot::unassigned()` means it was recorded but has no slot yet, and an
+/// assigned `Slot` stores the mark's position.
+/// The separate absent state is required because optional capture groups can
+/// leave holes between the smallest and largest recorded mark.
+struct MarkSlotMap {
+  slots : FixedArray[Slot]
+  /// True when some recorded mark still holds `Slot::unassigned()`; lets
+  /// `assign_slot` skip the copy for the (common) threads that recorded no
+  /// new mark in the current step.
+  has_unassigned : Bool
+} derive(Eq, Hash)
 
 ///|
 fn MarkSlotMap::empty() -> MarkSlotMap {
-  MarkSlotMap(@immut/sorted_map.SortedMap::new())
+  { slots: [], has_unassigned: false, }
 }
 
 ///|
+/// Record `mark` at the current position (overwriting an earlier record of
+/// the same mark, as a later iteration of a group does).
 fn MarkSlotMap::add_mark(self : MarkSlotMap, mark : Mark) -> MarkSlotMap {
-  MarkSlotMap(self.0.add(mark, Slot::unassigned()))
+  let n = Int::max(self.slots.length(), mark.0 + 1)
+  let slots = FixedArray::make_and_blit(
+    self.slots,
+    allocate_len=n,
+    init=Slot::absent(),
+    len=self.slots.length(),
+  )
+  slots[mark.0] = Slot::unassigned()
+  { slots, has_unassigned: true, }
 }
 
 ///|
 fn MarkSlotMap::assign_slot(self : MarkSlotMap, slot : Slot) -> MarkSlotMap {
-  MarkSlotMap(
-    self.0.map((_mark, prev_slot) => {
-      if prev_slot.is_assigned() {
-        prev_slot
-      } else {
-        slot
+  // `Slot::unassigned()` encodes "unassigned", so assigning slot 0 would
+  // silently leave the map unassigned; `find_slot` never hands out index 0.
+  guard slot.is_assigned() else { panic() }
+  if !self.has_unassigned {
+    self
+  } else {
+    let slots = self.slots.copy()
+    for i, s in slots {
+      if s == Slot::unassigned() {
+        slots[i] = slot
       }
-    }),
-  )
+    }
+    { slots, has_unassigned: false, }
+  }
 }
 
 ///|
 /// Function `get_slot`.
 pub fn MarkSlotMap::get_slot(self : MarkSlotMap, mark : Mark) -> Slot {
-  match self.0.get(mark) {
-    None => Slot::unassigned()
-    Some(slot) => slot
+  if mark.0 >= 0 && mark.0 < self.slots.length() {
+    let slot = self.slots[mark.0]
+    if slot.is_absent() {
+      Slot::unassigned()
+    } else {
+      slot
+    }
+  } else {
+    Slot::unassigned()
   }
 }
 
 ///|
 /// Return an iterator via `iter2`.
 pub fn MarkSlotMap::iter2(self : MarkSlotMap) -> Iter2[Mark, Slot] {
-  self.0.iter2()
+  let mut i = 0
+  Iter2::new(() => {
+    while i < self.slots.length() {
+      let s = self.slots[i]
+      i += 1
+      if !s.is_absent() {
+        return Some((Mark(i - 1), s))
+      }
+    }
+    None
+  })
 }
