@@ -138,9 +138,9 @@ test "fixed arrays" {
   inspect(has_two, content="true")
 
   // Check if array starts/ends with sequence
-  let starts = fixed.starts_with([1, 2])
+  let starts = fixed.has_prefix([1, 2])
   inspect(starts, content="true")
-  let ends = fixed.ends_with([2, 3])
+  let ends = fixed.has_suffix([2, 3])
   inspect(ends, content="true")
 }
 ```
