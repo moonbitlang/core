@@ -93,7 +93,11 @@ fn State::new(
 ///|
 /// Function `start`.
 pub fn State::start(cat : @shared_types.Category, expr : Expr) -> State {
-  State::new(Slot::unassigned(), cat, ts_exp(MarkSlotMap::empty(), expr))
+  State::new(
+    Slot::unassigned(),
+    cat,
+    ThreadSet([Exp(MarkSlotMap::empty(), expr)]),
+  )
 }
 
 ///|
