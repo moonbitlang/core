@@ -17,7 +17,7 @@ test "symbol set membership and its boundaries" {
   let s = SymbolSet::of(
     @shared_types.RecharSet::char_range(2, 3) + @shared_types.RecharSet::char(7),
   )
-  assert_true(s.0.length() == 8)
+  inspect(s.0.length(), content="1")
   let cases = [
     (-1, false),
     (0, false),

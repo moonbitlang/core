@@ -157,10 +157,10 @@ pub fn e_cset(ctx~ : Context, c : @shared_types.RecharSet) -> Expr {
 /// Membership table for a `Chr` node.
 ///
 /// Character sets reach the automaton after symbolization, so their elements
-/// are dense small symbol ids; a flat table indexed by symbol answers
-/// `contains` with one load instead of a walk of the interval tree, and it
-/// is consulted once per `Chr` node per thread on every transition.
-priv struct SymbolSet(FixedArray[Bool])
+/// are dense small symbol ids. Pack 32 symbols per word to reduce space while
+/// retaining constant-time membership with one load, instead of walking the
+/// interval tree once per `Chr` node per thread on every transition.
+priv struct SymbolSet(FixedArray[UInt])
 
 ///|
 fn SymbolSet::of(c : @shared_types.RecharSet) -> SymbolSet {
@@ -168,11 +168,22 @@ fn SymbolSet::of(c : @shared_types.RecharSet) -> SymbolSet {
   guard c.first_interval() is Some((lo, _)) && lo >= 0 && hi <= 0x10FFFF else {
     panic()
   }
-  let table = FixedArray::make(hi + 1, false)
+  let table = FixedArray::make((hi >> 5) + 1, 0U)
   for interval in c.intervals() {
     let (lo, hi) = interval
-    for s in lo..<=hi {
-      table[s] = true
+    let first = lo >> 5
+    let last = hi >> 5
+    // Neither shift reaches 32, including intervals ending on a word boundary.
+    let first_mask = 0xFFFFFFFFU << (lo & 31)
+    let last_mask = 0xFFFFFFFFU >> (31 - (hi & 31))
+    if first == last {
+      table[first] = table[first] | (first_mask & last_mask)
+    } else {
+      table[first] = table[first] | first_mask
+      for word in (first + 1)..<last {
+        table[word] = 0xFFFFFFFFU
+      }
+      table[last] = table[last] | last_mask
     }
   }
   SymbolSet(table)
@@ -180,10 +191,12 @@ fn SymbolSet::of(c : @shared_types.RecharSet) -> SymbolSet {
 
 ///|
 /// Symbols outside the table (including the `-1` end-of-input marker used
-/// for the final transition) are never members.
+/// for the final transition) are never members. Unused bits in the last word
+/// remain zero, so no separate upper-symbol bound is needed.
 fn SymbolSet::contains(self : SymbolSet, c : @shared_types.Rechar) -> Bool {
-  c.reinterpret_as_uint() < self.0.length().reinterpret_as_uint() &&
-  self.0.unsafe_get(c)
+  let word = c.reinterpret_as_uint() >> 5
+  word < self.0.length().reinterpret_as_uint() &&
+  (self.0.unsafe_get(word.reinterpret_as_int()) & (1U << (c & 31))) != 0
 }
 
 ///|
