@@ -67,39 +67,49 @@ pub fn Regex::execute(
   )
   let start_state_id = self.stablize_start_state(prev_cat)
   let positions = Positions::new()
+  let mut buf = positions.buf
   let mut transition_table = self.transition_table
+  let mut slot_table = self.slot_table
   let data = input.data()
   let mut pos = input.start_offset() + last_index
   let end = input.start_offset() + input.length()
+  // INVARIANT: The start state is never a break state, so `base` is a valid
+  // non-negative transition base on entry to the loop. Empty character classes
+  // like `/[]/` are transformed during compilation:
+  //   `/[]/`  -> `seq(shortest(char(any)), capture(empty))`
+  //   `/^[]/` -> `capture(seq(start_of_input, empty))`
+  let mut base = start_state_id.0
   let mut state_id = start_state_id
   while pos < end {
     let ch = data.unsafe_get(pos).to_int()
     let symbol = symbol_table.map(ch)
-    // INVARIANT: The start state is never a break state.
-    // Empty character classes like `/[]/` are transformed during compilation:
-    //   `/[]/`  -> `seq(shortest(char(any)), capture(empty))`
-    //   `/^[]/` -> `capture(seq(start_of_input, empty))`
-    // This ensures the executor can safely access state.transitions[symbol] without checking.
-    let transition_index = state_id.transition_base() + symbol
-    let prev_state_id = state_id
-    state_id = transition_table.unsafe_get(transition_index)
-    if state_id.is_pending() {
-      state_id = self.stablize_next_state(prev_state_id, symbol)
+    let transition_index = base + symbol
+    let mut next = transition_table.unsafe_get(transition_index)
+    if next == -1 {
+      let next_id = self.stablize_next_state(StateId(base), symbol)
       transition_table = self.transition_table
-      transition_table[transition_index] = state_id
+      slot_table = self.slot_table
+      next = next_id.0
+      transition_table[transition_index] = next
+      slot_table[transition_index] = self.get_state(next_id).slot().index
     }
-    let slot = state_id.slot()
-    // NOTE: we manually inline `Positions::set` here to avoid the overhead
-    // of callee-owned RC (reference counting) operations.
-    // Slot::unassigned() uses index 0, so writing it is harmless and keeps this path branchless.
-    if slot.index >= positions.0.length() {
-      positions.0.resize(slot.index + 8, -1)
+    let slot = slot_table.unsafe_get(transition_index)
+    // `Positions::set` inlined by hand: the length check is the bounds check.
+    // Slot::unassigned() is index 0, so writing it is harmless and keeps this
+    // path branchless.
+    if slot >= buf.length() {
+      buf = positions.grow(slot)
     }
-    positions.0[slot.index] = pos
-    if state_id.is_break() {
+    buf.unsafe_set(slot, pos)
+    if next < 0 {
+      state_id = StateId(next)
       break
     }
+    base = next
     pos += 1
+  }
+  if !state_id.is_break() {
+    state_id = StateId(base)
   }
   let state = self.get_state(state_id)
   let matched = match state.status() {

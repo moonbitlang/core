@@ -891,6 +891,24 @@ test "capture/multiple_captures_same_pattern" {
 }
 
 ///|
+test "matches that need more than 2047 live capture slots are found" {
+  // Regression: the packed state id reserved 11 bits for the capture slot.
+  // Every start position of a long literal run needs its own slot for the
+  // group-0 start mark, so this pattern needed slot 2048 and the match was
+  // silently lost (release) or `debug_assert` fired (debug).
+  let re = @string.Regex::unsafe_from_string("(a)(?:a{256}){9}")
+  guard re.execute("a".repeat(2400)) is Some(m) else { fail("Expected match") }
+  inspect(m.before().length(), content="0")
+  inspect(m.content().length(), content="2305")
+  debug_inspect(
+    m.group(1),
+    content=(
+      #|Some(<StringView: "a">)
+    ),
+  )
+}
+
+///|
 test "character classes are stored with merged intervals" {
   // Regression: union of `a`, `d`, then `b` used to leave `a` and `b` as two
   // touching intervals, `[(97, 97), (98, 98), (100, 100)]`, which the
