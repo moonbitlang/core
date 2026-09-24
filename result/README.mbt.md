@@ -62,22 +62,22 @@ test {
 }
 ```
 
-A safe alternative is the `or` method, which returns the value if the result is `Ok` or a default value if it is `Err`.
+A safe alternative is the `unwrap_or` method, which returns the value if the result is `Ok` or a default value if it is `Err`.
 ```mbt check
 ///|
 test {
   let result : Result[Int, String] = Err("error")
-  let value = result.or(0)
+  let value = result.unwrap_or(0)
   @test.assert_eq(value, 0)
 }
 ```
 
-There is a lazy version of `or` called `or_else`, which takes a function that returns a default value.
+There is a lazy version of `unwrap_or` called `unwrap_or_else`, which takes a function that returns a default value.
 ```mbt check
 ///|
 test {
   let result : Result[Int, String] = Err("error")
-  let value = result.or_else(() => 0)
+  let value = result.unwrap_or_else(() => 0)
   @test.assert_eq(value, 0)
 }
 ```

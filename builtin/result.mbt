@@ -24,7 +24,10 @@
 ///   @test.assert_eq(y, Ok(42))
 /// }
 /// ```
-pub fn[T, E, U] Result::map(self : Result[T, E], f : (T) -> U) -> Result[U, E] {
+pub fn[T, E, U] Result::map(
+  self : Result[T, E],
+  f : (T) -> U raise?,
+) -> Result[U, E] raise? {
   match self {
     Ok(value) => Ok(f(value))
     Err(err) => Err(err)
@@ -55,8 +58,8 @@ test "map" {
 /// ```
 pub fn[T, E, F] Result::map_err(
   self : Result[T, E],
-  f : (E) -> F,
-) -> Result[T, F] {
+  f : (E) -> F raise?,
+) -> Result[T, F] raise? {
   match self {
     Ok(value) => Ok(value)
     Err(err) => Err(f(err))
@@ -86,7 +89,7 @@ test "map_err" {
 ///   @test.assert_eq(y.unwrap_or(5), 5)
 /// }
 /// ```
-#alias(or)
+#alias(or, deprecated)
 pub fn[T, E] Result::unwrap_or(self : Result[T, E], default : T) -> T {
   match self {
     Ok(value) | (Err(_) with value = default) => value
@@ -116,7 +119,7 @@ test "unwrap_or" {
 ///   @test.assert_eq(y.unwrap_or_else(() => 5), 5)
 /// }
 /// ```
-#alias(or_else)
+#alias(or_else, deprecated)
 pub fn[T, E] Result::unwrap_or_else(
   self : Result[T, E],
   default : () -> T raise?,
@@ -180,8 +183,8 @@ test "flatten" {
 /// ```
 pub fn[T, E, U] Result::bind(
   self : Result[T, E],
-  g : (T) -> Result[U, E],
-) -> Result[U, E] {
+  g : (T) -> Result[U, E] raise?,
+) -> Result[U, E] raise? {
   match self {
     Ok(value) => g(value)
     Err(err) => Err(err)
@@ -351,4 +354,32 @@ pub impl[T : Eq, E : Eq] Eq for Result[T, E] with fn equal(self, other) {
     (Err(x), Err(y)) => x == y
     _ => false
   }
+}
+
+///|
+test "map/map_err/bind propagate callback errors" {
+  let ok : Result[Int, String] = Ok(1)
+  let err : Result[Int, String] = Err("e")
+  let r1 : Result[Result[Int, String], Error] = Ok(
+    ok.map(x => if x == 1 { fail("map") } else { x }),
+  ) catch {
+    e => Err(e)
+  }
+  assert_true(r1 is Err(Failure(msg)) && msg.contains("map"))
+  let r2 : Result[Result[Int, String], Error] = Ok(
+    err.map_err(_ => fail("map_err")),
+  ) catch {
+    e => Err(e)
+  }
+  assert_true(r2 is Err(Failure(msg)) && msg.contains("map_err"))
+  let r3 : Result[Result[Int, String], Error] = Ok(ok.bind(_ => fail("bind"))) catch {
+    e => Err(e)
+  }
+  assert_true(r3 is Err(Failure(msg)) && msg.contains("bind"))
+  // The callback is not invoked on the other variant.
+  assert_true(err.map(_ => (fail("unreachable") : Int)) == Err("e"))
+  assert_true(ok.map_err(_ => (fail("unreachable") : String)) == Ok(1))
+  assert_true(
+    err.bind(_ => (fail("unreachable") : Result[Int, String])) == Err("e"),
+  )
 }
