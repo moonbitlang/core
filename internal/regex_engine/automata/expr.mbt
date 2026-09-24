@@ -100,6 +100,7 @@ pub fn e_copy(ctx~ : Context, e : Expr) -> Expr {
     Chr(c) => e_cset(ctx~, c)
     Alt(xs) => e_alt(ctx~, xs.map(x => e_copy(ctx~, x)))
     Seq(_) => {
+      // original: e_seq(ctx~, pref, e_copy(ctx~, x), e_copy(ctx~, y))
       // Sequences nest to the right, one level per element, so walk the
       // spine iteratively instead of recursing once per element.
       let spine = []
