@@ -155,7 +155,7 @@ fn[K : Eq, V] Node::add_with_path(
           None => bucket
           Some(index) => bucket.remove_at(index)
         }
-        Leaf(key, value, new_bucket.add((key1, value1)))
+        Leaf(key, value, new_bucket.prepend((key1, value1)))
       }
     Flat(key1, value1, path1) =>
       if path == path1 && key == key1 {
@@ -576,11 +576,11 @@ pub fn[K : Eq, V] HashMap::union(
       (Branch(children1), Branch(children2)) =>
         Branch(children1.union(children2, go))
       (Leaf(key1, value1, bucket1), Leaf(key2, value2, bucket2)) => {
-        let kvs1 = bucket1.add((key1, value1))
-        let kvs2 = bucket2.add((key2, value2))
+        let kvs1 = bucket1.prepend((key1, value1))
+        let kvs2 = bucket2.prepend((key2, value2))
         match kvs1.filter(kv => kvs2.lookup(kv.0) is None) {
           Empty => node2
-          More(head, tail~) => Leaf(key2, value2, bucket2 + tail.add(head))
+          More(head, tail~) => Leaf(key2, value2, bucket2 + tail.prepend(head))
         }
       }
       _ => abort("Unreachable")
@@ -621,8 +621,8 @@ pub fn[K : Eq, V] HashMap::union_with(
       (Branch(children1), Branch(children2)) =>
         Branch(children1.union(children2, go))
       (Leaf(key1, value1, bucket1), Leaf(key2, value2, bucket2)) => {
-        let kvs1 = bucket1.add((key1, value1))
-        let kvs2 = bucket2.add((key2, value2))
+        let kvs1 = bucket1.prepend((key1, value1))
+        let kvs2 = bucket2.prepend((key2, value2))
         kvs1.union_with(kvs2, f)
       }
       _ => abort("Unreachable")
@@ -682,8 +682,8 @@ pub fn[K : Eq, V] HashMap::intersection(
           Some(children) => Some(collapse_branch(children))
         }
       (Leaf(key1, value1, bucket1), Leaf(key2, value2, bucket2)) => {
-        let kvs1 = bucket1.add((key1, value1))
-        let kvs2 = bucket2.add((key2, value2))
+        let kvs1 = bucket1.prepend((key1, value1))
+        let kvs2 = bucket2.prepend((key2, value2))
         match kvs2.filter(kv => kvs1.lookup(kv.0) is Some(_)) {
           Empty => None
           More(head, tail=Empty) => Some(Flat(head.0, head.1, @path.exhausted))
@@ -727,8 +727,8 @@ pub fn[K : Eq, V] HashMap::intersection_with(
           Some(children) => Some(collapse_branch(children))
         }
       (Leaf(key1, value1, bucket1), Leaf(key2, value2, bucket2)) => {
-        let kvs1 = bucket1.add((key1, value1))
-        let kvs2 = bucket2.add((key2, value2))
+        let kvs1 = bucket1.prepend((key1, value1))
+        let kvs2 = bucket2.prepend((key2, value2))
         kvs1.intersection_with(kvs2, f)
       }
       _ => abort("Unreachable")
@@ -785,8 +785,8 @@ pub fn[K : Eq, V] HashMap::difference(
           Some(children) => Some(collapse_branch(children))
         }
       (Leaf(key1, value1, bucket1), Leaf(key2, value2, bucket2)) => {
-        let kvs1 = bucket1.add((key1, value1))
-        let kvs2 = bucket2.add((key2, value2))
+        let kvs1 = bucket1.prepend((key1, value1))
+        let kvs2 = bucket2.prepend((key2, value2))
         match kvs1.filter(kv => !(kvs2.lookup(kv.0) is Some(_))) {
           Empty => None
           More(head, tail=Empty) => Some(Flat(head.0, head.1, @path.exhausted))
@@ -980,8 +980,8 @@ impl[K : Eq, V : Eq] Eq for Node[K, V] with fn equal(self, other) {
     (Branch(children1), Branch(children2)) => children1 == children2
     (Leaf(key1, value1, bucket1), Leaf(key2, value2, bucket2)) => {
       guard bucket1.length() == bucket2.length() else { return false }
-      let kvs1 = bucket1.add((key1, value1))
-      let kvs2 = bucket2.add((key2, value2))
+      let kvs1 = bucket1.prepend((key1, value1))
+      let kvs2 = bucket2.prepend((key2, value2))
       kvs1.all(kv => kvs2.lookup(kv.0) is Some(v) && kv.1 == v)
     }
     _ => false

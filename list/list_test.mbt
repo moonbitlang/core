@@ -625,7 +625,7 @@ test "intercalate" {
 
 ///|
 test "default" {
-  let ls : @list.List[Int] = @list.default()
+  let ls : @list.List[Int] = Default::default()
   debug_inspect(ls, content="<List: []>")
 }
 

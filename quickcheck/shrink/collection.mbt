@@ -20,8 +20,8 @@ pub impl[T : Shrink] Shrink for @list.List[T] with fn shrink(xs) {
       Empty => [||]
       More(x, tail=xs) =>
         Shrink::shrink(x)
-        .map(x_ => xs.add(x_))
-        .concat(shr_sub_terms(xs).map(xs_ => xs_.add(x)))
+        .map(x_ => xs.prepend(x_))
+        .concat(shr_sub_terms(xs).map(xs_ => xs_.prepend(x)))
     }
   }
 

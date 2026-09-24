@@ -191,7 +191,7 @@ pub fn[X, R] Iter::fold(
 /// # Returns
 ///
 /// Returns the number of elements in the iterator.
-#alias(length)
+#alias(length, deprecated="Use `count` instead")
 pub fn[X] Iter::count(self : Iter[X]) -> Int {
   for _ in self; count = 0 {
     continue count + 1
@@ -824,7 +824,7 @@ pub fn[X] Iter::to_array(self : Iter[X]) -> Array[X] {
 ///|
 /// Return this iterator itself.
 /// Return an iterator via `iter`.
-#alias(iterator)
+#alias(iterator, deprecated)
 pub fn[X] Iter::iter(self : Iter[X]) -> Iter[X] {
   self
 }
@@ -832,7 +832,7 @@ pub fn[X] Iter::iter(self : Iter[X]) -> Iter[X] {
 ///|
 /// Return an indexed view of this iterator.
 /// Return an iterator via `iter2`.
-#alias(iterator2)
+#alias(iterator2, deprecated)
 pub fn[X] Iter::iter2(self : Iter[X]) -> Iter2[Int, X] {
   let mut i = 0
   Iter2({
@@ -1072,7 +1072,7 @@ pub fn[X, Y] Iter2::new(f : () -> (X, Y)?, size_hint? : Int) -> Iter2[X, Y] {
 ///|
 /// Convert to plain iterator of pairs.
 /// Return an iterator via `iter`.
-#alias(iterator)
+#alias(iterator, deprecated)
 pub fn[X, Y] Iter2::iter(self : Iter2[X, Y]) -> Iter[(X, Y)] {
   self.0
 }
@@ -1080,7 +1080,7 @@ pub fn[X, Y] Iter2::iter(self : Iter2[X, Y]) -> Iter[(X, Y)] {
 ///|
 /// Return this two-variable iterator itself.
 /// Return an iterator via `iter2`.
-#alias(iterator2)
+#alias(iterator2, deprecated)
 pub fn[X, Y] Iter2::iter2(self : Iter2[X, Y]) -> Iter2[X, Y] {
   self
 }

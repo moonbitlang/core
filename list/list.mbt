@@ -66,7 +66,7 @@ pub fn[A] List::cons(head : A, tail : List[A]) -> List[A] {
 ///   @debug.assert_eq(ls, List([1, 2, 3, 4]))
 /// }
 /// ```
-#alias(add)
+#alias(add, deprecated="Use `prepend` instead")
 #owned(head)
 pub fn[A] List::prepend(self : List[A], head : A) -> List[A] {
   More(head, tail=self)
@@ -1778,15 +1778,7 @@ pub impl[X] Default for List[X] with fn default() {
 
 ///|
 /// Return the default value for a list (empty list).
-/// 
-/// # Example
-///
-/// ```mbt check
-/// test {
-///   let ls : @list.List[Int] = @list.default()
-///   @test.assert_eq(ls.is_empty(), true)
-/// }
-/// ```
+#deprecated("Use `@list.new()` or `Default::default()` instead")
 pub fn[X] default() -> List[X] {
   Empty
 }
