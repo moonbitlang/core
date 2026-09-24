@@ -190,9 +190,9 @@ fn find_slot(ctx~ : Context, desc : ThreadSet) -> Slot {
     if marks.has_unassigned {
       has_unassigned_slots = true
     }
-    for s in marks.slots {
-      if s > 0 {
-        ctx.book.mark_used(Slot::from_index(s))
+    for slot in marks.slots {
+      if slot.is_assigned() {
+        ctx.book.mark_used(slot)
       }
     }
   })
