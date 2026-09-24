@@ -914,3 +914,33 @@ test "very long literal patterns compile without deep recursion" {
   }
   inspect(m2.content().length(), content="200000")
 }
+
+///|
+test "matches that need more than 2047 live capture slots are found" {
+  // Regression: the packed state id reserved 11 bits for the capture slot.
+  // Every start position of a long literal run needs its own slot for the
+  // group-0 start mark, so this pattern needed slot 2048 and the match was
+  // silently lost (release) or `debug_assert` fired (debug).
+  let re = @string.Regex::unsafe_from_string("(a)(?:a{256}){9}")
+  guard re.execute("a".repeat(2400)) is Some(m) else { fail("Expected match") }
+  inspect(m.before().length(), content="0")
+  inspect(m.content().length(), content="2305")
+  debug_inspect(
+    m.group(1),
+    content=(
+      #|Some(<StringView: "a">)
+    ),
+  )
+}
+
+///|
+test "character classes are stored with merged intervals" {
+  // Regression: union of `a`, `d`, then `b` used to leave `a` and `b` as two
+  // touching intervals, `[(97, 97), (98, 98), (100, 100)]`, which the
+  // compiler then turned into redundant symbol classes. (Only runtime-parsed
+  // patterns reach this path; `re"..."` literals are lowered at compile time.)
+  let regex = @string.Regex::unsafe_from_string("[adb]")
+  debug_inspect(regex, content="<Regex: Char([(97, 98), (100, 100)])>")
+  let ranges = @string.Regex::unsafe_from_string("[x-zu-wa-c]")
+  debug_inspect(ranges, content="<Regex: Char([(97, 99), (117, 122)])>")
+}

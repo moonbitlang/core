@@ -13,28 +13,41 @@
 // limitations under the License.
 
 ///|
-priv struct Positions(Array[Int])
+/// For every slot, the input offset recorded the last time a state owning
+/// that slot was entered.
+priv struct Positions {
+  mut buf : FixedArray[Int]
+}
 
 ///|
 fn Positions::new() -> Positions {
-  Positions(Array::make(8, -1))
+  { buf: FixedArray::make(8, -1), }
 }
 
 ///|
-#alias("_[_]=_")
+/// Grow `buf` so that `slot` is in range and return it.
+fn Positions::grow(self : Positions, slot : Int) -> FixedArray[Int] {
+  let buf = FixedArray::make(Int::max(slot + 8, self.buf.length() * 2), -1)
+  self.buf.blit_to(buf, len=self.buf.length())
+  self.buf = buf
+  buf
+}
+
+///|
 fn Positions::set(self : Positions, slot : @automata.Slot, pos : Int) -> Unit {
-  if slot.index >= self.0.length() {
-    self.0.resize(slot.index + 8, -1)
+  let buf = if slot.index >= self.buf.length() {
+    self.grow(slot.index)
+  } else {
+    self.buf
   }
-  self.0[slot.index] = pos
+  buf[slot.index] = pos
 }
 
 ///|
-#alias("_[_]")
 fn Positions::get(self : Positions, slot : @automata.Slot) -> Int {
-  if slot.index >= self.0.length() {
+  if slot.index >= self.buf.length() {
     -1
   } else {
-    self.0[slot.index]
+    self.buf[slot.index]
   }
 }

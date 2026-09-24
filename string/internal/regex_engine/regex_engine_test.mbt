@@ -249,3 +249,27 @@ test "Regex::group_names includes capture name" {
   @test.assert_eq(names[0], None)
   @test.assert_eq(names[1], Some("x"))
 }
+
+///|
+test "slot indices above 2047 keep matching" {
+  // Regression: the packed state id used to reserve 11 bits for the slot, so
+  // once more than 2047 positions had to be remembered at once the encoding
+  // silently corrupted and the match was lost. Every start position of the
+  // literal run below needs its own slot for the group-0 start mark.
+  let n = 2100
+  let pat = @regex_engine.seq([
+    @regex_engine.capture(
+      @regex_engine.char(@regex_engine.RecharSet::char('a')),
+    ),
+    @regex_engine.quantifier(
+      @regex_engine.char(@regex_engine.RecharSet::char('a')),
+      { min: n, max: Some(n), mode: Greedy, },
+    ),
+  ])
+  let re = @regex_engine.compile(profile~, pat)
+  guard re.execute("a".repeat(n + 100), 0) is Some(m) else {
+    fail("Expected match")
+  }
+  @test.assert_eq(m.group(0), Some((0, n + 1)))
+  @test.assert_eq(m.group(1), Some((0, 1)))
+}

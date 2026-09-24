@@ -13,38 +13,24 @@
 // limitations under the License.
 
 ///|
-priv struct StateId(Int64)
+/// Encoded reference to a stabilized state, as stored in the transition table.
+///
+/// - `value >= 0`: a running state; the value is its transition base
+///   (`index * num_symbols`), so the next transition is `value + symbol`.
+/// - `value == -1`: the transition has not been computed yet.
+/// - `value <= -2`: a break state (matched or failed) with base `-2 - value`.
+///
+/// Keeping this a plain `Int` matters on the JS backend, where `Int64` is
+/// lowered to `BigInt` and every operation in the scan loop would allocate.
+priv struct StateId(Int)
 
 ///|
-let pending_state_id : StateId = -1
+let pending_state_id : StateId = StateId(-1)
 
 ///|
-fn StateId::new(
-  index~ : Int,
-  slot~ : @automata.Slot,
-  is_break~ : Bool,
-  num_symbols~ : Int,
-) -> StateId {
-  debug_assert(() => {
-    index <= 0b1111_1111_1111_1111_1110 &&
-    slot.index <= 0b111_1111_1111 &&
-    num_symbols <= 0b111_1111_1110
-  })
-  let transition_base = index * num_symbols
-  let encoded_index = if is_break { -2 - index } else { index }
-  let id = StateId(
-    (((encoded_index << 11) | slot.index).to_int64() << 32) |
-    transition_base.to_int64(),
-  )
-  debug_assert(() => {
-    id.index() == index && id.slot() == slot && id.is_break() == is_break
-  })
-  id
-}
-
-///|
-fn StateId::is_pending(self : StateId) -> Bool {
-  self.0 == -1
+fn StateId::new(base~ : Int, is_break~ : Bool) -> StateId {
+  guard base >= 0 && base <= 0x7FFFFFFD else { panic() }
+  StateId(if is_break { -2 - base } else { base })
 }
 
 ///|
@@ -54,20 +40,9 @@ fn StateId::is_break(self : StateId) -> Bool {
 
 ///|
 fn StateId::transition_base(self : StateId) -> Int {
-  self.0.to_int()
-}
-
-///|
-fn StateId::index(self : StateId) -> Int {
-  let x = (self.0 >> 43).to_int()
-  if x < 0 {
-    -(x + 2)
+  if self.0 >= 0 {
+    self.0
   } else {
-    x
+    -2 - self.0
   }
-}
-
-///|
-fn StateId::slot(self : StateId) -> @automata.Slot {
-  @automata.Slot::from_index((self.0 >> 32).to_int() & 0b111_1111_1111)
 }
