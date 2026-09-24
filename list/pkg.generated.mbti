@@ -52,7 +52,8 @@ pub fn[A] List::from_iter(Iter[A]) -> Self[A]
 #as_free_fn(from_iterator_rev, deprecated)
 #as_free_fn
 pub fn[A] List::from_iter_rev(Iter[A]) -> Self[A]
-#as_free_fn
+#as_free_fn(deprecated)
+#deprecated
 pub fn[A : @json.FromJson] List::from_json(Json) -> Self[A] raise @json.JsonDecodeError
 #alias(is_prefix, deprecated)
 pub fn[A : Eq] List::has_prefix(Self[A], Self[A]) -> Bool

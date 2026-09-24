@@ -11,3 +11,13 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+///|
+/// Parses a JSON value into a `SortedSet`.
+#as_free_fn(deprecated="Use `@json.from_json` instead")
+#deprecated("Use `@json.from_json` instead")
+pub fn[A : @json.FromJson + Compare] SortedSet::from_json(
+  json : Json,
+) -> SortedSet[A] raise @json.JsonDecodeError {
+  @json.from_json(json)
+}

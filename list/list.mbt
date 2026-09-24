@@ -136,17 +136,6 @@ pub impl[A : @json.FromJson] @json.FromJson for List[A] with fn from_json(
 }
 
 ///|
-/// Parse JSON into a list.
-/// 
-/// Converts a JSON array into a list of the specified type.
-#as_free_fn
-pub fn[A : @json.FromJson] List::from_json(
-  json : Json,
-) -> List[A] raise @json.JsonDecodeError {
-  @json.from_json(json)
-}
-
-///|
 /// Convert array to list.
 ///
 /// # Example

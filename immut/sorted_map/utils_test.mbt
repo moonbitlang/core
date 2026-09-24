@@ -509,18 +509,16 @@ test "range with non-existent boundaries" {
 }
 
 ///|
-test "from_json free function" {
+test "from_json via @json.from_json" {
   let json : Json = { "a": 1, "b": 2 }
-  let map : @sorted_map.SortedMap[String, Int] = @sorted_map.from_json(json)
+  let map : @sorted_map.SortedMap[String, Int] = @json.from_json(json)
   @json.json_inspect(Json(map), content={ "a": 1, "b": 2 })
 }
 
 ///|
 test "from_json rejects non-object" {
   let bad_json : Json = [1, 2, 3]
-  try
-    (@sorted_map.from_json(bad_json) : @sorted_map.SortedMap[String, Int])
-  catch {
+  try (@json.from_json(bad_json) : @sorted_map.SortedMap[String, Int]) catch {
     _ => ()
   } noraise {
     _ => fail("expected JsonDecodeError")

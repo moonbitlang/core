@@ -679,7 +679,7 @@ test "List::to_json with empty list" {
 }
 
 ///|
-test "List::from_json" {
+test "List from_json round-trip" {
   for xs in (@quickcheck.samples(20) : Array[@list.List[Int]]) {
     @debug.assert_eq(xs, @json.from_json(Json(xs)))
   }
@@ -700,7 +700,7 @@ test "to_json/from_json" {
   @json.json_inspect(v, content={
     "Err": ["JsonDecodeError", ["", "@list.from_json: expected array"]],
   })
-  let v2 : @list.List[Int] = @list.from_json([1, 2, 3, 4])
+  let v2 : @list.List[Int] = @json.from_json([1, 2, 3, 4])
   @json.json_inspect(v2, content=[1, 2, 3, 4])
 }
 

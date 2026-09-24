@@ -1018,15 +1018,6 @@ pub impl[A : @json.FromJson + Compare] @json.FromJson for SortedSet[A] with fn f
   }
 }
 
-///|
-/// Create from `json`.
-#as_free_fn
-pub fn[A : @json.FromJson + Compare] SortedSet::from_json(
-  json : Json,
-) -> SortedSet[A] raise @json.JsonDecodeError {
-  @json.from_json(json)
-}
-
 // The following are the helper functions or types used by the internal implementation of ImmutableSet
 
 ///|
