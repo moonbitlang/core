@@ -17,6 +17,8 @@ struct Context {
   mut next_expr_id : Int
   mut book : SlotBook
   mut book_dirty : Bool
+  /// Scratch set for `remove_duplicates`, cleared before each use.
+  seen : @hashset.HashSet[ExprId]
 }
 
 ///|
@@ -27,6 +29,7 @@ pub fn Context::Context() -> Context {
     next_expr_id: EXPR_ID_RESERVED + 1,
     book: SlotBook::empty(),
     book_dirty: false,
+    seen: HashSet([]),
   }
 }
 
