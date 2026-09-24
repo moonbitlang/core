@@ -155,24 +155,9 @@ fn rightmost(t : Tree) -> (Rechar, Rechar)? {
 }
 
 ///|
+/// `t` holds intervals strictly below `lo`; if its largest interval touches
+/// `lo`, absorb it and return the widened lower bound.
 fn try_merge_left(lo : Rechar, t : Tree) -> (Rechar, Tree) {
-  fn remove_leftmost(t : Tree) -> Tree {
-    match t {
-      Empty => panic()
-      Node(l=Empty, r~, ..) => r
-      Node(l~, lo~, hi~, r~, ..) => bal(remove_leftmost(l), lo, hi, r)
-    }
-  }
-
-  if leftmost(t) is Some((lo2, hi2)) && hi2 + 1 >= lo {
-    (lo2, remove_leftmost(t))
-  } else {
-    (lo, t)
-  }
-}
-
-///|
-fn try_merge_right(hi : Rechar, t : Tree) -> (Rechar, Tree) {
   fn remove_rightmost(t : Tree) -> Tree {
     match t {
       Empty => panic()
@@ -181,8 +166,27 @@ fn try_merge_right(hi : Rechar, t : Tree) -> (Rechar, Tree) {
     }
   }
 
-  if rightmost(t) is Some((lo2, hi2)) && lo2 - 1 <= hi {
-    (hi2, remove_rightmost(t))
+  if rightmost(t) is Some((lo2, hi2)) && hi2 + 1 >= lo {
+    (lo2, remove_rightmost(t))
+  } else {
+    (lo, t)
+  }
+}
+
+///|
+/// `t` holds intervals strictly above `hi`; if its smallest interval touches
+/// `hi`, absorb it and return the widened upper bound.
+fn try_merge_right(hi : Rechar, t : Tree) -> (Rechar, Tree) {
+  fn remove_leftmost(t : Tree) -> Tree {
+    match t {
+      Empty => panic()
+      Node(l=Empty, r~, ..) => r
+      Node(l~, lo~, hi~, r~, ..) => bal(remove_leftmost(l), lo, hi, r)
+    }
+  }
+
+  if leftmost(t) is Some((lo2, hi2)) && lo2 - 1 <= hi {
+    (hi2, remove_leftmost(t))
   } else {
     (hi, t)
   }
