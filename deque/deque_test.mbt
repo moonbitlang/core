@@ -3146,3 +3146,11 @@ test "binary_search_by propagates comparator errors" {
   }
   inspect(raised, content="true")
 }
+
+///|
+test "Default is the empty deque" {
+  let dq : @deque.Deque[Int] = Default::default()
+  inspect(dq.is_empty(), content="true")
+  dq.push_back(1)
+  inspect(dq.length(), content="1")
+}

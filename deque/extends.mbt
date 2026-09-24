@@ -34,6 +34,11 @@ pub extend Deque with Hash::{hash}
 pub extend Deque with @debug.Debug::{to_repr}
 
 ///|
+#deprecated("Use `Default::default` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Deque with Default::{default}
+
+///|
 #deprecated("Use `@json.from_json` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Deque with @json.FromJson::{from_json}
