@@ -99,7 +99,27 @@ pub fn e_copy(ctx~ : Context, e : Expr) -> Expr {
   match e.def {
     Chr(c) => e_cset(ctx~, c)
     Alt(xs) => e_alt(ctx~, xs.map(x => e_copy(ctx~, x)))
-    Seq(pref, x, y) => e_seq(ctx~, pref, e_copy(ctx~, x), e_copy(ctx~, y))
+    Seq(_) => {
+      // original: e_seq(ctx~, pref, e_copy(ctx~, x), e_copy(ctx~, y))
+      // Sequences nest to the right, one level per element, so walk the
+      // spine iteratively instead of recursing once per element.
+      let spine = []
+      let tail = for cur = e {
+        match cur.def {
+          Seq(pref, x, y) => {
+            spine.push((pref, e_copy(ctx~, x)))
+            continue y
+          }
+          _ => break e_copy(ctx~, cur)
+        }
+      }
+      for i = spine.length() - 1, acc = tail; i >= 0; {
+        let (pref, x) = spine[i]
+        continue i - 1, e_seq(ctx~, pref, x, acc)
+      } nobreak {
+        acc
+      }
+    }
     Rep(mode, pref, x) => e_rep(ctx~, mode, pref, e_copy(ctx~, x))
     Eps => e_eps
     Mark(m) => e_mark(ctx~, m)

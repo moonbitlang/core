@@ -891,6 +891,31 @@ test "capture/multiple_captures_same_pattern" {
 }
 
 ///|
+test "very long literal patterns compile without deep recursion" {
+  // Regression: sequence translation and expression copying used to recurse
+  // once per element, overflowing the stack on the JS/wasm backends.
+  let sb = StringBuilder()
+  let mut seed = 7
+  for _ in 0..<100000 {
+    seed = seed * 1103515245 + 12345
+    sb.write_char(
+      ('a'.to_int() + ((seed >> 16) & 0x7FFF) % 26).unsafe_to_char(),
+    )
+  }
+  let literal = sb.to_string()
+  let re = @string.Regex::string(literal)
+  guard re.execute("x" + literal + "x") is Some(m) else {
+    fail("Expected match")
+  }
+  inspect(m.content().length(), content="100000")
+  let twice = re.repeat(min=2, max=2)
+  guard twice.execute(literal + literal) is Some(m2) else {
+    fail("Expected match")
+  }
+  inspect(m2.content().length(), content="200000")
+}
+
+///|
 test "matches that need more than 2047 live capture slots are found" {
   // Regression: the packed state id reserved 11 bits for the capture slot.
   // Every start position of a long literal run needs its own slot for the

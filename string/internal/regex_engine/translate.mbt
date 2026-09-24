@@ -168,17 +168,17 @@ fn transl_seq(
     }
   }
 
-  fn go(i : Int) -> @automata.Expr {
-    if i >= exprs.length() {
-      @automata.e_eps
-    } else {
-      let (cr, pref2) = translate(tc, exprs[i])
-      let cr2 = go(i + 1)
-      compose(pref2, cr, cr2)
-    }
+  // Translate left to right (capture groups are numbered in translation
+  // order), then fold from the right without recursion: a long literal is a
+  // long sequence, and recursing once per element overflows the stack on the
+  // JS/wasm backends.
+  let translated = exprs.map(e => translate(tc, e))
+  for i = translated.length() - 1, cr2 = @automata.e_eps; i >= 0; {
+    let (cr, pref2) = translated[i]
+    continue i - 1, compose(pref2, cr, cr2)
+  } nobreak {
+    cr2
   }
-
-  go(0)
 }
 
 ///|
