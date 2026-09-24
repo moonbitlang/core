@@ -222,10 +222,13 @@ pub impl Compare for String with fn compare(self, other) {
   let len = self.length()
   match len.compare(other.length()) {
     0 => {
+      // Direct operators instead of the `Compare` impl keep the loop free of
+      // per-unit call overhead
       for i in 0..<len {
-        let order = self.unsafe_get(i).compare(other.unsafe_get(i))
-        if order != 0 {
-          return order
+        let x = self.unsafe_get(i)
+        let y = other.unsafe_get(i)
+        if x != y {
+          return if x < y { -1 } else { 1 }
         }
       }
       0
