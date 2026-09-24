@@ -1629,3 +1629,63 @@ test "chunks accepts large positive sizes" {
   inspect(arr.chunks(2147483647).length(), content="1")
   inspect(arr[:].chunks(2147483647).length(), content="1")
 }
+
+///|
+test "in-place filters leave no stale duplicates when the callback raises" {
+  // Elements before the raising one are filtered as usual; the element whose
+  // callback raised and everything after it are kept unchanged, in order.
+  let arr = [1, 2, 3, 4, 5]
+  let r = try
+    arr.retain(x => {
+      if x == 4 {
+        fail("stop")
+      }
+      x % 2 == 0
+    })
+  catch {
+    _ => "raised"
+  } noraise {
+    _ => "ok"
+  }
+  inspect(r, content="raised")
+  debug_inspect(arr, content="[2, 4, 5]")
+  let arr = [1, 2, 3, 4, 5]
+  let r = try
+    arr.extract_if(x => {
+      if x == 4 {
+        fail("stop")
+      }
+      x % 2 == 1
+    })
+    |> ignore
+  catch {
+    _ => "raised"
+  } noraise {
+    _ => "ok"
+  }
+  inspect(r, content="raised")
+  debug_inspect(arr, content="[2, 4, 5]")
+  let arr = [1, 2, 3, 4, 5]
+  let r = try
+    arr.retain_map(x => {
+      if x == 4 {
+        fail("stop")
+      }
+      if x % 2 == 0 {
+        Some(x * 10)
+      } else {
+        None
+      }
+    })
+  catch {
+    _ => "raised"
+  } noraise {
+    _ => "ok"
+  }
+  inspect(r, content="raised")
+  debug_inspect(arr, content="[20, 4, 5]")
+  // Raising on the very first element leaves the array untouched.
+  let arr = [1, 2, 3]
+  let _ = arr.retain(_ => fail("stop")) catch { _ => () }
+  debug_inspect(arr, content="[1, 2, 3]")
+}

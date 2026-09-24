@@ -1208,7 +1208,11 @@ pub fn[T] Array::swap(self : Array[T], i : Int, j : Int) -> Unit {
 pub fn[T] Array::retain(self : Array[T], f : (T) -> Bool raise?) -> Unit raise? {
   let len = self.length()
   let write = for read, v in self; write = 0 {
-    if f(v) {
+    let keep = {
+      errdefer self.close_gap(write, read, len)
+      f(v)
+    }
+    if keep {
       if read != write {
         self.unsafe_set(write, v)
       }
@@ -1221,6 +1225,26 @@ pub fn[T] Array::retain(self : Array[T], f : (T) -> Bool raise?) -> Unit raise? 
   if write != len {
     self.unsafe_truncate_to_length(write)
   }
+}
+
+///|
+/// Error path of the in-place filters (`retain`, `retain_map`, `extract_if`),
+/// run when the callback raises on element `read`. The first `write` slots
+/// hold the kept elements, the slots in `[write, read)` are stale and
+/// `[read, len)` (starting with the element whose callback raised) has not
+/// been consumed. Moves that tail down behind the kept prefix and truncates,
+/// so the array never holds a stale duplicate.
+fn[T] Array::close_gap(
+  self : Array[T],
+  write : Int,
+  read : Int,
+  len : Int,
+) -> Unit {
+  guard write != read else { return }
+  for i in read..<len {
+    self.unsafe_set(write + i - read, self.unsafe_get(i))
+  }
+  self.unsafe_truncate_to_length(write + len - read)
 }
 
 ///|
@@ -1499,14 +1523,19 @@ pub fn[T] Array::extract_if(
   f : (T) -> Bool raise?,
 ) -> Array[T] raise? {
   let removed = []
-  for read in 0..<self.length(); write = 0 {
-    let elem = self[read]
-    if f(elem) {
+  let len = self.length()
+  for read in 0..<len; write = 0 {
+    let elem = self.unsafe_get(read)
+    let extract = {
+      errdefer self.close_gap(write, read, len)
+      f(elem)
+    }
+    if extract {
       removed.push(elem)
       continue write
     } else {
       if read != write {
-        self[write] = elem
+        self.unsafe_set(write, elem)
       }
       continue write + 1
     }
@@ -1899,7 +1928,11 @@ pub fn[A] Array::retain_map(
   let len = self.length()
   for read_idx in 0..<len; write_idx = 0 {
     let val = buf[read_idx]
-    match f(val) {
+    let mapped = {
+      errdefer self.close_gap(write_idx, read_idx, len)
+      f(val)
+    }
+    match mapped {
       Some(new_val) => {
         buf[write_idx] = new_val
         continue write_idx + 1

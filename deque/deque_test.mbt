@@ -3130,3 +3130,130 @@ test "deque release_unused covers the wrapped case" {
     ),
   )
 }
+
+///|
+/// A deque whose logical order is [1, 2, 3, 4, 5] but whose ring buffer wraps
+/// around its end.
+fn wrapped_1_to_5() -> @deque.Deque[Int] {
+  let dq = @deque.Deque([3, 4, 5], capacity=5)
+  dq.push_front(2)
+  dq.push_front(1)
+  let (front, back) = dq.as_views()
+  guard front.length() == 2 && back.length() == 3 else {
+    abort("expected a wrapped buffer")
+  }
+  dq
+}
+
+///|
+test "in-place filters on a wrapped buffer" {
+  let dq = wrapped_1_to_5()
+  dq.retain(x => x % 2 == 1)
+  @debug.debug_inspect(dq.to_array(), content="[1, 3, 5]")
+  let dq = wrapped_1_to_5()
+  let ext = dq.extract_if(x => x % 2 == 0)
+  @debug.debug_inspect(ext.to_array(), content="[2, 4]")
+  @debug.debug_inspect(dq.to_array(), content="[1, 3, 5]")
+  let dq = wrapped_1_to_5()
+  dq.retain_map(x => if x > 2 { Some(x * 10) } else { None })
+  @debug.debug_inspect(dq.to_array(), content="[30, 40, 50]")
+  dq.push_back(60)
+  dq.push_front(0)
+  @debug.debug_inspect(dq.to_array(), content="[0, 30, 40, 50, 60]")
+}
+
+///|
+test "in-place filters leave no stale duplicates when the callback raises" {
+  // Elements before the raising one are filtered as usual; the element whose
+  // callback raised and everything after it are kept unchanged, in order.
+  let dq = wrapped_1_to_5()
+  let r = try
+    dq.retain(x => {
+      if x == 4 {
+        fail("stop")
+      }
+      x % 2 == 0
+    })
+  catch {
+    _ => "raised"
+  } noraise {
+    _ => "ok"
+  }
+  inspect(r, content="raised")
+  @debug.debug_inspect(dq.to_array(), content="[2, 4, 5]")
+  let dq = wrapped_1_to_5()
+  let r = try
+    dq.extract_if(x => {
+      if x == 4 {
+        fail("stop")
+      }
+      x % 2 == 1
+    })
+    |> ignore
+  catch {
+    _ => "raised"
+  } noraise {
+    _ => "ok"
+  }
+  inspect(r, content="raised")
+  @debug.debug_inspect(dq.to_array(), content="[2, 4, 5]")
+  let dq = wrapped_1_to_5()
+  let r = try
+    dq.retain_map(x => {
+      if x == 4 {
+        fail("stop")
+      }
+      if x % 2 == 0 {
+        Some(x * 10)
+      } else {
+        None
+      }
+    })
+  catch {
+    _ => "raised"
+  } noraise {
+    _ => "ok"
+  }
+  inspect(r, content="raised")
+  @debug.debug_inspect(dq.to_array(), content="[20, 4, 5]")
+  // The deque stays usable at both ends afterwards.
+  dq.push_front(0)
+  dq.push_back(6)
+  @debug.debug_inspect(dq.to_array(), content="[0, 20, 4, 5, 6]")
+}
+
+///|
+test "in-place filters raising in the front half of a wrapped buffer" {
+  // wrapped_1_to_5 stores [1, 2] at the end of the buffer and [3, 4, 5] at
+  // the start; raise while still in the first stretch.
+  let dq = wrapped_1_to_5()
+  let r = try
+    dq.retain(x => {
+      if x == 2 {
+        fail("stop")
+      }
+      false
+    })
+  catch {
+    _ => "raised"
+  } noraise {
+    _ => "ok"
+  }
+  inspect(r, content="raised")
+  @debug.debug_inspect(dq.to_array(), content="[2, 3, 4, 5]")
+  let dq = wrapped_1_to_5()
+  let r = try
+    dq.retain_map(x => {
+      if x == 2 {
+        fail("stop")
+      }
+      Some(x * 10)
+    })
+  catch {
+    _ => "raised"
+  } noraise {
+    _ => "ok"
+  }
+  inspect(r, content="raised")
+  @debug.debug_inspect(dq.to_array(), content="[10, 2, 3, 4, 5]")
+}

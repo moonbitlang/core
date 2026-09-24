@@ -1215,12 +1215,20 @@ pub fn[A : Eq] Deque::contains(self : Deque[A], value : A) -> Bool {
 /// }
 /// ```
 #locals(f)
-pub fn[A] Deque::extract_if(self : Deque[A], f : (A) -> Bool) -> Deque[A] {
+pub fn[A] Deque::extract_if(
+  self : Deque[A],
+  f : (A) -> Bool raise?,
+) -> Deque[A] raise? {
   guard !self.is_empty() else { from_array([]) }
   let removed = from_array([])
-  for read in 0..<self.length(); write = 0 {
+  let len = self.length()
+  for read in 0..<len; write = 0 {
     let elem = self[read]
-    if f(elem) {
+    let extract = {
+      errdefer self.close_gap(write, read, len)
+      f(elem)
+    }
+    if extract {
       removed.push_back(elem)
       continue write
     } else {
@@ -1455,13 +1463,20 @@ test "truncate zero" {
 /// ```
 #locals(f)
 #alias(filter_map_inplace, deprecated)
-pub fn[A] Deque::retain_map(self : Deque[A], f : (A) -> A?) -> Unit {
+pub fn[A] Deque::retain_map(
+  self : Deque[A],
+  f : (A) -> A? raise?,
+) -> Unit raise? {
   guard !self.is_empty() else { return }
-  let { head, buf, .. } = self
+  let { head, buf, len, } = self
   let cap = buf.length()
   let (front, back) = self.as_views()
-  let (idx, kept_len) = for cur in front; idx = head, kept_len = 0 {
-    if f(cur) is Some(v) {
+  let (idx, kept_len) = for read, cur in front; idx = head, kept_len = 0 {
+    let mapped = {
+      errdefer self.close_gap(kept_len, read, len)
+      f(cur)
+    }
+    if mapped is Some(v) {
       buf[idx] = v
       continue idx + 1, kept_len + 1
     }
@@ -1473,9 +1488,14 @@ pub fn[A] Deque::retain_map(self : Deque[A], f : (A) -> A?) -> Unit {
     self.truncate(kept_len)
     return
   }
-  let kept_len = for cur in back; idx = idx, kept_len = kept_len {
+  let front_len = front.length()
+  let kept_len = for i, cur in back; idx = idx, kept_len = kept_len {
     let idx = if idx == cap { 0 } else { idx }
-    if f(cur) is Some(v) {
+    let mapped = {
+      errdefer self.close_gap(kept_len, front_len + i, len)
+      f(cur)
+    }
+    if mapped is Some(v) {
       buf[idx] = v
       continue idx + 1, kept_len + 1
     }
@@ -1512,13 +1532,17 @@ pub fn[A] Deque::retain_map(self : Deque[A], f : (A) -> A?) -> Unit {
 /// }
 /// ```
 #locals(f)
-pub fn[A] Deque::retain(self : Deque[A], f : (A) -> Bool) -> Unit {
+pub fn[A] Deque::retain(self : Deque[A], f : (A) -> Bool raise?) -> Unit raise? {
   guard !self.is_empty() else { return }
-  let { head, buf, .. } = self
+  let { head, buf, len, } = self
   let cap = buf.length()
   let (front, back) = self.as_views()
-  let (idx, kept_len) = for cur in front; idx = head, kept_len = 0 {
-    if f(cur) {
+  let (idx, kept_len) = for read, cur in front; idx = head, kept_len = 0 {
+    let keep = {
+      errdefer self.close_gap(kept_len, read, len)
+      f(cur)
+    }
+    if keep {
       buf[idx] = cur
       continue idx + 1, kept_len + 1
     }
@@ -1530,9 +1554,14 @@ pub fn[A] Deque::retain(self : Deque[A], f : (A) -> Bool) -> Unit {
     self.truncate(kept_len)
     return
   }
-  let kept_len = for cur in back; idx = idx, kept_len = kept_len {
+  let front_len = front.length()
+  let kept_len = for i, cur in back; idx = idx, kept_len = kept_len {
     let idx = if idx == cap { 0 } else { idx }
-    if f(cur) {
+    let keep = {
+      errdefer self.close_gap(kept_len, front_len + i, len)
+      f(cur)
+    }
+    if keep {
       buf[idx] = cur
       continue idx + 1, kept_len + 1
     }
@@ -1541,6 +1570,37 @@ pub fn[A] Deque::retain(self : Deque[A], f : (A) -> Bool) -> Unit {
     kept_len
   }
   self.truncate(kept_len)
+}
+
+///|
+/// Buffer slot of logical index `i` (`0 <= i < capacity`).
+fn[A] Deque::slot(self : Deque[A], i : Int) -> Int {
+  let j = self.head + i
+  if j < self.buf.length() {
+    j
+  } else {
+    j - self.buf.length()
+  }
+}
+
+///|
+/// Error path of the in-place filters (`retain`, `retain_map`, `extract_if`),
+/// run when the callback raises on logical index `read`. Logical indices
+/// `[0, write)` hold the kept elements, `[write, read)` are stale and
+/// `[read, len)` (starting with the element whose callback raised) have not
+/// been consumed. Moves that tail down behind the kept prefix and shortens the
+/// deque, so it never holds a stale duplicate.
+fn[A] Deque::close_gap(
+  self : Deque[A],
+  write : Int,
+  read : Int,
+  len : Int,
+) -> Unit {
+  guard write != read else { return }
+  for i in read..<len {
+    self.buf[self.slot(write + i - read)] = self.buf[self.slot(i)]
+  }
+  self.truncate(write + len - read)
 }
 
 ///|
