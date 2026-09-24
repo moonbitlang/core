@@ -22,7 +22,11 @@ struct Regex {
   symbol_repr : ReadOnlyArray[Rechar]
   start_states : Array[(Category, StateId)]
   state_table : @hashmap.HashMap[@automata.State, StateId]
-  mut transition_table : FixedArray[StateId]
+  /// Indexed by `transition_base + symbol`; holds the encoded next state.
+  mut transition_table : FixedArray[Int]
+  /// Parallel to `transition_table`; holds the slot of the next state so the
+  /// scan loop needs no per-state lookup.
+  mut slot_table : FixedArray[Int]
   mut final_table : FixedArray[
     @list.List[(Category, @automata.Slot, @automata.Status)],
   ]
@@ -55,6 +59,7 @@ fn Regex::new(
     start_states: [],
     state_table: HashMap([]),
     transition_table: [],
+    slot_table: [],
     final_table: [],
     states: [],
     num_states: 0,

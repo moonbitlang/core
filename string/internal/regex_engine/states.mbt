@@ -14,7 +14,12 @@
 
 ///|
 fn Regex::get_state(self : Regex, state_id : StateId) -> @automata.State {
-  self.states.unsafe_get(state_id.index())
+  self.states.unsafe_get(self.state_index(state_id))
+}
+
+///|
+fn Regex::state_index(self : Regex, state_id : StateId) -> Int {
+  state_id.transition_base() / self.num_symbols()
 }
 
 ///|
@@ -46,28 +51,28 @@ fn Regex::stablize_state(self : Regex, state : @automata.State) -> StateId {
 
       let new_transition_table = FixedArray::make(
         new_states_len * num_symbols,
-        pending_state_id,
+        pending_state_id.0,
       )
       self.transition_table.blit_to(
         new_transition_table,
         len=self.transition_table.length(),
       )
+      let new_slot_table = FixedArray::make(new_states_len * num_symbols, 0)
+      self.slot_table.blit_to(new_slot_table, len=self.slot_table.length())
 
       let new_final_table = FixedArray::make(new_states_len, @list.empty())
       self.final_table.blit_to(new_final_table, len=self.final_table.length())
 
       self.states = new_states
       self.transition_table = new_transition_table
+      self.slot_table = new_slot_table
       self.final_table = new_final_table
     }
     self.states[index] = state
-    let state_id = StateId::new(
-      index~,
-      slot=state.slot(),
+    StateId::new(
+      base=index * num_symbols,
       is_break=state.status() is (Match(_) | Failed),
-      num_symbols~,
     )
-    state_id
   })
 }
 
@@ -94,7 +99,7 @@ fn Regex::stablize_final(
   state : @automata.State,
   next_cat : Category,
 ) -> (@automata.Slot, @automata.Status) {
-  let state_index = state_id.index()
+  let state_index = self.state_index(state_id)
   for entry = self.final_table[state_index] {
     match entry {
       Empty => {
