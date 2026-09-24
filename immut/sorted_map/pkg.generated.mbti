@@ -37,7 +37,8 @@ pub fn[K : Compare, V] SortedMap::from_array(ArrayView[(K, V)]) -> Self[K, V]
 #as_free_fn(from_iterator, deprecated)
 #as_free_fn
 pub fn[K : Compare, V] SortedMap::from_iter(Iter[(K, V)]) -> Self[K, V]
-#as_free_fn
+#as_free_fn(deprecated)
+#deprecated
 pub fn[V : @json.FromJson] SortedMap::from_json(Json) -> Self[String, V] raise @json.JsonDecodeError
 #alias(lookup, deprecated)
 pub fn[K : Compare, V] SortedMap::get(Self[K, V], K) -> V?

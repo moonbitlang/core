@@ -33,7 +33,8 @@ pub fn[A : Compare] SortedSet::from_array(ArrayView[A]) -> Self[A]
 #as_free_fn(from_iterator, deprecated)
 #as_free_fn
 pub fn[A : Compare] SortedSet::from_iter(Iter[A]) -> Self[A]
-#as_free_fn
+#as_free_fn(deprecated)
+#deprecated
 pub fn[A : @json.FromJson + Compare] SortedSet::from_json(Json) -> Self[A] raise @json.JsonDecodeError
 pub fn[A : Hash] SortedSet::hash(Self[A]) -> Int
 #alias(inter, deprecated)

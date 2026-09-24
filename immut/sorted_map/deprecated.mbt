@@ -27,3 +27,13 @@ pub fn[K, V] SortedMap::keys(self : SortedMap[K, V]) -> Array[K] {
 pub fn[K, V] SortedMap::elems(self : SortedMap[K, V]) -> Array[V] {
   self.values().collect()
 }
+
+///|
+/// Parses a JSON value into a `SortedMap`.
+#as_free_fn(deprecated="Use `@json.from_json` instead")
+#deprecated("Use `@json.from_json` instead")
+pub fn[V : @json.FromJson] SortedMap::from_json(
+  json : Json,
+) -> SortedMap[String, V] raise @json.JsonDecodeError {
+  @json.from_json(json)
+}

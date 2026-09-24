@@ -631,9 +631,9 @@ test "from_json" {
 }
 
 ///|
-test "from_json free function" {
+test "from_json via @json.from_json" {
   let json : Json = [1, 2, 3]
-  let set : @sorted_set.SortedSet[Int] = @sorted_set.from_json(json)
+  let set : @sorted_set.SortedSet[Int] = @json.from_json(json)
   debug_inspect(
     set,
     content=(
@@ -645,7 +645,7 @@ test "from_json free function" {
 ///|
 test "from_json rejects non-array" {
   let bad_json : Json = { "a": 1 }
-  try (@sorted_set.from_json(bad_json) : @sorted_set.SortedSet[Int]) catch {
+  try (@json.from_json(bad_json) : @sorted_set.SortedSet[Int]) catch {
     _ => ()
   } noraise {
     _ => fail("expected JsonDecodeError")
