@@ -350,3 +350,18 @@ test "transfer_self_empty" {
     ),
   )
 }
+
+///|
+test "Queue constructor with capacity" {
+  let q : @queue.Queue[Int] = Queue([], capacity=16)
+  inspect(q.is_empty(), content="true")
+  for i in 0..<20 {
+    q.push(i)
+  }
+  inspect(q.length(), content="20")
+  @debug.debug_inspect(q.pop(), content="Some(0)")
+  // A capacity smaller than the input still keeps every element.
+  let q = @queue.Queue([1, 2, 3], capacity=1)
+  inspect(q.length(), content="3")
+  @debug.debug_inspect(q.peek(), content="Some(1)")
+}
