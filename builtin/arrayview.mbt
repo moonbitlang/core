@@ -1243,11 +1243,12 @@ pub fn[T] ArrayView::search_by(
 /// ```mbt check
 /// test {
 ///   let view = [1, 2, 3, 4, 5][:]
-///   inspect(view.starts_with([1, 2]), content="true")
-///   inspect(view.starts_with([2, 3]), content="false")
+///   inspect(view.has_prefix([1, 2]), content="true")
+///   inspect(view.has_prefix([2, 3]), content="false")
 /// }
 /// ```
-pub fn[T : Eq] ArrayView::starts_with(
+#alias(starts_with, deprecated="Use `has_prefix` instead")
+pub fn[T : Eq] ArrayView::has_prefix(
   self : ArrayView[T],
   prefix : ArrayView[T],
 ) -> Bool {
@@ -1270,11 +1271,12 @@ pub fn[T : Eq] ArrayView::starts_with(
 /// ```mbt check
 /// test {
 ///   let view = [1, 2, 3, 4, 5][:]
-///   inspect(view.ends_with([4, 5]), content="true")
-///   inspect(view.ends_with([3, 4]), content="false")
+///   inspect(view.has_suffix([4, 5]), content="true")
+///   inspect(view.has_suffix([3, 4]), content="false")
 /// }
 /// ```
-pub fn[T : Eq] ArrayView::ends_with(
+#alias(ends_with, deprecated="Use `has_suffix` instead")
+pub fn[T : Eq] ArrayView::has_suffix(
   self : ArrayView[T],
   suffix : ArrayView[T],
 ) -> Bool {
@@ -1315,7 +1317,7 @@ pub fn[T : Eq] ArrayView::strip_prefix(
   self : ArrayView[T],
   prefix : ArrayView[T],
 ) -> ArrayView[T]? {
-  if self.starts_with(prefix) {
+  if self.has_prefix(prefix) {
     Some(self[prefix.length():])
   } else {
     None
@@ -1345,7 +1347,7 @@ pub fn[T : Eq] ArrayView::strip_suffix(
   self : ArrayView[T],
   suffix : ArrayView[T],
 ) -> ArrayView[T]? {
-  if self.ends_with(suffix) {
+  if self.has_suffix(suffix) {
     Some(self[:self.length() - suffix.length()])
   } else {
     None

@@ -921,17 +921,18 @@ pub fn[T] Array::count_if(
 /// ```mbt check
 /// test {
 ///   let arr = [1, 2, 3, 4, 5]
-///   inspect(arr.starts_with([1, 2]), content="true")
-///   inspect(arr.starts_with([2, 3]), content="false")
-///   inspect(arr.starts_with([]), content="true")
-///   inspect(arr.starts_with([1, 2, 3, 4, 5, 6]), content="false")
+///   inspect(arr.has_prefix([1, 2]), content="true")
+///   inspect(arr.has_prefix([2, 3]), content="false")
+///   inspect(arr.has_prefix([]), content="true")
+///   inspect(arr.has_prefix([1, 2, 3, 4, 5, 6]), content="false")
 /// }
 /// ```
-pub fn[T : Eq] Array::starts_with(
+#alias(starts_with, deprecated="Use `has_prefix` instead")
+pub fn[T : Eq] Array::has_prefix(
   self : Array[T],
   prefix : ArrayView[T],
 ) -> Bool {
-  self[:].starts_with(prefix)
+  self[:].has_prefix(prefix)
 }
 
 ///|
@@ -949,16 +950,20 @@ pub fn[T : Eq] Array::starts_with(
 /// ```mbt check
 /// test {
 ///   let arr = [1, 2, 3, 4, 5]
-///   inspect(arr.ends_with([4, 5]), content="true")
-///   inspect(arr.ends_with([3, 4]), content="false")
-///   inspect(arr.ends_with([]), content="true")
+///   inspect(arr.has_suffix([4, 5]), content="true")
+///   inspect(arr.has_suffix([3, 4]), content="false")
+///   inspect(arr.has_suffix([]), content="true")
 ///   let arr : Array[Int] = []
-///   inspect(arr.ends_with([]), content="true")
-///   inspect(arr.ends_with([1]), content="false")
+///   inspect(arr.has_suffix([]), content="true")
+///   inspect(arr.has_suffix([1]), content="false")
 /// }
 /// ```
-pub fn[T : Eq] Array::ends_with(self : Array[T], suffix : ArrayView[T]) -> Bool {
-  self[:].ends_with(suffix)
+#alias(ends_with, deprecated="Use `has_suffix` instead")
+pub fn[T : Eq] Array::has_suffix(
+  self : Array[T],
+  suffix : ArrayView[T],
+) -> Bool {
+  self[:].has_suffix(suffix)
 }
 
 ///|

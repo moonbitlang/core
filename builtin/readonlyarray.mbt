@@ -564,14 +564,15 @@ pub fn[T : Compare] ReadOnlyArray::is_sorted(self : ReadOnlyArray[T]) -> Bool {
 /// ```mbt check
 /// test {
 ///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
-///   inspect(arr.starts_with([1, 2]), content="true")
+///   inspect(arr.has_prefix([1, 2]), content="true")
 /// }
 /// ```
-pub fn[T : Eq] ReadOnlyArray::starts_with(
+#alias(starts_with, deprecated="Use `has_prefix` instead")
+pub fn[T : Eq] ReadOnlyArray::has_prefix(
   self : ReadOnlyArray[T],
   prefix : ArrayView[T],
 ) -> Bool {
-  self[:].starts_with(prefix)
+  self[:].has_prefix(prefix)
 }
 
 ///|
@@ -581,14 +582,15 @@ pub fn[T : Eq] ReadOnlyArray::starts_with(
 /// ```mbt check
 /// test {
 ///   let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
-///   inspect(arr.ends_with([4, 5]), content="true")
+///   inspect(arr.has_suffix([4, 5]), content="true")
 /// }
 /// ```
-pub fn[T : Eq] ReadOnlyArray::ends_with(
+#alias(ends_with, deprecated="Use `has_suffix` instead")
+pub fn[T : Eq] ReadOnlyArray::has_suffix(
   self : ReadOnlyArray[T],
   suffix : ArrayView[T],
 ) -> Bool {
-  self[:].ends_with(suffix)
+  self[:].has_suffix(suffix)
 }
 
 ///|

@@ -1142,39 +1142,40 @@ test "contains" {
 /// ```mbt check
 /// test {
 ///   let arr : FixedArray[Int] = [3, 4, 5]
-///   assert_true(arr.starts_with([3, 4]))
+///   assert_true(arr.has_prefix([3, 4]))
 /// }
 /// ```
-pub fn[T : Eq] FixedArray::starts_with(
+#alias(starts_with, deprecated="Use `has_prefix` instead")
+pub fn[T : Eq] FixedArray::has_prefix(
   self : FixedArray[T],
   prefix : ArrayView[T],
 ) -> Bool {
-  self[:].starts_with(prefix)
+  self[:].has_prefix(prefix)
 }
 
 ///|
-test "starts_with" {
+test "has_prefix" {
   {
     let arr : FixedArray[Int] = []
-    assert_true(arr.starts_with([]))
-    assert_false(arr.starts_with([1]))
+    assert_true(arr.has_prefix([]))
+    assert_false(arr.has_prefix([1]))
   }
   {
     let arr : FixedArray[_] = [3]
-    assert_true(arr.starts_with([]))
-    assert_true(arr.starts_with([3]))
-    assert_false(arr.starts_with([2]))
-    assert_false(arr.starts_with([3, 1]))
+    assert_true(arr.has_prefix([]))
+    assert_true(arr.has_prefix([3]))
+    assert_false(arr.has_prefix([2]))
+    assert_false(arr.has_prefix([3, 1]))
   }
   let arr : FixedArray[_] = [3, 4, 5]
-  assert_true(arr.starts_with([]))
-  assert_true(arr.starts_with([3]))
-  assert_false(arr.starts_with([2]))
-  assert_true(arr.starts_with([3, 4]))
-  assert_false(arr.starts_with([3, 2]))
-  assert_true(arr.starts_with([3, 4, 5]))
-  assert_false(arr.starts_with([3, 4, 2]))
-  assert_false(arr.starts_with([3, 4, 5, 6]))
+  assert_true(arr.has_prefix([]))
+  assert_true(arr.has_prefix([3]))
+  assert_false(arr.has_prefix([2]))
+  assert_true(arr.has_prefix([3, 4]))
+  assert_false(arr.has_prefix([3, 2]))
+  assert_true(arr.has_prefix([3, 4, 5]))
+  assert_false(arr.has_prefix([3, 4, 2]))
+  assert_false(arr.has_prefix([3, 4, 5, 6]))
 }
 
 ///|
@@ -1184,43 +1185,44 @@ test "starts_with" {
 /// ```mbt check
 /// test {
 ///   let v : FixedArray[Int] = [3, 4, 5]
-///   assert_true(v.ends_with([5]))
+///   assert_true(v.has_suffix([5]))
 /// }
 /// ```
-pub fn[T : Eq] FixedArray::ends_with(
+#alias(ends_with, deprecated="Use `has_suffix` instead")
+pub fn[T : Eq] FixedArray::has_suffix(
   self : FixedArray[T],
   suffix : ArrayView[T],
 ) -> Bool {
-  self[:].ends_with(suffix)
+  self[:].has_suffix(suffix)
 }
 
 ///|
-test "ends_with" {
+test "has_suffix" {
   {
     let arr : FixedArray[Int] = []
-    assert_true(arr.ends_with([]))
-    assert_false(arr.ends_with([1]))
+    assert_true(arr.has_suffix([]))
+    assert_false(arr.has_suffix([1]))
   }
   {
     let arr : FixedArray[_] = [3]
-    assert_true(arr.ends_with([]))
-    assert_true(arr.ends_with([3]))
-    assert_false(arr.ends_with([2]))
-    assert_false(arr.ends_with([3, 1]))
+    assert_true(arr.has_suffix([]))
+    assert_true(arr.has_suffix([3]))
+    assert_false(arr.has_suffix([2]))
+    assert_false(arr.has_suffix([3, 1]))
   }
   let arr : FixedArray[_] = [3, 4, 5]
-  assert_true(arr.ends_with([]))
-  assert_true(arr.ends_with([5]))
-  assert_false(arr.ends_with([2]))
-  assert_true(arr.ends_with([4, 5]))
-  assert_false(arr.ends_with([4, 2]))
-  assert_false(arr.ends_with([2, 5]))
-  assert_true(arr.ends_with([3, 4, 5]))
-  assert_false(arr.ends_with([3, 4, 2]))
-  assert_false(arr.ends_with([3, 2, 5]))
-  assert_false(arr.ends_with([2, 4, 5]))
-  assert_false(arr.ends_with([3, 4, 5, 6]))
-  assert_false(arr.ends_with([2, 3, 4, 5]))
+  assert_true(arr.has_suffix([]))
+  assert_true(arr.has_suffix([5]))
+  assert_false(arr.has_suffix([2]))
+  assert_true(arr.has_suffix([4, 5]))
+  assert_false(arr.has_suffix([4, 2]))
+  assert_false(arr.has_suffix([2, 5]))
+  assert_true(arr.has_suffix([3, 4, 5]))
+  assert_false(arr.has_suffix([3, 4, 2]))
+  assert_false(arr.has_suffix([3, 2, 5]))
+  assert_false(arr.has_suffix([2, 4, 5]))
+  assert_false(arr.has_suffix([3, 4, 5, 6]))
+  assert_false(arr.has_suffix([2, 3, 4, 5]))
 }
 
 ///|

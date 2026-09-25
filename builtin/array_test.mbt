@@ -361,19 +361,19 @@ test "array_contains" {
 }
 
 ///|
-test "array_starts_with" {
+test "array_has_prefix" {
   let arr = [1, 2, 3]
-  assert_true(arr.starts_with([1, 2]))
-  assert_false(arr.starts_with([2, 3]))
-  assert_false(arr.starts_with([1, 2, 3, 4]))
+  assert_true(arr.has_prefix([1, 2]))
+  assert_false(arr.has_prefix([2, 3]))
+  assert_false(arr.has_prefix([1, 2, 3, 4]))
 }
 
 ///|
-test "array_ends_with" {
+test "array_has_suffix" {
   let arr = [1, 2, 3]
-  assert_true(arr.ends_with([2, 3]))
-  assert_false(arr.ends_with([1, 2]))
-  assert_false(arr.ends_with([1, 2, 3, 4]))
+  assert_true(arr.has_suffix([2, 3]))
+  assert_false(arr.has_suffix([1, 2]))
+  assert_false(arr.has_suffix([1, 2, 3, 4]))
 }
 
 ///|

@@ -95,7 +95,6 @@ pub fn[T : Eq] Array::dedup(Self[T]) -> Unit
 pub fn[T] Array::drain(Self[T], Int, Int) -> Self[T]
 pub fn[T] Array::each(Self[T], (T) -> Unit raise?) -> Unit raise?
 pub fn[T] Array::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
-pub fn[T : Eq] Array::ends_with(Self[T], ArrayView[T]) -> Bool
 pub fn[T : Eq] Array::equal(Self[T], Self[T]) -> Bool
 #alias(sub, deprecated)
 #alias(view, deprecated)
@@ -114,6 +113,10 @@ pub fn[T] Array::from_fixed_array(FixedArray[T]) -> Self[T]
 pub fn[T] Array::from_iter(Iter[T]) -> Self[T]
 pub fn[T] Array::get(Self[T], Int) -> T?
 pub fn[T] Array::get_view(Self[T], start? : Int, end? : Int) -> ArrayView[T]?
+#alias(starts_with, deprecated)
+pub fn[T : Eq] Array::has_prefix(Self[T], ArrayView[T]) -> Bool
+#alias(ends_with, deprecated)
+pub fn[T : Eq] Array::has_suffix(Self[T], ArrayView[T]) -> Bool
 pub fn[T : Hash] Array::hash(Self[T]) -> Int
 pub fn[T] Array::insert(Self[T], Int, T) -> Unit
 pub fn[T] Array::is_empty(Self[T]) -> Bool
@@ -170,7 +173,6 @@ pub fn[T : Compare] Array::sort(Self[T]) -> Unit
 pub fn[T] Array::sort_by(Self[T], (T, T) -> Int) -> Unit
 pub fn[T, K : Compare] Array::sort_by_key(Self[T], (T) -> K) -> Unit
 pub fn[T] Array::split(Self[T], (T) -> Bool raise?) -> Self[Self[T]] raise?
-pub fn[T : Eq] Array::starts_with(Self[T], ArrayView[T]) -> Bool
 pub fn[T : Eq] Array::strip_prefix(Self[T], ArrayView[T]) -> ArrayView[T]?
 pub fn[T : Eq] Array::strip_suffix(Self[T], ArrayView[T]) -> ArrayView[T]?
 pub fn[T] Array::suffixes(Self[T], include_empty? : Bool) -> Iter[ArrayView[T]]
@@ -213,7 +215,6 @@ pub fn[T : Eq] ArrayView::count(Self[T], T) -> Int
 pub fn[T] ArrayView::count_if(Self[T], (T) -> Bool raise?) -> Int raise?
 pub fn[T] ArrayView::each(Self[T], (T) -> Unit raise?) -> Unit raise?
 pub fn[T] ArrayView::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
-pub fn[T : Eq] ArrayView::ends_with(Self[T], Self[T]) -> Bool
 pub fn[T : Eq] ArrayView::equal(Self[T], Self[T]) -> Bool
 #alias(sub, deprecated)
 #alias(view, deprecated)
@@ -224,6 +225,10 @@ pub fn[A, B] ArrayView::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 pub fn[A, B] ArrayView::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
 pub fn[T] ArrayView::get(Self[T], Int) -> T?
 pub fn[T] ArrayView::get_view(Self[T], start? : Int, end? : Int) -> Self[T]?
+#alias(starts_with, deprecated)
+pub fn[T : Eq] ArrayView::has_prefix(Self[T], Self[T]) -> Bool
+#alias(ends_with, deprecated)
+pub fn[T : Eq] ArrayView::has_suffix(Self[T], Self[T]) -> Bool
 pub fn[A : Hash] ArrayView::hash(Self[A]) -> Int
 pub fn[T] ArrayView::is_empty(Self[T]) -> Bool
 pub fn[T : Compare] ArrayView::is_sorted(Self[T]) -> Bool
@@ -247,7 +252,6 @@ pub fn[X] ArrayView::rev_iter(Self[X]) -> Iter[X]
 pub fn[T : Eq] ArrayView::search(Self[T], T) -> Int?
 pub fn[T] ArrayView::search_by(Self[T], (T) -> Bool raise?) -> Int? raise?
 pub fn[T] ArrayView::start_offset(Self[T]) -> Int
-pub fn[T : Eq] ArrayView::starts_with(Self[T], Self[T]) -> Bool
 pub fn[T : Eq] ArrayView::strip_prefix(Self[T], Self[T]) -> Self[T]?
 pub fn[T : Eq] ArrayView::strip_suffix(Self[T], Self[T]) -> Self[T]?
 pub fn[T] ArrayView::suffixes(Self[T], include_empty? : Bool) -> Iter[Self[T]]
@@ -1000,7 +1004,6 @@ pub fn[T : Eq] FixedArray::contains(Self[T], T) -> Bool
 pub fn[T] FixedArray::copy(Self[T]) -> Self[T]
 pub fn[T] FixedArray::each(Self[T], (T) -> Unit raise?) -> Unit raise?
 pub fn[T] FixedArray::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
-pub fn[T : Eq] FixedArray::ends_with(Self[T], ArrayView[T]) -> Bool
 pub fn[T : Eq] FixedArray::equal(Self[T], Self[T]) -> Bool
 #alias(sub, deprecated)
 #alias(view, deprecated)
@@ -1013,6 +1016,10 @@ pub fn[T] FixedArray::from_array(ArrayView[T]) -> Self[T]
 pub fn[T] FixedArray::from_iter(Iter[T]) -> Self[T]
 pub fn[T] FixedArray::get(Self[T], Int) -> T?
 pub fn[T] FixedArray::get_view(Self[T], start? : Int, end? : Int) -> ArrayView[T]?
+#alias(starts_with, deprecated)
+pub fn[T : Eq] FixedArray::has_prefix(Self[T], ArrayView[T]) -> Bool
+#alias(ends_with, deprecated)
+pub fn[T : Eq] FixedArray::has_suffix(Self[T], ArrayView[T]) -> Bool
 pub fn[T : Hash] FixedArray::hash(Self[T]) -> Int
 pub fn[T] FixedArray::is_empty(Self[T]) -> Bool
 pub fn[T : Compare] FixedArray::is_sorted(Self[T]) -> Bool
@@ -1047,7 +1054,6 @@ pub fn[T : Compare] FixedArray::sort(Self[T]) -> Unit
 pub fn[T] FixedArray::sort_by(Self[T], (T, T) -> Int) -> Unit
 pub fn[T, K : Compare] FixedArray::sort_by_key(Self[T], (T) -> K) -> Unit
 pub fn[T : Compare] FixedArray::stable_sort(Self[T]) -> Unit
-pub fn[T : Eq] FixedArray::starts_with(Self[T], ArrayView[T]) -> Bool
 pub fn[T] FixedArray::swap(Self[T], Int, Int) -> Unit
 pub fn[A] FixedArray::unsafe_blit(Self[A], Int, Self[A], Int, Int) -> Unit
 pub fn FixedArray::unsafe_write_uint16_be(Self[Byte], Int, UInt16) -> Unit
@@ -1073,7 +1079,6 @@ pub fn[T : Compare] ReadOnlyArray::compare(Self[T], Self[T]) -> Int
 pub fn[T : Eq] ReadOnlyArray::contains(Self[T], T) -> Bool
 pub fn[T] ReadOnlyArray::each(Self[T], (T) -> Unit raise?) -> Unit raise?
 pub fn[T] ReadOnlyArray::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
-pub fn[T : Eq] ReadOnlyArray::ends_with(Self[T], ArrayView[T]) -> Bool
 pub fn[T : Eq] ReadOnlyArray::equal(Self[T], Self[T]) -> Bool
 #alias(sub, deprecated)
 #alias(view, deprecated)
@@ -1087,6 +1092,10 @@ pub fn[T] ReadOnlyArray::from_array(ArrayView[T]) -> Self[T]
 pub fn[T] ReadOnlyArray::from_iter(Iter[T]) -> Self[T]
 pub fn[T] ReadOnlyArray::get(Self[T], Int) -> T?
 pub fn[T] ReadOnlyArray::get_view(Self[T], start? : Int, end? : Int) -> ArrayView[T]?
+#alias(starts_with, deprecated)
+pub fn[T : Eq] ReadOnlyArray::has_prefix(Self[T], ArrayView[T]) -> Bool
+#alias(ends_with, deprecated)
+pub fn[T : Eq] ReadOnlyArray::has_suffix(Self[T], ArrayView[T]) -> Bool
 pub fn[T : Hash] ReadOnlyArray::hash(Self[T]) -> Int
 pub fn[T] ReadOnlyArray::is_empty(Self[T]) -> Bool
 pub fn[T : Compare] ReadOnlyArray::is_sorted(Self[T]) -> Bool
@@ -1108,7 +1117,6 @@ pub fn[A, B] ReadOnlyArray::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B raise
 pub fn[T] ReadOnlyArray::rev_iter(Self[T]) -> Iter[T]
 pub fn[T : Eq] ReadOnlyArray::search(Self[T], T) -> Int?
 pub fn[T] ReadOnlyArray::search_by(Self[T], (T) -> Bool raise?) -> Int? raise?
-pub fn[T : Eq] ReadOnlyArray::starts_with(Self[T], ArrayView[T]) -> Bool
 pub fn[T : Eq] ReadOnlyArray::strip_prefix(Self[T], ArrayView[T]) -> ArrayView[T]?
 pub fn[T : Eq] ReadOnlyArray::strip_suffix(Self[T], ArrayView[T]) -> ArrayView[T]?
 pub fn[T] ReadOnlyArray::suffixes(Self[T], include_empty? : Bool) -> Iter[ArrayView[T]]
