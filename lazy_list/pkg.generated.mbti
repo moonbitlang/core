@@ -11,6 +11,7 @@ import {
 
 // Types and methods
 type LazyList[A]
+pub fn[A] LazyList::LazyList(ArrayView[A]) -> Self[A]
 pub fn[A] LazyList::concat(Self[A], Self[A]) -> Self[A]
 pub fn[A] LazyList::drop(Self[A], Int) -> Self[A]
 pub fn[A] LazyList::drop_while(Self[A], (A) -> Bool raise?) -> Self[A] raise?

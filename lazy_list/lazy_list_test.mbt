@@ -369,3 +369,13 @@ test "concat keeps both sides memoized across traversals" {
   debug_inspect(both.to_array(), content="[1, 2, 3, 4]")
   inspect(pulls.val, content="4")
 }
+
+///|
+test "LazyList constructor copies the view" {
+  let arr = [1, 2, 3, 4]
+  let xs = @lazy_list.LazyList(arr[1:])
+  arr[2] = 30
+  debug_inspect(xs.to_array(), content="[2, 3, 4]")
+  debug_inspect(xs.tail().map(t => t.to_array()), content="Some([3, 4])")
+  inspect(@lazy_list.LazyList(([] : Array[Int])).is_empty(), content="true")
+}
