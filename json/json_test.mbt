@@ -395,6 +395,51 @@ test "stringify number" {
 }
 
 ///|
+test "stringify non-finite number" {
+  // A directly constructed `Number` can hold a value JSON has no syntax for.
+  // It is written the way `Double::to_json` encodes one, so the output stays
+  // valid JSON and `Double::from_json` reads it back.
+  let nan = Json::number(@double.not_a_number)
+  let inf = Json::number(@double.infinity)
+  let neg_inf = Json::number(@double.neg_infinity)
+  inspect(
+    nan.stringify(),
+    content=(
+      #|"NaN"
+    ),
+  )
+  inspect(
+    inf.stringify(),
+    content=(
+      #|"Infinity"
+    ),
+  )
+  inspect(
+    neg_inf.stringify(),
+    content=(
+      #|"-Infinity"
+    ),
+  )
+  inspect(
+    [nan, inf, neg_inf].to_json().stringify(),
+    content=(
+      #|["NaN","Infinity","-Infinity"]
+    ),
+  )
+  let back : Double = @json.from_json(@json.parse(inf.stringify()))
+  inspect(back == @double.infinity, content="true")
+  let back : Double = @json.from_json(@json.parse(neg_inf.stringify()))
+  inspect(back == @double.neg_infinity, content="true")
+  let back : Double = @json.from_json(@json.parse(nan.stringify()))
+  inspect(back.is_nan(), content="true")
+  // `repr` still takes precedence over the double it accompanies.
+  inspect(
+    Json::number(@double.infinity, repr="1e999999999").stringify(),
+    content="1e999999999",
+  )
+}
+
+///|
 test "stringify with indent" {
   let json : Json = {
     "key": [1.0, true, null, [], { "key": "value", "value": 100.0 }],
