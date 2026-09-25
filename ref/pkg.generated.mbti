@@ -6,6 +6,7 @@ import {
 }
 
 // Values
+#deprecated
 pub fn[T] new(T) -> Ref[T]
 
 // Errors

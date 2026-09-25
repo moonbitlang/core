@@ -39,7 +39,7 @@ pub impl[X : Show] Show for Ref[X] with fn output(self, logger) {
 
 ///|
 /// create a reference from value
-#alias(new, deprecated)
+#alias(new, deprecated="Use `Ref(x)` instead")
 #owned(x)
 pub fn[T] Ref::Ref(x : T) -> Ref[T] {
   { val: x, }
@@ -48,7 +48,7 @@ pub fn[T] Ref::Ref(x : T) -> Ref[T] {
 ///|
 test "to_string" {
   @debug.debug_inspect(
-    new(3),
+    Ref(3),
     content=(
       #|<Ref: 3>
     ),
@@ -57,6 +57,7 @@ test "to_string" {
 
 ///|
 /// Same as the `Ref` constructor.
+#deprecated("Use `Ref(x)` instead")
 #owned(x)
 pub fn[T] new(x : T) -> Ref[T] {
   { val: x, }
@@ -69,7 +70,7 @@ pub fn[T] new(x : T) -> Ref[T] {
 ///
 /// ```mbt check
 /// test {
-///   @test.assert_eq(@ref.new(1).map(a => a + 1).val, 2)
+///   @test.assert_eq(@ref.Ref(1).map(a => a + 1).val, 2)
 /// }
 /// ```
 pub fn[T, R] Ref::map(self : Ref[T], f : (T) -> R raise?) -> Ref[R] raise? {
@@ -94,7 +95,7 @@ pub fn[T, R] Ref::map(self : Ref[T], f : (T) -> R raise?) -> Ref[R] raise? {
 ///
 /// ```mbt check
 /// test {
-///   let x = @ref.new(1)
+///   let x = @ref.Ref(1)
 ///   x.protect(2, () => x.val = 3)
 ///   @test.assert_eq(x.val, 1)
 /// }
@@ -115,8 +116,8 @@ pub fn[T, R] Ref::protect(self : Ref[T], a : T, f : () -> R raise?) -> R raise? 
 ///
 /// ```mbt check
 /// test {
-///   let x = @ref.new(1)
-///   let y = @ref.new(2)
+///   let x = @ref.Ref(1)
+///   let y = @ref.Ref(2)
 ///   @ref.swap(x, y)
 ///   @test.assert_eq(x.val, 2)
 ///   @test.assert_eq(y.val, 1)
@@ -131,8 +132,8 @@ pub fn[T] Ref::swap(self : Ref[T], that : Ref[T]) -> Unit {
 
 ///|
 test "swap" {
-  let x = new(1)
-  let y = new(2)
+  let x = Ref(1)
+  let y = Ref(2)
   swap(x, y)
   inspect(x.val, content="2")
   inspect(y.val, content="1")
@@ -146,7 +147,7 @@ pub fn[T] Ref::update(self : Ref[T], f : (T) -> T raise?) -> Unit raise? {
 
 ///|
 test "decr" {
-  let a = new(1)
+  let a = Ref(1)
   a.val -= 1
   inspect(a.val, content="0")
   a.val -= 5
@@ -155,7 +156,7 @@ test "decr" {
 
 ///|
 test "incr" {
-  let a = new(1)
+  let a = Ref(1)
   a.val += 1
   inspect(a.val, content="2")
   a.val += 5
