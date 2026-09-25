@@ -15,7 +15,7 @@
 ///|
 test "bench Arbitrary String size=10000 count=100" (it : @bench.T) {
   it.bench(fn() {
-    let state = @splitmix.new()
+    let state = @splitmix.RandomState()
     let mut total = 0
     for _ in 0..<100 {
       let value : String = @quickcheck.Arbitrary::arbitrary(10000, state)

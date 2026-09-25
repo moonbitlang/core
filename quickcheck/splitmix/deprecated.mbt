@@ -14,7 +14,7 @@
 
 ///|
 /// Create a new instance.
-#deprecated("use `@splitmix.new` instead")
+#deprecated("Use `RandomState()` instead")
 pub fn RandomState::new(seed? : UInt64 = 37) -> RandomState {
-  new(seed~)
+  RandomState(seed~)
 }

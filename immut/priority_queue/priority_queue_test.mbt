@@ -210,7 +210,7 @@ test "equal" {
 ///|
 test "complex" {
   fn rand(upper : Int) -> Int {
-    let rng = @random.Rand::new()
+    let rng = @random.Rand()
     rng.int(limit=upper)
   }
 

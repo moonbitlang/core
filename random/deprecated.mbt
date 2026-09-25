@@ -14,17 +14,17 @@
 
 ///|
 /// Create a new instance.
-#deprecated("Use `Rand::new()` instead")
+#deprecated("Use `Rand::chacha8(seed~)` instead")
 pub fn new(seed? : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456") -> Rand {
   if seed.length() != 32 {
     abort("seed must be 32 bytes long")
   }
-  @random_source.ChaCha8(seed) as &Source
+  { source: @random_source.ChaCha8(seed) as &Source, }
 }
 
 ///|
 /// Create a new random number generator with [seed].
-#deprecated("You may use `Rand::chacha8(seed~)` instead of `Rand::new(chacha8(seed~))")
+#deprecated("You may use `Rand::chacha8(seed~)` instead of `Rand(generator=chacha8(seed~))`")
 pub fn chacha8(seed? : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456") -> &Source {
   @random_source.ChaCha8(seed)
 }

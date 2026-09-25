@@ -10,7 +10,7 @@ Create and initialize random number generators:
 ///|
 test "random state creation" {
   // Create with default seed
-  let rng1 = @splitmix.new()
+  let rng1 = @splitmix.RandomState()
   debug_inspect(
     rng1,
     content=(
@@ -19,7 +19,7 @@ test "random state creation" {
   )
 
   // Create with specific seed
-  let rng2 = @splitmix.new(seed=12345UL)
+  let rng2 = @splitmix.RandomState(seed=12345UL)
   debug_inspect(
     rng2,
     content=(
@@ -45,7 +45,7 @@ Generate various types of random numbers:
 ```mbt check
 ///|
 test "random number generation" {
-  let rng = @splitmix.new(seed=42UL)
+  let rng = @splitmix.RandomState(seed=42UL)
 
   // Generate random integers
   let int_val = rng.next_int()
@@ -99,7 +99,7 @@ Omitting `limit` generates across the complete unsigned range.
 ```mbt check
 ///|
 test "bounded unsigned generation" {
-  let rng = @splitmix.new(seed=42UL)
+  let rng = @splitmix.RandomState(seed=42UL)
   debug_inspect(
     (
       rng.next_uint(limit=10U),
@@ -120,7 +120,7 @@ Generate random floating-point values:
 ```mbt check
 ///|
 test "floating point generation" {
-  let rng = @splitmix.new(seed=123UL)
+  let rng = @splitmix.RandomState(seed=123UL)
 
   // Generate random doubles [0.0, 1.0)
   let double_val = rng.next_double()
@@ -148,7 +148,7 @@ Use advanced RNG operations:
 ```mbt check
 ///|
 test "advanced operations" {
-  let rng = @splitmix.new(seed=999UL)
+  let rng = @splitmix.RandomState(seed=999UL)
 
   // Generate two UInt values at once
   let (uint1, uint2) = rng.next_two_uint()
@@ -193,7 +193,7 @@ Manage random number generator state:
 ```mbt check
 ///|
 test "state management" {
-  let rng = @splitmix.new(seed=555UL)
+  let rng = @splitmix.RandomState(seed=555UL)
 
   // Advance the state manually
   rng.next()
@@ -225,8 +225,8 @@ Use seeded generators for reproducible tests:
 ///|
 test "deterministic testing" {
   // Same seed should produce same sequence
-  let rng1 = @splitmix.new(seed=777UL)
-  let rng2 = @splitmix.new(seed=777UL)
+  let rng1 = @splitmix.RandomState(seed=777UL)
+  let rng2 = @splitmix.RandomState(seed=777UL)
 
   // Generate same sequence
   let seq1 : ReadOnlyArray[Int] = [
@@ -254,7 +254,7 @@ This generator is used by QuickCheck for property testing:
 test "quickcheck integration concept" {
   // Conceptual usage in property-based testing
   fn test_property_with_random_data() -> Bool {
-    let rng = @splitmix.new()
+    let rng = @splitmix.RandomState()
 
     // Generate test data
     let test_int = rng.next_positive_int()

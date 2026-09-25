@@ -67,7 +67,7 @@ pub fn[T] Generator::sample(
   size? : Int = 100,
   seed? : UInt64 = 37,
 ) -> T {
-  self.run(size, @splitmix.new(seed~))
+  self.run(size, RandomState(seed~))
 }
 
 ///|
@@ -78,7 +78,7 @@ pub fn[T] Generator::samples(
   size? : Int = 100,
   seed? : UInt64 = 37,
 ) -> Array[T] {
-  let state = @splitmix.new(seed~)
+  let state = @splitmix.RandomState(seed~)
   Array::makei(count, _ => self.run(size, state))
 }
 
