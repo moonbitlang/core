@@ -1471,19 +1471,21 @@ pub fn[A] Deque::retain_map(
   let { head, buf, len, } = self
   let cap = buf.length()
   let (front, back) = self.as_views()
-  let (idx, kept_len) = for read, cur in front; idx = head, kept_len = 0 {
+  // `front` is contiguous from `head`, so the write slot is `head + kept_len`.
+  let kept_len = for read, cur in front; kept_len = 0 {
     let mapped = {
       errdefer self.close_gap(kept_len, read, len)
       f(cur)
     }
     if mapped is Some(v) {
-      buf[idx] = v
-      continue idx + 1, kept_len + 1
+      buf[head + kept_len] = v
+      continue kept_len + 1
     }
-    continue idx, kept_len
+    continue kept_len
   } nobreak {
-    (idx, kept_len)
+    kept_len
   }
+  let idx = head + kept_len
   if back.is_empty() {
     self.truncate(kept_len)
     return
@@ -1537,19 +1539,21 @@ pub fn[A] Deque::retain(self : Deque[A], f : (A) -> Bool raise?) -> Unit raise? 
   let { head, buf, len, } = self
   let cap = buf.length()
   let (front, back) = self.as_views()
-  let (idx, kept_len) = for read, cur in front; idx = head, kept_len = 0 {
+  // `front` is contiguous from `head`, so the write slot is `head + kept_len`.
+  let kept_len = for read, cur in front; kept_len = 0 {
     let keep = {
       errdefer self.close_gap(kept_len, read, len)
       f(cur)
     }
     if keep {
-      buf[idx] = cur
-      continue idx + 1, kept_len + 1
+      buf[head + kept_len] = cur
+      continue kept_len + 1
     }
-    continue idx, kept_len
+    continue kept_len
   } nobreak {
-    (idx, kept_len)
+    kept_len
   }
+  let idx = head + kept_len
   if back.is_empty() {
     self.truncate(kept_len)
     return
