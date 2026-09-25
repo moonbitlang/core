@@ -29,7 +29,10 @@ let float_ulp : Float = 1.0F / Float::from_int64(1L << 24)
 
 ///|
 /// Create a new RandomState from an optional seed.
-pub fn new(seed? : UInt64 = 37) -> RandomState {
+///
+/// `@splitmix.new` remains available as a deprecated alias.
+#as_free_fn(new, deprecated="Use `RandomState()` instead")
+pub fn RandomState::RandomState(seed? : UInt64 = 37) -> RandomState {
   { seed: mix64(seed), gamma: mix_gamma(seed + golden_gamma), }
 }
 
@@ -189,7 +192,7 @@ fn mix_gamma(z0 : UInt64) -> UInt64 {
 
 ///|
 pub impl Default for RandomState with fn default() {
-  new()
+  RandomState()
 }
 
 ///|

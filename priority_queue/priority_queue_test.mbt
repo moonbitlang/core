@@ -197,7 +197,7 @@ test "from_iter empty iter" {
 ///|
 test "complex" {
   let rand = (upper : Int) => {
-    let rng = @random.Rand::new()
+    let rng = @random.Rand()
     rng.int(limit=upper)
   }
   let arr = (0).until(1000, inclusive=true).collect()

@@ -4,7 +4,7 @@ Pseudo-random number generation based on the ChaCha8 stream cipher. Provides unb
 
 ## Overview
 
-The `Rand` type wraps a `Source` trait object that produces 64-bit random values. By default, `Rand::new()` uses a ChaCha8 cipher seeded from platform entropy when available, and falls back to the default fixed seed on unsupported targets. For reproducible results, use `Rand::chacha8(seed~)` with the same 32-byte seed; for distinct reproducible streams, supply different seeds.
+The `Rand` type wraps a `Source` trait object that produces 64-bit random values. By default, `Rand()` uses a ChaCha8 cipher seeded from platform entropy when available, and falls back to the default fixed seed on unsupported targets. For reproducible results, use `Rand::chacha8(seed~)` with the same 32-byte seed; for distinct reproducible streams, supply different seeds.
 
 ## Create
 
@@ -13,7 +13,7 @@ Create a generator with the default ChaCha8 source:
 ```mbt check
 ///|
 test {
-  let r = @random.Rand::new()
+  let r = @random.Rand()
   inspect(r.uint(limit=100) < 100, content="true")
 }
 ```
@@ -38,7 +38,7 @@ test {
 ```mbt check
 ///|
 test {
-  let r = @random.Rand::new()
+  let r = @random.Rand()
   // full range
   let _ : Int = r.int() // [0, 2^31)
   let _ : UInt = r.uint() // [0, 2^32)
@@ -59,7 +59,7 @@ test {
 ```mbt check
 ///|
 test {
-  let r = @random.Rand::new()
+  let r = @random.Rand()
   let d = r.double()
   inspect(d >= 0.0 && d < 1.0, content="true")
   let f = r.float()
@@ -78,7 +78,7 @@ because of intermediate rounding.
 ```mbt check
 ///|
 test {
-  let r = @random.Rand::new()
+  let r = @random.Rand()
   let d = r.double(min=-10.0, max=10.0)
   inspect(d >= -10.0 && d < 10.0, content="true")
   let f = r.float(min=-10.0F, max=10.0F)
@@ -101,7 +101,7 @@ interval if scaling either bound by that step would underflow;
 ```mbt check
 ///|
 test {
-  let r = @random.Rand::new()
+  let r = @random.Rand()
   let _ : Bool = r.boolean()
 }
 ```
@@ -113,7 +113,7 @@ test {
 ```mbt check
 ///|
 test {
-  let r = @random.Rand::new()
+  let r = @random.Rand()
   let a = [1, 2, 3, 4, 5]
   r.shuffle(a.length(), fn(i, j) {
     let t = a[i]
@@ -133,7 +133,7 @@ Generate a random non-negative `BigInt` with at most the given number of bits
 ```mbt check
 ///|
 test {
-  let r = @random.Rand::new()
+  let r = @random.Rand()
   let big = r.bigint(128)
   inspect(big >= 0N, content="true")
 }
@@ -158,7 +158,7 @@ impl @random.Source for MySource with fn next(self) -> UInt64 {
 ///|
 test {
   let gen : MySource = { value: 42, }
-  let r = @random.Rand::new(generator=gen as &@random.Source)
+  let r = @random.Rand(generator=gen as &@random.Source)
   let _ = r.uint64()
 }
 ```

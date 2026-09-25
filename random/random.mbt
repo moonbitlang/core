@@ -15,7 +15,9 @@
 ///|
 /// `Rand` is a pseudo-random number generator (PRNG) that provides various
 /// methods to generate random numbers of different types.
-struct Rand(&Source)
+struct Rand {
+  source : &Source
+}
 
 ///|
 /// The [Source] trait defines a method to generate random numbers.
@@ -39,7 +41,7 @@ pub fn Rand::chacha8(
   if seed.length() != 32 {
     abort("seed must be 32 bytes long")
   }
-  Rand(@random_source.ChaCha8(seed) as &Source)
+  { source: @random_source.ChaCha8(seed) as &Source, }
 }
 
 ///|
@@ -49,21 +51,23 @@ let fixed_test_seed : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456"
 /// Create a random number generator with the supplied [Source].
 /// Without a source, seeds ChaCha8 from platform entropy when available,
 /// falling back to the fixed default seed if entropy is unavailable.
-pub fn Rand::new(generator? : &Source) -> Rand {
+///
+/// `Rand::new` remains available as a deprecated alias.
+#alias(new, deprecated="Use `Rand()` instead")
+pub fn Rand::Rand(generator? : &Source) -> Rand {
   match generator {
     None =>
       match @env.rand(32) {
         Some(seed) => Rand::chacha8(seed~)
         None => Rand::chacha8()
       }
-    Some(gen) => Rand(gen)
+    Some(gen) => { source: gen, }
   }
 }
 
 ///|
 fn Rand::next(self : Rand) -> UInt64 {
-  let Rand(s) = self
-  s.next()
+  self.source.next()
 }
 
 ///|
@@ -419,7 +423,7 @@ pub fn Rand::boolean(self : Rand) -> Bool {
 ///
 /// ```mbt check
 /// test {
-///   let rand = @random.Rand::new()
+///   let rand = @random.Rand()
 ///   let n = rand.bigint(8) // Generate random 8-bit number
 ///   inspect(n.bit_length() <= 8, content="true")
 /// }
@@ -511,7 +515,7 @@ test "umul128: handles zero correctly" {
 /// # Example
 /// ```mbt check
 /// test {
-///   let r = @random.Rand::new()
+///   let r = @random.Rand()
 ///   let a : FixedArray[Int] = [1, 2, 3, 4, 5]
 ///   r.shuffle(a.length(), (i : Int, j : Int) => {
 ///     let t = a[i]

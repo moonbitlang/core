@@ -145,7 +145,7 @@ Functions for generating and testing probable primes using the Miller-Rabin test
 ```mbt check
 ///|
 test "primality" {
-  let rng = @random.Rand::new()
+  let rng = @random.Rand()
   let prime = @math.probable_prime(64, rng)
   inspect(@math.is_probable_prime(prime, rng), content="true")
   inspect(@math.is_probable_prime(4N, rng), content="false")

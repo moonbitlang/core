@@ -22,7 +22,7 @@ priv struct H {
 fn[T : @quickcheck.Arbitrary] scalar_samples_at_zero(
   seeds : Array[UInt64],
 ) -> Array[T] {
-  seeds.map(seed => @quickcheck.Arbitrary::arbitrary(0, @splitmix.new(seed~)))
+  seeds.map(seed => @quickcheck.Arbitrary::arbitrary(0, RandomState(seed~)))
 }
 
 ///|
@@ -152,7 +152,7 @@ test "arbitrary unit" {
 
 ///|
 test "arbitrary float" {
-  let state = @splitmix.new()
+  let state = @splitmix.RandomState()
   let f1 : Float = @quickcheck.gen(size=42, state~)
   let f2 : Float = @quickcheck.gen(size=42, state~)
   // These two random floats should be different

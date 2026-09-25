@@ -6,12 +6,13 @@ import {
 }
 
 // Values
-pub fn new(seed? : UInt64) -> RandomState
 
 // Errors
 
 // Types and methods
 type RandomState derive(@debug.Debug)
+#as_free_fn(new, deprecated)
+pub fn RandomState::RandomState(seed? : UInt64) -> Self
 pub fn RandomState::clone(Self) -> Self
 #deprecated
 pub fn RandomState::new(seed? : UInt64) -> Self

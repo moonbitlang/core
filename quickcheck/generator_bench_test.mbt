@@ -19,7 +19,7 @@ test "bench Generator::zip_with n=1000000" (it : @bench.T) {
     (a, b) => a + b,
   )
   it.bench(fn() {
-    let state = @splitmix.new()
+    let state = @splitmix.RandomState()
     let mut sum = 0
     for _ in 0..<1000000 {
       sum += generator.run(100, state)

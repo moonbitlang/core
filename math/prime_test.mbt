@@ -14,7 +14,7 @@
 
 ///|
 test "@math.is_probable_prime" {
-  let r = @random.Rand::new()
+  let r = @random.Rand()
   // small primes
   inspect(@math.is_probable_prime(2N, r), content="true")
   inspect(@math.is_probable_prime(3N, r), content="true")
@@ -83,7 +83,7 @@ test "@math.is_probable_prime" {
 
 ///|
 test "@math.probable_prime" {
-  let rand = @random.Rand::new()
+  let rand = @random.Rand()
   inspect(
     @math.is_probable_prime(@math.probable_prime(32, rand), rand),
     content="true",
@@ -104,27 +104,27 @@ test "@math.probable_prime" {
 
 ///|
 test "panic is_probable_prime non-positive iters" {
-  let r = @random.Rand::new()
+  let r = @random.Rand()
   ignore(@math.is_probable_prime(17N, r, iters=0))
 }
 
 ///|
 test "trial_divisions 1024-bit bucket" {
-  let r = @random.Rand::new()
+  let r = @random.Rand()
   let n = (1N << 1023) * 3N + 3N
   assert_false(@math.is_probable_prime(n, r))
 }
 
 ///|
 test "trial_divisions 2048-bit bucket" {
-  let r = @random.Rand::new()
+  let r = @random.Rand()
   let n = (1N << 2050) + 5N
   assert_false(@math.is_probable_prime(n, r))
 }
 
 ///|
 test "trial_divisions above 4096-bit bucket" {
-  let r = @random.Rand::new()
+  let r = @random.Rand()
   let n = (1N << 4097) + 1N
   assert_false(@math.is_probable_prime(n, r))
 }
@@ -132,7 +132,7 @@ test "trial_divisions above 4096-bit bucket" {
 ///|
 #cfg(false)
 test "is_probable_prime edge cases" {
-  let r = @random.Rand::new()
+  let r = @random.Rand()
 
   // Test with negative iterations (should panic)
   try {
@@ -164,7 +164,7 @@ test "is_probable_prime edge cases" {
 ///|
 #cfg(false)
 test "trial_divisions boundary conditions" {
-  let r = @random.Rand::new()
+  let r = @random.Rand()
 
   // Test numbers that equal small primes (edge case in trial_divisions)
   assert_true(is_probable_prime(2N, r))
@@ -185,7 +185,7 @@ test "trial_divisions boundary conditions" {
 ///|
 #cfg(false)
 test "miller_rabin edge cases" {
-  let r = @random.Rand::new()
+  let r = @random.Rand()
 
   // Test with small numbers that would trigger edge case handling in miller_rabin_test
   // (these won't actually call miller_rabin_test due to early returns, 
@@ -205,7 +205,7 @@ test "miller_rabin edge cases" {
 ///|
 #cfg(false)
 test "probable_prime different bit sizes" {
-  let rand = @random.Rand::new()
+  let rand = @random.Rand()
 
   // Test various bit sizes
   for bit_size in [8, 16, 24, 48, 72, 128] {
@@ -220,7 +220,7 @@ test "probable_prime different bit sizes" {
 ///|
 #cfg(false)
 test "comprehensive primality tests" {
-  let r = @random.Rand::new()
+  let r = @random.Rand()
 
   // Test a range of small numbers to ensure comprehensive coverage
   let known_primes = [

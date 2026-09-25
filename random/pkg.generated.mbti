@@ -17,6 +17,8 @@ pub fn new(seed? : Bytes) -> Rand
 
 // Types and methods
 type Rand
+#alias(new, deprecated)
+pub fn Rand::Rand(generator? : &Source) -> Self
 pub fn Rand::bigint(Self, Int) -> @bigint.BigInt
 pub fn Rand::boolean(Self) -> Bool
 pub fn Rand::chacha8(seed? : Bytes) -> Self
@@ -24,7 +26,6 @@ pub fn Rand::double(Self, min? : Double, max? : Double) -> Double
 pub fn Rand::float(Self, min? : Float, max? : Float) -> Float
 pub fn Rand::int(Self, limit? : Int) -> Int
 pub fn Rand::int64(Self, limit? : Int64) -> Int64
-pub fn Rand::new(generator? : &Source) -> Self
 pub fn Rand::shuffle(Self, Int, (Int, Int) -> Unit) -> Unit
 pub fn Rand::uint(Self, limit? : UInt) -> UInt
 pub fn Rand::uint64(Self, limit? : UInt64) -> UInt64

@@ -1978,7 +1978,7 @@ pub fn[T] Array::push_iter(self : Self[T], iter : Iter[T]) -> Unit {
 /// test {
 /// let arr = [1, 2, 3, 4, 5]
 /// fn rand(upper : Int) -> Int {
-///   let rng = @random.Rand::new()
+///   let rng = @random.Rand()
 ///   rng.int(limit=upper)
 /// }
 ///
@@ -2011,7 +2011,7 @@ pub fn[T] Array::shuffle_in_place(
 /// let arr = [1, 2, 3, 4, 5]
 ///
 /// fn rand(upper : Int) -> Int {
-///   let rng = @random.Rand::new()
+///   let rng = @random.Rand()
 ///   rng.int(limit=upper)
 /// }
 ///
