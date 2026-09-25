@@ -832,3 +832,57 @@ test "remove_and_get returns the removed value and keeps the rest intact" {
   let empty : @hashmap.HashMap[String, Int] = HashMap([])
   assert_eq(empty.remove_and_get("x"), None)
 }
+
+///|
+fn raised(f : () -> Unit raise) -> Bool {
+  try f() catch {
+    _ => true
+  } noraise {
+    _ => false
+  }
+}
+
+///|
+fn sorted_pairs(m : @hashmap.HashMap[Int, Int]) -> Array[(Int, Int)] {
+  let a = m.to_array()
+  a.sort()
+  a
+}
+
+///|
+test "HashMap mutators propagate callback errors and leave the map consistent" {
+  let m = @hashmap.HashMap([ for i in 0..<20 => (i, i * 10) ])
+  let mut calls = 0
+  inspect(
+    raised(() => {
+      m.retain((k, _) => {
+        calls += 1
+        if calls == 10 {
+          fail("stop")
+        }
+        k % 2 == 0
+      })
+    }),
+    content="true",
+  )
+  // Whatever was decided before the error is applied; the rest is kept.
+  let after = sorted_pairs(m)
+  inspect(m.length() == after.length(), content="true")
+  for pair in after {
+    inspect(m.get(pair.0) == Some(pair.1), content="true")
+  }
+  let before = sorted_pairs(m)
+  inspect(raised(() => m.update(0, _ => fail("stop"))), content="true")
+  inspect(raised(() => m.update(100, _ => fail("stop"))), content="true")
+  inspect(
+    raised(() => ignore(m.get_or_init(100, () => fail("stop")))),
+    content="true",
+  )
+  inspect(
+    raised(() => m.update_or_default(0, 0, _ => fail("stop"))),
+    content="true",
+  )
+  @debug.assert_eq(sorted_pairs(m), before)
+  m.set(100, 1)
+  @debug.debug_inspect(m.get(100), content="Some(1)")
+}

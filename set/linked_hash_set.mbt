@@ -638,7 +638,7 @@ pub fn[K] Set::copy(self : Set[K]) -> Set[K] {
 /// }
 /// ```
 #locals(f)
-pub fn[K] Set::retain(self : Set[K], f : (K) -> Bool) -> Unit {
+pub fn[K] Set::retain(self : Set[K], f : (K) -> Bool raise?) -> Unit raise? {
   // An entry does not store its own slot, only its predecessor's, so a
   // rejected entry is removed one step later, through its successor's `prev`
   // (or `tail`, at the end). Removing it cannot disturb the successor: `next`

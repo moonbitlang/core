@@ -146,8 +146,8 @@ pub fn[K : Compare, V] SortedMap::at(self : SortedMap[K, V], key : K) -> V {
 pub fn[K : Compare, V] SortedMap::get_or_init(
   self : SortedMap[K, V],
   key : K,
-  init : () -> V,
-) -> V {
+  init : () -> V raise?,
+) -> V raise? {
   match self.get(key) {
     Some(v) => v
     None => {
@@ -182,8 +182,8 @@ pub fn[K : Compare, V] SortedMap::update_or_default(
   self : SortedMap[K, V],
   key : K,
   default : V,
-  f : (V) -> V,
-) -> Unit {
+  f : (V) -> V raise?,
+) -> Unit raise? {
   let (new_root, inserted) = update_or_default_node(self.root, key, default, f)
   if self.root != new_root {
     self.root = new_root
@@ -671,8 +671,8 @@ fn[K : Compare, V] update_or_default_node(
   root : Node[K, V]?,
   key : K,
   default : V,
-  f : (V) -> V,
-) -> (Node[K, V]?, Bool) {
+  f : (V) -> V raise?,
+) -> (Node[K, V]?, Bool) raise? {
   match root {
     None => (Some(new_node(key, default)), true)
     Some(n) =>

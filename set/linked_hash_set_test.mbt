@@ -754,3 +754,24 @@ test "union_in_place with itself is a no-op" {
   assert_eq(s.to_array(), [0, 1, 2, 3, 4, 5])
   assert_eq(s.capacity(), capacity)
 }
+
+///|
+test "Set::retain propagates callback errors and leaves the set consistent" {
+  let s = @set.Set([1, 2, 3, 4])
+  let r = try
+    s.retain(x => {
+      if x == 3 {
+        fail("stop")
+      }
+      x != 1
+    })
+  catch {
+    _ => true
+  } noraise {
+    _ => false
+  }
+  inspect(r, content="true")
+  @debug.debug_inspect(s.to_array(), content="[2, 3, 4]")
+  s.add(5)
+  @debug.debug_inspect(s.to_array(), content="[2, 3, 4, 5]")
+}

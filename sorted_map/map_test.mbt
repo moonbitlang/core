@@ -481,3 +481,26 @@ test "copy independence" {
   debug_inspect(map2.get(2), content="Some(\"x\")")
   debug_inspect(map2.get(4), content="Some(\"d\")")
 }
+
+///|
+test "SortedMap mutators propagate callback errors and leave the map unchanged" {
+  let m = @sorted_map.SortedMap([(1, "a"), (2, "b"), (3, "c")])
+  let r1 = try m.get_or_init(4, () => fail("stop")) |> ignore catch {
+    _ => true
+  } noraise {
+    _ => false
+  }
+  inspect(r1, content="true")
+  let r2 = try m.update_or_default(2, "", _ => fail("stop")) catch {
+    _ => true
+  } noraise {
+    _ => false
+  }
+  inspect(r2, content="true")
+  @debug.debug_inspect(
+    m.to_array(),
+    content="[(1, \"a\"), (2, \"b\"), (3, \"c\")]",
+  )
+  m.update_or_default(4, "d", v => v)
+  inspect(m.length(), content="4")
+}

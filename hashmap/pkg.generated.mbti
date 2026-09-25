@@ -37,7 +37,7 @@ pub fn[K : Hash + Eq, V] HashMap::get(Self[K, V], K) -> V?
 pub fn[V] HashMap::get_from_bytes(Self[Bytes, V], BytesView) -> V?
 pub fn[V] HashMap::get_from_string(Self[String, V], StringView) -> V?
 pub fn[K : Hash + Eq, V] HashMap::get_or_default(Self[K, V], K, V) -> V
-pub fn[K : Hash + Eq, V] HashMap::get_or_init(Self[K, V], K, () -> V) -> V
+pub fn[K : Hash + Eq, V] HashMap::get_or_init(Self[K, V], K, () -> V raise?) -> V raise?
 pub fn[K, V] HashMap::is_empty(Self[K, V]) -> Bool
 #alias(iterator, deprecated)
 pub fn[K, V] HashMap::iter(Self[K, V]) -> Iter[(K, V)]
@@ -54,12 +54,12 @@ pub fn[K : Eq, V] HashMap::merge_in_place(Self[K, V], Self[K, V]) -> Unit
 pub fn[K, V] HashMap::new(capacity? : Int) -> Self[K, V]
 pub fn[K : Hash + Eq, V] HashMap::remove(Self[K, V], K) -> Unit
 pub fn[K : Hash + Eq, V] HashMap::remove_and_get(Self[K, V], K) -> V?
-pub fn[K, V] HashMap::retain(Self[K, V], (K, V) -> Bool) -> Unit
+pub fn[K, V] HashMap::retain(Self[K, V], (K, V) -> Bool raise?) -> Unit raise?
 #alias("_[_]=_")
 pub fn[K : Hash + Eq, V] HashMap::set(Self[K, V], K, V) -> Unit
 pub fn[K, V] HashMap::to_array(Self[K, V]) -> Array[(K, V)]
-pub fn[K : Hash + Eq, V] HashMap::update(Self[K, V], K, (V?) -> V?) -> Unit
-pub fn[K : Hash + Eq, V] HashMap::update_or_default(Self[K, V], K, V, (V) -> V) -> Unit
+pub fn[K : Hash + Eq, V] HashMap::update(Self[K, V], K, (V?) -> V? raise?) -> Unit raise?
+pub fn[K : Hash + Eq, V] HashMap::update_or_default(Self[K, V], K, V, (V) -> V raise?) -> Unit raise?
 pub fn[K, V] HashMap::values(Self[K, V]) -> Iter[V]
 pub impl[K, V] Default for HashMap[K, V]
 pub impl[K : Hash + Eq, V : Eq] Eq for HashMap[K, V]
