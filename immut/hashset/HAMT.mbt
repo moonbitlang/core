@@ -103,7 +103,7 @@ fn[A : Eq] Node::add_with_path(
       if key == key1 || bucket.contains(key) {
         self
       } else {
-        Leaf(key, bucket.add(key1))
+        Leaf(key, bucket.prepend(key1))
       }
     Flat(key1, path1) =>
       if path == path1 && key == key1 {
@@ -403,11 +403,11 @@ pub fn[K : Eq] HashSet::union(
       (Branch(children1), Branch(children2)) =>
         Branch(children1.union(children2, go))
       (Leaf(key1, bucket1), Leaf(key2, bucket2)) => {
-        let keys1 = bucket1.add(key1)
-        let keys2 = bucket2.add(key2)
+        let keys1 = bucket1.prepend(key1)
+        let keys2 = bucket2.prepend(key2)
         match keys1.filter(k => !keys2.contains(k)) {
           Empty => node2
-          More(head, tail~) => Leaf(key2, bucket2 + tail.add(head))
+          More(head, tail~) => Leaf(key2, bucket2 + tail.prepend(head))
         }
       }
       _ => abort("Unreachable")
@@ -442,8 +442,8 @@ pub fn[K : Eq] HashSet::intersection(
           Some(children) => Some(collapse_branch(children))
         }
       (Leaf(key1, bucket1), Leaf(key2, bucket2)) => {
-        let keys1 = bucket1.add(key1)
-        let keys2 = bucket2.add(key2)
+        let keys1 = bucket1.prepend(key1)
+        let keys2 = bucket2.prepend(key2)
         match keys1.filter(k => keys2.contains(k)) {
           Empty => None
           More(head, tail=Empty) => Some(Flat(head, @path.exhausted))
@@ -483,8 +483,8 @@ pub fn[K : Eq] HashSet::difference(
           Some(children) => Some(collapse_branch(children))
         }
       (Leaf(key1, bucket1), Leaf(key2, bucket2)) => {
-        let keys1 = bucket1.add(key1)
-        let keys2 = bucket2.add(key2)
+        let keys1 = bucket1.prepend(key1)
+        let keys2 = bucket2.prepend(key2)
         match keys1.filter(k => !keys2.contains(k)) {
           Empty => None
           More(head, tail=Empty) => Some(Flat(head, @path.exhausted))
@@ -658,8 +658,8 @@ impl[A : Eq] Eq for Node[A] with fn equal(self, other) {
     (Leaf(x, xs), Leaf(y, ys)) =>
       xs.length() == ys.length() &&
       ({
-        let keys1 = xs.add(x)
-        let keys2 = ys.add(y)
+        let keys1 = xs.prepend(x)
+        let keys2 = ys.prepend(y)
         keys1.iter().all(k => keys2.contains(k))
       })
     (Flat(x, pathx), Flat(y, pathy)) => pathx == pathy && x == y

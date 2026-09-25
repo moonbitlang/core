@@ -43,6 +43,7 @@ pub impl Default for UInt with fn default() {
 
 ///|
 /// same as `UInt::default`
+#deprecated("Use `0U` or `Default::default()` instead")
 pub fn default() -> UInt {
   0
 }

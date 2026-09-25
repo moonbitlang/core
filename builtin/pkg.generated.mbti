@@ -296,7 +296,7 @@ pub fn[X] Iter::any(Self[X], (X) -> Bool raise?) -> Bool raise?
 pub fn[X] Iter::clamped_view(Self[X], start? : Int, end? : Int) -> Self[X]
 pub fn[X] Iter::concat(Self[X], Self[X]) -> Self[X]
 pub fn[X : Eq] Iter::contains(Self[X], X) -> Bool
-#alias(length)
+#alias(length, deprecated)
 pub fn[X] Iter::count(Self[X]) -> Int
 pub fn[X] Iter::count_if(Self[X], (X) -> Bool raise?) -> Int raise?
 pub fn[X] Iter::drop(Self[X], Int) -> Self[X]
@@ -311,9 +311,9 @@ pub fn[X, Y] Iter::flat_map(Self[X], (X) -> Self[Y]) -> Self[Y]
 pub fn[X] Iter::flatten(Self[Self[X]]) -> Self[X]
 pub fn[X, R] Iter::fold(Self[X], init~ : R, (R, X) -> R raise?) -> R raise?
 pub fn[X] Iter::intersperse(Self[X], X) -> Self[X]
-#alias(iterator)
+#alias(iterator, deprecated)
 pub fn[X] Iter::iter(Self[X]) -> Self[X]
-#alias(iterator2)
+#alias(iterator2, deprecated)
 pub fn[X] Iter::iter2(Self[X]) -> Iter2[Int, X]
 pub fn[A : ToStringView] Iter::join(Self[A], StringView) -> String
 pub fn[X] Iter::last(Self[X]) -> X?
@@ -346,9 +346,9 @@ pub impl[X : ToJson] ToJson for Iter[X]
 pub(all) struct Iter2[X, Y](Iter[(X, Y)])
 pub fn[X, Y] Iter2::concat(Self[X, Y], Self[X, Y]) -> Self[X, Y]
 pub fn[X, Y] Iter2::each(Self[X, Y], (X, Y) -> Unit raise?) -> Unit raise?
-#alias(iterator)
+#alias(iterator, deprecated)
 pub fn[X, Y] Iter2::iter(Self[X, Y]) -> Iter[(X, Y)]
-#alias(iterator2)
+#alias(iterator2, deprecated)
 pub fn[X, Y] Iter2::iter2(Self[X, Y]) -> Self[X, Y]
 pub fn[X, Y] Iter2::new(() -> (X, Y)?, size_hint? : Int) -> Self[X, Y]
 pub fn[X, Y] Iter2::next(Self[X, Y]) -> (X, Y)?

@@ -7,6 +7,7 @@ import {
 }
 
 // Values
+#deprecated
 pub fn[X] default() -> List[X]
 
 // Errors
@@ -80,7 +81,7 @@ pub fn[A : Compare] List::minimum(Self[A]) -> A?
 #as_free_fn
 pub fn[A] List::new() -> Self[A]
 pub fn[A] List::nth(Self[A], Int) -> A?
-#alias(add)
+#alias(add, deprecated)
 pub fn[A] List::prepend(Self[A], A) -> Self[A]
 pub fn[A : Eq] List::remove(Self[A], A) -> Self[A]
 pub fn[A] List::remove_at(Self[A], Int) -> Self[A]
