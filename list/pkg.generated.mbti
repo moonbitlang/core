@@ -76,9 +76,10 @@ pub fn[A, B] List::map(Self[A], (A) -> B raise?) -> Self[B] raise?
 pub fn[A, B] List::mapi(Self[A], (Int, A) -> B raise?) -> Self[B] raise?
 pub fn[A : Compare] List::maximum(Self[A]) -> A?
 pub fn[A : Compare] List::minimum(Self[A]) -> A?
-#alias(empty)
-#as_free_fn(empty)
-#as_free_fn
+#alias(empty, deprecated)
+#as_free_fn(empty, deprecated)
+#as_free_fn(deprecated)
+#deprecated
 pub fn[A] List::new() -> Self[A]
 pub fn[A] List::nth(Self[A], Int) -> A?
 #alias(add, deprecated)

@@ -60,7 +60,7 @@ fn Regex::stablize_state(self : Regex, state : @automata.State) -> StateId {
       let new_slot_table = FixedArray::make(new_states_len * num_symbols, 0)
       self.slot_table.blit_to(new_slot_table, len=self.slot_table.length())
 
-      let new_final_table = FixedArray::make(new_states_len, @list.empty())
+      let new_final_table = FixedArray::make(new_states_len, @list.List([]))
       self.final_table.blit_to(new_final_table, len=self.final_table.length())
 
       self.states = new_states

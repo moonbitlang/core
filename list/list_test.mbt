@@ -15,7 +15,7 @@
 ///|
 test "List constructor" {
   let ls = @list.List([1, 2, 3, 4, 5])
-  let el : @list.List[Int] = @list.empty()
+  let el : @list.List[Int] = List([])
   debug_inspect(ls, content="<List: [1, 2, 3, 4, 5]>")
   debug_inspect(el, content="<List: []>")
 }
@@ -23,7 +23,7 @@ test "List constructor" {
 ///|
 test "pipe" {
   debug_inspect(
-    1 |> x => { @list.List::prepend(@list.empty(), x) },
+    1 |> x => { @list.List::prepend(List([]), x) },
     content="<List: [1]>",
   )
 }
@@ -80,7 +80,7 @@ test "iter2" {
 ///|
 test "map" {
   let ls = @list.List([1, 2, 3, 4, 5])
-  let rs : @list.List[Int] = @list.empty()
+  let rs : @list.List[Int] = List([])
   debug_inspect(ls.map(x => x * 2), content="<List: [2, 4, 6, 8, 10]>")
   debug_inspect(rs.map(x => x * 2), content="<List: []>")
 }
@@ -88,7 +88,7 @@ test "map" {
 ///|
 test "mapi" {
   let ls = @list.List([1, 2, 3, 4, 5])
-  let el : @list.List[Int] = @list.empty()
+  let el : @list.List[Int] = List([])
   debug_inspect(ls.mapi((i, x) => i * x), content="<List: [0, 2, 6, 12, 20]>")
   debug_inspect(el.mapi((i, x) => i * x), content="<List: []>")
 }
@@ -96,7 +96,7 @@ test "mapi" {
 ///|
 test "rev_map" {
   let ls = @list.List([1, 2, 3, 4, 5])
-  let rs : @list.List[Int] = @list.empty()
+  let rs : @list.List[Int] = List([])
   debug_inspect(ls.rev_map(x => x * 2), content="<List: [10, 8, 6, 4, 2]>")
   debug_inspect(rs.rev_map(x => x * 2), content="<List: []>")
 }
@@ -104,7 +104,7 @@ test "rev_map" {
 ///|
 test "to_array" {
   let list = @list.List([1, 2, 3, 4, 5])
-  let empty : @list.List[Int] = @list.empty()
+  let empty : @list.List[Int] = List([])
   let array = list.to_array()
   let earray = empty.to_array()
   debug_inspect(array, content="[1, 2, 3, 4, 5]")
@@ -114,7 +114,7 @@ test "to_array" {
 ///|
 test "filter" {
   let ls = @list.List([1, 2, 3, 4, 5])
-  let rs : @list.List[Int] = @list.empty()
+  let rs : @list.List[Int] = List([])
   debug_inspect(ls.filter(x => x % 2 == 0), content="<List: [2, 4]>")
   debug_inspect(rs.filter(x => x % 2 == 0), content="<List: []>")
 }
@@ -141,7 +141,7 @@ test "unsafe_tail" {
 
 ///|
 test "panic unsafe_tail" {
-  let ls : @list.List[Int] = @list.empty()
+  let ls : @list.List[Int] = List([])
   debug_inspect(ls.unsafe_tail())
 }
 
@@ -169,9 +169,9 @@ test "last" {
 test "concat" {
   let ls = @list.List([1, 2, 3, 4, 5])
   let rs = @list.List([6, 7, 8, 9, 10])
-  debug_inspect(ls.concat(@list.empty()), content="<List: [1, 2, 3, 4, 5]>")
+  debug_inspect(ls.concat(List([])), content="<List: [1, 2, 3, 4, 5]>")
   debug_inspect(
-    (@list.empty() : @list.List[Int]).concat(rs),
+    (List([]) : @list.List[Int]).concat(rs),
     content="<List: [6, 7, 8, 9, 10]>",
   )
   debug_inspect(
@@ -184,11 +184,11 @@ test "concat" {
 test "rev_concat" {
   let ls = @list.List([1, 2, 3, 4, 5])
   let rs = @list.List([6, 7, 8, 9, 10])
-  debug_inspect(@list.empty().rev_concat(ls), content="<List: [1, 2, 3, 4, 5]>")
   debug_inspect(
-    rs.rev_concat(@list.empty()),
-    content="<List: [10, 9, 8, 7, 6]>",
+    @list.List([]).rev_concat(ls),
+    content="<List: [1, 2, 3, 4, 5]>",
   )
+  debug_inspect(rs.rev_concat(List([])), content="<List: [10, 9, 8, 7, 6]>")
   debug_inspect(
     ls.rev_concat(rs),
     content="<List: [5, 4, 3, 2, 1, 6, 7, 8, 9, 10]>",
@@ -206,7 +206,7 @@ test "rev" {
 ///|
 test "fold" {
   let ls = @list.List([1, 2, 3, 4, 5])
-  let el : @list.List[Int] = @list.empty()
+  let el : @list.List[Int] = List([])
   debug_inspect(el.fold((acc, x) => acc + x, init=0), content="0")
   debug_inspect(ls.fold((acc, x) => acc + x, init=0), content="15")
 }
@@ -214,7 +214,7 @@ test "fold" {
 ///|
 test "rev_fold" {
   let ls = @list.List(["1", "2", "3", "4", "5"])
-  let el : @list.List[String] = @list.empty()
+  let el : @list.List[String] = List([])
   debug_inspect(
     ls.rev().fold((acc, x) => x + acc, init=""),
     content=(
@@ -232,7 +232,7 @@ test "rev_fold" {
 ///|
 test "foldi" {
   let ls = @list.List([1, 2, 3, 4, 5])
-  let el : @list.List[Int] = @list.empty()
+  let el : @list.List[Int] = List([])
   debug_inspect(ls.foldi((i, acc, x) => acc + i * x, init=0), content="40")
   debug_inspect(el.foldi((i, acc, x) => acc + i * x, init=0), content="0")
 }
@@ -240,7 +240,7 @@ test "foldi" {
 ///|
 test "rev_foldi" {
   let ls = @list.List([1, 2, 3, 4, 5])
-  let el : @list.List[Int] = @list.empty()
+  let el : @list.List[Int] = List([])
   debug_inspect(
     ls.rev().foldi((i, acc, x) => x * i + acc, init=0),
     content="20",
@@ -261,7 +261,7 @@ test "zip" {
 ///|
 test "flat_map" {
   let ls = @list.List([1, 2, 3])
-  let rs : @list.List[Int] = @list.empty()
+  let rs : @list.List[Int] = List([])
   debug_inspect(rs.flat_map(x => List([x, x * 2])), content="<List: []>")
   debug_inspect(
     ls.flat_map(x => List([x, x * 2])),
@@ -278,7 +278,7 @@ test "flat_map single element" {
 ///|
 test "filter_map" {
   let ls = @list.List([4, 2, 2, 6, 3, 1])
-  let rs : @list.List[Int] = @list.empty()
+  let rs : @list.List[Int] = List([])
   debug_inspect(
     ls.filter_map(x => if x >= 3 { Some(x) } else { None }),
     content="<List: [4, 6, 3]>",
@@ -311,7 +311,7 @@ test "panic List::repeat negative" {
 ///|
 test "intersperse" {
   let ls = @list.List(["1", "2", "3", "4", "5"])
-  let el : @list.List[String] = @list.empty()
+  let el : @list.List[String] = List([])
   debug_inspect(
     ls.intersperse("|"),
     content=(
@@ -325,7 +325,7 @@ test "intersperse" {
 test "is_empty" {
   let ls = @list.List([1, 2, 3, 4, 5])
   debug_inspect(ls.is_empty(), content="false")
-  debug_inspect((@list.empty() : @list.List[Unit]).is_empty(), content="true")
+  debug_inspect((List([]) : @list.List[Unit]).is_empty(), content="true")
 }
 
 ///|
@@ -339,14 +339,14 @@ test "unzip" {
 ///|
 test "flatten" {
   let ls = @list.List([@list.List([1, 2, 3]), List([4, 5, 6]), List([7, 8, 9])])
-  let el : @list.List[@list.List[Int]] = @list.empty()
+  let el : @list.List[@list.List[Int]] = List([])
   debug_inspect(ls.flatten(), content="<List: [1, 2, 3, 4, 5, 6, 7, 8, 9]>")
   debug_inspect(el.flatten(), content="<List: []>")
 }
 
 ///|
 test "flatten with empty head" {
-  let ls = @list.List([(@list.empty() : @list.List[Int]), List([1, 2])])
+  let ls = @list.List([(List([]) : @list.List[Int]), List([1, 2])])
   debug_inspect(ls.flatten(), content="<List: [1, 2]>")
 }
 
@@ -371,7 +371,7 @@ test "minimum" {
 ///|
 test "sort" {
   let ls = @list.List([1, 123, 52, 3, 6, 0, -6, -76])
-  let el : @list.List[Int] = @list.empty()
+  let el : @list.List[Int] = List([])
   debug_inspect(el.sort(), content="<List: []>")
   debug_inspect(ls.sort(), content="<List: [-76, -6, 0, 1, 3, 6, 52, 123]>")
 }
@@ -431,7 +431,7 @@ test "take" {
 ///|
 test "drop" {
   let ls = @list.List([1, 2, 3, 4, 5]).drop(3)
-  let el : @list.List[Int] = @list.empty()
+  let el : @list.List[Int] = List([])
   debug_inspect(ls, content="<List: [4, 5]>")
   debug_inspect(ls.drop(-10), content="<List: [4, 5]>")
   debug_inspect(ls.drop(10), content="<List: []>")
@@ -443,7 +443,7 @@ test "drop" {
 ///|
 test "take_while" {
   let ls = @list.List([0, 1, 2, 3, 4]).take_while(x => x < 3)
-  let el : @list.List[Int] = @list.empty().take_while(_e => true)
+  let el : @list.List[Int] = @list.List([]).take_while(_e => true)
   debug_inspect(ls, content="<List: [0, 1, 2]>")
   debug_inspect(el, content="<List: []>")
 }
@@ -451,14 +451,14 @@ test "take_while" {
 ///|
 test "drop_while" {
   let ls = @list.List([0, 1, 2, 3, 4]).drop_while(x => x < 3)
-  let el : @list.List[Int] = @list.empty().drop_while(_e => true)
+  let el : @list.List[Int] = @list.List([]).drop_while(_e => true)
   debug_inspect(ls, content="<List: [3, 4]>")
   debug_inspect(el, content="<List: []>")
 }
 
 ///|
 test "scan_left" {
-  let el = @list.empty().scan_left((acc, x) => acc + x, init=0)
+  let el = @list.List([]).scan_left((acc, x) => acc + x, init=0)
   let ls = @list.List([1, 2, 3, 4, 5]).scan_left((acc, x) => acc + x, init=0)
   let ls2 = @list.List([1, 2, 3, 4]).scan_left((acc, x) => acc - x, init=100)
   debug_inspect(el, content="<List: [0]>")
@@ -485,7 +485,7 @@ test "scan_left calls f once per element" {
 
 ///|
 test "scan_right" {
-  let el = @list.empty().scan_right((acc, x) => x + acc, init=0)
+  let el = @list.List([]).scan_right((acc, x) => x + acc, init=0)
   let ls = @list.List([1, 2, 3, 4]).scan_right((acc, x) => x + acc, init=0)
   let ls2 = @list.List([1, 2, 3, 4]).scan_right((acc, x) => x - acc, init=100)
   debug_inspect(el, content="<List: [0]>")
@@ -496,7 +496,7 @@ test "scan_right" {
 ///|
 test "lookup" {
   let ls = @list.List([(1, "a"), (2, "b"), (3, "c")])
-  let el : @list.List[(Int, Int)] = @list.empty()
+  let el : @list.List[(Int, Int)] = List([])
   debug_inspect(el.lookup(1), content="None")
   debug_inspect(
     ls.lookup(3),
@@ -518,7 +518,7 @@ test "find" {
     content="None",
   )
   debug_inspect(
-    (@list.empty() : @list.List[Int]).find(element => element % 2 == 0),
+    (List([]) : @list.List[Int]).find(element => element % 2 == 0),
     content="None",
   )
 }
@@ -534,7 +534,7 @@ test "findi" {
     content="None",
   )
   debug_inspect(
-    (@list.empty() : @list.List[Int]).findi((element, i) => {
+    (List([]) : @list.List[Int]).findi((element, i) => {
       element % 2 == 0 && i == 3
     }),
     content="None",
@@ -590,14 +590,14 @@ test "has_prefix" {
     @list.List([1, 2, 3, 4, 5]).has_prefix(List([3, 2, 3])),
     content="false",
   )
-  debug_inspect(@list.empty().has_prefix(List([1, 2, 3])), content="false")
+  debug_inspect(@list.List([]).has_prefix(List([1, 2, 3])), content="false")
 }
 
 ///|
 test "equal" {
   debug_inspect(@list.List([1, 2, 3]) == List([1, 2, 3]), content="true")
   debug_inspect(@list.List([1, 2, 3]) == List([1, 3, 3]), content="false")
-  debug_inspect(@list.empty() == List([1]), content="false")
+  debug_inspect(@list.List([]) == List([1]), content="false")
 }
 
 ///|
@@ -615,7 +615,7 @@ test "has_suffix" {
 ///|
 test "intercalate" {
   let ls = @list.List([@list.List([1, 2, 3]), List([4, 5, 6]), List([7, 8, 9])])
-  let el : @list.List[@list.List[Int]] = @list.empty()
+  let el : @list.List[@list.List[Int]] = List([])
   debug_inspect(
     ls.intercalate(List([0])),
     content="<List: [1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9]>",
@@ -656,7 +656,7 @@ test "List::output with non-empty list" {
 #warnings("-deprecated")
 test "List::output with empty list" {
   let buf = StringBuilder(size_hint=100)
-  let list : @list.List[Int] = @list.empty()
+  let list : @list.List[Int] = List([])
   Show::output(list, buf)
   debug_inspect(
     buf,
@@ -674,7 +674,7 @@ test "List::to_json with non-empty list" {
 
 ///|
 test "List::to_json with empty list" {
-  let list : @list.List[Int] = @list.empty()
+  let list : @list.List[Int] = List([])
   @json.json_inspect(ToJson::to_json(list), content=[])
 }
 
@@ -738,7 +738,7 @@ test "List::zip with lists of equal length" {
 ///|
 test "@list.zip with empty list" {
   debug_inspect(
-    @list.List([1]).zip((@list.empty() : @list.List[Int])),
+    @list.List([1]).zip((List([]) : @list.List[Int])),
     content="<List: []>",
   )
 }
@@ -759,7 +759,7 @@ test "List::maximum with non-empty list" {
 
 ///|
 test "@list.maximum with empty list" {
-  debug_inspect((@list.empty() : @list.List[Int]).maximum(), content="None")
+  debug_inspect((List([]) : @list.List[Int]).maximum(), content="None")
 }
 
 ///|
@@ -771,7 +771,7 @@ test "List::minimum with non-empty list" {
 
 ///|
 test "@list.minimum with empty list" {
-  debug_inspect((@list.empty() : @list.List[Int]).minimum(), content="None")
+  debug_inspect((List([]) : @list.List[Int]).minimum(), content="None")
 }
 
 ///|
@@ -780,7 +780,7 @@ test "add" {
   debug_inspect(@list.List([]) + List([1]), content="<List: [1]>")
   debug_inspect(@list.List([1]) + List([1]), content="<List: [1, 1]>")
   debug_inspect(
-    (@list.empty() : @list.List[Int]) + (@list.empty() : @list.List[Int]),
+    (List([]) : @list.List[Int]) + (List([]) : @list.List[Int]),
     content="<List: []>",
   )
 }
@@ -889,7 +889,7 @@ test "drop advanced cases" {
   debug_inspect(l.drop(10), content="<List: []>")
 
   // Drop from empty list
-  let empty : @list.List[Int] = @list.empty()
+  let empty : @list.List[Int] = List([])
   debug_inspect(empty.drop(3), content="<List: []>")
 
   // Drop 0
@@ -968,7 +968,7 @@ test "remove_at edge cases" {
   debug_inspect(l.remove_at(2), content="<List: [1, 2, 4, 5]>")
 
   // Remove from empty list
-  let empty : @list.List[Int] = @list.empty()
+  let empty : @list.List[Int] = List([])
   debug_inspect(empty.remove_at(0), content="<List: []>")
 
   // Remove multiple elements
@@ -1046,7 +1046,7 @@ test "intersperse with complex values" {
   debug_inspect(result.length(), content="5")
 
   // Empty list with intersperse
-  let empty : @list.List[Int] = @list.empty()
+  let empty : @list.List[Int] = List([])
   debug_inspect(empty.intersperse(0), content="<List: []>")
 
   // Single element list with intersperse
@@ -1105,7 +1105,7 @@ test "has_prefix and has_suffix complex cases" {
   assert_false(l.has_suffix(List([3, 4, 6])))
 
   // Test with empty list
-  let empty : @list.List[Int] = @list.empty()
+  let empty : @list.List[Int] = List([])
   assert_true(empty.has_prefix(List([])))
   assert_true(empty.has_suffix(List([])))
   assert_true(l.has_prefix(List([])))
@@ -1115,7 +1115,7 @@ test "has_prefix and has_suffix complex cases" {
 ///|
 test "find_index" {
   // empty
-  let empty = @list.empty()
+  let empty = @list.List([])
   debug_inspect(empty.find_index(x => x > 0), content="None")
   // basic
   let ls = @list.List([1, 2, 3, 4, 5])
@@ -1132,7 +1132,7 @@ test "compare" {
   let list1 = @list.List([1, 2, 3])
   let list2 = @list.List([1, 2, 4])
   let list3 = @list.List([1, 2])
-  let empty : @list.List[Int] = @list.empty()
+  let empty : @list.List[Int] = List([])
 
   // Test lexicographic comparison
   debug_inspect(list1.compare(list2), content="-1") // list1 < list2
@@ -1155,7 +1155,7 @@ test "compare" {
 test "flat_map and filter_map skip empties" {
   let ls = @list.List([0, 1, 2])
   debug_inspect(
-    ls.flat_map(x => if x == 0 { @list.empty() } else { List([x, x]) }),
+    ls.flat_map(x => if x == 0 { List([]) } else { List([x, x]) }),
     content="<List: [1, 1, 2, 2]>",
   )
   debug_inspect(
@@ -1166,7 +1166,7 @@ test "flat_map and filter_map skip empties" {
 
 ///|
 test "unzip empty" {
-  let (xs, ys) : (@list.List[Int], @list.List[String]) = @list.empty().unzip()
+  let (xs, ys) : (@list.List[Int], @list.List[String]) = @list.List([]).unzip()
   debug_inspect(xs, content="<List: []>")
   debug_inspect(ys, content="<List: []>")
 }
@@ -1179,7 +1179,7 @@ test "unfold none" {
 
 ///|
 test "take and take_while edge cases" {
-  let empty : @list.List[Int] = @list.empty()
+  let empty : @list.List[Int] = List([])
   debug_inspect(empty.take(3), content="<List: []>")
   debug_inspect(
     @list.List([1, 2]).take_while(_ => true),
@@ -1192,7 +1192,7 @@ test "take and take_while edge cases" {
 test "remove empty and head" {
   let ls = @list.List([1, 2, 3])
   debug_inspect(ls.remove(1), content="<List: [2, 3]>")
-  let empty : @list.List[Int] = @list.empty()
+  let empty : @list.List[Int] = List([])
   debug_inspect(empty.remove(1), content="<List: []>")
 }
 
@@ -1205,7 +1205,7 @@ test "List default trait" {
 ///|
 test "has_suffix boundaries" {
   let l = @list.List([1, 2, 3, 4, 5])
-  let empty : @list.List[Int] = @list.empty()
+  let empty : @list.List[Int] = List([])
   // empty suffixes
   assert_true(l.has_suffix(empty))
   assert_true(empty.has_suffix(empty))
