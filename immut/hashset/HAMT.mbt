@@ -540,7 +540,7 @@ priv enum CurrNode[A] {
 /// Converted to Iter
 #alias(iterator, deprecated)
 pub fn[A] HashSet::iter(self : HashSet[A]) -> Iter[A] {
-  let empty = Bucket(@list.new())
+  let empty = Bucket(List([]))
   let mut curr_node = match self.data {
     Some(tree) => Tree(tree)
     None => empty

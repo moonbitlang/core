@@ -843,7 +843,7 @@ pub fn[K, V] HashMap::values(self : HashMap[K, V]) -> Iter[V] {
 /// Converted to Iter
 #alias(iterator, deprecated)
 pub fn[K, V] HashMap::iter(self : HashMap[K, V]) -> Iter[(K, V)] {
-  let empty = Bucket(@list.new())
+  let empty = Bucket(List([]))
   let mut curr_node = match self.data {
     Some(tree) => Tree(tree)
     None => empty

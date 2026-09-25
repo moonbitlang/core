@@ -54,3 +54,14 @@ pub fn[A : @json.FromJson] List::from_json(
 ) -> List[A] raise @json.JsonDecodeError {
   @json.from_json(json)
 }
+
+///|
+/// Creates an empty list.
+#alias(empty, deprecated="Use `List([])` instead")
+#as_free_fn(deprecated="Use `List([])` instead")
+#as_free_fn(empty, deprecated="Use `List([])` instead")
+#deprecated("Use `List([])` instead")
+#inline
+pub fn[A] List::new() -> List[A] {
+  Empty
+}

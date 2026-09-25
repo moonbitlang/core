@@ -758,7 +758,7 @@ test "String::fold" {
   let s = "this is a long string"
   inspect(s.fold(init=0, (acc, c) => acc + c.to_int()), content="1980")
   debug_inspect(
-    s.fold(init=@list.empty(), (acc, x) => acc.prepend(x)).rev(),
+    s.fold(init=@list.List([]), (acc, x) => acc.prepend(x)).rev(),
     content=(
       #|<List:
       #|  [
@@ -787,7 +787,7 @@ test "String::fold" {
     ),
   )
   debug_inspect(
-    s.rev_fold(init=@list.empty(), (acc, x) => acc.prepend(x)),
+    s.rev_fold(init=@list.List([]), (acc, x) => acc.prepend(x)),
     content=(
       #|<List:
       #|  [

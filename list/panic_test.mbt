@@ -14,27 +14,27 @@
 
 ///|
 test "last None" {
-  assert_true((@list.empty() : @list.List[Int]).last() == None)
+  assert_true((List([]) : @list.List[Int]).last() == None)
 }
 
 ///|
 test "panic nth_exn" {
-  @list.empty().unsafe_nth(0)
+  @list.List([]).unsafe_nth(0)
 }
 
 ///|
 test "panic @list.exn with empty list" {
-  @list.empty().unsafe_head()
+  @list.List([]).unsafe_head()
 }
 
 ///|
 test "panic @list.unsafe_maximum with empty list" {
-  inspect((@list.empty() : @list.List[Int]).unsafe_maximum())
+  inspect((List([]) : @list.List[Int]).unsafe_maximum())
 }
 
 ///|
 test "panic @list.unsafe_minimum with empty list" {
-  inspect((@list.empty() : @list.List[Int]).unsafe_minimum())
+  inspect((List([]) : @list.List[Int]).unsafe_minimum())
 }
 
 ///|
@@ -46,6 +46,8 @@ test "unsafe_head with non-empty list" {
 
 ///|
 test "panic unsafe_last with empty list" {
-  // Test the panic path of unsafe_last to cover line 469
-  @list.empty().unsafe_last()
+  @list.List(
+    // Test the panic path of unsafe_last to cover line 469
+    [],
+  ).unsafe_last()
 }

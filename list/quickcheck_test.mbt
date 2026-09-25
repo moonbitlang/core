@@ -37,7 +37,7 @@ test "quickcheck: concat is a monoid with Empty as identity" {
   @quickcheck.check(
     (input : (@list.List[Int], @list.List[Int], @list.List[Int])) => {
       let (xs, ys, zs) = input
-      let empty : @list.List[Int] = @list.empty()
+      let empty : @list.List[Int] = List([])
       guard xs + ys + zs == xs + (ys + zs) else { return false }
       guard xs + empty == xs && empty + xs == xs else { return false }
       guard (xs + ys).length() == xs.length() + ys.length() else {

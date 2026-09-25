@@ -13,25 +13,6 @@
 // limitations under the License.
 
 ///|
-/// Creates an empty list.
-///
-/// # Example
-///
-/// ```mbt check
-/// test {
-///   let ls : @list.List[Int] = @list.new()
-///   @debug.assert_eq(ls, @list.empty())
-/// }
-/// ```
-#alias(empty)
-#as_free_fn
-#as_free_fn(empty)
-#inline
-pub fn[A] List::new() -> List[A] {
-  Empty
-}
-
-///|
 /// Prepend an element to the list and create a new list.
 /// 
 /// This function constructs a new list with the given element as the head
@@ -958,7 +939,7 @@ pub fn[A] List::intersperse(self : List[A], separator : A) -> List[A] {
 ///
 /// ```mbt check
 /// test {
-///   let empty_list : @list.List[Int] = @list.empty()
+///   let empty_list : @list.List[Int] = List([])
 ///   @test.assert_eq(empty_list.is_empty(), true)
 ///   let non_empty = @list.List([1, 2, 3])
 ///   @test.assert_eq(non_empty.is_empty(), false)
@@ -1099,7 +1080,7 @@ pub fn[A : Compare] List::unsafe_maximum(self : List[A]) -> A {
 /// test {
 ///   let ls = @list.List([1, 3, 2, 5, 4])
 ///   assert_true(ls.maximum() == Some(5))
-///   let empty : @list.List[Int] = @list.empty()
+///   let empty : @list.List[Int] = List([])
 ///   assert_true(empty.maximum() == None)
 /// }
 /// ```
@@ -1151,7 +1132,7 @@ pub fn[A : Compare] List::unsafe_minimum(self : List[A]) -> A {
 /// test {
 ///   let ls = @list.List([1, 3, 2, 5, 4])
 ///   assert_true(ls.minimum() == Some(1))
-///   let empty : @list.List[Int] = @list.empty()
+///   let empty : @list.List[Int] = List([])
 ///   assert_true(empty.minimum() == None)
 /// }
 /// ```
@@ -1778,7 +1759,7 @@ pub impl[X] Default for List[X] with fn default() {
 
 ///|
 /// Return the default value for a list (empty list).
-#deprecated("Use `@list.new()` or `Default::default()` instead")
+#deprecated("Use `List([])` or `Default::default()` instead")
 pub fn[X] default() -> List[X] {
   Empty
 }
