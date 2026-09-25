@@ -4,12 +4,12 @@ This package provides functionality for working with mutable references, allowin
 
 ## Creating and Accessing References
 
-References can be created using `@ref.new()`. The reference value can be accessed through the `val` field:
+References can be created with the `Ref(x)` constructor (`@ref.Ref(x)` from other packages). The reference value can be accessed through the `val` field:
 
 ```mbt check
 ///|
 test "creating and accessing refs" {
-  let r1 = @ref.new(42)
+  let r1 = @ref.Ref(42)
   inspect(r1.val, content="42")
 }
 ```
@@ -21,7 +21,7 @@ The `update` function allows modifying the contained value using a transformatio
 ```mbt check
 ///|
 test "updating refs" {
-  let counter = @ref.new(0)
+  let counter = @ref.Ref(0)
   counter.update(x => x + 1)
   inspect(counter.val, content="1")
   counter.update(x => x * 2)
@@ -36,7 +36,7 @@ The `map` function transforms a reference while preserving the reference wrapper
 ```mbt check
 ///|
 test "mapping refs" {
-  let num = @ref.new(10)
+  let num = @ref.Ref(10)
   let doubled = num.map(x => x * 2)
   inspect(doubled.val, content="20")
   let squared = num.map(x => x * x)
@@ -51,8 +51,8 @@ You can exchange the values of two references using the `swap` function:
 ```mbt check
 ///|
 test "swapping refs" {
-  let r1 = @ref.new("first")
-  let r2 = @ref.new("second")
+  let r1 = @ref.Ref("first")
+  let r2 = @ref.Ref("second")
   @ref.swap(r1, r2)
   inspect(r1.val, content="second")
   inspect(r2.val, content="first")
@@ -66,7 +66,7 @@ The `protect` function temporarily sets a reference to a value and restores it a
 ```mbt check
 ///|
 test "protected updates" {
-  let state = @ref.new(100)
+  let state = @ref.Ref(100)
   let mut middle = 0
   let result = state.protect(50, () => {
     middle = state.val

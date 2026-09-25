@@ -154,7 +154,7 @@ pub impl[X : Arbitrary] Arbitrary for Array[X] with fn arbitrary(size, rs) {
 
 ///|
 pub impl[X : Arbitrary] Arbitrary for @ref.Ref[X] with fn arbitrary(size, rs) {
-  @ref.new(X::arbitrary(size, rs))
+  Ref(X::arbitrary(size, rs))
 }
 
 ///|

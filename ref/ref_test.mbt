@@ -14,14 +14,14 @@
 
 ///|
 test "map" {
-  let x = @ref.new(1)
+  let x = @ref.Ref(1)
   let y = x.map(a => a + 1)
   assert_eq(y.val, 2)
 }
 
 ///|
 test "protect" {
-  let x = @ref.new(1)
+  let x = @ref.Ref(1)
   assert_eq(x.val, 1)
   let mut r = 0
   x.protect(2, () => r = x.val)
@@ -37,7 +37,7 @@ test "protect" {
 
 ///|
 test "protect with error" {
-  let x = @ref.new(1)
+  let x = @ref.Ref(1)
   assert_eq(x.val, 1)
   let mut r = 0
   try
@@ -57,35 +57,35 @@ test "protect with error" {
 
 ///|
 test "update with increment function" {
-  let a = @ref.new(1)
+  let a = @ref.Ref(1)
   a.update(x => x + 1)
   assert_eq(a.val, 2)
 }
 
 ///|
 test "update with decrement function" {
-  let a = @ref.new(1)
+  let a = @ref.Ref(1)
   a.update(x => x - 1)
   assert_eq(a.val, 0)
 }
 
 ///|
 test "update with multiplication function" {
-  let a = @ref.new(2)
+  let a = @ref.Ref(2)
   a.update(x => x * 2)
   assert_eq(a.val, 4)
 }
 
 ///|
 test "update with division function" {
-  let a = @ref.new(4)
+  let a = @ref.Ref(4)
   a.update(x => x / 2)
   assert_eq(a.val, 2)
 }
 
 ///|
 test "update with identity function" {
-  let a = @ref.new(1)
+  let a = @ref.Ref(1)
   a.update(x => x)
   assert_eq(a.val, 1)
 }
@@ -103,7 +103,7 @@ test "Ref::new with string" {
 
 ///|
 test "map with error handling" {
-  let x = @ref.new(10)
+  let x = @ref.Ref(10)
   try
     x.map(a => {
       if a > 5 {
@@ -116,7 +116,7 @@ test "map with error handling" {
   } noraise {
     _ => fail("expected error")
   }
-  let y = @ref.new(3)
+  let y = @ref.Ref(3)
   let r = try
     y.map(a => {
       if a > 5 {
@@ -134,7 +134,7 @@ test "map with error handling" {
 
 ///|
 test "update with error handling" {
-  let x = @ref.new(5)
+  let x = @ref.Ref(5)
   try
     x.update(a => {
       if a == 5 {
@@ -148,7 +148,7 @@ test "update with error handling" {
     _ => fail("expected error")
   }
   assert_eq(x.val, 5) // value should remain unchanged on error
-  let y = @ref.new(3)
+  let y = @ref.Ref(3)
   y.update(a => a + 1)
   assert_eq(y.val, 4)
 }
