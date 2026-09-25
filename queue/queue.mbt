@@ -18,7 +18,10 @@ fn[A] new_queue() -> Queue[A] {
 }
 
 ///|
-/// Creates a new queue from an array.
+/// Creates a new queue holding the elements of `arr`, front first.
+///
+/// `capacity` preallocates room for at least that many elements (never less
+/// than `arr.length()`), as in `@deque.Deque(arr, capacity=...)`.
 ///
 /// # Example
 /// ```mbt check
@@ -32,8 +35,8 @@ fn[A] new_queue() -> Queue[A] {
 #as_free_fn(from_array)
 #alias(of, deprecated="Use from_array instead")
 #as_free_fn(of, deprecated="Use from_array instead")
-pub fn[A] Queue::Queue(arr : ArrayView[A]) -> Queue[A] {
-  { inner: Deque(arr), }
+pub fn[A] Queue::Queue(arr : ArrayView[A], capacity? : Int) -> Queue[A] {
+  { inner: Deque(arr, capacity?), }
 }
 
 ///|
