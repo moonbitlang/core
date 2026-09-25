@@ -121,3 +121,21 @@ test "bench StringView::lexical_compare early-diff n=256" (it : @bench.T) {
 test "bench String::compare equal-length common-prefix n=256" (it : @bench.T) {
   it.bench(fn() { it.keep(lc_str_prefix_a.compare(lc_str_prefix_b)) })
 }
+
+///|
+// `Compare for StringView` short-circuits on the same view, so compare two
+// distinct strings of equal length.
+test "bench StringView::compare equal-length common-prefix n=256" (
+  it : @bench.T,
+) {
+  it.bench(fn() { it.keep(lc_str_prefix_a[:].compare(lc_str_prefix_b)) })
+}
+
+///|
+test "bench StringView::compare_ignore_ascii_case common-prefix n=256" (
+  it : @bench.T,
+) {
+  it.bench(fn() {
+    it.keep(lc_str_prefix_a[:].compare_ignore_ascii_case(lc_str_prefix_b))
+  })
+}

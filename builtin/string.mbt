@@ -222,8 +222,7 @@ pub impl Compare for String with fn compare(self, other) {
   let len = self.length()
   match len.compare(other.length()) {
     0 => {
-      // Direct operators instead of the `Compare` impl keep the loop free of
-      // per-unit call overhead
+      // Same `x != y`-first loop as `StringView::lexical_compare`
       for i in 0..<len {
         let x = self.unsafe_get(i)
         let y = other.unsafe_get(i)
