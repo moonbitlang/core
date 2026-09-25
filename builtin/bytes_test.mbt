@@ -437,6 +437,26 @@ test "BytesView::lexical_compare/basic" {
 }
 
 ///|
+// Inputs of at least 16 bytes that differ at byte 0 or 1 take the first-byte
+// probes on native/wasm; one that differs past the last 16-byte block takes
+// the scalar tail. `\x80` vs `\x7f` pins unsigned byte order.
+test "BytesView::lexical_compare/long inputs differing early or in the tail" {
+  let base = Bytes::makei(20, _ => b'\x7f')
+  let at = (i : Int) => {
+    Bytes::makei(20, j => if j == i { b'\x80' } else { b'\x7f' })
+  }
+  for i in [0, 1, 18] {
+    let high = at(i)
+    inspect(base.lexical_compare(high), content="-1")
+    inspect(high.lexical_compare(base), content="1")
+    // Offset views exercise non-zero starts
+    let padded = b"\x00" + high
+    inspect(base[:].lexical_compare(padded[1:]), content="-1")
+    inspect(padded[1:].lexical_compare(base), content="1")
+  }
+}
+
+///|
 test "Bytes and BytesView Compare preserve shortlex ordering" {
   let equal_left = Bytes::makei(64, i => i.to_byte())
   let equal_right = Bytes::makei(64, i => i.to_byte())
