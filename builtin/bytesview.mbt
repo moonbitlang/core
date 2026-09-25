@@ -579,13 +579,15 @@ fn BytesView::bytesview_lexical_compare_impl(
   let min_len = if self_len < other_len { self_len } else { other_len }
   // Avoid v128 setup for the common case where long inputs differ immediately.
   if min_len >= 16 {
-    let cmp = self.unsafe_get(0).compare(other.unsafe_get(0))
-    if cmp != 0 {
-      return cmp
+    let x = self.unsafe_get(0)
+    let y = other.unsafe_get(0)
+    if x != y {
+      return if x < y { -1 } else { 1 }
     }
-    let cmp = self.unsafe_get(1).compare(other.unsafe_get(1))
-    if cmp != 0 {
-      return cmp
+    let x = self.unsafe_get(1)
+    let y = other.unsafe_get(1)
+    if x != y {
+      return if x < y { -1 } else { 1 }
     }
   }
   let self_bytes = unsafe_from_bytes(self.bytes())
@@ -607,9 +609,10 @@ fn BytesView::bytesview_lexical_compare_impl(
     i += 16
   }
   while i < min_len {
-    let cmp = self.unsafe_get(i).compare(other.unsafe_get(i))
-    if cmp != 0 {
-      return cmp
+    let x = self.unsafe_get(i)
+    let y = other.unsafe_get(i)
+    if x != y {
+      return if x < y { -1 } else { 1 }
     }
     i += 1
   }
@@ -625,10 +628,12 @@ fn BytesView::bytesview_lexical_compare_impl(
   let self_len = self.length()
   let other_len = other.length()
   let min_len = if self_len < other_len { self_len } else { other_len }
+  // Same `x != y`-first loop as `StringView::lexical_compare`
   for i in 0..<min_len {
-    let cmp = self.unsafe_get(i).compare(other.unsafe_get(i))
-    if cmp != 0 {
-      return cmp
+    let x = self.unsafe_get(i)
+    let y = other.unsafe_get(i)
+    if x != y {
+      return if x < y { -1 } else { 1 }
     }
   }
   self_len.compare(other_len)

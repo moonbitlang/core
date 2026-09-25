@@ -385,12 +385,13 @@ pub impl Compare for StringView with fn compare(self, other) {
   if physical_equal(self.str(), other.str()) && self.start() == other.start() {
     return 0
   }
+  // Same `x != y`-first loop as `StringView::lexical_compare`
   for i in 0..<self_len {
-    let cmp = self
-      .str()
-      .unsafe_get(self.start() + i)
-      .compare(other.str().unsafe_get(other.start() + i))
-    guard cmp == 0 else { return cmp }
+    let x = self.unsafe_get(i)
+    let y = other.unsafe_get(i)
+    if x != y {
+      return if x < y { -1 } else { 1 }
+    }
   }
   0
 }
@@ -448,8 +449,10 @@ pub fn StringView::lexical_compare(
   let other_len = other.length()
   let min_len = if self_len < other_len { self_len } else { other_len }
 
-  // Compare code unit by code unit up to the minimum length; direct operators
-  // instead of the `Compare` impl keep the loop free of per-unit call overhead
+  // Compare code unit by code unit up to the minimum length. Test `x != y` and
+  // order only on a mismatch: `x.compare(y) != 0` would compute the -1/0/1
+  // result on every iteration, and the backends do not fold it back into
+  // `x != y`.
   for i in 0..<min_len {
     let x = self.unsafe_get(i)
     let y = other.unsafe_get(i)
@@ -522,11 +525,10 @@ pub fn StringView::compare_ignore_ascii_case(
   let other_len = other.length()
   let min_len = if self_len < other_len { self_len } else { other_len }
   for i in 0..<min_len {
-    let a = ascii_fold_lower_u16(self.str().unsafe_get(self.start() + i))
-    let b = ascii_fold_lower_u16(other.str().unsafe_get(other.start() + i))
-    let cmp = a.compare(b)
-    if cmp != 0 {
-      return cmp
+    let a = ascii_fold_lower_u16(self.unsafe_get(i))
+    let b = ascii_fold_lower_u16(other.unsafe_get(i))
+    if a != b {
+      return if a < b { -1 } else { 1 }
     }
   }
   self_len.compare(other_len)
