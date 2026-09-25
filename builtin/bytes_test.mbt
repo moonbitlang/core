@@ -485,26 +485,26 @@ test "Bytes has_prefix/has_suffix/chop" {
   inspect(view.has_prefix(b"el"), content="true")
   inspect(view.has_suffix(b"ll"), content="true")
   inspect(view.has_prefix(b"ll"), content="false")
-  debug_inspect(view.chop_prefix(b"el"), content="Some(<BytesView: [0x6c]>)")
-  debug_inspect(view.chop_suffix(b"ll"), content="Some(<BytesView: [0x65]>)")
+  debug_inspect(view.strip_prefix(b"el"), content="Some(<BytesView: [0x6c]>)")
+  debug_inspect(view.strip_suffix(b"ll"), content="Some(<BytesView: [0x65]>)")
   debug_inspect(
-    view.chop_prefix(b""),
+    view.strip_prefix(b""),
     content="Some(<BytesView: [0x65, 0x6c, 0x6c]>)",
   )
   debug_inspect(
-    view.chop_suffix(b""),
+    view.strip_suffix(b""),
     content="Some(<BytesView: [0x65, 0x6c, 0x6c]>)",
   )
   debug_inspect(
-    bytes.chop_prefix(b"he"),
+    bytes.strip_prefix(b"he"),
     content="Some(<BytesView: [0x6c, 0x6c, 0x6f]>)",
   )
   debug_inspect(
-    bytes.chop_suffix(b"lo"),
+    bytes.strip_suffix(b"lo"),
     content="Some(<BytesView: [0x68, 0x65, 0x6c]>)",
   )
-  debug_inspect(bytes.chop_prefix(b"zz"), content="None")
-  debug_inspect(bytes.chop_suffix(b"zz"), content="None")
+  debug_inspect(bytes.strip_prefix(b"zz"), content="None")
+  debug_inspect(bytes.strip_suffix(b"zz"), content="None")
 }
 
 ///|

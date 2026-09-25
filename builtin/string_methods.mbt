@@ -295,7 +295,7 @@ test "StringView has_prefix and has_suffix" {
 ///   assert_true("hello".strip_suffix("hello") == Some(""))
 /// }
 /// ```
-#alias(chop_suffix)
+#alias(chop_suffix, deprecated="Use `strip_suffix` instead")
 pub fn String::strip_suffix(self : String, suffix : StringView) -> StringView? {
   self[:].strip_suffix(suffix)
 }
@@ -340,7 +340,7 @@ test "strip_suffix" {
 ///   assert_true("hello".strip_prefix("hello") == Some(""))
 /// }
 /// ```
-#alias(chop_prefix)
+#alias(chop_prefix, deprecated="Use `strip_prefix` instead")
 pub fn String::strip_prefix(self : String, prefix : StringView) -> StringView? {
   self[:].strip_prefix(prefix)
 }
@@ -362,7 +362,7 @@ pub fn String::strip_prefix(self : String, prefix : StringView) -> StringView? {
 ///   assert_true(view.strip_prefix("hello world") == Some(""))
 /// }
 /// ```
-#alias(chop_prefix)
+#alias(chop_prefix, deprecated="Use `strip_prefix` instead")
 pub fn StringView::strip_prefix(
   self : StringView,
   prefix : StringView,
@@ -392,7 +392,7 @@ pub fn StringView::strip_prefix(
 ///   assert_true(view.strip_suffix("hello world") == Some(""))
 /// }
 /// ```
-#alias(chop_suffix)
+#alias(chop_suffix, deprecated="Use `strip_suffix` instead")
 pub fn StringView::strip_suffix(
   self : StringView,
   suffix : StringView,
