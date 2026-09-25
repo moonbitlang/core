@@ -79,7 +79,10 @@ test "find" {
 /// of the first character that satisfies the given predicate. If no such
 /// character is found, it returns None.
 #locals(pred)
-pub fn StringView::find_by(self : StringView, pred : (Char) -> Bool) -> Int? {
+pub fn StringView::find_by(
+  self : StringView,
+  pred : (Char) -> Bool raise?,
+) -> Int? raise? {
   for c in self; offset = 0 {
     if pred(c) {
       break Some(offset)
@@ -94,7 +97,10 @@ pub fn StringView::find_by(self : StringView, pred : (Char) -> Bool) -> Int? {
 /// Returns the UTF-16 code-unit offset, relative to the beginning of this
 /// string, of the first character that satisfies the given predicate. If no
 /// such character is found, it returns None.
-pub fn String::find_by(self : String, pred : (Char) -> Bool) -> Int? {
+pub fn String::find_by(
+  self : String,
+  pred : (Char) -> Bool raise?,
+) -> Int? raise? {
   self[:].find_by(pred)
 }
 

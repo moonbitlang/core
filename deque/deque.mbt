@@ -2286,8 +2286,8 @@ test "weird behavior after drain" {
 #locals(cmp)
 pub fn[A] Deque::binary_search_by(
   self : Deque[A],
-  cmp : (A) -> Int,
-) -> Result[Int, Int] {
+  cmp : (A) -> Int raise?,
+) -> Result[Int, Int] raise? {
   let len = self.len
 
   // Functional loop with two evolving bounds `i` (inclusive) and `j` (exclusive).

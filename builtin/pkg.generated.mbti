@@ -288,8 +288,8 @@ pub fn Hasher::finalize(Self) -> Int
 #alias(Iterator, deprecated)
 type Iter[X]
 pub fn[T] Iter::add(Self[T], Self[T]) -> Self[T]
-pub fn[X] Iter::all(Self[X], (X) -> Bool) -> Bool
-pub fn[X] Iter::any(Self[X], (X) -> Bool) -> Bool
+pub fn[X] Iter::all(Self[X], (X) -> Bool raise?) -> Bool raise?
+pub fn[X] Iter::any(Self[X], (X) -> Bool raise?) -> Bool raise?
 #alias("_[_:_]")
 #alias(sub, deprecated)
 #alias(view, deprecated)
@@ -298,7 +298,7 @@ pub fn[X] Iter::concat(Self[X], Self[X]) -> Self[X]
 pub fn[X : Eq] Iter::contains(Self[X], X) -> Bool
 #alias(length)
 pub fn[X] Iter::count(Self[X]) -> Int
-pub fn[X] Iter::count_if(Self[X], (X) -> Bool) -> Int
+pub fn[X] Iter::count_if(Self[X], (X) -> Bool raise?) -> Int raise?
 pub fn[X] Iter::drop(Self[X], Int) -> Self[X]
 pub fn[X] Iter::drop_while(Self[X], (X) -> Bool) -> Self[X]
 pub fn[X] Iter::each(Self[X], (X) -> Unit raise?) -> Unit raise?
@@ -306,7 +306,7 @@ pub fn[X] Iter::eachi(Self[X], (Int, X) -> Unit raise?) -> Unit raise?
 pub fn[X] Iter::empty() -> Self[X]
 pub fn[X] Iter::filter(Self[X], (X) -> Bool) -> Self[X]
 pub fn[X, Y] Iter::filter_map(Self[X], (X) -> Y?) -> Self[Y]
-pub fn[X] Iter::find_first(Self[X], (X) -> Bool) -> X?
+pub fn[X] Iter::find_first(Self[X], (X) -> Bool raise?) -> X? raise?
 pub fn[X, Y] Iter::flat_map(Self[X], (X) -> Self[Y]) -> Self[Y]
 pub fn[X] Iter::flatten(Self[Self[X]]) -> Self[X]
 pub fn[X, R] Iter::fold(Self[X], init~ : R, (R, X) -> R raise?) -> R raise?
@@ -345,7 +345,7 @@ pub impl[X : ToJson] ToJson for Iter[X]
 #alias(Iterator2, deprecated)
 pub(all) struct Iter2[X, Y](Iter[(X, Y)])
 pub fn[X, Y] Iter2::concat(Self[X, Y], Self[X, Y]) -> Self[X, Y]
-pub fn[X, Y] Iter2::each(Self[X, Y], (X, Y) -> Unit) -> Unit
+pub fn[X, Y] Iter2::each(Self[X, Y], (X, Y) -> Unit raise?) -> Unit raise?
 #alias(iterator)
 pub fn[X, Y] Iter2::iter(Self[X, Y]) -> Iter[(X, Y)]
 #alias(iterator2)
@@ -869,7 +869,7 @@ pub fn String::escape(String, quote? : Bool) -> String
 #alias(sub, deprecated)
 pub fn String::exact_view(String, start? : Int, end? : Int) -> StringView
 pub fn String::find(String, StringView) -> Int?
-pub fn String::find_by(String, (Char) -> Bool) -> Int?
+pub fn String::find_by(String, (Char) -> Bool raise?) -> Int? raise?
 pub fn[A] String::fold(String, init~ : A, (A, Char) -> A raise?) -> A raise?
 pub fn String::from_array(ArrayView[Char]) -> String
 #alias(from_iterator, deprecated)
@@ -1237,7 +1237,7 @@ pub fn StringView::escape(Self, quote? : Bool) -> Self
 #alias(sub, deprecated)
 pub fn StringView::exact_view(Self, start? : Int, end? : Int) -> Self
 pub fn StringView::find(Self, Self) -> Int?
-pub fn StringView::find_by(Self, (Char) -> Bool) -> Int?
+pub fn StringView::find_by(Self, (Char) -> Bool raise?) -> Int? raise?
 pub fn[A] StringView::fold(Self, init~ : A, (A, Char) -> A raise?) -> A raise?
 pub fn StringView::from_array(ArrayView[Char]) -> Self
 #alias(from_iterator, deprecated)
