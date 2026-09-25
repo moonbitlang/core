@@ -966,23 +966,6 @@ pub fn[T] Option::unwrap_or_else(T?, () -> T raise?) -> T raise?
 #alias(or_error, deprecated)
 pub fn[T, Err : Error] Option::unwrap_or_error(T?, Err) -> T raise Err
 
-pub fn[T, E, U] Result::bind(Self[T, E], (T) -> Self[U, E] raise?) -> Self[U, E] raise?
-pub fn[T : Compare, E : Compare] Result::compare(Self[T, E], Self[T, E]) -> Int
-pub fn[T : Eq, E : Eq] Result::equal(Self[T, E], Self[T, E]) -> Bool
-pub fn[T, E] Result::flatten(Self[Self[T, E], E]) -> Self[T, E]
-pub fn[T : Hash, E : Hash] Result::hash(Self[T, E]) -> Int
-pub fn[T, E, U] Result::map(Self[T, E], (T) -> U raise?) -> Self[U, E] raise?
-pub fn[T, E, F] Result::map_err(Self[T, E], (E) -> F raise?) -> Self[T, F] raise?
-pub fn[T, E] Result::to_option(Self[T, E]) -> T?
-pub fn[T, E] Result::unwrap(Self[T, E]) -> T
-pub fn[T, E] Result::unwrap_err(Self[T, E]) -> E
-#alias(or, deprecated)
-pub fn[T, E] Result::unwrap_or(Self[T, E], T) -> T
-pub fn[T : Default, E] Result::unwrap_or_default(Self[T, E]) -> T
-#alias(or_else, deprecated)
-pub fn[T, E] Result::unwrap_or_else(Self[T, E], () -> T raise?) -> T raise?
-pub fn[T, E : Error] Result::unwrap_or_error(Self[T, E]) -> T raise E
-
 pub fn[T] FixedArray::add(Self[T], Self[T]) -> Self[T]
 #alias(every)
 pub fn[T] FixedArray::all(Self[T], (T) -> Bool raise?) -> Bool raise?
@@ -1370,7 +1353,6 @@ pub impl Compare for UInt64
 pub impl Compare for Double
 pub impl Compare for String
 pub impl[X : Compare] Compare for X?
-pub impl[T : Compare, E : Compare] Compare for Result[T, E]
 pub impl[T : Compare] Compare for FixedArray[T]
 pub impl[T : Compare] Compare for ReadOnlyArray[T]
 pub impl Compare for Bytes
@@ -1438,7 +1420,6 @@ pub impl Eq for UInt64
 pub impl Eq for Double
 pub impl Eq for String
 pub impl[X : Eq] Eq for X?
-pub impl[T : Eq, E : Eq] Eq for Result[T, E]
 pub impl[T : Eq] Eq for FixedArray[T]
 pub impl[T : Eq] Eq for ReadOnlyArray[T]
 pub impl Eq for Bytes
@@ -1476,7 +1457,6 @@ pub impl Hash for UInt64
 pub impl Hash for Double
 pub impl Hash for String
 pub impl[X : Hash] Hash for X?
-pub impl[T : Hash, E : Hash] Hash for Result[T, E]
 pub impl[T : Hash] Hash for FixedArray[T]
 pub impl[T : Hash] Hash for ReadOnlyArray[T]
 pub impl Hash for Bytes
@@ -1559,8 +1539,6 @@ pub impl Show for Double
 pub impl Show for String
 #deprecated
 pub impl[X : Show] Show for X?
-#deprecated
-pub impl[T : Show, E : Show] Show for Result[T, E]
 #deprecated
 pub impl[X : Show] Show for FixedArray[X]
 #deprecated

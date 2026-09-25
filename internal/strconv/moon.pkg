@@ -3,6 +3,7 @@ import {
   "moonbitlang/core/double",
   "moonbitlang/core/error",
   "moonbitlang/core/uint64",
+  "moonbitlang/core/result",
   "moonbitlang/core/test",
 }
 

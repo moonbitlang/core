@@ -57,3 +57,59 @@ test "wrap2 with error result" {
     _ => fail("expected error")
   }
 }
+
+///|
+test "Result equality with Ok" {
+  let result1 : Result[Int, String] = Ok(1)
+  let result2 = Result::Ok(1)
+  let result3 = Result::Ok(2)
+  @test.assert_eq(result1, result2)
+  @test.assert_not_eq(result1, result3)
+}
+
+///|
+test "Result equality with Err" {
+  let result1 : Result[Int, String] = Err("error")
+  let result2 = Result::Err("error")
+  let result3 = Result::Err("different error")
+  @test.assert_eq(result1, result2)
+  @test.assert_not_eq(result1, result3)
+}
+
+///|
+test "Result equality mixed" {
+  let okResult = Result::Ok(1)
+  let errResult = Result::Err("error")
+  @test.assert_not_eq(okResult, errResult)
+}
+
+///|
+test "Result bind Err" {
+  let err : Result[Int, String] = Err("fail")
+  let res = err.bind(x => Ok(x + 1))
+  @test.assert_eq(res, Err("fail"))
+}
+
+///|
+test "Result unwrap Ok" {
+  let ok : Result[Int, String] = Ok(5)
+  inspect(ok.unwrap(), content="5")
+}
+
+///|
+test "panic Result::unwrap on Err" {
+  let err : Result[Int, String] = Err("boom")
+  err.unwrap() |> ignore
+}
+
+///|
+test "panic Result::unwrap_err on Ok" {
+  let ok : Result[Int, String] = Ok(1)
+  ok.unwrap_err() |> ignore
+}
+
+///|
+test "Result unwrap_or_error Ok" {
+  let ok : Result[Int, Failure] = Ok(3)
+  inspect(ok.unwrap_or_error(), content="3")
+}
