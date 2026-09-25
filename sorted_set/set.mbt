@@ -484,7 +484,8 @@ pub fn[V : Compare] SortedSet::intersection(
 
 ///|
 /// Returns `true` if every element of `self` is also in `src`.
-pub fn[V : Compare] SortedSet::subset(
+#alias(subset, deprecated="Use `is_subset` instead")
+pub fn[V : Compare] SortedSet::is_subset(
   self : SortedSet[V],
   src : SortedSet[V],
 ) -> Bool {
@@ -493,11 +494,21 @@ pub fn[V : Compare] SortedSet::subset(
 
 ///|
 /// Returns `true` if the two sets have no elements in common.
-pub fn[V : Compare] SortedSet::disjoint(
+#alias(disjoint, deprecated="Use `is_disjoint` instead")
+pub fn[V : Compare] SortedSet::is_disjoint(
   self : SortedSet[V],
   src : SortedSet[V],
 ) -> Bool {
   self.iter().all(x => !src.contains(x))
+}
+
+///|
+/// Returns `true` if every element of `src` is also in `self`.
+pub fn[V : Compare] SortedSet::is_superset(
+  self : SortedSet[V],
+  src : SortedSet[V],
+) -> Bool {
+  src.is_subset(self)
 }
 
 // General collection operations

@@ -215,20 +215,23 @@ test "quickcheck: subset and disjoint agree with the model and each other" {
       let (b, model_b) = build(ys)
       let model_subset = model_a.iter().all(x => model_b.contains(x))
       let model_disjoint = model_a.iter().all(x => !model_b.contains(x))
-      if a.subset(b) != model_subset || a.disjoint(b) != model_disjoint {
+      if a.is_subset(b) != model_subset || a.is_disjoint(b) != model_disjoint {
         return false
       }
       // Mutual inclusion is exactly equality.
-      if (a.subset(b) && b.subset(a)) != (a == b) {
+      if (a.is_subset(b) && b.is_subset(a)) != (a == b) {
+        return false
+      }
+      if a.is_superset(b) != b.is_subset(a) {
         return false
       }
       // Derived containment facts.
-      a.difference(b).disjoint(b) &&
-      a.intersection(b).subset(a) &&
-      a.intersection(b).subset(b) &&
-      a.subset(a.union(b)) &&
-      b.subset(a.union(b)) &&
-      a.symmetric_difference(b).disjoint(a.intersection(b))
+      a.difference(b).is_disjoint(b) &&
+      a.intersection(b).is_subset(a) &&
+      a.intersection(b).is_subset(b) &&
+      a.is_subset(a.union(b)) &&
+      b.is_subset(a.union(b)) &&
+      a.symmetric_difference(b).is_disjoint(a.intersection(b))
     },
     count=200,
   )
