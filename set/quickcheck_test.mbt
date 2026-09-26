@@ -239,3 +239,35 @@ test "quickcheck: insertion order survives repeated rehashing" {
     set.capacity() >= 512 && agrees_with_model(set, model)
   })
 }
+
+///|
+test "quickcheck: set algebra keeps insertion order and matches a model" {
+  @quickcheck.check((input : (Array[Int], Array[Int])) => {
+    let (xs, ys) = input
+    // String elements, so the probes reuse non-trivial stored hashes.
+    let dedup = (zs : Array[Int]) => {
+      let out : Array[String] = []
+      for z in zs {
+        let k = "k\{z % 17}"
+        if !out.contains(k) {
+          out.push(k)
+        }
+      }
+      out
+    }
+    let xs = dedup(xs)
+    let ys = dedup(ys)
+    let a = @set.Set(xs)
+    let b = @set.Set(ys)
+    let only_x = xs.filter(x => !ys.contains(x))
+    let only_y = ys.filter(y => !xs.contains(y))
+    a.union(b).to_array() == xs + only_y &&
+    a.intersection(b).to_array() == xs.filter(x => ys.contains(x)) &&
+    a.difference(b).to_array() == only_x &&
+    a.symmetric_difference(b).to_array() == only_x + only_y &&
+    a.is_subset(b) == only_x.is_empty() &&
+    a.is_superset(b) == only_y.is_empty() &&
+    a.is_disjoint(b) == xs.iter().all(x => !ys.contains(x)) &&
+    (a == b) == (only_x.is_empty() && only_y.is_empty())
+  })
+}
