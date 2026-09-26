@@ -123,7 +123,34 @@ pub fn String::unsafe_substring(
 /// comparisons (e.g. `StringView == StringView`, `StringView::has_prefix`).
 /// The function body is the fallback implementation for targets without the
 /// intrinsic.
+///
+/// Native lowers the intrinsic to `memcmp`, so the body only runs on wasm,
+/// wasm-gc and js. On wasm, ranges of at least eight code units are compared
+/// eight units at a time by `string_range_equal_simd`.
 #borrow(self, other)
+#cfg(target="wasm")
+#intrinsic("%string.unsafe_range_equal")
+fn String::unsafe_range_equal(
+  self : String,
+  self_off~ : Int,
+  other : String,
+  other_off~ : Int,
+  len~ : Int,
+) -> Bool {
+  if len >= 8 {
+    return string_range_equal_simd(self, self_off, other, other_off, len)
+  }
+  for i in 0..<len {
+    guard self.unsafe_get(self_off + i) == other.unsafe_get(other_off + i) else {
+      return false
+    }
+  }
+  true
+}
+
+///|
+#borrow(self, other)
+#cfg(not(target="wasm"))
 #intrinsic("%string.unsafe_range_equal")
 fn String::unsafe_range_equal(
   self : String,
@@ -136,6 +163,33 @@ fn String::unsafe_range_equal(
     guard self.unsafe_get(self_off + i) == other.unsafe_get(other_off + i) else {
       return false
     }
+  }
+  true
+}
+
+///|
+/// Vector body of `String::unsafe_range_equal` for `len >= 8`. It compares
+/// eight code units per step; a remainder of one to seven units is covered by
+/// one more load of the last eight units of each range, which overlaps the
+/// previous block and stays inside both ranges because `len >= 8`.
+#borrow(left, right)
+#cfg(target="wasm")
+fn string_range_equal_simd(
+  left : String,
+  left_off : Int,
+  right : String,
+  right_off : Int,
+  len : Int,
+) -> Bool {
+  for i = 0; i + 8 <= len; i = i + 8 {
+    let a = v128_load_i16x8(left, left_off + i)
+    let b = v128_load_i16x8(right, right_off + i)
+    guard i16x8_all_true(i16x8_eq(a, b)) else { return false }
+  }
+  if (len & 7) != 0 {
+    let a = v128_load_i16x8(left, left_off + len - 8)
+    let b = v128_load_i16x8(right, right_off + len - 8)
+    return i16x8_all_true(i16x8_eq(a, b))
   }
   true
 }

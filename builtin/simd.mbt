@@ -205,6 +205,24 @@ fn i16x8_bitmask(value : V128) -> Int {
 }
 
 ///|
+// Only the wasm bodies of the `unsafe_range_equal` intrinsics use the
+// `all_true` reductions; native lowers those intrinsics to `memcmp`.
+#cfg(target="wasm")
+#intrinsic("%v128.i8x16_all_true")
+fn i8x16_all_true(value : V128) -> Bool {
+  u64_byte_eq_mask(v128_lo(value), 0) == 0 &&
+  u64_byte_eq_mask(v128_hi(value), 0) == 0
+}
+
+///|
+#cfg(target="wasm")
+#intrinsic("%v128.i16x8_all_true")
+fn i16x8_all_true(value : V128) -> Bool {
+  u64_u16_eq_mask(v128_lo(value), 0) == 0 &&
+  u64_u16_eq_mask(v128_hi(value), 0) == 0
+}
+
+///|
 // Per-byte equality mask over the eight bytes of a `UInt64`: each byte becomes
 // `0xFF` when the operands' bytes match, `0x00` otherwise.
 #cfg(any(target="native", target="wasm"))
