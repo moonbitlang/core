@@ -58,6 +58,7 @@ fn code_point_of_surrogate_pair(leading : Int, trailing : Int) -> Char {
 /// } // 5 ASCII chars + 1 surrogate pair (2 code units)
 /// ```
 #alias(codepoint_length, deprecated)
+#cfg(not(any(target="native", target="wasm")))
 pub fn String::char_length(
   self : String,
   start_offset? : Int = 0,
@@ -68,6 +69,55 @@ pub fn String::char_length(
     start_offset <= end_offset &&
     end_offset <= self.length() else {
     abort("invalid start or end index for String::codepoint_length")
+  }
+  for utf16_index = start_offset, char_count = 0
+      utf16_index < end_offset
+      utf16_index = utf16_index + 1, char_count = char_count + 1 {
+    let c1 = self.unsafe_get(utf16_index)
+    if c1.is_leading_surrogate() && utf16_index + 1 < end_offset {
+      let c2 = self.unsafe_get(utf16_index + 1)
+      if c2.is_trailing_surrogate() {
+        continue utf16_index + 2, char_count + 1
+      } else {
+        abort("invalid surrogate pair")
+      }
+    }
+  } nobreak {
+    char_count
+  }
+}
+
+///|
+/// Returns the number of Unicode code points (characters) in the string.
+///
+/// This method counts actual Unicode characters, properly handling surrogate pairs
+/// that represent single characters like emojis. For the raw UTF-16 code unit count,
+/// use `length()` instead.
+///
+/// # Examples
+///
+/// ```mbt check
+/// test {
+///   let s = "Hello🤣"
+///   inspect(s.char_length(), content="6") // 6 actual characters
+///   inspect(s.length(), content="7")
+/// } // 5 ASCII chars + 1 surrogate pair (2 code units)
+/// ```
+#alias(codepoint_length, deprecated)
+#cfg(any(target="native", target="wasm"))
+pub fn String::char_length(
+  self : String,
+  start_offset? : Int = 0,
+  end_offset? : Int,
+) -> Int {
+  let end_offset = if end_offset is Some(o) { o } else { self.length() }
+  guard start_offset >= 0 &&
+    start_offset <= end_offset &&
+    end_offset <= self.length() else {
+    abort("invalid start or end index for String::codepoint_length")
+  }
+  if end_offset - start_offset >= CHAR_LENGTH_SIMD_THRESHOLD {
+    return string_char_length_simd(self, start_offset, end_offset)
   }
   for utf16_index = start_offset, char_count = 0
       utf16_index < end_offset
@@ -489,6 +539,7 @@ pub fn String::offset_of_nth_char(
 /// Test if the length of the string is equal to the given length.
 ///
 /// This has O(n) complexity where n is the length in the parameter.
+#cfg(not(any(target="native", target="wasm")))
 pub fn String::char_length_eq(
   self : String,
   len : Int,
@@ -514,9 +565,54 @@ pub fn String::char_length_eq(
 }
 
 ///|
+/// Test if the length of the string is equal to the given length.
+///
+/// This has O(n) complexity where n is the length in the parameter.
+#cfg(any(target="native", target="wasm"))
+pub fn String::char_length_eq(
+  self : String,
+  len : Int,
+  start_offset? : Int = 0,
+  end_offset? : Int,
+) -> Bool {
+  let end_offset = if end_offset is Some(o) { o } else { self.length() }
+  // The offsets are not validated, so only a range inside `self` takes the
+  // SIMD path; any other range runs the scalar walk below, as before.
+  if len >= CHAR_LENGTH_SIMD_THRESHOLD &&
+    end_offset - start_offset >= CHAR_LENGTH_SIMD_THRESHOLD &&
+    start_offset >= 0 &&
+    start_offset <= end_offset &&
+    end_offset <= self.length() {
+    return string_char_length_cmp_simd(
+      self,
+      len,
+      start_offset,
+      end_offset,
+      exact=true,
+    )
+  }
+  for index = start_offset, count = 0
+      index < end_offset && count < len
+      index = index + 1, count = count + 1 {
+    let c1 = self.unsafe_get(index)
+    if c1.is_leading_surrogate() && index + 1 < end_offset {
+      let c2 = self.unsafe_get(index + 1)
+      if c2.is_trailing_surrogate() {
+        continue index + 2, count + 1
+      } else {
+        abort("invalid surrogate pair")
+      }
+    }
+  } nobreak {
+    count == len && index == end_offset
+  }
+}
+
+///|
 /// Test if the length of the string is greater than or equal to the given length.
 ///
 /// This has O(n) complexity where n is the length in the parameter.
+#cfg(not(any(target="native", target="wasm")))
 pub fn String::char_length_ge(
   self : String,
   len : Int,
@@ -524,6 +620,50 @@ pub fn String::char_length_ge(
   end_offset? : Int,
 ) -> Bool {
   let end_offset = if end_offset is Some(o) { o } else { self.length() }
+  for index = start_offset, count = 0
+      index < end_offset && count < len
+      index = index + 1, count = count + 1 {
+    let c1 = self.unsafe_get(index)
+    if c1.is_leading_surrogate() && index + 1 < end_offset {
+      let c2 = self.unsafe_get(index + 1)
+      if c2.is_trailing_surrogate() {
+        continue index + 2, count + 1
+      } else {
+        abort("invalid surrogate pair")
+      }
+    }
+  } nobreak {
+    count >= len
+  }
+}
+
+///|
+/// Test if the length of the string is greater than or equal to the given length.
+///
+/// This has O(n) complexity where n is the length in the parameter.
+#cfg(any(target="native", target="wasm"))
+pub fn String::char_length_ge(
+  self : String,
+  len : Int,
+  start_offset? : Int = 0,
+  end_offset? : Int,
+) -> Bool {
+  let end_offset = if end_offset is Some(o) { o } else { self.length() }
+  // The offsets are not validated, so only a range inside `self` takes the
+  // SIMD path; any other range runs the scalar walk below, as before.
+  if len >= CHAR_LENGTH_SIMD_THRESHOLD &&
+    end_offset - start_offset >= CHAR_LENGTH_SIMD_THRESHOLD &&
+    start_offset >= 0 &&
+    start_offset <= end_offset &&
+    end_offset <= self.length() {
+    return string_char_length_cmp_simd(
+      self,
+      len,
+      start_offset,
+      end_offset,
+      exact=false,
+    )
+  }
   for index = start_offset, count = 0
       index < end_offset && count < len
       index = index + 1, count = count + 1 {
