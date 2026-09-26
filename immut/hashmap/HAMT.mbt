@@ -477,11 +477,13 @@ pub fn[K : Eq + Hash, V] HashMap::remove(
   self : HashMap[K, V],
   key : K,
 ) -> HashMap[K, V] {
-  {
-    data: match self.data {
-      None => None
-      Some(node) => node.remove_with_path(key, @path.of(key))
-    },
+  match self.data {
+    None => self
+    Some(node) =>
+      match node.remove_with_path(key, @path.of(key)) {
+        Some(new_node) if physical_equal(new_node, node) => self
+        new_data => { data: new_data, }
+      }
   }
 }
 
@@ -521,6 +523,10 @@ fn[K : Eq, V] Node::remove_with_path(
         None => Some(self)
         Some(child) => {
           let new_child = child.remove_with_path(key, path.next())
+          // The key was absent: keep this node rather than copying the path.
+          if new_child is Some(nc) && physical_equal(nc, child) {
+            return Some(self)
+          }
           let new_children = match (children.length(), new_child) {
             (1, None) => return None
             (_, None) => children.remove(idx)
@@ -566,6 +572,10 @@ pub fn[K : Eq, V] HashMap::union(
   other : HashMap[K, V],
 ) -> HashMap[K, V] {
   fn go(node1 : Node[_], node2) {
+    // A subtree shared by both maps is its own union (same keys and values).
+    if physical_equal(node1, node2) {
+      return node2
+    }
     match (node1, node2) {
       (_, Flat(key2, value2, path2)) => node1.add_with_path(key2, value2, path2)
       (Flat(key1, value1, path1), _) =>
@@ -665,6 +675,10 @@ pub fn[K : Eq, V] HashMap::intersection(
   other : HashMap[K, V],
 ) -> HashMap[K, V] {
   fn go(node1 : Node[_], node2) {
+    // A subtree shared by both maps is its own intersection.
+    if physical_equal(node1, node2) {
+      return Some(node2)
+    }
     match (node1, node2) {
       (_, Flat(key2, _, path2)) =>
         match node1.get_with_path(key2, path2) {
@@ -772,6 +786,10 @@ pub fn[K : Eq, V] HashMap::difference(
   other : HashMap[K, V],
 ) -> HashMap[K, V] {
   fn go(node1 : Node[_], node2) {
+    // A subtree shared by both maps contributes nothing to the difference.
+    if physical_equal(node1, node2) {
+      return None
+    }
     match (node1, node2) {
       (node, Flat(k, _, path)) => node.remove_with_path(k, path)
       (Flat(key, _, path), _) =>
