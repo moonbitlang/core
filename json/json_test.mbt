@@ -627,3 +627,20 @@ fn[A : @json.FromJson] test_json_export(x : A) -> A {
 test {
   let _ : Int = test_json_export(42)
 }
+
+///|
+test "json_inspect reports locations when the check fails" {
+  let msg = try @json.json_inspect(42, content=41) catch {
+    InspectError(msg) => msg
+  } noraise {
+    _ => "no error"
+  }
+  inspect(msg.has_prefix("@EXPECT_FAILED {\"loc\": "), content="true")
+  inspect(msg.contains("\"args_loc\": "), content="true")
+  inspect(msg.contains("json_test.mbt"), content="true")
+  inspect(msg.contains("\"mode\": \"json\""), content="true")
+  inspect(
+    msg.contains("\"expect\": \"41\", \"actual\": \"42\""),
+    content="true",
+  )
+}
