@@ -26,26 +26,54 @@
 fn adversarial_string(seeds : Array[Int], allow_surrogates~ : Bool) -> String {
   let buf = StringBuilder(size_hint=seeds.length())
   for seed in seeds {
-    let code : UInt16 = match seed & 0xF {
-      0 => '"'
-      1 => '\\'
-      2 => '/'
-      3 => '\n'
-      4 => 0x1F
-      5 => ' '
-      6 => 0x0C
-      7 => 0xD800
-      8 => 0xDFFF
-      9 => 0xFFFF
-      10 => 'a'
-      _ => ((seed >> 4) & 0xFFFF).to_uint16()
-    }
+    let code = adversarial_unit(seed)
     let code = if !allow_surrogates && code is (0xD800..=0xDFFF) {
       code ^ 0x2000
     } else {
       code
     }
     buf.write_char(code.unsafe_to_char())
+  }
+  buf.to_string()
+}
+
+///|
+/// The code unit `adversarial_string` derives from `seed`.
+fn adversarial_unit(seed : Int) -> UInt16 {
+  match seed & 0xF {
+    0 => '"'
+    1 => '\\'
+    2 => '/'
+    3 => '\n'
+    4 => 0x1F
+    5 => ' '
+    6 => 0x0C
+    7 => 0xD800
+    8 => 0xDFFF
+    9 => 0xFFFF
+    10 => 'a'
+    _ => ((seed >> 4) & 0xFFFF).to_uint16()
+  }
+}
+
+///|
+/// Like `adversarial_string`, but valid UTF-16: every surrogate the seeds pick
+/// is emitted as a complete pair, so surrogate pairs sit next to escapes
+/// without ever being split.
+fn valid_adversarial_string(seeds : Array[Int]) -> String {
+  let buf = StringBuilder(size_hint=seeds.length() * 2)
+  for seed in seeds {
+    let code = adversarial_unit(seed).to_int()
+    let char = if code is (0xD800..=0xDBFF) {
+      // The supplementary character whose leading surrogate is `code`.
+      0x10000 + ((code - 0xD800) << 10)
+    } else if code is (0xDC00..=0xDFFF) {
+      // The supplementary character whose trailing surrogate is `code`.
+      0x10000 + (code - 0xDC00)
+    } else {
+      code
+    }
+    buf.write_char(char.unsafe_to_char())
   }
   buf.to_string()
 }
@@ -103,7 +131,7 @@ test "quickcheck: write_escaped matches the per-code-unit model" {
   }
   @quickcheck.check(count=300, (input : (Array[Int], Bool)) => {
     let (seeds, escape_slash) = input
-    let str = adversarial_string(seeds, allow_surrogates=true)
+    let str = valid_adversarial_string(seeds)
     guard actual(str, escape_slash) == model_escape(str, escape_slash) else {
       return false
     }
