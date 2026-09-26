@@ -43,3 +43,10 @@ test "bench Json::stringify strings quotes controls n=2048" (it : @bench.T) {
   let json = make_stringify_escape_bench_array("moonbit\"core\\json\nvalue")
   it.bench(fn() { it.keep(json.stringify().length()) })
 }
+
+///|
+test "bench Json::stringify 2KB prose one newline n=64" (it : @bench.T) {
+  let line = "The quick brown fox jumps over the lazy dog. ".repeat(45)
+  let json = Json(Array::makei(64, i => "\{i}\n" + line))
+  it.bench(fn() { it.keep(json.stringify().length()) })
+}
