@@ -832,3 +832,40 @@ test "remove_and_get returns the removed value and keeps the rest intact" {
   let empty : @hashmap.HashMap[String, Int] = HashMap([])
   assert_eq(empty.remove_and_get("x"), None)
 }
+
+///|
+test "retain visits each entry once when a cluster wraps around the table" {
+  let m : @hashmap.HashMap[Int, Int] = HashMap([])
+  let mask = m.capacity() - 1
+  // Two keys whose home is the last slot: the second one wraps to slot 0.
+  let keys = []
+  for k = 0; keys.length() < 2; k = k + 1 {
+    if (Hash::hash(k) & mask) == mask {
+      keys.push(k)
+    }
+  }
+  m.set(keys[0], 0)
+  m.set(keys[1], 1)
+  let calls = @hashmap.HashMap([])
+  m.retain((k, _) => {
+    calls.set(k, calls.get_or_default(k, 0) + 1)
+    k != keys[0]
+  })
+  @debug.debug_inspect(calls.get(keys[0]), content="Some(1)")
+  @debug.debug_inspect(calls.get(keys[1]), content="Some(1)")
+  @debug.debug_inspect(m.to_array(), content="[(\{keys[1]}, 1)]")
+}
+
+///|
+test "retain visits every entry exactly once" {
+  let m = @hashmap.HashMap([ for i in 0..<1000 => (i, i) ])
+  let seen = @hashmap.HashMap([])
+  m.retain((k, _) => {
+    guard !seen.contains(k) else { abort("visited twice: \{k}") }
+    seen.set(k, ())
+    k % 3 == 0
+  })
+  inspect(seen.length(), content="1000")
+  inspect(m.length(), content="334")
+  inspect(m.iter().all(kv => kv.0 % 3 == 0), content="true")
+}

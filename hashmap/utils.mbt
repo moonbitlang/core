@@ -418,11 +418,24 @@ pub fn[K, V] HashMap::values(self : HashMap[K, V]) -> Iter[V] {
 /// ```
 #locals(f)
 pub fn[K, V] HashMap::retain(self : HashMap[K, V], f : (K, V) -> Bool) -> Unit {
-  let size = self.size
-  let mut j = 0
-  for i = 0; j < size; i = i + 1 {
+  guard self.size > 0 else { return }
+  // Scan the table once, starting just after an empty slot. `shift_back`
+  // moves entries back only within a cluster, and a cluster never spans an
+  // empty slot, so an entry is never shifted from an already-visited slot
+  // into one still to be visited. Starting at slot 0 instead breaks when a
+  // cluster wraps around the end of the table: removing the entry in the last
+  // slot shifts the wrapped entry from slot 0 back into it, and `f` sees that
+  // entry twice. The load factor stays below 1, so an empty slot exists.
+  let mask = self.capacity_mask
+  let start = for i = 0 {
+    if self.entries[i] is None {
+      break i
+    }
+    continue i + 1
+  }
+  for k in 1..<=mask {
+    let i = (start + k) & mask
     while self.entries[i] is Some(entry) {
-      j += 1
       if f(entry.key, entry.value) {
         break
       } else {

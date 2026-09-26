@@ -686,3 +686,43 @@ test "union_in_place with itself is a no-op" {
   assert_eq(sorted_union_elements(s), [0, 1, 2, 3, 4, 5])
   assert_eq(s.capacity(), capacity)
 }
+
+///|
+test "retain visits each element once when a cluster wraps around the table" {
+  let s : @hashset.HashSet[Int] = HashSet([])
+  let mask = s.capacity() - 1
+  // Two elements whose home is the last slot: the second one wraps to slot 0.
+  let keys = []
+  for k = 0; keys.length() < 2; k = k + 1 {
+    if (Hash::hash(k) & mask) == mask {
+      keys.push(k)
+    }
+  }
+  s.add(keys[0])
+  s.add(keys[1])
+  let calls = []
+  s.retain(k => {
+    calls.push(k)
+    k != keys[0]
+  })
+  calls.sort()
+  let expected = [keys[0], keys[1]]
+  expected.sort()
+  @debug.assert_eq(calls, expected)
+  @debug.assert_eq(s.to_array(), [keys[1]])
+}
+
+///|
+test "retain on a full cluster run keeps exactly the accepted elements" {
+  // Stress: many elements, predicate records every call.
+  let s = @hashset.HashSet([ for i in 0..<1000 => i ])
+  let seen = @hashset.HashSet([])
+  s.retain(x => {
+    guard !seen.contains(x) else { abort("visited twice: \{x}") }
+    seen.add(x)
+    x % 3 == 0
+  })
+  inspect(seen.length(), content="1000")
+  inspect(s.length(), content="334")
+  inspect(s.iter().all(x => x % 3 == 0), content="true")
+}
