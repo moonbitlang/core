@@ -410,15 +410,19 @@ fn need_escape_scalar(
   end : Int,
 ) -> Bool {
   for i in start..<end {
-    let code = str.unsafe_get(i)
-    if code == '"' ||
-      code == '\\' ||
-      code < ' ' ||
-      (escape_slash && code == '/') {
+    if needs_escape_unit(str.unsafe_get(i), escape_slash) {
       return true
     }
   }
   false
+}
+
+///|
+/// Whether the UTF-16 code unit `code` must be escaped in a JSON string:
+/// `"`, `\`, control characters, and `/` when `escape_slash` is set.
+#inline
+fn needs_escape_unit(code : UInt16, escape_slash : Bool) -> Bool {
+  code == '"' || code == '\\' || code < ' ' || (escape_slash && code == '/')
 }
 
 ///|
@@ -479,28 +483,36 @@ fn write_escaped(
     buf.write_string(str)
     return
   }
-  for code in str.code_units() {
-    match code {
-      '"' => buf.write_string("\\\"")
-      '\\' => buf.write_string("\\\\")
-      '/' =>
-        if escape_slash {
-          buf.write_string("\\/")
-        } else {
-          buf.write_char('/')
-        }
-      '\n' => buf.write_string("\\n")
-      '\r' => buf.write_string("\\r")
-      '\b' => buf.write_string("\\b")
-      '\t' => buf.write_string("\\t")
-      0x0C => buf.write_string("\\f")
-      _ =>
-        if code < ' ' {
-          buf.write_string("\\u00")
-          buf.write_string(code.to_byte().to_hex())
-        } else {
-          buf.write_char(code.unsafe_to_char())
-        }
+  // Copy each run of code units that need no escaping with one
+  // `write_view`, and write the escapes in between. Escaped code units are
+  // ASCII, so every run boundary sits next to an ASCII unit and never inside
+  // a surrogate pair of a (valid UTF-16) string.
+  for i, code in str.code_units(); run_start = 0 {
+    guard needs_escape_unit(code, escape_slash) else { continue run_start }
+    buf.write_view(str.exact_view(start=run_start, end=i))
+    write_escape(buf, code)
+    continue i + 1
+  } nobreak {
+    buf.write_view(str.exact_view(start=run_start))
+  }
+}
+
+///|
+/// Writes the JSON escape sequence for `code`, a code unit for which
+/// `needs_escape_unit` holds.
+fn write_escape(buf : StringBuilder, code : UInt16) -> Unit {
+  match code {
+    '"' => buf.write_string("\\\"")
+    '\\' => buf.write_string("\\\\")
+    '/' => buf.write_string("\\/")
+    '\n' => buf.write_string("\\n")
+    '\r' => buf.write_string("\\r")
+    '\b' => buf.write_string("\\b")
+    '\t' => buf.write_string("\\t")
+    0x0C => buf.write_string("\\f")
+    _ => {
+      buf.write_string("\\u00")
+      buf.write_string(code.to_byte().to_hex())
     }
   }
 }
