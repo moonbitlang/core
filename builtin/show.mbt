@@ -141,6 +141,8 @@ pub fn StringView::escape(
 }
 
 ///|
+// js and wasm-gc have no vector loads, so they keep the scalar loop.
+#cfg(not(any(target="native", target="wasm")))
 fn StringView::escape_to(
   self : StringView,
   logger : &Logger,
@@ -201,6 +203,116 @@ fn StringView::escape_to(
   if quote {
     logger.write_char('"')
   }
+}
+
+///|
+// Same output and `Logger` call sequence as the scalar loop above, but the
+// unescaped runs are found with `find_escape_code_unit`, eight UTF-16 code
+// units at a time for longer runs.
+//
+// Every run boundary is either an end of the view or next to an escaped
+// ASCII code unit, so the scalar loop's `self[seg:i]` never snaps a boundary
+// and the raw `make_view` below yields the same run.
+#cfg(any(target="native", target="wasm"))
+fn StringView::escape_to(
+  self : StringView,
+  logger : &Logger,
+  quote? : Bool = true,
+) -> Unit {
+  if quote {
+    logger.write_char('"')
+  }
+  let data = self.str()
+  let end = self.start() + self.length()
+  for i = self.start(), seg = self.start() {
+    let i = find_escape_code_unit(data, i, end)
+    if i > seg {
+      logger.write_view(StringView::make_view(data, seg, i))
+    }
+    guard i < end else { break }
+    let code = data.unsafe_get(i)
+    match code {
+      '"' | '\\' as c => {
+        logger.write_char('\\')
+        logger.write_char(c.unsafe_to_char())
+      }
+      '\n' => logger.write_string("\\n")
+      '\r' => logger.write_string("\\r")
+      '\b' => logger.write_string("\\b")
+      '\t' => logger.write_string("\\t")
+      code => logger <+ "\\u{\{cb => cb.write_string(code.to_byte().to_hex())}}"
+    }
+    continue i + 1, i + 1
+  }
+  if quote {
+    logger.write_char('"')
+  }
+}
+
+///|
+// Returns the index of the first code unit in `data[pos:end]` that
+// `String::escape` rewrites (a double quote, a backslash, or a control
+// character below U+0020), or `end` when there is none. The caller must
+// ensure `0 <= pos <= end <= data.length()`.
+//
+// Ranges shorter than two SIMD blocks, which include most short strings,
+// are scanned one code unit at a time. Longer ones check `pos` first, so a
+// run of consecutive escapes does not pay for a vector scan per escape.
+#cfg(any(target="native", target="wasm"))
+#inline
+fn find_escape_code_unit(data : String, pos : Int, end : Int) -> Int {
+  if end - pos < 16 {
+    find_escape_code_unit_scalar(data, pos, end)
+  } else if code_unit_needs_escape(data.unsafe_get(pos)) {
+    pos
+  } else {
+    find_escape_code_unit_simd(data, pos + 1, end)
+  }
+}
+
+///|
+#cfg(any(target="native", target="wasm"))
+#inline
+fn code_unit_needs_escape(code : UInt16) -> Bool {
+  code == '"' || code == '\\' || code < ' '
+}
+
+///|
+#cfg(any(target="native", target="wasm"))
+fn find_escape_code_unit_scalar(data : String, pos : Int, end : Int) -> Int {
+  for i in pos..<end {
+    if code_unit_needs_escape(data.unsafe_get(i)) {
+      return i
+    }
+  }
+  end
+}
+
+///|
+// `find_escape_code_unit` for any range length: scans eight code units at a
+// time, then the remaining tail one code unit at a time. Has the same
+// contract as `find_escape_code_unit`.
+#cfg(any(target="native", target="wasm"))
+fn find_escape_code_unit_simd(data : String, pos : Int, end : Int) -> Int {
+  let quote = i16x8_splat('"')
+  let backslash = i16x8_splat('\\')
+  let control_max = i16x8_splat(0x1F)
+  // `end - p` cannot overflow, unlike `p + 8` for offsets near `Int` max.
+  let tail_start = for p = pos; end - p >= 8; {
+    let block = v128_load_i16x8(data, p)
+    let escaped = v128_or(
+      i16x8_le_u(block, control_max),
+      v128_or(i16x8_eq(block, quote), i16x8_eq(block, backslash)),
+    )
+    if v128_any_true(escaped) {
+      // Lane k sets bit k, so the lowest set bit is the first match.
+      return p + i16x8_bitmask(escaped).ctz()
+    }
+    continue p + 8
+  } nobreak {
+    p
+  }
+  find_escape_code_unit_scalar(data, tail_start, end)
 }
 
 ///|
