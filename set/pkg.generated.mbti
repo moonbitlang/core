@@ -25,44 +25,44 @@ pub fn[K] Set::clear(Self[K]) -> Unit
 pub fn[K : Hash + Eq] Set::contains(Self[K], K) -> Bool
 #alias(clone, deprecated)
 pub fn[K] Set::copy(Self[K]) -> Self[K]
-pub fn[K : Hash + Eq] Set::difference(Self[K], Self[K]) -> Self[K]
+pub fn[K : Eq] Set::difference(Self[K], Self[K]) -> Self[K]
 pub fn[K] Set::each(Self[K], (K) -> Unit raise?) -> Unit raise?
 pub fn[K] Set::eachi(Self[K], (Int, K) -> Unit raise?) -> Unit raise?
-pub fn[K : Hash + Eq] Set::equal(Self[K], Self[K]) -> Bool
+pub fn[K : Eq] Set::equal(Self[K], Self[K]) -> Bool
 pub fn[K] Set::filter(Self[K], (K) -> Bool raise?) -> Self[K] raise?
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)
 #as_free_fn
 pub fn[K : Hash + Eq] Set::from_iter(Iter[K]) -> Self[K]
-pub fn[K : Hash + Eq] Set::intersection(Self[K], Self[K]) -> Self[K]
-pub fn[K : Hash + Eq] Set::is_disjoint(Self[K], Self[K]) -> Bool
+pub fn[K : Eq] Set::intersection(Self[K], Self[K]) -> Self[K]
+pub fn[K : Eq] Set::is_disjoint(Self[K], Self[K]) -> Bool
 pub fn[K] Set::is_empty(Self[K]) -> Bool
-pub fn[K : Hash + Eq] Set::is_subset(Self[K], Self[K]) -> Bool
-pub fn[K : Hash + Eq] Set::is_superset(Self[K], Self[K]) -> Bool
+pub fn[K : Eq] Set::is_subset(Self[K], Self[K]) -> Bool
+pub fn[K : Eq] Set::is_superset(Self[K], Self[K]) -> Bool
 #alias(iterator, deprecated)
 pub fn[K] Set::iter(Self[K]) -> Iter[K]
-pub fn[K : Hash + Eq] Set::land(Self[K], Self[K]) -> Self[K]
+pub fn[K : Eq] Set::land(Self[K], Self[K]) -> Self[K]
 #alias(size, deprecated)
 pub fn[K] Set::length(Self[K]) -> Int
-pub fn[K : Hash + Eq] Set::lor(Self[K], Self[K]) -> Self[K]
-pub fn[K : Hash + Eq] Set::lxor(Self[K], Self[K]) -> Self[K]
+pub fn[K : Eq] Set::lor(Self[K], Self[K]) -> Self[K]
+pub fn[K : Eq] Set::lxor(Self[K], Self[K]) -> Self[K]
 #as_free_fn(deprecated)
 #deprecated
 pub fn[K] Set::new(capacity? : Int) -> Self[K]
 pub fn[K : Hash + Eq] Set::remove(Self[K], K) -> Unit
 pub fn[K : Hash + Eq] Set::remove_and_check(Self[K], K) -> Bool
 pub fn[K] Set::retain(Self[K], (K) -> Bool) -> Unit
-pub fn[K : Hash + Eq] Set::sub(Self[K], Self[K]) -> Self[K]
-pub fn[K : Hash + Eq] Set::symmetric_difference(Self[K], Self[K]) -> Self[K]
+pub fn[K : Eq] Set::sub(Self[K], Self[K]) -> Self[K]
+pub fn[K : Eq] Set::symmetric_difference(Self[K], Self[K]) -> Self[K]
 pub fn[K] Set::to_array(Self[K]) -> Array[K]
-pub fn[K : Hash + Eq] Set::union(Self[K], Self[K]) -> Self[K]
+pub fn[K : Eq] Set::union(Self[K], Self[K]) -> Self[K]
 pub fn[K : Eq] Set::union_in_place(Self[K], Self[K]) -> Unit
-pub impl[K : Hash + Eq] BitAnd for Set[K]
-pub impl[K : Hash + Eq] BitOr for Set[K]
-pub impl[K : Hash + Eq] BitXOr for Set[K]
+pub impl[K : Eq] BitAnd for Set[K]
+pub impl[K : Eq] BitOr for Set[K]
+pub impl[K : Eq] BitXOr for Set[K]
 pub impl[K] Default for Set[K]
-pub impl[K : Hash + Eq] Eq for Set[K]
-pub impl[K : Hash + Eq] Sub for Set[K]
+pub impl[K : Eq] Eq for Set[K]
+pub impl[K : Eq] Sub for Set[K]
 pub impl[X : ToJson] ToJson for Set[X]
 pub impl[K : @debug.Debug] @debug.Debug for Set[K]
 pub impl[X : @json.FromJson + Hash + Eq] @json.FromJson for Set[X]

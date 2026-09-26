@@ -267,8 +267,15 @@ pub fn[K : Hash + Eq] Set::add_and_check(self : Set[K], key : K) -> Bool {
 ///|
 /// Check if the hash set contains a key.
 pub fn[K : Hash + Eq] Set::contains(self : Set[K], key : K) -> Bool {
-  // inline lookup to avoid unnecessary allocations
-  let hash = Hash::hash(key)
+  self.contains_with_hash(key, Hash::hash(key))
+}
+
+///|
+/// `contains` with a precomputed `hash`. The set operations pass the hash
+/// stored in the other set's entry: both sets hash `K` with the same `Hash`
+/// impl, so the stored hash is exactly what `contains` would recompute.
+#inline
+fn[K : Eq] Set::contains_with_hash(self : Set[K], key : K, hash : Int) -> Bool {
   // SAFETY: masked probe index; see the note at the top of this file.
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries.unsafe_get(idx) is Some(entry) else { break false }
@@ -558,13 +565,8 @@ pub fn[K] Set::to_array(self : Set[K]) -> Array[K] {
 }
 
 ///|
-pub impl[K : Hash + Eq] Eq for Set[K] with fn equal(self, other) {
-  guard self.size == other.size else { return false }
-  for k in self {
-    guard other.contains(k) else { return false }
-  } nobreak {
-    true
-  }
+pub impl[K : Eq] Eq for Set[K] with fn equal(self, other) {
+  self.size == other.size && self.all_in(other)
 }
 
 ///|
@@ -720,30 +722,51 @@ pub fn[K] Set::filter(self : Set[K], f : (K) -> Bool raise?) -> Set[K] raise? {
 
 ///|
 /// Returns a new set containing elements in `self` that are not in `other`.
-pub fn[K : Hash + Eq] Set::difference(self : Set[K], other : Set[K]) -> Set[K] {
+pub fn[K : Eq] Set::difference(self : Set[K], other : Set[K]) -> Set[K] {
   let m = new_set(default_init_capacity)
-  self.each(k => if !other.contains(k) { m.add(k) })
+  m.add_missing_from(self, other)
   m
 }
 
 ///|
+/// Appends, in `from`'s order, every element of `from` that is not in
+/// `other`, reusing the hashes stored in `from`'s entries.
+fn[K : Eq] Set::add_missing_from(
+  self : Set[K],
+  from : Set[K],
+  other : Set[K],
+) -> Unit {
+  for x = from.head {
+    match x {
+      Some({ key, hash, next, .. }) => {
+        if !other.contains_with_hash(key, hash) {
+          self.add_with_hash(key, hash)
+        }
+        continue next
+      }
+      None => break
+    }
+  }
+}
+
+///|
 /// Returns a new set containing elements in exactly one of the two sets.
-pub fn[K : Hash + Eq] Set::symmetric_difference(
+pub fn[K : Eq] Set::symmetric_difference(
   self : Set[K],
   other : Set[K],
 ) -> Set[K] {
   let m = new_set(default_init_capacity)
-  self.each(k => if !other.contains(k) { m.add(k) })
-  other.each(k => if !self.contains(k) { m.add(k) })
+  m.add_missing_from(self, other)
+  m.add_missing_from(other, self)
   m
 }
 
 ///|
 /// Returns a new set containing all elements from both sets.
-pub fn[K : Hash + Eq] Set::union(self : Set[K], other : Set[K]) -> Set[K] {
-  let m = new_set(default_init_capacity)
-  self.each(k => m.add(k))
-  other.each(k => m.add(k))
+pub fn[K : Eq] Set::union(self : Set[K], other : Set[K]) -> Set[K] {
+  // `self`'s elements in order, then `other`'s new ones in order.
+  let m = self.copy()
+  m.union_in_place(other)
   m
 }
 
@@ -779,13 +802,50 @@ pub fn[K : Eq] Set::union_in_place(self : Set[K], other : Set[K]) -> Unit {
 
 ///|
 /// Returns a new set containing only elements present in both sets.
-pub fn[K : Hash + Eq] Set::intersection(
-  self : Set[K],
-  other : Set[K],
-) -> Set[K] {
+pub fn[K : Eq] Set::intersection(self : Set[K], other : Set[K]) -> Set[K] {
   let m = new_set(default_init_capacity)
-  self.each(k => if other.contains(k) { m.add(k) })
+  for x = self.head {
+    match x {
+      Some({ key, hash, next, .. }) => {
+        if other.contains_with_hash(key, hash) {
+          m.add_with_hash(key, hash)
+        }
+        continue next
+      }
+      None => break
+    }
+  }
   m
+}
+
+///|
+/// Returns `true` if every element of `self` is in `other`, probing with
+/// the hashes stored in `self`'s entries.
+fn[K : Eq] Set::all_in(self : Set[K], other : Set[K]) -> Bool {
+  for x = self.head {
+    match x {
+      Some({ key, hash, next, .. }) => {
+        guard other.contains_with_hash(key, hash) else { break false }
+        continue next
+      }
+      None => break true
+    }
+  }
+}
+
+///|
+/// Returns `true` if no element of `self` is in `other`, probing with the
+/// hashes stored in `self`'s entries.
+fn[K : Eq] Set::none_in(self : Set[K], other : Set[K]) -> Bool {
+  for x = self.head {
+    match x {
+      Some({ key, hash, next, .. }) => {
+        guard !other.contains_with_hash(key, hash) else { break false }
+        continue next
+      }
+      None => break true
+    }
+  }
 }
 
 ///|
@@ -832,65 +892,47 @@ pub impl[X : @json.FromJson + Hash + Eq] @json.FromJson for Set[X] with fn from_
 
 ///|
 /// Returns `true` if the two sets have no elements in common.
-pub fn[K : Hash + Eq] Set::is_disjoint(self : Set[K], other : Set[K]) -> Bool {
+pub fn[K : Eq] Set::is_disjoint(self : Set[K], other : Set[K]) -> Bool {
   if self.length() <= other.length() {
-    for k in self {
-      if other.contains(k) {
-        return false
-      }
-    }
+    self.none_in(other)
   } else {
-    for k in other {
-      if self.contains(k) {
-        return false
-      }
-    }
+    other.none_in(self)
   }
-  true
 }
 
 ///|
 /// Returns `true` if every element of `self` is also in `other`.
-pub fn[K : Hash + Eq] Set::is_subset(self : Set[K], other : Set[K]) -> Bool {
-  if self.length() <= other.length() {
-    for k in self {
-      if !other.contains(k) {
-        return false
-      }
-    }
-    true
-  } else {
-    false
-  }
+pub fn[K : Eq] Set::is_subset(self : Set[K], other : Set[K]) -> Bool {
+  self.length() <= other.length() && self.all_in(other)
 }
 
 ///|
 /// Returns `true` if every element of `other` is also in `self`.
-pub fn[K : Hash + Eq] Set::is_superset(self : Set[K], other : Set[K]) -> Bool {
+pub fn[K : Eq] Set::is_superset(self : Set[K], other : Set[K]) -> Bool {
   other.is_subset(self)
 }
 
 ///|
 /// Intersection of two hash sets.
-pub impl[K : Hash + Eq] BitAnd for Set[K] with fn land(self, other) {
+pub impl[K : Eq] BitAnd for Set[K] with fn land(self, other) {
   self.intersection(other)
 }
 
 ///|
 /// Union of two hash sets.
-pub impl[K : Hash + Eq] BitOr for Set[K] with fn lor(self, other) {
+pub impl[K : Eq] BitOr for Set[K] with fn lor(self, other) {
   self.union(other)
 }
 
 ///|
 /// Symmetric difference of two hash sets.
-pub impl[K : Hash + Eq] BitXOr for Set[K] with fn lxor(self, other) {
+pub impl[K : Eq] BitXOr for Set[K] with fn lxor(self, other) {
   self.symmetric_difference(other)
 }
 
 ///|
 /// Difference of two hash sets.
-pub impl[K : Hash + Eq] Sub for Set[K] with fn sub(self, other) {
+pub impl[K : Eq] Sub for Set[K] with fn sub(self, other) {
   self.difference(other)
 }
 
