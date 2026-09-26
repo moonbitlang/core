@@ -115,8 +115,14 @@ fn[A : Eq] Node::add_with_path(
       let idx = path.idx()
       match children.get(idx) {
         Some(child) => {
-          let child = child.add_with_path(key, path.next())
-          Branch(children.replace(idx, child))
+          let new_child = child.add_with_path(key, path.next())
+          // The key was already present: keep this node rather than
+          // copying the path down to it.
+          if physical_equal(new_child, child) {
+            self
+          } else {
+            Branch(children.replace(idx, new_child))
+          }
         }
         None => {
           let child = Flat(key, path.next())
@@ -284,22 +290,29 @@ fn[A : Eq + Hash] hash_set_from_array(arr : ArrayView[A]) -> HashSet[A] {
 ///|
 /// Add a key to the hashset.
 pub fn[A : Eq + Hash] HashSet::add(self : HashSet[A], key : A) -> HashSet[A] {
-  {
-    data: match self.data {
-      None => Some(Flat(key, @path.of(key)))
-      Some(node) => Some(node.add_with_path(key, @path.of(key)))
-    },
+  match self.data {
+    None => { data: Some(Flat(key, @path.of(key))), }
+    Some(node) => {
+      let new_node = node.add_with_path(key, @path.of(key))
+      if physical_equal(new_node, node) {
+        self
+      } else {
+        { data: Some(new_node), }
+      }
+    }
   }
 }
 
 ///|
 /// Remove an element from a set
 pub fn[A : Eq + Hash] HashSet::remove(self : HashSet[A], key : A) -> HashSet[A] {
-  {
-    data: match self.data {
-      None => None
-      Some(node) => node.remove_with_path(key, @path.of(key))
-    },
+  match self.data {
+    None => self
+    Some(node) =>
+      match node.remove_with_path(key, @path.of(key)) {
+        Some(new_node) if physical_equal(new_node, node) => self
+        new_data => { data: new_data, }
+      }
   }
 }
 
@@ -353,6 +366,10 @@ fn[A : Eq] Node::remove_with_path(
         None => Some(self)
         Some(child) => {
           let new_child = child.remove_with_path(key, path.next())
+          // The key was absent: keep this node rather than copying the path.
+          if new_child is Some(nc) && physical_equal(nc, child) {
+            return Some(self)
+          }
           let new_children = match (children.length(), new_child) {
             (1, None) => return None
             (_, None) => children.remove(idx)
@@ -397,6 +414,11 @@ pub fn[K : Eq] HashSet::union(
   other : HashSet[K],
 ) -> HashSet[K] {
   fn go(node1, node2) {
+    // A subtree shared by both sets (e.g. two versions of one set) is its
+    // own union.
+    if physical_equal(node1, node2) {
+      return node1
+    }
     match (node1, node2) {
       (node, Flat(key, path)) | (Flat(key, path), node) =>
         node.add_with_path(key, path)
@@ -429,6 +451,10 @@ pub fn[K : Eq] HashSet::intersection(
   other : HashSet[K],
 ) -> HashSet[K] {
   fn go(node1, node2) {
+    // A subtree shared by both sets is its own intersection.
+    if physical_equal(node1, node2) {
+      return Some(node1)
+    }
     match (node1, node2) {
       (node, Flat(key, path) as flat) | (Flat(key, path) as flat, node) =>
         if node.contains(key, path) {
@@ -469,6 +495,10 @@ pub fn[K : Eq] HashSet::difference(
   other : HashSet[K],
 ) -> HashSet[K] {
   fn go(node1 : Node[_], node2) {
+    // A subtree shared by both sets contributes nothing to the difference.
+    if physical_equal(node1, node2) {
+      return None
+    }
     match (node1, node2) {
       (node, Flat(k, path)) => node.remove_with_path(k, path)
       (Flat(key, path) as flat, node) =>
