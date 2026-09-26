@@ -479,30 +479,36 @@ fn write_escaped(
     buf.write_string(str)
     return
   }
-  for code in str.code_units() {
+  // Copy each run of code units that need no escaping with one
+  // `write_view`, and write the escapes in between. Escapes are ASCII, so a
+  // run boundary never splits a surrogate pair; lone surrogates are copied
+  // verbatim as part of a run.
+  let run_start = for i, code in str.code_units(); run_start = 0 {
+    match code {
+      '"' | '\\' | '\n' | '\r' | '\b' | '\t' | 0x0C => ()
+      '/' => if !escape_slash { continue run_start }
+      _ => if code >= ' ' { continue run_start }
+    }
+    buf.write_view(str.view(start_offset=run_start, end_offset=i))
     match code {
       '"' => buf.write_string("\\\"")
       '\\' => buf.write_string("\\\\")
-      '/' =>
-        if escape_slash {
-          buf.write_string("\\/")
-        } else {
-          buf.write_char('/')
-        }
+      '/' => buf.write_string("\\/")
       '\n' => buf.write_string("\\n")
       '\r' => buf.write_string("\\r")
       '\b' => buf.write_string("\\b")
       '\t' => buf.write_string("\\t")
       0x0C => buf.write_string("\\f")
-      _ =>
-        if code < ' ' {
-          buf.write_string("\\u00")
-          buf.write_string(code.to_byte().to_hex())
-        } else {
-          buf.write_char(code.unsafe_to_char())
-        }
+      _ => {
+        buf.write_string("\\u00")
+        buf.write_string(code.to_byte().to_hex())
+      }
     }
+    continue i + 1
+  } nobreak {
+    run_start
   }
+  buf.write_view(str.view(start_offset=run_start))
 }
 
 ///|
