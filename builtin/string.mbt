@@ -222,6 +222,11 @@ pub impl Compare for String with fn compare(self, other) {
   let len = self.length()
   match len.compare(other.length()) {
     0 => {
+      if STRING_COMPARE_SIMD &&
+        len >= 8 &&
+        self.unsafe_get(0) == other.unsafe_get(0) {
+        return code_unit_range_compare_simd(self, 0, other, 0, len)
+      }
       // Same `x != y`-first loop as `StringView::lexical_compare`
       for i in 0..<len {
         let x = self.unsafe_get(i)
