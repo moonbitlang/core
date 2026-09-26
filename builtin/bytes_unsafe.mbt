@@ -570,7 +570,34 @@ pub fn BytesView::unsafe_read_uint16_be(
 /// comparisons (e.g. `BytesView == BytesView`, `BytesView::equal_to_bytes`).
 /// The function body is the fallback implementation for targets without the
 /// intrinsic.
+///
+/// Native lowers the intrinsic to `memcmp`, so the body only runs on wasm,
+/// wasm-gc and js. On wasm, ranges of at least sixteen bytes are compared
+/// sixteen bytes at a time by `bytes_range_equal_simd`.
 #borrow(self, other)
+#cfg(target="wasm")
+#intrinsic("%bytes.unsafe_range_equal")
+fn Bytes::unsafe_range_equal(
+  self : Bytes,
+  self_off~ : Int,
+  other : Bytes,
+  other_off~ : Int,
+  len~ : Int,
+) -> Bool {
+  if len >= 16 {
+    return bytes_range_equal_simd(self, self_off, other, other_off, len)
+  }
+  for i in 0..<len {
+    guard self.unsafe_get(self_off + i) == other.unsafe_get(other_off + i) else {
+      return false
+    }
+  }
+  true
+}
+
+///|
+#borrow(self, other)
+#cfg(not(target="wasm"))
 #intrinsic("%bytes.unsafe_range_equal")
 fn Bytes::unsafe_range_equal(
   self : Bytes,
@@ -583,6 +610,35 @@ fn Bytes::unsafe_range_equal(
     guard self.unsafe_get(self_off + i) == other.unsafe_get(other_off + i) else {
       return false
     }
+  }
+  true
+}
+
+///|
+/// Vector body of `Bytes::unsafe_range_equal` for `len >= 16`. It compares
+/// sixteen bytes per step; a remainder of one to fifteen bytes is covered by
+/// one more load of the last sixteen bytes of each range, which overlaps the
+/// previous block and stays inside both ranges because `len >= 16`.
+#borrow(left, right)
+#cfg(target="wasm")
+fn bytes_range_equal_simd(
+  left : Bytes,
+  left_off : Int,
+  right : Bytes,
+  right_off : Int,
+  len : Int,
+) -> Bool {
+  let left_data = unsafe_from_bytes(left)
+  let right_data = unsafe_from_bytes(right)
+  for i = 0; i + 16 <= len; i = i + 16 {
+    let a = v128_load(left_data, left_off + i)
+    let b = v128_load(right_data, right_off + i)
+    guard i8x16_all_true(i8x16_eq(a, b)) else { return false }
+  }
+  if (len & 15) != 0 {
+    let a = v128_load(left_data, left_off + len - 16)
+    let b = v128_load(right_data, right_off + len - 16)
+    return i8x16_all_true(i8x16_eq(a, b))
   }
   true
 }
