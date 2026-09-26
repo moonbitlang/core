@@ -241,6 +241,7 @@ test "panic Array growth rejects a wrapped required size" {
 ///|
 fn[T] Array::resize_buffer(self : Array[T], new_capacity : Int) -> Unit {
   let old_buf = self.buf
+  self.buf = []
   // Only the live prefix is worth carrying over. The slots beyond `len` hold
   // either NULL or the elements earlier removals left behind, and leaving them
   // with the old buffer is what releases the latter when that buffer dies.
