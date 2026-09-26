@@ -385,6 +385,17 @@ pub impl Compare for StringView with fn compare(self, other) {
   if physical_equal(self.str(), other.str()) && self.start() == other.start() {
     return 0
   }
+  if STRING_COMPARE_SIMD &&
+    self_len >= 8 &&
+    self.unsafe_get(0) == other.unsafe_get(0) {
+    return code_unit_range_compare_simd(
+      self.str(),
+      self.start(),
+      other.str(),
+      other.start(),
+      self_len,
+    )
+  }
   // Same `x != y`-first loop as `StringView::lexical_compare`
   for i in 0..<self_len {
     let x = self.unsafe_get(i)
@@ -448,6 +459,19 @@ pub fn StringView::lexical_compare(
   let self_len = self.length()
   let other_len = other.length()
   let min_len = if self_len < other_len { self_len } else { other_len }
+  if STRING_COMPARE_SIMD &&
+    min_len >= 8 &&
+    self.unsafe_get(0) == other.unsafe_get(0) {
+    let cmp = code_unit_range_compare_simd(
+      self.str(),
+      self.start(),
+      other.str(),
+      other.start(),
+      min_len,
+    )
+    guard cmp == 0 else { return cmp }
+    return self_len.compare(other_len)
+  }
 
   // Compare code unit by code unit up to the minimum length. Test `x != y` and
   // order only on a mismatch: `x.compare(y) != 0` would compute the -1/0/1
