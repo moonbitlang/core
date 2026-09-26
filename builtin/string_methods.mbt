@@ -426,12 +426,13 @@ pub fn StringView::strip_suffix(
 /// }
 /// ```
 pub fn StringView::to_array(self : StringView) -> Array[Char] {
-  self
-  .iter()
-  .fold(init=Array(capacity=self.length()), (rv, c) => {
-    rv.push(c)
-    rv
-  })
+  // A direct `for .. in` decodes surrogate pairs inline; going through
+  // `iter()` costs a closure call per character.
+  let chars : Array[Char] = Array(capacity=self.length())
+  for c in self {
+    chars.push(c)
+  }
+  chars
 }
 
 ///|
