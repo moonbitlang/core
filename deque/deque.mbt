@@ -38,7 +38,20 @@ fn[A] new_deque(capacity : Int) -> Deque[A] {
 /// Computes the tail index (index of last element) on demand.
 /// Only valid when len > 0.
 fn[A] Deque::tail_index(self : Deque[A]) -> Int {
-  (self.head + self.len - 1) % self.buf.length()
+  wrap_index(self.head + self.len - 1, self.buf.length())
+}
+
+///|
+/// `i % cap` for `0 <= i < 2 * cap`, without the division: `head < cap`
+/// whenever the buffer is non-empty, and every offset added to it is below
+/// `cap`, so a single subtraction brings the sum back into range.
+#inline
+fn wrap_index(i : Int, cap : Int) -> Int {
+  if i >= cap {
+    i - cap
+  } else {
+    i
+  }
 }
 
 ///|
@@ -647,7 +660,7 @@ pub fn[A] Deque::push_front(self : Deque[A], value : A) -> Unit {
     self.realloc()
   }
   let cap = self.buf.length()
-  self.head = (self.head - 1 + cap) % cap
+  self.head = if self.head == 0 { cap - 1 } else { self.head - 1 }
   self.buf[self.head] = value
   self.len += 1
 }
@@ -671,7 +684,7 @@ pub fn[A] Deque::push_back(self : Deque[A], value : A) -> Unit {
     self.realloc()
   }
   let cap = self.buf.length()
-  let write_idx = (self.head + self.len) % cap
+  let write_idx = wrap_index(self.head + self.len, cap)
   self.buf[write_idx] = value
   self.len += 1
 }
@@ -696,8 +709,7 @@ pub fn[A] Deque::push_back(self : Deque[A], value : A) -> Unit {
 #alias(pop_front_exn, deprecated)
 pub fn[A] Deque::unsafe_pop_front(self : Deque[A]) -> Unit {
   guard self.len > 0 else { abort("The deque is empty!") }
-  let cap = self.buf.length()
-  self.head = (self.head + 1) % cap
+  self.head = wrap_index(self.head + 1, self.buf.length())
   self.len -= 1
 }
 
@@ -755,8 +767,7 @@ pub fn[A] Deque::unsafe_pop_back(self : Deque[A]) -> Unit {
 pub fn[A] Deque::pop_front(self : Deque[A]) -> A? {
   guard self.len > 0 else { return None }
   let value = self.buf[self.head]
-  let cap = self.buf.length()
-  self.head = (self.head + 1) % cap
+  self.head = wrap_index(self.head + 1, self.buf.length())
   self.len -= 1
   Some(value)
 }
@@ -2320,7 +2331,7 @@ pub fn[A] Deque::binary_search_by(
 /// Safe element access with bounds checking
 pub fn[A] Deque::get(self : Deque[A], index : Int) -> A? {
   if index >= 0 && index < self.len {
-    let physical_index = (self.head + index) % self.buf.length()
+    let physical_index = wrap_index(self.head + index, self.buf.length())
     Some(self.buf[physical_index])
   } else {
     None

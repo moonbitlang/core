@@ -29,3 +29,52 @@ test "bench Deque::to_array Ref n=50000" (it : @bench.T) {
   let d = @deque.from_array(Array::makei(deque_bench_n, i => "value\{i}"))
   it.bench(fn() { it.keep(d.to_array()) })
 }
+
+///|
+test "bench Deque steady-state pop_front/push_back x100000 len=1000" (
+  it : @bench.T,
+) {
+  // `Deque(xs)` sizes the buffer to exactly 1000 slots, not a power of two.
+  let dq = @deque.Deque(Array::makei(1000, i => i))
+  it.bench(fn() {
+    let mut acc = 0
+    for i in 0..<100000 {
+      guard dq.pop_front() is Some(x) else { break }
+      acc += x
+      dq.push_back(x + i)
+    }
+    it.keep(acc)
+  })
+}
+
+///|
+test "bench Deque steady-state push_front/pop_back x100000 len=1000" (
+  it : @bench.T,
+) {
+  let dq = @deque.Deque(Array::makei(1000, i => i))
+  it.bench(fn() {
+    let mut acc = 0
+    for i in 0..<100000 {
+      guard dq.pop_back() is Some(x) else { break }
+      acc += x
+      dq.push_front(x + i)
+    }
+    it.keep(acc)
+  })
+}
+
+///|
+test "bench Deque::get x100000 len=1000" (it : @bench.T) {
+  let dq = @deque.Deque(Array::makei(1000, i => i))
+  dq.push_front(-1) // make the buffer wrap
+  ignore(dq.pop_back())
+  it.bench(fn() {
+    let mut acc = 0
+    for i in 0..<100000 {
+      if dq.get((i * 7 + acc) % 1000) is Some(x) {
+        acc = (acc + x) & 0xffff
+      }
+    }
+    it.keep(acc)
+  })
+}
