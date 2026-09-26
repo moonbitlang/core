@@ -134,8 +134,8 @@ pub fn[K : Compare, V] SortedMap::at(self : SortedMap[K, V], key : K) -> V {
 /// Iterate over the key-value pairs in the map.
 pub fn[K, V] SortedMap::each(
   self : SortedMap[K, V],
-  f : (K, V) -> Unit,
-) -> Unit {
+  f : (K, V) -> Unit raise?,
+) -> Unit raise? {
   match self {
     Empty => ()
     Tree(k, value~, l, r, ..) => {
@@ -150,20 +150,20 @@ pub fn[K, V] SortedMap::each(
 /// Iterate over the key-value pairs with index.
 pub fn[K, V] SortedMap::eachi(
   self : SortedMap[K, V],
-  f : (Int, K, V) -> Unit,
-) -> Unit {
-  fn do_eachi(m : SortedMap[K, V], f, i) {
+  f : (Int, K, V) -> Unit raise?,
+) -> Unit raise? {
+  fn do_eachi(m : SortedMap[K, V], i : Int) -> Unit raise? {
     match m {
       Empty => ()
       Tree(k, value~, l, r, ..) => {
-        do_eachi(l, f, i)
+        do_eachi(l, i)
         f(l.length() + i, k, value)
-        do_eachi(r, f, l.length() + i + 1)
+        do_eachi(r, l.length() + i + 1)
       }
     }
   }
 
-  do_eachi(self, f, 0)
+  do_eachi(self, 0)
 }
 
 ///|
@@ -171,8 +171,8 @@ pub fn[K, V] SortedMap::eachi(
 #alias(map_with_key, deprecated)
 pub fn[K, X, Y] SortedMap::map(
   self : SortedMap[K, X],
-  f : (K, X) -> Y,
-) -> SortedMap[K, Y] {
+  f : (K, X) -> Y raise?,
+) -> SortedMap[K, Y] raise? {
   match self {
     Empty => Empty
     Tree(k, value~, l, r, size~) =>
@@ -183,13 +183,13 @@ pub fn[K, X, Y] SortedMap::map(
 ///|
 /// Fold over the key-value pairs in descending key order.
 /// O(n).
-#alias(foldr_with_key)
+#alias(foldr_with_key, deprecated)
 pub fn[K, V, A] SortedMap::rev_fold(
   self : SortedMap[K, V],
-  f : (A, K, V) -> A,
   init~ : A,
-) -> A {
-  fn go(m : SortedMap[K, V], acc) {
+  f : (A, K, V) -> A raise?,
+) -> A raise? {
+  fn go(m : SortedMap[K, V], acc : A) -> A raise? {
     match m {
       Empty => acc
       Tree(k, value~, l, r, ..) => go(l, f(go(r, acc), k, value))
@@ -205,10 +205,10 @@ pub fn[K, V, A] SortedMap::rev_fold(
 #alias(foldl_with_key, deprecated)
 pub fn[K, V, A] SortedMap::fold(
   self : SortedMap[K, V],
-  f : (A, K, V) -> A,
   init~ : A,
-) -> A {
-  fn go(m : SortedMap[K, V], acc) {
+  f : (A, K, V) -> A raise?,
+) -> A raise? {
+  fn go(m : SortedMap[K, V], acc : A) -> A raise? {
     match m {
       Empty => acc
       Tree(k, value~, l, r, ..) => go(r, f(go(l, acc), k, value))

@@ -19,15 +19,15 @@ pub fn[K : Compare, V] SortedMap::add(Self[K, V], K, V) -> Self[K, V]
 pub fn[K : Compare, V] SortedMap::at(Self[K, V], K) -> V
 pub fn[K : Compare, V : Compare] SortedMap::compare(Self[K, V], Self[K, V]) -> Int
 pub fn[K : Compare, V] SortedMap::contains(Self[K, V], K) -> Bool
-pub fn[K, V] SortedMap::each(Self[K, V], (K, V) -> Unit) -> Unit
-pub fn[K, V] SortedMap::eachi(Self[K, V], (Int, K, V) -> Unit) -> Unit
+pub fn[K, V] SortedMap::each(Self[K, V], (K, V) -> Unit raise?) -> Unit raise?
+pub fn[K, V] SortedMap::eachi(Self[K, V], (Int, K, V) -> Unit raise?) -> Unit raise?
 #deprecated
 pub fn[K, V] SortedMap::elems(Self[K, V]) -> Array[V]
 pub fn[K : Eq, V : Eq] SortedMap::equal(Self[K, V], Self[K, V]) -> Bool
 #alias(filter_with_key, deprecated)
 pub fn[K, V] SortedMap::filter(Self[K, V], (K, V) -> Bool raise?) -> Self[K, V] raise?
 #alias(foldl_with_key, deprecated)
-pub fn[K, V, A] SortedMap::fold(Self[K, V], (A, K, V) -> A, init~ : A) -> A
+pub fn[K, V, A] SortedMap::fold(Self[K, V], init~ : A, (A, K, V) -> A raise?) -> A raise?
 #alias(of, deprecated)
 #as_free_fn(of, deprecated)
 #as_free_fn(deprecated)
@@ -54,15 +54,15 @@ pub fn[K, V] SortedMap::keys_as_iter(Self[K, V]) -> Iter[K]
 #alias(size, deprecated)
 pub fn[K, V] SortedMap::length(Self[K, V]) -> Int
 #alias(map_with_key, deprecated)
-pub fn[K, X, Y] SortedMap::map(Self[K, X], (K, X) -> Y) -> Self[K, Y]
+pub fn[K, X, Y] SortedMap::map(Self[K, X], (K, X) -> Y raise?) -> Self[K, Y] raise?
 pub fn[K : Compare, V] SortedMap::merge(Self[K, V], Self[K, V]) -> Self[K, V]
 #alias(empty, deprecated)
 #as_free_fn
 pub fn[K, V] SortedMap::new() -> Self[K, V]
 pub fn[K : Compare, V] SortedMap::range(Self[K, V], low~ : K, high~ : K) -> Iter2[K, V]
 pub fn[K : Compare, V] SortedMap::remove(Self[K, V], K) -> Self[K, V]
-#alias(foldr_with_key)
-pub fn[K, V, A] SortedMap::rev_fold(Self[K, V], (A, K, V) -> A, init~ : A) -> A
+#alias(foldr_with_key, deprecated)
+pub fn[K, V, A] SortedMap::rev_fold(Self[K, V], init~ : A, (A, K, V) -> A raise?) -> A raise?
 pub fn[K, V] SortedMap::rev_keys(Self[K, V]) -> Iter[K]
 pub fn[K, V] SortedMap::rev_values(Self[K, V]) -> Iter[V]
 #as_free_fn
