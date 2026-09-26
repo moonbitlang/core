@@ -211,3 +211,19 @@ test "repr alias: prelude-visible shortcut for @debug.to_string" {
   assert_eq(repr("hi"), @debug.to_string("hi"))
   assert_eq(repr([1, 2]), @debug.to_string([1, 2]))
 }
+
+///|
+test "debug_inspect reports locations when the check fails" {
+  let msg = try @debug.debug_inspect(42, content="41") catch {
+    InspectError(msg) => msg
+  } noraise {
+    _ => "no error"
+  }
+  inspect(msg.has_prefix("@EXPECT_FAILED {\"loc\": "), content="true")
+  inspect(msg.contains("\"args_loc\": "), content="true")
+  inspect(msg.contains("debug_test.mbt"), content="true")
+  inspect(
+    msg.contains("\"expect\": \"41\", \"actual\": \"42\""),
+    content="true",
+  )
+}

@@ -585,13 +585,15 @@ pub fn json_inspect(
   loc~ : SourceLoc,
   args_loc~ : ArgsLoc,
 ) -> Unit raise InspectError {
-  let loc = loc.to_json_string()
-  let args_loc = args_loc.to_json()
   let actual = obj.to_json().stringify(escape_slash=false)
   let want = match content {
     Some(x) | (None with x = Json("")) => x.stringify(escape_slash=false)
   }
   if actual != want {
+    // Only a failing check needs the locations; formatting them is most of
+    // the cost of a passing call.
+    let loc = loc.to_json_string()
+    let args_loc = args_loc.to_json()
     raise InspectError(
       (
         $|@EXPECT_FAILED {"loc": \{loc}, "args_loc": \{args_loc}, "expect": \{want.escape()}, "actual": \{actual.escape()}, "mode": "json"}
