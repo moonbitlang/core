@@ -160,8 +160,19 @@ fn[K] HashSet::set_entry(
 ///|
 /// Returns `true` if the set contains the given key.
 pub fn[K : Hash + Eq] HashSet::contains(self : HashSet[K], key : K) -> Bool {
-  // inline lookup to avoid unnecessary allocations
-  let hash = Hash::hash(key)
+  self.contains_with_hash(key, Hash::hash(key))
+}
+
+///|
+/// `contains` with a precomputed `hash`. The set operations pass the hash
+/// stored in the other set's entry: both sets hash `K` with the same `Hash`
+/// impl, so the stored hash is exactly what `contains` would recompute.
+#inline
+fn[K : Eq] HashSet::contains_with_hash(
+  self : HashSet[K],
+  key : K,
+  hash : Int,
+) -> Bool {
   for i = 0, idx = hash & self.capacity_mask {
     // SAFETY: same masked-index invariant as `add_with_hash`.
     guard self.entries.unsafe_get(idx) is Some(entry) else { break false }
@@ -398,13 +409,12 @@ pub fn[K : Hash + Eq] HashSet::from_iter(iter : Iter[K]) -> HashSet[K] {
 
 ///|
 /// Returns a new set containing all elements from both sets.
-pub fn[K : Hash + Eq] HashSet::union(
+pub fn[K : Eq] HashSet::union(
   self : HashSet[K],
   other : HashSet[K],
 ) -> HashSet[K] {
-  let m = new_hashset(default_init_capacity)
-  self.each(k => m.add(k))
-  other.each(k => m.add(k))
+  let m = self.copy()
+  m.union_in_place(other)
   m
 }
 
@@ -439,66 +449,86 @@ pub fn[K : Eq] HashSet::union_in_place(
 
 ///|
 /// Returns a new set containing only elements present in both sets.
-pub fn[K : Hash + Eq] HashSet::intersection(
+pub fn[K : Eq] HashSet::intersection(
   self : HashSet[K],
   other : HashSet[K],
 ) -> HashSet[K] {
   let m = new_hashset(default_init_capacity)
-  self.each(k => if other.contains(k) { m.add(k) })
+  for entry in self.entries {
+    if entry is Some({ key, hash, .. }) && other.contains_with_hash(key, hash) {
+      m.add_with_hash(key, hash)
+    }
+  }
   m
 }
 
 ///|
 /// Returns a new set containing elements in `self` that are not in `other`.
-pub fn[K : Hash + Eq] HashSet::difference(
+pub fn[K : Eq] HashSet::difference(
   self : HashSet[K],
   other : HashSet[K],
 ) -> HashSet[K] {
   let m = new_hashset(default_init_capacity)
-  self.each(k => if !other.contains(k) { m.add(k) })
+  for entry in self.entries {
+    if entry is Some({ key, hash, .. }) && !other.contains_with_hash(key, hash) {
+      m.add_with_hash(key, hash)
+    }
+  }
   m
 }
 
 ///|
 /// Symmetric difference of two hash sets.
-pub fn[K : Hash + Eq] HashSet::symmetric_difference(
+pub fn[K : Eq] HashSet::symmetric_difference(
   self : HashSet[K],
   other : HashSet[K],
 ) -> HashSet[K] {
   let m = self.difference(other)
-  other.each(k => if !self.contains(k) { m.add(k) })
+  for entry in other.entries {
+    if entry is Some({ key, hash, .. }) && !self.contains_with_hash(key, hash) {
+      m.add_with_hash(key, hash)
+    }
+  }
   m
 }
 
 ///|
 /// Returns `true` if the two sets have no elements in common.
-pub fn[K : Hash + Eq] HashSet::is_disjoint(
+pub fn[K : Eq] HashSet::is_disjoint(
   self : HashSet[K],
   other : HashSet[K],
 ) -> Bool {
-  if self.length() <= other.length() {
-    self.iter().all(k => !other.contains(k))
+  let (small, large) = if self.length() <= other.length() {
+    (self, other)
   } else {
-    other.iter().all(k => !self.contains(k))
+    (other, self)
   }
+  for entry in small.entries {
+    if entry is Some({ key, hash, .. }) && large.contains_with_hash(key, hash) {
+      return false
+    }
+  }
+  true
 }
 
 ///|
 /// Returns `true` if every element of `self` is also in `other`.
-pub fn[K : Hash + Eq] HashSet::is_subset(
+pub fn[K : Eq] HashSet::is_subset(
   self : HashSet[K],
   other : HashSet[K],
 ) -> Bool {
-  if self.length() <= other.length() {
-    self.iter().all(k => other.contains(k))
-  } else {
-    false
+  guard self.length() <= other.length() else { return false }
+  for entry in self.entries {
+    if entry is Some({ key, hash, .. }) && !other.contains_with_hash(key, hash) {
+      return false
+    }
   }
+  true
 }
 
 ///|
 /// Returns `true` if every element of `other` is also in `self`.
-pub fn[K : Hash + Eq] HashSet::is_superset(
+pub fn[K : Eq] HashSet::is_superset(
   self : HashSet[K],
   other : HashSet[K],
 ) -> Bool {
@@ -507,25 +537,25 @@ pub fn[K : Hash + Eq] HashSet::is_superset(
 
 ///|
 /// Intersection of two hash sets.
-pub impl[K : Hash + Eq] BitAnd for HashSet[K] with fn land(self, other) {
+pub impl[K : Eq] BitAnd for HashSet[K] with fn land(self, other) {
   self.intersection(other)
 }
 
 ///|
 /// Union of two hash sets.
-pub impl[K : Hash + Eq] BitOr for HashSet[K] with fn lor(self, other) {
+pub impl[K : Eq] BitOr for HashSet[K] with fn lor(self, other) {
   self.union(other)
 }
 
 ///|
 /// Symmetric difference of two hash sets.
-pub impl[K : Hash + Eq] BitXOr for HashSet[K] with fn lxor(self, other) {
+pub impl[K : Eq] BitXOr for HashSet[K] with fn lxor(self, other) {
   self.symmetric_difference(other)
 }
 
 ///|
 /// Difference of two hash sets.
-pub impl[K : Hash + Eq] Sub for HashSet[K] with fn sub(self, other) {
+pub impl[K : Eq] Sub for HashSet[K] with fn sub(self, other) {
   self.difference(other)
 }
 
