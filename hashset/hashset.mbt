@@ -545,7 +545,10 @@ pub fn[K] HashSet::retain(self : HashSet[K], f : (K) -> Bool) -> Unit {
   // into one still to be visited. Starting at slot 0 instead breaks when a
   // cluster wraps around the end of the table: removing the entry in the last
   // slot shifts the wrapped entry from slot 0 back into it, and `f` sees that
-  // entry twice. The load factor stays below 1, so an empty slot exists.
+  // entry twice. The table grows at 13/16 full (`calc_grow_threshold`), so
+  // an empty slot always exists. If the growth threshold is ever raised to
+  // 100%, start instead at an entry sitting in its home slot (`psl == 0`),
+  // which is also a cluster boundary.
   let mask = self.capacity_mask
   let start = for i = 0 {
     if self.entries[i] is None {
