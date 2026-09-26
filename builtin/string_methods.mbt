@@ -2287,27 +2287,55 @@ fn find_ascii_uppercase_code_unit(
 }
 
 ///|
-// Check the first code unit scalarly so capitalized strings retain the lowest
-// possible startup cost. Then scan full blocks eight UTF-16 code units at a
-// time and finish with a scalar tail.
-#cfg(any(target="native", target="wasm"))
-fn find_ascii_uppercase_code_unit_simd(
+#cfg(not(any(target="js", target="native", target="wasm")))
+fn find_ascii_lowercase_code_unit(
   data : String,
   start : Int,
   len : Int,
 ) -> Int? {
   let end = start + len
-  if data.unsafe_get(start) is ('A'..='Z') {
+  for i in start..<end {
+    // SAFETY: i stays within the caller-provided UTF-16 slice bounds.
+    let code_unit = data.unsafe_get(i)
+    if code_unit is ('a'..='z') {
+      return Some(i - start)
+    }
+  }
+  None
+}
+
+///|
+// Returns the offset, relative to `start`, of the first code unit of
+// `data[start:start + len]` in the inclusive range `first..=last`. Requires
+// `len > 0` and `first <= last`. Check the first code unit scalarly so strings
+// that start with a match retain the lowest possible startup cost. Then scan
+// full blocks eight UTF-16 code units at a time and finish with a scalar tail.
+// moonc does not inline functions containing loops, so the bounds stay
+// runtime arguments; they only feed the splats before the loop and the scalar
+// checks, leaving the vector loop body the same as with literal bounds.
+#cfg(any(target="native", target="wasm"))
+fn find_ascii_range_code_unit_simd(
+  data : String,
+  start : Int,
+  len : Int,
+  first : UInt16,
+  last : UInt16,
+) -> Int? {
+  let end = start + len
+  let code_unit = data.unsafe_get(start)
+  if code_unit >= first && code_unit <= last {
     return Some(0)
   }
-  let ascii_a = i16x8_splat(0x41)
-  let ascii_range = i16x8_splat(0x5A - 0x41)
-  let tail_start = for pos = start; pos + 8 <= end; {
+  let range_start = i16x8_splat(first)
+  let range_width = i16x8_splat(last - first)
+  // `end - pos` cannot overflow, unlike `pos + 8`.
+  let tail_start = for pos = start; end - pos >= 8; {
     let code_units = v128_load_i16x8(data, pos)
-    let uppercase_mask = i16x8_le_u(i16x8_sub(code_units, ascii_a), ascii_range)
-    if v128_any_true(uppercase_mask) {
+    let in_range = i16x8_le_u(i16x8_sub(code_units, range_start), range_width)
+    if v128_any_true(in_range) {
       for i in pos..<(pos + 8) {
-        if data.unsafe_get(i) is ('A'..='Z') {
+        let code_unit = data.unsafe_get(i)
+        if code_unit >= first && code_unit <= last {
           return Some(i - start)
         }
       }
@@ -2317,7 +2345,8 @@ fn find_ascii_uppercase_code_unit_simd(
     pos
   }
   for i in tail_start..<end {
-    if data.unsafe_get(i) is ('A'..='Z') {
+    let code_unit = data.unsafe_get(i)
+    if code_unit >= first && code_unit <= last {
       return Some(i - start)
     }
   }
@@ -2345,42 +2374,74 @@ fn find_ascii_uppercase_code_unit(
     }
     None
   } else {
-    find_ascii_uppercase_code_unit_simd(data, start, len)
+    find_ascii_range_code_unit_simd(data, start, len, 'A', 'Z')
   }
 }
 
 ///|
-/// Copies `view` into an exact-size UTF-16 buffer once, then patches the ASCII
-/// uppercase code units in place. `first_uppercase` is supplied by the
-/// allocation-free search in `to_lower`.
+// Same threshold as `find_ascii_uppercase_code_unit`.
+#inline
+#cfg(any(target="native", target="wasm"))
+fn find_ascii_lowercase_code_unit(
+  data : String,
+  start : Int,
+  len : Int,
+) -> Int? {
+  if len < 24 {
+    let end = start + len
+    for i in start..<end {
+      // SAFETY: i stays within the caller-provided UTF-16 slice bounds.
+      let code_unit = data.unsafe_get(i)
+      if code_unit is ('a'..='z') {
+        return Some(i - start)
+      }
+    }
+    None
+  } else {
+    find_ascii_range_code_unit_simd(data, start, len, 'a', 'z')
+  }
+}
+
+///|
+/// Copies `view` into an exact-size UTF-16 buffer once, then adds `delta` to
+/// the code units in the ASCII range `first..=last` in place. `first_match` is
+/// the offset of the first such code unit, supplied by the allocation-free
+/// search in `to_lower` or `to_upper`; nothing before it is revisited.
+/// Requires `first <= last`.
 /// Native and linear-memory Wasm can load and store this buffer eight code
 /// units at a time.
 #cfg(any(target="native", target="wasm"))
-fn ascii_lowercase_copy(view : StringView, first_uppercase : Int) -> String {
+fn ascii_case_copy(
+  view : StringView,
+  first_match : Int,
+  first : UInt16,
+  last : UInt16,
+  delta : Int,
+) -> String {
   let len = view.length()
   let output : FixedArray[UInt16] = FixedArray::make(len, 0)
   output.unsafe_blit_from_string(0, view.data(), view.start_offset(), len)
-  let ascii_a = i16x8_splat(0x41)
-  let ascii_range = i16x8_splat(0x5A - 0x41)
-  let lowercase_delta = i16x8_splat(0x20)
-  let tail_start = for pos = first_uppercase; pos + 8 <= len; {
+  let range_start = i16x8_splat(first)
+  let range_width = i16x8_splat(last - first)
+  // Lane addition wraps modulo 2^16, so a negative `delta` subtracts.
+  let lane_delta = i16x8_splat(delta.to_uint16())
+  // `len - pos` cannot overflow, unlike `pos + 8`.
+  let tail_start = for pos = first_match; len - pos >= 8; {
     let code_units = v128_load_fixedarray_i16x8(output, pos)
-    // Subtraction wraps lanes below `A`, so this unsigned comparison selects
-    // exactly the inclusive `A..Z` range with one vector comparison.
-    let uppercase_mask = i16x8_le_u(i16x8_sub(code_units, ascii_a), ascii_range)
-    let lowered = i16x8_add(
-      code_units,
-      v128_and(uppercase_mask, lowercase_delta),
-    )
-    v128_store_i16x8(output, pos, lowered)
+    // Subtraction wraps lanes below `first`, so this unsigned comparison
+    // selects exactly the inclusive `first..=last` range with one vector
+    // comparison.
+    let in_range = i16x8_le_u(i16x8_sub(code_units, range_start), range_width)
+    let converted = i16x8_add(code_units, v128_and(in_range, lane_delta))
+    v128_store_i16x8(output, pos, converted)
     continue pos + 8
   } nobreak {
     pos
   }
   for i in tail_start..<len {
     let code_unit = output.unsafe_get(i)
-    if code_unit is ('A'..='Z') {
-      output.unsafe_set(i, (code_unit.to_int() + 32).to_uint16())
+    if code_unit >= first && code_unit <= last {
+      output.unsafe_set(i, (code_unit.to_int() + delta).to_uint16())
     }
   }
   unsafe_fixedarray_uint16_to_string(output)
@@ -2391,16 +2452,22 @@ fn ascii_lowercase_copy(view : StringView, first_uppercase : Int) -> String {
 /// particular, wasm-gc represents this buffer as a GC array, for which SIMD
 /// loads and stores would expand into individual array accesses.
 #cfg(not(any(target="js", target="native", target="wasm")))
-fn ascii_lowercase_copy(view : StringView, first_uppercase : Int) -> String {
+fn ascii_case_copy(
+  view : StringView,
+  first_match : Int,
+  first : UInt16,
+  last : UInt16,
+  delta : Int,
+) -> String {
   let len = view.length()
   let output : FixedArray[UInt16] = FixedArray::make(len, 0)
   output.unsafe_blit_from_string(0, view.data(), view.start_offset(), len)
-  let tail = view.view(start_offset=first_uppercase)
+  let tail = view.view(start_offset=first_match)
   // Keep `tail.code_units()` directly in the loop so compiler backends can
   // recognize and lower the zero-copy traversal at the use site.
   for i, u in tail.code_units() {
-    if u is ('A'..='Z') {
-      output.unsafe_set(first_uppercase + i, (u.to_int() + 32).to_uint16())
+    if u >= first && u <= last {
+      output.unsafe_set(first_match + i, (u.to_int() + delta).to_uint16())
     }
   }
   unsafe_fixedarray_uint16_to_string(output)
@@ -2419,7 +2486,7 @@ pub fn StringView::to_lower(self : StringView) -> StringView {
   guard find_ascii_uppercase_code_unit(data, start, len) is Some(idx) else {
     return self
   }
-  ascii_lowercase_copy(self, idx)
+  ascii_case_copy(self, idx, 'A', 'Z', 32)
 }
 
 ///|
@@ -2433,7 +2500,7 @@ pub fn String::to_lower(self : String) -> String {
   guard find_ascii_uppercase_code_unit(self, 0, len) is Some(idx) else {
     return self
   }
-  ascii_lowercase_copy(self, idx)
+  ascii_case_copy(self, idx, 'A', 'Z', 32)
 }
 
 ///|
@@ -2528,6 +2595,36 @@ test "View::to_lower" {
 /// Converts the ASCII lowercase letters (`'a'` to `'z'`) in this string to
 /// uppercase. All other characters, including non-ASCII letters, are left
 /// unchanged.
+#cfg(not(target="js"))
+pub fn StringView::to_upper(self : StringView) -> StringView {
+  // TODO: deal with non-ascii characters
+  let data = self.data()
+  let start = self.start_offset()
+  let len = self.length()
+  guard find_ascii_lowercase_code_unit(data, start, len) is Some(idx) else {
+    return self
+  }
+  ascii_case_copy(self, idx, 'a', 'z', -32)
+}
+
+///|
+/// Converts the ASCII lowercase letters (`'a'` to `'z'`) in this string to
+/// uppercase. All other characters, including non-ASCII letters, are left
+/// unchanged.
+#cfg(not(target="js"))
+pub fn String::to_upper(self : String) -> String {
+  // TODO: deal with non-ascii characters
+  let len = self.length()
+  guard find_ascii_lowercase_code_unit(self, 0, len) is Some(idx) else {
+    return self
+  }
+  ascii_case_copy(self, idx, 'a', 'z', -32)
+}
+
+///|
+/// JavaScript strings cannot be patched in place, so retain the character-loop
+/// fallback instead of allocating an intermediate substring per unchanged run.
+#cfg(target="js")
 pub fn StringView::to_upper(self : StringView) -> StringView {
   // TODO: deal with non-ascii characters
   guard self.find_by(c => c.is_ascii_lowercase()) is Some(idx) else {
@@ -2550,6 +2647,7 @@ pub fn StringView::to_upper(self : StringView) -> StringView {
 /// Converts the ASCII lowercase letters (`'a'` to `'z'`) in this string to
 /// uppercase. All other characters, including non-ASCII letters, are left
 /// unchanged.
+#cfg(target="js")
 pub fn String::to_upper(self : String) -> String {
   // TODO: deal with non-ascii characters
   guard self.find_by(c => c.is_ascii_lowercase()) is Some(idx) else {
@@ -2573,6 +2671,14 @@ test "to_upper" {
   assert_true("hello".to_upper() == "HELLO")
   assert_true("HELLO".to_upper() == "HELLO")
   assert_true("Hello, World!".to_upper() == "HELLO, WORLD!")
+  // Starts at an unaligned code-unit offset, crosses both ASCII range
+  // boundaries, fills one vector, and leaves one scalar code unit.
+  assert_true("XXa`z{AZ09!".to_upper() == "XXA`Z{AZ09!")
+  assert_true("🤣a".to_upper() == "🤣A")
+  assert_true("a🤣b".to_upper() == "A🤣B")
+  let unpaired = String::from_array([(0xD800).unsafe_to_char(), 'a'])
+  let uppered_unpaired = String::from_array([(0xD800).unsafe_to_char(), 'A'])
+  assert_true(unpaired.to_upper() == uppered_unpaired)
 }
 
 ///|
@@ -2582,10 +2688,25 @@ test "to_upper after a non-BMP character" {
 }
 
 ///|
+test "to_upper SIMD search boundaries" {
+  for lowercase_at in 0..<40 {
+    let prefix = "X".repeat(lowercase_at)
+    let suffix = "X".repeat(40 - lowercase_at)
+    assert_true((prefix + "a" + suffix).to_upper() == prefix + "A" + suffix)
+  }
+  let source = "a" + "X".repeat(40) + "z"
+  assert_true(source[1:41].to_upper() == "X".repeat(40))
+}
+
+///|
 test "View::to_upper" {
   assert_true("hello"[:].to_upper() == "HELLO")
   assert_true("HELLO"[:].to_upper() == "HELLO")
   assert_true("Hello, World!"[:].to_upper() == "HELLO, WORLD!")
+  assert_true("X🤣abY"[1:5].to_upper() == "🤣AB")
+  let unpaired = String::from_array([(0xD800).unsafe_to_char(), 'a'])
+  let uppered_unpaired = String::from_array([(0xD800).unsafe_to_char(), 'A'])
+  assert_true(unpaired[:].to_upper() == uppered_unpaired)
 }
 
 ///|
