@@ -45,6 +45,30 @@ pub fn[A] LazyList::empty() -> LazyList[A] {
 }
 
 ///|
+/// Builds a lazy list holding the elements of `arr`, in order.
+///
+/// The elements are copied when the list is built, so later changes to the
+/// array behind `arr` do not show through. Every tail is already evaluated.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   let xs = @lazy_list.LazyList([1, 2, 3])
+///   debug_inspect(xs.to_array(), content="[1, 2, 3]")
+///   debug_inspect(xs.head(), content="Some(1)")
+///   inspect(@lazy_list.LazyList(([] : Array[Int])).is_empty(), content="true")
+/// }
+/// ```
+pub fn[A] LazyList::LazyList(arr : ArrayView[A]) -> LazyList[A] {
+  for i = arr.length() - 1, acc = LazyList::empty(); i >= 0; {
+    continue i - 1, { cell: Cons(arr[i], tail=Tail::ready(acc)), }
+  } nobreak {
+    acc
+  }
+}
+
+///|
 /// Prepends an element with a lazy, memoized tail. This is the primary
 /// builder for streams whose continuation should not be evaluated until
 /// it is observed. The tail thunk is invoked at most once.
