@@ -1032,7 +1032,7 @@ pub impl ToJson for StringView with fn to_json(self) {
 
 ///|
 pub impl Add for StringView with fn add(self, other) {
-  [..self, ..other]
+  concat_views(self, other)
 }
 
 ///|
