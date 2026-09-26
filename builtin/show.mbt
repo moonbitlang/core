@@ -237,22 +237,6 @@ pub impl[X : Show] Show for X? with fn output(self, logger) {
 
 ///|
 #deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
-pub impl[T : Show, E : Show] Show for Result[T, E]
-
-///|
-pub impl[T : Show, E : Show] Show for Result[T, E] with fn output(self, logger) {
-  match self {
-    Ok(x) =>
-      logger <+
-        $|Ok(\{x})
-    Err(e) =>
-      logger <+
-        $|Err(\{e})
-  }
-}
-
-///|
-#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
 pub impl[X : Show] Show for FixedArray[X]
 
 ///|

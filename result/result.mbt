@@ -383,3 +383,58 @@ test "map/map_err/bind propagate callback errors" {
     err.bind(_ => (fail("unreachable") : Result[Int, String])) == Err("e"),
   )
 }
+
+///|
+/// Implements the `Hash` trait for `Result` type, allowing `Result` values to be
+/// used in hash-based collections.
+///
+/// Parameters:
+///
+/// * `self` : The `Result` value to be hashed.
+/// * `hasher` : The hasher object to which the hash value will be combined.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let hasher = Hasher(seed=0)
+///   let ok_result : Result[Int, String] = Ok(42)
+///   let err_result : Result[Int, String] = Err("error")
+///   hasher.combine(ok_result)
+///   inspect(hasher.finalize(), content="-1948635851")
+///   let hasher = Hasher(seed=0)
+///   hasher.combine(err_result)
+///   inspect(hasher.finalize(), content="1953766574")
+/// }
+/// ```
+pub impl[T : Hash, E : Hash] Hash for Result[T, E] with fn hash_combine(
+  self,
+  hasher,
+) {
+  match self {
+    Ok(x) => {
+      hasher.combine_int(0)
+      hasher.combine(x)
+    }
+    Err(x) => {
+      hasher.combine_int(1)
+      hasher.combine(x)
+    }
+  }
+}
+
+///|
+#deprecated("Use Debug instead of Show for debugging purposes. See https://github.com/moonbitlang/core/blob/main/debug/README.mbt.md")
+pub impl[T : Show, E : Show] Show for Result[T, E]
+
+///|
+pub impl[T : Show, E : Show] Show for Result[T, E] with fn output(self, logger) {
+  match self {
+    Ok(x) =>
+      logger <+
+        $|Ok(\{x})
+    Err(e) =>
+      logger <+
+        $|Err(\{e})
+  }
+}

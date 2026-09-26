@@ -424,15 +424,6 @@ pub extend ReadOnlyArray with Eq::{equal}
 pub extend ReadOnlyArray with Hash::{hash}
 
 ///|
-pub extend Result with Compare::{compare}
-
-///|
-pub extend Result with Eq::{equal}
-
-///|
-pub extend Result with Hash::{hash}
-
-///|
 pub extend SourceLoc with Show::{to_string}
 
 ///|
@@ -1188,26 +1179,6 @@ pub extend ReadOnlyArray with Show::{to_string, output}
 #deprecated("Use `Json(value)` instead", skip_current_package=true)
 #doc(hidden)
 pub extend ReadOnlyArray with ToJson::{to_json}
-
-///|
-#deprecated("Use the comparison operators (`<`, `<=`, `>=`, `>`) instead", skip_current_package=true)
-#doc(hidden)
-pub extend Result with Compare::{op_lt, op_le, op_ge, op_gt}
-
-///|
-#deprecated("Use `!=` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Result with Eq::{not_equal}
-
-///|
-#deprecated("Use `Hash::hash_combine` instead", skip_current_package=true)
-#doc(hidden)
-pub extend Result with Hash::{hash_combine}
-
-///|
-#deprecated("Use `@debug.Debug` instead of `Show` for collections", skip_current_package=true)
-#doc(hidden)
-pub extend Result with Show::{to_string, output}
 
 ///|
 #deprecated("Use `Json(value)` instead", skip_current_package=true)
