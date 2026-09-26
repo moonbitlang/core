@@ -241,6 +241,9 @@ test "panic Array growth rejects a wrapped required size" {
 ///|
 fn[T] Array::resize_buffer(self : Array[T], new_capacity : Int) -> Unit {
   let old_buf = self.buf
+  // Drop the array's reference so make_and_blit can see a unique old buffer.
+  // On native/Wasm1 this lets it transfer element references without retaining
+  // each one. Other owners still keep the buffer on the shared-copy path.
   self.buf = []
   // Only the live prefix is worth carrying over. The slots beyond `len` hold
   // either NULL or the elements earlier removals left behind, and leaving them
