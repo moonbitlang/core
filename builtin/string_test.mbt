@@ -318,3 +318,20 @@ test "StringView repeat single" {
   let view = "repeat".exact_view()
   inspect(view.repeat(1), content="repeat")
 }
+
+///|
+test "concatenating string helpers keep every code unit" {
+  let s = "a🌟b"
+  // StringView pads with a non-BMP padding char, and with a view that starts
+  // inside the source string.
+  inspect(s[1:].pad_start(6, '✨'), content="✨✨✨🌟b")
+  inspect(s[:3].pad_end(5, '🌟'), content="a🌟🌟🌟")
+  inspect(s.pad_end(6, '-'), content="a🌟b--")
+  // replace: empty `old` prepends, and a match at either end.
+  inspect(s[1:].replace(old="", new="x"), content="x🌟b")
+  inspect(s.replace(old="a", new=""), content="🌟b")
+  inspect(s.replace(old="b", new="🚀"), content="a🌟🚀")
+  // StringView + StringView across a surrogate pair boundary.
+  inspect(s[:1] + s[1:], content="a🌟b")
+  inspect(s[:0] + s[:0], content="")
+}

@@ -1453,6 +1453,39 @@ test "is_blank" {
 }
 
 ///|
+/// Upper bound (exclusive, in UTF-16 code units) on the length of a result
+/// built with `String + String` in the padding helpers. The native runtime
+/// computes the byte count of a string concatenation as a 32-bit `len * 2`,
+/// so longer results go through `concat_views` instead. Callers check
+/// `padding.length() < string_add_max_len - len`, which cannot overflow.
+let string_add_max_len : Int = 0x4000_0000
+
+///|
+/// Concatenates `a`, `b` and the optional `rest` into a new string with a
+/// single, exactly sized buffer.
+///
+/// This is what `[..a, ..b, ..rest]` means, but string spread lowers to a
+/// per-character `Iter` loop into an unsized builder, which is several times
+/// slower for these internal callers.
+fn concat_views(a : StringView, b : StringView, rest? : StringView) -> String {
+  let len = a.length() +
+    b.length() +
+    (match rest {
+      Some(r) => r.length()
+      None => 0
+    })
+  // `size_hint` is in bytes; two per UTF-16 code unit. If `len * 2`
+  // overflows, the hint is ignored and `write_view` grows the buffer.
+  let buf = StringBuilder(size_hint=len * 2)
+  buf.write_view(a)
+  buf.write_view(b)
+  if rest is Some(r) {
+    buf.write_view(r)
+  }
+  buf.to_string()
+}
+
+///|
 /// Returns a new string with `padding_char`s prefixed to `self` if
 /// `self.length() < total_width`. The threshold and the pad count are
 /// measured in UTF-16 code units: `total_width - self.length()` copies of
@@ -1468,7 +1501,7 @@ pub fn StringView::pad_start(
   let len = self.length()
   guard len < total_width else { return self.to_owned() }
   let padding = String::make(total_width - len, padding_char)
-  [..padding, ..self]
+  concat_views(padding, self)
 }
 
 ///|
@@ -1487,7 +1520,11 @@ pub fn String::pad_start(
   let len = self.length()
   guard len < total_width else { return self }
   let padding = String::make(total_width - len, padding_char)
-  [..padding, ..self]
+  if padding.length() < string_add_max_len - len {
+    padding + self
+  } else {
+    concat_views(padding, self)
+  }
 }
 
 ///|
@@ -1531,7 +1568,7 @@ pub fn StringView::pad_end(
   let len = self.length()
   guard len < total_width else { return self.to_owned() }
   let padding = String::make(total_width - len, padding_char)
-  [..self, ..padding]
+  concat_views(self, padding)
 }
 
 ///|
@@ -1550,7 +1587,11 @@ pub fn String::pad_end(
   let len = self.length()
   guard len < total_width else { return self }
   let padding = String::make(total_width - len, padding_char)
-  [..self, ..padding]
+  if padding.length() < string_add_max_len - len {
+    self + padding
+  } else {
+    concat_views(self, padding)
+  }
 }
 
 ///|
@@ -2024,11 +2065,11 @@ pub fn StringView::replace(
 ) -> StringView {
   match self.find(old) {
     Some(end) =>
-      [
-        ..self.view(end_offset=end),
-        ..new,
-        ..self.view(start_offset=end + old.length()),
-      ]
+      concat_views(
+        self.view(end_offset=end),
+        new,
+        rest=self.view(start_offset=end + old.length()),
+      )
     None => self
   }
 }
@@ -2045,11 +2086,11 @@ pub fn String::replace(
 ) -> String {
   match self.find(old) {
     Some(end) =>
-      [
-        ..self.view(end_offset=end),
-        ..new,
-        ..self.view(start_offset=end + old.length()),
-      ]
+      concat_views(
+        self.view(end_offset=end),
+        new,
+        rest=self.view(start_offset=end + old.length()),
+      )
     None => self
   }
 }
