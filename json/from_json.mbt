@@ -180,19 +180,27 @@ pub impl[X : FromJson] FromJson for Array[X] with fn from_json(json, path) {
   guard json is Array(a) else {
     decode_error(path, "Array::from_json: expected array")
   }
+  decode_elements(a, path)
+}
+
+///|
+/// Decodes every element of `a` into an array sized up front (an array
+/// comprehension grows by pushing, which costs ~33% on nested arrays).
+/// Elements are pushed rather than written into uninitialised slots, so an
+/// element that fails to decode leaves no uninitialised memory behind.
+fn[X : FromJson] decode_elements(
+  a : Array[Json],
+  path : JsonPath,
+) -> Array[X] raise JsonDecodeError {
   // The test cannot fail; it only narrows the binding so that `index` becomes
   // assignable, letting every element share one path node. See `JsonPath`.
   guard! JsonPath::Index(path, index=0) is (Index(_) as new_path)
-  // TODO: the comprehension grows the result by pushing, while the `mapi` this
-  // replaced presized it to `a.length()`. That costs ~33% on nested arrays
-  // (native/release, `Array[Array[Int]]` 500x50: 86.1us -> 114.5us). Revisit
-  // once comprehensions presize from a known-length iterable.
-  [
-    for i, x in a => {
-      new_path.index = i
-      FromJson::from_json(x, new_path)
-    }
-  ]
+  let res : Array[X] = Array(capacity=a.length())
+  for i, x in a {
+    new_path.index = i
+    res.push(FromJson::from_json(x, new_path))
+  }
+  res
 }
 
 ///|
@@ -200,15 +208,7 @@ pub impl[X : FromJson] FromJson for ArrayView[X] with fn from_json(json, path) {
   guard json is Array(a) else {
     decode_error(path, "ArrayView::from_json: expected array")
   }
-  // As above: the test cannot fail, it just makes `index` assignable.
-  guard! JsonPath::Index(path, index=0) is (Index(_) as new_path)
-  // As above: pending the comprehension presizing fix.
-  [
-    for i, x in a => {
-      new_path.index = i
-      FromJson::from_json(x, new_path)
-    }
-  ]
+  decode_elements(a, path)
 }
 
 ///|
@@ -243,7 +243,7 @@ pub impl[V : FromJson] FromJson for Map[String, V] with fn from_json(json, path)
   guard json is Object(obj) else {
     decode_error(path, "Map::from_json: expected object")
   }
-  let res = Map([])
+  let res = Map([], capacity=obj.length())
   // As above: the test cannot fail, it just makes `key` assignable.
   guard! JsonPath::Key(path, key="") is (Key(_) as new_path)
   // Map::map_with_key
