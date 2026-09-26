@@ -64,3 +64,33 @@ test "quickcheck: union, intersection, and difference obey membership laws" {
     true
   })
 }
+
+///|
+test "quickcheck: set predicates and equality agree with a sorted-array model" {
+  @quickcheck.check((input : (Array[Int], Array[Int])) => {
+    let (xs, ys) = input
+    // String elements, so the probes reuse non-trivial stored hashes.
+    let key = (x : Int) => "k\{x % 23}"
+    let xs = normalized(xs.map(x => x % 23))
+    let ys = normalized(ys.map(y => y % 23))
+    let a = @hashset.from_array(xs.map(key))
+    let b = @hashset.from_array(ys.map(key))
+    let model_sub = xs.iter().all(x => ys.contains(x))
+    let model_sup = ys.iter().all(y => xs.contains(y))
+    let model_dis = xs.iter().all(x => !ys.contains(x))
+    let sym = a.symmetric_difference(b)
+    let model_sym = xs.filter(x => !ys.contains(x)) +
+      ys.filter(y => !xs.contains(y))
+    let sym_ok = sym.length() == model_sym.length() &&
+      model_sym.iter().all(x => sym.contains(key(x)))
+    let union = a.union(b)
+    let union_ok = union.length() == normalized(xs + ys).length() &&
+      union.iter().all(k => a.contains(k) || b.contains(k))
+    a.is_subset(b) == model_sub &&
+    a.is_superset(b) == model_sup &&
+    a.is_disjoint(b) == model_dis &&
+    (a == b) == (model_sub && model_sup) &&
+    sym_ok &&
+    union_ok
+  })
+}

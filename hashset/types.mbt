@@ -60,11 +60,12 @@ struct HashSet[K] {
 ///   inspect(a == b, content="false")
 /// }
 /// ```
-pub impl[K : Hash + Eq] Eq for HashSet[K] with fn equal(self, other) {
+pub impl[K : Eq] Eq for HashSet[K] with fn equal(self, other) {
   guard self.size == other.size else { return false }
-  for k in self {
-    guard other.contains(k) else { return false }
-  } nobreak {
-    true
+  for entry in self.entries {
+    if entry is Some({ key, hash, .. }) && !other.contains_with_hash(key, hash) {
+      return false
+    }
   }
+  true
 }
