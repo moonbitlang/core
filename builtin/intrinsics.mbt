@@ -67,6 +67,13 @@ pub fn[T] ignore(t : T) -> Unit = "%ignore"
 pub fn[T] physical_equal(a : T, b : T) -> Bool = "%refeq"
 
 ///|
+/// Borrows the reference without retaining it. A true result only permits
+/// reuse when the caller owns the reference; a borrowed reference may still
+/// belong to a live caller. Only available on native and linear-memory Wasm.
+#cfg(any(target="native", target="wasm"))
+fn[T] unsafe_is_unique_ref(value : T) -> Bool = "%unsafe_is_unique_ref"
+
+///|
 pub using @abort {abort}
 
 ///|
