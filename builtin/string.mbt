@@ -257,12 +257,13 @@ fn unsafe_to_bytes(array : FixedArray[Byte]) -> Bytes = "%identity"
 ///|
 /// Converts the String into an array of Chars.
 pub fn String::to_array(self : String) -> Array[Char] {
-  self
-  .iter()
-  .fold(init=Array(capacity=self.length()), (rv, c) => {
-    rv.push(c)
-    rv
-  })
+  // A direct `for .. in` decodes surrogate pairs inline; going through
+  // `iter()` costs a closure call per character.
+  let chars : Array[Char] = Array(capacity=self.length())
+  for c in self {
+    chars.push(c)
+  }
+  chars
 }
 
 ///|

@@ -318,3 +318,19 @@ test "StringView repeat single" {
   let view = "repeat".exact_view()
   inspect(view.repeat(1), content="repeat")
 }
+
+///|
+test "to_array agrees with iter on surrogates" {
+  // A valid pair, a lone leading surrogate, and a lone trailing one.
+  let s = String::from_array([
+    'a',
+    '🌍',
+    Int::unsafe_to_char(0xD800),
+    'b',
+    Int::unsafe_to_char(0xDC00),
+  ])
+  debug_inspect(s.to_array() == s.iter().to_array(), content="true")
+  debug_inspect(s[1:].to_array() == s[1:].iter().to_array(), content="true")
+  debug_inspect(s.to_array().length(), content="5")
+  debug_inspect("".to_array(), content="[]")
+}
