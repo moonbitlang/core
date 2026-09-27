@@ -340,3 +340,141 @@ test "required group with only hidden members reports a plain message" {
     ),
   )
 }
+
+///|
+/// Parse `argv` and summarise the outcome on one line: the parsed flags and
+/// values on success, or the first line of the error message on failure.
+fn parse_outcome(
+  cmd : @argparse.Command,
+  argv : Array[String],
+  env? : Map[String, String] = Map([]),
+) -> String {
+  try cmd.parse(argv~, env~) catch {
+    err => err.to_string().split("\n").next().unwrap_or("").to_owned()
+  } noraise {
+    m => "ok \{@debug.to_string((m.flags, m.values))}"
+  }
+}
+
+///|
+test "default values do not trigger relationships or exclusive groups" {
+  let exclusive = @argparse.Command(
+    "demo",
+    groups=[ArgGroup("fmt", args=["format", "json"], multiple=false)],
+    options=[OptionArg("format", long="format", default_values=["text"])],
+    flags=[FlagArg("json", long="json")],
+  )
+  // BUG: should parse with json=true and format=["text"]; the default value
+  // of `format` counts as a second member of the exclusive group.
+  inspect(
+    parse_outcome(exclusive, ["--json"]),
+    content=(
+      #|error: group conflict fmt
+    ),
+  )
+  // Two members passed explicitly: a real conflict.
+  inspect(
+    parse_outcome(exclusive, ["--format", "csv", "--json"]),
+    content=(
+      #|error: group conflict fmt
+    ),
+  )
+
+  let conflicts = @argparse.Command("demo", options=[
+    OptionArg("mode", long="mode", default_values=["fast"], conflicts_with=[
+      "other",
+    ]),
+    OptionArg("other", long="other"),
+  ])
+  // BUG: should parse; `mode` only holds its default value.
+  inspect(
+    parse_outcome(conflicts, ["--other", "x"]),
+    content=(
+      #|error: conflicting arguments: mode and other
+    ),
+  )
+  // Both passed explicitly: a real conflict.
+  inspect(
+    parse_outcome(conflicts, ["--mode", "slow", "--other", "x"]),
+    content=(
+      #|error: conflicting arguments: mode and other
+    ),
+  )
+
+  let conflicts_target = @argparse.Command("demo", options=[
+    OptionArg("mode", long="mode", default_values=["fast"]),
+    OptionArg("other", long="other", conflicts_with=["mode"]),
+  ])
+  // BUG: should parse; the conflict target `mode` only holds its default.
+  inspect(
+    parse_outcome(conflicts_target, ["--other", "x"]),
+    content=(
+      #|error: conflicting arguments: other and mode
+    ),
+  )
+
+  let requires = @argparse.Command("demo", options=[
+    OptionArg("mode", long="mode", default_values=["fast"], requires=["config"]),
+    OptionArg("config", long="config"),
+  ])
+  // BUG: should parse; `mode` only holds its default value.
+  inspect(
+    parse_outcome(requires, []),
+    content=(
+      #|error: the following required argument was not provided: 'config' (required by 'mode')
+    ),
+  )
+  // `mode` passed explicitly: `config` really is required.
+  inspect(
+    parse_outcome(requires, ["--mode", "slow"]),
+    content=(
+      #|error: the following required argument was not provided: 'config' (required by 'mode')
+    ),
+  )
+
+  let group_requires = @argparse.Command(
+    "demo",
+    groups=[ArgGroup("g", args=["mode"], requires=["config"])],
+    options=[
+      OptionArg("mode", long="mode", default_values=["fast"]),
+      OptionArg("config", long="config"),
+    ],
+  )
+  // BUG: should parse; the only member of `g` holds its default value.
+  inspect(
+    parse_outcome(group_requires, []),
+    content=(
+      #|error: the following required argument was not provided: 'config'
+    ),
+  )
+
+  let group_conflicts = @argparse.Command(
+    "demo",
+    groups=[ArgGroup("g", args=["mode"], conflicts_with=["other"])],
+    options=[
+      OptionArg("mode", long="mode", default_values=["fast"]),
+      OptionArg("other", long="other"),
+    ],
+  )
+  // BUG: should parse; the only member of `g` holds its default value.
+  inspect(
+    parse_outcome(group_conflicts, ["--other", "x"]),
+    content=(
+      #|error: group conflict g conflicts with other
+    ),
+  )
+
+  // A value from the environment counts as passed, like an argv value.
+  let env_conflicts = @argparse.Command("demo", options=[
+    OptionArg("mode", long="mode", env="MODE", default_values=["fast"], conflicts_with=[
+      "other",
+    ]),
+    OptionArg("other", long="other"),
+  ])
+  inspect(
+    parse_outcome(env_conflicts, ["--other", "x"], env={ "MODE": "slow" }),
+    content=(
+      #|error: conflicting arguments: mode and other
+    ),
+  )
+}
