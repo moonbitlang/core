@@ -166,26 +166,68 @@ fn[K, V] unbalanced_nodes(t : SortedMap[K, V]) -> Array[(Int, Int)] {
 test "filter rebuilds a balanced tree" {
   let m = SortedMap(Array::makei(2000, i => (i, i)))
   // The root is 1000: `kept` keeps it and `dropped` drops it.
-  // BUG: `filter` recombines the independently filtered subtrees with a
-  // single `balance` step when the node is kept, or with `glue` when it is
-  // dropped, but their sizes can differ by far more than one rotation
-  // repairs. Every node should be balanced: `[]` and `true` in both cases.
   let kept = m.filter((k, _) => k == 0 || k >= 1000)
   inspect(kept.length(), content="1001")
   @debug.debug_inspect(
     unbalanced_nodes(kept),
     content=(
-      #|[(1, 249)]
+      #|[]
     ),
   )
-  inspect(is_valid(kept), content="false")
+  inspect(is_valid(kept), content="true")
   let dropped = m.filter((k, _) => k < 1000 || k == 1999)
   inspect(dropped.length(), content="1001")
   @debug.debug_inspect(
     unbalanced_nodes(dropped),
     content=(
-      #|[(498, 1)]
+      #|[]
     ),
   )
-  inspect(is_valid(dropped), content="false")
+  inspect(is_valid(dropped), content="true")
+}
+
+///|
+/// Filter `m` with `pred` and check the result is valid and holds exactly
+/// the entries of `m` that satisfy `pred`.
+fn check_filter(
+  m : SortedMap[Int, Int],
+  pred : (Int, Int) -> Bool,
+) -> Unit raise {
+  let filtered = m.filter(pred)
+  assert_true(is_valid(filtered))
+  @test.assert_eq(
+    filtered.to_array(),
+    m.to_array().filter(kv => pred(kv.0, kv.1)),
+  )
+}
+
+///|
+test "filter keeps the tree balanced" {
+  // every subset of small maps
+  for n in 0..<=12 {
+    let m = SortedMap(Array::makei(n, i => (i, i)))
+    for mask in 0..<(1 << n) {
+      check_filter(m, (k, _) => ((mask >> k) & 1) == 1)
+    }
+  }
+  // every contiguous range of medium maps
+  for n in 13..<=40 {
+    let m = SortedMap(Array::makei(n, i => (i, i)))
+    for a in 0..<n {
+      for b in a..<=n {
+        check_filter(m, (k, _) => k >= a && k < b)
+      }
+    }
+  }
+  // lopsided predicates on a large map
+  let m = SortedMap(Array::makei(2000, i => (i, i)))
+  check_filter(m, (k, _) => k >= 1000)
+  check_filter(m, (k, _) => k < 1000)
+  check_filter(m, (k, _) => k >= 1000 && k < 1100)
+  check_filter(m, (k, _) => (k >= 500 && k < 1500) || k == 0)
+  check_filter(m, (k, _) => k % 100 == 0 || k >= 1500)
+  check_filter(m, (k, _) => k < 10 || k >= 1990)
+  check_filter(m, (k, _) => k != 1000)
+  check_filter(m, (k, _) => k < 1000 || k >= 1998)
+  check_filter(m, (k, _) => k <= 2 || (k > 1000 && k < 1500))
 }

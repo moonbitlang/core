@@ -83,6 +83,20 @@ fn[K, V] glue(l : SortedMap[K, V], r : SortedMap[K, V]) -> SortedMap[K, V] {
 }
 
 ///|
+/// Concatenates two trees where all keys in `l` < all keys in `r`. Unlike
+/// `glue`, no assumption is made on the relative sizes of `l` and `r`.
+fn[K, V] concat(l : SortedMap[K, V], r : SortedMap[K, V]) -> SortedMap[K, V] {
+  match (l, r) {
+    (Empty, r) => r
+    (l, Empty) => l
+    (l, r) => {
+      let (k, v, r) = r.split_min()
+      join(l, k, v, r)
+    }
+  }
+}
+
+///|
 /// Returns a new map with the given key removed. O(log n).
 /// If the key is not present, the original map is returned.
 pub fn[K : Compare, V] SortedMap::remove(
@@ -115,9 +129,9 @@ pub fn[K, V] SortedMap::filter(
     Empty => Empty
     Tree(k, value=v, l, r, ..) =>
       if pred(k, v) {
-        balance(k, v, l.filter(pred), r.filter(pred))
+        join(l.filter(pred), k, v, r.filter(pred))
       } else {
-        glue(l.filter(pred), r.filter(pred))
+        concat(l.filter(pred), r.filter(pred))
       }
   }
 }
