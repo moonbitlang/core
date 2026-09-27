@@ -2,7 +2,9 @@
 
 The `moonbitlang/core/v128` package provides SIMD-style constructors, lane
 extractors, arithmetic, comparisons, bitwise operations, and memory operations
-for the built-in `V128` type. The SIMD functions are experimental and hidden
+for the built-in `V128` type. `V128::equal`, `V128::to_string`, and the `Eq`
+and `Show` implementations live in `builtin`; the `Debug` implementation lives
+in `debug`. The SIMD functions are experimental and hidden
 from the generated public interface; their API may change without notice.
 
 ```mbt check
