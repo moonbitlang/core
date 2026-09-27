@@ -799,11 +799,6 @@ test "global flag negation followed by occurrences across subcommand levels" {
     ["-v", "-v", "mid", "--no-v", "leaf", "-v"],
     ["-v", "mid", "-v", "leaf", "--no-v", "-v"],
   ]
-  // BUG: occurrences after a `--no-v` inside a subcommand are added to the
-  // count from before the reset. Every row whose last `--no-v` is followed by
-  // exactly one `-v` should report `true x1` at every level, as
-  // `-v --no-v -v mid` does; rows 4, 8, 9, 10 and 11 report x2, x2, x2, x3
-  // and x3 instead.
   inspect(
     nested_global_table("v", rows, flags=[
       FlagArg(
@@ -819,14 +814,14 @@ test "global flag negation followed by occurrences across subcommand levels" {
       #|-v --no-v -v mid => true x1 | true x1
       #|-v mid --no-v => false | false
       #|--no-v mid -v => true x1 | true x1
-      #|-v mid --no-v -v => true x2 | true x2
+      #|-v mid --no-v -v => true x1 | true x1
       #|-v mid --no-v leaf => false | false | false
       #|-v mid leaf --no-v => false | false | false
       #|--no-v mid leaf -v => true x1 | true x1 | true x1
-      #|-v mid --no-v -v leaf => true x2 | true x2 | true x2
-      #|-v mid leaf --no-v -v => true x2 | true x2 | true x2
-      #|-v -v mid --no-v leaf -v => true x3 | true x3 | true x3
-      #|-v mid -v leaf --no-v -v => true x3 | true x3 | true x3
+      #|-v mid --no-v -v leaf => true x1 | true x1 | true x1
+      #|-v mid leaf --no-v -v => true x1 | true x1 | true x1
+      #|-v -v mid --no-v leaf -v => true x1 | true x1 | true x1
+      #|-v mid -v leaf --no-v -v => true x1 | true x1 | true x1
     ),
   )
   inspect(
@@ -878,5 +873,107 @@ test "global flag negation followed by occurrences across subcommand levels" {
       #|-v -v mid --no-v leaf -v => false | false | false
       #|-v mid -v leaf --no-v -v => false | false | false
     ),
+  )
+}
+
+///|
+test "nested global count negation in other command shapes" {
+  let count_flag = @argparse.FlagArg(
+    "v",
+    short='v',
+    long="v",
+    action=Count,
+    negatable=true,
+    global=true,
+  )
+  // Declared global on `mid`, parsed through three levels below the root.
+  let mid_global = @argparse.Command("root", subcommands=[
+    Command("mid", flags=[count_flag], subcommands=[
+      Command("leaf", subcommands=[Command("tip")]),
+    ]),
+  ])
+  inspect(
+    nested_global_levels(mid_global, "v", [
+      "mid", "-v", "leaf", "--no-v", "-v", "tip", "-v",
+    ]),
+    content="- | true x2 | true x2 | true x2",
+  )
+  // Redeclared as a compatible global on `mid`.
+  let redeclared = @argparse.Command("root", flags=[count_flag], subcommands=[
+    Command("mid", flags=[count_flag], subcommands=[Command("leaf")]),
+  ])
+  inspect(
+    nested_global_levels(redeclared, "v", [
+      "-v", "mid", "-v", "leaf", "--no-v", "-v",
+    ]),
+    content="true x1 | true x1 | true x1",
+  )
+  // Reached through `mid`'s default subcommand.
+  let defaulted = @argparse.Command("root", flags=[count_flag], subcommands=[
+    Command("mid", subcommands=[Command("leaf")], default_subcommand="leaf"),
+  ])
+  inspect(
+    nested_global_levels(defaulted, "v", ["-v", "mid"]),
+    content="true x1 | true x1 | true x1",
+  )
+  inspect(
+    nested_global_levels(defaulted, "v", ["-v", "mid", "--no-v", "-v"]),
+    content="true x1 | true x1 | true x1",
+  )
+}
+
+///|
+test "nested global count keeps argv over env across two levels" {
+  let cmd = @argparse.Command(
+    "root",
+    flags=[
+      FlagArg(
+        "v",
+        short='v',
+        long="v",
+        action=Count,
+        env="V",
+        negatable=true,
+        global=true,
+      ),
+    ],
+    subcommands=[Command("mid", subcommands=[Command("leaf")])],
+  )
+  let from_env = cmd.parse(argv=["mid", "leaf"], env={ "V": "3" }) catch {
+    _ => panic()
+  }
+  assert_true(
+    from_env.flag_counts is { "v": 3, .. } &&
+    from_env.sources is { "v": Env, .. } &&
+    from_env.subcommand is Some(("mid", mid)) &&
+    mid.flag_counts is { "v": 3, .. } &&
+    mid.subcommand is Some(("leaf", leaf)) &&
+    leaf.flag_counts is { "v": 3, .. } &&
+    leaf.sources is { "v": Env, .. },
+  )
+  let from_argv = cmd.parse(argv=["-v", "mid", "leaf"], env={ "V": "3" }) catch {
+    _ => panic()
+  }
+  assert_true(
+    from_argv.flag_counts is { "v": 1, .. } &&
+    from_argv.sources is { "v": Argv, .. } &&
+    from_argv.subcommand is Some(("mid", mid)) &&
+    mid.flag_counts is { "v": 1, .. } &&
+    mid.subcommand is Some(("leaf", leaf)) &&
+    leaf.flag_counts is { "v": 1, .. } &&
+    leaf.sources is { "v": Argv, .. },
+  )
+  let negated = cmd.parse(argv=["-v", "mid", "leaf", "--no-v"], env={ "V": "3" }) catch {
+    _ => panic()
+  }
+  assert_true(
+    negated.flags is { "v": false, .. } &&
+    negated.flag_counts.get("v") is None &&
+    negated.sources is { "v": Argv, .. } &&
+    negated.subcommand is Some(("mid", mid)) &&
+    mid.flags is { "v": false, .. } &&
+    mid.subcommand is Some(("leaf", leaf)) &&
+    leaf.flags is { "v": false, .. } &&
+    leaf.flag_counts.get("v") is None,
   )
 }
