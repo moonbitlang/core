@@ -180,7 +180,8 @@ pub fn Char::is_whitespace(self : Self) -> Bool {
 }
 
 ///|
-/// Returns true if this char has one of the general categories for numbers.
+/// Returns true if this char has one of the general categories for numbers
+/// (Nd, Nl or No) in Unicode 16.0.
 pub fn Char::is_numeric(self : Self) -> Bool {
   if self is ('0'..='9') {
     return true
@@ -197,7 +198,7 @@ pub fn Char::is_numeric(self : Self) -> Bool {
   | '\u00BE'
   | '\u0660'..='\u0669'
   | '\u06F0'..='\u06F9'
-  | '\u07C0'..='\u07F9'
+  | '\u07C0'..='\u07C9'
   | '\u0966'..='\u096F'
   | '\u09E6'..='\u09EF'
   | '\u09F4'..='\u09F9'
@@ -235,7 +236,8 @@ pub fn Char::is_numeric(self : Self) -> Bool {
   | '\u2070'
   | '\u2074'..='\u2079'
   | '\u2080'..='\u2089'
-  | '\u2150'..='\u2189'
+  | '\u2150'..='\u2182'
+  | '\u2185'..='\u2189'
   | '\u2460'..='\u249B'
   | '\u24EA'..='\u24FF'
   | '\u2776'..='\u2793'
@@ -275,6 +277,7 @@ pub fn Char::is_numeric(self : Self) -> Bool {
   | '\u{10916}'..='\u{1091B}'
   | '\u{109BC}'..='\u{109BD}'
   | '\u{109C0}'..='\u{109CF}'
+  | '\u{109D2}'..='\u{109FF}'
   | '\u{10A40}'..='\u{10A48}'
   | '\u{10A7D}'..='\u{10A7E}'
   | '\u{10A9D}'..='\u{10A9F}'
@@ -316,9 +319,10 @@ pub fn Char::is_numeric(self : Self) -> Bool {
   | '\u{16B50}'..='\u{16B59}'
   | '\u{16B5B}'..='\u{16B61}'
   | '\u{16D70}'..='\u{16D79}'
-  | '\u{16D80}'..='\u{16E96}'
+  | '\u{16E80}'..='\u{16E96}'
   | '\u{1CCF0}'..='\u{1CCF9}'
-  | '\u{1D2C0}'..='\u{1D2F3}'
+  | '\u{1D2C0}'..='\u{1D2D3}'
+  | '\u{1D2E0}'..='\u{1D2F3}'
   | '\u{1D360}'..='\u{1D378}'
   | '\u{1D7CE}'..='\u{1D7FF}'
   | '\u{1E140}'..='\u{1E149}'
@@ -327,8 +331,11 @@ pub fn Char::is_numeric(self : Self) -> Bool {
   | '\u{1E5F1}'..='\u{1E5FA}'
   | '\u{1E8C7}'..='\u{1E8CF}'
   | '\u{1E950}'..='\u{1E959}'
-  | '\u{1EC71}'..='\u{1ECB4}'
-  | '\u{1ED01}'..='\u{1ED3D}'
+  | '\u{1EC71}'..='\u{1ECAB}'
+  | '\u{1ECAD}'..='\u{1ECAF}'
+  | '\u{1ECB1}'..='\u{1ECB4}'
+  | '\u{1ED01}'..='\u{1ED2D}'
+  | '\u{1ED2F}'..='\u{1ED3D}'
   | '\u{1F100}'..='\u{1F10C}'
   | '\u{1FBF0}'..='\u{1FBF9}')
 }

@@ -87,9 +87,6 @@ test "Char::is_numeric at the edges of its number ranges" {
   // should be true exactly for Nd, Nl and No. The probes are the endpoints of
   // each over- or under-covered range and the neighbours just outside each
   // corrected range.
-  // BUG: U+07CA, U+07F9, U+2183, U+2184, U+16D80, U+16E7F, U+1D2D4, U+1D2DF,
-  // U+1ECAC, U+1ECB0 and U+1ED2E should be false, and U+109D2 and U+109FF
-  // should be true.
   let probes : Array[(Char, String)] = [
     ('\u{07C9}', "Nd"),
     ('\u{07CA}', "Lo"),
@@ -132,36 +129,36 @@ test "Char::is_numeric at the edges of its number ranges" {
     lines.join("\n"),
     content=(
       #|U+7c9 Nd true
-      #|U+7ca Lo true
-      #|U+7f9 Po true
+      #|U+7ca Lo false
+      #|U+7f9 Po false
       #|U+7fa Lm false
       #|U+2182 Nl true
-      #|U+2183 Lu true
-      #|U+2184 Ll true
+      #|U+2183 Lu false
+      #|U+2184 Ll false
       #|U+2185 Nl true
       #|U+109cf No true
       #|U+109d1 Cn false
-      #|U+109d2 No false
-      #|U+109ff No false
+      #|U+109d2 No true
+      #|U+109ff No true
       #|U+10a00 Lo false
       #|U+16d79 Nd true
-      #|U+16d80 Cn true
-      #|U+16e7f Ll true
+      #|U+16d80 Cn false
+      #|U+16e7f Ll false
       #|U+16e80 No true
       #|U+16e96 No true
       #|U+16e97 Po false
       #|U+1d2d3 No true
-      #|U+1d2d4 Cn true
-      #|U+1d2df Cn true
+      #|U+1d2d4 Cn false
+      #|U+1d2df Cn false
       #|U+1d2e0 No true
       #|U+1ecab No true
-      #|U+1ecac So true
+      #|U+1ecac So false
       #|U+1ecad No true
       #|U+1ecaf No true
-      #|U+1ecb0 Sc true
+      #|U+1ecb0 Sc false
       #|U+1ecb1 No true
       #|U+1ed2d No true
-      #|U+1ed2e So true
+      #|U+1ed2e So false
       #|U+1ed2f No true
     ),
   )
