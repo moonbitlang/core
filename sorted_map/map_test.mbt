@@ -481,3 +481,88 @@ test "copy independence" {
   debug_inspect(map2.get(2), content="Some(\"x\")")
   debug_inspect(map2.get(4), content="Some(\"d\")")
 }
+
+///|
+/// Returns `(length, keys in order, keys that get can find)`.
+fn map_state(
+  m : @sorted_map.SortedMap[Int, Int],
+) -> (Int, Array[Int], Array[Int]) {
+  let keys = m.keys().to_array()
+  (m.length(), keys, [ for k in keys if m.get(k) is Some(_) => k ])
+}
+
+///|
+test "update_or_default: f inserts keys into the same map" {
+  let m = @sorted_map.from_array([(150, 0)])
+  m.update_or_default(150, 0, v => {
+    for i in 0..<10 {
+      m.set(i, i)
+    }
+    v + 1
+  })
+  // BUG: the keys `f` inserted are lost; should be
+  // (11, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 150], [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 150])
+  debug_inspect(
+    map_state(m),
+    content=(
+      #|(11, [150], [150])
+    ),
+  )
+  debug_inspect(m.get(150), content="Some(1)")
+}
+
+///|
+test "update_or_default: f inserts keys on both sides of the present key" {
+  let m = @sorted_map.from_array([(10, 0)])
+  m.update_or_default(10, 0, v => {
+    for k in [5, 3, 15, 20, 1] {
+      m.set(k, k)
+    }
+    v + 1
+  })
+  // BUG: the rebalanced tree `f` built is dropped; should be
+  // (6, [1, 3, 5, 10, 15, 20], [1, 3, 5, 10, 15, 20])
+  debug_inspect(
+    map_state(m),
+    content=(
+      #|(6, [10], [10])
+    ),
+  )
+}
+
+///|
+test "update_or_default: f removes other keys from the same map" {
+  let m = @sorted_map.from_array([ for i in 0..<8 => (i, i) ])
+  m.update_or_default(7, 0, v => {
+    for i in 0..<6 {
+      m.remove(i)
+    }
+    v + 10
+  })
+  // BUG: removed keys 3 and 5 come back; should be (2, [6, 7], [6, 7])
+  debug_inspect(
+    map_state(m),
+    content=(
+      #|(2, [3, 5, 6, 7], [3, 5, 6, 7])
+    ),
+  )
+  debug_inspect(m.get(7), content="Some(17)")
+}
+
+///|
+test "update_or_default: f removes the present key" {
+  let m = @sorted_map.from_array([(1, 1), (2, 2), (3, 3)])
+  m.update_or_default(2, 0, v => {
+    m.remove(2)
+    v + 10
+  })
+  // BUG: the result overwrites key 3 instead of being stored under key 2;
+  // should be [(1, 1), (2, 12), (3, 3)] with length 3
+  debug_inspect(
+    m.to_array(),
+    content=(
+      #|[(1, 1), (3, 12)]
+    ),
+  )
+  inspect(m.length(), content="2")
+}
