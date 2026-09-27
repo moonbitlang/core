@@ -21,7 +21,8 @@
 #cfg(any(target="native", target="wasm"))
 test "find_escape_code_unit_simd locates every escaped unit in every lane" {
   let probes = [0x22, 0x5C, ..Array::makei(0x20, i => i)]
-  let misses = [0x20, 0x21, 0x23, 0x5B, 0x5D, 0x7F, 0xD800]
+  // Unescaped units, including non-ASCII ones whose low byte is a quote or a backslash.
+  let misses = [0x20, 0x21, 0x23, 0x5B, 0x5D, 0x7F, 0x0122, 0x015C, 0x4E2D]
   for len in 0..<41 {
     // Escaped units just before `pos` and one unit after `end`: a scan that
     // looked outside `[pos, end)` would return a wrong index for them.

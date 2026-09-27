@@ -17,17 +17,30 @@
 // next escape checks the first unit and, if that unit does not need escaping,
 // continues with the SIMD scan. The sweeps below cover every lane of several
 // blocks, the scalar tail, runs of consecutive escapes, views at non-zero
-// offsets, and lone surrogates next to block boundaries.
+// offsets, and surrogate pairs next to block boundaries. Inputs are
+// well-formed UTF-16, as every `String` and `StringView` is.
 //
 // Code units are held in `Array[Int]` rather than `Array[UInt16]`: release
 // builds of moonc 0.10.14 miscompile element stores into `Array[UInt16]`.
 
 ///|
-/// Builds a string from raw UTF-16 code units; lone surrogates stay lone.
+/// Builds a string from UTF-16 code units. Callers pass well-formed sequences;
+/// each surrogate pair is decoded into one supplementary `Char`, since
+/// `unsafe_to_char` must not be given a surrogate half.
 fn escape_units_to_string(units : ArrayView[Int]) -> String {
   let buf = StringBuilder(size_hint=units.length())
-  for u in units {
+  for i = 0; i < units.length(); {
+    let u = units[i]
+    if u is (0xD800..=0xDBFF) &&
+      i + 1 < units.length() &&
+      units[i + 1] is (0xDC00..=0xDFFF) {
+      let scalar = 0x10000 + ((u - 0xD800) << 10) + (units[i + 1] - 0xDC00)
+      buf.write_char(scalar.unsafe_to_char())
+      continue i + 2
+    }
+    guard !(u is (0xD800..=0xDFFF)) else { abort("ill-formed test input") }
     buf.write_char(u.unsafe_to_char())
+    continue i + 1
   }
   buf.to_string()
 }
@@ -90,9 +103,9 @@ fn escape_check(
 ) -> Unit raise {
   let s = escape_units_to_string(units)
   let full = escape_units_to_string([..prefix, ..units, ..suffix])
-  let view = full.view(
-    start_offset=prefix.length(),
-    end_offset=prefix.length() + units.length(),
+  let view = full.exact_view(
+    start=prefix.length(),
+    end=prefix.length() + units.length(),
   )
   for quote in [true, false] {
     let expected = escape_model(units, quote)
@@ -157,19 +170,19 @@ test "escape: views at every start offset inside a larger buffer" {
   for start in 0..<24 {
     for end in start..<=backing.length() {
       let expected = escape_model(backing[start:end], true)
-      let view = full.view(start_offset=start, end_offset=end)
+      let view = full.exact_view(start~, end~)
       assert_eq(escape_string_units(view.escape()), expected)
     }
   }
 }
 
 ///|
-test "escape: surrogates around block boundaries are copied verbatim" {
+test "escape: surrogate pairs around block boundaries are copied verbatim" {
   let pieces = [
-    [0xD83D, 0xDE00], // a valid pair
-    [0xD800], // lone leading
-    [0xDC00], // lone trailing
-    [0xDFFF, 0xD800], // reversed pair
+    [0xD83D, 0xDE00], // a pair
+    [0xD800, 0xDC00], // the lowest pair
+    [0xDBFF, 0xDFFF], // the highest pair
+    [0xD83D, 0xDE00, 0xD83D, 0xDE01], // adjacent pairs
     [0xFFFF],
   ]
   for piece in pieces {
@@ -179,14 +192,13 @@ test "escape: surrogates around block boundaries are copied verbatim" {
         for k, u in piece {
           units[pos + k] = u
         }
-        // When the view starts with a trailing or ends with a leading surrogate,
-        // its boundary splits a pair of the backing string.
-        escape_check(units, [0xD83D], [0xDE00])
+        // The view sits between pairs of the backing string.
+        escape_check(units, [0xD83D, 0xDE00], [0xD83D, 0xDE00])
         // An escaped unit right after the surrogate(s).
         let after = pos + piece.length()
         if after < len {
           units[after] = 0x5C
-          escape_check(units, [0xDC00], [0xD800])
+          escape_check(units, [0xD83D, 0xDE00], [0xD83D, 0xDE00])
         }
         // An escaped unit right before the surrogate(s).
         if pos > 0 {
@@ -225,22 +237,28 @@ test "escape: long strings" {
 }
 
 ///|
-/// Maps a seed to a code unit: escaped units, near misses, non-ASCII BMP, and
-/// surrogate halves (paired or not, depending on neighbours).
-fn escape_seed_unit(seed : Int) -> Int {
+/// Pushes the code units for a seed: escaped units, near misses, non-ASCII BMP,
+/// or a whole surrogate pair, so the result stays well-formed UTF-16.
+fn escape_push_seed_units(units : Array[Int], seed : Int) -> Unit {
   match seed & 0xF {
-    0 => 0x22
-    1 => 0x5C
-    2 => 0x0A
-    3 => 0x09
-    4 => 0x00
-    5 => 0x1F
-    6 => 0x20
-    7 => 0x7F
-    8 => 0x4E2D
-    9 => 0xD83D
-    10 => 0xDE00
-    _ => 0x21 + ((seed >> 4) & 0x3F)
+    0 => units.push(0x22)
+    1 => units.push(0x5C)
+    2 => units.push(0x0A)
+    3 => units.push(0x09)
+    4 => units.push(0x00)
+    5 => units.push(0x1F)
+    6 => units.push(0x20)
+    7 => units.push(0x7F)
+    8 => units.push(0x4E2D)
+    9 => {
+      units.push(0xD83D)
+      units.push(0xDE00)
+    }
+    10 => {
+      units.push(0xDBFF)
+      units.push(0xDFFF)
+    }
+    _ => units.push(0x21 + ((seed >> 4) & 0x3F))
   }
 }
 
@@ -248,11 +266,11 @@ fn escape_seed_unit(seed : Int) -> Int {
 test "quickcheck: escape agrees with the per-code-unit model" {
   @quickcheck.check(count=300, (input : (Array[Int], Int, Int)) => {
     let (seeds, pre, post) = input
-    // Each seed yields four code units, so most inputs reach the vector loop.
+    // Each seed yields at least four code units, so most inputs reach the vector loop.
     let units = []
     for seed in seeds {
       for k in 0..<4 {
-        units.push(escape_seed_unit(seed >> (k * 7)))
+        escape_push_seed_units(units, seed >> (k * 7))
       }
     }
     let prefix = Array::make(pre & 7, 0x22)

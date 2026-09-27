@@ -134,14 +134,19 @@ forward and the end moves backward. Negative offsets clamp to zero, and an
 inverted range produces an empty view. `StringView` uses the same rules with
 offsets relative to the view.
 
+`String` and `StringView` must always be well-formed UTF-16: every surrogate is
+part of a pair, and a view never starts or ends inside one. The checked slicing
+APIs described here enforce this, and library code may rely on it without
+re-checking.
+
 Use `s.exact_view(start~, end~)` when invalid bounds or split surrogate pairs should
 panic, or `s.get_view(start~, end~)` to receive `None` for an invalid range.
 For a lossless split, use `s.split_at(i)`; `s[:i]` and `s[i:]` both exclude a
 character when `i` falls inside its surrogate pair.
 
 The old `sub` name is deprecated in favor of `exact_view`. The legacy `view`
-method is also deprecated; it retains its `start_offset`/`end_offset` labels and
-raw UTF-16 behavior for compatibility.
+method keeps its `start_offset`/`end_offset` labels and takes raw UTF-16 offsets
+without checking surrogate boundaries, so its caller must not split a pair.
 
 ```d2
 direction: right
