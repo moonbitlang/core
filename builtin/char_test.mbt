@@ -82,6 +82,92 @@ test "char printable and ascii case" {
 }
 
 ///|
+test "Char::is_numeric at the edges of its number ranges" {
+  // Each probe is paired with its Unicode 16.0 general category; the result
+  // should be true exactly for Nd, Nl and No. The probes are the endpoints of
+  // each over- or under-covered range and the neighbours just outside each
+  // corrected range.
+  // BUG: U+07CA, U+07F9, U+2183, U+2184, U+16D80, U+16E7F, U+1D2D4, U+1D2DF,
+  // U+1ECAC, U+1ECB0 and U+1ED2E should be false, and U+109D2 and U+109FF
+  // should be true.
+  let probes : Array[(Char, String)] = [
+    ('\u{07C9}', "Nd"),
+    ('\u{07CA}', "Lo"),
+    ('\u{07F9}', "Po"),
+    ('\u{07FA}', "Lm"),
+    ('\u{2182}', "Nl"),
+    ('\u{2183}', "Lu"),
+    ('\u{2184}', "Ll"),
+    ('\u{2185}', "Nl"),
+    ('\u{109CF}', "No"),
+    ('\u{109D1}', "Cn"),
+    ('\u{109D2}', "No"),
+    ('\u{109FF}', "No"),
+    ('\u{10A00}', "Lo"),
+    ('\u{16D79}', "Nd"),
+    ('\u{16D80}', "Cn"),
+    ('\u{16E7F}', "Ll"),
+    ('\u{16E80}', "No"),
+    ('\u{16E96}', "No"),
+    ('\u{16E97}', "Po"),
+    ('\u{1D2D3}', "No"),
+    ('\u{1D2D4}', "Cn"),
+    ('\u{1D2DF}', "Cn"),
+    ('\u{1D2E0}', "No"),
+    ('\u{1ECAB}', "No"),
+    ('\u{1ECAC}', "So"),
+    ('\u{1ECAD}', "No"),
+    ('\u{1ECAF}', "No"),
+    ('\u{1ECB0}', "Sc"),
+    ('\u{1ECB1}', "No"),
+    ('\u{1ED2D}', "No"),
+    ('\u{1ED2E}', "So"),
+    ('\u{1ED2F}', "No"),
+  ]
+  let lines = probes.map(p => {
+    let (c, category) = p
+    "U+\{c.to_int().to_string(radix=16)} \{category} \{c.is_numeric()}"
+  })
+  inspect(
+    lines.join("\n"),
+    content=(
+      #|U+7c9 Nd true
+      #|U+7ca Lo true
+      #|U+7f9 Po true
+      #|U+7fa Lm false
+      #|U+2182 Nl true
+      #|U+2183 Lu true
+      #|U+2184 Ll true
+      #|U+2185 Nl true
+      #|U+109cf No true
+      #|U+109d1 Cn false
+      #|U+109d2 No false
+      #|U+109ff No false
+      #|U+10a00 Lo false
+      #|U+16d79 Nd true
+      #|U+16d80 Cn true
+      #|U+16e7f Ll true
+      #|U+16e80 No true
+      #|U+16e96 No true
+      #|U+16e97 Po false
+      #|U+1d2d3 No true
+      #|U+1d2d4 Cn true
+      #|U+1d2df Cn true
+      #|U+1d2e0 No true
+      #|U+1ecab No true
+      #|U+1ecac So true
+      #|U+1ecad No true
+      #|U+1ecaf No true
+      #|U+1ecb0 Sc true
+      #|U+1ecb1 No true
+      #|U+1ed2d No true
+      #|U+1ed2e So true
+      #|U+1ed2f No true
+    ),
+  )
+}
+
+///|
 test "panic Char::is_digit invalid radix" {
   '0'.is_digit(1U) |> ignore
 }
