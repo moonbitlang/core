@@ -936,6 +936,9 @@ pub fn String::unsafe_char_at(String, Int) -> Char
 pub fn String::unsafe_substring(String, start~ : Int, end~ : Int) -> String
 pub fn String::view(String, start_offset? : Int, end_offset? : Int) -> StringView
 
+pub fn V128::equal(V128, V128) -> Bool
+pub fn V128::to_string(V128) -> String
+
 pub fn[T, U] Option::bind(T?, (T) -> U? raise?) -> U? raise?
 pub fn[X : Compare] Option::compare(X?, X?) -> Int
 pub fn[X : Eq] Option::equal(X?, X?) -> Bool
@@ -1437,6 +1440,7 @@ pub impl Eq for UInt16
 pub impl Eq for UInt64
 pub impl Eq for Double
 pub impl Eq for String
+pub impl Eq for V128
 pub impl[X : Eq] Eq for X?
 pub impl[T : Eq, E : Eq] Eq for Result[T, E]
 pub impl[T : Eq] Eq for FixedArray[T]
@@ -1557,6 +1561,7 @@ pub impl Show for UInt16
 pub impl Show for UInt64
 pub impl Show for Double
 pub impl Show for String
+pub impl Show for V128
 #deprecated
 pub impl[X : Show] Show for X?
 #deprecated

@@ -49,6 +49,7 @@ pub impl Debug for UInt64
 pub impl Debug for Float
 pub impl Debug for Double
 pub impl Debug for String
+pub impl Debug for V128
 pub impl[T : Debug] Debug for T?
 pub impl[T : Debug, E : Debug] Debug for Result[T, E]
 pub impl[T : Debug] Debug for FixedArray[T]

@@ -1,20 +1,11 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/v128"
 
-import {
-  "moonbitlang/core/debug",
-}
-
 // Values
 
 // Errors
 
 // Types and methods
-pub fn V128::equal(V128, V128) -> Bool
-pub fn V128::to_string(V128) -> String
-pub impl Eq for V128
-pub impl Show for V128
-pub impl @debug.Debug for V128
 
 // Type aliases
 

@@ -737,6 +737,12 @@ pub extend Unit with Hash::{hash}
 ///|
 pub extend Unit with Show::{to_string}
 
+///|
+pub extend V128 with Eq::{equal}
+
+///|
+pub extend V128 with Show::{to_string}
+
 // --- deprecated: compatibility methods ---
 
 ///|
@@ -1728,3 +1734,13 @@ pub extend Unit with Show::{output}
 #deprecated("Use `Json(value)` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Unit with ToJson::{to_json}
+
+///|
+#deprecated("Use `!=` instead", skip_current_package=true)
+#doc(hidden)
+pub extend V128 with Eq::{not_equal}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+#doc(hidden)
+pub extend V128 with Show::{output}

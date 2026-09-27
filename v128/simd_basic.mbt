@@ -13,63 +13,6 @@
 // limitations under the License.
 
 ///|
-/// Compares two `V128` values for bitwise equality across both 64-bit words.
-#internal(experimental, "subject to breaking change without notice")
-#doc(hidden)
-pub impl Eq for V128 with fn equal(self : V128, other : V128) -> Bool {
-  lo(self) == lo(other) && hi(self) == hi(other)
-}
-
-///|
-/// Compares two `V128` values for bitwise inequality across both 64-bit words.
-#internal(experimental, "subject to breaking change without notice")
-#doc(hidden)
-pub impl Eq for V128 with fn not_equal(self : V128, other : V128) -> Bool {
-  lo(self) != lo(other) || hi(self) != hi(other)
-}
-
-///|
-fn u64_hex_to(logger : &Logger, value : UInt64) -> Unit {
-  let digits = value.to_string(radix=16)
-  logger <+ "0x"
-  for _ in digits.length()..<16 {
-    logger.write_char('0')
-  }
-  logger.write_string(digits)
-}
-
-///|
-fn u64_hex(value : UInt64) -> String {
-  let buf = StringBuilder()
-  u64_hex_to(buf, value)
-  buf.to_string()
-}
-
-///|
-/// Prints the two 64-bit words in zero-padded hex so every byte lane is
-/// visible; lane 0 is the lowest byte of the first word.
-#internal(experimental, "subject to breaking change without notice")
-#doc(hidden)
-pub impl Show for V128 with fn output(self : V128, logger) {
-  logger <+
-    "V128(\{cb => u64_hex_to(cb, lo(self))}, \{cb => u64_hex_to(cb, hi(self))})"
-}
-
-///|
-/// Shows the two 64-bit words in the same zero-padded hex form as `Show`.
-#internal(experimental, "subject to breaking change without notice")
-#doc(hidden)
-pub impl @debug.Debug for V128 with fn to_repr(self) {
-  @debug.Repr::opaque_(
-    "V128",
-    @debug.Repr::tuple([
-      @debug.Repr::literal(u64_hex(lo(self))),
-      @debug.Repr::literal(u64_hex(hi(self))),
-    ]),
-  )
-}
-
-///|
 /// Creates a vector from per-lane constants (sixteen 8-bit integer lanes).
 #intrinsic("%v128.v128_const_i8x16")
 #internal(experimental, "subject to breaking change without notice")

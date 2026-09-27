@@ -18,8 +18,8 @@
 // the few ops the scanners need are hosted here directly.
 //
 // Scanner-only operations are gated to the linear-memory backends that use
-// them. `v128_make` and `v128_load` also support aligned bitstring extraction,
-// so they remain available on every backend with portable fallback bodies.
+// them. Construction, lane extraction, and loads also support the public
+// V128 methods and aligned bitstring extraction on every backend.
 // Scanner intrinsic declarations also carry scalar bodies for native builds
 // without hardware SIMD support.
 
@@ -27,11 +27,9 @@
 fn v128_make(lo : UInt64, hi : UInt64) -> V128 = "%v128.make"
 
 ///|
-#cfg(any(target="native", target="wasm"))
 fn v128_lo(value : V128) -> UInt64 = "%v128.lo"
 
 ///|
-#cfg(any(target="native", target="wasm"))
 fn v128_hi(value : V128) -> UInt64 = "%v128.hi"
 
 ///|
