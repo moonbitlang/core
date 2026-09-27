@@ -500,12 +500,14 @@ test "update_or_default: f inserts keys into the same map" {
     }
     v + 1
   })
-  // BUG: the keys `f` inserted are lost; should be
-  // (11, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 150], [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 150])
   debug_inspect(
     map_state(m),
     content=(
-      #|(11, [150], [150])
+      #|(
+      #|  11,
+      #|  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 150],
+      #|  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 150],
+      #|)
     ),
   )
   debug_inspect(m.get(150), content="Some(1)")
@@ -520,12 +522,10 @@ test "update_or_default: f inserts keys on both sides of the present key" {
     }
     v + 1
   })
-  // BUG: the rebalanced tree `f` built is dropped; should be
-  // (6, [1, 3, 5, 10, 15, 20], [1, 3, 5, 10, 15, 20])
   debug_inspect(
     map_state(m),
     content=(
-      #|(6, [10], [10])
+      #|(6, [1, 3, 5, 10, 15, 20], [1, 3, 5, 10, 15, 20])
     ),
   )
 }
@@ -539,13 +539,7 @@ test "update_or_default: f removes other keys from the same map" {
     }
     v + 10
   })
-  // BUG: removed keys 3 and 5 come back; should be (2, [6, 7], [6, 7])
-  debug_inspect(
-    map_state(m),
-    content=(
-      #|(2, [3, 5, 6, 7], [3, 5, 6, 7])
-    ),
-  )
+  debug_inspect(map_state(m), content="(2, [6, 7], [6, 7])")
   debug_inspect(m.get(7), content="Some(17)")
 }
 
@@ -556,13 +550,97 @@ test "update_or_default: f removes the present key" {
     m.remove(2)
     v + 10
   })
-  // BUG: the result overwrites key 3 instead of being stored under key 2;
-  // should be [(1, 1), (2, 12), (3, 3)] with length 3
+  debug_inspect(m.to_array(), content="[(1, 1), (2, 12), (3, 3)]")
+  inspect(m.length(), content="3")
+}
+
+///|
+test "update_or_default: f sets the present key" {
+  let m = @sorted_map.from_array([(1, 1), (2, 2)])
+  m.update_or_default(1, 0, v => {
+    m.set(1, 100)
+    v + 10
+  })
+  debug_inspect(m.to_array(), content="[(1, 11), (2, 2)]")
+}
+
+///|
+test "update_or_default: f removes the key whose successor is the present key" {
+  // Built from 0..<5, the tree is 1(0, 3(2, 4)). Removing 1 moves key 2 into
+  // the root node and unlinks the node that held 2 when `f` was called.
+  let m = @sorted_map.from_array([ for i in 0..<5 => (i, i) ])
+  m.update_or_default(2, 0, v => {
+    m.remove(1)
+    v + 10
+  })
   debug_inspect(
     m.to_array(),
     content=(
-      #|[(1, 1), (3, 12)]
+      #|[(0, 0), (2, 12), (3, 3), (4, 4)]
     ),
   )
-  inspect(m.length(), content="2")
+  inspect(m.length(), content="4")
+}
+
+///|
+test "update_or_default: f removes and re-inserts the present key" {
+  let m = @sorted_map.from_array([ for i in 0..<5 => (i, i) ])
+  m.update_or_default(3, 0, v => {
+    m.remove(3)
+    m.set(3, 100)
+    v + 10
+  })
+  debug_inspect(
+    map_state(m),
+    content=(
+      #|(5, [0, 1, 2, 3, 4], [0, 1, 2, 3, 4])
+    ),
+  )
+  debug_inspect(m.get(3), content="Some(13)")
+}
+
+///|
+test "update_or_default: f clears the map" {
+  let m = @sorted_map.from_array([ for i in 0..<5 => (i, i) ])
+  m.update_or_default(2, 0, v => {
+    m.clear()
+    v + 10
+  })
+  debug_inspect(m.to_array(), content="[(2, 12)]")
+  inspect(m.length(), content="1")
+}
+
+///|
+fn sorted_map_fib(memo : @sorted_map.SortedMap[Int, Int], n : Int) -> Int {
+  if n < 2 {
+    return n
+  }
+  memo.get_or_init(n, () => {
+    sorted_map_fib(memo, n - 1) + sorted_map_fib(memo, n - 2)
+  })
+}
+
+///|
+test "get_or_init: init may write to the same map (memoization)" {
+  let memo : @sorted_map.SortedMap[Int, Int] = SortedMap([])
+  inspect(sorted_map_fib(memo, 30), content="832040")
+  let missing = [ for k in 2..<=30 if memo.get(k) is None => k ]
+  debug_inspect(
+    (memo.length(), memo.to_array().length(), missing),
+    content=(
+      #|(29, 29, [])
+    ),
+  )
+}
+
+///|
+test "get_or_init: init inserts the same key" {
+  let m = @sorted_map.from_array([(1, 1)])
+  let v = m.get_or_init(3, () => {
+    m.set(3, 30)
+    m.set(2, 20)
+    300
+  })
+  inspect(v, content="300")
+  debug_inspect(m.to_array(), content="[(1, 1), (2, 20), (3, 300)]")
 }
