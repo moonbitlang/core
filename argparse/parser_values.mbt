@@ -237,6 +237,20 @@ fn matches_has_value_or_flag(matches : Matches, name : String) -> Bool {
 }
 
 ///|
+/// Whether `name` was given explicitly: on the command line or through its env
+/// variable. Unlike `matches_has_value_or_flag`, a value filled in by
+/// `apply_defaults` does not count. `requires` / `conflicts_with` and group
+/// exclusivity use this to decide whether an arg takes part, while `required`
+/// args and groups and `requires` targets are still satisfied by defaults.
+fn matches_explicitly_present(matches : Matches, name : String) -> Bool {
+  let source = match matches.flag_sources.get(name) {
+    Some(source) => Some(source)
+    None => matches.value_sources.get(name)
+  }
+  source is Some(Argv | Env)
+}
+
+///|
 fn apply_flag(matches : Matches, arg : Arg, source : ValueSource) -> Unit {
   match arg.info {
     FlagInfo(action=SetTrue, ..) => matches.flags[arg.name] = true

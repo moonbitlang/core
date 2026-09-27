@@ -364,12 +364,11 @@ test "default values do not trigger relationships or exclusive groups" {
     options=[OptionArg("format", long="format", default_values=["text"])],
     flags=[FlagArg("json", long="json")],
   )
-  // BUG: should parse with json=true and format=["text"]; the default value
-  // of `format` counts as a second member of the exclusive group.
+  // The default value of `format` does not make it a second group member.
   inspect(
     parse_outcome(exclusive, ["--json"]),
     content=(
-      #|error: group conflict fmt
+      #|ok ({ "json": true }, { "format": ["text"] })
     ),
   )
   // Two members passed explicitly: a real conflict.
@@ -386,11 +385,11 @@ test "default values do not trigger relationships or exclusive groups" {
     ]),
     OptionArg("other", long="other"),
   ])
-  // BUG: should parse; `mode` only holds its default value.
+  // `mode` only holds its default value, so it does not conflict.
   inspect(
     parse_outcome(conflicts, ["--other", "x"]),
     content=(
-      #|error: conflicting arguments: mode and other
+      #|ok ({}, { "mode": ["fast"], "other": ["x"] })
     ),
   )
   // Both passed explicitly: a real conflict.
@@ -405,11 +404,11 @@ test "default values do not trigger relationships or exclusive groups" {
     OptionArg("mode", long="mode", default_values=["fast"]),
     OptionArg("other", long="other", conflicts_with=["mode"]),
   ])
-  // BUG: should parse; the conflict target `mode` only holds its default.
+  // The conflict target `mode` only holds its default value.
   inspect(
     parse_outcome(conflicts_target, ["--other", "x"]),
     content=(
-      #|error: conflicting arguments: other and mode
+      #|ok ({}, { "mode": ["fast"], "other": ["x"] })
     ),
   )
 
@@ -417,11 +416,11 @@ test "default values do not trigger relationships or exclusive groups" {
     OptionArg("mode", long="mode", default_values=["fast"], requires=["config"]),
     OptionArg("config", long="config"),
   ])
-  // BUG: should parse; `mode` only holds its default value.
+  // `mode` only holds its default value, so it requires nothing.
   inspect(
     parse_outcome(requires, []),
     content=(
-      #|error: the following required argument was not provided: 'config' (required by 'mode')
+      #|ok ({}, { "mode": ["fast"] })
     ),
   )
   // `mode` passed explicitly: `config` really is required.
@@ -440,11 +439,11 @@ test "default values do not trigger relationships or exclusive groups" {
       OptionArg("config", long="config"),
     ],
   )
-  // BUG: should parse; the only member of `g` holds its default value.
+  // The only member of `g` holds its default value, so `g` requires nothing.
   inspect(
     parse_outcome(group_requires, []),
     content=(
-      #|error: the following required argument was not provided: 'config'
+      #|ok ({}, { "mode": ["fast"] })
     ),
   )
 
@@ -456,11 +455,12 @@ test "default values do not trigger relationships or exclusive groups" {
       OptionArg("other", long="other"),
     ],
   )
-  // BUG: should parse; the only member of `g` holds its default value.
+  // The only member of `g` holds its default value, so `g` conflicts with
+  // nothing.
   inspect(
     parse_outcome(group_conflicts, ["--other", "x"]),
     content=(
-      #|error: group conflict g conflicts with other
+      #|ok ({}, { "mode": ["fast"], "other": ["x"] })
     ),
   )
 
@@ -473,6 +473,94 @@ test "default values do not trigger relationships or exclusive groups" {
   ])
   inspect(
     parse_outcome(env_conflicts, ["--other", "x"], env={ "MODE": "slow" }),
+    content=(
+      #|error: conflicting arguments: mode and other
+    ),
+  )
+}
+
+///|
+test "defaults satisfy requirements while env and argv values trigger relations" {
+  let required_group = @argparse.Command(
+    "demo",
+    groups=[ArgGroup("g", required=true, args=["mode"])],
+    options=[OptionArg("mode", long="mode", default_values=["fast"])],
+  )
+  inspect(
+    parse_outcome(required_group, []),
+    content=(
+      #|ok ({}, { "mode": ["fast"] })
+    ),
+  )
+
+  let requires_default = @argparse.Command("demo", options=[
+    OptionArg("mode", long="mode", requires=["config"]),
+    OptionArg("config", long="config", default_values=["cfg.toml"]),
+  ])
+  inspect(
+    parse_outcome(requires_default, ["--mode", "slow"]),
+    content=(
+      #|ok ({}, { "mode": ["slow"], "config": ["cfg.toml"] })
+    ),
+  )
+
+  let group_to_group = @argparse.Command(
+    "demo",
+    groups=[
+      ArgGroup("a", args=["x"], conflicts_with=["b"]),
+      ArgGroup("b", args=["mode"]),
+    ],
+    flags=[FlagArg("x", long="x")],
+    options=[OptionArg("mode", long="mode", default_values=["fast"])],
+  )
+  inspect(
+    parse_outcome(group_to_group, ["--x"]),
+    content=(
+      #|ok ({ "x": true }, { "mode": ["fast"] })
+    ),
+  )
+  inspect(
+    parse_outcome(group_to_group, ["--x", "--mode", "slow"]),
+    content=(
+      #|error: group conflict a conflicts with b
+    ),
+  )
+
+  // An env value makes a group member explicit.
+  let env_group = @argparse.Command(
+    "demo",
+    groups=[ArgGroup("fmt", args=["format", "json"], multiple=false)],
+    options=[
+      OptionArg("format", long="format", env="FORMAT", default_values=["text"]),
+    ],
+    flags=[FlagArg("json", long="json")],
+  )
+  inspect(
+    parse_outcome(env_group, ["--json"], env={ "FORMAT": "csv" }),
+    content=(
+      #|error: group conflict fmt
+    ),
+  )
+
+  // Global defaults propagated into a subcommand stay implicit.
+  let global_cmd = @argparse.Command(
+    "demo",
+    options=[
+      OptionArg("mode", long="mode", default_values=["fast"], global=true, conflicts_with=[
+        "other",
+      ]),
+      OptionArg("other", long="other", global=true),
+    ],
+    subcommands=[Command("run")],
+  )
+  inspect(
+    parse_outcome(global_cmd, ["run", "--other", "x"]),
+    content=(
+      #|ok ({}, { "mode": ["fast"], "other": ["x"] })
+    ),
+  )
+  inspect(
+    parse_outcome(global_cmd, ["--mode", "slow", "run", "--other", "x"]),
     content=(
       #|error: conflicting arguments: mode and other
     ),
