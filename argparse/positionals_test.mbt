@@ -377,3 +377,75 @@ test "hyphen token is rejected while a later positional still needs values" {
     ),
   )
 }
+
+///|
+/// Parse `argv` and summarise the outcome on one line: the parsed flags and
+/// values on success, or the first line of the error message on failure.
+fn hyphen_positional_outcome(
+  cmd : @argparse.Command,
+  argv : Array[String],
+) -> String {
+  try cmd.parse(argv~, env=empty_env()) catch {
+    err => err.to_string().split("\n").next().unwrap_or("").to_owned()
+  } noraise {
+    m => "ok \{@debug.to_string((m.flags, m.values))}"
+  }
+}
+
+///|
+test "allow_hyphen positional yields to a negated flag" {
+  let cmd = @argparse.Command(
+    "demo",
+    flags=[
+      FlagArg("verbose", long="verbose", negatable=true),
+      FlagArg("quiet", long="quiet"),
+    ],
+    positionals=[
+      PositionArg(
+        "rest",
+        num_args=ValueRange(lower=0),
+        allow_hyphen_values=true,
+      ),
+    ],
+  )
+  inspect(
+    hyphen_positional_outcome(cmd, ["--verbose"]),
+    content=(
+      #|ok ({ "verbose": true }, {})
+    ),
+  )
+  // BUG: should parse as verbose=false with no `rest` values.
+  inspect(
+    hyphen_positional_outcome(cmd, ["--no-verbose"]),
+    content=(
+      #|ok ({}, { "rest": ["--no-verbose"] })
+    ),
+  )
+  // BUG: should parse as verbose=false with rest=["a", "b"].
+  inspect(
+    hyphen_positional_outcome(cmd, ["a", "--no-verbose", "b"]),
+    content=(
+      #|ok ({}, { "rest": ["a", "--no-verbose", "b"] })
+    ),
+  )
+  // BUG: should be rejected like `--verbose=1`, not taken as a value.
+  inspect(
+    hyphen_positional_outcome(cmd, ["--no-verbose=1"]),
+    content=(
+      #|ok ({}, { "rest": ["--no-verbose=1"] })
+    ),
+  )
+  inspect(
+    hyphen_positional_outcome(cmd, ["--verbose=1"]),
+    content=(
+      #|error: unexpected argument '--verbose=1' found
+    ),
+  )
+  // `quiet` is not negatable and `mystery` is unknown: both stay values.
+  inspect(
+    hyphen_positional_outcome(cmd, ["--no-quiet", "--no-mystery"]),
+    content=(
+      #|ok ({}, { "rest": ["--no-quiet", "--no-mystery"] })
+    ),
+  )
+}
