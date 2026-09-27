@@ -976,6 +976,16 @@ pub extend Double with Show::{output}
 pub extend Double with ToJson::{to_json}
 
 ///|
+#deprecated("Use `Json(value)` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Error with ToJson::{to_json}
+
+///|
+#deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
+#doc(hidden)
+pub extend Error with Show::{output}
+
+///|
 #deprecated("Use `Show::output` via the trait or `to_string` instead", skip_current_package=true)
 #doc(hidden)
 pub extend Failure with Show::{output}

@@ -13,22 +13,14 @@
 // limitations under the License.
 
 ///|
-fn error_to_repr(e : Error) -> @debug.Repr = "%error.to_repr"
+/// Returns the textual representation of this error.
+pub fn Error::to_string(self : Error) -> String = "%error.to_string"
 
 ///|
-pub impl @debug.Debug for Error with fn to_repr(self) {
-  error_to_repr(self)
+pub impl Show for Error with fn to_string(self) {
+  Error::to_string(self)
 }
 
 ///|
-test "Debug for Error" {
-  fn fail_with_error() -> Unit raise {
-    raise InspectError::InspectError("test error")
-  }
-
-  try fail_with_error() catch {
-    e => @debug.debug_inspect(e, content="InspectError(\"test error\")")
-  } noraise {
-    _ => fail("expected error")
-  }
-}
+/// Returns the JSON representation of this error.
+pub impl ToJson for Error with fn to_json(self) = "%error.to_json"
