@@ -141,3 +141,51 @@ test "merge keeps the tree balanced" {
     )
   }
 }
+
+///|
+/// `(left size, right size)` of every node, in pre-order, whose subtrees
+/// break the size-balance condition checked by `is_balanced`.
+fn[K, V] unbalanced_nodes(t : SortedMap[K, V]) -> Array[(Int, Int)] {
+  let acc = []
+  fn go(t : SortedMap[K, V]) {
+    guard t is Tree(_, l, r, ..) else { return }
+    let ln = l.length()
+    let rn = r.length()
+    if ln + rn >= 2 && (ln > ratio * rn || rn > ratio * ln) {
+      acc.push((ln, rn))
+    }
+    go(l)
+    go(r)
+  }
+
+  go(t)
+  acc
+}
+
+///|
+test "filter rebuilds a balanced tree" {
+  let m = SortedMap(Array::makei(2000, i => (i, i)))
+  // The root is 1000: `kept` keeps it and `dropped` drops it.
+  // BUG: `filter` recombines the independently filtered subtrees with a
+  // single `balance` step when the node is kept, or with `glue` when it is
+  // dropped, but their sizes can differ by far more than one rotation
+  // repairs. Every node should be balanced: `[]` and `true` in both cases.
+  let kept = m.filter((k, _) => k == 0 || k >= 1000)
+  inspect(kept.length(), content="1001")
+  @debug.debug_inspect(
+    unbalanced_nodes(kept),
+    content=(
+      #|[(1, 249)]
+    ),
+  )
+  inspect(is_valid(kept), content="false")
+  let dropped = m.filter((k, _) => k < 1000 || k == 1999)
+  inspect(dropped.length(), content="1001")
+  @debug.debug_inspect(
+    unbalanced_nodes(dropped),
+    content=(
+      #|[(498, 1)]
+    ),
+  )
+  inspect(is_valid(dropped), content="false")
+}
