@@ -44,18 +44,19 @@ pub fn Double::to_int64(self : Double) -> Int64 = "%f64_to_i64_saturate"
 
 ///|
 /// Converts a double-precision floating-point number to an unsigned 64-bit
-/// integer, handling special cases and value ranges.
+/// integer. Handles special cases including NaN and numbers outside the valid
+/// UInt64 range.
 ///
 /// Parameters:
 ///
-/// * `value` : The double-precision floating-point number to be converted.
+/// * `self` : The double-precision floating-point number to be converted.
 ///
 /// Returns an unsigned 64-bit integer value according to the following rules:
 ///
 /// * Returns 0 if the input is NaN
 /// * Returns `@uint64.MAX_VALUE` (18446744073709551615UL) if the input is
-/// greater than or equal to `@uint64.MAX_VALUE`
-/// * Returns 0UL if the input is less than or equal to 0
+///   greater than or equal to 2^64 (18446744073709551616.0)
+/// * Returns 0 if the input is less than or equal to 0
 /// * Otherwise returns the integer part of the input by truncating towards zero
 ///
 /// Example:
@@ -64,8 +65,10 @@ pub fn Double::to_int64(self : Double) -> Int64 = "%f64_to_i64_saturate"
 /// test {
 ///   inspect(42.0.to_uint64(), content="42")
 ///   inspect((-42.5).to_uint64(), content="0")
+///   inspect(1.0e19.to_uint64(), content="10000000000000000000")
 ///   inspect((0.0 / 0.0).to_uint64(), content="0") // NaN
 ///   inspect((1.0 / 0.0).to_uint64(), content="18446744073709551615") // Infinity
+///   inspect((-1.0 / 0.0).to_uint64(), content="0") // -Infinity
 /// }
 /// ```
 pub fn Double::to_uint64(self : Double) -> UInt64 = "%f64.to_u64_saturate"
