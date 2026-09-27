@@ -45,6 +45,7 @@ options(
     "double_to_int64_native.mbt": [ "native", "llvm" ],
     "double_to_int_wasm.mbt": [ "wasm", "wasm-gc" ],
     "double_to_uint.mbt": [ "not", "wasm", "wasm-gc" ],
+    "double_to_uint64_test.mbt": [ "native", "llvm" ],
     "double_to_uint_wasm.mbt": [ "wasm", "wasm-gc" ],
     "panic_nonjs_test.mbt": [ "wasm", "wasm-gc" ],
     "panic_test.mbt": [ "not", "native", "llvm" ],
