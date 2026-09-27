@@ -1097,6 +1097,42 @@ test "Double::until with NaN step" {
 }
 
 ///|
+test "Double::until computes elements without accumulating error" {
+  // BUG: should be 10 (0.0 + 10 * 0.1 == 1.0 is not below the end)
+  inspect(0.0.until(1.0, step=0.1).count(), content="11")
+  // BUG: should be 10 (1.0 - 10 * 0.1 == 0.0 is not above the end)
+  inspect(1.0.until(0.0, step=-0.1).count(), content="11")
+  // BUG: the 7th element should be 0.6000000000000001 (0.0 + 6 * 0.1)
+  debug_inspect(0.0.until(1.0, step=0.1).nth(6), content="Some(0.6)")
+  // BUG: should end with 1 (0.0 + 10 * 0.1 == 1.0 hits the end exactly)
+  debug_inspect(
+    0.0.until(1.0, step=0.1, inclusive=true).last(),
+    content="Some(0.9999999999999999)",
+  )
+  // BUG: `i + step == i` here, so these never terminate; they should be
+  // [9007199254740992, 9007199254740992] (element 1 rounds back to the start)
+  // and [1e+308, Infinity] (the end is yielded once, then iteration stops).
+  debug_inspect(
+    9007199254740992.0.until(9007199254740994.0).take(4).to_array(),
+    content=(
+      #|[
+      #|  9007199254740992,
+      #|  9007199254740992,
+      #|  9007199254740992,
+      #|  9007199254740992,
+      #|]
+    ),
+  )
+  debug_inspect(
+    1.0e308
+    .until(@double.infinity, step=1.0e308, inclusive=true)
+    .take(4)
+    .to_array(),
+    content="[1e+308, Infinity, Infinity, Infinity]",
+  )
+}
+
+///|
 test "Float::until with early break" {
   for i in 0.0.until(10.0) {
     if i > 2.0 {

@@ -218,6 +218,25 @@ test "Float::until with NaN step" {
 }
 
 ///|
+test "Float::until computes elements without accumulating error" {
+  // BUG: should be 100 (0.0 + 100 * 0.01 rounds to 1.0, which is not below
+  // the end); the accumulated sum reaches 0.9999993443489075 instead
+  inspect((0.0 : Float).until(1.0, step=0.01).count(), content="101")
+  // BUG: should end with 1 (0.0 + 10 * 0.1 rounds to 1.0 and hits the end)
+  debug_inspect(
+    (0.0 : Float).until(1.0, step=0.1, inclusive=true).last(),
+    content="Some(0.9000000953674316)",
+  )
+  // BUG: `i + step == i` here, so this never terminates; it should be
+  // [16777216, 16777216, 16777218] (16777217 and 16777219 are not Floats and
+  // round to even, so the fourth element 16777220 reaches the end).
+  debug_inspect(
+    (16777216.0 : Float).until(16777220.0).take(4).to_array(),
+    content="[16777216, 16777216, 16777216, 16777216]",
+  )
+}
+
+///|
 test "Float::min and Float::max" {
   assert_eq((1.0 : Float).min(2.0), 1.0)
   assert_eq((2.0 : Float).min(1.0), 1.0)
