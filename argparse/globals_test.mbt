@@ -599,3 +599,190 @@ test "global set option used in both parent and child argv conflicts" {
     ),
   )
 }
+
+///|
+/// Renders the state of global `name` at every matches level, root first.
+fn nested_global_levels(
+  cmd : @argparse.Command,
+  name : String,
+  argv : Array[String],
+) -> String {
+  let parsed = cmd.parse(argv~, env=empty_env()) catch {
+    err => return "\{"\{err}".split("\n").next().unwrap_or("")}"
+  }
+  let levels = []
+  let mut current = Some(parsed)
+  while current is Some(m) {
+    let level = match
+      (m.flags.get(name), m.flag_counts.get(name), m.values.get(name)) {
+      (Some(flag), None, _) => "\{flag}"
+      (Some(flag), Some(count), _) => "\{flag} x\{count}"
+      (None, _, Some(values)) => values.join(",")
+      (None, _, None) => "-"
+    }
+    levels.push(level)
+    current = match m.subcommand {
+      Some((_, sub)) => Some(sub)
+      None => None
+    }
+  }
+  levels.join(" | ")
+}
+
+///|
+/// Parses each row with `root > mid` when it does not mention `leaf`, and with
+/// `root > mid > leaf` otherwise; the global is declared on `root` only.
+fn nested_global_table(
+  name : String,
+  rows : Array[Array[String]],
+  flags? : Array[@argparse.FlagArg] = [],
+  options? : Array[@argparse.OptionArg] = [],
+) -> String {
+  let one_level = @argparse.Command("root", flags~, options~, subcommands=[
+    Command("mid"),
+  ])
+  let two_levels = @argparse.Command("root", flags~, options~, subcommands=[
+    Command("mid", subcommands=[Command("leaf")]),
+  ])
+  let lines = []
+  for argv in rows {
+    let cmd = if argv.contains("leaf") { two_levels } else { one_level }
+    lines.push("\{argv.join(" ")} => \{nested_global_levels(cmd, name, argv)}")
+  }
+  lines.join("\n")
+}
+
+///|
+test "global flags merge across one and two subcommand levels" {
+  let rows = [
+    ["-v", "mid"],
+    ["-v", "-v", "mid"],
+    ["mid", "-v"],
+    ["-v", "mid", "-v"],
+    ["-v", "mid", "leaf"],
+    ["-v", "-v", "mid", "leaf"],
+    ["mid", "-v", "leaf"],
+    ["mid", "leaf", "-v"],
+    ["-v", "mid", "-v", "leaf"],
+    ["-v", "mid", "leaf", "-v"],
+    ["mid", "-v", "leaf", "-v"],
+    ["-v", "mid", "-v", "leaf", "-v"],
+    ["mid", "leaf"],
+  ]
+  // BUG: a root-only argv count is lost once it passes two levels; the
+  // correct rows are `-v mid leaf => true x1 | true x1 | true x1` and
+  // `-v -v mid leaf => true x2 | true x2 | true x2`.
+  inspect(
+    nested_global_table("v", rows, flags=[
+      FlagArg("v", short='v', long="", action=Count, global=true),
+    ]),
+    content=(
+      #|-v mid => true x1 | true x1
+      #|-v -v mid => true x2 | true x2
+      #|mid -v => true x1 | true x1
+      #|-v mid -v => true x2 | true x2
+      #|-v mid leaf => false | false | false
+      #|-v -v mid leaf => false | false | false
+      #|mid -v leaf => true x1 | true x1 | true x1
+      #|mid leaf -v => true x1 | true x1 | true x1
+      #|-v mid -v leaf => true x2 | true x2 | true x2
+      #|-v mid leaf -v => true x2 | true x2 | true x2
+      #|mid -v leaf -v => true x2 | true x2 | true x2
+      #|-v mid -v leaf -v => true x3 | true x3 | true x3
+      #|mid leaf => - | - | -
+    ),
+  )
+  inspect(
+    nested_global_table("v", rows, flags=[
+      FlagArg("v", short='v', long="", action=SetTrue, global=true),
+    ]),
+    content=(
+      #|-v mid => true | true
+      #|-v -v mid => true | true
+      #|mid -v => true | true
+      #|-v mid -v => true | true
+      #|-v mid leaf => true | true | true
+      #|-v -v mid leaf => true | true | true
+      #|mid -v leaf => true | true | true
+      #|mid leaf -v => true | true | true
+      #|-v mid -v leaf => true | true | true
+      #|-v mid leaf -v => true | true | true
+      #|mid -v leaf -v => true | true | true
+      #|-v mid -v leaf -v => true | true | true
+      #|mid leaf => - | - | -
+    ),
+  )
+  inspect(
+    nested_global_table("v", rows, flags=[
+      FlagArg("v", short='v', long="", action=SetFalse, global=true),
+    ]),
+    content=(
+      #|-v mid => false | false
+      #|-v -v mid => false | false
+      #|mid -v => false | false
+      #|-v mid -v => false | false
+      #|-v mid leaf => false | false | false
+      #|-v -v mid leaf => false | false | false
+      #|mid -v leaf => false | false | false
+      #|mid leaf -v => false | false | false
+      #|-v mid -v leaf => false | false | false
+      #|-v mid leaf -v => false | false | false
+      #|mid -v leaf -v => false | false | false
+      #|-v mid -v leaf -v => false | false | false
+      #|mid leaf => - | - | -
+    ),
+  )
+}
+
+///|
+test "global options merge across one and two subcommand levels" {
+  let rows = [
+    ["-m", "a", "mid"],
+    ["mid", "-m", "b"],
+    ["-m", "a", "mid", "-m", "b"],
+    ["-m", "a", "mid", "leaf"],
+    ["mid", "-m", "b", "leaf"],
+    ["mid", "leaf", "-m", "c"],
+    ["-m", "a", "mid", "-m", "b", "leaf"],
+    ["-m", "a", "mid", "leaf", "-m", "c"],
+    ["mid", "-m", "b", "leaf", "-m", "c"],
+    ["-m", "a", "mid", "-m", "b", "leaf", "-m", "c"],
+    ["mid", "leaf"],
+  ]
+  inspect(
+    nested_global_table("m", rows, options=[
+      OptionArg("m", short='m', long="", global=true),
+    ]),
+    content=(
+      #|-m a mid => a | a
+      #|mid -m b => b | b
+      #|-m a mid -m b => error: argument '-m' cannot be used multiple times
+      #|-m a mid leaf => a | a | a
+      #|mid -m b leaf => b | b | b
+      #|mid leaf -m c => c | c | c
+      #|-m a mid -m b leaf => error: argument '-m' cannot be used multiple times
+      #|-m a mid leaf -m c => error: argument '-m' cannot be used multiple times
+      #|mid -m b leaf -m c => error: argument '-m' cannot be used multiple times
+      #|-m a mid -m b leaf -m c => error: argument '-m' cannot be used multiple times
+      #|mid leaf => - | - | -
+    ),
+  )
+  inspect(
+    nested_global_table("m", rows, options=[
+      OptionArg("m", short='m', long="", action=Append, global=true),
+    ]),
+    content=(
+      #|-m a mid => a | a
+      #|mid -m b => b | b
+      #|-m a mid -m b => a,b | a,b
+      #|-m a mid leaf => a | a | a
+      #|mid -m b leaf => b | b | b
+      #|mid leaf -m c => c | c | c
+      #|-m a mid -m b leaf => a,b | a,b | a,b
+      #|-m a mid leaf -m c => a,c | a,c | a,c
+      #|mid -m b leaf -m c => b,c | b,c | b,c
+      #|-m a mid -m b leaf -m c => a,b,c | a,b,c | a,b,c
+      #|mid leaf => - | - | -
+    ),
+  )
+}
