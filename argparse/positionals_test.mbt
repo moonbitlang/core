@@ -414,25 +414,25 @@ test "allow_hyphen positional yields to a negated flag" {
       #|ok ({ "verbose": true }, {})
     ),
   )
-  // BUG: should parse as verbose=false with no `rest` values.
+  // `--no-verbose` is the negated flag, not a value for `rest`.
   inspect(
     hyphen_positional_outcome(cmd, ["--no-verbose"]),
     content=(
-      #|ok ({}, { "rest": ["--no-verbose"] })
+      #|ok ({ "verbose": false }, {})
     ),
   )
-  // BUG: should parse as verbose=false with rest=["a", "b"].
+  // Also once `rest` has started collecting values.
   inspect(
     hyphen_positional_outcome(cmd, ["a", "--no-verbose", "b"]),
     content=(
-      #|ok ({}, { "rest": ["a", "--no-verbose", "b"] })
+      #|ok ({ "verbose": false }, { "rest": ["a", "b"] })
     ),
   )
-  // BUG: should be rejected like `--verbose=1`, not taken as a value.
+  // An inline value is rejected, as for `--verbose=1`.
   inspect(
     hyphen_positional_outcome(cmd, ["--no-verbose=1"]),
     content=(
-      #|ok ({}, { "rest": ["--no-verbose=1"] })
+      #|error: unexpected argument '--no-verbose=1' found
     ),
   )
   inspect(
@@ -446,6 +446,36 @@ test "allow_hyphen positional yields to a negated flag" {
     hyphen_positional_outcome(cmd, ["--no-quiet", "--no-mystery"]),
     content=(
       #|ok ({}, { "rest": ["--no-quiet", "--no-mystery"] })
+    ),
+  )
+}
+
+///|
+test "allow_hyphen positional in a subcommand yields to a negated global flag" {
+  let cmd = @argparse.Command(
+    "demo",
+    flags=[FlagArg("verbose", long="verbose", negatable=true, global=true)],
+    subcommands=[
+      Command("run", positionals=[
+        PositionArg(
+          "rest",
+          num_args=ValueRange(lower=0),
+          allow_hyphen_values=true,
+        ),
+      ]),
+    ],
+  )
+  let parsed = cmd.parse(
+    argv=["--verbose", "run", "--no-verbose"],
+    env=empty_env(),
+  ) catch {
+    _ => panic()
+  }
+  guard parsed.subcommand is Some((_, sub)) else { panic() }
+  @debug.debug_inspect(
+    (parsed.flags, sub.flags, sub.values),
+    content=(
+      #|({ "verbose": false }, { "verbose": false }, {})
     ),
   )
 }
