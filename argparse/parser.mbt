@@ -482,9 +482,8 @@ fn parse_command_impl(
       match long_index.get_from_string(name) {
         None =>
           // Support `--no-<flag>` when the underlying flag is marked `negatable`.
-          if name is [.. "no-", .. target] &&
-            long_index.get_from_string(target)
-            is Some({ info: FlagInfo(negatable=true, action~, ..), .. } as spec) {
+          if lookup_negated_flag(long_index, name)
+            is Some({ info: FlagInfo(action~, ..), .. } as spec) {
             if inline is Some(_) {
               raise ArgParseError::InvalidArgument(arg)
             }
